@@ -1,0 +1,4 @@
+λ = 0.0 ──────── 0.27 ────────── 0.5+
+    Frozen      Complex         Chaotic
+                  ↑
+           "Edge of chaos"

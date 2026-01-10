@@ -1,0 +1,7 @@
+      Order ←─────────────────→ Chaos
+        │                         │
+  Frozen│    COMPLEXITY           │Random
+  Static│    MAXIMIZED            │Noise
+        │         ↓               │
+        └─────────●───────────────┘
+              Critical point

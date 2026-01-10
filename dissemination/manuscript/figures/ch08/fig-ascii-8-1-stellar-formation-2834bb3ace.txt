@@ -1,0 +1,11 @@
+  Log L
+     │
+     │  ★ Birth line
+     │   ╲
+     │    ╲ Pre-main sequence
+     │     ╲  tracks
+     │      ╲
+     │       ╲
+     │        ★ Main sequence
+     └────────────────────── Log T
+            ← cooler

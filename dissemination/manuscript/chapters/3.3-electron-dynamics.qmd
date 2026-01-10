@@ -1,0 +1,187 @@
+# Electron Dynamics {#sec-electron-dynamics}
+
+*"How electrons orbit, bond, and determine chemistry"*
+
+::: {.callout-note}
+## Key Revelation
+Electron behavior follows simple rules: minimize energy, fill shells, share or transfer to achieve stability. All of chemistry flows from these principles.
+:::
+
+## Shell Filling Rules
+
+### Aufbau Principle
+
+Electrons fill orbitals in order of increasing energy:
+
+```
+1s → 2s → 2p → 3s → 3p → 4s → 3d → 4p →
+5s → 4d → 5p → 6s → 4f → 5d → 6p →
+7s → 5f → 6d → 7p
+```
+
+The 4s fills before 3d because it has lower energy.
+
+### Pauli Exclusion
+
+No two electrons can have identical quantum numbers.
+
+In simulation: same-state particles repel at short range, preventing overlap.
+
+### Hund's Rule
+
+Electrons fill degenerate orbitals singly before pairing.
+
+Why? Parallel spins minimize electron-electron repulsion.
+
+## Orbital Mechanics
+
+### Angular Momentum
+
+Orbital angular momentum is quantized:
+$$
+L = \sqrt{\ell(\ell+1)} \hbar
+$$
+
+where $\ell$ is the **azimuthal quantum number** (0, 1, 2, 3... for s, p, d, f orbitals respectively).
+
+::: {.callout-note}
+## Quantum Numbers
+- **Principal quantum number** $n$ (1, 2, 3...) determines energy level
+- **Azimuthal quantum number** $\ell$ (0 to n-1) determines orbital shape and angular momentum
+- **Magnetic quantum number** $m_\ell$ (-$\ell$ to +$\ell$) determines orbital orientation
+- **Spin quantum number** $m_s$ (±½) determines electron spin
+:::
+
+In simulation: stable orbits occur where angular momentum satisfies the quantization condition.
+
+### Energy Levels
+
+For hydrogen-like atoms:
+$$
+E_n = -\frac{13.6 \times Z^2}{n^2} \text{ eV}
+$$
+
+Where Z is the atomic number and n is the principal quantum number.
+
+### Probability Distributions
+
+Orbitals define where electrons are likely to be:
+
+| Orbital | Shape | Nodes |
+|---------|-------|-------|
+| s | Sphere | 0 angular |
+| p | Dumbbell | 1 angular |
+| d | Cloverleaf | 2 angular |
+| f | Complex | 3 angular |
+
+## Ionization and Electron Affinity
+
+### Ionization
+
+Removing an electron requires energy:
+$$
+\text{Na} \rightarrow \text{Na}^+ + e^-
+$$
+
+First ionization energy varies across the table:
+- Alkali metals: Low (easy to remove)
+- Noble gases: High (hard to remove)
+
+### Electron Affinity
+
+Adding an electron releases energy:
+$$
+\text{Cl} + e^- \rightarrow \text{Cl}^-
+$$
+
+Halogens have high electron affinity—they want one more electron to complete their shell.
+
+## Valence and Reactivity
+
+### Valence Electrons
+
+Electrons in the outermost shell. Determine:
+- Chemical reactivity
+- Bond formation
+- Ion charge
+
+### The Octet Rule
+
+Atoms are most stable with 8 valence electrons (full s²p⁶).
+
+Atoms achieve this by:
+- **Losing electrons** (metals): Na → Na⁺
+- **Gaining electrons** (nonmetals): Cl → Cl⁻
+- **Sharing electrons** (covalent): C-C bonds
+
+## Transitions and Spectra
+
+When electrons change energy levels:
+
+### Absorption
+$$
+E_{\text{photon}} = E_{\text{final}} - E_{\text{initial}}
+$$
+Electron absorbs photon, jumps to higher energy.
+
+### Emission
+$$
+E_{\text{photon}} = E_{\text{initial}} - E_{\text{final}}
+$$
+Electron emits photon, drops to lower energy.
+
+### Spectral Lines
+
+Each element has unique energy levels, creating unique spectral fingerprints.
+
+## Spin
+
+Electrons have intrinsic angular momentum (spin):
+- Spin up: +½
+- Spin down: -½
+
+Two electrons can share an orbital only if they have opposite spin.
+
+## Experiments
+
+### Orbital Visualization
+See the probability clouds for s, p, d, f orbitals.
+
+### Spectral Lines
+Excite atoms. Watch emission spectra. Identify the element by its fingerprint.
+
+### Ionization
+Remove electrons one by one. Measure ionization energies.
+
+## Implementation
+
+```python
+def find_shell(electron, nucleus):
+    # Calculate distance from nucleus
+    r = distance(electron.position, nucleus.position)
+
+    # Determine shell based on radius
+    if r < 6:
+        return 1  # 1s
+    elif r < 10:
+        return 2  # 2s, 2p
+    elif r < 14:
+        return 3  # 3s, 3p
+    else:
+        return 4  # Higher shells
+
+def is_shell_full(shell, electron_count):
+    max_electrons = {1: 2, 2: 8, 3: 18, 4: 32}
+    return electron_count >= max_electrons[shell]
+```
+
+## Concepts
+
+- **aufbau**: Order of orbital filling
+- **pauli-exclusion**: No identical quantum states
+- **valence**: Outer electrons determining chemistry
+- **spectral-lines**: Energy-level transitions
+
+## Transition
+
+Electrons in atoms are governed by quantum rules. But what happens inside the nucleus? Next, we explore nuclear physics—fusion, fission, and radioactive decay.

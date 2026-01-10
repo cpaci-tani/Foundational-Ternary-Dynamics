@@ -1,0 +1,198 @@
+# Atmospheres {#sec-atmospheres}
+
+*"The breath of worlds"*
+
+::: {.callout-note}
+## Key Revelation
+An atmosphere is a battle between gravity (holding gas in) and thermal energy (allowing escape). The winner determines whether a world can support life.
+:::
+
+::: {.callout-note}
+## How FTD Produces Atmospheric Structure
+Atmospheric layering emerges from flux dynamics in a gravitational field:
+
+- **Hydrostatic equilibrium** = balance of gravitational flux gradient vs thermal flux pressure
+- **Temperature profile** = determined by radiative flux transport and convective flux mixing
+- **Escape velocity** = threshold where kinetic flux exceeds gravitational binding flux
+- **Layering** = different absorption/emission properties of flux at different altitudes
+
+The barometric formula follows from flux conservation in a gravitational potential.
+:::
+
+## Atmospheric Structure
+
+### Earth's Layers
+
+| Layer | Altitude | Temperature | Features |
+|-------|----------|-------------|----------|
+| Troposphere | 0-12 km | Decreases | Weather |
+| Stratosphere | 12-50 km | Increases | Ozone |
+| Mesosphere | 50-80 km | Decreases | Meteors burn |
+| Thermosphere | 80-700 km | Increases | Aurora |
+| Exosphere | >700 km | — | Transition to space |
+
+### Why Temperature Varies
+
+- **Troposphere**: Heated from below (ground)
+- **Stratosphere**: Ozone absorbs UV
+- **Mesosphere**: No heat source
+- **Thermosphere**: UV absorption
+
+## Atmospheric Escape
+
+### Jeans Escape
+
+Thermal escape when particles exceed escape velocity:
+
+$$
+v_{\text{thermal}} = \sqrt{\frac{2k_BT}{m}}
+$$
+
+$$
+v_{\text{escape}} = \sqrt{\frac{2GM}{r}}
+$$
+
+If $v_{\text{thermal}} > v_{\text{escape}}/6$, significant loss occurs.
+
+### Why Hydrogen Escapes
+
+Light molecules move faster at same temperature:
+$$
+v \propto \frac{1}{\sqrt{m}}
+$$
+
+H₂ moves 4× faster than O₂ → escapes more easily.
+
+### Atmospheric Retention
+
+| Planet | Gravity | Temperature | Atmosphere |
+|--------|---------|-------------|------------|
+| Moon | Weak | Hot days | None |
+| Mars | Weak | Cold | Thin CO₂ |
+| Earth | Medium | Moderate | Thick N₂/O₂ |
+| Venus | Medium | Hot | Dense CO₂ |
+| Jupiter | Strong | Cold | Massive H₂/He |
+
+## The Greenhouse Effect
+
+### Mechanism
+
+```
+  Sunlight →    ← IR escapes
+       ╲       ↑
+        ╲     ↑ ↑ ↑
+         ╲   ─────────  ← Atmosphere
+          ╲   ↑ ↑ ↑ ↑   (absorbs and re-emits IR)
+           ╲ ─────────
+    Ground absorbs visible,
+    emits infrared
+```
+
+### Energy Balance
+
+Without atmosphere:
+$$
+T_{\text{eff}} = \left(\frac{(1-A)S}{4\sigma}\right)^{1/4}
+$$
+
+With greenhouse gases:
+$$
+T_{\text{surface}} > T_{\text{eff}}
+$$
+
+### Planetary Comparison
+
+| Planet | T_eff | T_surface | Δ |
+|--------|-------|-----------|---|
+| Venus | 232 K | 737 K | +505 K |
+| Earth | 255 K | 288 K | +33 K |
+| Mars | 210 K | 210 K | 0 K |
+
+Venus's runaway greenhouse makes it hotter than Mercury.
+
+## Atmospheric Composition
+
+### Earth
+
+| Gas | Percentage |
+|-----|------------|
+| N₂ | 78% |
+| O₂ | 21% |
+| Ar | 0.93% |
+| CO₂ | 0.04% |
+| H₂O | 0-4% |
+
+### Venus
+
+| Gas | Percentage |
+|-----|------------|
+| CO₂ | 96.5% |
+| N₂ | 3.5% |
+
+### Mars
+
+| Gas | Percentage |
+|-----|------------|
+| CO₂ | 95% |
+| N₂ | 2.7% |
+| Ar | 1.6% |
+
+## Weather
+
+Driven by uneven heating:
+
+- **Hadley cells**: Tropical convection
+- **Trade winds**: Surface return flow
+- **Jet streams**: Upper atmosphere currents
+- **Storms**: Energy redistribution
+
+### The Coriolis Effect
+
+Rotating planet deflects moving air:
+- Northern hemisphere: Rightward deflection
+- Southern hemisphere: Leftward deflection
+
+Creates spiral storm patterns.
+
+## In Simulation
+
+```python
+class Atmosphere:
+    def __init__(self, planet, composition, mass):
+        self.planet = planet
+        self.gases = composition
+        self.mass = mass
+        self.scale_height = calculate_scale_height(planet, composition)
+
+    def escape_rate(self, species):
+        v_thermal = sqrt(2 * k_B * self.temperature / species.mass)
+        v_escape = sqrt(2 * G * self.planet.mass / self.planet.radius)
+        return jeans_escape_rate(v_thermal, v_escape)
+
+    def greenhouse_temperature(self):
+        T_eff = effective_temperature(self.planet)
+        greenhouse_factor = sum(gas.absorption for gas in self.gases)
+        return T_eff * (1 + greenhouse_factor)**0.25
+```
+
+## Experiments
+
+### Atmospheric Escape
+Give planet different masses. Watch which atmospheres survive.
+
+### Greenhouse Effect
+Add CO₂. Watch temperature rise.
+
+### Weather Patterns
+Set up temperature gradients. Watch circulation develop.
+
+## Concepts
+
+- **scale-height**: How quickly pressure drops with altitude
+- **jeans-escape**: Thermal atmospheric loss
+- **greenhouse-effect**: Atmospheric warming from IR absorption
+- **coriolis-effect**: Deflection from planetary rotation
+
+## Transition
+
+Atmospheres blanket surfaces. But what lies beneath? Next, we explore geology—the solid structure of worlds.

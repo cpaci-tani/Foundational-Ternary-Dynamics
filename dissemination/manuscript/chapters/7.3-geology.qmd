@@ -1,0 +1,182 @@
+# Geology {#sec-geology}
+
+*"The solid foundation of worlds"*
+
+::: {.callout-note}
+## Key Revelation
+Planets are not static—their interiors churn, their surfaces crack, and their mountains rise over millions of years. Geology is planetary dynamics in slow motion.
+:::
+
+## Planetary Interiors
+
+### Structure
+
+Planets differentiate into layers based on density:
+
+```
+    ┌─────────────┐
+    │   Crust     │ ← Light silicates
+    ├─────────────┤
+    │             │
+    │   Mantle    │ ← Dense silicates
+    │             │
+    ├─────────────┤
+    │  Outer core │ ← Liquid metal
+    ├─────────────┤
+    │ Inner core  │ ← Solid metal
+    └─────────────┘
+```
+
+### Heat Budget
+
+| Source | Power | Duration |
+|--------|-------|----------|
+| Radioactive decay | ~20 TW | Ongoing |
+| Residual accretion | Decreasing | Initial |
+| Core crystallization | ~5 TW | Ongoing |
+
+Earth's interior is still hot from formation + radioactive heating.
+
+## Plate Tectonics
+
+### Driving Forces
+
+- **Mantle convection**: Hot material rises, cold sinks
+- **Ridge push**: New crust pushes plates apart
+- **Slab pull**: Dense subducting plates pull
+
+### Plate Boundaries
+
+| Type | Motion | Features |
+|------|--------|----------|
+| Divergent | Apart | Mid-ocean ridges |
+| Convergent | Together | Trenches, mountains |
+| Transform | Sliding | Earthquakes |
+
+### The Rock Cycle
+
+```
+    Igneous ─── weathering ──→ Sediment
+       ↑                           ↓
+    melting                    burial
+       ↑                           ↓
+    Metamorphic ←─ heat/pressure ─ Sedimentary
+```
+
+## Volcanism
+
+### Magma Types
+
+| Type | SiO₂ | Viscosity | Eruption |
+|------|------|-----------|----------|
+| Basaltic | 45-52% | Low | Effusive |
+| Andesitic | 52-63% | Medium | Mixed |
+| Rhyolitic | >63% | High | Explosive |
+
+### Volcano Types
+
+- **Shield**: Broad, gentle (Hawaii)
+- **Stratovolcano**: Steep, explosive (Mt. Fuji)
+- **Caldera**: Collapsed supervolcano (Yellowstone)
+
+### Volcanic Products
+
+- **Lava**: Flowing molten rock
+- **Tephra**: Ejected fragments
+- **Gases**: CO₂, H₂O, SO₂
+- **Pyroclastic flows**: Deadly hot gas + debris clouds
+
+## Earthquakes
+
+### Causes
+
+- Fault rupture (tectonic)
+- Volcanic activity
+- Human activity (induced)
+
+### Magnitude
+
+Richter scale (logarithmic):
+$$
+M = \log_{10}(A) + \text{corrections}
+$$
+
+Each unit = 10× more amplitude, 31.6× more energy.
+
+### Seismic Waves
+
+| Type | Motion | Speed | Travel |
+|------|--------|-------|--------|
+| P-wave | Compression | Fastest | Through all |
+| S-wave | Shear | Medium | Solids only |
+| Surface | Rolling | Slowest | Surface |
+
+## Comparative Geology
+
+### Mars
+
+- Dead tectonics (one plate)
+- Giant volcanoes (Olympus Mons)
+- Ancient river valleys
+- No magnetic field
+
+### Venus
+
+- Active volcanism
+- No plate tectonics
+- Resurfacing events
+- Thick atmosphere
+
+### Moon
+
+- Heavily cratered
+- Ancient mare (basalt flows)
+- No tectonics, no atmosphere
+- Seismically quiet
+
+## In Simulation
+
+```python
+class Planet:
+    def __init__(self, mass, composition):
+        self.layers = differentiate(mass, composition)
+        self.plates = []
+        self.heat = initial_heat(mass)
+
+    def evolve(self, dt):
+        # Convection
+        self.mantle_flow = convection(self.layers['mantle'])
+
+        # Plate motion
+        for plate in self.plates:
+            plate.move(self.mantle_flow)
+
+        # Volcanism
+        if pressure_release(self.layers):
+            create_volcano()
+
+        # Heat loss
+        self.heat -= surface_radiation(dt)
+```
+
+## Experiments
+
+### Plate Motion
+Watch plates move over millions of simulated years. See continents drift.
+
+### Volcano Builder
+Set up conditions. Watch eruptions based on magma type.
+
+### Earthquake Waves
+Trigger quake. Watch P and S waves propagate.
+
+## Concepts
+
+- **plate-tectonics**: Moving crustal plates
+- **convection**: Heat-driven circulation
+- **volcanism**: Molten rock reaching surface
+- **seismology**: Study of earthquakes
+
+## Transition
+
+Solid ground and gaseous atmosphere need protection. Next, we explore magnetospheres—the invisible shields that protect worlds from space.

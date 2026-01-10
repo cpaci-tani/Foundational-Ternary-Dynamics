@@ -1,0 +1,249 @@
+# Gravity from the Four Integers {#sec-gravity-integers}
+
+*"Why is gravity 10³⁹ times weaker than electromagnetism?"*
+
+::: {.callout-note}
+## Key Revelation
+The gravitational hierarchy—the mysterious 10³⁹ ratio between gravity and other forces—emerges entirely from the four integers {3, 4, 7, 13} through twenty powers of α.
+:::
+
+## The Hierarchy Problem
+
+Gravity is absurdly weak compared to other forces:
+
+| Force | Relative Strength | Ratio to Gravity |
+|-------|------------------|------------------|
+| Strong | 1 | 10³⁹ |
+| Electromagnetic | 10⁻² | 10³⁷ |
+| Weak | 10⁻⁶ | 10³³ |
+| **Gravity** | **10⁻³⁹** | **1** |
+
+Why this enormous hierarchy? Standard physics has no explanation—it's one of the biggest unsolved problems. FTD derives it.
+
+## The Gravitational Coupling
+
+### Definition
+
+The gravitational fine structure constant:
+
+$$\alpha_G = \frac{G_N m_p^2}{\hbar c} \approx 5.91 \times 10^{-39}$$
+
+This measures gravity's strength between two protons.
+
+### The Key Insight
+
+$$\alpha_G = \left(\frac{m_p}{m_P}\right)^2$$
+
+where:
+- $m_p$ = proton mass (938 MeV)
+- $m_P$ = Planck mass (1.22 × 10¹⁹ GeV)
+
+**Gravity is weak because protons are light compared to the Planck scale.**
+
+So the question becomes: why is $m_p/m_P \approx 10^{-19.5}$?
+
+## The Derivation Chain
+
+### Step 1: The Proton-Electron Mass Ratio
+
+From the framework integers (see Chapter 1.10 for the primary derivation):
+
+$$\frac{m_p}{m_e} = \frac{n_{\text{eff}}}{\alpha} + T(b_3 + N_c)$$
+
+where $T(n) = n(n+1)/2$ is the nth triangular number.
+
+Substituting {N_c = 3, b₃ = 7, n_eff = 13}:
+
+$$\frac{m_p}{m_e} = \frac{13}{1/137.036} + T(10) = 13 \times 137.036 + 55 = 1781.47 + 55 = 1836.47$$
+
+**Experimental value**: 1836.15
+**Agreement**: 99.98% (0.02% error)
+
+::: {.callout-note}
+## Formula Reconciliation
+An alternative approximation $(n_{\text{eff}} + N_c/b_3)/\alpha = (94/7) \times 137 \approx 1840$ appears in some derivations but the triangular number formula above is more accurate and is the canonical form.
+:::
+
+### Step 2: The Electron Mass
+
+From Chapter 1.10 (Lemniscate-Alpha):
+
+$$m_e = m_P \cdot \sqrt{2\pi} \cdot \frac{N_{\text{base}}^2}{N_c} \cdot \alpha^{11}$$
+
+With N_base = 4, N_c = 3:
+
+$$m_e = m_P \cdot \sqrt{2\pi} \cdot \frac{16}{3} \cdot \alpha^{11}$$
+
+The α¹¹ suppression is why the electron is so much lighter than the Planck mass.
+
+### Step 3: The Proton Mass
+
+Combining Steps 1 and 2:
+
+$$m_p = m_e \cdot \frac{n_{\text{eff}} + N_c/b_3}{\alpha}$$
+
+$$m_p = m_P \cdot \sqrt{2\pi} \cdot \frac{16}{3} \cdot \left(n_{\text{eff}} + \frac{N_c}{b_3}\right) \cdot \alpha^{10}$$
+
+The proton carries α¹⁰ (one power less than the electron due to strong binding).
+
+### Step 4: The Gravitational Coupling
+
+$$\alpha_G = \left(\frac{m_p}{m_P}\right)^2 = 2\pi \cdot \left(\frac{N_{\text{base}}^2}{N_c}\right)^2 \cdot \left(n_{\text{eff}} + \frac{N_c}{b_3}\right)^2 \cdot \alpha^{20}$$
+
+Substituting all integers:
+
+$$\alpha_G = 2\pi \cdot \left(\frac{16}{3}\right)^2 \cdot \left(\frac{94}{7}\right)^2 \cdot \alpha^{20}$$
+
+## The Result
+
+**FTD Prediction**: α_G = 5.909 × 10⁻³⁹
+
+**Experimental Value**: α_G = 5.906 × 10⁻³⁹
+
+**Agreement**: 99.94% (0.06% error)
+
+::: {.callout-important}
+## What This Means
+
+The 10³⁹ hierarchy is **not arbitrary**. It arises because:
+
+1. **α²⁰ factor**: Twenty powers of the fine structure constant
+2. **Geometric prefactors**: Products of the framework integers
+
+Every piece of this formula traces back to {3, 4, 7, 13}.
+:::
+
+## Why Twenty Powers of α?
+
+The gravitational coupling involves **two** powers of the proton mass, each carrying α¹⁰:
+
+$$\alpha_G \sim m_p^2 \sim (\alpha^{10})^2 = \alpha^{20}$$
+
+Each factor of α represents one level of the mass hierarchy:
+- α¹: electromagnetic corrections
+- α²: binding energy scale
+- ...
+- α¹⁰: QCD confinement scale (proton mass)
+- α²⁰: gravitational coupling (square of proton mass ratio)
+
+## The Lattice Derivation
+
+### Why G_N = 1/(b₃ + N_c)²?
+
+From Chapter 1.10, the gravitational bias:
+
+$$G_{\text{bias}} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{(7+3)^2} = \frac{1}{100} = 0.01$$
+
+This is the **dimensionless** gravitational coupling in lattice units.
+
+The combination b₃ + N_c = 10 represents:
+- b₃ = 7: QCD beta function (gluon self-coupling)
+- N_c = 3: Color charges
+
+Their sum encodes "strong sector complexity." Gravity couples inversely to the square—the same geometric form as 1/r² force law.
+
+### An Elegant Identity
+
+Note that:
+$$n_{\text{eff}} - N_c = 13 - 3 = 10 = b_3 + N_c$$
+
+This connects the effective dimension to the strong sector, suggesting gravity emerges from the same geometric structure as the gauge forces.
+
+## Inverse-Square Law from Geometry
+
+### Flux Conservation
+
+The flux field J satisfies Gauss's law. For a spherical source:
+
+$$\oint_{S_r} \mathbf{J} \cdot d\mathbf{A} = \Phi_0$$
+
+Since the surface area of a sphere is 4πr²:
+
+$$|\mathbf{J}(r)| = \frac{\Phi_0}{4\pi r^2}$$
+
+**The inverse-square law is purely geometric—a consequence of flux conservation in 3D space.**
+
+### The Force Law
+
+With density ρ = |J| and gravitational coupling G_N:
+
+$$\mathbf{F}_g = -G_N \cdot m \cdot \nabla\rho$$
+
+For a point mass M:
+
+$$\boxed{\mathbf{F}_g = -\frac{G_N M m}{r^2}\hat{r}}$$
+
+Newton's law of gravitation emerges from flux geometry.
+
+## Connection to General Relativity
+
+### The Effective Metric
+
+Flux density gradients can be recast as spacetime curvature:
+
+$$g_{\mu\nu} = \eta_{\mu\nu} + h_{\mu\nu}$$
+
+where:
+$$h_{00} = -\frac{2\Phi}{c^2}$$
+
+with Φ the Newtonian potential.
+
+### Geodesic Motion
+
+Particles following flux gradients are equivalently following geodesics in the effective metric:
+
+$$\frac{d^2 x^\mu}{d\tau^2} + \Gamma^\mu_{\alpha\beta} \frac{dx^\alpha}{d\tau}\frac{dx^\beta}{d\tau} = 0$$
+
+**FTD particles on flux gradients = GR particles on geodesics**
+
+### Gravitational Waves
+
+Accelerating masses create propagating flux ripples:
+
+$$\Box h_{\mu\nu} = -16\pi G_N T_{\mu\nu}$$
+
+These are gravitational waves—transverse flux oscillations traveling at speed C.
+
+## Summary: The Complete Picture
+
+```
+{3, 4, 7, 13}
+     │
+     ├── α = 1/137.036 (from G* quadratic)
+     │
+     ├── m_e = m_P × √(2π) × (16/3) × α¹¹
+     │
+     ├── m_p/m_e = (13 + 3/7) × 137
+     │
+     ├── m_p = m_P × √(2π) × (16/3) × (94/7) × α¹⁰
+     │
+     └── α_G = (m_p/m_P)² = 2π × (16/3)² × (94/7)² × α²⁰
+               = 5.91 × 10⁻³⁹ ✓
+```
+
+## Predictions
+
+### No Large Extra Dimensions
+
+Theories with large extra dimensions predict modified gravity at short distances. FTD predicts inverse-square all the way down to the Planck scale—no anomalies.
+
+### Gravitational Constant is Fundamental
+
+G_N is not a random parameter—it's derived from the same integers that give α. Any universe with our gauge structure has this gravitational hierarchy.
+
+### Matter-Antimatter Symmetry in Gravity
+
+Since gravity couples to flux density |J|², not charge, matter and antimatter gravitate identically. This is a prediction, not an input.
+
+## Concepts
+
+- **gravitational-hierarchy**: The 10³⁹ ratio between gravity and strong force
+- **alpha-G**: Gravitational fine structure constant = G_N m_p²/(ℏc)
+- **inverse-square-law**: F ∝ 1/r² from flux conservation in 3D
+- **effective-metric**: Flux density → spacetime curvature correspondence
+- **geodesic-motion**: Particle trajectories as curves through effective geometry
+- **gravitational-waves**: Transverse flux ripples from accelerating masses
+
+## Transition
+
+We've seen how all four forces—strong, electromagnetic, weak, and gravitational—emerge from the flux field and derive their strengths from the four integers. The weak force transforms particles; gravity shapes spacetime. But what happens when we zoom out to cosmic scales? The next book explores the Planck scale and subatomic realm where these forces play out.

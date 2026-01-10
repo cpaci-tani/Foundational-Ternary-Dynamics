@@ -1,0 +1,195 @@
+# Main Sequence {#sec-main-sequence}
+
+*"Where stars spend their lives"*
+
+::: {.callout-note}
+## Key Revelation
+A main sequence star is a self-regulating fusion reactor: gravity squeezes, fusion pushes back. This equilibrium can last billions of years.
+:::
+
+## Hydrostatic Equilibrium
+
+The balance that defines a star:
+
+```
+    Gravity ↓    ↑ Pressure
+           ↓    ↑
+           ↓    ↑
+           ● Core
+           ↑    ↓
+           ↑    ↓
+    Pressure ↑    ↓ Gravity
+```
+
+$$
+\frac{dP}{dr} = -\frac{Gm(r)\rho}{r^2}
+$$
+
+At every point, pressure exactly balances gravity.
+
+## Energy Generation
+
+### Proton-Proton Chain (M < 1.5 M☉)
+
+Dominant in Sun-like stars:
+
+$$
+4p \rightarrow {^4\text{He}} + 2e^+ + 2\nu_e + 26.7 \text{ MeV}
+$$
+
+Step by step:
+```
+p + p → D + e⁺ + νₑ     (slow—rate limiting)
+D + p → ³He + γ
+³He + ³He → ⁴He + 2p
+```
+
+### CNO Cycle (M > 1.5 M☉)
+
+Carbon, nitrogen, oxygen catalyze fusion:
+
+```
+¹²C + p → ¹³N + γ
+¹³N → ¹³C + e⁺ + νₑ
+¹³C + p → ¹⁴N + γ
+¹⁴N + p → ¹⁵O + γ     (slow—rate limiting)
+¹⁵O → ¹⁵N + e⁺ + νₑ
+¹⁵N + p → ¹²C + ⁴He
+```
+
+Net: 4p → ⁴He (carbon recycled)
+
+## The Mass-Luminosity Relation
+
+$$
+L \propto M^{3.5}
+$$
+
+| Mass | Luminosity | Temp | Lifetime |
+|------|------------|------|----------|
+| 0.1 M☉ | 0.001 L☉ | 3000 K | 10 trillion yr |
+| 0.5 M☉ | 0.03 L☉ | 4000 K | 50 billion yr |
+| 1 M☉ | 1 L☉ | 5800 K | 10 billion yr |
+| 2 M☉ | 16 L☉ | 8000 K | 1 billion yr |
+| 10 M☉ | 3000 L☉ | 20000 K | 30 million yr |
+| 50 M☉ | 500000 L☉ | 40000 K | 4 million yr |
+
+More massive stars exhibit significantly shorter main-sequence lifetimes due to their elevated core temperatures and correspondingly higher fusion rates.
+
+## Spectral Classification
+
+Stars are classified by temperature:
+
+```
+O B A F G K M (L T Y for brown dwarfs)
+
+"(Traditional mnemonic: O, B, A, F, G, K, M, L, T, Y — ordered by decreasing surface temperature)"
+```
+
+| Class | Temperature | Color | Example |
+|-------|-------------|-------|---------|
+| O | >30,000 K | Blue | ζ Ophiuchi |
+| B | 10-30,000 K | Blue-white | Rigel |
+| A | 7,500-10,000 K | White | Sirius |
+| F | 6,000-7,500 K | Yellow-white | Procyon |
+| G | 5,200-6,000 K | Yellow | Sun |
+| K | 3,700-5,200 K | Orange | Arcturus |
+| M | 2,400-3,700 K | Red | Betelgeuse |
+
+## The HR Diagram
+
+The fundamental tool of stellar astronomy:
+
+```
+    Log L
+       │
+   10⁴ │  ★ O stars
+       │   ★ B
+   10² │    ★ A
+       │     ★ F
+     1 │      ★ G (Sun)
+       │       ★ K
+  10⁻²│        ★ M
+       │
+       └────────────────
+        40000  6000  3000  K
+              Temperature →
+```
+
+Main sequence is a diagonal band: luminosity correlates with temperature.
+
+## Stellar Structure
+
+### Core
+
+- Fusion zone
+- 15 million K (Sun)
+- 25% of radius
+
+### Radiative Zone
+
+- Energy transport by photons
+- Photons scatter, random walk
+- 25-70% of radius (depends on mass)
+
+### Convective Zone
+
+- Energy transport by bulk motion
+- Hot material rises, cool sinks
+- Outer 30% (Sun)
+
+## Self-Regulation
+
+The stellar thermostat:
+
+1. Fusion rate drops → core contracts
+2. Contraction heats core
+3. Higher temperature → faster fusion
+4. More pressure → expansion
+5. Expansion cools core
+6. Back to equilibrium
+
+## In Simulation
+
+```python
+class MainSequenceStar:
+    def __init__(self, mass):
+        self.mass = mass
+        self.luminosity = mass**3.5
+        self.temperature = 5800 * mass**0.5
+        self.lifetime = 10e9 / mass**2.5  # years
+
+    def evolve(self, dt):
+        # Burn hydrogen
+        H_burned = self.luminosity * dt / FUSION_EFFICIENCY
+        self.core_hydrogen -= H_burned
+
+        # Adjust structure
+        self.maintain_equilibrium()
+
+        # Check for end of main sequence
+        if self.core_hydrogen <= 0:
+            return self.evolve_off_main_sequence()
+```
+
+## Experiments
+
+### Build a Star
+Set mass. Watch equilibrium establish.
+
+### HR Diagram
+Plot many stars by luminosity and temperature.
+
+### Lifetime Calculator
+Input mass. Calculate main sequence lifetime.
+
+## Concepts
+
+- **hydrostatic-equilibrium**: Pressure vs gravity balance
+- **pp-chain**: Hydrogen fusion in low-mass stars
+- **cno-cycle**: Hydrogen fusion in high-mass stars
+- **main-sequence**: Hydrogen-burning phase
+
+## Transition
+
+Stars don't just burn hydrogen. They forge heavier elements in their cores. Next, we explore stellar nucleosynthesis—the origin of the periodic table.

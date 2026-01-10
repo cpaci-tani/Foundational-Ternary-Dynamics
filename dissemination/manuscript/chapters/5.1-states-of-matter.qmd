@@ -1,0 +1,183 @@
+# States of Matter {#sec-states-matter}
+
+*"Solid, liquid, gas—and beyond"*
+
+::: {.callout-note}
+## Key Revelation
+The same atoms behave completely differently depending on temperature and pressure. Phase is about motion, not identity.
+:::
+
+::: {.callout-note}
+## How FTD Produces Thermodynamics
+Temperature, pressure, and phase are emergent properties in FTD:
+
+- **Kinetic energy** = average squared velocity of manifested particles
+- **Temperature** emerges as a proxy: $T_{\text{proxy}} = \langle|\vec{J}|^2\rangle / 3N$
+- **Pressure** = rate of flux exchange at system boundaries
+- **Phase** = classification based on density, mobility, and correlation length
+
+Standard thermodynamic laws (PV = nRT, entropy increase) emerge in the continuum limit. For the rigorous derivation, see THEORETICAL_FOUNDATIONS Part IV: Statistical Mechanics.
+:::
+
+## The Four Primary States
+
+| State | Density | Order | Particle Motion |
+|-------|---------|-------|-----------------|
+| Solid | High | Long-range | Vibration in place |
+| Liquid | High | Short-range | Flow, but touch |
+| Gas | Low | None | Free movement |
+| Plasma | Low | None | Ionized, free electrons |
+
+![The four primary states of matter and their characteristic properties.](../figures/ch05/fig-states-of-matter-panels.png){#fig-states-of-matter}
+
+## Solid
+
+Particles locked in fixed positions.
+
+### Properties
+- Definite shape and volume
+- Incompressible
+- Particles vibrate around fixed points
+- Long-range order (crystalline) or short-range (amorphous)
+
+### Types
+- **Crystalline**: Regular lattice (salt, diamond)
+- **Amorphous**: No long-range order (glass, plastic)
+
+## Liquid
+
+Particles touching but mobile.
+
+### Properties
+- Definite volume, no definite shape
+- Nearly incompressible
+- Particles slide past each other
+- Short-range order only
+
+### Unique Features
+- Surface tension (inward force from cohesion)
+- Viscosity (resistance to flow)
+- Capillary action (climbing narrow tubes)
+
+## Gas
+
+Particles far apart and free.
+
+### Properties
+- No definite shape or volume
+- Highly compressible
+- Particles move randomly
+- No order
+
+### Gas Laws
+
+**Ideal Gas Law**:
+$$
+PV = nRT
+$$
+
+where R = 8.314 J/(mol·K) is the ideal gas constant, P is pressure, V is volume, n is the number of moles, and T is temperature.
+
+**Kinetic Theory**:
+$$
+\frac{3}{2}kT = \frac{1}{2}mv^2_{\text{avg}}
+$$
+
+Temperature IS average kinetic energy.
+
+## Plasma
+
+Ionized gas—electrons freed from atoms.
+
+### Properties
+- Electrically conductive
+- Responds to magnetic fields
+- Emits light
+- Most common state in the universe
+
+### Where Found
+- Stars (99% of visible matter)
+- Lightning
+- Neon signs
+- Fusion reactors
+
+## Temperature in Simulation
+
+Temperature emerges from particle motion. In FTD, we define a **temperature proxy** that mirrors the kinetic theory result:
+
+$$
+T_{\text{proxy}} = \frac{\langle|\vec{J}|^2\rangle}{3N}
+$$
+
+::: {.callout-note}
+## Dimensional Analysis
+In physical units, kinetic theory gives $\frac{3}{2}k_B T = \frac{1}{2}m\langle v^2\rangle$, so $T = \frac{m\langle v^2\rangle}{3k_B}$. In FTD natural units where flux $|J|$ serves as a momentum proxy and we set $k_B = 1$, the temperature proxy has dimensions of energy per particle. The factor of 3 accounts for three spatial dimensions (equipartition theorem).
+:::
+
+Higher average squared flux magnitude = higher temperature.
+
+## Pressure in Simulation
+
+Pressure from particle collisions with boundaries:
+
+$$
+P = \frac{F}{A} = \frac{\text{momentum transfer}}{\text{area} \times \text{time}}
+$$
+
+## Phase in the Lattice
+
+Phase determined by:
+1. **Density**: Particles per region
+2. **Temperature proxy**: Average |flux|
+3. **Order parameter**: How correlated are neighbor positions?
+
+```python
+def determine_phase(region):
+    density = count_particles(region) / region.volume
+    temperature = average_flux_magnitude(region)
+    order = correlation_length(region)
+
+    if density > HIGH and order > LONG_RANGE:
+        return SOLID
+    elif density > HIGH and order > SHORT_RANGE:
+        return LIQUID
+    elif density < LOW:
+        if ionized(region):
+            return PLASMA
+        else:
+            return GAS
+```
+
+## Experiments
+
+### Heat and Cool
+Start with solid. Add energy. Watch transition to liquid, then gas.
+
+### Pressure Changes
+Compress a gas. See density increase, temperature rise.
+
+### Phase Boundaries
+Map the conditions where different phases exist.
+
+## Concepts
+
+- **solid**: Fixed positions, long-range order
+- **liquid**: Touching, flowing, short-range order
+- **gas**: Separated, free motion
+- **plasma**: Ionized gas
+
+::: {.callout-note}
+## Chapter Summary
+**Matter exists in four primary phases**: solid (fixed positions, long-range order), liquid (touching but mobile, short-range order), gas (separated, no order), and plasma (ionized, responds to fields). **Temperature emerges** as average kinetic flux: T_proxy = ⟨|J|²⟩/3N. **Phase is determined** by density, temperature proxy, and correlation length. The same atoms behave completely differently depending on conditions—phase is about motion, not identity. Plasma is the most common state in the universe (99% of visible matter is in stars).
+:::
+
+## Transition
+
+States exist in equilibrium under specific conditions. At the boundaries, transitions occur. Next, we explore phase transitions—melting, boiling, and more in @sec-phase-transitions.
+
+::: {.callout-tip}
+## Related Topics
+- **Phase transitions**: @sec-phase-transitions covers melting, boiling, and critical phenomena
+- **Chemical bonds**: @sec-chemical-bonds explains how atoms connect in different states
+- **Exotic states**: @sec-exotic-states explores superconductors and superfluids
+:::

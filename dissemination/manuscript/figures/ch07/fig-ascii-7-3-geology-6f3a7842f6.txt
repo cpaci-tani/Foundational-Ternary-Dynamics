@@ -1,0 +1,11 @@
+    ┌─────────────┐
+    │   Crust     │ ← Light silicates
+    ├─────────────┤
+    │             │
+    │   Mantle    │ ← Dense silicates
+    │             │
+    ├─────────────┤
+    │  Outer core │ ← Liquid metal
+    ├─────────────┤
+    │ Inner core  │ ← Solid metal
+    └─────────────┘

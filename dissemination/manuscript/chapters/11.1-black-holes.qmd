@@ -1,0 +1,308 @@
+# Black Holes {#sec-black-holes}
+
+*At the extremes of cosmic evolution lie phenomena that test the framework's limits. Black holes represent the ultimate concentration of flux density.*
+
+*"Points of no return"*
+
+::: {.callout-note}
+## Key Revelation
+Black holes are not holes at all—they are regions where gravity has become so strong that nothing, not even light, can escape. They are the ultimate expression of gravity's triumph.
+:::
+
+::: {.callout-note collapse="true"}
+## Historical Context
+John Michell (1784) and Pierre-Simon Laplace (1796) first conceived of "dark stars" with escape velocities exceeding light speed. Karl Schwarzschild derived the first exact solution to Einstein's equations in 1916, from a WWI trench. The term "black hole" was popularized by John Wheeler in 1967. Stephen Hawking's 1974 prediction of black hole radiation connected gravity to quantum mechanics. The Event Horizon Telescope imaged M87* in 2019, and LIGO detected gravitational waves from merging black holes starting in 2015—confirming these objects exist.
+:::
+
+## What Is a Black Hole?
+
+A region of spacetime where the escape velocity exceeds the speed of light.
+
+### The Event Horizon
+
+The point of no return:
+$$
+r_s = \frac{2GM}{c^2} \approx 3 \text{ km} \times \frac{M}{M_\odot}
+$$
+
+| Mass | Schwarzschild radius |
+|------|---------------------|
+| Earth | 9 mm |
+| Sun | 3 km |
+| 10 M☉ | 30 km |
+| Sagittarius A* | 12 million km |
+| M87* | 20 billion km |
+
+### The Singularity
+
+At the center (classically):
+- Infinite density
+- Spacetime curvature → ∞
+- Physics breaks down
+
+Quantum gravity may resolve this.
+
+## Types of Black Holes
+
+### Stellar Mass (3-100 M☉)
+
+- Formed from massive star collapse
+- Most common type
+- Found in binary systems
+- Some detected as X-ray sources
+
+### Intermediate Mass (100-10⁵ M☉)
+
+- Formation unclear
+- Possibly merged stellar BHs
+- Possibly primordial
+- Hardest to detect
+
+### Supermassive (10⁶-10¹⁰ M☉)
+
+- Found in galaxy centers
+- Origin debated
+- Grew via accretion + mergers
+- AGN/quasar engine
+
+## Kerr Black Holes (Rotating)
+
+Most real black holes rotate.
+
+### Structure
+
+![Structure of a rotating (Kerr) black hole showing the ergosphere, event horizons, and ring singularity.](../figures/ch11/fig-kerr-blackhole.png){#fig-kerr-blackhole}
+
+### Properties
+- Ergosphere: Region where spacetime is dragged
+- Frame dragging: Everything must co-rotate
+- Can extract energy (Penrose process)
+- Two horizons (outer and inner)
+
+## Accretion Disks
+
+Matter falling into black holes forms disks:
+
+```
+            ╱─────────╲
+           ╱           ╲
+    ──────●──────────────
+           ╲           ╱
+            ╲─────────╱
+               Disk
+```
+
+### Properties
+- Friction heats gas
+- Emits X-rays, UV
+- Incredibly luminous
+- Powers AGN
+
+## Black Hole Thermodynamics
+
+### Hawking Temperature
+
+Stephen Hawking's 1974 calculation [@hawking1974] showed that black holes emit thermal radiation:
+
+$$
+T_H = \frac{\hbar c^3}{8\pi G M k_B} \approx 6 \times 10^{-8} \text{ K} \times \frac{M_\odot}{M}
+$$
+
+For stellar mass BH: Colder than CMB.
+
+### Bekenstein-Hawking Entropy
+
+Jacob Bekenstein proposed [@bekenstein1973] that black holes carry entropy proportional to horizon area:
+
+$$
+S = \frac{k_B c^3 A}{4 G \hbar}
+$$
+
+Entropy proportional to horizon area, not volume!
+
+### Hawking Radiation
+
+Virtual pairs at horizon:
+- One particle falls in
+- One escapes
+- Black hole loses mass
+- Eventually evaporates
+
+Timescale: $t \propto M^3$
+
+For stellar BH: 10⁶⁷ years (far longer than universe age).
+
+## The Information Paradox
+
+If black holes evaporate via thermal radiation:
+- All information about what fell in is lost
+- Violates quantum mechanics (unitarity)
+
+This is the famous **information paradox**—a conflict between quantum mechanics and general relativity.
+
+### The Problem Statement
+
+When matter falls into a black hole and the black hole later evaporates:
+
+```
+┌─────────────────────────────────────────────┐
+│    INITIAL STATE                            │
+│    - Pure quantum state |ψ⟩                 │
+│    - Complete information                   │
+│                                             │
+│    ↓ (black hole formation & evaporation)   │
+│                                             │
+│    FINAL STATE                              │
+│    - Thermal radiation (mixed state ρ)      │
+│    - Information lost?                      │
+└─────────────────────────────────────────────┘
+```
+
+Thermal radiation is featureless—it contains no memory of what fell in.
+
+## The FTD Resolution
+
+**[CONJECTURE]** In FTD, the information paradox may have a geometric resolution: **information is preserved because the flux field evolution is unitary**.
+
+### Flux Tunneling, Not Pair Production
+
+The standard Hawking picture involves virtual pair production at the horizon:
+- One particle falls in, one escapes
+- The escaping particle is thermal (random)
+
+**FTD picture**: Hawking radiation arises from **flux tunneling**:
+
+```
+STANDARD:      Vacuum → (particle + antiparticle)
+                         ↓           ↓
+                      falls in    escapes (thermal)
+
+FTD:           Interior flux → tunnels through horizon → exterior flux
+               (carries information encoded in correlations)
+```
+
+The flux field is continuous—it doesn't have a sharp boundary at the horizon. Information encoded in flux correlations can tunnel out.
+
+### The Stretched Horizon
+
+In FTD, the "horizon" is not a mathematical surface but a **stretched horizon**—a thin layer of highly scrambled flux:
+
+$$\delta r \sim \ell_P \sqrt{\frac{M}{M_P}}$$
+
+This layer:
+- Scrambles infalling information rapidly (thermalization time ~ M log M)
+- Preserves information in flux correlations
+- Gradually releases it through tunneling
+
+### The Page Curve
+
+The Page curve describes how entanglement entropy of radiation changes as the black hole evaporates:
+
+![The Page curve showing entanglement entropy evolution during black hole evaporation.](../figures/ch11/fig-page-curve.png){#fig-page-curve}
+
+**Key features**:
+- Entropy increases during first half (information going in)
+- Entropy decreases during second half (information coming out)
+- Returns to zero (unitarity preserved)
+
+**[SELECTION]** FTD's action principle implies unitary flux evolution (see THEORETICAL_FOUNDATIONS Part II for the argument). The Page curve follows automatically.
+
+::: {.callout-important}
+## No Information Loss
+In FTD, the flux field's unitary evolution guarantees information preservation. The "paradox" arises only if you treat the horizon as a sharp classical boundary—but it isn't.
+:::
+
+### No Firewall Needed
+
+The "firewall paradox" arises from trying to preserve unitarity while maintaining a smooth horizon. The proposed solution (firewall) would make the horizon violent for infalling observers.
+
+**FTD avoids this**:
+- The stretched horizon scrambles information
+- No need for drama at the horizon
+- Infalling observer experiences nothing special (until tidal forces)
+- Information escapes via continuous flux tunneling
+
+### The Holographic Bound
+
+The Bekenstein-Hawking entropy:
+
+$$S = \frac{A}{4\ell_P^2}$$
+
+In FTD, this reflects the **number of independent flux modes** on the stretched horizon:
+
+$$N_{\text{modes}} = \frac{A}{\ell_P^2}$$
+
+The factor of 4 arises from the Hilbert space structure: each mode has 2 polarizations and 2 helicities.
+
+### What Happens to Infalling Information?
+
+1. **Falls in**: Information encoded in manifested particles
+2. **Scrambles**: Rapidly thermalized at stretched horizon (time ~ M log M)
+3. **Correlates**: Encoded in subtle correlations of flux field
+4. **Tunnels out**: Gradually escapes via Hawking radiation
+5. **Reconstructed**: In principle, pure state recoverable from complete radiation
+
+The entire process is unitary. **[CONJECTURE]** Information may be preserved through this mechanism.
+
+## In Simulation
+
+```python
+class BlackHole:
+    def __init__(self, mass, spin=0):
+        self.mass = mass
+        self.spin = spin  # 0 to 1
+        self.r_s = 2 * G * mass / c**2
+        self.r_event = self.r_s * (1 + sqrt(1 - spin**2)) / 2
+
+    def capture(self, particle):
+        r = distance(particle.position, self.position)
+        if r < self.r_event:
+            # Point of no return
+            self.mass += particle.mass
+            particle.state = 0  # Returns to void
+            return True
+        return False
+
+    def hawking_temperature(self):
+        return HBAR * c**3 / (8 * pi * G * self.mass * k_B)
+
+    def evaporation_time(self):
+        return 5120 * pi * G**2 * self.mass**3 / (HBAR * c**4)
+```
+
+## Experiments
+
+### Orbit Simulator
+Watch objects orbit black hole. See last stable orbit.
+
+### Spaghettification
+Drop object into black hole. Watch tidal stretching.
+
+### Hawking Radiation
+Observe (very slow) evaporation of black hole.
+
+## Concepts
+
+- **event-horizon**: Boundary of no return
+- **singularity**: Infinite curvature point
+- **ergosphere**: Rotating spacetime region
+- **hawking-radiation**: Quantum evaporation
+- **information-paradox**: Apparent conflict between unitarity and thermal radiation
+- **stretched-horizon**: FTD's scrambling layer at ~Planck depth
+- **flux-tunneling**: How information escapes in FTD (not pair production)
+- **page-curve**: Entropy evolution guaranteeing unitarity
+- **holographic-bound**: S = A/4ℓ_P² from flux mode counting
+
+## Transition
+
+Black holes warp spacetime. When they merge, they send ripples through the fabric of space—gravitational waves (@sec-gravitational-waves).
+
+The resolution of the information paradox in FTD illustrates a central theme: apparent contradictions often arise from incomplete understanding. What seemed like a fundamental conflict between gravity and quantum mechanics turns out to be a feature of how information is encoded and retrieved in a discrete lattice.
+
+::: {.callout-tip}
+## Related Topics
+- **Gravitational waves**: @sec-gravitational-waves describes spacetime ripples from merging black holes
+- **Compact objects**: @sec-compact-objects covers neutron stars and other stellar remnants
+- **Information and entropy**: @sec-information-entropy explores the connection between black holes and information theory
+- **Heat death**: @sec-heat-death discusses the ultimate fate of black holes
+:::

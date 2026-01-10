@@ -1,0 +1,23 @@
+VOID (State 0)
+    ↓ Genesis
+MANIFESTATION (State ±1)
+    ↓ Binding
+STRUCTURE (Triads, Shells)
+    ↓ Assembly
+ATOMS (Periodic Table)
+    ↓ Bonding
+MOLECULES (Chemistry)
+    ↓ Aggregation
+MATTER (Phases)
+    ↓ Accretion
+PLANETS (Geology)
+    ↓ Ignition
+STARS (Nucleosynthesis)
+    ↓ Assembly
+GALAXIES (Dynamics)
+    ↓ Clustering
+COSMOS (Large-Scale Structure)
+    ↓ Evolution
+COMPLEXITY (Emergence)
+    ↓ Return
+VOID (Heat Death)

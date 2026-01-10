@@ -1,0 +1,9 @@
+Fraction
+   │
+E  │████████████████████████
+S0 │██████████████████
+S  │██████████████
+Irr│████████
+   └──────────────────────────
+   Cluster center    Field
+   (high density)    (low density)

@@ -1,0 +1,179 @@
+# Simple Molecules {#sec-simple-molecules}
+
+*"The building blocks of chemistry"*
+
+::: {.callout-note}
+## Key Revelation
+Simple molecules—just two or three atoms—make up our atmosphere, our water, and the gases we breathe. Complexity starts small.
+:::
+
+## Diatomic Molecules
+
+Two-atom molecules. Many elements exist naturally as diatomics.
+
+### Homonuclear Diatomics
+
+| Molecule | Bond | Length (Å) | Energy (kJ/mol) | Notes |
+|----------|------|-----------|-----------------|-------|
+| H₂ | Single | 0.74 | 436 | Simplest |
+| N₂ | Triple | 1.10 | 946 | Very stable |
+| O₂ | Double | 1.21 | 498 | Paramagnetic |
+| F₂ | Single | 1.42 | 158 | Weak |
+| Cl₂ | Single | 1.99 | 243 | Green gas |
+
+### Nitrogen: The Inert Gas
+```
+:N≡N:
+
+Triple bond makes N₂ extremely stable.
+78% of atmosphere.
+Won't react with most substances.
+```
+
+### Oxygen: The Reactive Gas
+```
+·O=O·
+
+Double bond, but with unpaired electrons.
+Paramagnetic (attracted to magnets).
+Essential for respiration.
+```
+
+### Heteronuclear Diatomics
+
+| Molecule | Bond | Length (Å) | Energy (kJ/mol) | Notes |
+|----------|------|-----------|-----------------|-------|
+| HF | Polar | 0.92 | 570 | Strong H-bond |
+| HCl | Polar | 1.27 | 432 | Acid |
+| CO | Triple | 1.13 | 1077 | Toxic, very stable |
+| NO | 2.5 | 1.15 | 631 | Radical, pollutant |
+
+### Carbon Monoxide: Silent Killer
+```
+:C≡O:
+
+Isoelectronic with N₂ (same electron count).
+Binds to hemoglobin stronger than O₂.
+Colorless, odorless—dangerous.
+```
+
+## Triatomic Molecules
+
+Three atoms, various geometries.
+
+### Water: The Universal Solvent
+
+```
+    H   H
+     \ /
+      O
+   104.5°
+```
+
+| Property | Value | Significance |
+|----------|-------|--------------|
+| Geometry | Bent | Polar molecule |
+| Bond angle | 104.5° | Less than tetrahedral |
+| Polarity | High | Dissolves salts |
+| H-bonding | Strong | High boiling point |
+
+### Carbon Dioxide: Linear Greenhouse Gas
+
+```
+O=C=O
+  180°
+```
+
+| Property | Value | Significance |
+|----------|-------|--------------|
+| Geometry | Linear | Nonpolar overall |
+| Bonds | Double (both) | Stable |
+| Vibration | IR active | Greenhouse effect |
+
+### Ozone: The UV Shield
+
+```
+  O       O
+   \     /
+    O
+  116.8°
+```
+
+Three oxygen atoms, bent geometry. Absorbs harmful UV radiation in the stratosphere.
+
+### Other Triatomics
+
+| Molecule | Geometry | Angle | Notes |
+|----------|----------|-------|-------|
+| H₂S | Bent | 92° | Rotten egg smell |
+| NO₂ | Bent | 134° | Brown gas, pollutant |
+| SO₂ | Bent | 119° | Acid rain precursor |
+
+## Molecular Geometry
+
+### VSEPR Theory
+
+Electron pairs arrange to minimize repulsion:
+
+| Electron pairs | Geometry | Example |
+|---------------|----------|---------|
+| 2 | Linear | CO₂ |
+| 3 | Trigonal planar | BF₃ |
+| 4 | Tetrahedral | CH₄ |
+| 5 | Trigonal bipyramidal | PCl₅ |
+| 6 | Octahedral | SF₆ |
+
+Lone pairs count too, but don't appear in the name.
+
+### Why Water is Bent
+
+Oxygen has 4 electron pairs around it:
+- 2 bonding pairs (to H)
+- 2 lone pairs
+
+```
+       ‥
+       O
+      / \
+     H   H
+```
+
+Lone pairs repel more than bonding pairs, compressing the bond angle from 109.5° to 104.5°.
+
+## Polarity
+
+### Molecular Dipole Moment
+
+The vector sum of all bond dipoles.
+
+- **Water**: Bent shape → net dipole → polar
+- **CO₂**: Linear shape → dipoles cancel → nonpolar
+
+### Why Polarity Matters
+
+Polar molecules:
+- Dissolve in water
+- Have higher boiling points
+- Participate in hydrogen bonding
+
+## Experiments
+
+### Build Molecules
+Construct diatomic and triatomic molecules. See geometries form.
+
+### Measure Bond Properties
+Calculate bond lengths, angles, and energies.
+
+### Polarity Visualization
+See charge distributions in molecules.
+
+## Concepts
+
+- **diatomic**: Two-atom molecule
+- **triatomic**: Three-atom molecule
+- **molecular-geometry**: Shape determined by electron pairs
+- **molecular-polarity**: Net charge distribution
+
+## Transition
+
+Simple molecules are the letters. Now we build words—complex molecules with multiple functional groups, including the organic chemistry of life.

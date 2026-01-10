@@ -1,0 +1,181 @@
+# Complex Molecules {#sec-complex-molecules}
+
+*"Organic chemistry and beyond"*
+
+::: {.callout-note}
+## Key Revelation
+Carbon's ability to form four bonds creates unlimited molecular possibilities. Add nitrogen, oxygen, and other atoms, and you have the chemistry of life.
+:::
+
+## Carbon: The Backbone of Complexity
+
+Why carbon?
+- 4 valence electrons → 4 bonds
+- Can bond to itself → chains and rings
+- Right size → stable bonds
+- Multiple bond types → single, double, triple
+
+## Hydrocarbons
+
+Molecules of just carbon and hydrogen.
+
+### Alkanes (Single Bonds)
+
+| Formula | Name | Structure | Notes |
+|---------|------|-----------|-------|
+| CH₄ | Methane | Tetrahedral | Natural gas |
+| C₂H₆ | Ethane | Two tetrahedra | |
+| C₃H₈ | Propane | Chain | Fuel |
+| C₄H₁₀ | Butane | Chain | Lighter fluid |
+| C₅H₁₂ | Pentane | Chain | Solvent |
+
+General formula: CₙH₂ₙ₊₂
+
+### Alkenes (Double Bonds)
+
+| Formula | Name | Notes |
+|---------|------|-------|
+| C₂H₄ | Ethylene | Planar, ripening agent |
+| C₃H₆ | Propene | Plastic precursor |
+
+General formula: CₙH₂ₙ
+
+### Alkynes (Triple Bonds)
+
+| Formula | Name | Notes |
+|---------|------|-------|
+| C₂H₂ | Acetylene | Linear, welding fuel |
+| C₃H₄ | Propyne | |
+
+General formula: CₙH₂ₙ₋₂
+
+### Aromatic Compounds
+
+Ring structures with alternating double bonds.
+
+```
+    H
+    |
+H-C   C-H
+  ‖   |
+H-C   C-H
+    |
+    H
+
+Benzene: C₆H₆
+Six-membered ring with resonance.
+```
+
+## Functional Groups
+
+The reactive parts of molecules.
+
+| Group | Formula | Name | Example |
+|-------|---------|------|---------|
+| -OH | R-OH | Alcohol | Ethanol |
+| -CHO | R-CHO | Aldehyde | Formaldehyde |
+| -COOH | R-COOH | Carboxylic acid | Acetic acid |
+| -NH₂ | R-NH₂ | Amine | Methylamine |
+| -SH | R-SH | Thiol | Methanethiol |
+| C=O | R-CO-R' | Ketone | Acetone |
+| -O- | R-O-R' | Ether | Diethyl ether |
+| -COO- | R-COO-R' | Ester | Ethyl acetate |
+
+### Alcohols
+
+Hydroxyl group (-OH) on carbon:
+```
+    H   H
+    |   |
+H - C - C - OH
+    |   |
+    H   H
+
+Ethanol (drinking alcohol)
+```
+
+### Acids and Bases
+
+**Carboxylic acids** donate H⁺:
+```
+     O
+     ‖
+R - C - OH → R - C - O⁻ + H⁺
+```
+
+**Amines** accept H⁺:
+```
+R - NH₂ + H⁺ → R - NH₃⁺
+```
+
+## Isomers
+
+Same formula, different structure.
+
+### Structural Isomers
+
+Different connectivity:
+```
+Butane: CH₃-CH₂-CH₂-CH₃
+        vs
+Isobutane: CH₃-CH(CH₃)-CH₃
+```
+
+### Stereoisomers
+
+Same connectivity, different spatial arrangement:
+- **Cis-trans**: Around double bonds
+- **Enantiomers**: Mirror images (chirality)
+
+### Chirality
+
+A carbon with 4 different groups is chiral:
+```
+        A
+        |
+    B—C*—D
+        |
+        E
+
+Mirror images are not superimposable.
+```
+
+This matters in biology—life uses only one "handedness" of amino acids.
+
+## Reactions
+
+### Combustion
+```
+CH₄ + 2O₂ → CO₂ + 2H₂O + energy
+```
+
+### Substitution
+One group replaces another.
+
+### Addition
+Atoms add across double bond.
+
+### Elimination
+Double bond forms, atoms leave.
+
+## Experiments
+
+### Molecule Builder
+Construct organic molecules from atoms. See 3D geometries.
+
+### Reaction Simulator
+Watch reactions occur: bonds breaking, bonds forming.
+
+### Isomer Explorer
+Find all isomers for a given formula.
+
+## Concepts
+
+- **hydrocarbon**: C and H only
+- **functional-group**: Reactive part of molecule
+- **isomer**: Same formula, different structure
+- **chirality**: Mirror-image asymmetry
+
+## Transition
+
+Complex molecules are still small compared to the giants of chemistry. Next, we explore macromolecules—proteins, polymers, and DNA.

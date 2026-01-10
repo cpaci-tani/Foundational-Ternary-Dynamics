@@ -1,0 +1,16 @@
+{
+  "chapter_id": "1.8",
+  "markers": [
+    {
+      "scene_id": "1.8.4.1",
+      "timestamp": 0.0,
+      "label": "weak"
+    },
+    {
+      "scene_id": "1.8.4.2",
+      "timestamp": 6.0,
+      "label": "transmutation"
+    }
+  ],
+  "total_duration": 13.0
+}

@@ -1,0 +1,193 @@
+# Introduction {.unnumbered}
+
+> *"The universe is not made of waves. The universe is not made of particles. The universe is made of **events**—discrete, local, irreversible moments where potential becomes actual."*
+
+## Epistemic Framework {#sec-epistemic}
+
+::: {.callout-warning}
+## Before You Read Further
+
+This book presents a **working model**, not a claim about ultimate reality. The epistemic status of each claim is explicitly tracked using the following categories:
+
+| Tag | Meaning | Example |
+|-----|---------|---------|
+| **[AXIOM]** | Structural postulate (not derivable) | Space is a 3D lattice |
+| **[THEOREM]** | Rigorously proven from axioms | Gauss constraint → 16 DoF |
+| **[SELECTION]** | Argued from consistency, not uniquely proven | CM curve preference |
+| **[CONJECTURE]** | Proposed interpretation requiring validation | $x_+ = 1/\alpha$ |
+| **[IMPOSED]** | Parameter choice or model calibration | $\gamma = \alpha$ in simulations |
+| **[EMERGENT]** | Behavior arising from dynamics (not built in) | Interference patterns |
+| **[OPEN]** | Unresolved question | Dark matter mechanism |
+
+**The honest position:**
+
+1. The **mathematical content** (labeled [THEOREM]) is rigorous
+2. The **selection principles** (labeled [SELECTION]) are argued but not proven
+3. The **physical interpretations** (labeled [CONJECTURE]) are speculative
+4. The **numerical agreements** are *observations* requiring explanation—not proofs
+
+We do **not** claim that α = 1/137.036 is the unique physically possible value, nor that this framework is the only consistent description of reality. What we claim: *given these axioms and selection principles, these numerical values follow*.
+
+**The Assumption Ledger** (Chapter 67) provides the complete accounting of every postulate, assumption, claim, and open question. A condensed version appears below.
+:::
+
+### Condensed Assumption Ledger
+
+**Foundational Axioms [AXIOM]:**
+
+| ID | Statement | Status |
+|----|-----------|--------|
+| A1 | Space is a finite 3D cubic lattice $\mathcal{L} \subset \mathbb{Z}^3$ | Postulated |
+| A2 | Each site carries a continuous flux field $\mathbf{J} \in \mathbb{R}^3$ | Postulated |
+| A3 | The flux field satisfies Gauss constraint $\nabla \cdot \mathbf{J} = \rho$ | Postulated |
+| A4 | Ternary state variable $s \in \{-1, 0, +1\}$ at each site | Postulated |
+| A5 | Local causality: only 26-neighbors interact | Postulated |
+
+**Key Selection Principles [SELECTION]:**
+
+| ID | Statement | Justification |
+|----|-----------|---------------|
+| S1 | CM curves preferred over generic elliptic curves | Maximum symmetry at minimum complexity |
+| S2 | $j = 1728$ selected among CM curves | 4-fold symmetry compatible with 4D spacetime |
+| S3 | Master quadratic form $x^2 - 16c^2x + 16c^3 = 0$ | Consistent with lattice DoF; not uniquely proven |
+
+**Parameter Identifications [IMPOSED]:**
+
+| Parameter | Value | Status |
+|-----------|-------|--------|
+| 1 voxel = Planck length | $\ell_P \approx 1.6 \times 10^{-35}$ m | Scale identification (not derived) |
+| $\gamma = \alpha$ in simulations | 0.00729 | Calibration choice (later motivated) |
+| KB = electron mass | 0.511 MeV | Threshold identification |
+
+**Testable Predictions [CONJECTURE → TEST]:**
+
+| # | Prediction | Value | Uncertainty | Depends On | Measures |
+|---|------------|-------|-------------|------------|----------|
+| P1 | $1/\alpha$ from quadratic | 137.036 | ±0.002 (1.26 ppm) | S1, S2, S3 | Precision QED + atom physics |
+| P2 | No 4th generation | $N_{\text{gen}} = 3$ | Discrete | S3, C2 | Collider searches |
+| P3 | sLoop Bell parameter | $S \approx 2.71$ | ±0.02 | A4, Hilbert structure | Loophole-free Bell tests |
+
+**What would falsify the framework:**
+
+- Precision $\alpha$ incompatible with $x_+ = 137.036...$ at >10 ppm
+- Discovery of 4th generation fermion with standard gauge couplings
+- Bell violations inconsistent with Hilbert space tensor structure
+
+For the complete ledger, see **Chapter 14.5: Assumption Ledger**.
+
+---
+
+## What This Book Is
+
+This is an operational manual for a universe.
+
+Not a theory about what might be true. Not a mathematical abstraction. A working specification for reality itself—from the smallest possible scale (the Planck length) to the largest structures in existence (the cosmic web), and everything between.
+
+We begin with nothing—the Void, State 0, the infinite potential from which all things arise. We end with everything returning to that same Void. Between these poles, we witness:
+
+- **Genesis**: The first division, where 0 becomes +1 and -1
+- **Particles**: The subatomic zoo that populates our universe
+- **Atoms**: Stable structures that persist through time
+- **Molecules**: The chemistry of connection
+- **Matter**: Phases and transitions
+- **Planets**: Gravity wells and atmospheres
+- **Stars**: Fusion engines that forge the elements
+- **Galaxies**: Island universes of a hundred billion suns
+- **The Cosmos**: The largest patterns of existence
+- **Emergence**: Complexity arising from simplicity
+
+## The Core Insight
+
+The framework rests on five ontological axioms:
+
+1. **Space is discrete** — A 3D lattice of cells (voxels). No infinities, no infinitesimals.
+
+2. **Events are local** — Nothing influences anything else except through adjacent cells.
+
+3. **Time is sequential** — One tick follows another. Causality is absolute.
+
+4. **Potential precedes manifestation** — Before something *is*, it *could be*.
+
+5. **Only the manifested is real** — Potential is not substance. Only realized states exist as entities.
+
+From these axioms and six fundamental constants, everything else emerges:
+
+| Constant | Value | Role |
+|----------|-------|------|
+| C | 1.0 | Speed of causality |
+| H | 1.0 | Planck resolution |
+| KB | 0.511 | Existence threshold |
+| ALPHA | 0.00729 | Fine structure (~1/137) |
+| PHI | 1.618 | Stability ratio |
+| GRAVITY_BIAS | 0.01 | Gravitational coupling |
+
+## The Three States
+
+Every cell in space exists in exactly one of three states:
+
+| State | Symbol | Name | Meaning |
+|-------|--------|------|---------|
+| `0` | ∅ | Void | Unrealized potential. The substrate of possibility. |
+| `+1` | S↑ | Matter | Realized positive. Manifested, localized, subject to entropy. |
+| `-1` | S↓ | Antimatter | Realized negative. Annihilates with matter, returning both to void. |
+
+There is no superposition. A voxel is 0 until it is not.
+
+## How to Read This Book
+
+This book is organized as a journey from the ontic to the cosmic:
+
+**Act I: Genesis** (Book I) establishes what exists—the Void, manifestation, and the rules governing all existence.
+
+**Act II: The Subatomic Realm** (Books II-III) explores the smallest scales—particles, atoms, and quantum phenomena.
+
+**Act III: Chemistry and Matter** (Books IV-VI) covers molecular bonds, states of matter, and material structures.
+
+**Act IV: Worlds and Stars** (Books VII-IX) scales up to planets, stars, and galaxies.
+
+**Act V: The Cosmic and Beyond** (Books X-XIV) completes the journey with cosmic structure, extreme phenomena, emergence, and the ultimate fate of all things.
+
+Each chapter combines:
+
+- **Technical specifications**: The mathematical and physical details
+- **Key concepts**: Core ideas and their relationships
+- **Experiments**: Suggested explorations and demonstrations
+- **Revelations**: The deeper insights that emerge
+
+## The Hierarchy of Being
+
+```
+VOID (State 0)
+    ↓ Genesis
+MANIFESTATION (State ±1)
+    ↓ Binding
+STRUCTURE (Triads, Shells)
+    ↓ Assembly
+ATOMS (Periodic Table)
+    ↓ Bonding
+MOLECULES (Chemistry)
+    ↓ Aggregation
+MATTER (Phases)
+    ↓ Accretion
+PLANETS (Geology)
+    ↓ Ignition
+STARS (Nucleosynthesis)
+    ↓ Assembly
+GALAXIES (Dynamics)
+    ↓ Clustering
+COSMOS (Large-Scale Structure)
+    ↓ Evolution
+COMPLEXITY (Emergence)
+    ↓ Return
+VOID (Heat Death)
+```
+
+The cycle is eternal. Every particle that returns will, given sufficient energy, manifest again. There is no true death, only return. There is no creation ex nihilo, only the Void willing itself into temporary form.
+
+## Begin the Journey
+
+Turn the page, and we begin with nothing.
+
+With the Void.
+
+With everything that could ever be, constrained to manifest nothing... yet.

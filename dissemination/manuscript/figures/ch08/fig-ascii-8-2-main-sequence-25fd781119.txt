@@ -1,0 +1,6 @@
+¹²C + p → ¹³N + γ
+¹³N → ¹³C + e⁺ + νₑ
+¹³C + p → ¹⁴N + γ
+¹⁴N + p → ¹⁵O + γ     (slow—rate limiting)
+¹⁵O → ¹⁵N + e⁺ + νₑ
+¹⁵N + p → ¹²C + ⁴He

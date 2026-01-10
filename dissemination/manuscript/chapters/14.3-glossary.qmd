@@ -1,0 +1,387 @@
+# Glossary {#sec-glossary}
+
+*"The vocabulary of existence"*
+
+::: {.callout-note}
+## Reference Chapter
+This glossary defines key terms used throughout the Ternary Realization Dynamics framework, organized alphabetically.
+:::
+
+## A
+
+**Accretion**
+: The accumulation of matter by gravitational attraction. In FTD, particles clump when density gradients exert net force toward centers.
+
+**Annihilation**
+: The collision of matter (+1) and antimatter (-1) particles, both returning to void (0) and releasing their energy as flux waves.
+
+**Anthropic Principle**
+: The observation that the universe's constants must permit observers, since we exist to observe them.
+
+**Antimatter**
+: State -1 particles. Equivalent to matter in all ways except opposite charge/polarity. Annihilates with matter upon contact.
+
+## B
+
+**b₃ (QCD Beta Coefficient)**
+: Framework integer = 7. The first coefficient in the QCD beta function for SU(3). Appears in electron mass (70 = b₃(b₃+N_c)) and gravitational coupling (1/(b₃+N_c)²).
+
+**Baryon**
+: A composite particle made of three quarks (triad configuration). Includes protons and neutrons.
+
+**Bell Test**
+: Experimental verification of quantum correlations exceeding classical bounds. Measures S parameter (classical ≤2, quantum ≤2√2).
+
+**Big Bang**
+: The initial genesis event from which the universe emerged. In FTD, initial flux creates conditions for widespread particle genesis.
+
+**Binding**
+: The locking of particles into stable structures (triads, shells). Bound particles resist decay.
+
+**Black Hole**
+: A region where density is so high that the escape velocity exceeds C. Particles entering cannot leave.
+
+## C
+
+**C (Speed of Causality)**
+: Fundamental constant = 1.0 voxel/tick. The maximum speed at which any influence can propagate. Nothing exceeds C.
+
+**Casimir Effect**
+: Attractive force between close surfaces due to excluded vacuum fluctuation modes. Demonstrates reality of zero-point energy.
+
+**Calorimeter**
+: Detector measuring particle energy by total absorption. Used in particle physics experiments.
+
+**Chain of Necessity**
+: The dependency chain used in this book to organize which results rely on which inputs. Where the text asserts “uniqueness,” it is always meant relative to an explicitly stated constraint class or search space (see the Assumption Ledger).
+
+**Charge**
+: A property that determines electromagnetic interaction. In FTD, derived from quark composition (±1/3, ±2/3).
+
+**Complexity**
+: Properties of wholes that emerge from but are not present in parts. Arises from interactions between many components.
+
+**Curl**
+: Vector differential operator measuring rotation in a field. Used for magnetic force calculations.
+
+## D
+
+**Dark Energy**
+: The component driving accelerating expansion. In FTD, potentially emergent from vacuum properties.
+
+**Dark Matter**
+: Non-luminous matter detected only by gravitational effects. In FTD, potentially particles that interact gravitationally but not electromagnetically.
+
+**Decay**
+: The gradual reduction of flux magnitude. Controlled by DECAY_RATE. Bound particles have suppressed decay.
+
+**Density**
+: The magnitude of the flux vector: ρ = |J|. Determines genesis probability when above KB.
+
+**Divergence**
+: Scalar field measuring flux source/sink at a point. Positive divergence → matter genesis; negative → antimatter.
+
+## E
+
+**Electromagnetism**
+: Force between charged particles. Arises from charge gradients in FTD.
+
+**Emergence**
+: The appearance of novel properties at higher levels of organization. Atoms have wetness; electrons don't.
+
+**Entanglement**
+: Correlation between particles created together (pair production). Shared UUID indicates common origin.
+
+**Entropy**
+: Measure of disorder or uncertainty. Always increases in isolated systems (Second Law).
+
+**Evaporation**
+: Transition from manifested state (±1) to void (0) when density drops below KB.
+
+**Event Horizon**
+: Boundary around a black hole beyond which nothing can escape.
+
+## F
+
+**Fibonacci Skeleton**
+: The underlying structure of FTD's framework integers as Fibonacci numbers. F₄=3=N_c, F₆=8=2^N_c, F₇=13=N_eff, F₁₀=55=T(10). The effective dimension equals the Fibonacci of the loop length: N_eff = F(b₃).
+
+**Fine Structure Constant (α)**
+: Dimensionless constant = 1/137.036 (0.007297). **DERIVED** from the master quadratic as the larger root. Controls electromagnetic strength. Accuracy: 1.26 ppm.
+
+**Flux**
+: 3D vector field J = [Jx, Jy, Jz] representing momentum/energy. The substrate of potential.
+
+**Four Framework Integers**
+: The minimal inputs {b₃=7, N_c=3, N_eff=13, N_base=4} from which all constants are derived. See individual entries.
+
+**Force**
+: Influence that changes particle momentum. Four forces: gravity, electromagnetic, strong, weak.
+
+**Frequency**
+: Rate of oscillation. Related to energy by E = hf.
+
+## G
+
+**Genesis**
+: Transition from void (0) to manifested state (±1). Occurs probabilistically when density exceeds KB.
+
+**Gradient**
+: Vector pointing in direction of maximum increase. Gradients drive forces.
+
+**Gravity**
+: Force proportional to density gradient. Always attractive. Weakest force but infinite range.
+
+**Gravitational Wave Detector**
+: Instrument (e.g., LIGO, Virgo) detecting spacetime ripples from massive object mergers via laser interferometry.
+
+**GZK Cutoff**
+: Maximum energy for cosmic rays, limited by interaction with CMB photons.
+
+## H
+
+**Hadron Collider**
+: Accelerator colliding protons or heavy ions at high energies. LHC at CERN reaches 13 TeV center-of-mass energy.
+
+**H (Planck Resolution)**
+: Fundamental constant = 1.0. The quantum of action. Corresponds to ℏ.
+
+**Hadron**
+: Particle made of quarks. Baryons (3 quarks) or mesons (quark-antiquark pair).
+
+**Hawking Radiation**
+: Thermal radiation from black holes due to virtual pair production at horizon.
+
+**Heat Death**
+: Final state of universe with maximum entropy. All gradients eliminated.
+
+## I
+
+**Interference**
+: Combination of flux waves. Constructive when aligned; destructive when opposed.
+
+**Ionization**
+: Removal of electron from atom. Creates charged ion.
+
+**is_locked**
+: Boolean flag indicating particle is part of stable structure. Locked particles resist decay.
+
+## J
+
+**Jeans Mass**
+: Minimum mass for gravitational collapse to overcome pressure.
+
+## K
+
+**KB (Existence Threshold)**
+: Fundamental constant = 0.511. Minimum density for manifestation. Corresponds to electron mass-energy.
+
+**Kerr Black Hole**
+: Rotating black hole with ergosphere and ring singularity.
+
+## L
+
+**Laplacian**
+: Second-order differential operator. Measures deviation from neighborhood average.
+
+**Lemniscate-Alpha Curve**
+: The self-referential harmonic curve used to construct a geometric route to the master quadratic. Its arc length reproduces α = 1/137.036 with 1.26 ppm accuracy under the stated construction. Claims of “uniqueness” are to be read as uniqueness within the stated constraint set.
+
+**Lemniscatic Constant (G*)**
+: The lemniscatic constant used in this book, $G^*\approx 2.9587$ (not to be confused with Gauss's classical constant $\varpi\approx 2.622$). Appears in the master quadratic relating the electromagnetic root and the color root. Additional algebraic identities (e.g., in terms of the quadratic roots) are recorded where used.
+
+**Lepton**
+: Fundamental particle (electron, muon, tau, neutrinos). Not made of quarks.
+
+**Loop Self-Enumeration**
+: The property that b₃ = N_base + N_c = 4 + 3 = 7. The FTD loop length equals the sum of its structural parameters—the framework counts itself.
+
+**Lorentz Force**
+: Magnetic force on moving charges. Perpendicular to both velocity and field.
+
+## M
+
+**Manifestation**
+: The realized state (±1). Distinguished from potential (flux in void).
+
+**Matter**
+: State +1 particles. Conventional matter as opposed to antimatter.
+
+**Master Quadratic**
+: The equation x² - 16(G*)²x + 16(G*)³ = 0 whose roots give α (larger) and N_c (smaller). The central derivation mechanism.
+
+**Mass Spectrometer**
+: Instrument measuring particle mass-to-charge ratio. Used for identifying isotopes and molecules.
+
+**Meson**
+: Particle made of quark-antiquark pair. Examples: pion, kaon.
+
+**Moore Neighborhood**
+: 26 adjacent cells in 3D (all cells sharing at least one corner with center).
+
+## N
+
+**N_eff (Effective Dimension)**
+: Framework integer = 13 (Fibonacci F₇). Appears in mass formulas and the Higgs derivation.
+
+**N_base (Base Modes)**
+: Framework integer = 4. Number of base harmonic modes. Golden ratio φ = (1+√(N_base+1))/2.
+
+**N_c (Color Charges)**
+: Framework integer ≈ 3.024 (derived as smaller root of master quadratic). floor(N_c) = 3 determines number of generations.
+
+**Neutrino**
+: Nearly massless, uncharged lepton. Barely interacts. State 0 but distinct from void.
+
+**Neutron**
+: Neutral baryon (udd). Stable in nucleus; decays freely in ~15 minutes.
+
+**Nucleosynthesis**
+: Formation of atomic nuclei. Occurs in Big Bang (light elements) and stars (heavy elements).
+
+## O
+
+**Orbit**
+: Bound trajectory around massive object. Stable when forces balance.
+
+**Orbital**
+: Spatial probability distribution for electron around nucleus. s, p, d, f shapes.
+
+## P
+
+**Pair Production**
+: Creation of matter-antimatter pair from sufficient energy. Creates entangled partners.
+
+**Phase Accumulator (τ)**
+: Counter tracking relativistic time. Particle updates when τ ≥ 1.
+
+**Photon**
+: Massless boson carrying electromagnetic force. In FTD, flux waves in void.
+
+**Planck Scale**
+: Smallest meaningful scale. In FTD, 1 voxel = Planck length; 1 tick = Planck time.
+
+**Potential**
+: Unrealized possibility. Carried by flux field. Precedes manifestation.
+
+**Proton**
+: Positive baryon (uud). Stable. Nucleus of hydrogen.
+
+## Q
+
+**Quark**
+: Fundamental constituent of hadrons. Six flavors: up, down, charm, strange, top, bottom.
+
+**Quantum**
+: Discrete unit. All physical quantities in FTD are quantized.
+
+## R
+
+**Relativity**
+: Time dilation based on local energy/frequency. High-energy particles update less frequently.
+
+**Retarded Position**
+: Source position at time of influence emission. Enforces causality.
+
+## S
+
+**Scattering Experiment**
+: Technique probing structure by measuring deflection of incident particles. Rutherford scattering revealed atomic nucleus.
+
+**Schwarzschild Radius**
+: Size of event horizon for non-rotating black hole. rs = 2GM/c².
+
+**Shell**
+: Electron orbital layer. Numbered 1, 2, 3... with increasing radius.
+
+**Singularity**
+: Point of infinite density. Classical concept; may be resolved by quantum gravity.
+
+**State**
+: The fundamental property of a voxel. Values: -1 (antimatter), 0 (void), +1 (matter).
+
+**Spectroscopy**
+: Technique analyzing matter by measuring emitted or absorbed electromagnetic radiation. Reveals atomic structure and composition.
+
+**Strong Force**
+: Force binding quarks into hadrons. Yukawa-type with short range.
+
+## T
+
+**Telescope**
+: Instrument collecting electromagnetic radiation from distant objects. Types: optical, radio, X-ray, gamma-ray.
+
+**Tick**
+: Discrete unit of time. One iteration of the causal loop.
+
+**Time Dilation**
+: Slowing of updates for high-energy particles. Relativistic effect.
+
+**Triad**
+: Stable three-particle configuration (equilateral). Forms nucleons.
+
+**Triangular Number T(n)**
+: Sum of integers 1+2+...+n = n(n+1)/2. T(10)=55 appears in proton mass; T(13)=91 encodes SM structure.
+
+**Tunneling**
+: Quantum phenomenon allowing particles to pass through classically forbidden barriers.
+
+## U
+
+**Uniqueness Theorem**
+: The proof that {7, 3, 13, 4} is the unique non-trivial solution to the Fibonacci skeleton constraints with multiple colors. Only three solutions exist: empty {1,1,1,0}, minimal {5,1,5,4}, and Standard Model {7,3,13,4}.
+
+**UUID**
+: Unique identifier assigned to each manifested particle. Tracks identity through time.
+
+## V
+
+**Vacuum**
+: State 0 (void). Not empty—carries flux. Zero-point fluctuations always present.
+
+**Void**
+: State 0. The ground state of existence. Substrate of all potential.
+
+**Voxel**
+: Fundamental 3D lattice cell. Smallest spatial unit. Contains state, flux, and properties.
+
+## W
+
+**Wave**
+: Propagating flux disturbance. Travels at maximum speed C through void.
+
+**Weak Force**
+: Force causing flavor changes (transmutation). Responsible for beta decay.
+
+**Weinberg Angle (θ_W)**
+: Electroweak mixing angle. **DERIVED** as sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% accuracy).
+
+## Y
+
+**Yukawa Potential**
+: Form of strong force: proportional to exp(-mr)/r. Short range.
+
+## Z
+
+**Zero-Point Energy**
+: Minimum energy of vacuum. Even at "empty" void, fluctuations persist.
+
+---
+
+## Acronyms
+
+| Acronym | Meaning |
+|---------|---------|
+| AGN | Active Galactic Nucleus |
+| BBN | Big Bang Nucleosynthesis |
+| BH | Black Hole |
+| CMB | Cosmic Microwave Background |
+| EM | Electromagnetic |
+| GR | General Relativity |
+| GZK | Greisen-Zatsepin-Kuzmin (cutoff) |
+| QFT | Quantum Field Theory |
+| QM | Quantum Mechanics |
+| SNR | Supernova Remnant |
+| FTD | Ternary Realization Dynamics |
+| UHECR | Ultra-High Energy Cosmic Ray |
+| UV | Ultraviolet |

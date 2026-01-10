@@ -1,0 +1,264 @@
+# The Action Principle {#sec-action-principle}
+
+*"From a single equation, all dynamics flow"*
+
+::: {.callout-note}
+## Key Revelation
+The update rules of FTD can be encoded in a variational (action) formulation. In this chapter we show one action whose stationary points reproduce the update structure.
+:::
+
+## Why an Action Principle?
+
+Until now, we have described FTD's rules procedurally: "do this, then that." But this raises a question:
+
+> **Why these rules and not others?**
+
+An action principle answers this question. All of physics—from Newton's laws to general relativity to quantum field theory—can be derived from the simple statement:
+
+(Here, we use the action principle in the constructive sense: given a set of update rules, we exhibit an action compatible with them.)
+
+$$\delta S = 0$$
+
+The system evolves along the path that extremizes the action S.
+
+### What the Action Principle Provides
+
+| Benefit | Description |
+|---------|-------------|
+| **Derivation** | Rules follow from δS = 0, not assumption |
+| **Conservation Laws** | Via Noether's theorem [@noether1918]: symmetries → conserved quantities |
+| **Quantization Path** | Path integral formulation: sum over all paths weighted by exp(iS/ℏ) |
+| **Principled Modification** | Change S, derive new physics |
+
+## The FTD Action
+
+The complete action governing both discrete states s ∈ {-1, 0, +1} and continuous flux J ∈ ℝ³:
+
+$$S[s, J] = \sum_t \sum_v \mathcal{L}(v, t)$$
+
+where the **Lagrangian density** decomposes into four terms:
+
+$$\mathcal{L} = \mathcal{L}_{\text{flux}} + \mathcal{L}_{\text{manifest}} + \mathcal{L}_{\text{coupling}} + \mathcal{L}_{\text{constraint}}$$
+
+Let us examine each term.
+
+## The Flux Dynamics Term
+
+$$\mathcal{L}_{\text{flux}} = \frac{1}{2}|\partial_t J|^2 - \frac{1}{2}c^2|\nabla J|^2 - \lambda(\nabla \cdot J - \rho)^2$$
+
+| Term | Role |
+|------|------|
+| ½\|∂ₜJ\|² | Kinetic energy of flux |
+| ½c²\|∇J\|² | Gradient energy (enables wave propagation) |
+| λ(∇·J - ρ)² | **Gauss constraint** (enforces charge conservation) |
+
+The third term is crucial. It enforces:
+
+$$\nabla \cdot J = \rho$$
+
+This is Gauss's law! From this constraint, **U(1) gauge symmetry emerges automatically**. The flux can be shifted by any gradient: J → J + ∇λ, and the physics remains unchanged.
+
+In this formulation, the constraint term introduces a gauge-like redundancy: shifts of the form J → J + ∇λ do not change the constrained dynamics.
+
+::: {.callout-tip}
+## Gauge Symmetry Emergence
+In this construction, a U(1)-like gauge redundancy is compatible with the charge-conservation constraint. The intent is to make the symmetry structure explicit rather than to assert a unique derivation.
+:::
+
+## The Manifestation Potential
+
+$$\mathcal{L}_{\text{manifest}} = -V(|J|, s)$$
+
+where V determines when genesis and evaporation occur:
+
+$$V(\rho, s) = \begin{cases}
+0 & \text{if } s = 0 \text{ and } \rho < K_B \\
+-K_B \ln(\rho/K_B) & \text{if } s = 0 \text{ and } \rho \geq K_B \\
+\frac{1}{2}\kappa(\rho - K_B)^2 & \text{if } s \neq 0
+\end{cases}$$
+
+::: {.callout-note}
+## Dimensional Analysis
+For the action to be dimensionless (in natural units where ℏ = 1), the Lagrangian density $\mathcal{L}$ must have dimensions of energy density [E]/[L]³. This requires:
+
+- $K_B$ has dimensions of energy [E] (the manifestation threshold)
+- $\rho = |J|$ has dimensions of [E]/[L]² (flux magnitude)
+- $\kappa$ has dimensions of [L]⁴/[E] to make $\frac{1}{2}\kappa(\rho - K_B)^2$ have dimensions [E]/[L]³
+
+The parameter $\kappa$ controls the stiffness of the restoring force for manifested particles.
+:::
+
+### What This Potential Does
+
+1. **Creates the threshold**: At ρ = KB, manifestation becomes energetically favorable
+2. **Provides restoring force**: Manifested particles oscillate around KB
+3. **Logarithmic form**: Upon quantization, gives the exponential genesis probability
+
+The shape of this potential is chosen to give stable particles with the intended genesis statistics; other choices are possible, but this one is simple and analytically tractable.
+
+## The State-Flux Coupling
+
+$$\mathcal{L}_{\text{coupling}} = -g \cdot s \cdot (\nabla \cdot J)$$
+
+This coupling term:
+
+- Positive divergence (flux sources) favors s = +1 (matter)
+- Negative divergence (flux sinks) favors s = -1 (antimatter)
+
+This construction reproduces the polarity selection rule: minimizing the action favors the sign choice aligned with the divergence term.
+
+## The Topological Constraint
+
+$$\mathcal{L}_{\text{constraint}} = \mu \cdot (s^2 - |s|)$$
+
+This enforces s ∈ {-1, 0, +1}:
+
+| State | s² - \|s\| |
+|-------|-----------|
+| s = 0 | 0 - 0 = 0 (allowed) |
+| s = +1 | 1 - 1 = 0 (allowed) |
+| s = -1 | 1 - 1 = 0 (allowed) |
+| s = 0.5 | 0.25 - 0.5 < 0 (penalized) |
+
+Only integer states are permitted.
+
+## The Complete Action
+
+Putting it all together:
+
+$$\boxed{S[s,J] = \sum_t \sum_v \left[ \frac{1}{2}|\partial_t J|^2 - \frac{1}{2}c^2|\nabla J|^2 - \lambda(\nabla \cdot J - \rho)^2 - V(|J|, s) - g \cdot s \cdot (\nabla \cdot J) \right]}$$
+
+This single equation contains all of FTD's dynamics.
+
+## Deriving the Update Rules
+
+Now we derive the rules that govern each tick.
+
+### Flux Update: The Wave Equation
+
+Applying the Euler-Lagrange equation δS/δJ = 0:
+
+$$\partial_t^2 J = c^2 \nabla^2 J - 2\lambda \nabla(\nabla \cdot J - \rho) - \frac{\partial V}{\partial J}$$
+
+Discretizing with Δt = 1 (one tick):
+
+$$J(t+1) = 2J(t) - J(t-1) + c^2 \nabla^2 J(t) + \text{forces}$$
+
+Defining **wave velocity** w(t) = J(t) - J(t-1):
+
+$$w(t+1) = w(t) + c^2 \nabla^2 J(t) + \text{forces}$$
+$$J(t+1) = J(t) + w(t+1)$$
+
+::: {.callout-important}
+## Derivation Complete
+This matches the FTD update rule from Chapter 1.6: the discrete wave update is recovered from the action formulation.
+:::
+
+### Genesis Probability
+
+The variation with respect to state s gives:
+
+$$\frac{\partial V}{\partial s} + g \cdot (\nabla \cdot J) = 0$$
+
+For the void state (s = 0):
+- If |J| < KB: V = 0, state is stable
+- If |J| ≥ KB: V creates pressure toward manifestation
+
+The probability of transition follows from thermal/quantum fluctuations:
+
+$$P(0 \to \pm 1) \propto \exp\left(-\frac{K_B - |J|}{K_B}\right)$$
+
+This reproduces the exponential genesis probability in the same functional form used earlier.
+
+### Polarity Selection
+
+The coupling term determines which sign is favored:
+
+$$s = \text{sign}(\nabla \cdot J)$$
+
+When divergence is positive (source), s = +1 (matter).
+When divergence is negative (sink), s = -1 (antimatter).
+
+This recovers the polarity rule within the assumed action.
+
+## Decay from Dissipation
+
+Real systems have friction. Adding a **dissipation function**:
+
+$$\mathcal{F} = \frac{1}{2}\gamma |\partial_t J|^2$$
+
+The modified Euler-Lagrange equation includes:
+
+$$-\frac{\partial \mathcal{F}}{\partial \dot{J}} = -\gamma \dot{J}$$
+
+Giving the update rule with damping:
+
+$$J(t+1) = (1-\gamma)J(t) + w(t+1)$$
+
+With γ = DECAY_RATE = α ≈ 1/137.
+
+::: {.callout-note}
+## The Fine Structure Constant
+The decay rate is identified with the fine structure constant. Within this model, both play the role of an electromagnetic-coupling strength appearing in the dissipation term.
+:::
+
+## Conservation Laws: Noether's Theorem
+
+Emmy Noether proved: **Every continuous symmetry implies a conserved quantity.**
+
+| Symmetry | Conserved Quantity |
+|----------|-------------------|
+| Time translation (S unchanged if t → t + Δt) | Energy (total flux) |
+| Space translation (S unchanged if x → x + Δx) | Momentum |
+| U(1) gauge (J → J + ∇λ) | Electric charge |
+| Global phase (ψ → e^{iθ}ψ) | Particle number |
+
+These conservation laws follow from the symmetries of the chosen action (via Noether's theorem).
+
+## What the Action Achieves
+
+| Original Rule (Chapter 1.6) | Now Derived From |
+|-----------------------------|------------------|
+| Wave propagation | Euler-Lagrange for L_flux |
+| Genesis probability | Extremization of L_manifest |
+| Polarity selection | Coupling term L_coupling |
+| Decay rate | Dissipation function F |
+| Charge conservation | Gauss constraint in L_flux |
+
+Every procedural rule from earlier chapters now has a **principled origin**.
+
+## The Path Integral: Quantum Mechanics
+
+The action principle connects to quantum mechanics through the **path integral**:
+
+$$\langle f | i \rangle = \int \mathcal{D}[J] \exp\left(\frac{i S[J]}{\hbar}\right)$$
+
+The probability amplitude between initial state |i⟩ and final state |f⟩ is a sum over all possible flux histories, each weighted by exp(iS/ℏ).
+
+Paths with large action oscillate rapidly and cancel. Paths near δS = 0 (the classical path) contribute coherently.
+
+This is how quantum mechanics emerges from FTD—through the action principle.
+
+## Experiments
+
+### Action Visualization
+Display the Lagrangian density at each voxel. Watch how it changes as particles move, genesis occurs, and waves propagate.
+
+### Conservation Check
+Create an isolated system. Track total energy (∑|J|²) and momentum (∑J) over many ticks. Verify they remain constant.
+
+### Genesis Threshold
+Slowly increase flux density in a void region. Watch how the genesis probability changes as ρ crosses KB.
+
+## Concepts
+
+- **action**: The total S[s,J] integrated over time and space
+- **lagrangian**: The density L from which S is built
+- **euler-lagrange**: The equation δS = 0 used to obtain dynamics from an action
+- **noether**: Symmetry → conservation law theorem
+- **gauge-symmetry**: Invariance under J → J + ∇λ, giving charge conservation
+- **path-integral**: Quantum mechanics as sum over histories weighted by exp(iS/ℏ)
+
+## Transition
+
+We now have a principled foundation—the action principle from which all FTD dynamics flow. But what about quantum mechanics? In the next chapter, we construct the Hilbert space and see how quantum phenomena emerge from the flux field.

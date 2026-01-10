@@ -1,0 +1,21 @@
+{
+  "chapter_id": "2.4",
+  "markers": [
+    {
+      "scene_id": "2.4.3.1",
+      "timestamp": 0.0,
+      "label": "superposition"
+    },
+    {
+      "scene_id": "2.4.3.2",
+      "timestamp": 4.0,
+      "label": "distinction"
+    },
+    {
+      "scene_id": "2.4.3.3",
+      "timestamp": 6.0,
+      "label": "flux_superpose"
+    }
+  ],
+  "total_duration": 10.0
+}

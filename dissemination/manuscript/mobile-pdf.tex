@@ -1,0 +1,77 @@
+% Mobile-friendly PDF settings
+% =============================================================================
+
+% Better font rendering
+\usepackage{microtype}
+
+% Nicer tables
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+
+% Prevent word wrapping in table cells - use smaller font
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtable}{\footnotesize}
+\AtBeginEnvironment{tabular}{\footnotesize}
+
+% Allow tables to break across pages if needed
+\usepackage{ltablex}
+\keepXColumns
+
+% Better float handling
+\usepackage{float}
+
+% For page color reset after title page
+\usepackage{afterpage}
+
+% Better math typesetting
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+% Unicode support for symbols
+\usepackage{textcomp}
+
+% Chapter styling
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{50pt}{40pt}
+
+% Prevent orphans and widows
+\widowpenalty=10000
+\clubpenalty=10000
+
+% Better hyphenation (babel loaded by Quarto via lang: en-US in _quarto.yml)
+\hyphenpenalty=500
+\tolerance=1000
+
+% Compact lists for mobile readability
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=*}
+
+% Figure placement
+\renewcommand{\floatpagefraction}{0.8}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+
+% Section formatting
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+% Header/footer styling
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\textit{\leftmark}}
+\fancyhead[LO]{\textit{\rightmark}}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}

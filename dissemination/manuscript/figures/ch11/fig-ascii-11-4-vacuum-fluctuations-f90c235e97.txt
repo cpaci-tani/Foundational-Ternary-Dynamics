@@ -1,0 +1,7 @@
+     ╱───╲
+e⁺  ╱     ╲  e⁻
+   ●       ●
+e⁻  ╲     ╱  e⁺
+     ╲───╱
+
+Virtual pair exists for Δt ≈ ℏ/2ΔE
