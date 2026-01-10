@@ -1,0 +1,10 @@
+     Fe-56 ← Most stable
+        ↑
+BE/A    ╱\
+       /  \
+      /    \
+   H /      \ U
+    ↓        ↓
+   Fusion   Fission
+   releases releases
+   energy   energy

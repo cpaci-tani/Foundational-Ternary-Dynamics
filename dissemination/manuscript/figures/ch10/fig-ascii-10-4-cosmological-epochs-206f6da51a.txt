@@ -1,0 +1,17 @@
+Time                              Events
+─────────────────────────────────────────────
+10⁻⁴³ s     │ Planck Era
+            │ Quantum gravity
+10⁻³⁶ s     │ Inflation begins
+            │ Exponential expansion
+10⁻³² s     │ Inflation ends
+            │ Reheating
+10⁻¹² s     │ Electroweak symmetry breaks
+10⁻⁶ s      │ Quarks bind into hadrons
+1 s         │ Neutrinos decouple
+3 min       │ Nucleosynthesis (BBN)
+380,000 yr  │ Recombination / CMB
+200 Myr     │ First stars
+1 Gyr       │ First galaxies
+9 Gyr       │ Dark energy dominates
+13.8 Gyr    │ Today

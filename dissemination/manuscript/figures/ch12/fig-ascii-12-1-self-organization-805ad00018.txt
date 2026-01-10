@@ -1,0 +1,6 @@
+        Cold (top)
+    ┌─────────────────┐
+    │ ↺    ↺    ↺    │ ← Convection cells
+    │    ↻    ↻    ↻ │   emerge spontaneously
+    └─────────────────┘
+        Hot (bottom)

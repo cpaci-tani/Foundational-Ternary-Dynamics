@@ -1,0 +1,167 @@
+# Stable Structures {#sec-stable-structures}
+
+*Building on the manifestation dynamics of Book I and the particle physics of Book II, we now examine how particles combine into stable structures.*
+
+*"What persists through time"*
+
+::: {.callout-note}
+## Key Revelation
+Stability arises from geometry. Three particles in an equilateral triangle (a triad) form a structure that resists decay. This is how protons and neutrons persist for billions of years.
+:::
+
+## The Triad
+
+The most fundamental stable structure is the **triad**: three particles arranged in an equilateral triangle.
+
+### Detection Criteria
+
+A triad is recognized when:
+1. Three particles within 2.0 voxels of each other
+2. Approximately equilateral geometry
+3. All particles have the same sign (+1 or -1)
+
+### Geometry
+
+```
+     A
+    /|\
+   / | \
+  /  |  \
+ B---+---C
+
+Distance AB = BC = CA = √2 (edge neighbors)
+```
+
+### Stability Properties
+
+When a triad is detected:
+- `is_locked = True` for all three particles
+- Decay rate → 0
+- Binding energy = KB × PHI
+- Structure persists indefinitely
+
+## Proton Configuration
+
+The proton consists of two up quarks and one down quark:
+
+```
+     u (+2/3)
+    /   \
+   /     \
+u (+2/3)--d (-1/3)
+
+Net charge: +2/3 + 2/3 - 1/3 = +1
+Mass: ~9.0 units
+Stability: Effectively infinite
+```
+
+The strong force binds the quarks. The geometry provides stability.
+
+## Neutron Configuration
+
+The neutron consists of one up quark and two down quarks:
+
+```
+     u (+2/3)
+    /   \
+   /     \
+d (-1/3)--d (-1/3)
+
+Net charge: +2/3 - 1/3 - 1/3 = 0
+Mass: ~9.0 units
+Stability: Stable in nucleus, decays when free (~15 minutes)
+```
+
+Free neutrons decay via the weak force:
+```
+n → p + e⁻ + ν̄ₑ
+```
+
+## Electron Shells
+
+Electrons organize around nuclei in shells:
+
+### Shell Structure
+
+| Shell | n | Max electrons | Radius (voxels) |
+|-------|---|---------------|-----------------|
+| 1s | 1 | 2 | 4-6 |
+| 2s | 2 | 2 | 8-10 |
+| 2p | 2 | 6 | 10-12 |
+| 3s | 3 | 2 | 12-14 |
+| 3p | 3 | 6 | 14-16 |
+| 3d | 3 | 10 | 16-18 |
+| 4s | 4 | 2 | 18-20 |
+
+### Shell Stability
+
+Electrons in shells have `shell_n` set. Full shells are particularly stable:
+- Helium: 2 electrons (1s²) — noble gas
+- Neon: 10 electrons ([He]2s²2p⁶) — noble gas
+- Argon: 18 electrons ([Ne]3s²3p⁶) — noble gas
+
+## Orbital Shapes
+
+Different orbitals have different geometries:
+
+### s Orbitals (Spherical)
+No angular nodes. Spherically symmetric around nucleus.
+
+### p Orbitals (Dumbbell)
+One angular node. Three orientations (px, py, pz).
+
+### d Orbitals (Cloverleaf)
+Two angular nodes. Five orientations.
+
+### f Orbitals (Complex)
+Three angular nodes. Seven orientations.
+
+## Binding Energy
+
+The energy required to break a stable structure:
+
+### Triads
+$$
+E_{\text{bind}} = K_B \times \Phi = 0.511 \times 1.618 \approx 0.83
+$$
+
+### Electron Shells
+$$
+E_n = -\frac{13.6 \times Z^2}{n^2} \text{ (hydrogen-like)}
+$$
+
+## Lock Mechanism
+
+When `is_locked = True`:
+
+```python
+def apply_decay(particle):
+    if particle.is_locked:
+        return  # No decay for locked particles
+
+    particle.flux *= (1 - DECAY_RATE)
+```
+
+Locked particles don't lose energy. They persist until an external force breaks the structure.
+
+## Experiments
+
+### Triad Formation
+Create three same-sign particles close together. Watch them lock into a triad.
+
+### Shell Filling
+Add electrons to a nucleus one by one. Watch them organize into shells.
+
+### Stability Test
+Create various configurations. See which ones lock and persist.
+
+## Concepts
+
+- **triad**: Three-particle stable structure (nucleons)
+- **shell**: Electron orbital around nucleus
+- **binding-energy**: Energy to break a structure
+- **is_locked**: Stability flag preventing decay
+
+## Transition
+
+Stable structures form atoms. Next, we explore the full periodic table of elements—all the atoms that can exist.

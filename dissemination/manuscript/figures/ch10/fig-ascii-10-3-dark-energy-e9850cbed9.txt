@@ -1,0 +1,6 @@
+Expected (decelerating):    ★ (bright)
+Observed:                   ★ (fainter)
+                              ↓
+                           Farther than expected
+                              ↓
+                           Universe accelerating

@@ -1,0 +1,107 @@
+# The First Division {#sec-first-division}
+
+*"0 → +1, -1"*
+
+::: {.callout-note}
+## Key Insight
+Within the framework, manifestation occurs in particle-antiparticle pairs, ensuring global charge conservation. Net state remains zero.
+:::
+
+## Genesis
+
+When flux density exceeds the threshold $K_B$ (the manifestation threshold, corresponding to the electron mass scale in natural units) and probability conditions are met, pair production occurs.
+
+For every particle of matter (+1) that manifests, a particle of antimatter (-1) must also appear. This is not a rule imposed from outside; it is a mathematical necessity **[THEOREM: follows from Noether's theorem applied to the action's global symmetry]**. The sum must remain zero.
+
+## The Genesis Event
+
+The moment of creation follows precise rules:
+
+$$
+p_{\text{create}}(x) = \text{clamp}\left(1 - \exp\left(-\frac{E(x) - K_B}{K_B}\right), 0, 1\right)
+$$
+
+where:
+
+- $p_{\text{create}}(x)$ is the probability of manifestation at position $x$
+- $E(x) = |\mathbf{J}(x)|$ is the local flux density (energy proxy)
+- $K_B = 0.511$ is the manifestation threshold (electron mass scale)
+- $\text{clamp}(y, 0, 1)$ restricts $y$ to the interval $[0, 1]$
+
+When $E(x) \geq K_B$, genesis becomes possible, with probability increasing exponentially above threshold.
+
+### What Happens at Genesis
+
+1. **Flux accumulates** — Energy density builds in a region of space
+2. **Threshold reached** — When density ≥ KB, manifestation becomes possible
+3. **Pair production** — Matter (+1) and antimatter (-1) emerge together
+4. **Momentum conserved** — The pair carries the flux that created them
+5. **Entanglement established** — The pair shares a common origin (UUID)
+
+## The Balance Sheet
+
+| Before | After |
+|--------|-------|
+| E = energy | E = energy |
+| State = 0 | States = +1, -1 |
+| Net = 0 | Net = +1 + (-1) = 0 |
+
+Conservation laws are satisfied: energy is conserved, charge is conserved, and the net state remains zero.
+
+## Pair Production
+
+When genesis occurs:
+
+```
+0 + Energy → (+1) + (-1)
+
+The Void + sufficient flux → matter + antimatter
+```
+
+This is not creation from nothing. This is *reorganization* of what already existed as potential into what now exists as manifestation.
+
+### Properties of the Pair
+
+- **Opposite states**: +1 and -1
+- **Shared origin**: Same `entanglement_partner_uuid`
+- **Conserved momentum**: Flux divided between them
+- **Correlated properties**: Spin, charge, identity linked
+
+## Experiments
+
+### Trigger Genesis
+Accumulate flux in a region until particles appear. Watch the threshold behavior—nothing happens until KB is exceeded, then sudden manifestation.
+
+### Balance Check
+Count matter vs antimatter in any region. Over sufficient time and space, they are always equal.
+
+### Threshold Discovery
+Find the minimum energy for genesis. Probe the boundary at KB = 0.511.
+
+## Mathematical Details
+
+### Energy Threshold
+The existence threshold KB = 0.511 corresponds to the electron rest mass in our unit system. Nothing can manifest with less energy than this.
+
+### Probability Function
+The exponential form ensures:
+- Below threshold: p = 0
+- At threshold: p begins rising
+- Far above threshold: p → 1
+
+### Divergence Sign
+
+When genesis occurs, the sign of the divergence of the flux field determines which particle gets which state **[SELECTION: follows from the coupling term in the action]**:
+- Positive divergence → +1 (matter)
+- Negative divergence → -1 (antimatter)
+
+## Concepts
+
+- **genesis**: The transition from State 0 to States ±1
+- **three-states**: The fundamental triad (0, +1, -1)
+- **pair-production**: Why particles always come in pairs
+- **conservation**: The universe's balance sheet
+
+## Transition
+
+The first division has occurred. Now we must understand the two layers of reality—the potential that underlies all, and the manifestation that we observe.

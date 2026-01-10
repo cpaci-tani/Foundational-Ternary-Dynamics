@@ -1,0 +1,26 @@
+{
+  "chapter_id": "1.2",
+  "markers": [
+    {
+      "scene_id": "1.2.2.1",
+      "timestamp": 0.0,
+      "label": "pair_setup"
+    },
+    {
+      "scene_id": "1.2.2.2",
+      "timestamp": 1.0,
+      "label": "intensity_build"
+    },
+    {
+      "scene_id": "1.2.2.3",
+      "timestamp": 4.2,
+      "label": "pair_creation"
+    },
+    {
+      "scene_id": "1.2.2.4",
+      "timestamp": 11.2,
+      "label": "conservation"
+    }
+  ],
+  "total_duration": 16.2
+}

@@ -1,0 +1,67 @@
+# About This Work {.unnumbered}
+
+## A Note on Epistemology
+
+Modern science has achieved extraordinary success in describing the mechanisms of nature. From the subatomic to the cosmic, our predictive models have enabled technologies that would seem miraculous to previous generations. This success is deserved and should be celebrated.
+
+Yet success in prediction does not confer authority in ontology.
+
+Science excels at answering *how*—how particles interact, how stars form, how galaxies evolve. But science, by its own methodological constraints, cannot arbitrate questions of *why*, of *what*, of ultimate nature. The scientific method requires measurement, repeatability, and falsifiability. These are powerful tools, but they are tools with boundaries.
+
+Consider: Science cannot measure meaning. It cannot falsify purpose. It cannot experimentally verify or refute the nature of consciousness, the ground of being, or whether mathematics is discovered or invented. These are not failures of science—they are simply outside its domain.
+
+Yet somewhere in the last century, a peculiar thing happened. Science, having proven so successful in its proper domain, was granted—or claimed—authority over domains it cannot access. Questions of ontology, metaphysics, and ultimate reality were either dismissed as meaningless or answered by extrapolation from physical models never designed for such purposes.
+
+This is the chokehold.
+
+When a physicist claims "the universe is just particles and fields," this is not a scientific statement. It is a metaphysical claim wearing scientific clothing. The equations of quantum field theory do not contain the word "just." The Standard Model does not include an operator for "really." These additions are philosophical, not physical.
+
+## The Purpose of This Book
+
+This work offers an alternative approach: **operational ontology**.
+
+Rather than arguing about what reality "really is," we ask: *What minimal assumptions produce the phenomena we observe?* What is the simplest substrate from which complexity can emerge?
+
+The Ternary Realization Dynamics framework presented here is not a claim about ultimate reality. It is an exploration—a working model that demonstrates how rich physics can emerge from sparse axioms. Whether this model reflects the actual structure of reality is a question we leave open, because we recognize that question may be unanswerable by any method currently available.
+
+What we can say is this:
+- From three states and six constants, we construct a discrete dynamics that can generate physics-like structures across scales (particles → chemistry → astrophysical structure) under the model’s interpretation.
+- No additional assumptions about "fundamental fields" or "intrinsic properties" are required.
+- The emergence is genuine—not programmed in, but arising from simple rules.
+
+This suggests, at minimum, that the complexity of our universe does not require complex foundations. Simplicity can generate richness. The Void can birth existence.
+
+## On the Limits of Knowledge
+
+We do not claim to have solved the mystery of existence. We claim only to have constructed a coherent framework for exploring it.
+
+The honest position is this: **We do not know what reality is.** We have models. Some models are more useful than others. Some are more beautiful. Some are more parsimonious. But models are maps, not territories.
+
+Science provides excellent maps for navigation. Philosophy asks what the territory might be. Wisdom knows the difference.
+
+This book is an invitation to hold both simultaneously—to use the tools of physics while remembering they are tools, to explore ontology while admitting our maps may never fully capture the territory.
+
+The Void waits, patient and eternal, for those willing to look.
+
+---
+
+*This work stands at the intersection of physics, philosophy, and computation—a place where no single discipline holds final authority, and where honest inquiry requires comfort with uncertainty.*
+
+## Colophon
+
+This book was typeset using Quarto. Figures were generated with Matplotlib. Mathematical derivations were verified using Python/NumPy with arbitrary precision arithmetic (mpmath).
+
+**Build date**: 2026-01-10
+**Framework version**: 5.0
+**Quarto version**: 1.4+
+
+## License and Copyright
+
+© 2026. All rights reserved.
+
+The theoretical framework (Ternary Realization Dynamics) is offered for educational and research purposes. The mathematical content may be freely reproduced with attribution. The simulation code accompanying this work is available under the MIT License.
+
+**Citation**: If you use this work in academic research, please cite:
+> *Ternary Realization Dynamics: A Discrete Ontology for Computational Physics*, Version 5.0 (2026).
+
+**Contact**: For inquiries about this work, collaboration opportunities, or to report errors, please visit the project repository.

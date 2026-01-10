@@ -1,0 +1,175 @@
+# Galaxy Types {#sec-galaxy-types}
+
+*"The cosmic menagerie"*
+
+::: {.callout-note}
+## Key Revelation
+Galaxies come in distinct types, but these aren't fixed categories—they represent different evolutionary states, shaped by mergers, environment, and star formation history.
+:::
+
+## The Hubble Classification
+
+### Hubble's Tuning Fork
+
+```
+       Ellipticals          Spirals
+                          ↗ Sa → Sb → Sc → Sd (normal)
+E0 → E3 → E5 → E7 → S0
+                          ↘ SBa → SBb → SBc → SBd (barred)
+```
+
+Note: This is NOT an evolutionary sequence.
+
+## Elliptical Galaxies (E)
+
+Smooth, featureless spheroids.
+
+### Properties
+
+| Property | Description |
+|----------|-------------|
+| Shape | Spheroidal to elongated |
+| Stars | Old, red |
+| Gas | Very little |
+| Star formation | None (dead) |
+| Population | ~15% of galaxies |
+
+### Classification
+
+E0 to E7 based on apparent ellipticity:
+- E0: Circular
+- E7: Most elongated
+
+### Examples
+- M87 (giant elliptical in Virgo)
+- NGC 1132 (fossil group)
+
+## Spiral Galaxies (S)
+
+Disk galaxies with spiral arms.
+
+### Structure
+
+```
+      Halo (old stars, dark matter)
+     ╱                           ╲
+    ╱   ╭───────────────────╮     ╲
+   ╱   ╱    Disk + Arms      ╲     ╲
+  │   │    ┌───────────┐     │     │
+  │   │    │   Bulge   │     │     │
+  │   │    └───────────┘     │     │
+   ╲   ╲                    ╱     ╱
+    ╲   ╰───────────────────╯     ╱
+     ╲                           ╱
+```
+
+### Properties
+
+| Property | Description |
+|----------|-------------|
+| Structure | Disk + bulge + halo |
+| Stars | Mix of old and young |
+| Gas | Significant in disk |
+| Star formation | In spiral arms |
+| Population | ~70% of bright galaxies |
+
+### Subtypes
+
+| Type | Bulge | Arms | Gas |
+|------|-------|------|-----|
+| Sa | Large | Tight | Less |
+| Sb | Medium | Moderate | Medium |
+| Sc | Small | Open | More |
+| Sd | Tiny | Very open | Most |
+
+### Barred Spirals (SB)
+
+Central bar connects to spiral arms:
+- Possibly a phase, not permanent
+- Affects gas flow
+- Milky Way is SBbc
+
+## Lenticular Galaxies (S0)
+
+Intermediate between elliptical and spiral.
+
+### Properties
+- Disk but no arms
+- Little gas or star formation
+- Old stellar population
+- Possibly "faded" spirals
+
+## Irregular Galaxies (Irr)
+
+No regular structure.
+
+### Types
+- **Irr I**: Some structure visible
+- **Irr II**: Chaotic, often interacting
+
+### Examples
+- Large/Small Magellanic Clouds
+- Many dwarf galaxies
+
+## Galaxy Properties
+
+| Type | Mass | Diameter | Example |
+|------|------|----------|---------|
+| Giant elliptical | 10¹³ M☉ | 300 kpc | M87 |
+| Large spiral | 10¹¹ M☉ | 30 kpc | Milky Way |
+| Dwarf elliptical | 10⁷ M☉ | 1 kpc | Many |
+| Dwarf irregular | 10⁸ M☉ | 3 kpc | SMC |
+
+## Why Different Types?
+
+### Formation History
+- Gas-rich mergers → spirals
+- Gas-poor mergers → ellipticals
+
+### Environment
+- Clusters → more ellipticals
+- Field → more spirals
+
+### Transformation
+Spirals can become ellipticals through:
+- Major mergers
+- Ram pressure stripping
+- Strangulation (cut off from gas)
+
+## The Morphology-Density Relation
+
+```
+Fraction
+   │
+E  │████████████████████████
+S0 │██████████████████
+S  │██████████████
+Irr│████████
+   └──────────────────────────
+   Cluster center    Field
+   (high density)    (low density)
+```
+
+Dense environments have more ellipticals.
+
+## Experiments
+
+### Galaxy Zoo
+Classify galaxy images by type.
+
+### Merger Product
+Predict outcome of spiral + spiral collision.
+
+### Environment Effect
+Place galaxy in cluster. Watch transformation.
+
+## Concepts
+
+- **elliptical**: Smooth, spheroidal, old stars
+- **spiral**: Disk with arms, ongoing star formation
+- **lenticular**: Disk without arms
+- **irregular**: No clear structure
+
+## Transition
+
+The Milky Way is our home galaxy—a barred spiral. Let's explore our cosmic neighborhood in detail.

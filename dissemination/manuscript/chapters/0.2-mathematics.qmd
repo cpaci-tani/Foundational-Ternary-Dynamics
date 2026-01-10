@@ -1,0 +1,254 @@
+# Mathematical Prerequisites {#sec-mathematics}
+
+*"The language in which the universe is written."*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter provides the mathematical background needed to understand FTD. The reader familiar with these topics may skip ahead; others should treat this as a reference to return to as needed.
+:::
+
+## Quick Notation Reference
+
+| Symbol | Meaning | First Use |
+|--------|---------|-----------|
+| $\mathbf{J}$ | Flux field (vector) | @sec-two-layers |
+| $\rho = \|\mathbf{J}\|$ | Flux density (scalar) | @sec-two-layers |
+| $s \in \{-1, 0, +1\}$ | Ternary state | @sec-void |
+| $K_B$ | Manifestation threshold (0.511 in m_e units) | @sec-constants |
+| $\alpha$ | Fine structure constant (~1/137) | @sec-constants |
+| $\nabla \cdot \mathbf{J}$ | Divergence of flux | Below |
+| $\nabla \times \mathbf{J}$ | Curl of flux | Below |
+| $\nabla^2$ | Laplacian operator | Below |
+| $b_3, N_c, N_{eff}, N_{base}$ | Framework integers (7, 3, 13, 4) | @sec-lemniscate-alpha |
+| $G^*$ | Lemniscatic constant (~2.9587) | @sec-lemniscate-alpha |
+| $T(n)$ | Triangular number = n(n+1)/2 | Below |
+
+## Discrete Differential Geometry
+
+Standard calculus assumes continuous space. FTD operates on a discrete lattice. We need discrete analogs of familiar operations.
+
+### The Lattice
+
+Space is a 3D integer lattice $\mathbb{Z}^3$. Each point $(i, j, k)$ is a voxel.
+
+### Discrete Derivatives
+
+For a scalar field $f$ defined on the lattice:
+
+**Forward difference:**
+$$\partial_x^+ f(x) = f(x + \hat{e}_x) - f(x)$$
+
+**Backward difference:**
+$$\partial_x^- f(x) = f(x) - f(x - \hat{e}_x)$$
+
+**Central difference:**
+$$\partial_x f(x) = \frac{f(x + \hat{e}_x) - f(x - \hat{e}_x)}{2}$$
+
+### Discrete Gradient
+
+For scalar field $f$:
+
+$$\nabla f = \left(\partial_x f, \partial_y f, \partial_z f\right)$$
+
+Using central differences:
+
+$$
+\nabla f(x) = \frac{1}{2}\begin{pmatrix}
+f(x+\hat{e}_x) - f(x-\hat{e}_x) \\
+f(x+\hat{e}_y) - f(x-\hat{e}_y) \\
+f(x+\hat{e}_z) - f(x-\hat{e}_z)
+\end{pmatrix}
+$$
+
+### Discrete Divergence
+
+For vector field $\mathbf{J} = (J_x, J_y, J_z)$:
+
+$$\nabla \cdot \mathbf{J} = \partial_x J_x + \partial_y J_y + \partial_z J_z$$
+
+$$= \frac{1}{2}\sum_{i \in \{x,y,z\}} \left[J_i(x + \hat{e}_i) - J_i(x - \hat{e}_i)\right]$$
+
+### Discrete Curl
+
+$$\nabla \times \mathbf{J} = \begin{pmatrix}
+\partial_y J_z - \partial_z J_y \\
+\partial_z J_x - \partial_x J_z \\
+\partial_x J_y - \partial_y J_x
+\end{pmatrix}$$
+
+### Discrete Laplacian
+
+$$\nabla^2 f = \sum_{\text{neighbors}} f(\text{neighbor}) - 6 \cdot f(\text{center})$$
+
+For the 6-connected neighborhood. For 26-connected:
+
+$$\nabla^2 f = \sum_{n \in N_{26}} w_n \cdot f(n) - f(\text{center})$$
+
+Where $w_n$ weights by distance.
+
+## Lattice Theory
+
+### The Moore Neighborhood
+
+In 3D, the **Moore neighborhood** of a cell includes all 26 adjacent cells:
+- 6 face neighbors (distance 1)
+- 12 edge neighbors (distance √2)
+- 8 corner neighbors (distance √3)
+
+### Cellular Automata
+
+A **cellular automaton** is defined by:
+1. A lattice (grid of cells)
+2. A set of states each cell can take
+3. A neighborhood definition
+4. An update rule
+
+FTD is a cellular automaton with:
+- Lattice: $\mathbb{Z}^3$ (or finite periodic box)
+- States: {−1, 0, +1} per cell
+- Neighborhood: 26-cell Moore
+- Rule: The causal loop (see @sec-causal-loop)
+
+### Discrete Time Evolution
+
+Updates are synchronous: all cells update based on the previous tick's state. This ensures:
+- Determinism (same initial state → same evolution)
+- Reversibility in principle (though not in practice due to decay)
+- Causality (effects propagate at most 1 cell per tick)
+
+## Helmholtz Decomposition
+
+Any vector field can be decomposed into irrotational and solenoidal parts:
+
+$$\mathbf{J} = \mathbf{J}_L + \mathbf{J}_T$$
+
+Where:
+- $\mathbf{J}_L$ (longitudinal): $\nabla \times \mathbf{J}_L = 0$
+- $\mathbf{J}_T$ (transverse): $\nabla \cdot \mathbf{J}_T = 0$
+
+### Physical Interpretation
+
+| Component | Constraint | Physical Role |
+|-----------|------------|---------------|
+| $\mathbf{J}_L$ | Curl-free | Tied to charges (Gauss's law) |
+| $\mathbf{J}_T$ | Divergence-free | Propagating radiation |
+
+### Degrees of Freedom
+
+- Total: 3 (vector components)
+- Constrained: 1 (longitudinal, determined by sources)
+- Physical: 2 (transverse)
+
+This is why photons have 2 polarizations, not 3.
+
+## Group Theory for Gauge Symmetry
+
+### What Is Gauge Symmetry?
+
+A **gauge transformation** changes the mathematical description without changing physical observables.
+
+For the flux field:
+$$\mathbf{J} \to \mathbf{J} + \nabla \lambda$$
+
+Under this transformation:
+- $\nabla \times \mathbf{J}$ is unchanged (curl of gradient = 0)
+- Physical observables depend only on $\nabla \times \mathbf{J}$
+- The transformation is a **symmetry**
+
+### U(1) Gauge Group
+
+The electromagnetic gauge group is U(1)—the group of phase rotations:
+$$\psi \to e^{i\theta} \psi$$
+
+In FTD, this corresponds to adding a gradient to the flux field, which doesn't change the curl.
+
+### SU(3) and Color (Speculative)
+
+The three spatial axes may provide an SU(3) structure:
+- "Color" = primary axis of flux alignment
+- Color rotations = local axis rotations
+- Color-neutral = symmetric across all axes
+
+This interpretation remains speculative.
+
+## Wave Equations
+
+### The Continuous Wave Equation
+
+$$\frac{\partial^2 u}{\partial t^2} = c^2 \nabla^2 u$$
+
+### Discrete Wave Equation
+
+Using the discrete Laplacian and finite time steps:
+
+$$u(t+1) - 2u(t) + u(t-1) = c^2 \nabla^2 u(t)$$
+
+Or in update form:
+$$u(t+1) = 2u(t) - u(t-1) + c^2 \nabla^2 u(t)$$
+
+### Velocity-Verlet Integration
+
+More stable integration using wave velocity $v$:
+
+$$v(t+1) = v(t) + c^2 \nabla^2 u(t)$$
+$$u(t+1) = u(t) + v(t+1)$$
+
+With damping:
+$$v(t+1) = (1 - \gamma)[v(t) + c^2 \nabla^2 u(t)]$$
+
+## Probability and Entropy
+
+### Genesis Probability
+
+The probability of manifestation given energy $E$:
+
+$$P_{\text{create}}(x) = \text{clamp}\left(1 - \exp\left(-\frac{E(x) - K_B}{K_B}\right), 0, 1\right)$$
+
+### Shannon Entropy
+
+For a probability distribution $\{p_i\}$:
+
+$$H = -\sum_i p_i \log_2 p_i$$
+
+### Boltzmann Entropy
+
+For a system with $\Omega$ microstates:
+
+$$S = k_B \ln \Omega$$
+
+## Triangular Numbers
+
+The $n$-th triangular number:
+
+$$T(n) = \frac{n(n+1)}{2} = 1 + 2 + \cdots + n$$
+
+These appear in the Lemniscate-Alpha derivation:
+- $T(13) = 91$ encodes the Standard Model structure
+- The scaling factor involves $T(n_{\text{eff}})$
+
+## The Lemniscatic Constant
+
+The classical **lemniscatic constant** (Gauss's constant):
+
+$$\varpi = \int_0^1 \frac{dx}{\sqrt{1-x^4}} = \frac{\Gamma(1/4)^2}{4\sqrt{2\pi}} \approx 2.6221$$
+
+::: {.callout-important}
+## FTD Uses a Different G*
+In this book, $G^*$ denotes the lemniscatic constant at the $j=1728$ point,
+$$G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} \approx 2.9587,$$
+not Gauss's classical constant $\varpi \approx 2.622$.
+
+The Lemniscate-Alpha curve is presented as an independent geometric construction that reproduces the same numerical value to high precision, and $G^*$ then appears in the master quadratic. See @sec-glossary for terminology and scope.
+:::
+
+## Concepts
+
+- **discrete-derivative**: Finite difference approximation
+- **helmholtz**: Decomposition into longitudinal + transverse
+- **gauge-symmetry**: Transformation that leaves physics unchanged
+- **cellular-automaton**: Discrete dynamical system on lattice
+- **triangular-number**: Sum of first n integers
+
+## Transition
+
+With mathematical tools in hand, we turn to the philosophical foundations: what kind of ontology does FTD propose, and how does it address the measurement problem?

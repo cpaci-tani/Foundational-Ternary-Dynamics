@@ -1,0 +1,9 @@
+┌───────────────────┐
+│ Outer crust       │ ← Iron lattice + electrons
+├───────────────────┤
+│ Inner crust       │ ← Neutron-rich nuclei + neutron drip
+├───────────────────┤
+│ Outer core        │ ← Superfluid neutrons + superconducting protons
+├───────────────────┤
+│ Inner core        │ ← ??? (quark matter?)
+└───────────────────┘

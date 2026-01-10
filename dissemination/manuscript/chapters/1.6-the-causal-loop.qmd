@@ -1,0 +1,143 @@
+# The Causal Loop {#sec-causal-loop}
+
+*"The heartbeat of the universe"*
+
+::: {.callout-note}
+## Key Revelation
+Every tick of existence follows the same 13 steps, in the same order. This is not a rule—it is the structure of causality itself.
+:::
+
+## The Universal Tick
+
+The universe advances one tick at a time. Each tick follows this sequence:
+
+```
+┌───────────────────────────────────────────┐
+│         THE UNIVERSAL TICK                │
+├───────────────────────────────────────────┤
+│  1. TIME GATE    Phase accumulator        │
+│  2. DECAY        Entropy to unlocked      │
+│  3. EXISTENCE    Evaporate / Genesis      │
+│  4. PROPAGATE    Flux waves advance       │
+│  5. SUPERPOSE    Fields sum               │
+│  6. FIELDS       Gradients, curl, div     │
+│  7. FORCES       Gravity, EM, Strong      │
+│  8. INTEGRATE    Forces → velocity        │
+│  9. MOVE         Particles advance        │
+│ 10. COLLIDE      Handle interactions      │
+│ 11. TRANSMUTE    Polarity flips           │
+│ 12. BIND         Lock structures          │
+│ 13. INCREMENT    t += 1                   │
+└───────────────────────────────────────────┘
+```
+
+## Why This Order?
+
+The sequence is not arbitrary. Causality demands it.
+
+- You cannot apply forces without first computing fields
+- You cannot move without first applying forces
+- You cannot detect collisions without first moving
+- You cannot bind structures without first detecting what exists
+
+Each step depends on the results of previous steps.
+
+## The 13 Steps Explained
+
+### 1. TIME GATE
+Check each voxel's phase accumulator τ. If τ ≥ 1, the voxel updates this tick. High-energy particles update less often (time dilation).
+
+### 2. DECAY
+Apply entropy to unlocked particles:
+```python
+particle.flux *= (1 - DECAY_RATE)
+```
+Locked (bound) particles skip this step.
+
+### 3. EXISTENCE
+Check thresholds:
+- If density < KB and state ≠ 0: Evaporate (±1 → 0)
+- If density ≥ KB and state = 0: Maybe genesis (0 → ±1)
+
+### 4. PROPAGATE
+Flux waves advance through the lattice. Wave velocity updates flux.
+
+### 5. SUPERPOSE
+Where multiple flux contributions overlap, they sum as vectors.
+
+### 6. COMPUTE FIELDS
+Calculate derived fields:
+- Gradients: ∇ρ, ∇q
+- Curl: ∇ × J
+- Divergence: ∇ · J
+
+### 7. FORCES
+Calculate all forces on each particle:
+- Gravity: $F_g = G \cdot \nabla\bar{\rho}$
+- Electric: $F_e = -q \cdot \nabla\bar{q}$
+- Magnetic: $F_m = \beta_m \cdot (\nabla \times J) \times \hat{J}$
+- Strong: $F_s = g^2 \cdot e^{-mr}(1+mr)/r^2$
+- Weak: Transmutation check
+
+### 8. INTEGRATE
+Apply accumulated forces to particle velocities:
+```python
+particle.velocity += particle.force_accumulator / particle.mass
+particle.force_accumulator = [0, 0, 0]  # Reset
+```
+
+### 9. MOVE
+Update positions (with speed limit C):
+```python
+speed = |particle.velocity|
+if speed > C:
+    particle.velocity *= C / speed
+particle.position += particle.velocity
+```
+
+### 10. COLLIDE
+Handle interactions:
+- Empty target → move there
+- Same-sign target → elastic collision
+- Opposite-sign target → annihilation
+
+### 11. TRANSMUTE
+Weak force effects: If stress S exceeds threshold, particle may flip polarity and emit neutrino.
+
+### 12. BIND
+Detect stable structures (triads). Lock them against decay.
+
+### 13. INCREMENT
+Advance the global tick counter: `t += 1`
+
+## Experiments
+
+### Single Step Mode
+Execute one tick at a time. Watch each of the 13 phases in slow motion.
+
+### Phase Isolation
+View only one phase at a time. See how FORCES differs from MOVE differs from COLLIDE.
+
+### Order Experiment
+Understand why order matters. What happens if you MOVE before computing FORCES?
+
+## The Rhythm
+
+Speed up the simulation. Watch the universe pulse with the rhythm of existence.
+
+This is the heartbeat:
+- **Tick**: one cycle complete
+- **Tick**: another cycle
+- **Tick**: forever forward
+
+The causal loop never stops. It cannot stop—for the loop IS time.
+
+## Concepts
+
+- **tick**: The fundamental unit of time
+- **causal-loop**: The 13-step update sequence
+- **phase-order**: Why steps must occur in this order
+
+## Transition
+
+The causal loop governs how time advances. But time itself is not uniform—high-energy particles experience time differently. Next, we explore time dilation and causality.

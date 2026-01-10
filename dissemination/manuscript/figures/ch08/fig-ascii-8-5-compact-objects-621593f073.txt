@@ -1,0 +1,8 @@
+      Rotation axis
+           │
+           │   Magnetic axis
+           │  ╱
+           │ ╱
+      ─────●─────  ← Beams sweep like lighthouse
+          ╱│
+         ╱ │

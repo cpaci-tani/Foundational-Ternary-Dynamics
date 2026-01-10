@@ -1,0 +1,12 @@
+TYPICAL THEORY:
+  Axioms → Predictions
+  (Axioms are free parameters)
+
+TRD:
+  Axioms ←→ Predictions
+  (Axioms constrain each other)
+
+  N_c = 3 → b₃ = 7 → n_eff = 13 → α = 1/137
+                ↑                        │
+                └────────────────────────┘
+                    Self-consistency

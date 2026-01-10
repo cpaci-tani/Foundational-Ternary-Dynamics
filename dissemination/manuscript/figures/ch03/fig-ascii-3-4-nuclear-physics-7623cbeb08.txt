@@ -1,0 +1,3 @@
+p + p → D + e⁺ + νₑ      (slow, determines rate)
+D + p → ³He + γ
+³He + ³He → ⁴He + 2p

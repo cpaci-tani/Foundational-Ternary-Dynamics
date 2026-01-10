@@ -1,0 +1,12 @@
+Complexity
+    │
+    │        ╱╲
+    │       ╱  ╲
+    │      ╱    ╲
+    │     ╱      ╲╲
+    │    ╱         ╲╲╲
+    │   ╱             ╲╲╲
+    └──────────────────────── Time
+       ↑         ↑          ↑
+    Genesis   Peak      Heat Death
+              (Now?)

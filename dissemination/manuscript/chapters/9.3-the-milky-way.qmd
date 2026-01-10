@@ -1,0 +1,210 @@
+# The Milky Way {#sec-milky-way}
+
+*"Our cosmic home"*
+
+::: {.callout-note}
+## Key Revelation
+We live inside a galaxy—a barred spiral of several hundred billion stars, with a supermassive black hole at its center. The Milky Way is our address in the universe.
+:::
+
+::: {.callout-note}
+## How FTD Produces Galactic Structure
+The Milky Way's structure emerges from flux dynamics at galactic scales:
+
+- **Spiral arms** = density waves in the stellar flux, triggering star formation as material passes through
+- **Dark matter halo** = unmanifested flux (s = 0) providing the gravitational scaffold
+- **Central black hole** = extreme flux concentration where nothing escapes
+- **Rotation curve** = flat because dark matter flux dominates beyond the visible disk
+
+The barred spiral morphology reflects the angular momentum distribution of the primordial flux cloud.
+:::
+
+## Basic Properties
+
+| Property | Value |
+|----------|-------|
+| Type | SBbc (barred spiral) |
+| Diameter | ~100,000 light-years |
+| Thickness | ~1,000 ly (disk) |
+| Mass | ~1.5 trillion M☉ (with dark matter) |
+| Stars | 100-400 billion |
+| Age | ~13.6 billion years |
+
+## Structure
+
+```
+Edge-on view:
+              Halo
+          ╱─────────╲
+         ╱           ╲
+    ════════════════════  ← Thin disk
+         ─────────────    ← Thick disk
+         ╲    ●    ╱      ← Bulge (● = center)
+          ╲─────────╱
+              Halo
+
+Face-on view:
+         ╱────╲
+        ╱ ╭──╮ ╲
+       │ ╱ ●  ╲ │    ← Bar
+       │ ╲    ╱ │
+        ╲ ╰──╯ ╱
+         ╲────╱
+           Spiral arms
+```
+
+## Components
+
+### Thin Disk
+
+- Contains most visible stars
+- Young to intermediate age
+- Star formation ongoing
+- Circular orbits
+- Scale height: ~300 pc
+
+### Thick Disk
+
+- Older stars
+- More vertical extent
+- Scale height: ~1000 pc
+- Formed early or from mergers
+
+### Bulge/Bar
+
+- Central concentration
+- Bar ~10,000 ly long
+- Mix of old and young stars
+- Contains central black hole
+
+### Halo
+
+- Spheroidal distribution
+- Old, metal-poor stars
+- Globular clusters (~150)
+- Extends to ~300,000 ly
+
+### Dark Matter Halo
+
+- Dominates mass
+- Extends to ~600,000 ly
+- ~85% of total mass
+- Inferred from rotation curve
+
+## Spiral Arms
+
+### Major Arms
+
+| Arm | Distance from Sun |
+|----|-------------------|
+| Perseus | 6,000 ly |
+| Sagittarius | 8,000 ly |
+| Scutum-Centaurus | 12,000 ly |
+| Norma | 15,000 ly |
+
+Our Sun is in the Orion Spur, between Perseus and Sagittarius.
+
+### Why Arms?
+
+Density wave theory:
+- Arms are waves, not material structures
+- Stars and gas enter and exit
+- Compression triggers star formation
+- Young, bright stars make arms visible
+
+## The Galactic Center
+
+### Sagittarius A*
+
+Supermassive black hole:
+- Mass: 4.1 million M☉
+- Distance: 26,000 ly
+- Schwarzschild radius: ~12 million km
+- Currently quiescent
+
+### Central Parsec
+
+Extreme environment:
+- High stellar density
+- Young massive stars (unexpected!)
+- Streamers of hot gas
+- Strong magnetic fields
+
+## Solar Neighborhood
+
+### The Sun's Location
+- 26,000 ly from center
+- In thin disk
+- Orion Spur
+- Moving at 220 km/s around center
+- Orbital period: ~230 million years
+
+### Nearby Stars
+
+Within 20 light-years:
+- ~100 known stellar systems
+- Proxima Centauri: 4.24 ly
+- Barnard's Star: 5.96 ly
+- Sirius: 8.6 ly
+
+## Satellite Galaxies
+
+The Milky Way has ~60 known satellites:
+
+| Galaxy | Distance | Mass |
+|--------|----------|------|
+| Large Magellanic Cloud | 160,000 ly | 10¹⁰ M☉ |
+| Small Magellanic Cloud | 200,000 ly | 7×10⁹ M☉ |
+| Sagittarius Dwarf | 70,000 ly | 4×10⁸ M☉ |
+| Ursa Minor Dwarf | 200,000 ly | 2×10⁷ M☉ |
+
+Sagittarius is currently being cannibalized.
+
+## Future
+
+### Andromeda Collision
+
+In ~4.5 billion years:
+- Milky Way and Andromeda merge
+- Will form elliptical galaxy ("Milkomeda")
+- Sun may be flung to outskirts
+- No direct stellar collisions expected
+
+## In Simulation
+
+```python
+class MilkyWay:
+    def __init__(self):
+        self.disk = ThinDisk(radius=50000, mass=6e10)
+        self.bulge = Bulge(radius=3000, mass=1e10)
+        self.halo = DarkMatterHalo(radius=300000, mass=1e12)
+        self.smbh = BlackHole(mass=4e6)
+        self.satellites = load_satellites()
+
+    def orbit_period(self, radius):
+        # Flat rotation curve
+        v_circular = 220  # km/s
+        return 2 * pi * radius / v_circular
+```
+
+## Experiments
+
+### Galactic Tour
+Fly through the Milky Way. Visit center, arms, halo.
+
+### Rotation Curve
+Measure velocities at different radii. See flat curve (dark matter evidence).
+
+### Future Merger
+Watch Milky Way and Andromeda collide.
+
+## Concepts
+
+- **spiral-arms**: Density wave star formation regions
+- **galactic-center**: Location of supermassive black hole
+- **rotation-curve**: Velocity vs radius (flat = dark matter)
+- **satellite-galaxies**: Small galaxies orbiting larger
+
+## Transition
+
+Our galaxy doesn't exist in isolation. Galaxies interact, merge, and transform. Next, we explore these cosmic collisions.

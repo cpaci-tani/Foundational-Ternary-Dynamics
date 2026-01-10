@@ -1,0 +1,145 @@
+# The Two Layers {#sec-two-layers}
+
+*"The seen and the unseen"*
+
+::: {.callout-note}
+## Key Insight
+The framework distinguishes two ontological layers: the continuous flux field (potential) and the discrete state field (manifestation). Dynamics in the former determine transitions in the latter.
+:::
+
+## Layer 1: Potential (Pre-Ontic)
+
+Potential is **where something might happen**. It is not real in itself—it is the precondition for reality.
+
+The flux field permeates the entire lattice, carrying energy-momentum information that determines where manifestation events can occur.
+
+### Flux Vectors
+
+The potential layer is characterized by flux vectors:
+
+- **3D directional field**: $\vec{J} = (J_x, J_y, J_z)$
+- **Propagates through void** at speed C (1 cell/tick maximum)
+- **Flux magnitude = energy amplitude = density**
+
+### Density
+
+The density at any position is the magnitude of the flux:
+
+$$
+\rho = |\vec{J}| = \sqrt{J_x^2 + J_y^2 + J_z^2}
+$$
+
+where $\vec{J} = (J_x, J_y, J_z)$ is the flux vector. When $\rho \geq K_B$ (the manifestation threshold), genesis becomes possible.
+
+### Frequency
+
+Energy is related to frequency via:
+
+$$
+E = H \times f
+$$
+
+where $H = 1$ is the Planck constant in natural units and $f$ is the oscillation frequency. Higher frequency corresponds to higher energy, which affects time dilation for manifested particles.
+
+### Wave Velocity
+
+The time derivative of flux, used for wave equation integration. Waves propagate, interfere, and determine where manifestation occurs.
+
+### Phase Accumulator
+
+Each voxel maintains a local phase:
+
+$$
+\tau(x) \in [0,1)
+$$
+
+This accumulates based on local energy. When $\tau \geq 1$, the voxel is "active" for that tick.
+
+## Layer 2: Manifestation (Ontic)
+
+Manifestation is **when potential becomes real**. A discrete, local event.
+
+The rules:
+- **Intensity determines where**: Manifestation occurs in high-flux regions
+- **Divergence sign determines what**: Matter (+1) vs antimatter (-1)
+- **Once manifested**: Forces, collisions, decay apply
+
+### The Split View
+
+Imagine viewing the universe two ways simultaneously:
+
+| Potential View | Manifestation View |
+|---------------|-------------------|
+| Flowing flux fields | Discrete particles |
+| Continuous gradients | Point locations |
+| Wave-like behavior | Particle-like behavior |
+| Pre-ontic | Ontic |
+
+Both views are valid. They show different aspects of the same reality.
+
+## The Ocean Metaphor
+
+Consider this analogy:
+
+- **The ocean currents** = flux field (Layer 1)
+- **Ships on the surface** = particles (Layer 2)
+
+The currents are always there, flowing, interacting. Ships appear where currents are strong, move with the currents, and sometimes sink back into the ocean.
+
+You can study the currents (potential) or the ships (manifestation). Both are real. But the currents are more fundamental—they determine where ships can exist.
+
+## Experiments
+
+### Wave Visualization
+Create a flux disturbance. Watch it propagate through the void at speed C. See how it spreads, reflects, interferes.
+
+### Genesis Prediction
+Look at the potential field. Predict where genesis will occur based on flux density. Watch your predictions confirmed.
+
+### Flux Painting
+Draw patterns in the potential field. Observe how manifested particles appear in the high-density regions you created.
+
+## Mathematical Details
+
+### Wave Propagation
+
+The flux field evolves according to the discrete wave equation:
+
+$$
+\frac{\partial^2 u}{\partial t^2} = c^2 \nabla^2 u
+$$
+
+::: {.callout-note}
+## Derivation Source
+This wave equation is derived from the FTD action principle S[s,J]. See THEORETICAL_FOUNDATIONS Part I for the complete derivation via Euler-Lagrange equations.
+:::
+
+Discretized via velocity-Verlet:
+
+1. Calculate Laplacian (neighbor average - center)
+2. Update wave velocity
+3. Update flux
+4. Apply damping
+
+### Voxel State
+
+Each voxel maintains:
+
+```
+flux = [fx, fy, fz]         # Momentum vector
+density = |flux|            # Energy magnitude
+frequency = f               # Vibration rate
+wave_velocity = [vx,vy,vz]  # For wave propagation
+phase = τ                   # Local phase accumulator
+```
+
+## Concepts
+
+- **flux-vectors**: The 3D momentum/energy field
+- **density**: The magnitude of flux (|J|)
+- **layer-one**: The pre-ontic potential layer
+- **layer-two**: The ontic manifestation layer
+
+## Transition
+
+Now that we understand the two layers, we can see how they interact through interference—the geometry of possibility.

@@ -1,0 +1,145 @@
+# Time and Causality {#sec-time-causality}
+
+*"Why fast clocks run slow"*
+
+::: {.callout-note}
+## Key Revelation
+Time is not uniform. High-energy particles experience time more slowly. This is not a relativistic correction—it is fundamental to how the universe works.
+:::
+
+## Time Dilation
+
+In this framework, time dilation emerges naturally from the update mechanism.
+
+### The Lag Factor
+
+Each voxel has a local lag factor:
+
+$$
+L(x) = 1 + \alpha \cdot E(x) \cdot \omega(x)
+$$
+
+Where:
+- $\alpha$ = fine structure constant (0.00729)
+- $E(x)$ = local energy density
+- $\omega(x)$ = local frequency
+
+### The Phase Accumulator
+
+Each tick, the phase accumulator advances:
+
+$$
+\tau(x) \leftarrow \tau(x) + \frac{1}{L(x)}
+$$
+
+When $\tau \geq 1$, the voxel is "active" and processes updates. Then $\tau$ resets.
+
+**High-energy particles have larger L**, so their τ advances more slowly. They update less frequently. From their perspective, time flows normally—but from an external perspective, they age more slowly.
+
+## Two Particles, Different Times
+
+Consider two particles:
+
+| Particle | Energy | Lag Factor | Updates per 10 ticks |
+|----------|--------|------------|---------------------|
+| A (low energy) | 1.0 | 1.007 | ~10 |
+| B (high energy) | 100.0 | 1.73 | ~6 |
+
+Particle B experiences only 6 "moments" while particle A experiences 10. B ages more slowly.
+
+This is the source of relativistic time dilation in FTD—not a separate effect, but a fundamental feature of how updates propagate. **[SELECTION: the phase accumulator mechanism reproduces relativistic time dilation; its form is chosen to match known physics]**
+
+## Relativistic Mass
+
+As particles approach speed C, their effective mass increases:
+
+$$
+m_{\text{relativistic}} = \frac{m_{\text{rest}}}{\sqrt{1 - v^2/c^2}} = m_{\text{rest}} \cdot \gamma
+$$
+
+The gamma factor:
+
+$$
+\gamma = \frac{1}{\sqrt{1 - v^2/c^2}}
+$$
+
+As $v \rightarrow c$, $\gamma \rightarrow \infty$. You cannot accelerate a massive particle to the speed of light—the energy required becomes infinite.
+
+## Retarded Positions
+
+Forces don't act instantaneously. Information travels at speed C. When particle A exerts force on particle B, it uses A's position from the past:
+
+$$
+\vec{r}_{\text{retarded}} = \vec{r}_{\text{current}} - \vec{v} \cdot \frac{d}{C}
+$$
+
+Where $d$ is the distance between particles.
+
+This means:
+- Gravity uses past positions
+- Electromagnetic forces use past positions
+- All causal influence is limited by C
+
+## The Speed Limit
+
+Nothing can travel faster than C (1 voxel per tick). This is not a velocity limit—it is a **causality limit**.
+
+### What Happens at C
+
+When you try to accelerate a particle past C:
+1. Energy increases
+2. Lag factor increases
+3. Particle updates less frequently
+4. Effective velocity approaches but never reaches C
+
+### Implementation
+
+```python
+speed = |particle.velocity|
+if speed > C:
+    particle.velocity *= C / speed  # Clamp to C
+```
+
+## Experiments
+
+### Twin Paradox
+Create two identical particles. Accelerate one to high speed for a journey. Bring it back. Compare their phase accumulators—the traveling twin has aged less.
+
+### Force Lag
+Visualize retarded positions. See how forces act on where particles *were*, not where they are now.
+
+### Speed Limit Test
+Try to accelerate a particle past C. Watch the relativistic mass increase. See the asymptotic approach to lightspeed.
+
+## Mathematical Details
+
+### Time Dilation Formula
+
+The relationship between proper time τ and coordinate time t:
+
+$$
+d\tau = dt \cdot \sqrt{1 - v^2/c^2}
+$$
+
+In discrete form, this becomes the phase accumulator mechanism.
+
+### Energy-Momentum Relation
+
+$$
+E^2 = (pc)^2 + (m_0 c^2)^2
+$$
+
+For a massless particle (like flux waves): $E = pc$
+
+For a massive particle at rest: $E = m_0 c^2$
+
+## Concepts
+
+- **time-dilation**: High energy → slow time
+- **phase-accumulator**: The local clock mechanism
+- **retarded-positions**: Forces use past data
+- **speed-limit**: Nothing exceeds C
+
+## Transition
+
+Time and causality shape how particles move. But what makes them move? Next, we examine the four fundamental forces that govern all interactions.

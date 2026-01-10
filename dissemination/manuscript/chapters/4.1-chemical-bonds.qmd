@@ -1,0 +1,168 @@
+# Chemical Bonds {#sec-chemical-bonds}
+
+*With stable atoms in hand, we now explore how they combine through electron shell interactions.*
+
+*"How atoms connect"*
+
+::: {.callout-note}
+## Key Revelation
+Atoms bond to achieve stability. Whether by giving, taking, or sharing electrons, the goal is always the same: complete shells.
+:::
+
+## Why Atoms Bond
+
+Atoms are most stable with full outer shells. Most atoms don't have full shells naturally, so they bond with other atoms to share electrons.
+
+## Ionic Bonds
+
+Electron transfer creates oppositely charged ions that attract.
+
+### Example: Sodium Chloride
+
+```
+Na → Na⁺ + e⁻     (loses 1 electron)
+Cl + e⁻ → Cl⁻     (gains 1 electron)
+Na⁺ + Cl⁻ → NaCl  (electrostatic attraction)
+```
+
+### Properties of Ionic Compounds
+- High melting points (strong electrostatic bonds)
+- Brittle crystals (shift and like charges repel)
+- Conduct electricity when dissolved (free ions)
+- Form regular lattice structures
+
+## Covalent Bonds
+
+Electron sharing between atoms.
+
+### Single Bond
+One shared electron pair:
+```
+H-H: Each H contributes 1 electron
+     Both have 2 electrons (full 1s shell)
+```
+
+### Double Bond
+Two shared pairs:
+```
+O=O: Each O contributes 2 electrons
+     Both have 8 valence electrons
+```
+
+### Triple Bond
+Three shared pairs:
+```
+N≡N: Each N contributes 3 electrons
+     Very strong, very stable (atmosphere)
+```
+
+### Bond Strength
+Triple > Double > Single
+
+The more electrons shared, the stronger and shorter the bond.
+
+## Polar vs Nonpolar Covalent
+
+### Nonpolar Covalent
+Equal sharing between identical atoms:
+```
+H-H, O=O, N≡N
+```
+
+### Polar Covalent
+Unequal sharing between different atoms:
+```
+H-Cl: Chlorine pulls electrons more strongly
+      Creates partial charges: Hδ⁺-Clδ⁻
+```
+
+### Electronegativity
+The tendency to attract electrons. Fluorine is highest (4.0).
+
+Electronegativity difference determines bond type:
+- 0-0.4: Nonpolar covalent
+- 0.4-1.7: Polar covalent
+- >1.7: Ionic
+
+## Metallic Bonds
+
+Electron "sea" shared among many nuclei.
+
+### Model
+```
+⊕ e⁻ ⊕ e⁻ ⊕ e⁻ ⊕
+e⁻ ⊕ e⁻ ⊕ e⁻ ⊕ e⁻
+⊕ e⁻ ⊕ e⁻ ⊕ e⁻ ⊕
+
+⊕ = metal cation
+e⁻ = delocalized electron
+```
+
+### Properties of Metals
+- Electrical conductivity (electrons move freely)
+- Thermal conductivity (electrons carry heat)
+- Malleability (layers slide without breaking bonds)
+- Metallic luster (electrons reflect light)
+
+## Hydrogen Bonds
+
+Weak bonds between molecules, crucial for life.
+
+### Formation
+When H is bonded to N, O, or F (electronegative atoms):
+```
+H-O-H ··· H-O-H
+         ↑
+    Hydrogen bond
+```
+
+### Strength
+About 5% of a covalent bond. Weak individually, but significant collectively.
+
+### Importance
+- Water's high boiling point
+- DNA double helix structure
+- Protein secondary structure
+- Ice floating (unusual—lower density solid)
+
+## Van der Waals Forces
+
+Weakest intermolecular forces.
+
+### London Dispersion
+Temporary dipoles from electron fluctuations. Present in ALL molecules.
+
+### Dipole-Dipole
+Permanent dipoles attract each other.
+
+### Dipole-Induced Dipole
+Permanent dipole induces temporary dipole in neighbor.
+
+## Experiments
+
+### Bond Formation
+Bring atoms together. Watch electrons redistribute. See bonds form.
+
+### Bond Breaking
+Add energy to bonds. Watch them break. Measure bond energies.
+
+### Crystal Building
+Stack ions or atoms. Watch different bonding types create different structures.
+
+## Concepts
+
+- **ionic-bond**: Electron transfer, electrostatic attraction
+- **covalent-bond**: Electron sharing
+- **metallic-bond**: Electron sea
+- **hydrogen-bond**: Weak intermolecular attraction
+
+## Transition
+
+Atoms bond into molecules. Now let's explore the simplest molecules—diatomics and triatomics that make up our atmosphere and essential compounds in @sec-simple-molecules.
+
+::: {.callout-tip}
+## Related Topics
+- **Simple molecules**: @sec-simple-molecules covers diatomics and triatomics
+- **Complex molecules**: @sec-complex-molecules explores larger structures
+- **States of matter**: @sec-states-matter explains how bonded atoms behave collectively
+:::

@@ -1,0 +1,213 @@
+# The Philosophical Stance {#sec-philosophy}
+
+*"Before physics asks 'how,' philosophy asks 'what.'"*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter makes explicit the philosophical commitments underlying FTD. Every physical theory carries philosophical baggage; we prefer to unpack ours openly.
+:::
+
+## Dispositional Ontology
+
+FTD adopts a **dispositional ontology**: reality consists of dispositions (potentials, tendencies) that may or may not be actualized. This places FTD in conversation with contemporary philosophy of science, particularly the work on powers and dispositions by Mumford [@mumford2003], Bird [@bird2007], and Molnar [@molnar2003].
+
+### The Three Ontological Levels
+
+| Level | FTD Entity | Status |
+|-------|-----------|--------|
+| **Substrate** | Void (state 0) | Foundational |
+| **Disposition** | Flux field $\mathbf{J}$ | Tendencies of substrate |
+| **Manifestation** | States ±1 | Actualized dispositions |
+
+::: {.callout-note}
+## Connection to Philosophical Literature
+The dispositional ontology here echoes Aristotle's distinction between *potentiality* (dynamis) and *actuality* (energeia). The flux field plays the role of what contemporary metaphysicians call "powers"—intrinsic properties that ground causal capacities. Unlike categorical properties (which just *are*), dispositional properties point beyond themselves to what they *would do* under various conditions. See Mumford & Anjum [@mumford2011] for how dispositions can be causally efficacious without being reducible to categorical bases.
+:::
+
+### The Void as Null Substrate
+
+State 0 is not "nothing"—it is **substrate awaiting activation**.
+
+Think of it like:
+- A stem cell (undifferentiated, capable of becoming any cell type)
+- RAM at address 0x0000 (present, null, awaiting data)
+- A blank canvas (present, receptive, not empty)
+
+The void is not absence; it is **presence without properties**.
+
+### Flux as Disposition
+
+The flux field $\mathbf{J}$ represents dispositions:
+- Where flux is high, manifestation is likely
+- Where flux is low, the void persists
+- Flux is real (it propagates, interferes) but not substantial
+
+This resolves a classic puzzle: how can potential be "real" without being substance?
+
+Answer: Dispositions are modes of the substrate, not additional entities.
+
+### Manifestation as Actualization
+
+When conditions are met (density ≥ KB), disposition becomes actuality:
+- State transitions from 0 to ±1
+- Properties emerge (charge, mass, position)
+- The particle enters the causal order
+
+This is not creation ex nihilo—it is the actualization of pre-existing disposition.
+
+## Graded Monism
+
+FTD is neither dualist nor reductionist. It proposes **graded monism**:
+
+- **One substance**: The void/flux continuum
+- **Multiple modes**: Void, flux, manifestation
+- **Grades of being**: From potential to actual
+
+This framework engages with debates about **emergence** in philosophy of mind and philosophy of science. Following Kim [@kim1999], we distinguish:
+
+- **Weak emergence**: Higher-level patterns unpredictable in practice but derivable in principle from lower-level rules (FTD claims this for bound structures, interference patterns)
+- **Strong emergence**: Genuinely novel causal powers not reducible to the base level (FTD does *not* claim this)
+
+The "graded" aspect addresses Kim's causal exclusion argument: if dispositions are modes of the substrate (not separate entities), there is no problematic overdetermination. Manifestation doesn't *compete* with flux for causal efficacy—it *is* flux actualized.
+
+### Comparison with Other Views
+
+| View | Claim | FTD Position |
+|------|-------|--------------|
+| **Materialism** | Only matter exists | Manifestation is one mode, not all |
+| **Idealism** | Only mind exists | No—void has no mental properties |
+| **Dualism** | Mind and matter are separate | No—one graded substance |
+| **Panpsychism** | All matter has mind | No—no mental properties attributed |
+
+FTD is closest to **neutral monism**: one substance with multiple aspects, none privileged as fundamental.
+
+## Why Ternary?
+
+The choice of three states {−1, 0, +1} is not arbitrary.
+
+### The Argument from Asymmetry
+
+Binary systems (0, 1) cannot represent asymmetric phenomena naturally:
+- Matter/antimatter asymmetry
+- CP violation
+- Time's arrow
+
+Ternary systems have a natural "neutral" state that can distinguish between two polarities.
+
+### The Argument from Minimality
+
+Why not four states? Five?
+
+Ternary is **minimal for polarity**:
+- Two is insufficient (no neutral)
+- Three is sufficient (positive, negative, neutral)
+- Four or more adds structure without necessity
+
+### The Argument from Self-Reference
+
+The Lemniscate-Alpha derivation shows that the "2" in power-of-2 frequencies comes from the 2 manifest states (±1). The ternary structure generates binary harmonics as its "shadow."
+
+## The Measurement Problem
+
+Standard quantum mechanics faces the **measurement problem**: when does superposition "collapse" to definite state?
+
+FTD dissolves this problem:
+
+### No Superposition
+
+There is no ontic superposition. A particle is always in one definite state. What we call "superposition" is:
+- Epistemic uncertainty (we don't know which state)
+- Or: flux exists everywhere, manifestation is definite
+
+### No Collapse
+
+There is no collapse because there was never superposition. Measurement reveals a pre-existing state, doesn't create it.
+
+### No Observer Privilege
+
+Observers are physical systems. Measurement is interaction. There is nothing special about consciousness in this framework.
+
+::: {.callout-warning}
+## Epistemic Caveat
+This is a strong interpretive claim. Whether FTD can reproduce all quantum predictions—especially Bell violations—remains under investigation. See @sec-quantum-phenomena for the sLoop proposal.
+:::
+
+## Determinism and Free Will
+
+FTD is **deterministic**: given initial conditions, the evolution is fixed.
+
+### Implications
+
+- No genuine randomness (what looks random is sensitivity to unknown conditions)
+- No libertarian free will (if free will requires indeterminism)
+- Full predictability in principle (though not in practice)
+
+### Compatibilist Response
+
+This doesn't eliminate agency:
+- Agents are complex systems within the dynamics
+- Decisions emerge from physical processes
+- Responsibility can be defined functionally
+
+FTD takes no official position on free will debates but makes its determinism explicit.
+
+## Locality and Causality
+
+FTD is **strictly local**: influences propagate through adjacent cells only.
+
+### No Action at a Distance
+
+Everything that happens at a point happens because of its neighbors. There is no unmediated distant influence.
+
+### The Speed Limit
+
+Maximum speed = 1 cell/tick = c. This is not just a limit on matter but on causality itself.
+
+### Bell Correlations
+
+How then do Bell correlations arise without non-locality?
+
+The sLoop proposal: correlations arise from shared substrate, not from signals. The measurement apparatus and measured particles are ontologically connected through the flux field—they are parts of the same system.
+
+See @sec-quantum-phenomena for details.
+
+## The Status of Mathematics
+
+Is mathematics discovered or invented?
+
+FTD suggests a middle position:
+- The **structure** of mathematics is discovered (it follows from logic)
+- The **interpretation** is constructed (we choose what to model)
+
+The Lemniscate-Alpha derivation is striking because:
+- The curve is mathematically defined (discovered)
+- Its connection to physics is interpretive (constructed)
+- But the numerical agreement is remarkable (1.26 ppm)
+
+Does this mean mathematics IS physics? We don't claim this. We note the coincidence and leave interpretation to the reader.
+
+## Open Philosophical Questions
+
+### Why This Ontology?
+
+Why does the universe instantiate FTD rather than something else? We have no answer. This is the question of existence, not of structure.
+
+### Why These Axioms?
+
+The five axioms are sufficient, but are they necessary? Could a different set produce equivalent physics? Unknown.
+
+### Is Consciousness Special?
+
+FTD treats consciousness as emergent from physical processes. Whether there are aspects of consciousness not captured by physics is beyond our scope.
+
+## Concepts
+
+- **dispositional-ontology**: Reality as potentials and their actualization
+- **graded-monism**: One substance with degrees of being
+- **measurement-dissolution**: No collapse because no superposition
+- **strict-locality**: Influences propagate only through neighbors
+- **determinism**: Future fixed by present state
+
+## Transition
+
+With epistemic ground rules, mathematical tools, and philosophical stance established, we now begin the physics proper: the nature of the void, the first division into potential and actuality, and the emergence of structure from simplicity.
