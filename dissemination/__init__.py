@@ -1,2 +1,0 @@
-"""TRD dissemination package (Python)."""
-
