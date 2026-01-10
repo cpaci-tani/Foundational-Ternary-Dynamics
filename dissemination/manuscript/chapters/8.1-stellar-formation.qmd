@@ -1,0 +1,183 @@
+# Stellar Formation {#sec-stellar-formation}
+
+*"From nebula to star"*
+
+::: {.callout-note}
+## Key Revelation
+Stars are born when gravity defeats pressure in molecular clouds. The same process that forms planets—accretion—operates at vastly larger scales to ignite fusion.
+:::
+
+::: {.callout-note}
+## How FTD Produces Stellar Formation
+Stellar formation in FTD follows from flux dynamics at large scales:
+
+- **Gravitational instability** = regions where flux density exceeds local pressure support
+- **Jeans mass** emerges from the balance of gravitational flux gradients vs kinetic flux
+- **Fragmentation** occurs when cooling (flux dissipation) reduces Jeans mass
+- **Fusion ignition** happens when core flux density reaches nuclear threshold
+
+The hierarchical structure of star-forming regions reflects the scale-free nature of gravitational flux collapse.
+:::
+
+## Molecular Cloud Collapse
+
+### Initial Conditions
+
+Stars form in giant molecular clouds:
+- Size: 10-100 parsecs
+- Mass: 10⁴-10⁶ M☉
+- Temperature: 10-20 K
+- Composition: H₂, He, dust
+
+### Trigger Mechanisms
+
+Something must start the collapse:
+- **Supernova shockwave**: Compression
+- **Cloud collision**: Density increase
+- **Spiral arm compression**: Density wave
+- **Turbulence decay**: Support removal
+
+### Jeans Criterion
+
+Collapse occurs when gravity overcomes thermal pressure:
+
+$$
+M > M_J = \left(\frac{5k_BT}{G\mu m_H}\right)^{3/2} \left(\frac{3}{4\pi\rho}\right)^{1/2}
+$$
+
+For typical molecular cloud: $M_J \approx 10-100 \, M_\odot$
+
+## Fragmentation
+
+Large clouds break into multiple protostars:
+
+```
+      Initial cloud
+           ○
+          ╱│╲
+         ╱ │ ╲
+        ○  ○  ○    ← Fragments
+       ╱│  │  │╲
+      ○ ○  ○  ○ ○  ← More fragments
+```
+
+Each fragment continues collapsing independently.
+
+## Protostellar Evolution
+
+### Class 0 (0-10,000 years)
+
+- Deeply embedded in cloud
+- Invisible at optical wavelengths
+- Accretion onto central object
+- Bipolar outflows begin
+
+### Class I (10,000-100,000 years)
+
+- Envelope still infalling
+- Infrared bright
+- Disk forming
+- Outflows strengthen
+
+### Class II (100,000-1 million years)
+
+- T Tauri star
+- Visible optically
+- Disk prominent
+- Planet formation begins
+
+### Class III (>1 million years)
+
+- Disk dispersing
+- Pre-main sequence
+- Approaching hydrogen fusion
+- "Weak-line" T Tauri
+
+## The Birth Line
+
+Stars become visible when they emerge from their natal cloud:
+
+```
+  Log L
+     │
+     │  ★ Birth line
+     │   ╲
+     │    ╲ Pre-main sequence
+     │     ╲  tracks
+     │      ╲
+     │       ╲
+     │        ★ Main sequence
+     └────────────────────── Log T
+            ← cooler
+```
+
+## Star Formation Efficiency
+
+Only 1-10% of cloud mass becomes stars:
+- Stellar winds disperse gas
+- Radiation pressure pushes dust
+- Supernovae clear remaining material
+
+## Initial Mass Function
+
+The distribution of stellar masses at birth:
+
+$$
+\frac{dN}{dM} \propto M^{-2.35}
+$$
+
+- Many more low-mass stars than high-mass
+- Few stars > 50 M☉
+- Peak around 0.1-0.5 M☉
+
+## In Simulation
+
+```python
+def form_star(molecular_cloud):
+    while cloud.mass > jeans_mass(cloud):
+        # Gravitational collapse
+        cloud.contract()
+
+        # Temperature rises from compression
+        cloud.temperature += compression_heating()
+
+        # Check for ignition
+        if cloud.core_temp > FUSION_THRESHOLD:
+            return MainSequenceStar(cloud)
+
+        # Fragment if unstable
+        if should_fragment(cloud):
+            return [form_star(fragment) for fragment in split(cloud)]
+```
+
+## Experiments
+
+### Cloud Collapse
+Create molecular cloud. Watch it fragment and collapse.
+
+### Protostar Evolution
+Follow protostar from Class 0 to Class III.
+
+### Mass Distribution
+Form many stars. Compare to observed IMF.
+
+## Concepts
+
+- **jeans-mass**: Minimum mass for collapse
+- **fragmentation**: Cloud breaking into multiple stars
+- **protostar**: Star before hydrogen fusion begins
+- **t-tauri**: Young pre-main-sequence star
+
+## Transition
+
+Protostars become real stars when fusion ignites. Next (@sec-main-sequence), we explore the main sequence—where stars spend most of their lives, steadily fusing hydrogen into helium for billions of years.
+
+The journey from molecular cloud to main-sequence star takes millions of years—a geological instant on cosmic timescales, yet long enough for complex processes of fragmentation, accretion, and disk formation that determine not just stellar properties but also the planets that may form alongside.
+
+::: {.callout-tip}
+## Related Topics
+- **Main sequence**: @sec-main-sequence describes stellar hydrogen burning
+- **Stellar nucleosynthesis**: @sec-stellar-nucleosynthesis covers element formation in stars
+- **Stellar death**: @sec-stellar-death explores how stars end their lives
+- **Gravity wells**: @sec-gravity-wells explains the gravitational dynamics underlying collapse
+:::

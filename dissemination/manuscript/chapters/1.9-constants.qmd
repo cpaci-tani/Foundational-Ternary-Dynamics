@@ -1,0 +1,196 @@
+# Constants {#sec-constants}
+
+*"The tuning of reality"*
+
+::: {.callout-note}
+## Key Revelation
+From six constants, an entire universe unfolds. Change any of them, and chemistry fails, stars don't form, or observers cannot exist.
+:::
+
+::: {.callout-warning}
+## Derivation Status
+
+| Constant | Status | Scope |
+|----------|--------|-------|
+| C, H | Axiomatic | Core paper |
+| ALPHA | **DERIVED** | Core paper (1.26 ppm) |
+| KB, PHI, GRAVITY_BIAS | **DERIVED** [†] | Companion work |
+
+The core paper derives α from the master quadratic. Other derived constants use α plus additional framework relations developed in companion papers.
+:::
+
+## The Fundamental Constants
+
+The entire framework depends on just six numbers:
+
+| Constant | Value | Role | Status |
+|----------|-------|------|--------|
+| **C** | 1.0 | Speed of causality (maximum velocity) | Axiomatic |
+| **H** | 1.0 | Planck resolution (minimum distance/time) | Axiomatic |
+| **KB** | 0.511 | Existence threshold (minimum manifestation energy) | Derived [†] |
+| **ALPHA** | 0.00729 | Fine structure constant (~1/137) | **Derived** |
+| **PHI** | 1.618 | Golden ratio (stability geometry) | Derived [†] |
+| **GRAVITY_BIAS** | 0.01 | Gravitational coupling strength | Derived [†] |
+
+Plus the decay rate:
+
+| Constant | Value | Role | Status |
+|----------|-------|------|--------|
+| **DECAY_RATE** | 0.00729 | Entropy rate (= ALPHA) | Identified [†] |
+
+## Axioms (Hard Limits)
+
+Some constants are definitional—they establish the units:
+
+### C = 1.0 (Speed of Causality)
+The maximum rate at which information can propagate. One voxel per tick. This is not a velocity limit but a causality limit—nothing can influence anything faster than this.
+
+### H = 1.0 (Planck Resolution)
+The minimum unit of space and time. One voxel. One tick. There is no "between" these values.
+
+### KB = 0.511 (Existence Threshold)
+The minimum energy for manifestation. Numerically anchored to the electron rest mass scale in the chosen units; companion relations then connect this value to the framework integers once α is fixed.
+
+## Tuning Constants
+
+Other constants are tunable—they determine *behavior* within the framework:
+
+### ALPHA = 0.00729 (Fine Structure)
+
+The fine structure constant determines the strength of electromagnetic interactions. The experimentally measured value is α = 1/137.035999177(21) [@codata2022].
+
+::: {.callout-important}
+## Derived, Not Assumed
+Unlike other constants in this section, α is **not** a free parameter. It emerges from geometric constraints on a self-referential curve. See @sec-lemniscate-alpha for the full derivation, which achieves 1.26 ppm accuracy.
+:::
+
+This single number controls:
+- Atomic structure
+- Chemical bonding
+- Light-matter interactions
+- Decay rates
+
+### PHI = 1.618 (Golden Ratio)
+
+The golden ratio appears in stable geometries. Triads (nucleons) use this ratio for their internal structure. It provides maximum stability.
+
+### GRAVITY_BIAS = 0.01 (Gravitational Coupling)
+
+Controls the strength of gravity relative to other forces. Much weaker than electromagnetic force, but cumulative over large masses.
+
+### DECAY_RATE = 0.00729 (Entropy Rate)
+
+Controls how quickly unbound particles lose energy. Set equal to ALPHA, creating an elegant symmetry: the rate of electromagnetic interaction equals the rate of entropic decay.
+
+For clarity: this equality is an identification used in the model’s parameterization; its status and scope are tracked in the Assumption Ledger.
+
+## What If?
+
+What happens if we change these constants?
+
+### Increase ALPHA
+- Atoms become unstable (electrons fall into nucleus)
+- Chemistry fails
+- No molecules, no life
+
+### Decrease ALPHA
+- Atoms become too loosely bound
+- Chemical reactions too weak
+- No complex chemistry
+
+### Increase KB
+- Fewer particles can exist
+- Universe too sparse for structure
+
+### Decrease KB
+- Too many particles manifest
+- Universe too dense
+- Runaway pair production
+
+### Increase GRAVITY_BIAS
+- Stars collapse too quickly
+- No stable fusion
+- No heavy elements
+
+### Decrease GRAVITY_BIAS
+- No galaxy formation
+- No stars
+- Just diffuse gas forever
+
+## The Anthropic Window
+
+Our constants fall within a narrow window that allows:
+- Stable atoms
+- Complex chemistry
+- Long-lived stars
+- Heavy element formation
+- Planetary systems
+- Observers
+
+This is the "fine-tuning problem." Why these values?
+
+### Possible Explanations
+
+1. **Multiverse**: Many universes exist with different constants; we observe one that allows observers (selection effect)
+
+2. **Necessity**: Only these values are mathematically self-consistent
+
+3. **Design**: The constants were chosen for a purpose
+
+4. **This Simulation**: We chose constants to match our universe because that's what we wanted to model
+
+## Experiments
+
+### Break Chemistry
+Increase ALPHA gradually. Watch atomic orbitals destabilize. See chemistry fail.
+
+### Instant Decay
+Maximize DECAY_RATE. Watch particles evaporate almost immediately.
+
+### Find Stability
+Start with random constants. Try to tune them to create stable atoms and chemistry. Appreciate how narrow the window is.
+
+### Constant Playground
+Full control over all constants. Explore the parameter space. Find surprising configurations.
+
+## Mathematical Relationships
+
+### Energy-Mass Equivalence
+$$
+E = mc^2 = m \cdot 1^2 = m
+$$
+(In our units, c = 1, so E = m)
+
+### Threshold Condition
+$$
+\rho \geq K_B \implies \text{manifestation possible}
+$$
+
+### Decay Evolution
+$$
+\rho(t) = \rho_0 \cdot (1 - \text{DECAY\_RATE})^t
+$$
+
+Time to half-density: $t_{1/2} = \frac{\ln 2}{\ln(1/(1-\text{DECAY\_RATE}))}$
+
+## Concepts
+
+- **constants**: The fundamental parameters that shape reality
+- **fine-tuning**: Sensitivity to constant values
+- **anthropic-principle**: Why these values allow observers
+
+::: {.callout-note}
+## Chapter Summary
+**Six constants define the FTD framework**: C (causality speed), H (Planck resolution), KB (existence threshold), ALPHA (fine structure), PHI (golden ratio), and GRAVITY_BIAS (gravitational coupling). Of these, **α is derived** from geometric constraints (1.26 ppm accuracy), while the others are either axiomatic (C, H) or derived from α via framework relations. The constants fall within a narrow **anthropic window**—small changes would prevent stable atoms, stars, or observers from existing.
+:::
+
+## Transition
+
+We have presented six constants as the tuning parameters of reality. But are they truly free parameters? The next chapter (@sec-lemniscate-alpha) reveals something remarkable: at least one of these constants—the fine structure constant α—is not arbitrary at all. It emerges from the geometry of self-reference.
+
+::: {.callout-tip}
+## Related Topics
+- **Lemniscate-Alpha**: @sec-lemniscate-alpha derives α = 1/137.036 from geometry
+- **Constants Reference**: @sec-constants-reference provides the complete technical reference
+- **The Anthropic Window**: @sec-anthropic-window explores why these values permit observers
+:::

@@ -1,0 +1,11 @@
+Sugar-Phosphate backbone
+        |
+    5'— P — S — P — S — P — S —3'
+            |       |       |
+            A ≡ T   G ≡ C   A ≡ T
+            |       |       |
+    3'— P — S — P — S — P — S —5'
+
+Base pairs:
+  A-T: 2 hydrogen bonds
+  G-C: 3 hydrogen bonds

@@ -1,0 +1,305 @@
+# Alternative Endings {#sec-alternative-endings}
+
+*"Other fates for the cosmos"*
+
+::: {.callout-note}
+## Key Revelation
+Heat death is not destiny's only option. Depending on dark energy's nature, the universe might end in fire (Big Rip), ice (Big Freeze), or renewal (Big Bounce). The cosmos has many possible endings.
+:::
+
+## The Big Rip
+
+### Dark Energy Intensifies
+
+If dark energy's equation of state has w < -1 ("phantom energy"):
+$$
+\rho_{DE} \propto a^{-3(1+w)}
+$$
+
+With w < -1, dark energy density *increases* as universe expands.
+
+### Timeline to Rip
+
+| Time Before Rip | Event |
+|-----------------|-------|
+| 1 billion years | Galaxy clusters torn apart |
+| 60 million years | Milky Way disrupted |
+| 3 months | Solar system destroyed |
+| 30 minutes | Earth explodes |
+| 10⁻¹⁹ seconds | Atoms ripped apart |
+| 0 | Spacetime itself tears |
+
+### The Physics
+
+Expansion accelerates without bound:
+$$
+H(t) \rightarrow \infty \text{ as } t \rightarrow t_{rip}
+$$
+
+Everything—galaxies, stars, planets, atoms, nuclei—torn apart.
+
+### Survival?
+
+None possible. Even fundamental particles disrupted.
+
+## The Big Crunch
+
+### Gravity Wins
+
+If dark energy weakens or reverses:
+- Expansion slows
+- Stops
+- Reverses
+
+### The Collapse
+
+```
+Time evolution:
+────────────────────────────
+Expansion ───→ Maximum ───→ Contraction
+                  ↓
+              Structures merge
+                  ↓
+              Temperature rises
+                  ↓
+              All matter compressed
+                  ↓
+              Singularity (Big Crunch)
+────────────────────────────
+```
+
+### The Final Moments
+
+As universe contracts:
+- CMB blueshifts, heats
+- Stars cooked by radiation
+- Nuclei dissociate
+- Quark-gluon plasma
+- Final singularity
+
+Time reversal of Big Bang.
+
+## The Big Bounce
+
+### Crunch to Bang
+
+Perhaps the universe cycles:
+- Contracts to minimum
+- Bounces
+- Expands again
+- Repeat forever
+
+### Cyclic Cosmology
+
+```
+     Size
+       │
+       │    ╱╲    ╱╲    ╱╲
+       │   ╱  ╲  ╱  ╲  ╱  ╲
+       │  ╱    ╲╱    ╲╱    ╲
+       │ ╱
+       └─────────────────────── Time
+           ↑      ↑      ↑
+        Bounce  Bounce  Bounce
+```
+
+### Mechanisms
+
+1. **Loop quantum gravity**: Quantum effects prevent singularity
+2. **Ekpyrotic**: Colliding branes in string theory
+3. **Conformal cyclic cosmology**: Penrose's CCC
+
+### Information Survival?
+
+Does information persist through bounces?
+- If yes: Eternal memory
+- If no: Each cycle fresh
+
+## The Big Freeze (Heat Death Variant)
+
+### Accelerating Expansion
+
+With cosmological constant (w = -1):
+- Expansion accelerates forever
+- But not to rip—just faster expansion
+- Dilution without destruction
+
+### Isolation
+
+Eventually:
+- Galaxies beyond horizon
+- Observable universe: Just our local group
+- Then just our galaxy remnant
+- Then just scattered particles
+
+### Effective Heat Death
+
+Same endpoint as heat death, but:
+- Faster approach
+- More isolated
+- More expansion
+
+## Vacuum Decay
+
+### The False Vacuum
+
+Our vacuum might not be ground state:
+- Metastable configuration
+- Could decay to true vacuum
+
+### The Bubble of Death
+
+```
+True vacuum bubble nucleates:
+         ⊙ ← bubble forms
+
+Expands at nearly light speed:
+      ╱───────╲
+     ╱  True   ╲
+    ╱  Vacuum   ╲
+   ╱─────────────╲
+  ↗               ↖
+Expanding at ~c
+```
+
+### Consequences
+
+Inside true vacuum:
+- Different physics
+- Different constants
+- Different particles
+- No chemistry, no life
+
+### Probability
+
+Tunneling probability per unit volume:
+$$
+P \propto e^{-S}
+$$
+
+Very small, but not zero.
+
+Could happen anytime, anywhere.
+
+## The Big Snap
+
+### Cosmic String Catastrophe
+
+If cosmic strings exist and are unstable:
+- String network decays violently
+- Energy released in gravitational waves
+- Spacetime disrupted
+
+### The Scenario
+
+```
+Stable network:
+∿∿∿∿∿∿∿∿∿∿∿∿
+
+Instability develops:
+∿∿∿∿╳∿∿∿∿∿∿∿
+
+Cascade:
+∿∿∿╳∿╳∿╳∿∿∿
+
+Spacetime disruption:
+* * * * * * * * * * * * *
+```
+
+Speculative, but possible.
+
+## In the Simulation
+
+### Modeling Alternative Endings
+
+```python
+def simulate_big_rip(universe, w=-1.5):
+    # Phantom dark energy (w < -1)
+    while True:
+        # Dark energy density increases
+        s = universe.scale
+        exponent = -3 * (1 + w)
+        rho_de = initial_rho * s**exponent
+
+        # Apply dark energy expansion
+        expansion_rate = sqrt(rho_de)
+        universe.expand(expansion_rate)
+
+        # Check for rip
+        if expansion_rate > INFINITY_THRESHOLD:
+            print("Big Rip occurred!")
+            break
+
+        universe.step()
+
+def simulate_big_crunch(universe, turn_time):
+    for tick in range(turn_time):
+        universe.step()
+        universe.expand(slow_rate)
+
+    # Reverse expansion
+    while universe.size > PLANCK_SIZE:
+        universe.step()
+        universe.contract(accelerating_rate)
+
+    print("Big Crunch!")
+
+def simulate_vacuum_decay(universe):
+    for tick in range(MAX_TICKS):
+        # Check for spontaneous nucleation
+        for voxel in universe.grid:
+            if random() < DECAY_PROBABILITY:
+                # Nucleate true vacuum bubble
+                bubble = create_true_vacuum_bubble(voxel)
+                universe.add_bubble(bubble)
+
+        # Expand existing bubbles
+        for bubble in universe.bubbles:
+            bubble.expand_at_c()
+
+        universe.step()
+```
+
+## Comparison of Endings
+
+| Ending | Cause | Timescale | Survival? |
+|--------|-------|-----------|-----------|
+| Heat Death | Entropy | 10¹⁰⁰+ years | No (eventual) |
+| Big Rip | Phantom energy | ~20 Gyr | No |
+| Big Crunch | Gravity | Variable | No |
+| Big Bounce | Quantum gravity | Cycles | Maybe |
+| Big Freeze | Dark energy | 10¹⁴+ years | No (eventual) |
+| Vacuum Decay | Quantum tunneling | Random | No |
+
+## The Most Likely Ending
+
+Current evidence favors:
+- Cosmological constant (w ≈ -1)
+- Eternal expansion
+- Heat death via Big Freeze
+
+But measurements have uncertainty:
+- w could be slightly < -1 → Rip
+- w could change with time → Unknown
+
+## Experiments
+
+### Ending Selector
+Choose dark energy equation of state. Watch corresponding fate.
+
+### Vacuum Decay Visualization
+See bubble nucleate and expand. Watch physics change.
+
+### Bounce Animation
+Run cyclic cosmology. Watch universe contract and re-expand.
+
+## Concepts
+
+- **big-rip**: Phantom energy tears everything apart
+- **big-crunch**: Gravity reverses expansion
+- **big-bounce**: Crunch followed by new expansion
+- **vacuum-decay**: Transition to true vacuum
+
+## Transition
+
+Many possible endings, but one theme unites them: return. Whether through rip, crunch, freeze, or decay, everything returns to a simpler state. The ultimate return is to the Void itself.

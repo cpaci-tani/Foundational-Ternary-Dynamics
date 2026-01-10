@@ -1,0 +1,413 @@
+# Particle Catalog {#sec-particle-catalog}
+
+*"The complete bestiary—mass relations and numerical fits within the framework"*
+
+::: {.callout-important}
+## Major Update: Masses Are Derived
+This catalog compiles the mass relations used in the Lemniscate-Alpha program and companion material, using four integers: b₃=7, N_c=3, N_eff=13, N_base=4. Masses are shown as ratios to electron mass m_e = 0.511 MeV/c².
+:::
+
+## Fundamental Fermions
+
+### Quarks (State: +1)
+
+Quarks are the fundamental constituents of hadrons. The catalog presents the framework's proposed mass relations in a uniform format.
+
+#### Quark Mass Derivations
+
+| Quark | Formula | m/m_e | MeV/c² | Error |
+|-------|---------|-------|--------|-------|
+| Up (u) | N_base + sin²θ_W | 4.231 | 2.16 | 0.09% |
+| Down (d) | 2N_base + 1 + αN_eff | 9.095 | 4.67 | 0.48% |
+| Strange (s) | N_eff(N_eff+1) + 1 | 183 | 93.5 | 0.12% |
+| Charm (c) | N_eff(b₃+N_c)(19) + 15 | 2485 | 1270 | 0.01% |
+| Bottom (b) | 10³×8 + 169 | 8169 | 4180 | 0.14% |
+| Top (t) | (φ² - 64α) × m_W | 338,400 | 173,000 | 0.12% |
+
+#### Generation I (Stable)
+
+| Property | Up (u) | Down (d) |
+|----------|--------|----------|
+| Symbol | u | d |
+| Charge | +2/3 | -1/3 |
+| Mass (m/m_e) | 4.23 | 9.10 |
+| State | +1 | +1 |
+| Color | r/g/b | r/g/b |
+| **Derivation** | N_base + sin²θ_W | 2N_base + 1 + αN_eff |
+
+#### Generation II
+
+| Property | Charm (c) | Strange (s) |
+|----------|-----------|-------------|
+| Symbol | c | s |
+| Charge | +2/3 | -1/3 |
+| Mass (m/m_e) | 2485 | 183 |
+| State | +1 | +1 |
+| Color | r/g/b | r/g/b |
+| **Derivation** | N_eff(b₃+N_c)(19)+15 | N_eff(N_eff+1)+1 |
+
+#### Generation III
+
+| Property | Top (t) | Bottom (b) |
+|----------|---------|------------|
+| Symbol | t | b |
+| Charge | +2/3 | -1/3 |
+| Mass (m/m_e) | 338,400 | 8169 |
+| State | +1 | +1 |
+| Color | r/g/b | r/g/b |
+| **Derivation** | (φ²-64α)×m_W | 10³×8+169 |
+
+### Antiquarks (State: -1)
+
+Every quark has an antiquark with opposite charge and state.
+
+| Antiquark | Symbol | Charge | State |
+|-----------|--------|--------|-------|
+| Anti-up | ū | -2/3 | -1 |
+| Anti-down | d̄ | +1/3 | -1 |
+| Anti-charm | c̄ | -2/3 | -1 |
+| Anti-strange | s̄ | +1/3 | -1 |
+| Anti-top | t̄ | -2/3 | -1 |
+| Anti-bottom | b̄ | +1/3 | -1 |
+
+### Leptons
+
+#### Lepton Mass Derivations
+
+| Lepton | Formula | m/m_e | MeV/c² | Error |
+|--------|---------|-------|--------|-------|
+| Electron | 70α = b₃(b₃+N_c)α | 1.000 | 0.511 | 0.036% |
+| Muon | 3×70 - 3 | 207 | 105.8 | 0.11% |
+| Tau | 17×207 - 42 | 3477 | 1777 | 0.01% |
+
+#### Charged Leptons (State: -1)
+
+| Property | Electron (e⁻) | Muon (μ⁻) | Tau (τ⁻) |
+|----------|---------------|-----------|----------|
+| Symbol | e⁻ | μ⁻ | τ⁻ |
+| Charge | -1 | -1 | -1 |
+| Mass (m/m_e) | 1 | 207 | 3477 |
+| State | -1 | -1 | -1 |
+| **Derivation** | 70α | 3×70 - 3 | 17×207 - 42 |
+| Stable | Yes | No (2.2 μs) | No (290 fs) |
+
+#### Antileptons (State: +1)
+
+| Antilepton | Symbol | Charge | Mass | State |
+|------------|--------|--------|------|-------|
+| Positron | e⁺ | +1 | 0.511 | +1 |
+| Antimuon | μ⁺ | +1 | 2.1 | +1 |
+| Antitau | τ⁺ | +1 | 35.0 | +1 |
+
+#### Neutrinos (State: 0)
+
+| Property | νₑ | νμ | ντ |
+|----------|-----|-----|-----|
+| Charge | 0 | 0 | 0 |
+| Mass | ~0.001 | ~0.001 | ~0.001 |
+| State | 0 | 0 | 0 |
+| Interacts | Weak only | Weak only | Weak only |
+
+## Bosons (Force Carriers)
+
+### Electroweak Boson Mass Derivations
+
+| Boson | Formula | m/m_e | GeV/c² | Error |
+|-------|---------|-------|--------|-------|
+| W± | 67/(8α²) | 157,273 | 80.38 | 0.016% |
+| Z⁰ | m_W × √(13/10) | 179,266 | 91.19 | 0.49% |
+| Higgs | N_eff/α² | 244,125 | 124.8 | 0.40% |
+
+### Gauge Bosons
+
+| Property | Photon (γ) | Gluon (g) | W± | Z⁰ |
+|----------|------------|-----------|-----|-----|
+| Force | EM | Strong | Weak | Weak |
+| Charge | 0 | 0 | ±1 | 0 |
+| Mass (m/m_e) | 0 | 0 | 157,273 | 179,266 |
+| **Derivation** | — | — | 67/(8α²) | m_W×√(13/10) |
+| State | 0 | 0 | ±1 | 0 |
+| Range | ∞ | ~1 fm | ~0.001 fm | ~0.001 fm |
+
+### Higgs Boson
+
+| Property | Value |
+|----------|-------|
+| Symbol | H⁰ |
+| Charge | 0 |
+| Mass (m/m_e) | 244,125 |
+| **Derivation** | N_eff/α² |
+| State | 0 |
+| Role | Mass generation |
+
+## Composite Particles: Baryons
+
+### Baryon Mass Derivations
+
+| Baryon | Formula | m/m_e | MeV/c² | Error |
+|--------|---------|-------|--------|-------|
+| Proton | N_eff/α + T(10) | 1836.47 | 938.3 | 0.017% |
+| Neutron | m_p + (φ² - 12α) | 1839.0 | 939.6 | 0.04% |
+
+Where T(10) = 55 is the 10th triangular number, and (n-p)/m_e = φ² - 12α = 2.53.
+
+### Nucleons (Generation I quarks only)
+
+| Property | Proton (p) | Neutron (n) |
+|----------|------------|-------------|
+| Quarks | uud | udd |
+| Charge | +1 | 0 |
+| Mass (m/m_e) | 1836.47 | 1839.0 |
+| **Derivation** | N_eff/α + T(10) | m_p + (φ² - 12α) |
+| State | +1 | 0 |
+| Stable | Yes | No (≈15 min free) |
+| Geometry | Triad | Triad |
+
+### Strange Baryons
+
+| Baryon | Quarks | Charge | Mass | Strangeness |
+|--------|--------|--------|------|-------------|
+| Λ⁰ | uds | 0 | 14.0 | -1 |
+| Σ⁺ | uus | +1 | 14.0 | -1 |
+| Σ⁰ | uds | 0 | 14.0 | -1 |
+| Σ⁻ | dds | -1 | 14.0 | -1 |
+| Ξ⁰ | uss | 0 | 16.0 | -2 |
+| Ξ⁻ | dss | -1 | 16.0 | -2 |
+| Ω⁻ | sss | -1 | 20.0 | -3 |
+
+### Delta Baryons (Excited States)
+
+| Baryon | Quarks | Charge | Mass | Notes |
+|--------|--------|--------|------|-------|
+| Δ⁺⁺ | uuu | +2 | 15.0 | Resonance |
+| Δ⁺ | uud | +1 | 15.0 | Resonance |
+| Δ⁰ | udd | 0 | 15.0 | Resonance |
+| Δ⁻ | ddd | -1 | 15.0 | Resonance |
+
+### Charmed Baryons
+
+| Baryon | Quarks | Charge | Mass |
+|--------|--------|--------|------|
+| Λc⁺ | udc | +1 | 50.0 |
+| Σc⁺⁺ | uuc | +2 | 52.0 |
+| Ξc⁺ | usc | +1 | 55.0 |
+| Ωc⁰ | ssc | 0 | 60.0 |
+
+## Composite Particles: Mesons
+
+### Pions (Lightest Mesons)
+
+| Meson | Quarks | Charge | Mass | Lifetime |
+|-------|--------|--------|------|----------|
+| π⁺ | ud̄ | +1 | 3.0 | 26 ns |
+| π⁻ | dū | -1 | 3.0 | 26 ns |
+| π⁰ | uū/dd̄ | 0 | 3.0 | 84 as |
+
+### Kaons (Strange Mesons)
+
+| Meson | Quarks | Charge | Mass | Strangeness |
+|-------|--------|--------|------|-------------|
+| K⁺ | us̄ | +1 | 10.0 | +1 |
+| K⁻ | sū | -1 | 10.0 | -1 |
+| K⁰ | ds̄ | 0 | 10.0 | +1 |
+| K̄⁰ | sd̄ | 0 | 10.0 | -1 |
+
+### Eta Mesons
+
+| Meson | Quarks | Charge | Mass |
+|-------|--------|--------|------|
+| η | uū+dd̄+ss̄ | 0 | 11.0 |
+| η' | uū+dd̄+ss̄ | 0 | 20.0 |
+
+### Vector Mesons
+
+| Meson | Quarks | Charge | Mass |
+|-------|--------|--------|------|
+| ρ⁺ | ud̄ | +1 | 15.0 |
+| ρ⁻ | dū | -1 | 15.0 |
+| ρ⁰ | uū/dd̄ | 0 | 15.0 |
+| ω | uū+dd̄ | 0 | 16.0 |
+| φ | ss̄ | 0 | 20.0 |
+
+### Heavy Quarkonia
+
+| Meson | Quarks | Charge | Mass | Notes |
+|-------|--------|--------|------|-------|
+| J/ψ | cc̄ | 0 | 60.0 | Charmonium |
+| ηc | cc̄ | 0 | 58.0 | Charmonium |
+| Υ | bb̄ | 0 | 180.0 | Bottomonium |
+| ηb | bb̄ | 0 | 175.0 | Bottomonium |
+
+### D Mesons (Charmed)
+
+| Meson | Quarks | Charge | Mass |
+|-------|--------|--------|------|
+| D⁺ | cd̄ | +1 | 40.0 |
+| D⁻ | dc̄ | -1 | 40.0 |
+| D⁰ | cū | 0 | 40.0 |
+| D̄⁰ | uc̄ | 0 | 40.0 |
+| Ds⁺ | cs̄ | +1 | 42.0 |
+
+### B Mesons (Bottom)
+
+| Meson | Quarks | Charge | Mass |
+|-------|--------|--------|------|
+| B⁺ | ub̄ | +1 | 100.0 |
+| B⁻ | bū | -1 | 100.0 |
+| B⁰ | db̄ | 0 | 100.0 |
+| Bs⁰ | sb̄ | 0 | 102.0 |
+
+## Atomic Nuclei (Selected)
+
+### Light Nuclei
+
+| Nucleus | Symbol | Protons | Neutrons | Mass |
+|---------|--------|---------|----------|------|
+| Hydrogen | ¹H | 1 | 0 | 9.0 |
+| Deuterium | ²H | 1 | 1 | 18.0 |
+| Tritium | ³H | 1 | 2 | 27.0 |
+| Helium-3 | ³He | 2 | 1 | 27.0 |
+| Helium-4 | ⁴He | 2 | 2 | 36.0 |
+| Lithium-7 | ⁷Li | 3 | 4 | 63.0 |
+| Carbon-12 | ¹²C | 6 | 6 | 108.0 |
+
+### Medium Nuclei
+
+| Nucleus | Z | N | Mass | Notes |
+|---------|---|---|------|-------|
+| Oxygen-16 | 8 | 8 | 144.0 | Doubly magic |
+| Iron-56 | 26 | 30 | 504.0 | Most stable |
+| Nickel-62 | 28 | 34 | 558.0 | Highest binding/nucleon |
+
+### Heavy Nuclei
+
+| Nucleus | Z | N | Mass | Notes |
+|---------|---|---|------|-------|
+| Lead-208 | 82 | 126 | 1872.0 | Doubly magic, stable |
+| Uranium-235 | 92 | 143 | 2115.0 | Fissile |
+| Uranium-238 | 92 | 146 | 2142.0 | Most common U |
+
+## Atoms (Selected)
+
+### Complete Atoms
+
+| Atom | Z | Electrons | Config | Mass |
+|------|---|-----------|--------|------|
+| H | 1 | 1 | 1s¹ | 9.5 |
+| He | 2 | 2 | 1s² | 37.0 |
+| Li | 3 | 3 | [He]2s¹ | 63.5 |
+| C | 6 | 6 | [He]2s²2p² | 108.5 |
+| N | 7 | 7 | [He]2s²2p³ | 126.0 |
+| O | 8 | 8 | [He]2s²2p⁴ | 144.5 |
+| Fe | 26 | 26 | [Ar]3d⁶4s² | 517.0 |
+
+## Simulation Implementation
+
+### Particle Creation Template
+
+```python
+PARTICLE_CATALOG = {
+    # Quarks
+    'up': {'mass': 0.6, 'charge': 2/3, 'state': +1},
+    'down': {'mass': 0.6, 'charge': -1/3, 'state': +1},
+    'charm': {'mass': 25.0, 'charge': 2/3, 'state': +1},
+    'strange': {'mass': 2.0, 'charge': -1/3, 'state': +1},
+    'top': {'mass': 350.0, 'charge': 2/3, 'state': +1},
+    'bottom': {'mass': 80.0, 'charge': -1/3, 'state': +1},
+
+    # Leptons
+    'electron': {'mass': 0.511, 'charge': -1, 'state': -1},
+    'muon': {'mass': 2.1, 'charge': -1, 'state': -1},
+    'tau': {'mass': 35.0, 'charge': -1, 'state': -1},
+    'neutrino_e': {'mass': 0.001, 'charge': 0, 'state': 0},
+
+    # Composite
+    'proton': {
+        'mass': 9.0,
+        'charge': +1,
+        'state': +1,
+        'composition': ['up', 'up', 'down'],
+        'geometry': 'triad'
+    },
+    'neutron': {
+        'mass': 9.0,
+        'charge': 0,
+        'state': 0,
+        'composition': ['up', 'down', 'down'],
+        'geometry': 'triad'
+    },
+}
+
+def create_particle(particle_type, position):
+    template = PARTICLE_CATALOG[particle_type]
+    particle = Voxel(position)
+    particle.state = template['state']
+    particle.mass = template['mass']
+    particle.charge = template['charge']
+    particle.uuid = generate_uuid()
+    return particle
+```
+
+### Composite Particle Factory
+
+```python
+def create_proton(center_position):
+    """Create a proton triad at given position."""
+    # Equilateral triangle in xy-plane
+    offset = 0.707  # sqrt(2)/2 for unit separation
+    positions = [
+        center_position + [0, offset, 0],      # up
+        center_position + [-offset, -offset/2, 0],  # up
+        center_position + [offset, -offset/2, 0],   # down
+    ]
+
+    quarks = [
+        create_particle('up', positions[0]),
+        create_particle('up', positions[1]),
+        create_particle('down', positions[2]),
+    ]
+
+    # Lock the triad
+    for q in quarks:
+        q.is_locked = True
+
+    return Proton(quarks)
+
+def create_hydrogen(center_position):
+    """Create hydrogen atom: proton + electron."""
+    proton = create_proton(center_position)
+
+    # Electron at shell radius
+    electron_pos = center_position + [5, 0, 0]  # n=1 shell
+    electron = create_particle('electron', electron_pos)
+    electron.shell_n = 1
+
+    return HydrogenAtom(proton, electron)
+```
+
+## Quick Reference Table
+
+### By State
+
+| State | Particles |
+|-------|-----------|
+| +1 (Matter) | Quarks, positron, antileptons, W⁺ |
+| 0 (Void/Neutral) | Photon, gluon, Z⁰, Higgs, neutrinos |
+| -1 (Antimatter) | Antiquarks, electron, charged leptons, W⁻ |
+
+### By Force Interaction
+
+| Force | Affected Particles |
+|-------|-------------------|
+| Strong | Quarks, gluons |
+| EM | All charged |
+| Weak | All fermions |
+| Gravity | All with mass |
+
+### By Stability
+
+| Category | Examples |
+|----------|----------|
+| Absolutely stable | Proton, electron, photon, neutrinos |
+| Metastable | Neutron (free), muon |
+| Resonances | Delta baryons, rho mesons |

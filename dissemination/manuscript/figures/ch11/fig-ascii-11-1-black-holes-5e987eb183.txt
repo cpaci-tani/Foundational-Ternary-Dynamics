@@ -1,0 +1,11 @@
+┌─────────────────────────────────────────────┐
+│    INITIAL STATE                            │
+│    - Pure quantum state |ψ⟩                 │
+│    - Complete information                   │
+│                                             │
+│    ↓ (black hole formation & evaporation)   │
+│                                             │
+│    FINAL STATE                              │
+│    - Thermal radiation (mixed state ρ)      │
+│    - Information lost?                      │
+└─────────────────────────────────────────────┘

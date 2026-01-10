@@ -1,0 +1,197 @@
+# Voxel Anatomy {#sec-voxel-anatomy}
+
+*"Everything a point in space needs to know"*
+
+::: {.callout-note}
+## Key Revelation
+Each voxel is a complete world: position, state, energy, velocity, phase, and connections. The voxel is the atom of space itself.
+:::
+
+## The Fundamental Unit
+
+Every point in space is a voxel. Each voxel carries all the information needed to determine its behavior.
+
+## Voxel Data Structure
+
+```python
+class Voxel:
+    # ═══════════════════════════════════════════════════════════════
+    # IDENTITY
+    # ═══════════════════════════════════════════════════════════════
+    pos = [x, y, z]                    # Lattice position (integers)
+    uuid = None                         # Unique identifier (if manifested)
+    entanglement_partner_uuid = None    # Partner from pair production
+
+    # ═══════════════════════════════════════════════════════════════
+    # ONTOLOGICAL STATE
+    # ═══════════════════════════════════════════════════════════════
+    state = 0                           # -1, 0, +1
+    charge = None                       # Fractional for quarks (±1/3, ±2/3)
+    shell_n = None                      # Electron shell number (if electron)
+
+    # ═══════════════════════════════════════════════════════════════
+    # ENERGY / WILL
+    # ═══════════════════════════════════════════════════════════════
+    flux = [0.0, 0.0, 0.0]             # Momentum/energy vector
+    density = 0.0                       # |flux| - energy magnitude
+    frequency = 1.0                     # E = hf - vibration rate
+
+    # ═══════════════════════════════════════════════════════════════
+    # MECHANICS
+    # ═══════════════════════════════════════════════════════════════
+    force_accumulator = [0.0, 0.0, 0.0] # Forces acting this tick
+    position_remainder = [0.0, 0.0, 0.0] # Sub-voxel position
+    wave_velocity = [0.0, 0.0, 0.0]      # For wave equation
+
+    # ═══════════════════════════════════════════════════════════════
+    # TEMPORAL
+    # ═══════════════════════════════════════════════════════════════
+    phase = 0.0                         # τ ∈ [0,1) for time gating
+
+    # ═══════════════════════════════════════════════════════════════
+    # STABILITY
+    # ═══════════════════════════════════════════════════════════════
+    is_locked = False                   # In stable structure?
+```
+
+## Identity Fields
+
+### Position
+Integer coordinates (x, y, z) on the lattice. Immutable for the voxel itself, but particles can move between voxels.
+
+### UUID
+Unique identifier assigned at genesis. Tracks the particle through its lifetime. Released at evaporation/annihilation.
+
+### Entanglement Partner
+The UUID of the particle created alongside this one. Links particles born together, allowing correlation without communication.
+
+## Ontological Fields
+
+### State
+The most fundamental property:
+- **0**: Void (can conduct flux, cannot manifest)
+- **+1**: Matter (manifested positive)
+- **-1**: Antimatter (manifested negative)
+
+### Charge
+For quarks, fractional charge:
+- Up-type: +2/3
+- Down-type: -1/3
+
+For leptons, integer charge:
+- Electron: -1
+- Neutrino: 0
+
+### Shell Number
+For electrons bound to nuclei, the principal quantum number (1, 2, 3, ...).
+
+## Energy Fields
+
+### Flux
+The 3D momentum/energy vector. Carries:
+- Direction of energy flow
+- Magnitude of energy
+- Phase information (via direction)
+
+### Density
+The magnitude of flux: $\rho = |\vec{J}| = \sqrt{J_x^2 + J_y^2 + J_z^2}$
+
+Determines:
+- Can particle exist? (ρ ≥ KB)
+- Gravitational influence
+- Probability of genesis
+
+### Frequency
+The vibration rate of the field: $E = Hf$
+
+Affects time dilation through the lag factor.
+
+## Mechanics Fields
+
+### Force Accumulator
+Sum of all forces acting on this voxel this tick. Reset after integration.
+
+### Position Remainder
+Sub-voxel fractional position. Accumulates until a discrete jump occurs.
+
+### Wave Velocity
+Used for wave equation integration. The time derivative of flux.
+
+## Temporal Fields
+
+### Phase (τ)
+The local clock. Accumulates each tick as:
+$$
+\tau \leftarrow \tau + \frac{1}{L(x)}
+$$
+
+When τ ≥ 1, the voxel processes updates and τ resets.
+
+## Stability Fields
+
+### Is Locked
+Boolean flag indicating whether this particle is part of a stable structure (e.g., a triad).
+
+Locked particles:
+- Don't decay
+- Have modified force responses
+- Maintain structural integrity
+
+## The Moore Neighborhood
+
+Each voxel has 26 neighbors:
+
+| Type | Count | Distance |
+|------|-------|----------|
+| Face neighbors | 6 | 1 |
+| Edge neighbors | 12 | √2 |
+| Corner neighbors | 8 | √3 |
+| **Total** | **26** | |
+
+All physics is local—only neighbors matter for direct interaction.
+
+## Derived Fields
+
+Computed from local and neighbor data:
+
+### Density Gradient
+$$
+\nabla\rho = \left(\frac{\partial\rho}{\partial x}, \frac{\partial\rho}{\partial y}, \frac{\partial\rho}{\partial z}\right)
+$$
+
+### Charge Field
+$$
+\bar{q}(x) = \text{smoothed average of nearby charges}
+$$
+
+### Divergence
+$$
+\nabla \cdot \vec{J} = \frac{\partial J_x}{\partial x} + \frac{\partial J_y}{\partial y} + \frac{\partial J_z}{\partial z}
+$$
+
+### Curl
+$$
+\nabla \times \vec{J} = \left(\frac{\partial J_z}{\partial y} - \frac{\partial J_y}{\partial z}, \frac{\partial J_x}{\partial z} - \frac{\partial J_z}{\partial x}, \frac{\partial J_y}{\partial x} - \frac{\partial J_x}{\partial y}\right)
+$$
+
+## Experiments
+
+### Voxel Inspector
+Select any voxel. See all its fields in real-time. Watch them change each tick.
+
+### Field Visualization
+Toggle between visualizing different fields: flux, density, phase, charge.
+
+### Neighborhood View
+See a voxel's 26 neighbors. Watch how local interactions propagate.
+
+## Concepts
+
+- **voxel**: The fundamental unit of space
+- **state**: The three-valued ontological status
+- **flux**: The energy/momentum vector
+- **phase**: The local time accumulator
+
+## Transition
+
+Each voxel can host a particle. Now let's meet all the particles that can exist—the particle zoo.

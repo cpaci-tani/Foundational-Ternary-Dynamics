@@ -1,0 +1,216 @@
+# Galaxy Interactions {#sec-galaxy-interactions}
+
+*"Cosmic collisions"*
+
+::: {.callout-note}
+## Key Revelation
+Galaxies don't just drift through space—they collide, merge, and transform each other. These interactions drive galaxy evolution and trigger dramatic starbursts.
+:::
+
+## Types of Interactions
+
+### Flyby
+
+Close passage without merger:
+- Tidal distortions
+- Triggered star formation
+- Can repeat (bound orbit)
+
+### Minor Merger
+
+Small galaxy absorbed by large:
+- Small galaxy disrupted
+- Large galaxy barely affected
+- Adds stars to halo
+- Common occurrence
+
+### Major Merger
+
+Two comparable galaxies combine:
+- Both heavily disrupted
+- Dramatic morphological change
+- Usually produces elliptical
+- Rare but transformative
+
+## Tidal Effects
+
+Gravity from passing galaxy distorts structure:
+
+```
+Before:       During:         After:
+   ○            ╱○              ─────○
+   │           ╱ │               ╲ │
+   ●──────────●──────────────────●
+               ╲ │               ╱ │
+                ╲○              ─────○
+
+Tidal tails form on opposite sides
+```
+
+### Tidal Tails
+
+- Stretched material on two sides
+- Can extend hundreds of thousands of light-years
+- Stars, gas, and dark matter
+- Examples: Mice Galaxies, Antennae
+
+### Tidal Dwarf Galaxies
+
+Dense clumps in tidal tails can become small galaxies:
+- Formed from debris
+- Lack dark matter
+- Short-lived?
+
+## Merger Sequence
+
+### Stage 1: Approach
+- Galaxies detect each other gravitationally
+- Orbits modified
+- No visible interaction yet
+
+### Stage 2: First Passage
+- Tidal tails form
+- Bars may be triggered
+- Some gas driven to centers
+- First starburst
+
+### Stage 3: Separation
+- Galaxies move apart
+- Tidal features stretch
+- Dynamic friction slows them
+- Will return
+
+### Stage 4: Final Coalescence
+- Galaxies merge centers
+- Violent relaxation
+- Black holes merge
+- Major starburst
+- AGN possibly triggered
+
+### Stage 5: Relaxation
+- Merged remnant settles
+- Usually elliptical shape
+- Star formation fades
+- "Post-starburst" phase
+
+## Starbursts
+
+Mergers trigger extreme star formation:
+
+### Mechanism
+1. Gas loses angular momentum
+2. Flows to galaxy centers
+3. High density → rapid star formation
+4. Rates 10-100× normal
+
+### Ultra-Luminous Infrared Galaxies (ULIRGs)
+
+Most extreme starbursts:
+- $L > 10^{12} L_\odot$
+- Heavily dust-obscured
+- Shine in infrared
+- Often merging systems
+
+## The Fate of Supermassive Black Holes
+
+When galaxies merge, so do their SMBHs:
+
+### Process
+1. Black holes sink to merger center (dynamical friction)
+2. Form binary (separation ~parsec)
+3. Binary hardens (ejects stars)
+4. "Final parsec problem"—how do they get closer?
+5. Eventually merge → gravitational waves
+
+## Environmental Effects
+
+### Ram Pressure Stripping
+
+In galaxy clusters:
+```
+Hot cluster gas
+       ↓↓↓↓↓↓↓↓↓
+    ╭──────────╮
+    │  Galaxy  │→ Motion
+    │ ═════════│← Gas stripped
+    ╰──────────╯
+       ↓↓↓↓↓↓↓↓↓
+```
+
+Galaxy's gas is swept away.
+
+### Harassment
+
+Repeated high-speed encounters in clusters:
+- Heats disk stars
+- Thickens disk
+- Eventually transforms spiral → S0
+
+### Strangulation
+
+Cut off from fresh gas supply:
+- Existing gas consumed
+- No new star formation
+- Slow fading to red
+
+## Famous Interactions
+
+| System | Type | Distance |
+|--------|------|----------|
+| Antennae | Major merger | 45 Mly |
+| Mice | Early merger | 290 Mly |
+| Whirlpool (M51) | Interaction | 23 Mly |
+| Cartwheel | Ring galaxy | 500 Mly |
+
+## In Simulation
+
+```python
+def galaxy_merger(gal1, gal2):
+    # Initial approach
+    while separation(gal1, gal2) > tidal_radius:
+        evolve_orbits(gal1, gal2)
+
+    # Interaction phase
+    while not merged(gal1, gal2):
+        # Tidal forces
+        apply_tides(gal1, gal2)
+
+        # Gas dynamics
+        drive_gas_inflow(gal1)
+        drive_gas_inflow(gal2)
+
+        # Star formation
+        starburst(gal1.center)
+        starburst(gal2.center)
+
+        # Dynamical friction
+        slow_relative_motion(gal1, gal2)
+
+    # Coalescence
+    remnant = combine(gal1, gal2)
+    merge_black_holes(gal1.smbh, gal2.smbh)
+
+    return remnant
+```
+
+## Experiments
+
+### Collision Simulator
+Set up two galaxies. Watch them merge over billions of years.
+
+### Tidal Tail Formation
+Observe how tidal tails develop during close passage.
+
+### Starburst Trigger
+Measure star formation rate through merger stages.
+
+## Concepts
+
+- **tidal-interaction**: Gravitational distortion
+- **major-merger**: Comparable mass combination
+- **starburst**: Intense star formation episode
+- **ram-pressure-stripping**: Gas removal by hot ICM
+
+## Transition
+
+Galaxies are embedded in larger structures. Now we scale up to the cosmic realm—the large-scale structure of the universe itself.

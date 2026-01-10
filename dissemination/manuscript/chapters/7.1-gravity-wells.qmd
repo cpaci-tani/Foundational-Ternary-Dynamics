@@ -1,0 +1,252 @@
+# Gravity Wells {#sec-gravity-wells}
+
+*Having understood how matter organizes from atoms through materials, we now scale up to planetary bodies where gravity dominates.*
+
+*"How worlds are born"*
+
+::: {.callout-note}
+## Key Revelation
+Planets form from the same process that governs all scales: matter following gravity gradients, accumulating until stable structures emerge.
+:::
+
+## Planetary Formation
+
+### Stage 1: Accretion
+
+From a disk of gas and dust around a young star:
+
+```
+    ★
+   ╱|╲
+  ╱ | ╲
+ ○──○──○  ← Dust grains collide
+  ╲ | ╱
+   ╲|╱
+
+Dust grains collide and stick.
+Electrostatic forces hold small grains.
+```
+
+### Stage 2: Planetesimals
+
+When objects reach ~1 km:
+
+- Gravity becomes significant
+- Runaway growth begins
+- Larger objects attract more material
+- Planetesimals form in ~10,000 years
+
+### Stage 3: Protoplanets
+
+- Planetesimals collide and merge
+- Mars-sized bodies form
+- Oligarchic growth (few dominant)
+- Takes ~100,000 years
+
+### Stage 4: Final Assembly
+
+- Giant impacts reshape worlds
+- Moon-forming impact (Earth)
+- Orbital clearing
+- Takes ~100 million years
+
+## Planetary Types
+
+### Terrestrial (Rocky)
+
+| Property | Range |
+|----------|-------|
+| Mass | 0.1-2 M⊕ |
+| Radius | 0.5-1.5 R⊕ |
+| Density | 4-6 g/cm³ |
+| Surface | Solid |
+| Composition | Iron, silicates |
+
+Examples: Mercury, Venus, Earth, Mars
+
+### Gas Giants
+
+| Property | Range |
+|----------|-------|
+| Mass | 10-500 M⊕ |
+| Radius | 3-15 R⊕ |
+| Density | 0.5-2 g/cm³ |
+| Surface | None (gas all the way down?) |
+| Composition | H, He |
+
+Examples: Jupiter, Saturn
+
+### Ice Giants
+
+| Property | Range |
+|----------|-------|
+| Mass | 10-20 M⊕ |
+| Radius | 3-5 R⊕ |
+| Composition | H₂O, NH₃, CH₄ ices |
+
+Examples: Uranus, Neptune
+
+## The Gravity Well
+
+Planets sit in gravitational potential wells:
+
+```
+Potential energy
+
+    ╲         ╱
+     ╲       ╱
+      ╲     ╱
+       ╲   ╱
+        ╲ ╱
+         ●  ← Planet at bottom
+```
+
+Escape velocity:
+$$
+v_{\text{escape}} = \sqrt{\frac{2GM}{r}}
+$$
+
+| Body | v_escape |
+|------|----------|
+| Moon | 2.4 km/s |
+| Earth | 11.2 km/s |
+| Jupiter | 60 km/s |
+| Sun | 618 km/s |
+
+## General Relativity: Emergence from FTD
+
+In FTD, gravity is a force arising from density gradients:
+
+$$\vec{F}_g = G_{\text{bias}} \cdot \nabla\bar{\rho}(x)$$
+
+But general relativity describes gravity as spacetime curvature. How do these connect?
+
+### The Effective Metric
+
+The flux density field ρ(x) creates an **effective metric**:
+
+$$g_{\mu\nu} = \eta_{\mu\nu} + h_{\mu\nu}(\rho)$$
+
+Where:
+- η_μν is the flat Minkowski metric
+- h_μν is the perturbation from flux density
+
+In the weak-field limit:
+
+$$h_{00} = -\frac{2\Phi}{c^2}, \quad h_{ij} = -\frac{2\Phi}{c^2}\delta_{ij}$$
+
+Where Φ is the Newtonian potential, related to flux density by:
+
+$$\nabla^2\Phi = 4\pi G \rho$$
+
+### Geodesic Motion
+
+Free particles in FTD follow **flux gradients**. In the GR picture, this is **geodesic motion**:
+
+$$\frac{d^2x^\mu}{d\tau^2} + \Gamma^\mu_{\nu\lambda}\frac{dx^\nu}{d\tau}\frac{dx^\lambda}{d\tau} = 0$$
+
+The Christoffel symbols Γ are determined by the metric derivatives—which come from the flux density profile.
+
+::: {.callout-note}
+## Gravity as Geometry
+FTD's flux gradients create an effective curved geometry. What looks like a force is actually motion along the straightest possible path (geodesic) in curved spacetime.
+:::
+
+### Einstein's Equations
+
+The linearized Einstein equations:
+
+$$\Box h_{\mu\nu} = -16\pi G T_{\mu\nu}$$
+
+emerge from the FTD wave equation for the flux field:
+
+$$\partial_t^2 J = c^2 \nabla^2 J + \text{sources}$$
+
+The stress-energy tensor T_μν corresponds to the flux density and momentum distributions.
+
+### Beyond Linearized Gravity
+
+At higher flux densities (strong gravity), nonlinear effects appear:
+- Metric perturbations interact with each other
+- Geodesic deviation becomes significant
+- Full Einstein equations emerge
+
+This is why FTD naturally incorporates:
+- Gravitational waves (flux ripples)
+- Black holes (extreme flux concentrations)
+- Cosmological expansion (large-scale flux dynamics)
+
+### Gravitational Waves in FTD
+
+When massive objects accelerate, flux patterns propagate outward:
+
+$$h_{+,\times} \propto \frac{1}{r}\frac{d^2Q_{ij}}{dt^2}$$
+
+These are gravitational waves—transverse ripples in the flux field traveling at speed C.
+
+## Differentiation
+
+Heavy elements sink, light elements float.
+
+### Earth's Layers
+
+| Layer | Depth | Composition |
+|-------|-------|-------------|
+| Crust | 0-35 km | Silicates |
+| Mantle | 35-2900 km | Mg, Fe silicates |
+| Outer core | 2900-5100 km | Liquid Fe-Ni |
+| Inner core | 5100-6371 km | Solid Fe-Ni |
+
+### Heat Sources
+
+- Gravitational compression
+- Radioactive decay (U, Th, K)
+- Residual accretion heat
+- Tidal heating (moons)
+
+## In Simulation
+
+```python
+def planetary_formation(dust_cloud):
+    while not stable(dust_cloud):
+        # Gravity pulls particles together
+        apply_gravity(dust_cloud)
+
+        # Detect forming clumps
+        clumps = find_density_peaks(dust_cloud)
+
+        # Merge nearby clumps
+        for clump in clumps:
+            if touching(clump, other_clump):
+                merge(clump, other_clump)
+
+        # Check for differentiation
+        for planet in large_clumps:
+            if hot_enough(planet):
+                differentiate(planet)
+```
+
+## Experiments
+
+### Accretion Disk
+Create dust disk around star. Watch planetesimals form.
+
+### Collision Simulator
+Collide protoplanets. See what survives.
+
+### Differentiation
+Heat a proto-Earth. Watch layers form.
+
+## Concepts
+
+- **accretion**: Growth by gravitational accumulation
+- **differentiation**: Separation into layers by density
+- **escape-velocity**: Speed to leave gravity well
+- **protoplanet**: Forming planet
+- **effective-metric**: g_μν = η_μν + h_μν(ρ) from flux density
+- **geodesic-motion**: Free particles follow straightest paths in curved spacetime
+- **linearized-gr**: □h_μν = -16πGT_μν from FTD wave equation
+
+## Transition
+
+Planets need more than solid ground. Next, we explore atmospheres—the gases that surround worlds and enable life.

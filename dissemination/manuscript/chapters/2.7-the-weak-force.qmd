@@ -1,0 +1,312 @@
+# The Weak Force: The Transformer {#sec-weak-force}
+
+*"The only force that changes identity"*
+
+::: {.callout-note}
+## Key Revelation
+The weak force doesn't push or pull—it transforms. A neutron becomes a proton. A muon becomes an electron. This power of transmutation emerges from the SU(2) structure of chiral flux doublets, with all parameters derived from the four integers.
+:::
+
+## What Makes the Weak Force Unique
+
+| Property | Strong | EM | Weak | Gravity |
+|----------|--------|-----|------|---------|
+| Changes particle type | No | No | **Yes** | No |
+| Violates parity | No | No | **Yes** | No |
+| Massive carriers | No | No | **Yes** | No |
+| Range | 10⁻¹⁵ m | ∞ | **10⁻¹⁸ m** | ∞ |
+
+The weak force breaks every symmetry it can. It is the rebel among forces.
+
+## The W and Z Bosons
+
+### Carriers of the Weak Force
+
+Unlike the massless photon, the weak bosons are heavy:
+
+| Boson | Charge | Mass | Role |
+|-------|--------|------|------|
+| W⁺ | +1 | 80.4 GeV | Changes flavor (u↔d) |
+| W⁻ | -1 | 80.4 GeV | Changes flavor (d↔u) |
+| Z⁰ | 0 | 91.2 GeV | Neutral currents |
+
+### Why So Heavy?
+
+In FTD, the W and Z masses emerge from the Higgs mechanism (Chapter 2.5). But the **ratio** comes from the Weinberg angle:
+
+$$\frac{M_W}{M_Z} = \cos\theta_W = \sqrt{1 - \sin^2\theta_W} = \sqrt{1 - \frac{3}{13}} = \sqrt{\frac{10}{13}} = 0.877$$
+
+**Prediction**: M_W/M_Z = 0.877
+
+**Measured**: 80.4/91.2 = 0.882
+
+**Agreement**: 0.6%
+
+### The Mass Formula
+
+From the four integers:
+
+$$M_W = \frac{v}{2} \times g = \frac{67}{8\alpha^2} \times m_e$$
+
+where v = 246 GeV is the Higgs vacuum expectation value.
+
+$$M_W = \frac{67}{8 \times (1/137)^2} \times 0.511 \text{ MeV} = 80.3 \text{ GeV}$$
+
+**Agreement with experiment**: 0.2%
+
+## Beta Decay: The Weak Force in Action
+
+### Neutron Decay
+
+The most important weak process:
+
+$$n \to p + e^- + \bar{\nu}_e$$
+
+In quark terms:
+$$d \to u + W^- \to u + e^- + \bar{\nu}_e$$
+
+```
+BEFORE:          AFTER:
+  u                u
+ / \              / \
+u   d    →      u   u    +  e⁻  +  ν̄ₑ
+                    ↑
+              (d changed to u via W⁻)
+```
+
+### The Process Step by Step
+
+1. **Down quark emits W⁻**: The d quark (charge -1/3) becomes u quark (charge +2/3)
+2. **W⁻ propagates**: Very short distance (~10⁻¹⁸ m) due to large mass
+3. **W⁻ decays**: W⁻ → e⁻ + ν̄_e (or μ⁻ + ν̄_μ, etc.)
+
+### Lifetime from First Principles
+
+The neutron lifetime:
+
+$$\tau_n = \frac{1}{\Gamma} = \frac{192\pi^3}{G_F^2 m_n^5 |V_{ud}|^2 f}$$
+
+where:
+- G_F = Fermi coupling constant
+- f ≈ 1.71 = phase space factor
+- V_ud ≈ 0.974 from CKM matrix (Chapter 2.6)
+
+**FTD prediction**: τ_n ≈ 880 s
+
+**Measured**: 878.4 ± 0.5 s
+
+## Parity Violation: The Left-Handed Universe
+
+### The Discovery
+
+In 1956, Wu discovered that beta decay violates mirror symmetry. Electrons from cobalt-60 decay are preferentially emitted **opposite** to the nuclear spin.
+
+### FTD Explanation
+
+The flux field has intrinsic chirality:
+
+$$\chi = \text{sign}(\vec{J} \cdot (\nabla \times \vec{J}))$$
+
+The weak force couples differently to left-handed and right-handed particles:
+
+| Particle Type | Weak Charge |
+|---------------|-------------|
+| Left-handed fermion | Full SU(2) doublet |
+| Right-handed fermion | SU(2) singlet |
+| Left-handed antifermion | SU(2) singlet |
+| Right-handed antifermion | Full SU(2) doublet |
+
+### Why Left?
+
+In FTD, the discrete lattice update rules have a preferred handedness. The flux spiral direction determines which chirality couples to SU(2).
+
+This is not arbitrary—it follows from the 3D cubic lattice having a consistent orientation convention.
+
+## The SU(2) Structure
+
+### Weak Isospin Doublets
+
+Left-handed fermions form doublets:
+
+$$\begin{pmatrix} u \\ d \end{pmatrix}_L \quad \begin{pmatrix} c \\ s \end{pmatrix}_L \quad \begin{pmatrix} t \\ b \end{pmatrix}_L$$
+
+$$\begin{pmatrix} \nu_e \\ e \end{pmatrix}_L \quad \begin{pmatrix} \nu_\mu \\ \mu \end{pmatrix}_L \quad \begin{pmatrix} \nu_\tau \\ \tau \end{pmatrix}_L$$
+
+### Weak Isospin Assignments
+
+| Particle | T | T₃ | Q |
+|----------|---|----|----|
+| u_L, c_L, t_L | 1/2 | +1/2 | +2/3 |
+| d_L, s_L, b_L | 1/2 | -1/2 | -1/3 |
+| ν_e, ν_μ, ν_τ | 1/2 | +1/2 | 0 |
+| e_L, μ_L, τ_L | 1/2 | -1/2 | -1 |
+| All right-handed | 0 | 0 | Q |
+
+### The Gell-Mann–Nishijima Formula
+
+Electric charge relates to weak isospin and hypercharge:
+
+$$Q = T_3 + \frac{Y}{2}$$
+
+In FTD, this is a constraint from the combined U(1)×SU(2) gauge structure.
+
+## Electroweak Unification
+
+### The Mixing
+
+Above ~100 GeV, electromagnetism and the weak force unify. The photon (γ) and Z boson are mixtures:
+
+$$\gamma = B\cos\theta_W + W^3\sin\theta_W$$
+$$Z = -B\sin\theta_W + W^3\cos\theta_W$$
+
+where:
+- B = U(1) gauge boson (hypercharge)
+- W³ = neutral component of SU(2) triplet
+
+### The Weinberg Angle Again
+
+$$\sin^2\theta_W = \frac{N_c}{n_{\text{eff}}} = \frac{3}{13} = 0.2308$$
+
+This angle determines:
+- W and Z mass ratio
+- Relative coupling strengths
+- Neutral current cross-sections
+
+## Weak Processes in the Universe
+
+### Stellar Burning
+
+The pp-chain that powers the Sun:
+
+$$p + p \to d + e^+ + \nu_e$$
+
+This requires a weak interaction (p → n + e⁺ + ν) and is incredibly slow—explaining why the Sun burns for billions of years.
+
+### Big Bang Nucleosynthesis
+
+In the first minutes, weak interactions set the neutron-to-proton ratio:
+
+$$n + \nu_e \leftrightarrow p + e^-$$
+$$n + e^+ \leftrightarrow p + \bar{\nu}_e$$
+
+When these reactions freeze out (T ~ 1 MeV), the ratio is about 1:7, determining primordial helium abundance.
+
+### Supernovae
+
+Core-collapse supernovae release 99% of their energy as neutrinos. The weak interaction is the only way for the collapsing core to shed energy fast enough.
+
+## The Fermi Coupling
+
+The strength of weak interactions:
+
+$$G_F = \frac{\sqrt{2}}{8} \frac{g^2}{M_W^2} = 1.166 \times 10^{-5} \text{ GeV}^{-2}$$
+
+### From the Four Integers
+
+$$G_F = \frac{\sqrt{2} \pi \alpha}{2 \sin^2\theta_W M_W^2}$$
+
+With sin²θ_W = 3/13 and M_W derived from the Higgs VEV:
+
+$$G_F = \frac{\sqrt{2} \pi \times (1/137)}{2 \times (3/13) \times (80.4 \text{ GeV})^2}$$
+
+**Agreement with experiment**: 0.1%
+
+## Neutral Currents
+
+### Discovery (1973)
+
+The existence of Z⁰ was inferred from neutrino scattering:
+
+$$\nu_\mu + e^- \to \nu_\mu + e^-$$
+
+No charge exchange—but momentum transfer. The Z mediates "neutral current" interactions.
+
+### The Z Coupling
+
+The Z boson couples to both left and right-handed fermions (unlike W±):
+
+$$g_L = T_3 - Q\sin^2\theta_W$$
+$$g_R = -Q\sin^2\theta_W$$
+
+For electrons:
+- g_L = -1/2 - (-1)(3/13) = -1/2 + 3/13 = -7/26
+- g_R = -(-1)(3/13) = 3/13
+
+## Rare Decays
+
+The weak force enables decays forbidden by other interactions:
+
+### Flavor-Changing Neutral Currents (FCNC)
+
+At tree level, Z cannot change quark flavor (no s→d transitions). But at loop level:
+
+$$B_s^0 \to \mu^+ \mu^-$$
+
+FTD predicts the branching ratio via CKM elements from Chapter 2.6.
+
+### CP Violation in Kaons
+
+$$K^0 \leftrightarrow \bar{K}^0$$
+
+The mixing involves box diagrams with W bosons. The CP-violating parameter ε comes from the CKM phase.
+
+## The Weak Force in FTD: Summary
+
+### What Emerges from the Integers
+
+| Quantity | Formula | Value |
+|----------|---------|-------|
+| sin²θ_W | N_c/n_eff | 3/13 = 0.2308 |
+| M_W/M_Z | √(10/13) | 0.877 |
+| G_F | √2πα/(2 sin²θ_W M_W²) | 1.166×10⁻⁵ GeV⁻² |
+| V_ud | 1 - λ²/2 | 0.974 |
+
+### What's Unique About the Weak Force
+
+1. **Massive carriers**: From Higgs mechanism
+2. **Parity violation**: From chiral lattice structure
+3. **Flavor changing**: From CKM/PMNS mixing
+4. **CP violation**: From complex CKM phase
+
+## The Short Range Mystery
+
+Why is the weak force so short-ranged?
+
+### The Uncertainty Principle
+
+$$\Delta x \sim \frac{\hbar c}{M_W c^2} \sim \frac{200 \text{ MeV·fm}}{80,000 \text{ MeV}} \sim 0.0025 \text{ fm}$$
+
+The W boson can only exist for ~10⁻²⁵ seconds before decaying. It travels less than 10⁻¹⁸ m.
+
+### Contrast with EM
+
+The photon is massless, so:
+$$\Delta x \sim \frac{\hbar c}{0} = \infty$$
+
+Electromagnetic force has infinite range.
+
+## Experiments
+
+### Beta Decay Observation
+Watch neutron → proton + electron + antineutrino. Measure the electron energy spectrum.
+
+### Parity Violation Demo
+Observe preferential emission direction in polarized decay.
+
+### W/Z Production
+At high energy, directly produce W and Z bosons. Observe their decay products.
+
+## Concepts
+
+- **weak-boson**: W± and Z⁰ particles that mediate weak interactions
+- **beta-decay**: Neutron → proton via weak force
+- **parity-violation**: Weak force distinguishes left from right
+- **weak-isospin**: SU(2) quantum number; doublets for left-handed fermions
+- **neutral-current**: Weak interaction without charge exchange (Z-mediated)
+- **fermi-coupling**: Effective strength of weak interaction at low energy
+- **electroweak-unification**: EM and weak merge above ~100 GeV
+- **chirality**: Handedness; weak force couples only to left-handed particles
+
+## Transition
+
+The weak force can transform particles, but it requires energy from somewhere. Where does the energy come from that drives all these processes? Next we explore the atomic realm, where quantum mechanics determines the structure of matter.

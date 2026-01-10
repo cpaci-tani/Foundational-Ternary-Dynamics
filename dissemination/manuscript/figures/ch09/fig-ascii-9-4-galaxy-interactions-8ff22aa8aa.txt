@@ -1,0 +1,7 @@
+Hot cluster gas
+       ↓↓↓↓↓↓↓↓↓
+    ╭──────────╮
+    │  Galaxy  │→ Motion
+    │ ═════════│← Gas stripped
+    ╰──────────╯
+       ↓↓↓↓↓↓↓↓↓

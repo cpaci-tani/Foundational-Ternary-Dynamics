@@ -1,0 +1,133 @@
+# The Planck Scale {#sec-planck-scale}
+
+*"The grain of reality"*
+
+::: {.callout-note}
+## Key Insight
+At the smallest scales, spacetime exhibits discrete structure. The lattice spacing defines a fundamental length below which no further subdivision is possible.
+:::
+
+## The Grain of Reality
+
+Zoom in far enough, and you hit a floor. Space is not continuous—it is a lattice of discrete cells.
+
+### Planck Units (Simulation)
+
+| Quantity | Symbol | FTD Value | Physical Scale |
+|----------|--------|-----------|----------------|
+| Planck length | $\ell_P$ | 1 voxel | $1.6 \times 10^{-35}$ m |
+| Planck time | $t_P$ | 1 tick | $5.4 \times 10^{-44}$ s |
+| Planck energy | $E_P$ | 1 (lattice unit) | $1.22 \times 10^{19}$ GeV |
+| Manifestation threshold | $K_B$ | $\sim \alpha^{11}$ | 0.511 MeV (electron mass) |
+
+**Important distinction**: The Planck energy $E_P$ sets the overall energy scale of the lattice (one flux unit in natural units). The manifestation threshold $K_B \approx 0.511$ MeV is the *minimum energy required for particle creation*—derived as $K_B = m_P \sqrt{2\pi} \cdot (16/3) \cdot \alpha^{11}$ (see @sec-constants). These differ by $\sim 24$ orders of magnitude: $K_B/E_P \sim 10^{-24}$, which is precisely $\alpha^{11}$.
+
+The discreteness is fundamental: no physical process can resolve distances smaller than one voxel or time intervals shorter than one tick.
+
+## What Happens at the Planck Scale
+
+### Space is Granular
+No continuous positions exist. Only integer coordinates matter. A particle at (3.7, 2.1, 5.9) is really at (4, 2, 6) with a position remainder tracking the fractional part.
+
+### Time is Quantized
+Events happen at discrete ticks, not between them. There is no "halfway through tick 47"—tick 47 either has happened or hasn't.
+
+### Causality is Strict
+Maximum influence: 1 voxel per tick. This isn't a speed limit—it's a causality limit. No physical process can violate it.
+
+### Uncertainty is Geometric
+What appears as quantum uncertainty is actually sub-voxel position tracking **[CONJECTURE: this reinterpretation requires validation against full quantum predictions]**. The `position_remainder` accumulates until it triggers a discrete jump.
+
+## Discreteness
+
+### No Infinitesimals
+Zeno's paradox dissolves. You cannot subdivide space forever because there is a smallest unit. Motion is not continuous—it is a series of discrete jumps.
+
+### Integer Lattice
+Position coordinates are integers: (x, y, z) where x, y, z ∈ ℤ
+
+Neighbors are at distance 1 (6 face neighbors) or √2 (12 edge neighbors) or √3 (8 corner neighbors). Total: 26 neighbors in the Moore neighborhood.
+
+### Sub-Voxel Tracking
+When physics demands fractional positions, we track them:
+
+```python
+# Fractional position accumulates
+position_remainder += fractional_velocity
+# When it exceeds threshold, discrete jump
+if |position_remainder| >= 1:
+    position += sign(position_remainder)
+    position_remainder -= sign(position_remainder)
+```
+
+## The Quantum Foam
+
+At the Planck scale, the Void itself fluctuates.
+
+### Virtual Pair Production
+When energy density approaches KB, virtual particle pairs briefly manifest:
+- Appear for a tick or two
+- Annihilate before becoming real
+- Create a "foamy" texture in the vacuum
+
+### Flux Turbulence
+The flux field churns at small scales:
+- Random fluctuations
+- Short-lived vortices
+- Constant activity beneath the apparent stillness
+
+### Vacuum Energy
+Even "empty" space has energy:
+- Baseline flux fluctuations
+- Zero-point motion
+- The Void is never truly still
+
+## Into the Grid
+
+Zoom into a region of space:
+
+```
+Scale 0 (macroscopic): Smooth, continuous-looking
+Scale -1: Some pixelation visible
+Scale -2: Clearly discrete structure
+Scale -3 (Planck): Individual voxels visible
+
+Each voxel: A single cell with state (0, +1, or -1)
+           Plus flux, density, phase, velocity...
+```
+
+## Position Remainder
+
+When a particle moves at fractional velocity:
+
+| Tick | Velocity | Remainder | Position | Jump? |
+|------|----------|-----------|----------|-------|
+| 0 | 0.3 | 0.0 | 0 | No |
+| 1 | 0.3 | 0.3 | 0 | No |
+| 2 | 0.3 | 0.6 | 0 | No |
+| 3 | 0.3 | 0.9 | 0 | No |
+| 4 | 0.3 | 1.2→0.2 | 1 | Yes! |
+
+The particle "waits" until accumulated motion justifies a jump.
+
+## Experiments
+
+### Voxel Visualization
+Zoom to Planck scale. See individual voxels. Watch states flicker.
+
+### Position Tracking
+Follow a slow particle. Watch its position remainder accumulate. See the discrete jumps.
+
+### Vacuum Fluctuations
+Observe "empty" space at Planck scale. See the virtual pairs, the foam, the activity.
+
+## Concepts
+
+- **discreteness**: Space and time have minimum units
+- **voxel**: The fundamental cell of space
+- **position-remainder**: Sub-voxel position tracking
+- **quantum-foam**: Vacuum fluctuations at Planck scale
+
+## Transition
+
+We've seen the grain of reality. Now let's examine what each grain contains—the anatomy of a voxel.

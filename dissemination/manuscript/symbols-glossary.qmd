@@ -1,0 +1,194 @@
+# Symbols Glossary {#sec-symbols-glossary .unnumbered}
+
+This reference documents all mathematical and physics symbols used throughout this book.
+
+## Superscripts and Subscripts
+
+| Symbol | Meaning | Example |
+|--------|---------|---------|
+| $^+$ | Positive charge | $e^+$ (positron) |
+| $^-$ | Negative charge | $e^-$ (electron) |
+| $^0$ | Zero/neutral | $\pi^0$ (neutral pion) |
+| $^{1-9}$ | Numeric power | $10^6$ (million) |
+| $_{0-9}$ | Numeric subscript | $H_2O$ (water) |
+| $_e$ | Electron subscript | $\nu_e$ (electron neutrino) |
+| $_n$ | Neutron subscript | $m_n$ (neutron mass) |
+| $_p$ | Proton subscript | $m_p$ (proton mass) |
+
+## Greek Letters
+
+### Lowercase
+
+| Symbol | Name | Common Usage |
+|--------|------|--------------|
+| $\alpha$ | alpha | Fine structure constant |
+| $\beta$ | beta | Velocity ratio (v/c) |
+| $\gamma$ | gamma | Lorentz factor, photon |
+| $\delta$ | delta | Small change |
+| $\varepsilon$ | epsilon | Small quantity |
+| $\eta$ | eta | Efficiency |
+| $\theta$ | theta | Angle |
+| $\lambda$ | lambda | Wavelength |
+| $\mu$ | mu | Muon, micro- prefix |
+| $\nu$ | nu | Neutrino, frequency |
+| $\pi$ | pi | 3.14159..., pion |
+| $\rho$ | rho | Density |
+| $\sigma$ | sigma | Cross-section |
+| $\tau$ | tau | Tau lepton, proper time |
+| $\varphi$ | phi | Golden ratio, phase |
+| $\chi$ | chi | Chi-squared |
+| $\psi$ | psi | Wavefunction |
+| $\omega$ | omega | Angular frequency |
+
+### Uppercase
+
+| Symbol | Name | Common Usage |
+|--------|------|--------------|
+| $\Gamma$ | Gamma | Decay width |
+| $\Delta$ | Delta | Change, delta baryon |
+| $\Theta$ | Theta | Heaviside function |
+| $\Lambda$ | Lambda | Cosmological constant |
+| $\Xi$ | Xi | Xi baryon |
+| $\Sigma$ | Sigma | Summation, sigma baryon |
+| $\Phi$ | Phi | Magnetic flux |
+| $\Psi$ | Psi | Wavefunction |
+| $\Omega$ | Omega | Ohm, density parameter |
+
+## Mathematical Operators
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| $\infty$ | infinity | Unbounded |
+| $\nabla$ | nabla/del | Gradient operator |
+| $\partial$ | partial | Partial derivative |
+| $\sum$ | summation | Sum over terms |
+| $\prod$ | product | Product of terms |
+| $\int$ | integral | Integration |
+| $\sqrt{x}$ | square root | Square root |
+| $\propto$ | proportional | Proportional to |
+
+## Comparison and Equality
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| $\approx$ | approximately | Approximately equal |
+| $\neq$ | not equal | Not equal to |
+| $\leq$ | less or equal | Less than or equal |
+| $\geq$ | greater or equal | Greater than or equal |
+| $\ll$ | much less | Much less than |
+| $\gg$ | much greater | Much greater than |
+
+## Arithmetic
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| $\pm$ | plus-minus | Plus or minus |
+| $\times$ | times | Multiplication |
+| $\div$ | divide | Division |
+| $\cdot$ | center dot | Multiplication |
+
+## Arrows
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| $\rightarrow$ | right arrow | Yields, goes to |
+| $\leftarrow$ | left arrow | From |
+| $\uparrow$ | up arrow | Spin up |
+| $\downarrow$ | down arrow | Spin down |
+| $\leftrightarrow$ | bidirectional | Reversible |
+| $\Rightarrow$ | implies | Implies |
+| $\Leftrightarrow$ | iff | If and only if |
+
+## Set Theory and Logic
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| $\in$ | element of | Is member of |
+| $\notin$ | not element | Not member of |
+| $\subset$ | subset | Is subset of |
+| $\cup$ | union | Set union |
+| $\cap$ | intersection | Set intersection |
+| $\forall$ | for all | For all |
+| $\exists$ | exists | There exists |
+| $\neg$ | not | Logical not |
+| $\wedge$ | and | Logical and |
+| $\vee$ | or | Logical or |
+
+## Physics Constants and Units
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| $\hbar$ | h-bar | Reduced Planck constant |
+| $\ell$ | script l | Length |
+| $^\circ$ | degree | Angle degrees |
+| $\odot$ | Sun | Solar ($M_\odot$ = solar mass) |
+| $\oplus$ | Earth | Earth ($M_\oplus$ = Earth mass) |
+
+## Brackets
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| $\langle x \rangle$ | angle brackets | Expectation value |
+| $(x)$ | parentheses | Grouping |
+| $[A,B]$ | square brackets | Commutator |
+| $\{x\}$ | curly braces | Set notation |
+
+## Particle Notation Reference
+
+### Leptons
+
+| Particle | Symbol | Charge |
+|----------|--------|--------|
+| Electron | $e^-$ | -1 |
+| Positron | $e^+$ | +1 |
+| Muon | $\mu^-$ | -1 |
+| Antimuon | $\mu^+$ | +1 |
+| Tau | $\tau^-$ | -1 |
+| Antitau | $\tau^+$ | +1 |
+| Electron neutrino | $\nu_e$ | 0 |
+| Muon neutrino | $\nu_\mu$ | 0 |
+| Tau neutrino | $\nu_\tau$ | 0 |
+
+### Quarks
+
+| Particle | Symbol | Charge |
+|----------|--------|--------|
+| Up | $u$ | +2/3 |
+| Down | $d$ | -1/3 |
+| Strange | $s$ | -1/3 |
+| Charm | $c$ | +2/3 |
+| Bottom | $b$ | -1/3 |
+| Top | $t$ | +2/3 |
+| Antiquarks | $\bar{u}, \bar{d}$, etc. | opposite |
+
+### Hadrons - Baryons
+
+| Particle | Symbol | Quarks |
+|----------|--------|--------|
+| Proton | $p$ | uud |
+| Neutron | $n$ | udd |
+| Lambda | $\Lambda$ | uds |
+| Sigma plus | $\Sigma^+$ | uus |
+| Sigma zero | $\Sigma^0$ | uds |
+| Sigma minus | $\Sigma^-$ | dds |
+| Xi zero | $\Xi^0$ | uss |
+| Xi minus | $\Xi^-$ | dss |
+| Omega minus | $\Omega^-$ | sss |
+| Delta | $\Delta^{++}, \Delta^+, \Delta^0, \Delta^-$ | uuu, uud, udd, ddd |
+
+### Hadrons - Mesons
+
+| Particle | Symbol | Quarks |
+|----------|--------|--------|
+| Pion | $\pi^+, \pi^-, \pi^0$ | $u\bar{d}, d\bar{u}, u\bar{u}/d\bar{d}$ |
+| Kaon | $K^+, K^-, K^0$ | $u\bar{s}, s\bar{u}, d\bar{s}$ |
+
+### Bosons
+
+| Particle | Symbol | Force |
+|----------|--------|-------|
+| Photon | $\gamma$ | Electromagnetic |
+| Gluon | $g$ | Strong |
+| W bosons | $W^+, W^-$ | Weak |
+| Z boson | $Z^0$ | Weak |
+| Higgs | $H^0$ | Mass mechanism |

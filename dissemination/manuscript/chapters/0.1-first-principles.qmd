@@ -1,0 +1,169 @@
+# On First Principles {#sec-first-principles}
+
+*"Before physics, there must be honesty about what we claim to know."*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter establishes the epistemic framework for everything that follows. Before we describe what exists, we must be clear about what we can prove, what we assume, and what we conjecture.
+:::
+
+## What Is a Mathematical Declaration?
+
+This book attempts something unusual: a **mathematical declaration of the universe**. Not a simulation of known physics, but a derivation of physics-like behavior from minimal axioms.
+
+A mathematical declaration differs from:
+
+- **A theory** (which fits parameters to data)
+- **A model** (which approximates known phenomena)
+- **A simulation** (which reproduces observed behavior)
+
+A declaration says: *Given these axioms, this structure follows necessarily.*
+
+### The Standard of Proof
+
+| Claim Type | Standard | Example |
+|------------|----------|---------|
+| **Axiom** | Stated, not proven | "Space is discrete" |
+| **Theorem** | Logically derived from axioms | "Causality is local" |
+| **Emergence** | Demonstrated in simulation | "Stable triads form" |
+| **Conjecture** | Proposed, not proven | "Bell violations arise from sLoop" |
+| **Interpretation** | One reading among many | "State ±1 corresponds to matter/antimatter" |
+
+We strive to clearly label every claim in this book by type.
+
+## The Hierarchy of Justification
+
+### Level 1: Definitions
+
+Definitions create language. They cannot be true or false—only useful or confusing.
+
+Examples:
+- "A voxel is a unit cell of the lattice"
+- "State 0 is called 'void'"
+- "Flux is a 3D vector field"
+
+### Level 2: Axioms
+
+Axioms are starting assumptions. They are not proven within the system. Their justification (if any) comes from:
+- Mathematical necessity
+- Simplicity (Occam's razor)
+- Empirical adequacy (if the system is meant to model reality)
+
+Our five axioms:
+1. Space is a discrete 3D lattice
+2. Time advances in discrete ticks
+3. Each cell has state ∈ {−1, 0, +1}
+4. Updates are local (26-neighbor Moore neighborhood)
+5. Causality is preserved (max speed = 1 cell/tick)
+
+### Level 3: Theorems
+
+Theorems follow logically from axioms. If the axioms are true, theorems must be true.
+
+Examples:
+- "No information travels faster than c" (from Axiom 5)
+- "Conservation laws hold in closed systems" (from deterministic local updates)
+
+### Level 4: Emergent Properties
+
+Emergence is trickier. We say a property is emergent if:
+1. It is not directly coded into the rules
+2. It arises as a consequence of the dynamics
+3. It can be demonstrated (usually via simulation)
+
+Examples:
+- Stable structures (triads) from geometry + forces
+- Interference patterns from flux superposition
+
+### Level 5: Conjectures
+
+Conjectures are proposals we believe may be true but haven't proven.
+
+Examples:
+- The sLoop mechanism produces Bell violations
+- Lorentz invariance emerges at large scales
+- The Lemniscate-Alpha curve has physical significance
+
+## The Distinction: Emergent vs Imposed
+
+This is perhaps the most important distinction in the entire book.
+
+### Emergent (Symptomatic)
+
+Features that arise as **symptoms** of the dynamics:
+
+| Feature | How It Emerges |
+|---------|----------------|
+| Bound structures | Geometry + stability under decay |
+| Interference patterns | Vector addition of flux |
+| Conservation laws | Closed system + deterministic update |
+| 2 photon polarizations | 3 components − 1 constraint |
+
+### Imposed (Premeditated)
+
+Features explicitly built into the rules:
+
+| Feature | Why Imposed |
+|---------|-------------|
+| Force functional forms | To target known physics |
+| Parameter values (KB, α) | Phenomenological matching |
+| 26-neighbor connectivity | Design choice |
+
+### The Honest Position
+
+We do not claim to have derived F = kq₁q₂/r² from pure geometry. We claim that **given** force-like rules, FTD produces physics-like behavior.
+
+The exception: The fine structure constant α IS derived from geometry (see @sec-lemniscate-alpha). This represents a genuine reduction of an imposed parameter to an emergent one.
+
+## What This Book Claims
+
+::: {.callout-important}
+## The Central Claims
+
+1. **From three states and five axioms**, we construct a consistent dynamics
+2. **Some features emerge** that were not directly coded
+3. **The fine structure constant** can be derived geometrically
+4. **Bell violations may arise** from self-referential observation (conjecture)
+5. **Physics-like behavior occurs** at macroscopic scales
+:::
+
+## What This Book Does NOT Claim
+
+::: {.callout-warning}
+## What We Do Not Claim
+
+1. We have NOT solved physics
+2. We have NOT proven all Standard Model parameters follow from FTD
+3. We have NOT demonstrated that our universe IS a FTD system
+4. We have NOT resolved all open questions in foundations
+:::
+
+## Reading This Book
+
+### For the Skeptic
+
+Every claim is labeled. Check the derivations. Run the simulations. Find the gaps.
+
+### For the Philosopher
+
+The ontology is explicit. The emergence/imposed distinction is maintained. The epistemic status of each claim is stated.
+
+### For the Physicist
+
+The mathematics is self-contained. The predictions are (in principle) testable. The limitations are acknowledged.
+
+### For the Curious
+
+You don't need to believe anything. Watch what happens when simple rules run. See complexity emerge from simplicity.
+
+## Concepts
+
+- **axiom**: Starting assumption, not proven within system
+- **theorem**: Logical consequence of axioms
+- **emergence**: Property arising from but not coded into rules
+- **conjecture**: Unproven proposal
+- **epistemic-status**: Classification of claim type
+
+## Transition
+
+With epistemic ground rules established, we turn to the mathematical tools needed to understand FTD: discrete differential geometry, lattice theory, and the formalism of cellular automata.

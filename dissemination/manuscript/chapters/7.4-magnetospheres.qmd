@@ -1,0 +1,201 @@
+# Magnetospheres {#sec-magnetospheres}
+
+*"Invisible shields"*
+
+::: {.callout-note}
+## Key Revelation
+A planet's magnetic field is its shield against the solar wind. Without one, atmospheres erode and surfaces are irradiated. Earth's magnetosphere makes life possible.
+:::
+
+## Planetary Magnetic Fields
+
+### The Dynamo Mechanism
+
+Magnetic fields arise from:
+1. **Conducting fluid** (liquid metal core)
+2. **Convection** (heat-driven motion)
+3. **Rotation** (Coriolis effect organizes flow)
+
+$$
+\frac{\partial \vec{B}}{\partial t} = \nabla \times (\vec{v} \times \vec{B}) + \eta \nabla^2 \vec{B}
+$$
+
+### Magnetic Field Comparison
+
+| Planet | Field Strength | Dynamo Active? |
+|--------|---------------|----------------|
+| Mercury | 1% Earth | Weak |
+| Venus | None | No (slow rotation) |
+| Earth | 25-65 μT | Yes |
+| Mars | Crustal only | Extinct |
+| Jupiter | 20× Earth | Very active |
+| Saturn | 0.5× Earth | Active |
+
+## Magnetosphere Structure
+
+```
+                    Bow shock
+                   ╱
+Solar wind ──────►╱
+                  ╲
+                   ╲ Magnetopause
+                    ╲
+        ┌───────────────────────────┐
+        │   ┌─────────────┐         │
+        │   │ Radiation   │         │
+        │   │   Belts     │         │
+        │   │  ┌─────┐    │         │
+        │   │  │Earth│    │         │
+        │   │  └─────┘    │         │
+        │   │             │         │
+        │   └─────────────┘         │
+        │                           │
+        └───────────────────────────┘
+                    ╲
+                     ╲ Magnetotail
+                      ╲───────────────►
+```
+
+### Key Regions
+
+| Region | Description |
+|--------|-------------|
+| Bow shock | Where solar wind slows (supersonic → subsonic) |
+| Magnetopause | Boundary of magnetic dominance |
+| Plasmasphere | Inner region of trapped plasma |
+| Radiation belts | High-energy particle zones |
+| Magnetotail | Extended tail (sunward side) |
+
+## The Solar Wind
+
+Stream of charged particles from the Sun:
+
+- **Speed**: 300-800 km/s
+- **Density**: ~5 particles/cm³
+- **Composition**: Protons, electrons, some He
+
+### Interaction with Magnetosphere
+
+1. Solar wind approaches
+2. Bow shock slows particles
+3. Flow diverted around magnetopause
+4. Some particles enter via cusps
+5. Tail stretches in antisunward direction
+
+## Van Allen Belts
+
+Trapped charged particle zones:
+
+### Inner Belt (1-2 R⊕)
+- Primarily protons
+- Energies: 10-100 MeV
+- Source: Cosmic rays, solar protons
+
+### Outer Belt (3-6 R⊕)
+- Primarily electrons
+- Energies: 0.1-10 MeV
+- Source: Solar wind injection
+
+### Hazards
+
+- Damage to electronics
+- Radiation exposure for astronauts
+- Satellites must navigate carefully
+
+## Aurora
+
+When solar particles enter atmosphere:
+
+```
+      Magnetic field line
+              ╱
+             ╱
+Solar ─────►●──────► Atmosphere
+particles   ╲
+             ╲
+              ↓
+         AURORA
+```
+
+### Colors
+
+| Color | Cause |
+|-------|-------|
+| Green | Oxygen (557.7 nm) |
+| Red | Oxygen (630.0 nm) |
+| Blue/Purple | Nitrogen |
+
+### Locations
+
+- Auroral ovals around magnetic poles
+- Expand during magnetic storms
+- Visible from 60-70° latitude typically
+
+## Magnetic Reversals
+
+Earth's field flips polarity:
+
+- Average interval: ~300,000 years
+- Last reversal: 780,000 years ago
+- Transition takes: ~1,000-10,000 years
+- Field weakens during reversal
+
+## Without a Magnetosphere
+
+### Mars
+
+- Lost its magnetic field ~4 billion years ago
+- Solar wind strips atmosphere
+- Surface now irradiated
+- May have prevented life
+
+### Implications
+
+Magnetospheres are crucial for:
+- Atmospheric retention
+- Surface habitability
+- Protection from cosmic rays
+
+## In Simulation
+
+```python
+class Magnetosphere:
+    def __init__(self, planet):
+        self.planet = planet
+        self.field_strength = dynamo_strength(planet.core)
+
+    def shape(self, solar_wind):
+        # Pressure balance determines magnetopause
+        r_magnetopause = self.standoff_distance(solar_wind.pressure)
+
+        # Tail extends antisunward
+        self.tail_length = 100 * r_magnetopause
+
+    def deflect(self, particle):
+        if particle.charge != 0:
+            # Lorentz force
+            F = particle.charge * cross(particle.velocity, self.B_field)
+            particle.apply_force(F)
+```
+
+## Experiments
+
+### Field Visualization
+See magnetic field lines around planet.
+
+### Solar Wind Interaction
+Send charged particles at magnetosphere. Watch deflection.
+
+### Aurora Simulation
+Inject particles at polar cusps. See light emission.
+
+## Concepts
+
+- **dynamo**: Mechanism generating magnetic fields
+- **magnetopause**: Boundary of magnetic dominance
+- **van-allen-belts**: Trapped radiation zones
+- **aurora**: Light from atmospheric particle collisions
+
+## Transition
+
+We've explored planets in detail. Now we scale up to the engines that power solar systems—stars themselves.

@@ -1,0 +1,21 @@
+{
+  "chapter_id": "3.1",
+  "markers": [
+    {
+      "scene_id": "3.1.1.1",
+      "timestamp": 0.0,
+      "label": "triad"
+    },
+    {
+      "scene_id": "3.1.1.2",
+      "timestamp": 4.0,
+      "label": "triangle"
+    },
+    {
+      "scene_id": "3.1.1.3",
+      "timestamp": 7.0,
+      "label": "stability"
+    }
+  ],
+  "total_duration": 11.5
+}

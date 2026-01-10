@@ -1,0 +1,135 @@
+# Interference {#sec-interference}
+
+*"Geometry, not mystery"*
+
+::: {.callout-note}
+## Key Insight
+Interference arises from the vector addition of flux fields. Constructive interference occurs where vectors align; destructive interference occurs where they oppose.
+:::
+
+## Geometry, Not Mystery
+
+Interference is **what happens when two potential fields overlap**.
+
+When two waves meet in the same region of space, their flux vectors add:
+
+$$
+\vec{J}_{\text{combined}} = \vec{J}_A + \vec{J}_B
+$$
+
+The result depends on the relative alignment:
+
+- **Vectors align** → constructive interference (higher intensity)
+- **Vectors oppose** → destructive interference (lower intensity)
+
+**No complex amplitudes required.** Flux vectors in 3D Euclidean space produce interference naturally.
+
+## Constructive Interference
+
+When two flux sources produce aligned vectors:
+
+```
+Source A: →→→→→
+Source B: →→→→→
+Result:   →→→→→→→→→→ (doubled amplitude)
+```
+
+The combined density is higher. Genesis is more likely.
+
+## Destructive Interference
+
+When two flux sources produce opposing vectors:
+
+```
+Source A: →→→→→
+Source B: ←←←←←
+Result:   (near zero)
+```
+
+The combined density is lower. Genesis becomes impossible in these regions.
+
+## The Double-Slit Pattern
+
+Consider two flux sources separated by a small distance:
+
+1. Each source emits expanding waves
+2. Waves overlap in the region beyond
+3. Some regions have aligned flux (bright bands)
+4. Some regions have opposing flux (dark bands)
+
+Manifestation events occur preferentially in the high-intensity regions where flux density exceeds the threshold $K_B$.
+
+## Wave Propagation
+
+The discrete wave equation governs propagation:
+
+$$
+\frac{\partial^2 u}{\partial t^2} = c^2 \nabla^2 u
+$$
+
+Discretized for our lattice:
+
+1. **Calculate Laplacian**: Average of 6 neighbors minus center × 6
+2. **Update wave velocity**: Add Laplacian × c²
+3. **Update flux**: Add wave velocity
+4. **Apply damping**: Prevent unbounded growth
+
+### Implementation
+
+```python
+for voxel in grid:
+    # Average of neighbors minus center
+    neighbors = voxel.neighbors
+    avg = sum(n.flux for n in neighbors) / 6
+    laplacian = avg - voxel.flux
+
+    voxel.wave_velocity += C**2 * laplacian
+    voxel.flux += voxel.wave_velocity
+    voxel.flux *= (1 - DAMPING)
+```
+
+## Experiments
+
+### Two-Source Interference
+Set up two flux sources. Watch the interference pattern emerge. Bright and dark bands form naturally.
+
+### Phase Control
+Adjust the relative phase between two sources. Watch the pattern shift. At 180° out of phase, destructive interference dominates.
+
+### Manifestation Mapping
+Map where particles appear over many genesis events. They cluster in the bright bands, never in the dark bands.
+
+## Mathematical Details
+
+### Intensity
+
+The intensity at any point is the squared magnitude of the combined flux:
+
+$$
+I = |\vec{J}_{\text{combined}}|^2 = |\vec{J}_A + \vec{J}_B|^2
+$$
+
+Expanding:
+
+$$
+I = |\vec{J}_A|^2 + |\vec{J}_B|^2 + 2\vec{J}_A \cdot \vec{J}_B
+$$
+
+The cross term $2\vec{J}_A \cdot \vec{J}_B$ determines interference:
+- Positive (aligned): constructive
+- Negative (opposed): destructive
+
+### No Complex Numbers
+
+Classical wave interference requires complex amplitudes to track phase. In FTD, the 3D vector nature of flux naturally encodes phase information. The direction IS the phase. **[EMERGENT: vector phase encoding arises from the 3D structure, not imposed separately]**
+
+## Concepts
+
+- **vector-addition**: Flux fields add as vectors
+- **constructive-interference**: Aligned phases reinforce
+- **destructive-interference**: Opposed phases cancel
+- **wave-nature**: Reality's underlying wave structure
+
+## Transition
+
+Interference shapes where things can exist. But existence is not permanent—particles are born, live, and die in an eternal cycle. Next, we explore the cycle of existence.

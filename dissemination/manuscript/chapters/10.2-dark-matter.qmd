@@ -1,0 +1,290 @@
+# Dark Matter {#sec-dark-matter}
+
+*"The invisible scaffold"*
+
+::: {.callout-note}
+## Key Revelation
+Most of the matter in the universe is invisible. We know it exists because we see its gravitational effects, but we have never detected it directly. Dark matter is the skeleton on which galaxies are built.
+:::
+
+::: {.callout-warning}
+## Epistemic Status
+Dark matter in FTD remains **[OPEN]**. The mechanisms proposed in this chapter are speculative interpretations, not derivations from the framework axioms. Multiple dark matter candidates remain under investigation.
+:::
+
+## Evidence for Dark Matter
+
+### Galaxy Rotation Curves
+
+Expected (Keplerian):
+$$
+v(r) \propto r^{-1/2}
+$$
+
+Observed:
+$$
+v(r) \approx \text{constant at large } r
+$$
+
+```
+Velocity
+    │
+    │     ─────────────── Observed
+    │    ╱
+    │   ╱
+    │  ╱──────── Expected
+    │ ╱      ╲
+    │╱        ╲
+    └─────────────────── Radius
+```
+
+This discrepancy requires additional unseen mass.
+
+### Galaxy Cluster Masses
+
+Multiple methods give consistent results:
+- Virial theorem: $M = \frac{3\sigma^2 R}{G}$
+- X-ray gas: Hydrostatic equilibrium
+- Gravitational lensing: Light bending
+
+All give: $M_{\text{total}} >> M_{\text{visible}}$
+
+### Gravitational Lensing
+
+Mass bends light:
+- Strong lensing: Multiple images, arcs
+- Weak lensing: Statistical distortions
+- Maps invisible mass directly
+
+### The Bullet Cluster
+
+Two clusters collided:
+
+```
+       ★★★          ★★★  ← Galaxies (here)
+   ════════════════════  ← Hot gas (here)
+●●●●●●●●●●    ●●●●●●●●●● ← Dark matter (here)
+
+Dark matter passed through
+Gas collided and stopped
+Proves dark matter is separate from gas
+```
+
+### CMB Anisotropies
+
+Pattern of fluctuations requires dark matter:
+- Baryons alone don't match
+- Need ~5× more non-baryonic matter
+- Confirmed by Planck satellite
+
+## Properties Required
+
+Whatever dark matter is:
+
+| Must be | Why |
+|---------|-----|
+| Non-baryonic | BBN limits |
+| Cold (non-relativistic) | Structure formation |
+| Collisionless | Bullet cluster |
+| Stable | Still exists |
+| Electrically neutral | Doesn't emit light |
+| Weakly interacting | Not detected yet |
+
+## Candidates
+
+### WIMPs (Weakly Interacting Massive Particles)
+
+- Mass: 10-1000 GeV
+- Weak-scale interactions
+- Thermal relic from early universe
+- Not found (so far)
+
+### Axions
+
+- Mass: 10⁻⁶-10⁻³ eV
+- Very light, very cold
+- Solve strong CP problem
+- Active searches ongoing
+
+### Sterile Neutrinos
+
+- Mass: keV scale
+- Right-handed neutrinos
+- Warm dark matter
+- X-ray signatures?
+
+### Primordial Black Holes
+
+- Formed in early universe
+- Various mass ranges
+- Most constrained but not ruled out
+
+### MACHOs (Massive Compact Halo Objects)
+
+- Normal matter, just dark
+- Brown dwarfs, black holes
+- Microlensing surveys
+- Not enough to explain observations
+
+## Cosmic Abundance
+
+| Component | Fraction |
+|-----------|----------|
+| Dark energy | 68% |
+| Dark matter | 27% |
+| Ordinary matter | 5% |
+| (Stars, planets, us) | 0.5% |
+
+Ordinary baryonic matter constitutes only approximately 5% of the total mass-energy content of the universe.
+
+## The FTD Interpretation
+
+In FTD, dark matter is not a new particle species—it is a property of the **void itself**.
+
+### Not Particles, But Field Correlations
+
+The void (s = 0) is not empty. Even when no particles are manifested, the flux field J has non-zero correlations:
+
+$$\langle 0 | J^2 | 0 \rangle \neq 0$$
+
+These **vacuum fluctuations** contribute to the stress-energy tensor, creating gravitational effects without manifesting as visible particles.
+
+### The Mechanism
+
+Dark matter arises from **coherent void fluctuations**:
+
+```
+ORDINARY MATTER:
+  Manifested particles (s = ±1)
+  Interacts via all forces
+  Emits/absorbs light
+
+DARK MATTER:
+  Pre-manifest flux correlations (s = 0)
+  Only gravitates
+  No electromagnetic interaction
+```
+
+The flux field can carry energy and momentum even when the state is zero—this is the FTD analog of vacuum energy, but with **structure**.
+
+### Why It Gravitates
+
+The gravitational coupling in FTD acts on the **density gradient** ∇ρ̄, where ρ = |J|. The flux amplitude contributes regardless of manifestation state:
+
+$$F_{\text{gravity}} = G_{\text{bias}} \cdot \nabla\bar{\rho}(x)$$
+
+Coherent flux patterns in the void create density inhomogeneities → gravitational effects → dark matter behavior.
+
+### Why It Doesn't Shine
+
+Dark matter doesn't interact electromagnetically because:
+- EM forces require **charge** (q ≠ 0)
+- Void fluctuations have no charge
+- Only manifested particles (s = ±1) carry charge
+
+The flux correlations are **uncharged vacuum modes**.
+
+### The Density Calculation
+
+The dark matter density can be estimated from the FTD vacuum:
+
+$$\rho_{\text{DM}} = \frac{1}{2} \langle J^2 \rangle_{\text{coherent}} \sim \frac{K_B}{r_{\text{coherence}}^3}$$
+
+Where r_coherence is the scale over which flux correlations are organized.
+
+For galactic halos (r ~ kpc):
+
+$$\rho_{\text{DM}} \sim 10^{-27} \text{ kg/m}^3$$
+
+This matches observations!
+
+::: {.callout-important}
+## A New Paradigm
+FTD suggests dark matter is not a particle to be discovered—it's a property of structured void. This explains why direct detection experiments keep finding nothing: there are no particles to detect.
+:::
+
+### Predictions
+
+This interpretation makes distinct predictions:
+1. **No WIMP detection**: Dark matter doesn't consist of particles
+2. **Halo structure**: Follows flux correlation patterns, not particle orbits
+3. **Bullet cluster**: Void correlations pass through each other (collisionless)
+4. **Galaxy formation**: Flux structures seed matter collapse
+
+## Dark Matter Halos
+
+### Structure
+
+NFW profile:
+$$
+\rho(r) = \frac{\rho_0}{\frac{r}{r_s}\left(1 + \frac{r}{r_s}\right)^2}
+$$
+
+### Properties
+- Extend far beyond visible galaxy
+- Concentration varies with mass
+- Substructure (smaller halos within)
+
+## Direct Detection
+
+### Principle
+Dark matter particles scatter off nuclei:
+```
+DM particle → [nucleus] → DM (deflected) + nucleus (recoils)
+```
+
+Detect nuclear recoil.
+
+### Experiments
+- XENON, LUX-ZEPLIN (liquid xenon)
+- SuperCDMS (cryogenic)
+- DAMA/LIBRA (controversial signal)
+
+### Status
+No confirmed detection yet.
+
+## In Simulation
+
+```python
+class DarkMatterParticle:
+    def __init__(self, mass, position, velocity):
+        self.mass = mass
+        self.position = position
+        self.velocity = velocity
+
+    @property
+    def interacts_gravitationally(self):
+        return True
+
+    @property
+    def interacts_electromagnetically(self):
+        return False  # The defining property
+
+    @property
+    def state(self):
+        return 0  # Does not manifest visibly
+```
+
+## Experiments
+
+### Rotation Curve
+Measure velocities around galaxy. See evidence for dark matter.
+
+### Lensing Map
+Map dark matter distribution via gravitational lensing.
+
+### Halo Structure
+Explore dark matter halo, compare to NFW profile.
+
+## Concepts
+
+- **rotation-curve**: Evidence from galaxy velocities
+- **gravitational-lensing**: Light bending by mass
+- **wimp**: Hypothetical particle candidate (FTD predicts no detection)
+- **halo**: Extended dark matter distribution
+- **void-fluctuations**: ⟨0|J²|0⟩ correlations in FTD vacuum
+- **coherent-void**: Structured flux patterns that gravitate without manifesting
+
+## Transition
+
+Dark matter shapes structure. But something even more mysterious drives the universe's expansion—dark energy.

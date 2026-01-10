@@ -1,0 +1,227 @@
+# Gravitational Waves {#sec-gravitational-waves}
+
+*"Ripples in spacetime"*
+
+::: {.callout-note}
+## Key Insight
+Gravitational waves—propagating disturbances in the spacetime metric—were predicted by general relativity [@einstein1916] and first directly detected by LIGO in 2015 [@abbott2016_gw150914].
+:::
+
+## What Are Gravitational Waves?
+
+Ripples in the fabric of spacetime, caused by accelerating masses.
+
+### Production
+
+When masses accelerate asymmetrically:
+- Binary stars orbiting
+- Supernovae (if asymmetric)
+- Black hole mergers
+- Cosmic strings (hypothetical)
+
+### Propagation
+
+Travel at speed c through spacetime itself.
+
+## Properties
+
+### Strain
+
+$$
+h = \frac{\Delta L}{L} \approx 10^{-21}
+$$
+
+For LIGO detections: 1/1000th the diameter of a proton over 4 km.
+
+### Polarization
+
+Two modes:
+- **Plus (+)**: Stretches along one axis, compresses perpendicular
+- **Cross (×)**: Rotated 45° from plus
+
+```
+Plus:        Cross:
+○ → ○        ○   ○
+              ╲ ╱
+○   ○          ╳
+              ╱ ╲
+○ ← ○        ○   ○
+```
+
+### Speed
+
+The propagation speed was confirmed to equal $c$ to within $10^{-15}$ by the multi-messenger observation of GW170817 [@abbott2017_gw170817].
+
+## Sources
+
+### Binary Black Holes
+
+The primary source class for current detectors:
+
+- GW150914: First detection, $36 + 29 \to 62\,M_\odot$ [@abbott2016_gw150914]
+- Characteristic "chirp" waveform from inspiral
+- ~90 confirmed events through O3 observing run [@gwtc3]
+
+### Binary Neutron Stars
+
+GW170817:
+- First neutron star merger detected
+- Electromagnetic counterpart
+- Confirmed speed = c
+- Heavy element production
+
+### Supermassive Binaries
+
+LISA (future) targets:
+- Merging galaxy centers
+- 10⁶-10⁷ M☉
+- Millihertz frequencies
+
+### Primordial
+
+From early universe:
+- Inflation
+- Phase transitions
+- Cosmic strings
+
+## The Waveform
+
+### Inspiral
+
+```
+Frequency
+    │      ╱╱╱
+    │     ╱╱
+    │    ╱╱
+    │   ╱╱
+    │  ╱╱
+    │ ╱╱
+    │╱
+    └──────────── Time
+         Chirp
+```
+
+$$
+f \propto t^{-3/8}
+$$
+
+### Merger
+
+Maximum amplitude, complex dynamics, peak frequency.
+
+### Ringdown
+
+Damped oscillations as final black hole settles:
+$$
+h(t) \propto e^{-t/\tau} \cos(\omega t)
+$$
+
+## Detection
+
+### LIGO/Virgo
+
+Laser interferometers:
+
+```
+       Mirror
+          │
+          │
+Mirror ───●─── Mirror
+          │    Laser
+          │
+       Mirror
+
+Arms: 4 km
+Sensitivity: 10⁻²¹ strain
+```
+
+### How It Works
+
+1. Laser split into two arms
+2. GW stretches one arm, compresses other
+3. Light returns out of phase
+4. Interference pattern changes
+
+### Detections
+
+Since 2015:
+- ~90 confirmed events
+- Mostly BBH mergers
+- Some BNS, BHNS
+
+## Science from GW
+
+### Tests of General Relativity
+
+- GW speed = c (confirmed)
+- Polarization = 2 modes (confirmed)
+- Waveform matches prediction (confirmed)
+
+### Astrophysics
+
+- Black hole masses and spins
+- Merger rates
+- Neutron star equation of state
+- Hubble constant (standard sirens)
+
+### Cosmology
+
+- Independent distance measure
+- Dark energy constraints
+- Early universe physics (future)
+
+## Future Detectors
+
+| Detector | Frequency | Targets |
+|----------|-----------|---------|
+| LIGO/Virgo | 10-1000 Hz | Stellar BH, NS |
+| LISA | 0.1-100 mHz | SMBH, EMRIs |
+| Pulsar timing | nHz | SMBH binaries |
+| Einstein Telescope | 1-10000 Hz | All stellar |
+
+## In Simulation
+
+```python
+def gravitational_wave(binary_system, distance):
+    m1, m2 = binary_system.masses
+    chirp_mass = (m1 * m2)**(3/5) / (m1 + m2)**(1/5)
+    f = binary_system.orbital_frequency
+
+    # Strain amplitude
+    h = (4 * G * chirp_mass / c**2 / distance) * \
+        (pi * G * chirp_mass * f / c**3)**(2/3)
+
+    return h
+
+def inspiral_waveform(t, chirp_mass):
+    # Frequency evolution (chirp formula)
+    M = G * chirp_mass / c**3
+    f = (256/5 * M**(-5/3) * t)**(-3/8)
+
+    # Phase
+    phi = integrate(2 * pi * f, t)
+
+    return h_0 * cos(phi)
+```
+
+## Experiments
+
+### Binary Inspiral
+Watch two black holes spiral together. See frequency increase.
+
+### Detection Simulation
+Inject GW signal. Extract from noise.
+
+### Merger Dynamics
+Watch final plunge and ringdown.
+
+## Concepts
+
+- **strain**: Fractional length change
+- **chirp**: Rising frequency inspiral
+- **ringdown**: Post-merger oscillation
+- **interferometer**: Detection method
+
+## Transition
+
+Gravitational waves come from the most violent events. But high-energy particles also rain down from space—cosmic rays.

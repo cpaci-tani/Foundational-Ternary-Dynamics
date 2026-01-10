@@ -1,0 +1,16 @@
+{
+  "chapter_id": "2.2",
+  "markers": [
+    {
+      "scene_id": "2.2.6.1",
+      "timestamp": 0.0,
+      "label": "summary"
+    },
+    {
+      "scene_id": "2.2.6.2",
+      "timestamp": 4.0,
+      "label": "diagram"
+    }
+  ],
+  "total_duration": 11.5
+}

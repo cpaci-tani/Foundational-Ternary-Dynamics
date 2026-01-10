@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="194.4pt" height="147pt" viewBox="0 0 194.4 147" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-01-02T17:09:01.297240</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.8, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 147 
+L 194.4 147 
+L 194.4 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="text_1">
+    <!--      * -->
+    <g style="fill: #2c3e50" transform="translate(10.8 17.503563) scale(0.1 -0.1)">
+     <defs>
+      <path id="DejaVuSansMono-20" transform="scale(0.015625)"/>
+      <path id="DejaVuSansMono-2a" d="M 3334 3897 
+L 2216 3291 
+L 3334 2681 
+L 3156 2375 
+L 2106 3009 
+L 2106 1831 
+L 1747 1831 
+L 1747 3009 
+L 697 2375 
+L 519 2681 
+L 1638 3291 
+L 519 3897 
+L 697 4206 
+L 1747 3572 
+L 1747 4750 
+L 2106 4750 
+L 2106 3572 
+L 3156 4206 
+L 3334 3897 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#DejaVuSansMono-20"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(60.205078 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(120.410156 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(180.615234 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(240.820312 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(301.025391 0)"/>
+    </g>
+    <!--     * * -->
+    <g style="fill: #2c3e50" transform="translate(10.8 28.765125) scale(0.1 -0.1)">
+     <use xlink:href="#DejaVuSansMono-20"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(60.205078 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(120.410156 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(180.615234 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(240.820312 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(301.025391 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(361.230469 0)"/>
+    </g>
+    <!--    * * * -->
+    <g style="fill: #2c3e50" transform="translate(10.8 40.026688) scale(0.1 -0.1)">
+     <use xlink:href="#DejaVuSansMono-20"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(60.205078 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(120.410156 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(180.615234 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(240.820312 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(301.025391 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(361.230469 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(421.435547 0)"/>
+    </g>
+    <!--   * * * * -->
+    <g style="fill: #2c3e50" transform="translate(10.8 51.28825) scale(0.1 -0.1)">
+     <use xlink:href="#DejaVuSansMono-20"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(60.205078 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(120.410156 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(180.615234 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(240.820312 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(301.025391 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(361.230469 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(421.435547 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(481.640625 0)"/>
+    </g>
+    <!--  * * * * * -->
+    <g style="fill: #2c3e50" transform="translate(10.8 62.549813) scale(0.1 -0.1)">
+     <use xlink:href="#DejaVuSansMono-20"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(60.205078 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(120.410156 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(180.615234 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(240.820312 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(301.025391 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(361.230469 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(421.435547 0)"/>
+     <use xlink:href="#DejaVuSansMono-20" transform="translate(481.640625 0)"/>
+     <use xlink:href="#DejaVuSansMono-2a" transform="translate(541.845703 0)"/>
+    </g>
+    <!-- ────────── -->
+    <g style="fill: #2c3e50" transform="translate(10.8 73.811375) scale(0.1 -0.1)">
+     <defs>
+      <path id="DejaVuSansMono-2500" d="M -63 1931 
+L -63 2469 
+L 3916 2469 
+L 3916 1931 
+L -63 1931 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#DejaVuSansMono-2500"/>
+     <use xlink:href="#DejaVuSansMono-2500" transform="translate(60.205078 0)"/>
+     <use xlink:href="#DejaVuSansMono-2500" transform="translate(120.410156 0)"/>
+     <use xlink:href="#DejaVuSansMono-2500" transform="translate(180.615234 0)"/>
+     <use xlink:href="#DejaVuSansMono-2500" transform="translate(240.820312 0)"/>
+     <use xlink:href="#DejaVuSansMono-2500" transform="translate(301.025391 0)"/>
+     <use xlink:href="#DejaVuSansMono-2500" transform="translate(361.230469 0)"/>
+     <use xlink:href="#DejaVuSansMono-2500" transform="translate(421.435547 0)"/>
+     <use xlink:href="#DejaVuSansMono-2500" transform="translate(481.640625 0)"/>
+     <use xlink:href="#DejaVuSansMono-2500" transform="translate(541.845703 0)"/>
+    </g>
+    <!--  -->
+    <g style="fill: #2c3e50" transform="translate(10.8 85.072938) scale(0.1 -0.1)"/>
+   </g>
+  </g>
+ </g>
+</svg>

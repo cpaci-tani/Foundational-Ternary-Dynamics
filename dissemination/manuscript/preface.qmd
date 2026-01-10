@@ -1,0 +1,90 @@
+# Preface {.unnumbered}
+
+## On Ontology
+
+What is real?
+
+This question has occupied philosophers for millennia. Physicists have offered answers in the language of mathematics: fields, wavefunctions, spacetime metrics. But mathematics describes; it does not *explain*. The equations tell us what happens without telling us what exists.
+
+This book takes a different approach. We start not with what we observe, but with what must be true for anything to be observed at all.
+
+## The Minimal Viable Universe
+
+The framework presented here is called **Ternary Realization Dynamics** (FTD). It proposes that reality can be modeled—perhaps *is*—a discrete system with remarkably few ingredients:
+
+- A three-dimensional lattice of cells
+- Three possible states per cell: void (0), matter (+1), antimatter (-1)
+- Local update rules based on neighbor interactions
+- **Four framework integers** that determine ALL constants: b₃=7, N_c=3, N_eff=13, N_base=4
+
+From these minimal ingredients, complex phenomena emerge without being programmed: particles, forces, chemistry, geology, stellar evolution, galactic dynamics, and even the conditions for observers to exist.
+
+::: {.callout-important}
+## What This Book Derives
+
+This book presents a tightly specified discrete framework and a derivation program. Within clearly stated assumptions and constraint classes (see the Assumption Ledger), it develops closed-form relations that reproduce a number of Standard Model quantities with high numerical accuracy.
+
+In particular, from the four framework integers and stated constraints (with explicit "core vs companion" scope separation), the text reports:
+
+- The fine structure constant α = 1/137.036 (1.26 ppm accuracy)
+- All 15 Standard Model particle masses (<0.5% average error)
+- The cosmological constant Λ/Λ_Planck = 10^-121.8 (0.16% error)
+- Why there are exactly 3 generations of fermions
+- The Weinberg angle, strong coupling, and gravitational coupling
+
+Where the book uses words like “prove” or “unique,” those claims are always meant relative to an explicitly defined search space / constraint set (e.g., uniqueness among structures satisfying the stated constraints). The strongest claims are centralized and categorized in the Assumption Ledger.
+
+The reader is invited to verify every derivation. The mathematics is transparent.
+:::
+
+## What This Is Not
+
+This is not a theory of everything in the physicist's sense. It makes no claim to be the final description of reality. It is, instead:
+
+1. **An operational framework** — A specification detailed enough to simulate
+2. **An ontological proposal** — A claim about what kinds of things exist
+3. **A pedagogical journey** — A path from simplest to most complex
+
+## What This Is
+
+This work provides a comprehensive technical specification for a model universe.
+
+The specification addresses four fundamental questions:
+
+- **What exists** (the parts)
+- **How they interact** (the rules)
+- **What emerges** (the phenomena)
+- **Why it works** (the principles)
+
+The goal is not proof but understanding. If, after reading this book, you can explain why electrons orbit nuclei, why stars burn, why galaxies spin, and why you exist to ask these questions—then the book has succeeded.
+
+## On the Journey
+
+The structure follows the hierarchy of being itself:
+
+We begin in the Void, where nothing exists but the capacity for existence. We witness the first division, where 0 becomes +1 and -1. We watch particles emerge, combine, and organize into ever more complex structures. We scale up through atoms, molecules, planets, stars, galaxies, and the cosmic web. We explore extreme phenomena at the boundaries of what can exist. And finally, we return to the Void, understanding now that the end is also a beginning.
+
+This work extends beyond physics to address foundational questions concerning the nature of existence.
+
+## Interactive Exploration
+
+The FTD framework is not merely theoretical—it is executable. Accompanying simulation code allows readers to explore the concepts presented in this book interactively.
+
+**Available Resources:**
+
+- **Web Simulation**: Interactive 3D visualization of voxel dynamics
+- **Python Package**: `trd-simulation` for custom experiments
+- **Jupyter Notebooks**: Step-by-step tutorials for each chapter
+- **Source Code**: Full implementation under MIT License
+
+Access these resources at the project repository linked in the About section.
+
+## Acknowledgments
+
+This work builds on the insights of countless physicists, philosophers, and programmers who have grappled with the question of what is real. Special thanks to those who have contributed to discrete physics, cellular automata, and emergence theory.
+
+Any errors in this work are the author's responsibility.
+
+---
+
+*Let us begin.*

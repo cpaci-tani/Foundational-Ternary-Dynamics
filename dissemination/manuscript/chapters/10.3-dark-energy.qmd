@@ -1,0 +1,262 @@
+# Dark Energy {#sec-dark-energy}
+
+*"The accelerating expansion"*
+
+::: {.callout-note}
+## Key Revelation
+The universe is not just expanding—it's accelerating. Something with negative pressure, filling all of space, is pushing the cosmos apart. We call it dark energy, but we don't know what it is.
+:::
+
+## Discovery
+
+### Type Ia Supernovae
+
+Standard candles for measuring distances:
+- Same peak luminosity
+- Measure apparent brightness
+- Calculate distance
+
+### The Surprise (1998)
+
+Distant supernovae were fainter than expected:
+
+```
+Expected (decelerating):    ★ (bright)
+Observed:                   ★ (fainter)
+                              ↓
+                           Farther than expected
+                              ↓
+                           Universe accelerating
+```
+
+Universe expanding faster now than before.
+
+### Nobel Prize 2011
+
+Perlmutter, Schmidt, Riess for this discovery.
+
+## Evidence
+
+### Type Ia Supernovae
+
+Original discovery. Confirmed by multiple surveys.
+
+### CMB + BAO
+
+Cosmic Microwave Background + Baryon Acoustic Oscillations:
+- CMB: Universe is flat (Ω_total ≈ 1)
+- Matter: Ω_matter ≈ 0.3
+- Difference: Ω_Λ ≈ 0.7
+
+### Age of Universe
+
+Without dark energy:
+- Age < 10 billion years
+- Oldest stars: ~13 billion years
+- Contradiction!
+
+With dark energy: Age = 13.8 billion years (correct)
+
+### Integrated Sachs-Wolfe Effect
+
+CMB photons gain/lose energy crossing voids/clusters.
+Effect only works with dark energy.
+
+## Properties
+
+| Property | Value |
+|----------|-------|
+| Density | ~7 × 10⁻³⁰ g/cm³ |
+| Fraction | 68% of universe |
+| Pressure | Negative (P < 0) |
+| Equation of state | w ≈ -1 |
+
+### Equation of State
+
+$$
+P = w \rho c^2
+$$
+
+| w value | Meaning |
+|---------|---------|
+| w > -1/3 | Decelerating |
+| w = -1 | Cosmological constant |
+| w < -1 | Phantom energy |
+
+Current observations: $w = -1.03 \pm 0.03$
+
+## What Could It Be?
+
+### Cosmological Constant (Λ)
+
+Einstein's "biggest blunder":
+- Constant energy density of vacuum
+- w = -1 exactly
+- Simplest explanation
+
+### Quintessence
+
+Dynamical scalar field:
+- w can vary with time
+- Tracks other components
+- Predicts w ≠ -1
+
+### Modified Gravity
+
+Maybe gravity is different at large scales:
+- f(R) gravity
+- Extra dimensions
+- No need for dark energy
+
+## The Cosmological Constant Problem
+
+Quantum field theory predicts vacuum energy:
+$$
+\rho_{\text{QFT}} \approx 10^{120} \times \rho_{\text{observed}}
+$$
+
+The worst prediction in physics.
+
+Why is Λ so small, but not zero?
+
+## The FTD Solution: α⁵⁷
+
+FTD provides a **geometric derivation** of the cosmological constant that resolves the 122 orders of magnitude discrepancy.
+
+### The Derivation
+
+The cosmological constant in Planck units is:
+
+$$\frac{\Lambda}{\Lambda_{\text{Planck}}} = \alpha^{57}$$
+
+Where α = 1/137.036 is the fine structure constant.
+
+Let's calculate:
+$$\alpha^{57} = (0.00729735...)^{57} = 10^{-121.8}$$
+
+Observed:
+$$\frac{\Lambda_{\text{obs}}}{\Lambda_{\text{Planck}}} \approx 10^{-122}$$
+
+**Agreement to 0.16%!**
+
+::: {.callout-important}
+## The 122 Orders of Magnitude Explained
+The cosmological constant isn't unnaturally small—it's a 57th-order effect in the electromagnetic coupling. The Lemniscate-Alpha framework predicts this exponent exactly.
+:::
+
+### Why 57?
+
+The number 57 emerges from the Lemniscate-Alpha geometry:
+
+$$57 = 3 \times 19 = 3 \times (b_3 + N_c + N_{\text{eff}} - 1)$$
+
+Where:
+- 3 = Number of generations
+- b₃ = 7 (QCD beta coefficient)
+- N_c = 3 (color charges)
+- N_eff = 13 (effective dimension)
+
+The cosmological constant involves physics at all scales from Planck to cosmic—hence it accumulates all the geometric factors.
+
+### Physical Interpretation
+
+In FTD, the cosmological constant represents the **residual vacuum energy** after cancellation:
+
+$$\Lambda = \rho_{\text{Planck}} \times \text{(suppression from 57 nested correlations)}$$
+
+Each power of α represents one layer of correlation in the flux field hierarchy:
+- α¹: electromagnetic effects
+- α²: radiative corrections
+- ...
+- α⁵⁷: cosmic-scale vacuum energy
+
+### The Coincidence Problem
+
+Why is dark energy comparable to matter density NOW?
+
+In FTD: Both scale with α through different paths that **intersect at the current epoch**:
+
+$$\rho_{\text{matter}} \sim \alpha^{-3} \times \rho_0 \quad \text{(structure formation)}$$
+$$\rho_\Lambda \sim \alpha^{57} \times \rho_{\text{Planck}}$$
+
+The intersection happens when the universe is ~13.8 billion years old—not coincidence but necessity.
+
+### Comparison with Standard Approach
+
+| Approach | Λ/Λ_Planck | Issue |
+|----------|------------|-------|
+| Naive QFT | 10⁰ | Wrong by 10¹²² |
+| Supersymmetry | 10⁻⁶⁰ | Still wrong |
+| Anthropic | ~10⁻¹²² | Not predictive |
+| **FTD (α⁵⁷)** | **10⁻¹²¹·⁸** | **Matches to 0.16%** |
+
+## Fate of the Universe
+
+Dark energy determines cosmic destiny:
+
+| Scenario | w value | Outcome |
+|----------|---------|---------|
+| Big Crunch | w > -1/3 | Collapse |
+| Eternal expansion | w = -1 | De Sitter space |
+| Big Rip | w < -1 | Tear apart |
+
+Current evidence: Eternal accelerating expansion.
+
+### The Far Future
+
+With w = -1:
+- Galaxies beyond Local Group recede forever
+- Eventually pass horizon—no longer visible
+- Universe becomes dark, cold, empty
+- Heat death
+
+## In Simulation
+
+```python
+class DarkEnergy:
+    def __init__(self, equation_of_state=-1):
+        self.w = equation_of_state
+        self.density = LAMBDA_DENSITY  # Constant
+
+    def effect_on_expansion(self, scale_factor):
+        # Dark energy causes acceleration
+        if self.w == -1:
+            # Cosmological constant
+            return LAMBDA_DENSITY  # Constant
+        else:
+            # Quintessence - varies with scale
+            return self.density * scale_factor**(3 * (1 + self.w))
+
+# Friedmann equation
+def expansion_rate(a, matter, radiation, dark_energy):
+    H_squared = (8 * pi * G / 3) * (
+        matter.density / a**3 +
+        radiation.density / a**4 +
+        dark_energy.density  # Constant!
+    )
+    return sqrt(H_squared)
+```
+
+## Experiments
+
+### Supernova Distances
+Measure Type Ia at various redshifts. Plot Hubble diagram.
+
+### Expansion History
+Track how expansion rate changes over cosmic time.
+
+### Future Prediction
+Extrapolate current acceleration into far future.
+
+## Concepts
+
+- **cosmological-constant**: Λ, constant vacuum energy
+- **equation-of-state**: Ratio of pressure to energy density
+- **accelerating-expansion**: Universe speeding up
+- **dark-energy-density**: 68% of universe
+- **alpha-57**: FTD derivation: Λ/Λ_Planck = α⁵⁷ ≈ 10⁻¹²²
+- **coincidence-problem**: Why Ω_Λ ~ Ω_m now? (addressed in FTD)
+
+## Transition
+
+Dark matter and dark energy shape the universe's evolution. Now let's trace the full history—the cosmological epochs from Big Bang to today.

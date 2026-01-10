@@ -1,0 +1,239 @@
+# Phase Transitions {#sec-phase-transitions}
+
+*"When matter transforms"*
+
+::: {.callout-note}
+## Key Revelation
+Phase transitions happen at specific conditions—the critical points where energy finally overcomes the forces holding a phase together.
+:::
+
+::: {.callout-note}
+## How FTD Produces Phase Transitions
+Phase transitions in FTD arise from competition between flux gradients:
+
+- **Binding flux** holds structures together (attractive gradients)
+- **Kinetic flux** enables particle motion (momentum distribution)
+- **Critical point** occurs when kinetic flux overcomes binding flux
+- **Latent heat** = flux energy required to break neighbor correlations
+
+The Clausius-Clapeyron equation emerges from flux balance at phase boundaries.
+:::
+
+## The Phase Diagram
+
+```
+        Pressure
+           │
+           │      SOLID
+           │     ╱
+           │    ╱ Triple
+           │   ╱  Point
+           │  ╱────┐
+           │ ╱     │ LIQUID
+           │╱      │
+    ───────┼───────┴────────── Temperature
+           │        ╲
+           │         ╲ Critical
+           │          ╲ Point
+           │   GAS     ╲
+           │            SUPERCRITICAL
+```
+
+### Key Points
+
+- **Triple point**: All three phases coexist
+- **Critical point**: Liquid-gas distinction vanishes
+
+## Transition Types
+
+| Transition | Direction | Energy |
+|------------|-----------|--------|
+| Melting | Solid → Liquid | Absorb (ΔH > 0) |
+| Freezing | Liquid → Solid | Release (ΔH < 0) |
+| Vaporization | Liquid → Gas | Absorb |
+| Condensation | Gas → Liquid | Release |
+| Sublimation | Solid → Gas | Absorb |
+| Deposition | Gas → Solid | Release |
+| Ionization | Gas → Plasma | Absorb |
+| Recombination | Plasma → Gas | Release |
+
+## Latent Heat
+
+Energy absorbed or released during transition without temperature change.
+
+### Heat of Fusion
+
+Energy to melt solid:
+$$
+Q = m \times L_f
+$$
+
+### Heat of Vaporization
+
+Energy to boil liquid:
+$$
+Q = m \times L_v
+$$
+
+Usually $L_v >> L_f$ because you must completely separate molecules.
+
+## First-Order Transitions
+
+Sharp boundaries, latent heat involved.
+
+### Characteristics
+- Discontinuity in first derivative of free energy
+- Coexisting phases at transition
+- Latent heat required
+- Examples: Melting, boiling, sublimation
+
+## Second-Order Transitions
+
+Continuous change, no latent heat.
+
+### Characteristics
+- Discontinuity in second derivative of free energy
+- No latent heat
+- Order parameter changes continuously
+- Examples: Ferromagnetic → paramagnetic, superconducting transition
+
+## The Clausius-Clapeyron Equation
+
+Describes the slope of phase boundaries:
+
+$$
+\frac{dP}{dT} = \frac{L}{T \Delta V}
+$$
+
+Where:
+- L = latent heat
+- ΔV = volume change
+
+### Water's Anomaly
+
+Ice is less dense than water (ΔV < 0), so melting curve has negative slope. Higher pressure → lower melting point.
+
+## Nucleation
+
+Transitions don't happen uniformly—they start at nucleation sites.
+
+### Homogeneous Nucleation
+Random fluctuations create seeds of new phase. Rare.
+
+### Heterogeneous Nucleation
+Impurities or surfaces provide sites. Much more common.
+
+### Supercooling/Superheating
+Without nucleation sites, matter can exist past transition temperature:
+- Supercooled water: Liquid below 0°C
+- Superheated liquid: Liquid above boiling point
+
+## Critical Phenomena
+
+Near the critical point:
+- Fluctuations become huge
+- Properties diverge (critical opalescence)
+- No distinction between liquid and gas
+
+Above the critical point: **supercritical fluid**—properties of both liquid and gas.
+
+## Cosmological Phase Transitions
+
+The early universe underwent phase transitions just like water—but at vastly higher temperatures.
+
+### The Electroweak Transition (T ~ 100 GeV)
+
+At T ~ 10¹⁵ K (100 GeV), the Higgs field condensed:
+
+| Before | After |
+|--------|-------|
+| ⟨H⟩ = 0 | ⟨H⟩ = 246 GeV |
+| W, Z massless | W, Z massive |
+| EM and Weak unified | EM and Weak separate |
+
+**In FTD**: This is a **first-order** transition. It proceeds via bubble nucleation—exactly like water boiling, but with the Higgs condensate forming inside bubbles.
+
+The bubble walls are where **baryogenesis** happens (see Chapter 10.4).
+
+### The QCD Transition (T ~ 150 MeV)
+
+At T ~ 10¹² K (150 MeV), quarks and gluons confined into hadrons:
+
+| Before | After |
+|--------|-------|
+| Quark-gluon plasma | Protons, neutrons, pions |
+| Free quarks | Quarks confined in color-neutral combinations |
+| χ symmetry intact | χ symmetry spontaneously broken |
+
+**In FTD**: This is a **crossover** (smooth transition), not first-order. The flux configurations reorganize continuously rather than via bubbles.
+
+### Phase Transitions in FTD
+
+All phase transitions in FTD involve the flux field reorganizing:
+
+| Transition | Flux Behavior | Order |
+|------------|---------------|-------|
+| Melting | Bond flux breaks, particles move freely | First-order |
+| Boiling | Complete flux separation | First-order |
+| Ferromagnetic | Flux alignments disorder | Second-order |
+| Superconducting | Flux pairing (Cooper pairs) | Second-order |
+| Electroweak | Higgs condensate forms | First-order |
+| QCD | Color confinement | Crossover |
+
+::: {.callout-note}
+## Universal Physics
+The same mathematics describes ice melting and the electroweak transition—both involve an order parameter (flux configuration) changing as temperature crosses a critical value.
+:::
+
+## Experiments
+
+### Melting Point
+Heat a solid. Watch the transition. Measure temperature during phase change.
+
+### Triple Point
+Find conditions where solid, liquid, and gas coexist.
+
+### Critical Point
+Approach the critical point. Watch the liquid-gas interface disappear.
+
+## Implementation
+
+```python
+def check_phase_transition(particle, neighbors):
+    local_temp = average_flux_magnitude(neighbors)
+    local_pressure = density(neighbors) * local_temp
+
+    current_phase = particle.phase
+
+    # Check transition conditions
+    if current_phase == SOLID:
+        if local_temp > melting_point(particle.type):
+            particle.phase = LIQUID
+            absorb_heat(particle, latent_heat_fusion)
+
+    elif current_phase == LIQUID:
+        if local_temp > boiling_point(particle.type):
+            particle.phase = GAS
+            absorb_heat(particle, latent_heat_vaporization)
+```
+
+## Concepts
+
+- **latent-heat**: Energy for phase change without temperature change
+- **nucleation**: Starting points for phase transitions
+- **triple-point**: Three phases coexist
+- **critical-point**: Liquid-gas distinction vanishes
+- **electroweak-transition**: First-order at T ~ 100 GeV, Higgs condensation
+- **qcd-transition**: Crossover at T ~ 150 MeV, quark confinement
+- **order-parameter**: Quantity that changes at transition (flux configuration in FTD)
+
+## Transition
+
+Normal phases cover most conditions. But at extremes, exotic states emerge—superconductors, superfluids, and more in @sec-exotic-states.
+
+::: {.callout-tip}
+## Related Topics
+- **Exotic states**: @sec-exotic-states covers superconductors and superfluids
+- **States of matter**: @sec-states-matter reviews the four primary phases
+- **Cosmological epochs**: @sec-cosmological-epochs describes phase transitions in the early universe
+:::

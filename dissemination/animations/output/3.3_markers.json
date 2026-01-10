@@ -1,0 +1,16 @@
+{
+  "chapter_id": "3.3",
+  "markers": [
+    {
+      "scene_id": "3.3.2.1",
+      "timestamp": 0.0,
+      "label": "radii"
+    },
+    {
+      "scene_id": "3.3.2.2",
+      "timestamp": 5.0,
+      "label": "shells"
+    }
+  ],
+  "total_duration": 11.8
+}

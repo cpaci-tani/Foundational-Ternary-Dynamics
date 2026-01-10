@@ -1,0 +1,18 @@
+Edge-on view:
+              Halo
+          ╱─────────╲
+         ╱           ╲
+    ════════════════════  ← Thin disk
+         ─────────────    ← Thick disk
+         ╲    ●    ╱      ← Bulge (● = center)
+          ╲─────────╱
+              Halo
+
+Face-on view:
+         ╱────╲
+        ╱ ╭──╮ ╲
+       │ ╱ ●  ╲ │    ← Bar
+       │ ╲    ╱ │
+        ╲ ╰──╯ ╱
+         ╲────╱
+           Spiral arms

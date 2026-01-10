@@ -1,0 +1,273 @@
+# Heat Death {#sec-heat-death}
+
+*"The final equilibrium"*
+
+::: {.callout-note}
+## Key Revelation
+All processes require energy gradients. When the last gradient flattens, when the final star burns out, when everything reaches the same temperature—the universe dies not with a bang, but with a whisper fading into eternal silence.
+:::
+
+## The Second Law's Endgame
+
+### Entropy Always Wins
+
+$$
+dS_{total} \geq 0
+$$
+
+Every process:
+- Uses energy gradients
+- Creates entropy
+- Moves toward equilibrium
+
+Eventually, no gradients remain.
+
+### The Timeline
+
+| Era | Time (years) | Events |
+|-----|--------------|--------|
+| Stelliferous | Now - 10¹⁴ | Stars shine |
+| Degenerate | 10¹⁴ - 10⁴⁰ | White dwarfs, neutron stars cool |
+| Black Hole | 10⁴⁰ - 10¹⁰⁰ | Only black holes remain |
+| Dark | 10¹⁰⁰+ | Black holes evaporate |
+| Heat Death | ∞ | Final equilibrium |
+
+## The Stelliferous Era Ends
+
+### Last Stars Form (~10¹⁴ years)
+
+Star formation requires:
+- Gas to collapse
+- Gravity to compress
+- Fusion to ignite
+
+Eventually:
+- All gas locked in remnants
+- No new stars possible
+- Last red dwarf fades
+
+### The Final Stellar Light
+
+Red dwarfs live longest (~10¹³ years):
+- M-class, 0.1 M☉
+- Slow, efficient burning
+- When the last one dies, starlight ends forever
+
+## The Degenerate Era
+
+### What Remains
+
+After stars die:
+- White dwarfs (cooling carbon/oxygen)
+- Neutron stars (cooling nuclear matter)
+- Black holes (slowly evaporating)
+- Brown dwarfs (never ignited)
+- Planets (frozen, dark)
+
+### White Dwarf Cooling
+
+$$
+T(t) \propto t^{-2/5}
+$$
+
+Cooling takes 10¹⁵+ years to approach background.
+
+### Black Dwarf Formation
+
+Eventually white dwarfs become black dwarfs:
+- Too cold to radiate visibly
+- Crystalline carbon/oxygen
+- Dark, cold cinders
+
+(None exist yet—universe too young)
+
+## The Black Hole Era
+
+### Black Holes Dominate
+
+By 10⁴⁰ years:
+- Stellar remnants have decayed or merged
+- Only black holes remain significant
+- Plus radiation and sparse particles
+
+### Hawking Evaporation
+
+$$
+t_{evap} = \frac{5120 \pi G^2 M^3}{\hbar c^4}
+$$
+
+| Mass | Evaporation Time |
+|------|-----------------|
+| 1 M☉ | 10⁶⁷ years |
+| 10⁶ M☉ | 10⁸⁷ years |
+| 10⁹ M☉ | 10⁹⁶ years |
+| 10¹² M☉ | 10¹⁰⁵ years |
+
+### The Final Black Hole
+
+Supermassive black holes last longest.
+
+The very last one evaporates around 10¹⁰⁰ years:
+- Final flash of Hawking radiation
+- Then: nothing but particles
+
+## The Dark Era
+
+### What's Left
+
+After 10¹⁰⁰ years:
+- Photons (redshifted to near zero energy)
+- Neutrinos (incredibly sparse)
+- Electrons and positrons (if stable)
+- Protons (if stable) or their decay products
+
+### Proton Decay?
+
+Grand unified theories predict:
+$$
+\tau_p \approx 10^{34} - 10^{45} \text{ years}
+$$
+
+If protons decay:
+- All baryonic matter eventually dissolves
+- Only leptons and photons remain
+
+### Temperature Approaches Zero
+
+Expansion redshifts everything:
+$$
+T \propto \frac{1}{a(t)}
+$$
+
+Temperature asymptotes to zero but never reaches it.
+
+## True Heat Death
+
+### Definition
+
+Heat death = thermal equilibrium everywhere:
+- Same temperature throughout
+- No energy gradients
+- No possible work
+- Maximum entropy
+
+### The Final State
+
+```
+∞ years from now:
+─────────────────────────────────────────
+Temperature: ~10⁻³⁰ K (approaching 0)
+Density: ~10⁻¹²³ kg/m³ (approaching 0)
+Contents: Scattered photons, neutrinos
+Events: Essentially none
+Entropy: Maximum
+Time: Meaningless (nothing changes)
+─────────────────────────────────────────
+```
+
+### Does Time End?
+
+If nothing changes, does time exist?
+
+Philosophically ambiguous:
+- Time continues (spacetime exists)
+- Time is meaningless (no events to order)
+
+## In the Simulation
+
+### Modeling Heat Death
+
+```python
+def simulate_heat_death(universe, max_ticks=10**15):
+    for tick in range(max_ticks):
+        universe.step()
+
+        # Check for heat death conditions
+        temp_variance = compute_temperature_variance(universe)
+        particle_count = count_particles(universe)
+        structure_count = count_structures(universe)
+
+        if (temp_variance < EPSILON and
+            structure_count == 0 and
+            particle_count < THRESHOLD):
+            print(f"Heat death at tick {tick}")
+            return tick
+
+    return "Still evolving"
+
+def heat_death_state():
+    # Final configuration
+    return {
+        'state': 0,  # All void
+        'flux': [0, 0, 0],  # No momentum
+        'density': 0,  # No energy density
+        'structures': [],  # No organization
+        'entropy': 'maximum'
+    }
+```
+
+### Acceleration in Simulation
+
+Real heat death: 10¹⁰⁰+ years
+Simulation: Increase DECAY_RATE to observe faster
+
+```python
+def accelerated_heat_death():
+    # Normal: DECAY_RATE = 0.00729
+    # Accelerated: DECAY_RATE = 0.1
+
+    universe = create_universe(decay_rate=0.1)
+
+    while not is_heat_death(universe):
+        universe.step()
+        observe(universe)
+```
+
+## Philosophical Implications
+
+### The Universe's Purpose?
+
+If universe ends in heat death:
+- Was there a point?
+- Does meaning require permanence?
+- Or is the journey sufficient?
+
+### Boltzmann Brains
+
+In eternal equilibrium:
+- Random fluctuations still occur
+- Eventually, a brain-like fluctuation
+- "Boltzmann brain" observes briefly
+- Then dissolves
+
+Problem: More Boltzmann brains than real observers?
+
+### Eternal Recurrence?
+
+Poincaré recurrence theorem:
+- Finite system returns to initial state
+- Given infinite time
+
+But: Expanding universe isn't finite bounded system.
+
+## Experiments
+
+### Entropy Maximization
+Watch universe approach maximum entropy. See structure dissolve.
+
+### Cooling Simulation
+Track temperature as universe ages. See asymptotic approach to zero.
+
+### Decay Cascade
+Follow final particles as everything evaporates.
+
+## Concepts
+
+- **heat-death**: Final thermal equilibrium
+- **stelliferous-era**: Time of stars
+- **black-hole-era**: Dominated by black holes
+- **proton-decay**: Possible baryon dissolution
+
+## Transition
+
+Heat death is the most probable end. But is it the only possibility? Next, we explore alternative endings—scenarios where the universe meets different fates.

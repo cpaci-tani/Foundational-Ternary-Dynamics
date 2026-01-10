@@ -1,0 +1,207 @@
+# Semiconductors {#sec-semiconductors}
+
+*"The foundation of computing"*
+
+::: {.callout-note}
+## Key Revelation
+Semiconductors can be switched between conducting and insulating. This controllability enables transistors, and transistors enable computers.
+:::
+
+## Between Metal and Insulator
+
+| Material | Band Gap | Conductivity |
+|----------|----------|--------------|
+| Metal | 0 | High |
+| Semiconductor | 0.1-3 eV | Moderate |
+| Insulator | >3 eV | Very low |
+
+## Intrinsic Semiconductors
+
+Pure silicon or germanium.
+
+### Band Structure
+
+```
+Energy
+  ↑
+  │  ╔═══════════╗
+  │  ║ Conduction║ ← Empty at T=0
+  │  ║   band    ║
+  │  ╚═══════════╝
+  │      ↕ Gap (Si: 1.1 eV)
+  │  ╔═══════════╗
+  │  ║  Valence  ║ ← Full at T=0
+  │  ║   band    ║
+  │  ╚═══════════╝
+  └───────────────→
+```
+
+### Thermal Excitation
+
+At T > 0, some electrons gain enough energy to jump the gap:
+$$
+n = n_0 \exp\left(-\frac{E_g}{2k_BT}\right)
+$$
+
+### Carriers
+
+- **Electrons**: Negative carriers in conduction band
+- **Holes**: Positive carriers in valence band (missing electrons)
+
+Both contribute to conductivity.
+
+## Doping
+
+Adding impurities to control carrier concentration.
+
+### n-Type (Add Group V: P, As, Sb)
+
+Extra electrons (donors):
+```
+    Si  Si  Si
+    Si  P⁺  Si  ← P has 5 valence electrons
+    Si  Si  Si     1 extra electron free
+         e⁻
+```
+
+### p-Type (Add Group III: B, Ga, Al)
+
+Extra holes (acceptors):
+```
+    Si  Si  Si
+    Si  B⁻  Si  ← B has 3 valence electrons
+    Si  Si  Si     1 missing electron = hole
+         h⁺
+```
+
+### Carrier Concentrations
+
+For n-type: $n >> p$, electrons dominate
+For p-type: $p >> n$, holes dominate
+
+## The p-n Junction
+
+Interface between p-type and n-type regions.
+
+### Formation
+
+```
+p-type       n-type
+┌─────────┬─────────┐
+│ h⁺ h⁺   │   e⁻ e⁻ │
+│   h⁺ h⁺ │ e⁻ e⁻   │
+│ h⁺   h⁺ │   e⁻ e⁻ │
+└─────────┴─────────┘
+     ↓
+┌─────────────────────┐
+│ h⁺ h⁺│ - + │e⁻ e⁻   │
+│      │ - + │        │  Depletion zone
+│ h⁺ h⁺│ - + │e⁻ e⁻   │
+└─────────────────────┘
+```
+
+Electrons and holes recombine at the junction, leaving behind charged ions.
+
+### Depletion Zone
+
+Region with no free carriers. Acts as insulator.
+
+### Built-in Voltage
+
+Electric field from exposed ions creates potential barrier.
+
+## Diode Behavior
+
+### Forward Bias (+ on p-side)
+
+Shrinks depletion zone. Current flows.
+
+### Reverse Bias (+ on n-side)
+
+Expands depletion zone. No current (blocking).
+
+### I-V Characteristic
+
+$$
+I = I_0 \left(e^{qV/k_BT} - 1\right)
+$$
+
+Exponential in forward direction, blocked in reverse.
+
+## Transistor
+
+The switch that enables computing.
+
+### Basic Types
+
+- **BJT** (Bipolar Junction Transistor): npn or pnp
+- **MOSFET** (Metal-Oxide-Semiconductor FET): Most common today
+
+### MOSFET Structure
+
+```
+     Gate (voltage control)
+        ↓
+   ┌────────┐
+ ──┤  Oxide ├──
+   │  ─────  │
+   │ n  p  n │
+   │    ↑    │
+   └────────┘
+   Source  Drain
+
+Gate voltage controls channel conductivity.
+```
+
+### Switching
+
+- Gate voltage low: Channel off (insulating)
+- Gate voltage high: Channel on (conducting)
+
+This is how 0s and 1s are represented.
+
+## In Simulation
+
+```python
+class Semiconductor:
+    def __init__(self, base_material, dopant_type, dopant_concentration):
+        self.material = base_material
+        self.type = dopant_type
+        self.carrier_density = calculate_carriers(dopant_concentration)
+
+    def conductivity(self, temperature, electric_field):
+        # Intrinsic carriers
+        n_i = intrinsic_carrier(self.material, temperature)
+
+        # Doped carriers
+        if self.type == N_TYPE:
+            n = self.carrier_density
+            p = n_i**2 / n
+        else:
+            p = self.carrier_density
+            n = n_i**2 / p
+
+        return ELECTRON_MOBILITY * n + HOLE_MOBILITY * p
+```
+
+## Experiments
+
+### Doping Effect
+Add impurities to pure semiconductor. Watch conductivity change.
+
+### p-n Junction
+Build junction. Apply forward and reverse bias. See diode behavior.
+
+### Transistor Switch
+Build transistor. Control current with gate voltage.
+
+## Concepts
+
+- **band-gap**: Energy between valence and conduction bands
+- **doping**: Adding impurities to control carriers
+- **p-n-junction**: Interface between p-type and n-type
+- **transistor**: Voltage-controlled switch
+
+## Transition
+
+Semiconductors enable electronics. But life uses different structures—biological materials with unique properties. Next, we explore the building blocks of life.
