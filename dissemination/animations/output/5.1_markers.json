@@ -1,0 +1,16 @@
+{
+  "chapter_id": "5.1",
+  "markers": [
+    {
+      "scene_id": "5.1.1.1",
+      "timestamp": 0.0,
+      "label": "solid"
+    },
+    {
+      "scene_id": "5.1.1.2",
+      "timestamp": 4.0,
+      "label": "lattice"
+    }
+  ],
+  "total_duration": 10.2
+}

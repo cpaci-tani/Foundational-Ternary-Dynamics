@@ -1,0 +1,10 @@
+       Mirror
+          │
+          │
+Mirror ───●─── Mirror
+          │    Laser
+          │
+       Mirror
+
+Arms: 4 km
+Sensitivity: 10⁻²¹ strain

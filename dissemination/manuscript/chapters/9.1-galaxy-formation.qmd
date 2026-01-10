@@ -1,0 +1,188 @@
+# Galaxy Formation {#sec-galaxy-formation}
+
+*"From seeds to spirals"*
+
+::: {.callout-note}
+## Key Revelation
+Galaxies form from tiny density fluctuations in the early universe, amplified by gravity over billions of years. Dark matter provides the scaffolding.
+:::
+
+::: {.callout-note}
+## How FTD Produces Galaxy Formation
+Galaxy formation emerges from the flux field's response to primordial perturbations:
+
+- **Dark matter halos** = unmanifested flux concentrations (s = 0) that source gravity
+- **Density fluctuations** = inherited from quantum fluctuations in the early flux field
+- **Gravitational instability** = flux gradients amplifying initial perturbations
+- **Baryon infall** = manifested matter (s ≠ 0) following the gravitational flux wells
+
+The cosmic web structure reflects the topology of flux concentrations on cosmological scales.
+:::
+
+## Initial Conditions
+
+### Density Fluctuations
+
+The early universe was almost, but not quite, uniform:
+- Quantum fluctuations during inflation
+- Stretched to cosmic scales
+- Density variations: δρ/ρ ~ 10⁻⁵
+
+### Seeds
+
+These tiny variations are the seeds of all cosmic structure:
+- Slightly overdense regions attract more matter
+- Grow through gravitational instability
+- Eventually collapse into galaxies
+
+## The Role of Dark Matter
+
+Dark matter dominates structure formation:
+- Doesn't interact with light (no pressure)
+- Collapses first
+- Creates gravitational wells
+- Baryons fall in later
+
+### The Cosmic Web
+
+Dark matter forms:
+```
+    ┌─────○─────────○─────┐
+    │      ╲       ╱      │
+    ○───────●─────●───────○
+    │      ╱       ╲      │
+    │     ╱         ╲     │
+    ○────●───────────●────○
+
+● = Dark matter halo (galaxy sites)
+─ = Filaments
+○ = Nodes (galaxy clusters)
+```
+
+## Formation Pathways
+
+### Hierarchical Merging (Modern View)
+
+```
+Time
+ ↓
+ ○ ○ ○ ○ ○ ○ ○ ○   Small halos form first
+  ╲╱   ╲╱   ╲╱
+   ○     ○    ○    Merge into larger
+    ╲   ╱ ╲  ╱
+     ○     ○       Continue merging
+      ╲   ╱
+       ○           Present-day galaxy
+```
+
+### Bottom-Up Process
+
+1. **Dark matter halos form** (z ~ 20-30)
+2. **Gas falls in** (cools, condenses)
+3. **First stars form** (z ~ 20)
+4. **Small galaxies merge** (z ~ 10-2)
+5. **Continued growth** (ongoing)
+
+## Gas Cooling and Star Formation
+
+### Cooling Time
+
+Gas must cool to collapse:
+$$
+t_{\text{cool}} = \frac{3k_BT n}{2 \Lambda(T) n^2}
+$$
+
+Where Λ(T) is the cooling function.
+
+If $t_{\text{cool}} < t_{\text{Hubble}}$: gas can cool, collapse, form stars.
+
+### The Cooling Curve
+
+```
+    Log Λ
+       │
+       │     ╱╲ Bremsstrahlung
+       │    ╱  ╲
+       │   ╱    ╲
+       │ ─╱─────Line cooling
+       │╱        ╲
+       └───────────────── Log T
+        10⁴   10⁶   10⁸
+```
+
+Efficient cooling at 10⁴-10⁶ K.
+
+## Angular Momentum
+
+Galaxies spin because:
+- Tidal torques from neighbors
+- Random motions during collapse
+- Conservation of angular momentum
+
+### Disk Formation
+
+Gas with angular momentum settles into disk:
+- Falls to center
+- Spins up (conservation)
+- Flattens perpendicular to rotation axis
+
+## Feedback
+
+Star formation regulates itself:
+
+### Stellar Feedback
+- Supernovae heat and expel gas
+- Stellar winds inject energy
+- UV radiation ionizes gas
+
+### AGN Feedback
+- Central black hole accretes
+- Jets and outflows
+- Can quench star formation
+
+## Galaxy Assembly
+
+```python
+def galaxy_formation(dark_matter_halo):
+    # Baryons fall into dark matter well
+    gas = accrete_baryons(halo)
+
+    while universe.age < 13.8_billion_years:
+        # Gas cools
+        if cooling_time(gas) < hubble_time():
+            gas.cool()
+            gas.condense()
+
+        # Stars form from dense gas
+        stars = form_stars(dense_gas)
+
+        # Feedback regulates
+        feedback(stars, gas)
+        feedback(central_black_hole, gas)
+
+        # Mergers
+        if merger_event():
+            merge_with(other_galaxy)
+```
+
+## Experiments
+
+### Halo Collapse
+Watch dark matter halo form from initial fluctuations.
+
+### Disk Formation
+See gas settle into rotating disk.
+
+### Merger Simulation
+Collide two galaxies. Watch the result.
+
+## Concepts
+
+- **hierarchical-merging**: Small objects combine into larger
+- **dark-matter-halo**: Invisible gravitational scaffold
+- **cooling-flow**: Gas radiating energy and condensing
+- **feedback**: Self-regulation of star formation
+
+## Transition
+
+Galaxies form from the same processes at every mass scale. Now let's explore the variety of galaxies that result—spirals, ellipticals, and more.

@@ -1,0 +1,257 @@
+# Complexity {#sec-complexity}
+
+*"Emergence at all scales"*
+
+::: {.callout-note}
+## Key Revelation
+The universe is not merely complicated—it is complex. Complexity means the whole has properties that no part possesses. From quarks to consciousness, each level of organization reveals new phenomena invisible from below.
+:::
+
+## Emergence
+
+### More Is Different
+
+Philip Anderson's insight: "More is different."
+
+Reductionism tells us what things are made of.
+It does not tell us what they do.
+
+### Examples
+
+| Parts | Whole | Emergent Property |
+|-------|-------|-------------------|
+| H₂O molecules | Water | Wetness |
+| Neurons | Brain | Thought |
+| Ants | Colony | Intelligence |
+| Notes | Music | Emotion |
+| Atoms | Life | Purpose |
+
+### Strong vs Weak Emergence
+
+**Weak emergence**: In principle derivable from parts (just complex).
+
+**Strong emergence**: New causal powers not reducible to parts.
+
+This simulation suggests: All emergence is weak (derivable from rules), but practically strong (unpredictable without running it).
+
+## Levels of Organization
+
+### The Hierarchy
+
+```
+Level 14: Universe (Cosmic Structure)
+Level 13: Galaxy Clusters
+Level 12: Galaxies
+Level 11: Star Systems
+Level 10: Planets
+Level 9:  Ecosystems
+Level 8:  Organisms
+Level 7:  Organs
+Level 6:  Cells
+Level 5:  Organelles
+Level 4:  Macromolecules
+Level 3:  Molecules
+Level 2:  Atoms
+Level 1:  Particles
+Level 0:  Voxels (Void + Flux)
+```
+
+### Properties at Each Level
+
+Each level has:
+- Its own vocabulary
+- Its own laws (effective theories)
+- Its own entities
+- Downward causation on lower levels
+
+### Downward Causation
+
+Higher levels influence lower:
+- Organism behavior affects cell chemistry
+- Market forces affect individual decisions
+- Meaning affects brain states
+
+Not mystical—just complex feedback.
+
+## Measures of Complexity
+
+### Kolmogorov Complexity
+
+Length of shortest program to produce output:
+$$
+K(x) = \min_p \{ |p| : U(p) = x \}
+$$
+
+| Pattern | K | Type |
+|---------|---|------|
+| 000...0 | Small | Simple |
+| Random | ≈ Length | Incompressible |
+| π digits | Small | Compressible (has program) |
+| Life | Intermediate | Complex |
+
+### Logical Depth
+
+Time required for shortest program to run:
+- Simple: Short program, quick execution
+- Random: No program captures it
+- Complex: Short program, long execution
+
+Life is logically deep.
+
+### Effective Complexity
+
+Amount of regularity:
+$$
+C_{eff} = K(regularities)
+$$
+
+- Random: Low effective complexity (no regularities)
+- Simple: Low effective complexity (few regularities)
+- Complex: High effective complexity (many regularities)
+
+## Complex Adaptive Systems
+
+### Properties
+
+1. **Many interacting agents**
+2. **Nonlinear dynamics**
+3. **Feedback loops**
+4. **Adaptation and learning**
+5. **Emergence of higher-order structure**
+6. **Self-organization**
+
+### Examples
+
+| System | Agents | Emergent Structure |
+|--------|--------|-------------------|
+| Ecosystem | Organisms | Food webs |
+| Economy | People | Markets |
+| Brain | Neurons | Thoughts |
+| Immune system | Cells | Recognition |
+| Cities | People | Culture |
+
+## The Edge of Chaos Revisited
+
+### Phase Transitions in Computation
+
+| Regime | Properties | Computation |
+|--------|------------|-------------|
+| Ordered | Predictable, frozen | Memory only |
+| Chaotic | Random, unstable | Transmission only |
+| Critical | Balanced, complex | Processing possible |
+
+### Lambda Parameter
+
+Langton's work on cellular automata:
+```
+λ = 0.0 ──────── 0.27 ────────── 0.5+
+    Frozen      Complex         Chaotic
+                  ↑
+           "Edge of chaos"
+```
+
+Maximum computational capability at critical point.
+
+### Life at the Edge
+
+Biology may operate at criticality:
+- Gene regulatory networks
+- Neural dynamics
+- Ecosystems
+
+Evolution tunes toward the edge.
+
+## In the Simulation
+
+### Complexity Emerges Naturally
+
+```python
+def measure_complexity(grid):
+    # Structural complexity
+    structures = find_all_structures(grid)
+    structure_diversity = len(set(types(structures)))
+
+    # Dynamic complexity
+    patterns = analyze_flux_patterns(grid)
+    pattern_variety = entropy(patterns)
+
+    # Hierarchical complexity
+    levels = identify_organization_levels(grid)
+    hierarchy_depth = len(levels)
+
+    return {
+        'structural': structure_diversity,
+        'dynamic': pattern_variety,
+        'hierarchical': hierarchy_depth
+    }
+
+def complexity_evolution(universe):
+    history = []
+    for tick in range(many_ticks):
+        universe.step()
+        c = measure_complexity(universe.grid)
+        history.append(c)
+
+    # Complexity tends to increase, then plateau
+    # Peak at intermediate times
+    # Then heat death reduces complexity
+```
+
+### Why Complexity Peaks
+
+```
+Complexity
+    │
+    │        ╱╲
+    │       ╱  ╲
+    │      ╱    ╲
+    │     ╱      ╲╲
+    │    ╱         ╲╲╲
+    │   ╱             ╲╲╲
+    └──────────────────────── Time
+       ↑         ↑          ↑
+    Genesis   Peak      Heat Death
+              (Now?)
+```
+
+We exist at complexity's peak.
+
+## Computation and Complexity
+
+### Universe as Computer
+
+If the universe computes itself:
+- Input: Initial conditions
+- Program: Physical laws
+- Output: Current state
+
+### Computational Irreducibility
+
+Wolfram's observation:
+- Some systems cannot be predicted except by running them
+- No shortcut exists
+- Must simulate to know outcome
+
+This simulation may have computational irreducibility—we cannot predict what will emerge without running it.
+
+## Experiments
+
+### Complexity Measurement
+Track complexity metrics over time. See peak and decline.
+
+### Hierarchy Detection
+Identify spontaneous levels of organization.
+
+### Edge of Chaos
+Tune parameters to find critical point. Maximum complexity there.
+
+## Concepts
+
+- **emergence**: Properties of wholes absent in parts
+- **levels-of-organization**: Hierarchical structure
+- **kolmogorov-complexity**: Shortest program length
+- **edge-of-chaos**: Critical point for computation
+
+## Transition
+
+Complexity builds. But why does this particular complexity exist? Why these constants, these particles, this universe? Next, we explore the anthropic window—why the universe allows observers at all.

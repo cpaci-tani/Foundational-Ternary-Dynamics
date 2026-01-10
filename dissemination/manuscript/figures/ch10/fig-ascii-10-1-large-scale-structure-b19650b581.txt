@@ -1,0 +1,13 @@
+        ●═══════●════════●
+        ║       ║        ║
+        ║  void ║  void  ║
+        ║       ║        ║
+●═══════●═══════●════════●═══════●
+        ║       ║        ║
+        ║  void ║  void  ║
+        ║       ║        ║
+        ●═══════●════════●
+
+● = Nodes (galaxy clusters)
+═ = Filaments (galaxy chains)
+void = Empty regions

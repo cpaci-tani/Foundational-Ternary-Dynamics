@@ -1,0 +1,183 @@
+# Exotic States {#sec-exotic-states}
+
+*"When matter does the impossible"*
+
+::: {.callout-note}
+## Key Revelation
+At extreme conditions—very cold, very dense, very hot—matter exhibits behaviors that defy everyday intuition. These exotic states reveal quantum mechanics at macroscopic scales.
+:::
+
+::: {.callout-note}
+## How FTD Produces Exotic States
+Exotic quantum phases emerge when flux behavior becomes macroscopically coherent:
+
+- **Superconductivity** = Cooper pairs form when flux-mediated attraction overcomes thermal disruption; pairs are bosonic and condense into coherent flux state
+- **Superfluidity** = Bose-Einstein condensation of flux into a single macroscopic quantum state
+- **Bose-Einstein condensate** = many particles sharing identical flux configuration at T → 0
+- **Fermi degeneracy** = Pauli exclusion forces fermion flux into high-momentum states
+
+These states reveal that the flux field, not individual particles, is the fundamental reality.
+:::
+
+## Superconductivity
+
+Below a critical temperature, some materials conduct electricity with zero resistance.
+
+### Properties
+- Zero electrical resistance
+- Meissner effect (expels magnetic fields)
+- Persistent currents (flow forever)
+- Quantized magnetic flux
+
+### Mechanism (BCS Theory)
+- Electrons form Cooper pairs via phonons
+- Pairs behave as bosons
+- Condense into single quantum state
+- No scattering = no resistance
+
+### In Simulation
+```python
+if temperature < T_critical:
+    pair_electrons(nearby_electrons)
+    for pair in cooper_pairs:
+        pair.resistance = 0
+        pair.locked = True
+```
+
+### Applications
+- MRI machines
+- Particle accelerators
+- Maglev trains
+- Quantum computers
+
+## Superfluidity
+
+Zero viscosity below critical temperature.
+
+### Properties
+- Flows without friction
+- Climbs container walls
+- Quantized vortices
+- Second sound (temperature waves)
+
+### Helium-4
+
+At 2.17 K, helium-4 becomes superfluid:
+- Two-fluid model: normal + superfluid components
+- Lambda transition (specific heat spike)
+- Cannot be stirred (vortices quantized)
+
+### In Simulation
+```python
+if temperature < T_lambda and particle.type == HELIUM_4:
+    particle.viscosity = 0
+    quantize_angular_momentum(particle)
+```
+
+## Bose-Einstein Condensate (BEC)
+
+At near-absolute zero, bosons occupy the same quantum state.
+
+### Properties
+- Macroscopic quantum coherence
+- Matter waves visible
+- Interference patterns
+- Extremely low temperature (nK)
+
+### Creation
+1. Laser cool atoms
+2. Trap magnetically
+3. Evaporative cooling
+4. BEC forms below critical T
+
+### In Simulation
+Multiple particles can share the same voxel if:
+- They are bosons (integer spin)
+- Temperature is near zero
+- They have identical quantum states
+
+## Quark-Gluon Plasma
+
+At extreme temperature/density, hadrons dissolve.
+
+### Properties
+- Quarks and gluons deconfined
+- Nearly perfect fluid (lowest viscosity)
+- Existed microseconds after Big Bang
+- Created briefly in particle colliders
+
+### Conditions
+- Temperature > 2 × 10¹² K
+- Energy density > 1 GeV/fm³
+
+### In Simulation
+```python
+if temperature > DECONFINEMENT_TEMP:
+    for hadron in hadrons:
+        unlock_triads(hadron)
+        release_quarks(hadron)
+    # Free quarks and gluons interact directly
+```
+
+## Neutron Star Matter
+
+At nuclear densities, matter is mostly neutrons.
+
+### Layers
+1. **Outer crust**: Iron lattice + electrons
+2. **Inner crust**: Neutron-rich nuclei + neutron drip
+3. **Outer core**: Superfluid neutrons + superconducting protons
+4. **Inner core**: Unknown—quark matter? strange matter?
+
+### Properties
+- Density: 10¹⁴ g/cm³
+- Supported by neutron degeneracy pressure
+- Intense magnetic fields (10¹² G)
+- Millisecond rotation possible
+
+## Degenerate Matter
+
+When quantum pressure prevents further compression.
+
+### Electron Degeneracy
+- Supports white dwarfs
+- Electrons fill lowest states
+- Pauli exclusion prevents collapse
+- Limit: 1.4 M☉ (Chandrasekhar)
+
+### Neutron Degeneracy
+- Supports neutron stars
+- Neutrons fill lowest states
+- Limit: ~3 M☉ (uncertain)
+
+## Strange Matter
+
+Hypothetical stable matter containing strange quarks.
+
+### Properties (Theoretical)
+- Lower energy than nuclear matter (?)
+- Self-stabilizing
+- Would convert normal matter on contact
+- May exist in neutron star cores
+
+## Experiments
+
+### Superconductor Simulation
+Cool material below critical temperature. Watch resistance vanish.
+
+### Superfluid Demo
+Cool helium. Watch it climb walls and flow without friction.
+
+### BEC Formation
+Cool bosons toward absolute zero. Watch them condense.
+
+## Concepts
+
+- **superconductivity**: Zero electrical resistance
+- **superfluidity**: Zero viscosity
+- **bose-einstein-condensate**: Bosons in same quantum state
+- **quark-gluon-plasma**: Deconfined quarks and gluons
+
+## Transition
+
+Exotic states show matter's quantum nature at large scales. Now we explore how matter organizes—from crystals to semiconductors to biological structures.

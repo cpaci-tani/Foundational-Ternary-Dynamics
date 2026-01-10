@@ -1,0 +1,10 @@
+        VOID (State 0)
+           ↓ Genesis
+    MANIFESTATION (±1)
+           ↓ Persistence
+      STRUCTURE (bound)
+           ↓ Decay
+    MANIFESTATION (±1)
+           ↓ Evaporation
+        VOID (State 0)
+           ↓ ... (repeat)

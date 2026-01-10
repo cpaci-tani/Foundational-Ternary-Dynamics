@@ -1,0 +1,466 @@
+# Equations Reference {#sec-equations-reference}
+
+*"The mathematical foundation—from axioms to derivations"*
+
+::: {.callout-important}
+## Major Update: Derivation Equations Added
+This reference now includes the equations used throughout the Lemniscate-Alpha program and related chapters to connect Standard Model quantities to a small integer data set.
+:::
+
+## The Master Equation
+
+### Universal State Update
+
+$$
+\Psi(x, t+1) = \text{TimeGate}(x) \times \text{Existence}(x) \times \text{Dynamics}(x)
+$$
+
+### Expanded Form
+
+$$
+\Psi(x,t) = \delta\left(\frac{1}{1 + \alpha|J|\omega}\right) \times \text{sgn}\left(\lfloor|J| - KB\rfloor\right) \times \left[\xi + F_g + F_e + F_m + F_{strong} + F_{weak}\right]
+$$
+
+## Flux and Density
+
+### Flux Vector
+$$
+\vec{J}(x) = [J_x, J_y, J_z]
+$$
+
+### Density (Flux Magnitude)
+$$
+\rho(x) = |\vec{J}(x)| = \sqrt{J_x^2 + J_y^2 + J_z^2}
+$$
+
+### Density Gradient
+$$
+\nabla\rho = \left(\frac{\partial\rho}{\partial x}, \frac{\partial\rho}{\partial y}, \frac{\partial\rho}{\partial z}\right)
+$$
+
+### Discretized Gradient
+$$
+\nabla\rho(x) = \frac{1}{2}\left(\rho(x+\hat{e}) - \rho(x-\hat{e})\right)
+$$
+
+## Field Operators
+
+### Divergence
+$$
+\text{div } \vec{J} = \nabla \cdot \vec{J} = \frac{\partial J_x}{\partial x} + \frac{\partial J_y}{\partial y} + \frac{\partial J_z}{\partial z}
+$$
+
+Discretized:
+$$
+\nabla \cdot \vec{J} = \frac{1}{2}\sum_i \left[J_i(x+\hat{e}_i) - J_i(x-\hat{e}_i)\right]
+$$
+
+### Curl
+$$
+\text{curl } \vec{J} = \nabla \times \vec{J} = \begin{pmatrix} \frac{\partial J_z}{\partial y} - \frac{\partial J_y}{\partial z} \\ \frac{\partial J_x}{\partial z} - \frac{\partial J_z}{\partial x} \\ \frac{\partial J_y}{\partial x} - \frac{\partial J_x}{\partial y} \end{pmatrix}
+$$
+
+### Laplacian
+$$
+\nabla^2 f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2} + \frac{\partial^2 f}{\partial z^2}
+$$
+
+Discretized (3D):
+$$
+\nabla^2 f(x) = \sum_{\text{neighbors}} f(n) - 6f(x)
+$$
+
+## Wave Equation
+
+### Continuous Form
+$$
+\frac{\partial^2 u}{\partial t^2} = c^2 \nabla^2 u
+$$
+
+### Discrete Update (Velocity-Verlet)
+
+1. Compute Laplacian:
+$$
+\nabla^2 u = \bar{u}_{neighbors} - u
+$$
+
+2. Update wave velocity:
+$$
+v_{wave}(t+1) = v_{wave}(t) + c^2 \nabla^2 u
+$$
+
+3. Update flux:
+$$
+\vec{J}(t+1) = \vec{J}(t) + v_{wave}(t+1)
+$$
+
+4. Apply damping:
+$$
+\vec{J}(t+1) = \vec{J}(t+1) \times (1 - \lambda)
+$$
+
+## Genesis and Evaporation
+
+### Genesis Probability
+$$
+P_{genesis}(x) = \text{clamp}\left(1 - \exp\left(-\frac{\rho(x) - KB}{KB}\right), 0, 1\right)
+$$
+
+### Polarity Assignment
+$$
+S(x) = \text{sgn}(\nabla \cdot \vec{J})
+$$
+
+Where sgn returns +1, 0, or -1.
+
+### Evaporation Condition
+$$
+\rho(x) < KB \implies S(x) \rightarrow 0
+$$
+
+## Force Equations
+
+### Gravity
+$$
+\vec{F}_g = G_{bias} \times \nabla\bar{\rho}(x)
+$$
+
+Where $\bar{\rho}$ is the neighborhood-averaged density.
+
+### Coulomb (Electric)
+$$
+\vec{F}_e = -q(x) \times \nabla\bar{q}(x)
+$$
+
+Where q is the charge field.
+
+### Lorentz (Magnetic)
+$$
+\vec{F}_m = \beta_m \times (\nabla \times \vec{J}) \times \hat{J}
+$$
+
+### Strong Force (Yukawa)
+$$
+\vec{F}_{strong} = g^2 \frac{e^{-m_\pi r}}{r^2}(1 + m_\pi r)\hat{r}
+$$
+
+For short range (1-3 voxels):
+- Attractive at medium range
+- Repulsive at very short range
+
+### Weak Force Stress
+$$
+S_{weak}(x) = |\nabla \cdot \vec{J}| + |\nabla \times \vec{J}| + |\nabla\bar{\rho}|
+$$
+
+Transmutation occurs when:
+$$
+S_{weak} > S_{threshold}
+$$
+
+## Relativity
+
+### Time Dilation Lag Factor
+$$
+L(x) = 1 + \alpha \times E(x) \times \omega(x)
+$$
+
+Where:
+- $E(x)$ = local energy (density)
+- $\omega(x)$ = local frequency
+
+### Phase Accumulator Update
+$$
+\tau(x) = \tau(x) + \frac{1}{L(x)}
+$$
+
+Active tick when:
+$$
+\tau(x) \geq 1 \implies \text{update voxel, reset } \tau
+$$
+
+### Relativistic Mass
+$$
+m_{rel} = \frac{m_0}{\sqrt{1 - v^2/c^2}} = \gamma m_0
+$$
+
+### Lorentz Factor
+$$
+\gamma = \frac{1}{\sqrt{1 - v^2/c^2}}
+$$
+
+### Retarded Position
+$$
+\vec{r}_{ret} = \vec{r}_{current} - \vec{v} \times \frac{d}{c}
+$$
+
+## Thermodynamics
+
+### Temperature Proxy
+$$
+T_{proxy} = \frac{\langle|\vec{J}|^2\rangle}{3 N}
+$$
+
+### Entropy
+$$
+S = -k_B \sum_i p_i \ln(p_i)
+$$
+
+### Free Energy
+$$
+F = E - TS
+$$
+
+## Quantum Equations
+
+### Energy-Frequency Relation
+$$
+E = h \times f = H \times \omega
+$$
+
+### Uncertainty (Heisenberg)
+$$
+\Delta E \times \Delta t \geq \frac{\hbar}{2}
+$$
+
+### Tunneling Probability
+$$
+P_{tunnel} \propto \exp\left(-2d\sqrt{\frac{2m(V-E)}{\hbar^2}}\right)
+$$
+
+## Black Holes
+
+### Schwarzschild Radius
+$$
+r_s = \frac{2GM}{c^2}
+$$
+
+### Hawking Temperature
+$$
+T_H = \frac{\hbar c^3}{8\pi G M k_B}
+$$
+
+### Bekenstein-Hawking Entropy
+$$
+S_{BH} = \frac{k_B c^3 A}{4 G \hbar}
+$$
+
+### Evaporation Time
+$$
+t_{evap} = \frac{5120 \pi G^2 M^3}{\hbar c^4}
+$$
+
+## Cosmology
+
+### Hubble Law
+$$
+v = H_0 \times d
+$$
+
+### Friedmann Equation
+$$
+H^2 = \frac{8\pi G}{3}\rho - \frac{k c^2}{a^2} + \frac{\Lambda c^2}{3}
+$$
+
+### Scale Factor Evolution
+$$
+\dot{a}^2 = H_0^2\left[\Omega_m a^{-1} + \Omega_r a^{-2} + \Omega_\Lambda a^2 + \Omega_k\right]
+$$
+
+### Density Evolution
+$$
+\rho_m \propto a^{-3}, \quad \rho_r \propto a^{-4}, \quad \rho_\Lambda = \text{constant}
+$$
+
+---
+
+## Lemniscate-Alpha Derivations
+
+These equations summarize the book's proposed relations connecting fundamental constants to four integers: b₃=7, N_c=3, N_eff=13, N_base=4.
+
+### Master Quadratic
+$$
+x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0
+$$
+
+Roots: $\alpha = 1/137.036$ (larger), $N_c = 3.024$ (smaller)
+
+### Fine Structure Constant
+
+::: {.callout-warning}
+## Notation Clarification
+The master quadratic yields $x_+ = 137.036$ (the larger root), which is identified with $1/\alpha$, not $\alpha$ itself.
+:::
+
+$$
+\frac{1}{\alpha} = \frac{1}{2}\left[16(G^*)^2 + \sqrt{256(G^*)^4 - 64(G^*)^3}\right] = 137.036
+$$
+
+Therefore: $\alpha = 1/137.036 \approx 0.00729$
+
+### Electron Mass
+$$
+\frac{m_e}{m_0} = b_3(b_3 + N_c)\alpha = 70\alpha = 0.5110
+$$
+
+### Muon Mass
+$$
+\frac{m_\mu}{m_e} = 3 \times 70 - 3 = 207
+$$
+
+### Tau Mass
+$$
+\frac{m_\tau}{m_e} = 17 \times 207 - 42 = 3477
+$$
+
+### Proton Mass
+$$
+\frac{m_p}{m_e} = \frac{N_{eff}}{\alpha} + T(10) = \frac{13}{\alpha} + 55 = 1836.47
+$$
+
+### Neutron-Proton Difference
+$$
+\frac{m_n - m_p}{m_e} = \phi^2 - 12\alpha = 2.53
+$$
+
+### W Boson Mass
+$$
+\frac{m_W}{m_e} = \frac{67}{8\alpha^2} = \frac{b_3(b_3+N_c) - N_c}{8\alpha^2} = 157{,}273
+$$
+
+### Z Boson Mass
+$$
+\frac{m_Z}{m_e} = \frac{m_W}{m_e} \times \sqrt{\frac{13}{10}} = 179{,}266
+$$
+
+### Higgs Mass
+$$
+\frac{m_H}{m_e} = \frac{N_{eff}}{\alpha^2} = 244{,}125
+$$
+
+### Up Quark Mass
+$$
+\frac{m_u}{m_e} = N_{base} + \sin^2\theta_W = 4 + \frac{3}{13} = 4.231
+$$
+
+### Down Quark Mass
+$$
+\frac{m_d}{m_e} = 2N_{base} + 1 + \alpha N_{eff} = 9.095
+$$
+
+### Strange Quark Mass
+$$
+\frac{m_s}{m_e} = N_{eff}(N_{eff}+1) + 1 = 13 \times 14 + 1 = 183
+$$
+
+### Charm Quark Mass
+$$
+\frac{m_c}{m_e} = N_{eff}(b_3+N_c) \times 19 + 15 = 13 \times 10 \times 19 + 15 = 2485
+$$
+
+### Bottom Quark Mass
+$$
+\frac{m_b}{m_e} = 10^3 \times 8 + 169 = 8169
+$$
+
+### Top Quark Mass
+$$
+\frac{m_t}{m_W} = \phi^2 - 64\alpha = 2.151
+$$
+
+### Weinberg Angle
+$$
+\sin^2\theta_W = \frac{N_c}{N_{eff}} = \frac{3}{13} = 0.2308
+$$
+
+### Strong Coupling
+$$
+\alpha_s = \frac{b_3}{b_3^2 + b_3 + N_c} = \frac{7}{59} = 0.1186
+$$
+
+### Gravitational Coupling
+$$
+G_{bias} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{100} = 0.01
+$$
+
+### Golden Ratio
+$$
+\phi = \frac{1 + \sqrt{N_{base}+1}}{2} = \frac{1+\sqrt{5}}{2} = 1.618...
+$$
+
+### Number of Generations
+$$
+N_{gen} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3
+$$
+
+### Cosmological Constant
+$$
+\frac{\Lambda}{\Lambda_{Planck}} = \alpha^{57} = \alpha^{b_3(b_3+N_c) - N_{eff}} = 10^{-121.8}
+$$
+
+### Neutrino Mass Ratio
+$$
+\frac{\Delta m^2_{32}}{\Delta m^2_{21}} = \frac{(b_3+N_c)^2}{N_c} = \frac{100}{3} = 33.3
+$$
+
+---
+
+## Structure Formation
+
+### Jeans Mass
+$$
+M_J = \left(\frac{5kT}{G\mu m_H}\right)^{3/2} \left(\frac{3}{4\pi\rho}\right)^{1/2}
+$$
+
+### Binding Energy
+$$
+E_{bind} = KB \times \phi \quad (\text{for triads})
+$$
+
+### Shell Radius
+$$
+r_n \propto n^2 \quad (\text{hydrogen-like})
+$$
+
+## Information Theory
+
+### Shannon Entropy
+$$
+H = -\sum_i p_i \log_2(p_i)
+$$
+
+### Landauer's Principle
+$$
+E_{min} = k_B T \ln(2) \quad \text{per bit erased}
+$$
+
+### Kolmogorov Complexity
+$$
+K(x) = \min_p\{|p| : U(p) = x\}
+$$
+
+## Quick Reference
+
+### Core Equations
+
+| Equation | Purpose |
+|----------|---------|
+| $\rho = \|\vec{J}\|$ | Density from flux |
+| $P_{gen} = 1 - e^{-(\rho-KB)/KB}$ | Genesis probability |
+| $\vec{F}_g = G \nabla\bar{\rho}$ | Gravity |
+| $\vec{F}_e = -q \nabla\bar{q}$ | Coulomb |
+| $L = 1 + \alpha E \omega$ | Time dilation |
+| $\tau += 1/L$ | Phase accumulator |
+| $\vec{J} *= (1-\lambda)$ | Decay/damping |
+
+### Conservation Laws
+
+| Quantity | Equation |
+|----------|----------|
+| Energy | $\sum \|\vec{J}\|^2 = \text{constant}$ |
+| Momentum | $\sum \vec{J} = \text{constant}$ |
+| Charge | $\sum q = \text{constant}$ |
+
+::: {.callout-note}
+Energy is proportional to flux magnitude **squared** (analogous to kinetic energy $\propto v^2$), while momentum is the vector sum of flux.
+:::

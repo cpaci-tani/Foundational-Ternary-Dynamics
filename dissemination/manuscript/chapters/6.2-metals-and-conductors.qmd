@@ -1,0 +1,197 @@
+# Metals and Conductors {#sec-metals-conductors}
+
+*"The electron sea"*
+
+::: {.callout-note}
+## Key Revelation
+Metals conduct because their electrons are delocalized—not bound to individual atoms but free to flow throughout the material. The electron sea explains all metallic properties.
+:::
+
+::: {.callout-note}
+## How FTD Produces Metallic Conduction
+The "electron sea" arises naturally from FTD's flux structure:
+
+- **Delocalized electrons** = flux distributions spanning the entire lattice rather than localized around nuclei
+- **Conductivity** = flux can propagate freely through the extended electron wavefunction
+- **Resistance** = flux scattering from lattice vibrations (phonons) and impurities
+- **Fermi surface** = boundary in flux-momentum space between occupied and unoccupied states
+
+Band theory emerges from the periodic boundary conditions of flux in a crystalline lattice.
+:::
+
+## The Electron Sea Model
+
+In metals, valence electrons are shared among all atoms.
+
+```
+⊕ e⁻ ⊕ e⁻ ⊕ e⁻ ⊕ e⁻
+e⁻ ⊕ e⁻ ⊕ e⁻ ⊕ e⁻ ⊕
+⊕ e⁻ ⊕ e⁻ ⊕ e⁻ ⊕ e⁻
+e⁻ ⊕ e⁻ ⊕ e⁻ ⊕ e⁻ ⊕
+
+⊕ = metal cation (fixed)
+e⁻ = delocalized electron (mobile)
+```
+
+## Properties Explained
+
+### Electrical Conductivity
+
+Electrons move freely in response to electric field:
+$$
+\vec{J} = \sigma \vec{E}
+$$
+
+Current flows because electrons can move without jumping between atoms.
+
+### Thermal Conductivity
+
+Electrons carry heat:
+$$
+\kappa = \frac{1}{3} C_v v \lambda
+$$
+
+Metals conduct heat well because electrons move fast and far.
+
+### Malleability and Ductility
+
+Layers of ions can slide past each other without breaking bonds—the electron sea reforms around the new positions.
+
+```
+Before:  ⊕ ⊕ ⊕    After:  ⊕ ⊕ ⊕
+         ⊕ ⊕ ⊕            ⊕ ⊕ ⊕
+                  →           (slid)
+```
+
+### Metallic Luster
+
+Free electrons oscillate in response to light and re-emit it—metals are shiny.
+
+### Opacity
+
+Electrons absorb photons across a continuous range—metals are opaque.
+
+## Band Theory
+
+A more sophisticated view of electron behavior.
+
+### Energy Bands
+
+- **Valence band**: Filled electron states
+- **Conduction band**: Empty or partially filled states
+- **Band gap**: Energy difference between bands
+
+### Metal Band Structure
+
+```
+Energy
+  ↑
+  │  ╔═══════════╗
+  │  ║           ║ ← Conduction band
+  │  ║  Partially║   (partially filled)
+  │  ║  filled   ║
+  │  ╚═══════════╝
+  │  No gap!
+  │  ╔═══════════╗
+  │  ║  Filled   ║ ← Valence band
+  │  ╚═══════════╝
+  └───────────────→
+```
+
+No gap between valence and conduction bands—electrons can move freely.
+
+## Resistance
+
+Even metals have some resistance.
+
+### Sources
+- **Phonon scattering**: Vibrating atoms deflect electrons
+- **Impurity scattering**: Foreign atoms deflect electrons
+- **Defect scattering**: Lattice imperfections deflect electrons
+
+### Temperature Dependence
+
+$$
+\rho(T) = \rho_0 (1 + \alpha T)
+$$
+
+Resistance increases with temperature (more phonons).
+
+## Conductivity Values
+
+| Material | Conductivity (S/m) | Notes |
+|----------|-------------------|-------|
+| Silver | 6.3 × 10⁷ | Best conductor |
+| Copper | 5.9 × 10⁷ | Most common wire |
+| Gold | 4.5 × 10⁷ | Corrosion resistant |
+| Aluminum | 3.8 × 10⁷ | Lightweight |
+| Iron | 1.0 × 10⁷ | Magnetic |
+| Graphite | 10⁵ | Layered conductor |
+| Glass | 10⁻¹² | Insulator |
+
+## Free Electron Model
+
+Treating electrons as non-interacting particles.
+
+### Fermi Energy
+
+Maximum electron energy at absolute zero:
+$$
+E_F = \frac{\hbar^2}{2m}\left(\frac{3\pi^2 n}{V}\right)^{2/3}
+$$
+
+### Fermi Velocity
+
+$$
+v_F = \sqrt{\frac{2E_F}{m}} \approx 10^6 \text{ m/s}
+$$
+
+Electrons at the Fermi surface move very fast.
+
+### Fermi-Dirac Distribution
+
+Probability of state being occupied:
+$$
+f(E) = \frac{1}{e^{(E-E_F)/k_BT} + 1}
+$$
+
+At T = 0, sharp cutoff at $E_F$.
+
+## In Simulation
+
+```python
+class MetalRegion:
+    def __init__(self, atoms):
+        self.ions = atoms  # Fixed positive ions
+        self.electrons = pool_electrons(atoms)  # Shared
+
+    def apply_field(self, E_field):
+        for electron in self.electrons:
+            # Electrons respond to field
+            electron.flux += ELECTRON_CHARGE * E_field
+            # Random scattering
+            if random() < scattering_rate:
+                randomize_direction(electron.flux)
+```
+
+## Experiments
+
+### Conductivity Measurement
+Apply voltage. Measure current. Calculate resistance.
+
+### Temperature Dependence
+Heat a wire. Watch resistance increase.
+
+### Electron Flow Visualization
+See electrons respond to applied field. Watch current flow.
+
+## Concepts
+
+- **electron-sea**: Delocalized valence electrons
+- **band-structure**: Allowed and forbidden energy ranges
+- **fermi-energy**: Maximum electron energy at T=0
+- **conductivity**: Ability to carry current
+
+## Transition
+
+Metals conduct freely. Insulators don't conduct at all. Between them are semiconductors—the basis of modern electronics.

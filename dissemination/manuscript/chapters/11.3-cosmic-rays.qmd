@@ -1,0 +1,233 @@
+# Cosmic Rays {#sec-cosmic-rays}
+
+*"High-energy messengers"*
+
+::: {.callout-note}
+## Key Revelation
+The universe is filled with speeding particles—some with energies far beyond what our accelerators achieve. Cosmic rays are messengers from the most violent events in the cosmos.
+:::
+
+## What Are Cosmic Rays?
+
+High-energy particles from space, mostly protons and nuclei.
+
+### Composition
+
+| Particle | Fraction |
+|----------|----------|
+| Protons | 87% |
+| Helium nuclei | 12% |
+| Heavier nuclei | 1% |
+| Electrons | 0.1% |
+
+### Discovery
+
+Victor Hess (1912):
+- Balloon experiments
+- Ionization increased with altitude
+- Must come from above
+- Nobel Prize 1936
+
+## The Energy Spectrum
+
+$$
+\frac{dN}{dE} \propto E^{-\gamma}
+$$
+
+### Features
+
+```
+Log Flux
+    │
+    │╲
+    │ ╲  γ ≈ 2.7
+    │  ╲
+    │   ╲ ← Knee (3×10¹⁵ eV)
+    │    ╲
+    │     ╲ γ ≈ 3.0
+    │      ╲
+    │       ╲ ← Ankle (3×10¹⁸ eV)
+    │        ╲
+    │         ╲ γ ≈ 2.7
+    │          ╲
+    │           ╲ ← GZK cutoff (5×10¹⁹ eV)
+    └──────────────────────── Log Energy
+```
+
+### The Knee (3×10¹⁵ eV)
+
+Spectrum steepens:
+- Galactic accelerators reach limit?
+- Transition region?
+
+### The Ankle (3×10¹⁸ eV)
+
+Spectrum flattens:
+- Extragalactic sources dominate
+- Transition from galactic to extragalactic
+
+### GZK Cutoff (5×10¹⁹ eV)
+
+Interaction with CMB:
+$$
+p + \gamma_{\text{CMB}} \rightarrow \Delta^+ \rightarrow p + \pi^0 \text{ or } n + \pi^+
+$$
+
+Limits how far UHECRs can travel (~100 Mpc).
+
+## Acceleration
+
+### Fermi Acceleration
+
+#### First Order (Shock Acceleration)
+
+At supernova shocks:
+1. Particle crosses shock
+2. Scattered by magnetic fields
+3. Returns across shock
+4. Gains energy each crossing
+
+$$
+\frac{\Delta E}{E} \approx \frac{v_{\text{shock}}}{c}
+$$
+
+Maximum energy:
+$$
+E_{\text{max}} \propto Z B R v_{\text{shock}}
+$$
+
+### Hillas Criterion
+
+Sources must satisfy:
+$$
+E_{\text{max}} = Z e B R \beta c
+$$
+
+Larger B or R → higher energy possible.
+
+### Candidate Sources
+
+| Source | Max Energy | Notes |
+|--------|------------|-------|
+| SNR | 10¹⁵ eV | Galactic knee |
+| Pulsars | 10¹⁶ eV | Strong B field |
+| AGN jets | 10²⁰ eV | UHECR sources? |
+| GRBs | 10²⁰ eV | Transient |
+
+## Detection
+
+### Direct (Low Energy)
+
+Satellites and balloons:
+- Measure particle directly
+- Limited collecting area
+- Works up to ~10¹⁵ eV
+
+### Indirect (High Energy)
+
+Ground arrays:
+- Particle showers in atmosphere
+- Spread over km²
+- Thousands of detectors
+
+### Air Showers
+
+Primary cosmic ray hits atmosphere:
+```
+       ★ Primary
+        ╲
+     ╱ ╳ ╲
+   ╱ ╳ ╳ ╳ ╲
+ ╱ ╳ ╳ ╳ ╳ ╳ ╲
+╳ ╳ ╳ ╳ ╳ ╳ ╳ ╳ ← Ground level
+```
+
+Billions of secondary particles reach ground.
+
+## Ultra-High Energy Cosmic Rays
+
+The highest energy particles known:
+- 10²⁰ eV (= 50 J in one particle!)
+- Tennis ball at 100 km/h—in one proton
+- Origin: Still debated
+
+### The Oh-My-God Particle (1991)
+
+$$
+E = 3.2 \times 10^{20} \text{ eV}
+$$
+
+Single proton with macroscopic energy.
+
+## Effects on Earth
+
+### Atmospheric
+
+- Secondary particles reach ground
+- Muons, electrons, photons
+- Create isotopes (¹⁴C)
+
+### Biological
+
+- Radiation dose at high altitude
+- Astronaut exposure concern
+- May affect mutations
+
+### Technological
+
+- Single-event upsets in electronics
+- Bit flips in memory
+- Airline electronics
+
+## In Simulation
+
+```python
+class CosmicRay:
+    def __init__(self, energy, particle_type='proton'):
+        self.energy = energy
+        self.type = particle_type
+
+    def propagate(self):
+        while self.energy > threshold:
+            # GZK losses for UHECR
+            if self.energy > GZK_ENERGY:
+                if interacts_with_cmb():
+                    self.energy -= pion_production_loss()
+
+            # Magnetic deflection
+            deflection = z * B_field / self.energy
+            self.direction += random_deflection(deflection)
+
+    def air_shower(self, atmosphere):
+        cascade = []
+        cascade.append(self)
+
+        while cascade:
+            particle = cascade.pop()
+            secondaries = particle.interact(atmosphere)
+            cascade.extend(secondaries)
+
+        return count_at_ground(cascade)
+```
+
+## Experiments
+
+### Energy Spectrum
+Measure cosmic rays at different energies. See spectral features.
+
+### Air Shower
+Watch high-energy particle cascade through atmosphere.
+
+### Source Hunting
+Track arrival directions. Look for anisotropy.
+
+## Concepts
+
+- **fermi-acceleration**: Energy gain at shocks
+- **air-shower**: Cascade of secondary particles
+- **gzk-cutoff**: CMB interaction limit
+- **uhecr**: Ultra-high energy cosmic rays
+
+## Transition
+
+Even "empty" space isn't really empty. Quantum fluctuations create virtual particles everywhere. Next, we explore vacuum fluctuations.

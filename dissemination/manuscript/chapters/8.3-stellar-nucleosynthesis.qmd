@@ -1,0 +1,195 @@
+# Stellar Nucleosynthesis {#sec-stellar-nucleosynthesis}
+
+*"Forging the elements"*
+
+::: {.callout-note}
+## Key Revelation
+Every atom heavier than hydrogen was made inside a star. The carbon in your body, the iron in your blood—all forged in stellar cores and scattered by explosions.
+:::
+
+::: {.callout-note}
+## How FTD Produces Nucleosynthesis
+Element formation follows from flux dynamics at nuclear densities:
+
+- **Fusion** = flux-mediated tunneling through Coulomb barriers when core flux density is sufficient
+- **Binding energy** = net flux reduction when nucleons form stable configurations (triads)
+- **Iron peak** = maximum binding energy per nucleon (flux minimum); no energy release beyond
+- **r-process/s-process** = neutron flux capture rates in different stellar environments
+
+The periodic table emerges from the stability landscape of nuclear flux configurations.
+:::
+
+## Origin of Elements
+
+| Element | Origin |
+|---------|--------|
+| H, He (most) | Big Bang |
+| He (some), C, O, N | Stellar fusion |
+| Elements up to Fe | Massive star cores |
+| Elements beyond Fe | Supernovae, mergers |
+
+## Hydrogen Burning
+
+Where it all starts (main sequence):
+
+$$
+4{^1\text{H}} \rightarrow {^4\text{He}} + 2e^+ + 2\nu_e + 26.7 \text{ MeV}
+$$
+
+This is the longest phase—billions of years for Sun-like stars.
+
+## Helium Burning
+
+### The Triple-Alpha Process
+
+When hydrogen is exhausted:
+
+$$
+{^4\text{He}} + {^4\text{He}} \rightarrow {^8\text{Be}} \quad (\text{unstable, } \tau = 10^{-16} \text{ s})
+$$
+$$
+{^8\text{Be}} + {^4\text{He}} \rightarrow {^{12}\text{C}} + \gamma
+$$
+
+Requires T > 100 million K.
+
+### Carbon Production
+
+The Hoyle resonance makes this possible:
+- ¹²C has an excited state at exactly the right energy
+- Without it, almost no carbon would form
+- Fine-tuning: Move the level by 1%, no carbon
+
+### Further Burning
+
+$$
+{^{12}\text{C}} + {^4\text{He}} \rightarrow {^{16}\text{O}} + \gamma
+$$
+
+## Advanced Burning Stages
+
+Only in massive stars (> 8 M☉):
+
+| Stage | Fuel | Products | T (K) | Duration |
+|-------|------|----------|-------|----------|
+| H | H | He | 1.5×10⁷ | 10 Myr |
+| He | He | C, O | 1×10⁸ | 1 Myr |
+| C | C | Ne, Mg | 6×10⁸ | 1000 yr |
+| Ne | Ne | O, Mg | 1.2×10⁹ | 1 yr |
+| O | O | Si, S | 1.5×10⁹ | months |
+| Si | Si | Fe | 3×10⁹ | days |
+
+### The Onion Structure
+
+```
+         ┌───────────────┐
+         │   H burning   │
+         ├───────────────┤
+         │  He burning   │
+         ├───────────────┤
+         │   C burning   │
+         ├───────────────┤
+         │  O/Ne/Si...   │
+         ├───────────────┤
+         │   Fe core     │
+         └───────────────┘
+```
+
+## Iron: The End of the Line
+
+Iron-56 has the highest binding energy per nucleon.
+
+- Fusing iron *absorbs* energy
+- No energy to maintain pressure
+- Core collapses → supernova
+
+## Beyond Iron
+
+### The s-process (Slow Neutron Capture)
+
+In AGB stars:
+$$
+{^A\text{X}} + n \rightarrow {^{A+1}\text{X}}
+$$
+
+If unstable, beta decay before next capture:
+$$
+{^{A+1}\text{X}} \rightarrow {^{A+1}\text{Y}} + e^- + \bar{\nu}_e
+$$
+
+Creates elements up to bismuth.
+
+### The r-process (Rapid Neutron Capture)
+
+In supernovae and neutron star mergers:
+- Many neutrons captured before decay
+- Creates heaviest elements (gold, uranium)
+- Requires extreme neutron flux
+
+## Yield
+
+A 25 M☉ star produces (approximately):
+
+| Element | Mass (M☉) |
+|---------|-----------|
+| O | 3.0 |
+| C | 0.4 |
+| Ne | 0.3 |
+| Mg | 0.1 |
+| Si | 0.15 |
+| S | 0.05 |
+| Fe | 0.1 |
+
+## Cosmic Abundances
+
+Result of billions of years of nucleosynthesis:
+
+| Element | Abundance (relative to Si = 10⁶) |
+|---------|----------------------------------|
+| H | 2.8 × 10¹⁰ |
+| He | 2.7 × 10⁹ |
+| O | 2.4 × 10⁷ |
+| C | 1.0 × 10⁷ |
+| Ne | 3.4 × 10⁶ |
+| Fe | 9.0 × 10⁵ |
+| N | 3.1 × 10⁶ |
+| Si | 1.0 × 10⁶ |
+
+## In Simulation
+
+```python
+def nucleosynthesis(star, stage):
+    if stage == 'hydrogen':
+        rate = pp_chain_rate(star.core_temp)
+        star.helium += rate * dt
+        star.hydrogen -= 4 * rate * dt
+
+    elif stage == 'helium':
+        rate = triple_alpha_rate(star.core_temp)
+        star.carbon += rate * dt
+        star.helium -= 3 * rate * dt
+
+    # ... continue for heavier elements
+```
+
+## Experiments
+
+### Fusion Chain
+Watch hydrogen become helium, helium become carbon.
+
+### Element Factory
+Run massive star through all burning stages.
+
+### Abundance Calculator
+Sum contributions from many generations of stars.
+
+## Concepts
+
+- **triple-alpha**: Helium to carbon fusion
+- **s-process**: Slow neutron capture
+- **r-process**: Rapid neutron capture
+- **iron-peak**: Fusion endpoint
+
+## Transition
+
+Stars don't last forever. When fusion ends, stars die—sometimes quietly, sometimes explosively. Next, we explore stellar death.

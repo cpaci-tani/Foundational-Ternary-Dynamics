@@ -1,0 +1,4 @@
+Universe 1: α = 0.001  → No atoms
+Universe 2: α = 0.5    → Unstable atoms
+Universe 3: α = 0.007  → Chemistry works ← (We're here)
+Universe N: α = ...    → Various fates

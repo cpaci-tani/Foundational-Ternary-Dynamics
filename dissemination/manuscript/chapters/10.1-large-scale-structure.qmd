@@ -1,0 +1,208 @@
+# Large-Scale Structure {#sec-large-scale-structure}
+
+*"The cosmic web"*
+
+::: {.callout-note}
+## Key Revelation
+Galaxies are not randomly scattered—they form a vast web of filaments, walls, and voids. This pattern is the largest structure in the universe, written in dark matter.
+:::
+
+## The Cosmic Web
+
+At the largest scales, the universe has structure:
+
+```
+        ●═══════●════════●
+        ║       ║        ║
+        ║  void ║  void  ║
+        ║       ║        ║
+●═══════●═══════●════════●═══════●
+        ║       ║        ║
+        ║  void ║  void  ║
+        ║       ║        ║
+        ●═══════●════════●
+
+● = Nodes (galaxy clusters)
+═ = Filaments (galaxy chains)
+void = Empty regions
+```
+
+## Components
+
+### Nodes (Clusters)
+
+Where filaments intersect:
+- Galaxy clusters
+- Highest density regions
+- 100-1000 galaxies
+- Mass: 10¹⁴-10¹⁵ M☉
+- Size: 2-10 Mpc
+
+### Filaments
+
+Galaxy chains connecting nodes:
+- Contain ~50% of baryonic matter
+- Length: 10-100 Mpc
+- Width: ~1-2 Mpc
+- Most galaxies live here
+
+### Walls/Sheets
+
+2D structures:
+- Surfaces of voids
+- Lower density than filaments
+- Extend tens of Mpc
+
+### Voids
+
+Nearly empty regions:
+- 50-80% of universe volume
+- Diameter: 10-100 Mpc
+- Very few galaxies
+- Not completely empty
+
+## Scale
+
+The largest structures:
+
+| Structure | Size |
+|-----------|------|
+| Galaxy | 0.03-0.3 Mpc |
+| Galaxy group | 1-3 Mpc |
+| Galaxy cluster | 2-10 Mpc |
+| Supercluster | 50-100 Mpc |
+| Void | 10-100 Mpc |
+| Great Wall | 100-500 Mpc |
+
+Largest known: Hercules-Corona Borealis Great Wall (~10 billion ly)
+
+## How Structure Formed
+
+### Initial Fluctuations
+
+From inflation (z ~ 10³⁰):
+- Quantum fluctuations stretched
+- δρ/ρ ~ 10⁻⁵ at recombination
+- Seen in CMB
+
+### Linear Growth
+
+At early times:
+$$
+\delta(t) \propto a(t) = \frac{1}{1+z}
+$$
+
+Density contrast grows with scale factor.
+
+### Non-Linear Collapse
+
+When δ ≈ 1:
+- Spherical regions collapse
+- Form virialized halos
+- Then merge hierarchically
+
+### Present Structure
+
+Result of 13.8 billion years of growth:
+- Filamentary web
+- ~200 Mpc "cells"
+- Statistically homogeneous at >300 Mpc
+
+## Galaxy Clusters
+
+The most massive gravitationally bound objects.
+
+### Composition
+
+| Component | Mass Fraction |
+|-----------|--------------|
+| Dark matter | 85% |
+| Hot gas (ICM) | 13% |
+| Galaxies | 2% |
+
+### The Intracluster Medium
+
+Hot gas between galaxies:
+- Temperature: 10⁷-10⁸ K
+- Emits X-rays
+- Traced by Sunyaev-Zel'dovich effect
+- Contains most baryons
+
+## Observations
+
+### Galaxy Surveys
+
+Mapping the web:
+- SDSS: >1 million galaxies
+- 2dF: 220,000 galaxies
+- DESI: 40 million planned
+
+### Results
+
+```
+  Slice through universe:
+
+        ★   ★★  ★
+    ★  ★  ★    ★★   ★
+      ★★      ★    ★★
+   ★    ★★ ★   ★  ★
+  ★  ★     ★★ ★    ★
+    ★   ★      ★  ★★
+  ★   ★★   ★     ★
+
+  Filaments and voids clearly visible
+```
+
+## Homogeneity
+
+At largest scales (>300 Mpc), universe becomes uniform:
+- Cosmological principle confirmed
+- Same in all directions (isotropy)
+- Same everywhere (homogeneity)
+
+## In Simulation
+
+```python
+def form_cosmic_web(initial_density_field):
+    # Start with primordial fluctuations
+    while universe.age < 13.8e9:
+        # Compute gravity
+        gravity_field = compute_gravity(all_matter)
+
+        # Move particles
+        for particle in particles:
+            particle.velocity += gravity_field[particle.position]
+            particle.position += particle.velocity * dt
+
+        # Expand space (Hubble flow)
+        apply_expansion()
+
+    # Identify structures
+    halos = find_overdensities(particles)
+    filaments = find_connections(halos)
+    voids = find_underdensities(particles)
+
+    return CosmicWeb(halos, filaments, voids)
+```
+
+## Experiments
+
+### Structure Formation
+Start with initial fluctuations. Watch web emerge.
+
+### Slice Survey
+Take 2D slice through simulation. Compare to real surveys.
+
+### Void Identification
+Find empty regions. Measure their statistics.
+
+## Concepts
+
+- **cosmic-web**: Large-scale structure pattern
+- **filament**: Galaxy chains connecting clusters
+- **void**: Nearly empty region
+- **homogeneity**: Uniformity at largest scales
+
+## Transition
+
+The cosmic web is shaped by invisible dark matter. Next, we explore this mysterious substance that outweighs all visible matter.

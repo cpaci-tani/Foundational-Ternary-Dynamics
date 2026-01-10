@@ -1,0 +1,21 @@
+{
+  "chapter_id": "4.4",
+  "markers": [
+    {
+      "scene_id": "4.4.1.1",
+      "timestamp": 0.0,
+      "label": "proteins"
+    },
+    {
+      "scene_id": "4.4.1.2",
+      "timestamp": 4.0,
+      "label": "chain"
+    },
+    {
+      "scene_id": "4.4.1.3",
+      "timestamp": 6.0,
+      "label": "levels"
+    }
+  ],
+  "total_duration": 10.6
+}

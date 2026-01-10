@@ -1,0 +1,193 @@
+# Macromolecules {#sec-macromolecules}
+
+*"The giants of the molecular world"*
+
+::: {.callout-note}
+## Key Revelation
+From simple building blocks, enormous structures emerge. Proteins fold, DNA encodes, and polymers give materials their properties. Life is macromolecular.
+:::
+
+## Proteins
+
+Chains of amino acids that do everything in life.
+
+### Amino Acids
+
+20 standard amino acids, each with:
+- Amino group (-NH₂)
+- Carboxyl group (-COOH)
+- R group (side chain—what makes each unique)
+
+```
+        R    O
+        |    ‖
+H₂N - C - C - OH
+        |
+        H
+```
+
+### Peptide Bonds
+
+Amino acids link by condensation:
+```
+     O    H        O
+     ‖    |        ‖
+-C - N - C - C - N - C-
+         |    ‖    |
+         R    O    R
+```
+
+### Protein Structure
+
+| Level | Description | Forces |
+|-------|-------------|--------|
+| Primary | Amino acid sequence | Covalent (peptide bonds) |
+| Secondary | α-helix, β-sheet | Hydrogen bonds |
+| Tertiary | 3D folding | All forces |
+| Quaternary | Multiple chains | All forces |
+
+### Protein Functions
+
+- **Enzymes**: Catalyze reactions
+- **Structural**: Collagen, keratin
+- **Transport**: Hemoglobin
+- **Immune**: Antibodies
+- **Signaling**: Hormones
+
+## Nucleic Acids
+
+Information storage molecules.
+
+### DNA Structure
+
+```
+Sugar-Phosphate backbone
+        |
+    5'— P — S — P — S — P — S —3'
+            |       |       |
+            A ≡ T   G ≡ C   A ≡ T
+            |       |       |
+    3'— P — S — P — S — P — S —5'
+
+Base pairs:
+  A-T: 2 hydrogen bonds
+  G-C: 3 hydrogen bonds
+```
+
+### Double Helix
+
+- 10 base pairs per turn
+- 3.4 nm pitch
+- Major and minor grooves
+- Antiparallel strands
+
+### RNA
+
+- Single-stranded (usually)
+- Uracil instead of thymine
+- Sugar is ribose (not deoxyribose)
+- Types: mRNA, tRNA, rRNA
+
+## Polymers
+
+Long chains of repeating units (monomers).
+
+### Addition Polymers
+
+Monomers add without losing atoms:
+
+| Monomer | Polymer | Use |
+|---------|---------|-----|
+| Ethylene | Polyethylene | Plastic bags |
+| Propylene | Polypropylene | Containers |
+| Styrene | Polystyrene | Foam, packaging |
+| Vinyl chloride | PVC | Pipes |
+
+```
+n(CH₂=CH₂) → -[-CH₂-CH₂-]ₙ-
+```
+
+### Condensation Polymers
+
+Monomers lose small molecule (usually water):
+
+| Type | Example | Use |
+|------|---------|-----|
+| Polyester | PET | Bottles, fabric |
+| Polyamide | Nylon | Fibers, fabric |
+| Polyurethane | PU | Foam, coatings |
+
+## Carbohydrates
+
+Sugars and their polymers.
+
+### Monosaccharides
+
+Simple sugars: glucose, fructose, galactose (all C₆H₁₂O₆)
+
+### Disaccharides
+
+Two sugars linked:
+- Sucrose = glucose + fructose
+- Lactose = glucose + galactose
+- Maltose = glucose + glucose
+
+### Polysaccharides
+
+| Name | Function | Source |
+|------|----------|--------|
+| Starch | Energy storage | Plants |
+| Glycogen | Energy storage | Animals |
+| Cellulose | Structure | Plant cell walls |
+| Chitin | Structure | Fungi, arthropods |
+
+## Lipids
+
+Not true polymers, but complex molecules.
+
+### Fatty Acids
+
+Long hydrocarbon chain + carboxyl group:
+```
+CH₃(CH₂)ₙCOOH
+```
+
+- Saturated: No double bonds, solid at room temp
+- Unsaturated: Double bonds, liquid at room temp
+
+### Phospholipids
+
+Basis of cell membranes:
+```
+     Hydrophilic head (phosphate)
+            ↓
+        ┌──────┐
+        │ P    │
+        └──┬───┘
+           │
+     ══════╪══════  ← Hydrophobic tails (fatty acids)
+           │
+     ══════╪══════
+```
+
+## Experiments
+
+### Protein Folding
+Watch a chain of amino acids fold into its final structure.
+
+### DNA Replication
+Observe the double helix unzip and copy.
+
+### Polymer Synthesis
+Build polymers from monomers. Compare properties.
+
+## Concepts
+
+- **protein**: Amino acid polymer with complex structure
+- **nucleic-acid**: Information-carrying polymer (DNA, RNA)
+- **polymer**: Long chain of repeating units
+- **carbohydrate**: Sugar or sugar polymer
+
+## Transition
+
+Macromolecules have complex properties. Now we zoom out to see how molecules aggregate into bulk matter—the different states and their transitions.

@@ -1,0 +1,193 @@
+# The Cycle of Existence {#sec-cycle}
+
+*"Birth, life, death, return"*
+
+::: {.callout-note}
+## Key Insight
+Manifestation follows a cyclic pattern: genesis (0 → ±1), persistence, and evaporation (±1 → 0). Conservation laws govern all transitions.
+:::
+
+## The Eternal Cycle
+
+```
+       0 → ±1 → 0
+
+The Void births existence.
+Existence persists while it can.
+Existence returns to the Void.
+```
+
+This cycle operates at every scale:
+- **Particles**: Genesis → Decay
+- **Stars**: Nebula → Remnant
+- **Galaxies**: Formation → Dissolution
+- **Universe**: Big Bang → Heat Death
+
+## Genesis (0 → ±1)
+
+When conditions are right, the Void manifests:
+
+1. **Density threshold**: When flux density ≥ KB
+2. **Probability check**: Genesis probability evaluated
+3. **Pair production**: Matter (+1) and antimatter (-1) emerge
+4. **Identity assignment**: UUID assigned for tracking
+5. **Entanglement established**: Partners linked
+
+## Entanglement
+
+Particles born together share a bond. Their `entanglement_partner_uuid` connects them through their shared origin.
+
+This is not "spooky action at a distance"—it is **shared origin**. The correlation exists because they were born together, not because they communicate.
+
+## Persistence (±1 → ±1)
+
+Once manifested, a particle persists by:
+
+1. **Maintaining flux**: Energy above KB
+2. **Forming structures**: Stable geometries resist decay
+3. **Avoiding annihilation**: Staying away from opposite-state particles
+
+### Forces During Persistence
+
+Manifested particles experience:
+- Gravity (density gradients)
+- Electromagnetism (charge interactions)
+- Strong force (nuclear binding)
+- Weak force (transmutation)
+
+## Entropy and Decay
+
+Nothing lasts forever. Every tick, unlocked particles experience decay:
+
+```python
+flux *= (1 - DECAY_RATE)  # DECAY_RATE = 0.00729
+```
+
+This slow erosion eventually brings all things back to the threshold.
+
+### Decay Suppression
+
+Bound particles (in stable structures like triads) have their decay suppressed:
+- **Locked** particles don't decay
+- Binding energy stabilizes against entropy
+- Structures can persist indefinitely
+
+## Evaporation (±1 → 0)
+
+When density falls below KB:
+
+1. State becomes 0
+2. Particle "evaporates" back to Void
+3. Flux remains as vacuum energy
+4. UUID released
+
+This is not destruction—it is **return**. The energy persists; only the manifestation ends.
+
+## Annihilation (+1 meets -1)
+
+When matter encounters antimatter:
+
+1. Both particles return to Void
+2. Energy released as directional flux burst
+3. Momentum conserved in the burst
+4. Net state returns to zero
+
+```
+(+1) + (-1) → energy burst → 0
+
+What was created together returns together.
+```
+
+## The Complete Cycle
+
+| Stage | From | To | Trigger |
+|-------|------|-----|---------|
+| Genesis | 0 | ±1 | Density ≥ KB |
+| Persistence | ±1 | ±1 | Energy maintained |
+| Decay | ±1 | ±1 | Entropy reduces flux |
+| Evaporation | ±1 | 0 | Density < KB |
+| Annihilation | +1,-1 | 0 | Opposite states meet |
+
+## The Variational Origin
+
+Why these rules? Why this cycle? The answer comes from the **action principle** (Chapter 1.11).
+
+### Genesis Probability: Derived
+
+The genesis probability is not assumed—it follows from extremizing the action.
+
+The manifestation potential in the Lagrangian:
+
+$$V(\rho, s) = -K_B \ln(\rho/K_B) \quad \text{when } \rho \geq K_B, s = 0$$
+
+creates a pressure toward manifestation when flux density exceeds threshold.
+
+The probability of transition follows from thermal/quantum fluctuations around the action minimum:
+
+$$P(0 \to \pm 1) \propto \exp\left(-\frac{K_B - |J|}{K_B}\right)$$
+
+::: {.callout-tip}
+## Derivation, Not Assumption
+The exponential form of genesis probability emerges from the action principle. We didn't put it in by hand—it follows from the mathematics of extremization.
+:::
+
+### Polarity Selection: Derived
+
+Why does positive divergence create matter (+1) and negative divergence create antimatter (-1)?
+
+The state-flux coupling term in the action:
+
+$$\mathcal{L}_{\text{coupling}} = -g \cdot s \cdot (\nabla \cdot J)$$
+
+When minimizing S, the favored state is:
+
+$$s = \text{sign}(\nabla \cdot J)$$
+
+Sources (positive divergence) favor positive states.
+Sinks (negative divergence) favor negative states.
+
+### Decay Rate: Derived
+
+The decay rate α ≈ 1/137 comes from the **dissipation function**:
+
+$$\mathcal{F} = \frac{1}{2}\gamma |\partial_t J|^2$$
+
+This modifies the Euler-Lagrange equation to include damping:
+
+$$J(t+1) = (1-\gamma) J(t) + w(t+1)$$
+
+The decay rate γ = α connects to electromagnetic radiation: excited systems lose energy by radiating flux. The fine structure constant measures this coupling. **[IMPOSED: the identification γ = α is a parameter choice, not a derivation—see Assumption Ledger ASSUMP.6]**
+
+### The Complete Derivation
+
+| Rule | Origin in Action |
+|------|------------------|
+| Genesis probability | Extremization of V(ρ,s) |
+| Polarity selection | Coupling term L_coupling |
+| Decay rate | Dissipation function F |
+| Threshold KB | Manifestation potential minimum |
+| Conservation laws | Noether's theorem from symmetries |
+
+The cycle of existence is not arbitrary—it can be represented as a stationary-path solution (δS = 0) for an appropriately chosen action.
+
+## Experiments
+
+### Lifecycle Watch
+Create a particle and follow it from genesis through decay to evaporation. Time how long it persists.
+
+### Decay Rate Control
+Adjust DECAY_RATE. See how faster decay shortens particle lifetimes, how slower decay extends them.
+
+### Annihilation Setup
+Bring a +1 and -1 particle together. Watch the flash of energy as they return to the Void.
+
+## Concepts
+
+- **persistence**: How particles maintain existence
+- **decay**: Entropy's erosion of manifestation
+- **evaporation**: Return to Void when E < KB
+- **annihilation**: Matter + antimatter → energy → Void
+
+## Transition
+
+The cycle of existence requires time. But how does time itself work in this discrete universe? Next, we examine the causal loop—the heartbeat of existence.

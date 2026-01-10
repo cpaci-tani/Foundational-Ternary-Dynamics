@@ -1,0 +1,662 @@
+# Information Quantification in FTD {#sec-information-quantification}
+
+*"To know is to constrain; to experience is to accumulate constraints"*
+
+::: {.callout-note}
+## Key Revelation
+Information is not substance—it is constraint on configuration space. We can quantify it using entropy measures. An sLoop's priors are its initial representation structure; its experiences are accumulated mutual information with the environment.
+:::
+
+## 1. Information in Configuration Space
+
+### Definition 1.1 (State Information Density)
+
+For a single voxel with ternary state $s \in \{-1, 0, +1\}$, the maximum information content is:
+
+$$I_{\text{state}} = \log_2(3) \approx 1.585 \text{ bits per voxel}$$
+
+For a region $R \subseteq \mathcal{L}$ with $|R|$ voxels:
+
+$$I_{\text{max}}(R) = |R| \cdot \log_2(3) \text{ bits}$$
+
+### Definition 1.2 (Actual State Information)
+
+Given a probability distribution $P(s)$ over states in region $R$:
+
+$$I_{\text{actual}}(R) = -\sum_{c \in \mathcal{C}_R} P(c) \log_2 P(c)$$
+
+The **information deficit** (how much the region is constrained):
+
+$$\Delta I(R) = I_{\text{max}}(R) - I_{\text{actual}}(R) \geq 0$$
+
+A fully random region has $\Delta I = 0$. A fully determined region has $\Delta I = I_{\text{max}}$.
+
+### Definition 1.3 (Flux Information)
+
+The continuous flux field $\mathbf{J}(v) \in \mathbb{R}^3$ requires discretization for finite information content. At resolution $\epsilon$:
+
+$$I_{\text{flux}}(R, \epsilon) = |R| \cdot 3 \cdot \log_2\left(\frac{J_{\text{max}}}{\epsilon}\right)$$
+
+where $J_{\text{max}}$ is the maximum flux magnitude.
+
+**Physical interpretation**: The Planck scale sets a natural cutoff. Below Planck resolution, flux information is undefined.
+
+---
+
+## 2. Information Measures
+
+### 2.1 Shannon Entropy
+
+For a configuration distribution $P(c)$:
+
+$$H[P] = -\sum_c P(c) \log_2 P(c)$$
+
+**Properties:**
+- $H \geq 0$ (non-negative)
+- $H = 0$ iff deterministic (one configuration has $P = 1$)
+- $H = H_{\text{max}}$ iff uniform distribution
+
+### 2.2 Relative Entropy (Kullback-Leibler Divergence)
+
+The information gained by updating from prior $Q$ to posterior $P$:
+
+$$D_{KL}(P \| Q) = \sum_c P(c) \log_2 \frac{P(c)}{Q(c)} \geq 0$$
+
+**Interpretation**: How many bits of "surprise" when reality is $P$ but you expected $Q$.
+
+### 2.3 Mutual Information
+
+The shared information between two regions $A$ and $B$:
+
+$$I(A; B) = H[A] + H[B] - H[A, B]$$
+
+**Interpretation**: How much knowing $A$ tells you about $B$.
+
+::: {.callout-important}
+## Mutual Information is Symmetric
+$I(A; B) = I(B; A)$
+
+Correlation is bidirectional. This is crucial for understanding sLoop: the observer-observed relationship is mutual.
+:::
+
+---
+
+## 3. Information Geometry of Space
+
+### Definition 3.1 (Local Information Density)
+
+At voxel $v$, the information density is:
+
+$$\rho_I(v) = -\sum_{s \in \{-1,0,+1\}} P(s|v) \log_2 P(s|v)$$
+
+This creates a scalar field over the lattice—an **information landscape**.
+
+### Definition 3.2 (Information Gradient)
+
+$$\nabla I(v) = \left(\frac{\partial \rho_I}{\partial x}, \frac{\partial \rho_I}{\partial y}, \frac{\partial \rho_I}{\partial z}\right)$$
+
+**Physical meaning**: Information flows from high-entropy (uncertain) to low-entropy (determined) regions during collapse.
+
+### Definition 3.3 (Information Current)
+
+The rate of information flow through a surface $\Sigma$:
+
+$$\Phi_I = \int_\Sigma \rho_I \mathbf{v} \cdot d\mathbf{A}$$
+
+where $\mathbf{v}$ is the flux velocity field.
+
+### Theorem 3.1 (Information Conservation)
+
+In a closed system, total information is conserved:
+
+$$\frac{d}{dt} \int_V \rho_I \, dV = -\oint_{\partial V} \rho_I \mathbf{v} \cdot d\mathbf{A}$$
+
+Information cannot be created or destroyed—only transferred or transformed.
+
+---
+
+## 4. sLoop Information Structure
+
+An sLoop $(\Omega, \phi, \sigma)$ has three distinct information reservoirs:
+
+### 4.1 Substrate Information
+
+The physical information content of the sLoop's matter:
+
+$$I_\Omega = \sum_{v \in \Omega} \rho_I(v)$$
+
+This is the "hardware"—the bits stored in the physical configuration.
+
+### 4.2 Representation Information
+
+The capacity of the representation map $\phi: \mathcal{C} \to \mathcal{M}$:
+
+$$I_\phi = \log_2 |\mathcal{M}|$$
+
+This is the "software"—how many distinct representations are possible.
+
+### 4.3 Self-Model Information
+
+The information content of the self-embedding $\sigma$:
+
+$$I_\sigma = I(\sigma(\Omega); \Omega)$$
+
+The mutual information between the self-model and the actual substrate.
+
+::: {.callout-note}
+## The Three Information Types
+
+| Type | Symbol | What It Measures |
+|------|--------|------------------|
+| Substrate | $I_\Omega$ | Physical bits in matter |
+| Representation | $I_\phi$ | Capacity of mental model |
+| Self-model | $I_\sigma$ | Accuracy of self-knowledge |
+:::
+
+---
+
+## 5. Quantifying Priors
+
+### Definition 5.1 (Prior Distribution)
+
+An sLoop's **prior** is the probability distribution over configurations before observation:
+
+$$\pi: \mathcal{C} \to [0, 1], \quad \sum_c \pi(c) = 1$$
+
+### Definition 5.2 (Prior Entropy)
+
+The uncertainty before observation:
+
+$$H_{\text{prior}} = H[\pi] = -\sum_c \pi(c) \log_2 \pi(c)$$
+
+**Maximum ignorance**: Uniform prior, $\pi(c) = 1/|\mathcal{C}|$, gives $H_{\text{prior}} = \log_2 |\mathcal{C}|$.
+
+**Maximum knowledge**: Deterministic prior, $\pi(c_0) = 1$, gives $H_{\text{prior}} = 0$.
+
+### Definition 5.3 (Prior Structure)
+
+The prior is not uniform—it has structure encoding beliefs about reality:
+
+$$\pi(c) = \frac{1}{Z} e^{-\beta E(c)}$$
+
+where:
+- $E(c)$ is the "implausibility" of configuration $c$
+- $\beta$ is a confidence parameter
+- $Z$ is the normalization (partition function)
+
+### 5.1 Innate Priors (Built-in Structure)
+
+Some priors are "hardwired" into the sLoop's architecture:
+
+$$\pi_{\text{innate}}(c) \propto \exp\left(-\sum_i w_i f_i(c)\right)$$
+
+where $f_i$ are feature detectors and $w_i$ are innate weights.
+
+**Examples of innate priors:**
+- Spatial continuity: nearby voxels likely have similar states
+- Temporal persistence: configurations change slowly
+- Conservation: total flux is approximately constant
+
+### 5.2 Learned Priors (Acquired Structure)
+
+Experience updates the prior via Bayes' theorem:
+
+$$\pi_{t+1}(c) = \frac{P(\text{obs}|c) \cdot \pi_t(c)}{P(\text{obs})}$$
+
+The **learning rate** is the information gain per observation:
+
+$$\Delta I_{\text{learn}} = D_{KL}(\pi_{t+1} \| \pi_t)$$
+
+---
+
+## 6. Quantifying Experience
+
+### Definition 6.1 (Experience)
+
+An **experience** is a sequence of observations $(o_1, o_2, \ldots, o_T)$ that updates the sLoop's internal state.
+
+### Definition 6.2 (Experiential Information)
+
+The total information accumulated through experience:
+
+$$I_{\text{exp}} = \sum_{t=1}^T D_{KL}(\pi_t \| \pi_{t-1})$$
+
+This is the cumulative "surprise"—how much the sLoop's beliefs have changed.
+
+### Definition 6.3 (Experience Entropy)
+
+The entropy of the experience sequence:
+
+$$H_{\text{exp}} = -\sum_{\mathbf{o}} P(\mathbf{o}) \log_2 P(\mathbf{o})$$
+
+High $H_{\text{exp}}$ means varied, unpredictable experiences.
+Low $H_{\text{exp}}$ means repetitive, predictable experiences.
+
+### 6.1 The Experience Integral
+
+Over continuous time, experience accumulates:
+
+$$I_{\text{exp}}(T) = \int_0^T \dot{I}(t) \, dt$$
+
+where $\dot{I}(t)$ is the instantaneous information rate (bits per tick).
+
+### 6.2 Experience Compression
+
+Not all observations are retained. The **compression ratio** is:
+
+$$\eta = \frac{I_{\text{stored}}}{I_{\text{received}}}$$
+
+Human memory has $\eta \ll 1$—most experience is discarded, only patterns retained.
+
+---
+
+## 7. The Prior-Experience Decomposition
+
+### Theorem 7.1 (Total Knowledge Decomposition)
+
+An sLoop's total knowledge $K$ decomposes as:
+
+$$K = K_{\text{prior}} + K_{\text{exp}} - K_{\text{forgotten}}$$
+
+where:
+- $K_{\text{prior}}$ = innate + inherited knowledge
+- $K_{\text{exp}}$ = accumulated experiential information
+- $K_{\text{forgotten}}$ = information lost to decay/overwriting
+
+### Definition 7.1 (Knowledge State)
+
+The knowledge state at time $t$ is the posterior distribution:
+
+$$\kappa_t(c) = P(c | o_1, \ldots, o_t, \pi_0)$$
+
+This encodes everything the sLoop "knows" about configurations.
+
+### Definition 7.2 (Knowledge Entropy)
+
+$$H_{\text{knowledge}}(t) = H[\kappa_t]$$
+
+As knowledge increases, entropy decreases (uncertainty shrinks).
+
+### The Fundamental Constraint
+
+$$H_{\text{knowledge}}(t) \leq H_{\text{prior}} - I_{\text{exp}}(t) + H_{\text{noise}}(t)$$
+
+You cannot know more than your priors plus experience, minus noise.
+
+---
+
+## 8. Information Flow in sLoop Dynamics
+
+### 8.1 The Perception Channel
+
+External configuration $c$ → Observation $o$ → Updated belief $\kappa$
+
+The **channel capacity** limits perception:
+
+$$I(c; o) \leq C_{\text{perception}}$$
+
+where $C_{\text{perception}}$ is determined by sensory bandwidth.
+
+### 8.2 The Action Channel
+
+Intention $\iota$ → Action $a$ → Environmental change $\Delta c$
+
+The **action bandwidth** limits influence:
+
+$$I(\iota; \Delta c) \leq C_{\text{action}}$$
+
+### 8.3 The Reflection Channel (sLoop-specific)
+
+Self-model $\sigma$ → Self-observation $o_\sigma$ → Updated self-model $\sigma'$
+
+The **reflection bandwidth**:
+
+$$I(\sigma; o_\sigma) \leq C_{\text{reflection}}$$
+
+::: {.callout-important}
+## The sLoop Bottleneck
+
+Consciousness is limited by reflection bandwidth. We cannot fully know ourselves because $I_\sigma < I_\Omega$—the self-model is always a compression of the substrate.
+:::
+
+---
+
+## 9. Quantitative Measures for Consciousness
+
+### Definition 9.1 (Integrated Information - $\Phi$)
+
+Following Tononi's IIT, we define:
+
+$$\Phi(\Omega) = \min_{\text{partitions } P} I(\Omega) - \sum_{p \in P} I(p)$$
+
+The information lost by any partition. High $\Phi$ → integrated consciousness.
+
+### Definition 9.2 (sLoop Depth Information)
+
+The information content of nested self-reference:
+
+$$I_d = \sum_{k=1}^{d} I(\sigma^k(\Omega); \sigma^{k-1}(\Omega))$$
+
+where $\sigma^k$ is $k$-fold self-modeling (thinking about thinking about...).
+
+### Definition 9.3 (Experiential Richness)
+
+$$R = H_{\text{exp}} \times I_{\text{exp}} \times \Phi$$
+
+The product of variety, quantity, and integration of experience.
+
+### Definition 9.4 (Wisdom)
+
+$$W = \frac{K_{\text{compressed}}}{I_{\text{exp}}}$$
+
+How much reusable knowledge per bit of experience. High $W$ → efficient learning.
+
+---
+
+## 10. The Information Accounting
+
+### 10.1 For a Human sLoop
+
+Rough estimates:
+
+| Quantity | Value | Notes |
+|----------|-------|-------|
+| $I_\Omega$ (brain) | ~10¹⁵ bits | Synaptic weights |
+| $I_\phi$ (representational capacity) | ~10⁹ bits | Working concepts |
+| $I_\sigma$ (self-model) | ~10⁶ bits | Autobiographical self |
+| $C_{\text{perception}}$ | ~10⁷ bits/sec | Sensory bandwidth |
+| $C_{\text{action}}$ | ~10⁴ bits/sec | Motor bandwidth |
+| $C_{\text{reflection}}$ | ~10² bits/sec | Introspective bandwidth |
+| $\eta$ (memory compression) | ~10⁻⁶ | Vast experience loss |
+
+### 10.2 For the Universe as sLoop
+
+If the universe is a cosmic sLoop:
+
+| Quantity | Value | Notes |
+|----------|-------|-------|
+| $I_\Omega$ (observable universe) | ~10¹²² bits | Bekenstein bound |
+| $I_\phi$ (?) | ? | What represents the universe? |
+| $I_\sigma$ (?) | ? | Self-awareness of cosmos? |
+
+The cosmic sLoop question: Does $\phi(\text{universe}) \cap \sigma(\text{universe}) \neq \emptyset$?
+
+---
+
+## 11. Biological Sensory Channels
+
+The biological sLoop receives information through specialized transduction pathways. Each sense converts physical configurations into neural patterns.
+
+### 11.1 The Transduction Hierarchy
+
+```
+ENVIRONMENT (configuration c)
+        ↓
+    [Physical Signal]
+        ↓ transduction
+    [Receptor Activation]
+        ↓ encoding
+    [Neural Spike Train]
+        ↓ integration
+    [Cortical Pattern]
+        ↓ binding
+    [Conscious Percept]
+        ↓ storage
+    [Memory Trace]
+```
+
+At each stage, information is transformed and compressed.
+
+### 11.2 Sensory Channel Capacities
+
+| Sense | Receptors | Raw Input | Conscious Access | Compression |
+|-------|-----------|-----------|------------------|-------------|
+| **Vision** | ~130M rods/cones | ~10⁷ bits/sec | ~40 bits/sec | 10⁻⁵ |
+| **Audition** | ~16K hair cells | ~10⁵ bits/sec | ~30 bits/sec | 10⁻³ |
+| **Touch** | ~5M mechanoreceptors | ~10⁶ bits/sec | ~5 bits/sec | 10⁻⁵ |
+| **Olfaction** | ~10M receptors | ~10⁵ bits/sec | ~1 bit/sec | 10⁻⁵ |
+| **Gustation** | ~10K taste buds | ~10³ bits/sec | ~1 bit/sec | 10⁻² |
+| **Proprioception** | ~500K sensors | ~10⁶ bits/sec | ~2 bits/sec | 10⁻⁵ |
+| **Interoception** | ~10⁸ neurons | ~10⁵ bits/sec | ~0.1 bits/sec | 10⁻⁶ |
+
+**Total sensory input**: ~10⁷ bits/sec
+**Conscious bandwidth**: ~50 bits/sec
+**Overall compression**: ~10⁻⁵
+
+::: {.callout-important}
+## The Consciousness Bottleneck
+
+Only 1 in 100,000 bits of sensory input reaches conscious awareness. The vast majority is processed unconsciously, filtered, and discarded.
+:::
+
+### 11.3 Transduction as Through-Pattern
+
+Each receptor type implements a specific through-pattern:
+
+$$\tau_{\text{sense}}: \mathcal{C}_{\text{physical}} \to \mathcal{C}_{\text{neural}}$$
+
+**Vision** (photoreceptors):
+$$\tau_{\text{vis}}(\gamma) = \sigma(\int \gamma(\lambda) S(\lambda) d\lambda)$$
+where $\gamma(\lambda)$ is photon flux, $S(\lambda)$ is spectral sensitivity, and $\sigma$ is neural nonlinearity.
+
+**Audition** (hair cells):
+$$\tau_{\text{aud}}(p) = \sigma(\mathcal{F}[p(t)])$$
+where $p(t)$ is pressure wave and $\mathcal{F}$ is cochlear Fourier transform.
+
+**Touch** (mechanoreceptors):
+$$\tau_{\text{touch}}(\mathbf{F}) = \sigma(\nabla \cdot \mathbf{F})$$
+where $\mathbf{F}$ is force field on skin surface.
+
+### 11.4 The Sensory Funnel
+
+Information flow narrows as it approaches consciousness:
+
+```
+SENSORY FUNNEL
+══════════════════════════════════════════════════
+
+Layer 0: PHYSICAL WORLD
+         ~10²² bits (local environment)
+              ↓ [receptor limits]
+
+Layer 1: RECEPTOR ACTIVATION
+         ~10⁷ bits/sec
+              ↓ [lateral inhibition]
+
+Layer 2: PRIMARY SENSORY CORTEX
+         ~10⁶ bits/sec
+              ↓ [feature extraction]
+
+Layer 3: ASSOCIATION CORTEX
+         ~10⁵ bits/sec
+              ↓ [attention filter]
+
+Layer 4: WORKING MEMORY
+         ~10² bits/sec
+              ↓ [consolidation]
+
+Layer 5: LONG-TERM MEMORY
+         ~10¹ bits/sec stored
+```
+
+### 11.5 Sensory Information Formulas
+
+**Definition 11.1 (Sensory Mutual Information)**
+
+The information a sense $S$ provides about configuration $c$:
+
+$$I_S = I(o_S; c) = H[o_S] - H[o_S | c]$$
+
+**Definition 11.2 (Sensory Efficiency)**
+
+How much of the available information is captured:
+
+$$\eta_S = \frac{I(o_S; c)}{H[c_{\text{accessible}}]}$$
+
+**Definition 11.3 (Cross-Modal Integration)**
+
+Information gained by combining senses:
+
+$$I_{\text{multi}} = I(o_1, o_2, \ldots, o_n; c) - \sum_i I(o_i; c)$$
+
+Positive $I_{\text{multi}}$ indicates synergy (senses reinforce each other).
+Negative indicates redundancy (senses overlap).
+
+### 11.6 Interoception: The Internal Senses
+
+Internal body states provide continuous background information:
+
+| System | What It Senses | Information Rate |
+|--------|----------------|------------------|
+| Cardiovascular | Heart rate, blood pressure | ~100 bits/sec |
+| Respiratory | Breath rate, O₂/CO₂ levels | ~50 bits/sec |
+| Digestive | Hunger, satiety, nausea | ~10 bits/sec |
+| Thermal | Core temperature, skin temp | ~20 bits/sec |
+| Vestibular | Balance, acceleration | ~100 bits/sec |
+| Nociceptive | Pain, tissue damage | ~10³ bits/sec (variable) |
+
+**Total interoceptive input**: ~10⁵ bits/sec
+**Conscious access**: ~0.1 bits/sec
+
+Interoception is mostly unconscious—only extreme states (pain, hunger, dizziness) break through to awareness.
+
+### 11.7 The Binding Problem
+
+Sensory inputs arrive as separate streams. How does the sLoop unify them?
+
+**Definition 11.4 (Binding Information)**
+
+The information required to specify which features belong together:
+
+$$I_{\text{bind}} = H[\text{all features}] - H[\text{correct bindings}]$$
+
+For $n$ features with $k$ objects: $I_{\text{bind}} \approx n \log_2 k$ bits.
+
+**Proposed FTD Solution**: Binding occurs via **temporal synchrony** in flux patterns. Features processed by the same sLoop region at the same tick are bound together.
+
+$$\text{Bound}(f_1, f_2) \iff \exists \Omega: f_1, f_2 \in \phi_\Omega(c) \text{ simultaneously}$$
+
+### 11.8 Attention as Information Gating
+
+Attention selects which sensory channels reach consciousness.
+
+**Definition 11.5 (Attentional Gain)**
+
+$$G_A(S) = \frac{I_S^{\text{attended}}}{I_S^{\text{unattended}}}$$
+
+Typical values: $G_A \approx 3$–$10$ for attended vs unattended stimuli.
+
+**Attentional Capacity**:
+
+$$\sum_S G_A(S) \cdot I_S \leq C_{\text{conscious}} \approx 50 \text{ bits/sec}$$
+
+Attending to one channel reduces capacity for others—attention is a **zero-sum game**.
+
+### 11.9 Sensory Memory Stages
+
+| Stage | Duration | Capacity | Compression |
+|-------|----------|----------|-------------|
+| Iconic (visual) | ~250 ms | ~10⁶ bits | 1:1 |
+| Echoic (auditory) | ~2 sec | ~10⁵ bits | 1:1 |
+| Working memory | ~20 sec | ~100 bits | 10⁻⁴ |
+| Short-term | ~hours | ~10³ bits | 10⁻³ |
+| Long-term | ~years | ~10⁹ bits | 10⁻⁶ |
+
+**The Great Forgetting**: From sensory input to long-term memory, compression ratio is ~10⁻⁶. Only patterns survive.
+
+### 11.10 Biological Prior Structure
+
+The sLoop's priors are shaped by:
+
+**Genetic priors** (innate):
+- Edge detection (V1 orientation columns)
+- Face recognition (fusiform gyrus)
+- Language acquisition (Broca's/Wernicke's areas)
+- Threat detection (amygdala)
+
+**Developmental priors** (critical periods):
+- Visual acuity (first 6 months)
+- Phoneme discrimination (first year)
+- Language syntax (first 7 years)
+- Social cognition (adolescence)
+
+**Learned priors** (experience):
+- Updated via Bayesian inference
+- Consolidated during sleep
+- Subject to interference and decay
+
+$$\pi_{\text{total}} = \pi_{\text{genetic}} \cdot \pi_{\text{developmental}} \cdot \pi_{\text{learned}}$$
+
+---
+
+## 12. Summary: The Information Triad
+
+```
+INFORMATION IN FTD
+═══════════════════════════════════════════════════════════
+
+SPATIAL INFORMATION
+├── State information: log₂(3) bits per voxel
+├── Flux information: continuous → requires discretization
+├── Information density: ρᵢ(v) = local entropy
+└── Information current: flow through surfaces
+
+PRIOR INFORMATION
+├── Innate: hardwired structure π₀
+├── Learned: Bayesian updates π₀ → π_t
+├── Prior entropy: H[π] = initial uncertainty
+└── Prior structure: beliefs about configurations
+
+EXPERIENTIAL INFORMATION
+├── Experience: sequence of observations
+├── Accumulated: I_exp = integral of surprise over time
+├── Compressed: η = stored/received
+└── Wisdom: W = knowledge/experience
+
+sLOOP INFORMATION
+├── Substrate I_Ω: physical bits
+├── Representation I_φ: model capacity
+├── Self-model I_σ: self-knowledge
+└── Integration Φ: irreducible wholeness
+
+BIOLOGICAL SENSORY CHANNELS
+├── Vision: 10⁷ → 40 bits/sec (10⁻⁵ compression)
+├── Audition: 10⁵ → 30 bits/sec
+├── Touch: 10⁶ → 5 bits/sec
+├── Interoception: 10⁵ → 0.1 bits/sec
+├── Total input: ~10⁷ bits/sec
+├── Conscious access: ~50 bits/sec
+└── Compression: 10⁻⁵ (1 in 100,000)
+
+PRIOR HIERARCHY
+├── Genetic: innate neural architecture
+├── Developmental: critical period shaping
+├── Learned: Bayesian experience updates
+└── Total: π_genetic × π_developmental × π_learned
+```
+
+---
+
+## Concepts
+
+- **information-density**: Local entropy field over the lattice
+- **prior-distribution**: Beliefs before observation
+- **experiential-information**: Accumulated surprise from observations
+- **knowledge-state**: Posterior distribution encoding all beliefs
+- **channel-capacity**: Bandwidth limits on perception/action/reflection
+- **integrated-information**: Information lost by any partition (Φ)
+- **wisdom**: Knowledge per unit experience
+- **sloop-bottleneck**: Self-model always compresses substrate
+- **transduction**: Conversion of physical signal to neural pattern
+- **sensory-funnel**: Narrowing information flow toward consciousness
+- **binding-problem**: Unifying separate sensory streams
+- **attentional-gain**: Information amplification for attended channels
+- **interoception**: Internal body state sensing
+- **genetic-prior**: Innate neural structure encoding expectations
+- **consciousness-bottleneck**: 50 bits/sec limit on aware processing
+
+---
+
+## Transition
+
+Information quantification provides the metrics for consciousness. We can now measure priors (what an sLoop expects), experience (what it has observed), and knowledge (what it believes). Biological sensory channels show the massive compression (~10⁻⁵) from raw input to conscious awareness—the sLoop samples reality through a narrow straw. This completes the formal apparatus for treating consciousness as a physical phenomenon within FTD—a self-referential information structure constrained by channel capacities, shaped by genetic and developmental priors, and growing through Bayesian update from filtered sensory experience.

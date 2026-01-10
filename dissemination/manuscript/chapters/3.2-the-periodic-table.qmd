@@ -1,0 +1,188 @@
+# The Periodic Table {#sec-periodic-table}
+
+*"All the elements, from hydrogen to uranium and beyond"*
+
+::: {.callout-note}
+## Key Revelation
+The periodic table is not arbitrary. Each element is a specific configuration of protons, neutrons, and electrons, with properties determined by quantum geometry.
+:::
+
+## A Personal Inventory
+
+Consider what you are made of. The calcium in your bones was forged in the heart of a dying star. The iron in your blood—every atom—was created in the final moments before a supernova. The oxygen you breathe was released by cyanobacteria that lived two billion years before you were born.
+
+You are not merely *in* the universe. You are the universe, organized into a pattern that can contemplate itself.
+
+The periodic table is the census of that organization: 118 ways that protons, neutrons, and electrons arrange themselves into stable patterns. Each element is not just a chemical species—it is a chapter in the story of cosmic evolution, from the first three minutes after the Big Bang to the stellar explosions that seeded your planet with complexity.
+
+::: {.callout-note collapse="true"}
+## Historical Context
+Dmitri Mendeleev published his periodic table in 1869, famously predicting undiscovered elements (gallium, scandium, germanium) from gaps in his arrangement. The physical basis—electron shells—came only after quantum mechanics (Bohr 1913, Schrödinger 1926). Glenn Seaborg expanded the table with actinides in the 1940s. Today's 118 elements represent configurations from 1 proton (hydrogen) to 118 (oganesson), with each row reflecting a new electron shell being filled.
+:::
+
+## The Logic of the Table
+
+The periodic table organizes elements by:
+- **Rows (periods)**: Shell being filled
+- **Columns (groups)**: Valence electron configuration
+- **Blocks**: Orbital type (s, p, d, f)
+
+::: {.callout-note}
+## Mass Units in This Chapter
+Atomic masses are given in **atomic mass units (u)**, where 1 u = 1/12 the mass of carbon-12 ≈ 931.5 MeV/c². The mass of a hydrogen atom is approximately 1 u, making these values easy to interpret: they roughly equal the nucleon count (protons + neutrons).
+:::
+
+## Period 1: The Primordial Elements
+
+| Z | Sym | Name | Mass (u) | Config | Notes |
+|---|-----|------|----------|--------|-------|
+| 1 | H | Hydrogen | 1.008 | 1s¹ | Simplest |
+| 2 | He | Helium | 4.003 | 1s² | Noble gas |
+
+### Hydrogen: The First Atom
+
+Three minutes after the Big Bang, when the universe had cooled enough for protons and electrons to exist, the first hydrogen atoms formed. Not forged in any star—hydrogen *predates* stars. Every hydrogen atom in the water you drink is approximately 13.8 billion years old, unchanged since the beginning.
+
+![Hydrogen: the simplest atom, consisting of one proton and one electron in the 1s orbital.](../figures/ch03/fig-hydrogen-atom.png){#fig-hydrogen-atom width=50%}
+
+The hydrogen in your body has been on an extraordinary journey: first floating in primordial gas clouds, then compressed into the first stars, then ejected in stellar winds, then gathered into the solar nebula, then incorporated into water on Earth, then drunk by countless organisms before you. Yet it remains, at its core, the same simple pattern—one proton, one electron—that formed when the universe was three minutes old.
+
+### Helium: The Inert Witness
+
+![Helium: two protons, two neutrons, and two electrons filling the 1s shell completely—making it chemically inert.](../figures/ch03/fig-helium-atom.png){#fig-helium-atom width=50%}
+
+Helium has a closed shell and participates in no chemistry. It witnesses the universe but does not engage. The helium in a party balloon was mostly made in the Big Bang or fused in stellar cores. It escapes Earth's atmosphere—too light to be held by our gravity—and drifts into space. We will eventually run out of helium on Earth; it is not renewable.
+
+## Period 2: Carbon and Life
+
+| Z | Sym | Name | Mass (u) | Config | Notes |
+|---|-----|------|----------|--------|-------|
+| 3 | Li | Lithium | 6.94 | [He]2s¹ | Metal |
+| 4 | Be | Beryllium | 9.01 | [He]2s² | Toxic |
+| 5 | B | Boron | 10.81 | [He]2s²2p¹ | Metalloid |
+| 6 | C | Carbon | 12.01 | [He]2s²2p² | Life |
+| 7 | N | Nitrogen | 14.01 | [He]2s²2p³ | 78% air |
+| 8 | O | Oxygen | 16.00 | [He]2s²2p⁴ | Respire |
+| 9 | F | Fluorine | 19.00 | [He]2s²2p⁵ | Reactive |
+| 10 | Ne | Neon | 20.18 | [He]2s²2p⁶ | Noble |
+
+### Carbon: The Element of Life
+
+There is something miraculous about carbon-12: three helium nuclei fused together in the heart of a red giant star. This fusion is exquisitely improbable—requiring a quantum resonance (the Hoyle state) at exactly the right energy. If that resonance were 4% different, carbon would not form; if it were 1% different, carbon would not survive to be ejected into space. We exist because of a 1% window in nuclear physics.
+
+Carbon has 4 valence electrons, allowing it to form 4 bonds. This versatility enables:
+- Long chains (hydrocarbons)
+- Rings (aromatic compounds)
+- Complex structures (proteins, DNA)
+
+The carbon in your DNA was once inside a star. That star died, and its carbon drifted through space for millions of years. It condensed into the cloud that became our solar system, aggregated into Earth, was cycled through the atmosphere and oceans, was absorbed by plants, eaten by animals, and eventually became *you*—a pattern of carbon atoms that can read about carbon atoms.
+
+## Period 3: Metals and Semiconductors
+
+| Z | Sym | Name | Mass (u) | Config | Notes |
+|---|-----|------|----------|--------|-------|
+| 11 | Na | Sodium | 22.99 | [Ne]3s¹ | Reactive |
+| 12 | Mg | Magnesium | 24.31 | [Ne]3s² | Essential |
+| 13 | Al | Aluminum | 26.98 | [Ne]3s²3p¹ | Common |
+| 14 | Si | Silicon | 28.09 | [Ne]3s²3p² | Chips |
+| 15 | P | Phosphorus | 30.97 | [Ne]3s²3p³ | DNA |
+| 16 | S | Sulfur | 32.07 | [Ne]3s²3p⁴ | Yellow |
+| 17 | Cl | Chlorine | 35.45 | [Ne]3s²3p⁵ | Halogen |
+| 18 | Ar | Argon | 39.95 | [Ne]3s²3p⁶ | Noble |
+
+### Silicon: The Semiconductor
+
+Like carbon, silicon has 4 valence electrons. But its larger size changes the bonding:
+- Forms crystals rather than long chains
+- Semiconductor properties enable computing
+- Second most abundant element in Earth's crust
+
+The silicon in your phone was once part of the primordial Earth, formed from the deaths of ancient stars. It spent billions of years locked in rock, then was mined, purified to 99.9999999% purity, sliced into wafers, etched with circuits, and assembled into the device you're reading this on. Silicon is now thinking about silicon—the substrate has become self-aware through us.
+
+## The Transition Metals (Period 4 onward)
+
+Filling the d orbitals creates the transition metals—the elements that enabled the Bronze Age, the Iron Age, and the Electronic Age:
+
+| Z | Sym | Name | Mass (u) | Notes |
+|---|-----|------|----------|-------|
+| 26 | Fe | Iron | 55.85 | Most stable |
+| 29 | Cu | Copper | 63.55 | Conductor |
+| 30 | Zn | Zinc | 65.38 | Essential |
+| 47 | Ag | Silver | 107.87 | Best conductor |
+| 79 | Au | Gold | 196.97 | Noble metal |
+| 82 | Pb | Lead | 207.2 | Dense, toxic |
+| 92 | U | Uranium | 238.03 | Nuclear fuel |
+
+### Iron: The End of Fusion
+
+Iron-56 has the highest binding energy per nucleon. Stars cannot gain energy by fusing iron—it's the end of the fusion line. When a massive star's core becomes iron, fusion stops, and the star collapses in milliseconds, triggering a supernova.
+
+In that catastrophic moment—lasting less than a second—elements heavier than iron are forged: gold, platinum, uranium. These heavy elements exist only because stars die violently. The gold in a wedding ring required a star to explode.
+
+The iron in your blood (each hemoglobin molecule carries four iron atoms) was synthesized in the final moments of a star's life, blasted across space at 10% the speed of light, incorporated into the cloud that became our solar system, and eventually found its way into *you*. You are, quite literally, a walking supernova remnant.
+
+::: {.callout-note}
+## The Cosmic Origin of Blood
+Every breath you take, the iron in your hemoglobin carries oxygen from your lungs to your cells. That iron was forged in a stellar core over 5 billion years ago. When you cut yourself and see red, you're seeing the signature of a dead star.
+:::
+
+## Periodic Trends
+
+### Atomic Radius
+Increases down a group (more shells), decreases across a period (more protons pulling electrons in).
+
+### Ionization Energy
+Energy to remove an electron. Increases across a period, decreases down a group.
+
+### Electronegativity
+Tendency to attract electrons. Highest for fluorine (top right), lowest for francium (bottom left).
+
+### Reactivity
+- Metals: Most reactive at bottom left (Francium, Cesium)
+- Nonmetals: Most reactive at top right (Fluorine)
+
+## Experiments
+
+### Element Builder
+Build any element by adding protons, neutrons, electrons. Watch shells fill.
+
+### Periodic Trends
+Visualize how properties change across periods and down groups.
+
+### Isotope Explorer
+Same element, different neutron counts. Compare stability.
+
+## The Table as Biography
+
+The periodic table is not just a catalog of elements—it is a timeline of cosmic history:
+
+| Era | Elements Created | Process |
+|-----|-----------------|---------|
+| First 3 minutes | H, He, trace Li | Big Bang nucleosynthesis |
+| First billion years | C, N, O, up to Fe | Stellar fusion |
+| Supernovae | Fe through U | Explosive nucleosynthesis |
+| Neutron star mergers | Heavy r-process elements | Violent collisions |
+| Modern | Np through Og (93-118) | Human particle accelerators |
+
+You are reading these words with eyes made of carbon (stellar fusion), seeing with retinas that use zinc (supernova), processing with a brain that uses copper (supernova), through a device containing rare earth elements (neutron star mergers).
+
+The periodic table is your autobiography, written in nuclear physics.
+
+## Concepts
+
+- **element**: Defined by proton count (Z)
+- **isotope**: Same element, different neutron count
+- **shell-filling**: Order of electron orbital occupation
+- **valence**: Outer-shell electrons determining chemistry
+- **nucleosynthesis**: The cosmic processes that create elements
+
+## Transition
+
+The periodic table gives us atoms. Now let's examine how electrons behave within atoms—orbitals, shells, and chemical reactivity in @sec-electron-dynamics.
+
+::: {.callout-tip}
+## Related Topics
+- **Electron dynamics**: @sec-electron-dynamics covers orbitals and shells
+- **Chemical bonds**: @sec-chemical-bonds explains how elements combine
+- **Stable structures**: @sec-stable-structures discusses why certain configurations persist
+:::

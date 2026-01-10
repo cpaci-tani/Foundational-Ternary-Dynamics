@@ -1,0 +1,8 @@
+  Sunlight →    ← IR escapes
+       ╲       ↑
+        ╲     ↑ ↑ ↑
+         ╲   ─────────  ← Atmosphere
+          ╲   ↑ ↑ ↑ ↑   (absorbs and re-emits IR)
+           ╲ ─────────
+    Ground absorbs visible,
+    emits infrared

@@ -1,0 +1,244 @@
+# Proton Decay {#sec-proton-decay}
+
+*"Nothing lasts forever—not even matter"*
+
+::: {.callout-note}
+## Key Revelation
+Grand unification predicts protons decay with lifetime τ_p ~ 10³⁵ years. This is 10²⁵ times the age of the universe—yet detectable by watching 10³⁴ protons simultaneously.
+:::
+
+## The Immortal Proton?
+
+### Classical Stability
+
+Protons appear absolutely stable:
+- Lightest baryon (no lighter state to decay to)
+- Electric charge conserved (can't become neutral)
+- Baryon number conserved (can't become lepton)
+
+For 13.8 billion years, every proton in the universe has survived.
+
+### The GUT Revolution
+
+Grand unification changes everything. At M_GUT ~ 10¹⁶ GeV:
+- Quarks and leptons are unified
+- Baryon number is **not** conserved
+- Protons **can** decay
+
+## The Decay Mechanism
+
+### X and Y Bosons
+
+GUT theories introduce superheavy gauge bosons:
+
+| Boson | Charge | Mass | Role |
+|-------|--------|------|------|
+| X | +4/3 | ~10¹⁶ GeV | Converts quark ↔ lepton |
+| Y | +1/3 | ~10¹⁶ GeV | Converts quark ↔ lepton |
+
+These bosons mediate transitions between quarks and leptons.
+
+### The Dominant Channel
+
+$$p \to e^+ + \pi^0$$
+
+In quark language:
+$$uud \to e^+ + (u\bar{u}) \to e^+ + \pi^0$$
+
+```
+BEFORE:          AFTER:
+  u
+ / \         e⁺ (positron)
+u   d    →        +
+                 π⁰ (neutral pion)
+                  ↓
+                 γγ (two photons)
+```
+
+### Alternative Channels
+
+| Channel | Branching Fraction | Signature |
+|---------|-------------------|-----------|
+| p → e⁺ + π⁰ | ~30-50% | e⁺ + 2γ |
+| p → μ⁺ + π⁰ | ~10-20% | μ⁺ + 2γ |
+| p → ν̄ + π⁺ | ~10-20% | π⁺ |
+| p → e⁺ + η | ~5-10% | e⁺ + multi-γ |
+| n → e⁺ + π⁻ | (bound n) | e⁺ + π⁻ |
+
+## The Lifetime Calculation
+
+### Dimensional Analysis
+
+The decay rate scales as:
+
+$$\Gamma_p \sim \frac{\alpha_{\text{GUT}}^2 m_p^5}{M_{\text{GUT}}^4}$$
+
+- α_GUT²: Two GUT vertices (quark → X → lepton)
+- m_p⁵: Phase space factor (dimension [mass]⁵)
+- M_GUT⁴: Propagator suppression (heavy X boson)
+
+### The FTD Prediction
+
+Using our derived values:
+- α_GUT = 1/42
+- M_GUT ≈ 2 × 10¹⁶ GeV
+- m_p = 0.938 GeV
+
+$$\tau_p = \frac{1}{\Gamma_p} \sim \frac{M_{\text{GUT}}^4}{\alpha_{\text{GUT}}^2 m_p^5}$$
+
+**Numerical calculation**:
+
+$$\tau_p \sim \frac{(2 \times 10^{16})^4}{(1/42)^2 \times (0.938)^5} \text{ GeV}^{-1}$$
+
+Converting GeV⁻¹ to seconds (1 GeV⁻¹ ≈ 6.58 × 10⁻²⁵ s):
+
+$$\boxed{\tau_p \sim 10^{35} \text{ years}}$$
+
+### The Formula in Integers
+
+$$\tau_p \propto \frac{(1/\alpha_{\text{GUT}})^2}{\alpha^{40}} \sim \frac{42^2}{\alpha^{40}}$$
+
+The 40 powers of α (from M_GUT⁴ ~ α³² and m_p⁵ ~ α⁵⁰... net ~α⁴⁰) encode the extreme rarity.
+
+## Experimental Detection
+
+### The Challenge
+
+τ_p ~ 10³⁵ years means:
+- Probability of one proton decaying in one year: 10⁻³⁵
+- Need to watch ~10³⁵ protons to see ~1 decay/year
+
+### The Solution: Water Cherenkov Detectors
+
+A kiloton of water contains:
+$$N_p \approx \frac{10^9 \text{ g}}{18 \text{ g/mol}} \times 6 \times 10^{23} \times 10 \approx 3 \times 10^{32} \text{ protons}$$
+
+50 kilotons → ~10³⁴ protons → ~0.1 decays/year if τ_p = 10³⁵ years
+
+### Current Experiments
+
+| Experiment | Mass | Location | Limit on τ_p |
+|------------|------|----------|--------------|
+| Super-Kamiokande | 50 kt | Japan | > 1.6 × 10³⁴ years |
+| SNO+ | 1 kt | Canada | Expected limits |
+| JUNO | 20 kt | China | Under construction |
+| **Hyper-Kamiokande** | **260 kt** | Japan | **Will test 10³⁵ yr** |
+
+### The Detection Signature
+
+For p → e⁺ + π⁰:
+
+1. **Positron**: Cherenkov ring (sharp, electron-like)
+2. **Neutral pion**: π⁰ → γγ within 10⁻¹⁶ s
+3. **Two photons**: Each creates fuzzy Cherenkov ring
+4. **Total energy**: Should equal m_p = 938 MeV
+5. **Momentum**: Should be zero (proton at rest)
+
+### Background Rejection
+
+Main backgrounds:
+- Atmospheric neutrinos: νₑ + n → e⁻ + p (similar topology)
+- Cosmic ray muons: Can fake events if not vetoed
+
+Super-K achieves background ~1 event/(megaton·year) in signal region.
+
+## What Detection Would Mean
+
+### Confirmation of Grand Unification
+
+Proton decay at τ_p ~ 10³⁵ years would:
+- Confirm GUT gauge coupling unification
+- Validate M_GUT ~ 10¹⁶ GeV
+- Support 1/α_GUT = 42
+
+### Test of FTD Framework
+
+The FTD prediction is specific:
+
+$$\tau_p(p \to e^+ \pi^0) = (1.0 \pm 0.3) \times 10^{35} \text{ years}$$
+
+**If observed**:
+- τ_p in range 3 × 10³⁴ to 3 × 10³⁵ years → FTD confirmed
+- τ_p significantly different → Modify FTD parameters
+
+**If NOT observed by Hyper-K (sensitivity ~10³⁵ years)**:
+- τ_p > 10³⁵ years → GUT scale higher, or different unification pattern
+- Would require revisiting α_GUT = 1/42
+
+### Baryon Number Violation
+
+Observation proves:
+- Baryon number is NOT an exact symmetry
+- The universe can have unequal matter/antimatter (baryogenesis)
+- Protons are not the "ground state"—they can decay
+
+## The Bigger Picture
+
+### Where Did Matter Come From?
+
+The same interaction that allows protons to decay (B violation) explains baryogenesis:
+
+$$\text{No baryon number conservation} \implies \text{Matter-antimatter asymmetry possible}$$
+
+Without proton decay channels, the universe would have equal matter and antimatter—and annihilate to pure radiation.
+
+### Connection to CP Violation
+
+Baryogenesis requires:
+1. **B violation**: ✓ (proton decay)
+2. **C and CP violation**: ✓ (CKM phase, Chapter 2.6)
+3. **Out of equilibrium**: ✓ (expanding universe)
+
+FTD derives all three ingredients from the framework integers.
+
+### The End of Matter
+
+If τ_p ~ 10³⁵ years, then:
+- In 10³⁵ years, most protons will have decayed
+- Atoms become impossible
+- Only leptons, photons, and neutrinos remain
+- The universe becomes "proton-free"
+
+This is part of the ultimate fate of the cosmos (Book XIII).
+
+## Summary: Proton Decay from Four Integers
+
+| Quantity | Formula | Value |
+|----------|---------|-------|
+| GUT coupling | 1/α_GUT | 42 |
+| GUT scale | M_GUT | ~2 × 10¹⁶ GeV |
+| Proton lifetime | τ_p ~ M_GUT⁴/(α_GUT² m_p⁵) | ~10³⁵ years |
+| Dominant channel | p → e⁺ + π⁰ | ~30-50% |
+
+The derivation chain:
+```
+{3, 4, 7, 13}
+     │
+     └── b₃ = 7 → 1/α_GUT = 42
+              │
+              └── M_GUT ~ 10¹⁶ GeV
+                       │
+                       └── τ_p ~ 10³⁵ years
+```
+
+## Falsification Criteria
+
+| Observation | Implication |
+|-------------|-------------|
+| τ_p = (0.3-3) × 10³⁵ yr | FTD confirmed |
+| τ_p < 10³⁴ yr | Framework falsified |
+| τ_p > 10³⁶ yr (no detection at Hyper-K) | Need to revise M_GUT or α_GUT |
+| Different decay channels dominant | Modify GUT structure |
+
+## Concepts
+
+- **proton-decay**: Baryon number violation via GUT interactions
+- **x-boson**: Superheavy gauge boson mediating quark-lepton transitions
+- **gut-lifetime**: τ_p ~ M_GUT⁴/α_GUT² m_p⁵ ~ 10³⁵ years
+- **cherenkov-detection**: Light cone from superluminal particle in water
+- **baryon-violation**: Key ingredient for matter-antimatter asymmetry
+- **baryogenesis**: Creation of matter excess in early universe
+
+## Transition
+
+Proton decay is FTD's most dramatic experimental prediction—testable within the next decade. But what about the reverse process? How did matter form in the first place? The subatomic realm awaits, where quarks bind into protons that can—eventually—decay back to leptons and light.

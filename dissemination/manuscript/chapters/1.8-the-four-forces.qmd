@@ -1,0 +1,299 @@
+# The Four Forces {#sec-four-forces}
+
+*"How things influence each other"*
+
+::: {.callout-note}
+## Key Insight
+Interactions in the framework reduce to four force categories: gravitational, electromagnetic, strong nuclear, and weak nuclear. Each arises from differential operations on the flux field.
+:::
+
+## Gravity
+
+The weakest force, but the only one that always attracts.
+
+### The Formula
+
+$$
+\vec{F}_g = G_{\text{bias}} \cdot \nabla\bar{\rho}(x)
+$$
+
+where:
+
+- $\vec{F}_g$ is the gravitational force vector
+- $G_{\text{bias}} = 0.01$ is the gravitational coupling constant (derived from $1/(b_3 + N_c)^2$)
+- $\bar{\rho}(x)$ is the neighbor-averaged flux density at position $x$
+- $\nabla$ denotes the discrete gradient operator
+
+### Properties
+
+- **Range**: Infinite (inverse-square falloff)
+- **Strength**: Very weak
+- **Sign**: Always attractive
+- **Source**: Mass (energy density)
+
+### How It Works
+
+Gravity emerges from density gradients. Where density is uneven, particles experience a force toward higher density. This is why mass attracts mass—each creates a density gradient that pulls the other.
+
+The inverse-square law emerges naturally from 3D geometry. A source creates a density field that falls off as 1/r². The gradient of this field gives force proportional to 1/r².
+
+## Electromagnetism
+
+The force between charged particles.
+
+### Electric (Coulomb) Force
+
+$$
+\vec{F}_e = -q(x) \cdot \nabla\bar{q}(x)
+$$
+
+- Like charges repel (positive times positive gradient = push away)
+- Opposite charges attract (negative times positive gradient = pull toward)
+
+### Magnetic (Lorentz) Force
+
+$$
+\vec{F}_m = \beta_m \cdot (\nabla \times \vec{J}) \times \hat{J}
+$$
+
+Moving charges create magnetic fields. The curl of the current density (∇ × J) gives the magnetic field. Forces act perpendicular to both field and motion.
+
+### Electromagnetic Strength
+
+The fine structure constant $\alpha$ ≈ 1/137 = 0.00729 sets the strength of electromagnetic interactions.
+
+## The Strong Force
+
+The force that binds nucleons.
+
+### Yukawa Potential
+
+$$
+\vec{F}_{\text{strong}} = g_s^2 \cdot \frac{e^{-m_\pi r}(1 + m_\pi r)}{r^2} \hat{r}
+$$
+
+where:
+
+- $\vec{F}_{\text{strong}}$ is the strong force vector
+- $g_s$ is the strong coupling constant (dimensionless)
+- $m_\pi$ is the pion mass scale (sets the interaction range)
+- $r$ is the separation distance in lattice units
+- $\hat{r}$ is the unit vector pointing from source to target
+
+### Properties
+
+- **Range**: Very short (1-3 voxels)
+- **Strength**: Extremely strong (100× electromagnetic)
+- **Behavior**: Attractive at medium range, repulsive at very short range
+- **Creates**: Stable triads (protons, neutrons)
+
+### The Repulsive Core
+
+At distances less than ~1 voxel, the strong force becomes repulsive. This prevents particles from collapsing into each other and allows stable structures.
+
+::: {.callout-note}
+## Emergent vs Imposed
+- **Emergent**: Coulomb 1/r² form (from 3D geometry), gauge symmetry (U(1) from Gauss constraint)
+- **Imposed**: Yukawa functional form (borrowed from nuclear physics), strong coupling value
+
+See CLAUDE.md Chapter 6 for the complete distinction between features that emerge from the dynamics vs those that are phenomenologically imposed.
+:::
+
+## The Weak Force
+
+The force responsible for transmutation.
+
+### The Stress Measure
+
+$$
+S(x) = |\nabla \cdot \vec{J}| + |\nabla \times \vec{J}| + |\nabla\bar{\rho}|
+$$
+
+When stress S exceeds a threshold, the weak force can act.
+
+### Transmutation
+
+When weak force triggers:
+1. Particle polarity flips (+1 ↔ -1)
+2. Neutrino emitted
+3. Energy conserved
+
+This is how neutrons decay: d quark → u quark + electron + antineutrino
+
+### Properties
+
+- **Range**: Extremely short
+- **Effect**: Changes particle identity
+- **Rate**: Very slow compared to other forces
+
+## Force Comparison
+
+| Force | Relative Strength | Range | Mediator |
+|-------|------------------|-------|----------|
+| Strong | 1 | 10⁻¹⁵ m | Gluon |
+| Electromagnetic | 10⁻² | ∞ | Photon |
+| Weak | 10⁻⁶ | 10⁻¹⁸ m | W, Z |
+| Gravity | 10⁻⁴⁰ | ∞ | Graviton? |
+
+## Gauge Symmetries: The Deep Structure
+
+The forces are not random—they arise from **gauge symmetries** of the flux field.
+
+### U(1): Electromagnetism
+
+The electromagnetic force has **U(1) gauge symmetry**: invariance under local phase rotations.
+
+$$J \to J + \nabla\lambda$$
+
+The Gauss constraint ∇·J = ρ is preserved under this transformation. The conserved quantity is **electric charge**.
+
+| Component | Physical Meaning |
+|-----------|-----------------|
+| 2 transverse modes | Photon polarizations |
+| 1 longitudinal mode | Constrained by Gauss law |
+| Gauge invariance | Charge conservation |
+
+### SU(2): The Weak Force
+
+The weak force has **SU(2) gauge symmetry** from chiral flux doublets.
+
+$$\Psi_L = \begin{pmatrix} \psi_\uparrow \\ \psi_\downarrow \end{pmatrix}_L$$
+
+where:
+
+- ψ↑ = J_x + iJ_y (positive helicity)
+- ψ↓ = J_x - iJ_y (negative helicity)
+- L = left-handed (from flux spiral direction)
+
+SU(2) transformations rotate between up-type and down-type:
+
+$$\Psi_L \to U\Psi_L, \quad U = e^{i\theta^a\sigma^a/2}$$
+
+The gauge bosons are W⁺, W⁻, and Z⁰.
+
+### SU(3): The Strong Force (Color)
+
+The strong force has **SU(3) gauge symmetry** from the three spatial dimensions of the lattice.
+
+| Color | Flux Alignment |
+|-------|---------------|
+| Red | J primarily along x-axis |
+| Green | J primarily along y-axis |
+| Blue | J primarily along z-axis |
+
+SU(3) transformations rotate the color orientation. The eight gluons correspond to the eight generators of SU(3).
+
+::: {.callout-note}
+## Color Confinement
+Why can't we see isolated quarks? Between separated quarks, the flux forms **tubes** rather than spreading. The tube energy grows with distance, so it's energetically favorable to create quark-antiquark pairs. Quarks are always confined in color-neutral combinations.
+:::
+
+## Parity Violation
+
+The weak force violates **parity symmetry** (mirror symmetry).
+
+### The Mechanism
+
+The flux field has a preferred chirality:
+
+$$\chi = \text{sign}(\vec{J} \cdot (\nabla \times \vec{J}))$$
+
+The lattice update rules are NOT symmetric under χ → -χ:
+
+- Left-handed particles feel the full SU(2) weak force
+- Right-handed particles are SU(2) singlets
+
+This is why neutrinos are only left-handed and antineutrinos are only right-handed.
+
+### The Weinberg Angle
+
+The mixing between U(1) and SU(2) is measured by the **Weinberg angle**:
+
+$$\sin^2\theta_W = \frac{3}{13} = 0.2308$$
+
+This value is **derived** from the Lemniscate-Alpha curve (Chapter 1.10), not measured and plugged in.
+
+## Force Unification
+
+At high energies, the forces merge.
+
+### The Running of Couplings
+
+Coupling constants change with energy scale:
+
+$$\alpha(Q) = \frac{\alpha_0}{1 - \frac{\alpha_0}{3\pi}\ln(Q^2/m_e^2)}$$
+
+- Electromagnetic: α increases with energy
+- Strong: α_s decreases with energy (asymptotic freedom)
+- Weak: Related to EM through Weinberg angle
+
+### Grand Unification
+
+At energy scale M_GUT ≈ 10¹⁵ GeV, all three gauge couplings converge:
+
+$$\alpha_1 = \alpha_2 = \alpha_3 = \alpha_{\text{GUT}} \approx \frac{1}{42}$$
+
+Above this scale, there is a single unified force with combined gauge group.
+
+### The Hierarchy
+
+```
+Energy Scale    Force Structure
+═══════════════════════════════════
+10¹⁹ GeV       Planck scale (lattice)
+10¹⁵ GeV       Grand Unified (single force)
+10² GeV        Electroweak unification
+1 GeV          Separate EM, weak, strong
+0              Full four-force world
+```
+
+## Experiments
+
+### Force Isolation
+Turn off all forces except one. See how gravity alone causes clumping. See how EM alone causes charge separation.
+
+### Strength Comparison
+Same setup, different forces. See how the strong force dominates at short range, EM at medium range, gravity at long range.
+
+### Equilibrium Finding
+Balance multiple forces. Find configurations where gravity, EM, and strong forces balance to create stable structures.
+
+## Implementation
+
+```python
+def compute_forces(particle, grid):
+    F = [0, 0, 0]
+    pos = particle.position
+
+    # Gravity
+    F += GRAVITY_BIAS * gradient(density_field, pos)
+
+    # Electric
+    q = particle.charge
+    F += -q * gradient(charge_field, pos)
+
+    # Magnetic
+    B = curl(current_field, pos)
+    F += BETA_M * cross(B, particle.velocity)
+
+    # Strong (if nearby particles)
+    for neighbor in nearby_particles(particle, 3):
+        F += strong_force(particle, neighbor)
+
+    # Weak (transmutation check)
+    if stress(pos) > WEAK_THRESHOLD:
+        maybe_transmute(particle)
+
+    return F
+```
+
+## Concepts
+
+- **gravity**: Mass attracts mass via density gradients
+- **electromagnetism**: Charge interactions (electric and magnetic)
+- **strong-force**: Short-range nuclear binding
+- **weak-force**: Particle transmutation
+
+## Transition
+
+The forces are tuned by constants. But why these particular constants? Next, we explore the fundamental constants that determine the behavior of everything.

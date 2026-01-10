@@ -1,0 +1,304 @@
+# Information and Entropy {#sec-information-entropy}
+
+*"The arrow of time"*
+
+::: {.callout-note}
+## Key Revelation
+Information is physical. Erasing a bit releases heat. Entropy measures what we don't know. The second law drives the universe toward equilibrium—but pockets of order can persist, borrowing from the cosmic entropy budget.
+:::
+
+## Shannon Entropy
+
+### Measuring Uncertainty
+
+How surprised are you by a message?
+$$
+H = -\sum_i p_i \log_2(p_i)
+$$
+
+| Outcome | Probability | Surprise |
+|---------|-------------|----------|
+| Certain (p=1) | Always | 0 bits |
+| Coin flip (p=0.5) | Random | 1 bit |
+| Die roll (p=1/6) | More random | 2.58 bits |
+
+### Information Content
+
+A message carries information equal to the entropy it reduces:
+$$
+I = H_{before} - H_{after}
+$$
+
+Learning the coin landed heads: 1 bit of information.
+
+## Thermodynamic Entropy
+
+### Boltzmann's Formula
+
+$$
+S = k_B \ln(\Omega)
+$$
+
+Where Ω = number of microstates consistent with macrostate.
+
+### Example: Gas Expansion
+
+| State | Microstates | Entropy |
+|-------|-------------|---------|
+| Left half only | 2^N / 2^N = 1 | 0 |
+| Full volume | 2^N | N k_B ln(2) |
+
+Entropy increases when constraint removed.
+
+## The Connection
+
+### Landauer's Principle
+
+Erasing one bit of information:
+$$
+E_{min} = k_B T \ln(2)
+$$
+
+At room temperature: ~3×10⁻²¹ J per bit.
+
+Information is physical. Computation has thermodynamic cost.
+
+### Maxwell's Demon (Standard Resolution)
+
+```
+Demon sorts fast/slow molecules:
+     Hot ← │ → Cold
+           │
+    ● →    │  ← ●
+   fast    │   slow
+
+But: Demon must store information
+     Erasing that information costs entropy
+     Second law preserved
+```
+
+## The Second Law
+
+### Statement
+
+Total entropy of isolated system never decreases:
+$$
+dS_{total} \geq 0
+$$
+
+### Why?
+
+Not a fundamental law—a statistical truth:
+- Overwhelmingly more disordered states than ordered
+- Random evolution → most likely state
+- Most likely = highest entropy
+
+### In Simulation
+
+```python
+def entropy_evolution(universe):
+    # DECAY_RATE ensures entropy increase
+    for voxel in universe:
+        if not voxel.is_locked:
+            voxel.flux *= (1 - DECAY_RATE)
+
+    # But structures can locally decrease entropy
+    # At cost of global entropy increase
+    bind_triads(universe)  # Local order
+    radiate_energy(universe)  # Global disorder
+```
+
+## The Arrow of Time
+
+### Past vs Future
+
+Why do we remember the past, not the future?
+
+| Direction | Entropy | Memories |
+|-----------|---------|----------|
+| Past | Lower | Recorded |
+| Future | Higher | Unknown |
+
+Memory requires entropy increase in brain.
+
+### The Past Hypothesis
+
+Universe started in extraordinarily low entropy state:
+- Big Bang: Smooth, uniform
+- Today: Clumpy, complex
+- Heat death: Smooth again
+
+### In FTD Terms
+
+```
+t=0: All Void (state 0)
+     Minimum entropy configuration
+
+t>0: Genesis creates particles
+     Particles clump, form structure
+     Local complexity increases
+     Global entropy increases
+
+t→∞: Return to Void
+     Maximum entropy (heat death)
+```
+
+### The Boundary Condition Solution
+
+Why did the universe start with low entropy? In FTD, the answer is **boundary conditions on the action principle**.
+
+The FTD action:
+
+$$S[s,J] = \sum_t \sum_v \mathcal{L}(s,J)$$
+
+requires boundary conditions at both temporal ends. Variational principles need to know **where to start and where to end**.
+
+**Initial condition**: The simplest boundary is all-Void:
+
+$$s(v, t=0) = 0 \quad \forall v$$
+
+This is the **unique maximum-symmetry state**—homogeneous, isotropic, zero information content.
+
+**Final condition**: The action principle requires specifying the endpoint. In cosmology, this is the **heat death** state:
+
+$$\lim_{t \to \infty} S(t) = S_{max}$$
+
+Maximum entropy, uniform distribution, no gradients.
+
+::: {.callout-important}
+## The Arrow is Geometric
+The arrow of time is not a mystery to be explained—it is a **boundary condition** of the variational problem. Time's direction is the direction from low-entropy boundary to high-entropy boundary.
+:::
+
+### Why This Boundary?
+
+Why these particular boundary conditions? Three answers:
+
+1. **Anthropic**: Only universes with low initial entropy produce observers. We couldn't be asking this question otherwise.
+
+2. **Uniqueness**: The all-Void state is the **unique** state with maximum symmetry. Any other initial condition requires specifying additional structure—breaking symmetry without explanation.
+
+3. **Self-consistency**: The action principle itself requires smooth boundaries. The all-Void → heat-death trajectory is the smoothest possible evolution.
+
+### Retrocausality and the Block Universe
+
+In FTD, the action principle is **non-local in time**. The path that extremizes S depends on both initial and final conditions.
+
+This doesn't mean the future causes the past. It means:
+
+| View | Interpretation |
+|------|----------------|
+| **Process** | Universe evolves tick-by-tick, following rules |
+| **Block** | Entire 4D history extremizes action |
+
+Both views are valid. The rules are local; the explanation is global.
+
+### Information is Conserved
+
+The flux field evolution is **unitary**—information is never created or destroyed, only redistributed.
+
+$$I_{total}(t) = I_{total}(0) = \text{constant}$$
+
+Entropy increases because information spreads out, not because it disappears. The distinction matters for:
+
+- **Black hole information paradox**: Information escapes via Hawking radiation correlations
+- **Quantum mechanics**: Unitarity preserved at the fundamental level
+- **Reversibility**: In principle, the simulation could run backward
+
+## Free Energy
+
+### Helmholtz Free Energy
+
+$$
+F = E - TS
+$$
+
+Systems minimize free energy, not just energy.
+
+### Life and Free Energy
+
+Living systems:
+- Import low-entropy energy (sunlight, food)
+- Export high-entropy waste (heat)
+- Maintain local order by increasing global entropy
+
+## Information in Physics
+
+### Black Hole Information Paradox
+
+If information falls into black hole:
+- Hawking radiation is thermal (no information)
+- Information seemingly destroyed
+- Violates quantum mechanics
+
+Resolution: Information encoded in subtle correlations (still debated).
+
+### Holographic Principle
+
+Maximum information in region:
+$$
+I_{max} = \frac{A}{4 l_P^2}
+$$
+
+Proportional to surface area, not volume!
+
+## In the Simulation
+
+### Tracking Entropy
+
+```python
+def compute_entropy(grid):
+    # Partition into cells
+    cells = partition(grid, CELL_SIZE)
+
+    # Count particles per cell
+    counts = [len(c.particles) for c in cells]
+
+    # Compute probability distribution
+    total = sum(counts)
+    probs = [c/total for c in counts if c > 0]
+
+    # Shannon entropy
+    H = -sum(p * log2(p) for p in probs)
+
+    return H
+
+def track_arrow_of_time(grid, history):
+    H_now = compute_entropy(grid)
+    history.append(H_now)
+
+    # Verify second law (statistically)
+    if len(history) > 100:
+        trend = linear_fit(history[-100:])
+        assert trend.slope >= 0, "Second law violated!"
+```
+
+### Information Preservation
+
+Despite entropy increase, information is conserved:
+- UUID tracks every particle
+- Entanglement partners remembered
+- Total flux conserved
+- History could be reversed (in principle)
+
+## Experiments
+
+### Entropy Measurement
+Watch entropy increase as system evolves. Verify second law.
+
+### Maxwell's Demon
+Attempt to violate second law. See information cost.
+
+### Arrow of Time
+Run simulation forward and backward. Observe asymmetry.
+
+## Concepts
+
+- **shannon-entropy**: Measure of uncertainty
+- **boltzmann-entropy**: Count of microstates
+- **landauer-principle**: Information erasure costs energy
+- **arrow-of-time**: Entropy's temporal asymmetry
+
+## Transition
+
+Information connects to entropy, entropy to time. But what emerges from all this? Next, we explore complexity—the patterns that arise between order and chaos.

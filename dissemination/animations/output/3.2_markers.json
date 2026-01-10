@@ -1,0 +1,21 @@
+{
+  "chapter_id": "3.2",
+  "markers": [
+    {
+      "scene_id": "3.2.3.1",
+      "timestamp": 0.0,
+      "label": "aufbau"
+    },
+    {
+      "scene_id": "3.2.3.2",
+      "timestamp": 4.0,
+      "label": "levels"
+    },
+    {
+      "scene_id": "3.2.3.3",
+      "timestamp": 5.0,
+      "label": "order"
+    }
+  ],
+  "total_duration": 10.0
+}

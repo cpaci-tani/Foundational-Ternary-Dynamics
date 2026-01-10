@@ -1,0 +1,238 @@
+# Self-Organization {#sec-self-organization}
+
+*"Order from chaos"*
+
+::: {.callout-note}
+## Key Revelation
+Complexity doesn't require a designer. Simple local rules, repeated endlessly, can create structures of breathtaking intricacy. The universe organizes itself.
+:::
+
+## Patterns from Simple Rules
+
+### The Surprise of Emergence
+
+When you follow simple rules:
+- No individual knows the pattern
+- No central control exists
+- Yet structure appears
+
+This is self-organization.
+
+### Cellular Automata
+
+Local rules → global patterns.
+
+#### Conway's Game of Life
+```
+Rules:
+1. Underpopulation: <2 neighbors → dies
+2. Survival: 2-3 neighbors → lives
+3. Overpopulation: >3 neighbors → dies
+4. Reproduction: exactly 3 → birth
+
+Simple rules → gliders, oscillators, computers
+```
+
+From four rules: Turing-complete computation.
+
+### Reaction-Diffusion
+
+Turing patterns from activator-inhibitor dynamics:
+$$
+\frac{\partial u}{\partial t} = D_u \nabla^2 u + f(u,v)
+$$
+$$
+\frac{\partial v}{\partial t} = D_v \nabla^2 v + g(u,v)
+$$
+
+Creates: spots, stripes, spirals—the patterns of life.
+
+### Flocking (Boids)
+
+Reynolds' three rules:
+1. **Separation**: Avoid crowding neighbors
+2. **Alignment**: Match heading with neighbors
+3. **Cohesion**: Move toward average position
+
+Result: Emergent flocking behavior indistinguishable from birds.
+
+## Dissipative Structures
+
+### Far from Equilibrium
+
+Prigogine's insight: Order can emerge when:
+- Open system (energy flows through)
+- Far from equilibrium
+- Nonlinear dynamics
+- Fluctuations present
+
+### Bénard Cells
+
+Heat a fluid from below:
+```
+        Cold (top)
+    ┌─────────────────┐
+    │ ↺    ↺    ↺    │ ← Convection cells
+    │    ↻    ↻    ↻ │   emerge spontaneously
+    └─────────────────┘
+        Hot (bottom)
+```
+
+Hexagonal cells appear without blueprint.
+
+### Chemical Oscillators
+
+BZ reaction creates traveling waves:
+- No stirring
+- No external forcing
+- Just chemistry organizing itself
+
+### Hurricanes
+
+Self-organized heat engine:
+- Warm ocean provides energy
+- Coriolis force creates spin
+- Spiral structure emerges
+- Maintains itself against entropy
+
+## Self-Organized Criticality
+
+### The Sandpile Model
+
+Add grains one at a time:
+```
+     *
+    * *
+   * * *
+  * * * *
+ * * * * *
+──────────
+```
+
+Avalanches of all sizes, power-law distribution.
+
+### Properties
+
+- **No tuning needed**: System finds critical point
+- **Power laws**: P(size) ∝ size^(-τ)
+- **Scale-free**: No characteristic size
+
+### Examples in Nature
+
+| System | Avalanche |
+|--------|-----------|
+| Earthquakes | Magnitude distribution |
+| Forest fires | Burn area |
+| Extinctions | Species lost |
+| Neural activity | Cascade size |
+| Solar flares | Energy release |
+
+## In the FTD Framework
+
+Self-organization emerges naturally:
+
+```python
+def self_organization_demo(grid):
+    # No special rules needed
+    # Just run the causal loop
+
+    for tick in range(many_ticks):
+        # Local interactions only
+        for voxel in grid:
+            compute_forces(voxel, neighbors)
+            apply_forces(voxel)
+            move(voxel)
+
+        # Detect emergent structures
+        triads = find_triads(grid)
+        clusters = find_clusters(grid)
+        patterns = analyze_patterns(grid)
+
+        # Structures form spontaneously
+        if triads:
+            print(f"Nucleons emerged: {len(triads)}")
+        if clusters:
+            print(f"Clusters formed: {len(clusters)}")
+```
+
+### Why It Works
+
+1. **Local rules**: Each voxel only sees neighbors
+2. **Nonlinearity**: Threshold for manifestation (KB)
+3. **Feedback**: Forces create correlations
+4. **Energy flow**: Flux propagation
+
+### Emergent Scales
+
+From local rules:
+- Quarks → Hadrons
+- Hadrons → Nuclei
+- Nuclei + Electrons → Atoms
+- Atoms → Molecules
+- Molecules → Crystals, Cells
+- Cells → Organisms
+- Stars → Galaxies
+
+No level "knows" about levels above.
+
+## The Edge of Chaos
+
+### Phase Diagram of Complexity
+
+```
+      Order ←─────────────────→ Chaos
+        │                         │
+  Frozen│    COMPLEXITY           │Random
+  Static│    MAXIMIZED            │Noise
+        │         ↓               │
+        └─────────●───────────────┘
+              Critical point
+```
+
+### Langton's Lambda
+
+| λ value | Behavior |
+|---------|----------|
+| 0 | Frozen (all same) |
+| 0.2-0.3 | Periodic |
+| ~0.27 | Complex (edge of chaos) |
+| 0.5+ | Chaotic |
+
+### Computation at the Edge
+
+Complex computation requires:
+- Enough structure to store information
+- Enough dynamics to process it
+- Balance: the edge of chaos
+
+## Experiments
+
+### Flocking Simulation
+Watch simple boid rules create emergent flocking behavior.
+
+### Sandpile Dynamics
+Add grains, observe power-law avalanche distribution.
+
+### Pattern Formation
+See Turing patterns emerge from reaction-diffusion.
+
+## Concepts
+
+- **emergence**: Wholes with properties absent in parts
+- **self-organized-criticality**: Spontaneous power laws
+- **dissipative-structures**: Order from energy flow
+- **edge-of-chaos**: Complexity sweet spot
+
+## Transition
+
+Order emerges from chaos. But what is order, really? What distinguishes organized from disorganized? Next (@sec-information-entropy), we explore information and entropy—the deep mathematical structures that quantify organization.
+
+FTD itself exemplifies self-organization: from the simplest possible rules (local updates on a ternary lattice), the entire complexity of the universe emerges without top-down design. Each level—quarks to hadrons to atoms to molecules to life—is an emergent phenomenon arising from levels below.
+
+::: {.callout-tip}
+## Related Topics
+- **Information and entropy**: @sec-information-entropy formalizes what "order" means
+- **Complexity**: @sec-complexity explores the emergence of complex structures
+- **The anthropic window**: @sec-anthropic-window asks why constants permit complex observers
+- **Heat death**: @sec-heat-death describes entropy's ultimate victory
+:::

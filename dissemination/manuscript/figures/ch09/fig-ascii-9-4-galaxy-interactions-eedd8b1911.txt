@@ -1,0 +1,8 @@
+Before:       During:         After:
+   ○            ╱○              ─────○
+   │           ╱ │               ╲ │
+   ●──────────●──────────────────●
+               ╲ │               ╱ │
+                ╲○              ─────○
+
+Tidal tails form on opposite sides

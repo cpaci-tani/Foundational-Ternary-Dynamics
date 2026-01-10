@@ -1,0 +1,193 @@
+# Stellar Death {#sec-stellar-death}
+
+*"How stars end their lives"*
+
+::: {.callout-note}
+## Key Revelation
+A star's mass determines its fate. Small stars fade quietly into white dwarfs. Massive stars explode as supernovae, seeding the universe with heavy elements.
+:::
+
+::: {.callout-note}
+## How FTD Produces Stellar Death
+Stellar endpoints follow from the limits of flux support:
+
+- **White dwarf** = electron degeneracy pressure (Pauli exclusion on flux states) halts collapse
+- **Neutron star** = neutron degeneracy pressure after electrons merge with protons
+- **Black hole** = no flux mechanism can support the core; collapse to singularity
+- **Supernova** = gravitational potential energy released when core collapses faster than flux can respond
+
+The Chandrasekhar limit (~1.4 M☉) emerges from the maximum electron degeneracy pressure.
+:::
+
+## Low Mass Stars (< 8 M☉)
+
+The path of Sun-like stars.
+
+### Red Giant Phase
+
+When core hydrogen exhausted:
+1. Core contracts, heats
+2. Shell burning begins
+3. Envelope expands
+4. Surface cools → red
+5. Star swells to ~100× original size
+
+### Helium Flash
+
+In stars < 2 M☉:
+- Degenerate core ignites helium
+- Runaway fusion (seconds)
+- Core expands, stabilizes
+
+### Asymptotic Giant Branch (AGB)
+
+After helium exhausted:
+- Double shell burning (H and He)
+- Thermal pulses
+- Strong mass loss
+- Planetary nebula forms
+
+### Planetary Nebula
+
+```
+       ┌─────────────────┐
+       │                 │
+       │    ○            │  ← Hot central star
+       │                 │
+       │                 │
+       └─────────────────┘
+         ↑ Expanding gas shell
+```
+
+Expelled envelope glows from UV radiation of hot core.
+
+### White Dwarf
+
+What remains:
+- Carbon-oxygen core
+- ~0.6 M☉ typically
+- Earth-sized
+- Electron degeneracy pressure
+- Slowly cools forever
+
+## High Mass Stars (> 8 M☉)
+
+The path to supernova.
+
+### Pre-Supernova
+
+Multiple burning stages create onion structure:
+- Each stage shorter than the last
+- Iron core grows
+- Silicon burning lasts only days
+
+### Core Collapse
+
+When iron core exceeds Chandrasekhar mass (~1.4 M☉):
+1. Electron degeneracy fails
+2. Core collapses in milliseconds
+3. Neutronization: p + e⁻ → n + νₑ
+4. Core bounces at nuclear density
+5. Shock wave launches
+
+### The Explosion
+
+Energy release: ~10⁴⁶ J (99% in neutrinos)
+
+```
+                   ★ → ⊙
+                      BOOM
+              ╱ ╲ ╱ ╲ ╱ ╲
+             ←   ↑   ↓   →
+              ╲ ╱ ╲ ╱ ╲ ╱
+
+Expanding debris at 10,000 km/s
+```
+
+### Supernova Types
+
+| Type | Mechanism | Spectrum |
+|------|-----------|----------|
+| Ia | White dwarf thermonuclear | No H, strong Si |
+| Ib | Core collapse, no H envelope | No H |
+| Ic | Core collapse, no H or He | No H or He |
+| II | Core collapse with H | H present |
+
+### Remnant
+
+What's left:
+- Neutron star (8-25 M☉ progenitor)
+- Black hole (>25 M☉ progenitor)
+
+## Type Ia Supernovae
+
+Special case: exploding white dwarf
+
+### Mechanism
+
+White dwarf in binary system:
+1. Accretes matter from companion
+2. Approaches 1.4 M☉
+3. Carbon ignites throughout
+4. Entire star explodes
+
+### Standard Candles
+
+All Type Ia have similar peak luminosity:
+- Used to measure cosmic distances
+- Led to discovery of dark energy
+
+## Supernova Remnants
+
+The debris expands for millennia:
+
+### Stages
+
+1. **Free expansion** (few hundred years)
+2. **Sedov-Taylor** (thousands of years)
+3. **Radiative** (tens of thousands of years)
+4. **Merger** with ISM
+
+Famous remnants: Crab Nebula, Cassiopeia A, Vela
+
+## In Simulation
+
+```python
+def stellar_death(star):
+    if star.mass < 8:
+        # Low mass path
+        star.become_red_giant()
+        star.eject_planetary_nebula()
+        return WhiteDwarf(star.core_mass)
+
+    else:
+        # High mass path
+        star.burn_all_stages()
+        core = star.build_iron_core()
+
+        if core.mass > CHANDRASEKHAR:
+            energy = core.collapse()
+            return Supernova(star, energy)
+```
+
+## Experiments
+
+### Red Giant Evolution
+Watch Sun-like star expand into red giant.
+
+### Core Collapse
+Simulate collapse of massive star core.
+
+### Supernova Explosion
+Watch shock wave propagate through star.
+
+## Concepts
+
+- **red-giant**: Expanded star with shell burning
+- **planetary-nebula**: Expelled envelope of dying star
+- **white-dwarf**: Electron-degenerate remnant
+- **supernova**: Explosive stellar death
+
+## Transition
+
+When massive stars die, they leave behind exotic objects—white dwarfs, neutron stars, and black holes. Next, we explore these compact objects.
