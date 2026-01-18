@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Information is not substance—it is constraint on configuration space. We can quantify it using entropy measures. An sLoop's priors are its initial representation structure; its experiences are accumulated mutual information with the environment.
+Information is not substance: it is constraint on configuration space. We can quantify it using entropy measures. An sLoop's priors are its initial representation structure; its experiences are accumulated mutual information with the environment.
 :::
 
 ## 1. Information in Configuration Space
@@ -89,7 +89,7 @@ At voxel $v$, the information density is:
 
 $$\rho_I(v) = -\sum_{s \in \{-1,0,+1\}} P(s|v) \log_2 P(s|v)$$
 
-This creates a scalar field over the lattice—an **information landscape**.
+This creates a scalar field over the lattice: an **information landscape**.
 
 ### Definition 3.2 (Information Gradient)
 
@@ -111,7 +111,7 @@ In a closed system, total information is conserved:
 
 $$\frac{d}{dt} \int_V \rho_I \, dV = -\oint_{\partial V} \rho_I \mathbf{v} \cdot d\mathbf{A}$$
 
-Information cannot be created or destroyed—only transferred or transformed.
+Information cannot be created or destroyed: only transferred or transformed.
 
 ---
 
@@ -125,7 +125,7 @@ The physical information content of the sLoop's matter:
 
 $$I_\Omega = \sum_{v \in \Omega} \rho_I(v)$$
 
-This is the "hardware"—the bits stored in the physical configuration.
+This is the "hardware": the bits stored in the physical configuration.
 
 ### 4.2 Representation Information
 
@@ -133,7 +133,7 @@ The capacity of the representation map $\phi: \mathcal{C} \to \mathcal{M}$:
 
 $$I_\phi = \log_2 |\mathcal{M}|$$
 
-This is the "software"—how many distinct representations are possible.
+This is the "software": how many distinct representations are possible.
 
 ### 4.3 Self-Model Information
 
@@ -175,7 +175,7 @@ $$H_{\text{prior}} = H[\pi] = -\sum_c \pi(c) \log_2 \pi(c)$$
 
 ### Definition 5.3 (Prior Structure)
 
-The prior is not uniform—it has structure encoding beliefs about reality:
+The prior is not uniform: it has structure encoding beliefs about reality:
 
 $$\pi(c) = \frac{1}{Z} e^{-\beta E(c)}$$
 
@@ -221,7 +221,7 @@ The total information accumulated through experience:
 
 $$I_{\text{exp}} = \sum_{t=1}^T D_{KL}(\pi_t \| \pi_{t-1})$$
 
-This is the cumulative "surprise"—how much the sLoop's beliefs have changed.
+This is the cumulative "surprise": how much the sLoop's beliefs have changed.
 
 ### Definition 6.3 (Experience Entropy)
 
@@ -246,7 +246,7 @@ Not all observations are retained. The **compression ratio** is:
 
 $$\eta = \frac{I_{\text{stored}}}{I_{\text{received}}}$$
 
-Human memory has $\eta \ll 1$—most experience is discarded, only patterns retained.
+Human memory has $\eta \ll 1$: most experience is discarded, only patterns retained.
 
 ---
 
@@ -316,7 +316,7 @@ $$I(\sigma; o_\sigma) \leq C_{\text{reflection}}$$
 ::: {.callout-important}
 ## The sLoop Bottleneck
 
-Consciousness is limited by reflection bandwidth. We cannot fully know ourselves because $I_\sigma < I_\Omega$—the self-model is always a compression of the substrate.
+Consciousness is limited by reflection bandwidth. We cannot fully know ourselves because $I_\sigma < I_\Omega$: the self-model is always a compression of the substrate.
 :::
 
 ---
@@ -518,7 +518,7 @@ Internal body states provide continuous background information:
 **Total interoceptive input**: ~10⁵ bits/sec
 **Conscious access**: ~0.1 bits/sec
 
-Interoception is mostly unconscious—only extreme states (pain, hunger, dizziness) break through to awareness.
+Interoception is mostly unconscious: only extreme states (pain, hunger, dizziness) break through to awareness.
 
 ### 11.7 The Binding Problem
 
@@ -544,13 +544,13 @@ Attention selects which sensory channels reach consciousness.
 
 $$G_A(S) = \frac{I_S^{\text{attended}}}{I_S^{\text{unattended}}}$$
 
-Typical values: $G_A \approx 3$–$10$ for attended vs unattended stimuli.
+Typical values: $G_A \approx 3$-$10$ for attended vs unattended stimuli.
 
 **Attentional Capacity**:
 
 $$\sum_S G_A(S) \cdot I_S \leq C_{\text{conscious}} \approx 50 \text{ bits/sec}$$
 
-Attending to one channel reduces capacity for others—attention is a **zero-sum game**.
+Attending to one channel reduces capacity for others: attention is a **zero-sum game**.
 
 ### 11.9 Sensory Memory Stages
 
@@ -659,4 +659,4 @@ PRIOR HIERARCHY
 
 ## Transition
 
-Information quantification provides the metrics for consciousness. We can now measure priors (what an sLoop expects), experience (what it has observed), and knowledge (what it believes). Biological sensory channels show the massive compression (~10⁻⁵) from raw input to conscious awareness—the sLoop samples reality through a narrow straw. This completes the formal apparatus for treating consciousness as a physical phenomenon within FTD—a self-referential information structure constrained by channel capacities, shaped by genetic and developmental priors, and growing through Bayesian update from filtered sensory experience.
+Information quantification provides the metrics for consciousness. We can now measure priors (what an sLoop expects), experience (what it has observed), and knowledge (what it believes). Biological sensory channels show the massive compression (~10⁻⁵) from raw input to conscious awareness: the sLoop samples reality through a narrow straw. This completes the formal apparatus for treating consciousness as a physical phenomenon within FTD: a self-referential information structure constrained by channel capacities, shaped by genetic and developmental priors, and growing through Bayesian update from filtered sensory experience.

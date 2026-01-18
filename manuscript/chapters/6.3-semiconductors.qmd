@@ -204,4 +204,4 @@ Build transistor. Control current with gate voltage.
 
 ## Transition
 
-Semiconductors enable electronics. But life uses different structures—biological materials with unique properties. Next, we explore the building blocks of life.
+Semiconductors enable electronics. But life uses different structures: biological materials with unique properties. Next, we explore the building blocks of life.

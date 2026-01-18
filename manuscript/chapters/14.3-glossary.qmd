@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Reference Chapter
-This glossary defines key terms used throughout the Ternary Realization Dynamics framework, organized alphabetically.
+This glossary defines key terms used throughout the Foundational Ternary Dynamics framework, organized alphabetically.
 :::
 
 ## A
@@ -25,6 +25,12 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 
 **b₃ (QCD Beta Coefficient)**
 : Framework integer = 7. The first coefficient in the QCD beta function for SU(3). Appears in electron mass (70 = b₃(b₃+N_c)) and gravitational coupling (1/(b₃+N_c)²).
+
+**Born Rule (as Translation Protocol)**
+: The interpretation of the Born rule P = |ψ|² not as a mysterious postulate but as the translation protocol between Domain A (configurations) and Domain B (probabilities). The squared amplitude is what remains invariant under domain crossing.
+
+**Bridge Operator (𝒯)**
+: The mathematical structure that translates between Domain A (ontic/classical) and Domain B (epistemic/probabilistic). In quantum mechanics, the Born rule P = |ψ|² serves as the bridge operator. See also: Domain A, Domain B.
 
 **Baryon**
 : A composite particle made of three quarks (triad configuration). Includes protons and neutrons.
@@ -69,6 +75,21 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 **Dark Energy**
 : The component driving accelerating expansion. In FTD, potentially emergent from vacuum properties.
 
+**Dispositional Ontology**
+: The philosophical position that reality is fundamentally composed of dispositions (tendencies, potentials) rather than categorical properties. In FTD, the flux field J represents dispositional properties of the void substrate.
+
+**Domain A (𝒜)**
+: The ontic/classical domain of configurations. Contains definite states, actual arrangements, and physical structures. Distinguished from Domain B by containing no probabilities—only actualities. The substrate of what *is*.
+
+**Domain B (ℬ)**
+: The epistemic/probabilistic domain. Contains probability distributions, knowledge states, and information about systems. Distinguished from Domain A by containing no definite configurations—only distributions over possibilities. The domain of what is *known* or *knowable*.
+
+**Domain Confusion**
+: The philosophical error of projecting properties appropriate to one domain onto another. Examples include treating probabilities as physical substances (B→A error) or treating configurations as merely epistemic (A→B error).
+
+**Domain Interpenetration**
+: The property that Domain A and Domain B exist within each other: physical structures in A can encode information (B content), while probability distributions in B describe configurations in A. Neither domain is more fundamental.
+
 **Dark Matter**
 : Non-luminous matter detected only by gravitational effects. In FTD, potentially particles that interact gravitationally but not electromagnetically.
 
@@ -85,6 +106,15 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 
 **Electromagnetism**
 : Force between charged particles. Arises from charge gradients in FTD.
+
+**Encoding Relation**
+: The mathematical map ε: A → B that extracts epistemic content (information, meaning) from physical structure. A book encodes information; a brain encodes beliefs. The encoding relation is how Domain A structures can "contain" Domain B content.
+
+**Epistemic Inertia**
+: Resistance to belief change proportional to the "mass" of evidence supporting current beliefs. Analogous to physical inertia but in Domain B. See also: Noetic Mass.
+
+**Epistemic Physical Object**
+: A configuration in Domain A that encodes content from Domain B. Examples: books (encode information), brains (encode beliefs), measurement devices (encode measurement results). The mechanism by which domains interpenetrate.
 
 **Emergence**
 : The appearance of novel properties at higher levels of organization. Atoms have wetness; electrons don't.
@@ -126,8 +156,14 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 **Genesis**
 : Transition from void (0) to manifested state (±1). Occurs probabilistically when density exceeds KB.
 
+**Graded Monism**
+: The ontological position that reality consists of one fundamental substance (the void) with multiple modes or grades of being. Distinguished from dualism (two substances) and eliminative monism (only one mode). In FTD: void (substrate) → flux (disposition) → manifestation (actuality).
+
 **Gradient**
 : Vector pointing in direction of maximum increase. Gradients drive forces.
+
+**Global(t)**
+: Everything at one tick. The complete state of the universe at timestamp $t$. Contains all entities, observers, and configurations.
 
 **Gravity**
 : Force proportional to density gradient. Always attractive. Weakest force but infinite range.
@@ -145,6 +181,9 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 
 **H (Planck Resolution)**
 : Fundamental constant = 1.0. The quantum of action. Corresponds to ℏ.
+
+**H(Ω,t) (Horizon)**
+: What observer Ω can perceive at tick $t$. A subset of Global(t). Mediated by six senses: sight, sound, touch, taste, smell, cognition.
 
 **Hadron**
 : Particle made of quarks. Baryons (3 quarks) or mesons (quark-antiquark pair).
@@ -194,7 +233,7 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 : Fundamental particle (electron, muon, tau, neutrinos). Not made of quarks.
 
 **Loop Self-Enumeration**
-: The property that b₃ = N_base + N_c = 4 + 3 = 7. The FTD loop length equals the sum of its structural parameters—the framework counts itself.
+: The property that b₃ = N_base + N_c = 4 + 3 = 7. The FTD loop length equals the sum of its structural parameters: the framework counts itself.
 
 **Lorentz Force**
 : Magnetic force on moving charges. Perpendicular to both velocity and field.
@@ -216,6 +255,9 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 **Meson**
 : Particle made of quark-antiquark pair. Examples: pion, kaon.
 
+**Meta-sLoop**
+: An sLoop that includes a model of the sLoop itself. The defining structure of consciousness. A self-model φ(Ω) that contains φ²(φ(Ω)).
+
 **Moore Neighborhood**
 : 26 adjacent cells in 3D (all cells sharing at least one corner with center).
 
@@ -223,6 +265,9 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 
 **N_eff (Effective Dimension)**
 : Framework integer = 13 (Fibonacci F₇). Appears in mass formulas and the Higgs derivation.
+
+**Noetic Mass (M_Ω)**
+: The "epistemic inertia" of an observer—resistance to belief change based on accumulated evidence. Defined as M_Ω = ∫ρ_Ω(x)dx where ρ_Ω is the observer's belief density. Heavier noetic mass means more evidence required to shift beliefs. See also: Epistemic Inertia.
 
 **N_base (Base Modes)**
 : Framework integer = 4. Number of base harmonic modes. Golden ratio φ = (1+√(N_base+1))/2.
@@ -241,11 +286,17 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 
 ## O
 
+**Observer (Ω)**
+: In FTD, any manifested structure (s ≠ 0) capable of coupling to the flux field. Not privileged by consciousness—a rock can trigger collapse as well as a brain. The observer is defined by its configuration Ω(t), its horizon H(Ω,t), and its noetic mass M_Ω.
+
 **Orbit**
 : Bound trajectory around massive object. Stable when forces balance.
 
 **Orbital**
 : Spatial probability distribution for electron around nucleus. s, p, d, f shapes.
+
+**Ω(t) (Omega)**
+: Complete configuration of an observer at tick $t$. Includes every atom, neuron, memory, and state of the conscious system. The "soul" at one moment.
 
 ## P
 
@@ -263,6 +314,9 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 
 **Potential**
 : Unrealized possibility. Carried by flux field. Precedes manifestation.
+
+**Potential vs Probability**
+: The crucial distinction between Domain A and Domain B. Potential (flux) is ontic—it exists in physical space as a real field with causal power. Probability is epistemic—it exists in the space of knowledge as a distribution over possibilities. Confusing these leads to domain confusion.
 
 **Proton**
 : Positive baryon (uud). Stable. Nucleus of hydrogen.
@@ -294,6 +348,12 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 **Shell**
 : Electron orbital layer. Numbered 1, 2, 3... with increasing radius.
 
+**Six Senses**
+: The channels through which an observer perceives its horizon H(Ω,t): sight (EM flux), sound (pressure waves), touch (mechanical contact), taste (chemical close-range), smell (chemical distance), cognition (internal state, memory, inference).
+
+**sLoop (Self-referential Loop)**
+: A closed causal structure where an observing system is part of the system being observed. The defining structure of FTD's approach to measurement and consciousness. In an sLoop, the observer and observed share a common flux substrate, creating correlations that exceed classical bounds. Key to Bell violations (S ≈ 2√2). Distinguished from external observation by ontological continuity between observer and system. See also: Meta-sLoop.
+
 **Singularity**
 : Point of infinite density. Classical concept; may be resolved by quantum gravity.
 
@@ -320,11 +380,17 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 **Triad**
 : Stable three-particle configuration (equilateral). Forms nucleons.
 
+**Translation Protocol**
+: The mathematical procedure for converting quantities between Domain A and Domain B. The Born rule P = |ψ|² is the canonical translation protocol in quantum mechanics. See also: Bridge Operator.
+
 **Triangular Number T(n)**
 : Sum of integers 1+2+...+n = n(n+1)/2. T(10)=55 appears in proton mass; T(13)=91 encodes SM structure.
 
 **Tunneling**
 : Quantum phenomenon allowing particles to pass through classically forbidden barriers.
+
+**Two-Domain Framework**
+: The FTD philosophical framework distinguishing Domain A (ontic/classical configurations) from Domain B (epistemic/probabilistic distributions). Neither domain is reducible to the other; both are necessary for complete description. The framework resolves measurement paradoxes by tracking which domain each quantity belongs to.
 
 ## U
 
@@ -334,10 +400,13 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 **UUID**
 : Unique identifier assigned to each manifested particle. Tracks identity through time.
 
+**𝕌 (Universe)**
+: The set of all Global(t) across all time: { Global(t) : t ∈ ℤ }. Everything that has existed, exists, or will exist.
+
 ## V
 
 **Vacuum**
-: State 0 (void). Not empty—carries flux. Zero-point fluctuations always present.
+: State 0 (void). Not empty: carries flux. Zero-point fluctuations always present.
 
 **Void**
 : State 0. The ground state of existence. Substrate of all potential.
@@ -357,6 +426,9 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 : Electroweak mixing angle. **DERIVED** as sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% accuracy).
 
 ## Y
+
+**xyztgψ(Δt)**
+: Complete specification of one entity at one tick. Includes position (xyz), time (t), geometric constraint (g), modal constraint (ψ), and dynamics (Δt). The fundamental ontological unit.
 
 **Yukawa Potential**
 : Form of strong force: proportional to exp(-mr)/r. Short range.
@@ -382,6 +454,6 @@ This glossary defines key terms used throughout the Ternary Realization Dynamics
 | QFT | Quantum Field Theory |
 | QM | Quantum Mechanics |
 | SNR | Supernova Remnant |
-| FTD | Ternary Realization Dynamics |
+| FTD | Foundational Ternary Dynamics |
 | UHECR | Ultra-High Energy Cosmic Ray |
 | UV | Ultraviolet |

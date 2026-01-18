@@ -185,4 +185,4 @@ Collide two galaxies. Watch the result.
 
 ## Transition
 
-Galaxies form from the same processes at every mass scale. Now let's explore the variety of galaxies that result—spirals, ellipticals, and more.
+Galaxies form from the same processes at every mass scale. Now let's explore the variety of galaxies that result: spirals, ellipticals, and more.

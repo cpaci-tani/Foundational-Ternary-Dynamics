@@ -51,7 +51,7 @@ Key achievements within the framework (with several items representing proposed 
 - **Full SM gauge group**: U(1) × SU(2) × SU(3) derived from FTD axioms — see [GAUGE_STRUCTURE.md](GAUGE_STRUCTURE.md)
 - **Categorical foundations**: sLoop structure rigorously formalized — see [FORMAL_CATEGORICAL_FRAMEWORK.md](FORMAL_CATEGORICAL_FRAMEWORK.md)
 - **D = 3 uniqueness**: Three dimensions uniquely selected by atomic stability + gauge requirements (no longer axiomatic)
-- **Consciousness**: Derived from same G* geometry with complex roots y = 2.19 ± 1.30i — see [Consciousness_Quadratic_Derivation.md](Consciousness_Quadratic_Derivation.md)
+- **Consciousness**: [SPECULATIVE] Proposed extension using same G* geometry with complex roots y = 2.19 ± 1.30i — see [Consciousness_Quadratic_Derivation.md](Consciousness_Quadratic_Derivation.md)
 
 The framework demonstrates that U(1) gauge symmetry emerges naturally from the constraint structure (Gauss law), SU(2) from the ternary state structure, SU(3) from the three spatial dimensions, and Lorentz invariance emerges at scales >> lattice spacing. See [THEORETICAL_FOUNDATIONS.md](THEORETICAL_FOUNDATIONS.md) for complete derivations.
 
@@ -1656,6 +1656,8 @@ See [FTD_REFERENCE_v5.md](FTD_REFERENCE_v5.md), [FTD_VERIFICATION_REPORT.md](FTD
 
 # APPENDIX A: Glossary
 
+## Core Entities
+
 | Term | Definition |
 |------|------------|
 | Voxel | A single lattice site |
@@ -1666,9 +1668,51 @@ See [FTD_REFERENCE_v5.md](FTD_REFERENCE_v5.md), [FTD_VERIFICATION_REPORT.md](FTD
 | Evaporation | Transition from ±1 to 0 |
 | Annihilation | +1 and -1 adjacent → both become 0 |
 | Triad | Three-particle bound configuration (nucleon analog) |
-| Tick | One discrete time step |
+| Tick | One discrete time step (Δt) |
 | KB | Manifestation threshold = m_e c² = m_P √(2π) (16/3) α¹¹ (derived) |
+
+## Ontological Notation
+
+| Symbol | Definition |
+|--------|------------|
+| xyztgψ(Δt) | Complete specification of one entity at one tick: position (xyz), time (t), geometric constraint (g), modal constraint (ψ), dynamics (Δt) |
+| g | Geometric constraint: locality, Moore neighborhood, causality (entity can only interact with neighbors) |
+| ψ | Modal constraint: what transitions are possible from current state (potential, not mystical wave function) |
+| Δt | The tick: one discrete step forward in time |
+| Ω(t) | One observer at one tick: complete configuration (atoms, neurons, memories, personality, etc.) |
+| H(Ω,t) | Horizon: what observer Ω can perceive at tick t (subset of Global) |
+| Global(t) | Everything at one tick: all entities, all observers, all configurations |
+| 𝕌 | The universe across all time: { Global(t) : t ∈ ℤ } |
+| ⊤ | True: manifested, actual, registered |
+| ⊥ | False: unmanifested, potential, unregistered |
+
+## Six Senses (Horizon Channels)
+
+| Sense | Definition |
+|-------|------------|
+| Sight | Electromagnetic flux in visible range |
+| Sound | Pressure waves in medium |
+| Touch | Direct contact, mechanical deformation |
+| Taste | Chemical detection (close range) |
+| Smell | Chemical detection (distance) |
+| Cognition | Internal state, memory, inference (the sixth sense) |
+
+## Observer Hierarchy
+
+| Type | Gates | Organic | Capability |
+|------|-------|---------|------------|
+| Dead | 0 | - | None |
+| Brain Dead | 1 | Yes | Detection only |
+| Detector | 1 | No | Detection only |
+| Measurer | ≥2 | No | Inference, no meaning |
+| Observer | ≥2 | Yes | Meaning emerges |
+
+## Technical Terms
+
+| Term | Definition |
+|------|------------|
 | sLoop | Self-referential loop; observer-system coupling structure (§12.4) |
+| Meta-sLoop | sLoop that includes model of the sLoop itself (consciousness) |
 | G* | Lemniscatic constant ≈ 2.9587 from elliptic integral theory (§7.4) |
 | Born rule | P(v) = \|ψ(v)\|²/\|\|ψ\|\|²; probability from wave function (§13.1) |
 | Action S[s,J] | Variational principle from which update rules derive (v4.0) |
@@ -1678,6 +1722,15 @@ See [FTD_REFERENCE_v5.md](FTD_REFERENCE_v5.md), [FTD_VERIFICATION_REPORT.md](FTD
 | ∇² | Discrete Laplacian operator (§3.2, §20.3) |
 | ∇·J | Divergence of flux field (determines polarity) |
 | ∇×J | Curl of flux field (magnetic-like behavior) |
+
+## Dimensional Buildup
+
+| Level | Notation | Meaning |
+|-------|----------|---------|
+| 1D | xy | Point on a line (one spatial dimension) |
+| 2D | xyt | Point on plane + time |
+| 3D | xyzt | Point in space + time (where physics usually stops) |
+| 4D | xyztgψ(Δt) | Full specification with constraints and dynamics |
 
 ---
 

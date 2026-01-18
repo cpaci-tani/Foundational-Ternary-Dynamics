@@ -13,7 +13,7 @@ Until now, we have described FTD's rules procedurally: "do this, then that." But
 
 > **Why these rules and not others?**
 
-An action principle answers this question. All of physics—from Newton's laws to general relativity to quantum field theory—can be derived from the simple statement:
+An action principle answers this question. All of physics: from Newton's laws to general relativity to quantum field theory: can be derived from the simple statement:
 
 (Here, we use the action principle in the constructive sense: given a set of update rules, we exhibit an action compatible with them.)
 
@@ -237,7 +237,7 @@ The probability amplitude between initial state |i⟩ and final state |f⟩ is a
 
 Paths with large action oscillate rapidly and cancel. Paths near δS = 0 (the classical path) contribute coherently.
 
-This is how quantum mechanics emerges from FTD—through the action principle.
+This is how quantum mechanics emerges from FTD: through the action principle.
 
 ## Experiments
 
@@ -261,4 +261,4 @@ Slowly increase flux density in a void region. Watch how the genesis probability
 
 ## Transition
 
-We now have a principled foundation—the action principle from which all FTD dynamics flow. But what about quantum mechanics? In the next chapter, we construct the Hilbert space and see how quantum phenomena emerge from the flux field.
+We now have a principled foundation: the action principle from which all FTD dynamics flow. But what about quantum mechanics? In the next chapter, we construct the Hilbert space and see how quantum phenomena emerge from the flux field.

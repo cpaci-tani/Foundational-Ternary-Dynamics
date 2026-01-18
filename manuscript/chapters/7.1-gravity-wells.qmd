@@ -145,7 +145,7 @@ Free particles in FTD follow **flux gradients**. In the GR picture, this is **ge
 
 $$\frac{d^2x^\mu}{d\tau^2} + \Gamma^\mu_{\nu\lambda}\frac{dx^\nu}{d\tau}\frac{dx^\lambda}{d\tau} = 0$$
 
-The Christoffel symbols Γ are determined by the metric derivatives—which come from the flux density profile.
+The Christoffel symbols Γ are determined by the metric derivatives: which come from the flux density profile.
 
 ::: {.callout-note}
 ## Gravity as Geometry
@@ -182,7 +182,7 @@ When massive objects accelerate, flux patterns propagate outward:
 
 $$h_{+,\times} \propto \frac{1}{r}\frac{d^2Q_{ij}}{dt^2}$$
 
-These are gravitational waves—transverse ripples in the flux field traveling at speed C.
+These are gravitational waves: transverse ripples in the flux field traveling at speed C.
 
 ## Differentiation
 
@@ -249,4 +249,4 @@ Heat a proto-Earth. Watch layers form.
 
 ## Transition
 
-Planets need more than solid ground. Next, we explore atmospheres—the gases that surround worlds and enable life.
+Planets need more than solid ground. Next, we explore atmospheres: the gases that surround worlds and enable life.

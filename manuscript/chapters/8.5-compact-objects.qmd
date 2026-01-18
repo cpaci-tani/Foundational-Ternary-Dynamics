@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Gravity never gives up. White dwarfs, neutron stars, and black holes represent gravity's victory at progressively higher densities—electrons, neutrons, and finally nothing can resist.
+Gravity never gives up. White dwarfs, neutron stars, and black holes represent gravity's victory at progressively higher densities: electrons, neutrons, and finally nothing can resist.
 :::
 
 ## White Dwarfs
@@ -41,7 +41,7 @@ Above this mass, electron degeneracy fails.
 White dwarfs are born hot and cool over billions of years:
 - No energy generation
 - Radiate stored thermal energy
-- Eventually become black dwarfs (not yet—universe too young)
+- Eventually become black dwarfs (not yet: universe too young)
 
 ## Neutron Stars
 
@@ -121,7 +121,7 @@ $$
 r_s = \frac{2GM}{c^2} \approx 3 \text{ km} \times \frac{M}{M_\odot}
 $$
 
-Nothing—not even light—escapes from within.
+Nothing: not even light: escapes from within.
 
 ### Types
 

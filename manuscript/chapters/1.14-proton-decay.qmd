@@ -1,10 +1,10 @@
 # Proton Decay {#sec-proton-decay}
 
-*"Nothing lasts forever—not even matter"*
+*"Nothing lasts forever: not even matter"*
 
 ::: {.callout-note}
 ## Key Revelation
-Grand unification predicts protons decay with lifetime τ_p ~ 10³⁵ years. This is 10²⁵ times the age of the universe—yet detectable by watching 10³⁴ protons simultaneously.
+Grand unification predicts protons decay with lifetime τ_p ~ 10³⁵ years. This is 10²⁵ times the age of the universe: yet detectable by watching 10³⁴ protons simultaneously.
 :::
 
 ## The Immortal Proton?
@@ -170,7 +170,7 @@ $$\tau_p(p \to e^+ \pi^0) = (1.0 \pm 0.3) \times 10^{35} \text{ years}$$
 Observation proves:
 - Baryon number is NOT an exact symmetry
 - The universe can have unequal matter/antimatter (baryogenesis)
-- Protons are not the "ground state"—they can decay
+- Protons are not the "ground state": they can decay
 
 ## The Bigger Picture
 
@@ -180,7 +180,7 @@ The same interaction that allows protons to decay (B violation) explains baryoge
 
 $$\text{No baryon number conservation} \implies \text{Matter-antimatter asymmetry possible}$$
 
-Without proton decay channels, the universe would have equal matter and antimatter—and annihilate to pure radiation.
+Without proton decay channels, the universe would have equal matter and antimatter: and annihilate to pure radiation.
 
 ### Connection to CP Violation
 
@@ -241,4 +241,4 @@ The derivation chain:
 
 ## Transition
 
-Proton decay is FTD's most dramatic experimental prediction—testable within the next decade. But what about the reverse process? How did matter form in the first place? The subatomic realm awaits, where quarks bind into protons that can—eventually—decay back to leptons and light.
+Proton decay is FTD's most dramatic experimental prediction: testable within the next decade. But what about the reverse process? How did matter form in the first place? The subatomic realm awaits, where quarks bind into protons that can: eventually: decay back to leptons and light.

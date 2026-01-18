@@ -7,11 +7,24 @@
 The framework distinguishes two ontological layers: the continuous flux field (potential) and the discrete state field (manifestation). Dynamics in the former determine transitions in the latter.
 :::
 
-## Layer 1: Potential (Pre-Ontic)
+## Layer 1: Domain A (The Spatial Potential)
 
-Potential is **where something might happen**. It is not real in itself—it is the precondition for reality.
+**"What Exists"**
 
-The flux field permeates the entire lattice, carrying energy-momentum information that determines where manifestation events can occur.
+::: {.callout-note}
+## Formal Definition
+See @sec-two-domains for the complete formal definition of Domain A as configuration space $\mathcal{A}$ and Domain B as probability space $\mathcal{B}$.
+:::
+
+Domain A is the **Ontic Realm of Potential**. It is:
+*   **Deterministic:** Governed by the Physics Quadratic (update operator $U$).
+*   **Local:** Interaction speed limited to $c$ (Moore neighborhood).
+*   **Predictable:** Represents the "hard physics" of the universe (Mass, Charge, Space).
+
+Formally, Domain A is the configuration space:
+$$\mathcal{A} = \{(s, \mathbf{J}) \,|\, s: L \to \{-1,0,+1\}, \; \mathbf{J}: L \to \mathbb{R}^3\}$$
+
+The "Wave" in Domain A is strictly hydrodynamic: an **aggregate of historical movement**, not a spooky non-local entity.
 
 ### Flux Vectors
 
@@ -86,7 +99,7 @@ Consider this analogy:
 
 The currents are always there, flowing, interacting. Ships appear where currents are strong, move with the currents, and sometimes sink back into the ocean.
 
-You can study the currents (potential) or the ships (manifestation). Both are real. But the currents are more fundamental—they determine where ships can exist.
+You can study the currents (potential) or the ships (manifestation). Both are real. But the currents are more fundamental: they determine where ships can exist.
 
 ## Experiments
 
@@ -137,9 +150,10 @@ phase = τ                   # Local phase accumulator
 
 - **flux-vectors**: The 3D momentum/energy field
 - **density**: The magnitude of flux (|J|)
-- **layer-one**: The pre-ontic potential layer
-- **layer-two**: The ontic manifestation layer
+- **layer-one**: Domain A, the pre-ontic potential layer; configuration space $\mathcal{A}$
+- **layer-two**: The ontic manifestation layer; discrete states $s \in \{-1, 0, +1\}$
+- **domain-A**: See @sec-two-domains for formal definition
 
 ## Transition
 
-Now that we understand the two layers, we can see how they interact through interference—the geometry of possibility.
+Now that we understand the two layers, we can see how they interact through interference: the geometry of possibility.

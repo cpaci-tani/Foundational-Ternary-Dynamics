@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Galaxies don't just drift through space—they collide, merge, and transform each other. These interactions drive galaxy evolution and trigger dramatic starbursts.
+Galaxies don't just drift through space: they collide, merge, and transform each other. These interactions drive galaxy evolution and trigger dramatic starbursts.
 :::
 
 ## Types of Interactions
@@ -119,7 +119,7 @@ When galaxies merge, so do their SMBHs:
 1. Black holes sink to merger center (dynamical friction)
 2. Form binary (separation ~parsec)
 3. Binary hardens (ejects stars)
-4. "Final parsec problem"—how do they get closer?
+4. "Final parsec problem": how do they get closer?
 5. Eventually merge → gravitational waves
 
 ## Environmental Effects
@@ -213,4 +213,4 @@ Measure star formation rate through merger stages.
 
 ## Transition
 
-Galaxies are embedded in larger structures. Now we scale up to the cosmic realm—the large-scale structure of the universe itself.
+Galaxies are embedded in larger structures. Now we scale up to the cosmic realm: the large-scale structure of the universe itself.

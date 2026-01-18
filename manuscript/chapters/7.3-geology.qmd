@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Planets are not static—their interiors churn, their surfaces crack, and their mountains rise over millions of years. Geology is planetary dynamics in slow motion.
+Planets are not static: their interiors churn, their surfaces crack, and their mountains rise over millions of years. Geology is planetary dynamics in slow motion.
 :::
 
 ## Planetary Interiors
@@ -179,4 +179,4 @@ Trigger quake. Watch P and S waves propagate.
 
 ## Transition
 
-Solid ground and gaseous atmosphere need protection. Next, we explore magnetospheres—the invisible shields that protect worlds from space.
+Solid ground and gaseous atmosphere need protection. Next, we explore magnetospheres: the invisible shields that protect worlds from space.

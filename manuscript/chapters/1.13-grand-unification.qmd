@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-At energy scale M_GUT ≈ 2 × 10¹⁶ GeV, all three gauge couplings converge to α_GUT = 1/42. This single number—6 × 7—emerges from the framework integers.
+At energy scale M_GUT ≈ 2 × 10¹⁶ GeV, all three gauge couplings converge to α_GUT = 1/42. This single number: 6 × 7: emerges from the framework integers.
 :::
 
 ## The Running of Couplings
@@ -19,7 +19,7 @@ At everyday energies, the three forces have wildly different strengths:
 | Weak | α₂ = 1/30 | 30 |
 | Strong | α₃ = 0.118 | 8.5 |
 
-Why three different values? FTD says: they're not fundamentally different—they're the same coupling viewed at different scales.
+Why three different values? FTD says: they're not fundamentally different: they're the same coupling viewed at different scales.
 
 ### The Beta Functions
 
@@ -39,7 +39,7 @@ For the Standard Model (with 3 generations):
 
 ### The FTD Connection
 
-The QCD beta coefficient is **exactly** b₃ = 7—one of our four integers!
+The QCD beta coefficient is **exactly** b₃ = 7: one of our four integers!
 
 $$b_3 = 11 - \frac{2n_f}{3} = 11 - \frac{2 \times 6}{3} = 11 - 4 = 7$$
 
@@ -80,13 +80,16 @@ $$\boxed{\frac{1}{\alpha_{\text{GUT}}} = 42}$$
 
 ## Deriving 1/α_GUT = 42
 
-### From the Framework Integers
+### From the Framework Integers (Informational Consistency)
 
-The unified coupling emerges from:
+The unified coupling emerges from a **feedback loop** involving the observed matter content:
 
 $$\frac{1}{\alpha_{\text{GUT}}} = 6 \times b_3 = 6 \times 7 = 42$$
 
-Why 6? This is the number of quark flavors n_f = 6, which enters the beta function.
+Here, the factor **6** is an **Ad Hoc Informational Input**: it corresponds to the number of quark flavors $N_f = 6$ observed in our universe.
+*   **Geometry** provides $\{3, 4, 7, 13\}$.
+*   **Information** (Ad Hoc) provides $N_f=6$.
+*   **Consistency** reveals that $6 \times 7 = 42$, locking the structure together.
 
 Alternatively:
 $$\frac{1}{\alpha_{\text{GUT}}} = 2N_c \times (N_c + N_{\text{base}}) = 2 \times 3 \times 7 = 42$$
@@ -261,4 +264,4 @@ All derived from {3, 4, 7, 13}.
 
 ## Transition
 
-Unification at 10¹⁶ GeV predicts protons eventually decay. The next chapter explores this remarkable prediction—a window into physics at energies we can never directly probe.
+Unification at 10¹⁶ GeV predicts protons eventually decay. The next chapter explores this remarkable prediction: a window into physics at energies we can never directly probe.

@@ -1,6 +1,6 @@
 # Equations Reference {#sec-equations-reference}
 
-*"The mathematical foundation—from axioms to derivations"*
+*"The mathematical foundation: from axioms to derivations"*
 
 ::: {.callout-important}
 ## Major Update: Derivation Equations Added

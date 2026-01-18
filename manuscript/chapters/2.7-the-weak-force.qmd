@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The weak force doesn't push or pull—it transforms. A neutron becomes a proton. A muon becomes an electron. This power of transmutation emerges from the SU(2) structure of chiral flux doublets, with all parameters derived from the four integers.
+The weak force doesn't push or pull: it transforms. A neutron becomes a proton. A muon becomes an electron. This power of transmutation emerges from the SU(2) structure of chiral flux doublets, with all parameters derived from the four integers.
 :::
 
 ## What Makes the Weak Force Unique
@@ -120,7 +120,7 @@ The weak force couples differently to left-handed and right-handed particles:
 
 In FTD, the discrete lattice update rules have a preferred handedness. The flux spiral direction determines which chirality couples to SU(2).
 
-This is not arbitrary—it follows from the 3D cubic lattice having a consistent orientation convention.
+This is not arbitrary: it follows from the 3D cubic lattice having a consistent orientation convention.
 
 ## The SU(2) Structure
 
@@ -142,7 +142,7 @@ $$\begin{pmatrix} \nu_e \\ e \end{pmatrix}_L \quad \begin{pmatrix} \nu_\mu \\ \m
 | e_L, μ_L, τ_L | 1/2 | -1/2 | -1 |
 | All right-handed | 0 | 0 | Q |
 
-### The Gell-Mann–Nishijima Formula
+### The Gell-Mann-Nishijima Formula
 
 Electric charge relates to weak isospin and hypercharge:
 
@@ -180,7 +180,7 @@ The pp-chain that powers the Sun:
 
 $$p + p \to d + e^+ + \nu_e$$
 
-This requires a weak interaction (p → n + e⁺ + ν) and is incredibly slow—explaining why the Sun burns for billions of years.
+This requires a weak interaction (p → n + e⁺ + ν) and is incredibly slow: explaining why the Sun burns for billions of years.
 
 ### Big Bang Nucleosynthesis
 
@@ -219,7 +219,7 @@ The existence of Z⁰ was inferred from neutrino scattering:
 
 $$\nu_\mu + e^- \to \nu_\mu + e^-$$
 
-No charge exchange—but momentum transfer. The Z mediates "neutral current" interactions.
+No charge exchange: but momentum transfer. The Z mediates "neutral current" interactions.
 
 ### The Z Coupling
 

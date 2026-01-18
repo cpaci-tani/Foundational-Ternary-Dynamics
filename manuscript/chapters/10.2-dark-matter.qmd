@@ -139,7 +139,7 @@ Ordinary baryonic matter constitutes only approximately 5% of the total mass-ene
 
 ## The FTD Interpretation
 
-In FTD, dark matter is not a new particle species—it is a property of the **void itself**.
+In FTD, dark matter is not a new particle species: it is a property of the **void itself**.
 
 ### Not Particles, But Field Correlations
 
@@ -165,7 +165,7 @@ DARK MATTER:
   No electromagnetic interaction
 ```
 
-The flux field can carry energy and momentum even when the state is zero—this is the FTD analog of vacuum energy, but with **structure**.
+The flux field can carry energy and momentum even when the state is zero: this is the FTD analog of vacuum energy, but with **structure**.
 
 ### Why It Gravitates
 
@@ -200,7 +200,7 @@ This matches observations!
 
 ::: {.callout-important}
 ## A New Paradigm
-FTD suggests dark matter is not a particle to be discovered—it's a property of structured void. This explains why direct detection experiments keep finding nothing: there are no particles to detect.
+FTD suggests dark matter is not a particle to be discovered: it's a property of structured void. This explains why direct detection experiments keep finding nothing: there are no particles to detect.
 :::
 
 ### Predictions
@@ -287,4 +287,4 @@ Explore dark matter halo, compare to NFW profile.
 
 ## Transition
 
-Dark matter shapes structure. But something even more mysterious drives the universe's expansion—dark energy.
+Dark matter shapes structure. But something even more mysterious drives the universe's expansion: dark energy.

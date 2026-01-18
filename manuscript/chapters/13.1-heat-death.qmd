@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-All processes require energy gradients. When the last gradient flattens, when the final star burns out, when everything reaches the same temperature—the universe dies not with a bang, but with a whisper fading into eternal silence.
+All processes require energy gradients. When the last gradient flattens, when the final star burns out, when everything reaches the same temperature: the universe dies not with a bang, but with a whisper fading into eternal silence.
 :::
 
 ## The Second Law's Endgame
@@ -79,7 +79,7 @@ Eventually white dwarfs become black dwarfs:
 - Crystalline carbon/oxygen
 - Dark, cold cinders
 
-(None exist yet—universe too young)
+(None exist yet: universe too young)
 
 ## The Black Hole Era
 
@@ -270,4 +270,4 @@ Follow final particles as everything evaporates.
 
 ## Transition
 
-Heat death is the most probable end. But is it the only possibility? Next, we explore alternative endings—scenarios where the universe meets different fates.
+Heat death is the most probable end. But is it the only possibility? Next, we explore alternative endings: scenarios where the universe meets different fates.

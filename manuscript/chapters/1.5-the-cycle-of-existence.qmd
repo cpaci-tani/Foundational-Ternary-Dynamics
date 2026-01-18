@@ -37,7 +37,7 @@ When conditions are right, the Void manifests:
 
 Particles born together share a bond. Their `entanglement_partner_uuid` connects them through their shared origin.
 
-This is not "spooky action at a distance"—it is **shared origin**. The correlation exists because they were born together, not because they communicate.
+This is not "spooky action at a distance": it is **shared origin**. The correlation exists because they were born together, not because they communicate.
 
 ## Persistence (±1 → ±1)
 
@@ -81,7 +81,7 @@ When density falls below KB:
 3. Flux remains as vacuum energy
 4. UUID released
 
-This is not destruction—it is **return**. The energy persists; only the manifestation ends.
+This is not destruction: it is **return**. The energy persists; only the manifestation ends.
 
 ## Annihilation (+1 meets -1)
 
@@ -114,7 +114,7 @@ Why these rules? Why this cycle? The answer comes from the **action principle** 
 
 ### Genesis Probability: Derived
 
-The genesis probability is not assumed—it follows from extremizing the action.
+The genesis probability is not assumed: it follows from extremizing the action.
 
 The manifestation potential in the Lagrangian:
 
@@ -128,7 +128,7 @@ $$P(0 \to \pm 1) \propto \exp\left(-\frac{K_B - |J|}{K_B}\right)$$
 
 ::: {.callout-tip}
 ## Derivation, Not Assumption
-The exponential form of genesis probability emerges from the action principle. We didn't put it in by hand—it follows from the mathematics of extremization.
+The exponential form of genesis probability emerges from the action principle. We didn't put it in by hand: it follows from the mathematics of extremization.
 :::
 
 ### Polarity Selection: Derived
@@ -156,7 +156,7 @@ This modifies the Euler-Lagrange equation to include damping:
 
 $$J(t+1) = (1-\gamma) J(t) + w(t+1)$$
 
-The decay rate γ = α connects to electromagnetic radiation: excited systems lose energy by radiating flux. The fine structure constant measures this coupling. **[IMPOSED: the identification γ = α is a parameter choice, not a derivation—see Assumption Ledger ASSUMP.6]**
+The decay rate γ = α connects to electromagnetic radiation: excited systems lose energy by radiating flux. The fine structure constant measures this coupling. **[IMPOSED: the identification γ = α is a parameter choice, not a derivation: see Assumption Ledger ASSUMP.6]**
 
 ### The Complete Derivation
 
@@ -168,7 +168,7 @@ The decay rate γ = α connects to electromagnetic radiation: excited systems lo
 | Threshold KB | Manifestation potential minimum |
 | Conservation laws | Noether's theorem from symmetries |
 
-The cycle of existence is not arbitrary—it can be represented as a stationary-path solution (δS = 0) for an appropriately chosen action.
+The cycle of existence is not arbitrary: it can be represented as a stationary-path solution (δS = 0) for an appropriately chosen action.
 
 ## Experiments
 
@@ -190,4 +190,4 @@ Bring a +1 and -1 particle together. Watch the flash of energy as they return to
 
 ## Transition
 
-The cycle of existence requires time. But how does time itself work in this discrete universe? Next, we examine the causal loop—the heartbeat of existence.
+The cycle of existence requires time. But how does time itself work in this discrete universe? Next, we examine the causal loop: the heartbeat of existence.

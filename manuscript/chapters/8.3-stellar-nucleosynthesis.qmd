@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Every atom heavier than hydrogen was made inside a star. The carbon in your body, the iron in your blood—all forged in stellar cores and scattered by explosions.
+Every atom heavier than hydrogen was made inside a star. The carbon in your body, the iron in your blood: all forged in stellar cores and scattered by explosions.
 :::
 
 ::: {.callout-note}
@@ -36,7 +36,7 @@ $$
 4{^1\text{H}} \rightarrow {^4\text{He}} + 2e^+ + 2\nu_e + 26.7 \text{ MeV}
 $$
 
-This is the longest phase—billions of years for Sun-like stars.
+This is the longest phase: billions of years for Sun-like stars.
 
 ## Helium Burning
 
@@ -192,4 +192,4 @@ Sum contributions from many generations of stars.
 
 ## Transition
 
-Stars don't last forever. When fusion ends, stars die—sometimes quietly, sometimes explosively. Next, we explore stellar death.
+Stars don't last forever. When fusion ends, stars die: sometimes quietly, sometimes explosively. Next, we explore stellar death.

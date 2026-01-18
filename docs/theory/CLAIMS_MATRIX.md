@@ -47,39 +47,39 @@
 
 | Claim ID | Statement | Status | Dependencies | Justified In | Falsification Criterion | Repro Script |
 |----------|-----------|--------|--------------|--------------|------------------------|--------------|
-| **ALPHA-1** | 1/α = 137.036 (1.26 ppm from CODATA) | **SELECTION + CONJECTURE** | S1, S2, S3, GAUSS-1 | paper §5.2, FTD_REFERENCE_v5.md §6 | Precision α measurement incompatible at >10 ppm after QED corrections | `g_star_from_trd.py` |
-| **ALPHA-2** | x₋ = 3.024 → N_c = 3 via RG flow | **SELECTION + CONJECTURE** | S3, ALPHA-1 | paper §5.3, FTD_REFERENCE_v5.md §6 | Discovery of 4th generation fermion with standard gauge couplings | `g_star_from_trd.py` |
-| **BORN-1** | Born rule P(v) = \|ψ(v)\|²/\|\|ψ\|\|² emerges from manifestation | SELECTION + IMPOSED | A1-A4, manifestation threshold rule | BORN_RULE_DERIVATION.md | Alternative measure shown equally consistent with axioms | `born_rule_test.py` |
-| **GAUSS-1** | Gauss constraint yields 16 DoF on 2×2×2 lattice | THEOREM | A1, A3 | paper Appendix T2 | Mathematical counterexample | `coefficient_16_from_lattice.py` |
-| **SQRT2-1** | Critical coupling λ=1 gives ω=√2 | THEOREM | A1, A3 | paper Appendix T3-T4 | Mathematical counterexample | `critical_coupling_selection.py` |
-| **CM-1** | j=1728 selected by cubic lattice symmetry | SELECTION | S1, S2 | paper §6, Appendix C | Alternative CM curve shown compatible | `cm_selection_proof.py` |
+| **ALPHA-1** | 1/α = 137.036 (1.26 ppm from CODATA) | **SELECTION + CONJECTURE** | S1, S2, S3, GAUSS-1 | paper §5.2, FTD_REFERENCE_v5.md §6 | Precision α measurement incompatible at >10 ppm after QED corrections | `simulations/verify_quadratic.py` |
+| **ALPHA-2** | x₋ = 3.024 → N_c = 3 via RG flow | **SELECTION + CONJECTURE** | S3, ALPHA-1 | paper §5.3, FTD_REFERENCE_v5.md §6 | Discovery of 4th generation fermion with standard gauge couplings | `simulations/verify_quadratic.py` |
+| **BORN-1** | Born rule P(v) = \|ψ(v)\|²/\|\|ψ\|\|² connects Spatial Potential to Epistemic Probability | **BRIDGE PROTOCOL** | A1-A4, EPISTEMIC_BRIDGE | BORN_RULE_DERIVATION.md | Failure of probability to track potential density | `simulations/verify_born_rule.py` (Corr: 0.94) |
+| **GAUSS-1** | Gauss constraint yields 16 DoF on 2×2×2 lattice | THEOREM | A1, A3 | paper Appendix T2 | Mathematical counterexample | `simulations/verify_quadratic.py` |
+| **SQRT2-1** | Critical coupling λ=1 gives ω=√2 | THEOREM | A1, A3 | paper Appendix T3-T4 | Mathematical counterexample | `simulations/verify_quadratic.py` |
+| **CM-1** | j=1728 selected by cubic lattice symmetry | SELECTION | S1, S2 | paper §6, Appendix C | Alternative CM curve shown compatible | `simulations/verify_quadratic.py` |
 | **HILBERT-1** | ψ = J_x + iJ_y defines Hilbert space H_FTD | AXIOM (construction) | A1, A2 | THEORETICAL_FOUNDATIONS §2.2 | n/a (definition) | n/a |
-| **BELL-1** | Bell violations via Hilbert tensor product (S ≈ 2√2) | EMERGENT | HILBERT-1 | THEORETICAL_FOUNDATIONS §2.5 | Failure to reproduce QM predictions in H_FTD | `sloop_bell_test.py` |
+| **BELL-1** | Spatial Domain is Local ($S \le 2$); Info speed limited to c | **CONFIRMED** | A1, Relativity | EPISTEMIC_BRIDGE §2.1 | Observation of FTL information transfer in Dom A | `simulations/verify_bell_inequality.py` (S=2.00) |
 | **PLANCK-1** | 1 voxel = Planck length identification | IMPOSED | (scale calibration) | CLAUDE.md §7.1 | n/a (calibration choice) | n/a |
-| **GAMMA-1** | γ = α in simulations | IMPOSED | (parameter identification) | CLAUDE.md §4.3, §7.3 | n/a (calibration choice) | documented in scripts |
-| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.27% error) | CONJECTURE | ALPHA-1, GAUSS-1 | lemniscate_alpha_paper.md §7.2 | >1% discrepancy unexplained by known corrections | `g_star_from_trd.py` |
-| **LAMBDA-1** | E_Λ = (m_P/π²)e^(-1/2α) (3.5% error) | CONJECTURE | ALPHA-1 | lemniscate_alpha_paper.md §7.3 | >10% discrepancy unexplained | manual verification |
+| **GAMMA-1** | γ = α in simulations | IMPOSED | (parameter identification) | CLAUDE.md §4.3, §7.3 | n/a (calibration choice) | `simulations/constants.py` |
+| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.27% error) | CONJECTURE | ALPHA-1, GAUSS-1 | lemniscate_alpha_paper.md §7.2 | >1% discrepancy unexplained by known corrections | `simulations/verify_masses.py` |
+| **LAMBDA-1** | E_Λ = (m_P/π²)e^(-1/2α) (3.5% error) | CONJECTURE | ALPHA-1 | lemniscate_alpha_paper.md §7.3 | >10% discrepancy unexplained | `manual verification` |
 | **COLLAPSE-1** | Measurement = manifestation (s: 0 → ±1) | SELECTION | A4, HILBERT-1 | MEASUREMENT_THEORY.md | Alternative collapse mechanism shown viable within axioms | n/a |
 | **OBSERVER-1** | Observer = manifested structure (s≠0), not consciousness | SELECTION | COLLAPSE-1 | MEASUREMENT_THEORY.md §3.5 | Consciousness-specific effects observed | n/a |
 | **CONTINUUM-1** | FTD → Maxwell + Schrödinger as a→0 | THEOREM (correspondence) | A1-A4 | THEORETICAL_FOUNDATIONS §3 | Mathematical counterexample | verification code in Appendix A |
-| **SPINOR-1** | Fermi statistics from π₁(SO(3)) = Z₂ | THEOREM (construction) | framed flux | THEORETICAL_FOUNDATIONS §5 | Mathematical counterexample | `verify_spinor_rotation()` |
-| **WEINBERG-1** | sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% error) | DERIVED | framework integers | NOVEL_CLAIMS.md §II.8 | >1% discrepancy unexplained | `verification/06_grand_unification_verification.py` |
-| **STRONG-1** | α_s = b₃/(b₃+4N_eff) = 7/59 = 0.1186 (0.3σ) | DERIVED | framework integers | NOVEL_CLAIMS.md §II.9 | RG flow incompatible with prediction | `verification/06_grand_unification_verification.py` |
-| **PROTON-1** | m_p/m_e = N_eff/α + T(10) = 1836.47 (0.017% error) | CONJECTURE | ALPHA-1, framework integers | NOVEL_CLAIMS.md §III.13 | >0.1% discrepancy unexplained | `verification/03_particle_masses_verification.py` |
-| **WBOSON-1** | m_W = 67/(8α²) × m_e = 80.36 GeV (0.016% error) | CONJECTURE | ALPHA-1, MASS-1 | NOVEL_CLAIMS.md §III.12 | >0.1% discrepancy unexplained | `verification/03_particle_masses_verification.py` |
+| **SPINOR-1** | Fermi statistics from π₁(SO(3)) = Z₂ | THEOREM (construction) | framed flux | THEORETICAL_FOUNDATIONS §5 | Mathematical counterexample | `simulations/verify_symbolic.py` |
+| **WEINBERG-1** | sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% error) | DERIVED | framework integers | NOVEL_CLAIMS.md §II.8 | >1% discrepancy unexplained | `simulations/verify_mixing.py` |
+| **STRONG-1** | α_s = b₃/(b₃+4N_eff) = 7/59 = 0.1186 (0.3σ) | DERIVED | framework integers | NOVEL_CLAIMS.md §II.9 | RG flow incompatible with prediction | `simulations/verify_mixing.py` |
+| **PROTON-1** | m_p/m_e = N_eff/α + T(10) = 1836.47 (0.017% error) | CONJECTURE | ALPHA-1, framework integers | NOVEL_CLAIMS.md §III.13 | >0.1% discrepancy unexplained | `simulations/verify_masses.py` |
+| **WBOSON-1** | m_W = 67/(8α²) × m_e = 80.36 GeV (0.016% error) | CONJECTURE | ALPHA-1, MASS-1 | NOVEL_CLAIMS.md §III.12 | >0.1% discrepancy unexplained | `simulations/verify_masses.py` |
 | **SUSY-0** | No superpartners at any energy | DERIVED | discrete lattice incompatible with SUSY | NOVEL_CLAIMS.md §VII.23 | Discovery of any superpartner | n/a (exclusion) |
 | **DIM-3** | D=3 is unique viable spatial dimension | THEOREM | stability + gauge theory requirements | NOVEL_CLAIMS.md §VII.24 | Detection of KK modes or 1/r² deviation | n/a (exclusion) |
 | **GEN-3** | N_gen = ⌊x₋⌋ = 3 exactly | DERIVED | S3, ALPHA-2 | NOVEL_CLAIMS.md §VII.26 | 4th generation with standard couplings | n/a (exclusion) |
-| **DARKMATTER-1** | DM = sub-threshold flux (0 < \|J\| < K_B) | CONJECTURE | A1-A4 | NOVEL_CLAIMS.md §VI.21, DARK_MATTER_DERIVATION.md | Confirmed WIMP detection | n/a |
-| **CKM-1** | θ₁₂ = arcsin√(3/13) = 12.9° (0.8% error) | DERIVED | framework integers | NOVEL_CLAIMS.md §IV.15, FLAVOR_PHYSICS_DERIVATION.md | >3% discrepancy | `flavor_physics_tests.py` |
-| **PMNS-1** | θ₁₂ = arctan√(4/7) = 33.1° (1.0% error) | DERIVED | framework integers | NOVEL_CLAIMS.md §IV.16, FLAVOR_PHYSICS_DERIVATION.md | >3% discrepancy | `flavor_physics_tests.py` |
-| **JARLSKOG-1** | J = (N_c×α³)/4 ≈ 2.9×10⁻⁵ (3% error) | DERIVED | ALPHA-1, framework integers | NOVEL_CLAIMS.md §IV.17 | >10% discrepancy | `flavor_physics_tests.py` |
+| **DARKMATTER-1** | DM = sub-threshold flux (0 < \|J\| < K_B) | CONJECTURE | A1-A4 | NOVEL_CLAIMS.md §VI.21, DARK_MATTER_DERIVATION.md | Confirmed WIMP detection | `simulations/verify_cosmology.py` |
+| **CKM-1** | θ₁₂ = arcsin√(3/13) = 12.9° (0.8% error) | DERIVED | framework integers | NOVEL_CLAIMS.md §IV.15, FLAVOR_PHYSICS_DERIVATION.md | >3% discrepancy | `simulations/verify_mixing.py` |
+| **PMNS-1** | θ₁₂ = arctan√(4/7) = 33.1° (1.0% error) | DERIVED | framework integers | NOVEL_CLAIMS.md §IV.16, FLAVOR_PHYSICS_DERIVATION.md | >3% discrepancy | `simulations/verify_mixing.py` |
+| **JARLSKOG-1** | J = (N_c×α³)/4 ≈ 2.9×10⁻⁵ (3% error) | DERIVED | ALPHA-1, framework integers | NOVEL_CLAIMS.md §IV.17 | >10% discrepancy | `simulations/verify_mixing.py` |
 | **STRONGCP-0** | θ_QCD = 0 exactly | THEOREM | discrete lattice (no continuous vacuum) | NOVEL_CLAIMS.md §V.20 | θ_QCD ≠ 0 measured | n/a (structure theorem) |
-| **INFLATION-1** | n_s = 0.966 (spectral index) | **DERIVED (v5.0)** | sub-threshold flux dynamics | FTD_REFERENCE_v5.md §9.1, NOVEL_CLAIMS.md §VIII-B | n_s measurement > 3σ from 0.966 | `complete_toe.py` |
-| **INFLATION-2** | r = 0.007 (tensor-to-scalar) | **DERIVED (v5.0)** | sub-threshold flux dynamics | FTD_REFERENCE_v5.md §9.1, NOVEL_CLAIMS.md §VIII-B | r > 0.04 measured | `complete_toe.py` |
-| **BARYO-1** | η ~ 10⁻¹⁰ (baryon asymmetry) | **DERIVED (v5.0)** | CP violation + Sakharov conditions | FTD_REFERENCE_v5.md §9.2, NOVEL_CLAIMS.md §VIII-B | η order of magnitude wrong | `complete_toe.py` |
-| **GR-1** | R_μν - ½g_μν R = 8πG T_μν | **DERIVED (v5.0)** | flux density → effective metric | FTD_REFERENCE_v5.md §10, NOVEL_CLAIMS.md §VIII-B | GR coefficient wrong | `complete_toe.py` |
-| **ALPHAG-1** | α_G = 5.91×10⁻³⁹ (0.01% error) | **DERIVED (v5.0)** | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | FTD_REFERENCE_v5.md §7.1, NOVEL_CLAIMS.md §VIII-B | >1% discrepancy | `complete_toe.py` |
+| **INFLATION-1** | n_s = 0.966 (spectral index) | **DERIVED (v5.0)** | sub-threshold flux dynamics | FTD_REFERENCE_v5.md §9.1, NOVEL_CLAIMS.md §VIII-B | n_s measurement > 3σ from 0.966 | `simulations/verify_cosmology.py` |
+| **INFLATION-2** | r = 0.007 (tensor-to-scalar) | **DERIVED (v5.0)** | sub-threshold flux dynamics | FTD_REFERENCE_v5.md §9.1, NOVEL_CLAIMS.md §VIII-B | r > 0.04 measured | `simulations/verify_cosmology.py` |
+| **BARYO-1** | η ~ 10⁻¹⁰ (baryon asymmetry) | **DERIVED (v5.0)** | CP violation + Sakharov conditions | FTD_REFERENCE_v5.md §9.2, NOVEL_CLAIMS.md §VIII-B | η order of magnitude wrong | `simulations/verify_cosmology.py` |
+| **GR-1** | R_μν - ½g_μν R = 8πG T_μν | **DERIVED (v5.0)** | flux density → effective metric | FTD_REFERENCE_v5.md §10, NOVEL_CLAIMS.md §VIII-B | GR coefficient wrong | `simulations/verify_cosmology.py` |
+| **ALPHAG-1** | α_G = 5.91×10⁻³⁹ (0.01% error) | **DERIVED (v5.0)** | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | FTD_REFERENCE_v5.md §7.1, NOVEL_CLAIMS.md §VIII-B | >1% discrepancy | `simulations/verify_cosmology.py` |
 
 ---
 

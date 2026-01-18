@@ -1,0 +1,198 @@
+# The Grounding of Constraints {#sec-grounding-constraints}
+
+*"The bridge from possibility to lattice"*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter bridges the abstract xyztg$\psi$ ontology (Chapter 0.4) to the concrete lattice implementation (Book I). We show how the geometric constraint $g$ becomes the Moore neighborhood, and how the modal constraint $\psi$ becomes the flux field $\mathbf{J}$.
+:::
+
+## The Gap We Must Bridge
+
+The Event-Constraint Ontology establishes three primitives:
+
+| Primitive | Symbol | Nature |
+|-----------|--------|--------|
+| Event | $xyzt$ | Ontic fact |
+| Geometric constraint | $g$ | Metric/causal structure |
+| Modal constraint | $\psi$ | Transition law |
+
+But FTD's dynamics operate on:
+
+| Entity | Symbol | Implementation |
+|--------|--------|----------------|
+| Voxel state | $s(v,t)$ | $\{-1, 0, +1\}$ |
+| Flux field | $\mathbf{J}(v,t)$ | $\mathbb{R}^3$ |
+| Neighborhood | $N_{26}(v)$ | Moore connectivity |
+
+How do we get from one to the other?
+
+## The Geometric Constraint Becomes the Lattice
+
+### Why Discrete?
+
+The geometric constraint $g$ must be **computable**. A continuum requires infinite information to specify a single point. Discreteness is the minimal structure supporting:
+
+1. Finite specification of state
+2. Local causality (finite neighborhood)
+3. Deterministic evolution
+
+::: {.callout-important}
+## Theorem: Discreteness from Computability
+
+If $g$ must be:
+- Finitely specifiable (each configuration describable)
+- Locally causal (influences propagate through neighbors)
+- Deterministically evolvable (next state from current state)
+
+Then $g$ must be implementable on a discrete lattice.
+:::
+
+### Why Cubic?
+
+Among discrete lattices, the cubic lattice $\mathbb{Z}^3$ is selected by:
+
+1. **Isotropy at scale**: Cubic lattice has maximal discrete symmetry group (48 elements)
+2. **Self-duality**: The dual of a cubic lattice is cubic
+3. **Minimal encoding**: Each site has 6 face-neighbors, 12 edge-neighbors, 8 corner-neighbors = 26 total (Moore neighborhood)
+4. **Dimensional parsimony**: 3D is the minimum supporting stable atoms and gauge theories (see Chapter 1.12)
+
+### Why Moore Neighborhood?
+
+The 26-connected Moore neighborhood (all cells sharing at least a corner) is selected by:
+
+$$N_{26}(v) = \{u \in \mathbb{Z}^3 : \max(|u_x - v_x|, |u_y - v_y|, |u_z - v_z|) \leq 1\} \setminus \{v\}$$
+
+This is the **maximal local** neighborhood: it includes all cells within distance 1 under the $L^\infty$ norm.
+
+| Alternative | Why Rejected |
+|-------------|--------------|
+| 6-connected (face only) | Breaks diagonal propagation; wave equation unstable |
+| Continuous | Infinite information per update |
+| Non-local | Violates causality |
+
+## The Modal Constraint Becomes the Flux Field
+
+### Why a Vector Field?
+
+The modal constraint $\psi$ must encode:
+- Which events can occur (support of $\psi$)
+- With what relative likelihood ($|\psi|^2$)
+- Directional information (for momentum, forces)
+
+A scalar field cannot carry direction. A spinor field requires additional structure. A vector field $\mathbf{J} \in \mathbb{R}^3$ is the **minimal structure** encoding amplitude and direction.
+
+### Why Continuous Values?
+
+Events are discrete ($s \in \{-1, 0, +1\}$), but constraints can be graded. The flux field $\mathbf{J}$ takes continuous values because:
+
+1. **Interference requires superposition**: $\mathbf{J}_1 + \mathbf{J}_2$ can destructively interfere
+2. **Forces require gradients**: $\nabla|\mathbf{J}|$ gives force direction
+3. **Thresholds require comparison**: $|\mathbf{J}| \geq K_B$ triggers manifestation
+
+::: {.callout-note}
+## The Two-Layer Ontology
+
+This gives FTD its characteristic two-layer structure:
+
+| Layer | Type | Values | Role |
+|-------|------|--------|------|
+| State | Discrete | $\{-1, 0, +1\}$ | What IS (actualized) |
+| Flux | Continuous | $\mathbb{R}^3$ | What COULD BE (potential) |
+
+The flux field is the **dispositional layer**; the state field is the **actual layer**.
+:::
+
+### Why Wave Equation?
+
+The flux field evolves according to:
+
+$$\frac{\partial^2 \mathbf{J}}{\partial t^2} = c^2 \nabla^2 \mathbf{J}$$
+
+This is selected by:
+
+1. **Locality**: $\nabla^2$ involves only neighbors
+2. **Reversibility**: Wave equation is time-symmetric
+3. **Conservation**: Total flux is preserved
+4. **Finite speed**: $c$ bounds information propagation
+
+## The Formal Mapping
+
+We can now state the complete correspondence:
+
+### Events → Voxel States
+
+$$xyzt \longleftrightarrow (v, t, s(v,t))$$
+
+An event at spacetime location $(x,y,z,t)$ corresponds to a voxel $v = (x,y,z)$ at tick $t$ with state $s(v,t) \in \{-1, 0, +1\}$.
+
+### Geometric Constraint → Lattice Structure
+
+$$g \longleftrightarrow (\mathbb{Z}^3, N_{26}, c = 1)$$
+
+The geometric constraint becomes:
+- The cubic lattice $\mathbb{Z}^3$
+- The Moore neighborhood $N_{26}$
+- The speed limit $c = 1$ voxel/tick
+
+### Modal Constraint → Flux Field
+
+$$\psi \longleftrightarrow \mathbf{J}(v,t) \in \mathbb{R}^3$$
+
+The modal constraint becomes the flux field, with:
+- Amplitude $|\mathbf{J}|$ determining manifestation probability
+- Direction determining polarity ($\nabla \cdot \mathbf{J}$ selects $\pm 1$)
+- Curl determining magnetic-like forces
+
+## Why This Mapping Is Forced
+
+### Theorem: Uniqueness of Implementation
+
+Given the requirements:
+1. **Computability**: Finite specification, deterministic evolution
+2. **Locality**: Influences propagate through neighbors only
+3. **Conservation**: Total charge and energy preserved
+4. **Interference**: Waves can constructively/destructively combine
+5. **Manifestation**: Discrete outcomes from continuous potential
+
+The implementation must be:
+- Discrete lattice (from 1)
+- Moore neighborhood or subset (from 2)
+- Vector field for potential (from 4, 5)
+- Cubic lattice (from symmetry + 3D)
+
+**Proof sketch**: Any departure from this structure either violates one of the requirements or adds unnecessary complexity without new physics.
+
+## The Remaining Degrees of Freedom
+
+After the mapping, what remains to be specified?
+
+| Parameter | Value | Status |
+|-----------|-------|--------|
+| Lattice spacing | $\ell_P$ (Planck length) | [IMPOSED: scale identification] |
+| Speed | $c = 1$ voxel/tick | [AXIOM: defines time unit] |
+| Threshold | $K_B = m_e$ | [DERIVED: from $\alpha$ and G*] |
+| Damping | $\gamma = \alpha$ | [IMPOSED: identification] |
+
+The lattice spacing sets the physical scale but doesn't affect dimensionless predictions. The threshold is derived from the master quadratic. Only the damping identification remains truly imposed.
+
+## Connection to Action Principle
+
+The full justification for why flux evolves via wave equation, and why manifestation follows the threshold rule, comes from the action principle (Chapter 1.11):
+
+$$S[s, \mathbf{J}] = \sum_t \sum_v \left[ \frac{1}{2}|\partial_t \mathbf{J}|^2 - \frac{1}{2}|\nabla \mathbf{J}|^2 - V(|\mathbf{J}|, s) - g_c \cdot s \cdot (\nabla \cdot \mathbf{J}) \right]$$
+
+The update rules are not postulated: they follow from $\delta S = 0$. This chapter establishes *what* the implementation is; Chapter 1.11 establishes *why*.
+
+## Concepts
+
+- **grounding**: The process of connecting abstract ontology to concrete implementation
+- **lattice-selection**: Why cubic $\mathbb{Z}^3$ is the unique choice given constraints
+- **flux-as-modal**: The flux field as the implementation of the modal constraint $\psi$
+- **two-layer-ontology**: Discrete states (actual) + continuous flux (potential)
+- **moore-neighborhood**: The 26-connected locality structure
+- **uniqueness-theorem**: The claim that this implementation is forced by the requirements
+
+## Transition
+
+With the bridge established from xyztg$\psi$ to the lattice, we now ask a prior question: why is there flux at all? Why does the void have any structure capable of manifestation? The next chapter addresses what comes before even the void as we have described it.

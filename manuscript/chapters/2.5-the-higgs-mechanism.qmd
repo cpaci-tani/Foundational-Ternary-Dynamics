@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Particles acquire mass through interaction with the flux vacuum. The void is not empty—it has a condensate. Moving through this condensate creates resistance we call mass.
+Particles acquire mass through interaction with the flux vacuum. The void is not empty: it has a condensate. Moving through this condensate creates resistance we call mass.
 :::
 
 ## The Mass Problem
@@ -37,7 +37,7 @@ As the universe cools below a critical temperature T_c:
 
 $$T < T_c \implies \langle |J| \rangle = v \neq 0 \quad \text{(broken phase)}$$
 
-The vacuum "chooses" a direction in flux space. The symmetry is **spontaneously broken**—the laws are symmetric, but the vacuum state is not.
+The vacuum "chooses" a direction in flux space. The symmetry is **spontaneously broken**: the laws are symmetric, but the vacuum state is not.
 
 ### The Mexican Hat Potential
 
@@ -48,7 +48,7 @@ $$V(|J|) = -\mu^2 |J|^2 + \lambda |J|^4$$
 At the origin (|J| = 0): unstable maximum.
 At the rim (|J| = v): stable minimum.
 
-The system rolls down to the rim and stays there. Which point on the rim? Any point—the choice breaks the symmetry.
+The system rolls down to the rim and stays there. Which point on the rim? Any point: the choice breaks the symmetry.
 
 ## The Higgs Field
 
@@ -75,11 +75,11 @@ Using:
 
 **Calculation**: $1.22 \times 10^{19} \times 2.507 \times 8.3 \times 10^{-18} \approx 254$ GeV
 
-This is the electroweak scale! The measured value is 246.22 GeV—agreement within 3%.
+This is the electroweak scale! The measured value is 246.22 GeV: agreement within 3%.
 
 ::: {.callout-important}
 ## Derived, Not Input
-The Higgs VEV v = 246 GeV is not put in by hand—it emerges from the Planck mass $m_P$ (set by the lattice) and the fine structure constant $\alpha$ (from the master quadratic). The exponent 8 counts the number of α factors needed to descend from the Planck scale to the electroweak scale.
+The Higgs VEV v = 246 GeV is not put in by hand: it emerges from the Planck mass $m_P$ (set by the lattice) and the fine structure constant $\alpha$ (from the master quadratic). The exponent 8 counts the number of α factors needed to descend from the Planck scale to the electroweak scale.
 :::
 
 ## How Mass is Generated
@@ -94,7 +94,7 @@ This IS a mass term! The W boson mass:
 
 $$m_W = \frac{gv}{2} = \frac{g \times 246}{2} \approx 80 \text{ GeV}$$
 
-The photon remains massless because it corresponds to the unbroken U(1) symmetry—the direction along the rim of the Mexican hat.
+The photon remains massless because it corresponds to the unbroken U(1) symmetry: the direction along the rim of the Mexican hat.
 
 ### For Fermions
 
@@ -222,4 +222,4 @@ Create excitation above the vacuum (a Higgs boson). Watch it propagate and decay
 
 ## Transition
 
-Mass comes from the Higgs condensate. But why do different particles have different masses? The answer lies in the particle spectrum—the zoo of fundamental particles. Next, we catalog every particle and understand their relationships.
+Mass comes from the Higgs condensate. But why do different particles have different masses? The answer lies in the particle spectrum: the zoo of fundamental particles. Next, we catalog every particle and understand their relationships.

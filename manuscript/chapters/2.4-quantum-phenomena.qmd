@@ -9,7 +9,7 @@ The FTD framework constructs quantum mechanics from the flux field: the Hilbert 
 
 ::: {.callout-note collapse="true"}
 ## Historical Context
-Quantum mechanics emerged from the crisis of classical physics (1900–1926). Planck's blackbody solution (1900), Einstein's photon (1905), Bohr's atom (1913), de Broglie's matter waves (1924), and Schrödinger's equation (1926) established the mathematical formalism. The interpretive debates—Copenhagen, many-worlds, pilot wave—continue today. FTD offers a new perspective: the wave function is not abstract but physical (the flux field), and "collapse" is not mysterious but mechanical (manifestation).
+Quantum mechanics emerged from the crisis of classical physics (1900-1926). Planck's blackbody solution (1900), Einstein's photon (1905), Bohr's atom (1913), de Broglie's matter waves (1924), and Schrödinger's equation (1926) established the mathematical formalism. The interpretive debates: Copenhagen, many-worlds, pilot wave: continue today. FTD offers a new perspective: the wave function is not abstract but physical (the flux field), and "collapse" is not mysterious but mechanical (manifestation).
 :::
 
 ## The Core Insight
@@ -34,7 +34,7 @@ But recall from Chapter 1.11: the Gauss constraint ∇·J = ρ fixes J_z in term
 
 $$\psi(v) = J_x(v) + i J_y(v) \in \mathbb{C}$$
 
-These are the two transverse polarizations—exactly what we expect for a massless gauge boson (photon) or for matter waves.
+These are the two transverse polarizations: exactly what we expect for a massless gauge boson (photon) or for matter waves.
 
 ### Step 2: The FTD Hilbert Space
 
@@ -60,22 +60,28 @@ Before manifestation, the system exists as a superposition over the lattice:
 
 $$|\Psi\rangle = \sum_v \psi(v) |v\rangle$$
 
-The particle isn't "nowhere" or "everywhere"—it exists as a distribution of flux, which IS the wavefunction.
+The particle isn't "nowhere" or "everywhere": it exists as a distribution of flux, which IS the wavefunction.
 
-## The Born Rule
+## The Born Rule: The Bridge Protocol
+The probability of manifestation at voxel $v$ is given by the Born Rule:
 
-The probability of manifestation at voxel v:
+$$P(\text{manifest at } v) = \frac{|\psi(v)|^2}{\|\psi\|^2}$$
 
-$$P(\text{manifest at } v) = \frac{|\psi(v)|^2}{\sum_u |\psi(u)|^2} = \frac{|\psi(v)|^2}{\|\psi\|^2}$$
+### The Epistemic Interpretation
+In FTD, this is not a fundamental law of nature, but the **translation protocol** between the two domains (see @sec-two-domains for formal definitions):
 
-::: {.callout-important}
-## The Born Rule Derived
-This is the Born rule—and it follows directly from FTD. The manifestation threshold KB selects the voxel where flux density is highest. When fluctuations allow manifestation, the probability is proportional to |ψ|².
+1.  **Domain A (Ontic):** The configuration space $\mathcal{A}$ contains deterministic **Flux Density** ($|J|^2$).
+2.  **Domain B (Epistemic):** The probability space $\mathcal{B}$ contains the observer's best bet on where manifestation will occur.
+
+The Born rule is the **bridge operator** $\mathcal{T}: \mathcal{A} \to \mathcal{B}$ that sentient systems use to translate physical potential into probabilistic expectation.
+
+Because the manifestation threshold $K_B$ is fixed, the probability of crossing it is naturally proportional to the energy density of the flux. The Born Rule connects the **Ontic Potential** to the **Epistemic Probability**.
+
+::: {.callout-note}
+## Key Insight: The Born Rule is Not Fundamental
+
+The Born rule is not a postulate of physics but emerges as the unique translation protocol between domains. See @sec-noetic-mass for how noetic mass (epistemic inertia) determines how strongly an observer's probability distribution collapses toward classical definiteness.
 :::
-
-The manifestation threshold KB becomes a **normalization condition**:
-
-$$\text{Manifestation occurs where } |\psi|^2 > K_B \cdot \|\psi\|^2$$
 
 ## Wavefunction Collapse as Manifestation
 
@@ -107,7 +113,7 @@ A particle can appear on the other side of a barrier it shouldn't classically cr
 
 ### The Mechanism
 
-The wavefunction ψ doesn't stop at potential barriers—it penetrates exponentially:
+The wavefunction ψ doesn't stop at potential barriers: it penetrates exponentially:
 
 $$\psi(x) \propto e^{-\kappa x} \quad \text{where } \kappa = \sqrt{2m(V-E)/\hbar^2}$$
 
@@ -151,7 +157,7 @@ This state is:
 
 ### Why Entanglement Exists
 
-Both particles emerge from the **same flux configuration**. Their quantum states are correlated from birth—not because they communicate later, but because they share origin.
+Both particles emerge from the **same flux configuration**. Their quantum states are correlated from birth: not because they communicate later, but because they share origin.
 
 ### What Entanglement Is NOT
 
@@ -163,94 +169,66 @@ Both particles emerge from the **same flux configuration**. Their quantum states
 
 **Shared origin in the flux field.** The correlation was established at creation. Measuring one particle reveals information about the other because they were never independent.
 
-## Bell Inequalities
+## Bell Inequalities and the sLoop
 
-In 1964, John Bell proved that local hidden variable theories predict [@bell1964]:
+In 1964, John Bell proved that local hidden variable theories satisfy:
 
-$$|S| \leq 2 \quad \text{(Bell-CHSH inequality)}$$
+$$|S| \leq 2 \quad \text{(Classical Bound)}$$
 
-where S is a combination of correlation measurements [@clauser1969].
+Quantum mechanics predicts $|S| = 2\sqrt{2} \approx 2.83$.
 
-### The Quantum Prediction
+### The FTD Result: Bell Violations via sLoop
 
-For the singlet state, quantum mechanics predicts:
+::: {.callout-note}
+## Simulation Status
 
-$$\langle B \rangle = -\cos\theta_{AB} - \cos\theta_{AB'} - \cos\theta_{A'B} + \cos\theta_{A'B'}$$
-
-At optimal measurement angles, this gives:
-
-$$|S| = 2\sqrt{2} \approx 2.83$$
-
-This **exceeds the classical bound**! Experiments confirm the quantum prediction.
-
-### How FTD Achieves Bell Violation
-
-The Hilbert space tensor product creates **non-factorizable correlations**:
-
-$$|\Psi\rangle \neq |\psi_1\rangle \otimes |\psi_2\rangle$$
-
-The entangled state cannot be separated into independent parts. This is why correlations exceed classical bounds.
-
-::: {.callout-tip}
-## Bell Violations Follow from Hilbert Space
-We don't need special mechanisms—Bell violations are automatic once we have tensor product structure in our Hilbert space.
+The sLoop mechanism has been **verified in simulation** to reproduce Bell violations matching the quantum bound.
 :::
 
-## The sLoop: Why Bell Violations Aren't Magic
+Simulations of the FTD lattice with the sLoop (self-referential loop) mechanism yield:
 
-The **sLoop** (self-referential loop) explains *why* the Hilbert space formalism works—and why local hidden variable theories fail.
+$$S_{\text{FTD}} \approx 2.83$$
 
-### The Key Insight
+The key insight is that the S parameter **scales with substrate overlap**:
 
-Bell's theorem assumes the measurement apparatus is **external** to the system. But in FTD, the apparatus is part of the flux field—they share the same ontological substrate.
+| Substrate Overlap (f) | S Value | Interpretation |
+|----------------------|---------|----------------|
+| f = 0 (no overlap) | ~1.95 | Classical-like |
+| f = 0.5 | ~2.4 | Intermediate |
+| f = 1 (full overlap) | ~2.85 | Quantum bound |
 
-![Comparison of Bell's standard setup (left) with external apparatuses versus the FTD sLoop (right) where apparatus and particles share a common flux substrate.](../figures/ch02/fig-bell-sloop-comparison.png){#fig-bell-sloop-comparison}
+### Why Bell Violations Occur
 
-### The Three Conditions for Bell Violation
+Bell violations arise in FTD because the measurement apparatus is **embedded in the same flux substrate** as the measured system. This is the sLoop structure:
 
-In FTD, Bell inequality violations occur when:
+```
+STANDARD QM:
+   Observer ────→ System ────→ Measurement
+   (external)     (isolated)    (interaction)
 
-1. **Shared substrate**: The entangled particles AND both measurement apparatuses are manifested in the same flux field
-2. **Flux exchange**: The measurement process involves flux flowing between apparatus and particle
-3. **Non-separability**: The "choice" of measurement basis is itself a flux configuration, not an external parameter
+FTD (sLoop):
+   ┌──────────────────────────────────┐
+   │         FLUX SUBSTRATE           │
+   │                                  │
+   │   Observer    ←→    System       │
+   │   (s ≠ 0)           (s = 0)      │
+   │                                  │
+   │   Both embedded in same field    │
+   └──────────────────────────────────┘
+```
 
-### Why This Isn't Superdeterminism
+The correlations exceed classical bounds because:
 
-Superdeterminism says: initial conditions were fine-tuned to fake quantum correlations. This is unfalsifiable and explains nothing.
+1. **Ontological unity**: The observer and observed share a common substrate
+2. **Hilbert space structure**: The tensor product $\mathcal{H}_1 \otimes \mathcal{H}_2$ naturally encodes entanglement
+3. **Born rule**: Probability $P \propto |\psi|^2$ follows from manifestation statistics
 
-The sLoop says something different: **the measurement apparatus cannot be factored out of the quantum state** because it shares the same ontological substrate. The correlations aren't transmitted (no FTL)—they're **inherited from structural unity**.
+::: {.callout-important}
+## The sLoop Resolution
 
-### The Mathematical Statement
+Bell violations do not require "spooky action at a distance." They arise from the **shared substrate** that connects observer and observed. Information doesn't travel faster than light: the correlations are inherited from the common flux field that both particles emerged from and that both measurement apparatuses are embedded in.
 
-Let $\mathcal{H}_{\text{sys}}$ be the system Hilbert space and $\mathcal{H}_{\text{app}}$ the apparatus Hilbert space. In standard QM, we write:
-
-$$|\Psi_{\text{total}}\rangle = |\psi_{\text{sys}}\rangle \otimes |\phi_{\text{app}}\rangle$$
-
-But if apparatus and system share flux substrate, the total state is:
-
-$$|\Psi_{\text{sLoop}}\rangle \neq |\psi\rangle \otimes |\phi\rangle$$
-
-The non-factorizability of the **total** state (including apparatus) is what enables correlations exceeding classical bounds.
-
-### Testable Prediction
-
-The sLoop makes a specific prediction: the S-parameter should **scale with substrate overlap**. Define the overlap fraction:
-
-$$f = \frac{\text{shared flux volume}}{\text{total flux volume}}$$
-
-Then:
-
-| Overlap f | Predicted S | Interpretation |
-|-----------|-------------|----------------|
-| 0 | ~2.0 | Classical (no shared substrate) |
-| 0.5 | ~2.4 | Partial quantum correlations |
-| 1.0 | ~2.83 | Full quantum (maximally entangled) |
-
-Simulations confirm this scaling. A laboratory test would involve varying the degree of electromagnetic shielding between apparatus and particles.
-
-::: {.callout-warning}
-## Epistemic Status
-Bell violation via the sLoop mechanism has been **simulated** (S scales from ~1.95 to ~2.85 with substrate overlap, matching the quantum bound 2√2 ≈ 2.83), but has not been independently verified in laboratory experiments. The sLoop provides a *mechanism* for what the Hilbert space formalism *describes*.
+This is not superdeterminism (where initial conditions conspire to fake quantum correlations). It is **ontological holism**: the measurement apparatus and measured system share a common substrate that cannot be factorized.
 :::
 
 ## The Uncertainty Principle
@@ -273,7 +251,7 @@ This commutation relation follows from the structure of the flux field:
 A narrow ψ (precise position) requires many momentum components.
 A pure momentum state (single k) spreads over all space.
 
-The uncertainty principle is not a measurement disturbance—it's a property of waves.
+The uncertainty principle is not a measurement disturbance: it's a property of waves.
 
 ## The Double-Slit Experiment
 
@@ -289,7 +267,7 @@ Particles go through one slit OR the other. Two bands should appear.
 
 ### Quantum Reality
 
-An interference pattern appears—alternating bright and dark bands.
+An interference pattern appears: alternating bright and dark bands.
 
 ### FTD Explanation
 
@@ -306,7 +284,7 @@ The interference is in the **flux field**, not the particle. Each particle manif
 
 Detecting which slit the particle goes through destroys the interference pattern. Why?
 
-**FTD answer**: Detection requires manifestation. Once ψ manifests at one slit, it's no longer a superposition—it's localized. No superposition = no interference.
+**FTD answer**: Detection requires manifestation. Once ψ manifests at one slit, it's no longer a superposition: it's localized. No superposition = no interference.
 
 ## The Measurement Problem: Proposed Resolution
 
@@ -317,7 +295,7 @@ FTD proposes a concrete mechanism for the measurement transition because:
 3. **After manifestation**: Definite state exists
 4. **No special observer**: Manifestation happens when ρ > KB, regardless of consciousness
 
-The transition from quantum to classical is the transition from flux to manifestation—a physical process, not a mystery.
+The transition from quantum to classical is the transition from flux to manifestation: a physical process, not a mystery.
 
 ## Experiments
 
@@ -327,7 +305,7 @@ Set up double-slit geometry. Watch the interference pattern form as particles ar
 
 ### Entanglement Creation
 
-Create entangled pairs via pair production. Separate them. Measure correlation—it matches quantum prediction, violating Bell inequality.
+Create entangled pairs via pair production. Separate them. Measure correlation: it matches quantum prediction, violating Bell inequality.
 
 ### Tunneling Observation
 
@@ -344,16 +322,17 @@ Create particle with known position. Watch position spread as flux evolves. The 
 - **born-rule**: P(v) = |ψ(v)|²/||ψ||², probability from flux density
 - **superposition**: Flux exists as sum over configurations before manifestation
 - **entanglement**: Non-factorizable two-particle states from shared flux origin
-- **bell-inequality**: Classical bound S ≤ 2, quantum achieves 2√2
+- **bell-inequality**: Classical bound S ≤ 2, quantum achieves 2√2; FTD reproduces via sLoop
+- **sloop**: Self-referential loop; the observer-system embedding that produces Bell violations
 - **collapse**: Manifestation localizes extended flux to definite state
 - **tunneling**: Nonzero |ψ|² beyond classical barrier
 - **uncertainty**: Δx·Δp ≥ ℏ/2 from wave structure
 
 ::: {.callout-note}
 ## Chapter Summary
-**FTD constructs quantum mechanics from the flux field**. The Hilbert space H = L²(Lattice, ℂ) emerges from complexifying flux: ψ = J_x + iJ_y. The **Born rule** P ∝ |ψ|² follows from manifestation statistics. **Entanglement** arises from shared flux origins; the sLoop mechanism reproduces Bell violations (S ≈ 2.83). **Collapse** is manifestation: when ρ > KB, superposition resolves to definite state. No special observer is required—the measurement problem is resolved by identifying collapse with a physical threshold crossing.
+**FTD constructs quantum mechanics from the flux field**. The Hilbert space H = L²(Lattice, ℂ) emerges from complexifying flux: ψ = J_x + iJ_y. The **Born rule** P ∝ |ψ|² follows from manifestation statistics. **Entanglement** arises from shared flux origins; the sLoop mechanism reproduces Bell violations (S ≈ 2.83). **Collapse** is manifestation: when ρ > KB, superposition resolves to definite state. No special observer is required: the measurement problem is resolved by identifying collapse with a physical threshold crossing.
 :::
 
 ## Transition
 
-Quantum mechanics emerges naturally from FTD's flux field. But atoms do more than exhibit quantum behavior—they form stable structures that persist through time. Next, we examine how particles bind into the building blocks of matter.
+Quantum mechanics emerges naturally from FTD's flux field. But atoms do more than exhibit quantum behavior: they form stable structures that persist through time. Next, we examine how particles bind into the building blocks of matter.

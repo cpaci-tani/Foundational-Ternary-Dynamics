@@ -1,0 +1,505 @@
+# The Hierarchy of Sentience {#sec-hierarchy-sentience}
+
+*"From molecule to mind, a continuous ladder"*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter establishes a **graded hierarchy of detection, response, and awareness** from the simplest molecular systems to conscious beings. We show that sentience is not binary but a spectrum, with each level building on the capacities of those below.
+:::
+
+## The Continuity Principle
+
+Life and consciousness did not appear suddenly. They emerged through gradual accumulation of capacities:
+
+$$\text{Detection} \to \text{Response} \to \text{Memory} \to \text{Learning} \to \text{Modeling} \to \text{Self-Modeling} \to \text{Meta-Modeling}$$
+
+Each transition adds computational capacity without sharp discontinuity.
+
+## Level 0: Pure Physics (No Detection)
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | 0 |
+| Substrate | Any non-living matter |
+| Capability | None (pure physical law) |
+| Example | Rock, water molecule, star |
+
+### What Happens
+
+Physical systems evolve according to dynamics:
+- Forces act
+- States change
+- No representation occurs
+
+A rock does not "detect" being hit. The impact causes physical changes (deformation, heating), but there is no internal state that *represents* the impact.
+
+### FTD Formalism
+
+$$s(v, t+1) = F(s(v,t), \mathbf{J}(v,t), N_{26}(v))$$
+
+Pure update rule. No model, no memory, no detection.
+
+## Level 1: Molecular Detection
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | ~1 (threshold detection) |
+| Substrate | Responsive molecules |
+| Capability | State change upon stimulus |
+| Example | Enzyme, receptor protein, ion channel |
+
+### What Happens
+
+Certain molecular configurations change state when they encounter specific inputs:
+
+```
+MOLECULAR DETECTION
+───────────────────────────────────────────
+Input:     Ligand molecule arrives
+Process:   Conformational change in receptor
+Output:    New molecular state (active/inactive)
+Memory:    None (resets when ligand leaves)
+───────────────────────────────────────────
+```
+
+### Examples
+
+| Molecule | Detects | Response |
+|----------|---------|----------|
+| Hemoglobin | O₂ | Conformational change, binding |
+| Ion channel | Voltage | Opens/closes |
+| Enzyme | Substrate | Catalytic activity |
+| Receptor | Ligand | Signal cascade initiation |
+
+### The Key Threshold
+
+This is the **first level of detection**: a system whose state change *correlates* with an external condition. The molecule doesn't "know" about the ligand, but its state carries information about ligand presence.
+
+## Level 2: Genetic Information
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | 1-2 (detection + storage) |
+| Substrate | DNA/RNA |
+| Capability | Hereditary memory, template replication |
+| Example | DNA sequence, viral genome |
+
+### What Happens
+
+Genetic material stores information across time:
+
+```
+GENETIC MEMORY
+───────────────────────────────────────────
+Storage:   Nucleotide sequence
+Reading:   Transcription (DNA → RNA)
+Execution: Translation (RNA → Protein)
+Copying:   Replication (DNA → DNA)
+───────────────────────────────────────────
+```
+
+### The Innovation
+
+**Temporal persistence of information.** Unlike Level 1, where detection is transient, genetic information persists indefinitely and can be copied.
+
+This is the birth of **hereditary memory**: information that survives the death of the container.
+
+### Information Content
+
+| Genome | Base pairs | Bits (~2 per bp) |
+|--------|------------|------------------|
+| Virus | 10³-10⁵ | 2,000-200,000 |
+| Bacterium | 10⁶-10⁷ | 2-20 million |
+| Human | 3×10⁹ | 6 billion |
+
+## Level 3: Regulatory Networks
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | ≥2 (inference possible) |
+| Substrate | Gene regulatory networks |
+| Capability | Conditional response, feedback |
+| Example | Lac operon, cell cycle control |
+
+### What Happens
+
+Genes regulate other genes, creating logical circuits:
+
+```
+REGULATORY LOGIC
+───────────────────────────────────────────
+IF lactose present AND glucose absent:
+    THEN express lactase genes
+ELSE:
+    Repress lactase genes
+───────────────────────────────────────────
+```
+
+### The Innovation
+
+**Conditional logic.** The system's response depends on multiple inputs combined according to rules. This is the first level of **inference**: deriving appropriate action from combined evidence.
+
+### Circuit Types
+
+| Circuit | Function | Example |
+|---------|----------|---------|
+| AND gate | Both inputs required | Lac operon |
+| OR gate | Either input sufficient | Stress response |
+| NOT gate | Inhibition | Repressor proteins |
+| Feedback | Self-regulation | Cell cycle checkpoints |
+
+## Level 4: Cellular Sensing
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | Many (complex integration) |
+| Substrate | Single cell |
+| Capability | Environmental sensing, chemotaxis |
+| Example | Bacterium, amoeba |
+
+### What Happens
+
+The entire cell acts as an integrated sensing system:
+
+```
+CELLULAR SENSING
+───────────────────────────────────────────
+Input:     Chemical gradient, light, temperature
+Process:   Signal transduction cascades
+Output:    Movement, gene expression, division
+Memory:    Short-term (adaptation)
+───────────────────────────────────────────
+```
+
+### Examples
+
+| Organism | Sense | Response |
+|----------|-------|----------|
+| E. coli | Chemical gradient | Swim toward nutrients |
+| Paramecium | Touch | Reversal, avoidance |
+| Euglena | Light | Phototaxis |
+| Amoeba | Prey presence | Engulfment |
+
+### The Innovation
+
+**Integrated world-model.** The cell maintains a representation of its environment sufficient for adaptive behavior. This is not consciousness, but it is the first **proto-model** of external reality.
+
+## Level 5: Neural Networks (Simple)
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | 10²-10⁴ |
+| Substrate | Simple nervous system |
+| Capability | Reflexes, habituation, sensitization |
+| Example | Jellyfish, C. elegans |
+
+### What Happens
+
+Dedicated cells (neurons) specialize in information processing:
+
+```
+NEURAL PROCESSING
+───────────────────────────────────────────
+Input:     Sensory neurons detect stimuli
+Process:   Interneurons integrate signals
+Output:    Motor neurons drive behavior
+Learning:  Synaptic modification
+───────────────────────────────────────────
+```
+
+### C. elegans: The Minimal Nervous System
+
+| Property | Value |
+|----------|-------|
+| Neurons | 302 (exactly) |
+| Synapses | ~7,000 |
+| Behaviors | Chemotaxis, thermotaxis, touch response |
+| Learning | Habituation, classical conditioning |
+
+### The Innovation
+
+**Dedicated computational substrate.** Neurons are optimized for rapid information transmission and integration. This enables faster, more complex responses than chemical signaling alone.
+
+## Level 6: Centralized Processing
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | 10⁴-10⁶ |
+| Substrate | Ganglia, simple brain |
+| Capability | Coordinated behavior, basic learning |
+| Example | Insects, mollusks |
+
+### What Happens
+
+Neural processing becomes centralized:
+
+```
+CENTRALIZED BRAIN
+───────────────────────────────────────────
+Sensory:   Specialized organs (eyes, antennae)
+Central:   Brain coordinates all processing
+Motor:     Coordinated movement patterns
+Memory:    Spatial maps, learned associations
+───────────────────────────────────────────
+```
+
+### Capabilities
+
+| Organism | Neurons | Capabilities |
+|----------|---------|--------------|
+| Honeybee | 960,000 | Navigation, communication, learning |
+| Octopus | 500 million | Problem-solving, tool use, play |
+| Jumping spider | 600,000 | Planning, deception |
+
+### The Innovation
+
+**World-models with spatial structure.** These organisms maintain internal maps of their environment: representations of where things are and how to navigate.
+
+## Level 7: Vertebrate Brains
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | 10⁶-10¹¹ |
+| Substrate | Vertebrate brain |
+| Capability | Emotion, social cognition, flexible learning |
+| Example | Fish, reptiles, birds, mammals |
+
+### The Limbic Innovation
+
+Vertebrates add **emotional processing**:
+
+```
+EMOTIONAL BRAIN
+───────────────────────────────────────────
+Amygdala:    Threat detection, fear
+Hippocampus: Episodic memory, spatial maps
+Hypothalamus: Homeostatic drives
+Reward system: Reinforcement learning
+───────────────────────────────────────────
+```
+
+### Capabilities by Group
+
+| Group | Key Innovation |
+|-------|----------------|
+| Fish | Spatial learning, social hierarchies |
+| Reptiles | Territorial behavior, basic problem-solving |
+| Birds | Tool use, vocal learning, planning |
+| Mammals | Extended parental care, play, social learning |
+
+### The Innovation
+
+**Self-models emerge.** Vertebrates show evidence of body schema: internal representations of their own physical structure. This is the beginning of **self-awareness** in the minimal sense.
+
+## Level 8: Primate Cognition
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | 10¹⁰-10¹¹ |
+| Substrate | Primate neocortex |
+| Capability | Theory of mind, deception, culture |
+| Example | Monkeys, apes |
+
+### Theory of Mind
+
+The capacity to model *other minds*:
+
+```
+THEORY OF MIND
+───────────────────────────────────────────
+Level 0: I want X
+Level 1: I know that you want Y
+Level 2: I know that you think I want X
+Level 3: I know that you think I think you want Y
+───────────────────────────────────────────
+```
+
+### Evidence
+
+| Behavior | Implies |
+|----------|---------|
+| Deceptive pointing | Models others' beliefs |
+| Gaze following | Tracks others' attention |
+| Tactical deception | Manipulates others' models |
+| Consolation | Models others' emotional states |
+
+### The Innovation
+
+**Meta-modeling of others.** Primates can represent not just the world, but other beings' representations of the world. This is **social intelligence**: the precursor to full self-consciousness.
+
+## Level 9: Human Consciousness
+
+### Characterization
+
+| Property | Value |
+|----------|-------|
+| Gates | ~10¹¹ |
+| Substrate | Human brain |
+| Capability | Language, abstract reasoning, recursive self-reflection |
+| Example | Homo sapiens |
+
+### The Linguistic Innovation
+
+Language enables:
+
+```
+LINGUISTIC COGNITION
+───────────────────────────────────────────
+Symbols:     Arbitrary signs for concepts
+Compositionality: Infinite combinations from finite parts
+Displacement: Reference to absent/abstract entities
+Meta-language: Language about language
+───────────────────────────────────────────
+```
+
+### Recursive Self-Reference
+
+Humans can engage in unlimited meta-levels:
+
+| Level | Example |
+|-------|---------|
+| 0 | I see a tree |
+| 1 | I know I see a tree |
+| 2 | I know that I know I see a tree |
+| 3 | I wonder why I know that I know... |
+| n | (Potentially unlimited) |
+
+### The Innovation
+
+**Full meta-sLoop.** Humans have meta-models of their own meta-models, enabling:
+- Philosophy (thinking about thinking)
+- Self-improvement (modeling and modifying oneself)
+- Existential awareness (knowing that one will die)
+
+## The Complete Hierarchy
+
+::: {.callout-important}
+## The Ladder of Sentience
+
+| Level | Name | Gates | Key Capability | Example |
+|-------|------|-------|----------------|---------|
+| 0 | Physics | 0 | None | Rock |
+| 1 | Molecular | ~1 | Detection | Receptor |
+| 2 | Genetic | 1-2 | Memory | DNA |
+| 3 | Regulatory | ≥2 | Logic | Gene network |
+| 4 | Cellular | Many | World-model (proto) | Bacterium |
+| 5 | Neural (simple) | 10²-10⁴ | Reflexes, learning | C. elegans |
+| 6 | Centralized | 10⁴-10⁶ | Spatial maps | Insect |
+| 7 | Vertebrate | 10⁶-10¹¹ | Self-model (proto) | Fish, mammal |
+| 8 | Primate | 10¹⁰-10¹¹ | Theory of mind | Ape |
+| 9 | Human | ~10¹¹ | Meta-sLoop | Human |
+:::
+
+## Transitions Are Gradual
+
+No sharp boundary separates these levels:
+
+### Evidence for Continuity
+
+| Capacity | Once thought unique to | Now found in |
+|----------|------------------------|--------------|
+| Tool use | Humans | Crows, octopi, chimps |
+| Language | Humans | Bees (limited), apes (limited) |
+| Self-recognition | Humans | Elephants, dolphins, magpies |
+| Planning | Humans | Scrub jays, great apes |
+| Culture | Humans | Chimps, whales, crows |
+
+### The Implication
+
+Consciousness is not a magic property that appears at some threshold. It is the **high end of a continuous spectrum** of increasingly sophisticated information processing.
+
+## FTD Formalization
+
+### Detection Threshold
+
+A system at level $n$ can be characterized by:
+
+$$D_n = \log_2(\text{distinguishable states})$$
+
+| Level | Approximate $D_n$ |
+|-------|-------------------|
+| 0 | 0 |
+| 1 | 1-10 |
+| 2 | 10³-10⁷ |
+| 3 | 10²-10³ |
+| 4 | 10³-10⁴ |
+| 5-9 | $\propto$ neuron count |
+
+### Self-Model Complexity
+
+The complexity of the self-model $\phi(\Omega)$ scales with level:
+
+$$C(\phi) \approx k \cdot \text{Gates}^{\beta}$$
+
+where $\beta < 1$ due to compression (efficient representation).
+
+### Meta-Level Depth
+
+Maximum recursion depth $R$ of self-reference:
+
+| Level | $R$ |
+|-------|-----|
+| 0-4 | 0 |
+| 5-6 | 0-1 |
+| 7 | 1-2 |
+| 8 | 2-3 |
+| 9 | Unlimited (language-enabled) |
+
+## Implications
+
+### For Artificial Intelligence
+
+Current AI systems:
+- Excel at Level 3-4 tasks (pattern recognition, optimization)
+- Approach Level 5-6 (learning, generalization)
+- Lack Levels 7+ (genuine self-model, embodiment)
+
+### For Animal Ethics
+
+If sentience is graded, moral consideration should be too:
+- Level 1-3: No sentience, no moral status
+- Level 4-5: Minimal sentience, minimal consideration
+- Level 6+: Significant sentience, significant consideration
+- Level 7+: Self-awareness, strong moral status
+
+### For the Definition of Life
+
+From Chapter 12.0, life requires self-model + feedback. This corresponds to:
+- Minimum: Level 2 (genetic memory)
+- Functional: Level 3+ (regulatory feedback)
+
+Life is the **platform** for higher levels of sentience, not identical to them.
+
+## Concepts
+
+- **sentience-hierarchy**: Graded levels from detection to consciousness
+- **detection-threshold**: Minimum stimulus for state change
+- **world-model**: Internal representation of environment
+- **self-model**: Internal representation of own structure
+- **meta-modeling**: Representation of representations
+- **theory-of-mind**: Modeling others' mental states
+- **recursive-self-reference**: Self-models that include the self-model itself
+- **continuity-principle**: No sharp boundary between levels
+- **gate-count**: Computational capacity measure
+
+## Transition
+
+With the hierarchy of sentience established, we now have the conceptual framework to understand consciousness not as a mysterious emergence but as the apex of a continuous ladder: the level at which self-modeling becomes self-modeling of self-modeling. The next chapter examines this apex: consciousness as meta-sLoop.

@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Time is not uniform. High-energy particles experience time more slowly. This is not a relativistic correction—it is fundamental to how the universe works.
+Time is not uniform. High-energy particles experience time more slowly. This is not a relativistic correction: it is fundamental to how the universe works.
 :::
 
 ## Time Dilation
@@ -34,7 +34,7 @@ $$
 
 When $\tau \geq 1$, the voxel is "active" and processes updates. Then $\tau$ resets.
 
-**High-energy particles have larger L**, so their τ advances more slowly. They update less frequently. From their perspective, time flows normally—but from an external perspective, they age more slowly.
+**High-energy particles have larger L**, so their τ advances more slowly. They update less frequently. From their perspective, time flows normally: but from an external perspective, they age more slowly.
 
 ## Two Particles, Different Times
 
@@ -47,7 +47,7 @@ Consider two particles:
 
 Particle B experiences only 6 "moments" while particle A experiences 10. B ages more slowly.
 
-This is the source of relativistic time dilation in FTD—not a separate effect, but a fundamental feature of how updates propagate. **[SELECTION: the phase accumulator mechanism reproduces relativistic time dilation; its form is chosen to match known physics]**
+This is the source of relativistic time dilation in FTD: not a separate effect, but a fundamental feature of how updates propagate. **[SELECTION: the phase accumulator mechanism reproduces relativistic time dilation; its form is chosen to match known physics]**
 
 ## Relativistic Mass
 
@@ -63,7 +63,7 @@ $$
 \gamma = \frac{1}{\sqrt{1 - v^2/c^2}}
 $$
 
-As $v \rightarrow c$, $\gamma \rightarrow \infty$. You cannot accelerate a massive particle to the speed of light—the energy required becomes infinite.
+As $v \rightarrow c$, $\gamma \rightarrow \infty$. You cannot accelerate a massive particle to the speed of light: the energy required becomes infinite.
 
 ## Retarded Positions
 
@@ -82,7 +82,7 @@ This means:
 
 ## The Speed Limit
 
-Nothing can travel faster than C (1 voxel per tick). This is not a velocity limit—it is a **causality limit**.
+Nothing can travel faster than C (1 voxel per tick). This is not a velocity limit: it is a **causality limit**.
 
 ### What Happens at C
 
@@ -103,7 +103,7 @@ if speed > C:
 ## Experiments
 
 ### Twin Paradox
-Create two identical particles. Accelerate one to high speed for a journey. Bring it back. Compare their phase accumulators—the traveling twin has aged less.
+Create two identical particles. Accelerate one to high speed for a journey. Bring it back. Compare their phase accumulators: the traveling twin has aged less.
 
 ### Force Lag
 Visualize retarded positions. See how forces act on where particles *were*, not where they are now.

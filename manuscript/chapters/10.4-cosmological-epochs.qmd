@@ -66,7 +66,7 @@ The inflaton field φ is identified with the **mean flux amplitude** before mani
 
 $$\phi \equiv \langle |J| \rangle_{\text{pre-manifest}}$$
 
-When ρ < KB everywhere, no particles exist—only pure flux potential.
+When ρ < KB everywhere, no particles exist: only pure flux potential.
 
 #### The Starobinsky Potential
 
@@ -92,7 +92,7 @@ The Starobinsky potential is **motivated by** the FTD action structure, but the 
 2. Identifying the inflaton with mean flux amplitude (interpretation)
 3. Assuming homogeneous initial conditions (boundary condition)
 
-The n_s = 0.9649 match to Planck data is suggestive but not uniquely determined by FTD—many inflationary models give similar n_s values. The prediction r = 0.0033 is testable but not yet ruled in or out.
+The n_s = 0.9649 match to Planck data is suggestive but not uniquely determined by FTD: many inflationary models give similar n_s values. The prediction r = 0.0033 is testable but not yet ruled in or out.
 :::
 
 #### How Inflation Ends
@@ -146,7 +146,7 @@ This is exactly the right order of magnitude for baryogenesis.
 
 **3. Departure from Equilibrium**
 
-The electroweak phase transition in FTD is **first-order**—it proceeds through bubble nucleation rather than smooth crossover. Inside the bubbles, the Higgs condensate forms; outside, it hasn't yet.
+The electroweak phase transition in FTD is **first-order**: it proceeds through bubble nucleation rather than smooth crossover. Inside the bubbles, the Higgs condensate forms; outside, it hasn't yet.
 
 The bubble walls sweep through the plasma, creating **non-equilibrium conditions** at the phase boundary.
 
@@ -171,7 +171,7 @@ $$\eta \approx 6 \times 10^{-10}$$
 ## Epistemic Status: Baryogenesis
 This mechanism **demonstrates** that FTD contains the necessary ingredients for baryogenesis:
 1. CP violation from the CKM phase (derived)
-2. First-order electroweak transition (assumed—see caveat below)
+2. First-order electroweak transition (assumed: see caveat below)
 3. Sphaleron processes (standard physics)
 
 **Key caveat**: Whether the electroweak transition is truly first-order in FTD (as required for this mechanism) is **assumed, not derived**. In the Standard Model, lattice calculations show the transition is a smooth crossover for m_H = 125 GeV. FTD proposes modifications that could restore first-order behavior, but this has not been rigorously demonstrated. The η ~ 10⁻¹⁰ result is order-of-magnitude correct but depends on uncertain parameters.
@@ -414,4 +414,4 @@ Plot cosmic star formation rate over time.
 
 ## Transition
 
-The cosmic story continues. Now we explore extreme phenomena—black holes, gravitational waves, and the most violent events in the universe.
+The cosmic story continues. Now we explore extreme phenomena: black holes, gravitational waves, and the most violent events in the universe.

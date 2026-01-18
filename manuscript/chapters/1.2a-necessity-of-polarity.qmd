@@ -1,0 +1,222 @@
+# The Necessity of Polarity {#sec-necessity-polarity}
+
+*"Why three states and no other?"*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter proves that the ternary state space $\{-1, 0, +1\}$ is not an arbitrary choice but the **unique minimal structure** supporting the physics we observe. We derive this from conservation laws, symmetry requirements, and stability conditions.
+:::
+
+## The Assumption We Must Justify
+
+FTD postulates that each voxel has state $s(v,t) \in \{-1, 0, +1\}$. But why?
+
+- Why not binary $\{0, 1\}$?
+- Why not quaternary $\{-1, 0, +1, +2\}$?
+- Why not continuous $s \in \mathbb{R}$?
+
+This chapter shows that ternary is **forced** by the requirements of:
+1. Charge conservation
+2. Pair production/annihilation
+3. Stable vacuum
+4. Minimal complexity
+
+## Requirement 1: Conservation with Polarity
+
+### The Problem with Binary
+
+Consider a binary state space $\{0, 1\}$:
+- State 1 represents "something"
+- State 0 represents "nothing"
+
+**Problem**: How does annihilation work?
+
+If two particles meet, they should be able to cancel. But $1 + 1 = 2 \neq 0$. Binary states cannot conserve "charge" through annihilation.
+
+### The Solution: Opposite States
+
+For annihilation to conserve charge:
+$$s_1 + s_2 = 0$$
+
+This requires states of opposite sign. The minimal set is $\{-1, +1\}$.
+
+### Why Include Zero?
+
+If we only have $\{-1, +1\}$, what happens after annihilation? The voxel must be in *some* state. We need a neutral state representing "no manifestation":
+
+$$\{-1, +1\} \cup \{0\} = \{-1, 0, +1\}$$
+
+::: {.callout-important}
+## Theorem: Ternary from Conservation
+
+Any state space supporting:
+1. Pair production ($0 \to s_+ + s_-$)
+2. Annihilation ($s_+ + s_- \to 0$)
+3. Charge conservation ($\sum s = \text{const}$)
+
+must contain at least three states: positive, negative, and neutral.
+:::
+
+## Requirement 2: Pair Production
+
+### Symmetry of Genesis
+
+When energy concentrates and manifestation occurs, the resulting particles must:
+- Conserve total charge (net zero from void)
+- Have opposite properties (to be distinguishable)
+- Be equally likely (symmetry)
+
+This requires:
+$$0 \xrightarrow{\text{genesis}} (+1) + (-1)$$
+
+### Why Exactly Two Polarities?
+
+Could we have three or more polarities (like quarks with three colors)?
+
+At the **fundamental** level, we need:
+- One positive polarity
+- One negative polarity (its opposite)
+- One neutral state (the ground)
+
+Higher structures (like color charge) emerge from **combinations** of fundamental states, not from additional fundamental polarities.
+
+::: {.callout-note}
+## Color as Emergent
+
+FTD derives $N_c = 3$ colors from the spatial dimensionality of the lattice (3D), not from additional fundamental states. Color is a **geometric** property of how triads bind, not an additional state variable.
+:::
+
+## Requirement 3: Stable Vacuum
+
+### The Vacuum Must Be Achievable
+
+After all matter and antimatter annihilate, what remains? The vacuum: all voxels in state 0.
+
+For the vacuum to be:
+- Achievable (reachable by dynamics)
+- Stable (not spontaneously decaying)
+- Unique (no equivalent alternative)
+
+There must be exactly one neutral state, and it must be the ground state.
+
+### Why Not Multiple Neutral States?
+
+If we had $\{-1, 0_a, 0_b, +1\}$ with two neutral states:
+- Which is the "true" vacuum?
+- Can $0_a$ transition to $0_b$?
+- This adds structure without physical necessity
+
+**Parsimony selects one neutral state**.
+
+## Requirement 4: Minimal Complexity
+
+### The Kolmogorov Argument
+
+Among all state spaces satisfying requirements 1-3, which has minimal description complexity?
+
+| State Space | Size | Satisfies 1-3? | Complexity |
+|-------------|------|----------------|------------|
+| $\{0, 1\}$ | 2 | No (no annihilation) | Low but fails |
+| $\{-1, 0, +1\}$ | 3 | Yes | Minimal |
+| $\{-2, -1, 0, +1, +2\}$ | 5 | Yes | Higher |
+| $\mathbb{Z}$ | $\infty$ | Yes | Infinite |
+
+::: {.callout-important}
+## Theorem: Ternary is Minimal
+
+The state space $\{-1, 0, +1\}$ is the **unique minimal** structure satisfying conservation, pair production, and vacuum stability.
+:::
+
+## The Formal Proof
+
+### Definition (Admissible State Space)
+
+A state space $S$ is **admissible** if:
+1. $S$ contains an identity element $0$ (vacuum)
+2. For each $s \in S \setminus \{0\}$, there exists $\bar{s} \in S$ with $s + \bar{s} = 0$ (annihilation)
+3. $S$ is closed under allowed transitions (dynamics)
+
+### Theorem (Uniqueness of Ternary)
+
+The minimal admissible state space is $S = \{-1, 0, +1\}$.
+
+**Proof**:
+
+1. By (1), $0 \in S$.
+
+2. By (2), if any non-zero element exists, its inverse must exist. Let $s \neq 0$ be in $S$. Then $\bar{s} = -s \in S$.
+
+3. By minimality, $S = \{0, s, -s\}$ for some $s \neq 0$.
+
+4. By convention (choosing units), set $s = 1$.
+
+5. Therefore $S = \{-1, 0, +1\}$. $\square$
+
+## Alternative State Spaces
+
+### What If States Were Continuous?
+
+If $s \in \mathbb{R}$:
+- Annihilation works: $s + (-s) = 0$
+- But manifestation is no longer discrete
+- "Particle" becomes ill-defined
+- Conservation becomes approximate, not exact
+
+Continuous states blur the distinction between potential (flux) and actual (manifestation). FTD keeps these separate: flux is continuous, states are discrete.
+
+### What If We Had More States?
+
+If $S = \{-n, ..., -1, 0, +1, ..., +n\}$ for $n > 1$:
+- All requirements still satisfied
+- But additional states add structure without new physics
+- Why would $+2$ decay to $+1$ rather than directly to $0$?
+- Parsimony rejects this
+
+### What About Non-Integer States?
+
+If $S = \{-1, -1/3, 0, +1/3, +1\}$ (like quark charges):
+- These are not fundamental states
+- Fractional charges emerge from confinement
+- The fundamental states remain $\{-1, 0, +1\}$
+
+## Connection to Physical Charges
+
+### Electron Charge
+
+The electron has charge $-1$ in natural units. This is the fundamental negative state.
+
+### Quark Charges
+
+Quarks have charges $+2/3$ and $-1/3$. But these are **effective charges** arising from:
+- Confinement in triads
+- The 3D geometry of binding
+- Not from additional fundamental states
+
+### Antiparticles
+
+Every particle has an antiparticle with opposite charge. This is the $+1 \leftrightarrow -1$ symmetry of the state space.
+
+## The Ternary Structure in FTD Dynamics
+
+The ternary states appear throughout FTD:
+
+| Domain | Ternary Structure |
+|--------|-------------------|
+| States | $\{-1, 0, +1\}$ |
+| Polarity selection | $\text{sign}(\nabla \cdot \mathbf{J})$ |
+| Charge conservation | $\sum s = 0$ for genesis |
+| Annihilation | $(+1) + (-1) \to 0 + 0$ |
+| CPT symmetry | $s \to -s$ under charge conjugation |
+
+## Concepts
+
+- **ternary-necessity**: The state space $\{-1, 0, +1\}$ is forced, not chosen
+- **polarity**: The distinction between $+1$ and $-1$ states
+- **admissible-state-space**: State space satisfying conservation and dynamics
+- **minimality**: Ternary as the smallest admissible structure
+- **vacuum-uniqueness**: Exactly one neutral ground state
+- **charge-conservation**: $\sum s$ is constant under dynamics
+
+## Transition
+
+Having established that ternary states are necessary, we now turn to what these states do: how they interact, combine, and form the structures of the physical world.

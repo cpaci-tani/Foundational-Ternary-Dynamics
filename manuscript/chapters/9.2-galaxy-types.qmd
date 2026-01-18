@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Galaxies come in distinct types, but these aren't fixed categories—they represent different evolutionary states, shaped by mergers, environment, and star formation history.
+Galaxies come in distinct types, but these aren't fixed categories: they represent different evolutionary states, shaped by mergers, environment, and star formation history.
 :::
 
 ## The Hubble Classification
@@ -172,4 +172,4 @@ Place galaxy in cluster. Watch transformation.
 
 ## Transition
 
-The Milky Way is our home galaxy—a barred spiral. Let's explore our cosmic neighborhood in detail.
+The Milky Way is our home galaxy: a barred spiral. Let's explore our cosmic neighborhood in detail.

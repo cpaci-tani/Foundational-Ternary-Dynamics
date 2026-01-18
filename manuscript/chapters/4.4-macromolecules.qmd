@@ -16,7 +16,7 @@ Chains of amino acids that do everything in life.
 20 standard amino acids, each with:
 - Amino group (-NH₂)
 - Carboxyl group (-COOH)
-- R group (side chain—what makes each unique)
+- R group (side chain: what makes each unique)
 
 ```
         R    O
@@ -63,11 +63,11 @@ Information storage molecules.
 ```
 Sugar-Phosphate backbone
         |
-    5'— P — S — P — S — P — S —3'
+    5':  P :  S :  P :  S :  P :  S : 3'
             |       |       |
             A ≡ T   G ≡ C   A ≡ T
             |       |       |
-    3'— P — S — P — S — P — S —5'
+    3':  P :  S :  P :  S :  P :  S : 5'
 
 Base pairs:
   A-T: 2 hydrogen bonds
@@ -190,4 +190,4 @@ Build polymers from monomers. Compare properties.
 
 ## Transition
 
-Macromolecules have complex properties. Now we zoom out to see how molecules aggregate into bulk matter—the different states and their transitions.
+Macromolecules have complex properties. Now we zoom out to see how molecules aggregate into bulk matter: the different states and their transitions.

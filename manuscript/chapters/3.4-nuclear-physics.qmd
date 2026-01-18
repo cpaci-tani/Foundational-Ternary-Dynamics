@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The nucleus contains almost all of an atom's mass, bound by the strong force. When nuclei rearrange, they release or absorb enormous energy—the power of stars and bombs.
+The nucleus contains almost all of an atom's mass, bound by the strong force. When nuclei rearrange, they release or absorb enormous energy: the power of stars and bombs.
 :::
 
 ## Nuclear Binding
@@ -64,7 +64,7 @@ Each term emerges from flux geometry **[THEOREM: derived in companion work using
 
 ::: {.callout-important}
 ## All Within 2%
-The semi-empirical mass formula coefficients are not fitted—they emerge from FTD geometry with the same integers (K_B, α, N_c, n_eff) that determine particle masses and coupling constants.
+The semi-empirical mass formula coefficients are not fitted: they emerge from FTD geometry with the same integers (K_B, α, N_c, n_eff) that determine particle masses and coupling constants.
 :::
 
 ### Volume Term: Strong Force Saturation
@@ -99,7 +99,7 @@ Certain nuclei are extraordinarily stable: Z or N = 2, 8, 20, 28, 50, 82, 126
 
 ### FTD Explanation: Flux Standing Waves
 
-In FTD, nuclear stability corresponds to **closed flux shells**—standing wave patterns that fill completely:
+In FTD, nuclear stability corresponds to **closed flux shells**: standing wave patterns that fill completely:
 
 | Magic Number | Flux Configuration |
 |--------------|-------------------|
@@ -116,7 +116,7 @@ The spin-orbit coupling (from flux frame rotation) splits energy levels, shiftin
 ### Doubly Magic Nuclei
 
 Nuclei with both Z AND N magic are exceptionally stable:
-- ⁴He (Z=2, N=2) — "alpha particle"
+- ⁴He (Z=2, N=2) :  "alpha particle"
 - ¹⁶O (Z=8, N=8)
 - ⁴⁰Ca (Z=20, N=20)
 - ²⁰⁸Pb (Z=82, N=126)
@@ -274,4 +274,4 @@ Trigger one fission. Watch the chain reaction propagate.
 
 ## Transition
 
-Nuclear physics explains where elements come from (stars) and where nuclear energy comes from (binding energy). Now we scale up to chemistry—how atoms connect into molecules.
+Nuclear physics explains where elements come from (stars) and where nuclear energy comes from (binding energy). Now we scale up to chemistry: how atoms connect into molecules.

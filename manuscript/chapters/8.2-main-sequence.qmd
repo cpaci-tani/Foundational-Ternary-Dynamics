@@ -39,7 +39,7 @@ $$
 
 Step by step:
 ```
-p + p → D + e⁺ + νₑ     (slow—rate limiting)
+p + p → D + e⁺ + νₑ     (slow: rate limiting)
 D + p → ³He + γ
 ³He + ³He → ⁴He + 2p
 ```
@@ -52,7 +52,7 @@ Carbon, nitrogen, oxygen catalyze fusion:
 ¹²C + p → ¹³N + γ
 ¹³N → ¹³C + e⁺ + νₑ
 ¹³C + p → ¹⁴N + γ
-¹⁴N + p → ¹⁵O + γ     (slow—rate limiting)
+¹⁴N + p → ¹⁵O + γ     (slow: rate limiting)
 ¹⁵O → ¹⁵N + e⁺ + νₑ
 ¹⁵N + p → ¹²C + ⁴He
 ```
@@ -83,7 +83,7 @@ Stars are classified by temperature:
 ```
 O B A F G K M (L T Y for brown dwarfs)
 
-"(Traditional mnemonic: O, B, A, F, G, K, M, L, T, Y — ordered by decreasing surface temperature)"
+"(Traditional mnemonic: O, B, A, F, G, K, M, L, T, Y :  ordered by decreasing surface temperature)"
 ```
 
 | Class | Temperature | Color | Example |
@@ -192,4 +192,4 @@ Input mass. Calculate main sequence lifetime.
 
 ## Transition
 
-Stars don't just burn hydrogen. They forge heavier elements in their cores. Next, we explore stellar nucleosynthesis—the origin of the periodic table.
+Stars don't just burn hydrogen. They forge heavier elements in their cores. Next, we explore stellar nucleosynthesis: the origin of the periodic table.

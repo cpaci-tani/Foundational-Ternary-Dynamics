@@ -211,4 +211,4 @@ Visualize vacuum energy density across space.
 
 ## Transition
 
-We've explored extreme phenomena. Now we step back to see how complexity emerges from simple rules—self-organization, entropy, and the nature of emergence.
+We've explored extreme phenomena. Now we step back to see how complexity emerges from simple rules: self-organization, entropy, and the nature of emergence.

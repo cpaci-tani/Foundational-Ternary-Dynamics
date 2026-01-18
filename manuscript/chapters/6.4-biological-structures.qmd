@@ -16,7 +16,7 @@ Biological organization emerges from the same flux dynamics governing all matter
 - **Information storage** = DNA base pairing as specific flux-mediated hydrogen bond patterns
 - **Metabolism** = controlled flux transfer between molecular configurations
 
-Life is organized matter—flux configurations that maintain and replicate themselves against entropic dissipation.
+Life is organized matter: flux configurations that maintain and replicate themselves against entropic dissipation.
 :::
 
 ## The Cell Membrane
@@ -242,4 +242,4 @@ Assemble organelles within membrane. Create minimal cell.
 
 ## Transition
 
-We've explored matter at molecular scales. Now we zoom out dramatically—to planets, where gravity dominates and geology shapes worlds.
+We've explored matter at molecular scales. Now we zoom out dramatically: to planets, where gravity dominates and geology shapes worlds.

@@ -198,4 +198,4 @@ Inject particles at polar cusps. See light emission.
 
 ## Transition
 
-We've explored planets in detail. Now we scale up to the engines that power solar systems—stars themselves.
+We've explored planets in detail. Now we scale up to the engines that power solar systems: stars themselves.

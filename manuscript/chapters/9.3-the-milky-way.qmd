@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-We live inside a galaxy—a barred spiral of several hundred billion stars, with a supermassive black hole at its center. The Milky Way is our address in the universe.
+We live inside a galaxy: a barred spiral of several hundred billion stars, with a supermassive black hole at its center. The Milky Way is our address in the universe.
 :::
 
 ::: {.callout-note}

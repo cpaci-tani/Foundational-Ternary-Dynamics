@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The universe is not merely complicated—it is complex. Complexity means the whole has properties that no part possesses. From quarks to consciousness, each level of organization reveals new phenomena invisible from below.
+The universe is not merely complicated: it is complex. Complexity means the whole has properties that no part possesses. From quarks to consciousness, each level of organization reveals new phenomena invisible from below.
 :::
 
 ## Emergence
@@ -71,7 +71,7 @@ Higher levels influence lower:
 - Market forces affect individual decisions
 - Meaning affects brain states
 
-Not mystical—just complex feedback.
+Not mystical: just complex feedback.
 
 ## Measures of Complexity
 
@@ -232,7 +232,7 @@ Wolfram's observation:
 - No shortcut exists
 - Must simulate to know outcome
 
-This simulation may have computational irreducibility—we cannot predict what will emerge without running it.
+This simulation may have computational irreducibility: we cannot predict what will emerge without running it.
 
 ## Experiments
 
@@ -254,4 +254,4 @@ Tune parameters to find critical point. Maximum complexity there.
 
 ## Transition
 
-Complexity builds. But why does this particular complexity exist? Why these constants, these particles, this universe? Next, we explore the anthropic window—why the universe allows observers at all.
+Complexity builds. But why does this particular complexity exist? Why these constants, these particles, this universe? Next, we explore the anthropic window: why the universe allows observers at all.

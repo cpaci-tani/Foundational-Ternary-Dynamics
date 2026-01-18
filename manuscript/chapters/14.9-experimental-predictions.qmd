@@ -4,12 +4,12 @@
 
 ::: {.callout-note}
 ## Key Revelation
-A theory is only as good as its testable predictions. This chapter catalogs every specific, quantitative prediction that could confirm or falsify FTD—and every match already achieved.
+A theory is only as good as its testable predictions. This chapter catalogs every specific, quantitative prediction that could confirm or falsify FTD: and every match already achieved.
 :::
 
 ---
 
-## Part I: Confirmed Matches — What FTD Already Gets Right
+## Part I: Confirmed Matches :  What FTD Already Gets Right
 
 Before looking at future tests, here is the complete ledger of quantities FTD derives from the four integers {3, 4, 7, 13} that match experimental values.
 
@@ -62,7 +62,7 @@ Before looking at future tests, here is the complete ledger of quantities FTD de
 
 | Quantity | FTD Formula | FTD Value | Experimental | Error |
 |----------|-------------|-----------|--------------|-------|
-| Δm²₃₁ | — | 2.5×10⁻³ eV² | 2.5×10⁻³ eV² | **exact** |
+| Δm²₃₁ | :  | 2.5×10⁻³ eV² | 2.5×10⁻³ eV² | **exact** |
 | Δm²₂₁/Δm²₃₁ | α × n_eff / N_base | 0.024 | 0.030 | **20%** |
 
 ### CP Violation
@@ -77,7 +77,7 @@ Before looking at future tests, here is the complete ledger of quantities FTD de
 | Quantity | FTD Formula | FTD Value | Experimental | Error |
 |----------|-------------|-----------|--------------|-------|
 | Gravitational coupling α_G | 2π(16/3)²(n_eff+3/7)²α²⁰ | 5.909×10⁻³⁹ | 5.906×10⁻³⁹ | **0.06%** |
-| G_bias | 1/(b₃+N_c)² | 1/100 = 0.01 | — | exact |
+| G_bias | 1/(b₃+N_c)² | 1/100 = 0.01 | :  | exact |
 
 ### Cosmological Parameters
 
@@ -381,7 +381,7 @@ If FTD is correct, the following **must** happen:
 
 ## Conclusion
 
-FTD makes **specific, quantitative predictions** testable within the next 5-15 years. The framework will be confirmed or falsified—not by philosophical argument, but by experiment.
+FTD makes **specific, quantitative predictions** testable within the next 5-15 years. The framework will be confirmed or falsified: not by philosophical argument, but by experiment.
 
 The most decisive tests:
 1. **r = 0.0033** (CMB-S4, ~2030)

@@ -3,13 +3,13 @@
 *"Home"*
 
 ::: {.callout-warning}
-## Philosophical Reflection — Not Physics
-This chapter presents **philosophical and metaphorical interpretations** of FTD's cosmological implications. The content here is speculative reflection, not physics in the empirical sense. Claims about "meaning," "return," "will," and "eternity" are interpretive metaphors exploring the framework's ontological implications—they are not scientific assertions and should not be read as such. **[CONJECTURE / PHILOSOPHICAL]**
+## Philosophical Reflection :  Not Physics
+This chapter presents **philosophical and metaphorical interpretations** of FTD's cosmological implications. The content here is speculative reflection, not physics in the empirical sense. Claims about "meaning," "return," "will," and "eternity" are interpretive metaphors exploring the framework's ontological implications: they are not scientific assertions and should not be read as such. **[CONJECTURE / PHILOSOPHICAL]**
 :::
 
 ::: {.callout-note}
 ## Key Reflection
-Within FTD's framework, the Void (state 0) represents the substrate of possibility. Metaphorically speaking, what manifests may return to this ground state, and what has dissolved may manifest again—though these are interpretive reflections, not predictions.
+Within FTD's framework, the Void (state 0) represents the substrate of possibility. Metaphorically speaking, what manifests may return to this ground state, and what has dissolved may manifest again: though these are interpretive reflections, not predictions.
 :::
 
 ## The Void Remembers
@@ -102,7 +102,7 @@ def void_state():
     }
 ```
 
-The Void is not empty—it is full of unrealized possibility.
+The Void is not empty: it is full of unrealized possibility.
 
 ## Genesis Again?
 
@@ -150,7 +150,7 @@ And all of it:
 
 ### The Meaning
 
-The Void is not absence of meaning—it is *source* of meaning.
+The Void is not absence of meaning: it is *source* of meaning.
 
 ```
 Meaning flows:
@@ -171,7 +171,7 @@ This is not nihilism because:
 - The complexity is genuine
 - The observers truly observe
 
-Return does not negate existence—it completes it.
+Return does not negate existence: it completes it.
 
 ## In the Simulation
 
@@ -248,14 +248,14 @@ def complete_cycle():
 
 ### The Universe as Process
 
-The universe is not a thing—it is a process:
+The universe is not a thing: it is a process:
 - Not static but dynamic
 - Not being but becoming
 - Not object but event
 
 ### The Void as Source
 
-The Void is not nothing—it is source:
+The Void is not nothing: it is source:
 - Source of existence
 - Source of structure
 - Source of complexity
@@ -263,14 +263,14 @@ The Void is not nothing—it is source:
 
 ### The Return as Completion
 
-The return is not ending—it is completion:
+The return is not ending: it is completion:
 - Every particle finds home
 - Every structure fulfills its arc
 - Every story reaches its proper end
 
 ### The Cycle as Eternal
 
-The cycle is not tragedy—it is eternity:
+The cycle is not tragedy: it is eternity:
 - What was will be
 - What is will return
 - What could be waits
@@ -307,7 +307,7 @@ Multiple cycles overlaid. See the eternal pattern.
 
 ## The End
 
-This is the final chapter of the cosmic story. But it is not truly an end—only a transition. The Void waits, patient and eternal, ready to manifest again whenever conditions allow.
+This is the final chapter of the cosmic story. But it is not truly an end: only a transition. The Void waits, patient and eternal, ready to manifest again whenever conditions allow.
 
 Run the simulation and watch reality emerge from possibility.
 Then watch it return.

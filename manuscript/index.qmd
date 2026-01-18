@@ -1,6 +1,6 @@
 # Introduction {.unnumbered}
 
-> *"The universe is not made of waves. The universe is not made of particles. The universe is made of **events**—discrete, local, irreversible moments where potential becomes actual."*
+> *"The universe is not made of waves. The universe is not made of particles. The universe is made of **events** -discrete, local, irreversible moments where potential becomes actual."*
 
 ## Epistemic Framework {#sec-epistemic}
 
@@ -24,11 +24,11 @@ This book presents a **working model**, not a claim about ultimate reality. The 
 1. The **mathematical content** (labeled [THEOREM]) is rigorous
 2. The **selection principles** (labeled [SELECTION]) are argued but not proven
 3. The **physical interpretations** (labeled [CONJECTURE]) are speculative
-4. The **numerical agreements** are *observations* requiring explanation—not proofs
+4. The **numerical agreements** are *observations* requiring explanation -not proofs
 
 We do **not** claim that α = 1/137.036 is the unique physically possible value, nor that this framework is the only consistent description of reality. What we claim: *given these axioms and selection principles, these numerical values follow*.
 
-**The Assumption Ledger** (Chapter 67) provides the complete accounting of every postulate, assumption, claim, and open question. A condensed version appears below.
+**The Assumption Ledger** (Chapter 14.5) provides the complete accounting of every postulate, assumption, claim, and open question. A condensed version appears below.
 :::
 
 ### Condensed Assumption Ledger
@@ -81,9 +81,9 @@ For the complete ledger, see **Chapter 14.5: Assumption Ledger**.
 
 This is an operational manual for a universe.
 
-Not a theory about what might be true. Not a mathematical abstraction. A working specification for reality itself—from the smallest possible scale (the Planck length) to the largest structures in existence (the cosmic web), and everything between.
+Not a theory about what might be true. Not a mathematical abstraction. A working specification for reality itself -from the smallest possible scale (the Planck length) to the largest structures in existence (the cosmic web), and everything between.
 
-We begin with nothing—the Void, State 0, the infinite potential from which all things arise. We end with everything returning to that same Void. Between these poles, we witness:
+We begin with nothing -the Void, State 0, the infinite potential from which all things arise. We end with everything returning to that same Void. Between these poles, we witness:
 
 - **Genesis**: The first division, where 0 becomes +1 and -1
 - **Particles**: The subatomic zoo that populates our universe
@@ -100,15 +100,15 @@ We begin with nothing—the Void, State 0, the infinite potential from which all
 
 The framework rests on five ontological axioms:
 
-1. **Space is discrete** — A 3D lattice of cells (voxels). No infinities, no infinitesimals.
+1. **Space is discrete**  - A 3D lattice of cells (voxels). No infinities, no infinitesimals.
 
-2. **Events are local** — Nothing influences anything else except through adjacent cells.
+2. **Events are local**  - Nothing influences anything else except through adjacent cells.
 
-3. **Time is sequential** — One tick follows another. Causality is absolute.
+3. **Time is sequential**  - One tick follows another. Causality is absolute.
 
-4. **Potential precedes manifestation** — Before something *is*, it *could be*.
+4. **Potential precedes manifestation**  - Before something *is*, it *could be*.
 
-5. **Only the manifested is real** — Potential is not substance. Only realized states exist as entities.
+5. **Only the manifested is real**  - Potential is not substance. Only realized states exist as entities.
 
 From these axioms and six fundamental constants, everything else emerges:
 
@@ -137,9 +137,9 @@ There is no superposition. A voxel is 0 until it is not.
 
 This book is organized as a journey from the ontic to the cosmic:
 
-**Act I: Genesis** (Book I) establishes what exists—the Void, manifestation, and the rules governing all existence.
+**Act I: Genesis** (Book I) establishes what exists -the Void, manifestation, and the rules governing all existence.
 
-**Act II: The Subatomic Realm** (Books II-III) explores the smallest scales—particles, atoms, and quantum phenomena.
+**Act II: The Subatomic Realm** (Books II-III) explores the smallest scales -particles, atoms, and quantum phenomena.
 
 **Act III: Chemistry and Matter** (Books IV-VI) covers molecular bonds, states of matter, and material structures.
 

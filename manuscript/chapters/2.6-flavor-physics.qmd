@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The CKM matrix, PMNS matrix, and all flavor mixing parameters emerge from just four integers: N_c = 3, N_base = 4, b₃ = 7, and n_eff = 13. No fitting—pure derivation.
+The CKM matrix, PMNS matrix, and all flavor mixing parameters emerge from just four integers: N_c = 3, N_base = 4, b₃ = 7, and n_eff = 13. No fitting: pure derivation.
 :::
 
 ## The Puzzle of Generations
@@ -24,7 +24,7 @@ Everything in flavor physics traces back to four numbers:
 | QCD beta | b₃ | 7 | One-loop running coefficient |
 | Effective dimension | n_eff | 13 | b₃ + 2×N_c = 7 + 6 |
 
-These integers aren't chosen—they emerge from the lattice geometry and self-consistency requirements.
+These integers aren't chosen: they emerge from the lattice geometry and self-consistency requirements.
 
 ## From Integers to Angles
 
@@ -69,7 +69,7 @@ $$\lambda = \sqrt{2 \times \frac{3}{13} \times \frac{7}{59}} = \sqrt{2 \times 0.
 
 ::: {.callout-important}
 ## Why This Formula?
-The factor of 2 comes from the two manifest states (±1) in FTD. The Cabibbo angle connects the weak sector (sin²θ_W) to the strong sector (α_s)—it's the geometric mean of their couplings to manifestation.
+The factor of 2 comes from the two manifest states (±1) in FTD. The Cabibbo angle connects the weak sector (sin²θ_W) to the strong sector (α_s): it's the geometric mean of their couplings to manifestation.
 :::
 
 ### The A Parameter
@@ -153,7 +153,7 @@ $$= \arctan\sqrt{\frac{0.5}{0.375}} \times 0.941 = 49.1° \times 0.941 = 46.2°$
 
 ## CP Violation: Matter vs Antimatter
 
-The universe has more matter than antimatter. This requires CP violation—physics that distinguishes particles from antiparticles.
+The universe has more matter than antimatter. This requires CP violation: physics that distinguishes particles from antiparticles.
 
 ### The Jarlskog Invariant
 
@@ -184,7 +184,7 @@ $$\delta_{\text{CKM}} = \arctan\left(\frac{b_3}{N_c}\right) = \arctan\left(\frac
 The formula $\delta = \arctan(b_3/N_c) = \arctan(7/3)$ gives the physical CP-violating phase directly. The integers $b_3 = 7$ and $N_c = 3$ encode the fundamental asymmetry between matter and antimatter in the weak sector.
 :::
 
-This phase cannot be removed by redefinitions—it is physically meaningful and drives CP violation in the quark sector.
+This phase cannot be removed by redefinitions: it is physically meaningful and drives CP violation in the quark sector.
 
 ## Neutrino Masses
 
@@ -288,4 +288,4 @@ All from four integers.
 
 ## Transition
 
-We've seen how the integers determine mixing between generations. But what mediates these transitions? The weak force, carried by W and Z bosons, is unlike any other—it can change particle identity. Let's explore it in depth.
+We've seen how the integers determine mixing between generations. But what mediates these transitions? The weak force, carried by W and Z bosons, is unlike any other: it can change particle identity. Let's explore it in depth.

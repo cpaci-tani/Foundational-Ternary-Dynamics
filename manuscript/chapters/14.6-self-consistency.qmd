@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-FTD's four framework integers {7, 3, 13, 4} are not arbitrary—they form a self-consistent solution within the framework's stated constraints. The theory bootstraps itself into existence in the sense that its inputs constrain one another.
+FTD's four framework integers {7, 3, 13, 4} are not arbitrary: they form a self-consistent solution within the framework's stated constraints. The theory bootstraps itself into existence in the sense that its inputs constrain one another.
 :::
 
 ::: {.callout-warning}
@@ -23,7 +23,7 @@ Claims marked [†] are developed using the same framework but in companion pape
 
 ## Part I: Why These Integers?
 
-The framework uses four integers: {b₃=7, N_c=3, N_eff=13, N_base=4}. We will show these are **not arbitrary**—they form a self-consistent solution within the stated constraint class.
+The framework uses four integers: {b₃=7, N_c=3, N_eff=13, N_base=4}. We will show these are **not arbitrary**: they form a self-consistent solution within the stated constraint class.
 
 The strongest uniqueness language in this chapter is always relative to an explicit constraint class (e.g., the discrete-lattice + Fibonacci-constraint setup used throughout).
 
@@ -54,7 +54,7 @@ The strongest uniqueness language in this chapter is always relative to an expli
         Gauge group = SU(N_c) = SU(3) ────────┘
 ```
 
-Each integer determines the others. This is not fine-tuning—it is **self-determination**.
+Each integer determines the others. This is not fine-tuning: it is **self-determination**.
 
 ### Step 1: N_c Determines Everything
 
@@ -97,7 +97,7 @@ Given N_c = 3:
 - n_f = 6
 - b₃ = 11 - 4 = 7
 
-This is not a choice—it's determined by QCD with the matter content.
+This is not a choice: it's determined by QCD with the matter content.
 
 ### Step 3: N_eff = F_{b₃} = 13
 
@@ -145,17 +145,22 @@ $$N_{\text{base}} = 3 + 1 = 4$$
 
 Alternatively: 4 = 2² represents the spinor dimension for fermions.
 
-### The Master Equation
+### The Master Quadratic Connection
 
-The integers satisfy a self-consistency equation:
+The integers connect to the fine structure constant through the master quadratic (@sec-master-quadratic-derivation):
 
-$$\alpha = \frac{1}{b_3 \cdot (b_3 + N_c)} \cdot \left(1 - \frac{n_{\text{eff}}}{4\pi N_{\text{base}}^2}\right)^{-1}$$
+$$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
 
-Substituting {7, 3, 13, 4}:
+where the coefficient 16 = N_base² = 4² emerges from the lattice degrees of freedom, and the lemniscatic constant G* encodes the elliptic integral structure.
 
-$$\alpha = \frac{1}{7 \times 10} \cdot \left(1 - \frac{13}{4\pi \times 16}\right)^{-1} = \frac{1}{70} \times 1.065 = 0.00729$$
+The larger root x₊ = 137.0361... = 1/α, while the integers appear in:
 
-This gives α = 1/137.036
+- b₃ = 7: QCD beta function coefficient
+- N_c = 3: Color charge number (from x₋ = 3.024...)
+- N_eff = 13 = F₇: Effective degrees of freedom at QCD scale
+- N_base = 4: Spacetime wave modes (giving coefficient 16 = 4²)
+
+The self-consistency is that b₃ = 11 - 2n_f/3 = 7 requires n_f = 6 (three generations of quarks), which requires N_generations = 3 = ⌊x₋⌋, closing the loop
 
 **Uniqueness (scoped)**: Within the stated constraint class, alternative integer choices typically violate one or more of:
 
@@ -166,7 +171,7 @@ This gives α = 1/137.036
 
 ---
 
-## Part II: The Strong CP Problem — Proposed Mechanism [†]
+## Part II: The Strong CP Problem :  Proposed Mechanism [†]
 
 ::: {.callout-note}
 ## Companion Work
@@ -251,7 +256,7 @@ $$m_a \approx 6 \times 10^{-6} \text{ eV}$$
 
 ::: {.callout-note}
 ## Predictions (Falsifiable)
-The following predictions emerge from the broader FTD framework. Some follow directly from the core paper's discrete lattice structure; others require companion work derivations. All are falsifiable—if any specific prediction fails, the corresponding claim is refuted.
+The following predictions emerge from the broader FTD framework. Some follow directly from the core paper's discrete lattice structure; others require companion work derivations. All are falsifiable: if any specific prediction fails, the corresponding claim is refuted.
 :::
 
 FTD makes specific, falsifiable predictions that differ from the Standard Model alone.
@@ -382,7 +387,7 @@ FTD is falsified if ANY of the following occur:
 
 ::: {.callout-important}
 ## Scientific Status
-This is what makes FTD scientific: it makes specific predictions that can be wrong. The framework is not merely consistent—it is testable.
+This is what makes FTD scientific: it makes specific predictions that can be wrong. The framework is not merely consistent: it is testable.
 :::
 
 ---
@@ -420,7 +425,7 @@ FTD:
                     Self-consistency
 ```
 
-The framework isn't just internally consistent—it is **highly constrained** by requiring self-consistency (within the stated constraint class).
+The framework isn't just internally consistent: it is **highly constrained** by requiring self-consistency (within the stated constraint class).
 
 ### The Remaining Input
 
@@ -431,7 +436,7 @@ Possible answers:
 1. Any topology supporting SU(3) gauge theory requires 3 spatial dimensions
 2. The lattice is the unique regularization preserving both gauge invariance and locality
 2. The lattice is a candidate regularization intended to preserve both gauge invariance and locality
-3. This is the "cosmological selection" principle—other structures don't produce observers
+3. This is the "cosmological selection" principle: other structures don't produce observers
 
 But even without answering this, FTD has reduced the number of unexplained inputs from dozens (Standard Model parameters) to essentially one (the existence of the lattice itself).
 

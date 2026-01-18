@@ -9,15 +9,15 @@ The periodic table is not arbitrary. Each element is a specific configuration of
 
 ## A Personal Inventory
 
-Consider what you are made of. The calcium in your bones was forged in the heart of a dying star. The iron in your blood—every atom—was created in the final moments before a supernova. The oxygen you breathe was released by cyanobacteria that lived two billion years before you were born.
+Consider what you are made of. The calcium in your bones was forged in the heart of a dying star. The iron in your blood: every atom: was created in the final moments before a supernova. The oxygen you breathe was released by cyanobacteria that lived two billion years before you were born.
 
 You are not merely *in* the universe. You are the universe, organized into a pattern that can contemplate itself.
 
-The periodic table is the census of that organization: 118 ways that protons, neutrons, and electrons arrange themselves into stable patterns. Each element is not just a chemical species—it is a chapter in the story of cosmic evolution, from the first three minutes after the Big Bang to the stellar explosions that seeded your planet with complexity.
+The periodic table is the census of that organization: 118 ways that protons, neutrons, and electrons arrange themselves into stable patterns. Each element is not just a chemical species: it is a chapter in the story of cosmic evolution, from the first three minutes after the Big Bang to the stellar explosions that seeded your planet with complexity.
 
 ::: {.callout-note collapse="true"}
 ## Historical Context
-Dmitri Mendeleev published his periodic table in 1869, famously predicting undiscovered elements (gallium, scandium, germanium) from gaps in his arrangement. The physical basis—electron shells—came only after quantum mechanics (Bohr 1913, Schrödinger 1926). Glenn Seaborg expanded the table with actinides in the 1940s. Today's 118 elements represent configurations from 1 proton (hydrogen) to 118 (oganesson), with each row reflecting a new electron shell being filled.
+Dmitri Mendeleev published his periodic table in 1869, famously predicting undiscovered elements (gallium, scandium, germanium) from gaps in his arrangement. The physical basis: electron shells: came only after quantum mechanics (Bohr 1913, Schrödinger 1926). Glenn Seaborg expanded the table with actinides in the 1940s. Today's 118 elements represent configurations from 1 proton (hydrogen) to 118 (oganesson), with each row reflecting a new electron shell being filled.
 :::
 
 ## The Logic of the Table
@@ -41,17 +41,17 @@ Atomic masses are given in **atomic mass units (u)**, where 1 u = 1/12 the mass 
 
 ### Hydrogen: The First Atom
 
-Three minutes after the Big Bang, when the universe had cooled enough for protons and electrons to exist, the first hydrogen atoms formed. Not forged in any star—hydrogen *predates* stars. Every hydrogen atom in the water you drink is approximately 13.8 billion years old, unchanged since the beginning.
+Three minutes after the Big Bang, when the universe had cooled enough for protons and electrons to exist, the first hydrogen atoms formed. Not forged in any star: hydrogen *predates* stars. Every hydrogen atom in the water you drink is approximately 13.8 billion years old, unchanged since the beginning.
 
 ![Hydrogen: the simplest atom, consisting of one proton and one electron in the 1s orbital.](../figures/ch03/fig-hydrogen-atom.png){#fig-hydrogen-atom width=50%}
 
-The hydrogen in your body has been on an extraordinary journey: first floating in primordial gas clouds, then compressed into the first stars, then ejected in stellar winds, then gathered into the solar nebula, then incorporated into water on Earth, then drunk by countless organisms before you. Yet it remains, at its core, the same simple pattern—one proton, one electron—that formed when the universe was three minutes old.
+The hydrogen in your body has been on an extraordinary journey: first floating in primordial gas clouds, then compressed into the first stars, then ejected in stellar winds, then gathered into the solar nebula, then incorporated into water on Earth, then drunk by countless organisms before you. Yet it remains, at its core, the same simple pattern: one proton, one electron: that formed when the universe was three minutes old.
 
 ### Helium: The Inert Witness
 
-![Helium: two protons, two neutrons, and two electrons filling the 1s shell completely—making it chemically inert.](../figures/ch03/fig-helium-atom.png){#fig-helium-atom width=50%}
+![Helium: two protons, two neutrons, and two electrons filling the 1s shell completely: making it chemically inert.](../figures/ch03/fig-helium-atom.png){#fig-helium-atom width=50%}
 
-Helium has a closed shell and participates in no chemistry. It witnesses the universe but does not engage. The helium in a party balloon was mostly made in the Big Bang or fused in stellar cores. It escapes Earth's atmosphere—too light to be held by our gravity—and drifts into space. We will eventually run out of helium on Earth; it is not renewable.
+Helium has a closed shell and participates in no chemistry. It witnesses the universe but does not engage. The helium in a party balloon was mostly made in the Big Bang or fused in stellar cores. It escapes Earth's atmosphere: too light to be held by our gravity: and drifts into space. We will eventually run out of helium on Earth; it is not renewable.
 
 ## Period 2: Carbon and Life
 
@@ -68,14 +68,14 @@ Helium has a closed shell and participates in no chemistry. It witnesses the uni
 
 ### Carbon: The Element of Life
 
-There is something miraculous about carbon-12: three helium nuclei fused together in the heart of a red giant star. This fusion is exquisitely improbable—requiring a quantum resonance (the Hoyle state) at exactly the right energy. If that resonance were 4% different, carbon would not form; if it were 1% different, carbon would not survive to be ejected into space. We exist because of a 1% window in nuclear physics.
+There is something miraculous about carbon-12: three helium nuclei fused together in the heart of a red giant star. This fusion is exquisitely improbable: requiring a quantum resonance (the Hoyle state) at exactly the right energy. If that resonance were 4% different, carbon would not form; if it were 1% different, carbon would not survive to be ejected into space. We exist because of a 1% window in nuclear physics.
 
 Carbon has 4 valence electrons, allowing it to form 4 bonds. This versatility enables:
 - Long chains (hydrocarbons)
 - Rings (aromatic compounds)
 - Complex structures (proteins, DNA)
 
-The carbon in your DNA was once inside a star. That star died, and its carbon drifted through space for millions of years. It condensed into the cloud that became our solar system, aggregated into Earth, was cycled through the atmosphere and oceans, was absorbed by plants, eaten by animals, and eventually became *you*—a pattern of carbon atoms that can read about carbon atoms.
+The carbon in your DNA was once inside a star. That star died, and its carbon drifted through space for millions of years. It condensed into the cloud that became our solar system, aggregated into Earth, was cycled through the atmosphere and oceans, was absorbed by plants, eaten by animals, and eventually became *you*: a pattern of carbon atoms that can read about carbon atoms.
 
 ## Period 3: Metals and Semiconductors
 
@@ -97,11 +97,11 @@ Like carbon, silicon has 4 valence electrons. But its larger size changes the bo
 - Semiconductor properties enable computing
 - Second most abundant element in Earth's crust
 
-The silicon in your phone was once part of the primordial Earth, formed from the deaths of ancient stars. It spent billions of years locked in rock, then was mined, purified to 99.9999999% purity, sliced into wafers, etched with circuits, and assembled into the device you're reading this on. Silicon is now thinking about silicon—the substrate has become self-aware through us.
+The silicon in your phone was once part of the primordial Earth, formed from the deaths of ancient stars. It spent billions of years locked in rock, then was mined, purified to 99.9999999% purity, sliced into wafers, etched with circuits, and assembled into the device you're reading this on. Silicon is now thinking about silicon: the substrate has become self-aware through us.
 
 ## The Transition Metals (Period 4 onward)
 
-Filling the d orbitals creates the transition metals—the elements that enabled the Bronze Age, the Iron Age, and the Electronic Age:
+Filling the d orbitals creates the transition metals: the elements that enabled the Bronze Age, the Iron Age, and the Electronic Age:
 
 | Z | Sym | Name | Mass (u) | Notes |
 |---|-----|------|----------|-------|
@@ -115,9 +115,9 @@ Filling the d orbitals creates the transition metals—the elements that enabled
 
 ### Iron: The End of Fusion
 
-Iron-56 has the highest binding energy per nucleon. Stars cannot gain energy by fusing iron—it's the end of the fusion line. When a massive star's core becomes iron, fusion stops, and the star collapses in milliseconds, triggering a supernova.
+Iron-56 has the highest binding energy per nucleon. Stars cannot gain energy by fusing iron: it's the end of the fusion line. When a massive star's core becomes iron, fusion stops, and the star collapses in milliseconds, triggering a supernova.
 
-In that catastrophic moment—lasting less than a second—elements heavier than iron are forged: gold, platinum, uranium. These heavy elements exist only because stars die violently. The gold in a wedding ring required a star to explode.
+In that catastrophic moment: lasting less than a second: elements heavier than iron are forged: gold, platinum, uranium. These heavy elements exist only because stars die violently. The gold in a wedding ring required a star to explode.
 
 The iron in your blood (each hemoglobin molecule carries four iron atoms) was synthesized in the final moments of a star's life, blasted across space at 10% the speed of light, incorporated into the cloud that became our solar system, and eventually found its way into *you*. You are, quite literally, a walking supernova remnant.
 
@@ -154,7 +154,7 @@ Same element, different neutron counts. Compare stability.
 
 ## The Table as Biography
 
-The periodic table is not just a catalog of elements—it is a timeline of cosmic history:
+The periodic table is not just a catalog of elements: it is a timeline of cosmic history:
 
 | Era | Elements Created | Process |
 |-----|-----------------|---------|
@@ -178,7 +178,7 @@ The periodic table is your autobiography, written in nuclear physics.
 
 ## Transition
 
-The periodic table gives us atoms. Now let's examine how electrons behave within atoms—orbitals, shells, and chemical reactivity in @sec-electron-dynamics.
+The periodic table gives us atoms. Now let's examine how electrons behave within atoms: orbitals, shells, and chemical reactivity in @sec-electron-dynamics.
 
 ::: {.callout-tip}
 ## Related Topics

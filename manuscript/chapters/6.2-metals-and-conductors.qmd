@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Metals conduct because their electrons are delocalized—not bound to individual atoms but free to flow throughout the material. The electron sea explains all metallic properties.
+Metals conduct because their electrons are delocalized: not bound to individual atoms but free to flow throughout the material. The electron sea explains all metallic properties.
 :::
 
 ::: {.callout-note}
@@ -55,7 +55,7 @@ Metals conduct heat well because electrons move fast and far.
 
 ### Malleability and Ductility
 
-Layers of ions can slide past each other without breaking bonds—the electron sea reforms around the new positions.
+Layers of ions can slide past each other without breaking bonds: the electron sea reforms around the new positions.
 
 ```
 Before:  ⊕ ⊕ ⊕    After:  ⊕ ⊕ ⊕
@@ -65,11 +65,11 @@ Before:  ⊕ ⊕ ⊕    After:  ⊕ ⊕ ⊕
 
 ### Metallic Luster
 
-Free electrons oscillate in response to light and re-emit it—metals are shiny.
+Free electrons oscillate in response to light and re-emit it: metals are shiny.
 
 ### Opacity
 
-Electrons absorb photons across a continuous range—metals are opaque.
+Electrons absorb photons across a continuous range: metals are opaque.
 
 ## Band Theory
 
@@ -98,7 +98,7 @@ Energy
   └───────────────→
 ```
 
-No gap between valence and conduction bands—electrons can move freely.
+No gap between valence and conduction bands: electrons can move freely.
 
 ## Resistance
 
@@ -194,4 +194,4 @@ See electrons respond to applied field. Watch current flow.
 
 ## Transition
 
-Metals conduct freely. Insulators don't conduct at all. Between them are semiconductors—the basis of modern electronics.
+Metals conduct freely. Insulators don't conduct at all. Between them are semiconductors: the basis of modern electronics.

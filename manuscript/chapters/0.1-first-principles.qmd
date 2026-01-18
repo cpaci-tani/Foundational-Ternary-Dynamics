@@ -35,7 +35,7 @@ We strive to clearly label every claim in this book by type.
 
 ### Level 1: Definitions
 
-Definitions create language. They cannot be true or false—only useful or confusing.
+Definitions create language. They cannot be true or false: only useful or confusing.
 
 Examples:
 - "A voxel is a unit cell of the lattice"

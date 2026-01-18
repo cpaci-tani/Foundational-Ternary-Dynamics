@@ -1,7 +1,7 @@
 # Observational Confirmations {#sec-obs-confirm}
 
 > *"Theory guides, observation decides."*
-> — attributed to I.M. Kolthoff
+> :  attributed to I.M. Kolthoff
 
 ## The First Test: Cloud-9 {#sec-cloud9}
 
@@ -63,12 +63,12 @@ From the discovery paper:
 ::: {.callout-note}
 ## Epistemic Status
 
-**[CONSISTENT WITH OBSERVATION]** — Cloud-9 represents the first FTD prediction found to be consistent with independent astronomical observation. The observations were not used to construct the framework. However, "consistent with" does not mean "proven by"—standard ΛCDM also explains these features, albeit through different mechanisms.
+**[CONSISTENT WITH OBSERVATION]** :  Cloud-9 represents the first FTD prediction found to be consistent with independent astronomical observation. The observations were not used to construct the framework. However, "consistent with" does not mean "proven by": standard ΛCDM also explains these features, albeit through different mechanisms.
 :::
 
 ### What This Means
 
-Cloud-9 is what FTD calls **the void made visible**—a region where flux exists but has never crossed the manifestation threshold to become stars.
+Cloud-9 is what FTD calls **the void made visible**: a region where flux exists but has never crossed the manifestation threshold to become stars.
 
 In FTD terms:
 - **State s = 0 everywhere** (no manifested voxels)
@@ -118,7 +118,7 @@ FTD makes one prediction that ΛCDM does not:
 
 > **ALL starless halos must be spherical, not just most.**
 
-If a disk-shaped starless halo is found, FTD's manifestation dynamics would be falsified. ΛCDM has no such constraint—disk-shaped dark halos would be unexpected but not forbidden.
+If a disk-shaped starless halo is found, FTD's manifestation dynamics would be falsified. ΛCDM has no such constraint: disk-shaped dark halos would be unexpected but not forbidden.
 
 ---
 

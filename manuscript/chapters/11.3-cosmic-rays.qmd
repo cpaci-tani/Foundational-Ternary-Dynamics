@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The universe is filled with speeding particles—some with energies far beyond what our accelerators achieve. Cosmic rays are messengers from the most violent events in the cosmos.
+The universe is filled with speeding particles: some with energies far beyond what our accelerators achieve. Cosmic rays are messengers from the most violent events in the cosmos.
 :::
 
 ## What Are Cosmic Rays?
@@ -148,7 +148,7 @@ Billions of secondary particles reach ground.
 
 The highest energy particles known:
 - 10²⁰ eV (= 50 J in one particle!)
-- Tennis ball at 100 km/h—in one proton
+- Tennis ball at 100 km/h: in one proton
 - Origin: Still debated
 
 ### The Oh-My-God Particle (1991)

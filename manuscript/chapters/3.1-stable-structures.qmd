@@ -96,9 +96,9 @@ Electrons organize around nuclei in shells:
 ### Shell Stability
 
 Electrons in shells have `shell_n` set. Full shells are particularly stable:
-- Helium: 2 electrons (1s²) — noble gas
-- Neon: 10 electrons ([He]2s²2p⁶) — noble gas
-- Argon: 18 electrons ([Ne]3s²3p⁶) — noble gas
+- Helium: 2 electrons (1s²) :  noble gas
+- Neon: 10 electrons ([He]2s²2p⁶) :  noble gas
+- Argon: 18 electrons ([Ne]3s²3p⁶) :  noble gas
 
 ## Orbital Shapes
 
@@ -164,4 +164,4 @@ Create various configurations. See which ones lock and persist.
 
 ## Transition
 
-Stable structures form atoms. Next, we explore the full periodic table of elements—all the atoms that can exist.
+Stable structures form atoms. Next, we explore the full periodic table of elements: all the atoms that can exist.

@@ -1,6 +1,6 @@
 # Constants Reference {#sec-constants-reference}
 
-*"The tuning of reality—constants organized by status"*
+*"The tuning of reality: constants organized by status"*
 
 ::: {.callout-important}
 ## Major Update: Constants Are Derived

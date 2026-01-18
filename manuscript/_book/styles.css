@@ -1,4 +1,4 @@
-/* Mobile-Friendly Styles for Ternary Realization Dynamics */
+/* Mobile-Friendly Styles for Foundational Ternary Dynamics */
 
 /* ============================================
    BASE RESPONSIVE SETTINGS
@@ -159,19 +159,158 @@ mjx-container {
 }
 
 /* ============================================
-   CALLOUT BOXES
+   CALLOUT BOXES - FTD CUSTOM THEMES
    ============================================ */
 
+/* Base callout styles */
 .callout {
-  margin: 1rem 0;
-  padding: 1rem;
-  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border-left: 5px solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.callout-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Epistemic Status Callouts */
+
+/* AXIOM: Foundation stones - Deep Purple */
+.callout-axiom,
+.callout[data-callout="axiom"] {
+  background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%);
+  border-color: #7c3aed;
+}
+.callout-axiom .callout-title,
+.callout[data-callout="axiom"] .callout-title {
+  color: #5b21b6;
+}
+.callout-axiom .callout-title::before,
+.callout[data-callout="axiom"] .callout-title::before {
+  content: "◉";
+  font-size: 1.2em;
+}
+
+/* THEOREM: Proven truths - Royal Blue */
+.callout-theorem,
+.callout[data-callout="theorem"] {
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  border-color: #2563eb;
+}
+.callout-theorem .callout-title,
+.callout[data-callout="theorem"] .callout-title {
+  color: #1d4ed8;
+}
+.callout-theorem .callout-title::before,
+.callout[data-callout="theorem"] .callout-title::before {
+  content: "■";
+  font-size: 1.1em;
+}
+
+/* SELECTION: Chosen for consistency - Amber */
+.callout-selection,
+.callout[data-callout="selection"] {
+  background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+  border-color: #d97706;
+}
+.callout-selection .callout-title,
+.callout[data-callout="selection"] .callout-title {
+  color: #b45309;
+}
+.callout-selection .callout-title::before,
+.callout[data-callout="selection"] .callout-title::before {
+  content: "◇";
+  font-size: 1.2em;
+}
+
+/* CONJECTURE: Open questions - Warm Orange */
+.callout-conjecture,
+.callout[data-callout="conjecture"] {
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  border-color: #ea580c;
+}
+.callout-conjecture .callout-title,
+.callout[data-callout="conjecture"] .callout-title {
+  color: #c2410c;
+}
+.callout-conjecture .callout-title::before,
+.callout[data-callout="conjecture"] .callout-title::before {
+  content: "?";
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+/* DEFINITION: Formal definitions - Teal */
+.callout-definition,
+.callout[data-callout="definition"] {
+  background: linear-gradient(135deg, #ccfbf1 0%, #d1fae5 100%);
+  border-color: #0d9488;
+}
+.callout-definition .callout-title,
+.callout[data-callout="definition"] .callout-title {
+  color: #0f766e;
+}
+.callout-definition .callout-title::before,
+.callout[data-callout="definition"] .callout-title::before {
+  content: "≡";
+  font-size: 1.3em;
+}
+
+/* INSIGHT: Key revelations - Deep Rose */
+.callout-insight,
+.callout[data-callout="insight"] {
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  border-color: #db2777;
+}
+.callout-insight .callout-title,
+.callout[data-callout="insight"] .callout-title {
+  color: #be185d;
+}
+.callout-insight .callout-title::before,
+.callout[data-callout="insight"] .callout-title::before {
+  content: "✦";
+  font-size: 1.1em;
+}
+
+/* Override Quarto defaults for better FTD theming */
+.callout-note {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-color: #0284c7;
+}
+
+.callout-important {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-color: #dc2626;
+}
+
+.callout-warning {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-color: #d97706;
+}
+
+.callout-tip {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #059669;
+}
+
+.callout-caution {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-color: #ea580c;
+}
+
+/* Mobile responsiveness for callouts */
 @media (max-width: 576px) {
   .callout {
-    padding: 0.75rem;
-    margin: 0.75rem 0;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0.5rem;
   }
 
   .callout-title {

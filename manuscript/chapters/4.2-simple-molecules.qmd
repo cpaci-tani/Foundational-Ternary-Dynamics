@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Simple molecules—just two or three atoms—make up our atmosphere, our water, and the gases we breathe. Complexity starts small.
+Simple molecules: just two or three atoms: make up our atmosphere, our water, and the gases we breathe. Complexity starts small.
 :::
 
 ## Diatomic Molecules
@@ -54,7 +54,7 @@ Essential for respiration.
 
 Isoelectronic with N₂ (same electron count).
 Binds to hemoglobin stronger than O₂.
-Colorless, odorless—dangerous.
+Colorless, odorless: dangerous.
 ```
 
 ## Triatomic Molecules
@@ -176,4 +176,4 @@ See charge distributions in molecules.
 
 ## Transition
 
-Simple molecules are the letters. Now we build words—complex molecules with multiple functional groups, including the organic chemistry of life.
+Simple molecules are the letters. Now we build words: complex molecules with multiple functional groups, including the organic chemistry of life.

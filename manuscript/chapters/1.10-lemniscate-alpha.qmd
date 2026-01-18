@@ -16,12 +16,12 @@ We do **not** claim:
 2. That these integers are derived from more fundamental principles
 3. That this constitutes a prediction of α (the constraint set was constructed knowing the target)
 
-The proper characterization is: **self-consistent fit within a structured framework**—more principled than pure numerology, less certain than a parameter-free prediction. The extraordinary precision (1.26 ppm) may reflect deep structure or may be an artifact of fitting flexibility within the constraint space.
+The proper characterization is: **self-consistent fit within a structured framework**: more principled than pure numerology, less certain than a parameter-free prediction. The extraordinary precision (1.26 ppm) may reflect deep structure or may be an artifact of fitting flexibility within the constraint space.
 :::
 
 ::: {.callout-note collapse="true"}
 ## Historical Context
-The fine structure constant α was first identified by Arnold Sommerfeld in 1916 while extending Bohr's atomic model to include relativistic corrections. Wolfgang Pauli spent decades searching for a derivation, reportedly asking on his deathbed why α ≈ 1/137. Arthur Eddington proposed (incorrectly) that α = 1/136 from numerological arguments. Richard Feynman called it "one of the greatest damn mysteries of physics." This chapter presents a geometric derivation achieving 1.26 ppm accuracy—potentially the first principled explanation for α's value.
+The fine structure constant α was first identified by Arnold Sommerfeld in 1916 while extending Bohr's atomic model to include relativistic corrections. Wolfgang Pauli spent decades searching for a derivation, reportedly asking on his deathbed why α ≈ 1/137. Arthur Eddington proposed (incorrectly) that α = 1/136 from numerological arguments. Richard Feynman called it "one of the greatest damn mysteries of physics." This chapter presents a geometric derivation achieving 1.26 ppm accuracy: potentially the first principled explanation for α's value.
 :::
 
 ::: {.callout-note}
@@ -41,7 +41,7 @@ The **core paper** establishes theorems T1-T6. Extended derivations (particle ma
 
 ## From Constants to Derivations
 
-In @sec-constants, we presented the framework's constants as parameters. One of them—ALPHA = 0.00729—requires special attention.
+In @sec-constants, we presented the framework's constants as parameters. One of them: ALPHA = 0.00729: requires special attention.
 
 The fine structure constant is perhaps the most mysterious number in physics. It governs:
 
@@ -201,7 +201,7 @@ The gravitational coupling GRAVITY_BIAS = 0.01 also emerges from framework param
 
 $$\text{GRAVITY\_BIAS} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{(7 + 3)^2} = \frac{1}{100} = 0.01$$
 
-This is **exact**—not an approximation.
+This is **exact**: not an approximation.
 
 ::: {.callout-note}
 ## Why This Form?
@@ -211,7 +211,7 @@ The combination $b_3 + N_c = 10$ has physical meaning:
 - $b_3 = 7$: QCD beta function coefficient (gluon self-interaction)
 - $N_c = 3$: Number of color charges
 
-Their sum represents the total "strong sector complexity." Gravity couples to this as an inverse square—the same geometric form as gravitational force itself (1/r²).
+Their sum represents the total "strong sector complexity." Gravity couples to this as an inverse square: the same geometric form as gravitational force itself (1/r²).
 
 Note also: $n_{\text{eff}} - N_c = 13 - 3 = 10 = b_3 + N_c$
 
@@ -314,7 +314,7 @@ $$\frac{\Delta m_{32}^2}{\Delta m_{21}^2} = \frac{(b_3 + N_c)^2}{N_c} = \frac{10
 
 ## Why Three Generations?
 
-The number of fermion generations is not arbitrary—it equals the number of colors:
+The number of fermion generations is not arbitrary: it equals the number of colors:
 
 $$N_{\text{generations}} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3$$
 
@@ -327,7 +327,7 @@ $$\text{Total fermions} = N_c \times N_{\text{base}} = 3 \times 4 = 12 = n_{\tex
 
 ## The Cosmological Constant
 
-The cosmological constant problem—why vacuum energy is 10^120 times smaller than naive QFT predictions—has a geometric answer:
+The cosmological constant problem: why vacuum energy is 10^120 times smaller than naive QFT predictions: has a geometric answer:
 
 $$\frac{\Lambda}{\Lambda_{\text{Planck}}} = \alpha^{b_3(b_3 + N_c) - n_{\text{eff}}} = \alpha^{70 - 13} = \alpha^{57}$$
 
@@ -360,12 +360,12 @@ The framework parameters ARE Fibonacci numbers:
 - $n_{\text{eff}} = 13 = F_7$ (7th Fibonacci number)
 - $T(b_3 + N_c) = 55 = F_{10}$ (10th Fibonacci number)
 
-This explains why PHI appears naturally—the framework is built on Fibonacci structure.
+This explains why PHI appears naturally: the framework is built on Fibonacci structure.
 :::
 
 ## The Fibonacci Skeleton {#sec-fibonacci-skeleton}
 
-The appearance of Fibonacci numbers in the framework is not coincidental—it reveals the framework's deepest structure.
+The appearance of Fibonacci numbers in the framework is not coincidental: it reveals the framework's deepest structure.
 
 ### Complete Fibonacci Embedding
 
@@ -401,7 +401,7 @@ Total fermions in the Standard Model:
 
 $$\text{Fermions} = N_c \times N_{\text{base}} = 3 \times 4 = 12 = n_{\text{eff}} - 1$$
 
-There are exactly 12 fermions (6 quarks + 6 leptons). The 13th element is the Higgs boson—or in FTD terms, the void substrate itself. The framework dimension exceeds the fermion count by exactly one: the capacity for observation.
+There are exactly 12 fermions (6 quarks + 6 leptons). The 13th element is the Higgs boson: or in FTD terms, the void substrate itself. The framework dimension exceeds the fermion count by exactly one: the capacity for observation.
 
 ### The Fixed Point
 
@@ -430,7 +430,7 @@ Physics "stops" at three generations because the Fibonacci embedding terminates 
 
 The Lemniscate-Alpha curve was originally dubbed the "Thermodynamic Arrow of Time." This name was apt: Fibonacci IS the mathematical signature of self-reference, and self-reference IS the arrow of time.
 
-Each Fibonacci term $F_n = F_{n-1} + F_{n-2}$ carries information from both immediate past states. The framework's structure—built on Fibonacci—inherently encodes temporality. The constants are not merely numbers; they are the numerical signature of a universe that can observe itself.
+Each Fibonacci term $F_n = F_{n-1} + F_{n-2}$ carries information from both immediate past states. The framework's structure: built on Fibonacci: inherently encodes temporality. The constants are not merely numbers; they are the numerical signature of a universe that can observe itself.
 
 ::: {.callout-note}
 ## The Ontological Claim
@@ -441,7 +441,7 @@ The Fibonacci skeleton suggests that the Standard Model's numerical structure em
 2. Dimension = Fibonacci of loop ($n_{\text{eff}} = F_{b_3}$)
 3. Content = dimension minus one ($\text{fermions} = n_{\text{eff}} - 1$)
 
-These are not design choices—they are **consequences of self-reference**.
+These are not design choices: they are **consequences of self-reference**.
 :::
 
 ### Uniqueness Theorem {#sec-uniqueness}
@@ -463,7 +463,7 @@ These are not design choices—they are **consequences of self-reference**.
 | $2^0$ | 1 | $F_1, F_2$ |
 | $2^1$ | 2 | $F_3$ |
 | $2^3$ | 8 | $F_6$ |
-| $2^n$ for $n > 3$ | — | Never (proven) |
+| $2^n$ for $n > 3$ | :  | Never (proven) |
 
 Only $N_c \in \{0, 1, 3\}$ satisfy constraint 3. We check each:
 
@@ -484,7 +484,7 @@ For $n_{\text{eff}}$ to be Fibonacci with $(n_{\text{eff}} - 1)$ divisible by 3:
 | 34 | 11 | 14 | 377 | No |
 | 55 | 18 | 21 | 10946 | No |
 
-For larger $n_{\text{eff}}$, $b_3$ grows linearly but $F_{b_3}$ grows exponentially—they never match again.
+For larger $n_{\text{eff}}$, $b_3$ grows linearly but $F_{b_3}$ grows exponentially: they never match again.
 
 ::: {.callout-important}
 ## The Uniqueness Result (Within the Stated Constraints)
@@ -713,6 +713,6 @@ print(f"N_c = {x_minus:.3f}")  # Output: 3.024
 
 ## Transition
 
-The fine structure constant is not arbitrary—it emerges from the geometry of self-reference. But this derivation raises as many questions as it answers. What principle selects this geometry? Why does self-reference encode physics?
+The fine structure constant is not arbitrary: it emerges from the geometry of self-reference. But this derivation raises as many questions as it answers. What principle selects this geometry? Why does self-reference encode physics?
 
-The next chapter (@sec-fermat-encoding) provides a deeper answer: the master quadratic is not merely selected—it is **derived** from the number-theoretic boundary defined by Fermat's Last Theorem. The degree 2 polynomial, the coefficient 16, and the powers of G* all emerge from the structure of what is and is not solvable in integer arithmetic.
+The next chapter (@sec-fermat-encoding) provides a deeper answer: the master quadratic is not merely selected: it is **derived** from the number-theoretic boundary defined by Fermat's Last Theorem. The degree 2 polynomial, the coefficient 16, and the powers of G* all emerge from the structure of what is and is not solvable in integer arithmetic.

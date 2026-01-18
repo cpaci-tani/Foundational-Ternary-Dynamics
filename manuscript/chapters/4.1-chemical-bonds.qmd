@@ -123,7 +123,7 @@ About 5% of a covalent bond. Weak individually, but significant collectively.
 - Water's high boiling point
 - DNA double helix structure
 - Protein secondary structure
-- Ice floating (unusual—lower density solid)
+- Ice floating (unusual: lower density solid)
 
 ## Van der Waals Forces
 
@@ -158,7 +158,7 @@ Stack ions or atoms. Watch different bonding types create different structures.
 
 ## Transition
 
-Atoms bond into molecules. Now let's explore the simplest molecules—diatomics and triatomics that make up our atmosphere and essential compounds in @sec-simple-molecules.
+Atoms bond into molecules. Now let's explore the simplest molecules: diatomics and triatomics that make up our atmosphere and essential compounds in @sec-simple-molecules.
 
 ::: {.callout-tip}
 ## Related Topics

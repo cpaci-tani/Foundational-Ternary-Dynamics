@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The universe's constants seem exquisitely tuned for complexity. Slight changes would yield sterile cosmos. This "fine-tuning" demands explanation—or at least, acknowledgment of our special position in parameter space.
+The universe's constants seem exquisitely tuned for complexity. Slight changes would yield sterile cosmos. This "fine-tuning" demands explanation: or at least, acknowledgment of our special position in parameter space.
 :::
 
 ## The Fine-Tuning Puzzle
@@ -103,7 +103,7 @@ Quantum-flavored, speculative.
 Many universes with different constants:
 - Most are sterile
 - We're in one that permits us
-- No fine-tuning—just selection
+- No fine-tuning: just selection
 
 ```
 Universe 1: α = 0.001  → No atoms
@@ -152,7 +152,7 @@ Why these values?
 
 ### What This Reveals
 
-The simulation is anthropically tuned by design—our design.
+The simulation is anthropically tuned by design: our design.
 
 This doesn't resolve the question for the base universe, but it illuminates the issue:
 - Tuning is easy if there's a tuner

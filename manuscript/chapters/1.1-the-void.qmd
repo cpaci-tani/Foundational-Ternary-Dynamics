@@ -4,14 +4,14 @@
 
 ::: {.callout-note}
 ## Key Insight
-The Void represents the ground state of the lattice—not an absence of existence, but rather the dispositional substrate from which manifestation can occur.
+The Void represents the ground state of the lattice: not an absence of existence, but rather the dispositional substrate from which manifestation can occur.
 :::
 
 ## What Is Real
 
 We begin at the beginning. Before particles, before forces, before time itself ticks forward, there is the Void.
 
-State 0 is not "empty space"—it is the ground state of existence. The Void is not nothing; it is the infinite potential from which all things arise and to which all things return.
+State 0 is not "empty space": it is the ground state of existence. The Void is not nothing; it is the infinite potential from which all things arise and to which all things return.
 
 ### Properties of State 0 (The Void)
 
@@ -40,21 +40,21 @@ There is no superposition of states. A voxel is **0 until it is not**.
 
 The framework rests on five axioms:
 
-1. **Space is discrete** — A 3D lattice of cells (voxels). No infinities, no infinitesimals. The minimum unit is 1 voxel = 1 Planck length.
+1. **Space is discrete** :  A 3D lattice of cells (voxels). No infinities, no infinitesimals. The minimum unit is 1 voxel = 1 Planck length.
 
-2. **Events are local** — Nothing influences anything else except through adjacent cells. The 26-connectivity Moore neighborhood defines "adjacent."
+2. **Events are local** :  Nothing influences anything else except through adjacent cells. The 26-connectivity Moore neighborhood defines "adjacent."
 
-3. **Time is sequential** — One tick follows another. Causality is absolute. The global tick counter is the heartbeat of existence.
+3. **Time is sequential** :  One tick follows another. Causality is absolute. The global tick counter is the heartbeat of existence.
 
-4. **Potential precedes manifestation** — Before something *is*, it *could be*. The flux field carries possibility.
+4. **Potential precedes manifestation** :  Before something *is*, it *could be*. The flux field carries possibility.
 
-5. **Only the manifested is real** — Potential is not substance. Only realized states (±1) exist as entities. State 0 is substrate, not emptiness. **[AXIOM A4, A5]**
+5. **Only the manifested is real** :  Potential is not substance. Only realized states (±1) exist as entities. State 0 is substrate, not emptiness. **[AXIOM A4, A5]**
 
 ::: {.callout-warning}
 ## Ontological Clarification: The Reality of Flux
-This axiom requires careful interpretation. The **flux field** J(x) exists in void regions (s = 0) and carries real causal power—it determines where manifestation occurs, mediates forces, and propagates waves. So in what sense is "only the manifested real"?
+This axiom requires careful interpretation. The **flux field** J(x) exists in void regions (s = 0) and carries real causal power: it determines where manifestation occurs, mediates forces, and propagates waves. So in what sense is "only the manifested real"?
 
-The resolution is **dispositional realism**: the flux field encodes *tendencies* of the substrate, not properties of independent entities. Flux is *real but not substantial*—it describes what the substrate *would do* under various conditions, not what it *is*. Manifested particles (s = ±1) are the *actualization* of these tendencies. This is analogous to how a magnetic field is real (affects compass needles) even where no magnetic charges exist.
+The resolution is **dispositional realism**: the flux field encodes *tendencies* of the substrate, not properties of independent entities. Flux is *real but not substantial*: it describes what the substrate *would do* under various conditions, not what it *is*. Manifested particles (s = ±1) are the *actualization* of these tendencies. This is analogous to how a magnetic field is real (affects compass needles) even where no magnetic charges exist.
 :::
 
 
@@ -72,13 +72,13 @@ where:
 - $E(x) = |\mathbf{J}(x)|$ is the local flux density
 - $K_B = 0.511$ is the manifestation threshold (electron mass scale)
 
-This is not true randomness—it is sensitivity to initial conditions below our resolution.
+This is not true randomness: it is sensitivity to initial conditions below our resolution.
 
 ## On Observation
 
 Consciousness is not special. Observation does not collapse anything. The Void manifests when conditions allow, regardless of observers.
 
-To observe is to interact—to couple your measuring apparatus to the system. This is mechanical, not mystical.
+To observe is to interact: to couple your measuring apparatus to the system. This is mechanical, not mystical.
 
 ## Experiments
 
@@ -86,7 +86,7 @@ To observe is to interact—to couple your measuring apparatus to the system. Th
 Observe the Void for 60 seconds. Notice patterns your mind creates. The Void shows nothing, but your consciousness will find structure.
 
 ### Potential Probe
-Enable potential visualization. See the invisible sea—the flux field that underlies all manifestation.
+Enable potential visualization. See the invisible sea: the flux field that underlies all manifestation.
 
 ## Concepts
 
@@ -96,7 +96,7 @@ Enable potential visualization. See the invisible sea—the flux field that unde
 
 ## Transition
 
-The next chapter (@sec-first-division) examines the first division—the transition from state 0 to states +1 and -1, which constitutes the genesis of manifested structure.
+The next chapter (@sec-first-division) examines the first division: the transition from state 0 to states +1 and -1, which constitutes the genesis of manifested structure.
 
 ::: {.callout-tip}
 ## Related Topics

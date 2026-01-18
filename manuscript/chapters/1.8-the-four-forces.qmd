@@ -33,7 +33,7 @@ where:
 
 ### How It Works
 
-Gravity emerges from density gradients. Where density is uneven, particles experience a force toward higher density. This is why mass attracts mass—each creates a density gradient that pulls the other.
+Gravity emerges from density gradients. Where density is uneven, particles experience a force toward higher density. This is why mass attracts mass: each creates a density gradient that pulls the other.
 
 The inverse-square law emerges naturally from 3D geometry. A source creates a density field that falls off as 1/r². The gradient of this field gives force proportional to 1/r².
 
@@ -137,7 +137,7 @@ This is how neutrons decay: d quark → u quark + electron + antineutrino
 
 ## Gauge Symmetries: The Deep Structure
 
-The forces are not random—they arise from **gauge symmetries** of the flux field.
+The forces are not random: they arise from **gauge symmetries** of the flux field.
 
 ### U(1): Electromagnetism
 

@@ -25,6 +25,11 @@ manuscript/*_files/
 *.bbl
 *.blg
 
+# folders
+medium_posts/
+visualizer/
+media/
+
 # IDE
 .vscode/
 .idea/
@@ -35,6 +40,7 @@ manuscript/*_files/
 .DS_Store
 Thumbs.db
 nul
+__init__.py
 
 # Archives (keep source, not zips)
 *.zip
@@ -52,3 +58,6 @@ nul
 .venv/
 env/
 venv/
+
+# Test output (auto-generated)
+tests/verification_report.txt

@@ -94,7 +94,7 @@ $$
 \text{Cl} + e^- \rightarrow \text{Cl}^-
 $$
 
-Halogens have high electron affinity—they want one more electron to complete their shell.
+Halogens have high electron affinity: they want one more electron to complete their shell.
 
 ## Valence and Reactivity
 
@@ -184,4 +184,4 @@ def is_shell_full(shell, electron_count):
 
 ## Transition
 
-Electrons in atoms are governed by quantum rules. But what happens inside the nucleus? Next, we explore nuclear physics—fusion, fission, and radioactive decay.
+Electrons in atoms are governed by quantum rules. But what happens inside the nucleus? Next, we explore nuclear physics: fusion, fission, and radioactive decay.

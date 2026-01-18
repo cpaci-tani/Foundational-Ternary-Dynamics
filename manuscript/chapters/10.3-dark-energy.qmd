@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The universe is not just expanding—it's accelerating. Something with negative pressure, filling all of space, is pushing the cosmos apart. We call it dark energy, but we don't know what it is.
+The universe is not just expanding: it's accelerating. Something with negative pressure, filling all of space, is pushing the cosmos apart. We call it dark energy, but we don't know what it is.
 :::
 
 ## Discovery
@@ -141,7 +141,7 @@ $$\frac{\Lambda_{\text{obs}}}{\Lambda_{\text{Planck}}} \approx 10^{-122}$$
 
 ::: {.callout-important}
 ## The 122 Orders of Magnitude Explained
-The cosmological constant isn't unnaturally small—it's a 57th-order effect in the electromagnetic coupling. The Lemniscate-Alpha framework predicts this exponent exactly.
+The cosmological constant isn't unnaturally small: it's a 57th-order effect in the electromagnetic coupling. The Lemniscate-Alpha framework predicts this exponent exactly.
 :::
 
 ### Why 57?
@@ -156,7 +156,7 @@ Where:
 - N_c = 3 (color charges)
 - N_eff = 13 (effective dimension)
 
-The cosmological constant involves physics at all scales from Planck to cosmic—hence it accumulates all the geometric factors.
+The cosmological constant involves physics at all scales from Planck to cosmic: hence it accumulates all the geometric factors.
 
 ### Physical Interpretation
 
@@ -179,7 +179,7 @@ In FTD: Both scale with α through different paths that **intersect at the curre
 $$\rho_{\text{matter}} \sim \alpha^{-3} \times \rho_0 \quad \text{(structure formation)}$$
 $$\rho_\Lambda \sim \alpha^{57} \times \rho_{\text{Planck}}$$
 
-The intersection happens when the universe is ~13.8 billion years old—not coincidence but necessity.
+The intersection happens when the universe is ~13.8 billion years old: not coincidence but necessity.
 
 ### Comparison with Standard Approach
 
@@ -206,7 +206,7 @@ Current evidence: Eternal accelerating expansion.
 
 With w = -1:
 - Galaxies beyond Local Group recede forever
-- Eventually pass horizon—no longer visible
+- Eventually pass horizon: no longer visible
 - Universe becomes dark, cold, empty
 - Heat death
 
@@ -259,4 +259,4 @@ Extrapolate current acceleration into far future.
 
 ## Transition
 
-Dark matter and dark energy shape the universe's evolution. Now let's trace the full history—the cosmological epochs from Big Bang to today.
+Dark matter and dark energy shape the universe's evolution. Now let's trace the full history: the cosmological epochs from Big Bang to today.

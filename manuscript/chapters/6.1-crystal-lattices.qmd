@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Crystals are not random—they follow strict geometric rules. Only 14 fundamental lattice types exist in 3D, and all crystalline matter fits into these patterns.
+Crystals are not random: they follow strict geometric rules. Only 14 fundamental lattice types exist in 3D, and all crystalline matter fits into these patterns.
 :::
 
 ::: {.callout-note}
@@ -188,4 +188,4 @@ Shine X-rays on crystal. See diffraction spots. Deduce structure.
 
 ## Transition
 
-Crystals provide structure. Now we explore how electrons move through materials—metals, insulators, and everything between.
+Crystals provide structure. Now we explore how electrons move through materials: metals, insulators, and everything between.

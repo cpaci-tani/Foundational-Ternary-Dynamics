@@ -15,6 +15,7 @@ from verify_quadratic import run_all_verifications as verify_quadratic
 from verify_masses import run_all_mass_verifications as verify_masses
 from verify_mixing import run_all_mixing_verifications as verify_mixing
 from verify_cosmology import run_all_cosmology_verifications as verify_cosmology
+from verify_symbolic import verify_symbolic_proof
 
 
 def print_header():
@@ -115,6 +116,10 @@ def run_all():
     # Cosmology
     print("\n\n")
     verify_cosmology()
+
+    # Symbolic Proofs
+    print("\n\n")
+    verify_symbolic_proof()
 
     # Final summary
     print_summary()

@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Every tick of existence follows the same 13 steps, in the same order. This is not a rule—it is the structure of causality itself.
+Every tick of existence follows the same 13 steps, in the same order. This is not a rule: it is the structure of causality itself.
 :::
 
 ## The Universal Tick
@@ -130,7 +130,7 @@ This is the heartbeat:
 - **Tick**: another cycle
 - **Tick**: forever forward
 
-The causal loop never stops. It cannot stop—for the loop IS time.
+The causal loop never stops. It cannot stop: for the loop IS time.
 
 ## Concepts
 
@@ -140,4 +140,4 @@ The causal loop never stops. It cannot stop—for the loop IS time.
 
 ## Transition
 
-The causal loop governs how time advances. But time itself is not uniform—high-energy particles experience time differently. Next, we explore time dilation and causality.
+The causal loop governs how time advances. But time itself is not uniform: high-energy particles experience time differently. Next, we explore time dilation and causality.

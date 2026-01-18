@@ -190,4 +190,4 @@ Watch shock wave propagate through star.
 
 ## Transition
 
-When massive stars die, they leave behind exotic objects—white dwarfs, neutron stars, and black holes. Next, we explore these compact objects.
+When massive stars die, they leave behind exotic objects: white dwarfs, neutron stars, and black holes. Next, we explore these compact objects.

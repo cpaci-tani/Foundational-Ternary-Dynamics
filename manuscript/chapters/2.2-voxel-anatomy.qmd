@@ -148,7 +148,7 @@ Each voxel has 26 neighbors:
 | Corner neighbors | 8 | √3 |
 | **Total** | **26** | |
 
-All physics is local—only neighbors matter for direct interaction.
+All physics is local: only neighbors matter for direct interaction.
 
 ## Derived Fields
 
@@ -194,4 +194,4 @@ See a voxel's 26 neighbors. Watch how local interactions propagate.
 
 ## Transition
 
-Each voxel can host a particle. Now let's meet all the particles that can exist—the particle zoo.
+Each voxel can host a particle. Now let's meet all the particles that can exist: the particle zoo.

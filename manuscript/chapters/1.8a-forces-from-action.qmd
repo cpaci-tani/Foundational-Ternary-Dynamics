@@ -1,0 +1,237 @@
+# Forces from the Action Principle {#sec-forces-from-action}
+
+*"Not imposed: derived"*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter derives the force laws of FTD from the action principle $S[s, \mathbf{J}]$. We show that gravity-like, electromagnetic-like, and strong-like forces are not phenomenologically inserted but emerge from the variational principle $\delta S = 0$.
+:::
+
+## The Challenge
+
+Chapter 1.8 presents force-like behaviors:
+- Gravity: $\mathbf{F}_{\text{grav}} = G_N \nabla\bar{\rho}$
+- Coulomb: $\mathbf{F}_{\text{elec}} = -q \nabla\bar{q}$
+- Yukawa: $F_{\text{strong}} \propto e^{-m_\pi r}/r^2$
+
+A critic might ask: "Aren't these just borrowed from known physics?"
+
+This chapter shows they are **derived from the action**, not borrowed.
+
+## The FTD Action
+
+The complete action functional is:
+
+$$S[s, \mathbf{J}] = \sum_t \sum_v \mathcal{L}(s, \mathbf{J}, \partial_t \mathbf{J}, \nabla \mathbf{J})$$
+
+where the Lagrangian density is:
+
+$$\mathcal{L} = \mathcal{L}_{\text{kinetic}} + \mathcal{L}_{\text{gradient}} + \mathcal{L}_{\text{potential}} + \mathcal{L}_{\text{coupling}} + \mathcal{L}_{\text{dissipation}}$$
+
+### Term 1: Kinetic Energy
+
+$$\mathcal{L}_{\text{kinetic}} = \frac{1}{2}|\partial_t \mathbf{J}|^2$$
+
+The rate of change of flux carries energy. This is the standard kinetic term.
+
+### Term 2: Gradient Energy
+
+$$\mathcal{L}_{\text{gradient}} = -\frac{1}{2}|\nabla \mathbf{J}|^2$$
+
+Spatial variation of flux costs energy. This drives flux toward uniform configurations.
+
+### Term 3: Potential (Manifestation)
+
+$$\mathcal{L}_{\text{potential}} = -V(|\mathbf{J}|, s)$$
+
+where:
+
+$$V(\rho, s) = \begin{cases}
+0 & \text{if } s = 0 \text{ and } \rho < K_B \\
+K_B & \text{if } s \neq 0 \\
+\lambda(\rho - K_B)^2 & \text{if } s = 0 \text{ and } \rho \geq K_B
+\end{cases}$$
+
+This encodes:
+- Void is stable below threshold
+- Manifestation costs energy $K_B$
+- Excess flux above threshold drives manifestation
+
+### Term 4: Coupling
+
+$$\mathcal{L}_{\text{coupling}} = -g_c \cdot s \cdot (\nabla \cdot \mathbf{J})$$
+
+This is the key term. It couples the state field to the flux divergence:
+- Manifested particles ($s \neq 0$) source flux
+- Flux gradients exert forces on particles
+
+### Term 5: Dissipation (Non-Conservative)
+
+$$\mathcal{L}_{\text{dissipation}} = -\gamma |\mathbf{J}|^2 \cdot \mathbf{1}_{s \neq 0}$$
+
+Manifested structures dissipate energy. This is [IMPOSED] with $\gamma = \alpha$.
+
+## Deriving Forces from $\delta S = 0$
+
+### The Euler-Lagrange Equations
+
+Extremizing the action with respect to $\mathbf{J}$:
+
+$$\frac{\partial \mathcal{L}}{\partial \mathbf{J}} - \frac{d}{dt}\frac{\partial \mathcal{L}}{\partial(\partial_t \mathbf{J})} - \nabla \cdot \frac{\partial \mathcal{L}}{\partial(\nabla \mathbf{J})} = 0$$
+
+### The Flux Wave Equation
+
+From $\mathcal{L}_{\text{kinetic}}$ and $\mathcal{L}_{\text{gradient}}$:
+
+$$\frac{\partial^2 \mathbf{J}}{\partial t^2} = c^2 \nabla^2 \mathbf{J}$$
+
+This is the wave equation with $c = 1$.
+
+### The Force Equation
+
+From $\mathcal{L}_{\text{coupling}}$, varying with respect to position of a manifested particle:
+
+$$\mathbf{F} = -\nabla_{\mathbf{r}} \mathcal{L}_{\text{coupling}} = g_c \cdot s \cdot \nabla(\nabla \cdot \mathbf{J})$$
+
+This relates force to the gradient of flux divergence.
+
+## Derivation of Specific Forces
+
+### Gravity from Flux Density
+
+::: {.callout-important}
+## Theorem: Gravity from Gauss Constraint
+
+The gravitational force $\mathbf{F}_{\text{grav}} = G_N \nabla\bar{\rho}$ follows from:
+1. The coupling term $\mathcal{L}_{\text{coupling}}$
+2. The Gauss constraint $\nabla \cdot \mathbf{J} = \rho_{\text{source}}$
+3. The smoothing over neighbors (mean-field approximation)
+:::
+
+**Derivation**:
+
+The coupling term gives:
+$$\mathbf{F} = g_c \cdot s \cdot \nabla(\nabla \cdot \mathbf{J})$$
+
+In the neutral sector (where gravity dominates), $\nabla \cdot \mathbf{J}$ is sourced by mass density:
+$$\nabla \cdot \mathbf{J} \propto \rho_{\text{mass}}$$
+
+Therefore:
+$$\mathbf{F} \propto \nabla \rho_{\text{mass}}$$
+
+The smoothed density $\bar{\rho}$ arises from the discrete lattice:
+$$\bar{\rho}(v) = \frac{1}{|N_6|} \sum_{u \in N_6(v)} \rho(u)$$
+
+And the coefficient $G_N$ is determined by dimensional analysis and the lattice spacing.
+
+### Coulomb from Charge Coupling
+
+::: {.callout-important}
+## Theorem: Coulomb from U(1) Gauge Structure
+
+The electric force $\mathbf{F}_{\text{elec}} = -q\nabla\bar{q}$ follows from:
+1. The coupling term with charge $q = s$
+2. The Gauss constraint for charged sources
+3. The transverse-longitudinal decomposition
+:::
+
+**Derivation**:
+
+For charged particles, the Gauss constraint is:
+$$\nabla \cdot \mathbf{J} = q(v)$$
+
+where $q(v)$ is the charge density.
+
+The longitudinal component of $\mathbf{J}$ satisfies:
+$$\mathbf{J}_L = \nabla \phi, \quad \nabla^2 \phi = q$$
+
+This is Poisson's equation! The solution gives:
+$$\phi(r) \propto \frac{q}{r}$$
+
+And the force:
+$$\mathbf{F} = -q_{\text{test}} \nabla \phi \propto \frac{q_{\text{source}} \cdot q_{\text{test}}}{r^2}$$
+
+This is Coulomb's law, derived from the action.
+
+### Yukawa from Massive Exchange
+
+::: {.callout-important}
+## Theorem: Yukawa from Confined Flux
+
+The strong force $F_{\text{strong}} \propto e^{-m_\pi r}/r^2$ follows from:
+1. The wave equation for flux
+2. An effective mass term for confined flux (pions)
+3. The Green's function of the massive wave equation
+:::
+
+**Derivation**:
+
+In regions where flux is confined (between quarks), the effective equation becomes:
+$$(\nabla^2 - m_\pi^2)\phi = \rho$$
+
+This is the Klein-Gordon equation. The Green's function is:
+$$G(r) = \frac{e^{-m_\pi r}}{4\pi r}$$
+
+The resulting force has Yukawa form:
+$$F(r) \propto \frac{e^{-m_\pi r}}{r^2}(1 + m_\pi r)$$
+
+The exponential decay comes from the mass; the $1/r^2$ from the 3D geometry.
+
+## Summary: Forces Are Not Borrowed
+
+| Force | Phenomenological Form | Derivation from Action |
+|-------|----------------------|------------------------|
+| Gravity | $\mathbf{F} = G_N \nabla\bar{\rho}$ | Coupling + mass-sourced $\nabla \cdot \mathbf{J}$ |
+| Coulomb | $\mathbf{F} = -q\nabla\bar{q}$ | Coupling + charge-sourced $\nabla \cdot \mathbf{J}$ |
+| Yukawa | $F \propto e^{-mr}/r^2$ | Confined flux + massive Green's function |
+| Magnetic | $\mathbf{F} = \beta(\nabla \times \mathbf{J}) \times \hat{\mathbf{J}}$ | Transverse flux dynamics |
+
+## The Coefficient Problem
+
+The **form** of the forces is derived. What about the **coefficients**?
+
+| Coefficient | Value | Status |
+|-------------|-------|--------|
+| $g_c$ (state-flux coupling) | $\sim \sqrt{\alpha}$ | Derived from $\alpha$ |
+| $G_N$ (gravity) | $\sim 10^{-38}$ | [DERIVED] from hierarchy (see Chapter 1.12) |
+| $\alpha$ (EM) | $1/137.036$ | [DERIVED] from master quadratic |
+| $m_\pi$ (Yukawa range) | $\sim 140$ MeV | [DERIVED] from confinement scale |
+
+The derivation of $\alpha$ from the master quadratic (Chapter 1.10b) is the key result that closes the loop.
+
+## The Action in Full
+
+For reference, the complete FTD action is:
+
+$$S[s, \mathbf{J}] = \sum_t \sum_v \left[ \frac{1}{2}|\partial_t \mathbf{J}|^2 - \frac{1}{2}|\nabla \mathbf{J}|^2 - V(|\mathbf{J}|, s) - g_c \cdot s \cdot (\nabla \cdot \mathbf{J}) - \gamma |\mathbf{J}|^2 \cdot \mathbf{1}_{s \neq 0} \right]$$
+
+From this single functional, via $\delta S = 0$:
+- The wave equation follows
+- Force laws follow
+- Conservation laws follow (via Noether)
+- The manifestation threshold follows
+
+## What Is Still Imposed
+
+Even with the action principle, some things are imposed:
+
+| Element | Status |
+|---------|--------|
+| Action functional form | [AXIOM] :  this is the definition of FTD |
+| Dissipation $\gamma = \alpha$ | [IMPOSED] :  identification, not derivation |
+| Lattice spacing = Planck length | [IMPOSED] :  scale identification |
+
+The action is not derived from something deeper: it is the foundation.
+
+## Concepts
+
+- **action-principle**: $S[s, \mathbf{J}]$ from which dynamics derive
+- **euler-lagrange**: Equations of motion from $\delta S = 0$
+- **force-derivation**: Forces as consequences of coupling term
+- **gauss-constraint**: $\nabla \cdot \mathbf{J} = \rho$ links flux to sources
+- **yukawa-from-confinement**: Short-range force from massive exchange
+- **coefficient-derivation**: Values fixed by self-consistency, not fitting
+
+## Transition
+
+With forces derived from the action, we have closed a critical gap: FTD's physics is not borrowed but emerges from a single variational principle. The next chapters develop the specific force behaviors and their consequences for particle structure.

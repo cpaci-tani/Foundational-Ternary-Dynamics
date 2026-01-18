@@ -157,7 +157,7 @@ Under this transformation:
 
 ### U(1) Gauge Group
 
-The electromagnetic gauge group is U(1)—the group of phase rotations:
+The electromagnetic gauge group is U(1): the group of phase rotations:
 $$\psi \to e^{i\theta} \psi$$
 
 In FTD, this corresponds to adding a gradient to the flux field, which doesn't change the curl.

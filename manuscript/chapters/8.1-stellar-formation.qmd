@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Stars are born when gravity defeats pressure in molecular clouds. The same process that forms planets—accretion—operates at vastly larger scales to ignite fusion.
+Stars are born when gravity defeats pressure in molecular clouds. The same process that forms planets: accretion: operates at vastly larger scales to ignite fusion.
 :::
 
 ::: {.callout-note}
@@ -170,9 +170,9 @@ Form many stars. Compare to observed IMF.
 
 ## Transition
 
-Protostars become real stars when fusion ignites. Next (@sec-main-sequence), we explore the main sequence—where stars spend most of their lives, steadily fusing hydrogen into helium for billions of years.
+Protostars become real stars when fusion ignites. Next (@sec-main-sequence), we explore the main sequence: where stars spend most of their lives, steadily fusing hydrogen into helium for billions of years.
 
-The journey from molecular cloud to main-sequence star takes millions of years—a geological instant on cosmic timescales, yet long enough for complex processes of fragmentation, accretion, and disk formation that determine not just stellar properties but also the planets that may form alongside.
+The journey from molecular cloud to main-sequence star takes millions of years: a geological instant on cosmic timescales, yet long enough for complex processes of fragmentation, accretion, and disk formation that determine not just stellar properties but also the planets that may form alongside.
 
 ::: {.callout-tip}
 ## Related Topics

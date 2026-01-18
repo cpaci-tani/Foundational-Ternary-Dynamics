@@ -1,6 +1,6 @@
 # Particle Catalog {#sec-particle-catalog}
 
-*"The complete bestiary—mass relations and numerical fits within the framework"*
+*"The complete bestiary: mass relations and numerical fits within the framework"*
 
 ::: {.callout-important}
 ## Major Update: Masses Are Derived
@@ -125,7 +125,7 @@ Every quark has an antiquark with opposite charge and state.
 | Force | EM | Strong | Weak | Weak |
 | Charge | 0 | 0 | ±1 | 0 |
 | Mass (m/m_e) | 0 | 0 | 157,273 | 179,266 |
-| **Derivation** | — | — | 67/(8α²) | m_W×√(13/10) |
+| **Derivation** | :  | :  | 67/(8α²) | m_W×√(13/10) |
 | State | 0 | 0 | ±1 | 0 |
 | Range | ∞ | ~1 fm | ~0.001 fm | ~0.001 fm |
 

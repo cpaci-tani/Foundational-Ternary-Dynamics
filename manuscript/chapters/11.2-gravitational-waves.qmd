@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Insight
-Gravitational waves—propagating disturbances in the spacetime metric—were predicted by general relativity [@einstein1916] and first directly detected by LIGO in 2015 [@abbott2016_gw150914].
+Gravitational waves: propagating disturbances in the spacetime metric: were predicted by general relativity [@einstein1916] and first directly detected by LIGO in 2015 [@abbott2016_gw150914].
 :::
 
 ## What Are Gravitational Waves?
@@ -224,4 +224,4 @@ Watch final plunge and ringdown.
 
 ## Transition
 
-Gravitational waves come from the most violent events. But high-energy particles also rain down from space—cosmic rays.
+Gravitational waves come from the most violent events. But high-energy particles also rain down from space: cosmic rays.

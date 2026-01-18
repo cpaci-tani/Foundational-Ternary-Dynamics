@@ -75,3 +75,27 @@
   \fancyfoot[C]{\thepage}
   \renewcommand{\headrulewidth}{0pt}
 }
+
+% =============================================================================
+% TABLE OF CONTENTS FORMATTING
+% =============================================================================
+% Fix spacing between section numbers and titles in ToC
+\usepackage{tocloft}
+
+% Add space after chapter numbers in ToC
+\setlength{\cftchapnumwidth}{2.5em}
+
+% Add space after section numbers in ToC
+\setlength{\cftsecnumwidth}{3.0em}
+
+% Add space after subsection numbers in ToC
+\setlength{\cftsubsecnumwidth}{3.8em}
+
+% Add space after subsubsection numbers in ToC
+\setlength{\cftsubsubsecnumwidth}{4.5em}
+
+% Ensure dotted leaders don't crowd the page numbers
+\setlength{\cftchapindent}{0em}
+\setlength{\cftsecindent}{1.5em}
+\setlength{\cftsubsecindent}{3.8em}
+\setlength{\cftsubsubsecindent}{6.5em}

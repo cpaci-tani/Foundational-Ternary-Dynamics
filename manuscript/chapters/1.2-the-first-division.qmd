@@ -32,11 +32,11 @@ When $E(x) \geq K_B$, genesis becomes possible, with probability increasing expo
 
 ### What Happens at Genesis
 
-1. **Flux accumulates** — Energy density builds in a region of space
-2. **Threshold reached** — When density ≥ KB, manifestation becomes possible
-3. **Pair production** — Matter (+1) and antimatter (-1) emerge together
-4. **Momentum conserved** — The pair carries the flux that created them
-5. **Entanglement established** — The pair shares a common origin (UUID)
+1. **Flux accumulates** :  Energy density builds in a region of space
+2. **Threshold reached** :  When density ≥ KB, manifestation becomes possible
+3. **Pair production** :  Matter (+1) and antimatter (-1) emerge together
+4. **Momentum conserved** :  The pair carries the flux that created them
+5. **Entanglement established** :  The pair shares a common origin (UUID)
 
 ## The Balance Sheet
 
@@ -70,7 +70,7 @@ This is not creation from nothing. This is *reorganization* of what already exis
 ## Experiments
 
 ### Trigger Genesis
-Accumulate flux in a region until particles appear. Watch the threshold behavior—nothing happens until KB is exceeded, then sudden manifestation.
+Accumulate flux in a region until particles appear. Watch the threshold behavior: nothing happens until KB is exceeded, then sudden manifestation.
 
 ### Balance Check
 Count matter vs antimatter in any region. Over sufficient time and space, they are always equal.
@@ -104,4 +104,4 @@ When genesis occurs, the sign of the divergence of the flux field determines whi
 
 ## Transition
 
-The first division has occurred. Now we must understand the two layers of reality—the potential that underlies all, and the manifestation that we observe.
+The first division has occurred. Now we must understand the two layers of reality: the potential that underlies all, and the manifestation that we observe.

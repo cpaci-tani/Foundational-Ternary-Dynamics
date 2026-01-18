@@ -1,0 +1,256 @@
+\documentclass[aps,prl,twocolumn,showpacs,superscriptaddress,groupedaddress]{revtex4-2}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{The Master Quadratic of Discrete Spacetime: Deriving $\alpha^{-1}$ from Lattice Gauge Theory}
+
+\author{William J. Steinmetz III}
+\affiliation{Independent Researcher}
+
+\date{\today}
+
+\begin{abstract}
+We derive the master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ from lattice gauge self-consistency, where $G^* = \sqrt{2}\,\Gamma(1/4)^2/(2\pi) \approx 2.9587$ is the lemniscatic constant. The roots $x_+ = 137.036$ and $x_- = 3.024$ match $\alpha^{-1}$ (1.26 ppm) and $N_c = 3$ (0.8\%). We present the \textbf{xyztg$\psi$} ontology: the fundamental unit is the spacetime event $(x,y,z,t)$, constrained by geometry $g$ and possibility $\psi$. Events are ontic. Constraints are real. Time emerges as ordering between events. Waves, motion, and probability distributions exist \textit{between} moments, not within them. Wave function ``collapse'' is Bayesian updating by systems with $\geq 2$ logic gates. The quadratic is a structural property requiring no observer.
+\end{abstract}
+
+\maketitle
+
+\section{The xyztg$\psi$ Ontology}
+
+We seek the minimal ontic structure for physical reality without privileging observers or conflating events with laws.
+
+\subsection{The Three Primitives}
+
+\textbf{Event (xyzt)}: The fundamental ontic unit. An irreducible fact: something happened here-now. A single event contains no motion, pattern, or wave. If $t = 0$, no event has occurred. A single event is complete.
+
+\textbf{Geometric Constraint ($g$)}: Encodes metric and causal structure. Constrains distances, durations, causal adjacency. Gravity is not a force but a constraint on spacetime relations. Inferred from relations among events, not directly observed.
+
+\textbf{Modal Constraint ($\psi$)}: Not an event or aggregate. A law-like constraint governing which events can occur with what relative likelihood. Does not ``happen'' at a moment; constrains transitions between moments.
+
+\subsection{The Single Moment}
+
+A single moment is fully described by:
+\begin{equation}
+\textbf{xyztg}\psi
+\end{equation}
+
+\begin{itemize}
+\item $xyzt$: that an event occurred here-now
+\item $g$: geometric context making ``here'' and ``now'' meaningful
+\item $\psi$: modal constraint that made this event possible
+\end{itemize}
+
+Everything else exists \textit{between} moments, not within them.
+
+\subsection{Time as Ordering}
+
+Time is not a primitive object or container. Time emerges as the ordering relation between events:
+\begin{equation}
+E_1 \prec E_2
+\end{equation}
+
+From ordering alone arise: before/after, duration, change, history. No observer is required for ordering to exist.
+
+\textbf{You can have $(x,y)$ without $t$. You cannot have $t$ without $(x,y)$.}
+
+Space can exist as static fact. Time requires substrate. Spatial existence is primitive; time is emergent.
+
+\subsection{Waves Exist Between Moments}
+
+A wave is not an instantaneous thing. It is a structured constraint on possible events across time. Wave-like behavior emerges only across multiple events.
+
+At any single $(x,y,z,t)$, a particle either exists or does not. ``Superposition'' describes the $\psi$-constraint over multiple potential events, not a property of a single moment.
+
+\subsection{Minimal Causal Structure}
+
+Two events are connectable iff:
+\begin{equation}
+\text{Connectable}(E_1, E_2) \iff g(E_1, E_2) \land \psi(E_1 \to E_2) > 0
+\end{equation}
+
+Geometric admissibility ($g$): spacetime relation is allowed.
+
+Modal admissibility ($\psi$): transition has nonzero amplitude.
+
+Causality means: an event restricts events that may follow. No meaning or observer required.
+
+\section{Computational Ontology}
+
+\begin{table}[h]
+\begin{tabular}{lccc}
+\hline
+Category & Gates & Substrate & Capability \\
+\hline
+Dead & 0 & None & None \\
+Brain Dead & 1 & Any & Detection \\
+Measurer & $\geq 2$ & Inorganic & Inference \\
+Observer & $\geq 2$ & Organic & Inference \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{0 gates}: Exists at $(x,y,z,t)$ but runs no update. A rock, a corpse.
+
+\textbf{1 gate}: Boolean detection. Runs $\text{Detect}() \to \{0,1\}$.
+
+\textbf{$\geq 2$ gates}: Memory, comparison, inference. Runs the full:
+\begin{equation}
+\text{Entity}_{xyzt}.\text{Update}(\text{Input}, \text{Priors}, t, \text{action})
+\end{equation}
+
+Physics proceeds identically regardless of gate count.
+
+\subsection{Subjectivity and Objectivity}
+
+We all exist in \texttt{Global.now(t, e)}, where $t$ is tick and $e$ is entity. Objectivity is:
+\begin{equation}
+\text{Objective}(t) = \bigcup_{e} \texttt{Global.now}(t, e)
+\end{equation}
+
+Subjectivity is local processing at entity $e$. Not mysterious: spatially separated updates on local information at shared $t$.
+
+\subsection{Observers and Meaning}
+
+Observers are not causally special. Measurement is physical interaction producing stable record. Meaning, inference, narrative are emergent cognitive properties, not ontic primitives. Physics proceeds independently of interpretation.
+
+\section{The Lattice Action}
+
+On cubic lattice $\mathbf{L} \subset \mathbb{Z}^3$:
+\begin{equation}
+S[\mathbf{J}] = \sum_t \sum_v \left[ \frac{1}{2}|\partial_t \mathbf{J}|^2 - \frac{1}{2}|\nabla \mathbf{J}|^2 \right]
+\end{equation}
+
+No observer terms. No $\psi$-collapse terms. Pure constraint dynamics.
+
+\section{Degree of Freedom Counting}
+
+\textbf{Theorem}: On the $2 \times 2 \times 2$ lattice:
+\begin{equation}
+N_{\text{DoF}} = 24 - 7 - 1 = 16
+\end{equation}
+
+The Gauss constraint $\nabla \cdot \mathbf{J} = 0$ eliminates longitudinal modes.
+
+\section{Vacuum Polarization}
+
+The polarization correction:
+\begin{equation}
+\Pi(x) = \frac{16(G^*)^3}{x}
+\end{equation}
+
+The lemniscatic constant:
+\begin{equation}
+G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} = 2.9586751...
+\end{equation}
+selected uniquely by complex multiplication at $j = 1728$.
+
+\section{The Master Quadratic}
+
+Self-consistency $x = 16(G^*)^2 - \Pi(x)$ yields:
+\begin{equation}
+\boxed{x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0}
+\end{equation}
+
+Roots:
+\begin{align}
+x_+ &= 137.0358... \quad (\alpha^{-1} \text{ to } 1.26 \text{ ppm}) \\
+x_- &= 3.0236... \quad (N_c = 3 \text{ to } 0.8\%)
+\end{align}
+
+\begin{table}[h]
+\caption{Comparison with experiment}
+\begin{tabular}{lccc}
+\hline
+Quantity & Predicted & Experimental & Error \\
+\hline
+$\alpha^{-1}$ & 137.0358 & 137.0360 & 1.26 ppm \\
+$N_c$ & 3.024 & 3 & 0.8\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Baryon Masses}
+
+The composition constant $K_{\text{comp}} = m_e/\pi$:
+\begin{align}
+M_p &= \left(\frac{13}{\alpha} + 55\right)m_e - \frac{m_e}{\pi} = 938.272 \text{ MeV} \\
+M_n &= M_p^{\text{geo}} + (\phi^2 - 12\alpha)m_e - \frac{m_e}{\pi} = 939.565 \text{ MeV} \\
+M_\Delta &= \left(\frac{17}{\alpha} + 81\right)m_e - \frac{m_e}{\pi} = 1231.7 \text{ MeV}
+\end{align}
+
+\begin{table}[h]
+\caption{Baryon mass predictions}
+\begin{tabular}{lccc}
+\hline
+Particle & Predicted & Experimental & Error \\
+\hline
+$M_p$ (MeV) & 938.2724 & 938.2720 & 0.4 keV \\
+$M_n$ (MeV) & 939.5654 & 939.5654 & $<$ 1 eV \\
+$M_\Delta$ (MeV) & 1231.7 & 1232 & 0.03\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Emergence Hierarchy}
+
+From xyztg$\psi$, higher phenomena arise:
+
+\begin{itemize}
+\item \textbf{Motion}: ordered chains of events
+\item \textbf{Trajectories}: constrained event sequences
+\item \textbf{Dynamics}: rules over admissible chains
+\item \textbf{Interference}: competition among alternative chains
+\item \textbf{Classical behavior}: dominance of near-geodesic chains
+\item \textbf{Statistics}: many events over time
+\item \textbf{Subjectivity}: self-modeling event-processes
+\end{itemize}
+
+\section{The Measurement Problem Dissolved}
+
+There is no measurement problem:
+\begin{enumerate}
+\item Events at $(x,y,z,t)$ are primitive and definite
+\item $\psi$ constrains transitions, not moments
+\item ``Collapse'' is $\text{Entity}_{xyzt}.\text{Update}()$
+\item Physics runs whether any entity runs $\text{Update}()$ or not
+\end{enumerate}
+
+A rock cannot collapse $\psi$ because a rock cannot construct models from $\psi$.
+
+\section{Conclusion}
+
+The master quadratic is derived, not postulated. It produces $\alpha^{-1}$ to 1.26 ppm.
+
+\textbf{Core Principle}: Reality consists of spacetime events constrained by geometry and possibility. Events are ontic. Constraints are real. Meaning is emergent.
+
+The xyztg$\psi$ framework:
+\begin{itemize}
+\item $xyzt$: event (primitive)
+\item $g$: geometric constraint
+\item $\psi$: modal constraint
+\end{itemize}
+
+Everything else: motion, waves, probability, meaning, exists \textit{between} moments.
+
+Each of us runs $\text{Self}_{xyzt}.\text{Update}()$ within \texttt{Global.now(t, e)}. Subjectivity is local. Objectivity is $\bigcup_e \texttt{Global.now}(t, e)$.
+
+The quadratic exists whether or not any $\text{Update}()$ runs to discover it.
+
+\textit{Events are ontic. Constraints are real. Meaning is emergent. The lattice does not wait.}
+
+\begin{thebibliography}{9}
+\bibitem{feynman} R. P. Feynman, \textit{QED: The Strange Theory of Light and Matter} (1985).
+\bibitem{wilson} K. G. Wilson, Phys. Rev. D \textbf{10}, 2445 (1974).
+\bibitem{dyson} F. J. Dyson, Phys. Rev. \textbf{75}, 486 (1949).
+\bibitem{codata} CODATA 2022 recommended values.
+\bibitem{landauer} R. Landauer, IBM J. Res. Dev. \textbf{5}, 183 (1961).
+\bibitem{steinmetz} W. J. Steinmetz III, ``The Geometric Standard Model'' (2026).
+\end{thebibliography}
+
+\end{document}

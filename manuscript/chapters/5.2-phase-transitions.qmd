@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Phase transitions happen at specific conditions—the critical points where energy finally overcomes the forces holding a phase together.
+Phase transitions happen at specific conditions: the critical points where energy finally overcomes the forces holding a phase together.
 :::
 
 ::: {.callout-note}
@@ -115,7 +115,7 @@ Ice is less dense than water (ΔV < 0), so melting curve has negative slope. Hig
 
 ## Nucleation
 
-Transitions don't happen uniformly—they start at nucleation sites.
+Transitions don't happen uniformly: they start at nucleation sites.
 
 ### Homogeneous Nucleation
 Random fluctuations create seeds of new phase. Rare.
@@ -135,11 +135,11 @@ Near the critical point:
 - Properties diverge (critical opalescence)
 - No distinction between liquid and gas
 
-Above the critical point: **supercritical fluid**—properties of both liquid and gas.
+Above the critical point: **supercritical fluid**: properties of both liquid and gas.
 
 ## Cosmological Phase Transitions
 
-The early universe underwent phase transitions just like water—but at vastly higher temperatures.
+The early universe underwent phase transitions just like water: but at vastly higher temperatures.
 
 ### The Electroweak Transition (T ~ 100 GeV)
 
@@ -151,7 +151,7 @@ At T ~ 10¹⁵ K (100 GeV), the Higgs field condensed:
 | W, Z massless | W, Z massive |
 | EM and Weak unified | EM and Weak separate |
 
-**In FTD**: This is a **first-order** transition. It proceeds via bubble nucleation—exactly like water boiling, but with the Higgs condensate forming inside bubbles.
+**In FTD**: This is a **first-order** transition. It proceeds via bubble nucleation: exactly like water boiling, but with the Higgs condensate forming inside bubbles.
 
 The bubble walls are where **baryogenesis** happens (see Chapter 10.4).
 
@@ -182,7 +182,7 @@ All phase transitions in FTD involve the flux field reorganizing:
 
 ::: {.callout-note}
 ## Universal Physics
-The same mathematics describes ice melting and the electroweak transition—both involve an order parameter (flux configuration) changing as temperature crosses a critical value.
+The same mathematics describes ice melting and the electroweak transition: both involve an order parameter (flux configuration) changing as temperature crosses a critical value.
 :::
 
 ## Experiments
@@ -229,7 +229,7 @@ def check_phase_transition(particle, neighbors):
 
 ## Transition
 
-Normal phases cover most conditions. But at extremes, exotic states emerge—superconductors, superfluids, and more in @sec-exotic-states.
+Normal phases cover most conditions. But at extremes, exotic states emerge: superconductors, superfluids, and more in @sec-exotic-states.
 
 ::: {.callout-tip}
 ## Related Topics

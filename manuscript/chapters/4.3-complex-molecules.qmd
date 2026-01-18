@@ -133,14 +133,14 @@ A carbon with 4 different groups is chiral:
 ```
         A
         |
-    B—C*—D
+    B: C*: D
         |
         E
 
 Mirror images are not superimposable.
 ```
 
-This matters in biology—life uses only one "handedness" of amino acids.
+This matters in biology: life uses only one "handedness" of amino acids.
 
 ## Reactions
 
@@ -178,4 +178,4 @@ Find all isomers for a given formula.
 
 ## Transition
 
-Complex molecules are still small compared to the giants of chemistry. Next, we explore macromolecules—proteins, polymers, and DNA.
+Complex molecules are still small compared to the giants of chemistry. Next, we explore macromolecules: proteins, polymers, and DNA.

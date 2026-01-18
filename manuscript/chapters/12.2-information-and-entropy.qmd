@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Information is physical. Erasing a bit releases heat. Entropy measures what we don't know. The second law drives the universe toward equilibrium—but pockets of order can persist, borrowing from the cosmic entropy budget.
+Information is physical. Erasing a bit releases heat. Entropy measures what we don't know. The second law drives the universe toward equilibrium: but pockets of order can persist, borrowing from the cosmic entropy budget.
 :::
 
 ## Shannon Entropy
@@ -88,7 +88,7 @@ $$
 
 ### Why?
 
-Not a fundamental law—a statistical truth:
+Not a fundamental law: a statistical truth:
 - Overwhelmingly more disordered states than ordered
 - Random evolution → most likely state
 - Most likely = highest entropy
@@ -157,7 +157,7 @@ requires boundary conditions at both temporal ends. Variational principles need 
 
 $$s(v, t=0) = 0 \quad \forall v$$
 
-This is the **unique maximum-symmetry state**—homogeneous, isotropic, zero information content.
+This is the **unique maximum-symmetry state**: homogeneous, isotropic, zero information content.
 
 **Final condition**: The action principle requires specifying the endpoint. In cosmology, this is the **heat death** state:
 
@@ -167,7 +167,7 @@ Maximum entropy, uniform distribution, no gradients.
 
 ::: {.callout-important}
 ## The Arrow is Geometric
-The arrow of time is not a mystery to be explained—it is a **boundary condition** of the variational problem. Time's direction is the direction from low-entropy boundary to high-entropy boundary.
+The arrow of time is not a mystery to be explained: it is a **boundary condition** of the variational problem. Time's direction is the direction from low-entropy boundary to high-entropy boundary.
 :::
 
 ### Why This Boundary?
@@ -176,7 +176,7 @@ Why these particular boundary conditions? Three answers:
 
 1. **Anthropic**: Only universes with low initial entropy produce observers. We couldn't be asking this question otherwise.
 
-2. **Uniqueness**: The all-Void state is the **unique** state with maximum symmetry. Any other initial condition requires specifying additional structure—breaking symmetry without explanation.
+2. **Uniqueness**: The all-Void state is the **unique** state with maximum symmetry. Any other initial condition requires specifying additional structure: breaking symmetry without explanation.
 
 3. **Self-consistency**: The action principle itself requires smooth boundaries. The all-Void → heat-death trajectory is the smoothest possible evolution.
 
@@ -195,7 +195,7 @@ Both views are valid. The rules are local; the explanation is global.
 
 ### Information is Conserved
 
-The flux field evolution is **unitary**—information is never created or destroyed, only redistributed.
+The flux field evolution is **unitary**: information is never created or destroyed, only redistributed.
 
 $$I_{total}(t) = I_{total}(0) = \text{constant}$$
 
@@ -241,6 +241,21 @@ I_{max} = \frac{A}{4 l_P^2}
 $$
 
 Proportional to surface area, not volume!
+
+## Societal Noetics: Information as Perturbation
+
+The principles of entropy and information extend to the societal level.
+
+### Cultural Objectivity
+Societies maintain a **Shared Epistemic Model** ($\Phi_{culture}$) based on accumulated information. This "Cultural Objectivity" behaves like a physical object with **Noetic Inertia**: it resists change.
+
+### Propaganda as Perturbation
+"Propaganda" is the injection of **Informational Entropy** designed to destabilize $\Phi_{culture}$.
+1.  **Perturbation:** High-intensity flux (narrative) disrupts the existing coherence of the cultural model.
+2.  **Restructuring:** The model re-condenses around the new attractor (the propagated truth).
+3.  **The Limit:** This manipulates the **Epistemic Domain** (meaning), but cannot alter the **Ontic Domain** (physics). No amount of propaganda can change the value of $G^*$.
+
+This distinguishes **Political Truth** (mutable/informational) from **Physical Truth** (immutable/geometric).
 
 ## In the Simulation
 
@@ -301,4 +316,4 @@ Run simulation forward and backward. Observe asymmetry.
 
 ## Transition
 
-Information connects to entropy, entropy to time. But what emerges from all this? Next, we explore complexity—the patterns that arise between order and chaos.
+Information connects to entropy, entropy to time. But what emerges from all this? Next, we explore complexity: the patterns that arise between order and chaos.
