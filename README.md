@@ -140,7 +140,7 @@ pytest tests/ -v
 python tests/run_all_tests.py
 ```
 
-### Read the Book
+### Read the Book (WIP) 
 
 **[Download the PDF](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/blob/main/manuscript/_book/Foundational-Ternary-Dynamics.pdf)** (82 chapters)
 
