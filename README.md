@@ -142,7 +142,9 @@ python tests/run_all_tests.py
 
 ### Read the Book
 
-The complete 82-chapter manuscript is built with Quarto:
+**[Download the PDF](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/blob/main/manuscript/_book/Foundational-Ternary-Dynamics.pdf)** (82 chapters)
+
+Or build from source with Quarto:
 
 ```bash
 cd manuscript
