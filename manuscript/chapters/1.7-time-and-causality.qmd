@@ -5,7 +5,47 @@
 ::: {.callout-note}
 ## Key Revelation
 Time is not uniform. High-energy particles experience time more slowly. This is not a relativistic correction: it is fundamental to how the universe works.
+
+This chapter reconciles the apparent tension between discrete time (the FTD axiom) and emergent time dilation (the physical phenomenon) through the **dual time framework** established in @sec-formal-logic.
 :::
+
+## The Dual Time Framework
+
+Before examining time dilation, we must clarify what "time" means in FTD.
+
+### Epistemic Time vs Physical Time
+
+As established in @sec-formal-logic and @sec-time-ordering, FTD distinguishes two temporal concepts:
+
+| Concept | Symbol | Nature | Properties |
+|---------|--------|--------|------------|
+| **Epistemic Time** | $T_e$ | Logical ordering | Discrete ticks, monotonic, irreversible |
+| **Physical Time** | $T_p$ | Emergent measure | Continuous-appearing, metric, can dilate |
+
+::: {.callout-important}
+## Key Insight: The Tick is Not a Duration
+The FTD "tick" $t$ is an **epistemic moment**—a step in the sequence of distinctions. It is an ordering index, not a physical duration.
+
+What we call "time dilation" is a phenomenon of **physical time $T_p$**, not epistemic time $T_e$. Different observers (sLoops) accumulate different numbers of ticks between events, which manifests as physical time running at different rates.
+:::
+
+### Reconciling Discrete and Dilating
+
+The apparent paradox:
+- **FTD axiom**: Time is discrete ticks
+- **Physical observation**: Time dilates (runs slower for moving observers)
+
+The resolution: **Epistemic time $T_e$ is always discrete; physical time $T_p$ is an emergent metric that varies across observers.**
+
+Consider two observers A and B:
+- Both experience discrete ticks (epistemic time)
+- A accumulates 100 ticks between events E1 and E2
+- B accumulates only 60 ticks between the same events (due to motion/energy)
+- In physical time, we say "B's clock ran slower"
+
+There is no contradiction: discrete epistemic ordering is compatible with variable emergent metric.
+
+---
 
 ## Time Dilation
 
@@ -135,10 +175,13 @@ For a massive particle at rest: $E = m_0 c^2$
 
 ## Concepts
 
-- **time-dilation**: High energy → slow time
-- **phase-accumulator**: The local clock mechanism
-- **retarded-positions**: Forces use past data
-- **speed-limit**: Nothing exceeds C
+- **dual-time-framework**: The distinction between epistemic time $T_e$ (discrete ordering) and physical time $T_p$ (emergent metric)
+- **epistemic-time**: $T_e$ = sequence of ticks; logical ordering of distinctions; always discrete
+- **physical-time**: $T_p$ = emergent measure on epistemic ordering; continuous-appearing; can dilate
+- **time-dilation**: High energy → slow physical time (fewer ticks accumulated between events)
+- **phase-accumulator**: The local clock mechanism implementing variable tick rates
+- **retarded-positions**: Forces use past data (causality constraint)
+- **speed-limit**: Nothing exceeds C (1 voxel per tick)
 
 ## Transition
 

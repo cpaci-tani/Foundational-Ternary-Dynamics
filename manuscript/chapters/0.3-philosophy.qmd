@@ -5,6 +5,8 @@
 ::: {.callout-note}
 ## Purpose of This Chapter
 This chapter makes explicit the philosophical commitments underlying FTD. Every physical theory carries philosophical baggage; we prefer to unpack ours openly.
+
+Building on the epistemic chain established in @sec-formal-logic (distinction → ternary valuation → space → physics → science), we now explore how the two-domain framework (Domain A/B) connects to this logical foundation, and formalize the **modal constraint ψ** that governs what can be distinguished.
 :::
 
 ## The Nature of Philosophy: Epistemic Pattern Matching
@@ -628,6 +630,81 @@ When a sentient bridge **creates** an epistemic physical object:
 
 Art, science, and communication are all **domain translation activities** -the deliberate creation of A-structures that encode B-content for transmission to other bridges.
 
+## The Modal Constraint ψ {#sec-modal-constraint}
+
+A central question remains: **What determines which configurations can be distinguished?** We formalize this through the modal constraint ψ.
+
+### Definition
+
+::: {.callout-important}
+## Definition: The Modal Constraint ψ
+
+The **modal constraint** ψ is a function that determines which ontological configurations are epistemically accessible:
+
+$$\psi: \mathcal{A} \times O \to \{0, 1\}$$
+
+where:
+- $\mathcal{A}$ = configuration space (Domain A)
+- $O$ = set of observers
+- $\psi(a, o) = 1$ if configuration $a$ is distinguishable by observer $o$
+- $\psi(a, o) = 0$ if configuration $a$ is not distinguishable by observer $o$
+:::
+
+### The Accessibility Relation
+
+In modal logic terms, ψ defines an **accessibility relation** $R$ between worlds:
+
+$$w_1 R w_2 \iff \psi(w_2, o_{w_1}) = 1$$
+
+"World $w_2$ is accessible from $w_1$" means an observer in $w_1$ can distinguish the configuration that defines $w_2$.
+
+### Modal Operators via ψ
+
+The standard modal operators now have concrete meaning:
+
+| Operator | Definition via ψ | Meaning |
+|----------|------------------|---------|
+| $\Box p$ (Necessity) | $\forall a: \psi(a, o) = 1 \Rightarrow p(a)$ | $p$ holds in all distinguishable configurations |
+| $\diamond p$ (Possibility) | $\exists a: \psi(a, o) = 1 \land p(a)$ | $p$ holds in some distinguishable configuration |
+
+### ψ and the sLoop
+
+The modal constraint ψ emerges from the **sLoop** structure:
+
+1. An observer $o$ is an sLoop (self-referential loop) in Domain A
+2. The sLoop has a **horizon** $H_o$: the set of configurations it can couple to
+3. ψ is determined by the horizon: $\psi(a, o) = 1 \iff a \cap H_o \neq \emptyset$
+
+::: {.callout-note}
+## Key Insight
+The modal constraint is not imposed from outside—it **emerges** from the physical structure of the observer. What you can know is determined by what you can couple to.
+:::
+
+### ψ and Measurement
+
+The modal constraint explains why **measurement is constrained**:
+
+- An observer can only measure what is within its horizon
+- The measurement outcome depends on the flux coupling at the boundary
+- "Inaccessible" configurations (ψ = 0) never become part of the observer's knowledge
+
+This grounds the measurement problem in physics rather than metaphysics: measurement is **physical coupling within the horizon**, not mysterious "collapse."
+
+### ψ and the Epistemic Chain
+
+The modal constraint connects to the epistemic chain from @sec-formal-logic:
+
+```
+Distinction → Valuation → Relations → Space → ψ → Physics
+                                        ↑
+                           Modal constraint determines
+                           which distinctions are possible
+```
+
+ψ is not arbitrary—it is **determined by the physical embedding** of the observer in the flux field.
+
+---
+
 ## Dispositional Ontology (As Context)
 
 Within this interpretive framework, FTD adopts a **dispositional ontology**: reality consists of dispositions (potentials, tendencies) that may or may not be actualized. This is not a claim about "what lies beneath," but a claim about the best way to *model* the void.
@@ -667,9 +744,25 @@ FTD is closest to **neutral monism**: one substance with multiple aspects, none 
 
 ## Why Ternary?
 
-The choice of three states {−1, 0, +1} is not arbitrary.
+The choice of three states {−1, 0, +1} is **not arbitrary**—it is a theorem of EPL-ST (see @sec-formal-logic).
 
-### The Argument from Asymmetry
+### Recap: The Derivation
+
+As shown in @sec-formal-logic, ternary valuation is **necessary** given:
+1. Paraconsistent logic (contradiction is localized, not explosive)
+2. Epistemic constraints (some propositions are undetermined)
+3. Distinction as primitive (marking this vs. not-this)
+
+The three values are:
+- **+1**: Affirmed (distinguished as holding)
+- **-1**: Negated (distinguished as not holding)
+- **0**: Undetermined (no distinction made)
+
+### Additional Arguments
+
+Beyond the necessity proof, ternary has several attractive properties:
+
+**The Argument from Asymmetry**
 
 Binary systems (0, 1) cannot represent asymmetric phenomena naturally:
 - Matter/antimatter asymmetry
@@ -678,7 +771,7 @@ Binary systems (0, 1) cannot represent asymmetric phenomena naturally:
 
 Ternary systems have a natural "neutral" state that can distinguish between two polarities.
 
-### The Argument from Minimality
+**The Argument from Minimality**
 
 Why not four states? Five?
 
@@ -687,9 +780,14 @@ Ternary is **minimal for polarity**:
 - Three is sufficient (positive, negative, neutral)
 - Four or more adds structure without necessity
 
-### The Argument from Self-Reference
+**The Argument from Self-Reference**
 
 The Lemniscate-Alpha derivation shows that the "2" in power-of-2 frequencies comes from the 2 manifest states (±1). The ternary structure generates binary harmonics as its "shadow."
+
+::: {.callout-important}
+## Key Point
+The ternary structure is not a design choice—it is the **necessary consequence** of distinguishability under paraconsistent constraints. FTD's three states {−1, 0, +1} are derived, not assumed.
+:::
 
 ## The Measurement Problem
 
@@ -786,6 +884,9 @@ FTD treats consciousness as emergent from physical processes. Whether there are 
 
 ## Concepts
 
+- **modal-constraint-ψ**: Function $\psi: \mathcal{A} \times O \to \{0,1\}$ determining which configurations are epistemically accessible to each observer
+- **accessibility-relation**: $w_1 R w_2 \iff \psi(w_2, o_{w_1}) = 1$; defines modal operators
+- **horizon**: $H_o$ = the set of configurations an sLoop can couple to; determines ψ
 - **domain-A**: $\mathcal{A}$ = Configuration space of ontic states $(s, \mathbf{J})$; deterministic, local, observer-independent
 - **domain-B**: $\mathcal{B}$ = Space of probability distributions; epistemic, observer-relative, contains meaning
 - **bridge-operator**: $\mathcal{T}: \mathcal{A} \to \mathcal{B}$; translation from ontic to epistemic via sentient sLoop

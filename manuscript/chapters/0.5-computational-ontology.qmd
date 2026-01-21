@@ -5,6 +5,8 @@
 ::: {.callout-note}
 ## Purpose of This Chapter
 This chapter addresses the measurement problem by grounding observation in computation. We define a hierarchy of entities based on their computational capacity and show that "collapse" is not a physical process but a computational one: Bayesian updating by sufficiently complex systems.
+
+Building on the epistemic chain (@sec-formal-logic), we clarify the distinction between **epistemic time** (the discrete sequence of distinctions/ticks) and **physical time** (the emergent metric). The "tick" in FTD is an **epistemic moment**, not a physical duration.
 :::
 
 ## The Observer Problem
@@ -82,11 +84,51 @@ Both run $\text{Update}()$. Both construct models. Both update priors based on i
 Consciousness is not causally special. It is one implementation of the $\geq 2$ gate computation.
 :::
 
+## Time as Computational Ordering {#sec-time-ordering}
+
+Before discussing the Global Now, we must clarify what "time" means in FTD.
+
+### Epistemic vs Physical Time
+
+As established in @sec-formal-logic, FTD distinguishes two temporal concepts:
+
+| Concept | Symbol | Nature | Properties |
+|---------|--------|--------|------------|
+| **Epistemic Time** | $T_e$ | Logical ordering | Discrete, monotonic, irreversible |
+| **Physical Time** | $T_p$ | Emergent measure | Continuous-appearing, metric, can dilate |
+
+### The Tick as Epistemic Moment
+
+The FTD "tick" is an **epistemic moment**—a single step in the sequence of distinctions. It is:
+
+- **Not a duration**: A tick has no "length" in the physical sense
+- **An ordering index**: Tick $t$ comes before tick $t+1$
+- **Irreversible**: Once a distinction is made, it cannot be unmade
+
+::: {.callout-important}
+## Key Insight
+The tick is the computational analogue of a Turing machine step: one discrete update to the global state. It does not measure "how long" something takes; it measures "how many steps" have occurred.
+:::
+
+### Reconciling Discrete Ticks with Time Dilation
+
+This resolves an apparent inconsistency:
+- **FTD axiom**: Time is discrete ticks
+- **FTD claim**: Time dilation emerges
+
+The resolution: **Epistemic time $T_e$ is always discrete; physical time $T_p$ is an emergent measure on $T_e$.**
+
+Time dilation means that different observers (different sLoops) accumulate different numbers of ticks between events. From the perspective of $T_p$, this appears as "time running slower." From the perspective of $T_e$, it is simply different tick counts.
+
+---
+
 ## The Global Now
 
 All entities exist within a shared temporal frame. We formalize this using the notation from §0.4:
 
 $$\texttt{Global}(t) = \text{everything at tick } t$$
+
+Here $t$ is an **epistemic time index**, not a physical duration.
 
 Within Global, each observer $\Omega$ has a horizon:
 
@@ -233,6 +275,9 @@ From xyztg$\psi$ and computational ontology, higher phenomena arise:
 
 ## Concepts
 
+- **epistemic-time**: $T_e$ = discrete, monotonic sequence of ticks; the logical ordering of distinctions
+- **physical-time**: $T_p$ = emergent metric on epistemic time; continuous-appearing, can dilate
+- **tick**: One step in the epistemic sequence; an ordering index, not a duration
 - **computational-hierarchy**: Entities ranked by logic gate count
 - **dead-entity**: 0 gates, participates but does not compute
 - **brain-dead-entity**: 1 gate, detects but does not model

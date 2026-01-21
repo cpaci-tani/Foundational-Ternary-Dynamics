@@ -10,7 +10,7 @@
 
 > **Major Update (v4.0)**: This version incorporates novel theoretical foundations including an action principle from which update rules are derived, Hilbert space construction from the flux field, and established connections to standard physics (Maxwell, Schrödinger). See [THEORETICAL_FOUNDATIONS.md](THEORETICAL_FOUNDATIONS.md) for complete derivations.
 
-> **Major Update (v4.1)**: First observational confirmation achieved. Cloud-9 (Leisman et al. 2025) validates FTD predictions about spherical dark matter halos. See [CLOUD9_OBSERVATIONAL_CONFIRMATION.md](CLOUD9_OBSERVATIONAL_CONFIRMATION.md). Full SM gauge group now derived: U(1) × SU(2) × SU(3). See [GAUGE_STRUCTURE.md](GAUGE_STRUCTURE.md) and [FORMAL_CATEGORICAL_FRAMEWORK.md](FORMAL_CATEGORICAL_FRAMEWORK.md).
+> **Major Update (v4.1)**: First observational confirmation achieved. Cloud-9 (Anand et al. 2025) validates FTD predictions about spherical dark matter halos. See [CLOUD9_OBSERVATIONAL_CONFIRMATION.md](CLOUD9_OBSERVATIONAL_CONFIRMATION.md). Full SM gauge group now derived: U(1) × SU(2) × SU(3). See [GAUGE_STRUCTURE.md](GAUGE_STRUCTURE.md) and [FORMAL_CATEGORICAL_FRAMEWORK.md](FORMAL_CATEGORICAL_FRAMEWORK.md).
 
 > **Major Update (v5.0 - TOE COMPLETE)**: All 7 remaining theoretical gaps have been resolved:
 > - **C1 PROVEN**: x₊ = 1/α via Complex Multiplication uniqueness (no longer conjecture)

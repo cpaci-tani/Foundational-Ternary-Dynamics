@@ -4,7 +4,9 @@
 
 ::: {.callout-note}
 ## Purpose of This Chapter
-This chapter establishes the epistemic framework for everything that follows. Before we describe what exists, we must be clear about what we can prove, what we assume, and what we conjecture.
+This chapter establishes the epistemic framework for everything that follows. Building on the logical chain established in @sec-formal-logic (from distinction → ternary valuation → space → physics), we now specify FTD's first principles and their epistemic status.
+
+**Key insight:** The ternary state space is not an arbitrary assumption—it is a *theorem* of EPL-ST. What remains as genuine axioms are the structural choices that instantiate this necessary framework.
 :::
 
 ## What Is a Mathematical Declaration?
@@ -31,7 +33,36 @@ A declaration says: *Given these axioms, this structure follows necessarily.*
 
 We strive to clearly label every claim in this book by type.
 
+## The Primacy of Distinction
+
+Before we list axioms, we acknowledge the foundation established in @sec-formal-logic:
+
+::: {.callout-important}
+## The Grounding Chain
+**Distinction** (primitive) → **Ternary Valuation** (theorem) → **Space** (theorem) → **FTD Axioms** (structural choices)
+
+The ternary states {−1, 0, +1} and the requirement for 3D space are *derived* from the logic of distinguishability. What remains to be specified are the *structural choices* that instantiate this necessary framework.
+:::
+
+### What is Derived vs What is Chosen
+
+| Feature | Status | Justification |
+|---------|--------|---------------|
+| Ternary states {−1, 0, +1} | **[T] Theorem** | Necessary from EPL-ST |
+| 3D space | **[T] Theorem** | Minimal stable embedding |
+| Discrete lattice | **[A] Axiom** | Structural choice (simplest discrete 3D) |
+| 26-neighbor connectivity | **[A] Axiom** | Maximal local contact |
+| Discrete ticks | **[A] Axiom** | Epistemic time instantiation |
+
 ## The Hierarchy of Justification
+
+### Level 0: Theorems from Distinction (NEW)
+
+These follow from EPL-ST and are *not* axioms within FTD:
+
+- **Ternary valuation is necessary** (proved in @sec-formal-logic)
+- **d ≥ 3 dimensions required for stable embedding** (proved in @sec-formal-logic)
+- **Epistemic time is discrete and irreversible** (from definition of distinction)
 
 ### Level 1: Definitions
 
@@ -39,22 +70,19 @@ Definitions create language. They cannot be true or false: only useful or confus
 
 Examples:
 - "A voxel is a unit cell of the lattice"
-- "State 0 is called 'void'"
+- "State 0 is called 'void'" (= undistinguished substrate)
+- "State ±1 is called 'manifestation'" (= distinguished)
 - "Flux is a 3D vector field"
 
-### Level 2: Axioms
+### Level 2: Axioms (Structural Choices)
 
-Axioms are starting assumptions. They are not proven within the system. Their justification (if any) comes from:
-- Mathematical necessity
-- Simplicity (Occam's razor)
-- Empirical adequacy (if the system is meant to model reality)
+Axioms are structural choices that instantiate the derived framework. Given that ternary states and 3D are necessary, we choose:
 
-Our five axioms:
-1. Space is a discrete 3D lattice
-2. Time advances in discrete ticks
-3. Each cell has state ∈ {−1, 0, +1}
-4. Updates are local (26-neighbor Moore neighborhood)
-5. Causality is preserved (max speed = 1 cell/tick)
+1. **Space is a discrete cubic 3D lattice** (simplest regular 3D tiling)
+2. **Time advances in discrete ticks** (instantiates epistemic time)
+3. ~~Each cell has state ∈ {−1, 0, +1}~~ **(Now a theorem, not axiom)**
+4. **Updates are local (26-neighbor Moore neighborhood)** (maximal contact structure)
+5. **Causality is preserved (max speed = 1 cell/tick)** (from locality)
 
 ### Level 3: Theorems
 
@@ -120,11 +148,13 @@ The exception: The fine structure constant α IS derived from geometry (see @sec
 ::: {.callout-important}
 ## The Central Claims
 
-1. **From three states and five axioms**, we construct a consistent dynamics
-2. **Some features emerge** that were not directly coded
-3. **The fine structure constant** can be derived geometrically
-4. **Bell violations may arise** from self-referential observation (conjecture)
-5. **Physics-like behavior occurs** at macroscopic scales
+1. **The ternary ontology is derived**, not assumed (from EPL-ST)
+2. **From structural axioms**, we construct a consistent dynamics
+3. **Some features emerge** that were not directly coded
+4. **The fine structure constant** can be derived geometrically
+5. **Bell violations may arise** from self-referential observation (conjecture)
+6. **Physics-like behavior occurs** at macroscopic scales
+7. **Science itself is grounded** in the chain from distinction to physics
 :::
 
 ## What This Book Does NOT Claim
@@ -158,12 +188,16 @@ You don't need to believe anything. Watch what happens when simple rules run. Se
 
 ## Concepts
 
-- **axiom**: Starting assumption, not proven within system
-- **theorem**: Logical consequence of axioms
+- **distinction**: The primitive act of marking difference (EPL-ST)
+- **valuation**: Assigning epistemic status {−1, 0, +1} to propositions
+- **axiom**: Structural choice, not proven within system (but may follow from deeper logic)
+- **theorem**: Logical consequence of axioms or EPL-ST
 - **emergence**: Property arising from but not coded into rules
 - **conjecture**: Unproven proposal
 - **epistemic-status**: Classification of claim type
+- **void**: Undistinguished substrate (s = 0)
+- **manifestation**: Distinguished state (s = ±1)
 
 ## Transition
 
-With epistemic ground rules established, we turn to the mathematical tools needed to understand FTD: discrete differential geometry, lattice theory, and the formalism of cellular automata.
+With the epistemic chain established (distinction → ternary → space → axioms), we turn to the mathematical tools needed to understand FTD: discrete differential geometry, lattice theory, and the formalism of cellular automata.

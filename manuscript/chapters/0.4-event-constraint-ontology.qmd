@@ -5,6 +5,8 @@
 ::: {.callout-note}
 ## Purpose of This Chapter
 This chapter presents the **xyztg$\psi$** ontological framework: the minimal structure required to describe physical reality without privileging observers or conflating events with laws.
+
+Building on the epistemic chain (@sec-formal-logic), we show how space and time **emerge** from the requirements of consistent epistemic extension, and formalize how the modal constraint ψ (introduced in @sec-modal-constraint) governs the structure of events.
 :::
 
 ## The Three Primitives
@@ -143,6 +145,52 @@ This asymmetry suggests a natural hierarchy:
 
 The notation "1D = $xy$" means: the first non-trivial level is spatial relationship without temporal sequence. Adding time creates the next level of complexity.
 
+## Space Emergence: Why d ≥ 3 {#sec-space-emergence}
+
+As derived in @sec-formal-logic, the spatial dimension $d \geq 3$ is **not a free parameter**—it is a theorem of consistent epistemic extension.
+
+### The Theorem (Recap)
+
+::: {.callout-important}
+## Emergent Space Theorem [T]
+**If consistent epistemic extension requires stable relational embedding, then the minimal such embedding has dimension $d \geq 3$.**
+:::
+
+The arguments are:
+
+1. **$d = 1$**: Linear ordering cannot support stable clustering
+2. **$d = 2$**: Planar embedding cannot support non-trivial knots (topological protection)
+3. **$d = 3$**: Three dimensions admit:
+   - Stable triangular configurations (triads)
+   - Non-trivial knot theory
+   - Gauge theories with confinement (SU(3))
+   - Spinor structure (π₁(SO(3)) = ℤ₂)
+
+### Contact Structure
+
+The 26-connected Moore neighborhood is not arbitrary—it is the **maximal contact structure** on a 3D cubic lattice:
+
+$$N(v) = \{u \in L : \max(|u_x - v_x|, |u_y - v_y|, |u_z - v_z|) \leq 1\} \setminus \{v\}$$
+
+This gives:
+- 6 face-neighbors (share a face)
+- 12 edge-neighbors (share an edge)
+- 8 corner-neighbors (share only a vertex)
+
+Total: 26 neighbors.
+
+The Moore neighborhood is selected because it provides **maximal local connectivity** while preserving discrete structure. Any larger neighborhood would either require non-local connections or a finer lattice.
+
+### From Relations to Lattice
+
+The chain is:
+
+```
+Distinctions → Relations → Invariant Structures → Embedding → Lattice
+```
+
+The cubic lattice $L \subset \mathbb{Z}^3$ is the **simplest regular 3D tiling** that instantiates the derived spatial requirement. Other tilings (hexagonal, etc.) would work but add complexity without necessity.
+
 ## Waves Exist Between Moments
 
 A wave is not an instantaneous thing. You cannot have a wave at a single moment.
@@ -228,6 +276,8 @@ The flux field $\mathbf{J}$ encodes the modal constraint: where flux is high, ma
 - **event-ontology**: Events as the fundamental ontic units
 - **geometric-constraint**: Metric and causal structure as real but non-substantial
 - **modal-constraint**: Laws governing transitions between events
+- **space-emergence**: d ≥ 3 as theorem from consistent epistemic extension
+- **contact-structure**: 26-connected Moore neighborhood as maximal local connectivity
 - **xyztgψ(Δt)**: Complete description of a single entity at one tick
 - **Ω(t)**: Complete configuration of an observer at one tick
 - **H(Ω,t)**: Horizon, what an observer can perceive

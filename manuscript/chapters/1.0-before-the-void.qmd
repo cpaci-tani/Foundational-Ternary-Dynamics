@@ -5,6 +5,8 @@
 ::: {.callout-note}
 ## Purpose of This Chapter
 This chapter addresses the deepest foundation: why does the void have structure? Why is manifestation possible? We argue that the flux field's existence is not contingent but necessary given the minimal requirements for a coherent ontology.
+
+Building on the epistemic chain from @sec-formal-logic (distinction → ternary → space → physics), we show that the void is the **logical precondition** for distinguishability itself.
 :::
 
 ## The Question Behind the Question
@@ -17,6 +19,25 @@ Chapter 1.1 begins with the Void: state 0, the substrate awaiting activation. Bu
 4. The flux can exceed a threshold and trigger manifestation
 
 Where do these come from? Why is there a void *capable* of manifestation, rather than absolute nothing?
+
+## The Logical Precondition: Before Distinction
+
+Before we can speak of distinction (the primitive of EPL-ST), there must be **something to distinguish**. The void is this "something"—not a particular thing, but the **substrate of distinguishability**.
+
+::: {.callout-important}
+## Key Insight: The Void Precedes Distinction
+**Before distinction, there is no "where."** Space itself is meaningless without the possibility of marking "here" versus "there."
+
+The void is not located in space. The void is what **makes location possible**.
+:::
+
+### The Chain
+
+```
+VOID (substrate) → DISTINCTION (act) → VALUATION (ternary) → SPACE → PHYSICS
+```
+
+The void comes before the epistemic chain because the chain requires something to operate on. The void is the **undifferentiated potential** from which all distinction emerges.
 
 ## The Principle of Minimal Coherence
 
@@ -33,18 +54,20 @@ For anything to exist in a way that can be described, discussed, or known, there
 4. **Relation**: States must be able to affect each other
 :::
 
-These four requirements are not physical laws: they are **preconditions for any physics at all**.
+These four requirements are not physical laws: they are **preconditions for any physics at all**. They follow from the deeper requirement: **distinction must be possible**.
 
 ## Deriving the Flux Field
 
 ### From Distinguishability to States
 
-If existence requires distinguishability, there must be at least two states. The minimal non-trivial choice is three: $\{-1, 0, +1\}$, which allows:
-- A neutral state (0)
-- Two distinguished states (+1, -1)
-- Symmetric opposition between the distinguished states
+As proven in @sec-formal-logic (the Ternary Valuation Theorem), distinguishability under paraconsistent constraints **necessarily** produces exactly three states: $\{-1, 0, +1\}$.
 
-Two states would work, but would not allow a neutral "ground." Four or more adds structure without necessity.
+This is not a choice but a theorem:
+- **+1**: Affirmed (distinguished as holding)
+- **-1**: Negated (distinguished as not holding)
+- **0**: Undetermined (no distinction made = void)
+
+The void is the **undistinguished state**—not "nothing," but "not yet distinguished."
 
 ### From Locality to Lattice
 
@@ -168,6 +191,63 @@ The three-dimensionality of the lattice is not axiomatic. It is uniquely selecte
 
 Why is the lattice 3-dimensional? This is established as a **derived consequence** of deeper requirements.
 
+### The Dimensional Hierarchy
+
+Before examining why D = 3, we must understand how dimensions emerge at all. A single spatial axis does not constitute a complete dimension:
+
+| Level | Components | Status |
+|-------|------------|--------|
+| 0.5D | X or Y alone | Incomplete (no extent without contrast) |
+| 1D | XY | First complete spatial dimension |
+| 2D | XY + T | Space with time |
+| 3D | XY + Z + T | Full spacetime |
+| 3D+1 | XYZT + gΨ(ΔT) | Spacetime with gravitational-wavefunction coupling |
+
+The key insight: **dimensions require pairs**. A single axis X has no meaning without a contrasting axis Y to define extent and direction. You cannot have "half" a volume or "half" a time interval. The pairing XY creates the first complete dimension, not X alone.
+
+::: {.callout-note}
+## Why a Single Axis is 0.5D
+
+Consider a line existing outside of space and time. Which way is it facing? The question has no answer. Without a reference, there are no cardinal directions, no orientation, no "up" or "down." The line simply *is*.
+
+A single axis (X or Y alone) has no determinable state of orientation. It exists, but its existence is incomplete: potential without actualization. Only when a second line is introduced can orientation emerge:
+
+- **Two perpendicular lines** → cardinal directions (North, South, East, West)
+- **Two parallel lines** → parallelism (the concept of "alongside")
+- **Multiple lines** → geometry (angles, shapes, extent)
+
+From geometry emerge properties: hatches, circles, interference patterns. In three dimensions, even moiré patterns become possible. But none of this can exist with a single undetermined axis.
+:::
+
+::: {.callout-important}
+## The Emergence of Relativity and Subjectivity
+
+This dimensional hierarchy has a profound implication: **relativity itself is emergent**.
+
+At 0.5D (a single axis), there is only pure existence without perspective. The line simply *is*. There is no "from here" versus "from there" because there is no second reference point.
+
+At 1D (two axes in relation), something new emerges: the very concept of "relative to what?" Now there are two things, and each can serve as a reference for the other. This is the birth of:
+
+- **Relativity**: Position and orientation only have meaning relative to something else
+- **Perspective**: The possibility of "viewing from here" versus "viewing from there"
+- **Subjectivity**: The precondition for observers (distinct viewpoints)
+
+| Dimensional Stage | What Emerges |
+|-------------------|--------------|
+| 0.5D | Pure existence (no perspective possible) |
+| 1D | Orientation, relativity, the subject/object distinction |
+| 2D+ | Geometry, physics, observers |
+
+**Subjectivity is not added to an objective universe.** It is *co-emergent* with spatial relation itself. The moment you have two things in relation, you have the precondition for perspective. This connects directly to FTD's sLoop concept: the observer is not external to the system but ontologically continuous with it. The subject/object distinction is emergent, not fundamental.
+:::
+
+This is why:
+- X alone = 0.5D (potential, not actual)
+- Y alone = 0.5D (potential, not actual)
+- XY together = 1D (actual dimension through relationship)
+
+Time T adds a full dimension when paired with space, giving 2D. The third spatial axis Z completes physical spacetime at 3D. The "+1" beyond 3D emerges from the gravitational-wavefunction coupling gΨ(ΔT), which connects geometry to quantum evolution.
+
 ### Six Independent Arguments for D = 3
 
 **Argument 1: Gauge Theory Requirements**
@@ -273,6 +353,8 @@ This chapter is more speculative than the physics derivations. We argue for plau
 
 ## Concepts
 
+- **void-as-precondition**: The void as the substrate that makes distinction possible
+- **before-distinction**: The logical "prior" to the epistemic chain (void → distinction → ternary → space)
 - **minimal-coherence**: The requirements for anything to exist coherently
 - **flux-necessity**: The flux field as required mediator of influence
 - **void-as-dispositional**: The void as structured potential, not absence
@@ -280,6 +362,8 @@ This chapter is more speculative than the physics derivations. We argue for plau
 - **bootstrap**: Self-organization from symmetric ground to structured cosmos
 - **initial-condition**: What the simplest beginning must look like
 - **d3-uniqueness**: The derivation that D = 3 is uniquely selected by 6 constraints
+- **dimensional-hierarchy**: How dimensions emerge from pairs (0.5D → 1D → 2D → 3D)
+- **emergent-relativity**: Relativity and subjectivity co-emerge with spatial relation at 1D
 
 ## Transition
 

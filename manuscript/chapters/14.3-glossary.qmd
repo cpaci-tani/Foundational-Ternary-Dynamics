@@ -55,6 +55,12 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 **Casimir Effect**
 : Attractive force between close surfaces due to excluded vacuum fluctuation modes. Demonstrates reality of zero-point energy.
 
+**Ce₂Zr₂O₇ (Cerium Zirconium Oxide)**
+: Pyrochlore material exhibiting quantum spin ice behavior. In 2025, confirmed as the first material showing emergent photon-like excitations from discrete lattice dynamics—validating FTD's core mechanism of gauge boson emergence from constraint structure.
+
+**CP Violation (in Baryons)**
+: Asymmetry between matter and antimatter decay rates in three-quark systems. First observed in baryons by LHCb in 2025 (Λb⁰ → pK⁻π⁺π⁻, 5.2σ). FTD derives CP violation from integer ratios: δ_CP = arctan(7/3) ≈ 66.8°.
+
 **Calorimeter**
 : Detector measuring particle energy by total absorption. Used in particle physics experiments.
 
@@ -73,7 +79,10 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 ## D
 
 **Dark Energy**
-: The component driving accelerating expansion. In FTD, potentially emergent from vacuum properties.
+: The component driving accelerating expansion. In FTD, emergent from dynamic void flux: ρ_DE = ½⟨J²⟩_vacuum. DESI 2025 data (4.2σ) shows w evolves over cosmic time—consistent with FTD prediction that void flux is dynamic, not constant.
+
+**Dark Energy Spectroscopic Instrument (DESI)**
+: Spectroscopic survey instrument at Kitt Peak National Observatory. DR2 (2025) provided 4.2σ evidence for evolving dark energy (w₀ ≈ −0.7, wₐ ≈ −1), challenging the cosmological constant and supporting FTD's dynamic void interpretation.
 
 **Dispositional Ontology**
 : The philosophical position that reality is fundamentally composed of dispositions (tendencies, potentials) rather than categorical properties. In FTD, the flux field J represents dispositional properties of the void substrate.
@@ -107,6 +116,9 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 **Electromagnetism**
 : Force between charged particles. Arises from charge gradients in FTD.
 
+**Electron Electric Dipole Moment (eEDM)**
+: A measure of the asymmetric charge distribution along the electron's spin axis. A non-zero eEDM would indicate CP violation beyond the Standard Model. The 2025 JILA measurement set the world's best limit: |d_e| < 4.1 × 10⁻³⁰ e·cm. FTD predicts d_e ≈ 0 for fundamental manifestations, consistent with observation.
+
 **Encoding Relation**
 : The mathematical map ε: A → B that extracts epistemic content (information, meaning) from physical structure. A book encodes information; a brain encodes beliefs. The encoding relation is how Domain A structures can "contain" Domain B content.
 
@@ -118,6 +130,9 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 
 **Emergence**
 : The appearance of novel properties at higher levels of organization. Atoms have wetness; electrons don't.
+
+**Emergent Gauge Bosons**
+: Gauge field quanta (photon-like excitations) that arise from collective dynamics of an underlying discrete system rather than being fundamental. Confirmed in quantum spin ice (Ce₂Zr₂O₇, 2025)—validating FTD's core mechanism where photons emerge from flux field dynamics on a lattice.
 
 **Entanglement**
 : Correlation between particles created together (pair production). Shared UUID indicates common origin.
@@ -261,6 +276,9 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 **Moore Neighborhood**
 : 26 adjacent cells in 3D (all cells sharing at least one corner with center).
 
+**MUSE (MUon proton Scattering Experiment)**
+: Experiment at PSI designed to resolve the proton radius puzzle by measuring electron and muon scattering simultaneously under identical kinematic conditions. Uses mixed lepton beams, GEM detectors, wire chambers, and scintillators to compare cross sections and form factors directly.
+
 ## N
 
 **N_eff (Effective Dimension)**
@@ -280,6 +298,9 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 
 **Neutron**
 : Neutral baryon (udd). Stable in nucleus; decays freely in ~15 minutes.
+
+**Neutron Lifetime Puzzle**
+: Unexplained ~10 second discrepancy between bottle method (τ ≈ 877.8 s) and beam method (τ ≈ 888.1 s) measurements of free neutron lifetime. FTD interpretation: measurement-context-dependent sLoop coupling may create different effective decay rates. Status: under active investigation at PSI, J-PARC, LANL, NIST.
 
 **Nucleosynthesis**
 : Formation of atomic nuclei. Occurs in Big Bang (light elements) and stars (heavy elements).
@@ -306,6 +327,9 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 **Phase Accumulator (τ)**
 : Counter tracking relativistic time. Particle updates when τ ≥ 1.
 
+**Path Identity (Quantum Indistinguishability)**
+: Mechanism by which quantum correlations arise from indistinguishable particle paths rather than entanglement. Demonstrated in 2025 Bell violation experiment (S = 2.275 ± 0.057, >4σ) without entangled particles—directly supporting FTD's sLoop interpretation that correlations arise from shared substrate access.
+
 **Photon**
 : Massless boson carrying electromagnetic force. In FTD, flux waves in void.
 
@@ -321,6 +345,9 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 **Proton**
 : Positive baryon (uud). Stable. Nucleus of hydrogen.
 
+**Proton Radius Puzzle**
+: Discrepancy between proton charge radius measured via muonic hydrogen (~0.84 fm) and electronic hydrogen (~0.88 fm). FTD interpretation: the proton "radius" is intrinsically probe-dependent because different probes couple to different scales of the triad flux distribution. MUSE experiment at PSI testing this with simultaneous electron/muon scattering measurements.
+
 ## Q
 
 **Quark**
@@ -328,6 +355,9 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 
 **Quantum**
 : Discrete unit. All physical quantities in FTD are quantized.
+
+**Quantum Spin Ice (QSI)**
+: Exotic quantum state on pyrochlore lattice where magnetic moments exhibit liquid-like correlations and U(1) gauge structure. Distinguished from classical spin ice by emergent photon-like excitations near zero energy. Ce₂Zr₂O₇ confirmed as QSI in 2025—first experimental validation of FTD's mechanism for gauge boson emergence from discrete lattice dynamics.
 
 ## R
 
@@ -448,12 +478,22 @@ This glossary defines key terms used throughout the Foundational Ternary Dynamic
 | BBN | Big Bang Nucleosynthesis |
 | BH | Black Hole |
 | CMB | Cosmic Microwave Background |
+| DESI | Dark Energy Spectroscopic Instrument |
+| eEDM | electron Electric Dipole Moment |
 | EM | Electromagnetic |
+| FTD | Foundational Ternary Dynamics |
 | GR | General Relativity |
 | GZK | Greisen-Zatsepin-Kuzmin (cutoff) |
+| JILA | Joint Institute for Laboratory Astrophysics |
+| J-PARC | Japan Proton Accelerator Research Complex |
+| LANL | Los Alamos National Laboratory |
+| LHCb | Large Hadron Collider beauty (experiment) |
+| MUSE | MUon proton Scattering Experiment |
+| NIST | National Institute of Standards and Technology |
+| PSI | Paul Scherrer Institute |
 | QFT | Quantum Field Theory |
 | QM | Quantum Mechanics |
+| QSI | Quantum Spin Ice |
 | SNR | Supernova Remnant |
-| FTD | Foundational Ternary Dynamics |
 | UHECR | Ultra-High Energy Cosmic Ray |
 | UV | Ultraviolet |

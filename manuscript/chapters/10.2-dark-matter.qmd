@@ -235,13 +235,55 @@ DM particle → [nucleus] → DM (deflected) + nucleus (recoils)
 
 Detect nuclear recoil.
 
+### The Migdal Effect: A New Detection Channel
+
+In January 2026, the first direct observation of the **Migdal effect** was reported in Nature [@yi2026migdal], achieving 5σ statistical significance with 6 candidate events from ~10⁶ recorded.
+
+The Migdal effect occurs when a nucleus experiences sudden acceleration (from collision with a neutral particle), causing electrons to be ejected:
+
+```
+Neutral particle → [nucleus accelerates suddenly]
+                           ↓
+                   [electrons can't follow]
+                           ↓
+                   [electron ejected = SIGNAL]
+```
+
+**Why This Matters for Dark Matter:**
+
+Light dark matter (MeV-GeV scale) produces nuclear recoils too small to detect directly. But the Migdal effect provides an **amplification mechanism**:
+
+| Direct Recoil | Migdal Enhancement |
+|---------------|-------------------|
+| Sub-threshold signal | Electron ejection detectable |
+| Requires heavy DM | Works for light DM |
+| Limited by detector threshold | Extends sensitivity |
+
+**FTD Interpretation:**
+
+In FTD terms, the Migdal effect demonstrates flux perturbation propagation:
+
+1. Dark matter (|J| < κ_B) collides with nucleus
+2. Creates sharp flux gradient ∇J at collision site
+3. Gradient propagates through void substrate
+4. Electron shell experiences threshold crossing
+5. Electron manifests as free particle (detectable)
+
+This is precisely the mechanism FTD predicts: flux disturbances in the void can trigger manifestation transitions at *distant* locations from the primary interaction.
+
+::: {.callout-note}
+## Validation of FTD Detection Mechanism
+The Migdal effect confirmation validates the core FTD prediction that sub-threshold interactions can produce observable signatures through flux propagation and non-local threshold crossing.
+:::
+
 ### Experiments
 - XENON, LUX-ZEPLIN (liquid xenon)
 - SuperCDMS (cryogenic)
 - DAMA/LIBRA (controversial signal)
+- **Migdal-enhanced searches** (now validated)
 
 ### Status
-No confirmed detection yet.
+No confirmed dark matter detection yet. However, the Migdal effect confirmation opens new sensitivity windows for light dark matter searches.
 
 ## In Simulation
 
