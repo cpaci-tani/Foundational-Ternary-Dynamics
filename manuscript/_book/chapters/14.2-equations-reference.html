@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A comprehensive theoretical framework deriving fundamental physics from first principles. From the void emerges manifestation; from manifestation, structure; from structure, cosmos.">
+
+<title>82&nbsp; Equations Reference – Foundational Ternary Dynamics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/14.3-glossary.html" rel="next">
+<link href="../chapters/14.1-constants-reference.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-597958c53c93a607afca12fd375c57ed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-0c47356b75e689b7607bd8dfcce5fca1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/14.1-constants-reference.html">Book XIV: Appendices</a></li><li class="breadcrumb-item"><a href="../chapters/14.2-equations-reference.html"><span class="chapter-number">82</span>&nbsp; <span class="chapter-title">Equations Reference</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Foundational Ternary Dynamics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Prolegomena</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/0.0-formal-logic.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The Logic of Being</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/0.1-first-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">On First Principles</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/0.3-philosophy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Philosophical Stance</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/0.2-mathematics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Mathematical Prerequisites</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/0.4-event-constraint-ontology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Event-Constraint Ontology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/0.5-computational-ontology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Computational Ontology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/0.6-grounding-of-constraints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">The Grounding of Constraints</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book I: Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.0-before-the-void.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Before the Void</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.1-the-void.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The Void</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.2-the-first-division.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">The First Division</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.2a-necessity-of-polarity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">The Necessity of Polarity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.3-the-two-layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">The Two Layers</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.4-interference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Interference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.5-the-cycle-of-existence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">The Cycle of Existence</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.6-the-causal-loop.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">The Causal Loop</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.7-time-and-causality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time and Causality</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.8-the-four-forces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">The Four Forces</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.8a-forces-from-action.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Forces from the Action Principle</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.9-constants.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Constants</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.10-lemniscate-alpha.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">The Lemniscate-Alpha Derivation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.10a-fermat-encoding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">The Fermat Encoding</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.10b-master-quadratic-derivation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">The Master Quadratic from Lattice Gauge Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.11-the-action-principle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">The Action Principle</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.12-gravity-from-integers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Gravity from the Four Integers</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.13-grand-unification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Grand Unification</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.14-proton-decay.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Proton Decay</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1.15-vacuum-energy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">The Vacuum Energy Resolution</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book II: The Subatomic Realm</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2.1-the-planck-scale.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">The Planck Scale</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2.2-voxel-anatomy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Voxel Anatomy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2.3-the-particle-zoo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">The Particle Zoo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2.4-quantum-phenomena.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Quantum Phenomena</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2.5-the-higgs-mechanism.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">The Higgs Mechanism</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2.6-flavor-physics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Flavor Physics: Why Three Generations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2.7-the-weak-force.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">The Weak Force: The Transformer</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book III: The Atomic Realm</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3.1-stable-structures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">35</span>&nbsp; <span class="chapter-title">Stable Structures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3.2-the-periodic-table.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">The Periodic Table</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3.3-electron-dynamics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">Electron Dynamics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3.4-nuclear-physics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Nuclear Physics</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book IV: The Molecular Realm</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4.1-chemical-bonds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Chemical Bonds</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4.2-simple-molecules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">Simple Molecules</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4.3-complex-molecules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">41</span>&nbsp; <span class="chapter-title">Complex Molecules</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4.4-macromolecules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">42</span>&nbsp; <span class="chapter-title">Macromolecules</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book V: States of Matter</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5.1-states-of-matter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">States of Matter</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5.2-phase-transitions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">44</span>&nbsp; <span class="chapter-title">Phase Transitions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5.3-exotic-states.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">Exotic States</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book VI: Structures and Materials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6.1-crystal-lattices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">46</span>&nbsp; <span class="chapter-title">Crystal Lattices</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6.2-metals-and-conductors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">47</span>&nbsp; <span class="chapter-title">Metals and Conductors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6.3-semiconductors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">48</span>&nbsp; <span class="chapter-title">Semiconductors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6.4-biological-structures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">49</span>&nbsp; <span class="chapter-title">Biological Structures</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book VII: The Planetary Realm</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7.1-gravity-wells.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">50</span>&nbsp; <span class="chapter-title">Gravity Wells</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7.2-atmospheres.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">51</span>&nbsp; <span class="chapter-title">Atmospheres</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7.3-geology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">52</span>&nbsp; <span class="chapter-title">Geology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7.4-magnetospheres.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">53</span>&nbsp; <span class="chapter-title">Magnetospheres</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book VIII: The Stellar Realm</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8.1-stellar-formation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">54</span>&nbsp; <span class="chapter-title">Stellar Formation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8.2-main-sequence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">55</span>&nbsp; <span class="chapter-title">Main Sequence</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8.3-stellar-nucleosynthesis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">56</span>&nbsp; <span class="chapter-title">Stellar Nucleosynthesis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8.4-stellar-death.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">57</span>&nbsp; <span class="chapter-title">Stellar Death</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8.5-compact-objects.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">58</span>&nbsp; <span class="chapter-title">Compact Objects</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book IX: The Galactic Realm</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9.1-galaxy-formation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">59</span>&nbsp; <span class="chapter-title">Galaxy Formation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9.2-galaxy-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">60</span>&nbsp; <span class="chapter-title">Galaxy Types</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9.3-the-milky-way.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">61</span>&nbsp; <span class="chapter-title">The Milky Way</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9.4-galaxy-interactions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">62</span>&nbsp; <span class="chapter-title">Galaxy Interactions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book X: The Cosmic Realm</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10.1-large-scale-structure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">63</span>&nbsp; <span class="chapter-title">Large-Scale Structure</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10.2-dark-matter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">64</span>&nbsp; <span class="chapter-title">Dark Matter</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10.3-dark-energy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">65</span>&nbsp; <span class="chapter-title">Dark Energy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10.4-cosmological-epochs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">66</span>&nbsp; <span class="chapter-title">Cosmological Epochs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book XI: Extreme Phenomena</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11.1-black-holes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">67</span>&nbsp; <span class="chapter-title">Black Holes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11.2-gravitational-waves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">68</span>&nbsp; <span class="chapter-title">Gravitational Waves</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11.3-cosmic-rays.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">69</span>&nbsp; <span class="chapter-title">Cosmic Rays</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11.4-vacuum-fluctuations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">70</span>&nbsp; <span class="chapter-title">Vacuum Fluctuations</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book XII: Emergent Phenomena</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12.0-definition-of-life.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">71</span>&nbsp; <span class="chapter-title">The Definition of Life</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12.1-self-organization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">72</span>&nbsp; <span class="chapter-title">Self-Organization</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12.1a-hierarchy-of-sentience.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">73</span>&nbsp; <span class="chapter-title">The Hierarchy of Sentience</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12.2-information-and-entropy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">74</span>&nbsp; <span class="chapter-title">Information and Entropy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12.3-complexity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">75</span>&nbsp; <span class="chapter-title">Complexity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12.4-the-anthropic-window.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">76</span>&nbsp; <span class="chapter-title">The Anthropic Window</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12.5-consciousness-as-self-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">77</span>&nbsp; <span class="chapter-title">Consciousness as Self-Reference</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book XIII: The End</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13.1-heat-death.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">78</span>&nbsp; <span class="chapter-title">Heat Death</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13.2-alternative-endings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">79</span>&nbsp; <span class="chapter-title">Alternative Endings</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13.3-return-to-void.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">80</span>&nbsp; <span class="chapter-title">Return to Void</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book XIV: Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.1-constants-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">81</span>&nbsp; <span class="chapter-title">Constants Reference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.2-equations-reference.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">82</span>&nbsp; <span class="chapter-title">Equations Reference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.3-glossary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">83</span>&nbsp; <span class="chapter-title">Glossary</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.4-particle-catalog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">84</span>&nbsp; <span class="chapter-title">Particle Catalog</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.5-assumption-ledger.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">85</span>&nbsp; <span class="chapter-title">Assumption Ledger</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.6-self-consistency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">86</span>&nbsp; <span class="chapter-title">Self-Consistency and Completeness</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.7-sloop-formalization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">87</span>&nbsp; <span class="chapter-title">The sLoop: Mathematical Formalization</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.8-information-quantification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">88</span>&nbsp; <span class="chapter-title">Information Quantification in FTD</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.9-experimental-predictions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">89</span>&nbsp; <span class="chapter-title">Experimental Predictions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14.10-number-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">90</span>&nbsp; <span class="chapter-title">Number Theory Foundations</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">Book XV: Observational Support</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15.1-observational-confirmations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">91</span>&nbsp; <span class="chapter-title">Observational Confirmations</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true">
+ <span class="menu-text">Back Matter</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../symbols-glossary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Symbols Glossary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About This Work</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-master-equation" id="toc-the-master-equation" class="nav-link active" data-scroll-target="#the-master-equation"><span class="header-section-number">82.1</span> The Master Equation</a>
+  <ul class="collapse">
+  <li><a href="#universal-state-update" id="toc-universal-state-update" class="nav-link" data-scroll-target="#universal-state-update"><span class="header-section-number">82.1.1</span> Universal State Update</a></li>
+  <li><a href="#expanded-form" id="toc-expanded-form" class="nav-link" data-scroll-target="#expanded-form"><span class="header-section-number">82.1.2</span> Expanded Form</a></li>
+  </ul></li>
+  <li><a href="#flux-and-density" id="toc-flux-and-density" class="nav-link" data-scroll-target="#flux-and-density"><span class="header-section-number">82.2</span> Flux and Density</a>
+  <ul class="collapse">
+  <li><a href="#flux-vector" id="toc-flux-vector" class="nav-link" data-scroll-target="#flux-vector"><span class="header-section-number">82.2.1</span> Flux Vector</a></li>
+  <li><a href="#density-flux-magnitude" id="toc-density-flux-magnitude" class="nav-link" data-scroll-target="#density-flux-magnitude"><span class="header-section-number">82.2.2</span> Density (Flux Magnitude)</a></li>
+  <li><a href="#density-gradient" id="toc-density-gradient" class="nav-link" data-scroll-target="#density-gradient"><span class="header-section-number">82.2.3</span> Density Gradient</a></li>
+  <li><a href="#discretized-gradient" id="toc-discretized-gradient" class="nav-link" data-scroll-target="#discretized-gradient"><span class="header-section-number">82.2.4</span> Discretized Gradient</a></li>
+  </ul></li>
+  <li><a href="#field-operators" id="toc-field-operators" class="nav-link" data-scroll-target="#field-operators"><span class="header-section-number">82.3</span> Field Operators</a>
+  <ul class="collapse">
+  <li><a href="#divergence" id="toc-divergence" class="nav-link" data-scroll-target="#divergence"><span class="header-section-number">82.3.1</span> Divergence</a></li>
+  <li><a href="#curl" id="toc-curl" class="nav-link" data-scroll-target="#curl"><span class="header-section-number">82.3.2</span> Curl</a></li>
+  <li><a href="#laplacian" id="toc-laplacian" class="nav-link" data-scroll-target="#laplacian"><span class="header-section-number">82.3.3</span> Laplacian</a></li>
+  </ul></li>
+  <li><a href="#wave-equation" id="toc-wave-equation" class="nav-link" data-scroll-target="#wave-equation"><span class="header-section-number">82.4</span> Wave Equation</a>
+  <ul class="collapse">
+  <li><a href="#continuous-form" id="toc-continuous-form" class="nav-link" data-scroll-target="#continuous-form"><span class="header-section-number">82.4.1</span> Continuous Form</a></li>
+  <li><a href="#discrete-update-velocity-verlet" id="toc-discrete-update-velocity-verlet" class="nav-link" data-scroll-target="#discrete-update-velocity-verlet"><span class="header-section-number">82.4.2</span> Discrete Update (Velocity-Verlet)</a></li>
+  </ul></li>
+  <li><a href="#genesis-and-evaporation" id="toc-genesis-and-evaporation" class="nav-link" data-scroll-target="#genesis-and-evaporation"><span class="header-section-number">82.5</span> Genesis and Evaporation</a>
+  <ul class="collapse">
+  <li><a href="#genesis-probability" id="toc-genesis-probability" class="nav-link" data-scroll-target="#genesis-probability"><span class="header-section-number">82.5.1</span> Genesis Probability</a></li>
+  <li><a href="#polarity-assignment" id="toc-polarity-assignment" class="nav-link" data-scroll-target="#polarity-assignment"><span class="header-section-number">82.5.2</span> Polarity Assignment</a></li>
+  <li><a href="#evaporation-condition" id="toc-evaporation-condition" class="nav-link" data-scroll-target="#evaporation-condition"><span class="header-section-number">82.5.3</span> Evaporation Condition</a></li>
+  </ul></li>
+  <li><a href="#force-equations" id="toc-force-equations" class="nav-link" data-scroll-target="#force-equations"><span class="header-section-number">82.6</span> Force Equations</a>
+  <ul class="collapse">
+  <li><a href="#gravity" id="toc-gravity" class="nav-link" data-scroll-target="#gravity"><span class="header-section-number">82.6.1</span> Gravity</a></li>
+  <li><a href="#coulomb-electric" id="toc-coulomb-electric" class="nav-link" data-scroll-target="#coulomb-electric"><span class="header-section-number">82.6.2</span> Coulomb (Electric)</a></li>
+  <li><a href="#lorentz-magnetic" id="toc-lorentz-magnetic" class="nav-link" data-scroll-target="#lorentz-magnetic"><span class="header-section-number">82.6.3</span> Lorentz (Magnetic)</a></li>
+  <li><a href="#strong-force-yukawa" id="toc-strong-force-yukawa" class="nav-link" data-scroll-target="#strong-force-yukawa"><span class="header-section-number">82.6.4</span> Strong Force (Yukawa)</a></li>
+  <li><a href="#weak-force-stress" id="toc-weak-force-stress" class="nav-link" data-scroll-target="#weak-force-stress"><span class="header-section-number">82.6.5</span> Weak Force Stress</a></li>
+  </ul></li>
+  <li><a href="#relativity" id="toc-relativity" class="nav-link" data-scroll-target="#relativity"><span class="header-section-number">82.7</span> Relativity</a>
+  <ul class="collapse">
+  <li><a href="#time-dilation-lag-factor" id="toc-time-dilation-lag-factor" class="nav-link" data-scroll-target="#time-dilation-lag-factor"><span class="header-section-number">82.7.1</span> Time Dilation Lag Factor</a></li>
+  <li><a href="#phase-accumulator-update" id="toc-phase-accumulator-update" class="nav-link" data-scroll-target="#phase-accumulator-update"><span class="header-section-number">82.7.2</span> Phase Accumulator Update</a></li>
+  <li><a href="#relativistic-mass" id="toc-relativistic-mass" class="nav-link" data-scroll-target="#relativistic-mass"><span class="header-section-number">82.7.3</span> Relativistic Mass</a></li>
+  <li><a href="#lorentz-factor" id="toc-lorentz-factor" class="nav-link" data-scroll-target="#lorentz-factor"><span class="header-section-number">82.7.4</span> Lorentz Factor</a></li>
+  <li><a href="#retarded-position" id="toc-retarded-position" class="nav-link" data-scroll-target="#retarded-position"><span class="header-section-number">82.7.5</span> Retarded Position</a></li>
+  </ul></li>
+  <li><a href="#thermodynamics" id="toc-thermodynamics" class="nav-link" data-scroll-target="#thermodynamics"><span class="header-section-number">82.8</span> Thermodynamics</a>
+  <ul class="collapse">
+  <li><a href="#temperature-proxy" id="toc-temperature-proxy" class="nav-link" data-scroll-target="#temperature-proxy"><span class="header-section-number">82.8.1</span> Temperature Proxy</a></li>
+  <li><a href="#entropy" id="toc-entropy" class="nav-link" data-scroll-target="#entropy"><span class="header-section-number">82.8.2</span> Entropy</a></li>
+  <li><a href="#free-energy" id="toc-free-energy" class="nav-link" data-scroll-target="#free-energy"><span class="header-section-number">82.8.3</span> Free Energy</a></li>
+  </ul></li>
+  <li><a href="#quantum-equations" id="toc-quantum-equations" class="nav-link" data-scroll-target="#quantum-equations"><span class="header-section-number">82.9</span> Quantum Equations</a>
+  <ul class="collapse">
+  <li><a href="#energy-frequency-relation" id="toc-energy-frequency-relation" class="nav-link" data-scroll-target="#energy-frequency-relation"><span class="header-section-number">82.9.1</span> Energy-Frequency Relation</a></li>
+  <li><a href="#uncertainty-heisenberg" id="toc-uncertainty-heisenberg" class="nav-link" data-scroll-target="#uncertainty-heisenberg"><span class="header-section-number">82.9.2</span> Uncertainty (Heisenberg)</a></li>
+  <li><a href="#tunneling-probability" id="toc-tunneling-probability" class="nav-link" data-scroll-target="#tunneling-probability"><span class="header-section-number">82.9.3</span> Tunneling Probability</a></li>
+  </ul></li>
+  <li><a href="#black-holes" id="toc-black-holes" class="nav-link" data-scroll-target="#black-holes"><span class="header-section-number">82.10</span> Black Holes</a>
+  <ul class="collapse">
+  <li><a href="#schwarzschild-radius" id="toc-schwarzschild-radius" class="nav-link" data-scroll-target="#schwarzschild-radius"><span class="header-section-number">82.10.1</span> Schwarzschild Radius</a></li>
+  <li><a href="#hawking-temperature" id="toc-hawking-temperature" class="nav-link" data-scroll-target="#hawking-temperature"><span class="header-section-number">82.10.2</span> Hawking Temperature</a></li>
+  <li><a href="#bekenstein-hawking-entropy" id="toc-bekenstein-hawking-entropy" class="nav-link" data-scroll-target="#bekenstein-hawking-entropy"><span class="header-section-number">82.10.3</span> Bekenstein-Hawking Entropy</a></li>
+  <li><a href="#evaporation-time" id="toc-evaporation-time" class="nav-link" data-scroll-target="#evaporation-time"><span class="header-section-number">82.10.4</span> Evaporation Time</a></li>
+  </ul></li>
+  <li><a href="#cosmology" id="toc-cosmology" class="nav-link" data-scroll-target="#cosmology"><span class="header-section-number">82.11</span> Cosmology</a>
+  <ul class="collapse">
+  <li><a href="#hubble-law" id="toc-hubble-law" class="nav-link" data-scroll-target="#hubble-law"><span class="header-section-number">82.11.1</span> Hubble Law</a></li>
+  <li><a href="#friedmann-equation" id="toc-friedmann-equation" class="nav-link" data-scroll-target="#friedmann-equation"><span class="header-section-number">82.11.2</span> Friedmann Equation</a></li>
+  <li><a href="#scale-factor-evolution" id="toc-scale-factor-evolution" class="nav-link" data-scroll-target="#scale-factor-evolution"><span class="header-section-number">82.11.3</span> Scale Factor Evolution</a></li>
+  <li><a href="#density-evolution" id="toc-density-evolution" class="nav-link" data-scroll-target="#density-evolution"><span class="header-section-number">82.11.4</span> Density Evolution</a></li>
+  </ul></li>
+  <li><a href="#lemniscate-alpha-derivations" id="toc-lemniscate-alpha-derivations" class="nav-link" data-scroll-target="#lemniscate-alpha-derivations"><span class="header-section-number">82.12</span> Lemniscate-Alpha Derivations</a>
+  <ul class="collapse">
+  <li><a href="#master-quadratic" id="toc-master-quadratic" class="nav-link" data-scroll-target="#master-quadratic"><span class="header-section-number">82.12.1</span> Master Quadratic</a></li>
+  <li><a href="#fine-structure-constant" id="toc-fine-structure-constant" class="nav-link" data-scroll-target="#fine-structure-constant"><span class="header-section-number">82.12.2</span> Fine Structure Constant</a></li>
+  <li><a href="#electron-mass" id="toc-electron-mass" class="nav-link" data-scroll-target="#electron-mass"><span class="header-section-number">82.12.3</span> Electron Mass</a></li>
+  <li><a href="#muon-mass" id="toc-muon-mass" class="nav-link" data-scroll-target="#muon-mass"><span class="header-section-number">82.12.4</span> Muon Mass</a></li>
+  <li><a href="#tau-mass" id="toc-tau-mass" class="nav-link" data-scroll-target="#tau-mass"><span class="header-section-number">82.12.5</span> Tau Mass</a></li>
+  <li><a href="#proton-mass" id="toc-proton-mass" class="nav-link" data-scroll-target="#proton-mass"><span class="header-section-number">82.12.6</span> Proton Mass</a></li>
+  <li><a href="#neutron-proton-difference" id="toc-neutron-proton-difference" class="nav-link" data-scroll-target="#neutron-proton-difference"><span class="header-section-number">82.12.7</span> Neutron-Proton Difference</a></li>
+  <li><a href="#w-boson-mass" id="toc-w-boson-mass" class="nav-link" data-scroll-target="#w-boson-mass"><span class="header-section-number">82.12.8</span> W Boson Mass</a></li>
+  <li><a href="#z-boson-mass" id="toc-z-boson-mass" class="nav-link" data-scroll-target="#z-boson-mass"><span class="header-section-number">82.12.9</span> Z Boson Mass</a></li>
+  <li><a href="#higgs-mass" id="toc-higgs-mass" class="nav-link" data-scroll-target="#higgs-mass"><span class="header-section-number">82.12.10</span> Higgs Mass</a></li>
+  <li><a href="#up-quark-mass" id="toc-up-quark-mass" class="nav-link" data-scroll-target="#up-quark-mass"><span class="header-section-number">82.12.11</span> Up Quark Mass</a></li>
+  <li><a href="#down-quark-mass" id="toc-down-quark-mass" class="nav-link" data-scroll-target="#down-quark-mass"><span class="header-section-number">82.12.12</span> Down Quark Mass</a></li>
+  <li><a href="#strange-quark-mass" id="toc-strange-quark-mass" class="nav-link" data-scroll-target="#strange-quark-mass"><span class="header-section-number">82.12.13</span> Strange Quark Mass</a></li>
+  <li><a href="#charm-quark-mass" id="toc-charm-quark-mass" class="nav-link" data-scroll-target="#charm-quark-mass"><span class="header-section-number">82.12.14</span> Charm Quark Mass</a></li>
+  <li><a href="#bottom-quark-mass" id="toc-bottom-quark-mass" class="nav-link" data-scroll-target="#bottom-quark-mass"><span class="header-section-number">82.12.15</span> Bottom Quark Mass</a></li>
+  <li><a href="#top-quark-mass" id="toc-top-quark-mass" class="nav-link" data-scroll-target="#top-quark-mass"><span class="header-section-number">82.12.16</span> Top Quark Mass</a></li>
+  <li><a href="#weinberg-angle" id="toc-weinberg-angle" class="nav-link" data-scroll-target="#weinberg-angle"><span class="header-section-number">82.12.17</span> Weinberg Angle</a></li>
+  <li><a href="#strong-coupling" id="toc-strong-coupling" class="nav-link" data-scroll-target="#strong-coupling"><span class="header-section-number">82.12.18</span> Strong Coupling</a></li>
+  <li><a href="#gravitational-coupling" id="toc-gravitational-coupling" class="nav-link" data-scroll-target="#gravitational-coupling"><span class="header-section-number">82.12.19</span> Gravitational Coupling</a></li>
+  <li><a href="#golden-ratio" id="toc-golden-ratio" class="nav-link" data-scroll-target="#golden-ratio"><span class="header-section-number">82.12.20</span> Golden Ratio</a></li>
+  <li><a href="#number-of-generations" id="toc-number-of-generations" class="nav-link" data-scroll-target="#number-of-generations"><span class="header-section-number">82.12.21</span> Number of Generations</a></li>
+  <li><a href="#cosmological-constant" id="toc-cosmological-constant" class="nav-link" data-scroll-target="#cosmological-constant"><span class="header-section-number">82.12.22</span> Cosmological Constant</a></li>
+  <li><a href="#neutrino-mass-ratio" id="toc-neutrino-mass-ratio" class="nav-link" data-scroll-target="#neutrino-mass-ratio"><span class="header-section-number">82.12.23</span> Neutrino Mass Ratio</a></li>
+  </ul></li>
+  <li><a href="#novel-geometric-relationships" id="toc-novel-geometric-relationships" class="nav-link" data-scroll-target="#novel-geometric-relationships"><span class="header-section-number">82.13</span> Novel Geometric Relationships</a>
+  <ul class="collapse">
+  <li><a href="#mandelbrot-lemniscate-bridge-exact-identity" id="toc-mandelbrot-lemniscate-bridge-exact-identity" class="nav-link" data-scroll-target="#mandelbrot-lemniscate-bridge-exact-identity"><span class="header-section-number">82.13.1</span> Mandelbrot-Lemniscate Bridge (Exact Identity)</a></li>
+  <li><a href="#trd-mandelbrot-transformation" id="toc-trd-mandelbrot-transformation" class="nav-link" data-scroll-target="#trd-mandelbrot-transformation"><span class="header-section-number">82.13.2</span> TRD-Mandelbrot Transformation</a></li>
+  <li><a href="#minimum-distance-formula" id="toc-minimum-distance-formula" class="nav-link" data-scroll-target="#minimum-distance-formula"><span class="header-section-number">82.13.3</span> Minimum Distance Formula</a></li>
+  <li><a href="#proton-mass-pure-π-formula" id="toc-proton-mass-pure-π-formula" class="nav-link" data-scroll-target="#proton-mass-pure-π-formula"><span class="header-section-number">82.13.4</span> Proton Mass (Pure π Formula)</a></li>
+  <li><a href="#strong-coupling-gπ-form" id="toc-strong-coupling-gπ-form" class="nav-link" data-scroll-target="#strong-coupling-gπ-form"><span class="header-section-number">82.13.5</span> Strong Coupling (G*/π Form)</a></li>
+  <li><a href="#the-three-regimes" id="toc-the-three-regimes" class="nav-link" data-scroll-target="#the-three-regimes"><span class="header-section-number">82.13.6</span> The Three Regimes</a></li>
+  <li><a href="#consciousness-quadratic" id="toc-consciousness-quadratic" class="nav-link" data-scroll-target="#consciousness-quadratic"><span class="header-section-number">82.13.7</span> Consciousness Quadratic</a></li>
+  <li><a href="#winding-number" id="toc-winding-number" class="nav-link" data-scroll-target="#winding-number"><span class="header-section-number">82.13.8</span> Winding Number</a></li>
+  <li><a href="#regime-ratio" id="toc-regime-ratio" class="nav-link" data-scroll-target="#regime-ratio"><span class="header-section-number">82.13.9</span> Regime Ratio</a></li>
+  <li><a href="#arc-length-relationship" id="toc-arc-length-relationship" class="nav-link" data-scroll-target="#arc-length-relationship"><span class="header-section-number">82.13.10</span> Arc Length Relationship</a></li>
+  </ul></li>
+  <li><a href="#structure-formation" id="toc-structure-formation" class="nav-link" data-scroll-target="#structure-formation"><span class="header-section-number">82.14</span> Structure Formation</a>
+  <ul class="collapse">
+  <li><a href="#jeans-mass" id="toc-jeans-mass" class="nav-link" data-scroll-target="#jeans-mass"><span class="header-section-number">82.14.1</span> Jeans Mass</a></li>
+  <li><a href="#binding-energy" id="toc-binding-energy" class="nav-link" data-scroll-target="#binding-energy"><span class="header-section-number">82.14.2</span> Binding Energy</a></li>
+  <li><a href="#shell-radius" id="toc-shell-radius" class="nav-link" data-scroll-target="#shell-radius"><span class="header-section-number">82.14.3</span> Shell Radius</a></li>
+  </ul></li>
+  <li><a href="#information-theory" id="toc-information-theory" class="nav-link" data-scroll-target="#information-theory"><span class="header-section-number">82.15</span> Information Theory</a>
+  <ul class="collapse">
+  <li><a href="#shannon-entropy" id="toc-shannon-entropy" class="nav-link" data-scroll-target="#shannon-entropy"><span class="header-section-number">82.15.1</span> Shannon Entropy</a></li>
+  <li><a href="#landauers-principle" id="toc-landauers-principle" class="nav-link" data-scroll-target="#landauers-principle"><span class="header-section-number">82.15.2</span> Landauer’s Principle</a></li>
+  <li><a href="#kolmogorov-complexity" id="toc-kolmogorov-complexity" class="nav-link" data-scroll-target="#kolmogorov-complexity"><span class="header-section-number">82.15.3</span> Kolmogorov Complexity</a></li>
+  </ul></li>
+  <li><a href="#quick-reference" id="toc-quick-reference" class="nav-link" data-scroll-target="#quick-reference"><span class="header-section-number">82.16</span> Quick Reference</a>
+  <ul class="collapse">
+  <li><a href="#core-equations" id="toc-core-equations" class="nav-link" data-scroll-target="#core-equations"><span class="header-section-number">82.16.1</span> Core Equations</a></li>
+  <li><a href="#conservation-laws" id="toc-conservation-laws" class="nav-link" data-scroll-target="#conservation-laws"><span class="header-section-number">82.16.2</span> Conservation Laws</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/14.1-constants-reference.html">Book XIV: Appendices</a></li><li class="breadcrumb-item"><a href="../chapters/14.2-equations-reference.html"><span class="chapter-number">82</span>&nbsp; <span class="chapter-title">Equations Reference</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-equations-reference" class="quarto-section-identifier"><span class="chapter-number">82</span>&nbsp; <span class="chapter-title">Equations Reference</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><em>“The mathematical foundation: from axioms to derivations”</em></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Major Update: Derivation Equations Added
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This reference now includes the equations used throughout the Lemniscate-Alpha program and related chapters to connect Standard Model quantities to a small integer data set.</p>
+</div>
+</div>
+<section id="the-master-equation" class="level2" data-number="82.1">
+<h2 data-number="82.1" class="anchored" data-anchor-id="the-master-equation"><span class="header-section-number">82.1</span> The Master Equation</h2>
+<section id="universal-state-update" class="level3" data-number="82.1.1">
+<h3 data-number="82.1.1" class="anchored" data-anchor-id="universal-state-update"><span class="header-section-number">82.1.1</span> Universal State Update</h3>
+<p><span class="math display">\[
+\Psi(x, t+1) = \text{TimeGate}(x) \times \text{Existence}(x) \times \text{Dynamics}(x)
+\]</span></p>
+</section>
+<section id="expanded-form" class="level3" data-number="82.1.2">
+<h3 data-number="82.1.2" class="anchored" data-anchor-id="expanded-form"><span class="header-section-number">82.1.2</span> Expanded Form</h3>
+<p><span class="math display">\[
+\Psi(x,t) = \delta\left(\frac{1}{1 + \alpha|J|\omega}\right) \times \text{sgn}\left(\lfloor|J| - KB\rfloor\right) \times \left[\xi + F_g + F_e + F_m + F_{strong} + F_{weak}\right]
+\]</span></p>
+</section>
+</section>
+<section id="flux-and-density" class="level2" data-number="82.2">
+<h2 data-number="82.2" class="anchored" data-anchor-id="flux-and-density"><span class="header-section-number">82.2</span> Flux and Density</h2>
+<section id="flux-vector" class="level3" data-number="82.2.1">
+<h3 data-number="82.2.1" class="anchored" data-anchor-id="flux-vector"><span class="header-section-number">82.2.1</span> Flux Vector</h3>
+<p><span class="math display">\[
+\vec{J}(x) = [J_x, J_y, J_z]
+\]</span></p>
+</section>
+<section id="density-flux-magnitude" class="level3" data-number="82.2.2">
+<h3 data-number="82.2.2" class="anchored" data-anchor-id="density-flux-magnitude"><span class="header-section-number">82.2.2</span> Density (Flux Magnitude)</h3>
+<p><span class="math display">\[
+\rho(x) = |\vec{J}(x)| = \sqrt{J_x^2 + J_y^2 + J_z^2}
+\]</span></p>
+</section>
+<section id="density-gradient" class="level3" data-number="82.2.3">
+<h3 data-number="82.2.3" class="anchored" data-anchor-id="density-gradient"><span class="header-section-number">82.2.3</span> Density Gradient</h3>
+<p><span class="math display">\[
+\nabla\rho = \left(\frac{\partial\rho}{\partial x}, \frac{\partial\rho}{\partial y}, \frac{\partial\rho}{\partial z}\right)
+\]</span></p>
+</section>
+<section id="discretized-gradient" class="level3" data-number="82.2.4">
+<h3 data-number="82.2.4" class="anchored" data-anchor-id="discretized-gradient"><span class="header-section-number">82.2.4</span> Discretized Gradient</h3>
+<p><span class="math display">\[
+\nabla\rho(x) = \frac{1}{2}\left(\rho(x+\hat{e}) - \rho(x-\hat{e})\right)
+\]</span></p>
+</section>
+</section>
+<section id="field-operators" class="level2" data-number="82.3">
+<h2 data-number="82.3" class="anchored" data-anchor-id="field-operators"><span class="header-section-number">82.3</span> Field Operators</h2>
+<section id="divergence" class="level3" data-number="82.3.1">
+<h3 data-number="82.3.1" class="anchored" data-anchor-id="divergence"><span class="header-section-number">82.3.1</span> Divergence</h3>
+<p><span class="math display">\[
+\text{div } \vec{J} = \nabla \cdot \vec{J} = \frac{\partial J_x}{\partial x} + \frac{\partial J_y}{\partial y} + \frac{\partial J_z}{\partial z}
+\]</span></p>
+<p>Discretized: <span class="math display">\[
+\nabla \cdot \vec{J} = \frac{1}{2}\sum_i \left[J_i(x+\hat{e}_i) - J_i(x-\hat{e}_i)\right]
+\]</span></p>
+</section>
+<section id="curl" class="level3" data-number="82.3.2">
+<h3 data-number="82.3.2" class="anchored" data-anchor-id="curl"><span class="header-section-number">82.3.2</span> Curl</h3>
+<p><span class="math display">\[
+\text{curl } \vec{J} = \nabla \times \vec{J} = \begin{pmatrix} \frac{\partial J_z}{\partial y} - \frac{\partial J_y}{\partial z} \\ \frac{\partial J_x}{\partial z} - \frac{\partial J_z}{\partial x} \\ \frac{\partial J_y}{\partial x} - \frac{\partial J_x}{\partial y} \end{pmatrix}
+\]</span></p>
+</section>
+<section id="laplacian" class="level3" data-number="82.3.3">
+<h3 data-number="82.3.3" class="anchored" data-anchor-id="laplacian"><span class="header-section-number">82.3.3</span> Laplacian</h3>
+<p><span class="math display">\[
+\nabla^2 f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2} + \frac{\partial^2 f}{\partial z^2}
+\]</span></p>
+<p>Discretized (3D): <span class="math display">\[
+\nabla^2 f(x) = \sum_{\text{neighbors}} f(n) - 6f(x)
+\]</span></p>
+</section>
+</section>
+<section id="wave-equation" class="level2" data-number="82.4">
+<h2 data-number="82.4" class="anchored" data-anchor-id="wave-equation"><span class="header-section-number">82.4</span> Wave Equation</h2>
+<section id="continuous-form" class="level3" data-number="82.4.1">
+<h3 data-number="82.4.1" class="anchored" data-anchor-id="continuous-form"><span class="header-section-number">82.4.1</span> Continuous Form</h3>
+<p><span class="math display">\[
+\frac{\partial^2 u}{\partial t^2} = c^2 \nabla^2 u
+\]</span></p>
+</section>
+<section id="discrete-update-velocity-verlet" class="level3" data-number="82.4.2">
+<h3 data-number="82.4.2" class="anchored" data-anchor-id="discrete-update-velocity-verlet"><span class="header-section-number">82.4.2</span> Discrete Update (Velocity-Verlet)</h3>
+<ol type="1">
+<li><p>Compute Laplacian: <span class="math display">\[
+\nabla^2 u = \bar{u}_{neighbors} - u
+\]</span></p></li>
+<li><p>Update wave velocity: <span class="math display">\[
+v_{wave}(t+1) = v_{wave}(t) + c^2 \nabla^2 u
+\]</span></p></li>
+<li><p>Update flux: <span class="math display">\[
+\vec{J}(t+1) = \vec{J}(t) + v_{wave}(t+1)
+\]</span></p></li>
+<li><p>Apply damping: <span class="math display">\[
+\vec{J}(t+1) = \vec{J}(t+1) \times (1 - \lambda)
+\]</span></p></li>
+</ol>
+</section>
+</section>
+<section id="genesis-and-evaporation" class="level2" data-number="82.5">
+<h2 data-number="82.5" class="anchored" data-anchor-id="genesis-and-evaporation"><span class="header-section-number">82.5</span> Genesis and Evaporation</h2>
+<section id="genesis-probability" class="level3" data-number="82.5.1">
+<h3 data-number="82.5.1" class="anchored" data-anchor-id="genesis-probability"><span class="header-section-number">82.5.1</span> Genesis Probability</h3>
+<p><span class="math display">\[
+P_{genesis}(x) = \text{clamp}\left(1 - \exp\left(-\frac{\rho(x) - KB}{KB}\right), 0, 1\right)
+\]</span></p>
+</section>
+<section id="polarity-assignment" class="level3" data-number="82.5.2">
+<h3 data-number="82.5.2" class="anchored" data-anchor-id="polarity-assignment"><span class="header-section-number">82.5.2</span> Polarity Assignment</h3>
+<p><span class="math display">\[
+S(x) = \text{sgn}(\nabla \cdot \vec{J})
+\]</span></p>
+<p>Where sgn returns +1, 0, or -1.</p>
+</section>
+<section id="evaporation-condition" class="level3" data-number="82.5.3">
+<h3 data-number="82.5.3" class="anchored" data-anchor-id="evaporation-condition"><span class="header-section-number">82.5.3</span> Evaporation Condition</h3>
+<p><span class="math display">\[
+\rho(x) &lt; KB \implies S(x) \rightarrow 0
+\]</span></p>
+</section>
+</section>
+<section id="force-equations" class="level2" data-number="82.6">
+<h2 data-number="82.6" class="anchored" data-anchor-id="force-equations"><span class="header-section-number">82.6</span> Force Equations</h2>
+<section id="gravity" class="level3" data-number="82.6.1">
+<h3 data-number="82.6.1" class="anchored" data-anchor-id="gravity"><span class="header-section-number">82.6.1</span> Gravity</h3>
+<p><span class="math display">\[
+\vec{F}_g = G_{bias} \times \nabla\bar{\rho}(x)
+\]</span></p>
+<p>Where <span class="math inline">\(\bar{\rho}\)</span> is the neighborhood-averaged density.</p>
+</section>
+<section id="coulomb-electric" class="level3" data-number="82.6.2">
+<h3 data-number="82.6.2" class="anchored" data-anchor-id="coulomb-electric"><span class="header-section-number">82.6.2</span> Coulomb (Electric)</h3>
+<p><span class="math display">\[
+\vec{F}_e = -q(x) \times \nabla\bar{q}(x)
+\]</span></p>
+<p>Where q is the charge field.</p>
+</section>
+<section id="lorentz-magnetic" class="level3" data-number="82.6.3">
+<h3 data-number="82.6.3" class="anchored" data-anchor-id="lorentz-magnetic"><span class="header-section-number">82.6.3</span> Lorentz (Magnetic)</h3>
+<p><span class="math display">\[
+\vec{F}_m = \beta_m \times (\nabla \times \vec{J}) \times \hat{J}
+\]</span></p>
+</section>
+<section id="strong-force-yukawa" class="level3" data-number="82.6.4">
+<h3 data-number="82.6.4" class="anchored" data-anchor-id="strong-force-yukawa"><span class="header-section-number">82.6.4</span> Strong Force (Yukawa)</h3>
+<p><span class="math display">\[
+\vec{F}_{strong} = g^2 \frac{e^{-m_\pi r}}{r^2}(1 + m_\pi r)\hat{r}
+\]</span></p>
+<p>For short range (1-3 voxels): - Attractive at medium range - Repulsive at very short range</p>
+</section>
+<section id="weak-force-stress" class="level3" data-number="82.6.5">
+<h3 data-number="82.6.5" class="anchored" data-anchor-id="weak-force-stress"><span class="header-section-number">82.6.5</span> Weak Force Stress</h3>
+<p><span class="math display">\[
+S_{weak}(x) = |\nabla \cdot \vec{J}| + |\nabla \times \vec{J}| + |\nabla\bar{\rho}|
+\]</span></p>
+<p>Transmutation occurs when: <span class="math display">\[
+S_{weak} &gt; S_{threshold}
+\]</span></p>
+</section>
+</section>
+<section id="relativity" class="level2" data-number="82.7">
+<h2 data-number="82.7" class="anchored" data-anchor-id="relativity"><span class="header-section-number">82.7</span> Relativity</h2>
+<section id="time-dilation-lag-factor" class="level3" data-number="82.7.1">
+<h3 data-number="82.7.1" class="anchored" data-anchor-id="time-dilation-lag-factor"><span class="header-section-number">82.7.1</span> Time Dilation Lag Factor</h3>
+<p><span class="math display">\[
+L(x) = 1 + \alpha \times E(x) \times \omega(x)
+\]</span></p>
+<p>Where: - <span class="math inline">\(E(x)\)</span> = local energy (density) - <span class="math inline">\(\omega(x)\)</span> = local frequency</p>
+</section>
+<section id="phase-accumulator-update" class="level3" data-number="82.7.2">
+<h3 data-number="82.7.2" class="anchored" data-anchor-id="phase-accumulator-update"><span class="header-section-number">82.7.2</span> Phase Accumulator Update</h3>
+<p><span class="math display">\[
+\tau(x) = \tau(x) + \frac{1}{L(x)}
+\]</span></p>
+<p>Active tick when: <span class="math display">\[
+\tau(x) \geq 1 \implies \text{update voxel, reset } \tau
+\]</span></p>
+</section>
+<section id="relativistic-mass" class="level3" data-number="82.7.3">
+<h3 data-number="82.7.3" class="anchored" data-anchor-id="relativistic-mass"><span class="header-section-number">82.7.3</span> Relativistic Mass</h3>
+<p><span class="math display">\[
+m_{rel} = \frac{m_0}{\sqrt{1 - v^2/c^2}} = \gamma m_0
+\]</span></p>
+</section>
+<section id="lorentz-factor" class="level3" data-number="82.7.4">
+<h3 data-number="82.7.4" class="anchored" data-anchor-id="lorentz-factor"><span class="header-section-number">82.7.4</span> Lorentz Factor</h3>
+<p><span class="math display">\[
+\gamma = \frac{1}{\sqrt{1 - v^2/c^2}}
+\]</span></p>
+</section>
+<section id="retarded-position" class="level3" data-number="82.7.5">
+<h3 data-number="82.7.5" class="anchored" data-anchor-id="retarded-position"><span class="header-section-number">82.7.5</span> Retarded Position</h3>
+<p><span class="math display">\[
+\vec{r}_{ret} = \vec{r}_{current} - \vec{v} \times \frac{d}{c}
+\]</span></p>
+</section>
+</section>
+<section id="thermodynamics" class="level2" data-number="82.8">
+<h2 data-number="82.8" class="anchored" data-anchor-id="thermodynamics"><span class="header-section-number">82.8</span> Thermodynamics</h2>
+<section id="temperature-proxy" class="level3" data-number="82.8.1">
+<h3 data-number="82.8.1" class="anchored" data-anchor-id="temperature-proxy"><span class="header-section-number">82.8.1</span> Temperature Proxy</h3>
+<p><span class="math display">\[
+T_{proxy} = \frac{\langle|\vec{J}|^2\rangle}{3 N}
+\]</span></p>
+</section>
+<section id="entropy" class="level3" data-number="82.8.2">
+<h3 data-number="82.8.2" class="anchored" data-anchor-id="entropy"><span class="header-section-number">82.8.2</span> Entropy</h3>
+<p><span class="math display">\[
+S = -k_B \sum_i p_i \ln(p_i)
+\]</span></p>
+</section>
+<section id="free-energy" class="level3" data-number="82.8.3">
+<h3 data-number="82.8.3" class="anchored" data-anchor-id="free-energy"><span class="header-section-number">82.8.3</span> Free Energy</h3>
+<p><span class="math display">\[
+F = E - TS
+\]</span></p>
+</section>
+</section>
+<section id="quantum-equations" class="level2" data-number="82.9">
+<h2 data-number="82.9" class="anchored" data-anchor-id="quantum-equations"><span class="header-section-number">82.9</span> Quantum Equations</h2>
+<section id="energy-frequency-relation" class="level3" data-number="82.9.1">
+<h3 data-number="82.9.1" class="anchored" data-anchor-id="energy-frequency-relation"><span class="header-section-number">82.9.1</span> Energy-Frequency Relation</h3>
+<p><span class="math display">\[
+E = h \times f = H \times \omega
+\]</span></p>
+</section>
+<section id="uncertainty-heisenberg" class="level3" data-number="82.9.2">
+<h3 data-number="82.9.2" class="anchored" data-anchor-id="uncertainty-heisenberg"><span class="header-section-number">82.9.2</span> Uncertainty (Heisenberg)</h3>
+<p><span class="math display">\[
+\Delta E \times \Delta t \geq \frac{\hbar}{2}
+\]</span></p>
+</section>
+<section id="tunneling-probability" class="level3" data-number="82.9.3">
+<h3 data-number="82.9.3" class="anchored" data-anchor-id="tunneling-probability"><span class="header-section-number">82.9.3</span> Tunneling Probability</h3>
+<p><span class="math display">\[
+P_{tunnel} \propto \exp\left(-2d\sqrt{\frac{2m(V-E)}{\hbar^2}}\right)
+\]</span></p>
+</section>
+</section>
+<section id="black-holes" class="level2" data-number="82.10">
+<h2 data-number="82.10" class="anchored" data-anchor-id="black-holes"><span class="header-section-number">82.10</span> Black Holes</h2>
+<section id="schwarzschild-radius" class="level3" data-number="82.10.1">
+<h3 data-number="82.10.1" class="anchored" data-anchor-id="schwarzschild-radius"><span class="header-section-number">82.10.1</span> Schwarzschild Radius</h3>
+<p><span class="math display">\[
+r_s = \frac{2GM}{c^2}
+\]</span></p>
+</section>
+<section id="hawking-temperature" class="level3" data-number="82.10.2">
+<h3 data-number="82.10.2" class="anchored" data-anchor-id="hawking-temperature"><span class="header-section-number">82.10.2</span> Hawking Temperature</h3>
+<p><span class="math display">\[
+T_H = \frac{\hbar c^3}{8\pi G M k_B}
+\]</span></p>
+</section>
+<section id="bekenstein-hawking-entropy" class="level3" data-number="82.10.3">
+<h3 data-number="82.10.3" class="anchored" data-anchor-id="bekenstein-hawking-entropy"><span class="header-section-number">82.10.3</span> Bekenstein-Hawking Entropy</h3>
+<p><span class="math display">\[
+S_{BH} = \frac{k_B c^3 A}{4 G \hbar}
+\]</span></p>
+</section>
+<section id="evaporation-time" class="level3" data-number="82.10.4">
+<h3 data-number="82.10.4" class="anchored" data-anchor-id="evaporation-time"><span class="header-section-number">82.10.4</span> Evaporation Time</h3>
+<p><span class="math display">\[
+t_{evap} = \frac{5120 \pi G^2 M^3}{\hbar c^4}
+\]</span></p>
+</section>
+</section>
+<section id="cosmology" class="level2" data-number="82.11">
+<h2 data-number="82.11" class="anchored" data-anchor-id="cosmology"><span class="header-section-number">82.11</span> Cosmology</h2>
+<section id="hubble-law" class="level3" data-number="82.11.1">
+<h3 data-number="82.11.1" class="anchored" data-anchor-id="hubble-law"><span class="header-section-number">82.11.1</span> Hubble Law</h3>
+<p><span class="math display">\[
+v = H_0 \times d
+\]</span></p>
+</section>
+<section id="friedmann-equation" class="level3" data-number="82.11.2">
+<h3 data-number="82.11.2" class="anchored" data-anchor-id="friedmann-equation"><span class="header-section-number">82.11.2</span> Friedmann Equation</h3>
+<p><span class="math display">\[
+H^2 = \frac{8\pi G}{3}\rho - \frac{k c^2}{a^2} + \frac{\Lambda c^2}{3}
+\]</span></p>
+</section>
+<section id="scale-factor-evolution" class="level3" data-number="82.11.3">
+<h3 data-number="82.11.3" class="anchored" data-anchor-id="scale-factor-evolution"><span class="header-section-number">82.11.3</span> Scale Factor Evolution</h3>
+<p><span class="math display">\[
+\dot{a}^2 = H_0^2\left[\Omega_m a^{-1} + \Omega_r a^{-2} + \Omega_\Lambda a^2 + \Omega_k\right]
+\]</span></p>
+</section>
+<section id="density-evolution" class="level3" data-number="82.11.4">
+<h3 data-number="82.11.4" class="anchored" data-anchor-id="density-evolution"><span class="header-section-number">82.11.4</span> Density Evolution</h3>
+<p><span class="math display">\[
+\rho_m \propto a^{-3}, \quad \rho_r \propto a^{-4}, \quad \rho_\Lambda = \text{constant}
+\]</span></p>
+<hr>
+</section>
+</section>
+<section id="lemniscate-alpha-derivations" class="level2" data-number="82.12">
+<h2 data-number="82.12" class="anchored" data-anchor-id="lemniscate-alpha-derivations"><span class="header-section-number">82.12</span> Lemniscate-Alpha Derivations</h2>
+<p>These equations summarize the book’s proposed relations connecting fundamental constants to four integers: b₃=7, N_c=3, N_eff=13, N_base=4.</p>
+<section id="master-quadratic" class="level3" data-number="82.12.1">
+<h3 data-number="82.12.1" class="anchored" data-anchor-id="master-quadratic"><span class="header-section-number">82.12.1</span> Master Quadratic</h3>
+<p><span class="math display">\[
+x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0
+\]</span></p>
+<p>Roots: <span class="math inline">\(\alpha = 1/137.036\)</span> (larger), <span class="math inline">\(N_c = 3.024\)</span> (smaller)</p>
+</section>
+<section id="fine-structure-constant" class="level3" data-number="82.12.2">
+<h3 data-number="82.12.2" class="anchored" data-anchor-id="fine-structure-constant"><span class="header-section-number">82.12.2</span> Fine Structure Constant</h3>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Notation Clarification
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The master quadratic yields <span class="math inline">\(x_+ = 137.036\)</span> (the larger root), which is identified with <span class="math inline">\(1/\alpha\)</span>, not <span class="math inline">\(\alpha\)</span> itself.</p>
+</div>
+</div>
+<p><span class="math display">\[
+\frac{1}{\alpha} = \frac{1}{2}\left[16(G^*)^2 + \sqrt{256(G^*)^4 - 64(G^*)^3}\right] = 137.036
+\]</span></p>
+<p>Therefore: <span class="math inline">\(\alpha = 1/137.036 \approx 0.00729\)</span></p>
+</section>
+<section id="electron-mass" class="level3" data-number="82.12.3">
+<h3 data-number="82.12.3" class="anchored" data-anchor-id="electron-mass"><span class="header-section-number">82.12.3</span> Electron Mass</h3>
+<p><span class="math display">\[
+\frac{m_e}{m_0} = b_3(b_3 + N_c)\alpha = 70\alpha = 0.5110
+\]</span></p>
+</section>
+<section id="muon-mass" class="level3" data-number="82.12.4">
+<h3 data-number="82.12.4" class="anchored" data-anchor-id="muon-mass"><span class="header-section-number">82.12.4</span> Muon Mass</h3>
+<p><span class="math display">\[
+\frac{m_\mu}{m_e} = 3 \times 70 - 3 = 207
+\]</span></p>
+</section>
+<section id="tau-mass" class="level3" data-number="82.12.5">
+<h3 data-number="82.12.5" class="anchored" data-anchor-id="tau-mass"><span class="header-section-number">82.12.5</span> Tau Mass</h3>
+<p><span class="math display">\[
+\frac{m_\tau}{m_e} = 17 \times 207 - 42 = 3477
+\]</span></p>
+</section>
+<section id="proton-mass" class="level3" data-number="82.12.6">
+<h3 data-number="82.12.6" class="anchored" data-anchor-id="proton-mass"><span class="header-section-number">82.12.6</span> Proton Mass</h3>
+<p><span class="math display">\[
+\frac{m_p}{m_e} = \frac{N_{eff}}{\alpha} + T(10) = \frac{13}{\alpha} + 55 = 1836.47
+\]</span></p>
+</section>
+<section id="neutron-proton-difference" class="level3" data-number="82.12.7">
+<h3 data-number="82.12.7" class="anchored" data-anchor-id="neutron-proton-difference"><span class="header-section-number">82.12.7</span> Neutron-Proton Difference</h3>
+<p><span class="math display">\[
+\frac{m_n - m_p}{m_e} = \phi^2 - 12\alpha = 2.53
+\]</span></p>
+</section>
+<section id="w-boson-mass" class="level3" data-number="82.12.8">
+<h3 data-number="82.12.8" class="anchored" data-anchor-id="w-boson-mass"><span class="header-section-number">82.12.8</span> W Boson Mass</h3>
+<p><span class="math display">\[
+\frac{m_W}{m_e} = \frac{67}{8\alpha^2} = \frac{b_3(b_3+N_c) - N_c}{8\alpha^2} = 157{,}273
+\]</span></p>
+</section>
+<section id="z-boson-mass" class="level3" data-number="82.12.9">
+<h3 data-number="82.12.9" class="anchored" data-anchor-id="z-boson-mass"><span class="header-section-number">82.12.9</span> Z Boson Mass</h3>
+<p><span class="math display">\[
+\frac{m_Z}{m_e} = \frac{m_W}{m_e} \times \sqrt{\frac{13}{10}} = 179{,}266
+\]</span></p>
+</section>
+<section id="higgs-mass" class="level3" data-number="82.12.10">
+<h3 data-number="82.12.10" class="anchored" data-anchor-id="higgs-mass"><span class="header-section-number">82.12.10</span> Higgs Mass</h3>
+<p><span class="math display">\[
+\frac{m_H}{m_e} = \frac{N_{eff}}{\alpha^2} = 244{,}125
+\]</span></p>
+</section>
+<section id="up-quark-mass" class="level3" data-number="82.12.11">
+<h3 data-number="82.12.11" class="anchored" data-anchor-id="up-quark-mass"><span class="header-section-number">82.12.11</span> Up Quark Mass</h3>
+<p><span class="math display">\[
+\frac{m_u}{m_e} = N_{base} + \sin^2\theta_W = 4 + \frac{3}{13} = 4.231
+\]</span></p>
+</section>
+<section id="down-quark-mass" class="level3" data-number="82.12.12">
+<h3 data-number="82.12.12" class="anchored" data-anchor-id="down-quark-mass"><span class="header-section-number">82.12.12</span> Down Quark Mass</h3>
+<p><span class="math display">\[
+\frac{m_d}{m_e} = 2N_{base} + 1 + \alpha N_{eff} = 9.095
+\]</span></p>
+</section>
+<section id="strange-quark-mass" class="level3" data-number="82.12.13">
+<h3 data-number="82.12.13" class="anchored" data-anchor-id="strange-quark-mass"><span class="header-section-number">82.12.13</span> Strange Quark Mass</h3>
+<p><span class="math display">\[
+\frac{m_s}{m_e} = N_{eff}(N_{eff}+1) + 1 = 13 \times 14 + 1 = 183
+\]</span></p>
+</section>
+<section id="charm-quark-mass" class="level3" data-number="82.12.14">
+<h3 data-number="82.12.14" class="anchored" data-anchor-id="charm-quark-mass"><span class="header-section-number">82.12.14</span> Charm Quark Mass</h3>
+<p><span class="math display">\[
+\frac{m_c}{m_e} = N_{eff}(b_3+N_c) \times 19 + 15 = 13 \times 10 \times 19 + 15 = 2485
+\]</span></p>
+</section>
+<section id="bottom-quark-mass" class="level3" data-number="82.12.15">
+<h3 data-number="82.12.15" class="anchored" data-anchor-id="bottom-quark-mass"><span class="header-section-number">82.12.15</span> Bottom Quark Mass</h3>
+<p><span class="math display">\[
+\frac{m_b}{m_e} = 10^3 \times 8 + 169 = 8169
+\]</span></p>
+</section>
+<section id="top-quark-mass" class="level3" data-number="82.12.16">
+<h3 data-number="82.12.16" class="anchored" data-anchor-id="top-quark-mass"><span class="header-section-number">82.12.16</span> Top Quark Mass</h3>
+<p><span class="math display">\[
+\frac{m_t}{m_W} = \phi^2 - 64\alpha = 2.151
+\]</span></p>
+</section>
+<section id="weinberg-angle" class="level3" data-number="82.12.17">
+<h3 data-number="82.12.17" class="anchored" data-anchor-id="weinberg-angle"><span class="header-section-number">82.12.17</span> Weinberg Angle</h3>
+<p><span class="math display">\[
+\sin^2\theta_W = \frac{N_c}{N_{eff}} = \frac{3}{13} = 0.2308
+\]</span></p>
+</section>
+<section id="strong-coupling" class="level3" data-number="82.12.18">
+<h3 data-number="82.12.18" class="anchored" data-anchor-id="strong-coupling"><span class="header-section-number">82.12.18</span> Strong Coupling</h3>
+<p><span class="math display">\[
+\alpha_s = \frac{b_3}{b_3^2 + b_3 + N_c} = \frac{7}{59} = 0.1186
+\]</span></p>
+</section>
+<section id="gravitational-coupling" class="level3" data-number="82.12.19">
+<h3 data-number="82.12.19" class="anchored" data-anchor-id="gravitational-coupling"><span class="header-section-number">82.12.19</span> Gravitational Coupling</h3>
+<p><span class="math display">\[
+G_{bias} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{100} = 0.01
+\]</span></p>
+</section>
+<section id="golden-ratio" class="level3" data-number="82.12.20">
+<h3 data-number="82.12.20" class="anchored" data-anchor-id="golden-ratio"><span class="header-section-number">82.12.20</span> Golden Ratio</h3>
+<p><span class="math display">\[
+\phi = \frac{1 + \sqrt{N_{base}+1}}{2} = \frac{1+\sqrt{5}}{2} = 1.618...
+\]</span></p>
+</section>
+<section id="number-of-generations" class="level3" data-number="82.12.21">
+<h3 data-number="82.12.21" class="anchored" data-anchor-id="number-of-generations"><span class="header-section-number">82.12.21</span> Number of Generations</h3>
+<p><span class="math display">\[
+N_{gen} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3
+\]</span></p>
+</section>
+<section id="cosmological-constant" class="level3" data-number="82.12.22">
+<h3 data-number="82.12.22" class="anchored" data-anchor-id="cosmological-constant"><span class="header-section-number">82.12.22</span> Cosmological Constant</h3>
+<p><span class="math display">\[
+\frac{\Lambda}{\Lambda_{Planck}} = \alpha^{57} = \alpha^{b_3(b_3+N_c) - N_{eff}} = 10^{-121.8}
+\]</span></p>
+</section>
+<section id="neutrino-mass-ratio" class="level3" data-number="82.12.23">
+<h3 data-number="82.12.23" class="anchored" data-anchor-id="neutrino-mass-ratio"><span class="header-section-number">82.12.23</span> Neutrino Mass Ratio</h3>
+<p><span class="math display">\[
+\frac{\Delta m^2_{32}}{\Delta m^2_{21}} = \frac{(b_3+N_c)^2}{N_c} = \frac{100}{3} = 33.3
+\]</span></p>
+<hr>
+</section>
+</section>
+<section id="novel-geometric-relationships" class="level2" data-number="82.13">
+<h2 data-number="82.13" class="anchored" data-anchor-id="novel-geometric-relationships"><span class="header-section-number">82.13</span> Novel Geometric Relationships</h2>
+<p>These equations represent recently discovered connections between G*, the Mandelbrot set, and fundamental physics.</p>
+<section id="mandelbrot-lemniscate-bridge-exact-identity" class="level3" data-number="82.13.1">
+<h3 data-number="82.13.1" class="anchored" data-anchor-id="mandelbrot-lemniscate-bridge-exact-identity"><span class="header-section-number">82.13.1</span> Mandelbrot-Lemniscate Bridge (Exact Identity)</h3>
+<p><span class="math display">\[
+k_c \times c_{\text{cusp}} \times G^* = 1
+\]</span></p>
+<p>Where: - <span class="math inline">\(k_c = 4/G^* \approx 1.352\)</span> (critical coefficient) - <span class="math inline">\(c_{\text{cusp}} = 1/4\)</span> (Mandelbrot cardioid cusp) - <span class="math inline">\(G^* \approx 2.9587\)</span> (lemniscatic constant)</p>
+</section>
+<section id="trd-mandelbrot-transformation" class="level3" data-number="82.13.2">
+<h3 data-number="82.13.2" class="anchored" data-anchor-id="trd-mandelbrot-transformation"><span class="header-section-number">82.13.2</span> TRD-Mandelbrot Transformation</h3>
+<p><span class="math display">\[
+c = \frac{1}{k \cdot G^*}
+\]</span></p>
+<p>Maps TRD coefficient <span class="math inline">\(k\)</span> to Mandelbrot parameter <span class="math inline">\(c\)</span>.</p>
+</section>
+<section id="minimum-distance-formula" class="level3" data-number="82.13.3">
+<h3 data-number="82.13.3" class="anchored" data-anchor-id="minimum-distance-formula"><span class="header-section-number">82.13.3</span> Minimum Distance Formula</h3>
+<p><span class="math display">\[
+d_{\min} = \frac{(G^*)^2}{32} = 0.2736
+\]</span></p>
+<p>The irreducible gap from the origin in the Lemniscate-Alpha curve.</p>
+</section>
+<section id="proton-mass-pure-π-formula" class="level3" data-number="82.13.4">
+<h3 data-number="82.13.4" class="anchored" data-anchor-id="proton-mass-pure-π-formula"><span class="header-section-number">82.13.4</span> Proton Mass (Pure π Formula)</h3>
+<p><span class="math display">\[
+\frac{m_p}{m_e} = 6\pi^5 = 1836.118
+\]</span></p>
+<p><strong>Accuracy: 0.002%</strong> — Uses only π and the integer 6.</p>
+</section>
+<section id="strong-coupling-gπ-form" class="level3" data-number="82.13.5">
+<h3 data-number="82.13.5" class="anchored" data-anchor-id="strong-coupling-gπ-form"><span class="header-section-number">82.13.5</span> Strong Coupling (G*/π Form)</h3>
+<p><span class="math display">\[
+\alpha_s = \frac{G^*}{8\pi} = 0.1177
+\]</span></p>
+<p><strong>Accuracy: 0.15%</strong></p>
+</section>
+<section id="the-three-regimes" class="level3" data-number="82.13.6">
+<h3 data-number="82.13.6" class="anchored" data-anchor-id="the-three-regimes"><span class="header-section-number">82.13.6</span> The Three Regimes</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Regime</th>
+<th><span class="math inline">\(k\)</span></th>
+<th><span class="math inline">\(c = 1/(k \cdot G^*)\)</span></th>
+<th>Root Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Physics</td>
+<td>16</td>
+<td>0.021</td>
+<td>Real</td>
+</tr>
+<tr class="even">
+<td>Critical</td>
+<td><span class="math inline">\(k_c = 1.352\)</span></td>
+<td>0.25</td>
+<td>Double</td>
+</tr>
+<tr class="odd">
+<td>Consciousness</td>
+<td>0.5</td>
+<td>0.676</td>
+<td>Complex</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="consciousness-quadratic" class="level3" data-number="82.13.7">
+<h3 data-number="82.13.7" class="anchored" data-anchor-id="consciousness-quadratic"><span class="header-section-number">82.13.7</span> Consciousness Quadratic</h3>
+<p><span class="math display">\[
+y^2 - \frac{(G^*)^2}{2}y + \frac{(G^*)^3}{4} = 0
+\]</span></p>
+<p><strong>Complex roots:</strong> <span class="math inline">\(y = 2.19 \pm 1.30i\)</span></p>
+</section>
+<section id="winding-number" class="level3" data-number="82.13.8">
+<h3 data-number="82.13.8" class="anchored" data-anchor-id="winding-number"><span class="header-section-number">82.13.8</span> Winding Number</h3>
+<p>The Lemniscate-Alpha curve at <span class="math inline">\(k = 0.5\)</span> has <strong>winding number = -2</strong> around the origin.</p>
+</section>
+<section id="regime-ratio" class="level3" data-number="82.13.9">
+<h3 data-number="82.13.9" class="anchored" data-anchor-id="regime-ratio"><span class="header-section-number">82.13.9</span> Regime Ratio</h3>
+<p><span class="math display">\[
+\frac{k_{\text{physics}}}{k_{\text{consciousness}}} = \frac{16}{0.5} = 32
+\]</span></p>
+<p>This ratio appears as the denominator in <span class="math inline">\(d_{\min} = (G^*)^2/32\)</span>.</p>
+</section>
+<section id="arc-length-relationship" class="level3" data-number="82.13.10">
+<h3 data-number="82.13.10" class="anchored" data-anchor-id="arc-length-relationship"><span class="header-section-number">82.13.10</span> Arc Length Relationship</h3>
+<p><span class="math display">\[
+L \times \frac{91}{732} = G^*
+\]</span></p>
+<p>Where: - <span class="math inline">\(L = 23.7996\)</span> (Lemniscate-Alpha arc length) - <span class="math inline">\(91 = 7 \times 13\)</span> (product of framework integers!) - <span class="math inline">\(732 = 4 \times 183 = 4 \times 3 \times 61\)</span></p>
+<hr>
+</section>
+</section>
+<section id="structure-formation" class="level2" data-number="82.14">
+<h2 data-number="82.14" class="anchored" data-anchor-id="structure-formation"><span class="header-section-number">82.14</span> Structure Formation</h2>
+<section id="jeans-mass" class="level3" data-number="82.14.1">
+<h3 data-number="82.14.1" class="anchored" data-anchor-id="jeans-mass"><span class="header-section-number">82.14.1</span> Jeans Mass</h3>
+<p><span class="math display">\[
+M_J = \left(\frac{5kT}{G\mu m_H}\right)^{3/2} \left(\frac{3}{4\pi\rho}\right)^{1/2}
+\]</span></p>
+</section>
+<section id="binding-energy" class="level3" data-number="82.14.2">
+<h3 data-number="82.14.2" class="anchored" data-anchor-id="binding-energy"><span class="header-section-number">82.14.2</span> Binding Energy</h3>
+<p><span class="math display">\[
+E_{bind} = KB \times \phi \quad (\text{for triads})
+\]</span></p>
+</section>
+<section id="shell-radius" class="level3" data-number="82.14.3">
+<h3 data-number="82.14.3" class="anchored" data-anchor-id="shell-radius"><span class="header-section-number">82.14.3</span> Shell Radius</h3>
+<p><span class="math display">\[
+r_n \propto n^2 \quad (\text{hydrogen-like})
+\]</span></p>
+</section>
+</section>
+<section id="information-theory" class="level2" data-number="82.15">
+<h2 data-number="82.15" class="anchored" data-anchor-id="information-theory"><span class="header-section-number">82.15</span> Information Theory</h2>
+<section id="shannon-entropy" class="level3" data-number="82.15.1">
+<h3 data-number="82.15.1" class="anchored" data-anchor-id="shannon-entropy"><span class="header-section-number">82.15.1</span> Shannon Entropy</h3>
+<p><span class="math display">\[
+H = -\sum_i p_i \log_2(p_i)
+\]</span></p>
+</section>
+<section id="landauers-principle" class="level3" data-number="82.15.2">
+<h3 data-number="82.15.2" class="anchored" data-anchor-id="landauers-principle"><span class="header-section-number">82.15.2</span> Landauer’s Principle</h3>
+<p><span class="math display">\[
+E_{min} = k_B T \ln(2) \quad \text{per bit erased}
+\]</span></p>
+</section>
+<section id="kolmogorov-complexity" class="level3" data-number="82.15.3">
+<h3 data-number="82.15.3" class="anchored" data-anchor-id="kolmogorov-complexity"><span class="header-section-number">82.15.3</span> Kolmogorov Complexity</h3>
+<p><span class="math display">\[
+K(x) = \min_p\{|p| : U(p) = x\}
+\]</span></p>
+</section>
+</section>
+<section id="quick-reference" class="level2" data-number="82.16">
+<h2 data-number="82.16" class="anchored" data-anchor-id="quick-reference"><span class="header-section-number">82.16</span> Quick Reference</h2>
+<section id="core-equations" class="level3" data-number="82.16.1">
+<h3 data-number="82.16.1" class="anchored" data-anchor-id="core-equations"><span class="header-section-number">82.16.1</span> Core Equations</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Equation</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\rho = \|\vec{J}\|\)</span></td>
+<td>Density from flux</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(P_{gen} = 1 - e^{-(\rho-KB)/KB}\)</span></td>
+<td>Genesis probability</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\vec{F}_g = G \nabla\bar{\rho}\)</span></td>
+<td>Gravity</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\vec{F}_e = -q \nabla\bar{q}\)</span></td>
+<td>Coulomb</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(L = 1 + \alpha E \omega\)</span></td>
+<td>Time dilation</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\tau += 1/L\)</span></td>
+<td>Phase accumulator</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\vec{J} *= (1-\lambda)\)</span></td>
+<td>Decay/damping</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="conservation-laws" class="level3" data-number="82.16.2">
+<h3 data-number="82.16.2" class="anchored" data-anchor-id="conservation-laws"><span class="header-section-number">82.16.2</span> Conservation Laws</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Quantity</th>
+<th>Equation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Energy</td>
+<td><span class="math inline">\(\sum \|\vec{J}\|^2 = \text{constant}\)</span></td>
+</tr>
+<tr class="even">
+<td>Momentum</td>
+<td><span class="math inline">\(\sum \vec{J} = \text{constant}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Charge</td>
+<td><span class="math inline">\(\sum q = \text{constant}\)</span></td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Energy is proportional to flux magnitude <strong>squared</strong> (analogous to kinetic energy <span class="math inline">\(\propto v^2\)</span>), while momentum is the vector sum of flux.</p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/14.1-constants-reference.html" class="pagination-link" aria-label="Constants Reference">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">81</span>&nbsp; <span class="chapter-title">Constants Reference</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/14.3-glossary.html" class="pagination-link" aria-label="Glossary">
+        <span class="nav-page-text"><span class="chapter-number">83</span>&nbsp; <span class="chapter-title">Glossary</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

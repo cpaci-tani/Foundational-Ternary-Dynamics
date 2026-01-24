@@ -94,7 +94,7 @@ The 3D momentum/energy vector. Carries:
 - Phase information (via direction)
 
 ### Density
-The magnitude of flux: $\rho = |\vec{J}| = \sqrt{J_x^2 + J_y^2 + J_z^2}$
+The magnitude of flux: $\rho = |\mathbf{J}| = \sqrt{J_x^2 + J_y^2 + J_z^2}$
 
 Determines:
 - Can particle exist? (ρ ≥ KB)
@@ -133,7 +133,7 @@ When τ ≥ 1, the voxel processes updates and τ resets.
 Boolean flag indicating whether this particle is part of a stable structure (e.g., a triad).
 
 Locked particles:
-- Don't decay
+- Do not decay
 - Have modified force responses
 - Maintain structural integrity
 
@@ -166,12 +166,12 @@ $$
 
 ### Divergence
 $$
-\nabla \cdot \vec{J} = \frac{\partial J_x}{\partial x} + \frac{\partial J_y}{\partial y} + \frac{\partial J_z}{\partial z}
+\nabla \cdot \mathbf{J} = \frac{\partial J_x}{\partial x} + \frac{\partial J_y}{\partial y} + \frac{\partial J_z}{\partial z}
 $$
 
 ### Curl
 $$
-\nabla \times \vec{J} = \left(\frac{\partial J_z}{\partial y} - \frac{\partial J_y}{\partial z}, \frac{\partial J_x}{\partial z} - \frac{\partial J_z}{\partial x}, \frac{\partial J_y}{\partial x} - \frac{\partial J_x}{\partial y}\right)
+\nabla \times \mathbf{J} = \left(\frac{\partial J_z}{\partial y} - \frac{\partial J_y}{\partial z}, \frac{\partial J_x}{\partial z} - \frac{\partial J_z}{\partial x}, \frac{\partial J_y}{\partial x} - \frac{\partial J_x}{\partial y}\right)
 $$
 
 ## Experiments
@@ -194,4 +194,4 @@ See a voxel's 26 neighbors. Watch how local interactions propagate.
 
 ## Transition
 
-Each voxel can host a particle. Now let's meet all the particles that can exist: the particle zoo.
+Each voxel can host a particle. Now we meet all the particles that can exist: the particle zoo.

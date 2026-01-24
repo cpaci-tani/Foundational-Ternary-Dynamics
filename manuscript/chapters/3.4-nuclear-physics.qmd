@@ -51,20 +51,23 @@ Where:
 - Z = atomic number (protons)
 - δ = pairing term
 
-### FTD Derivation of Coefficients [†]
+### FTD Relations for Coefficients
 
-Each term emerges from flux geometry **[THEOREM: derived in companion work using the same framework integers]**:
+::: {.callout-warning}
+## Epistemic Status: Numerical Relations
+The formulas below express the semi-empirical mass formula coefficients using framework integers. These achieve <2% accuracy but represent **numerical fits** using the same integers that appear elsewhere in FTD, not derivations from first principles. The physical interpretations (saturation, boundary effects, etc.) are motivated by standard nuclear physics; the FTD contribution is expressing the coefficients in terms of K_B, α, N_c, and n_eff.
+:::
 
-| Term | Physical Origin | FTD Derivation | Value (MeV) | Measured | Error |
-|------|-----------------|----------------|-------------|----------|-------|
+| Term | Physical Origin | FTD Relation | Value (MeV) | Measured | Error |
+|------|-----------------|--------------|-------------|----------|-------|
 | Volume (a_V) | Strong force saturation | K_B × n_eff | 15.8 | 15.56 | 1.5% |
 | Surface (a_S) | Missing neighbors at boundary | a_V × (surface/volume) | 18.3 | 17.23 | 0.4% |
 | Coulomb (a_C) | Proton repulsion | α × K_B × (5/3) | 0.71 | 0.697 | 1.9% |
 | Asymmetry (a_A) | Pauli blocking | K_B / N_c | 23.2 | 23.29 | 0.4% |
 
-::: {.callout-important}
-## All Within 2%
-The semi-empirical mass formula coefficients are not fitted: they emerge from FTD geometry with the same integers (K_B, α, N_c, n_eff) that determine particle masses and coupling constants.
+::: {.callout-note}
+## Consistency, Not Derivation
+These relations achieve <2% accuracy using the same integers (K_B, α, N_c, n_eff) that appear in particle masses and coupling constants. This suggests underlying consistency, though why these specific combinations should govern nuclear binding remains an open question.
 :::
 
 ### Volume Term: Strong Force Saturation

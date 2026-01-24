@@ -115,7 +115,7 @@ Ice is less dense than water (ΔV < 0), so melting curve has negative slope. Hig
 
 ## Nucleation
 
-Transitions don't happen uniformly: they start at nucleation sites.
+Transitions do not happen uniformly: they start at nucleation sites.
 
 ### Homogeneous Nucleation
 Random fluctuations create seeds of new phase. Rare.
@@ -139,7 +139,7 @@ Above the critical point: **supercritical fluid**: properties of both liquid and
 
 ## Cosmological Phase Transitions
 
-The early universe underwent phase transitions just like water: but at vastly higher temperatures.
+The early universe underwent phase transitions just like water, but at vastly higher temperatures.
 
 ### The Electroweak Transition (T ~ 100 GeV)
 

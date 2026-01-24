@@ -13,7 +13,7 @@ Until now, we have described FTD's rules procedurally: "do this, then that." But
 
 > **Why these rules and not others?**
 
-An action principle answers this question. All of physics: from Newton's laws to general relativity to quantum field theory: can be derived from the simple statement:
+An action principle answers this question. All of physics, from Newton's laws to general relativity to quantum field theory, can be derived from the simple statement:
 
 (Here, we use the action principle in the constructive sense: given a set of update rules, we exhibit an action compatible with them.)
 

@@ -14,6 +14,8 @@ manuscript/.quarto/
 manuscript/*_files/
 *.quarto_ipynb
 
+.claude/
+
 # LaTeX auxiliary files
 *.aux
 *.log

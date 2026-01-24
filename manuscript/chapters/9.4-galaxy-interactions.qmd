@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Galaxies don't just drift through space: they collide, merge, and transform each other. These interactions drive galaxy evolution and trigger dramatic starbursts.
+Galaxies do not just drift through space: they collide, merge, and transform each other. These interactions drive galaxy evolution and trigger dramatic starbursts.
 :::
 
 ## Types of Interactions

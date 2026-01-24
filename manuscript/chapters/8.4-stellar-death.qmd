@@ -115,7 +115,7 @@ Expanding debris at 10,000 km/s
 
 ### Remnant
 
-What's left:
+What is left:
 - Neutron star (8-25 M☉ progenitor)
 - Black hole (>25 M☉ progenitor)
 

@@ -97,7 +97,7 @@ Given N_c = 3:
 - n_f = 6
 - b₃ = 11 - 4 = 7
 
-This is not a choice: it's determined by QCD with the matter content.
+This is not a choice: it is determined by QCD with the matter content.
 
 ### Step 3: N_eff = F_{b₃} = 13
 
@@ -171,7 +171,7 @@ The self-consistency is that b₃ = 11 - 2n_f/3 = 7 requires n_f = 6 (three gene
 
 ---
 
-## Part II: The Strong CP Problem :  Proposed Mechanism [†]
+## Part II: The Strong CP Problem: Proposed Mechanism [†]
 
 ::: {.callout-note}
 ## Companion Work
@@ -398,7 +398,7 @@ This is what makes FTD scientific: it makes specific predictions that can be wro
 
 1. **Integers are selected (within constraints)**: {7, 3, 13, 4} form a self-consistent solution satisfying the stated Fibonacci constraints
 2. **Coefficient 16 derived**: From lattice DoF counting (primary derivation)
-3. **α = 1/137.036**: From master quadratic with 1.26 ppm accuracy
+3. **α = 1/137.036**: From master quadratic with **0.21 ppt precision** (precision formula)
 
 ### What Companion Work Extends [†]
 
@@ -425,7 +425,7 @@ FTD:
                     Self-consistency
 ```
 
-The framework isn't just internally consistent: it is **highly constrained** by requiring self-consistency (within the stated constraint class).
+The framework is not just internally consistent: it is **highly constrained** by requiring self-consistency (within the stated constraint class).
 
 ### The Remaining Input
 
@@ -436,7 +436,7 @@ Possible answers:
 1. Any topology supporting SU(3) gauge theory requires 3 spatial dimensions
 2. The lattice is the unique regularization preserving both gauge invariance and locality
 2. The lattice is a candidate regularization intended to preserve both gauge invariance and locality
-3. This is the "cosmological selection" principle: other structures don't produce observers
+3. This is the "cosmological selection" principle: other structures do not produce observers
 
 But even without answering this, FTD has reduced the number of unexplained inputs from dozens (Standard Model parameters) to essentially one (the existence of the lattice itself).
 

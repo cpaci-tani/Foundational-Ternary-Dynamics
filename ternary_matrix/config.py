@@ -7,7 +7,7 @@ from dataclasses import dataclass
 @dataclass
 class PhysicsConfig:
     # Fundamental Constants
-    C: float = 1.0           # Speed of Causality (voxels/tick)
+    C: float = 0.5           # Speed of Causality (voxels/tick) - Reduced for CFL Stability
     H: float = 1.0           # Planck unit (lattice spacing)
     
     # Thresholds

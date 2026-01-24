@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-At extreme conditions: very cold, very dense, very hot: matter exhibits behaviors that defy everyday intuition. These exotic states reveal quantum mechanics at macroscopic scales.
+At extreme conditions (very cold, very dense, very hot) matter exhibits behaviors that defy everyday intuition. These exotic states reveal quantum mechanics at macroscopic scales.
 :::
 
 ::: {.callout-note}

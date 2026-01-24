@@ -405,6 +405,85 @@ $$
 
 ---
 
+## Novel Geometric Relationships
+
+These equations represent recently discovered connections between G*, the Mandelbrot set, and fundamental physics.
+
+### Mandelbrot-Lemniscate Bridge (Exact Identity)
+$$
+k_c \times c_{\text{cusp}} \times G^* = 1
+$$
+
+Where:
+- $k_c = 4/G^* \approx 1.352$ (critical coefficient)
+- $c_{\text{cusp}} = 1/4$ (Mandelbrot cardioid cusp)
+- $G^* \approx 2.9587$ (lemniscatic constant)
+
+### TRD-Mandelbrot Transformation
+$$
+c = \frac{1}{k \cdot G^*}
+$$
+
+Maps TRD coefficient $k$ to Mandelbrot parameter $c$.
+
+### Minimum Distance Formula
+$$
+d_{\min} = \frac{(G^*)^2}{32} = 0.2736
+$$
+
+The irreducible gap from the origin in the Lemniscate-Alpha curve.
+
+### Proton Mass (Pure π Formula)
+$$
+\frac{m_p}{m_e} = 6\pi^5 = 1836.118
+$$
+
+**Accuracy: 0.002%**: Uses only π and the integer 6.
+
+### Strong Coupling (G*/π Form)
+$$
+\alpha_s = \frac{G^*}{8\pi} = 0.1177
+$$
+
+**Accuracy: 0.15%**
+
+### The Three Regimes
+
+| Regime | $k$ | $c = 1/(k \cdot G^*)$ | Root Type |
+|--------|-----|------------------------|-----------|
+| Physics | 16 | 0.021 | Real |
+| Critical | $k_c = 1.352$ | 0.25 | Double |
+| Consciousness | 0.5 | 0.676 | Complex |
+
+### Consciousness Quadratic
+$$
+y^2 - \frac{(G^*)^2}{2}y + \frac{(G^*)^3}{4} = 0
+$$
+
+**Complex roots:** $y = 2.19 \pm 1.30i$
+
+### Winding Number
+The Lemniscate-Alpha curve at $k = 0.5$ has **winding number = -2** around the origin.
+
+### Regime Ratio
+$$
+\frac{k_{\text{physics}}}{k_{\text{consciousness}}} = \frac{16}{0.5} = 32
+$$
+
+This ratio appears as the denominator in $d_{\min} = (G^*)^2/32$.
+
+### Arc Length Relationship
+$$
+L \times \frac{91}{732} = G^*
+$$
+
+Where:
+- $L = 23.7996$ (Lemniscate-Alpha arc length)
+- $91 = 7 \times 13$ (product of framework integers!)
+- $732 = 4 \times 183 = 4 \times 3 \times 61$
+
+---
+
 ## Structure Formation
 
 ### Jeans Mass

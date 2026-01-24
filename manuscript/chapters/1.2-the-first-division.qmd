@@ -32,11 +32,11 @@ When $E(x) \geq K_B$, genesis becomes possible, with probability increasing expo
 
 ### What Happens at Genesis
 
-1. **Flux accumulates** :  Energy density builds in a region of space
-2. **Threshold reached** :  When density ≥ KB, manifestation becomes possible
-3. **Pair production** :  Matter (+1) and antimatter (-1) emerge together
-4. **Momentum conserved** :  The pair carries the flux that created them
-5. **Entanglement established** :  The pair shares a common origin (UUID)
+1. **Flux accumulates**: Energy density builds in a region of space
+2. **Threshold reached**: When density $\geq K_B$, manifestation becomes possible
+3. **Pair production**: Matter (+1) and antimatter (-1) emerge together
+4. **Momentum conserved**: The pair carries the flux that created them
+5. **Entanglement established**: The pair shares a common origin (UUID)
 
 ## The Balance Sheet
 
@@ -70,18 +70,18 @@ This is not creation from nothing. This is *reorganization* of what already exis
 ## Experiments
 
 ### Trigger Genesis
-Accumulate flux in a region until particles appear. Watch the threshold behavior: nothing happens until KB is exceeded, then sudden manifestation.
+Accumulate flux in a region until particles appear. Watch the threshold behavior: nothing happens until $K_B$ is exceeded, then sudden manifestation.
 
 ### Balance Check
 Count matter vs antimatter in any region. Over sufficient time and space, they are always equal.
 
 ### Threshold Discovery
-Find the minimum energy for genesis. Probe the boundary at KB = 0.511.
+Find the minimum energy for genesis. Probe the boundary at $K_B = 0.511$.
 
 ## Mathematical Details
 
 ### Energy Threshold
-The existence threshold KB = 0.511 corresponds to the electron rest mass in our unit system. Nothing can manifest with less energy than this.
+The existence threshold $K_B = 0.511$ corresponds to the electron rest mass in our unit system. Nothing can manifest with less energy than this.
 
 ### Probability Function
 The exponential form ensures:

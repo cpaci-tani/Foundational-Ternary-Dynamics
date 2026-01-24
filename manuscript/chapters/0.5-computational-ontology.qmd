@@ -48,7 +48,7 @@ A single logic gate can perform one Boolean operation:
 
 $$\text{Detect}() \to \{0, 1\}$$
 
-This is the minimal interaction: something happens or it doesn't. A photon hits a surface or it doesn't. A Geiger counter clicks or it doesn't.
+This is the minimal interaction: something happens or it does not. A photon hits a surface or it does not. A Geiger counter clicks or it does not.
 
 One gate is sufficient for **detection** but not for **inference**. Detection changes the state of the detector but creates no model of what was detected.
 
@@ -64,7 +64,7 @@ This enables the full Update function:
 
 $$\text{Entity}_{xyzt}.\text{Update}(\text{Input}, \text{Priors}, t, \text{action})$$
 
-A measurer constructs a *model* of what it measures. It doesn't just register that something happened; it represents *what* happened and *how* it relates to prior states.
+A measurer constructs a *model* of what it measures. It does not just register that something happened; it represents *what* happened and *how* it relates to prior states.
 
 Examples: computers, scientific instruments, automated control systems.
 
@@ -99,7 +99,7 @@ As established in @sec-formal-logic, FTD distinguishes two temporal concepts:
 
 ### The Tick as Epistemic Moment
 
-The FTD "tick" is an **epistemic moment**—a single step in the sequence of distinctions. It is:
+The FTD "tick" is an **epistemic moment**: a single step in the sequence of distinctions. It is:
 
 - **Not a duration**: A tick has no "length" in the physical sense
 - **An ordering index**: Tick $t$ comes before tick $t+1$

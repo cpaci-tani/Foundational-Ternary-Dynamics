@@ -17,7 +17,7 @@ Magnetic fields arise from:
 3. **Rotation** (Coriolis effect organizes flow)
 
 $$
-\frac{\partial \vec{B}}{\partial t} = \nabla \times (\vec{v} \times \vec{B}) + \eta \nabla^2 \vec{B}
+\frac{\partial \mathbf{B}}{\partial t} = \nabla \times (\mathbf{v} \times \mathbf{B}) + \eta \nabla^2 \mathbf{B}
 $$
 
 ### Magnetic Field Comparison
@@ -198,4 +198,4 @@ Inject particles at polar cusps. See light emission.
 
 ## Transition
 
-We've explored planets in detail. Now we scale up to the engines that power solar systems: stars themselves.
+We have explored planets in detail. Now we scale up to the engines that power solar systems: stars themselves.

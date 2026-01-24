@@ -29,7 +29,7 @@ The barometric formula follows from flux conservation in a gravitational potenti
 | Stratosphere | 12-50 km | Increases | Ozone |
 | Mesosphere | 50-80 km | Decreases | Meteors burn |
 | Thermosphere | 80-700 km | Increases | Aurora |
-| Exosphere | >700 km | :  | Transition to space |
+| Exosphere | >700 km | Variable | Transition to space |
 
 ### Why Temperature Varies
 

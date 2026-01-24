@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The universe is not just expanding: it's accelerating. Something with negative pressure, filling all of space, is pushing the cosmos apart. We call it dark energy, but we don't know what it is.
+The universe is not just expanding: it is accelerating. Something with negative pressure, filling all of space, is pushing the cosmos apart. We call it dark energy, but we do not know what it is.
 :::
 
 ## Discovery
@@ -131,7 +131,7 @@ $$\frac{\Lambda}{\Lambda_{\text{Planck}}} = \alpha^{57}$$
 
 Where α = 1/137.036 is the fine structure constant.
 
-Let's calculate:
+Calculating:
 $$\alpha^{57} = (0.00729735...)^{57} = 10^{-121.8}$$
 
 Observed:
@@ -141,7 +141,7 @@ $$\frac{\Lambda_{\text{obs}}}{\Lambda_{\text{Planck}}} \approx 10^{-122}$$
 
 ::: {.callout-important}
 ## The 122 Orders of Magnitude Explained
-The cosmological constant isn't unnaturally small: it's a 57th-order effect in the electromagnetic coupling. The Lemniscate-Alpha framework predicts this exponent exactly.
+The cosmological constant is not unnaturally small: it is a 57th-order effect in the electromagnetic coupling. The Lemniscate-Alpha framework predicts this exponent exactly.
 :::
 
 ### Why 57?
@@ -259,4 +259,4 @@ Extrapolate current acceleration into far future.
 
 ## Transition
 
-Dark matter and dark energy shape the universe's evolution. Now let's trace the full history: the cosmological epochs from Big Bang to today.
+Dark matter and dark energy shape the universe's evolution. Now we trace the full history: the cosmological epochs from Big Bang to today.

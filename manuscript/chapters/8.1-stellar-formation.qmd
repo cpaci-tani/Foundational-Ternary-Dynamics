@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Stars are born when gravity defeats pressure in molecular clouds. The same process that forms planets: accretion: operates at vastly larger scales to ignite fusion.
+Stars are born when gravity defeats pressure in molecular clouds. The same process that forms planets (accretion) operates at vastly larger scales to ignite fusion.
 :::
 
 ::: {.callout-note}

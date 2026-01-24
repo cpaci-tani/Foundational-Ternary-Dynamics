@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Complexity doesn't require a designer. Simple local rules, repeated endlessly, can create structures of breathtaking intricacy. The universe organizes itself.
+Complexity does not require a designer. Simple local rules, repeated endlessly, can create structures of breathtaking intricacy. The universe organizes itself.
 :::
 
 ## Patterns from Simple Rules
@@ -45,7 +45,7 @@ $$
 \frac{\partial v}{\partial t} = D_v \nabla^2 v + g(u,v)
 $$
 
-Creates: spots, stripes, spirals: the patterns of life.
+Creates spots, stripes, spirals: the patterns of life.
 
 ### Flocking (Boids)
 
@@ -227,7 +227,7 @@ See Turing patterns emerge from reaction-diffusion.
 
 Order emerges from chaos. But what is order, really? What distinguishes organized from disorganized? Next (@sec-information-entropy), we explore information and entropy: the deep mathematical structures that quantify organization.
 
-FTD itself exemplifies self-organization: from the simplest possible rules (local updates on a ternary lattice), the entire complexity of the universe emerges without top-down design. Each level: quarks to hadrons to atoms to molecules to life: is an emergent phenomenon arising from levels below.
+FTD itself exemplifies self-organization: from the simplest possible rules (local updates on a ternary lattice), the entire complexity of the universe emerges without top-down design. Each level (quarks to hadrons to atoms to molecules to life) is an emergent phenomenon arising from levels below.
 
 ::: {.callout-tip}
 ## Related Topics

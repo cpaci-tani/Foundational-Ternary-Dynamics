@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-From six constants, an entire universe unfolds. Change any of them, and chemistry fails, stars don't form, or observers cannot exist.
+From six constants, an entire universe unfolds. Change any of them, and chemistry fails, stars do not form, or observers cannot exist.
 :::
 
 ::: {.callout-warning}
@@ -13,7 +13,7 @@ From six constants, an entire universe unfolds. Change any of them, and chemistr
 | Constant | Status | Scope |
 |----------|--------|-------|
 | C, H | Axiomatic | Core paper |
-| ALPHA | **DERIVED** | Core paper (1.26 ppm) |
+| ALPHA | **DERIVED** | Core paper (1.26 ppm base; **0.21 ppt** precision) |
 | KB, PHI, GRAVITY_BIAS | **DERIVED** [†] | Companion work |
 
 The core paper derives α from the master quadratic. Other derived constants use α plus additional framework relations developed in companion papers.
@@ -61,7 +61,7 @@ The fine structure constant determines the strength of electromagnetic interacti
 
 ::: {.callout-important}
 ## Derived, Not Assumed
-Unlike other constants in this section, α is **not** a free parameter. It emerges from geometric constraints on a self-referential curve. See @sec-lemniscate-alpha for the full derivation, which achieves 1.26 ppm accuracy.
+Unlike other constants in this section, α is **not** a free parameter. It emerges from geometric constraints on a self-referential curve. See @sec-lemniscate-alpha for the full derivation, which achieves **0.21 ppt precision** (1.26 ppm base, 6,000× improvement with precision formula).
 :::
 
 This single number controls:
@@ -137,7 +137,7 @@ This is the "fine-tuning problem." Why these values?
 
 3. **Design**: The constants were chosen for a purpose
 
-4. **This Simulation**: We chose constants to match our universe because that's what we wanted to model
+4. **This Simulation**: We chose constants to match our universe because that is what we wanted to model
 
 ## Experiments
 
@@ -181,12 +181,12 @@ Time to half-density: $t_{1/2} = \frac{\ln 2}{\ln(1/(1-\text{DECAY\_RATE}))}$
 
 ::: {.callout-note}
 ## Chapter Summary
-**Six constants define the FTD framework**: C (causality speed), H (Planck resolution), KB (existence threshold), ALPHA (fine structure), PHI (golden ratio), and GRAVITY_BIAS (gravitational coupling). Of these, **α is derived** from geometric constraints (1.26 ppm accuracy), while the others are either axiomatic (C, H) or derived from α via framework relations. The constants fall within a narrow **anthropic window**: small changes would prevent stable atoms, stars, or observers from existing.
+**Six constants define the FTD framework**: C (causality speed), H (Planck resolution), KB (existence threshold), ALPHA (fine structure), PHI (golden ratio), and GRAVITY_BIAS (gravitational coupling). Of these, **α is derived** from geometric constraints (**0.21 ppt precision** with the precision formula), while the others are either axiomatic (C, H) or derived from α via framework relations. The constants fall within a narrow **anthropic window**: small changes would prevent stable atoms, stars, or observers from existing.
 :::
 
 ## Transition
 
-We have presented six constants as the tuning parameters of reality. But are they truly free parameters? The next chapter (@sec-lemniscate-alpha) reveals something remarkable: at least one of these constants: the fine structure constant α: is not arbitrary at all. It emerges from the geometry of self-reference.
+We have presented six constants as the tuning parameters of reality. But are they truly free parameters? The next chapter (@sec-lemniscate-alpha) reveals something remarkable: at least one of these constants, the fine structure constant $\alpha$, is not arbitrary at all. It emerges from the geometry of self-reference.
 
 ::: {.callout-tip}
 ## Related Topics

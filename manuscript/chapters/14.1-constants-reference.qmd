@@ -18,7 +18,7 @@ These are the true inputs from which everything else follows.
 | N_eff | 13 | Effective dimension (Fibonacci F₇) | Scaling |
 | N_base | 4 | Base harmonic modes | Wave structure |
 
-![Derivation chain showing how the four framework integers produce the derived constants.](../figures/ch14/fig-constants-graph.png){#fig-constants-graph}
+![Derivation chain showing how the four framework integers produce the derived constants.](../../media/images/fig-constants-graph.png){#fig-constants-graph}
 
 **Self-consistency**: These satisfy the master quadratic:
 $$
@@ -76,9 +76,14 @@ $$
 | Value | 0.007297 |
 | Nature | [T+] **DERIVED** |
 | Derivation | Larger root of master quadratic |
-| Accuracy | **1.26 ppm** |
+| Base Accuracy | 1.26 ppm |
+| **Precision Formula** | **0.21 ppt** (6,000× better) |
 
-The fine structure constant emerges from the self-consistency requirement of the Lemniscate-Alpha curve.
+The fine structure constant emerges from the self-consistency requirement of the Lemniscate-Alpha curve. The **precision formula** adds corrections from conformal field theory:
+
+$$\frac{1}{\alpha} = x_+ - \frac{9}{47}|\varepsilon| + \frac{5}{64}|\varepsilon|^2$$
+
+where $\varepsilon = e^\pi - \pi - 20 \approx -9 \times 10^{-4}$ and $20 = b_3 + N_{\text{eff}} = 1/c_{\text{fermion}}$ (Weyl anomaly coefficient).
 
 ### Existence Threshold (KB)
 
@@ -152,6 +157,73 @@ $$
 | Measured | 0.1179 ± 0.0010 |
 | Accuracy | **0.3σ** |
 
+**Alternative formula (G*/π form)**:
+$$\alpha_s = \frac{G^*}{8\pi} = 0.1177 \quad \text{(0.15\% accuracy)}$$
+
+The ratio α_s/α ≈ 16 equals the physics coefficient k from the master quadratic.
+
+---
+
+## Novel Geometric Constants
+
+### Minimum Distance (d_min)
+
+$$
+d_{\min} = \frac{(G^*)^2}{32} = 0.2736
+$$
+
+| Property | Value |
+|----------|-------|
+| Symbol | d_min |
+| Predicted | 0.2736 |
+| Measured | 0.2730 |
+| Accuracy | **0.19%** |
+| Meaning | Irreducible gap from origin |
+
+The divisor 32 = k_physics/k_consciousness = 16/0.5 is the regime ratio.
+
+### Critical Coefficient (k_c)
+
+$$
+k_c = \frac{4}{G^*} \approx 1.352
+$$
+
+Satisfies the exact Mandelbrot-Lemniscate Bridge identity:
+$$k_c \times c_{\text{cusp}} \times G^* = 1$$
+
+### Proton Mass: Two Paths to the Same Number
+
+The proton-to-electron mass ratio admits two independent derivations that converge through G*.
+
+#### Pure Geometry Path (π-based)
+
+$$
+\frac{m_p}{m_e} = 6\pi^5 = 1836.118 \quad \text{(0.002\% error)}
+$$
+
+This uses only the integer 6 and π, with no framework integers or G*.
+
+#### Framework Integer Path
+
+$$
+\frac{m_p}{m_e} = \frac{N_{\text{eff}}}{\alpha} + T(10) = \frac{13}{1/137.036} + 55 = 1836.47 \quad \text{(0.017\% error)}
+$$
+
+Where T(10) = 55 is the 10th triangular number.
+
+#### The Connection: Why Both Work
+
+$$
+6\pi^5 \approx (G^*)^7 \times \left(1 - \frac{1}{N_{\text{eff}}}\right) = (G^*)^7 \times \frac{12}{13}
+$$
+
+Both formulas converge because the lemniscatic constant G* encodes the relationship between circular geometry (π) and framework integers. The factor (1 - 1/N_eff) = 12/13 connects the pure-π formula to the integer-based one.
+
+| Path | Formula | Predicted | Measured | Error |
+|------|---------|-----------|----------|-------|
+| Pure π | 6π⁵ | 1836.118 | 1836.153 | 0.002% |
+| Framework integers | N_eff/α + T(10) | 1836.47 | 1836.153 | 0.017% |
+
 ---
 
 ## Particle Masses (All Derived)
@@ -167,6 +239,11 @@ All measured values from the Particle Data Group [@pdg2024].
 | Tau | 17×207 - 42 | 3477 | 3477.2 | 0.01% |
 
 ### Quarks (ratios to electron)
+
+::: {.callout-warning}
+## Epistemic Status: Numerical Fits
+Unlike the lepton masses (pure integer arithmetic) and the proton mass (two independent paths via G*), these quark mass formulas are **numerical fits**: different ad-hoc combinations of framework integers achieving <1% accuracy. No underlying principle connecting them has been identified.
+:::
 
 | Particle | Formula | Predicted | Measured | Error |
 |----------|---------|-----------|----------|-------|
@@ -236,11 +313,12 @@ Where 57 = b₃(b₃+N_c) - N_eff = 70 - 13.
 | Baryon masses | 2 | 0.27% |
 | Boson masses | 3 | 0.30% |
 | Cosmological | 2 | 0.08% |
-| **Total derivations** | **20** | **<0.2%** |
+| Geometric (novel) | 3 | 0.12% |
+| **Total derivations** | **23** | **<0.2%** |
 
-![Predicted vs measured particle masses showing agreement across 15 particles.](../figures/ch14/fig-evidence-13-mass-pred-vs-measured.png){#fig-mass-predictions}
+![Predicted vs measured particle masses showing agreement across 15 particles.](../../media/images/fig-evidence-13-mass-pred-vs-measured.png){#fig-mass-predictions}
 
-![Summary scoreboard of headline predictions and their accuracy.](../figures/ch14/fig-evidence-16-headline-scoreboard.png){#fig-headline-scoreboard}
+![Summary scoreboard of headline predictions and their accuracy.](../../media/images/fig-evidence-16-headline-scoreboard.png){#fig-headline-scoreboard}
 
 ---
 
@@ -281,21 +359,27 @@ ALPHA_S = B3 / (B3**2 + B3 + NC)           # = 7/59
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  TERNARY REALIZATION DYNAMICS - DERIVED CONSTANTS       │
+│  FOUNDATIONAL TERNARY DYNAMICS - DERIVED CONSTANTS      │
 ├─────────────────────────────────────────────────────────┤
 │  Framework Integers:                                    │
 │    b₃ = 7    N_c = 3    N_eff = 13    N_base = 4       │
 ├─────────────────────────────────────────────────────────┤
 │  From these derive:                                     │
-│    α = 1/137.036      (1.26 ppm)                       │
+│    α = 1/137.036      (BASE: 1.26 ppm)                 │
+│    α PRECISION        (**0.21 ppt**, 6,000× better)   │
 │    m_e = 70α          (0.036%)                         │
 │    G = 1/100          (exact)                          │
 │    φ = (1+√5)/2       (exact)                          │
 │    sin²θ_W = 3/13     (0.19%)                          │
 │    α_s = 7/59         (0.3σ)                           │
 ├─────────────────────────────────────────────────────────┤
+│  Novel Geometric:                                       │
+│    d_min = (G*)²/32   (0.19%)                          │
+│    m_p/m_e = 6π⁵      (0.002%)                         │
+│    k_c × c_cusp × G* = 1  (exact)                      │
+├─────────────────────────────────────────────────────────┤
 │  All 15 SM particle masses: avg error <0.3%            │
-│  Cosmological constant: 0.16% error                    │
+│  Cosmological constant: 1.0% error                     │
 │  Number of generations: exactly 3                      │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -304,6 +388,9 @@ ALPHA_S = B3 / (B3**2 + B3 + NC)           # = 7/59
 ## Related Topics
 - **Constants introduction**: @sec-constants provides conceptual overview and "what if" scenarios
 - **Lemniscate-Alpha derivation**: @sec-lemniscate-alpha shows how α emerges from geometry
+- **Mandelbrot-Lemniscate Bridge**: @sec-mandelbrot-bridge connects TRD to fractal dynamics
+- **Minimum Distance Formula**: @sec-minimum-distance explains the irreducible gap from void
+- **Consciousness Quadratic**: @sec-consciousness-quadratic derives complex roots for k=0.5
 - **Particle catalog**: @sec-particle-catalog lists all derived particle properties
 - **Assumption ledger**: @sec-assumption-ledger tracks the epistemic status of all claims
 :::

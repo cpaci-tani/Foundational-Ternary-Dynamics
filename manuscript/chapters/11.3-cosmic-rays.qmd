@@ -230,4 +230,4 @@ Track arrival directions. Look for anisotropy.
 
 ## Transition
 
-Even "empty" space isn't really empty. Quantum fluctuations create virtual particles everywhere. Next, we explore vacuum fluctuations.
+Even "empty" space is not really empty. Quantum fluctuations create virtual particles everywhere. Next, we explore vacuum fluctuations.

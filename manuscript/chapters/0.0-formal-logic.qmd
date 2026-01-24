@@ -5,10 +5,28 @@
 
 ::: {.callout-note}
 ## Purpose of This Chapter
-Before physics, before mathematics, before philosophy: there is **Logic**. This chapter establishes the formal rules of reasoning that underpin the entire framework. No argument in this book violates these principles.
-
-More importantly, this chapter establishes the **epistemic chain** from the most primitive concept—**distinction**—through to physics and science itself. We show that the ternary ontology of FTD is not assumed but *derived* from the logic of distinguishability.
+Before physics, before mathematics, before philosophy: there is **Logic**. This chapter establishes the formal rules of reasoning that underpin the entire framework.
 :::
+
+## Prologue: The Integer Detective
+
+*"Why these numbers? Why not others?"*
+
+Imagine you walk into a room and find a safe. On the floor are four keys, labeled with integers: **3, 4, 7, 13**.
+You try them. The lock clicks. The door swings open. Inside, you find... everything.
+
+You find the exact mass of the electron. You find the strength of gravity. You find the age of the universe.
+
+A skeptic might say: *"You just picked the numbers that open the safe."*
+But here is the mystery: **The safe only has one keyhole.**
+
+The integer **13** does not just fit the "Proton Mass" tumbler. It also fits the "Fine Structure Constant" tumbler. And the "Neutrino Hierarchy" tumbler.
+The integer **3** does not just count the dimensions of space. It counts the generations of matter. It counts the color charges of quarks.
+
+In `Standard Physics`, these numbers are effectively random. We measure them, we write them down. $\alpha \approx 1/137$. Protons $\approx 1836$ electrons.
+In `Foundational Ternary Dynamics`, we claim something radical: **These numbers are not random. They are inevitable.**
+
+They are the only integers that satisfy the logic of a universe that can see itself. This chapter begins the detective story of *why*.
 
 ---
 
@@ -105,7 +123,7 @@ where $V = \{-1, 0, +1\}$ is the **ternary valuation domain**.
 3. **Why these three?** Distinction is a binary act (this vs. not-this). The results are: "this" (+1), "not-this" (-1), or "no distinction made" (0). There is no fourth possibility that is not reducible to these. $\square$
 :::
 
-This theorem is profound: **The ternary structure of FTD is not an arbitrary design choice—it is the necessary consequence of distinguishability itself.**
+This theorem is profound: **The ternary structure of FTD is not an arbitrary design choice: it is the necessary consequence of distinguishability itself.**
 
 ### Epistemic Operators
 
@@ -401,7 +419,7 @@ In the EPL-ST framework, **physics** is not the study of an independent external
 
 > **The discovery of lawful regularities in the evolution of invariant structures.**
 
-These "lawful regularities" are not imposed from outside—they are **necessary consequences** of consistent epistemic extension. The laws of physics are the grammar of distinguishability at the level of stable, extended structures.
+These "lawful regularities" are not imposed from outside: they are **necessary consequences** of consistent epistemic extension. The laws of physics are the grammar of distinguishability at the level of stable, extended structures.
 
 ### What is Science?
 
@@ -449,6 +467,6 @@ Before we speak of voids and particles, of flux and forces, we establish:
 
 ## Transition
 
-With the complete logical chain established—from distinction through epistemic valuation, relations, space, time, physics, and science—we now turn to the specific first principles that instantiate this framework in FTD.
+With the complete logical chain established (from distinction through epistemic valuation, relations, space, time, physics, and science), we now turn to the specific first principles that instantiate this framework in FTD.
 
 The key insight to carry forward: **The ternary ontology is not assumed. It is the necessary structure of any system admitting distinguishability.**

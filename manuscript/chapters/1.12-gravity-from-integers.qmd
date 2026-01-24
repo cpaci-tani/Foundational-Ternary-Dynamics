@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The gravitational hierarchy: the mysterious 10³⁹ ratio between gravity and other forces: emerges entirely from the four integers {3, 4, 7, 13} through twenty powers of α.
+The gravitational hierarchy (the mysterious $10^{39}$ ratio between gravity and other forces) emerges entirely from the four integers {3, 4, 7, 13} through twenty powers of α.
 :::
 
 ## The Hierarchy Problem
@@ -18,7 +18,7 @@ Gravity is absurdly weak compared to other forces:
 | Weak | 10⁻⁶ | 10³³ |
 | **Gravity** | **10⁻³⁹** | **1** |
 
-Why this enormous hierarchy? Standard physics has no explanation: it's one of the biggest unsolved problems. FTD derives it.
+Why this enormous hierarchy? Standard physics has no explanation: it is one of the biggest unsolved problems. FTD derives it.
 
 ## The Gravitational Coupling
 
@@ -229,7 +229,7 @@ Theories with large extra dimensions predict modified gravity at short distances
 
 ### Gravitational Constant is Fundamental
 
-G_N is not a random parameter: it's derived from the same integers that give α. Any universe with our gauge structure has this gravitational hierarchy.
+G_N is not a random parameter: it is derived from the same integers that give α. Any universe with our gauge structure has this gravitational hierarchy.
 
 ### Matter-Antimatter Symmetry in Gravity
 
@@ -246,4 +246,4 @@ Since gravity couples to flux density |J|², not charge, matter and antimatter g
 
 ## Transition
 
-We've seen how all four forces: strong, electromagnetic, weak, and gravitational: emerge from the flux field and derive their strengths from the four integers. The weak force transforms particles; gravity shapes spacetime. But what happens when we zoom out to cosmic scales? The next book explores the Planck scale and subatomic realm where these forces play out.
+We have seen how all four forces (strong, electromagnetic, weak, and gravitational) emerge from the flux field and derive their strengths from the four integers. The weak force transforms particles; gravity shapes spacetime. But what happens when we zoom out to cosmic scales? The next book explores the Planck scale and subatomic realm where these forces play out.

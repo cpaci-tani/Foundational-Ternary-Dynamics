@@ -30,10 +30,10 @@ The discreteness is fundamental: no physical process can resolve distances small
 No continuous positions exist. Only integer coordinates matter. A particle at (3.7, 2.1, 5.9) is really at (4, 2, 6) with a position remainder tracking the fractional part.
 
 ### Time is Quantized
-Events happen at discrete ticks, not between them. There is no "halfway through tick 47": tick 47 either has happened or hasn't.
+Events happen at discrete ticks, not between them. There is no "halfway through tick 47": tick 47 either has happened or has not.
 
 ### Causality is Strict
-Maximum influence: 1 voxel per tick. This isn't a speed limit: it's a causality limit. No physical process can violate it.
+Maximum influence: 1 voxel per tick. This is not a speed limit: it is a causality limit. No physical process can violate it.
 
 ### Uncertainty is Geometric
 What appears as quantum uncertainty is actually sub-voxel position tracking **[CONJECTURE: this reinterpretation requires validation against full quantum predictions]**. The `position_remainder` accumulates until it triggers a discrete jump.
@@ -130,4 +130,4 @@ Observe "empty" space at Planck scale. See the virtual pairs, the foam, the acti
 
 ## Transition
 
-We've seen the grain of reality. Now let's examine what each grain contains: the anatomy of a voxel.
+We have seen the grain of reality. Now we examine what each grain contains: the anatomy of a voxel.

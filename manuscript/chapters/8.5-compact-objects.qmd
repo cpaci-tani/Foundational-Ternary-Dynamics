@@ -121,7 +121,7 @@ $$
 r_s = \frac{2GM}{c^2} \approx 3 \text{ km} \times \frac{M}{M_\odot}
 $$
 
-Nothing: not even light: escapes from within.
+Nothing, not even light, escapes from within.
 
 ### Types
 

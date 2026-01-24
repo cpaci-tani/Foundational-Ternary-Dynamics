@@ -9,7 +9,7 @@ Every tick of existence follows the same 13 steps, in the same order. This is no
 
 ## The Universal Tick
 
-The universe advances one tick at a time. Each tick follows this sequence:
+The universe advances one tick at a time. Each tick follows this sequence, a cosmic iteration analogous to the Mandelbrot recurrence $z_{n+1} = z_n^2 + c$. Both are discrete update rules that transform the current state into the next. Both generate structure through repetition. Both ask implicitly at every step: *does this configuration persist, or does it dissolve?*
 
 ```
 ┌───────────────────────────────────────────┐
@@ -76,7 +76,7 @@ Calculate all forces on each particle:
 - Gravity: $F_g = G \cdot \nabla\bar{\rho}$
 - Electric: $F_e = -q \cdot \nabla\bar{q}$
 - Magnetic: $F_m = \beta_m \cdot (\nabla \times J) \times \hat{J}$
-- Strong: $F_s = g^2 \cdot e^{-mr}(1+mr)/r^2$
+- Strong: $F_s = g_s^2 \cdot \exp(-m_\pi r)(1+m_\pi r)/r^2$
 - Weak: Transmutation check
 
 ### 8. INTEGRATE
@@ -130,12 +130,28 @@ This is the heartbeat:
 - **Tick**: another cycle
 - **Tick**: forever forward
 
-The causal loop never stops. It cannot stop: for the loop IS time.
+The causal loop never stops. It cannot stop---for the loop IS time.
+
+## The Mandelbrot Connection
+
+The Mandelbrot set provides a map of what happens when a simple iteration runs forever:
+
+| Mandelbrot | FTD Causal Loop |
+|------------|-----------------|
+| $z_{n+1} = z_n^2 + c$ | $t_{n+1} = \text{update}(t_n)$ |
+| Complex plane parameter $c$ | Initial conditions |
+| Bounded orbit (inside set) | Stable structure (persists) |
+| Escaping orbit (outside set) | Dissolved (returns to void) |
+| Boundary (infinite detail) | Edge of existence |
+
+The Mandelbrot set is a snapshot of *all possible* iterations at once. FTD runs one specific iteration, the one with our particular initial conditions. But the logic is identical---**the iteration keeps going until it stops**.
+
+Points in the Mandelbrot set are those where the loop sustains itself forever. Structures in FTD are configurations where the causal loop maintains coherence against entropy. In both cases, persistence is not guaranteed. It emerges from the mathematics of self-reference.
 
 ## Concepts
 
 - **tick**: The fundamental unit of time
-- **causal-loop**: The 13-step update sequence
+- **causal loop**: The 13-step update sequence
 - **phase-order**: Why steps must occur in this order
 
 ## Transition

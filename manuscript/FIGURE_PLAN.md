@@ -23,7 +23,7 @@ Scope: `dissemination/manuscript/` (the Quarto book used for `_book/` outputs).
 
 - **File location**: `dissemination/manuscript/figures/chXX/fig-<slug>.png` (+ matching `.svg`).
 - **Quarto embed** (current pattern):
-  - `![](../figures/chXX/fig-<slug>.png){#fig-<slug> width="80%"}`
+  - `![](../media/images/fig-<slug>.png){#fig-<slug> width="80%"}`
 - **IDs**: keep `#fig-...` globally unique; prefer chapter-scoped slugs like `fig-voxel-anatomy-...` over generic `fig-diagram`.
 - **Output**:
   - PNG = stable for PDF builds

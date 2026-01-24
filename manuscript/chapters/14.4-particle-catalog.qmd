@@ -13,7 +13,14 @@ This catalog compiles the mass relations used in the Lemniscate-Alpha program an
 
 Quarks are the fundamental constituents of hadrons. The catalog presents the framework's proposed mass relations in a uniform format.
 
-#### Quark Mass Derivations
+::: {.callout-warning}
+## Epistemic Status: Numerical Fits
+Unlike lepton masses (which follow pure integer arithmetic: muon = 3×70 - 3, tau = 17×207 - 42) and the proton mass (which has two independent derivation paths converging via G*), the quark mass formulas below are **numerical fits**: combinations of framework integers that match experimental data to <1% accuracy but lack an underlying connecting principle.
+
+An underlying principle connecting these formulas remains an **open research question**.
+:::
+
+#### Quark Mass Relations
 
 | Quark | Formula | m/m_e | MeV/c² | Error |
 |-------|---------|-------|--------|-------|
@@ -93,11 +100,11 @@ Every quark has an antiquark with opposite charge and state.
 
 #### Antileptons (State: +1)
 
-| Antilepton | Symbol | Charge | Mass | State |
-|------------|--------|--------|------|-------|
+| Antilepton | Symbol | Charge | Mass (MeV) | State |
+|------------|--------|--------|------------|-------|
 | Positron | e⁺ | +1 | 0.511 | +1 |
-| Antimuon | μ⁺ | +1 | 2.1 | +1 |
-| Antitau | τ⁺ | +1 | 35.0 | +1 |
+| Antimuon | μ⁺ | +1 | 105.7 | +1 |
+| Antitau | τ⁺ | +1 | 1777 | +1 |
 
 #### Neutrinos (State: 0)
 
@@ -125,7 +132,7 @@ Every quark has an antiquark with opposite charge and state.
 | Force | EM | Strong | Weak | Weak |
 | Charge | 0 | 0 | ±1 | 0 |
 | Mass (m/m_e) | 0 | 0 | 157,273 | 179,266 |
-| **Derivation** | :  | :  | 67/(8α²) | m_W×√(13/10) |
+| **Derivation** | - | - | 67/(8α²) | m_W×√(13/10) |
 | State | 0 | 0 | ±1 | 0 |
 | Range | ∞ | ~1 fm | ~0.001 fm | ~0.001 fm |
 
@@ -142,14 +149,27 @@ Every quark has an antiquark with opposite charge and state.
 
 ## Composite Particles: Baryons
 
+::: {.callout-warning}
+## Epistemic Status: Composite Particles
+
+**Nucleons (proton, neutron)** have framework derivations with sub-percent accuracy.
+
+**All other composite particles** (strange baryons, mesons, heavy hadrons) use **[DATA]** from PDG 2024. Framework derivations for these masses remain an **open research question**. Values are included for reference completeness.
+:::
+
 ### Baryon Mass Derivations
 
 | Baryon | Formula | m/m_e | MeV/c² | Error |
 |--------|---------|-------|--------|-------|
-| Proton | N_eff/α + T(10) | 1836.47 | 938.3 | 0.017% |
+| Proton | 6π⁵ ≈ N_eff/α + T(10) | 1836.15 | 938.3 | 0.002% / 0.017% |
 | Neutron | m_p + (φ² - 12α) | 1839.0 | 939.6 | 0.04% |
 
 Where T(10) = 55 is the 10th triangular number, and (n-p)/m_e = φ² - 12α = 2.53.
+
+::: {.callout-note}
+## Two Paths to the Proton Mass
+The proton mass has two independent formulas: the pure geometry path (6π⁵ = 1836.118, 0.002% error) and the framework integer path (N_eff/α + T(10) = 1836.47, 0.017% error). Both converge via G*⁷ × (12/13). See @sec-constants-reference for the full derivation.
+:::
 
 ### Nucleons (Generation I quarks only)
 
@@ -163,143 +183,143 @@ Where T(10) = 55 is the 10th triangular number, and (n-p)/m_e = φ² - 12α = 2.
 | Stable | Yes | No (≈15 min free) |
 | Geometry | Triad | Triad |
 
-### Strange Baryons
+### Strange Baryons [DATA]
 
-| Baryon | Quarks | Charge | Mass | Strangeness |
-|--------|--------|--------|------|-------------|
-| Λ⁰ | uds | 0 | 14.0 | -1 |
-| Σ⁺ | uus | +1 | 14.0 | -1 |
-| Σ⁰ | uds | 0 | 14.0 | -1 |
-| Σ⁻ | dds | -1 | 14.0 | -1 |
-| Ξ⁰ | uss | 0 | 16.0 | -2 |
-| Ξ⁻ | dss | -1 | 16.0 | -2 |
-| Ω⁻ | sss | -1 | 20.0 | -3 |
+| Baryon | Quarks | Charge | m/m_e | MeV | Strangeness |
+|--------|--------|--------|-------|-----|-------------|
+| Λ⁰ | uds | 0 | 2183 | 1116 | -1 |
+| Σ⁺ | uus | +1 | 2327 | 1189 | -1 |
+| Σ⁰ | uds | 0 | 2334 | 1193 | -1 |
+| Σ⁻ | dds | -1 | 2343 | 1197 | -1 |
+| Ξ⁰ | uss | 0 | 2573 | 1315 | -2 |
+| Ξ⁻ | dss | -1 | 2586 | 1322 | -2 |
+| Ω⁻ | sss | -1 | 3272 | 1672 | -3 |
 
-### Delta Baryons (Excited States)
+### Delta Baryons (Excited States) [DATA]
 
-| Baryon | Quarks | Charge | Mass | Notes |
-|--------|--------|--------|------|-------|
-| Δ⁺⁺ | uuu | +2 | 15.0 | Resonance |
-| Δ⁺ | uud | +1 | 15.0 | Resonance |
-| Δ⁰ | udd | 0 | 15.0 | Resonance |
-| Δ⁻ | ddd | -1 | 15.0 | Resonance |
+| Baryon | Quarks | Charge | m/m_e | MeV | Notes |
+|--------|--------|--------|-------|-----|-------|
+| Δ⁺⁺ | uuu | +2 | 2411 | 1232 | Resonance |
+| Δ⁺ | uud | +1 | 2411 | 1232 | Resonance |
+| Δ⁰ | udd | 0 | 2411 | 1232 | Resonance |
+| Δ⁻ | ddd | -1 | 2411 | 1232 | Resonance |
 
-### Charmed Baryons
+### Charmed Baryons [DATA]
 
-| Baryon | Quarks | Charge | Mass |
-|--------|--------|--------|------|
-| Λc⁺ | udc | +1 | 50.0 |
-| Σc⁺⁺ | uuc | +2 | 52.0 |
-| Ξc⁺ | usc | +1 | 55.0 |
-| Ωc⁰ | ssc | 0 | 60.0 |
+| Baryon | Quarks | Charge | m/m_e | MeV |
+|--------|--------|--------|-------|-----|
+| Λc⁺ | udc | +1 | 4475 | 2286 |
+| Σc⁺⁺ | uuc | +2 | 4802 | 2454 |
+| Ξc⁺ | usc | +1 | 4829 | 2468 |
+| Ωc⁰ | ssc | 0 | 5275 | 2695 |
 
-## Composite Particles: Mesons
+## Composite Particles: Mesons [DATA]
 
 ### Pions (Lightest Mesons)
 
-| Meson | Quarks | Charge | Mass | Lifetime |
-|-------|--------|--------|------|----------|
-| π⁺ | ud̄ | +1 | 3.0 | 26 ns |
-| π⁻ | dū | -1 | 3.0 | 26 ns |
-| π⁰ | uū/dd̄ | 0 | 3.0 | 84 as |
+| Meson | Quarks | Charge | m/m_e | MeV | Lifetime |
+|-------|--------|--------|-------|-----|----------|
+| π⁺ | ud̄ | +1 | 273 | 139.6 | 26 ns |
+| π⁻ | dū | -1 | 273 | 139.6 | 26 ns |
+| π⁰ | uū/dd̄ | 0 | 264 | 135.0 | 84 as |
 
 ### Kaons (Strange Mesons)
 
-| Meson | Quarks | Charge | Mass | Strangeness |
-|-------|--------|--------|------|-------------|
-| K⁺ | us̄ | +1 | 10.0 | +1 |
-| K⁻ | sū | -1 | 10.0 | -1 |
-| K⁰ | ds̄ | 0 | 10.0 | +1 |
-| K̄⁰ | sd̄ | 0 | 10.0 | -1 |
+| Meson | Quarks | Charge | m/m_e | MeV | Strangeness |
+|-------|--------|--------|-------|-----|-------------|
+| K⁺ | us̄ | +1 | 966 | 493.7 | +1 |
+| K⁻ | sū | -1 | 966 | 493.7 | -1 |
+| K⁰ | ds̄ | 0 | 974 | 497.6 | +1 |
+| K̄⁰ | sd̄ | 0 | 974 | 497.6 | -1 |
 
 ### Eta Mesons
 
-| Meson | Quarks | Charge | Mass |
-|-------|--------|--------|------|
-| η | uū+dd̄+ss̄ | 0 | 11.0 |
-| η' | uū+dd̄+ss̄ | 0 | 20.0 |
+| Meson | Quarks | Charge | m/m_e | MeV |
+|-------|--------|--------|-------|-----|
+| η | uū+dd̄+ss̄ | 0 | 1072 | 547.9 |
+| η' | uū+dd̄+ss̄ | 0 | 1874 | 957.8 |
 
 ### Vector Mesons
 
-| Meson | Quarks | Charge | Mass |
-|-------|--------|--------|------|
-| ρ⁺ | ud̄ | +1 | 15.0 |
-| ρ⁻ | dū | -1 | 15.0 |
-| ρ⁰ | uū/dd̄ | 0 | 15.0 |
-| ω | uū+dd̄ | 0 | 16.0 |
-| φ | ss̄ | 0 | 20.0 |
+| Meson | Quarks | Charge | m/m_e | MeV |
+|-------|--------|--------|-------|-----|
+| ρ⁺ | ud̄ | +1 | 1517 | 775.3 |
+| ρ⁻ | dū | -1 | 1517 | 775.3 |
+| ρ⁰ | uū/dd̄ | 0 | 1517 | 775.3 |
+| ω | uū+dd̄ | 0 | 1532 | 782.7 |
+| φ | ss̄ | 0 | 1995 | 1019 |
 
 ### Heavy Quarkonia
 
-| Meson | Quarks | Charge | Mass | Notes |
-|-------|--------|--------|------|-------|
-| J/ψ | cc̄ | 0 | 60.0 | Charmonium |
-| ηc | cc̄ | 0 | 58.0 | Charmonium |
-| Υ | bb̄ | 0 | 180.0 | Bottomonium |
-| ηb | bb̄ | 0 | 175.0 | Bottomonium |
+| Meson | Quarks | Charge | m/m_e | MeV | Notes |
+|-------|--------|--------|-------|-----|-------|
+| J/ψ | cc̄ | 0 | 6060 | 3097 | Charmonium |
+| ηc | cc̄ | 0 | 5839 | 2984 | Charmonium |
+| Υ | bb̄ | 0 | 18514 | 9460 | Bottomonium |
+| ηb | bb̄ | 0 | 18393 | 9399 | Bottomonium |
 
 ### D Mesons (Charmed)
 
-| Meson | Quarks | Charge | Mass |
-|-------|--------|--------|------|
-| D⁺ | cd̄ | +1 | 40.0 |
-| D⁻ | dc̄ | -1 | 40.0 |
-| D⁰ | cū | 0 | 40.0 |
-| D̄⁰ | uc̄ | 0 | 40.0 |
-| Ds⁺ | cs̄ | +1 | 42.0 |
+| Meson | Quarks | Charge | m/m_e | MeV |
+|-------|--------|--------|-------|-----|
+| D⁺ | cd̄ | +1 | 3659 | 1870 |
+| D⁻ | dc̄ | -1 | 3659 | 1870 |
+| D⁰ | cū | 0 | 3650 | 1865 |
+| D̄⁰ | uc̄ | 0 | 3650 | 1865 |
+| Ds⁺ | cs̄ | +1 | 3852 | 1968 |
 
 ### B Mesons (Bottom)
 
-| Meson | Quarks | Charge | Mass |
-|-------|--------|--------|------|
-| B⁺ | ub̄ | +1 | 100.0 |
-| B⁻ | bū | -1 | 100.0 |
-| B⁰ | db̄ | 0 | 100.0 |
-| Bs⁰ | sb̄ | 0 | 102.0 |
+| Meson | Quarks | Charge | m/m_e | MeV |
+|-------|--------|--------|-------|-----|
+| B⁺ | ub̄ | +1 | 10332 | 5279 |
+| B⁻ | bū | -1 | 10332 | 5279 |
+| B⁰ | db̄ | 0 | 10332 | 5280 |
+| Bs⁰ | sb̄ | 0 | 10503 | 5367 |
 
-## Atomic Nuclei (Selected)
+## Atomic Nuclei (Selected) [DATA]
 
 ### Light Nuclei
 
-| Nucleus | Symbol | Protons | Neutrons | Mass |
-|---------|--------|---------|----------|------|
-| Hydrogen | ¹H | 1 | 0 | 9.0 |
-| Deuterium | ²H | 1 | 1 | 18.0 |
-| Tritium | ³H | 1 | 2 | 27.0 |
-| Helium-3 | ³He | 2 | 1 | 27.0 |
-| Helium-4 | ⁴He | 2 | 2 | 36.0 |
-| Lithium-7 | ⁷Li | 3 | 4 | 63.0 |
-| Carbon-12 | ¹²C | 6 | 6 | 108.0 |
+| Nucleus | Symbol | Z | N | m/m_e | MeV |
+|---------|--------|---|---|-------|-----|
+| Hydrogen | ¹H | 1 | 0 | 1836 | 938.3 |
+| Deuterium | ²H | 1 | 1 | 3671 | 1876 |
+| Tritium | ³H | 1 | 2 | 5497 | 2809 |
+| Helium-3 | ³He | 2 | 1 | 5497 | 2809 |
+| Helium-4 | ⁴He | 2 | 2 | 7295 | 3727 |
+| Lithium-7 | ⁷Li | 3 | 4 | 12789 | 6535 |
+| Carbon-12 | ¹²C | 6 | 6 | 21894 | 11188 |
 
 ### Medium Nuclei
 
-| Nucleus | Z | N | Mass | Notes |
-|---------|---|---|------|-------|
-| Oxygen-16 | 8 | 8 | 144.0 | Doubly magic |
-| Iron-56 | 26 | 30 | 504.0 | Most stable |
-| Nickel-62 | 28 | 34 | 558.0 | Highest binding/nucleon |
+| Nucleus | Z | N | m/m_e | MeV | Notes |
+|---------|---|---|-------|-----|-------|
+| Oxygen-16 | 8 | 8 | 29166 | 14903 | Doubly magic |
+| Iron-56 | 26 | 30 | 101960 | 52103 | Most stable |
+| Nickel-62 | 28 | 34 | 112890 | 57689 | Highest binding/nucleon |
 
 ### Heavy Nuclei
 
-| Nucleus | Z | N | Mass | Notes |
-|---------|---|---|------|-------|
-| Lead-208 | 82 | 126 | 1872.0 | Doubly magic, stable |
-| Uranium-235 | 92 | 143 | 2115.0 | Fissile |
-| Uranium-238 | 92 | 146 | 2142.0 | Most common U |
+| Nucleus | Z | N | m/m_e | MeV | Notes |
+|---------|---|---|-------|-----|-------|
+| Lead-208 | 82 | 126 | 378610 | 193488 | Doubly magic, stable |
+| Uranium-235 | 92 | 143 | 427850 | 218638 | Fissile |
+| Uranium-238 | 92 | 146 | 433320 | 221434 | Most common U |
 
-## Atoms (Selected)
+## Atoms (Selected) [DATA]
 
 ### Complete Atoms
 
-| Atom | Z | Electrons | Config | Mass |
-|------|---|-----------|--------|------|
-| H | 1 | 1 | 1s¹ | 9.5 |
-| He | 2 | 2 | 1s² | 37.0 |
-| Li | 3 | 3 | [He]2s¹ | 63.5 |
-| C | 6 | 6 | [He]2s²2p² | 108.5 |
-| N | 7 | 7 | [He]2s²2p³ | 126.0 |
-| O | 8 | 8 | [He]2s²2p⁴ | 144.5 |
-| Fe | 26 | 26 | [Ar]3d⁶4s² | 517.0 |
+| Atom | Z | Electrons | Config | m/m_e | u |
+|------|---|-----------|--------|-------|---|
+| H | 1 | 1 | 1s¹ | 1837 | 1.008 |
+| He | 2 | 2 | 1s² | 7298 | 4.003 |
+| Li | 3 | 3 | [He]2s¹ | 12652 | 6.941 |
+| C | 6 | 6 | [He]2s²2p² | 21900 | 12.01 |
+| N | 7 | 7 | [He]2s²2p³ | 25540 | 14.01 |
+| O | 8 | 8 | [He]2s²2p⁴ | 29173 | 16.00 |
+| Fe | 26 | 26 | [Ar]3d⁶4s² | 101830 | 55.85 |
 
 ## Simulation Implementation
 
@@ -411,3 +431,7 @@ def create_hydrogen(center_position):
 | Absolutely stable | Proton, electron, photon, neutrinos |
 | Metastable | Neutron (free), muon |
 | Resonances | Delta baryons, rho mesons |
+
+## Transition
+
+This catalog compiles the particle spectrum: fundamental fermions with derived masses, gauge bosons with framework formulas, and composite hadrons with PDG data. The assumption ledger (@sec-assumption-ledger) tracks the epistemic status of each derivation.

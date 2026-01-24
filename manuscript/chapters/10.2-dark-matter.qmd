@@ -73,7 +73,7 @@ Proves dark matter is separate from gas
 ### CMB Anisotropies
 
 Pattern of fluctuations requires dark matter:
-- Baryons alone don't match
+- Baryons alone do not match
 - Need ~5× more non-baryonic matter
 - Confirmed by Planck satellite
 
@@ -87,7 +87,7 @@ Whatever dark matter is:
 | Cold (non-relativistic) | Structure formation |
 | Collisionless | Bullet cluster |
 | Stable | Still exists |
-| Electrically neutral | Doesn't emit light |
+| Electrically neutral | Does not emit light |
 | Weakly interacting | Not detected yet |
 
 ## Candidates
@@ -175,9 +175,9 @@ $$F_{\text{gravity}} = G_{\text{bias}} \cdot \nabla\bar{\rho}(x)$$
 
 Coherent flux patterns in the void create density inhomogeneities → gravitational effects → dark matter behavior.
 
-### Why It Doesn't Shine
+### Why It Does Not Shine
 
-Dark matter doesn't interact electromagnetically because:
+Dark matter does not interact electromagnetically because:
 - EM forces require **charge** (q ≠ 0)
 - Void fluctuations have no charge
 - Only manifested particles (s = ±1) carry charge
@@ -200,13 +200,13 @@ This matches observations!
 
 ::: {.callout-important}
 ## A New Paradigm
-FTD suggests dark matter is not a particle to be discovered: it's a property of structured void. This explains why direct detection experiments keep finding nothing: there are no particles to detect.
+FTD suggests dark matter is not a particle to be discovered: it is a property of structured void. This explains why direct detection experiments keep finding nothing: there are no particles to detect.
 :::
 
 ### Predictions
 
 This interpretation makes distinct predictions:
-1. **No WIMP detection**: Dark matter doesn't consist of particles
+1. **No WIMP detection**: Dark matter does not consist of particles
 2. **Halo structure**: Follows flux correlation patterns, not particle orbits
 3. **Bullet cluster**: Void correlations pass through each other (collisionless)
 4. **Galaxy formation**: Flux structures seed matter collapse
@@ -244,7 +244,7 @@ The Migdal effect occurs when a nucleus experiences sudden acceleration (from co
 ```
 Neutral particle → [nucleus accelerates suddenly]
                            ↓
-                   [electrons can't follow]
+                   [electrons cannot follow]
                            ↓
                    [electron ejected = SIGNAL]
 ```

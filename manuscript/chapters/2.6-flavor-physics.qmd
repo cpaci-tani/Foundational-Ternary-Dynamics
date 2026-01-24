@@ -11,7 +11,7 @@ The CKM matrix, PMNS matrix, and all flavor mixing parameters emerge from just f
 
 Why are there three copies of each particle type? Why do quarks mix between generations? Why are the mixing angles what they are?
 
-Standard physics measures these values but doesn't explain them. FTD **derives** them.
+Standard physics measures these values but does not explain them. FTD **derives** them.
 
 ## The Four Integers
 
@@ -24,7 +24,7 @@ Everything in flavor physics traces back to four numbers:
 | QCD beta | b₃ | 7 | One-loop running coefficient |
 | Effective dimension | n_eff | 13 | b₃ + 2×N_c = 7 + 6 |
 
-These integers aren't chosen: they emerge from the lattice geometry and self-consistency requirements.
+These integers are not chosen: they emerge from the lattice geometry and self-consistency requirements.
 
 ## From Integers to Angles
 
@@ -69,7 +69,7 @@ $$\lambda = \sqrt{2 \times \frac{3}{13} \times \frac{7}{59}} = \sqrt{2 \times 0.
 
 ::: {.callout-important}
 ## Why This Formula?
-The factor of 2 comes from the two manifest states (±1) in FTD. The Cabibbo angle connects the weak sector (sin²θ_W) to the strong sector (α_s): it's the geometric mean of their couplings to manifestation.
+The factor of 2 comes from the two manifest states (±1) in FTD. The Cabibbo angle connects the weak sector (sin²θ_W) to the strong sector (α_s): it is the geometric mean of their couplings to manifestation.
 :::
 
 ### The A Parameter
@@ -114,7 +114,7 @@ $$\theta_{13} = \arcsin(0.148) = 8.5°$$
 
 ::: {.callout-tip}
 ## The α × N_c Pattern
-This formula is remarkably simple: the reactor angle is determined by the electromagnetic coupling times the number of colors. It's the "projection" of electromagnetism onto the color structure.
+This formula is remarkably simple: the reactor angle is determined by the electromagnetic coupling times the number of colors. It is the "projection" of electromagnetism onto the color structure.
 :::
 
 ### The Solar Angle θ₁₂
@@ -248,7 +248,7 @@ This has two roots:
     │                        └─→ α_s = 7/59
     │
     ├─→ b₃ = 7 ────────────→ QCD running
-    │                        └─→ CP phase = 2π×7/17
+    │                        └─→ CP phase = arctan(7/3)
     │
     └─→ N_base = 4 ────────→ Mode structure
                              └─→ Mass ratios
@@ -288,4 +288,4 @@ All from four integers.
 
 ## Transition
 
-We've seen how the integers determine mixing between generations. But what mediates these transitions? The weak force, carried by W and Z bosons, is unlike any other: it can change particle identity. Let's explore it in depth.
+We have seen how the integers determine mixing between generations. But what mediates these transitions? The weak force, carried by W and Z bosons, is unlike any other: it can change particle identity. We explore it in depth next.

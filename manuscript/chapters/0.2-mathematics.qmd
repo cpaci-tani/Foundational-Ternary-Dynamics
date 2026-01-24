@@ -160,7 +160,7 @@ Under this transformation:
 The electromagnetic gauge group is U(1): the group of phase rotations:
 $$\psi \to e^{i\theta} \psi$$
 
-In FTD, this corresponds to adding a gradient to the flux field, which doesn't change the curl.
+In FTD, this corresponds to adding a gradient to the flux field, which does not change the curl.
 
 ### SU(3) and Color (Speculative)
 
@@ -225,6 +225,15 @@ $$T(n) = \frac{n(n+1)}{2} = 1 + 2 + \cdots + n$$
 These appear in the Lemniscate-Alpha derivation:
 - $T(13) = 91$ encodes the Standard Model structure
 - The scaling factor involves $T(n_{\text{eff}})$
+
+### The Repunit Invariant (1111)
+
+The number 1111 appearing in the alpha precision formula is not a base-10 artifact. It is the **Repunit of Order $N_{\text{base}}$** in the framework's natural base $B = b_3 + N_c$:
+
+$$ B = 7 + 3 = 10 $$
+$$ R_{N_{\text{base}}}(B) = \sum_{k=0}^{N_{\text{base}}-1} B^k = 1 + 10 + 100 + 1000 = 1111 $$
+
+This term represents the full geometric series of the framework's discrete scaling structure.
 
 ## The Lemniscatic Constant
 

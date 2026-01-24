@@ -2,18 +2,33 @@
 Bell Inequality Verification Script
 ===================================
 
+EPISTEMIC STATUS: [CONJECTURE]
+    This script implements a CLASSICAL hidden variable model using shared
+    random angles. By Bell's theorem, local realistic models CANNOT violate
+    S > 2. This simulation correctly produces S ≤ 2 (classical limit).
+
+    The FTD theoretical prediction of S ≈ 2.83 (quantum maximum 2√2) is based
+    on the Hilbert space tensor product construction (see THEORETICAL_FOUNDATIONS.md),
+    NOT this simplified simulation. Full sLoop mechanism with proper quantum
+    formalism is required to demonstrate Bell violations - that implementation
+    is not present here.
+
 Purpose:
-    Verify that the FTD lattice substrate can support non-local correlations (Bell violations)
-    via the global Gauss constraint (Div J = 0).
+    Test a classical flux-loop model to establish baseline behavior.
+    This correctly shows that LOCAL REALISM respects the Bell bound S ≤ 2.
 
 Mechanism:
-    The Gauss constraint ∇·J = 0 implies that a change in flux at point A 
-    instantaneously restricts the valid flux configurations at point B, 
-    regardless of distance (in the static solver limit), analogous to the 
+    The Gauss constraint ∇·J = 0 implies that a change in flux at point A
+    instantaneously restricts the valid flux configurations at point B,
+    regardless of distance (in the static solver limit), analogous to the
     incompressibility of a fluid.
 
-    This script simulates a CHSH experiment using "constrained flux buckets" 
+    This script simulates a CHSH experiment using "constrained flux buckets"
     representing the global conservation law.
+
+Result:
+    S ≤ 2 confirms this model is LOCAL REALISTIC (as expected).
+    Bell violation would require implementing the full Hilbert space formalism.
 """
 
 import numpy as np

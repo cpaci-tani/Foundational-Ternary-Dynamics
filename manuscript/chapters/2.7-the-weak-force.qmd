@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-The weak force doesn't push or pull: it transforms. A neutron becomes a proton. A muon becomes an electron. This power of transmutation emerges from the SU(2) structure of chiral flux doublets, with all parameters derived from the four integers.
+The weak force does not push or pull: it transforms. A neutron becomes a proton. A muon becomes an electron. This power of transmutation emerges from the SU(2) structure of chiral flux doublets, with all parameters derived from the four integers.
 :::
 
 ## What Makes the Weak Force Unique
@@ -105,7 +105,7 @@ In 1956, Wu discovered that beta decay violates mirror symmetry. Electrons from 
 
 The flux field has intrinsic chirality:
 
-$$\chi = \text{sign}(\vec{J} \cdot (\nabla \times \vec{J}))$$
+$$\chi = \text{sign}(\mathbf{J} \cdot (\nabla \times \mathbf{J}))$$
 
 The weak force couples differently to left-handed and right-handed particles:
 
@@ -261,7 +261,7 @@ The mixing involves box diagrams with W bosons. The CP-violating parameter ε co
 | G_F | √2πα/(2 sin²θ_W M_W²) | 1.166×10⁻⁵ GeV⁻² |
 | V_ud | 1 - λ²/2 | 0.974 |
 
-### What's Unique About the Weak Force
+### What Is Unique About the Weak Force
 
 1. **Massive carriers**: From Higgs mechanism
 2. **Parity violation**: From chiral lattice structure
@@ -309,4 +309,4 @@ At high energy, directly produce W and Z bosons. Observe their decay products.
 
 ## Transition
 
-The weak force can transform particles, but it requires energy from somewhere. Where does the energy come from that drives all these processes? Next we explore the atomic realm, where quantum mechanics determines the structure of matter.
+The weak force can transform particles, but it requires energy from somewhere. Where does the energy come from that drives all these processes? Next we explore the atomic realm where quantum mechanics determines the structure of matter.

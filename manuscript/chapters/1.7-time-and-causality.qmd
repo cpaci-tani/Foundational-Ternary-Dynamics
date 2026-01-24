@@ -24,7 +24,7 @@ As established in @sec-formal-logic and @sec-time-ordering, FTD distinguishes tw
 
 ::: {.callout-important}
 ## Key Insight: The Tick is Not a Duration
-The FTD "tick" $t$ is an **epistemic moment**—a step in the sequence of distinctions. It is an ordering index, not a physical duration.
+The FTD "tick" $t$ is an **epistemic moment**: a step in the sequence of distinctions. It is an ordering index, not a physical duration.
 
 What we call "time dilation" is a phenomenon of **physical time $T_p$**, not epistemic time $T_e$. Different observers (sLoops) accumulate different numbers of ticks between events, which manifests as physical time running at different rates.
 :::
@@ -103,11 +103,11 @@ $$
 \gamma = \frac{1}{\sqrt{1 - v^2/c^2}}
 $$
 
-As $v \rightarrow c$, $\gamma \rightarrow \infty$. You cannot accelerate a massive particle to the speed of light: the energy required becomes infinite.
+As $v \rightarrow c$, $\gamma \rightarrow \infty$. You cannot accelerate a massive particle to the speed of light---the energy required becomes infinite.
 
 ## Retarded Positions
 
-Forces don't act instantaneously. Information travels at speed C. When particle A exerts force on particle B, it uses A's position from the past:
+Forces do not act instantaneously. Information travels at speed C. When particle A exerts force on particle B, it uses A's position from the past:
 
 $$
 \vec{r}_{\text{retarded}} = \vec{r}_{\text{current}} - \vec{v} \cdot \frac{d}{C}
@@ -122,7 +122,7 @@ This means:
 
 ## The Speed Limit
 
-Nothing can travel faster than C (1 voxel per tick). This is not a velocity limit: it is a **causality limit**.
+Nothing can travel faster than C (1 voxel per tick). This is not a velocity limit---it is a **causality limit**.
 
 ### What Happens at C
 
@@ -143,7 +143,7 @@ if speed > C:
 ## Experiments
 
 ### Twin Paradox
-Create two identical particles. Accelerate one to high speed for a journey. Bring it back. Compare their phase accumulators: the traveling twin has aged less.
+Create two identical particles. Accelerate one to high speed for a journey. Bring it back. Compare their accumulated phase $\tau$: the traveling twin has aged less.
 
 ### Force Lag
 Visualize retarded positions. See how forces act on where particles *were*, not where they are now.
@@ -155,7 +155,7 @@ Try to accelerate a particle past C. Watch the relativistic mass increase. See t
 
 ### Time Dilation Formula
 
-The relationship between proper time τ and coordinate time t:
+The relationship between proper time $\tau$ and coordinate time $t$:
 
 $$
 d\tau = dt \cdot \sqrt{1 - v^2/c^2}

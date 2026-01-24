@@ -6,7 +6,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Black holes are not holes at all: they are regions where gravity has become so strong that nothing, not even light, can escape. They are the ultimate expression of gravity's triumph.
+Black holes are not holes at all. They are regions where gravity has become so strong that nothing, not even light, can escape. They are the ultimate expression of gravity's triumph.
 :::
 
 ::: {.callout-note collapse="true"}
@@ -71,7 +71,7 @@ Most real black holes rotate.
 
 ### Structure
 
-![Structure of a rotating (Kerr) black hole showing the ergosphere, event horizons, and ring singularity.](../figures/ch11/fig-kerr-blackhole.png){#fig-kerr-blackhole}
+![Structure of a rotating (Kerr) black hole showing the ergosphere, event horizons, and ring singularity.](../../media/images/fig-kerr-blackhole.png){#fig-kerr-blackhole}
 
 ### Properties
 - Ergosphere: Region where spacetime is dragged
@@ -181,7 +181,7 @@ FTD:           Interior flux → tunnels through horizon → exterior flux
                (carries information encoded in correlations)
 ```
 
-The flux field is continuous: it doesn't have a sharp boundary at the horizon. Information encoded in flux correlations can tunnel out.
+The flux field is continuous: it does not have a sharp boundary at the horizon. Information encoded in flux correlations can tunnel out.
 
 ### The Stretched Horizon
 
@@ -198,7 +198,7 @@ This layer:
 
 The Page curve describes how entanglement entropy of radiation changes as the black hole evaporates:
 
-![The Page curve showing entanglement entropy evolution during black hole evaporation.](../figures/ch11/fig-page-curve.png){#fig-page-curve}
+![The Page curve showing entanglement entropy evolution during black hole evaporation.](../../media/images/fig-page-curve.png){#fig-page-curve}
 
 **Key features**:
 - Entropy increases during first half (information going in)
@@ -209,7 +209,7 @@ The Page curve describes how entanglement entropy of radiation changes as the bl
 
 ::: {.callout-important}
 ## No Information Loss
-In FTD, the flux field's unitary evolution guarantees information preservation. The "paradox" arises only if you treat the horizon as a sharp classical boundary: but it isn't.
+In FTD, the flux field's unitary evolution guarantees information preservation. The "paradox" arises only if you treat the horizon as a sharp classical boundary: but it is not.
 :::
 
 ### No Firewall Needed

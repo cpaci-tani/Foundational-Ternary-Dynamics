@@ -117,7 +117,7 @@ $$
 
 In FTD, gravity is a force arising from density gradients:
 
-$$\vec{F}_g = G_{\text{bias}} \cdot \nabla\bar{\rho}(x)$$
+$$\mathbf{F}_g = G_{\text{bias}} \cdot \nabla\bar{\rho}(x)$$
 
 But general relativity describes gravity as spacetime curvature. How do these connect?
 

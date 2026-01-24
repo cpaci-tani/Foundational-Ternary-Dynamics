@@ -17,6 +17,8 @@ Existence persists while it can.
 Existence returns to the Void.
 ```
 
+This is the universal pattern: **it keeps going until it stops**. The same logic governs the Mandelbrot set, where each point either sustains its iteration forever (inside the set) or escapes to infinity (outside). The cycle 0 → ±1 → 0 is the existential version of this mathematical truth.
+
 This cycle operates at every scale:
 - **Particles**: Genesis → Decay
 - **Stars**: Nebula → Remnant
@@ -68,7 +70,7 @@ This slow erosion eventually brings all things back to the threshold.
 ### Decay Suppression
 
 Bound particles (in stable structures like triads) have their decay suppressed:
-- **Locked** particles don't decay
+- **Locked** particles do not decay
 - Binding energy stabilizes against entropy
 - Structures can persist indefinitely
 
@@ -81,7 +83,7 @@ When density falls below KB:
 3. Flux remains as vacuum energy
 4. UUID released
 
-This is not destruction: it is **return**. The energy persists; only the manifestation ends.
+This is not destruction---it is **return**. The energy persists; only the manifestation ends.
 
 ## Annihilation (+1 meets -1)
 
@@ -100,17 +102,19 @@ What was created together returns together.
 
 ## The Complete Cycle
 
-| Stage | From | To | Trigger |
-|-------|------|-----|---------|
-| Genesis | 0 | ±1 | Density ≥ KB |
-| Persistence | ±1 | ±1 | Energy maintained |
-| Decay | ±1 | ±1 | Entropy reduces flux |
-| Evaporation | ±1 | 0 | Density < KB |
-| Annihilation | +1,-1 | 0 | Opposite states meet |
+| Stage | From | To | Trigger | Mandelbrot Analog |
+|-------|------|-----|---------|-------------------|
+| Genesis | 0 | ±1 | Density ≥ KB | Starting the iteration |
+| Persistence | ±1 | ±1 | Energy maintained | Bounded orbit |
+| Decay | ±1 | ±1 | Entropy reduces flux | Orbit approaching escape |
+| Evaporation | ±1 | 0 | Density < KB | Orbit escapes to infinity |
+| Annihilation | +1,-1 | 0 | Opposite states meet | Conjugate cancellation |
+
+The Mandelbrot set provides a map of all possible cycles at once. Points inside the set are those where existence persists forever. Points outside are those where the pattern cannot sustain itself. The infinitely complex boundary between them is where the universe is perpetually "deciding" whether to persist or dissolve.
 
 ## The Variational Origin
 
-Why these rules? Why this cycle? The answer comes from the **action principle** (Chapter 1.11).
+Why these rules? Why this cycle? The answer comes from the **action principle** (@sec-action-principle).
 
 ### Genesis Probability: Derived
 
@@ -137,7 +141,7 @@ Why does positive divergence create matter (+1) and negative divergence create a
 
 The state-flux coupling term in the action:
 
-$$\mathcal{L}_{\text{coupling}} = -g \cdot s \cdot (\nabla \cdot J)$$
+$$\mathcal{L}_{\text{coupling}} = -g_c \cdot s \cdot (\nabla \cdot \mathbf{J})$$
 
 When minimizing S, the favored state is:
 
@@ -148,7 +152,7 @@ Sinks (negative divergence) favor negative states.
 
 ### Decay Rate: Derived
 
-The decay rate α ≈ 1/137 comes from the **dissipation function**:
+The decay rate $\alpha \approx 1/137.036$ comes from the **dissipation function**:
 
 $$\mathcal{F} = \frac{1}{2}\gamma |\partial_t J|^2$$
 
@@ -156,14 +160,14 @@ This modifies the Euler-Lagrange equation to include damping:
 
 $$J(t+1) = (1-\gamma) J(t) + w(t+1)$$
 
-The decay rate γ = α connects to electromagnetic radiation: excited systems lose energy by radiating flux. The fine structure constant measures this coupling. **[IMPOSED: the identification γ = α is a parameter choice, not a derivation: see Assumption Ledger ASSUMP.6]**
+The decay rate γ = α connects to electromagnetic radiation: excited systems lose energy by radiating flux. The fine structure constant measures this coupling. **[IMPOSED]** The identification $\gamma = \alpha$ is a parameter choice, not a derivation; see Assumption Ledger ASSUMP.6.
 
 ### The Complete Derivation
 
 | Rule | Origin in Action |
 |------|------------------|
 | Genesis probability | Extremization of V(ρ,s) |
-| Polarity selection | Coupling term L_coupling |
+| Polarity selection | Coupling term $\mathcal{L}_{\text{coupling}}$ |
 | Decay rate | Dissipation function F |
 | Threshold KB | Manifestation potential minimum |
 | Conservation laws | Noether's theorem from symmetries |

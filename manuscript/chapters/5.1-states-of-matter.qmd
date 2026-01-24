@@ -12,7 +12,7 @@ The same atoms behave completely differently depending on temperature and pressu
 Temperature, pressure, and phase are emergent properties in FTD:
 
 - **Kinetic energy** = average squared velocity of manifested particles
-- **Temperature** emerges as a proxy: $T_{\text{proxy}} = \langle|\vec{J}|^2\rangle / 3N$
+- **Temperature** emerges as a proxy: $T_{\text{proxy}} = \langle|\mathbf{J}|^2\rangle / 3N$
 - **Pressure** = rate of flux exchange at system boundaries
 - **Phase** = classification based on density, mobility, and correlation length
 
@@ -28,7 +28,7 @@ Standard thermodynamic laws (PV = nRT, entropy increase) emerge in the continuum
 | Gas | Low | None | Free movement |
 | Plasma | Low | None | Ionized, free electrons |
 
-![The four primary states of matter and their characteristic properties.](../figures/ch05/fig-states-of-matter-panels.png){#fig-states-of-matter}
+![The four primary states of matter and their characteristic properties.](../../media/images/fig-states-of-matter-panels.png){#fig-states-of-matter}
 
 ## Solid
 
@@ -106,7 +106,7 @@ Ionized gas: electrons freed from atoms.
 Temperature emerges from particle motion. In FTD, we define a **temperature proxy** that mirrors the kinetic theory result:
 
 $$
-T_{\text{proxy}} = \frac{\langle|\vec{J}|^2\rangle}{3N}
+T_{\text{proxy}} = \frac{\langle|\mathbf{J}|^2\rangle}{3N}
 $$
 
 ::: {.callout-note}

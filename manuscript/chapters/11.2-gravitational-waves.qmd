@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Insight
-Gravitational waves: propagating disturbances in the spacetime metric: were predicted by general relativity [@einstein1916] and first directly detected by LIGO in 2015 [@abbott2016_gw150914].
+Gravitational waves, propagating disturbances in the spacetime metric, were predicted by general relativity [@einstein1916] and first directly detected by LIGO in 2015 [@abbott2016_gw150914].
 :::
 
 ## What Are Gravitational Waves?

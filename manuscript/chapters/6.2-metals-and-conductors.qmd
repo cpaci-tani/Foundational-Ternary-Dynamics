@@ -39,7 +39,7 @@ e⁻ = delocalized electron (mobile)
 
 Electrons move freely in response to electric field:
 $$
-\vec{J} = \sigma \vec{E}
+\mathbf{J} = \sigma \mathbf{E}
 $$
 
 Current flows because electrons can move without jumping between atoms.
@@ -194,4 +194,4 @@ See electrons respond to applied field. Watch current flow.
 
 ## Transition
 
-Metals conduct freely. Insulators don't conduct at all. Between them are semiconductors: the basis of modern electronics.
+Metals conduct freely. Insulators do not conduct at all. Between them are semiconductors: the basis of modern electronics.

@@ -77,7 +77,7 @@ Memory:    None (resets when ligand leaves)
 
 ### The Key Threshold
 
-This is the **first level of detection**: a system whose state change *correlates* with an external condition. The molecule doesn't "know" about the ligand, but its state carries information about ligand presence.
+This is the **first level of detection**: a system whose state change *correlates* with an external condition. The molecule does not "know" about the ligand, but its state carries information about ligand presence.
 
 ## Level 2: Genetic Information
 

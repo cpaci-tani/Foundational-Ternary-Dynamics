@@ -3,7 +3,7 @@
 *"Home"*
 
 ::: {.callout-warning}
-## Philosophical Reflection :  Not Physics
+## Philosophical Reflection: Not Physics
 This chapter presents **philosophical and metaphorical interpretations** of FTD's cosmological implications. The content here is speculative reflection, not physics in the empirical sense. Claims about "meaning," "return," "will," and "eternity" are interpretive metaphors exploring the framework's ontological implications: they are not scientific assertions and should not be read as such. **[CONJECTURE / PHILOSOPHICAL]**
 :::
 
@@ -248,14 +248,14 @@ def complete_cycle():
 
 ### The Universe as Process
 
-The universe is not a thing: it is a process:
+The universe is not a thing; it is a process:
 - Not static but dynamic
 - Not being but becoming
 - Not object but event
 
 ### The Void as Source
 
-The Void is not nothing: it is source:
+The Void is not nothing; it is source:
 - Source of existence
 - Source of structure
 - Source of complexity
@@ -263,14 +263,14 @@ The Void is not nothing: it is source:
 
 ### The Return as Completion
 
-The return is not ending: it is completion:
+The return is not ending; it is completion:
 - Every particle finds home
 - Every structure fulfills its arc
 - Every story reaches its proper end
 
 ### The Cycle as Eternal
 
-The cycle is not tragedy: it is eternity:
+The cycle is not tragedy; it is eternity:
 - What was will be
 - What is will return
 - What could be waits

@@ -88,7 +88,9 @@ Both electromagnetic and strong force structure emerge from a **single geometric
 ### 6. Lemniscatic Constant Selection
 
 ```
-G* = √2 × Γ(1/4)²/(2π) = 2.6220575...
+G* = √2 × Γ(1/4)²/(2π) = 2.9586751...
+
+Note: Distinct from classical lemniscate constant ϖ = Γ(1/4)²/(2√(2π)) ≈ 2.6220575
 ```
 
 Selected by **Complex Multiplication theory**—the lemniscatic curve (j-invariant = 1728) is distinguished among all elliptic curves by maximum symmetry at minimum complexity.
@@ -389,14 +391,15 @@ Wavefunction "collapse" is identified with the **manifestation event**:
 
 ### 30. Bell Inequality Violations
 
-Bell violations are achieved via the Hilbert space tensor product structure:
+Bell violations are **theoretically predicted** via the Hilbert space tensor product structure:
 ```
-S ≈ 2.83 (matching quantum bound 2√2)
+Theoretical prediction: S ≈ 2.83 (matching quantum bound 2√2)
+Simple simulation result: S ≤ 2 (classical limit)
 ```
 
-Nonlocality emerges from the mathematical structure, not from superluminal signaling.
+Note: The simple flux-loop simulation (verify_bell_inequality.py) correctly shows classical behavior S ≤ 2, as expected from Bell's theorem for local realistic models. Full Hilbert space implementation is required to demonstrate Bell violations.
 
-**Epistemic Status:** Mathematical derivation
+**Epistemic Status:** Theoretical prediction (not yet simulated)
 
 ---
 
@@ -559,7 +562,7 @@ x² − 16(G*)²x + 16(G*)³ = 0
 
 **Lemniscatic Constant:**
 ```
-G* = √2 × Γ(1/4)²/(2π) = 2.6220575...
+G* = √2 × Γ(1/4)²/(2π) = 2.9586751...
 ```
 
 **Electron Mass:**

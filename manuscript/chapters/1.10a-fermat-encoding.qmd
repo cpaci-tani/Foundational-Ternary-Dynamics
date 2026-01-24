@@ -4,7 +4,7 @@
 
 ::: {.callout-important}
 ## The Central Claim
-This chapter derives the form of the master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ from number-theoretic principles rooted in Fermat's Last Theorem. The quadratic is not an ad hoc construction: it is the unique polynomial encoding the boundary between degree 2 (the last Fermat-allowed exponent) and degrees 3, 4, ... (the Fermat-forbidden exponents).
+This chapter derives the form of the master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ from number-theoretic principles rooted in Fermat's Last Theorem. The quadratic is not an ad hoc construction: it is the unique polynomial encoding the boundary between degree 2 (the last Fermat-allowed exponent) and degrees 3, 4, ... (the Fermat-forbidden exponents).
 :::
 
 ::: {.callout-note}
@@ -120,7 +120,7 @@ This is structural necessity, not numerical coincidence.
 
 ## The Power Structure: Why G*² and G*³
 
-The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ uses specific powers of $G^*$:
+The master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ uses specific powers of $G^*$:
 
 | Term | Power | Interpretation |
 |------|-------|----------------|
@@ -162,7 +162,7 @@ The coefficient 16 appears naturally as $N_{\text{base}}^2$: the square of the s
 
 ## The Frey Curve Connection
 
-Wiles's proof of FLT relied on the **Frey curve**. If FLT were false: if there existed a solution $a^n + b^n = c^n$ for $n > 2$: then the elliptic curve:
+Wiles's proof of FLT relied on the **Frey curve**. If FLT were false---if there existed a solution $a^n + b^n = c^n$ for $n > 2$---then the elliptic curve:
 
 $$E_F: y^2 = x(x - a^n)(x + b^n)$$
 
@@ -178,7 +178,7 @@ This is the Frey curve with $a^n = b^n = 1$:
 
 $$y^2 = x(x - 1^n)(x + 1^n)$$
 
-The case $1^n + 1^n = 2 \neq 1^n$ trivially satisfies FLT (it's not a counterexample). The lemniscate encodes the **safe side** of the Fermat boundary: the degenerate case where FLT is automatically satisfied.
+The case $1^n + 1^n = 2 \neq 1^n$ trivially satisfies FLT (it is not a counterexample). The lemniscate encodes the **safe side** of the Fermat boundary: the degenerate case where FLT is automatically satisfied.
 
 ::: {.callout-important}
 ## The Lemniscate-Frey Correspondence [T]
@@ -211,7 +211,7 @@ This connects the curve's modular properties to the Fermat boundary structure.
 
 ## The Vieta Relations
 
-For the master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ with roots $x_+$ and $x_-$:
+For the master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ with roots $x_+$ and $x_-$:
 
 **Vieta's Formulas:**
 $$x_+ + x_- = 16G^{*2}$$
@@ -242,7 +242,7 @@ The quadratic is a "reduced" form of the modularity constraint at the Fermat bou
 
 ## Complete Fermat Encoding
 
-The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ encodes:
+The master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ encodes:
 
 ### The Integers {3, 4, 7, 13}
 
@@ -300,7 +300,7 @@ The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ encodes:
 **Proven (Physical Interpretation) [T]:**
 - $x_+ = 1/\alpha$ via CM selection uniqueness
 - $x_- \to N_c = 3$ via RG flow + topological quantization
-- The 1.26 ppm agreement follows from the derivation chain
+- The **0.21 ppt precision** (with precision formula) follows from the derivation chain
 :::
 
 ## The Derivation Chain

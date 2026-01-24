@@ -89,6 +89,29 @@ $$
 | π digits | Small | Compressible (has program) |
 | Life | Intermediate | Complex |
 
+### The Mandelbrot Set: Complexity from Simplicity
+
+The Mandelbrot set is perhaps the purest example of complexity emerging from simplicity. The entire infinite structure is defined by a single iteration:
+
+$$z_{n+1} = z_n^2 + c$$
+
+This two-symbol formula has Kolmogorov complexity of approximately 50 bits. Yet it generates:
+
+- Infinite boundary length (fractal dimension ≈ 2)
+- Self-similar structure at all scales
+- Every possible pattern encoded somewhere in the boundary
+
+| Mandelbrot Property | Complexity Implication |
+|---------------------|------------------------|
+| Formula: ~50 bits | Extremely low K(program) |
+| Boundary: infinite detail | Infinite K(output) |
+| Computation: unbounded | High logical depth |
+| Self-similarity | High effective complexity |
+
+The Mandelbrot set demonstrates that **complexity is not about complicated rules**. The simplest self-referential iteration, applied repeatedly, generates infinite structure. This is the paradigm for how consciousness emerges from the sLoop: not through elaborate mechanisms but through the power of self-reference.
+
+![Seahorse Valley: zooming into the Mandelbrot boundary reveals infinite self-similar detail. The same simple rule, applied repeatedly, generates structure at every scale.](../../media/images/fig-mandelbrot-zoom.png){#fig-mandelbrot-zoom}
+
 ### Logical Depth
 
 Time required for shortest program to run:
@@ -132,13 +155,25 @@ $$
 
 ## The Edge of Chaos Revisited
 
+### The Mandelbrot Boundary as Edge of Chaos
+
+The Mandelbrot set provides the clearest visualization of the edge of chaos:
+
+- **Inside the set (ordered)**: Orbits converge to fixed points or cycles. Predictable, stable, but computationally trivial.
+- **Outside the set (chaotic)**: Orbits escape to infinity. No structure, no memory, no computation.
+- **At the boundary (critical)**: Orbits neither converge nor escape. This is where all the complexity lives.
+
+The entire infinitely complex fractal boundary is the *edge* between order and chaos. This is not coincidence. The boundary is exactly where the iteration is "deciding" whether to persist or dissolve, whether to remain bounded or escape.
+
+**This is the locus of consciousness**: not in the stable interior (unconscious automation) nor in the chaotic exterior (no coherent process) but at the critical boundary where the sLoop perpetually balances between persistence and dissolution.
+
 ### Phase Transitions in Computation
 
-| Regime | Properties | Computation |
-|--------|------------|-------------|
-| Ordered | Predictable, frozen | Memory only |
-| Chaotic | Random, unstable | Transmission only |
-| Critical | Balanced, complex | Processing possible |
+| Regime | Properties | Computation | Mandelbrot Analog |
+|--------|------------|-------------|-------------------|
+| Ordered | Predictable, frozen | Memory only | Interior (bounded orbits) |
+| Chaotic | Random, unstable | Transmission only | Exterior (escaping orbits) |
+| Critical | Balanced, complex | Processing possible | Boundary (infinite detail) |
 
 ### Lambda Parameter
 

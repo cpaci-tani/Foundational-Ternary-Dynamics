@@ -102,13 +102,13 @@ Quantum-flavored, speculative.
 
 Many universes with different constants:
 - Most are sterile
-- We're in one that permits us
+- We are in one that permits us
 - No fine-tuning: just selection
 
 ```
 Universe 1: α = 0.001  → No atoms
 Universe 2: α = 0.5    → Unstable atoms
-Universe 3: α = 0.007  → Chemistry works ← (We're here)
+Universe 3: α = 0.007  → Chemistry works ← (We are here)
 Universe N: α = ...    → Various fates
 ```
 
@@ -146,7 +146,7 @@ Smolin's cosmological natural selection.
 This is key: We *chose* KB = 0.511, α = 0.00729, etc.
 
 Why these values?
-- Because we're modeling a universe like ours
+- Because we are modeling a universe like ours
 - We wanted atoms, stars, complexity
 - We tuned for richness
 
@@ -154,8 +154,8 @@ Why these values?
 
 The simulation is anthropically tuned by design: our design.
 
-This doesn't resolve the question for the base universe, but it illuminates the issue:
-- Tuning is easy if there's a tuner
+This does not resolve the question for the base universe, but it illuminates the issue:
+- Tuning is easy if there is a tuner
 - The mystery is whether our universe has one
 
 ### Exploring Parameter Space
@@ -200,7 +200,7 @@ Preliminary explorations suggest:
 If simulating universes is possible:
 - Advanced civilizations probably do it
 - Many simulated universes exist
-- We're probably in one
+- We are probably in one
 
 ### Evidence?
 
@@ -239,8 +239,8 @@ We are cosmically rare.
 ### Gratitude or Terror?
 
 Either:
-- We're cosmically privileged (to witness this)
-- We're cosmically precarious (it could have been nothing)
+- We are cosmically privileged (to witness this)
+- We are cosmically precarious (it could have been nothing)
 
 Or both.
 
@@ -264,4 +264,4 @@ Explore what "life" might look like with different constants.
 
 ## Transition
 
-We've explored emergence, complexity, and our place in parameter space. Now we must face the end. What happens when the universe runs down? Next, we explore heat death and the final state.
+We have explored emergence, complexity, and our place in parameter space. Now we must face the end. What happens when the universe runs down? Next, we explore heat death and the final state.

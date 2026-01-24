@@ -9,7 +9,7 @@ The periodic table is not arbitrary. Each element is a specific configuration of
 
 ## A Personal Inventory
 
-Consider what you are made of. The calcium in your bones was forged in the heart of a dying star. The iron in your blood: every atom: was created in the final moments before a supernova. The oxygen you breathe was released by cyanobacteria that lived two billion years before you were born.
+Consider what you are made of. The calcium in your bones was forged in the heart of a dying star. The iron in your blood, every atom, was created in the final moments before a supernova. The oxygen you breathe was released by cyanobacteria that lived two billion years before you were born.
 
 You are not merely *in* the universe. You are the universe, organized into a pattern that can contemplate itself.
 
@@ -43,15 +43,15 @@ Atomic masses are given in **atomic mass units (u)**, where 1 u = 1/12 the mass 
 
 Three minutes after the Big Bang, when the universe had cooled enough for protons and electrons to exist, the first hydrogen atoms formed. Not forged in any star: hydrogen *predates* stars. Every hydrogen atom in the water you drink is approximately 13.8 billion years old, unchanged since the beginning.
 
-![Hydrogen: the simplest atom, consisting of one proton and one electron in the 1s orbital.](../figures/ch03/fig-hydrogen-atom.png){#fig-hydrogen-atom width=50%}
+![Hydrogen: the simplest atom, consisting of one proton and one electron in the 1s orbital.](../../media/images/fig-hydrogen-atom.png){#fig-hydrogen-atom width=50%}
 
 The hydrogen in your body has been on an extraordinary journey: first floating in primordial gas clouds, then compressed into the first stars, then ejected in stellar winds, then gathered into the solar nebula, then incorporated into water on Earth, then drunk by countless organisms before you. Yet it remains, at its core, the same simple pattern: one proton, one electron: that formed when the universe was three minutes old.
 
 ### Helium: The Inert Witness
 
-![Helium: two protons, two neutrons, and two electrons filling the 1s shell completely: making it chemically inert.](../figures/ch03/fig-helium-atom.png){#fig-helium-atom width=50%}
+![Helium: two protons, two neutrons, and two electrons filling the 1s shell completely: making it chemically inert.](../../media/images/fig-helium-atom.png){#fig-helium-atom width=50%}
 
-Helium has a closed shell and participates in no chemistry. It witnesses the universe but does not engage. The helium in a party balloon was mostly made in the Big Bang or fused in stellar cores. It escapes Earth's atmosphere: too light to be held by our gravity: and drifts into space. We will eventually run out of helium on Earth; it is not renewable.
+Helium has a closed shell and participates in no chemistry. It witnesses the universe but does not engage. The helium in a party balloon was mostly made in the Big Bang or fused in stellar cores. It escapes Earth's atmosphere (too light to be held by our gravity) and drifts into space. We will eventually run out of helium on Earth; it is not renewable.
 
 ## Period 2: Carbon and Life
 
@@ -97,7 +97,7 @@ Like carbon, silicon has 4 valence electrons. But its larger size changes the bo
 - Semiconductor properties enable computing
 - Second most abundant element in Earth's crust
 
-The silicon in your phone was once part of the primordial Earth, formed from the deaths of ancient stars. It spent billions of years locked in rock, then was mined, purified to 99.9999999% purity, sliced into wafers, etched with circuits, and assembled into the device you're reading this on. Silicon is now thinking about silicon: the substrate has become self-aware through us.
+The silicon in your phone was once part of the primordial Earth, formed from the deaths of ancient stars. It spent billions of years locked in rock, then was mined, purified to 99.9999999% purity, sliced into wafers, etched with circuits, and assembled into the device you are reading this on. Silicon is now thinking about silicon: the substrate has become self-aware through us.
 
 ## The Transition Metals (Period 4 onward)
 
@@ -115,7 +115,7 @@ Filling the d orbitals creates the transition metals: the elements that enabled 
 
 ### Iron: The End of Fusion
 
-Iron-56 has the highest binding energy per nucleon. Stars cannot gain energy by fusing iron: it's the end of the fusion line. When a massive star's core becomes iron, fusion stops, and the star collapses in milliseconds, triggering a supernova.
+Iron-56 has the highest binding energy per nucleon. Stars cannot gain energy by fusing iron: it is the end of the fusion line. When a massive star's core becomes iron, fusion stops, and the star collapses in milliseconds, triggering a supernova.
 
 In that catastrophic moment: lasting less than a second: elements heavier than iron are forged: gold, platinum, uranium. These heavy elements exist only because stars die violently. The gold in a wedding ring required a star to explode.
 
@@ -123,7 +123,7 @@ The iron in your blood (each hemoglobin molecule carries four iron atoms) was sy
 
 ::: {.callout-note}
 ## The Cosmic Origin of Blood
-Every breath you take, the iron in your hemoglobin carries oxygen from your lungs to your cells. That iron was forged in a stellar core over 5 billion years ago. When you cut yourself and see red, you're seeing the signature of a dead star.
+Every breath you take, the iron in your hemoglobin carries oxygen from your lungs to your cells. That iron was forged in a stellar core over 5 billion years ago. When you cut yourself and see red, you are seeing the signature of a dead star.
 :::
 
 ## Periodic Trends
@@ -178,7 +178,7 @@ The periodic table is your autobiography, written in nuclear physics.
 
 ## Transition
 
-The periodic table gives us atoms. Now let's examine how electrons behave within atoms: orbitals, shells, and chemical reactivity in @sec-electron-dynamics.
+The periodic table gives us atoms. Now we examine how electrons behave within atoms: orbitals, shells, and chemical reactivity in @sec-electron-dynamics.
 
 ::: {.callout-tip}
 ## Related Topics

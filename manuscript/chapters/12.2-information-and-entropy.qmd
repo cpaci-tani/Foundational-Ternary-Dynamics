@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-Information is physical. Erasing a bit releases heat. Entropy measures what we don't know. The second law drives the universe toward equilibrium: but pockets of order can persist, borrowing from the cosmic entropy budget.
+Information is physical. Erasing a bit releases heat. Entropy measures what we do not know. The second law drives the universe toward equilibrium: but pockets of order can persist, borrowing from the cosmic entropy budget.
 :::
 
 ## Shannon Entropy
@@ -174,7 +174,7 @@ The arrow of time is not a mystery to be explained: it is a **boundary condition
 
 Why these particular boundary conditions? Three answers:
 
-1. **Anthropic**: Only universes with low initial entropy produce observers. We couldn't be asking this question otherwise.
+1. **Anthropic**: Only universes with low initial entropy produce observers. We could not be asking this question otherwise.
 
 2. **Uniqueness**: The all-Void state is the **unique** state with maximum symmetry. Any other initial condition requires specifying additional structure: breaking symmetry without explanation.
 
@@ -184,7 +184,7 @@ Why these particular boundary conditions? Three answers:
 
 In FTD, the action principle is **non-local in time**. The path that extremizes S depends on both initial and final conditions.
 
-This doesn't mean the future causes the past. It means:
+This does not mean the future causes the past. It means:
 
 | View | Interpretation |
 |------|----------------|

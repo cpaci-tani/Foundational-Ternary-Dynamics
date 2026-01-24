@@ -82,8 +82,8 @@ A system satisfies Criterion 1 if:
 - Cut off from flux exchange, it degrades (death)
 - With flux exchange, it maintains structure indefinitely
 
-A rock fails: it doesn't need flux exchange to persist.
-A fire fails: it doesn't maintain a specific structure.
+A rock fails: it does not need flux exchange to persist.
+A fire fails: it does not maintain a specific structure.
 A cell passes: cut off from nutrients, it dies; with nutrients, it maintains.
 
 ## Criterion 2: Self-Model
@@ -133,7 +133,7 @@ Behavior depends on both current state AND the self-model.
 
 ### Why This Matters
 
-A crystal has structure but no self-model. A computer has data about itself but doesn't use it to maintain itself (unless programmed to). Life uses its self-model for self-maintenance.
+A crystal has structure but no self-model. A computer has data about itself but does not use it to maintain itself (unless programmed to). Life uses its self-model for self-maintenance.
 
 ## Criterion 4: Pattern Propagation
 
@@ -156,7 +156,7 @@ Copies need not be exact. Mutation, variation, and evolution are permitted. What
 |------|--------|--------|
 | Sterile organism | Yes | Satisfies 1-3; propagation is capacity, not achievement |
 | Virus | Borderline | Has self-model but requires host for 1 and 3 |
-| Mule | Yes | Satisfies 1-3; hybrid origin doesn't negate life |
+| Mule | Yes | Satisfies 1-3; hybrid origin does not negate life |
 
 ## The Formal Definition
 
@@ -229,8 +229,8 @@ These are patterns of behavior among living things, not living things themselves
 
 Current AI systems:
 - Have no physical self-model (their code is not "about" their hardware)
-- Don't maintain themselves against entropy
-- Don't propagate copies that inherit the self-model
+- Do not maintain themselves against entropy
+- Do not propagate copies that inherit the self-model
 
 This could change with different architectures.
 

@@ -96,9 +96,9 @@ Electrons organize around nuclei in shells:
 ### Shell Stability
 
 Electrons in shells have `shell_n` set. Full shells are particularly stable:
-- Helium: 2 electrons (1s²) :  noble gas
-- Neon: 10 electrons ([He]2s²2p⁶) :  noble gas
-- Argon: 18 electrons ([Ne]3s²3p⁶) :  noble gas
+- Helium: 2 electrons (1s²): noble gas
+- Neon: 10 electrons ([He]2s²2p⁶): noble gas
+- Argon: 18 electrons ([Ne]3s²3p⁶): noble gas
 
 ## Orbital Shapes
 
@@ -142,7 +142,7 @@ def apply_decay(particle):
     particle.flux *= (1 - DECAY_RATE)
 ```
 
-Locked particles don't lose energy. They persist until an external force breaks the structure.
+Locked particles do not lose energy. They persist until an external force breaks the structure.
 
 ## Experiments
 

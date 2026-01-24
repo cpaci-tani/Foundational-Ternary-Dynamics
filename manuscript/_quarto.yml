@@ -49,6 +49,7 @@ book:
         - chapters/1.12-gravity-from-integers.qmd
         - chapters/1.13-grand-unification.qmd
         - chapters/1.14-proton-decay.qmd
+        - chapters/1.15-vacuum-energy.qmd
 
     - part: "Book II: The Subatomic Realm"
       chapters:
@@ -150,6 +151,7 @@ book:
         - chapters/14.7-sloop-formalization.qmd
         - chapters/14.8-information-quantification.qmd
         - chapters/14.9-experimental-predictions.qmd
+        - chapters/14.10-number-theory.qmd
 
     - part: "Book XV: Observational Support"
       chapters:

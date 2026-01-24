@@ -22,7 +22,7 @@ Where do these come from? Why is there a void *capable* of manifestation, rather
 
 ## The Logical Precondition: Before Distinction
 
-Before we can speak of distinction (the primitive of EPL-ST), there must be **something to distinguish**. The void is this "something"—not a particular thing, but the **substrate of distinguishability**.
+Before we can speak of distinction (the primitive of EPL-ST), there must be **something to distinguish**. The void is this "something": not a particular thing, but the **substrate of distinguishability**.
 
 ::: {.callout-important}
 ## Key Insight: The Void Precedes Distinction
@@ -67,7 +67,7 @@ This is not a choice but a theorem:
 - **-1**: Negated (distinguished as not holding)
 - **0**: Undetermined (no distinction made = void)
 
-The void is the **undistinguished state**—not "nothing," but "not yet distinguished."
+The void is the **undistinguished state**: not "nothing," but "not yet distinguished."
 
 ### From Locality to Lattice
 
@@ -332,9 +332,9 @@ No other dimension satisfies all five requirements simultaneously.
 
 FTD does not answer:
 
-1. **Why anything exists at all** :  This is metaphysics, not physics
-2. **Why these axioms and not others** :  We can show they are consistent and minimal, not that they are necessary
-3. **What "outside" the lattice means** :  The lattice is all there is; there is no outside
+1. **Why anything exists at all**: this is metaphysics, not physics
+2. **Why these axioms and not others**: we can show they are consistent and minimal, not that they are necessary
+3. **What "outside" the lattice means**: the lattice is all there is; there is no outside
 
 These are limits of any physical theory, not specific failures of FTD.
 

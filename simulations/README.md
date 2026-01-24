@@ -2,8 +2,8 @@
 
 This folder contains Python scripts that verify all mathematical derivations in the Foundational Ternary Dynamics (FTD) framework.
 
-**Last Verified:** January 10, 2026
-**Status:** All formulas mathematically verified
+**Last Verified:** January 23, 2026
+**Status:** All formulas mathematically verified + Physics simulations PASS
 
 ---
 
@@ -229,6 +229,139 @@ Framework Integers: {N_c=3, N_base=4, b_3=7, N_eff=13}
 | Neutrino ratio | 1 | 1 | 1.5% |
 | Spectral index | 1 | 1 | 0.1 sigma |
 | **Total** | **11** | **10** | - |
+
+---
+
+## Physics Limit Tests
+
+These tests verify that the discrete FTD lattice correctly reproduces known physics in appropriate limits.
+
+### 1. Rutherford Scattering (Classical Limit)
+
+**File:** `verify_scattering.py`
+
+Tests if discrete gradient of 1/r potential yields correct scattering cross-section σ ∝ 1/sin⁴(θ/2).
+
+```
+Theory Constraint: b × tan(θ/2) = constant (Rutherford formula)
+
+Results (500 particles, 100³ lattice):
+  Scattering angles: 50.8° to 153.8°
+  Mean K = 8.1577
+  Std deviation = 0.1530
+  Relative error: 1.88%
+
+STATUS: PASS (threshold <15%)
+```
+
+**Physics:** The constraint b × tan(θ/2) = const follows from conservation of angular momentum in a 1/r² force field. The discrete gradient operator correctly produces Coulomb scattering.
+
+### 2. Hydrogen Spectrum (Quantum Limit)
+
+**File:** `verify_hydrogen.py`
+
+Tests if "stable" orbits quantize at r = n² (Bohr radii).
+
+```
+Theory: Action S = ∮p·dx = 2π√r
+        Quantization: S = n·2π → r = n²
+
+Results (6 resonant orbits detected):
+  n=2: r=3.970  (expected 4.0,   error 0.76%)
+  n=3: r=8.919  (expected 9.0,   error 0.90%)
+  n=4: r=15.85  (expected 16.0,  error 0.95%)
+  n=5: r=24.76  (expected 25.0,  error 0.97%)
+  n=6: r=36.14  (expected 36.0,  error 0.39%)
+  n=7: r=49.01  (expected 49.0,  error 0.02%)
+
+STATUS: PASS (all errors <1.8%)
+```
+
+**Physics:** Action quantization S = nh emerges from constructive interference of phase accumulated over closed orbits. The discrete lattice supports quantized stable orbits.
+
+### 3. Time Dilation (Relativistic Limit)
+
+**File:** `verify_relativity.py`
+
+Tests if Lorentz factor γ = 1/√(1-v²) emerges from lattice speed limit C=1.
+
+```text
+Theory: Light clock geometry
+        v²_x + v²_y = C² (speed constraint)
+        Period T = 2L/v_y = T_0·γ
+
+Results (10 velocities, L=100):
+  v=0.0: γ=1.0000 (exact)
+  v=0.3: γ=1.0483 (exact)
+  v=0.5: γ=1.1547 (exact)
+  v=0.7: γ=1.4003 (exact)
+  v=0.9: γ=2.2942 (exact)
+
+  Maximum error: 0.00% (numerical precision)
+
+STATUS: PASS (EXACT)
+```
+
+**Physics:** Time dilation is a geometric consequence of the maximum propagation speed. A clock moving at velocity v has less "vertical velocity budget" available, so its ticks slow down by factor γ. No additional postulates required.
+
+### 4. Gravity (Universal Limit)
+
+**File:** `verify_gravity.py`
+
+Tests if FTD naturally reproduces gravity's key signatures: the Equivalence Principle and Kepler's Third Law.
+
+**Experiment 1: The Galileo Test (Equivalence Principle)**
+
+```text
+Method: Drop objects with masses N=1, N=10, N=100 in same potential field
+
+FTD Mechanism:
+  Force:        F_g ∝ N × ∇Φ  (coupling scales with flux count)
+  Inertia:      m_i ∝ N        (resistance scales with flux count)
+  Acceleration: a = F_g/m_i = ∇Φ  (N cancels!)
+
+Results:
+  Max Diff (m=1 vs m=10):  7.1×10⁻¹⁵
+  Max Diff (m=1 vs m=100): 0.0
+
+STATUS: PASS (precision ~10⁻¹⁵)
+```
+
+**Experiment 2: The Kepler Test (Orbital Dynamics)**
+
+```text
+Theory: T² ∝ R³ for circular orbits
+
+Results (80³ lattice):
+  R=10.0: T²/R³ = 0.3908  (0.55% deviation)
+  R=20.0: T²/R³ = 0.3938  (0.20% deviation)
+  R=30.0: T²/R³ = 0.3943  (0.34% deviation)
+
+STATUS: PASS (Max deviation 0.55%)
+```
+
+**Physics:** The Equivalence Principle is not a postulate—it emerges because:
+- An object's gravitational "charge" (how much it couples to the field) equals its flux count N
+- An object's inertia (resistance to acceleration) also equals N
+- These cancel: a = F/m = (N × g)/N = g
+
+Mass **is** charge in FTD. Objects fall identically because they're made of the same stuff as the field.
+
+### Summary
+
+| Test | Physical Regime | Key Prediction | Error | Status |
+| ---- | --------------- | -------------- | ----- | ------ |
+| Rutherford | Classical | σ ∝ 1/sin⁴(θ/2) | 1.88% | ✅ PASS |
+| Hydrogen | Quantum | r_n = n² | <1.8% | ✅ PASS |
+| Relativity | Relativistic | γ = 1/√(1-v²) | **EXACT** | ✅ PASS |
+| Gravity (Equiv.) | Universal | a independent of m | **10⁻¹⁵** | ✅ PASS |
+| Gravity (Kepler) | Universal | T² ∝ R³ | 0.55% | ✅ PASS |
+
+These tests demonstrate that:
+
+1. **Classical mechanics** emerges from discrete gradient forces
+2. **Quantum quantization** emerges from phase coherence on the lattice
+3. **Special relativity** emerges purely from the speed limit constraint
 
 ---
 

@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-All processes require energy gradients. When the last gradient flattens, when the final star burns out, when everything reaches the same temperature: the universe dies not with a bang, but with a whisper fading into eternal silence.
+All processes require energy gradients. When the last gradient flattens, when the final star burns out, when everything reaches the same temperature, the universe dies not with a bang, but with a whisper fading into eternal silence.
 :::
 
 ## The Second Law's Endgame
@@ -113,7 +113,7 @@ The very last one evaporates around 10¹⁰⁰ years:
 
 ## The Dark Era
 
-### What's Left
+### What Remains
 
 After 10¹⁰⁰ years:
 - Photons (redshifted to near zero energy)
@@ -248,7 +248,7 @@ Poincaré recurrence theorem:
 - Finite system returns to initial state
 - Given infinite time
 
-But: Expanding universe isn't finite bounded system.
+But: Expanding universe is not a finite bounded system.
 
 ## Experiments
 

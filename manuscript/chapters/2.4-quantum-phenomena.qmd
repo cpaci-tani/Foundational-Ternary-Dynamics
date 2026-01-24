@@ -60,7 +60,7 @@ Before manifestation, the system exists as a superposition over the lattice:
 
 $$|\Psi\rangle = \sum_v \psi(v) |v\rangle$$
 
-The particle isn't "nowhere" or "everywhere": it exists as a distribution of flux, which IS the wavefunction.
+The particle is not "nowhere" or "everywhere": it exists as a distribution of flux, which IS the wavefunction.
 
 ## The Born Rule: The Bridge Protocol
 The probability of manifestation at voxel $v$ is given by the Born Rule:
@@ -68,20 +68,24 @@ The probability of manifestation at voxel $v$ is given by the Born Rule:
 $$P(\text{manifest at } v) = \frac{|\psi(v)|^2}{\|\psi\|^2}$$
 
 ### The Epistemic Interpretation
-In FTD, this is not a fundamental law of nature, but the **translation protocol** between the two domains (see @sec-two-domains for formal definitions):
-
-1.  **Domain A (Ontic):** The configuration space $\mathcal{A}$ contains deterministic **Flux Density** ($|J|^2$).
-2.  **Domain B (Epistemic):** The probability space $\mathcal{B}$ contains the observer's best bet on where manifestation will occur.
-
-The Born rule is the **bridge operator** $\mathcal{T}: \mathcal{A} \to \mathcal{B}$ that sentient systems use to translate physical potential into probabilistic expectation.
-
-Because the manifestation threshold $K_B$ is fixed, the probability of crossing it is naturally proportional to the energy density of the flux. The Born Rule connects the **Ontic Potential** to the **Epistemic Probability**.
-
-::: {.callout-note}
-## Key Insight: The Born Rule is Not Fundamental
-
-The Born rule is not a postulate of physics but emerges as the unique translation protocol between domains. See @sec-noetic-mass for how noetic mass (epistemic inertia) determines how strongly an observer's probability distribution collapses toward classical definiteness.
-:::
+ In FTD, this is not a fundamental law of nature, but the **translation protocol** between the two domains (see @sec-two-domains for formal definitions):
+ 
+ 1.  **Domain A (Ontic):** The configuration space $\mathcal{A}$ contains deterministic **Flux Density** ($|J|^2$).
+ 2.  **Domain B (Epistemic):** The probability space $\mathcal{B}$ contains the observer's best bet on where manifestation will occur.
+ 
+ The Born rule is the **bridge operator** $\mathcal{T}: \mathcal{A} \to \mathcal{B}$ that sentient systems use to translate physical potential into probabilistic expectation.
+ 
+ ### The Consciousness Manifold Derivation [T]
+ 
+ As established in @sec-sloop-formalization, the Born Rule emerges from the interface between the **Real physical manifold** (real roots of the Master Quadratic) and the **Complex consciousness manifold** (complex roots of the Consciousness Quadratic). 
+ 
+ The projection from the complex observer domain to the real manifestation domain is uniquely satisfied by the complex conjugate product $P = \psi \cdot \psi^* = |\psi|^2$. This identifies the Born Rule as the only self-consistent geometric matching condition for observers embedded in a ternary lattice.
+ 
+ ::: {.callout-note}
+ ## Key Insight: The Born Rule is Not Fundamental
+ 
+ The Born rule is not a postulate of physics but emerges as the unique translation protocol between domains. See @sec-noetic-mass for how noetic mass (epistemic inertia) determines how strongly an observer's probability distribution collapses toward classical definiteness.
+ :::
 
 ## Wavefunction Collapse as Manifestation
 
@@ -109,11 +113,11 @@ There is no "measurement problem" because we have identified what collapse IS: t
 
 ## Tunneling
 
-A particle can appear on the other side of a barrier it shouldn't classically cross.
+A particle can appear on the other side of a barrier it should not classically cross.
 
 ### The Mechanism
 
-The wavefunction ψ doesn't stop at potential barriers: it penetrates exponentially:
+The wavefunction ψ does not stop at potential barriers: it penetrates exponentially:
 
 $$\psi(x) \propto e^{-\kappa x} \quad \text{where } \kappa = \sqrt{2m(V-E)/\hbar^2}$$
 
@@ -226,7 +230,7 @@ The correlations exceed classical bounds because:
 ::: {.callout-important}
 ## The sLoop Resolution
 
-Bell violations do not require "spooky action at a distance." They arise from the **shared substrate** that connects observer and observed. Information doesn't travel faster than light: the correlations are inherited from the common flux field that both particles emerged from and that both measurement apparatuses are embedded in.
+Bell violations do not require "spooky action at a distance." They arise from the **shared substrate** that connects observer and observed. Information does not travel faster than light: the correlations are inherited from the common flux field that both particles emerged from and that both measurement apparatuses are embedded in.
 
 This is not superdeterminism (where initial conditions conspire to fake quantum correlations). It is **ontological holism**: the measurement apparatus and measured system share a common substrate that cannot be factorized.
 :::
@@ -251,7 +255,7 @@ This commutation relation follows from the structure of the flux field:
 A narrow ψ (precise position) requires many momentum components.
 A pure momentum state (single k) spreads over all space.
 
-The uncertainty principle is not a measurement disturbance: it's a property of waves.
+The uncertainty principle is not a measurement disturbance: it is a property of waves.
 
 ## The Double-Slit Experiment
 
@@ -272,7 +276,7 @@ An interference pattern appears: alternating bright and dark bands.
 ### FTD Explanation
 
 1. **Source**: Creates flux wave ψ
-2. **Slits**: Flux passes through BOTH slits (it's a wave)
+2. **Slits**: Flux passes through BOTH slits (it is a wave)
 3. **Beyond barrier**: Flux from both slits interferes
 4. **Interference**: ψ_total = ψ_left + ψ_right (vector sum)
 5. **Detection**: Particle manifests where |ψ_total|² is high
@@ -284,7 +288,7 @@ The interference is in the **flux field**, not the particle. Each particle manif
 
 Detecting which slit the particle goes through destroys the interference pattern. Why?
 
-**FTD answer**: Detection requires manifestation. Once ψ manifests at one slit, it's no longer a superposition: it's localized. No superposition = no interference.
+**FTD answer**: Detection requires manifestation. Once ψ manifests at one slit, it is no longer a superposition: it is localized. No superposition = no interference.
 
 ## The Measurement Problem: Proposed Resolution
 

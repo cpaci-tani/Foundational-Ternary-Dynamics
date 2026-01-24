@@ -114,6 +114,31 @@ This reference documents all mathematical and physics symbols used throughout th
 | $\wedge$ | and | Logical and |
 | $\vee$ | or | Logical or |
 
+## Epistemic-Physical Logic (EPL-ST)
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| $\mathcal{A}$ | Domain A | Ontic/classical domain of configurations |
+| $\mathcal{B}$ | Domain B | Epistemic/probabilistic domain |
+| $\mathcal{T}$ | Bridge operator | Translation between Domain A and Domain B |
+| $\varepsilon$ | Encoding relation | Map $\varepsilon: A \to B$ extracting epistemic content |
+| $E$ | Epistemic states | Set of epistemic configurations |
+| $\text{Prop}$ | Propositions | Set of what can be distinguished |
+| $O$ | Observers | Entities capable of making distinctions |
+| $D$ | Distinctions | Acts of marking difference |
+| $\text{Ev}$ | Events | Actualized distinctions |
+| $W$ | Worlds | Total configurations of events |
+| $\text{val}(e, p)$ | Valuation function | $E \times \text{Prop} \to \{-1, 0, +1\}$ |
+| $V$ | Valuation domain | $\{-1, 0, +1\}$ ternary values |
+| $K_a(p)$ | Knowledge operator | "Observer $a$ knows $p$" |
+| $B_a(p)$ | Belief operator | "Observer $a$ believes $p$" |
+| $\diamond p$ | Possibility | "$p$ is epistemically possible" |
+| $\Box p$ | Necessity | "$p$ is epistemically necessary" |
+| $M_\Omega$ | Noetic mass | Epistemic inertia of observer $\Omega$ |
+| $\rho_\Omega$ | Belief density | Observer's belief distribution |
+| $T_e$ | Epistemic time | Discrete, irreversible sequence of distinctions |
+| $T_p$ | Physical time | Emergent metric on epistemic evolution |
+
 ## Physics Constants and Units
 
 | Symbol | Name | Meaning |

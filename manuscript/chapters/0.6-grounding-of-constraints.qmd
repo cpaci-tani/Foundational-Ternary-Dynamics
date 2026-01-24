@@ -174,7 +174,7 @@ After the mapping, what remains to be specified?
 | Threshold | $K_B = m_e$ | [DERIVED: from $\alpha$ and G*] |
 | Damping | $\gamma = \alpha$ | [IMPOSED: identification] |
 
-The lattice spacing sets the physical scale but doesn't affect dimensionless predictions. The threshold is derived from the master quadratic. Only the damping identification remains truly imposed.
+The lattice spacing sets the physical scale but does not affect dimensionless predictions. The threshold is derived from the master quadratic. Only the damping identification remains truly imposed.
 
 ## Connection to Action Principle
 

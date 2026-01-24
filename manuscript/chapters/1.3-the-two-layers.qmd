@@ -30,8 +30,8 @@ The "Wave" in Domain A is strictly hydrodynamic: an **aggregate of historical mo
 
 The potential layer is characterized by flux vectors:
 
-- **3D directional field**: $\vec{J} = (J_x, J_y, J_z)$
-- **Propagates through void** at speed C (1 cell/tick maximum)
+- **3D directional field**: $\mathbf{J} = (J_x, J_y, J_z)$
+- **Propagates through void** at speed $C$ (1 cell/tick maximum)
 - **Flux magnitude = energy amplitude = density**
 
 ### Density
@@ -39,10 +39,10 @@ The potential layer is characterized by flux vectors:
 The density at any position is the magnitude of the flux:
 
 $$
-\rho = |\vec{J}| = \sqrt{J_x^2 + J_y^2 + J_z^2}
+\rho = |\mathbf{J}| = \sqrt{J_x^2 + J_y^2 + J_z^2}
 $$
 
-where $\vec{J} = (J_x, J_y, J_z)$ is the flux vector. When $\rho \geq K_B$ (the manifestation threshold), genesis becomes possible.
+where $\mathbf{J} = (J_x, J_y, J_z)$ is the flux vector. When $\rho \geq K_B$ (the manifestation threshold), genesis becomes possible.
 
 ### Frequency
 
@@ -104,7 +104,7 @@ You can study the currents (potential) or the ships (manifestation). Both are re
 ## Experiments
 
 ### Wave Visualization
-Create a flux disturbance. Watch it propagate through the void at speed C. See how it spreads, reflects, interferes.
+Create a flux disturbance. Watch it propagate through the void at speed $C$. See how it spreads, reflects, interferes.
 
 ### Genesis Prediction
 Look at the potential field. Predict where genesis will occur based on flux density. Watch your predictions confirmed.
@@ -124,7 +124,7 @@ $$
 
 ::: {.callout-note}
 ## Derivation Source
-This wave equation is derived from the FTD action principle S[s,J]. See THEORETICAL_FOUNDATIONS Part I for the complete derivation via Euler-Lagrange equations.
+This wave equation is derived from the FTD action principle S[s,J]. See @sec-action-principle for the complete derivation via Euler-Lagrange equations.
 :::
 
 Discretized via velocity-Verlet:

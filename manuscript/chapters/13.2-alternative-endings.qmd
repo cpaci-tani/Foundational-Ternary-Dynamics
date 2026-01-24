@@ -36,7 +36,7 @@ $$
 H(t) \rightarrow \infty \text{ as } t \rightarrow t_{rip}
 $$
 
-Everything: galaxies, stars, planets, atoms, nuclei: torn apart.
+Everything (galaxies, stars, planets, atoms, nuclei) torn apart.
 
 ### Survival?
 

@@ -146,7 +146,7 @@ This is exactly the right order of magnitude for baryogenesis.
 
 **3. Departure from Equilibrium**
 
-The electroweak phase transition in FTD is **first-order**: it proceeds through bubble nucleation rather than smooth crossover. Inside the bubbles, the Higgs condensate forms; outside, it hasn't yet.
+The electroweak phase transition in FTD is **first-order**: it proceeds through bubble nucleation rather than smooth crossover. Inside the bubbles, the Higgs condensate forms; outside, it has not yet.
 
 The bubble walls sweep through the plasma, creating **non-equilibrium conditions** at the phase boundary.
 

@@ -14,7 +14,7 @@ Interference is **what happens when two potential fields overlap**.
 When two waves meet in the same region of space, their flux vectors add:
 
 $$
-\vec{J}_{\text{combined}} = \vec{J}_A + \vec{J}_B
+\mathbf{J}_{\text{combined}} = \mathbf{J}_A + \mathbf{J}_B
 $$
 
 The result depends on the relative alignment:
@@ -106,16 +106,16 @@ Map where particles appear over many genesis events. They cluster in the bright 
 The intensity at any point is the squared magnitude of the combined flux:
 
 $$
-I = |\vec{J}_{\text{combined}}|^2 = |\vec{J}_A + \vec{J}_B|^2
+I = |\mathbf{J}_{\text{combined}}|^2 = |\mathbf{J}_A + \mathbf{J}_B|^2
 $$
 
 Expanding:
 
 $$
-I = |\vec{J}_A|^2 + |\vec{J}_B|^2 + 2\vec{J}_A \cdot \vec{J}_B
+I = |\mathbf{J}_A|^2 + |\mathbf{J}_B|^2 + 2\mathbf{J}_A \cdot \mathbf{J}_B
 $$
 
-The cross term $2\vec{J}_A \cdot \vec{J}_B$ determines interference:
+The cross term $2\mathbf{J}_A \cdot \mathbf{J}_B$ determines interference:
 - Positive (aligned): constructive
 - Negative (opposed): destructive
 

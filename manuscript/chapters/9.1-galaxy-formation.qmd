@@ -38,7 +38,7 @@ These tiny variations are the seeds of all cosmic structure:
 ## The Role of Dark Matter
 
 Dark matter dominates structure formation:
-- Doesn't interact with light (no pressure)
+- Does not interact with light (no pressure)
 - Collapses first
 - Creates gravitational wells
 - Baryons fall in later
@@ -185,4 +185,4 @@ Collide two galaxies. Watch the result.
 
 ## Transition
 
-Galaxies form from the same processes at every mass scale. Now let's explore the variety of galaxies that result: spirals, ellipticals, and more.
+Galaxies form from the same processes at every mass scale. Now we explore the variety of galaxies that result: spirals, ellipticals, and more.

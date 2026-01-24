@@ -4,12 +4,12 @@
 
 ::: {.callout-note}
 ## Key Revelation
-A theory is only as good as its testable predictions. This chapter catalogs every specific, quantitative prediction that could confirm or falsify FTD: and every match already achieved.
+A theory is only as good as its testable predictions. This chapter catalogs every specific, quantitative prediction that could confirm or falsify FTD, and every match already achieved.
 :::
 
 ---
 
-## Part I: Confirmed Matches :  What FTD Already Gets Right
+## Part I: Confirmed Matches: What FTD Already Gets Right
 
 Before looking at future tests, here is the complete ledger of quantities FTD derives from the four integers {3, 4, 7, 13} that match experimental values.
 
@@ -17,7 +17,7 @@ Before looking at future tests, here is the complete ledger of quantities FTD de
 
 | Quantity | FTD Formula | FTD Value | Experimental | Error |
 |----------|-------------|-----------|--------------|-------|
-| Fine structure constant | Master quadratic root | 1/137.036 | 1/137.036 | **1.26 ppm** |
+| Fine structure constant | Master quadratic root + precision formula | 1/137.036 | 1/137.036 | **0.21 ppt** |
 | Color charges | Master quadratic root | 3.024 → 3 | 3 | exact |
 | Weinberg angle | sin²θ_W = N_c/n_eff | 3/13 = 0.2308 | 0.2312 | **0.17%** |
 | Strong coupling | α_s = b₃/(b₃+4n_eff) | 7/59 = 0.1186 | 0.1179 | **0.6%** |
@@ -62,7 +62,7 @@ Before looking at future tests, here is the complete ledger of quantities FTD de
 
 | Quantity | FTD Formula | FTD Value | Experimental | Error |
 |----------|-------------|-----------|--------------|-------|
-| Δm²₃₁ | :  | 2.5×10⁻³ eV² | 2.5×10⁻³ eV² | **exact** |
+| Δm²₃₁ | - | 2.5×10⁻³ eV² | 2.5×10⁻³ eV² | **exact** |
 | Δm²₂₁/Δm²₃₁ | α × n_eff / N_base | 0.024 | 0.030 | **20%** |
 
 ### CP Violation
@@ -77,7 +77,7 @@ Before looking at future tests, here is the complete ledger of quantities FTD de
 | Quantity | FTD Formula | FTD Value | Experimental | Error |
 |----------|-------------|-----------|--------------|-------|
 | Gravitational coupling α_G | 2π(16/3)²(n_eff+3/7)²α²⁰ | 5.909×10⁻³⁹ | 5.906×10⁻³⁹ | **0.06%** |
-| G_bias | 1/(b₃+N_c)² | 1/100 = 0.01 | :  | exact |
+| G_bias | 1/(b₃+N_c)² | 1/100 = 0.01 | - | exact |
 
 ### Cosmological Parameters
 

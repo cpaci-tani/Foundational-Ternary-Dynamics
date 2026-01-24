@@ -14,12 +14,12 @@ The weakest force, but the only one that always attracts.
 ### The Formula
 
 $$
-\vec{F}_g = G_{\text{bias}} \cdot \nabla\bar{\rho}(x)
+\mathbf{F}_g = G_{\text{bias}} \cdot \nabla\bar{\rho}(x)
 $$
 
 where:
 
-- $\vec{F}_g$ is the gravitational force vector
+- $\mathbf{F}_g$ is the gravitational force vector
 - $G_{\text{bias}} = 0.01$ is the gravitational coupling constant (derived from $1/(b_3 + N_c)^2$)
 - $\bar{\rho}(x)$ is the neighbor-averaged flux density at position $x$
 - $\nabla$ denotes the discrete gradient operator
@@ -35,7 +35,7 @@ where:
 
 Gravity emerges from density gradients. Where density is uneven, particles experience a force toward higher density. This is why mass attracts mass: each creates a density gradient that pulls the other.
 
-The inverse-square law emerges naturally from 3D geometry. A source creates a density field that falls off as 1/r². The gradient of this field gives force proportional to 1/r².
+The inverse-square law emerges naturally from 3D geometry. A source creates a density field that falls off as $1/r^2$. The gradient of this field gives force proportional to $1/r^2$.
 
 ## Electromagnetism
 
@@ -44,7 +44,7 @@ The force between charged particles.
 ### Electric (Coulomb) Force
 
 $$
-\vec{F}_e = -q(x) \cdot \nabla\bar{q}(x)
+\mathbf{F}_e = -q(x) \cdot \nabla\bar{q}(x)
 $$
 
 - Like charges repel (positive times positive gradient = push away)
@@ -53,14 +53,14 @@ $$
 ### Magnetic (Lorentz) Force
 
 $$
-\vec{F}_m = \beta_m \cdot (\nabla \times \vec{J}) \times \hat{J}
+\mathbf{F}_m = \beta_m \cdot (\nabla \times \mathbf{J}) \times \hat{J}
 $$
 
 Moving charges create magnetic fields. The curl of the current density (∇ × J) gives the magnetic field. Forces act perpendicular to both field and motion.
 
 ### Electromagnetic Strength
 
-The fine structure constant $\alpha$ ≈ 1/137 = 0.00729 sets the strength of electromagnetic interactions.
+The fine structure constant $\alpha \approx 1/137.036 \approx 0.00729$ sets the strength of electromagnetic interactions.
 
 ## The Strong Force
 
@@ -69,12 +69,12 @@ The force that binds nucleons.
 ### Yukawa Potential
 
 $$
-\vec{F}_{\text{strong}} = g_s^2 \cdot \frac{e^{-m_\pi r}(1 + m_\pi r)}{r^2} \hat{r}
+\mathbf{F}_{\text{strong}} = g_s^2 \cdot \frac{e^{-m_\pi r}(1 + m_\pi r)}{r^2} \hat{r}
 $$
 
 where:
 
-- $\vec{F}_{\text{strong}}$ is the strong force vector
+- $\mathbf{F}_{\text{strong}}$ is the strong force vector
 - $g_s$ is the strong coupling constant (dimensionless)
 - $m_\pi$ is the pion mass scale (sets the interaction range)
 - $r$ is the separation distance in lattice units
@@ -106,7 +106,7 @@ The force responsible for transmutation.
 ### The Stress Measure
 
 $$
-S(x) = |\nabla \cdot \vec{J}| + |\nabla \times \vec{J}| + |\nabla\bar{\rho}|
+S(x) = |\nabla \cdot \mathbf{J}| + |\nabla \times \mathbf{J}| + |\nabla\bar{\rho}|
 $$
 
 When stress S exceeds a threshold, the weak force can act.
@@ -143,9 +143,9 @@ The forces are not random: they arise from **gauge symmetries** of the flux fiel
 
 The electromagnetic force has **U(1) gauge symmetry**: invariance under local phase rotations.
 
-$$J \to J + \nabla\lambda$$
+$$\mathbf{J} \to \mathbf{J} + \nabla\lambda$$
 
-The Gauss constraint ∇·J = ρ is preserved under this transformation. The conserved quantity is **electric charge**.
+The Gauss constraint $\nabla \cdot \mathbf{J} = \rho$ is preserved under this transformation. The conserved quantity is **electric charge**.
 
 | Component | Physical Meaning |
 |-----------|-----------------|
@@ -161,15 +161,15 @@ $$\Psi_L = \begin{pmatrix} \psi_\uparrow \\ \psi_\downarrow \end{pmatrix}_L$$
 
 where:
 
-- ψ↑ = J_x + iJ_y (positive helicity)
-- ψ↓ = J_x - iJ_y (negative helicity)
+- $\psi_\uparrow = J_x + iJ_y$ (positive helicity)
+- $\psi_\downarrow = J_x - iJ_y$ (negative helicity)
 - L = left-handed (from flux spiral direction)
 
 SU(2) transformations rotate between up-type and down-type:
 
 $$\Psi_L \to U\Psi_L, \quad U = e^{i\theta^a\sigma^a/2}$$
 
-The gauge bosons are W⁺, W⁻, and Z⁰.
+The gauge bosons are $W^+$, $W^-$, and $Z^0$.
 
 ### SU(3): The Strong Force (Color)
 
@@ -185,7 +185,7 @@ SU(3) transformations rotate the color orientation. The eight gluons correspond 
 
 ::: {.callout-note}
 ## Color Confinement
-Why can't we see isolated quarks? Between separated quarks, the flux forms **tubes** rather than spreading. The tube energy grows with distance, so it's energetically favorable to create quark-antiquark pairs. Quarks are always confined in color-neutral combinations.
+Why cannot we see isolated quarks? Between separated quarks, the flux forms **tubes** rather than spreading. The tube energy grows with distance, so it is energetically favorable to create quark-antiquark pairs. Quarks are always confined in color-neutral combinations.
 :::
 
 ## Parity Violation
@@ -196,7 +196,7 @@ The weak force violates **parity symmetry** (mirror symmetry).
 
 The flux field has a preferred chirality:
 
-$$\chi = \text{sign}(\vec{J} \cdot (\nabla \times \vec{J}))$$
+$$\chi = \text{sign}(\mathbf{J} \cdot (\nabla \times \mathbf{J}))$$
 
 The lattice update rules are NOT symmetric under χ → -χ:
 
@@ -209,7 +209,7 @@ This is why neutrinos are only left-handed and antineutrinos are only right-hand
 
 The mixing between U(1) and SU(2) is measured by the **Weinberg angle**:
 
-$$\sin^2\theta_W = \frac{3}{13} = 0.2308$$
+$$\sin^2\theta_W = \frac{N_c}{N_{\text{eff}}} = \frac{3}{13} = 0.2308$$
 
 This value is **derived** from the Lemniscate-Alpha curve (Chapter 1.10), not measured and plugged in.
 

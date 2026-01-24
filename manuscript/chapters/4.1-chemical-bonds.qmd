@@ -11,7 +11,7 @@ Atoms bond to achieve stability. Whether by giving, taking, or sharing electrons
 
 ## Why Atoms Bond
 
-Atoms are most stable with full outer shells. Most atoms don't have full shells naturally, so they bond with other atoms to share electrons.
+Atoms are most stable with full outer shells. Most atoms do not have full shells naturally, so they bond with other atoms to share electrons.
 
 ## Ionic Bonds
 
@@ -158,7 +158,7 @@ Stack ions or atoms. Watch different bonding types create different structures.
 
 ## Transition
 
-Atoms bond into molecules. Now let's explore the simplest molecules: diatomics and triatomics that make up our atmosphere and essential compounds in @sec-simple-molecules.
+Atoms bond into molecules. Now we explore the simplest molecules: diatomics and triatomics that make up our atmosphere and essential compounds in @sec-simple-molecules.
 
 ::: {.callout-tip}
 ## Related Topics

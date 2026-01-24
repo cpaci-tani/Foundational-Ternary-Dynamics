@@ -242,4 +242,4 @@ Assemble organelles within membrane. Create minimal cell.
 
 ## Transition
 
-We've explored matter at molecular scales. Now we zoom out dramatically: to planets, where gravity dominates and geology shapes worlds.
+We have explored matter at molecular scales. Now we zoom out dramatically: to planets, where gravity dominates and geology shapes worlds.

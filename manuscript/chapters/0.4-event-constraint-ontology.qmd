@@ -147,7 +147,7 @@ The notation "1D = $xy$" means: the first non-trivial level is spatial relations
 
 ## Space Emergence: Why d ≥ 3 {#sec-space-emergence}
 
-As derived in @sec-formal-logic, the spatial dimension $d \geq 3$ is **not a free parameter**—it is a theorem of consistent epistemic extension.
+As derived in @sec-formal-logic, the spatial dimension $d \geq 3$ is **not a free parameter**: it is a theorem of consistent epistemic extension.
 
 ### The Theorem (Recap)
 
@@ -168,7 +168,7 @@ The arguments are:
 
 ### Contact Structure
 
-The 26-connected Moore neighborhood is not arbitrary—it is the **maximal contact structure** on a 3D cubic lattice:
+The 26-connected Moore neighborhood is not arbitrary: it is the **maximal contact structure** on a 3D cubic lattice:
 
 $$N(v) = \{u \in L : \max(|u_x - v_x|, |u_y - v_y|, |u_z - v_z|) \leq 1\} \setminus \{v\}$$
 

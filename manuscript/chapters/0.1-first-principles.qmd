@@ -6,7 +6,7 @@
 ## Purpose of This Chapter
 This chapter establishes the epistemic framework for everything that follows. Building on the logical chain established in @sec-formal-logic (from distinction → ternary valuation → space → physics), we now specify FTD's first principles and their epistemic status.
 
-**Key insight:** The ternary state space is not an arbitrary assumption—it is a *theorem* of EPL-ST. What remains as genuine axioms are the structural choices that instantiate this necessary framework.
+**Key insight:** The ternary state space is not an arbitrary assumption: it is a *theorem* of EPL-ST. What remains as genuine axioms are the structural choices that instantiate this necessary framework.
 :::
 
 ## What Is a Mathematical Declaration?
@@ -105,7 +105,7 @@ Examples:
 
 ### Level 5: Conjectures
 
-Conjectures are proposals we believe may be true but haven't proven.
+Conjectures are proposals we believe may be true but have not proven.
 
 Examples:
 - The sLoop mechanism produces Bell violations
@@ -184,7 +184,7 @@ The mathematics is self-contained. The predictions are (in principle) testable. 
 
 ### For the Curious
 
-You don't need to believe anything. Watch what happens when simple rules run. See complexity emerge from simplicity.
+You do not need to believe anything. Watch what happens when simple rules run. See complexity emerge from simplicity.
 
 ## Concepts
 

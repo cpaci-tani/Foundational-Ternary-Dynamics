@@ -14,7 +14,7 @@ Chapter 1.8 presents force-like behaviors:
 - Coulomb: $\mathbf{F}_{\text{elec}} = -q \nabla\bar{q}$
 - Yukawa: $F_{\text{strong}} \propto e^{-m_\pi r}/r^2$
 
-A critic might ask: "Aren't these just borrowed from known physics?"
+A critic might ask: "Are these not just borrowed from known physics?"
 
 This chapter shows they are **derived from the action**, not borrowed.
 
@@ -217,9 +217,9 @@ Even with the action principle, some things are imposed:
 
 | Element | Status |
 |---------|--------|
-| Action functional form | [AXIOM] :  this is the definition of FTD |
-| Dissipation $\gamma = \alpha$ | [IMPOSED] :  identification, not derivation |
-| Lattice spacing = Planck length | [IMPOSED] :  scale identification |
+| Action functional form | **[AXIOM]**: this is the definition of FTD |
+| Dissipation $\gamma = \alpha$ | **[IMPOSED]**: identification, not derivation |
+| Lattice spacing = Planck length | **[IMPOSED]**: scale identification |
 
 The action is not derived from something deeper: it is the foundation.
 

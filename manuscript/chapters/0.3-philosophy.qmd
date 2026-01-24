@@ -169,7 +169,7 @@ Potential has meaning for *individual* events:
 
 $$\text{If } |\mathbf{J}(v)| > K_B \text{ and } \nabla \cdot \mathbf{J} > 0 \implies s(v) \to +1$$
 
-This is not a probability -it is a **conditional certainty**. The flux field doesn't "probably" cause manifestation; it *does* cause it when conditions are met.
+This is not a probability - it is a **conditional certainty**. The flux field does not "probably" cause manifestation; it *does* cause it when conditions are met.
 
 ### The Born Rule Revisited
 
@@ -411,7 +411,7 @@ THE CONFUSION:
 "How does physical matter (Domain A) produce subjective experience?"
 
 THE DISSOLUTION:
-Subjective experience IS Domain B. It doesn't need to be "produced" by
+Subjective experience IS Domain B. It does not need to be "produced" by
 Domain A any more than probability needs to be "made of" atoms.
 
 The question confuses:
@@ -677,7 +677,7 @@ The modal constraint ψ emerges from the **sLoop** structure:
 
 ::: {.callout-note}
 ## Key Insight
-The modal constraint is not imposed from outside—it **emerges** from the physical structure of the observer. What you can know is determined by what you can couple to.
+The modal constraint is not imposed from outside: it **emerges** from the physical structure of the observer. What you can know is determined by what you can couple to.
 :::
 
 ### ψ and Measurement
@@ -701,7 +701,7 @@ Distinction → Valuation → Relations → Space → ψ → Physics
                            which distinctions are possible
 ```
 
-ψ is not arbitrary—it is **determined by the physical embedding** of the observer in the flux field.
+ψ is not arbitrary: it is **determined by the physical embedding** of the observer in the flux field.
 
 ---
 
@@ -729,7 +729,7 @@ This framework engages with debates about **emergence** in philosophy of mind an
 - **Weak emergence**: Higher-level patterns unpredictable in practice but derivable in principle from lower-level rules (FTD claims this for bound structures, interference patterns)
 - **Strong emergence**: Genuinely novel causal powers not reducible to the base level (FTD does *not* claim this)
 
-The "graded" aspect addresses Kim's causal exclusion argument: if dispositions are modes of the substrate (not separate entities), there is no problematic overdetermination. Manifestation doesn't *compete* with flux for causal efficacy: it *is* flux actualized.
+The "graded" aspect addresses Kim's causal exclusion argument: if dispositions are modes of the substrate (not separate entities), there is no problematic overdetermination. Manifestation does not *compete* with flux for causal efficacy: it *is* flux actualized.
 
 ### Comparison with Other Views
 
@@ -744,7 +744,7 @@ FTD is closest to **neutral monism**: one substance with multiple aspects, none 
 
 ## Why Ternary?
 
-The choice of three states {−1, 0, +1} is **not arbitrary**—it is a theorem of EPL-ST (see @sec-formal-logic).
+The choice of three states {−1, 0, +1} is **not arbitrary**: it is a theorem of EPL-ST (see @sec-formal-logic).
 
 ### Recap: The Derivation
 
@@ -786,7 +786,7 @@ The Lemniscate-Alpha derivation shows that the "2" in power-of-2 frequencies com
 
 ::: {.callout-important}
 ## Key Point
-The ternary structure is not a design choice—it is the **necessary consequence** of distinguishability under paraconsistent constraints. FTD's three states {−1, 0, +1} are derived, not assumed.
+The ternary structure is not a design choice: it is the **necessary consequence** of distinguishability under paraconsistent constraints. FTD's three states {−1, 0, +1} are derived, not assumed.
 :::
 
 ## The Measurement Problem
@@ -798,12 +798,12 @@ FTD dissolves this problem:
 ### No Superposition
 
 There is no ontic superposition. A particle is always in one definite state. What we call "superposition" is:
-- Epistemic uncertainty (we don't know which state)
+- Epistemic uncertainty (we do not know which state)
 - Or: flux exists everywhere, manifestation is definite
 
 ### No Collapse
 
-There is no collapse because there was never superposition. Measurement reveals a pre-existing state, doesn't create it.
+There is no collapse because there was never superposition. Measurement reveals a pre-existing state; it does not create it.
 
 ### No Observer Privilege
 
@@ -826,7 +826,7 @@ FTD is **deterministic**: given initial conditions, the evolution is fixed.
 
 ### Compatibilist Response
 
-This doesn't eliminate agency:
+This does not eliminate agency:
 - Agents are complex systems within the dynamics
 - Decisions emerge from physical processes
 - Responsibility can be defined functionally
@@ -864,9 +864,9 @@ FTD suggests a middle position:
 The Lemniscate-Alpha derivation is striking because:
 - The curve is mathematically defined (discovered)
 - Its connection to physics is interpretive (constructed)
-- But the numerical agreement is remarkable (1.26 ppm)
+- But the numerical agreement is remarkable (**0.21 ppt** with precision formula)
 
-Does this mean mathematics IS physics? We don't claim this. We note the coincidence and leave interpretation to the reader.
+Does this mean mathematics IS physics? We do not claim this. We note the coincidence and leave interpretation to the reader.
 
 ## Open Philosophical Questions
 
