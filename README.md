@@ -144,20 +144,24 @@ pytest tests/ -v
 python tests/run_all_tests.py
 ```
 
-### Build the Book
+### Read the Book
 
-The book must be built locally (build outputs are gitignored to keep the repository small).
+**Pre-built outputs** (after running `quarto render`):
+- **PDF**: [`manuscript/_book/Foundational-Ternary-Dynamics.pdf`](manuscript/_book/Foundational-Ternary-Dynamics.pdf) (~10 MB, A5 format)
+- **HTML Webbook**: [`manuscript/_webbook/index.html`](manuscript/_webbook/index.html) (interactive, searchable)
+
+**Build from source** (if outputs are missing):
 
 ```bash
 cd manuscript/src
 
 # Build HTML webbook
 quarto render --profile html
-# Open ../_webbook/index.html
+# Output: manuscript/_webbook/index.html
 
 # Build PDF
 quarto render --profile pdf
-# Open ../_book/Foundational-Ternary-Dynamics.pdf
+# Output: manuscript/_book/Foundational-Ternary-Dynamics.pdf
 ```
 
 **Requirements**: Quarto ≥ 1.4, TeX Live 2024+ (for PDF)
@@ -212,11 +216,17 @@ Foundational-Ternary-Dynamics/
 │   ├── test_coupling_constants.py
 │   ├── test_mixing_matrices.py
 │   └── run_all_tests.py
-├── manuscript/               # Complete book (82 chapters)
-├── simulations/              # Mathematical proof suite
+├── manuscript/               # Complete book (95 chapters)
+│   ├── src/                  # Quarto source files (.qmd)
+│   ├── _book/                # PDF output
+│   │   └── Foundational-Ternary-Dynamics.pdf
+│   └── _webbook/             # HTML webbook output
+│       └── index.html
 ├── models/                   # Python implementation
+├── scripts/                  # Verification and analysis scripts
 ├── docs/                     # Theory documents and reports
-└── figures/                  # Figure generation scripts
+├── evaluation/               # Formal certification reports
+└── dissemination/            # Jupyter notebooks and tutorials
 ```
 
 ---
