@@ -11,7 +11,7 @@
 - Derives 31+ Standard Model parameters from 4 constrained integers
 - Zero free parameters (integers uniquely fixed by self-consistency)
 - Best accuracy: 0.007% (tau mass)
-- Probability of coincidence: ~10^-28
+- Collectively significant (correlations reduce naive independence estimates)
 
 ## The Four Foundational Integers
 - N_c = 3: Color charges (from master quadratic root x_-)

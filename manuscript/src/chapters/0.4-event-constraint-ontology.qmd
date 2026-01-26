@@ -1,0 +1,292 @@
+# The Event-Constraint Ontology {#sec-event-constraint-ontology}
+
+*"Events are ontic. Constraints are real. Meaning is emergent."*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter presents the **xyztg$\psi$** ontological framework: the minimal structure required to describe physical reality without privileging observers or conflating events with laws.
+
+Building on the epistemic chain (@sec-formal-logic), we show how space and time **emerge** from the requirements of consistent epistemic extension, and formalize how the modal constraint ψ (introduced in @sec-modal-constraint) governs the structure of events.
+:::
+
+## The Three Primitives
+
+Reality requires exactly three kinds of primitive:
+
+### Event (xyzt)
+
+The **event** is the fundamental ontic unit. An irreducible fact: *something happened here-now*.
+
+Key properties:
+
+- A single event contains no motion, no pattern, no wave
+- If no event has occurred, there is no time
+- Each event is complete in itself
+- Events do not require observers to exist
+
+An event is specified by its spacetime coordinates $(x, y, z, t)$. The coordinates are not containers for events; they *are* the event's identity.
+
+### Geometric Constraint ($g$)
+
+The **geometric constraint** encodes metric and causal structure:
+
+- Constrains distances between events
+- Constrains durations between events
+- Defines causal adjacency
+- Specifies which events can be connected
+
+Gravity is not a force pulling objects together. Gravity is a constraint on spacetime relations. The geodesic is not a path an object *chooses*; it is the *only path available* given the geometric constraint.
+
+::: {.callout-important}
+## Key Insight
+Geometry ($g$) is inferred from relations among events, not directly observed. We never see spacetime curvature; we see objects following particular trajectories and infer the constraint from the pattern.
+:::
+
+### Modal Constraint ($\psi$)
+
+The **modal constraint** is not an event and not an aggregate of events. It is a law-like constraint governing:
+
+- Which events *can* occur
+- With what relative likelihood
+- Given other events
+
+The modal constraint does not "happen" at a moment. It constrains transitions *between* moments.
+
+| Primitive | Symbol | What It Is | What It Does |
+|-----------|--------|------------|--------------|
+| Event | $xyzt$ | Irreducible fact | Happens here-now |
+| Geometry | $g$ | Metric/causal structure | Constrains relations |
+| Modality | $\psi$ | Transition law | Constrains possibilities |
+
+## The Single Moment
+
+A single moment is fully described by:
+
+$$\mathbf{xyztg}\psi(\Delta t)$$
+
+This notation encodes:
+
+- $xyzt$: That an event occurred here-now
+- $g$: The geometric context making "here" and "now" meaningful
+- $\psi$: The modal constraint that made this event possible
+- $\Delta t$: The tick, one discrete step forward in time
+
+Everything else exists *between* moments, not within them.
+
+## From Entity to Universe
+
+The notation scales from a single entity to the entire universe:
+
+| Level | Notation | Meaning |
+|-------|----------|---------|
+| Entity | $xyztg\psi(\Delta t)$ | One thing, one moment, with constraints |
+| Observer | $\Omega(t)$ | Complete configuration of a conscious system at tick $t$ |
+| Horizon | $H(\Omega, t)$ | What observer $\Omega$ can perceive at tick $t$ |
+| Global | $\text{Global}(t)$ | Everything at one tick |
+| Universe | $\mathbb{U}$ | All of history: $\{\text{Global}(t) : t \in \mathbb{Z}\}$ |
+
+The observer $\Omega$ is not outside the system. An observer is just a very complex $xyztg\psi(\Delta t)$: a pattern of entities with sufficient structure to model itself and its environment.
+
+The horizon $H(\Omega, t)$ is always a subset of $\text{Global}(t)$. No observer perceives everything. Each $\Omega$ has a limited window into Global, mediated by the six senses:
+
+1. **Sight**: Electromagnetic flux in visible range
+2. **Sound**: Pressure waves in medium
+3. **Touch**: Direct contact, mechanical deformation
+4. **Taste**: Chemical detection (close range)
+5. **Smell**: Chemical detection (distance)
+6. **Cognition**: Internal state, memory, inference
+
+Objectivity then becomes:
+
+$$\text{Objectivity} = \bigcup_i H(\Omega_i, t)$$
+
+The union of all horizons. What we collectively can perceive. Still not $\text{Global}(t)$, but closer than any single $\Omega$ can get alone.
+
+## Time as Ordering
+
+Time is not a primitive object. Time is not a container.
+
+**Time emerges as the ordering relation between events:**
+
+$$E_1 \prec E_2$$
+
+From ordering alone arise:
+
+- Before and after
+- Duration
+- Change
+- History
+- Causality
+
+No observer is required for ordering to exist. Two events are ordered if one constrains the other.
+
+::: {.callout-important}
+## The Asymmetry of Existence
+
+**You can have $(x,y)$ without $t$. You cannot have $t$ without $(x,y)$.**
+
+Space can exist as static fact: a configuration with no change, no sequence, no before-and-after.
+
+Time requires substrate. Time is the *ordering of changes to spatial configurations*. Without space, there is nothing to order.
+
+Spatial existence is primitive. Time is emergent.
+:::
+
+### Dimensional Hierarchy
+
+This asymmetry suggests a natural hierarchy:
+
+| Level | Dimensions | What Exists |
+|-------|------------|-------------|
+| 0D | (point) | Nothing to speak of |
+| 1D | $xy$ | Spatial configuration |
+| 2D | $xyt$ | Spatial configuration + ordering |
+| 3D | $xyzt$ | Full spacetime event |
+
+The notation "1D = $xy$" means: the first non-trivial level is spatial relationship without temporal sequence. Adding time creates the next level of complexity.
+
+## Space Emergence: Why d ≥ 3 {#sec-space-emergence}
+
+As derived in @sec-formal-logic, the spatial dimension $d \geq 3$ is **not a free parameter**: it is a theorem of consistent epistemic extension.
+
+### The Theorem (Recap)
+
+::: {.callout-important}
+## Emergent Space Theorem [T]
+**If consistent epistemic extension requires stable relational embedding, then the minimal such embedding has dimension $d \geq 3$.**
+:::
+
+The arguments are:
+
+1. **$d = 1$**: Linear ordering cannot support stable clustering
+2. **$d = 2$**: Planar embedding cannot support non-trivial knots (topological protection)
+3. **$d = 3$**: Three dimensions admit:
+   - Stable triangular configurations (triads)
+   - Non-trivial knot theory
+   - Gauge theories with confinement (SU(3))
+   - Spinor structure (π₁(SO(3)) = ℤ₂)
+
+### Contact Structure
+
+The 26-connected Moore neighborhood is not arbitrary: it is the **maximal contact structure** on a 3D cubic lattice:
+
+$$N(v) = \{u \in L : \max(|u_x - v_x|, |u_y - v_y|, |u_z - v_z|) \leq 1\} \setminus \{v\}$$
+
+This gives:
+- 6 face-neighbors (share a face)
+- 12 edge-neighbors (share an edge)
+- 8 corner-neighbors (share only a vertex)
+
+Total: 26 neighbors.
+
+The Moore neighborhood is selected because it provides **maximal local connectivity** while preserving discrete structure. Any larger neighborhood would either require non-local connections or a finer lattice.
+
+### From Relations to Lattice
+
+The chain is:
+
+```
+Distinctions → Relations → Invariant Structures → Embedding → Lattice
+```
+
+The cubic lattice $L \subset \mathbb{Z}^3$ is the **simplest regular 3D tiling** that instantiates the derived spatial requirement. Other tilings (hexagonal, etc.) would work but add complexity without necessity.
+
+## Waves Exist Between Moments
+
+A wave is not an instantaneous thing. You cannot have a wave at a single moment.
+
+A wave is a structured constraint on possible events across time. Wave-like behavior emerges only across *multiple* events:
+
+- Interference requires two paths
+- Frequency requires repeated cycles
+- Wavelength requires spatial extent
+
+At any single $(x, y, z, t)$, a particle either exists or does not exist. "Superposition" describes the $\psi$-constraint over multiple *potential* events, not a property of a single moment.
+
+::: {.callout-note}
+## What $\psi$ Is and Is Not
+- $\psi$ is **not** a physical wave in space
+- $\psi$ is **not** knowledge in a mind
+- $\psi$ **is** a real constraint on which events can follow which
+- $\psi$ exists between moments, governing transitions
+:::
+
+## Minimal Causal Structure
+
+Two events are **connectable** if and only if:
+
+$$\text{Connectable}(E_1, E_2) \iff g(E_1, E_2) \land \psi(E_1 \to E_2) > 0$$
+
+This requires:
+
+1. **Geometric admissibility** [$g$]: The spacetime relation between $E_1$ and $E_2$ is allowed (they are within each other's light cones)
+
+2. **Modal admissibility** [$\psi$]: The transition from $E_1$ to $E_2$ has nonzero amplitude
+
+Causality means: an event restricts the events that may follow. No observer is required. No meaning is required. No consciousness is required.
+
+The constraint structure exists whether or not any system is complex enough to model it.
+
+## Implications for Physics
+
+### Locality
+
+If events are the ontic primitives and constraints are local (neighbors only), then:
+
+- No action at a distance
+- All influences propagate through adjacent events
+- Speed of propagation is bounded by $g$
+
+### Conservation
+
+If $\psi$ is translation-invariant (same constraints everywhere), then conserved quantities emerge automatically.
+
+### Determinism
+
+Given the initial configuration of events and the constraints $g$ and $\psi$, the future is determined. There is no ontological randomness; apparent randomness is sensitivity to unresolved structure.
+
+## The Status of Laws
+
+Are $g$ and $\psi$ "things"? Are they part of the furniture of the universe?
+
+FTD's position: Constraints are **real but not substantial**.
+
+| Entity | Substantial? | Real? |
+|--------|--------------|-------|
+| Events | Yes | Yes |
+| Geometry $g$ | No | Yes |
+| Modality $\psi$ | No | Yes |
+
+Constraints are not "made of" anything. They are not located anywhere. But they have genuine effects on what can occur. This is the sense in which "constraints are real."
+
+## Connection to FTD Dynamics
+
+The xyztg$\psi$ framework maps directly onto FTD:
+
+| xyztg$\psi$ | FTD Implementation |
+|-------------|-------------------|
+| Event $xyzt$ | Voxel state $s(v,t) \in \{-1, 0, +1\}$ |
+| Geometry $g$ | Lattice structure + Moore neighborhood |
+| Modality $\psi$ | Flux field $\mathbf{J}$ + update rules |
+
+The flux field $\mathbf{J}$ encodes the modal constraint: where flux is high, manifestation is likely. The update rules encode both geometric constraint (locality) and modal constraint (threshold, conservation).
+
+## Concepts
+
+- **event-ontology**: Events as the fundamental ontic units
+- **geometric-constraint**: Metric and causal structure as real but non-substantial
+- **modal-constraint**: Laws governing transitions between events
+- **space-emergence**: d ≥ 3 as theorem from consistent epistemic extension
+- **contact-structure**: 26-connected Moore neighborhood as maximal local connectivity
+- **xyztgψ(Δt)**: Complete description of a single entity at one tick
+- **Ω(t)**: Complete configuration of an observer at one tick
+- **H(Ω,t)**: Horizon, what an observer can perceive
+- **Global(t)**: Everything at one tick
+- **𝕌**: The universe across all time
+- **time-emergence**: Time as ordering relation, not primitive container
+- **spatial-priority**: Space can exist without time; time requires space
+- **six-senses**: Sight, sound, touch, taste, smell, cognition (horizon channels)
+
+## Transition
+
+With the ontological framework established, we now turn to the question of observation and measurement. What distinguishes a mere interaction from a measurement? What role (if any) does consciousness play? The next chapter addresses these questions through the lens of computational ontology.

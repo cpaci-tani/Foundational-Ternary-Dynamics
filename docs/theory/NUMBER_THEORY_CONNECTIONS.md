@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-This document establishes that the FTD framework integers {3, 4, 7, 13} are not arbitrary parameters but **structural necessities** arising from self-referential, bounded, consistent systems. These integers appear across disparate areas of pure mathematics—modular forms, algebraic number theory, combinatorial sequences, and elliptic curve theory—with a combined coincidence probability conservatively estimated at less than 10⁻⁶.
+This document establishes that the FTD framework integers {3, 4, 7, 13} are not arbitrary parameters but **structural necessities** arising from self-referential, bounded, consistent systems. These integers appear across disparate areas of pure mathematics—modular forms, algebraic number theory, combinatorial sequences, and elliptic curve theory. While the collective pattern is striking, correlations between appearances reduce naive independence estimates; a rigorous statistical analysis remains an open task.
 
 **Key Achievement:** The j-invariant j = 1728 can now be **derived** as (N_base × N_c)³ rather than being an independent selection principle, reducing the framework's axiom count.
 

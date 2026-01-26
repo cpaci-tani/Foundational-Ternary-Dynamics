@@ -12,9 +12,11 @@ build/
 # Quarto build artifacts
 manuscript/.quarto/
 manuscript/*_files/
+manuscript/_book/
+manuscript/_webbook/
 *.quarto_ipynb
 
-.claude/
+.claude
 
 # LaTeX auxiliary files
 *.aux
@@ -31,6 +33,8 @@ manuscript/*_files/
 medium_posts/
 visualizer/
 media/
+special_projects/
+*.pdf
 
 # IDE
 .vscode/
@@ -54,6 +58,13 @@ __init__.py
 
 # Jupyter
 .ipynb_checkpoints/
+Untitled*.ipynb
+
+# Node.js
+node_modules/
+
+# Pytest cache
+.pytest_cache/
 
 # Environment
 .env

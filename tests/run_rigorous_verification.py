@@ -269,13 +269,14 @@ DEGREES OF FREEDOM
 
 PROBABILITY ANALYSIS
 --------------------
-  If each prediction had 1% chance of matching by luck:
-  P(all match) ~ (0.01)^15 ~ 10^-30
+  NOTE: Naive probability calculations assume independence.
+  However, all predictions derive from the same 4 integers {3,4,7,13}.
+  Correlations between predictions reduce these estimates.
 
-  Even with 100 formula attempts per prediction:
-  P(all match) ~ 10^-15
+  A rigorous statistical analysis accounting for these correlations
+  remains an open task.
 
-  VERDICT: STATISTICALLY SIGNIFICANT
+  VERDICT: COLLECTIVELY SIGNIFICANT (correlations noted)
 
 FALSIFICATION CRITERIA
 ----------------------

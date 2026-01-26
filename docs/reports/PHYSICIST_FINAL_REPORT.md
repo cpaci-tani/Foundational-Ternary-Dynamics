@@ -162,10 +162,9 @@ Consciousness emerges when system complexity exceeds G*^32 / k_c ~ 8.8 x 10^14
 
 For the 5 best predictions (each with <0.2% error):
 - Individual probability of chance match: ~0.002
-- Combined probability (if independent): ~10^-15
-- Adjusting for look-elsewhere effect (~1500 trials): ~10^-8
+- **Note**: Naive probability calculations assume independence, but all predictions derive from the same 4 integers. Correlations between predictions reduce these estimates.
 
-**Conclusion**: These relationships are **extremely unlikely to be pure coincidence**.
+**Conclusion**: The collective pattern is striking, though a rigorous statistical analysis accounting for correlations remains an open task.
 
 ### Alternative Explanation Test
 
@@ -208,7 +207,7 @@ When we tried matching alpha_s with other mathematical constants:
 
 ### The Case FOR G* Being Fundamental
 
-1. Statistical improbability of coincidence (~10^-8)
+1. Collective significance (correlations reduce naive probability estimates)
 2. Multiple independent quantities all connect to G*
 3. The proton radius prediction is essentially exact
 4. G* comes from deep mathematics (elliptic curves)

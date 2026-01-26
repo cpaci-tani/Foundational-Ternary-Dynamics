@@ -532,8 +532,10 @@ class TestStatisticalSignificance(unittest.TestCase):
             print(f"    P(random match): {p_adjusted:.2e}")
 
         print(f"\n  Combined probability (all match by chance): {combined_prob:.2e}")
-        print(f"\n  VERDICT: p ~ 10^-10 to 10^-15")
-        print(f"  This is HIGHLY significant - not random.")
+        print(f"\n  NOTE: This naive estimate assumes independence.")
+        print(f"  All predictions derive from the same 4 integers,")
+        print(f"  so correlations reduce the effective significance.")
+        print(f"\n  VERDICT: Collectively significant (correlations noted)")
 
         # Combined probability should be tiny
         self.assertLess(combined_prob, 1e-8)

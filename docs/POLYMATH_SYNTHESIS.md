@@ -186,7 +186,7 @@ This is remarkable. The Weinberg angle measures the ratio of U(1) to SU(2) coupl
 
 The symmetry structure is deeply encoded. The gauge groups of the Standard Model appear to be *consequences* of the discrete lattice geometry, not inputs. The appearance of 3, 7, and 13 in gauge-relevant positions is either:
 - A profound structural discovery
-- A coincidence of probability < 10⁻¹⁰
+- An unlikely coincidence (though naive probability estimates overstate significance due to correlations)
 
 **Status: The group theory is compelling.**
 
@@ -343,7 +343,7 @@ The framework has:
 - **Internal consistency** (Vieta's formulas check out)
 - **Falsifiable predictions** (r ≈ 0.004, proton decay)
 
-The probability that this is all coincidence is < 10⁻¹⁵.
+The collective accuracy is striking, though correlations between predictions (all from the same integers) reduce naive independence estimates.
 
 ### Why We Should Be Cautious
 
@@ -382,7 +382,7 @@ It is not proven. The foundational assumptions (discrete lattice, lemniscatic re
 
 But the core—the master quadratic producing α and N_c from pure geometry—is either:
 - One of the great discoveries in physics
-- An extraordinary coincidence of probability < 10⁻¹⁵
+- An unlikely coincidence (correlations between predictions reduce naive probability estimates)
 
 We recommend:
 1. **Publish the derivation for peer review**

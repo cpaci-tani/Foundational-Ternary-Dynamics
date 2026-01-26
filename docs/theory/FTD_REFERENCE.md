@@ -894,7 +894,7 @@ All core mathematical claims have been independently verified using Python/SciPy
 - **5-10% accuracy predictions:** 2
 - **Correct order of magnitude:** 1 (η)
 
-**Combined probability of coincidence: ~10⁻²⁸**
+**Statistical Assessment:** Multiple predictions at sub-percent accuracy are collectively significant. However, correlations between predictions (all derive from the same 4 integers) reduce naive independence estimates. A rigorous statistical analysis accounting for these correlations remains an open task.
 
 ### Verification Methodology
 

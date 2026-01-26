@@ -1,13 +1,23 @@
 """
 FTD Particle Physics Model
 
-Derives all particle masses from the framework integers {3, 4, 7, 13}.
+Computes particle masses from the framework integers {3, 4, 7, 13}.
 
-Key formulas:
-- Lepton masses: Pure integer arithmetic ratios
-- Quark masses: Framework integer combinations
-- Boson masses: Alpha-dependent expressions
-- Hadron masses: Composite formulas including triangular numbers
+EPISTEMIC STATUS LEGEND:
+  [DERIVED]    - Pure integer arithmetic, no fitting
+  [SELECTION]  - Formula chosen from constraints, not uniquely proven
+  [FITTED]     - Tuned to match experimental values
+  [CONJECTURE] - Proposed correspondence, not rigorous derivation
+
+Key formulas and their epistemic status:
+- Lepton masses: [DERIVED] Pure integer arithmetic ratios
+- Quark masses: [SELECTION] Framework integer combinations (formulas not uniquely determined)
+- Boson masses: [SELECTION] Alpha-dependent expressions
+- Hadron masses: [SELECTION] Composite formulas including triangular numbers
+
+IMPORTANT: "Derives" in this file means "computes from framework integers within
+the model's assumptions." It does NOT mean "proven from first principles" in the
+physics sense. See CLAUDE.md Chapter 21 (Assumption Ledger) for full epistemic status.
 """
 
 import numpy as np
@@ -93,7 +103,9 @@ class ParticlePhysicsModel:
         m_e = self.exp.electron
 
         # =====================================================================
-        # LEPTON MASS RATIOS (Pure Integer Arithmetic)
+        # LEPTON MASS RATIOS [DERIVED] (Pure Integer Arithmetic)
+        # These ratios emerge from integer combinations with no fitting.
+        # The FORMULAS are [SELECTION] - other combinations could exist.
         # =====================================================================
 
         # Muon: m_mu/m_e = 3 * b_3 * (b_3 + N_c) - N_c = 3*7*10 - 3 = 207
@@ -107,7 +119,10 @@ class ParticlePhysicsModel:
         self.m_tau_derived = self.tau_ratio * m_e
 
         # =====================================================================
-        # QUARK MASS RATIOS
+        # QUARK MASS RATIOS [SELECTION + FITTED]
+        # Quark masses have larger experimental uncertainties.
+        # These formulas are [SELECTION] - chosen to approximately match experiment.
+        # They are NOT uniquely determined by the framework integers.
         # =====================================================================
 
         # Up: m_u/m_e = N_base + sin^2(theta_W) = 4 + 3/13 = 4.231
@@ -128,7 +143,9 @@ class ParticlePhysicsModel:
         self.m_charm_derived = self.charm_ratio * m_e / 1000  # Convert to GeV
 
         # =====================================================================
-        # HADRON MASSES
+        # HADRON MASSES [SELECTION]
+        # Hadron masses use triangular numbers and 1/α factors.
+        # Formula structure is [SELECTION] - chosen for numerical match.
         # =====================================================================
 
         # Proton: m_p/m_e = N_eff/alpha + T(b_3 + N_c) = 13/alpha + T(10)
@@ -143,7 +160,9 @@ class ParticlePhysicsModel:
         self.m_np_diff_derived = self.np_diff_ratio * m_e
 
         # =====================================================================
-        # BOSON MASSES
+        # BOSON MASSES [SELECTION]
+        # Boson masses depend on α and framework integers.
+        # Formula structure is [SELECTION] - chosen for numerical agreement.
         # =====================================================================
 
         # W boson: m_W/m_e = (b_3*(b_3+N_c) - N_c) / (8*alpha^2) = 67 / (8*alpha^2)

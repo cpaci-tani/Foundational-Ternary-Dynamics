@@ -515,7 +515,8 @@ All core mathematical claims have been independently verified using Python/SciPy
 - **Vieta relations:** Exact algebraic consistency ✓
 
 #### Statistical Significance
-- Combined probability of coincidence: ~10⁻²⁸
+- Multiple predictions at sub-percent accuracy are collectively significant
+- Correlations between predictions reduce naive independence estimates
 - 12 predictions at sub-percent accuracy
 - All verifiable claims confirmed
 

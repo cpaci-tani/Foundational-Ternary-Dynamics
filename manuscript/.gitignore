@@ -1,2 +1,22 @@
+# Quarto build artifacts
 /.quarto/
+/_book/
+/_freeze/
 **/*.quarto_ipynb
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.blg
+*.bbl
+*Notes.bib
+
+# Python
+__pycache__/
+*.pyc
+__init__.py

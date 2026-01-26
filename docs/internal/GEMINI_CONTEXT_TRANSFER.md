@@ -195,9 +195,10 @@ All emerge from the action principle:
 
 ## Gauge Symmetry
 
-- **U(1)** emerges from Gauss constraint (2 transverse modes, longitudinal constrained)
-- **SU(3)** emerges from 3 spatial dimensions (color = flux axis alignment)
-- Full Standard Model gauge group derived: U(1) × SU(2) × SU(3)
+- **U(1)** argued from Gauss constraint (2 transverse modes, longitudinal constrained) [CONJECTURE—missing Ward identities, anomaly analysis]
+- **SU(2)** conjectured from ternary state structure [CONJECTURE—NOT rigorously derived]
+- **SU(3)** geometrically motivated from 3 spatial dimensions (color = flux axis alignment) [CONJECTURE—missing gauge-covariant derivatives, asymptotic freedom]
+- SM gauge group U(1) × SU(2) × SU(3): **geometrically motivated, NOT rigorously derived**
 
 ---
 

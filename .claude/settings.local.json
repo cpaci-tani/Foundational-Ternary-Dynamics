@@ -16,7 +16,14 @@
       "Bash(for:*)",
       "Bash(do sed -i 's/TRD/FTD/g' \"$f\")",
       "Bash(done)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(pip install:*)",
+      "Bash(Get-ChildItem -Name \"C:\\\\Users\\\\cpaci\\\\Desktop\\\\pbr_pedagogy\\\\dissemination\\\\Foundational-Ternary-Dynamics\\\\manuscript\\\\src\\\\chapters\")",
+      "Bash(Sort-Object)",
+      "Bash(if not exist \"C:\\\\Users\\\\cpaci\\\\Desktop\\\\pbr_pedagogy\\\\dissemination\\\\Foundational-Ternary-Dynamics\\\\evaluation\\\\findings\" mkdir \"C:\\\\Users\\\\cpaci\\\\Desktop\\\\pbr_pedagogy\\\\dissemination\\\\Foundational-Ternary-Dynamics\\\\evaluation\\\\findings\")",
+      "Bash(git -C \"C:\\\\Users\\\\cpaci\\\\Desktop\\\\pbr_pedagogy\\\\dissemination\\\\Foundational-Ternary-Dynamics\" ls-files:*)",
+      "Bash(xargs:*)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }

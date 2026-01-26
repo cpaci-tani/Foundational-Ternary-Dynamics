@@ -1,0 +1,203 @@
+# On First Principles {#sec-first-principles}
+
+*"Before physics, there must be honesty about what we claim to know."*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter establishes the epistemic framework for everything that follows. Building on the logical chain established in @sec-formal-logic (from distinction → ternary valuation → space → physics), we now specify FTD's first principles and their epistemic status.
+
+**Key insight:** The ternary state space is not an arbitrary assumption: it is a *theorem* of EPL-ST. What remains as genuine axioms are the structural choices that instantiate this necessary framework.
+:::
+
+## What Is a Mathematical Declaration?
+
+This book attempts something unusual: a **mathematical declaration of the universe**. Not a simulation of known physics, but a derivation of physics-like behavior from minimal axioms.
+
+A mathematical declaration differs from:
+
+- **A theory** (which fits parameters to data)
+- **A model** (which approximates known phenomena)
+- **A simulation** (which reproduces observed behavior)
+
+A declaration says: *Given these axioms, this structure follows necessarily.*
+
+### The Standard of Proof
+
+| Claim Type | Standard | Example |
+|------------|----------|---------|
+| **Axiom** | Stated, not proven | "Space is discrete" |
+| **Theorem** | Logically derived from axioms | "Causality is local" |
+| **Emergence** | Demonstrated in simulation | "Stable triads form" |
+| **Conjecture** | Proposed, not proven | "Bell violations arise from sLoop" |
+| **Interpretation** | One reading among many | "State ±1 corresponds to matter/antimatter" |
+
+We strive to clearly label every claim in this book by type.
+
+## The Primacy of Distinction
+
+Before we list axioms, we acknowledge the foundation established in @sec-formal-logic:
+
+::: {.callout-important}
+## The Grounding Chain
+**Distinction** (primitive) → **Ternary Valuation** (theorem) → **Space** (theorem) → **FTD Axioms** (structural choices)
+
+The ternary states {−1, 0, +1} and the requirement for 3D space are *derived* from the logic of distinguishability. What remains to be specified are the *structural choices* that instantiate this necessary framework.
+:::
+
+### What is Derived vs What is Chosen
+
+| Feature | Status | Justification |
+|---------|--------|---------------|
+| Ternary states {−1, 0, +1} | **[T] Theorem** | Necessary from EPL-ST |
+| 3D space | **[T] Theorem** | Minimal stable embedding |
+| Discrete lattice | **[A] Axiom** | Structural choice (simplest discrete 3D) |
+| 26-neighbor connectivity | **[A] Axiom** | Maximal local contact |
+| Discrete ticks | **[A] Axiom** | Epistemic time instantiation |
+
+## The Hierarchy of Justification
+
+### Level 0: Theorems from Distinction (NEW)
+
+These follow from EPL-ST and are *not* axioms within FTD:
+
+- **Ternary valuation is necessary** (proved in @sec-formal-logic)
+- **d ≥ 3 dimensions required for stable embedding** (proved in @sec-formal-logic)
+- **Epistemic time is discrete and irreversible** (from definition of distinction)
+
+### Level 1: Definitions
+
+Definitions create language. They cannot be true or false: only useful or confusing.
+
+Examples:
+- "A voxel is a unit cell of the lattice"
+- "State 0 is called 'void'" (= undistinguished substrate)
+- "State ±1 is called 'manifestation'" (= distinguished)
+- "Flux is a 3D vector field"
+
+### Level 2: Axioms (Structural Choices)
+
+Axioms are structural choices that instantiate the derived framework. Given that ternary states and 3D are necessary, we choose:
+
+1. **Space is a discrete cubic 3D lattice** (simplest regular 3D tiling)
+2. **Time advances in discrete ticks** (instantiates epistemic time)
+3. ~~Each cell has state ∈ {−1, 0, +1}~~ **(Now a theorem, not axiom)**
+4. **Updates are local (26-neighbor Moore neighborhood)** (maximal contact structure)
+5. **Causality is preserved (max speed = 1 cell/tick)** (from locality)
+
+### Level 3: Theorems
+
+Theorems follow logically from axioms. If the axioms are true, theorems must be true.
+
+Examples:
+- "No information travels faster than c" (from Axiom 5)
+- "Conservation laws hold in closed systems" (from deterministic local updates)
+
+### Level 4: Emergent Properties
+
+Emergence is trickier. We say a property is emergent if:
+1. It is not directly coded into the rules
+2. It arises as a consequence of the dynamics
+3. It can be demonstrated (usually via simulation)
+
+Examples:
+- Stable structures (triads) from geometry + forces
+- Interference patterns from flux superposition
+
+### Level 5: Conjectures
+
+Conjectures are proposals we believe may be true but have not proven.
+
+Examples:
+- The sLoop mechanism produces Bell violations
+- Lorentz invariance emerges at large scales
+- The Lemniscate-Alpha curve has physical significance
+
+## The Distinction: Emergent vs Imposed
+
+This is perhaps the most important distinction in the entire book.
+
+### Emergent (Symptomatic)
+
+Features that arise as **symptoms** of the dynamics:
+
+| Feature | How It Emerges |
+|---------|----------------|
+| Bound structures | Geometry + stability under decay |
+| Interference patterns | Vector addition of flux |
+| Conservation laws | Closed system + deterministic update |
+| 2 photon polarizations | 3 components − 1 constraint |
+
+### Imposed (Premeditated)
+
+Features explicitly built into the rules:
+
+| Feature | Why Imposed |
+|---------|-------------|
+| Force functional forms | To target known physics |
+| Parameter values (KB, α) | Phenomenological matching |
+| 26-neighbor connectivity | Design choice |
+
+### The Honest Position
+
+We do not claim to have derived F = kq₁q₂/r² from pure geometry. We claim that **given** force-like rules, FTD produces physics-like behavior.
+
+The exception: The fine structure constant α IS derived from geometry (see @sec-lemniscate-alpha). This represents a genuine reduction of an imposed parameter to an emergent one.
+
+## What This Book Claims
+
+::: {.callout-important}
+## The Central Claims
+
+1. **The ternary ontology is derived**, not assumed (from EPL-ST)
+2. **From structural axioms**, we construct a consistent dynamics
+3. **Some features emerge** that were not directly coded
+4. **The fine structure constant** can be derived geometrically
+5. **Bell violations may arise** from self-referential observation (conjecture)
+6. **Physics-like behavior occurs** at macroscopic scales
+7. **Science itself is grounded** in the chain from distinction to physics
+:::
+
+## What This Book Does NOT Claim
+
+::: {.callout-warning}
+## What We Do Not Claim
+
+1. We have NOT solved physics
+2. We have NOT proven all Standard Model parameters follow from FTD
+3. We have NOT demonstrated that our universe IS a FTD system
+4. We have NOT resolved all open questions in foundations
+:::
+
+## Reading This Book
+
+### For the Skeptic
+
+Every claim is labeled. Check the derivations. Run the simulations. Find the gaps.
+
+### For the Philosopher
+
+The ontology is explicit. The emergence/imposed distinction is maintained. The epistemic status of each claim is stated.
+
+### For the Physicist
+
+The mathematics is self-contained. The predictions are (in principle) testable. The limitations are acknowledged.
+
+### For the Curious
+
+You do not need to believe anything. Watch what happens when simple rules run. See complexity emerge from simplicity.
+
+## Concepts
+
+- **distinction**: The primitive act of marking difference (EPL-ST)
+- **valuation**: Assigning epistemic status {−1, 0, +1} to propositions
+- **axiom**: Structural choice, not proven within system (but may follow from deeper logic)
+- **theorem**: Logical consequence of axioms or EPL-ST
+- **emergence**: Property arising from but not coded into rules
+- **conjecture**: Unproven proposal
+- **epistemic-status**: Classification of claim type
+- **void**: Undistinguished substrate (s = 0)
+- **manifestation**: Distinguished state (s = ±1)
+
+## Transition
+
+With the epistemic chain established (distinction → ternary → space → axioms), we turn to the mathematical tools needed to understand FTD: discrete differential geometry, lattice theory, and the formalism of cellular automata.

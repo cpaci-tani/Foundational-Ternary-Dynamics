@@ -1,15 +1,30 @@
 """
 FTD Mixing Matrix Model
 
-Derives CKM and PMNS mixing matrices from framework integers {3, 4, 7, 13}.
+Computes CKM and PMNS mixing matrices from framework integers {3, 4, 7, 13}.
 
-PMNS (Neutrino) Mixing:
-- sin²θ₁₂ = Nc/(Nc+b₃) = 3/10 = 0.300
-- sin²θ₂₃ = (Neff+Nc)/(2Neff+Nc) = 16/29 = 0.5517
-- sin²θ₁₃ = 1/(Nbase×Neff) = 1/52 = 0.0192
+EPISTEMIC STATUS LEGEND:
+  [DERIVED]    - Pure integer arithmetic, no fitting
+  [SELECTION]  - Formula chosen from constraints, not uniquely proven
+  [NUMEROLOGY] - Pattern matching, no derivation from dynamics
+  [CONJECTURE] - Proposed correspondence, not rigorous derivation
 
-CP Phase:
-- δ = arctan(b₃/Nc) = arctan(7/3) = 66.80°
+PMNS (Neutrino) Mixing [SELECTION]:
+- sin²θ₁₂ = Nc/(Nc+b₃) = 3/10 = 0.300  [~1% error - good match]
+- sin²θ₂₃ = (Neff+Nc)/(2Neff+Nc) = 16/29 = 0.5517  [~4% error]
+- sin²θ₁₃ = 1/(Nbase×Neff) = 1/52 = 0.0192  [~13% error - poor match]
+
+CP Phase [SELECTION]:
+- δ = arctan(b₃/Nc) = arctan(7/3) = 66.80°  [~2% error vs CKM experimental]
+
+CKM Matrix [NUMEROLOGY]:
+- CKM angle formulas have larger errors (5-20%)
+- These are pattern matches, NOT derived from gauge dynamics
+- See CLAUDE.md §22.4 for epistemic status
+
+IMPORTANT: "Derives" in this file means "computes from integer fractions."
+It does NOT mean these formulas follow uniquely from FTD dynamics.
+The formulas are [SELECTION] - other fractions could match experiment.
 """
 
 import numpy as np

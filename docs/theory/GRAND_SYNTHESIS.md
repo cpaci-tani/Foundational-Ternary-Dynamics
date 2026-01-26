@@ -211,9 +211,9 @@ If correct, this suggests:
 
 ### Statistical Significance
 
-- 5 independent quantities match to < 0.3% error
-- Probability of coincidence: < 10^-8 (after look-elsewhere correction)
-- This is **highly statistically significant**
+- 5 quantities match to < 0.3% error
+- Collectively significant, though correlations between predictions (all from same integers) reduce naive independence estimates
+- A rigorous statistical analysis accounting for these correlations remains an open task
 
 ### Theoretical Completeness
 

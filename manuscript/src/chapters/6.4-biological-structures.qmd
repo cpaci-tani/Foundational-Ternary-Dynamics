@@ -1,0 +1,193 @@
+# Biological Structures {#sec-biological-structures}
+
+::: {.callout-warning}
+## Pedagogical Context [NOT DERIVED FROM FTD]
+This chapter provides **standard biochemistry/biophysics context**. While FTD proposes a mechanism for biological structure (see callout below), **no quantitative predictions** (protein folding energies, DNA stability) are derived from FTD axioms at this scale. The mechanisms described are [CONJECTURE].
+:::
+
+*"Life's building blocks"*
+
+::: {.callout-note}
+## Key Revelation
+Life builds with the same atoms as rocks and metals, but organizes them into self-replicating, energy-processing, information-storing structures. The architecture of life is molecular.
+:::
+
+::: {.callout-note}
+## How FTD Proposes Biological Structure [CONJECTURE]
+Biological organization is *proposed* to emerge from the same flux dynamics governing all matter:
+
+- **Molecular stability** = flux configurations that minimize local energy (hydrogen bonds, van der Waals)
+- **Self-assembly** = entropy-driven flux redistribution toward lower free energy states
+- **Information storage** = DNA base pairing as specific flux-mediated hydrogen bond patterns
+- **Metabolism** = controlled flux transfer between molecular configurations
+
+Life is organized matter: flux configurations that maintain and replicate themselves against entropic dissipation.
+:::
+
+## The Cell Membrane
+
+The boundary between life and non-life.
+
+### Lipid Bilayer
+
+![The lipid bilayer: phospholipids self-assemble with hydrophilic heads facing water and hydrophobic tails forming the membrane core.](../../media/images/fig-lipid-bilayer.png){#fig-lipid-bilayer}
+
+Phospholipids spontaneously form this structure because their hydrophilic (water-loving) heads face the aqueous environment while their hydrophobic (water-fearing) tails cluster together in the membrane interior.
+
+### Properties
+- Selectively permeable
+- Fluid (molecules move laterally)
+- Self-healing
+- 5-10 nm thick
+
+### Membrane Proteins
+
+Embedded in the bilayer:
+
+| Type | Function |
+|------|----------|
+| Channels | Allow specific ions through |
+| Transporters | Move molecules against gradient |
+| Receptors | Detect signals |
+| Enzymes | Catalyze reactions |
+
+## Cytoskeleton
+
+The internal scaffold of cells.
+
+### Microfilaments (Actin)
+
+The thinnest cytoskeletal elements (7 nm diameter), consisting of two twisted strands of actin protein.
+
+**Functions**: Cell shape maintenance, cell movement, muscle contraction
+
+### Intermediate Filaments
+
+Medium-sized filaments (10 nm diameter) with a rope-like structure.
+
+**Functions**: Mechanical strength, nuclear envelope support, tissue integrity
+
+### Microtubules
+
+The largest cytoskeletal elements (25 nm diameter), hollow tubes made of tubulin protein.
+
+**Functions**: Intracellular transport highways, cell division (mitotic spindle), cilia and flagella structure
+
+## DNA Structure
+
+The information molecule.
+
+### Double Helix
+
+![The DNA double helix: two antiparallel strands connected by base pairs (A-T with 2 hydrogen bonds, G-C with 3 hydrogen bonds).](../../media/images/fig-dna-helix.png){#fig-dna-helix}
+
+The structure consists of:
+- **Sugar-phosphate backbone**: Alternating deoxyribose sugars and phosphate groups
+- **Base pairs**: Adenine pairs with Thymine (2 H-bonds), Guanine pairs with Cytosine (3 H-bonds)
+- **Antiparallel strands**: One runs 5'→3', the other 3'→5'
+
+### Key Properties
+- Antiparallel strands (5'→3', 3'→5')
+- 10.5 base pairs per turn
+- Major and minor grooves
+- 2 nm diameter
+
+## Protein Structure
+
+### Levels
+
+| Level | Description | Stabilized by |
+|-------|-------------|---------------|
+| Primary | Amino acid sequence | Covalent bonds |
+| Secondary | α-helix, β-sheet | Hydrogen bonds |
+| Tertiary | 3D fold | All forces |
+| Quaternary | Multiple chains | All forces |
+
+### α-Helix
+
+![The α-helix: a coiled structure with 3.6 amino acid residues per turn, stabilized by hydrogen bonds parallel to the helix axis.](../../media/images/fig-alpha-helix.png){#fig-alpha-helix}
+
+The backbone spirals upward with hydrogen bonds connecting every fourth residue, creating a stable rod-like structure.
+
+### β-Sheet
+
+![The β-sheet: extended strands connected side-by-side by hydrogen bonds, forming a pleated sheet structure.](../../media/images/fig-beta-sheet.png){#fig-beta-sheet}
+
+Strands can run in the same direction (parallel) or opposite directions (antiparallel), connected by hydrogen bonds between backbone atoms.
+
+## Organelles
+
+Compartments within cells.
+
+| Organelle | Function | Key Feature |
+|-----------|----------|-------------|
+| Nucleus | DNA storage | Double membrane |
+| Mitochondria | ATP production | Own DNA |
+| Ribosome | Protein synthesis | RNA + protein |
+| ER | Protein processing | Connected to nucleus |
+| Golgi | Packaging | Stacked membranes |
+| Lysosome | Digestion | Acidic interior |
+| Chloroplast | Photosynthesis | Own DNA (plants) |
+
+## Self-Assembly
+
+Biological structures build themselves.
+
+### Principles
+1. **Thermodynamic favorability**: Lower free energy
+2. **Specific interactions**: Lock and key
+3. **Hierarchical**: Small units → larger structures
+4. **Dynamic**: Constantly remodeling
+
+### Examples
+- Lipids → membranes
+- Amino acids → proteins → complexes
+- Nucleotides → DNA → chromosomes
+
+## In Simulation
+
+```python
+class Membrane:
+    def __init__(self, phospholipids):
+        self.lipids = phospholipids
+        self.proteins = []
+
+    def add_protein(self, protein):
+        self.proteins.append(protein)
+
+    def permeability(self, molecule):
+        if molecule.is_small and molecule.is_nonpolar:
+            return HIGH  # Crosses easily
+        elif molecule in self.channel_substrates:
+            return MEDIUM  # Channel-mediated
+        else:
+            return LOW  # Blocked
+
+class Protein:
+    def __init__(self, sequence):
+        self.primary = sequence
+        self.secondary = predict_secondary(sequence)
+        self.tertiary = fold(self.secondary)
+```
+
+## Experiments
+
+### Membrane Assembly
+Add phospholipids to water. Watch vesicles form spontaneously.
+
+### Protein Folding
+Create amino acid chain. Watch it fold into functional shape.
+
+### Cell Building
+Assemble organelles within membrane. Create minimal cell.
+
+## Concepts
+
+- **lipid-bilayer**: Self-assembled membrane structure
+- **cytoskeleton**: Internal cell scaffold
+- **protein-folding**: Sequence → structure → function
+- **self-assembly**: Spontaneous organization
+
+## Transition
+
+We have explored matter at molecular scales. Now we zoom out dramatically: to planets, where gravity dominates and geology shapes worlds.

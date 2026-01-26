@@ -377,7 +377,7 @@ The integers are now **derived from sequence theory**, not selected:
 
 ### Statistical Analysis
 
-Combined coincidence probability: **p < 10⁻⁶** (conservative estimate accounting for selection effects)
+**Statistical Note:** The collective pattern is striking, but correlations between appearances (all from the same 4 integers) reduce naive independence estimates. A rigorous statistical analysis accounting for these correlations remains an open task.
 
 ### Implications
 

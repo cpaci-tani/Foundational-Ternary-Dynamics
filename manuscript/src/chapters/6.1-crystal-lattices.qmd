@@ -1,0 +1,168 @@
+# Crystal Lattices {#sec-crystal-lattices}
+
+::: {.callout-warning}
+## Pedagogical Context [NOT DERIVED FROM FTD]
+This chapter provides **standard crystallography context**. While FTD proposes a mechanism for crystal structure (see callout below), **no quantitative predictions** (lattice constants, crystal energies) are derived from FTD axioms at this scale. The mechanisms described are [CONJECTURE].
+:::
+
+*"Order in the solid state"*
+
+::: {.callout-note}
+## Key Revelation
+Crystals are not random: they follow strict geometric rules. Only 14 fundamental lattice types exist in 3D, and all crystalline matter fits into these patterns.
+:::
+
+::: {.callout-note}
+## How FTD Proposes Crystal Structure [CONJECTURE]
+The 14 Bravais lattices are *proposed* to emerge from FTD's discrete substrate:
+
+- **The simulation lattice is cubic**, providing the natural coordinate system
+- **Atomic positions** are minima of the flux potential
+- **Lattice constants** emerge from equilibrium between attractive (strong/EM) and repulsive (Pauli) flux gradients
+- **Crystal symmetries** reflect the point group symmetries of the flux field
+
+The discrete nature of FTD space naturally admits discrete crystal structures.
+:::
+
+## Bravais Lattices
+
+There are exactly 14 ways to fill 3D space with a repeating pattern.
+
+### The Seven Crystal Systems
+
+| System | Lattices | Angles | Lengths | Example |
+|--------|----------|--------|---------|---------|
+| Cubic | 3 | 90°, 90°, 90° | a = b = c | NaCl, Fe, Cu |
+| Tetragonal | 2 | 90°, 90°, 90° | a = b ≠ c | Tin, TiO₂ |
+| Orthorhombic | 4 | 90°, 90°, 90° | a ≠ b ≠ c | Sulfur |
+| Hexagonal | 1 | 90°, 90°, 120° | a = b ≠ c | Graphite, Zn |
+| Trigonal | 1 | α = β = γ ≠ 90° | a = b = c | Quartz |
+| Monoclinic | 2 | 90°, β, 90° | a ≠ b ≠ c | Gypsum |
+| Triclinic | 1 | α ≠ β ≠ γ | a ≠ b ≠ c | Most organics |
+
+## Cubic Lattices
+
+The most common metallic structures.
+
+### Simple Cubic (SC)
+
+![Simple cubic lattice: atoms at corners only, coordination number 6, packing efficiency 52%.](../../media/images/fig-simple-cubic.png){#fig-simple-cubic}
+
+- **Coordination**: 6 nearest neighbors
+- **Packing efficiency**: 52%
+- **Example**: Polonium
+
+### Body-Centered Cubic (BCC)
+
+![Body-centered cubic lattice: atoms at corners plus one atom in the center of the cube.](../../media/images/fig-bcc.png){#fig-bcc}
+
+- **Coordination**: 8 nearest neighbors
+- **Packing efficiency**: 68%
+- **Examples**: Fe, W, Cr, Na
+
+### Face-Centered Cubic (FCC)
+
+![Face-centered cubic lattice: atoms at corners plus atoms at the center of each face.](../../media/images/fig-fcc.png){#fig-fcc}
+
+- **Coordination**: 12 nearest neighbors
+- **Packing efficiency**: 74%
+- **Examples**: Cu, Al, Au, Ag
+
+## Hexagonal Close-Packed (HCP)
+
+Alternative to FCC with same packing efficiency.
+
+![Hexagonal close-packed lattice: alternating layers in ABABAB stacking pattern.](../../media/images/fig-hcp.png){#fig-hcp}
+
+- **Stacking sequence**: ABABAB... (2 layers repeat)
+- **Coordination**: 12 nearest neighbors
+- **Packing efficiency**: 74%
+- **Examples**: Mg, Zn, Ti
+
+### FCC vs HCP
+
+Both are close-packed (74%) but different stacking:
+- FCC: ABCABC... (3 layers repeat)
+- HCP: ABABAB... (2 layers repeat)
+
+## Diamond Cubic
+
+![Diamond cubic lattice: each atom tetrahedrally bonded to four neighbors.](../../media/images/fig-diamond-cubic.png){#fig-diamond-cubic}
+
+Each atom bonds to four others in a tetrahedral arrangement, creating an open structure with remarkable properties:
+
+- **Coordination**: 4 nearest neighbors
+- **Packing efficiency**: 34% (very open structure)
+- **Examples**: C (diamond), Si, Ge
+
+## Defects
+
+Real crystals have imperfections.
+
+### Point Defects
+
+| Type | Description | Effect |
+|------|-------------|--------|
+| Vacancy | Missing atom | Diffusion |
+| Interstitial | Extra atom | Strengthening |
+| Substitutional | Wrong atom | Alloying |
+
+### Line Defects (Dislocations)
+
+- **Edge dislocation**: Extra half-plane of atoms
+- **Screw dislocation**: Helical distortion
+
+Dislocations allow plastic deformation.
+
+### Planar Defects
+
+- **Grain boundaries**: Between crystal regions
+- **Stacking faults**: ABCABABC instead of ABCABC
+- **Twin boundaries**: Mirror-image regions
+
+## Miller Indices
+
+Notation for crystal planes and directions.
+
+### Planes
+$$(hkl)$$
+
+Example: (100) is perpendicular to x-axis.
+
+### Directions
+$$[uvw]$$
+
+Example: [111] is body diagonal.
+
+## X-Ray Diffraction
+
+How we determine crystal structures.
+
+### Bragg's Law
+$$
+n\lambda = 2d\sin\theta
+$$
+
+X-rays reflect off crystal planes. Constructive interference reveals plane spacing.
+
+## Experiments
+
+### Crystal Builder
+Stack atoms in different arrangements. See Bravais lattices form.
+
+### Defect Simulator
+Introduce vacancies, interstitials. Watch how properties change.
+
+### Diffraction Pattern
+Shine X-rays on crystal. See diffraction spots. Deduce structure.
+
+## Concepts
+
+- **bravais-lattice**: 14 fundamental 3D lattice types
+- **coordination-number**: Number of nearest neighbors
+- **packing-efficiency**: Fraction of space filled
+- **crystal-defect**: Imperfection in lattice
+
+## Transition
+
+Crystals provide structure. Now we explore how electrons move through materials: metals, insulators, and everything between.

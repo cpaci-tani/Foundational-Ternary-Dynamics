@@ -10,7 +10,7 @@
 
 > **Major Update (v4.0)**: This version incorporates novel theoretical foundations including an action principle from which update rules are derived, Hilbert space construction from the flux field, and established connections to standard physics (Maxwell, Schrödinger). See [THEORETICAL_FOUNDATIONS.md](THEORETICAL_FOUNDATIONS.md) for complete derivations.
 
-> **Major Update (v4.1)**: First observational confirmation achieved. Cloud-9 (Anand et al. 2025) validates FTD predictions about spherical dark matter halos. See [CLOUD9_OBSERVATIONAL_CONFIRMATION.md](CLOUD9_OBSERVATIONAL_CONFIRMATION.md). Full SM gauge group now derived: U(1) × SU(2) × SU(3). See [GAUGE_STRUCTURE.md](GAUGE_STRUCTURE.md) and [FORMAL_CATEGORICAL_FRAMEWORK.md](FORMAL_CATEGORICAL_FRAMEWORK.md).
+> **Major Update (v4.1)**: First observational confirmation achieved. Cloud-9 (Anand et al. 2025) validates FTD predictions about spherical dark matter halos. See [CLOUD9_OBSERVATIONAL_CONFIRMATION.md](CLOUD9_OBSERVATIONAL_CONFIRMATION.md). SM gauge group geometrically motivated: U(1) argued from Helmholtz decomposition; SU(2) × SU(3) **[CONJECTURE]** from ternary/spatial structure. See [GAUGE_STRUCTURE.md](GAUGE_STRUCTURE.md) and [FORMAL_CATEGORICAL_FRAMEWORK.md](FORMAL_CATEGORICAL_FRAMEWORK.md).
 
 > **Major Update (v5.0 - TOE COMPLETE)**: All 7 remaining theoretical gaps have been resolved:
 > - **C1 PROVEN**: x₊ = 1/α via Complex Multiplication uniqueness (no longer conjecture)
@@ -60,12 +60,12 @@ Key achievements within the framework (with several items representing proposed 
 - **Baryogenesis**: η ~ 10⁻¹⁰ from CP violation + Sakharov conditions
 - **Candidate predictions**: 17+ high-precision predictions — see Chapter 16 and [FTD_VERIFICATION_REPORT.md](FTD_VERIFICATION_REPORT.md)
 - **Observational confirmation**: Cloud-9 (spherical dark matter halo) confirms FTD predictions — see [CLOUD9_OBSERVATIONAL_CONFIRMATION.md](CLOUD9_OBSERVATIONAL_CONFIRMATION.md)
-- **Full SM gauge group**: U(1) × SU(2) × SU(3) derived from FTD axioms — see [GAUGE_STRUCTURE.md](GAUGE_STRUCTURE.md)
+- **SM gauge group**: U(1) argued (Helmholtz); SU(2) × SU(3) **[CONJECTURE]** (geometric motivation) — see [GAUGE_STRUCTURE.md](GAUGE_STRUCTURE.md)
 - **Categorical foundations**: sLoop structure rigorously formalized — see [FORMAL_CATEGORICAL_FRAMEWORK.md](FORMAL_CATEGORICAL_FRAMEWORK.md)
 - **D = 3 uniqueness**: Three dimensions uniquely selected by atomic stability + gauge requirements (no longer axiomatic)
-- **Consciousness**: [SPECULATIVE] Proposed extension using same G* geometry with complex roots y = 2.19 ± 1.30i — see [Consciousness_Quadratic_Derivation.md](Consciousness_Quadratic_Derivation.md)
+- **Consciousness**: [SPECULATIVE - NOT REQUIRED FOR PHYSICS] Exploratory extension using same G* geometry with complex roots y = 2.19 ± 1.30i. This is philosophical speculation, not physics. Core FTD results (α, masses, gauge structure) do not depend on this interpretation. — see [Consciousness_Quadratic_Derivation.md](Consciousness_Quadratic_Derivation.md)
 
-The framework demonstrates that U(1) gauge symmetry emerges naturally from the constraint structure (Gauss law), SU(2) from the ternary state structure, SU(3) from the three spatial dimensions, and Lorentz invariance emerges at scales >> lattice spacing. See [THEORETICAL_FOUNDATIONS.md](THEORETICAL_FOUNDATIONS.md) for complete derivations.
+The framework argues that U(1) gauge symmetry arises from the constraint structure (Gauss law via Helmholtz decomposition). SU(2) from the ternary state structure and SU(3) from the three spatial dimensions are **geometrically motivated conjectures**, not rigorous derivations. Lorentz invariance emerges approximately at scales >> lattice spacing. See [THEORETICAL_FOUNDATIONS.md](THEORETICAL_FOUNDATIONS.md) for available derivations and [§6.6] for gauge theory limitations.
 
 **Keywords:** discrete spacetime, cellular automata, emergent physics, computational ontology, universe simulation
 
@@ -544,12 +544,26 @@ if stress(v) > WEAK_THRESHOLD:
 ## 6.6 Limitations of Force Modeling
 
 - Forces are phenomenological (Yukawa, Coulomb forms borrowed from established physics)
-- ✅ U(1) gauge symmetry **emerges** from Gauss constraint (verified in simulation; see §14.3)
-- ⬜ SU(2) gauge symmetry not addressed
-- ✅ SU(3) color structure **simulated** via flux axis interpretation (see APPENDIX_A)
+- **[CONJECTURE]** U(1) gauge symmetry **argued** to emerge from Gauss constraint (see §14.3)
+  - Missing: Ward identity derivation, anomaly analysis
+- **[CONJECTURE]** SU(2) gauge symmetry conjectured from ternary structure (NOT rigorously derived)
+  - Missing: Gauge-covariant derivatives, W/Z boson fields, electroweak unification
+- **[CONJECTURE]** SU(3) color structure geometrically motivated (NOT rigorously derived)
+  - Missing: Gluon self-interactions, asymptotic freedom mechanism, confinement proof
 - Lorentz covariance is approximate (emerges at scales >> lattice spacing; see §14.2)
 - Renormalization is not addressed
 - Coupling constants are parameters, not predictions (but see G* observation in §7.4)
+
+> **Gauge Theory Scope Statement [CRITICAL]**
+>
+> FTD provides a geometric/kinematic argument for U(1) gauge structure via Helmholtz decomposition
+> (2 transverse modes matching photon polarizations). However:
+> - This is an **argument**, not a rigorous derivation
+> - No Ward identities or anomaly cancellation demonstrated
+> - SU(2) × SU(3) gauge structure is **conjectured**, not proven
+> - Non-Abelian gauge dynamics (gluon self-interactions) are absent
+>
+> These limitations do not invalidate the framework but define the current scope of gauge-related claims.
 
 ## 6.7 Emergent vs Imposed: The Honest Distinction
 
@@ -559,14 +573,14 @@ FTD distinguishes between features that are **symptomatic** (emergent) and those
 
 Features arising as **symptoms** of the dynamics, without being explicitly coded:
 
-| Feature | How It Emerges |
-|---------|----------------|
-| Bound structures (triads) | Geometry + stability under decay |
-| Interference patterns | Vector addition of flux (linear superposition) |
-| Gauge symmetry (U(1)) | Constraint structure (Gauss law) |
-| Stable "atoms" | Balance of attractive/repulsive flux gradients |
-| Hierarchical organization | Scale-free dynamics of aggregation |
-| Conservation laws | Closed system + deterministic update |
+| Feature | How It Emerges | Status |
+|---------|----------------|--------|
+| Bound structures (triads) | Geometry + stability under decay | [EMERGENT] |
+| Interference patterns | Vector addition of flux (linear superposition) | [EMERGENT] |
+| Gauge symmetry (U(1)) | Constraint structure (Gauss law) | **[CONJECTURE]** |
+| Stable "atoms" | Balance of attractive/repulsive flux gradients | [EMERGENT] |
+| Hierarchical organization | Scale-free dynamics of aggregation | [EMERGENT] |
+| Conservation laws | Closed system + deterministic update | [EMERGENT] |
 | 2 photon polarizations | 3 components - 1 constraint = 2 physical modes |
 
 These are genuine emergent properties—they were not designed in but follow from the rules.
@@ -1058,22 +1072,29 @@ The following aspects of known physics are **not** present in the current model:
 - Weak isospin and hypercharge are absent
 - Higgs mechanism is not implemented
 
-### Gravity — ✅ NOW DERIVED
+### Gravity — PARTIALLY ADDRESSED **[SELECTION + CONJECTURE]**
 
-> **UPDATE (v4.1)**: The gravity sector development is complete within the model. See [GRAVITY_SECTOR.md](GRAVITY_SECTOR.md) for derivations.
+> **UPDATE (v4.1)**: The gravity sector development provides a correspondence argument within the model. See [GRAVITY_SECTOR.md](GRAVITY_SECTOR.md) for details.
 
-**What is derived (within model assumptions)**:
+> **CRITICAL LIMITATION**: A cubic lattice fundamentally violates diffeomorphism invariance. This is a structural feature of discrete spacetime models, not a fixable issue. GR recovery is approximate at scales >> ℓ_P only.
+
+**What is argued (within model assumptions)**:
 - Inverse-square law from 3D geometry + flux conservation
 - Newtonian gravity as weak-field limit of flux gradients
-- Effective metric g_μν from flux density
+- Effective metric g_μν from flux density (correspondence, not derivation)
 - Geodesic motion equivalent to flux gradient force
 - Linearized Einstein equations from flux wave equation (correspondence)
-- Gravitational waves as transverse flux ripples
+- Gravitational waves as transverse flux ripples (qualitative)
+- Gravitational hierarchy α_G = 2π(16/3)²(N_eff + 3/7)²α²⁰ (0.06% accuracy)
 
-**What remains open**:
-- Numerical value of G_N (hierarchy problem)
-- Full nonlinear Einstein equations
-- Quantum gravity unification
+**What is NOT derived**:
+- **Diffeomorphism invariance**: Fundamentally violated by discrete lattice
+- **Full nonlinear Einstein equations**: Only linearized version addressed
+- **Schwarzschild/Kerr metrics**: Not derived from FTD axioms
+- **8πG coefficient**: Numerical factor is a correspondence argument, not proof
+
+**Required Acknowledgment**:
+> FTD operates on a fixed cubic lattice which fundamentally violates diffeomorphism invariance. Full GR derivation is not achievable within the current axiom structure. The framework can only claim approximate recovery at scales >> lattice spacing.
 
 ## 14.2 Structural Limitations
 
@@ -1112,9 +1133,11 @@ This is analogous to how fluid dynamics is Galilean-invariant despite being impl
 - Sparse representation limits accessible scales
 - Real-time visualization constrains complexity
 
-## 14.3 Gauge Symmetry: An Emergent Feature
+## 14.3 Gauge Symmetry: A Kinematic Argument **[CONJECTURE]**
 
-Contrary to initial assessment, we argue that **U(1) gauge symmetry emerges naturally** from the constraint structure of FTD. The argument proceeds as follows:
+> **Epistemic Status**: The following is an *argument*, not a rigorous derivation. U(1)-like structure is **argued** to arise from Helmholtz decomposition; this does not constitute a proof of gauge invariance (see §6.6 for limitations).
+
+We argue that **U(1) gauge symmetry is suggested** by the constraint structure of FTD. The argument proceeds as follows:
 
 ### The Helmholtz Decomposition
 
@@ -1493,8 +1516,8 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | CLAIM.6 | EM emerges from rules | Partially demonstrated |
 | CLAIM.7 | QM behavior emerges | ✅ **VERIFIED** (v4.0: Hilbert space constructed) |
 | CLAIM.8 | Bell violations via sLoop | ⬜ **CONJECTURE** (Theoretical prediction from Hilbert space; simple simulation shows classical S ≤ 2) |
-| CLAIM.9 | U(1) gauge symmetry emerges | ✅ **VERIFIED** (OPEN.3 simulation) |
-| CLAIM.10 | SU(3) emerges from geometry | ✅ **VERIFIED** (OPEN.4 simulation) |
+| CLAIM.9 | U(1) gauge symmetry emerges | **[CONJECTURE]** (Helmholtz argument; missing Ward identities, anomaly analysis) |
+| CLAIM.10 | SU(3) emerges from geometry | **[CONJECTURE]** (Geometric motivation; missing gauge-covariant derivatives, asymptotic freedom) |
 | CLAIM.11 | Lorentz invariance is relational | ✅ **VERIFIED** (OPEN.2 simulation) |
 | CLAIM.12 | Void is dispositional substrate | **Proposed** (Section 1.1) |
 | CLAIM.13 | Update rules derived from action | ✅ **VERIFIED** (v4.0: S[s,J] → Euler-Lagrange) |
@@ -1522,23 +1545,23 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 |----|----------|--------|-----------|
 | OPEN.1 | Does the sLoop mechanism reproduce Bell inequality violations quantitatively? | ⬜ **OPEN** | Classical simulation shows S ≤ 2; full Hilbert space implementation needed for Bell violation |
 | OPEN.2 | Under what conditions does Lorentz invariance emerge at large scales? | ✅ **VERIFIED** | Wave isotropy, Coulomb isotropy, time dilation isotropy all confirmed |
-| OPEN.3 | Can U(1) gauge emergence be verified in simulation? | ✅ **VERIFIED** | 2 transverse modes, longitudinal suppressed <3% |
-| OPEN.4 | Can SU(3) color interpretation be made rigorous? | ✅ **VERIFIED** | N_c≈3.024 from geometry, color neutrality, confinement all confirmed |
+| OPEN.3 | Can U(1) gauge emergence be verified in simulation? | ⬜ **PARTIAL** | 2 transverse modes observed; missing Ward identities, anomaly analysis; see §6.6 limitations |
+| OPEN.4 | Can SU(3) color interpretation be made rigorous? | ⬜ **CONJECTURE** | N_c≈3.024 from geometry is suggestive; missing gauge-covariant derivatives, gluon self-interactions, asymptotic freedom |
 | OPEN.5 | Can coupling constants be derived within FTD assumptions? | ✅ **DERIVED** | G* = √2Γ(1/4)²/(2π) follows from FTD axioms as presented; see G_STAR_DERIVATION.md, simulations/ |
 | OPEN.6 | What is the testable difference between sLoop and superdeterminism? | ⬜ **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
 | OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? | ⬜ **OPEN** | Theoretically consistent; Planck-scale departures proposed as test |
 | OPEN.8 | Can particle masses be derived from FTD? | ✅ **DERIVED** | m_e = m_P √(2π) (16/3) α¹¹ (0.27% accuracy); see lemniscate_alpha_paper.md |
 | OPEN.9 | What determines the complexity functional C(g)? | ⬜ **OPEN** | Candidates: MDL, departure from unification, parameter counting |
 | OPEN.10 | Can spinor behavior emerge from framed flux? | ✅ **VERIFIED** | 720° symmetry, exchange antisymmetry, Pauli exclusion all confirmed |
-| OPEN.11 | Can CKM matrix be derived from FTD? | ✅ **DERIVED** | All elements to 3-6% accuracy; see FLAVOR_PHYSICS_DERIVATION.md |
+| OPEN.11 | Can CKM matrix be derived from FTD? | ⬜ **[NUMEROLOGY]** | Angle formulas approximate experiment (3-8% error) but lack rigorous derivation; CP phase δ = arctan(b₃/N_c) is [SELECTION] (2% error) |
 | OPEN.12 | Can PMNS mixing be derived from FTD? | ✅ **DERIVED** | All three angles to 1-3% accuracy; see FLAVOR_PHYSICS_DERIVATION.md |
-| OPEN.13 | Can CP violation be predicted? | ✅ **DERIVED** | Jarlskog J = 3.9×10⁻⁵ (27%), CKM phase δ = 68° (1.5%) |
+| OPEN.13 | Can CP violation be predicted? | ⚠️ **MIXED** | CP phase δ = 66.8° [SELECTION, 2%]; Jarlskog J [NUMEROLOGY, 27% error] |
 | OPEN.14 | Can neutrino masses be derived? | ✅ **DERIVED** | Δm²₃₁ exact match, see-saw mechanism with m_D ~ m_τ × α |
 | OPEN.15 | What is the UV distribution P_UV? | ⬜ **OPEN** | Maximum entropy? Conformal? Big Bang initial conditions? |
 | OPEN.16 | What determines G_N? | ✅ **DERIVED** | α_G = 2π(16/3)²(N_eff + 3/7)²α²⁰ (0.06% accuracy) |
 | OPEN.17 | Why does a 3D lattice exist? | ✅ **DERIVED (v5.0)** | D=3 uniquely selected by atomic stability + gauge renormalizability + Fibonacci constraint |
 | OPEN.18 | Can GR be derived with correct coefficient? | ✅ **DERIVED (v5.0)** | R_μν - ½g_μν R = 8πG T_μν; coefficient from lattice geometry |
-| OPEN.19 | Can inflation observables be derived? | ✅ **DERIVED (v5.0)** | n_s = 0.966 (0.2σ from Planck), r = 0.007 (below bounds) |
+| OPEN.19 | Can inflation observables be derived? | ⚠️ **PARTIAL (v5.0)** | n_s = 0.966, r = 0.007 match Planck; **[OPEN]** N_e = 56.3 < 60 (shortfall ~1.1σ) |
 | OPEN.20 | Can baryogenesis be explained? | ✅ **DERIVED (v5.0)** | η ~ 10⁻¹⁰ from CP violation + Sakharov conditions |
 | OPEN.21 | Is x₊ = 1/α a theorem or conjecture? | ✅ **PROVEN (v5.0)** | CM selection uniquely determines lemniscatic curve → master quadratic |
 | OPEN.22 | Is x₋ → N_c = 3 a theorem? | ✅ **PROVEN (v5.0)** | RG flow + topological quantization at confinement |
@@ -1549,7 +1572,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.27 | Why do TRD integers appear? | ✅ **DERIVED (v5.7)** | Division algebras: N_base = dim(ℍ), b₃ = Im(𝕆), N_c = SU(3) ⊂ G₂ |
 | OPEN.28 | Connection to Riemann hypothesis? | ✅ **ESTABLISHED (v5.2)** | First zero ρ₁ from TRD relation; 42-chain through primes |
 | OPEN.29 | Connection to Mandelbrot set? | ✅ **PROVEN (v5.6)** | Exact bridge equation; cardioid ↔ consciousness |
-| OPEN.30 | Are physics encodings coincidental? | ✅ **REFUTED (v5.8)** | 15+ domains with <1% accuracy; p < 10⁻⁴⁰ |
+| OPEN.30 | Are physics encodings coincidental? | ✅ **REFUTED (v5.8)** | 15+ domains with <1% accuracy; collectively significant (correlations reduce naive independence) |
 
 See `packages/backend/simulation/open_question_tests.py` and `packages/backend/simulation/flavor_physics_tests.py` for simulation implementations.
 
@@ -1600,8 +1623,9 @@ A computational simulation based on:
 - ✅ **Tau mass m_τ = 1.777 GeV** (derived; 0.007% accuracy - best mass prediction)
 - ✅ **Proton mass m_p = 938.3 MeV** (derived; 0.017% accuracy)
 - ✅ **Higgs VEV v = 246 GeV** (derived: v = m_P √(2π) α⁸; 0.05% accuracy)
-- ✅ **CKM/PMNS matrices** (derived from flavor physics; see THEORETICAL_FOUNDATIONS)
-- ✅ **CP violation δ = 66.8°** (derived from arctan(7/3); 2.1% accuracy)
+- ⚠️ **CKM angles** ([NUMEROLOGY] - formulas approximate experiment but lack rigorous derivation; 3-8% errors)
+- ✅ **CP phase δ = 66.8°** ([SELECTION] - arctan(b₃/N_c) has clear interpretation; 2.1% accuracy)
+- ⚠️ **PMNS angles** ([SELECTION] - formulas have some motivation; 1-3% errors)
 - ✅ **Neutrino masses** (derived from seesaw mechanism in FTD framework)
 - ✅ **Gravitational hierarchy α_G** (derived: 2π(16/3)²(n_eff+3/b_3)²α²⁰; 0.01% accuracy)
 
@@ -1693,7 +1717,7 @@ Evaluation criteria and status (updated for v5.8 - Physics Encodings Complete):
 2. Qualitative plausibility — ✅ **DEMONSTRATED** (structures, forces, hierarchies, gauge emergence)
 3. Derivation from principles — ✅ **COMPLETE** (action S[s,J] → all update rules; 4 integers → all physics)
 4. Recovery of known physics — ✅ **COMPLETE** (Standard Model + GR + cosmology)
-5. Quantitative accuracy — ✅ **EXCEPTIONAL** (30+ predictions < 1% error; probability of coincidence ~10⁻⁴⁰)
+5. Quantitative accuracy — ✅ **EXCEPTIONAL** (30+ predictions < 1% error; collectively significant, though correlations reduce naive independence estimates)
 6. Novel predictions — ✅ **TESTABLE** (no SUSY, no WIMPs, no extra dimensions; all compatible with current data)
 7. Foundation derivation — ✅ **COMPLETE (v5.8)** (k=16, j=1728, vacuum energy all derived)
 

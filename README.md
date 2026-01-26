@@ -1,5 +1,9 @@
 # Foundational Ternary Dynamics
 
+[![CI](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/workflows/CI/badge.svg)](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+
 **A framework that derives the fine structure constant from first principles.**
 
 ---
@@ -140,17 +144,23 @@ pytest tests/ -v
 python tests/run_all_tests.py
 ```
 
-### Read the Book (WIP) 
+### Build the Book
 
-**[Download the PDF](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/blob/main/manuscript/_book/Foundational-Ternary-Dynamics.pdf)** (82 chapters)
-
-Or build from source with Quarto:
+The book must be built locally (build outputs are gitignored to keep the repository small).
 
 ```bash
-cd manuscript
-quarto render --to html
-# Open _book/index.html
+cd manuscript/src
+
+# Build HTML webbook
+quarto render --profile html
+# Open ../_webbook/index.html
+
+# Build PDF
+quarto render --profile pdf
+# Open ../_book/Foundational-Ternary-Dynamics.pdf
 ```
+
+**Requirements**: Quarto ≥ 1.4, TeX Live 2024+ (for PDF)
 
 ### Napkin Calculation
 
@@ -180,6 +190,18 @@ That's it. No fitting. No free parameters beyond the four integers.
 
 ---
 
+## Formal Evaluation
+
+This manuscript underwent rigorous multi-domain evaluation by 18 AI expert agents:
+
+- **Paradigm-Neutral Grade**: **A (93.95/100)**
+- **Domains evaluated**: Theoretical Physics, Mathematics, Philosophy, Cosmology, Astrophysics, Chemistry, Materials Science, Biophysics, Quantum Information, plus 8 functional areas (Pedagogy, Accessibility, Visualization, Technical Writing, Citation, Build, UX, Architecture)
+- **Full report**: [`evaluation/certification/FTD_CERTIFICATION_v1.0_PARADIGM_NEUTRAL.md`](evaluation/certification/FTD_CERTIFICATION_v1.0_PARADIGM_NEUTRAL.md)
+
+Key findings: Exemplary epistemic transparency, genuine mathematical structure, falsifiable predictions compatible with current data.
+
+---
+
 ## Repository Structure
 
 ```
@@ -199,6 +221,23 @@ Foundational-Ternary-Dynamics/
 
 ---
 
+## Epistemic Labels
+
+FTD uses a rigorous labeling system to classify claims:
+
+| Label | Meaning | Example |
+|-------|---------|---------|
+| **[AXIOM]** | Foundational postulate | Discrete 3D lattice |
+| **[THEOREM]** | Rigorously proven | x₊ = 137.036 from master quadratic |
+| **[SELECTION]** | Argued from consistency | sin²θ_W = N_c/n_eff |
+| **[CONJECTURE]** | Proposed interpretation | Triads → nucleons |
+| **[NUMEROLOGY]** | Pattern without rigorous derivation | CKM angle formulas (3-8% errors) |
+| **[OPEN]** | Unresolved question | E-folding shortfall (N_e ≈ 56 < 60) |
+
+See [EPISTEMIC_LABELS.md](docs/EPISTEMIC_LABELS.md) for the complete classification.
+
+---
+
 ## Falsification Criteria
 
 The framework makes specific predictions that could prove it wrong:
@@ -215,10 +254,13 @@ All predictions are currently compatible with experimental bounds. Discovery of 
 
 ## Requirements
 
-**Python** ≥ 3.8 with:
+**Python** ≥ 3.10 with:
 ```
-numpy >= 1.20
-scipy >= 1.7
+numpy>=1.24.0,<2.0.0
+scipy>=1.11.0,<2.0.0
+matplotlib>=3.7.0,<4.0.0
+sympy>=1.12,<2.0
+mpmath>=1.3.0,<2.0.0
 ```
 
 **Optional** (for book compilation):
@@ -266,7 +308,7 @@ My wife has been extraordinarily patient through this obsession. She would like 
 </p>
 
 <p align="center">
-<b>FTD v1.0</b> - First Complete Release<br>
+<b>FTD v1.0.1</b> - Open Source Release<br>
 <i>All formulas independently verifiable</i><br>
 January 2026
 </p>

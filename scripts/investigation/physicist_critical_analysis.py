@@ -8,6 +8,14 @@ all claims made in this session with appropriate skepticism and rigor.
 
 The key question: Are these relationships fundamental physics,
 numerical coincidences, or something in between?
+
+STATISTICAL CAVEAT (2026-01-24):
+================================
+The probability estimates in this script assume independence between predictions.
+However, all predictions derive from the same 4 framework integers {3, 4, 7, 13},
+which introduces correlations that reduce naive independence estimates.
+A rigorous statistical analysis accounting for these correlations remains an open task.
+The probability figures should be interpreted as illustrative, not definitive.
 """
 
 import numpy as np

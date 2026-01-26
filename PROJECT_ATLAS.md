@@ -47,17 +47,17 @@ graph TD
 
 ## Directory Index
 
-### 📂 Core & Logic
+### Core & Logic
 *   [ternary_matrix/](file:///c:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/ternary_matrix/) - The core C++/Python cellular automata engine.
     *   `physics/` - Implementation of discrete gravity, electromagnetism, and strong/weak interactions.
     *   `model/` - High-level simulation state management.
 *   [visualizer/](file:///c:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/visualizer/) - Real-time 3D OpenGL/Vulkan rendering engine for simulation state.
 
-### 📂 Domain Models
+### Domain Models
 *   [models/](file:///c:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/models/) - Logical and physical interpretations of the ternary dynamics.
     *   `epistemic/` - Axiomatic definitions (Planck scale, constants, master quadratic).
 
-### 📂 Execution & Verification
+### Execution & Verification
 *   [simulations/](file:///c:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/simulations/) - The primary verification suite for SM parameters (masses, mixing, etc.).
 *   [scripts/](file:///c:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/scripts/) - Operational scripts for running the environment.
     *   `runners/` - Production experiment orchestration.
@@ -65,7 +65,7 @@ graph TD
     *   `visualization/` - Scripts for generating Manim scenes and interactive dashboards.
 *   [tests/](file:///c:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/tests/) - Unit and integration tests for code stability.
 
-### 📂 Dissemination & Media
+### Dissemination & Media
 *   [docs/](file:///c:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/docs/) - Theory papers, internal reports, and technical guides.
     *   `theory/` - Deep dives into FTD physics and math.
     *   `papers/` - Published and archived academic manuscripts.
