@@ -12,8 +12,6 @@ build/
 # Quarto build artifacts
 manuscript/.quarto/
 manuscript/*_files/
-manuscript/_book/
-manuscript/_webbook/
 *.quarto_ipynb
 
 .claude
@@ -34,7 +32,6 @@ medium_posts/
 visualizer/
 media/
 special_projects/
-*.pdf
 
 # IDE
 .vscode/
