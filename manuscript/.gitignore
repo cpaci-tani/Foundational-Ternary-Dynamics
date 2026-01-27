@@ -4,6 +4,9 @@
 /_freeze/
 **/*.quarto_ipynb
 
+.claude
+special_projects/
+
 # LaTeX auxiliary files
 *.aux
 *.log
