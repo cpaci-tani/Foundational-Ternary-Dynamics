@@ -77,7 +77,7 @@ $$
 \rho_{\Lambda} \approx 10^{-47} \text{ GeV}^4
 $$
 
-Discrepancy: ~10¹²⁰
+Discrepancy: ~$10^{120}$
 
 The worst prediction in physics.
 

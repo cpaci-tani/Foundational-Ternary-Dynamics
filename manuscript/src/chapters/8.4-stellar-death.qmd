@@ -16,10 +16,10 @@ Stellar endpoints follow from the limits of flux support:
 - **Black hole** = no flux mechanism can support the core; collapse to singularity
 - **Supernova** = gravitational potential energy released when core collapses faster than flux can respond
 
-The Chandrasekhar limit (~1.4 M☉) emerges from the maximum electron degeneracy pressure.
+The Chandrasekhar limit (~1.4 $M_\odot$) emerges from the maximum electron degeneracy pressure.
 :::
 
-## Low Mass Stars (< 8 M☉)
+## Low Mass Stars (< 8 $M_\odot$)
 
 The path of Sun-like stars.
 
@@ -34,7 +34,7 @@ When core hydrogen exhausted:
 
 ### Helium Flash
 
-In stars < 2 M☉:
+In stars < 2 $M_\odot$:
 - Degenerate core ignites helium
 - Runaway fusion (seconds)
 - Core expands, stabilizes
@@ -55,12 +55,12 @@ The expelled envelope forms a planetary nebula: an expanding shell of gas illumi
 
 What remains:
 - Carbon-oxygen core
-- ~0.6 M☉ typically
+- ~0.6 $M_\odot$ typically
 - Earth-sized
 - Electron degeneracy pressure
 - Slowly cools forever
 
-## High Mass Stars (> 8 M☉)
+## High Mass Stars (> 8 $M_\odot$)
 
 The path to supernova.
 
@@ -73,16 +73,16 @@ Multiple burning stages create onion structure:
 
 ### Core Collapse
 
-When iron core exceeds Chandrasekhar mass (~1.4 M☉):
+When iron core exceeds Chandrasekhar mass (~1.4 $M_\odot$):
 1. Electron degeneracy fails
 2. Core collapses in milliseconds
-3. Neutronization: p + e⁻ → n + νₑ
+3. Neutronization: p + e$^-$ $\to$ n + $\nu_e$
 4. Core bounces at nuclear density
 5. Shock wave launches
 
 ### The Explosion
 
-Energy release: approximately 10⁴⁶ J, with 99% carried away by neutrinos. The remaining 1% drives the explosion, launching the stellar envelope outward at speeds up to 10,000 km/s.
+Energy release: approximately $10^{46}$ J, with 99% carried away by neutrinos. The remaining 1% drives the explosion, launching the stellar envelope outward at speeds up to 10,000 km/s.
 
 ![The pathways of stellar death: low-mass stars become white dwarfs via red giant and planetary nebula phases, while massive stars explode as supernovae leaving neutron stars or black holes.](../../media/images/fig-stellar-fates.png){#fig-stellar-fates}
 
@@ -98,8 +98,8 @@ Energy release: approximately 10⁴⁶ J, with 99% carried away by neutrinos. Th
 ### Remnant
 
 What is left:
-- Neutron star (8-25 M☉ progenitor)
-- Black hole (>25 M☉ progenitor)
+- Neutron star (8-25 $M_\odot$ progenitor)
+- Black hole (>25 $M_\odot$ progenitor)
 
 ## Type Ia Supernovae
 
@@ -109,7 +109,7 @@ Special case: exploding white dwarf
 
 White dwarf in binary system:
 1. Accretes matter from companion
-2. Approaches 1.4 M☉
+2. Approaches 1.4 $M_\odot$
 3. Carbon ignites throughout
 4. Entire star explodes
 

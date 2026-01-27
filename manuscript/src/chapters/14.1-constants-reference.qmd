@@ -72,7 +72,7 @@ $$
 
 | Property | Value |
 |----------|-------|
-| Symbol | α |
+| Symbol | $\alpha$ |
 | Value | 0.007297 |
 | Nature | [T+] **DERIVED** |
 | Derivation | Larger root of master quadratic |
@@ -96,7 +96,7 @@ $$
 | Symbol | KB |
 | Value | 0.511 |
 | Nature | [T+] **DERIVED** |
-| Derivation | 70α where 70 = b₃(b₃+N_c) |
+| Derivation | $70\alpha$ where $70 = b_3(b_3+N_c)$ |
 | Accuracy | **0.036%** |
 
 This is the electron mass, derived from geometry.
@@ -151,7 +151,7 @@ $$
 
 | Property | Value |
 |----------|-------|
-| Symbol | α_s |
+| Symbol | $\alpha_s$ |
 | Value | 0.1186 |
 | Nature | [T+] **DERIVED** |
 | Measured | 0.1179 ± 0.0010 |
@@ -160,7 +160,7 @@ $$
 **Alternative formula (G*/π form)**:
 $$\alpha_s = \frac{G^*}{8\pi} = 0.1177 \quad \text{(0.15\% accuracy)}$$
 
-The ratio α_s/α ≈ 16 equals the physics coefficient k from the master quadratic.
+The ratio $\alpha_s/\alpha \approx 16$ equals the physics coefficient k from the master quadratic.
 
 ---
 
@@ -221,8 +221,8 @@ Both formulas converge because the lemniscatic constant G* encodes the relations
 
 | Path | Formula | Predicted | Measured | Error |
 |------|---------|-----------|----------|-------|
-| Pure π | 6π⁵ | 1836.118 | 1836.153 | 0.002% |
-| Framework integers | N_eff/α + T(10) | 1836.47 | 1836.153 | 0.017% |
+| Pure $\pi$ | $6\pi^5$ | 1836.118 | 1836.153 | 0.002% |
+| Framework integers | $N_{eff}/\alpha + T(10)$ | 1836.47 | 1836.153 | 0.017% |
 
 ---
 
@@ -234,7 +234,7 @@ All measured values from the Particle Data Group [@pdg2024].
 
 | Particle | Formula | Predicted | Measured | Error |
 |----------|---------|-----------|----------|-------|
-| Electron | 70α m₀ | 1.000 | 1.000 | 0.036% |
+| Electron | $70\alpha \cdot m_0$ | 1.000 | 1.000 | 0.036% |
 | Muon | 3×70 - 3 | 207 | 206.77 | 0.11% |
 | Tau | 17×207 - 42 | 3477 | 3477.2 | 0.01% |
 
@@ -248,26 +248,26 @@ Unlike the lepton masses (pure integer arithmetic) and the proton mass (two inde
 | Particle | Formula | Predicted | Measured | Error |
 |----------|---------|-----------|----------|-------|
 | Up | N_base + sin²θ_W | 4.231 | 4.227 | 0.09% |
-| Down | 2N_base + 1 + αN_eff | 9.095 | 9.139 | 0.48% |
+| Down | $2N_{base} + 1 + \alpha N_{eff}$ | 9.095 | 9.139 | 0.48% |
 | Strange | N_eff(N_eff+1) + 1 | 183 | 182.78 | 0.12% |
 | Charm | N_eff(b₃+N_c)(19) + 15 | 2485 | 2485 | 0.01% |
 | Bottom | 10³×8 + 169 | 8169 | 8180 | 0.14% |
-| Top | (φ² - 64α) × m_W | 338,400 | 338,000 | 0.12% |
+| Top | $(\phi^2 - 64\alpha) \times m_W$ | 338,400 | 338,000 | 0.12% |
 
 ### Baryons
 
 | Quantity | Formula | Predicted | Measured | Error |
 |----------|---------|-----------|----------|-------|
-| Proton/electron | N_eff/α + T(10) | 1836.47 | 1836.15 | 0.017% |
-| (n-p)/electron | φ² - 12α | 2.53 | 2.531 | 0.53% |
+| Proton/electron | $N_{eff}/\alpha + T(10)$ | 1836.47 | 1836.15 | 0.017% |
+| (n-p)/electron | $\phi^2 - 12\alpha$ | 2.53 | 2.531 | 0.53% |
 
 ### Electroweak Bosons (ratios to electron)
 
 | Particle | Formula | Predicted | Measured | Error |
 |----------|---------|-----------|----------|-------|
-| W boson | 67/(8α²) | 157,273 | 157,298 | 0.016% |
+| W boson | $67/(8\alpha^2)$ | 157,273 | 157,298 | 0.016% |
 | Z boson | m_W × √(13/10) | 179,266 | 178,387 | 0.49% |
-| Higgs | N_eff/α² | 244,125 | 245,107 | 0.40% |
+| Higgs | $N_{eff}/\alpha^2$ | 244,125 | 245,107 | 0.40% |
 
 ---
 
@@ -363,12 +363,12 @@ ALPHA_S = B3 / (B3**2 + B3 + NC)           # = 7/59
 ### Derived Constants
 | Constant | Value | Accuracy |
 |----------|-------|----------|
-| α | 1/137.036 | 0.21 ppt (precision) |
-| m_e | 70α | 0.036% |
+| $\alpha$ | 1/137.036 | 0.21 ppt (precision) |
+| $m_e$ | $70\alpha$ | 0.036% |
 | G | 1/100 | exact |
-| φ | (1+√5)/2 | exact |
-| sin²θ_W | 3/13 | 0.19% |
-| α_s | 7/59 | 0.3σ |
+| $\phi$ | $(1+\sqrt{5})/2$ | exact |
+| $\sin^2\theta_W$ | 3/13 | 0.19% |
+| $\alpha_s$ | 7/59 | 0.3σ |
 
 ### Novel Geometric
 | Quantity | Formula | Accuracy |
@@ -385,7 +385,7 @@ ALPHA_S = B3 / (B3**2 + B3 + NC)           # = 7/59
 ::: {.callout-tip}
 ## Related Topics
 - **Constants introduction**: @sec-constants provides conceptual overview and "what if" scenarios
-- **Lemniscate-Alpha derivation**: @sec-lemniscate-alpha shows how α emerges from geometry
+- **Lemniscate-Alpha derivation**: @sec-lemniscate-alpha shows how $\alpha$ emerges from geometry
 - **Mandelbrot-Lemniscate Bridge**: @sec-mandelbrot-bridge connects TRD to fractal dynamics
 - **Minimum Distance Formula**: @sec-minimum-distance explains the irreducible gap from void
 - **Consciousness Quadratic**: @sec-consciousness-quadratic derives complex roots for k=0.5

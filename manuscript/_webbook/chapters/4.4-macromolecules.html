@@ -73,6 +73,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -974,8 +1003,8 @@ ul.task-list li input[type="checkbox"] {
 <p>Chains of amino acids that do everything in life.</p>
 <section id="amino-acids" class="level3" data-number="42.1.1">
 <h3 data-number="42.1.1" class="anchored" data-anchor-id="amino-acids"><span class="header-section-number">42.1.1</span> Amino Acids</h3>
-<p>20 standard amino acids, each with: - Amino group (-NH₂) - Carboxyl group (-COOH) - R group (side chain: what makes each unique)</p>
-<p>The general structure: H₂N-CH(R)-COOH, where R is the side chain unique to each amino acid.</p>
+<p>20 standard amino acids, each with: - Amino group (<span class="math inline">\(-\text{NH}_2\)</span>) - Carboxyl group (-COOH) - R group (side chain: what makes each unique)</p>
+<p>The general structure: <span class="math inline">\(\text{H}_2\text{N}\)</span>-CH(R)-COOH, where R is the side chain unique to each amino acid.</p>
 </section>
 <section id="peptide-bonds" class="level3" data-number="42.1.2">
 <h3 data-number="42.1.2" class="anchored" data-anchor-id="peptide-bonds"><span class="header-section-number">42.1.2</span> Peptide Bonds</h3>
@@ -1099,7 +1128,7 @@ Figure&nbsp;42.1: DNA double helix structure with sugar-phosphate backbone and b
 </tr>
 </tbody>
 </table>
-<p>Example: n(CH₂=CH₂) → -[-CH₂-CH₂-]ₙ- (polyethylene)</p>
+<p>Example: n(<span class="math inline">\(\text{CH}_2\text{=CH}_2\)</span>) <span class="math inline">\(\to\)</span> <span class="math inline">\(-[-\text{CH}_2\text{-CH}_2-]_n-\)</span> (polyethylene)</p>
 </section>
 <section id="condensation-polymers" class="level3" data-number="42.3.2">
 <h3 data-number="42.3.2" class="anchored" data-anchor-id="condensation-polymers"><span class="header-section-number">42.3.2</span> Condensation Polymers</h3>
@@ -1137,7 +1166,7 @@ Figure&nbsp;42.1: DNA double helix structure with sugar-phosphate backbone and b
 <p>Sugars and their polymers.</p>
 <section id="monosaccharides" class="level3" data-number="42.4.1">
 <h3 data-number="42.4.1" class="anchored" data-anchor-id="monosaccharides"><span class="header-section-number">42.4.1</span> Monosaccharides</h3>
-<p>Simple sugars: glucose, fructose, galactose (all C₆H₁₂O₆)</p>
+<p>Simple sugars: glucose, fructose, galactose (all <span class="math inline">\(\text{C}_6\text{H}_{12}\text{O}_6\)</span>)</p>
 </section>
 <section id="disaccharides" class="level3" data-number="42.4.2">
 <h3 data-number="42.4.2" class="anchored" data-anchor-id="disaccharides"><span class="header-section-number">42.4.2</span> Disaccharides</h3>
@@ -1183,7 +1212,7 @@ Figure&nbsp;42.1: DNA double helix structure with sugar-phosphate backbone and b
 <p>Not true polymers, but complex molecules.</p>
 <section id="fatty-acids" class="level3" data-number="42.5.1">
 <h3 data-number="42.5.1" class="anchored" data-anchor-id="fatty-acids"><span class="header-section-number">42.5.1</span> Fatty Acids</h3>
-<p>Long hydrocarbon chain + carboxyl group: CH₃(CH₂)ₙCOOH</p>
+<p>Long hydrocarbon chain + carboxyl group: <span class="math inline">\(\text{CH}_3(\text{CH}_2)_n\text{COOH}\)</span></p>
 <ul>
 <li><strong>Saturated</strong>: No double bonds, solid at room temperature</li>
 <li><strong>Unsaturated</strong>: Double bonds, liquid at room temperature</li>

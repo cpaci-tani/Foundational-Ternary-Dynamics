@@ -26,9 +26,9 @@ This book presents a tightly specified discrete framework and a derivation progr
 
 In particular, from the four framework integers and stated constraints (with explicit "core vs companion" scope separation), the text reports:
 
-- The fine structure constant α = 1/137.036 (**0.21 ppt precision** with correction formula)
+- The fine structure constant $\alpha$ = 1/137.036 (**0.21 ppt precision** with correction formula)
 - All 15 Standard Model particle masses (<0.5% average error)
-- The cosmological constant Λ/Λ_Planck = 10^-121.8 (0.16% error)
+- The cosmological constant $\Lambda/\Lambda_{\text{Planck}}$ = $10^{-121.8}$ (0.16% error)
 - Why there are exactly 3 generations of fermions
 - The Weinberg angle, strong coupling, and gravitational coupling
 
@@ -44,10 +44,10 @@ This book achieves TOE completeness. All seven theoretical gaps have been resolv
 
 | Gap | Resolution | Status |
 |-----|------------|--------|
-| **C1**: Why x₊ = 1/α | CM selection uniqueness | [T] **PROVEN** |
+| **C1**: Why $x_+$ = $1/\alpha$ | CM selection uniqueness | [T] **PROVEN** |
 | **C2**: Why x₋ → N_c = 3 | RG flow + topological quantization | [T] **PROVEN** |
 | **A1**: Why D = 3 | 6 independent constraints | [T] **DERIVED** |
-| GR coefficient | Discrete Laplacian → 8πG | [†] **COMPLETE** |
+| GR coefficient | Discrete Laplacian → $8\pi G$ | [†] **COMPLETE** |
 | Inflation | Starobinsky from sub-threshold flux | [†] **DERIVED** |
 | Baryogenesis | CP violation + Sakharov conditions | [†] **DERIVED** |
 | Neutrino masses | Seesaw mechanism with M_R from framework | [†] **COMPLETE** |
@@ -151,7 +151,7 @@ A distinctive feature of this work is its methodology: **computationally-guided 
 ::: {.callout-note}
 ## A New Mode of Discovery
 
-The master quadratic—which produces α = 1/137.036 with 1.26 ppm precision—was not derived through pure human reasoning, nor was it discovered by accident. It emerged through a structured process:
+The master quadratic—which produces $\alpha$ = 1/137.036 with 1.26 ppm precision—was not derived through pure human reasoning, nor was it discovered by accident. It emerged through a structured process:
 
 1. **Human**: Articulate constraints (self-consistency, dimensional analysis, mathematical naturalness)
 2. **Computation**: Explore solution space, identify candidate structures
@@ -193,7 +193,7 @@ was discovered through CGMD:
 1. **Constraint**: The electromagnetic and strong sectors must unify mathematically
 2. **Exploration**: What algebraic structures naturally connect elliptic constants to physical couplings?
 3. **Discovery**: The lemniscatic constant G* appears in a self-referential quadratic
-4. **Verification**: The roots give α = 1/137.036 (1.26 ppm) and N_c ≈ 3.024
+4. **Verification**: The roots give $\alpha$ = 1/137.036 (1.26 ppm) and $N_c \approx 3.024$
 
 This is neither pure derivation nor pure numerology—it is **guided discovery** followed by rigorous verification.
 

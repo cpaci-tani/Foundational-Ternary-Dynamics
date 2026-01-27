@@ -73,6 +73,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -1165,25 +1194,25 @@ Figure&nbsp;60.2: Spiral galaxy structure showing the disk with spiral arms, cen
 <tbody>
 <tr class="odd">
 <td>Giant elliptical</td>
-<td>10¹³ M☉</td>
+<td><span class="math inline">\(10^{13}\)</span> <span class="math inline">\(M_\odot\)</span></td>
 <td>300 kpc</td>
 <td>M87</td>
 </tr>
 <tr class="even">
 <td>Large spiral</td>
-<td>10¹¹ M☉</td>
+<td><span class="math inline">\(10^{11}\)</span> <span class="math inline">\(M_\odot\)</span></td>
 <td>30 kpc</td>
 <td>Milky Way</td>
 </tr>
 <tr class="odd">
 <td>Dwarf elliptical</td>
-<td>10⁷ M☉</td>
+<td><span class="math inline">\(10^7\)</span> <span class="math inline">\(M_\odot\)</span></td>
 <td>1 kpc</td>
 <td>Many</td>
 </tr>
 <tr class="even">
 <td>Dwarf irregular</td>
-<td>10⁸ M☉</td>
+<td><span class="math inline">\(10^8\)</span> <span class="math inline">\(M_\odot\)</span></td>
 <td>3 kpc</td>
 <td>SMC</td>
 </tr>

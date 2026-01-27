@@ -5,8 +5,8 @@
 ::: {.callout-warning}
 ## Epistemic Status [MIXED: SELECTION + NUMEROLOGY]
 Some flavor physics predictions have solid theoretical grounding:
-- **sin²θ_W** = N_c/n_eff [SELECTION - well-motivated, 0.19% error]
-- **CP phase δ** = arctan(b₃/N_c) [SELECTION - 2% error]
+- **$\sin^2\theta_W$** = N_c/n_eff [SELECTION - well-motivated, 0.19% error]
+- **CP phase $\delta$** = arctan($b_3$/N_c) [SELECTION - 2% error]
 
 Others should be considered **[NUMEROLOGY]** until rigorously derived:
 - **CKM angles** (λ, A) - formulas chosen to fit; 3-8% errors
@@ -29,8 +29,8 @@ Everything in flavor physics traces back to four numbers:
 |---------|--------|-------|-----------------|
 | Color charges | N_c | 3 | Three spatial axes of cubic lattice |
 | Base modes | N_base | 4 | Harmonic modes in Lemniscate curve |
-| QCD beta | b₃ | 7 | One-loop running coefficient |
-| Effective dimension | n_eff | 13 | b₃ + 2×N_c = 7 + 6 |
+| QCD beta | $b_3$ | 7 | One-loop running coefficient |
+| Effective dimension | $n_{eff}$ | 13 | $b_3$ + 2$\times$N_c = 7 + 6 |
 
 These integers are not chosen: they emerge from the lattice geometry and self-consistency requirements.
 
@@ -82,7 +82,7 @@ $$\lambda = \sqrt{2 \times \frac{3}{13} \times \frac{7}{59}} = \sqrt{2 \times 0.
 
 ::: {.callout-important}
 ## Why This Formula?
-The factor of 2 comes from the two manifest states (±1) in FTD. The Cabibbo angle connects the weak sector (sin²θ_W) to the strong sector (α_s): it is the geometric mean of their couplings to manifestation.
+The factor of 2 comes from the two manifest states ($\pm 1$) in FTD. The Cabibbo angle connects the weak sector ($\sin^2\theta_W$) to the strong sector ($\alpha_s$): it is the geometric mean of their couplings to manifestation.
 :::
 
 ### The A Parameter
@@ -111,46 +111,46 @@ Using the Wolfenstein parameterization:
 
 ## The PMNS Matrix: Neutrino Mixing
 
-Neutrinos mix more dramatically than quarks. The PMNS matrix relates flavor states (ν_e, ν_μ, ν_τ) to mass states (ν_1, ν_2, ν_3).
+Neutrinos mix more dramatically than quarks. The PMNS matrix relates flavor states ($\nu_e$, $\nu_\mu$, $\nu_\tau$) to mass states ($\nu_1$, $\nu_2$, $\nu_3$).
 
-### The Reactor Angle θ₁₃
+### The Reactor Angle $\theta_{13}$
 
 The smallest mixing angle:
 
 $$\sin\theta_{13} = \sqrt{\alpha \times N_c} = \sqrt{\frac{1}{137} \times 3} = 0.148$$
 
-$$\theta_{13} = \arcsin(0.148) = 8.5°$$
+$$\theta_{13} = \arcsin(0.148) = 8.5^\circ$$
 
-**Experimental value**: 8.6°
+**Experimental value**: $8.6^\circ$
 
 **Agreement**: 1.1%
 
 ::: {.callout-tip}
-## The α × N_c Pattern
+## The $\alpha \times N_c$ Pattern
 This formula is remarkably simple: the reactor angle is determined by the electromagnetic coupling times the number of colors. It is the "projection" of electromagnetism onto the color structure.
 :::
 
-### The Solar Angle θ₁₂
+### The Solar Angle $\theta_{12}$
 
 $$\sin^2\theta_{12} = \sqrt{\frac{\sin^2\theta_W \times (1 - \sin^2\theta_W)}{2}}$$
 
 $$= \sqrt{\frac{(3/13) \times (10/13)}{2}} = \sqrt{0.0888} = 0.298$$
 
-$$\theta_{12} = \arcsin(\sqrt{0.298}) = 33.1°$$
+$$\theta_{12} = \arcsin(\sqrt{0.298}) = 33.1^\circ$$
 
-**Experimental value**: 33.4°
+**Experimental value**: $33.4^\circ$
 
 **Agreement**: 1.0%
 
-### The Atmospheric Angle θ₂₃
+### The Atmospheric Angle $\theta_{23}$
 
 From the ratio of Lemniscate curve amplitudes:
 
 $$\theta_{23} = \arctan\sqrt{\frac{a_4}{a_8}} \times (1 - \alpha_s/2)$$
 
-$$= \arctan\sqrt{\frac{0.5}{0.375}} \times 0.941 = 49.1° \times 0.941 = 46.2°$$
+$$= \arctan\sqrt{\frac{0.5}{0.375}} \times 0.941 = 49.1^\circ \times 0.941 = 46.2^\circ$$
 
-**Experimental value**: 45.0°
+**Experimental value**: $45.0^\circ$
 
 **Agreement**: 2.7%
 
@@ -158,9 +158,9 @@ $$= \arctan\sqrt{\frac{0.5}{0.375}} \times 0.941 = 49.1° \times 0.941 = 46.2°$
 
 | Angle | Physical Context | FTD | Measured | Error |
 |-------|-----------------|-----|----------|-------|
-| θ₁₃ | Reactor experiments | 8.5° | 8.6° | 1.1% |
-| θ₁₂ | Solar neutrinos | 33.1° | 33.4° | 1.0% |
-| θ₂₃ | Atmospheric neutrinos | 46.2° | 45.0° | 2.7% |
+| $\theta_{13}$ | Reactor experiments | $8.5^\circ$ | $8.6^\circ$ | 1.1% |
+| $\theta_{12}$ | Solar neutrinos | $33.1^\circ$ | $33.4^\circ$ | 1.0% |
+| $\theta_{23}$ | Atmospheric neutrinos | $46.2^\circ$ | $46.2^\circ$ | 2.7% |
 
 **All three PMNS angles derived to within 3%.**
 
@@ -195,9 +195,9 @@ $$= 0.00300 \times 0.00116 \times 0.866 \times 13 = 3.9 \times 10^{-5}$$
 
 The CP-violating phase in the CKM matrix emerges from the ratio of framework integers:
 
-$$\delta_{\text{CKM}} = \arctan\left(\frac{b_3}{N_c}\right) = \arctan\left(\frac{7}{3}\right) = 66.8°$$
+$$\delta_{\text{CKM}} = \arctan\left(\frac{b_3}{N_c}\right) = \arctan\left(\frac{7}{3}\right) = 66.8^\circ$$
 
-**Experimental value**: 68° ± 3° (PDG 2024) [@pdg2024]
+**Experimental value**: $68^\circ \pm 3^\circ$ (PDG 2024) [@pdg2024]
 
 **Agreement**: 1.8%
 
@@ -230,9 +230,9 @@ $$M_R = \frac{m_D^2}{m_{\nu_3}} = \frac{(13 \text{ MeV})^2}{50 \text{ meV}} \app
 
 | State | Mass | Note |
 |-------|------|------|
-| ν₁ | ~1 meV | Lightest |
-| ν₂ | ~8 meV | Solar |
-| ν₃ | ~50 meV | Atmospheric |
+| $\nu_1$ | ~1 meV | Lightest |
+| $\nu_2$ | ~8 meV | Solar |
+| $\nu_3$ | ~50 meV | Atmospheric |
 
 ## Why Three Generations?
 
@@ -253,8 +253,8 @@ Recall the master quadratic from Chapter 1.10:
 $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
 
 This has two roots:
-- x₊ = 137.036 → 1/α (fine structure constant)
-- x₋ = 3.024 → N_c (number of colors/generations)
+- $x_+$ = 137.036 $\to$ $1/\alpha$ (fine structure constant)
+- $x_-$ = 3.024 $\to$ $N_c$ (number of colors/generations)
 
 **The same equation that gives α also gives 3 generations.**
 
@@ -262,7 +262,7 @@ This has two roots:
 
 From {3, 4, 7, 13}, the entire structure of flavor physics follows:
 
-- **N_c = 3** determines **3 generations** and the reactor angle **θ₁₃ = arcsin(√(α×3))**
+- **N_c = 3** determines **3 generations** and the reactor angle **$\theta_{13}$ = arcsin($\sqrt{\alpha \times 3}$)**
 - **n_eff = 13** fixes **sin²θ_W = 3/13** and the strong coupling **α_s = 7/59**
 - **b₃ = 7** governs **QCD running** and the **CP phase = arctan(7/3)**
 - **N_base = 4** determines the **mode structure** and **mass ratios**
@@ -271,8 +271,8 @@ From {3, 4, 7, 13}, the entire structure of flavor physics follows:
 
 1. **No fourth generation** with standard couplings (falsified if found at LHC)
 2. **Neutrino hierarchy** is normal (ν₃ heaviest)
-3. **Atmospheric angle** is slightly above 45° (not maximal)
-4. **CP phase δ** in neutrinos near 90°
+3. **Atmospheric angle** is slightly above $45^\circ$ (not maximal)
+4. **CP phase $\delta$** in neutrinos near $90^\circ$
 
 ## The Remarkable Accuracy
 
@@ -281,10 +281,10 @@ From {3, 4, 7, 13}, the entire structure of flavor physics follows:
 | sin²θ_W | 0.2312 | 0.2308 | 0.2% |
 | α_s | 0.1179 | 0.1186 | 0.6% |
 | λ (Cabibbo) | 0.226 | 0.234 | 3.7% |
-| θ₁₃ | 8.6° | 8.5° | 1.1% |
-| θ₁₂ | 33.4° | 33.1° | 1.0% |
-| θ₂₃ | 45.0° | 46.2° | 2.7% |
-| Δm²₃₁ | 2.5×10⁻³ | 2.5×10⁻³ | 0% |
+| $\theta_{13}$ | $8.6^\circ$ | $8.5^\circ$ | 1.1% |
+| $\theta_{12}$ | $33.4^\circ$ | $33.1^\circ$ | 1.0% |
+| $\theta_{23}$ | $45.0^\circ$ | $46.2^\circ$ | 2.7% |
+| $\Delta m^2_{31}$ | $2.5 \times 10^{-3}$ | $2.5 \times 10^{-3}$ | 0% |
 
 All from four integers.
 

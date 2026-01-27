@@ -26,7 +26,7 @@ $$
 |--------|---------------|----------------|
 | Mercury | 1% Earth | Weak |
 | Venus | None | No (slow rotation) |
-| Earth | 25-65 μT | Yes |
+| Earth | 25-65 $\mu$T | Yes |
 | Mars | Crustal only | Extinct |
 | Jupiter | 20× Earth | Very active |
 | Saturn | 0.5× Earth | Active |
@@ -39,7 +39,7 @@ $$
 
 | Region | Description |
 |--------|-------------|
-| Bow shock | Where solar wind slows (supersonic → subsonic) |
+| Bow shock | Where solar wind slows (supersonic $\to$ subsonic) |
 | Magnetopause | Boundary of magnetic dominance |
 | Plasmasphere | Inner region of trapped plasma |
 | Radiation belts | High-energy particle zones |
@@ -65,12 +65,12 @@ Stream of charged particles from the Sun:
 
 Trapped charged particle zones:
 
-### Inner Belt (1-2 R⊕)
+### Inner Belt (1-2 $R_\oplus$)
 - Primarily protons
 - Energies: 10-100 MeV
 - Source: Cosmic rays, solar protons
 
-### Outer Belt (3-6 R⊕)
+### Outer Belt (3-6 $R_\oplus$)
 - Primarily electrons
 - Energies: 0.1-10 MeV
 - Source: Solar wind injection

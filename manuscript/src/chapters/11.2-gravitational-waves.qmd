@@ -67,7 +67,7 @@ GW170817:
 
 LISA (future) targets:
 - Merging galaxy centers
-- 10⁶-10⁷ M☉
+- $10^6$-$10^7$ $M_\odot$
 - Millihertz frequencies
 
 ### Primordial
@@ -106,7 +106,7 @@ $$
 
 Laser interferometers with perpendicular arms 4 km long. A laser beam is split and sent down both arms, reflected by mirrors, and recombined. Gravitational waves cause differential length changes that shift the interference pattern.
 
-Sensitivity reaches 10⁻²¹ strain: detecting length changes of 1/1000th the diameter of a proton over 4 km.
+Sensitivity reaches $10^{-21}$ strain: detecting length changes of 1/1000th the diameter of a proton over 4 km.
 
 ### How It Works
 

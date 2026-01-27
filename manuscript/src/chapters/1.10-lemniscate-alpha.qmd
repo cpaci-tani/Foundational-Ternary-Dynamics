@@ -1,27 +1,27 @@
-# The Lemniscate-Alpha Derivation {#sec-lemniscate-alpha}
+# The Lemniscate-$\alpha$ Derivation {#sec-lemniscate-alpha}
 
 *"The fine structure constant is the geometric cost of self-reference."*
 
 ::: {.callout-important}
 ## The Central Claim
-This chapter presents a constructive route from a specified geometric object (the Lemniscate-Alpha curve) and a stated constraint set to a master quadratic whose electromagnetic root reproduces the observed fine structure constant $\alpha \approx 1/137$ to **0.21 parts per trillion precision**: the most accurate theoretical derivation of α ever achieved.
+This chapter presents a constructive route from a specified geometric object (the Lemniscate-Alpha curve) and a stated constraint set to a master quadratic whose electromagnetic root reproduces the observed fine structure constant $\alpha \approx 1/137$ to **0.21 parts per trillion precision**: the most accurate theoretical derivation of $\alpha$ ever achieved.
 :::
 
 ::: {.callout-warning}
 ## Critical Epistemic Distinction: Derivation vs Fitting
-When we claim α is "derived," we mean: **given** the specific constraint set (Closure, Self-Reference, Equipartition, Chirality, SM Encoding, Arc Length), **and given** the integer identification (b₃=7, N_c=3, N_eff=13, N_base=4), the value α = 1/137.036 follows mathematically.
+When we claim $\alpha$ is "derived," we mean: **given** the specific constraint set (Closure, Self-Reference, Equipartition, Chirality, SM Encoding, Arc Length), **and given** the integer identification ($b_3$=7, $N_c$=3, $N_{eff}$=13, $N_{base}$=4), the value $\alpha$ = 1/137.036 follows mathematically.
 
 We do **not** claim:
 1. That these constraints are the unique possible constraints
 2. That these integers are derived from more fundamental principles
-3. That this constitutes a prediction of α (the constraint set was constructed knowing the target)
+3. That this constitutes a prediction of $\alpha$ (the constraint set was constructed knowing the target)
 
 The proper characterization is: **self-consistent fit within a structured framework**: more principled than pure numerology, less certain than a parameter-free prediction. The extraordinary precision (**0.21 ppt** with the precision formula, 6,000× better than the 1.26 ppm base derivation) may reflect deep structure or may be an artifact of fitting flexibility within the constraint space.
 :::
 
 ::: {.callout-note collapse="true"}
 ## Historical Context
-The fine structure constant α was first identified by Arnold Sommerfeld in 1916 while extending Bohr's atomic model to include relativistic corrections. Wolfgang Pauli spent decades searching for a derivation, reportedly asking on his deathbed why α ≈ 1/137. Arthur Eddington proposed (incorrectly) that α = 1/136 from numerological arguments. Richard Feynman called it "one of the greatest damn mysteries of physics." This chapter presents a geometric derivation achieving **0.21 ppt accuracy** (parts per trillion): the most precise theoretical derivation of α's value ever achieved, and potentially the first principled explanation for this fundamental constant.
+The fine structure constant $\alpha$ was first identified by Arnold Sommerfeld in 1916 while extending Bohr's atomic model to include relativistic corrections. Wolfgang Pauli spent decades searching for a derivation, reportedly asking on his deathbed why $\alpha \approx 1/137$. Arthur Eddington proposed (incorrectly) that $\alpha = 1/136$ from numerological arguments. Richard Feynman called it "one of the greatest damn mysteries of physics." This chapter presents a geometric derivation achieving **0.21 ppt accuracy** (parts per trillion): the most precise theoretical derivation of $\alpha$'s value ever achieved, and potentially the first principled explanation for this fundamental constant.
 :::
 
 ::: {.callout-note}
@@ -52,7 +52,7 @@ The fine structure constant is perhaps the most mysterious number in physics. It
 
 Why is $\alpha \approx 1/137.036$? For nearly a century, physicists have wondered if this number has a deeper explanation or if it is simply a brute fact about our universe.
 
-We claim: **within the stated construction and constraint class, α emerges from the geometry.** [SELECTION S1-S3]
+We claim: **within the stated construction and constraint class, $\alpha$ emerges from the geometry.** [SELECTION S1-S3]
 
 ## The Lemniscate-Alpha Curve
 
@@ -78,7 +78,7 @@ This curve has remarkable properties:
 
 1. **Five modes** with frequencies 1, 2, 4, 8, 16
 2. **Power-of-2 structure** reflecting binary combinations
-3. **Self-referential closure** (the 16th mode encodes the total dimensionality: 4² = 16)
+3. **Self-referential closure** (the 16th mode encodes the total dimensionality: $4^2$ = 16)
 
 ### Why These Coefficients?
 
@@ -96,7 +96,7 @@ The coefficients are not chosen freely. They are fixed by the six constraints st
 ## The Six Constraints
 
 1. **Closure**: The curve must close ($x(0) = x(2\pi)$, $y(0) = y(2\pi)$)
-2. **Self-Reference**: N² = highest frequency (4² = 16)
+2. **Self-Reference**: $N^2$ = highest frequency ($4^2$ = 16)
 3. **Equipartition**: Energy distributed across modes
 4. **Chirality**: $y_n$ alternates sign with phase
 5. **SM Encoding**: Mode 8 coefficients encode the QCD beta function
@@ -134,7 +134,7 @@ This matches the lemniscatic constant used in this book to within 0.0006%.
 ## Selection Principle S3
 The quadratic form relating electromagnetic and color structure is **argued from consistency**, not uniquely proven. The specific form emerges from lattice DoF counting and self-consistency requirements.
 
-**Update**: @sec-fermat-encoding provides a deeper derivation of this quadratic form from Fermat's Last Theorem structure, showing that the degree 2, coefficient 16, and powers G*² and G*³ are determined by number-theoretic boundary constraints.
+**Update**: @sec-fermat-encoding provides a deeper derivation of this quadratic form from Fermat's Last Theorem structure, showing that the degree 2, coefficient 16, and powers $G^{*2}$ and $G^{*3}$ are determined by number-theoretic boundary constraints.
 :::
 
 The gauge couplings of the Standard Model satisfy:
@@ -147,10 +147,10 @@ $$x = 8(G^*)^2 \pm \sqrt{64(G^*)^4 - 16(G^*)^3}$$
 
 | Root | Value | Physical Meaning |
 |------|-------|------------------|
-| $x_+$ | **137.036** | 1/α (electromagnetic coupling) |
+| $x_+$ | **137.036** | $1/\alpha$ (electromagnetic coupling) |
 | $x_-$ | **3.024** | $N_c$ (number of color charges) |
 
-![The master quadratic and its roots: the electromagnetic coupling (1/α ≈ 137) and color charges (N_c ≈ 3) emerge from the same geometric structure.](../../media/images/fig-master-quadratic-roots.png){#fig-quadratic-roots}
+![The master quadratic and its roots: the electromagnetic coupling ($1/\alpha \approx 137$) and color charges ($N_c \approx 3$) emerge from the same geometric structure.](../../media/images/fig-master-quadratic-roots.png){#fig-quadratic-roots}
 
 The larger root gives:
 
@@ -175,24 +175,24 @@ where:
 
 $$\varepsilon = e^\pi - \pi - 20 \approx -9 \times 10^{-4}$$
 
-The constant **20 = b₃ + N_eff = 7 + 13** equals 1/c_fermion where c_fermion = 0.05 is the Weyl anomaly coefficient from conformal field theory.
+The constant **20 = $b_3$ + $N_{eff}$ = 7 + 13** equals $1/c_{fermion}$ where $c_{fermion}$ = 0.05 is the Weyl anomaly coefficient from conformal field theory.
 
 Computing with x_+ = 137.0361714582:
 
 $$\frac{1}{\alpha} = 137.0361714582 - \frac{9}{47}(0.0009) + \frac{5}{64}(0.0009)^2 = 137.0359991770...$$
 
 **Comparison:**
-- CODATA 2022: 1/α = 137.035999177(21)
-- FTD precision: 1/α = 137.035999177029...
+- CODATA 2022: $1/\alpha$ = 137.035999177(21)
+- FTD precision: $1/\alpha$ = 137.035999177029...
 - Error: **0.21 ppt** (parts per trillion)
 
 ### Why These Coefficients?
 
 The precision formula encodes framework integers:
 
-- **47 = N_c × N_base² - 1 = 3 × 16 - 1**: A prime number
-- **|ε| ≈ 1/1111** where 1111 = (b₃ + N_base)(8N_eff - N_c) = 11 × 101
-- **20 = b₃ + N_eff = 7 + 13**: The Weyl anomaly reciprocal
+- **47 = $N_c \times N_{base}^2 - 1$ = 3 × 16 - 1**: A prime number
+- **|ε| ≈ 1/1111** where 1111 = $(b_3 + N_{base})(8N_{eff} - N_c)$ = 11 × 101
+- **20 = $b_3 + N_{eff}$ = 7 + 13**: The Weyl anomaly reciprocal
 
 ### CFT Conformal Anomaly Connection
 
@@ -221,11 +221,11 @@ Heegner numbers: {1, 2, 3, 7, 11, 19, 43, **67**, 163}
 ## Heegner-FTD Overlap
 Two of four FTD integers ARE Heegner numbers:
 - N_c = 3 ✓ (Heegner)
-- b₃ = 7 ✓ (Heegner)
+- $b_3$ = 7 ✓ (Heegner)
 - N_base = 4 (not Heegner)
 - N_eff = 13 (not Heegner)
 
-The first four Heegner numbers multiply to: 1 × 2 × 3 × 7 = **42** = 2 × N_c × b₃
+The first four Heegner numbers multiply to: 1 × 2 × 3 × 7 = **42** = $2 \times N_c \times b_3$
 :::
 
 ## Derived vs Imposed
@@ -245,7 +245,7 @@ This derivation changes the status of constants in our framework:
 
 ::: {.callout-note}
 ## Companion Work
-The following derivations extend beyond what the core paper establishes. They are developed in companion papers and included here for completeness. While they use the same framework integers, their derivation chains are independent of the core α derivation.
+The following derivations extend beyond what the core paper establishes. They are developed in companion papers and included here for completeness. While they use the same framework integers, their derivation chains are independent of the core $\alpha$ derivation.
 :::
 
 The same framework derives other Standard Model parameters:
@@ -285,7 +285,7 @@ The combination $b_3 + N_c = 10$ has physical meaning:
 - $b_3 = 7$: QCD beta function coefficient (gluon self-interaction)
 - $N_c = 3$: Number of color charges
 
-Their sum represents the total "strong sector complexity." Gravity couples to this as an inverse square: the same geometric form as gravitational force itself (1/r²).
+Their sum represents the total "strong sector complexity." Gravity couples to this as an inverse square: the same geometric form as gravitational force itself ($1/r^2$).
 
 Note also: $n_{\text{eff}} - N_c = 13 - 3 = 10 = b_3 + N_c$
 
@@ -301,7 +301,7 @@ $$\text{KB} = b_3(b_3 + N_c)\alpha = 7 \times 10 \times \alpha = \frac{70}{137.0
 **Accuracy: 0.036%** compared to electron mass 0.51099895 MeV.
 
 ::: {.callout-note}
-The core paper derives α from the master quadratic. The electron mass derivation uses α plus additional framework relations and is developed in companion work.
+The core paper derives $\alpha$ from the master quadratic. The electron mass derivation uses $\alpha$ plus additional framework relations and is developed in companion work.
 :::
 
 ### Lepton Mass Ratios
@@ -651,7 +651,7 @@ This connects the quadratic iteration $z \to z^2 + c$ to the master quadratic th
 ::: {.callout-important}
 ## The Three-Regime Interpretation
 
-- **Physics regime** ($k = 16$): Deep inside the Mandelbrot set, where iterations converge. Corresponds to stable, real-valued physics with α and N_c as real roots.
+- **Physics regime** ($k = 16$): Deep inside the Mandelbrot set, where iterations converge. Corresponds to stable, real-valued physics with $\alpha$ and $N_c$ as real roots.
 
 - **Critical regime** ($k_c$): At the boundary, the cusp of the cardioid. The transition point.
 
@@ -729,7 +729,7 @@ $$\alpha_s = \frac{G^*}{8\pi} = 0.1177...$$
 - $8\pi = 25.13 \approx 25$ (explains why simpler approximations work)
 - Circumference of circle with radius 4 = $N_{\text{base}}$
 
-### The α Ratio
+### The $\alpha$ Ratio
 
 The ratio of strong to electromagnetic coupling:
 
@@ -747,7 +747,7 @@ These are identical because they are both solutions to the same quadratic!
 
 ## Uniqueness of the Lemniscate-Alpha {#sec-curve-uniqueness}
 
-A natural question: Could a *different* curve also derive α = 1/137.036?
+A natural question: Could a *different* curve also derive $\alpha$ = 1/137.036?
 
 Within the stated construction and constraint class, no alternative curve is known that reproduces the same chain of determinations.
 
@@ -759,9 +759,9 @@ The curve's specificity follows from a chain of determinations under the stated 
 
 The curve must have 5 modes at frequencies {1, 2, 4, 8, 16} because:
 
-- Self-reference requires N² = highest frequency
+- Self-reference requires $N^2$ = highest frequency
 - Power-of-2 frequencies come from ternary structure (2 manifest states)
-- Only N = 4 satisfies both: 4² = 16 = 2⁴
+- Only N = 4 satisfies both: $4^2 = 16 = 2^4$
 
 **Step 2: Coefficients encode framework integers.**
 
@@ -803,22 +803,22 @@ By the Uniqueness Theorem (@sec-uniqueness), within the stated skeleton constrai
 The chain proceeds through seven steps:
 
 1. **Fibonacci Skeleton Constraints** establish the structural requirements
-2. **Framework integers** {b₃=7, N_c=3, N_eff=13, N_base=4} are the unique non-trivial solution
+2. **Framework integers** {$b_3$=7, $N_c$=3, $N_{eff}$=13, $N_{base}$=4} are the unique non-trivial solution
 3. **Self-reference closure** requires 5 modes at frequencies 2ⁿ
 4. **Integer encoding** fixes coefficients within constraints
 5. **Integration** yields arc length L = 23.7996
 6. **Framework scaling** produces G* = 2.9587
-7. **Master quadratic** determines α = 1/137.036
+7. **Master quadratic** determines $\alpha$ = 1/137.036
 
 Within the stated constraint class, each link in this chain is fixed by the preceding choices.
 
 ::: {.callout-important}
 ## A Highly Constrained Construction
 
-The fine structure constant α = 1/137.036 emerges from the curve produced by this construction, which:
+The fine structure constant $\alpha$ = 1/137.036 emerges from the curve produced by this construction, which:
 
 1. Uses power-of-2 frequencies (required by ternary physics)
-2. Has 5 modes (required by self-reference: 4² = 16)
+2. Has 5 modes (required by self-reference: $4^2$ = 16)
 3. Encodes the framework integers in its coefficients
 4. Produces the self-consistent G* = 2.9587
 
@@ -834,7 +834,7 @@ No broader claim is made here about uniqueness outside the stated constraint cla
 
 | Category | Count | Best Accuracy | Status |
 |----------|-------|---------------|--------|
-| Coupling constants (α) | 1 | 1.26 ppm | [T] THEOREM |
+| Coupling constants ($\alpha$) | 1 | 1.26 ppm | [T] THEOREM |
 | N_c from quadratic | 1 | ~0.8% (integer 3) | [T] THEOREM |
 | Coefficient 16 | 1 | Exact | [T] THEOREM |
 
@@ -889,14 +889,14 @@ discriminant = b**2 - 4*a*c
 x_plus = (-b + np.sqrt(discriminant)) / (2*a)
 x_minus = (-b - np.sqrt(discriminant)) / (2*a)
 
-print(f"1/α = {x_plus:.3f}")   # Output: 137.036
+print(f"1/alpha = {x_plus:.3f}")   # Output: 137.036
 print(f"N_c = {x_minus:.3f}")  # Output: 3.024
 ```
 
 ## Concepts
 
-- **lemniscate-alpha**: The curve whose arc length determines α
-- **self-reference**: Closure condition N² = highest frequency
+- **lemniscate-alpha**: The curve whose arc length determines $\alpha$
+- **self-reference**: Closure condition $N^2$ = highest frequency
 - **master-quadratic**: Equation determining gauge couplings
 - **derived-vs-imposed**: Distinction between emergent and phenomenological constants
 

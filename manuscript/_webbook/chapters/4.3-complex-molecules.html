@@ -73,6 +73,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -986,38 +1015,38 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>CH₄</td>
+<td><span class="math inline">\(\text{CH}_4\)</span></td>
 <td>Methane</td>
 <td>Tetrahedral</td>
 <td>Natural gas</td>
 </tr>
 <tr class="even">
-<td>C₂H₆</td>
+<td><span class="math inline">\(\text{C}_2\text{H}_6\)</span></td>
 <td>Ethane</td>
 <td>Two tetrahedra</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td>C₃H₈</td>
+<td><span class="math inline">\(\text{C}_3\text{H}_8\)</span></td>
 <td>Propane</td>
 <td>Chain</td>
 <td>Fuel</td>
 </tr>
 <tr class="even">
-<td>C₄H₁₀</td>
+<td><span class="math inline">\(\text{C}_4\text{H}_{10}\)</span></td>
 <td>Butane</td>
 <td>Chain</td>
 <td>Lighter fluid</td>
 </tr>
 <tr class="odd">
-<td>C₅H₁₂</td>
+<td><span class="math inline">\(\text{C}_5\text{H}_{12}\)</span></td>
 <td>Pentane</td>
 <td>Chain</td>
 <td>Solvent</td>
 </tr>
 </tbody>
 </table>
-<p>General formula: CₙH₂ₙ₊₂</p>
+<p>General formula: <span class="math inline">\(\text{C}_n\text{H}_{2n+2}\)</span></p>
 </section>
 <section id="alkenes-double-bonds" class="level3" data-number="41.2.2">
 <h3 data-number="41.2.2" class="anchored" data-anchor-id="alkenes-double-bonds"><span class="header-section-number">41.2.2</span> Alkenes (Double Bonds)</h3>
@@ -1031,18 +1060,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>C₂H₄</td>
+<td><span class="math inline">\(\text{C}_2\text{H}_4\)</span></td>
 <td>Ethylene</td>
 <td>Planar, ripening agent</td>
 </tr>
 <tr class="even">
-<td>C₃H₆</td>
+<td><span class="math inline">\(\text{C}_3\text{H}_6\)</span></td>
 <td>Propene</td>
 <td>Plastic precursor</td>
 </tr>
 </tbody>
 </table>
-<p>General formula: CₙH₂ₙ</p>
+<p>General formula: <span class="math inline">\(\text{C}_n\text{H}_{2n}\)</span></p>
 </section>
 <section id="alkynes-triple-bonds" class="level3" data-number="41.2.3">
 <h3 data-number="41.2.3" class="anchored" data-anchor-id="alkynes-triple-bonds"><span class="header-section-number">41.2.3</span> Alkynes (Triple Bonds)</h3>
@@ -1056,18 +1085,18 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>C₂H₂</td>
+<td><span class="math inline">\(\text{C}_2\text{H}_2\)</span></td>
 <td>Acetylene</td>
 <td>Linear, welding fuel</td>
 </tr>
 <tr class="even">
-<td>C₃H₄</td>
+<td><span class="math inline">\(\text{C}_3\text{H}_4\)</span></td>
 <td>Propyne</td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p>General formula: CₙH₂ₙ₋₂</p>
+<p>General formula: <span class="math inline">\(\text{C}_n\text{H}_{2n-2}\)</span></p>
 </section>
 <section id="aromatic-compounds" class="level3" data-number="41.2.4">
 <h3 data-number="41.2.4" class="anchored" data-anchor-id="aromatic-compounds"><span class="header-section-number">41.2.4</span> Aromatic Compounds</h3>
@@ -1082,7 +1111,7 @@ Figure&nbsp;41.1: Benzene ring structure: six carbons in a hexagonal ring with a
 </figcaption>
 </figure>
 </div>
-<p>Benzene (C₆H₆) features a six-membered ring with resonance: electrons delocalize around the entire ring rather than alternating between fixed single and double bonds.</p>
+<p>Benzene (<span class="math inline">\(\text{C}_6\text{H}_6\)</span>) features a six-membered ring with resonance: electrons delocalize around the entire ring rather than alternating between fixed single and double bonds.</p>
 </section>
 </section>
 <section id="functional-groups" class="level2" data-number="41.3">
@@ -1117,8 +1146,8 @@ Figure&nbsp;41.1: Benzene ring structure: six carbons in a hexagonal ring with a
 <td>Acetic acid</td>
 </tr>
 <tr class="even">
-<td>-NH₂</td>
-<td>R-NH₂</td>
+<td><span class="math inline">\(-\text{NH}_2\)</span></td>
+<td><span class="math inline">\(\text{R-NH}_2\)</span></td>
 <td>Amine</td>
 <td>Methylamine</td>
 </tr>
@@ -1165,8 +1194,8 @@ Figure&nbsp;41.2: Ethanol molecule showing hydroxyl group.
 </section>
 <section id="acids-and-bases" class="level3" data-number="41.3.2">
 <h3 data-number="41.3.2" class="anchored" data-anchor-id="acids-and-bases"><span class="header-section-number">41.3.2</span> Acids and Bases</h3>
-<p><strong>Carboxylic acids</strong> donate H⁺: R-COOH → R-COO⁻ + H⁺</p>
-<p><strong>Amines</strong> accept H⁺: R-NH₂ + H⁺ → R-NH₃⁺</p>
+<p><strong>Carboxylic acids</strong> donate <span class="math inline">\(\text{H}^+\)</span>: R-COOH <span class="math inline">\(\to\)</span> R-COO<span class="math inline">\(^-\)</span> + <span class="math inline">\(\text{H}^+\)</span></p>
+<p><strong>Amines</strong> accept <span class="math inline">\(\text{H}^+\)</span>: <span class="math inline">\(\text{R-NH}_2\)</span> + <span class="math inline">\(\text{H}^+\)</span> <span class="math inline">\(\to\)</span> <span class="math inline">\(\text{R-NH}_3^+\)</span></p>
 </section>
 </section>
 <section id="isomers" class="level2" data-number="41.4">
@@ -1200,7 +1229,7 @@ Figure&nbsp;41.3: Chirality: a carbon bonded to four different groups has non-su
 <h2 data-number="41.5" class="anchored" data-anchor-id="reactions"><span class="header-section-number">41.5</span> Reactions</h2>
 <section id="combustion" class="level3" data-number="41.5.1">
 <h3 data-number="41.5.1" class="anchored" data-anchor-id="combustion"><span class="header-section-number">41.5.1</span> Combustion</h3>
-<p>CH₄ + 2O₂ → CO₂ + 2H₂O + energy</p>
+<p><span class="math inline">\(\text{CH}_4 + 2\text{O}_2 \to \text{CO}_2 + 2\text{H}_2\text{O}\)</span> + energy</p>
 </section>
 <section id="substitution" class="level3" data-number="41.5.2">
 <h3 data-number="41.5.2" class="anchored" data-anchor-id="substitution"><span class="header-section-number">41.5.2</span> Substitution</h3>

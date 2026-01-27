@@ -15,9 +15,9 @@ The end state of Sun-like stars.
 
 | Property | Value |
 |----------|-------|
-| Mass | 0.5-1.4 M☉ |
-| Radius | ~1 R⊕ |
-| Density | ~10⁶ g/cm³ |
+| Mass | 0.5-1.4 $M_\odot$ |
+| Radius | ~1 $R_\oplus$ |
+| Density | ~$10^6$ g/cm$^3$ |
 | Temperature | 10,000-100,000 K (initially) |
 | Composition | C, O (mostly) |
 
@@ -60,11 +60,11 @@ Protons and electrons combine into neutrons.
 
 | Property | Value |
 |----------|-------|
-| Mass | 1.4-2.5 M☉ |
+| Mass | 1.4-2.5 $M_\odot$ |
 | Radius | ~10 km |
-| Density | ~10¹⁴ g/cm³ |
-| Surface gravity | 10¹¹ g |
-| Magnetic field | 10⁸-10¹⁵ G |
+| Density | ~$10^{14}$ g/cm$^3$ |
+| Surface gravity | $10^{11}$ g |
+| Magnetic field | $10^8$-$10^{15}$ G |
 
 ### Structure
 
@@ -83,7 +83,7 @@ Rotating neutron stars with beamed radiation emit like cosmic lighthouses. Their
 ### Magnetars
 
 Neutron stars with extreme magnetic fields:
-- B ~ 10¹⁴-10¹⁵ G
+- B ~ $10^{14}$-$10^{15}$ G
 - Occasional giant flares
 - Most magnetized objects known
 
@@ -93,7 +93,7 @@ When nothing can resist gravity.
 
 ### Formation
 
-From core collapse of very massive stars (>25 M☉).
+From core collapse of very massive stars (>25 $M_\odot$).
 
 ### Event Horizon
 
@@ -108,9 +108,9 @@ Nothing, not even light, escapes from within.
 
 | Type | Mass | Formation |
 |------|------|-----------|
-| Stellar | 3-100 M☉ | Core collapse |
-| Intermediate | 100-10⁵ M☉ | Unknown |
-| Supermassive | 10⁶-10¹⁰ M☉ | Galaxy centers |
+| Stellar | 3-100 $M_\odot$ | Core collapse |
+| Intermediate | 100-$10^5$ $M_\odot$ | Unknown |
+| Supermassive | $10^6$-$10^{10}$ $M_\odot$ | Galaxy centers |
 
 ### Properties (Kerr Black Hole)
 

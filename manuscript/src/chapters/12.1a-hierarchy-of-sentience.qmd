@@ -60,7 +60,7 @@ Certain molecular configurations change state when they encounter specific input
 
 | Molecule | Detects | Response |
 |----------|---------|----------|
-| Hemoglobin | O₂ | Conformational change, binding |
+| Hemoglobin | $\text{O}_2$ | Conformational change, binding |
 | Ion channel | Voltage | Opens/closes |
 | Enzyme | Substrate | Catalytic activity |
 | Receptor | Ligand | Signal cascade initiation |
@@ -94,9 +94,9 @@ This is the birth of **hereditary memory**: information that survives the death 
 
 | Genome | Base pairs | Bits (~2 per bp) |
 |--------|------------|------------------|
-| Virus | 10³-10⁵ | 2,000-200,000 |
-| Bacterium | 10⁶-10⁷ | 2-20 million |
-| Human | 3×10⁹ | 6 billion |
+| Virus | $10^3$-$10^5$ | 2,000-200,000 |
+| Bacterium | $10^6$-$10^7$ | 2-20 million |
+| Human | $3 \times 10^9$ | 6 billion |
 
 ## Level 3: Regulatory Networks
 
@@ -160,7 +160,7 @@ The entire cell acts as an integrated sensing system. Inputs include chemical gr
 
 | Property | Value |
 |----------|-------|
-| Gates | 10²-10⁴ |
+| Gates | $10^2$-$10^4$ |
 | Substrate | Simple nervous system |
 | Capability | Reflexes, habituation, sensitization |
 | Example | Jellyfish, C. elegans |
@@ -188,7 +188,7 @@ Dedicated cells (neurons) specialize in information processing. Sensory neurons 
 
 | Property | Value |
 |----------|-------|
-| Gates | 10⁴-10⁶ |
+| Gates | $10^4$-$10^6$ |
 | Substrate | Ganglia, simple brain |
 | Capability | Coordinated behavior, basic learning |
 | Example | Insects, mollusks |
@@ -215,7 +215,7 @@ Neural processing becomes centralized. Specialized sensory organs (eyes, antenna
 
 | Property | Value |
 |----------|-------|
-| Gates | 10⁶-10¹¹ |
+| Gates | $10^6$-$10^{11}$ |
 | Substrate | Vertebrate brain |
 | Capability | Emotion, social cognition, flexible learning |
 | Example | Fish, reptiles, birds, mammals |
@@ -243,7 +243,7 @@ Vertebrates add **emotional processing** through specialized structures: the amy
 
 | Property | Value |
 |----------|-------|
-| Gates | 10¹⁰-10¹¹ |
+| Gates | $10^{10}$-$10^{11}$ |
 | Substrate | Primate neocortex |
 | Capability | Theory of mind, deception, culture |
 | Example | Monkeys, apes |
@@ -271,7 +271,7 @@ The capacity to model *other minds* operates at multiple levels: Level 0 (I want
 
 | Property | Value |
 |----------|-------|
-| Gates | ~10¹¹ |
+| Gates | ~$10^{11}$ |
 | Substrate | Human brain |
 | Capability | Language, abstract reasoning, recursive self-reflection |
 | Example | Homo sapiens |
@@ -311,11 +311,11 @@ Humans can engage in unlimited meta-levels:
 | 2 | Genetic | 1-2 | Memory | DNA |
 | 3 | Regulatory | ≥2 | Logic | Gene network |
 | 4 | Cellular | Many | World-model (proto) | Bacterium |
-| 5 | Neural (simple) | 10²-10⁴ | Reflexes, learning | C. elegans |
-| 6 | Centralized | 10⁴-10⁶ | Spatial maps | Insect |
-| 7 | Vertebrate | 10⁶-10¹¹ | Self-model (proto) | Fish, mammal |
-| 8 | Primate | 10¹⁰-10¹¹ | Theory of mind | Ape |
-| 9 | Human | ~10¹¹ | Meta-sLoop | Human |
+| 5 | Neural (simple) | $10^2$-$10^4$ | Reflexes, learning | C. elegans |
+| 6 | Centralized | $10^4$-$10^6$ | Spatial maps | Insect |
+| 7 | Vertebrate | $10^6$-$10^{11}$ | Self-model (proto) | Fish, mammal |
+| 8 | Primate | $10^{10}$-$10^{11}$ | Theory of mind | Ape |
+| 9 | Human | ~$10^{11}$ | Meta-sLoop | Human |
 :::
 
 ## Transitions Are Gradual
@@ -348,9 +348,9 @@ $$D_n = \log_2(\text{distinguishable states})$$
 |-------|-------------------|
 | 0 | 0 |
 | 1 | 1-10 |
-| 2 | 10³-10⁷ |
-| 3 | 10²-10³ |
-| 4 | 10³-10⁴ |
+| 2 | $10^3$-$10^7$ |
+| 3 | $10^2$-$10^3$ |
+| 4 | $10^3$-$10^4$ |
 | 5-9 | $\propto$ neuron count |
 
 ### Self-Model Complexity

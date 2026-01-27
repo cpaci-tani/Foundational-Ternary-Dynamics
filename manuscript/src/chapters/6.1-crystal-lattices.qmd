@@ -33,12 +33,12 @@ There are exactly 14 ways to fill 3D space with a repeating pattern.
 | System | Lattices | Angles | Lengths | Example |
 |--------|----------|--------|---------|---------|
 | Cubic | 3 | 90°, 90°, 90° | a = b = c | NaCl, Fe, Cu |
-| Tetragonal | 2 | 90°, 90°, 90° | a = b ≠ c | Tin, TiO₂ |
-| Orthorhombic | 4 | 90°, 90°, 90° | a ≠ b ≠ c | Sulfur |
-| Hexagonal | 1 | 90°, 90°, 120° | a = b ≠ c | Graphite, Zn |
-| Trigonal | 1 | α = β = γ ≠ 90° | a = b = c | Quartz |
-| Monoclinic | 2 | 90°, β, 90° | a ≠ b ≠ c | Gypsum |
-| Triclinic | 1 | α ≠ β ≠ γ | a ≠ b ≠ c | Most organics |
+| Tetragonal | 2 | 90°, 90°, 90° | a = b $\neq$ c | Tin, $\text{TiO}_2$ |
+| Orthorhombic | 4 | 90°, 90°, 90° | a $\neq$ b $\neq$ c | Sulfur |
+| Hexagonal | 1 | 90°, 90°, 120° | a = b $\neq$ c | Graphite, Zn |
+| Trigonal | 1 | $\alpha = \beta = \gamma \neq 90°$ | a = b = c | Quartz |
+| Monoclinic | 2 | 90°, $\beta$, 90° | a $\neq$ b $\neq$ c | Gypsum |
+| Triclinic | 1 | $\alpha \neq \beta \neq \gamma$ | a $\neq$ b $\neq$ c | Most organics |
 
 ## Cubic Lattices
 

@@ -26,7 +26,7 @@ The cosmic web structure reflects the topology of flux concentrations on cosmolo
 The early universe was almost, but not quite, uniform:
 - Quantum fluctuations during inflation
 - Stretched to cosmic scales
-- Density variations: δρ/ρ ~ 10⁻⁵
+- Density variations: $\delta\rho/\rho$ ~ $10^{-5}$
 
 ### Seeds
 
@@ -80,7 +80,7 @@ If $t_{\text{cool}} < t_{\text{Hubble}}$: gas can cool, collapse, form stars.
 
 ### The Cooling Curve
 
-Gas cools most efficiently at temperatures between 10⁴ and 10⁶ K, where atomic line cooling dominates. Above this range, bremsstrahlung (free-free emission) takes over but is less efficient. Below it, the gas becomes neutral and cooling rates drop sharply.
+Gas cools most efficiently at temperatures between $10^4$ and $10^6$ K, where atomic line cooling dominates. Above this range, bremsstrahlung (free-free emission) takes over but is less efficient. Below it, the gas becomes neutral and cooling rates drop sharply.
 
 ## Angular Momentum
 

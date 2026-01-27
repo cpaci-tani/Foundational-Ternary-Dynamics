@@ -108,10 +108,10 @@ The spin-orbit coupling (from flux frame rotation) splits energy levels, shiftin
 ### Doubly Magic Nuclei
 
 Nuclei with both Z AND N magic are exceptionally stable:
-- ⁴He (Z=2, N=2) :  "alpha particle"
-- ¹⁶O (Z=8, N=8)
-- ⁴⁰Ca (Z=20, N=20)
-- ²⁰⁸Pb (Z=82, N=126)
+- $^4$He (Z=2, N=2) :  "alpha particle"
+- $^{16}$O (Z=8, N=8)
+- $^{40}$Ca (Z=20, N=20)
+- $^{208}$Pb (Z=82, N=126)
 
 ## The Strong Force in the Nucleus
 

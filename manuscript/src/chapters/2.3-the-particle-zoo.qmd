@@ -37,9 +37,9 @@ Quarks never exist alone: they are always bound in triads (baryons) or pairs (me
 
 | Particle | Symbol | Charge | Mass | State |
 |----------|--------|--------|------|-------|
-| Electron | e⁻ | -1 | 0.511 MeV | -1 |
-| Positron | e⁺ | +1 | 0.511 MeV | +1 |
-| Electron neutrino | νₑ | 0 | < 0.45 eV | 0 |
+| Electron | $e^-$ | -1 | 0.511 MeV | -1 |
+| Positron | $e^+$ | +1 | 0.511 MeV | +1 |
+| Electron neutrino | $\nu_e$ | 0 | < 0.45 eV | 0 |
 
 The electron is the lightest charged particle: the minimum manifestation.
 
@@ -58,8 +58,8 @@ Heavier versions of Generation I, decay quickly to lighter particles.
 
 | Particle | Symbol | Charge | Mass | State |
 |----------|--------|--------|------|-------|
-| Muon | μ⁻ | -1 | 106 MeV | -1 |
-| Muon neutrino | νμ | 0 | < 0.19 MeV | 0 |
+| Muon | $\mu^-$ | -1 | 106 MeV | -1 |
+| Muon neutrino | $\nu_\mu$ | 0 | < 0.19 MeV | 0 |
 
 ## Generation III: Heaviest
 
@@ -76,8 +76,8 @@ The most massive fundamental particles.
 
 | Particle | Symbol | Charge | Mass | State |
 |----------|--------|--------|------|-------|
-| Tau | τ⁻ | -1 | 1.777 GeV | -1 |
-| Tau neutrino | ντ | 0 | < 18.2 MeV | 0 |
+| Tau | $\tau^-$ | -1 | 1.777 GeV | -1 |
+| Tau neutrino | $\nu_\tau$ | 0 | < 18.2 MeV | 0 |
 
 ## Bosons: Force Carriers
 
@@ -87,7 +87,7 @@ Bosons mediate forces. They are flux configurations, not manifested particles.
 |----------|--------|-------|------|-------|
 | Photon | γ | EM | 0 | 0 |
 | Gluon | g | Strong | 0 | 0 |
-| W± | W | Weak | 80.4 GeV | ±1 |
+| $W^\pm$ | W | Weak | 80.4 GeV | $\pm 1$ |
 | Z | Z | Weak | 91.2 GeV | 0 |
 
 Photons and gluons travel at speed C. W and Z bosons are massive and short-lived.
@@ -101,13 +101,13 @@ Photons and gluons travel at speed C. W and Z bosons are massive and short-lived
 | Proton | uud | +1 | 938.3 MeV | Stable |
 | Neutron | udd | 0 | 939.6 MeV | Stable in nucleus |
 | Lambda | uds | 0 | 1116 MeV | Contains strange |
-| Sigma⁺ | uus | +1 | 1189 MeV | Contains strange |
-| Sigma⁰ | uds | 0 | 1192 MeV | Contains strange |
-| Sigma⁻ | dds | -1 | 1197 MeV | Contains strange |
-| Xi⁰ | uss | 0 | 1315 MeV | Double strange |
-| Xi⁻ | dss | -1 | 1322 MeV | Double strange |
-| Omega⁻ | sss | -1 | 1672 MeV | Triple strange |
-| Delta⁺⁺ | uuu | +2 | 1232 MeV | Excited state |
+| $\Sigma^+$ | uus | +1 | 1189 MeV | Contains strange |
+| $\Sigma^0$ | uds | 0 | 1192 MeV | Contains strange |
+| $\Sigma^-$ | dds | -1 | 1197 MeV | Contains strange |
+| $\Xi^0$ | uss | 0 | 1315 MeV | Double strange |
+| $\Xi^-$ | dss | -1 | 1322 MeV | Double strange |
+| $\Omega^-$ | sss | -1 | 1672 MeV | Triple strange |
+| $\Delta^{++}$ | uuu | +2 | 1232 MeV | Excited state |
 
 ### Proton Structure
 
@@ -125,14 +125,14 @@ Net charge: +2/3 - 1/3 - 1/3 = **0**
 
 | Particle | Quarks | Charge | Mass | Notes |
 |----------|--------|--------|------|-------|
-| Pion⁺ | ud̄ | +1 | 140 MeV | Lightest meson |
-| Pion⁻ | dū | -1 | 140 MeV | |
-| Pion⁰ | uū/dd̄ | 0 | 135 MeV | Decays to photons |
-| Kaon⁺ | us̄ | +1 | 494 MeV | Strange meson |
-| Kaon⁰ | ds̄ | 0 | 498 MeV | Strange meson |
-| Eta | mixed | 0 | 548 MeV | uū+dd̄+ss̄ |
-| J/Psi | cc̄ | 0 | 3.097 GeV | Charmonium |
-| Upsilon | bb̄ | 0 | 9.46 GeV | Bottomonium |
+| $\pi^+$ | $u\bar{d}$ | +1 | 140 MeV | Lightest meson |
+| $\pi^-$ | $d\bar{u}$ | -1 | 140 MeV | |
+| $\pi^0$ | $u\bar{u}/d\bar{d}$ | 0 | 135 MeV | Decays to photons |
+| $K^+$ | $u\bar{s}$ | +1 | 494 MeV | Strange meson |
+| $K^0$ | $d\bar{s}$ | 0 | 498 MeV | Strange meson |
+| Eta | mixed | 0 | 548 MeV | $u\bar{u}+d\bar{d}+s\bar{s}$ |
+| J/Psi | $c\bar{c}$ | 0 | 3.097 GeV | Charmonium |
+| Upsilon | $b\bar{b}$ | 0 | 9.46 GeV | Bottomonium |
 
 ## The Pattern
 
@@ -150,7 +150,7 @@ The distinction between fermions (half-integer spin) and bosons (integer spin) h
 
 ### The Topology of Rotations
 
-Consider rotating a flux configuration by 360°. For a scalar field, this returns to the original state. But the flux field J ∈ ℝ³ has **orientation**: it is a vector field.
+Consider rotating a flux configuration by 360 degrees. For a scalar field, this returns to the original state. But the flux field J $\in \mathbb{R}^3$ has **orientation**: it is a vector field.
 
 The key insight comes from the **fundamental group** of the rotation group:
 
@@ -158,15 +158,15 @@ $$\pi_1(SO(3)) = \mathbb{Z}_2$$
 
 This means there are two topologically distinct classes of rotation paths:
 - Paths that can be contracted to the identity (bosons)
-- Paths that require **720°** rotation to contract (fermions)
+- Paths that require **720 degree** rotation to contract (fermions)
 
 ### Framed Flux Lines
 
 In FTD, a fermion is not just a concentration of flux: it is a **framed flux configuration**:
 
-**Boson** (scalar flux pattern): A 360° rotation returns to the same state.
+**Boson** (scalar flux pattern): A 360 degree rotation returns to the same state.
 
-**Fermion** (framed flux pattern): A 360° rotation picks up a phase factor of -1. Only a 720° rotation returns to the original configuration.
+**Fermion** (framed flux pattern): A 360 degree rotation picks up a phase factor of -1. Only a 720 degree rotation returns to the original configuration.
 
 The "frame" is the orientation of the flux lines relative to their direction of motion. Under rotation, the frame twists, accumulating a phase.
 
@@ -180,10 +180,10 @@ The flux field complexified as ψ = J_x + iJ_y transforms as a **spinor**:
 
 $$\psi \to e^{i\theta/2}\psi \quad \text{under rotation by } \theta$$
 
-At θ = 2π: ψ → -ψ (sign flip!)
-At θ = 4π: ψ → +ψ (identity restored)
+At $\theta = 2\pi$: $\psi \to -\psi$ (sign flip!)
+At $\theta = 4\pi$: $\psi \to +\psi$ (identity restored)
 
-This 720° periodicity is the defining property of spin-1/2 particles.
+This 720 degree periodicity is the defining property of spin-1/2 particles.
 
 ## Fermi-Dirac Statistics
 
@@ -191,7 +191,7 @@ Why cannot two electrons occupy the same state? This follows from the spinor str
 
 ### The Exchange Operation
 
-Consider swapping two identical fermions. Topologically, this is equivalent to rotating one particle around the other by 360°.
+Consider swapping two identical fermions. Topologically, this is equivalent to rotating one particle around the other by 360 degrees.
 
 For spinors, this gives a phase factor of -1:
 
@@ -251,20 +251,20 @@ $$J = \text{Im}(V_{us}V_{cb}V_{ub}^*V_{cs}^*) \approx 3 \times 10^{-5}$$
 
 In FTD, this follows from the curve's deviation from perfect symmetry:
 
-$$\delta_{\text{CKM}} = 68° \quad \text{(derived from Lemniscate-Alpha)}$$
+$$\delta_{\text{CKM}} = 68^\circ \quad \text{(derived from Lemniscate-Alpha)}$$
 
 The phase arises because the curve relating the three generations is not self-conjugate: it has a preferred orientation.
 
 ### The Wolfenstein Parameterization
 
-The CKM matrix can be expanded in powers of λ ≈ 0.23 (the Cabibbo angle):
+The CKM matrix can be expanded in powers of $\lambda \approx 0.23$ (the Cabibbo angle):
 
 | Parameter | FTD Prediction | Measured | Error |
 |-----------|----------------|----------|-------|
-| λ | 0.234 | 0.225 | 3.7% |
+| $\lambda$ | 0.234 | 0.225 | 3.7% |
 | A | 0.78 | 0.826 | 6% |
-| ρ̄ | 0.13 | 0.141 | 8% |
-| η̄ | 0.35 | 0.357 | 2% |
+| $\bar{\rho}$ | 0.13 | 0.141 | 8% |
+| $\bar{\eta}$ | 0.35 | 0.357 | 2% |
 
 ## Neutrino Oscillations
 
@@ -272,7 +272,7 @@ Neutrinos change flavor as they propagate: a phenomenon requiring non-zero neutr
 
 ### Mass vs Flavor Eigenstates
 
-Neutrinos are produced in **flavor eigenstates** (νₑ, νμ, ντ) but propagate as **mass eigenstates** (ν₁, ν₂, ν₃). These are related by the **PMNS matrix**:
+Neutrinos are produced in **flavor eigenstates** ($\nu_e$, $\nu_\mu$, $\nu_\tau$) but propagate as **mass eigenstates** ($\nu_1$, $\nu_2$, $\nu_3$). These are related by the **PMNS matrix**:
 
 $$\begin{pmatrix} \nu_e \\ \nu_\mu \\ \nu_\tau \end{pmatrix} = U_{\text{PMNS}} \begin{pmatrix} \nu_1 \\ \nu_2 \\ \nu_3 \end{pmatrix}$$
 
@@ -287,17 +287,17 @@ The PMNS mixing angles can be related to the geometric structure:
 
 | Angle | FTD Prediction | Measured | Error |
 |-------|----------------|----------|-------|
-| θ₁₂ (solar) | 33.1° | 33.4° | 1.0% |
-| θ₂₃ (atmospheric) | 46.2° | 45° | 2.7% |
-| θ₁₃ (reactor) | 8.5° | 8.6° | 1.1% |
+| $\theta_{12}$ (solar) | 33.1 degrees | 33.4 degrees | 1.0% |
+| $\theta_{23}$ (atmospheric) | 46.2 degrees | 45 degrees | 2.7% |
+| $\theta_{13}$ (reactor) | 8.5 degrees | 8.6 degrees | 1.1% |
 
 ### The Oscillation Formula
 
-The probability of νₐ → νᵦ after distance L:
+The probability of $\nu_\alpha \to \nu_\beta$ after distance L:
 
 $$P(\nu_\alpha \to \nu_\beta) = \sin^2(2\theta) \sin^2\left(\frac{\Delta m^2 L}{4E}\right)$$
 
-Where Δm² is the mass-squared difference between eigenstates.
+Where $\Delta m^2$ is the mass-squared difference between eigenstates.
 
 ### Neutrino Mass Differences
 
@@ -305,8 +305,8 @@ From FTD geometry:
 
 | Parameter | FTD Prediction | Measured | Error |
 |-----------|----------------|----------|-------|
-| Δm²₃₁ | 2.5×10⁻³ eV² | 2.5×10⁻³ eV² | exact |
-| Δm²₂₁ | 5.9×10⁻⁵ eV² | 7.4×10⁻⁵ eV² | 20% |
+| $\Delta m^2_{31}$ | $2.5 \times 10^{-3}$ eV$^2$ | $2.5 \times 10^{-3}$ eV$^2$ | exact |
+| $\Delta m^2_{21}$ | $5.9 \times 10^{-5}$ eV$^2$ | $7.4 \times 10^{-5}$ eV$^2$ | 20% |
 
 ::: {.callout-note}
 ## The See-Saw Mechanism

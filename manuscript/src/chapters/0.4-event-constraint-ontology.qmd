@@ -164,7 +164,7 @@ The arguments are:
    - Stable triangular configurations (triads)
    - Non-trivial knot theory
    - Gauge theories with confinement (SU(3))
-   - Spinor structure (π₁(SO(3)) = ℤ₂)
+   - Spinor structure ($\pi_1$(SO(3)) = $\mathbb{Z}_2$)
 
 ### Contact Structure
 

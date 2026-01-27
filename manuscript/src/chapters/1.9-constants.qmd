@@ -59,11 +59,11 @@ Other constants are tunable: they determine *behavior* within the framework:
 
 ### ALPHA = 0.00729 (Fine Structure)
 
-The fine structure constant determines the strength of electromagnetic interactions. The experimentally measured value is α = 1/137.035999177(21) [@codata2022].
+The fine structure constant determines the strength of electromagnetic interactions. The experimentally measured value is $\alpha = 1/137.035999177(21)$ [@codata2022].
 
 ::: {.callout-important}
 ## Derived, Not Assumed
-Unlike other constants in this section, α is **not** a free parameter. It emerges from geometric constraints on a self-referential curve. See @sec-lemniscate-alpha for the full derivation, which achieves **0.21 ppt precision** (1.26 ppm base, 6,000× improvement with precision formula).
+Unlike other constants in this section, $\alpha$ is **not** a free parameter. It emerges from geometric constraints on a self-referential curve. See @sec-lemniscate-alpha for the full derivation, which achieves **0.21 ppt precision** (1.26 ppm base, 6,000× improvement with precision formula).
 :::
 
 This single number controls:
@@ -183,7 +183,7 @@ Time to half-density: $t_{1/2} = \frac{\ln 2}{\ln(1/(1-\text{DECAY\_RATE}))}$
 
 ::: {.callout-note}
 ## Chapter Summary
-**Six constants define the FTD framework**: C (causality speed), H (Planck resolution), KB (existence threshold), ALPHA (fine structure), PHI (golden ratio), and GRAVITY_BIAS (gravitational coupling). Of these, **α is derived** from geometric constraints (**0.21 ppt precision** with the precision formula), while the others are either axiomatic (C, H) or derived from α via framework relations. The constants fall within a narrow **anthropic window**: small changes would prevent stable atoms, stars, or observers from existing.
+**Six constants define the FTD framework**: C (causality speed), H (Planck resolution), KB (existence threshold), ALPHA (fine structure), PHI (golden ratio), and GRAVITY_BIAS (gravitational coupling). Of these, **$\alpha$ is derived** from geometric constraints (**0.21 ppt precision** with the precision formula), while the others are either axiomatic (C, H) or derived from α via framework relations. The constants fall within a narrow **anthropic window**: small changes would prevent stable atoms, stars, or observers from existing.
 :::
 
 ## Transition
@@ -192,7 +192,7 @@ We have presented six constants as the tuning parameters of reality. But are the
 
 ::: {.callout-tip}
 ## Related Topics
-- **Lemniscate-Alpha**: @sec-lemniscate-alpha derives α = 1/137.036 from geometry
+- **Lemniscate-Alpha**: @sec-lemniscate-alpha derives $\alpha$ = 1/137.036 from geometry
 - **Constants Reference**: @sec-constants-reference provides the complete technical reference
 - **The Anthropic Window**: @sec-anthropic-window explores why these values permit observers
 :::

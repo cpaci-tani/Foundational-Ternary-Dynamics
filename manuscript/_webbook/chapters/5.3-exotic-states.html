@@ -108,6 +108,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -1181,7 +1210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Supports white dwarfs</li>
 <li>Electrons fill lowest states</li>
 <li>Pauli exclusion prevents collapse</li>
-<li>Limit: 1.4 M☉ (Chandrasekhar)</li>
+<li>Limit: 1.4 <span class="math inline">\(M_\odot\)</span> (Chandrasekhar)</li>
 </ul>
 </section>
 <section id="neutron-degeneracy" class="level3" data-number="45.6.2">
@@ -1189,7 +1218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>Supports neutron stars</li>
 <li>Neutrons fill lowest states</li>
-<li>Limit: ~3 M☉ (uncertain)</li>
+<li>Limit: ~3 <span class="math inline">\(M_\odot\)</span> (uncertain)</li>
 </ul>
 </section>
 </section>

@@ -39,14 +39,14 @@ The phase diagram maps pressure versus temperature, revealing distinct regions f
 
 | Transition | Direction | Energy |
 |------------|-----------|--------|
-| Melting | Solid → Liquid | Absorb (ΔH > 0) |
-| Freezing | Liquid → Solid | Release (ΔH < 0) |
-| Vaporization | Liquid → Gas | Absorb |
-| Condensation | Gas → Liquid | Release |
-| Sublimation | Solid → Gas | Absorb |
-| Deposition | Gas → Solid | Release |
-| Ionization | Gas → Plasma | Absorb |
-| Recombination | Plasma → Gas | Release |
+| Melting | Solid $\to$ Liquid | Absorb ($\Delta H > 0$) |
+| Freezing | Liquid $\to$ Solid | Release ($\Delta H < 0$) |
+| Vaporization | Liquid $\to$ Gas | Absorb |
+| Condensation | Gas $\to$ Liquid | Release |
+| Sublimation | Solid $\to$ Gas | Absorb |
+| Deposition | Gas $\to$ Solid | Release |
+| Ionization | Gas $\to$ Plasma | Absorb |
+| Recombination | Plasma $\to$ Gas | Release |
 
 ## Latent Heat
 
@@ -138,7 +138,7 @@ At T ~ 10¹⁵ K (100 GeV), the Higgs field condensed:
 
 | Before | After |
 |--------|-------|
-| ⟨H⟩ = 0 | ⟨H⟩ = 246 GeV |
+| $\langle H \rangle = 0$ | $\langle H \rangle = 246$ GeV |
 | W, Z massless | W, Z massive |
 | EM and Weak unified | EM and Weak separate |
 
@@ -154,7 +154,7 @@ At T ~ 10¹² K (150 MeV), quarks and gluons confined into hadrons:
 |--------|-------|
 | Quark-gluon plasma | Protons, neutrons, pions |
 | Free quarks | Quarks confined in color-neutral combinations |
-| χ symmetry intact | χ symmetry spontaneously broken |
+| $\chi$ symmetry intact | $\chi$ symmetry spontaneously broken |
 
 **In FTD**: This is a **crossover** (smooth transition), not first-order. The flux configurations reorganize continuously rather than via bubbles.
 

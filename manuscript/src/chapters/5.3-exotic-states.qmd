@@ -148,12 +148,12 @@ When quantum pressure prevents further compression.
 - Supports white dwarfs
 - Electrons fill lowest states
 - Pauli exclusion prevents collapse
-- Limit: 1.4 M☉ (Chandrasekhar)
+- Limit: 1.4 $M_\odot$ (Chandrasekhar)
 
 ### Neutron Degeneracy
 - Supports neutron stars
 - Neutrons fill lowest states
-- Limit: ~3 M☉ (uncertain)
+- Limit: ~3 $M_\odot$ (uncertain)
 
 ## Strange Matter
 

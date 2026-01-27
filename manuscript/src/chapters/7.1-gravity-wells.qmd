@@ -46,8 +46,8 @@ When objects reach ~1 km:
 
 | Property | Range |
 |----------|-------|
-| Mass | 0.1-2 M⊕ |
-| Radius | 0.5-1.5 R⊕ |
+| Mass | 0.1-2 $M_\oplus$ |
+| Radius | 0.5-1.5 $R_\oplus$ |
 | Density | 4-6 g/cm³ |
 | Surface | Solid |
 | Composition | Iron, silicates |
@@ -58,8 +58,8 @@ Examples: Mercury, Venus, Earth, Mars
 
 | Property | Range |
 |----------|-------|
-| Mass | 10-500 M⊕ |
-| Radius | 3-15 R⊕ |
+| Mass | 10-500 $M_\oplus$ |
+| Radius | 3-15 $R_\oplus$ |
 | Density | 0.5-2 g/cm³ |
 | Surface | None (gas all the way down?) |
 | Composition | H, He |
@@ -70,9 +70,9 @@ Examples: Jupiter, Saturn
 
 | Property | Range |
 |----------|-------|
-| Mass | 10-20 M⊕ |
-| Radius | 3-5 R⊕ |
-| Composition | H₂O, NH₃, CH₄ ices |
+| Mass | 10-20 $M_\oplus$ |
+| Radius | 3-5 $R_\oplus$ |
+| Composition | $\text{H}_2\text{O}$, $\text{NH}_3$, $\text{CH}_4$ ices |
 
 Examples: Uranus, Neptune
 

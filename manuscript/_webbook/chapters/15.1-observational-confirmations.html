@@ -1059,17 +1059,17 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td>HI Mass</td>
-<td><span class="math inline">\(10^{6.07}\)</span> M☉</td>
+<td><span class="math inline">\(10^{6.07}\)</span> <span class="math inline">\(M_\odot\)</span></td>
 <td>VLA 21-cm</td>
 </tr>
 <tr class="even">
 <td>Stellar Mass</td>
-<td>&lt; <span class="math inline">\(10^{3.5}\)</span> M☉</td>
+<td>&lt; <span class="math inline">\(10^{3.5}\)</span> <span class="math inline">\(M_\odot\)</span></td>
 <td>HST non-detection</td>
 </tr>
 <tr class="odd">
 <td>Halo Mass</td>
-<td>~<span class="math inline">\(5 \times 10^9\)</span> M☉</td>
+<td>~<span class="math inline">\(5 \times 10^9\)</span> <span class="math inline">\(M_\odot\)</span></td>
 <td>Velocity dispersion</td>
 </tr>
 <tr class="even">
@@ -1085,12 +1085,12 @@ window.Quarto = {
 <tr class="even">
 <td>Support</td>
 <td><strong>Pressure (thermal)</strong></td>
-<td>σ = 5.5 km/s</td>
+<td><span class="math inline">\(\sigma\)</span> = 5.5 km/s</td>
 </tr>
 <tr class="odd">
 <td>Gas-to-star ratio</td>
 <td><strong>&gt; 443</strong></td>
-<td>M_HI / M_*</td>
+<td><span class="math inline">\(M_{\text{HI}} / M_*\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -1128,12 +1128,12 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td>Pressure-supported</td>
-<td>✓ Thermal support (σ = 5.5 km/s)</td>
+<td>Thermal support (<span class="math inline">\(\sigma\)</span> = 5.5 km/s)</td>
 <td><strong>CONSISTENT</strong></td>
 </tr>
 <tr class="even">
 <td>Starless below threshold</td>
-<td>✓ M_* &lt; <span class="math inline">\(10^{3.5}\)</span> M☉</td>
+<td><span class="math inline">\(M_* &lt; 10^{3.5}\)</span> <span class="math inline">\(M_\odot\)</span></td>
 <td><strong>CONSISTENT</strong></td>
 </tr>
 <tr class="odd">
@@ -1143,7 +1143,7 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>Near threshold mass</td>
-<td>✓ ~<span class="math inline">\(5 \times 10^9\)</span> M☉ ≈ M_crit</td>
+<td>~<span class="math inline">\(5 \times 10^9\)</span> <span class="math inline">\(M_\odot \approx M_{\text{crit}}\)</span></td>
 <td><strong>CONSISTENT</strong></td>
 </tr>
 </tbody>
@@ -1165,7 +1165,7 @@ window.Quarto = {
 <section id="what-this-means" class="level3" data-number="91.1.4">
 <h3 data-number="91.1.4" class="anchored" data-anchor-id="what-this-means"><span class="header-section-number">91.1.4</span> What This Means</h3>
 <p>Cloud-9 is what FTD calls <strong>the void made visible</strong>: a region where flux exists but has never crossed the manifestation threshold to become stars.</p>
-<p>In FTD terms: - <strong>State s = 0 everywhere</strong> (no manifested voxels) - <strong>Flux J ≠ 0</strong> (dark matter halo present) - <strong>Below κ_B threshold</strong> (no genesis has occurred)</p>
+<p>In FTD terms: - <strong>State s = 0 everywhere</strong> (no manifested voxels) - <strong>Flux <span class="math inline">\(J \neq 0\)</span></strong> (dark matter halo present) - <strong>Below <span class="math inline">\(\kappa_B\)</span> threshold</strong> (no genesis has occurred)</p>
 <p>This is direct evidence that: 1. Unmanifested structures can exist stably 2. They have the geometry FTD predicts (spherical, non-rotating) 3. There is a threshold for manifestation</p>
 </section>
 <section id="alternative-explanations" class="level3" data-number="91.1.5">
@@ -1199,7 +1199,7 @@ window.Quarto = {
 <tr class="odd">
 <td>What determines threshold</td>
 <td>Cooling physics</td>
-<td>κ_B (electron mass scale)</td>
+<td><span class="math inline">\(\kappa_B\)</span> (electron mass scale)</td>
 </tr>
 <tr class="even">
 <td>What is dark matter</td>
@@ -1238,12 +1238,12 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>Universal threshold</td>
-<td>Measure M_halo distribution</td>
-<td>Sharp cutoff at M_crit</td>
+<td>Measure <span class="math inline">\(M_{\text{halo}}\)</span> distribution</td>
+<td>Sharp cutoff at <span class="math inline">\(M_{\text{crit}}\)</span></td>
 </tr>
 <tr class="odd">
 <td>No intermediate ratios</td>
-<td>Plot M_HI/M_* distribution</td>
+<td>Plot <span class="math inline">\(M_{\text{HI}}/M_*\)</span> distribution</td>
 <td>Bimodal: normal (1-10) or extreme (&gt;100)</td>
 </tr>
 </tbody>
@@ -1294,7 +1294,7 @@ window.Quarto = {
 <tr class="even">
 <td>Candidate events</td>
 <td>6</td>
-<td>From ~10⁶ recorded</td>
+<td>From ~<span class="math inline">\(10^6\)</span> recorded</td>
 </tr>
 <tr class="odd">
 <td>Mechanism</td>
@@ -1306,10 +1306,10 @@ window.Quarto = {
 <p><strong>FTD Interpretation:</strong></p>
 <p>The Migdal effect has deep significance for the manifestation dynamics framework:</p>
 <ol type="1">
-<li><p><strong>Flux Perturbation Mechanism</strong>: The “instantaneous acceleration” of the nucleus creates a sharp gradient ∇J in the flux field. This perturbation propagates to the electron shell faster than the electrons can adiabatically adjust.</p></li>
+<li><p><strong>Flux Perturbation Mechanism</strong>: The “instantaneous acceleration” of the nucleus creates a sharp gradient <span class="math inline">\(\nabla J\)</span> in the flux field. This perturbation propagates to the electron shell faster than the electrons can adiabatically adjust.</p></li>
 <li><p><strong>Threshold Crossing at Distance</strong>: The electron ejection occurs not at the collision site but in the electron shell, demonstrating that flux perturbations can trigger manifestation transitions (here: bound → free) at locations distant from the primary interaction.</p></li>
-<li><p><strong>Dark Matter Detection Enhancement</strong>: This validates the mechanism by which sub-threshold dark matter interactions could produce <em>detectable</em> signatures. In FTD terms: dark matter (|J| &lt; κ_B) collides with nucleus, creates flux gradient, gradient propagates to electron shell, electron crosses threshold.</p></li>
-<li><p><strong>sLoop Coupling</strong>: The detection apparatus (6 events from 10⁶) is itself a manifested structure coupling to the flux field, precisely the observer-substrate relationship FTD predicts for measurement.</p></li>
+<li><p><strong>Dark Matter Detection Enhancement</strong>: This validates the mechanism by which sub-threshold dark matter interactions could produce <em>detectable</em> signatures. In FTD terms: dark matter (<span class="math inline">\(|J| &lt; \kappa_B\)</span>) collides with nucleus, creates flux gradient, gradient propagates to electron shell, electron crosses threshold.</p></li>
+<li><p><strong>sLoop Coupling</strong>: The detection apparatus (6 events from <span class="math inline">\(10^6\)</span>) is itself a manifested structure coupling to the flux field, precisely the observer-substrate relationship FTD predicts for measurement.</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1358,7 +1358,7 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td>Material</td>
-<td>Ce₂Zr₂O₇ (pyrochlore lattice)</td>
+<td><span class="math inline">\(\text{Ce}_2\text{Zr}_2\text{O}_7\)</span> (pyrochlore lattice)</td>
 <td>3D corner-sharing tetrahedra</td>
 </tr>
 <tr class="even">
@@ -1443,19 +1443,19 @@ FTD FRAMEWORK:
 </thead>
 <tbody>
 <tr class="odd">
-<td>w₀ (present)</td>
-<td>−1.0 (constant)</td>
-<td><strong>−0.7</strong></td>
+<td><span class="math inline">\(w_0\)</span> (present)</td>
+<td>-1.0 (constant)</td>
+<td><strong>-0.7</strong></td>
 </tr>
 <tr class="even">
-<td>wₐ (evolution)</td>
+<td><span class="math inline">\(w_a\)</span> (evolution)</td>
 <td>0 (no change)</td>
-<td><strong>−1.0</strong></td>
+<td><strong>-1.0</strong></td>
 </tr>
 <tr class="odd">
 <td>Significance</td>
 <td>-</td>
-<td><strong>4.2σ deviation</strong> from ΛCDM</td>
+<td><strong><span class="math inline">\(4.2\sigma\)</span> deviation</strong> from <span class="math inline">\(\Lambda\)</span>CDM</td>
 </tr>
 <tr class="even">
 <td>Energy density</td>
@@ -1481,15 +1481,15 @@ FTD FRAMEWORK:
 </thead>
 <tbody>
 <tr class="odd">
-<td>w ≠ −1 (not cosmological constant)</td>
+<td><span class="math inline">\(w \neq -1\)</span> (not cosmological constant)</td>
 <td>Void flux is dynamic, not static</td>
 </tr>
 <tr class="even">
-<td>w evolves with redshift</td>
+<td><span class="math inline">\(w\)</span> evolves with redshift</td>
 <td>Flux vacuum undergoes cosmic evolution</td>
 </tr>
 <tr class="odd">
-<td>Energy peaked at z ≈ 0.45</td>
+<td>Energy peaked at <span class="math inline">\(z \approx 0.45\)</span></td>
 <td>Phase transition in void structure</td>
 </tr>
 <tr class="even">
@@ -1508,7 +1508,7 @@ FTD FRAMEWORK:
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>DESI’s 4.2σ evidence for evolving dark energy is <strong>strongly consistent</strong> with FTD’s prediction that dark energy arises from dynamic void flux. A static cosmological constant would be <strong>surprising</strong> in FTD, as the flux field has no mechanism to remain perfectly constant across cosmic time.</p>
+<p>DESI’s <span class="math inline">\(4.2\sigma\)</span> evidence for evolving dark energy is <strong>strongly consistent</strong> with FTD’s prediction that dark energy arises from dynamic void flux. A static cosmological constant would be <strong>surprising</strong> in FTD, as the flux field has no mechanism to remain perfectly constant across cosmic time.</p>
 </div>
 </div>
 </section>
@@ -1532,12 +1532,12 @@ FTD FRAMEWORK:
 <tbody>
 <tr class="odd">
 <td>Bell parameter S</td>
-<td>2.275 ± 0.057</td>
-<td>Violates classical bound S ≤ 2</td>
+<td><span class="math inline">\(2.275 \pm 0.057\)</span></td>
+<td>Violates classical bound <span class="math inline">\(S \leq 2\)</span></td>
 </tr>
 <tr class="even">
 <td>Significance</td>
-<td><strong>&gt;4σ</strong></td>
+<td><strong><span class="math inline">\(&gt; 4\sigma\)</span></strong></td>
 <td>Statistically robust</td>
 </tr>
 <tr class="odd">
@@ -1606,6 +1606,11 @@ SLOOP INTERPRETATION:
 <p><strong>Status:</strong> [CONSISTENT]</p>
 <p>In March 2025, the LHCb collaboration announced the <strong>first observation of CP violation in baryon decays</strong>, published in Nature in July 2025 <span class="citation" data-cites="lhcb2025cp">(<a href="#ref-lhcb2025cp" role="doc-biblioref">LHCb Collaboration 2025</a>)</span>.</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 38%">
+<col style="width: 20%">
+<col style="width: 41%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Observation</th>
@@ -1616,17 +1621,17 @@ SLOOP INTERPRETATION:
 <tbody>
 <tr class="odd">
 <td>Decay channel</td>
-<td>Λb⁰ → pK⁻π⁺π⁻</td>
+<td><span class="math inline">\(\Lambda_b^0 \to pK^-\pi^+\pi^-\)</span></td>
 <td>Bottom baryon to proton + mesons</td>
 </tr>
 <tr class="even">
 <td>CP asymmetry</td>
-<td>A_CP = (2.45 ± 0.46)%</td>
-<td>Matter ≠ antimatter</td>
+<td><span class="math inline">\(A_{\text{CP}} = (2.45 \pm 0.46)\%\)</span></td>
+<td>Matter <span class="math inline">\(\neq\)</span> antimatter</td>
 </tr>
 <tr class="odd">
 <td>Significance</td>
-<td><strong>5.2σ</strong></td>
+<td><strong><span class="math inline">\(5.2\sigma\)</span></strong></td>
 <td>Discovery threshold</td>
 </tr>
 <tr class="even">
@@ -1641,13 +1646,17 @@ SLOOP INTERPRETATION:
 <p><strong>FTD Interpretation:</strong></p>
 <p>FTD derives CP violation from the framework integers:</p>
 <p><span class="math display">\[\delta_{\text{CP}} = \arctan\left(\frac{7}{3}\right) \approx 66.8°\]</span></p>
-<p>The observation of CP violation in baryons with A_CP ≈ 2.45% is <strong>consistent</strong> with FTD’s prediction that:</p>
+<p>The observation of CP violation in baryons with <span class="math inline">\(A_{\text{CP}} \approx 2.45\%\)</span> is <strong>consistent</strong> with FTD’s prediction that:</p>
 <ol type="1">
 <li>CP violation arises from the discrete structure of triads (3-quark bound states)</li>
 <li>The CKM phase is determined by integer ratios (7/3)</li>
 <li>Baryogenesis requires CP violation in baryonic matter, now confirmed to exist</li>
 </ol>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 42%">
+<col style="width: 57%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>LHCb Finding</th>
@@ -1660,7 +1669,7 @@ SLOOP INTERPRETATION:
 <td>Triads carry CP-violating phase</td>
 </tr>
 <tr class="even">
-<td>A_CP ≈ 2.45%</td>
+<td><span class="math inline">\(A_{\text{CP}} \approx 2.45\%\)</span></td>
 <td>Consistent with derived Jarlskog invariant</td>
 </tr>
 <tr class="odd">
@@ -1679,7 +1688,7 @@ SLOOP INTERPRETATION:
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The Standard Model’s CP violation is insufficient to explain the universe’s matter-antimatter asymmetry. FTD derives η ~ 10⁻¹⁰ from CP violation + Sakharov conditions. LHCb’s baryon observation confirms that CP asymmetry exists precisely in the structures (triads) where FTD predicts it must operate.</p>
+<p>The Standard Model’s CP violation is insufficient to explain the universe’s matter-antimatter asymmetry. FTD derives <span class="math inline">\(\eta \sim 10^{-10}\)</span> from CP violation + Sakharov conditions. LHCb’s baryon observation confirms that CP asymmetry exists precisely in the structures (triads) where FTD predicts it must operate.</p>
 </div>
 </div>
 </section>
@@ -1703,17 +1712,17 @@ SLOOP INTERPRETATION:
 <tbody>
 <tr class="odd">
 <td>Upper limit</td>
-<td>|d_e| &lt; 4.1 × 10⁻³⁰ e·cm</td>
-<td>2.4× better than previous</td>
+<td><span class="math inline">\(|d_e| &lt; 4.1 \times 10^{-30}\)</span> e cm</td>
+<td>2.4x better than previous</td>
 </tr>
 <tr class="even">
 <td>Method</td>
-<td>Trapped HfF⁺ molecular ions</td>
+<td>Trapped <span class="math inline">\(\text{HfF}^+\)</span> molecular ions</td>
 <td>300 hours measurement</td>
 </tr>
 <tr class="odd">
 <td>Constraint</td>
-<td>New physics above ~10¹³ GeV</td>
+<td>New physics above ~<span class="math inline">\(10^{13}\)</span> GeV</td>
 <td>Supersymmetry strongly constrained</td>
 </tr>
 </tbody>
@@ -1721,17 +1730,21 @@ SLOOP INTERPRETATION:
 <p><strong>Why the eEDM Matters:</strong></p>
 <p>A non-zero eEDM would indicate CP violation beyond the Standard Model. The measurement probes physics at energy scales far beyond any collider:</p>
 <pre><code>eEDM SENSITIVITY VS. ACCELERATORS:
-  LHC probes:          ~10⁴ GeV
-  eEDM (2025) probes:  ~10¹³ GeV
+  LHC probes:          ~10^4 GeV
+  eEDM (2025) probes:  ~10^13 GeV
 
-  eEDM is ~10⁹× more sensitive to BSM physics</code></pre>
+  eEDM is ~10^9x more sensitive to BSM physics</code></pre>
 <p><strong>FTD Interpretation:</strong></p>
 <p>FTD derives CP violation from the discrete integer structure:</p>
 <p><span class="math display">\[\delta_{\text{CP}} = \arctan\left(\frac{7}{3}\right) \approx 66.8°\]</span></p>
 <p>This phase manifests in: 1. <strong>CKM matrix</strong>: quark flavor mixing (2.1% accuracy) 2. <strong>PMNS matrix</strong>: neutrino mixing 3. <strong>Baryogenesis</strong>: matter-antimatter asymmetry</p>
 <p>However, the electron is a <strong>fundamental manifestation</strong> in FTD, not a composite structure. CP-violating phases arise in: - Transitions between manifestation states (weak decay) - Composite structures where phase accumulates (quarks, baryons) - Flavor mixing matrices (multi-generation structure)</p>
-<p>For a pointlike electron: - No internal structure to carry phase - CP violation enters only via loop corrections - Predicted d_e is extremely small</p>
+<p>For a pointlike electron: - No internal structure to carry phase - CP violation enters only via loop corrections - Predicted <span class="math inline">\(d_e\)</span> is extremely small</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 48%">
+<col style="width: 51%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>FTD Prediction</th>
@@ -1740,8 +1753,8 @@ SLOOP INTERPRETATION:
 </thead>
 <tbody>
 <tr class="odd">
-<td>d_e ≈ 0 for fundamental particles</td>
-<td>✓ |d_e| &lt; 4.1 × 10⁻³⁰ e·cm</td>
+<td><span class="math inline">\(d_e \approx 0\)</span> for fundamental particles</td>
+<td><span class="math inline">\(|d_e| &lt; 4.1 \times 10^{-30}\)</span> e cm</td>
 </tr>
 <tr class="even">
 <td>CP phase in composites only</td>
@@ -1763,7 +1776,7 @@ SLOOP INTERPRETATION:
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The eEDM measurement <strong>constrains</strong> potential extensions to FTD. Any future FTD-derived prediction of d_e must satisfy |d_e| &lt; 4.1 × 10⁻³⁰ e·cm. Current FTD framework predicts d_e ≈ 0, which is consistent with observation.</p>
+<p>The eEDM measurement <strong>constrains</strong> potential extensions to FTD. Any future FTD-derived prediction of <span class="math inline">\(d_e\)</span> must satisfy <span class="math inline">\(|d_e| &lt; 4.1 \times 10^{-30}\)</span> e cm. Current FTD framework predicts <span class="math inline">\(d_e \approx 0\)</span>, which is consistent with observation.</p>
 </div>
 </div>
 <hr>
@@ -1841,14 +1854,14 @@ SLOOP INTERPRETATION:
 <td>✅ Consistent (LIGO)</td>
 </tr>
 <tr class="even">
-<td>α = 1/137.036</td>
+<td><span class="math inline">\(\alpha\)</span> = 1/137.036</td>
 <td>Couplings</td>
-<td>✅ Consistent (<strong>0.21 ppt</strong>)</td>
+<td>(confirmed) (<strong>0.21 ppt</strong>)</td>
 </tr>
 <tr class="odd">
-<td>N_c ≈ 3</td>
+<td><span class="math inline">\(N_c \approx 3\)</span></td>
 <td>QCD</td>
-<td>✅ Consistent</td>
+<td>(consistent)</td>
 </tr>
 </tbody>
 </table>
@@ -1909,16 +1922,16 @@ SLOOP INTERPRETATION:
 <tr class="odd">
 <td><strong>Discrepancy</strong></td>
 <td><strong>~10 seconds</strong></td>
-<td><strong>~5σ</strong></td>
+<td><strong>~<span class="math inline">\(5\sigma\)</span></strong></td>
 <td>Unexplained</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Current Status (2025):</strong></p>
-<p>In September 2025, representatives from all operating neutron lifetime experiments convened at PSI to address this puzzle. New results from LANL, NIST, J-PARC, and PSI are expected in coming years. J-PARC’s electron-detection method <span class="citation" data-cites="hirota2020jparc">(<a href="#ref-hirota2020jparc" role="doc-biblioref">Hirota et al. 2020</a>)</span> (distinct from proton-detection beam experiments) shows consistency with bottle results but 2.3σ tension with proton-based beam measurements.</p>
+<p>In September 2025, representatives from all operating neutron lifetime experiments convened at PSI to address this puzzle. New results from LANL, NIST, J-PARC, and PSI are expected in coming years. J-PARC’s electron-detection method <span class="citation" data-cites="hirota2020jparc">(<a href="#ref-hirota2020jparc" role="doc-biblioref">Hirota et al. 2020</a>)</span> (distinct from proton-detection beam experiments) shows consistency with bottle results but <span class="math inline">\(2.3\sigma\)</span> tension with proton-based beam measurements.</p>
 <p>Proposed explanations include: - Exotic decay channels (mirror neutrons), largely excluded - Excited neutron states with different lifetimes - Multiple elastic collision effects in bottles - Systematic measurement artifacts</p>
 <p><strong>FTD Interpretation (Speculative):</strong></p>
-<p>FTD predicts τ_n ≈ 880 s (Chapter 2.7), falling between the two measured values. The discrepancy may arise from <strong>measurement-context-dependent sLoop coupling</strong>:</p>
+<p>FTD predicts <span class="math inline">\(\tau_n \approx 880\)</span> s (Chapter 2.7), falling between the two measured values. The discrepancy may arise from <strong>measurement-context-dependent sLoop coupling</strong>:</p>
 <pre><code>BOTTLE METHOD:
   Neutron ← strong sLoop coupling → Container walls
   Local flux concentration enhanced
@@ -1969,7 +1982,7 @@ BEAM METHOD:
 <tr class="odd">
 <td><strong>Discrepancy</strong></td>
 <td><strong>~4%</strong></td>
-<td>Historically &gt;7σ</td>
+<td>Historically <span class="math inline">\(&gt; 7\sigma\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -2065,14 +2078,14 @@ BEAM METHOD:
 <tr class="odd">
 <td>Electron</td>
 <td>0.511 MeV</td>
-<td>~10⁻¹² m</td>
-<td>Averages over larger region → r_halo</td>
+<td>~<span class="math inline">\(10^{-12}\)</span> m</td>
+<td>Averages over larger region (<span class="math inline">\(r_{\text{halo}}\)</span>)</td>
 </tr>
 <tr class="even">
 <td>Muon</td>
 <td>105.7 MeV</td>
-<td>~10⁻¹⁴ m</td>
-<td>Probes smaller core → r_core</td>
+<td>~<span class="math inline">\(10^{-14}\)</span> m</td>
+<td>Probes smaller core (<span class="math inline">\(r_{\text{core}}\)</span>)</td>
 </tr>
 </tbody>
 </table>

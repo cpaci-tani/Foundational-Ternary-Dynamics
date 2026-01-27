@@ -25,9 +25,9 @@ The hierarchical structure of star-forming regions reflects the scale-free natur
 
 Stars form in giant molecular clouds:
 - Size: 10-100 parsecs
-- Mass: 10⁴-10⁶ M☉
+- Mass: $10^4$-$10^6$ $M_\odot$
 - Temperature: 10-20 K
-- Composition: H₂, He, dust
+- Composition: $\text{H}_2$, He, dust
 
 ### Trigger Mechanisms
 
@@ -103,8 +103,8 @@ $$
 $$
 
 - Many more low-mass stars than high-mass
-- Few stars > 50 M☉
-- Peak around 0.1-0.5 M☉
+- Few stars > 50 $M_\odot$
+- Peak around 0.1-0.5 $M_\odot$
 
 ## In Simulation
 

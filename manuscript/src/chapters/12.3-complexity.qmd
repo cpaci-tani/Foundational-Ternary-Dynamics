@@ -20,7 +20,7 @@ It does not tell us what they do.
 
 | Parts | Whole | Emergent Property |
 |-------|-------|-------------------|
-| H₂O molecules | Water | Wetness |
+| $\text{H}_2\text{O}$ molecules | Water | Wetness |
 | Neurons | Brain | Thought |
 | Ants | Colony | Intelligence |
 | Notes | Music | Emotion |
@@ -42,21 +42,21 @@ The universe organizes itself into nested levels, each with its own emergent pro
 
 | Level | Organization | Scale |
 |-------|--------------|-------|
-| 14 | Universe (Cosmic Structure) | ~10²⁶ m |
-| 13 | Galaxy Clusters | ~10²³ m |
-| 12 | Galaxies | ~10²¹ m |
-| 11 | Star Systems | ~10¹³ m |
-| 10 | Planets | ~10⁷ m |
-| 9 | Ecosystems | ~10³ m |
-| 8 | Organisms | ~10⁰ m |
-| 7 | Organs | ~10⁻¹ m |
-| 6 | Cells | ~10⁻⁵ m |
-| 5 | Organelles | ~10⁻⁶ m |
-| 4 | Macromolecules | ~10⁻⁸ m |
-| 3 | Molecules | ~10⁻⁹ m |
-| 2 | Atoms | ~10⁻¹⁰ m |
-| 1 | Particles | ~10⁻¹⁵ m |
-| 0 | Voxels (Void + Flux) | ~10⁻³⁵ m |
+| 14 | Universe (Cosmic Structure) | ~$10^{26}$ m |
+| 13 | Galaxy Clusters | ~$10^{23}$ m |
+| 12 | Galaxies | ~$10^{21}$ m |
+| 11 | Star Systems | ~$10^{13}$ m |
+| 10 | Planets | ~$10^{7}$ m |
+| 9 | Ecosystems | ~$10^{3}$ m |
+| 8 | Organisms | ~$10^{0}$ m |
+| 7 | Organs | ~$10^{-1}$ m |
+| 6 | Cells | ~$10^{-5}$ m |
+| 5 | Organelles | ~$10^{-6}$ m |
+| 4 | Macromolecules | ~$10^{-8}$ m |
+| 3 | Molecules | ~$10^{-9}$ m |
+| 2 | Atoms | ~$10^{-10}$ m |
+| 1 | Particles | ~$10^{-15}$ m |
+| 0 | Voxels (Void + Flux) | ~$10^{-35}$ m |
 
 ### Properties at Each Level
 
@@ -87,8 +87,8 @@ $$
 | Pattern | K | Type |
 |---------|---|------|
 | 000...0 | Small | Simple |
-| Random | ≈ Length | Incompressible |
-| π digits | Small | Compressible (has program) |
+| Random | $\approx$ Length | Incompressible |
+| $\pi$ digits | Small | Compressible (has program) |
 | Life | Intermediate | Complex |
 
 ### The Mandelbrot Set: Complexity from Simplicity
@@ -106,7 +106,7 @@ This two-symbol formula has Kolmogorov complexity of approximately 50 bits. Yet 
 | Mandelbrot Property | Complexity Implication |
 |---------------------|------------------------|
 | Formula: ~50 bits | Extremely low K(program) |
-| Boundary: infinite detail | Infinite K(output) |
+| Boundary: infinite detail | Infinite $K$(output) |
 | Computation: unbounded | High logical depth |
 | Self-similarity | High effective complexity |
 
@@ -179,7 +179,7 @@ The entire infinitely complex fractal boundary is the *edge* between order and c
 
 ### Lambda Parameter
 
-Langton's work on cellular automata showed that the "lambda parameter" controls the transition between frozen and chaotic dynamics. At λ ≈ 0.27 lies the edge of chaos, where complexity is maximized: frozen dynamics at low λ, chaotic behavior at high λ, but maximum computational capability at the critical point between them.
+Langton's work on cellular automata showed that the "lambda parameter" controls the transition between frozen and chaotic dynamics. At $\lambda \approx 0.27$ lies the edge of chaos, where complexity is maximized: frozen dynamics at low $\lambda$, chaotic behavior at high $\lambda$, but maximum computational capability at the critical point between them.
 
 ### Life at the Edge
 

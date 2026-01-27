@@ -197,7 +197,7 @@ Giving the update rule with damping:
 
 $$J(t+1) = (1-\gamma)J(t) + w(t+1)$$
 
-With γ = DECAY_RATE = α ≈ 1/137.
+With $\gamma$ = DECAY_RATE = $\alpha \approx 1/137$.
 
 ::: {.callout-note}
 ## The Fine Structure Constant

@@ -26,7 +26,7 @@ With w < -1, dark energy density *increases* as universe expands.
 | 60 million years | Milky Way disrupted |
 | 3 months | Solar system destroyed |
 | 30 minutes | Earth explodes |
-| 10⁻¹⁹ seconds | Atoms ripped apart |
+| $10^{-19}$ seconds | Atoms ripped apart |
 | 0 | Spacetime itself tears |
 
 ### The Physics
@@ -218,11 +218,11 @@ def simulate_vacuum_decay(universe):
 
 | Ending | Cause | Timescale | Survival? |
 |--------|-------|-----------|-----------|
-| Heat Death | Entropy | 10¹⁰⁰+ years | No (eventual) |
+| Heat Death | Entropy | $10^{100}$+ years | No (eventual) |
 | Big Rip | Phantom energy | ~20 Gyr | No |
 | Big Crunch | Gravity | Variable | No |
 | Big Bounce | Quantum gravity | Cycles | Maybe |
-| Big Freeze | Dark energy | 10¹⁴+ years | No (eventual) |
+| Big Freeze | Dark energy | $10^{14}$+ years | No (eventual) |
 | Vacuum Decay | Quantum tunneling | Random | No |
 
 ## The Most Likely Ending

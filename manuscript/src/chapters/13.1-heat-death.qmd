@@ -26,15 +26,15 @@ Eventually, no gradients remain.
 
 | Era | Time (years) | Events |
 |-----|--------------|--------|
-| Stelliferous | Now - 10¹⁴ | Stars shine |
-| Degenerate | 10¹⁴ - 10⁴⁰ | White dwarfs, neutron stars cool |
-| Black Hole | 10⁴⁰ - 10¹⁰⁰ | Only black holes remain |
-| Dark | 10¹⁰⁰+ | Black holes evaporate |
-| Heat Death | ∞ | Final equilibrium |
+| Stelliferous | Now - $10^{14}$ | Stars shine |
+| Degenerate | $10^{14}$ - $10^{40}$ | White dwarfs, neutron stars cool |
+| Black Hole | $10^{40}$ - $10^{100}$ | Only black holes remain |
+| Dark | $10^{100}$+ | Black holes evaporate |
+| Heat Death | $\infty$ | Final equilibrium |
 
 ## The Stelliferous Era Ends
 
-### Last Stars Form (~10¹⁴ years)
+### Last Stars Form (~$10^{14}$ years)
 
 Star formation requires:
 - Gas to collapse
@@ -48,8 +48,8 @@ Eventually:
 
 ### The Final Stellar Light
 
-Red dwarfs live longest (~10¹³ years):
-- M-class, 0.1 M☉
+Red dwarfs live longest ($\sim 10^{13}$ years):
+- M-class, $0.1$ $M_\odot$
 - Slow, efficient burning
 - When the last one dies, starlight ends forever
 
@@ -70,7 +70,7 @@ $$
 T(t) \propto t^{-2/5}
 $$
 
-Cooling takes 10¹⁵+ years to approach background.
+Cooling takes $10^{15}$+ years to approach background.
 
 ### Black Dwarf Formation
 
@@ -85,7 +85,7 @@ Eventually white dwarfs become black dwarfs:
 
 ### Black Holes Dominate
 
-By 10⁴⁰ years:
+By $10^{40}$ years:
 - Stellar remnants have decayed or merged
 - Only black holes remain significant
 - Plus radiation and sparse particles
@@ -98,16 +98,16 @@ $$
 
 | Mass | Evaporation Time |
 |------|-----------------|
-| 1 M☉ | 10⁶⁷ years |
-| 10⁶ M☉ | 10⁸⁷ years |
-| 10⁹ M☉ | 10⁹⁶ years |
-| 10¹² M☉ | 10¹⁰⁵ years |
+| $1$ $M_\odot$ | $10^{67}$ years |
+| $10^6$ $M_\odot$ | $10^{87}$ years |
+| $10^9$ $M_\odot$ | $10^{96}$ years |
+| $10^{12}$ $M_\odot$ | $10^{105}$ years |
 
 ### The Final Black Hole
 
 Supermassive black holes last longest.
 
-The very last one evaporates around 10¹⁰⁰ years:
+The very last one evaporates around $10^{100}$ years:
 - Final flash of Hawking radiation
 - Then: nothing but particles
 
@@ -115,7 +115,7 @@ The very last one evaporates around 10¹⁰⁰ years:
 
 ### What Remains
 
-After 10¹⁰⁰ years:
+After $10^{100}$ years:
 - Photons (redshifted to near zero energy)
 - Neutrinos (incredibly sparse)
 - Electrons and positrons (if stable)
@@ -155,7 +155,7 @@ Heat death = thermal equilibrium everywhere:
 
 ![The entropy timeline: entropy increases from the Big Bang through structure formation to the heat death, where maximum entropy is achieved.](../../media/images/fig-entropy-timeline.png){#fig-entropy-timeline}
 
-The final state approaches asymptotically: temperature near 10⁻³⁰ K, density near 10⁻¹²³ kg/m³, contents reduced to scattered photons and neutrinos, events essentially ceased, entropy at maximum. In such a state, even the concept of time becomes meaningless since nothing changes to mark its passage.
+The final state approaches asymptotically: temperature near $10^{-30}$ K, density near $10^{-123}$ kg/m$^3$, contents reduced to scattered photons and neutrinos, events essentially ceased, entropy at maximum. In such a state, even the concept of time becomes meaningless since nothing changes to mark its passage.
 
 ### Does Time End?
 

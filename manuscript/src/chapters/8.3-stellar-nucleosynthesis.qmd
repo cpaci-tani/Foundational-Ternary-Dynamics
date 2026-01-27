@@ -56,7 +56,7 @@ Requires T > 100 million K.
 ### Carbon Production
 
 The Hoyle resonance makes this possible:
-- ¹²C has an excited state at exactly the right energy
+- $^{12}$C has an excited state at exactly the right energy
 - Without it, almost no carbon would form
 - Fine-tuning: Move the level by 1%, no carbon
 
@@ -68,16 +68,16 @@ $$
 
 ## Advanced Burning Stages
 
-Only in massive stars (> 8 M☉):
+Only in massive stars (> 8 $M_\odot$):
 
 | Stage | Fuel | Products | T (K) | Duration |
 |-------|------|----------|-------|----------|
-| H | H | He | 1.5×10⁷ | 10 Myr |
-| He | He | C, O | 1×10⁸ | 1 Myr |
-| C | C | Ne, Mg | 6×10⁸ | 1000 yr |
-| Ne | Ne | O, Mg | 1.2×10⁹ | 1 yr |
-| O | O | Si, S | 1.5×10⁹ | months |
-| Si | Si | Fe | 3×10⁹ | days |
+| H | H | He | $1.5 \times 10^7$ | 10 Myr |
+| He | He | C, O | $1 \times 10^8$ | 1 Myr |
+| C | C | Ne, Mg | $6 \times 10^8$ | 1000 yr |
+| Ne | Ne | O, Mg | $1.2 \times 10^9$ | 1 yr |
+| O | O | Si, S | $1.5 \times 10^9$ | months |
+| Si | Si | Fe | $3 \times 10^9$ | days |
 
 ### The Onion Structure
 
@@ -118,9 +118,9 @@ In supernovae and neutron star mergers:
 
 ## Yield
 
-A 25 M☉ star produces (approximately):
+A 25 $M_\odot$ star produces (approximately):
 
-| Element | Mass (M☉) |
+| Element | Mass ($M_\odot$) |
 |---------|-----------|
 | O | 3.0 |
 | C | 0.4 |
@@ -134,16 +134,16 @@ A 25 M☉ star produces (approximately):
 
 Result of billions of years of nucleosynthesis:
 
-| Element | Abundance (relative to Si = 10⁶) |
+| Element | Abundance (relative to Si = $10^6$) |
 |---------|----------------------------------|
-| H | 2.8 × 10¹⁰ |
-| He | 2.7 × 10⁹ |
-| O | 2.4 × 10⁷ |
-| C | 1.0 × 10⁷ |
-| Ne | 3.4 × 10⁶ |
-| Fe | 9.0 × 10⁵ |
-| N | 3.1 × 10⁶ |
-| Si | 1.0 × 10⁶ |
+| H | $2.8 \times 10^{10}$ |
+| He | $2.7 \times 10^9$ |
+| O | $2.4 \times 10^7$ |
+| C | $1.0 \times 10^7$ |
+| Ne | $3.4 \times 10^6$ |
+| Fe | $9.0 \times 10^5$ |
+| N | $3.1 \times 10^6$ |
+| Si | $1.0 \times 10^6$ |
 
 ## In Simulation
 

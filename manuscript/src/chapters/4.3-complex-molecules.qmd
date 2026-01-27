@@ -28,31 +28,31 @@ Molecules of just carbon and hydrogen.
 
 | Formula | Name | Structure | Notes |
 |---------|------|-----------|-------|
-| CH₄ | Methane | Tetrahedral | Natural gas |
-| C₂H₆ | Ethane | Two tetrahedra | |
-| C₃H₈ | Propane | Chain | Fuel |
-| C₄H₁₀ | Butane | Chain | Lighter fluid |
-| C₅H₁₂ | Pentane | Chain | Solvent |
+| $\text{CH}_4$ | Methane | Tetrahedral | Natural gas |
+| $\text{C}_2\text{H}_6$ | Ethane | Two tetrahedra | |
+| $\text{C}_3\text{H}_8$ | Propane | Chain | Fuel |
+| $\text{C}_4\text{H}_{10}$ | Butane | Chain | Lighter fluid |
+| $\text{C}_5\text{H}_{12}$ | Pentane | Chain | Solvent |
 
-General formula: CₙH₂ₙ₊₂
+General formula: $\text{C}_n\text{H}_{2n+2}$
 
 ### Alkenes (Double Bonds)
 
 | Formula | Name | Notes |
 |---------|------|-------|
-| C₂H₄ | Ethylene | Planar, ripening agent |
-| C₃H₆ | Propene | Plastic precursor |
+| $\text{C}_2\text{H}_4$ | Ethylene | Planar, ripening agent |
+| $\text{C}_3\text{H}_6$ | Propene | Plastic precursor |
 
-General formula: CₙH₂ₙ
+General formula: $\text{C}_n\text{H}_{2n}$
 
 ### Alkynes (Triple Bonds)
 
 | Formula | Name | Notes |
 |---------|------|-------|
-| C₂H₂ | Acetylene | Linear, welding fuel |
-| C₃H₄ | Propyne | |
+| $\text{C}_2\text{H}_2$ | Acetylene | Linear, welding fuel |
+| $\text{C}_3\text{H}_4$ | Propyne | |
 
-General formula: CₙH₂ₙ₋₂
+General formula: $\text{C}_n\text{H}_{2n-2}$
 
 ### Aromatic Compounds
 
@@ -60,7 +60,7 @@ Ring structures with alternating double bonds.
 
 ![Benzene ring structure: six carbons in a hexagonal ring with alternating double bonds.](../../media/images/fig-benzene.png){#fig-benzene}
 
-Benzene (C₆H₆) features a six-membered ring with resonance: electrons delocalize around the entire ring rather than alternating between fixed single and double bonds.
+Benzene ($\text{C}_6\text{H}_6$) features a six-membered ring with resonance: electrons delocalize around the entire ring rather than alternating between fixed single and double bonds.
 
 ## Functional Groups
 
@@ -71,7 +71,7 @@ The reactive parts of molecules.
 | -OH | R-OH | Alcohol | Ethanol |
 | -CHO | R-CHO | Aldehyde | Formaldehyde |
 | -COOH | R-COOH | Carboxylic acid | Acetic acid |
-| -NH₂ | R-NH₂ | Amine | Methylamine |
+| $-\text{NH}_2$ | $\text{R-NH}_2$ | Amine | Methylamine |
 | -SH | R-SH | Thiol | Methanethiol |
 | C=O | R-CO-R' | Ketone | Acetone |
 | -O- | R-O-R' | Ether | Diethyl ether |
@@ -87,9 +87,9 @@ Ethanol (CH₃CH₂OH) is the "drinking alcohol" found in beer, wine, and spirit
 
 ### Acids and Bases
 
-**Carboxylic acids** donate H⁺: R-COOH → R-COO⁻ + H⁺
+**Carboxylic acids** donate $\text{H}^+$: R-COOH $\to$ R-COO$^-$ + $\text{H}^+$
 
-**Amines** accept H⁺: R-NH₂ + H⁺ → R-NH₃⁺
+**Amines** accept $\text{H}^+$: $\text{R-NH}_2$ + $\text{H}^+$ $\to$ $\text{R-NH}_3^+$
 
 ## Isomers
 
@@ -117,7 +117,7 @@ Mirror images are not superimposable. This matters in biology: life uses only on
 
 ### Combustion
 
-CH₄ + 2O₂ → CO₂ + 2H₂O + energy
+$\text{CH}_4 + 2\text{O}_2 \to \text{CO}_2 + 2\text{H}_2\text{O}$ + energy
 
 ### Substitution
 One group replaces another.

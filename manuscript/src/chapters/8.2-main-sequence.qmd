@@ -23,7 +23,7 @@ At every point, pressure exactly balances gravity.
 
 ## Energy Generation
 
-### Proton-Proton Chain (M < 1.5 M☉)
+### Proton-Proton Chain (M < 1.5 $M_\odot$)
 
 Dominant in Sun-like stars:
 
@@ -38,7 +38,7 @@ D + p → ³He + γ
 ³He + ³He → ⁴He + 2p
 ```
 
-### CNO Cycle (M > 1.5 M☉)
+### CNO Cycle (M > 1.5 $M_\odot$)
 
 Carbon, nitrogen, oxygen catalyze fusion:
 
@@ -61,12 +61,12 @@ $$
 
 | Mass | Luminosity | Temp | Lifetime |
 |------|------------|------|----------|
-| 0.1 M☉ | 0.001 L☉ | 3000 K | 10 trillion yr |
-| 0.5 M☉ | 0.03 L☉ | 4000 K | 50 billion yr |
-| 1 M☉ | 1 L☉ | 5800 K | 10 billion yr |
-| 2 M☉ | 16 L☉ | 8000 K | 1 billion yr |
-| 10 M☉ | 3000 L☉ | 20000 K | 30 million yr |
-| 50 M☉ | 500000 L☉ | 40000 K | 4 million yr |
+| 0.1 $M_\odot$ | 0.001 $L_\odot$ | 3000 K | 10 trillion yr |
+| 0.5 $M_\odot$ | 0.03 $L_\odot$ | 4000 K | 50 billion yr |
+| 1 $M_\odot$ | 1 $L_\odot$ | 5800 K | 10 billion yr |
+| 2 $M_\odot$ | 16 $L_\odot$ | 8000 K | 1 billion yr |
+| 10 $M_\odot$ | 3000 $L_\odot$ | 20000 K | 30 million yr |
+| 50 $M_\odot$ | 500000 $L_\odot$ | 40000 K | 4 million yr |
 
 More massive stars exhibit significantly shorter main-sequence lifetimes due to their elevated core temperatures and correspondingly higher fusion rates.
 

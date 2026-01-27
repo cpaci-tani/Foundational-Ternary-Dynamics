@@ -40,19 +40,19 @@ $$
 
 The spectrum follows a power law with spectral index γ that changes at characteristic energies: γ ≈ 2.7 below the knee, steepening to γ ≈ 3.0 between knee and ankle, then returning to γ ≈ 2.7 above the ankle before the GZK cutoff.
 
-### The Knee (3×10¹⁵ eV)
+### The Knee ($3 \times 10^{15}$ eV)
 
 Spectrum steepens:
 - Galactic accelerators reach limit?
 - Transition region?
 
-### The Ankle (3×10¹⁸ eV)
+### The Ankle ($3 \times 10^{18}$ eV)
 
 Spectrum flattens:
 - Extragalactic sources dominate
 - Transition from galactic to extragalactic
 
-### GZK Cutoff (5×10¹⁹ eV)
+### GZK Cutoff ($5 \times 10^{19}$ eV)
 
 Interaction with CMB:
 $$
@@ -95,10 +95,10 @@ Larger B or R → higher energy possible.
 
 | Source | Max Energy | Notes |
 |--------|------------|-------|
-| SNR | 10¹⁵ eV | Galactic knee |
-| Pulsars | 10¹⁶ eV | Strong B field |
-| AGN jets | 10²⁰ eV | UHECR sources? |
-| GRBs | 10²⁰ eV | Transient |
+| SNR | $10^{15}$ eV | Galactic knee |
+| Pulsars | $10^{16}$ eV | Strong B field |
+| AGN jets | $10^{20}$ eV | UHECR sources? |
+| GRBs | $10^{20}$ eV | Transient |
 
 ## Detection
 
@@ -107,7 +107,7 @@ Larger B or R → higher energy possible.
 Satellites and balloons:
 - Measure particle directly
 - Limited collecting area
-- Works up to ~10¹⁵ eV
+- Works up to ~$10^{15}$ eV
 
 ### Indirect (High Energy)
 
@@ -123,7 +123,7 @@ When a primary cosmic ray strikes the atmosphere, it triggers a cascade: the pri
 ## Ultra-High Energy Cosmic Rays
 
 The highest energy particles known:
-- 10²⁰ eV (= 50 J in one particle!)
+- $10^{20}$ eV (= 50 J in one particle!)
 - Tennis ball at 100 km/h: in one proton
 - Origin: Still debated
 
@@ -141,7 +141,7 @@ Single proton with macroscopic energy.
 
 - Secondary particles reach ground
 - Muons, electrons, photons
-- Create isotopes (¹⁴C)
+- Create isotopes ($^{14}$C)
 
 ### Biological
 

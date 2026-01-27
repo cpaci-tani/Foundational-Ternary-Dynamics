@@ -4,7 +4,7 @@
 
 ::: {.callout-important}
 ## The Cosmological Constant Problem Resolved
-The cosmological constant problem (a 10¹²³ discrepancy between quantum field theory predictions and observation) is resolved within FTD. The vacuum energy formula:
+The cosmological constant problem (a $10^{123}$ discrepancy between quantum field theory predictions and observation) is resolved within FTD. The vacuum energy formula:
 
 $$\rho_\Lambda = m_e^4 \times \alpha^{16} \times G^{*2}$$
 
@@ -31,8 +31,8 @@ $$\rho_\Lambda^{\text{obs}} \approx 3.9 \times 10^{-47} \text{ GeV}^4$$
 
 | Approach | Prediction | Problem |
 |----------|------------|---------|
-| Naive QFT (Planck cutoff) | ~10⁷⁶ GeV⁴ | 10¹²³ too large |
-| SUSY (TeV cutoff) | ~10⁻⁶⁴ GeV⁴ | 10¹⁷ too large |
+| Naive QFT (Planck cutoff) | $\sim 10^{76}$ GeV$^4$ | $10^{123}$ too large |
+| SUSY (TeV cutoff) | $\sim 10^{-64}$ GeV$^4$ | $10^{17}$ too large |
 | Anthropic selection | - | No predictive power |
 | Quintessence | Free parameters | Not a resolution |
 
@@ -55,9 +55,9 @@ Computing each factor:
 
 | Component | Value | Origin |
 |-----------|-------|--------|
-| $m_e^4$ | $6.82 \times 10^{-14}$ GeV⁴ | Manifestation threshold⁴ |
-| $\alpha^{16}$ | $6.47 \times 10^{-35}$ | 16 DOF coupled by α |
-| $G^{*2}$ | $8.754$ | Lemniscatic geometry² |
+| $m_e^4$ | $6.82 \times 10^{-14}$ GeV$^4$ | Manifestation threshold$^4$ |
+| $\alpha^{16}$ | $6.47 \times 10^{-35}$ | 16 DOF coupled by $\alpha$ |
+| $G^{*2}$ | $8.754$ | Lemniscatic geometry$^2$ |
 
 **Product:**
 $$\rho_\Lambda = 6.82 \times 10^{-14} \times 6.47 \times 10^{-35} \times 8.754 = 3.86 \times 10^{-47} \text{ GeV}^4$$
@@ -217,9 +217,9 @@ The formula would be falsified by:
 |--------|--------------|-----|
 | Vacuum modes | Infinite (continuum) | Finite (16 on minimal lattice) |
 | Cutoff scale | Planck $m_P$ | Manifestation threshold $m_e$ |
-| Base energy | $m_P^4 \sim 10^{76}$ GeV⁴ | $m_e^4 \sim 10^{-14}$ GeV⁴ |
+| Base energy | $m_P^4 \sim 10^{76}$ GeV$^4$ | $m_e^4 \sim 10^{-14}$ GeV$^4$ |
 | Suppression | None | $\alpha^{16} \times G^{*2}$ |
-| Prediction | Off by 10¹²³ | Off by 1% |
+| Prediction | Off by $10^{123}$ | Off by 1% |
 
 ### The Resolution Mechanism
 
@@ -227,7 +227,7 @@ The formula would be falsified by:
 2. **Mode coupling**: $\alpha^{16}$ (35 orders)
 3. **Geometric factor**: $G^{*2} \approx 9$
 
-Total: $10^{-88} \times 10^{-35} \times 10 = 10^{-122}$ ✓
+Total: $10^{-88} \times 10^{-35} \times 10 = 10^{-122}$
 
 ## Significance
 
@@ -251,8 +251,8 @@ The formula uses:
 
 ## Concepts
 
-- **cosmological-constant-problem**: 10¹²³ discrepancy between QFT and observation
-- **vacuum-energy**: Energy density of empty space ρ_Λ
+- **cosmological-constant-problem**: $10^{123}$ discrepancy between QFT and observation
+- **vacuum-energy**: Energy density of empty space $\rho_\Lambda$
 - **manifestation-threshold**: Minimum energy for void → particle; sets vacuum scale
 - **alpha-power-ladder**: Hierarchy of α powers encoding mass/energy scales
 - **mode-coupling**: Each lattice DOF couples with strength α

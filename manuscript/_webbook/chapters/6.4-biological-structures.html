@@ -108,6 +108,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -929,8 +958,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#protein-structure" id="toc-protein-structure" class="nav-link" data-scroll-target="#protein-structure"><span class="header-section-number">49.4</span> Protein Structure</a>
   <ul class="collapse">
   <li><a href="#levels" id="toc-levels" class="nav-link" data-scroll-target="#levels"><span class="header-section-number">49.4.1</span> Levels</a></li>
-  <li><a href="#α-helix" id="toc-α-helix" class="nav-link" data-scroll-target="#α-helix"><span class="header-section-number">49.4.2</span> α-Helix</a></li>
-  <li><a href="#β-sheet" id="toc-β-sheet" class="nav-link" data-scroll-target="#β-sheet"><span class="header-section-number">49.4.3</span> β-Sheet</a></li>
+  <li><a href="#alpha-helix" id="toc-alpha-helix" class="nav-link" data-scroll-target="#alpha-helix"><span class="header-section-number">49.4.2</span> <span class="math inline">\(\alpha\)</span>-Helix</a></li>
+  <li><a href="#beta-sheet" id="toc-beta-sheet" class="nav-link" data-scroll-target="#beta-sheet"><span class="header-section-number">49.4.3</span> <span class="math inline">\(\beta\)</span>-Sheet</a></li>
   </ul></li>
   <li><a href="#organelles" id="toc-organelles" class="nav-link" data-scroll-target="#organelles"><span class="header-section-number">49.5</span> Organelles</a></li>
   <li><a href="#self-assembly" id="toc-self-assembly" class="nav-link" data-scroll-target="#self-assembly"><span class="header-section-number">49.6</span> Self-Assembly</a>
@@ -1116,12 +1145,12 @@ Figure&nbsp;49.2: The DNA double helix: two antiparallel strands connected by ba
 </figcaption>
 </figure>
 </div>
-<p>The structure consists of: - <strong>Sugar-phosphate backbone</strong>: Alternating deoxyribose sugars and phosphate groups - <strong>Base pairs</strong>: Adenine pairs with Thymine (2 H-bonds), Guanine pairs with Cytosine (3 H-bonds) - <strong>Antiparallel strands</strong>: One runs 5’→3’, the other 3’→5’</p>
+<p>The structure consists of: - <strong>Sugar-phosphate backbone</strong>: Alternating deoxyribose sugars and phosphate groups - <strong>Base pairs</strong>: Adenine pairs with Thymine (2 H-bonds), Guanine pairs with Cytosine (3 H-bonds) - <strong>Antiparallel strands</strong>: One runs 5’ <span class="math inline">\(\to\)</span> 3’, the other 3’ <span class="math inline">\(\to\)</span> 5’</p>
 </section>
 <section id="key-properties" class="level3" data-number="49.3.2">
 <h3 data-number="49.3.2" class="anchored" data-anchor-id="key-properties"><span class="header-section-number">49.3.2</span> Key Properties</h3>
 <ul>
-<li>Antiparallel strands (5’→3’, 3’→5’)</li>
+<li>Antiparallel strands (5’ <span class="math inline">\(\to\)</span> 3’, 3’ <span class="math inline">\(\to\)</span> 5’)</li>
 <li>10.5 base pairs per turn</li>
 <li>Major and minor grooves</li>
 <li>2 nm diameter</li>
@@ -1148,7 +1177,7 @@ Figure&nbsp;49.2: The DNA double helix: two antiparallel strands connected by ba
 </tr>
 <tr class="even">
 <td>Secondary</td>
-<td>α-helix, β-sheet</td>
+<td><span class="math inline">\(\alpha\)</span>-helix, <span class="math inline">\(\beta\)</span>-sheet</td>
 <td>Hydrogen bonds</td>
 </tr>
 <tr class="odd">
@@ -1164,29 +1193,29 @@ Figure&nbsp;49.2: The DNA double helix: two antiparallel strands connected by ba
 </tbody>
 </table>
 </section>
-<section id="α-helix" class="level3" data-number="49.4.2">
-<h3 data-number="49.4.2" class="anchored" data-anchor-id="α-helix"><span class="header-section-number">49.4.2</span> α-Helix</h3>
+<section id="alpha-helix" class="level3" data-number="49.4.2">
+<h3 data-number="49.4.2" class="anchored" data-anchor-id="alpha-helix"><span class="header-section-number">49.4.2</span> <span class="math inline">\(\alpha\)</span>-Helix</h3>
 <div id="fig-alpha-helix" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-alpha-helix-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="../../media/images/fig-alpha-helix.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-alpha-helix-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;49.3: The α-helix: a coiled structure with 3.6 amino acid residues per turn, stabilized by hydrogen bonds parallel to the helix axis.
+Figure&nbsp;49.3: The alpha-helix: a coiled structure with 3.6 amino acid residues per turn, stabilized by hydrogen bonds parallel to the helix axis.
 </figcaption>
 </figure>
 </div>
 <p>The backbone spirals upward with hydrogen bonds connecting every fourth residue, creating a stable rod-like structure.</p>
 </section>
-<section id="β-sheet" class="level3" data-number="49.4.3">
-<h3 data-number="49.4.3" class="anchored" data-anchor-id="β-sheet"><span class="header-section-number">49.4.3</span> β-Sheet</h3>
+<section id="beta-sheet" class="level3" data-number="49.4.3">
+<h3 data-number="49.4.3" class="anchored" data-anchor-id="beta-sheet"><span class="header-section-number">49.4.3</span> <span class="math inline">\(\beta\)</span>-Sheet</h3>
 <div id="fig-beta-sheet" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-beta-sheet-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="../../media/images/fig-beta-sheet.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-beta-sheet-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;49.4: The β-sheet: extended strands connected side-by-side by hydrogen bonds, forming a pleated sheet structure.
+Figure&nbsp;49.4: The beta-sheet: extended strands connected side-by-side by hydrogen bonds, forming a pleated sheet structure.
 </figcaption>
 </figure>
 </div>
@@ -1258,9 +1287,9 @@ Figure&nbsp;49.4: The β-sheet: extended strands connected side-by-side by hydro
 <section id="examples" class="level3" data-number="49.6.2">
 <h3 data-number="49.6.2" class="anchored" data-anchor-id="examples"><span class="header-section-number">49.6.2</span> Examples</h3>
 <ul>
-<li>Lipids → membranes</li>
-<li>Amino acids → proteins → complexes</li>
-<li>Nucleotides → DNA → chromosomes</li>
+<li>Lipids <span class="math inline">\(\to\)</span> membranes</li>
+<li>Amino acids <span class="math inline">\(\to\)</span> proteins <span class="math inline">\(\to\)</span> complexes</li>
+<li>Nucleotides <span class="math inline">\(\to\)</span> DNA <span class="math inline">\(\to\)</span> chromosomes</li>
 </ul>
 </section>
 </section>

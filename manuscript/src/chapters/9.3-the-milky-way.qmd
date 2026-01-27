@@ -26,7 +26,7 @@ The barred spiral morphology reflects the angular momentum distribution of the p
 | Type | SBbc (barred spiral) |
 | Diameter | ~100,000 light-years |
 | Thickness | ~1,000 ly (disk) |
-| Mass | ~1.5 trillion M☉ (with dark matter) |
+| Mass | ~1.5 trillion $M_\odot$ (with dark matter) |
 | Stars | 100-400 billion |
 | Age | ~13.6 billion years |
 
@@ -100,7 +100,7 @@ Density wave theory:
 ### Sagittarius A*
 
 Supermassive black hole:
-- Mass: 4.1 million M☉
+- Mass: 4.1 million $M_\odot$
 - Distance: 26,000 ly
 - Schwarzschild radius: ~12 million km
 - Currently quiescent
@@ -136,10 +136,10 @@ The Milky Way has ~60 known satellites:
 
 | Galaxy | Distance | Mass |
 |--------|----------|------|
-| Large Magellanic Cloud | 160,000 ly | 10¹⁰ M☉ |
-| Small Magellanic Cloud | 200,000 ly | 7×10⁹ M☉ |
-| Sagittarius Dwarf | 70,000 ly | 4×10⁸ M☉ |
-| Ursa Minor Dwarf | 200,000 ly | 2×10⁷ M☉ |
+| Large Magellanic Cloud | 160,000 ly | $10^{10}$ $M_\odot$ |
+| Small Magellanic Cloud | 200,000 ly | $7 \times 10^9$ $M_\odot$ |
+| Sagittarius Dwarf | 70,000 ly | $4 \times 10^8$ $M_\odot$ |
+| Ursa Minor Dwarf | 200,000 ly | $2 \times 10^7$ $M_\odot$ |
 
 Sagittarius is currently being cannibalized.
 

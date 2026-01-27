@@ -84,10 +84,10 @@ The information molecule.
 The structure consists of:
 - **Sugar-phosphate backbone**: Alternating deoxyribose sugars and phosphate groups
 - **Base pairs**: Adenine pairs with Thymine (2 H-bonds), Guanine pairs with Cytosine (3 H-bonds)
-- **Antiparallel strands**: One runs 5'→3', the other 3'→5'
+- **Antiparallel strands**: One runs 5' $\to$ 3', the other 3' $\to$ 5'
 
 ### Key Properties
-- Antiparallel strands (5'→3', 3'→5')
+- Antiparallel strands (5' $\to$ 3', 3' $\to$ 5')
 - 10.5 base pairs per turn
 - Major and minor grooves
 - 2 nm diameter
@@ -99,19 +99,19 @@ The structure consists of:
 | Level | Description | Stabilized by |
 |-------|-------------|---------------|
 | Primary | Amino acid sequence | Covalent bonds |
-| Secondary | α-helix, β-sheet | Hydrogen bonds |
+| Secondary | $\alpha$-helix, $\beta$-sheet | Hydrogen bonds |
 | Tertiary | 3D fold | All forces |
 | Quaternary | Multiple chains | All forces |
 
-### α-Helix
+### $\alpha$-Helix
 
-![The α-helix: a coiled structure with 3.6 amino acid residues per turn, stabilized by hydrogen bonds parallel to the helix axis.](../../media/images/fig-alpha-helix.png){#fig-alpha-helix}
+![The alpha-helix: a coiled structure with 3.6 amino acid residues per turn, stabilized by hydrogen bonds parallel to the helix axis.](../../media/images/fig-alpha-helix.png){#fig-alpha-helix}
 
 The backbone spirals upward with hydrogen bonds connecting every fourth residue, creating a stable rod-like structure.
 
-### β-Sheet
+### $\beta$-Sheet
 
-![The β-sheet: extended strands connected side-by-side by hydrogen bonds, forming a pleated sheet structure.](../../media/images/fig-beta-sheet.png){#fig-beta-sheet}
+![The beta-sheet: extended strands connected side-by-side by hydrogen bonds, forming a pleated sheet structure.](../../media/images/fig-beta-sheet.png){#fig-beta-sheet}
 
 Strands can run in the same direction (parallel) or opposite directions (antiparallel), connected by hydrogen bonds between backbone atoms.
 
@@ -140,9 +140,9 @@ Biological structures build themselves.
 4. **Dynamic**: Constantly remodeling
 
 ### Examples
-- Lipids → membranes
-- Amino acids → proteins → complexes
-- Nucleotides → DNA → chromosomes
+- Lipids $\to$ membranes
+- Amino acids $\to$ proteins $\to$ complexes
+- Nucleotides $\to$ DNA $\to$ chromosomes
 
 ## In Simulation
 

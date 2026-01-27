@@ -49,7 +49,7 @@ The rock cycle describes the continuous transformation of rocks through three ma
 
 ### Magma Types
 
-| Type | SiO₂ | Viscosity | Eruption |
+| Type | $\text{SiO}_2$ | Viscosity | Eruption |
 |------|------|-----------|----------|
 | Basaltic | 45-52% | Low | Effusive |
 | Andesitic | 52-63% | Medium | Mixed |
@@ -65,7 +65,7 @@ The rock cycle describes the continuous transformation of rocks through three ma
 
 - **Lava**: Flowing molten rock
 - **Tephra**: Ejected fragments
-- **Gases**: CO₂, H₂O, SO₂
+- **Gases**: $\text{CO}_2$, $\text{H}_2\text{O}$, $\text{SO}_2$
 - **Pyroclastic flows**: Deadly hot gas + debris clouds
 
 ## Earthquakes

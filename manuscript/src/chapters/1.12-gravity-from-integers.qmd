@@ -1,6 +1,6 @@
 # Gravity from the Four Integers {#sec-gravity-integers}
 
-*"Why is gravity 10³⁹ times weaker than electromagnetism?"*
+*"Why is gravity $10^{39}$ times weaker than electromagnetism?"*
 
 ::: {.callout-warning}
 ## Scope Limitation [CRITICAL]
@@ -18,10 +18,10 @@ Gravity is absurdly weak compared to other forces:
 
 | Force | Relative Strength | Ratio to Gravity |
 |-------|------------------|------------------|
-| Strong | 1 | 10³⁹ |
-| Electromagnetic | 10⁻² | 10³⁷ |
-| Weak | 10⁻⁶ | 10³³ |
-| **Gravity** | **10⁻³⁹** | **1** |
+| Strong | 1 | $10^{39}$ |
+| Electromagnetic | $10^{-2}$ | $10^{37}$ |
+| Weak | $10^{-6}$ | $10^{33}$ |
+| **Gravity** | **$10^{-39}$** | **1** |
 
 Why this enormous hierarchy? Standard physics has no explanation: it is one of the biggest unsolved problems. FTD derives it.
 
@@ -41,7 +41,7 @@ $$\alpha_G = \left(\frac{m_p}{m_P}\right)^2$$
 
 where:
 - $m_p$ = proton mass (938 MeV)
-- $m_P$ = Planck mass (1.22 × 10¹⁹ GeV)
+- $m_P$ = Planck mass ($1.22 \times 10^{19}$ GeV)
 
 **Gravity is weak because protons are light compared to the Planck scale.**
 
@@ -57,7 +57,7 @@ $$\frac{m_p}{m_e} = \frac{n_{\text{eff}}}{\alpha} + T(b_3 + N_c)$$
 
 where $T(n) = n(n+1)/2$ is the nth triangular number.
 
-Substituting {N_c = 3, b₃ = 7, n_eff = 13}:
+Substituting {$N_c = 3$, $b_3 = 7$, $n_{eff} = 13$}:
 
 $$\frac{m_p}{m_e} = \frac{13}{1/137.036} + T(10) = 13 \times 137.036 + 55 = 1781.47 + 55 = 1836.47$$
 
@@ -79,7 +79,7 @@ With N_base = 4, N_c = 3:
 
 $$m_e = m_P \cdot \sqrt{2\pi} \cdot \frac{16}{3} \cdot \alpha^{11}$$
 
-The α¹¹ suppression is why the electron is so much lighter than the Planck mass.
+The $\alpha^{11}$ suppression is why the electron is so much lighter than the Planck mass.
 
 ### Step 3: The Proton Mass
 
@@ -89,7 +89,7 @@ $$m_p = m_e \cdot \frac{n_{\text{eff}} + N_c/b_3}{\alpha}$$
 
 $$m_p = m_P \cdot \sqrt{2\pi} \cdot \frac{16}{3} \cdot \left(n_{\text{eff}} + \frac{N_c}{b_3}\right) \cdot \alpha^{10}$$
 
-The proton carries α¹⁰ (one power less than the electron due to strong binding).
+The proton carries $\alpha^{10}$ (one power less than the electron due to strong binding).
 
 ### Step 4: The Gravitational Coupling
 
@@ -101,18 +101,18 @@ $$\alpha_G = 2\pi \cdot \left(\frac{16}{3}\right)^2 \cdot \left(\frac{94}{7}\rig
 
 ## The Result
 
-**FTD Prediction**: α_G = 5.909 × 10⁻³⁹
+**FTD Prediction**: $\alpha_G = 5.909 \times 10^{-39}$
 
-**Experimental Value**: α_G = 5.906 × 10⁻³⁹
+**Experimental Value**: $\alpha_G = 5.906 \times 10^{-39}$
 
 **Agreement**: 99.94% (0.06% error)
 
 ::: {.callout-important}
 ## What This Means
 
-The 10³⁹ hierarchy is **not arbitrary**. It arises because:
+The $10^{39}$ hierarchy is **not arbitrary**. It arises because:
 
-1. **α²⁰ factor**: Twenty powers of the fine structure constant
+1. **$\alpha^{20}$ factor**: Twenty powers of the fine structure constant
 2. **Geometric prefactors**: Products of the framework integers
 
 Every piece of this formula traces back to {3, 4, 7, 13}.
@@ -120,20 +120,20 @@ Every piece of this formula traces back to {3, 4, 7, 13}.
 
 ## Why Twenty Powers of α?
 
-The gravitational coupling involves **two** powers of the proton mass, each carrying α¹⁰:
+The gravitational coupling involves **two** powers of the proton mass, each carrying $\alpha^{10}$:
 
 $$\alpha_G \sim m_p^2 \sim (\alpha^{10})^2 = \alpha^{20}$$
 
-Each factor of α represents one level of the mass hierarchy:
-- α¹: electromagnetic corrections
-- α²: binding energy scale
+Each factor of $\alpha$ represents one level of the mass hierarchy:
+- $\alpha^1$: electromagnetic corrections
+- $\alpha^2$: binding energy scale
 - ...
-- α¹⁰: QCD confinement scale (proton mass)
-- α²⁰: gravitational coupling (square of proton mass ratio)
+- $\alpha^{10}$: QCD confinement scale (proton mass)
+- $\alpha^{20}$: gravitational coupling (square of proton mass ratio)
 
 ## The Lattice Derivation
 
-### Why G_N = 1/(b₃ + N_c)²?
+### Why $G_N = 1/(b_3 + N_c)^2$?
 
 From Chapter 1.10, the gravitational bias:
 
@@ -141,9 +141,9 @@ $$G_{\text{bias}} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{(7+3)^2} = \frac{1}{100} 
 
 This is the **dimensionless** gravitational coupling in lattice units.
 
-The combination b₃ + N_c = 10 represents:
-- b₃ = 7: QCD beta function (gluon self-coupling)
-- N_c = 3: Color charges
+The combination $b_3 + N_c = 10$ represents:
+- $b_3 = 7$: QCD beta function (gluon self-coupling)
+- $N_c = 3$: Color charges
 
 Their sum encodes "strong sector complexity." Gravity couples inversely to the square: the same geometric form as 1/r² force law.
 
@@ -213,11 +213,11 @@ These are gravitational waves: transverse flux oscillations traveling at speed C
 
 From the four framework integers {3, 4, 7, 13}, the entire gravitational hierarchy follows:
 
-1. **Fine structure constant**: α = 1/137.036 (from G* quadratic)
-2. **Electron mass**: m_e = m_P × √(2π) × (16/3) × α¹¹
-3. **Mass ratio**: m_p/m_e = (13 + 3/7) × 137
-4. **Proton mass**: m_p = m_P × √(2π) × (16/3) × (94/7) × α¹⁰
-5. **Gravitational coupling**: α_G = (m_p/m_P)² = 2π × (16/3)² × (94/7)² × α²⁰ = 5.91 × 10⁻³⁹ ✓
+1. **Fine structure constant**: $\alpha = 1/137.036$ (from G* quadratic)
+2. **Electron mass**: $m_e = m_P \times \sqrt{2\pi} \times (16/3) \times \alpha^{11}$
+3. **Mass ratio**: $m_p/m_e = (13 + 3/7) \times 137$
+4. **Proton mass**: $m_p = m_P \times \sqrt{2\pi} \times (16/3) \times (94/7) \times \alpha^{10}$
+5. **Gravitational coupling**: $\alpha_G = (m_p/m_P)^2 = 2\pi \times (16/3)^2 \times (94/7)^2 \times \alpha^{20} = 5.91 \times 10^{-39}$
 
 ## Predictions
 
@@ -235,9 +235,9 @@ Since gravity couples to flux density |J|², not charge, matter and antimatter g
 
 ## Concepts
 
-- **gravitational-hierarchy**: The 10³⁹ ratio between gravity and strong force
-- **alpha-G**: Gravitational fine structure constant = G_N m_p²/(ℏc)
-- **inverse-square-law**: F ∝ 1/r² from flux conservation in 3D
+- **gravitational-hierarchy**: The $10^{39}$ ratio between gravity and strong force
+- **alpha-G**: Gravitational fine structure constant = $G_N m_p^2/(\hbar c)$
+- **inverse-square-law**: $F \propto 1/r^2$ from flux conservation in 3D
 - **effective-metric**: Flux density → spacetime curvature correspondence
 - **geodesic-motion**: Particle trajectories as curves through effective geometry
 - **gravitational-waves**: Transverse flux ripples from accelerating masses

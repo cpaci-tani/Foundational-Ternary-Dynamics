@@ -57,7 +57,7 @@ Effect only works with dark energy.
 
 | Property | Value |
 |----------|-------|
-| Density | ~7 × 10⁻³⁰ g/cm³ |
+| Density | ~$7 \times 10^{-30}$ g/cm$^3$ |
 | Fraction | 68% of universe |
 | Pressure | Negative (P < 0) |
 | Equation of state | w ≈ -1 |
@@ -110,7 +110,7 @@ The worst prediction in physics.
 
 Why is Λ so small, but not zero?
 
-## The FTD Solution: α⁵⁷
+## The FTD Solution: $\alpha^{57}$
 
 FTD provides a **geometric derivation** of the cosmological constant that resolves the 122 orders of magnitude discrepancy.
 
@@ -120,7 +120,7 @@ The cosmological constant in Planck units is:
 
 $$\frac{\Lambda}{\Lambda_{\text{Planck}}} = \alpha^{57}$$
 
-Where α = 1/137.036 is the fine structure constant.
+Where $\alpha = 1/137.036$ is the fine structure constant.
 
 Calculating:
 $$\alpha^{57} = (0.00729735...)^{57} = 10^{-121.8}$$
@@ -143,9 +143,9 @@ $$57 = 3 \times 19 = 3 \times (b_3 + N_c + N_{\text{eff}} - 1)$$
 
 Where:
 - 3 = Number of generations
-- b₃ = 7 (QCD beta coefficient)
-- N_c = 3 (color charges)
-- N_eff = 13 (effective dimension)
+- $b_3 = 7$ (QCD beta coefficient)
+- $N_c = 3$ (color charges)
+- $N_{eff} = 13$ (effective dimension)
 
 The cosmological constant involves physics at all scales from Planck to cosmic: hence it accumulates all the geometric factors.
 
@@ -156,16 +156,16 @@ In FTD, the cosmological constant represents the **residual vacuum energy** afte
 $$\Lambda = \rho_{\text{Planck}} \times \text{(suppression from 57 nested correlations)}$$
 
 Each power of α represents one layer of correlation in the flux field hierarchy:
-- α¹: electromagnetic effects
-- α²: radiative corrections
+- $\alpha^1$: electromagnetic effects
+- $\alpha^2$: radiative corrections
 - ...
-- α⁵⁷: cosmic-scale vacuum energy
+- $\alpha^{57}$: cosmic-scale vacuum energy
 
 ### The Coincidence Problem
 
 Why is dark energy comparable to matter density NOW?
 
-In FTD: Both scale with α through different paths that **intersect at the current epoch**:
+In FTD: Both scale with $\alpha$ through different paths that **intersect at the current epoch**:
 
 $$\rho_{\text{matter}} \sim \alpha^{-3} \times \rho_0 \quad \text{(structure formation)}$$
 $$\rho_\Lambda \sim \alpha^{57} \times \rho_{\text{Planck}}$$
@@ -176,10 +176,10 @@ The intersection happens when the universe is ~13.8 billion years old: not coinc
 
 | Approach | Λ/Λ_Planck | Issue |
 |----------|------------|-------|
-| Naive QFT | 10⁰ | Wrong by 10¹²² |
-| Supersymmetry | 10⁻⁶⁰ | Still wrong |
-| Anthropic | ~10⁻¹²² | Not predictive |
-| **FTD (α⁵⁷)** | **10⁻¹²¹·⁸** | **Matches to 0.16%** |
+| Naive QFT | $10^0$ | Wrong by $10^{122}$ |
+| Supersymmetry | $10^{-60}$ | Still wrong |
+| Anthropic | ~$10^{-122}$ | Not predictive |
+| **FTD ($\alpha^{57}$)** | **$10^{-121.8}$** | **Matches to 0.16%** |
 
 ## Fate of the Universe
 
@@ -245,7 +245,7 @@ Extrapolate current acceleration into far future.
 - **equation-of-state**: Ratio of pressure to energy density
 - **accelerating-expansion**: Universe speeding up
 - **dark-energy-density**: 68% of universe
-- **alpha-57**: FTD derivation: Λ/Λ_Planck = α⁵⁷ ≈ 10⁻¹²²
+- **alpha-57**: FTD derivation: $\Lambda/\Lambda_{\text{Planck}} = \alpha^{57} \approx 10^{-122}$
 - **coincidence-problem**: Why Ω_Λ ~ Ω_m now? (addressed in FTD)
 
 ## Transition

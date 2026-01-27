@@ -4,7 +4,7 @@
 
 ::: {.callout-note}
 ## Key Revelation
-At energy scale M_GUT ≈ 2 × 10¹⁶ GeV, all three gauge couplings converge to α_GUT = 1/42. This single number (6 × 7) emerges from the framework integers.
+At energy scale $M_{GUT} \approx 2 \times 10^{16}$ GeV, all three gauge couplings converge to $\alpha_{GUT} = 1/42$. This single number (6 × 7) emerges from the framework integers.
 :::
 
 ## The Running of Couplings
@@ -15,9 +15,9 @@ At everyday energies, the three forces have wildly different strengths:
 
 | Force | Coupling at M_Z | Inverse Coupling |
 |-------|-----------------|------------------|
-| Electromagnetic | α₁ = 1/98 | 98 |
-| Weak | α₂ = 1/30 | 30 |
-| Strong | α₃ = 0.118 | 8.5 |
+| Electromagnetic | $\alpha_1 = 1/98$ | 98 |
+| Weak | $\alpha_2 = 1/30$ | 30 |
+| Strong | $\alpha_3 = 0.118$ | 8.5 |
 
 Why three different values? FTD says: they are not fundamentally different; they are the same coupling viewed at different scales.
 
@@ -33,9 +33,9 @@ For the Standard Model (with 3 generations):
 
 | Coupling | Beta Coefficient | Physical Origin |
 |----------|------------------|-----------------|
-| b₁ | 41/10 | Hypercharge running |
-| b₂ | -19/6 | Weak isospin running |
-| b₃ | -7 | QCD running |
+| $b_1$ | 41/10 | Hypercharge running |
+| $b_2$ | -19/6 | Weak isospin running |
+| $b_3$ | -7 | QCD running |
 
 ### The FTD Connection
 
@@ -46,7 +46,7 @@ $$b_3 = 11 - \frac{2n_f}{3} = 11 - \frac{2 \times 6}{3} = 11 - 4 = 7$$
 for n_f = 6 quark flavors.
 
 ::: {.callout-important}
-## Why b₃ = 7 Matters
+## Why $b_3 = 7$ Matters
 This coefficient controls:
 - How the strong coupling runs with energy
 - The rate of asymptotic freedom
@@ -66,11 +66,11 @@ The three couplings converge at a single point.
 
 ### The Unification Scale
 
-Solving for when α₁⁻¹ = α₂⁻¹ = α₃⁻¹:
+Solving for when $\alpha_1^{-1} = \alpha_2^{-1} = \alpha_3^{-1}$:
 
 $$M_{\text{GUT}} \approx 2 \times 10^{16} \text{ GeV}$$
 
-This is remarkably close to the Planck scale (10¹⁹ GeV) but not identical.
+This is remarkably close to the Planck scale ($10^{19}$ GeV) but not identical.
 
 ### The Unified Coupling
 
@@ -78,7 +78,7 @@ At unification, all three couplings equal:
 
 $$\boxed{\frac{1}{\alpha_{\text{GUT}}} = 42}$$
 
-## Deriving 1/α_GUT = 42
+## Deriving $1/\alpha_{GUT} = 42$
 
 ### From the Framework Integers (Informational Consistency)
 
@@ -107,13 +107,13 @@ The unified coupling encodes the product structure of gauge symmetries.
 ### Agreement with Running
 
 Starting from our derived low-energy couplings:
-- α₁(M_Z) = (5/3)(3/13) = 5/39 ≈ 0.0128 → 1/α₁ ≈ 78
-- α₂(M_Z) = (3/13)/sin²θ_W = (3/13)/(3/13) = 1 × (coupling normalization) → 1/α₂ ≈ 30
-- α₃(M_Z) = 7/59 ≈ 0.118 → 1/α₃ ≈ 8.5
+- $\alpha_1(M_Z) = (5/3)(3/13) = 5/39 \approx 0.0128$ → $1/\alpha_1 \approx 78$
+- $\alpha_2(M_Z) = (3/13)/\sin^2\theta_W = (3/13)/(3/13) = 1$ × (coupling normalization) → $1/\alpha_2 \approx 30$
+- $\alpha_3(M_Z) = 7/59 \approx 0.118$ → $1/\alpha_3 \approx 8.5$
 
-Running these to M_GUT ≈ 2 × 10¹⁶ GeV:
+Running these to $M_{GUT} \approx 2 \times 10^{16}$ GeV:
 
-All three converge to **1/α_GUT ≈ 42** within ~2%.
+All three converge to **$1/\alpha_{GUT} \approx 42$** within ~2%.
 
 ## The Gauge Hierarchy
 
@@ -123,19 +123,19 @@ The energy hierarchy descends through distinct regimes:
 
 | Energy Scale | Force Structure |
 |--------------|-----------------|
-| 10¹⁹ GeV (M_Planck) | Lattice substrate, gravity |
-| 10¹⁶ GeV (M_GUT) | Unified: α = 1/42 |
-| 10² GeV (M_EW) | Electroweak: α₁, α₂ split |
-| 1 GeV | Strong confinement: α₃ large |
+| $10^{19}$ GeV ($M_{Planck}$) | Lattice substrate, gravity |
+| $10^{16}$ GeV ($M_{GUT}$) | Unified: $\alpha = 1/42$ |
+| $10^2$ GeV ($M_{EW}$) | Electroweak: $\alpha_1$, $\alpha_2$ split |
+| 1 GeV | Strong confinement: $\alpha_3$ large |
 | 0 | Four separate forces |
 
 At each threshold, symmetries break and couplings diverge.
 
 ### Why the Hierarchy?
 
-The ratio M_Planck/M_GUT ≈ 1000 is small. But M_GUT/M_EW ≈ 10¹⁴ is huge.
+The ratio $M_{Planck}/M_{GUT} \approx 1000$ is small. But $M_{GUT}/M_{EW} \approx 10^{14}$ is huge.
 
-In FTD, this hierarchy follows from α²⁰ (see Chapter 1.12):
+In FTD, this hierarchy follows from $\alpha^{20}$ (see Chapter 1.12):
 $$\frac{M_{\text{EW}}}{M_{\text{GUT}}} \sim \alpha^8 \sim 10^{-17}$$
 
 Each power of α represents one "level" in the mass hierarchy.
@@ -157,7 +157,7 @@ A larger GUT puts all fermions of one generation into a single representation:
 
 $$\mathbf{16} = \text{all fermions of one generation}$$
 
-**FTD Interpretation**: 16 = 2⁴ = N_base² is the lattice degree of freedom count (Chapter 1.10).
+**FTD Interpretation**: $16 = 2^4 = N_{base}^2$ is the lattice degree of freedom count (Chapter 1.10).
 
 ### Why FTD Prefers SU(3)×SU(2)×U(1)
 
@@ -182,7 +182,7 @@ $$\tau_p \sim \frac{M_{\text{GUT}}^4}{\alpha_{\text{GUT}}^2 m_p^5}$$
 
 ### FTD Calculation
 
-With M_GUT ≈ 2 × 10¹⁶ GeV and α_GUT = 1/42:
+With $M_{GUT} \approx 2 \times 10^{16}$ GeV and $\alpha_{GUT} = 1/42$:
 
 $$\tau_p \sim \frac{(2 \times 10^{16})^4}{(1/42)^2 \times (0.938)^5} \text{ GeV}^{-1}$$
 
@@ -192,7 +192,7 @@ $$\boxed{\tau_p \sim 10^{35} \text{ years}}$$
 
 ### Experimental Status
 
-Current limit: τ_p > 1.6 × 10³⁴ years (Super-Kamiokande)
+Current limit: $\tau_p > 1.6 \times 10^{34}$ years (Super-Kamiokande)
 
 **FTD prediction is consistent with limits and testable by Hyper-Kamiokande.**
 
@@ -221,10 +221,10 @@ The same result emerges from the framework integers!
 
 | Quantity | Formula | Value |
 |----------|---------|-------|
-| Unified coupling | 1/α_GUT = 6 × b₃ | 42 |
-| Unification scale | M_GUT | ~2 × 10¹⁶ GeV |
-| sin²θ_W at M_GUT | 3/(3+4+1) | 3/8 |
-| Proton lifetime | τ_p ~ M_GUT⁴/(α_GUT² m_p⁵) | ~10³⁵ years |
+| Unified coupling | $1/\alpha_{GUT} = 6 \times b_3$ | 42 |
+| Unification scale | $M_{GUT}$ | $\sim 2 \times 10^{16}$ GeV |
+| $\sin^2\theta_W$ at $M_{GUT}$ | 3/(3+4+1) | 3/8 |
+| Proton lifetime | $\tau_p \sim M_{GUT}^4/(\alpha_{GUT}^2 m_p^5)$ | $\sim 10^{35}$ years |
 
 All derived from {3, 4, 7, 13}.
 
@@ -232,10 +232,10 @@ All derived from {3, 4, 7, 13}.
 
 From {3, 4, 7, 13}, the entire gauge structure follows:
 
-- **b₃ = 7** (QCD beta function coefficient) gives **1/α_GUT = 6 × 7 = 42**
-- **N_c = 3** determines the **SU(3) gauge group**
-- **N_base = 4** yields **16 = 2⁴ modes**
-- **n_eff = 13** fixes **sin²θ_W = 3/13**, which runs to **3/8 at M_GUT**
+- **$b_3 = 7$** (QCD beta function coefficient) gives **$1/\alpha_{GUT} = 6 \times 7 = 42$**
+- **$N_c = 3$** determines the **SU(3) gauge group**
+- **$N_{base} = 4$** yields **$16 = 2^4$ modes**
+- **$n_{eff} = 13$** fixes **$\sin^2\theta_W = 3/13$**, which runs to **3/8 at $M_{GUT}$**
 
 ## The Octonionic Origin (v5.7) {#sec-octonionic-origin}
 
@@ -253,45 +253,45 @@ By Hurwitz's theorem (1898), there are exactly **four** normed division algebras
 | Real numbers | ℝ | 1 | Ordered | Baseline |
 | Complex numbers | ℂ | 2 | Algebraically closed | √2 in G* |
 | Quaternions | ℍ | **4** | Non-commutative | **N_base = 4** |
-| Octonions | 𝕆 | 8 | Non-associative | **b₃ = 7, N_c = 3** |
+| Octonions | 𝕆 | 8 | Non-associative | **$b_3 = 7$, $N_c = 3$** |
 
 The dimensional relationships are striking:
-- Sum: 1 + 2 + 4 + 8 = 15 = N_base² - 1
-- Product: 1 × 2 × 4 × 8 = 64 = N_base³
+- Sum: 1 + 2 + 4 + 8 = 15 = $N_{base}^2 - 1$
+- Product: 1 × 2 × 4 × 8 = 64 = $N_{base}^3$
 
 ### From Octonions to FTD Integers
 
 | Integer | Value | Algebraic Origin |
 |---------|-------|------------------|
-| N_c | 3 | dim(SU(3) fundamental); SU(3) ⊂ G₂ = Aut(𝕆) |
+| $N_c$ | 3 | dim(SU(3) fundamental); SU(3) $\subset G_2$ = Aut(𝕆) |
 | N_base | 4 | dim(ℍ) = quaternion dimension |
-| b₃ | 7 | Number of imaginary octonion units |
+| $b_3$ | 7 | Number of imaginary octonion units |
 | N_eff | 13 | Fibonacci closure: 7 + 3 + 3 = 13 |
 
 ### The Fano Plane
 
 Octonion multiplication is encoded by the **Fano plane**, the smallest projective plane:
 
-- **7 points** = imaginary octonion units = b₃
-- **7 lines** = multiplication triplets = b₃
+- **7 points** = imaginary octonion units = $b_3$
+- **7 lines** = multiplication triplets = $b_3$
 - **3 points per line** = N_c
 - **3 lines per point** = N_c
 
-The (7, 7, 3, 3) structure directly encodes both b₃ and N_c!
+The (7, 7, 3, 3) structure directly encodes both $b_3$ and $N_c$!
 
-### SU(3) from G₂
+### SU(3) from $G_2$
 
-The automorphism group of the octonions is the exceptional Lie group G₂:
+The automorphism group of the octonions is the exceptional Lie group $G_2$:
 
 $$\text{Aut}(\mathbb{O}) = G_2$$
 
-The maximal subgroup of G₂ is exactly **SU(3)**, the color gauge group.
+The maximal subgroup of $G_2$ is exactly **SU(3)**, the color gauge group.
 
 **Gunaydin-Gursey Result (1973):** When one imaginary octonion unit is fixed, the remaining symmetries form precisely SU(3)_color.
 
 ::: {.callout-note}
 ## The Standard Model from Octonions
-The exceptional Jordan algebra J₃(𝕆) (3×3 Hermitian octonionic matrices) has automorphism group F₄. The symmetries of J₃(𝕆) preserving certain structures form exactly the Standard Model gauge group:
+The exceptional Jordan algebra $J_3$(𝕆) (3×3 Hermitian octonionic matrices) has automorphism group $F_4$. The symmetries of $J_3$(𝕆) preserving certain structures form exactly the Standard Model gauge group:
 
 $$SU(3)_c \times SU(2)_L \times U(1)_Y / \mathbb{Z}_6$$
 
@@ -304,17 +304,17 @@ The exceptional Lie groups encode FTD integers:
 
 | Group | Dimension | FTD Factorization |
 |-------|-----------|-------------------|
-| G₂ | 14 | 2 × 7 = 2 × b₃ |
-| **F₄** | **52** | **N_base × N_eff = 4 × 13** |
-| E₆ | 78 | 6 × 13 = (N_base + 2) × N_eff |
-| E₇ | 133 | 7 × 19 = b₃ × 19 |
-| E₈ | 248 | 8 × 31 |
+| $G_2$ | 14 | $2 \times 7 = 2 \times b_3$ |
+| **$F_4$** | **52** | **$N_{base} \times N_{eff}$ = 4 × 13** |
+| $E_6$ | 78 | $6 \times 13 = (N_{base} + 2) \times N_{eff}$ |
+| $E_7$ | 133 | $7 \times 19 = b_3 \times 19$ |
+| $E_8$ | 248 | 8 × 31 |
 
-The dimension of F₄ is exactly N_base × N_eff!
+The dimension of $F_4$ is exactly $N_{base} \times N_{eff}$!
 
 ### Why Physics Stops at Octonions
 
-What about sedenions (dimension 16 = N_base²)?
+What about sedenions (dimension $16 = N_{base}^2$)?
 
 **Sedenions have zero divisors**: there exist a, b ≠ 0 such that ab = 0.
 
@@ -340,17 +340,17 @@ This triality is **unique to SO(8)**.
 
 **Conjecture:** The three fermion generations correspond to the three triality representations, explaining why:
 - 3 generations exist
-- Each has 16 = N_base² fermion states
-- Total: 3 × 16 = 48 = N_c × N_base² states
+- Each has $16 = N_{base}^2$ fermion states
+- Total: $3 \times 16 = 48 = N_c \times N_{base}^2$ states
 
 ## Concepts
 
 - **grand-unification**: Merger of gauge forces at high energy
 - **running-coupling**: Energy dependence of interaction strength
 - **beta-function**: Rate of coupling change with energy
-- **gut-scale**: Energy ~10¹⁶ GeV where couplings unify
+- **gut-scale**: Energy $\sim 10^{16}$ GeV where couplings unify
 - **alpha-gut**: Unified coupling = 1/42
-- **proton-decay**: GUT prediction: p → e⁺ + π⁰
+- **proton-decay**: GUT prediction: p → $e^+$ + $\pi^0$
 - **division-algebra**: Algebra where |ab| = |a||b|; only ℝ, ℂ, ℍ, 𝕆 (Hurwitz theorem)
 - **octonion**: 8-dimensional non-associative division algebra; source of FTD integers
 - **fano-plane**: (7,7,3,3) structure encoding octonion multiplication
@@ -358,4 +358,4 @@ This triality is **unique to SO(8)**.
 
 ## Transition
 
-Unification at 10¹⁶ GeV predicts protons eventually decay. The next chapter explores this remarkable prediction: a window into physics at energies we can never directly probe.
+Unification at $10^{16}$ GeV predicts protons eventually decay. The next chapter explores this remarkable prediction: a window into physics at energies we can never directly probe.

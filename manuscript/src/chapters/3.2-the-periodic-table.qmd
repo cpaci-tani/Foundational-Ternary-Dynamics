@@ -36,8 +36,8 @@ Atomic masses are given in **atomic mass units (u)**, where 1 u = 1/12 the mass 
 
 | Z | Sym | Name | Mass (u) | Config | Notes |
 |---|-----|------|----------|--------|-------|
-| 1 | H | Hydrogen | 1.008 | 1s¹ | Simplest |
-| 2 | He | Helium | 4.003 | 1s² | Noble gas |
+| 1 | H | Hydrogen | 1.008 | $1s^1$ | Simplest |
+| 2 | He | Helium | 4.003 | $1s^2$ | Noble gas |
 
 ### Hydrogen: The First Atom
 
@@ -57,14 +57,14 @@ Helium has a closed shell and participates in no chemistry. It witnesses the uni
 
 | Z | Sym | Name | Mass (u) | Config | Notes |
 |---|-----|------|----------|--------|-------|
-| 3 | Li | Lithium | 6.94 | [He]2s¹ | Metal |
-| 4 | Be | Beryllium | 9.01 | [He]2s² | Toxic |
-| 5 | B | Boron | 10.81 | [He]2s²2p¹ | Metalloid |
-| 6 | C | Carbon | 12.01 | [He]2s²2p² | Life |
-| 7 | N | Nitrogen | 14.01 | [He]2s²2p³ | 78% air |
-| 8 | O | Oxygen | 16.00 | [He]2s²2p⁴ | Respire |
-| 9 | F | Fluorine | 19.00 | [He]2s²2p⁵ | Reactive |
-| 10 | Ne | Neon | 20.18 | [He]2s²2p⁶ | Noble |
+| 3 | Li | Lithium | 6.94 | [He]$2s^1$ | Metal |
+| 4 | Be | Beryllium | 9.01 | [He]$2s^2$ | Toxic |
+| 5 | B | Boron | 10.81 | [He]$2s^2 2p^1$ | Metalloid |
+| 6 | C | Carbon | 12.01 | [He]$2s^2 2p^2$ | Life |
+| 7 | N | Nitrogen | 14.01 | [He]$2s^2 2p^3$ | 78% air |
+| 8 | O | Oxygen | 16.00 | [He]$2s^2 2p^4$ | Respire |
+| 9 | F | Fluorine | 19.00 | [He]$2s^2 2p^5$ | Reactive |
+| 10 | Ne | Neon | 20.18 | [He]$2s^2 2p^6$ | Noble |
 
 ### Carbon: The Element of Life
 
@@ -81,14 +81,14 @@ The carbon in your DNA was once inside a star. That star died, and its carbon dr
 
 | Z | Sym | Name | Mass (u) | Config | Notes |
 |---|-----|------|----------|--------|-------|
-| 11 | Na | Sodium | 22.99 | [Ne]3s¹ | Reactive |
-| 12 | Mg | Magnesium | 24.31 | [Ne]3s² | Essential |
-| 13 | Al | Aluminum | 26.98 | [Ne]3s²3p¹ | Common |
-| 14 | Si | Silicon | 28.09 | [Ne]3s²3p² | Chips |
-| 15 | P | Phosphorus | 30.97 | [Ne]3s²3p³ | DNA |
-| 16 | S | Sulfur | 32.07 | [Ne]3s²3p⁴ | Yellow |
-| 17 | Cl | Chlorine | 35.45 | [Ne]3s²3p⁵ | Halogen |
-| 18 | Ar | Argon | 39.95 | [Ne]3s²3p⁶ | Noble |
+| 11 | Na | Sodium | 22.99 | [Ne]$3s^1$ | Reactive |
+| 12 | Mg | Magnesium | 24.31 | [Ne]$3s^2$ | Essential |
+| 13 | Al | Aluminum | 26.98 | [Ne]$3s^2 3p^1$ | Common |
+| 14 | Si | Silicon | 28.09 | [Ne]$3s^2 3p^2$ | Chips |
+| 15 | P | Phosphorus | 30.97 | [Ne]$3s^2 3p^3$ | DNA |
+| 16 | S | Sulfur | 32.07 | [Ne]$3s^2 3p^4$ | Yellow |
+| 17 | Cl | Chlorine | 35.45 | [Ne]$3s^2 3p^5$ | Halogen |
+| 18 | Ar | Argon | 39.95 | [Ne]$3s^2 3p^6$ | Noble |
 
 ### Silicon: The Semiconductor
 

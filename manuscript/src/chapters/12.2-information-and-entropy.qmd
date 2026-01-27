@@ -117,7 +117,7 @@ $$
 E_{min} = k_B T \ln(2)
 $$
 
-At room temperature: ~3×10⁻²¹ J per bit.
+At room temperature: ~$3 \times 10^{-21}$ J per bit.
 
 Information is physical. Computation has thermodynamic cost.
 

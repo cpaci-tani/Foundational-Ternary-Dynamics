@@ -130,10 +130,10 @@ This is how neutrons decay: d quark → u quark + electron + antineutrino
 
 | Force | Relative Strength | Range | Mediator |
 |-------|------------------|-------|----------|
-| Strong | 1 | 10⁻¹⁵ m | Gluon |
-| Electromagnetic | 10⁻² | ∞ | Photon |
-| Weak | 10⁻⁶ | 10⁻¹⁸ m | W, Z |
-| Gravity | 10⁻⁴⁰ | ∞ | Graviton? |
+| Strong | 1 | $10^{-15}$ m | Gluon |
+| Electromagnetic | $10^{-2}$ | $\infty$ | Photon |
+| Weak | $10^{-6}$ | $10^{-18}$ m | W, Z |
+| Gravity | $10^{-40}$ | $\infty$ | Graviton? |
 
 ## Gauge Symmetries: The Deep Structure
 
@@ -228,7 +228,7 @@ The FTD lattice has natural frame bundle topology. At each voxel, the flux vecto
 
 $$\pi_1(SO(3)) = \mathbb{Z}_2$$
 
-This means there are two topologically distinct classes of frame rotations: those that return to identity after $2\pi$, and those that require $4\pi$ (720°) rotation. This is exactly the **spinor** structure.
+This means there are two topologically distinct classes of frame rotations: those that return to identity after $2\pi$, and those that require $4\pi$ (720 degrees) rotation. This is exactly the **spinor** structure.
 
 **Step 2: Doublet from Ternary States**
 
@@ -273,8 +273,8 @@ The lattice update rules break parity. The chirality $\chi = \text{sign}(\mathbf
 
 | Test | Expected | Result | Status |
 |------|----------|--------|--------|
-| 720° rotation identity | $\psi \to \psi$ | Phase = 0.0001 rad | ✅ PASS |
-| 360° rotation sign flip | $\psi \to -\psi$ | Sign flip confirmed | ✅ PASS |
+| 720 degrees rotation identity | $\psi \to \psi$ | Phase = 0.0001 rad | PASS |
+| 360 degrees rotation sign flip | $\psi \to -\psi$ | Sign flip confirmed | PASS |
 | Pauli algebra $[\sigma_i, \sigma_j] = 2i\epsilon_{ijk}\sigma_k$ | Exact | Max error < 10⁻¹⁵ | ✅ PASS |
 | SU(2) doublet transformation | Unitary | $|U^\dagger U - I| < 10⁻¹⁴$ | ✅ PASS |
 
@@ -282,7 +282,7 @@ The lattice update rules break parity. The chirality $\chi = \text{sign}(\mathbf
 ## For the Skeptical Physicist
 "Spinors are assumed in quantum mechanics. How can they *emerge*?"
 
-**Response**: Spinors are forced by **topology**, not physics assumptions. The frame bundle of any 3D space has fundamental group $\pi_1(SO(3)) = \mathbb{Z}_2$. This is pure mathematics—it means rotating a frame by 360° does NOT return it to its original state; only 720° does.
+**Response**: Spinors are forced by **topology**, not physics assumptions. The frame bundle of any 3D space has fundamental group $\pi_1(SO(3)) = \mathbb{Z}_2$. This is pure mathematics---it means rotating a frame by 360 degrees does NOT return it to its original state; only 720 degrees does.
 
 The ternary states {+1, 0, -1} then naturally form the 2+1 dimensional representation of SU(2). The fact that electrons require 720° rotation to return to their original state is not mysterious quantum weirdness—it is **forced by the topology of 3D rotations**.
 :::
@@ -372,7 +372,7 @@ This is **derived**, not input. The slight deviation from exactly 3 represents R
 ...the SU(3) gauge group is **forced by the algebraic structure of division algebras**. There are only 4 normed division algebras (reals, complex, quaternions, octonions), and only octonions give SU(3). This is mathematics, not physics input.
 :::
 
-![Derivation of the Standard Model gauge group U(1) × SU(2) × SU(3) from FTD axioms.](../../media/images/fig-gauge-group-derivation.png){#fig-gauge-derivation}
+![Derivation of the Standard Model gauge group $U(1) \times SU(2) \times SU(3)$ from FTD axioms.](../../media/images/fig-gauge-group-derivation.png){#fig-gauge-derivation}
 
 ## Parity Violation
 
@@ -415,7 +415,7 @@ $$\alpha(Q) = \frac{\alpha_0}{1 - \frac{\alpha_0}{3\pi}\ln(Q^2/m_e^2)}$$
 
 ### Grand Unification
 
-At energy scale M_GUT ≈ 10¹⁵ GeV, all three gauge couplings converge:
+At energy scale $M_{GUT} \approx 10^{15}$ GeV, all three gauge couplings converge:
 
 $$\alpha_1 = \alpha_2 = \alpha_3 = \alpha_{\text{GUT}} \approx \frac{1}{42}$$
 
@@ -427,7 +427,7 @@ Above this scale, there is a single unified force with combined gauge group.
 
 ![Force unification at different energy scales: from the four-force world we observe, through electroweak unification, to grand unification, and ultimately to the Planck scale.](../../media/images/fig-force-unification.png){#fig-force-unification}
 
-At progressively higher energies, the forces merge: first electromagnetic and weak unify around 100 GeV, then at the grand unification scale (~10¹⁵ GeV) all three gauge couplings converge, and finally at the Planck scale (~10¹⁹ GeV) gravity joins the unified description.
+At progressively higher energies, the forces merge: first electromagnetic and weak unify around 100 GeV, then at the grand unification scale ($\sim 10^{15}$ GeV) all three gauge couplings converge, and finally at the Planck scale ($\sim 10^{19}$ GeV) gravity joins the unified description.
 
 ## Experiments
 

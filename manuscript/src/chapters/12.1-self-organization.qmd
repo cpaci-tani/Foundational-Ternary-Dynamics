@@ -94,7 +94,7 @@ Add grains one at a time. The pile grows until it reaches a critical slope, afte
 ### Properties
 
 - **No tuning needed**: System finds critical point
-- **Power laws**: P(size) ∝ size^(-τ)
+- **Power laws**: $P(\text{size}) \propto \text{size}^{-\tau}$
 - **Scale-free**: No characteristic size
 
 ### Examples in Nature
@@ -165,11 +165,11 @@ Between frozen order and random chaos lies a critical point where complexity is 
 
 ### Langton's Lambda
 
-| λ value | Behavior |
+| $\lambda$ value | Behavior |
 |---------|----------|
 | 0 | Frozen (all same) |
 | 0.2-0.3 | Periodic |
-| ~0.27 | Complex (edge of chaos) |
+| $\sim 0.27$ | Complex (edge of chaos) |
 | 0.5+ | Chaotic |
 
 ### Computation at the Edge

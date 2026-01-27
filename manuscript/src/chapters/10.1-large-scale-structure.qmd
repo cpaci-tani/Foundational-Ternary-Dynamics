@@ -23,7 +23,7 @@ Where filaments intersect:
 - Galaxy clusters
 - Highest density regions
 - 100-1000 galaxies
-- Mass: 10¹⁴-10¹⁵ M☉
+- Mass: $10^{14}$-$10^{15}$ $M_\odot$
 - Size: 2-10 Mpc
 
 ### Filaments
@@ -68,9 +68,9 @@ Largest known: Hercules-Corona Borealis Great Wall (~10 billion ly)
 
 ### Initial Fluctuations
 
-From inflation (z ~ 10³⁰):
+From inflation (z ~ $10^{30}$):
 - Quantum fluctuations stretched
-- δρ/ρ ~ 10⁻⁵ at recombination
+- $\delta\rho/\rho$ ~ $10^{-5}$ at recombination
 - Seen in CMB
 
 ### Linear Growth
@@ -111,7 +111,7 @@ The most massive gravitationally bound objects.
 ### The Intracluster Medium
 
 Hot gas between galaxies:
-- Temperature: 10⁷-10⁸ K
+- Temperature: $10^7$-$10^8$ K
 - Emits X-rays
 - Traced by Sunyaev-Zel'dovich effect
 - Contains most baryons

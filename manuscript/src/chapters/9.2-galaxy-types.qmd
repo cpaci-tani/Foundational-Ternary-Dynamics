@@ -101,10 +101,10 @@ No regular structure.
 
 | Type | Mass | Diameter | Example |
 |------|------|----------|---------|
-| Giant elliptical | 10¹³ M☉ | 300 kpc | M87 |
-| Large spiral | 10¹¹ M☉ | 30 kpc | Milky Way |
-| Dwarf elliptical | 10⁷ M☉ | 1 kpc | Many |
-| Dwarf irregular | 10⁸ M☉ | 3 kpc | SMC |
+| Giant elliptical | $10^{13}$ $M_\odot$ | 300 kpc | M87 |
+| Large spiral | $10^{11}$ $M_\odot$ | 30 kpc | Milky Way |
+| Dwarf elliptical | $10^7$ $M_\odot$ | 1 kpc | Many |
+| Dwarf irregular | $10^8$ $M_\odot$ | 3 kpc | SMC |
 
 ## Why Different Types?
 

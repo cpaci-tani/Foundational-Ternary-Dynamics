@@ -97,7 +97,7 @@ The 3D momentum/energy vector. Carries:
 The magnitude of flux: $\rho = |\mathbf{J}| = \sqrt{J_x^2 + J_y^2 + J_z^2}$
 
 Determines:
-- Can particle exist? (ρ ≥ KB)
+- Can particle exist? ($\rho \geq K_B$)
 - Gravitational influence
 - Probability of genesis
 
@@ -144,8 +144,8 @@ Each voxel has 26 neighbors:
 | Type | Count | Distance |
 |------|-------|----------|
 | Face neighbors | 6 | 1 |
-| Edge neighbors | 12 | √2 |
-| Corner neighbors | 8 | √3 |
+| Edge neighbors | 12 | $\sqrt{2}$ |
+| Corner neighbors | 8 | $\sqrt{3}$ |
 | **Total** | **26** | |
 
 All physics is local: only neighbors matter for direct interaction.

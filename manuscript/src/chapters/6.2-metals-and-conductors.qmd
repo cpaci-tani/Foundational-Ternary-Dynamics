@@ -101,13 +101,13 @@ Resistance increases with temperature (more phonons).
 
 | Material | Conductivity (S/m) | Notes |
 |----------|-------------------|-------|
-| Silver | 6.3 × 10⁷ | Best conductor |
-| Copper | 5.9 × 10⁷ | Most common wire |
-| Gold | 4.5 × 10⁷ | Corrosion resistant |
-| Aluminum | 3.8 × 10⁷ | Lightweight |
-| Iron | 1.0 × 10⁷ | Magnetic |
-| Graphite | 10⁵ | Layered conductor |
-| Glass | 10⁻¹² | Insulator |
+| Silver | $6.3 \times 10^7$ | Best conductor |
+| Copper | $5.9 \times 10^7$ | Most common wire |
+| Gold | $4.5 \times 10^7$ | Corrosion resistant |
+| Aluminum | $3.8 \times 10^7$ | Lightweight |
+| Iron | $1.0 \times 10^7$ | Magnetic |
+| Graphite | $10^5$ | Layered conductor |
+| Glass | $10^{-12}$ | Insulator |
 
 ## Free Electron Model
 

@@ -23,7 +23,8 @@
       "Bash(if not exist \"C:\\\\Users\\\\cpaci\\\\Desktop\\\\pbr_pedagogy\\\\dissemination\\\\Foundational-Ternary-Dynamics\\\\evaluation\\\\findings\" mkdir \"C:\\\\Users\\\\cpaci\\\\Desktop\\\\pbr_pedagogy\\\\dissemination\\\\Foundational-Ternary-Dynamics\\\\evaluation\\\\findings\")",
       "Bash(git -C \"C:\\\\Users\\\\cpaci\\\\Desktop\\\\pbr_pedagogy\\\\dissemination\\\\Foundational-Ternary-Dynamics\" ls-files:*)",
       "Bash(xargs:*)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(xxd:*)"
     ]
   }
 }

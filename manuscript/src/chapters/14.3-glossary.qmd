@@ -62,7 +62,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 ### Notable Properties
 - **8128** is the fourth **perfect number** (equals sum of its proper divisors: 1+2+4+8+...+4064)
 - **42** equals the product of the first four Heegner numbers: 1 × 2 × 3 × 7
-- **127** is a Mersenne prime (2⁷ - 1)
+- **127** is a Mersenne prime ($2^7$ - 1)
 - **137** is a prime number
 - **1111** factors as 11 × 101, two primes; encodes all four framework integers {3, 4, 7, 13}
 - **1728** is a perfect cube with special modular properties
@@ -87,12 +87,12 @@ The following integers appear throughout FTD derivations. All are derived from t
 : The hierarchical sequence of α powers encoding fundamental mass and energy scales: α⁸ (Higgs VEV), α¹¹ (electron mass), α¹⁶ (vacuum energy), α²⁰ (gravitational coupling). The gaps {3, 5, 4} between exponents encode framework integers.
 
 **Alpha Precision Formula**
-: The correction formula achieving **0.21 ppt** accuracy for α: 1/α = x₊ - (9/47)|ε| + (5/64)|ε|² where ε = e^π - π - 20 ≈ -9×10⁻⁴. The correction term 9/47 combines framework integers (47 = N_c × N_base² - 1 = 3×16-1), and remarkably |ε| ≈ 1/1111 where 1111 = (b₃+N_base)(8N_eff-N_c) = 11×101. The constant 20 = b₃ + N_eff = 7 + 13 = 1/c_fermion connects to the Weyl anomaly coefficient from conformal field theory. This 6,000× improvement over the base 1.26 ppm derivation represents the most precise theoretical prediction of α ever achieved.
+: The correction formula achieving **0.21 ppt** accuracy for $\alpha$: $1/\alpha = x_+ - (9/47)|\varepsilon| + (5/64)|\varepsilon|^2$ where $\varepsilon = e^\pi - \pi - 20 \approx -9 \times 10^{-4}$. The correction term 9/47 combines framework integers (47 = N_c × N_base² - 1 = 3×16-1), and remarkably |ε| ≈ 1/1111 where 1111 = (b₃+N_base)(8N_eff-N_c) = 11×101. The constant 20 = b₃ + N_eff = 7 + 13 = 1/c_fermion connects to the Weyl anomaly coefficient from conformal field theory. This 6,000× improvement over the base 1.26 ppm derivation represents the most precise theoretical prediction of α ever achieved.
 
 ## B
 
 **b₃ (QCD Beta Coefficient)**
-: Framework integer = 7. The first coefficient in the QCD beta function for SU(3). Appears in electron mass (70 = b₃(b₃+N_c)) and gravitational coupling (1/(b₃+N_c)²).
+: Framework integer = 7. The first coefficient in the QCD beta function for SU(3). Appears in electron mass (70 = $b_3(b_3+N_c)$) and gravitational coupling ($1/(b_3+N_c)^2$).
 
 **Born Rule (as Translation Protocol)**
 : The interpretation of the Born rule P = |ψ|² not as a mysterious postulate but as the translation protocol between Domain A (configurations) and Domain B (probabilities). The squared amplitude is what remains invariant under domain crossing.

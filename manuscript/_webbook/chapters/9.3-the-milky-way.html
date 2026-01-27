@@ -108,6 +108,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -1037,7 +1066,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td>Mass</td>
-<td>~1.5 trillion M☉ (with dark matter)</td>
+<td>~1.5 trillion <span class="math inline">\(M_\odot\)</span> (with dark matter)</td>
 </tr>
 <tr class="odd">
 <td>Stars</td>
@@ -1154,7 +1183,7 @@ Figure&nbsp;61.1: The structure of the Milky Way: edge-on and face-on views show
 <h2 data-number="61.5" class="anchored" data-anchor-id="the-galactic-center"><span class="header-section-number">61.5</span> The Galactic Center</h2>
 <section id="sagittarius-a" class="level3" data-number="61.5.1">
 <h3 data-number="61.5.1" class="anchored" data-anchor-id="sagittarius-a"><span class="header-section-number">61.5.1</span> Sagittarius A*</h3>
-<p>Supermassive black hole: - Mass: 4.1 million M☉ - Distance: 26,000 ly - Schwarzschild radius: ~12 million km - Currently quiescent</p>
+<p>Supermassive black hole: - Mass: 4.1 million <span class="math inline">\(M_\odot\)</span> - Distance: 26,000 ly - Schwarzschild radius: ~12 million km - Currently quiescent</p>
 </section>
 <section id="central-parsec" class="level3" data-number="61.5.2">
 <h3 data-number="61.5.2" class="anchored" data-anchor-id="central-parsec"><span class="header-section-number">61.5.2</span> Central Parsec</h3>
@@ -1193,22 +1222,22 @@ Figure&nbsp;61.1: The structure of the Milky Way: edge-on and face-on views show
 <tr class="odd">
 <td>Large Magellanic Cloud</td>
 <td>160,000 ly</td>
-<td>10¹⁰ M☉</td>
+<td><span class="math inline">\(10^{10}\)</span> <span class="math inline">\(M_\odot\)</span></td>
 </tr>
 <tr class="even">
 <td>Small Magellanic Cloud</td>
 <td>200,000 ly</td>
-<td>7×10⁹ M☉</td>
+<td><span class="math inline">\(7 \times 10^9\)</span> <span class="math inline">\(M_\odot\)</span></td>
 </tr>
 <tr class="odd">
 <td>Sagittarius Dwarf</td>
 <td>70,000 ly</td>
-<td>4×10⁸ M☉</td>
+<td><span class="math inline">\(4 \times 10^8\)</span> <span class="math inline">\(M_\odot\)</span></td>
 </tr>
 <tr class="even">
 <td>Ursa Minor Dwarf</td>
 <td>200,000 ly</td>
-<td>2×10⁷ M☉</td>
+<td><span class="math inline">\(2 \times 10^7\)</span> <span class="math inline">\(M_\odot\)</span></td>
 </tr>
 </tbody>
 </table>

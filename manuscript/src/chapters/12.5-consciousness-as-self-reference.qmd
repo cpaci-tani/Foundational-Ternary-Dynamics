@@ -143,10 +143,10 @@ $$M_{collective} = \sum_i M_{\Omega_i}$$
 | System | Approx. $M_\Omega$ | Epistemic Behavior |
 |--------|--------------------|--------------------|
 | Photon detector | $\sim 1$ | Responds instantly to input |
-| Insect nervous system | $\sim 10^3$ | Some model persistence |
-| Mammalian brain | $\sim 10^{10}$ | Stable world model |
-| Human with ideology | $\sim 10^{12}$ | Strong belief inertia |
-| Cultural consensus | $\sim 10^{20}$ | "Objective reality" |
+| Insect nervous system | ~$10^3$ | Some model persistence |
+| Mammalian brain | ~$10^{10}$ | Stable world model |
+| Human with ideology | ~$10^{12}$ | Strong belief inertia |
+| Cultural consensus | ~$10^{20}$ | "Objective reality" |
 
 ## The Mandelbrot Set: A Mathematical Portrait of Self-Reference
 

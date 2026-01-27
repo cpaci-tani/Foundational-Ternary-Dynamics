@@ -1022,18 +1022,18 @@ window.Quarto = {
 </div>
 <section id="the-core-insight" class="level2" data-number="31.1">
 <h2 data-number="31.1" class="anchored" data-anchor-id="the-core-insight"><span class="header-section-number">31.1</span> The Core Insight</h2>
-<p>The discrete states s ∈ {-1, 0, +1} are <strong>measurement outcomes</strong>.</p>
-<p>The continuous flux field J ∈ ℝ³ is <strong>the quantum state</strong>.</p>
+<p>The discrete states s <span class="math inline">\(\in\)</span> {-1, 0, +1} are <strong>measurement outcomes</strong>.</p>
+<p>The continuous flux field J <span class="math inline">\(\in \mathbb{R}^3\)</span> is <strong>the quantum state</strong>.</p>
 <p>This single reinterpretation resolves all quantum mysteries.</p>
 </section>
 <section id="constructing-hilbert-space" class="level2" data-number="31.2">
 <h2 data-number="31.2" class="anchored" data-anchor-id="constructing-hilbert-space"><span class="header-section-number">31.2</span> Constructing Hilbert Space</h2>
 <section id="step-1-complexify-the-flux" class="level3" data-number="31.2.1">
 <h3 data-number="31.2.1" class="anchored" data-anchor-id="step-1-complexify-the-flux"><span class="header-section-number">31.2.1</span> Step 1: Complexify the Flux</h3>
-<p>The flux J ∈ ℝ³ has three real components. We define:</p>
+<p>The flux J <span class="math inline">\(\in \mathbb{R}^3\)</span> has three real components. We define:</p>
 <p><span class="math display">\[\psi = J_x + i J_y \in \mathbb{C}\]</span></p>
 <p>The third component J_z is the longitudinal mode.</p>
-<p>But recall from Chapter 1.11: the Gauss constraint ∇·J = ρ fixes J_z in terms of the charge distribution. So the <strong>physical degrees of freedom</strong> are:</p>
+<p>But recall from Chapter 1.11: the Gauss constraint <span class="math inline">\(\nabla \cdot J = \rho\)</span> fixes J_z in terms of the charge distribution. So the <strong>physical degrees of freedom</strong> are:</p>
 <p><span class="math display">\[\psi(v) = J_x(v) + i J_y(v) \in \mathbb{C}\]</span></p>
 <p>These are the two transverse polarizations: exactly what we expect for a massless gauge boson (photon) or for matter waves.</p>
 </section>
@@ -1075,7 +1075,7 @@ window.Quarto = {
 <p>Why the exponent 2? Why not <span class="math inline">\(|\psi|\)</span> or <span class="math inline">\(|\psi|^4\)</span>? Four independent derivations converge on the same answer.</p>
 <section id="derivation-1-gleasons-theorem-hilbert-space-structure" class="level3" data-number="31.3.1">
 <h3 data-number="31.3.1" class="anchored" data-anchor-id="derivation-1-gleasons-theorem-hilbert-space-structure"><span class="header-section-number">31.3.1</span> Derivation 1: Gleason’s Theorem (Hilbert Space Structure)</h3>
-<p><strong>Theorem (Gleason, 1957)</strong>: In a Hilbert space of dimension ≥ 3, the only probability measure satisfying non-contextuality is <span class="math inline">\(P(v) = |\langle v | \psi \rangle|^2\)</span>.</p>
+<p><strong>Theorem (Gleason, 1957)</strong>: In a Hilbert space of dimension <span class="math inline">\(\geq 3\)</span>, the only probability measure satisfying non-contextuality is <span class="math inline">\(P(v) = |\langle v | \psi \rangle|^2\)</span>.</p>
 <p>In FTD, the Hilbert space <span class="math inline">\(\mathcal{H}_{\text{FTD}} = L^2(\text{Lattice}, \mathbb{C})\)</span> has dimension equal to the number of lattice sites (&gt;&gt; 3). The Gleason conditions are satisfied:</p>
 <table class="caption-top table">
 <thead>
@@ -1086,7 +1086,7 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Dimension ≥ 3</td>
+<td>Dimension <span class="math inline">\(\geq 3\)</span></td>
 <td>Lattice has <span class="math inline">\(N^3\)</span> sites</td>
 </tr>
 <tr class="even">
@@ -1105,7 +1105,7 @@ window.Quarto = {
 <h3 data-number="31.3.2" class="anchored" data-anchor-id="derivation-2-threshold-crossing-statistics-manifestation-dynamics"><span class="header-section-number">31.3.2</span> Derivation 2: Threshold Crossing Statistics (Manifestation Dynamics)</h3>
 <p>When flux concentrates at a voxel, manifestation occurs when <span class="math inline">\(\rho = |\mathbf{J}| &gt; K_B\)</span>. For a wave function spread over multiple sites, the probability of threshold crossing at site <span class="math inline">\(v\)</span> is proportional to the <strong>energy density</strong> at that site:</p>
 <p><span class="math display">\[P(\text{threshold at } v) \propto \rho^2(v) = |\mathbf{J}(v)|^2 = |\psi(v)|^2\]</span></p>
-<p><strong>Why squared?</strong> Energy density scales as amplitude squared. This is not quantum-specific—it applies to any wave phenomenon (electromagnetic energy ~ E², acoustic intensity ~ amplitude²).</p>
+<p><strong>Why squared?</strong> Energy density scales as amplitude squared. This is not quantum-specific—it applies to any wave phenomenon (electromagnetic energy <span class="math inline">\(\sim E^2\)</span>, acoustic intensity <span class="math inline">\(\sim\)</span> amplitude<span class="math inline">\(^2\)</span>).</p>
 </section>
 <section id="derivation-3-conservation-continuity-equation-uniqueness" class="level3" data-number="31.3.3">
 <h3 data-number="31.3.3" class="anchored" data-anchor-id="derivation-3-conservation-continuity-equation-uniqueness"><span class="header-section-number">31.3.3</span> Derivation 3: Conservation (Continuity Equation Uniqueness)</h3>
@@ -1113,7 +1113,7 @@ window.Quarto = {
 <p><span class="math display">\[\frac{\partial P}{\partial t} + \nabla \cdot \mathbf{j} = 0\]</span></p>
 <p>For the Schrödinger-like dynamics of the flux field, the unique conserved current that is:</p>
 <ol type="1">
-<li>Bilinear in ψ and ψ*</li>
+<li>Bilinear in <span class="math inline">\(\psi\)</span> and <span class="math inline">\(\psi^*\)</span></li>
 <li>Real-valued</li>
 <li>Transforms correctly under gauge transformations</li>
 </ol>
@@ -1127,7 +1127,7 @@ window.Quarto = {
 <p><span class="math display">\[P(v) = \frac{e^{-\beta E(v)}}{Z}\]</span></p>
 <p>For the harmonic oscillator dynamics of the flux field, <span class="math inline">\(E(v) \propto |\psi(v)|^2\)</span>, giving:</p>
 <p><span class="math display">\[P(v) \propto |\psi(v)|^2\]</span></p>
-<p>at high temperature (β → 0). The Born rule is the <strong>maximum entropy</strong> assignment consistent with energy constraints.</p>
+<p>at high temperature (<span class="math inline">\(\beta \to 0\)</span>). The Born rule is the <strong>maximum entropy</strong> assignment consistent with energy constraints.</p>
 </section>
 <section id="verification-summary" class="level3" data-number="31.3.5">
 <h3 data-number="31.3.5" class="anchored" data-anchor-id="verification-summary"><span class="header-section-number">31.3.5</span> Verification Summary</h3>
@@ -1219,8 +1219,8 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 </figcaption>
 </figure>
 </div>
-<p><strong>Before manifestation</strong>: Flux ψ(v) is defined everywhere, state s(v) = 0 for all voxels, and the system exists in superposition over the lattice.</p>
-<p><strong>At manifestation</strong> (when ρ &gt; KB): One voxel is selected with probability |ψ|², state transitions s(v₀) → ±1, flux localizes to ψ(v) → δ(v-v₀)·ψ(v₀). This IS wavefunction collapse.</p>
+<p><strong>Before manifestation</strong>: Flux <span class="math inline">\(\psi(v)\)</span> is defined everywhere, state s(v) = 0 for all voxels, and the system exists in superposition over the lattice.</p>
+<p><strong>At manifestation</strong> (when <span class="math inline">\(\rho &gt; K_B\)</span>): One voxel is selected with probability <span class="math inline">\(|\psi|^2\)</span>, state transitions <span class="math inline">\(s(v_0) \to \pm 1\)</span>, flux localizes to <span class="math inline">\(\psi(v) \to \delta(v-v_0) \cdot \psi(v_0)\)</span>. This IS wavefunction collapse.</p>
 <p><strong>After manifestation</strong>: The particle exists at a definite location, flux spreads again via the wave equation, and the next measurement may find it elsewhere.</p>
 <p>There is no “measurement problem” because we have identified what collapse IS: the transition from continuous flux to discrete manifestation when density exceeds threshold.</p>
 </section>
@@ -1229,9 +1229,9 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 <p>A particle can appear on the other side of a barrier it should not classically cross.</p>
 <section id="the-mechanism" class="level3" data-number="31.5.1">
 <h3 data-number="31.5.1" class="anchored" data-anchor-id="the-mechanism"><span class="header-section-number">31.5.1</span> The Mechanism</h3>
-<p>The wavefunction ψ does not stop at potential barriers: it penetrates exponentially:</p>
+<p>The wavefunction <span class="math inline">\(\psi\)</span> does not stop at potential barriers: it penetrates exponentially:</p>
 <p><span class="math display">\[\psi(x) \propto e^{-\kappa x} \quad \text{where } \kappa = \sqrt{2m(V-E)/\hbar^2}\]</span></p>
-<p>Inside the barrier, |ψ|² is small but nonzero. If the barrier is thin enough, ψ has amplitude on the far side.</p>
+<p>Inside the barrier, <span class="math inline">\(|\psi|^2\)</span> is small but nonzero. If the barrier is thin enough, <span class="math inline">\(\psi\)</span> has amplitude on the far side.</p>
 </section>
 <section id="tunneling-probability" class="level3" data-number="31.5.2">
 <h3 data-number="31.5.2" class="anchored" data-anchor-id="tunneling-probability"><span class="header-section-number">31.5.2</span> Tunneling Probability</h3>
@@ -1265,7 +1265,7 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 <p>This state is:</p>
 <ul>
 <li><strong>Antisymmetric</strong>: Swapping particles gives a minus sign</li>
-<li><strong>Entangled</strong>: Cannot be written as |ψ₁⟩ ⊗ |ψ₂⟩</li>
+<li><strong>Entangled</strong>: Cannot be written as <span class="math inline">\(|\psi_1\rangle \otimes |\psi_2\rangle\)</span></li>
 <li><strong>Correlated</strong>: Measuring one determines the other</li>
 </ul>
 </section>
@@ -1339,8 +1339,8 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 <section id="why-bell-violations-occur" class="level3" data-number="31.7.2">
 <h3 data-number="31.7.2" class="anchored" data-anchor-id="why-bell-violations-occur"><span class="header-section-number">31.7.2</span> Why Bell Violations Occur</h3>
 <p>Bell violations arise in FTD because the measurement apparatus is <strong>embedded in the same flux substrate</strong> as the measured system. This is the sLoop structure.</p>
-<p>In <strong>standard QM</strong>, we have a linear chain: Observer (external) → System (isolated) → Measurement (interaction).</p>
-<p>In the <strong>FTD sLoop structure</strong>, both observer and system exist within a shared flux substrate. The observer (with s ≠ 0) and the system (with s = 0) are both embedded in the same field, enabling non-classical correlations through their common origin.</p>
+<p>In <strong>standard QM</strong>, we have a linear chain: Observer (external) <span class="math inline">\(\to\)</span> System (isolated) <span class="math inline">\(\to\)</span> Measurement (interaction).</p>
+<p>In the <strong>FTD sLoop structure</strong>, both observer and system exist within a shared flux substrate. The observer (with <span class="math inline">\(s \neq 0\)</span>) and the system (with s = 0) are both embedded in the same field, enabling non-classical correlations through their common origin.</p>
 <p>The correlations exceed classical bounds because:</p>
 <ol type="1">
 <li><strong>Ontological unity</strong>: The observer and observed share a common substrate</li>
@@ -1417,7 +1417,7 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 </table>
 <p>The sLoop makes a <strong>specific, testable prediction</strong>: the S parameter should scale linearly with substrate overlap fraction f.&nbsp;This has been verified in simulation:</p>
 <p><span class="math display">\[S(f) \approx 2 + 0.83 \cdot f\]</span></p>
-<p>At f = 0 (no overlap), S ≈ 2 (classical bound). At f = 1 (full overlap), S ≈ 2.83 (quantum bound).</p>
+<p>At f = 0 (no overlap), <span class="math inline">\(S \approx 2\)</span> (classical bound). At f = 1 (full overlap), <span class="math inline">\(S \approx 2.83\)</span> (quantum bound).</p>
 <p>Superdeterminism makes no such prediction—it just asserts “the universe is set up to fake quantum mechanics.”</p>
 </div>
 </div>
@@ -1433,10 +1433,10 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 <p><span class="math display">\[[\hat{x}, \hat{p}] = i\hbar\]</span></p>
 <p>This commutation relation follows from the structure of the flux field:</p>
 <ul>
-<li>Position is where ψ is concentrated</li>
-<li>Momentum is encoded in the phase gradient: p = ℏ∇(arg ψ)</li>
+<li>Position is where <span class="math inline">\(\psi\)</span> is concentrated</li>
+<li>Momentum is encoded in the phase gradient: <span class="math inline">\(p = \hbar \nabla(\arg \psi)\)</span></li>
 </ul>
-<p>A narrow ψ (precise position) requires many momentum components. A pure momentum state (single k) spreads over all space.</p>
+<p>A narrow <span class="math inline">\(\psi\)</span> (precise position) requires many momentum components. A pure momentum state (single k) spreads over all space.</p>
 <p>The uncertainty principle is not a measurement disturbance: it is a property of waves.</p>
 </section>
 </section>
@@ -1458,11 +1458,11 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 <section id="ftd-explanation" class="level3" data-number="31.9.4">
 <h3 data-number="31.9.4" class="anchored" data-anchor-id="ftd-explanation"><span class="header-section-number">31.9.4</span> FTD Explanation</h3>
 <ol type="1">
-<li><strong>Source</strong>: Creates flux wave ψ</li>
+<li><strong>Source</strong>: Creates flux wave <span class="math inline">\(\psi\)</span></li>
 <li><strong>Slits</strong>: Flux passes through BOTH slits (it is a wave)</li>
 <li><strong>Beyond barrier</strong>: Flux from both slits interferes</li>
-<li><strong>Interference</strong>: ψ_total = ψ_left + ψ_right (vector sum)</li>
-<li><strong>Detection</strong>: Particle manifests where |ψ_total|² is high</li>
+<li><strong>Interference</strong>: <span class="math inline">\(\psi_{\text{total}} = \psi_{\text{left}} + \psi_{\text{right}}\)</span> (vector sum)</li>
+<li><strong>Detection</strong>: Particle manifests where <span class="math inline">\(|\psi_{\text{total}}|^2\)</span> is high</li>
 <li><strong>Pattern</strong>: Builds up one particle at a time</li>
 </ol>
 <p>The interference is in the <strong>flux field</strong>, not the particle. Each particle manifests at ONE location, but that location is determined by the interference pattern.</p>
@@ -1470,7 +1470,7 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 <section id="if-you-watch-the-slits" class="level3" data-number="31.9.5">
 <h3 data-number="31.9.5" class="anchored" data-anchor-id="if-you-watch-the-slits"><span class="header-section-number">31.9.5</span> If You Watch the Slits</h3>
 <p>Detecting which slit the particle goes through destroys the interference pattern. Why?</p>
-<p><strong>FTD answer</strong>: Detection requires manifestation. Once ψ manifests at one slit, it is no longer a superposition: it is localized. No superposition = no interference.</p>
+<p><strong>FTD answer</strong>: Detection requires manifestation. Once <span class="math inline">\(\psi\)</span> manifests at one slit, it is no longer a superposition: it is localized. No superposition = no interference.</p>
 </section>
 </section>
 <section id="the-measurement-problem-proposed-resolution" class="level2" data-number="31.10">
@@ -1480,7 +1480,7 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 <li><strong>Before manifestation</strong>: System is in superposition (flux spread)</li>
 <li><strong>Manifestation IS collapse</strong>: The threshold crossing selects one outcome</li>
 <li><strong>After manifestation</strong>: Definite state exists</li>
-<li><strong>No special observer</strong>: Manifestation happens when ρ &gt; KB, regardless of consciousness</li>
+<li><strong>No special observer</strong>: Manifestation happens when <span class="math inline">\(\rho &gt; K_B\)</span>, regardless of consciousness</li>
 </ol>
 <p>The transition from quantum to classical is the transition from flux to manifestation: a physical process, not a mystery.</p>
 </section>
@@ -1488,7 +1488,7 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 <h2 data-number="31.11" class="anchored" data-anchor-id="experiments"><span class="header-section-number">31.11</span> Experiments</h2>
 <section id="interference-demo" class="level3" data-number="31.11.1">
 <h3 data-number="31.11.1" class="anchored" data-anchor-id="interference-demo"><span class="header-section-number">31.11.1</span> Interference Demo</h3>
-<p>Set up double-slit geometry. Watch the interference pattern form as particles arrive one by one at locations determined by |ψ|².</p>
+<p>Set up double-slit geometry. Watch the interference pattern form as particles arrive one by one at locations determined by <span class="math inline">\(|\psi|^2\)</span>.</p>
 </section>
 <section id="entanglement-creation" class="level3" data-number="31.11.2">
 <h3 data-number="31.11.2" class="anchored" data-anchor-id="entanglement-creation"><span class="header-section-number">31.11.2</span> Entanglement Creation</h3>
@@ -1506,16 +1506,16 @@ Figure&nbsp;31.2: Wavefunction collapse in FTD: before manifestation, flux is di
 <section id="concepts" class="level2" data-number="31.12">
 <h2 data-number="31.12" class="anchored" data-anchor-id="concepts"><span class="header-section-number">31.12</span> Concepts</h2>
 <ul>
-<li><strong>hilbert-space</strong>: H = L²(Lattice, ℂ), the space of quantum states</li>
-<li><strong>wavefunction</strong>: ψ(v) = J_x + iJ_y, the complexified flux</li>
-<li><strong>born-rule</strong>: P(v) = |ψ(v)|²/||ψ||², probability from flux density</li>
+<li><strong>hilbert-space</strong>: <span class="math inline">\(H = L^2(\text{Lattice}, \mathbb{C})\)</span>, the space of quantum states</li>
+<li><strong>wavefunction</strong>: <span class="math inline">\(\psi(v) = J_x + iJ_y\)</span>, the complexified flux</li>
+<li><strong>born-rule</strong>: <span class="math inline">\(P(v) = |\psi(v)|^2/||\psi||^2\)</span>, probability from flux density</li>
 <li><strong>superposition</strong>: Flux exists as sum over configurations before manifestation</li>
 <li><strong>entanglement</strong>: Non-factorizable two-particle states from shared flux origin</li>
-<li><strong>bell-inequality</strong>: Classical bound S ≤ 2, quantum achieves 2√2; FTD reproduces via sLoop</li>
+<li><strong>bell-inequality</strong>: Classical bound <span class="math inline">\(S \leq 2\)</span>, quantum achieves <span class="math inline">\(2\sqrt{2}\)</span>; FTD reproduces via sLoop</li>
 <li><strong>sloop</strong>: Self-referential loop; the observer-system embedding that produces Bell violations</li>
 <li><strong>collapse</strong>: Manifestation localizes extended flux to definite state</li>
-<li><strong>tunneling</strong>: Nonzero |ψ|² beyond classical barrier</li>
-<li><strong>uncertainty</strong>: Δx·Δp ≥ ℏ/2 from wave structure</li>
+<li><strong>tunneling</strong>: Nonzero <span class="math inline">\(|\psi|^2\)</span> beyond classical barrier</li>
+<li><strong>uncertainty</strong>: <span class="math inline">\(\Delta x \cdot \Delta p \geq \hbar/2\)</span> from wave structure</li>
 </ul>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">

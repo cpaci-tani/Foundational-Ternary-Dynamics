@@ -181,7 +181,7 @@ The top quark couples strongly to the condensate, so it has large mass.
 
 ### The Transition
 
-The electroweak phase transition occurred when the universe was about 10⁻¹² seconds old, at temperature T ≈ 160 GeV.
+The electroweak phase transition occurred when the universe was about $10^{-12}$ seconds old, at temperature T $\approx$ 160 GeV.
 
 In FTD, this transition is **first-order** (involves nucleation of bubbles), which has important consequences for baryogenesis.
 

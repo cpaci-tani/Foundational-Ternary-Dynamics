@@ -20,17 +20,17 @@ Two-atom molecules. Many elements exist naturally as diatomics.
 
 | Molecule | Bond | Length (Å) | Energy (kJ/mol) | Notes |
 |----------|------|-----------|-----------------|-------|
-| H₂ | Single | 0.74 | 436 | Simplest |
-| N₂ | Triple | 1.10 | 946 | Very stable |
-| O₂ | Double | 1.21 | 498 | Paramagnetic |
-| F₂ | Single | 1.42 | 158 | Weak |
-| Cl₂ | Single | 1.99 | 243 | Green gas |
+| $\text{H}_2$ | Single | 0.74 | 436 | Simplest |
+| $\text{N}_2$ | Triple | 1.10 | 946 | Very stable |
+| $\text{O}_2$ | Double | 1.21 | 498 | Paramagnetic |
+| $\text{F}_2$ | Single | 1.42 | 158 | Weak |
+| $\text{Cl}_2$ | Single | 1.99 | 243 | Green gas |
 
 ### Nitrogen: The Inert Gas
 ```
 :N≡N:
 
-Triple bond makes N₂ extremely stable.
+Triple bond makes $\text{N}_2$ extremely stable.
 78% of atmosphere.
 Will not react with most substances.
 ```
@@ -110,9 +110,9 @@ Three oxygen atoms, bent geometry. Absorbs harmful UV radiation in the stratosph
 
 | Molecule | Geometry | Angle | Notes |
 |----------|----------|-------|-------|
-| H₂S | Bent | 92° | Rotten egg smell |
-| NO₂ | Bent | 134° | Brown gas, pollutant |
-| SO₂ | Bent | 119° | Acid rain precursor |
+| $\text{H}_2\text{S}$ | Bent | 92° | Rotten egg smell |
+| $\text{NO}_2$ | Bent | 134° | Brown gas, pollutant |
+| $\text{SO}_2$ | Bent | 119° | Acid rain precursor |
 
 ## Molecular Geometry
 
@@ -122,11 +122,11 @@ Electron pairs arrange to minimize repulsion:
 
 | Electron pairs | Geometry | Example |
 |---------------|----------|---------|
-| 2 | Linear | CO₂ |
-| 3 | Trigonal planar | BF₃ |
-| 4 | Tetrahedral | CH₄ |
-| 5 | Trigonal bipyramidal | PCl₅ |
-| 6 | Octahedral | SF₆ |
+| 2 | Linear | $\text{CO}_2$ |
+| 3 | Trigonal planar | $\text{BF}_3$ |
+| 4 | Tetrahedral | $\text{CH}_4$ |
+| 5 | Trigonal bipyramidal | $\text{PCl}_5$ |
+| 6 | Octahedral | $\text{SF}_6$ |
 
 Lone pairs count too, but do not appear in the name.
 

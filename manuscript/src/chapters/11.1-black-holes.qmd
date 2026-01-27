@@ -29,7 +29,7 @@ $$
 |------|---------------------|
 | Earth | 9 mm |
 | Sun | 3 km |
-| 10 M☉ | 30 km |
+| 10 $M_\odot$ | 30 km |
 | Sagittarius A* | 12 million km |
 | M87* | 20 billion km |
 
@@ -44,21 +44,21 @@ Quantum gravity may resolve this.
 
 ## Types of Black Holes
 
-### Stellar Mass (3-100 M☉)
+### Stellar Mass (3-100 $M_\odot$)
 
 - Formed from massive star collapse
 - Most common type
 - Found in binary systems
 - Some detected as X-ray sources
 
-### Intermediate Mass (100-10⁵ M☉)
+### Intermediate Mass (100-$10^5$ $M_\odot$)
 
 - Formation unclear
 - Possibly merged stellar BHs
 - Possibly primordial
 - Hardest to detect
 
-### Supermassive (10⁶-10¹⁰ M☉)
+### Supermassive ($10^6$-$10^{10}$ $M_\odot$)
 
 - Found in galaxy centers
 - Origin debated
@@ -123,7 +123,7 @@ Virtual pairs at horizon:
 
 Timescale: $t \propto M^3$
 
-For stellar BH: 10⁶⁷ years (far longer than universe age).
+For stellar BH: $10^{67}$ years (far longer than universe age).
 
 ## The Information Paradox
 
@@ -259,7 +259,7 @@ Observe (very slow) evaporation of black hole.
 - **stretched-horizon**: FTD's scrambling layer at ~Planck depth
 - **flux-tunneling**: How information escapes in FTD (not pair production)
 - **page-curve**: Entropy evolution guaranteeing unitarity
-- **holographic-bound**: S = A/4ℓ_P² from flux mode counting
+- **holographic-bound**: $S = A/4\ell_P^2$ from flux mode counting
 
 ## Transition
 

@@ -19,11 +19,11 @@ Chains of amino acids that do everything in life.
 ### Amino Acids
 
 20 standard amino acids, each with:
-- Amino group (-NH₂)
+- Amino group ($-\text{NH}_2$)
 - Carboxyl group (-COOH)
 - R group (side chain: what makes each unique)
 
-The general structure: H₂N-CH(R)-COOH, where R is the side chain unique to each amino acid.
+The general structure: $\text{H}_2\text{N}$-CH(R)-COOH, where R is the side chain unique to each amino acid.
 
 ### Peptide Bonds
 
@@ -87,7 +87,7 @@ Monomers add without losing atoms:
 | Styrene | Polystyrene | Foam, packaging |
 | Vinyl chloride | PVC | Pipes |
 
-Example: n(CH₂=CH₂) → -[-CH₂-CH₂-]ₙ- (polyethylene)
+Example: n($\text{CH}_2\text{=CH}_2$) $\to$ $-[-\text{CH}_2\text{-CH}_2-]_n-$ (polyethylene)
 
 ### Condensation Polymers
 
@@ -105,7 +105,7 @@ Sugars and their polymers.
 
 ### Monosaccharides
 
-Simple sugars: glucose, fructose, galactose (all C₆H₁₂O₆)
+Simple sugars: glucose, fructose, galactose (all $\text{C}_6\text{H}_{12}\text{O}_6$)
 
 ### Disaccharides
 
@@ -129,7 +129,7 @@ Not true polymers, but complex molecules.
 
 ### Fatty Acids
 
-Long hydrocarbon chain + carboxyl group: CH₃(CH₂)ₙCOOH
+Long hydrocarbon chain + carboxyl group: $\text{CH}_3(\text{CH}_2)_n\text{COOH}$
 
 - **Saturated**: No double bonds, solid at room temperature
 - **Unsaturated**: Double bonds, liquid at room temperature

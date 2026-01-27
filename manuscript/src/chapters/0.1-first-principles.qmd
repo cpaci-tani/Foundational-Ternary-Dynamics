@@ -139,9 +139,9 @@ Features explicitly built into the rules:
 
 ### The Honest Position
 
-We do not claim to have derived F = kq₁q₂/r² from pure geometry. We claim that **given** force-like rules, FTD produces physics-like behavior.
+We do not claim to have derived F = $kq_1q_2/r^2$ from pure geometry. We claim that **given** force-like rules, FTD produces physics-like behavior.
 
-The exception: The fine structure constant α IS derived from geometry (see @sec-lemniscate-alpha). This represents a genuine reduction of an imposed parameter to an emergent one.
+The exception: The fine structure constant $\alpha$ IS derived from geometry (see @sec-lemniscate-alpha). This represents a genuine reduction of an imposed parameter to an emergent one.
 
 ## What This Book Claims
 

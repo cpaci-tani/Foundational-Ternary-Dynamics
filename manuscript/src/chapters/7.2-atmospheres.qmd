@@ -61,17 +61,17 @@ $$
 v \propto \frac{1}{\sqrt{m}}
 $$
 
-H₂ moves 4× faster than O₂ → escapes more easily.
+$\text{H}_2$ moves 4$\times$ faster than $\text{O}_2$ $\to$ escapes more easily.
 
 ### Atmospheric Retention
 
 | Planet | Gravity | Temperature | Atmosphere |
 |--------|---------|-------------|------------|
 | Moon | Weak | Hot days | None |
-| Mars | Weak | Cold | Thin CO₂ |
-| Earth | Medium | Moderate | Thick N₂/O₂ |
-| Venus | Medium | Hot | Dense CO₂ |
-| Jupiter | Strong | Cold | Massive H₂/He |
+| Mars | Weak | Cold | Thin $\text{CO}_2$ |
+| Earth | Medium | Moderate | Thick $\text{N}_2$/$\text{O}_2$ |
+| Venus | Medium | Hot | Dense $\text{CO}_2$ |
+| Jupiter | Strong | Cold | Massive $\text{H}_2$/He |
 
 ## The Greenhouse Effect
 
@@ -109,25 +109,25 @@ Venus's runaway greenhouse makes it hotter than Mercury.
 
 | Gas | Percentage |
 |-----|------------|
-| N₂ | 78% |
-| O₂ | 21% |
+| $\text{N}_2$ | 78% |
+| $\text{O}_2$ | 21% |
 | Ar | 0.93% |
-| CO₂ | 0.04% |
-| H₂O | 0-4% |
+| $\text{CO}_2$ | 0.04% |
+| $\text{H}_2\text{O}$ | 0-4% |
 
 ### Venus
 
 | Gas | Percentage |
 |-----|------------|
-| CO₂ | 96.5% |
-| N₂ | 3.5% |
+| $\text{CO}_2$ | 96.5% |
+| $\text{N}_2$ | 3.5% |
 
 ### Mars
 
 | Gas | Percentage |
 |-----|------------|
-| CO₂ | 95% |
-| N₂ | 2.7% |
+| $\text{CO}_2$ | 95% |
+| $\text{N}_2$ | 2.7% |
 | Ar | 1.6% |
 
 ## Weather
@@ -174,7 +174,7 @@ class Atmosphere:
 Give planet different masses. Watch which atmospheres survive.
 
 ### Greenhouse Effect
-Add CO₂. Watch temperature rise.
+Add $\text{CO}_2$. Watch temperature rise.
 
 ### Weather Patterns
 Set up temperature gradients. Watch circulation develop.

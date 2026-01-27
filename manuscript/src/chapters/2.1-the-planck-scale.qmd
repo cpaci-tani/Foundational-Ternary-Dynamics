@@ -44,9 +44,9 @@ What appears as quantum uncertainty is actually sub-voxel position tracking **[C
 Zeno's paradox dissolves. You cannot subdivide space forever because there is a smallest unit. Motion is not continuous: it is a series of discrete jumps.
 
 ### Integer Lattice
-Position coordinates are integers: (x, y, z) where x, y, z ∈ ℤ
+Position coordinates are integers: (x, y, z) where x, y, z $\in \mathbb{Z}$
 
-Neighbors are at distance 1 (6 face neighbors) or √2 (12 edge neighbors) or √3 (8 corner neighbors). Total: 26 neighbors in the Moore neighborhood.
+Neighbors are at distance 1 (6 face neighbors) or $\sqrt{2}$ (12 edge neighbors) or $\sqrt{3}$ (8 corner neighbors). Total: 26 neighbors in the Moore neighborhood.
 
 ### Sub-Voxel Tracking
 When physics demands fractional positions, we track them:

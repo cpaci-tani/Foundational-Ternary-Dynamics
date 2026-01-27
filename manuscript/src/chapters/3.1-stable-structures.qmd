@@ -24,13 +24,13 @@ A triad is recognized when:
 
 ![Triad geometry: three particles at vertices of an equilateral triangle.](../../media/images/fig-triad-geometry.png){#fig-triad-geometry}
 
-The three particles form an equilateral triangle with distance AB = BC = CA = √2 (edge neighbors).
+The three particles form an equilateral triangle with distance AB = BC = CA = $\sqrt{2}$ (edge neighbors).
 
 ### Stability Properties
 
 When a triad is detected:
 - `is_locked = True` for all three particles
-- Decay rate → 0
+- Decay rate $\to$ 0
 - Binding energy = KB × PHI
 - Structure persists indefinitely
 
@@ -56,7 +56,7 @@ The neutron consists of one up quark and two down quarks:
 - **Mass**: ~9.0 units
 - **Stability**: Stable in nucleus, decays when free (~15 minutes)
 
-Free neutrons decay via the weak force: n → p + e⁻ + ν̄ₑ
+Free neutrons decay via the weak force: $n \to p + e^- + \bar{\nu}_e$
 
 ## Electron Shells
 
@@ -77,9 +77,9 @@ Electrons organize around nuclei in shells:
 ### Shell Stability
 
 Electrons in shells have `shell_n` set. Full shells are particularly stable:
-- Helium: 2 electrons (1s²): noble gas
-- Neon: 10 electrons ([He]2s²2p⁶): noble gas
-- Argon: 18 electrons ([Ne]3s²3p⁶): noble gas
+- Helium: 2 electrons ($1s^2$): noble gas
+- Neon: 10 electrons ([He]$2s^2 2p^6$): noble gas
+- Argon: 18 electrons ([Ne]$3s^2 3p^6$): noble gas
 
 ## Orbital Shapes
 

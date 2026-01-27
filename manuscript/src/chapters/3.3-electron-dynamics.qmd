@@ -13,7 +13,7 @@ Electron behavior follows simple rules: minimize energy, fill shells, share or t
 
 Electrons fill orbitals in order of increasing energy, following the **Aufbau sequence**:
 
-> 1s → 2s → 2p → 3s → 3p → 4s → 3d → 4p → 5s → 4d → 5p → 6s → 4f → 5d → 6p → 7s → 5f → 6d → 7p
+> 1s $\to$ 2s $\to$ 2p $\to$ 3s $\to$ 3p $\to$ 4s $\to$ 3d $\to$ 4p $\to$ 5s $\to$ 4d $\to$ 5p $\to$ 6s $\to$ 4f $\to$ 5d $\to$ 6p $\to$ 7s $\to$ 5f $\to$ 6d $\to$ 7p
 
 Note that 4s fills before 3d because it has lower energy at this point in the sequence.
 
@@ -45,7 +45,7 @@ where $\ell$ is the **azimuthal quantum number** (0, 1, 2, 3... for s, p, d, f o
 - **Principal quantum number** $n$ (1, 2, 3...) determines energy level
 - **Azimuthal quantum number** $\ell$ (0 to n-1) determines orbital shape and angular momentum
 - **Magnetic quantum number** $m_\ell$ (-$\ell$ to +$\ell$) determines orbital orientation
-- **Spin quantum number** $m_s$ (±½) determines electron spin
+- **Spin quantum number** $m_s$ ($\pm 1/2$) determines electron spin
 :::
 
 In simulation: stable orbits occur where angular momentum satisfies the quantization condition.
@@ -103,11 +103,11 @@ Electrons in the outermost shell. Determine:
 
 ### The Octet Rule
 
-Atoms are most stable with 8 valence electrons (full s²p⁶).
+Atoms are most stable with 8 valence electrons (full $s^2 p^6$).
 
 Atoms achieve this by:
-- **Losing electrons** (metals): Na → Na⁺
-- **Gaining electrons** (nonmetals): Cl → Cl⁻
+- **Losing electrons** (metals): Na $\to$ Na$^+$
+- **Gaining electrons** (nonmetals): Cl $\to$ Cl$^-$
 - **Sharing electrons** (covalent): C-C bonds
 
 ## Transitions and Spectra
@@ -133,8 +133,8 @@ Each element has unique energy levels, creating unique spectral fingerprints.
 ## Spin
 
 Electrons have intrinsic angular momentum (spin):
-- Spin up: +½
-- Spin down: -½
+- Spin up: $+1/2$
+- Spin down: $-1/2$
 
 Two electrons can share an orbital only if they have opposite spin.
 

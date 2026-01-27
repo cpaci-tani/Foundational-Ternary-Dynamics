@@ -81,7 +81,7 @@ Whatever dark matter is:
 
 ### Axions
 
-- Mass: 10⁻⁶-10⁻³ eV
+- Mass: $10^{-6}$-$10^{-3}$ eV
 - Very light, very cold
 - Solve strong CP problem
 - Active searches ongoing
@@ -219,7 +219,7 @@ Detect nuclear recoil.
 
 ### The Migdal Effect: A New Detection Channel
 
-In January 2026, the first direct observation of the **Migdal effect** was reported in Nature [@yi2026migdal], achieving 5σ statistical significance with 6 candidate events from ~10⁶ recorded.
+In January 2026, the first direct observation of the **Migdal effect** was reported in Nature [@yi2026migdal], achieving 5σ statistical significance with 6 candidate events from ~$10^6$ recorded.
 
 The Migdal effect occurs when a nucleus experiences sudden acceleration (from collision with a neutral particle), causing electrons to be ejected:
 

@@ -152,7 +152,7 @@ This modifies the Euler-Lagrange equation to include damping:
 
 $$J(t+1) = (1-\gamma) J(t) + w(t+1)$$
 
-The decay rate γ = α connects to electromagnetic radiation: excited systems lose energy by radiating flux. The fine structure constant measures this coupling. **[IMPOSED]** The identification $\gamma = \alpha$ is a parameter choice, not a derivation; see Assumption Ledger ASSUMP.6.
+The decay rate $\gamma = \alpha$ connects to electromagnetic radiation: excited systems lose energy by radiating flux. The fine structure constant measures this coupling. **[IMPOSED]** The identification $\gamma = \alpha$ is a parameter choice, not a derivation; see Assumption Ledger ASSUMP.6.
 
 ### The Complete Derivation
 

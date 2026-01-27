@@ -11,13 +11,13 @@ The universe has evolved through distinct eras, each with its own physics. From 
 
 ![The cosmic timeline from the Big Bang to today, showing the major epochs and phase transitions.](../../media/images/fig-cosmic-timeline.png){#fig-cosmic-timeline}
 
-The key events span 60 orders of magnitude in time: from the Planck era (10⁻⁴³ s) through inflation, particle physics transitions, nucleosynthesis, recombination, the dark ages, cosmic dawn, and galaxy assembly to the present day (13.8 billion years).
+The key events span 60 orders of magnitude in time: from the Planck era ($10^{-43}$ s) through inflation, particle physics transitions, nucleosynthesis, recombination, the dark ages, cosmic dawn, and galaxy assembly to the present day (13.8 billion years).
 
-## The Planck Era (0 to 10⁻⁴³ s)
+## The Planck Era (0 to $10^{-43}$ s)
 
 ### Conditions
-- Temperature: >10³² K
-- Size: <10⁻³⁵ m (Planck length)
+- Temperature: >$10^{32}$ K
+- Size: <$10^{-35}$ m (Planck length)
 - All forces unified?
 
 ### Physics
@@ -25,10 +25,10 @@ The key events span 60 orders of magnitude in time: from the Planck era (10⁻�
 - No known physics applies
 - Requires theory of quantum gravity
 
-## Inflation (10⁻³⁶ to 10⁻³² s)
+## Inflation ($10^{-36}$ to $10^{-32}$ s)
 
 ### What Happened
-Exponential expansion by factor ~10²⁶
+Exponential expansion by factor ~$10^{26}$
 
 ### Why It Matters
 Solves:
@@ -97,11 +97,11 @@ $$\langle |J| \rangle \to K_B$$
 
 At this point, manifestation begins (reheating), and the universe transitions to the particle-dominated era.
 
-## Electroweak Era (10⁻³² to 10⁻¹² s)
+## Electroweak Era ($10^{-32}$ to $10^{-12}$ s)
 
 ### Forces Split
-- At 10⁻³² s: Strong force separates
-- At 10⁻¹² s: EM and Weak separate
+- At $10^{-32}$ s: Strong force separates
+- At $10^{-12}$ s: EM and Weak separate
 - Higgs field gives mass to particles
 
 ### Baryogenesis: The FTD Mechanism
@@ -187,14 +187,14 @@ At T_QCD ~ 150 MeV, quarks and gluons confine into hadrons.
 
 | Transition | Temperature | Order | Physical Effect |
 |------------|-------------|-------|-----------------|
-| GUT | 10¹⁵ GeV | First-order? | Force separation |
+| GUT | $10^{15}$ GeV | First-order? | Force separation |
 | Electroweak | 100 GeV | First-order | Higgs condensation, baryogenesis |
 | QCD | 150 MeV | Crossover | Quark confinement |
 
 ## Quark Era (10⁻¹² to 10⁻⁶ s)
 
 ### Conditions
-- Temperature: 10¹² K
+- Temperature: $10^{12}$ K
 - Quark-gluon plasma
 - Free quarks and gluons
 
@@ -207,7 +207,7 @@ Temperature drops enough for quarks to bind:
 ## Lepton Era (10⁻⁶ s to 1 s)
 
 ### Conditions
-- Temperature: 10⁹-10¹² K
+- Temperature: $10^9$-$10^{12}$ K
 - Leptons dominate
 - Neutrinos in equilibrium
 
@@ -227,19 +227,19 @@ Temperature drops enough for quarks to bind:
 
 | Time | T (K) | Events |
 |------|-------|--------|
-| 1 s | 10¹⁰ | Neutron freeze-out |
-| 3 min | 10⁹ | D, ³He, ⁴He form |
-| 20 min | 10⁸ | Nucleosynthesis ends |
+| 1 s | $10^{10}$ | Neutron freeze-out |
+| 3 min | $10^{9}$ | D, $^3$He, $^4$He form |
+| 20 min | $10^{8}$ | Nucleosynthesis ends |
 
 ### Products
 
 | Element | Abundance |
 |---------|-----------|
 | H | 75% by mass |
-| ⁴He | 25% by mass |
+| $^4$He | 25% by mass |
 | D | 0.01% |
-| ³He | 0.01% |
-| ⁷Li | 10⁻⁹ |
+| $^3$He | 0.01% |
+| $^7$Li | $10^{-9}$ |
 
 Everything heavier: Made in stars.
 
@@ -274,7 +274,7 @@ Universe becomes neutral.
 
 ### CMB Properties
 - Almost perfectly uniform
-- Tiny fluctuations (δT/T ~ 10⁻⁵)
+- Tiny fluctuations ($\delta T/T \sim 10^{-5}$)
 - These fluctuations → all structure
 
 ## Dark Ages (380,000 yr to 200 Myr)
@@ -292,7 +292,7 @@ Universe waits for first stars.
 
 ### First Stars (Pop III)
 - Formed from pristine H/He
-- Very massive (100s of M☉)
+- Very massive (100s of $M_\odot$)
 - Very short-lived
 - Created first heavy elements
 
@@ -385,7 +385,7 @@ Plot cosmic star formation rate over time.
 - **baryogenesis**: Creation of matter-antimatter asymmetry
 - **sakharov-conditions**: B violation, CP violation, departure from equilibrium
 - **sphaleron**: Topological configuration enabling baryon number change
-- **eta-parameter**: η = (n_B - n_B̄)/n_γ ≈ 6×10⁻¹⁰
+- **eta-parameter**: $\eta = (n_B - n_{\bar{B}})/n_\gamma \approx 6 \times 10^{-10}$
 - **electroweak-transition**: First-order phase transition at T ~ 100 GeV
 - **qcd-transition**: Crossover at T ~ 150 MeV, quark confinement
 - **nucleosynthesis**: Formation of light elements
