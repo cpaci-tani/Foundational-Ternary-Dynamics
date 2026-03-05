@@ -240,7 +240,12 @@
       "Bash(test -d \"docs/articles\")",
       "Bash(head -50 dissemination/notebooks/*.ipynb)",
       "Bash(black --check --diff .)",
-      "Bash(ruff check .)"
+      "Bash(ruff check .)",
+      "Bash(do)",
+      "Bash(if [ -e \"$f\" ])",
+      "Bash(then echo \"OK: $f\")",
+      "Bash(else echo \"MISSING: $f\")",
+      "Bash(fi)"
     ]
   },
   "outputStyle": "default"
