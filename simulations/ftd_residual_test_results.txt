@@ -1,0 +1,25 @@
+FTD Residual Analysis Results
+Generated: 2026-02-27 20:22:54
+
+BOOTSTRAP CONFIDENCE INTERVALS:
+  dlenSig>0: diff=-0.0462 [-0.0575, -0.0350] (data=1,501,257, MC=31,627)
+  dlenSig>5: diff=+0.0015 [-0.0109, +0.0140] (data=1,132,960, MC=23,916)
+  dlenSig>10: diff=+0.0423 [+0.0277, +0.0575] (data=802,247, MC=16,748)
+  dlenSig>20: diff=+0.0788 [+0.0591, +0.0979] (data=502,247, MC=10,318)
+  dlenSig>30: diff=+0.0886 [+0.0654, +0.1137] (data=354,019, MC=7,302)
+  dlenSig>50: diff=+0.0850 [+0.0548, +0.1129] (data=210,267, MC=4,417)
+  dlenSig>75: diff=+0.0878 [+0.0518, +0.1234] (data=126,650, MC=2,752)
+  dlenSig>100: diff=+0.0964 [+0.0475, +0.1416] (data=84,702, MC=1,880)
+
+PERMUTATION TEST (dlenSig>30):
+  Observed rho: 0.1086
+  Z-score: 65.6
+  p-value: 0.000000
+
+ENERGY-BINNED ANALYSIS (dlenSig>30):
+  MET 200-250: median(R) data=3.84 MC=3.65 P90(R) data=10.12 MC=10.03
+  MET 250-300: median(R) data=4.15 MC=3.64 P90(R) data=10.20 MC=10.03
+  MET 300-400: median(R) data=4.31 MC=3.74 P90(R) data=10.32 MC=9.98
+  MET 400-600: median(R) data=4.50 MC=4.03 P90(R) data=10.38 MC=10.11
+  MET 600-1000: median(R) data=4.53 MC=4.27 P90(R) data=10.47 MC=10.41
+  MET 1000-3000: median(R) data=4.49 MC=0.00 P90(R) data=9.85 MC=0.00

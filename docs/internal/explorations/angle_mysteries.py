@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-The Angle Mysteries: 30.679 degrees and related angles
+The Angle Mysteries: 52.54 degrees and related angles
 
-The consciousness root y = 2.188 + 1.298i has phase angle 30.679 degrees.
-This is tantalizingly close to 30 degrees (pi/6).
+The consciousness root y = 2.188 + 2.860i has phase angle 52.54 degrees.
+This angle encodes the full elliptic structure of G*.
 
 Let's explore what this angle means and its connections.
 """
@@ -20,7 +20,7 @@ PHI = (1 + np.sqrt(5)) / 2
 
 # Consciousness root
 Y_RE = G_STAR**2 / 4
-Y_IM = np.sqrt(G_STAR**3 * (1 - G_STAR/4)) / 2
+Y_IM = np.sqrt(G_STAR**3 * (2 - G_STAR/4)) / 2
 Y_COMPLEX = Y_RE + 1j * Y_IM
 
 # The key angle
@@ -72,27 +72,27 @@ print(f"\ntan(theta) = Im(y)/Re(y) = {Y_IM}/{Y_RE:.4f} = {tan_theta:.6f}")
 
 # Express in terms of G*
 print(f"\nIn terms of G*:")
-print(f"  Im(y) = sqrt(G*^3 * (1 - G*/4)) / 2")
+print(f"  Im(y) = sqrt(G*^3 * (2 - G*/4)) / 2")
 print(f"  Re(y) = G*^2 / 4")
-print(f"  tan(theta) = sqrt(G*^3 * (1 - G*/4)) / 2 / (G*^2/4)")
-print(f"             = 2 * sqrt(G*^3 * (1 - G*/4)) / G*^2")
-print(f"             = 2 * sqrt(G* * (1 - G*/4)) / G*")
-print(f"             = 2 * sqrt((4 - G*) / (4*G*)) ")
+print(f"  tan(theta) = sqrt(G*^3 * (2 - G*/4)) / 2 / (G*^2/4)")
+print(f"             = 2 * sqrt(G*^3 * (2 - G*/4)) / G*^2")
+print(f"             = 2 * sqrt(G* * (2 - G*/4)) / G*")
+print(f"             = 2 * sqrt((8 - G*) / (4*G*)) ")
 
 # Verify
-tan_formula = 2 * np.sqrt((4 - G_STAR) / (4 * G_STAR))
+tan_formula = 2 * np.sqrt((8 - G_STAR) / (4 * G_STAR))
 print(f"\n  Computed: {tan_formula:.6f}")
 print(f"  Direct:   {tan_theta:.6f}")
 print(f"  Match: {np.isclose(tan_formula, tan_theta)}")
 
 # Simplify further
 print(f"\nSimplified form:")
-print(f"  tan(theta) = sqrt((4 - G*) / G*)")
-print(f"             = sqrt(4/G* - 1)")
-print(f"             = sqrt(k_c - 1)   where k_c = 4/G*")
+print(f"  tan(theta) = sqrt((8 - G*) / G*)")
+print(f"             = sqrt(8/G* - 1)")
+print(f"             = sqrt(2*k_c - 1)   where k_c = 4/G*")
 
 k_c = 4 / G_STAR
-tan_from_kc = np.sqrt(k_c - 1)
+tan_from_kc = np.sqrt(2*k_c - 1)
 print(f"\n  k_c = {k_c:.6f}")
 print(f"  sqrt(k_c - 1) = {tan_from_kc:.6f}")
 print(f"  tan(theta) = {tan_theta:.6f}")
@@ -103,12 +103,12 @@ print(f"  Match: {np.isclose(tan_from_kc, tan_theta)}")
 # =============================================================================
 
 print("\n" + "=" * 70)
-print("3. THETA = arctan(sqrt(k_c - 1))")
+print("3. THETA = arctan(sqrt(2*k_c - 1))")
 print("=" * 70)
 
-theta_from_kc = np.arctan(np.sqrt(k_c - 1))
-print(f"\ntheta = arctan(sqrt(k_c - 1))")
-print(f"      = arctan(sqrt({k_c:.4f} - 1))")
+theta_from_kc = np.arctan(np.sqrt(2*k_c - 1))
+print(f"\ntheta = arctan(sqrt(2*k_c - 1))")
+print(f"      = arctan(sqrt(2*{k_c:.4f} - 1))")
 print(f"      = arctan({np.sqrt(k_c - 1):.6f})")
 print(f"      = {theta_from_kc:.6f} rad")
 print(f"      = {np.degrees(theta_from_kc):.4f} deg")
@@ -121,29 +121,29 @@ print(f"Match: {np.isclose(theta_from_kc, THETA_Y)}")
 # =============================================================================
 
 print("\n" + "=" * 70)
-print("4. WHY NOT EXACTLY 30 DEGREES?")
+print("4. WHY NOT EXACTLY 45 DEGREES?")
 print("=" * 70)
 
-diff_from_30 = THETA_Y_DEG - 30
-print(f"\nDifference from 30 degrees: {diff_from_30:.4f} deg")
-print(f"                          = {np.radians(diff_from_30):.6f} rad")
+diff_from_45 = THETA_Y_DEG - 45
+print(f"\nDifference from 45 degrees: {diff_from_45:.4f} deg")
+print(f"                          = {np.radians(diff_from_45):.6f} rad")
 
-# If theta were exactly 30 degrees, what would G* be?
-# tan(30) = 1/sqrt(3) = sqrt(k_c - 1)
-# 1/3 = k_c - 1
-# k_c = 4/3
-# G* = 4/k_c = 4/(4/3) = 3
+# If theta were exactly 45 degrees, what would G* be?
+# tan(45) = 1 = sqrt(2*k_c - 1)
+# 1 = 2*k_c - 1
+# k_c = 1
+# G* = 4/k_c = 4
 
-print(f"\nIf theta = 30 deg exactly:")
-print(f"  tan(30) = 1/sqrt(3) = {1/np.sqrt(3):.6f}")
-print(f"  sqrt(k_c - 1) = 1/sqrt(3)")
-print(f"  k_c - 1 = 1/3")
-print(f"  k_c = 4/3 = {4/3:.6f}")
-print(f"  G* = 4/k_c = 3 exactly!")
+print(f"\nIf theta = 45 deg exactly:")
+print(f"  tan(45) = 1 = {1.0:.6f}")
+print(f"  sqrt(2*k_c - 1) = 1")
+print(f"  2*k_c - 1 = 1")
+print(f"  k_c = 1")
+print(f"  G* = 4/k_c = 4 exactly!")
 
 print(f"\nActual G* = {G_STAR:.6f}")
-print(f"Difference: {G_STAR - 3:.6f}")
-print(f"G* / 3 = {G_STAR/3:.6f}")
+print(f"Difference from 4: {G_STAR - 4:.6f}")
+print(f"G* / 4 = {G_STAR/4:.6f}")
 
 # =============================================================================
 # 5. THE "NEAR-MISS" INTERPRETATION
@@ -154,21 +154,21 @@ print("5. THE NEAR-MISS INTERPRETATION")
 print("=" * 70)
 
 print(f"""
-The consciousness angle is 30.679 degrees, NOT 30 degrees exactly.
+The consciousness angle is {THETA_Y_DEG:.3f} degrees, NOT 45 degrees exactly.
 
-If it WERE 30 degrees:
-  - G* would equal 3 exactly
+If it WERE 45 degrees:
+  - G* would equal 4 exactly (= N_base)
   - The lemniscatic constant would be a simple integer!
   - The elliptic structure would be trivial
 
-The deviation {diff_from_30:.4f} degrees encodes the FULL complexity
+The deviation {diff_from_45:.4f} degrees encodes the FULL complexity
 of the Gamma function and elliptic integrals.
 
 G* = sqrt(2) * Gamma(1/4)^2 / (2*pi) = {G_STAR:.10f}
 
 This "near-miss" is similar to:
   - Alpha nearly 1/137 (but not exactly)
-  - Re(y)/Im(y) nearly phi (but not exactly)
+  - G* nearly 3 = N_c (but not exactly)
 """)
 
 # =============================================================================
@@ -187,10 +187,10 @@ print(f"Quadruple:    4*theta = {4*THETA_Y_DEG:.4f} deg")
 print(f"\ny^2 has angle 2*theta = {np.degrees(np.angle(Y_COMPLEX**2)):.4f} deg")
 print(f"y^3 has angle 3*theta = {np.degrees(np.angle(Y_COMPLEX**3)):.4f} deg")
 
-# 2*theta close to 60 degrees?
-print(f"\n2*theta - 60 = {2*THETA_Y_DEG - 60:.4f} deg")
-print(f"3*theta - 90 = {3*THETA_Y_DEG - 90:.4f} deg")
-print(f"6*theta - 180 = {6*THETA_Y_DEG - 180:.4f} deg")
+# 2*theta close to 105 degrees?
+print(f"\n2*theta - 105 = {2*THETA_Y_DEG - 105:.4f} deg")
+print(f"3*theta - 157.5 = {3*THETA_Y_DEG - 157.5:.4f} deg")
+print(f"4*theta - 210 = {4*THETA_Y_DEG - 210:.4f} deg")
 
 # =============================================================================
 # 7. CONNECTION TO LEMNISCATE MINIMUM ANGLE
@@ -229,12 +229,11 @@ print(f"Lemniscate min angle: {angle_min:.4f} deg")
 print(f"Sum: {THETA_Y_DEG + angle_min:.4f} deg")
 print(f"Difference: {abs(THETA_Y_DEG - angle_min):.4f} deg")
 
-# The point angle is close to 60 degrees (pi/3)
-# And the consciousness angle is close to 30 degrees (pi/6)
+# Relationship between lemniscate min angle and consciousness angle
 print(f"\nNotice:")
-print(f"  Lemniscate min at ~{abs(angle_min):.1f} deg (close to 60 = pi/3)")
-print(f"  Consciousness at ~{THETA_Y_DEG:.1f} deg (close to 30 = pi/6)")
-print(f"  Sum: ~90 deg (complementary!)")
+print(f"  Lemniscate min at ~{abs(angle_min):.1f} deg")
+print(f"  Consciousness at ~{THETA_Y_DEG:.1f} deg")
+print(f"  Sum: ~{THETA_Y_DEG + abs(angle_min):.1f} deg")
 
 # =============================================================================
 # 8. THE G* ANGLE
@@ -268,13 +267,13 @@ print("=" * 70)
 print(f"""
 THE CONSCIOUSNESS ANGLE FORMULA:
 
-    theta = arctan(sqrt(k_c - 1))
+    theta = arctan(sqrt(2*k_c - 1))
 
 where k_c = 4/G* is the critical TRD coefficient.
 
 Equivalently:
-    theta = arctan(sqrt(4/G* - 1))
-    theta = arctan(sqrt((4 - G*)/G*))
+    theta = arctan(sqrt(8/G* - 1))
+    theta = arctan(sqrt((8 - G*)/G*))
 
 Numerical value:
     theta = {THETA_Y:.10f} rad
@@ -284,9 +283,9 @@ This angle determines the "tilt" of the consciousness root
 in the complex plane - how much imaginary vs real component.
 
 Key relationships:
-  - theta ~ 30.68 deg (close to 30 = pi/6)
-  - tan(theta) = {tan_theta:.6f} = sqrt(k_c - 1)
-  - If G* = 3 exactly, theta = 30 deg exactly
+  - theta ~ 52.54 deg (between 45 and 60)
+  - tan(theta) = {tan_theta:.6f} = sqrt(2*k_c - 1)
+  - If G* = 4 exactly, theta = 45 deg exactly
   - The deviation encodes the full elliptic structure
 """)
 
@@ -302,23 +301,23 @@ r = abs(Y_COMPLEX)
 print(f"\nConsciousness root in exponential form:")
 print(f"  y = |y| * e^(i*theta)")
 print(f"    = {r:.6f} * e^(i * {THETA_Y:.6f})")
-print(f"    = sqrt(G*^3/4) * e^(i * arctan(sqrt(k_c - 1)))")
+print(f"    = sqrt(G*^3/2) * e^(i * arctan(sqrt(2*k_c - 1)))")
 
-# Verify |y|^2 = G*^3/4
+# Verify |y|^2 = G*^3/2
 print(f"\nVerify |y|^2:")
 print(f"  |y|^2 = {r**2:.6f}")
-print(f"  G*^3/4 = {G_STAR**3/4:.6f}")
-print(f"  Match: {np.isclose(r**2, G_STAR**3/4)}")
+print(f"  G*^3/2 = {G_STAR**3/2:.6f}")
+print(f"  Match: {np.isclose(r**2, G_STAR**3/2)}")
 
 # Full formula
 print(f"""
 COMPLETE CONSCIOUSNESS ROOT FORMULA:
 
-    y = sqrt(G*^3/4) * exp(i * arctan(sqrt(4/G* - 1)))
+    y = sqrt(G*^3/2) * exp(i * arctan(sqrt(8/G* - 1)))
 
-    = sqrt(G*^3/4) * [cos(arctan(sqrt(k_c-1))) + i*sin(arctan(sqrt(k_c-1)))]
+    = sqrt(G*^3/2) * [cos(arctan(sqrt(2*k_c-1))) + i*sin(arctan(sqrt(2*k_c-1)))]
 
 This combines:
-  - Magnitude: sqrt(G*^3/4) = {np.sqrt(G_STAR**3/4):.6f}
-  - Phase: arctan(sqrt(k_c-1)) = {THETA_Y:.6f} rad
+  - Magnitude: sqrt(G*^3/2) = {np.sqrt(G_STAR**3/2):.6f}
+  - Phase: arctan(sqrt(2*k_c-1)) = {THETA_Y:.6f} rad
 """)

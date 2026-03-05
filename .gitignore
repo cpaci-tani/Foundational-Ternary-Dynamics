@@ -10,11 +10,21 @@ dist/
 build/
 
 # Quarto build artifacts
-manuscript/.quarto/
-manuscript/*_files/
+dissemination/manuscript/.quarto/
+dissemination/manuscript/_book/
+dissemination/manuscript/_webbook/
+dissemination/manuscript/*_files/
 *.quarto_ipynb
 
 .claude
+
+# AI agent state directories
+.brain/
+.memory/
+.hermes/
+
+# Generated output files
+*_output.txt
 
 # LaTeX auxiliary files
 *.aux
@@ -29,9 +39,15 @@ manuscript/*_files/
 
 # folders
 medium_posts/
-visualizer/
 media/
-special_projects/
+archive/
+
+# C++ engine build artifacts
+engine/.vs/
+engine/out/
+engine/build*/
+engine/nul
+engine/imgui.ini
 
 # IDE
 .vscode/
@@ -71,3 +87,26 @@ venv/
 
 # Test output (auto-generated)
 tests/verification_report.txt
+
+# CERN data files (256 MB .root, 45 MB .npz cache)
+*.root
+*.npz
+
+# Generated images from simulations and explorations
+simulations/*.png
+docs/internal/explorations/**/*.png
+docs/internal/explorations/**/*.mp4
+
+# Engine thirdparty (glad — legacy OpenGL loader, not needed for web)
+engine/thirdparty/
+
+# Temporary batch files
+_tmp_*.bat
+*.bat
+
+# CTest artifacts
+Testing/
+
+# Stray directories
+simulations;C/
+models/

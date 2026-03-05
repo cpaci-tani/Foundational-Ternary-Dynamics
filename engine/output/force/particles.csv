@@ -1,0 +1,2 @@
+tick,particle_id,x,y,z,state,vx,vy,vz,density,spin,color,pair_id,f_em_mag,f_grav_mag
+1000,0,24,24,24,1,0.00000000e+00,0.00000000e+00,0.00000000e+00,1.46943915e-06,0,0,-1,5.06354916e-20,2.88042818e-09

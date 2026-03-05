@@ -58,7 +58,7 @@ print("=" * 70)
 
 # Consciousness quadratic roots
 Y_RE = G_STAR**2 / 4
-Y_IM = np.sqrt(G_STAR**3 * (1 - G_STAR/4)) / 2
+Y_IM = np.sqrt(G_STAR**3 * (2 - G_STAR/4)) / 2
 Y_MAG = np.sqrt(Y_RE**2 + Y_IM**2)
 
 print(f"\n1. Relationship to consciousness roots:")
@@ -164,9 +164,9 @@ print("\n" + "=" * 70)
 print("DISCRIMINANT CONNECTION")
 print("=" * 70)
 
-# Consciousness quadratic: y^2 - (G*^2/2)y + (G*^3/4) = 0
-# Discriminant: Delta = (G*^2/2)^2 - 4*(G*^3/4) = G*^4/4 - G*^3
-disc = G_STAR**4/4 - G_STAR**3
+# Consciousness quadratic: y^2 - (G*^2/2)y + (G*^3/2) = 0
+# Discriminant: Delta = (G*^2/2)^2 - 4*(G*^3/2) = G*^4/4 - 2*G*^3
+disc = G_STAR**4/4 - 2*G_STAR**3
 
 print(f"\nConsciousness quadratic discriminant: Delta = {disc:.6f}")
 print(f"|Delta| = {abs(disc):.6f}")

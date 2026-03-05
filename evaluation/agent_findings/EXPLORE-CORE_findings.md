@@ -41,7 +41,7 @@ The Foundational Ternary Dynamics framework presents an ambitious attempt to der
 ### S5: Comprehensive Scope
 - Covers Planck scale to cosmological scales
 - Addresses measurement problem via manifestation = collapse
-- Includes consciousness derivation (complex roots y = 2.19 ± 1.30i)
+- Includes consciousness derivation (complex roots y = 2.19 ± 2.86i)
 
 ---
 
@@ -58,8 +58,8 @@ The Foundational Ternary Dynamics framework presents an ambitious attempt to der
 - The claim "zero free parameters" obscures that integers themselves are choices
 
 ### W3: Consciousness Speculation [MAJOR]
-- Extension to consciousness (Consciousness_Quadratic_Derivation.md) lacks empirical grounding
-- Complex roots interpretation (y = 2.19 ± 1.30i) is highly speculative
+- Extension to consciousness (archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md) lacks empirical grounding
+- Complex roots interpretation (y = 2.19 ± 2.86i) is highly speculative
 - May undermine credibility of rigorous physics sections
 
 ### W4: Observational Confirmation Claims [MAJOR]
@@ -112,4 +112,4 @@ The Foundational Ternary Dynamics framework presents an ambitious attempt to der
 - `docs/theory/G_STAR_DERIVATION.md`
 - `docs/theory/THEORETICAL_FOUNDATIONS.md`
 - `docs/theory/BORN_RULE_DERIVATION.md`
-- `docs/theory/Consciousness_Quadratic_Derivation.md`
+- `docs/theory/archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md`

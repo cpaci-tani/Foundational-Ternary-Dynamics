@@ -198,10 +198,10 @@ The FTD manuscript evaluation employed a comprehensive methodology designed to s
 - Mapped interdependencies between issues
 
 **Output:**
-- grades_matrix.md
-- strengths_compilation.md
-- weaknesses_compilation.md
-- interdependencies.md
+- ARCH_GRADES_MATRIX.md
+- ARCH_STRENGTHS_COMPILATION.md
+- ARCH_WEAKNESSES_COMPILATION.md
+- ARCH_INTERDEPENDENCIES.md
 
 #### Phase 4: Defense Preparation
 

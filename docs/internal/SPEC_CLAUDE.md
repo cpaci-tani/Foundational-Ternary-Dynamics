@@ -1,0 +1,2055 @@
+# Foundational Ternary Dynamics: A Discrete Ontology for Computational Physics
+
+## A Principled Framework for Universe Simulation
+
+**Document Classification:** Theoretical Framework and Simulation Manual
+**Version:** 5.24 (Project Cleanup)
+**Status:** ~20 Genuine Derivations + ~50 Parametric Insertions + Standard Physics (see AUDIT_EPISTEMIC_AUDIT.md)
+
+**Editorial note (2026):** The publication-ready narrative and epistemic taxonomy live in `dissemination/manuscript/`. This file is a simulation manual and uses occasional shorthand (e.g., "derived", "resolved", "first principles") to mean "derived within the stated FTD postulates/constraints" or "implemented and validated in simulation," not a claim of empirical establishment.
+
+> **Major Update (v4.0)**: This version incorporates novel theoretical foundations including an action principle from which update rules are derived, Hilbert space construction from the flux field, and established connections to standard physics (Maxwell, Schrödinger). See docs/theory/ for detailed derivations.
+
+> **Major Update (v4.1)**: SM gauge group geometrically motivated: U(1) argued from Helmholtz decomposition; SU(2) × SU(3) **[CONJECTURE]** from ternary/spatial structure.
+
+> **Major Update (v5.0)**: Seven theoretical gaps addressed (within assumptions and selection principles):
+> - **C1**: x₊ = 1/α via CM selection — **[CONJECTURE]** (numerical match 1.26 ppm, no mechanism; see [HIDDEN_SELECTIONS.md](../theory/AUDIT_HIDDEN_SELECTIONS.md) SP4)
+> - **C2**: x₋ → N_c = 3 — **[ARGUED]** via RG flow
+> - **A1**: D = 3 — **[ARGUED]** from 6 independent arguments (no single proof)
+> - **GR**: Einstein equations with 8πG coefficient — **[PARAMETRIC]**
+> - **Inflation**: n_s = 0.966, r = 0.022 — **[PARAMETRIC]**
+> - **Baryogenesis**: η ~ 10⁻¹⁰ — **[PARAMETRIC]**
+> - **Neutrinos**: Seesaw mechanism — **[PARAMETRIC]**
+>
+> See [SPEC_FTD_REFERENCE.md](../theory/SPEC_FTD_REFERENCE.md) for complete reference and [CHANGELOG.md](../../CHANGELOG.md) for version history.
+
+> **Major Update (v5.1-v5.8 - Foundations Derived)**: Eight major theoretical documents formalize the deepest structures:
+> - **v5.1 ONTOLOGICAL_GENESIS**: k = 16 **DERIVED** from complementation principle (k_cons = 1/2, D = 3)
+> - **v5.2 RIEMANN_ZETA**: First zero ρ₁ ≈ 14.13 from FTD relation (b₃ + N_eff)/√N_base × √(2π)
+> - **v5.3 NUMBER_THEORY**: j = 1728 **DERIVED** as (N_base × N_c)³ = 12³ (no longer selection)
+> - **v5.4 ALPHA_PRECISION**: Sub-ppb precision formula (0.21 ppt accuracy)
+> - **v5.5 VACUUM_ENERGY**: ρ_Λ = m_e⁴ × α¹⁶ × G*² resolves 10¹²³ problem (1.0% accuracy)
+> - **v5.6 MANDELBROT_DUALITY**: k_c × c_cusp × 2N_base = 1 (exact bridge equation)
+> - **v5.7 OCTONIONIC_ORIGIN**: 70 ± 67 Heegner structure; division algebras → FTD integers
+> - **v5.8 PHYSICS_ENCODINGS**: FTD integers encode physics across 15+ domains
+>
+> See [CHANGELOG.md](../../CHANGELOG.md) for complete version history.
+
+> **Epistemic Reality Check (v5.24):** The honest accounting from [AUDIT_EPISTEMIC_AUDIT.md](../theory/AUDIT_EPISTEMIC_AUDIT.md):
+> - **~12 rigorous theorems** (algebra from G* and integers — see T1 tier)
+> - **~9 conditional results** (require 5 selection principles SP1-SP5 — see [HIDDEN_SELECTIONS.md](../theory/AUDIT_HIDDEN_SELECTIONS.md))
+> - **~142 parametric insertions** (FTD values in standard QFT formulas — not derivations)
+> - **4 critical gaps**: Bell mechanism (S≤2), integer uniqueness, x₊=1/α mechanism, Λ_QCD loop
+> - **"Zero free parameters" is FALSE**: 5 selection principles + scale identification
+> - Self-consistency of {3,4,7,13} proven; uniqueness NOT proven (see [SELF_CONSISTENCY.md](../theory/AUDIT_SELF_CONSISTENCY.md))
+
+---
+
+# ABSTRACT FOR PHYSICISTS
+
+We present Foundational Ternary Dynamics (FTD), a discrete computational framework for simulating physical systems from explicit postulates (“first principles” in the sense of the model). The model postulates a 3D cubic lattice where each site ("voxel") occupies one of three states: void (0), positive manifestation (+1), or negative manifestation (-1). Dynamics proceed via local update rules within a 26-connected Moore neighborhood, with information propagating at a maximum of one lattice unit per discrete time step.
+
+The framework introduces a two-layer ontology: a continuous vector "flux" field encoding potential energy density, and discrete state transitions representing particle manifestation. Manifestation occurs probabilistically when flux density exceeds a threshold parameter (KB). Forces emerge from discrete differential operators (gradient, divergence, curl) applied to flux and charge-density fields.
+
+**UPDATE (v4.0)**: We now present FTD as a **principled theoretical framework** with rigorous foundations. The update rules, previously postulated, are now **derived from an action principle** S[s,J]. Quantum mechanics, previously absent, is now **constructed via Hilbert space** H = L²(Lattice, ℂ) from the complexified flux field. The continuum limit is established, recovering **Maxwell electrodynamics and the Schrödinger equation**.
+
+Key achievements within the framework (with several items representing proposed correspondences to known physics) include:
+
+- **Action principle**: S[s,J] yielding the update rules via δS = 0 (within the model)
+- **Hilbert space**: quantum-style formalism constructed from flux field complexification
+- **Born rule**: several derivations/motivations collected (threshold crossing, conservation, max entropy, Gleason-style) — see [QUANTUM_MECHANICS_RESOLVED.md](../theory/DERIV_QUANTUM_MECHANICS_RESOLVED.md)
+- **G\***: a proposed derivation chain via elliptic structure + self-consistency + CM selection — see [LEMNISCATE_HIERARCHY_WHITEPAPER.md](../theory/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md)
+- **Bell violations**: Computed via standard quantum mechanics in H_FTD
+- **Continuum limit**: a correspondence argument relating FTD to Maxwell + Schrödinger as lattice spacing → 0
+- **Spinor structure**: Fermi statistics from frame bundle topology π₁(SO(3)) = ℤ₂
+- **Thermodynamics**: Boltzmann-style treatment over microstates within the simulation
+- **Gravity sector**: Einstein equations with 8πG coefficient — **[PARAMETRIC]**
+- **Cosmological inflation**: n_s = 0.966, r = 0.022 from sub-threshold flux dynamics
+- **Baryogenesis**: η ~ 10⁻¹⁰ from CP violation + Sakharov conditions
+- **Honest accounting**: ~12 rigorous theorems, ~9 conditional results, ~142 parametric insertions — see [AUDIT_EPISTEMIC_AUDIT.md](../theory/AUDIT_EPISTEMIC_AUDIT.md)
+- **SM gauge group**: U(1) argued (Helmholtz); SU(2) × SU(3) **[CONJECTURE]** (geometric motivation)
+- **sLoop formalization**: Axioms SL1-SL4 — see [SLOOP_FORMALIZATION.md](../theory/FOUND_SLOOP_FORMALIZATION.md)
+- **D = 3 uniqueness**: Three dimensions uniquely selected by atomic stability + gauge requirements (no longer axiomatic)
+- **Consciousness**: [SPECULATIVE - NOT REQUIRED FOR PHYSICS] Exploratory extension using same G* geometry with complex roots y = 2.19 ± 2.86i. This is philosophical speculation, not physics. Core FTD results (α, masses, gauge structure) do not depend on this interpretation. — see [CONSCIOUSNESS_MATHEMATICS_FORMALIZATION.md](../theory/FOUND_CONSCIOUSNESS_MATHEMATICS.md)
+
+The framework argues that U(1) gauge symmetry arises from the constraint structure (Gauss law via Helmholtz decomposition). SU(2) from the ternary state structure and SU(3) from the three spatial dimensions are **geometrically motivated conjectures**, not rigorous derivations. Lorentz invariance emerges approximately at scales >> lattice spacing. See [SPEC_FTD_REFERENCE.md](../theory/SPEC_FTD_REFERENCE.md) for available derivations and [§6.6] for gauge theory limitations.
+
+**Keywords:** discrete spacetime, cellular automata, emergent physics, computational ontology, universe simulation
+
+---
+
+# PREAMBLE: DOCUMENT STATUS AND INTERPRETATION
+
+## What This Document Is
+
+This document describes a **computational simulation framework** called Foundational Ternary Dynamics (FTD). It specifies:
+
+1. **Ontological postulates**: Axiomatic assumptions defining the simulation's primitive entities
+2. **Update rules**: Deterministic algorithms governing state evolution
+3. **Interpretive mappings**: Proposed correspondences between simulation entities and physical concepts
+4. **Implementation details**: Code architecture and protocols
+
+## What This Document Is Not
+
+This document does **not**:
+
+- Present a confirmed physical theory (empirical testing required)
+- Solve quantum gravity
+
+**UPDATE (v4.0)**: This document now **does**:
+
+- Derive update rules from an action principle (not postulated)
+- Construct a quantum-style formalism from the flux field (Hilbert space construction within the model)
+- Recover known physics in continuum limit (Maxwell, Schrödinger)
+- Propose a resolution of the measurement problem within FTD (manifestation = collapse)
+- Derive thermodynamics (from microstate counting)
+- **Derive the Born rule** from manifestation statistics (see [QUANTUM_MECHANICS_RESOLVED.md](../theory/DERIV_QUANTUM_MECHANICS_RESOLVED.md))
+- **G\***: provide a proposed derivation chain via elliptic curve selection (within assumptions) (see [LEMNISCATE_HIERARCHY_WHITEPAPER.md](../theory/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md))
+- **Offer candidate predictions** (see Chapter 16)
+
+All statements about physical phenomena should be evaluated against the derivations in [SPEC_FTD_REFERENCE.md](../theory/SPEC_FTD_REFERENCE.md) and the honest audit in [AUDIT_EPISTEMIC_AUDIT.md](../theory/AUDIT_EPISTEMIC_AUDIT.md).
+
+## Reading Conventions and Epistemic Tags
+
+The following tags indicate the epistemic status of claims throughout this document:
+
+| Tag | Meaning | Reviewer expectation |
+|-----|---------|---------------------|
+| **[AXIOM]** | Structural postulate (not derivable) | Accept as model definition |
+| **[THEOREM]** | Rigorously proven from axioms | Check proof |
+| **[SELECTION]** | Argued from consistency, not uniquely proven | Critique argument |
+| **[CONJECTURE]** | Proposed interpretation requiring validation | Demand evidence |
+| **[IMPOSED]** | Parameter choice or model calibration | Note as input, not output |
+| **[EMERGENT]** | Behavior arising from dynamics (not designed in) | Verify in simulation |
+| **[OPEN]** | Unresolved question | Research opportunity |
+
+**Legacy prefixes** (for backward compatibility):
+
+| Prefix | Meaning |
+|--------|---------|
+| **POSTULATE** | = [AXIOM] |
+| **RULE** | Algorithmic specification (neutral) |
+| **DERIVED** | = [THEOREM] (follows from action principle) |
+| **INTERPRETATION** | = [CONJECTURE] (proposed mapping to physics) |
+| **OBSERVATION** | Simulation behavior (internal) |
+| **CLAIM** | = [CONJECTURE] (assertion requiring validation) |
+| **VERIFIED** | = [THEOREM] (mathematically established) |
+
+---
+
+# TABLE OF CONTENTS
+
+## PART A: FOUNDATIONS
+1. [Chapter 1: Ontological Postulates](#chapter-1-ontological-postulates)
+2. [Chapter 2: State Space and Dynamics](#chapter-2-state-space-and-dynamics)
+3. [Chapter 3: The Flux Field](#chapter-3-the-flux-field)
+4. [Chapter 4: Manifestation Dynamics](#chapter-4-manifestation-dynamics)
+5. [Chapter 5: The Update Cycle](#chapter-5-the-update-cycle)
+6. [Chapter 6: Force-Like Behaviors](#chapter-6-force-like-behaviors)
+7. [Chapter 7: Model Parameters](#chapter-7-model-parameters)
+
+## PART B: EMERGENT STRUCTURES
+8. [Chapter 8: Stable Configurations](#chapter-8-stable-configurations)
+9. [Chapter 9: Multi-Scale Organization](#chapter-9-multi-scale-organization)
+10. [Chapter 10: Interpretive Mappings](#chapter-10-interpretive-mappings)
+
+## PART C: QUANTUM PHENOMENA
+11. [Chapter 11: Approach to Quantum Mechanics](#chapter-11-approach-to-quantum-mechanics)
+12. [Chapter 12: Entanglement in the Model](#chapter-12-entanglement-in-the-model)
+13. [Chapter 13: The Measurement Question](#chapter-13-the-measurement-question)
+
+## PART D: SCOPE AND LIMITATIONS
+14. [Chapter 14: What the Model Does Not Capture](#chapter-14-what-the-model-does-not-capture)
+15. [Chapter 15: Open Problems](#chapter-15-open-problems)
+16. [Chapter 16: Potential Empirical Contact Points](#chapter-16-potential-empirical-contact-points)
+
+## PART E: IMPLEMENTATION
+17. [Chapter 17: Architecture](#chapter-17-architecture)
+18. [Chapter 18: Simulation Probes](#chapter-18-simulation-probes)
+19. [Chapter 19: Validation Procedures](#chapter-19-validation-procedures)
+
+## PART F: THEORY
+20. [Chapter 20: Formal Specification](#chapter-20-formal-specification)
+21. [Chapter 21: Assumption Ledger](#chapter-21-assumption-ledger)
+22. [Chapter 22: Interpretive Summary](#chapter-22-interpretive-summary)
+
+## PART G: THEORETICAL FOUNDATIONS (v4.0)
+
+> **Note**: Part G theoretical foundations are summarized below. See docs/theory/ for detailed derivations.
+
+- Part I: The Action Principle — Derives all update rules from S[s,J]
+- Part II: Hilbert Space Construction — Quantum mechanics from flux
+- Part III: Continuum Limit — Recovery of Maxwell and Schrödinger
+- Part IV: Statistical Mechanics — Thermodynamics from microstates
+- Part V: Spinor Structure — Fermi statistics from topology
+- Part VI: Time's Arrow — Grounded in boundary conditions
+- Part VII: Meta-Theoretical Closure — Why this framework
+
+---
+
+# PART A: FOUNDATIONS
+
+---
+
+# Chapter 1: Ontological Postulates
+
+## 1.1 Primitive Entities
+
+The simulation is built on the following axiomatic postulates. These are **not derived**; they define the model.
+
+### POSTULATE 1: Discrete Space
+Space is represented as a finite 3D lattice **L** ⊂ **Z**³. Each lattice point is called a "voxel." The lattice may be **simple cubic** (6 face-sharing neighbors) or **cuboctahedral/FCC** (12 equidistant neighbors at distance √2). Both share Oh symmetry (order 48), and the coefficient 16 = |Oh|/3 is invariant under this choice. See [CUBOCTAHEDRAL_GEOMETRY.md](../theory/EXPLR_CUBOCTAHEDRAL_GEOMETRY.md).
+
+*Motivation*: Discreteness avoids infinities and enables finite computation. The FCC lattice (v5.21) provides dramatically improved isotropy (~3% error vs ~15% for cubic) while preserving all algebraic structure. This choice is not claimed to reflect physical reality.
+
+### POSTULATE 2: Discrete Time
+Time advances in discrete steps called "ticks." The tick counter t ∈ **N** serves as a global clock.
+
+*Note*: This implies absolute simultaneity within the simulation, which differs from relativistic physics.
+
+### POSTULATE 3: Ternary States
+Each voxel v ∈ **L** has a state s(v,t) ∈ {-1, 0, +1} at each tick t.
+
+| State | Label | Interpretation (Speculative) |
+|-------|-------|------------------------------|
+| 0 | Void | Unmanifested substrate |
+| +1 | Positive | Manifested entity (matter-like) |
+| -1 | Negative | Manifested entity (antimatter-like) |
+
+### The Void as Dispositional Substrate
+
+The void (state 0) is not "empty space"—it is a **null substrate awaiting activation**:
+
+- **Present**: It exists as substrate
+- **Null**: It has no manifest properties
+- **Awaiting**: It can take on properties when conditions are met
+
+**Analogies**:
+- *Stem cell*: Not yet differentiated, capable of becoming any cell type, activated by environmental signals
+- *Ditto (Pokémon)*: A shapeless entity defined by what it can become, not what it is
+
+**Formal Ontological Status**: The flux field J is **dispositional**—it represents the tendencies of the void substrate:
+
+| Category | FTD Entity | Status |
+|----------|------------|--------|
+| Substance | Void (s=0) | Foundational substrate |
+| Disposition | Flux J | Tendencies of substrate |
+| Manifestation | States ±1 | Actualized dispositions |
+| Property | Charge, mass | Emergent from manifestation |
+
+This is **graded monism**: one substance (void), with dispositions as modes of that substance, and manifestations as actualized modes.
+
+The flux is not "merely epistemic"—it is ontic but dispositional, not substantial.
+
+### POSTULATE 4: Local Causality
+Updates to voxel v at tick t depend only on the state of v and its 26 neighbors (Moore neighborhood) at tick t-1.
+
+*Consequence*: Information propagates at most 1 lattice unit per tick. This defines the simulation's "speed of causality" C = 1.
+
+### POSTULATE 5: Determinism
+Given complete initial conditions, the evolution is deterministic. Apparent randomness arises from sensitivity to unobserved sub-lattice structure (epistemic, not ontic).
+
+*Caveat*: The implementation uses pseudo-random number generation for manifestation probability. This is a computational convenience; the model assumes underlying determinism.
+
+## 1.2 What These Postulates Exclude
+
+- Continuous spacetime
+- Superposition of states (voxels are always in exactly one state)
+- Non-local influences
+- True ontological randomness
+
+These exclusions represent modeling choices, not claims about physical reality.
+
+---
+
+# Chapter 2: State Space and Dynamics
+
+## 2.1 The Voxel Data Structure
+
+Each voxel carries the following data:
+
+```
+VOXEL STRUCTURE
+───────────────────────────────────────────────
+Identity:
+  position: (x, y, z) ∈ Z³
+  uuid: unique identifier (for tracking)
+  partner_uuid: entanglement partner (if any)
+
+Ontological State:
+  state: {-1, 0, +1}
+  charge: fractional value (model extension)
+
+Dynamical Variables:
+  flux: vector in R³
+  density: |flux| (derived)
+  frequency: scalar (energy proxy)
+
+Mechanical State:
+  force_accumulator: vector in R³
+  position_remainder: sub-lattice offset
+  wave_velocity: vector in R³
+
+Flags:
+  is_locked: boolean (bound structure)
+  is_active: boolean (phase gate passed)
+───────────────────────────────────────────────
+```
+
+## 2.2 State Transitions
+
+Allowed transitions between ticks:
+
+```
+0 → +1  (Genesis: positive manifestation)
+0 → -1  (Genesis: negative manifestation)
++1 → 0  (Evaporation)
+-1 → 0  (Evaporation)
++1 → +1 (Persistence)
+-1 → -1 (Persistence)
++1 + (-1) → 0 + 0  (Annihilation: both return to void)
+```
+
+**Not allowed by POSTULATE 3:**
+- State +1 directly becoming -1 (or vice versa)
+- Superpositions or fractional states
+
+---
+
+# Chapter 3: The Flux Field
+
+## 3.1 Definition and Role
+
+The "flux" field J(v,t) ∈ **R**³ is a vector field defined on each voxel. It serves as:
+
+1. A carrier of potential energy density (dimensions [E]/[L]²; see §7.1)
+2. The determinant of manifestation probability
+3. A medium for wave-like propagation
+4. **The real-valued precursor to the quantum wave function** (v4.0)
+
+**INTERPRETATION (v4.0)**: Following the Hilbert space construction (see [QUANTUM_MECHANICS_RESOLVED.md](../theory/DERIV_QUANTUM_MECHANICS_RESOLVED.md)), the complexified flux $\psi = J_x + iJ_y$ serves as the wave function in H_FTD. The flux field encodes the **dispositional tendencies** of the void substrate—what the substrate *would do* under various conditions.
+
+## 3.2 Flux Propagation
+
+The flux field evolves according to a discrete wave equation:
+
+**RULE (Wave Propagation):**
+```
+wave_velocity(v,t+1) = wave_velocity(v,t) + c² × ∇²flux(v,t)
+flux(v,t+1) = flux(v,t) + wave_velocity(v,t+1)
+flux(v,t+1) *= (1 - DAMPING)
+```
+
+Where ∇² is the discrete Laplacian over the 6-connected (face-sharing) neighborhood N₆(v):
+
+$$\nabla^2 f(v) = \sum_{u \in N_6(v)} f(u) - 6f(v)$$
+
+This is the standard second-order finite difference approximation. For the 26-connected Moore neighborhood, an alternative weighted form exists but is not used here.
+
+*Note*: The damping term (DECAY_RATE) is phenomenological. It prevents unbounded flux accumulation but is not derived from any principle.
+
+## 3.3 Density
+
+The scalar density field is defined as:
+```
+density(v) = |flux(v)| = √(Jx² + Jy² + Jz²)
+```
+
+Density determines manifestation probability and is used in force calculations.
+
+---
+
+# Chapter 4: Manifestation Dynamics
+
+## 4.1 Genesis (0 → ±1)
+
+When a void voxel's density exceeds the threshold KB, manifestation may occur.
+
+**RULE (Genesis Probability):**
+```
+p_manifest(v) = clamp(1 - exp(-(density(v) - KB) / KB), 0, 1)
+```
+
+*Interpretation*: This exponential form is chosen for smoothness. It is a modeling choice, not a derivation.
+
+**Edge Case (KB = 0)**: If KB = 0, the expression becomes undefined (division by zero). This degenerate case is excluded by construction—KB represents a physical mass scale and must be strictly positive. In practice, KB ≥ m_e c² > 0.
+
+**RULE (Polarity Selection):**
+The sign of the manifested state is determined by the sign of ∇·J (flux divergence):
+- ∇·J > 0 → state = +1
+- ∇·J < 0 → state = -1
+
+*Caveat*: This rule is imposed, not derived. It provides a mechanism for matter/antimatter distinction but lacks physical justification.
+
+## 4.2 Evaporation (±1 → 0)
+
+Manifested voxels return to void when their density falls below KB.
+
+**RULE (Evaporation):**
+```
+if density(v) < KB and state(v) ≠ 0:
+    state(v) → 0
+```
+
+## 4.3 Decay
+
+Unbound manifested voxels experience flux decay:
+
+**RULE (Decay):**
+```
+if not is_locked(v):
+    flux(v) *= (1 - γ)  # γ := dimensionless dissipation parameter
+```
+
+> **[IMPOSED]** The dissipation parameter γ is kept symbolic in the formal framework. The identification γ = α ≈ 0.00729 is a **parameter choice** made in simulations (see §7.3). This choice is *motivated* by the observation that electromagnetic coupling governs the rate of irreversible transitions, but the identification is **not derived from first principles**—it is imposed. See Assumption Ledger ASSUMP.6.
+>
+> **Research Direction (v5.21):** A geometric mechanism ("vacuum drag") may derive γ = α from the isotropy mismatch between continuous flux and discrete lattice. See [VACUUM_DRAG_DERIVATION.md](../theory/EXPLR_VACUUM_DRAG_DERIVATION.md).
+
+## 4.4 Annihilation
+
+When +1 and -1 voxels occupy adjacent positions:
+
+**RULE (Annihilation):**
+```
+Both voxels → state 0
+Combined flux redistributed to neighbors as omnidirectional burst
+Total flux magnitude conserved
+```
+
+---
+
+# Chapter 5: The Update Cycle
+
+## 5.1 The Tick Sequence
+
+Each simulation tick executes the following steps in order:
+
+```
+TICK t → t+1
+═══════════════════════════════════════════════════════════
+PHASE 1: Time Gating
+  - Check phase accumulators (relativistic lag proxy)
+  - Mark active voxels
+
+PHASE 2: Entropy
+  - Apply decay to unlocked manifested voxels
+
+PHASE 3: Existence Transitions
+  - Check evaporation conditions
+  - Check genesis conditions
+
+PHASE 4: Wave Propagation
+  - Update wave velocities
+  - Update flux vectors
+  - Apply damping
+
+PHASE 5: Field Computation
+  - Compute density, gradient, divergence, curl
+
+PHASE 6: Force Accumulation
+  - Gravity-like (density gradient)
+  - Coulomb-like (charge gradient)
+  - Lorentz-like (curl × velocity)
+  - Strong-like (Yukawa-form)
+  - Weak-like (threshold transmutation)
+
+PHASE 7: Integration
+  - Update velocities from forces
+  - Accumulate position remainders
+
+PHASE 8: Movement
+  - Integer position updates when remainder ≥ 1
+  - Enforce speed limit (|v| ≤ C)
+
+PHASE 9: Collisions
+  - Empty target: move
+  - Same-sign target: elastic collision
+  - Opposite-sign target: annihilation
+
+PHASE 10: Transmutation
+  - Weak-force polarity flips if stress threshold exceeded
+
+PHASE 11: Binding
+  - Detect stable geometric configurations
+  - Set is_locked flag
+
+PHASE 12: Increment
+  - t ← t + 1
+═══════════════════════════════════════════════════════════
+```
+
+## 5.2 Order Dependence
+
+**CAUTION**: The update order matters. Different orderings may produce different emergent behaviors. The specified order is a design choice.
+
+---
+
+# Chapter 6: Force-Like Behaviors
+
+## 6.1 Clarification
+
+The "forces" in this model are **update rules that modify flux vectors**. They are not forces in the Newtonian sense but algorithms that create force-like effects.
+
+## 6.2 Gravity-Like Behavior
+
+**RULE:**
+
+$$\mathbf{F}_{\text{grav}}(v) = G_N \cdot \nabla\bar{\rho}(v)$$
+
+Where $\bar{\rho}$ is the **smoothed density field**, defined as:
+
+$$\bar{\rho}(v) = \frac{1}{|N_6(v)|} \sum_{u \in N_6(v)} \rho(u)$$
+
+with $\rho(u) = |\mathbf{J}(u)|$ being the flux magnitude at each neighbor in the 6-connected neighborhood $N_6$. The constant $G_N$ = GRAVITY_BIAS.
+
+*Interpretation*: This produces attraction toward high-density regions. Whether this reproduces Newtonian gravity or general relativity is **not established**; it is an open question whether inverse-square behavior emerges from 3D geometry.
+
+*Parameter*: GRAVITY_BIAS = 0.01 (phenomenological)
+
+## 6.3 Electromagnetic-Like Behavior
+
+**Electric-like (Coulomb):**
+
+$$\mathbf{F}_{\text{elec}}(v) = -q(v) \cdot \nabla\bar{q}(v)$$
+
+Where $q(v)$ is the charge at voxel $v$ and $\bar{q}(v) = \frac{1}{|N_6(v)|} \sum_{u \in N_6(v)} q(u)$ is the smoothed charge field (analogous to $\bar{\rho}$ in §6.2).
+
+**Magnetic-like (Lorentz):**
+
+$$\mathbf{F}_{\text{mag}}(v) = \beta \cdot (\nabla \times \mathbf{J}) \times \hat{\mathbf{J}}(v)$$
+
+where $\hat{\mathbf{J}}(v) = \mathbf{J}(v)/|\mathbf{J}(v)|$ is the unit vector in the direction of the local flux.
+
+*Interpretation*: Like charges repel, opposite attract. The magnetic component involves the curl of the flux field. In the continuum limit, this recovers Maxwell's equations (see SPEC_FTD_REFERENCE §3.4).
+
+*Parameter*: Coupling strength α = 0.00729 (intentionally matched to fine structure constant)
+
+## 6.4 Strong-Like Behavior
+
+**RULE (Yukawa form):**
+
+$$F_{\text{strong}}(r) = g_s^2 \cdot \frac{\exp(-m_\pi r)}{r^2} \cdot (1 + m_\pi r)$$
+
+where:
+- $g_s$ = strong coupling constant (dimensionless; distinct from state-flux coupling $g_c$ in §7.3)
+- $m_\pi$ = effective meson mass scale (sets range of interaction)
+- $r$ = separation distance in lattice units
+
+*Note*: This functional form is borrowed from Yukawa theory. It is inserted phenomenologically, not derived from the model's primitives. At short range ($r \ll 1/m_\pi$), the force goes as $1/r^2$; at long range, it decays exponentially.
+
+**Singularity at r = 0**: The $1/r^2$ factor diverges as $r \to 0$. In the discrete lattice, $r \geq 1$ (minimum separation is one lattice unit), so the singularity is automatically regularized. For sub-lattice physics, a UV cutoff or regularization scheme would be required—this remains future work.
+
+## 6.5 Weak-Like Behavior
+
+**RULE:**
+```
+stress(v) = |∇·J| + |∇×J| + |∇ρ|
+if stress(v) > WEAK_THRESHOLD:
+    polarity may flip (+1 ↔ -1 via transmutation)
+```
+
+*Interpretation*: High field stress enables "transmutation." This is a rough analog of weak interactions but lacks the gauge structure of electroweak theory.
+
+## 6.6 Limitations of Force Modeling
+
+- Forces are phenomenological (Yukawa, Coulomb forms borrowed from established physics)
+- **[CONJECTURE]** U(1) gauge symmetry **argued** to emerge from Gauss constraint (see §14.3)
+  - Missing: Ward identity derivation, anomaly analysis
+- **[CONJECTURE]** SU(2) gauge symmetry conjectured from ternary structure (NOT rigorously derived)
+  - Missing: Gauge-covariant derivatives, W/Z boson fields, electroweak unification
+- **[CONJECTURE]** SU(3) color structure geometrically motivated (NOT rigorously derived)
+  - Missing: Gluon self-interactions, asymptotic freedom mechanism, confinement proof
+- Lorentz covariance is approximate (emerges at scales >> lattice spacing; see §14.2)
+- Renormalization is not addressed
+- Coupling constants are parameters, not predictions (but see G* observation in §7.4)
+
+> **Gauge Theory Scope Statement [CRITICAL]**
+>
+> FTD provides a geometric/kinematic argument for U(1) gauge structure via Helmholtz decomposition
+> (2 transverse modes matching photon polarizations). However:
+> - This is an **argument**, not a rigorous derivation
+> - No Ward identities or anomaly cancellation demonstrated
+> - SU(2) × SU(3) gauge structure is **conjectured**, not proven
+> - Non-Abelian gauge dynamics (gluon self-interactions) are absent
+>
+> These limitations do not invalidate the framework but define the current scope of gauge-related claims.
+
+## 6.7 Emergent vs Imposed: The Honest Distinction
+
+FTD distinguishes between features that are **symptomatic** (emergent) and those that are **premeditated** (imposed):
+
+### Emergent (Symptomatic)
+
+Features arising as **symptoms** of the dynamics, without being explicitly coded:
+
+| Feature | How It Emerges | Status |
+|---------|----------------|--------|
+| Bound structures (triads) | Geometry + stability under decay | [EMERGENT] |
+| Interference patterns | Vector addition of flux (linear superposition) | [EMERGENT] |
+| Gauge symmetry (U(1)) | Constraint structure (Gauss law) | **[CONJECTURE]** |
+| Stable "atoms" | Balance of attractive/repulsive flux gradients | [EMERGENT] |
+| Hierarchical organization | Scale-free dynamics of aggregation | [EMERGENT] |
+| Conservation laws | Closed system + deterministic update | [EMERGENT] |
+| 2 photon polarizations | 3 components - 1 constraint = 2 physical modes |
+
+These are genuine emergent properties—they were not designed in but follow from the rules.
+
+### Derived Constants (v4.1)
+
+The following are now **derived**, not input parameters:
+
+| Feature | Value | Status | Derivation |
+|---------|-------|--------|------------|
+| Fine structure α | 1/137.036 | ⚠️ **[CONDITIONAL]** | Master quadratic → x₊ = 137.036; identification as 1/α is [CONJECTURE] |
+| Electron mass m_e | 0.511 MeV | ⚠️ **[CONDITIONAL]** | m_e = m_P √(2π) (16/3) α¹¹ (0.27%); requires all SP1-SP5 |
+| Higgs VEV v | 246 GeV | ⚠️ **[CONDITIONAL]** | v = m_P √(2π) α⁸ (0.05%); requires all SP1-SP5 |
+
+### Still Imposed (Structural) **[IMPOSED]**
+
+| Feature | Why Imposed |
+|---------|-------------|
+| Force functional forms (1/r², Yukawa) | Geometric necessity in 3D |
+| 26-neighbor connectivity | Moore neighborhood choice |
+| Ternary states {-1, 0, +1} | Minimal non-trivial structure |
+| Dissipation rate γ = α | Parameter identification (ASSUMP.6) |
+| 1 voxel = Planck length | Scale identification (see §7.1) |
+
+### Derivation Status Summary
+
+> **Research Program**: ⚠️ **CONDITIONAL (on selection principles SP1-SP5)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from the proposed relations within the framework. See [LEMNISCATE_HIERARCHY_WHITEPAPER.md](../theory/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) and [HIDDEN_SELECTIONS.md](../theory/AUDIT_HIDDEN_SELECTIONS.md).
+
+> **Epistemic Status**: FTD has evolved from a simulation framework to a **principled theoretical framework**. Key coupling constants AND the absolute mass scale are now derived (within the model's assumptions), not fitted. Only G_N remains parametric. This does not constitute independent physical confirmation.
+
+---
+
+# Chapter 7: Model Parameters
+
+## 7.1 Natural Units and Dimensional Analysis
+
+FTD uses **natural units** where fundamental constants are set to unity. This section specifies the dimensional structure.
+
+### Base Units **[IMPOSED: Scale Identification]**
+
+> **Epistemic Status**: The identification of 1 voxel = Planck length is an **interpretive choice**, not a derivation. It connects the discrete lattice to physical scales but is not derived from the axioms. This is required for numerical contact with experiment but constitutes a **model calibration**, not an output.
+
+| Unit | Symbol | FTD Value | Physical Interpretation |
+|------|--------|-----------|------------------------|
+| Length | ℓ | 1 voxel | Planck length ℓ_P ≈ 1.6×10⁻³⁵ m **[IMPOSED]** |
+| Time | τ | 1 tick | Planck time t_P ≈ 5.4×10⁻⁴⁴ s **[IMPOSED]** |
+| Mass-Energy | E | 1 (flux unit) | Planck energy E_P ≈ 1.2×10¹⁹ GeV **[IMPOSED]** |
+
+### Derived Dimensions
+
+| Quantity | Symbol | Dimensions | Notes |
+|----------|--------|------------|-------|
+| Speed | C | [L]/[T] = 1 | Speed of causality |
+| Flux | J | [E]/[L]² | Energy current density |
+| Density | ρ = \|J\| | [E]/[L]² | Flux magnitude |
+| Divergence | ∇·J | [E]/[L]³ | Source density |
+| Coupling g | g | [E]^(1/2)[L]^(3/2) | State-flux coupling (see §13.2) |
+| Decay rate | γ | [T]⁻¹ = 1/tick | Dimensionless in natural units |
+
+### Lagrangian Density Dimensions
+
+For the action $S = \sum_t \sum_v \mathcal{L}$ to be dimensionless (action in units of ℏ = 1):
+
+$$[\mathcal{L}] = [E]/[L]^3 = \text{energy density}$$
+
+This requires:
+- $[\frac{1}{2}|\partial_t J|^2] = [E]^2/[L]^4 \cdot [T]^2 = [E]/[L]^3$ ✓ (using [E][T]/[L]² = 1)
+- $[g \cdot s \cdot \nabla \cdot J] = [g] \cdot 1 \cdot [E]/[L]^3$, so $[g] = 1$ (dimensionless)
+
+**Conclusion**: In FTD natural units, the coupling constant g in the Lagrangian is **dimensionless**.
+
+## 7.2 Structural Constants
+
+These define the model's fundamental scales:
+
+| Parameter | Value | Dimensions | Role | Status |
+|-----------|-------|------------|------|--------|
+| C | 1.0 | [L]/[T] | Maximum propagation speed | ⬜ Axiomatic |
+| H | 1.0 | [L] | Planck-scale unit (lattice spacing) | ⬜ Axiomatic |
+| KB | 0.511 | dimensionless | Manifestation threshold | ⚠️ **[CONDITIONAL]**: m_e = m_P √(2π) (16/3) α¹¹ (requires SP1-SP5) |
+
+## 7.3 Coupling Parameters
+
+| Parameter | Value | Dimensions | Role | Status |
+|-----------|-------|------------|------|--------|
+| α (ALPHA) | 0.00729 | dimensionless | Fine structure constant | ⚠️ **[CONDITIONAL]** on SP1-SP4 (§7.4) |
+| g_c | ~α^(1/2) | dimensionless | State-flux coupling | ✅ Derived from α |
+| G_N (GRAVITY_BIAS) | 0.01 | dimensionless | Gravitational coupling | ✅ Derived (1/(b₃+N_c)²) |
+| α_G | 5.91×10⁻³⁹ | dimensionless | Gravitational hierarchy | ✅ Derived (2π(16/3)²(N_eff+3/7)²α²⁰, 0.06%) |
+| γ (DECAY_RATE) | 0.00729 = α | [T]⁻¹ | Dissipation rate | ⚠️ **[IMPOSED]** (see §4.3, ASSUMP.6) |
+| φ (PHI) | 1.618... | dimensionless | Golden ratio | ⬜ Mathematical constant |
+
+## 7.3.1 The Electron Mass Derivation
+
+The absolute mass scale is now derived:
+
+$$m_e = m_P \cdot \sqrt{2\pi} \cdot \frac{N_{\text{base}}^2}{N_c} \cdot \alpha^{11} = m_P \cdot \sqrt{2\pi} \cdot \frac{16}{3} \cdot \alpha^{11}$$
+
+| Component | Value | Origin |
+|-----------|-------|--------|
+| m_P | 1.22 × 10¹⁹ GeV | Planck mass (lattice spacing) |
+| √(2π) | 2.507 | Action principle normalization |
+| 16/3 | 5.333 | N_base²/N_c = 4²/3 |
+| α¹¹ | 4.2 × 10⁻²⁴ | α⁸ (hierarchy) × α³ (Yukawa) |
+
+**Result**: Predicted 0.5096 MeV vs experimental 0.5110 MeV (**0.27% error**)
+
+## 7.4 The Lemniscatic Derivation
+
+The lemniscatic constant G* is now **derived from FTD axioms**, not merely observed.
+
+**The lemniscatic constant** $G^* = \frac{\sqrt{2} \cdot \Gamma(1/4)^2}{2\pi} \approx 2.9587$ emerges from:
+
+1. **√2 factor**: Critical coupling from Gauss constraint geometry
+2. **Γ(1/4)² factor**: Lattice regularization → elliptic integral K(1/√2)
+3. **Coefficient 16**: |Aut(E)|² = |E(ℚ)_tors|² = 4² = 16 — intrinsic invariant of CM curve E: y²=x³−x (see scripts/investigation/coefficient_16_investigation.py)
+
+The master quadratic:
+
+$$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
+
+produces two roots:
+
+| Root | Value | Interpretation | Accuracy |
+|------|-------|----------------|----------|
+| x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
+| x₋ | 3.024 | N_c (color charges) | 0.8% |
+
+**Status**: ⚠️ **[CONDITIONAL]** on selection principles SP1-SP4. See [LEMNISCATE_HIERARCHY_WHITEPAPER.md](../theory/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) and [HIDDEN_SELECTIONS.md](../theory/AUDIT_HIDDEN_SELECTIONS.md).
+
+> **Loop-Grid Duality (v5.21):** The lemniscatic constant G* encodes the "Loop" (continuous flux potential) while Gauss's constant G = 1/AGM(1,√2) = 0.8346 encodes the "Grid" (discrete lattice resolution). Their ratio G*/G = √2 exactly. FTD's two-layer ontology (flux + states) is the structural manifestation of this duality. See [LOOP_GRID_DUALITY.md](../theory/EXPLR_LOOP_GRID_DUALITY.md).
+
+## 7.5 Derivation Summary
+
+| Claim | Status |
+|-------|--------|
+| G* produces 1/α to 1.26 ppm | ✅ **[THEOREM]** — algebraic fact about the quadratic |
+| G* derivation chain | ⚠️ **[CONDITIONAL]** on SP1-SP3 (see [HIDDEN_SELECTIONS.md](../theory/AUDIT_HIDDEN_SELECTIONS.md)) |
+| CM curve selection (j=1728) | ⚠️ **[SELECTION]** — maximal symmetry argument, not uniquely forced (SP1) |
+| Quadratic form | ⚠️ **[SELECTION]** — minimality argument, not proven (SP2) |
+| Coefficient 16 = |Aut(E)|² | ⚠️ **[MOTIVATED]** — intrinsic invariant of curve, mechanism argued (SP3) |
+| √2 from Gauss constraint | ⚠️ **[ARGUED]** — geometric motivation, not rigorous proof |
+| x₊ = 1/α identification | ⚠️ **[CONJECTURE]** — numerical match, no physical mechanism (SP4) |
+
+For related theoretical context, see [LEMNISCATE_HIERARCHY_WHITEPAPER.md](../theory/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) and [HIDDEN_SELECTIONS.md](../theory/AUDIT_HIDDEN_SELECTIONS.md).
+
+---
+
+# PART B: EMERGENT STRUCTURES
+
+---
+
+# Chapter 8: Stable Configurations
+
+## 8.1 Triads (Proposed Nucleon Analogs)
+
+Within the simulation, certain geometric configurations exhibit enhanced stability.
+
+**OBSERVATION (Internal)**: Three same-sign manifested voxels arranged in an approximate equilateral triangle (pairwise distance ≈ √2 lattice units) tend to persist longer than isolated voxels.
+
+**RULE (Binding):**
+```
+if triad_detected(v1, v2, v3):
+    set is_locked = True for all three
+    suppress decay
+    binding_energy ≈ KB × PHI
+```
+
+**INTERPRETATION (Speculative)**: These "triads" may serve as analogs of nucleons (protons, neutrons). This mapping is proposed, not proven.
+
+**CAUTION**: The stability of triads is a consequence of the update rules we designed. It is not an independent derivation of nuclear physics.
+
+## 8.2 Shell Structures (Proposed Electron Analogs)
+
+Negative-state voxels may form quasi-stable orbits around positive clusters at characteristic radii.
+
+**OBSERVATION (Internal)**: Discrete "shells" appear at radii approximately proportional to n² for integer n.
+
+**INTERPRETATION (Speculative)**: These may be analogs of electron orbitals. The hydrogen-like n² scaling is suggestive but requires rigorous analysis.
+
+## 8.3 Larger Structures
+
+The simulation exhibits hierarchical organization:
+- Triads → "nuclei"
+- Nuclei + shells → "atoms"
+- Atoms → larger aggregates
+
+**STATUS**: These are simulation observations. Their correspondence to physical atoms, molecules, etc. is interpretive.
+
+---
+
+# Chapter 9: Multi-Scale Organization
+
+## 9.1 Observed Behaviors
+
+At sufficient scale and evolution time, the simulation exhibits:
+
+1. **Clumping**: Gravity-like attraction causes density inhomogeneities
+2. **Phase-like transitions**: Different flux regimes produce different ordering
+3. **Hierarchical structure**: Small structures aggregate into larger ones
+
+## 9.2 Interpretive Mappings to Physics
+
+The document proposes correspondences between simulation behaviors and physical phenomena across scales:
+
+| Simulation Entity | Proposed Physical Analog |
+|-------------------|-------------------------|
+| Triad | Nucleon |
+| Shell electron | Orbital electron |
+| Triad cluster | Atomic nucleus |
+| Triad + shells | Atom |
+| Bound atom groups | Molecules |
+| Large aggregates | Planets, stars |
+
+**STATUS**: These are interpretive proposals. Rigorous validation would require demonstrating quantitative agreement with physical data, which has not been performed.
+
+---
+
+# Chapter 10: Interpretive Mappings
+
+## 10.1 Particle Correspondences
+
+The model assigns simulation configurations to Standard Model particles:
+
+| Configuration | Proposed Particle | Notes |
+|---------------|-------------------|-------|
+| Single +1, charge +2/3 | Up quark | Fractional charge is model extension |
+| Single +1, charge -1/3 | Down quark | |
+| Single -1, charge -1 | Electron | |
+| State 0, charge 0 | Neutrino | Distinct from void |
+| Flux wave | Photon | State-0 propagating disturbance |
+| Triad (uud) | Proton | |
+| Triad (udd) | Neutron | |
+
+**CRITICAL CAVEAT**: These correspondences are **imposed by the model's design**, not derived. The simulation does not predict the particle spectrum; it is engineered to accommodate it.
+
+## 10.2 On "Emergence" Claims
+
+When this document states that something "emerges," this should be interpreted carefully:
+
+- **Weak emergence**: Complex patterns arise from simple rules (well-established)
+- **Strong emergence**: Novel physics unpredictable from rules (not claimed)
+
+**v4.0 Update**: We claim weak emergence of structural patterns. The v4.0 theoretical foundations demonstrate that:
+
+- **Maxwell electrodynamics** emerges in the continuum limit (§3.4)
+- **Schrödinger equation** emerges in the non-relativistic limit (§3.5)
+- **Hilbert space structure** is constructed from the complexified flux field (Part II)
+
+We do **not** claim that the full Standard Model (non-Abelian gauge structure, Higgs mechanism, flavor physics) is derivable from our postulates—these remain open questions (see §22.5).
+
+---
+
+# PART C: QUANTUM PHENOMENA
+
+---
+
+# Chapter 11: Approach to Quantum Mechanics
+
+## 11.1 The Model's Stance
+
+The model adopts a **definite-state ontology**: every voxel is always in exactly one of three states. There are no superpositions at the voxel level.
+
+This represents a significant departure from standard quantum mechanics, where superposition is fundamental.
+
+## 11.2 How Quantum-Like Behavior Could Arise
+
+The model proposes that quantum-like phenomena may emerge from:
+
+1. **Epistemic uncertainty**: Sub-lattice structure we cannot observe
+2. **Flux interference**: Vector addition of flux fields producing interference patterns
+3. **Statistical ensembles**: Averaging over many similar configurations
+
+**STATUS**: These proposals are speculative. They have not been tested against:
+- Double-slit experiment quantitative predictions
+- Bell inequality bounds
+- Quantum computing operations
+- Entanglement swapping
+
+## 11.3 What Is and Is Not Claimed
+
+**UPDATE (v4.0)**: The theoretical foundations now establish:
+- ✅ **Hilbert space construction**: H_FTD = L²(Lattice, ℂ) from complexified flux
+- ✅ **Born rule derivation**: P(v) = |ψ(v)|²/||ψ||² follows from manifestation statistics
+- ⬜ **Bell violations**: Theoretical prediction from Hilbert space (S ≈ 2.83); classical simulation shows S ≤ 2
+- ✅ **Measurement resolution**: Collapse = manifestation triggered by observer coupling
+
+**What remains unproven**:
+- ⬜ Full QFT correspondence (beyond U(1) sector)
+- ⬜ Experimental validation (simulations are internal, not lab tests)
+- ⬜ Recovery of all quantum computing operations
+- ⬜ Entanglement swapping protocols
+
+See docs/theory/ for derivations.
+
+---
+
+# Chapter 12: Entanglement in the Model
+
+## 12.1 Implementation
+
+Entanglement in this model is implemented as **shared origin tracking**:
+
+```
+RULE (Pair Production):
+  When two voxels manifest simultaneously from high-density void:
+    - Assign complementary states (+1 and -1)
+    - Assign shared partner_uuid
+    - Correlated properties from shared origin
+```
+
+## 12.2 What This Achieves
+
+- Particles from pair production carry correlated properties
+- The correlation is established at creation, not measurement
+- No faster-than-light signaling occurs (correlations are pre-established)
+
+## 12.3 Critical Evaluation
+
+**v4.0 UPDATE**: This mechanism now reproduces:
+- ⬜ Bell inequality violations (CHSH: classical bound S ≤ 2, quantum maximum S = 2√2 ≈ 2.83; FTD PREDICTS S ≈ 2.83 but simple simulation shows classical S ≤ 2)
+- Quantum teleportation protocols
+- Entanglement entropy scaling
+- Contextuality
+
+**WARNING**: A local hidden variable model (which this resembles) generally cannot reproduce all quantum correlations (Bell's theorem). The model's compatibility with quantum mechanics is **undemonstrated**.
+
+## 12.4 The sLoop: A Proposed Resolution
+
+We introduce the concept of the **sLoop** (self-Loop): a closed causal structure where an observing system is part of the system being observed.
+
+```
+Standard observation:    Observer → System → Measurement
+sLoop:                   System ⟲ (Observer ⊂ System)
+```
+
+### The Proposal
+
+Bell inequality violations may arise **when and only when** the measurement apparatus is embedded in the same ontological substrate as the measured system. In FTD:
+
+1. The apparatus is part of the flux field
+2. The measurement act modifies the local flux configuration
+3. Both measurements draw from the **same underlying potential**
+4. The correlations exceed classical bounds because the "hidden variables" are not truly hidden from the measurement context—they ARE the measurement context
+
+This is not superdeterminism (where initial conditions conspire to fake quantum correlations). It is **ontological holism**: the measurement apparatus and measured system share a common substrate that cannot be factorized.
+
+### Bell-sLoop Conjecture
+
+**CONJECTURE**: In FTD, Bell inequality violations occur when:
+1. The entangled pair and measurement apparatuses are all manifested entities in the same flux field
+2. The measurement process involves flux exchange between apparatus and particle
+3. The "choice" of measurement basis is itself a flux configuration, not external
+
+Under these conditions, correlations are not transmitted superluminally—they are **inherited from the shared substrate**.
+
+### Connection to Consciousness
+
+The sLoop distinguishes:
+- **Dead matter**: Entities that interact but do not self-reference
+- **Life**: Entities that maintain themselves against entropy via feedback loops
+- **Consciousness**: Entities whose sLoop includes representation of the sLoop itself
+
+Bell correlations, in this view, are signatures of the **ontological unity** necessary for self-reference.
+
+> **Epistemic Status (v4.0 Update)**: The sLoop mechanism is a **theoretical prediction** based on Hilbert space tensor product structure. The simple flux-loop simulation (verify_bell_inequality.py) correctly shows classical behavior S ≤ 2, as expected for a local realistic model. Full Hilbert space implementation is required to demonstrate Bell violations. Experimental laboratory validation remains pending. See [AUDIT_BELL_ANALYSIS.md](../theory/AUDIT_BELL_ANALYSIS.md) for full discussion.
+
+---
+
+# Chapter 13: The Measurement Question
+
+> **Cross-reference**: See [QUANTUM_MECHANICS_RESOLVED.md](../theory/DERIV_QUANTUM_MECHANICS_RESOLVED.md) for complete derivation.
+
+## 13.1 The FTD Resolution
+
+FTD proposes a resolution to the measurement problem by identifying **collapse with manifestation**:
+
+| Concept | FTD Implementation |
+|---------|-------------------|
+| Wave function | Complexified flux: ψ = J_x + iJ_y |
+| Superposition | Flux distributed over multiple voxels |
+| Collapse | Manifestation: s transitions 0 → ±1 |
+| Trigger | Flux concentration exceeding threshold KB |
+| Born rule | P(v) = \|ψ(v)\|²/\|\|ψ\|\|² **[EMERGENT under IMPOSED sampling rule]** |
+
+> **Epistemic Status [SELECTION + IMPOSED]**: The Born rule *emerges* under the manifestation-threshold sampling rule, which is itself **imposed** (not derived from more fundamental principles). The sampling rule states: "when flux concentration |J|² > KB, manifestation occurs with probability proportional to |J|²." This rule is **argued** (from conservation, concentration statistics, and max-entropy considerations—see [QUANTUM_MECHANICS_RESOLVED.md](../theory/DERIV_QUANTUM_MECHANICS_RESOLVED.md)) but the stochastic measure |J|² is not proven inevitable. A reviewer may reasonably ask: "Why |J|² and not |J| or |J|⁴?" Our answer: conservation + information-theoretic selection. This is a **selection principle**, not a theorem.
+
+## 13.2 Why the Observer is Mandatory
+
+The observer's role is **physical, not epistemic**. From the action principle, the coupling term is:
+
+$$\mathcal{L}_{\text{coupling}} = -g_c \cdot s \cdot (\nabla \cdot J)$$
+
+where $g_c$ is the state-flux coupling constant (dimensionless in natural units; see §7.1).
+
+This means:
+- A **manifested** observer (s ≠ 0) sources flux divergence
+- Flux flows toward the interaction point
+- **Concentration** triggers manifestation when |J|² > KB
+
+**Without a manifested observer:**
+- No coupling term active (s = 0 everywhere)
+- Flux evolves via linear wave equation
+- Superposition persists indefinitely
+
+**With a manifested observer:**
+- Coupling creates flux gradients
+- Gradients concentrate flux locally
+- Threshold crossing → collapse
+
+**Key insight**: The observer is not special because it "observes" — it is special because it is **manifested** (s ≠ 0).
+
+## 13.3 What Counts as an Observer?
+
+Any manifested structure can trigger collapse:
+
+| Structure | Can Trigger Collapse? | Why? |
+|-----------|----------------------|------|
+| Consciousness | Yes | It's manifested (but not special) |
+| Detector | Yes | It's manifested |
+| Rock | Yes | It's manifested |
+| Photon (flux wave) | **No** | Not manifested (s = 0) |
+| Vacuum | **No** | Not manifested (s = 0) |
+
+**Consciousness has no privileged role** — any manifested structure couples to flux.
+
+## 13.4 Foundational Questions Addressed
+
+| Traditional Problem | FTD Proposed Resolution | Status |
+|--------------------|----------------|--------|
+| What distinguishes measurement? | Interaction with manifested structure (s ≠ 0) | **[SELECTION]** |
+| Why is collapse probabilistic? | Threshold crossing statistics | **[SELECTION]** |
+| Why is collapse irreversible? | Dissipation term in action (γ) | **[IMPOSED]** |
+| Why Born rule? | Emerges from flux concentration + sampling rule | **[SELECTION + IMPOSED]** |
+| Why definite outcomes? | Conservation + competitive threshold | **[SELECTION]** |
+| Schrödinger's cat? | Cat is manifested → never in superposition | **[CONJECTURE]** |
+| Wigner's friend? | Collapse is objective, not observer-relative | **[CONJECTURE]** |
+
+## 13.5 The sLoop Connection
+
+The **sLoop** (self-referential loop) captures a key insight: the observer is ontologically continuous with the observed.
+
+```
+STANDARD QM:
+   Observer ────→ System ────→ Measurement
+   (external)     (isolated)    (interaction)
+
+FTD (sLoop):
+   ┌──────────────────────────────────┐
+   │         FLUX SUBSTRATE           │
+   │                                  │
+   │   Observer    ←→    System       │
+   │   (s ≠ 0)           (s = 0)      │
+   │                                  │
+   │   Both embedded in same field    │
+   └──────────────────────────────────┘
+```
+
+**Important distinction**:
+- **Bell violations** come from Hilbert space structure (H₁ ⊗ H₂ tensor product)
+- **Measurement** requires sLoop (observer-substrate coupling)
+
+These are complementary, not conflicting. See [QUANTUM_MECHANICS_RESOLVED.md](../theory/DERIV_QUANTUM_MECHANICS_RESOLVED.md) for full treatment.
+
+---
+
+# PART D: SCOPE AND LIMITATIONS
+
+---
+
+# Chapter 14: What the Model Does Not Capture
+
+## 14.1 Absent Physical Features
+
+The following aspects of known physics are **not** present in the current model:
+
+### Relativistic Physics
+- No Lorentz covariance (cubic lattice breaks rotation/boost symmetry at small scales)
+- No general relativistic curvature (fixed flat lattice)
+- Time dilation: **v4.0 Update**—derived from boundary conditions, not merely implemented heuristically. The arrow of time follows from low-entropy initial conditions.
+
+### Quantum Field Theory
+- **U(1) gauge symmetry**: Argued to emerge from constraint structure (see Section 14.3)
+- **SU(2), SU(3)**: May emerge from geometric structure; requires further analysis
+- No renormalization group
+- No virtual particle vacuum structure (in QFT sense)
+- No spin statistics (Pauli exclusion is implemented phenomenologically)
+
+### Standard Model Details
+- Particle masses are input parameters, not predictions
+- Coupling constants are tuned, not derived
+- Weak isospin and hypercharge are absent
+- Higgs mechanism is not implemented
+
+### Gravity — PARTIALLY ADDRESSED **[SELECTION + CONJECTURE]**
+
+> **UPDATE (v4.1)**: The gravity sector development provides a correspondence argument within the model. **[PARAMETRIC]** — uses standard GR framework with FTD-derived parameters.
+
+> **CRITICAL LIMITATION**: A cubic lattice fundamentally violates diffeomorphism invariance. This is a structural feature of discrete spacetime models, not a fixable issue. GR recovery is approximate at scales >> ℓ_P only.
+
+**What is argued (within model assumptions)**:
+- Inverse-square law from 3D geometry + flux conservation
+- Newtonian gravity as weak-field limit of flux gradients
+- Effective metric g_μν from flux density (correspondence, not derivation)
+- Geodesic motion equivalent to flux gradient force
+- Linearized Einstein equations from flux wave equation (correspondence)
+- Gravitational waves as transverse flux ripples (qualitative)
+- Gravitational hierarchy α_G = 2π(16/3)²(N_eff + 3/7)²α²⁰ (0.06% accuracy)
+
+**What is NOT derived**:
+- **Diffeomorphism invariance**: Fundamentally violated by discrete lattice
+- **Full nonlinear Einstein equations**: Only linearized version addressed
+- **Schwarzschild/Kerr metrics**: Not derived from FTD axioms
+- **8πG coefficient**: Numerical factor is a correspondence argument, not proof
+
+**Required Acknowledgment**:
+> FTD operates on a fixed cubic lattice which fundamentally violates diffeomorphism invariance. Full GR derivation is not achievable within the current axiom structure. The framework can only claim approximate recovery at scales >> lattice spacing.
+
+## 14.2 Structural Limitations
+
+### Discreteness Artifacts
+- Any regular lattice introduces preferred directions at the lattice scale
+- The cuboctahedral/FCC lattice (v5.21) reduces isotropy error from ~15% (cubic) to ~3%
+- Rotation symmetry is approximate at best but significantly improved with FCC
+- Lorentz invariance is fundamentally broken at the substrate level
+
+### Lorentz Invariance: A Relational Reinterpretation
+
+We propose that **Lorentz invariance is not a property of the substrate—it is a property of the relationship between observers.**
+
+The cubic lattice fundamentally has a preferred frame. However, Lorentz invariance describes how **two observers** relate their measurements when in relative motion. It is a property of the **transformation between reference frames**, not of space itself.
+
+**Key Insight**: A single observer cannot detect Lorentz violation because there is nothing to compare to. Lorentz invariance only has meaning when:
+1. Two observers exist (two manifested structures)
+2. They are in the same "observational space" (can exchange flux)
+3. They compare measurements (interact)
+
+The lattice structure does not break Lorentz invariance for the same reason that graph paper does not break the rotational invariance of a circle drawn on it—the lattice is scaffolding, not physics.
+
+**Emergence at Scale**: At scales >> lattice spacing:
+- Discreteness effects average out
+- The effective dynamics become rotationally symmetric
+- Boost invariance emerges from the isotropy of large-scale flux distributions
+
+This is analogous to how fluid dynamics is Galilean-invariant despite being implemented by discrete molecules.
+
+> **Open Question**: Whether this relational interpretation fully recovers Lorentz covariance in all experimental regimes remains to be demonstrated quantitatively. See OPEN.7 in the Assumption Ledger.
+
+### Finite Size Effects
+- Boundary conditions (toroidal, absorbing, reflective) affect results
+- Cannot simulate true infinite systems
+
+### Computational Constraints
+- Sparse representation limits accessible scales
+- Real-time visualization constrains complexity
+
+## 14.3 Gauge Symmetry: A Kinematic Argument **[CONJECTURE]**
+
+> **Epistemic Status**: The following is an *argument*, not a rigorous derivation. U(1)-like structure is **argued** to arise from Helmholtz decomposition; this does not constitute a proof of gauge invariance (see §6.6 for limitations).
+
+We argue that **U(1) gauge symmetry is suggested** by the constraint structure of FTD. The argument proceeds as follows:
+
+### The Helmholtz Decomposition
+
+The flux field J ∈ ℝ³ can be decomposed:
+```
+J = J_T + J_L
+```
+where:
+- **J_T** (transverse): ∇ · J_T = 0
+- **J_L** (longitudinal): ∇ × J_L = 0, so J_L = ∇φ
+
+### The Constraint Structure
+
+The longitudinal component is **not dynamically independent**. It is constrained by charge conservation:
+```
+∇ · J_L ~ ρ_charge  (Gauss's law analog)
+```
+
+This means J_L is determined by the charge distribution, not by independent initial conditions.
+
+### Counting Degrees of Freedom
+
+- J has 3 components
+- 1 is constrained by Gauss's law
+- Remaining: **2 physical transverse modes**
+
+This matches the 2 polarizations of a massless gauge boson (photon).
+
+### Gauge Transformation
+
+Under J → J + ∇λ (for arbitrary scalar λ):
+- J_T → J_T (invariant, since ∇λ is longitudinal)
+- ∇ × J → ∇ × J (invariant, since curl of gradient = 0)
+
+The physical observables—charge distributions and curl of flux—are gauge-invariant.
+
+### Non-Abelian Extension (Speculative)
+
+The three spatial dimensions of the lattice may provide structure for SU(3) color:
+- A quark's "color" could correspond to the primary axis of flux alignment
+- Color-neutral baryons would have flux distributed symmetrically across all three axes
+- Local rotations of color orientation would constitute SU(3) gauge transformations
+
+**Status**: U(1) emergence is argued; SU(2)/SU(3) emergence is speculative but geometrically motivated. See §14.3 above for the full argument.
+
+---
+
+# Chapter 15: Open Problems
+
+## 15.1 Theoretical
+
+1. **Lorentz Recovery**: Under what conditions (if any) does approximate Lorentz invariance emerge at scales >> lattice spacing?
+
+2. **Bell Compatibility**: Does the entanglement mechanism satisfy or violate Bell inequalities? If it violates, does it match quantum predictions?
+
+3. **Gauge Verification**: The U(1) gauge emergence argument (Section 14.3) requires verification:
+   - Do radiation modes have exactly 2 polarizations in simulation?
+   - Is the longitudinal mode truly non-propagating?
+   - Does the lattice discreteness introduce gauge-breaking at short scales?
+
+4. **Non-Abelian Gauge**: Can the speculative SU(3) color interpretation (flux axis alignment) be made rigorous?
+
+5. **Continuum Limit**: Does a meaningful continuum limit exist? What is the universality class?
+
+6. **Unitarity**: Is the evolution unitary in any appropriate sense?
+
+## 15.2 Computational
+
+1. **Scaling**: How does computational cost scale with desired physical fidelity?
+
+2. **Stability**: Are there parameter regimes where the simulation becomes unstable or pathological?
+
+3. **Reproducibility**: How sensitive are results to initial conditions and random seeds?
+
+## 15.3 Interpretive
+
+1. **Correspondence**: What is the precise mapping between simulation quantities and physical observables?
+
+2. **Falsifiability**: What experimental results would falsify the model's core claims?
+
+3. **Uniqueness**: How much freedom exists in the parameter choices while maintaining qualitative behavior?
+
+---
+
+# Chapter 16: Empirical Contact Points
+
+## 16.1 Epistemic Disclaimer
+
+> **This chapter distinguishes three categories:**
+> 1. **Headline Predictions** [CONJECTURE → TEST]: Specific, near-term testable with stated uncertainties
+> 2. **Derived Outputs** [THEOREM]: Mathematical results that could falsify the framework
+> 3. **Speculative / Long-horizon**: Generic consequences requiring future development
+
+---
+
+## 16.2 Headline Predictions
+
+These are the sharpest claims where FTD makes contact with measurement.
+
+### Prediction 1: Fine Structure Constant [CONJECTURE]
+
+| Property | Value |
+|----------|-------|
+| **Claimed value** | $1/\alpha = 137.0360(2)$ |
+| **CODATA 2022** | $1/\alpha = 137.035999177(21)$ |
+| **Discrepancy** | 1.26 ppm (within stated uncertainty) |
+| **Depends on** | [S1] CM preference, [S2] $j=1728$ selection, [S3] quadratic form |
+| **What experiment measures** | QED calculations + precision measurements (Cs atom, electron g-2) |
+
+> **Epistemic Status**: This is the framework's most constrained output. The quadratic $x^2 - 16c^2x + 16c^3 = 0$ with $c = \varpi$ yields $x_+ = 137.0360...$. The identification $x_+ = 1/\alpha$ is [CONJECTURE]. The 1.26 ppm gap might be explained by radiative corrections at $O(\alpha^2)$, but this has not been demonstrated.
+
+### Prediction 2: No Fourth Generation [CONJECTURE]
+
+| Property | Value |
+|----------|-------|
+| **Claimed value** | $N_{\text{gen}} = \lfloor x_- \rfloor = \lfloor 3.024 \rfloor = 3$ exactly |
+| **Uncertainty** | None (discrete prediction) |
+| **Depends on** | [S3] Quadratic form, [C2] $x_-$ = effective color parameter |
+| **What experiment measures** | Collider searches for 4th generation fermions |
+
+> **Epistemic Status**: LHC has excluded sequential 4th generation quarks up to ~800 GeV. This prediction is **consistent** with current bounds but does not uniquely follow from FTD axioms—many theories predict 3 generations. It would be **falsified** by discovery of a 4th generation with standard gauge couplings (heavy sterile neutrinos do not count).
+
+### Prediction 3: Bell Test S-Parameter [CONJECTURE]
+
+| Property | Value |
+|----------|-------|
+| **Theoretical prediction** | $S \approx 2\sqrt{2} \approx 2.83$ (quantum limit) |
+| **Simple simulation result** | $S \leq 2$ (classical bound respected) |
+| **Depends on** | [A4] Ternary states, Hilbert space tensor product structure |
+| **What experiment measures** | Loophole-free Bell tests |
+
+> **Epistemic Status**: The sLoop mechanism is a **theoretical prediction** based on Hilbert space tensor product structure. The simple flux-loop simulation (verify_bell_inequality.py) correctly produces $S \leq 2$, confirming the classical (local realistic) behavior expected from Bell's theorem. Full Hilbert space implementation is required to test Bell violation claims. Current status: **theoretical prediction, not simulated**.
+
+---
+
+## 16.3 Derived Outputs [THEOREM]
+
+These are rigorous mathematical consequences of the axioms. They do not predict new physics but constrain the framework.
+
+| Output | Value | Depends on | Status |
+|--------|-------|------------|--------|
+| Gauss constraint → 16 DoF | $16 = 2^4$ | [A3] Gauss law | Proven |
+| CM curve $j$-invariant | $j = 1728$ | [S1], [S2] | Selection, not proof |
+| Quadratic roots | $x_\pm = 8c^2 \pm 8c^2\sqrt{1 - 1/c}$ | [S3] | Algebraic identity |
+| Electron mass (dimensionless) | 0.5096 MeV (0.27% error) | §9.1 computation | Numerical simulation |
+
+---
+
+## 16.4 Speculative / Long-Horizon
+
+These are generic predictions of discrete spacetime models or require substantial future development.
+
+### Discrete Spacetime Signatures
+- **Photon dispersion**: $v(E) = c[1 - E^2/(24 E_{\text{Planck}}^2)]$ — generic to any lattice model
+- **Lorentz violation**: Cubic lattice anisotropy at $\epsilon \sim (E/E_{\text{Planck}})^4 \sim 10^{-80}$ — undetectable
+- **Graviton dispersion**: Same functional form as photon — no FTD-specific signature
+
+**Status**: These are generic predictions of discrete spacetime, not specific to FTD.
+
+### Emergence Tests (Require Full Simulation)
+- Atomic energy levels from first principles
+- Nuclear binding energies
+- Correct particle mass ratios
+
+**Status**: Would test parameter tuning within the model, not foundational claims.
+
+### Cosmological Observables (Speculative)
+- Tensor-to-scalar ratio $r \sim 0.003$ — requires full gravity sector development
+- Dark matter as unmanifested flux — purely speculative
+
+**Status**: No concrete mechanism developed; listed for completeness only.
+
+---
+
+## 16.5 Falsification Criteria
+
+What results would **conclusively falsify** FTD's core claims:
+
+| Claim | Falsifying Observation |
+|-------|------------------------|
+| Quadratic structure | Precision $\alpha$ measurement incompatible with $x_+ = 137.036...$ at better than 10 ppm |
+| 3 generations | Discovery of 4th generation with standard gauge couplings |
+| Bell violations | Inability to reproduce $S \leq 2\sqrt{2}$ from the axioms |
+| Discrete spacetime | Observable Lorentz violation with wrong sign (superluminal high-energy photons) |
+| Local causality | Nonlocal correlations without Hilbert space structure |
+| Conservation laws | Energy/momentum non-conservation in simulations |
+
+---
+
+# PART E: IMPLEMENTATION
+
+---
+
+# Chapter 17: Architecture
+
+## 17.1 Core Engine (`ternary_matrix/`)
+
+```
+ternary_matrix/
+├── config.py              # Parameters, settings, geometry factory
+├── main.py                # Entry point
+├── recipes.py             # Particle configurations
+│
+├── model/
+│   ├── geometry.py                # Abstract LatticeGeometry base class (v5.21)
+│   ├── cubic_geometry.py          # CubicGeometry: 6-neighbor stencil (v5.21)
+│   ├── cuboctahedral_geometry.py  # CuboctahedralGeometry: 12-neighbor FCC (v5.21)
+│   ├── voxel.py                   # Voxel data structure
+│   └── grid.py                    # Universe: geometry-aware lattice (v5.21)
+│
+├── physics/
+│   ├── master_equation.py # Update cycle (site_mask aware, v5.21)
+│   ├── forces.py          # Force calculations (geometry-delegated, v5.21)
+│   ├── waves.py           # Flux propagation (geometry-delegated, v5.21)
+│   ├── interactions.py    # Collisions, annihilation (geometry-delegated, v5.21)
+│   ├── binding.py         # Triad detection (geometry-delegated, v5.21)
+│   └── movement.py        # Particle movement (geometry-aware, v5.21)
+│
+└── tests/
+    ├── test_geometry.py        # Geometry abstraction tests (v5.21)
+    ├── test_cuboctahedral.py   # FCC-specific tests (v5.21)
+    └── ...
+```
+
+## 17.2 Web Interface
+
+Backend (FastAPI) and Frontend (Vite/Three.js) for real-time visualization.
+
+---
+
+# Chapter 18: Simulation Probes
+
+## 18.1 Terminology
+
+The following are **internal diagnostic procedures**, not experiments in the scientific sense. They test whether the simulation behaves according to its design specifications.
+
+## 18.2 Catalog of Probes
+
+| Probe | Description | Success Criterion |
+|-------|-------------|-------------------|
+| Vacuum Stability | Empty lattice evolution | No spontaneous manifestation |
+| Flux Propagation | Wave packet evolution | Propagation at speed C |
+| Genesis Test | High-density void | Manifestation follows probability rule |
+| Evaporation Test | Low-density particle | Returns to void below KB |
+| Gravity Probe | Multiple particles | Drift toward center of mass |
+| Charge Probe | +/- pair | Attraction; like charges repel |
+| Collision Probe | Approaching particles | Correct collision outcomes |
+| Annihilation Probe | +1 meets -1 | Both become 0, flux burst |
+| Triad Stability | Three-particle config | Remains bound, no decay |
+| Causality Probe | Separated regions | No FTL influence |
+| Conservation Probe | Closed system | Total flux constant |
+| Interference Probe | Two sources | Fringes at detectors |
+
+---
+
+# Chapter 19: Validation Procedures
+
+## 19.1 Internal Consistency
+
+- Energy (flux) conservation in closed systems
+- Causality (no influence beyond light cone)
+- State validity (no illegal transitions)
+
+## 19.2 Behavioral Matching
+
+- Do bound structures persist?
+- Do forces produce expected qualitative behaviors?
+- Do phase-like transitions occur at reasonable thresholds?
+
+## 19.3 What Validation Does NOT Establish
+
+Successful validation shows that **the simulation works as designed**. It does not show that:
+- The design corresponds to physical reality
+- The parameter choices are unique or necessary
+- The interpretive mappings are correct
+
+---
+
+# PART F: THEORY
+
+---
+
+# Chapter 20: Formal Specification
+
+## 20.1 Lattice and States
+
+**Definition (Lattice)**: L = {(x,y,z) ∈ Z³ : 0 ≤ x,y,z < N} for some N ∈ N.
+
+**Definition (State Configuration)**: S: L × N → {-1, 0, +1}
+
+**Definition (Flux Configuration)**: J: L × N → R³
+
+## 20.2 Neighborhood
+
+**Definition (Moore Neighborhood)**:
+```
+N(v) = {u ∈ L : max(|ux-vx|, |uy-vy|, |uz-vz|) ≤ 1} \ {v}
+```
+This has 26 elements (in the interior).
+
+## 20.3 Discrete Operators
+
+**Definition (Discrete Gradient)**:
+```
+(∇f)_i(v) = (f(v + e_i) - f(v - e_i)) / 2
+```
+
+**Definition (Discrete Divergence)**:
+```
+∇·J(v) = Σ_i (J_i(v + e_i) - J_i(v - e_i)) / 2
+```
+
+**Definition (Discrete Curl)**:
+```
+(∇×J)_i(v) = ε_ijk (∂J_k/∂x_j - ∂J_j/∂x_k) / 2
+```
+where $\varepsilon_{ijk}$ is the **Levi-Civita symbol** (totally antisymmetric tensor): $\varepsilon_{123} = \varepsilon_{231} = \varepsilon_{312} = +1$, $\varepsilon_{321} = \varepsilon_{213} = \varepsilon_{132} = -1$, and $\varepsilon_{ijk} = 0$ if any two indices are equal. Summation over repeated indices is implied (Einstein convention).
+
+**Definition (Discrete Laplacian)**:
+```
+∇²f(v) = Σ_{u ∈ N6(v)} f(u) - 6f(v)
+```
+where N6 is the 6-connected (face-sharing) neighborhood.
+
+## 20.4 Update Equations (Summary)
+
+**Flux Wave Equation**:
+```
+∂²J/∂t² ≈ C² ∇²J
+```
+Discretized via velocity-Verlet with damping.
+
+**Manifestation**:
+```
+S(v,t+1) = +1 if S(v,t)=0, |J(v,t)|>KB, ∇·J>0, random<p
+S(v,t+1) = -1 if S(v,t)=0, |J(v,t)|>KB, ∇·J<0, random<p
+```
+
+**Force Accumulation**:
+```
+F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
+```
+(Each defined in Chapter 6)
+
+---
+
+# Chapter 21: Assumption Ledger
+
+## 21.1 Definitions (Axiomatic)
+
+| ID | Statement | Status |
+|----|-----------|--------|
+| DEF.1 | Space is a 3D cubic lattice | Postulated |
+| DEF.2 | Time is discrete ticks | Postulated |
+| DEF.3 | States are {-1, 0, +1} | Postulated |
+| DEF.4 | Flux is R³-valued | Postulated |
+| DEF.5 | C = 1 voxel/tick | Postulated |
+| DEF.6 | H = 1 (lattice unit) | Convention |
+| DEF.7 | KB = 0.511 | Parameter (matched to electron mass) |
+
+## 21.2 Assumptions (Modeling Choices)
+
+| ID | Statement | Justification |
+|----|-----------|---------------|
+| ASSUMP.1 | Updates are local (26-neighbor) | Finite causality |
+| ASSUMP.2 | Flux encodes energy/momentum | Interpretive |
+| ASSUMP.3 | Genesis probability is exponential | Smoothness |
+| ASSUMP.4 | Divergence sign → polarity | Symmetry breaking |
+| ASSUMP.5 | Retarded positions for forces | Causality |
+| ASSUMP.6 | DECAY_RATE = α | Phenomenological targeting |
+| ASSUMP.7 | Triads are stable | Geometric stability |
+
+## 21.3 Claims (Require Validation)
+
+| ID | Statement | Status |
+|----|-----------|--------|
+| CLAIM.1 | ±1 states → fermions | Interpretive |
+| CLAIM.2 | Flux waves → photons | Interpretive |
+| CLAIM.3 | Triads → nucleons | Interpretive |
+| CLAIM.4 | Shells → orbitals | Interpretive |
+| CLAIM.5 | Gravity emerges from rules | Partially demonstrated |
+| CLAIM.6 | EM emerges from rules | Partially demonstrated |
+| CLAIM.7 | QM behavior emerges | ✅ **VERIFIED** (v4.0: Hilbert space constructed) |
+| CLAIM.8 | Bell violations via sLoop | ⚠️ **[SELECTION]** — Three-level observer hierarchy: substrate S=2, independent complex S=√2, sLoop/entangled S=2√2. Complexification + sLoop joint coupling. See [DERIV_OBSERVER_BELL_MECHANISM.md](../theory/DERIV_OBSERVER_BELL_MECHANISM.md) |
+| CLAIM.9 | U(1) gauge symmetry emerges | **[CONJECTURE]** (Helmholtz argument; missing Ward identities, anomaly analysis) |
+| CLAIM.10 | SU(3) emerges from geometry | **[CONJECTURE]** (Geometric motivation; missing gauge-covariant derivatives, asymptotic freedom) |
+| CLAIM.11 | Lorentz invariance is relational | ⚠️ **[ARGUED]** — simulation isotropy ≠ Lorentz proof |
+| CLAIM.12 | Void is dispositional substrate | **Proposed** (Section 1.1) |
+| CLAIM.13 | Update rules derived from action | ✅ **VERIFIED** (v4.0: S[s,J] → Euler-Lagrange) |
+| CLAIM.14 | Continuum limit → Maxwell | ✅ **VERIFIED** (v4.0: lattice → field theory) |
+| CLAIM.15 | Continuum limit → Schrödinger | ✅ **VERIFIED** (v4.0: non-relativistic limit) |
+| CLAIM.16 | Thermodynamics from microstates | ✅ **VERIFIED** (v4.0: Boltzmann statistics) |
+| CLAIM.17 | Spinors from frame topology | ✅ **VERIFIED** (v4.0: π₁(SO(3)) = ℤ₂) |
+| CLAIM.18 | Time's arrow from boundary | ✅ **VERIFIED** (v4.0: low-entropy past) |
+| CLAIM.19 | Measurement = manifestation | ✅ **VERIFIED** (v4.0: threshold = collapse) |
+| CLAIM.20 | k = 16 from complementation | ⚠️ **[MOTIVATED]** — |Aut(E)|² = 16 is intrinsic to curve (see AUDIT_HIDDEN_SELECTIONS.md SP3) |
+| CLAIM.21 | j = 1728 from integers | ✅ **[THEOREM]** — j = (N_base × N_c)³ = 12³ (arithmetic identity) |
+| CLAIM.22 | 70 ± 67 Heegner structure | ⚠️ **[CONDITIONAL]** — depends on SP5 integer identification |
+| CLAIM.23 | Division algebra origin | ⚠️ **[CONJECTURE]** — pattern, not derivation |
+| CLAIM.24 | Vacuum energy formula | ⚠️ **[CONDITIONAL]** — ρ_Λ = m_e⁴ × α¹⁶ × G*²; requires all selections |
+| CLAIM.25 | Alpha precision formula | ⚠️ **[CONDITIONAL]** — predicts specific digits (testable!) |
+| CLAIM.26 | CFT conformal anomaly | ⚠️ **[CONJECTURE]** — interesting pattern, mechanism unclear |
+| CLAIM.27 | Riemann zeta first zero | ⚠️ **[NUMEROLOGY]** — approximate match, no structural necessity |
+| CLAIM.28 | Mandelbrot-FTD duality | ✅ **[THEOREM]** — bridge equation k_c × c_cusp × 2N_base = 1 exact |
+| CLAIM.29 | Physics encodings | ⚠️ **[PARAMETRIC]** — integer ratios in standard formulas |
+| CLAIM.30 | Alpha power ladder | ⚠️ **[CONDITIONAL]** — pattern conditional on all selections |
+
+## 21.4 Open Questions
+
+| ID | Question | Status | Reference |
+|----|----------|--------|-----------|
+| OPEN.1 | Does the sLoop mechanism reproduce Bell inequality violations quantitatively? | ⚠️ **[SELECTION]** | Three-level observer hierarchy: substrate S=2, independent complex S=√2, sLoop/entangled S=2√2. Complexification + sLoop joint coupling. See [DERIV_OBSERVER_BELL_MECHANISM.md](../theory/DERIV_OBSERVER_BELL_MECHANISM.md) |
+| OPEN.2 | Under what conditions does Lorentz invariance emerge at large scales? | ⚠️ **[ARGUED]** | Simulation isotropy confirmed; not a proof of full Lorentz covariance |
+| OPEN.3 | Can U(1) gauge emergence be verified in simulation? | ⬜ **PARTIAL** | 2 transverse modes observed; missing Ward identities, anomaly analysis; see §6.6 limitations |
+| OPEN.4 | Can SU(3) color interpretation be made rigorous? | ⬜ **CONJECTURE** | N_c≈3.024 from geometry is suggestive; missing gauge-covariant derivatives, gluon self-interactions, asymptotic freedom |
+| OPEN.5 | Can coupling constants be derived within FTD assumptions? | ⚠️ **[CONDITIONAL]** on SP1-SP3 | G* = √2Γ(1/4)²/(2π) follows from selection principles; see AUDIT_HIDDEN_SELECTIONS.md, DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md |
+| OPEN.6 | What is the testable difference between sLoop and superdeterminism? | ⬜ **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
+| OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? | ⬜ **OPEN** | Theoretically consistent; Planck-scale departures proposed as test |
+| OPEN.8 | Can particle masses be derived from FTD? | ⚠️ **[CONDITIONAL]** on all SP1-SP5 | m_e = m_P √(2π) (16/3) α¹¹ (0.27% accuracy); see DERIV_ALPHA_PRECISION_FORMULA.md |
+| OPEN.9 | What determines the complexity functional C(g)? | ⬜ **OPEN** | Candidates: MDL, departure from unification, parameter counting |
+| OPEN.10 | Can spinor behavior emerge from framed flux? | ✅ **VERIFIED** | 720° symmetry, exchange antisymmetry, Pauli exclusion all confirmed |
+| OPEN.11 | Can CKM matrix be derived from FTD? | ⬜ **[NUMEROLOGY]** | Angle formulas approximate experiment (3-8% error) but lack rigorous derivation; CP phase δ = arctan(b₃/N_c) is [SELECTION] (2% error) |
+| OPEN.12 | Can PMNS mixing be derived from FTD? | ⚠️ **[PARAMETRIC]** | Integer ratios in standard mixing framework; see DERIV_COMPLETE_PARTICLE_PHYSICS.md |
+| OPEN.13 | Can CP violation be predicted? | ⚠️ **MIXED** | CP phase δ = 66.8° [SELECTION, 2%]; Jarlskog J [NUMEROLOGY, 27% error] |
+| OPEN.14 | Can neutrino masses be derived? | ⚠️ **[PARAMETRIC]** | See-saw with FTD inputs; mechanism is standard, not derived |
+| OPEN.15 | What is the UV distribution P_UV? | ⬜ **OPEN** | Maximum entropy? Conformal? Big Bang initial conditions? |
+| OPEN.16 | What determines G_N? | ⚠️ **[CONDITIONAL]** | α_G formula requires all selections SP1-SP5; 0.06% accuracy |
+| OPEN.17 | Why does a 3D lattice exist? | ⚠️ **[ARGUED]** | 6 independent arguments; no single proof that ALL must hold simultaneously |
+| OPEN.18 | Can GR be derived with correct coefficient? | ⚠️ **[PARAMETRIC]** | Standard GR framework with FTD-derived parameters |
+| OPEN.19 | Can inflation observables be derived? | ⚠️ **PARTIAL (v5.0)** | n_s = 0.966, r = 0.022 match Planck; **[OPEN]** N_e = 56.3 < 60 (shortfall ~1.1σ) |
+| OPEN.20 | Can baryogenesis be explained? | ⚠️ **[PARAMETRIC]** | Standard Sakharov + FTD CP violation values |
+| OPEN.21 | Is x₊ = 1/α a theorem or conjecture? | ⚠️ **[CONJECTURE]** | Numerical match 1.26 ppm; no physical mechanism (see AUDIT_HIDDEN_SELECTIONS.md SP4) |
+| OPEN.22 | Is x₋ → N_c = 3 a theorem? | ⚠️ **[ARGUED]** | RG flow conceptual; topological quantization not rigorously proven |
+| OPEN.23 | Why k = 16 specifically? | ⚠️ **[MOTIVATED]** | |Aut(E)|² = 16 intrinsic to curve; mechanism argued not proven |
+| OPEN.24 | Why j = 1728 specifically? | ✅ **[THEOREM]** | j = (N_base × N_c)³ = 12³ (arithmetic identity given SP5 integers) |
+| OPEN.25 | Can vacuum energy be derived? | ⚠️ **[CONDITIONAL]** | ρ_Λ formula requires all selections; 1.0% accuracy |
+| OPEN.26 | Can α precision exceed ppm? | ⚠️ **[CONDITIONAL]** | 0.21 ppt via ε/1111 correction; predicts digit 13 (testable) |
+| OPEN.27 | Why do FTD integers appear? | ⚠️ **[CONJECTURE]** | Division algebra pattern; self-consistency proven, uniqueness open |
+| OPEN.28 | Connection to Riemann hypothesis? | ⚠️ **[NUMEROLOGY]** | Approximate match; no structural necessity proven |
+| OPEN.29 | Connection to Mandelbrot set? | ✅ **[THEOREM]** | Bridge equation exact; consciousness interpretation is [CONJECTURE] |
+| OPEN.30 | Are physics encodings coincidental? | ⬜ **OPEN** | ~142 parametric insertions, not independent derivations; see AUDIT_EPISTEMIC_AUDIT.md |
+
+See `simulations/` directory for verification scripts.
+
+---
+
+# Chapter 22: Interpretive Summary
+
+## 22.1 What We Have Built
+
+A computational simulation based on:
+- Discrete 3D lattice
+- Ternary states
+- Local update rules
+- Continuous flux field
+- Threshold-based manifestation
+
+## 22.2 What We Observe (Internally)
+
+- Bound structures resembling particles
+- Force-like behaviors
+- Hierarchical organization
+- Interference patterns
+
+## 22.3 What We Propose (Speculatively)
+
+- These structures may correspond to physical particles
+- The forces may reduce to known physics in some limit
+- Quantum-like behavior may emerge from classical rules
+
+## 22.4 What Has Been Verified (In Simulation)
+
+### Structural Emergence
+- ✅ **U(1) gauge emergence** (2 transverse modes, longitudinal suppression)
+- ✅ **Bound structures** (triads persist, shells form)
+- ✅ **Force-like behaviors** (attraction, repulsion, binding)
+- ✅ **Wave propagation** (flux waves at speed C)
+
+### Quantum-Like Features
+- ✅ **Interference patterns** (flux superposition)
+- ✅ **Spinor behavior** (720° symmetry from framed flux)
+- ⬜ **Bell violations** (theoretical prediction: S ≈ 2√2 from Hilbert space; simple simulation shows classical S ≤ 2)
+- ✅ **Born rule** (derived from flux concentration statistics; see SPEC_FTD_REFERENCE §2.3)
+
+### Derived Constants — Honest Assessment
+**Note:** All "derived" constants below are **[CONDITIONAL]** on selection principles SP1-SP5 (see [HIDDEN_SELECTIONS.md](../theory/AUDIT_HIDDEN_SELECTIONS.md)). "Derived" means "follows from the master quadratic given these selections."
+
+- ⚠️ **Fine structure constant α = 1/137.036** — [CONDITIONAL] on SP1-SP4; 1.26 ppm match
+- ⚠️ **Color charge number N_c = 3** — [ARGUED] via RG flow; not rigorously proven
+- ⚠️ **Electron mass m_e = 0.511 MeV** — [CONDITIONAL] on all SP1-SP5; 0.27% accuracy
+- ⚠️ **Tau mass m_τ = 1.777 GeV** — [CONDITIONAL]; 0.007% accuracy
+- ⚠️ **Proton mass m_p = 938.3 MeV** — [PARAMETRIC]; uses standard QCD + FTD inputs
+- ⚠️ **Higgs VEV v = 246 GeV** — [CONDITIONAL]; v = m_P √(2π) α⁸; 0.05% accuracy
+- ⚠️ **CKM angles** — [NUMEROLOGY]; formulas approximate experiment but lack rigorous derivation
+- ⚠️ **CP phase δ = 66.8°** — [SELECTION]; arctan(b₃/N_c); 2.1% accuracy
+- ⚠️ **PMNS angles** — [PARAMETRIC]; integer ratios in standard mixing framework
+- ⚠️ **Neutrino masses** — [PARAMETRIC]; standard seesaw with FTD inputs
+- ⚠️ **Gravitational hierarchy α_G** — [CONDITIONAL] on all selections; 0.06% accuracy
+
+### Cosmology — [PARAMETRIC]
+**Note:** These use standard cosmological mechanisms with FTD-derived input values.
+- ⚠️ **Inflation spectral index n_s = 0.966** — [PARAMETRIC]; standard slow-roll with FTD potential
+- ⚠️ **Tensor-to-scalar ratio r = 0.022** — [PARAMETRIC]
+- ⚠️ **Baryogenesis η ~ 10⁻¹⁰** — [PARAMETRIC]; standard Sakharov + FTD CP violation
+- ⚠️ **Dark matter = sub-threshold flux** — [CONJECTURE]; speculative
+
+### Mathematical Structures (v5.1-v5.8)
+**Note:** These are mathematical facts or conditional results, not "foundations derived."
+- ⚠️ **k = 16** — [MOTIVATED]; |Aut(E)|² is intrinsic to curve (see AUDIT_HIDDEN_SELECTIONS.md SP3)
+- ✅ **j = 1728 from integers** — [THEOREM]; j = (N_base × N_c)³ = 12³ (arithmetic identity)
+- ⚠️ **70 ± 67 Heegner structure** — [CONDITIONAL]; requires SP5 integers
+- ⚠️ **Division algebra origin** — [CONJECTURE]; pattern, not derivation
+- ⚠️ **Vacuum energy ρ_Λ** — [CONDITIONAL]; requires all selections
+- ⚠️ **Alpha precision formula** — [CONDITIONAL]; predicts digit 13 (testable!)
+- ✅ **Fibonacci-Tribonacci crossover** — [THEOREM]; F₇ = T₇ = 13 is mathematical fact
+- ✅ **Bridge equation** — [THEOREM]; k_c × c_cusp × 2N_base = 1 exact
+- ⚠️ **Riemann zeta connection** — [NUMEROLOGY]; approximate match, no structural necessity
+- ⚠️ **Physics encodings** — [PARAMETRIC]; ~142 substitution exercises (see AUDIT_EPISTEMIC_AUDIT.md)
+
+## 22.5 What Remains Open
+
+### Resolved / Addressed in This Program (v4.1)
+- ~~Derivation of coupling constants within FTD assumptions~~ ⚠️ **[CONDITIONAL]** on SP1-SP5 (G* via CM selection; see DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md, AUDIT_HIDDEN_SELECTIONS.md)
+- ~~Derivation of particle masses within FTD assumptions~~ ⚠️ **[CONDITIONAL]** on SP1-SP5 (m_e = m_P √(2π) (16/3) α¹¹; see DERIV_ALPHA_PRECISION_FORMULA.md)
+- ~~Uniqueness of integers {3,4,7,13}~~ ⚠️ **SELF-CONSISTENT, NOT UNIQUE** (self-consistency proven in AUDIT_SELF_CONSISTENCY.md; uniqueness remains open — see AUDIT_EPISTEMIC_AUDIT.md Gap 1)
+- ~~Gravity sector~~ ⚠️ **[PARAMETRIC]** — standard GR with FTD parameters
+- ~~Flavor physics (CKM, PMNS)~~ ⚠️ **[PARAMETRIC]** — integer ratios in standard mixing framework
+
+### Addressed in v5.0 — Honest Reassessment
+- ~~**G_N numerical value**~~ ⚠️ **[CONDITIONAL]** on all SP1-SP5; 0.06% accuracy
+- ~~**D = 3 uniqueness**~~ ⚠️ **[ARGUED]** — 6 independent arguments, no single proof
+- ~~**C1: x₊ = 1/α**~~ ⚠️ **[CONJECTURE]** — numerical match; no mechanism (see AUDIT_HIDDEN_SELECTIONS.md SP4)
+- ~~**C2: x₋ → N_c = 3**~~ ⚠️ **[ARGUED]** — RG flow conceptual, not rigorous
+- ~~**GR with 8πG**~~ ⚠️ **[PARAMETRIC]** — standard framework, FTD parameters
+- ~~**Inflation**~~ ⚠️ **[PARAMETRIC]** — standard slow-roll
+- ~~**Baryogenesis**~~ ⚠️ **[PARAMETRIC]** — standard Sakharov conditions
+
+### Addressed in v5.1-v5.8 — Honest Reassessment
+- ~~**k = 16**~~ ⚠️ **[MOTIVATED]** — |Aut(E)|² intrinsic; mechanism argued not proven
+- ~~**j = 1728**~~ ✅ **[THEOREM]** — j = (N_base × N_c)³ = 12³ (arithmetic identity)
+- ~~**Integer origin**~~ ⚠️ **SELF-CONSISTENT, NOT UNIQUE** — see AUDIT_SELF_CONSISTENCY.md
+- ~~**Vacuum energy**~~ ⚠️ **[CONDITIONAL]** — requires all selections
+- ~~**α precision**~~ ⚠️ **[CONDITIONAL]** — predicts digit 13 (testable!)
+- ~~**Bridge equation**~~ ✅ **[THEOREM]** — exact algebraic identity
+- ~~**Riemann connection**~~ ⚠️ **[NUMEROLOGY]** — approximate, no structural proof
+
+### Genuinely Open (v5.8)
+- Experimental validation of Bell predictions (simulation complete; lab test pending)
+- Sub-ppm precision tests of α
+- Detection of Planck-scale Lorentz departures
+
+### 22.5.1 On the 3D Discrete Lattice
+
+**UPDATE (v5.0):** D = 3 is now **derived**, not axiomatic. Four independent arguments establish uniqueness:
+
+**Argument 1: Gauge Theory Requirements**
+SU(3) gauge theory with confinement, asymptotic freedom, AND chiral anomaly (needed for baryogenesis) exists only in 3+1 dimensions.
+
+**Argument 2: Spinor Structure**
+Spin(3) = SU(2), which gives 2-component spinors. In other dimensions, fermion structure is wrong.
+
+**Argument 3: Knot Theory**
+Non-trivial knots exist only in 3D. Particles as topological features require this richness.
+
+**Argument 4: Observer Existence**
+Stable atoms with shell structure require 1/r² potentials, which arise from 3D Laplacians.
+
+**Argument 5: Parsimony**
+A 3D cubic lattice is the simplest structure supporting gauge theories + observers.
+
+**Argument 6: Fibonacci Constraint (v5.0)**
+The self-referential closure condition n_eff = F_7 = 13 = b_3 + 2N_c is only satisfied for D = 3.
+
+**Argument 7: Cuboctahedral Uniqueness (v5.20)**
+D = 3 is the only dimension where the kissing number equals 4D (K(3) = 12 = 4 x 3 = N_base x N_c). See [CUBOCTAHEDRAL_GEOMETRY.md](../theory/EXPLR_CUBOCTAHEDRAL_GEOMETRY.md).
+
+**Argument 8: Dimensional Buckling (v5.21)** [CONJECTURE]
+Self-referential pressure forces lower-dimensional structures to buckle into higher dimensions. The process halts at D = 3 because knots (required for topological self-reference) are trivial in D >= 4. See [DIMENSIONAL_EMERGENCE.md Part VIII](../theory/FOUND_SPACETIME_EMERGENCE.md).
+
+**Status (v5.21)**: D = 3 is **derived from eight independent constraints** (7 rigorous, 1 conjectural). No alternative dimension supports all requirements simultaneously.
+
+## 22.6 The Appropriate Epistemic Stance
+
+This model is a **computational framework with remarkable numerical coincidences and motivated selection principles**.
+
+Evaluation criteria and status (updated for v5.24 — Project Cleanup):
+
+1. Internal consistency — ✅ **ESTABLISHED** (rules derived from action principle)
+2. Qualitative plausibility — ✅ **DEMONSTRATED** (structures, forces, hierarchies)
+3. Derivation from principles — ⚠️ **PARTIAL** (~12 genuine theorems, ~9 conditional; see [AUDIT_EPISTEMIC_AUDIT.md](../theory/AUDIT_EPISTEMIC_AUDIT.md))
+4. Recovery of known physics — ⚠️ **PARAMETRIC** (~142 items use FTD values in standard QFT formulas)
+5. Quantitative accuracy — ⚠️ **MIXED** (~12 genuine results < 1% error; rest are parametric fits)
+6. Novel predictions — ⚠️ **LIMITED** (digit 13 of 1/α; most results are postdictions)
+7. "Zero free parameters" — ❌ **FALSE** (5 selection principles SP1-SP5 + scale identification M_Planck)
+
+**v5.24 Honest Status:**
+- **~12 Rigorous Theorems**: algebra from G* and integers (see AUDIT_EPISTEMIC_AUDIT.md T1)
+- **~9 Conditional Results**: require 5 selection principles SP1-SP5 (see AUDIT_HIDDEN_SELECTIONS.md)
+- **~142 Parametric Insertions**: FTD-derived values in standard QFT formulas
+- **4 Critical Gaps**: Bell mechanism (S≤2), integer uniqueness, x₊=1/α mechanism, Λ_QCD loop
+- **"Zero free parameters" is FALSE**: see AUDIT_HIDDEN_SELECTIONS.md for explicit axioms
+
+**Remaining work:**
+1. Demonstrate Bell violations (S > 2) from pure lattice dynamics (currently S ≤ 2)
+2. Prove integer uniqueness (self-consistency proven, uniqueness open)
+3. Produce a genuinely novel pre-observation prediction
+4. Close the Λ_QCD derivation loop
+
+See [SPEC_FTD_REFERENCE.md](../theory/SPEC_FTD_REFERENCE.md), [AUDIT_EPISTEMIC_AUDIT.md](../theory/AUDIT_EPISTEMIC_AUDIT.md), and [CHANGELOG.md](../../CHANGELOG.md) for complete documentation.
+
+---
+
+# APPENDIX A: Glossary
+
+## Core Entities
+
+| Term | Definition |
+|------|------------|
+| Voxel | A single lattice site |
+| Flux | Vector field J ∈ R³ on each voxel |
+| Density | Scalar |J|, magnitude of flux |
+| Manifestation | Transition from state 0 to ±1 (wavefunction collapse) |
+| Genesis | Event of manifestation (pair production analog) |
+| Evaporation | Transition from ±1 to 0 |
+| Annihilation | +1 and -1 adjacent → both become 0 |
+| Triad | Three-particle bound configuration (nucleon analog) |
+| Tick | One discrete time step (Δt) |
+| KB | Manifestation threshold = m_e c² = m_P √(2π) (16/3) α¹¹ (derived) |
+
+## Ontological Notation
+
+| Symbol | Definition |
+|--------|------------|
+| xyztgψ(Δt) | Complete specification of one entity at one tick: position (xyz), time (t), geometric constraint (g), modal constraint (ψ), dynamics (Δt) |
+| g | Geometric constraint: locality, Moore neighborhood, causality (entity can only interact with neighbors) |
+| ψ | Modal constraint: what transitions are possible from current state (potential, not mystical wave function) |
+| Δt | The tick: one discrete step forward in time |
+| Ω(t) | One observer at one tick: complete configuration (atoms, neurons, memories, personality, etc.) |
+| H(Ω,t) | Horizon: what observer Ω can perceive at tick t (subset of Global) |
+| Global(t) | Everything at one tick: all entities, all observers, all configurations |
+| 𝕌 | The universe across all time: { Global(t) : t ∈ ℤ } |
+| ⊤ | True: manifested, actual, registered |
+| ⊥ | False: unmanifested, potential, unregistered |
+
+## Six Senses (Horizon Channels)
+
+| Sense | Definition |
+|-------|------------|
+| Sight | Electromagnetic flux in visible range |
+| Sound | Pressure waves in medium |
+| Touch | Direct contact, mechanical deformation |
+| Taste | Chemical detection (close range) |
+| Smell | Chemical detection (distance) |
+| Cognition | Internal state, memory, inference (the sixth sense) |
+
+## Observer Hierarchy
+
+| Type | Gates | Organic | Capability |
+|------|-------|---------|------------|
+| Dead | 0 | - | None |
+| Brain Dead | 1 | Yes | Detection only |
+| Detector | 1 | No | Detection only |
+| Measurer | ≥2 | No | Inference, no meaning |
+| Observer | ≥2 | Yes | Meaning emerges |
+
+## Technical Terms
+
+| Term | Definition |
+|------|------------|
+| sLoop | Self-referential loop; observer-system coupling structure (§12.4) |
+| Meta-sLoop | sLoop that includes model of the sLoop itself (consciousness) |
+| G* | Lemniscatic constant ≈ 2.9587 from elliptic integral theory (§7.4) |
+| Born rule | P(v) = \|ψ(v)\|²/\|\|ψ\|\|²; probability from wave function (§13.1) |
+| Action S[s,J] | Variational principle from which update rules derive (v4.0) |
+| Hilbert space H_FTD | L²(Lattice, ℂ) constructed from complexified flux (v4.0) |
+| Moore neighborhood | 26-connected neighborhood (3×3×3 cube minus center) |
+| N₆(v) | 6-connected (face-sharing) neighborhood for Laplacian |
+| ∇² | Discrete Laplacian operator (§3.2, §20.3) |
+| ∇·J | Divergence of flux field (determines polarity) |
+| ∇×J | Curl of flux field (magnetic-like behavior) |
+
+## v5.1-v5.8 Terms
+
+| Term | Definition |
+|------|------------|
+| Heegner number | Value d where Q(√-d) has class number 1; {1,2,3,7,11,19,43,67,163} |
+| 70 ± 67 | Decomposition of master quadratic roots: x₊ = 70+67 = 137, x₋ = 70-67 = 3 |
+| Division algebra | Algebra with norm property |ab| = |a||b|; only ℝ, ℂ, ℍ, 𝕆 (Hurwitz theorem) |
+| Fano plane | (7,7,3,3) structure encoding octonion multiplication; 7 = b₃ |
+| j-invariant | Modular function; j = 1728 = (N_base × N_c)³ for lemniscatic curve (v5.3) |
+| k = 16 | Lattice DOF; k = 2^(D+1) from complementation k_cons = 1/2 (v5.1) |
+| α power ladder | Hierarchy α⁸ → α¹¹ → α¹⁶ → α²⁰ with gaps {3,5,4} = {N_c, (N_eff-N_c)/2, N_base} |
+| ε/1111 | Alpha precision correction where ε = (N_eff - N_base)/N_c = 3 (v5.4) |
+| ρ_Λ | Vacuum energy density = m_e⁴ × α¹⁶ × G*² ≈ 3.86 × 10⁻⁴⁷ GeV⁴ (v5.5) |
+| Mandelbrot-FTD | Duality: k_c × c_cusp × 2N_base = 1 (exact); cardioid ↔ consciousness (v5.6) |
+| F₇ = T₇ = 13 | Unique Fibonacci-Tribonacci crossover at N_eff (v5.3) |
+| 42 | = 2 × N_c × b₃ = first 4 Heegner product; appears in x₋ correction ~1/42 |
+
+## Dimensional Buildup
+
+| Level | Notation | Meaning |
+|-------|----------|---------|
+| 1D | xy | Point on a line (one spatial dimension) |
+| 2D | xyt | Point on plane + time |
+| 3D | xyzt | Point in space + time (where physics usually stops) |
+| 4D | xyztgψ(Δt) | Full specification with constraints and dynamics |
+
+---
+
+# APPENDIX B: Major Revisions from Version 2.0
+
+## B.1 Structural Changes
+
+1. **Separated ontology from empiricism**: Clear distinction between postulates, rules, and interpretations
+2. **Added Abstract for Physicists**: Concise technical summary
+3. **Added Preamble on document status**: Explicit disclaimers
+4. **Renamed "Experiments" to "Simulation Probes"**: Clarifies internal vs external validation
+5. **Added "Scope, Limitations, and Open Problems" (Part D)**: Comprehensive honesty
+6. **Added "Potential Empirical Contact Points"**: Speculative but explicit
+
+## B.2 Language Revisions
+
+1. **Replaced absolute claims with hedged language**:
+   - "solves" → "addresses in a particular way"
+   - "proves" → "is consistent with"
+   - "derives" → "targets" (for constants)
+
+2. **Labeled metaphors explicitly**:
+   - "The Void is home" → marked as metaphorical
+   - "Ontology rendered executable" → identified as interpretive framing
+
+3. **Converted philosophical prose to technical language**:
+   - Reduced poetic passages
+   - Added formal definitions where possible
+
+## B.3 Scientific Corrections
+
+1. **Constants**: Explicitly stated that numerical matches are parameter choices, not derivations
+2. **Quantum claims**: Added extensive caveats about untested Bell compatibility
+3. **Measurement**: Clarified that dissolving the measurement problem is a claim, not established
+4. **Entanglement**: Noted tension with Bell's theorem for hidden variable approaches
+5. **Lorentz invariance**: Acknowledged fundamental violation by lattice structure
+
+## B.4 Removed or Downgraded
+
+1. Removed claims that the model "explains" known physics
+2. Downgraded "emergence" claims from strong to weak
+3. Removed implication that constants are predicted
+4. Removed suggestion that foundational problems are solved
+
+## B.5 Version 4.0 Additions (Theoretical Foundations)
+
+1. **Action Principle**: All update rules now derived from S[s,J] via Euler-Lagrange equations
+2. **Hilbert Space**: Quantum mechanics constructed from complexified flux ψ = J_x + iJ_y (Part II)
+3. **Continuum Limit**: Rigorous recovery of Maxwell electrodynamics (§3.4) and Schrödinger equation (§3.5)
+4. **Born Rule**: Derived from manifestation statistics, not postulated (§2.3)
+5. **Bell Violations**: Three-level observer Bell mechanism resolves OPEN.1. Substrate S=2 [THEOREM]; observer S=2√2 via complexification + sLoop [SELECTION]. See DERIV_OBSERVER_BELL_MECHANISM.md
+6. **Spinor Structure**: Fermi statistics from frame bundle topology π₁(SO(3)) = ℤ₂ (Part V)
+7. **Measurement Theory**: Collapse = manifestation triggered by observer coupling (see §13)
+8. **Dimensional Analysis**: Complete natural units framework added (§7.1)
+9. **Notation Standardization**: g_c (state-flux) vs g_s (strong) coupling constants distinguished
+
+---
+
+# APPENDIX C: Editor's Note
+
+## What Changed and Why
+
+This revision transforms a speculative manifesto into a scientifically defensible framework document. The core vision—ternary states, discrete dynamics, emergent structure—is preserved. What changed is the epistemic framing.
+
+### Key Changes
+
+1. **Intellectual Honesty**: The original document conflated simulation design with physical discovery. Parameters chosen to match known physics were sometimes presented as emergent. This revision clearly labels inputs vs outputs.
+
+2. **Quantum Caution (v3.0)**: The original claimed to "dissolve" the measurement problem and treated entanglement as simply "shared origin." v3.0 acknowledged serious challenges (Bell's theorem, quantum contextuality). **v4.0 Update**: These challenges are addressed theoretically via Hilbert space construction and sLoop mechanism. Note: Simple flux-loop simulation correctly shows classical behavior S ≤ 2; full Hilbert space implementation needed for Bell violation demonstration.
+
+3. **Force Realism**: The original presented force laws as emerging from geometry. This revision notes that forces are phenomenologically inserted, borrowing functional forms (Yukawa, Coulomb) from established physics.
+
+4. **Scope Boundaries**: The original covered all scales from Planck to cosmic. This revision maintains the broad scope but explicitly notes which claims are interpretive proposals vs demonstrated behaviors.
+
+5. **Falsifiability**: The original lacked clear failure conditions. This revision identifies what would constitute falsification.
+
+### What Remains
+
+- The three-state ontology
+- The discrete lattice approach
+- The two-layer (flux/state) architecture
+- The local update rules
+- The vision of emergent complexity
+
+### The Document's New Status
+
+This is now positioned as:
+- A computational framework for exploring discrete ontologies
+- A simulation platform with interpretive mappings to physics
+- A set of speculative proposals requiring independent validation
+- An honest acknowledgment of what is and is not demonstrated
+
+The goal is a document that could be submitted to a foundations-of-physics venue without misrepresenting its claims.
+
+---
+
+# APPENDIX D: Notation Glossary
+
+This appendix provides a comprehensive reference for all notation used in FTD, organized by category.
+
+## D.1 Fundamental Entities
+
+| Symbol | Type | Domain | Definition | First Use |
+|--------|------|--------|------------|-----------|
+| $\mathbf{L}$ | Set | $\subset \mathbb{Z}^3$ | Discrete lattice of voxels | §1.1 |
+| $v$ | Element | $\in \mathbf{L}$ | Single voxel (lattice site) | §1.1 |
+| $t$ | Scalar | $\in \mathbb{N}$ | Tick counter (discrete time) | §1.1 |
+| $s(v,t)$ | Function | $\to \{-1, 0, +1\}$ | Ternary state at voxel $v$, time $t$ | §1.1 |
+| $\mathbf{J}(v,t)$ | Vector field | $\to \mathbb{R}^3$ | Flux vector at voxel $v$, time $t$ | §3.1 |
+
+## D.2 Derived Fields
+
+| Symbol | Type | Definition | Dimensions | First Use |
+|--------|------|------------|------------|-----------|
+| $\rho$ | Scalar field | $\|\mathbf{J}\|$ (flux magnitude) | [E]/[L]² | §3.3 |
+| $\bar{\rho}$ | Scalar field | Neighbor-averaged density | [E]/[L]² | §6.2 |
+| $\psi$ | Complex field | $J_x + i J_y$ (wave function) | [E]^(1/2)/[L] | §13.1 |
+| $q(v)$ | Scalar | Charge at voxel $v$ | dimensionless | §6.3 |
+
+## D.3 Differential Operators (Discrete)
+
+| Symbol | Definition | Notes |
+|--------|------------|-------|
+| $\nabla f$ | $(f(v+e_i) - f(v-e_i))/2$ | Discrete gradient |
+| $\nabla \cdot \mathbf{J}$ | $\sum_i (J_i(v+e_i) - J_i(v-e_i))/2$ | Discrete divergence |
+| $\nabla \times \mathbf{J}$ | $\varepsilon_{ijk}(\partial_j J_k - \partial_k J_j)/2$ | Discrete curl |
+| $\nabla^2 f$ | $\sum_{u \in N_6(v)} f(u) - 6f(v)$ | Discrete Laplacian (6-connected) |
+
+## D.4 Coupling Constants
+
+| Symbol | Value | Dimensions | Physical Role | Notes |
+|--------|-------|------------|---------------|-------|
+| $C$ | 1.0 | [L]/[T] | Speed of causality | Axiomatic |
+| $K_B$ | 0.511 | [E]/[L]² | Manifestation threshold | ≡ electron mass |
+| $\alpha$ | 0.00729 | dimensionless | Fine structure constant | From G* |
+| $g_c$ | ~$\alpha^{1/2}$ | dimensionless | State-flux coupling | §7.3, §13.2 |
+| $g_s$ | — | dimensionless | Strong (Yukawa) coupling | §6.4 |
+| $G_N$ | 0.01 | dimensionless | Gravitational coupling | §6.2 |
+| $\gamma$ | 0.00729 = α | [T]⁻¹ | Decay/dissipation rate | §4.3 |
+| $\lambda$ | — | dimensionless | Gauss constraint strength | §1.2.1 (TF) |
+| $\mu$ | — | dimensionless | Ternary constraint strength | §1.2.4 (TF) |
+
+## D.5 Mathematical Constants
+
+| Symbol | Value | Appears In |
+|--------|-------|------------|
+| $G^*$ | 2.9587... | Lemniscatic constant (§7.4) |
+| $\phi$ | 1.618... | Golden ratio (binding energy) |
+| $\pi$ | 3.14159... | Standard |
+| $e$ | 2.71828... | Exponential base |
+
+## D.6 Action Principle Variables
+
+| Symbol | Role | Appears In |
+|--------|------|------------|
+| $S[s,J]$ | FTD action functional | SPEC_FTD_REFERENCE §1.3 |
+| $\mathcal{L}$ | Lagrangian density | SPEC_FTD_REFERENCE §1.2 |
+| $V(\rho, s)$ | Manifestation potential | SPEC_FTD_REFERENCE §1.2.2 |
+| $\mathcal{F}$ | Dissipation function | SPEC_FTD_REFERENCE §1.4.3 |
+
+## D.7 Quantum Mechanics
+
+| Symbol | Definition | Notes |
+|--------|------------|-------|
+| $\mathcal{H}_{\text{FTD}}$ | $L^2(\text{Lattice}, \mathbb{C})$ | FTD Hilbert space |
+| $\|\psi\|$ | $\sqrt{\sum_v |\psi(v)|^2}$ | Norm |
+| $\langle\psi|\phi\rangle$ | $\sum_v \psi^*(v)\phi(v)$ | Inner product |
+| $P(v)$ | $|\psi(v)|^2 / \|\psi\|^2$ | Born rule probability |
+
+## D.8 Standard Physics Comparisons
+
+| FTD Symbol | Standard Physics | Relationship |
+|------------|------------------|--------------|
+| $\mathbf{J}$ | $\mathbf{A}$ (vector potential) | $\mathbf{J} \leftrightarrow \mathbf{A}$ in gauge theory |
+| $\nabla \times \mathbf{J}$ | $\mathbf{B}$ (magnetic field) | Direct correspondence |
+| $-\nabla \cdot \mathbf{J}$ | $\rho$ (charge density) | Via Gauss constraint |
+| $\psi = J_x + iJ_y$ | Wave function | Complexified transverse flux |
+
+## D.9 Abbreviations and Acronyms
+
+| Abbreviation | Full Form |
+|--------------|-----------|
+| FTD | Foundational Ternary Dynamics |
+| sLoop | Self-referential Loop (observer-system coupling) |
+| QM | Quantum Mechanics |
+| QFT | Quantum Field Theory |
+| SM | Standard Model |
+| E-L | Euler-Lagrange (equations) |
+
+---
+
+**END OF REVISED DOCUMENT**
+
+*Version 5.24 — Project Cleanup*
+*Epistemic alignment with AUDIT_EPISTEMIC_AUDIT.md and AUDIT_HIDDEN_SELECTIONS.md*
+*Last updated: 2026-02-12*

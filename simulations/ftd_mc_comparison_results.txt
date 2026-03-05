@@ -1,0 +1,25 @@
+FTD CERN MC Comparison Results
+Generated: 2026-02-28 02:00:28
+Mode: docker
+
+MC Samples:
+  WJetsToLNu: 4,599 selected / 19,759,298 total (xsec=61526.7 pb)
+  ZJetsToNuNu_200toInf: 20,445 selected / 33,226 total (xsec=18.0 pb)
+  ZJetsToNuNu_100to200: 3,616 selected / 136,230 total (xsec=93.8 pb)
+  QCD_HT1000to1500: 2,438 selected / 477,196 total (xsec=1005.0 pb)
+  QCD_HT700to1000: 529 selected / 499,379 total (xsec=6334.0 pb)
+
+Data: 1,501,257 events
+MC scale factor: 4858.5056
+
+KEY RESULTS:
+  FTD tail excess vs sqrt(MET): rho=0.0000, p=1.0000e+00
+
+  Decay-length-significance categories:
+    dlenSig>10: rho_data=0.0767, rho_MC=0.0344, diff=0.0423
+    dlenSig>30: rho_data=0.1086, rho_MC=0.0200, diff=0.0886
+    dlenSig>50: rho_data=0.1066, rho_MC=0.0216, diff=0.0850
+
+  B-veto categories:
+    no_bjet: rho_data=0.0088, rho_MC=0.0290, diff=-0.0202, KS=0.0365 (p=2.38e-20)
+    has_bjet: rho_data=0.0422, rho_MC=0.0609, diff=-0.0187, KS=0.0511 (p=9.96e-32)

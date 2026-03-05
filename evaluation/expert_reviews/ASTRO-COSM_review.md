@@ -298,7 +298,7 @@ The stellar nucleosynthesis chapter references nuclear binding energies and the 
 The compact objects chapter discusses Pauli exclusion (electron/neutron degeneracy) without referencing FTD's Hilbert space construction. How does the TRD spinor structure (pi_1(SO(3)) = Z_2) connect to degenerate matter?
 
 ### Connection to Cosmology Content
-The galaxy formation chapter discusses primordial fluctuations without connecting to FTD's inflation predictions (n_s = 0.966, r = 0.007). The power spectrum should be derivable if inflation is truly derived.
+The galaxy formation chapter discusses primordial fluctuations without connecting to FTD's inflation predictions (n_s = 0.966, r = 0.022). The power spectrum should be derivable if inflation is truly derived.
 
 ### Consistency with CLAUDE.md
 The main documentation claims "mathematically complete Theory of Everything" but the astrophysical chapters primarily present standard physics with interpretive overlays. This tension should be addressed - either strengthen derivations or soften completeness claims.

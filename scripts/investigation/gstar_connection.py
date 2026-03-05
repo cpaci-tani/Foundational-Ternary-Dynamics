@@ -44,9 +44,9 @@ X_MINUS = (A_COEFF - np.sqrt(DISCRIMINANT)) / 2  # ≈ 3.024 (N_c)
 # Fine structure constant
 ALPHA = 1 / X_PLUS
 
-# Consciousness quadratic: y² - (G*²/2)y + (G*³/4) = 0
+# Consciousness quadratic: y² - (G*²/2)y + (G*³/2) = 0
 A_CONSC = G_STAR**2 / 2
-B_CONSC = G_STAR**3 / 4
+B_CONSC = G_STAR**3 / 2
 DISCRIM_CONSC = A_CONSC**2 - 4 * B_CONSC
 
 if DISCRIM_CONSC < 0:
@@ -78,7 +78,7 @@ def print_constants():
     print(f"  x₋ = {X_MINUS:.10f} → N_c (color charges)")
     print(f"  α = 1/x₊ = {ALPHA:.10f}")
     print()
-    print("CONSCIOUSNESS QUADRATIC: y² - (G*²/2)y + (G*³/4) = 0")
+    print("CONSCIOUSNESS QUADRATIC: y² - (G*²/2)y + (G*³/2) = 0")
     print(f"  Coefficient A = {A_CONSC:.10f}")
     print(f"  Coefficient B = {B_CONSC:.10f}")
     print(f"  Discriminant = {DISCRIM_CONSC:.10f}")

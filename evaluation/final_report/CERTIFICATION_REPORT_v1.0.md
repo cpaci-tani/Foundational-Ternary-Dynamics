@@ -304,14 +304,14 @@ See: `evaluation/agent_findings/` (22 individual reports)
 
 ### Appendix B: Consolidated Findings
 See: `evaluation/strengths_weaknesses/`
-- consolidated_strengths.md
-- consolidated_weaknesses.md
-- cross_domain_issues.md
+- ARCH_CONSOLIDATED_STRENGTHS.md
+- ARCH_CONSOLIDATED_WEAKNESSES.md
+- ARCH_CROSS_DOMAIN_ISSUES.md
 
 ### Appendix C: Defense Protocol
 See: `evaluation/defense_responses/`
-- defense_protocol_responses.md
-- unresolved_issues.md
+- AUDIT_DEFENSE_PROTOCOL_RESPONSES.md
+- AUDIT_UNRESOLVED_ISSUES.md
 
 ### Appendix D: Comprehensive Grading
 See: `evaluation/final_report/COMPREHENSIVE_GRADING_TABLE.md`

@@ -1,0 +1,2598 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTD Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ── Reset ─────────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ── Design Tokens ─────────────────────────────────── */
+        :root {
+            --bg-deep: #111827;
+            --bg-surface: #1f2937;
+            --bg-card: #283548;
+            --bg-input: #374151;
+            --border: #374151;
+            --border-light: #4b5563;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent: #60a5fa;
+            --accent-dim: #3b82f6;
+            --positive: #4ade80;
+            --negative: #f87171;
+            --warning: #fbbf24;
+            --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Consolas', monospace;
+            --radius: 4px;
+            --radius-lg: 8px;
+        }
+
+        /* ── Base ──────────────────────────────────────────── */
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* ── App Shell ─────────────────────────────────────── */
+        #app {
+            display: grid;
+            height: 100vh;
+            grid-template-rows: 48px 1fr auto auto 28px;
+            grid-template-areas:
+                "toolbar"
+                "viewport"
+                "tabs"
+                "panel"
+                "status";
+        }
+
+        /* ── Toolbar ───────────────────────────────────────── */
+        #toolbar {
+            grid-area: toolbar;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 16px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        #toolbar .brand {
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+            margin-right: 8px;
+        }
+
+        #toolbar .brand span {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        #toolbar .separator {
+            width: 1px;
+            height: 24px;
+            background: var(--border-light);
+            margin: 0 4px;
+        }
+
+        /* Toolbar controls */
+        .tb-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.15s;
+        }
+
+        .tb-btn:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+
+        .tb-btn.active {
+            background: var(--accent-dim);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .tb-select {
+            height: 32px;
+            padding: 0 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .tb-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .tb-label {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tb-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tb-slider {
+            width: 80px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .tb-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .tb-value {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--accent);
+            min-width: 24px;
+            text-align: right;
+        }
+
+        .tb-value-wide {
+            min-width: 30px;
+        }
+
+        .tb-checkbox-label {
+            cursor: pointer;
+        }
+
+        .tb-checkbox-label input {
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        /* ── Viewport ──────────────────────────────────────── */
+        #viewport {
+            grid-area: viewport;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #0f1729 0%, #162033 100%);
+        }
+
+        #viewport canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .view-toggle {
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 500;
+            background: rgba(31, 41, 55, 0.85);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: all 0.15s;
+        }
+
+        .view-toggle:hover {
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+
+        .view-toggle.active {
+            color: var(--accent);
+            border-color: var(--accent-dim);
+        }
+
+        .field-swatch {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .field-sep {
+            display: inline-block;
+            width: 1px;
+            height: 18px;
+            background: var(--border);
+            margin: 0 4px;
+            vertical-align: middle;
+        }
+
+        .dynamics-toggle {
+            border: 1px dashed var(--border) !important;
+            color: var(--text-secondary);
+        }
+
+        .dynamics-toggle.active {
+            border-color: var(--warning) !important;
+            color: var(--warning);
+            background: rgba(255, 167, 38, 0.1);
+        }
+
+        #viewport-overlay {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            max-width: 100%;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* ── Environment Background Selector ─────────────── */
+        /* ── Viewport Bottom Selectors (Env + Boundary) ── */
+        .viewport-bottom-bar {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 100;
+        }
+        .viewport-select-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .viewport-select-group label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .viewport-select-group select {
+            font-size: 11px;
+            padding: 3px 8px;
+            background: rgba(31, 41, 55, 0.85);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            outline: none;
+            transition: all 0.15s;
+        }
+        .viewport-select-group select:hover,
+        .viewport-select-group select:focus {
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+        .viewport-select-group select option {
+            background: #1f2937;
+            color: var(--text-primary);
+        }
+
+        /* ── Element Legend (Scale 2) ─────────────────────── */
+        .ae-legend {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 100;
+            background: rgba(31, 41, 55, 0.88);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            backdrop-filter: blur(8px);
+            padding: 8px 10px;
+            min-width: 90px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .ae-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 2px 0;
+        }
+
+        .ae-legend-swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            flex-shrink: 0;
+        }
+
+        .ae-legend-sym {
+            font-weight: 600;
+            font-family: var(--font-mono);
+            color: var(--text-primary);
+            min-width: 18px;
+        }
+
+        .ae-legend-name {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        .ae-legend-sep {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        .ae-legend-header {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 0 1px;
+        }
+
+        /* ── Tab Bar ───────────────────────────────────────── */
+        #tab-bar {
+            grid-area: tabs;
+            display: flex;
+            gap: 0;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .tab:hover {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* ── Panel Area ────────────────────────────────────── */
+        #panel-area {
+            grid-area: panel;
+            min-height: 260px;
+            max-height: 45vh;
+            overflow-y: auto;
+            background: var(--bg-surface);
+            padding: 16px;
+            transition: min-height 0.2s, max-height 0.2s, padding 0.2s;
+        }
+
+        #app.panels-collapsed #panel-area {
+            min-height: 0;
+            max-height: 0;
+            padding: 0 16px;
+            overflow: hidden;
+        }
+
+        #app.panels-collapsed #tab-bar .tab {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        #app.panels-collapsed #tab-bar #btn-panel-toggle {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #btn-panel-toggle {
+            margin-left: auto;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            background: none;
+            border: none;
+            border-left: 1px solid var(--border);
+            user-select: none;
+            transition: color 0.15s;
+        }
+
+        #btn-panel-toggle:hover {
+            color: var(--text-primary);
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        /* Panel layout helpers */
+        .panel-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .panel-grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .panel-grid-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .panel-grid-4 {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+        }
+
+        .card-title {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        /* Stat display */
+        .stat-value {
+            font-family: var(--font-mono);
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .stat-unit {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+
+        .stat-sparkline {
+            margin-top: 6px;
+            height: 24px;
+        }
+
+        /* PE Telemetry Panel */
+        #pe-telemetry { margin-top: 12px; }
+        .pe-telem-section { margin-bottom: 10px; }
+        .pe-telem-title {
+            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.8px; color: var(--accent); margin-bottom: 8px;
+        }
+        .pe-conservation-row {
+            display: grid; grid-template-columns: 50px 1fr 20px 80px;
+            align-items: center; gap: 6px; margin-bottom: 4px;
+            font-family: var(--font-mono); font-size: 12px;
+        }
+        .pe-cons-label { color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .pe-cons-value { color: var(--text-primary); }
+        .pe-cons-alarm { width: 8px; height: 8px; border-radius: 50%; background: transparent; }
+        .pe-cons-alarm.alarm-green { background: var(--positive); }
+        .pe-cons-alarm.alarm-yellow { background: var(--warning); }
+        .pe-cons-alarm.alarm-red { background: var(--negative); }
+        .pe-cons-spark { height: 20px; }
+        .pe-telem-details { margin-top: 10px; }
+        .pe-telem-details summary { cursor: pointer; }
+        .pe-telem-summary {
+            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.8px; color: var(--text-secondary);
+            padding: 4px 0; border-bottom: 1px solid var(--border);
+        }
+        .pe-table-wrap { max-height: 200px; overflow-y: auto; }
+        .pe-table {
+            width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 11px;
+        }
+        .pe-table th {
+            position: sticky; top: 0; background: var(--bg-surface);
+            color: var(--text-muted); font-size: 9px; text-transform: uppercase;
+            letter-spacing: 0.5px; padding: 4px 6px; text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+        .pe-table th:first-child, .pe-table td:first-child { text-align: left; }
+        .pe-table td {
+            padding: 3px 6px; text-align: right; color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+        }
+        .pe-table tr:hover { background: rgba(96, 165, 250, 0.08); }
+        .pe-ts-label {
+            font-size: 10px; color: var(--text-muted); margin-top: 6px; margin-bottom: 2px;
+        }
+        .pe-ts-chart { width: 100%; height: 60px; }
+
+        /* Chart containers */
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+        }
+
+        .chart-container canvas {
+            width: 100%;
+            height: 160px;
+        }
+
+        .chart-title {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .chart-legend-item::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            margin-right: 4px;
+            vertical-align: middle;
+            background-color: var(--color);
+        }
+
+        /* Toggle checkboxes */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .toggle-row input[type="checkbox"] {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--border-light);
+            border-radius: 3px;
+            background: var(--bg-input);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-row input[type="checkbox"]:checked {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+
+        .toggle-row input[type="checkbox"]:checked::after {
+            content: '\2713';
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .toggle-row label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        /* Collapsible advanced toggle section */
+        .toggle-advanced { margin-top: 4px; }
+        .toggle-advanced summary {
+            list-style: none;
+            cursor: pointer;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            margin: 8px 0 2px 0;
+            opacity: 0.7;
+            user-select: none;
+        }
+        .toggle-advanced summary::-webkit-details-marker { display: none; }
+        .toggle-advanced summary::after { content: ' \25B8'; font-size: 8px; }
+        .toggle-advanced[open] summary::after { content: ' \25BE'; }
+
+        /* Scenario override indicator (gold left border) */
+        .toggle-row.scenario-override {
+            border-left: 2px solid var(--warning);
+            padding-left: 6px;
+        }
+
+        /* Scale context header above controls grid */
+        .panel-scale-header {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Constants table */
+        .const-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .const-table th {
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--border);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .const-table td {
+            padding: 4px 8px;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+        }
+
+        .const-table td:first-child {
+            color: var(--text-secondary);
+        }
+
+        .const-table td:last-child {
+            font-family: var(--font-mono);
+            color: var(--accent);
+            text-align: right;
+        }
+
+        /* Inspector */
+        .inspector-empty {
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .inspector-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 4px 16px;
+            font-size: 12px;
+        }
+
+        .inspector-grid dt {
+            color: var(--text-muted);
+        }
+
+        .inspector-grid dd {
+            font-family: var(--font-mono);
+            color: var(--text-primary);
+        }
+
+        /* Control panel form elements */
+        .ctrl-input {
+            width: 100%;
+            height: 30px;
+            padding: 0 8px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 12px;
+        }
+
+        .ctrl-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .ctrl-btn {
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--accent-dim);
+            border: none;
+            border-radius: var(--radius);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .ctrl-btn:hover {
+            background: var(--accent);
+        }
+
+        .ctrl-btn-secondary {
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .ctrl-btn-secondary:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .ctrl-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .ctrl-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            min-width: 60px;
+        }
+
+        /* ── Status Bar ────────────────────────────────────── */
+        #status-bar {
+            grid-area: status;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 0 16px;
+            background: var(--bg-deep);
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        #status-bar .status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        #status-bar .status-value {
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+        }
+
+        #status-bar .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--positive);
+        }
+
+        #status-bar .status-dot.idle {
+            background: var(--text-muted);
+        }
+
+        /* ── Zoo Table ─────────────────────────────────────── */
+        .zoo-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .zoo-table th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-muted);
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--bg-surface);
+        }
+
+        .zoo-table td {
+            padding: 5px 8px;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.3);
+        }
+
+        .zoo-table tr:hover td {
+            background: rgba(96, 165, 250, 0.06);
+        }
+
+        .zoo-cat-header td {
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 8px 8px 4px;
+            border-bottom: 2px solid;
+        }
+
+        .zoo-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        .zoo-symbol {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .zoo-mass {
+            font-family: var(--font-mono);
+            color: var(--accent);
+            font-size: 11px;
+        }
+
+        .zoo-formula {
+            font-size: 10px;
+            color: var(--text-muted);
+            max-width: 200px;
+        }
+
+        .zoo-accuracy {
+            font-family: var(--font-mono);
+            font-size: 11px;
+        }
+
+        .zoo-inject-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .zoo-inject-btn:hover {
+            background: var(--accent-dim);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .zoo-inject-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* ── Scrollbar ─────────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-surface);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* ── Scale mode visibility ────────────────────── */
+        #app.mode-particles .scale0-only {
+            display: none !important;
+        }
+
+        #app.mode-particles .scale2-only {
+            display: none !important;
+        }
+
+        #app.mode-particles .scale3-only {
+            display: none !important;
+        }
+
+        #app.mode-lattice .scale1-only {
+            display: none !important;
+        }
+
+        #app.mode-lattice .scale2-only {
+            display: none !important;
+        }
+
+        #app.mode-lattice .scale3-only {
+            display: none !important;
+        }
+
+        #app.mode-atoms .scale0-only {
+            display: none !important;
+        }
+
+        #app.mode-atoms .scale1-only {
+            display: none !important;
+        }
+
+        #app.mode-atoms .scale3-only {
+            display: none !important;
+        }
+
+        #app.mode-molecules .scale0-only {
+            display: none !important;
+        }
+
+        #app.mode-molecules .scale1-only {
+            display: none !important;
+        }
+
+        #app.mode-molecules .scale2-only {
+            display: none !important;
+        }
+
+        /* ── Scale 4 (Consciousness) visibility rules ── */
+        #app.mode-consciousness .scale0-only {
+            display: none !important;
+        }
+        #app.mode-consciousness .scale1-only {
+            display: none !important;
+        }
+        #app.mode-consciousness .scale2-only {
+            display: none !important;
+        }
+        #app.mode-consciousness .scale3-only {
+            display: none !important;
+        }
+        #app.mode-consciousness .scale-ae {
+            display: none !important;
+        }
+        /* Hide Scale 4 elements in other modes */
+        #app.mode-lattice .scale4-only {
+            display: none !important;
+        }
+        #app.mode-particles .scale4-only {
+            display: none !important;
+        }
+        #app.mode-atoms .scale4-only {
+            display: none !important;
+        }
+        #app.mode-molecules .scale4-only {
+            display: none !important;
+        }
+
+        /* Consciousness mode dark atmosphere */
+        #app.mode-consciousness #viewport {
+            background: #050510;
+        }
+        #app.mode-consciousness .tab[data-scales="0"],
+        #app.mode-consciousness .tab[data-scales="1"],
+        #app.mode-consciousness .tab[data-scales="1,2,3"] {
+            display: none !important;
+        }
+
+        /* Consciousness color variables */
+        :root {
+            --consciousness-primary: #00e5ff;
+            --consciousness-secondary: #7c4dff;
+            --consciousness-glow: #00bcd4;
+            --consciousness-gold: #ffd700;
+        }
+
+        /* .scale-ae = visible at BOTH Scale 2 (atoms) and Scale 3 (molecules) */
+        #app.mode-lattice .scale-ae {
+            display: none !important;
+        }
+
+        #app.mode-particles .scale-ae {
+            display: none !important;
+        }
+
+        /* ── Tab visibility per scale ─────────────────── */
+        /* Tabs with data-scales="0" only show in lattice mode */
+        #app.mode-particles .tab[data-scales="0"],
+        #app.mode-atoms .tab[data-scales="0"],
+        #app.mode-molecules .tab[data-scales="0"] {
+            display: none !important;
+        }
+
+        /* Tabs with data-scales="1" only show in particles mode */
+        #app.mode-lattice .tab[data-scales="1"],
+        #app.mode-atoms .tab[data-scales="1"],
+        #app.mode-molecules .tab[data-scales="1"] {
+            display: none !important;
+        }
+
+        /* Tabs with data-scales="1,2,3" hide only in lattice mode */
+        #app.mode-lattice .tab[data-scales="1,2,3"] {
+            display: none !important;
+        }
+
+        .mode-unavailable {
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 40px;
+            font-size: 13px;
+        }
+
+        /* PE controls card */
+        .pe-ctrl-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .pe-ctrl-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            min-width: 70px;
+        }
+
+        .pe-ctrl-value {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--accent);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .pe-slider {
+            flex: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .pe-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Combo panel */
+        .combo-btn-row { display:flex; gap:4px; flex-wrap:wrap; }
+        .combo-btn-row .ctrl-btn-secondary { padding:4px 8px; font-size:11px; flex:1; min-width:0; white-space:nowrap; }
+        .combo-section-label { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); margin:6px 0 4px 0; opacity:0.7; }
+
+        /* PE inspector selected highlight */
+        .pe-insp-selected {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 1px var(--accent-dim);
+        }
+
+        .pe-insp-catalog-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        .pe-insp-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .pe-insp-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .pe-insp-symbol {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--accent);
+        }
+
+        /* ── Toast Notifications ──────────────────────────── */
+        #toast-container {
+            position: fixed;
+            top: 56px;
+            right: 16px;
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+            max-width: 420px;
+        }
+
+        .toast {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-lg);
+            font-size: 12px;
+            line-height: 1.4;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            animation: toast-in 0.25s ease-out;
+        }
+
+        .toast button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 2px;
+            line-height: 1;
+        }
+
+        .toast button:hover {
+            color: var(--text-primary);
+        }
+
+        .toast-warning {
+            border-color: var(--warning);
+        }
+
+        .toast-warning::before {
+            content: '\26A0';
+            margin-right: 2px;
+            color: var(--warning);
+        }
+
+        .toast-error {
+            border-color: var(--negative);
+        }
+
+        .toast-error::before {
+            content: '\2716';
+            margin-right: 2px;
+            color: var(--negative);
+        }
+
+        .toast-info {
+            border-color: var(--accent);
+        }
+
+        .toast-info::before {
+            content: '\2139';
+            margin-right: 2px;
+            color: var(--accent);
+        }
+
+        @keyframes toast-in {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ── Fatal Error Overlay ──────────────────────────── */
+        #error-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(17, 24, 39, 0.95);
+        }
+
+        #error-overlay .error-box {
+            background: var(--bg-card);
+            border: 1px solid var(--negative);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            max-width: 480px;
+            text-align: center;
+        }
+
+        #error-overlay h2 {
+            color: var(--negative);
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        #error-overlay p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        #error-overlay code {
+            display: block;
+            margin-top: 12px;
+            padding: 10px;
+            background: var(--bg-deep);
+            border-radius: var(--radius);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--negative);
+            text-align: left;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <div id="app" class="mode-lattice">
+        <!-- ── Toolbar ──────────────────────────────── -->
+        <div id="toolbar">
+            <div class="brand">FTD Engine <span>v2.7</span></div>
+            <div class="separator"></div>
+            <div class="tb-group">
+                <button class="tb-btn" id="btn-play" title="Play / Pause (Space)">&#9654;</button>
+                <button class="tb-btn" id="btn-step" title="Step (S)">&#9205;</button>
+                <button class="tb-btn" id="btn-reset" title="Reset (R)">&#8634;</button>
+            </div>
+            <div class="separator"></div>
+            <div class="tb-group">
+                <span class="tb-label">Engine</span>
+                <select class="tb-select" id="engine-mode">
+                    <option value="lattice" selected>Scale 0 (Substrate)</option>
+                    <option value="particles">Scale 1 (Particles)</option>
+                    <option value="atoms">Scale 2 (Atoms)</option>
+                    <option value="molecules">Scale 3 (Molecules)</option>
+                    <option value="consciousness">Scale 4 (Consciousness)</option>
+                </select>
+            </div>
+            <div class="separator"></div>
+            <!-- Scale 0 controls -->
+            <div class="tb-group scale0-only" id="lattice-controls">
+                <span class="tb-label">Scenario</span>
+                <select class="tb-select" id="scenario-select" style="max-width:200px">
+                    <option value="empty">Empty Lattice</option>
+                    <optgroup label="Wave Demos">
+                        <option value="flux-pulse" selected>Flux Pulse</option>
+                        <option value="flux-dipole">Flux Dipole</option>
+                        <option value="flux-standing">Standing Wave</option>
+                        <option value="flux-dispersion">Dispersion</option>
+                        <option value="flux-soliton">Soliton</option>
+                        <option value="flux-ring">Ring Wave</option>
+                        <option value="flux-interference">4-Source Interference</option>
+                        <option value="flux-vortex">Flux Vortex</option>
+                    </optgroup>
+                    <optgroup label="Particle Physics">
+                        <option value="flux-collision">Particle Collision</option>
+                        <option value="flux-pair-production">Pair Production</option>
+                        <option value="flux-hydrogen">Hydrogen Atom</option>
+                        <option value="flux-gravity-cluster">Gravity Cluster</option>
+                        <option value="flux-random-genesis">Random Genesis</option>
+                    </optgroup>
+                    <optgroup label="Light &amp; Color">
+                        <option value="light-rainbow">Rainbow (3 Colors)</option>
+                        <option value="light-prism">Lattice Prism</option>
+                        <option value="light-dipole">Dipole Radiation</option>
+                        <option value="light-two-slit">Two-Slit Interference</option>
+                        <option value="light-photon-race">Photon Race (Dim vs Bright)</option>
+                    </optgroup>
+                    <optgroup label="Experiments">
+                        <option value="flux-rutherford">Rutherford Scattering</option>
+                        <option value="flux-cyclotron">Cyclotron Motion</option>
+                        <option value="flux-screening">Charge Screening</option>
+                        <option value="flux-gravitational-wave">Gravitational Wave</option>
+                        <option value="flux-triad">Triad Formation</option>
+                        <option value="flux-thermalization">Thermalization</option>
+                        <option value="flux-force-profile">Force Profile</option>
+                    </optgroup>
+                    <optgroup label="Advanced">
+                        <option value="flux-cascade">Genesis Cascade</option>
+                        <option value="flux-damping">Damping Demo</option>
+                        <option value="flux-dual-substrate">Dual Substrate</option>
+                    </optgroup>
+                    <optgroup label="Cosmology">
+                        <option value="flux-antimatter">Antimatter Annihilation</option>
+                        <option value="flux-dark-matter">Dark Matter Halo</option>
+                        <option value="flux-baryogenesis">Baryogenesis</option>
+                        <option value="flux-vacuum-foam">Vacuum Fluctuations</option>
+                        <option value="flux-cosmic-web">Cosmic Web</option>
+                    </optgroup>
+                </select>
+            </div>
+            <!-- Scale 1 controls -->
+            <div class="tb-group scale1-only" id="pe-controls">
+                <span class="tb-label">Scenario</span>
+                <select class="tb-select" id="pe-scenario-select">
+                    <option value="pe-hydrogen" selected>Hydrogen Atom</option>
+                    <option value="pe-helium">Helium Atom</option>
+                    <option value="pe-positronium">Positronium</option>
+                    <option value="pe-muonium">Muonium</option>
+                    <option value="pe-scattering">Proton-Electron Scattering</option>
+                    <option value="pe-three-body">Three-Body (p+ p+ e-)</option>
+                    <option value="pe-deuteron">Deuteron (p + n)</option>
+                    <option value="pe-custom">Custom (Manual)</option>
+                </select>
+            </div>
+            <!-- Scale 2 controls -->
+            <div class="tb-group scale2-only" id="ae-controls">
+                <span class="tb-label">Scenario</span>
+                <select class="tb-select" id="ae-scenario-select" style="max-width:200px">
+                    <!-- Element periods injected by buildElementScenarios() -->
+                    <optgroup label="Special">
+                        <option value="ae-periodic">Periodic Table (All 118)</option>
+                        <option value="ae-custom">Custom (Manual)</option>
+                    </optgroup>
+                </select>
+                <label class="tb-check" style="margin-left:8px" title="Show electron orbital probability clouds">
+                    <input type="checkbox" id="ae-show-clouds" checked>
+                    Orbitals
+                </label>
+            </div>
+            <!-- Scale 3 controls -->
+            <div class="tb-group scale3-only" id="mol-controls">
+                <span class="tb-label">Scenario</span>
+                <select class="tb-select" id="mol-scenario-select" style="max-width:200px">
+                    <!-- Populated by buildMoleculeScenarios3() in app.js -->
+                    <optgroup label="Special">
+                        <option value="mol-crystal">NaCl Crystal</option>
+                        <option value="mol-custom">Custom (Manual)</option>
+                    </optgroup>
+                </select>
+                <label class="tb-check" style="margin-left:8px" title="Show electron orbital probability clouds">
+                    <input type="checkbox" id="mol-show-clouds" checked>
+                    Orbitals
+                </label>
+            </div>
+            <!-- Scale 4 controls -->
+            <div class="tb-group scale4-only" id="cs-controls">
+                <span class="tb-label">Scenario</span>
+                <select class="tb-select" id="cs-scenario-select" style="max-width:200px">
+                    <optgroup label="Observer Modes">
+                        <option value="cs-threshold" selected>Threshold Crossing</option>
+                        <option value="cs-high-coupling">High Coupling</option>
+                    </optgroup>
+                    <optgroup label="sLoop">
+                        <option value="cs-self-ref">Self-Reference</option>
+                        <option value="cs-nested-sloop">Nested sLoop</option>
+                    </optgroup>
+                    <optgroup label="Duality">
+                        <option value="cs-chirality">Chirality Split</option>
+                        <option value="cs-boundary-orbit">Boundary Orbit</option>
+                        <option value="cs-entangled">Entangled Pair</option>
+                    </optgroup>
+                    <optgroup label="Phase States">
+                        <option value="cs-flow">Flow State</option>
+                        <option value="cs-meditation">Meditation</option>
+                    </optgroup>
+                    <optgroup label="Custom">
+                        <option value="cs-custom">Custom (Manual)</option>
+                    </optgroup>
+                </select>
+                <select class="tb-select" id="cs-figure-select" style="max-width:140px; margin-left:6px">
+                    <optgroup label="Ethereal">
+                        <option value="aetheric">Aetheric Body</option>
+                        <option value="spirit">Spirit in the Sky</option>
+                        <option value="plasmoid" selected>Plasmoid Cloud</option>
+                    </optgroup>
+                    <optgroup label="Divine">
+                        <option value="god">God Figure</option>
+                        <option value="demiurge">Demiurge</option>
+                        <option value="yahweh">Yahweh (Pillar)</option>
+                    </optgroup>
+                    <optgroup label="Historical">
+                        <option value="hotep">Hotep</option>
+                        <option value="jesus">Jesus</option>
+                        <option value="mayan-sun">Mayan Sun God</option>
+                    </optgroup>
+                    <optgroup label="Dark">
+                        <option value="death-cloud">Death Cloud</option>
+                    </optgroup>
+                    <optgroup label="Classic">
+                        <option value="humanoid">Humanoid</option>
+                        <option value="alien">Alien</option>
+                    </optgroup>
+                </select>
+                <label class="tb-check" style="margin-left:8px" title="Enable consciousness audio synthesis">
+                    <input type="checkbox" id="cs-audio">
+                    Audio
+                </label>
+            </div>
+            <div class="separator"></div>
+            <div class="tb-group scale0-only" id="lattice-size-group">
+                <span class="tb-label">Size</span>
+                <select class="tb-select" id="lattice-size">
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                    <option value="24">24</option>
+                    <option value="32" selected>32</option>
+                    <option value="48">48</option>
+                    <option value="64">64</option>
+                </select>
+            </div>
+            <div class="tb-group">
+                <span class="tb-label">Speed</span>
+                <input type="range" class="tb-slider" id="ticks-per-frame" min="0.1" max="50" step="0.1" value="1">
+                <span class="tb-value" id="tpf-display">1</span>
+            </div>
+            <div class="tb-group scale0-only">
+                <label class="tb-checkbox-label tb-label" for="log-time"
+                    title="Logarithmic time: dt grows as log₁₀(1 + T/100). Same compute, covers more physical time.">
+                    <input type="checkbox" id="log-time">Log Time
+                </label>
+                <span class="tb-value tb-value-wide" id="dt-display">1.0</span>
+            </div>
+        </div>
+
+        <!-- ── 3D Viewport ──────────────────────────── -->
+        <div id="viewport">
+            <div id="viewport-overlay" class="scale0-only">
+                <button class="view-toggle active" id="toggle-wireframe">Wireframe</button>
+                <button class="view-toggle active" id="toggle-flux-volume">Flux Volume</button>
+                <button class="view-toggle" id="toggle-flux-slice">Flux Slice</button>
+                <span class="field-sep"></span>
+                <button class="view-toggle field-toggle" id="toggle-e-field" title="Electric field lines (E = -wave_vel)">
+                    <span class="field-swatch" style="background:#4dd0e1"></span>E Field
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-b-field" title="Magnetic field lines (B = curl J)">
+                    <span class="field-swatch" style="background:#66bb6a"></span>B Field
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-poynting" title="Poynting vector (energy flow S = E x B)">
+                    <span class="field-swatch" style="background:#ffa726"></span>Energy
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-div-field" title="Divergence of J (charge sources/sinks)">
+                    <span class="field-swatch" style="background:linear-gradient(90deg,#e53935,#1e88e5)"></span>&nabla;&middot;J
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-flux-lines" title="Flux streamlines (J field)">
+                    <span class="field-swatch" style="background:linear-gradient(90deg,#1565c0,#ffee58,#e53935)"></span>Flux Lines
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-force-volume" title="3D force vectors (net force field)">
+                    <span class="field-swatch" style="background:#78909c"></span>Forces
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-dual-substrate" title="Dual substrate J_L (warm) / J_R (cool)">
+                    <span class="field-swatch" style="background:linear-gradient(90deg,#ff7043,#42a5f5)"></span>Dual J
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-chirality" title="Chirality field (|J_L| - |J_R|)">
+                    <span class="field-swatch" style="background:linear-gradient(90deg,#ef5350,#42a5f5)"></span>Chirality
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-light" title="Light field (|Poynting| glow)">
+                    <span class="field-swatch" style="background:#ffeb3b"></span>Light
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-gravity-field" title="Gravity field vectors (density gradient attraction)">
+                    <span class="field-swatch" style="background:#b0bec5"></span>Gravity
+                </button>
+            </div>
+            <div id="pe-viewport-overlay" class="scale1-only"
+                style="position:absolute;top:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:620px;justify-content:flex-end">
+                <button class="view-toggle field-toggle" id="toggle-velocities" title="Velocity vectors">
+                    <span class="field-swatch" style="background:#ffa726"></span>Velocities
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-trails" title="Orbit trails">
+                    <span class="field-swatch" style="background:#ab47bc"></span>Trails
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-pe-efield" title="Coulomb E-field streamlines">
+                    <span class="field-swatch" style="background:#42a5f5"></span>E Field
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-pe-potential" title="Coulomb potential heatmap (XZ plane)">
+                    <span class="field-swatch" style="background:linear-gradient(90deg,#ef5350,#42a5f5)"></span>Potential
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-pe-gravity-field" title="Gravity force vectors (XZ plane)">
+                    <span class="field-swatch" style="background:#78909c"></span>Gravity F
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-pe-forces" title="Net force arrows per particle">
+                    <span class="field-swatch" style="background:#66bb6a"></span>Forces
+                </button>
+                <span class="field-sep"></span>
+                <button class="view-toggle dynamics-toggle active" id="toggle-pe-gravity" title="Toggle gravitational force (dynamics)">
+                    Gravity
+                </button>
+                <button class="view-toggle dynamics-toggle" id="toggle-pe-damping" title="Toggle velocity damping (dynamics)">
+                    Damping
+                </button>
+            </div>
+            <div id="ae-viewport-overlay" class="scale2-only"
+                style="position:absolute;top:12px;right:12px;display:flex;gap:6px">
+                <button class="view-toggle" id="toggle-ae-field"
+                    title="Show force field heatmap + vectors">Fields</button>
+            </div>
+            <div id="ae-legend" class="scale2-only ae-legend"></div>
+            <div id="mol-viewport-overlay" class="scale3-only"
+                style="position:absolute;top:12px;right:12px;display:flex;gap:6px">
+                <button class="view-toggle active" id="toggle-mol-bonds" title="Show covalent bonds">Bonds</button>
+                <button class="view-toggle" id="toggle-mol-field"
+                    title="Show force field heatmap + vectors">Fields</button>
+            </div>
+            <div id="mol-legend" class="scale3-only ae-legend"></div>
+            <div id="cs-viewport-overlay" class="scale4-only"
+                style="position:absolute;top:12px;right:12px;display:flex;gap:6px;align-items:center">
+                <span style="color:var(--consciousness-primary);font-size:11px;opacity:0.7" id="cs-status-label">
+                    Observable: <span id="cs-observable-pct">37%</span> &middot;
+                    &theta;<sub>C</sub> = <span id="cs-theta-val">52.5&deg;</span>
+                </span>
+            </div>
+
+            <!-- ── Bottom-bar selectors (Env + Boundary) ── -->
+            <div class="viewport-bottom-bar">
+                <div class="viewport-select-group">
+                    <label for="bg-select">Env</label>
+                    <select id="bg-select">
+                        <option value="none">None</option>
+                        <optgroup label="Cosmic">
+                            <option value="stars" selected>Star Field</option>
+                            <option value="nebula">Nebula</option>
+                            <option value="foam">Quantum Foam</option>
+                            <option value="beyond">The Beyond</option>
+                            <option value="storm">Flux Storm</option>
+                        </optgroup>
+                        <optgroup label="360° Environments">
+                            <option value="studio">Studio</option>
+                            <option value="workshop">Workshop</option>
+                            <option value="sunset">Sunset</option>
+                            <option value="night">Night Sky</option>
+                            <option value="forest">Forest</option>
+                            <option value="urban">Urban</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="viewport-select-group">
+                    <label for="boundary-select">Boundary</label>
+                    <select id="boundary-select">
+                        <option value="cube" selected>Cube</option>
+                        <option value="sphere">Sphere</option>
+                        <option value="dodecahedron">Dodecahedron</option>
+                        <option value="icosahedron">Icosahedron</option>
+                        <option value="octahedron">Octahedron</option>
+                        <option value="cylinder">Cylinder</option>
+                        <option value="torus">Torus</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tab Bar ──────────────────────────────── -->
+        <div id="tab-bar">
+            <div class="tab active" data-panel="controls">Controls</div>
+            <div class="tab" data-panel="diagnostics">Diagnostics</div>
+            <div class="tab" data-panel="charts">Charts</div>
+            <div class="tab" data-panel="lagrangian" data-scales="0">Lagrangian</div>
+            <div class="tab" data-panel="inspector">Inspector</div>
+            <div class="tab" data-panel="zoo" data-scales="1">Particle Zoo</div>
+            <div class="tab" data-panel="ontic">Ontic</div>
+            <div class="tab" data-panel="physics" data-scales="1,2,3">Physics</div>
+            <div class="tab" data-panel="hierarchy">Hierarchy</div>
+            <div class="tab" data-panel="consciousness" data-scales="4">Consciousness</div>
+            <button id="btn-panel-toggle" title="Collapse/expand panels">&#9660;</button>
+        </div>
+
+        <!-- ── Panel Area ───────────────────────────── -->
+        <div id="panel-area">
+            <!-- Controls -->
+            <div class="panel active" id="panel-controls">
+                <div class="panel-scale-header">
+                    <span class="scale0-only">Scale 0 &middot; Substrate Lattice</span>
+                    <span class="scale1-only">Scale 1 &middot; Particle Engine</span>
+                    <span class="scale2-only">Scale 2 &middot; Atom Engine</span>
+                    <span class="scale3-only">Scale 3 &middot; Molecular Engine</span>
+                    <span class="scale4-only">Scale 4 &middot; Consciousness</span>
+                </div>
+                <div class="panel-grid panel-grid-3">
+                    <div class="card scale0-only">
+                        <div class="card-title">Physics Toggles</div>
+
+                        <div class="combo-section-label">Wave & Field</div>
+                        <div class="toggle-row"><input type="checkbox" id="t-wave" checked><label for="t-wave"
+                                title="Flux wave equation: J evolves via discrete Laplacian (c^2 nabla^2 J)">Wave Propagation</label></div>
+                        <div class="toggle-row"><input type="checkbox" id="t-coupling" checked><label for="t-coupling"
+                                title="Manifested particles source flux via coupling term g_c * grad(s)">State-Flux Coupling</label></div>
+                        <div class="toggle-row"><input type="checkbox" id="t-damping" checked><label for="t-damping"
+                                title="Exponential flux decay at rate alpha per tick (energy dissipation)">Dissipation</label></div>
+                        <div class="toggle-row"><input type="checkbox" id="t-gauss" checked><label for="t-gauss"
+                                title="Enforce div(J) = charge density via SOR solver on void sites">Gauss Projection</label></div>
+
+                        <div class="combo-section-label">Matter</div>
+                        <div class="toggle-row"><input type="checkbox" id="t-genesis" checked><label for="t-genesis"
+                                title="Particles manifest when |J| exceeds K_B; evaporate when field energy drains">Genesis / Evaporation</label></div>
+                        <div class="toggle-row"><input type="checkbox" id="t-movement" checked><label for="t-movement"
+                                title="Particles accumulate force into velocity remainder and move on the lattice">Movement</label></div>
+
+                        <div class="combo-section-label">Forces</div>
+                        <div class="toggle-row"><input type="checkbox" id="t-forces" checked><label for="t-forces"
+                                title="Master switch: apply electromagnetic and gravitational forces to manifested particles">Forces (EM + Gravity)</label></div>
+                        <div class="toggle-row"><input type="checkbox" id="t-poisson" checked><label for="t-poisson"
+                                title="Solve Poisson equation for Coulomb potential (SOR, replaces direct div gradient)">Poisson Coulomb</label></div>
+                        <div class="toggle-row"><input type="checkbox" id="t-gravity" checked><label for="t-gravity"
+                                title="Attractive force from smoothed density gradient: F = G_N * grad(rho)">Gravity</label></div>
+                        <div class="toggle-row"><input type="checkbox" id="t-lorentz" checked><label for="t-lorentz"
+                                title="Magnetic force: F = alpha * s * (v x B) where B = curl(J). Does zero work">Lorentz Force</label></div>
+
+                        <details class="toggle-advanced">
+                            <summary>Advanced</summary>
+                            <div class="toggle-row"><input type="checkbox" id="t-selective"><label for="t-selective"
+                                    title="Only damp flux near particles; vacuum EM waves propagate losslessly">Selective Damping</label></div>
+                            <div class="toggle-row"><input type="checkbox" id="t-larmor"><label for="t-larmor"
+                                    title="Accelerating charges radiate energy: damping proportional to a^2 (needs selective damping ON)">Larmor Radiation</label></div>
+                            <div class="toggle-row"><input type="checkbox" id="t-dual"><label for="t-dual"
+                                    title="Split flux into J_L + J_R chirality pair; observable psi = J_L + J_R">Dual Substrate</label></div>
+                        </details>
+
+                        <div style="margin-top:8px;font-size:10px;color:var(--text-muted);opacity:0.5">
+                            Field visualization: viewport buttons (top-right) &#8593;
+                        </div>
+                    </div>
+                    <div class="card scale0-only">
+                        <div class="card-title">Substrate Controls</div>
+
+                        <div class="combo-section-label">Inject</div>
+                        <div class="ctrl-row" style="margin-bottom:4px">
+                            <span class="ctrl-label" style="min-width:28px">Pos</span>
+                            <input type="number" class="ctrl-input" id="inj-x" value="16" style="width:44px">
+                            <input type="number" class="ctrl-input" id="inj-y" value="16" style="width:44px">
+                            <input type="number" class="ctrl-input" id="inj-z" value="16" style="width:44px">
+                            <button class="ctrl-btn-secondary" id="btn-center" title="Center position"
+                                    style="padding:4px 6px;font-size:10px;min-width:0">Center</button>
+                            <button class="ctrl-btn-secondary" id="btn-random" title="Random position"
+                                    style="padding:4px 6px;font-size:10px;min-width:0">Rand</button>
+                        </div>
+                        <div class="ctrl-row" style="margin-bottom:4px">
+                            <span class="ctrl-label" style="min-width:28px">State</span>
+                            <div class="combo-btn-row" style="flex:1;gap:2px">
+                                <button class="ctrl-btn-secondary active" id="inj-state-pos" style="flex:1" title="Positive manifestation">+1</button>
+                                <button class="ctrl-btn-secondary" id="inj-state-neg" style="flex:1" title="Negative manifestation">&minus;1</button>
+                            </div>
+                        </div>
+                        <div class="combo-btn-row">
+                            <button class="ctrl-btn-secondary" id="btn-inject" title="Inject point particle">Particle</button>
+                            <button class="ctrl-btn-secondary" id="btn-inject-wave" title="Inject wavepacket">Wave</button>
+                            <button class="ctrl-btn-secondary" id="btn-inject-flux" title="Inject flux at position">Flux</button>
+                            <button class="ctrl-btn-secondary" id="btn-inject-pair" title="Create entangled pair">Pair</button>
+                        </div>
+
+                        <div class="combo-section-label">Parameters</div>
+                        <div class="pe-ctrl-row">
+                            <span class="pe-ctrl-label" style="min-width:50px">K<sub>B</sub></span>
+                            <input type="range" class="pe-slider" id="combo-kb" min="0.05" max="2.0" step="0.01" value="0.511">
+                            <span class="pe-ctrl-value" id="combo-kb-val">0.511</span>
+                        </div>
+                        <div class="pe-ctrl-row">
+                            <span class="pe-ctrl-label" style="min-width:50px">G<sub>N</sub></span>
+                            <input type="range" class="pe-slider" id="combo-gn" min="0.0" max="0.1" step="0.001" value="0.010">
+                            <span class="pe-ctrl-value" id="combo-gn-val">0.010</span>
+                        </div>
+                        <div class="pe-ctrl-row">
+                            <span class="pe-ctrl-label" style="min-width:50px">Damp</span>
+                            <input type="range" class="pe-slider" id="combo-damp" min="0.0" max="0.05" step="0.001" value="0.007">
+                            <span class="pe-ctrl-value" id="combo-damp-val">0.007</span>
+                        </div>
+
+                        <div class="combo-section-label">Field</div>
+                        <div class="combo-btn-row">
+                            <button class="ctrl-btn-secondary" id="btn-clear-field">Clear Field</button>
+                            <button class="ctrl-btn-secondary" id="btn-random-flux">Random Flux</button>
+                        </div>
+                    </div>
+                    <div class="card scale0-only">
+                        <div class="card-title">Quick Actions</div>
+                        <div style="display:flex;flex-direction:column;gap:6px">
+                            <button class="ctrl-btn-secondary" id="btn-enable-all">Enable All Terms</button>
+                            <button class="ctrl-btn-secondary" id="btn-disable-all">Disable All Terms</button>
+                            <button class="ctrl-btn-secondary" id="btn-clear-particles">Clear All Particles</button>
+                        </div>
+                    </div>
+                    <!-- Scale 1 PE Controls -->
+                    <div class="card scale1-only">
+                        <div class="card-title">Particle Engine Controls</div>
+                        <div class="pe-ctrl-row">
+                            <span class="pe-ctrl-label">Time Step</span>
+                            <input type="range" class="pe-slider" id="pe-dt-slider" min="0.1" max="2.0" step="0.1"
+                                value="1.0">
+                            <span class="pe-ctrl-value" id="pe-dt-value">1.0</span>
+                        </div>
+                        <div class="pe-ctrl-row">
+                            <span class="pe-ctrl-label">Softening</span>
+                            <input type="range" class="pe-slider" id="pe-soft-slider" min="0.01" max="1.0" step="0.01"
+                                value="0.10">
+                            <span class="pe-ctrl-value" id="pe-soft-value">0.10</span>
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:8px">
+                            <button class="ctrl-btn-secondary" id="btn-pe-clear">Clear &amp; Reload</button>
+                        </div>
+                    </div>
+                    <!-- Scale 2 Atom Engine Controls -->
+                    <div class="card scale-ae">
+                        <div class="card-title">Atom Engine Controls</div>
+
+                        <div class="combo-section-label">Forces</div>
+                        <div class="toggle-row">
+                            <input type="checkbox" id="ae-ionic" checked>
+                            <label for="ae-ionic" title="Coulomb force: F = -k·Q_i·Q_j / r² (attractive/repulsive between ions)">Ionic (Coulomb)</label>
+                        </div>
+                        <div class="toggle-row">
+                            <input type="checkbox" id="ae-vdw" checked>
+                            <label for="ae-vdw" title="Lennard-Jones 12-6: steric repulsion at short range, dispersion attraction at long range">Van der Waals</label>
+                        </div>
+                        <div class="toggle-row">
+                            <input type="checkbox" id="ae-bonds-force" checked>
+                            <label for="ae-bonds-force" title="Harmonic spring between bonded atoms: F = -k·(r - r_eq)">Bond Springs</label>
+                        </div>
+
+                        <div class="combo-section-label">Dynamics</div>
+                        <div class="toggle-row">
+                            <input type="checkbox" id="ae-bonding" checked>
+                            <label for="ae-bonding" title="Automatically form/break covalent bonds based on distance and valence">Auto-Bonding</label>
+                        </div>
+                        <div class="toggle-row">
+                            <input type="checkbox" id="ae-damping">
+                            <label for="ae-damping" title="Velocity damping: v *= (1 - 0.02·dt) per tick (thermostat)">Damping</label>
+                        </div>
+                        <div class="toggle-row">
+                            <input type="checkbox" id="ae-speed-limit" checked>
+                            <label for="ae-speed-limit" title="Cap atomic velocities at maximum speed (prevents numerical explosion)">Speed Limit</label>
+                        </div>
+
+                        <div class="combo-section-label">Parameters</div>
+                        <div class="pe-ctrl-row">
+                            <span class="pe-ctrl-label" title="Velocity Verlet integration time step (smaller = more accurate, slower)">Time Step</span>
+                            <input type="range" class="pe-slider" id="ae-dt-slider" min="0.01" max="0.5" step="0.01"
+                                value="0.10">
+                            <span class="pe-ctrl-value" id="ae-dt-value">0.10</span>
+                        </div>
+                        <div class="pe-ctrl-row">
+                            <span class="pe-ctrl-label" title="Force softening length: prevents singularity at r→0">Softening</span>
+                            <input type="range" class="pe-slider" id="ae-soft-slider" min="0.1" max="2.0" step="0.1"
+                                value="0.3">
+                            <span class="pe-ctrl-value" id="ae-soft-value">0.30</span>
+                        </div>
+
+                        <div style="display:flex;gap:8px;margin-top:8px">
+                            <button class="ctrl-btn-secondary" id="btn-ae-clear">Clear &amp; Reload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diagnostics -->
+            <div class="panel" id="panel-diagnostics">
+                <!-- Scale 0 diagnostics -->
+                <div class="panel-grid panel-grid-4 scale0-only">
+                    <div class="card">
+                        <div class="card-title">Manifested</div>
+                        <div class="stat-value" id="diag-manifested">0</div>
+                        <canvas class="stat-sparkline" id="spark-manifested"></canvas>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Positive / Negative</div>
+                        <div class="stat-value"><span id="diag-positive" style="color:var(--positive)">0</span> / <span
+                                id="diag-negative" style="color:var(--negative)">0</span></div>
+                        <canvas class="stat-sparkline" id="spark-charges"></canvas>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Total Flux</div>
+                        <div class="stat-value" id="diag-flux">0.0000</div>
+                        <canvas class="stat-sparkline" id="spark-flux"></canvas>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Total Energy</div>
+                        <div class="stat-value" id="diag-energy">0.0000</div>
+                        <canvas class="stat-sparkline" id="spark-energy"></canvas>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Entropy</div>
+                        <div class="stat-value" id="diag-entropy">0.0000</div>
+                        <canvas class="stat-sparkline" id="spark-entropy"></canvas>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Charge Balance</div>
+                        <div class="stat-value" id="diag-charge">0</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Spin (Up / Down)</div>
+                        <div class="stat-value"><span id="diag-spin-up">0</span> / <span id="diag-spin-down">0</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Color (R / G / B)</div>
+                        <div class="stat-value" style="font-size:16px"><span id="diag-color-r"
+                                style="color:#ef5350">0</span> / <span id="diag-color-g"
+                                style="color:var(--positive)">0</span> / <span id="diag-color-b"
+                                style="color:var(--accent)">0</span></div>
+                    </div>
+                </div>
+                <div class="panel-grid panel-grid-4 scale0-only" style="margin-top:12px">
+                    <div class="card">
+                        <div class="card-title">Field Energy</div>
+                        <div class="stat-value" id="diag-field-energy">0.0000</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Wave Energy</div>
+                        <div class="stat-value" id="diag-wave-energy">0.0000</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Coulomb PE</div>
+                        <div class="stat-value" id="diag-coulomb-pe">0.0000</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Gauss Violation</div>
+                        <div class="stat-value" id="diag-gauss-violation">0.0000</div>
+                    </div>
+                </div>
+                <!-- Scale 1 PE Telemetry Panel -->
+                <div id="pe-telemetry" class="scale1-only">
+                    <!-- Section 1: Conservation Laws (always visible) -->
+                    <div class="pe-telem-section">
+                        <div class="pe-telem-title">Conservation Laws</div>
+                        <div class="pe-conservation-row">
+                            <span class="pe-cons-label">Energy</span>
+                            <span class="pe-cons-value" id="pet-energy">0.000000</span>
+                            <span class="pe-cons-alarm" id="pet-energy-alarm"></span>
+                            <canvas class="pe-cons-spark" id="pet-spark-energy"></canvas>
+                        </div>
+                        <div class="pe-conservation-row">
+                            <span class="pe-cons-label">|p|</span>
+                            <span class="pe-cons-value" id="pet-momentum">0.000000</span>
+                            <span class="pe-cons-alarm" id="pet-momentum-alarm"></span>
+                            <canvas class="pe-cons-spark" id="pet-spark-momentum"></canvas>
+                        </div>
+                        <div class="pe-conservation-row">
+                            <span class="pe-cons-label">|L|</span>
+                            <span class="pe-cons-value" id="pet-angmom">0.000000</span>
+                            <span class="pe-cons-alarm" id="pet-angmom-alarm"></span>
+                            <canvas class="pe-cons-spark" id="pet-spark-angmom"></canvas>
+                        </div>
+                        <div class="pe-conservation-row">
+                            <span class="pe-cons-label">Drift</span>
+                            <span class="pe-cons-value" id="pet-drift">0.0000%</span>
+                            <span class="pe-cons-alarm" id="pet-drift-alarm"></span>
+                            <canvas class="pe-cons-spark" id="pet-spark-drift"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: System Properties -->
+                    <details class="pe-telem-details" open>
+                        <summary class="pe-telem-summary">System Properties</summary>
+                        <div class="panel-grid panel-grid-3" style="margin-top:8px">
+                            <div class="card"><div class="card-title">Particles</div><div class="stat-value" id="pet-count">0</div></div>
+                            <div class="card"><div class="card-title">Virial 2K/|U|</div><div class="stat-value" id="pet-virial">—</div></div>
+                            <div class="card"><div class="card-title">Temperature</div><div class="stat-value" id="pet-temp">—</div></div>
+                        </div>
+                        <div class="panel-grid panel-grid-3" style="margin-top:8px">
+                            <div class="card"><div class="card-title">RMS Velocity</div><div class="stat-value" id="pet-vrms">—</div></div>
+                            <div class="card"><div class="card-title">System Radius</div><div class="stat-value" id="pet-radius">—</div></div>
+                            <div class="card"><div class="card-title">Tick</div><div class="stat-value" id="pet-tick">0</div></div>
+                        </div>
+                        <div class="panel-grid panel-grid-3" style="margin-top:8px">
+                            <div class="card"><div class="card-title">KE</div><div class="stat-value" id="pet-ke">0.000000</div></div>
+                            <div class="card"><div class="card-title">PE</div><div class="stat-value" id="pet-pe">0.000000</div></div>
+                            <div class="card"><div class="card-title">CoM</div><div class="stat-value" id="pet-com" style="font-size:12px">—</div></div>
+                        </div>
+                        <div class="panel-grid panel-grid-2" style="margin-top:4px">
+                            <div class="card"><div class="card-title">PE (Coulomb)</div><div class="stat-value" id="pet-pe-coulomb">0.000000</div></div>
+                            <div class="card"><div class="card-title">PE (Gravity)</div><div class="stat-value" id="pet-pe-gravity">0.000000</div></div>
+                        </div>
+                    </details>
+
+                    <!-- Section 3: Per-Particle Table -->
+                    <details class="pe-telem-details">
+                        <summary class="pe-telem-summary">Per-Particle Data</summary>
+                        <div class="pe-table-wrap" style="margin-top:8px">
+                            <table class="pe-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th><th>q</th><th>m</th><th>|r|</th>
+                                        <th>|v|</th><th>|a|</th><th>|F|</th><th>KE</th><th>Lk</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pet-particle-tbody"></tbody>
+                            </table>
+                        </div>
+                    </details>
+
+                    <!-- Section 4: Orbital Mechanics (2-body) -->
+                    <details class="pe-telem-details" id="pet-orbital-section" style="display:none">
+                        <summary class="pe-telem-summary">Orbital Mechanics (2-body)</summary>
+                        <div class="panel-grid panel-grid-3" style="margin-top:8px">
+                            <div class="card"><div class="card-title">Separation r</div><div class="stat-value" id="pet-orb-r">—</div></div>
+                            <div class="card"><div class="card-title">Reduced Mass μ</div><div class="stat-value" id="pet-orb-mu">—</div></div>
+                            <div class="card"><div class="card-title">Spec. Ang. Mom h</div><div class="stat-value" id="pet-orb-h">—</div></div>
+                        </div>
+                        <div class="panel-grid panel-grid-3" style="margin-top:8px">
+                            <div class="card"><div class="card-title">Semi-major a</div><div class="stat-value" id="pet-orb-a">—</div></div>
+                            <div class="card"><div class="card-title">Eccentricity e</div><div class="stat-value" id="pet-orb-e">—</div></div>
+                            <div class="card"><div class="card-title">Period T</div><div class="stat-value" id="pet-orb-T">—</div></div>
+                        </div>
+                        <div class="panel-grid panel-grid-2" style="margin-top:8px">
+                            <div class="card"><div class="card-title">Vis-viva Check</div><div class="stat-value" id="pet-orb-visviva" style="font-size:12px">—</div></div>
+                            <div class="card"><div class="card-title">Phase Space (r, v_r)</div><canvas id="pet-phase-space" style="width:100%;height:80px"></canvas></div>
+                        </div>
+                    </details>
+
+                    <!-- Section 5: Time-Series Charts -->
+                    <details class="pe-telem-details">
+                        <summary class="pe-telem-summary">Time-Series</summary>
+                        <div style="margin-top:8px">
+                            <div class="pe-ts-label">Energy (KE <span style="color:#60a5fa">●</span> PE <span style="color:#f87171">●</span> Total <span style="color:#e5e7eb">●</span>)</div>
+                            <canvas class="pe-ts-chart" id="pet-ts-energy"></canvas>
+                            <div class="pe-ts-label">|p| <span style="color:#4ade80">●</span></div>
+                            <canvas class="pe-ts-chart" id="pet-ts-momentum"></canvas>
+                            <div class="pe-ts-label">|L| <span style="color:#a78bfa">●</span></div>
+                            <canvas class="pe-ts-chart" id="pet-ts-angmom"></canvas>
+                            <div class="pe-ts-label">Virial 2K/|U| <span style="color:#fb923c">●</span></div>
+                            <canvas class="pe-ts-chart" id="pet-ts-virial"></canvas>
+                        </div>
+                    </details>
+                </div>
+                <!-- Scale 2+3 AE diagnostics (atoms & molecules share AtomEngine) -->
+                <div class="panel-grid panel-grid-4 scale-ae">
+                    <div class="card">
+                        <div class="card-title">Atom Count</div>
+                        <div class="stat-value" id="ae-diag-count">0</div>
+                    </div>
+                    <div class="card scale3-only">
+                        <div class="card-title">Bond Count</div>
+                        <div class="stat-value" id="ae-diag-bonds">0</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Kinetic Energy</div>
+                        <div class="stat-value" id="ae-diag-ke">0.0000</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Total Energy</div>
+                        <div class="stat-value" id="ae-diag-etotal">0.0000</div>
+                    </div>
+                </div>
+                <div class="panel-grid panel-grid-4 scale-ae" style="margin-top:12px">
+                    <div class="card">
+                        <div class="card-title">PE (Ionic)</div>
+                        <div class="stat-value" id="ae-diag-pe-ionic">0.0000</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">PE (Van der Waals)</div>
+                        <div class="stat-value" id="ae-diag-pe-vdw">0.0000</div>
+                    </div>
+                    <div class="card scale3-only">
+                        <div class="card-title">PE (Bonds)</div>
+                        <div class="stat-value" id="ae-diag-pe-bond">0.0000</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Temperature</div>
+                        <div class="stat-value" id="ae-diag-temp">0.0000</div>
+                    </div>
+                </div>
+                <div class="panel-grid panel-grid-4 scale-ae" style="margin-top:12px">
+                    <div class="card">
+                        <div class="card-title">Momentum |p|</div>
+                        <div class="stat-value" id="ae-diag-momentum">0.0000</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">AE Tick</div>
+                        <div class="stat-value" id="ae-diag-tick">0</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Energy Drift</div>
+                        <div class="stat-value" id="ae-diag-drift">0.00%</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Atomic Mass</div>
+                        <div class="stat-value" id="ae-diag-mass">--</div>
+                    </div>
+                </div>
+                <!-- Nuclear physics row -->
+                <div class="panel-grid panel-grid-4 scale-ae" style="margin-top:12px">
+                    <div class="card">
+                        <div class="card-title">Nuclear B.E.</div>
+                        <div class="stat-value" id="ae-diag-nbe">--</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">B/A (MeV)</div>
+                        <div class="stat-value" id="ae-diag-ba">--</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Electron B.E.</div>
+                        <div class="stat-value" id="ae-diag-ebe">--</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Mass (K<sub>B</sub>)</div>
+                        <div class="stat-value" id="ae-diag-mass-kb">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="panel" id="panel-charts">
+                <div class="panel-grid panel-grid-2">
+                    <div class="chart-container">
+                        <div class="chart-title">Flux &amp; Energy</div>
+                        <canvas id="chart-flux-energy"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Particle Count</div>
+                        <canvas id="chart-particles"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lagrangian -->
+            <div class="panel" id="panel-lagrangian">
+                <div class="mode-unavailable scale1-only">Lagrangian diagnostics are only available in Scale 0
+                    (Substrate) mode.</div>
+                <div class="mode-unavailable scale-ae">Lagrangian diagnostics are only available in Scale 0 (Substrate)
+                    mode.</div>
+                <div class="panel-grid scale0-only" style="grid-template-columns: 2fr 1fr;">
+                    <div class="chart-container">
+                        <div class="chart-title">Lagrangian Density (Stacked)</div>
+                        <canvas id="chart-lagrangian" style="height:180px"></canvas>
+                        <div class="chart-legend">
+                            <span class="chart-legend-item" style="--color:#ef5350">Born-Infeld</span>
+                            <span class="chart-legend-item" style="--color:#fb8c00">Coupling</span>
+                            <span class="chart-legend-item" style="--color:#fdd835">Velocity</span>
+                            <span class="chart-legend-item" style="--color:#42a5f5">Gauss</span>
+                            <span class="chart-legend-item" style="--color:#78909c">Dissipation</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card" style="margin-bottom:12px">
+                            <div class="card-title">Term Toggles</div>
+                            <div class="toggle-row"><input type="checkbox" id="lt-bi" checked><label for="lt-bi"
+                                    style="color:#ef5350">Born-Infeld</label></div>
+                            <div class="toggle-row"><input type="checkbox" id="lt-coupling" checked><label
+                                    for="lt-coupling" style="color:#fb8c00">Coupling</label></div>
+                            <div class="toggle-row"><input type="checkbox" id="lt-velocity" checked><label
+                                    for="lt-velocity" style="color:#fdd835">Velocity</label></div>
+                            <div class="toggle-row"><input type="checkbox" id="lt-gauss" checked><label for="lt-gauss"
+                                    style="color:#42a5f5">Gauss</label></div>
+                            <div class="toggle-row"><input type="checkbox" id="lt-dissipation" checked><label
+                                    for="lt-dissipation" style="color:#78909c">Dissipation</label></div>
+                        </div>
+                        <div class="card" style="margin-bottom:12px">
+                            <div class="card-title">Constraints</div>
+                            <dl class="inspector-grid">
+                                <dt>Gauss ||div J - s||</dt>
+                                <dd id="lag-gauss-viol">--</dd>
+                                <dt>Max Gauss Error</dt>
+                                <dd id="lag-max-gauss">--</dd>
+                                <dt>Total |J|</dt>
+                                <dd id="lag-flux-mag">--</dd>
+                                <dt>Wave KE</dt>
+                                <dd id="lag-wave-ke">--</dd>
+                                <dt>Manifested</dt>
+                                <dd id="lag-manifested">--</dd>
+                                <dt>Locked</dt>
+                                <dd id="lag-locked">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Derived Constants</div>
+                            <table class="const-table" id="const-table">
+                                <thead>
+                                    <tr>
+                                        <th>Constant</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>G*</td>
+                                        <td id="const-gstar">2.6220576</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1/&alpha;</td>
+                                        <td id="const-alpha-inv">137.03600</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&alpha;</td>
+                                        <td id="const-alpha">0.0072974</td>
+                                    </tr>
+                                    <tr>
+                                        <td>K<sub>B</sub></td>
+                                        <td id="const-kb">0.5110000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>G<sub>N</sub></td>
+                                        <td id="const-gn">0.0100000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>g<sub>c</sub></td>
+                                        <td id="const-gc">0.0854245</td>
+                                    </tr>
+                                    <tr>
+                                        <td>N<sub>c</sub></td>
+                                        <td id="const-nc">3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>N<sub>eff</sub></td>
+                                        <td id="const-neff">13</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Particle Zoo -->
+            <div class="panel" id="panel-zoo">
+                <div style="margin-bottom:10px;display:flex;gap:8px;align-items:center">
+                    <input type="text" class="ctrl-input" id="zoo-search" placeholder="Search particles..."
+                        style="max-width:300px">
+                    <select class="tb-select" id="zoo-filter">
+                        <option value="all">All Categories</option>
+                        <option value="leptons">Leptons</option>
+                        <option value="quarks">Quarks</option>
+                        <option value="gauge_bosons">Gauge Bosons</option>
+                        <option value="scalar">Scalar Boson</option>
+                        <option value="baryons">Baryons</option>
+                        <option value="mesons">Mesons</option>
+                    </select>
+                </div>
+                <div id="zoo-table-container" style="max-height:300px;overflow-y:auto"></div>
+            </div>
+
+            <!-- Inspector -->
+            <div class="panel" id="panel-inspector">
+                <!-- Scale 0 Lattice Inspector -->
+                <div class="inspector-empty scale0-only" id="inspector-empty">
+                    Click a particle in the 3D viewport to inspect its properties
+                </div>
+                <div id="inspector-content" class="scale0-only" style="display:none">
+                    <div class="panel-grid panel-grid-3">
+                        <div class="card">
+                            <div class="card-title">Identity</div>
+                            <dl class="inspector-grid">
+                                <dt>Particle ID</dt>
+                                <dd id="insp-id">--</dd>
+                                <dt>State</dt>
+                                <dd id="insp-state">--</dd>
+                                <dt>Position</dt>
+                                <dd id="insp-pos">--</dd>
+                                <dt>Spin</dt>
+                                <dd id="insp-spin">--</dd>
+                                <dt>Color</dt>
+                                <dd id="insp-color">--</dd>
+                                <dt>Pair ID</dt>
+                                <dd id="insp-pair">--</dd>
+                                <dt>Locked</dt>
+                                <dd id="insp-locked">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Fields</div>
+                            <dl class="inspector-grid">
+                                <dt>Flux</dt>
+                                <dd id="insp-flux">--</dd>
+                                <dt>Density</dt>
+                                <dd id="insp-density">--</dd>
+                                <dt>div(J)</dt>
+                                <dd id="insp-divj">--</dd>
+                                <dt>curl(J)</dt>
+                                <dd id="insp-curl">--</dd>
+                                <dt>Velocity</dt>
+                                <dd id="insp-vel">--</dd>
+                                <dt>Speed</dt>
+                                <dd id="insp-speed">--</dd>
+                                <dt>Accel</dt>
+                                <dd id="insp-accel">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">EM Fields</div>
+                            <dl class="inspector-grid">
+                                <dt>|E|</dt>
+                                <dd id="insp-e-mag">--</dd>
+                                <dt>|B|</dt>
+                                <dd id="insp-b-mag">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Forces</div>
+                            <dl class="inspector-grid">
+                                <dt>Coulomb</dt>
+                                <dd id="insp-f-coulomb">--</dd>
+                                <dt>Gravity</dt>
+                                <dd id="insp-f-gravity">--</dd>
+                                <dt>Magnetic</dt>
+                                <dd id="insp-f-magnetic">--</dd>
+                                <dt>Strong</dt>
+                                <dd id="insp-f-strong">--</dd>
+                                <dt>Exchange</dt>
+                                <dd id="insp-f-exchange">--</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <!-- Scale 1 PE Inspector -->
+                <div class="inspector-empty scale1-only" id="pe-inspector-empty">
+                    Click a particle cloud in the 3D viewport to inspect it
+                </div>
+                <div id="pe-inspector-content" class="scale1-only" style="display:none">
+                    <div class="panel-grid panel-grid-3">
+                        <div class="card">
+                            <div class="card-title">Identity</div>
+                            <div class="pe-insp-header">
+                                <span class="pe-insp-catalog-dot" id="pe-insp-dot"></span>
+                                <span class="pe-insp-name" id="pe-insp-name">--</span>
+                                <span class="pe-insp-symbol" id="pe-insp-symbol">--</span>
+                            </div>
+                            <dl class="inspector-grid">
+                                <dt>Engine ID</dt>
+                                <dd id="pe-insp-id">--</dd>
+                                <dt>Catalog</dt>
+                                <dd id="pe-insp-catalog">--</dd>
+                                <dt>Mass</dt>
+                                <dd id="pe-insp-mass">--</dd>
+                                <dt>Charge</dt>
+                                <dd id="pe-insp-charge">--</dd>
+                                <dt>Locked</dt>
+                                <dd id="pe-insp-locked">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Dynamics</div>
+                            <dl class="inspector-grid">
+                                <dt>Position</dt>
+                                <dd id="pe-insp-pos">--</dd>
+                                <dt>Velocity</dt>
+                                <dd id="pe-insp-vel">--</dd>
+                                <dt>Speed</dt>
+                                <dd id="pe-insp-speed">--</dd>
+                                <dt>KE</dt>
+                                <dd id="pe-insp-ke">--</dd>
+                                <dt>Orbital r</dt>
+                                <dd id="pe-insp-orbital">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Interactions</div>
+                            <dl class="inspector-grid">
+                                <dt>Nearest</dt>
+                                <dd id="pe-insp-nearest">--</dd>
+                                <dt>Distance</dt>
+                                <dd id="pe-insp-dist">--</dd>
+                                <dt>Coulomb |F|</dt>
+                                <dd id="pe-insp-fc">--</dd>
+                                <dt>Net |F|</dt>
+                                <dd id="pe-insp-fnet">--</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <!-- Scale 2+3 AE Inspector -->
+                <!-- Scenario Info (for non-molecule scenarios: single elements, crystal, periodic table) -->
+                <div class="scale-ae" id="ae-scenario-info" style="display:none">
+                    <div class="card" style="margin-bottom:12px">
+                        <div class="card-title" id="ae-scenario-title">--</div>
+                        <div style="color:var(--text-muted);font-size:11px;margin-bottom:6px" id="ae-scenario-desc">--
+                        </div>
+                        <dl class="inspector-grid" id="ae-scenario-fields">
+                            <!-- Populated dynamically -->
+                        </dl>
+                    </div>
+                </div>
+                <!-- Molecule Info (Scale 3 only) -->
+                <div class="scale3-only" id="ae-mol-info" style="display:none">
+                    <div class="card" style="margin-bottom:12px">
+                        <div class="card-title" id="ae-mol-title">Molecule</div>
+                        <div style="color:var(--text-muted);font-size:11px;margin-bottom:6px" id="ae-mol-desc">--</div>
+                        <dl class="inspector-grid">
+                            <dt>Formula</dt>
+                            <dd id="ae-mol-formula">--</dd>
+                            <dt>Category</dt>
+                            <dd id="ae-mol-category">--</dd>
+                            <dt>Atoms</dt>
+                            <dd id="ae-mol-atom-count">--</dd>
+                            <dt>Composition</dt>
+                            <dd id="ae-mol-composition">--</dd>
+                            <dt>Bonds</dt>
+                            <dd id="ae-mol-bond-count">--</dd>
+                            <dt>Total Mass</dt>
+                            <dd id="ae-mol-mass">--</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Atom click-to-inspect -->
+                <div class="inspector-empty scale-ae" id="ae-inspector-empty">
+                    Click an atom in the 3D viewport to inspect its properties
+                </div>
+                <div id="ae-inspector-content" class="scale-ae" style="display:none">
+                    <div class="panel-grid panel-grid-3">
+                        <div class="card">
+                            <div class="card-title">Element</div>
+                            <div class="pe-insp-header">
+                                <span class="pe-insp-catalog-dot" id="ae-insp-dot"></span>
+                                <span class="pe-insp-name" id="ae-insp-name">--</span>
+                                <span class="pe-insp-symbol" id="ae-insp-symbol">--</span>
+                            </div>
+                            <dl class="inspector-grid">
+                                <dt>Atom ID</dt>
+                                <dd id="ae-insp-id">--</dd>
+                                <dt>Z</dt>
+                                <dd id="ae-insp-z">--</dd>
+                                <dt>Charge</dt>
+                                <dd id="ae-insp-charge">--</dd>
+                                <dt>Mass</dt>
+                                <dd id="ae-insp-mass">--</dd>
+                                <dt>Locked</dt>
+                                <dd id="ae-insp-locked">--</dd>
+                                <dt>N (neutrons)</dt>
+                                <dd id="ae-insp-n">--</dd>
+                                <dt>A (mass #)</dt>
+                                <dd id="ae-insp-a">--</dd>
+                                <dt>Max Bonds</dt>
+                                <dd id="ae-insp-maxbonds">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Dynamics</div>
+                            <dl class="inspector-grid">
+                                <dt>Position</dt>
+                                <dd id="ae-insp-pos">--</dd>
+                                <dt>Velocity</dt>
+                                <dd id="ae-insp-vel">--</dd>
+                                <dt>Speed</dt>
+                                <dd id="ae-insp-speed">--</dd>
+                                <dt>KE</dt>
+                                <dd id="ae-insp-ke">--</dd>
+                                <dt>Net |F|</dt>
+                                <dd id="ae-insp-fnet">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Neighbors</div>
+                            <dl class="inspector-grid scale3-only" id="ae-insp-bonds" style="max-height:140px;overflow-y:auto">
+                                <!-- Bond list populated dynamically (Scale 3 only) -->
+                            </dl>
+                            <div style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px">
+                                <dl class="inspector-grid">
+                                    <dt>Nearest</dt>
+                                    <dd id="ae-insp-nearest">--</dd>
+                                    <dt>Distance</dt>
+                                    <dd id="ae-insp-nearest-dist">--</dd>
+                                </dl>
+                            </div>
+                            <div style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px">
+                                <dl class="inspector-grid">
+                                    <dt>vdW &#963;</dt>
+                                    <dd id="ae-insp-sigma">--</dd>
+                                    <dt>vdW &#949;</dt>
+                                    <dd id="ae-insp-epsilon">--</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ontic Observatory (Phase 1) -->
+            <div class="panel" id="panel-ontic">
+                <div class="panel-grid panel-grid-2">
+                    <div class="card" id="ontic-fc-card">
+                        <div class="card-title">(f, C₀) Ordered Pair</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading observatory...</div>
+                    </div>
+                    <div class="card" id="ontic-observer-card">
+                        <div class="card-title">Observer Panel</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading...</div>
+                    </div>
+                    <div class="card" id="ontic-hierarchy-card">
+                        <div class="card-title">Aggregation Hierarchy</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading...</div>
+                    </div>
+                    <div class="card" id="ontic-info-card">
+                        <div class="card-title">Information Dynamics</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Physics Fidelity (Phase 2) -->
+            <div class="panel" id="panel-physics">
+                <div class="panel-grid panel-grid-2">
+                    <div class="card" id="physics-energy-levels">
+                        <div class="card-title">Energy Levels</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading spectroscopy...</div>
+                    </div>
+                    <div class="card" id="physics-cross-sections">
+                        <div class="card-title">Cross-Sections</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading...</div>
+                    </div>
+                    <div class="card" id="physics-decay-rates">
+                        <div class="card-title">Decay Rates</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading...</div>
+                    </div>
+                    <div class="card" id="physics-constants">
+                        <div class="card-title">Ontic Chain Constants</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading...</div>
+                    </div>
+                </div>
+                <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+                    <label style="font-size:11px;color:var(--text-secondary)">Z (atomic number):</label>
+                    <input type="range" id="physics-z-slider" min="1" max="92" step="1" value="1" style="width:200px">
+                    <span id="physics-z-value" style="font-size:12px;color:var(--accent);min-width:30px">Z=1</span>
+                </div>
+            </div>
+
+            <!-- Aggregation Hierarchy (Phase 3) -->
+            <div class="panel" id="panel-hierarchy">
+                <div class="panel-grid panel-grid-3">
+                    <div class="card" id="hierarchy-tower">
+                        <div class="card-title">Aggregation Levels</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading...</div>
+                    </div>
+                    <div class="card" id="hierarchy-bridge">
+                        <div class="card-title">Scale Bridge</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading...</div>
+                    </div>
+                    <div class="card" id="hierarchy-emergence">
+                        <div class="card-title">Emergence Monitor</div>
+                        <div style="color:var(--text-muted);font-size:11px">Loading...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel" id="panel-consciousness">
+                <!-- Row 1: Theory Constants -->
+                <div class="panel-grid panel-grid-4">
+                    <div class="card" title="Consciousness phase angle: arctan(Y_IMAG / Y_REAL) = 52.54°. Divides subject-dominant (above) from object-dominant (below) awareness.">
+                        <div class="card-title">&theta;<sub>C</sub> (Theory)</div>
+                        <div class="stat-value" id="cs-diag-theta" style="color:var(--consciousness-primary)">52.54&deg;</div>
+                    </div>
+                    <div class="card" title="cos²(θ_C) = G*/8 ≈ 37%. The fraction of reality accessible to a conscious observer — 63% remains hidden.">
+                        <div class="card-title">Observable Fraction</div>
+                        <div class="stat-value" id="cs-diag-observable" style="color:var(--consciousness-primary)">37.0%</div>
+                    </div>
+                    <div class="card" title="√(G*³/2) ≈ 3.599. Flux intensity must exceed K_C for the consciousness quadratic to produce complex (conscious) roots.">
+                        <div class="card-title">K<sub>C</sub> Threshold</div>
+                        <div class="stat-value" id="cs-diag-kc" style="color:var(--consciousness-secondary)">3.599</div>
+                    </div>
+                    <div class="card" title="Self-referential loop depth. 0 = none, 1 = observer observes itself (standing wave), 2 = aware of self-awareness (nested standing waves).">
+                        <div class="card-title">sLoop Depth</div>
+                        <div class="stat-value" id="cs-diag-sloop">0</div>
+                    </div>
+                </div>
+                <!-- Row 2: Dynamic Measurements -->
+                <div class="panel-grid panel-grid-4" style="margin-top:12px">
+                    <div class="card" title="Measured phase angle from wave/field energy ratio. Below 52.54° = object-dominant (flow). Above = subject-dominant (meditation).">
+                        <div class="card-title">Effective &theta;</div>
+                        <div class="stat-value" id="cs-diag-eff-theta">--</div>
+                    </div>
+                    <div class="card" title="Peak flux as ratio of consciousness threshold K_C ≈ 3.599. Below 1.0 = sub-threshold. Above 1.0 = consciousness possible.">
+                        <div class="card-title">Flux / K<sub>C</sub></div>
+                        <div class="stat-value" id="cs-diag-flux-ratio">0.000</div>
+                    </div>
+                    <div class="card" title="Quadratic domain: Real (k=16) = physics, Degenerate (k≈1.35) = measurement boundary, Complex (k=½) = consciousness with imaginary roots.">
+                        <div class="card-title">Domain</div>
+                        <div class="stat-value" id="cs-diag-domain" style="font-size:11px">--</div>
+                    </div>
+                    <div class="card" title="Bell inequality parameter. Substrate S ≤ 2 (local deterministic). Entangled observer S = 2√2 via complexification + sLoop coupling.">
+                        <div class="card-title">Bell S</div>
+                        <div class="stat-value" id="cs-diag-bell">--</div>
+                    </div>
+                </div>
+                <!-- Row 3: Consciousness Metrics -->
+                <div class="panel-grid panel-grid-4" style="margin-top:12px">
+                    <div class="card" title="Real part of consciousness quadratic root, scaled by flux ratio. Theory value Y_REAL = G*²/4 ≈ 2.189.">
+                        <div class="card-title">y (Real)</div>
+                        <div class="stat-value" id="cs-diag-yreal">0.000</div>
+                    </div>
+                    <div class="card" title="Imaginary part of consciousness quadratic root, scaled by flux ratio. Theory value Y_IMAG ≈ 2.863. Non-zero = consciousness.">
+                        <div class="card-title">y (Imaginary)</div>
+                        <div class="stat-value" id="cs-diag-yimag">0.000i</div>
+                    </div>
+                    <div class="card" title="Intensity: |y_eff| − K_C. Positive (green) = above consciousness threshold. Negative (red) = sub-threshold.">
+                        <div class="card-title">Consciousness I</div>
+                        <div class="stat-value" id="cs-diag-intensity">--</div>
+                    </div>
+                    <div class="card" title="Mandelbrot iteration at c = 1/G* ≈ 0.338. Boundary-orbit tracks z → z² + c per frame. Bounded |z| < 2 = on Mandelbrot boundary.">
+                        <div class="card-title">Mandelbrot |z|</div>
+                        <div class="stat-value" id="cs-diag-mandelbrot">c=0.338</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Toast Notifications ─────────────────── -->
+        <div id="toast-container"></div>
+
+        <!-- ── Status Bar ───────────────────────────── -->
+        <div id="status-bar">
+            <div class="status-item">
+                <div class="status-dot idle" id="status-dot"></div>
+                <span id="status-state">Idle</span>
+            </div>
+            <div class="status-item">Tick: <span class="status-value" id="status-tick">0</span></div>
+            <div class="status-item" id="status-time-item">T: <span class="status-value" id="status-ptime">0</span>
+            </div>
+            <div class="status-item">Particles: <span class="status-value" id="status-particles">0</span></div>
+            <div class="status-item">Energy: <span class="status-value" id="status-energy">0.0000</span></div>
+            <div class="status-item" style="margin-left:auto">
+                <span class="status-value" id="status-fps">--</span> fps
+            </div>
+            <div class="status-item">
+                <span id="status-engine" style="color:var(--warning)">Mock Engine</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Application Scripts ──────────────────────── -->
+    <script type="module" src="js/app.js?v=20260305e"></script>
+</body>
+
+</html>

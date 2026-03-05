@@ -27,7 +27,7 @@
 
 ### For Manuscript Changes
 - [ ] Figures have alt text for accessibility
-- [ ] Mathematical notation is consistent with SYMBOL_GLOSSARY.md
+- [ ] Mathematical notation is consistent with [docs/reference/REF_SYMBOL_GLOSSARY.md](docs/reference/REF_SYMBOL_GLOSSARY.md)
 - [ ] Cross-references and citations are valid
 - [ ] Quarto build succeeds locally
 

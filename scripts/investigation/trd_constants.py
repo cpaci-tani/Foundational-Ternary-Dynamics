@@ -1,7 +1,7 @@
 """
 TRD Constants - Canonical Reference
 ====================================
-Version: 5.0 (Theory of Everything Complete)
+Version: 5.24 (Discrete Substrate Framework)
 Last Updated: January 2026
 
 This file contains all fundamental constants, derived values, and
@@ -28,7 +28,7 @@ from typing import Dict, Any
 # =============================================================================
 
 TRD_VERSION = "5.0"
-TRD_STATUS = "Theory of Everything Complete"
+TRD_STATUS = "Discrete Substrate Framework"
 TRD_DATE = "January 2026"
 
 # =============================================================================
@@ -341,7 +341,7 @@ def print_summary():
     print("""
 ======================================================================
               TRD CONSTANTS - VERSION 5.0
-              Theory of Everything Complete
+              Discrete Substrate Framework
 ======================================================================
 
   FRAMEWORK INTEGERS

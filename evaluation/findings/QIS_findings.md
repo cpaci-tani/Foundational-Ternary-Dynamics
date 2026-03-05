@@ -7,9 +7,9 @@
   - `manuscript/src/chapters/2.4-quantum-phenomena.qmd`
   - `manuscript/src/chapters/12.5-consciousness-as-self-reference.qmd`
   - `manuscript/src/chapters/14.7-sloop-formalization.qmd`
-  - CLAUDE.md (main framework documentation)
-  - FTD_REFERENCE.md
-  - CLAIMS_MATRIX.md
+  - SPEC_CLAUDE.md (main framework documentation)
+  - SPEC_FTD_REFERENCE.md
+  - REF_CLAIMS_MATRIX.md
 
 ---
 
@@ -40,7 +40,7 @@ The documents are notably careful about epistemic status, distinguishing between
 The treatment of two-particle systems via tensor product H_2 = H_FTD x H_FTD is standard and correct. The singlet state formulation follows quantum mechanical conventions.
 
 ### S5: Acknowledgment of Simulation vs Theory Distinction
-The CLAIMS_MATRIX.md explicitly notes that "simple simulation shows classical S <= 2; quantum violation S ~ 2.83 is a theoretical prediction requiring full Hilbert space implementation." This honest acknowledgment of current limitations is appropriate.
+The REF_CLAIMS_MATRIX.md explicitly notes that "simple simulation shows classical S <= 2; quantum violation S ~ 2.83 is a theoretical prediction requiring full Hilbert space implementation." This honest acknowledgment of current limitations is appropriate.
 
 ---
 
@@ -78,7 +78,7 @@ The four "independent" Born rule derivations are not as independent as claimed:
 4. The maximum entropy argument requires specifying the constraint structure
 
 ### W6: Consciousness Extensions Are Not Falsifiable
-The extension to consciousness via "complex roots" (y = 2.19 +/- 1.30i) is numerology without predictive content. The claims about "consciousness as oscillatory awareness" are not connected to any measurable quantity.
+The extension to consciousness via "complex roots" (y = 2.19 +/- 2.86i) is numerology without predictive content. The claims about "consciousness as oscillatory awareness" are not connected to any measurable quantity.
 
 ### W7: No Treatment of Quantum Computing Primitives
 The framework does not address:

@@ -1,0 +1,41 @@
+FTD Topological Cavitation Test Results
+============================================================
+Dataset: CMS Run2016G MET NanoAOD (record 30526)
+Total events processed: 26,974,131
+Events selected: 4,571,674
+Selection: MET > 100 GeV, nSV > 0, 0.01 < max(SV_dxy) < 100 cm
+
+CORRELATION TESTS
+----------------------------------------
+Spearman rho(sqrt(MET), R_cav) = 0.0001 (full)
+Spearman rho(MET, R_cav)       = 0.0001 (full)
+Spearman rho (outer R>2.9)     = 0.0521
+Spearman rho (inner R<2.9)     = -0.0389
+
+FUNCTIONAL FITS
+----------------------------------------
+Log-log power law exponent     = 0.0252 (FTD: 0.5)
+95th-pct quantile exponent (sqrt space) = 0.553
+
+TAIL EXCESS (vs single exponential)
+----------------------------------------
+R > 5 cm:  obs/exp ~ 1.5x (all energy bins)
+R > 8 cm:  obs/exp ~ 3-15x (energy-dependent)
+R > 20 cm: obs/exp ~ 20-200x (strongly energy-dependent)
+
+CONDITIONAL TAIL PROBABILITY
+----------------------------------------
+P(R > 2 cm | MET) ~ MET^0.063 (rho=0.997)
+P(R > 5 cm | MET) ~ MET^0.158 (rho=0.999)
+P(R > 10 cm | MET) ~ MET^0.219 (rho=0.998)
+
+VERDICT
+----------------------------------------
+INCONCLUSIVE but INTERESTING.
+Data is SM-dominated, but tail shows structure:
+ - Massive excess over exponential BG at large R
+ - Tail probability grows as power law in MET
+ - Outer tracker shows positive sqrt(MET)-R correlation
+ - These could be SM (KS/Lambda, nuclear interactions)
+   or something more exotic.
+Proper test requires MC subtraction + b-hadron veto.

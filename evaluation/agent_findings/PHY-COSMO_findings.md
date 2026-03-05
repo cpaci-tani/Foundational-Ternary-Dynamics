@@ -58,11 +58,11 @@ FTD makes ambitious cosmological claims spanning inflation observables, baryogen
 - **Cannot fully solve horizon problem as stated**
 - Shortfall not acknowledged in manuscript
 
-### W2: Multiple Conflicting r Formulas [MAJOR]
-- Chapter 10.4: r = 0.0033 (Starobinsky)
+### W2: Multiple Conflicting r Formulas [RESOLVED v5.29]
+- Chapter 10.4: r = 0.0033 (Starobinsky model, different formula)
 - cosmology.py: r = 0.022
-- verify_cosmology.py: r = 0.007
-- Internal inconsistency; unclear which is correct
+- verify_cosmology.py: r = 0.022 (corrected v5.29)
+- Standardized on r = 0.022 from 4α(N_c/N_base); Starobinsky value from different derivation path
 
 ### W3: Baryogenesis Assumptions Unjustified [MAJOR]
 - First-order EW transition assumed, not proven

@@ -1,0 +1,1172 @@
+/**
+ * GPU kernels for Phase 1 (Read) and Phase 2 (Write) of the FTD tick cycle.
+ *
+ * Phase Read: Isotropic 18-point Laplacian stencil + state-flux coupling
+ * Phase Write: Leapfrog integration, damping, near-particle mask,
+ *              genesis (stochastic manifestation), evaporation
+ */
+
+#include "ftd/gpu_buffers.h"
+#include "ftd/constants.h"
+#include <cuda_runtime.h>
+#include <cmath>
+
+namespace ftd {
+namespace gpu {
+namespace kernels {
+
+// ---------- Device helpers ----------
+
+__device__ __forceinline__
+int wrap(int x, int L) {
+    return ((x % L) + L) % L;
+}
+
+__device__ __forceinline__
+int idx3d(int x, int y, int z, int L) {
+    return wrap(z, L) * L * L + wrap(y, L) * L + wrap(x, L);
+}
+
+// ---------- Phase Read Kernel ----------
+// Computes delta_j = C_WAVE^2 * Laplacian(flux) + G_C * gradient(state)
+//                   + G_C * curl(state * velocity)
+
+__global__ void phase_read_kernel(
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    const int8_t* __restrict__ state,
+    const double* __restrict__ vel_x,
+    const double* __restrict__ vel_y,
+    const double* __restrict__ vel_z,
+    double* __restrict__ djx,
+    double* __restrict__ djy,
+    double* __restrict__ djz,
+    int L,
+    bool do_wave,
+    bool do_coupling
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+
+    double dx = 0.0, dy = 0.0, dz = 0.0;
+
+    if (do_wave) {
+        // Isotropic 18-point Laplacian: (1/3)*sum_face + (1/6)*sum_edge - 4*center
+        // Cancels O(k^4) anisotropy of the 6-point stencil.
+        // 6 face neighbors
+        int xp = idx3d(x+1, y, z, L);
+        int xm = idx3d(x-1, y, z, L);
+        int yp = idx3d(x, y+1, z, L);
+        int ym = idx3d(x, y-1, z, L);
+        int zp = idx3d(x, y, z+1, L);
+        int zm = idx3d(x, y, z-1, L);
+        // 12 edge neighbors (exactly 2 coords differ by ±1)
+        int xy_pp = idx3d(x+1,y+1,z,L), xy_pm = idx3d(x+1,y-1,z,L);
+        int xy_mp = idx3d(x-1,y+1,z,L), xy_mm = idx3d(x-1,y-1,z,L);
+        int xz_pp = idx3d(x+1,y,z+1,L), xz_pm = idx3d(x+1,y,z-1,L);
+        int xz_mp = idx3d(x-1,y,z+1,L), xz_mm = idx3d(x-1,y,z-1,L);
+        int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
+        int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
+
+        constexpr double WF = 1.0/3.0;   // face weight
+        constexpr double WE = 1.0/6.0;   // edge weight
+
+        double face_x = flux_x[xp] + flux_x[xm] + flux_x[yp] + flux_x[ym]
+                       + flux_x[zp] + flux_x[zm];
+        double edge_x = flux_x[xy_pp] + flux_x[xy_pm] + flux_x[xy_mp] + flux_x[xy_mm]
+                      + flux_x[xz_pp] + flux_x[xz_pm] + flux_x[xz_mp] + flux_x[xz_mm]
+                      + flux_x[yz_pp] + flux_x[yz_pm] + flux_x[yz_mp] + flux_x[yz_mm];
+        double lap_x = WF * face_x + WE * edge_x - 4.0 * flux_x[i];
+
+        double face_y = flux_y[xp] + flux_y[xm] + flux_y[yp] + flux_y[ym]
+                       + flux_y[zp] + flux_y[zm];
+        double edge_y = flux_y[xy_pp] + flux_y[xy_pm] + flux_y[xy_mp] + flux_y[xy_mm]
+                      + flux_y[xz_pp] + flux_y[xz_pm] + flux_y[xz_mp] + flux_y[xz_mm]
+                      + flux_y[yz_pp] + flux_y[yz_pm] + flux_y[yz_mp] + flux_y[yz_mm];
+        double lap_y = WF * face_y + WE * edge_y - 4.0 * flux_y[i];
+
+        double face_z = flux_z[xp] + flux_z[xm] + flux_z[yp] + flux_z[ym]
+                       + flux_z[zp] + flux_z[zm];
+        double edge_z = flux_z[xy_pp] + flux_z[xy_pm] + flux_z[xy_mp] + flux_z[xy_mm]
+                      + flux_z[xz_pp] + flux_z[xz_pm] + flux_z[xz_mp] + flux_z[xz_mm]
+                      + flux_z[yz_pp] + flux_z[yz_pm] + flux_z[yz_mp] + flux_z[yz_mm];
+        double lap_z = WF * face_z + WE * edge_z - 4.0 * flux_z[i];
+
+        constexpr double cw2 = C_WAVE * C_WAVE;
+        dx += cw2 * lap_x;
+        dy += cw2 * lap_y;
+        dz += cw2 * lap_z;
+    }
+
+    if (do_coupling) {
+        // Gradient of state: g_c * ∇(s)
+        int xp = idx3d(x+1, y, z, L);
+        int xm = idx3d(x-1, y, z, L);
+        int yp = idx3d(x, y+1, z, L);
+        int ym = idx3d(x, y-1, z, L);
+        int zp = idx3d(x, y, z+1, L);
+        int zm = idx3d(x, y, z-1, L);
+
+        double gs_x = 0.5 * (static_cast<double>(state[xp]) - static_cast<double>(state[xm]));
+        double gs_y = 0.5 * (static_cast<double>(state[yp]) - static_cast<double>(state[ym]));
+        double gs_z = 0.5 * (static_cast<double>(state[zp]) - static_cast<double>(state[zm]));
+
+        dx += G_C * gs_x;
+        dy += G_C * gs_y;
+        dz += G_C * gs_z;
+
+        // Curl of (state * velocity): g_c * ∇×(s·v)
+        // (∇×F)_x = dFz/dy - dFy/dz, etc.
+        // F_i = state * velocity_i at each site
+        auto sv = [&](int idx_j, int comp) -> double {
+            double s = static_cast<double>(state[idx_j]);
+            if (comp == 0) return s * vel_x[idx_j];
+            if (comp == 1) return s * vel_y[idx_j];
+            return s * vel_z[idx_j];
+        };
+
+        double curl_x = 0.5 * (sv(yp, 2) - sv(ym, 2)) - 0.5 * (sv(zp, 1) - sv(zm, 1));
+        double curl_y = 0.5 * (sv(zp, 0) - sv(zm, 0)) - 0.5 * (sv(xp, 2) - sv(xm, 2));
+        double curl_z = 0.5 * (sv(xp, 1) - sv(xm, 1)) - 0.5 * (sv(yp, 0) - sv(ym, 0));
+
+        dx += G_C * curl_x;
+        dy += G_C * curl_y;
+        dz += G_C * curl_z;
+    }
+
+    djx[i] = dx;
+    djy[i] = dy;
+    djz[i] = dz;
+}
+
+// ---------- Near-Particle Mask + Larmor Accel Kernel ----------
+// Computes near_particle mask and, when do_larmor=true, also propagates
+// the max accel_mag of nearby particles to each near-particle site.
+
+__global__ void compute_near_particle_kernel(
+    const int8_t* __restrict__ state,
+    const double* __restrict__ accel_mag,
+    uint8_t* __restrict__ near_particle,
+    double* __restrict__ near_accel,
+    bool do_larmor,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+
+    // Check self and 6 face neighbors for particles
+    int nbrs[6] = {
+        idx3d(x+1,y,z,L), idx3d(x-1,y,z,L),
+        idx3d(x,y+1,z,L), idx3d(x,y-1,z,L),
+        idx3d(x,y,z+1,L), idx3d(x,y,z-1,L)
+    };
+
+    bool near = (state[i] != 0);
+    double max_a = 0.0;
+
+    if (near && do_larmor) {
+        max_a = accel_mag[i];
+    }
+
+    for (int n = 0; n < 6; ++n) {
+        int j = nbrs[n];
+        if (state[j] != 0) {
+            near = true;
+            if (do_larmor) {
+                double a = accel_mag[j];
+                if (a > max_a) max_a = a;
+            }
+        }
+    }
+
+    near_particle[i] = near ? 1 : 0;
+    if (do_larmor) {
+        near_accel[i] = max_a;
+    }
+}
+
+// ---------- Phase Write Kernel ----------
+// Leapfrog integration + conditional damping (with optional Larmor modulation)
+
+__global__ void phase_write_kernel(
+    double* __restrict__ flux_x,
+    double* __restrict__ flux_y,
+    double* __restrict__ flux_z,
+    double* __restrict__ wv_x,
+    double* __restrict__ wv_y,
+    double* __restrict__ wv_z,
+    const double* __restrict__ djx,
+    const double* __restrict__ djy,
+    const double* __restrict__ djz,
+    const uint8_t* __restrict__ near_particle,
+    const double* __restrict__ near_accel,
+    bool do_damping,
+    bool selective_damping,
+    bool do_larmor,
+    double damp,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+
+    // Leapfrog: wave_vel += delta_j; flux += wave_vel
+    wv_x[i] += djx[i];
+    wv_y[i] += djy[i];
+    wv_z[i] += djz[i];
+
+    flux_x[i] += wv_x[i];
+    flux_y[i] += wv_y[i];
+    flux_z[i] += wv_z[i];
+
+    // Conditional damping
+    if (do_damping) {
+        bool should_damp = !selective_damping || (near_particle[i] != 0);
+        if (should_damp) {
+            double eff_damp = damp;
+            // Larmor radiation: modulate damping at near-particle sites
+            if (do_larmor && selective_damping && near_particle[i]) {
+                double a2 = near_accel[i] * near_accel[i];
+                double larmor_mod = fmin(1.0, LARMOR_FLOOR + K_LARMOR * a2);
+                eff_damp = 1.0 - DAMPING * larmor_mod;
+            }
+            flux_x[i] *= eff_damp;
+            flux_y[i] *= eff_damp;
+            flux_z[i] *= eff_damp;
+            wv_x[i] *= eff_damp;
+            wv_y[i] *= eff_damp;
+            wv_z[i] *= eff_damp;
+        }
+    }
+}
+
+// ---------- Fused Wave Update Kernel (phase_read + phase_write) ----------
+// Computes Laplacian + coupling in registers and immediately applies leapfrog,
+// eliminating the intermediate delta_j global memory round-trip.
+// Single-substrate only; dual-substrate uses separate read/write kernels.
+
+__global__ void wave_update_kernel(
+    double* __restrict__ flux_x,
+    double* __restrict__ flux_y,
+    double* __restrict__ flux_z,
+    double* __restrict__ wv_x,
+    double* __restrict__ wv_y,
+    double* __restrict__ wv_z,
+    const int8_t* __restrict__ state,
+    const double* __restrict__ vel_x,
+    const double* __restrict__ vel_y,
+    const double* __restrict__ vel_z,
+    const uint8_t* __restrict__ near_particle,
+    const double* __restrict__ near_accel,
+    bool do_wave,
+    bool do_coupling,
+    bool do_damping,
+    bool selective_damping,
+    bool do_larmor,
+    double damp,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+
+    // --- Phase Read: compute delta_j in registers ---
+    double djx = 0.0, djy = 0.0, djz = 0.0;
+
+    // Neighbor indices (shared between wave and coupling)
+    int xp = idx3d(x+1, y, z, L);
+    int xm = idx3d(x-1, y, z, L);
+    int yp = idx3d(x, y+1, z, L);
+    int ym = idx3d(x, y-1, z, L);
+    int zp = idx3d(x, y, z+1, L);
+    int zm = idx3d(x, y, z-1, L);
+
+    if (do_wave) {
+        // 12 edge neighbors
+        int xy_pp = idx3d(x+1,y+1,z,L), xy_pm = idx3d(x+1,y-1,z,L);
+        int xy_mp = idx3d(x-1,y+1,z,L), xy_mm = idx3d(x-1,y-1,z,L);
+        int xz_pp = idx3d(x+1,y,z+1,L), xz_pm = idx3d(x+1,y,z-1,L);
+        int xz_mp = idx3d(x-1,y,z+1,L), xz_mm = idx3d(x-1,y,z-1,L);
+        int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
+        int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
+
+        constexpr double WF = 1.0/3.0;
+        constexpr double WE = 1.0/6.0;
+        constexpr double cw2 = C_WAVE * C_WAVE;
+
+        double face_x = flux_x[xp] + flux_x[xm] + flux_x[yp] + flux_x[ym]
+                       + flux_x[zp] + flux_x[zm];
+        double edge_x = flux_x[xy_pp] + flux_x[xy_pm] + flux_x[xy_mp] + flux_x[xy_mm]
+                      + flux_x[xz_pp] + flux_x[xz_pm] + flux_x[xz_mp] + flux_x[xz_mm]
+                      + flux_x[yz_pp] + flux_x[yz_pm] + flux_x[yz_mp] + flux_x[yz_mm];
+        djx += cw2 * (WF * face_x + WE * edge_x - 4.0 * flux_x[i]);
+
+        double face_y = flux_y[xp] + flux_y[xm] + flux_y[yp] + flux_y[ym]
+                       + flux_y[zp] + flux_y[zm];
+        double edge_y = flux_y[xy_pp] + flux_y[xy_pm] + flux_y[xy_mp] + flux_y[xy_mm]
+                      + flux_y[xz_pp] + flux_y[xz_pm] + flux_y[xz_mp] + flux_y[xz_mm]
+                      + flux_y[yz_pp] + flux_y[yz_pm] + flux_y[yz_mp] + flux_y[yz_mm];
+        djy += cw2 * (WF * face_y + WE * edge_y - 4.0 * flux_y[i]);
+
+        double face_z = flux_z[xp] + flux_z[xm] + flux_z[yp] + flux_z[ym]
+                       + flux_z[zp] + flux_z[zm];
+        double edge_z = flux_z[xy_pp] + flux_z[xy_pm] + flux_z[xy_mp] + flux_z[xy_mm]
+                      + flux_z[xz_pp] + flux_z[xz_pm] + flux_z[xz_mp] + flux_z[xz_mm]
+                      + flux_z[yz_pp] + flux_z[yz_pm] + flux_z[yz_mp] + flux_z[yz_mm];
+        djz += cw2 * (WF * face_z + WE * edge_z - 4.0 * flux_z[i]);
+    }
+
+    if (do_coupling) {
+        double gs_x = 0.5 * (static_cast<double>(state[xp]) - static_cast<double>(state[xm]));
+        double gs_y = 0.5 * (static_cast<double>(state[yp]) - static_cast<double>(state[ym]));
+        double gs_z = 0.5 * (static_cast<double>(state[zp]) - static_cast<double>(state[zm]));
+
+        djx += G_C * gs_x;
+        djy += G_C * gs_y;
+        djz += G_C * gs_z;
+
+        auto sv = [&](int idx_j, int comp) -> double {
+            double s = static_cast<double>(state[idx_j]);
+            if (comp == 0) return s * vel_x[idx_j];
+            if (comp == 1) return s * vel_y[idx_j];
+            return s * vel_z[idx_j];
+        };
+
+        double curl_x = 0.5 * (sv(yp, 2) - sv(ym, 2)) - 0.5 * (sv(zp, 1) - sv(zm, 1));
+        double curl_y = 0.5 * (sv(zp, 0) - sv(zm, 0)) - 0.5 * (sv(xp, 2) - sv(xm, 2));
+        double curl_z = 0.5 * (sv(xp, 1) - sv(xm, 1)) - 0.5 * (sv(yp, 0) - sv(ym, 0));
+
+        djx += G_C * curl_x;
+        djy += G_C * curl_y;
+        djz += G_C * curl_z;
+    }
+
+    // --- Phase Write: leapfrog integration + damping ---
+    wv_x[i] += djx;
+    wv_y[i] += djy;
+    wv_z[i] += djz;
+
+    flux_x[i] += wv_x[i];
+    flux_y[i] += wv_y[i];
+    flux_z[i] += wv_z[i];
+
+    if (do_damping) {
+        bool should_damp = !selective_damping || (near_particle[i] != 0);
+        if (should_damp) {
+            double eff_damp = damp;
+            if (do_larmor && selective_damping && near_particle[i]) {
+                double a2 = near_accel[i] * near_accel[i];
+                double larmor_mod = fmin(1.0, LARMOR_FLOOR + K_LARMOR * a2);
+                eff_damp = 1.0 - DAMPING * larmor_mod;
+            }
+            flux_x[i] *= eff_damp;
+            flux_y[i] *= eff_damp;
+            flux_z[i] *= eff_damp;
+            wv_x[i] *= eff_damp;
+            wv_y[i] *= eff_damp;
+            wv_z[i] *= eff_damp;
+        }
+    }
+}
+
+// ---------- Genesis Kernel ----------
+// Stochastic manifestation: void sites with density > K_GENESIS may manifest
+
+__global__ void genesis_kernel(
+    int8_t* __restrict__ state,
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    const double* __restrict__ random,  // pre-generated uniform [0,1)
+    int8_t* __restrict__ spin,
+    int8_t* __restrict__ color,
+    int32_t* __restrict__ particle_id,
+    int next_pid,  // starting particle ID for this batch
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+    if (state[i] != 0) return;  // already manifested
+
+    double fx = flux_x[i], fy = flux_y[i], fz = flux_z[i];
+    double density = sqrt(fx*fx + fy*fy + fz*fz);
+
+    constexpr double k_genesis = 3.0 * K_B;
+    if (density <= k_genesis) return;
+
+    // Genesis probability
+    double excess = density - k_genesis;
+    double p = 1.0 - exp(-excess / K_B);
+    if (random[i] >= p) return;
+
+    // Determine polarity from divergence sign
+    int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
+    int yp = idx3d(x,y+1,z,L), ym = idx3d(x,y-1,z,L);
+    int zp = idx3d(x,y,z+1,L), zm = idx3d(x,y,z-1,L);
+
+    double div = 0.5 * ((flux_x[xp] - flux_x[xm])
+                       + (flux_y[yp] - flux_y[ym])
+                       + (flux_z[zp] - flux_z[zm]));
+
+    state[i] = (div >= 0) ? 1 : -1;
+
+    // Assign spin from dominant curl component
+    double curl_x = 0.5 * ((flux_z[yp] - flux_z[ym]) - (flux_y[zp] - flux_y[zm]));
+    double curl_y = 0.5 * ((flux_x[zp] - flux_x[zm]) - (flux_z[xp] - flux_z[xm]));
+    double curl_z = 0.5 * ((flux_y[xp] - flux_y[xm]) - (flux_x[yp] - flux_x[ym]));
+
+    double max_curl = fmax(fabs(curl_x), fmax(fabs(curl_y), fabs(curl_z)));
+    if (max_curl > 1e-15) {
+        double dominant = (fabs(curl_x) >= fabs(curl_y) && fabs(curl_x) >= fabs(curl_z)) ? curl_x
+                        : (fabs(curl_y) >= fabs(curl_z)) ? curl_y : curl_z;
+        spin[i] = (dominant > 0) ? 1 : -1;
+    }
+
+    // Assign color from dominant flux axis
+    double afx = fabs(fx), afy = fabs(fy), afz = fabs(fz);
+    if (afx >= afy && afx >= afz) color[i] = 1;       // red
+    else if (afy >= afz)          color[i] = 2;        // green
+    else                          color[i] = 3;        // blue
+
+    // Particle ID: use atomicAdd for thread-safe increment
+    // Note: this gives non-deterministic IDs across threads; acceptable for GPU
+    particle_id[i] = atomicAdd(&particle_id[0], 0) + i;  // placeholder; proper atomic below
+}
+
+// ---------- Evaporation Kernel ----------
+
+__global__ void evaporation_kernel(
+    int8_t* __restrict__ state,
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    const double* __restrict__ wv_x,
+    const double* __restrict__ wv_y,
+    const double* __restrict__ wv_z,
+    const bool* __restrict__ locked,
+    int8_t* __restrict__ spin,
+    int8_t* __restrict__ color,
+    int32_t* __restrict__ particle_id,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+    if (state[i] == 0 || locked[i]) return;
+
+    // Neighborhood energy check (same as CPU: particle + 6 face neighbors)
+    double local_energy = flux_x[i]*flux_x[i] + flux_y[i]*flux_y[i] + flux_z[i]*flux_z[i]
+                        + wv_x[i]*wv_x[i] + wv_y[i]*wv_y[i] + wv_z[i]*wv_z[i];
+
+    int nbrs[6] = {
+        idx3d(x+1,y,z,L), idx3d(x-1,y,z,L),
+        idx3d(x,y+1,z,L), idx3d(x,y-1,z,L),
+        idx3d(x,y,z+1,L), idx3d(x,y,z-1,L)
+    };
+    for (int n = 0; n < 6; ++n) {
+        int j = nbrs[n];
+        local_energy += flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]
+                      + wv_x[j]*wv_x[j] + wv_y[j]*wv_y[j] + wv_z[j]*wv_z[j];
+    }
+
+    constexpr double EVAP_THRESHOLD = K_B * K_B * 1e-6;
+    if (local_energy < EVAP_THRESHOLD) {
+        state[i] = 0;
+        spin[i] = 0;
+        color[i] = 0;
+        particle_id[i] = -1;
+    }
+}
+
+// ============================================================================
+// DUAL-SUBSTRATE KERNELS
+// ============================================================================
+
+// ---------- Dual Phase Read Kernel ----------
+// Computes independent Laplacians on L and R substrates, splits coupling 50/50
+
+__global__ void phase_read_dual_kernel(
+    const double* __restrict__ fL_x, const double* __restrict__ fL_y, const double* __restrict__ fL_z,
+    const double* __restrict__ fR_x, const double* __restrict__ fR_y, const double* __restrict__ fR_z,
+    const int8_t* __restrict__ state,
+    const double* __restrict__ vel_x, const double* __restrict__ vel_y, const double* __restrict__ vel_z,
+    double* __restrict__ djL_x, double* __restrict__ djL_y, double* __restrict__ djL_z,
+    double* __restrict__ djR_x, double* __restrict__ djR_y, double* __restrict__ djR_z,
+    int L, bool do_wave, bool do_coupling
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+    int i = z * L * L + y * L + x;
+
+    double dLx = 0, dLy = 0, dLz = 0;
+    double dRx = 0, dRy = 0, dRz = 0;
+
+    if (do_wave) {
+        // Isotropic 18-point Laplacian on each substrate independently
+        int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
+        int yp = idx3d(x,y+1,z,L), ym = idx3d(x,y-1,z,L);
+        int zp = idx3d(x,y,z+1,L), zm = idx3d(x,y,z-1,L);
+        int xy_pp = idx3d(x+1,y+1,z,L), xy_pm = idx3d(x+1,y-1,z,L);
+        int xy_mp = idx3d(x-1,y+1,z,L), xy_mm = idx3d(x-1,y-1,z,L);
+        int xz_pp = idx3d(x+1,y,z+1,L), xz_pm = idx3d(x+1,y,z-1,L);
+        int xz_mp = idx3d(x-1,y,z+1,L), xz_mm = idx3d(x-1,y,z-1,L);
+        int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
+        int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
+
+        constexpr double WF = 1.0/3.0, WE = 1.0/6.0;
+        constexpr double cw2 = C_WAVE * C_WAVE;
+
+        // Macro for 18-point Laplacian on a single component array
+        #define LAP18(arr, idx_center) \
+            (WF * (arr[xp] + arr[xm] + arr[yp] + arr[ym] + arr[zp] + arr[zm]) \
+           + WE * (arr[xy_pp] + arr[xy_pm] + arr[xy_mp] + arr[xy_mm] \
+                 + arr[xz_pp] + arr[xz_pm] + arr[xz_mp] + arr[xz_mm] \
+                 + arr[yz_pp] + arr[yz_pm] + arr[yz_mp] + arr[yz_mm]) \
+           - 4.0 * arr[idx_center])
+
+        dLx += cw2 * LAP18(fL_x, i);
+        dLy += cw2 * LAP18(fL_y, i);
+        dLz += cw2 * LAP18(fL_z, i);
+        dRx += cw2 * LAP18(fR_x, i);
+        dRy += cw2 * LAP18(fR_y, i);
+        dRz += cw2 * LAP18(fR_z, i);
+
+        #undef LAP18
+    }
+
+    if (do_coupling) {
+        // Split coupling source 50/50 between L and R
+        int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
+        int yp = idx3d(x,y+1,z,L), ym = idx3d(x,y-1,z,L);
+        int zp = idx3d(x,y,z+1,L), zm = idx3d(x,y,z-1,L);
+
+        double gs_x = 0.5 * (static_cast<double>(state[xp]) - static_cast<double>(state[xm]));
+        double gs_y = 0.5 * (static_cast<double>(state[yp]) - static_cast<double>(state[ym]));
+        double gs_z = 0.5 * (static_cast<double>(state[zp]) - static_cast<double>(state[zm]));
+
+        double half_gc = 0.5 * G_C;
+        dLx += half_gc * gs_x;  dLy += half_gc * gs_y;  dLz += half_gc * gs_z;
+        dRx += half_gc * gs_x;  dRy += half_gc * gs_y;  dRz += half_gc * gs_z;
+
+        // Split curl coupling 50/50
+        auto sv = [&](int idx_j, int comp) -> double {
+            double s = static_cast<double>(state[idx_j]);
+            if (comp == 0) return s * vel_x[idx_j];
+            if (comp == 1) return s * vel_y[idx_j];
+            return s * vel_z[idx_j];
+        };
+        double cx = 0.5 * (sv(yp,2) - sv(ym,2)) - 0.5 * (sv(zp,1) - sv(zm,1));
+        double cy = 0.5 * (sv(zp,0) - sv(zm,0)) - 0.5 * (sv(xp,2) - sv(xm,2));
+        double cz = 0.5 * (sv(xp,1) - sv(xm,1)) - 0.5 * (sv(yp,0) - sv(ym,0));
+
+        dLx += half_gc * cx;  dLy += half_gc * cy;  dLz += half_gc * cz;
+        dRx += half_gc * cx;  dRy += half_gc * cy;  dRz += half_gc * cz;
+    }
+
+    djL_x[i] = dLx;  djL_y[i] = dLy;  djL_z[i] = dLz;
+    djR_x[i] = dRx;  djR_y[i] = dRy;  djR_z[i] = dRz;
+}
+
+// ---------- Dual Phase Write Kernel ----------
+// Independent leapfrog on L/R, sync observable (flux = L + R)
+
+__global__ void phase_write_dual_kernel(
+    double* __restrict__ fL_x, double* __restrict__ fL_y, double* __restrict__ fL_z,
+    double* __restrict__ fR_x, double* __restrict__ fR_y, double* __restrict__ fR_z,
+    double* __restrict__ wvL_x, double* __restrict__ wvL_y, double* __restrict__ wvL_z,
+    double* __restrict__ wvR_x, double* __restrict__ wvR_y, double* __restrict__ wvR_z,
+    const double* __restrict__ djL_x, const double* __restrict__ djL_y, const double* __restrict__ djL_z,
+    const double* __restrict__ djR_x, const double* __restrict__ djR_y, const double* __restrict__ djR_z,
+    double* __restrict__ obs_x, double* __restrict__ obs_y, double* __restrict__ obs_z,
+    double* __restrict__ wv_x, double* __restrict__ wv_y, double* __restrict__ wv_z,
+    const uint8_t* __restrict__ near_particle,
+    const double* __restrict__ near_accel,
+    bool do_damping, bool selective_damping, bool do_larmor, double damp,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+    int i = z * L * L + y * L + x;
+
+    // Independent leapfrog on L
+    wvL_x[i] += djL_x[i];  wvL_y[i] += djL_y[i];  wvL_z[i] += djL_z[i];
+    fL_x[i] += wvL_x[i];   fL_y[i] += wvL_y[i];   fL_z[i] += wvL_z[i];
+
+    // Independent leapfrog on R
+    wvR_x[i] += djR_x[i];  wvR_y[i] += djR_y[i];  wvR_z[i] += djR_z[i];
+    fR_x[i] += wvR_x[i];   fR_y[i] += wvR_y[i];   fR_z[i] += wvR_z[i];
+
+    // Conditional damping on L and R independently
+    if (do_damping) {
+        bool should = !selective_damping || (near_particle[i] != 0);
+        if (should) {
+            double eff_damp = damp;
+            // Larmor radiation: modulate damping at near-particle sites
+            if (do_larmor && selective_damping && near_particle[i]) {
+                double a2 = near_accel[i] * near_accel[i];
+                double larmor_mod = fmin(1.0, LARMOR_FLOOR + K_LARMOR * a2);
+                eff_damp = 1.0 - DAMPING * larmor_mod;
+            }
+            fL_x[i] *= eff_damp; fL_y[i] *= eff_damp; fL_z[i] *= eff_damp;
+            fR_x[i] *= eff_damp; fR_y[i] *= eff_damp; fR_z[i] *= eff_damp;
+            wvL_x[i] *= eff_damp; wvL_y[i] *= eff_damp; wvL_z[i] *= eff_damp;
+            wvR_x[i] *= eff_damp; wvR_y[i] *= eff_damp; wvR_z[i] *= eff_damp;
+        }
+    }
+
+    // Sync observable: flux = L + R, wave_vel = L + R
+    obs_x[i] = fL_x[i] + fR_x[i];
+    obs_y[i] = fL_y[i] + fR_y[i];
+    obs_z[i] = fL_z[i] + fR_z[i];
+    wv_x[i] = wvL_x[i] + wvR_x[i];
+    wv_y[i] = wvL_y[i] + wvR_y[i];
+    wv_z[i] = wvL_z[i] + wvR_z[i];
+}
+
+// ---------- Dual Genesis Kernel (chirality-based polarity) ----------
+
+__global__ void genesis_dual_kernel(
+    int8_t* __restrict__ state,
+    const double* __restrict__ fL_x, const double* __restrict__ fL_y, const double* __restrict__ fL_z,
+    const double* __restrict__ fR_x, const double* __restrict__ fR_y, const double* __restrict__ fR_z,
+    const double* __restrict__ obs_x, const double* __restrict__ obs_y, const double* __restrict__ obs_z,
+    const double* __restrict__ random,
+    int8_t* __restrict__ spin, int8_t* __restrict__ color,
+    int32_t* __restrict__ particle_id,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+    int i = z * L * L + y * L + x;
+    if (state[i] != 0) return;
+
+    // Observable density
+    double fx = obs_x[i], fy = obs_y[i], fz = obs_z[i];
+    double density = sqrt(fx*fx + fy*fy + fz*fz);
+
+    constexpr double k_genesis = 3.0 * K_B;
+    if (density <= k_genesis) return;
+
+    double excess = density - k_genesis;
+    double p = 1.0 - exp(-excess / K_B);
+    if (random[i] >= p) return;
+
+    // Polarity from chirality (|psi_L|^2 - |psi_R|^2)
+    double psiL2 = fL_x[i]*fL_x[i] + fL_y[i]*fL_y[i];
+    double psiR2 = fR_x[i]*fR_x[i] + fR_y[i]*fR_y[i];
+    double chi = psiL2 - psiR2;
+    state[i] = (chi >= 0) ? 1 : -1;
+
+    // Spin from curl of observable
+    int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
+    int yp = idx3d(x,y+1,z,L), ym = idx3d(x,y-1,z,L);
+    int zp = idx3d(x,y,z+1,L), zm = idx3d(x,y,z-1,L);
+
+    double curl_x = 0.5*((obs_z[yp]-obs_z[ym]) - (obs_y[zp]-obs_y[zm]));
+    double curl_y = 0.5*((obs_x[zp]-obs_x[zm]) - (obs_z[xp]-obs_z[xm]));
+    double curl_z = 0.5*((obs_y[xp]-obs_y[xm]) - (obs_x[yp]-obs_x[ym]));
+
+    double max_curl = fmax(fabs(curl_x), fmax(fabs(curl_y), fabs(curl_z)));
+    if (max_curl > 1e-15) {
+        double dominant = (fabs(curl_x) >= fabs(curl_y) && fabs(curl_x) >= fabs(curl_z)) ? curl_x
+                        : (fabs(curl_y) >= fabs(curl_z)) ? curl_y : curl_z;
+        spin[i] = (dominant > 0) ? 1 : -1;
+    }
+
+    // Color from dominant observable axis
+    double afx = fabs(fx), afy = fabs(fy), afz = fabs(fz);
+    if (afx >= afy && afx >= afz) color[i] = 1;
+    else if (afy >= afz) color[i] = 2;
+    else color[i] = 3;
+
+    particle_id[i] = i;
+}
+
+// ---------- Launcher Functions ----------
+
+void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
+    dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
+
+    phase_read_kernel<<<grid, block>>>(
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_state,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
+        L, do_wave, do_coupling
+    );
+}
+
+void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
+                        bool larmor_radiation, double damping_factor,
+                        bool do_genesis, double dt) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
+    dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
+
+    // Compute near-particle mask (+ Larmor accel) if selective damping
+    if (selective_damping) {
+        compute_near_particle_kernel<<<grid, block>>>(
+            bufs.d_state, bufs.d_accel_mag,
+            bufs.d_near_particle, bufs.d_near_accel,
+            larmor_radiation, L
+        );
+    }
+
+    // Leapfrog + damping (with optional Larmor modulation)
+    phase_write_kernel<<<grid, block>>>(
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
+        bufs.d_near_particle, bufs.d_near_accel,
+        do_damping, selective_damping, larmor_radiation,
+        damping_factor, L
+    );
+
+    // Genesis (stochastic) — requires cuRAND pre-fill
+    if (do_genesis) {
+        // Random numbers are generated in gpu_engine.cu before calling this
+        genesis_kernel<<<grid, block>>>(
+            bufs.d_state,
+            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_random,
+            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+            0, L
+        );
+    }
+
+    // Evaporation
+    evaporation_kernel<<<grid, block>>>(
+        bufs.d_state,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_locked,
+        bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+        L
+    );
+}
+
+// ---------- Fused Wave Update Launcher (single-substrate) ----------
+// Replaces launch_phase_read + launch_phase_write for single-substrate path.
+// Eliminates delta_j global memory round-trip.
+
+void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
+                        bool do_damping, bool selective_damping,
+                        bool larmor_radiation, double damping_factor,
+                        bool do_genesis, double dt) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
+    dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
+
+    // Compute near-particle mask (+ Larmor accel) if selective damping
+    if (selective_damping) {
+        compute_near_particle_kernel<<<grid, block>>>(
+            bufs.d_state, bufs.d_accel_mag,
+            bufs.d_near_particle, bufs.d_near_accel,
+            larmor_radiation, L
+        );
+    }
+
+    // Fused Laplacian + coupling + leapfrog + damping
+    wave_update_kernel<<<grid, block>>>(
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_state,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_near_particle, bufs.d_near_accel,
+        do_wave, do_coupling,
+        do_damping, selective_damping, larmor_radiation,
+        damping_factor, L
+    );
+
+    // Genesis (stochastic) — requires cuRAND pre-fill
+    if (do_genesis) {
+        genesis_kernel<<<grid, block>>>(
+            bufs.d_state,
+            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_random,
+            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+            0, L
+        );
+    }
+
+    // Evaporation
+    evaporation_kernel<<<grid, block>>>(
+        bufs.d_state,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_locked,
+        bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+        L
+    );
+}
+
+// ---------- Dual-Substrate Launchers ----------
+
+void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
+    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+
+    phase_read_dual_kernel<<<grid, block>>>(
+        bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+        bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+        bufs.d_state,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_delta_j_L_x, bufs.d_delta_j_L_y, bufs.d_delta_j_L_z,
+        bufs.d_delta_j_R_x, bufs.d_delta_j_R_y, bufs.d_delta_j_R_z,
+        L, do_wave, do_coupling
+    );
+}
+
+void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
+                              bool larmor_radiation, double damping_factor,
+                              bool do_genesis, double dt) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
+    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+
+    // Compute near-particle mask (+ Larmor accel) if selective damping
+    if (selective_damping) {
+        compute_near_particle_kernel<<<grid, block>>>(
+            bufs.d_state, bufs.d_accel_mag,
+            bufs.d_near_particle, bufs.d_near_accel,
+            larmor_radiation, L
+        );
+    }
+
+    // Dual leapfrog + sync observable (with optional Larmor modulation)
+    phase_write_dual_kernel<<<grid, block>>>(
+        bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+        bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+        bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
+        bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
+        bufs.d_delta_j_L_x, bufs.d_delta_j_L_y, bufs.d_delta_j_L_z,
+        bufs.d_delta_j_R_x, bufs.d_delta_j_R_y, bufs.d_delta_j_R_z,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_near_particle, bufs.d_near_accel,
+        do_damping, selective_damping, larmor_radiation,
+        damping_factor, L
+    );
+
+    // Dual genesis (chirality-based)
+    if (do_genesis) {
+        genesis_dual_kernel<<<grid, block>>>(
+            bufs.d_state,
+            bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+            bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_random,
+            bufs.d_spin, bufs.d_color, bufs.d_particle_id, L
+        );
+    }
+
+    // Evaporation uses observable field (same as legacy)
+    evaporation_kernel<<<grid, block>>>(
+        bufs.d_state,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_locked,
+        bufs.d_spin, bufs.d_color, bufs.d_particle_id, L
+    );
+}
+
+// ---------- Dual-substrate Gauss sync kernel ----------
+// After Gauss projection modifies the observable (d_flux_x/y/z),
+// propagate the correction back to L and R substrates equally:
+//   delta = J_new - (J_L + J_R)
+//   J_L += delta/2,  J_R += delta/2
+// This preserves J_L + J_R = J and keeps chirality unchanged.
+
+__global__ void gauss_sync_dual_kernel(
+    double* fL_x, double* fL_y, double* fL_z,
+    double* fR_x, double* fR_y, double* fR_z,
+    const double* obs_x, const double* obs_y, const double* obs_z,
+    int L)
+{
+    int bx = blockIdx.x * blockDim.x + threadIdx.x;
+    int by = blockIdx.y * blockDim.y + threadIdx.y;
+    int bz = blockIdx.z * blockDim.z + threadIdx.z;
+    if (bx >= L || by >= L || bz >= L) return;
+    int i = bz * L * L + by * L + bx;
+
+    double dx = (obs_x[i] - (fL_x[i] + fR_x[i])) * 0.5;
+    double dy = (obs_y[i] - (fL_y[i] + fR_y[i])) * 0.5;
+    double dz = (obs_z[i] - (fL_z[i] + fR_z[i])) * 0.5;
+
+    fL_x[i] += dx;  fL_y[i] += dy;  fL_z[i] += dz;
+    fR_x[i] += dx;  fR_y[i] += dy;  fR_z[i] += dz;
+}
+
+void launch_gauss_sync_dual(GpuBuffers& bufs) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
+    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+
+    gauss_sync_dual_kernel<<<grid, block>>>(
+        bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+        bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        L
+    );
+}
+
+// ============================================================================
+// WEAK TRANSMUTATION KERNEL [CLAUDE.md §6.5]
+// ============================================================================
+// When field stress |div(J)| + |curl(J)| + |grad(rho)| exceeds WEAK_THRESHOLD,
+// manifested particles may flip polarity (+1 <-> -1).
+//
+// Dual-substrate threshold analysis:
+//   In dual mode, div and curl use J_L only (parity violation), while ∇ρ uses
+//   the observable J (scale-independent). The same K_GENESIS threshold applies
+//   without halving because the L-substrate carries ~98% of the flux at positive
+//   particle sites: (1+δ)/2 ≈ 0.978 where δ = DELTA_APPROX ≈ 0.957.
+//   So div(J_L) ≈ 0.978 × div(J_obs) — the asymmetric splitting means the
+//   dominant substrate is nearly identical to the observable.
+
+__global__ void weak_transmutation_kernel(
+    int8_t* __restrict__ state,
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    const double* __restrict__ random,
+    bool dual_substrate,
+    const double* __restrict__ fL_x,
+    const double* __restrict__ fL_y,
+    const double* __restrict__ fL_z,
+    double* __restrict__ fL_x_mut,   // mutable L substrate (for swap)
+    double* __restrict__ fL_y_mut,
+    double* __restrict__ fL_z_mut,
+    double* __restrict__ fR_x_mut,   // mutable R substrate (for swap)
+    double* __restrict__ fR_y_mut,
+    double* __restrict__ fR_z_mut,
+    double* __restrict__ wvL_x_mut,
+    double* __restrict__ wvL_y_mut,
+    double* __restrict__ wvL_z_mut,
+    double* __restrict__ wvR_x_mut,
+    double* __restrict__ wvR_y_mut,
+    double* __restrict__ wvR_z_mut,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+    if (state[i] == 0) return;  // Only manifested particles transmute
+
+    // Neighbor indices
+    int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
+    int yp = idx3d(x,y+1,z,L), ym = idx3d(x,y-1,z,L);
+    int zp = idx3d(x,y,z+1,L), zm = idx3d(x,y,z-1,L);
+
+    // Select flux arrays: J_L in dual mode, J in single mode
+    const double* fx = dual_substrate ? fL_x : flux_x;
+    const double* fy = dual_substrate ? fL_y : flux_y;
+    const double* fz = dual_substrate ? fL_z : flux_z;
+
+    // Divergence: div(J) = dJx/dx + dJy/dy + dJz/dz
+    double div_J = 0.5 * ((fx[xp] - fx[xm]) + (fy[yp] - fy[ym]) + (fz[zp] - fz[zm]));
+    double div_mag = fabs(div_J);
+
+    // Curl: (∇×J)_x = dJz/dy - dJy/dz, etc.
+    double curl_x = 0.5 * ((fz[yp] - fz[ym]) - (fy[zp] - fy[zm]));
+    double curl_y = 0.5 * ((fx[zp] - fx[zm]) - (fz[xp] - fz[xm]));
+    double curl_z = 0.5 * ((fy[xp] - fy[xm]) - (fx[yp] - fx[ym]));
+    double curl_mag = sqrt(curl_x*curl_x + curl_y*curl_y + curl_z*curl_z);
+
+    // Gradient of density: ∇ρ where ρ = |J|
+    auto density = [&](int j) -> double {
+        return sqrt(flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]);
+    };
+    double gx = 0.5 * (density(xp) - density(xm));
+    double gy = 0.5 * (density(yp) - density(ym));
+    double gz = 0.5 * (density(zp) - density(zm));
+    double grad_mag = sqrt(gx*gx + gy*gy + gz*gz);
+
+    double stress = div_mag + curl_mag + grad_mag;
+
+    constexpr double weak_threshold = K_GENESIS;  // = 3 * K_B
+    if (stress <= weak_threshold) return;
+
+    // Probabilistic flip: p = 1 - exp(-(stress - threshold) / K_B)
+    double p = 1.0 - exp(-(stress - weak_threshold) / K_B);
+    if (random[i] >= p) return;
+
+    // Flip polarity
+    state[i] = -state[i];
+
+    // In dual mode, swap L/R flux to match new chirality
+    if (dual_substrate) {
+        // Swap flux L <-> R
+        double tmp;
+        tmp = fL_x_mut[i]; fL_x_mut[i] = fR_x_mut[i]; fR_x_mut[i] = tmp;
+        tmp = fL_y_mut[i]; fL_y_mut[i] = fR_y_mut[i]; fR_y_mut[i] = tmp;
+        tmp = fL_z_mut[i]; fL_z_mut[i] = fR_z_mut[i]; fR_z_mut[i] = tmp;
+        // Swap wave_vel L <-> R
+        tmp = wvL_x_mut[i]; wvL_x_mut[i] = wvR_x_mut[i]; wvR_x_mut[i] = tmp;
+        tmp = wvL_y_mut[i]; wvL_y_mut[i] = wvR_y_mut[i]; wvR_y_mut[i] = tmp;
+        tmp = wvL_z_mut[i]; wvL_z_mut[i] = wvR_z_mut[i]; wvR_z_mut[i] = tmp;
+    }
+}
+
+// ============================================================================
+// PAIR PRODUCTION KERNEL [CLAUDE.md §4.1, §12.1]
+// ============================================================================
+// Enhanced genesis: when flux > 2×K_GENESIS at a void site, produce correlated
+// +1/-1 pair at adjacent sites. Uses atomicCAS_byte to claim two sites atomically.
+
+// Byte-level atomicCAS (duplicate from kernels_forces.cu — not shared across TUs)
+__device__ __forceinline__
+int8_t atomicCAS_byte_stencil(int8_t* addr, int8_t compare, int8_t val) {
+    unsigned int* word_addr = reinterpret_cast<unsigned int*>(
+        reinterpret_cast<size_t>(addr) & ~3ULL);
+    unsigned int byte_offset = (reinterpret_cast<size_t>(addr) & 3) * 8;
+    unsigned int byte_mask = 0xFFu << byte_offset;
+
+    unsigned int old_word = *word_addr;
+    unsigned int assumed;
+    do {
+        assumed = old_word;
+        unsigned int old_byte = (assumed >> byte_offset) & 0xFF;
+        if (old_byte != static_cast<unsigned char>(compare))
+            return static_cast<int8_t>(old_byte);
+        unsigned int new_word = (assumed & ~byte_mask)
+                              | (static_cast<unsigned int>(static_cast<unsigned char>(val)) << byte_offset);
+        old_word = atomicCAS(word_addr, assumed, new_word);
+    } while (old_word != assumed);
+    return compare;
+}
+
+__global__ void pair_production_kernel(
+    int8_t* __restrict__ state,
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    const double* __restrict__ random,
+    int32_t* __restrict__ pair_id,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+    if (state[i] != 0) return;  // Only void sites can produce pairs
+
+    // Check flux magnitude
+    double rho = sqrt(flux_x[i]*flux_x[i] + flux_y[i]*flux_y[i] + flux_z[i]*flux_z[i]);
+    constexpr double PAIR_THRESHOLD = 2.0 * K_GENESIS;
+    if (rho < PAIR_THRESHOLD) return;
+
+    // Probabilistic: p = 1 - exp(-(rho - threshold) / K_B)
+    double p = 1.0 - exp(-(rho - PAIR_THRESHOLD) / K_B);
+    if (random[i] >= p) return;
+
+    // Find best adjacent void site for partner
+    // Check 6 face neighbors
+    int nbrs[6] = {
+        idx3d(x+1,y,z,L), idx3d(x-1,y,z,L),
+        idx3d(x,y+1,z,L), idx3d(x,y-1,z,L),
+        idx3d(x,y,z+1,L), idx3d(x,y,z-1,L)
+    };
+
+    // Pick neighbor with highest flux (most energetic)
+    int best_j = -1;
+    double best_rho = 0.0;
+    for (int n = 0; n < 6; ++n) {
+        int j = nbrs[n];
+        if (state[j] != 0) continue;  // Must be void
+        double rj = sqrt(flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]);
+        if (rj > best_rho) {
+            best_rho = rj;
+            best_j = j;
+        }
+    }
+    if (best_j < 0) return;  // No adjacent void site
+
+    // Atomically claim both sites: first site → +1, second → -1
+    int8_t old_i = atomicCAS_byte_stencil(&state[i], 0, 1);
+    if (old_i != 0) return;  // Someone else claimed it
+
+    int8_t old_j = atomicCAS_byte_stencil(&state[best_j], 0, -1);
+    if (old_j != 0) {
+        // Rollback: release first site
+        state[i] = 0;
+        return;
+    }
+
+    // Both claimed — assign matching pair_id (use lattice index as unique ID)
+    pair_id[i] = i;
+    pair_id[best_j] = i;
+}
+
+void launch_pair_production(GpuBuffers& bufs) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
+    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+
+    pair_production_kernel<<<grid, block>>>(
+        bufs.d_state,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_random,
+        bufs.d_pair_id,
+        L
+    );
+}
+
+void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
+    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+
+    weak_transmutation_kernel<<<grid, block>>>(
+        bufs.d_state,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_random,
+        dual_substrate,
+        bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+        bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+        bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+        bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
+        bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
+        L
+    );
+}
+
+}  // namespace kernels
+}  // namespace gpu
+}  // namespace ftd

@@ -1,0 +1,737 @@
+/**
+ * GPU kernels for Phase 4 (Forces) and Phase 5 (Movement).
+ *
+ * Forces: Coulomb (from Poisson potential), gravity (density gradient),
+ *         Lorentz (v × B where B = curl(J))
+ * Movement: remainder accumulation, speed clamping, collision detection
+ */
+
+#include "ftd/gpu_buffers.h"
+#include "ftd/constants.h"
+#include <cuda_runtime.h>
+#include <cmath>
+
+#define CUDA_CHECK(call) do { \
+    cudaError_t err = (call); \
+    if (err != cudaSuccess) { \
+        fprintf(stderr, "CUDA error at %s:%d: %s\n", \
+                __FILE__, __LINE__, cudaGetErrorString(err)); \
+        exit(1); \
+    } \
+} while(0)
+
+namespace ftd {
+namespace gpu {
+namespace kernels {
+
+// ---------- Device helpers ----------
+
+__device__ __forceinline__
+int wrap_d(int x, int L) {
+    return ((x % L) + L) % L;
+}
+
+__device__ __forceinline__
+int idx3d_d(int x, int y, int z, int L) {
+    return wrap_d(z, L) * L * L + wrap_d(y, L) * L + wrap_d(x, L);
+}
+
+// Byte-level atomicCAS: CUDA only supports 32-bit+ atomicCAS,
+// so we operate on the containing 32-bit word.
+__device__ __forceinline__
+int8_t atomicCAS_byte(int8_t* addr, int8_t compare, int8_t val) {
+    // Find the 4-byte aligned word containing our byte
+    unsigned int* word_addr = reinterpret_cast<unsigned int*>(
+        reinterpret_cast<size_t>(addr) & ~3ULL);
+    unsigned int byte_offset = (reinterpret_cast<size_t>(addr) & 3) * 8;
+    unsigned int byte_mask = 0xFFu << byte_offset;
+
+    unsigned int old_word = *word_addr;
+    unsigned int assumed;
+    do {
+        assumed = old_word;
+        unsigned int old_byte = (assumed >> byte_offset) & 0xFF;
+        if (old_byte != static_cast<unsigned char>(compare))
+            return static_cast<int8_t>(old_byte);
+        unsigned int new_word = (assumed & ~byte_mask)
+                              | (static_cast<unsigned int>(static_cast<unsigned char>(val)) << byte_offset);
+        old_word = atomicCAS(word_addr, assumed, new_word);
+    } while (old_word != assumed);
+    return compare;  // Success: old value was indeed `compare`
+}
+
+// ---------- Force Kernel ----------
+// Computes forces on all manifested particles and updates velocity
+
+__global__ void phase_forces_kernel(
+    const int8_t* __restrict__ state,
+    const double* __restrict__ phi_coulomb,
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    double* __restrict__ vel_x,
+    double* __restrict__ vel_y,
+    double* __restrict__ vel_z,
+    double* __restrict__ accel_mag,
+    bool poisson_coulomb,
+    bool gravity,
+    bool lorentz_force,
+    double dt,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+    if (state[i] == 0) return;  // Only manifested particles
+
+    double s = static_cast<double>(state[i]);
+    double fx = 0.0, fy = 0.0, fz = 0.0;
+
+    // Neighbor indices
+    int xp = idx3d_d(x+1,y,z,L), xm = idx3d_d(x-1,y,z,L);
+    int yp = idx3d_d(x,y+1,z,L), ym = idx3d_d(x,y-1,z,L);
+    int zp = idx3d_d(x,y,z+1,L), zm = idx3d_d(x,y,z-1,L);
+
+    // --- Coulomb force ---
+    if (poisson_coulomb) {
+        // Poisson mode: F = -alpha * s * gradient(phi_coulomb)
+        double grad_phi_x = 0.5 * (phi_coulomb[xp] - phi_coulomb[xm]);
+        double grad_phi_y = 0.5 * (phi_coulomb[yp] - phi_coulomb[ym]);
+        double grad_phi_z = 0.5 * (phi_coulomb[zp] - phi_coulomb[zm]);
+
+        fx -= ALPHA * s * grad_phi_x;
+        fy -= ALPHA * s * grad_phi_y;
+        fz -= ALPHA * s * grad_phi_z;
+    } else {
+        // Legacy mode: F = -alpha * s * gradient(div(J))
+        // Compute divergence at each face neighbor, then take gradient
+        auto div_J = [&](int j) -> double {
+            int jx = j % L, jy = (j / L) % L, jz = j / (L * L);
+            int jp_x = idx3d_d(jx+1,jy,jz,L), jm_x = idx3d_d(jx-1,jy,jz,L);
+            int jp_y = idx3d_d(jx,jy+1,jz,L), jm_y = idx3d_d(jx,jy-1,jz,L);
+            int jp_z = idx3d_d(jx,jy,jz+1,L), jm_z = idx3d_d(jx,jy,jz-1,L);
+            return 0.5 * ((flux_x[jp_x] - flux_x[jm_x])
+                        + (flux_y[jp_y] - flux_y[jm_y])
+                        + (flux_z[jp_z] - flux_z[jm_z]));
+        };
+        double grad_div_x = 0.5 * (div_J(xp) - div_J(xm));
+        double grad_div_y = 0.5 * (div_J(yp) - div_J(ym));
+        double grad_div_z = 0.5 * (div_J(zp) - div_J(zm));
+
+        fx -= ALPHA * s * grad_div_x;
+        fy -= ALPHA * s * grad_div_y;
+        fz -= ALPHA * s * grad_div_z;
+    }
+
+    // --- Gravity: F = G_N * gradient(density) using tier-2 stencil ---
+    if (gravity) {
+        // Tier-2 gradient: use r=2 neighbors to avoid self-field contamination
+        int x2p = idx3d_d(x+2,y,z,L), x2m = idx3d_d(x-2,y,z,L);
+        int y2p = idx3d_d(x,y+2,z,L), y2m = idx3d_d(x,y-2,z,L);
+        int z2p = idx3d_d(x,y,z+2,L), z2m = idx3d_d(x,y,z-2,L);
+
+        auto density = [&](int j) -> double {
+            return sqrt(flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]);
+        };
+
+        double gx = 0.25 * (density(x2p) - density(x2m));
+        double gy = 0.25 * (density(y2p) - density(y2m));
+        double gz = 0.25 * (density(z2p) - density(z2m));
+
+        fx += G_N * gx;
+        fy += G_N * gy;
+        fz += G_N * gz;
+    }
+
+    // --- Lorentz force: F = alpha * s * (v × B) where B = curl(J) ---
+    if (lorentz_force) {
+        double vx = vel_x[i], vy = vel_y[i], vz = vel_z[i];
+        double speed = sqrt(vx*vx + vy*vy + vz*vz);
+
+        if (speed > 1e-15) {
+            // B = curl(J)
+            double Bx = 0.5 * ((flux_z[yp] - flux_z[ym]) - (flux_y[zp] - flux_y[zm]));
+            double By = 0.5 * ((flux_x[zp] - flux_x[zm]) - (flux_z[xp] - flux_z[xm]));
+            double Bz = 0.5 * ((flux_y[xp] - flux_y[xm]) - (flux_x[yp] - flux_x[ym]));
+
+            // v × B
+            double cross_x = vy * Bz - vz * By;
+            double cross_y = vz * Bx - vx * Bz;
+            double cross_z = vx * By - vy * Bx;
+
+            fx += ALPHA * s * cross_x;
+            fy += ALPHA * s * cross_y;
+            fz += ALPHA * s * cross_z;
+        }
+    }
+
+    // --- Update velocity ---
+    double old_vx = vel_x[i], old_vy = vel_y[i], old_vz = vel_z[i];
+    vel_x[i] += fx * dt;
+    vel_y[i] += fy * dt;
+    vel_z[i] += fz * dt;
+
+    // Speed clamping (nothing outruns light)
+    double speed2 = vel_x[i]*vel_x[i] + vel_y[i]*vel_y[i] + vel_z[i]*vel_z[i];
+    if (speed2 > C_SPEED * C_SPEED) {
+        double scale = C_SPEED / sqrt(speed2);
+        vel_x[i] *= scale;
+        vel_y[i] *= scale;
+        vel_z[i] *= scale;
+    }
+
+    // Store acceleration magnitude (for Larmor radiation)
+    double ax = vel_x[i] - old_vx, ay = vel_y[i] - old_vy, az = vel_z[i] - old_vz;
+    accel_mag[i] = sqrt(ax*ax + ay*ay + az*az) / dt;
+}
+
+// ---------- Movement Kernel ----------
+// Accumulate remainder, compute integer moves.
+// For Phase 1 simplicity: movement resolved on CPU (download particle list).
+// This kernel only does remainder accumulation and speed clamping.
+
+__global__ void phase_movement_kernel(
+    int8_t* __restrict__ state,
+    double* __restrict__ vel_x,
+    double* __restrict__ vel_y,
+    double* __restrict__ vel_z,
+    double* __restrict__ rem_x,
+    double* __restrict__ rem_y,
+    double* __restrict__ rem_z,
+    double* __restrict__ flux_x,
+    double* __restrict__ flux_y,
+    double* __restrict__ flux_z,
+    double* __restrict__ wv_x,
+    double* __restrict__ wv_y,
+    double* __restrict__ wv_z,
+    const bool* __restrict__ locked,
+    int32_t* __restrict__ particle_id,
+    int8_t* __restrict__ spin,
+    int8_t* __restrict__ color,
+    double dt,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = z * L * L + y * L + x;
+    if (state[i] == 0 || locked[i]) return;
+
+    // Accumulate remainder
+    rem_x[i] += vel_x[i] * dt;
+    rem_y[i] += vel_y[i] * dt;
+    rem_z[i] += vel_z[i] * dt;
+
+    // Compute integer displacement
+    int dx = 0, dy = 0, dz = 0;
+    if (rem_x[i] >= 1.0) { dx = 1; rem_x[i] -= 1.0; }
+    else if (rem_x[i] <= -1.0) { dx = -1; rem_x[i] += 1.0; }
+    if (rem_y[i] >= 1.0) { dy = 1; rem_y[i] -= 1.0; }
+    else if (rem_y[i] <= -1.0) { dy = -1; rem_y[i] += 1.0; }
+    if (rem_z[i] >= 1.0) { dz = 1; rem_z[i] -= 1.0; }
+    else if (rem_z[i] <= -1.0) { dz = -1; rem_z[i] += 1.0; }
+
+    if (dx == 0 && dy == 0 && dz == 0) return;  // No movement
+
+    int tx = wrap_d(x + dx, L);
+    int ty = wrap_d(y + dy, L);
+    int tz = wrap_d(z + dz, L);
+    int target = tz * L * L + ty * L + tx;
+
+    // Collision resolution via byte-level atomicCAS on state
+    // Try to claim target site (only if currently void)
+    int8_t old = atomicCAS_byte(&state[target], 0, state[i]);
+
+    if (old == 0) {
+        // Successfully claimed target — transfer particle data
+        vel_x[target] = vel_x[i];
+        vel_y[target] = vel_y[i];
+        vel_z[target] = vel_z[i];
+        rem_x[target] = rem_x[i];
+        rem_y[target] = rem_y[i];
+        rem_z[target] = rem_z[i];
+        particle_id[target] = particle_id[i];
+        spin[target] = spin[i];
+        color[target] = color[i];
+
+        // Portable self-field transfer
+        double old_rho = sqrt(flux_x[i]*flux_x[i] + flux_y[i]*flux_y[i] + flux_z[i]*flux_z[i]);
+        if (old_rho > 1e-15) {
+            double transfer = fmin(old_rho, K_B);
+            double ratio = transfer / old_rho;
+            double sfx = flux_x[i] * ratio;
+            double sfy = flux_y[i] * ratio;
+            double sfz = flux_z[i] * ratio;
+
+            // Atomic subtract from source, add to target (prevents races)
+            atomicAdd(&flux_x[target], sfx);
+            atomicAdd(&flux_y[target], sfy);
+            atomicAdd(&flux_z[target], sfz);
+            atomicAdd(&flux_x[i], -sfx);
+            atomicAdd(&flux_y[i], -sfy);
+            atomicAdd(&flux_z[i], -sfz);
+        }
+
+        // Clear source
+        state[i] = 0;
+        vel_x[i] = 0; vel_y[i] = 0; vel_z[i] = 0;
+        rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
+        particle_id[i] = -1;
+        spin[i] = 0;
+        color[i] = 0;
+    } else if (old == -state[i]) {
+        // Opposite charge at target: annihilation
+        // Both particles return to void; scatter flux to neighbors
+        state[i] = 0;
+        state[target] = 0;
+        vel_x[i] = 0; vel_y[i] = 0; vel_z[i] = 0;
+        vel_x[target] = 0; vel_y[target] = 0; vel_z[target] = 0;
+        rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
+        rem_x[target] = 0; rem_y[target] = 0; rem_z[target] = 0;
+        particle_id[i] = -1;
+        particle_id[target] = -1;
+        spin[i] = 0; spin[target] = 0;
+        color[i] = 0; color[target] = 0;
+
+        // Scatter source flux to its 6 face neighbors
+        double sixth = 1.0 / 6.0;
+        int nbrs_src[6] = {
+            idx3d_d(x+1,y,z,L), idx3d_d(x-1,y,z,L),
+            idx3d_d(x,y+1,z,L), idx3d_d(x,y-1,z,L),
+            idx3d_d(x,y,z+1,L), idx3d_d(x,y,z-1,L)
+        };
+        for (int n = 0; n < 6; ++n) {
+            atomicAdd(&flux_x[nbrs_src[n]], flux_x[i] * sixth);
+            atomicAdd(&flux_y[nbrs_src[n]], flux_y[i] * sixth);
+            atomicAdd(&flux_z[nbrs_src[n]], flux_z[i] * sixth);
+        }
+        flux_x[i] = 0; flux_y[i] = 0; flux_z[i] = 0;
+
+        // Scatter target flux to its 6 face neighbors
+        int nbrs_tgt[6] = {
+            idx3d_d(tx+1,ty,tz,L), idx3d_d(tx-1,ty,tz,L),
+            idx3d_d(tx,ty+1,tz,L), idx3d_d(tx,ty-1,tz,L),
+            idx3d_d(tx,ty,tz+1,L), idx3d_d(tx,ty,tz-1,L)
+        };
+        for (int n = 0; n < 6; ++n) {
+            atomicAdd(&flux_x[nbrs_tgt[n]], flux_x[target] * sixth);
+            atomicAdd(&flux_y[nbrs_tgt[n]], flux_y[target] * sixth);
+            atomicAdd(&flux_z[nbrs_tgt[n]], flux_z[target] * sixth);
+        }
+        flux_x[target] = 0; flux_y[target] = 0; flux_z[target] = 0;
+    } else {
+        // Same-sign collision → elastic bounce: reverse velocity along movement axis
+        if (dx != 0) vel_x[i] = -vel_x[i];
+        if (dy != 0) vel_y[i] = -vel_y[i];
+        if (dz != 0) vel_z[i] = -vel_z[i];
+        rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
+    }
+}
+
+// ============================================================================
+// PARTICLE LIST — compact indices of all manifested particles
+// ============================================================================
+
+__global__ void build_particle_list_kernel(
+    const int8_t* __restrict__ state,
+    int* __restrict__ plist_idx,
+    int* __restrict__ num_particles,
+    int N, int max_particles
+) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
+    if (state[i] == 0) return;
+
+    int slot = atomicAdd(num_particles, 1);
+    if (slot < max_particles) {
+        plist_idx[slot] = i;
+    }
+}
+
+// ============================================================================
+// DEVICE-SIDE RUNNING STRONG COUPLING [mirrors ontic::alpha_s_running]
+// ============================================================================
+
+__device__ __forceinline__
+double alpha_s_running_d(double Q_GeV) {
+    constexpr double LAMBDA_QCD_d  = 0.217;   // ontic::LAMBDA_QCD
+    constexpr double B0_NF5_d      = 23.0 / 3.0;
+    constexpr double PI_d          = 3.14159265358979323846;
+
+    if (Q_GeV <= LAMBDA_QCD_d) return 1.0;
+    double log_ratio = log(Q_GeV * Q_GeV / (LAMBDA_QCD_d * LAMBDA_QCD_d));
+    if (log_ratio <= 0.0) return 1.0;
+    return 4.0 * PI_d / (B0_NF5_d * log_ratio);
+}
+
+__device__ __forceinline__
+double alpha_s_lattice_d(double r_voxels) {
+    constexpr double Q_LATTICE_d = 2.0;
+    constexpr double ALPHA_S_d   = 1.0;
+    if (r_voxels <= 0.0) return ALPHA_S_d;
+    double Q = Q_LATTICE_d / r_voxels;
+    double as = alpha_s_running_d(Q);
+    return fmin(as, ALPHA_S_d);
+}
+
+// ============================================================================
+// COLOR FORCE KERNEL [CLAUDE.md §6.4 — SU(3) color-dependent pairwise force]
+// ============================================================================
+// Thread per particle i, iterates over all other particles j.
+// Same-color pairs: attraction via running alpha_s(r).
+// Three regimes: r<3 (Coulomb), 3<=r<8 (transition), r>=8 (linear confinement).
+
+__global__ void color_force_kernel(
+    const int* __restrict__ plist_idx,
+    const int  num_particles,
+    const int8_t* __restrict__ state,
+    const int8_t* __restrict__ color_arr,
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    double* __restrict__ vel_x,
+    double* __restrict__ vel_y,
+    double* __restrict__ vel_z,
+    double dt,
+    int L
+) {
+    int pi = blockIdx.x * blockDim.x + threadIdx.x;
+    if (pi >= num_particles) return;
+
+    int i = plist_idx[pi];
+    int iz = i / (L * L), iy = (i / L) % L, ix = i % L;
+    int8_t ci = color_arr[i];
+
+    double fx = 0.0, fy = 0.0, fz = 0.0;
+
+    for (int pj = 0; pj < num_particles; ++pj) {
+        if (pj == pi) continue;
+        int j = plist_idx[pj];
+        int jz = j / (L * L), jy = (j / L) % L, jx = j % L;
+
+        // Shortest distance with periodic wrapping
+        int dx = jx - ix; if (dx > L/2) dx -= L; if (dx < -L/2) dx += L;
+        int dy = jy - iy; if (dy > L/2) dy -= L; if (dy < -L/2) dy += L;
+        int dz = jz - iz; if (dz > L/2) dz -= L; if (dz < -L/2) dz += L;
+        double r2 = (double)(dx*dx + dy*dy + dz*dz);
+        double r = sqrt(r2);
+        if (r < 1.0) r = 1.0;
+
+        // Color factor: same color → full strength, different → reduced
+        int8_t cj = color_arr[j];
+        double color_factor = (ci == cj && ci > 0) ? 1.0 : 0.25;
+
+        double as = alpha_s_lattice_d(r);
+
+        // Three-regime force profile (attractive)
+        double f_mag;
+        if (r < 3.0) {
+            f_mag = as * color_factor / r2;              // Coulomb
+        } else if (r < 8.0) {
+            f_mag = as * color_factor / (3.0 * r);       // Transition
+        } else {
+            f_mag = as * color_factor * r / 64.0;        // Linear confinement
+        }
+
+        // Direction: attractive (toward j)
+        double inv_r = 1.0 / r;
+        fx += f_mag * dx * inv_r;
+        fy += f_mag * dy * inv_r;
+        fz += f_mag * dz * inv_r;
+    }
+
+    atomicAdd(&vel_x[i], fx * dt);
+    atomicAdd(&vel_y[i], fy * dt);
+    atomicAdd(&vel_z[i], fz * dt);
+}
+
+// ============================================================================
+// YUKAWA (STRONG) FORCE KERNEL [CLAUDE.md §6.4]
+// ============================================================================
+// F = ALPHA_S * exp(-M_YUKAWA * r) / r² * (1 + M_YUKAWA * r) — attractive, all particles.
+
+__global__ void yukawa_force_kernel(
+    const int* __restrict__ plist_idx,
+    const int  num_particles,
+    const int8_t* __restrict__ state,
+    double* __restrict__ vel_x,
+    double* __restrict__ vel_y,
+    double* __restrict__ vel_z,
+    double dt,
+    int L
+) {
+    int pi = blockIdx.x * blockDim.x + threadIdx.x;
+    if (pi >= num_particles) return;
+
+    int i = plist_idx[pi];
+    int iz = i / (L * L), iy = (i / L) % L, ix = i % L;
+
+    double fx = 0.0, fy = 0.0, fz = 0.0;
+
+    constexpr double AS = 1.0;     // ALPHA_S
+    constexpr double MY = 1.0;     // M_YUKAWA
+
+    for (int pj = 0; pj < num_particles; ++pj) {
+        if (pj == pi) continue;
+        int j = plist_idx[pj];
+        int jz = j / (L * L), jy = (j / L) % L, jx = j % L;
+
+        int dx = jx - ix; if (dx > L/2) dx -= L; if (dx < -L/2) dx += L;
+        int dy = jy - iy; if (dy > L/2) dy -= L; if (dy < -L/2) dy += L;
+        int dz = jz - iz; if (dz > L/2) dz -= L; if (dz < -L/2) dz += L;
+        double r2 = (double)(dx*dx + dy*dy + dz*dz);
+        double r = sqrt(r2);
+        if (r < 1.0) r = 1.0;
+
+        // Yukawa force: attractive, short range
+        double f_mag = AS * exp(-MY * r) / r2 * (1.0 + MY * r);
+
+        // Attractive: toward j
+        double inv_r = 1.0 / r;
+        fx += f_mag * dx * inv_r;
+        fy += f_mag * dy * inv_r;
+        fz += f_mag * dz * inv_r;
+    }
+
+    atomicAdd(&vel_x[i], fx * dt);
+    atomicAdd(&vel_y[i], fy * dt);
+    atomicAdd(&vel_z[i], fz * dt);
+}
+
+// ============================================================================
+// EXCHANGE (PAULI) FORCE KERNEL [CLAUDE.md §11]
+// ============================================================================
+// Same-spin repulsion: F = ALPHA_EXCHANGE * exp(-r²/r_ex²) / r² (repulsive)
+// Only between same-spin particles. Very short range.
+
+__global__ void exchange_force_kernel(
+    const int* __restrict__ plist_idx,
+    const int  num_particles,
+    const int8_t* __restrict__ state,
+    const int8_t* __restrict__ spin_arr,
+    double* __restrict__ vel_x,
+    double* __restrict__ vel_y,
+    double* __restrict__ vel_z,
+    double dt,
+    int L
+) {
+    int pi = blockIdx.x * blockDim.x + threadIdx.x;
+    if (pi >= num_particles) return;
+
+    int i = plist_idx[pi];
+    int iz = i / (L * L), iy = (i / L) % L, ix = i % L;
+    int8_t si = spin_arr[i];
+    if (si == 0) return;  // No spin → no exchange
+
+    double fx = 0.0, fy = 0.0, fz = 0.0;
+
+    const double AE = ALPHA * ALPHA;    // ALPHA_EXCHANGE = α² (from ontic chain)
+    constexpr double R_EX = 3.0;       // Exchange range (voxels)
+    constexpr double R_EX2 = R_EX * R_EX;
+
+    for (int pj = 0; pj < num_particles; ++pj) {
+        if (pj == pi) continue;
+        int j = plist_idx[pj];
+        if (spin_arr[j] != si) continue;  // Only same-spin
+
+        int jz = j / (L * L), jy = (j / L) % L, jx = j % L;
+
+        int dx = jx - ix; if (dx > L/2) dx -= L; if (dx < -L/2) dx += L;
+        int dy = jy - iy; if (dy > L/2) dy -= L; if (dy < -L/2) dy += L;
+        int dz = jz - iz; if (dz > L/2) dz -= L; if (dz < -L/2) dz += L;
+        double r2 = (double)(dx*dx + dy*dy + dz*dz);
+        double r = sqrt(r2);
+        if (r < 1.0) r = 1.0;
+
+        // Repulsive short-range: away from j
+        double f_mag = AE * exp(-r2 / R_EX2) / (r * r);
+
+        double inv_r = 1.0 / r;
+        fx -= f_mag * dx * inv_r;
+        fy -= f_mag * dy * inv_r;
+        fz -= f_mag * dz * inv_r;
+    }
+
+    atomicAdd(&vel_x[i], fx * dt);
+    atomicAdd(&vel_y[i], fy * dt);
+    atomicAdd(&vel_z[i], fz * dt);
+}
+
+// ============================================================================
+// TRIAD BINDING DETECTION [CLAUDE.md §8.1]
+// ============================================================================
+// For each particle, find 2 nearest same-sign neighbors. If all pairwise
+// distances within 20% AND all < TRIAD_RADIUS → set locked=true.
+
+__global__ void triad_detection_kernel(
+    const int* __restrict__ plist_idx,
+    const int  num_particles,
+    const int8_t* __restrict__ state,
+    bool* __restrict__ locked,
+    int L
+) {
+    int pi = blockIdx.x * blockDim.x + threadIdx.x;
+    if (pi >= num_particles) return;
+
+    int i = plist_idx[pi];
+    int8_t si = state[i];
+    int iz = i / (L * L), iy = (i / L) % L, ix = i % L;
+
+    constexpr double TRIAD_RADIUS = 3.0;
+
+    // Find 2 nearest same-sign neighbors
+    double best1_r2 = 1e30, best2_r2 = 1e30;
+    int best1_j = -1, best2_j = -1;
+    int best1_dx = 0, best1_dy = 0, best1_dz = 0;
+    int best2_dx = 0, best2_dy = 0, best2_dz = 0;
+
+    for (int pj = 0; pj < num_particles; ++pj) {
+        if (pj == pi) continue;
+        int j = plist_idx[pj];
+        if (state[j] != si) continue;
+
+        int jz = j / (L * L), jy = (j / L) % L, jx = j % L;
+        int dx = jx - ix; if (dx > L/2) dx -= L; if (dx < -L/2) dx += L;
+        int dy = jy - iy; if (dy > L/2) dy -= L; if (dy < -L/2) dy += L;
+        int dz = jz - iz; if (dz > L/2) dz -= L; if (dz < -L/2) dz += L;
+        double r2 = (double)(dx*dx + dy*dy + dz*dz);
+
+        if (r2 < best1_r2) {
+            best2_r2 = best1_r2; best2_j = best1_j;
+            best2_dx = best1_dx; best2_dy = best1_dy; best2_dz = best1_dz;
+            best1_r2 = r2; best1_j = j;
+            best1_dx = dx; best1_dy = dy; best1_dz = dz;
+        } else if (r2 < best2_r2) {
+            best2_r2 = r2; best2_j = j;
+            best2_dx = dx; best2_dy = dy; best2_dz = dz;
+        }
+    }
+
+    if (best1_j < 0 || best2_j < 0) return;
+
+    double r_a = sqrt(best1_r2);
+    double r_b = sqrt(best2_r2);
+
+    // Distance between the two neighbors
+    int dx_ab = best2_dx - best1_dx;
+    int dy_ab = best2_dy - best1_dy;
+    int dz_ab = best2_dz - best1_dz;
+    double r_c = sqrt((double)(dx_ab*dx_ab + dy_ab*dy_ab + dz_ab*dz_ab));
+
+    // Check: all within TRIAD_RADIUS
+    if (r_a > TRIAD_RADIUS || r_b > TRIAD_RADIUS || r_c > TRIAD_RADIUS) return;
+
+    // Check: near-equilateral (pairwise distances within 20% of each other)
+    double r_max = fmax(r_a, fmax(r_b, r_c));
+    double r_min = fmin(r_a, fmin(r_b, r_c));
+    if (r_max <= 0.0) return;
+    double ratio = r_min / r_max;
+    if (ratio < 0.8) return;
+
+    // Triad detected — lock all three
+    locked[i] = true;
+    locked[best1_j] = true;
+    locked[best2_j] = true;
+}
+
+// ---------- Launcher Functions ----------
+
+void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
+                         bool gravity, bool lorentz_force, double dt) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy than 512
+    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+
+    phase_forces_kernel<<<grid, block>>>(
+        bufs.d_state, bufs.d_phi_coulomb,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_accel_mag,
+        poisson_coulomb, gravity, lorentz_force, dt, L
+    );
+}
+
+void launch_phase_movement(GpuBuffers& bufs, double dt) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads — better SM occupancy than 512
+    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+
+    phase_movement_kernel<<<grid, block>>>(
+        bufs.d_state,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+        bufs.d_locked,
+        bufs.d_particle_id, bufs.d_spin, bufs.d_color,
+        dt, L
+    );
+}
+
+void launch_build_particle_list(GpuBuffers& bufs) {
+    // Reset counter
+    CUDA_CHECK(cudaMemset(bufs.d_num_particles, 0, sizeof(int)));
+
+    int block = 256;
+    int grid = (bufs.N + block - 1) / block;
+    build_particle_list_kernel<<<grid, block>>>(
+        bufs.d_state, bufs.d_plist_idx, bufs.d_num_particles,
+        bufs.N, GpuBuffers::MAX_PARTICLES
+    );
+}
+
+void launch_color_force(GpuBuffers& bufs, int num_particles, double dt) {
+    if (num_particles <= 0) return;
+    int block = 256;
+    int grid = (num_particles + block - 1) / block;
+    color_force_kernel<<<grid, block>>>(
+        bufs.d_plist_idx, num_particles,
+        bufs.d_state, bufs.d_color,
+        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        dt, bufs.L
+    );
+}
+
+void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt) {
+    if (num_particles <= 0) return;
+    int block = 256;
+    int grid = (num_particles + block - 1) / block;
+    yukawa_force_kernel<<<grid, block>>>(
+        bufs.d_plist_idx, num_particles,
+        bufs.d_state,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        dt, bufs.L
+    );
+}
+
+void launch_exchange_force(GpuBuffers& bufs, int num_particles, double dt) {
+    if (num_particles <= 0) return;
+    int block = 256;
+    int grid = (num_particles + block - 1) / block;
+    exchange_force_kernel<<<grid, block>>>(
+        bufs.d_plist_idx, num_particles,
+        bufs.d_state, bufs.d_spin,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        dt, bufs.L
+    );
+}
+
+void launch_triad_detection(GpuBuffers& bufs, int num_particles) {
+    if (num_particles <= 0) return;
+    int block = 256;
+    int grid = (num_particles + block - 1) / block;
+    triad_detection_kernel<<<grid, block>>>(
+        bufs.d_plist_idx, num_particles,
+        bufs.d_state, bufs.d_locked, bufs.L
+    );
+}
+
+}  // namespace kernels
+}  // namespace gpu
+}  // namespace ftd

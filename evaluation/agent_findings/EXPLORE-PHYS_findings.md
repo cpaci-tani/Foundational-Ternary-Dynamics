@@ -43,7 +43,7 @@ The physical applications of FTD span from subatomic particles to cosmological s
 
 ### S5: Cosmological Predictions
 - Inflation spectral index n_s = 0.966 (0.2σ from Planck)
-- Tensor-to-scalar ratio r = 0.007 (below bounds)
+- Tensor-to-scalar ratio r = 0.022 (below bounds)
 - Baryogenesis η ~ 10⁻¹⁰ (correct order)
 - Dark matter as sub-threshold flux
 

@@ -1,0 +1,145 @@
+======================================================================
+FTD PARTIAL CORRELATION DEEP INVESTIGATION: 10 TESTS
+======================================================================
+
+Loading cached data...
+Data: 1,501,257 events | MC: 31,627 events
+Signal (dlenSig>30): Data 354,019 | MC 7,302
+Signal data: 354,019 events
+Signal MC:   7,302 events
+
+----------------------------------------------------------------------
+SANITY CHECK: Reproducing baseline correlations
+----------------------------------------------------------------------
+  Raw rho(sqrt(MET), R_cav):             +0.1086  (expect ~+0.109)
+  Partial rho (rank, sv_mass only):       +0.1026  (expect ~+0.103)
+  Reduction: 5.5%  (expect ~5%)
+  MC raw rho:                             +0.0200  (expect ~+0.020)
+
+======================================================================
+TEST 1: Iterative Control Waterfall
+======================================================================
+  Raw:             rho = +0.1086
+  +sv_mass           rho = +0.1026  (5.5% reduction)
+  +bjet              rho = +0.0865  (20.3% reduction)
+  +ntracks           rho = +0.0854  (21.3% reduction)
+  +dlsig             rho = +0.0809  (25.5% reduction)
+  +sv_mass^2         rho = +0.0807  (25.6% reduction)
+
+======================================================================
+TEST 2: Nonlinear Residualization
+======================================================================
+  Polynomial (deg 2):  rho = +0.0753
+  Polynomial (deg 3):  rho = +0.0743
+  WARNING: sklearn not available. Skipping RF/GBM tests.
+
+======================================================================
+TEST 3: B-Fraction Reweighting
+======================================================================
+  Global B-fraction: 0.675
+  MET [ 200,  250): B-frac = 0.579  (n=25,778)
+  MET [ 250,  300): B-frac = 0.546  (n=9,218)
+  MET [ 300,  350): B-frac = 0.537  (n=3,824)
+  MET [ 350,  400): B-frac = 0.532  (n=1,795)
+  MET [ 400,  500): B-frac = 0.501  (n=1,407)
+  MET [ 500,  600): B-frac = 0.471  (n=454)
+  MET [ 600,  800): B-frac = 0.463  (n=246)
+
+  Raw rho (unweighted):       +0.1086
+  Reweighted rho (const B-frac): +0.1007 +/- 0.0017
+  Reduction: 7.3%
+
+======================================================================
+TEST 4: SV Mass Stratification
+======================================================================
+  SV mass [0.0, 1.0) GeV (K/light     ): rho = +0.0593  (n=94,684)
+  SV mass [1.0, 2.5) GeV (D meson     ): rho = +0.1071  (n=156,841)
+  SV mass [2.5, 4.0) GeV (transition  ): rho = +0.1010  (n=68,332)
+  SV mass [4.0, 7.0) GeV (B meson     ): rho = +0.1024  (n=24,133)
+  SV mass [7.0, 50.0) GeV (exotic      ): rho = +0.0691  (n=10,017)
+
+======================================================================
+TEST 5: Track Multiplicity Stratification
+======================================================================
+  nt=2    : rho = +0.0934  (n=115,627)
+  nt=3    : rho = +0.1155  (n=87,107)
+  nt=4    : rho = +0.1072  (n=64,207)
+  nt>=5   : rho = +0.0940  (n=87,078)
+
+======================================================================
+TEST 6: MET-Dependent Partial Correlation
+======================================================================
+  MET [ 200,  250): raw=+0.0150  partial=+0.0155  (n=25,778)
+  MET [ 250,  325): raw=+0.0269  partial=+0.0278  (n=11,501)
+  MET [ 325,  450): raw=+0.0247  partial=+0.0244  (n=4,242)
+  MET [ 450, 1200): raw=+0.0065  partial=+0.0060  (n=1,283)
+
+======================================================================
+TEST 7: Permutation Null Distribution
+======================================================================
+  Running 5000 permutations (this may take a minute)...
+    1000/5000 permutations done...
+    2000/5000 permutations done...
+    3000/5000 permutations done...
+    4000/5000 permutations done...
+    5000/5000 permutations done...
+  Observed partial rho (subsample): +0.1107
+  Null distribution: mean=+0.0000, std=0.0044
+  p-value (two-sided): 0.000000
+  Z-score: 24.93
+  --> HIGHLY SIGNIFICANT (p < 0.001, Z = 24.9)
+
+======================================================================
+TEST 8: MC Partial Correlation
+======================================================================
+  MC raw rho:            +0.0200
+  MC partial (sv_mass):  +0.0429
+
+  DATA partial:          +0.1026
+  MC   partial:          +0.0429
+  Excess partial:        +0.0597
+  --> MC shows SOME correlation. Partial kinematic origin.
+  MC partial (sv_mass+bjet): +0.0462
+
+======================================================================
+TEST 9: R_cav Range Dependence
+======================================================================
+  R_cav [  0.0,   1.0) cm (R<1cm       ): rho = -0.0008  (n=29,540)
+  R_cav [  1.0,   4.4) cm (1-4.4cm     ): rho = +0.0632  (n=207,919)
+  R_cav [  4.4,  10.2) cm (4.4-10.2cm  ): rho = +0.0429  (n=93,043)
+  R_cav [ 10.2,  60.0) cm (R>10.2cm    ): rho = -0.0305  (n=23,497)
+
+======================================================================
+TEST 10: Partial Distance Correlation
+======================================================================
+  Computing distance correlation (n=5000, O(n^2) memory)...
+  dcor(sqrt(MET), R_cav) = 0.0960
+  dcor(sqrt(MET), R_cav | sv_mass) = 0.0974  [linear residualization]
+  dcor(sqrt(MET), R_cav | sv_mass^3) = 0.0867  [poly-3 residualization]
+  Permutation test (n=500): p = 0.0000
+
+======================================================================
+SUMMARY
+======================================================================
+
+Figure saved: C:\Users\cpaci\Desktop\pbr_pedagogy\dissemination\Foundational-Ternary-Dynamics\simulations\ftd_partial_correlation_DEEP.png
+
+======================================================================
+FINAL VERDICT
+======================================================================
+  T1: Iterative ctrl         rho=+0.0807  --> SURVIVES
+  T2: Nonlinear resid        rho=+0.0743  --> AMBIG
+  T3: B-frac reweight        rho=+0.1007  --> SURVIVES
+  T4: Mass strata            rho=+0.0878  --> SURVIVES
+  T5: Ntracks strata         rho=+0.1025  --> SURVIVES
+  T6: MET-dep partial        rho=+0.0184  --> KILLED
+  T7: Permutation            rho=+0.1107  --> SURVIVES
+  T8: MC comparison          rho=+0.0597  --> GENUINE
+  T9: R_cav range            rho=+0.0187  --> KILLED
+  T10: Distance corr         rho=+0.0867  --> SURVIVES
+
+  SURVIVES: 7  |  KILLED: 2  |  AMBIGUOUS: 1
+  OVERALL: Correlation appears GENUINE (non-kinematic)
+
+  Permutation p-value: 0.0e+00
+  Z-score: 24.9

@@ -170,7 +170,7 @@ The manuscript contains genuinely novel mathematical observations that deserve f
 
 - **$e^\pi - \pi \approx 20$**: This near-integer (19.999...) is known in recreational mathematics and predates FTD. Claiming it "equals" $b_3 + N_{eff}$ is numerology dressed as mathematics.
 
-- **Consciousness Quadratic**: The derivation of complex roots $y = 2.19 \pm 1.30i$ from $k_{cons} = 1/2$ is mathematically valid but the physical interpretation ("oscillatory awareness") is metaphysical, not mathematical.
+- **Consciousness Quadratic**: The derivation of complex roots $y = 2.19 \pm 2.86i$ from $k_{cons} = 1/2$ is mathematically valid but the physical interpretation ("oscillatory awareness") is metaphysical, not mathematical.
 
 - **"42 Nexus"**: The appearance of 42 through multiple routes (Heegner, Catalan, Bernoulli, FTD) is presented as significant. However, small integers appear in many contexts; establishing genuine structural connection requires more than enumeration.
 

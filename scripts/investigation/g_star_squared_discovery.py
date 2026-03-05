@@ -103,7 +103,7 @@ print("WHY G*^2?")
 print("=" * 70)
 
 print(f"\nG*^2 appears in the consciousness quadratic:")
-print(f"  y^2 - (G*^2/2)y + (G*^3/4) = 0")
+print(f"  y^2 - (G*^2/2)y + (G*^3/2) = 0")
 print(f"  Linear coefficient: G*^2/2 = {G_STAR**2/2:.6f}")
 
 print(f"\nmin_dist = G*^2/32 = (G*^2/2) / 16")
@@ -200,7 +200,7 @@ print(f"\n2. NEW: min_dist * 8 * k_c = {bridge2:.6f} (close to G* = {G_STAR:.6f}
 # min_dist * G* = G*^3/32
 # G*^3/32 = ?
 print(f"\n3. min_dist * G* = G*^3/32 = {G_STAR**3/32:.6f}")
-print(f"   = consciousness constant term / 8 = {(G_STAR**3/4)/8:.6f}")
+print(f"   = consciousness constant term / 16 = {(G_STAR**3/2)/16:.6f}")
 
 # =============================================================================
 # FINAL SYNTHESIS

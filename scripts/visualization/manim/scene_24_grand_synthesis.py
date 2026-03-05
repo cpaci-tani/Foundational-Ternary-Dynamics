@@ -5,7 +5,7 @@ A 5-minute (300-second) epic Manim animation that weaves together
 the entire FTD story - from the Void through all of physics to
 conscious observers and the sLoop closure.
 
-This is the capstone visualization - the complete Theory of Everything
+This is the capstone visualization - the complete framework
 in one breathtaking animation.
 
 Storyboard:
@@ -62,7 +62,7 @@ class GrandSynthesisScene(Scene):
             weight=BOLD
         )
         subtitle = Text(
-            "A Theory of Everything",
+            "A Discrete Substrate Framework",
             font_size=32,
             color=WHITE
         )
@@ -460,7 +460,7 @@ class GrandSynthesisScene(Scene):
 
         # Consciousness quadratic
         consciousness_eq = MathTex(
-            r"y = 2.19 \pm 1.30i",
+            r"y = 2.19 \pm 2.86i",
             font_size=28, color=CONSCIOUSNESS
         )
         consciousness_eq.to_edge(DOWN, buff=0.8)
@@ -597,7 +597,7 @@ class GrandSynthesisScene(Scene):
         )
 
         end_subtitle = VGroup(
-            Text("A complete Theory of Everything", font_size=24, color=WHITE),
+            Text("A complete discrete substrate framework", font_size=24, color=WHITE),
             Text("derived from four integers", font_size=20, color=VOID),
             MathTex(r"\{3, 4, 7, 13\}", font_size=36, color=FLUX),
         ).arrange(DOWN, buff=0.3)
