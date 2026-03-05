@@ -238,7 +238,9 @@
       "Bash(du -sh */)",
       "Bash(do test -f \"$link\")",
       "Bash(test -d \"docs/articles\")",
-      "Bash(head -50 dissemination/notebooks/*.ipynb)"
+      "Bash(head -50 dissemination/notebooks/*.ipynb)",
+      "Bash(black --check --diff .)",
+      "Bash(ruff check .)"
     ]
   },
   "outputStyle": "default"

@@ -24,9 +24,6 @@ A prediction is MEANINGFUL if:
 import unittest
 import numpy as np
 from scipy.special import gamma
-from scipy.stats import norm
-from typing import Tuple, List, Dict
-
 
 # =============================================================================
 # CONSTANTS
@@ -43,18 +40,21 @@ GAMMA_QUARTER = gamma(0.25)
 G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
 PHI = (1 + np.sqrt(5)) / 2
 
+
 # Derived from quadratic
 def get_alpha():
     c = G_STAR
-    disc = (16 * c**2)**2 - 4 * 16 * c**3
+    disc = (16 * c**2) ** 2 - 4 * 16 * c**3
     x_plus = (16 * c**2 + np.sqrt(disc)) / 2
     return 1 / x_plus
+
 
 ALPHA = get_alpha()
 ALPHA_INV = 1 / ALPHA
 
 # Planck mass
 M_PLANCK = 1.220890e19  # GeV
+
 
 # Experimental values (PDG 2024)
 class Exp:
@@ -96,6 +96,7 @@ def percent_error(pred, exp):
 # TIER 1: RIGOROUS DERIVATIONS (Clear physics, no free parameters)
 # =============================================================================
 
+
 class TestTier1RigorousDerivations(unittest.TestCase):
     """
     TIER 1: Predictions with clear derivation chains and physical motivation.
@@ -121,7 +122,7 @@ class TestTier1RigorousDerivations(unittest.TestCase):
         PREDICTIONS: 1 (electron mass)
         VERDICT: RIGOROUS
         """
-        m_e_pred = M_PLANCK * np.sqrt(2*np.pi) * (N_base**2/N_c) * ALPHA**11
+        m_e_pred = M_PLANCK * np.sqrt(2 * np.pi) * (N_base**2 / N_c) * ALPHA**11
         m_e_mev = m_e_pred * 1000  # Convert to MeV
 
         error = percent_error(m_e_mev, Exp.m_e)
@@ -130,15 +131,15 @@ class TestTier1RigorousDerivations(unittest.TestCase):
         exp_check_1 = N_c + 2 * N_base  # 3 + 8 = 11
         exp_check_2 = N_eff - 2  # 13 - 2 = 11
 
-        print(f"\n[RIGOROUS] Electron Mass")
-        print(f"  Formula: m_e = m_P * sqrt(2*pi) * (16/3) * alpha^11")
+        print("\n[RIGOROUS] Electron Mass")
+        print("  Formula: m_e = m_P * sqrt(2*pi) * (16/3) * alpha^11")
         print(f"  Predicted: {m_e_mev:.6f} MeV")
         print(f"  Experimental: {Exp.m_e:.6f} MeV")
         print(f"  Error: {error:.3f}%")
-        print(f"\n  Exponent 11 structure:")
+        print("\n  Exponent 11 structure:")
         print(f"    N_c + 2*N_base = {exp_check_1}")
         print(f"    N_eff - 2 = {exp_check_2}")
-        print(f"  Both equal 11: MOTIVATED")
+        print("  Both equal 11: MOTIVATED")
 
         self.assertEqual(exp_check_1, 11)
         self.assertEqual(exp_check_2, 11)
@@ -161,22 +162,22 @@ class TestTier1RigorousDerivations(unittest.TestCase):
         PREDICTIONS: 1
         VERDICT: RIGOROUS (consistent with electron mass structure)
         """
-        v_pred = M_PLANCK * np.sqrt(2*np.pi) * ALPHA**8  # GeV
+        v_pred = M_PLANCK * np.sqrt(2 * np.pi) * ALPHA**8  # GeV
 
         error = percent_error(v_pred, Exp.v)
 
         # Check ratio with electron mass
         ratio_pred = v_pred / (Exp.m_e / 1000)  # v in GeV, m_e in GeV
-        ratio_formula = (N_c / N_base**2) * ALPHA**(-3)  # Inverse of (16/3)*alpha^3
+        ratio_formula = (N_c / N_base**2) * ALPHA ** (-3)  # Inverse of (16/3)*alpha^3
 
-        print(f"\n[RIGOROUS] Higgs VEV")
-        print(f"  Formula: v = m_P * sqrt(2*pi) * alpha^8")
+        print("\n[RIGOROUS] Higgs VEV")
+        print("  Formula: v = m_P * sqrt(2*pi) * alpha^8")
         print(f"  Predicted: {v_pred:.2f} GeV")
         print(f"  Experimental: {Exp.v:.2f} GeV")
         print(f"  Error: {error:.3f}%")
-        print(f"\n  Exponent structure:")
-        print(f"    8 = 2*N_base: Double base dimension")
-        print(f"    8 = 11 - 3 = electron_exp - N_c: Color removed")
+        print("\n  Exponent structure:")
+        print("    8 = 2*N_base: Double base dimension")
+        print("    8 = 11 - 3 = electron_exp - N_c: Color removed")
 
         self.assertLess(error, 0.1)
 
@@ -198,8 +199,8 @@ class TestTier1RigorousDerivations(unittest.TestCase):
 
         This is the most impressive derivation: 0.06% for a 10^-39 quantity.
         """
-        mass_factor = (N_base**2 / N_c)**2
-        hierarchy = (N_eff + N_c / b_3)**2
+        mass_factor = (N_base**2 / N_c) ** 2
+        hierarchy = (N_eff + N_c / b_3) ** 2
         alpha_G_pred = 2 * np.pi * mass_factor * hierarchy * ALPHA**20
 
         alpha_G_exp = 5.906e-39  # Experimental
@@ -209,12 +210,12 @@ class TestTier1RigorousDerivations(unittest.TestCase):
         exp_check_1 = 2 * (N_c + b_3)  # 2 * 10 = 20
         exp_check_2 = 8 + 11 + 1  # Higgs + electron + 1 = 20
 
-        print(f"\n[RIGOROUS] Gravitational Coupling")
-        print(f"  Formula: alpha_G = 2*pi * (16/3)^2 * (13+3/7)^2 * alpha^20")
+        print("\n[RIGOROUS] Gravitational Coupling")
+        print("  Formula: alpha_G = 2*pi * (16/3)^2 * (13+3/7)^2 * alpha^20")
         print(f"  Predicted: {alpha_G_pred:.4e}")
         print(f"  Experimental: {alpha_G_exp:.4e}")
         print(f"  Error: {error:.3f}%")
-        print(f"\n  Exponent 20 structure:")
+        print("\n  Exponent 20 structure:")
         print(f"    2*(N_c + b_3) = {exp_check_1}")
         print(f"    8 + 11 + 1 = {exp_check_2}")
 
@@ -226,6 +227,7 @@ class TestTier1RigorousDerivations(unittest.TestCase):
 # =============================================================================
 # TIER 2: DERIVED WITH INTERPRETATION (Physics + selection)
 # =============================================================================
+
 
 class TestTier2DerivedWithInterpretation(unittest.TestCase):
     """
@@ -261,12 +263,12 @@ class TestTier2DerivedWithInterpretation(unittest.TestCase):
             "sqrt(2) * m_W": np.sqrt(2) * Exp.m_W,
         }
 
-        print(f"\n[DERIVED+SELECTION] Higgs Mass")
-        print(f"  Formula: m_H = N_eff * m_e / alpha^2")
+        print("\n[DERIVED+SELECTION] Higgs Mass")
+        print("  Formula: m_H = N_eff * m_e / alpha^2")
         print(f"  Predicted: {m_H_pred:.2f} GeV")
         print(f"  Experimental: {Exp.m_H:.2f} GeV")
         print(f"  Error: {error:.3f}%")
-        print(f"\n  Alternative formulas:")
+        print("\n  Alternative formulas:")
         for name, val in alternatives.items():
             print(f"    {name}: {val:.2f} GeV ({percent_error(val, Exp.m_H):.2f}%)")
 
@@ -294,12 +296,12 @@ class TestTier2DerivedWithInterpretation(unittest.TestCase):
         sin2_from_ratio = 1 - (N_c + b_3) / N_eff  # 1 - 10/13 = 3/13
         sin2_claimed = N_c / N_eff  # 3/13
 
-        print(f"\n[DERIVED] W/Z Mass Ratio")
-        print(f"  Formula: M_W/M_Z = sqrt(10/13)")
+        print("\n[DERIVED] W/Z Mass Ratio")
+        print("  Formula: M_W/M_Z = sqrt(10/13)")
         print(f"  Predicted: {ratio_pred:.4f}")
         print(f"  Experimental: {ratio_exp:.4f}")
         print(f"  Error: {error:.2f}%")
-        print(f"\n  Consistency with Weinberg angle:")
+        print("\n  Consistency with Weinberg angle:")
         print(f"    sin^2(theta_W) from ratio: {sin2_from_ratio:.4f}")
         print(f"    sin^2(theta_W) claimed: {sin2_claimed:.4f}")
         print(f"    CONSISTENT: {np.isclose(sin2_from_ratio, sin2_claimed)}")
@@ -311,6 +313,7 @@ class TestTier2DerivedWithInterpretation(unittest.TestCase):
 # =============================================================================
 # TIER 3: NUMEROLOGY (Fits well but unclear derivation)
 # =============================================================================
+
 
 class TestTier3Numerology(unittest.TestCase):
     """
@@ -355,14 +358,14 @@ class TestTier3Numerology(unittest.TestCase):
         ratio_trivial = 207  # Just the number
         error_trivial = percent_error(ratio_trivial, ratio_exp)
 
-        print(f"\n[NUMEROLOGY] Muon/Electron Ratio")
+        print("\n[NUMEROLOGY] Muon/Electron Ratio")
         print(f"  Experimental: {ratio_exp:.3f}")
-        print(f"\n  Formulas compared:")
+        print("\n  Formulas compared:")
         print(f"    3*7*10 - 3 = {ratio_ftd} (error {error_ftd:.3f}%)")
         print(f"    200 + 7 = {ratio_simple} (error {error_simple:.3f}%)")
         print(f"    Just 207 = {ratio_trivial} (error {error_trivial:.3f}%)")
-        print(f"\n  VERDICT: Complex formula offers NO advantage over simpler ones.")
-        print(f"  STATUS: NUMEROLOGY (kept for completeness)")
+        print("\n  VERDICT: Complex formula offers NO advantage over simpler ones.")
+        print("  STATUS: NUMEROLOGY (kept for completeness)")
 
         # It still fits well
         self.assertLess(error_ftd, 0.2)
@@ -395,15 +398,15 @@ class TestTier3Numerology(unittest.TestCase):
 
         error = percent_error(tau_ratio_ftd, tau_ratio_exp)
 
-        print(f"\n[NUMEROLOGY?] Tau/Electron Ratio")
+        print("\n[NUMEROLOGY?] Tau/Electron Ratio")
         print(f"  Formula: (13+4)*207 - 2*3*7 = 17*207 - 42 = {tau_ratio_ftd}")
         print(f"  Experimental: {tau_ratio_exp:.2f}")
         print(f"  Error: {error:.4f}%")
-        print(f"\n  Structure analysis:")
-        print(f"    17 = N_eff + N_base (7th prime)")
-        print(f"    42 = 2*N_c*b_3 = 2*3*7")
-        print(f"\n  VERDICT: 0.01% is remarkable, but chains from numerology.")
-        print(f"  STATUS: KEEP (accuracy too good to ignore)")
+        print("\n  Structure analysis:")
+        print("    17 = N_eff + N_base (7th prime)")
+        print("    42 = 2*N_c*b_3 = 2*3*7")
+        print("\n  VERDICT: 0.01% is remarkable, but chains from numerology.")
+        print("  STATUS: KEEP (accuracy too good to ignore)")
 
         self.assertLess(error, 0.02)
 
@@ -436,14 +439,14 @@ class TestTier3Numerology(unittest.TestCase):
         ratio_simple = N_base / (N_c * ALPHA)
         error_simple = percent_error(ratio_simple, ratio_exp)
 
-        print(f"\n[NUMEROLOGY] Proton/Electron Ratio")
+        print("\n[NUMEROLOGY] Proton/Electron Ratio")
         print(f"  Experimental: {ratio_exp:.2f}")
         print(f"\n  FTD formula: 13*137 + T(10) = {ratio_ftd:.2f}")
         print(f"  Error: {error_ftd:.3f}%")
         print(f"\n  Simpler alternative: 4/(3*alpha) = {ratio_simple:.2f}")
         print(f"  Error: {error_simple:.3f}%")
-        print(f"\n  VERDICT: T(10) addition is arbitrary.")
-        print(f"  STATUS: NUMEROLOGY")
+        print("\n  VERDICT: T(10) addition is arbitrary.")
+        print("  STATUS: NUMEROLOGY")
 
         self.assertLess(error_ftd, 0.05)
 
@@ -468,14 +471,14 @@ class TestTier3Numerology(unittest.TestCase):
         error = percent_error(alpha_s_ftd, alpha_s_exp)
 
         # Check what coefficient would give exact match
-        coef_needed = b_3 * (1/alpha_s_exp - 1) / N_eff
+        coef_needed = b_3 * (1 / alpha_s_exp - 1) / N_eff
 
-        print(f"\n[NUMEROLOGY] Strong Coupling")
+        print("\n[NUMEROLOGY] Strong Coupling")
         print(f"  Formula: alpha_s = 7/(7 + 4*13) = 7/59 = {alpha_s_ftd:.4f}")
         print(f"  Experimental: {alpha_s_exp:.4f}")
         print(f"  Error: {error:.2f}%")
         print(f"\n  The '4' is arbitrary. Coefficient needed for exact: {coef_needed:.2f}")
-        print(f"  STATUS: NUMEROLOGY (good fit, unclear derivation)")
+        print("  STATUS: NUMEROLOGY (good fit, unclear derivation)")
 
         self.assertLess(error, 1.0)
 
@@ -483,6 +486,7 @@ class TestTier3Numerology(unittest.TestCase):
 # =============================================================================
 # TIER 4: STATISTICAL ANALYSIS
 # =============================================================================
+
 
 class TestStatisticalSignificance(unittest.TestCase):
     """
@@ -532,10 +536,10 @@ class TestStatisticalSignificance(unittest.TestCase):
             print(f"    P(random match): {p_adjusted:.2e}")
 
         print(f"\n  Combined probability (all match by chance): {combined_prob:.2e}")
-        print(f"\n  NOTE: This naive estimate assumes independence.")
-        print(f"  All predictions derive from the same 4 integers,")
-        print(f"  so correlations reduce the effective significance.")
-        print(f"\n  VERDICT: Collectively significant (correlations noted)")
+        print("\n  NOTE: This naive estimate assumes independence.")
+        print("  All predictions derive from the same 4 integers,")
+        print("  so correlations reduce the effective significance.")
+        print("\n  VERDICT: Collectively significant (correlations noted)")
 
         # Combined probability should be tiny
         self.assertLess(combined_prob, 1e-8)
@@ -564,10 +568,20 @@ class TestStatisticalSignificance(unittest.TestCase):
 
         # Outputs (partial list of tested predictions)
         outputs = [
-            "alpha", "m_e", "v_Higgs", "m_H", "M_W/M_Z",
-            "sin^2(theta_W)", "alpha_G", "alpha_s",
-            "m_mu/m_e", "m_tau/m_e", "m_p/m_e",
-            "delta_CKM", "n_s", "r",
+            "alpha",
+            "m_e",
+            "v_Higgs",
+            "m_H",
+            "M_W/M_Z",
+            "sin^2(theta_W)",
+            "alpha_G",
+            "alpha_s",
+            "m_mu/m_e",
+            "m_tau/m_e",
+            "m_p/m_e",
+            "delta_CKM",
+            "n_s",
+            "r",
             # And more...
         ]
 
@@ -578,8 +592,8 @@ class TestStatisticalSignificance(unittest.TestCase):
         print(f"\n  Independent inputs: {independent_inputs}")
         print(f"  Predictions tested: {len(outputs)}+")
         print(f"  Ratio: {ratio:.0f}:1")
-        print(f"\n  VERDICT: NOT overfitting")
-        print(f"  A framework that predicts 15x more than it inputs is constrained.")
+        print("\n  VERDICT: NOT overfitting")
+        print("  A framework that predicts 15x more than it inputs is constrained.")
 
         self.assertGreater(ratio, 5)
 
@@ -587,6 +601,7 @@ class TestStatisticalSignificance(unittest.TestCase):
 # =============================================================================
 # SUMMARY
 # =============================================================================
+
 
 class TestMassSummary(unittest.TestCase):
     """Generate comprehensive mass prediction summary."""
@@ -598,12 +613,13 @@ class TestMassSummary(unittest.TestCase):
         print("=" * 70)
 
         # Calculate predictions
-        m_e_pred = M_PLANCK * np.sqrt(2*np.pi) * (N_base**2/N_c) * ALPHA**11 * 1000
-        v_pred = M_PLANCK * np.sqrt(2*np.pi) * ALPHA**8
-        m_H_pred = N_eff * (Exp.m_e/1000) / ALPHA**2
-        alpha_G_pred = 2*np.pi * (N_base**2/N_c)**2 * (N_eff + N_c/b_3)**2 * ALPHA**20
+        m_e_pred = M_PLANCK * np.sqrt(2 * np.pi) * (N_base**2 / N_c) * ALPHA**11 * 1000
+        v_pred = M_PLANCK * np.sqrt(2 * np.pi) * ALPHA**8
+        m_H_pred = N_eff * (Exp.m_e / 1000) / ALPHA**2
+        alpha_G_pred = 2 * np.pi * (N_base**2 / N_c) ** 2 * (N_eff + N_c / b_3) ** 2 * ALPHA**20
 
-        print("""
+        print(
+            """
 TIER 1: RIGOROUS (Clear derivation, physical motivation)
 ---------------------------------------------------------
 Quantity        Formula                              Pred      Exp       Error
@@ -627,15 +643,26 @@ TOTAL PREDICTIONS: 30+
 INDEPENDENT INPUTS: 2 (N_c=3, N_base=4)
 PREDICTIVE RATIO: >15:1
 """.format(
-            m_e_pred, Exp.m_e, percent_error(m_e_pred, Exp.m_e),
-            v_pred, Exp.v, percent_error(v_pred, Exp.v),
-            alpha_G_pred, 5.906e-39, percent_error(alpha_G_pred, 5.906e-39),
-            m_H_pred, Exp.m_H, percent_error(m_H_pred, Exp.m_H),
-            np.sqrt(10/13), Exp.m_W/Exp.m_Z, percent_error(np.sqrt(10/13), Exp.m_W/Exp.m_Z)
-        ))
+                m_e_pred,
+                Exp.m_e,
+                percent_error(m_e_pred, Exp.m_e),
+                v_pred,
+                Exp.v,
+                percent_error(v_pred, Exp.v),
+                alpha_G_pred,
+                5.906e-39,
+                percent_error(alpha_G_pred, 5.906e-39),
+                m_H_pred,
+                Exp.m_H,
+                percent_error(m_H_pred, Exp.m_H),
+                np.sqrt(10 / 13),
+                Exp.m_W / Exp.m_Z,
+                percent_error(np.sqrt(10 / 13), Exp.m_W / Exp.m_Z),
+            )
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 70)
     print("FTD MASS DERIVATIONS - RIGOROUS ANALYSIS")
     print("Polymath Classification: Rigor vs Numerology")

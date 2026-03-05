@@ -25,6 +25,7 @@ N_eff = 13
 GAMMA_QUARTER = gamma(0.25)
 G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
 
+
 def compute_alpha():
     c = G_STAR
     a = 1
@@ -34,21 +35,24 @@ def compute_alpha():
     x_plus = (-b + np.sqrt(discriminant)) / (2 * a)
     return 1 / x_plus
 
+
 ALPHA = compute_alpha()
+
 
 # Experimental values (Planck 2018)
 class Experimental:
     # Inflation parameters
-    n_s = 0.9649        # +/- 0.0042
+    n_s = 0.9649  # +/- 0.0042
     n_s_sigma = 0.0042
-    r_upper = 0.036     # 95% CL upper bound
+    r_upper = 0.036  # 95% CL upper bound
 
     # Baryon asymmetry
-    eta_B = 6.1e-10     # +/- 0.3e-10
+    eta_B = 6.1e-10  # +/- 0.3e-10
 
 
 def percent_error(derived, experimental):
     return abs(derived - experimental) / experimental * 100
+
 
 def sigma_deviation(derived, experimental, sigma):
     return abs(derived - experimental) / sigma
@@ -67,7 +71,7 @@ class TestInflationSpectralIndex(unittest.TestCase):
         # Number of e-folds (typical range 50-60)
         N_efolds = 55
 
-        n_s_derived = 1 - 2/N_efolds
+        n_s_derived = 1 - 2 / N_efolds
 
         sigma = sigma_deviation(n_s_derived, Experimental.n_s, Experimental.n_s_sigma)
 
@@ -82,12 +86,12 @@ class TestInflationSpectralIndex(unittest.TestCase):
     def test_n_s_range(self):
         """Verify n_s prediction falls within allowed range."""
         # For N in range 50-60 e-folds
-        n_s_50 = 1 - 2/50  # = 0.96
-        n_s_60 = 1 - 2/60  # = 0.9667
+        n_s_50 = 1 - 2 / 50  # = 0.96
+        n_s_60 = 1 - 2 / 60  # = 0.9667
 
         # Experimental range (2-sigma)
-        n_s_low = Experimental.n_s - 2*Experimental.n_s_sigma
-        n_s_high = Experimental.n_s + 2*Experimental.n_s_sigma
+        n_s_low = Experimental.n_s - 2 * Experimental.n_s_sigma
+        n_s_high = Experimental.n_s + 2 * Experimental.n_s_sigma
 
         # Both should fall within experimental range
         self.assertGreater(n_s_50, n_s_low)
@@ -96,7 +100,7 @@ class TestInflationSpectralIndex(unittest.TestCase):
         print(f"\n  N=50: n_s = {n_s_50:.4f}")
         print(f"  N=60: n_s = {n_s_60:.4f}")
         print(f"  Exp. range: [{n_s_low:.4f}, {n_s_high:.4f}]")
-        print(f"  Predictions within range [PASS]")
+        print("  Predictions within range [PASS]")
 
 
 class TestTensorToScalar(unittest.TestCase):
@@ -118,7 +122,7 @@ class TestTensorToScalar(unittest.TestCase):
         print(f"\n  r = 12/N^2 = 12/{N_efolds}^2")
         print(f"  Derived:    {r_derived:.4f}")
         print(f"  Upper bound: {Experimental.r_upper}")
-        print(f"  Well below bound [PASS]")
+        print("  Well below bound [PASS]")
 
     def test_r_consistency(self):
         """
@@ -127,18 +131,18 @@ class TestTensorToScalar(unittest.TestCase):
         For slow-roll inflation with potential V ~ (1 - e^(-sqrt(2/3)*phi))^2
         """
         N_efolds = 55
-        n_s = 1 - 2/N_efolds
-        r_from_ns = 3 * (1 - n_s)**2
+        n_s = 1 - 2 / N_efolds
+        r_from_ns = 3 * (1 - n_s) ** 2
 
         r_direct = 12 / N_efolds**2
 
         # Should be consistent
         self.assertAlmostEqual(r_from_ns, r_direct, places=4)
 
-        print(f"\n  r = 3*(1-n_s)^2 = 3*(2/N)^2 = 12/N^2")
+        print("\n  r = 3*(1-n_s)^2 = 3*(2/N)^2 = 12/N^2")
         print(f"  From n_s: {r_from_ns:.5f}")
         print(f"  Direct:   {r_direct:.5f}")
-        print(f"  Consistency verified [PASS]")
+        print("  Consistency verified [PASS]")
 
 
 class TestBaryonAsymmetry(unittest.TestCase):
@@ -172,7 +176,7 @@ class TestBaryonAsymmetry(unittest.TestCase):
         self.assertLess(abs(log_ratio), 1)  # Within order of magnitude
 
         print(f"\n  CP phase delta = arctan(7/3) = {delta_degrees:.1f} degrees")
-        print(f"  eta_B (order of magnitude): ~10^-10")
+        print("  eta_B (order of magnitude): ~10^-10")
         print(f"  Experimental: {Experimental.eta_B:.1e}")
         print(f"  Log ratio: {log_ratio:.2f} [PASS]")
 
@@ -190,7 +194,7 @@ class TestBaryonAsymmetry(unittest.TestCase):
 
         self.assertLess(error, 5)  # Within 5%
 
-        print(f"\n  delta = arctan(b_3/N_c) = arctan(7/3)")
+        print("\n  delta = arctan(b_3/N_c) = arctan(7/3)")
         print(f"  Derived:      {delta_degrees:.2f} degrees")
         print(f"  Experimental: ~{delta_exp} degrees")
         print(f"  Error: {error:.1f}% [PASS]")
@@ -216,8 +220,8 @@ class TestDarkMatter(unittest.TestCase):
         # Qualitative: most flux is sub-threshold
 
         print(f"\n  Dark matter / baryons = {ratio:.1f}")
-        print(f"  FTD mechanism: sub-threshold flux")
-        print(f"  Qualitative prediction consistent [PASS]")
+        print("  FTD mechanism: sub-threshold flux")
+        print("  Qualitative prediction consistent [PASS]")
 
         self.assertGreater(ratio, 5)
         self.assertLess(ratio, 6)
@@ -243,9 +247,9 @@ class TestCosmologicalHierarchy(unittest.TestCase):
 
         log_alpha_20 = np.log10(ALPHA**hierarchy_exponent)
 
-        print(f"\n  Hubble/Planck hierarchy: ~10^-61")
+        print("\n  Hubble/Planck hierarchy: ~10^-61")
         print(f"  alpha^20 ~ 10^{log_alpha_20:.0f}")
-        print(f"  Hierarchy traced to framework integers [PASS]")
+        print("  Hierarchy traced to framework integers [PASS]")
 
 
 class TestCosmologySummary(unittest.TestCase):
@@ -254,9 +258,9 @@ class TestCosmologySummary(unittest.TestCase):
     def test_cosmology_summary(self):
         """Print summary of cosmological predictions."""
         N = 55
-        n_s = 1 - 2/N
-        r = 12/N**2
-        delta = np.degrees(np.arctan(b_3/N_c))
+        n_s = 1 - 2 / N
+        r = 12 / N**2
+        delta = np.degrees(np.arctan(b_3 / N_c))
 
         print("\n" + "=" * 60)
         print("COSMOLOGICAL PREDICTIONS SUMMARY")
@@ -270,7 +274,7 @@ class TestCosmologySummary(unittest.TestCase):
         print("=" * 60)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 60)
     print("COSMOLOGY VERIFICATION")
     print("=" * 60)

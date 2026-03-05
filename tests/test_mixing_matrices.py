@@ -29,6 +29,7 @@ N_eff = 13
 GAMMA_QUARTER = gamma(0.25)
 G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
 
+
 def compute_alpha():
     c = G_STAR
     a = 1
@@ -38,25 +39,27 @@ def compute_alpha():
     x_plus = (-b + np.sqrt(discriminant)) / (2 * a)
     return 1 / x_plus
 
+
 ALPHA = compute_alpha()
+
 
 # PDG 2024 CKM elements (magnitudes)
 class CKMExperimental:
-    V_ud = 0.97373    # +/- 0.00031
-    V_us = 0.2243     # +/- 0.0005
-    V_ub = 0.00382    # +/- 0.00020
-    V_cd = 0.221      # +/- 0.004
-    V_cs = 0.975      # +/- 0.006
-    V_cb = 0.0408     # +/- 0.0014
-    V_td = 0.0086     # +/- 0.0002
-    V_ts = 0.0415     # +/- 0.0009
-    V_tb = 0.99914    # +/- 0.00005
+    V_ud = 0.97373  # +/- 0.00031
+    V_us = 0.2243  # +/- 0.0005
+    V_ub = 0.00382  # +/- 0.00020
+    V_cd = 0.221  # +/- 0.004
+    V_cs = 0.975  # +/- 0.006
+    V_cb = 0.0408  # +/- 0.0014
+    V_td = 0.0086  # +/- 0.0002
+    V_ts = 0.0415  # +/- 0.0009
+    V_tb = 0.99914  # +/- 0.00005
 
     # Wolfenstein parameters
     lambda_w = 0.2243  # ~ sin(theta_C)
-    A = 0.814         # +/- 0.023
-    rho_bar = 0.160   # +/- 0.011
-    eta_bar = 0.348   # +/- 0.010
+    A = 0.814  # +/- 0.023
+    rho_bar = 0.160  # +/- 0.011
+    eta_bar = 0.348  # +/- 0.010
 
     # CP phase
     delta_ckm = 68.0  # degrees, +/- 3.5
@@ -66,15 +69,15 @@ class CKMExperimental:
 class PMNSExperimental:
     # Mixing angles (degrees)
     theta_12 = 33.44  # +/- 0.77 (solar angle)
-    theta_23 = 49.2   # +/- 0.9 (atmospheric angle, normal ordering)
-    theta_13 = 8.57   # +/- 0.12 (reactor angle)
+    theta_23 = 49.2  # +/- 0.9 (atmospheric angle, normal ordering)
+    theta_13 = 8.57  # +/- 0.12 (reactor angle)
 
     # CP phase (degrees)
-    delta_cp = 195    # +/- 25 (poorly constrained)
+    delta_cp = 195  # +/- 25 (poorly constrained)
 
     # sin^2(theta) values
-    sin2_12 = 0.304   # +/- 0.012
-    sin2_23 = 0.570   # +/- 0.018
+    sin2_12 = 0.304  # +/- 0.012
+    sin2_23 = 0.570  # +/- 0.018
     sin2_13 = 0.0222  # +/- 0.0007
 
 
@@ -98,7 +101,7 @@ class TestCKMWolfenstein(unittest.TestCase):
 
         self.assertLess(error, 5)
 
-        print(f"\n  Cabibbo angle lambda:")
+        print("\n  Cabibbo angle lambda:")
         print(f"  Derived:      {lambda_ftd:.4f}")
         print(f"  Experimental: {CKMExperimental.lambda_w:.4f}")
         print(f"  Error: {error:.1f}% [PASS]")
@@ -116,7 +119,7 @@ class TestCKMWolfenstein(unittest.TestCase):
 
         self.assertLess(error, 5)
 
-        print(f"\n  Wolfenstein A:")
+        print("\n  Wolfenstein A:")
         print(f"  Derived:      {A_ftd:.3f}")
         print(f"  Experimental: {CKMExperimental.A:.3f}")
         print(f"  Error: {error:.1f}% [PASS]")
@@ -131,7 +134,7 @@ class TestCKMWolfenstein(unittest.TestCase):
 
         self.assertLess(error, 3)
 
-        print(f"\n  CKM CP phase delta:")
+        print("\n  CKM CP phase delta:")
         print(f"  delta = arctan(7/3) = {delta_ftd:.2f} degrees")
         print(f"  Experimental: {CKMExperimental.delta_ckm:.2f} degrees")
         print(f"  Error: {error:.1f}% [PASS]")
@@ -205,7 +208,7 @@ class TestJarlskogInvariant(unittest.TestCase):
 
         self.assertLess(error, 30)  # Order of magnitude
 
-        print(f"\n  Jarlskog J = A^2 * lambda^6 * eta")
+        print("\n  Jarlskog J = A^2 * lambda^6 * eta")
         print(f"  Approximation: {J_approx:.2e}")
         print(f"  PDG value:     {J_exp:.2e}")
         print(f"  Error: {error:.1f}% [PASS]")
@@ -231,7 +234,7 @@ class TestPMNSAngles(unittest.TestCase):
 
         self.assertLess(error, 2)
 
-        print(f"\n  Solar angle theta_12:")
+        print("\n  Solar angle theta_12:")
         print(f"  Derived:      {theta_12_adjusted:.2f} degrees")
         print(f"  Experimental: {PMNSExperimental.theta_12:.2f} degrees")
         print(f"  Error: {error:.1f}% [PASS]")
@@ -250,7 +253,7 @@ class TestPMNSAngles(unittest.TestCase):
 
         self.assertLess(error, 10)
 
-        print(f"\n  Atmospheric angle theta_23:")
+        print("\n  Atmospheric angle theta_23:")
         print(f"  Derived:      {theta_23_ftd:.2f} degrees")
         print(f"  Experimental: {PMNSExperimental.theta_23:.2f} degrees")
         print(f"  Error: {error:.1f}% [PASS]")
@@ -268,7 +271,7 @@ class TestPMNSAngles(unittest.TestCase):
 
         self.assertLess(error, 5)
 
-        print(f"\n  Reactor angle theta_13:")
+        print("\n  Reactor angle theta_13:")
         print(f"  Derived:      {theta_13_ftd:.2f} degrees")
         print(f"  Experimental: {PMNSExperimental.theta_13:.2f} degrees")
         print(f"  Error: {error:.1f}% [PASS]")
@@ -295,10 +298,10 @@ class TestNeutrinoMasses(unittest.TestCase):
         ratio_ftd = N_eff * N_c / N_base + N_c  # 13*3/4 + 3 ~ 12.75
 
         # Order of magnitude correct
-        print(f"\n  Neutrino mass hierarchy:")
+        print("\n  Neutrino mass hierarchy:")
         print(f"  dm^2_31 / dm^2_21 experimental: {ratio_exp:.1f}")
         print(f"  FTD structure factor: {ratio_ftd:.1f}")
-        print(f"  Order of magnitude consistent [PASS]")
+        print("  Order of magnitude consistent [PASS]")
 
 
 class TestMixingSummary(unittest.TestCase):
@@ -323,7 +326,7 @@ class TestMixingSummary(unittest.TestCase):
         print("=" * 60)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 60)
     print("MIXING MATRICES VERIFICATION")
     print("CKM and PMNS Parameters")

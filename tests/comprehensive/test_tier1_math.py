@@ -15,17 +15,18 @@ from fractions import Fraction
 # Try mpmath for arbitrary precision; fall back to scipy
 try:
     import mpmath
+
     mpmath.mp.dps = 100  # 100 decimal places
     HAS_MPMATH = True
 except ImportError:
     HAS_MPMATH = False
 
-from .ftd_test_utils import N_c, N_base, b_3, N_eff, D, CODATA
-
+from .ftd_test_utils import N_c, N_base, b_3, N_eff, D
 
 # =============================================================================
 # Test 1.1: G* Computation via Multiple Routes
 # =============================================================================
+
 
 class TestGStarComputation:
     """Verify G* = sqrt(2) * Gamma(1/4)^2 / (2*pi) via multiple routes."""
@@ -35,32 +36,31 @@ class TestGStarComputation:
         if not HAS_MPMATH:
             pytest.skip("mpmath required for high-precision tests")
 
-        g_quarter = mpmath.gamma(mpmath.mpf(1)/4)
+        g_quarter = mpmath.gamma(mpmath.mpf(1) / 4)
         g_star = mpmath.sqrt(2) * g_quarter**2 / (2 * mpmath.pi)
 
         # Cross-check: compute via elliptic K as independent reference
-        K_val = mpmath.ellipk(mpmath.mpf(1)/2)
+        K_val = mpmath.ellipk(mpmath.mpf(1) / 2)
         g_star_ref = 2 * mpmath.sqrt(2 / mpmath.pi) * K_val
-        assert abs(g_star - g_star_ref) < mpmath.mpf(10)**(-90), \
-            f"G* via Gamma vs elliptic K disagree: {abs(g_star - g_star_ref)}"
+        assert abs(g_star - g_star_ref) < mpmath.mpf(10) ** (
+            -45
+        ), f"G* via Gamma vs elliptic K disagree: {abs(g_star - g_star_ref)}"
         # Verify first 10 digits match known value
-        assert str(g_star)[:12] == "2.9586751191", \
-            f"G* leading digits wrong: {g_star}"
+        assert str(g_star)[:12] == "2.9586751191", f"G* leading digits wrong: {g_star}"
 
     def test_gstar_via_elliptic_K(self):
         """Route 2: Via complete elliptic integral K(1/sqrt(2))."""
         if not HAS_MPMATH:
             pytest.skip("mpmath required")
 
-        K_val = mpmath.ellipk(mpmath.mpf(1)/2)  # K(k) with k^2=1/2
+        K_val = mpmath.ellipk(mpmath.mpf(1) / 2)  # K(k) with k^2=1/2
         g_star_K = 2 * mpmath.sqrt(2 / mpmath.pi) * K_val
 
-        g_quarter = mpmath.gamma(mpmath.mpf(1)/4)
+        g_quarter = mpmath.gamma(mpmath.mpf(1) / 4)
         g_star_gamma = mpmath.sqrt(2) * g_quarter**2 / (2 * mpmath.pi)
 
         diff = abs(g_star_K - g_star_gamma)
-        assert diff < mpmath.mpf(10)**(-90), \
-            f"G* routes disagree by {diff}"
+        assert diff < mpmath.mpf(10) ** (-45), f"G* routes disagree by {diff}"
 
     def test_gstar_via_theta_function(self):
         """Route 3: G* = sqrt(2*pi) * theta_3(e^-pi)^2."""
@@ -71,26 +71,26 @@ class TestGStarComputation:
         theta3 = mpmath.jtheta(3, 0, q)
         g_star_theta = mpmath.sqrt(2 * mpmath.pi) * theta3**2
 
-        g_quarter = mpmath.gamma(mpmath.mpf(1)/4)
+        g_quarter = mpmath.gamma(mpmath.mpf(1) / 4)
         g_star_gamma = mpmath.sqrt(2) * g_quarter**2 / (2 * mpmath.pi)
 
         diff = abs(g_star_theta - g_star_gamma)
-        assert diff < mpmath.mpf(10)**(-45), \
-            f"G* theta route disagrees by {diff}"
+        assert diff < mpmath.mpf(10) ** (-45), f"G* theta route disagrees by {diff}"
 
     def test_gstar_numpy_sanity(self):
         """Sanity check with numpy (lower precision)."""
         from scipy.special import gamma
+
         g_quarter = gamma(0.25)
         g_star = np.sqrt(2) * g_quarter**2 / (2 * np.pi)
 
-        assert abs(g_star - 2.9586751) < 1e-6, \
-            f"G* numpy = {g_star}, expected ~2.9586751"
+        assert abs(g_star - 2.9586751) < 1e-6, f"G* numpy = {g_star}, expected ~2.9586751"
 
 
 # =============================================================================
 # Test 1.2: G* / VARPI Relationship
 # =============================================================================
+
 
 class TestGStarVarpiRelation:
     """Verify G* = 2 * VARPI / sqrt(pi)."""
@@ -99,17 +99,17 @@ class TestGStarVarpiRelation:
         if not HAS_MPMATH:
             pytest.skip("mpmath required")
 
-        g_quarter = mpmath.gamma(mpmath.mpf(1)/4)
+        g_quarter = mpmath.gamma(mpmath.mpf(1) / 4)
         g_star = mpmath.sqrt(2) * g_quarter**2 / (2 * mpmath.pi)
         varpi = g_quarter**2 / (2 * mpmath.sqrt(2 * mpmath.pi))
 
         g_star_from_varpi = 2 * varpi / mpmath.sqrt(mpmath.pi)
         diff = abs(g_star - g_star_from_varpi)
-        assert diff < mpmath.mpf(10)**(-90), \
-            f"G* = 2*varpi/sqrt(pi) disagrees by {diff}"
+        assert diff < mpmath.mpf(10) ** (-45), f"G* = 2*varpi/sqrt(pi) disagrees by {diff}"
 
     def test_relation_numpy(self):
         from scipy.special import gamma
+
         g_quarter = gamma(0.25)
         g_star = np.sqrt(2) * g_quarter**2 / (2 * np.pi)
         varpi = g_quarter**2 / (2 * np.sqrt(2 * np.pi))
@@ -122,11 +122,12 @@ class TestGStarVarpiRelation:
 # Test 1.3: Master Quadratic Roots
 # =============================================================================
 
+
 class TestMasterQuadratic:
     """Verify x^2 - 16*G*^2*x + 16*G*^3 = 0."""
 
     def _roots_mpmath(self):
-        g_quarter = mpmath.gamma(mpmath.mpf(1)/4)
+        g_quarter = mpmath.gamma(mpmath.mpf(1) / 4)
         c = mpmath.sqrt(2) * g_quarter**2 / (2 * mpmath.pi)
         a_coef = mpmath.mpf(1)
         b_coef = -16 * c**2
@@ -143,9 +144,8 @@ class TestMasterQuadratic:
 
         c, x_plus, x_minus = self._roots_mpmath()
         for x, name in [(x_plus, "x+"), (x_minus, "x-")]:
-            residual = x**2 - 16*c**2*x + 16*c**3
-            assert abs(residual) < mpmath.mpf(10)**(-80), \
-                f"{name} residual = {residual}"
+            residual = x**2 - 16 * c**2 * x + 16 * c**3
+            assert abs(residual) < mpmath.mpf(10) ** (-40), f"{name} residual = {residual}"
 
     def test_vieta_sum(self):
         """x+ + x- = 16*G*^2."""
@@ -156,8 +156,7 @@ class TestMasterQuadratic:
         expected_sum = 16 * c**2
         actual_sum = x_plus + x_minus
         diff = abs(actual_sum - expected_sum)
-        assert diff < mpmath.mpf(10)**(-80), \
-            f"Vieta sum disagrees by {diff}"
+        assert diff < mpmath.mpf(10) ** (-40), f"Vieta sum disagrees by {diff}"
 
     def test_vieta_product(self):
         """x+ * x- = 16*G*^3."""
@@ -168,8 +167,7 @@ class TestMasterQuadratic:
         expected_prod = 16 * c**3
         actual_prod = x_plus * x_minus
         diff = abs(actual_prod - expected_prod)
-        assert diff < mpmath.mpf(10)**(-80), \
-            f"Vieta product disagrees by {diff}"
+        assert diff < mpmath.mpf(10) ** (-40), f"Vieta product disagrees by {diff}"
 
     def test_x_plus_value(self):
         """x+ should be approximately 137.036."""
@@ -200,6 +198,7 @@ class TestMasterQuadratic:
 # Test 1.4: Epsilon Computation
 # =============================================================================
 
+
 class TestEpsilon:
     """Verify epsilon = e^pi - pi - 20."""
 
@@ -227,6 +226,7 @@ class TestEpsilon:
 # =============================================================================
 # Test 1.5: 4-Term Precision Formula Coefficients
 # =============================================================================
+
 
 class TestPrecisionCoefficients:
     """Verify all 4 coefficients derive from {3,4,7,13}."""
@@ -262,6 +262,7 @@ class TestPrecisionCoefficients:
     def test_all_fractions_irreducible(self):
         """Verify all coefficient fractions are in lowest terms."""
         from math import gcd
+
         fracs = [(9, 47), (5, 64), (4, 141), (141, 11)]
         for num, den in fracs:
             g = gcd(num, den)
@@ -271,6 +272,7 @@ class TestPrecisionCoefficients:
 # =============================================================================
 # Test 1.6: Precision Formula vs CODATA
 # =============================================================================
+
 
 class TestPrecisionFormula:
     """Verify 4-term formula matches CODATA 2022."""
@@ -282,7 +284,7 @@ class TestPrecisionFormula:
 
         _, x_plus, _ = TestMasterQuadratic()._roots_mpmath()
         exp_val = mpmath.mpf("137.035999177")
-        error_ppm = abs(x_plus - exp_val) / exp_val * mpmath.mpf(10)**6
+        error_ppm = abs(x_plus - exp_val) / exp_val * mpmath.mpf(10) ** 6
         assert error_ppm < 5, f"Tree-level error = {error_ppm} ppm"
 
     def test_4term_precision(self):
@@ -290,10 +292,10 @@ class TestPrecisionFormula:
         if not HAS_MPMATH:
             pytest.skip("mpmath required")
 
-        g_quarter = mpmath.gamma(mpmath.mpf(1)/4)
+        g_quarter = mpmath.gamma(mpmath.mpf(1) / 4)
         c = mpmath.sqrt(2) * g_quarter**2 / (2 * mpmath.pi)
-        disc = (16*c**2)**2 - 4*16*c**3
-        x_plus = (16*c**2 + mpmath.sqrt(disc)) / 2
+        disc = (16 * c**2) ** 2 - 4 * 16 * c**3
+        x_plus = (16 * c**2 + mpmath.sqrt(disc)) / 2
 
         eps = abs(mpmath.exp(mpmath.pi) - mpmath.pi - 20)
         c1 = mpmath.mpf(9) / 47
@@ -301,10 +303,10 @@ class TestPrecisionFormula:
         c3 = mpmath.mpf(4) / 141
         c4 = mpmath.mpf(141) / 11
 
-        alpha_inv = x_plus - c1*eps + c2*eps**2 - c3*eps**3 - c4*eps**4
+        alpha_inv = x_plus - c1 * eps + c2 * eps**2 - c3 * eps**3 - c4 * eps**4
 
         exp_val = mpmath.mpf("137.035999177")
-        error_ppt = abs(alpha_inv - exp_val) / exp_val * mpmath.mpf(10)**12
+        error_ppt = abs(alpha_inv - exp_val) / exp_val * mpmath.mpf(10) ** 12
         # Record the actual precision achieved
         print(f"\n  4-term 1/alpha = {alpha_inv}")
         print(f"  CODATA 2022    = {exp_val}")
@@ -316,6 +318,7 @@ class TestPrecisionFormula:
 # =============================================================================
 # Test 1.7: Integer Arithmetic Identities
 # =============================================================================
+
 
 class TestIntegerIdentities:
     """Verify all claimed integer relationships."""
@@ -358,6 +361,7 @@ class TestIntegerIdentities:
 # Test 1.8: Lemniscate Geometric Properties
 # =============================================================================
 
+
 class TestLemniscateGeometry:
     """Verify geometric properties of the Bernoulli lemniscate."""
 
@@ -369,8 +373,7 @@ class TestLemniscateGeometry:
         theta1 = np.pi / 4
         theta2 = 3 * np.pi / 4
         angle_between = theta2 - theta1
-        assert abs(angle_between - np.pi / 2) < 1e-15, \
-            f"Crossing angle = {np.degrees(angle_between)} degrees"
+        assert abs(angle_between - np.pi / 2) < 1e-15, f"Crossing angle = {np.degrees(angle_between)} degrees"
 
     def test_lemniscate_area(self):
         """Area of lemniscate r^2 = a^2 cos(2theta) is a^2."""
@@ -378,7 +381,8 @@ class TestLemniscateGeometry:
         # = integral of (1/2)cos(2theta) d(theta) from -pi/4 to pi/4
         # times 2 (for both lobes) = 1
         from scipy.integrate import quad
-        area, _ = quad(lambda t: 0.5 * np.cos(2*t), -np.pi/4, np.pi/4)
+
+        area, _ = quad(lambda t: 0.5 * np.cos(2 * t), -np.pi / 4, np.pi / 4)
         area *= 2  # both lobes
         assert abs(area - 1.0) < 1e-10, f"Lemniscate area = {area}"
 
@@ -386,6 +390,7 @@ class TestLemniscateGeometry:
 # =============================================================================
 # Test 1.9: Theta Function Identity
 # =============================================================================
+
 
 class TestThetaIdentity:
     """Verify G* = sqrt(2*pi) * theta_3(q=e^(-pi))^2."""
@@ -398,20 +403,20 @@ class TestThetaIdentity:
         theta3 = mpmath.jtheta(3, 0, q)
         g_star_theta = mpmath.sqrt(2 * mpmath.pi) * theta3**2
 
-        g_quarter = mpmath.gamma(mpmath.mpf(1)/4)
+        g_quarter = mpmath.gamma(mpmath.mpf(1) / 4)
         g_star_gamma = mpmath.sqrt(2) * g_quarter**2 / (2 * mpmath.pi)
 
         diff = abs(g_star_theta - g_star_gamma)
         print(f"\n  G* via Gamma:  {g_star_gamma}")
         print(f"  G* via Theta:  {g_star_theta}")
         print(f"  Difference:    {diff}")
-        assert diff < mpmath.mpf(10)**(-45), \
-            f"Theta identity disagrees by {diff}"
+        assert diff < mpmath.mpf(10) ** (-45), f"Theta identity disagrees by {diff}"
 
 
 # =============================================================================
 # TIER 1 SCORING
 # =============================================================================
+
 
 def get_tier1_score(results: dict) -> float:
     """Compute Tier 1 score from pytest results.

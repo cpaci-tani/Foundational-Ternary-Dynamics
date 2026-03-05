@@ -15,9 +15,11 @@ import sys
 import os
 
 # Add project root to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-import ternary_matrix.config as cfg
+# ternary_matrix is the archived Python engine (replaced by C++ engine).
+# Skip this entire module if unavailable.
+cfg = pytest.importorskip("ternary_matrix.config")
 from ternary_matrix.model.grid import Universe
 from ternary_matrix.physics import (
     tick,
@@ -26,12 +28,9 @@ from ternary_matrix.physics import (
     divergence_3d,
     curl_3d,
     propagate_flux,
-    accumulate_forces,
     gravity_force,
-    coulomb_force,
     integrate,
     clamp_velocity,
-    move_particles,
     process_interactions,
 )
 
@@ -55,6 +54,7 @@ def set_config(**kwargs):
 # Test 4.1: Vacuum Stability
 # =============================================================================
 
+
 class TestVacuumStability:
     """Empty lattice should remain empty."""
 
@@ -75,6 +75,7 @@ class TestVacuumStability:
 # Test 4.2: Energy Conservation
 # =============================================================================
 
+
 class TestEnergyConservation:
     """Total flux magnitude should be conserved without damping."""
 
@@ -86,7 +87,7 @@ class TestEnergyConservation:
         # Create a flux pulse
         mid = 8
         uni.flux[mid, mid, mid] = [1.0, 0.5, 0.3]
-        uni.flux[mid+1, mid, mid] = [0.5, 0.2, 0.1]
+        uni.flux[mid + 1, mid, mid] = [0.5, 0.2, 0.1]
 
         initial_energy = np.sum(np.sqrt(np.sum(uni.flux**2, axis=-1)))
 
@@ -107,6 +108,7 @@ class TestEnergyConservation:
 # =============================================================================
 # Test 4.3: Charge Conservation
 # =============================================================================
+
 
 class TestChargeConservation:
     """Net charge should be conserved."""
@@ -141,6 +143,7 @@ class TestChargeConservation:
 # Test 4.4: Causality (Light Cone)
 # =============================================================================
 
+
 class TestCausality:
     """Information should not propagate faster than the speed limit."""
 
@@ -163,7 +166,7 @@ class TestCausality:
         for x in range(32):
             for y in range(32):
                 for z in range(32):
-                    dist = np.sqrt((x-mid)**2 + (y-mid)**2 + (z-mid)**2)
+                    dist = np.sqrt((x - mid) ** 2 + (y - mid) ** 2 + (z - mid) ** 2)
                     if dist > max_reach and density[x, y, z] > 1e-10:
                         violations += 1
 
@@ -175,6 +178,7 @@ class TestCausality:
 # =============================================================================
 # Test 4.5: Speed Limit Enforcement
 # =============================================================================
+
 
 class TestSpeedLimit:
     """Particle velocities should never exceed C."""
@@ -192,13 +196,13 @@ class TestSpeedLimit:
 
         max_speed = np.max(np.sqrt(np.sum(uni.velocity**2, axis=-1)))
         print(f"\n  Max speed after integration: {max_speed:.4f}")
-        assert max_speed <= cfg.CONSTANTS.C + 1e-6, \
-            f"Speed {max_speed} > C={cfg.CONSTANTS.C}"
+        assert max_speed <= cfg.CONSTANTS.C + 1e-6, f"Speed {max_speed} > C={cfg.CONSTANTS.C}"
 
 
 # =============================================================================
 # Test 4.6: Wave Propagation
 # =============================================================================
+
 
 class TestWavePropagation:
     """Flux waves should propagate at approximately C_WAVE."""
@@ -226,6 +230,7 @@ class TestWavePropagation:
 # Test 4.7: Triad Stability
 # =============================================================================
 
+
 class TestTriadStability:
     """Locked triads should persist."""
 
@@ -252,6 +257,7 @@ class TestTriadStability:
 # Test 4.8: Annihilation
 # =============================================================================
 
+
 class TestAnnihilation:
     """Opposite-sign adjacent particles should annihilate."""
 
@@ -269,13 +275,13 @@ class TestAnnihilation:
         state1 = uni.states[8, 8, 8]
         state2 = uni.states[9, 8, 8]
         print(f"\n  After annihilation: states = ({state1}, {state2})")
-        assert state1 == 0 and state2 == 0, \
-            f"Annihilation failed: ({state1}, {state2})"
+        assert state1 == 0 and state2 == 0, f"Annihilation failed: ({state1}, {state2})"
 
 
 # =============================================================================
 # Test 4.9: Genesis / Evaporation
 # =============================================================================
+
 
 class TestGenesisEvaporation:
     """Manifestation and evaporation thresholds should work."""
@@ -287,13 +293,14 @@ class TestGenesisEvaporation:
         calculate_density(uni)
 
         tick(uni)
-        density_val = np.sqrt(np.sum(uni.flux[8, 8, 8]**2))
+        density_val = np.sqrt(np.sum(uni.flux[8, 8, 8] ** 2))
         print(f"\n  Flux density at site: {density_val:.4f} (KB={cfg.CONSTANTS.KB})")
 
 
 # =============================================================================
 # Test 4.10: Numerical Stability
 # =============================================================================
+
 
 class TestNumericalStability:
     """Long runs should not produce NaN or Inf."""
@@ -314,7 +321,7 @@ class TestNumericalStability:
         has_inf = np.any(np.isinf(uni.flux))
         max_flux = np.max(np.abs(uni.flux))
 
-        print(f"\n  After 500 ticks:")
+        print("\n  After 500 ticks:")
         print(f"    NaN in flux: {has_nan}")
         print(f"    Inf in flux: {has_inf}")
         print(f"    Max |flux|:  {max_flux:.4f}")
@@ -327,6 +334,7 @@ class TestNumericalStability:
 # =============================================================================
 # Test 4.11: Vector Calculus Identities
 # =============================================================================
+
 
 class TestVectorCalculus:
     """Discrete differential operator identities."""
@@ -362,6 +370,7 @@ class TestVectorCalculus:
 # Test 4.12: Inverse-Square Law Emergence
 # =============================================================================
 
+
 class TestInverseSquareLaw:
     """Test whether gravity-like force follows 1/r^2."""
 
@@ -375,7 +384,7 @@ class TestInverseSquareLaw:
         for dx in range(-1, 2):
             for dy in range(-1, 2):
                 for dz in range(-1, 2):
-                    uni.flux[mid+dx, mid+dy, mid+dz] = [3.0, 0.0, 0.0]
+                    uni.flux[mid + dx, mid + dy, mid + dz] = [3.0, 0.0, 0.0]
 
         calculate_density(uni)
         f_grav = gravity_force(uni)
@@ -383,7 +392,7 @@ class TestInverseSquareLaw:
         distances = []
         forces = []
         for r in range(3, 14):
-            fx, fy, fz = f_grav[mid+r, mid, mid]
+            fx, fy, fz = f_grav[mid + r, mid, mid]
             f_mag = np.sqrt(fx**2 + fy**2 + fz**2)
             if f_mag > 1e-10:
                 distances.append(r)
@@ -395,7 +404,7 @@ class TestInverseSquareLaw:
             slope, intercept = np.polyfit(log_r, log_f, 1)
 
             print(f"\n  Force vs distance fit: F ∝ r^{slope:.2f}")
-            print(f"  Expected: r^(-2.0)")
+            print("  Expected: r^(-2.0)")
             print(f"  Measurements: {len(distances)} points")
 
             assert -4.0 < slope < -0.5, f"Slope = {slope:.2f}, expected ~-2"

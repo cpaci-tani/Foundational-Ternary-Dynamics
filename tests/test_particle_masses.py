@@ -27,6 +27,7 @@ PHI = (1 + np.sqrt(5)) / 2  # Golden ratio
 GAMMA_QUARTER = gamma(0.25)
 G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
 
+
 # Derived alpha
 def compute_alpha():
     c = G_STAR
@@ -37,11 +38,13 @@ def compute_alpha():
     x_plus = (-b + np.sqrt(discriminant)) / (2 * a)
     return 1 / x_plus
 
+
 ALPHA = compute_alpha()
 ALPHA_INV = 1 / ALPHA
 
 # Planck mass in GeV
 M_PLANCK = 1.220890e19  # GeV
+
 
 # PDG 2024 experimental values (in MeV unless noted)
 class Experimental:
@@ -90,7 +93,7 @@ class TestElectronMass(unittest.TestCase):
         - N_base^2/N_c = 16/3 (lattice structure)
         - alpha^11 = electromagnetic hierarchy
         """
-        m_e_derived = M_PLANCK * np.sqrt(2*np.pi) * (N_base**2/N_c) * ALPHA**11
+        m_e_derived = M_PLANCK * np.sqrt(2 * np.pi) * (N_base**2 / N_c) * ALPHA**11
 
         # Convert to MeV
         m_e_mev = m_e_derived * 1000
@@ -100,7 +103,7 @@ class TestElectronMass(unittest.TestCase):
         # Should be within 0.5%
         self.assertLess(error, 0.5)
 
-        print(f"\n  m_e = m_P * sqrt(2*pi) * (16/3) * alpha^11")
+        print("\n  m_e = m_P * sqrt(2*pi) * (16/3) * alpha^11")
         print(f"  Derived:      {m_e_mev:.6f} MeV")
         print(f"  Experimental: {Experimental.m_electron:.6f} MeV")
         print(f"  Error: {error:.3f}% [PASS]")
@@ -109,7 +112,7 @@ class TestElectronMass(unittest.TestCase):
         """Verify each component of the electron mass formula."""
         # Each multiplicative factor
         planck_factor = M_PLANCK  # ~ 1.22e19 GeV
-        sqrt_2pi = np.sqrt(2*np.pi)  # ~ 2.507
+        sqrt_2pi = np.sqrt(2 * np.pi)  # ~ 2.507
         lattice_factor = N_base**2 / N_c  # = 16/3 ~ 5.333
         alpha_factor = ALPHA**11  # ~ 4.2e-24
 
@@ -117,7 +120,7 @@ class TestElectronMass(unittest.TestCase):
         m_e_gev = planck_factor * sqrt_2pi * lattice_factor * alpha_factor
         m_e_mev = m_e_gev * 1000
 
-        print(f"\n  Electron mass breakdown:")
+        print("\n  Electron mass breakdown:")
         print(f"    m_P        = {planck_factor:.3e} GeV")
         print(f"    sqrt(2*pi) = {sqrt_2pi:.6f}")
         print(f"    16/3       = {lattice_factor:.6f}")
@@ -151,8 +154,8 @@ class TestTauMass(unittest.TestCase):
 
         print(f"\n  m_tau / m_e experimental: {ratio_exp:.1f}")
         print(f"  FTD structural estimate:  {ratio_approx:.1f}")
-        print(f"  The full derivation uses flavor physics (see verify_masses.py)")
-        print(f"  Order of magnitude consistent [PASS]")
+        print("  The full derivation uses flavor physics (see verify_masses.py)")
+        print("  Order of magnitude consistent [PASS]")
 
 
 class TestProtonMass(unittest.TestCase):
@@ -182,8 +185,8 @@ class TestProtonMass(unittest.TestCase):
 
         print(f"\n  m_p / m_e experimental: {ratio_exp:.1f}")
         print(f"  FTD structural estimate: {ratio_approx:.1f}")
-        print(f"  Full derivation involves QCD (see verify_masses.py)")
-        print(f"  Structural relationship verified [PASS]")
+        print("  Full derivation involves QCD (see verify_masses.py)")
+        print("  Structural relationship verified [PASS]")
 
 
 class TestMuonMass(unittest.TestCase):
@@ -217,7 +220,7 @@ class TestMuonMass(unittest.TestCase):
         print(f"  m_tau = {m_tau:.4f} MeV")
         print(f"  m_mu / m_e = {ratio_mu_e:.1f}")
         print(f"  m_tau / m_mu = {ratio_tau_mu:.1f}")
-        print(f"  Hierarchical structure verified [PASS]")
+        print("  Hierarchical structure verified [PASS]")
 
 
 class TestQuarkMasses(unittest.TestCase):
@@ -244,7 +247,7 @@ class TestQuarkMasses(unittest.TestCase):
         print(f"\n  m_u = {m_u:.2f} MeV")
         print(f"  m_d = {m_d:.2f} MeV")
         print(f"  m_u/m_d = {ratio:.3f}")
-        print(f"  This hierarchy ensures proton stability [PASS]")
+        print("  This hierarchy ensures proton stability [PASS]")
 
 
 class TestHiggsMass(unittest.TestCase):
@@ -256,7 +259,7 @@ class TestHiggsMass(unittest.TestCase):
 
         The Higgs VEV is the electroweak symmetry breaking scale.
         """
-        v_derived = M_PLANCK * np.sqrt(2*np.pi) * ALPHA**8  # GeV
+        v_derived = M_PLANCK * np.sqrt(2 * np.pi) * ALPHA**8  # GeV
 
         # Experimental VEV
         v_exp = 246.22  # GeV
@@ -266,7 +269,7 @@ class TestHiggsMass(unittest.TestCase):
         # Should be within 0.5%
         self.assertLess(error, 0.5)
 
-        print(f"\n  v = m_P * sqrt(2*pi) * alpha^8")
+        print("\n  v = m_P * sqrt(2*pi) * alpha^8")
         print(f"  Derived:      {v_derived:.2f} GeV")
         print(f"  Experimental: {v_exp:.2f} GeV")
         print(f"  Error: {error:.3f}% [PASS]")
@@ -291,11 +294,11 @@ class TestMassHierarchy(unittest.TestCase):
         self.assertGreater(tau_mu_ratio, 10)  # tau heavier than muon
         self.assertGreater(tau_e_ratio, 1000)  # tau much heavier than electron
 
-        print(f"\n  Lepton mass ratios:")
+        print("\n  Lepton mass ratios:")
         print(f"    m_mu/m_e  = {mu_e_ratio:.2f}")
         print(f"    m_tau/m_mu = {tau_mu_ratio:.2f}")
         print(f"    m_tau/m_e = {tau_e_ratio:.2f}")
-        print(f"  Hierarchical structure verified [PASS]")
+        print("  Hierarchical structure verified [PASS]")
 
 
 class TestMassSummary(unittest.TestCase):
@@ -303,12 +306,12 @@ class TestMassSummary(unittest.TestCase):
 
     def test_all_masses_summary(self):
         """Print summary of all mass predictions."""
-        m_e_mev = M_PLANCK * np.sqrt(2*np.pi) * (N_base**2/N_c) * ALPHA**11 * 1000
+        m_e_mev = M_PLANCK * np.sqrt(2 * np.pi) * (N_base**2 / N_c) * ALPHA**11 * 1000
 
         predictions = [
             ("Electron", m_e_mev, Experimental.m_electron),
             ("Tau", m_e_mev * ALPHA_INV / (PHI**2 * np.pi), Experimental.m_tau),
-            ("Proton", m_e_mev * ALPHA_INV * (1 + ALPHA/np.pi), Experimental.m_proton),
+            ("Proton", m_e_mev * ALPHA_INV * (1 + ALPHA / np.pi), Experimental.m_proton),
         ]
 
         print("\n" + "=" * 50)
@@ -324,7 +327,7 @@ class TestMassSummary(unittest.TestCase):
         print("=" * 50)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 60)
     print("PARTICLE MASS VERIFICATION")
     print("=" * 60)

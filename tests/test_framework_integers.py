@@ -17,13 +17,12 @@ This test verifies:
 """
 
 import unittest
-import numpy as np
 
 # Framework integers
-N_c = 3       # Number of colors (quark color charge)
-N_base = 4    # Base dimension constant
-b_3 = 7       # QCD beta function first coefficient
-N_eff = 13    # Effective degrees of freedom
+N_c = 3  # Number of colors (quark color charge)
+N_base = 4  # Base dimension constant
+b_3 = 7  # QCD beta function first coefficient
+N_eff = 13  # Effective degrees of freedom
 
 
 class TestFrameworkIntegers(unittest.TestCase):
@@ -60,7 +59,7 @@ class TestFrameworkIntegers(unittest.TestCase):
         self.assertEqual(n_eff_derived, 13)
         self.assertEqual(n_eff_derived, N_eff)
         print(f"\n  N_eff = b_3 + 2*N_c = {b_3} + 2*{N_c} = {n_eff_derived}")
-        print(f"  This equals F_7 = 13 (Fibonacci closure) [PASS]")
+        print("  This equals F_7 = 13 (Fibonacci closure) [PASS]")
 
     def test_fibonacci_sequence(self):
         """Verify N_eff = 13 is indeed F_7 (the 7th Fibonacci number)."""
@@ -114,9 +113,9 @@ class TestFrameworkIntegers(unittest.TestCase):
         # Verify this is a Fibonacci number
         self.assertIn(neff, fibs)
         self.assertEqual((nc, nb, b3, neff), (3, 4, 7, 13))
-        print(f"\n  With physical constraints (N_c = 3 from QCD):")
-        print(f"  Unique solution: (N_c, N_base, b_3, N_eff) = (3, 4, 7, 13)")
-        print(f"  N_eff = 13 = F_7 is Fibonacci [PASS]")
+        print("\n  With physical constraints (N_c = 3 from QCD):")
+        print("  Unique solution: (N_c, N_base, b_3, N_eff) = (3, 4, 7, 13)")
+        print("  N_eff = 13 = F_7 is Fibonacci [PASS]")
 
     def test_generation_count(self):
         """
@@ -167,19 +166,19 @@ class TestIntegerRelationships(unittest.TestCase):
         alpha_G = 2*pi * (N_base^2/N_c)^2 * (N_eff + N_c/b_3)^2 * alpha^20
         """
         # Check the combinations
-        mass_factor = (N_base**2 / N_c)**2
-        expected_mass = (16/3)**2
+        mass_factor = (N_base**2 / N_c) ** 2
+        expected_mass = (16 / 3) ** 2
         self.assertAlmostEqual(mass_factor, expected_mass, places=10)
 
         hierarchy_factor = N_eff + N_c / b_3
-        expected_hier = 13 + 3/7
+        expected_hier = 13 + 3 / 7
         self.assertAlmostEqual(hierarchy_factor, expected_hier, places=10)
 
         print(f"\n  Mass factor: (N_base^2/N_c)^2 = (16/3)^2 = {mass_factor:.6f}")
         print(f"  Hierarchy: N_eff + N_c/b_3 = 13 + 3/7 = {hierarchy_factor:.6f} [PASS]")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 60)
     print("FTD FRAMEWORK INTEGERS VERIFICATION")
     print("=" * 60)

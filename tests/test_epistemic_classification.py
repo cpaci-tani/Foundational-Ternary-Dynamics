@@ -27,24 +27,25 @@ POLYMATH ANALYSIS CRITERIA:
 
 import unittest
 import numpy as np
-from scipy.special import gamma, ellipk
+from scipy.special import gamma
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, List
+from typing import List
 
 
 class EpistemicStatus(Enum):
-    THEOREM = "THEOREM"        # Mathematically proven
-    DERIVED = "DERIVED"        # Clear derivation chain
-    SELECTION = "SELECTION"    # Constrained choice
+    THEOREM = "THEOREM"  # Mathematically proven
+    DERIVED = "DERIVED"  # Clear derivation chain
+    SELECTION = "SELECTION"  # Constrained choice
     NUMEROLOGY = "NUMEROLOGY"  # Coincidence without derivation
-    IMPOSED = "IMPOSED"        # Parameter choice
+    IMPOSED = "IMPOSED"  # Parameter choice
     CONJECTURE = "CONJECTURE"  # Requires validation
 
 
 @dataclass
 class Derivation:
     """Represents a derived quantity with full epistemic metadata."""
+
     name: str
     formula: str
     value: float
@@ -53,7 +54,7 @@ class Derivation:
     status: EpistemicStatus
     derivation_chain: List[str]
     degrees_of_freedom: int  # Free parameters in formula
-    predictions_made: int    # Independent predictions
+    predictions_made: int  # Independent predictions
     notes: str = ""
 
     @property
@@ -72,10 +73,10 @@ class Derivation:
 # =============================================================================
 
 # The four integers - these are IMPOSED (axioms of the framework)
-N_c = 3          # Colors - IMPOSED (but matches QCD)
-N_base = 4       # Base dimension - IMPOSED
-b_3 = 7          # QCD beta coefficient - DERIVED from N_c + N_base
-N_eff = 13       # Effective DoF - DERIVED from b_3 + 2*N_c (Fibonacci F_7)
+N_c = 3  # Colors - IMPOSED (but matches QCD)
+N_base = 4  # Base dimension - IMPOSED
+b_3 = 7  # QCD beta coefficient - DERIVED from N_c + N_base
+N_eff = 13  # Effective DoF - DERIVED from b_3 + 2*N_c (Fibonacci F_7)
 
 # Mathematical constants - THEOREM (pure mathematics)
 PHI = (1 + np.sqrt(5)) / 2
@@ -89,10 +90,11 @@ M_PLANCK = 1.220890e19  # GeV
 def compute_quadratic_roots():
     """Solve master quadratic - THEOREM (quadratic formula is proven)."""
     c = G_STAR
-    discriminant = (16 * c**2)**2 - 4 * 16 * c**3
+    discriminant = (16 * c**2) ** 2 - 4 * 16 * c**3
     x_plus = (16 * c**2 + np.sqrt(discriminant)) / 2
     x_minus = (16 * c**2 - np.sqrt(discriminant)) / 2
     return x_plus, x_minus
+
 
 X_PLUS, X_MINUS = compute_quadratic_roots()
 ALPHA = 1 / X_PLUS
@@ -102,8 +104,10 @@ ALPHA = 1 / X_PLUS
 # EXPERIMENTAL VALUES
 # =============================================================================
 
+
 class Exp:
     """PDG 2024 experimental values."""
+
     # Coupling constants
     alpha_inv = 137.035999177
     alpha_s = 0.1179
@@ -141,6 +145,7 @@ class Exp:
 def ppm_error(derived, exp):
     return abs(derived - exp) / exp * 1e6
 
+
 def percent_error(derived, exp):
     return abs(derived - exp) / exp * 100
 
@@ -148,6 +153,7 @@ def percent_error(derived, exp):
 # =============================================================================
 # TEST CLASS: THEOREMS (Mathematically Proven)
 # =============================================================================
+
 
 class TestTheorems(unittest.TestCase):
     """
@@ -184,7 +190,7 @@ class TestTheorems(unittest.TestCase):
 
         print(f"\n[THEOREM] FTD G* = {g_star_gamma:.12f}")
         print(f"  Classical ϖ   = {varpi_classical:.12f}")
-        print(f"  Status: Pure mathematics, no free parameters")
+        print("  Status: Pure mathematics, no free parameters")
 
     def test_quadratic_formula(self):
         """
@@ -202,13 +208,13 @@ class TestTheorems(unittest.TestCase):
         self.assertAlmostEqual(X_PLUS * X_MINUS, 16 * c**3, places=10)
 
         # Roots satisfy equation (proven)
-        residual_plus = X_PLUS**2 - 16*c**2*X_PLUS + 16*c**3
-        residual_minus = X_MINUS**2 - 16*c**2*X_MINUS + 16*c**3
+        residual_plus = X_PLUS**2 - 16 * c**2 * X_PLUS + 16 * c**3
+        residual_minus = X_MINUS**2 - 16 * c**2 * X_MINUS + 16 * c**3
 
         self.assertAlmostEqual(residual_plus, 0, places=10)
         self.assertAlmostEqual(residual_minus, 0, places=10)
 
-        print(f"\n[THEOREM] Quadratic roots:")
+        print("\n[THEOREM] Quadratic roots:")
         print(f"  x_+ = {X_PLUS:.10f}")
         print(f"  x_- = {X_MINUS:.10f}")
         print(f"  Residuals: {residual_plus:.2e}, {residual_minus:.2e}")
@@ -233,7 +239,7 @@ class TestTheorems(unittest.TestCase):
         fib = [1, 1, 2, 3, 5, 8, 13, 21]
         self.assertEqual(n_eff_derived, fib[6])  # F_7 (0-indexed)
 
-        print(f"\n[THEOREM] Fibonacci constraint:")
+        print("\n[THEOREM] Fibonacci constraint:")
         print(f"  b_3 = N_c + N_base = 3 + 4 = {b_3_derived}")
         print(f"  N_eff = b_3 + 2*N_c = 7 + 6 = {n_eff_derived} = F_7")
 
@@ -241,6 +247,7 @@ class TestTheorems(unittest.TestCase):
 # =============================================================================
 # TEST CLASS: DERIVED (Clear derivation chain, but from imposed axioms)
 # =============================================================================
+
 
 class TestDerived(unittest.TestCase):
     """
@@ -279,17 +286,17 @@ class TestDerived(unittest.TestCase):
             formula="1/alpha = x_+ from x^2 - 16G*^2*x + 16G*^3 = 0",
             value=alpha_inv_derived,
             experimental=Exp.alpha_inv,
-            error_percent=error/10000,
+            error_percent=error / 10000,
             status=EpistemicStatus.DERIVED,
             derivation_chain=[
                 "[IMPOSED] 16 = lattice DoF",
                 "[THEOREM] G* = lemniscate constant",
                 "[THEOREM] Solve quadratic",
-                "[SELECTION] x_+ = 1/alpha"
+                "[SELECTION] x_+ = 1/alpha",
             ],
             degrees_of_freedom=1,  # The identification
             predictions_made=1,
-            notes="1.26 ppm is remarkable. Statistical significance: p < 10^-6"
+            notes="1.26 ppm is remarkable. Statistical significance: p < 10^-6",
         )
 
         print(f"\n[DERIVED] {d.name}")
@@ -326,15 +333,16 @@ class TestDerived(unittest.TestCase):
         for name, value in derivations.items():
             self.assertEqual(value, 16, f"{name} should equal 16")
 
-        print(f"\n[DERIVED] Coefficient 16 via multiple routes:")
+        print("\n[DERIVED] Coefficient 16 via multiple routes:")
         for name, value in derivations.items():
             print(f"  {name}: {value}")
-        print(f"  All agree: This is NOT numerology (multiple independent derivations)")
+        print("  All agree: This is NOT numerology (multiple independent derivations)")
 
 
 # =============================================================================
 # TEST CLASS: SELECTION (Constrained but not unique)
 # =============================================================================
+
 
 class TestSelection(unittest.TestCase):
     """
@@ -358,11 +366,11 @@ class TestSelection(unittest.TestCase):
         # Fermat constraint: smallest n > 2 with no integer solutions
         # This is proven (Wiles 1995), so N_c = 3 is selected by FLT.
 
-        print(f"\n[SELECTION] N_c = 3:")
+        print("\n[SELECTION] N_c = 3:")
         print(f"  From quadratic: floor({X_MINUS:.4f}) = {n_c_from_quadratic}")
-        print(f"  From Fermat: first forbidden exponent = 3")
-        print(f"  From QCD: confinement requires N_c = 3")
-        print(f"  Convergent selection: NOT numerology")
+        print("  From Fermat: first forbidden exponent = 3")
+        print("  From QCD: confinement requires N_c = 3")
+        print("  Convergent selection: NOT numerology")
 
     def test_weinberg_angle_selection(self):
         """
@@ -388,16 +396,16 @@ class TestSelection(unittest.TestCase):
 
         # Compare to alternative formulas
         alternatives = {
-            "3/13 (FTD)": 3/13,
-            "0.25 - alpha/(3*pi)": 0.25 - ALPHA/(3*np.pi),
-            "3/(N_eff + 0.1)": 3/13.1,  # Slight tuning
+            "3/13 (FTD)": 3 / 13,
+            "0.25 - alpha/(3*pi)": 0.25 - ALPHA / (3 * np.pi),
+            "3/(N_eff + 0.1)": 3 / 13.1,  # Slight tuning
         }
 
-        print(f"\n[SELECTION] Weinberg angle sin^2(theta_W):")
+        print("\n[SELECTION] Weinberg angle sin^2(theta_W):")
         print(f"  FTD (3/13): {sin2_w_ftd:.5f}")
         print(f"  Experimental: {sin2_w_exp:.5f}")
         print(f"  Error: {error:.2f}%")
-        print(f"  Alternatives:")
+        print("  Alternatives:")
         for name, val in alternatives.items():
             print(f"    {name}: {val:.5f} (error {percent_error(val, sin2_w_exp):.2f}%)")
 
@@ -409,6 +417,7 @@ class TestSelection(unittest.TestCase):
 # =============================================================================
 # TEST CLASS: NUMEROLOGY DETECTION
 # =============================================================================
+
 
 class TestNumerologyDetection(unittest.TestCase):
     """
@@ -440,30 +449,30 @@ class TestNumerologyDetection(unittest.TestCase):
         p_e_ftd = N_eff / ALPHA + T_10  # 13*137 + 55 = 1836
         p_e_exp = Exp.m_p_over_m_e  # 1836.15
 
-        print(f"\n[NUMEROLOGY ANALYSIS] Mass ratios:")
-        print(f"\n  m_mu/m_e:")
+        print("\n[NUMEROLOGY ANALYSIS] Mass ratios:")
+        print("\n  m_mu/m_e:")
         print(f"    Formula: 3*b_3*(b_3+N_c) - N_c = 3*7*10 - 3 = {mu_e_ftd}")
         print(f"    Experimental: {mu_e_exp:.2f}")
         print(f"    Error: {percent_error(mu_e_ftd, mu_e_exp):.2f}%")
-        print(f"    VERDICT: Formula uses 4 integers with specific operations.")
-        print(f"             Why these operations? No clear physical motivation.")
-        print(f"             STATUS: BORDERLINE NUMEROLOGY - keep but flag")
+        print("    VERDICT: Formula uses 4 integers with specific operations.")
+        print("             Why these operations? No clear physical motivation.")
+        print("             STATUS: BORDERLINE NUMEROLOGY - keep but flag")
 
-        print(f"\n  m_tau/m_e:")
+        print("\n  m_tau/m_e:")
         print(f"    Formula: (N_eff+N_base)*{mu_e_ftd} - 2*N_c*b_3 = {tau_e_ftd}")
         print(f"    Experimental: {tau_e_exp:.2f}")
         print(f"    Error: {percent_error(tau_e_ftd, tau_e_exp):.3f}%")
-        print(f"    VERDICT: Builds on mu/e ratio - if that's numerology, so is this.")
-        print(f"             BUT: 0.01% accuracy is remarkable.")
-        print(f"             STATUS: KEEP - accuracy suggests structure")
+        print("    VERDICT: Builds on mu/e ratio - if that's numerology, so is this.")
+        print("             BUT: 0.01% accuracy is remarkable.")
+        print("             STATUS: KEEP - accuracy suggests structure")
 
-        print(f"\n  m_p/m_e:")
+        print("\n  m_p/m_e:")
         print(f"    Formula: N_eff/alpha + T(10) = 13*137 + 55 = {p_e_ftd:.0f}")
         print(f"    Experimental: {p_e_exp:.2f}")
         print(f"    Error: {percent_error(p_e_ftd, p_e_exp):.3f}%")
-        print(f"    VERDICT: T(10) = 55 appears ad-hoc.")
-        print(f"             Why triangular number? Why 10?")
-        print(f"             STATUS: NUMEROLOGY - but keep for record")
+        print("    VERDICT: T(10) = 55 appears ad-hoc.")
+        print("             Why triangular number? Why 10?")
+        print("             STATUS: NUMEROLOGY - but keep for record")
 
         # These should pass as "close enough" even if numerology
         self.assertLess(percent_error(mu_e_ftd, mu_e_exp), 1.0)
@@ -485,15 +494,15 @@ class TestNumerologyDetection(unittest.TestCase):
 
         alpha_s_exp = Exp.alpha_s  # 0.1179
 
-        print(f"\n[NUMEROLOGY ANALYSIS] Strong coupling alpha_s:")
+        print("\n[NUMEROLOGY ANALYSIS] Strong coupling alpha_s:")
         print(f"  Manuscript: 7/(7+52) = {alpha_s_manuscript:.4f}")
         print(f"  Structural: Nc/(2*pi*b3)*ln(b3/Nc) = {alpha_s_structural:.4f}")
         print(f"  Experimental: {alpha_s_exp:.4f}")
         print(f"\n  Manuscript error: {percent_error(alpha_s_manuscript, alpha_s_exp):.2f}%")
         print(f"  Structural error: {percent_error(alpha_s_structural, alpha_s_exp):.1f}%")
-        print(f"\n  VERDICT: Manuscript formula fits better but lacks derivation.")
-        print(f"           Why 4*N_eff? This looks like parameter fitting.")
-        print(f"           STATUS: NUMEROLOGY - but keep for record")
+        print("\n  VERDICT: Manuscript formula fits better but lacks derivation.")
+        print("           Why 4*N_eff? This looks like parameter fitting.")
+        print("           STATUS: NUMEROLOGY - but keep for record")
 
         # Manuscript formula is closer
         self.assertLess(percent_error(alpha_s_manuscript, alpha_s_exp), 1.0)
@@ -502,6 +511,7 @@ class TestNumerologyDetection(unittest.TestCase):
 # =============================================================================
 # TEST CLASS: PHYSICALLY MOTIVATED DERIVATIONS
 # =============================================================================
+
 
 class TestPhysicallyMotivated(unittest.TestCase):
     """
@@ -526,28 +536,28 @@ class TestPhysicallyMotivated(unittest.TestCase):
         Without derivation of WHY 11, this is borderline.
         But the 0.27% accuracy with no free parameters is significant.
         """
-        m_e_ftd = M_PLANCK * np.sqrt(2*np.pi) * (N_base**2/N_c) * ALPHA**11 * 1000  # MeV
+        m_e_ftd = M_PLANCK * np.sqrt(2 * np.pi) * (N_base**2 / N_c) * ALPHA**11 * 1000  # MeV
 
         error = percent_error(m_e_ftd, Exp.m_e)
 
         # Check if exponent 11 is special
         exponent_checks = {
             "N_eff - 2": N_eff - 2,
-            "N_c + 2*N_base": N_c + 2*N_base,
+            "N_c + 2*N_base": N_c + 2 * N_base,
             "b_3 + N_base": b_3 + N_base,
         }
 
-        print(f"\n[DERIVED] Electron mass:")
-        print(f"  Formula: m_e = m_P * sqrt(2*pi) * (16/3) * alpha^11")
+        print("\n[DERIVED] Electron mass:")
+        print("  Formula: m_e = m_P * sqrt(2*pi) * (16/3) * alpha^11")
         print(f"  Derived: {m_e_ftd:.6f} MeV")
         print(f"  Experimental: {Exp.m_e:.6f} MeV")
         print(f"  Error: {error:.3f}%")
-        print(f"\n  Why exponent 11?")
+        print("\n  Why exponent 11?")
         for name, val in exponent_checks.items():
             match = "MATCH" if val == 11 else ""
             print(f"    {name} = {val} {match}")
-        print(f"\n  11 = N_c + 2*N_base = 3 + 8: Color + double-dimension structure")
-        print(f"  STATUS: DERIVED (exponent has structural meaning)")
+        print("\n  11 = N_c + 2*N_base = 3 + 8: Color + double-dimension structure")
+        print("  STATUS: DERIVED (exponent has structural meaning)")
 
         self.assertLess(error, 0.5)
 
@@ -562,20 +572,20 @@ class TestPhysicallyMotivated(unittest.TestCase):
 
         The ratio m_e/v = (16/3) * alpha^3 ~ 2*10^-6 is the hierarchy.
         """
-        v_ftd = M_PLANCK * np.sqrt(2*np.pi) * ALPHA**8  # GeV
+        v_ftd = M_PLANCK * np.sqrt(2 * np.pi) * ALPHA**8  # GeV
 
         error = percent_error(v_ftd, Exp.v_higgs)
 
         # Check exponent structure
-        print(f"\n[DERIVED] Higgs VEV:")
-        print(f"  Formula: v = m_P * sqrt(2*pi) * alpha^8")
+        print("\n[DERIVED] Higgs VEV:")
+        print("  Formula: v = m_P * sqrt(2*pi) * alpha^8")
         print(f"  Derived: {v_ftd:.2f} GeV")
         print(f"  Experimental: {Exp.v_higgs:.2f} GeV")
         print(f"  Error: {error:.3f}%")
-        print(f"\n  Why exponent 8?")
-        print(f"    8 = 2*N_base = 2*4: Double base dimension")
-        print(f"    8 = 11 - 3 = electron_exp - N_c")
-        print(f"  STATUS: DERIVED (consistent with electron mass structure)")
+        print("\n  Why exponent 8?")
+        print("    8 = 2*N_base = 2*4: Double base dimension")
+        print("    8 = 11 - 3 = electron_exp - N_c")
+        print("  STATUS: DERIVED (consistent with electron mass structure)")
 
         self.assertLess(error, 0.1)
 
@@ -598,16 +608,16 @@ class TestPhysicallyMotivated(unittest.TestCase):
 
         error = percent_error(delta_ftd, delta_exp)
 
-        print(f"\n[DERIVED] CKM CP phase:")
-        print(f"  Formula: delta = arctan(b_3/N_c) = arctan(7/3)")
+        print("\n[DERIVED] CKM CP phase:")
+        print("  Formula: delta = arctan(b_3/N_c) = arctan(7/3)")
         print(f"  Derived: {delta_ftd:.2f} degrees")
         print(f"  Experimental: {delta_exp:.2f} degrees")
         print(f"  Error: {error:.2f}%")
-        print(f"\n  ANALYSIS:")
-        print(f"    - Clean formula using only framework integers")
-        print(f"    - No arbitrary coefficients")
-        print(f"    - arctan is natural for phase angles")
-        print(f"  STATUS: DERIVED (clean and motivated)")
+        print("\n  ANALYSIS:")
+        print("    - Clean formula using only framework integers")
+        print("    - No arbitrary coefficients")
+        print("    - arctan is natural for phase angles")
+        print("  STATUS: DERIVED (clean and motivated)")
 
         self.assertLess(error, 3.0)
 
@@ -615,6 +625,7 @@ class TestPhysicallyMotivated(unittest.TestCase):
 # =============================================================================
 # TEST CLASS: COSMOLOGICAL PREDICTIONS
 # =============================================================================
+
 
 class TestCosmology(unittest.TestCase):
     """
@@ -632,18 +643,18 @@ class TestCosmology(unittest.TestCase):
         the correct inflation model.
         """
         N_efolds = 55  # Standard assumption
-        n_s_ftd = 1 - 2/N_efolds
+        n_s_ftd = 1 - 2 / N_efolds
 
         error = percent_error(n_s_ftd, Exp.n_s)
 
-        print(f"\n[DERIVED] Spectral index:")
-        print(f"  Formula: n_s = 1 - 2/N = 1 - 2/55")
+        print("\n[DERIVED] Spectral index:")
+        print("  Formula: n_s = 1 - 2/N = 1 - 2/55")
         print(f"  Derived: {n_s_ftd:.4f}")
         print(f"  Experimental: {Exp.n_s:.4f}")
         print(f"  Error: {error:.4f}%")
-        print(f"\n  NOTE: This is Starobinsky inflation, not FTD-specific.")
-        print(f"  FTD specifies N ~ 55, which is standard.")
-        print(f"  STATUS: DERIVED (but from standard cosmology)")
+        print("\n  NOTE: This is Starobinsky inflation, not FTD-specific.")
+        print("  FTD specifies N ~ 55, which is standard.")
+        print("  STATUS: DERIVED (but from standard cosmology)")
 
         # Within 1 sigma
         sigma_dev = abs(n_s_ftd - Exp.n_s) / 0.0042
@@ -659,11 +670,11 @@ class TestCosmology(unittest.TestCase):
         N_efolds = 55
         r_ftd = 12 / N_efolds**2
 
-        print(f"\n[DERIVED] Tensor-to-scalar ratio:")
-        print(f"  Formula: r = 12/N^2 = 12/55^2")
+        print("\n[DERIVED] Tensor-to-scalar ratio:")
+        print("  Formula: r = 12/N^2 = 12/55^2")
         print(f"  Derived: {r_ftd:.5f}")
-        print(f"  Current bound: < 0.036")
-        print(f"  STATUS: PREDICTION - testable by CMB-S4 (~2030)")
+        print("  Current bound: < 0.036")
+        print("  STATUS: PREDICTION - testable by CMB-S4 (~2030)")
 
         self.assertLess(r_ftd, 0.01)  # Well below bounds
 
@@ -671,6 +682,7 @@ class TestCosmology(unittest.TestCase):
 # =============================================================================
 # TEST CLASS: GRAVITATIONAL SECTOR
 # =============================================================================
+
 
 class TestGravity(unittest.TestCase):
     """
@@ -691,8 +703,8 @@ class TestGravity(unittest.TestCase):
 
         The 0.06% accuracy is remarkable for such a small number.
         """
-        mass_factor = (N_base**2 / N_c)**2  # (16/3)^2
-        hierarchy_factor = (N_eff + N_c / b_3)**2  # (13 + 3/7)^2
+        mass_factor = (N_base**2 / N_c) ** 2  # (16/3)^2
+        hierarchy_factor = (N_eff + N_c / b_3) ** 2  # (13 + 3/7)^2
         alpha_factor = ALPHA**20
 
         alpha_G_ftd = 2 * np.pi * mass_factor * hierarchy_factor * alpha_factor
@@ -700,19 +712,19 @@ class TestGravity(unittest.TestCase):
 
         error = percent_error(alpha_G_ftd, alpha_G_exp)
 
-        print(f"\n[DERIVED] Gravitational coupling:")
-        print(f"  Formula: alpha_G = 2*pi * (16/3)^2 * (13+3/7)^2 * alpha^20")
-        print(f"  Components:")
+        print("\n[DERIVED] Gravitational coupling:")
+        print("  Formula: alpha_G = 2*pi * (16/3)^2 * (13+3/7)^2 * alpha^20")
+        print("  Components:")
         print(f"    Mass factor (16/3)^2 = {mass_factor:.4f}")
         print(f"    Hierarchy (13+3/7)^2 = {hierarchy_factor:.4f}")
         print(f"    alpha^20 = {alpha_factor:.3e}")
         print(f"  Derived: {alpha_G_ftd:.3e}")
         print(f"  Experimental: {alpha_G_exp:.3e}")
         print(f"  Error: {error:.3f}%")
-        print(f"\n  Why exponent 20?")
-        print(f"    20 = 2 * (N_c + b_3) = 2 * 10")
-        print(f"    20 = 11 + 8 + 1 (electron + Higgs + unity)")
-        print(f"  STATUS: DERIVED (structure is motivated)")
+        print("\n  Why exponent 20?")
+        print("    20 = 2 * (N_c + b_3) = 2 * 10")
+        print("    20 = 11 + 8 + 1 (electron + Higgs + unity)")
+        print("  STATUS: DERIVED (structure is motivated)")
 
         self.assertLess(error, 0.1)
 
@@ -720,6 +732,7 @@ class TestGravity(unittest.TestCase):
 # =============================================================================
 # SUMMARY TEST
 # =============================================================================
+
 
 class TestEpistemicSummary(unittest.TestCase):
     """Generate a complete epistemic summary of all FTD claims."""
@@ -781,7 +794,7 @@ DEGREES OF FREEDOM ANALYSIS:
         print(summary)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 70)
     print("FTD EPISTEMIC CLASSIFICATION TEST SUITE")
     print("Polymath Analysis of Mathematical Rigor")

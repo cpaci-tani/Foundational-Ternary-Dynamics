@@ -9,17 +9,15 @@ A failure here means internal contradictions or unfalsifiability --
 the framework is not scientific.
 """
 
-import pytest
 import numpy as np
-from fractions import Fraction
 
-from .ftd_test_utils import N_c, N_base, b_3, N_eff, D, CODATA, percent_error
+from .ftd_test_utils import N_c, N_eff, CODATA, percent_error
 from .test_tier3_predictions import compute_ftd_values
-
 
 # =============================================================================
 # Test 7.1: Internal Contradictions
 # =============================================================================
+
 
 class TestInternalContradictions:
     """Check for mutual inconsistencies among derived quantities."""
@@ -32,7 +30,7 @@ class TestInternalContradictions:
         mw_mz_exp = CODATA["m_W"].value / CODATA["m_Z"].value
         err = percent_error(mw_mz_ftd, mw_mz_exp)
 
-        print(f"\n  Consistency: sin^2(theta_W) -> M_W/M_Z")
+        print("\n  Consistency: sin^2(theta_W) -> M_W/M_Z")
         print(f"  sin^2(theta_W) = {sin2w_ftd:.6f} (FTD: 3/13)")
         print(f"  M_W/M_Z = sqrt(1-sin^2) = {mw_mz_ftd:.6f}")
         print(f"  M_W/M_Z (exp) = {mw_mz_exp:.6f}")
@@ -44,22 +42,23 @@ class TestInternalContradictions:
     def test_alpha_consistency(self):
         """Is alpha from the quadratic consistent with alpha used in mass formulas?"""
         from scipy.special import gamma
+
         g_quarter = gamma(0.25)
         g_star = np.sqrt(2) * g_quarter**2 / (2 * np.pi)
 
         # Alpha from tree-level quadratic
-        disc = (16*g_star**2)**2 - 4*16*g_star**3
-        x_plus_tree = (16*g_star**2 + np.sqrt(disc)) / 2
+        disc = (16 * g_star**2) ** 2 - 4 * 16 * g_star**3
+        x_plus_tree = (16 * g_star**2 + np.sqrt(disc)) / 2
         alpha_tree = 1.0 / x_plus_tree
 
         # Alpha from 4-term formula
         eps = abs(np.exp(np.pi) - np.pi - 20)
-        c1, c2, c3, c4 = 9/47, 5/64, 4/141, 141/11
-        x_plus_4t = x_plus_tree - c1*eps + c2*eps**2 - c3*eps**3 - c4*eps**4
+        c1, c2, c3, c4 = 9 / 47, 5 / 64, 4 / 141, 141 / 11
+        x_plus_4t = x_plus_tree - c1 * eps + c2 * eps**2 - c3 * eps**3 - c4 * eps**4
         alpha_4t = 1.0 / x_plus_4t
 
         diff_ppm = abs(alpha_tree - alpha_4t) / alpha_4t * 1e6
-        print(f"\n  Alpha consistency:")
+        print("\n  Alpha consistency:")
         print(f"  alpha (tree level) = {alpha_tree:.10f}")
         print(f"  alpha (4-term)     = {alpha_4t:.10f}")
         print(f"  Difference:        {diff_ppm:.2f} ppm")
@@ -81,6 +80,7 @@ class TestInternalContradictions:
 # =============================================================================
 # Test 7.2: Worst Predictions
 # =============================================================================
+
 
 class TestWorstPredictions:
     """Identify the predictions with largest errors."""
@@ -116,8 +116,7 @@ class TestWorstPredictions:
         n_bad = 0
         for name, ftd_val, exp_val, err in predictions:
             marker = " <- PROBLEM" if err > 5 else ""
-            print(f"  {name:<30} FTD={ftd_val:>12.6f}  "
-                  f"exp={exp_val:>12.6f}  err={err:>6.2f}%{marker}")
+            print(f"  {name:<30} FTD={ftd_val:>12.6f}  " f"exp={exp_val:>12.6f}  err={err:>6.2f}%{marker}")
             if err > 5:
                 n_bad += 1
 
@@ -127,6 +126,7 @@ class TestWorstPredictions:
 # =============================================================================
 # Test 7.3: Circular Reasoning Detection
 # =============================================================================
+
 
 class TestCircularReasoning:
     """Automated check for circular dependencies in formulas."""
@@ -165,6 +165,7 @@ class TestCircularReasoning:
 # Test 7.4: Overfitting / Flexibility Assessment
 # =============================================================================
 
+
 class TestOverfitting:
     """Count effective degrees of freedom vs number of predictions."""
 
@@ -174,34 +175,30 @@ class TestOverfitting:
             # Explicit integers (2 independent: N_c, N_base; rest derived)
             "N_c": "Integer choice",
             "N_base": "Integer choice",
-
             # Structural choices (act as parameters)
             "Quadratic form (not cubic, quartic)": "Form selection",
             "Coefficient = N_base^2 = 16": "Derived from N_base",
             "G* as the base constant": "Mathematical constant selection",
             "j=1728 CM curve": "Curve selection",
-
             # Correction formula
             "4-term correction (not 3 or 5)": "Truncation choice",
             "Epsilon = e^pi - pi - 20": "Correction form",
-
             # Mass formulas
             "m_e: exponent 11 = N_c+2*N_base": "Exponent selection",
             "m_mu/m_e = 3*7*10-3": "Post-hoc formula",
             "m_tau/m_e = 17*207-42": "Post-hoc formula",
             "m_p/m_e = 13*137+55": "Post-hoc formula",
-
             # External inputs
             "M_Planck": "External input",
         }
 
-        n_true_params = 2    # N_c, N_base
+        n_true_params = 2  # N_c, N_base
         n_structural = len(choices) - 2  # Structural choices beyond integers
         n_total_dof = len(choices)
-        n_predictions = 15   # Approximate number of independent predictions
+        n_predictions = 15  # Approximate number of independent predictions
 
-        print(f"\n  OVERFITTING ASSESSMENT:")
-        print(f"  " + "-" * 60)
+        print("\n  OVERFITTING ASSESSMENT:")
+        print("  " + "-" * 60)
         for choice, kind in choices.items():
             print(f"    [{kind:<25}] {choice}")
 
@@ -223,50 +220,40 @@ class TestOverfitting:
 # Test 7.5: Falsifiability Score
 # =============================================================================
 
+
 class TestFalsifiability:
     """Score what fraction of claims are genuinely falsifiable."""
 
     def test_falsifiability_catalog(self):
         """Catalog each claim and whether it's falsifiable."""
         claims = [
-            ("1/alpha = 137.036...", True,
-             "Precision measurement > 10 ppm from prediction"),
-            ("N_gen = 3", True,
-             "Discovery of 4th generation with standard couplings"),
-            ("sin^2(theta_W) = 3/13", True,
-             "Precision measurement > 1% discrepancy"),
-            ("m_e formula", True,
-             "Precision M_Planck measurement contradicting formula"),
-            ("m_mu/m_e = 207", True,
-             "Any measurement inconsistent with 207.0"),
-            ("Substrate S <= 2", True,
-             "Would be falsified if substrate could give S > 2"),
-            ("Aggregate S = 2sqrt(2)", False,
-             "Cannot test -- no demonstration of aggregate emergence"),
-            ("Consciousness K_C = 3.60", False,
-             "No experimental protocol to measure this"),
-            ("Phase = 52.54 degrees", False,
-             "No experimental protocol to measure this"),
-            ("Void is dispositional substrate", False,
-             "Philosophical -- not empirically testable"),
-            ("sLoop explains Bell violations", False,
-             "No specific prediction distinguishing sLoop from other interpretations"),
-            ("D=3 is uniquely selected", True,
-             "Would be falsified by detection of extra dimensions"),
-            ("Discrete spacetime", True,
-             "Detection of Planck-scale Lorentz violation"),
-            ("CP phase = arctan(7/3)", True,
-             "Precision CKM measurement > 5% from prediction"),
-            ("Inflation n_s = 0.9645", True,
-             "CMB measurement > 3 sigma outside predicted range"),
+            ("1/alpha = 137.036...", True, "Precision measurement > 10 ppm from prediction"),
+            ("N_gen = 3", True, "Discovery of 4th generation with standard couplings"),
+            ("sin^2(theta_W) = 3/13", True, "Precision measurement > 1% discrepancy"),
+            ("m_e formula", True, "Precision M_Planck measurement contradicting formula"),
+            ("m_mu/m_e = 207", True, "Any measurement inconsistent with 207.0"),
+            ("Substrate S <= 2", True, "Would be falsified if substrate could give S > 2"),
+            ("Aggregate S = 2sqrt(2)", False, "Cannot test -- no demonstration of aggregate emergence"),
+            ("Consciousness K_C = 3.60", False, "No experimental protocol to measure this"),
+            ("Phase = 52.54 degrees", False, "No experimental protocol to measure this"),
+            ("Void is dispositional substrate", False, "Philosophical -- not empirically testable"),
+            (
+                "sLoop explains Bell violations",
+                False,
+                "No specific prediction distinguishing sLoop from other interpretations",
+            ),
+            ("D=3 is uniquely selected", True, "Would be falsified by detection of extra dimensions"),
+            ("Discrete spacetime", True, "Detection of Planck-scale Lorentz violation"),
+            ("CP phase = arctan(7/3)", True, "Precision CKM measurement > 5% from prediction"),
+            ("Inflation n_s = 0.9645", True, "CMB measurement > 3 sigma outside predicted range"),
         ]
 
         n_falsifiable = sum(1 for _, f, _ in claims if f)
         n_total = len(claims)
         fraction = n_falsifiable / n_total
 
-        print(f"\n  FALSIFIABILITY ASSESSMENT:")
-        print(f"  " + "-" * 60)
+        print("\n  FALSIFIABILITY ASSESSMENT:")
+        print("  " + "-" * 60)
         for claim, is_falsifiable, criterion in claims:
             status = "FALSIFIABLE" if is_falsifiable else "NOT FALSIFIABLE"
             print(f"    [{status:<16}] {claim}")
@@ -284,6 +271,7 @@ class TestFalsifiability:
 # Test 7.6: b_3 QCD Mismatch
 # =============================================================================
 
+
 class TestB3Mismatch:
     """Document the false claim about b_3 being a QCD beta coefficient."""
 
@@ -295,19 +283,19 @@ class TestB3Mismatch:
 
         print("\n  b_3 = 7 QCD CLAIM ANALYSIS:")
         print("  " + "-" * 50)
-        print(f"  Claimed in constants.py line 17:")
-        print(f"    'QCD beta function coefficient = 11 - 4/3 * N_c * N_f (N_f=0)'")
-        print(f"    This gives: 11 - 0 = 11, NOT 7.")
+        print("  Claimed in constants.py line 17:")
+        print("    'QCD beta function coefficient = 11 - 4/3 * N_c * N_f (N_f=0)'")
+        print("    This gives: 11 - 0 = 11, NOT 7.")
         print()
 
         # Check all conventions
         for nf in range(7):
             # Convention 1: b_0 = 11*N_c/3 - 2*N_f/3
-            b0_conv1 = 11*N_c/3 - 2*nf/3
+            b0_conv1 = 11 * N_c / 3 - 2 * nf / 3
             # Convention 2: b_0 = 11 - 2*nf/3
-            b0_conv2 = 11 - 2*nf/3
+            b0_conv2 = 11 - 2 * nf / 3
             # Convention 3: b_0 = (11*N_c - 2*nf) / (12*np.pi)
-            b0_conv3 = (11*N_c - 2*nf) / (12*np.pi)
+            b0_conv3 = (11 * N_c - 2 * nf) / (12 * np.pi)
 
             if abs(b0_conv1 - 7) < 0.01 or abs(b0_conv2 - 7) < 0.01:
                 print(f"  N_f={nf}: b_0 = {b0_conv1:.2f} (conv1) / {b0_conv2:.2f} (conv2)")
@@ -316,7 +304,7 @@ class TestB3Mismatch:
 
         print()
         print("  ACTUAL ORIGIN of b_3 = 7:")
-        print(f"    b_3 = N_c + N_base = 3 + 4 = 7")
+        print("    b_3 = N_c + N_base = 3 + 4 = 7")
         print("  This is purely an integer arithmetic identity.")
         print("  The QCD beta function claim is INCORRECT.")
         print()

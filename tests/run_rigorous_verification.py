@@ -48,7 +48,7 @@ def compute_all_predictions():
     GAMMA_QUARTER = gamma(0.25)
     G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
     c = G_STAR
-    disc = (16 * c**2)**2 - 4 * 16 * c**3
+    disc = (16 * c**2) ** 2 - 4 * 16 * c**3
     x_plus = (16 * c**2 + np.sqrt(disc)) / 2
     x_minus = (16 * c**2 - np.sqrt(disc)) / 2
     ALPHA = 1 / x_plus
@@ -77,7 +77,6 @@ def compute_all_predictions():
             "status": "THEOREM",
             "formula": "Root of x^2 - 16G*^2x + 16G*^3 = 0",
         },
-
         # Derived (clear chain)
         "1/alpha": {
             "value": x_plus,
@@ -87,19 +86,19 @@ def compute_all_predictions():
             "error_ppm": abs(x_plus - 137.035999177) / 137.035999177 * 1e6,
         },
         "m_e (MeV)": {
-            "value": M_P * np.sqrt(2*np.pi) * (N_base**2/N_c) * ALPHA**11 * 1000,
+            "value": M_P * np.sqrt(2 * np.pi) * (N_base**2 / N_c) * ALPHA**11 * 1000,
             "expected": 0.51099895,
             "status": "DERIVED",
             "formula": "m_P*sqrt(2pi)*(16/3)*alpha^11",
         },
         "v_Higgs (GeV)": {
-            "value": M_P * np.sqrt(2*np.pi) * ALPHA**8,
+            "value": M_P * np.sqrt(2 * np.pi) * ALPHA**8,
             "expected": 246.22,
             "status": "DERIVED",
             "formula": "m_P*sqrt(2pi)*alpha^8",
         },
         "alpha_G": {
-            "value": 2*np.pi * (N_base**2/N_c)**2 * (N_eff + N_c/b_3)**2 * ALPHA**20,
+            "value": 2 * np.pi * (N_base**2 / N_c) ** 2 * (N_eff + N_c / b_3) ** 2 * ALPHA**20,
             "expected": 5.906e-39,
             "status": "DERIVED",
             "formula": "2pi*(16/3)^2*(13+3/7)^2*alpha^20",
@@ -116,7 +115,6 @@ def compute_all_predictions():
             "status": "DERIVED",
             "formula": "arcsin(sqrt(alpha*N_c))",
         },
-
         # Selection (constrained choice)
         "sin^2(theta_W)": {
             "value": N_c / N_eff,
@@ -131,12 +129,11 @@ def compute_all_predictions():
             "formula": "sqrt(10/13)",
         },
         "m_H (GeV)": {
-            "value": N_eff * 0.51099895/1000 / ALPHA**2,
+            "value": N_eff * 0.51099895 / 1000 / ALPHA**2,
             "expected": 125.25,
             "status": "SELECTION",
             "formula": "N_eff*m_e/alpha^2",
         },
-
         # Numerology (fits but unclear why)
         "m_mu/m_e": {
             "value": 3 * b_3 * (b_3 + N_c) - N_c,
@@ -162,16 +159,15 @@ def compute_all_predictions():
             "status": "NUMEROLOGY",
             "formula": "7/(7+52) = 7/59",
         },
-
         # Cosmology
         "n_s (spectral index)": {
-            "value": 1 - 2/55,
+            "value": 1 - 2 / 55,
             "expected": 0.9649,
             "status": "DERIVED",
             "formula": "1 - 2/N for N=55 e-folds (Starobinsky)",
         },
         "r (tensor/scalar)": {
-            "value": 12/55**2,
+            "value": 12 / 55**2,
             "expected": 0.036,  # Upper bound
             "status": "PREDICTION",
             "formula": "12/N^2 = 0.004 (well below bound)",

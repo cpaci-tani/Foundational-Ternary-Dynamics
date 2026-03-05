@@ -83,14 +83,14 @@ jobs:
 
       - name: Render Quarto manuscript
         run: |
-          cd manuscript
+          cd dissemination/manuscript
           quarto render --to html
 
       - name: Upload manuscript artifacts
         uses: actions/upload-artifact@v4
         with:
           name: manuscript-html
-          path: manuscript/_site/
+          path: dissemination/manuscript/_site/
           retention-days: 7
 
   validate-physics:
@@ -118,22 +118,26 @@ jobs:
           # Lemniscatic constant G*
           G_star = math.sqrt(2) * (math.gamma(0.25)**2) / (2 * math.pi)
 
-          # Master quadratic coefficients
-          c = G_star
-          x_plus = 8*c**2 + 8*c**2 * math.sqrt(1 - 1/c)
-          x_minus = 8*c**2 - 8*c**2 * math.sqrt(1 - 1/c)
+          # Master quadratic: x^2 - 16*G*^2 * x + 16*G*^3 = 0
+          a = 1
+          b = -16 * G_star**2
+          c = 16 * G_star**3
+          disc = b**2 - 4*a*c
+          x_plus = (-b + math.sqrt(disc)) / (2*a)
+          x_minus = (-b - math.sqrt(disc)) / (2*a)
 
           # Verify alpha derivation
-          alpha_inv_pred = x_plus
           alpha_inv_exp = 137.035999177
-          error_ppm = abs(alpha_inv_pred - alpha_inv_exp) / alpha_inv_exp * 1e6
+          error_ppm = abs(x_plus - alpha_inv_exp) / alpha_inv_exp * 1e6
 
           print(f'G* = {G_star:.10f}')
-          print(f'1/alpha predicted = {alpha_inv_pred:.10f}')
-          print(f'1/alpha experimental = {alpha_inv_exp}')
+          print(f'x+ (1/alpha) = {x_plus:.10f}')
+          print(f'x- (N_c)     = {x_minus:.10f}')
+          print(f'1/alpha exp  = {alpha_inv_exp}')
           print(f'Error = {error_ppm:.2f} ppm')
 
           assert error_ppm < 10, f'Alpha derivation error {error_ppm} ppm exceeds 10 ppm threshold'
+          assert abs(x_minus - 3.0) < 0.1, f'x- = {x_minus}, expected ~3.0'
           print('Physics validation PASSED')
           "
 

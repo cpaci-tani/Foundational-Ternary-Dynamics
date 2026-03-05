@@ -27,6 +27,7 @@ N_eff = 13
 GAMMA_QUARTER = gamma(0.25)
 G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
 
+
 # Derived alpha
 def compute_alpha():
     c = G_STAR
@@ -37,19 +38,22 @@ def compute_alpha():
     x_plus = (-b + np.sqrt(discriminant)) / (2 * a)
     return 1 / x_plus
 
+
 ALPHA = compute_alpha()
 ALPHA_INV = 1 / ALPHA
+
 
 # PDG 2024 experimental values
 class Experimental:
     alpha_inv = 137.035999177  # +/- 0.000000021
-    alpha_s = 0.1179           # +/- 0.0009 at M_Z
-    sin2_theta_w = 0.23122     # +/- 0.00003
+    alpha_s = 0.1179  # +/- 0.0009 at M_Z
+    sin2_theta_w = 0.23122  # +/- 0.00003
     alpha_G_approx = 5.91e-39  # Gravitational fine structure constant
 
 
 def percent_error(derived, experimental):
     return abs(derived - experimental) / experimental * 100
+
 
 def ppm_error(derived, experimental):
     return abs(derived - experimental) / experimental * 1e6
@@ -98,12 +102,12 @@ class TestStrongCoupling(unittest.TestCase):
         self.assertLess(alpha_s_struct, 0.2)
 
         # Verify the full calculation from constants.py would give closer
-        print(f"\n  alpha_s structural estimate = N_c / (2*pi*b_3) * ln(b_3/N_c)")
+        print("\n  alpha_s structural estimate = N_c / (2*pi*b_3) * ln(b_3/N_c)")
         print(f"         = {N_c} / (2*pi*{b_3}) * ln({b_3}/{N_c})")
         print(f"  Structural:   {alpha_s_struct:.4f}")
         print(f"  Experimental: {Experimental.alpha_s:.4f}")
-        print(f"  (Full RG running needed for precision - see verify_masses.py)")
-        print(f"  Order of magnitude verified [PASS]")
+        print("  (Full RG running needed for precision - see verify_masses.py)")
+        print("  Order of magnitude verified [PASS]")
 
     def test_alpha_s_components(self):
         """Verify components of alpha_s formula."""
@@ -149,8 +153,8 @@ class TestWeakMixingAngle(unittest.TestCase):
         print(f"\n  sin^2(theta_W) tree level: {sin2_w_tree:.5f}")
         print(f"  FTD with correction:       {sin2_w_ftd:.5f}")
         print(f"  Experimental:              {sin2_w_exp:.5f}")
-        print(f"  (Full EW corrections needed for precision)")
-        print(f"  Physical range verified [PASS]")
+        print("  (Full EW corrections needed for precision)")
+        print("  Physical range verified [PASS]")
 
     def test_cos2_theta_w(self):
         """Verify cos^2(theta_W) = 1 - sin^2(theta_W)."""
@@ -174,8 +178,8 @@ class TestGravitationalCoupling(unittest.TestCase):
 
         This gives the hierarchy between gravity and other forces.
         """
-        mass_factor = (N_base**2 / N_c)**2  # (16/3)^2
-        hierarchy_factor = (N_eff + N_c / b_3)**2  # (13 + 3/7)^2
+        mass_factor = (N_base**2 / N_c) ** 2  # (16/3)^2
+        hierarchy_factor = (N_eff + N_c / b_3) ** 2  # (13 + 3/7)^2
         alpha_factor = ALPHA**20
 
         alpha_G_derived = 2 * np.pi * mass_factor * hierarchy_factor * alpha_factor
@@ -185,7 +189,7 @@ class TestGravitationalCoupling(unittest.TestCase):
 
         self.assertLess(abs(log_ratio), 0.5)  # Within half order of magnitude
 
-        print(f"\n  alpha_G = 2*pi * (16/3)^2 * (13 + 3/7)^2 * alpha^20")
+        print("\n  alpha_G = 2*pi * (16/3)^2 * (13 + 3/7)^2 * alpha^20")
         print(f"  Mass factor:      {mass_factor:.4f}")
         print(f"  Hierarchy factor: {hierarchy_factor:.4f}")
         print(f"  alpha^20:         {alpha_factor:.3e}")
@@ -207,7 +211,7 @@ class TestGravitationalCoupling(unittest.TestCase):
         self.assertGreater(ratio, 1e-40)
 
         print(f"\n  alpha_G / alpha^2 = {ratio:.3e}")
-        print(f"  This represents the gravity-EM hierarchy [PASS]")
+        print("  This represents the gravity-EM hierarchy [PASS]")
 
 
 class TestCouplingUnification(unittest.TestCase):
@@ -220,16 +224,16 @@ class TestCouplingUnification(unittest.TestCase):
         strong_em_ratio = alpha_s_struct / ALPHA
 
         # Experimental ratio at M_Z
-        ratio_exp = Experimental.alpha_s / (1/Experimental.alpha_inv)
+        ratio_exp = Experimental.alpha_s / (1 / Experimental.alpha_inv)
 
-        print(f"\n  Coupling ratios:")
+        print("\n  Coupling ratios:")
         print(f"    alpha_s_struct / alpha = {strong_em_ratio:.2f}")
         print(f"    alpha_s_exp / alpha = {ratio_exp:.2f}")
 
         # Both should be O(10), structural may differ
         self.assertGreater(strong_em_ratio, 1)
         self.assertLess(strong_em_ratio, 50)
-        print(f"    Structural ratio in expected range [PASS]")
+        print("    Structural ratio in expected range [PASS]")
 
     def test_integer_origins(self):
         """Verify all couplings trace to the 4 integers."""
@@ -242,7 +246,7 @@ class TestCouplingUnification(unittest.TestCase):
         # alpha_G uses all four
 
         print(f"\n  Framework integers: {integers_used}")
-        print(f"  All couplings derive from these 4 integers [PASS]")
+        print("  All couplings derive from these 4 integers [PASS]")
 
         self.assertEqual(len(integers_used), 4)
 
@@ -254,21 +258,27 @@ class TestCouplingSummary(unittest.TestCase):
         """Print summary of coupling predictions."""
         alpha_s = N_c / (2 * np.pi * b_3) * np.log(b_3 / N_c)
         sin2_w = 0.25 * (1 - ALPHA / (N_c * np.pi))
-        alpha_G = 2 * np.pi * (N_base**2/N_c)**2 * (N_eff + N_c/b_3)**2 * ALPHA**20
+        alpha_G = 2 * np.pi * (N_base**2 / N_c) ** 2 * (N_eff + N_c / b_3) ** 2 * ALPHA**20
 
         print("\n" + "=" * 60)
         print("COUPLING CONSTANTS SUMMARY")
         print("=" * 60)
         print(f"{'Constant':<20} {'Derived':>15} {'Exp.':>15} {'Error':>10}")
         print("-" * 60)
-        print(f"{'1/alpha':<20} {ALPHA_INV:>15.6f} {Experimental.alpha_inv:>15.6f} {ppm_error(ALPHA_INV, Experimental.alpha_inv):>9.2f} ppm")
-        print(f"{'alpha_s':<20} {alpha_s:>15.4f} {Experimental.alpha_s:>15.4f} {percent_error(alpha_s, Experimental.alpha_s):>9.2f}%")
-        print(f"{'sin^2(theta_W)':<20} {sin2_w:>15.5f} {Experimental.sin2_theta_w:>15.5f} {percent_error(sin2_w, Experimental.sin2_theta_w):>9.3f}%")
+        print(
+            f"{'1/alpha':<20} {ALPHA_INV:>15.6f} {Experimental.alpha_inv:>15.6f} {ppm_error(ALPHA_INV, Experimental.alpha_inv):>9.2f} ppm"
+        )
+        print(
+            f"{'alpha_s':<20} {alpha_s:>15.4f} {Experimental.alpha_s:>15.4f} {percent_error(alpha_s, Experimental.alpha_s):>9.2f}%"
+        )
+        print(
+            f"{'sin^2(theta_W)':<20} {sin2_w:>15.5f} {Experimental.sin2_theta_w:>15.5f} {percent_error(sin2_w, Experimental.sin2_theta_w):>9.3f}%"
+        )
         print(f"{'alpha_G':<20} {alpha_G:>15.2e} {Experimental.alpha_G_approx:>15.2e} {'~0.01%':>10}")
         print("=" * 60)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 60)
     print("COUPLING CONSTANTS VERIFICATION")
     print("=" * 60)

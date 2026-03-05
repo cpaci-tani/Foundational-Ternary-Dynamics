@@ -22,7 +22,6 @@ import unittest
 import numpy as np
 from scipy.special import gamma
 
-
 # Framework integers
 N_c = 3
 N_base = 4
@@ -33,11 +32,13 @@ N_eff = 13
 GAMMA_QUARTER = gamma(0.25)
 G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
 
+
 def get_alpha():
     c = G_STAR
-    disc = (16 * c**2)**2 - 4 * 16 * c**3
+    disc = (16 * c**2) ** 2 - 4 * 16 * c**3
     x_plus = (16 * c**2 + np.sqrt(disc)) / 2
     return 1 / x_plus
+
 
 ALPHA = get_alpha()
 ALPHA_INV = 1 / ALPHA
@@ -47,8 +48,10 @@ ALPHA_INV = 1 / ALPHA
 # EXPERIMENTAL VALUES (PDG 2024)
 # =============================================================================
 
+
 class CKM_Exp:
     """CKM matrix experimental values."""
+
     # Magnitudes
     V_ud = 0.97373
     V_us = 0.2243
@@ -75,10 +78,11 @@ class CKM_Exp:
 
 class PMNS_Exp:
     """PMNS matrix experimental values (normal ordering)."""
+
     # Angles in degrees
     theta_12 = 33.44  # solar
-    theta_23 = 49.2   # atmospheric (upper octant)
-    theta_13 = 8.57   # reactor
+    theta_23 = 49.2  # atmospheric (upper octant)
+    theta_13 = 8.57  # reactor
 
     # sin^2 values
     sin2_12 = 0.304
@@ -89,7 +93,7 @@ class PMNS_Exp:
     delta_cp = 195  # degrees (poorly constrained)
 
     # Mass squared differences (eV^2)
-    dm2_21 = 7.42e-5   # solar
+    dm2_21 = 7.42e-5  # solar
     dm2_31 = 2.517e-3  # atmospheric
 
 
@@ -100,6 +104,7 @@ def percent_error(pred, exp):
 # =============================================================================
 # CKM MATRIX ANALYSIS
 # =============================================================================
+
 
 class TestCKMRigorous(unittest.TestCase):
     """Rigorous analysis of CKM matrix predictions."""
@@ -137,17 +142,17 @@ class TestCKMRigorous(unittest.TestCase):
         lambda_sqrt = np.sqrt(ALPHA) * 2.6
         error_sqrt = percent_error(lambda_sqrt, CKM_Exp.lambda_w)
 
-        print(f"\n[ANALYSIS] Cabibbo Angle (lambda)")
+        print("\n[ANALYSIS] Cabibbo Angle (lambda)")
         print(f"  Experimental: {CKM_Exp.lambda_w:.4f}")
-        print(f"\n  FTD formula: sqrt(2*sin^2(theta_W)*alpha_s)")
+        print("\n  FTD formula: sqrt(2*sin^2(theta_W)*alpha_s)")
         print(f"    = sqrt(2 * {sin2_w:.4f} * {alpha_s:.4f})")
         print(f"    = {lambda_ftd:.4f}")
         print(f"    Error: {error:.1f}%")
-        print(f"\n  Alternatives:")
+        print("\n  Alternatives:")
         print(f"    N_c/(N_c+N_base) = 3/7 = {lambda_simple:.3f} (error {error_simple:.0f}%)")
         print(f"    sqrt(alpha)*2.6 = {lambda_sqrt:.4f} (error {error_sqrt:.1f}%)")
-        print(f"\n  VERDICT: FTD formula is better than trivial, worse than tuned.")
-        print(f"  STATUS: BORDERLINE (keep but flag)")
+        print("\n  VERDICT: FTD formula is better than trivial, worse than tuned.")
+        print("  STATUS: BORDERLINE (keep but flag)")
 
         self.assertLess(error, 5.0)
 
@@ -173,17 +178,17 @@ class TestCKMRigorous(unittest.TestCase):
         error = percent_error(delta_ftd, CKM_Exp.delta)
         sigma = abs(delta_ftd - CKM_Exp.delta) / 3.5
 
-        print(f"\n[RIGOROUS] CKM CP Phase")
-        print(f"  Formula: delta = arctan(b_3/N_c) = arctan(7/3)")
+        print("\n[RIGOROUS] CKM CP Phase")
+        print("  Formula: delta = arctan(b_3/N_c) = arctan(7/3)")
         print(f"  Predicted: {delta_ftd:.2f} degrees")
         print(f"  Experimental: {CKM_Exp.delta:.2f} +/- 3.5 degrees")
         print(f"  Error: {error:.1f}%")
         print(f"  Deviation: {sigma:.2f} sigma")
-        print(f"\n  ANALYSIS:")
-        print(f"    - Clean formula, no arbitrary coefficients")
-        print(f"    - arctan natural for phase angles")
-        print(f"    - b_3/N_c = QCD/color ratio has physical meaning")
-        print(f"\n  STATUS: RIGOROUS (well-motivated)")
+        print("\n  ANALYSIS:")
+        print("    - Clean formula, no arbitrary coefficients")
+        print("    - arctan natural for phase angles")
+        print("    - b_3/N_c = QCD/color ratio has physical meaning")
+        print("\n  STATUS: RIGOROUS (well-motivated)")
 
         self.assertLess(error, 3.0)
         self.assertLess(sigma, 1.5)
@@ -205,13 +210,13 @@ class TestCKMRigorous(unittest.TestCase):
         - N_eff = 13: Effective degrees of freedom
         """
         lambda_w = CKM_Exp.lambda_w
-        J_ftd = lambda_w**4 * (ALPHA / (2*np.pi)) * np.sin(2*np.pi/N_c) * N_eff
+        J_ftd = lambda_w**4 * (ALPHA / (2 * np.pi)) * np.sin(2 * np.pi / N_c) * N_eff
 
         error = percent_error(J_ftd, CKM_Exp.J)
 
-        print(f"\n[DERIVED] Jarlskog Invariant")
-        print(f"  Formula: J = lambda^4 * (alpha/2pi) * sin(2pi/3) * N_eff")
-        print(f"  Components:")
+        print("\n[DERIVED] Jarlskog Invariant")
+        print("  Formula: J = lambda^4 * (alpha/2pi) * sin(2pi/3) * N_eff")
+        print("  Components:")
         print(f"    lambda^4 = {lambda_w**4:.6f}")
         print(f"    alpha/(2pi) = {ALPHA/(2*np.pi):.6f}")
         print(f"    sin(2pi/3) = {np.sin(2*np.pi/N_c):.4f}")
@@ -219,8 +224,8 @@ class TestCKMRigorous(unittest.TestCase):
         print(f"  Predicted: {J_ftd:.2e}")
         print(f"  Experimental: {CKM_Exp.J:.2e}")
         print(f"  Error: {error:.0f}%")
-        print(f"\n  VERDICT: Order of magnitude correct. 27% error is acceptable.")
-        print(f"  STATUS: DERIVED (physically motivated)")
+        print("\n  VERDICT: Order of magnitude correct. 27% error is acceptable.")
+        print("  STATUS: DERIVED (physically motivated)")
 
         self.assertLess(error, 50)
 
@@ -228,6 +233,7 @@ class TestCKMRigorous(unittest.TestCase):
 # =============================================================================
 # PMNS MATRIX ANALYSIS
 # =============================================================================
+
 
 class TestPMNSRigorous(unittest.TestCase):
     """Rigorous analysis of PMNS (neutrino mixing) predictions."""
@@ -249,17 +255,17 @@ class TestPMNSRigorous(unittest.TestCase):
 
         error = percent_error(theta_13_ftd, PMNS_Exp.theta_13)
 
-        print(f"\n[DERIVED] Reactor Angle theta_13")
-        print(f"  Formula: theta_13 = arcsin(sqrt(alpha * N_c))")
+        print("\n[DERIVED] Reactor Angle theta_13")
+        print("  Formula: theta_13 = arcsin(sqrt(alpha * N_c))")
         print(f"  sin(theta_13) = sqrt({ALPHA:.6f} * {N_c}) = {sin_theta_13:.4f}")
         print(f"  Predicted: {theta_13_ftd:.2f} degrees")
         print(f"  Experimental: {PMNS_Exp.theta_13:.2f} degrees")
         print(f"  Error: {error:.1f}%")
-        print(f"\n  ANALYSIS:")
-        print(f"    - Clean formula using alpha and N_c")
-        print(f"    - Naturally small (alpha ~ 1/137 is small)")
-        print(f"    - N_c = 3 has physical meaning")
-        print(f"\n  STATUS: DERIVED (well-motivated)")
+        print("\n  ANALYSIS:")
+        print("    - Clean formula using alpha and N_c")
+        print("    - Naturally small (alpha ~ 1/137 is small)")
+        print("    - N_c = 3 has physical meaning")
+        print("\n  STATUS: DERIVED (well-motivated)")
 
         self.assertLess(error, 2.0)
 
@@ -282,17 +288,17 @@ class TestPMNSRigorous(unittest.TestCase):
 
         error = percent_error(sin2_12_ftd, PMNS_Exp.sin2_12)
 
-        print(f"\n[SELECTION] Solar Angle theta_12")
-        print(f"  Formula: sin^2(theta_12) = sqrt(sin^2(theta_W)*(1-sin^2(theta_W))/2)")
+        print("\n[SELECTION] Solar Angle theta_12")
+        print("  Formula: sin^2(theta_12) = sqrt(sin^2(theta_W)*(1-sin^2(theta_W))/2)")
         print(f"  sin^2(theta_W) = {sin2_w:.4f}")
         print(f"  sin^2(theta_12) predicted = {sin2_12_ftd:.4f}")
         print(f"  sin^2(theta_12) experimental = {PMNS_Exp.sin2_12:.4f}")
         print(f"  Error: {error:.1f}%")
         print(f"  theta_12 = {theta_12_ftd:.1f} vs {PMNS_Exp.theta_12:.1f} degrees")
-        print(f"\n  ANALYSIS:")
-        print(f"    - Connects neutrino mixing to weak mixing (physical)")
-        print(f"    - But why this specific formula? (selection)")
-        print(f"\n  STATUS: SELECTION (motivated but not unique)")
+        print("\n  ANALYSIS:")
+        print("    - Connects neutrino mixing to weak mixing (physical)")
+        print("    - But why this specific formula? (selection)")
+        print("\n  STATUS: SELECTION (motivated but not unique)")
 
         self.assertLess(error, 3.0)
 
@@ -314,18 +320,18 @@ class TestPMNSRigorous(unittest.TestCase):
 
         error = percent_error(theta_23_ftd, PMNS_Exp.theta_23)
 
-        print(f"\n[SELECTION] Atmospheric Angle theta_23")
-        print(f"  Formula: theta_23 = 45 + arctan(N_c/b_3)/5")
+        print("\n[SELECTION] Atmospheric Angle theta_23")
+        print("  Formula: theta_23 = 45 + arctan(N_c/b_3)/5")
         print(f"  Predicted: {theta_23_ftd:.1f} degrees")
         print(f"  Experimental: {PMNS_Exp.theta_23:.1f} degrees")
         print(f"  Error: {error:.1f}%")
-        print(f"\n  KEY PREDICTION: theta_23 > 45 degrees (upper octant)")
-        print(f"  Current data: favors upper octant CONFIRMED")
-        print(f"\n  ANALYSIS:")
-        print(f"    - Maximal mixing (45) is natural baseline")
-        print(f"    - Deviation via N_c/b_3 has structure")
-        print(f"    - The factor 1/5 is arbitrary")
-        print(f"\n  STATUS: SELECTION (prediction correct, formula ad-hoc)")
+        print("\n  KEY PREDICTION: theta_23 > 45 degrees (upper octant)")
+        print("  Current data: favors upper octant CONFIRMED")
+        print("\n  ANALYSIS:")
+        print("    - Maximal mixing (45) is natural baseline")
+        print("    - Deviation via N_c/b_3 has structure")
+        print("    - The factor 1/5 is arbitrary")
+        print("\n  STATUS: SELECTION (prediction correct, formula ad-hoc)")
 
         # Verify upper octant prediction
         self.assertGreater(theta_23_ftd, 45)
@@ -335,6 +341,7 @@ class TestPMNSRigorous(unittest.TestCase):
 # =============================================================================
 # NEUTRINO MASS ANALYSIS
 # =============================================================================
+
 
 class TestNeutrinoMasses(unittest.TestCase):
     """Analysis of neutrino mass predictions."""
@@ -352,14 +359,14 @@ class TestNeutrinoMasses(unittest.TestCase):
         ratio_exp = PMNS_Exp.dm2_31 / PMNS_Exp.dm2_21  # ~ 34
         ratio_ftd = N_eff * N_c / N_base + N_c  # 13*3/4 + 3 ~ 12.75
 
-        print(f"\n[PREDICTION] Neutrino Mass Hierarchy")
-        print(f"  FTD predicts: NORMAL ORDERING (nu_3 heaviest)")
-        print(f"\n  Mass-squared ratio dm^2_31/dm^2_21:")
+        print("\n[PREDICTION] Neutrino Mass Hierarchy")
+        print("  FTD predicts: NORMAL ORDERING (nu_3 heaviest)")
+        print("\n  Mass-squared ratio dm^2_31/dm^2_21:")
         print(f"    Experimental: {ratio_exp:.1f}")
         print(f"    FTD structural: {ratio_ftd:.1f}")
-        print(f"\n  The ratio is not precisely derived, but normal ordering is predicted.")
-        print(f"\n  TESTABLE: JUNO/DUNE will determine hierarchy by ~2028")
-        print(f"  FALSIFICATION: Inverted hierarchy confirmed")
+        print("\n  The ratio is not precisely derived, but normal ordering is predicted.")
+        print("\n  TESTABLE: JUNO/DUNE will determine hierarchy by ~2028")
+        print("  FALSIFICATION: Inverted hierarchy confirmed")
 
     def test_sum_of_masses(self):
         """
@@ -377,15 +384,15 @@ class TestNeutrinoMasses(unittest.TestCase):
         sum_pred = 59  # meV
         bound = 120  # meV
 
-        print(f"\n[PREDICTION] Sum of Neutrino Masses")
+        print("\n[PREDICTION] Sum of Neutrino Masses")
         print(f"  FTD prediction: Sum(m_nu) ~ {sum_pred} meV")
         print(f"  Current bound: < {bound} meV")
-        print(f"\n  Mass spectrum (meV):")
-        print(f"    m_1 ~ 1")
-        print(f"    m_2 ~ 8")
-        print(f"    m_3 ~ 50")
-        print(f"  Sum ~ 59 meV")
-        print(f"\n  TESTABLE: DESI + CMB-S4 (sensitivity ~ 15 meV)")
+        print("\n  Mass spectrum (meV):")
+        print("    m_1 ~ 1")
+        print("    m_2 ~ 8")
+        print("    m_3 ~ 50")
+        print("  Sum ~ 59 meV")
+        print("\n  TESTABLE: DESI + CMB-S4 (sensitivity ~ 15 meV)")
 
         self.assertLess(sum_pred, bound)
 
@@ -393,6 +400,7 @@ class TestNeutrinoMasses(unittest.TestCase):
 # =============================================================================
 # CONSISTENCY CHECKS
 # =============================================================================
+
 
 class TestMixingConsistency(unittest.TestCase):
     """Verify internal consistency of mixing predictions."""
@@ -412,7 +420,7 @@ class TestMixingConsistency(unittest.TestCase):
         # Consistency: sin^2 + cos^2 = 1
         total = sin2_w + cos2_w
 
-        print(f"\n[CONSISTENCY] Weinberg Angle Relations")
+        print("\n[CONSISTENCY] Weinberg Angle Relations")
         print(f"  sin^2(theta_W) = N_c/N_eff = 3/13 = {sin2_w:.6f}")
         print(f"  cos^2(theta_W) = (N_c+b_3)/N_eff = 10/13 = {cos2_w:.6f}")
         print(f"  Sum: {total:.6f}")
@@ -435,9 +443,9 @@ class TestMixingConsistency(unittest.TestCase):
 
         row_sum = V_ud**2 + V_us**2 + V_ub**2
 
-        print(f"\n[CONSISTENCY] CKM Unitarity Check (first row)")
+        print("\n[CONSISTENCY] CKM Unitarity Check (first row)")
         print(f"  |V_ud|^2 + |V_us|^2 + |V_ub|^2 = {row_sum:.6f}")
-        print(f"  Should equal 1.0")
+        print("  Should equal 1.0")
         print(f"  Deviation from unity: {abs(1 - row_sum)*100:.3f}%")
 
         self.assertAlmostEqual(row_sum, 1.0, places=2)
@@ -446,6 +454,7 @@ class TestMixingConsistency(unittest.TestCase):
 # =============================================================================
 # SUMMARY
 # =============================================================================
+
 
 class TestMixingSummary(unittest.TestCase):
     """Summary of mixing matrix analysis."""
@@ -489,7 +498,7 @@ CONSISTENCY
 """)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 70)
     print("FTD MIXING MATRICES - RIGOROUS ANALYSIS")
     print("=" * 70)

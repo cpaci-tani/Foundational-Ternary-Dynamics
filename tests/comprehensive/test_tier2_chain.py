@@ -9,24 +9,24 @@ A failure here means the "derivation" is actually curve-fitting or
 contains circular reasoning.
 """
 
-import pytest
 import numpy as np
 from fractions import Fraction
 
 try:
     import mpmath
+
     mpmath.mp.dps = 50
     HAS_MPMATH = True
 except ImportError:
     HAS_MPMATH = False
 
-from .ftd_test_utils import N_c, N_base, b_3, N_eff, D, CODATA, percent_error
+from .ftd_test_utils import N_c, N_base, b_3, CODATA, percent_error
 from .test_tier3_predictions import compute_ftd_values
-
 
 # =============================================================================
 # Test 2.1: Dependency Graph (Acyclicity Check)
 # =============================================================================
+
 
 class TestDependencyGraph:
     """Build and verify the derivation dependency graph."""
@@ -39,22 +39,18 @@ class TestDependencyGraph:
             "N_base": [],
             "G_star": [],  # Mathematical constant, no physics
             "M_Planck": [],  # External input
-
             # Level 1: Direct derivations from integers
             "b_3": ["N_c", "N_base"],
             "N_eff": ["b_3", "N_c"],
             "D": ["N_c", "N_base"],
             "coefficient_16": ["N_base"],
-
             # Level 2: Master quadratic
             "master_quadratic": ["G_star", "coefficient_16"],
             "x_plus": ["master_quadratic"],
             "x_minus": ["master_quadratic"],
-
             # Level 3: Physical identification
             "alpha_inv": ["x_plus"],  # IDENTIFICATION
             "N_c_from_x_minus": ["x_minus"],  # IDENTIFICATION → circularity check!
-
             # Level 4: Precision formula
             "epsilon": ["b_3", "N_eff"],
             "c1": ["N_c", "D"],
@@ -63,7 +59,6 @@ class TestDependencyGraph:
             "c4": ["N_c", "D", "b_3", "N_base"],
             "alpha_inv_precision": ["alpha_inv", "epsilon", "c1", "c2", "c3", "c4"],
             "alpha": ["alpha_inv_precision"],
-
             # Level 5: Derived physics
             "m_electron": ["M_Planck", "N_base", "N_c", "alpha"],
             "sin2_theta_w": ["N_c", "N_eff"],
@@ -115,12 +110,12 @@ class TestDependencyGraph:
         # x_minus from the quadratic gives floor(x_minus) = 3 = N_c
         # This is consistency, not derivation
         from scipy.special import gamma
+
         g_quarter = gamma(0.25)
         g_star = np.sqrt(2) * g_quarter**2 / (2 * np.pi)
-        disc = (16*g_star**2)**2 - 4*16*g_star**3
-        x_minus = (16*g_star**2 - np.sqrt(disc)) / 2
-        assert int(np.floor(x_minus)) == N_c, \
-            f"floor(x_minus) = {int(np.floor(x_minus))} != N_c = {N_c}"
+        disc = (16 * g_star**2) ** 2 - 4 * 16 * g_star**3
+        x_minus = (16 * g_star**2 - np.sqrt(disc)) / 2
+        assert int(np.floor(x_minus)) == N_c, f"floor(x_minus) = {int(np.floor(x_minus))} != N_c = {N_c}"
         # This test PASSES but the circularity is noted:
         print("\n  NOTE: N_c=3 is both input (integer choice) and output (floor(x_minus))")
         print("  This is CONSISTENCY, not an independent derivation.")
@@ -129,6 +124,7 @@ class TestDependencyGraph:
 # =============================================================================
 # Test 2.2: b_3 QCD Beta Function Audit
 # =============================================================================
+
 
 class TestB3QCDAudit:
     """Audit QCD claim: does b_3=7 match any QCD beta coefficient?"""
@@ -139,8 +135,7 @@ class TestB3QCDAudit:
         # For SU(3): b_0 = 11 - 2*N_f/3
         b0_nf0 = 11 - Fraction(2, 3) * 0  # N_f=0, SU(3)
         assert b0_nf0 == 11, f"b_0(N_f=0) = {b0_nf0}"
-        assert b0_nf0 != b_3, \
-            "b_0(N_f=0) should NOT equal b_3=7"
+        assert b0_nf0 != b_3, "b_0(N_f=0) should NOT equal b_3=7"
         print("\n  CONFIRMED: The comment 'N_f=0' in constants.py is WRONG.")
         print("  b_0(N_f=0) = 11, not 7.")
 
@@ -168,12 +163,14 @@ class TestB3QCDAudit:
 # Test 2.3: Integer Uniqueness (Exhaustive Search)
 # =============================================================================
 
+
 class TestIntegerUniqueness:
     """Search for alternative integer sets that produce similar physics."""
 
     def test_exhaustive_alpha_search(self):
         """Find all (N_c, N_base) pairs producing 1/alpha within 100 ppm."""
         from scipy.special import gamma
+
         g_quarter = gamma(0.25)
         g_star = np.sqrt(2) * g_quarter**2 / (2 * np.pi)
 
@@ -193,7 +190,7 @@ class TestIntegerUniqueness:
                 if error < 100:  # within 100 ppm
                     matches.append((nc, nb, x_plus, error))
 
-        print(f"\n  Integer sets producing 1/alpha within 100 ppm:")
+        print("\n  Integer sets producing 1/alpha within 100 ppm:")
         for nc, nb, xp, err in sorted(matches, key=lambda x: x[3]):
             print(f"    N_c={nc}, N_base={nb}: x+ = {xp:.6f}, error = {err:.2f} ppm")
 
@@ -218,10 +215,10 @@ class TestIntegerUniqueness:
                     continue
                 err = self._compute_multi_error(nc, nb)
                 if err < baseline_err * 3:  # within 3x of baseline
-                    competitors.append((nc, nb, err, err/max(baseline_err, 1e-10)))
+                    competitors.append((nc, nb, err, err / max(baseline_err, 1e-10)))
 
         print(f"\n  Baseline {{3,4}} error = {baseline_err:.4f}")
-        print(f"  Competitors within 3x:")
+        print("  Competitors within 3x:")
         for nc, nb, err, ratio in sorted(competitors, key=lambda x: x[2]):
             print(f"    N_c={nc}, N_base={nb}: error = {err:.4f} ({ratio:.1f}x)")
 
@@ -232,14 +229,14 @@ class TestIntegerUniqueness:
         """Total squared percent error across key predictions."""
         ftd = compute_ftd_values(nc, nb)
         if ftd is None:
-            return float('inf')
+            return float("inf")
 
         total = 0
         for key in ["alpha_inv", "sin2_theta_w", "m_mu_over_m_e", "m_tau_over_m_e"]:
             if key in ftd and key in CODATA:
                 val = ftd[key]
                 if np.isfinite(val):
-                    total += percent_error(val, CODATA[key].value)**2
+                    total += percent_error(val, CODATA[key].value) ** 2
                 else:
                     total += 1e6
         return total
@@ -248,6 +245,7 @@ class TestIntegerUniqueness:
 # =============================================================================
 # Test 2.4: Alternative Mathematical Constants
 # =============================================================================
+
 
 class TestAlternativeConstants:
     """Test whether other mathematical constants produce 1/alpha."""
@@ -278,9 +276,9 @@ class TestAlternativeConstants:
 
         for name, c in constants.items():
             # Standard quadratic: x^2 - 16*c^2*x + 16*c^3 = 0
-            disc = (16 * c**2)**2 - 4 * 16 * c**3
+            disc = (16 * c**2) ** 2 - 4 * 16 * c**3
             if disc < 0:
-                results.append((name, c, None, float('inf')))
+                results.append((name, c, None, float("inf")))
                 continue
             x_plus = (16 * c**2 + np.sqrt(disc)) / 2
             error = abs(x_plus - target) / target * 1e6
@@ -309,6 +307,7 @@ class TestAlternativeConstants:
 # Test 2.5: Hidden Inputs Audit
 # =============================================================================
 
+
 class TestHiddenInputs:
     """Audit which predictions require external inputs."""
 
@@ -322,12 +321,10 @@ class TestHiddenInputs:
             "PMNS angles": ["integers"],
             "m_mu/m_e": ["integers {3,7}"],
             "m_tau/m_e": ["integers {3,7} via m_mu/m_e"],
-
             # Require M_Planck (external input)
             "m_electron": ["M_Planck", "alpha", "integers"],
             "v_Higgs": ["M_Planck", "alpha"],
             "alpha_G": ["alpha", "integers"],
-
             # Require additional external inputs
             "decay_rates": ["G_F (Fermi constant)", "standard QFT formulas"],
             "meson_masses": ["Lambda_QCD", "ChPT formulas"],
@@ -339,11 +336,18 @@ class TestHiddenInputs:
         n_genuine = 0
         n_external = 0
         for quantity, inputs in audit.items():
-            has_external = any(i in ["M_Planck", "G_F (Fermi constant)",
-                                     "Lambda_QCD", "ChPT formulas",
-                                     "standard QFT formulas",
-                                     "RG equations from SM"]
-                               for i in inputs)
+            has_external = any(
+                i
+                in [
+                    "M_Planck",
+                    "G_F (Fermi constant)",
+                    "Lambda_QCD",
+                    "ChPT formulas",
+                    "standard QFT formulas",
+                    "RG equations from SM",
+                ]
+                for i in inputs
+            )
             status = "EXTERNAL" if has_external else "GENUINE"
             if has_external:
                 n_external += 1
@@ -353,19 +357,20 @@ class TestHiddenInputs:
 
         print(f"\n  Genuine derivations: {n_genuine}")
         print(f"  Require external inputs: {n_external}")
-        print(f"  'Zero free parameters' claim: FALSE")
+        print("  'Zero free parameters' claim: FALSE")
 
     def test_m_planck_is_required(self):
         """Electron mass derivation requires M_Planck as external input."""
         m_planck = 1.220890e19  # GeV
         from scipy.special import gamma
+
         g_quarter = gamma(0.25)
         g_star = np.sqrt(2) * g_quarter**2 / (2 * np.pi)
-        disc = (16*g_star**2)**2 - 4*16*g_star**3
-        x_plus = (16*g_star**2 + np.sqrt(disc)) / 2
+        disc = (16 * g_star**2) ** 2 - 4 * 16 * g_star**3
+        x_plus = (16 * g_star**2 + np.sqrt(disc)) / 2
         alpha = 1.0 / x_plus
 
-        m_e = m_planck * np.sqrt(2*np.pi) * (16/3) * alpha**11
+        m_e = m_planck * np.sqrt(2 * np.pi) * (16 / 3) * alpha**11
         m_e_mev = m_e * 1000
 
         # The formula works, but M_Planck is an INPUT
@@ -377,12 +382,14 @@ class TestHiddenInputs:
 # Test 2.6: Coefficient Freedom
 # =============================================================================
 
+
 class TestCoefficientFreedom:
     """Test whether other polynomial forms also produce 1/alpha."""
 
     def test_quadratic_is_special(self):
         """Test generalized quadratics x^2 - a*c^2*x + a*c^3 = 0 for various a."""
         from scipy.special import gamma
+
         g_quarter = gamma(0.25)
         g_star = np.sqrt(2) * g_quarter**2 / (2 * np.pi)
         target = CODATA["alpha_inv"].value
@@ -390,7 +397,7 @@ class TestCoefficientFreedom:
         print(f"\n  Testing generalized coefficients (c = G* = {g_star:.6f}):")
         matches = []
         for a in range(1, 50):
-            disc = (a * g_star**2)**2 - 4 * a * g_star**3
+            disc = (a * g_star**2) ** 2 - 4 * a * g_star**3
             if disc < 0:
                 continue
             x_plus = (a * g_star**2 + np.sqrt(disc)) / 2

@@ -83,7 +83,7 @@ def print_summary(result):
     total = result.testsRun
     failures = len(result.failures)
     errors = len(result.errors)
-    skipped = len(result.skipped) if hasattr(result, 'skipped') else 0
+    skipped = len(result.skipped) if hasattr(result, "skipped") else 0
     passed = total - failures - errors - skipped
 
     print("\n" + "=" * 70)
@@ -134,7 +134,7 @@ def print_key_results():
 
     # Mass calculation
     M_PLANCK = 1.220890e19
-    m_e_derived = M_PLANCK * np.sqrt(2*np.pi) * (N_base**2/N_c) * alpha**11 * 1000
+    m_e_derived = M_PLANCK * np.sqrt(2 * np.pi) * (N_base**2 / N_c) * alpha**11 * 1000
 
     print("\n" + "=" * 70)
     print("KEY NUMERICAL RESULTS")
@@ -152,12 +152,12 @@ def print_key_results():
 
     print("\nFine Structure Constant:")
     print(f"  1/alpha (FTD):  {x_plus:.10f}")
-    print(f"  1/alpha (exp):  137.035999177")
+    print("  1/alpha (exp):  137.035999177")
     print(f"  Error: {abs(x_plus - 137.035999177)/137.035999177 * 1e6:.2f} ppm")
 
     print("\nElectron Mass:")
     print(f"  m_e (FTD): {m_e_derived:.6f} MeV")
-    print(f"  m_e (exp): 0.510999 MeV")
+    print("  m_e (exp): 0.510999 MeV")
     print(f"  Error: {abs(m_e_derived - 0.510999)/0.510999 * 100:.3f}%")
 
     print("=" * 70)
@@ -167,7 +167,7 @@ def save_report(result, output, filename="tests/verification_report.txt"):
     """Save detailed test report to file."""
     report_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
 
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write("=" * 70 + "\n")
         f.write("FTD VERIFICATION REPORT\n")
         f.write("=" * 70 + "\n")
@@ -195,9 +195,9 @@ def save_report(result, output, filename="tests/verification_report.txt"):
 def main():
     """Main entry point."""
     # Parse arguments
-    verbose = '--verbose' in sys.argv or '-v' in sys.argv
-    json_output = '--json' in sys.argv
-    summary_only = '--summary' in sys.argv
+    verbose = "--verbose" in sys.argv or "-v" in sys.argv
+    json_output = "--json" in sys.argv
+    summary_only = "--summary" in sys.argv
 
     if not json_output:
         print_banner()
@@ -209,12 +209,12 @@ def main():
     if json_output:
         # Output as JSON
         data = {
-            'timestamp': datetime.now().isoformat(),
-            'total': result.testsRun,
-            'passed': result.testsRun - len(result.failures) - len(result.errors),
-            'failures': len(result.failures),
-            'errors': len(result.errors),
-            'success': len(result.failures) == 0 and len(result.errors) == 0
+            "timestamp": datetime.now().isoformat(),
+            "total": result.testsRun,
+            "passed": result.testsRun - len(result.failures) - len(result.errors),
+            "failures": len(result.failures),
+            "errors": len(result.errors),
+            "success": len(result.failures) == 0 and len(result.errors) == 0,
         }
         print(json.dumps(data, indent=2))
     else:
@@ -233,5 +233,5 @@ def main():
     sys.exit(0 if result.wasSuccessful() else 1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

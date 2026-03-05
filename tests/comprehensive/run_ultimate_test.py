@@ -18,12 +18,10 @@ import re
 from datetime import datetime
 
 # Add project root to path
-PROJECT_ROOT = os.path.join(os.path.dirname(__file__), '..', '..')
+PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
 sys.path.insert(0, PROJECT_ROOT)
 
-from tests.comprehensive.ftd_test_utils import (
-    TIER_WEIGHTS, TierResult, compute_verdict, format_verdict_report
-)
+from tests.comprehensive.ftd_test_utils import TierResult, compute_verdict, format_verdict_report
 
 
 def run_pytest_tier(tier_file: str, tier_name: str) -> TierResult:
@@ -45,15 +43,15 @@ def run_pytest_tier(tier_file: str, tier_name: str) -> TierResult:
     failed = 0
     errors = 0
 
-    summary_match = re.search(r'(\d+) passed', output)
+    summary_match = re.search(r"(\d+) passed", output)
     if summary_match:
         passed = int(summary_match.group(1))
 
-    fail_match = re.search(r'(\d+) failed', output)
+    fail_match = re.search(r"(\d+) failed", output)
     if fail_match:
         failed = int(fail_match.group(1))
 
-    error_match = re.search(r'(\d+) error', output)
+    error_match = re.search(r"(\d+) error", output)
     if error_match:
         errors = int(error_match.group(1))
 
@@ -62,16 +60,15 @@ def run_pytest_tier(tier_file: str, tier_name: str) -> TierResult:
 
     # Extract critical failures
     critical = []
-    for line in output.split('\n'):
-        if 'FAILED' in line:
+    for line in output.split("\n"):
+        if "FAILED" in line:
             critical.append(line.strip())
 
     # Collect interesting output lines (print statements from tests)
     details = []
-    for line in output.split('\n'):
+    for line in output.split("\n"):
         stripped = line.strip()
-        if stripped.startswith(('  ', 'NOTE:', 'VERDICT:', 'CONFIRMED:',
-                                'WARNING:', 'CONCLUSION:')):
+        if stripped.startswith(("  ", "NOTE:", "VERDICT:", "CONFIRMED:", "WARNING:", "CONCLUSION:")):
             details.append(stripped)
 
     return TierResult(
@@ -114,21 +111,23 @@ def main():
             result = run_pytest_tier(filename, display_name)
             tier_results[key] = result
             status = "PASS" if result.failed == 0 else "ISSUES"
-            print(f"  Result: {result.passed}/{result.total} passed "
-                  f"(Score: {result.score:.0f}/100) [{status}]")
+            print(f"  Result: {result.passed}/{result.total} passed " f"(Score: {result.score:.0f}/100) [{status}]")
             if result.critical_failures:
                 for cf in result.critical_failures[:3]:
                     print(f"    !! {cf}")
         except subprocess.TimeoutExpired:
             tier_results[key] = TierResult(
-                name=display_name, score=0, passed=0, failed=1, total=1,
-                critical_failures=["TIMEOUT: Test suite exceeded 5 minutes"]
+                name=display_name,
+                score=0,
+                passed=0,
+                failed=1,
+                total=1,
+                critical_failures=["TIMEOUT: Test suite exceeded 5 minutes"],
             )
-            print(f"  Result: TIMEOUT")
+            print("  Result: TIMEOUT")
         except Exception as e:
             tier_results[key] = TierResult(
-                name=display_name, score=0, passed=0, failed=1, total=1,
-                critical_failures=[f"ERROR: {str(e)[:100]}"]
+                name=display_name, score=0, passed=0, failed=1, total=1, critical_failures=[f"ERROR: {str(e)[:100]}"]
             )
             print(f"  Result: ERROR -- {e}")
 

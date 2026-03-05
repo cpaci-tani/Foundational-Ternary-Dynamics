@@ -45,7 +45,7 @@ class TestLemniscaticConstant(unittest.TestCase):
         self.assertAlmostEqual(g_star, expected, places=8)
 
         print(f"\n  Gamma(1/4) = {gamma_quarter:.10f}")
-        print(f"  G* = sqrt(2) * Gamma(1/4)^2 / (2*pi)")
+        print("  G* = sqrt(2) * Gamma(1/4)^2 / (2*pi)")
         print(f"     = sqrt(2) * {gamma_quarter:.6f}^2 / (2*pi)")
         print(f"     = {g_star:.10f} [PASS]")
 
@@ -78,7 +78,7 @@ class TestLemniscaticConstant(unittest.TestCase):
         self.assertAlmostEqual(g_star_gamma, g_star_elliptic, places=8)
         print(f"\n  G* via Gamma(1/4): {g_star_gamma:.10f}")
         print(f"  G* via K(1/sqrt(2)): {g_star_elliptic:.10f}")
-        print(f"  Agreement verified [PASS]")
+        print("  Agreement verified [PASS]")
 
 
 class TestMasterQuadratic(unittest.TestCase):
@@ -262,12 +262,12 @@ class TestNapkinDerivation(unittest.TestCase):
         g_star_calc = sqrt_2 * (gamma_quarter**2) / (2 * pi)
 
         # Compare to high-precision
-        g_star_exact = np.sqrt(2) * gamma(0.25)**2 / (2 * np.pi)
+        g_star_exact = np.sqrt(2) * gamma(0.25) ** 2 / (2 * np.pi)
 
         error = abs(g_star_calc - g_star_exact)
         self.assertLess(error, 1e-8)
 
-        print(f"\n  Calculator inputs:")
+        print("\n  Calculator inputs:")
         print(f"    sqrt(2)     = {sqrt_2}")
         print(f"    Gamma(1/4)  = {gamma_quarter}")
         print(f"    pi          = {pi}")
@@ -287,8 +287,8 @@ class TestNapkinDerivation(unittest.TestCase):
         c = 16 * g**3
 
         # Quadratic formula
-        disc = b**2 - 4*a*c
-        x_plus = (-b + np.sqrt(disc)) / (2*a)
+        disc = b**2 - 4 * a * c
+        x_plus = (-b + np.sqrt(disc)) / (2 * a)
 
         # Should get approximately 137
         self.assertAlmostEqual(x_plus, 137.036, places=2)
@@ -299,7 +299,7 @@ class TestNapkinDerivation(unittest.TestCase):
         print(f"  x_+ = {x_plus:.6f} ~ 137 [PASS]")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("=" * 60)
     print("MASTER QUADRATIC VERIFICATION")
     print("Fine Structure Constant Derivation")
