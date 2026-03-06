@@ -245,7 +245,12 @@
       "Bash(if [ -e \"$f\" ])",
       "Bash(then echo \"OK: $f\")",
       "Bash(else echo \"MISSING: $f\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(source \"C:/emsdk/emsdk_env.sh\")",
+      "Bash(cmd.exe //c \"C:\\\\emsdk\\\\emsdk_env.bat && emcmake cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release 2>&1\")",
+      "Bash(\"C:/emsdk/python/3.13.3_64bit/python.exe\" \"C:/emsdk/upstream/emscripten/emcmake.py\" --help)",
+      "Bash(EMSDK=\"C:/emsdk\" EMSDK_NODE=\"C:/emsdk/node/22.16.0_64bit/bin/node.exe\" PATH=\"C:/emsdk:C:/emsdk/upstream/emscripten:$PATH\" \"C:/emsdk/python/3.13.3_64bit/python.exe\" \"C:/emsdk/upstream/emscripten/emcmake.py\" cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release)",
+      "Bash(EMSDK=\"C:/emsdk\" EMSDK_NODE=\"C:/emsdk/node/22.16.0_64bit/bin/node.exe\" PATH=\"C:/emsdk:C:/emsdk/upstream/emscripten:$PATH\" \"C:/emsdk/python/3.13.3_64bit/python.exe\" \"C:/emsdk/upstream/emscripten/emmake.py\" cmake --build engine/build_wasm --target ftd_wasm)"
     ]
   },
   "outputStyle": "default"
