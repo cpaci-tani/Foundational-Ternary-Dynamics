@@ -16,7 +16,7 @@ Foundational Ternary Dynamics (FTD) consists of two pillars:
 
 **A mathematical derivation chain** — starting from four constrained integers {3, 4, 7, 13} and the lemniscatic constant G\* ≈ 2.9587, the framework derives ~20 physical constants including the fine structure constant α to 1.26 ppm, particle mass ratios, and neutrino mixing angles.
 
-**A C++ simulation engine** — a 3D cubic lattice where each site holds one of three states {−1, 0, +1}, coupled to a continuous vector flux field J ∈ ℝ³. Six update rules derived from an action principle S[s,J] govern the dynamics. The engine operates at three physics scales (voxel, particle, atom), supports CUDA GPU acceleration (363× speedup on RTX 5090), and compiles to WebAssembly for an interactive browser dashboard with 23+ scenarios.
+**A C++ simulation engine** — a 3D cubic lattice where each site holds one of three states {−1, 0, +1}, coupled to a continuous vector flux field J ∈ ℝ³. Six update rules derived from an action principle S[s,J] govern the dynamics. The engine operates at three physics scales (voxel, particle, atom), supports CUDA GPU acceleration , and compiles to WebAssembly for an interactive browser dashboard with 23+ scenarios.
 
 The central result is a quadratic equation — x² − 16G\*²x + 16G\*³ = 0 — whose roots yield 1/α = 137.036 (1.26 ppm from CODATA) and N_c = 3.024 (the number of color charges).
 
