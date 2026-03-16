@@ -45,6 +45,7 @@ From void to physics — the emergence story.
 
 | Order | Document | Description |
 |-------|----------|-------------|
+| **2.0** | **[FOUND_AXIOM_ZERO.md](02_foundations/FOUND_AXIOM_ZERO.md)** | **AXIOM ZERO: A voxel has state s in {-1,0,+1} and position x in Z³, nothing else. All five postulates reduce to these two properties. Shows what emerges from state alone, position alone, and both together. Addresses reviewer objections. The master document of FTD.** |
 | 2.1 | [FOUND_THE_FIRST_DISTINCTION.md](02_foundations/FOUND_THE_FIRST_DISTINCTION.md) | What precedes I₄ — Levels -3 to 0 |
 | 2.2 | [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) | Comprehensive i exploration (self-reference², Cayley-Dickson, perpendicularity, CM theory) |
 | 2.3 | [FOUND_EULER_IDENTITY_TERNARY.md](02_foundations/FOUND_EULER_IDENTITY_TERNARY.md) | Euler's identity as annihilation equation, i emergence from G* at k_crit = 4/G*, nome identity q = (-1)^i |
