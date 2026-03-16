@@ -100,6 +100,8 @@ Physics from first principles.
 | 3.30 | [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) | **Gap equation:** Master quadratic as lattice self-consistency equation x²=32πW₃(x-G\*); BCS analogy; 9-step chain from Z to α with honest tagging; connects Watson identity, quadratic necessity, Born rule, and force structure |
 | 3.31 | [DERIV_COULOMB_SCATTERING_AMPLITUDE.md](03_derivations/DERIV_COULOMB_SCATTERING_AMPLITUDE.md) | **First scattering amplitude:** Tree-level Coulomb M=-α/λ(q) from FTD Lagrangian; recovers Rutherford in continuum limit; predicts cubic anisotropy and UV suppression at Planck scale; Ward identity exact on lattice |
 | 3.32 | [DERIV_DIRAC_FROM_MASTER_QUADRATIC.md](03_derivations/DERIV_DIRAC_FROM_MASTER_QUADRATIC.md) | **Dirac equation from the master quadratic:** Fermion sector derived (not imported) via discriminant trichotomy; complex roots ($\Delta < 0$) yield $e^{ibt}$ oscillations = spinor wavefunction evolution; one quadratic produces bosons (real), fermions (complex), measurement (degenerate) |
+| 3.33 | [DERIV_GAP_EQUATION_FORM.md](03_derivations/DERIV_GAP_EQUATION_FORM.md) | **Why x²=K(x-G\*):** One-loop self-consistency F(x)=K(1-G\*/x) forces linked coefficients C=KG\*; unique degree-2 form with screening; closes the gap equation [SELECTION] |
+| 3.34 | [DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](03_derivations/DERIV_ALPHA_FROM_PHASE_STRUCTURE.md) | **Why x₊=1/α:** FTD Lagrangian IS U(1) lattice gauge theory in temporal gauge; Wilson/Polyakov two-phase structure; x₊=Coulomb phase (EM), x₋=confined phase (strong); closes SP4 [SELECTION] |
 
 ---
 
