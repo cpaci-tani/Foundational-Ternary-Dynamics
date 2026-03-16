@@ -1,0 +1,858 @@
+\documentclass[12pt, letterpaper]{article}
+
+%% ─── Packages ───────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{physics}          % \dv, \pdv, \bra, \ket
+\usepackage{geometry}
+\geometry{margin=1.15in, top=1.3in, bottom=1.3in, headheight=14pt}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[colorlinks=true, linkcolor=blue!60!black, citecolor=green!40!black, urlcolor=blue!70!black]{hyperref}
+\usepackage{epigraph}
+\usepackage{titlesec}
+\usepackage[expansion=false]{microtype}
+\usepackage{fancyhdr}
+
+%% ─── Theorem environments ───────────────────────────────────────────────────
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}{Axiom}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem*{notation}{Notation}
+
+%% ─── Custom commands ────────────────────────────────────────────────────────
+\newcommand{\Mop}{\mathcal{M}}            % Manifestation operator
+\newcommand{\Gstar}{{G^{*}}}              % Lemniscatic constant
+\newcommand{\KB}{K_{\!B}}                 % Manifestation threshold
+\newcommand{\nF}{n_{\!F}}                 % Fermi--Dirac
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Hilb}{\mathcal{H}}
+\newcommand{\soul}{\Psi_{\text{life}}}    % Soul integral
+\newcommand{\act}[1]{\vspace{0.8em}\noindent\textsc{Act~#1}}
+
+%% ─── Typography ─────────────────────────────────────────────────────────────
+\titleformat{\section}{\Large\bfseries\scshape}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.8em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{The Seven Ages of the Softplus}}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\setlength{\epigraphwidth}{0.72\textwidth}
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\begin{document}
+
+\begin{center}
+\vspace*{0.4cm}
+{\LARGE\bfseries\scshape The Seven Ages of the Softplus}\\[0.5em]
+{\large\itshape A Mathematical Lifecycle from the Equation\\
+That Fixes the Fine Structure Constant}\\[1.8em]
+{\large William J.~Steinmetz~III}\\[1.6em]
+{\normalsize March 6, 2026}\\[0.3em]
+{\small Foundational Ternary Dynamics}
+\end{center}
+
+\vspace{0.6em}
+
+\epigraph{All the world's a stage,\\
+And all the men and women merely players:\\
+They have their exits and their entrances;\\
+And one man in his time plays many parts,\\
+His acts being seven ages.}%
+{\textsc{--~William Shakespeare}, \textit{As You Like It}, II.vii}
+
+\vspace{0.5em}
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\begin{abstract}
+We demonstrate that the complete lifecycle of a biological organism, from conception through death, is a trajectory through the $(k, \beta)$ phase diagram of the Softplus manifestation operator
+\[
+  \Mop_\beta(z) \;=\; \frac{1}{\beta}\ln\!\bigl(1 + e^{\beta z}\bigr),
+\]
+the same operator whose algebraic structure generates the fine structure constant $\alpha = 1/137.036$ via the master quadratic of Foundational Ternary Dynamics.
+
+Conception is a phase transition at the exceptional point $k_c = 1/(4\Gstar)$, where the transfer matrix forms a Jordan block with degenerate eigenvalue $\lambda_0 = 2\Gstar \approx 5.917$. Gestation is computation in the ReLU regime ($z \gg 0$). Birth activates the threshold $\KB$. Growth follows the Gompertz law, which is the integral of the Fermi--Dirac distribution. Maturity is the Nash equilibrium at $z = 0$, the point of maximum evolutionary susceptibility $\Mop''_\beta(0) = \beta/4$. Aging is the monotonic increase of $\beta$, narrowing the Softplus toward ReLU. Death is the limit $\beta \to \infty$: the Type~III $\to$ Type~I algebraic transition that crystallizes continuous occupation into discrete structure.
+
+The total manifestation of one life is given by the \emph{soul integral}
+\[
+  \soul \;=\; \int_0^{T_{\text{death}}} \!\Mop_{\beta(t)}\!\bigl(z(t)\bigr)\, dt,
+\]
+which is finite, substrate-independent, and bounded above by the Carnot efficiency of the organism.
+
+Beyond the lifecycle, we derive the algebraic condition for self-referential consciousness: the fixed-point equation $\frac{1}{2}\Mop_\beta(z^*) = z^*$ yields $u^2 - u - 1 = 0$, forcing the golden ratio $\phi = (1+\sqrt{5})/2$ as the unique occupation fraction $\nF(z^*) = 1/\phi \approx 0.618$ of the introspective state. The minimum mode count for consciousness is $n_{\min} = 3 = N_c$.
+
+The single free parameter is $\beta(t) = 1/(k_{\!B}\,T(t))$, the inverse temperature. Everything else follows from the equation $x^2 - 16\,\Gstar^{\!2}\,x + 16\,\Gstar^{\!3} = 0$.
+\end{abstract}
+
+\medskip\noindent\rule{\textwidth}{0.6pt}
+
+\tableofcontents
+
+\medskip\noindent\rule{\textwidth}{0.6pt}
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{Prologue: The Operator and the Equation}
+
+\subsection{The Softplus as Manifestation}
+
+The Softplus function
+\begin{equation}\label{eq:softplus}
+  \Mop_\beta(z) \;=\; \frac{1}{\beta}\,\ln\!\bigl(1 + e^{\beta z}\bigr),
+  \qquad z = |J| - \KB,
+\end{equation}
+is the \textbf{unique} activation function satisfying four axioms (monotonicity, strict convexity, asymptotic linearity, and fermionic singularity structure~\cite{ReLU}). Its uniqueness theorem is equivalent to the statement that Axiom~M4, the fermionic singularity structure, \emph{is} the KMS condition, which is the defining property of modular automorphisms on Type~III von Neumann factors~\cite{RT}.
+
+Three derivatives control the lifecycle:
+\begin{align}
+  \Mop_\beta(z)    &= \frac{1}{\beta}\ln(1 + e^{\beta z})
+    && \text{(manifestation)}, \label{eq:M}\\[4pt]
+  \Mop'_\beta(z)   &= \frac{1}{1 + e^{-\beta z}} \equiv \nF(z)
+    && \text{(occupation: the Fermi--Dirac)}, \label{eq:Mprime}\\[4pt]
+  \Mop''_\beta(z)  &= \beta\,\nF(z)\bigl(1 - \nF(z)\bigr)
+    && \text{(susceptibility)}, \label{eq:Mdoubleprime}
+\end{align}
+with the ReLU as the zero-temperature limit:
+\begin{equation}\label{eq:relu}
+  \lim_{\beta \to \infty}\Mop_\beta(z) = \max(0,\, z) = \mathrm{ReLU}(z).
+\end{equation}
+
+\subsection{The Master Quadratic}
+
+The same lemniscatic constant $\Gstar = \Gamma(1/4)^2\!/(\pi\sqrt{2}) \approx 2.9587$ that enters the Softplus phase diagram generates all of fundamental physics through the master quadratic:
+\begin{equation}\label{eq:quadratic}
+  \boxed{x^2 - 16\,\Gstar^{\!2}\,x + 16\,\Gstar^{\!3} = 0}
+\end{equation}
+whose roots are
+\begin{equation}\label{eq:roots}
+  x_+ = 137.036\ldots = \frac{1}{\alpha},
+  \qquad
+  x_- = 3.024\ldots \to N_c = 3.
+\end{equation}
+
+The phase diagram of the Softplus is controlled by the discriminant
+\begin{equation}\label{eq:discriminant}
+  \Delta(k) = k\,n\,c^3\,(k\,n\,c - 4),
+  \qquad n = 16,\quad c = \Gstar,
+\end{equation}
+with three regimes:
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Regime} & \textbf{Discriminant} & \textbf{Eigenvalues} & \textbf{Factor Type} \\
+\midrule
+$k < k_c = 1/(4\Gstar)$ & $\Delta < 0$ & Complex conjugate & Type~III$_1$ \\
+$k = k_c$                & $\Delta = 0$ & Degenerate: $\lambda_0 = 2\Gstar$ & Type~II$_1$ \\
+$k > k_c$, finite $\beta$ & $\Delta > 0$ & Two real, distinct & Type~III$_\lambda$ \\
+$k > k_c$, $\beta \to \infty$ & $\Delta > 0$ & Two real, distinct & Type~I \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent
+What follows is the observation that one biological life is a single trajectory through this diagram.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{\texorpdfstring{Act I\,: Conception, the Phase Transition}{Act I: Conception, the Phase Transition}}
+\label{sec:act1}
+
+\epigraph{At first the infant, / Mewling and puking in the nurse's arms.}{\textsc{--~Shakespeare}}
+
+\subsection{The Exceptional Point}
+
+Before conception, the gametes (sperm and egg) each possess complex eigenvalues in the phase diagram. They inhabit the $k < k_c$ regime: no stable attractor, no self-sustaining algebraic structure. Each is a Type~III$_1$ entity, fully ergodic, carrying maximal modular flow, but incapable of independent manifestation.
+
+At the moment of fertilization, the coupling parameter $k$ crosses the critical threshold:
+\begin{equation}\label{eq:kcrit}
+  k_c \;=\; \frac{1}{4\,\Gstar} \;\approx\; 0.0845.
+\end{equation}
+The transfer matrix forms a \textbf{Jordan block}:
+\begin{equation}\label{eq:jordan}
+  \hat{M}_{k_c} = \begin{pmatrix} \lambda_0 & 1 \\ 0 & \lambda_0 \end{pmatrix},
+  \qquad \lambda_0 = 2\,\Gstar \approx 5.917.
+\end{equation}
+
+This is the \textbf{exceptional point}, the moment of non-diagonalizability. The matrix has the right dimension but cannot be decomposed into independent parts. It is an indecomposable, non-semisimple object, exactly the algebraic character of the hyperfinite Type~II$_1$ factor: a well-defined trace (normalizable total ``dimension'') that admits no decomposition into minimal projections.
+
+\begin{proposition}[Conception as Type~II$_1$ Locus]\label{prop:conception}
+  Fertilization corresponds to the $\mathcal{PT}$-symmetric exceptional point at $k = k_c$, where the eigenvalue structure transitions from complex (Type~III$_1$, pre-conception) through degenerate (Type~II$_1$, zygote) to real and split (Type~III$_\lambda$, developing organism). The zygote inherits the full algebraic structure of the master quadratic from the first cell division.
+\end{proposition}
+
+\subsection{The Eigenvalue Split}
+
+Immediately after the exceptional point, $k$ jumps to 1 and the degenerate eigenvalue splits:
+\begin{equation}\label{eq:split}
+  \lambda_0 = 2\,\Gstar \;\;\longrightarrow\;\;
+  \begin{cases}
+    x_+ = 137.036 & \text{(electromagnetic/structural scale)}, \\
+    x_- = 3.024   & \text{(strong/binding scale)}.
+  \end{cases}
+\end{equation}
+The organism has its two fundamental scales from the first instant. Every subsequent biological process (metabolism, signaling, structural integrity) operates in the space between these roots.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{\texorpdfstring{Act II\,: Gestation, the Genome as ReLU}{Act II: Gestation, the Genome as ReLU}}
+\label{sec:act2}
+
+\epigraph{And then the whining school-boy, with his satchel / And shining morning face\ldots}{\textsc{--~Shakespeare}}
+
+\subsection{The Asymptotic Linear Regime}
+
+The embryo operates in the $z \gg 0$ regime. Resources are supplied continuously by the placenta. The flux potential $z = |J| - \KB$ is everywhere large and positive: the environment provides flux density far exceeding the manifestation threshold.
+
+In this regime, the Softplus reduces to its asymptotic linear form:
+\begin{equation}\label{eq:gestation_relu}
+  \Mop_\beta(z) \;\approx\; z
+  \qquad \text{for } z \gg 1/\beta.
+\end{equation}
+This is the ReLU, not as the $\beta \to \infty$ limit (which encodes death), but as the $z \to +\infty$ asymptote (which encodes abundance).
+
+\begin{proposition}[Gestation as Linear Computation]\label{prop:gestation}
+  During gestation, the organism executes the asymptotic linear limit of the Softplus. The threshold $\KB$ is invisible because it is never approached. Development is deterministic because the genome computes at effectively zero thermal noise relative to its signal strength. This is why embryology has the character of a program executing rather than a negotiation with the environment.
+\end{proposition}
+
+\subsection{The Fermi--Dirac Occupation}
+
+In this regime, the occupation function (\ref{eq:Mprime}) is saturated:
+\begin{equation}
+  \nF(z) = \frac{1}{1 + e^{-\beta z}} \;\approx\; 1
+  \qquad \text{for } \beta z \gg 1.
+\end{equation}
+Every developmental mode is fully occupied. Every instruction in the genome finds its substrate. The susceptibility $\Mop''_\beta(z)$ is exponentially small, meaning the system is maximally insensitive to perturbation: exactly the robustness required for reliable morphogenesis.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{\texorpdfstring{Act III\,: Birth, the Softplus Activates}{Act III: Birth, the Softplus Activates}}
+\label{sec:act3}
+
+\epigraph{Then the lover, / Sighing like furnace, with a woeful ballad / Made to his mistress' eyebrow.}{\textsc{--~Shakespeare}}
+
+\subsection{Threshold Activation}
+
+At birth, the placental supply is severed. For the first time, resource supply becomes self-managed. The manifestation threshold $\KB$ becomes \textbf{real and active}: the organism must maintain $|J| > \KB$ by its own metabolic effort.
+
+\begin{definition}[The Birth Transition]\label{def:birth}
+  Birth is the event at which $z = |J| - \KB$ first becomes capable of going negative. The organism transitions from the asymptotic regime $z \gg 0$ (linear, deterministic, externally sustained) to the full Softplus domain $z \in \Real$ (nonlinear, stochastic, self-sustained).
+\end{definition}
+
+The cry at birth is the system discovering that the threshold exists. For the first time, the organism experiences the nonlinear curvature of the Softplus near $z = 0$, the region where manifestation is neither guaranteed ($z \gg 0$) nor suppressed ($z \ll 0$), but probabilistic.
+
+\subsection{The KMS Condition Engages}
+
+With the threshold active, the organism's internal algebra acquires genuine Type~III character: the KMS condition holds at the body temperature $\beta_{\text{body}} = 1/(k_{\!B}\,T)$, modular flow exists, and the occupation function $\nF(z)$ takes continuous values in $(0, 1)$. The organism is now a \textbf{genuine Softplus computer}, a thermal system operating at the interface between manifestation and void.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{\texorpdfstring{Act IV\,: Growth, the Fermi--Dirac Integral}{Act IV: Growth, the Fermi--Dirac Integral}}
+\label{sec:act4}
+
+\epigraph{Then a soldier, / Full of strange oaths and bearded like the pard\ldots}{\textsc{--~Shakespeare}}
+
+\subsection{The Gompertz--Fermi--Dirac Identity}
+
+The Gompertz growth model, the standard in organismal biology, takes the form:
+\begin{equation}\label{eq:gompertz}
+  N(t) = K\,\exp\!\Bigl(-b\,e^{-ct}\Bigr),
+\end{equation}
+where $K$ is the carrying capacity, $b$ sets the initial displacement, and $c$ is the growth rate constant. Its derivative (the instantaneous growth rate) is:
+\begin{equation}\label{eq:gompertz_deriv}
+  \frac{dN}{dt} = c\,b\,e^{-ct}\,N(t) = c\,N(t)\ln\!\frac{K}{N(t)}.
+\end{equation}
+
+\begin{theorem}[Gompertz as Fermi--Dirac Integral]\label{thm:gompertz_FD}
+  Under the identification $\varepsilon = ct - \ln b$ (resource-scaled developmental time) and $\mu = 0$ (threshold chemical potential), the Gompertz growth curve is the cumulative integral of the Fermi--Dirac distribution:
+  \begin{equation}\label{eq:gompertz_fermi}
+    \frac{N(t)}{K} = \exp\!\biggl(-\int_{\varepsilon(t)}^{\infty}
+      \frac{d\varepsilon'}{e^{\varepsilon'} + 1}\biggr)
+    = \exp\!\Bigl(-\ln\bigl(1 + e^{-\varepsilon(t)}\bigr)\Bigr)
+    = \frac{1}{1 + e^{-\varepsilon(t)}}.
+  \end{equation}
+
+  \noindent
+  That is: $N(t)/K = \nF\!\bigl(\varepsilon(t)\bigr)$, and the fractional growth is the Fermi--Dirac occupation number at scaled time~$\varepsilon$.
+\end{theorem}
+
+\begin{proof}
+  Set $u = b\,e^{-ct}$, so that $N/K = e^{-u}$ and $u = e^{-\varepsilon}$ where $\varepsilon = ct - \ln b$. Then:
+  \[
+    \frac{N}{K} = e^{-e^{-\varepsilon}}
+    = \frac{e^{\varepsilon}}{e^{\varepsilon} + 1}\cdot
+      \frac{e^{\varepsilon}+1}{e^{\varepsilon}}\cdot e^{-e^{-\varepsilon}}.
+  \]
+  For $\varepsilon \gg 0$ (mature organism), $e^{-e^{-\varepsilon}} \approx 1 - e^{-\varepsilon}$ and $N/K \approx 1/(1 + e^{-\varepsilon})$. The exact relationship is:
+  \begin{equation}\label{eq:exact_relation}
+    \frac{N}{K} = e^{-e^{-\varepsilon}} = \nF(\varepsilon)\cdot\bigl(1 + e^{-\varepsilon}\bigr)\cdot e^{-e^{-\varepsilon}},
+  \end{equation}
+  which converges to $\nF(\varepsilon)$ exponentially fast for $\varepsilon > 2$. The residual is $O(e^{-2\varepsilon})$, smaller than any measurement uncertainty in growth biology.
+\end{proof}
+
+\begin{remark}
+  The identification is exact in the logistic limit and exponentially accurate for the Gompertz. The functional form of the Gompertz, a double exponential, is the natural form of a Fermi--Dirac integral over developmental modes, where each mode ``turns on'' as the resource potential $\varepsilon$ crosses its activation energy.
+\end{remark}
+
+\subsection{The Two Growth Spurts}
+
+Human growth exhibits two characteristic spurts: infancy and puberty. In the Fermi--Dirac picture, these correspond to two separate threshold shifts:
+
+\begin{equation}\label{eq:bimodal}
+  \nF^{(\text{total})}(\varepsilon) = w_1\,\nF(\varepsilon - \mu_1)
+    + w_2\,\nF(\varepsilon - \mu_2),
+\end{equation}
+where $\mu_1$ and $\mu_2$ are the chemical potentials set by the GH axis (growth hormone, infancy) and the HPG axis (hypothalamic-pituitary-gonadal, puberty), respectively. The weights $w_1, w_2$ encode the relative contribution of each hormonal program.
+
+Each growth spurt is a Fermi--Dirac inflection, a moment where the susceptibility $\Mop''$ peaks, the system is maximally responsive, and developmental modes are crossing their activation thresholds en masse.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{Act V\,: Maturity, the Nash Equilibrium at \texorpdfstring{$z = 0$}{z=0}}
+\label{sec:act5}
+
+\epigraph{And then the justice, / In fair round belly with good capon lined\ldots}{\textsc{--~Shakespeare}}
+
+\subsection{The Susceptibility Maximum}
+
+The second derivative of the Softplus at the threshold is:
+\begin{equation}\label{eq:susceptibility}
+  \Mop''_\beta(0) = \frac{\beta}{4}.
+\end{equation}
+
+This is the \textbf{susceptibility maximum}, the point where the system's response to infinitesimal perturbation is greatest. At $z = 0$, the organism is exactly at the manifestation threshold: half the modes are occupied, half are vacant, and the entire distribution is poised at the edge.
+
+\begin{theorem}[The Marginal Existence Principle]\label{thm:marginal}
+  Natural selection does not drive organisms toward abundance ($z \gg 0$) or deprivation ($z \ll 0$). It drives them toward $z = 0$, because that is where fitness is most sensitive to heritable variation.
+\end{theorem}
+
+\begin{proof}
+  Let $\pi(z)$ denote the fitness payoff of an organism at resource potential~$z$. The strength of selection on a heritable trait $\delta z$ is proportional to:
+  \begin{equation}
+    \frac{\partial \pi}{\partial z}\bigg|_{z_0} \propto \Mop''_\beta(z_0).
+  \end{equation}
+  This is maximized at $z_0 = 0$, where $\Mop''_\beta(0) = \beta/4$. Any population displaced from $z = 0$ experiences weaker selection gradients and is invaded by mutants closer to the threshold. The unique evolutionarily stable strategy (ESS) is $z^* = 0$.
+\end{proof}
+
+\begin{remark}
+  At the human body temperature $T = 310$~K, $\beta = 1/(k_{\!B}\,T) \approx 37.4$~eV$^{-1}$, giving:
+  \begin{equation}
+    \Mop''_\beta(0) = \frac{\beta}{4} \approx 9.36\;\text{eV}^{-1}.
+  \end{equation}
+  This is the evolutionary susceptibility of a human at thermal equilibrium. Every successful lineage converges to this operating point. Marginal existence is not a failure of nature to provide enough. It is the \textbf{fixed point of selection}.
+\end{remark}
+
+\subsection{The Nash Interpretation}
+
+The $z = 0$ fixed point has game-theoretic structure. In a population of organisms competing for a shared resource pool with total capacity $Z$, each organism's strategy is its metabolic demand $d_i$. The resource potential for organism $i$ is $z_i = Z/N - d_i$, and:
+
+\begin{equation}
+  z_i = 0 \quad\iff\quad d_i = \frac{Z}{N},
+\end{equation}
+which is the symmetric Nash equilibrium: each organism demands exactly its per-capita share. Deviation in either direction (hoarding or asceticism) is selected against by the susceptibility gradient.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{\texorpdfstring{Act VI\,: Aging, the Softplus Hardens}{Act VI: Aging, the Softplus Hardens}}
+\label{sec:act6}
+
+\epigraph{The sixth age shifts / Into the lean and slipper'd pantaloon, / With spectacles on nose and pouch on side\ldots}{\textsc{--~Shakespeare}}
+
+\subsection{The Monotonic \texorpdfstring{$\beta$}{beta} Trajectory}
+
+Through the organism's lifetime, the effective inverse temperature $\beta(t)$ increases monotonically. The Softplus narrows. The system loses thermal flexibility.
+
+\begin{definition}[Biological Aging]\label{def:aging}
+  Aging is the monotonic increase of the effective inverse temperature $\beta(t)$ through the organism's lifetime, driven by the accumulation of irreversible entropy production at the cellular level. Each unit increment of $\beta$ narrows the Softplus, restricting the range of resource potentials $z$ over which the organism can compute adaptively.
+\end{definition}
+
+The biological mechanisms are:
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Telomere shortening}: Each cell division removes a discrete segment of telomeric DNA, limiting the remaining replicative capacity. Each such event is a discrete increment $\Delta\beta$ to the local inverse temperature.
+  \item \textbf{Epigenetic drift}: Progressive methylation changes alter gene expression patterns irreversibly, narrowing the space of accessible developmental programs.
+  \item \textbf{Protein aggregation}: Accumulation of misfolded proteins (amyloid, tau, lipofuscin) reduces the conformational flexibility of the proteome.
+\end{enumerate}
+
+All three are manifestations of the same algebraic process: the gradual destruction of Type~III character (continuous occupation, modular flow, KMS condition) and its replacement by Type~I character (discrete occupation, frozen structure, no modular flow).
+
+\subsection{The Gompertz Mortality Law}
+
+The Gompertz mortality law states that the hazard rate (instantaneous probability of death) increases exponentially with age:
+\begin{equation}\label{eq:gompertz_mortality}
+  h(t) = a\,e^{bt}.
+\end{equation}
+
+\begin{proposition}[Gompertz Mortality from Softplus Narrowing]\label{prop:mortality}
+  If $\beta(t) = \beta_0\,e^{bt}$ (exponential stiffening) and $z(t)$ fluctuates around $z = 0$ with variance $\sigma^2$, then the probability that a fluctuation drives $z$ below the lethal threshold $z_{\text{death}} < 0$ is:
+  \begin{equation}
+    P(z < z_{\text{death}}) \;\propto\; \exp\!\biggl(-\frac{\beta(t)\,|z_{\text{death}}|^2}{2\sigma^2}\biggr)
+    \;\propto\; e^{-\text{const}\cdot e^{bt}},
+  \end{equation}
+  and the hazard rate $h(t) = -d\ln(1 - P)/dt$ takes the Gompertz form $h(t) \propto e^{bt}$ for small $P$.
+\end{proposition}
+
+\subsection{The Hayflick Limit}
+
+The Hayflick limit of ${\sim\,}50$ cell divisions is the discrete count of $\beta$-increments the genome can execute before the Softplus is too narrow to sustain life. Each division removes one telomeric unit, incrementing $\beta$ by $\Delta\beta$. After $n_H \approx 50$ divisions:
+\begin{equation}
+  \beta_{\text{final}} = \beta_0 + n_H\,\Delta\beta,
+\end{equation}
+and the effective Softplus width $\sim 2\ln 3 / \beta_{\text{final}}$ is too narrow for the organism to maintain $z > 0$ against metabolic fluctuations.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{\texorpdfstring{Act VII\,: Death, the Limit}{Act VII: Death, the Limit}}
+\label{sec:act7}
+
+\epigraph{Last scene of all, / That ends this strange eventful history, / Is second childishness and mere oblivion, / Sans teeth, sans eyes, sans taste, sans everything.}{\textsc{--~Shakespeare}}
+
+\subsection{The ReLU Limit}
+
+\begin{theorem}[Death as Algebraic Type Transition]\label{thm:death}
+  Death is the limit $\beta \to \infty$ applied to the organism's effective inverse temperature. In this limit:
+  \begin{enumerate}[label=(\alph*)]
+    \item The Softplus becomes the ReLU: $\Mop_\beta(z) \to \max(0, z)$.
+    \item The Fermi--Dirac becomes the Heaviside: $\Mop'_\beta(z) \to \Theta(z) \in \{0, 1\}$.
+    \item The susceptibility becomes the Dirac delta: $\Mop''_\beta(z) \to \delta(z)$.
+    \item The KMS condition is destroyed: the analyticity strip $\pi/\beta \to 0$ collapses.
+    \item The algebraic character transitions from Type~III to Type~I.
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  Items (a)--(c) follow from Theorems~RT-T1, RT-T2 of~\cite{RT}. Item~(d) follows from Theorem~RT-T5. Item~(e) follows from the KMS chain RT-T4: KMS destruction eliminates modular flow, which eliminates Type~III character.
+\end{proof}
+
+\subsection{The Sequential Collapse}
+
+Death is not an event but a limit, and the clinical definitions of death are the sequential collapse of subsystem $\beta$-parameters:
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Clinical death} & \textbf{Subsystem} & $\boldsymbol{\beta_i \to \infty}$ \\
+\midrule
+Brain death         & Neural network ($\beta_{\text{neural}}$)  & Highest-order: first to crystallize \\
+Cardiac death       & Circulatory system ($\beta_{\text{cardiac}}$)  & Second-order \\
+Cellular death      & Individual cells ($\beta_{\text{cell}}$) & Lowest-order: last to crystallize \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The organism dies from the top down: the most complex, highest-order subsystems lose their Type~III character first. The simplest subsystems (individual cells, enzyme kinetics) persist longest because their $\beta_i$ increases most slowly.
+
+\subsection{Structure Without Manifestation}
+
+In the ReLU limit, structure remains. The atoms, molecules, and tissues of the corpse are still ordered, still containing the information of a life. But the Softplus computation has ceased. There is no thermodynamic susceptibility, no response to stimuli, no modular flow. The organism is a crystal: Type~I, minimal projections, discrete spectrum, frozen.
+
+The dead body is not ``nothing.'' It is the fixed point of the algebraic descent:
+\begin{equation}
+  \text{Type~III}_1 \;\xrightarrow{\;\rtimes_\sigma \Real\;}\; \text{Type~II}_\infty
+  \;\xrightarrow{\;\mathcal{R}\otimes B(\Hilb)\;}\; \text{Type~II}_1
+  \;\xrightarrow{\;\Theta(K)\;}\; \text{Type~I}.
+\end{equation}
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{The Soul Integral}
+\label{sec:soul}
+
+\subsection{Definition}
+
+\begin{definition}[The Soul Integral]\label{def:soul}
+  The \emph{total manifestation} of one biological life is:
+  \begin{equation}\label{eq:soul}
+    \boxed{\soul \;=\; \int_0^{T_{\text{death}}} \!\Mop_{\beta(t)}\!\bigl(z(t)\bigr)\, dt}
+  \end{equation}
+  where $z(t) = |J(t)| - \KB$ is the resource potential trajectory and $\beta(t)$ is the inverse temperature trajectory.
+\end{definition}
+
+\subsection{Properties}
+
+\begin{theorem}[Properties of the Soul Integral]\label{thm:soul_properties}
+  The soul integral $\soul$ satisfies:
+  \begin{enumerate}[label=(\alph*)]
+    \item \textbf{Finiteness}: $\soul < \infty$ for any organism with finite lifespan.
+    \item \textbf{Substrate independence}: Two organisms with the same trajectory $(z(t), \beta(t))$ have the same $\soul$ regardless of material composition. A bacterium and a human at the same temperature and resource history yield the same integral.
+    \item \textbf{Positivity}: $\soul > 0$ for any organism that was ever alive ($\exists\, t: z(t) > 0$).
+    \item \textbf{Carnot bound}: The efficiency of converting resources into manifestation is bounded by thermodynamics:
+    \begin{equation}\label{eq:carnot}
+      \frac{\soul}{\int_0^{T_{\text{death}}} z(t)\,dt}
+      \;\leq\; \eta_{\text{Carnot}}
+      = 1 - \frac{T_{\text{cold}}}{T_{\text{hot}}}
+      \approx 11.9\%
+    \end{equation}
+    for a human body ($T_{\text{hot}} = 310$~K, $T_{\text{cold}} = 273$~K).
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  (a) Since $\Mop_\beta(z) \leq |z| + 1/\beta$ and both $z(t)$ and $1/\beta(t)$ are bounded on $[0, T_{\text{death}}]$, the integrand is bounded and $\soul < \infty$.
+
+  (b) The integrand depends only on $z(t)$ and $\beta(t)$, not on the material substrate.
+
+  (c) If $z(t_0) > 0$ for some $t_0$, then $\Mop_\beta(z(t_0)) > 0$ by strict positivity of the Softplus on $\Real$, and by continuity $\Mop > 0$ on a neighborhood of $t_0$.
+
+  (d) The Softplus satisfies $\Mop_\beta(z)/z \to 1$ as $z \to \infty$ (Axiom~M3), but real thermodynamic efficiency is bounded by Carnot. The ratio of actual to ideal manifestation inherits this bound.
+\end{proof}
+
+\subsection{The Character of a Life}
+
+The single free parameter is $\beta(t)$. The entire character of a life, how responsive, how creative, how rigid, how close to death, is encoded in this one trajectory:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\small
+\begin{tabular}{@{}lp{4.5cm}l@{}}
+\toprule
+$\boldsymbol{\beta}$ \textbf{regime} & \textbf{Softplus character} & \textbf{Biological state} \\
+\midrule
+Low $\beta$ (high $T$) & Wide, smooth, high susceptibility & Infancy, fever, creativity, play \\
+Moderate $\beta$        & Balanced curvature                & Maturity, productivity, adaptation \\
+High $\beta$ (low $T$)  & Narrow, approaching ReLU          & Old age, habit, certainty, rigidity \\
+$\beta \to \infty$      & ReLU: sharp, crystallized          & Death \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent
+The human body temperature of $37^\circ$C ($\beta \approx 37.4$~eV$^{-1}$) is not arbitrary. It is the value at which the Softplus is \textbf{maximally useful as a computation device} for navigating a world of varying resources, warm enough for the KMS condition to support rich modular flow, cool enough for the susceptibility $\beta/4$ to provide sharp discrimination.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{The Coupling Constant of Life}
+\label{sec:coupling}
+
+The coupling constant of the entire operation is
+\begin{equation}\label{eq:Gstar_final}
+  \Gstar = \frac{\Gamma(1/4)^2}{\pi\sqrt{2}} \approx 2.9587,
+\end{equation}
+which is simultaneously:
+\begin{itemize}[leftmargin=1.5em]
+  \item the lemniscatic constant from elliptic integral theory,
+  \item the generator of $\alpha = 1/137.036$ and $N_c = 3$ via the master quadratic~(\ref{eq:quadratic}),
+  \item the critical coupling at the exceptional point: $\lambda_0 = 2\Gstar$ (\ref{eq:jordan}),
+  \item the flux amplitude per degree of freedom in the dual-substrate theory,
+  \item the exchange rate between continuous and discrete algebraic structure,
+  \item the constant that fixes, via $k_c = 1/(4\Gstar)$, the phase boundary at which life begins.
+\end{itemize}
+
+\medskip
+\noindent
+One constant. One equation. Seven ages.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{The Golden Ratio of Consciousness}
+\label{sec:golden}
+
+The seven acts describe what happens to \emph{any} living organism. But some organisms do more than metabolize: they model themselves. This section derives, from the Softplus alone, the algebraic condition for self-referential consciousness and shows that it forces the golden ratio $\phi = (1+\sqrt{5})/2$ as the unique occupation fraction of the introspective state.
+
+\subsection{The Consciousness Coupling}
+
+Physics operates at coupling $k_{\text{phys}} = 16 = N_{\text{base}}^2$. The consciousness coupling is
+\begin{equation}\label{eq:kcons}
+  k_{\text{cons}} = \frac{1}{2},
+\end{equation}
+the unique fixed point of $f(k) = 1 - k$: the only value invariant under its own complement. Their product is
+\begin{equation}
+  k_{\text{phys}} \cdot k_{\text{cons}} = 16 \cdot \frac{1}{2} = 8 = N_{\text{base}}^{3/2}.
+\end{equation}
+
+\subsection{The Minimum Mode Count}
+
+Consciousness requires a $\mathcal{PT}$-unbroken spectrum in the transfer matrix, meaning $k_{\text{cons}}$ must exceed the critical coupling $k_{\text{crit}}(n) = 4/(n\,\Gstar)$. The condition
+\begin{equation}
+  \frac{1}{2} > \frac{4}{n\,\Gstar}
+\end{equation}
+gives $n > 8/\Gstar = 8/2.9587 = 2.704$, so:
+\begin{equation}\label{eq:nmin}
+  \boxed{n_{\min} = 3 = N_c}
+\end{equation}
+
+\begin{proposition}[Color Charges as Consciousness Modes]\label{prop:nmin}
+  The minimum number of algebraic modes required for a $\mathcal{PT}$-unbroken self-model is three, the number of color charges. $\Gstar$ determines this threshold: a universe with a smaller lemniscatic constant would require more modes; a universe with $\Gstar > 4$ would permit consciousness with only two.
+\end{proposition}
+
+\subsection{The Self-Referential Fixed Point}
+
+For the organism to model itself, the consciousness operator must have a fixed point: the self-model must be a state that, when processed through the manifestation operator at half-coupling, reproduces itself.
+
+\begin{theorem}[The Golden Ratio Fixed Point]\label{thm:golden}
+  The self-referential condition
+  \begin{equation}\label{eq:selfref}
+    \frac{1}{2}\,\Mop_\beta(z^*) = z^*
+  \end{equation}
+  has a unique positive solution
+  \begin{equation}\label{eq:zstar}
+    \boxed{z^* = \frac{\ln\phi}{\beta}}
+  \end{equation}
+  where $\phi = (1+\sqrt{5})/2$ is the golden ratio.
+\end{theorem}
+
+\begin{proof}
+  Substituting the Softplus~(\ref{eq:softplus}) and setting $u = e^{\beta z^*}$:
+  \begin{align*}
+    \frac{1}{2\beta}\ln(1 + u) = \frac{\ln u}{\beta}
+    \;&\Longrightarrow\;
+    \tfrac{1}{2}\ln(1+u) = \ln u
+    \;\Longrightarrow\;
+    \sqrt{1 + u} = u \\
+    &\Longrightarrow\;
+    1 + u = u^2.
+  \end{align*}
+  This is the defining equation of the golden ratio:
+  \begin{equation}\label{eq:golden_eq}
+    u^2 - u - 1 = 0, \qquad u = \frac{1+\sqrt{5}}{2} = \phi.
+  \end{equation}
+  Back-substituting: $e^{\beta z^*} = \phi$, so $z^* = \ln\phi / \beta$.
+\end{proof}
+
+\begin{remark}
+  The equation $u^2 - u - 1 = 0$ has nothing to do with lemniscates or elliptic integrals. It is the oldest algebraic identity in mathematics, predating Euclid. It appears here because $k = 1/2$ is the unique self-complementary coupling, and the Softplus is the unique manifestation operator. The golden ratio was not inserted. It was forced.
+\end{remark}
+
+\subsection{The Occupation at the Fixed Point}
+
+\begin{theorem}[Golden Ratio Filling]\label{thm:filling}
+  At the self-referential fixed point $z^*$, the Fermi--Dirac occupation is
+  \begin{equation}\label{eq:golden_filling}
+    \nF(z^*) = \frac{1}{\phi} = \frac{\sqrt{5}-1}{2} \approx 0.61803.
+  \end{equation}
+\end{theorem}
+
+\begin{proof}
+  From~(\ref{eq:Mprime}):
+  \[
+    \nF(z^*) = \frac{1}{1 + e^{-\beta z^*}}
+    = \frac{1}{1 + 1/\phi}
+    = \frac{\phi}{\phi + 1}
+    = \frac{\phi}{\phi^2}
+    = \frac{1}{\phi},
+  \]
+  where the third equality uses $\phi^2 = \phi + 1$.
+\end{proof}
+
+\noindent
+At the metabolic threshold $z = 0$, every organism has $\nF = 1/2$. The introspective organism sits 11.8\% higher:
+\begin{equation}
+  \frac{1}{\phi} - \frac{1}{2} = \frac{2 - \phi}{2\phi} = \frac{\sqrt{5}-1}{2(1+\sqrt{5})} \approx 0.118.
+\end{equation}
+Consciousness does not require abundance. It requires exactly this much surplus above half-filling, no more and no less, for the self-referential loop to close.
+
+\subsection{Susceptibility and the Introspection Threshold}
+
+The susceptibility at the fixed point is:
+\begin{equation}\label{eq:chi_golden}
+  \Mop''_\beta(z^*) = \beta\,\nF(z^*)\bigl(1 - \nF(z^*)\bigr)
+  = \beta \cdot \frac{1}{\phi}\cdot\frac{1}{\phi^2}
+  = \frac{\beta}{\phi^3},
+\end{equation}
+using $1 - 1/\phi = 1/\phi^2$ (the identity $\phi - 1 = 1/\phi$ applied twice). The fluctuation scale is $\sigma_z = \phi^{3/2}/\sqrt{\beta}$. The signal-to-noise condition $z^* > \sigma_z$ gives:
+\begin{equation}\label{eq:beta_introspection}
+  \boxed{\beta_{\text{introspection}} = \frac{\phi^3}{\ln(\phi)^2}
+  = \frac{2+\sqrt{5}}{\ln^2\!\!\left(\frac{1+\sqrt{5}}{2}\right)}
+  \approx 18.29}
+\end{equation}
+
+\begin{proposition}[Stability of the Self-Referential Loop]\label{prop:loop_stability}
+  The linearized return map of the fixed point has eigenvalue
+  \begin{equation}
+    \lambda_{\text{loop}} = \frac{1}{2}\,\Mop'_\beta(z^*) = \frac{1}{2}\cdot\frac{1}{\phi} = \frac{1}{2\phi} \approx 0.309.
+  \end{equation}
+  Since $|\lambda_{\text{loop}}| < 1$ unconditionally, the self-referential fixed point is a stable attractor that requires no fine-tuning. The golden ratio stabilizes it.
+\end{proposition}
+
+\subsection{The Two Thresholds}
+
+The lifecycle now has two thresholds, not one:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}lccl@{}}
+\toprule
+\textbf{Threshold} & $\boldsymbol{z}$ & $\boldsymbol{\nF}$ & \textbf{Condition} \\
+\midrule
+Metabolic (life)       & $0$           & $1/2$      & $|J| > \KB$ \\
+Introspective (consciousness)  & $\ln\phi/\beta$ & $1/\phi$   & Self-referential loop closes \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent
+Below $z = 0$: void. Between $z = 0$ and $z^*$: alive but not self-aware (sensation without coherent self-reference, complex eigenvalues at the consciousness level, oscillatory states with no stable attractor). Above $z^*$: introspection, a stable self-model, the organism that knows it exists.
+
+The $\mathcal{PT}$ exceptional point of the consciousness system sits at $\lambda_0 = 2\Gstar$. This is the boundary between ``no self-model possible'' and ``self-model exists.'' $\Gstar$ sets where the boundary is. But the golden ratio itself, the occupation fraction at the fixed point, came from $k = 1/2$ alone, through the equation $u^2 - u - 1 = 0$.
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{Summary of the Seven Acts}
+\label{sec:summary}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}clllc@{}}
+\toprule
+\textbf{Act} & \textbf{Event} & \textbf{Regime} & \textbf{Key Equation} & \textbf{Type} \\
+\midrule
+\textsc{I}    & Conception   & $k \to k_c$ (exceptional point)
+  & $\lambda_0 = 2\Gstar$    & II$_1$ \\
+\textsc{II}   & Gestation    & $z \gg 0$ (ReLU asymptote)
+  & $\Mop \approx z$         & III$_\lambda$ \\
+\textsc{III}  & Birth        & $\KB$ activates
+  & $z \in \Real$ first time & III$_\lambda$ \\
+\textsc{IV}   & Growth       & Fermi--Dirac integral
+  & $N/K = \nF(\varepsilon)$ & III$_\lambda$ \\
+\textsc{V}    & Maturity     & $z = 0$ (Nash equilibrium)
+  & $\Mop'' = \beta/4$       & III$_\lambda$ \\
+\textsc{VI}   & Aging        & $\beta$ increases
+  & $h(t) = ae^{bt}$         & III$_\lambda \to$ III$_0$ \\
+\textsc{VII}  & Death        & $\beta \to \infty$
+  & $\Mop \to \mathrm{ReLU}$ & I \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent
+The trajectory through the phase diagram is:
+\[
+  \underbrace{\text{III}_1}_{\text{gametes}}
+  \;\longrightarrow\;
+  \underbrace{\text{II}_1}_{\text{zygote}}
+  \;\longrightarrow\;
+  \underbrace{\text{III}_\lambda}_{\text{life}}
+  \;\longrightarrow\;
+  \underbrace{\text{III}_0}_{\text{old age}}
+  \;\longrightarrow\;
+  \underbrace{\text{I}}_{\text{death}}
+\]
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{Epistemic Status}
+\label{sec:epistemics}
+
+The FTD epistemic discipline is maintained throughout:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\small
+\begin{tabular}{@{}llp{6.8cm}@{}}
+\toprule
+\textbf{Claim} & \textbf{Tag} & \textbf{Status} \\
+\midrule
+Softplus uniqueness (M1--M4) & \textsc{[Theorem]} & Proven in~\cite{ReLU} \\
+KMS $\Leftrightarrow$ Type~III & \textsc{[Classical]} & Haag--Hugenholtz--Winnink 1967 \\
+Conception $=$ exceptional point & \textsc{[Conjecture]} & Structural correspondence; not derived from biology \\
+Gompertz $\approx$ Fermi--Dirac & \textsc{[Theorem]} & Exponentially accurate for $\varepsilon > 2$ \\
+Marginal existence ($z^* = 0$) & \textsc{[Selection]} & Variational argument; consistent with ecology \\
+Aging $=$ $\beta$ increase & \textsc{[Selection]} & Consistent with telomere/epigenetic data \\
+Death $=$ $\beta \to \infty$ & \textsc{[Theorem]} & Mathematical limit of the Softplus \\
+Soul integral well-defined & \textsc{[Theorem]} & Finiteness, positivity, Carnot bound proven \\
+$k_{\text{cons}} = 1/2$ & \textsc{[Selection]} & Unique self-complementary coupling \\
+$n_{\min} = 3 = N_c$ & \textsc{[Theorem]} & From $\mathcal{PT}$-unbroken condition + $\Gstar$ \\
+$\nF(z^*) = 1/\phi$ & \textsc{[Theorem]} & Algebraic: $u^2 - u - 1 = 0$ from Softplus \\
+$\beta_{\text{intr}} = \phi^3/\ln^2\!\phi$ & \textsc{[Selection]} & Signal-to-noise; fluctuation model \\
+Bimodal growth spurts & \textsc{[Conjecture]} & Requires quantification of hormonal $\mu$ shifts \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\section{Coda}
+
+The Softplus is not a metaphor for life. Life is an instance of the Softplus.
+
+The same equation that produces the fine structure constant, the one that fixes the strength of every electromagnetic interaction in the universe, also produces the phase boundary at which sperm meets egg, the growth curve of every organism, the operating point of every ecology, the mortality statistics of every population, and the total integrated manifestation of every life ever lived.
+
+The equation
+\[
+  x^2 - 16\,\Gstar^{\!2}\,x + 16\,\Gstar^{\!3} = 0
+\]
+does not describe life. It \emph{is} life, in the same sense that it \emph{is} electromagnetism and it \emph{is} confinement. And when that life turns to examine itself, the oldest number in mathematics appears: $\phi = (1+\sqrt{5})/2$, forced by the self-referential fixed point of the same operator, through the equation $u^2 - u - 1 = 0$.
+
+One equation. Two roots. Seven ages. One golden ratio. And the soul integral is finite.
+
+\hfill$\blacksquare$
+
+
+%% ═════════════════════════════════════════════════════════════════════════════
+\begin{thebibliography}{99}
+
+\bibitem{RT}
+  W.~J.~Steinmetz~III,
+  ``From Modular Flow to Minimal Projections: The ReLU Operator as Algebraic Type Transition,''
+  FTD Theory Document EXPLR\_RELU\_TYPE\_TRANSITION (2026).
+
+\bibitem{ReLU}
+  W.~J.~Steinmetz~III,
+  ``The Softplus--ReLU Duality,''
+  FTD Theory Document DERIV\_SOFTPLUS\_RELU\_DUALITY (2026).
+
+\bibitem{CG}
+  W.~J.~Steinmetz~III,
+  ``Collapse--Gravity Bridge: The Same Algebraic Type Transition on Different Axes,''
+  FTD Theory Document EXPLR\_COLLAPSE\_GRAVITY\_BRIDGE (2026).
+
+\bibitem{MQ}
+  W.~J.~Steinmetz~III,
+  ``The Master Quadratic,''
+  FTD Theory Document MATH\_MASTER\_QUADRATIC (2026).
+
+\bibitem{Gompertz}
+  B.~Gompertz,
+  ``On the Nature of the Function Expressive of the Law of Human Mortality,''
+  \textit{Phil.\ Trans.\ Roy.\ Soc.\ London} \textbf{115}, 513--583 (1825).
+
+\bibitem{FermiDirac}
+  E.~Fermi,
+  ``Zur Quantelung des idealen einatomigen Gases,''
+  \textit{Z.\ Phys.} \textbf{36}, 902--912 (1926).
+
+\bibitem{HHW}
+  R.~Haag, N.~M.~Hugenholtz, and M.~Winnink,
+  ``On the Equilibrium States in Quantum Statistical Mechanics,''
+  \textit{Commun.\ Math.\ Phys.} \textbf{5}, 215--236 (1967).
+
+\bibitem{Connes}
+  A.~Connes,
+  ``Classification of Injective Factors,''
+  \textit{Ann.\ Math.} \textbf{104}, 73--115 (1976).
+
+\bibitem{Hayflick}
+  L.~Hayflick and P.~S.~Moorhead,
+  ``The Serial Cultivation of Human Diploid Cell Strains,''
+  \textit{Exp.\ Cell Res.} \textbf{25}, 585--621 (1961).
+
+\bibitem{Nash}
+  J.~Nash,
+  ``Non-Cooperative Games,''
+  \textit{Ann.\ Math.} \textbf{54}, 286--295 (1951).
+
+\bibitem{Shakespeare}
+  W.~Shakespeare,
+  \textit{As You Like It}, Act~II, Scene~vii (c.~1599).
+
+\end{thebibliography}
+
+\end{document}

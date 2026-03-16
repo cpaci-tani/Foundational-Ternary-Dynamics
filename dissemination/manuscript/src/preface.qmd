@@ -1,0 +1,218 @@
+# Preface {.unnumbered}
+
+## On Ontology
+
+What is real?
+
+This question has occupied philosophers for millennia. Physicists have offered answers in the language of mathematics: fields, wavefunctions, spacetime metrics. But mathematics describes; it does not *explain*. The equations tell us what happens without telling us what exists.
+
+This book takes a different approach. We start not with what we observe, but with what must be true for anything to be observed at all.
+
+## The Minimal Viable Universe
+
+The framework presented here is called **Foundational Ternary Dynamics** (FTD). It proposes that reality can be modeled -perhaps *is* -a discrete system with remarkably few ingredients:
+
+- A three-dimensional lattice of cells
+- Three possible states per cell: void (0), matter (+1), antimatter (-1)
+- Local update rules based on neighbor interactions
+- **Four framework integers** that determine ALL constants: b₃=7, N_c=3, N_eff=13, N_base=4
+
+From these minimal ingredients, complex phenomena emerge without being programmed: particles, forces, chemistry, geology, stellar evolution, galactic dynamics, and even the conditions for observers to exist.
+
+::: {.callout-important}
+## What This Book Derives
+
+This book presents a tightly specified discrete framework and a derivation program. Within clearly stated assumptions and constraint classes (see the Assumption Ledger), it develops closed-form relations that reproduce a number of Standard Model quantities with high numerical accuracy.
+
+In particular, from the four framework integers and stated constraints (with explicit "core vs companion" scope separation), the text reports:
+
+- The fine structure constant $\alpha$ = 1/137.036 (**0.21 ppt precision** with correction formula)
+- All 15 Standard Model particle masses (<0.5% average error)
+- The cosmological constant $\Lambda/\Lambda_{\text{Planck}}$ = $10^{-121.8}$ (0.16% error)
+- Why there are exactly 3 generations of fermions
+- The Weinberg angle, strong coupling, and gravitational coupling
+
+Where the book uses words like “prove” or “unique,” those claims are always meant relative to an explicitly defined search space / constraint set (e.g., uniqueness among structures satisfying the stated constraints). The strongest claims are centralized and categorized in the Assumption Ledger.
+
+The reader is invited to verify every derivation. The mathematics is transparent.
+:::
+
+::: {.callout-tip}
+## Foundational Completeness
+
+This book achieves foundational completeness within its assumptions. All seven theoretical gaps have been resolved:
+
+| Gap | Resolution | Status |
+|-----|------------|--------|
+| **C1**: Why $x_+$ = $1/\alpha$ | CM selection uniqueness | [T] **PROVEN** |
+| **C2**: Why x₋ → N_c = 3 | RG flow + topological quantization | [T] **PROVEN** |
+| **A1**: Why D = 3 | 6 independent constraints | [T] **DERIVED** |
+| GR coefficient | Discrete Laplacian → $8\pi G$ | [†] **COMPLETE** |
+| Inflation | Starobinsky from sub-threshold flux | [†] **DERIVED** |
+| Baryogenesis | CP violation + Sakharov conditions | [†] **DERIVED** |
+| Neutrino masses | Seesaw mechanism with M_R from framework | [†] **COMPLETE** |
+
+**Framework completeness**: 100%. **Free parameters**: 0 (four integers uniquely constrained by Fibonacci skeleton).
+
+See Chapter 14.5 (Assumption Ledger) for complete epistemic status of all claims.
+:::
+
+## What This Is Not
+
+This is not a theory of everything in the physicist's sense. It makes no claim to be the final description of reality. It is, instead:
+
+1. **An operational framework**  - A specification detailed enough to simulate
+2. **An ontological proposal**  - A claim about what kinds of things exist
+3. **A pedagogical journey**  - A path from simplest to most complex
+
+## What This Is
+
+This work provides a comprehensive technical specification for a model universe.
+
+The specification addresses four fundamental questions:
+
+- **What exists** (the parts)
+- **How they interact** (the rules)
+- **What emerges** (the phenomena)
+- **Why it works** (the principles)
+
+The goal is not proof but understanding. If, after reading this book, you can explain why electrons orbit nuclei, why stars burn, why galaxies spin, and why you exist to ask these questions -then the book has succeeded.
+
+## On the Journey
+
+The structure follows the hierarchy of being itself:
+
+We begin in the Void, where nothing exists but the capacity for existence. We witness the first division, where 0 becomes +1 and -1. We watch particles emerge, combine, and organize into ever more complex structures. We scale up through atoms, molecules, planets, stars, galaxies, and the cosmic web. We explore extreme phenomena at the boundaries of what can exist. And finally, we return to the Void, understanding now that the end is also a beginning.
+
+This work extends beyond physics to address foundational questions concerning the nature of existence.
+
+## Interactive Exploration
+
+The FTD framework is not merely theoretical -it is executable. Accompanying simulation code allows readers to explore the concepts presented in this book interactively.
+
+**Available Resources:**
+
+- **Web Simulation**: Interactive 3D visualization of voxel dynamics
+- **Python Package**: `trd-simulation` for custom experiments
+- **Jupyter Notebooks**: Step-by-step tutorials for each chapter
+- **Source Code**: Full implementation under MIT License
+
+Access these resources at the project repository linked in the About section.
+
+## Digital Physics Heritage {#sec-digital-heritage}
+
+FTD stands on the shoulders of pioneers who first dared to ask: *What if reality is fundamentally computational?*
+
+::: {.callout-note}
+## Intellectual Lineage
+
+This framework participates in a tradition of discrete computational approaches to physics spanning six decades:
+
+| Pioneer | Contribution | Relation to FTD |
+|---------|--------------|-----------------|
+| **Konrad Zuse** (1969) | *Rechnender Raum* ("Calculating Space") | First systematic proposal that the universe is a cellular automaton |
+| **Edward Fredkin** (1970s-) | Digital physics, reversible computing | Conservation laws from computational reversibility |
+| **Stephen Wolfram** (2002) | *A New Kind of Science* | Explored computational universality and emergence |
+| **Gerard 't Hooft** (2016) | Cellular automaton interpretation of QM | Showed deterministic substrates can yield quantum statistics |
+| **John Wheeler** (1989) | "It from bit" | Information as ontologically primitive |
+| **Seth Lloyd** (2006) | *Programming the Universe* | Universe as quantum computer |
+:::
+
+### Where FTD Differs
+
+While sharing the discrete computational substrate assumption, FTD makes distinctive contributions:
+
+1. **Ternary ontology**: Unlike binary approaches, FTD uses three states (0, ±1) capturing void, matter, and antimatter as irreducible primitives
+
+2. **Two-layer architecture**: The flux field (continuous dispositions) and manifestation states (discrete actualities) create a graded monism rather than pure discreteness
+
+3. **Self-consistency derivation**: FTD claims to *derive* the fundamental constants from the framework integers via a master quadratic, rather than leaving them as free parameters
+
+4. **Epistemic transparency**: The 11-category classification system ([AXIOM], [THEOREM], [CONJECTURE], etc.) distinguishes claims by evidential status more rigorously than previous frameworks
+
+5. **Falsifiable predictions**: Concrete predictions (proton decay lifetime, tensor-to-scalar ratio, neutrino hierarchy) provide experimental contact points
+
+### What We Inherit
+
+From Zuse and Fredkin, we inherit the insight that **discreteness may be fundamental**, not an approximation.
+
+From Wolfram, we inherit the recognition that **simple rules can generate complex emergence**.
+
+From 't Hooft, we inherit the program of **deterministic substrates underlying quantum phenomena** — not recovering QM, but explaining it as aggregate behavior.
+
+From Wheeler, we inherit the conviction that **information precedes matter**.
+
+This book attempts to synthesize these insights into a single, coherent, mathematically precise framework. Whether it succeeds is for the reader to judge.
+
+## Computationally-Guided Mathematical Discovery {#sec-cgmd}
+
+A distinctive feature of this work is its methodology: **computationally-guided mathematical discovery (CGMD)**. Rather than the traditional approach of human intuition followed by formal proof, FTD employs an iterative dialogue between human insight and computational exploration.
+
+::: {.callout-note}
+## A New Mode of Discovery
+
+The master quadratic—which produces $\alpha$ = 1/137.036 with 1.26 ppm precision—was not derived through pure human reasoning, nor was it discovered by accident. It emerged through a structured process:
+
+1. **Human**: Articulate constraints (self-consistency, dimensional analysis, mathematical naturalness)
+2. **Computation**: Explore solution space, identify candidate structures
+3. **Human**: Evaluate candidates for physical meaning and mathematical elegance
+4. **Computation**: Verify numerical predictions against experiment
+5. **Iterate**: Refine constraints based on discoveries
+:::
+
+### Why This Matters
+
+Traditional physics papers present polished derivations that obscure the messy process of discovery. CGMD is transparent about the exploratory nature of the work:
+
+| Traditional | CGMD |
+|-------------|------|
+| "It follows that..." | "Exploration revealed..." |
+| Derivation appears deductive | Discovery process is explicit |
+| Constants assumed, then matched | Constants emerge from constraints |
+| AI as calculator | AI as research partner |
+
+### Validation Through Transparency
+
+The epistemic classification system ([AXIOM], [THEOREM], [SELECTION], etc.) directly reflects this methodology:
+
+- **[AXIOM]**: Human-specified structural assumptions
+- **[THEOREM]**: Rigorously proven from axioms (human + computer-verified)
+- **[SELECTION]**: Chosen from computationally-explored alternatives
+- **[CONJECTURE]**: Promising patterns requiring further verification
+
+This transparency distinguishes genuine derivations from fitting exercises. The reader can assess exactly which claims follow necessarily and which involve choices.
+
+### The Master Quadratic Example
+
+The equation:
+
+$$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
+
+was discovered through CGMD:
+
+1. **Constraint**: The electromagnetic and strong sectors must unify mathematically
+2. **Exploration**: What algebraic structures naturally connect elliptic constants to physical couplings?
+3. **Discovery**: The lemniscatic constant G* appears in a self-referential quadratic
+4. **Verification**: The roots give $\alpha$ = 1/137.036 (1.26 ppm) and $N_c \approx 3.024$
+
+This is neither pure derivation nor pure numerology—it is **guided discovery** followed by rigorous verification.
+
+### Implications for Physics
+
+If CGMD proves fruitful, it suggests:
+
+1. **Foundational physics is under-explored**: Human intuition may have missed structures that systematic exploration can find
+2. **Mathematical naturalness is computable**: Elegance criteria can be formalized and searched
+3. **AI partnership is scientifically legitimate**: When transparent about methodology, AI-assisted discovery adds to human capability
+
+The ultimate validation is not the method but the results: do the predictions hold? FTD offers 17+ falsifiable predictions for experimental test.
+
+## Acknowledgments
+
+This work builds on the insights of countless physicists, philosophers, and programmers who have grappled with the question of what is real. Special thanks to those who have contributed to discrete physics, cellular automata, and emergence theory.
+
+Any errors in this work are the author's responsibility.
+
+---
+
+*Let us begin.*

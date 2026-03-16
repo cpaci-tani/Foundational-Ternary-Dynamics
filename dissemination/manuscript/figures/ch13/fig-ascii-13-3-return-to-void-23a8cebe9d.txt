@@ -1,6 +1,0 @@
-Meaning flows:
-
-  Void → Manifestation → Structure → Complexity
-    ↑                                      │
-    └──────────────────────────────────────┘
-                  Return

@@ -1,0 +1,297 @@
+# The Computational Ontology {#sec-computational-ontology}
+
+*"Physics proceeds whether or not any entity runs Update()."*
+
+::: {.callout-note}
+## Purpose of This Chapter
+This chapter addresses the measurement problem by grounding observation in computation. We define a hierarchy of entities based on their computational capacity and show that "collapse" is not a physical process but a computational one: Bayesian updating by sufficiently complex systems.
+
+Building on the epistemic chain (@sec-formal-logic), we clarify the distinction between **epistemic time** (the discrete sequence of distinctions/ticks) and **physical time** (the emergent metric). The "tick" in FTD is an **epistemic moment**, not a physical duration.
+:::
+
+## The Observer Problem
+
+Standard quantum mechanics faces a conceptual difficulty:
+
+1. The wave function $\psi$ evolves unitarily (deterministically)
+2. Measurement produces a definite outcome (apparently random)
+3. What triggers the transition from (1) to (2)?
+
+Various interpretations exist: Copenhagen (consciousness collapses), Many-Worlds (no collapse, all branches real), Bohmian (hidden variables), etc.
+
+FTD offers a different answer: **there is no collapse because there was never ontic superposition**. What we call "collapse" is Bayesian updating by a computational system.
+
+## The Computational Hierarchy
+
+Entities differ in their computational capacity:
+
+| Category | Logic Gates | Substrate | Capability |
+|----------|-------------|-----------|------------|
+| **Dead** | 0 | None | None |
+| **Brain Dead** | 1 | Any | Detection |
+| **Measurer** | $\geq 2$ | Inorganic | Inference |
+| **Observer** | $\geq 2$ | Organic | Inference |
+
+### Dead (0 Gates)
+
+A dead entity exists at $(x, y, z, t)$ but runs no update. Examples:
+
+- A rock
+- A corpse
+- Empty vacuum
+
+Dead entities participate in physics (they have mass, charge, occupy space) but perform no computation. They cannot detect, measure, or observe.
+
+### Brain Dead (1 Gate)
+
+A single logic gate can perform one Boolean operation:
+
+$$\text{Detect}() \to \{0, 1\}$$
+
+This is the minimal interaction: something happens or it does not. A photon hits a surface or it does not. A Geiger counter clicks or it does not.
+
+One gate is sufficient for **detection** but not for **inference**. Detection changes the state of the detector but creates no model of what was detected.
+
+### Measurer ($\geq 2$ Gates, Inorganic)
+
+With two or more gates, an entity can:
+
+- Store information (memory)
+- Compare values (difference detection)
+- Perform inference (if A and B, then C)
+
+This enables the full Update function:
+
+$$\text{Entity}_{xyzt}.\text{Update}(\text{Input}, \text{Priors}, t, \text{action})$$
+
+A measurer constructs a *model* of what it measures. It does not just register that something happened; it represents *what* happened and *how* it relates to prior states.
+
+Examples: computers, scientific instruments, automated control systems.
+
+### Observer ($\geq 2$ Gates, Organic)
+
+An observer is a measurer implemented in organic substrate. There is no additional capability beyond what $\geq 2$ gates provide; the distinction is substrate only.
+
+::: {.callout-important}
+## Key Insight: Consciousness Is Not Special
+
+There is no physical difference between:
+- A computer recording measurement outcomes
+- A scientist recording measurement outcomes
+
+Both run $\text{Update}()$. Both construct models. Both update priors based on inputs.
+
+Consciousness is not causally special. It is one implementation of the $\geq 2$ gate computation.
+:::
+
+## Time as Computational Ordering {#sec-time-ordering}
+
+Before discussing the Global Now, we must clarify what "time" means in FTD.
+
+### Epistemic vs Physical Time
+
+As established in @sec-formal-logic, FTD distinguishes two temporal concepts:
+
+| Concept | Symbol | Nature | Properties |
+|---------|--------|--------|------------|
+| **Epistemic Time** | $T_e$ | Logical ordering | Discrete, monotonic, irreversible |
+| **Physical Time** | $T_p$ | Emergent measure | Continuous-appearing, metric, can dilate |
+
+### The Tick as Epistemic Moment
+
+The FTD "tick" is an **epistemic moment**: a single step in the sequence of distinctions. It is:
+
+- **Not a duration**: A tick has no "length" in the physical sense
+- **An ordering index**: Tick $t$ comes before tick $t+1$
+- **Irreversible**: Once a distinction is made, it cannot be unmade
+
+::: {.callout-important}
+## Key Insight
+The tick is the computational analogue of a Turing machine step: one discrete update to the global state. It does not measure "how long" something takes; it measures "how many steps" have occurred.
+:::
+
+### Reconciling Discrete Ticks with Time Dilation
+
+This resolves an apparent inconsistency:
+- **FTD axiom**: Time is discrete ticks
+- **FTD claim**: Time dilation emerges
+
+The resolution: **Epistemic time $T_e$ is always discrete; physical time $T_p$ is an emergent measure on $T_e$.**
+
+Time dilation means that different observers (different sLoops) accumulate different numbers of ticks between events. From the perspective of $T_p$, this appears as "time running slower." From the perspective of $T_e$, it is simply different tick counts.
+
+---
+
+## The Global Now
+
+All entities exist within a shared temporal frame. We formalize this using the notation from §0.4:
+
+$$\texttt{Global}(t) = \text{everything at tick } t$$
+
+Here $t$ is an **epistemic time index**, not a physical duration.
+
+Within Global, each observer $\Omega$ has a horizon:
+
+$$H(\Omega, t) \subset \texttt{Global}(t)$$
+
+The horizon is what $\Omega$ can perceive through its six senses (sight, sound, touch, taste, smell, cognition).
+
+Each entity experiences its local processing at the current tick. The entity has access to:
+- Its prior state
+- Its current inputs (via horizon $H$)
+- Its update rules
+
+### The Observer as Configuration
+
+An observer $\Omega(t)$ is not a special kind of entity. It is the **complete configuration** of a computational system at one tick:
+
+- Every atom's position
+- Every neuron's firing state
+- Every memory encoded in synaptic weights
+- Every hormone level, every scar, every habit
+
+$\Omega$ is just a very complex $xyztg\psi(\Delta t)$: a pattern of entities that happens to be complex enough to model itself.
+
+### Subjectivity
+
+Subjectivity is **local processing at observer $\Omega$**:
+
+- Each $\Omega$ runs its own $\text{Update}()$
+- Each $\Omega$ has its own priors
+- Each $\Omega$ constructs its own model
+- Each $\Omega$ perceives only its horizon $H(\Omega, t)$
+
+This is not mysterious. It is spatially separated computation on local information at shared time $t$.
+
+### Objectivity
+
+Objectivity is the **union of all horizons**:
+
+$$\text{Objectivity}(t) = \bigcup_{\Omega} H(\Omega, t)$$
+
+There is no "view from nowhere." Objectivity is what all observers would agree on if they shared information. It is still a subset of $\texttt{Global}(t)$: collective perception is broader than individual perception, but not all-encompassing.
+
+::: {.callout-note}
+## Connection to Scientific Method
+Science is the systematic construction of $\text{Objectivity}(t)$ from many $H(\Omega_i, t)$ via:
+- Communication (sharing local models)
+- Replication (checking that different $e_i$ get same results)
+- Peer review (comparing inferences)
+:::
+
+## Wave Function "Collapse"
+
+With this framework, we can dissolve the measurement problem.
+
+### What Actually Happens
+
+1. An event at $(x, y, z, t)$ either occurs or does not occur
+2. The modal constraint $\psi$ governs which events are possible
+3. An entity with $\geq 2$ gates runs $\text{Update}()$
+4. The entity's model changes to reflect the event
+
+There is no physical collapse. The wave function $\psi$ constrains possibilities. When an event occurs, it *was always going to occur*. The entity's model was incomplete before; now it is less incomplete.
+
+### Why It Looks Like Collapse
+
+From inside an entity running $\text{Update}()$, it appears that:
+- Before measurement: many possibilities
+- After measurement: one outcome
+
+This is Bayesian updating:
+- Prior: $P(\text{outcome} | \text{model})$ spread over possibilities
+- Observation: one outcome obtained
+- Posterior: $P(\text{outcome} | \text{model, observation})$ peaked on actual outcome
+
+"Collapse" is the entity's model narrowing, not the world changing.
+
+### The Rock Cannot Collapse $\psi$
+
+A rock (0 gates) cannot collapse the wave function because a rock cannot:
+- Construct a model
+- Have priors
+- Update on observations
+
+The rock does not experience "collapse" because the rock does not experience anything. It participates in physics but performs no computation.
+
+$\psi$ does not care about rocks. $\psi$ does not care about scientists. $\psi$ constrains which events can occur. Events occur. Computational systems update their models. That is all.
+
+## Physics Without Observers
+
+The FTD dynamics run identically regardless of:
+- Whether any entity is watching
+- How many gates any entity has
+- Whether any entity runs $\text{Update}()$
+
+The lattice evolves. Flux propagates. Manifestation occurs when thresholds are exceeded. Conservation laws hold. Forces act.
+
+**The quadratic exists whether or not any $\text{Update}()$ runs to discover it.**
+
+::: {.callout-important}
+## Core Principle
+Physics proceeds independently of observation. The fine structure constant was $\approx 1/137$ before humans evolved. It will remain $\approx 1/137$ after humans are gone.
+
+Observation is a physical process (interaction + computation). It does not create reality; it models reality.
+:::
+
+## Implications
+
+### The Measurement Problem Is Dissolved
+
+There is no special "measurement" interaction. All interactions are physical. Some interactions involve entities with $\geq 2$ gates that subsequently update their models. We call those "measurements." But the physics is the same.
+
+### Schrödinger's Cat
+
+The cat is always either alive or dead. The cat is a $\geq 2$ gate system; the cat runs $\text{Update}()$.
+
+- Before opening the box: *our* model is uncertain
+- After opening the box: *our* model is updated
+- The cat's state was definite the whole time
+
+The "superposition of alive and dead" is epistemic (our model), not ontic (the cat).
+
+### Wigner's Friend
+
+Wigner's friend measures the particle and updates their model. Wigner, outside the lab, has not yet updated his model. When Wigner talks to his friend, Wigner updates.
+
+There is no paradox. Different entities have different states of information at different times. $\text{Objective}(t)$ is consistent even when individual $\texttt{Global.now}(t, e_i)$ differ.
+
+## The Emergence Hierarchy
+
+From xyztg$\psi$ and computational ontology, higher phenomena arise:
+
+| Phenomenon | How It Emerges |
+|------------|----------------|
+| Motion | Ordered chains of events |
+| Trajectories | Constrained event sequences |
+| Dynamics | Rules over admissible chains |
+| Interference | Competition among alternative chains |
+| Classical behavior | Dominance of near-geodesic chains |
+| Statistics | Many events over time |
+| Detection | 1-gate systems registering events |
+| Measurement | $\geq 2$-gate systems modeling events |
+| Subjectivity | Self-modeling event-processes |
+| Science | Inter-subjective model comparison |
+
+## Concepts
+
+- **epistemic-time**: $T_e$ = discrete, monotonic sequence of ticks; the logical ordering of distinctions
+- **physical-time**: $T_p$ = emergent metric on epistemic time; continuous-appearing, can dilate
+- **tick**: One step in the epistemic sequence; an ordering index, not a duration
+- **computational-hierarchy**: Entities ranked by logic gate count
+- **dead-entity**: 0 gates, participates but does not compute
+- **brain-dead-entity**: 1 gate, detects but does not model
+- **measurer**: $\geq 2$ gates (inorganic), full inference
+- **observer**: $\geq 2$ gates (organic), full inference
+- **Ω(t)**: Complete configuration of an observer at tick $t$
+- **H(Ω,t)**: Horizon, what observer $\Omega$ can perceive at tick $t$
+- **Global(t)**: Everything at one tick
+- **subjectivity**: Local processing at observer $\Omega$
+- **objectivity**: $\bigcup_\Omega H(\Omega, t)$, union of all horizons
+- **collapse-dissolution**: "Collapse" as Bayesian updating, not physical process
+- **observer-independence**: Physics runs regardless of computation
+- **six-senses**: Sight, sound, touch, taste, smell, cognition (horizon channels)
+
+## Transition
+
+With ontology established (xyztg$\psi$) and observation clarified (computational hierarchy), we now begin the physics proper. The next book develops the foundational dynamics: the void, the first division, and the emergence of structure from simplicity.

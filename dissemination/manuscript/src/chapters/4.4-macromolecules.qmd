@@ -1,0 +1,165 @@
+# Macromolecules {#sec-macromolecules}
+
+::: {.callout-warning}
+## Pedagogical Context [NOT DERIVED FROM FTD]
+This chapter provides **standard biochemistry context**. The content describes known macromolecular structures for pedagogical completeness. **No quantitative predictions** are derived from FTD axioms at this scale.
+:::
+
+*"The giants of the molecular world"*
+
+::: {.callout-note}
+## Key Revelation
+From simple building blocks, enormous structures emerge. Proteins fold, DNA encodes, and polymers give materials their properties. Life is macromolecular.
+:::
+
+## Proteins
+
+Chains of amino acids that do everything in life.
+
+### Amino Acids
+
+20 standard amino acids, each with:
+- Amino group ($-\text{NH}_2$)
+- Carboxyl group (-COOH)
+- R group (side chain: what makes each unique)
+
+The general structure: $\text{H}_2\text{N}$-CH(R)-COOH, where R is the side chain unique to each amino acid.
+
+### Peptide Bonds
+
+Amino acids link by condensation, releasing water and forming the peptide bond (-CO-NH-) that chains amino acids together into proteins.
+
+### Protein Structure
+
+| Level | Description | Forces |
+|-------|-------------|--------|
+| Primary | Amino acid sequence | Covalent (peptide bonds) |
+| Secondary | α-helix, β-sheet | Hydrogen bonds |
+| Tertiary | 3D folding | All forces |
+| Quaternary | Multiple chains | All forces |
+
+### Protein Functions
+
+- **Enzymes**: Catalyze reactions
+- **Structural**: Collagen, keratin
+- **Transport**: Hemoglobin
+- **Immune**: Antibodies
+- **Signaling**: Hormones
+
+## Nucleic Acids
+
+Information storage molecules.
+
+### DNA Structure
+
+![DNA double helix structure with sugar-phosphate backbone and base pairing.](../../media/images/fig-dna-helix.png){#fig-dna-helix}
+
+Two antiparallel sugar-phosphate backbones connected by base pairs:
+- **A-T**: Adenine pairs with thymine via 2 hydrogen bonds
+- **G-C**: Guanine pairs with cytosine via 3 hydrogen bonds
+
+### Double Helix
+
+- 10 base pairs per turn
+- 3.4 nm pitch
+- Major and minor grooves
+- Antiparallel strands
+
+### RNA
+
+- Single-stranded (usually)
+- Uracil instead of thymine
+- Sugar is ribose (not deoxyribose)
+- Types: mRNA, tRNA, rRNA
+
+## Polymers
+
+Long chains of repeating units (monomers).
+
+### Addition Polymers
+
+Monomers add without losing atoms:
+
+| Monomer | Polymer | Use |
+|---------|---------|-----|
+| Ethylene | Polyethylene | Plastic bags |
+| Propylene | Polypropylene | Containers |
+| Styrene | Polystyrene | Foam, packaging |
+| Vinyl chloride | PVC | Pipes |
+
+Example: n($\text{CH}_2\text{=CH}_2$) $\to$ $-[-\text{CH}_2\text{-CH}_2-]_n-$ (polyethylene)
+
+### Condensation Polymers
+
+Monomers lose small molecule (usually water):
+
+| Type | Example | Use |
+|------|---------|-----|
+| Polyester | PET | Bottles, fabric |
+| Polyamide | Nylon | Fibers, fabric |
+| Polyurethane | PU | Foam, coatings |
+
+## Carbohydrates
+
+Sugars and their polymers.
+
+### Monosaccharides
+
+Simple sugars: glucose, fructose, galactose (all $\text{C}_6\text{H}_{12}\text{O}_6$)
+
+### Disaccharides
+
+Two sugars linked:
+- Sucrose = glucose + fructose
+- Lactose = glucose + galactose
+- Maltose = glucose + glucose
+
+### Polysaccharides
+
+| Name | Function | Source |
+|------|----------|--------|
+| Starch | Energy storage | Plants |
+| Glycogen | Energy storage | Animals |
+| Cellulose | Structure | Plant cell walls |
+| Chitin | Structure | Fungi, arthropods |
+
+## Lipids
+
+Not true polymers, but complex molecules.
+
+### Fatty Acids
+
+Long hydrocarbon chain + carboxyl group: $\text{CH}_3(\text{CH}_2)_n\text{COOH}$
+
+- **Saturated**: No double bonds, solid at room temperature
+- **Unsaturated**: Double bonds, liquid at room temperature
+
+### Phospholipids
+
+Basis of cell membranes:
+
+![Phospholipid structure: hydrophilic head and hydrophobic tails.](../../media/images/fig-lipid-bilayer.png){#fig-phospholipid}
+
+Each phospholipid has a hydrophilic head (phosphate group) and hydrophobic tails (fatty acid chains). In water, they spontaneously form bilayers with heads facing outward and tails facing inward.
+
+## Experiments
+
+### Protein Folding
+Watch a chain of amino acids fold into its final structure.
+
+### DNA Replication
+Observe the double helix unzip and copy.
+
+### Polymer Synthesis
+Build polymers from monomers. Compare properties.
+
+## Concepts
+
+- **protein**: Amino acid polymer with complex structure
+- **nucleic-acid**: Information-carrying polymer (DNA, RNA)
+- **polymer**: Long chain of repeating units
+- **carbohydrate**: Sugar or sugar polymer
+
+## Transition
+
+Macromolecules have complex properties. Now we zoom out to see how molecules aggregate into bulk matter: the different states and their transitions.

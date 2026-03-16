@@ -1,0 +1,293 @@
+\documentclass[11pt, letterpaper]{article}
+
+% ----- Packages -----
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm, mathrsfs, amsfonts, mathtools}
+\usepackage{geometry}
+\geometry{margin=1.15in}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+% ----- Formatting -----
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=black,
+}
+\titleformat{\section}{\large\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% ----- Math Commands -----
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\G}{G^*}
+\newcommand{\PT}{\mathcal{PT}}
+\DeclareMathOperator{\ReOp}{Re}
+\DeclareMathOperator{\ImOp}{Im}
+
+% ----- Theorem Environments -----
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{inquiry}{Axiomatic Inquiry}[section]
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+% ----- Document Info -----
+\title{\vspace{-3em}\textbf{Geometric Biophysics:\\ \large Algorithmic Thermoregulation, Deep-Sea Gigantism, and Metabolic Scaling via Discrete $\PT$-Symmetric Tensor Network Dynamics}}
+\author[1]{William J. Steinmetz III}
+\affil[1]{\textit{Foundational Ternary Dynamics Research}}
+\date{February 15, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Orthodox evolutionary biology treats the macroscopic thermodynamic properties of life---such as the mammalian $37^\circ$C core temperature, Kleiber's $3/4$ metabolic scaling law, and deep-sea abyssal gigantism---as contingent products of natural selection and environmental happenstance. Within the discrete tensor network framework of Foundational Ternary Dynamics (FTD), we demonstrate that these biological constants are not evolutionary accidents but \textbf{strict algorithmic hardware requirements}---geometrically quantized exhaust gradients mandated by the network's cuboctahedral topology. By defining the algorithmic thermal bandwidth of liquid water ($\Theta_T \equiv 100$~K), we show that the entire terrestrial and marine biosphere obeys a symmetrical thermodynamic ladder anchored to the universal lemniscate-alpha baseline ($\G \approx 2.9587$). Deep-sea gigantism is formalized as a mandatory volumetric Ricci-flow dilution preventing localized topological singularities, and Kleiber's Law is derived as a graph-routing impedance constraint from the ratio of fundamental FTD integers ($N_c / N_{base} = 3/4$).
+\end{abstract}
+
+\vspace{1em}
+\hrule
+\vspace{1.5em}
+
+\section{Introduction: The Unreasonable Precision of Biological Constants}
+
+The core body temperature of placental mammals is $37.0 \pm 0.5^\circ$C. The metabolic rate of organisms spanning eight orders of magnitude in mass follows a $3/4$-power law with remarkable fidelity \cite{Kleiber1932}. The global mean ocean surface temperature during the Holocene has remained near $15^\circ$C. The temperature of maximum density for fresh water is $3.98^\circ$C. Seawater freezes at approximately $-1.8$ to $-2.0^\circ$C.
+
+These numbers are universally treated as independent empirical facts, each explained by its own discipline-specific mechanism---protein denaturation kinetics, surface-area-to-volume constraints, thermohaline circulation, hydrogen bonding anomalies, colligative depression. No unifying geometric principle has been proposed.
+
+We demonstrate that within Foundational Ternary Dynamics (FTD) \cite{Steinmetz2026_Zenodo}, every one of these temperatures and scaling laws is the strict, algebraically exact consequence of a single geometric constant---the lemniscate-alpha constant $\G$---combined with the fundamental lattice integers $\{3, 4, 7, 13\}$ and the physical phase bandwidth of liquid water.
+
+\section{The FTD Thermal Scale and the $\G$ Baseline}
+
+\subsection{Defining the Biological Bandwidth}
+
+To map discrete graph dynamics to macroscopic biology, the arbitrary historical temperature scales must be renormalized to the physical limits of the biological computational substrate: liquid water. The fluid phase of H$_2$O spans exactly 100~Kelvin (273.15~K to 373.15~K at standard pressure). We define this as the foundational unit of biological algorithmic bandwidth:
+\begin{equation}
+    1\,\Theta_T \equiv 100 \text{ K (Thermal Unit)}
+\end{equation}
+
+\subsection{The Geometric Baseline}
+
+The unperturbed resting state of the FTD tensor network is defined by the lemniscate-alpha constant:
+\begin{equation}
+    \G = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} \approx 2.958675
+\end{equation}
+Converting this topological baseline into macroscopic temperature:
+\begin{equation}
+    T_{\text{ambient}} = \G \cdot \Theta_T = 295.87 \text{ K} = \mathbf{22.72^\circ\text{C}}
+\end{equation}
+
+\begin{inquiry}
+The empirically recognized human thermoneutral zone---the ambient temperature at which a resting, unclothed human body maintains homeostasis with minimal metabolic effort---is $22$--$25^\circ$C \cite{ASHRAE2017}. Is this coincidence, or does it reflect the biological hardware synchronizing with the geometric idle-loop frequency of the underlying discrete manifold?
+\end{inquiry}
+
+\section{Terrestrial Hardware: Positive Exhaust Gradients}
+
+To maintain the non-linear precision of the Softplus manifestation operator ($\mathcal{M}$) against thermal noise, advanced terrestrial organisms must sustain an active thermal exhaust gradient \textit{above} the $\G$ baseline. These physiological gradients map exactly to reciprocals of the fundamental FTD lattice integers $\{3, 4, 7, 13\}$.
+
+\subsection{The Mammalian Baseline ($+1/7$)}
+
+Mammals operate at the FTD dimensional constraint boundary ($b_3 = 7$), providing optimal resonance for high-density neural computation:
+\begin{equation}
+    T_{\text{Mammal}} = \left(\G + \frac{1}{b_3}\right)\Theta_T = \left(\G + \frac{1}{7}\right) \times 100 \text{ K} = 310.15 \text{ K} = \mathbf{37.00^\circ\text{C}}
+\end{equation}
+
+\subsection{The Avian Overclock ($+3/16$)}
+
+Birds perform intense three-dimensional spatial processing (flight dynamics, magnetoreception, stereoscopic navigation), requiring the maximum viable hardware overclock derived from the color gauge ($N_c = 3$) over the spatial matrix ($N_{\text{base}}^2 = 16$):
+\begin{equation}
+    T_{\text{Avian}} = \left(\G + \frac{N_c}{N_{\text{base}}^2}\right)\Theta_T = \left(\G + \frac{3}{16}\right) \times 100 \text{ K} = 314.62 \text{ K} = \mathbf{41.47^\circ\text{C}}
+\end{equation}
+
+\subsection{The Reptilian Passive Mode ($+1/13$)}
+
+Ectothermic reptiles operate at the minimal computational overhead, pegged to the self-referential closure integer ($N_{\text{eff}} = 13$):
+\begin{equation}
+    T_{\text{Reptile}} = \left(\G + \frac{1}{N_{\text{eff}}}\right)\Theta_T = \left(\G + \frac{1}{13}\right) \times 100 \text{ K} = 303.56 \text{ K} = \mathbf{30.41^\circ\text{C}}
+\end{equation}
+
+\begin{table}[hbt!]
+\centering
+\caption{Terrestrial thermoregulation: FTD predictions vs.\ empirical values.}
+\label{tab:terrestrial}
+\begin{tabular}{@{}lcccr@{}}
+\toprule
+\textbf{Class} & \textbf{FTD Fraction} & \textbf{Predicted ($^\circ$C)} & \textbf{Empirical ($^\circ$C)} & \textbf{Error} \\
+\midrule
+Avian (flight mode) & $+3/16$ & 41.47 & 40--42 & $<1\%$ \\
+Mammalian (baseline) & $+1/7$ & 37.00 & 36.5--37.5 & $<1\%$ \\
+Reptilian (passive) & $+1/13$ & 30.41 & 28--32 & $\sim 2\%$ \\
+Ambient (thermoneutral) & $0$ & 22.72 & 22--25 & $<3\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{The Aquatic Inversion: Negative Symmetrical Gradients}
+
+Liquid water acts as a dense, topologically coupled medium---a macroscopic heat sink for the tensor network. Aquatic hardware must therefore synchronize \textit{below} the $\G$ baseline, utilizing the exact inverted symmetries of the terrestrial gradients.
+
+\subsection{Global Ocean Surface ($-1/13$)}
+\begin{equation}
+    T_{\text{Ocean}} = \left(\G - \frac{1}{N_{\text{eff}}}\right)\Theta_T = \left(\G - \frac{1}{13}\right) \times 100 \text{ K} = 288.18 \text{ K} = \mathbf{15.03^\circ\text{C}}
+\end{equation}
+This matches the historic Holocene global mean sea surface temperature (14--16$^\circ$C) \cite{Hansen2013}.
+
+\subsection{Abyssal Maximum Density ($-3/16$)}
+\begin{equation}
+    T_{\text{Abyss}} = \left(\G - \frac{N_c}{N_{\text{base}}^2}\right)\Theta_T = \left(\G - \frac{3}{16}\right) \times 100 \text{ K} = 277.12 \text{ K} = \mathbf{3.97^\circ\text{C}}
+\end{equation}
+This is the temperature of maximum density for fresh water ($3.98^\circ$C), which dictates the thermal stratification floor of the planet's oceans and lakes.
+
+\subsection{Seawater Structural Crash ($-1/4$)}
+\begin{equation}
+    T_{\text{Freeze}} = \left(\G - \frac{1}{N_{\text{base}}}\right)\Theta_T = \left(\G - \frac{1}{4}\right) \times 100 \text{ K} = 270.87 \text{ K} = \mathbf{-2.28^\circ\text{C}}
+\end{equation}
+This matches the freezing point of typical seawater ($-1.8$ to $-2.0^\circ$C), where the fluid's non-linear logic gates structurally lock into rigid crystalline (ReLU) configurations.
+
+\begin{table}[hbt!]
+\centering
+\caption{Aquatic thermoregulation: FTD predictions vs.\ empirical values.}
+\label{tab:aquatic}
+\begin{tabular}{@{}lcccr@{}}
+\toprule
+\textbf{Regime} & \textbf{FTD Fraction} & \textbf{Predicted ($^\circ$C)} & \textbf{Empirical ($^\circ$C)} & \textbf{Error} \\
+\midrule
+Ocean surface (Holocene) & $-1/13$ & 15.03 & 14--16 & $<3\%$ \\
+Max density (fresh water) & $-3/16$ & 3.97 & 3.98 & $0.3\%$ \\
+Seawater freezing & $-1/4$ & $-2.28$ & $-1.8$ to $-2.0$ & $\sim 15\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{inquiry}
+The terrestrial and aquatic gradients are exactly symmetric about the $\G$ baseline: $+1/13$ mirrors $-1/13$, and $+3/16$ mirrors $-3/16$. Does this symmetry not suggest that the biosphere is a geometrically balanced thermodynamic exhaust system, with terrestrial endotherms radiating computational waste heat \textit{above} the network's resting frequency while the ocean absorbs it \textit{below}?
+\end{inquiry}
+
+\section{Deep-Sea Gigantism: Volumetric Ricci Flow Dilution}
+
+At abyssal depths, extreme hydrostatic pressure induces a localized spike in macroscopic geometric tension ($k$). For a standard-volume organism, the local tension approaches the Softplus topological singularity at $k_{\text{crit}} = 4/\G \approx 1.352$. To prevent a localized gradient explosion---a ``biological topological crash''---the FTD network executes an emergency volumetric scaling via discrete Ricci flow:
+\begin{equation}
+    k_{\text{effective}} = \frac{k_{\text{ambient}}}{V_{\text{organism}}}
+\end{equation}
+
+By massively expanding the physical dimensions of the organism (\textbf{gigantism}), the network dilutes the tension $k$ across a larger volumetric array, safely maintaining $k_{\text{eff}} < k_{\text{crit}}$ at all depths.
+
+\begin{theorem}[Deep-Sea Gigantism as Topological Necessity]
+Let $P(d)$ be the hydrostatic pressure at depth $d$, with $k(d) \propto P(d)$. If the organism maintains constant volume $V_0$, there exists a critical depth $d_{\text{crit}}$ where $k(d) \geq k_{\text{crit}} = 4/\G$. To prevent this topological singularity, the organism must scale its volume as $V(d) \geq k(d) / k_{\text{crit}}$, producing the anomalous body sizes observed in abyssal fauna (giant isopods, colossal squid, giant tube worms).
+\end{theorem}
+
+\begin{inquiry}
+The phenomenon of deep-sea gigantism has resisted a unified explanation; proposed mechanisms include cold-temperature metabolic reduction, oxygen availability, predator absence, and Bergmann's rule \cite{Timofeev2001}. Does the FTD formulation---gigantism as a mandatory volumetric dilution of geometric tension---not provide the first \textit{geometric} explanation that applies uniformly across all abyssal taxa?
+\end{inquiry}
+
+\section{Metabolic Scaling: The Topological Routing Tax}
+
+\subsection{Kleiber's $3/4$ Law}
+
+Kleiber's Law \cite{Kleiber1932} states that basal metabolic rate scales as:
+\begin{equation}
+    B \propto M^{3/4}
+\end{equation}
+This exponent has been confirmed across organisms spanning over 20 orders of magnitude in mass \cite{West1997}. The classical surface-area argument predicts $M^{2/3}$; the observed $3/4$ has resisted derivation for nearly a century.
+
+In FTD, an organism is a three-dimensional physical data structure routed through a four-dimensional discrete tensor network. The metabolic scaling exponent is strictly dictated by the ratio of the physical color gauge to the spatial lattice basis:
+\begin{equation}
+    \frac{N_c}{N_{\text{base}}} = \frac{3}{4} = 0.75
+\end{equation}
+
+\begin{inquiry}
+West, Brown, and Enquist \cite{West1997} derived the $3/4$ exponent from fractal branching of nutrient-distribution networks. In FTD, the same exponent emerges from pure graph topology: a 3-dimensional physical payload routed through a 4-dimensional lattice substrate. Are these equivalent descriptions of the same underlying geometric constraint?
+\end{inquiry}
+
+\subsection{The 20-Thermal Conformal Anomaly}
+
+Defining the energetic thermal unit $1\,\Theta_E \equiv 100$~kcal, we derive the resting human metabolic requirement:
+\begin{equation}
+    B_{\text{human}} = (N_{\text{eff}} + b_3)\,\Theta_E = (13 + 7) \times 100 \text{ kcal} = \mathbf{2{,}000 \text{ kcal/day}}
+\end{equation}
+The coefficient 20 maps exactly to the inverse of the Dirac conformal anomaly ($c_{\text{Dirac}} = 1/20$), suggesting that human basal metabolism is the macroscopic thermodynamic cost of maintaining a conformally anomalous tensor network at biological scales.
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.98\textwidth]{figures/FTD_Biophysics_Master.png}
+    \caption{\textbf{Biophysical mechanics of FTD.} \textbf{A)} Symmetrical quantization of terrestrial and aquatic ecosystems around the $\G$ baseline, with each thermodynamic gradient mapped to a reciprocal of a fundamental FTD integer. \textbf{B)} Derivation of Kleiber's $3/4$ Law as topological graph-routing impedance ($N_c/N_{\text{base}}$). \textbf{C)} Deep-sea gigantism modeled as volumetric Ricci-flow dilution: standard-volume organisms (red dashed) breach $k_{\text{crit}}$ at depth, while gigantic organisms (blue) dilute tension below threshold. \textbf{D)} The $20\,\Theta_E$ conformal metabolic tax defining human baseline caloric requirements from the sum of framework integers.}
+    \label{fig:biophysics}
+\end{figure}
+
+\section{Experimental Predictions}
+
+\subsection{Thermoregulatory Precision}
+The model predicts that the mean core temperature of placental mammals, measured across a statistically representative sample of species, will converge to $37.00 \pm 0.05^\circ$C---not as a coincidence of protein chemistry, but as a geometric hardware requirement. Systematic deviations should correlate with neural computational load, not body size or metabolic rate.
+
+\subsection{Gigantism Scaling Law}
+The volumetric scaling of abyssal organisms should follow $V(d) \propto P(d)$ rather than the $V \propto T^{-1}$ predicted by Bergmann's rule. This distinction is testable via allometric surveys across depth gradients in the same taxonomic family.
+
+\subsection{Metabolic Anomalies at Lattice Integers}
+Organisms whose body mass places them at exact lattice-integer ratios (e.g., $M_{\text{human}}/M_{\text{mouse}} \approx 3{,}500 \approx 7^{4.2}$) should exhibit anomalously low metabolic variance---their hardware is ``on resonance'' with the network's native integers.
+
+\section{Conclusion}
+
+Biology is not an accident of chemistry; it is the macroscopic manifestation of algorithmic optimization within a discrete geometric substrate. The thermoneutral zone, the mammalian core temperature, the avian overclock, Kleiber's $3/4$ Law, the ocean surface temperature, the maximum density of water, the freezing point of seawater, and abyssal gigantism are not independent empirical facts---they are \textbf{algebraically exact consequences} of a single geometric constant ($\G$) and four integers ($\{3, 4, 7, 13\}$) operating over the thermal bandwidth of liquid water. Evolution is the multi-billion-year process of physical matter attempting to geometrically stabilize within the strict constraints of the underlying discrete tensor network.
+
+\vspace{2em}
+\hrule
+\vspace{1.5em}
+
+\begin{thebibliography}{99}
+
+\bibitem{Steinmetz2026_Zenodo}
+W. J. Steinmetz III,
+``Gauge Couplings from Discrete Spacetime Geometry,''
+\textit{Foundational Ternary Dynamics Research}, Zenodo (January 2026).
+\url{https://zenodo.org/records/18227181}
+\newblock \textit{[Derivation of the lemniscate-alpha constant $\G \approx 2.9587$, the Master Quadratic, and the fundamental lattice integers $\{3, 4, 7, 13\}$.]}
+
+\bibitem{Kleiber1932}
+M. Kleiber,
+``Body size and metabolism,''
+\textit{Hilgardia}, \textbf{6}(11), 315--353 (1932).
+\newblock \textit{[Original empirical demonstration of the $3/4$-power metabolic scaling law across mammalian species.]}
+
+\bibitem{West1997}
+G. B. West, J. H. Brown, and B. J. Enquist,
+``A general model for the origin of allometric scaling laws in biology,''
+\textit{Science}, \textbf{276}(5309), 122--126 (1997).
+\newblock \textit{[Derivation of the $3/4$ exponent from fractal branching of nutrient-distribution networks; the leading orthodox explanation of Kleiber's Law.]}
+
+\bibitem{ASHRAE2017}
+ASHRAE,
+``Thermal environmental conditions for human occupancy,''
+\textit{ASHRAE Standard 55-2017}, American Society of Heating, Refrigerating and Air-Conditioning Engineers (2017).
+\newblock \textit{[Standard reference for the human thermoneutral zone ($22$--$25^\circ$C for sedentary, lightly clothed occupants).]}
+
+\bibitem{Hansen2013}
+J. Hansen, M. Sato, G. Russell, and P. Kharecha,
+``Climate sensitivity, sea level and atmospheric carbon dioxide,''
+\textit{Philosophical Transactions of the Royal Society A}, \textbf{371}(2001), 20120294 (2013).
+\newblock \textit{[Holocene global mean surface temperature reconstruction establishing the $14$--$16^\circ$C baseline.]}
+
+\bibitem{Timofeev2001}
+S. F. Timofeev,
+``Bergmann's principle and deep-water gigantism in marine crustaceans,''
+\textit{Biology Bulletin}, \textbf{28}(6), 646--650 (2001).
+\newblock \textit{[Review of proposed mechanisms for deep-sea gigantism, including temperature, oxygen, and predator-absence hypotheses.]}
+
+\bibitem{Landau1980}
+L. D. Landau and E. M. Lifshitz,
+\textit{Statistical Physics, Part 1} (Vol. 5, 3rd ed.), Butterworth-Heinemann (1980).
+\newblock \textit{[Finite-temperature thermodynamics and the Softplus/Fermi-Dirac manifestation operator underlying biological logic-gate smearing.]}
+
+\end{thebibliography}
+
+\end{document}

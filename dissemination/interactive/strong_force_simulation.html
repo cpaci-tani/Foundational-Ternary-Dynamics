@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRD Strong Force (Yukawa) Simulation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d1b36 50%, #3d1a45 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: #e040fb;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(224, 64, 251, 0.3);
+        }
+
+        .subtitle {
+            color: #90a4ae;
+            font-size: 1.1em;
+        }
+
+        .formula-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(224, 64, 251, 0.3);
+            border-radius: 12px;
+            padding: 15px 25px;
+            margin: 15px auto;
+            display: inline-block;
+        }
+
+        .formula-box .main-formula {
+            font-size: 1.6em;
+            color: #ea80fc;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .canvas-section {
+            flex: 1;
+            min-width: 600px;
+        }
+
+        #canvas-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls-section {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel h3 {
+            color: #e040fb;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 1px solid rgba(224, 64, 251, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 18px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #b0bec5;
+            font-size: 0.9em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #e040fb;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(224, 64, 251, 0.5);
+        }
+
+        .value-display {
+            text-align: right;
+            color: #ea80fc;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            margin-top: 4px;
+        }
+
+        .toggle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .toggle-btn {
+            padding: 8px 14px;
+            border: 1px solid rgba(224, 64, 251, 0.4);
+            background: rgba(224, 64, 251, 0.1);
+            color: #ea80fc;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background: rgba(224, 64, 251, 0.4);
+            border-color: #e040fb;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(224, 64, 251, 0.3);
+        }
+
+        .preset-btn {
+            padding: 10px 16px;
+            border: none;
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.1s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .preset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
+        }
+
+        .color-legend {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .color-item {
+            text-align: center;
+        }
+
+        .color-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 0 auto 5px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .color-dot.red { background: #f44336; }
+        .color-dot.green { background: #4caf50; }
+        .color-dot.blue { background: #2196f3; }
+
+        .color-item span {
+            font-size: 0.8em;
+            color: #90a4ae;
+        }
+
+        .graph-container {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #force-graph {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nc-display {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .nc-value {
+            font-size: 2em;
+            color: #e040fb;
+            font-family: 'Courier New', monospace;
+        }
+
+        .nc-label {
+            font-size: 0.9em;
+            color: #90a4ae;
+            margin-top: 5px;
+        }
+
+        .info-box {
+            background: rgba(156, 39, 176, 0.1);
+            border: 1px solid rgba(156, 39, 176, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #ce93d8;
+        }
+
+        .derivation-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 6px;
+            font-size: 0.85em;
+        }
+
+        .status-badge {
+            background: #4caf50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Strong Force (Yukawa) Simulation</h1>
+            <p class="subtitle">Ternary Realization Dynamics - Quark Confinement and Color Charge</p>
+            <div class="formula-box">
+                <span class="main-formula" id="formula-display"></span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="canvas-section">
+                <div id="canvas-container"></div>
+            </div>
+
+            <div class="controls-section">
+                <div class="panel">
+                    <h3>Number of Colors</h3>
+                    <div class="nc-display">
+                        <div class="nc-value">N<sub>c</sub> = 3</div>
+                        <div class="nc-label">Derived from master quadratic (x₋ = 3.024)</div>
+                    </div>
+                    <div class="color-legend">
+                        <div class="color-item">
+                            <div class="color-dot red"></div>
+                            <span>Red</span>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-dot green"></div>
+                            <span>Green</span>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-dot blue"></div>
+                            <span>Blue</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Parameters</h3>
+
+                    <div class="control-group">
+                        <label>Strong Coupling (g<sub>s</sub>²)</label>
+                        <input type="range" id="gs-slider" min="0.5" max="5" step="0.1" value="2">
+                        <div class="value-display">g<sub>s</sub>² = <span id="gs-value">2.0</span></div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Range Parameter (m<sub>π</sub>)</label>
+                        <input type="range" id="mpi-slider" min="0.01" max="0.1" step="0.005" value="0.03">
+                        <div class="value-display">m<sub>π</sub> = <span id="mpi-value">0.030</span></div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Confinement Strength</label>
+                        <input type="range" id="conf-slider" min="0" max="2" step="0.1" value="1">
+                        <div class="value-display"><span id="conf-value">1.0</span>x</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Force vs Distance</h3>
+                    <div class="graph-container">
+                        <canvas id="force-graph"></canvas>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75em; color: #78909c; margin-top: 5px;">
+                        <span>Yukawa (exponential decay)</span>
+                        <span style="color: #78909c;">— Coulomb (1/r²)</span>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Visualization</h3>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" id="toggle-strings" onclick="toggleOption('showStrings')">Color Strings</button>
+                        <button class="toggle-btn active" id="toggle-range" onclick="toggleOption('showRange')">Range Circle</button>
+                        <button class="toggle-btn active" id="toggle-labels" onclick="toggleOption('showLabels')">Labels</button>
+                        <button class="toggle-btn" id="toggle-forces" onclick="toggleOption('showForces')">Force Vectors</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Presets</h3>
+                    <button class="preset-btn" onclick="loadPreset('proton')">Proton (uud)</button>
+                    <button class="preset-btn" onclick="loadPreset('neutron')">Neutron (udd)</button>
+                    <button class="preset-btn" onclick="loadPreset('meson')">Meson (qq̄)</button>
+                    <button class="preset-btn" onclick="loadPreset('free')">Free Quarks (try to separate!)</button>
+                </div>
+
+                <div class="panel">
+                    <h3>Confinement</h3>
+                    <div class="info-box">
+                        The Yukawa potential <b>F ~ e<sup>-m<sub>π</sub>r</sup>/r²</b> shows
+                        exponential decay at long range.
+                        <br><br>
+                        In QCD, the <b>string tension</b> grows linearly with separation,
+                        causing <b>confinement</b>: isolated quarks require infinite energy.
+                        <br><br>
+                        <b>Color-neutral</b> combinations (R+G+B = white) are stable.
+                        Try pulling a quark away - it snaps back!
+                    </div>
+                    <div class="derivation-status">
+                        <span class="status-badge">DERIVED</span>
+                        <span>SU(3) from 3D geometry</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // TRD STRONG FORCE (YUKAWA) SIMULATION
+        // F_strong = g_s² * e^(-m_π*r) / r² * (1 + m_π*r)
+        // ============================================
+
+        let quarks = [];
+        let g_s_squared = 2.0;
+        let m_pi = 0.03;
+        let confinementStrength = 1.0;
+        let selectedQuark = null;
+        let isDragging = false;
+
+        let options = {
+            showStrings: true,
+            showRange: true,
+            showLabels: true,
+            showForces: false
+        };
+
+        const CANVAS_WIDTH = 700;
+        const CANVAS_HEIGHT = 600;
+        const COLORS = {
+            red: '#f44336',
+            green: '#4caf50',
+            blue: '#2196f3'
+        };
+        const COLOR_NAMES = ['red', 'green', 'blue'];
+
+        // Quark class
+        class Quark {
+            constructor(x, y, color, type = 'u') {
+                this.pos = createVector(x, y);
+                this.vel = createVector(0, 0);
+                this.acc = createVector(0, 0);
+                this.color = color;  // 'red', 'green', 'blue'
+                this.type = type;    // 'u' or 'd'
+                this.radius = 20;
+                this.force = createVector(0, 0);
+                this.mass = 1;
+                this.anchorPos = createVector(x, y);  // For confinement
+            }
+
+            applyForce(force) {
+                let a = p5.Vector.div(force, this.mass);
+                this.acc.add(a);
+                this.force = force.copy();
+            }
+
+            update(dt) {
+                if (this === selectedQuark && isDragging) {
+                    // Being dragged - follow mouse with spring
+                    let target = createVector(mouseX, mouseY);
+                    let spring = p5.Vector.sub(target, this.pos);
+                    spring.mult(0.3);
+                    this.vel = spring;
+                } else {
+                    this.vel.add(p5.Vector.mult(this.acc, dt));
+                    this.vel.mult(0.95);  // Damping
+                }
+
+                this.pos.add(p5.Vector.mult(this.vel, dt));
+                this.acc.mult(0);
+
+                // Boundary
+                this.pos.x = constrain(this.pos.x, this.radius, CANVAS_WIDTH - this.radius);
+                this.pos.y = constrain(this.pos.y, this.radius, CANVAS_HEIGHT - this.radius);
+            }
+
+            draw() {
+                // Draw quark
+                noStroke();
+                let c = color(COLORS[this.color]);
+                fill(c);
+                ellipse(this.pos.x, this.pos.y, this.radius * 2);
+
+                // Glow
+                for (let r = this.radius * 2; r > this.radius; r -= 3) {
+                    fill(red(c), green(c), blue(c), map(r, this.radius, this.radius * 2, 100, 0));
+                    ellipse(this.pos.x, this.pos.y, r * 2);
+                }
+
+                // Inner highlight
+                fill(255, 255, 255, 50);
+                ellipse(this.pos.x - 5, this.pos.y - 5, this.radius * 0.8);
+
+                // Label
+                if (options.showLabels) {
+                    fill(255);
+                    noStroke();
+                    textAlign(CENTER, CENTER);
+                    textSize(14);
+                    textStyle(BOLD);
+                    text(this.type, this.pos.x, this.pos.y);
+
+                    textSize(10);
+                    textStyle(NORMAL);
+                    text(this.color.charAt(0).toUpperCase(), this.pos.x, this.pos.y + this.radius + 10);
+                }
+
+                // Force vector
+                if (options.showForces && this.force.mag() > 0.1) {
+                    let fScaled = p5.Vector.mult(this.force, 20);
+                    let maxLen = 50;
+                    if (fScaled.mag() > maxLen) fScaled.setMag(maxLen);
+
+                    stroke(255, 200, 100);
+                    strokeWeight(2);
+                    line(this.pos.x, this.pos.y,
+                         this.pos.x + fScaled.x, this.pos.y + fScaled.y);
+                }
+            }
+
+            containsPoint(px, py) {
+                return dist(px, py, this.pos.x, this.pos.y) < this.radius;
+            }
+        }
+
+        // ============================================
+        // TRD YUKAWA FORCE CALCULATION
+        // F = g_s² * e^(-m_π*r) / r² * (1 + m_π*r)
+        // ============================================
+
+        function calculateYukawaForce(q1, q2) {
+            let dir = p5.Vector.sub(q2.pos, q1.pos);
+            let r = dir.mag();
+
+            // Avoid singularity
+            let minDist = q1.radius + q2.radius;
+            if (r < minDist) r = minDist;
+
+            // Yukawa force: F = g_s² * e^(-m_π*r) / r² * (1 + m_π*r)
+            let yukawa = g_s_squared * Math.exp(-m_pi * r) / (r * r) * (1 + m_pi * r);
+
+            // Add linear confinement term (string tension)
+            let confinement = confinementStrength * 0.01 * r;
+
+            let forceMag = yukawa + confinement;
+
+            dir.normalize();
+            dir.mult(forceMag * 100);  // Scale for visibility
+
+            return dir;
+        }
+
+        function isColorNeutral(quarkGroup) {
+            if (quarkGroup.length !== 3) return false;
+
+            let colors = quarkGroup.map(q => q.color);
+            return colors.includes('red') && colors.includes('green') && colors.includes('blue');
+        }
+
+        // ============================================
+        // DRAWING FUNCTIONS
+        // ============================================
+
+        function drawColorStrings() {
+            if (!options.showStrings) return;
+
+            // Draw gluon-like strings between quarks
+            for (let i = 0; i < quarks.length; i++) {
+                for (let j = i + 1; j < quarks.length; j++) {
+                    let q1 = quarks[i];
+                    let q2 = quarks[j];
+                    let d = dist(q1.pos.x, q1.pos.y, q2.pos.x, q2.pos.y);
+
+                    // String thickness based on distance (more tension = thicker)
+                    let thickness = map(d, 50, 300, 3, 1);
+                    thickness = constrain(thickness, 1, 5);
+
+                    // String color (gradient between the two quarks)
+                    let c1 = color(COLORS[q1.color]);
+                    let c2 = color(COLORS[q2.color]);
+
+                    // Draw curved string with gradient
+                    noFill();
+                    strokeWeight(thickness);
+
+                    let steps = 20;
+                    for (let s = 0; s < steps; s++) {
+                        let t = s / steps;
+                        let t2 = (s + 1) / steps;
+
+                        // Interpolate color
+                        let c = lerpColor(c1, c2, t);
+                        stroke(red(c), green(c), blue(c), 150);
+
+                        // Add some wave to the string
+                        let wave1 = sin(t * PI * 2 + frameCount * 0.05) * 5;
+                        let wave2 = sin(t2 * PI * 2 + frameCount * 0.05) * 5;
+
+                        let x1 = lerp(q1.pos.x, q2.pos.x, t);
+                        let y1 = lerp(q1.pos.y, q2.pos.y, t) + wave1;
+                        let x2 = lerp(q1.pos.x, q2.pos.x, t2);
+                        let y2 = lerp(q1.pos.y, q2.pos.y, t2) + wave2;
+
+                        line(x1, y1, x2, y2);
+                    }
+                }
+            }
+        }
+
+        function drawRangeCircles() {
+            if (!options.showRange) return;
+
+            // Draw the effective range of the strong force
+            let range = 1 / m_pi;  // Characteristic range
+
+            for (let q of quarks) {
+                noFill();
+                stroke(COLORS[q.color]);
+                strokeWeight(1);
+                drawingContext.setLineDash([5, 5]);
+                ellipse(q.pos.x, q.pos.y, range * 2, range * 2);
+                drawingContext.setLineDash([]);
+            }
+        }
+
+        function drawForceGraph() {
+            let canvas = document.getElementById('force-graph');
+            let ctx = canvas.getContext('2d');
+
+            // Set canvas size
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            let w = canvas.width;
+            let h = canvas.height;
+
+            // Clear
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fillRect(0, 0, w, h);
+
+            // Draw axes
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(30, h - 20);
+            ctx.lineTo(w - 10, h - 20);
+            ctx.moveTo(30, h - 20);
+            ctx.lineTo(30, 10);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('r', w - 15, h - 8);
+            ctx.fillText('F', 15, 15);
+
+            // Plot Yukawa
+            ctx.strokeStyle = '#e040fb';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            let maxR = 200;
+            let maxF = 0;
+
+            // Find max for scaling
+            for (let r = 10; r < maxR; r += 5) {
+                let f = g_s_squared * Math.exp(-m_pi * r) / (r * r) * (1 + m_pi * r);
+                f += confinementStrength * 0.01 * r;
+                if (f > maxF) maxF = f;
+            }
+
+            for (let i = 0; i < w - 40; i++) {
+                let r = map(i, 0, w - 40, 10, maxR);
+                let f = g_s_squared * Math.exp(-m_pi * r) / (r * r) * (1 + m_pi * r);
+                f += confinementStrength * 0.01 * r;
+
+                let x = 30 + i;
+                let y = map(f, 0, maxF * 1.2, h - 20, 20);
+                y = constrain(y, 10, h - 20);
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Plot pure Coulomb for comparison
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+
+            for (let i = 0; i < w - 40; i++) {
+                let r = map(i, 0, w - 40, 10, maxR);
+                let f = g_s_squared / (r * r);  // Pure Coulomb
+
+                let x = 30 + i;
+                let y = map(f, 0, maxF * 1.2, h - 20, 20);
+                y = constrain(y, 10, h - 20);
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // ============================================
+        // PRESET CONFIGURATIONS
+        // ============================================
+
+        function loadPreset(preset) {
+            quarks = [];
+            let cx = CANVAS_WIDTH / 2;
+            let cy = CANVAS_HEIGHT / 2;
+
+            switch(preset) {
+                case 'proton':
+                    // uud - two up quarks, one down quark
+                    quarks.push(new Quark(cx - 40, cy - 30, 'red', 'u'));
+                    quarks.push(new Quark(cx + 40, cy - 30, 'green', 'u'));
+                    quarks.push(new Quark(cx, cy + 40, 'blue', 'd'));
+                    break;
+
+                case 'neutron':
+                    // udd - one up quark, two down quarks
+                    quarks.push(new Quark(cx - 40, cy - 30, 'red', 'u'));
+                    quarks.push(new Quark(cx + 40, cy - 30, 'green', 'd'));
+                    quarks.push(new Quark(cx, cy + 40, 'blue', 'd'));
+                    break;
+
+                case 'meson':
+                    // quark-antiquark pair
+                    quarks.push(new Quark(cx - 50, cy, 'red', 'u'));
+                    quarks.push(new Quark(cx + 50, cy, 'red', 'ū'));  // Anti-red = cyan conceptually
+                    break;
+
+                case 'free':
+                    // Start with separated quarks
+                    quarks.push(new Quark(cx - 150, cy, 'red', 'u'));
+                    quarks.push(new Quark(cx, cy - 100, 'green', 'd'));
+                    quarks.push(new Quark(cx + 150, cy + 50, 'blue', 'u'));
+                    break;
+            }
+        }
+
+        // ============================================
+        // P5.JS SETUP AND DRAW
+        // ============================================
+
+        function setup() {
+            let canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+            canvas.parent('canvas-container');
+
+            // Mouse interaction
+            canvas.mousePressed(() => {
+                for (let q of quarks) {
+                    if (q.containsPoint(mouseX, mouseY)) {
+                        selectedQuark = q;
+                        isDragging = true;
+                        break;
+                    }
+                }
+            });
+
+            // Load proton by default
+            loadPreset('proton');
+
+            // Setup sliders
+            document.getElementById('gs-slider').addEventListener('input', (e) => {
+                g_s_squared = parseFloat(e.target.value);
+                document.getElementById('gs-value').textContent = g_s_squared.toFixed(1);
+            });
+
+            document.getElementById('mpi-slider').addEventListener('input', (e) => {
+                m_pi = parseFloat(e.target.value);
+                document.getElementById('mpi-value').textContent = m_pi.toFixed(3);
+            });
+
+            document.getElementById('conf-slider').addEventListener('input', (e) => {
+                confinementStrength = parseFloat(e.target.value);
+                document.getElementById('conf-value').textContent = confinementStrength.toFixed(1);
+            });
+
+            // Render formula
+            katex.render(
+                'F = g_s^2 \\cdot \\frac{e^{-m_\\pi r}}{r^2} (1 + m_\\pi r)',
+                document.getElementById('formula-display'),
+                { throwOnError: false }
+            );
+        }
+
+        function mouseReleased() {
+            selectedQuark = null;
+            isDragging = false;
+        }
+
+        function draw() {
+            background(20, 15, 30);
+
+            // Draw range circles
+            drawRangeCircles();
+
+            // Draw color strings
+            drawColorStrings();
+
+            // Calculate forces
+            for (let i = 0; i < quarks.length; i++) {
+                let totalForce = createVector(0, 0);
+
+                for (let j = 0; j < quarks.length; j++) {
+                    if (i !== j) {
+                        let force = calculateYukawaForce(quarks[i], quarks[j]);
+                        totalForce.add(force);
+                    }
+                }
+
+                quarks[i].applyForce(totalForce);
+            }
+
+            // Update and draw quarks
+            let dt = 0.4;
+            for (let q of quarks) {
+                q.update(dt);
+                q.draw();
+            }
+
+            // Update force graph
+            drawForceGraph();
+
+            // Status indicator
+            fill(255, 255, 255, 150);
+            noStroke();
+            textSize(12);
+            textAlign(LEFT, TOP);
+
+            let status = isColorNeutral(quarks) ? "Color Neutral (Stable)" : "Color Charged (Unstable)";
+            let statusColor = isColorNeutral(quarks) ? color(100, 255, 100) : color(255, 100, 100);
+            fill(statusColor);
+            text(status, 10, 10);
+
+            fill(255, 255, 255, 100);
+            text(`g_s² = ${g_s_squared.toFixed(1)} | m_π = ${m_pi.toFixed(3)} | Quarks: ${quarks.length}`, 10, 28);
+            text("Drag quarks to see confinement!", 10, 46);
+        }
+
+        // ============================================
+        // UI HELPERS
+        // ============================================
+
+        function toggleOption(option) {
+            options[option] = !options[option];
+
+            let btnId = 'toggle-' + option.replace('show', '').toLowerCase();
+            let btn = document.getElementById(btnId);
+            if (btn) {
+                btn.classList.toggle('active', options[option]);
+            }
+        }
+    </script>
+</body>
+</html>

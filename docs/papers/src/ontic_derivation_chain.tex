@@ -1,0 +1,562 @@
+\documentclass[11pt, letterpaper]{article}
+
+% ----- Packages -----
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{geometry}
+\geometry{margin=1.15in}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{authblk}
+\usepackage{booktabs}
+\usepackage{array}
+
+% ----- Formatting -----
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=black}
+\pdfstringdefDisableCommands{\def\G{G*}\def\xp{x+}\def\xm{x-}}
+\titleformat{\section}{\large\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% ----- Math Commands -----
+\newcommand{\G}{{G^*}}
+\newcommand{\xp}{x_+}
+\newcommand{\xm}{x_-}
+\DeclareMathOperator{\AGM}{AGM}
+
+% ----- Theorem Environments -----
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+% ----- Epistemic Tags -----
+\definecolor{ftdblue}{RGB}{0,70,130}
+\newcommand{\epi}[1]{\textnormal{{\small\sffamily\bfseries\color{ftdblue}[#1]}}}
+
+% ----- Document -----
+\title{\vspace{-2em}\textbf{The Ontic Derivation Chain:\\[4pt]
+\large Twenty-Six Physical Constants from Two Inputs}}
+\author[1]{C. Montanez}
+\affil[1]{\textit{Foundational Ternary Dynamics Research}}
+\date{March 2026 \quad\small FTD v5.27}
+
+\begin{document}
+\maketitle
+
+% ===========================================================================
+\begin{abstract}
+From two inputs---the spatial dimension $D=3$ and the lemniscate constant
+$\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$---a chain of algebraic identities
+yields twenty-six independently testable physical quantities. The chain proceeds:
+$\varpi \to M \to \G \to \pi$, where a master quadratic
+$x^2 - 16\,\G^2\,x + 16\,\G^3 = 0$ produces roots
+$\xp = 137.036$ and $\xm = 3.024$, identified with $1/\alpha$ (1.26\,ppm
+tree-level; $<\!1$\,ppt corrected) and $N_c = 3$. An integer cascade
+yields $\{3,4,7,13,47\}$, from which follow
+$\sin^2\!\theta_W = 3/13$,
+$\alpha_s(M_Z) = 7/59$,
+integer lepton mass ratios,
+the full CKM and PMNS mixing matrices,
+and the gravitational hierarchy $\alpha_G \propto \alpha^{20}$.
+A companion proof suite (301/301 checks, NumPy/SciPy) verifies every
+numerical claim. We present the framework as a self-consistent algebraic
+structure and state explicit falsification criteria.
+\end{abstract}
+
+\smallskip
+\noindent\textit{Epistemic tags:}
+\epi{Axiom} structural postulate;
+\epi{Theorem} proven from axioms;
+\epi{Selection} argued, not uniquely proven;
+\epi{Conjecture} requires experimental validation.
+
+\bigskip
+
+% ===========================================================================
+\section{Inputs and Notation}
+% ===========================================================================
+
+\noindent The entire derivation chain rests on two inputs.
+
+\begin{center}
+\fbox{\parbox{0.9\textwidth}{
+\textbf{Input 1} \epi{Axiom}: $D = 3$ spatial dimensions (cubic lattice $\mathbb{Z}^3$).\\[3pt]
+\textbf{Input 2} \epi{Axiom}: The lemniscate constant
+$\displaystyle\varpi = \frac{\Gamma(1/4)^2}{2\sqrt{2\pi}} = 2.62206\ldots$
+}}
+\end{center}
+
+\smallskip
+\noindent Table~\ref{tab:notation} defines the principal symbols.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}clll@{}}
+\toprule
+\textbf{Symbol} & \textbf{Definition} & \textbf{Value} & \textbf{Layer} \\
+\midrule
+$\varpi$ & $\Gamma(1/4)^2/(2\sqrt{2\pi})$ & $2.62206$ & 1 \\
+$M$ & $\varpi/\pi = 1/\AGM(1,\sqrt{2})$ & $0.83463$ & 1 \\
+$\G$ & $2\sqrt{\varpi\cdot M} = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$ & $2.95868$ & 2 \\
+$k$ & Lattice DoF coefficient & $16$ & 3 \\
+$\xp$ & Larger root of master quadratic & $137.036$ & 3 \\
+$\xm$ & Smaller root & $3.024$ & 3 \\
+$\alpha$ & $1/\xp$ & $7.297\times10^{-3}$ & 5 \\
+$N_c$ & $\lfloor\xm\rfloor$ (color charges) & $3$ & 4 \\
+$b_3$ & $(11N_c - 2N_f)/3$ (QCD beta) & $7$ & 4 \\
+$N_\text{eff}$ & $b_3 + 2N_c$ (effective DoF) & $13$ & 4 \\
+$\mathcal{D}$ & $N_c\cdot N_\text{base}^2 - 1$ & $47$ & 4 \\
+\bottomrule
+\end{tabular}
+\caption{Principal symbols of the ontic chain.}
+\label{tab:notation}
+\end{table}
+
+% ===========================================================================
+\section{The Derivation Chain (Layers $-1$ to $3$)}
+% ===========================================================================
+
+\subsection{Layers $0$ to $1$: From $e$ to $\varpi$}
+
+\textbf{Layer 0.}
+Starting from $e$ (the natural base, unique eigenvalue of $d/dx$), the
+Euler--Mascheroni constant $\gamma = \lim_{n\to\infty}[\sum_{k=1}^n 1/k - \ln n]$ enters the Weierstrass product
+$1/\Gamma(z) = z\,e^{\gamma z}\prod_{n\geq 1}[(1+z/n)\,e^{-z/n}]$,
+evaluated at $z = 1/4$ to give $\Gamma(1/4) = 3.62561\ldots$ \epi{Theorem}
+
+\begin{definition}[Lemniscate constant]\label{def:varpi}
+$\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi}) = 2.62206\ldots$
+\end{definition}
+
+\begin{definition}[Gauss constant]\label{def:gauss}
+$M = \varpi/\pi = 1/\AGM(1,\sqrt{2}) = 0.83463\ldots$
+\end{definition}
+
+\subsection{Layer 2: The Universal Operator $\G$}
+
+\begin{definition}[$\G$]\label{def:gstar}
+$\displaystyle\G = 2\sqrt{\varpi\cdot M}$
+\end{definition}
+
+\begin{equation}
+\boxed{\G = \frac{\sqrt{2}\;\Gamma(1/4)^2}{2\pi} = \frac{2\varpi}{\sqrt{\pi}} = 2.95868\ldots}
+\end{equation}
+
+\begin{corollary}[Derived $\pi$]
+$\pi = 4\varpi^2/\G^2$. The lemniscate constant is ontologically prior to $\pi$. \epi{Theorem}
+\end{corollary}
+
+\subsection{Layer 2b: Generalized Discriminant}
+
+\begin{lemma}[Three regimes]\label{lem:disc}
+The generalized quadratic $x^2 - k\,\G^2\,x + k\,\G^3 = 0$ has discriminant
+$\Delta = k\,\G^3(k\,\G - 4)$. Three domains:
+\begin{enumerate}[nosep]
+\item $k\G > 4$ $(k=16)$: $\Delta > 0$, real roots $\to$ \textbf{physics}.
+\item $k\G = 4$ $(k=4/\G)$: $\Delta = 0$, degenerate $\to$ Born rule boundary.
+\item $k\G < 4$ $(k=1/2)$: $\Delta < 0$, complex conjugate roots (no physical interpretation in this paper).
+\end{enumerate}
+\end{lemma}
+
+\subsection{Layer 3: The Master Quadratic}
+
+\begin{lemma}[Coefficient 16]\label{lem:16}
+On the minimal $2\times 2\times 2$ cubic lattice: 24 total components $-$ 7 gauge
+constraints (Gauss law) $-$ 1 global phase $= 16$ physical degrees of freedom.
+Equivalently, $16 = N_\text{base}^2 = 2^{D+1}$. \epi{Selection}
+\end{lemma}
+
+\begin{lemma}[CM selection]\label{lem:cm}
+The cubic lattice $\mathbb{Z}^3$ has $\mathbb{Z}_4$ rotation symmetry, selecting the
+unique elliptic curve with Complex Multiplication discriminant $j = 1728$: the
+lemniscatic curve $y^2 = x^3 - x$ at modulus $k = 1/\sqrt{2}$. This fixes
+$\G$ as the relevant elliptic constant. \epi{Selection}
+\end{lemma}
+
+\begin{remark}[Why this quadratic]
+The form $x^2 - kc^2\,x + kc^3 = 0$ is selected by requiring the
+Vieta product-to-sum ratio to equal $c$ itself:
+$\xp\,\xm/(\xp + \xm) = kc^3/(kc^2) = c = \G$.
+That is, $\G$ is half the harmonic mean of the two physics roots.
+The asymmetry between $c^2$ (sum) and $c^3$ (product) encodes the
+distinction between spatial amplitude and spacetime action per degree of freedom. \epi{Selection}
+\end{remark}
+
+\begin{theorem}[Master Quadratic]\label{thm:master}
+\begin{equation}
+\boxed{x^2 - 16\,\G^2\,x + 16\,\G^3 = 0}
+\end{equation}
+with roots
+\begin{align}
+\xp &= 8\G^2 + 8\G^2\sqrt{1 - 1/\G} = 137.0362\ldots \label{eq:xplus}\\
+\xm &= 8\G^2 - 8\G^2\sqrt{1 - 1/\G} = 3.0240\ldots \label{eq:xminus}
+\end{align}
+\end{theorem}
+
+\noindent\textbf{Vieta's relations:}
+$\xp + \xm = 16\,\G^2$,\quad
+$\xp\cdot\xm = 16\,\G^3$.
+
+\begin{remark}
+The harmonic mean identity $\G = \xp\,\xm/(\xp + \xm)$ shows $\G$ is half the harmonic mean of the two physics roots.
+\end{remark}
+
+% ===========================================================================
+\section{The Integer Cascade (Layer 4)}
+% ===========================================================================
+
+\begin{proposition}[Framework integers]\label{prop:integers}
+From $\xm = 3.024\ldots$ and $D = 3$, the following integers are fixed:
+\end{proposition}
+
+\begin{center}\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} & \textbf{Physics} & \textbf{Tag} \\
+\midrule
+$N_c$ & $\lfloor\xm\rfloor$ & 3 & Color charges & \epi{Conj.} \\
+$N_\text{gen}$ & $N_c$ & 3 & Fermion generations & \epi{Conj.} \\
+$N_f$ & $2N_\text{gen}$ & 6 & Quark flavors & \epi{Thm.} \\
+$N_\text{base}$ & $2^{(D+1)/2}$ & 4 & Spinor dimension & \epi{Thm.} \\
+$b_3$ & $(11N_c - 2N_f)/3$ & 7 & QCD beta coefficient & \epi{Thm.} \\
+$N_\text{eff}$ & $b_3 + 2N_c$ & 13 & Effective DoF $= F_7$ & \epi{Thm.} \\
+$\mathcal{D}$ & $N_c N_\text{base}^2 - 1$ & 47 & Constraint dimension & \epi{Thm.} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+$N_\text{eff} = 13 = F_7$ (seventh Fibonacci number).
+$b_3 = N_\text{base} + N_c$ (additive closure of the two primitive integers).
+\end{remark}
+
+% ===========================================================================
+\section{Coupling Constants (Layer 5)}
+% ===========================================================================
+
+\noindent Four coupling constants follow from the integers and $\xp$.
+
+\begin{equation}
+\boxed{\alpha = \frac{1}{\xp} = 7.297\times 10^{-3}}
+\quad\text{\epi{Conjecture}: tree-level, 1.26\,ppm from CODATA}
+\end{equation}
+
+\begin{equation}
+\boxed{\sin^2\!\theta_W = \frac{N_c}{N_\text{eff}} = \frac{3}{13} = 0.23077}
+\quad\text{\epi{Conjecture}: 0.19\% from 0.23122}
+\end{equation}
+
+\begin{equation}
+\boxed{\alpha_s(M_Z) = \frac{b_3}{b_3 + 4N_\text{eff}} = \frac{7}{59} = 0.11864}
+\quad\text{\epi{Conjecture}: 0.63\% from 0.1179}
+\end{equation}
+
+\begin{equation}
+\boxed{\alpha_G = 2\pi\!\left(\frac{16}{3}\right)^{\!2}\!\left(N_\text{eff} + \frac{3}{b_3}\right)^{\!2}\alpha^{20}}
+\quad\text{\epi{Conjecture}: exponent } 20 = N_\text{eff} + b_3
+\label{eq:alphaG}
+\end{equation}
+
+\noindent The gravitational hierarchy $\alpha_G \approx 5.91\times 10^{-39}$
+arises from $\alpha^{20}$, explaining the 37-order-of-magnitude gap between
+electromagnetism and gravity as a \emph{cross-domain} power of the coupling.
+
+% ===========================================================================
+\section{Mass Hierarchy (Layer 6)}
+% ===========================================================================
+
+\subsection{Absolute Scale}
+
+\noindent With $M_P = 1.221\times 10^{19}$\,GeV as the sole external input:
+
+\begin{equation}
+\boxed{m_e = M_P\,\sqrt{2\pi}\;\frac{N_\text{base}^2}{N_c}\;\alpha^{11}
+= M_P\,\sqrt{2\pi}\;\frac{16}{3}\;\alpha^{11}}
+\label{eq:me}
+\end{equation}
+
+\noindent Predicted: 0.510\,MeV; experimental: 0.511\,MeV (0.19\% error). \epi{Conjecture}
+
+\subsection{Integer Mass Ratios}
+
+\begin{center}\small
+\begin{tabular}{@{}llrrl@{}}
+\toprule
+\textbf{Ratio} & \textbf{Formula} & \textbf{FTD} & \textbf{Expt.} & \textbf{Err.} \\
+\midrule
+$m_\mu/m_e$ & $3b_3(b_3+N_c)-N_c$ & 207 & 206.768 & 0.11\% \\
+$m_\tau/m_e$ & $(N_\text{eff}+N_\text{base})\cdot 207 - 2N_c b_3$ & 3477 & 3477.23 & 0.007\% \\
+$m_p/m_e$ & $N_\text{eff}\cdot\xp + T_{10}$ & 1836.5 & 1836.15 & 0.018\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent where $T_{10} = (b_3 + N_c)(b_3 + N_c + 1)/2 = 55$ is the 10th triangular number.
+The proton mass combines the EM contribution ($N_\text{eff}\cdot\xp$: valence quarks
+coupled to the fine structure) with a QCD binding correction ($T_{10}$,
+reflecting the $\binom{b_3 + N_c + 1}{2}$ gluon exchange channels). \epi{Conjecture}
+
+\subsection{Electroweak Sector}
+
+\begin{align}
+v &= M_P\,\sqrt{2\pi}\;\alpha^8 = 246.08\;\text{GeV}
+    & &\text{(0.05\% from 246.22)} \quad\epi{Conj.} \label{eq:vev}\\[4pt]
+m_H &= \frac{N_\text{eff}}{\alpha^2}\;m_e = 124.7\;\text{GeV}
+    & &\text{(0.28\% from 125.1)} \quad\epi{Sel.} \label{eq:mh}\\[4pt]
+m_W &= \frac{b_3(b_3+N_c)-N_c}{8\alpha^2}\;m_e = 80.37\;\text{GeV}
+    & &\text{(0.003\% from 80.37)} \quad\epi{Conj.} \label{eq:mw}\\[4pt]
+m_Z &= m_W/\!\cos\theta_W = 91.63\;\text{GeV}
+    & &\text{(0.49\% from 91.19)} \quad\epi{Conj.} \label{eq:mz}
+\end{align}
+
+\noindent The $m_Z$ error (0.49\%, the worst mass prediction) propagates entirely from
+$\sin^2\!\theta_W = 3/13$ vs.\ the measured $0.23122$; the $m_W$ input is excellent.
+
+% ===========================================================================
+\section{Mixing Matrices (CKM and PMNS)}
+% ===========================================================================
+
+\subsection{PMNS (Neutrino Mixing)}
+
+\noindent All angles are ratios of framework integers. \epi{Conjecture}
+
+\begin{equation}
+\boxed{
+\sin^2\!\theta_{12} = \frac{N_c}{N_c + b_3} = \frac{3}{10},\qquad
+\sin^2\!\theta_{23} = \frac{N_\text{eff}+N_c}{2N_\text{eff}+N_c} = \frac{16}{29},\qquad
+\sin^2\!\theta_{13} = \frac{1}{N_\text{base}\cdot N_\text{eff}} = \frac{1}{52}
+}
+\end{equation}
+
+\begin{equation}
+\frac{\Delta m^2_{31}}{\Delta m^2_{21}} = \frac{(b_3+N_c)^2}{N_c} = \frac{100}{3} = 33.33
+\quad\text{(1.5\% from 32.85)} \quad\epi{Conjecture}
+\end{equation}
+
+\noindent Normal hierarchy predicted: $m_3 \gg m_2 \gg m_1$, testable by JUNO ($\sim$2027).
+
+\subsection{CKM (Quark Mixing)}
+
+\noindent Three angles from $\G$ and framework integers. \epi{Conjecture}
+
+\begin{equation}
+\boxed{
+\sin\theta_C = \frac{\G}{N_\text{eff}},\qquad
+\sin\theta_{23} = \frac{b_3}{N_\text{eff}^2} = \frac{7}{169},\qquad
+\sin\theta_{13} = \frac{N_c}{b_3+N_c}\!\left(\frac{\G}{N_\text{eff}}\right)^{\!3}
+}
+\end{equation}
+
+\begin{equation}
+\delta_{CP} = \arctan\!\left(\frac{b_3}{N_c}\right) = \arctan\!\left(\frac{7}{3}\right) = 66.8^\circ
+\quad\text{(2.1\% from $65.4^\circ$)} \quad\epi{Conjecture}
+\end{equation}
+
+\noindent The full CKM matrix via standard PDG parametrization gives all nine $|V_{ij}|$
+within 0--8.4\% of experiment:
+
+\begin{center}\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+& \textbf{FTD} & \textbf{PDG 2024} & \textbf{Error} \\
+\midrule
+$|V_{ud}|$ & 0.97406 & 0.97373 & 0.03\% \\
+$|V_{us}|$ & 0.22759 & 0.22430 & 1.47\% \\
+$|V_{ub}|$ & 0.00354 & 0.00382 & 7.4\% \\
+$|V_{cd}|$ & 0.22701 & 0.22100 & 2.7\% \\
+$|V_{cs}|$ & 0.97326 & 0.97500 & 0.18\% \\
+$|V_{cb}|$ & 0.04142 & 0.04080 & 1.5\% \\
+$|V_{td}|$ & 0.00867 & 0.00800 & 8.4\% \\
+$|V_{ts}|$ & 0.04071 & 0.03880 & 4.9\% \\
+$|V_{tb}|$ & 0.99914 & 1.01300 & 1.4\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Jarlskog invariant: $J = c_{12}\,s_{12}\,c_{23}\,s_{23}\,c_{13}^2\,s_{13}\sin\delta = 3.18\times 10^{-5}$
+(3.2\% from $3.08\times 10^{-5}$).
+First-row unitarity: $|V_{ud}|^2 + |V_{us}|^2 + |V_{ub}|^2 = 1.000000$ (exact by construction).
+
+% ===========================================================================
+\section{Precision Formula (Layer 7)}
+% ===========================================================================
+
+\noindent The tree-level $1/\alpha = \xp$ is refined by a four-term correction using
+the modular deviation $\varepsilon = e^\pi - \pi - (b_3 + N_\text{eff})
+= e^\pi - \pi - 20 \approx -9.00\times 10^{-4}$.
+
+\begin{equation}
+\boxed{\frac{1}{\alpha} = \xp - c_1|\varepsilon| + c_2|\varepsilon|^2
+- c_3|\varepsilon|^3 - c_4|\varepsilon|^4}
+\label{eq:precision}
+\end{equation}
+
+\noindent where each coefficient is a ratio of framework integers:
+
+\begin{equation}
+c_1 = \frac{N_c^2}{\mathcal{D}} = \frac{9}{47},\quad
+c_2 = \frac{N_\text{eff}-2N_\text{base}}{N_\text{base}^3} = \frac{5}{64},\quad
+c_3 = \frac{N_\text{base}}{N_c\,\mathcal{D}} = \frac{4}{141},\quad
+c_4 = \frac{N_c\,\mathcal{D}}{b_3 + N_\text{base}} = \frac{141}{11}
+\end{equation}
+
+\noindent\textbf{Result}: $1/\alpha = 137.035\,999\,177\ldots$, matching CODATA 2022
+($137.035\,999\,177(21)$) to $< 1$\,part per trillion. \epi{Conjecture}
+
+\begin{remark}
+The coefficients are pattern-matched, not derived from QED radiative corrections.
+Four coefficients fitting one target necessarily achieves high precision;
+the non-trivial content is that each coefficient is expressible as a simple
+ratio of the same five framework integers $\{3,4,7,13,47\}$.
+Falsification: if future CODATA measurements shift outside the correction range.
+\end{remark}
+
+% ===========================================================================
+\section{Comparison with Experiment}
+% ===========================================================================
+
+\begin{table}[ht]
+\centering\small
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}rlllrrl@{}}
+\toprule
+\textbf{\#} & \textbf{Quantity} & \textbf{FTD Formula} & \textbf{FTD} & \textbf{Expt.} & \textbf{Err.} & \textbf{Tag} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Coupling constants}} \\
+1 & $1/\alpha$ (tree) & $\xp$ & 137.036 & 137.036 & 1.3\,ppm & \epi{C} \\
+2 & $1/\alpha$ (corr.) & Eq.\,\eqref{eq:precision} & 137.036\,0 & 137.036\,0 & $<$1\,ppt & \epi{C} \\
+3 & $\sin^2\!\theta_W$ & $3/13$ & 0.2308 & 0.2312 & 0.19\% & \epi{C} \\
+4 & $\alpha_s(M_Z)$ & $7/59$ & 0.1186 & 0.1179 & 0.63\% & \epi{C} \\
+5 & $\alpha_G$ & Eq.\,\eqref{eq:alphaG} & $5.91\!\times\!10^{-39}$ & $5.91\!\times\!10^{-39}$ & 0.06\% & \epi{C} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Masses}} \\
+6 & $m_e$ & Eq.\,\ref{eq:me} & 0.510\,MeV & 0.511 & 0.19\% & \epi{C} \\
+7 & $m_\mu/m_e$ & $3b_3(b_3\!+\!N_c)\!-\!N_c$ & 207 & 206.77 & 0.11\% & \epi{C} \\
+8 & $m_\tau/m_e$ & integer formula & 3477 & 3477.2 & 0.007\% & \epi{C} \\
+9 & $m_p$ & $N_\text{eff}\cdot\xp\!+\!T_{10}$ & 938.4 & 938.3 & 0.02\% & \epi{C} \\
+10 & $v$ (Higgs VEV) & Eq.\,\ref{eq:vev} & 246.08 & 246.22 & 0.05\% & \epi{C} \\
+11 & $m_H$ & Eq.\,\ref{eq:mh} & 124.7 & 125.1 & 0.28\% & \epi{S} \\
+12 & $m_W$ & Eq.\,\ref{eq:mw} & 80.37 & 80.37 & 0.003\% & \epi{S} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{PMNS mixing}} \\
+13 & $\sin^2\!\theta_{12}$ & $3/10$ & 0.300 & 0.307 & 2.3\% & \epi{C} \\
+14 & $\sin^2\!\theta_{23}$ & $16/29$ & 0.552 & 0.546 & 1.0\% & \epi{C} \\
+15 & $\sin^2\!\theta_{13}$ & $1/52$ & 0.0192 & 0.0220 & 12.7\%$^\dagger$ & \epi{C} \\
+16 & $\Delta m^2$ ratio & $100/3$ & 33.33 & 32.85 & 1.5\% & \epi{C} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{CKM mixing}} \\
+17 & $\sin\theta_C$ & $\G/N_\text{eff}$ & 0.2276 & 0.2243 & 1.5\% & \epi{C} \\
+18 & $\sin\theta_{23}^{CKM}$ & $7/169$ & 0.0414 & 0.0408 & 1.5\% & \epi{C} \\
+19 & $\sin\theta_{13}^{CKM}$ & $(3/10)(\G/13)^3$ & 0.00354 & 0.00382 & 7.4\% & \epi{C} \\
+20 & $\delta_{CP}$ & $\arctan(7/3)$ & $66.8^\circ$ & $65.4^\circ$ & 2.1\% & \epi{C} \\
+21 & Jarlskog $J$ & from angles & $3.18\!\times\!10^{-5}$ & $3.08\!\times\!10^{-5}$ & 3.2\% & \epi{C} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Cosmology}} \\
+22 & $n_s$ & $1 - 2/N_e$ & 0.9645 & 0.9649 & 0.04\% & \epi{C} \\
+23 & $r$ & $4\alpha(N_c/N_\text{base})$ & 0.0219 & $<0.036$ & OK & \epi{C} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Structural}} \\
+24 & $N_\text{gen}$ & $\lfloor\xm\rfloor$ & 3 & 3 & exact & \epi{C} \\
+25 & $N_c$ & $\lfloor\xm\rfloor$ & 3 & 3 & exact & \epi{C} \\
+26 & Hierarchy & normal & NH & NH & --- & \epi{C} \\
+\bottomrule
+\end{tabular}
+\caption{FTD predictions vs.\ experiment.
+Tags: \epi{C} = Conjecture, \epi{S} = Selection.
+Of 26 quantities: 20 within 2\%, 24 within 5\%, 25 within 13\%.
+$^\dagger$Worst prediction; $1/(N_\text{base}\cdot N_\text{eff})$ is the simplest
+integer-ratio approximation but overshoots.}
+\label{tab:comparison}
+\end{table}
+
+% ===========================================================================
+\section{Falsification Criteria}
+% ===========================================================================
+
+\noindent Seven conditions, each sufficient to falsify the framework:
+
+\begin{enumerate}[nosep,label=\textbf{F\arabic*.}]
+\item Precision $\alpha$ measurement deviating from $\xp = 137.036\ldots$ by $> 10$\,ppm
+      (after accounting for QED corrections).
+\item Discovery of a fourth fermion generation with standard gauge couplings.
+\item $\sin^2\!\theta_W$ measured more than 1\% from $3/13$.
+\item Definitive determination of inverted neutrino mass hierarchy
+      (JUNO, $\sim$2027).
+\item Planck-scale Lorentz violation with wrong sign (superluminal high-energy photons).
+\item Failure of any integer cascade relation
+      ($b_3 \neq 7$, $N_\text{eff} \neq 13$, etc.)\ under revised QCD data.
+\item Tensor-to-scalar ratio $r$ measured outside $[0.005,\; 0.036]$
+      (LiteBIRD, $\sim$2032).
+\end{enumerate}
+
+% ===========================================================================
+\section{Reproducibility}
+% ===========================================================================
+
+\noindent All numerical claims are verified by a deterministic proof suite
+(\texttt{simulations/proofs/}, 11 modules, 301 assertions, 301 PASS) requiring
+only Python~3.10+, NumPy, and SciPy. The master entry point
+\texttt{proof\_10\_ultimate\_chain.py} executes the complete chain.
+Every constant is computed from scratch in \texttt{common.py}
+with no imports from the project's own constants module.
+
+% ===========================================================================
+% References
+% ===========================================================================
+
+\begin{thebibliography}{9}
+
+\bibitem{CODATA2022}
+E.~Tiesinga \textit{et al.},
+``CODATA recommended values of the fundamental physical constants: 2022,''
+\textit{Rev.\ Mod.\ Phys.}\ (2024).
+
+\bibitem{PDG2024}
+R.~L.~Workman \textit{et al.} (Particle Data Group),
+\textit{Review of Particle Physics},
+Phys.\ Rev.\ D \textbf{110}, 030001 (2024).
+
+\bibitem{Planck2018}
+N.~Aghanim \textit{et al.} (Planck Collaboration),
+``Planck 2018 results. VI.\ Cosmological parameters,''
+Astron.\ Astrophys.\ \textbf{641}, A6 (2020).
+
+\bibitem{NuFIT52}
+I.~Esteban \textit{et al.},
+``The fate of hints: updated global analysis of three-flavour neutrino oscillations,''
+JHEP \textbf{09}, 178 (2020). NuFIT 5.2.
+
+\bibitem{Silverman2009}
+J.~H.~Silverman,
+\textit{The Arithmetic of Elliptic Curves}, 2nd ed., Springer (2009).
+
+\bibitem{Cox1989}
+D.~A.~Cox,
+\textit{Primes of the Form $x^2 + ny^2$}, Wiley (1989).
+Complex multiplication theory.
+
+\bibitem{Wilson1974}
+K.~G.~Wilson,
+``Confinement of quarks,''
+Phys.\ Rev.\ D \textbf{10}, 2445 (1974).
+
+\bibitem{FTDFramework}
+C.~Montanez,
+``Foundational Ternary Dynamics: A Discrete Ontology for Computational Physics,''
+framework specification v5.27 (2026).
+\url{https://github.com/cmontanez/Foundational-Ternary-Dynamics}
+
+\bibitem{FTDProofs}
+C.~Montanez,
+``FTD Proof Suite v5.27: 301 verified assertions,''
+supplementary material (2026).
+
+\end{thebibliography}
+
+\end{document}

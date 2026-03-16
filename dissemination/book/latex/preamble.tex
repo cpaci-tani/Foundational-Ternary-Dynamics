@@ -1,0 +1,87 @@
+% LaTeX Preamble for The Golden Thread
+% Custom styling for PDF output
+
+% Typography
+\usepackage{microtype}
+\usepackage{lettrine}  % For drop caps at chapter starts
+
+% Math packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% Graphics
+\usepackage{graphicx}
+\usepackage{float}
+
+% Colors for callout boxes
+\usepackage{xcolor}
+\definecolor{goldthread}{RGB}{201, 162, 39}
+\definecolor{darkblue}{RGB}{44, 62, 80}
+
+% Epigraphs for chapter openings
+\usepackage{epigraph}
+\setlength{\epigraphwidth}{0.8\textwidth}
+\renewcommand{\epigraphflush}{center}
+\renewcommand{\sourceflush}{center}
+
+% Chapter styling
+\usepackage{titlesec}
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{darkblue}}
+  {\chaptertitlename\ \thechapter}
+  {20pt}
+  {\Huge}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{darkblue}}
+  {\thesection}
+  {1em}
+  {}
+
+% Headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\itshape\nouppercase{\rightmark}}
+\fancyhead[RE]{\itshape The Golden Thread}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Custom command for the lemniscate symbol in section breaks
+\newcommand{\sectionbreak}{%
+  \vspace{1em}%
+  \begin{center}%
+    \textcolor{goldthread}{\Large$\infty$}%
+  \end{center}%
+  \vspace{1em}%
+}
+
+% Better fractions
+\usepackage{nicefrac}
+
+% Hyperlinks
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=darkblue,
+  urlcolor=goldthread,
+  citecolor=darkblue
+}
+
+% Dedication page
+\newcommand{\dedication}[1]{%
+  \clearpage
+  \thispagestyle{empty}
+  \vspace*{\stretch{1}}
+  \begin{center}
+    \itshape #1
+  \end{center}
+  \vspace*{\stretch{3}}
+  \clearpage
+}
+
+% For displaying key numbers prominently
+\newcommand{\keynumber}[1]{\textbf{\textcolor{darkblue}{#1}}}

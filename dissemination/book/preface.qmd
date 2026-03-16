@@ -1,0 +1,49 @@
+---
+title: "Preface"
+---
+
+## About This Book {.unnumbered}
+
+This is not a book of mysticism dressed in mathematical clothing. It is not an attempt to prove that ancient peoples had advanced technology or contact with extraterrestrials. It is not a work of New Age speculation.
+
+This is an investigation.
+
+It is an attempt to trace a thread of knowledge—mathematical knowledge, encoded in symbol and myth and architecture—from the earliest human civilizations to the present day. It takes seriously the possibility that certain patterns were discovered, preserved, lost, rediscovered, and encoded again across the millennia.
+
+It follows the evidence where it leads.
+
+## What This Book Claims
+
+What it claims is modest and, perhaps, interesting:
+
+That certain mathematical relationships appear to be fundamental to the structure of reality. That human beings have encountered these relationships throughout history, through observation, through contemplation, through what the Greeks called *theoria*—direct seeing. And that the encoding of these relationships in myth, ritual, and architecture was not primitive superstition but sophisticated knowledge preservation.
+
+The ancients were not fools. They built structures we still cannot fully explain. They developed astronomical systems of remarkable precision. They created symbol systems that have endured for thousands of years.
+
+Perhaps they also discovered something true.
+
+## How to Read This Book
+
+Each chapter builds on what came before, but the book can also be entered at different points depending on your background and interests:
+
+- **If you're interested in ancient history**, start with Act I and follow the narrative chronologically
+- **If you're coming from physics or mathematics**, you might begin with Act III, then return to see how the ancients encoded these same insights
+- **If you want the mathematical core**, Appendix A provides the complete derivations
+
+Throughout, you'll find:
+
+::: {.callout-note}
+## Framework Connections
+Boxes like this link the historical material to the mathematical framework described in Act III.
+:::
+
+## Acknowledgments
+
+This work stands on the shoulders of countless scholars, researchers, and seekers who have traced pieces of this thread before me. Their names appear throughout these pages.
+
+Special thanks to the traditions that preserved this knowledge through millennia of forgetting—often at great personal cost to their keepers.
+
+---
+
+*William J Steinmetz III*
+*January 2026*

@@ -1,9 +1,0 @@
-     Hydrophilic head (phosphate)
-            ↓
-        ┌──────┐
-        │ P    │
-        └──┬───┘
-           │
-     ══════╪══════  ← Hydrophobic tails (fatty acids)
-           │
-     ══════╪══════

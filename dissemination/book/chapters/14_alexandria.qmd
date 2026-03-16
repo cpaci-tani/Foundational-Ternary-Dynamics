@@ -1,0 +1,170 @@
+---
+title: "Chapter 14: Alexandria"
+---
+
+## The Library
+
+The Library of Alexandria was not a single building but a complex of institutions. At its heart was the **Mouseion** (from which we get "museum")—a temple to the Muses that served as a research institution. Scholars were paid by the state to live there, study, teach, and write. It was the world's first university, the first think tank, the first government-funded research program.
+
+The library itself aimed to collect every book in existence. Ships arriving in Alexandria's harbor were searched for manuscripts, which were copied (or confiscated). The Ptolemaic kings—the Greek dynasty that ruled Egypt after Alexander—competed to acquire texts. At its height, the library may have held between 400,000 and 700,000 scrolls.
+
+Here were gathered:
+
+- The complete works of the Greek tragedians (only fragments survive today)
+- The mathematical treatises of Euclid, Archimedes, Apollonius
+- The astronomical observations of centuries
+- Egyptian texts translated into Greek
+- Babylonian star catalogs
+- Persian scriptures
+- Possibly Buddhist texts from India
+
+Alexandria was where East met West—where the traditions we have been tracing converged, compared notes, and synthesized.
+
+---
+
+## Euclid's Elements
+
+Around 300 BCE, a mathematician named Euclid compiled a systematic treatise on geometry. His *Elements* would become the most successful textbook in history—used for over two thousand years, second only to the Bible in the number of editions printed.
+
+Euclid did not discover most of the theorems in the *Elements*. What he did was organize them into a rigorous deductive structure:
+
+1. Start with **definitions** (point, line, plane, etc.)
+2. State **postulates** (axioms that cannot be proven but must be assumed)
+3. **Prove** all subsequent propositions from these foundations
+
+This is the axiomatic method—the idea that all of mathematics can be derived from a small set of self-evident truths. It would influence philosophy, theology, physics, and law for millennia.
+
+Euclid's five postulates seem simple:
+
+1. A straight line can be drawn between any two points
+2. A finite straight line can be extended indefinitely
+3. A circle can be drawn with any center and radius
+4. All right angles are equal
+5. The parallel postulate (if a line crosses two other lines and the interior angles on one side sum to less than two right angles, the two lines eventually meet on that side)
+
+The fifth postulate is more complex than the others. For two thousand years, mathematicians tried to prove it from the first four. They failed—and in failing, they discovered non-Euclidean geometry, which became essential for Einstein's general relativity.
+
+The *Elements* is a monument to the Greek conviction that reality is structured by demonstrable truth. It is the architectural blueprint of rigorous thought.
+
+---
+
+## Archimedes and the Limits
+
+Archimedes of Syracuse (287-212 BCE) may have studied at Alexandria before returning to his native city. He was the greatest mathematician of antiquity—perhaps of all time before Newton.
+
+Archimedes calculated π to unprecedented accuracy by inscribing and circumscribing polygons around a circle, using polygons of 96 sides to establish that π lies between 223/71 and 22/7.
+
+He developed methods that anticipate integral calculus by two millennia—computing areas and volumes by slicing shapes into infinitesimally thin sections and summing them.
+
+He discovered the law of the lever ("Give me a place to stand and I will move the Earth"), the principle of buoyancy (allegedly leaping from his bath shouting "Eureka!"), and the mathematics of spirals.
+
+And he connected the practical to the theoretical. Archimedes designed war machines that held off the Roman siege of Syracuse for two years. Yet he considered his engineering merely amusing—his mathematical works were his true legacy.
+
+When the Romans finally took Syracuse, a soldier found Archimedes drawing geometric figures in the sand. "Do not disturb my circles," the old mathematician said. The soldier killed him anyway.
+
+---
+
+## Eratosthenes Measures the Earth
+
+Eratosthenes of Cyrene (276-194 BCE) was the chief librarian of Alexandria. He was a polymath—poet, geographer, mathematician, astronomer—nicknamed "Beta" by his contemporaries because he was second-best at everything (but second-best at everything is remarkable).
+
+His most famous achievement: measuring the circumference of the Earth.
+
+Eratosthenes knew that at noon on the summer solstice, the sun shone directly down a deep well in Syene (modern Aswan)—casting no shadow, indicating the sun was directly overhead. On the same day in Alexandria, a vertical stick cast a shadow of about 7.2 degrees from vertical.
+
+If the Earth were flat, the sun would be overhead everywhere at the same time. The shadow meant that Alexandria and Syene were on a curved surface.
+
+7.2 degrees is 1/50 of a full circle (360/7.2 = 50). The distance from Alexandria to Syene was about 5,000 stadia. Therefore, the Earth's circumference was approximately 50 × 5,000 = 250,000 stadia.
+
+Converting to modern units is complicated by uncertainty about the exact length of Eratosthenes' stadium, but his result was probably within 2% of the correct value—about 40,000 kilometers.
+
+In the 3rd century BCE, a librarian calculated the size of the Earth to within 2%. This was not mere observation; it was reasoning from geometry, from the behavior of shadows, from the assumption that the sun's rays arrive parallel (because the sun is very far away).
+
+The Greeks knew the Earth was round. They knew approximately how big it was. They knew it was a sphere hanging in space.
+
+---
+
+## Hipparchus and the Stars
+
+Hipparchus of Nicaea (190-120 BCE) was the greatest observational astronomer of antiquity. Working on the island of Rhodes but drawing on Babylonian records preserved at Alexandria, he compiled a catalog of over 850 stars—noting their positions, their apparent brightness, and their movements.
+
+Most stars stay fixed relative to each other. But Hipparchus noticed something peculiar: the positions of stars relative to the equinoxes were slowly shifting. The spring equinox was drifting backward through the zodiac.
+
+This is **precession**—the slow wobble of Earth's axis that takes approximately 25,920 years to complete one cycle. Hipparchus could not determine the full period (he estimated about 36,000 years), but he identified the phenomenon.
+
+Precession is the clock behind the astrological ages—the Age of Pisces giving way to the Age of Aquarius. It is the cycle that may be encoded in the king-lists and mythologies we traced in earlier chapters.
+
+Hipparchus also developed trigonometry, calculated the distance to the Moon (within 5% of the correct value), and established systematic methods for predicting eclipses.
+
+All of this knowledge was gathered, preserved, and transmitted at Alexandria.
+
+---
+
+## The Hermetic Synthesis
+
+Alexandria was also the birthplace of the Hermetic tradition—the body of texts attributed to Hermes Trismegistus, "Thrice-Great Hermes."
+
+Hermes Trismegistus was a syncretistic figure, combining the Greek Hermes (messenger of the gods, guide of souls, inventor of writing) with the Egyptian Thoth (god of wisdom, magic, and the moon). The texts attributed to him—written in Greek but claiming Egyptian antiquity—presented a mystical philosophy of cosmic unity, divine emanation, and spiritual transformation.
+
+The most famous Hermetic text is the *Corpus Hermeticum*, a collection of treatises on theology, cosmology, and magic. It begins:
+
+> *"The All is Mind; the Universe is Mental."*
+
+This is the Hermetic version of Platonic idealism—the claim that consciousness or thought is more fundamental than matter.
+
+The Hermetic texts also taught the famous principle:
+
+> *"As above, so below; as below, so above."*
+
+This is the doctrine of correspondence—that the patterns of the cosmos are reflected at every scale, from the stars to the human soul.
+
+The Hermetica synthesized Greek philosophy, Egyptian mysticism, Jewish cosmology, and Babylonian astrology into a coherent (if sometimes obscure) system. When Renaissance scholars rediscovered these texts, they believed they were reading the original Egyptian wisdom that had taught Pythagoras and Plato.
+
+---
+
+## The Destruction
+
+The Library of Alexandria did not die in a single dramatic fire. It died slowly, over centuries, through a series of catastrophes:
+
+- **48 BCE**: Julius Caesar's troops, besieging Alexandria, may have accidentally burned part of the library (or a warehouse of books meant for export—sources differ)
+- **270 CE**: Emperor Aurelian destroyed parts of the library during a battle
+- **391 CE**: Christian mobs, at the instigation of Bishop Theophilus, destroyed the Serapeum—a temple that housed a "daughter library"
+- **642 CE**: The Arab conquest—though the famous story of Caliph Omar ordering the books burned ("If they agree with the Quran, they are redundant; if they disagree, they are heretical") is probably apocryphal
+
+By the 7th century, Alexandria's great library had ceased to exist. Most of what it contained was lost forever.
+
+We do not know what we do not know. Works referenced by ancient authors—complete texts of Aristotle, histories of civilizations, scientific treatises, poetry, philosophy—exist now only as titles in catalogs, as fragments quoted by other writers, as ghosts of knowledge.
+
+The loss is incalculable.
+
+---
+
+## What Survived
+
+Not everything was lost. Some texts were copied and recopied. Some were translated into Arabic and preserved in Islamic libraries. Some were hidden in monasteries, waiting to be rediscovered.
+
+What survived was enough to transform the world when it flowed back to Europe during the Renaissance. Euclid's *Elements*, Ptolemy's *Almagest*, the Hermetic texts, fragments of Plato and Aristotle—these became the seeds from which modern science and philosophy grew.
+
+The library was destroyed, but the project it represented—the gathering and synthesis of all human knowledge—was not. Every university library, every research institution, every digital archive is a distant descendant of Alexandria.
+
+We are still trying to rebuild what was lost.
+
+---
+
+## Key Points
+
+- Alexandria, founded by Alexander the Great in 331 BCE, became the intellectual capital of the ancient world
+- The Library of Alexandria aimed to collect every book in existence—possibly 400,000-700,000 scrolls
+- Euclid's *Elements* established the axiomatic method that remains the foundation of mathematical proof
+- Archimedes developed methods anticipating calculus and connected theory to engineering
+- Eratosthenes calculated Earth's circumference to within 2% accuracy using shadows and geometry
+- Hipparchus discovered precession and compiled a star catalog of 850+ stars
+- The Hermetic tradition synthesized Greek, Egyptian, Jewish, and Babylonian thought
+- The library was destroyed gradually over centuries—most of its contents lost forever
+- What survived became the foundation of Renaissance learning and modern science
+- The project of gathering human knowledge continues in libraries and archives today
+
+---
+
+*Chapter 15: Hermes Trismegistus — As Above, So Below*
+

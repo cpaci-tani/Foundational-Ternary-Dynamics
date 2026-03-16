@@ -1,0 +1,54 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.ruff]
+line-length = 120
+exclude = [
+    ".venv",
+    "archive",
+    "engine",
+    "media",
+    "node_modules",
+    # Research / exploration code (not production)
+    "dissemination/manuscript",
+    "dissemination/whitepaper",
+    "dissemination/notebooks",
+    "dissemination/visuals",
+    "docs/internal/explorations",
+    "scripts",
+    "simulations",
+    "special_projects",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = [
+    "E501",   # line too long (handled by line-length)
+    "E402",   # module level import not at top of file
+    "F841",   # local variable assigned but never used
+    "E741",   # ambiguous variable name
+    "W605",   # invalid escape sequence (common in LaTeX strings)
+]
+
+[tool.black]
+line-length = 120
+extend-exclude = '''
+/(
+    \.venv
+    | archive
+    | engine
+    | media
+    | node_modules
+    | dissemination/manuscript
+    | dissemination/whitepaper
+    | dissemination/notebooks
+    | dissemination/visuals
+    | docs/internal/explorations
+    | scripts
+    | simulations
+    | special_projects
+)/
+'''

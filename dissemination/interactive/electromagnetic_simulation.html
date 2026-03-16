@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRD Electromagnetic Simulation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: #ffd54f;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 213, 79, 0.3);
+        }
+
+        .subtitle {
+            color: #90a4ae;
+            font-size: 1.1em;
+        }
+
+        .formula-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 213, 79, 0.3);
+            border-radius: 12px;
+            padding: 15px 25px;
+            margin: 15px auto;
+            display: inline-block;
+        }
+
+        .formula-row {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .formula-item {
+            text-align: center;
+        }
+
+        .formula-label {
+            font-size: 0.85em;
+            color: #90a4ae;
+            margin-bottom: 5px;
+        }
+
+        .formula-item .formula {
+            font-size: 1.4em;
+            color: #ffd54f;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .canvas-section {
+            flex: 1;
+            min-width: 600px;
+        }
+
+        #canvas-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            cursor: crosshair;
+        }
+
+        .controls-section {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel h3 {
+            color: #ffd54f;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 1px solid rgba(255, 213, 79, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 18px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #b0bec5;
+            font-size: 0.9em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffd54f;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
+        }
+
+        .value-display {
+            text-align: right;
+            color: #ffe082;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            margin-top: 4px;
+        }
+
+        .toggle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .toggle-btn {
+            padding: 8px 14px;
+            border: 1px solid rgba(255, 213, 79, 0.4);
+            background: rgba(255, 213, 79, 0.1);
+            color: #ffe082;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background: rgba(255, 213, 79, 0.4);
+            border-color: #ffd54f;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 213, 79, 0.3);
+        }
+
+        .charge-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .charge-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .charge-btn.positive {
+            border-color: #ef5350;
+            background: rgba(239, 83, 80, 0.2);
+            color: #ef5350;
+        }
+
+        .charge-btn.positive.active, .charge-btn.positive:hover {
+            background: rgba(239, 83, 80, 0.4);
+        }
+
+        .charge-btn.negative {
+            border-color: #42a5f5;
+            background: rgba(66, 165, 245, 0.2);
+            color: #42a5f5;
+        }
+
+        .charge-btn.negative.active, .charge-btn.negative:hover {
+            background: rgba(66, 165, 245, 0.4);
+        }
+
+        .preset-btn {
+            padding: 10px 16px;
+            border: none;
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.1s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .preset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #78909c, #546e7a);
+        }
+
+        .alpha-display {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .alpha-value {
+            font-size: 2em;
+            color: #ffd54f;
+            font-family: 'Courier New', monospace;
+        }
+
+        .alpha-label {
+            font-size: 0.9em;
+            color: #90a4ae;
+            margin-top: 5px;
+        }
+
+        .info-box {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #ffcc80;
+        }
+
+        .derivation-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 6px;
+            font-size: 0.85em;
+        }
+
+        .status-badge {
+            background: #4caf50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .instructions {
+            font-size: 0.85em;
+            color: #78909c;
+            text-align: center;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Electromagnetic Force Simulation</h1>
+            <p class="subtitle">Ternary Realization Dynamics - Coulomb & Lorentz Forces from Flux Gradients</p>
+            <div class="formula-box">
+                <div class="formula-row">
+                    <div class="formula-item">
+                        <div class="formula-label">Coulomb (Electric)</div>
+                        <div class="formula" id="coulomb-formula"></div>
+                    </div>
+                    <div class="formula-item">
+                        <div class="formula-label">Lorentz (Magnetic)</div>
+                        <div class="formula" id="lorentz-formula"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="canvas-section">
+                <div id="canvas-container"></div>
+                <div class="instructions">Click on canvas to place charges. Select charge type below.</div>
+            </div>
+
+            <div class="controls-section">
+                <div class="panel">
+                    <h3>Fine Structure Constant</h3>
+                    <div class="alpha-display">
+                        <div class="alpha-value">α = 1/137.036</div>
+                        <div class="alpha-label">Derived from TRD master quadratic</div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Coupling Strength (α multiplier)</label>
+                        <input type="range" id="alpha-slider" min="0.1" max="5" step="0.1" value="1">
+                        <div class="value-display">α × <span id="alpha-value">1.0</span></div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Charge Magnitude</label>
+                        <input type="range" id="charge-slider" min="0.5" max="3" step="0.1" value="1">
+                        <div class="value-display">|q| = <span id="charge-value">1.0</span></div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Add Charges</h3>
+                    <div class="charge-btn-group">
+                        <button class="charge-btn positive active" id="btn-positive" onclick="setChargeType(1)">+ Positive</button>
+                        <button class="charge-btn negative" id="btn-negative" onclick="setChargeType(-1)">− Negative</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Visualization</h3>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" id="toggle-fieldlines" onclick="toggleOption('showFieldLines')">Field Lines</button>
+                        <button class="toggle-btn active" id="toggle-vectors" onclick="toggleOption('showVectors')">Force Vectors</button>
+                        <button class="toggle-btn" id="toggle-potential" onclick="toggleOption('showPotential')">Potential Field</button>
+                        <button class="toggle-btn active" id="toggle-trails" onclick="toggleOption('showTrails')">Trails</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Presets</h3>
+                    <button class="preset-btn" onclick="loadPreset('dipole')">Electric Dipole</button>
+                    <button class="preset-btn" onclick="loadPreset('quadrupole')">Quadrupole</button>
+                    <button class="preset-btn" onclick="loadPreset('chain')">Charge Chain</button>
+                    <button class="preset-btn" onclick="loadPreset('orbiting')">Orbiting Electron</button>
+                    <button class="preset-btn clear-btn" onclick="clearCharges()">Clear All</button>
+                </div>
+
+                <div class="panel">
+                    <h3>TRD Derivation</h3>
+                    <div class="info-box">
+                        The Coulomb force emerges from the <b>Gauss constraint</b> in TRD:
+                        <br><br>
+                        ∇·J = q (charge sources flux divergence)
+                        <br><br>
+                        The fine structure constant <b>α = 1/137.036</b> is derived from
+                        the master quadratic with the lemniscatic constant G*.
+                        <br><br>
+                        <b>U(1) gauge symmetry</b> emerges naturally from the constraint structure.
+                    </div>
+                    <div class="derivation-status">
+                        <span class="status-badge">DERIVED</span>
+                        <span>α from G* (1.26 ppm accuracy)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // TRD ELECTROMAGNETIC SIMULATION
+        // Coulomb: F_elec = -q * grad(q_bar)
+        // Lorentz: F_mag = beta * (curl J) x J_hat
+        // ============================================
+
+        let charges = [];
+        let alpha = 1 / 137.036;  // Fine structure constant
+        let alphaMultiplier = 1.0;
+        let chargeMagnitude = 1.0;
+        let selectedChargeType = 1;  // +1 or -1
+
+        let options = {
+            showFieldLines: true,
+            showVectors: true,
+            showPotential: false,
+            showTrails: true
+        };
+
+        const CANVAS_WIDTH = 700;
+        const CANVAS_HEIGHT = 600;
+        const TRAIL_LENGTH = 60;
+        const K_COULOMB = 50;  // Scaling factor for visualization
+
+        // Charge class
+        class Charge {
+            constructor(x, y, q, vx = 0, vy = 0, fixed = false) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(vx, vy);
+                this.acc = createVector(0, 0);
+                this.q = q;  // +1 or -1 (or scaled)
+                this.mass = 1;
+                this.radius = 15;
+                this.trail = [];
+                this.force = createVector(0, 0);
+                this.fixed = fixed;
+            }
+
+            applyForce(force) {
+                if (this.fixed) return;
+                let a = p5.Vector.div(force, this.mass);
+                this.acc.add(a);
+                this.force = force.copy();
+            }
+
+            update(dt) {
+                if (this.fixed) return;
+
+                this.vel.add(p5.Vector.mult(this.acc, dt));
+                this.vel.mult(0.99);  // Damping
+                this.pos.add(p5.Vector.mult(this.vel, dt));
+                this.acc.mult(0);
+
+                // Store trail
+                if (options.showTrails) {
+                    this.trail.push(this.pos.copy());
+                    if (this.trail.length > TRAIL_LENGTH) {
+                        this.trail.shift();
+                    }
+                }
+
+                // Boundary reflection
+                if (this.pos.x < this.radius || this.pos.x > CANVAS_WIDTH - this.radius) {
+                    this.vel.x *= -0.8;
+                    this.pos.x = constrain(this.pos.x, this.radius, CANVAS_WIDTH - this.radius);
+                }
+                if (this.pos.y < this.radius || this.pos.y > CANVAS_HEIGHT - this.radius) {
+                    this.vel.y *= -0.8;
+                    this.pos.y = constrain(this.pos.y, this.radius, CANVAS_HEIGHT - this.radius);
+                }
+            }
+
+            draw() {
+                // Draw trail
+                if (options.showTrails && this.trail.length > 1) {
+                    noFill();
+                    beginShape();
+                    for (let i = 0; i < this.trail.length; i++) {
+                        let alpha_trail = map(i, 0, this.trail.length, 0, 150);
+                        if (this.q > 0) {
+                            stroke(255, 100, 100, alpha_trail);
+                        } else {
+                            stroke(100, 150, 255, alpha_trail);
+                        }
+                        strokeWeight(2);
+                        vertex(this.trail[i].x, this.trail[i].y);
+                    }
+                    endShape();
+                }
+
+                // Draw charge
+                noStroke();
+                if (this.q > 0) {
+                    // Positive - red
+                    fill(239, 83, 80);
+                    ellipse(this.pos.x, this.pos.y, this.radius * 2);
+
+                    // Glow
+                    for (let r = this.radius * 2; r > this.radius; r -= 3) {
+                        fill(239, 83, 80, map(r, this.radius, this.radius * 2, 80, 0));
+                        ellipse(this.pos.x, this.pos.y, r * 2);
+                    }
+
+                    // Plus sign
+                    fill(255);
+                    rectMode(CENTER);
+                    rect(this.pos.x, this.pos.y, 12, 4);
+                    rect(this.pos.x, this.pos.y, 4, 12);
+                } else {
+                    // Negative - blue
+                    fill(66, 165, 245);
+                    ellipse(this.pos.x, this.pos.y, this.radius * 2);
+
+                    // Glow
+                    for (let r = this.radius * 2; r > this.radius; r -= 3) {
+                        fill(66, 165, 245, map(r, this.radius, this.radius * 2, 80, 0));
+                        ellipse(this.pos.x, this.pos.y, r * 2);
+                    }
+
+                    // Minus sign
+                    fill(255);
+                    rectMode(CENTER);
+                    rect(this.pos.x, this.pos.y, 12, 4);
+                }
+
+                // Fixed indicator
+                if (this.fixed) {
+                    noFill();
+                    stroke(255, 255, 255, 100);
+                    strokeWeight(2);
+                    ellipse(this.pos.x, this.pos.y, this.radius * 2.5);
+                }
+
+                // Force vector
+                if (options.showVectors && this.force.mag() > 0.01 && !this.fixed) {
+                    let fScaled = p5.Vector.mult(this.force, 50);
+                    let maxLen = 60;
+                    if (fScaled.mag() > maxLen) fScaled.setMag(maxLen);
+
+                    stroke(255, 200, 50);
+                    strokeWeight(2);
+                    line(this.pos.x, this.pos.y,
+                         this.pos.x + fScaled.x, this.pos.y + fScaled.y);
+
+                    // Arrow head
+                    push();
+                    translate(this.pos.x + fScaled.x, this.pos.y + fScaled.y);
+                    rotate(fScaled.heading());
+                    fill(255, 200, 50);
+                    noStroke();
+                    triangle(-8, -4, 0, 0, -8, 4);
+                    pop();
+                }
+            }
+        }
+
+        // ============================================
+        // TRD COULOMB FORCE CALCULATION
+        // F_elec = -q * grad(q_bar)
+        // Implemented as: F = k * q1 * q2 / r^2
+        // ============================================
+
+        function calculateCoulombForce(c1, c2) {
+            let dir = p5.Vector.sub(c2.pos, c1.pos);
+            let distance = dir.mag();
+
+            // Avoid singularity
+            if (distance < c1.radius + c2.radius) {
+                distance = c1.radius + c2.radius;
+            }
+
+            // Coulomb's law: F = k * q1 * q2 / r^2
+            // Negative product = attraction (opposite charges)
+            // Positive product = repulsion (same charges)
+            let effectiveAlpha = alpha * alphaMultiplier;
+            let forceMag = K_COULOMB * effectiveAlpha * c1.q * c2.q / (distance * distance);
+
+            dir.normalize();
+            // Force on c1 due to c2: if same sign, push apart (positive force along dir)
+            // if opposite sign, pull together (negative force along dir)
+            dir.mult(-forceMag);  // Negative because we want attraction for opposite charges
+
+            return dir;
+        }
+
+        // ============================================
+        // ELECTRIC FIELD AND FIELD LINES
+        // ============================================
+
+        function electricFieldAt(x, y) {
+            let E = createVector(0, 0);
+
+            for (let c of charges) {
+                let dir = createVector(x - c.pos.x, y - c.pos.y);
+                let d = dir.mag();
+                if (d < 5) d = 5;
+
+                let Emag = K_COULOMB * c.q / (d * d);
+                dir.normalize();
+                dir.mult(Emag);
+                E.add(dir);
+            }
+
+            return E;
+        }
+
+        function potentialAt(x, y) {
+            let V = 0;
+            for (let c of charges) {
+                let d = dist(x, y, c.pos.x, c.pos.y);
+                if (d < 5) d = 5;
+                V += K_COULOMB * c.q / d;
+            }
+            return V;
+        }
+
+        function drawPotentialField() {
+            let gridSize = 15;
+            noStroke();
+
+            for (let x = 0; x < CANVAS_WIDTH; x += gridSize) {
+                for (let y = 0; y < CANVAS_HEIGHT; y += gridSize) {
+                    let V = potentialAt(x + gridSize/2, y + gridSize/2);
+                    let c;
+                    if (V > 0) {
+                        c = color(255, 100, 100, min(abs(V) * 2, 80));
+                    } else {
+                        c = color(100, 150, 255, min(abs(V) * 2, 80));
+                    }
+                    fill(c);
+                    rect(x, y, gridSize, gridSize);
+                }
+            }
+        }
+
+        function drawFieldLines() {
+            if (charges.length === 0) return;
+
+            let numLines = 12;
+
+            for (let c of charges) {
+                if (c.q > 0) {
+                    // Draw lines emanating from positive charges
+                    for (let i = 0; i < numLines; i++) {
+                        let angle = (TWO_PI / numLines) * i;
+                        let startX = c.pos.x + cos(angle) * (c.radius + 5);
+                        let startY = c.pos.y + sin(angle) * (c.radius + 5);
+
+                        drawSingleFieldLine(startX, startY, 1);
+                    }
+                }
+            }
+        }
+
+        function drawSingleFieldLine(startX, startY, direction) {
+            let x = startX;
+            let y = startY;
+            let stepSize = 5;
+            let maxSteps = 150;
+
+            stroke(255, 200, 100, 150);
+            strokeWeight(1.5);
+            noFill();
+
+            beginShape();
+            vertex(x, y);
+
+            for (let i = 0; i < maxSteps; i++) {
+                let E = electricFieldAt(x, y);
+
+                if (E.mag() < 0.01 || E.mag() > 1000) break;
+
+                E.normalize();
+                E.mult(stepSize * direction);
+
+                x += E.x;
+                y += E.y;
+
+                // Check if out of bounds
+                if (x < 0 || x > CANVAS_WIDTH || y < 0 || y > CANVAS_HEIGHT) break;
+
+                // Check if hit a negative charge
+                let hitNegative = false;
+                for (let c of charges) {
+                    if (c.q < 0 && dist(x, y, c.pos.x, c.pos.y) < c.radius + 3) {
+                        hitNegative = true;
+                        break;
+                    }
+                }
+                if (hitNegative) {
+                    vertex(x, y);
+                    break;
+                }
+
+                vertex(x, y);
+            }
+
+            endShape();
+        }
+
+        // ============================================
+        // PRESET CONFIGURATIONS
+        // ============================================
+
+        function loadPreset(preset) {
+            charges = [];
+
+            let cx = CANVAS_WIDTH / 2;
+            let cy = CANVAS_HEIGHT / 2;
+
+            switch(preset) {
+                case 'dipole':
+                    charges.push(new Charge(cx - 80, cy, chargeMagnitude, 0, 0, true));
+                    charges.push(new Charge(cx + 80, cy, -chargeMagnitude, 0, 0, true));
+                    break;
+
+                case 'quadrupole':
+                    charges.push(new Charge(cx - 80, cy - 80, chargeMagnitude, 0, 0, true));
+                    charges.push(new Charge(cx + 80, cy - 80, -chargeMagnitude, 0, 0, true));
+                    charges.push(new Charge(cx - 80, cy + 80, -chargeMagnitude, 0, 0, true));
+                    charges.push(new Charge(cx + 80, cy + 80, chargeMagnitude, 0, 0, true));
+                    break;
+
+                case 'chain':
+                    for (let i = 0; i < 6; i++) {
+                        let x = 150 + i * 80;
+                        let sign = (i % 2 === 0) ? 1 : -1;
+                        charges.push(new Charge(x, cy, sign * chargeMagnitude, 0, 0, true));
+                    }
+                    break;
+
+                case 'orbiting':
+                    // Heavy positive "nucleus" at center
+                    let nucleus = new Charge(cx, cy, chargeMagnitude * 3, 0, 0, true);
+                    nucleus.mass = 100;
+                    charges.push(nucleus);
+
+                    // Orbiting negative "electron"
+                    let orbitRadius = 100;
+                    let orbitSpeed = Math.sqrt(K_COULOMB * alpha * alphaMultiplier * 3 / orbitRadius) * 0.3;
+                    let electron = new Charge(cx + orbitRadius, cy, -chargeMagnitude, 0, orbitSpeed, false);
+                    electron.mass = 0.1;
+                    charges.push(electron);
+                    break;
+            }
+        }
+
+        function clearCharges() {
+            charges = [];
+        }
+
+        // ============================================
+        // P5.JS SETUP AND DRAW
+        // ============================================
+
+        function setup() {
+            let canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+            canvas.parent('canvas-container');
+
+            // Click to add charges
+            canvas.mousePressed(() => {
+                if (mouseX > 0 && mouseX < CANVAS_WIDTH && mouseY > 0 && mouseY < CANVAS_HEIGHT) {
+                    charges.push(new Charge(mouseX, mouseY, selectedChargeType * chargeMagnitude, 0, 0, false));
+                }
+            });
+
+            // Load dipole by default
+            loadPreset('dipole');
+
+            // Setup sliders
+            document.getElementById('alpha-slider').addEventListener('input', (e) => {
+                alphaMultiplier = parseFloat(e.target.value);
+                document.getElementById('alpha-value').textContent = alphaMultiplier.toFixed(1);
+            });
+
+            document.getElementById('charge-slider').addEventListener('input', (e) => {
+                chargeMagnitude = parseFloat(e.target.value);
+                document.getElementById('charge-value').textContent = chargeMagnitude.toFixed(1);
+            });
+
+            // Render formulas with KaTeX
+            katex.render('\\mathbf{F}_{\\text{elec}} = -q \\cdot \\nabla\\bar{q}',
+                document.getElementById('coulomb-formula'), { throwOnError: false });
+            katex.render('\\mathbf{F}_{\\text{mag}} = \\beta (\\nabla \\times \\mathbf{J}) \\times \\hat{\\mathbf{J}}',
+                document.getElementById('lorentz-formula'), { throwOnError: false });
+        }
+
+        function draw() {
+            background(15, 20, 35);
+
+            // Draw potential field if enabled
+            if (options.showPotential) {
+                drawPotentialField();
+            }
+
+            // Draw field lines if enabled
+            if (options.showFieldLines) {
+                drawFieldLines();
+            }
+
+            // Calculate forces
+            for (let i = 0; i < charges.length; i++) {
+                let totalForce = createVector(0, 0);
+
+                for (let j = 0; j < charges.length; j++) {
+                    if (i !== j) {
+                        let force = calculateCoulombForce(charges[i], charges[j]);
+                        totalForce.add(force);
+                    }
+                }
+
+                charges[i].applyForce(totalForce);
+            }
+
+            // Update and draw charges
+            let dt = 0.3;
+            for (let c of charges) {
+                c.update(dt);
+                c.draw();
+            }
+
+            // Info overlay
+            fill(255, 255, 255, 100);
+            noStroke();
+            textSize(12);
+            textAlign(LEFT, TOP);
+            text(`Charges: ${charges.length} | α × ${alphaMultiplier.toFixed(1)} = ${(alpha * alphaMultiplier).toFixed(6)}`, 10, 10);
+            text(`Click to add ${selectedChargeType > 0 ? 'positive (+)' : 'negative (−)'} charges`, 10, 28);
+        }
+
+        // ============================================
+        // UI HELPERS
+        // ============================================
+
+        function toggleOption(option) {
+            options[option] = !options[option];
+
+            let btnId = 'toggle-' + option.replace('show', '').toLowerCase();
+            let btn = document.getElementById(btnId);
+            if (btn) {
+                btn.classList.toggle('active', options[option]);
+            }
+
+            if (option === 'showTrails' && !options.showTrails) {
+                for (let c of charges) {
+                    c.trail = [];
+                }
+            }
+        }
+
+        function setChargeType(type) {
+            selectedChargeType = type;
+            document.getElementById('btn-positive').classList.toggle('active', type > 0);
+            document.getElementById('btn-negative').classList.toggle('active', type < 0);
+        }
+    </script>
+</body>
+</html>
