@@ -234,7 +234,7 @@ where x_+ and x_- are the roots of the master quadratic (the self-consistent cou
 
 **Honest assessment:** This is one of FTD's more speculative claims. Standard physics does not derive time from energy processing; it treats time as a parameter. FTD's claim that time IS processing is an interpretive choice, not a derivation.
 
-### 3.2 The master quadratic [THEOREM given Steps 6-7 of the chain]
+### 3.2 The master quadratic and its three regimes [THEOREM given Steps 6-7 of the chain]
 
 The self-consistency (gap) equation of the lattice is:
 
@@ -268,6 +268,14 @@ The roots are:
 | 10 | Physical identification x_+ = 1/alpha, x_- -> N_c | [SELECTION] |
 
 **Steps 0-5 are rock solid.** Steps 6-7 are the contested territory. Steps 8-9 are algebra. Step 10 is an identification, not a derivation.
+
+**The discriminant trichotomy** [THEOREM]: The generalized master quadratic $x^2 - kG^{*2}x + kG^{*3} = 0$ has discriminant $\Delta = kG^{*3}(kG^* - 4)$. One quadratic, three regimes:
+
+- $\Delta > 0$ ($k = 16$, physical): **real roots** — bosonic sector (coupling constants $\alpha$, $N_c$)
+- $\Delta = 0$ ($k = 4/G^*$, critical): **degenerate root** — the Born rule / measurement boundary
+- $\Delta < 0$ ($k < 4/G^*$): **complex roots** — the Dirac equation emerges; complex roots $x = a \pm bi$ yield $e^{ibt}$ oscillations, which IS the fermion wavefunction. The fermion sector is not imported from external physics — it is derived from the complex regime of the same master quadratic that produces $\alpha$ and $N_c$.
+
+The master quadratic does not just produce coupling constants. It produces the entire particle content: bosons (real roots), fermions (complex roots), and measurement (degenerate root) from ONE equation.
 
 ### 3.3 Determinism is a consequence [THEOREM given the Lagrangian]
 
@@ -465,7 +473,6 @@ This question is [OPEN] in the deepest possible sense.
 2. It does not close the partition function gap.
 3. It does not derive the coefficient 16.
 4. It does not explain why x_+ = 1/alpha rather than just some number.
-5. It does not address consciousness.
 
 ### The status of the claim
 
