@@ -1,0 +1,20 @@
+project:
+  output-dir: ../_webbook
+
+format:
+  html:
+    theme: default
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    code-fold: true
+    highlight-style: github
+    smooth-scroll: true
+    page-layout: article
+    grid:
+      sidebar-width: 280px
+      body-width: 800px
+      margin-width: 250px
+    css: styles.css
+    include-before-body: skip-link.html

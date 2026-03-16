@@ -1,0 +1,150 @@
+---
+title: "Chapter 28: The Scientific Revolution"
+---
+
+## Copernicus
+
+Nicolaus Copernicus (1473-1543) was a Polish churchman, trained in canon law and medicine, who devoted his life to a radical astronomical project: placing the sun at the center of the cosmos.
+
+His motivations were partly technical—the Ptolemaic system, with its epicycles upon epicycles, had become unwieldy. A sun-centered system was mathematically simpler.
+
+But his motivations were also philosophical. Copernicus was a student of Renaissance thought, familiar with Neoplatonic ideas that exalted the sun as the visible image of the divine. In his system, the sun ruled the cosmos as a king rules his court, radiating light and order.
+
+Copernicus delayed publication until the year of his death. He knew how radical his claim was. Yet he framed it not as contradiction but as restoration—a return to ancient truth. Some Pythagoreans, he noted, had taught that the Earth moved.
+
+The revolution began with an appeal to tradition.
+
+---
+
+## Kepler
+
+Johannes Kepler (1571-1630) was a German astronomer obsessed with the mathematical harmony of the cosmos.
+
+Kepler discovered that planetary orbits were not circles but ellipses—a finding that shattered the ancient ideal of perfect circular motion. Yet he saw this as revealing deeper harmony. His three laws of planetary motion—describing how planets move, how fast they move, and the relationship between orbital period and distance—were mathematical truths that God had embedded in creation.
+
+Kepler was a convinced Neoplatonist and Pythagorean. He believed that the universe was structured by geometry, that the five Platonic solids explained the spacing of the planets, that the ratios of planetary motions formed a celestial music.
+
+He was wrong about the Platonic solids. But he was right that mathematics governed the heavens. And his laws would become the foundation for Newton's synthesis.
+
+Kepler also worked on optics, on the geometry of snowflakes, on the stacking of spheres. Everywhere he looked, he found mathematical pattern. For him, science was a form of worship—the discovery of the divine mind's thoughts.
+
+---
+
+## Galileo
+
+Galileo Galilei (1564-1642), whom we met in Chapter 24, was the first to turn the new telescope to the sky.
+
+He saw mountains on the Moon (proving it was not a perfect sphere). He saw four moons orbiting Jupiter (proving that not everything orbited the Earth). He saw the phases of Venus (proving it orbited the sun). He saw countless stars invisible to the naked eye (proving the universe was far larger than imagined).
+
+Galileo was also a physicist. He studied falling bodies, projectile motion, the pendulum, the resistance of materials. He developed the method of idealization—imagining frictionless surfaces, perfect spheres, conditions that never exist in nature but that reveal the underlying mathematical law.
+
+His famous claim: the book of nature is written in the language of mathematics.
+
+This is the Platonic-Pythagorean tradition expressed in new form. Nature is mathematical. To know nature, you must know mathematics.
+
+But Galileo was also combative, political, and contemptuous of those who disagreed with him. His conflict with the Church was not merely intellectual but personal. His condemnation in 1633 made him a martyr to science—but also deepened the rift between science and religion.
+
+---
+
+## Descartes
+
+René Descartes (1596-1650) built a new philosophy on a new foundation.
+
+His method was doubt. Strip away everything that can be doubted—sense experience (which deceives), memory (which errs), even mathematics (what if an evil demon is tricking you?). What remains?
+
+*Cogito, ergo sum*—I think, therefore I am. The one thing that cannot be doubted is the existence of the doubter. From this foundation, Descartes rebuilt knowledge.
+
+But his reconstruction divided reality into two substances:
+
+- **Res cogitans**: Thinking substance, mind, consciousness—unextended, immaterial
+- **Res extensa**: Extended substance, matter, body—spatial, mechanical
+
+This is **Cartesian dualism**. Mind and matter are fundamentally different. The body is a machine; the mind is... something else, interacting with the body through the pineal gland.
+
+The consequences were profound:
+
+- **Nature is mechanical**: Animals are automata, lacking true feeling. Nature is dead matter in motion.
+- **Mind is separate**: Consciousness is not part of nature but mysteriously connected to it.
+- **Science studies matter**: The proper domain of natural philosophy is res extensa—the quantifiable, mechanical world.
+
+Descartes solved the problem of how to do science: study matter as pure mechanism, leave mind to the philosophers and theologians. But he created the "mind-body problem" that philosophy has struggled with ever since.
+
+---
+
+## Newton
+
+Isaac Newton (1642-1727) achieved the great synthesis.
+
+In the *Principia Mathematica* (1687), Newton unified terrestrial and celestial mechanics. The same force that makes an apple fall pulls the Moon in its orbit and keeps the planets circling the sun. This force—gravity—follows an inverse-square law: it decreases with the square of distance.
+
+Newton formulated three laws of motion:
+1. A body at rest stays at rest; a body in motion continues in uniform motion unless acted upon by a force
+2. Force equals mass times acceleration (F = ma)
+3. Every action has an equal and opposite reaction
+
+From these laws and the law of gravity, virtually all known astronomical and mechanical phenomena could be derived. The success was staggering.
+
+The Newtonian universe was:
+
+- **Absolute**: Space and time were containers, independent of their contents
+- **Deterministic**: Given the positions and velocities of all particles, the future was in principle calculable
+- **Mechanical**: The universe ran like a clock, requiring no ongoing divine intervention
+- **Mathematical**: The laws were equations, precise and universal
+
+This was the "clockwork universe"—beautiful, elegant, and cold.
+
+---
+
+## Newton's Secret
+
+Newton was not, however, the pure rationalist he is often portrayed as.
+
+He devoted more time to alchemy than to physics. He wrote millions of words on biblical prophecy and chronology. He studied the dimensions of Solomon's Temple, believing they encoded cosmological secrets. He considered the ancient Egyptians and Chaldeans to have possessed genuine knowledge, later corrupted.
+
+Newton believed he was recovering ancient wisdom, not inventing new. His physics was, to him, the rediscovery of truths known to the ancients in purer form.
+
+John Maynard Keynes, who purchased Newton's alchemical manuscripts, wrote:
+
+> *"Newton was not the first of the age of reason. He was the last of the magicians."*
+
+The founding father of modern science was also an inheritor of the perennial tradition—a secret he kept from all but a few intimates.
+
+---
+
+## The Divorce
+
+The Scientific Revolution established a new paradigm: the world as machine, matter as inert, mathematics as the language of nature.
+
+This paradigm was spectacularly successful. It explained phenomena that had puzzled humanity for millennia. It predicted new phenomena with uncanny accuracy. It laid the foundation for technology that would transform human life.
+
+But it came at a cost.
+
+**Spirit was exiled**: In the mechanical universe, there was no room for soul, for purpose, for meaning. These became "subjective"—real to the experiencer but not part of the objective world.
+
+**The sacred was silenced**: Nature, once the garment of God, became a resource to be exploited. The enchanted world became the disenchanted world.
+
+**Science and religion split**: They became "separate magisteria"—science for facts, religion for values. But this truce was unstable, because each side kept trespassing on the other's territory.
+
+**The perennial tradition went underground**: The synthesis of spirit and matter, of inner and outer, of the living cosmos—this had no place in the official worldview. It survived in esoteric circles, in poetry, in the margins.
+
+The divorce was not complete. Many scientists remained religious. Many philosophers sought synthesis. But the official culture of modernity declared: the universe is a machine, and you are a ghost in a machine.
+
+---
+
+## Key Points
+
+- The Scientific Revolution (1543-1687) transformed the Western worldview
+- Copernicus placed the sun at the center, motivated by mathematical simplicity and Neoplatonic ideals
+- Kepler discovered elliptical orbits and sought mathematical harmony in the cosmos
+- Galileo used the telescope, developed experimental physics, and championed mathematics as nature's language
+- Descartes divided reality into mind (res cogitans) and matter (res extensa)—Cartesian dualism
+- Newton unified terrestrial and celestial mechanics with laws of motion and gravity
+- The Newtonian universe was deterministic, mechanical, and governed by mathematical law
+- Newton himself was an alchemist and student of ancient wisdom—"the last of the magicians"
+- The mechanical worldview exiled spirit, silenced the sacred, and divorced science from meaning
+- The perennial tradition survived in margins, esoteric circles, and poetry
+
+---
+
+*Chapter 29: Darwin — The Living Machine*
+

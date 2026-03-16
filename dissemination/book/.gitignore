@@ -1,0 +1,39 @@
+# Quarto build outputs
+/_book/
+/_site/
+/.quarto/
+/_freeze/
+
+# Rendered outputs (can be regenerated)
+*.html
+*.pdf
+*.epub
+!The_Golden_Thread.html
+!The_Golden_Thread.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.env
+.venv
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+**/*.quarto_ipynb
