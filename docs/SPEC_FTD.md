@@ -709,7 +709,7 @@ The lemniscatic constant G* is now **derived from FTD axioms**, not merely obser
 2. **Γ(1/4)² factor**: Lattice regularization → elliptic integral K(1/√2)
 3. **Coefficient 16**: Physical degrees of freedom on 2×2×2 minimal lattice (24 - 7 - 1 = 16)
 
-The master quadratic:
+The master quadratic (degree 2 is forced by self-referential closure of the ternary constraint AND by the degree-2 CM field $\mathbb{Q}(i)$; see [DERIV_QUADRATIC_NECESSITY.md](docs/theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md)):
 
 $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
 

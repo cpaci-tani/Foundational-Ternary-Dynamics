@@ -56,10 +56,11 @@ From void to physics — the emergence story.
 | 2.9 | [FOUND_LADDER_GENERATING_RULE.md](02_foundations/FOUND_LADDER_GENERATING_RULE.md) | **The Ladder's Generating Rule:** Why alpha-power exponents are {1,2,3,4,8,11,14,20}; two regimes (perturbative gaps=1, structural gaps={N_base,N_c,N_c,N_f}); total gap = 16 = k_phys (five independent characterizations); n_gravity = n_perturbative + k_phys = 4+16=20; k_phys*k_cons = 2^D = 8; **x+/x- = (1+δ)/(1-δ) exactly** [THEOREM]; SM walk adds features in complexity order. 10 claims (LGR-1 to LGR-10) |
 | 2.10 | [FOUND_FORCE_STRUCTURE.md](02_foundations/FOUND_FORCE_STRUCTURE.md) | **The Force Structure:** One equation, four forces. G* → x+(EM, weak, gravity via α-powers) + x-(strong via N_c). Forces as dual-substrate modes: \|J\|=gravity, J=EM, J_L-J_R=weak, J_R axis=strong. Hierarchy problem dissolved (α^16 = SM walk). EM dominance from G*>>1/4. Algebraic unity (not GUT). 7 claims (FST-1 to FST-7) |
 | 2.11 | [FOUND_META_PATTERNS.md](02_foundations/FOUND_META_PATTERNS.md) | **Boundary selection patterns:** Unifying metapatterns across FTD derivations |
+| 2.12 | [FOUND_BORN_RULE_NULL_CONE.md](02_foundations/FOUND_BORN_RULE_NULL_CONE.md) | **Born rule as null-cone geometry:** i² + a² + b² = 0 encodes Born rule, Pythagorean theorem, Riemann sphere, Wick rotation, and null cone simultaneously; explains why P = \|ψ\|² is quadratic |
 
 ---
 
-## 3. Core Physics Derivations (25)
+## 3. Core Physics Derivations (26)
 
 Physics from first principles.
 
@@ -93,10 +94,12 @@ Physics from first principles.
 | 3.26 | [DERIV_LATTICE_BLACK_HOLES.md](03_derivations/DERIV_LATTICE_BLACK_HOLES.md) | **Consolidated:** Schwarzschild + Kerr + Reissner-Nordström from lattice computational budget (replaces 3.5, 3.9, 3.13) |
 | 3.27 | [DERIV_LATTICE_QED_COMPLETE.md](03_derivations/DERIV_LATTICE_QED_COMPLETE.md) | **Complete one/two-loop QED renormalization on lattice** |
 | 3.28 | [DERIV_PION_MASS_FROM_GSTAR.md](03_derivations/DERIV_PION_MASS_FROM_GSTAR.md) | Pion mass derived from G* |
+| 3.29 | [DERIV_QUADRATIC_NECESSITY.md](03_derivations/DERIV_QUADRATIC_NECESSITY.md) | **Why quadratic:** Two independent proofs (ontological self-reference + CM field degree) that the master equation must be degree 2; addresses SP2 |
+| 3.30 | [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) | **Gap equation:** Master quadratic as lattice self-consistency equation x²=32πW₃(x-G\*); BCS analogy; 9-step chain from Z to α with honest tagging; connects Watson identity, quadratic necessity, Born rule, and force structure |
 
 ---
 
-## 4. Coupling Constants and Precision (8)
+## 4. Coupling Constants and Precision (9)
 
 The lemniscatic structure and α derivation.
 
@@ -110,6 +113,8 @@ The lemniscatic structure and α derivation.
 | 4.6 | [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) | Master quadratic as discrete-continuous bridge; PF decomposition of Vieta relations, precision formula, theta self-duality |
 | 4.7 | [DERIV_COSMOLOGICAL_CONSTANT.md](04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md) | Cosmological constant Λ from lattice vacuum energy [SELECTION]; supersedes DERIV_VACUUM_ENERGY_FORMULA v1.0 |
 | 4.8 | [DERIV_PLANCK_MASS_AND_LAMBDA_QCD.md](04_coupling/DERIV_PLANCK_MASS_AND_LAMBDA_QCD.md) | Closing the external input loop: Λ_QCD [THEOREM] + M_P self-consistency [SELECTION] |
+| 4.9 | [DERIV_ALPHA_LATTICE_MECHANISM.md](04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md) | **Physical mechanism:** Z³ → cuboctahedron → CM curve → G* → α; traces the complete chain from lattice axiom to fine structure constant; addresses SP4 |
+| 4.10 | [DERIV_WATSON_GSTAR_IDENTITY.md](04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) | **W₃ = G\*²/(2π):** The Watson integral (3D cubic lattice self-energy) IS a G\*-derived quantity [THEOREM]; 1/α + N_c = 32πW₃; master quadratic coefficients built from lattice self-energy; the lattice and the lemniscate share the quartic integral I₄ |
 
 ---
 
@@ -190,6 +195,7 @@ Number theory and special functions.
 | 9.11 | [EXPLR_PARTITION_PRIME_DETECTION.md](09_mathematical/EXPLR_PARTITION_PRIME_DETECTION.md) | **Partition-prime connections (Craig–van Ittersum–Ono, PNAS 2024):** Prime-detecting polynomial factors as (n-1)(n-2)(N_c·n - N_base) [THEOREM]; σ₁ at FTD primes returns framework quantities (σ₁(3)=4, σ₁(7)=8, σ₁(13)=14) [THEOREM]; Ramanujan coefficient 7/10 = b₃/(b₃+N_c) [THEOREM]; H_k weights match FTD DoF; MacMahonesque algebra Z_q as algebraic home for lemniscatic transform; 42-chain as partition-zero counting; 960 = 48×20 (lattice multiplicity × n_gravity). 10 claims (PPD-1 to PPD-9, PPD-2b) |
 | 9.12 | [EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md](09_mathematical/EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md) | Kinematic topology of Fourcier lobes |
 | 9.13 | [EXPLR_HALF_MOBIUS_LEMNISCATE.md](09_mathematical/EXPLR_HALF_MOBIUS_LEMNISCATE.md) | Discriminant trichotomy via molecular orbital analogy |
+| 9.14 | [DERIV_LFUNCTION_GSTAR_CONNECTION.md](09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md) | **L-function connection:** G\* = 8L(E,1)/sqrt(pi) [THEOREM]; 16 = torsion² from BSD; Hecke eigenvalues at framework primes (3,7,47 supersingular; 13 ordinary with a₁₃=2N_c); open question connecting Z_FTD to Langlands program |
 
 ---
 

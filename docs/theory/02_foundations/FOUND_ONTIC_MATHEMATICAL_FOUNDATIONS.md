@@ -183,11 +183,18 @@ M = 1.1981...
 ▼
 G* = 2.9587...
 │
+│  [Watson-G* Identity: W₃ = G*²/(2π) = Γ(1/4)⁴/(4π³)]
+│  [The 3D cubic lattice self-energy IS a G*-derived quantity]
+│
 │  [Master quadratic: x² - 16G*²x + 16G*³ = 0]
-│  [Coefficient 16 = N_base² from lattice DoF]
+│  [Degree 2: self-referential closure + CM field degree]
+│  [Coefficient 16 = |Aut(E)|² where E: y²=x³-x]
+│  [Vieta sum: x₊+x₋ = 16G*² = 32πW₃]
 ▼
 x₊ = 137.036...  ≈  1/α
 x₋ = 3.024...    ≈  N_c
+│
+│  [1/α + N_c = 32π × (Watson integral of Z³)]
 │
 │  [4-term precision formula with ε = e^π - π - 20]
 ▼
