@@ -140,6 +140,22 @@ inline constexpr double PI = 4.0 * VARPI * VARPI / (G_STAR * G_STAR);
 // on each face of the cubic lattice. PF = π/4 = ϖ²/G*²
 inline constexpr double PF = PI / 4.0;
 
+// THE WATSON-G* IDENTITY [THEOREM — DERIV_WATSON_GSTAR_IDENTITY.md]:
+//   W₃ = G*²/(2π) = Γ(1/4)⁴/(4π³)
+//
+// W₃ is the Watson integral (Watson, 1939): the self-energy of the 3D
+// cubic lattice propagator. It is a fundamental constant of lattice
+// field theory, computed as the Green's function at the origin on Z³.
+//
+// This identity means G* is INTRINSIC to the cubic lattice — the lattice
+// "knows about" G* through its own Green's function. Both W₃ and G*
+// derive from the quartic integral I₄, which is their common ancestor.
+//
+// Key consequence: x₊ + x₋ = 16G*² = 32πW₃, so
+//   1/α + N_c = 32π × (3D cubic lattice self-energy)
+//
+inline constexpr double W_3 = G_STAR * G_STAR / (2.0 * PI);
+
 // The time operator: √G*
 // Each G*-tick divides into two √G* sub-ticks (Read and Write phases).
 inline constexpr double SQRT_GSTAR = 1.720079974649039;
@@ -174,6 +190,14 @@ inline constexpr double GSTAR_ACTION = G_STAR * G_STAR * G_STAR;    // G*³ per 
 // The critical coefficient k_crit = 4/G* is the boundary where i appears.
 // Below this threshold, self-reference forces the algebra out of R into C.
 //
+// NULL CONE GEOMETRY [THEOREM — FOUND_BORN_RULE_NULL_CONE.md]:
+//   At the critical point, the Born rule emerges from the null-cone
+//   equation i² + a² + b² = 0. This single equation simultaneously
+//   encodes: the unit circle (U(1) phase), the Pythagorean theorem,
+//   the Riemann sphere (spinors), and the Wick rotation between
+//   Euclidean (probability) and Lorentzian (causality) signatures.
+//   P = |ψ|² is quadratic because it IS the null-cone's quadratic form.
+//
 // The ternary states {-1, 0, +1} map to complex geometry:
 //   +1  =  e^{i·0}     (zero rotation: matter)
 //   -1  =  e^{iπ}      (half rotation: antimatter)
@@ -203,14 +227,28 @@ inline constexpr double X_BORN = 2.0 * G_STAR;
 // The master quadratic equation:
 //   x² - 16·G*²·x + 16·G*³ = 0
 //
-// Coefficient 16 = N_BASE² = 2^(D+1) comes from the number of physical
-// degrees of freedom on the minimal 2×2×2 lattice: 24 - 7 - 1 = 16
-// (24 total components, 7 gauge constraints, 1 global phase).
+// WHY QUADRATIC (degree 2) [THEOREM — DERIV_QUADRATIC_NECESSITY.md]:
+//   Proof 1: Self-referential closure of the ternary constraint
+//            0 = (-1) + (+1) doubles degree from 1 to 2.
+//   Proof 2: CM field Q(i) has degree 2 over Q; Schneider-Chudnovsky
+//            bounds algebraic relations to degree ≤ 2.
+//
+// WHY COEFFICIENT 16 [MOTIVATED — MATH_MASTER_QUADRATIC.md §4]:
+//   |Aut(E)|² = 4² = 16 where E: y²=x³-x has Aut = {1,-1,i,-i} ≅ Z₄.
+//   Also: N_BASE² = 4², conductor/2 = 32/2 = 16, |Δ|/4 = 64/4 = 16.
+//   DOF counting in TEMPORAL GAUGE (the ontological gauge of FTD):
+//   FTD's flux J is a spatial 3-vector with no temporal component
+//   (Postulate 2: discrete time with global clock ≡ A₀ = 0).
+//   On the 2×2×2 torus: 24 total - 7 Gauss constraints - 1 pure gauge = 16.
+//   (Coulomb gauge gives 14, but temporal gauge is ontologically forced.)
+//
+// LATTICE CONNECTION [THEOREM — DERIV_WATSON_GSTAR_IDENTITY.md]:
+//   x₊ + x₋ = 16G*² = 32πW₃ (Watson integral of the 3D cubic lattice)
 //
 // Roots via quadratic formula:
-//   x± = 8G*² ± 8G*²·√(1 - 1/G*)
+//   x± = 8G*² ± 4G*^(3/2)·√(4G* - 1)
 
-inline constexpr int COEFFICIENT = 16;  // N_BASE² = 2^(D+1)
+inline constexpr int COEFFICIENT = 16;  // |Aut(E)|² where E: y²=x³-x
 
 inline constexpr double X_PLUS  = 137.0361714582;   // tree-level 1/α
 inline constexpr double X_MINUS = 3.0239639163;      // N_c root

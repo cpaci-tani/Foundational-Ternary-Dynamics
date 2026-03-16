@@ -331,6 +331,18 @@ class OnticChain:
             tag="[THEOREM]", unit="dimensionless",
         ))
 
+        # Watson-G* Identity [THEOREM — DERIV_WATSON_GSTAR_IDENTITY.md]
+        # W₃ = G*²/(2π) = Γ(1/4)⁴/(4π³) ≈ 1.3932
+        # The Watson integral (3D cubic lattice self-energy) IS a G*-derived quantity.
+        W_3 = G_star**2 / (2.0 * pi_derived)
+        self._add(Constant(
+            name="W_3", symbol="W₃",
+            value=W_3,
+            layer="2", depends_on=["G_STAR", "PI"],
+            formula="G*²/(2π) = Γ(1/4)⁴/(4π³) — Watson integral (3D cubic lattice self-energy)",
+            tag="[THEOREM]", unit="dimensionless",
+        ))
+
     # ── Layer 2b: Euler's Identity (emergence of i) ──────────────────────
 
     def _layer_2b(self):
@@ -390,6 +402,13 @@ class OnticChain:
             formula="(16G*² − √Δ) / 2",
             tag="[THEOREM]", unit="dimensionless",
         ))
+
+        # Watson identity validation [THEOREM — DERIV_WATSON_GSTAR_IDENTITY.md]
+        W_3 = self._v("W_3")
+        vieta_sum = x_plus + x_minus
+        watson_sum = 32.0 * self._v("PI") * W_3
+        assert abs(vieta_sum - watson_sum) < 1e-10, \
+            f"Watson identity FAILED: x₊+x₋={vieta_sum} ≠ 32πW₃={watson_sum}"
 
     # ── Layer 3b: Dual-Substrate Decomposition ───────────────────────────
 

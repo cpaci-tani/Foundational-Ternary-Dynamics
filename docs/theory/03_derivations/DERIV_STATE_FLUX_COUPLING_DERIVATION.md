@@ -348,9 +348,9 @@ The derivation uses:
 |-----------|-----------------|----------------|
 | α = 1/137.036 | [THEOREM] | [THEOREM] |
 | N_c = 3 | [THEOREM] | [THEOREM] |
-| g_c = √α | **[IMPOSED]** | **[THEOREM]** |
+| g_c = √α | **[IMPOSED]** | **[SELECTION]** — see DERIV_MASTER_QUADRATIC_GAP_EQUATION.md |
 
-**All coupling constants are now derived.**
+**Note (v5.29):** The upgrade of g_c from [IMPOSED] to [THEOREM] was premature. The self-consistency attempts in Parts III and V of this document produced incorrect values. The identification g_c² = α = 1/x₊ is [SELECTION], supported by the gap equation structure but not derived from the partition function. See DERIV_MASTER_QUADRATIC_GAP_EQUATION.md for the honest chain.
 
 ### 9.3 The Physical Picture
 
@@ -394,10 +394,10 @@ This matches α_s(M_Z) ≈ 0.118 to 0.6%.
 | **GC-1** | g_c is dimensionless in natural units | **[THEOREM]** |
 | **GC-2** | Transition amplitude = g_c | **[DEFINITION]** |
 | **GC-3** | Probability = g_c² (Born rule) | **[THEOREM]** |
-| **GC-4** | Total modes = x₊ = 137.036 | **[THEOREM]** |
-| **GC-5** | g_c² = 1/x₊ = α | **[THEOREM]** |
-| **GC-6** | g_c = √α = 0.0854 | **[THEOREM]** |
-| **GC-7** | FTD reproduces QED coupling | **[THEOREM]** |
+| **GC-4** | Total modes = x₊ = 137.036 | **[SELECTION]** — requires gap equation (see DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) |
+| **GC-5** | g_c² = 1/x₊ = α | **[SELECTION]** — physical identification, not derived from partition function |
+| **GC-6** | g_c = √α = 0.0854 | **[SELECTION]** — follows from GC-5 |
+| **GC-7** | FTD reproduces QED coupling | **[SELECTION]** — conditional on GC-5 |
 
 ---
 
