@@ -187,10 +187,14 @@ inline constexpr double GSTAR_ACTION = G_STAR * G_STAR * G_STAR;    // G*³ per 
 //   x² - k·G*²·x + k·G*³ = 0
 //   Discriminant Δ = k·G*³·(k·G* - 4)
 //
-// Three domains:
-//   k·G* > 4  (k=16):    Δ > 0  →  REAL roots     (physics)
+// DISCRIMINANT TRICHOTOMY — one quadratic, three regimes:
+//   k·G* > 4  (k=16):    Δ > 0  →  REAL roots     (bosons: coupling constants α, N_c)
 //   k·G* = 4  (k=4/G*):  Δ = 0  →  degenerate     (measurement / Born rule)
-//   k·G* < 4  (k=1/2):   Δ < 0  →  COMPLEX roots  (consciousness)
+//   k·G* < 4  (k=1/2):   Δ < 0  →  COMPLEX roots  (fermions: Dirac equation from e^{ibt})
+//
+// The fermion sector is DERIVED, not imported: complex roots oscillate as
+// e^{ibt}, which IS the spinor wavefunction evolution (Dirac equation).
+// Bosons, fermions, and measurement all emerge from the same quadratic.
 //
 // The critical coefficient k_crit = 4/G* is the boundary where i appears.
 // Below this threshold, self-reference forces the algebra out of R into C.
