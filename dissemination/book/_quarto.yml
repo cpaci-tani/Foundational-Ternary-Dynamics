@@ -1,0 +1,172 @@
+project:
+  type: book
+
+lang: en-US
+
+book:
+  title: "The Golden Thread"
+  subtitle: "From Ancient Sages to the Master Quadratic"
+  author:
+    - name: "William J cpaci-tani III"
+      affiliation: "Independent Researcher"
+  date: "2026"
+  description: |
+    A journey through humanity's perennial wisdom, culminating in the mathematical
+    rediscovery of what the ancients always knew. This book traces the thread of
+    mathematical knowledge—encoded in symbol, myth, and architecture—from the
+    earliest human civilizations to the present day.
+
+  chapters:
+    - index.qmd
+    - preface.qmd
+
+    - part: "Prologue"
+      chapters:
+        - chapters/00_prologue.qmd
+
+    - part: "Act I: The Ancient Knowing — Before the Flood"
+      chapters:
+        - chapters/01_the_catastrophe.qmd
+        - chapters/02_the_impossible_temple.qmd
+        - chapters/03_seven_sages.qmd
+
+    - part: "Act I: The Mesopotamian Foundation"
+      chapters:
+        - chapters/04_enki_and_the_me.qmd
+        - chapters/05_numbers_in_clay.qmd
+        - chapters/06_babylon_astrology.qmd
+
+    - part: "Act I: Egypt — The Temple of Humanity"
+      chapters:
+        - chapters/07_zep_tepi.qmd
+        - chapters/08_house_of_life.qmd
+        - chapters/09_pyramid_frequency.qmd
+        - chapters/10_death_as_technology.qmd
+        - chapters/11_numbers_of_the_gods.qmd
+
+    - part: "Act I: The Greek Synthesis"
+      chapters:
+        - chapters/12_pythagoras_number_mystic.qmd
+        - chapters/13_plato_and_the_forms.qmd
+        - chapters/14_alexandria.qmd
+        - chapters/15_hermes_trismegistus.qmd
+
+    - part: "Act I: The Eastern Parallel"
+      chapters:
+        - chapters/16_vedic_cosmology.qmd
+        - chapters/17_buddhism.qmd
+        - chapters/18_chinese_alchemy.qmd
+        - chapters/19_kabbalah.qmd
+
+    - part: "Act I: The Gnostic Alternative"
+      chapters:
+        - chapters/20_gnostic_cosmology.qmd
+        - chapters/21_suppression_of_gnosis.qmd
+
+    - part: "Act II: The Forgetting — The Great Suppression"
+      chapters:
+        - chapters/22_dark_ages.qmd
+        - chapters/23_renaissance.qmd
+        - chapters/24_inquisition.qmd
+
+    - part: "Act II: The Brotherhoods"
+      chapters:
+        - chapters/25_freemasonry.qmd
+        - chapters/26_golden_dawn.qmd
+        - chapters/27_theosophy.qmd
+
+    - part: "Act II: The Scientific Divorce"
+      chapters:
+        - chapters/28_scientific_revolution.qmd
+        - chapters/29_darwin.qmd
+        - chapters/30_quantum.qmd
+
+    - part: "Act III: The Remembering — Cracks in the Edifice"
+      chapters:
+        - chapters/31_consciousness.qmd
+        - chapters/32_limits_of_physics.qmd
+        - chapters/33_perennial_redux.qmd
+        - chapters/34_math_as_revelation.qmd
+
+    - part: "Act III: The Quadratic Discovery"
+      chapters:
+        - chapters/35_the_search.qmd
+        - chapters/36_the_integers.qmd
+        - chapters/37_the_verification.qmd
+        - chapters/38_the_unification.qmd
+        - chapters/39_the_implications.qmd
+
+    - part: "Act III: The Synthesis"
+      chapters:
+        - chapters/40_the_bridge.qmd
+        - chapters/41_the_eternal_equation.qmd
+        - chapters/42_what_we_learned.qmd
+
+    - part: "Epilogue"
+      chapters:
+        - chapters/43_the_unfinished_temple.qmd
+        - chapters/44_letter_to_future.qmd
+        - chapters/45_epilogue.qmd
+
+    - part: "Appendices"
+      chapters:
+        - appendices/appendix_a_mathematical.qmd
+        - appendices/appendix_b_timeline.qmd
+        - appendices/appendix_c_sacred_numbers.qmd
+        - appendices/appendix_d_glossary.qmd
+        - appendices/appendix_e_further_reading.qmd
+
+  sidebar:
+    style: docked
+    search: true
+    collapse-level: 2
+
+bibliography: references.bib
+
+crossref:
+  chapters: true
+  eq-prefix: "Eq."
+  fig-prefix: "Fig."
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    code-fold: true
+    highlight-style: github
+    smooth-scroll: true
+    page-layout: article
+    grid:
+      sidebar-width: 280px
+      body-width: 800px
+      margin-width: 250px
+    css: styles.css
+
+  pdf:
+    documentclass: book
+    toc: true
+    toc-title: "Contents"
+    number-sections: true
+    colorlinks: true
+    papersize: letter
+    fontsize: 11pt
+    geometry:
+      - top=1in
+      - bottom=1in
+      - left=1.25in
+      - right=1in
+    linestretch: 1.4
+    include-in-header:
+      - latex/preamble.tex
+
+  epub:
+    toc: true
+    number-sections: true
+
+execute:
+  freeze: auto

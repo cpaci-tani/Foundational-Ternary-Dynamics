@@ -1,0 +1,618 @@
+% ======================================================================
+%  ON THE ONTIC INCOMPLETENESS OF DISCRETE DETERMINISTIC SYSTEMS
+%
+%  Author: William J. cpaci-tani III
+%  March 2026
+%
+%  Target: Foundations of Physics (Springer)
+%  Version: Editorial revision 3 (structural reorganization)
+% ======================================================================
+
+\documentclass[11pt,letterpaper]{article}
+
+% ---- Packages ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=green!40!black,urlcolor=blue!70!black]{hyperref}
+
+% ---- Page geometry ----
+\geometry{letterpaper, margin=1.15in, top=1.3in, bottom=1.3in}
+\setstretch{1.15}
+
+% ---- Headers ----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{cpaci-tani}}
+\fancyhead[R]{\small\textit{Ontic Incompleteness}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---- Section formatting ----
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+
+% ---- Theorem environments (shared counter) ----
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiomenv}[theorem]{Axiom}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% ---- Shorthand ----
+\newcommand{\Lattice}{\Lambda}
+\newcommand{\Void}{\mathcal{V}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\KB}{K_B}
+
+% ======================================================================
+\begin{document}
+
+% ---- Title block ----
+\begin{center}
+{\Large\bfseries ON THE ONTIC INCOMPLETENESS\\[4pt] OF DISCRETE DETERMINISTIC SYSTEMS}
+
+\vspace{12pt}
+{\itshape The Initial Conditions Problem, Ontological Separation of Law\\
+and Boundary Data, with an Application to the Past Hypothesis}
+
+\vspace{16pt}
+{\scshape William J.\ cpaci-tani~III}
+
+\vspace{4pt}
+{\itshape Foundational Ternary Dynamics}
+
+\vspace{4pt}
+March 2026
+\end{center}
+
+\vspace{12pt}
+
+% ---- Abstract ----
+\noindent\textbf{Abstract.}
+We construct a minimal ontic logic for discrete deterministic systems and prove that any such system is ontically incomplete: its dynamics cannot determine its own initial conditions. We establish an ontological separation theorem: the complete specification of a discrete deterministic system is the ordered pair $(f, C_0)$ of dynamical law and boundary datum, and these two structures are provably independent. Using algorithmic information theory, we prove a boundary information dominance result: for a typical initial configuration, $K(C_0) \gg K(f)$. We then prove a structural unavoidability theorem: no local translation-invariant rule can determine a generic initial configuration, yielding a trilemma---any principle that determines $C_0$ must be nonlocal, translation-variant, or carry system-scale information. We apply this framework to the Past Hypothesis and argue that the epistemological status of these results is that of proved theorems, not falsifiable hypotheses. All claims are conditional on the axioms stated.
+
+\vspace{6pt}
+\noindent\textbf{Keywords:} ontic incompleteness, Kolmogorov complexity, initial conditions, translation invariance, cellular automata, Past Hypothesis, ontological separation
+
+\vspace{6pt}
+\noindent\textbf{PACS:} 03.65.Ta, 05.45.-a, 89.70.Cf
+
+\vspace{14pt}
+
+
+% ======================================================================
+\section{Introduction}
+% ======================================================================
+
+Every deterministic dynamical system requires two independent inputs: a law governing transitions and a specification of the initial state. This separation is familiar from differential equations (where the equation determines evolution but not boundary values), from Hamiltonian mechanics (where the flow on phase space is fixed but the initial point is free), and from quantum mechanics (where the Schr\"odinger equation governs the wave function but does not determine it at $t = 0$). What is less often appreciated is that in a \emph{discrete} deterministic system, this separation can be made exact: there is a first tick, it has a definite configuration, and nothing within the dynamics produces it.
+
+This paper proves three results about discrete deterministic systems satisfying five explicit axioms (finitude, discreteness, determinism, locality, causal closure). First, the initial configuration $C_0$ is not derivable from the update map $f$: the system is \emph{ontically incomplete} (Theorem~\ref{thm:incompleteness}). Second, the boundary datum generically carries overwhelmingly more information than the law: $K(C_0) \gg K(f)$ (Theorem~\ref{thm:dominance}). Third, no local translation-invariant rule can bridge this gap, yielding a trilemma: any principle that determines $C_0$ must be nonlocal, translation-variant, or carry system-scale information (Corollary~\ref{cor:trilemma}). We further show (Section~\ref{sec:generalized}) that for local translation-invariant dynamics, Ontic Incompleteness can be established without any temporal assumption: information-theoretic and symmetry arguments yield the same conclusion from A1 and A4 alone.
+
+We introduce the \emph{Void} $V$ as the unique configuration where every vertex has state $s_v = 0$ and flux $J(v) = \mathbf{0}$. Under generic dynamics, $V$ is a fixed point: a system initialized at the Void remains void for all time. The observed universe is not void; therefore the initial configuration $C_0 \neq V$. This is the most elementary empirical result available---something exists---and it is sufficient to launch the entire argument.
+
+\subsection{Notation}
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}cp{10.5cm}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Definition} \\
+\midrule
+$\Lattice$ & The substrate: a finite three-dimensional cubic lattice, $\Lattice \subset \Integer^3$ \\
+$v$ & A vertex (site) of $\Lattice$ \\
+$S$ & The state space at each vertex: $S = \{-1, 0, +1\}$ \\
+$J(v)$ & The flux field at vertex $v$: a vector in $\Real^3$ encoding energy density \\
+$C(t)$ & The total configuration at tick $t$: $C(t) = \{(s_v, J_v) \mid v \in \Lattice\}$ \\
+$\Omega$ & The configuration space: the set of all possible configurations $C$ \\
+$f$ & The update map: $f \colon \Omega \to \Omega$, deterministic, time-independent \\
+$t$ & Discrete time index: $t \in \Natural = \{0, 1, 2, \ldots\}$ \\
+$C_0$ & The initial configuration: $C(0) = C_0 \in \Omega$ \\
+$V$ & The Void: the unique configuration with $s_v = 0$, $J(v) = \mathbf{0}$ for all $v$ \\
+$\Sigma$ & Boundary data: $\Sigma := C_0$ (the independent structure completing system specification) \\
+$K(x)$ & Kolmogorov complexity of $x$: length of the shortest program producing $x$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Standard logical connectives: $\vdash$ (provable from), $\nvdash$ (not provable from), $\exists!$ (unique existence), $\Rightarrow$ (entails).
+
+\medskip
+\noindent\textit{Structure of the paper.} Section~2 states the axioms. Section~3 proves the Ontic Incompleteness theorem, including two generalizations independent of discrete time (Section~\ref{sec:generalized}). Sections~4--6 establish the Ontological Separation, Boundary Information Dominance, and Structural Unavoidability. Section~7 classifies the epistemological status of each result. Section~8 applies the framework to the Past Hypothesis. Section~9 summarizes and states limitations. Appendix~A develops the aggregation hierarchy.
+
+
+% ======================================================================
+\section{Axioms of a Discrete Deterministic System}
+% ======================================================================
+
+We state five axioms constituting the minimal conditions under which a discrete deterministic system is well-defined.
+
+\begin{axiomenv}[\textbf{A1: Finitude}]
+The substrate $\Lattice$ is a finite subset of $\Integer^3$. The state space $S$ is finite. The configuration space $\Omega$ is therefore finite.
+\end{axiomenv}
+
+\begin{axiomenv}[\textbf{A2: Discreteness}]
+Time is indexed by natural numbers. There exists no intermediate state between $t$ and $t+1$.
+\end{axiomenv}
+
+\noindent\textit{Note.} A2 is used directly in only one proof (Theorem~\ref{thm:incompleteness}). Section~\ref{sec:generalized} establishes the same conclusion without A2 for local translation-invariant dynamics.
+
+\begin{axiomenv}[\textbf{A3: Determinism}]
+The update map $f$ is a function (single-valued). For every $C \in \Omega$, $f(C)$ is unique.
+\end{axiomenv}
+
+\begin{axiomenv}[\textbf{A4: Locality}]
+The update of each vertex $v$ depends only on the states and fluxes of vertices within a bounded neighborhood $N(v)$.
+\end{axiomenv}
+
+\begin{axiomenv}[\textbf{A5: Completeness of $f$}]
+The update map $f$ together with $C_0$ fully determines all future configurations: $C(t) = f^t(C_0)$ for all $t > 0$. No additional input is required after $t = 0$.
+\end{axiomenv}
+
+\begin{remark}[On A5 and circularity]\label{rem:a5}
+A5 constrains the \emph{dynamics}: no external input is needed after $t = 0$. It does not assert that $f$ explains all structure. Theorem~\ref{thm:incompleteness} then establishes a separate fact about the \emph{boundary}: the initial configuration is not derivable from $f$. The conclusion is not assumed by A5; it is proved from A1--A5 jointly. A5 constrains the dynamics; Theorem~\ref{thm:incompleteness} constrains the boundary.
+\end{remark}
+
+\noindent\textbf{Scope.} All results are conditional on A1--A5. They are theorems about discrete deterministic systems satisfying these axioms, not universal claims about all possible physical systems.
+
+\begin{remark}[On the flux field and finite description]\label{rem:flux}
+The notation $J(v) \in \Real^3$ treats the flux field as continuous, while $S = \{-1, 0, +1\}$ is finite. If $J$ is truly real-valued, then $K(C_0) = \infty$ for almost all configurations and the dominance result $K(C_0) \gg K(f)$ becomes trivially true. The Kolmogorov complexity arguments in Sections~5--6 apply rigorously to the discrete state sector $\{s_v\}_{v \in \Lattice}$, which has $|\Omega_s| = 3^{|\Lattice|}$ and finite $K(C_0)$. For the full configuration $(s_v, J_v)$, the results hold \emph{a fortiori}: discretizing $J$ to any finite precision $\delta$ yields a finite but strictly larger configuration space, strengthening the dominance. All theorems in this paper are stated for the discrete sector; the continuous flux field does not weaken them.
+\end{remark}
+
+
+% ======================================================================
+\section{Ontic Incompleteness}
+% ======================================================================
+
+\subsection{Statement}
+
+\begin{theorem}[Ontic Incompleteness]\label{thm:incompleteness}
+Let $(\Lattice, S, f, \Omega)$ be a discrete deterministic system satisfying A1 through A5. Then the initial configuration $C_0$ is not derivable from $f$. Formally: $f \nvdash C_0$.
+\end{theorem}
+
+\begin{proof}
+Suppose for contradiction that $f \vdash C_0$. That is, suppose $C_0$ can be derived from the update map $f$ alone.
+
+By A3, $f$ maps configurations to configurations: $f \colon \Omega \to \Omega$. For $f$ to determine $C_0$, there must exist some configuration $C^*$ such that $f(C^*) = C_0$, and $C^*$ must itself be determined by $f$.
+
+But $C^*$ is a configuration at time $t = -1$. By A2, time is indexed by natural numbers: $t \in \Natural$. There is no $t = -1$. The domain of the dynamical history is $\{C(0), C(1), C(2), \ldots\}$. There is no predecessor to $C_0$ within the system.
+
+Therefore the assumption that $f \vdash C_0$ requires the existence of a state at a time that does not exist. This is a contradiction. Therefore $f \nvdash C_0$.
+\end{proof}
+
+\subsection{Consequences}
+
+\begin{corollary}[Irreducible External Dependence]\label{cor:external}
+The specification of any discrete deterministic system requires exactly one element not determined by the system: the initial configuration $C_0$.%
+\footnote{In continuous-time systems, the initial conditions problem is often obscured by gauge freedom, boundary conditions at infinity, or probabilistic reinterpretation. In a discrete deterministic system, the problem is sharp: there is a first tick, it has a definite configuration, and nothing within the dynamics produces it.}
+\end{corollary}
+
+\subsection{Relation to G\"odel}\label{sec:godel}
+
+Theorem~\ref{thm:incompleteness} is structurally analogous to G\"odel's first incompleteness theorem, but operates in a different domain. G\"odel showed that a sufficiently powerful formal system cannot prove all truths about itself. Theorem~\ref{thm:incompleteness} shows that a deterministic dynamical system cannot produce its own initial state. The parallel is precise: in both cases, a self-contained system requires input from outside itself to be fully specified.
+
+The difference is that G\"odel's result is about provability within formal logic---it is syntactic and concerns the expressive limitations of deductive systems. Ours is about causation within dynamics---it is temporal and concerns the productive limitations of update rules. We call this \emph{ontic incompleteness} to distinguish it from logical incompleteness.
+
+Unlike G\"odel's theorem, which has a single proof strategy (self-reference via diagonalization), Ontic Incompleteness admits multiple independent proofs from distinct structural properties---temporal well-ordering, information capacity, and symmetry (Section~\ref{sec:generalized})---suggesting that it captures a more fundamental obstruction than any single proof technique reveals.
+
+\subsection{Determinism and Chaos}
+
+A system satisfying A1--A5 has a unique trajectory $\{C(0), C(1), \ldots\}$ for each $C_0$ (immediate from A3 and A5 by induction). The trajectory is not random. However, it may \emph{appear} stochastic to any embedded observer, because an observer $O \subset \Lattice$ cannot encode the full configuration $C_0$: its information capacity is strictly less than the system's information content.
+
+\begin{proposition}[Dual Nature of Chaos]\label{prop:chaos}
+Deterministic chaos has both ontic and epistemic components. The dynamical sensitivity (positive Lyapunov exponent $\lambda$) is a property of $f$ alone and is ontic. The unpredictability arises from the observer's finite-precision initial data and is epistemic. These are distinct properties and must not be conflated.
+\end{proposition}
+
+\begin{proof}
+The Lyapunov exponent $\lambda = \lim_{t \to \infty} (1/t) \ln |df^t/dC|$ is computable without reference to any observer; sensitivity is ontic. When $\lambda > 0$, measurement error grows as $\varepsilon e^{\lambda t}$, exceeding any tolerance in finite time. Any embedded observer has insufficient information capacity (by A1, it is a proper subsystem). Therefore unpredictability is epistemic.
+\end{proof}
+
+\subsection{Generalized Ontic Incompleteness}\label{sec:generalized}
+
+Theorem~\ref{thm:incompleteness} uses A2 (the well-ordering of $\Natural$) to derive a contradiction from the nonexistence of $t = -1$. We now show that for local translation-invariant dynamics, Ontic Incompleteness follows from two independent arguments that use \emph{no temporal structure whatsoever}.
+
+\begin{theorem}[Information-Theoretic Ontic Incompleteness]\label{thm:info-incomp}
+Let $f$ be a local, translation-invariant update map on a finite lattice $\Lattice$ with $|S|$ states per site. Then for all but at most $2^{O(1)}$ configurations, $f \nvdash C_0$.
+\end{theorem}
+
+\begin{proof}
+A local translation-invariant $f$ is specified by a lookup table of size $|S|^{|N|}$, a constant independent of $|\Lattice|$. Hence $K(f) = O(1)$. The number of objects $x$ satisfying $K(x \mid f) \leq c$ is at most $2^{c+1}$. For a typical $C_0$---that is, for a configuration drawn from the uniform counting measure on $\Omega$, which assigns equal weight to each of the $|S|^{|\Lattice|}$ possible states---we have $K(C_0) \geq \log_2|\Omega| - O(1) = |\Lattice|\log_2|S| - O(1)$ (standard counting argument \cite{kolmogorov1965,li-vitanyi2008}). By the chain rule, $K(C_0 \mid f) \geq K(C_0) - K(f) - O(\log|\Lattice|) = \Theta(|\Lattice|)$. Therefore $K(C_0 \mid f)$ is not $O(1)$, and $f$ does not determine $C_0$. No property of the time-indexing set is invoked.
+\end{proof}
+
+\begin{definition}[Equivariant construction]\label{def:equivariant}
+A map $D$ from update rules to configurations is \emph{equivariant} if $D(\sigma \circ f \circ \sigma^{-1}) = \sigma(D(f))$ for every lattice translation $\sigma$. Equivariance states that $D$ does not depend on an arbitrary labeling of lattice sites; a construction violating it carries site-specific information, placing it under Branch~(b) of the Trilemma (Corollary~\ref{cor:trilemma}).
+\end{definition}
+
+\begin{theorem}[Symmetry-Based Ontic Incompleteness]\label{thm:sym-incomp}
+Let $f$ be translation-invariant: $f = \sigma \circ f \circ \sigma^{-1}$ for every lattice translation $\sigma$. Then any equivariant construction $D$ (Definition~\ref{def:equivariant}) satisfying $D(f) = C_0$ yields a uniform (homogeneous) configuration. In particular, for any non-uniform $C_0$, $f \nvdash C_0$.
+\end{theorem}
+
+\begin{proof}
+Suppose $D$ is equivariant with $D(f) = C_0$. Since $f = \sigma f \sigma^{-1}$ for all translations $\sigma$, equivariance gives $D(f) = D(\sigma f \sigma^{-1}) = \sigma(D(f))$. Hence $C_0 = \sigma(C_0)$ for all $\sigma$: the configuration is identical at every site. There are exactly $|S|$ such configurations. Any non-uniform $C_0$ is therefore not derivable.
+\end{proof}
+
+\begin{remark}[Complementarity of proofs]\label{rem:complementarity}
+Three independent proofs of Ontic Incompleteness now exist, using different axiom subsets:
+\begin{center}\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Proof} & \textbf{Axioms used} & \textbf{Covers} \\
+\midrule
+Temporal (Thm~\ref{thm:incompleteness}) & A2, A3 & All $f$, including non-transl.-inv. \\
+Information (Thm~\ref{thm:info-incomp}) & A1, A4, transl.\ inv. & Typical $C_0$, any time structure \\
+Symmetry (Thm~\ref{thm:sym-incomp}) & Transl.\ invariance & All non-uniform $C_0$, any time structure \\
+\bottomrule
+\end{tabular}
+\end{center}
+Neither proof subsumes the others. The temporal proof works for arbitrary $f$; the information proof is quantitative; the symmetry proof is the most elementary. The conclusion is overdetermined: Ontic Incompleteness follows from temporal well-ordering, from information capacity, and from symmetry independently.
+\end{remark}
+
+
+% ======================================================================
+\section{Ontological Separation of Law and Boundary Data}
+% ======================================================================
+
+We combine the preceding results into a single logical chain.
+
+\medskip
+\noindent\textbf{Premise 1 (Ontic Incompleteness).} $f \nvdash C_0$ (Theorem~\ref{thm:incompleteness}; for local translation-invariant $f$, also Theorems~\ref{thm:info-incomp} and~\ref{thm:sym-incomp}).
+
+\noindent\textbf{Premise 2 (Void Rejection).} $C_0 \neq V$ (Section~1: something exists).
+
+\noindent\textbf{Premise 3 (No Internal Randomness).} The system is deterministic (A3). No probability distribution over $\Omega$ is derivable from $f$.
+
+\begin{theorem}[Ontological Separation]\label{thm:separation}
+The complete specification of a discrete deterministic system is the ordered pair $(f, C_0)$, where $C_0$ is logically independent of $f$. No reduction of this pair to a single structure is possible within the system.
+\end{theorem}
+
+\begin{proof}
+By Premise~1, $f \nvdash C_0$. By Premise~2, $C_0 \neq V$. By Premise~3, no probability measure over $\Omega$ is generated by $f$, so $C_0$ is not a dynamically-generated random variable. Therefore the specification requires two independent inputs: (i)~the dynamical law $f$, and (ii)~the boundary datum $C_0$. Neither is derivable from the other.
+\end{proof}
+
+Theorem~\ref{thm:separation} is the discrete, ontological formulation of a separation that appears throughout mathematical physics. A PDE determines evolution but not boundary values. The Hamiltonian determines flow on phase space but not the initial point. What Theorem~\ref{thm:separation} adds is the ontological interpretation: for a system that is fundamentally discrete and deterministic, the separation between law and boundary data is a structural property of reality itself.
+
+We write $\Sigma := C_0$ as a notational device to denote the boundary datum---the second member of the ordered pair $(f, C_0)$. The question of what determines $C_0$ is not addressed by the theorem and is not representable within the formalism.
+
+
+% ======================================================================
+\section{Boundary Information Dominance}
+% ======================================================================
+
+We now quantify the informational content of $C_0$ using algorithmic information theory.
+
+\begin{definition}[Kolmogorov Complexity]\label{def:kolmogorov}
+The Kolmogorov complexity $K(x)$ of a finite object $x$ is the length of the shortest program that produces $x$ on a universal Turing machine \cite{kolmogorov1965,li-vitanyi2008}.
+\end{definition}
+
+\begin{proposition}[Typical Boundary Information]\label{prop:typical}
+For a finite configuration space $\Omega$ with $|\Omega|$ elements, the fraction of configurations $C$ with $K(C) < \log_2|\Omega| - k$ is at most $2^{-k}$. For a typical configuration, $K(C_0) \approx \log_2|\Omega|$.
+\end{proposition}
+
+\begin{proof}
+Standard result in algorithmic information theory \cite{kolmogorov1965,chaitin1966}. The number of programs of length less than $m$ is at most $2^m - 1$.
+\end{proof}
+
+\begin{remark}[Representation dependence]\label{rem:representation}
+$K(x)$ depends on the choice of universal Turing machine, but only up to an additive constant independent of $x$ and $|\Lattice|$. Since $K(f) = O(1)$ while $K(C_0) = O(|\Lattice|)$, the additive constant does not affect the dominance result.
+\end{remark}
+
+\begin{theorem}[Boundary Information Dominance]\label{thm:dominance}
+For a typical initial configuration, $K(C_0) \approx \log_2|\Omega|$, while $K(f) = O(|N|)$ where $|N|$ is the neighborhood size. Therefore $K(C_0) \gg K(f)$ for any nontrivial lattice.
+\end{theorem}
+
+\begin{proof}
+The update map $f$ is specified by a local, translation-invariant lookup table of size $|S|^{|N|} \times |S|$, a constant independent of lattice size: $K(f) = O(3^{|N|} \log 3)$. The configuration space $|\Omega| = 3^{|\Lattice|}$, so $\log_2|\Omega| = |\Lattice| \log_2 3$, growing linearly with lattice size. For $|\Lattice| \gg 3^{|N|}$, the boundary datum carries overwhelmingly more information than the dynamical law.
+\end{proof}
+
+The dynamical law $f$ is simple: a finite, local, translation-invariant rule. The boundary datum $C_0$ is (generically) complex: an incompressible specification of the state of every vertex.
+
+\subsection{The Compressible Case}
+
+Perhaps our $C_0$ is not typical. If $K(C_0) \ll \log_2|\Omega|$, the boundary datum is highly compressible---but Theorem~\ref{thm:separation} still holds. Compressibility means $C_0$ belongs to a vanishingly small subset of $\Omega$: a structured, atypical configuration. A note of precision: low thermodynamic entropy (small macrostate volume) and low Kolmogorov complexity (short description) are distinct concepts. The macrostate constraint has description length $\approx \log_2(|\Omega|/|S_{\mathrm{low}}|)$ bits; it is this constraint that constitutes the compressible structure. Compressibility is precisely the low-entropy condition identified by Penrose \cite{penrose1989}, and the question of why $C_0$ has this particular structure replaces the question of why $C_0$ has this particular value. Either way, the boundary datum demands explanation that $f$ cannot provide.
+
+
+% ======================================================================
+\section{Structural Unavoidability and the Trilemma}
+% ======================================================================
+
+A natural objection to Theorem~\ref{thm:dominance}: perhaps a deeper law $g$ determines both $f$ and $C_0$, reducing the ordered pair to a single structure. We show that this escape is formally constrained.
+
+\begin{lemma}[Information Capacity of Local Laws]\label{lem:capacity}
+Let $g$ be any local, translation-invariant rule on $\Lattice$ with state space $S$ and neighborhood radius $r$. Then $K(g) \leq C(|S|, r)$, a constant independent of $|\Lattice|$.
+\end{lemma}
+
+\begin{proof}
+A local translation-invariant rule is specified by a lookup table with $|S|^{|N(r)|}$ entries, where $|N(r)| = O(r^3)$. For $S = \{-1,0,+1\}$ and $r = 1$, the table has $3^{27} \approx 7.6 \times 10^{12}$ entries: a large but fixed number independent of $|\Lattice|$.
+\end{proof}
+
+\begin{theorem}[Structural Unavoidability]\label{thm:unavoidability}
+No local translation-invariant rule can determine the initial configuration of a nontrivial lattice. If $g$ is local and translation-invariant, then $K(g) = O(1)$, but for a typical $C_0$, $K(C_0) \sim |\Lattice| \log_2|S|$. Boundary information dominance is structurally unavoidable.
+\end{theorem}
+
+\begin{proof}
+Direct from Lemma~\ref{lem:capacity} and Proposition~\ref{prop:typical}. No amount of ingenuity in the design of $g$ can overcome the linear gap between a constant and a quantity that scales with system size.
+\end{proof}
+
+\begin{corollary}[The Trilemma]\label{cor:trilemma}
+Any principle that fully determines $C_0$ for a nontrivial lattice must satisfy at least one of: (a)~it is nonlocal, (b)~it breaks translation invariance, or (c)~its description length scales with $|\Lattice|$. In cases (a) and (b), the principle violates the defining properties of a physical law as understood in local field theory. In case (c), the principle is functionally equivalent to boundary data.
+\end{corollary}
+
+\begin{proof}
+By Lemma~\ref{lem:capacity}, any principle satisfying both locality and translation invariance has $K = O(1)$. These three options are exhaustive.
+\end{proof}
+
+\noindent By ``system-scale information'' we mean precisely case~(c): $K(g) = O(|\Lattice|)$, i.e., the principle's description length grows linearly with the system. Such a principle is informationally indistinguishable from a direct specification of $C_0$.
+
+\subsection{Logical Closure of the Trilemma}
+
+\noindent\textbf{Branch (a): $g$ is nonlocal.} The output at site $v$ depends on arbitrarily distant sites, requiring $O(|\Lattice|)$ bits of global data. A sub-case of ``bounded nonlocality'' (fixed range $R > 1$) is already covered by Lemma~\ref{lem:capacity}; if $R$ scales with $|\Lattice|$, we are in Branch~(c).
+
+\medskip
+\noindent\textbf{Branch (b): $g$ breaks translation invariance.} Site-specific rules require $|\Lattice|$ distinct lookup tables or site labels, so $K(g) = O(|\Lattice|)$. The site-specific variation \emph{is} the boundary data.
+
+\medskip
+\noindent\textbf{Branch (c): $K(g) \sim |\Lattice|$.} The principle carries system-scale information. Relabeling it does not change $K(g)$.
+
+\medskip
+The trichotomy is exhaustive: Lemma~\ref{lem:capacity} identifies exactly two properties that make $K(g) = O(1)$---locality and translation invariance. Violating either, or allowing description length to grow, covers all possibilities.
+
+\subsection{Informational Incompleteness of Law-Primary Ontologies}
+
+\begin{corollary}[Informational Incompleteness]\label{cor:info-incomplete}
+In any discrete deterministic system with local translation-invariant dynamics, the dynamical law accounts for at most $O(1/|\Lattice|)$ of the total informational content. Any ontological framework that treats laws as the primary explanatory structure is informationally incomplete: the law's fraction vanishes as the system grows.
+\end{corollary}
+
+\begin{proof}
+$K(f) = O(1)$ by Lemma~\ref{lem:capacity}. $K(C_0) = O(|\Lattice|)$ for typical~$C_0$. The fraction $O(1)/O(|\Lattice|) \!\to\! 0$.
+\end{proof}
+
+\subsection{Intellectual Lineage}
+
+The separation between law and initial conditions has deep roots: Leibniz \cite{leibniz1714} distinguished truths of reason from truths of fact and recognized that the Principle of Sufficient Reason demands an explanation for contingent configurations that logical necessity alone cannot supply. Whitehead \cite{whitehead1929} argued that the actual world is not deducible from eternal objects alone but requires a ``decision'' selecting one possibility from among many. In mathematical physics, the separation has been recognized by von Neumann \cite{vonneumann1932} (unitary evolution vs.\ initial preparation), G\"odel \cite{godel1931} (formal incompleteness), Kolmogorov \cite{kolmogorov1965} and Chaitin \cite{chaitin1966} (algorithmic information theory), Penrose \cite{penrose1989} (the low-entropy initial condition as a fundamental puzzle), and Wolfram \cite{wolfram2002} (computational irreducibility in discrete systems). The present contribution unifies structural independence (Theorem~\ref{thm:separation}), algorithmic dominance (Theorem~\ref{thm:dominance}), and structural unavoidability (Theorem~\ref{thm:unavoidability}) into a single framework. The unavoidability result---that no local translation-invariant principle can bridge the $O(1)$ versus $O(|\Lattice|)$ gap---appears to be new.
+
+\begin{remark}[The First Perturbation]\label{rem:perturbation}
+Define $P_0 = C_0 - V$: the difference between the initial configuration and the Void. Since $V$ is the zero element, $P_0 \equiv C_0$. The notation is useful when emphasizing what distinguishes our universe from emptiness. The entire dynamical content is encoded in $(f, C_0)$; no additional input is needed (A5).
+\end{remark}
+
+\subsection{The Main Structural Theorem}
+
+The preceding sections establish four independent results. We now collect them into a single statement that makes the architecture of the argument undeniable.
+
+\begin{theorem}[Boundary Structural Invariant]\label{thm:structural-invariant}
+Let a discrete deterministic system satisfy A1--A5 with local translation-invariant dynamics. Then:
+\begin{enumerate}[label=(\roman*)]
+  \item The system is ontically incomplete (Theorem~\ref{thm:incompleteness}).
+  \item The complete specification is the ordered pair $(f, C_0)$, where $C_0$ is independent of $f$ (Theorem~\ref{thm:separation}).
+  \item For typical $C_0$, $K(C_0) = \Theta(|\Lattice|)$ and $K(f) = O(1)$ (Theorem~\ref{thm:dominance}).
+  \item No local translation-invariant rule can eliminate this scaling gap (Theorem~\ref{thm:unavoidability}).
+\end{enumerate}
+Therefore the asymptotic dominance of boundary information over law information is invariant under all local translation-invariant refinements.
+\end{theorem}
+
+\begin{proof}
+Each item is proved independently: (i) by Theorem~\ref{thm:incompleteness}, (ii) by Theorem~\ref{thm:separation}, (iii) by Theorem~\ref{thm:dominance} with Proposition~\ref{prop:typical}, and (iv) by Theorem~\ref{thm:unavoidability}. The invariance conclusion follows: since no local translation-invariant refinement can reduce $K(C_0)$ below $\Theta(|\Lattice|)$ or raise $K(f)$ above $O(1)$, the dominance is structurally permanent.
+\end{proof}
+
+\begin{remark}[A2-independence]\label{rem:a2-free}
+For local translation-invariant dynamics, the entire Boundary Structural Invariant holds without A2. Items (iii) and (iv) use only A1 and A4 (Sections~5--6). Item (i) follows from Theorem~\ref{thm:info-incomp} or~\ref{thm:sym-incomp}. Item (ii) follows from item (i) combined with Void Rejection and determinism (A3).
+\end{remark}
+
+
+% ======================================================================
+\section{Epistemological Status and the Overextension of Falsifiability}
+% ======================================================================
+
+\subsection{The Category Error}
+
+Since Popper \cite{popper1934}, falsifiability has been adopted as the demarcation criterion for scientific claims. This is productive for empirical hypotheses but has bred a reflexive demand that \emph{all} results in a physics paper be falsifiable. This demand is a category error. Falsifiability was never intended as a criterion for logical theorems. Popper himself was explicit: mathematical truths are not scientific hypotheses and do not require empirical falsification.
+
+The results of Sections~3--6 are \emph{proved}. Theorem~\ref{thm:incompleteness} follows by contradiction. For local translation-invariant dynamics, two additional proofs establish the same conclusion without A2 (Theorems~\ref{thm:info-incomp} and~\ref{thm:sym-incomp}). Theorem~\ref{thm:separation} follows from Theorem~\ref{thm:incompleteness} and the observation that something exists. Theorem~\ref{thm:unavoidability} follows from a counting argument on lookup tables. Theorem~\ref{thm:structural-invariant} collects all four into a single invariance statement. These results cannot be falsified because they are not empirical claims. They can be \emph{invalidated} only by rejecting one or more of A1--A5.
+
+\subsection{The Hierarchy of Warrant}
+
+\noindent\textbf{(i) Logical proof.} A result that follows by valid inference from stated axioms. It holds with certainty conditional on those axioms and can be invalidated only by showing the axioms are inconsistent or inapplicable. Examples: Theorems~\ref{thm:incompleteness}, \ref{thm:separation}, \ref{thm:dominance}, \ref{thm:unavoidability}, \ref{thm:structural-invariant}; Corollaries~\ref{cor:trilemma}, \ref{cor:info-incomplete}.
+
+\medskip
+\noindent\textbf{(ii) Empirical falsification.} A result that makes a definite prediction about observable quantities. Examples: the Void Hypothesis (falsified), aggregation hierarchy predictions, the Past Hypothesis application.
+
+\medskip
+\noindent\textbf{(iii) Speculative interpretation.} A result that goes beyond both proof and prediction. Example: the question of what determines $C_0$.
+
+\medskip
+The error we identify is the conflation of (i) and (ii): the assumption that because a result appears in a physics paper, it must be an empirical hypothesis.
+
+\subsection{The Overextension of the Falsifiability Criterion}
+
+Falsifiability is a criterion for empirical hypotheses. It is not a criterion for logical theorems. The reflexive demand that all results in physics be falsifiable conflates epistemic filters with ontological constraints.
+
+Theorems~\ref{thm:incompleteness}, \ref{thm:separation}, and~\ref{thm:unavoidability} are proved by valid inference from explicit axioms. They do not make empirical predictions and therefore cannot be falsified. They can be invalidated only by rejecting the axioms on which they depend. This is not a defect; it is the defining property of logical results.
+
+The Pythagorean theorem is not falsifiable. No experiment can refute it. If space is non-Euclidean, the theorem does not fail---it does not apply. The same is true here. If the universe is not discrete, deterministic, or local, the present theorems do not apply. If it is, the conclusions follow necessarily.
+
+Falsifiability determines which claims are empirical. It does not determine which claims are true, structural, or worth knowing. Treating it as an ontological arbiter is an overextension of its proper domain.
+
+\subsection{Empirical Content}
+
+Theorems~\ref{thm:incompleteness}--\ref{thm:unavoidability} are logical theorems that can be invalidated by rejecting A1--A5 but cannot be falsified. The Void Hypothesis is falsifiable and has been falsified (something exists). The cosmological application (Section~8) predicts $K(f) \ll K(C_0) \ll \log_2|\Omega|$; if all observable structure derives from a dynamical law alone ($K(C_0) = 0$), the framework is falsified. The dual nature of chaos (Proposition~\ref{prop:chaos}) predicts that dynamical sensitivity is measurable and objective while long-term predictability is bounded by initial-condition precision. The interpretation of $C_0$ is not determined by the present analysis and remains an open question.
+
+
+% ======================================================================
+\section{Application: The Past Hypothesis}
+% ======================================================================
+
+The preceding results are purely structural. We now apply them to one specific physical question. This section is empirical and separable from the logical results.
+
+The Past Hypothesis \cite{albert2000}, following Boltzmann \cite{boltzmann1877}, states that the universe began in a state of extraordinarily low thermodynamic entropy. In our notation: the observed $C_0$ lies in a subset $S_{\mathrm{low}} \subset \Omega$ with $|S_{\mathrm{low}}| \ll |\Omega|$. This maps directly to the compressible case of Section~5.1: the macrostate constraint has description length $\approx \log_2(|\Omega|/|S_{\mathrm{low}}|)$ bits, and a compressible $C_0$ is a structured $C_0$ whose internal organization is not explained by $f$ or by typicality.
+
+\medskip
+\noindent\textbf{Consequence 1 (Non-genericity).} $C_0$ is atypical with respect to the uniform measure on $\Omega$. The set of low-entropy configurations has measure approaching zero for large $|\Lattice|$. Therefore $C_0$ was not produced by uniform sampling.
+
+\medskip
+\noindent\textbf{Consequence 2 (Structured boundary).} Since $K(C_0) \ll \log_2|\Omega|$, the boundary datum has internal structure---patterns, symmetries, or regularities---constituting a third type of information: neither law nor noise, but structured boundary data.
+
+\medskip
+Combining Theorem~\ref{thm:dominance} with the Past Hypothesis yields the \emph{Boundary Information Spectrum}:
+\begin{equation}
+K(f) \ll K(C_0) \ll \log_2|\Omega|
+\end{equation}
+The dynamical law is simple; a generic boundary datum would be maximally complex; our universe's boundary datum lies between---complex enough to encode all observable structure, yet structured enough to be far from generic.
+
+\begin{remark}
+The Boundary Information Spectrum restates in information-theoretic language the known facts that fundamental laws are simple and the initial state was low-entropy. Whether this intermediate complexity admits further compression is the central open question of fundamental cosmology.
+\end{remark}
+
+
+% ======================================================================
+\section{Summary and Limitations}
+% ======================================================================
+
+We have established the following chain using only the axioms of a discrete deterministic system and the single empirical observation that the universe is not void.
+
+\begin{enumerate}[label=(\roman*)]
+\item The Void is the unique null state and a fixed point under generic dynamics. The Void Hypothesis is empirically rejected.
+\item The initial configuration is not derivable from the dynamics (Ontic Incompleteness). Three independent proofs establish this: by the well-ordering of discrete time (Theorem~\ref{thm:incompleteness}), by information-theoretic gap (Theorem~\ref{thm:info-incomp}), and by translation symmetry (Theorem~\ref{thm:sym-incomp}). The latter two require no temporal assumption.
+\item Deterministic chaos is ontically sensitive but epistemically unpredictable (Proposition~\ref{prop:chaos}).
+\item The complete specification of a discrete deterministic system is the ordered pair $(f, C_0)$, where $C_0$ is independent of $f$ (Ontological Separation, Theorem~\ref{thm:separation}).
+\item For a typical $C_0$, $K(C_0) \gg K(f)$ (Boundary Information Dominance, Theorem~\ref{thm:dominance}).
+\item No local translation-invariant rule can determine a generic initial configuration. Any principle that does so must be nonlocal, translation-variant, or carry system-scale information (Structural Unavoidability, Theorem~\ref{thm:unavoidability}; Trilemma, Corollary~\ref{cor:trilemma}).
+\item The asymptotic dominance of boundary information over law information is invariant under all local translation-invariant refinements (Boundary Structural Invariant, Theorem~\ref{thm:structural-invariant}).
+\item Any law-primary ontology is informationally incomplete: the law accounts for $O(1/|\Lattice|)$ of the total specification, vanishing as the system grows (Corollary~\ref{cor:info-incomplete}).
+\item If $C_0$ is compressible, the boundary datum has internal structure not explained by $f$ or typicality: the information-theoretic content of the Past Hypothesis.
+\item The nature of $C_0$ is constrained but not determined by the present analysis (see below).
+\end{enumerate}
+
+The central thesis: in discrete deterministic systems satisfying A1--A5 with local translation-invariant dynamics, boundary information dominance is structurally unavoidable. The law accounts for $O(1)$ bits; the boundary datum for $O(|\Lattice|)$ bits. No deeper local law can close this gap. Moreover, for local translation-invariant dynamics, these results hold without the discrete time axiom A2 (Remark~\ref{rem:a2-free}), extending to any dynamical system on a finite lattice regardless of temporal structure.
+
+The present results are agnostic regarding whether the fundamental ontology is discrete or continuous; they establish a structural constraint on any system satisfying A1--A5.
+
+\subsection{On the Nature of $C_0$}
+
+The Trilemma (Corollary~\ref{cor:trilemma}) does not merely leave $C_0$ unexplained---it constrains the \emph{type} of explanation that is possible. Any principle that determines $C_0$ must be nonlocal, translation-variant, or carry system-scale information. These are not merely negative constraints; they constitute a positive characterization of the boundary datum's source.
+
+A nonlocal principle would require correlations across the entire lattice at $t = 0$---a global coherence with no dynamical origin. A translation-variant principle would require site-specific data for each vertex---a specification that is itself a boundary datum. A principle with system-scale description length would be informationally equivalent to $C_0$ itself. In every case, the determining principle inherits the essential character of what it purports to explain: it must carry information commensurate with the system it initializes.
+
+This is the structural content of ontic incompleteness. The question is not whether $C_0$ has an explanation, but what \emph{kind} of explanation is structurally admissible. The answer---nonlocal, non-uniform, or informationally rich---is itself a result, not merely the absence of one. The question has ancient precedent: Plato's \emph{Timaeus} \cite{plato_timaeus} required a Demiurge precisely because the eternal Forms could not, by themselves, account for the particular world. Leibniz's Principle of Sufficient Reason \cite{leibniz1714} demands that contingent facts have explanations not reducible to logical necessity. Whether the determining principle takes the form of a selection rule, a cosmological boundary condition, or a structure outside the formalism entirely is a question the present framework poses but cannot answer.
+
+\subsection{Limitations and Conditionality}
+
+The results are conditional on A1--A5. Three scenarios in which the conclusions weaken or fail:
+
+\medskip
+\noindent\textbf{(a) Continuity.} The temporal proof (Theorem~\ref{thm:incompleteness}) requires well-ordered time and does not apply when time is continuous. However, the information-theoretic proof (Theorem~\ref{thm:info-incomp}) requires only finiteness and locality, and the symmetry proof (Theorem~\ref{thm:sym-incomp}) requires only translation-invariance. These arguments survive at any finite spatial resolution and impose no constraint on the temporal indexing set. The limitation therefore applies to the temporal argument specifically, not to the incompleteness conclusion. If the lattice itself is replaced by a continuum, the arguments require modification; see Remark~\ref{rem:flux}.
+
+\medskip
+\noindent\textbf{(b) Nonlocality or global law.} If $f$ encodes global data (violating A4), $K(f)$ may scale with lattice size, and the separation may collapse.
+
+\medskip
+\noindent\textbf{(c) Lawful initial conditions.} If $C_0$ is determined by a deeper principle, the ordered pair would reduce to a single structure. However, Theorem~\ref{thm:unavoidability} and Corollary~\ref{cor:trilemma} constrain this: any such principle must be nonlocal, translation-variant, or carry system-scale information---in every case ceasing to function as a law in the standard sense.
+
+\begin{center}
+$*\quad*\quad*$
+\end{center}
+
+
+% ======================================================================
+\appendix
+\section{The Aggregation Hierarchy}
+\label{app:hierarchy}
+% ======================================================================
+
+We formalize the ontological levels between the raw substrate and observable physics.
+
+\medskip
+\noindent\textbf{Level 0: Informational.} A vertex $v \in \Lattice$ considered purely as an address: coordinates $(x,y,z) \in \Integer^3$ but no state assignment.
+
+\medskip
+\noindent\textbf{Level 1: Locational.} A vertex equipped with a definite state assignment $(s_v, J_v)$. A single located vertex has no emergent properties.
+
+\medskip
+\noindent\textbf{Level 2: Configurational (Aggregate).} A connected region $R \subset \Lattice$ where collective flux exceeds $\KB$ and the aggregate persists across multiple ticks. This is the first level at which identity is meaningful: the aggregate can be tracked and distinguished.
+
+\medskip
+\noindent\textbf{Level 3: Emergent.} Properties arising from temporal evolution of aggregates that have no analog at Levels~0--2: wave behavior, thermodynamic quantities, classical trajectories, measurement outcomes.
+
+\begin{theorem}[No Premature Emergence]\label{thm:emergence}
+Let $P$ be any Level~3 property. Then $P$ is not definable at Level~1. $P$ requires both spatial extent ($|R| \gg 1$) and temporal depth ($t \gg 1$).
+\end{theorem}
+
+\begin{proof}
+Level~3 properties are functions of coarse-grained fields: $P = F(\bar{J}(X,T))$. For $|B| = 1$ and $|I| = 1$, no averaging occurs and $P$ reduces to a Level~1 datum.
+\end{proof}
+
+\begin{definition}\label{def:voxel}
+A \emph{voxel} is an element $v \in \Lattice$ together with its assigned state $(s_v, J_v)$ at a given tick $t$. A voxel is \emph{active} if $|J_v| > 0$ and \emph{manifested} if $|J_v| > \KB$.
+\end{definition}
+
+\begin{definition}\label{def:particle}
+A \emph{particle} is an aggregate $A(R,t)$ where (i)~$R$ is connected, (ii)~total activation exceeds $\KB$, (iii)~the aggregate persists over a time interval, and (iv)~it is distinguishable from the background.
+\end{definition}
+
+Particles are Level~2 entities. They do not exist at Level~0 or Level~1.
+
+
+% ======================================================================
+% BIBLIOGRAPHY
+% ======================================================================
+
+\begin{thebibliography}{14}
+
+\bibitem{albert2000}
+D.~Albert, \emph{Time and Chance} (Harvard University Press, Cambridge, MA, 2000).
+
+\bibitem{boltzmann1877}
+L.~Boltzmann, ``\"Uber die Beziehung zwischen dem zweiten Hauptsatze der mechanischen W\"armetheorie und der Wahrscheinlichkeitsrechnung respektive den S\"atzen \"uber das W\"armegleichgewicht,'' \emph{Wiener Berichte} \textbf{76}, 373--435 (1877).
+
+\bibitem{chaitin1966}
+G.~J.~Chaitin, ``On the length of programs for computing finite binary sequences,'' \emph{Journal of the ACM} \textbf{13}(4), 547--569 (1966).
+
+\bibitem{godel1931}
+K.~G\"odel, ``\"Uber formal unentscheidbare S\"atze der Principia Mathematica und verwandter Systeme~I,'' \emph{Monatshefte f\"ur Mathematik und Physik} \textbf{38}, 173--198 (1931).
+
+\bibitem{kolmogorov1965}
+A.~N.~Kolmogorov, ``Three approaches to the quantitative definition of information,'' \emph{Problems of Information Transmission} \textbf{1}(1), 1--7 (1965).
+
+\bibitem{leibniz1714}
+G.~W.~Leibniz, \emph{Monadology} (1714). Reprinted in R.~Ariew and D.~Garber (eds.), \emph{G.~W.~Leibniz: Philosophical Essays} (Hackett, Indianapolis, 1989), pp.~213--225.
+
+\bibitem{li-vitanyi2008}
+M.~Li and P.~M.~B.~Vit\'anyi, \emph{An Introduction to Kolmogorov Complexity and Its Applications}, 3rd~ed.\ (Springer, New York, 2008).
+
+\bibitem{penrose1989}
+R.~Penrose, \emph{The Emperor's New Mind: Concerning Computers, Minds, and the Laws of Physics} (Oxford University Press, Oxford, 1989).
+
+\bibitem{plato_timaeus}
+Plato, \emph{Timaeus}, trans.\ D.~J.~Zeyl (Hackett, Indianapolis, 2000).
+
+\bibitem{popper1934}
+K.~R.~Popper, \emph{Logik der Forschung} (Springer, Vienna, 1934). English translation: \emph{The Logic of Scientific Discovery} (Hutchinson, London, 1959).
+
+\bibitem{vonneumann1932}
+J.~von~Neumann, \emph{Mathematische Grundlagen der Quantenmechanik} (Springer, Berlin, 1932). English translation: \emph{Mathematical Foundations of Quantum Mechanics} (Princeton University Press, Princeton, 1955).
+
+\bibitem{whitehead1929}
+A.~N.~Whitehead, \emph{Process and Reality: An Essay in Cosmology} (Macmillan, New York, 1929). Corrected edition (Free Press, New York, 1978).
+
+\bibitem{wolfram2002}
+S.~Wolfram, \emph{A New Kind of Science} (Wolfram Media, Champaign, IL, 2002).
+
+\end{thebibliography}
+
+\end{document}

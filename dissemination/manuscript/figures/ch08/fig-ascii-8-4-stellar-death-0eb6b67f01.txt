@@ -1,7 +1,0 @@
-       ┌─────────────────┐
-       │                 │
-       │    ○            │  ← Hot central star
-       │                 │
-       │                 │
-       └─────────────────┘
-         ↑ Expanding gas shell

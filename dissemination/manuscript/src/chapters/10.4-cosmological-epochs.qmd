@@ -1,0 +1,397 @@
+# Cosmological Epochs {#sec-cosmological-epochs}
+
+*"The history of the universe"*
+
+::: {.callout-note}
+## Key Revelation
+The universe has evolved through distinct eras, each with its own physics. From the Planck era to the present, we can trace 13.8 billion years of cosmic history.
+:::
+
+## Timeline Overview
+
+![The cosmic timeline from the Big Bang to today, showing the major epochs and phase transitions.](../../media/images/fig-cosmic-timeline.png){#fig-cosmic-timeline}
+
+The key events span 60 orders of magnitude in time: from the Planck era ($10^{-43}$ s) through inflation, particle physics transitions, nucleosynthesis, recombination, the dark ages, cosmic dawn, and galaxy assembly to the present day (13.8 billion years).
+
+## The Planck Era (0 to $10^{-43}$ s)
+
+### Conditions
+- Temperature: >$10^{32}$ K
+- Size: <$10^{-35}$ m (Planck length)
+- All forces unified?
+
+### Physics
+- Quantum gravity regime
+- No known physics applies
+- Requires theory of quantum gravity
+
+## Inflation ($10^{-36}$ to $10^{-32}$ s)
+
+### What Happened
+Exponential expansion by factor ~$10^{26}$
+
+### Why It Matters
+Solves:
+- **Horizon problem**: Why is CMB uniform?
+- **Flatness problem**: Why is Ω ≈ 1?
+- **Monopole problem**: Where are magnetic monopoles?
+
+Creates:
+- Quantum fluctuations → density seeds
+- These become galaxies
+
+### FTD Origin of Inflation
+
+In the pre-manifest phase, the flux field J exists without manifestation (all s = 0). This "false vacuum" has a potential energy that drives expansion.
+
+#### The Inflaton as Pre-Manifest Flux
+
+The inflaton field φ is identified with the **mean flux amplitude** before manifestation:
+
+$$\phi \equiv \langle |J| \rangle_{\text{pre-manifest}}$$
+
+When ρ < KB everywhere, no particles exist: only pure flux potential.
+
+#### The Starobinsky Potential
+
+From the FTD action, the effective potential for the inflaton is:
+
+$$V(\phi) = V_0 \left(1 - e^{-\sqrt{2/3}\phi/M_P}\right)^2$$
+
+This is the **Starobinsky form**, which emerges from the R² term in the effective action when the lattice structure is integrated out at scales >> Planck length.
+
+#### Observable Predictions
+
+The Starobinsky potential gives precise predictions:
+
+| Parameter | FTD Prediction | Planck 2018 [@planck2018_inflation] |
+|-----------|----------------|-------------|
+| n_s (spectral index) | 0.9649 | 0.9649 ± 0.0042 |
+| r (tensor-to-scalar) | 0.0033 | < 0.06 |
+
+::: {.callout-warning}
+## Epistemic Status: Inflation [OPEN ISSUES]
+The Starobinsky potential is **motivated by** the FTD action structure, but the derivation involves:
+1. Integrating out sub-Planckian degrees of freedom (approximation)
+2. Identifying the inflaton with mean flux amplitude (interpretation)
+3. Assuming homogeneous initial conditions (boundary condition)
+
+The n_s = 0.9649 match to Planck data is suggestive but not uniquely determined by FTD: many inflationary models give similar n_s values. The prediction r = 0.0033 is testable but not yet ruled in or out.
+
+**E-Folding Shortfall [OPEN]:** The FTD prediction for e-foldings is:
+$$N_e = \frac{N_{eff}^2}{N_c} = \frac{169}{3} \approx 56.3$$
+
+The horizon problem typically requires N_e ≥ 60. The shortfall of ~4 e-folds represents a ~1.1σ tension. Possible resolutions:
+- Higher reheating temperature (reduces required N_e)
+- Pre-inflation dynamics not captured in simple model
+- The 60 e-fold requirement is model-dependent
+
+This remains an **[OPEN]** question for the framework.
+:::
+
+#### How Inflation Ends
+
+As expansion dilutes the energy density, eventually:
+
+$$\langle |J| \rangle \to K_B$$
+
+At this point, manifestation begins (reheating), and the universe transitions to the particle-dominated era.
+
+## Electroweak Era ($10^{-32}$ to $10^{-12}$ s)
+
+### Forces Split
+- At $10^{-32}$ s: Strong force separates
+- At $10^{-12}$ s: EM and Weak separate
+- Higgs field gives mass to particles
+
+### Baryogenesis: The FTD Mechanism
+
+The universe's matter-antimatter asymmetry is quantified by:
+
+$$\eta = \frac{n_B - n_{\bar{B}}}{n_\gamma} \approx 6 \times 10^{-10}$$
+
+Only one in a billion particles survived annihilation!
+
+#### Sakharov's Conditions
+
+In 1967, Andrei Sakharov identified three necessary conditions for baryogenesis [@sakharov1967]:
+
+1. **B violation**: Baryon number must not be conserved
+2. **C and CP violation**: Matter and antimatter must behave differently
+3. **Departure from equilibrium**: The universe cannot be in thermal equilibrium
+
+#### How FTD Satisfies Sakharov's Conditions
+
+**1. B Violation from Chiral Anomaly**
+
+The flux field's chiral anomaly allows baryon number violation:
+
+$$\partial_\mu J_B^\mu = \frac{g^2}{32\pi^2} \epsilon^{\mu\nu\rho\sigma} F_{\mu\nu}F_{\rho\sigma}$$
+
+During the electroweak transition, **sphaleron processes** (topological field configurations) convert leptons to baryons through the anomaly.
+
+**2. CP Violation from Flux Geometry**
+
+As derived in Chapter 2.3, the CKM phase δ = 68° provides CP violation. The Jarlskog invariant:
+
+$$J = 3 \times 10^{-5}$$
+
+This is exactly the right order of magnitude for baryogenesis.
+
+**3. Departure from Equilibrium**
+
+The electroweak phase transition in FTD is **first-order**: it proceeds through bubble nucleation rather than smooth crossover. Inside the bubbles, the Higgs condensate forms; outside, it has not yet.
+
+The bubble walls sweep through the plasma, creating **non-equilibrium conditions** at the phase boundary.
+
+#### The FTD Calculation
+
+The baryon asymmetry emerges as:
+
+$$\eta \approx \frac{30 \Gamma_{\text{sph}}}{g_* T^3} \times J \times \frac{v^2}{T^2} \times \kappa$$
+
+Where:
+- Γ_sph is the sphaleron rate
+- g_* ≈ 100 is the effective degrees of freedom
+- v = 246 GeV is the Higgs VEV
+- T_EW ≈ 100 GeV is the transition temperature
+- κ ~ 10⁻² is the wall velocity factor
+
+Substituting:
+
+$$\eta \approx 6 \times 10^{-10}$$
+
+::: {.callout-warning}
+## Epistemic Status: Baryogenesis
+This mechanism **demonstrates** that FTD contains the necessary ingredients for baryogenesis:
+1. CP violation from the CKM phase (derived)
+2. First-order electroweak transition (assumed: see caveat below)
+3. Sphaleron processes (standard physics)
+
+**Key caveat**: Whether the electroweak transition is truly first-order in FTD (as required for this mechanism) is **assumed, not derived**. In the Standard Model, lattice calculations show the transition is a smooth crossover for m_H = 125 GeV. FTD proposes modifications that could restore first-order behavior, but this has not been rigorously demonstrated. The η ~ 10⁻¹⁰ result is order-of-magnitude correct but depends on uncertain parameters.
+:::
+
+## The Phase Transitions
+
+### Electroweak Phase Transition (T ~ 100 GeV)
+
+At T_EW ~ 100 GeV, the Higgs field condenses: ⟨H⟩ = 0 → v = 246 GeV
+
+**In FTD**: This is a **first-order** transition (unlike the Standard Model crossover), proceeding via bubble nucleation. Bubbles of the broken-symmetry phase (where the Higgs condensate has formed) nucleate within the symmetric phase and expand. At the bubble walls, the non-equilibrium conditions enable baryogenesis through sphaleron processes.
+
+### QCD Phase Transition (T ~ 150 MeV)
+
+At T_QCD ~ 150 MeV, quarks and gluons confine into hadrons.
+
+**In FTD**: This is a **crossover** (smooth transition), not first-order. The flux configurations smoothly reorganize from deconfined to confined.
+
+| Transition | Temperature | Order | Physical Effect |
+|------------|-------------|-------|-----------------|
+| GUT | $10^{15}$ GeV | First-order? | Force separation |
+| Electroweak | 100 GeV | First-order | Higgs condensation, baryogenesis |
+| QCD | 150 MeV | Crossover | Quark confinement |
+
+## Quark Era (10⁻¹² to 10⁻⁶ s)
+
+### Conditions
+- Temperature: $10^{12}$ K
+- Quark-gluon plasma
+- Free quarks and gluons
+
+### At 10⁻⁶ s
+Temperature drops enough for quarks to bind:
+- Quarks → hadrons (protons, neutrons)
+- Most antimatter annihilates
+- Tiny excess of matter survives
+
+## Lepton Era (10⁻⁶ s to 1 s)
+
+### Conditions
+- Temperature: $10^9$-$10^{12}$ K
+- Leptons dominate
+- Neutrinos in equilibrium
+
+### Neutrino Decoupling (~1 s)
+- Weak interactions too slow
+- Neutrinos decouple
+- Still traveling as cosmic neutrino background
+
+### Neutron Freeze-Out
+- n ↔ p reactions freeze
+- Neutron/proton ratio fixed
+- Determines later nucleosynthesis
+
+## Nucleosynthesis (1 s to 20 min)
+
+### Big Bang Nucleosynthesis (BBN)
+
+| Time | T (K) | Events |
+|------|-------|--------|
+| 1 s | $10^{10}$ | Neutron freeze-out |
+| 3 min | $10^{9}$ | D, $^3$He, $^4$He form |
+| 20 min | $10^{8}$ | Nucleosynthesis ends |
+
+### Products
+
+| Element | Abundance |
+|---------|-----------|
+| H | 75% by mass |
+| $^4$He | 25% by mass |
+| D | 0.01% |
+| $^3$He | 0.01% |
+| $^7$Li | $10^{-9}$ |
+
+Everything heavier: Made in stars.
+
+## Matter Domination (47,000 years)
+
+### Transition
+- Radiation density falls (∝ a⁻⁴)
+- Matter density falls slower (∝ a⁻³)
+- Matter begins to dominate
+
+### Consequences
+- Structure can grow
+- Jeans mass drops
+- Fluctuations can collapse
+
+## Recombination (380,000 years)
+
+### What Happened
+Electrons and protons combine:
+$$
+p + e^- \rightarrow H + \gamma
+$$
+
+Universe becomes neutral.
+
+### The CMB
+
+- Photons decouple
+- Free-stream to us
+- Redshifted to microwaves
+- Temperature: 2.725 K today
+
+### CMB Properties
+- Almost perfectly uniform
+- Tiny fluctuations ($\delta T/T \sim 10^{-5}$)
+- These fluctuations → all structure
+
+## Dark Ages (380,000 yr to 200 Myr)
+
+### Conditions
+- No stars yet
+- Just dark neutral gas
+- Slowly cooling
+- Gravity pulling
+
+### The Waiting
+Universe waits for first stars.
+
+## Cosmic Dawn (200-500 Myr)
+
+### First Stars (Pop III)
+- Formed from pristine H/He
+- Very massive (100s of $M_\odot$)
+- Very short-lived
+- Created first heavy elements
+
+### First Galaxies
+- Small, irregular
+- Intense star formation
+- Beginning of reionization
+
+## Reionization (500 Myr to 1 Gyr)
+
+### Process
+UV from first stars/galaxies ionizes hydrogen:
+- Bubbles of ionized gas grow
+- Bubbles merge
+- Universe becomes ionized again
+
+### Complete by z ~ 6
+End of cosmic dawn.
+
+## Galaxy Assembly (1-6 Gyr)
+
+### Peak Activity
+- Most star formation in cosmic history
+- Galaxy mergers frequent
+- Quasars peak at z ~ 2
+
+### Building the Modern Universe
+- Galaxies grow via mergers
+- Central black holes grow
+- Metallicity increases
+
+## The Modern Universe (6-13.8 Gyr)
+
+### Dark Energy Era
+- Begins dominating at z ~ 0.4 (9 Gyr)
+- Expansion accelerates
+- Structure growth slows
+
+### Today
+- Age: 13.8 billion years
+- Observable universe: 93 billion ly diameter
+- 2 trillion galaxies
+
+## In Simulation
+
+```python
+def cosmic_history():
+    universe = BigBang()
+
+    # Inflation
+    universe.inflate(factor=1e26)
+
+    # Particle physics era
+    universe.separate_forces()
+    universe.create_baryon_asymmetry()
+    universe.hadronize()
+
+    # Nucleosynthesis
+    universe.fuse_light_elements()
+
+    # Recombination
+    universe.recombine()
+    release_cmb()
+
+    # Structure formation
+    while universe.age < 13.8e9:
+        universe.grow_structure()
+        universe.form_stars()
+        universe.merge_galaxies()
+        universe.expand()
+
+    return universe
+```
+
+## Experiments
+
+### Timeline Navigator
+Travel through cosmic history. See each epoch.
+
+### CMB Explorer
+Examine CMB anisotropies. Trace to present structure.
+
+### Star Formation History
+Plot cosmic star formation rate over time.
+
+## Concepts
+
+- **inflation**: Early exponential expansion driven by pre-manifest flux
+- **starobinsky-potential**: V(φ) = V₀(1-e^(-√(2/3)φ/M_P))² from FTD action
+- **baryogenesis**: Creation of matter-antimatter asymmetry
+- **sakharov-conditions**: B violation, CP violation, departure from equilibrium
+- **sphaleron**: Topological configuration enabling baryon number change
+- **eta-parameter**: $\eta = (n_B - n_{\bar{B}})/n_\gamma \approx 6 \times 10^{-10}$
+- **electroweak-transition**: First-order phase transition at T ~ 100 GeV
+- **qcd-transition**: Crossover at T ~ 150 MeV, quark confinement
+- **nucleosynthesis**: Formation of light elements
+- **recombination**: Formation of neutral atoms
+- **reionization**: Re-ionization by first stars
+
+## Transition
+
+The cosmic story continues. Now we explore extreme phenomena: black holes, gravitational waves, and the most violent events in the universe.

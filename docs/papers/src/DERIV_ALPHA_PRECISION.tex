@@ -1,0 +1,536 @@
+% ======================================================================
+%  A Precision Formula for the Fine-Structure Constant
+%  from Discrete Lattice Combinatorics
+%
+%  Authors: William J. cpaci-tani III, et al.
+%  February 2026
+% ======================================================================
+
+\documentclass[11pt,twoside]{article}
+
+% ---- Packages ----
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=green!50!black,urlcolor=blue!70!black]{hyperref}
+
+% ---- Page geometry ----
+\geometry{letterpaper, margin=1.15in, top=1.3in, bottom=1.3in}
+\setstretch{1.18}
+
+% ---- Headers ----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\small\textit{cpaci-tani et al.}}
+\fancyhead[RO]{\small\textit{Precision Formula for $\alpha$}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---- Section formatting ----
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
+
+% ---- Theorem environments ----
+\newtheorem{theorem}{Theorem}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% ---- Epistemic tags ----
+\newcommand{\etag}[1]{\textsc{\small[#1]}}
+\newcommand{\axiom}{\etag{Axiom}}
+\newcommand{\selection}{\etag{Selection}}
+\newcommand{\conj}{\etag{Conjecture}}
+\newcommand{\imposed}{\etag{Imposed}}
+\newcommand{\verified}{\etag{Verified}}
+\newcommand{\openq}{\etag{Open}}
+
+% ---- Shorthand ----
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Gstar}{G^{*}}
+\newcommand{\xp}{x_{+}}
+\newcommand{\xm}{x_{-}}
+\newcommand{\inv}{\alpha^{-1}}
+\newcommand{\BZ}{\mathrm{BZ}}
+\DeclareMathOperator{\sign}{sign}
+
+% ======================================================================
+\begin{document}
+
+% ---- Title ----
+\begin{center}
+    {\LARGE\bfseries A Precision Formula for the Fine-Structure Constant\\[0.15cm]
+    from Discrete Lattice Combinatorics}\\[0.7cm]
+    {\large William J.\ cpaci-tani~III$^{1}$}\\[0.3cm]
+    {\normalsize $^{1}$\textit{Independent Researcher}}\\[0.5cm]
+    {\small February 2026 \quad---\quad Pre-print Draft}\\[0.15cm]
+    {\small\textit{Epistemic Status:}\ \conj}
+\end{center}
+
+\vspace{0.3cm}
+\hrule height 0.5pt
+\vspace{0.6cm}
+
+% ---- Abstract ----
+\begin{abstract}
+\noindent We present a closed-form analytic formula for the fine-structure constant~$\alpha$ that achieves sub-parts-per-trillion agreement with the CODATA~2022 recommended value.
+The formula extends the Foundational Ternary Dynamics (FTD) master quadratic---whose larger root $\xp \approx 137.036$ already approximates $\inv$ to 1.26\,ppm---by applying a four-term correction series in the small parameter $\eps = e^{\pi} - \pi - 20 \approx -9.0 \times 10^{-4}$.
+Each correction coefficient is an exact rational number constructed from the FTD framework integers $\{3, 4, 7, 13\}$ and the constrained vacuum mode count $D = 47$.
+The resulting formula yields $\inv = 137.035\,999\,177\,000\,04...\,$, matching the CODATA~2022 central value of $137.035\,999\,177(21)$ to a residual of $4.1 \times 10^{-14}$, well within experimental uncertainty.
+We present this as a conjectured numerical identity, discuss the combinatorial origins of the correction coefficients within the FTD framework, and derive a falsifiable prediction for future precision measurements of $\alpha$.
+\end{abstract}
+
+\vspace{0.3cm}
+\noindent\textbf{Keywords:} fine-structure constant, discrete spacetime, lemniscatic constant, FTD, precision formula, lattice combinatorics
+
+\vspace{0.3cm}
+\noindent\textbf{PACS:} 06.20.Jr, 12.20.Ds, 11.15.Ha
+
+\tableofcontents
+
+% ======================================================================
+\section{Introduction}
+\label{sec:intro}
+
+The fine-structure constant $\alpha \approx 1/137.036$ governs the strength of electromagnetic interactions and is one of the most precisely measured quantities in physics.
+The CODATA~2022 recommended value is~\cite{CODATA2022}:
+\begin{equation}
+\label{eq:codata}
+    \inv = 137.035\,999\,177(21),
+\end{equation}
+with a relative uncertainty of $1.5 \times 10^{-10}$.
+Despite this extraordinary experimental precision, no fundamental theory predicts the \emph{value} of~$\alpha$ from first principles.
+In the Standard Model, $\alpha$ is a free parameter determined by measurement.
+
+Foundational Ternary Dynamics (FTD) is a discrete computational framework that postulates a three-dimensional cubic lattice with ternary states $\{-1, 0, +1\}$ and a continuous flux field $\mathbf{J} \in \mathbb{R}^3$~\cite{cpaci-tani2026}.
+Within this framework, a master quadratic equation derived from the lemniscatic constant
+\begin{equation}
+\label{eq:gstar}
+    \Gstar = \frac{\sqrt{2}\;\Gamma(1/4)^2}{2\pi} \approx 2.9587,
+\end{equation}
+yields two roots:
+\begin{equation}
+\label{eq:quadratic}
+    x^2 - 16(\Gstar)^2\, x + 16(\Gstar)^3 = 0.
+\end{equation}
+The solutions are:
+\begin{equation}
+\label{eq:roots}
+    \xp = 137.036\,171\,458\,155..., \qquad \xm = 3.023\,963\,916\,339...
+\end{equation}
+The identification $\xp \leftrightarrow \inv$ achieves 1.26\,ppm accuracy.
+In this paper, we present a four-term correction formula that closes the remaining gap of $\delta = \xp - \inv_{\mathrm{CODATA}} \approx 1.72 \times 10^{-4}$, achieving sub-ppt precision.
+
+\begin{remark}[Epistemic status]
+This formula is presented as a \conj---a mathematical observation with suggestive combinatorial structure, not a rigorous derivation from quantum field theory.
+The physical interpretation of the correction terms remains \openq.
+\end{remark}
+
+
+% ======================================================================
+\section{The Correction Formula}
+\label{sec:formula}
+
+\subsection{The Expansion Parameter}
+\label{sec:epsilon}
+
+We define the dimensionless expansion parameter:
+\begin{equation}
+\label{eq:epsilon}
+    \boxed{\;\eps \;=\; e^{\pi} - \pi - 20 \;\approx\; -9.000\,208\,105 \times 10^{-4}\;}
+\end{equation}
+
+\noindent\textbf{Mathematical context.}
+The near-integer relation $e^{\pi} \approx \pi + 20$ is documented in number theory~\cite{Weisstein}.
+Within FTD, the connection to the framework is twofold:
+\begin{enumerate}[label=(\roman*), nosep]
+    \item $e^{\pi} = 1/q_L$ where $q_L = e^{-\pi}$ is the nome of the lemniscate elliptic curve underlying the master quadratic;
+    \item the integer~20 decomposes as $b_3 + N_{\mathrm{eff}} = 7 + 13$, the sum of the topological coefficient and effective mode count from the FTD integer set.
+\end{enumerate}
+
+\noindent Whether this decomposition has deeper significance or is coincidental remains \openq.
+
+
+\subsection{The Correction Coefficients}
+\label{sec:coefficients}
+
+We define four rational correction coefficients constructed from the FTD framework integers $N_c = 3$, $N_{\mathrm{base}} = 4$, $b_3 = 7$, $N_{\mathrm{eff}} = 13$, and the constrained vacuum denominator $D = N_{\mathrm{base}}^2 \times N_c - 1 = 47$:
+
+\begin{align}
+    c_1 &= \frac{N_c^2}{D} = \frac{9}{47} \approx 0.19149, \label{eq:c1}\\[6pt]
+    c_2 &= \frac{N_{\mathrm{eff}} - 2\,N_{\mathrm{base}}}{N_{\mathrm{base}}^3} = \frac{5}{64} = 0.078125, \label{eq:c2}\\[6pt]
+    c_3 &= \frac{N_{\mathrm{base}}}{N_c \cdot D} = \frac{4}{141} \approx 0.02837, \label{eq:c3}\\[6pt]
+    c_4 &= \frac{N_c \cdot D}{b_3 + N_{\mathrm{base}}} = \frac{141}{11} \approx 12.818. \label{eq:c4}
+\end{align}
+
+Each coefficient is an exact rational fraction whose numerator and denominator are specific combinatorial functions of the integer set $\{3, 4, 7, 13\}$.
+
+
+\subsection{The Precision Formula}
+\label{sec:precision_formula}
+
+The complete formula is:
+
+\begin{equation}
+\label{eq:main}
+    \boxed{\;\inv \;=\; \xp \;-\; c_1|\eps| \;+\; c_2|\eps|^2 \;-\; c_3|\eps|^3 \;-\; c_4|\eps|^4\;}
+\end{equation}
+
+\noindent with sign pattern $(-, +, -, -)$.
+
+
+\subsection{Numerical Evaluation}
+\label{sec:evaluation}
+
+Using $\Gstar = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$ computed to 60 decimal places via \texttt{mpmath}~\cite{mpmath}, the successive corrections converge rapidly (see Table~\ref{tab:convergence}).
+
+\begin{table}[H]
+    \centering
+    \caption{Successive correction terms and convergence to the CODATA~2022 value.
+    Each term provides approximately three additional digits of precision.}
+    \label{tab:convergence}
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        \textbf{Stage} & \textbf{Correction} & \textbf{Cumulative $\inv$} & \textbf{Residual from CODATA} \\
+        \midrule
+        Bare $\xp$ & --- & $137.036\,171\,458\,155...$ & $+1.72 \times 10^{-4}$ \\[3pt]
+        $-c_1|\eps|$ & $-1.723 \times 10^{-4}$ & $137.035\,999\,114...$ & $-6.33 \times 10^{-8}$ \\[3pt]
+        $+c_2|\eps|^2$ & $+6.328 \times 10^{-8}$ & $137.035\,999\,177\,029...$ & $+2.91 \times 10^{-11}$ \\[3pt]
+        $-c_3|\eps|^3$ & $-2.068 \times 10^{-11}$ & $137.035\,999\,177\,008...$ & $+8.45 \times 10^{-12}$ \\[3pt]
+        $-c_4|\eps|^4$ & $-8.411 \times 10^{-12}$ & $137.035\,999\,177\,000\,04...$ & $+4.14 \times 10^{-14}$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\noindent\textbf{Final result:}
+\begin{equation}
+\label{eq:result}
+    \inv = 137.035\,999\,177\,000\,041\,4...
+\end{equation}
+
+The residual of $4.1 \times 10^{-14}$ is three orders of magnitude below the CODATA uncertainty of $2.1 \times 10^{-8}$.
+
+
+% ======================================================================
+\section{Combinatorial Structure of the Coefficients}
+\label{sec:combinatorics}
+
+In this section we describe the algebraic patterns connecting each coefficient to the discrete phase space of the FTD lattice.
+We emphasize that these are \textbf{structural observations within the FTD framework}~\conj, not derivations from quantum field theory.
+
+\subsection{The Constrained Vacuum Denominator ($D = 47$)}
+\label{sec:D47}
+
+The minimal FTD lattice cell ($2 \times 2 \times 2$) contains 8~vertices, each carrying a 3-component flux vector $\mathbf{J} \in \mathbb{R}^3$, yielding $8 \times 3 = 24$ total degrees of freedom.
+The Gauss constraint $\nabla_L \cdot \mathbf{J} = \rho$ eliminates 7~longitudinal modes (one per interior face plus one global), and charge conservation removes 1~additional global degree of freedom, leaving
+\begin{equation}
+    24 - 7 - 1 = 16 \quad \text{physical degrees of freedom per cell.}
+\end{equation}
+Multiplexed across $N_c = 3$ color sectors with one global constraint subtracted:
+\begin{equation}
+\label{eq:D}
+    D = 16 \times N_c - 1 = 47.
+\end{equation}
+
+\noindent \selection: The Gauss constraint counting follows from the FTD action~\cite{cpaci-tani2026}.
+The color multiplexing and global constraint subtraction are argued from the framework structure but are not independently derived.
+
+
+\subsection{Coefficient Patterns}
+\label{sec:patterns}
+
+Each coefficient~$c_n$ is a ratio of FTD combinatorial factors.
+We observe:
+\begin{itemize}[nosep]
+    \item $c_1 = N_c^2/D$: ratio of $U(N_c)$ generator count to the constrained vacuum phase space.
+    \item $c_2 = (N_{\mathrm{eff}} - 2N_{\mathrm{base}})/N_{\mathrm{base}}^3$: ratio of internal interaction modes to volumetric phase space.
+    \item $c_3 = N_{\mathrm{base}}/(N_c \cdot D)$: the first coefficient suppressed by one additional color factor.
+    \item $c_4 = (N_c \cdot D)/(b_3 + N_{\mathrm{base}})$: hierarchical inversion of $c_3$'s component factors.
+\end{itemize}
+
+\noindent We note the algebraic relationship:
+\begin{equation}
+\label{eq:c3c4}
+    c_3 \times c_4 = \frac{4}{141} \times \frac{141}{11} = \frac{4}{11} = \frac{N_{\mathrm{base}}}{b_3 + N_{\mathrm{base}}}.
+\end{equation}
+
+
+
+\subsection{On the Sign Pattern}
+\label{sec:signs}
+
+The sign pattern $(-, +, -, -)$ is empirically determined.
+In standard QED, the one-loop vacuum polarization screens the bare charge (negative correction to~$\inv$), which is consistent with our $c_1$ sign.
+Higher-order corrections involve both screening and anti-screening contributions from vertex corrections and light-by-light scattering.
+
+\imposed: We do not claim that our sign pattern is derived from QED diagram counting.
+
+
+% ======================================================================
+\section{On the Number of Correction Terms}
+\label{sec:truncation}
+
+\subsection{Empirical Saturation}
+\label{sec:saturation}
+
+The four-term formula saturates the available experimental precision.
+A hypothetical fifth term of the form $c_5|\eps|^5$ would contribute at most $\sim c_5 \times 6 \times 10^{-16}$ for~$c_5$ of order unity, which is below any foreseeable experimental sensitivity.
+
+\subsection{Topological Motivation}
+\label{sec:topology}
+
+The first Betti number of the cube skeleton (the 1-skeleton of the $2 \times 2 \times 2$ lattice cell with $V=8$ vertices and $E=12$ edges) is:
+\begin{equation}
+\label{eq:betti}
+    b_1 = E - V + 1 = 12 - 8 + 1 = 5.
+\end{equation}
+This counts the number of independent cycles in the graph.
+The Gauss constraint removes one longitudinal (non-physical) cycle, suggesting that the number of \emph{physical} independent topological cycles may be $b_1 - 1 = 4$.
+
+\openq: Whether this topological observation provides a rigorous truncation mechanism, or whether the agreement at four terms is coincidental, remains to be determined.
+
+\subsection{Practical vs.\ Formal Truncation}
+\label{sec:practical}
+
+Even if the series does not formally truncate, the geometric suppression factor~$|\eps|^n$ ensures rapid convergence.
+The ratio of successive terms is:
+\begin{equation}
+    \frac{c_{n+1}\,|\eps|^{n+1}}{c_n\,|\eps|^n} \sim |\eps| \times \frac{c_{n+1}}{c_n} \sim 10^{-3} \times O(1) \sim 10^{-3}.
+\end{equation}
+Each term provides roughly three additional digits of precision.
+Four terms exhaust the precision of current experimental data ($\sim 10^{-12}$), rendering the question of formal truncation experimentally moot for the foreseeable future.
+
+
+% ======================================================================
+\section{Falsifiable Prediction}
+\label{sec:prediction}
+
+Because the formula produces specific digits beyond current experimental precision, it makes a concrete, falsifiable prediction.
+
+\begin{conjecture}[Digit prediction]
+\label{conj:digits}
+The true value of $\inv$ lies within $10^{-12}$ of
+\begin{equation}
+    \inv = 137.035\,999\,177\,000\,04(1).
+\end{equation}
+Specifically, the digits following the currently measured $137.035\,999\,177$ are predicted to be $000\,041...\,$, not (for example) $100$ or $200$.
+\end{conjecture}
+
+\noindent\textbf{Falsification criterion:}
+If a future measurement determines $\inv$ with uncertainty below $10^{-12}$ and the central value deviates from $137.035\,999\,177\,000$ by more than~$10^{-11}$, this formula is strictly falsified.
+
+\noindent\textbf{Current experimental context.}
+The most precise determination of~$\alpha$ comes from the electron $g-2$ measurement combined with five-loop QED calculations~\cite{Morel2020, Aoyama2018}.
+The CODATA~2022 uncertainty of $\pm 21$ in the last two digits ($\times 10^{-9}$) leaves substantial room for this prediction to be tested.
+
+
+% ======================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{What This Paper Claims}
+\begin{enumerate}[nosep]
+    \item A closed-form formula for $\inv$ matching CODATA to $4 \times 10^{-14}$.
+    \item All coefficients expressible as exact rationals from FTD integers $\{3, 4, 7, 13\}$.
+    \item A specific, falsifiable prediction for future precision measurements.
+\end{enumerate}
+
+\subsection{What This Paper Does Not Claim}
+\begin{enumerate}[nosep]
+    \item That the coefficients are QED vacuum polarization loop integrals---they are combinatorial ratios within the FTD integer framework.
+    \item That the perturbation series is proven to truncate---truncation is motivated but unproven.
+    \item That the asymptotic divergence of QED is resolved---UV regularization and series truncation are distinct issues.
+    \item That renormalization is eliminated---the lattice provides a natural cutoff, but the relationship to continuum renormalization is not established.
+\end{enumerate}
+
+\subsection{Degrees of Freedom Analysis}
+\label{sec:dof}
+
+A legitimate concern is that the formula contains sufficient discrete freedom to fit the CODATA value:
+\begin{itemize}[nosep]
+    \item One expansion parameter expression (chosen, not derived from the lattice action);
+    \item Four rational coefficients (constructed from a four-element integer set);
+    \item Four sign choices ($2^4 = 16$ possibilities).
+\end{itemize}
+
+\noindent Against this, we note:
+\begin{enumerate}[nosep]
+    \item The coefficients are not arbitrary---they are constrained to ratios of specific FTD combinatorial quantities.
+    \item The expansion parameter is not a free real number---it is a fixed mathematical constant.
+    \item The convergence pattern is remarkably clean, with each term providing ${\sim}\,3$ additional digits.
+    \item The formula predicts digits beyond current measurement that can be independently tested.
+\end{enumerate}
+Whether the formula represents a deep structural truth or an elaborate numerical coincidence is a question that future experiment can decisively answer.
+
+
+\subsection{Relationship to QED}
+\label{sec:qed}
+
+The standard QED approach computes measurable quantities (anomalous magnetic moment, Lamb shift, etc.)\ as perturbative series in~$\alpha/\pi$, taking~$\alpha$ as input.
+The coefficients of these series are transcendental numbers involving $\pi$, $\zeta(3)$, $\zeta(5)$, etc., and require enormous computational effort at high loop order~\cite{Aoyama2018}.
+
+Our formula operates in a fundamentally different register: it proposes a \emph{value} for~$\alpha$ from discrete combinatorics, rather than using~$\alpha$ to predict scattering amplitudes.
+The two approaches are complementary, not competing.
+If our formula is correct, it would constrain $\alpha$ more tightly than current QED~$+$~experiment, but it does not replace the QED calculations that relate $\alpha$ to observables.
+
+
+\subsection{Relationship to Lattice Gauge Theory}
+\label{sec:lattice}
+
+Standard lattice gauge theory (Wilson, 1974) provides a non-perturbative formulation of QFT on a discrete lattice~\cite{Wilson1974}.
+The FTD lattice shares the UV cutoff property (momentum restricted to the Brillouin zone $[-\pi, \pi]^3$) but differs in crucial respects:
+\begin{itemize}[nosep]
+    \item FTD postulates a ternary state ontology ($\{-1, 0, +1\}$) rather than continuous gauge fields.
+    \item The flux field $\mathbf{J}$ replaces the gauge potential $A_\mu$.
+    \item Manifestation dynamics (threshold crossing) replaces path integral quantization.
+\end{itemize}
+
+The correction coefficients~\eqref{eq:c1}--\eqref{eq:c4} are \emph{not} derived from lattice Feynman diagram computations.
+They arise from combinatorial counting of lattice degrees of freedom, not from loop momentum integrals.
+Establishing a formal connection between this combinatorial structure and standard lattice QED remains an important open problem.
+
+
+% ======================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We have presented a four-term analytic formula for the inverse fine-structure constant that achieves sub-parts-per-trillion agreement with the CODATA~2022 value.
+The formula combines the FTD master quadratic root~$\xp$ with correction terms whose coefficients are exact rational numbers built from the framework integers $\{3, 4, 7, 13\}$, expanded in the small parameter $\eps = e^{\pi} - \pi - 20$.
+
+The result is presented as a mathematical conjecture, not as a QED calculation.
+Its ultimate significance depends on whether future measurements confirm or refute the predicted digits $...0000414$ beyond current experimental precision.
+
+Should this prediction survive future experimental tests, it would constitute strong evidence that the fine-structure constant is determined by the discrete combinatorial structure of spacetime---an extraordinary claim requiring extraordinary evidence, which only precision measurement can provide.
+
+
+% ======================================================================
+\appendix
+
+\section{Computational Verification}
+\label{app:code}
+
+All calculations were performed using \texttt{mpmath}~\cite{mpmath} at 60-digit precision.
+The complete computation is reproduced below for independent verification:
+
+\begin{verbatim}
+from mpmath import mp, mpf, gamma, sqrt, pi, exp
+mp.dps = 60
+
+G_star = sqrt(2) * gamma(mpf('1')/4)**2 / (2*pi)
+disc   = (16*G_star**2)**2 - 4*16*G_star**3
+x_plus = (16*G_star**2 + sqrt(disc)) / 2
+eps    = abs(exp(pi) - pi - 20)
+
+c = [mpf(9)/47, mpf(5)/64, mpf(4)/141, mpf(141)/11]
+alpha_inv = (x_plus
+             - c[0]*eps
+             + c[1]*eps**2
+             - c[2]*eps**3
+             - c[3]*eps**4)
+# Result: 137.035999177000041405833862...
+\end{verbatim}
+
+\noindent Output: $\inv = 137.035\,999\,177\,000\,041\,405\,833\,862\,67...$
+
+\vspace{0.3cm}
+\noindent Difference from CODATA: $+4.14 \times 10^{-14}$ (within $\pm 2.1 \times 10^{-8}$ uncertainty).
+
+
+\section{Summary of FTD Framework Integers}
+\label{app:integers}
+
+\begin{table}[H]
+    \centering
+    \caption{The four FTD framework integers and their physical interpretations within the lattice framework.}
+    \label{tab:integers}
+    \begin{tabular}{@{}ccl@{}}
+        \toprule
+        \textbf{Symbol} & \textbf{Value} & \textbf{Interpretation} \\
+        \midrule
+        $N_c$ & 3 & Color charges / spatial dimensions \\
+        $N_{\mathrm{base}}$ & 4 & Base lattice dimension ($2^2$) \\
+        $b_3$ & 7 & Topological coefficient (Fibonacci $F_5 + F_3$) \\
+        $N_{\mathrm{eff}}$ & 13 & Effective modes ($b_3 + 2 N_c = 7 + 6$; also Fibonacci $F_7$) \\
+        \midrule
+        $D$ & 47 & Constrained vacuum: $N_{\mathrm{base}}^2 \times N_c - 1$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\section{Betti Number Calculation}
+\label{app:betti}
+
+For a connected graph~$G$ with $V$~vertices and $E$~edges, the first Betti number (cycle rank) is:
+\begin{equation}
+    b_1(G) = E - V + 1.
+\end{equation}
+For the 1-skeleton of the $2 \times 2 \times 2$ cube ($V = 8$, $E = 12$):
+\begin{equation}
+    b_1 = 12 - 8 + 1 = 5.
+\end{equation}
+This counts five independent topological cycles.
+If the Gauss constraint eliminates one non-physical (longitudinal) cycle, the number of physical independent cycles is~$4$, suggesting a possible connection to the four correction terms.
+This remains \openq.
+
+
+% ======================================================================
+% References
+% ======================================================================
+\begin{thebibliography}{99}
+
+\bibitem{CODATA2022}
+E.~Tiesinga, P.~J.~Mohr, D.~B.~Newell, and B.~N.~Taylor,
+``CODATA recommended values of the fundamental physical constants: 2022,''
+\textit{Rev.\ Mod.\ Phys.}\ \textbf{96}, 025010 (2024).
+
+\bibitem{cpaci-tani2026}
+W.~J.~cpaci-tani~III,
+``Foundational Ternary Dynamics: A Discrete Ontology for Computational Physics,''
+Pre-print (2026).
+
+\bibitem{Morel2020}
+L.~Morel, Z.~Yao, P.~Clad\'{e}, and S.~Guellati-Kh\'{e}lifa,
+``Determination of the fine-structure constant with an accuracy of 81 parts per trillion,''
+\textit{Nature}\ \textbf{588}, 61--65 (2020).
+
+\bibitem{Aoyama2018}
+T.~Aoyama, T.~Kinoshita, and M.~Nio,
+``Theory of the anomalous magnetic moment of the electron,''
+\textit{Atoms}\ \textbf{7}(1), 28 (2019).
+
+\bibitem{Wilson1974}
+K.~G.~Wilson,
+``Confinement of quarks,''
+\textit{Phys.\ Rev.\ D}\ \textbf{10}, 2445 (1974).
+
+\bibitem{Weisstein}
+E.~W.~Weisstein,
+``Almost integer,''
+\textit{MathWorld}---A Wolfram Web Resource.
+
+\bibitem{mpmath}
+F.~Johansson et al.,
+``mpmath: a Python library for arbitrary-precision floating-point arithmetic (version 1.3),''
+\url{https://mpmath.org/} (2023).
+
+\bibitem{Dyson1952}
+F.~J.~Dyson,
+``Divergence of perturbation theory in quantum electrodynamics,''
+\textit{Phys.\ Rev.}\ \textbf{85}, 631 (1952).
+
+\end{thebibliography}
+
+\end{document}

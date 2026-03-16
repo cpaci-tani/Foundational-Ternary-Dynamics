@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRD Unified Forces Simulation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.4em;
+            background: linear-gradient(135deg, #64b5f6, #e040fb, #66bb6a, #ffd54f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #90a4ae;
+            font-size: 1.1em;
+        }
+
+        .formula-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px 25px;
+            margin: 15px auto;
+            display: inline-block;
+        }
+
+        .formula-box .main-formula {
+            font-size: 1.4em;
+            color: #b0bec5;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .canvas-section {
+            flex: 1;
+            min-width: 650px;
+        }
+
+        #canvas-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .controls-section {
+            width: 340px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel h3 {
+            color: #b0bec5;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        .force-hierarchy {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .force-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .force-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .force-item.disabled {
+            opacity: 0.4;
+        }
+
+        .force-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .force-dot.strong { background: #e040fb; }
+        .force-dot.em { background: #ffd54f; }
+        .force-dot.weak { background: #66bb6a; }
+        .force-dot.gravity { background: #64b5f6; }
+
+        .force-name {
+            flex: 1;
+            font-size: 0.95em;
+        }
+
+        .force-strength {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #78909c;
+        }
+
+        .force-toggle {
+            width: 40px;
+            height: 22px;
+            border-radius: 11px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .force-toggle::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #78909c;
+            top: 2px;
+            left: 2px;
+            transition: all 0.2s;
+        }
+
+        .force-toggle.on::after {
+            left: 20px;
+            background: #4caf50;
+        }
+
+        .control-group {
+            margin-bottom: 18px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #b0bec5;
+            font-size: 0.9em;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #64b5f6, #e040fb);
+            cursor: pointer;
+        }
+
+        .value-display {
+            text-align: right;
+            color: #90a4ae;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            margin-top: 4px;
+        }
+
+        .preset-btn {
+            padding: 10px 16px;
+            border: none;
+            background: linear-gradient(135deg, #3f51b5, #303f9f);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.1s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .preset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(63, 81, 181, 0.4);
+        }
+
+        .force-breakdown {
+            margin-top: 15px;
+        }
+
+        .force-bar {
+            margin-bottom: 8px;
+        }
+
+        .force-bar .label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            margin-bottom: 3px;
+        }
+
+        .force-bar .label .name {
+            color: #90a4ae;
+        }
+
+        .force-bar .label .value {
+            font-family: 'Courier New', monospace;
+        }
+
+        .force-bar .bar-bg {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .force-bar .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.2s;
+        }
+
+        .bar-fill.strong { background: #e040fb; }
+        .bar-fill.em { background: #ffd54f; }
+        .bar-fill.weak { background: #66bb6a; }
+        .bar-fill.gravity { background: #64b5f6; }
+
+        .pie-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+
+        #pie-chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 0.8em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .energy-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .energy-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .energy-item .label {
+            font-size: 0.75em;
+            color: #78909c;
+        }
+
+        .energy-item .value {
+            font-size: 1.1em;
+            font-family: 'Courier New', monospace;
+            color: #b0bec5;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(100,181,246,0.1), rgba(224,64,251,0.1));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #b0bec5;
+        }
+
+        .action-callout {
+            background: linear-gradient(135deg, rgba(76,175,80,0.2), rgba(102,187,106,0.1));
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .action-callout .title {
+            font-size: 1.1em;
+            color: #81c784;
+            margin-bottom: 5px;
+        }
+
+        .action-callout .formula {
+            font-size: 1.3em;
+            color: #a5d6a7;
+        }
+
+        .toggle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .toggle-btn {
+            padding: 8px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #b0bec5;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Unified Forces Simulation</h1>
+            <p class="subtitle">Ternary Realization Dynamics - All Four Forces from One Action Principle</p>
+            <div class="formula-box">
+                <span class="main-formula" id="action-formula"></span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="canvas-section">
+                <div id="canvas-container"></div>
+            </div>
+
+            <div class="controls-section">
+                <div class="panel">
+                    <h3>Force Hierarchy</h3>
+                    <div class="force-hierarchy">
+                        <div class="force-item" onclick="toggleForce('strong')">
+                            <div class="force-dot strong"></div>
+                            <span class="force-name">Strong (Yukawa)</span>
+                            <span class="force-strength">1</span>
+                            <div class="force-toggle on" id="toggle-strong"></div>
+                        </div>
+                        <div class="force-item" onclick="toggleForce('em')">
+                            <div class="force-dot em"></div>
+                            <span class="force-name">Electromagnetic</span>
+                            <span class="force-strength">1/137</span>
+                            <div class="force-toggle on" id="toggle-em"></div>
+                        </div>
+                        <div class="force-item" onclick="toggleForce('weak')">
+                            <div class="force-dot weak"></div>
+                            <span class="force-name">Weak</span>
+                            <span class="force-strength">10⁻⁵</span>
+                            <div class="force-toggle on" id="toggle-weak"></div>
+                        </div>
+                        <div class="force-item" onclick="toggleForce('gravity')">
+                            <div class="force-dot gravity"></div>
+                            <span class="force-name">Gravity</span>
+                            <span class="force-strength">10⁻³⁹</span>
+                            <div class="force-toggle on" id="toggle-gravity"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Master Coupling</h3>
+                    <div class="control-group">
+                        <label>Overall Strength Multiplier</label>
+                        <input type="range" id="master-slider" min="0.1" max="3" step="0.1" value="1">
+                        <div class="value-display"><span id="master-value">1.0</span>x</div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Zoom Level</label>
+                        <input type="range" id="zoom-slider" min="0.5" max="2" step="0.1" value="1">
+                        <div class="value-display"><span id="zoom-value">1.0</span>x</div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Time Scale</label>
+                        <input type="range" id="time-slider" min="0.1" max="2" step="0.1" value="1">
+                        <div class="value-display"><span id="time-value">1.0</span>x</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Force Contributions</h3>
+                    <div class="pie-container">
+                        <canvas id="pie-chart"></canvas>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-dot" style="background:#e040fb"></div>Strong</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#ffd54f"></div>EM</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#66bb6a"></div>Weak</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#64b5f6"></div>Gravity</div>
+                    </div>
+
+                    <div class="force-breakdown">
+                        <div class="force-bar">
+                            <div class="label">
+                                <span class="name">Strong</span>
+                                <span class="value" id="strong-value" style="color:#e040fb">0.00</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill strong" id="strong-bar" style="width:0%"></div></div>
+                        </div>
+                        <div class="force-bar">
+                            <div class="label">
+                                <span class="name">Electromagnetic</span>
+                                <span class="value" id="em-value" style="color:#ffd54f">0.00</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill em" id="em-bar" style="width:0%"></div></div>
+                        </div>
+                        <div class="force-bar">
+                            <div class="label">
+                                <span class="name">Weak</span>
+                                <span class="value" id="weak-value" style="color:#66bb6a">0.00</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill weak" id="weak-bar" style="width:0%"></div></div>
+                        </div>
+                        <div class="force-bar">
+                            <div class="label">
+                                <span class="name">Gravity</span>
+                                <span class="value" id="gravity-value" style="color:#64b5f6">0.00</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill gravity" id="gravity-bar" style="width:0%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Presets</h3>
+                    <button class="preset-btn" onclick="loadPreset('hydrogen')">Hydrogen Atom</button>
+                    <button class="preset-btn" onclick="loadPreset('helium')">Helium Atom</button>
+                    <button class="preset-btn" onclick="loadPreset('proton')">Proton (3 quarks)</button>
+                    <button class="preset-btn" onclick="loadPreset('freeParticles')">Free Particles</button>
+                </div>
+
+                <div class="panel">
+                    <h3>Visualization</h3>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" id="btn-vectors" onclick="toggleOption('showVectors')">Force Vectors</button>
+                        <button class="toggle-btn active" id="btn-trails" onclick="toggleOption('showTrails')">Trails</button>
+                        <button class="toggle-btn" id="btn-labels" onclick="toggleOption('showLabels')">Labels</button>
+                        <button class="toggle-btn" id="btn-field" onclick="toggleOption('showField')">Field</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>System Energy</h3>
+                    <div class="energy-display">
+                        <div class="energy-item">
+                            <div class="label">Total</div>
+                            <div class="value" id="total-energy">0.00</div>
+                        </div>
+                        <div class="energy-item">
+                            <div class="label">Kinetic</div>
+                            <div class="value" id="kinetic-energy">0.00</div>
+                        </div>
+                        <div class="energy-item">
+                            <div class="label">Potential</div>
+                            <div class="value" id="potential-energy">0.00</div>
+                        </div>
+                        <div class="energy-item">
+                            <div class="label">Particles</div>
+                            <div class="value" id="particle-count">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="action-callout">
+                        <div class="title">All Forces from One Principle</div>
+                        <div class="formula" id="unified-action"></div>
+                    </div>
+                    <div class="info-box" style="margin-top: 15px;">
+                        The TRD action principle S[s,J] generates <b>all four fundamental forces</b>
+                        through a single mathematical structure.
+                        <br><br>
+                        The vast hierarchy (10<sup>39</sup> between strong and gravity)
+                        emerges from powers of α = 1/137.036.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // TRD UNIFIED FORCES SIMULATION
+        // All four forces from action S[s,J]
+        // ============================================
+
+        let particles = [];
+        let masterMultiplier = 1.0;
+        let zoomLevel = 1.0;
+        let timeScale = 1.0;
+
+        // Force enable flags
+        let forces = {
+            strong: true,
+            em: true,
+            weak: true,
+            gravity: true
+        };
+
+        // Force magnitudes for display
+        let forceMagnitudes = {
+            strong: 0,
+            em: 0,
+            weak: 0,
+            gravity: 0
+        };
+
+        let options = {
+            showVectors: true,
+            showTrails: true,
+            showLabels: false,
+            showField: false
+        };
+
+        const CANVAS_WIDTH = 700;
+        const CANVAS_HEIGHT = 600;
+        const TRAIL_LENGTH = 50;
+
+        // Coupling constants (relative)
+        const ALPHA = 1/137.036;
+        const G_STRONG = 1.0;
+        const G_EM = ALPHA;
+        const G_WEAK = 1e-5;
+        const G_GRAVITY = 1e-8;  // Scaled up for visibility
+
+        // Particle class
+        class Particle {
+            constructor(x, y, type, charge, color, mass = 1) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(0, 0);
+                this.acc = createVector(0, 0);
+                this.type = type;  // 'quark', 'electron', 'proton', 'neutron'
+                this.charge = charge;  // Electric charge
+                this.colorCharge = color;  // 'red', 'green', 'blue', 'none'
+                this.mass = mass;
+                this.radius = 12 + mass * 2;
+                this.trail = [];
+                this.forces = { strong: createVector(0,0), em: createVector(0,0), weak: createVector(0,0), gravity: createVector(0,0) };
+                this.totalForce = createVector(0, 0);
+            }
+
+            applyForce(force, type) {
+                this.forces[type] = force.copy();
+                let a = p5.Vector.div(force, this.mass);
+                this.acc.add(a);
+            }
+
+            update(dt) {
+                // Calculate total force
+                this.totalForce = createVector(0, 0);
+                for (let type in this.forces) {
+                    this.totalForce.add(this.forces[type]);
+                }
+
+                this.vel.add(p5.Vector.mult(this.acc, dt));
+                this.vel.mult(0.995);  // Slight damping
+                this.pos.add(p5.Vector.mult(this.vel, dt));
+                this.acc.mult(0);
+
+                // Reset forces for next frame
+                for (let type in this.forces) {
+                    this.forces[type].mult(0);
+                }
+
+                // Store trail
+                if (options.showTrails) {
+                    this.trail.push(this.pos.copy());
+                    if (this.trail.length > TRAIL_LENGTH) {
+                        this.trail.shift();
+                    }
+                }
+
+                // Soft boundary
+                let margin = 50;
+                if (this.pos.x < margin) this.vel.x += 0.5;
+                if (this.pos.x > CANVAS_WIDTH - margin) this.vel.x -= 0.5;
+                if (this.pos.y < margin) this.vel.y += 0.5;
+                if (this.pos.y > CANVAS_HEIGHT - margin) this.vel.y -= 0.5;
+            }
+
+            getColor() {
+                switch(this.type) {
+                    case 'quark':
+                        if (this.colorCharge === 'red') return color(244, 67, 54);
+                        if (this.colorCharge === 'green') return color(76, 175, 80);
+                        if (this.colorCharge === 'blue') return color(33, 150, 243);
+                        return color(156, 39, 176);
+                    case 'electron':
+                        return color(255, 235, 59);
+                    case 'proton':
+                        return color(239, 83, 80);
+                    case 'neutron':
+                        return color(158, 158, 158);
+                    default:
+                        return color(200);
+                }
+            }
+
+            draw() {
+                // Draw trail
+                if (options.showTrails && this.trail.length > 1) {
+                    noFill();
+                    let c = this.getColor();
+                    beginShape();
+                    for (let i = 0; i < this.trail.length; i++) {
+                        let alpha = map(i, 0, this.trail.length, 0, 100);
+                        stroke(red(c), green(c), blue(c), alpha);
+                        strokeWeight(2);
+                        vertex(this.trail[i].x, this.trail[i].y);
+                    }
+                    endShape();
+                }
+
+                // Draw particle
+                let c = this.getColor();
+                noStroke();
+                fill(c);
+                ellipse(this.pos.x, this.pos.y, this.radius * 2 * zoomLevel);
+
+                // Glow
+                for (let r = this.radius * 2; r > this.radius; r -= 2) {
+                    fill(red(c), green(c), blue(c), map(r, this.radius, this.radius * 2, 60, 0));
+                    ellipse(this.pos.x, this.pos.y, r * 2 * zoomLevel);
+                }
+
+                // Force vectors
+                if (options.showVectors) {
+                    this.drawForceVectors();
+                }
+
+                // Label
+                if (options.showLabels) {
+                    fill(255);
+                    textAlign(CENTER, CENTER);
+                    textSize(10);
+                    text(this.type.charAt(0).toUpperCase(), this.pos.x, this.pos.y);
+                }
+            }
+
+            drawForceVectors() {
+                let scale = 30 * masterMultiplier;
+                let maxLen = 40;
+
+                // Strong - purple
+                if (forces.strong && this.forces.strong) {
+                    this.drawVector(this.forces.strong, scale * 10, color(224, 64, 251), maxLen);
+                }
+
+                // EM - yellow
+                if (forces.em && this.forces.em) {
+                    this.drawVector(this.forces.em, scale * 100, color(255, 213, 79), maxLen);
+                }
+
+                // Weak - green
+                if (forces.weak && this.forces.weak) {
+                    this.drawVector(this.forces.weak, scale * 10000, color(102, 187, 106), maxLen);
+                }
+
+                // Gravity - blue
+                if (forces.gravity && this.forces.gravity) {
+                    this.drawVector(this.forces.gravity, scale * 1e7, color(100, 181, 246), maxLen);
+                }
+            }
+
+            drawVector(force, scale, col, maxLen) {
+                if (force.mag() < 0.0001) return;
+
+                let fScaled = p5.Vector.mult(force, scale);
+                if (fScaled.mag() > maxLen) fScaled.setMag(maxLen);
+                if (fScaled.mag() < 3) return;
+
+                stroke(col);
+                strokeWeight(2);
+                line(this.pos.x, this.pos.y,
+                     this.pos.x + fScaled.x, this.pos.y + fScaled.y);
+
+                // Arrow head
+                push();
+                translate(this.pos.x + fScaled.x, this.pos.y + fScaled.y);
+                rotate(fScaled.heading());
+                fill(col);
+                noStroke();
+                triangle(-6, -3, 0, 0, -6, 3);
+                pop();
+            }
+        }
+
+        // ============================================
+        // FORCE CALCULATIONS
+        // ============================================
+
+        function calculateStrongForce(p1, p2) {
+            // Only between quarks
+            if (p1.type !== 'quark' || p2.type !== 'quark') return createVector(0, 0);
+
+            let dir = p5.Vector.sub(p2.pos, p1.pos);
+            let r = dir.mag();
+            if (r < 20) r = 20;
+
+            // Yukawa: F = g² * e^(-mr) / r² * (1 + mr)
+            let m_pi = 0.02;
+            let forceMag = G_STRONG * masterMultiplier * Math.exp(-m_pi * r) / (r * r) * (1 + m_pi * r);
+
+            // Add confinement (linear term)
+            forceMag += 0.001 * r * masterMultiplier;
+
+            dir.normalize();
+            dir.mult(forceMag * 50);
+            return dir;
+        }
+
+        function calculateEMForce(p1, p2) {
+            if (p1.charge === 0 || p2.charge === 0) return createVector(0, 0);
+
+            let dir = p5.Vector.sub(p2.pos, p1.pos);
+            let r = dir.mag();
+            if (r < 15) r = 15;
+
+            // Coulomb: F = k * q1 * q2 / r²
+            let forceMag = G_EM * masterMultiplier * p1.charge * p2.charge / (r * r);
+
+            dir.normalize();
+            dir.mult(-forceMag * 500);  // Negative for attraction of opposites
+            return dir;
+        }
+
+        function calculateWeakForce(p1, p2) {
+            // Weak force is short-range and causes transmutation
+            // For visualization, we model it as a very short-range force
+            let dir = p5.Vector.sub(p2.pos, p1.pos);
+            let r = dir.mag();
+
+            if (r > 50) return createVector(0, 0);  // Very short range
+
+            let forceMag = G_WEAK * masterMultiplier * Math.exp(-r / 10) * 100;
+
+            dir.normalize();
+            dir.mult(forceMag);
+            return dir;
+        }
+
+        function calculateGravityForce(p1, p2) {
+            let dir = p5.Vector.sub(p2.pos, p1.pos);
+            let r = dir.mag();
+            if (r < 20) r = 20;
+
+            // Newton: F = G * m1 * m2 / r²
+            let forceMag = G_GRAVITY * masterMultiplier * p1.mass * p2.mass / (r * r);
+
+            dir.normalize();
+            dir.mult(forceMag * 1e6);  // Scale up for visibility
+            return dir;
+        }
+
+        // ============================================
+        // PRESETS
+        // ============================================
+
+        function loadPreset(preset) {
+            particles = [];
+            let cx = CANVAS_WIDTH / 2;
+            let cy = CANVAS_HEIGHT / 2;
+
+            switch(preset) {
+                case 'hydrogen':
+                    // Proton + electron
+                    particles.push(new Particle(cx, cy, 'proton', 1, 'none', 5));
+                    let e = new Particle(cx + 80, cy, 'electron', -1, 'none', 0.2);
+                    e.vel = createVector(0, 2);
+                    particles.push(e);
+                    break;
+
+                case 'helium':
+                    // 2 protons, 2 neutrons, 2 electrons
+                    particles.push(new Particle(cx - 10, cy - 5, 'proton', 1, 'none', 5));
+                    particles.push(new Particle(cx + 10, cy + 5, 'proton', 1, 'none', 5));
+                    particles.push(new Particle(cx - 5, cy + 10, 'neutron', 0, 'none', 5));
+                    particles.push(new Particle(cx + 5, cy - 10, 'neutron', 0, 'none', 5));
+
+                    let e1 = new Particle(cx + 60, cy, 'electron', -1, 'none', 0.2);
+                    e1.vel = createVector(0, 1.5);
+                    particles.push(e1);
+
+                    let e2 = new Particle(cx - 60, cy, 'electron', -1, 'none', 0.2);
+                    e2.vel = createVector(0, -1.5);
+                    particles.push(e2);
+                    break;
+
+                case 'proton':
+                    // 3 quarks (uud)
+                    particles.push(new Particle(cx - 25, cy - 15, 'quark', 2/3, 'red', 1));
+                    particles.push(new Particle(cx + 25, cy - 15, 'quark', 2/3, 'green', 1));
+                    particles.push(new Particle(cx, cy + 20, 'quark', -1/3, 'blue', 1));
+                    break;
+
+                case 'freeParticles':
+                    for (let i = 0; i < 8; i++) {
+                        let x = random(100, CANVAS_WIDTH - 100);
+                        let y = random(100, CANVAS_HEIGHT - 100);
+                        let types = ['electron', 'proton', 'quark'];
+                        let type = random(types);
+                        let charge = type === 'electron' ? -1 : (type === 'proton' ? 1 : random([-1/3, 2/3]));
+                        let colorCharge = type === 'quark' ? random(['red', 'green', 'blue']) : 'none';
+                        let mass = type === 'electron' ? 0.2 : (type === 'quark' ? 1 : 5);
+
+                        let p = new Particle(x, y, type, charge, colorCharge, mass);
+                        p.vel = p5.Vector.random2D().mult(random(0.5, 1.5));
+                        particles.push(p);
+                    }
+                    break;
+            }
+        }
+
+        // ============================================
+        // VISUALIZATION
+        // ============================================
+
+        function drawPieChart() {
+            let canvas = document.getElementById('pie-chart');
+            let ctx = canvas.getContext('2d');
+
+            canvas.width = 150;
+            canvas.height = 150;
+
+            let total = forceMagnitudes.strong + forceMagnitudes.em + forceMagnitudes.weak + forceMagnitudes.gravity;
+            if (total < 0.0001) total = 1;
+
+            let angles = {
+                strong: (forceMagnitudes.strong / total) * TWO_PI,
+                em: (forceMagnitudes.em / total) * TWO_PI,
+                weak: (forceMagnitudes.weak / total) * TWO_PI,
+                gravity: (forceMagnitudes.gravity / total) * TWO_PI
+            };
+
+            let colors = {
+                strong: '#e040fb',
+                em: '#ffd54f',
+                weak: '#66bb6a',
+                gravity: '#64b5f6'
+            };
+
+            let startAngle = -Math.PI / 2;
+            let cx = 75, cy = 75, r = 60;
+
+            ctx.clearRect(0, 0, 150, 150);
+
+            for (let force in angles) {
+                if (angles[force] > 0.01) {
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.arc(cx, cy, r, startAngle, startAngle + angles[force]);
+                    ctx.closePath();
+                    ctx.fillStyle = colors[force];
+                    ctx.fill();
+                    startAngle += angles[force];
+                }
+            }
+
+            // Center hole
+            ctx.beginPath();
+            ctx.arc(cx, cy, 25, 0, TWO_PI);
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fill();
+        }
+
+        function updateForceDisplay() {
+            let maxForce = Math.max(forceMagnitudes.strong, forceMagnitudes.em, forceMagnitudes.weak, forceMagnitudes.gravity, 0.001);
+
+            document.getElementById('strong-value').textContent = forceMagnitudes.strong.toFixed(3);
+            document.getElementById('em-value').textContent = forceMagnitudes.em.toFixed(3);
+            document.getElementById('weak-value').textContent = forceMagnitudes.weak.toFixed(3);
+            document.getElementById('gravity-value').textContent = forceMagnitudes.gravity.toFixed(5);
+
+            document.getElementById('strong-bar').style.width = (forceMagnitudes.strong / maxForce * 100) + '%';
+            document.getElementById('em-bar').style.width = (forceMagnitudes.em / maxForce * 100) + '%';
+            document.getElementById('weak-bar').style.width = (forceMagnitudes.weak / maxForce * 100) + '%';
+            document.getElementById('gravity-bar').style.width = (forceMagnitudes.gravity / maxForce * 100) + '%';
+
+            drawPieChart();
+        }
+
+        function calculateEnergies() {
+            let kinetic = 0;
+            let potential = 0;
+
+            for (let p of particles) {
+                kinetic += 0.5 * p.mass * p.vel.magSq();
+            }
+
+            // Simplified potential
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    let r = p5.Vector.dist(particles[i].pos, particles[j].pos);
+                    if (r < 10) r = 10;
+                    potential -= G_EM * particles[i].charge * particles[j].charge / r * 10;
+                }
+            }
+
+            return { kinetic, potential, total: kinetic + potential };
+        }
+
+        // ============================================
+        // P5.JS SETUP AND DRAW
+        // ============================================
+
+        function setup() {
+            let canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+            canvas.parent('canvas-container');
+
+            loadPreset('hydrogen');
+
+            // Sliders
+            document.getElementById('master-slider').addEventListener('input', (e) => {
+                masterMultiplier = parseFloat(e.target.value);
+                document.getElementById('master-value').textContent = masterMultiplier.toFixed(1);
+            });
+
+            document.getElementById('zoom-slider').addEventListener('input', (e) => {
+                zoomLevel = parseFloat(e.target.value);
+                document.getElementById('zoom-value').textContent = zoomLevel.toFixed(1);
+            });
+
+            document.getElementById('time-slider').addEventListener('input', (e) => {
+                timeScale = parseFloat(e.target.value);
+                document.getElementById('time-value').textContent = timeScale.toFixed(1);
+            });
+
+            // Formulas
+            katex.render('S[s,J] = \\sum_t \\sum_v \\mathcal{L}(s, J, \\nabla J)',
+                document.getElementById('action-formula'), { throwOnError: false });
+
+            katex.render('S[s,J]', document.getElementById('unified-action'), { throwOnError: false });
+        }
+
+        function draw() {
+            background(13, 13, 26);
+
+            // Reset force magnitudes
+            forceMagnitudes = { strong: 0, em: 0, weak: 0, gravity: 0 };
+
+            // Calculate all forces
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = 0; j < particles.length; j++) {
+                    if (i !== j) {
+                        if (forces.strong) {
+                            let f = calculateStrongForce(particles[i], particles[j]);
+                            particles[i].applyForce(f, 'strong');
+                            forceMagnitudes.strong += f.mag();
+                        }
+
+                        if (forces.em) {
+                            let f = calculateEMForce(particles[i], particles[j]);
+                            particles[i].applyForce(f, 'em');
+                            forceMagnitudes.em += f.mag();
+                        }
+
+                        if (forces.weak) {
+                            let f = calculateWeakForce(particles[i], particles[j]);
+                            particles[i].applyForce(f, 'weak');
+                            forceMagnitudes.weak += f.mag();
+                        }
+
+                        if (forces.gravity) {
+                            let f = calculateGravityForce(particles[i], particles[j]);
+                            particles[i].applyForce(f, 'gravity');
+                            forceMagnitudes.gravity += f.mag();
+                        }
+                    }
+                }
+            }
+
+            // Update and draw
+            let dt = timeScale * 0.4;
+            for (let p of particles) {
+                p.update(dt);
+                p.draw();
+            }
+
+            // Update displays
+            updateForceDisplay();
+
+            let energies = calculateEnergies();
+            document.getElementById('total-energy').textContent = energies.total.toFixed(2);
+            document.getElementById('kinetic-energy').textContent = energies.kinetic.toFixed(2);
+            document.getElementById('potential-energy').textContent = energies.potential.toFixed(2);
+            document.getElementById('particle-count').textContent = particles.length;
+
+            // Info overlay
+            fill(255, 255, 255, 80);
+            noStroke();
+            textSize(11);
+            textAlign(LEFT, TOP);
+            text(`Particles: ${particles.length} | Zoom: ${zoomLevel.toFixed(1)}x | Time: ${timeScale.toFixed(1)}x`, 10, 10);
+        }
+
+        // ============================================
+        // UI HELPERS
+        // ============================================
+
+        function toggleForce(force) {
+            forces[force] = !forces[force];
+            document.getElementById('toggle-' + force).classList.toggle('on', forces[force]);
+            document.querySelector(`.force-item:has(#toggle-${force})`).classList.toggle('disabled', !forces[force]);
+        }
+
+        function toggleOption(option) {
+            options[option] = !options[option];
+            let btn = document.getElementById('btn-' + option.replace('show', '').toLowerCase());
+            if (btn) btn.classList.toggle('active', options[option]);
+
+            if (option === 'showTrails' && !options.showTrails) {
+                for (let p of particles) p.trail = [];
+            }
+        }
+    </script>
+</body>
+</html>

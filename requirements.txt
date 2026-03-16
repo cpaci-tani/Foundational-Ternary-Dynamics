@@ -1,0 +1,24 @@
+# FTD Core Dependencies
+# Pinned versions for reproducibility (January 2026)
+
+# Core scientific computing
+numpy>=1.24.0,<2.0.0
+scipy>=1.11.0,<2.0.0
+matplotlib>=3.7.0,<4.0.0
+
+# Symbolic mathematics
+sympy>=1.12,<2.0
+mpmath>=1.3.0,<2.0.0
+
+# Development environment (optional, not needed for CI)
+# ipython>=8.0.0,<9.0.0
+# notebook>=7.0.0,<8.0.0
+
+# Animation (optional — requires system deps: FFmpeg, LaTeX, Cairo, Pango)
+# Install manually: pip install manim pylatexenc
+# manim>=0.18.0,<1.0.0
+# pylatexenc>=2.0,<3.0
+
+# Testing (install via: pip install -r requirements-dev.txt)
+# pytest>=7.0.0,<8.0.0
+# ruff>=0.1.0,<1.0.0

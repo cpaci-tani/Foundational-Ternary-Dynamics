@@ -1,2 +1,0 @@
-"""TRD manuscript package (Python)."""
-
