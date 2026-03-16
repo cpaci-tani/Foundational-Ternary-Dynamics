@@ -332,14 +332,15 @@ class OnticChain:
         ))
 
         # Watson-G* Identity [THEOREM — DERIV_WATSON_GSTAR_IDENTITY.md]
-        # W₃ = G*²/(2π) = Γ(1/4)⁴/(4π³) ≈ 1.3932
-        # The Watson integral (3D cubic lattice self-energy) IS a G*-derived quantity.
+        # I₁ = G*²/(2π) = Γ(1/4)⁴/(4π³) ≈ 1.3932
+        # Watson's I₁: BCC sublattice self-energy (8 corner neighbors of Moore neighborhood).
+        # NOT the SC self-energy I₃ ≈ 0.506. G* connects to BCC via Z₄ vertex symmetry.
         W_3 = G_star**2 / (2.0 * pi_derived)
         self._add(Constant(
-            name="W_3", symbol="W₃",
+            name="W_3", symbol="I₁",
             value=W_3,
             layer="2", depends_on=["G_STAR", "PI"],
-            formula="G*²/(2π) = Γ(1/4)⁴/(4π³) — Watson integral (3D cubic lattice self-energy)",
+            formula="G*²/(2π) = Γ(1/4)⁴/(4π³) — Watson I₁ (BCC sublattice of Moore neighborhood)",
             tag="[THEOREM]", unit="dimensionless",
         ))
 

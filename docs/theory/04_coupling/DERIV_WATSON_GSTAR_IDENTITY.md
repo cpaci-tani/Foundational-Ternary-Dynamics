@@ -1,32 +1,44 @@
-# The Watson–G* Identity: The Lattice Knows About G*
+# The Watson–G* Identity: G* and the BCC Sublattice
 
-## W₃ = G*²/(2π) — The 3D Cubic Lattice Self-Energy Is a G*-Derived Quantity
+## G*²/(2π) = Watson's I₁ — The BCC Component of the Moore Neighborhood
 
-**Date:** March 16, 2026
-**Status:** Theorem (algebraic identity) + physical interpretation
+**Date:** March 16, 2026 (corrected March 17, 2026)
+**Status:** Theorem (algebraic identity) + corrected physical interpretation
 **Dependencies:** MATH_MASTER_QUADRATIC.md, DERIV_GSTAR_PF_BRIDGE.md, DERIV_ALPHA_LATTICE_MECHANISM.md
 
 ---
 
 ## Abstract
 
-We prove that the Watson integral for the three-dimensional simple cubic lattice — a fundamental constant of lattice field theory computed by Watson in 1939 — is algebraically identical to G*²/(2π), where G* is the FTD master constant. This identity is not approximate; it holds to arbitrary precision as a consequence of both quantities being expressible in terms of Γ(1/4).
+We prove that the FTD master constant satisfies $G^{*2}/(2\pi) = \Gamma(1/4)^4/(4\pi^3)$, which equals Watson's $I_1$ integral — the self-energy of the **body-centered cubic (BCC)** lattice, NOT the simple cubic (SC) lattice. This identity is exact and holds to arbitrary precision.
 
-This result closes a critical gap in the FTD derivation chain: the question "why should a number from elliptic curve theory govern the lattice?" is answered by "because the lattice's own fundamental constant IS that number."
+**Correction (v2.0):** The original version of this document incorrectly identified $\Gamma(1/4)^4/(4\pi^3)$ as the SC lattice self-energy. Watson (1939) computed three triple integrals: $I_1$ (BCC, involving $\Gamma(1/4)$), $I_2$ (FCC, involving $\Gamma(1/3)$), and $I_3$ (SC, involving $\Gamma(n/24)$ for $n = 1, 5, 7, 11$). The FTD constant $G^{*2}/(2\pi)$ equals $I_1$, not $I_3$.
+
+This is structurally significant: the FTD lattice uses a **26-neighbor Moore neighborhood** that decomposes into SC (6 face neighbors), FCC (12 edge neighbors), and BCC (8 corner neighbors). G* connects specifically to the **BCC component** — the 8 corner neighbors at $(\pm 1, \pm 1, \pm 1)$ — whose $Z_4$ vertex symmetry selects the lemniscatic CM curve $E: y^2 = x^3 - x$.
 
 ---
 
-## Part I: The Watson Integral
+## Part I: Watson's Three Triple Integrals
 
-### 1.1 Definition [THEOREM]
+### 1.1 The Three Integrals [THEOREM — Watson 1939]
 
-The Watson integral for the D-dimensional simple cubic lattice is the lattice Green's function evaluated at the origin:
+Watson (1939) computed three lattice self-energy integrals, one for each cubic Bravais lattice:
 
-$$W_D = \frac{1}{(2\pi)^D} \int_{[-\pi,\pi]^D} \frac{d^D k}{\hat{k}^2} \tag{1.1}$$
+$$I_1 = \frac{1}{\pi^3}\int_0^\pi\!\int_0^\pi\!\int_0^\pi \frac{da\,db\,dc}{3 - \cos b\cos c - \cos c\cos a - \cos a\cos b} \tag{1.1}$$
 
-where $\hat{k}^2 = 2\sum_{\mu=1}^{D}(1 - \cos k_\mu)$ is the lattice Laplacian eigenvalue.
+$$I_2 = \frac{1}{\pi^3}\int_0^\pi\!\int_0^\pi\!\int_0^\pi \frac{da\,db\,dc}{3 - \cos a\cos b - \cos b\cos c - \cos c\cos a\cos b} \tag{1.2}$$
 
-For D = 3, an equivalent form uses the normalized Laplacian $\sigma(\mathbf{k}) = 1 - \frac{1}{3}(\cos k_x + \cos k_y + \cos k_z)$:
+$$I_3 = \frac{1}{\pi^3}\int_0^\pi\!\int_0^\pi\!\int_0^\pi \frac{da\,db\,dc}{3 - \cos a - \cos b - \cos c} \tag{1.3}$$
+
+| Integral | Lattice type | Neighbors | CM field | Gamma function | Numerical value |
+|----------|-------------|-----------|----------|---------------|----------------|
+| $I_1$ | **BCC** | 8 at $(\pm 1,\pm 1,\pm 1)$ | $\mathbb{Q}(i)$ | $\Gamma(1/4)$ | **1.3932** |
+| $I_2$ | **FCC** | 12 at permutations of $(\pm 1,\pm 1,0)$ | $\mathbb{Q}(\sqrt{-3})$ | $\Gamma(1/3)$ | 0.4461 |
+| $I_3$ | **SC** | 6 at $(\pm 1,0,0)$ etc. | $\mathbb{Q}(\sqrt{-6})$ | $\Gamma(n/24)$ | 0.5055 |
+
+### 1.2 The Key Identity [THEOREM]
+
+$$I_1 = \frac{\Gamma(1/4)^4}{4\pi^3} = \frac{G^{*2}}{2\pi} \tag{1.4}$$
 
 $$W_3 = \frac{1}{(2\pi)^3} \int_{[-\pi,\pi]^3} \frac{d^3 k}{\sigma(\mathbf{k})} \tag{1.2}$$
 
