@@ -57,10 +57,11 @@ From void to physics — the emergence story.
 | 2.10 | [FOUND_FORCE_STRUCTURE.md](02_foundations/FOUND_FORCE_STRUCTURE.md) | **The Force Structure:** One equation, four forces. G* → x+(EM, weak, gravity via α-powers) + x-(strong via N_c). Forces as dual-substrate modes: \|J\|=gravity, J=EM, J_L-J_R=weak, J_R axis=strong. Hierarchy problem dissolved (α^16 = SM walk). EM dominance from G*>>1/4. Algebraic unity (not GUT). 7 claims (FST-1 to FST-7) |
 | 2.11 | [FOUND_META_PATTERNS.md](02_foundations/FOUND_META_PATTERNS.md) | **Boundary selection patterns:** Unifying metapatterns across FTD derivations |
 | 2.12 | [FOUND_BORN_RULE_NULL_CONE.md](02_foundations/FOUND_BORN_RULE_NULL_CONE.md) | **Born rule as null-cone geometry:** i² + a² + b² = 0 encodes Born rule, Pythagorean theorem, Riemann sphere, Wick rotation, and null cone simultaneously; explains why P = \|ψ\|² is quadratic |
+| 2.13 | [FOUND_SELF_REFERENTIAL_CLOSURE.md](02_foundations/FOUND_SELF_REFERENTIAL_CLOSURE.md) | **The observed IS the observer:** Self-referential closure as derivation principle; circularities are the theorem, not the weakness; gap equation as geometric self-consistency; the lattice determines its own coupling; new epistemic tag [SELF-CONSISTENT] |
 
 ---
 
-## 3. Core Physics Derivations (26)
+## 3. Core Physics Derivations (27)
 
 Physics from first principles.
 
