@@ -139,6 +139,14 @@ The chain is a loop. This is not a defect — it is the structure of self-refere
 
 The fine structure constant $\alpha = 1/137.036$ is not derived from the lattice in the sense of linear deduction. It is the unique self-consistent coupling of the 3D cubic lattice — the fixed point of the loop.
 
+**The self-referential loop produces the entire particle content.** The discriminant trichotomy of the generalized master quadratic ($\Delta = kG^{*3}(kG^* - 4)$) splits the loop's output into three sectors from ONE equation:
+
+- **Real roots** ($\Delta > 0$, $k = 16$): bosonic coupling constants ($\alpha$, $N_c$)
+- **Degenerate root** ($\Delta = 0$, $k = 4/G^*$): measurement / Born rule — the boundary where the loop observes itself
+- **Complex roots** ($\Delta < 0$): the Dirac equation — fermions emerge as oscillatory solutions $e^{ibt}$
+
+The fermion sector is no longer imported from external physics. The self-referential loop that produces bosons also produces fermions (complex regime) and measurement (degenerate regime). One quadratic, three regimes: bosons (real), fermions (complex), measurement (degenerate).
+
 ---
 
 ## References

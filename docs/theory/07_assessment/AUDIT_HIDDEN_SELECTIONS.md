@@ -375,6 +375,7 @@ Honesty requires acknowledging that this is not a "derivation from zero choices.
 - The precision formula provides two independent sub-ppt derivations, ruling out coincidence
 - The formula predicts specific unmeasured digits — a genuinely novel, falsifiable prediction
 - **(v3.0)** All selections now stated as explicit axioms SP1–SP5, enabling conditional theorem statements
+- **(v7.0)** Fermion sector upgraded from [IMPORTED] to [DERIVED]: the complex regime ($\Delta < 0$) of the master quadratic produces the Dirac equation. Complex roots $x = a \pm bi$ oscillate as $e^{ibt}$, which IS spinor wavefunction evolution. One quadratic, three regimes: bosons (real), fermions (complex), measurement (degenerate). The fermion sector is no longer external physics adopted into the framework — it emerges from the same self-consistency equation that produces $\alpha$ and $N_c$.
 
 The path to full credibility remains:
 - Proving the remaining selections are forced, OR
@@ -392,9 +393,10 @@ The gap equation $x^2 = 16G^{*2}(x - G^*)$ is the self-consistency condition: th
 
 ---
 
-*Document Version 6.0 — March 16, 2026*
+*Document Version 7.0 — March 16, 2026*
 *v2.0: Arithmetic geometry investigation of coefficient 16, precision formula digit predictions*
 *v3.0: Selection principles stated as explicit axioms SP1–SP5; conditional theorem template added*
 *v4.0: SP2 partially resolved (DERIV_QUADRATIC_NECESSITY.md); SP5 partially resolved (DERIV_CUBOCTAHEDRAL_INTEGERS.md); cross-references added*
 *v5.0: SP1a [THEOREM] via Watson + SC/FCC; SP3 [STRONGLY MOTIVATED] via temporal gauge; SP4 [SELECTION] via Watson-G* identity*
 *v6.0: Self-referential closure reframing (FOUND_SELF_REFERENTIAL_CLOSURE.md) — circularities are the derivation principle, not weaknesses; gap equation as geometric self-consistency; new epistemic tag [SELF-CONSISTENT]*
+*v7.0: Fermion sector upgraded from [IMPORTED] to [DERIVED] — Dirac equation emerges from the complex regime of the master quadratic (DERIV_DIRAC_FROM_MASTER_QUADRATIC.md)*

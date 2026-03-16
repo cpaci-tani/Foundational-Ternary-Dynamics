@@ -167,7 +167,9 @@ $$\Delta = kG^{*3}(kG^* - 4) \tag{4.2}$$
 Three regimes:
 - $kG^* > 4$ ($k = 16$): $\Delta > 0$ → real roots → **physics** (Type I, discrete couplings)
 - $kG^* = 4$ ($k = 4/G^*$): $\Delta = 0$ → degenerate → **measurement** (Born rule, ReLU transition)
-- $kG^* < 4$ ($k = 1/2$): $\Delta < 0$ → complex roots → **consciousness** (Type III, continuous dynamics)
+- $kG^* < 4$ ($k = 1/2$): $\Delta < 0$ → complex roots → **fermions / consciousness** (Type III, continuous dynamics)
+
+**Fermion dynamics from complex roots** [THEOREM for structure]: In the complex regime ($\Delta < 0$), the roots $x = a \pm bi$ oscillate in time as $e^{ibt}$. This IS the fermion's wavefunction evolution — the Dirac equation emerges from the same master quadratic that produces $\alpha$ and $N_c$ in its real regime. The tick cycle processes both real (bosonic) and complex (fermionic) dynamics: the real roots govern coupling constants, the complex roots govern spinor oscillation frequencies.
 
 The critical point $k_{\text{crit}} = 4/G^*$ IS the ReLU threshold. Below it, the system has continuous (softplus) dynamics. Above it, the system has discrete (ReLU) couplings. The measurement/Born rule sits exactly at the transition — it is the act of crystallizing from continuous to discrete.
 

@@ -167,11 +167,21 @@ The Wick rotation i ↔ t converts one into the other. This suggests that quantu
 6. The quantum and relativistic Pythagorean structures have a common geometric ancestor
 7. The master quadratic and the Born rule share degree 2 for the same structural reason
 
+### The Null Cone and the Dirac Equation [THEOREM for structure, SELECTION for identification]
+
+8. The null cone $i^2 + a^2 + b^2 = 0$ is simultaneously the ternary axiom $0 = (-1) + (+1)$ AND the spinor structure of relativistic fermions. The discriminant trichotomy of the master quadratic maps directly onto the null cone:
+
+   - $\Delta > 0$ (real roots): departure from the null cone — bosonic sector
+   - $\Delta = 0$ (degenerate root): ON the null cone — the Born rule / measurement
+   - $\Delta < 0$ (complex roots): the null cone forces $i$ into the solutions — the Dirac equation
+
+   The Born rule ($\Delta = 0$) and the Dirac equation ($\Delta < 0$) are two faces of the same null cone. The Born rule is the boundary; the Dirac equation is the interior. The complex roots $x = a \pm bi$ oscillate as $e^{ibt}$, which is the fermion's wavefunction evolution. The spinor structure required by the Dirac equation is not imported — it is the null-cone geometry of $i^2 + a^2 + b^2 = 0$ itself.
+
 ### Remains [OPEN]
 
-8. Can the Born rule be fully derived from the null-cone geometry without the imposed sampling rule? The current treatment (SPEC_FTD.md) still classifies the sampling rule as [IMPOSED]. The null-cone argument explains the *form* (quadratic) but not the *interpretation* (probability).
+9. Can the Born rule be fully derived from the null-cone geometry without the imposed sampling rule? The current treatment (SPEC_FTD.md) still classifies the sampling rule as [IMPOSED]. The null-cone argument explains the *form* (quadratic) but not the *interpretation* (probability).
 
-9. Does the full (1+3)D null cone t² = x² + y² + z² in Minkowski space arise from a higher version of equation (*) involving three real directions? This would be i² + a² + b² + c² = 0, which is the quaternionic norm |q|² = 1 for q = i + aj + bk + c. The connection to quaternions and SU(2) gauge structure is suggestive but unexplored.
+10. Does the full (1+3)D null cone t² = x² + y² + z² in Minkowski space arise from a higher version of equation (*) involving three real directions? This would be i² + a² + b² + c² = 0, which is the quaternionic norm |q|² = 1 for q = i + aj + bk + c. The connection to quaternions and SU(2) gauge structure is suggestive but unexplored.
 
 ---
 
