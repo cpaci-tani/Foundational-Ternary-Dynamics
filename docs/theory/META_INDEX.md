@@ -98,6 +98,7 @@ Physics from first principles.
 | 3.28 | [DERIV_PION_MASS_FROM_GSTAR.md](03_derivations/DERIV_PION_MASS_FROM_GSTAR.md) | Pion mass derived from G* |
 | 3.29 | [DERIV_QUADRATIC_NECESSITY.md](03_derivations/DERIV_QUADRATIC_NECESSITY.md) | **Why quadratic:** Two independent proofs (ontological self-reference + CM field degree) that the master equation must be degree 2; addresses SP2 |
 | 3.30 | [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) | **Gap equation:** Master quadratic as lattice self-consistency equation x²=32πW₃(x-G\*); BCS analogy; 9-step chain from Z to α with honest tagging; connects Watson identity, quadratic necessity, Born rule, and force structure |
+| 3.31 | [DERIV_COULOMB_SCATTERING_AMPLITUDE.md](03_derivations/DERIV_COULOMB_SCATTERING_AMPLITUDE.md) | **First scattering amplitude:** Tree-level Coulomb M=-α/λ(q) from FTD Lagrangian; recovers Rutherford in continuum limit; predicts cubic anisotropy and UV suppression at Planck scale; Ward identity exact on lattice |
 
 ---
 
