@@ -1,0 +1,150 @@
+---
+title: "Chapter 6: Babylon and Astrology"
+---
+
+## The Seven Wanderers
+
+To the Babylonians, as to all ancient peoples, seven celestial bodies moved against the fixed background of stars: the Sun, the Moon, Mercury, Venus, Mars, Jupiter, and Saturn. These were the "wanderers"—planetes in Greek—and their movements defined the structure of the heavens.
+
+Each planet was associated with a god:
+- **Shamash** (the Sun) — god of justice and truth
+- **Sin** (the Moon) — god of wisdom and the calendar
+- **Nabu** (Mercury) — god of writing and knowledge
+- **Ishtar** (Venus) — goddess of love and war
+- **Nergal** (Mars) — god of war and plague
+- **Marduk** (Jupiter) — king of the gods
+- **Ninurta** (Saturn) — god of agriculture and the hunt
+
+The planets were not merely named after gods; they were considered manifestations of those gods, visible expressions of divine power moving through the heavens.
+
+This is why their movements mattered. When Jupiter rose in a certain constellation, Marduk was acting. When Mars appeared near the moon, Nergal was approaching Sin. The sky was not a clock but a stage, and the gods were the actors.
+
+---
+
+## The Enuma Anu Enlil
+
+The great astrological compendium of Babylon was the Enuma Anu Enlil—"When Anu and Enlil..."—a collection of approximately 7,000 celestial omens compiled over centuries.
+
+The omens follow a consistent format: "If [celestial phenomenon], then [terrestrial consequence]." For example:
+
+> *"If Venus appears in the east in the month of Nisannu and the Great and Small Twins surround her, all four of them, and she is dark: the king of Elam will die."*
+
+> *"If in the month of Tebetu the moon is visible on the first day: rains will come."*
+
+> *"If Jupiter comes close to Mars: great lords will die."*
+
+To modern eyes, these seem like arbitrary correlations. What possible mechanism could connect Jupiter approaching Mars to the deaths of kings?
+
+But consider the underlying assumption: the cosmos is a unified system. Events at one level (celestial) correspond to events at another level (terrestrial) because both are governed by the same underlying principles—the ME, the divine decrees that structure reality at all scales.
+
+This is not science. But it is also not random. It is a systematic attempt to read the operations of the universe as one would read a text, finding in the movements of planets the expressions of principles that also govern human affairs.
+
+---
+
+## The Zodiac
+
+The Babylonians divided the ecliptic—the apparent path of the sun through the sky—into twelve equal sections, each associated with a constellation. This is the zodiac, and it would become one of the most influential conceptual frameworks in human history.
+
+The twelve signs were:
+1. **MUL.LU.HUN.GA** (Aries) — the Hired Man
+2. **MUL.GU₄.AN.NA** (Taurus) — the Bull of Heaven
+3. **MUL.MASH.TAB.BA.GAL.GAL** (Gemini) — the Great Twins
+4. **MUL.AL.LUL** (Cancer) — the Crab
+5. **MUL.UR.GU.LA** (Leo) — the Lion
+6. **MUL.AB.SIN** (Virgo) — the Furrow
+7. **MUL.ZI.BA.AN.NA** (Libra) — the Scales
+8. **MUL.GIR.TAB** (Scorpio) — the Scorpion
+9. **MUL.PA.BIL.SAG** (Sagittarius) — the Archer
+10. **MUL.SUHUR.MASH** (Capricorn) — the Goat-Fish
+11. **MUL.GU.LA** (Aquarius) — the Great One
+12. **MUL.SIM.MAH** (Pisces) — the Fish-Tails
+
+The zodiac divided the celestial equator into twelve equal 30° segments—and here the number encoding appears again:
+
+- 12 signs × 30° = 360° (the full circle)
+- 360 = 6 × 60 (the base system)
+- 360 × 72 = 25,920 (the precessional cycle)
+- Each zodiacal age = 25,920 ÷ 12 = 2,160 years
+
+The twelve-fold division was not arbitrary. It was a way of mapping the precessional cycle—the great year of 25,920 years—onto an annual pattern, creating a correspondence between the small cycle (one year) and the great cycle (one precession).
+
+---
+
+## The Seven Spheres
+
+Babylonian cosmology imagined the universe as a series of concentric spheres, one for each of the seven planets, all enclosed by the sphere of fixed stars. The earth sat at the center, and the planets moved around it in their respective spheres.
+
+This model was not "correct" in the modern sense—the earth is not at the center, and there are no physical spheres. But it was mathematically sophisticated. The Babylonians understood that the apparent motions of planets could be modeled as combinations of circular motions. They developed predictive techniques that worked remarkably well.
+
+More importantly, the seven-sphere model created a framework that would dominate Western cosmology for two millennia. When Greeks like Plato and Aristotle constructed their cosmologies, they adopted the Babylonian structure. When medieval Europeans built their world-pictures, they built on the same foundation.
+
+The seven spheres became the seven heavens. The passage of the soul through the spheres became a metaphor for spiritual ascent. The planets became the Archons—rulers of cosmic territories that the soul must traverse.
+
+All of this begins in Babylon, with priests on ziggurats watching seven wandering lights.
+
+---
+
+## The Ziggurat
+
+The ziggurat—the stepped pyramid temple—was the dominant architectural form of Mesopotamia. Unlike Egyptian pyramids, which were solid and served as tombs, ziggurats were hollow and served as temples. Their multiple levels represented the levels of heaven.
+
+The most famous ziggurat was Etemenanki in Babylon—"the Foundation of Heaven and Earth"—also known as the Tower of Babel. It had seven levels, each a different color, each associated with a different planet:
+
+1. **Black** — Saturn (the outermost, darkest)
+2. **Orange** — Jupiter
+3. **Red** — Mars
+4. **Gold** — the Sun
+5. **Yellow** — Venus
+6. **Blue** — Mercury
+7. **Silver** — the Moon (the innermost, closest to Earth)
+
+At the summit was a temple where the god was believed to descend to meet the high priest. The ziggurat was a ladder between worlds, an axis mundi connecting earth to heaven.
+
+The seven levels encoded the seven spheres. Ascending the ziggurat was symbolically ascending through the planetary spheres. The architecture was cosmology made physical.
+
+---
+
+## The Transmission
+
+Babylonian astrology and astronomy did not stay in Babylon.
+
+When Cyrus the Great conquered Babylon in 539 BCE, Persian rule incorporated Babylonian learning. When Alexander the Great conquered Persia in 331 BCE, Greek scholars gained access to Babylonian archives. The astronomer Berossus established a school on the Greek island of Kos around 290 BCE, teaching Babylonian methods to Greek students.
+
+The transmission was massive and transformative. Greek astronomy—developed by Hipparchus, systematized by Ptolemy—was built on Babylonian foundations. Greek astrology—which would become the astrology of Rome, of the Islamic world, of medieval Europe—adopted Babylonian techniques wholesale.
+
+The zodiac, the seven planets, the division of the circle into 360 degrees, the association of planets with gods and with metals and with days of the week—all of this is Babylonian.
+
+When a modern person reads their horoscope, they are participating in a tradition that began three thousand years ago on the ziggurats of Sumer and Babylon.
+
+---
+
+## The Framework in the Stars
+
+From the perspective of this book, Babylonian astrology is significant not because it "works" (in the sense of accurately predicting events) but because it encodes, in its structure, the same numbers and patterns that appear throughout the perennial tradition.
+
+- **Seven** planets, seven days, seven spheres—the fundamental integer
+- **Twelve** signs of the zodiac, twelve months, twelve hours—the product of 3 and 4
+- **360** degrees, divisible by every significant number—the product of the base-60 system
+- **25,920** years of precession—the great cycle encoded in temple dimensions and king-lists
+- **432** appearing in the ratios between these numbers—the sacred constant
+
+Whether or not the planets influence human affairs, the Babylonians created a system that preserved mathematical relationships. Whether or not the zodiac has predictive power, it encodes the precessional cycle in a form that survives to this day.
+
+The astrology may be false. The mathematics is not.
+
+---
+
+## Key Points
+
+- Babylonian priests conducted systematic astronomical observations for three thousand years
+- Seven visible "planets" (including sun and moon) defined the structure of Babylonian cosmology
+- The Enuma Anu Enlil compiled 7,000 celestial omens based on the assumption that heaven and earth reflect the same principles
+- The zodiac divided the ecliptic into twelve 30° segments, encoding the precessional cycle
+- The seven-sphere model placed Earth at the center surrounded by concentric planetary spheres
+- Ziggurats had seven levels representing the seven spheres, each associated with a planet
+- Babylonian astronomy and astrology were transmitted to Persia, Greece, Rome, Islam, and medieval Europe
+- The mathematical relationships (7, 12, 360, 432, 25,920) persist in the astrological framework regardless of its predictive validity
+
+---
+
+*Chapter 7: Zep Tepi — The First Time*

@@ -1,0 +1,451 @@
+\documentclass[11pt, letterpaper]{article}
+
+% ----- Packages -----
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm, mathrsfs, amsfonts, mathtools}
+\usepackage{geometry}
+\geometry{margin=1.15in}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{authblk}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% ----- Formatting -----
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=black,
+}
+\titleformat{\section}{\large\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% ----- Math Commands -----
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\G}{G^*}
+\DeclareMathOperator{\AGM}{AGM}
+
+% ----- Theorem Environments -----
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+% ----- Epistemic Tags -----
+\newcommand{\epi}[1]{\textbf{\textsc{[#1]}}}
+
+% ----- Document Info -----
+\title{\vspace{-3em}\textbf{The Ontic Mathematical Foundations: From Counting to Coupling\\ \large The Constant Chain $\gamma \to \varpi \to M \to \pi \to \G$}}
+\author[1]{William J. Steinmetz III}
+\affil[1]{\textit{Foundational Ternary Dynamics Research}}
+\date{February 14, 2026 \\ \vspace{0.5em} \small Framework: FTD v5.24}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We formalize the ontic foundation of mathematical constants in Foundational Ternary Dynamics (FTD) as a directed chain of emergence: $\gamma \to \varpi \to M \to \pi \to \G$, where $\gamma$ is the Euler--Mascheroni constant, $\varpi$ is the lemniscate constant, $M = \AGM(1, \sqrt{2})$ is the Gauss arithmetic-geometric mean, $\pi$ is Archimedes' constant, and $\G$ is the lemniscate-alpha constant of FTD. The chain is grounded by a rigorous structural claim: \textbf{$\gamma$ is the inversion term where the discrete integer world first makes contact with the continuous analytical world, and this contact is logarithmic in character.} Without $\gamma$, there is no bridge from discrete counting to the elliptic and lemniscatic structures from which the fine-structure constant ($\alpha$) emerges. The ordering is defined not by numerical value, but by ontological depth.
+\end{abstract}
+
+\vspace{1em}
+\hrule
+\vspace{1.5em}
+
+\noindent \textit{\textbf{Epistemic Tags:} Throughout this document, we utilize strict epistemic bounding: \epi{Theorem} for structural results, \epi{Definition} for defining relations, \epi{Standard} for classical analysis, \epi{Selection} for ordering, and \epi{Conjecture} for physical interpretation.}
+
+\vspace{1em}
+
+%===============================================================================
+\section{The Five Constants}
+%===============================================================================
+
+\subsection{The Euler--Mascheroni Constant $\gamma$}
+
+\begin{equation}
+    \gamma = \lim_{n \to \infty} \left( \sum_{k=1}^{n} \frac{1}{k} - \ln n \right) = 0.5772156649\dots
+\end{equation}
+
+\noindent\textbf{What it requires:} Only the positive integers and the concept of a limit.
+
+\noindent\textbf{What it encodes:} The exact offset between \textit{discrete counting} (the harmonic series $H_n = 1 + 1/2 + 1/3 + \cdots + 1/n$) and \textit{continuous scaling} (the natural logarithm $\ln n$). This makes $\gamma$ the \textbf{universal conversion constant} between the arithmetic world of integers and the analytic world of continuous functions.
+
+\noindent\textbf{The inversion property:} Rearranging $H_n \approx \ln(n) + \gamma$, we find
+\begin{equation}
+    \exp(H_n - \gamma) \approx n
+\end{equation}
+Without $\gamma$, one cannot invert from continuous logarithmic scaling back to discrete counting. It is the constant that renders the integers recoverable from their logarithmic shadow.
+
+\noindent\textbf{Why $\gamma$ is ontologically first:} Every subsequent constant in the chain depends on the Gamma function $\Gamma(z)$, and $\gamma$ appears in its Weierstrass product representation:
+\begin{equation}
+    \frac{1}{\Gamma(z)} = z \cdot e^{\gamma z} \cdot \prod_{n=1}^{\infty}\left[\left(1 + \frac{z}{n}\right) e^{-z/n}\right]
+\end{equation}
+Here $\gamma$ is the \textbf{exponential rate} that controls how the Gamma function scales. It is embedded multiplicatively---as $\exp(\gamma z)$---into every evaluation of $\Gamma$, including the critical value $\Gamma(1/4)$ from which $\varpi$ and $\G$ are built.
+
+\subsection{The Lemniscate Constant $\varpi$}
+
+\begin{equation}
+    \varpi = \frac{\Gamma(1/4)^2}{2\sqrt{2\pi}} = 2.6220575543\dots
+\end{equation}
+
+\noindent\textbf{What it requires:} $\gamma$ (through $\Gamma(1/4)$), the integer 4, and $\pi$.
+
+\noindent\textbf{What it encodes:} The half-period of the Bernoulli lemniscate $r^2 = \cos(2\theta)$---the ``$\pi$ of the lemniscate.'' Just as $\pi$ measures the circle, $\varpi$ measures the figure-eight: the first self-crossing algebraic curve, encoding self-reference geometrically.
+
+\noindent\textbf{Connection to $\gamma$:} The digamma function satisfies
+\begin{equation}
+    \psi(1/4) = -\gamma - \frac{\pi}{2} - 3\ln 2
+\end{equation}
+This identity shows that $\gamma$ is \textit{analytically present} in the logarithmic derivative of $\Gamma$ at the critical point $z = 1/4$. Since $\Gamma(1/4)$ determines $\varpi$, $\gamma$ flows through to $\varpi$ via the derivative chain:
+\begin{equation}
+    \gamma \;\xrightarrow{\text{Weierstrass}}\; \Gamma(1/4) \;\xrightarrow{\text{definition}}\; \varpi
+\end{equation}
+
+\subsection{The Gauss Constant $M$}
+
+\begin{equation}
+    M = \AGM(1, \sqrt{2}) = 1.1981402347\dots
+\end{equation}
+
+\noindent\textbf{What it requires:} The arithmetic-geometric mean iteration applied to 1 and $\sqrt{2}$.
+
+\noindent\textbf{What it encodes:} The rate of convergence of the AGM process---itself a bridge between arithmetic means (discrete averaging) and geometric means (multiplicative scaling). The AGM is the fastest-converging classical algorithm, doubling precision with each step.
+
+\epi{Theorem} \textbf{Exact relationship:}
+\begin{equation}
+    \varpi = \frac{\pi}{M} \qquad \Longleftrightarrow \qquad M = \frac{\pi}{\varpi}
+\end{equation}
+
+This identity reveals $M$ as the \textbf{conversion factor between circular geometry ($\pi$) and lemniscatic geometry ($\varpi$)}. The reciprocal $1/M \approx 0.8346$ is the classical Gauss constant.
+
+\noindent\textbf{Note on ordering:} $M$ sits between $\varpi$ and $\pi$ in the chain because it is the bridge that \textbf{converts} between them. $\varpi$ is more fundamental (requiring only $\Gamma(1/4)$ and hence only $\gamma$ and 4); $M$ requires the AGM concept; $\pi$ requires circular geometry or, equivalently, the combination $M \cdot \varpi$.
+
+\subsection{Archimedes' Constant $\pi$}
+
+\begin{equation}
+    \pi = M \cdot \varpi = \frac{4\varpi^2}{\G^{2}} = 3.1415926536\dots
+\end{equation}
+
+\noindent\textbf{What it requires:} The circle, or equivalently, the product of $\varpi$ and $M$.
+
+\noindent\textbf{What it encodes:} The ratio of circumference to diameter---the constant of \textbf{circular closure}. In FTD, $\pi$ is not ontologically primitive. It is the product of two more fundamental constants:
+\begin{equation}
+    \pi = \varpi \cdot M = \varpi \cdot \AGM(1, \sqrt{2})
+\end{equation}
+
+This decomposition reveals $\pi$ as a \textbf{composite}: the lemniscatic half-period ($\varpi$) scaled by the arithmetic-geometric bridge ($M$).
+
+\epi{Selection} The claim that $\pi$ is ontologically derivative of $\varpi$ is a selection principle. Mathematically, any of $\{\gamma, \varpi, M, \pi, \G\}$ can be expressed in terms of the others. The ordering reflects the principle that constants requiring less structure are more fundamental.
+
+\subsection{The Lemniscate-Alpha Constant $\G$}
+
+\begin{equation}
+    \G = \frac{\sqrt{2}\;\Gamma(1/4)^2}{2\pi} = \frac{2\varpi}{\sqrt{\pi}} = 2.9586751192\dots
+\end{equation}
+
+\noindent\textbf{What it requires:} All four preceding constants, or equivalently, $\varpi$ and $\pi$ together.
+
+\noindent\textbf{What it encodes:} The master coefficient of the FTD quadratic \cite{Steinmetz2026_Zenodo}:
+\begin{equation}
+    x^2 - 16\,\G^{2}\,x + 16\,\G^{3} = 0
+\end{equation}
+whose roots are $x_+ = 137.036\ldots \approx 1/\alpha$ and $x_- = 3.024\ldots \approx N_c$.
+
+\noindent\textbf{Why $\G$ is ontologically last:} It is the most ``constructed'' of the five. It requires $\sqrt{2}$ (from the Gauss constraint geometry), $\Gamma(1/4)^2$ (which carries $\gamma$ through Weierstrass), and $\pi$ (which carries $M$ and $\varpi$). $\G$ is where all the preceding structure \textbf{converges} into a single number that, through the master quadratic, produces physics.
+
+%===============================================================================
+\section{The Chain as Ontological Ordering}
+%===============================================================================
+
+\subsection{The Principle}
+
+The ordering $\gamma \to \varpi \to M \to \pi \to \G$ is not by numerical magnitude but by \textbf{ontological depth}: the amount of mathematical structure required for each constant's definition.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}clcll@{}}
+\toprule
+\textbf{Level} & \textbf{Constant} & \textbf{Value} & \textbf{Requires} & \textbf{Encodes} \\
+\midrule
+0 & $\gamma$ & 0.5772\ldots & Integers + limit & Discrete $\leftrightarrow$ continuous bridge \\
+1 & $\varpi$ & 2.6221\ldots & $\gamma$ (via $\Gamma$), integer 4 & Self-crossing geometry \\
+2 & $M$ & 1.1981\ldots & AGM iteration & Arithmetic $\leftrightarrow$ geometric bridge \\
+3 & $\pi$ & 3.1416\ldots & $\varpi \times M$ & Circular closure \\
+4 & $\G$ & 2.9587\ldots & $\sqrt{2}$, $\varpi$, $\pi$ & Master quadratic $\to \alpha$ \\
+\bottomrule
+\end{tabular}
+\caption{The ontic hierarchy of mathematical constants.}
+\end{table}
+
+\subsection{Each Level Adds Structure}
+
+\textbf{Level 0 $\to$ 1 ($\gamma \to \varpi$):} From discrete/continuous bridging to self-crossing geometry. The Weierstrass product converts $\gamma$ (a limit of sums) into $\Gamma(1/4)$ (a special function value), and the definition $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$ crystallizes this into the period of a self-referential curve. This step adds \textbf{geometric self-reference}.
+
+\textbf{Level 1 $\to$ 2 ($\varpi \to M$):} From lemniscatic period to the AGM convergence rate. $M = \pi/\varpi$ is defined by the arithmetic-geometric mean, which iterates between two types of averaging. This step adds \textbf{iterative convergence}.
+
+\textbf{Level 2 $\to$ 3 ($M \to \pi$):} From AGM rate to circular constant. $\pi = \varpi \cdot M$ combines the self-crossing period with the convergence bridge. This step adds \textbf{closure} (the circle is the simplest closed curve).
+
+\textbf{Level 3 $\to$ 4 ($\pi \to \G$):} From circular to lemniscatic with $\sqrt{2}$ scaling. $\G = 2\varpi/\sqrt{\pi} = \sqrt{2} \cdot \Gamma(1/4)^2/(2\pi)$ introduces the $\sqrt{2}$ from the FCC/Gauss constraint geometry. This step adds \textbf{constraint physics}---the discrete lattice's Gauss law.
+
+\subsection{$\gamma$ as the Logarithmic Inversion Term}
+
+The deepest claim: \textbf{$\gamma$ is where numbers first scale logarithmically into the decimal space.}
+
+The harmonic series $H_n = 1 + 1/2 + \cdots + 1/n$ grows as $\ln(n) + \gamma$. This means the ``natural'' way to accumulate the reciprocals of integers (a purely arithmetic operation on $1, 2, 3, \ldots$) produces a logarithmic function plus a correction term $\gamma$. The integers, through their reciprocal sum, \textit{generate} logarithmic scaling---and $\gamma$ is the remainder.
+
+More precisely:
+\begin{itemize}[noitemsep]
+    \item \textbf{Discrete world:} $H_n = \sum 1/k$ (sum over integers)
+    \item \textbf{Continuous world:} $\ln(n)$ (integral $\int dx/x$)
+    \item \textbf{Bridge:} $\gamma = H_n - \ln(n)$ in the limit
+\end{itemize}
+
+The exponential form $e^{-\gamma} \approx 0.5615$ acts as a \textbf{decimal discount factor}: it governs how the discrete harmonic world undershoots the continuous logarithmic world. By Mertens' theorem \cite{Mertens1874}, $e^{-\gamma}$ even controls the distribution of primes:
+\begin{equation}
+    \prod_{p \leq N,\; p\text{ prime}} \left(1 - \frac{1}{p}\right) \;\sim\; \frac{e^{-\gamma}}{\ln N}
+\end{equation}
+So $\gamma$ is not merely a correction term---it is the constant that governs how \textbf{prime factorization} (the most fundamental discrete structure) maps to \textbf{logarithmic density} (the most fundamental continuous measure).
+
+%===============================================================================
+\section{The Complete Derivation Chain}
+%===============================================================================
+
+\subsection{From $\gamma$ to $\alpha$}
+
+The full chain, with each step justified:
+
+\begin{equation}
+    \boxed{\gamma \;\xrightarrow{\text{Weierstrass}}\; \Gamma(1/4) \;\xrightarrow{\text{def.}}\; \varpi \;\xrightarrow{\text{AGM}}\; M \;\xrightarrow{\times\,\varpi}\; \pi \;\xrightarrow{\sqrt{2}\,\text{scaling}}\; \G \;\xrightarrow{\text{quadratic}}\; \alpha}
+\end{equation}
+
+\begin{enumerate}[noitemsep]
+    \item $\gamma = 0.5772\ldots$ (integers + limit)
+    \item Weierstrass product: $1/\Gamma(z) = z \cdot e^{\gamma z} \cdot \prod\ldots$; evaluate at $z = 1/4$
+    \item $\Gamma(1/4) = 3.6256\ldots$
+    \item Definition: $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi}) = 2.6221\ldots$
+    \item AGM identity: $M = \pi/\varpi = \AGM(1,\sqrt{2}) = 1.1981\ldots$
+    \item Product: $\pi = \varpi \cdot M = 3.1416\ldots$
+    \item Scaling: $\G = 2\varpi/\sqrt{\pi} = \sqrt{2}\cdot\Gamma(1/4)^2/(2\pi) = 2.9587\ldots$
+    \item Master quadratic: $x^2 - 16\G^2 x + 16\G^3 = 0$
+    \item $x_+ = 137.036\ldots \approx 1/\alpha$, \quad $x_- = 3.024\ldots \approx N_c$
+\end{enumerate}
+
+\subsection{The Defining Relations}
+
+\epi{Definition} The entire chain rests on exactly \textbf{two independent definitions} plus one \textbf{FTD-specific claim}:
+
+\begin{definition}[Lemniscate Constant]
+$\displaystyle \varpi = \frac{\Gamma(1/4)^2}{2\sqrt{2\pi}}$
+\end{definition}
+
+\begin{definition}[Lemniscate-Alpha Constant]
+$\displaystyle \G = \frac{\sqrt{2}\;\Gamma(1/4)^2}{2\pi} = \frac{2\varpi}{\sqrt{\pi}}$
+\end{definition}
+
+\epi{Conjecture} The master quadratic with coefficient 16 (from lattice degrees of freedom):
+\begin{equation}
+    x^2 - 16\,\G^{2}\,x + 16\,\G^{3} = 0
+\end{equation}
+has roots $x_+ = 137.036\ldots \approx 1/\alpha$ and $x_- = 3.024\ldots \approx N_c$.
+
+\subsection{The $\gamma$--$\varpi$ Connection: How Counting Becomes Geometry}
+
+\epi{Theorem} This is the genuinely meaningful part of the chain---the mechanism by which the discrete-to-continuous bridge constant $\gamma$ flows into the lemniscatic structure.
+
+The \textbf{Weierstrass product} provides the link:
+\begin{equation}
+    \frac{1}{\Gamma(z)} = z \cdot e^{\gamma z} \cdot \prod_{n=1}^{\infty}\left[\left(1 + \frac{z}{n}\right) e^{-z/n}\right]
+\end{equation}
+Evaluated at $z = 1/4$ (the FTD-selected evaluation point), $\gamma$ enters as the factor $\exp(\gamma/4)$ inside $\Gamma(1/4)$. Since $\varpi$ and $\G$ depend on $\Gamma(1/4)^2$, $\gamma$ propagates through as $\exp(\gamma/2)$. This is not a numerical coincidence---it is a \textbf{structural consequence} of how the Gamma function is built from the integers.
+
+The digamma function (logarithmic derivative of $\Gamma$) makes this connection explicit:
+\begin{align}
+    \psi(1/4) &= -\gamma - \frac{\pi}{2} - 3\ln 2 &\text{\epi{Standard}---Gauss digamma theorem} \\
+    \psi(1/3) &= -\gamma - \frac{3}{2}\ln 3 - \frac{\pi}{2\sqrt{3}} &\text{\epi{Standard}---Gauss digamma theorem}
+\end{align}
+These are classical identities due to Gauss (1813) \cite{Gauss1813}. What is structurally meaningful for FTD is that the evaluation points $z = 1/3$ and $z = 1/4$ correspond to the two primary framework integers $N_c = 3$ and $N_{\text{base}} = 4$. Setting both expressions equal (since both define $\gamma$) yields:
+\begin{equation}
+    \psi(1/4) - \psi(1/3) = \frac{3}{2}\ln 3 + \frac{\pi}{2\sqrt{3}} - \frac{\pi}{2} - 3\ln 2
+\end{equation}
+This is a non-trivial \textbf{cross-constraint} linking the digamma at the two FTD integers through a specific combination of $\pi$, $\ln 2$, $\ln 3$, and $\sqrt{3}$.
+
+\subsection{Standard Results Used}
+
+\epi{Standard} The chain uses several classical results from analysis. These are \textbf{tools}, not FTD discoveries:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Result} & \textbf{Source} & \textbf{Role in Chain} \\
+\midrule
+$\Gamma(z)\cdot\Gamma(1-z) = \pi/\sin(\pi z)$ & Euler reflection & Relates $\Gamma(1/4)$ to $\Gamma(3/4)$ \\
+Gauss multiplication formula & Gauss (1812) & Connects $\Gamma$ at multiples of $1/n$ \\
+$\psi(1/n)$ closed forms & Gauss (1813) & Links $\gamma$ to $\Gamma(1/4)$ analytically \\
+$\varpi \cdot M = \pi$ & AGM--elliptic identity & Defines $M$ as bridge \\
+$\zeta(2n) = (-1)^{n+1}B_{2n}(2\pi)^{2n}/(2\cdot(2n)!)$ & Euler (1735) & Even zeta from Bernoulli numbers \\
+$\prod(1-1/p) \sim e^{-\gamma}/\ln N$ & Mertens (1874) & $\gamma$ governs prime distribution \\
+\bottomrule
+\end{tabular}
+\caption{Classical results employed in the derivation chain.}
+\end{table}
+
+%===============================================================================
+\section{Structural Theorems}
+%===============================================================================
+
+\subsection{The Minimal Generating Set}
+
+\begin{theorem}[Minimal Generating Set]
+The entire ontic chain is generated by exactly \textbf{two constants}: $\gamma$ (Euler--Mascheroni) and $\pi$ (Archimedes).
+\end{theorem}
+
+\textit{Proof sketch.} Given $\gamma$ and $\pi$:
+\begin{enumerate}[noitemsep]
+    \item $\Gamma(1/4)$ is determined by the Weierstrass product (requiring only $\gamma$ and the integer 4)
+    \item $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$
+    \item $M = \pi/\varpi = \AGM(1,\sqrt{2})$
+    \item $\G = 2\varpi/\sqrt{\pi} = \sqrt{2}\cdot\Gamma(1/4)^2/(2\pi)$
+    \item $x_+, x_-$ from the master quadratic
+    \item $\alpha = 1/x_+$ (with precision corrections using framework integers)
+\end{enumerate}
+
+The circularity ($\pi$ appears in step 2, which seems to require $\pi$ before generating it) resolves because \textbf{both $\gamma$ and $\pi$ are independently definable from the integers alone}: $\gamma = \lim[H_n - \ln(n)]$ and $\pi = 4\arctan(1) = 4\sum(-1)^n/(2n+1)$.
+
+\textbf{Implication:} The fine structure constant $\alpha$ is determined by exactly two transcendental constants from number theory, plus the framework integers $\{3, 4, 7, 13\}$.
+
+\subsection{The $\exp(\gamma/2)$ Universal Scaling}
+
+\begin{theorem}[Universal Rescaling]
+The factor $\exp(\gamma/2)$ is the \textbf{universal rescaling} that removes $\gamma$ from all lemniscatic constants simultaneously.
+\end{theorem}
+
+Define the ``$\gamma$-free'' constants:
+\begin{itemize}[noitemsep]
+    \item $\Gamma_0(1/4) = \Gamma(1/4) \cdot \exp(\gamma/4)$
+    \item $\varpi_0 = \varpi \cdot \exp(\gamma/2) = \Gamma_0(1/4)^2/(2\sqrt{2\pi})$
+    \item $\G_0 = \G \cdot \exp(\gamma/2)$
+\end{itemize}
+
+\textbf{Why $\exp(\gamma/2)$?} Because $\gamma$ enters the chain \textbf{only} through $\Gamma(1/4)$ via the Weierstrass product, where it contributes a factor of $\exp(\gamma/4)$. Since $\varpi$ and $\G$ depend on $\Gamma(1/4)^2$, the $\gamma$-dependence always enters as $\exp(\gamma/4)^2 = \exp(\gamma/2)$.
+
+\textbf{Physical reading:} The factor $\exp(-\gamma/2) \approx 0.749$ is the ``discount'' that the discrete-to-continuous bridge ($\gamma$) applies to the idealized lemniscatic constants. Without this discount, $\varpi_0 \approx 3.499$ and $\G_0 \approx 3.949$---both larger than their actual values. The integers, through their logarithmic shadow, \textbf{compress} the lemniscatic constants.
+
+%===============================================================================
+\section{Relation to the FTD Hierarchy}
+%===============================================================================
+
+\subsection{Where This Fits}
+
+The existing FTD ontological hierarchy begins at Level 0 with the Pure Integral $I_4$. The ontic constant chain provides the \textbf{sub-structure beneath $I_4$}:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Prior Hierarchy} & \textbf{This Document} & \textbf{Constant} \\
+\midrule
+Level $-3$: Absolute Void & --- & (no mathematics) \\
+Level $-2$: Pregnant Void & --- & (potentiality) \\
+Level $-1$: First Distinction & Level 0 & $\gamma$ (integers emerge) \\
+Level 0: Self-Reference ($n=4$) & Level 0$\to$1 & $\gamma \to \Gamma(1/4)$ \\
+Level 1: Pure Integral $I_4$ & Level 1 & $I_4 = \varpi/2$ \\
+Level 5: Lemniscatic & Levels 1--4 & $\varpi \to M \to \pi \to \G$ \\
+\bottomrule
+\end{tabular}
+\caption{Integration of the ontic chain with the FTD hierarchy.}
+\end{table}
+
+\noindent\textbf{Key identification:} $I_4 = \varpi/2$. The ``Pure Integral'' of the prior hierarchy is exactly half the lemniscate constant. The ontic chain $\gamma \to \varpi$ provides the foundation \textit{beneath} $I_4$ by showing where the Gamma function (and hence $\varpi$) gets its scaling from.
+
+\subsection{The Role of the Integer 4}
+
+In the prior hierarchy, $n = 4$ is selected by self-reference. In the ontic chain, 4 appears at the \textbf{evaluation point} $z = 1/4$ where the Weierstrass product (carrying $\gamma$) is evaluated to produce $\Gamma(1/4)$. The two hierarchies converge:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Prior:} Self-reference selects $n = 4$ $\to$ $I_4 = \int_0^1 dx/\sqrt{1-x^4}$
+    \item \textbf{Ontic:} $\gamma$ flows through $\Gamma(z)$ at $z = 1/4$ $\to$ $\Gamma(1/4) \to \varpi = 2I_4$
+\end{itemize}
+
+Both paths arrive at the same destination: the lemniscate constant $\varpi$. The integer 4 is the \textbf{meeting point} of the self-referential argument (why $n = 4$) and the analytic argument (why $z = 1/4$ in the Weierstrass product).
+
+%===============================================================================
+\section{Summary and Physical Interpretation}
+%===============================================================================
+
+\subsection{The Ontic Chain}
+
+\begin{equation}
+    \boxed{\gamma \;\xrightarrow{\text{Weierstrass}}\; \Gamma(1/4) \;\xrightarrow{\text{def.}}\; \varpi \;\xrightarrow{\text{AGM}}\; M \;\xrightarrow{\times\,\varpi}\; \pi \;\xrightarrow{\sqrt{2}\,\text{scaling}}\; \G \;\xrightarrow{\text{quadratic}}\; \alpha}
+\end{equation}
+
+\subsection{Physical Interpretation}
+
+\epi{Conjecture} $\gamma$ is the \textbf{first constant that exists} once the integers exist and the concept of a limit is available. It encodes the irreducible gap between counting and measuring---between the discrete and the continuous. Every subsequent constant in the chain inherits this gap through the Gamma function's Weierstrass product, which carries $\gamma$ as an exponential rate factor.
+
+The physical implication: \textbf{the fine structure constant $\alpha$ inherits its specific numerical value from $\gamma$ through a chain of exact algebraic relationships.} The integers provide the skeleton ($\{3, 4, 7, 13\}$); $\gamma$ provides the flesh (the continuous scaling); and the lemniscatic structure provides the self-referential closure that binds them together.
+
+\subsection{Epistemic Status}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Claim} & \textbf{Tag} & \textbf{Notes} \\
+\midrule
+$\gamma$ as logarithmic inversion term & \epi{Theorem} & Follows from $H_n = \ln(n) + \gamma + O(1/n)$ \\
+Weierstrass: $\gamma$ flows into $\Gamma(1/4)$ & \epi{Theorem} & Standard analysis; structural mechanism \\
+$\exp(\gamma/2)$ universal scaling & \epi{Theorem} & Consequence of $\Gamma(1/4)^2$ dependence \\
+Minimal generating set $\{\gamma, \pi\}$ & \epi{Theorem} & Constructive proof \\
+Digamma cross-constraint & \epi{Standard} & Gauss (1813); FTD integers have closed forms \\
+Ordering by ontological depth & \epi{Selection} & Principled but not uniquely determined \\
+Master quadratic yields $x_+ \approx 1/\alpha$ & \epi{Conjecture} & 1.26 ppm match; no mechanism derived \\
+Coefficient 16 from lattice DoF & \epi{Selection} & Argued from geometry; product rule imposed \\
+\bottomrule
+\end{tabular}
+\caption{Epistemic classification of all claims.}
+\end{table}
+
+\vspace{2em}
+\hrule
+\vspace{1.5em}
+
+\begin{thebibliography}{99}
+
+\bibitem{Steinmetz2026_Zenodo}
+W. J. Steinmetz III,
+``Gauge Couplings from Discrete Spacetime Geometry,''
+\textit{Foundational Ternary Dynamics Research}, Zenodo (January 2026).
+\url{https://zenodo.org/records/18227181}
+
+\bibitem{Gauss1813}
+C. F. Gauss,
+``Disquisitiones generales circa seriem infinitam,''
+\textit{Commentationes societatis regiae scientiarum Gottingensis recentiores}, \textbf{2}, 1--46 (1813).
+\newblock \textit{[Closed-form evaluations of the digamma function at rational arguments.]}
+
+\bibitem{Mertens1874}
+F. Mertens,
+``Ein Beitrag zur analytischen Zahlentheorie,''
+\textit{Journal f\"ur die reine und angewandte Mathematik}, \textbf{78}, 46--62 (1874).
+\newblock \textit{[Asymptotic product over primes: $\prod_{p \leq N}(1-1/p) \sim e^{-\gamma}/\ln N$.]}
+
+\bibitem{Euler1735}
+L. Euler,
+``De summis serierum reciprocarum,''
+\textit{Commentarii academiae scientiarum Petropolitanae}, \textbf{7}, 123--134 (1735).
+\newblock \textit{[Solution to the Basel problem and evaluation of $\zeta(2n)$ via Bernoulli numbers.]}
+
+\end{thebibliography}
+
+\end{document}

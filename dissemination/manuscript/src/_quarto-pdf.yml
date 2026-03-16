@@ -1,0 +1,22 @@
+project:
+  output-dir: ../_book
+
+format:
+  pdf:
+    documentclass: book
+    toc: true
+    toc-title: "Contents"
+    number-sections: true
+    colorlinks: true
+    papersize: a5
+    fontsize: 10pt
+    geometry:
+      - top=0.75in
+      - bottom=0.75in
+      - left=0.5in
+      - right=0.5in
+      - bindingoffset=0.25in
+    linestretch: 1.3
+    include-in-header:
+      - mobile-pdf.tex
+      - titlepage-preamble.tex
