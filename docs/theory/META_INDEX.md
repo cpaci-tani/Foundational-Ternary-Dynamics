@@ -59,6 +59,7 @@ From void to physics — the emergence story.
 | 2.11 | [FOUND_META_PATTERNS.md](02_foundations/FOUND_META_PATTERNS.md) | **Boundary selection patterns:** Unifying metapatterns across FTD derivations |
 | 2.12 | [FOUND_BORN_RULE_NULL_CONE.md](02_foundations/FOUND_BORN_RULE_NULL_CONE.md) | **Born rule as null-cone geometry:** i² + a² + b² = 0 encodes Born rule, Pythagorean theorem, Riemann sphere, Wick rotation, and null cone simultaneously; explains why P = \|ψ\|² is quadratic |
 | 2.13 | [FOUND_SELF_REFERENTIAL_CLOSURE.md](02_foundations/FOUND_SELF_REFERENTIAL_CLOSURE.md) | **The observed IS the observer:** Self-referential closure as derivation principle; circularities are the theorem, not the weakness; gap equation as geometric self-consistency; the lattice determines its own coupling; new epistemic tag [SELF-CONSISTENT] |
+| 2.14 | [FOUND_EMERGENT_TIME_GRAVITY.md](02_foundations/FOUND_EMERGENT_TIME_GRAVITY.md) | **Emergent time:** G\*²=energy per DOF per tick; space doesn't bend, gravity is tick-rate variation; ReLU crystallization mediates Type III→Type I; discriminant trichotomy: bosons/fermions/measurement |
 
 ---
 
@@ -102,6 +103,7 @@ Physics from first principles.
 | 3.32 | [DERIV_DIRAC_FROM_MASTER_QUADRATIC.md](03_derivations/DERIV_DIRAC_FROM_MASTER_QUADRATIC.md) | **Dirac equation from the master quadratic:** Fermion sector derived (not imported) via discriminant trichotomy; complex roots ($\Delta < 0$) yield $e^{ibt}$ oscillations = spinor wavefunction evolution; one quadratic produces bosons (real), fermions (complex), measurement (degenerate) |
 | 3.33 | [DERIV_GAP_EQUATION_FORM.md](03_derivations/DERIV_GAP_EQUATION_FORM.md) | **Why x²=K(x-G\*):** One-loop self-consistency F(x)=K(1-G\*/x) forces linked coefficients C=KG\*; unique degree-2 form with screening; closes the gap equation [SELECTION] |
 | 3.34 | [DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](03_derivations/DERIV_ALPHA_FROM_PHASE_STRUCTURE.md) | **Why x₊=1/α:** FTD Lagrangian IS U(1) lattice gauge theory in temporal gauge; Wilson/Polyakov two-phase structure; x₊=Coulomb phase (EM), x₋=confined phase (strong); closes SP4 [SELECTION] |
+| 3.35 | [DERIV_THREE_RESOLUTIONS.md](03_derivations/DERIV_THREE_RESOLUTIONS.md) | **Three resolutions:** Compact U(1) (ternary charge quantizes flux), bare=physical (no continuum→no RG running), one loop exact (one loop=one tick=degree 2); unified answer: the tick is atomic |
 
 ---
 
