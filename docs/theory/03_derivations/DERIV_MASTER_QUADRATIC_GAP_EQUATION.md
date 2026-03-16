@@ -205,6 +205,8 @@ The electromagnetic sector deviates from the bridge point about 2000 times more 
 - **Step 6**: Why the coefficient combines as $16 \times 2\pi \times W_3$ specifically. The three factors are individually [THEOREM], but their combination as the coefficient of the self-consistency equation is [SELECTION].
 - **Step 9**: The physical identification of the roots with $\alpha$ and $N_c$. Supported by Watson-G* identity, force structure, and 1.26 ppm numerical agreement, but no dynamical derivation.
 
+**The chain continues beyond Step 9.** The gap equation also produces the fermion sector via the discriminant trichotomy [THEOREM]: the generalized master quadratic $x^2 - kG^{*2}x + kG^{*3} = 0$ has $\Delta = kG^{*3}(kG^* - 4)$. At $k = 16$ (physics), $\Delta > 0$ gives real roots (bosonic coupling constants). At $k < 4/G^*$, $\Delta < 0$ gives complex roots whose oscillatory behavior $e^{ibt}$ IS the Dirac equation's wavefunction evolution. The chain does not end at $\alpha$ and $N_c$ — it continues to the Dirac equation. One quadratic, three regimes: bosons (real), fermions (complex), measurement (degenerate).
+
 ---
 
 ## Part VI: What This Does and Does Not Prove
