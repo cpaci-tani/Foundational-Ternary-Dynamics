@@ -1,9 +1,0 @@
-    Log Λ
-       │
-       │     ╱╲ Bremsstrahlung
-       │    ╱  ╲
-       │   ╱    ╲
-       │ ─╱─────Line cooling
-       │╱        ╲
-       └───────────────── Log T
-        10⁴   10⁶   10⁸

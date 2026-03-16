@@ -1,9 +1,0 @@
-    ★
-   ╱|╲
-  ╱ | ╲
- ○──○──○  ← Dust grains collide
-  ╲ | ╱
-   ╲|╱
-
-Dust grains collide and stick.
-Electrostatic forces hold small grains.

@@ -1,0 +1,127 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Quarto build artifacts
+dissemination/manuscript/.quarto/
+dissemination/manuscript/_book/
+dissemination/manuscript/_webbook/
+dissemination/manuscript/*_files/
+*.quarto_ipynb
+
+.claude
+
+# AI agent state directories
+.brain/
+.memory/
+.hermes/
+
+# Generated output files
+*_output.txt
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+
+# folders
+medium_posts/
+dissemination/media/
+archive/
+docs/internal/
+
+# C++ engine build artifacts
+engine/.vs/
+engine/out/
+engine/build*/
+engine/imgui.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Archives (keep source, not zips)
+*.zip
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+Untitled*.ipynb
+
+# Node.js
+node_modules/
+
+# Pytest cache
+.pytest_cache/
+.ruff_cache/
+
+# Environment
+.env
+.venv/
+env/
+venv/
+
+# Test output (auto-generated)
+scripts/tests/verification_report.txt
+
+# CERN data files (256 MB .root, 45 MB .npz cache)
+*.root
+*.npz
+
+# Generated images from scripts
+scripts/experiments/*.png
+evaluation/*.png
+docs/internal/explorations/**/*.png
+docs/internal/explorations/**/*.mp4
+
+# Engine thirdparty (glad — legacy OpenGL loader, not needed for web)
+engine/thirdparty/
+
+# Engine caches
+engine/.cache/
+engine/output/
+
+# Temporary batch files
+_tmp_*.bat
+
+# CTest artifacts
+Testing/
+engine/web/test_results.json
+
+# Stray directories
+models/
+
+# Consciousness/metaphysical speculation — not physics, damages credibility
+# Theory docs: consciousness quadratics, sLoop, meaning formalization, void-to-mind
+docs/theory/FOUND_CONSCIOUSNESS_MATHEMATICS.md
+docs/theory/FOUND_SLOOP_FORMALIZATION.md
+docs/theory/FOUND_AGENT_MEANING_FORMALIZATION.md
+docs/theory/FOUND_DEEP_HIERARCHY.md
+docs/theory/DERIV_CAVITATION_CONSCIOUSNESS_BRIDGE.md
+docs/theory/DERIV_OBSERVER_BELL_MECHANISM.md
+
+

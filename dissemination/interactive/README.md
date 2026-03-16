@@ -1,0 +1,105 @@
+# FTD Interactive Force Simulations
+
+Interactive 2D educational simulations demonstrating the four fundamental forces as derived from Foundational Ternary Dynamics (FTD).
+
+## Overview
+
+These self-contained HTML simulations visualize the exact mathematical formulas for each force, derived from the FTD action principle **S[s,J]**.
+
+## Simulations
+
+### 1. Gravity Simulation (`gravity_simulation.html`)
+**Formula:** F_grav = G_N * nabla(rho_bar)
+
+- N-body gravitational attraction
+- Inverse-square law emergence from 3D geometry
+- Orbital mechanics visualization
+- Energy conservation tracking
+
+### 2. Electromagnetic Simulation (`electromagnetic_simulation.html`)
+**Formulas:**
+- Coulomb: F_elec = -q * nabla(q_bar)
+- Lorentz: F_mag = beta * (curl J) x J_hat
+
+- Charged particle interactions (+/-)
+- Electric field line visualization
+- Fine structure constant alpha = 1/137.036 displayed
+- Click to place charges interactively
+
+### 3. Strong Force Simulation (`strong_force_simulation.html`)
+**Formula:** F_strong = g_s^2 * exp(-m_pi * r) / r^2 * (1 + m_pi * r)
+
+- Yukawa potential with exponential decay
+- Color charge visualization (RGB)
+- Quark confinement demonstration
+- Real-time force vs. distance graph
+- Drag quarks to see confinement!
+
+### 4. Weak Force Simulation (`weak_force_simulation.html`)
+**Formula:** S = |div J| + |curl J| + |grad rho|
+
+- Stress-driven transmutation (+1 <-> -1)
+- Stress field heatmap visualization
+- Threshold-triggered particle transformation
+- Neutrino emission effects
+- Beta decay demonstration
+
+### 5. Unified Forces Simulation (`unified_forces_simulation.html`)
+**Action:** S[s,J] = sum_t sum_v L(s, J, grad J)
+
+- All four forces active simultaneously
+- Force hierarchy visualization (Strong > EM > Weak > Gravity)
+- Toggle individual forces on/off
+- Real-time force contribution breakdown
+- Atom formation demonstrations
+
+## How to Use
+
+1. **Open any HTML file directly in a web browser** - no server required
+2. Use the control panels on the right to adjust parameters
+3. Toggle visualizations (force vectors, trails, field overlays)
+4. Try the preset configurations to see different physics scenarios
+
+## Technology
+
+- **p5.js** for 2D physics visualization
+- **KaTeX** for mathematical formula rendering
+- Self-contained HTML (no external dependencies except CDN libraries)
+
+## Mathematical Foundations
+
+All formulas are derived from the FTD action principle:
+
+```
+S[s,J] = sum_t sum_v [ 1/2|dt J|^2 - 1/2 c^2|grad J|^2
+                       - lambda(div J - rho)^2
+                       - V(|J|, s)
+                       - g_c * s * (div J)
+                       - mu * (s^2 - |s|) ]
+```
+
+Key derived constants:
+- **alpha = 1/137.036** (fine structure constant, 1.26 ppm accuracy)
+- **N_c = 3** (number of color charges)
+- **sin^2(theta_W) = 3/13 = 0.231** (Weinberg angle)
+
+## Force Hierarchy
+
+| Force | Relative Strength | FTD Origin |
+|-------|------------------|------------|
+| Strong | 1 | Yukawa from confined flux |
+| Electromagnetic | 1/137 | Gauss constraint |
+| Weak | 10^-5 | Stress-driven transmutation |
+| Gravity | 10^-39 | Flux density gradients |
+
+## Educational Goals
+
+These simulations aim to:
+1. **Show the math** - formulas displayed with real-time values
+2. **Visualize forces** - vector arrows, field lines, gradients
+3. **Demonstrate emergence** - how forces arise from simple principles
+4. **Enable exploration** - adjustable parameters and interactive controls
+
+## License
+
+Part of the Foundational Ternary Dynamics project.

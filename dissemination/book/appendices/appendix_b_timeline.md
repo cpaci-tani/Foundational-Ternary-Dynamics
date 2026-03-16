@@ -1,0 +1,158 @@
+# Appendix B: Timeline of the Perennial Tradition
+
+---
+
+## Prehistory and Ancient World
+
+| Date | Event | Significance |
+|------|-------|--------------|
+| ~12,800 BCE | Younger Dryas begins | Catastrophic climate shift; possible civilization reset |
+| ~11,600 BCE | Younger Dryas ends | Rapid warming; flood myths across cultures |
+| ~9600 BCE | Göbekli Tepe constructed | Oldest known megalithic site; astronomical alignments |
+| ~7000 BCE | Göbekli Tepe deliberately buried | Intentional preservation or concealment |
+| ~4000 BCE | Sumerian civilization begins | Writing, mathematics, the Me (divine decrees) |
+| ~3100 BCE | Egyptian unification | First Dynasty; construction of early pyramids |
+| ~2560 BCE | Great Pyramid of Giza built | Encodes φ, π, astronomical constants |
+| ~2000 BCE | Babylonian mathematics flourishes | Base-60 system, early algebra, 432 encoding |
+| ~1750 BCE | Code of Hammurabi | 282 laws inscribed in stone |
+| ~1500 BCE | Rig Veda composed | Vedic cosmology, yuga cycles, 432,000 encoding |
+| ~1300 BCE | Egyptian Book of the Dead | Technology of death transformation |
+
+---
+
+## Classical Antiquity
+
+| Date | Event | Significance |
+|------|-------|--------------|
+| ~800 BCE | Upanishads composed | Brahman-Atman identity, maya |
+| ~600 BCE | Thales of Miletus | First Western philosopher; "all is water" |
+| ~570-495 BCE | Pythagoras | Number mysticism, mathematical cosmos |
+| ~563-483 BCE | Siddhartha Gautama (Buddha) | Dependent origination, emptiness |
+| ~551-479 BCE | Confucius | Chinese ethical philosophy |
+| ~600-500 BCE | Lao Tzu (traditional) | Tao Te Ching, yin-yang philosophy |
+| ~428-348 BCE | Plato | Theory of Forms, Academy founded |
+| ~384-322 BCE | Aristotle | Metaphysics, unmoved mover |
+| 331 BCE | Alexandria founded | Becomes center of learning |
+| ~300 BCE | Euclid | Elements of geometry |
+| ~250 BCE | Archimedes | Mathematics, engineering |
+| ~200 BCE | Sefer Yetzirah (traditional) | Early Kabbalistic text |
+| 48 BCE | Library of Alexandria partially burned | First major destruction |
+
+---
+
+## Hellenistic and Roman Period
+
+| Date | Event | Significance |
+|------|-------|--------------|
+| ~100 BCE-200 CE | Hermetic texts composed | Corpus Hermeticum, emerald tradition |
+| ~50 CE | Philo of Alexandria | Jewish-Platonic synthesis |
+| ~100-300 CE | Gnostic movements flourish | Alternative Christianities |
+| ~200 CE | Plotinus | Neoplatonism, the One |
+| ~180 CE | Irenaeus writes Against Heresies | Proto-orthodox attack on Gnosticism |
+| 312 CE | Constantine converts | Christianity gains imperial power |
+| 325 CE | Council of Nicaea | Nicene Creed; heresy becomes crime |
+| 367 CE | Nag Hammadi texts buried | Gnostic library hidden |
+| 380 CE | Christianity becomes state religion | Theodosius I's edict |
+| 391 CE | Serapeum destroyed | Library of Alexandria final destruction |
+| 415 CE | Hypatia murdered | Neoplatonist philosopher killed |
+| 476 CE | Fall of Western Roman Empire | Dark Ages begin |
+| 529 CE | Academy in Athens closed | End of pagan philosophy |
+
+---
+
+## Medieval Period
+
+| Date | Event | Significance |
+|------|-------|--------------|
+| ~500-800 CE | Irish monasteries preserve texts | Islands of learning |
+| 622 CE | Islamic calendar begins | Muhammad's migration to Medina |
+| ~750-850 CE | House of Wisdom, Baghdad | Arabic translations of Greek texts |
+| ~800 CE | Al-Khwarizmi | Algebra, algorithms |
+| ~1000 CE | Avicenna (Ibn Sina) | Islamic Neoplatonism |
+| 1085 CE | Toledo falls to Christians | Translation movement begins |
+| 1099 CE | First Crusade captures Jerusalem | East-West contact |
+| ~1100 CE | Kabbalah develops in Provence | Sefer Bahir |
+| 1209-1229 CE | Albigensian Crusade | Cathars destroyed |
+| 1231 CE | Medieval Inquisition established | Systematic heresy prosecution |
+| ~1260-1280 CE | Zohar composed | Major Kabbalistic text |
+| 1307 CE | Knights Templar suppressed | Friday the 13th arrests |
+| 1348-1350 CE | Black Death | Social upheaval |
+
+---
+
+## Renaissance and Early Modern
+
+| Date | Event | Significance |
+|------|-------|--------------|
+| 1453 CE | Constantinople falls | Greek scholars flee to Italy |
+| 1460 CE | Corpus Hermeticum brought to Florence | Hermetic revival |
+| 1469 CE | Marsilio Ficino translates Hermetica | Platonic Academy |
+| 1486 CE | Pico della Mirandola's 900 Theses | Christian Kabbalah |
+| 1492 CE | Columbus reaches Americas | New world contact |
+| 1517 CE | Luther's 95 Theses | Protestant Reformation begins |
+| 1543 CE | Copernicus publishes | Heliocentric theory |
+| 1559 CE | Index of Forbidden Books | Censorship institutionalized |
+| 1600 CE | Giordano Bruno burned | Infinite universe heresy |
+| 1614-1617 CE | Rosicrucian manifestos | Invisible brotherhood |
+| 1633 CE | Galileo condemned | Heliocentrism forbidden |
+| 1642-1727 CE | Isaac Newton | Mechanics, optics, alchemy |
+| 1717 CE | Grand Lodge of England | Modern Freemasonry begins |
+
+---
+
+## Enlightenment and Modern
+
+| Date | Event | Significance |
+|------|-------|--------------|
+| 1776 CE | Adam Weishaupt founds Illuminati | Rationalist secret society |
+| 1781 CE | Kant's Critique of Pure Reason | Limits of metaphysics |
+| 1789 CE | French Revolution | Enlightenment politics |
+| 1831 CE | Maxwell born | Will unify electromagnetism |
+| 1859 CE | Darwin's Origin of Species | Evolution by natural selection |
+| 1875 CE | Theosophical Society founded | Blavatsky synthesizes traditions |
+| 1888 CE | Secret Doctrine published | Theosophical cosmology |
+| 1888 CE | Hermetic Order of Golden Dawn | Victorian magical revival |
+| 1900 CE | Planck's quantum hypothesis | Quantum revolution begins |
+| 1905 CE | Einstein's special relativity | Space and time unified |
+| 1915 CE | Einstein's general relativity | Geometry is gravity |
+| 1916 CE | Sommerfeld calculates α | Fine structure constant named |
+| 1925-1927 CE | Quantum mechanics developed | Heisenberg, Schrödinger, Dirac |
+| 1945 CE | Nag Hammadi library discovered | Gnostic texts recovered |
+
+---
+
+## Contemporary
+
+| Date | Event | Significance |
+|------|-------|--------------|
+| 1964 CE | Bell's theorem | Nonlocality proven |
+| 1973 CE | Standard Model completed | Electroweak unification |
+| 1995 CE | Göbekli Tepe excavation begins | Pre-agricultural civilization |
+| 2012 CE | Higgs boson discovered | Standard Model confirmed |
+| 2015 CE | LIGO detects gravitational waves | Einstein vindicated |
+| 2018 CE | Planck final results | Precision cosmology |
+| 2020s CE | Master quadratic identified | Framework crystallizes |
+| 2025 CE | Cloud-9 observation | Spherical dark matter halo |
+
+---
+
+## Pattern Summary
+
+The timeline reveals recurring patterns:
+
+1. **Periods of synthesis** (Alexandria, Renaissance, late 19th century) alternate with **periods of suppression** (early Church, Inquisition, Enlightenment materialism).
+
+2. **Eastern-Western contact** consistently sparks innovation: Crusades → medieval philosophy; British Raj → Theosophy; 20th century → global synthesis.
+
+3. **Catastrophes** (Younger Dryas, Black Death, World Wars) create openings for new thinking.
+
+4. **Secret preservation** (buried libraries, oral traditions, coded symbols) ensures continuity through suppression.
+
+5. **Mathematical physics** advances in bursts (Newton, Maxwell, Einstein, quantum founders), each time revealing deeper structure.
+
+The current moment may represent another synthesis—this time with unprecedented precision.
+
+---
+
+*End of Appendix B*
+

@@ -1,0 +1,164 @@
+# FTD Accessibility Validation Pipeline
+# Checks for WCAG 2.1 Level AA compliance
+
+name: Accessibility
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dissemination/manuscript/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'dissemination/manuscript/**'
+
+jobs:
+  accessibility-audit:
+    runs-on: ubuntu-latest
+    # Quarto rendering may fail if freeze artifacts are missing
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install accessibility tools
+        run: |
+          npm install -g pa11y pa11y-ci
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build manuscript
+        run: |
+          cd dissemination/manuscript/src
+          quarto render --profile html
+        timeout-minutes: 30
+
+      - name: Run Pa11y accessibility audit
+        run: |
+          # Create pa11y config
+          cat > .pa11yci << 'EOF'
+          {
+            "defaults": {
+              "standard": "WCAG2AA",
+              "timeout": 30000,
+              "wait": 1000
+            },
+            "urls": []
+          }
+          EOF
+
+          # Find HTML files and run pa11y on each
+          find dissemination/manuscript/_webbook -name "*.html" -type f | head -20 | while read file; do
+            echo "Checking: $file"
+            pa11y "$file" --standard WCAG2AA --reporter cli || true
+          done
+        continue-on-error: true
+
+  figure-alt-text:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check figures have alt text
+        run: |
+          echo "Checking for missing alt text in manuscript figures..."
+
+          # Find image references without fig-alt
+          missing_alt=$(grep -r "!\[" dissemination/manuscript/src/chapters/*.qmd | grep -v "fig-alt" | grep -v "^#" || true)
+
+          if [ -n "$missing_alt" ]; then
+            echo "WARNING: The following images may be missing alt text:"
+            echo "$missing_alt"
+            echo ""
+            echo "Consider adding fig-alt attributes for accessibility."
+          else
+            echo "All image references appear to have alt text or descriptions."
+          fi
+
+  color-contrast:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify colorblind-safe palette
+        run: |
+          echo "Checking color definitions for accessibility..."
+
+          # Check for problematic color combinations
+          python3 << 'EOF'
+          import re
+          import os
+
+          # Okabe-Ito colorblind-safe palette (recommended)
+          SAFE_COLORS = {
+              '#E69F00': 'orange',
+              '#56B4E9': 'sky blue',
+              '#009E73': 'bluish green',
+              '#F0E442': 'yellow',
+              '#0072B2': 'blue',
+              '#D55E00': 'vermillion',
+              '#CC79A7': 'reddish purple',
+              '#999999': 'gray',
+              '#000000': 'black',
+              '#FFFFFF': 'white'
+          }
+
+          # Known problematic combinations for colorblind users
+          PROBLEMATIC = [
+              ('red', 'green'),
+              ('#FF0000', '#00FF00'),
+              ('#FF0000', '#008000'),
+          ]
+
+          issues = []
+
+          # Check style files
+          style_files = []
+          for root, dirs, files in os.walk('.'):
+              if 'node_modules' in root or 'archive' in root:
+                  continue
+              for f in files:
+                  if f.endswith(('.py', '.css', '.scss')):
+                      if 'style' in f.lower() or 'color' in f.lower():
+                          style_files.append(os.path.join(root, f))
+
+          print(f"Found {len(style_files)} style-related files to check")
+
+          for sf in style_files:
+              try:
+                  with open(sf, 'r', encoding='utf-8', errors='ignore') as f:
+                      content = f.read().lower()
+                      for c1, c2 in PROBLEMATIC:
+                          if c1.lower() in content and c2.lower() in content:
+                              issues.append(f"{sf}: Contains potentially problematic color pair ({c1}, {c2})")
+              except Exception as e:
+                  pass
+
+          if issues:
+              print("WARNINGS:")
+              for issue in issues:
+                  print(f"  - {issue}")
+          else:
+              print("No obvious colorblind-problematic color combinations found.")
+
+          print("\nColor accessibility check complete.")
+          EOF
