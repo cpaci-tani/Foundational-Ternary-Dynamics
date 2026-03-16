@@ -141,20 +141,25 @@ inline constexpr double PI = 4.0 * VARPI * VARPI / (G_STAR * G_STAR);
 inline constexpr double PF = PI / 4.0;
 
 // THE WATSON-G* IDENTITY [THEOREM — DERIV_WATSON_GSTAR_IDENTITY.md]:
-//   W₃ = G*²/(2π) = Γ(1/4)⁴/(4π³)
+//   I₁ = G*²/(2π) = Γ(1/4)⁴/(4π³)
 //
-// W₃ is the Watson integral (Watson, 1939): the self-energy of the 3D
-// cubic lattice propagator. It is a fundamental constant of lattice
-// field theory, computed as the Green's function at the origin on Z³.
+// I₁ is Watson's first triple integral (Watson, 1939): the self-energy
+// of the BCC (body-centered cubic) lattice. In FTD's 26-neighbor Moore
+// neighborhood, this corresponds to the 8 CORNER neighbors at (±1,±1,±1).
 //
-// This identity means G* is INTRINSIC to the cubic lattice — the lattice
-// "knows about" G* through its own Green's function. Both W₃ and G*
-// derive from the quartic integral I₄, which is their common ancestor.
+// The Moore neighborhood decomposes into three sublattices:
+//   SC  (6 face neighbors):   I₃ ≈ 0.506, CM field Q(√-6), Γ(n/24)
+//   FCC (12 edge neighbors):  I₂ ≈ 0.446, CM field Q(√-3), Γ(1/3)
+//   BCC (8 corner neighbors): I₁ = 1.393, CM field Q(i),   Γ(1/4) = G*
 //
-// Key consequence: x₊ + x₋ = 16G*² = 32πW₃, so
-//   1/α + N_c = 32π × (3D cubic lattice self-energy)
+// G* connects to the BCC component because the 8 cube vertices have
+// Z₄ rotational symmetry matching the lemniscate curve Aut(E) = {1,-1,i,-i}.
 //
-inline constexpr double W_3 = G_STAR * G_STAR / (2.0 * PI);
+// Key consequence: x₊ + x₋ = 16G*² = 32πI₁
+//
+inline constexpr double I_1_BCC = G_STAR * G_STAR / (2.0 * PI);
+// Legacy alias (documents may reference W_3):
+inline constexpr double W_3 = I_1_BCC;
 
 // The time operator: √G*
 // Each G*-tick divides into two √G* sub-ticks (Read and Write phases).
