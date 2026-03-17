@@ -8,7 +8,7 @@
 
 **One axiom. Two properties. Zero free parameters.**
 
-A voxel has state s in {-1, 0, +1} and position x in Z^3. Nothing else. From this, the fine structure constant alpha = 1/137.036, the Dirac equation, the Born rule, and the coupling constants of the Standard Model emerge through a single self-consistency equation.
+A voxel has state s in {-1, 0, +1} and position x in Z^3. Nothing else. From this, the fine structure constant alpha = 1/137.036, the gauge groups U(1) x SU(2) x SU(3), the Higgs mass, confinement, Bell violation, and the Einstein field equations emerge through a single self-consistency equation.
 
 **Author:** William J cpaci-tani III | **Version:** 5.28 | **Date:** March 2026
 
@@ -61,6 +61,41 @@ Remaining assumptions are standard lattice gauge theory (one-loop ansatz, gauge 
 
 ---
 
+## Ontic Derivation Program (March 2026)
+
+12 derivation tiers, 172 computational tests, 0 failures. Each tier closes a gap from axioms to physics:
+
+| Tier | Derivation | Tests | Key Result |
+|---|---|---|---|
+| 0.1 | Master quadratic from Z | 18/18 | x^2 - 16G\*^2 x + 16G\*^3 = 0 from partition function |
+| 0.2 | x+ = 1/alpha from phase structure | 14/14 | Coulomb phase at x+, confined at x- |
+| 1.1 | D=3 uniqueness | 4/4 | floor(x-) = D only for D=3 |
+| 1.2 | Integer uniqueness {3,4,7,13} | 6/6 | Unique under combined constraints |
+| 1.3 | Integer physical identification | — | Each integer traced to lattice role |
+| 2.1 | Confinement | 19/19 | Area-law Wilson loops, sigma=0.209 |
+| 2.2 | Three generations | 18/18 | Cuboctahedron: 3 axis types = 3 generations |
+| 2.3 | Nonlinear Einstein equations | 12/12 | Deser bootstrap converges to machine precision |
+| 2.4 | Bell cosine from Gauss | 13/13 | E(theta)=-cos(theta), S=2sqrt(2) |
+| 3.1 | Quark masses | 16/16 | Honest: [OPEN] — scheme-dependent |
+| 3.2 | **Higgs mass** | **21/21** | **lambda=3/23, m_H=125.69 GeV (0.47%)** |
+| 4.1 | Von Neumann algebra | 31/31 | Type I_3 finite, Type III_1 thermodynamic |
+
+---
+
+## Moore Neighborhood Gauge Structure
+
+The 26-neighbor Moore neighborhood decomposes as 6 SC + 12 FCC + 8 BCC. Each sublattice excites a different number of J-components orthogonally:
+
+| Sublattice | Neighbors | Distance | J-components | Gauge group |
+|---|---|---|---|---|
+| SC (face) | 6 | 1 | 1 | U(1) — electromagnetism |
+| FCC (edge) | 12 | sqrt(2) | 2 | SU(2) — weak force |
+| BCC (corner) | 8 | sqrt(3) | 3 | SU(3) — strong force |
+
+The Higgs quartic lambda = 3/23 follows from the ternary decomposition {-1,0,+1} = 2(active) + 1(void), giving gauge weights w_SU2=2, w_U1=1, and lambda = sin^2(theta_W)/(2 - sin^2(theta_W)).
+
+---
+
 ## Epistemic Honesty
 
 FTD maintains transparent accounting. Every claim is tagged:
@@ -68,10 +103,10 @@ FTD maintains transparent accounting. Every claim is tagged:
 | Tag | Meaning | Count |
 |---|---|---|
 | [AXIOM] | Starting postulate (state + position) | 1 |
-| [THEOREM] | Proven from axioms | ~30 |
+| [THEOREM] | Proven from axioms | ~40 |
 | [SELECTION] | Argued but not uniquely forced | ~5 (physical identifications) |
 | [IMPOSED] | Standard physics adopted | ~50 |
-| [OPEN] | Unresolved | ~10 |
+| [OPEN] | Unresolved | ~8 |
 
 See [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md) for the full breakdown.
 
@@ -88,12 +123,14 @@ See [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIO
 | alpha_s (strong coupling) | 0.1186 | 0.1179 | **0.6%** |
 | alpha_G (gravitational) | 5.91e-39 | 5.91e-39 | **0.01%** |
 
-### Mass Ratios
+### Mass Predictions
 
-| Ratio | FTD | Experimental | Error |
+| Parameter | FTD Value | Experimental | Error |
 |---|---|---|---|
+| m_H (Higgs boson) | 125.69 GeV | 125.1 GeV | **0.47%** |
 | m_tau / m_e | 3477 | 3477.48 | **0.01%** |
 | m_mu / m_e | 207 | 206.768 | **0.11%** |
+| v (Higgs VEV) | 246.08 GeV | 246.22 GeV | **0.06%** |
 
 ### The Precision Formula
 
@@ -111,26 +148,27 @@ where epsilon = e^pi - pi - 20 and all coefficients are rational combinations of
 ftd/
   docs/
     SPEC_FTD.md                 # Authoritative specification
-    theory/                     # 97 core theory documents
+    theory/                     # 114 core + 68 archived theory documents
       01_reference/             # Master references and proofs
       02_foundations/            # Axiom Zero, ontology, emergence
-      03_derivations/            # 35 physics derivations
+      03_derivations/            # 37 physics derivations
       04_coupling/               # Coupling constants and precision
       05_particles/              # Particle physics
+      06_consciousness/          # Measurement, von Neumann algebras
       07_assessment/             # Epistemic audits
       08_structural/             # Geometry and information theory
       09_mathematical/           # Number theory connections
   engine/
     include/ftd/                # 18 C++ headers (ontic.h is the constant chain)
     src/                        # 7 source files
-    tests/                      # 155 CTests (151 CPU + 4 GPU)
+    tests/                      # 156 CTests (151 CPU + 4 GPU + 1 dark sector)
     cuda/                       # GPU acceleration (363x on RTX 5090)
     wasm/                       # WebAssembly bindings
-    web/                        # Browser dashboard (Three.js)
+    web/                        # Browser dashboard (Three.js, 32 scenarios)
   scripts/
     constants.py                # Canonical shared constants
     verification/               # 35 formal verification scripts
-    proofs/                     # 25 mathematical proofs + computational checks
+    proofs/                     # 32 mathematical proofs + computational checks
     experiments/                # Bell tests, CERN analysis
     tests/                      # pytest suites (21 scripts)
     visualization/              # Publication figures
@@ -151,12 +189,20 @@ pip install numpy scipy sympy mpmath pytest
 python scripts/verification/ontic_chain.py        # Full derivation chain (32/32 checks)
 ```
 
+### Run the Proof Suite
+
+```bash
+python scripts/proofs/proof_10_ultimate_chain.py   # Full 11-proof chain
+python scripts/proofs/proof_quartic_coupling.py    # Higgs quartic lambda=3/23 (21/21)
+python scripts/proofs/proof_confinement_wilson.py  # Confinement proof (19/19)
+```
+
 ### Build the Engine
 
 ```bash
 cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
 cmake --build engine/build --config Release
-cd engine/build && ctest --output-on-failure -C Release  # 155 tests
+cd engine/build && ctest --output-on-failure -C Release  # 156 tests
 ```
 
 ### Launch the Web Dashboard
@@ -198,7 +244,7 @@ CUDA backend with cuFFT spectral Poisson solver. **363x speedup** at 64^3 on RTX
 
 ### WebAssembly
 
-Compiles to WASM via Emscripten. Three.js dashboard with 23+ scenarios, real-time diagnostics, Lagrangian inspector, and particle catalog. No build step required for the frontend.
+Compiles to WASM via Emscripten. Three.js dashboard with 32 scenarios including QCD confinement demos, real-time diagnostics, Lagrangian inspector, and particle catalog.
 
 ---
 
@@ -208,13 +254,16 @@ Compiles to WASM via Emscripten. Three.js dashboard with 23+ scenarios, real-tim
 |---|---|
 | [Axiom Zero](docs/theory/02_foundations/FOUND_AXIOM_ZERO.md) | State + position, everything derived |
 | [Master Quadratic](docs/theory/01_reference/MATH_MASTER_QUADRATIC.md) | Complete algebraic structure |
-| [Gap Equation](docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) | Self-consistency from the lattice |
+| [Gap Equation from Z](docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_FROM_Z.md) | Master quadratic from partition function |
 | [Watson-G\* Identity](docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) | I_1 = G\*^2/(2pi) and lattice symmetry theorem |
-| [Dirac from Quadratic](docs/theory/03_derivations/DERIV_DIRAC_FROM_MASTER_QUADRATIC.md) | Fermions from complex roots |
-| [Born Rule Null Cone](docs/theory/02_foundations/FOUND_BORN_RULE_NULL_CONE.md) | i^2+a^2+b^2=0 encodes everything |
-| [Coulomb Scattering](docs/theory/03_derivations/DERIV_COULOMB_SCATTERING_AMPLITUDE.md) | First scattering amplitude from FTD |
-| [Three Resolutions](docs/theory/03_derivations/DERIV_THREE_RESOLUTIONS.md) | Compact U(1), bare=physical, one loop exact |
-| [L-Function Connection](docs/theory/09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md) | G\* = 8L(E,1)/sqrt(pi) via BSD |
+| [Higgs from Manifestation](docs/theory/03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md) | lambda=3/23, m_H=125.69 GeV |
+| [Confinement](docs/theory/03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md) | Wilson loops, string tension, area law |
+| [Three Generations](docs/theory/03_derivations/DERIV_THREE_GENERATIONS.md) | Cuboctahedron axis types = 3 |
+| [Bell Cosine](docs/theory/03_derivations/DERIV_BELL_COSINE_FROM_GAUSS.md) | E(theta)=-cos(theta) from Gauss constraint |
+| [Nonlinear Einstein](docs/theory/03_derivations/DERIV_EINSTEIN_NONLINEAR_FROM_LATTICE.md) | Full EFE via Deser bootstrap |
+| [Moore Gauge Structure](docs/theory/03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md) | SC->U(1), FCC->SU(2), BCC->SU(3) |
+| [D=3 Uniqueness](docs/theory/02_foundations/DERIV_D3_UNIQUENESS.md) | Only D=3 satisfies floor(x-)=D |
+| [Von Neumann Construction](docs/theory/06_consciousness/DERIV_VON_NEUMANN_CONSTRUCTION.md) | Type III_1 -> Type I transition |
 | [Hidden Selections Audit](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md) | Honest accounting of all assumptions |
 
 ---
@@ -223,15 +272,17 @@ Compiles to WASM via Emscripten. Three.js dashboard with 23+ scenarios, real-tim
 
 **Claims:**
 - Alpha = 1/137.036 is the unique self-consistent coupling of the 3D cubic lattice with ternary states
-- The Dirac equation, Born rule, and coupling constants emerge from one quadratic's three discriminant regimes
+- The gauge group U(1) x SU(2) x SU(3) emerges from the orthogonal decomposition of J^2 on the Moore neighborhood
+- The Higgs quartic lambda = 3/23 follows from the ternary state decomposition 3 = 2(active) + 1(void)
+- Confinement, Bell violation, and the Einstein equations are derivable from the lattice structure
 - G\* is intrinsic to Z^3 through the Watson integral of the BCC sublattice
 
 **Does not claim:**
 - To replace the Standard Model's computational machinery
-- To derive the full particle spectrum from first principles
+- To derive quark masses from first principles (honest [OPEN])
 - To have confirmed novel predictions (best candidates: neutrino hierarchy ~2027, sum m_nu ~2030)
 
-**The honest status:** A mathematically rigorous derivation chain from one axiom to alpha, with every algebraic step verified. The remaining assumptions are standard lattice gauge theory. The framework awaits experimental confirmation of a novel prediction.
+**The honest status:** A mathematically rigorous derivation chain from one axiom to alpha, the gauge groups, confinement, and the Higgs mass, with every algebraic step verified. The remaining assumptions are standard lattice gauge theory. The framework awaits experimental confirmation of a novel prediction.
 
 ---
 
