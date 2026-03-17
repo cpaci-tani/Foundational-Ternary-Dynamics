@@ -57,7 +57,7 @@ inline double gauss_term(double divJ, double rho_charge) {
 }
 
 // Rayleigh dissipation function: R = (DAMPING/2) * |wave_vel|^2
-// Models vacuum drag as energy sink. DAMPING = alpha (derived).
+// Models vacuum drag as energy sink. DAMPING = alpha [IMPOSED — see ontic.h ASSUMP.6].
 inline double rayleigh_dissipation(const Voxel& v) {
     return 0.5 * DAMPING * v.wave_vel.mag2();
 }

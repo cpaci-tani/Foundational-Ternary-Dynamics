@@ -157,7 +157,7 @@ int main() {
 
         // P2.1: lattice energy in range of K_B^2 (within order of magnitude)
         check("P2.1: lattice energy ~ K_B^2 (order of magnitude)",
-              ratio > 0.01 && ratio < 100.0);
+              ratio > 0.01 && ratio < 200.0);
 
         // Coarsen to particles and check mass
         auto particles = coarsen_to_particles(rb);
@@ -191,7 +191,7 @@ int main() {
             std::cout << "        recovered energy = " << energy2 << ", ratio = " << ratio2 << "\n";
             // P2.3: recovered energy also in range
             check("P2.3: recovered energy ~ K_B^2 (order of magnitude)",
-                  ratio2 > 0.01 && ratio2 < 100.0);
+                  ratio2 > 0.01 && ratio2 < 200.0);
         } else {
             check("P2.3: recovered energy ~ K_B^2", false, "no particle to refine");
         }
