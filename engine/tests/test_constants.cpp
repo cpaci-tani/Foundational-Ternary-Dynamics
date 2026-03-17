@@ -115,7 +115,7 @@ int main() {
     // K_GENESIS = N_C * K_B (factor 3 is the framework integer N_C)
     check_close("K_GENESIS = N_C * K_B", ftd::K_GENESIS, ftd::N_C * ftd::K_B, 1e-15);
 
-    // DAMPING = ALPHA [DERIVED from vacuum drag / geometric friction]
+    // DAMPING = ALPHA [IMPOSED — identification gamma = alpha is a parameter choice (ASSUMP.6)]
     // See: EXPLR_VACUUM_DRAG_DERIVATION.md, SPEC_SIX_ALGORITHMS.md (Algorithm 5)
     check_close("DAMPING = alpha (vacuum drag)", ftd::DAMPING, ftd::ALPHA, 1e-15);
 

@@ -119,35 +119,48 @@ Ordinary baryonic matter constitutes only approximately 5% of the total mass-ene
 
 ## The FTD Interpretation
 
-In FTD, dark matter is not a new particle species: it is a property of the **void itself**.
+In FTD, dark matter is not a new particle species: it is a property of the **self-field halo** surrounding every manifested particle.
 
-### Not Particles, But Field Correlations
+::: {.callout-warning}
+## Epistemic Status
+The self-field halo mechanism is **[SELECTION]** --- physically motivated and supported by engine simulation evidence, but not rigorously proven from first principles. See DERIV_DARK_SECTOR_DYNAMICS.md for the full derivation and claims table.
+:::
 
-The void (s = 0) is not empty. Even when no particles are manifested, the flux field J has non-zero correlations:
+### Not New Particles, But Self-Field Tails
 
-$$\langle 0 | J^2 | 0 \rangle \neq 0$$
+Every manifested particle (s = +/-1) in FTD continuously sources flux into its neighborhood via the coupling term. The resulting **self-field envelope** extends far beyond the particle itself:
 
-These **vacuum fluctuations** contribute to the stress-energy tensor, creating gravitational effects without manifesting as visible particles.
+- **r_eff** (flux-weighted RMS radius): ~15 voxels
+- **1% boundary**: ~23 voxels (where flux falls to 1% of peak)
+- **Self-field energy**: 0.08 $K_B^2$ per particle
+
+These measurements come from GPU simulations at 128^3 lattice resolution (GP-KCOMP-SHELL test).
 
 ### The Mechanism
 
-Dark matter arises from **coherent void fluctuations**:
+Dark matter is the **far-field tail** of the self-field halo:
 
 ```
-ORDINARY MATTER:
-  Manifested particles (s = ±1)
-  Interacts via all forces
+ORDINARY MATTER (the seed):
+  Manifested particle (s = +/-1) at one lattice site
+  Interacts via all forces (Coulomb, gravity, color)
   Emits/absorbs light
 
-DARK MATTER:
-  Pre-manifest flux correlations (s = 0)
-  Only gravitates
-  No electromagnetic interaction
+DARK MATTER (the halo):
+  Self-field envelope (s = 0, |J| > 0) extending ~15-23 voxels
+  Only gravitates (F = G_N * grad(rho), rho = |J|)
+  No electromagnetic interaction (F_em = -alpha * s * grad(phi), s = 0)
 ```
 
-The flux field can carry energy and momentum even when the state is zero: this is the FTD analog of vacuum energy, but with **structure**.
+The key insight: **every particle carries its own dark matter halo**. The self-field is gravitationally active but electromagnetically invisible because void sites (s = 0) do not couple to the Coulomb potential.
 
-**Ordinary matter** consists of manifested particles with states s = ±1. These interact via all forces and emit or absorb light. **Dark matter** consists of pre-manifest flux correlations where s = 0 everywhere. These only gravitate and have no electromagnetic interaction.
+### Stability: Why Dark Matter Persists
+
+The FTD engine uses **selective damping** (default behavior): energy dissipation only occurs within 1 lattice hop of a manifested particle. Far-field flux --- everything beyond the immediate particle neighborhood --- propagates **losslessly** through the vacuum.
+
+This means the self-field halo, once established, persists indefinitely. The dark matter does not decay because there is no damping channel in the vacuum. This is verified by engine test DS-1 (sub-threshold flux stability under selective damping).
+
+**Ordinary matter** consists of manifested particles with states s = +/-1. These interact via all forces and emit or absorb light. **Dark matter** consists of their self-field halos where s = 0 everywhere. These only gravitate and have no electromagnetic interaction.
 
 ### Why It Gravitates
 

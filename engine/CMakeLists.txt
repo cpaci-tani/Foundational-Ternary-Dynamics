@@ -408,6 +408,10 @@ target_link_libraries(ftd_neutrino_sector ftd_core)
 add_executable(ftd_cosmological_predictions tests/campaign_cosmological_predictions.cpp)
 target_link_libraries(ftd_cosmological_predictions ftd_core)
 
+# Phase 9b: Dark Sector Dynamics campaign
+add_executable(ftd_dark_sector tests/campaign_dark_sector.cpp)
+target_link_libraries(ftd_dark_sector ftd_core)
+
 # Phase 10: Novel Predictions & Falsifiability campaign
 add_executable(ftd_novel_predictions tests/campaign_novel_predictions.cpp)
 target_link_libraries(ftd_novel_predictions ftd_core)
@@ -709,6 +713,7 @@ add_test(NAME campaign_neutrino_sector COMMAND ftd_neutrino_sector)
 
 # Phase 9: Cosmological Predictions campaign
 add_test(NAME campaign_cosmological_predictions COMMAND ftd_cosmological_predictions)
+add_test(NAME campaign_dark_sector COMMAND ftd_dark_sector)
 
 # Phase 10: Novel Predictions & Falsifiability campaign
 add_test(NAME campaign_novel_predictions COMMAND ftd_novel_predictions)
@@ -759,7 +764,8 @@ set_tests_properties(
     campaign_gravitational_wave campaign_gravity_profile
     campaign_gravity_hierarchy
     campaign_triad_binding campaign_neutrino_sector
-    campaign_cosmological_predictions campaign_novel_predictions
+    campaign_cosmological_predictions campaign_dark_sector
+    campaign_novel_predictions
     falsifiability campaign_integer_sweep
     campaign_hydrogen_spectrum campaign_two_slit
     latency_field
@@ -778,3 +784,80 @@ set_tests_properties(
     campaign_free_dynamics campaign_aggregate_interaction
     campaign_gravity_profile flux_mediated
     PROPERTIES TIMEOUT 1800)
+
+# ============================================================================
+# CTest Labels — run subsets with: ctest -L <label>
+# ============================================================================
+
+# Unit tests (108 test_*.cpp files)
+set_tests_properties(
+    constants lorentz lattice born_infeld energy gauss stress_energy
+    thermodynamics lagrangian ontic_chain dual_substrate genesis
+    gravity_dynamics annihilation annihilation_conservation wave_collapse
+    wave_speed interference gauge polarization momentum magnetic
+    flux_mediated entanglement variational_coulomb magnetic_lagrangian
+    dissipation portable_field particle_lifetime vortex voxel_properties
+    lattice_operators discrete_operators bridge_dynamics maxwell csv_export
+    logic_engine poisson_coulomb energy_tracking energy_conservation
+    selffield_profile wavepacket particle_engine scale_bridge hydrogen_scale1
+    atom_engine atom_scale_bridge multiscale_bridge em_fields gauss_convergence
+    lorentz_force selective_damping em_energy_conservation continuity poynting
+    larmor dipole_radiation dispersion_relation thomson_scattering light
+    ensemble correlations spectral tracker benchmark latency_field
+    pe_exchange pe_strong pe_lorentz pe_magnetic_dipole pe_spin_orbit
+    pe_radiation pe_relativistic
+    ae_hbonds ae_angle_strain ae_dipole ae_thermostat ae_electronegativity
+    action_stationarity asymptotic_freedom atom_toggles atomic_energy
+    baryogenesis bell_aggregate born_rule_ensemble confinement_test
+    entanglement_basis flavor_physics higgs_mechanism hilbert measurement
+    particle_toggles spin_statistics triad_confinement wz_mass
+    falsifiability inflation dark_matter cosmological_constant consciousness
+    sloop lorentz_invariance electroweak hydrogen_em_only
+    PROPERTIES LABELS "unit")
+
+# Campaign tests (47 campaign_*.cpp files)
+set_tests_properties(
+    campaign_dispersion campaign_gauge_dynamics campaign_gauge_constraint
+    campaign_free_dynamics campaign_aggregate_interaction
+    campaign_poisson_force_law campaign_poisson_binding campaign_poisson_hydrogen
+    campaign_force_law campaign_energy_audit campaign_bound_lifetime
+    campaign_spontaneous campaign_cross_scale campaign_born_ensemble
+    campaign_h2_molecule campaign_multiscale_pipeline
+    campaign_statistical_convergence campaign_dispersion_convergence
+    campaign_coulomb_convergence campaign_wave_isotropy
+    campaign_born_rule campaign_bell_substrate campaign_epr_correlation
+    campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
+    campaign_structure_stability campaign_color_force campaign_color_neutral
+    campaign_confinement campaign_baryon_formation
+    campaign_weak_transmutation campaign_parity_violation campaign_weak_decay
+    campaign_gravitational_wave campaign_gravity_profile campaign_gravity_hierarchy
+    campaign_triad_binding campaign_neutrino_sector
+    campaign_cosmological_predictions campaign_dark_sector campaign_novel_predictions
+    campaign_integer_sweep campaign_hydrogen_spectrum campaign_two_slit
+    campaign_pe_fine_structure campaign_ae_water campaign_lorentz_measure
+    PROPERTIES LABELS "campaign")
+
+# Foundation tests (fast math/constants checks)
+set_tests_properties(
+    constants lorentz lattice ontic_chain born_infeld voxel_properties
+    lattice_operators discrete_operators dissipation magnetic_lagrangian
+    PROPERTIES LABELS "foundation")
+
+# Lagrangian & variational tests
+set_tests_properties(
+    lagrangian variational_coulomb magnetic_lagrangian dissipation
+    action_stationarity
+    PROPERTIES LABELS "lagrangian")
+
+# Scale 1: ParticleEngine tests
+set_tests_properties(
+    particle_engine pe_exchange pe_strong pe_lorentz pe_magnetic_dipole
+    pe_spin_orbit pe_radiation pe_relativistic particle_toggles
+    campaign_pe_fine_structure
+    PROPERTIES LABELS "scale1")
+
+# Scale 2: AtomEngine tests
+set_tests_properties(
+    atom_engine atom_scale_bridge ae_hbonds ae_angle_strain ae_dipole
+    ae_thermostat ae_electronegativity atom_toggles campaign_ae_water
+    PROPERTIES LABELS "scale2")

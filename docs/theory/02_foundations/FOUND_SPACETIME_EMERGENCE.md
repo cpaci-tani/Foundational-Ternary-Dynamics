@@ -291,6 +291,7 @@ The mismatch: $137.508 / 137.036 = 1.00344$ (0.34%). The 2D packing cannot close
 | 6. Fibonacci constraint | N_eff = F_7 = 13 only for D = 3 | [THEOREM] |
 | 7. Cuboctahedral uniqueness | Kissing number = 4D only for D = 3 | [THEOREM] |
 | **8. Dimensional buckling** | **Topological self-reference maximal at D = 3** | **[CONJECTURE]** |
+| **9. Dimensional counting** | **0.5D→1D→2D→3D via pairing + time; D=3 → BCC → G*** | **[CONJECTURE]** (see [FOUND_DIMENSIONAL_COUNTING.md](FOUND_DIMENSIONAL_COUNTING.md)) |
 
 ### 6.5 Honest Assessment
 

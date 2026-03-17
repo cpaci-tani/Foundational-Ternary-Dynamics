@@ -2,9 +2,9 @@
 
 ## Why Special Relativity, Gravity, and General Relativity Are Three Distinct Concepts in FTD
 
-**Document Version:** 1.0
-**Framework Version:** FTD v5.26
-**Date:** February 20, 2026
+**Document Version:** 2.0
+**Framework Version:** FTD v5.28
+**Date:** March 17, 2026 (updated from February 20, 2026)
 **Standard:** Semantic disambiguation with epistemic classification
 
 **Depends on:**
@@ -385,6 +385,62 @@ FTD has complete results through **Level 5**. Levels 6-7 represent genuine open 
 
 ---
 
+## §10. The Epistemic Time Dimension
+
+### 10.1 Three Concepts, Three Temporal Relations [SELECTION]
+
+The SR / Gravity / GR trichotomy is not merely about spatial relations — each concept embodies a fundamentally different relationship to **epistemic time**: how an observer knows and experiences temporal progression.
+
+| Concept | Spatial Relation | Epistemic Time Relation | What the Observer Knows |
+|---------|-----------------|------------------------|------------------------|
+| **SR** | Relative motion between lattice regions | **Kinematic time**: proper time $d\tau = \sqrt{1 - v^2}\,dT_U$ depends on motion alone | The observer's clock rate is determined by how fast they traverse the lattice |
+| **Gravity** | Local information density at a position | **Thermodynamic time**: proper time $d\tau = \sqrt{f}\,dT_U$ depends on ambient energy density | The observer's clock rate is determined by how much the local lattice is saturated |
+| **GR** | Both motion and density simultaneously | **Geometric time**: proper time $d\tau = \sqrt{f - v^2/f}\,dT_U$ emerges from the non-trivial coupling | The observer's experience is shaped by the interplay of motion and environment — neither alone suffices |
+
+### 10.2 Epistemic vs Ontological Time [SELECTION]
+
+FTD distinguishes two fundamentally different time concepts:
+
+**Ontological time** (the Universal Tick $T_U$): Absolute, discrete, the same everywhere. Every voxel updates once per tick. This is the lattice's internal clock — it never varies, never bends, never slows down. It is not observable.
+
+**Epistemic time** (proper time $\tau$): What an observer embedded in the lattice actually experiences. This depends on the observer's spatial relation (motion) and informational environment (gravity). Epistemic time is the only time any observer can measure.
+
+The three concepts of the trichotomy correspond to three **sources of epistemic time deviation** from the ontological tick:
+
+| Source | Mechanism | Formula |
+|--------|-----------|---------|
+| **SR** | Spatial traversal consumes tick budget | $\Delta\tau/\Delta T_U = \sqrt{1 - v^2}$ |
+| **Gravity** | Information density pre-consumes tick budget | $\Delta\tau/\Delta T_U = \sqrt{1 - r_s/r}$ |
+| **GR** | Both effects amplify each other non-linearly | $\Delta\tau/\Delta T_U = \sqrt{f - v^2/f}$ |
+
+### 10.3 Why Time Is Central to the Distinction [SELECTION]
+
+Standard physics unifies SR and gravity into GR by treating them as aspects of spacetime geometry. In this view, time and space are on equal footing (Minkowski signature).
+
+FTD inverts this: **time is more fundamental than geometry**. The Universal Tick exists at Level 0; spatial relations exist at Level 1; gravity at Level 2; geometry at Level 4. Time *precedes* space in the ontological hierarchy.
+
+The three concepts are therefore three different **perturbations of the observer's temporal experience**:
+
+1. **SR**: A *kinematic* perturbation — moving through space costs time
+2. **Gravity**: A *thermodynamic* perturbation — being near mass costs time (the lattice is "busy" processing gravitational information)
+3. **GR**: An *emergent geometric* encoding of how these two perturbations couple
+
+This is why they are "separate but similar" — all three affect the same observable (proper time), but through ontologically distinct mechanisms that happen to produce the same phenomenological signature (clock slowdown). The equivalence principle is the statement that locally, the observer cannot distinguish which mechanism is responsible.
+
+### 10.4 Connection to Consciousness and Measurement [CONJECTURE]
+
+The discriminant trichotomy ($\Delta > 0$, $\Delta = 0$, $\Delta < 0$) may extend this temporal hierarchy further:
+
+| Domain | $\Delta$ | Temporal Character |
+|--------|----------|-------------------|
+| Physics (real roots) | $\Delta > 0$ | Oscillatory — reversible dynamics |
+| Measurement (degenerate) | $\Delta = 0$ | Critical — the "now" of collapse |
+| Consciousness (complex roots) | $\Delta < 0$ | Exponential — irreversible experience |
+
+If correct, the three temporal modes (kinematic, thermodynamic, geometric) of the gravity trichotomy would nest inside the three temporal domains (oscillatory, critical, experiential) of the discriminant trichotomy. This remains [CONJECTURE] — the connection between gravitational time dilation and the measurement-consciousness boundary has not been rigorously established.
+
+---
+
 ## Cross-References
 
 | Document | Relationship |
@@ -398,6 +454,6 @@ FTD has complete results through **Level 5**. Levels 6-7 represent genuine open 
 
 ---
 
-*Document created: February 20, 2026*
-*Framework: Foundational Ternary Dynamics v5.26*
+*Document created: February 20, 2026 | Updated: March 17, 2026 (v2.0 — added §10 epistemic time dimension)*
+*Framework: Foundational Ternary Dynamics v5.28*
 *Classification: Foundational (FOUND_)*

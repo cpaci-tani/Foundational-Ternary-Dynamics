@@ -81,7 +81,7 @@ int main() {
     // This should be O(10^-43) — explaining why gravity is 10^39 times weaker than EM
     check("alpha^20 ~ 10^-43 (hierarchy explanation)", alpha_20 > 1e-44 && alpha_20 < 1e-42);
 
-    // 6. The damping identification: DAMPING = alpha [DERIVED]
+    // 6. The damping identification: DAMPING = alpha [IMPOSED — ASSUMP.6]
     // See: EXPLR_VACUUM_DRAG_DERIVATION.md, SPEC_SIX_ALGORITHMS.md (Algorithm 5)
     check("DAMPING = ALPHA exactly", ftd::ontic::DAMPING == ftd::ontic::ALPHA);
     std::cout << "    DAMPING = " << std::setprecision(10) << ftd::ontic::DAMPING

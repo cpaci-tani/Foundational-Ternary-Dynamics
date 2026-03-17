@@ -1,15 +1,15 @@
 # FTD Theory Documentation Index
 
-**Framework:** Foundational Ternary Dynamics v5.28-consolidated
-**Date:** March 15, 2026
-**Status:** Consolidated (86 core files, 67 archived)
+**Framework:** Foundational Ternary Dynamics v5.28
+**Date:** March 17, 2026
+**Status:** Consolidated (114 core files, 67 archived)
 **Single Source of Truth:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 
 ---
 
 ## Document Organization
 
-This index organizes all 86 core theory documents into 10 logical categories (9 subdirectories + this file).
+This index organizes all 114 core theory documents into 10 logical categories (9 subdirectories + this file).
 Archived documents (67 files) are in `archive/` subdirectory.
 
 ---
@@ -39,7 +39,7 @@ Start here for comprehensive overviews.
 
 ---
 
-## 2. Ontological Foundations (11)
+## 2. Ontological Foundations (16)
 
 From void to physics — the emergence story.
 
@@ -52,7 +52,7 @@ From void to physics — the emergence story.
 | 2.4 | [FOUND_SPACETIME_EMERGENCE.md](02_foundations/FOUND_SPACETIME_EMERGENCE.md) | How dimensions emerge (XY vs X+Y), dimensional buckling (D=3), and why space and time are categorically different |
 | 2.5 | [FOUND_ONTOLOGICAL_GENESIS.md](02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) | Complete hierarchy from void to physics (Levels 0-12) |
 | 2.6 | [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Constant chain γ → ϖ → M → π → G* — structural analysis, honest epistemics |
-| 2.7 | [FOUND_RELATIVITY_GRAVITY_DISTINCTION.md](02_foundations/FOUND_RELATIVITY_GRAVITY_DISTINCTION.md) | SR / Gravity / GR trichotomy: three distinct concepts, 7-level hierarchy, emergent equivalence principle |
+| 2.7 | [FOUND_RELATIVITY_GRAVITY_DISTINCTION.md](02_foundations/FOUND_RELATIVITY_GRAVITY_DISTINCTION.md) | **SR / Gravity / GR trichotomy (v2.0):** Three distinct concepts, 7-level hierarchy, emergent equivalence principle; **§10 epistemic time dimension:** kinematic/thermodynamic/geometric time relations, ontological vs epistemic time distinction, connection to discriminant trichotomy |
 | 2.8 | [FOUND_FOURCIER_ONTIC_TOOL.md](02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) | The Fourcier curve as generalized distinction-drawing instrument; connects First Distinction → Existence Filter → Cayley-Dickson cascade |
 | 2.9 | [FOUND_LADDER_GENERATING_RULE.md](02_foundations/FOUND_LADDER_GENERATING_RULE.md) | **The Ladder's Generating Rule:** Why alpha-power exponents are {1,2,3,4,8,11,14,20}; two regimes (perturbative gaps=1, structural gaps={N_base,N_c,N_c,N_f}); total gap = 16 = k_phys (five independent characterizations); n_gravity = n_perturbative + k_phys = 4+16=20; k_phys*k_cons = 2^D = 8; **x+/x- = (1+δ)/(1-δ) exactly** [THEOREM]; SM walk adds features in complexity order. 10 claims (LGR-1 to LGR-10) |
 | 2.10 | [FOUND_FORCE_STRUCTURE.md](02_foundations/FOUND_FORCE_STRUCTURE.md) | **The Force Structure:** One equation, four forces. G* → x+(EM, weak, gravity via α-powers) + x-(strong via N_c). Forces as dual-substrate modes: \|J\|=gravity, J=EM, J_L-J_R=weak, J_R axis=strong. Hierarchy problem dissolved (α^16 = SM walk). EM dominance from G*>>1/4. Algebraic unity (not GUT). 7 claims (FST-1 to FST-7) |
@@ -60,10 +60,13 @@ From void to physics — the emergence story.
 | 2.12 | [FOUND_BORN_RULE_NULL_CONE.md](02_foundations/FOUND_BORN_RULE_NULL_CONE.md) | **Born rule as null-cone geometry:** i² + a² + b² = 0 encodes Born rule, Pythagorean theorem, Riemann sphere, Wick rotation, and null cone simultaneously; explains why P = \|ψ\|² is quadratic |
 | 2.13 | [FOUND_SELF_REFERENTIAL_CLOSURE.md](02_foundations/FOUND_SELF_REFERENTIAL_CLOSURE.md) | **The observed IS the observer:** Self-referential closure as derivation principle; circularities are the theorem, not the weakness; gap equation as geometric self-consistency; the lattice determines its own coupling; new epistemic tag [SELF-CONSISTENT] |
 | 2.14 | [FOUND_EMERGENT_TIME_GRAVITY.md](02_foundations/FOUND_EMERGENT_TIME_GRAVITY.md) | **Emergent time:** G\*²=energy per DOF per tick; space doesn't bend, gravity is tick-rate variation; ReLU crystallization mediates Type III→Type I; discriminant trichotomy: bosons/fermions/measurement |
+| 2.15 | [FOUND_DIMENSIONAL_COUNTING.md](02_foundations/FOUND_DIMENSIONAL_COUNTING.md) | **Dimensional counting:** Constructive 0.5D→1D→2D→3D via pairing ontology + time; D=3 → Moore(26) → BCC(8) → G\* via Watson integral; **coefficient 16 = z_BCC × 2 derived from BCC + ternary ReLU**; self-referential closure α→K_B→p≈1→n_DOF=16→α; DC-4 (time→3D) is [CONJECTURE], rest is [THEOREM] |
+| 2.16 | [DERIV_D3_UNIQUENESS.md](02_foundations/DERIV_D3_UNIQUENESS.md) | **D=3 uniqueness:** Watson integral W_D computed for D=1..6; D=3 is the unique dimension where floor(x_-)=D (self-referential N_c=D); D=1 diverges, D>=4 gives floor(x_-)=2; proven by exhaustive check |
+| 2.17 | ~~DERIV_MOORE_GAUGE_ORTHOGONAL.md~~ | **SUPERSEDED** by 3.43 DERIV_MOORE_GAUGE_STRUCTURE.md (more complete, 32/32 tests); retained in `02_foundations/` for historical reference |
 
 ---
 
-## 3. Core Physics Derivations (28)
+## 3. Core Physics Derivations (29)
 
 Physics from first principles.
 
@@ -84,7 +87,7 @@ Physics from first principles.
 | 3.13 | [DERIV_LATTICE_REISSNER_NORDSTROM.md](archive/ARCH_DERIV_LATTICE_REISSNER_NORDSTROM.md) | Reissner-Nordström metric from lattice computational budget: EM field as anti-saturation; f(r) = 1 - r_s/r + r_Q²/r²; Born-Infeld extension; 5 verified limits; Kerr-Newman outline; completes black hole taxonomy |
 | 3.14 | [DERIV_LATTICE_SU3_GAUGE.md](03_derivations/DERIV_LATTICE_SU3_GAUGE.md) | **SU(3) lattice gauge theory:** Color from flux geometry (J_x,J_y,J_z ↔ r,g,b); gluon propagator [THEOREM]; quark-gluon vertex [THEOREM]; 3/4-gluon vertices from BI nonlinearity [SELECTION]; QCD beta function β₀ = (11N_c−2N_f)/3 = 7 [THEOREM]; asymptotic freedom; Wilson loop confinement [SELECTION] |
 | 3.15 | [DERIV_LATTICE_SU2_WEAK.md](03_derivations/DERIV_LATTICE_SU2_WEAK.md) | **SU(2) weak sector:** SU(2) from ternary doublet {+1,−1} [THEOREM]; W±/Z⁰ as transmutation operators; sin²θ_W = 3/13 [THEOREM]; M_W = 80.36 GeV, M_Z = 91.19 GeV [THEOREM]; **G_F derived** = 1/(√2 v²) [THEOREM]; ~50 decay rates upgraded from parametric to derived |
-| 3.16 | [DERIV_HIGGS_FROM_MANIFESTATION.md](03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md) | **Higgs mechanism:** Manifestation = EW phase transition [THEOREM]; Mexican hat from BI + feedback [SELECTION]; v = M_P√(2π)α⁸ = 246.09 GeV [THEOREM]; m_H = (N_eff/α²)m_e = 124.8 GeV [SELECTION]; Goldstone counting 3+1 [THEOREM]; hierarchy problem resolved by lattice UV cutoff |
+| 3.16 | [DERIV_HIGGS_FROM_MANIFESTATION.md](03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md) | **Higgs mechanism:** Manifestation = EW phase transition [THEOREM]; λ = sin²θ_W/(2−sin²θ_W) = 3/23 from ternary decomposition [THEOREM]; v = M_P√(2π)α⁸ = 246.08 GeV [THEOREM]; m_H = v√(6/23) = 125.69 GeV (0.47%) [THEOREM]; Goldstone counting 3+1 [THEOREM]; hierarchy problem resolved by lattice UV cutoff; 21/21 tests pass |
 | 3.17 | [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | **Path integral from FTD action:** Z = Σ exp(-S_E) well-defined on lattice [THEOREM]; W[J] generates connected correlators; G_c^(2)(k) = 1/λ(k) IS lattice propagator [THEOREM]; effective action Γ generates 1PI vertices; Feynman rules recovered from Z; thermodynamic partition function; KMS states at finite β |
 | 3.18 | [DERIV_LATTICE_CHIRAL_ANOMALY.md](03_derivations/DERIV_LATTICE_CHIRAL_ANOMALY.md) | **Chiral anomaly on FTD lattice:** ABJ anomaly ∂_μ j^μ₅ = (α/2π)FF̃ from triangle diagram [THEOREM]; Nielsen-Ninomiya resolution via Wilson fermions [SELECTION]; anomaly coefficient topological [THEOREM]; **π⁰→γγ = 7.73 eV** (1.2% vs PDG) [THEOREM]; baryogenesis connection via lattice topological charge [SELECTION] |
 | 3.19 | [DERIV_TWO_LOOP_ALPHA.md](archive/ARCH_DERIV_TWO_LOOP_ALPHA.md) | **Two-loop α from lattice:** O(α²) diagrams UV-finite on BZ² [THEOREM]; two-loop correction right magnitude for 1.26 ppm gap [CONJECTURE]; connection to precision formula c₁ = 9/47 [SELECTION]; road to sub-ppm prediction; lattice-specific Planck-scale corrections [CONJECTURE] |
@@ -104,6 +107,15 @@ Physics from first principles.
 | 3.33 | [DERIV_GAP_EQUATION_FORM.md](03_derivations/DERIV_GAP_EQUATION_FORM.md) | **Why x²=K(x-G\*):** One-loop self-consistency F(x)=K(1-G\*/x) forces linked coefficients C=KG\*; unique degree-2 form with screening; closes the gap equation [SELECTION] |
 | 3.34 | [DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](03_derivations/DERIV_ALPHA_FROM_PHASE_STRUCTURE.md) | **Why x₊=1/α:** FTD Lagrangian IS U(1) lattice gauge theory in temporal gauge; Wilson/Polyakov two-phase structure; x₊=Coulomb phase (EM), x₋=confined phase (strong); closes SP4 [SELECTION] |
 | 3.35 | [DERIV_THREE_RESOLUTIONS.md](03_derivations/DERIV_THREE_RESOLUTIONS.md) | **Three resolutions:** Compact U(1) (ternary charge quantizes flux), bare=physical (no continuum→no RG running), one loop exact (one loop=one tick=degree 2); unified answer: the tick is atomic |
+| 3.36 | [DERIV_OBSERVER_BELL_MECHANISM.md](03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) | **Observer Bell mechanism [SELECTION]:** Three-level hierarchy — substrate (S≤2, local hidden variable) → aggregate (ensemble statistics, non-factorizable) → observer (measurement, Born rule); explains how S=2√2 emerges from local dynamics; N_meas≈18; connects to Type III₁→Type I transition |
+| 3.37 | [DERIV_MASTER_QUADRATIC_FROM_Z.md](03_derivations/DERIV_MASTER_QUADRATIC_FROM_Z.md) | **Gap equation from partition function:** Derives x²-Kx+KG\*=0 from Z(x) via exact Gaussian J-integral, verified on L=2 torus (6561 configs, 18/18 tests); self-energy 1/x scaling confirmed; narrows [SELECTION] to self-consistency prescription uniqueness |
+| 3.38 | [DERIV_INTEGER_PHYSICAL_IDENTIFICATION.md](03_derivations/DERIV_INTEGER_PHYSICAL_IDENTIFICATION.md) | **Framework integers physical identification:** Traces {3,4,7,13} to physical roles — N_c=3 from gap equation + D=3 self-referential identity, N_base=4 from spinor dim, b_3=7 from QCD beta, N_eff=13 from effective DOF; only [SELECTION] is N_gen=N_c; 14/14 tests pass |
+| 3.39 | [DERIV_CONFINEMENT_FROM_GAP_EQUATION.md](03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md) | **Confinement from strong coupling:** Area-law Wilson loops at x₋=3.024 via strong coupling expansion; string tension σ=0.209; linear potential V(r)~σr; Coulomb phase at x₊ with σ≈0.004; Creutz ratio verification; 19/19 tests pass |
+| 3.40 | [DERIV_THREE_GENERATIONS.md](03_derivations/DERIV_THREE_GENERATIONS.md) | **Three generations from cuboctahedron:** O_h symmetry group (order 48) has 3 axis types — 3 C4 + 4 C3 + 6 C2 = 13 total axes = N_eff; N_axis_types=3=N_gen [SELECTION]; axis counts match {N_c, N_base, N_f, N_eff}; 18/18 tests pass |
+| 3.41 | [DERIV_EINSTEIN_NONLINEAR_FROM_LATTICE.md](03_derivations/DERIV_EINSTEIN_NONLINEAR_FROM_LATTICE.md) | **Nonlinear Einstein equations:** Deser iterative bootstrap from linearized EFE; converges in 6 iterations to machine precision; 8πG coefficient from G_N=1/(b₃+N_c)²; post-Newtonian expansion verified; 12/12 tests pass |
+| 3.42 | [DERIV_BELL_COSINE_FROM_GAUSS.md](03_derivations/DERIV_BELL_COSINE_FROM_GAUSS.md) | **Bell cosine from Gauss constraint:** ∇·J=ρ eliminates 1 DOF → 2D transverse flux → E(θ)=-cos(θ) → S=2√2 (Tsirelson); without constraint S≤2 (Bell); Monte Carlo verified; 13/13 tests pass |
+| 3.43 | [DERIV_MOORE_GAUGE_STRUCTURE.md](03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md) | **Gauge groups from J² orthogonality:** Moore 26=6+12+8; SC→U(1) (1 J-comp), FCC→SU(2) (2 J-comp), BCC→SU(3) (3 J-comp); baryon=3 quarks saturating J²=K_B²; meson unstable (2/3 threshold); N_EFF=13 max sub-threshold; G* from BCC; 6 C2 axes=6 quark flavors; dark matter=sub-threshold J²; 32/32 tests pass |
+| 3.44 | [DERIV_DARK_SECTOR_DYNAMICS.md](03_derivations/DERIV_DARK_SECTOR_DYNAMICS.md) | **Dark sector dynamics:** Dark energy + dark matter from lattice mechanics [SELECTION]; coupling source and selective damping; depends on cosmological constant derivation |
 
 ---
 
@@ -126,7 +138,7 @@ The lemniscatic structure and α derivation.
 
 ---
 
-## 5. Particle Physics Applications (5)
+## 5. Particle Physics Applications (6)
 
 Standard Model coverage.
 
@@ -137,21 +149,26 @@ Standard Model coverage.
 | 5.3 | [DERIV_OCTONIONIC_STRUCTURE.md](05_particles/DERIV_OCTONIONIC_STRUCTURE.md) | 70 ± 67 division algebra |
 | 5.4 | [PRED_ELECTROWEAK_MASSES.md](05_particles/PRED_ELECTROWEAK_MASSES.md) | Novel prediction: M_Z to 0.02%, M_W to 0.5% from α, sin²θ_W = 3/13, v = M_P√(2π)α⁸ |
 | 5.5 | [DERIV_NEUTRINO_MASS_ABSOLUTE.md](05_particles/DERIV_NEUTRINO_MASS_ABSOLUTE.md) | Absolute neutrino mass scale from seesaw; m₁ = 4.1 neV [SELECTION], Σmν = 58.1 meV, testable against KATRIN/JUNO |
+| 5.6 | [DERIV_QUARK_MASSES_FROM_LATTICE.md](05_particles/DERIV_QUARK_MASSES_FROM_LATTICE.md) | **Quark masses [OPEN]:** Honest attempt using framework integers; lepton baseline solid (mu_ratio=207, tau_ratio=3477); five quark ratio candidates all [CONJECTURE]; fundamental obstacle: scheme-dependent masses; 16/16 tests pass |
 
 ---
 
-## 6. Consciousness and Measurement (2)
+## 6. Consciousness and Measurement (6)
 
-Self-reference and the observer.
+Self-reference, the observer, and the measurement problem.
 
 | Order | Document | Description |
 |-------|----------|-------------|
 | 6.1 | [FOUND_THE_EXISTENCE_FILTER.md](06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | E(x) = Re(x) projection hierarchy; First Distinction → Born Rule via theta = conjugation |
 | 6.2 | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | QFT-GR bridge for consciousness; connects measurement theory to gravity sector |
+| 6.3 | [FOUND_VON_NEUMANN_CHAIN.md](06_consciousness/FOUND_VON_NEUMANN_CHAIN.md) | **Von Neumann chain resolution:** Four termination mechanisms (structural, algebraic, self-referential, discriminant); measurement chain has N_meas≈18 links, not infinity; vindicates von Neumann's mathematics while reinterpreting "consciousness" as algebraic self-referential closure |
+| 6.4 | [FOUND_WIGNERS_FRIEND_RESOLUTION.md](06_consciousness/FOUND_WIGNERS_FRIEND_RESOLUTION.md) | **Wigner's friend resolved:** Measurement is LOCAL and OBJECTIVE (Type III₁→Type I transition); friend's measurement is ontological, Wigner's superposition is epistemic; multi-observer consistency from deterministic substrate; vindicates Wigner's intuition about consciousness role |
+| 6.5 | [DERIV_COLLAPSE_MECHANISM.md](06_consciousness/DERIV_COLLAPSE_MECHANISM.md) | **Formal collapse mechanism:** ReLU crystallization → Softplus β-family → Lindblad master equation; derives quantum decoherence/collapse as algebraic phase transition (Type III₁→Type I); Born rule from Gaussian S_E structure; decoherence timescale τ≈N_meas ticks |
+| 6.6 | [DERIV_VON_NEUMANN_CONSTRUCTION.md](06_consciousness/DERIV_VON_NEUMANN_CONSTRUCTION.md) | **Von Neumann algebra construction:** Single-site M_3(C) Type I₃; N-site M_{3^N} Type I; isotony, conditional expectation, entropy increase all [THEOREM]; Araki-Woods Type III₁ in thermodynamic limit [SELECTION]; sign function as Type III₁→Type I transition; 31/31 tests pass |
 
 ---
 
-## 7. Critical Self-Assessment (8)
+## 7. Critical Self-Assessment (6)
 
 What is genuinely derived vs. claimed.
 
@@ -159,6 +176,7 @@ What is genuinely derived vs. claimed.
 |-------|----------|-------------|
 | 7.1 | [AUDIT_EPISTEMIC_AUDIT.md](07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | ~30 genuine, ~50 parametric, ~50 external; includes T1-T5 formalization tier appendix |
 | 7.2 | [AUDIT_SELF_CONSISTENCY.md](07_assessment/AUDIT_SELF_CONSISTENCY.md) | Integer self-consistency proof (6 constraints satisfied); uniqueness open |
+| 7.2b | [DERIV_INTEGER_UNIQUENESS.md](07_assessment/DERIV_INTEGER_UNIQUENESS.md) | **Integer uniqueness proven:** Exhaustive search confirms {3,4,7,13} is UNIQUE under combined physics + sequence constraints; 10 solutions exist with physics alone but master quadratic selects N_c=3; 6/6 tests pass |
 | 7.3 | [AUDIT_BELL_ANALYSIS.md](07_assessment/AUDIT_BELL_ANALYSIS.md) | Bell inequality theory and simulation: S ≤ 2 from lattice (expected; QM is aggregate) |
 | 7.4 | [AUDIT_HIDDEN_SELECTIONS.md](07_assessment/AUDIT_HIDDEN_SELECTIONS.md) | Selection principles as explicit axioms SP1-SP5 (v3.0) |
 | 7.5 | [AUDIT_NOVEL_PREDICTIONS.md](archive/ARCH_AUDIT_NOVEL_PREDICTIONS.md) | Pre-registered testable predictions |
@@ -168,7 +186,7 @@ What is genuinely derived vs. claimed.
 
 ---
 
-## 8. Structural Principles (7)
+## 8. Structural Principles (6)
 
 Geometry, scale, information, and recursion.
 
@@ -184,7 +202,7 @@ Geometry, scale, information, and recursion.
 
 ---
 
-## 9. Mathematical Connections (13)
+## 9. Mathematical Connections (13 active + 1 archived)
 
 Number theory and special functions.
 
@@ -247,7 +265,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 ## Archived Documents
 
-65 files in `archive/` subdirectory:
+67 files in `archive/` subdirectory:
 - Historical context and session notes
 - Superseded versions of consolidated documents
 - Speculative extensions (philosophy, biology)
@@ -257,6 +275,6 @@ Access via `archive/[filename].md` if needed for historical reference.
 
 ---
 
-*Index updated: March 6, 2026*
-*Framework: Foundational Ternary Dynamics v5.27-bell*
-*Structure: 85 core files (9 category folders) + 65 archived*
+*Index updated: March 17, 2026*
+*Framework: Foundational Ternary Dynamics v5.28*
+*Structure: 114 core files (9 category folders) + 67 archived*
