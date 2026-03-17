@@ -2,8 +2,8 @@
 
 ## A Lattice Field Theory Unifying Quantum Propagators and Gravitational Potentials
 
-**Version:** 3.1
-**Date:** February 26, 2026
+**Version:** 3.2
+**Date:** March 16, 2026
 **Status:** [THEOREM] (action, EOM, limits) + [SELECTION] (physical identifications)
 
 ---
@@ -129,7 +129,32 @@ $$\boxed{\mathcal{L}_{\text{grav}} = -\frac{1}{8\pi G}\,|\nabla_L \mathcal{L}|^2
 | State-flux coupling | $-g_c\,s\,(\nabla_L \cdot \mathbf{J})$ | Source/sink for gauge interactions |
 | Gauss constraint | $-\lambda_G(\nabla_L \cdot \mathbf{J} - \rho)^2$ | Enforces charge conservation → U(1) gauge symmetry |
 
-### 3.6 The Bandwidth Constraint
+### 3.6 Engine Decomposition (6 Active Terms + Dissipation)
+
+The analytical action (§3.3) is implemented in the simulation engine as six independently tracked terms plus a non-conservative dissipation function. This decomposition separates the **field sector** (wave propagation energy), the **particle sector** (Born-Infeld rest mass), and the **interaction sector** (coupling + constraint):
+
+1. **Born-Infeld core** (Particle sector): $-K_B\sqrt{(f^2-v^2)/f}$ — `born_infeld_term()`
+2. **State-flux coupling — electric** (Interaction): $-g_c\,s\,(\nabla_L \cdot \mathbf{J})$ — `coupling_term()`
+3. **Velocity coupling — magnetic** (Interaction): $-g_c\,s\,(\mathbf{v} \cdot \mathbf{J})$ — `velocity_coupling_term()`
+4. **Gauss constraint** (Constraint): $-\lambda_G\,(\nabla_L \cdot \mathbf{J} - \rho)^2$ — `gauss_term()`
+5. **Field kinetic energy** (Field sector): $\tfrac{1}{2}\lVert\Delta_t\mathbf{J}\rVert^2$ — `field_kinetic_term()`
+6. **Field gradient energy** (Field sector): $-\tfrac{1}{2}c^2\sum_\mu w_\mu\lVert\Delta_\mu\mathbf{J}\rVert^2$ — `field_gradient_term()`
+
+**Dissipation (non-conservative):**
+
+$$R = \frac{\alpha}{2}\,|\mathbf{v}_\text{wave}|^2 \qquad [\text{IMPOSED}]$$
+
+where $\mathbf{v}_\text{wave} = \Delta_t\mathbf{J}$ is the wave velocity (canonical momentum of the flux field), and the dissipation rate $\gamma = \alpha$ is identified with the fine-structure constant. This is a **parameter choice** (ASSUMP.6), not a derivation — see `ontic.h` Layer 6b. The motivation is that manifested particles negotiating discrete lattice geometry each tick lose energy at a rate governed by the state-flux coupling strength $g_c = \sqrt{\alpha}$.
+
+**Relationship to the analytical action:**
+
+- Terms 5 and 6 (field sector) emerge from the weak-field ($v \ll 1$) expansion of the Born-Infeld core (§5.4, Klein-Gordon limit). In the engine, these are tracked as independent diagnostic quantities but are not double-counted with Term 1.
+- Term 3 (velocity coupling) is the magnetic counterpart of Term 2. Its Euler-Lagrange equation produces the lattice Lorentz force $\mathbf{F} = g_c\,q\,(\mathbf{v} \times \nabla_L \times \mathbf{J})$, which maps to $\mathbf{F} = q(\mathbf{v} \times \mathbf{B})$ in the continuum limit. Term 3 vanishes for stationary particles ($\mathbf{v} = 0$).
+- The Rayleigh dissipation $R$ is not part of the action $S$ but enters through the dissipative Euler-Lagrange equations: $\frac{d}{dt}\frac{\partial L}{\partial \dot{q}} - \frac{\partial L}{\partial q} = -\frac{\partial R}{\partial \dot{q}}$.
+
+**Euler-Lagrange verification:** The engine provides `compute_el_residual()` which independently recomputes the field equation of motion from the Lagrangian and compares against the stored `delta_j_` buffer after `phase_read()`. The residual is typically $\sim 10^{-15}$ (machine epsilon), confirming exact correspondence between the action and the tick cycle.
+
+### 3.7 The Bandwidth Constraint
 
 $$v < f = 1 - \mathcal{L}^2$$
 
@@ -340,8 +365,10 @@ All physical constants trace to Axiom 1 ($\Lambda = \mathbb{Z}^3$), Axiom 2 ($a 
 | L-7 | Poisson equation $\nabla^2\mathcal{L} = 4\pi G\rho$ follows from the action | **[THEOREM]** |
 | L-8 | $\alpha = 1/x_+$ from master quadratic | **[SELECTION]** |
 | L-9 | $K_B = m_e$ (manifestation threshold = electron mass) | **[SELECTION]** |
+| L-10 | Velocity coupling $-g_c\,s\,(\mathbf{v}\cdot\mathbf{J})$ produces lattice Lorentz force | **[THEOREM]** |
+| L-11 | Rayleigh dissipation $R = (\alpha/2)\lVert\mathbf{v}_\text{wave}\rVert^2$ with $\gamma = \alpha$ | **[IMPOSED]** |
 
-**Epistemic breakdown: 7 [THEOREM], 2 [SELECTION], 0 [CONJECTURE].**
+**Epistemic breakdown: 8 [THEOREM], 2 [SELECTION], 0 [CONJECTURE], 1 [IMPOSED].**
 
 ---
 
@@ -361,5 +388,5 @@ All physical constants trace to Axiom 1 ($\Lambda = \mathbb{Z}^3$), Axiom 2 ($a 
 
 ---
 
-*Version 3.1 — February 26, 2026*
+*Version 3.2 — March 16, 2026*
 *Framework: Foundational Ternary Dynamics*
