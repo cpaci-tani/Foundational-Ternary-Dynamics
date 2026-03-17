@@ -51,6 +51,7 @@ export class MockBridge {
         // Boundary containment
         this._boundaryShape = 'cube';
         this._boundaryMask = null; // Uint8Array: 1=inside, 0=outside. Precomputed per shape.
+        this._reflectiveBoundary = true; // When false, particles/flux dissipate past boundary
 
         // Mutable simulation parameters (combo panel)
         this._params = { kb: K_B, gn: G_N, damping: DAMPING };
@@ -60,7 +61,7 @@ export class MockBridge {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
             gauss_projection: true, forces: true, gravity: false, movement: true,
             poisson_coulomb: true, lorentz_force: false, selective_damping: false,
-            larmor_radiation: false, dual_substrate: false,
+            larmor_radiation: false, dual_substrate: false, confinement: false,
         };
 
         // Visual settings (shared with viewport for size control)
@@ -78,6 +79,8 @@ export class MockBridge {
         this._boundaryShape = shape;
         this._rebuildBoundaryMask();
     }
+
+    setReflectiveBoundary(on) { this._reflectiveBoundary = !!on; }
 
     /** Precompute boundary mask so _tickFlux can skip per-voxel _insideBoundary calls. */
     _rebuildBoundaryMask() {
@@ -168,6 +171,8 @@ export class MockBridge {
         const ny = (p.y - cy) / R;
         const nz = (p.z - cz) / R;
         if (this._insideBoundary(nx, ny, nz)) return;
+        // Absorbing boundary: let particle pass through (no reflection)
+        if (!this._reflectiveBoundary) return;
 
         // Compute outward normal at boundary surface for reflection
         let snx = 0, sny = 0, snz = 0;
@@ -398,6 +403,32 @@ export class MockBridge {
             }
         }
 
+        // String breaking: when confinement + genesis ON, snap string if pair exceeds R_BREAK
+        if (this._toggles.confinement && this._toggles.genesis) {
+            const R_BREAK = N / 4;
+            let broke = false;
+            for (let i = 0; i < ps.length && !broke; i++) {
+                if (ps[i].state === 0) continue;
+                for (let j = i + 1; j < ps.length && !broke; j++) {
+                    if (ps[j].state === 0 || ps[i].state * ps[j].state >= 0) continue;
+                    let dx = ps[j].x - ps[i].x, dy = ps[j].y - ps[i].y, dz = ps[j].z - ps[i].z;
+                    if (dx > halfN) dx -= N; else if (dx < -halfN) dx += N;
+                    if (dy > halfN) dy -= N; else if (dy < -halfN) dy += N;
+                    if (dz > halfN) dz -= N; else if (dz < -halfN) dz += N;
+                    const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    if (r > R_BREAK) {
+                        // Snap: create new pair at midpoint
+                        const mx = Math.round(((ps[i].x + ps[j].x) / 2 + N) % N);
+                        const my = Math.round(((ps[i].y + ps[j].y) / 2 + N) % N);
+                        const mz = Math.round(((ps[i].z + ps[j].z) / 2 + N) % N);
+                        this.injectParticle(mx - 1, my, mz, 1);
+                        this.injectParticle(mx + 1, my, mz, -1);
+                        broke = true; // cap at 1 break per tick
+                    }
+                }
+            }
+        }
+
         // Remove dead particles
         // LOW-1 fix: In-place filter to avoid allocating new array every tick
         const kbThreshold = this._params.kb * 0.01;
@@ -437,6 +468,19 @@ export class MockBridge {
                     const fGrav = gn * K_B * K_B * invR2 * invR;
                     fx += fGrav * dx; fy += fGrav * dy; fz += fGrav * dz;
                 }
+                // Linear confinement for opposite-sign pairs
+                if (this._toggles.confinement && qi * qj < 0) {
+                    const r = Math.sqrt(r2raw);
+                    const SIGMA = 0.015;   // string tension
+                    const R_CRIT = 3.0;    // onset distance
+                    if (r > R_CRIT) {
+                        const fConf = SIGMA * (r - R_CRIT);
+                        const invRc = 1 / r;
+                        fx -= fConf * dx * invRc;  // attractive (toward partner)
+                        fy -= fConf * dy * invRc;
+                        fz -= fConf * dz * invRc;
+                    }
+                }
                 // Newton's 3rd law: equal and opposite
                 pi.ax += fx; pi.ay += fy; pi.az += fz;
                 pj.ax -= fx; pj.ay -= fy; pj.az -= fz;
@@ -464,7 +508,7 @@ export class MockBridge {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
             gauss_projection: true, forces: true, gravity: false, movement: true,
             poisson_coulomb: true, lorentz_force: false, selective_damping: false,
-            larmor_radiation: false, dual_substrate: false,
+            larmor_radiation: false, dual_substrate: false, confinement: false,
         };
         // Rebuild boundary mask for new lattice size
         this._rebuildBoundaryMask();
@@ -773,17 +817,52 @@ export class MockBridge {
             }
         }
 
-        // Commit: J += WV, J *= damp
+        // Commit: J += WV, J *= damp (selective or uniform)
         const total = N * N * N;
-        for (let i = 0; i < total; i++) {
-            for (let c = 0; c < 3; c++) {
-                J[i * 3 + c] = (J[i * 3 + c] + WV[i * 3 + c]) * damp;
+        const selective = this._toggles.selective_damping;
+
+        if (selective && damp < 1.0) {
+            // Build near-particle mask: mark 6-connected neighbors of manifested particles
+            if (!this._selectiveDampMask || this._selectiveDampMask.length !== total) {
+                this._selectiveDampMask = new Uint8Array(total);
+            }
+            this._selectiveDampMask.fill(0);
+            for (const p of this._particles) {
+                const px = ((p.x % N) + N) % N;
+                const py = ((p.y % N) + N) % N;
+                const pz = ((p.z % N) + N) % N;
+                const pidx = pz * N * N + py * N + px;
+                this._selectiveDampMask[pidx] = 1;
+                // 6-connected face neighbors
+                const offsets = [
+                    [(px + 1) % N, py, pz], [(px - 1 + N) % N, py, pz],
+                    [px, (py + 1) % N, pz], [px, (py - 1 + N) % N, pz],
+                    [px, py, (pz + 1) % N], [px, py, (pz - 1 + N) % N],
+                ];
+                for (const [nx, ny, nz] of offsets) {
+                    this._selectiveDampMask[nz * N * N + ny * N + nx] = 1;
+                }
+            }
+            // Apply: damp only near particles, lossless elsewhere
+            for (let i = 0; i < total; i++) {
+                const d = this._selectiveDampMask[i] ? damp : 1.0;
+                for (let c = 0; c < 3; c++) {
+                    J[i * 3 + c] = (J[i * 3 + c] + WV[i * 3 + c]) * d;
+                }
+            }
+        } else {
+            // Uniform damping (or no damping if damp === 1.0)
+            for (let i = 0; i < total; i++) {
+                for (let c = 0; c < 3; c++) {
+                    J[i * 3 + c] = (J[i * 3 + c] + WV[i * 3 + c]) * damp;
+                }
             }
         }
 
         // Boundary containment: zero flux & wave velocity outside boundary shape
         // Uses precomputed mask to avoid per-voxel _insideBoundary() calls
-        if (this._boundaryMask) {
+        // When reflective boundary is off, flux propagates freely past the shape
+        if (this._boundaryMask && this._reflectiveBoundary) {
             for (let idx = 0; idx < total; idx++) {
                 if (!this._boundaryMask[idx]) {
                     J[idx * 3] = 0; J[idx * 3 + 1] = 0; J[idx * 3 + 2] = 0;
@@ -2153,32 +2232,27 @@ export class MockBridge {
                     }
                     break;
                 }
-                case 'flux-ring': {
-                    // Ring of flux injections in XZ plane
-                    const radius = Math.floor(N / 4);
-                    const nPts = 16;
-                    for (let i = 0; i < nPts; i++) {
-                        const angle = (2 * Math.PI * i) / nPts;
-                        const rx = Math.round(mid + radius * Math.cos(angle));
-                        const rz = Math.round(mid + radius * Math.sin(angle));
-                        const fx = amp * Math.cos(angle);
-                        const fz = amp * Math.sin(angle);
-                        this._injectFlux(rx, mid, rz, fx, 0, fz);
-                    }
-                    break;
-                }
-                case 'flux-collision': {
-                    // Two ±1 particles on collision course with flux dressing
+                case 'flux-annihilation': {
+                    // Two matter-antimatter pairs on collision courses (X-axis + Z-axis)
                     const off = Math.floor(N / 3);
+                    // X-axis pair
                     this.injectParticle(mid - off, mid, mid, 1);
                     this.injectParticle(mid + off, mid, mid, -1);
-                    // Give them flux push toward each other
-                    for (let d = -3; d <= 3; d++) for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
-                        const r2 = dx * dx + dy * dy + d * d;
-                        const val = amp * Math.exp(-r2 / (2 * 4));
+                    // Z-axis pair
+                    this.injectParticle(mid, mid, mid - off, -1);
+                    this.injectParticle(mid, mid, mid + off, 1);
+                    // Strong flux kicks toward center for dramatic head-on collisions
+                    const pushAmp = amp * 2;
+                    for (let dz = -3; dz <= 3; dz++) for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        const val = pushAmp * Math.exp(-r2 / (2 * 4));
                         if (val > 0.001) {
-                            this._injectFlux(mid - off + dx, mid + dy, mid + d, val, 0, 0);
-                            this._injectFlux(mid + off + dx, mid + dy, mid + d, -val, 0, 0);
+                            // X-axis pair: push inward along X
+                            this._injectFlux(mid - off + dx, mid + dy, mid + dz, val, 0, 0);
+                            this._injectFlux(mid + off + dx, mid + dy, mid + dz, -val, 0, 0);
+                            // Z-axis pair: push inward along Z
+                            this._injectFlux(mid + dx, mid + dy, mid - off + dz, 0, 0, val);
+                            this._injectFlux(mid + dx, mid + dy, mid + off + dz, 0, 0, -val);
                         }
                     }
                     break;
@@ -2246,24 +2320,6 @@ export class MockBridge {
                     }
                     break;
                 }
-                case 'flux-gravity-cluster': {
-                    // Many same-sign particles for gravity clustering via density gradient
-                    const nParticles = 12;
-                    const spread = Math.floor(N / 3);
-                    for (let i = 0; i < nParticles; i++) {
-                        const px = mid + Math.round((Math.random() - 0.5) * spread);
-                        const py = mid + Math.round((Math.random() - 0.5) * spread);
-                        const pz = mid + Math.round((Math.random() - 0.5) * spread);
-                        this.injectParticle(px, py, pz, 1);
-                    }
-                    // Seed some background flux
-                    for (let dz = -4; dz <= 4; dz++) for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * 0.5 * Math.exp(-r2 / (2 * 9));
-                        if (val > 0.001) this._injectFlux(mid + dx, mid + dy, mid + dz, val, val * 0.3, 0);
-                    }
-                    break;
-                }
                 case 'flux-dual-substrate': {
                     // L/R chirality demo — two offset pulses in dual-substrate mode
                     const off = Math.floor(N / 4);
@@ -2302,17 +2358,70 @@ export class MockBridge {
                     break;
                 }
 
-                case 'flux-sub-threshold': {
-                    // Gaussian pulse at center but BELOW consciousness threshold K_C
-                    // Used for threshold-crossing scenario that builds up over time
-                    const subAmp = K_B * 0.3;
-                    for (let dz = -6; dz <= 6; dz++) for (let dy = -6; dy <= 6; dy++) for (let dx = -6; dx <= 6; dx++) {
+                // ── QCD Scenarios ──
+                case 'flux-meson': {
+                    // Quark-antiquark bound state with confinement
+                    this.injectParticle(mid - 4, mid, mid, 1);
+                    this.injectParticle(mid + 4, mid, mid, -1);
+                    // Small perpendicular velocity kick for oscillation
+                    const mpIdx = this._particles.length;
+                    this._particles[mpIdx - 2].vy = 0.05;
+                    this._particles[mpIdx - 1].vy = -0.05;
+                    // Gaussian flux dressing around both
+                    const mesonAmp = K_B * 1.5;
+                    for (let dz = -3; dz <= 3; dz++) for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = subAmp * Math.exp(-r2 / (2 * sigma * sigma));
-                        if (val > 0.001) this._injectFlux(mid + dx, mid + dy, mid + dz, val, 0, 0);
+                        const val = mesonAmp * Math.exp(-r2 / (2 * 4));
+                        if (val > 0.001) {
+                            this._injectFlux(mid - 4 + dx, mid + dy, mid + dz, val, 0, 0);
+                            this._injectFlux(mid + 4 + dx, mid + dy, mid + dz, -val, 0, 0);
+                        }
                     }
                     break;
                 }
+                case 'flux-string-breaking': {
+                    // Confinement string snap — pair yanked apart until string breaks
+                    this.injectParticle(mid - 3, mid, mid, 1);
+                    this.injectParticle(mid + 3, mid, mid, -1);
+                    // Strong outward velocity kicks
+                    const sbIdx = this._particles.length;
+                    this._particles[sbIdx - 2].vx = -0.3;
+                    this._particles[sbIdx - 1].vx = 0.3;
+                    // High flux for genesis at midpoint when string snaps
+                    const sbAmp = K_B * 3;
+                    for (let dz = -4; dz <= 4; dz++) for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        const val = sbAmp * Math.exp(-r2 / (2 * 6));
+                        if (val > 0.001) {
+                            this._injectFlux(mid + dx, mid + dy, mid + dz, val, val * 0.3, 0);
+                        }
+                    }
+                    break;
+                }
+                case 'flux-baryon': {
+                    // Three-quark bound state in equilateral triangle + sea quark
+                    const bR = Math.floor(N / 6);
+                    for (let k = 0; k < 3; k++) {
+                        const angle = (2 * Math.PI * k) / 3;
+                        const bx = Math.round(mid + bR * Math.cos(angle));
+                        const bz = Math.round(mid + bR * Math.sin(angle));
+                        this.injectParticle(bx, mid, bz, 1);
+                        // Small centripetal velocity
+                        const bidx = this._particles.length - 1;
+                        this._particles[bidx].vx = -0.04 * Math.sin(angle);
+                        this._particles[bidx].vz = 0.04 * Math.cos(angle);
+                    }
+                    // Sea quark nearby
+                    this.injectParticle(mid + 2, mid + 2, mid, -1);
+                    // Light flux dressing
+                    for (let dz = -3; dz <= 3; dz++) for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        const val = amp * 0.5 * Math.exp(-r2 / (2 * 4));
+                        if (val > 0.001) this._injectFlux(mid + dx, mid + dy, mid + dz, val, 0, val * 0.3);
+                    }
+                    break;
+                }
+
                 case 'flux-nested-standing': {
                     // Two orthogonal counter-propagating pulse pairs for nested sLoop
                     // X-axis pair (sLoop level 1) + Z-axis pair (sLoop level 2)
@@ -2471,51 +2580,8 @@ export class MockBridge {
                     break;
                 }
 
-                case 'flux-force-profile': {
-                    // Force profile: single locked +1 charge showing 1/r² field
-                    // (from campaign_force_law — see Coulomb field visualization)
-                    this.injectParticle(mid, mid, mid, 1);
-                    // Seed isotropic Coulomb-like flux dressing (radial, 1/r decay)
-                    const fMaxR = Math.floor(N / 3);
-                    for (let dz = -fMaxR; dz <= fMaxR; dz++) for (let dy = -fMaxR; dy <= fMaxR; dy++) for (let dx = -fMaxR; dx <= fMaxR; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 === 0 || r2 > fMaxR * fMaxR) continue;
-                        const r = Math.sqrt(r2);
-                        // Radial flux decaying as 1/r (so |J| ~ 1/r → force ~ 1/r²)
-                        const val = amp * 0.8 / r;
-                        this._injectFlux(mid + dx, mid + dy, mid + dz,
-                            val * dx / r, val * dy / r, val * dz / r);
-                    }
-                    break;
-                }
 
                 // ── Cosmology scenarios ──
-                case 'flux-antimatter': {
-                    // 4 matter-antimatter pairs on collision courses
-                    const q = Math.floor(N / 4);
-                    const pairOffsets = [
-                        [[ q,  0,  0], [-q,  0,  0]],  // x-axis pair
-                        [[ 0,  q,  0], [ 0, -q,  0]],  // y-axis pair
-                        [[ 0,  0,  q], [ 0,  0, -q]],  // z-axis pair
-                        [[ q,  q,  0], [-q, -q,  0]],  // diagonal pair
-                    ];
-                    for (const [posOff, negOff] of pairOffsets) {
-                        const px = mid + posOff[0], py = mid + posOff[1], pz = mid + posOff[2];
-                        const nx = mid + negOff[0], ny = mid + negOff[1], nz = mid + negOff[2];
-                        this.injectParticle(px, py, pz, 1);
-                        this.injectParticle(nx, ny, nz, -1);
-                        // Flux push toward center
-                        for (let dz = -3; dz <= 3; dz++) for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
-                            const r2 = dx * dx + dy * dy + dz * dz;
-                            const val = amp * Math.exp(-r2 / (2 * 4));
-                            if (val > 0.001) {
-                                this._injectFlux(px + dx, py + dy, pz + dz, -posOff[0] * val * 0.1, -posOff[1] * val * 0.1, -posOff[2] * val * 0.1);
-                                this._injectFlux(nx + dx, ny + dy, nz + dz, -negOff[0] * val * 0.1, -negOff[1] * val * 0.1, -negOff[2] * val * 0.1);
-                            }
-                        }
-                    }
-                    break;
-                }
                 case 'flux-dark-matter': {
                     // Sub-threshold flux halo (dark matter) + 3 visible particles
                     const haloR = Math.floor(N / 3);
@@ -2732,70 +2798,8 @@ export class MockBridge {
             return;
         }
 
-        // ── Legacy particle scenarios ──
-        switch (name) {
-            case 'empty': break;
-            case 'pair':
-                this.injectWavepacket(mid, mid, mid, 1);
-                this.injectParticle(mid + 6, mid, mid, -1);
-                break;
-            case 'production':
-                for (let i = 0; i < 5; i++) {
-                    this.injectParticle(4 + i, mid, mid, 1);
-                    this.injectParticle(N - 5 - i, mid, mid, -1);
-                }
-                break;
-            case 'interference': {
-                const q = Math.floor(N / 4);
-                this.injectWavepacket(q, q, mid, 1);
-                this.injectWavepacket(N - q, q, mid, 1);
-                this.injectWavepacket(q, N - q, mid, 1);
-                this.injectWavepacket(N - q, N - q, mid, 1);
-                break;
-            }
-            case 'force':
-                this.injectWavepacket(mid, mid, mid, 1);
-                break;
-            case 'hydrogen':
-                this.injectParticle(mid, mid, mid, 1);
-                this.injectParticle(mid + 8, mid, mid, -1);
-                break;
-            case 'entangled':
-                this.injectParticle(mid, mid, mid, 1);
-                this.injectParticle(mid, mid, mid + 1, -1);
-                break;
-            case 'annihilation':
-                this.injectParticle(mid - 3, mid, mid, 1);
-                this.injectParticle(mid + 3, mid, mid, -1);
-                break;
-            case 'triad':
-                this.injectWavepacket(mid, mid + 2, mid, 1);
-                this.injectWavepacket(mid - 2, mid - 1, mid, 1);
-                this.injectWavepacket(mid + 2, mid - 1, mid, 1);
-                break;
-            case 'dipole':
-                this.injectWavepacket(mid - 2, mid, mid, 1);
-                this.injectWavepacket(mid + 2, mid, mid, -1);
-                break;
-            case 'scattering':
-                this.injectParticle(mid - 8, mid, mid, 1);
-                this.injectParticle(mid + 8, mid, mid, 1);
-                break;
-            case 'wave':
-                break;
-            case 'cluster':
-                for (let dx = -1; dx <= 1; dx += 2) {
-                    for (let dy = -1; dy <= 1; dy += 2) {
-                        for (let dz = -1; dz <= 1; dz += 2) {
-                            const st = (dx + dy + dz > 0) ? 1 : -1;
-                            this.injectWavepacket(mid + dx * 3, mid + dy * 3, mid + dz * 3, st);
-                        }
-                    }
-                }
-                break;
-            case 'vacuum':
-                break;
-        }
+        // Legacy scenario redirect (only 'empty' kept)
+        if (name === 'empty') return;
     }
 }
 
@@ -3197,6 +3201,11 @@ export class WasmBridge {
         this._boundaryShape = shape;
         // Propagate to AE fallback MockBridge if it exists
         if (this._aeFallback) this._aeFallback.setBoundaryShape(shape);
+    }
+
+    setReflectiveBoundary(on) {
+        this._reflectiveBoundary = !!on;
+        if (this._aeFallback) this._aeFallback.setReflectiveBoundary(on);
     }
 
     // ── AtomEngine (Scale 2) WASM ─────────────────────────────────────

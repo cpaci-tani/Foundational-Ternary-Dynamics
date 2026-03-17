@@ -85,9 +85,9 @@ const PARTICLE_FRAG = `
             if (dist > 0.5) discard;
         }
 
-        float alpha = 1.0 - smoothstep(0.35, 0.5, dist);
-        float glow = exp(-dist * dist * 8.0) * 0.3;
-        gl_FragColor = vec4(vColor + glow, alpha * uOpacity);
+        float alpha = 1.0 - smoothstep(0.15, 0.5, dist);
+        float glow = exp(-dist * dist * 4.0) * 0.15;
+        gl_FragColor = vec4(vColor + glow, alpha * alpha * uOpacity);
     }
 `;
 
@@ -663,6 +663,82 @@ export class Viewport {
         }
     }
 
+    // ── Confinement Strings ───────────────────────────────────────────
+    _buildConfinementStrings() {
+        const MAX_STRINGS = 50;
+        const vertices = new Float32Array(MAX_STRINGS * 2 * 3);
+        const colors = new Float32Array(MAX_STRINGS * 2 * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.9, linewidth: 2,
+        });
+        this.confinementStrings = new THREE.LineSegments(geo, mat);
+        this.confinementStrings.visible = false;
+        this.scene.add(this.confinementStrings);
+    }
+
+    updateConfinementStrings(particles, N) {
+        if (!this.confinementStrings) this._buildConfinementStrings();
+        if (!particles || particles.length === 0) {
+            this.confinementStrings.geometry.setDrawRange(0, 0);
+            return;
+        }
+
+        const posAttr = this.confinementStrings.geometry.getAttribute('position');
+        const colAttr = this.confinementStrings.geometry.getAttribute('color');
+        const halfN = N / 2;
+        const R_BREAK = N / 4;
+        let seg = 0;
+        const maxSegs = posAttr.array.length / 6;
+
+        for (let i = 0; i < particles.length && seg < maxSegs; i++) {
+            const pi = particles[i];
+            if (pi.state === 0) continue;
+            for (let j = i + 1; j < particles.length && seg < maxSegs; j++) {
+                const pj = particles[j];
+                if (pj.state === 0 || pi.state * pj.state >= 0) continue;
+                let dx = pj.x - pi.x, dy = pj.y - pi.y, dz = pj.z - pi.z;
+                if (dx > halfN) dx -= N; else if (dx < -halfN) dx += N;
+                if (dy > halfN) dy -= N; else if (dy < -halfN) dy += N;
+                if (dz > halfN) dz -= N; else if (dz < -halfN) dz += N;
+                const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                if (r > R_BREAK) continue;
+                // Tension color: orange (low) → red (high)
+                const tension = Math.min(r / R_BREAK, 1.0);
+                const cr1 = 1.0, cg1 = 0.6 * (1 - tension), cb1 = 0.1 * (1 - tension);
+                const cr2 = 1.0, cg2 = 0.3 * (1 - tension), cb2 = 0.0;
+                // Positions
+                posAttr.array[seg * 6]     = pi.x;
+                posAttr.array[seg * 6 + 1] = pi.y;
+                posAttr.array[seg * 6 + 2] = pi.z;
+                posAttr.array[seg * 6 + 3] = pi.x + dx;
+                posAttr.array[seg * 6 + 4] = pi.y + dy;
+                posAttr.array[seg * 6 + 5] = pi.z + dz;
+                // Colors
+                colAttr.array[seg * 6]     = cr1;
+                colAttr.array[seg * 6 + 1] = cg1;
+                colAttr.array[seg * 6 + 2] = cb1;
+                colAttr.array[seg * 6 + 3] = cr2;
+                colAttr.array[seg * 6 + 4] = cg2;
+                colAttr.array[seg * 6 + 5] = cb2;
+                seg++;
+            }
+        }
+
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this.confinementStrings.geometry.setDrawRange(0, seg * 2);
+    }
+
+    toggleConfinementStrings(on) {
+        if (!this.confinementStrings) this._buildConfinementStrings();
+        this.confinementStrings.visible = on;
+        if (!on) this.confinementStrings.geometry.setDrawRange(0, 0);
+    }
+
     // ── Bond Lines (Scale 2 — Atom mode) ──────────────────────────────
     _buildBondLines() {
         const MAX_BONDS = 500;
@@ -1044,6 +1120,7 @@ export class Viewport {
         const mat = new THREE.ShaderMaterial({
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.55 } },
             transparent: true,
             depthWrite: false,
             blending: THREE.NormalBlending,
@@ -1081,8 +1158,8 @@ export class Viewport {
         // Clip to boundary shape (normalized coords -1..1 from lattice center)
         let count = 0;
         const maxPts = posAttr.array.length / 3;
-        const BASE_SIZE = 1.2;      // tiny base dot for inactive voxels (2× for 150 factor)
-        const MAX_SIZE  = 18.0;     // bright active voxel (2× for 150 factor)
+        const BASE_SIZE = 0.8;      // subtle base dot for inactive voxels
+        const MAX_SIZE  = 18.0;     // bright active voxel
         const FLUX_THRESHOLD = 0.003; // below this = "inactive" (dark dot)
         const halfN = N / 2;
 
@@ -1102,9 +1179,9 @@ export class Viewport {
                     posAttr.array[count * 3 + 2] = z;
 
                     if (mag < FLUX_THRESHOLD || maxFlux < 1e-20) {
-                        colAttr.array[count * 3]     = 0.15;
-                        colAttr.array[count * 3 + 1] = 0.18;
-                        colAttr.array[count * 3 + 2] = 0.25;
+                        colAttr.array[count * 3]     = 0.10;
+                        colAttr.array[count * 3 + 1] = 0.12;
+                        colAttr.array[count * 3 + 2] = 0.18;
                         sizeAttr.array[count] = BASE_SIZE;
                     } else {
                         const [r, g, b] = fluxToColor(mag, maxFlux);
@@ -1657,6 +1734,201 @@ export class Viewport {
         if (!this._gravityField) this._buildGravityField();
         this._gravityField.visible = on;
         if (!on) this._gravityField.geometry.setDrawRange(0, 0);
+    }
+
+    // ── Dark Matter Halo Overlay (sub-threshold flux envelope) ──────
+    _buildDarkMatterHalo() {
+        const maxPts = 8000;
+        const positions = new Float32Array(maxPts * 3);
+        const colors = new Float32Array(maxPts * 3);
+        const sizes = new Float32Array(maxPts);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.ShaderMaterial({
+            vertexShader: PARTICLE_VERT, fragmentShader: PARTICLE_FRAG,
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.35 } },
+            transparent: true, blending: THREE.AdditiveBlending,
+            depthWrite: false,
+        });
+        this._darkMatterHalo = new THREE.Points(geo, mat);
+        this._darkMatterHalo.visible = false;
+        this._darkMatterHalo.renderOrder = 1;
+        this.scene.add(this._darkMatterHalo);
+    }
+
+    updateDarkMatterHalo(particles, fluxMag, latticeSize) {
+        if (!this._darkMatterHalo) this._buildDarkMatterHalo();
+        const posAttr = this._darkMatterHalo.geometry.getAttribute('position');
+        const colAttr = this._darkMatterHalo.geometry.getAttribute('particleColor');
+        const sizeAttr = this._darkMatterHalo.geometry.getAttribute('size');
+        const N = latticeSize;
+        const kGen = 1.533; // K_GENESIS = 3 * K_B
+        let vi = 0;
+        const maxPts = 8000;
+
+        // For each voxel: if sub-threshold flux AND void state -> dark matter
+        // Sample every 2nd voxel for performance on 32^3
+        const step = N > 24 ? 2 : 1;
+        for (let z = 0; z < N && vi < maxPts; z += step) {
+            for (let y = 0; y < N && vi < maxPts; y += step) {
+                for (let x = 0; x < N && vi < maxPts; x += step) {
+                    const idx = z * N * N + y * N + x;
+                    const mag = fluxMag[idx];
+                    // Sub-threshold: flux exists but below genesis
+                    if (mag > 0.003 && mag < kGen) {
+                        const t = mag / kGen; // 0..1 normalized
+                        // Use raw lattice coordinates (matches updateFluxVolume and updateParticles)
+                        posAttr.array[vi * 3]     = x;
+                        posAttr.array[vi * 3 + 1] = y;
+                        posAttr.array[vi * 3 + 2] = z;
+                        // Purple gradient: faint → bright purple as flux approaches threshold
+                        colAttr.array[vi * 3]     = 0.3 + t * 0.4;  // R
+                        colAttr.array[vi * 3 + 1] = 0.1 + t * 0.15; // G
+                        colAttr.array[vi * 3 + 2] = 0.5 + t * 0.4;  // B
+                        sizeAttr.array[vi] = 1.5 + t * 6.0;
+                        vi++;
+                    }
+                }
+            }
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        sizeAttr.needsUpdate = true;
+        this._darkMatterHalo.geometry.setDrawRange(0, vi);
+    }
+
+    toggleDarkMatterHalo(on) {
+        if (!this._darkMatterHalo) this._buildDarkMatterHalo();
+        this._darkMatterHalo.visible = on;
+        if (!on) this._darkMatterHalo.geometry.setDrawRange(0, 0);
+    }
+
+    // ── Selective Damping Zones (wireframe cubes around damped voxels) ─
+    _buildDampingZones() {
+        const maxSegments = 1200; // 100 particles * 12 edges
+        const positions = new Float32Array(maxSegments * 2 * 3);
+        const colors = new Float32Array(maxSegments * 2 * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.4,
+        });
+        this._dampingZones = new THREE.LineSegments(geo, mat);
+        this._dampingZones.visible = false;
+        this._dampingZones.renderOrder = 2;
+        this.scene.add(this._dampingZones);
+    }
+
+    updateDampingZones(particles, latticeSize) {
+        if (!this._dampingZones) this._buildDampingZones();
+        const posAttr = this._dampingZones.geometry.getAttribute('position');
+        const colAttr = this._dampingZones.geometry.getAttribute('color');
+        let si = 0;
+
+        // 12 edges of a unit cube, scaled to 3x3x3 around particle
+        // Particles use raw lattice coordinates (not centered), matching updateParticles()
+        const edges = [
+            [0,0,0, 1,0,0], [0,1,0, 1,1,0], [0,0,1, 1,0,1], [0,1,1, 1,1,1],
+            [0,0,0, 0,1,0], [1,0,0, 1,1,0], [0,0,1, 0,1,1], [1,0,1, 1,1,1],
+            [0,0,0, 0,0,1], [1,0,0, 1,0,1], [0,1,0, 0,1,1], [1,1,0, 1,1,1],
+        ];
+
+        for (const p of particles) {
+            if (si >= 1200) break;
+            const cx = p.x, cy = p.y, cz = p.z;
+            for (const e of edges) {
+                const i = si * 6;
+                posAttr.array[i]     = cx - 1.5 + e[0] * 3;
+                posAttr.array[i + 1] = cy - 1.5 + e[1] * 3;
+                posAttr.array[i + 2] = cz - 1.5 + e[2] * 3;
+                posAttr.array[i + 3] = cx - 1.5 + e[3] * 3;
+                posAttr.array[i + 4] = cy - 1.5 + e[4] * 3;
+                posAttr.array[i + 5] = cz - 1.5 + e[5] * 3;
+                // Red tint
+                colAttr.array[i] = 0.8; colAttr.array[i+1] = 0.2; colAttr.array[i+2] = 0.2;
+                colAttr.array[i+3] = 0.8; colAttr.array[i+4] = 0.2; colAttr.array[i+5] = 0.2;
+                si++;
+            }
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._dampingZones.geometry.setDrawRange(0, si * 2);
+    }
+
+    toggleDampingZones(on) {
+        if (!this._dampingZones) this._buildDampingZones();
+        this._dampingZones.visible = on;
+        if (!on) this._dampingZones.geometry.setDrawRange(0, 0);
+    }
+
+    // ── Genesis Threshold Isosurface (birth boundary) ────────────────
+    _buildGenesisIsosurface() {
+        const maxPts = 4000;
+        const positions = new Float32Array(maxPts * 3);
+        const colors = new Float32Array(maxPts * 3);
+        const sizes = new Float32Array(maxPts);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.ShaderMaterial({
+            vertexShader: PARTICLE_VERT, fragmentShader: PARTICLE_FRAG,
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.45 } },
+            transparent: true, blending: THREE.AdditiveBlending,
+            depthWrite: false,
+        });
+        this._genesisIsosurface = new THREE.Points(geo, mat);
+        this._genesisIsosurface.visible = false;
+        this._genesisIsosurface.renderOrder = 1;
+        this.scene.add(this._genesisIsosurface);
+    }
+
+    updateGenesisIsosurface(fluxMag, latticeSize, kGenesis) {
+        if (!this._genesisIsosurface) this._buildGenesisIsosurface();
+        const posAttr = this._genesisIsosurface.geometry.getAttribute('position');
+        const colAttr = this._genesisIsosurface.geometry.getAttribute('particleColor');
+        const sizeAttr = this._genesisIsosurface.geometry.getAttribute('size');
+        const N = latticeSize;
+        let vi = 0;
+        const band = kGenesis * 0.15; // 15% band around threshold
+
+        for (let z = 0; z < N && vi < 4000; z++) {
+            for (let y = 0; y < N && vi < 4000; y++) {
+                for (let x = 0; x < N && vi < 4000; x++) {
+                    const mag = fluxMag[z * N * N + y * N + x];
+                    const dist = Math.abs(mag - kGenesis);
+                    if (dist < band && mag > 0.01) {
+                        const t = 1.0 - dist / band; // 1=on threshold, 0=edge of band
+                        // Raw lattice coordinates (matches updateFluxVolume)
+                        posAttr.array[vi * 3]     = x;
+                        posAttr.array[vi * 3 + 1] = y;
+                        posAttr.array[vi * 3 + 2] = z;
+                        // Green glow: bright at threshold, fading at band edges
+                        colAttr.array[vi * 3]     = 0.15 + t * 0.15;
+                        colAttr.array[vi * 3 + 1] = 0.7 + t * 0.3;
+                        colAttr.array[vi * 3 + 2] = 0.2 + t * 0.15;
+                        sizeAttr.array[vi] = 2.0 + t * 5.0;
+                        vi++;
+                    }
+                }
+            }
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        sizeAttr.needsUpdate = true;
+        this._genesisIsosurface.geometry.setDrawRange(0, vi);
+    }
+
+    toggleGenesisIsosurface(on) {
+        if (!this._genesisIsosurface) this._buildGenesisIsosurface();
+        this._genesisIsosurface.visible = on;
+        if (!on) this._genesisIsosurface.geometry.setDrawRange(0, 0);
     }
 
     // ── Dual Substrate Volume (Warm L / Cool R) ─────────────────────
