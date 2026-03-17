@@ -39,11 +39,15 @@ A discrete computational framework for simulating physical systems from explicit
 **Key results** (within framework assumptions):
 - Fine structure constant α = 1/137.036 derived from lemniscatic constant G* (1.26 ppm; < 0.001 ppt with 4-term expansion)
 - Electron mass m_e = m_P √(2π) (16/3) α¹¹ (0.27% error)
+- Higgs mass m_H = v√(6/23) = 125.69 GeV (0.47% error) from ternary quartic λ = 3/23
 - Color charge number N_c = 3 from RG flow + topological quantization
-- Einstein equations with correct 8πG coefficient
+- Gauge groups U(1)×SU(2)×SU(3) from Moore neighborhood J² orthogonal decomposition
+- Confinement from area-law Wilson loops at x₋ (σ = 0.209)
+- Bell violation S = 2√2 from Gauss constraint → 2D transverse flux
+- Full nonlinear Einstein equations via Deser iterative bootstrap
 - D = 3 uniquely selected (no longer axiomatic)
 
-**Honest accounting:** ~20 genuine derivations, ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
+**Honest accounting:** ~40 genuine derivations, ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
 
 ---
 
@@ -53,7 +57,7 @@ A discrete computational framework for simulating physical systems from explicit
 ftd/                                     # Project root
 ├── docs/
 │   ├── SPEC_FTD.md              # THE authoritative FTD specification (single source of truth)
-│   ├── theory/                   # 84 core theory documents (10 categories)
+│   ├── theory/                   # 115 core theory documents (10 categories)
 │   │   ├── META_INDEX.md         # Complete catalog
 │   │   ├── 01_reference/         # Master references and proofs
 │   │   ├── 02_foundations/       # Ontological emergence
@@ -72,14 +76,14 @@ ftd/                                     # Project root
 │   ├── SPEC_ENGINE.md            # Engine reference document
 │   ├── include/ftd/              # 18 headers (ontic.h, voxel.h, lattice.h, etc.)
 │   ├── src/                      # 7 source files
-│   ├── tests/                    # 155 CTests (151 CPU + 4 GPU)
+│   ├── tests/                    # 156 CTests (152 CPU + 4 GPU)
 │   ├── cuda/                     # GPU acceleration (RTX 5090, 363x speedup)
 │   ├── wasm/                     # Emscripten bindings
 │   └── web/                      # Browser dashboard (Three.js)
 ├── scripts/                      # ALL Python scripts (~124 scripts)
 │   ├── constants.py              # Canonical shared constants (single source of truth)
 │   ├── verification/             # Formal derivation verification (35 scripts)
-│   ├── proofs/                   # Formal mathematical proofs with error bounds (25 scripts)
+│   ├── proofs/                   # Formal mathematical proofs with error bounds (32 scripts)
 │   ├── experiments/              # Bell tests, CERN analysis, physics sims (16 scripts)
 │   ├── exploration/              # Focused research investigations (9 scripts)
 │   ├── tests/                    # Python test suites — pytest (21 scripts)
@@ -108,7 +112,7 @@ ftd/                                     # Project root
 ## C++ Engine
 
 **Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release`
-**Test**: `cd engine/build && ctest --output-on-failure -C Release` (155 tests)
+**Test**: `cd engine/build && ctest --output-on-failure -C Release` (156 tests)
 **WASM**: `emcmake cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release && emmake cmake --build engine/build_wasm --target ftd_wasm`
 **Web UI**: `python -m http.server 8080 -d engine/web`
 
