@@ -343,6 +343,26 @@ Even as [SELECTION], this derivation:
 
 ---
 
+# Part VIII: Dynamical Interpretation
+
+## 8.1 Connection to Engine Dynamics [SELECTION]
+
+The $\alpha^{16}$ suppression can be understood dynamically through the engine's coupling-damping balance (see [DERIV_DARK_SECTOR_DYNAMICS.md](../03_derivations/DERIV_DARK_SECTOR_DYNAMICS.md)):
+
+- **Coupling injection:** Each manifested particle sources flux via $\Delta J = g_c \cdot \nabla(s)$, injecting $O(\alpha)$ energy per tick per particle into its neighborhood
+- **Selective damping:** Only near-particle sites (within 1-hop) are damped; far-field flux propagates losslessly
+- **Steady state:** The 16 DOF channels each leak $O(\alpha)$ energy into the gravitational vacuum, giving total suppression $\alpha^{16}$
+
+The net energy leak per particle per tick is the microscopic origin of $\rho_\Lambda$. The macroscopic formula $\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2}$ counts the cumulative effect of all 16 mode-coupling channels.
+
+## 8.2 The $\alpha^{57}$ Approximation [THEOREM]
+
+The formula $\Lambda / \Lambda_{\text{Planck}} \approx \alpha^{57}$ appearing in dissemination materials is a **logarithmic approximation** of this derivation. When $m_e$ is expressed in Planck units ($m_e = M_P \sqrt{2\pi} \cdot (16/3) \cdot \alpha^{11}$), the total $\alpha$ exponent becomes 60, and the prefactor $C_{\text{pf}} = (2\pi)^2 \cdot (16/3)^4 \cdot G^{*2} \approx 2.2 \times 10^5$ absorbs 2.5 units of the exponent in base $1/\alpha$, giving the rounded value 57.5 $\approx$ 57.
+
+The canonical formula remains $\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2}$. The $\alpha^{57}$ version is a useful mnemonic but should not be cited as an independent derivation.
+
+---
+
 # Cross-References
 
 | Document | Relevant Content |
@@ -352,6 +372,7 @@ Even as [SELECTION], this derivation:
 | [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | T_μν derivation |
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action, DOF count |
 | [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Framework constants |
+| [DERIV_DARK_SECTOR_DYNAMICS.md](../03_derivations/DERIV_DARK_SECTOR_DYNAMICS.md) | Dynamical interpretation, dark sector unification |
 
 ---
 
@@ -361,8 +382,9 @@ Even as [SELECTION], this derivation:
 |---------|------|---------|
 | 1.0 | 2026-01-22 | Original formula, numerical verification only |
 | 2.0 | 2026-02-25 | Physical derivation (3 pillars), Λ conversion, Ω_Λ calculation, upgraded to [SELECTION] |
+| 2.1 | 2026-03-17 | Part VIII: dynamical interpretation, α^57 reconciliation, dark sector cross-reference |
 
 ---
 
-*Document Version 2.0 — February 25, 2026*
+*Document Version 2.1 — March 17, 2026*
 *Framework: Foundational Ternary Dynamics v5.27*

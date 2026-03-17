@@ -1,7 +1,7 @@
 // Test: Rayleigh Dissipation Function
 //
 // Verifies R = (DAMPING/2) * |wave_vel|^2
-// where DAMPING = alpha (derived from vacuum drag / geometric friction).
+// where DAMPING = alpha [IMPOSED — see ontic.h ASSUMP.6].
 //
 // Sections:
 //   1. DAMPING = ALPHA (identity)

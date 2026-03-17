@@ -168,7 +168,7 @@ int main() {
         double g_check = ftd::VARPI / std::sqrt(ftd::PF);
         check_close("G_STAR = varpi/sqrt(PF)", ftd::G_STAR, g_check, 1e-10);
 
-        // DAMPING = ALPHA [DERIVED from vacuum drag / geometric friction]
+        // DAMPING = ALPHA [IMPOSED — identification gamma = alpha is a parameter choice (ASSUMP.6)]
         // See: EXPLR_VACUUM_DRAG_DERIVATION.md, SPEC_SIX_ALGORITHMS.md
         check("DAMPING = ALPHA (vacuum drag)",
               std::abs(ftd::DAMPING - ftd::ALPHA) < 1e-15);
@@ -182,7 +182,7 @@ int main() {
         std::cout << "    K_GENESIS:     [DERIVED] N_C * K_B\n";
         std::cout << "    DRAG_PER_AXIS: [DERIVED] 1/N_BASE\n";
         std::cout << "    G_STAR:        [DERIVED] varpi/sqrt(PF)\n";
-        std::cout << "    DAMPING:       [DERIVED] gamma = alpha (vacuum drag)\n";
+        std::cout << "    DAMPING:       [IMPOSED] gamma = alpha (ASSUMP.6)\n";
         std::cout << "    C_WAVE:        [DISCRETIZATION] CFL bound\n";
     }
 

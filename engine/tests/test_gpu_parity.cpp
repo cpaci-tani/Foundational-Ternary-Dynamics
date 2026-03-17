@@ -53,7 +53,7 @@ static void test_soa_roundtrip() {
     std::vector<Voxel> voxels;
     gpu.sync_to_host(voxels);
 
-    int idx = 7 * L * L + 6 * L + 5;
+    int idx = 5 * L * L + 6 * L + 7;  // x-major: x*L² + y*L + z
     const auto& v = voxels[idx];
 
     CHECK(v.state == +1, "State preserved");
