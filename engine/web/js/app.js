@@ -26,7 +26,7 @@ import { OnticObservatory, renderFcCard, renderObserverCard, renderHierarchyTowe
 import { renderEnergyLevels } from './spectroscopy.js?v=20260304q';
 import { renderCrossSections } from './cross-sections.js?v=20260304q';
 import { renderDecayRates } from './decay-rates.js?v=20260304q';
-import { ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS, TICK_PHASES, ALPHA, K_B, G_N, DAMPING, G_STAR, VARPI, X_PLUS, X_MINUS, K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT, COS2_THETA_C } from './constants.js?v=20260305e';
+import { ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS, TICK_PHASES, ALPHA, K_B, K_GENESIS, G_N, DAMPING, G_STAR, VARPI, X_PLUS, X_MINUS, K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT, COS2_THETA_C } from './constants.js?v=20260305e';
 import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor, renderAggregationTower, renderScaleBridge, renderEmergenceMonitor } from './aggregation-bridge.js?v=20260304q';
 import { BackgroundManager } from './backgrounds.js?v=20260304s';
 import { PETelemetryPanel } from './pe-telemetry.js?v=20260304q';
@@ -93,6 +93,9 @@ let _showDualSubstrate = false;
 let _showChirality = false;
 let _showLight = false;
 let _showGravityField = false;
+let _showDarkMatterHalo = false;
+let _showDampingZones = false;
+let _showGenesisIsosurface = false;
 let _fieldFrame = 0;            // throttle counter for field updates
 let _fieldNeedsUpdate = false;  // force immediate field compute on toggle activation
 let _anyFieldActive = false;    // cached OR of all field toggle flags
@@ -101,7 +104,8 @@ function _recomputeAnyFieldActive() {
     _anyFieldActive = _showEField || _showBField || _showPoynting ||
         _showDivField || _showFluxLines || _showForceVolume ||
         _showDualSubstrate || _showChirality || _showLight ||
-        _showGravityField;
+        _showGravityField || _showDarkMatterHalo || _showDampingZones ||
+        _showGenesisIsosurface;
 }
 
 /**
@@ -139,6 +143,9 @@ function _resetAllVisualState() {
     _showChirality = false;
     _showLight = false;
     _showGravityField = false;
+    _showDarkMatterHalo = false;
+    _showDampingZones = false;
+    _showGenesisIsosurface = false;
     _fieldNeedsUpdate = false;
     _recomputeAnyFieldActive();
 
@@ -147,7 +154,8 @@ function _resetAllVisualState() {
         'toggle-e-field', 'toggle-b-field', 'toggle-poynting',
         'toggle-div-field', 'toggle-flux-lines', 'toggle-force-volume',
         'toggle-dual-substrate', 'toggle-chirality', 'toggle-light',
-        'toggle-gravity-field',
+        'toggle-gravity-field', 'toggle-dark-halo', 'toggle-damping-zones',
+        'toggle-genesis-iso',
     ]) {
         const btn = document.getElementById(id);
         if (btn) btn.classList.remove('active');
@@ -164,6 +172,9 @@ function _resetAllVisualState() {
         viewport.toggleChiralityField(false);
         viewport.toggleLightField(false);
         viewport.toggleGravityField(false);
+        viewport.toggleDarkMatterHalo(false);
+        viewport.toggleDampingZones(false);
+        viewport.toggleGenesisIsosurface(false);
     }
 
     // ── Scale 1: PE overlay buttons ──
@@ -258,6 +269,7 @@ const DEFAULT_TOGGLES = [
     ['selective_damping',false, 't-selective'],
     ['larmor_radiation', false, 't-larmor'],
     ['dual_substrate',   false, 't-dual'],
+    ['confinement',      false, 't-confinement'],
 ];
 
 // Phase 1-3 state
@@ -541,6 +553,14 @@ async function init() {
         _latticeNeedsUpload = true;
     });
 
+    // Reflective boundary toggle — when unchecked, flux/particles dissipate past boundary
+    const reflectiveCheck = document.getElementById('reflective-boundary');
+    reflectiveCheck.addEventListener('change', () => {
+        const on = reflectiveCheck.checked;
+        if (bridge && bridge.setReflectiveBoundary) bridge.setReflectiveBoundary(on);
+        if (_fluxMock && _fluxMock.setReflectiveBoundary) _fluxMock.setReflectiveBoundary(on);
+    });
+
     // Load default scenario (flux-pulse: pure substrate wave propagation)
     loadScenario('flux-pulse');
 
@@ -600,6 +620,14 @@ function animateLattice(now) {
             if (mockPD && mockPD.count > 0) particleData = mockPD;
         }
         viewport.updateParticles(particleData);
+
+        // Confinement string rendering
+        if (_fluxMock && _fluxMock._toggles.confinement) {
+            viewport.updateConfinementStrings(_fluxMock._particles, bridge.latticeSize || 32);
+            viewport.toggleConfinementStrings(true);
+        } else {
+            viewport.toggleConfinementStrings(false);
+        }
 
         // Flux volume/slice rendering for Scale 0
         const L = bridge.latticeSize || 32;
@@ -705,6 +733,42 @@ function animateLattice(now) {
         if (_showGravityField) {
             const gData = fieldBridge.getGravityFieldSampled(stride);
             if (gData.count > 0) viewport.updateGravityField(gData);
+        }
+
+        // Dark matter halo (sub-threshold flux envelope)
+        if (_showDarkMatterHalo && fieldBridge._fluxJ) {
+            const N = fieldBridge.latticeSize;
+            const total = N * N * N;
+            // Compute per-voxel flux magnitude for the halo overlay
+            if (!fieldBridge._fluxMagBuf || fieldBridge._fluxMagBuf.length !== total) {
+                fieldBridge._fluxMagBuf = new Float32Array(total);
+            }
+            const J = fieldBridge._fluxJ;
+            for (let i = 0; i < total; i++) {
+                const jx = J[i*3], jy = J[i*3+1], jz = J[i*3+2];
+                fieldBridge._fluxMagBuf[i] = Math.sqrt(jx*jx + jy*jy + jz*jz);
+            }
+            viewport.updateDarkMatterHalo(fieldBridge._particles, fieldBridge._fluxMagBuf, N);
+        }
+
+        // Selective damping zones (wireframe cubes around damped voxels)
+        if (_showDampingZones) {
+            viewport.updateDampingZones(fieldBridge._particles, fieldBridge.latticeSize);
+        }
+
+        // Genesis threshold isosurface (birth boundary)
+        if (_showGenesisIsosurface && fieldBridge._fluxJ) {
+            const N = fieldBridge.latticeSize;
+            const total = N * N * N;
+            if (!fieldBridge._fluxMagBuf || fieldBridge._fluxMagBuf.length !== total) {
+                fieldBridge._fluxMagBuf = new Float32Array(total);
+            }
+            const J = fieldBridge._fluxJ;
+            for (let i = 0; i < total; i++) {
+                const jx = J[i*3], jy = J[i*3+1], jz = J[i*3+2];
+                fieldBridge._fluxMagBuf[i] = Math.sqrt(jx*jx + jy*jy + jz*jz);
+            }
+            viewport.updateGenesisIsosurface(fieldBridge._fluxMagBuf, N, K_GENESIS);
         }
 
         // Dual substrate (uses flux data split into L/R via delta)
@@ -1782,8 +1846,15 @@ function loadConsciousnessScenario(name) {
     // Set up scenario-specific flux patterns and toggle overrides
     switch (name) {
         case 'cs-threshold': {
-            // Start below K_C, gradually build to cross real→complex boundary
-            bridge.setupScenario('flux-sub-threshold');
+            // Start below K_C with low-amplitude Gaussian, gradually build to cross real→complex boundary
+            const csMid = Math.floor((bridge.latticeSize || 32) / 2);
+            const csSubAmp = 0.511 * 0.3; // K_B * 0.3
+            const csSigma = 4;
+            for (let dz = -6; dz <= 6; dz++) for (let dy = -6; dy <= 6; dy++) for (let dx = -6; dx <= 6; dx++) {
+                const r2 = dx * dx + dy * dy + dz * dz;
+                const val = csSubAmp * Math.exp(-r2 / (2 * csSigma * csSigma));
+                if (val > 0.001) bridge.injectFlux(csMid + dx, csMid + dy, csMid + dz, val, 0, 0);
+            }
             _csScenarioMeta = { name, domain: 'Real (k=16)', thetaMode: 'dynamic', sloopDepth: 0, bellS: null };
             break;
         }
@@ -1887,6 +1958,7 @@ function wireControls() {
         't-selective': 'selective_damping',
         't-larmor': 'larmor_radiation',
         't-dual': 'dual_substrate',
+        't-confinement': 'confinement',
     };
 
     for (const [elId, toggleName] of Object.entries(toggleMap)) {
@@ -2181,6 +2253,7 @@ function wireViewportToggles() {
     wireBtn.addEventListener('click', () => {
         wireBtn.classList.toggle('active');
         viewport.toggleWireframe(wireBtn.classList.contains('active'));
+        _latticeNeedsUpload = true;
         // Keep universal Grid toggle in sync (wireframe IS the grid at Scale 0)
         const gb = document.getElementById('toggle-grid');
         if (gb) gb.classList.toggle('active', wireBtn.classList.contains('active'));
@@ -2212,6 +2285,7 @@ function wireViewportToggles() {
         fluxVolBtn.addEventListener('click', () => {
             fluxVolBtn.classList.toggle('active');
             viewport.toggleFluxVolume(fluxVolBtn.classList.contains('active'));
+            _latticeNeedsUpload = true; // force re-render on toggle
         });
     }
 
@@ -2220,6 +2294,7 @@ function wireViewportToggles() {
         fluxSliceBtn.addEventListener('click', () => {
             fluxSliceBtn.classList.toggle('active');
             viewport.toggleFluxSlice(fluxSliceBtn.classList.contains('active'));
+            _latticeNeedsUpload = true;
         });
     }
 
@@ -2313,6 +2388,9 @@ function wireViewportToggles() {
         ['toggle-chirality',      '_showChirality',     (on) => { _showChirality = on; viewport.toggleChiralityField(on); _fieldNeedsUpdate = true; }],
         ['toggle-light',          '_showLight',         (on) => { _showLight = on; viewport.toggleLightField(on); _fieldNeedsUpdate = true; }],
         ['toggle-gravity-field',  '_showGravityField',  (on) => { _showGravityField = on; viewport.toggleGravityField(on); _fieldNeedsUpdate = true; }],
+        ['toggle-dark-halo',      '_showDarkMatterHalo',(on) => { _showDarkMatterHalo = on; viewport.toggleDarkMatterHalo(on); _fieldNeedsUpdate = true; }],
+        ['toggle-damping-zones',  '_showDampingZones',  (on) => { _showDampingZones = on; viewport.toggleDampingZones(on); _fieldNeedsUpdate = true; }],
+        ['toggle-genesis-iso',    '_showGenesisIsosurface', (on) => { _showGenesisIsosurface = on; viewport.toggleGenesisIsosurface(on); _fieldNeedsUpdate = true; }],
     ];
     for (const [id, , handler] of fieldToggles) {
         const btn = document.getElementById(id);
@@ -2321,6 +2399,7 @@ function wireViewportToggles() {
                 btn.classList.toggle('active');
                 handler(btn.classList.contains('active'));
                 _recomputeAnyFieldActive();
+                _latticeNeedsUpload = true; // force immediate re-render on any toggle
             });
         }
     }
@@ -2890,9 +2969,11 @@ function loadScenario(name) {
     // doesn't have getFluxVolume, or for the parallel JS wave equation demo)
     const L = bridge.latticeSize || 32;
     _fluxMock = new MockBridge(L);
-    // Sync boundary shape to new mock bridge
+    // Sync boundary shape and reflective setting to new mock bridge
     const boundaryEl = document.getElementById('boundary-select');
     if (boundaryEl) _fluxMock.setBoundaryShape(boundaryEl.value);
+    const reflEl = document.getElementById('reflective-boundary');
+    if (reflEl) _fluxMock.setReflectiveBoundary(reflEl.checked);
     _fluxMock.setupScenario(name);
 
     // Reset ALL toggles to defaults before applying scenario-specific overrides.
@@ -2909,9 +2990,8 @@ function loadScenario(name) {
         const el = document.getElementById('t-dual');
         if (el) el.checked = true;
     }
-    if (name === 'flux-gravity-cluster' || name === 'flux-cosmic-web' ||
-        name === 'flux-antimatter' || name === 'flux-gravitational-wave' ||
-        name === 'flux-triad') {
+    if (name === 'flux-cosmic-web' || name === 'flux-gravitational-wave' ||
+        name === 'flux-triad' || name === 'flux-baryon') {
         bridge.setToggle('gravity', true);
         const el = document.getElementById('t-gravity');
         if (el) el.checked = true;
@@ -2920,6 +3000,23 @@ function loadScenario(name) {
         bridge.setToggle('lorentz_force', true);
         const el = document.getElementById('t-lorentz');
         if (el) el.checked = true;
+    }
+    // QCD scenarios: enable confinement
+    if (name === 'flux-meson' || name === 'flux-baryon') {
+        bridge.setToggle('confinement', true);
+        bridge.setToggle('genesis', false);
+        const cEl = document.getElementById('t-confinement');
+        if (cEl) cEl.checked = true;
+        const genEl = document.getElementById('t-genesis');
+        if (genEl) genEl.checked = false;
+    }
+    if (name === 'flux-string-breaking') {
+        bridge.setToggle('confinement', true);
+        bridge.setToggle('genesis', true);
+        const cEl = document.getElementById('t-confinement');
+        if (cEl) cEl.checked = true;
+        const genEl = document.getElementById('t-genesis');
+        if (genEl) genEl.checked = true;
     }
     if (name === 'flux-dark-matter') {
         bridge.setToggle('gravity', true);
