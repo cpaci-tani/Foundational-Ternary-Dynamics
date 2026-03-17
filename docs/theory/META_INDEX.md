@@ -2,7 +2,7 @@
 
 **Framework:** Foundational Ternary Dynamics v5.28
 **Date:** March 17, 2026
-**Status:** Consolidated (114 core files, 67 archived)
+**Status:** Consolidated (115 core files, 68 archived)
 **Single Source of Truth:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 
 ---
