@@ -28,8 +28,12 @@ target_compile_options(ftd_cuda PRIVATE
     $<$<COMPILE_LANGUAGE:CUDA>:--allow-unsupported-compiler>
 )
 
-# Enable separable compilation for device-side linking
+# Enable separable compilation for device-side linking.
+# CUDA_RESOLVE_DEVICE_SYMBOLS ON ensures the device-link step runs
+# when this static library is consumed by executables, resolving
+# __cudaRegisterLinkedBinary symbols that would otherwise be unresolved.
 set_target_properties(ftd_cuda PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
+    CUDA_RESOLVE_DEVICE_SYMBOLS ON
     POSITION_INDEPENDENT_CODE ON
 )

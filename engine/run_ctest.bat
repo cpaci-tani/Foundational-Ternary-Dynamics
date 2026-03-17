@@ -6,5 +6,14 @@ if not defined VS_PATH (
     exit /b 1
 )
 call "%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat" >nul 2>&1
-cd /d "%~dp0engine\build_cuda"
-ctest -C Release --output-on-failure %*
+REM Use build_cuda if it exists, else build
+if exist "%~dp0build_cuda" (
+    cd /d "%~dp0build_cuda"
+) else (
+    cd /d "%~dp0build"
+)
+echo ================================================================
+echo   FTD Engine Test Suite
+echo   Build dir: %CD%
+echo ================================================================
+ctest -C Release --progress --output-on-failure --output-junit test-results.xml %*

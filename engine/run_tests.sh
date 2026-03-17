@@ -7,10 +7,13 @@
 #    --build       Build the engine before testing (default)
 #    --no-build    Skip the build step
 #    --filter RE   Only run tests matching regex RE (passed to ctest -R)
+#    --label LBL   Only run tests with label LBL (passed to ctest -L)
+#                  Labels: unit, campaign, foundation, lagrangian, scale1, scale2
 #    --jobs N      Run N tests in parallel (passed to ctest -j)
 #    --verbose     Show full output for every test, not just failures
 #    --cuda        Use engine/build_cuda instead of engine/build
 #    --debug       Use Debug configuration instead of Release
+#    --eta         Show estimated run time from previous test data
 #    -h, --help    Show this help
 # ===========================================================================
 
@@ -34,9 +37,11 @@ ENGINE_DIR="$SCRIPT_DIR"
 DO_BUILD=true
 BUILD_DIR="$ENGINE_DIR/build"
 FILTER=""
+LABEL=""
 JOBS=""
 VERBOSE=""
 CONFIG="Release"
+SHOW_ETA=false
 
 # ── Parse arguments ──────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do
@@ -44,7 +49,9 @@ while [[ $# -gt 0 ]]; do
         --build)      DO_BUILD=true;  shift ;;
         --no-build)   DO_BUILD=false; shift ;;
         --filter)     FILTER="$2";    shift 2 ;;
+        --label|-l)   LABEL="$2";     shift 2 ;;
         --jobs|-j)    JOBS="$2";      shift 2 ;;
+        --eta)        SHOW_ETA=true;  shift ;;
         --verbose|-v) VERBOSE="--verbose"; shift ;;
         --cuda)       BUILD_DIR="$ENGINE_DIR/build_cuda"; shift ;;
         --debug)      CONFIG="Debug"; shift ;;
@@ -107,11 +114,13 @@ fi
 # ── Count total tests ────────────────────────────────────────────────────
 CTEST_ARGS=(-C "$CONFIG" --output-on-failure --progress)
 [[ -n "$FILTER" ]]  && CTEST_ARGS+=(-R "$FILTER")
+[[ -n "$LABEL" ]]   && CTEST_ARGS+=(-L "$LABEL")
 [[ -n "$JOBS" ]]    && CTEST_ARGS+=(-j "$JOBS")
 [[ -n "$VERBOSE" ]] && CTEST_ARGS+=("$VERBOSE")
 
 LIST_ARGS=(-C "$CONFIG" -N)
 [[ -n "$FILTER" ]] && LIST_ARGS+=(-R "$FILTER")
+[[ -n "$LABEL" ]]  && LIST_ARGS+=(-L "$LABEL")
 
 TOTAL_TESTS=$(cd "$BUILD_DIR" && ctest "${LIST_ARGS[@]}" 2>/dev/null \
     | grep "^Total Tests:" | awk '{print $NF}')
@@ -121,9 +130,24 @@ if [[ -z "$TOTAL_TESTS" || "$TOTAL_TESTS" -eq 0 ]]; then
     exit 1
 fi
 
+LABEL_INFO=""
+[[ -n "$LABEL" ]] && LABEL_INFO=" [label: $LABEL]"
+[[ -n "$FILTER" ]] && LABEL_INFO=" [filter: $FILTER]"
+
 echo "${BOLD}========================================${RESET}"
-echo "${BOLD}  Running $TOTAL_TESTS tests ($CONFIG)${RESET}"
+echo "${BOLD}  Running $TOTAL_TESTS tests ($CONFIG)$LABEL_INFO${RESET}"
 echo "${BOLD}========================================${RESET}"
+
+# Show ETA from CTestCostData.txt if available
+COST_FILE="$BUILD_DIR/Testing/Temporary/CTestCostData.txt"
+if [[ -f "$COST_FILE" ]]; then
+    TOTAL_SEC=$(awk '{sum += $3} END {printf "%.0f", sum}' "$COST_FILE" 2>/dev/null || echo "0")
+    if [[ "$TOTAL_SEC" -gt 0 ]]; then
+        MINS=$((TOTAL_SEC / 60))
+        SECS=$((TOTAL_SEC % 60))
+        echo "  ${DIM}ETA (from previous run): ~${MINS}m ${SECS}s${RESET}"
+    fi
+fi
 echo ""
 
 # ── Run ctest with real-time streaming output ────────────────────────────
