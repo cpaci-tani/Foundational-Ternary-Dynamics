@@ -1360,29 +1360,31 @@
                 <span class="tb-label">Scenario</span>
                 <select class="tb-select" id="scenario-select" style="max-width:200px">
                     <option value="empty">Empty Lattice</option>
-                    <optgroup label="Wave Demos">
+                    <optgroup label="Wave Dynamics">
                         <option value="flux-pulse" selected>Flux Pulse</option>
                         <option value="flux-dipole">Flux Dipole</option>
                         <option value="flux-standing">Standing Wave</option>
+                        <option value="flux-nested-standing">Nested Standing</option>
                         <option value="flux-dispersion">Dispersion</option>
                         <option value="flux-soliton">Soliton</option>
-                        <option value="flux-ring">Ring Wave</option>
                         <option value="flux-interference">4-Source Interference</option>
-                        <option value="flux-vortex">Flux Vortex</option>
+                        <option value="flux-vortex">Flux Vortex (Spin)</option>
                     </optgroup>
                     <optgroup label="Particle Physics">
-                        <option value="flux-collision">Particle Collision</option>
+                        <option value="flux-annihilation">Pair Annihilation</option>
                         <option value="flux-pair-production">Pair Production</option>
                         <option value="flux-hydrogen">Hydrogen Atom</option>
-                        <option value="flux-gravity-cluster">Gravity Cluster</option>
                         <option value="flux-random-genesis">Random Genesis</option>
+                        <option value="flux-meson">Meson (Confinement)</option>
+                        <option value="flux-string-breaking">String Breaking</option>
+                        <option value="flux-baryon">Baryon (3-Quark)</option>
                     </optgroup>
                     <optgroup label="Light &amp; Color">
                         <option value="light-rainbow">Rainbow (3 Colors)</option>
                         <option value="light-prism">Lattice Prism</option>
                         <option value="light-dipole">Dipole Radiation</option>
                         <option value="light-two-slit">Two-Slit Interference</option>
-                        <option value="light-photon-race">Photon Race (Dim vs Bright)</option>
+                        <option value="light-photon-race">Photon Race</option>
                     </optgroup>
                     <optgroup label="Experiments">
                         <option value="flux-rutherford">Rutherford Scattering</option>
@@ -1391,19 +1393,17 @@
                         <option value="flux-gravitational-wave">Gravitational Wave</option>
                         <option value="flux-triad">Triad Formation</option>
                         <option value="flux-thermalization">Thermalization</option>
-                        <option value="flux-force-profile">Force Profile</option>
+                    </optgroup>
+                    <optgroup label="Cosmology">
+                        <option value="flux-dark-matter">Dark Matter Halo</option>
+                        <option value="flux-baryogenesis">Baryogenesis</option>
+                        <option value="flux-vacuum-foam">Vacuum Fluctuations</option>
+                        <option value="flux-cosmic-web">Cosmic Web</option>
                     </optgroup>
                     <optgroup label="Advanced">
                         <option value="flux-cascade">Genesis Cascade</option>
                         <option value="flux-damping">Damping Demo</option>
                         <option value="flux-dual-substrate">Dual Substrate</option>
-                    </optgroup>
-                    <optgroup label="Cosmology">
-                        <option value="flux-antimatter">Antimatter Annihilation</option>
-                        <option value="flux-dark-matter">Dark Matter Halo</option>
-                        <option value="flux-baryogenesis">Baryogenesis</option>
-                        <option value="flux-vacuum-foam">Vacuum Fluctuations</option>
-                        <option value="flux-cosmic-web">Cosmic Web</option>
                     </optgroup>
                 </select>
             </div>
@@ -1590,6 +1590,15 @@
                 <button class="view-toggle field-toggle" id="toggle-gravity-field" title="Gravity field vectors (density gradient attraction)">
                     <span class="field-swatch" style="background:#b0bec5"></span>Gravity
                 </button>
+                <button class="view-toggle field-toggle" id="toggle-dark-halo" title="Dark matter halo (sub-threshold flux envelope, gravitates but invisible)">
+                    <span class="field-swatch" style="background:#7c3aed"></span>DM Halo
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-damping-zones" title="Selective damping boundary (1-hop zones around particles where energy dissipates)">
+                    <span class="field-swatch" style="background:#ef4444"></span>Damping
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-genesis-iso" title="Genesis threshold isosurface (where |J| = K_GENESIS; particles crystallize here)">
+                    <span class="field-swatch" style="background:#22c55e"></span>Genesis
+                </button>
             </div>
             <div id="pe-viewport-overlay" class="scale1-only"
                 style="position:absolute;top:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:620px;justify-content:flex-end">
@@ -1682,6 +1691,10 @@
                         <option value="none">None</option>
                     </select>
                 </div>
+                <div class="toggle-row" style="margin-left:12px;">
+                    <input type="checkbox" id="reflective-boundary" checked>
+                    <label for="reflective-boundary" style="font-size:11px;color:var(--text-secondary);cursor:pointer;">Reflective</label>
+                </div>
             </div>
         </div>
 
@@ -1743,6 +1756,8 @@
                                 title="Attractive force from smoothed density gradient: F = G_N * grad(rho)">Gravity</label></div>
                         <div class="toggle-row"><input type="checkbox" id="t-lorentz" checked><label for="t-lorentz"
                                 title="Magnetic force: F = alpha * s * (v x B) where B = curl(J). Does zero work">Lorentz Force</label></div>
+                        <div class="toggle-row"><input type="checkbox" id="t-confinement"><label for="t-confinement"
+                                title="Linear confinement: opposite-sign pairs feel string tension beyond R_CRIT. String breaks if genesis is ON.">Confinement</label></div>
 
                         <details class="toggle-advanced">
                             <summary>Advanced</summary>
