@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRD Gravity Simulation</title>
+    <title>FTD Gravity Simulation</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -319,7 +319,7 @@
                 <div class="panel">
                     <h3>Why Inverse-Square?</h3>
                     <div class="info-box">
-                        In TRD, the gravitational force emerges from flux density gradients.
+                        In FTD, the gravitational force emerges from flux density gradients.
                         The inverse-square law (<b>F ~ 1/r<sup>2</sup></b>) arises naturally from
                         <b>flux conservation</b> over a spherical surface in 3D space:
                         <br><br>
@@ -338,7 +338,7 @@
 
     <script>
         // ============================================
-        // TRD GRAVITY SIMULATION
+        // FTD GRAVITY SIMULATION
         // Formula: F_grav = G_N * grad(rho_bar)
         // ============================================
 
@@ -458,7 +458,7 @@
         }
 
         // ============================================
-        // TRD FORCE CALCULATION
+        // FTD FORCE CALCULATION
         // F_grav = G_N * grad(rho_bar)
         // Implemented as direct N-body for clarity
         // ============================================
@@ -473,7 +473,7 @@
                 distance = p1.radius + p2.radius;
             }
 
-            // TRD gravity: F = G_N * m1 * m2 / r^2
+            // FTD gravity: F = G_N * m1 * m2 / r^2
             // This emerges from F = G_N * grad(rho_bar)
             // where rho_bar is the smoothed density field
             let forceMag = G_N * p1.mass * p2.mass / (distance * distance);

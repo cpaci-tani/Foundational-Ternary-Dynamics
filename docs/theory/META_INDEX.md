@@ -2,7 +2,7 @@
 
 **Framework:** Foundational Ternary Dynamics v5.28
 **Date:** March 17, 2026
-**Status:** Consolidated (115 core files, 68 archived)
+**Status:** Consolidated (114 core files, 68 archived)
 **Single Source of Truth:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 
 ---
@@ -76,21 +76,21 @@ Physics from first principles.
 | 3.2 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | QM derived from First Distinction |
 | 3.3 | [DERIV_RELATIVITY_DERIVATION.md](03_derivations/DERIV_RELATIVITY_DERIVATION.md) | SR + GR from C=1 axiom |
 | 3.4 | [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](03_derivations/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | g_c = √α derivation |
-| 3.5 | [DERIV_LATTICE_SCHWARZSCHILD.md](archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) | Complete Schwarzschild metric from lattice computational budget (closes GAP-G1) |
+| 3.5 | ~~DERIV_LATTICE_SCHWARZSCHILD.md~~ | **ARCHIVED** → `archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md` (consolidated into 3.26 DERIV_LATTICE_BLACK_HOLES.md) |
 | 3.6 | [DERIV_FORCE_EMERGENCE.md](03_derivations/DERIV_FORCE_EMERGENCE.md) | Force laws derived from lattice Green's functions; Coulomb, Yukawa, Lorentz from flux action |
 | 3.7 | [DERIV_QFT_GRT_BRIDGE.md](03_derivations/DERIV_QFT_GRT_BRIDGE.md) | QFT propagators + GRT stress-energy tensor; same flux field dual role; closes GAP-G3. **Part IV (v1.1):** Relativistic Møller scattering (e⁻e⁻→e⁻e⁻) from lattice Feynman rules; NR limit recovers Rutherford (Thm 1.4) |
 | 3.8 | [DERIV_VARIATIONAL_PROOF.md](03_derivations/DERIV_VARIATIONAL_PROOF.md) | **Computational proof:** δS=0 reproduces every update rule (59 checks, 0 failures) — Lagrangian is the generating function for all simulation dynamics |
-| 3.9 | [DERIV_LATTICE_KERR.md](archive/ARCH_DERIV_LATTICE_KERR.md) | Kerr metric from lattice computational budget: vortical flux → directional budget asymmetry → frame dragging; Born-Infeld extension; 4 verified limits |
-| 3.10 | [DERIV_LATTICE_LOOP_CORRECTIONS.md](archive/ARCH_DERIV_LATTICE_LOOP_CORRECTIONS.md) | One-loop vacuum polarization Π_μν(k) on lattice: UV-finite [THEOREM], transversality [THEOREM], beta function β(α)=2α²/(3π) derived [THEOREM]; upgrades QB-13 from [SELECTION] to [THEOREM] |
-| 3.11 | [DERIV_LATTICE_VERTEX_CORRECTION.md](archive/ARCH_DERIV_LATTICE_VERTEX_CORRECTION.md) | One-loop vertex correction Λ_μ(p',p) on lattice: UV-finite [THEOREM], F₂(0) = α/(2π) (Schwinger g-2) [THEOREM], Ward identity Z₁=Z₂ [THEOREM], F₁(0)=1 [THEOREM]; completes one-loop QED from FTD lattice |
-| 3.12 | [DERIV_LATTICE_SELF_ENERGY.md](archive/ARCH_DERIV_LATTICE_SELF_ENERGY.md) | One-loop electron self-energy Σ(p) on lattice: UV-finite [THEOREM], mass renormalization logarithmic (no fine-tuning) [THEOREM], Z₁=Z₂ from Ward identity [THEOREM], no Landau pole [THEOREM] |
-| 3.13 | [DERIV_LATTICE_REISSNER_NORDSTROM.md](archive/ARCH_DERIV_LATTICE_REISSNER_NORDSTROM.md) | Reissner-Nordström metric from lattice computational budget: EM field as anti-saturation; f(r) = 1 - r_s/r + r_Q²/r²; Born-Infeld extension; 5 verified limits; Kerr-Newman outline; completes black hole taxonomy |
+| 3.9 | ~~DERIV_LATTICE_KERR.md~~ | **ARCHIVED** → `archive/ARCH_DERIV_LATTICE_KERR.md` (consolidated into 3.26 DERIV_LATTICE_BLACK_HOLES.md) |
+| 3.10 | ~~DERIV_LATTICE_LOOP_CORRECTIONS.md~~ | **ARCHIVED** → `archive/ARCH_DERIV_LATTICE_LOOP_CORRECTIONS.md` (consolidated into 3.27 DERIV_LATTICE_QED_COMPLETE.md) |
+| 3.11 | ~~DERIV_LATTICE_VERTEX_CORRECTION.md~~ | **ARCHIVED** → `archive/ARCH_DERIV_LATTICE_VERTEX_CORRECTION.md` (consolidated into 3.27 DERIV_LATTICE_QED_COMPLETE.md) |
+| 3.12 | ~~DERIV_LATTICE_SELF_ENERGY.md~~ | **ARCHIVED** → `archive/ARCH_DERIV_LATTICE_SELF_ENERGY.md` (consolidated into 3.27 DERIV_LATTICE_QED_COMPLETE.md) |
+| 3.13 | ~~DERIV_LATTICE_REISSNER_NORDSTROM.md~~ | **ARCHIVED** → `archive/ARCH_DERIV_LATTICE_REISSNER_NORDSTROM.md` (consolidated into 3.26 DERIV_LATTICE_BLACK_HOLES.md) |
 | 3.14 | [DERIV_LATTICE_SU3_GAUGE.md](03_derivations/DERIV_LATTICE_SU3_GAUGE.md) | **SU(3) lattice gauge theory:** Color from flux geometry (J_x,J_y,J_z ↔ r,g,b); gluon propagator [THEOREM]; quark-gluon vertex [THEOREM]; 3/4-gluon vertices from BI nonlinearity [SELECTION]; QCD beta function β₀ = (11N_c−2N_f)/3 = 7 [THEOREM]; asymptotic freedom; Wilson loop confinement [SELECTION] |
 | 3.15 | [DERIV_LATTICE_SU2_WEAK.md](03_derivations/DERIV_LATTICE_SU2_WEAK.md) | **SU(2) weak sector:** SU(2) from ternary doublet {+1,−1} [THEOREM]; W±/Z⁰ as transmutation operators; sin²θ_W = 3/13 [THEOREM]; M_W = 80.36 GeV, M_Z = 91.19 GeV [THEOREM]; **G_F derived** = 1/(√2 v²) [THEOREM]; ~50 decay rates upgraded from parametric to derived |
 | 3.16 | [DERIV_HIGGS_FROM_MANIFESTATION.md](03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md) | **Higgs mechanism:** Manifestation = EW phase transition [THEOREM]; λ = sin²θ_W/(2−sin²θ_W) = 3/23 from ternary decomposition [THEOREM]; v = M_P√(2π)α⁸ = 246.08 GeV [THEOREM]; m_H = v√(6/23) = 125.69 GeV (0.47%) [THEOREM]; Goldstone counting 3+1 [THEOREM]; hierarchy problem resolved by lattice UV cutoff; 21/21 tests pass |
 | 3.17 | [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | **Path integral from FTD action:** Z = Σ exp(-S_E) well-defined on lattice [THEOREM]; W[J] generates connected correlators; G_c^(2)(k) = 1/λ(k) IS lattice propagator [THEOREM]; effective action Γ generates 1PI vertices; Feynman rules recovered from Z; thermodynamic partition function; KMS states at finite β |
 | 3.18 | [DERIV_LATTICE_CHIRAL_ANOMALY.md](03_derivations/DERIV_LATTICE_CHIRAL_ANOMALY.md) | **Chiral anomaly on FTD lattice:** ABJ anomaly ∂_μ j^μ₅ = (α/2π)FF̃ from triangle diagram [THEOREM]; Nielsen-Ninomiya resolution via Wilson fermions [SELECTION]; anomaly coefficient topological [THEOREM]; **π⁰→γγ = 7.73 eV** (1.2% vs PDG) [THEOREM]; baryogenesis connection via lattice topological charge [SELECTION] |
-| 3.19 | [DERIV_TWO_LOOP_ALPHA.md](archive/ARCH_DERIV_TWO_LOOP_ALPHA.md) | **Two-loop α from lattice:** O(α²) diagrams UV-finite on BZ² [THEOREM]; two-loop correction right magnitude for 1.26 ppm gap [CONJECTURE]; connection to precision formula c₁ = 9/47 [SELECTION]; road to sub-ppm prediction; lattice-specific Planck-scale corrections [CONJECTURE] |
+| 3.19 | ~~DERIV_TWO_LOOP_ALPHA.md~~ | **ARCHIVED** → `archive/ARCH_DERIV_TWO_LOOP_ALPHA.md` (consolidated into 3.27 DERIV_LATTICE_QED_COMPLETE.md) |
 | 3.20 | [DERIV_BLACK_HOLE_PHYSICS.md](03_derivations/DERIV_BLACK_HOLE_PHYSICS.md) | Hawking radiation, entropy, and information paradox from lattice dynamics [THEOREM] + [SELECTION] |
 | 3.21 | [DERIV_EINSTEIN_FIELD_EQUATIONS.md](03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) | Einstein field equations R_μν − ½g_μνR = 8πGT_μν from flux stress-energy; closes GAP-2 and GAP-14.1 |
 | 3.22 | [DERIV_FERMI_COUPLING_CONSTANT.md](03_derivations/DERIV_FERMI_COUPLING_CONSTANT.md) | Fermi coupling G_F derivation from Higgs VEV [THEOREM]; depends on DERIV_HIGGS_FROM_MANIFESTATION |
@@ -265,7 +265,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 ## Archived Documents
 
-67 files in `archive/` subdirectory:
+68 files in `archive/` subdirectory:
 - Historical context and session notes
 - Superseded versions of consolidated documents
 - Speculative extensions (philosophy, biology)
@@ -277,4 +277,4 @@ Access via `archive/[filename].md` if needed for historical reference.
 
 *Index updated: March 17, 2026*
 *Framework: Foundational Ternary Dynamics v5.28*
-*Structure: 114 core files (9 category folders) + 67 archived*
+*Structure: 114 core files (9 category folders) + 68 archived*

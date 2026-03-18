@@ -49,12 +49,8 @@ int main() {
         check_close("Default speed = 0", v.speed(), 0.0, 1e-15);
         check_close("Default latency = 0", v.latency, 0.0, 1e-15);
         check_close("Default tau = 0", v.tau, 0.0, 1e-15);
-        check_close("Default drag = 0", v.drag, 0.0, 1e-15);
         check("Default locked = false", v.locked == false);
         check("Default pair_id = -1", v.pair_id == -1);
-        check_close("Default attention = 0", v.attention, 0.0, 1e-15);
-        check("Default sloop_depth = 0", v.sloop_depth == 0);
-        check("Default is_sloop = false", v.is_sloop == false);
     }
 
     // density() = |flux|

@@ -4,7 +4,7 @@
 
 **Date:** February 2, 2026 (Epistemic Update)
 **Framework:** Foundational Ternary Dynamics v5.17
-**Status:** See epistemic breakdown below
+**Status:** Mixed — ~20 [THEOREM] (genuine derivations), ~50 [PARAMETRIC INSERTION], ~50+ [EXTERNAL] (see epistemic breakdown below)
 
 ---
 
@@ -46,9 +46,9 @@ This document shows how FTD framework integers produce Standard Model observable
 
 ---
 
-# PART I: DECAY RATES AND WIDTHS
+# PART I: DECAY RATES AND WIDTHS [PARAMETRIC INSERTION]
 
-## I.1 Core Decay Formula
+## I.1 Core Decay Formula [EXTERNAL]
 
 All weak decays follow from the Fermi theory with FTD couplings:
 
@@ -398,7 +398,7 @@ $$\Gamma_t = \frac{G_F m_t^3}{8\sqrt{2}\pi} |V_{tb}|^2 \left(1 - \frac{m_W^2}{m_
 
 ---
 
-# PART II: RUNNING COUPLING CONSTANTS
+# PART II: RUNNING COUPLING CONSTANTS [PARAMETRIC INSERTION]
 
 ## II.1 Electromagnetic Coupling α(Q²)
 
@@ -470,7 +470,7 @@ $$\sin^2\theta_W(Q) = \frac{N_c}{N_{eff}} \times \left[1 + \frac{\alpha}{6\pi}(1
 
 ---
 
-# PART III: MESON SPECTRUM
+# PART III: MESON SPECTRUM [PARAMETRIC INSERTION]
 
 ## III.1 Pseudoscalar Mesons (J^PC = 0^-+)
 
@@ -638,7 +638,7 @@ where ΔM ≈ Λ_QCD × √N_c ≈ **300 MeV**.
 
 ---
 
-# PART IV: BARYON SPECTRUM
+# PART IV: BARYON SPECTRUM [PARAMETRIC INSERTION]
 
 ## IV.1 Core Baryon Mass Formulas
 
@@ -838,7 +838,7 @@ $$m_b^{baryon} = m_b + 2m_{light} + E_{binding}$$
 
 ---
 
-# PART VI: SCATTERING CROSS-SECTIONS
+# PART VI: SCATTERING CROSS-SECTIONS [PARAMETRIC INSERTION]
 
 > **Historical Note:** This section incorporates content from the earlier `DERIV_OBSERVABLE_PHYSICS_DERIVATIONS.md` (February 2026), which has been archived. The scattering cross-section derivations and unification scale calculation were unique to that document.
 

@@ -30,9 +30,9 @@ from scipy import stats
 G_STAR = (np.sqrt(2) * gamma(0.25)**2) / (2 * np.pi)
 
 # Physical constants (CODATA 2018 / PDG 2022)
-ALPHA_EM = 1 / 137.035999084  # Fine structure constant
+ALPHA_EM = 1 / 137.035999177  # Fine structure constant (CODATA 2022)
 ALPHA_S_MZ = 0.1179  # Strong coupling at M_Z (PDG 2022)
-SIN2_THETA_W = 0.23121  # Weinberg angle (on-shell)
+SIN2_THETA_W = 0.23122  # Weinberg angle (on-shell, PDG 2024)
 
 # Masses in MeV (PDG 2022)
 M_E = 0.51099895000  # Electron

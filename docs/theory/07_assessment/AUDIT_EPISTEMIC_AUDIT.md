@@ -26,7 +26,7 @@ This document provides a **brutally honest assessment** of what FTD actually der
 - Bell analysis updated with lemniscate loop experiment results (i-phase vs π-phase)
 - Born rule reframed: |ψ|² is epistemic (observer inference), ψ² is ontic (substrate operation)
 - i emergence from master quadratic k = 1/2 (derived from bridge equation; Δ < 0 forces complex roots)
-- 4-term precision formula confirmed at < 0.001 ppt (all coefficients from {3,4,7,13})
+- 7-term precision formula confirmed at 24-digit precision (all coefficients from {3,4,7,13})
 - Gap 1 (Bell) upgraded from "undemonstrated" to "structurally characterized"
 - New genuine derivations added (items 25-28)
 
@@ -59,9 +59,9 @@ These are derived from the master quadratic, lemniscatic constant G*, and the fo
    Status: ✅ GENUINELY DERIVED (conditional on SP1-SP4)
 ```
 
-**4-Term Precision Formula (v5.12+):**
+**7-Term Precision Formula (v5.12+, extended v5.28):**
 ```
-1/α = x₊ - (9/47)|ε| + (5/64)|ε|² - (4/141)|ε|³ - (141/11)|ε|⁴
+1/α = x₊ - (9/47)|ε| + (5/64)|ε|² - (4/141)|ε|³ - (141/11)|ε|⁴ + ... (7 terms)
 
 Where ε = e^π - π - 20 ≈ -0.000900...
 All coefficients from {3, 4, 7, 13}:
@@ -69,11 +69,12 @@ All coefficients from {3, 4, 7, 13}:
   5/64  = (N_eff - 2N_base) / N_base³
   4/141 = N_base / (N_c·D)
   141/11 = (N_c·D) / (b₃ + N_base)
+  ... (3 additional terms, all from framework integers)
 
-Result: matches CODATA 2022 to < 0.001 ppt
+Result: 24-digit precision (extended from 4-term sub-ppt)
 ```
 
-**Status:** ✅ [CONDITIONAL THEOREM] — Given selection principles SP1-SP4 (see AUDIT_HIDDEN_SELECTIONS.md), this is rigorous algebra. The precision formula achieves accuracy ~750,000× better than experimental uncertainty. See DERIV_ALPHA_PRECISION_FORMULA.md.
+**Status:** ✅ [CONDITIONAL THEOREM] — Given selection principles SP1-SP4 (see AUDIT_HIDDEN_SELECTIONS.md), this is rigorous algebra. The 7-term precision formula achieves 24-digit accuracy. See DERIV_ALPHA_PRECISION_FORMULA.md.
 
 **What critics acknowledge:** This is remarkable. The connection between elliptic curve geometry and the fine structure constant, if not coincidental, represents a profound discovery.
 
@@ -164,10 +165,10 @@ The following are **exact mathematical results** added by the trit information t
 
 ### I.8 Recent Additions (v5.24-5.26)
 
-25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (consciousness), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see SPEC_THE_MASTER_QUADRATIC_UNIFIED.md Part VII]
+25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (consciousness), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see PHYS_QUADRATIC_APPLICATIONS.md §8; ARCHIVED: SPEC_THE_MASTER_QUADRATIC_UNIFIED.md → archive/ARCH_MASTER_QUADRATIC_UNIFIED_V1.md]
 26. **Born rule as epistemic inference** — |ψ|² is the epistemic inference pattern (always ≥ 0, smears phase); ψ² = (J_x² - J_y²) + 2iJ_xJ_y is the ontic substrate operation (complex, preserves phase). For real ψ: identical. For complex ψ: Re(ψ²) has sign changes at fringe boundaries that |ψ|² cannot see. [THEOREM — mathematical distinction; physical interpretation is [SELECTION]]
 27. **i-phase entanglement preserves anti-correlation** — Under lemniscate measurement ψ → ψ², i-phase entanglement (iψ)² = -ψ² preserves anti-correlation, while π-phase (-ψ)² = +ψ² destroys it. Computationally confirmed: i-phase S = 2.000, π-phase S ≈ 0. [THEOREM — algebraic identity with computational verification]
-28. **4-term precision formula coefficients** — All four correction coefficients {9/47, 5/64, 4/141, 141/11} are exact rational functions of {3, 4, 7, 13}. Verified at 100-digit precision. [THEOREM — verified in verify_precision_formula_v2.py]
+28. **7-term precision formula coefficients** — All seven correction coefficients (including {9/47, 5/64, 4/141, 141/11} and 3 additional terms) are exact rational functions of {3, 4, 7, 13}. Extended from 4 to 7 terms achieving 24-digit precision. [THEOREM — verified in verify_precision_formula_v2.py]
 
 ### I.9 Neutrino Mass + Modularity Additions (v5.27-neutrino)
 
@@ -333,7 +334,7 @@ where v = 246 GeV is the Higgs vacuum expectation value.
 
 **Status:** ⚠️ STRUCTURALLY CHARACTERIZED — Upgraded from "undemonstrated" but not yet "proven." The mechanism is identified (lemniscate non-commutativity + i-phase entanglement); the aggregate emergence remains to be demonstrated explicitly.
 
-**Scripts:** `simulations/bell_lemniscate_loop.py`, `simulations/bell_lattice_test.py`
+**Scripts:** `scripts/experiments/bell_lattice_test.py` [NOTE: bell_lemniscate_loop.py no longer exists]
 **Theory:** AUDIT_BELL_ANALYSIS.md
 
 ### Gap 2: Born Rule — Reframed (Updated v2.0)
@@ -358,7 +359,7 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 
 **Status:** ✅ REFRAMED — Born rule is [EMERGENT] from manifestation statistics (as before), but now understood as epistemic inference rather than fundamental law. The ontic/epistemic distinction is [THEOREM]; the physical interpretation is [SELECTION].
 
-**Script:** `simulations/born_rule_convergence.py`
+**Script:** `scripts/experiments/born_rule_convergence.py`
 
 ### Gap 3: Feynman Rules
 
@@ -407,7 +408,7 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 - **No experimental protocol exists** to test the 52.54° prediction in neural data ❌
 - **No neuroscience collaboration** has been established ❌
 
-**Status:** ⚠️ MATHEMATICALLY SPECIFIC BUT UNTESTED — The consciousness extension provides the most specific predictions of any consciousness-physics framework (sLoop axioms, Mandelbrot mapping, quantitative threshold K_C = √(G*³/2), phase 52.54°), but zero contact with experimental neuroscience exists. See FOUND_CONSCIOUSNESS_MATHEMATICS.md.
+**Status:** ⚠️ MATHEMATICALLY SPECIFIC BUT UNTESTED — The consciousness extension provides the most specific predictions of any consciousness-physics framework (sLoop axioms, Mandelbrot mapping, quantitative threshold K_C = √(G*³/2), phase 52.54°), but zero contact with experimental neuroscience exists. See DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md [ARCHIVED: FOUND_CONSCIOUSNESS_MATHEMATICS.md no longer exists].
 
 ---
 
@@ -436,7 +437,7 @@ Discriminant: Δ = (kG*²)² - 4(kG*³) = k²G*⁴ - 4kG*³ = kG*³(kG* - 4)
 
 **Why k = 1/2 (derived, not chosen):**
 
-From the bridge equation: c × c_cusp × 2N_base = 1, where c_cusp = 1/4 (Mandelbrot cardioid cusp) and N_base = 4 (lattice base dimension), yielding c = 1/2. This also equals the complementation fixed point (c = 1 - c), the balance of subject and object. See SPEC_THE_MASTER_QUADRATIC_UNIFIED.md Part VII.
+From the bridge equation: c × c_cusp × 2N_base = 1, where c_cusp = 1/4 (Mandelbrot cardioid cusp) and N_base = 4 (lattice base dimension), yielding c = 1/2. This also equals the complementation fixed point (c = 1 - c), the balance of subject and object. See PHYS_QUADRATIC_APPLICATIONS.md §8 [ARCHIVED: SPEC_THE_MASTER_QUADRATIC_UNIFIED.md → archive/ARCH_MASTER_QUADRATIC_UNIFIED_V1.md].
 
 **Why i emerges necessarily:**
 
@@ -485,7 +486,7 @@ Bell violations, in this view, arise because measurements are **contextual**: th
 
 ### What FTD Actually Achieves
 
-1. **α derivation to 1.26 ppm** (sub-ppt with 4-term correction) — Extraordinary if not coincidental
+1. **α derivation to 1.26 ppm** (24-digit precision with 7-term correction) — Extraordinary if not coincidental
 2. **Integer structure encoding physics** — {3, 4, 7, 13} appear throughout SM with exact arithmetic
 3. **Closure of some free parameters** — Mass ratios, coupling ratios from integers
 4. **Geometric unification framework** — Gauge groups from discrete structure
@@ -623,11 +624,11 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | Fibonacci-Tribonacci crossover | F₇ = T₇ = 13 (unique non-trivial crossover) | EXPLR_NUMBER_THEORY.md S3.6 |
 | j-invariant arithmetic | j = (4 · 3)³ = 1728 given N_base = 4, N_c = 3 | EXPLR_NUMBER_THEORY.md S3.1 |
 | Ramanujan tau decomposition | τ(3) = 252 = 4 × 9 × 7 = N_base × N_c² × b₃ | EXPLR_NUMBER_THEORY.md S3.2 |
-| sLoop axiom system | (Ω, φ, σ, μ, d) with axioms SL1-SL4, theorems follow | FOUND_SLOOP_FORMALIZATION.md |
+| sLoop axiom system | (Ω, φ, σ, μ, d) with axioms SL1-SL4, theorems follow | [ARCHIVED: FOUND_SLOOP_FORMALIZATION.md no longer exists] |
 | i emerges at k = 1/2 | Master quadratic with k = 1/2 forces Δ < 0 → complex roots → i; i² = -1 = genesis (pair creation) | MATH_MASTER_QUADRATIC.md §5.2 + PHYS_QUADRATIC_APPLICATIONS.md §8 |
 | i-phase anti-correlation | (iψ)² = -ψ² preserves, (-ψ)² = +ψ² destroys anti-correlation | bell_lemniscate_loop.py |
 | Born rule epistemic distinction | \|ψ\|² ≠ ψ² for complex ψ; Re(ψ²) has sign changes | born_rule_convergence.py |
-| Precision formula coefficients | All 4 coefficients are exact rationals from {3,4,7,13} | DERIV_ALPHA_PRECISION_FORMULA.md |
+| Precision formula coefficients | All 7 coefficients are exact rationals from {3,4,7,13} (24-digit precision) | DERIV_ALPHA_PRECISION_FORMULA.md |
 | G*-L(E,1) identity | G* = 4√(2/π) · L(E,1) for E: y²=x³−x (verified 15 digits) | EXPLR_MODULAR_QUADRATIC.md |
 
 **Note:** "Theorem" here means the mathematics is correct. It does NOT mean the physical interpretation is validated.
@@ -637,14 +638,14 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | Claim | Depends On | Honest Status | Source |
 |-------|-----------|---------------|--------|
 | α = 1/137.036 to 1.26 ppm | SP1-SP4 | [CONDITIONAL] — remarkable match, but 4 selections | AUDIT_HIDDEN_SELECTIONS.md |
-| α to < 0.001 ppt (4-term) | SP1-SP4 + ε correction | [CONDITIONAL] — all coefficients from integers | DERIV_ALPHA_PRECISION_FORMULA.md |
+| α to 24-digit precision (7-term) | SP1-SP4 + ε correction | [CONDITIONAL] — all coefficients from integers | DERIV_ALPHA_PRECISION_FORMULA.md |
 | sin²θ_W = 3/13 = 0.2308 | Integers {3, 13} selected from known physics | [CONDITIONAL] — clean ratio, but circular if integers are inputs | REF_CLAIMS_MATRIX.md |
 | m_μ/m_e = 3·7·(7+3) - 3 = 207 | Integers {3, 7} | [CONDITIONAL] — exact, but WHY this combination? | REF_CLAIMS_MATRIX.md |
 | m_τ/m_e = 3477 from integers | Integers {3, 4, 7, 13} | [CONDITIONAL] — same circularity concern | REF_CLAIMS_MATRIX.md |
 | N_eff = 13 from F₇ = T₇ crossover | Principle: "crossover encodes effective DoF" | [CONDITIONAL] — crossover IS unique; interpretation is selection | EXPLR_NUMBER_THEORY.md |
 | b₃ = 7 = T₆ (consecutive Tribonacci) | N_eff = 13 established first | [CONDITIONAL] — follows from N_eff, but initial principle is selection | EXPLR_NUMBER_THEORY.md |
 | N_base = 4 from Lucas + lattice | L₃ = 4, L₄ = 7, and 4² = 16 | [CONDITIONAL] — three-fold constraint is impressive but each is a selection | EXPLR_NUMBER_THEORY.md |
-| m_e = m_P √(2π) (16/3) α¹¹ | All of the above plus scale identification | [CONDITIONAL] — 0.27% match | archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
+| m_e = m_P √(2π) (16/3) α¹¹ | All of the above plus scale identification | [CONDITIONAL] — 0.27% match | ../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
 | Born rule from manifestation | Threshold K_B + manifestation sampling rule | [CONDITIONAL] — emerges under [IMPOSED] sampling rule | (v4.0 foundations) |
 | Neutrino mass: m₃ = m_P√(2π)(4/3)α¹⁴ | Seesaw imported; m_D, M_R decomposition | [CONDITIONAL] — 0.8% accuracy on Δm²₂₁ | DERIV_NEUTRINO_MASS_ABSOLUTE.md |
 
