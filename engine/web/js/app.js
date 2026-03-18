@@ -2884,7 +2884,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'Helium Cluster',
                 desc: 'Six He atoms — van der Waals (LJ 12-6) only. Watch them settle.',
                 fields: { 'Atoms': '6 × He', 'Force': 'vdW only', 'Bonding': 'None (noble gas)' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
             break;
         }
         case 'ae-ar-cluster': {
@@ -2897,7 +2897,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'Argon Cluster',
                 desc: 'Eight Ar atoms in a cube — vdW condensation dynamics.',
                 fields: { 'Atoms': '8 × Ar', 'Force': 'vdW only', 'Layout': '2×2×2 cube' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
             break;
         }
         case 'ae-noble-mix': {
@@ -2912,7 +2912,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'Noble Gas Mix',
                 desc: 'He + Ne + Ar — different sizes interact via vdW only.',
                 fields: { 'Atoms': '2 He + 2 Ne + 2 Ar', 'Force': 'vdW only' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
             break;
         }
 
@@ -2926,7 +2926,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'NaCl Formation',
                 desc: 'Na⁺ and Cl⁻ attract via Coulomb force — ionic bond formation.',
                 fields: { 'Atoms': 'Na⁺ + Cl⁻', 'Force': 'Ionic (Coulomb)', 'Bonding': 'None (ionic)' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 40); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 40); viewport.controls.update(); }
             break;
         }
         case 'ae-nacl-lattice': {
@@ -2941,7 +2941,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'NaCl 3×3 Lattice',
                 desc: 'Ionic crystal lattice — alternating Na⁺/Cl⁻ held by Coulomb.',
                 fields: { 'Atoms': '9 (Na⁺/Cl⁻ alternating)', 'Layout': '3×3 grid', 'Force': 'Ionic + vdW' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
             break;
         }
         case 'ae-mgf2': {
@@ -2952,7 +2952,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'MgF₂ Formation',
                 desc: 'Mg²⁺ attracts two F⁻ ions — ionic bond formation.',
                 fields: { 'Atoms': 'Mg²⁺ + 2 F⁻', 'Force': 'Ionic (Coulomb)' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
             break;
         }
 
@@ -2966,7 +2966,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'H₂ Formation',
                 desc: 'Two hydrogen atoms approach — vdW attracts, bond forms at r < 4.8.',
                 fields: { 'Atoms': '2 × H', 'Force': 'vdW + auto-bond', 'Threshold': '1.2 × σ_avg ≈ 4.8' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
             break;
         }
         case 'ae-o2-form': {
@@ -2977,7 +2977,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'O₂ Formation',
                 desc: 'Two oxygen atoms approach and bond — double bond forms.',
                 fields: { 'Atoms': '2 × O', 'Force': 'vdW + auto-bond + angle strain' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
             break;
         }
         case 'ae-ch4-form': {
@@ -2992,7 +2992,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'CH₄ Assembly',
                 desc: 'Carbon + 4 hydrogens approach — bonds form, angle strain drives tetrahedral.',
                 fields: { 'Atoms': 'C + 4H', 'Target': '109.47° tetrahedral', 'Force': 'vdW + bond + angle' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 30); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 30); viewport.controls.update(); }
             break;
         }
 
@@ -3017,7 +3017,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'Water Dimer',
                 desc: 'Two H₂O molecules — H-bond attracts them. First Phase 3 demo!',
                 fields: { 'Atoms': '6 (2 × H₂O)', 'Force': 'Bond + H-bond + angle strain', 'H-bond': 'LJ 10-12 + angular' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
             break;
         }
         case 'ae-water-cluster': {
@@ -3045,7 +3045,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'Water Pentamer',
                 desc: 'Five H₂O molecules in a ring — H-bond network demonstration.',
                 fields: { 'Atoms': '15 (5 × H₂O)', 'Force': 'Bond + H-bond + angle', 'Pattern': 'Cyclic H-bond ring' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
             break;
         }
 
@@ -3054,16 +3054,17 @@ function loadAEScenario(name) {
         // ══════════════════════════════════════════════════════════════
         case 'ae-vsepr-linear': {
             // CO₂: start bent at 90°, should relax to 180° (linear)
+            // C-O sigma_avg ≈ 2.10, threshold ≈ 2.52; use r=2.0 for safe margin
             bridge.aeAddAtom(6, 0, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(8, 2.5, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(8, 0, 2.5, 0, 0, 0, 0, 0);  // 90° to start
+            bridge.aeAddAtom(8, 2.0, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(8, 0, 2.0, 0, 0, 0, 0, 0);  // 90° to start
             bridge.aeSetBonding(true); bridge.aePreBond();
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
             _aeSetPhase3({ angle: true });
             if (inspector) inspector.setScenarioInfo({ title: 'CO₂ VSEPR',
                 desc: 'CO₂ starts bent (90°) — angle strain drives it to linear (180°).',
                 fields: { 'Atoms': 'C + 2O', 'Start': '90°', 'Target': '180° (linear)', 'Steric #': '2' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
             break;
         }
         case 'ae-vsepr-tetrahedral': {
@@ -3080,7 +3081,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'CH₄ VSEPR',
                 desc: 'CH₄ starts at 90° — angle strain relaxes to 109.47° tetrahedral.',
                 fields: { 'Atoms': 'C + 4H', 'Start': '90°', 'Target': '109.47°', 'Steric #': '4' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
             break;
         }
         case 'ae-vsepr-bent': {
@@ -3096,7 +3097,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'H₂O VSEPR',
                 desc: 'H₂O starts at 150° — lone pairs drive H-O-H toward 104.5° bent.',
                 fields: { 'Atoms': 'O + 2H', 'Start': '150°', 'Target': '104.5°', 'Lone pairs': '2' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
             break;
         }
 
@@ -3118,7 +3119,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'Thermal Gas',
                 desc: '12 Ar atoms with Berendsen thermostat — temperature stabilizes at T=1.',
                 fields: { 'Atoms': '12 × Ar', 'Force': 'vdW only', 'Thermostat': 'ON (T=1.0)' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
             break;
         }
         case 'ae-collision': {
@@ -3128,7 +3129,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'Head-On Collision',
                 desc: 'Two Ar atoms approach at speed — LJ repulsion at short range.',
                 fields: { 'Atoms': '2 × Ar', 'Force': 'vdW (LJ 12-6)', 'Speed': '0.4 each' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 50); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 50); viewport.controls.update(); }
             break;
         }
 
@@ -3137,7 +3138,9 @@ function loadAEScenario(name) {
         // ══════════════════════════════════════════════════════════════
         case 'ae-fe-bcc': {
             bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
-            const a = 3.5;
+            // Fe sigma ≈ 1.35, bond threshold ≈ 1.62; BCC center-corner = a*√3/2
+            // Need a*√3/2 < 1.62 → a < 1.87. Use a = 0.9 so center-corner ≈ 1.56
+            const a = 0.9;
             // BCC: 8 corners + 1 center
             for (let ix = -1; ix <= 1; ix += 2)
                 for (let iy = -1; iy <= 1; iy += 2)
@@ -3148,12 +3151,13 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'Fe BCC Cluster',
                 desc: 'Iron atoms in body-centered cubic arrangement — metallic bonding.',
                 fields: { 'Atoms': '9 × Fe', 'Layout': 'BCC (8 corners + center)', 'Force': 'vdW + bond' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 30); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 15); viewport.controls.update(); }
             break;
         }
         case 'ae-cu-fcc': {
             bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
-            const a = 7.0;
+            // Cu sigma ≈ 1.30, bond threshold ≈ 1.56; use a = 1.5 for nearest-neighbor
+            const a = 1.5;
             bridge.aeAddAtom(29, 0, 0, 0, 0, 0, 0, 0);    // center
             bridge.aeAddAtom(29, a, 0, 0, 0, 0, 0, 0);     // +x
             bridge.aeAddAtom(29, -a, 0, 0, 0, 0, 0, 0);    // -x
@@ -3165,7 +3169,7 @@ function loadAEScenario(name) {
             if (inspector) inspector.setScenarioInfo({ title: 'Cu FCC Seed',
                 desc: 'Copper atoms in face-centered cubic seed — nearest-neighbor bonding.',
                 fields: { 'Atoms': '7 × Cu', 'Layout': 'FCC (center + 6 face)', 'Force': 'vdW + bond' }});
-            if (viewport) { viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 15); viewport.controls.update(); }
             break;
         }
 
