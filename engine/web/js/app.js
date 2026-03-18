@@ -2582,6 +2582,13 @@ function loadPEScenario(name) {
     const mp = 938.272;  // proton mass MeV
     const mmu = 105.658;  // muon mass MeV
     const mn = 939.565;  // neutron mass MeV
+    const mpi  = 139.57;   // charged pion mass MeV
+    const mK   = 493.68;   // charged kaon mass MeV
+    const mtau = 1776.86;  // tau mass MeV
+    const mW   = 80377.0;  // W boson mass MeV
+    const mSig = 1189.4;   // Sigma+ mass MeV
+    const mOmg = 1672.5;   // Omega- mass MeV
+    const mDel = 1232.0;   // Delta++ mass MeV
     const RE = 0.1;      // effective radius for PE (tiny — no false annihilation)
 
     switch (name) {
@@ -2650,6 +2657,156 @@ function loadPEScenario(name) {
             bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
             break;
         }
+        // ── Lepton scenarios (new) ─────────────────────────────────
+        case 'pe-true-muonium': {
+            // μ⁺μ⁻ orbiting their common center of mass
+            const r = 3;
+            const sep = 2 * r;
+            const v = Math.sqrt(ALPHA * r / (4 * Math.PI * mmu * (sep * sep + soft2)));
+            bridge.peAddParticle('antimuon', 1, r, 0, 0, 0, v, 0, mmu, RE);
+            bridge.peAddParticle('muon', -1, -r, 0, 0, 0, -v, 0, mmu, RE);
+            break;
+        }
+        case 'pe-tauonium': {
+            // τ⁺τ⁻ orbiting their common center of mass (tight orbit)
+            const r = 2;
+            const sep = 2 * r;
+            const v = Math.sqrt(ALPHA * r / (4 * Math.PI * mtau * (sep * sep + soft2)));
+            bridge.peAddParticle('antitau', 1, r, 0, 0, 0, v, 0, mtau, RE);
+            bridge.peAddParticle('tau', -1, -r, 0, 0, 0, -v, 0, mtau, RE);
+            break;
+        }
+        case 'pe-tau-atom': {
+            // Tauonic hydrogen: locked proton, τ⁻ in tight orbit
+            const r = 1.5;
+            const v = orbitalV(mtau, r);
+            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
+            bridge.peAddParticle('tau', -1, r, 0, 0, 0, v, 0, mtau, RE);
+            break;
+        }
+
+        // ── Exotic atom scenarios ─────────────────────────────────
+        case 'pe-pionic-hydrogen': {
+            // Pionic hydrogen: π⁻ orbiting locked proton
+            const r = 4;
+            const v = orbitalV(mpi, r);
+            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
+            bridge.peAddParticle('pion_minus', -1, r, 0, 0, 0, v, 0, mpi, RE);
+            break;
+        }
+        case 'pe-kaonic-hydrogen': {
+            // Kaonic hydrogen: K⁻ orbiting locked proton
+            const r = 4;
+            const v = orbitalV(mK, r);
+            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
+            bridge.peAddParticle('kaon_minus', -1, r, 0, 0, 0, v, 0, mK, RE);
+            break;
+        }
+        case 'pe-sigma-plus-atom': {
+            // Σ⁺ atom: electron orbiting locked Sigma+
+            const r = 5;
+            const v = orbitalV(me, r);
+            bridge.peAddLockedParticle('sigma_plus', 1, 0, 0, 0, mSig, RE);
+            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
+            break;
+        }
+        case 'pe-antiprotonic-hydrogen': {
+            // Protonium: p and p̄ orbiting common center of mass
+            const r = 3;
+            const sep = 2 * r;
+            const v = Math.sqrt(ALPHA * r / (4 * Math.PI * mp * (sep * sep + soft2)));
+            bridge.peAddParticle('proton', 1, r, 0, 0, 0, v, 0, mp, RE);
+            bridge.peAddParticle('antiproton', -1, -r, 0, 0, 0, -v, 0, mp, RE);
+            break;
+        }
+
+        // ── Hadron scenarios ──────────────────────────────────────
+        case 'pe-pion-orbit': {
+            // Pionium: π⁺π⁻ Coulomb bound state
+            const r = 4;
+            const sep = 2 * r;
+            const v = Math.sqrt(ALPHA * r / (4 * Math.PI * mpi * (sep * sep + soft2)));
+            bridge.peAddParticle('pion_plus', 1, r, 0, 0, 0, v, 0, mpi, RE);
+            bridge.peAddParticle('pion_minus', -1, -r, 0, 0, 0, -v, 0, mpi, RE);
+            break;
+        }
+        case 'pe-kaon-pair': {
+            // Kaonium: K⁺K⁻ Coulomb bound state
+            const r = 4;
+            const sep = 2 * r;
+            const v = Math.sqrt(ALPHA * r / (4 * Math.PI * mK * (sep * sep + soft2)));
+            bridge.peAddParticle('kaon_plus', 1, r, 0, 0, 0, v, 0, mK, RE);
+            bridge.peAddParticle('kaon_minus', -1, -r, 0, 0, 0, -v, 0, mK, RE);
+            break;
+        }
+        case 'pe-delta-system': {
+            // Δ⁺⁺ system: two locked +1 charges (int8_t constraint) + 2 electrons
+            const r = 4;
+            const v = orbitalV(me, r, 2);
+            bridge.peAddLockedParticle('delta_pp_a', 1, 0.3, 0, 0, mDel / 2, RE);
+            bridge.peAddLockedParticle('delta_pp_b', 1, -0.3, 0, 0, mDel / 2, RE);
+            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
+            bridge.peAddParticle('electron', -1, -r, 0, 0, 0, -v, 0, me, RE);
+            break;
+        }
+        case 'pe-omega-scattering': {
+            // Ω⁻ locked at origin, positron approaching with impact parameter
+            const v_app = 0.004;
+            bridge.peAddLockedParticle('omega_minus', -1, 0, 0, 0, mOmg, RE);
+            bridge.peAddParticle('positron', 1, -15, 2, 0, v_app, 0, 0, me, RE);
+            break;
+        }
+
+        // ── Nuclear scenarios ─────────────────────────────────────
+        case 'pe-tritium': {
+            // Tritium: locked p + n + n nucleus, electron orbiting
+            const r = 5;
+            const v = orbitalV(me, r);
+            bridge.peAddLockedParticle('proton', 1, 0, 0.3, 0, mp, RE);
+            bridge.peAddLockedParticle('neutron', 0, 0.3, -0.2, 0, mn, RE);
+            bridge.peAddLockedParticle('neutron', 0, -0.3, -0.2, 0, mn, RE);
+            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
+            break;
+        }
+        case 'pe-helion': {
+            // Helion / He-3: locked 2p + n nucleus, 2 electrons orbiting
+            const r = 4;
+            const v = orbitalV(me, r, 2);
+            bridge.peAddLockedParticle('proton', 1, 0.3, 0, 0, mp, RE);
+            bridge.peAddLockedParticle('proton', 1, -0.3, 0, 0, mp, RE);
+            bridge.peAddLockedParticle('neutron', 0, 0, 0.3, 0, mn, RE);
+            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
+            bridge.peAddParticle('electron', -1, -r, 0, 0, 0, -v, 0, me, RE);
+            break;
+        }
+
+        // ── Boson scenarios ───────────────────────────────────────
+        case 'pe-w-pair': {
+            // W⁺W⁻ pair in mutual Coulomb orbit
+            const r = 2;
+            const sep = 2 * r;
+            const v = Math.sqrt(ALPHA * r / (4 * Math.PI * mW * (sep * sep + soft2)));
+            bridge.peAddParticle('w_plus', 1, r, 0, 0, 0, v, 0, mW, RE);
+            bridge.peAddParticle('w_minus', -1, -r, 0, 0, 0, -v, 0, mW, RE);
+            break;
+        }
+
+        // ── Scattering scenarios (new) ────────────────────────────
+        case 'pe-meson-scattering': {
+            // π⁺ approaching locked proton (repulsive Coulomb)
+            const v_app = 0.006;
+            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
+            bridge.peAddParticle('pion_plus', 1, -15, 2, 0, v_app, 0, 0, mpi, RE);
+            break;
+        }
+        case 'pe-muon-scattering': {
+            // μ⁻ approaching locked proton (attractive Coulomb)
+            const v_app = 0.008;
+            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
+            bridge.peAddParticle('muon', -1, -15, 2, 0, v_app, 0, 0, mmu, RE);
+            break;
+        }
+
         case 'pe-custom':
         default:
             // Empty — user injects manually via Zoo or controls
@@ -2712,6 +2869,306 @@ function loadAEScenario(name) {
             }
             break;
         }
+        // ══════════════════════════════════════════════════════════════
+        // NOBLE GAS CLUSTERS — vdW only (no bonding, no ionic)
+        // ══════════════════════════════════════════════════════════════
+        case 'ae-he-cluster': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
+            const S = 5.5;
+            const hex = [[0,0,0],[S,0,0],[S*0.5,S*0.866,0],
+                         [0,0,S],[S,0,S],[S*0.5,S*0.866,S]];
+            for (const [x, y, z] of hex)
+                bridge.aeAddAtom(2, x - S*0.5, y - S*0.3, z - S*0.5,
+                    (Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, 0);
+            if (inspector) inspector.setScenarioInfo({ title: 'Helium Cluster',
+                desc: 'Six He atoms — van der Waals (LJ 12-6) only. Watch them settle.',
+                fields: { 'Atoms': '6 × He', 'Force': 'vdW only', 'Bonding': 'None (noble gas)' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-ar-cluster': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
+            const S = 6.0;
+            for (let ix = 0; ix < 2; ix++) for (let iy = 0; iy < 2; iy++) for (let iz = 0; iz < 2; iz++)
+                bridge.aeAddAtom(18, (ix-0.5)*S, (iy-0.5)*S, (iz-0.5)*S,
+                    (Math.random()-0.5)*0.15, (Math.random()-0.5)*0.15, (Math.random()-0.5)*0.15, 0);
+            if (inspector) inspector.setScenarioInfo({ title: 'Argon Cluster',
+                desc: 'Eight Ar atoms in a cube — vdW condensation dynamics.',
+                fields: { 'Atoms': '8 × Ar', 'Force': 'vdW only', 'Layout': '2×2×2 cube' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-noble-mix': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
+            bridge.aeAddAtom(2, -12, 0, 0, 0.1, 0, 0, 0);
+            bridge.aeAddAtom(2, -8, 0, 0, -0.1, 0, 0, 0);
+            bridge.aeAddAtom(10, -2, 0, 0, 0.1, 0, 0, 0);
+            bridge.aeAddAtom(10, 2, 0, 0, -0.1, 0, 0, 0);
+            bridge.aeAddAtom(18, 7, 0, 0, 0.1, 0, 0, 0);
+            bridge.aeAddAtom(18, 12, 0, 0, -0.1, 0, 0, 0);
+            if (inspector) inspector.setScenarioInfo({ title: 'Noble Gas Mix',
+                desc: 'He + Ne + Ar — different sizes interact via vdW only.',
+                fields: { 'Atoms': '2 He + 2 Ne + 2 Ar', 'Force': 'vdW only' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
+            break;
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // IONIC FORMATION — Coulomb-driven, no covalent bonding
+        // ══════════════════════════════════════════════════════════════
+        case 'ae-nacl-form': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeAddAtom(11, -12, 0, 0, 0.15, 0, 0, 1);   // Na+
+            bridge.aeAddAtom(17, 12, 0, 0, -0.15, 0, 0, -1);  // Cl-
+            if (inspector) inspector.setScenarioInfo({ title: 'NaCl Formation',
+                desc: 'Na⁺ and Cl⁻ attract via Coulomb force — ionic bond formation.',
+                fields: { 'Atoms': 'Na⁺ + Cl⁻', 'Force': 'Ionic (Coulomb)', 'Bonding': 'None (ionic)' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 40); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-nacl-lattice': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeSetBondsForce(false); document.getElementById('ae-bonds-force').checked = false;
+            const sp = 7.5;
+            for (let ix = 0; ix < 3; ix++) for (let iy = 0; iy < 3; iy++) {
+                const charge = ((ix + iy) % 2 === 0) ? 1 : -1;
+                const Z = charge === 1 ? 11 : 17;
+                bridge.aeAddAtom(Z, (ix-1)*sp, (iy-1)*sp, 0, 0, 0, 0, charge);
+            }
+            if (inspector) inspector.setScenarioInfo({ title: 'NaCl 3×3 Lattice',
+                desc: 'Ionic crystal lattice — alternating Na⁺/Cl⁻ held by Coulomb.',
+                fields: { 'Atoms': '9 (Na⁺/Cl⁻ alternating)', 'Layout': '3×3 grid', 'Force': 'Ionic + vdW' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-mgf2': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeAddAtom(12, 0, 0, 0, 0, 0, 0, 2);     // Mg2+
+            bridge.aeAddAtom(9, -15, 0, 0, 0.2, 0, 0, -1);  // F-
+            bridge.aeAddAtom(9, 15, 0, 0, -0.2, 0, 0, -1);  // F-
+            if (inspector) inspector.setScenarioInfo({ title: 'MgF₂ Formation',
+                desc: 'Mg²⁺ attracts two F⁻ ions — ionic bond formation.',
+                fields: { 'Atoms': 'Mg²⁺ + 2 F⁻', 'Force': 'Ionic (Coulomb)' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
+            break;
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // COVALENT FORMATION — watch bonds form via auto-bonding
+        // ══════════════════════════════════════════════════════════════
+        case 'ae-h2-form': {
+            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
+            bridge.aeAddAtom(1, -7, 0, 0, 0.08, 0, 0, 0);
+            bridge.aeAddAtom(1, 7, 0, 0, -0.08, 0, 0, 0);
+            if (inspector) inspector.setScenarioInfo({ title: 'H₂ Formation',
+                desc: 'Two hydrogen atoms approach — vdW attracts, bond forms at r < 4.8.',
+                fields: { 'Atoms': '2 × H', 'Force': 'vdW + auto-bond', 'Threshold': '1.2 × σ_avg ≈ 4.8' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-o2-form': {
+            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
+            bridge.aeAddAtom(8, -5, 0, 0, 0.06, 0, 0, 0);
+            bridge.aeAddAtom(8, 5, 0, 0, -0.06, 0, 0, 0);
+            _aeSetPhase3({ angle: true });
+            if (inspector) inspector.setScenarioInfo({ title: 'O₂ Formation',
+                desc: 'Two oxygen atoms approach and bond — double bond forms.',
+                fields: { 'Atoms': '2 × O', 'Force': 'vdW + auto-bond + angle strain' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-ch4-form': {
+            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
+            _aeSetPhase3({ angle: true });
+            const d = 9, t = 1 / Math.sqrt(3);
+            bridge.aeAddAtom(6, 0, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, d*t, d*t, d*t, -0.05, -0.05, -0.05, 0);
+            bridge.aeAddAtom(1, d*t, -d*t, -d*t, -0.05, 0.05, 0.05, 0);
+            bridge.aeAddAtom(1, -d*t, d*t, -d*t, 0.05, -0.05, 0.05, 0);
+            bridge.aeAddAtom(1, -d*t, -d*t, d*t, 0.05, 0.05, -0.05, 0);
+            if (inspector) inspector.setScenarioInfo({ title: 'CH₄ Assembly',
+                desc: 'Carbon + 4 hydrogens approach — bonds form, angle strain drives tetrahedral.',
+                fields: { 'Atoms': 'C + 4H', 'Target': '109.47° tetrahedral', 'Force': 'vdW + bond + angle' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 30); viewport.controls.update(); }
+            break;
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // H-BONDING — pre-formed water molecules with hydrogen bonds
+        // ══════════════════════════════════════════════════════════════
+        case 'ae-water-dimer': {
+            const ang = 104.5 * Math.PI / 180;
+            const rOH = 3.4;
+            // Molecule 1 (left)
+            bridge.aeAddAtom(8, -7, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, -7 + rOH, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, -7 + rOH*Math.cos(ang), rOH*Math.sin(ang), 0, 0, 0, 0, 0);
+            // Molecule 2 (right, rotated so O faces mol1's H)
+            bridge.aeAddAtom(8, 7, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, 7 - rOH, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, 7 - rOH*Math.cos(ang), -rOH*Math.sin(ang), 0, 0, 0, 0, 0);
+            // Pre-bond to establish O-H covalent bonds
+            bridge.aeSetBonding(true); bridge.aePreBond();
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            _aeSetPhase3({ hbonds: true, angle: true });
+            if (inspector) inspector.setScenarioInfo({ title: 'Water Dimer',
+                desc: 'Two H₂O molecules — H-bond attracts them. First Phase 3 demo!',
+                fields: { 'Atoms': '6 (2 × H₂O)', 'Force': 'Bond + H-bond + angle strain', 'H-bond': 'LJ 10-12 + angular' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-water-cluster': {
+            const ang = 104.5 * Math.PI / 180;
+            const rOH = 3.4;
+            const N_mol = 5, R_ring = 16;
+            for (let m = 0; m < N_mol; m++) {
+                const theta = (2 * Math.PI * m) / N_mol;
+                const ox = R_ring * Math.cos(theta), oy = R_ring * Math.sin(theta);
+                bridge.aeAddAtom(8, ox, oy, 0, 0, 0, 0, 0);
+                // H1 pointing toward next molecule (H-bond donor)
+                const tn = (2 * Math.PI * (m + 1)) / N_mol;
+                const dnx = Math.cos(tn) - Math.cos(theta), dny = Math.sin(tn) - Math.sin(theta);
+                const dn = Math.sqrt(dnx*dnx + dny*dny);
+                bridge.aeAddAtom(1, ox + rOH*dnx/dn, oy + rOH*dny/dn, 0, 0, 0, 0, 0);
+                // H2 at HOH angle
+                const px = -dny/dn, py = dnx/dn;
+                const h2x = Math.cos(ang)*dnx/dn + Math.sin(ang)*px;
+                const h2y = Math.cos(ang)*dny/dn + Math.sin(ang)*py;
+                bridge.aeAddAtom(1, ox + rOH*h2x, oy + rOH*h2y, 0, 0, 0, 0, 0);
+            }
+            bridge.aeSetBonding(true); bridge.aePreBond();
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            _aeSetPhase3({ hbonds: true, angle: true });
+            if (inspector) inspector.setScenarioInfo({ title: 'Water Pentamer',
+                desc: 'Five H₂O molecules in a ring — H-bond network demonstration.',
+                fields: { 'Atoms': '15 (5 × H₂O)', 'Force': 'Bond + H-bond + angle', 'Pattern': 'Cyclic H-bond ring' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
+            break;
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // VSEPR GEOMETRY — start at wrong angle, watch relaxation
+        // ══════════════════════════════════════════════════════════════
+        case 'ae-vsepr-linear': {
+            // CO₂: start bent at 90°, should relax to 180° (linear)
+            bridge.aeAddAtom(6, 0, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(8, 2.5, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(8, 0, 2.5, 0, 0, 0, 0, 0);  // 90° to start
+            bridge.aeSetBonding(true); bridge.aePreBond();
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            _aeSetPhase3({ angle: true });
+            if (inspector) inspector.setScenarioInfo({ title: 'CO₂ VSEPR',
+                desc: 'CO₂ starts bent (90°) — angle strain drives it to linear (180°).',
+                fields: { 'Atoms': 'C + 2O', 'Start': '90°', 'Target': '180° (linear)', 'Steric #': '2' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-vsepr-tetrahedral': {
+            // CH₄: start at 90° (cubic), should relax to 109.47°
+            const d = 3.5;
+            bridge.aeAddAtom(6, 0, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, d, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, -d, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, 0, d, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, 0, 0, d, 0, 0, 0, 0);
+            bridge.aeSetBonding(true); bridge.aePreBond();
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            _aeSetPhase3({ angle: true });
+            if (inspector) inspector.setScenarioInfo({ title: 'CH₄ VSEPR',
+                desc: 'CH₄ starts at 90° — angle strain relaxes to 109.47° tetrahedral.',
+                fields: { 'Atoms': 'C + 4H', 'Start': '90°', 'Target': '109.47°', 'Steric #': '4' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-vsepr-bent': {
+            // H₂O: start at 150° (too wide), should relax to 104.5°
+            const r = 3.4;
+            const theta0 = 150 * Math.PI / 180;
+            bridge.aeAddAtom(8, 0, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, r, 0, 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, r*Math.cos(theta0), r*Math.sin(theta0), 0, 0, 0, 0, 0);
+            bridge.aeSetBonding(true); bridge.aePreBond();
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            _aeSetPhase3({ angle: true });
+            if (inspector) inspector.setScenarioInfo({ title: 'H₂O VSEPR',
+                desc: 'H₂O starts at 150° — lone pairs drive H-O-H toward 104.5° bent.',
+                fields: { 'Atoms': 'O + 2H', 'Start': '150°', 'Target': '104.5°', 'Lone pairs': '2' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
+            break;
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // THERMAL DYNAMICS — thermostat + gas kinetics
+        // ══════════════════════════════════════════════════════════════
+        case 'ae-thermal-gas': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
+            _aeSetPhase3({ thermostat: true, temp: 1.0 });
+            const L = 15;
+            for (let n = 0; n < 12; n++) {
+                const x = (Math.random()-0.5)*2*L, y = (Math.random()-0.5)*2*L, z = (Math.random()-0.5)*2*L;
+                const speed = 0.3 + Math.random()*0.5;
+                const phi = Math.random()*2*Math.PI, th = Math.acos(2*Math.random()-1);
+                bridge.aeAddAtom(18, x, y, z,
+                    speed*Math.sin(th)*Math.cos(phi), speed*Math.sin(th)*Math.sin(phi), speed*Math.cos(th), 0);
+            }
+            if (inspector) inspector.setScenarioInfo({ title: 'Thermal Gas',
+                desc: '12 Ar atoms with Berendsen thermostat — temperature stabilizes at T=1.',
+                fields: { 'Atoms': '12 × Ar', 'Force': 'vdW only', 'Thermostat': 'ON (T=1.0)' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-collision': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeAddAtom(18, -20, 0, 0, 0.4, 0, 0, 0);
+            bridge.aeAddAtom(18, 20, 0, 0, -0.4, 0, 0, 0);
+            if (inspector) inspector.setScenarioInfo({ title: 'Head-On Collision',
+                desc: 'Two Ar atoms approach at speed — LJ repulsion at short range.',
+                fields: { 'Atoms': '2 × Ar', 'Force': 'vdW (LJ 12-6)', 'Speed': '0.4 each' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 50); viewport.controls.update(); }
+            break;
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // METALLIC CLUSTERS — multi-atom bonding
+        // ══════════════════════════════════════════════════════════════
+        case 'ae-fe-bcc': {
+            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
+            const a = 3.5;
+            // BCC: 8 corners + 1 center
+            for (let ix = -1; ix <= 1; ix += 2)
+                for (let iy = -1; iy <= 1; iy += 2)
+                    for (let iz = -1; iz <= 1; iz += 2)
+                        bridge.aeAddAtom(26, ix*a, iy*a, iz*a, 0, 0, 0, 0);
+            bridge.aeAddAtom(26, 0, 0, 0, 0, 0, 0, 0);
+            bridge.aePreBond();
+            if (inspector) inspector.setScenarioInfo({ title: 'Fe BCC Cluster',
+                desc: 'Iron atoms in body-centered cubic arrangement — metallic bonding.',
+                fields: { 'Atoms': '9 × Fe', 'Layout': 'BCC (8 corners + center)', 'Force': 'vdW + bond' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 30); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-cu-fcc': {
+            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
+            const a = 7.0;
+            bridge.aeAddAtom(29, 0, 0, 0, 0, 0, 0, 0);    // center
+            bridge.aeAddAtom(29, a, 0, 0, 0, 0, 0, 0);     // +x
+            bridge.aeAddAtom(29, -a, 0, 0, 0, 0, 0, 0);    // -x
+            bridge.aeAddAtom(29, 0, a, 0, 0, 0, 0, 0);     // +y
+            bridge.aeAddAtom(29, 0, -a, 0, 0, 0, 0, 0);    // -y
+            bridge.aeAddAtom(29, 0, 0, a, 0, 0, 0, 0);     // +z
+            bridge.aeAddAtom(29, 0, 0, -a, 0, 0, 0, 0);    // -z
+            bridge.aePreBond();
+            if (inspector) inspector.setScenarioInfo({ title: 'Cu FCC Seed',
+                desc: 'Copper atoms in face-centered cubic seed — nearest-neighbor bonding.',
+                fields: { 'Atoms': '7 × Cu', 'Layout': 'FCC (center + 6 face)', 'Force': 'vdW + bond' }});
+            if (viewport) { viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
+            break;
+        }
+
         case 'ae-custom':
             if (inspector) inspector.setScenarioInfo(null);
             break;
@@ -2804,6 +3261,12 @@ const AE_DEFAULT_TOGGLES = [
     ['ae-bonding', true, 'aeSetBonding'],
     ['ae-damping', false, 'aeSetDamping'],
     ['ae-speed-limit', true, 'aeSetSpeedLimit'],
+    // Phase 3 (all off by default — scenarios enable as needed)
+    ['ae-hbonds', false, 'aeSetHBonds'],
+    ['ae-angle', false, 'aeSetAngleStrain'],
+    ['ae-dipole', false, 'aeSetDipoleDipole'],
+    ['ae-thermostat', false, 'aeSetThermostat'],
+    ['ae-electronegativity', false, 'aeSetElectronegativity'],
 ];
 
 function _syncAEParamsFromUI() {
@@ -2824,6 +3287,25 @@ function _resetAETogglesToDefaults() {
         if (el) el.checked = defaultVal;
         if (bridge[setter]) bridge[setter](defaultVal);
     }
+}
+
+// Helper: enable Phase 3 forces for specific scenarios and sync UI checkboxes
+function _aeSetPhase3(flags) {
+    const map = {
+        hbonds: ['ae-hbonds', 'aeSetHBonds'],
+        angle: ['ae-angle', 'aeSetAngleStrain'],
+        dipole: ['ae-dipole', 'aeSetDipoleDipole'],
+        thermostat: ['ae-thermostat', 'aeSetThermostat'],
+        elec: ['ae-electronegativity', 'aeSetElectronegativity'],
+    };
+    for (const [key, [elId, setter]] of Object.entries(map)) {
+        if (flags[key] !== undefined && bridge[setter]) {
+            bridge[setter](flags[key]);
+            const el = document.getElementById(elId);
+            if (el) el.checked = flags[key];
+        }
+    }
+    if (flags.temp !== undefined && bridge.aeSetThermostatTemp) bridge.aeSetThermostatTemp(flags.temp);
 }
 
 // ── Scale 3: Molecule Scenario Loader ────────────────────────────────
