@@ -1,5 +1,48 @@
 # Foundational Ternary Dynamics Changelog
 
+## Engine v2.11 — Scale 1+2 Scenario Expansion + Phase 3 Forces (March 17, 2026)
+
+### Scale 1 (ParticleEngine): 15 New Scenarios
+
+Extended from 7 to 23 named scenarios (+ Custom), organized with `<optgroup>` dropdown labels:
+
+- **Leptons**: True Muonium (μ⁺μ⁻), Tauonium (τ⁺τ⁻), Tauonic Hydrogen (τ⁻ + p)
+- **Exotic Atoms**: Pionic Hydrogen (π⁻ + p), Kaonic Hydrogen (K⁻ + p), Sigma⁺ Atom (Σ⁺ + e⁻), Protonium (p̄ + p)
+- **Hadrons**: Pionium (π⁺π⁻), Kaonium (K⁺K⁻), Delta⁺⁺ System (Δ⁺⁺ + 2e⁻), Omega⁻ Scattering (Ω⁻ + e⁺)
+- **Nuclear**: Tritium (p + 2n + e⁻), Helion/He-3 (2p + n + 2e⁻)
+- **Bosons**: W⁺W⁻ Pair
+- **Scattering**: π⁺ off Proton, μ⁻ off Proton
+
+### Scale 2 (AtomEngine): Phase 3 Forces + 20 New Scenarios
+
+Implemented 5 Phase 3 forces in JS MockBridge (matching C++ `atom_engine.cpp`):
+
+| Force | Algorithm | Toggle |
+|-------|-----------|--------|
+| H-bonds | LJ 10-12 + cos²(θ_DHA) angular | `h_bonds` |
+| Angle strain (VSEPR) | 3-body harmonic restoring to equilibrium angles | `angle_strain` |
+| Dipole-dipole | 1/r⁵ interaction from electronegativity-weighted bond dipoles | `dipole_dipole` |
+| Thermostat | Berendsen velocity rescaling toward target T | `thermostat` |
+| Electronegativity | Pauling chi table (Z=1–18), extends bonding threshold for polar pairs | `electronegativity` |
+
+20 new scenarios across 7 categories:
+
+- **Noble Gas Clusters**: He Cluster, Ar Cluster, Noble Mix (vdW only)
+- **Ionic Formation**: NaCl, NaCl 3×3 Lattice, MgF₂
+- **Covalent Formation**: H₂, O₂, CH₄ assembly (watch bonds form)
+- **H-Bonding**: Water Dimer, Water Pentamer (first Phase 3 demos)
+- **VSEPR Geometry**: CO₂ (90°→180°), CH₄ (90°→109.5°), H₂O (150°→104.5°)
+- **Thermal Dynamics**: 12-atom Ar gas + thermostat, Head-on collision
+- **Metallic Clusters**: Fe BCC (9 atoms), Cu FCC (7 atoms)
+
+### Files Modified (854 insertions, 50 deletions)
+
+- **`engine/web/js/wasm-bridge.js`** (+262) — Phase 3 force computation, constants, atom properties, setters
+- **`engine/web/js/app.js`** (+512) — 35 new scenario cases, `_aeSetPhase3()` helper, extended toggles
+- **`engine/web/index.html`** (+112) — Scenario optgroups, Phase 3 checkboxes enabled
+
+---
+
 ## Engine v2.10 — Enhanced Atom/Molecule Visualization (March 9, 2026)
 
 ### Scale 2/3 Pedagogical Visualization
