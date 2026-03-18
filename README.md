@@ -277,6 +277,44 @@ Compiles to WASM via Emscripten. Three.js dashboard with 211 scenarios across 4 
 
 ---
 
+## Interactive Engine Gallery
+
+The browser-based simulation engine runs the FTD Lagrangian in real time across five scales of physical reality.
+
+### Scale 0 — Substrate Lattice
+
+4-source interference on the 32^3 cubic lattice with energy density heatmap (blue = low, red = high). Each voxel carries state s in {-1, 0, +1} and flux J in R^3, updated every tick via the 6-phase cycle.
+
+![Scale 0: 4-Source Interference](engine/web/screenshots/scale0_interference.png)
+
+Pair production with the Lagrangian density inspector showing the stacked contributions: field kinetic, gradient, Born-Infeld, coupling, velocity, Gauss, and dissipation terms.
+
+![Scale 0: Lagrangian Inspector](engine/web/screenshots/scale0_lagrangian.png)
+
+### Scale 2 — Atoms
+
+NaCl crystal lattice with alternating Na/Cl atoms, orbital electron clouds, and ionic Coulomb forces. The substructure panel shows protons, neutrons, and orbital shells.
+
+![Scale 2: NaCl Crystal](engine/web/screenshots/scale2_water_pentamer.png)
+
+### Scale 3 — Molecules
+
+Caffeine molecule (C8H10N4O2) with auto-bonding, Van der Waals forces, orbital clouds, and element labels. 27 molecules available from H2 to NaCl crystals.
+
+![Scale 3: Caffeine](engine/web/screenshots/scale3_caffeine.png)
+
+### Scale 4 — Consciousness
+
+Holographic humanoid figure in self-reference mode (sLoop depth 1) with the consciousness diagnostics panel showing the master quadratic's complex roots, phase angle theta_C = 52.54 degrees, observable fraction 37%, and Mandelbrot boundary orbit.
+
+![Scale 4: Consciousness](engine/web/screenshots/scale4_consciousness.png)
+
+The new Theory sub-tab provides 6 interactive pedagogical visualizations: Master Quadratic phase diagram, Complex Plane consciousness roots, Existence Filter projection hierarchy, ReLU crystallization, Von Neumann chain cascade, and Observer Boundary accumulation.
+
+![Scale 4: Theory Panels](engine/web/screenshots/scale4_theory.png)
+
+---
+
 ## Key Theory Documents
 
 | Document | Content |
