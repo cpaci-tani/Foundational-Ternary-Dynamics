@@ -19,6 +19,18 @@ Status: All results are [THEOREM] (pure algebra from master quadratic).
 See docs/theory/DERIV_CHARGE_QUARTIC_FROM_GSTAR.md for full derivation.
 """
 
+import io
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+
+# Ensure UTF-8 output on Windows
+if sys.platform == 'win32' and hasattr(sys.stdout, 'buffer'):
+    if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+        sys.stdout = io.TextIOWrapper(
+            sys.stdout.buffer, encoding='utf-8', errors='replace', line_buffering=True
+        )
+
 import numpy as np
 from scripts.constants import (
     G_STAR, ALPHA, X_PLUS, X_MINUS,

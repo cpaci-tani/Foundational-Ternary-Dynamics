@@ -2,8 +2,8 @@
 
 **Living document for AI agents and developers.**
 **Last updated:** 2026-03-05
-**Engine version:** 2.8 (Logic-First + Perfected EM + Multi-Scale Physics + CUDA GPU)
-**Test count:** 155 test files (108 unit + 47 campaigns), 155 CTests (151 CPU + 4 GPU-conditional). 10-Phase Proof-Out: 125+ checks, all PASS. GPU conditional on `FTD_ENABLE_CUDA`.
+**Engine version:** 2.10 (Logic-First + Perfected EM + Multi-Scale Physics + CUDA GPU)
+**Test count:** 157 test files, 156 CTests (152 CPU + 4 GPU-conditional). 10-Phase Proof-Out: 125+ checks, all PASS. GPU conditional on `FTD_ENABLE_CUDA`.
 
 ---
 
@@ -45,7 +45,7 @@ engine/
   SPEC_ENGINE.md              # This document
   print_ontic.py              # Utility to print ontic chain values
   include/ftd/
-    ontic.h                   # Ontic derivation chain (9+ layers), D=3 + varpi -> all constants (1133L)
+    ontic.h                   # Ontic derivation chain (9+ layers), D=3 + varpi -> all constants (1221L)
     constants.h               # Re-exports ontic + engine-specific constants (276L)
     voxel.h                   # Vec3, ForceDiag, Voxel struct (203L)
     lattice.h                 # Lattice class -- 3D cubic grid with periodic boundaries (59L)
@@ -79,7 +79,7 @@ engine/
     kernels_forces.cu         # GPU forces + movement + color/strong/weak/exchange kernels (737L)
     CMakeLists.txt            # CUDA build rules (35L)
   tests/
-    155 test files            # 108 unit + 47 campaigns (all registered as CTests)
+    157 test files            # All registered as CTests (152 CPU + 4 GPU-conditional)
   wasm/
     ftd_wasm.cpp              # Emscripten Embind bindings -- full engine API (1492L)
     CMakeLists.txt            # WASM build rules (Emscripten-only)
@@ -747,9 +747,9 @@ ftd_core (C++ library)
 
 **Scale 0 (Lattice):** Flux Pulse, Dipole, Proton+Electron, Genesis Cascade, Damping Demo, 4-Source Interference, Flux Vortex, Particle Collision, Pair Production, Hydrogen Atom, Gravity Cluster, Random Genesis, Rainbow, Lattice Prism, Dipole Radiation, Two-Slit, Photon Race, Dual Substrate, Entangled Pair, Annihilation, Force Law Profile
 
-**Scale 1 (ParticleEngine):** Hydrogen, Helium, Positronium, Muonium, Scattering, Three-body, Deuteron
+**Scale 1 (ParticleEngine):** Leptons: Hydrogen, Helium, Positronium, Muonium, True Muonium, Tauonium, Tauonic Hydrogen. Exotic Atoms: Pionic H, Kaonic H, Σ⁺ Atom, Protonium. Hadrons: Pionium, Kaonium, Δ⁺⁺ System, Ω⁻ Scattering. Nuclear: Deuteron, Tritium, Helion. Bosons: W⁺W⁻ Pair. Scattering: p-e, Three-body, π⁺-p, μ⁻-p. Custom. (23 scenarios)
 
-**Scale 2 (AtomEngine):** Individual elements (118), Periodic Table, Custom, H2, H2O, NaCl, CH4, NaCl Crystal, 25-molecule library
+**Scale 2 (AtomEngine):** Individual elements (118), Periodic Table. Noble Gas Clusters: He/Ar/Mix. Ionic Formation: NaCl/MgF₂/Lattice. Covalent Formation: H₂/O₂/CH₄. H-Bonding: Water Dimer/Pentamer. VSEPR Geometry: CO₂/CH₄/H₂O. Thermal Dynamics: Gas/Collision. Metallic Clusters: Fe BCC/Cu FCC. Custom. Phase 3 forces: H-bonds, angle strain, dipole-dipole, thermostat, electronegativity. Scale 3 molecules: 25-molecule library + NaCl Crystal
 
 ### Field Visualization Overlays (9 toggles, keys 1-9)
 

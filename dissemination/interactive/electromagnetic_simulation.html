@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRD Electromagnetic Simulation</title>
+    <title>FTD Electromagnetic Simulation</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -331,7 +331,7 @@
                     <h3>Fine Structure Constant</h3>
                     <div class="alpha-display">
                         <div class="alpha-value">α = 1/137.036</div>
-                        <div class="alpha-label">Derived from TRD master quadratic</div>
+                        <div class="alpha-label">Derived from FTD master quadratic</div>
                     </div>
 
                     <div class="control-group">
@@ -375,9 +375,9 @@
                 </div>
 
                 <div class="panel">
-                    <h3>TRD Derivation</h3>
+                    <h3>FTD Derivation</h3>
                     <div class="info-box">
-                        The Coulomb force emerges from the <b>Gauss constraint</b> in TRD:
+                        The Coulomb force emerges from the <b>Gauss constraint</b> in FTD:
                         <br><br>
                         ∇·J = q (charge sources flux divergence)
                         <br><br>
@@ -397,7 +397,7 @@
 
     <script>
         // ============================================
-        // TRD ELECTROMAGNETIC SIMULATION
+        // FTD ELECTROMAGNETIC SIMULATION
         // Coulomb: F_elec = -q * grad(q_bar)
         // Lorentz: F_mag = beta * (curl J) x J_hat
         // ============================================
@@ -553,7 +553,7 @@
         }
 
         // ============================================
-        // TRD COULOMB FORCE CALCULATION
+        // FTD COULOMB FORCE CALCULATION
         // F_elec = -q * grad(q_bar)
         // Implemented as: F = k * q1 * q2 / r^2
         // ============================================

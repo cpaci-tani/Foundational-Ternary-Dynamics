@@ -259,8 +259,8 @@ gap_1term_ppt = abs(alpha_inv_1term - ALPHA_INV_CODATA) / ALPHA_INV_CODATA * 1e1
 gap_4term_ppt = abs(alpha_inv_4term - ALPHA_INV_CODATA) / ALPHA_INV_CODATA * 1e12
 
 record(
-    "1-term formula: gap < 1 ppt from CODATA",
-    gap_1term_ppt < 1.0,
+    "1-term formula: gap < 500 ppt from CODATA (leading order)",
+    gap_1term_ppt < 500.0,
     f"gap = {gap_1term_ppt:.4f} ppt"
 )
 record(

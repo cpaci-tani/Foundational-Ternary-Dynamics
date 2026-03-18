@@ -10,6 +10,9 @@ Framework: FTD v5.17 + Trit Information Theory Extension
 
 import sys
 import math
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+
 import numpy as np
 from scipy.special import gamma
 

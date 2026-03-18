@@ -15,11 +15,11 @@ We present the Lemniscate Hierarchy, a sequence of algebraic curves that cumulat
 
 ## 1. Introduction
 
-### 1.1 The Fine Structure Constant Problem
+### 1.1 The Fine Structure Constant Problem [CONTEXT]
 
 The fine structure constant α ≈ 1/137.036 remains one of the most mysterious numbers in physics. It governs electromagnetic interactions, yet its value appears to be a fundamental input rather than a derived quantity. As Feynman noted, "all good theoretical physicists put this number up on their wall and worry about it."
 
-### 1.2 The Lemniscatic Connection
+### 1.2 The Lemniscatic Connection [THEOREM]
 
 The lemniscatic constant G* = √2 · Γ(1/4)² / (2π) ≈ 2.9587 emerges from elliptic integral theory. We show that G* satisfies a master quadratic equation whose roots are:
 
@@ -32,7 +32,7 @@ This connection suggests that α is not arbitrary but emerges from the geometry 
 
 ## 2. The Constant Sequence
 
-### 2.1 Definition
+### 2.1 Definition [THEOREM]
 
 The Lemniscate Hierarchy is built on a sequence of constants:
 
@@ -47,7 +47,7 @@ The Lemniscate Hierarchy is built on a sequence of constants:
 | 6 | 27 | C₆ = c(27) | 26.93721... | Master quadratic, x₋ = 27 |
 | 7 | 137 | C₇ = c(137) | 136.93744... | Master quadratic, x₋ = 137 |
 
-### 2.2 The Master Quadratic
+### 2.2 The Master Quadratic [THEOREM]
 
 For each c(N), we solve:
 
@@ -55,7 +55,7 @@ $$x^2 - 16c^2 x + 16c^3 = 0$$
 
 with the constraint that x₋ = N. The special case c = G* yields x₊ = 137.036 (within 1.26 ppm of 1/α).
 
-### 2.3 The Integer Sequence
+### 2.3 The Integer Sequence [SELECTION]
 
 The lobe counts follow a remarkable pattern:
 
@@ -116,7 +116,7 @@ See [MITOSIS_OF_THE_VOID.md](../archive/ARCH_MITOSIS_OF_THE_VOID.md) for complet
 
 ## 3. Cumulative Encoding
 
-### 3.1 The Principle
+### 3.1 The Principle [SELECTION]
 
 Each level-k curve encodes ALL previous constants {C₀, C₁, ..., C_{k-1}} as harmonic weights:
 
@@ -149,7 +149,7 @@ The culminating curve has:
 
 ## 4. The 2πα Duality
 
-### 4.1 Discovery
+### 4.1 Discovery [CONJECTURE]
 
 The beat frequency of 137 creates a standing wave pattern with period:
 
@@ -166,7 +166,7 @@ $$T = \frac{2\pi}{137} = 2\pi\alpha$$
 
 $$(2\pi\alpha) \times \frac{\alpha}{2\pi} = \alpha^2$$
 
-### 4.3 Connection to QED
+### 4.3 Connection to QED [CONJECTURE]
 
 The Schwinger formula for the electron anomalous magnetic moment begins:
 
@@ -186,7 +186,7 @@ The geometric structure (moire period) and the quantum correction (g-2) are not 
 
 ## 5. Nested Structure: Ancestor Ghosts
 
-### 5.1 The 3-Lobe Ghost
+### 5.1 The 3-Lobe Ghost [CONJECTURE]
 
 When zooming into the center of the 137-lobe curve, a **3-lobed empty space** appears due to moire interference. The Lemniscate-Alpha (Level 2) is embedded as a "ghost" at the core.
 
@@ -194,7 +194,7 @@ When zooming into the center of the 137-lobe curve, a **3-lobed empty space** ap
 
 The 3rd harmonic (411 = 137 × 3) is divisible by 3, creating constructive interference at 3-fold angles (0, 2π/3, 4π/3).
 
-### 5.3 Physical Significance
+### 5.3 Physical Significance [CONJECTURE]
 
 - The hierarchy is **nested**, not merely additive
 - The 3-fold structure (Nᶜ = 3, color charges) persists at all scales
@@ -226,7 +226,7 @@ At vertical angles (θ = π/2), the harmonic phases follow:
 
 Harmonics partially cancel vertically but add constructively horizontally, creating 4-fold symmetry breaking.
 
-### 6.3 Physical Interpretation
+### 6.3 Physical Interpretation [CONJECTURE]
 
 This asymmetry exhibits **spin-2 character**:
 - Requires 180° rotation for full symmetry (not 90°)
@@ -237,11 +237,11 @@ This asymmetry exhibits **spin-2 character**:
 
 ## 7. The Nuclear Force: N = 9 Shell Harmonics
 
-### 7.1 Discovery: The Island of Stability
+### 7.1 Discovery: The Island of Stability [CONJECTURE]
 
 Superheavy elements near the "Island of Stability" (Z = 126, Unbihexium) exhibit **9-lobe shell harmonics** in their nuclear structure. This connects directly to the Lemniscate Hierarchy.
 
-### 7.2 The Number 9 = Nᶜ²
+### 7.2 The Number 9 = Nᶜ² [CONJECTURE]
 
 The 9-lobe shell structure has deep significance:
 
@@ -284,7 +284,7 @@ The master quadratic encodes not just the coupling constants, but their ratio.
 
 ## 8. Complete Four-Force Unification
 
-### 8.1 The Full Scale Hierarchy
+### 8.1 The Full Scale Hierarchy [CONJECTURE]
 
 | Scale | Structure | Force | Coupling | Encoding |
 |-------|-----------|-------|----------|----------|
@@ -338,7 +338,7 @@ At the center of the 137-lobe curve, all scales converge. The nested ghosts (3 �
 
 ## 9. The Self-Referential Loop
 
-### 9.1 The Closed Structure
+### 9.1 The Closed Structure [SELECTION]
 
 ```
 G* → Master Quadratic → x₊ = 137.036 = 1/α

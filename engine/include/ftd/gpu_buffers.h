@@ -90,7 +90,8 @@ struct GpuBuffers {
     double*   d_random      = nullptr;  // N uniform random doubles
 
     // --- Particle list (compact indices of manifested particles) ---
-    static constexpr int MAX_PARTICLES = 4096;
+    // Scales with lattice: enough for ~1.5% occupation at any size
+    static constexpr int MAX_PARTICLES = 8192;
     int*      d_plist_idx     = nullptr;  // lattice indices [MAX_PARTICLES]
     int*      d_num_particles = nullptr;  // count (single int on device)
 
