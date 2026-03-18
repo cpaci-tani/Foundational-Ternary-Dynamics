@@ -1,7 +1,7 @@
 # Physics Status — FTD Multi-Scale Engine
 
 > **Living document** — updated after each implementation phase.
-> Last updated: 2026-03-08 (Phase 2 complete)
+> Last updated: 2026-03-17 (Phase 3 complete — JS MockBridge)
 
 ---
 
@@ -132,17 +132,18 @@ Velocity Verlet integration. dt = 0.01, softening = 0.5.
 | Covalent bonds (harmonic) | F = -k * (r - r_eq) * r_hat | `covalent_bonds` | Implemented | 1 | atom_toggles, campaign_h2_molecule |
 | Auto-bonding | Formation at r < 1.2*sigma; breaking at r > 2*r_eq | `auto_bonding` | Implemented | 1 | atom_engine |
 | Damping | v *= (1 - DAMPING * dt) | `damping` | Implemented | 1 | atom_toggles |
-| H-bonds | LJ 10-12 + angular dependence | `h_bonds` | Stub only | 3 | — |
-| Dipole-dipole | Standard dipole-dipole interaction | `dipole_dipole` | Stub only | 3 | — |
-| Angle strain (VSEPR) | V = k_theta * (theta - theta_eq)^2 / 2 | `angle_strain` | Stub only | 3 | — |
+| H-bonds | LJ 10-12 + cos²(θ_DHA) angular | `h_bonds` | JS MockBridge | 3 | ae-water-dimer scenario |
+| Dipole-dipole | 1/r⁵ from bond dipoles × Pauling chi | `dipole_dipole` | JS MockBridge | 3 | — |
+| Angle strain (VSEPR) | V = k_theta * (theta - theta_eq)^2 / 2 | `angle_strain` | JS MockBridge | 3 | ae-vsepr-* scenarios |
 | Torsional (dihedral) | V = V_n/2 * [1 + cos(n*phi - gamma)] | `torsional` | Stub only | 4 | — |
-| Thermostat (Nose-Hoover) | Velocity rescaling via auxiliary variable | `thermostat` | Stub only | 3 | — |
-| Electronegativity | Pauling chi-driven bond formation | `electronegativity` | Stub only | 3 | — |
+| Thermostat (Berendsen) | λ = √(1 + dt/τ·(T_target/T - 1)) | `thermostat` | JS MockBridge | 3 | ae-thermal-gas scenario |
+| Electronegativity | Pauling chi-driven bond formation threshold | `electronegativity` | JS MockBridge | 3 | — |
 
 ### Toggles (AtomToggles — 11 booleans)
 
 - **Active (5):** ionic (on), van_der_waals (on), covalent_bonds (on), auto_bonding (on), damping (off)
-- **Stub (6):** h_bonds, dipole_dipole, angle_strain, torsional, thermostat, electronegativity (all off)
+- **JS MockBridge (5):** h_bonds, dipole_dipole, angle_strain, thermostat, electronegativity (all off by default, enabled per scenario)
+- **Stub (1):** torsional (Phase 4)
 - **Helpers:** `enable_all()`, `minimal()`
 - **Backward compat:** `set_damping_enabled()`, `set_bonding_enabled()` delegate to toggles
 
@@ -153,9 +154,9 @@ Velocity Verlet integration. dt = 0.01, softening = 0.5.
 | f_ionic | Populated |
 | f_vdw | Populated |
 | f_bond | Populated |
-| f_hbond | Zero (Phase 3) |
-| f_dipole | Zero (Phase 3) |
-| f_angle | Zero (Phase 3) |
+| f_hbond | Active (JS MockBridge) |
+| f_dipole | Active (JS MockBridge) |
+| f_angle | Active (JS MockBridge) |
 | f_torsion | Zero (Phase 4) |
 
 ### Diagnostics (AtomDiagnostics)
@@ -178,7 +179,7 @@ Future Phase 4 additions: torsional (dihedral) angles, improper torsions (planar
 |-------|-------------|--------|
 | 0 | 13 active toggles + field viz | Complete |
 | 1 | Coulomb, Gravity, Damping + 7 Phase 2 forces | Complete (Phase 2) |
-| 2 | Ionic, vdW, Bonds, Auto-bond, Damping + 6 grayed-out future | Complete (Phase 1) |
+| 2 | Ionic, vdW, Bonds, Auto-bond, Damping + 5 Phase 3 toggles (H-bonds, Angle, Dipole, Thermostat, Electronegativity) + 1 grayed-out (Torsional) | Complete (Phase 3) |
 
 ---
 
@@ -199,7 +200,7 @@ Future Phase 4 additions: torsional (dihedral) angles, improper torsions (planar
 |-------|-------------|--------|-------------|
 | 1 | Toggle & Diagnostics Infrastructure | **Complete** | — |
 | 2 | Scale 1 Force Expansion (7 new forces) | **Complete** | Phase 1 |
-| 3 | Scale 2 Force Expansion (5 new forces) | Planned | Phase 1 |
+| 3 | Scale 2 Force Expansion (5 new forces) | **Complete (JS)** | Phase 1 |
 | 4 | Scale 3 Force Expansion (molecular) | Planned | Phases 2+3 |
 | 5 | Per-force visualization (color-coded arrows) | Planned | Phase 1 |
 | 6 | Performance (neighbor lists, SIMD) | Planned | Phases 2+3 |
