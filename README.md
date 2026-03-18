@@ -279,39 +279,47 @@ Compiles to WASM via Emscripten. Three.js dashboard with 211 scenarios across 4 
 
 ## Interactive Engine Gallery
 
-The browser-based simulation engine runs the FTD Lagrangian in real time across five scales of physical reality.
+The browser-based simulation engine runs the FTD Lagrangian in real time across four scales of physical reality. Launch with `python -m http.server 8080 -d engine/web` and open [localhost:8080](http://localhost:8080).
 
 ### Scale 0 — Substrate Lattice
 
-4-source interference on the 32^3 cubic lattice with energy density heatmap (blue = low, red = high). Each voxel carries state s in {-1, 0, +1} and flux J in R^3, updated every tick via the 6-phase cycle.
+Flux dipole on the 32^3 cubic lattice. Each voxel carries state s in {-1, 0, +1} and flux J in R^3, updated every tick via the 6-phase cycle. E-field and flux line overlays show the emergent electromagnetic structure.
 
-![Scale 0: 4-Source Interference](engine/web/screenshots/scale0_interference.png)
+![Scale 0: Flux Dipole](engine/web/screenshots/scale0_dipole.png)
 
-Pair production with the Lagrangian density inspector showing the stacked contributions: field kinetic, gradient, Born-Infeld, coupling, velocity, Gauss, and dissipation terms.
+Pair production with energy density heatmap (blue = low, red = high). Particles manifest when |J| exceeds the threshold K_B = 0.511.
+
+![Scale 0: Pair Production](engine/web/screenshots/scale0_pair_production.png)
+
+The Lagrangian density inspector shows the stacked contributions in real time: field kinetic, gradient, Born-Infeld, coupling, velocity, Gauss constraint, and dissipation terms.
 
 ![Scale 0: Lagrangian Inspector](engine/web/screenshots/scale0_lagrangian.png)
 
+### Scale 1 — Particles
+
+Hydrogen atom (proton + electron) with Coulomb binding, orbital trails, and Velocity Verlet integration. The particle engine computes analytical EM forces from the FTD coupling alpha = 1/137.036.
+
+![Scale 1: Hydrogen Atom](engine/web/screenshots/scale1_hydrogen.png)
+
 ### Scale 2 — Atoms
 
-NaCl crystal lattice with alternating Na/Cl atoms, orbital electron clouds, and ionic Coulomb forces. The substructure panel shows protons, neutrons, and orbital shells.
+Water pentamer (5 H2O molecules) showing orbital electron clouds, hydrogen bonding, and Van der Waals interactions. The substructure panel tracks protons, neutrons, and orbital shells for each element.
 
-![Scale 2: NaCl Crystal](engine/web/screenshots/scale2_water_pentamer.png)
+![Scale 2: Water Pentamer](engine/web/screenshots/scale2_water_pentamer.png)
+
+NaCl 3x3 crystal lattice with alternating Na/Cl atoms and ionic Coulomb forces. 138 atomic scenarios available from single hydrogen to multi-element clusters.
+
+![Scale 2: NaCl Crystal](engine/web/screenshots/scale2_nacl_crystal.png)
 
 ### Scale 3 — Molecules
 
-Caffeine molecule (C8H10N4O2) with auto-bonding, Van der Waals forces, orbital clouds, and element labels. 27 molecules available from H2 to NaCl crystals.
+Benzene (C6H6) with auto-bonding, orbital clouds, and the hexagonal ring structure. Bond springs and Van der Waals forces maintain molecular geometry.
+
+![Scale 3: Benzene](engine/web/screenshots/scale3_benzene.png)
+
+Caffeine (C8H10N4O2) — one of 27 molecules available from H2 to NaCl crystals and DNA bases.
 
 ![Scale 3: Caffeine](engine/web/screenshots/scale3_caffeine.png)
-
-### Scale 4 — Consciousness
-
-Holographic humanoid figure in self-reference mode (sLoop depth 1) with the consciousness diagnostics panel showing the master quadratic's complex roots, phase angle theta_C = 52.54 degrees, observable fraction 37%, and Mandelbrot boundary orbit.
-
-![Scale 4: Consciousness](engine/web/screenshots/scale4_consciousness.png)
-
-The new Theory sub-tab provides 6 interactive pedagogical visualizations: Master Quadratic phase diagram, Complex Plane consciousness roots, Existence Filter projection hierarchy, ReLU crystallization, Von Neumann chain cascade, and Observer Boundary accumulation.
-
-![Scale 4: Theory Panels](engine/web/screenshots/scale4_theory.png)
 
 ---
 
