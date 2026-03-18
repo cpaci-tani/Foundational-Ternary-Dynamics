@@ -193,7 +193,7 @@ ftd/
     tests/                      # 156 CTests (151 CPU + 4 GPU + 1 dark sector)
     cuda/                       # GPU acceleration (363x on RTX 5090)
     wasm/                       # WebAssembly bindings
-    web/                        # Browser dashboard (Three.js, 32 scenarios)
+    web/                        # Browser dashboard (Three.js, 211 scenarios across 4 scales)
   scripts/
     constants.py                # Canonical shared constants
     verification/               # 35 formal verification scripts
@@ -273,7 +273,7 @@ CUDA backend with cuFFT spectral Poisson solver. **363x speedup** at 64^3 on RTX
 
 ### WebAssembly
 
-Compiles to WASM via Emscripten. Three.js dashboard with 32 scenarios including QCD confinement demos, real-time diagnostics, Lagrangian inspector, and particle catalog.
+Compiles to WASM via Emscripten. Three.js dashboard with 211 scenarios across 4 scales (21 lattice, 23 particle, 140 atom, 27 molecule), real-time diagnostics, Lagrangian inspector, particle catalog, and Phase 3 atomic forces.
 
 ---
 
