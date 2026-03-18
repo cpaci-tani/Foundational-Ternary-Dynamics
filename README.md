@@ -353,10 +353,6 @@ Caffeine (C8H10N4O2) — one of 27 molecules available from H2 to NaCl crystals 
 - Confinement, Bell violation, and the Einstein equations are derivable from the lattice structure
 - G\* is intrinsic to Z^3 through the Watson integral of the BCC sublattice
 
-**Does not claim:**
-- To replace the Standard Model's computational machinery
-- To have confirmed novel predictions (best candidates: neutrino mass hierarchy ~2027, sum m_nu ~2030)
-
 **Open questions [OPEN]:**
 - Hadronic mass spectrum — quarks are confined; their "masses" are scheme-dependent parameters, not direct observables. Whether FTD can derive hadron masses from the confinement mechanism itself is unresolved.
 - Neutrino mass structure — predictions exist but await experimental reach
