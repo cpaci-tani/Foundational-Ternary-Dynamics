@@ -1321,6 +1321,126 @@
             max-height: 120px;
             overflow-y: auto;
         }
+        /* ── Consciousness Pedagogy ──────────────────── */
+        .cs-subtab-bar {
+            display: flex; gap: 0; margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .cs-subtab {
+            padding: 6px 16px; font-size: 11px; font-weight: 500;
+            color: var(--text-muted); cursor: pointer;
+            border-bottom: 2px solid transparent; transition: all 0.15s;
+            user-select: none;
+        }
+        .cs-subtab:hover { color: var(--text-secondary); }
+        .cs-subtab.active {
+            color: var(--consciousness-primary);
+            border-bottom-color: var(--consciousness-primary);
+        }
+        .cs-subpanel { display: none; }
+        .cs-subpanel.active { display: block; }
+
+        .cs-theory-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 10px;
+        }
+        .cs-theory-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 10px;
+            position: relative;
+        }
+        .cs-theory-card.cs-highlight {
+            border-color: var(--consciousness-primary);
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+        }
+        .cs-theory-title {
+            font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.8px;
+            color: var(--consciousness-primary);
+            margin-bottom: 6px;
+        }
+        .cs-theory-card canvas {
+            width: 100%; height: auto;
+            display: block; border-radius: 4px;
+            background: var(--bg-deep);
+        }
+        .cs-slider-row {
+            margin-top: 6px; display: flex;
+            align-items: center; gap: 8px;
+            font-size: 11px; color: var(--text-secondary);
+        }
+        .cs-slider-row input[type=range] { flex: 1; }
+        .cs-slider-row label {
+            font-family: var(--font-mono);
+            min-width: 70px;
+        }
+
+        .cs-walkthrough-container { max-width: 800px; margin: 0 auto; }
+        .cs-walkthrough-step-title {
+            font-size: 14px; font-weight: 600;
+            color: var(--consciousness-primary);
+            margin-bottom: 8px;
+        }
+        .cs-walkthrough-text {
+            font-size: 12px; line-height: 1.65;
+            color: var(--text-secondary);
+            margin-bottom: 12px; min-height: 60px;
+        }
+        .cs-walkthrough-canvas-host {
+            margin-bottom: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 10px;
+        }
+        .cs-walkthrough-canvas-host canvas {
+            width: 100%; height: auto; display: block;
+            border-radius: 4px; background: var(--bg-deep);
+        }
+        .cs-walkthrough-nav {
+            display: flex; align-items: center;
+            justify-content: center; gap: 16px;
+        }
+        #cs-walk-indicator {
+            font-size: 12px; color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .cs-info-btn {
+            position: absolute; top: 6px; right: 6px;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--bg-input); border: 1px solid var(--border);
+            color: var(--text-muted); font-size: 9px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1; z-index: 2;
+        }
+        .cs-info-btn:hover {
+            color: var(--consciousness-primary);
+            border-color: var(--consciousness-primary);
+        }
+        .cs-info-tooltip {
+            position: absolute; top: 26px; right: 4px; z-index: 100;
+            background: var(--bg-deep); border: 1px solid var(--consciousness-primary);
+            border-radius: var(--radius-lg); padding: 8px 10px;
+            font-size: 11px; color: var(--text-secondary); line-height: 1.5;
+            max-width: 260px; display: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        }
+        .cs-info-tooltip.visible { display: block; }
+
+        .cs-scenario-desc {
+            margin-top: 6px; padding: 6px 10px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); font-size: 11px;
+            color: var(--text-secondary); line-height: 1.5;
+        }
+        .cs-scenario-desc summary {
+            cursor: pointer; color: var(--consciousness-primary);
+            font-weight: 500; font-size: 11px;
+        }
     </style>
     <script type="importmap">
     {
@@ -1567,6 +1687,10 @@
                         <option value="cs-custom">Custom (Manual)</option>
                     </optgroup>
                 </select>
+                        <details class="cs-scenario-desc" id="cs-scenario-desc">
+                            <summary>What does this scenario demonstrate?</summary>
+                            <p id="cs-scenario-desc-text">Select a scenario to see its description.</p>
+                        </details>
                 <select class="tb-select" id="cs-figure-select" style="max-width:140px; margin-left:6px">
                     <optgroup label="Ethereal">
                         <option value="aetheric">Aetheric Body</option>
@@ -2764,61 +2888,125 @@
                 </div>
             </div>
             <div class="panel" id="panel-consciousness">
-                <!-- Row 1: Theory Constants -->
-                <div class="panel-grid panel-grid-4">
-                    <div class="card" title="Consciousness phase angle: arctan(Y_IMAG / Y_REAL) = 52.54°. Divides subject-dominant (above) from object-dominant (below) awareness.">
-                        <div class="card-title">&theta;<sub>C</sub> (Theory)</div>
-                        <div class="stat-value" id="cs-diag-theta" style="color:var(--consciousness-primary)">52.54&deg;</div>
+                <!-- Sub-tab bar -->
+                <div class="cs-subtab-bar">
+                    <span class="cs-subtab active" data-cspanel="cs-diagnostics">Diagnostics</span>
+                    <span class="cs-subtab" data-cspanel="cs-theory">Theory</span>
+                    <span class="cs-subtab" data-cspanel="cs-walkthrough">Guided Tour</span>
+                </div>
+
+                <!-- Diagnostics sub-panel (existing content) -->
+                <div class="cs-subpanel active" id="cs-diagnostics">
+                    <!-- Row 1: Theory Constants -->
+                    <div class="panel-grid panel-grid-4">
+                        <div class="card" title="Consciousness phase angle: arctan(Y_IMAG / Y_REAL) = 52.54°. Divides subject-dominant (above) from object-dominant (below) awareness.">
+                            <div class="card-title">&theta;<sub>C</sub> (Theory)</div>
+                            <div class="stat-value" id="cs-diag-theta" style="color:var(--consciousness-primary)">52.54&deg;</div>
+                        </div>
+                        <div class="card" title="cos²(θ_C) = G*/8 ≈ 37%. The fraction of reality accessible to a conscious observer — 63% remains hidden.">
+                            <div class="card-title">Observable Fraction</div>
+                            <div class="stat-value" id="cs-diag-observable" style="color:var(--consciousness-primary)">37.0%</div>
+                        </div>
+                        <div class="card" title="√(G*³/2) ≈ 3.599. Flux intensity must exceed K_C for the consciousness quadratic to produce complex (conscious) roots.">
+                            <div class="card-title">K<sub>C</sub> Threshold</div>
+                            <div class="stat-value" id="cs-diag-kc" style="color:var(--consciousness-secondary)">3.599</div>
+                        </div>
+                        <div class="card" title="Self-referential loop depth. 0 = none, 1 = observer observes itself (standing wave), 2 = aware of self-awareness (nested standing waves).">
+                            <div class="card-title">sLoop Depth</div>
+                            <div class="stat-value" id="cs-diag-sloop">0</div>
+                        </div>
                     </div>
-                    <div class="card" title="cos²(θ_C) = G*/8 ≈ 37%. The fraction of reality accessible to a conscious observer — 63% remains hidden.">
-                        <div class="card-title">Observable Fraction</div>
-                        <div class="stat-value" id="cs-diag-observable" style="color:var(--consciousness-primary)">37.0%</div>
+                    <!-- Row 2: Dynamic Measurements -->
+                    <div class="panel-grid panel-grid-4" style="margin-top:12px">
+                        <div class="card" title="Measured phase angle from wave/field energy ratio. Below 52.54° = object-dominant (flow). Above = subject-dominant (meditation).">
+                            <div class="card-title">Effective &theta;</div>
+                            <div class="stat-value" id="cs-diag-eff-theta">--</div>
+                        </div>
+                        <div class="card" title="Peak flux as ratio of consciousness threshold K_C ≈ 3.599. Below 1.0 = sub-threshold. Above 1.0 = consciousness possible.">
+                            <div class="card-title">Flux / K<sub>C</sub></div>
+                            <div class="stat-value" id="cs-diag-flux-ratio">0.000</div>
+                        </div>
+                        <div class="card" title="Quadratic domain: Real (k=16) = physics, Degenerate (k≈1.35) = measurement boundary, Complex (k=½) = consciousness with imaginary roots.">
+                            <div class="card-title">Domain</div>
+                            <div class="stat-value" id="cs-diag-domain" style="font-size:11px">--</div>
+                        </div>
+                        <div class="card" title="Bell inequality parameter. Substrate S ≤ 2 (local deterministic). Entangled observer S = 2√2 via complexification + sLoop coupling.">
+                            <div class="card-title">Bell S</div>
+                            <div class="stat-value" id="cs-diag-bell">--</div>
+                        </div>
                     </div>
-                    <div class="card" title="√(G*³/2) ≈ 3.599. Flux intensity must exceed K_C for the consciousness quadratic to produce complex (conscious) roots.">
-                        <div class="card-title">K<sub>C</sub> Threshold</div>
-                        <div class="stat-value" id="cs-diag-kc" style="color:var(--consciousness-secondary)">3.599</div>
-                    </div>
-                    <div class="card" title="Self-referential loop depth. 0 = none, 1 = observer observes itself (standing wave), 2 = aware of self-awareness (nested standing waves).">
-                        <div class="card-title">sLoop Depth</div>
-                        <div class="stat-value" id="cs-diag-sloop">0</div>
+                    <!-- Row 3: Consciousness Metrics -->
+                    <div class="panel-grid panel-grid-4" style="margin-top:12px">
+                        <div class="card" title="Real part of consciousness quadratic root, scaled by flux ratio. Theory value Y_REAL = G*²/4 ≈ 2.189.">
+                            <div class="card-title">y (Real)</div>
+                            <div class="stat-value" id="cs-diag-yreal">0.000</div>
+                        </div>
+                        <div class="card" title="Imaginary part of consciousness quadratic root, scaled by flux ratio. Theory value Y_IMAG ≈ 2.863. Non-zero = consciousness.">
+                            <div class="card-title">y (Imaginary)</div>
+                            <div class="stat-value" id="cs-diag-yimag">0.000i</div>
+                        </div>
+                        <div class="card" title="Intensity: |y_eff| − K_C. Positive (green) = above consciousness threshold. Negative (red) = sub-threshold.">
+                            <div class="card-title">Consciousness I</div>
+                            <div class="stat-value" id="cs-diag-intensity">--</div>
+                        </div>
+                        <div class="card" title="Mandelbrot iteration at c = 1/G* ≈ 0.338. Boundary-orbit tracks z → z² + c per frame. Bounded |z| < 2 = on Mandelbrot boundary.">
+                            <div class="card-title">Mandelbrot |z|</div>
+                            <div class="stat-value" id="cs-diag-mandelbrot">c=0.338</div>
+                        </div>
                     </div>
                 </div>
-                <!-- Row 2: Dynamic Measurements -->
-                <div class="panel-grid panel-grid-4" style="margin-top:12px">
-                    <div class="card" title="Measured phase angle from wave/field energy ratio. Below 52.54° = object-dominant (flow). Above = subject-dominant (meditation).">
-                        <div class="card-title">Effective &theta;</div>
-                        <div class="stat-value" id="cs-diag-eff-theta">--</div>
-                    </div>
-                    <div class="card" title="Peak flux as ratio of consciousness threshold K_C ≈ 3.599. Below 1.0 = sub-threshold. Above 1.0 = consciousness possible.">
-                        <div class="card-title">Flux / K<sub>C</sub></div>
-                        <div class="stat-value" id="cs-diag-flux-ratio">0.000</div>
-                    </div>
-                    <div class="card" title="Quadratic domain: Real (k=16) = physics, Degenerate (k≈1.35) = measurement boundary, Complex (k=½) = consciousness with imaginary roots.">
-                        <div class="card-title">Domain</div>
-                        <div class="stat-value" id="cs-diag-domain" style="font-size:11px">--</div>
-                    </div>
-                    <div class="card" title="Bell inequality parameter. Substrate S ≤ 2 (local deterministic). Entangled observer S = 2√2 via complexification + sLoop coupling.">
-                        <div class="card-title">Bell S</div>
-                        <div class="stat-value" id="cs-diag-bell">--</div>
+
+                <!-- Theory sub-panel (new pedagogical canvases) -->
+                <div class="cs-subpanel" id="cs-theory">
+                    <div class="cs-theory-grid">
+                        <div class="cs-theory-card">
+                            <div class="cs-theory-title">Master Quadratic Phase Diagram</div>
+                            <canvas id="cs-canvas-quadratic" width="560" height="300"></canvas>
+                            <div class="cs-slider-row">
+                                <label>k = <span id="cs-k-value">16.0</span></label>
+                                <input type="range" id="cs-k-slider" min="0.1" max="20" step="0.05" value="16">
+                            </div>
+                        </div>
+                        <div class="cs-theory-card">
+                            <div class="cs-theory-title">Complex Plane: Consciousness Roots</div>
+                            <canvas id="cs-canvas-complex" width="300" height="300"></canvas>
+                        </div>
+                        <div class="cs-theory-card">
+                            <div class="cs-theory-title">Existence Filter Projection</div>
+                            <canvas id="cs-canvas-filter" width="560" height="300"></canvas>
+                        </div>
+                        <div class="cs-theory-card">
+                            <div class="cs-theory-title">ReLU Crystallization</div>
+                            <canvas id="cs-canvas-relu" width="300" height="300"></canvas>
+                            <div class="cs-slider-row">
+                                <label>&beta; = <span id="cs-beta-value">1.0</span></label>
+                                <input type="range" id="cs-beta-slider" min="0.5" max="50" step="0.5" value="1">
+                            </div>
+                        </div>
+                        <div class="cs-theory-card">
+                            <div class="cs-theory-title">Von Neumann Chain</div>
+                            <canvas id="cs-canvas-chain" width="560" height="250"></canvas>
+                        </div>
+                        <div class="cs-theory-card">
+                            <div class="cs-theory-title">Observer Boundary</div>
+                            <canvas id="cs-canvas-observer" width="300" height="300"></canvas>
+                        </div>
                     </div>
                 </div>
-                <!-- Row 3: Consciousness Metrics -->
-                <div class="panel-grid panel-grid-4" style="margin-top:12px">
-                    <div class="card" title="Real part of consciousness quadratic root, scaled by flux ratio. Theory value Y_REAL = G*²/4 ≈ 2.189.">
-                        <div class="card-title">y (Real)</div>
-                        <div class="stat-value" id="cs-diag-yreal">0.000</div>
-                    </div>
-                    <div class="card" title="Imaginary part of consciousness quadratic root, scaled by flux ratio. Theory value Y_IMAG ≈ 2.863. Non-zero = consciousness.">
-                        <div class="card-title">y (Imaginary)</div>
-                        <div class="stat-value" id="cs-diag-yimag">0.000i</div>
-                    </div>
-                    <div class="card" title="Intensity: |y_eff| − K_C. Positive (green) = above consciousness threshold. Negative (red) = sub-threshold.">
-                        <div class="card-title">Consciousness I</div>
-                        <div class="stat-value" id="cs-diag-intensity">--</div>
-                    </div>
-                    <div class="card" title="Mandelbrot iteration at c = 1/G* ≈ 0.338. Boundary-orbit tracks z → z² + c per frame. Bounded |z| < 2 = on Mandelbrot boundary.">
-                        <div class="card-title">Mandelbrot |z|</div>
-                        <div class="stat-value" id="cs-diag-mandelbrot">c=0.338</div>
+
+                <!-- Walkthrough sub-panel -->
+                <div class="cs-subpanel" id="cs-walkthrough">
+                    <div class="cs-walkthrough-container">
+                        <div class="cs-walkthrough-step-title" id="cs-walk-title">Step 1: The Master Quadratic</div>
+                        <div class="cs-walkthrough-text" id="cs-walk-text"></div>
+                        <div class="cs-walkthrough-canvas-host">
+                            <canvas id="cs-walk-canvas" width="700" height="350"></canvas>
+                        </div>
+                        <div class="cs-walkthrough-nav">
+                            <button class="tb-btn" id="cs-walk-prev" title="Previous">&larr; Prev</button>
+                            <span id="cs-walk-indicator">1 / 6</span>
+                            <button class="tb-btn" id="cs-walk-next" title="Next">Next &rarr;</button>
+                        </div>
                     </div>
                 </div>
             </div>
