@@ -1411,14 +1411,44 @@
             <div class="tb-group scale1-only" id="pe-controls">
                 <span class="tb-label">Scenario</span>
                 <select class="tb-select" id="pe-scenario-select">
-                    <option value="pe-hydrogen" selected>Hydrogen Atom</option>
-                    <option value="pe-helium">Helium Atom</option>
-                    <option value="pe-positronium">Positronium</option>
-                    <option value="pe-muonium">Muonium</option>
-                    <option value="pe-scattering">Proton-Electron Scattering</option>
-                    <option value="pe-three-body">Three-Body (p+ p+ e-)</option>
-                    <option value="pe-deuteron">Deuteron (p + n)</option>
-                    <option value="pe-custom">Custom (Manual)</option>
+                    <optgroup label="Leptons">
+                        <option value="pe-hydrogen" selected>Hydrogen Atom (p + e⁻)</option>
+                        <option value="pe-helium">Helium Atom (He²⁺ + 2e⁻)</option>
+                        <option value="pe-positronium">Positronium (e⁺e⁻)</option>
+                        <option value="pe-muonium">Muonium (μ⁺e⁻)</option>
+                        <option value="pe-true-muonium">True Muonium (μ⁺μ⁻)</option>
+                        <option value="pe-tauonium">Tauonium (τ⁺τ⁻)</option>
+                        <option value="pe-tau-atom">Tauonic Hydrogen (τ⁻ + p)</option>
+                    </optgroup>
+                    <optgroup label="Exotic Atoms">
+                        <option value="pe-pionic-hydrogen">Pionic Hydrogen (π⁻ + p)</option>
+                        <option value="pe-kaonic-hydrogen">Kaonic Hydrogen (K⁻ + p)</option>
+                        <option value="pe-sigma-plus-atom">Sigma⁺ Atom (Σ⁺ + e⁻)</option>
+                        <option value="pe-antiprotonic-hydrogen">Protonium (p̄ + p)</option>
+                    </optgroup>
+                    <optgroup label="Hadrons">
+                        <option value="pe-pion-orbit">Pionium (π⁺π⁻)</option>
+                        <option value="pe-kaon-pair">Kaonium (K⁺K⁻)</option>
+                        <option value="pe-delta-system">Delta⁺⁺ System (Δ⁺⁺ + 2e⁻)</option>
+                        <option value="pe-omega-scattering">Omega⁻ Scattering (Ω⁻ + e⁺)</option>
+                    </optgroup>
+                    <optgroup label="Nuclear">
+                        <option value="pe-deuteron">Deuteron (p + n + e⁻)</option>
+                        <option value="pe-tritium">Tritium (p + 2n + e⁻)</option>
+                        <option value="pe-helion">Helion / He-3 (2p + n + 2e⁻)</option>
+                    </optgroup>
+                    <optgroup label="Bosons">
+                        <option value="pe-w-pair">W⁺W⁻ Pair</option>
+                    </optgroup>
+                    <optgroup label="Scattering">
+                        <option value="pe-scattering">Proton–Electron Scattering</option>
+                        <option value="pe-three-body">Three-Body (p⁺ p⁺ e⁻)</option>
+                        <option value="pe-meson-scattering">π⁺ off Proton</option>
+                        <option value="pe-muon-scattering">μ⁻ off Proton</option>
+                    </optgroup>
+                    <optgroup label="Custom">
+                        <option value="pe-custom">Custom (Manual)</option>
+                    </optgroup>
                 </select>
             </div>
             <!-- Scale 2 controls -->
@@ -1426,6 +1456,38 @@
                 <span class="tb-label">Scenario</span>
                 <select class="tb-select" id="ae-scenario-select" style="max-width:200px">
                     <!-- Element periods injected by buildElementScenarios() -->
+                    <optgroup label="Noble Gas Clusters">
+                        <option value="ae-he-cluster">He Cluster (6 atoms, vdW)</option>
+                        <option value="ae-ar-cluster">Ar Cluster (8 atoms, vdW)</option>
+                        <option value="ae-noble-mix">Noble Mix (He + Ne + Ar)</option>
+                    </optgroup>
+                    <optgroup label="Ionic Formation">
+                        <option value="ae-nacl-form">Na + Cl → NaCl</option>
+                        <option value="ae-nacl-lattice">NaCl 3×3 Lattice</option>
+                        <option value="ae-mgf2">Mg²⁺ + 2F⁻ → MgF₂</option>
+                    </optgroup>
+                    <optgroup label="Covalent Formation">
+                        <option value="ae-h2-form">H + H → H₂</option>
+                        <option value="ae-o2-form">O + O → O₂</option>
+                        <option value="ae-ch4-form">C + 4H → CH₄</option>
+                    </optgroup>
+                    <optgroup label="H-Bonding">
+                        <option value="ae-water-dimer">Water Dimer (H-bond)</option>
+                        <option value="ae-water-cluster">Water Pentamer</option>
+                    </optgroup>
+                    <optgroup label="VSEPR Geometry">
+                        <option value="ae-vsepr-linear">CO₂ → Linear (180°)</option>
+                        <option value="ae-vsepr-tetrahedral">CH₄ → Tetrahedral (109.5°)</option>
+                        <option value="ae-vsepr-bent">H₂O → Bent (104.5°)</option>
+                    </optgroup>
+                    <optgroup label="Thermal Dynamics">
+                        <option value="ae-thermal-gas">Ar Gas (12 atoms + thermostat)</option>
+                        <option value="ae-collision">Head-On Collision</option>
+                    </optgroup>
+                    <optgroup label="Metallic Clusters">
+                        <option value="ae-fe-bcc">Fe BCC Cluster (9 atoms)</option>
+                        <option value="ae-cu-fcc">Cu FCC Seed (7 atoms)</option>
+                    </optgroup>
                     <optgroup label="Special">
                         <option value="ae-periodic">Periodic Table (All 118)</option>
                         <option value="ae-custom">Custom (Manual)</option>
@@ -1970,30 +2032,30 @@
                         </div>
 
                         <details class="toggle-details">
-                            <summary style="font-size:11px;color:var(--text-dim);cursor:pointer;margin:4px 0">Future Forces (Phase 3)</summary>
-                            <div class="toggle-row" style="opacity:0.4">
-                                <input type="checkbox" id="ae-hbonds" disabled>
-                                <label for="ae-hbonds" title="Hydrogen bonds: directional LJ 10-12 between electronegative atoms (Phase 3)">H-Bonds</label>
+                            <summary style="font-size:11px;color:var(--text-dim);cursor:pointer;margin:4px 0">Advanced Forces</summary>
+                            <div class="toggle-row">
+                                <input type="checkbox" id="ae-hbonds">
+                                <label for="ae-hbonds" title="Hydrogen bonds: directional LJ 10-12 between electronegative atoms">H-Bonds</label>
                             </div>
-                            <div class="toggle-row" style="opacity:0.4">
-                                <input type="checkbox" id="ae-dipole" disabled>
-                                <label for="ae-dipole" title="Dipole-dipole interactions from partial charges (Phase 3)">Dipole-Dipole</label>
+                            <div class="toggle-row">
+                                <input type="checkbox" id="ae-dipole">
+                                <label for="ae-dipole" title="Dipole-dipole interactions from partial charges">Dipole-Dipole</label>
                             </div>
-                            <div class="toggle-row" style="opacity:0.4">
-                                <input type="checkbox" id="ae-angle" disabled>
-                                <label for="ae-angle" title="Bond angle strain: VSEPR preferred angles (Phase 3)">Angle Strain</label>
+                            <div class="toggle-row">
+                                <input type="checkbox" id="ae-angle">
+                                <label for="ae-angle" title="Bond angle strain: VSEPR preferred angles">Angle Strain</label>
                             </div>
                             <div class="toggle-row" style="opacity:0.4">
                                 <input type="checkbox" id="ae-torsional" disabled>
-                                <label for="ae-torsional" title="Torsional / dihedral angle forces (Phase 4)">Torsional</label>
+                                <label for="ae-torsional" title="Torsional / dihedral angle forces (Phase 4 — not yet implemented)">Torsional</label>
                             </div>
-                            <div class="toggle-row" style="opacity:0.4">
-                                <input type="checkbox" id="ae-thermostat" disabled>
-                                <label for="ae-thermostat" title="Nose-Hoover thermostat for constant temperature MD (Phase 3)">Thermostat</label>
+                            <div class="toggle-row">
+                                <input type="checkbox" id="ae-thermostat">
+                                <label for="ae-thermostat" title="Berendsen thermostat for constant temperature MD">Thermostat</label>
                             </div>
-                            <div class="toggle-row" style="opacity:0.4">
-                                <input type="checkbox" id="ae-electronegativity" disabled>
-                                <label for="ae-electronegativity" title="Electronegativity-driven bond polarity (Phase 3)">Electronegativity</label>
+                            <div class="toggle-row">
+                                <input type="checkbox" id="ae-electronegativity">
+                                <label for="ae-electronegativity" title="Electronegativity-driven bond polarity and formation threshold">Electronegativity</label>
                             </div>
                         </details>
 
