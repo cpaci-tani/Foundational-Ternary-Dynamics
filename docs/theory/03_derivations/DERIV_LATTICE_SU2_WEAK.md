@@ -10,7 +10,7 @@
 
 ## Abstract
 
-We derive the SU(2) weak interaction sector from the ternary state structure of FTD. The ternary state space {−1, 0, +1} contains a doublet subspace {|+⟩, |−⟩} that carries the fundamental representation of SU(2), while the void state |0⟩ is an SU(2) singlet. The W± bosons are identified with transmutation operators that flip the ternary state, and the Z⁰ boson couples diagonally to the state-charge operator. The Weinberg angle sin²θ_W = N_c/N_eff = 3/13, the W and Z boson masses, and the Fermi constant G_F = 1/(√2 v²) are all derived from FTD axioms with zero free parameters. The derivation of G_F upgrades ~50 weak decay rates from [PARAMETRIC INSERTION] to [THEOREM], as all numerical inputs (G_F, masses, CKM/PMNS elements) are now FTD-derived.
+We derive the SU(2) weak interaction sector from the ternary state structure of FTD. The ternary state space {−1, 0, +1} contains a doublet subspace {|+⟩, |−⟩} that carries the fundamental representation of SU(2), while the void state |0⟩ is an SU(2) singlet. The W± bosons are identified with transmutation operators that flip the ternary state, and the Z⁰ boson couples diagonally to the state-charge operator. The Weinberg angle sin²θ_W = N_c/N_eff = 3/13, the W and Z boson masses, and the Fermi constant G_F = 1/(√2 v²) are all derived from FTD axioms with zero free parameters. The derivation of G_F provides all numerical inputs (G_F, masses, CKM/PMNS elements) from FTD, but the ~50 weak decay rates remain [PARAMETRIC INSERTION] since G_F depends on v which is [SELECTION], and the functional forms (Fermi decay formulas) are imported from standard QFT.
 
 ---
 
@@ -112,7 +112,7 @@ where B_μ is the U(1)_Y hypercharge field and W³_μ is the neutral SU(2) field
 
 # Section 3: Electroweak Mixing
 
-## 3.1 The Weinberg Angle [THEOREM]
+## 3.1 The Weinberg Angle [SELECTION]
 
 **Theorem 3.1 (Weinberg Angle from Framework Integers).** *The weak mixing angle is:*
 
@@ -144,7 +144,7 @@ $$g' = \frac{e}{\cos\theta_W} = \frac{0.3028}{\sqrt{10/13}} = \frac{0.3028}{0.87
 | g' | 0.3453 | 0.3472 | 0.55% |
 | g/g' | 1.825 | 1.813 | 0.66% |
 
-## 3.3 Gauge Boson Masses [THEOREM]
+## 3.3 Gauge Boson Masses [SELECTION]
 
 **Theorem 3.2 (W and Z Masses).** *From the Higgs VEV v = M_P√(2π) α⁸ = 246.09 GeV:*
 
@@ -267,7 +267,7 @@ This yields V−A structure:
 
 # Section 6: Fermi Theory as Low-Energy Limit
 
-This is the central result of this document. It derives the Fermi constant from FTD-derived quantities, upgrading ~50 decay rates from [PARAMETRIC INSERTION] to [THEOREM].
+This is the central result of this document. It derives the Fermi constant from FTD-derived quantities. Note: the ~50 decay rates remain [PARAMETRIC INSERTION] since G_F depends on v which is [SELECTION], and the functional forms are imported from standard QFT.
 
 ## 6.1 The W Propagator at Low Energy [THEOREM]
 
@@ -466,13 +466,13 @@ where:
 | SU2-2 | Void |0⟩ is SU(2) singlet | **[THEOREM]** | T_i|0⟩ = 0 (§1.3) | SU2-1 |
 | SU2-3 | W± = transmutation operators T± | **[SELECTION]** | Consistent with stress-threshold mechanism (§2.1) | SU2-1, Ch. 6.5 |
 | SU2-4 | Z⁰ = diagonal T₃ coupling | **[SELECTION]** | Consistent with neutral-current phenomenology (§2.2) | SU2-1 |
-| SU2-5 | sin²θ_W = 3/13 = 0.23077 | **[THEOREM]** | 0.19% agreement with PDG (§3.1) | Master quadratic |
-| SU2-6 | M_W = 80.36 GeV | **[THEOREM]** | 0.02% agreement with PDG (§3.3) | SU2-5, v, α |
-| SU2-7 | M_Z = 91.19 GeV | **[THEOREM]** | 0.002% agreement with PDG (§3.3) | SU2-6, sin²θ_W |
+| SU2-5 | sin²θ_W = 3/13 = 0.23077 | **[SELECTION]** | 0.19% agreement with PDG (§3.1) | Master quadratic |
+| SU2-6 | M_W = 80.36 GeV | **[SELECTION]** | 0.02% agreement with PDG (§3.3) | SU2-5, v, α |
+| SU2-7 | M_Z = 91.19 GeV | **[SELECTION]** | 0.002% agreement with PDG (§3.3) | SU2-6, sin²θ_W |
 | SU2-8 | G_F = 1/(√2 v²) = 1.1677 × 10⁻⁵ GeV⁻² | **[THEOREM]** | 0.11% agreement (§6.2) | v = M_P√(2π)α⁸ |
 | SU2-9 | V−A structure from divergence asymmetry | **[SELECTION]** | Qualitative argument (§5) | Manifestation rule |
 | SU2-10 | Maximal parity violation | **[SELECTION]** | Follows from SU2-9 if valid (§5.4) | SU2-9 |
-| SU2-11 | ~50 decay rates upgraded PARAM → THEOREM | **[THEOREM]†** | All inputs FTD-derived (§7) | SU2-8, masses, CKM |
+| SU2-11 | ~50 decay rates: all numerical inputs FTD-derived | **[PARAMETRIC INSERTION]** | Functional forms imported from QFT; numerical inputs derived (§7) | SU2-8, masses, CKM |
 | SU2-12 | ρ = M²_W/(M²_Z cos²θ_W) = 1 | **[THEOREM]** | SU(2) doublet structure (§3.3) | SU2-1 |
 
 †Functional forms adopted from standard QFT [SELECTION]. Numerical inputs are [THEOREM].

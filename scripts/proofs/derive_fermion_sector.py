@@ -264,7 +264,7 @@ print("  PART 5: THE HIGGS MECHANISM")
 print(f"{'='*72}")
 
 v_higgs = M_P * np.sqrt(2*np.pi) * alpha**8
-m_H_exp = 125.10  # GeV
+m_H_exp = 125.25  # GeV (PDG 2024)
 
 # The Higgs self-coupling
 lambda_H = m_H_exp**2 / (2 * v_higgs**2)

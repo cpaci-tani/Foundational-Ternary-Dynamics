@@ -33,7 +33,7 @@ std::vector<Particle> coarsen_to_particles(const RenderBridge& rb) {
         p.id = v.particle_id;
         p.charge = v.state;
         p.mass = K_B;
-        p.r_eff = 2.48;
+        p.r_eff = R_EFF_DEFAULT;
 
         // Position: integer coord + sub-lattice remainder
         Coord c = lat.coord(idx);
@@ -174,7 +174,7 @@ std::vector<Particle> refine_to_particles(const Atom& a) {
         p.id = i;
         p.charge = +1;
         p.mass = M_PROTON;
-        p.r_eff = 2.48;
+        p.r_eff = R_EFF_DEFAULT;
         p.position = a.position;
         p.locked = true;
         result.push_back(p);
@@ -188,7 +188,7 @@ std::vector<Particle> refine_to_particles(const Atom& a) {
         p.id = a.Z + i;
         p.charge = -1;
         p.mass = K_B;
-        p.r_eff = 2.48;
+        p.r_eff = R_EFF_DEFAULT;
         p.position = a.position;
         p.position.x += a.radius * std::cos(angle);
         p.position.y += a.radius * std::sin(angle);

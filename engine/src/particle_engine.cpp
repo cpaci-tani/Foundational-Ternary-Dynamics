@@ -47,7 +47,7 @@ int ParticleEngine::add_locked_particle(int8_t charge, Vec3 position, double mas
     p.id = next_id_++;
     p.charge = charge;
     p.mass = mass;
-    p.r_eff = 2.48;
+    p.r_eff = R_EFF_DEFAULT;
     p.position = position;
     p.locked = true;
     p.spin = spin;

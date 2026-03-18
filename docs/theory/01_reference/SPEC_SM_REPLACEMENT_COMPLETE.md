@@ -534,7 +534,7 @@ This section lists limitations and open problems that the framework does not res
 
 ## 7.1 Gravity
 
-- **Full nonlinear Einstein equations** are not derived. The linearized equations follow from Noether's theorem applied to $\mathcal{L}_{\text{RB}}$ (DERIV_QFT_GRT_BRIDGE), and the Schwarzschild/Kerr/RN solutions are derived from the computational budget framework (DERIV_LATTICE_SCHWARZSCHILD, DERIV_LATTICE_KERR, DERIV_LATTICE_REISSNER_NORDSTROM). The full $R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = 8\pi G T_{\mu\nu}$ with arbitrary matter content in arbitrary geometries remains [OPEN].
+- **Full nonlinear Einstein equations** are not derived. The linearized equations follow from Noether's theorem applied to $\mathcal{L}_{\text{RB}}$ (DERIV_QFT_GRT_BRIDGE), and the Schwarzschild/Kerr/RN solutions are derived from the computational budget framework (DERIV_LATTICE_BLACK_HOLES; originally DERIV_LATTICE_SCHWARZSCHILD, DERIV_LATTICE_KERR, DERIV_LATTICE_REISSNER_NORDSTROM [ARCHIVED → archive/ARCH_DERIV_LATTICE_*.md, consolidated into DERIV_LATTICE_BLACK_HOLES]). The full $R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = 8\pi G T_{\mu\nu}$ with arbitrary matter content in arbitrary geometries remains [OPEN].
 - **Background independence** is not achieved. The lattice is a fixed background; the metric emerges as an effective description but spacetime itself does not fluctuate.
 - **Kerr-Newman** (rotating + charged) is outlined but not fully derived.
 

@@ -398,13 +398,9 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
         v.wave_vel_R  = {h_wvRx[i], h_wvRy[i], h_wvRz[i]};
         // Pair ID from device
         v.pair_id     = h_pair_id_dl[i];
-        // Deprecated fields stay at defaults
+        // Toggle-gated fields stay at defaults
         v.latency     = 0.0;
         v.tau         = 0.0;
-        v.drag        = 0.0;
-        v.attention   = 0.0;
-        v.sloop_depth = 0;
-        v.is_sloop    = false;
     }
 }
 
