@@ -20,7 +20,7 @@ FTD makes substantial algebraic claims, particularly regarding the master quadra
 
 ### S1: Master Quadratic Structure [RIGOROUS]
 - **Form:** x² - 16(G*)²x + 16(G*)³ = 0
-- **Roots:** x₊ = 137.0361714, x₋ = 3.0240753
+- **Roots:** x₊ = 137.0361714582, x₋ = 3.0239639163
 - Algebraically well-defined with explicit closed-form solutions
 - Discriminant analysis complete
 

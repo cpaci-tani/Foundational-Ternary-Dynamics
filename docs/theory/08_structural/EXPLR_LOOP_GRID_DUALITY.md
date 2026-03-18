@@ -2,8 +2,8 @@
 
 **Version:** 1.0
 **Date:** February 10, 2026
-**Status:** [MOTIVATED]
-**Epistemic Tag:** [MOTIVATED] -- The duality describes existing FTD structure; the deeper interpretation is proposed
+**Status:** [SELECTION]
+**Epistemic Tag:** [SELECTION] -- The duality describes existing FTD structure; the deeper interpretation is proposed
 
 > FTD has two layers: a continuous vector flux field and a discrete ternary state lattice. This is not a computational convenience. It is the structural manifestation of a fundamental duality between the continuous (Loop) and the discrete (Grid).
 

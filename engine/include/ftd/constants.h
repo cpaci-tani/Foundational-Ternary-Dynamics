@@ -160,6 +160,9 @@ using ontic::DRAG_PER_AXIS;
 inline constexpr double DRAG_ELECTRON = 0.25; // 1D drag
 inline constexpr double DRAG_TOP = 0.75;      // 3D drag
 
+// Default effective radius for Scale 1 particles (from Phase 6 engine data)
+inline constexpr double R_EFF_DEFAULT = 2.48;
+
 // ============================================================================
 // SM Sector Constants (Phase 2 — phenomenological insertions)
 // ============================================================================

@@ -3,7 +3,7 @@
  * Per-node state for the FTD render-bridge simulation.
  *
  * Each voxel carries ternary state, flux vector, velocity,
- * latency, proper-time accumulator, and drag.
+ * latency, and proper-time accumulator.
  */
 
 #include "constants.h"
@@ -108,10 +108,6 @@ struct Voxel {
   // Accumulated each tick for manifested particles when latency_field is ON.
   double tau = 0.0;
 
-  // DEPRECATED: always zero in logic-first engine (v2.0).
-  // Kept for Qt GUI binary compatibility.
-  double drag = 0.0;
-
   // Is this voxel part of a bound structure?
   bool locked = false;
 
@@ -135,18 +131,6 @@ struct Voxel {
   //   0 = colorless, 1 = red, 2 = green, 3 = blue
   // Assigned at genesis from dominant flux axis (3 spatial dims → 3 colors).
   int8_t color = 0;
-
-  // Continuous color orientation: unit vector in internal SU(3) color space.
-  // Assigned at genesis from dominant flux axis. Evolves under color force.
-  // Magnitude is always 1 (unit sphere in R³ maps to SU(3) Cartan subalgebra).
-  // Defaults to (0,0,0) = colorless (void/unmanifested).
-  Vec3 color_orientation;
-
-  // Noetic fields for consciousness sector (Phase 3).
-  // Populated by detect_sloops() and update_attention() each tick.
-  double attention = 0.0;
-  int sloop_depth = 0;
-  bool is_sloop = false;
 
   // Larmor radiation: acceleration magnitude from previous tick
   double accel_mag = 0.0;

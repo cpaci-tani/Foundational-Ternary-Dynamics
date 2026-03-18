@@ -214,8 +214,8 @@ Numerically (using $G^* = 2.9586751192\ldots$):
 
 | Root | Value |
 |------|-------|
-| $x_+$ | $137.0361714581\ldots$ |
-| $x_-$ | $3.0239358474\ldots$ |
+| $x_+$ | $137.0361714582\ldots$ |
+| $x_-$ | $3.0239639163\ldots$ |
 
 ### 6.4 Vieta Relations
 
@@ -494,7 +494,7 @@ x₊ = 137.036..., x₋ = 3.024...  [Algebraic roots — §6.3]
 | M-5 | $|{\rm Aut}(E)|^2 = 16$ | [THEOREM] |
 | M-6 | $16 = L_3^2$, unique non-trivial Lucas perfect square | [THEOREM] (BMS 2006) |
 | M-7 | $\Delta(k) = kG^{*3}(kG^*-4)$ | [THEOREM] |
-| M-8 | $x_+ = 137.0361714\ldots$, $x_- = 3.0239358\ldots$ | [THEOREM] |
+| M-8 | $x_+ = 137.0361714\ldots$, $x_- = 3.0239639\ldots$ | [THEOREM] |
 | M-9 | Vieta: $x_++x_- = 16G^{*2}$, $x_+x_- = 16G^{*3}$ | [THEOREM] |
 | M-10 | $G^* = \sqrt{2\pi}\,\vartheta_3(e^{-\pi})^2$ | [THEOREM] |
 | M-11 | $F_7 = T_7 = 13$ (unique crossover) | [THEOREM] (classical) |

@@ -162,21 +162,6 @@ Vec3 RenderBridge::curl_state_velocity(int idx) const {
   return curl;
 }
 
-// ============================================================================
-// Stub operators (maintain API — return zero/trivial values)
-// These existed in the phenomenological engine but are no longer computed.
-// ============================================================================
-
-double RenderBridge::screened_density(int /*idx*/) const { return 0.0; }
-Vec3 RenderBridge::gradient_screened_density(int /*idx*/) const { return {}; }
-Vec3 RenderBridge::gradient_latency(int /*idx*/) const { return {}; }
-Vec3 RenderBridge::gradient_attention(int /*idx*/) const { return {}; }
-int RenderBridge::triad_neighbor_count(int /*idx*/) const { return 0; }
-double RenderBridge::noetic_mass(int /*idx*/) const { return 0.0; }
-
-int RenderBridge::detect_sloops() { return 0; }
-
-
 double RenderBridge::compute_stress(int idx) const {
   double div_mag = std::abs(divergence_flux(idx));
   Vec3 c = curl_flux(idx);
@@ -1086,13 +1071,11 @@ Diagnostics RenderBridge::diagnostics() const {
   d.tick = tick_;
 
   const int N = static_cast<int>(lattice_.total_sites());
-  double total_drag = 0.0;
 
   for (int i = 0; i < N; ++i) {
     const auto &v = voxels_[i];
     d.total_flux += v.density();
     d.total_energy += std::abs(v.born_infeld_core());
-    total_drag += v.drag;
     double bw = v.bandwidth_used();
     if (bw > d.max_bandwidth)
       d.max_bandwidth = bw;
@@ -1107,7 +1090,6 @@ Diagnostics RenderBridge::diagnostics() const {
     }
   }
 
-  d.avg_drag = total_drag / N;
   d.total_entropy = compute_entropy();
 
   // Angular momentum: L = sum (r - r_cm) × v

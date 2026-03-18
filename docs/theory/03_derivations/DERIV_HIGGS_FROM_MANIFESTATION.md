@@ -177,7 +177,7 @@ $$v^2 = -\frac{\mu_{\text{eff}}^2}{\lambda_{\text{eff}}} = 2K_B^2(2g_c^2\langle 
 
 # Section 4: Deriving v = 246 GeV
 
-## 4.1 The VEV Formula [THEOREM]
+## 4.1 The VEV Formula [SELECTION]
 
 The Higgs vacuum expectation value is derived from the alpha hierarchy:
 
@@ -246,7 +246,7 @@ The Higgs mass is:
 
 $$m_H^2 = V''(v) = \left.\frac{d^2 V_{\text{total}}}{d\rho_0^2}\right|_{\rho_0 = v}$$
 
-## 5.2 The Higgs Mass [THEOREM]
+## 5.2 The Higgs Mass [SELECTION]
 
 The Higgs mass follows from the derived quartic coupling λ = 3/23 (Section 5A) and VEV v = M_P√(2π)α⁸:
 
@@ -266,7 +266,7 @@ The quartic coupling λ = 3/23 admits a direct ontic reading:
 - **Denominator 23 = N_C³ − N_BASE = 2N_EFF − N_C:** The number of independent interaction channels in the full cubic lattice minus the spinor degrees of freedom. Equivalently, 23 = 27 − 4, where 27 = 3³ is the total lattice dimensionality (the sum 3+4+7+13 = 27 of all framework integers) and 4 is the spinor dimension.
 - **λ = 3/23:** The fraction of the scalar potential attributable to the ternary state itself, relative to the total gauge-lattice structure. The Higgs field mediates between determination (±1) and indetermination (0), and its self-coupling measures the ratio of ternary identity to cubic complexity.
 
-## 5.4 The Quartic Coupling [THEOREM]
+## 5.4 The Quartic Coupling [SELECTION]
 
 The quartic coupling is derived in Section 5A from the ternary gauge structure:
 
@@ -515,11 +515,11 @@ The absence of BSM physics at the LHC is **consistent** with FTD: the hierarchy 
 | HIGGS-1 | Manifestation = EW phase transition | **[THEOREM]** | m = ⟨|s|⟩: zero (symmetric) vs nonzero (broken) |
 | HIGGS-2 | BI expansion gives parabolic + quartic | **[THEOREM]** | V_BI = ρ₀²/(2K_B) + ρ₀⁴/(8K_B³) + ... |
 | HIGGS-3 | Manifestation feedback → Mexican hat | **[SELECTION]** | μ²_eff = (1 − 2g_c²⟨s²⟩)/K_B < 0 when feedback strong |
-| HIGGS-4 | VEV: v = M_P√(2π)α⁸ = 246.08 GeV | **[THEOREM]** | 0.05% vs PDG 246.22 GeV |
-| HIGGS-5 | m_H = v√(6/23) = 125.69 GeV | **[THEOREM]** | 0.47% vs PDG 125.25 GeV |
+| HIGGS-4 | VEV: v = M_P√(2π)α⁸ = 246.08 GeV | **[SELECTION]** | 0.05% vs PDG 246.22 GeV |
+| HIGGS-5 | m_H = v√(6/23) = 125.69 GeV | **[SELECTION]** | 0.47% vs PDG 125.25 GeV |
 | HIGGS-6 | Goldstone counting: 3 + 1 = 4 | **[THEOREM]** | 3 transverse + 1 radial = dim(SU(2)×U(1)) |
 | HIGGS-7 | Hierarchy resolved by lattice UV cutoff | **[SELECTION]** | v/M_P = √(2π)α⁸ derived, not tuned |
-| HIGGS-8 | λ = 3/23 from ternary decomposition | **[THEOREM]** | 1.05% vs SM ~0.129 |
+| HIGGS-8 | λ = 3/23 from ternary decomposition | **[SELECTION]** | 1.05% vs SM ~0.129 |
 | HIGGS-9 | Corrections logarithmic on lattice | **[SELECTION]** | δm²_H ~ (α/8π)m²_t ln(M_P/m_t) |
 | HIGGS-10 | Photon massless (Gauss constraint) | **[THEOREM]** | ∇·J = ρ_charge (exact, topological) |
 | HIGGS-11 | BI expansion coefficients correct | **[THEOREM]** | c_1=1/2, c_2=1/8, c_3=1/16, c_4=5/128 |

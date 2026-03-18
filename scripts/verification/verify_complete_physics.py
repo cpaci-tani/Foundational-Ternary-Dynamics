@@ -10,6 +10,18 @@ Verifies ALL ~126 predictions from DERIV_COMPLETE_PARTICLE_PHYSICS.md:
 All predictions derived from framework integers {N_c=3, N_base=4, b_3=7, N_eff=13}.
 """
 
+import io
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+
+# Ensure UTF-8 output on Windows
+if sys.platform == 'win32' and hasattr(sys.stdout, 'buffer'):
+    if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+        sys.stdout = io.TextIOWrapper(
+            sys.stdout.buffer, encoding='utf-8', errors='replace', line_buffering=True
+        )
+
 import numpy as np
 from scripts.constants import (
     ALPHA, G_STAR, N_c, N_base, b_3, N_eff, PHI,
