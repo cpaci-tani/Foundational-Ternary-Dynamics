@@ -24,6 +24,13 @@ const AE_EPS_BASE = 0.005;  // LJ well depth for Z=1 (tuned for visible dynamics
 const AE_K_COULOMB = 2.0;    // Ionic coupling (qualitatively correct Coulomb >> vdW)
 const AE_K_BOND = 50.0;   // Bond spring stiffness multiplier
 const AE_SPEED_MAX = 10.0;   // Speed limit in simulation units
+const AE_H_BOND_EPS    = 0.001;  // H-bond LJ 10-12 well depth (sim units; ~1/5 covalent)
+const AE_K_ANGLE        = 0.05;   // VSEPR angle strain spring constant (sim units)
+const AE_THERMOSTAT_TAU = 10.0;   // Berendsen coupling timescale (in dt units)
+
+// Pauling electronegativity table (Z=0..18), mirrors C++ atom_engine.h:136-148
+const AE_CHI_TABLE = [0, 2.20, 0, 0.98, 1.57, 2.04, 2.55, 3.04, 3.44, 3.98,
+                      0, 0.93, 1.31, 1.61, 1.90, 2.19, 2.58, 3.16, 0.0];
 
 function computeAtomicProps(Z, N = 0) {
     const mass = Z + N * 1.001;  // Mass in atomic mass units (H≈1, C≈12)
@@ -32,7 +39,9 @@ function computeAtomicProps(Z, N = 0) {
     const vdw_epsilon = AE_EPS_BASE * Math.pow(Z, 2.0 / 3.0);  // Well depth
     const vdw_sigma = radius * N_BASE;  // Electron cloud size (H≈4)
     const max_bonds = elemMaxBonds(Z);
-    return { mass, radius, vdw_epsilon, vdw_sigma, max_bonds };
+    const electronegativity = (Z >= 1 && Z <= 18) ? AE_CHI_TABLE[Z]
+                            : (Z > 18 ? 1.5 + 0.3 * Math.log(Z) : 0);
+    return { mass, radius, vdw_epsilon, vdw_sigma, max_bonds, electronegativity };
 }
 
 // cpkColor and defaultNeutronCount now imported from elements.js
@@ -1563,7 +1572,14 @@ export class MockBridge {
             ionic: true,    // Ionic (Coulomb) force toggle
             vdw: true,      // Van der Waals (LJ 12-6) force toggle
             bonds_force: true, // Covalent bond spring force toggle
-            speed_limit: true  // Speed cap toggle
+            speed_limit: true, // Speed cap toggle
+            // Phase 3 forces (all off by default)
+            h_bonds: false,           // H-bond LJ 10-12 + angular
+            angle_strain: false,      // VSEPR angle restoring force
+            dipole_dipole: false,     // Dipole-dipole 1/r^5
+            thermostat: false,        // Berendsen velocity rescaling
+            thermostat_temp: 1.0,     // Target temperature (sim units)
+            electronegativity: false, // Polar bond formation threshold
         };
     }
 
@@ -1585,6 +1601,9 @@ export class MockBridge {
             id, Z, N: neutrons, charge, mass: props.mass, radius: props.radius,
             vdw_epsilon: props.vdw_epsilon, vdw_sigma: props.vdw_sigma,
             max_bonds: props.max_bonds, bonds: [],
+            electronegativity: props.electronegativity,
+            valence_electrons: props.max_bonds,
+            dipole_x: 0, dipole_y: 0, dipole_z: 0,
             x, y, z, vx, vy, vz, ax: 0, ay: 0, az: 0, locked: false
         });
         return id;
@@ -1653,6 +1672,23 @@ export class MockBridge {
         return false;
     }
 
+    _aeComputeDipoleMoments() {
+        const atoms = this._ae.atoms;
+        for (const a of atoms) {
+            a.dipole_x = 0; a.dipole_y = 0; a.dipole_z = 0;
+            for (const bond of a.bonds) {
+                const jIdx = this._aeIdToIdx.get(bond.partner_id);
+                if (jIdx === undefined) continue;
+                const aj = atoms[jIdx];
+                const chi_diff = aj.electronegativity - a.electronegativity;
+                if (Math.abs(chi_diff) < 1e-10) continue;
+                a.dipole_x += (aj.x - a.x) * chi_diff;
+                a.dipole_y += (aj.y - a.y) * chi_diff;
+                a.dipole_z += (aj.z - a.z) * chi_diff;
+            }
+        }
+    }
+
     _aeComputeForce(i) {
         const atoms = this._ae.atoms;
         const ai = atoms[i];
@@ -1690,6 +1726,61 @@ export class MockBridge {
                 const f_vdw = -24.0 * eps_mix * (2.0 * sr12 - sr6) / r;
                 fx += f_vdw * rx; fy += f_vdw * ry; fz += f_vdw * rz;
             }
+
+            // H-bonds: LJ 10-12 + cos²(θ_DHA) angular factor
+            // Fires between H bonded to electronegative donor and electronegative acceptor
+            if (this._ae.h_bonds) {
+                const isElecNeg = (Z) => Z === 7 || Z === 8 || Z === 9;
+                // Helper: compute H-bond force contribution
+                const hbondForce = (hAtom, acceptor, hIdx, aIdx) => {
+                    // Find electronegative donor bonded to H
+                    let donorIdx = -1;
+                    for (const b of hAtom.bonds) {
+                        const didx = this._aeIdToIdx.get(b.partner_id);
+                        if (didx !== undefined && isElecNeg(atoms[didx].Z)) { donorIdx = didx; break; }
+                    }
+                    if (donorIdx < 0 || donorIdx === aIdx) return;
+                    const sig_hb = (hAtom.vdw_sigma + acceptor.vdw_sigma) / 2;
+                    if (sig_hb <= 0 || r < 1e-10) return;
+                    const shr = sig_hb / r;
+                    const shr10 = Math.pow(shr, 10);
+                    const shr12 = shr10 * shr * shr;
+                    const f_rad = AE_H_BOND_EPS * 60.0 * (shr12 - shr10) / r;
+                    // Angular: cos²(θ_DHA) where D=donor, H=hAtom, A=acceptor
+                    const donor = atoms[donorIdx];
+                    const dhx = hAtom.x - donor.x, dhy = hAtom.y - donor.y, dhz = hAtom.z - donor.z;
+                    const hax = acceptor.x - hAtom.x, hay = acceptor.y - hAtom.y, haz = acceptor.z - hAtom.z;
+                    const dh_mag = Math.sqrt(dhx*dhx + dhy*dhy + dhz*dhz);
+                    const ha_mag = Math.sqrt(hax*hax + hay*hay + haz*haz);
+                    let cos_theta = 1.0;
+                    if (dh_mag > 1e-30 && ha_mag > 1e-30)
+                        cos_theta = (dhx*hax + dhy*hay + dhz*haz) / (dh_mag * ha_mag);
+                    const ang = cos_theta * cos_theta;
+                    fx += f_rad * ang * rx; fy += f_rad * ang * ry; fz += f_rad * ang * rz;
+                };
+                // Case 1: ai is H, aj is electronegative acceptor
+                if (ai.Z === 1 && isElecNeg(aj.Z)) hbondForce(ai, aj, i, j);
+                // Case 2: aj is H, ai is electronegative acceptor
+                if (aj.Z === 1 && isElecNeg(ai.Z)) hbondForce(aj, ai, j, i);
+            }
+
+            // Dipole-dipole: 1/r^5 interaction between pre-computed molecular dipoles
+            if (this._ae.dipole_dipole) {
+                const mi_x = ai.dipole_x, mi_y = ai.dipole_y, mi_z = ai.dipole_z;
+                const mj_x = aj.dipole_x, mj_y = aj.dipole_y, mj_z = aj.dipole_z;
+                const mi_mag2 = mi_x*mi_x + mi_y*mi_y + mi_z*mi_z;
+                const mj_mag2 = mj_x*mj_x + mj_y*mj_y + mj_z*mj_z;
+                if (mi_mag2 > 1e-60 && mj_mag2 > 1e-60 && r > 1e-10) {
+                    const mi_dot_r = mi_x*rx + mi_y*ry + mi_z*rz;
+                    const mj_dot_r = mj_x*rx + mj_y*ry + mj_z*rz;
+                    const mi_dot_mj = mi_x*mj_x + mi_y*mj_y + mi_z*mj_z;
+                    const coeff = 3.0 * AE_K_COULOMB / (r2 * r2 * r);  // 1/r^5 scaled
+                    const t1 = 5.0 * mi_dot_r * mj_dot_r / r2;
+                    fx += coeff * (t1*rx - mj_x*mi_dot_r - mi_x*mj_dot_r - rx*mi_dot_mj);
+                    fy += coeff * (t1*ry - mj_y*mi_dot_r - mi_y*mj_dot_r - ry*mi_dot_mj);
+                    fz += coeff * (t1*rz - mj_z*mi_dot_r - mi_z*mj_dot_r - rz*mi_dot_mj);
+                }
+            }
         }
 
         // Bond spring forces (O(1) partner lookup via Map)
@@ -1705,6 +1796,67 @@ export class MockBridge {
                 const dr = r - bond.r_eq;
                 const f_bond = bond.k_bond * dr;
                 fx += f_bond * rx; fy += f_bond * ry; fz += f_bond * rz;
+            }
+        }
+
+        // Angle strain / VSEPR (3-body): restoring force toward equilibrium angles
+        // Force on central atom i only; terminal atoms get Newton's 3rd in _aeComputeAllForces
+        if (this._ae.angle_strain && ai.bonds.length >= 2) {
+            for (let b1 = 0; b1 < ai.bonds.length; b1++) {
+                for (let b2 = b1 + 1; b2 < ai.bonds.length; b2++) {
+                    const j1 = this._aeIdToIdx.get(ai.bonds[b1].partner_id);
+                    const j2 = this._aeIdToIdx.get(ai.bonds[b2].partner_id);
+                    if (j1 === undefined || j2 === undefined) continue;
+                    const a1 = atoms[j1], a2 = atoms[j2];
+                    const r1x = a1.x - ai.x, r1y = a1.y - ai.y, r1z = a1.z - ai.z;
+                    const r2x = a2.x - ai.x, r2y = a2.y - ai.y, r2z = a2.z - ai.z;
+                    const m1 = Math.sqrt(r1x*r1x + r1y*r1y + r1z*r1z);
+                    const m2 = Math.sqrt(r2x*r2x + r2y*r2y + r2z*r2z);
+                    if (m1 < 1e-30 || m2 < 1e-30) continue;
+
+                    let cos_t = (r1x*r2x + r1y*r2y + r1z*r2z) / (m1 * m2);
+                    cos_t = Math.max(-1, Math.min(1, cos_t));
+                    const theta = Math.acos(cos_t);
+
+                    // VSEPR equilibrium angle from steric number
+                    const nbonds = ai.bonds.length;
+                    const lone_pairs = Math.max(0, ai.valence_electrons - nbonds);
+                    const steric = nbonds + lone_pairs;
+                    let theta_eq;
+                    switch (steric) {
+                        case 2: theta_eq = Math.PI; break;              // linear
+                        case 3: theta_eq = 2 * Math.PI / 3; break;     // trigonal planar
+                        case 4:
+                            if (lone_pairs === 0) theta_eq = Math.acos(-1/3);        // 109.47° tetrahedral
+                            else if (lone_pairs === 1) theta_eq = 107 * Math.PI / 180; // pyramidal
+                            else theta_eq = 104.5 * Math.PI / 180;                    // bent
+                            break;
+                        default: theta_eq = Math.acos(-1/3); break;
+                    }
+
+                    const sin_t = Math.sin(theta);
+                    if (Math.abs(sin_t) < 1e-15) continue;
+                    const dV = AE_K_ANGLE * (theta - theta_eq);
+
+                    // Perpendicular directions for force projection
+                    const r1hx = r1x/m1, r1hy = r1y/m1, r1hz = r1z/m1;
+                    const r2hx = r2x/m2, r2hy = r2y/m2, r2hz = r2z/m2;
+                    let p1x = r2hx - cos_t*r1hx, p1y = r2hy - cos_t*r1hy, p1z = r2hz - cos_t*r1hz;
+                    const pm1 = Math.sqrt(p1x*p1x + p1y*p1y + p1z*p1z);
+                    if (pm1 < 1e-30) continue;
+                    p1x /= pm1; p1y /= pm1; p1z /= pm1;
+                    let p2x = r1hx - cos_t*r2hx, p2y = r1hy - cos_t*r2hy, p2z = r1hz - cos_t*r2hz;
+                    const pm2 = Math.sqrt(p2x*p2x + p2y*p2y + p2z*p2z);
+                    if (pm2 < 1e-30) continue;
+                    p2x /= pm2; p2y /= pm2; p2z /= pm2;
+
+                    const fj1 = dV / (m1 * sin_t);
+                    const fj2 = dV / (m2 * sin_t);
+                    // Force on central atom = -(f_j1 + f_j2)
+                    fx -= fj1 * p1x + fj2 * p2x;
+                    fy -= fj1 * p1y + fj2 * p2y;
+                    fz -= fj1 * p1z + fj2 * p2z;
+                }
             }
         }
 
@@ -1759,10 +1911,69 @@ export class MockBridge {
     _aeComputeAllForces() {
         const atoms = this._ae.atoms;
         this._aeBuildBondLookup(); // build O(1) bond lookups before force loop
+
+        // Compute dipole moments before force evaluation
+        if (this._ae.dipole_dipole) this._aeComputeDipoleMoments();
+
         const forces = new Array(atoms.length);
         for (let i = 0; i < atoms.length; i++) {
             forces[i] = this._aeComputeForce(i);
         }
+
+        // Angle strain: distribute Newton's-3rd-law forces to terminal atoms
+        if (this._ae.angle_strain) {
+            for (let i = 0; i < atoms.length; i++) {
+                const ai = atoms[i];
+                if (ai.bonds.length < 2) continue;
+                for (let b1 = 0; b1 < ai.bonds.length; b1++) {
+                    for (let b2 = b1 + 1; b2 < ai.bonds.length; b2++) {
+                        const j1 = this._aeIdToIdx.get(ai.bonds[b1].partner_id);
+                        const j2 = this._aeIdToIdx.get(ai.bonds[b2].partner_id);
+                        if (j1 === undefined || j2 === undefined) continue;
+                        const a1 = atoms[j1], a2 = atoms[j2];
+                        const r1x = a1.x-ai.x, r1y = a1.y-ai.y, r1z = a1.z-ai.z;
+                        const r2x = a2.x-ai.x, r2y = a2.y-ai.y, r2z = a2.z-ai.z;
+                        const m1 = Math.sqrt(r1x*r1x+r1y*r1y+r1z*r1z);
+                        const m2 = Math.sqrt(r2x*r2x+r2y*r2y+r2z*r2z);
+                        if (m1 < 1e-30 || m2 < 1e-30) continue;
+                        let cos_t = (r1x*r2x+r1y*r2y+r1z*r2z)/(m1*m2);
+                        cos_t = Math.max(-1, Math.min(1, cos_t));
+                        const theta = Math.acos(cos_t);
+                        const nbonds = ai.bonds.length;
+                        const lone_pairs = Math.max(0, ai.valence_electrons - nbonds);
+                        const steric = nbonds + lone_pairs;
+                        let theta_eq;
+                        switch (steric) {
+                            case 2: theta_eq = Math.PI; break;
+                            case 3: theta_eq = 2*Math.PI/3; break;
+                            case 4:
+                                if (lone_pairs===0) theta_eq = Math.acos(-1/3);
+                                else if (lone_pairs===1) theta_eq = 107*Math.PI/180;
+                                else theta_eq = 104.5*Math.PI/180;
+                                break;
+                            default: theta_eq = Math.acos(-1/3); break;
+                        }
+                        const sin_t = Math.sin(theta);
+                        if (Math.abs(sin_t) < 1e-15) continue;
+                        const dV = AE_K_ANGLE * (theta - theta_eq);
+                        const r1hx=r1x/m1, r1hy=r1y/m1, r1hz=r1z/m1;
+                        const r2hx=r2x/m2, r2hy=r2y/m2, r2hz=r2z/m2;
+                        let p1x=r2hx-cos_t*r1hx, p1y=r2hy-cos_t*r1hy, p1z=r2hz-cos_t*r1hz;
+                        const pm1=Math.sqrt(p1x*p1x+p1y*p1y+p1z*p1z);
+                        if (pm1<1e-30) continue;
+                        p1x/=pm1; p1y/=pm1; p1z/=pm1;
+                        let p2x=r1hx-cos_t*r2hx, p2y=r1hy-cos_t*r2hy, p2z=r1hz-cos_t*r2hz;
+                        const pm2=Math.sqrt(p2x*p2x+p2y*p2y+p2z*p2z);
+                        if (pm2<1e-30) continue;
+                        p2x/=pm2; p2y/=pm2; p2z/=pm2;
+                        const fj1 = dV/(m1*sin_t), fj2 = dV/(m2*sin_t);
+                        forces[j1].fx += fj1*p1x; forces[j1].fy += fj1*p1y; forces[j1].fz += fj1*p1z;
+                        forces[j2].fx += fj2*p2x; forces[j2].fy += fj2*p2y; forces[j2].fz += fj2*p2z;
+                    }
+                }
+            }
+        }
+
         return forces;
     }
 
@@ -1852,6 +2063,27 @@ export class MockBridge {
             }
         }
 
+        // Berendsen thermostat: rescale velocities toward target temperature
+        if (this._ae.thermostat && this._ae.thermostat_temp > 0) {
+            let ke = 0, n_free = 0;
+            for (const a of atoms) {
+                if (!a.locked) {
+                    ke += 0.5 * a.mass * (a.vx*a.vx + a.vy*a.vy + a.vz*a.vz);
+                    n_free++;
+                }
+            }
+            if (n_free > 0) {
+                const T_current = 2.0 * ke / (3.0 * n_free);
+                if (T_current > 1e-30) {
+                    const lam = Math.sqrt(1.0 + dt / AE_THERMOSTAT_TAU
+                        * (this._ae.thermostat_temp / T_current - 1.0));
+                    for (const a of atoms) {
+                        if (!a.locked) { a.vx *= lam; a.vy *= lam; a.vz *= lam; }
+                    }
+                }
+            }
+        }
+
         // Auto-bonding
         if (this._ae.bonding) {
             for (let i = 0; i < atoms.length; i++) {
@@ -1864,7 +2096,13 @@ export class MockBridge {
                     const dx = aj.x - ai.x, dy = aj.y - ai.y, dz = aj.z - ai.z;
                     const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
                     const sig_avg = (ai.vdw_sigma + aj.vdw_sigma) / 2;
-                    if (r < 1.2 * sig_avg) {
+                    // Electronegativity extends bond formation for polar pairs
+                    let bond_threshold = 1.2 * sig_avg;
+                    if (this._ae.electronegativity) {
+                        const chi_diff = Math.abs(ai.electronegativity - aj.electronegativity);
+                        bond_threshold *= (1.0 + 0.2 * chi_diff);
+                    }
+                    if (r < bond_threshold) {
                         const r_eq = sig_avg * Math.pow(2, 1.0 / 6.0);
                         const eps_mix = Math.sqrt(ai.vdw_epsilon * aj.vdw_epsilon);
                         const k_bond = AE_K_BOND * eps_mix / (r_eq * r_eq);
@@ -2101,6 +2339,13 @@ export class MockBridge {
     aeSetVdw(e) { if (this._ae) this._ae.vdw = e; }
     aeSetBondsForce(e) { if (this._ae) this._ae.bonds_force = e; }
     aeSetSpeedLimit(e) { if (this._ae) this._ae.speed_limit = e; }
+    // Phase 3 setters
+    aeSetHBonds(e)            { if (this._ae) this._ae.h_bonds = e; }
+    aeSetAngleStrain(e)       { if (this._ae) this._ae.angle_strain = e; }
+    aeSetDipoleDipole(e)      { if (this._ae) this._ae.dipole_dipole = e; }
+    aeSetThermostat(e)        { if (this._ae) this._ae.thermostat = e; }
+    aeSetThermostatTemp(t)    { if (this._ae) this._ae.thermostat_temp = t; }
+    aeSetElectronegativity(e) { if (this._ae) this._ae.electronegativity = e; }
     aeAtomCount() { return this._ae ? this._ae.atoms.length : 0; }
 
     aeInspectAtom(id) {
@@ -3315,6 +3560,13 @@ export class WasmBridge {
         if (this._aeHasWasm && this._module && this._ae) this._module.aeSetBonding(this._ae, e);
         else this._ensureAEFallback().aeSetBonding(e);
     }
+    // Phase 3 setters (delegate to MockBridge fallback; WASM uses aeSetToggle)
+    aeSetHBonds(e)            { this._ensureAEFallback().aeSetHBonds(e); }
+    aeSetAngleStrain(e)       { this._ensureAEFallback().aeSetAngleStrain(e); }
+    aeSetDipoleDipole(e)      { this._ensureAEFallback().aeSetDipoleDipole(e); }
+    aeSetThermostat(e)        { this._ensureAEFallback().aeSetThermostat(e); }
+    aeSetThermostatTemp(t)    { this._ensureAEFallback().aeSetThermostatTemp(t); }
+    aeSetElectronegativity(e) { this._ensureAEFallback().aeSetElectronegativity(e); }
     aePreBond() {
         // WASM AtomEngine doesn't need pre-bonding (bonds are explicit there)
         // MockBridge needs it to prevent LJ explosions on first tick
