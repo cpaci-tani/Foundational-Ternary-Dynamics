@@ -3560,6 +3560,10 @@ export class WasmBridge {
         if (this._aeHasWasm && this._module && this._ae) this._module.aeSetBonding(this._ae, e);
         else this._ensureAEFallback().aeSetBonding(e);
     }
+    aeSetIonic(e)     { this._ensureAEFallback().aeSetIonic(e); }
+    aeSetVdw(e)       { this._ensureAEFallback().aeSetVdw(e); }
+    aeSetBondsForce(e){ this._ensureAEFallback().aeSetBondsForce(e); }
+    aeSetSpeedLimit(e){ this._ensureAEFallback().aeSetSpeedLimit(e); }
     // Phase 3 setters (delegate to MockBridge fallback; WASM uses aeSetToggle)
     aeSetHBonds(e)            { this._ensureAEFallback().aeSetHBonds(e); }
     aeSetAngleStrain(e)       { this._ensureAEFallback().aeSetAngleStrain(e); }
