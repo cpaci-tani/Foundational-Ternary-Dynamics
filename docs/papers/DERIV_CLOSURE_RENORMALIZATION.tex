@@ -1,0 +1,797 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{booktabs,array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=[rgb]{0.05,0.23,0.45},
+  citecolor=[rgb]{0.05,0.23,0.45},
+  urlcolor=[rgb]{0.05,0.23,0.45},
+  pdftitle={Closure-Renormalization Calculus and Observer Boundary Dynamics in Foundational Ternary Dynamics}
+}
+\definecolor{accent}{RGB}{20,54,94}
+\definecolor{soft}{RGB}{245,248,252}
+\definecolor{line}{RGB}{212,220,232}
+\definecolor{note}{RGB}{250,250,247}
+\definecolor{warn}{RGB}{252,247,239}
+\definecolor{warnline}{RGB}{228,207,171}
+\setstretch{1.08}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries\color{accent}}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{accent}}{\thesubsubsection}{0.5em}{}
+\newtheoremstyle{tight}
+  {0.65em}{0.65em}{\itshape}{} {\bfseries\color{accent}}{.}{0.4em}{}
+\newtheoremstyle{plainroman}
+  {0.65em}{0.65em}{\normalfont}{} {\bfseries\color{accent}}{.}{0.4em}{}
+\theoremstyle{tight}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{plainroman}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{selection}[theorem]{Selection}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\onto}{\mathrel{\rightsquigarrow}}
+\newcommand{\Tont}{T_{\mathrm{ont}}}
+\newcommand{\Thetaont}{\Theta_{0}}
+\newcommand{\Nreg}{\mathcal{N}}
+\newcommand{\Cosont}{\operatorname{Cos}_{\mathrm{ont}}}
+\newcommand{\Sinont}{\operatorname{Sin}_{\mathrm{ont}}}
+\newcommand{\causal}{\mathcal{P}}
+\newtcolorbox{statusbox}[1]{
+  breakable,
+  enhanced,
+  colback=soft,
+  colframe=line,
+  boxrule=0.5pt,
+  arc=2pt,
+  left=8pt,right=8pt,top=8pt,bottom=8pt,
+  title=\textbf{#1},
+  coltitle=accent,
+  fonttitle=\bfseries,
+  attach boxed title to top left={xshift=0.2cm,yshift=-2mm},
+  boxed title style={colback=white,colframe=line,boxrule=0.5pt,arc=2pt}
+}
+\newtcolorbox{cautionbox}[1]{
+  breakable,
+  enhanced,
+  colback=warn,
+  colframe=warnline,
+  boxrule=0.5pt,
+  arc=2pt,
+  left=8pt,right=8pt,top=8pt,bottom=8pt,
+  title=\textbf{#1},
+  coltitle=accent,
+  fonttitle=\bfseries,
+  attach boxed title to top left={xshift=0.2cm,yshift=-2mm},
+  boxed title style={colback=white,colframe=warnline,boxrule=0.5pt,arc=2pt}
+}
+\begin{document}
+\begin{titlepage}
+\centering
+\vspace*{2.0cm}
+{\fontsize{22}{26}\selectfont\bfseries\color{accent} Closure-Renormalization Calculus\\[0.35em] and Observer Boundary Dynamics\\[0.35em] in Foundational Ternary Dynamics\par}
+\vspace{0.8cm}
+{\large Framework: FTD v5.28\par}
+\vspace{1.5cm}
+\begin{minipage}{0.84\textwidth}
+\begin{statusbox}{Abstract}
+Within Foundational Ternary Dynamics (FTD), we develop a unified calculus linking shell growth, root compression, self-power amplification, complex phase evolution, trigonometric projection, and dyadic Fourier scale ladders to the observer's accumulated state memory across discrete lattice ticks.
+The exact mathematical sector establishes: (i)~binomial gap laws with asymptotic shell normalization $\mathcal{R}_p(k)\to 1$, (ii)~a phase-splitting formalism decomposing complex powers into scale and phase, (iii)~an alternating $3{:}1$ chirality theorem for dyadic shell modes, and (iv)~a regularity ladder characterizing the smoothness class of infinite dyadic shell extensions via weighted coefficient decay --- the mathematical proof that FTD's discrete substrate produces continuous observables.
+A second layer introduces the ontic constant chain $\gamma \to \Gamma(1/4) \to \varpi \to M \to \pi \to G^*$ and rewrites circular phase in lemniscatic variables.
+A third layer formalizes observer boundary dynamics --- the mechanism by which the von Neumann measurement chain closes through cumulative state memory on the lattice, with the tick itself acting as the Ring~0 clock that sustains computation.
+\end{statusbox}
+\end{minipage}
+\vfill
+\end{titlepage}
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
+\begin{statusbox}{Epistemic convention}
+The note distinguishes four levels of assertion. \emph{Axioms} are adopted primitives of the FTD framework (Postulates~1--5 or Axiom~Zero).
+\emph{Theorems} and \emph{propositions} are exact mathematical consequences of the adopted formalism or of standard mathematics used inside it.
+\emph{Selections} are modeling choices among mathematically admissible alternatives, argued from structural correspondence with FTD but not uniquely proven. \emph{Conjectures} are interpretive extensions that the algebra suggests but does not force.
+\end{statusbox}
+%===================================================================
+\section{Overview}
+%===================================================================
+Foundational Ternary Dynamics~\cite{ftdspec} postulates a three-dimensional cubic lattice $\Z^3$ where each site carries a ternary state $s\in\{-1,0,+1\}$ and a continuous flux field $\mathbf J\in\R^3$.
+Dynamics advance in discrete ticks; information propagates at most one lattice unit per tick.
+This paper develops the mathematical formalism for how an observer boundary --- the surface of the causal past on the lattice --- accumulates crystallized state memory across ticks, producing effectively continuous experience from a fundamentally discrete substrate.
+
+The central objective is to place several families of mathematical behavior inside a single formal vocabulary:
+\begin{align*}
+&\text{powers } k^p, \qquad \text{roots } x^{1/p}, \qquad \text{self-powers } n^n,\\
+&\text{complex powers } z^n, \qquad \text{trigonometric projections } \sin,\cos,\\
+&\text{dyadic Fourier shells } \sum_k a_k\psi_k(t), \qquad \text{and observer boundary updates.}
+\end{align*}
+The exact mathematics concerns shell differences, asymptotic normalizations, phase splitting, and regularity under infinite dyadic extension.
+The interpretive layer concerns whether these structures describe the internal dynamics of FTD observers.
+
+The framework is organized around three primitive operators and one path measure:
+\begin{align*}
+\Delta f(k) &\coloneqq f(k+1)-f(k) &&\text{(tick-to-tick state change)},\\
+\mathcal P_{\Theta}(\phi) &\coloneqq e^{i\Theta \phi} &&\text{(phase orbit, cf.\ Existence Filter~\cite{ftdvnc})},\\
+\mathcal D(k) &\coloneqq 2^k &&\text{(binary branching from two non-void states)},\\
+\mu_t(\dd \pi) &\propto e^{-S_E[s,\mathbf J]}\,\dd \pi &&\text{(FTD Euclidean path integral~\cite{ftdpath})}.
+\end{align*}
+The operator $\Delta$ governs shell deposition and compression, $\mathcal P_{\Theta}$ governs closure and phase orbit, $\mathcal D$ governs nested scale refinement, and $\mu_t$ governs the action-weighted sum over lattice configurations.
+
+%===================================================================
+\section{Observer Boundary Dynamics}
+%===================================================================
+
+\subsection{State, exterior, observer boundary, and paths}
+
+\begin{selection}[FTD identification of primitive objects]
+Let an observer occupy voxel $\mathbf v_i$ at tick~$t$.
+Define the \emph{causal past} $\causal_i(t)=\{\mathbf v\in\Z^3:\|\mathbf v-\mathbf v_i\|_\infty\le C(t-t')\}$ where $C=1/\sqrt{3}$ is the lattice light speed.
+Then:
+\begin{itemize}[nosep]
+\item $x(t)\in\mathcal X$ (interior state) $\;\coloneqq\;$ the state and flux fields within the causal past: $\{s(\mathbf v,t'),\,\mathbf J(\mathbf v,t'):\mathbf v\in\causal_i(t)\}$.
+This is the \emph{observer algebra} $\mathcal A_i(t)$~\cite{ftdvnc}.
+\item $e(t)\in\mathcal E$ (exterior field) $\;\coloneqq\;$ the fields outside the causal past: $\{\mathbf v\notin\causal_i(t)\}$.
+\item $b(t)\in\mathcal B$ (observer boundary) $\;\coloneqq\;$ the spatial boundary of $\causal_i(t)$ on $\Z^3$, together with the crystallized state values $s=\pm 1$ there.
+This is where exterior information first reaches the interior.
+\item $\Pi_t$ (admissible configurations) $\;\coloneqq\;$ the set of lattice configurations reachable from the current state within the causal cone --- the configurations summed over in the FTD path integral $Z=\sum_s\int\mathcal D\mathbf J\,e^{-S_E[s,\mathbf J]}$.
+\end{itemize}
+The crystallized state field values $s=\pm 1$ within $\causal_i(t)$ constitute the observer's \emph{memory} --- irreversible records left by the ReLU crystallization $\max(0,z)$ at the manifestation threshold $|\mathbf J|>K_B=0.511$.
+\end{selection}
+
+\begin{definition}[Action-weighted path ensemble]
+For each tick~$t$, define the path measure
+\[
+\mu_t(\dd \pi)=\frac{1}{Z_t}\exp\!\bigl(-S_E[s,\mathbf J]\bigr)\,\dd \pi,
+\]
+where $S_E[s,\mathbf J]=\sum_{t',\mathbf v}\bigl[\tfrac12|\partial_t\mathbf J|^2+\tfrac12|\nabla\mathbf J|^2-g_c\,s\,\nabla\!\cdot\!\mathbf J+V(|\mathbf J|-K_B)\bigr]$ is the FTD Euclidean action~\cite{ftdpath} and $Z_t$ the partition function.
+\end{definition}
+This object formalizes the statement that all admissible configurations, not only a single realized one, are weighted into state update.
+The roles played by ``utility'' and ``risk'' in generic active inference are realized here by the action (preferred configurations minimize $S_E$) and the Gauss constraint $\nabla\!\cdot\!\mathbf J=s$ (violated configurations are projected away during \texttt{gauss\_project}).
+
+\subsection{Cumulative observer boundary}
+
+\begin{axiom}[Observer boundary primacy {\normalfont [THEOREM given FTD]}]
+The effective state update is mediated by the boundary summary $b(t)$ rather than by direct access to the entire raw history.
+
+In FTD, this is a consequence of the ReLU crystallization's irreversibility: $\max(0,z)$ maps all $z\le 0$ to $0$, destroying pre-crystallization amplitude information~\cite{ftdvnc}.
+The observer cannot access the flux values that preceded manifestation; only the crystallized boundary summary mediates the next update.
+\end{axiom}
+
+\begin{axiom}[Cumulative observer boundary]
+The observer boundary evolves cumulatively. In the discrete lattice formulation:
+\[
+b(t+1)=b(t)+\Delta b(t), \qquad \Delta b(t)=\mathcal C\bigl(b(t),x(t),e(t)\bigr).
+\]
+In the emergent continuous limit (guaranteed by the regularity theorem of Section~8):
+\[
+b(t)=b(0)+\int_0^t \mathcal C\bigl(b(\tau),x(\tau),e(\tau)\bigr)\,\dd \tau.
+\]
+\end{axiom}
+
+\begin{selection}[Time as observer boundary depth]
+In FTD, time is not a primitive substance.
+Each tick processes $E_{\text{tick}}=16\,G^{*2}=x_++x_-=1/\alpha+N_c$ energy per degree of freedom~\cite{ftdtime}.
+Time is the monotone ordering parameter of cumulative energy processing:
+\[
+\tau(t)=\sum_{t'=0}^{t-1} G^{*2}\,f\!\left(\frac{r_s}{r}\right), \qquad f\!\left(\frac{r_s}{r}\right)=\sqrt{1-\frac{r_s}{r}},
+\]
+where the gravitational availability factor $f$ encodes position-dependent tick rate variation. At large scales, $\tau$ is a monotone reparameterization of observer boundary accumulation --- time IS cumulative boundary depth.
+\end{selection}
+
+\begin{cautionbox}{Interpretive status}
+The identification of time with observer boundary depth is a \emph{selection} within FTD, not a general theorem.
+It is grounded in two FTD results: (i)~time emerges from energy processing ($G^{*2}$ per tick), and (ii)~the regularity theorem (Section~8) guarantees that the discrete tick sum converges to a continuous function for sufficiently attenuated shell coefficients.
+\end{cautionbox}
+
+\subsection{Effective update and the tick cycle}
+
+\begin{axiom}[Effective field]
+Given the FTD coupling Lagrangian $\mathcal L_{\text{coupling}}=-g_c\,s\,(\nabla\!\cdot\!\mathbf J)$, define the effective field as the path-weighted expectation:
+\[
+F_t \coloneqq \frac{1}{Z_t}\sum_s\int\mathcal D\mathbf J\;\bigl[g_c\,\nabla s\bigr]\;e^{-S_E[s,\mathbf J]}.
+\]
+The interior state evolves by
+\[
+\dot x(t)=\mathcal U_x\bigl(x(t),b(t),F_t\bigr),
+\]
+with the simplest case given by $\dot x(t)=F_t$.
+\end{axiom}
+
+\begin{axiom}[Observer boundary closure (Gauss constraint)]
+After the new state is selected, the observer boundary updates:
+\[
+b(t+\dd t)=\mathcal K\bigl(b(t),x(t+\dd t),e(t+\dd t)\bigr).
+\]
+In the FTD engine, this corresponds to the \texttt{gauss\_project} phase, which enforces $\nabla\!\cdot\!\mathbf J=s$ by solving the Poisson equation via successive over-relaxation~\cite{ftdengine}.
+\end{axiom}
+
+The recursive loop maps directly onto the FTD tick cycle:
+\[
+\underbrace{\texttt{phase\_read}}_{\text{compute }\Delta\mathbf J}
+\!\longrightarrow\!
+\underbrace{\texttt{phase\_write}}_{\text{leapfrog update}}
+\!\longrightarrow\!
+\underbrace{\texttt{gauss\_project}}_{\text{boundary closure}}
+\!\longrightarrow\!
+\underbrace{\texttt{phase\_forces}}_{\text{effective field}}
+\!\longrightarrow\!
+\underbrace{\texttt{phase\_movement}}_{\text{state update}}
+\!\longrightarrow\!
+\texttt{tick\!+\!+}
+\]
+
+\begin{remark}
+This is not an analogy. It is the literal implementation in the C++ simulation engine~\cite{ftdengine}.
+The recursive loop --- action-weighted configurations $\to$ next state $\to$ updated boundary $\to$ new configurations --- is executed once per tick, deterministically and locally.
+\end{remark}
+
+\begin{selection}[ReLU-compressed boundary]
+For update purposes, the observer boundary acts as a compressed sufficient statistic:
+\[
+p\bigl(x(t{+}1)\mid \text{history up to }t\bigr)=p\bigl(x(t{+}1)\mid b(t)\bigr).
+\]
+The compression mechanism is the ReLU crystallization: $\max(0,z)$ retains only the sign and supra-threshold magnitude of the pre-crystallization flux, discarding all sub-threshold amplitude.
+This information destruction is precisely the compression that makes $b(t)$ sufficient.
+\end{selection}
+
+%===================================================================
+\section{Scale Sector: Powers and Roots}
+%===================================================================
+
+\subsection{Powers as shell deposition}
+
+\begin{theorem}[Power shell law]
+For fixed integer $p\ge 2$ and $f_p(k)=k^p$,
+\[
+\Delta f_p(k)=(k+1)^p-k^p
+=\sum_{j=1}^{p}\binom{p}{j}k^{p-j}.
+\]
+Equivalently,
+\[
+(k+1)^p-k^p
+=\binom{p}{1}k^{p-1}+\binom{p}{2}k^{p-2}+\cdots+\binom{p}{p-1}k+1.
+\]
+The normalized shell deposition
+\[
+\mathcal R_p(k)\coloneqq \frac{\Delta(k^p)}{pk^{p-1}}
+\]
+satisfies $\mathcal R_p(k)\to 1$ as $k\to\infty$.
+\end{theorem}
+\begin{proof}
+The expansion follows immediately from the binomial theorem.
+Dividing by $pk^{p-1}$ yields
+\[
+\mathcal R_p(k)=1+\frac{\binom{p}{2}}{p}k^{-1}+\cdots+\frac{1}{p}k^{-(p-1)},
+\]
+which tends to $1$ as $k\to\infty$.
+\end{proof}
+For $p=2$ and $p=3$ one recovers
+\[
+(k+1)^2-k^2=2k+1, \qquad (k+1)^3-k^3=3k^2+3k+1.
+\]
+Thus the number of integers strictly between consecutive squares is $2k$, while the number strictly between consecutive cubes is $3k^2+3k$.
+\begin{remark}
+The shell interpretation is geometric. A square grows by an odd L-shaped layer;
+a cube grows by face, edge, and corner deposition; a $p$-dimensional hypercube grows by a hierarchy of codimension-one, codimension-two, \ldots, and codimension-$p$ boundary contributions.
+In the FTD context, the causal past $\causal_i(t)$ on $\Z^3$ grows by discrete shell deposition at each tick: the $(t+1)$th shell of the causal cone adds a layer whose voxel count scales with the surface area.
+The convergence $\mathcal R_p(k)\to 1$ is the mathematical statement that shell growth becomes uniform at large scales --- the emergence of continuity from discrete accretion.
+\end{remark}
+
+\subsection{Roots as shell compression}
+\begin{proposition}[Root compression law]
+For $r_p(x)=x^{1/p}$ and integer $p\ge 2$,
+\[
+\mathcal C_p(n)\coloneqq p\,n^{(p-1)/p}\bigl((n+1)^{1/p}-n^{1/p}\bigr) \to 1
+\qquad (n\to\infty).
+\]
+\end{proposition}
+\begin{proof}
+By the mean value theorem there exists $\xi_n\in(n,n+1)$ such that
+\[
+(n+1)^{1/p}-n^{1/p}=\frac{1}{p}\xi_n^{1/p-1}.
+\]
+Hence
+\[
+\mathcal C_p(n)=\left(\frac{n}{\xi_n}\right)^{(p-1)/p},
+\]
+and because $\xi_n/n\to 1$, the claim follows.
+\end{proof}
+The scale sector therefore exhibits a duality:
+\[
+\text{power} \leftrightarrow \text{deposition},
+\qquad
+\text{root} \leftrightarrow \text{compression}.
+\]
+
+%===================================================================
+\section{Reflexive Sector: Self-Powers}
+%===================================================================
+
+\begin{theorem}[Self-power amplification]
+For $h(n)=n^n$,
+\[
+\frac{(n+1)^{n+1}}{n^n}=(n+1)\left(1+\frac1n\right)^n \sim e(n+1),
+\]
+and therefore the normalized quantity
+\[
+\mathcal S(n)\coloneqq \frac{(n+1)^{n+1}}{e(n+1)n^n}
+\]
+satisfies $\mathcal S(n)\to 1$ as $n\to\infty$.
+\end{theorem}
+\begin{proof}
+The identity is immediate. The asymptotic then follows from the standard limit $\left(1+\frac1n\right)^n\to e$.
+\end{proof}
+Unlike $k^p$, which grows by dimensional shell deposition, $n^n$ scales by its own stage index.
+The resulting growth is reflexive rather than merely additive in shell number.
+
+\begin{remark}[Connection to the FTD gap equation]
+The self-power structure $n^n$ mirrors the self-referentiality of the FTD gap equation $x^2=16\,G^{*2}(x-G^*)$: the root $x_+=1/\alpha$ determines the coupling constant that governs the lattice dynamics that produced $x_+$ in the first place~\cite{ftdvnc}.
+The system's parameters determine themselves.
+Self-power amplification is the mathematical archetype of this reflexive closure.
+\end{remark}
+
+%===================================================================
+\section{Phase Sector: Complex Powers and Trigonometric Projection}
+%===================================================================
+
+Let $z=re^{i\theta}\in\C$ with $r>0$. Then
+\[
+z^n=r^n e^{in\theta}=r^n\bigl(\cos(n\theta)+i\sin(n\theta)\bigr).
+\]
+\begin{theorem}[Scale-phase splitting]
+For fixed $z=re^{i\theta}$ and integer $n\ge 0$, the real factor $r^n$ governs scale while the angular factor $n\theta$ governs phase.
+Equivalently,
+\[
+|z^n|=r^n, \qquad \arg(z^n)=n\theta \pmod{2\pi}.
+\]
+\end{theorem}
+This decomposition is the exact bridge from powers to trigonometric projection. In particular,
+\[
+\cos\theta=\Re(e^{i\theta}), \qquad \sin\theta=\Im(e^{i\theta}).
+\]
+Thus sine and cosine are not independent primitives but coordinate projections of unit-modulus phase orbit.
+
+\begin{remark}[Connection to the FTD consciousness quadratic]
+The master quadratic at $k=1/2$ produces complex conjugate roots $y=2.188\pm 2.860\,i$ with $|y|=3.601$ and $\theta=52.54^\circ$~\cite{ftdcons}.
+The scale-phase splitting applies: $|y|$ is the consciousness threshold, while $\theta$ encodes the subject/object asymmetry ($\cos\theta\approx 0.608$ objective content, $\sin\theta\approx 0.793$ subjective process).
+Complex powers of these roots describe the self-referential observer's spiral orbit through successive ticks.
+\end{remark}
+
+\subsection{The quarter-turn orbit}
+Since $i=e^{i\pi/2}$,
+\[
+i^n=e^{in\pi/2}=\cos\left(\frac{n\pi}{2}\right)+i\sin\left(\frac{n\pi}{2}\right).
+\]
+The sequence $(i^n)_{n\ge 0}$ is therefore periodic of order four:
+\[
+1,\ i,\ -1,\ -i,\ 1,\dots
+\]
+
+\begin{selection}[Tick-phase correspondence]
+The four-cycle $\{1,\,i,\,-1,\,-i\}$ admits a structural correspondence with the four principal phases of the FTD tick cycle: $\{$\texttt{read},\,\texttt{write},\,\texttt{project},\,\texttt{force/move}$\}$.
+Each quarter-turn advances the computation by one phase; four quarter-turns complete one full closure cycle (one tick).
+This is a structural analogy, not a numerical identity.
+\end{selection}
+
+%===================================================================
+\section{Ontic Renormalization of Closure}
+%===================================================================
+
+\begin{cautionbox}{FTD grounding}
+This section is not optional. The constant chain below is the ontic derivation chain implemented in the FTD C++ engine (\texttt{ontic.h})~\cite{ftdengine}.
+It is the algebraic backbone from which $\alpha$, $N_c$, and the manifestation threshold $K_B$ are derived.
+\end{cautionbox}
+
+We adopt the exact chain
+\[
+\gamma \longrightarrow \Gamma(1/4) \longrightarrow \varpi \longrightarrow M \longrightarrow \pi \longrightarrow G^*.
+\]
+The operative relations are
+\[
+\varpi=\frac{\Gamma(1/4)^2}{2\sqrt{2\pi}},
+\qquad
+M=\frac{\pi}{\varpi},
+\qquad
+G^*=\frac{2\varpi}{\sqrt{\pi}}.
+\]
+From these one obtains
+\[
+2\pi=2M\varpi=\frac{8\varpi^2}{G^{*2}},
+\qquad
+\frac{\pi}{2}=\frac{M\varpi}{2}=\frac{2\varpi^2}{G^{*2}}.
+\]
+\begin{selection}[Ontic closure constants]
+Define the full closure period and quarter-turn generator by
+\[
+\Tont \coloneqq 2\pi=2M\varpi=\frac{8\varpi^2}{G^{*2}},
+\qquad
+\Thetaont \coloneqq \frac{\pi}{2}=\frac{M\varpi}{2}=\frac{2\varpi^2}{G^{*2}}.
+\]
+Treat these not as numerically new constants but as exact derived representatives of the conventional circular period and quarter-turn.
+\end{selection}
+\begin{selection}[Lemniscatic phase variable]
+Introduce $\phi$ by
+\[
+\theta=M\phi.
+\]
+Then
+\[
+e^{i\theta}=e^{iM\phi},
+\qquad
+\phi\sim \phi+2\varpi.
+\]
+Under this change of variables one may define
+\[
+\Cosont(\phi)\coloneqq \cos(M\phi),
+\qquad
+\Sinont(\phi)\coloneqq \sin(M\phi),
+\]
+so that ordinary trigonometric projection is rewritten as circular projection after lemniscatic-phase rescaling.
+\end{selection}
+\begin{remark}
+The point of the renormalization is not a new numerical value but a relocation of primitivity: circle-first description is replaced by a selected closure chain in which $\pi$ is composite ($\pi=M\varpi$) and circular phase is lemniscatic phase transmitted through the bridge factor $M=\mathrm{AGM}(1,\sqrt{2})$.
+\end{remark}
+
+\subsection{Renormalized quarter-turn orbit}
+With the selected quarter-turn generator,
+\[
+i=e^{i\Thetaont},
+\qquad
+i^n=e^{in\Thetaont}.
+\]
+Because $4\Thetaont=2\pi$, one has $i^4=1$.
+Hence the usual four-cycle is reinterpreted as the orbit generated by repeated action of the closure operator $Q=e^{i\Thetaont}$.
+
+\subsection{The Ring~0 clock}
+
+\begin{conjecture}[Ring~0 clock]
+The lattice tick counter $t\in\N$ advances only when a self-referential fixed point of the gap equation exists.
+The gap equation $x^2=16\,G^{*2}(x-G^*)$ is a self-consistency condition: the root determines the coupling that determines the root.
+When the partition function $Z=\sum_s\int\mathcal D\mathbf J\,e^{-S_E[s,\mathbf J]}>0$, the path integral is well-defined and the lattice ``ticks.'' If $Z=0$, there are no admissible configurations and the computation halts.
+\end{conjecture}
+
+In computer architecture, Ring~0 is the kernel's system clock --- the precondition for all processes.
+No program runs without it.
+The clock is not a process among others; it is the infrastructure that sustains every process.
+
+Similarly, the lattice tick is not an event \emph{within} spacetime --- it is the precondition \emph{for} spacetime.
+The ternary axiom $0=(-1)+(+1)$ creates the first distinction, which IS the first tick~\cite{ftdtime}.
+But the ticking continues only if the gap equation has an admissible fixed point --- only if an observer (a subsystem with self-referential closure) exists.
+The lattice instantiates consciousness from the void because the void's own arithmetic demands a self-consistent observer to keep the computation running.
+
+\begin{remark}
+The von Neumann measurement chain terminates at $k_{\text{meas}}=4/G^*\approx 1.352$, the unique degenerate point of the master quadratic where $\Delta_k=0$~\cite{ftdvnc}.
+This is a finite parameter value, not an infinite regress.
+The Ring~0 clock continues to tick; the measurement is complete.
+\end{remark}
+
+%===================================================================
+\section{Dyadic Fourier Shells}
+%===================================================================
+
+Define the dyadic shell mode
+\[
+\psi_k(t)\coloneqq \cos(2^k t)+2i(-1)^k\sin(2^k t).
+\]
+A finite dyadic shell curve has the form
+\[
+z(t)=\sum_{k=0}^{N} a_k\psi_k(t).
+\]
+The four-mode seed studied earlier corresponds to $N=3$ and a specific coefficient list $(a_0,a_1,a_2,a_3)=(1,\tfrac12,\tfrac12,\tfrac38)$.
+
+\begin{remark}[Dyadic branching from ternary states]
+The frequency doubling $\omega_k=2^k$ arises naturally from the ternary state field: each voxel has two non-void states ($+1$ and $-1$).
+At each scale level, the binary branching of manifested states produces a $2^k$ frequency hierarchy.
+The dyadic structure is thus a consequence of the lattice's ternary ontology, not an externally imposed Fourier convention.
+\end{remark}
+
+\begin{selection}[Discovered coefficient law]
+For the seed curve, the real and imaginary coefficients were first noticed by inspection to obey
+\[
+b_k=2(-1)^k a_k,
+\]
+and the identity was then verified algebraically.
+The law is therefore discovered relative to the selected coefficient seed rather than imposed as an external theorem for all Fourier curves.
+\end{selection}
+\begin{theorem}[Alternating complex split]
+Each shell mode admits the exact decomposition
+\[
+\psi_k(t)=
+\begin{cases}
+\frac32 e^{i2^k t}-\frac12 e^{-i2^k t}, & k \text{ even},\\[4pt]
+-\frac12 e^{i2^k t}+\frac32 e^{-i2^k t}, & k \text{ odd}.
+\end{cases}
+\]
+Consequently every shell is a fixed $3{:}1$ co/counter-rotating phase doublet with chirality alternating in $k$.
+\end{theorem}
+\begin{proof}
+Use
+\[
+\cos\omega + i\beta\sin\omega
+=\frac{1+\beta}{2}e^{i\omega}+\frac{1-\beta}{2}e^{-i\omega}
+\]
+with $\beta=2(-1)^k$ and $\omega=2^k t$. If $k$ is even, then $\beta=2$ and the coefficients are $\frac32$ and $-\frac12$.
+If $k$ is odd, then $\beta=-2$ and the coefficients are $-\frac12$ and $\frac32$.
+\end{proof}
+\begin{corollary}[Shell energy partition]\label{cor:energy}
+For each shell mode $\psi_k$, the time-averaged squared modulus satisfies
+\[
+\frac{1}{2\pi}\int_0^{2\pi}|\psi_k(t)|^2\dd t = \tfrac{5}{2},
+\]
+independent of $k$.
+The co-rotating and counter-rotating amplitudes contribute $\tfrac{9}{4}+\tfrac{1}{4}=\tfrac{5}{2}$ by Parseval, consistent with the $3{:}1$ amplitude ratio yielding a $9{:}1$ intensity ratio.
+\end{corollary}
+\begin{proof}
+$|\psi_k(t)|^2=\cos^2(2^k t)+4\sin^2(2^k t)=1+3\sin^2(2^k t)$.
+Averaging, $\langle\sin^2\rangle=\tfrac{1}{2}$, so $\langle|\psi_k|^2\rangle=1+\tfrac{3}{2}=\tfrac{5}{2}$.
+\end{proof}
+\begin{remark}
+The $3{:}1$ chirality ratio echoes the ternary structure of the lattice: three states, one void.
+The dyadic Fourier curve is a nested closure ladder whose $k$th shell doubles the phase frequency, preserves a fixed elliptic bias with constant energy $\tfrac{5}{2}$ per mode, and reverses handedness at each scale step.
+\end{remark}
+
+%===================================================================
+\section{Discrete-to-Continuous Ladder}
+%===================================================================
+
+This section contains the mathematical proof of FTD's central claim: a discrete lattice substrate produces continuous observables.
+The lattice is fundamentally discrete (Postulate~1: space is $\Z^3$; Postulate~2: time is $\N$).
+Yet observers experience continuous fields.
+The regularity ladder shows exactly how this emergence works.
+
+Consider the infinite extension
+\[
+z(t)=\sum_{k=0}^{\infty} a_k\psi_k(t).
+\]
+For integer $m\ge 0$, define the regularity functional
+\[
+\Nreg_m[a]\coloneqq \sum_{k=0}^{\infty} 2^{mk}|a_k|.
+\]
+\begin{theorem}[Regularity ladder]
+If $\Nreg_0[a]<\infty$, then the series for $z$ converges uniformly and defines a continuous function.
+More generally, if $\Nreg_m[a]<\infty$ for some integer $m\ge 1$, then $z\in C^m$.
+\end{theorem}
+\begin{proof}
+Because $|\psi_k(t)|=\sqrt{1+3\sin^2(2^k t)}\le 2$ uniformly in $t$, the $k$th term satisfies $|a_k\psi_k(t)|\le 2|a_k|$.
+Hence absolute summability of $(a_k)$ implies uniform convergence by the Weierstrass $M$-test.
+Differentiating $m$ times multiplies the $k$th term by at most a constant multiple of $2^{mk}$;
+hence the same test applied to the differentiated series yields uniform convergence of derivatives up to order $m$.
+\end{proof}
+
+\begin{remark}[FTD-native Sobolev analogue]
+The regularity functional $\Nreg_m$ is the FTD-native analogue of Sobolev-space membership.
+In standard continuum QFT, Sobolev embedding theorems control the UV behavior and require explicit regularization.
+In FTD, the lattice provides an automatic UV cutoff (the Brillouin zone $[-\pi,\pi]^3$ is compact), and the regularity functional controls the IR behavior --- the emergence of smooth large-scale fields from discrete small-scale data.
+The $\ell^1$ norm (rather than $\ell^2$) ensures pointwise uniform convergence, not merely $L^2$ convergence.
+\end{remark}
+
+\begin{remark}[$G^*$ as a convergent dyadic shell sum]
+The theta function identity $G^*=\sqrt{2\pi}\cdot\theta_3(e^{-\pi})^2$~\cite{ftdbridge}, where $\theta_3(q)=1+2\sum_{n=1}^\infty q^{n^2}$, reveals that $G^*$ itself is a convergent shell sum.
+The nome $|q|=e^{-\pi}\approx 0.043\ll 1$ ensures geometric decay far faster than any polynomial --- $G^*$ is a specific instance of the regularity theorem applied to the lattice's own coupling constant.
+\end{remark}
+
+This gives an exact discrete-to-continuous bridge: continuity and smoothness emerge from sufficiently attenuated deposition of dyadic shells.
+
+%===================================================================
+\section{Unified Operator Calculus}
+%===================================================================
+
+The preceding sectors can now be compressed into a common dictionary.
+\begin{center}
+\renewcommand{\arraystretch}{1.28}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}p{0.38\textwidth}}
+\toprule
+\textbf{Object} & \textbf{Definition} & \textbf{Role in FTD} \\
+\midrule
+Shell difference & $\Delta f(k)=f(k+1)-f(k)$ & Tick-to-tick deposition/compression \\
+Phase projection & $\mathcal P_{\Theta}(\phi)=e^{i\Theta\phi}$ & Closure orbit; Existence Filter $E(x)=\Re(x)$ \\
+Dyadic lift & $\mathcal D(k)=2^k$ & Binary branching from ternary states \\
+Path measure & $\mu_t\propto e^{-S_E[s,\mathbf J]}\dd\pi$ & FTD Euclidean path integral \\
+Ontic period & $\Tont = 2M\varpi$ & Full closure $=8\varpi^2/G^{*2}$ \\
+Ontic quarter-turn & $\Thetaont = M\varpi/2$ & Quarter closure $=2\varpi^2/G^{*2}$ \\
+Observer boundary & $b(t)=\partial\causal_i(t)$ & Crystallized state memory \\
+Tick clock & $t\in\N$ & Ring~0: $G^{*2}$ energy per DoF per tick \\
+Regularity norm & $\Nreg_m[a]=\sum 2^{mk}|a_k|$ & Discrete $\to$ continuous bridge \\
+\bottomrule
+\end{tabular}
+\end{center}
+The common grammar is therefore
+\[
+\text{scale} + \text{phase} + \text{closure} + \text{shell hierarchy} + \text{observer boundary} + \text{tick}.
+\]
+Powers and roots inhabit the scale side, complex exponentials and trigonometric projection inhabit the phase side, dyadic Fourier ladders inhabit nested shell hierarchy, the observer boundary accumulates crystallized memory, and the tick clock sustains the computation.
+
+%===================================================================
+\section{Mechanical Proof of Concept: A Low-Dimensional Toy Model}
+%===================================================================
+
+To bridge the formal calculus and the observer boundary dynamics, consider a minimal, one-dimensional toy model.
+Let the interior state $x(k)$ (representing the flux field magnitude) and observer boundary state $b(k)$ (representing the Gauss constraint accumulation) be scalar, with discrete time indexed by the tick number $k$.
+
+The interior state updates via shell deposition (the $\Delta\mathbf J$ computed in \texttt{phase\_read}):
+\[
+x(k+1) = x(k) + \Delta f_p(k)
+\]
+where $\Delta f_p(k)$ represents the accretion of a new $p$-dimensional shell.
+The observer boundary integrates this new state, modulated by the closure phase:
+\[
+b(k+1) = b(k) + \cos\!\bigl(k\Thetaont\bigr) \cdot x(k+1)
+\]
+where $\Thetaont=\pi/2$ is the ontic quarter-turn.
+The cosine modulation $\cos(k\pi/2)$ with its $\{1,\,0,\,-1,\,0\}$ pattern corresponds to the alternating acceptance and rejection of the Gauss constraint correction at each tick phase.
+
+\begin{example}[Quadratic shell iteration, $p=2$]
+Set $x(0)=0$, $b(0)=0$, and let $\Delta f_2(k)=2k+1$. Then:
+\begin{center}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{ccccc}
+\toprule
+$k$ & $\Delta f_2(k)$ & $x(k{+}1)$ & $\cos(k\pi/2)$ & $b(k{+}1)$ \\
+\midrule
+0 & 1 & 1 & $+1$ & $0+1\cdot 1 = 1$ \\
+1 & 3 & 4 & $0$ & $1+0\cdot 4 = 1$ \\
+2 & 5 & 9 & $-1$ & $1+(-1)\cdot 9 = -8$ \\
+3 & 7 & 16 & $0$ & $-8+0\cdot 16 = -8$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+After four ticks, $x(4)=4^2=16$ records the total shell volume (flux accumulated), while $b(4)=-8$ records the phase-modulated observer boundary trace (crystallized memory).
+The boundary retains a compressed summary: it registered the $k=0$ deposition positively and the $k=2$ deposition negatively, while the odd-$k$ depositions were projected to zero by the quarter-turn phase --- exactly as \texttt{gauss\_project} selectively corrects the constraint violation at each tick.
+\end{example}
+
+\begin{example}[Consciousness quadratic modulation, $k=\tfrac12$]
+For the consciousness sector, replace the real cosine modulation with the complex phase from the consciousness roots $y=|y|e^{i\theta_C}$ where $\theta_C\approx 52.54^\circ$.
+The observer boundary update becomes $b(k+1)=b(k)+\Re\!\bigl(e^{ik\theta_C}\bigr)\cdot x(k+1)$, producing a quasi-periodic spiral trajectory rather than the strict $\{1,0,-1,0\}$ pattern.
+This corresponds to the self-referential observer's oscillation between subject-dominant ($\sin\theta_C>0.5$) and object-dominant ($\cos\theta_C>0.5$) phases across successive ticks --- an observer that never fully settles into pure objectivity or pure subjectivity.
+\end{example}
+
+%===================================================================
+\section{Interpretive Synthesis}
+%===================================================================
+
+\begin{selection}[Closure-renormalization dynamics in FTD]
+Within FTD, the observer evolves by repeated deposition of action-weighted phase-shells across a cumulative boundary, with the next effective state generated by the leapfrog update
+\[
+x(t{+}1)=x(t)+\Delta\mathbf J(t), \qquad \Delta\mathbf J=C^2\nabla^2\mathbf J+g_c\nabla s,
+\]
+and the observer boundary then updated by the Gauss constraint:
+\[
+b(t{+}1)=\texttt{gauss\_project}\bigl(b(t),\,\nabla\!\cdot\!\mathbf J(t{+}1)-s(t{+}1)\bigr).
+\]
+Time is observer-boundary depth (cumulative energy processing at rate $G^{*2}$ per tick).
+Powers encode shell accretion, roots encode shell compression, complex exponentials encode closure orbit, trigonometric functions encode the Existence Filter's real projection, and dyadic Fourier ladders encode nested shell refinement whose convergent limit (the regularity theorem) yields continuous trace from discrete substrate.
+\end{selection}
+
+The von Neumann measurement chain~\cite{ftdvnc} terminates at the first subsystem with self-referential closure --- the gap equation's fixed point at $k_{\text{meas}}=4/G^*\approx 1.352$.
+The Ring~0 clock continues to tick, but the measurement is complete: the chain terminates not at infinity but at a finite algebraic locus.
+
+\begin{cautionbox}{What is and is not proved}
+The shell laws, asymptotic normalizations, phase decompositions, dyadic Fourier identities, and regularity ladder are \textbf{exact mathematical results} [THEOREM].
+The identification of these structures with FTD observer dynamics --- observer boundary as observer algebra boundary, tick cycle as the recursive loop, regularity ladder as the discrete-to-continuous bridge, Ring~0 clock as self-referential closure --- is a \textbf{structural correspondence} [SELECTION], argued from the precise mapping to FTD's tick cycle, action principle, and von Neumann chain termination, but not uniquely proven.
+The claim that the partition function's positivity requires self-referential closure remains \textbf{open} [CONJECTURE].
+\end{cautionbox}
+
+%===================================================================
+\section{Conclusion}
+%===================================================================
+
+The calculus developed here unifies several domains that are usually treated separately. Powers and roots become dual shell operations.
+Self-power becomes reflexive amplification mirroring the gap equation's self-consistency.
+Complex powers split into magnitude and phase, with the consciousness quadratic providing the FTD instance.
+Trigonometric functions become coordinate shadows of closure orbit, realized by the Existence Filter.
+Dyadic Fourier curves become nested shell ladders with exact alternation of chirality and constant energy per mode.
+The regularity theorem proves that sufficiently attenuated shell deposition produces smooth functions from discrete data --- the mathematical backbone of FTD's discrete-to-continuous bridge.
+
+The observer boundary model gives a formal arena in which the von Neumann measurement chain closes: the observer is not a passive endpoint of an infinite regress but the Ring~0 clock that sustains the lattice's computation.
+The tick processes $G^{*2}$ energy per degree of freedom, the ReLU crystallization irreversibly compresses flux into ternary state, and the observer boundary accumulates this crystallized memory across ticks.
+
+Within Foundational Ternary Dynamics, this calculus is the mathematical description of how discrete ticks produce continuous observers --- the formal bridge between the lattice's computational substrate and the observable continuity of physical law.
+
+\appendix
+\section{Notation}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.7\textwidth}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$x(t)$ & Interior state (state+flux fields within causal past $\causal_i(t)$) \\
+$e(t)$ & Exterior field (fields outside causal past) \\
+$b(t)$ & Observer boundary (boundary of causal past; crystallized state memory) \\
+$\causal_i(t)$ & Causal past of observer $i$ at tick $t$ \\
+$\Pi_t$ & Set of admissible lattice configurations from tick $t$ \\
+$\mu_t$ & FTD Euclidean path measure $\propto e^{-S_E[s,\mathbf J]}$ \\
+$S_E[s,\mathbf J]$ & FTD Euclidean action (kinetic + gradient + coupling + manifestation) \\
+$K_B$ & Manifestation threshold ($=0.511$, electron mass in lattice units) \\
+$g_c$ & State-flux coupling constant \\
+$\Delta$ & Forward difference operator \\
+$\mathcal P_{\Theta}$ & Phase projection operator \\
+$\mathcal D(k)$ & Dyadic lift $2^k$ \\
+$\varpi$ & Lemniscatic quarter-period constant ($\approx 2.622$) \\
+$M$ & AGM bridge factor $\pi/\varpi$ ($\approx 1.198$) \\
+$G^*$ & Lemniscate-alpha constant $2\varpi/\sqrt{\pi}$ ($\approx 2.959$) \\
+$\Tont$ & Full ontic closure period ($=2\pi$) \\
+$\Thetaont$ & Ontic quarter-turn generator ($=\pi/2$) \\
+$\psi_k(t)$ & Dyadic shell mode $\cos(2^k t)+2i(-1)^k\sin(2^k t)$ \\
+$\Nreg_m[a]$ & Regularity functional for the coefficient tail \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Selected References}
+\begin{thebibliography}{9}
+\bibitem{ahlfors}
+Lars V. Ahlfors,
+\emph{Complex Analysis},
+McGraw-Hill, 3rd ed., 1979.
+\bibitem{hardy}
+G. H. Hardy,
+\emph{Divergent Series},
+Oxford University Press, 1949.
+\bibitem{stein}
+Elias M. Stein and Rami Shakarchi,
+\emph{Fourier Analysis: An Introduction},
+Princeton University Press, 2003.
+\bibitem{whittaker}
+E. T. Whittaker and G. N. Watson,
+\emph{A Course of Modern Analysis},
+Cambridge University Press, 4th ed., 1927.
+\bibitem{friston}
+Karl Friston,
+A free energy principle for biological systems,
+\emph{Entropy} \textbf{14} (2012), 2100--2121.
+(Generic active inference framework that FTD concretizes via the Euclidean action $S_E[s,\mathbf J]$.)
+\bibitem{ftdspec}
+W.\,J.\,Steinmetz~III,
+\emph{Foundational Ternary Dynamics: The Complete Specification}, v5.28, 2026.
+\bibitem{ftdvnc}
+W.\,J.\,Steinmetz~III,
+The von Neumann chain: How FTD terminates the measurement regress, 2026.
+\bibitem{ftdtime}
+W.\,J.\,Steinmetz~III,
+Emergent time and gravity without curvature, 2026.
+\bibitem{ftdcons}
+W.\,J.\,Steinmetz~III,
+Consciousness, QFT, and GR from the master quadratic, 2026.
+\bibitem{ftdpath}
+W.\,J.\,Steinmetz~III,
+Path integral construction from the FTD action, 2026.
+\bibitem{ftdbridge}
+W.\,J.\,Steinmetz~III,
+The discrete-continuous bridge: the master quadratic as domain connector, 2026.
+\bibitem{ftdengine}
+FTD C++ simulation engine v2.8, \texttt{engine/SPEC\_ENGINE.md}, 2026.
+\end{thebibliography}
+\end{document}
