@@ -355,8 +355,11 @@ Caffeine (C8H10N4O2) — one of 27 molecules available from H2 to NaCl crystals 
 
 **Does not claim:**
 - To replace the Standard Model's computational machinery
-- To derive quark masses from first principles (honest [OPEN])
-- To have confirmed novel predictions (best candidates: neutrino hierarchy ~2027, sum m_nu ~2030)
+- To have confirmed novel predictions (best candidates: neutrino mass hierarchy ~2027, sum m_nu ~2030)
+
+**Open questions [OPEN]:**
+- Hadronic mass spectrum — quarks are confined; their "masses" are scheme-dependent parameters, not direct observables. Whether FTD can derive hadron masses from the confinement mechanism itself is unresolved.
+- Neutrino mass structure — predictions exist but await experimental reach
 
 **The honest status:** A mathematically rigorous derivation chain from one axiom to alpha, the gauge groups, confinement, and the Higgs mass, with every algebraic step verified. The remaining assumptions are standard lattice gauge theory. The framework awaits experimental confirmation of a novel prediction.
 
