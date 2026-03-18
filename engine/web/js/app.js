@@ -5,8 +5,8 @@
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge, MockBridge } from './wasm-bridge.js?v=20260309c';
-import { Viewport } from './viewport.js?v=20260309g';
+import { createBridge, MockBridge } from './wasm-bridge.js?v=20260318a';
+import { Viewport } from './viewport.js?v=20260318a';
 import { FluxEnergyChart, ParticleChart } from './charts.js?v=20260304q';
 import { DiagnosticsPanel } from './diagnostics.js?v=20260304q';
 import { LagrangianChart } from './lagrangian.js?v=20260304q';
@@ -26,14 +26,14 @@ import { OnticObservatory, renderFcCard, renderObserverCard, renderHierarchyTowe
 import { renderEnergyLevels } from './spectroscopy.js?v=20260304q';
 import { renderCrossSections } from './cross-sections.js?v=20260304q';
 import { renderDecayRates } from './decay-rates.js?v=20260304q';
-import { ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS, TICK_PHASES, ALPHA, K_B, K_GENESIS, G_N, DAMPING, G_STAR, VARPI, X_PLUS, X_MINUS, K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT, COS2_THETA_C } from './constants.js?v=20260305e';
+import { ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS, TICK_PHASES, ALPHA, K_B, K_GENESIS, G_N, DAMPING, G_STAR, VARPI, X_PLUS, X_MINUS, K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT, COS2_THETA_C, C_SPEED } from './constants.js?v=20260305e';
 import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor, renderAggregationTower, renderScaleBridge, renderEmergenceMonitor } from './aggregation-bridge.js?v=20260304q';
 import { BackgroundManager } from './backgrounds.js?v=20260304s';
 import { PETelemetryPanel } from './pe-telemetry.js?v=20260304q';
 import { ConsciousnessEngine } from './consciousness.js?v=20260305e';
 import { ConsciousnessPedagogy, addInfoTooltips } from './consciousness-pedagogy.js?v=20260317a';
 
-console.log('[FTD] App version 20260309f loaded (cache-busted)');
+console.log('[FTD] App version 20260318a loaded (cache-busted)');
 
 // ── Application State ────────────────────────────────────────────────
 let _initialized = false;
@@ -101,6 +101,14 @@ let _showGenesisIsosurface = false;
 let _fieldFrame = 0;            // throttle counter for field updates
 let _fieldNeedsUpdate = false;  // force immediate field compute on toggle activation
 let _anyFieldActive = false;    // cached OR of all field toggle flags
+
+// Black hole scenario state (Scale 1 only)
+let _bhActive = false;
+let _bhHawkingTick = 0;
+const _BH_HAWKING_INTERVAL = 300;
+const _BH_HORIZON_R = 3.0;
+const _BH_MASS = 5000;
+const _BH_TEST_MASS = 0.511;
 
 function _recomputeAnyFieldActive() {
     _anyFieldActive = _showEField || _showBField || _showPoynting ||
@@ -944,6 +952,27 @@ function animatePE(now) {
         _tickAccumulator -= wholeTicks;
         for (let i = 0; i < wholeTicks; i++) {
             bridge.peTick();
+        }
+
+        // Hawking-analogue pair emission for micro black hole scenario
+        if (_bhActive) {
+            _bhHawkingTick += wholeTicks;
+            if (_bhHawkingTick >= _BH_HAWKING_INTERVAL) {
+                _bhHawkingTick = 0;
+                const phi = Math.random() * 2 * Math.PI;
+                const r_emit = _BH_HORIZON_R + 0.5;
+                const px = r_emit * Math.cos(phi);
+                const pz = r_emit * Math.sin(phi);
+                const v_out = C_SPEED * 0.60;
+                // Escaping particle (red, e⁻) — radially outward
+                bridge.peAddParticle('electron', -1, px, 0, pz,
+                    v_out * Math.cos(phi), 0, v_out * Math.sin(phi),
+                    _BH_TEST_MASS, 0.1);
+                // In-falling partner (green, e⁺) — antipodal, slow
+                bridge.peAddParticle('positron', 1, -px, 0, -pz,
+                    v_out * 0.3 * Math.cos(phi), 0, v_out * 0.3 * Math.sin(phi),
+                    _BH_TEST_MASS, 0.1);
+            }
         }
     }
 
@@ -2614,6 +2643,13 @@ function loadPEScenario(name) {
     _resetAllVisualState();
     bridge.initPE();
 
+    // Reset black hole state from any prior scenario
+    _bhActive = false;
+    _bhHawkingTick = 0;
+    if (viewport && viewport.setEventHorizon) {
+        viewport.setEventHorizon(false, 0);
+    }
+
     // PE physics setup for atomic-scale simulations:
     // - Disable damping (Larmor radiation is Scale 0 only)
     // - Disable gravity (G_N=0.01 is lattice-scale; real α_G≈6e-39, negligible at atomic scale)
@@ -2869,6 +2905,69 @@ function loadPEScenario(name) {
             const v_app = 0.008;
             bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
             bridge.peAddParticle('muon', -1, -15, 2, 0, v_app, 0, 0, mmu, RE);
+            break;
+        }
+
+        // ── Gravity scenarios ─────────────────────────────────────
+        case 'pe-micro-bh': {
+            // Micro Black Hole — FTD lattice accretion demo
+            // [SELECTION] M_BH=5000 MeV, radii, Hawking rate are pedagogical choices
+            // [EMERGENT] C_SPEED cap creates inspiral zone at r<~10
+
+            // Override: gravity dominates, no Coulomb
+            bridge.peSetCoulomb(false);
+            bridge.peSetGravity(true);
+            bridge.peSetDamping(false);
+            bridge.peSetSoftening(1.0);
+            const peCoulombEl = document.getElementById('pe-coulomb');
+            const peGravityEl = document.getElementById('pe-gravity');
+            const peDampingEl = document.getElementById('pe-damping');
+            if (peCoulombEl) peCoulombEl.checked = false;
+            if (peGravityEl) peGravityEl.checked = true;
+            if (peDampingEl) peDampingEl.checked = false;
+
+            // BH locked at origin — neutral, enormous mass
+            bridge.peAddLockedParticle('neutron', 0, 0, 0, 0, _BH_MASS, 0.5);
+
+            // Gravity-only orbital velocity with Plummer softening
+            const soft2_bh = 1.0;
+            const gravOrbitalV = (r) =>
+                Math.sqrt(G_N * _BH_MASS * r / Math.pow(r * r + soft2_bh, 1.5));
+
+            // ZONE 1: Inspiral donors at r=8 (v_circ > C_SPEED — will spiral in)
+            const r_fall = 8, v_fall = 0.45;
+            const angles_fall = [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];
+            for (const a of angles_fall) {
+                bridge.peAddParticle('neutron', 0,
+                    r_fall * Math.cos(a), 0, r_fall * Math.sin(a),
+                    -v_fall * Math.sin(a), 0, v_fall * Math.cos(a),
+                    _BH_TEST_MASS, 0.1);
+            }
+
+            // ZONE 2: Accretion ring at r=16 (v_circ < C_SPEED — stable orbits)
+            const r_ring = 16;
+            const v_ring = Math.min(gravOrbitalV(r_ring) * 0.92, C_SPEED * 0.92);
+            const nRing = 8;
+            for (let i = 0; i < nRing; i++) {
+                const a = (i / nRing) * 2 * Math.PI;
+                bridge.peAddParticle('neutron', 0,
+                    r_ring * Math.cos(a), 0, r_ring * Math.sin(a),
+                    -v_ring * Math.sin(a), 0, v_ring * Math.cos(a),
+                    _BH_TEST_MASS, 0.1);
+            }
+
+            // ZONE 3: Far escapers at r=26 (slightly super-circular)
+            const r_far = 26;
+            const v_far = gravOrbitalV(r_far) * 1.05;
+            bridge.peAddParticle('neutron', 0, r_far, 0, 0, 0, 0, v_far, _BH_TEST_MASS, 0.1);
+            bridge.peAddParticle('neutron', 0, -r_far, 0, 0, 0, 0, -v_far, _BH_TEST_MASS, 0.1);
+
+            // Activate Hawking emission + event horizon visual
+            _bhActive = true;
+            _bhHawkingTick = 0;
+            if (viewport && viewport.setEventHorizon) {
+                viewport.setEventHorizon(true, _BH_HORIZON_R);
+            }
             break;
         }
 
@@ -3542,10 +3641,23 @@ function loadScenario(name) {
         if (el) el.checked = true;
     }
     if (name === 'flux-cosmic-web' || name === 'flux-gravitational-wave' ||
-        name === 'flux-triad' || name === 'flux-baryon') {
+        name === 'flux-triad' || name === 'flux-baryon' || name === 'flux-black-hole') {
         bridge.setToggle('gravity', true);
         const el = document.getElementById('t-gravity');
         if (el) el.checked = true;
+    }
+    if (name === 'flux-black-hole') {
+        bridge.setToggle('genesis', false);
+        const genEl = document.getElementById('t-genesis');
+        if (genEl) genEl.checked = false;
+    }
+    if (name === 'flux-stable-vortex') {
+        bridge.setToggle('damping', false);
+        bridge.setToggle('genesis', false);
+        const dEl = document.getElementById('t-damping');
+        if (dEl) dEl.checked = false;
+        const genEl = document.getElementById('t-genesis');
+        if (genEl) genEl.checked = false;
     }
     if (name === 'flux-cyclotron') {
         bridge.setToggle('lorentz_force', true);

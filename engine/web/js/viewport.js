@@ -1806,6 +1806,50 @@ export class Viewport {
         if (!on) this._darkMatterHalo.geometry.setDrawRange(0, 0);
     }
 
+    // ── Event Horizon Sphere (Scale 1 black hole scenario) ─────────────
+
+    _buildEventHorizon() {
+        // Dark translucent sphere — FTD "capture radius" where v_circ > C_SPEED
+        const geo = new THREE.SphereGeometry(1, 32, 24);
+        const mat = new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            transparent: true,
+            opacity: 0.75,
+            side: THREE.FrontSide,
+            depthWrite: false,
+        });
+        this._eventHorizonSphere = new THREE.Mesh(geo, mat);
+        this._eventHorizonSphere.visible = false;
+        this._eventHorizonSphere.renderOrder = 10;
+        this.scene.add(this._eventHorizonSphere);
+
+        // Orange equatorial ring — accretion disk boundary indicator
+        const ringGeo = new THREE.TorusGeometry(1, 0.06, 8, 48);
+        const ringMat = new THREE.MeshBasicMaterial({
+            color: 0xff8800,
+            transparent: true,
+            opacity: 0.65,
+            depthWrite: false,
+        });
+        this._eventHorizonRing = new THREE.Mesh(ringGeo, ringMat);
+        this._eventHorizonRing.visible = false;
+        this._eventHorizonRing.renderOrder = 11;
+        this.scene.add(this._eventHorizonRing);
+    }
+
+    setEventHorizon(active, radius) {
+        if (!this._eventHorizonSphere) this._buildEventHorizon();
+        if (active && radius > 0) {
+            this._eventHorizonSphere.scale.setScalar(radius);
+            this._eventHorizonSphere.visible = true;
+            this._eventHorizonRing.scale.setScalar(radius * 3.0);
+            this._eventHorizonRing.visible = true;
+        } else {
+            this._eventHorizonSphere.visible = false;
+            this._eventHorizonRing.visible = false;
+        }
+    }
+
     // ── Selective Damping Zones (wireframe cubes around damped voxels) ─
     _buildDampingZones() {
         const maxSegments = 1200; // 100 particles * 12 edges

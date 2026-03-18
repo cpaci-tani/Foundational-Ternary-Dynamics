@@ -2935,6 +2935,115 @@ export class MockBridge {
                     }
                     break;
                 }
+
+                case 'flux-black-hole': {
+                    // Lattice black hole: radial inward flux sink at center
+                    // + orbiting particles + wormhole throat flux tube to offset
+                    const bhR = Math.floor(N / 3);
+                    const bhAmp = amp * 1.2;
+                    // Radial inward flux — gravitational "drain" centered at mid
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        const dx = x - mid, dy = y - mid, dz = z - mid;
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        if (r2 < 1 || r2 > bhR * bhR) continue;
+                        const r = Math.sqrt(r2);
+                        // 1/r² radial inward flux (Schwarzschild-like drain)
+                        const val = bhAmp / (r * r);
+                        this._injectFlux(x, y, z,
+                            -val * dx / r, -val * dy / r, -val * dz / r);
+                    }
+                    // Wormhole throat: flux tube connecting center to offset exit
+                    const whExit = Math.floor(N / 4);
+                    const tubeR = 2;
+                    for (let t = 0; t <= whExit; t++) {
+                        const frac = t / whExit;
+                        const ty = mid + t;
+                        const tubeAmp = bhAmp * 0.8 * (1 - 0.5 * frac);
+                        for (let dz = -tubeR; dz <= tubeR; dz++)
+                        for (let dx = -tubeR; dx <= tubeR; dx++) {
+                            if (dx * dx + dz * dz > tubeR * tubeR) continue;
+                            this._injectFlux(mid + dx, ty, mid + dz, 0, tubeAmp, 0);
+                        }
+                    }
+                    // Radial outward burst at wormhole exit (white hole)
+                    const exitY = mid + whExit;
+                    for (let dz = -4; dz <= 4; dz++)
+                    for (let dy = -4; dy <= 4; dy++)
+                    for (let dx = -4; dx <= 4; dx++) {
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        if (r2 < 1 || r2 > 16) continue;
+                        const r = Math.sqrt(r2);
+                        const val = bhAmp * 0.6 * Math.exp(-r2 / 8);
+                        this._injectFlux(mid + dx, exitY + dy, mid + dz,
+                            val * dx / r, val * dy / r, val * dz / r);
+                    }
+                    // 4 orbiting particles around the BH center
+                    const orbR_bh = Math.floor(N / 5);
+                    for (let i = 0; i < 4; i++) {
+                        const angle = (i / 4) * 2 * Math.PI;
+                        const px = mid + Math.round(orbR_bh * Math.cos(angle));
+                        const pz = mid + Math.round(orbR_bh * Math.sin(angle));
+                        this.injectParticle(px, mid, pz, i < 2 ? 1 : -1);
+                        // Tangential flux kick for orbital motion
+                        const kick = amp * 0.5;
+                        this._injectFlux(px, mid, pz,
+                            -kick * Math.sin(angle), 0, kick * Math.cos(angle));
+                    }
+                    break;
+                }
+
+                case 'flux-stable-vortex': {
+                    // Multi-layer stable vortex: concentric tangential flux rings
+                    // with counter-rotating layers for stability
+                    const nRings = 3;
+                    const radii = [
+                        Math.floor(N / 8),   // inner ring ~4
+                        Math.floor(N / 5),   // middle ring ~6
+                        Math.floor(N / 3.2), // outer ring ~10
+                    ];
+                    const amps = [amp * 3.0, amp * 2.2, amp * 1.5];
+                    const dirs = [1, -1, 1]; // alternating rotation for stability
+                    const nPts = [16, 24, 36];
+                    const ySpread = 3; // vertical extent of each ring
+
+                    for (let ring = 0; ring < nRings; ring++) {
+                        const rr = radii[ring];
+                        const aa = amps[ring];
+                        const dir = dirs[ring];
+                        const np = nPts[ring];
+                        for (let i = 0; i < np; i++) {
+                            const angle = (2 * Math.PI * i) / np;
+                            const rx = Math.round(mid + rr * Math.cos(angle));
+                            const rz = Math.round(mid + rr * Math.sin(angle));
+                            // Tangential flux (perpendicular to radius vector)
+                            const tX = -Math.sin(angle) * aa * dir;
+                            const tZ = Math.cos(angle) * aa * dir;
+                            // Helicity: upward component for spin structure
+                            const tY = aa * 0.3 * dir;
+                            // Spread vertically for 3D structure
+                            for (let dy = -ySpread; dy <= ySpread; dy++) {
+                                const falloff = Math.exp(-(dy * dy) / (ySpread * 0.8));
+                                this._injectFlux(rx, mid + dy, rz,
+                                    tX * falloff, tY * falloff, tZ * falloff);
+                            }
+                        }
+                    }
+                    // Central axial flux column (vortex core)
+                    const coreR = 2;
+                    const coreAmp = amp * 2.5;
+                    for (let dy = -Math.floor(N / 4); dy <= Math.floor(N / 4); dy++) {
+                        const yFalloff = Math.exp(-(dy * dy) / (N * N * 0.02));
+                        for (let dz = -coreR; dz <= coreR; dz++)
+                        for (let dx = -coreR; dx <= coreR; dx++) {
+                            if (dx * dx + dz * dz > coreR * coreR) continue;
+                            this._injectFlux(mid + dx, mid + dy, mid + dz,
+                                0, coreAmp * yFalloff, 0);
+                        }
+                    }
+                    break;
+                }
             }
             return;
         }
