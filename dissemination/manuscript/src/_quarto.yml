@@ -60,6 +60,7 @@ book:
         - chapters/2.5-the-higgs-mechanism.qmd
         - chapters/2.6-flavor-physics.qmd
         - chapters/2.7-the-weak-force.qmd
+        - chapters/2.15-the-alpha-ladder.qmd
 
     - part: "Book III: The Atomic Realm"
       chapters:
@@ -128,6 +129,7 @@ book:
       chapters:
         - chapters/12.0-definition-of-life.qmd
         - chapters/12.1-self-organization.qmd
+        - chapters/12.1a-hierarchy-of-sentience.qmd
         - chapters/12.2-information-and-entropy.qmd
         - chapters/12.3-complexity.qmd
         - chapters/12.4-the-anthropic-window.qmd

@@ -196,7 +196,7 @@ ALPHA = 1.0 / ALPHA_INV
 ALPHA_S = b_3 / (b_3 + 4 * N_eff)
 
 # Weinberg angle
-SIN2_THETA_W = 1/4 * (1 - ALPHA / (N_c * np.pi))
+SIN2_THETA_W = N_c / N_eff  # 3/13 = 0.230769...
 
 # Gravitational coupling
 ALPHA_G = 2 * np.pi * (N_base**2 / N_c)**2 * (N_eff + N_c/b_3)**2 * ALPHA**20

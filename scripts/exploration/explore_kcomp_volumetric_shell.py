@@ -33,7 +33,7 @@ from typing import Tuple, List, Dict
 # =============================================================================
 # FTD Constants (from engine/include/ftd/ontic.h)
 # =============================================================================
-ALPHA = 0.00729735
+ALPHA = 0.0072973534  # 1/137.0361714582 (tree-level)
 K_B = 0.511                    # Manifestation threshold (MeV)
 G_STAR = 2.9586751192          # Lemniscatic constant
 R_EFF = 6.8                    # Self-field effective radius (Phase 6 engine data)

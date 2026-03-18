@@ -5,7 +5,7 @@
  * Implements the G*-tick dynamics with Read/Write sub-phases.
  * Each tick:
  *   1. Read phase (sqrt(G*) sub-tick): compute Delta_J from 6 face neighbors
- *   2. Write phase (sqrt(G*) sub-tick): commit updated J, round to grid, compute drag
+ *   2. Write phase (sqrt(G*) sub-tick): commit updated J, round to grid
  *   3. Update latency L from local density
  *   4. Enforce bandwidth: if v^2 + L^2 >= 1, scale velocity down
  *   5. Advance proper time: tau += G* * sqrt(1 - v^2 - L^2)
@@ -165,17 +165,7 @@ public:
     double born_probability(int idx) const;
     void create_entangled_pair(int x, int y, int z, const Vec3& flux_val);
 
-    // Field operators for Lagrangian terms
-    double screened_density(int idx) const;
-    Vec3 gradient_screened_density(int idx) const;
-    Vec3 gradient_latency(int idx) const;
-    Vec3 gradient_attention(int idx) const;
-    int triad_neighbor_count(int idx) const;
-
-    // Noetic operators (Phase 3)
-    double noetic_mass(int idx) const;
     double compute_entropy() const;
-    int detect_sloops();
 
     // Aggregate diagnostics (Phase 6)
     AggregateProfile aggregate_profile(int center_idx, double threshold = 0.01) const;
@@ -193,7 +183,7 @@ public:
 private:
     // Sub-phases of a single G*-tick
     void phase_read();      // Compute delta_J from neighbors
-    void phase_write();     // Commit flux, round positions, compute drag
+    void phase_write();     // Commit flux, round positions
     void phase_forces();    // Compute forces on manifested particles from flux
     void phase_movement();  // Move particles between voxels
     void gauss_project();       // Gauss constraint projection (∇·J = ρ)

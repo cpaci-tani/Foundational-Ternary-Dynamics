@@ -27,7 +27,7 @@ G_STAR = (sqrt(2) * gamma(0.25)**2) / (2 * pi)
 DELTA = 4.669201609102990671853203820466
 
 # Fine structure constant
-ALPHA = 1 / 137.035999084
+ALPHA = 1 / 137.035999177  # CODATA 2022
 
 # FTD integers
 N_BASE = 4
