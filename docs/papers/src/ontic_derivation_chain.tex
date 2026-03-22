@@ -42,9 +42,8 @@
 % ----- Document -----
 \title{\vspace{-2em}\textbf{The Ontic Derivation Chain:\\[4pt]
 \large Twenty-Six Physical Constants from Two Inputs}}
-\author[1]{C. Montanez}
-\affil[1]{\textit{Foundational Ternary Dynamics Research}}
-\date{March 2026 \quad\small FTD v5.27}
+\author{}
+\date{}
 
 \begin{document}
 \maketitle
@@ -53,7 +52,7 @@
 \begin{abstract}
 From two inputs---the spatial dimension $D=3$ and the lemniscate constant
 $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$---a chain of algebraic identities
-yields twenty-six independently testable physical quantities. The chain proceeds:
+yields twenty-six testable physical quantities (some sharing common roots). The chain proceeds:
 $\varpi \to M \to \G \to \pi$, where a master quadratic
 $x^2 - 16\,\G^2\,x + 16\,\G^3 = 0$ produces roots
 $\xp = 137.036$ and $\xm = 3.024$, identified with $1/\alpha$ (1.26\,ppm
@@ -67,6 +66,10 @@ and the gravitational hierarchy $\alpha_G \propto \alpha^{20}$.
 A companion proof suite (301/301 checks, NumPy/SciPy) verifies every
 numerical claim. We present the framework as a self-consistent algebraic
 structure and state explicit falsification criteria.
+Companion papers trace the lifecycle of a hydrogen atom through these
+constants~\cite{lifecycle}, analyze the discrete--continuous bridge in pure
+mathematics~\cite{bridge}, and propose a unifying ontological
+constructor~\cite{constructor}.
 \end{abstract}
 
 \smallskip
@@ -194,8 +197,8 @@ distinction between spatial amplitude and spacetime action per degree of freedom
 \end{equation}
 with roots
 \begin{align}
-\xp &= 8\G^2 + 8\G^2\sqrt{1 - 1/\G} = 137.0362\ldots \label{eq:xplus}\\
-\xm &= 8\G^2 - 8\G^2\sqrt{1 - 1/\G} = 3.0240\ldots \label{eq:xminus}
+\xp &= 8\G^2\!\left(1 + \sqrt{1 - \tfrac{1}{4\G}}\right) = 137.0362\ldots \label{eq:xplus}\\
+\xm &= 8\G^2\!\left(1 - \sqrt{1 - \tfrac{1}{4\G}}\right) = 3.0240\ldots \label{eq:xminus}
 \end{align}
 \end{theorem}
 
@@ -220,13 +223,13 @@ From $\xm = 3.024\ldots$ and $D = 3$, the following integers are fixed:
 \toprule
 \textbf{Symbol} & \textbf{Formula} & \textbf{Value} & \textbf{Physics} & \textbf{Tag} \\
 \midrule
-$N_c$ & $\lfloor\xm\rfloor$ & 3 & Color charges & \epi{Conj.} \\
-$N_\text{gen}$ & $N_c$ & 3 & Fermion generations & \epi{Conj.} \\
-$N_f$ & $2N_\text{gen}$ & 6 & Quark flavors & \epi{Thm.} \\
-$N_\text{base}$ & $2^{(D+1)/2}$ & 4 & Spinor dimension & \epi{Thm.} \\
-$b_3$ & $(11N_c - 2N_f)/3$ & 7 & QCD beta coefficient & \epi{Thm.} \\
-$N_\text{eff}$ & $b_3 + 2N_c$ & 13 & Effective DoF $= F_7$ & \epi{Thm.} \\
-$\mathcal{D}$ & $N_c N_\text{base}^2 - 1$ & 47 & Constraint dimension & \epi{Thm.} \\
+$N_c$ & $\lfloor\xm\rfloor$ & 3 & Color charges & \epi{Conjecture} \\
+$N_\text{gen}$ & $N_c$ & 3 & Fermion generations & \epi{Conjecture} \\
+$N_f$ & $2N_\text{gen}$ & 6 & Quark flavors & \epi{Theorem} \\
+$N_\text{base}$ & $2^{(D+1)/2}$ & 4 & Spinor dimension & \epi{Theorem} \\
+$b_3$ & $(11N_c - 2N_f)/3$ & 7 & QCD beta coefficient & \epi{Theorem} \\
+$N_\text{eff}$ & $b_3 + 2N_c$ & 13 & Effective DoF $= F_7$ & \epi{Theorem} \\
+$\mathcal{D}$ & $N_c N_\text{base}^2 - 1$ & 47 & Constraint dimension & \epi{Theorem} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -235,6 +238,26 @@ $\mathcal{D}$ & $N_c N_\text{base}^2 - 1$ & 47 & Constraint dimension & \epi{Thm
 $N_\text{eff} = 13 = F_7$ (seventh Fibonacci number).
 $b_3 = N_\text{base} + N_c$ (additive closure of the two primitive integers).
 \end{remark}
+
+% ===========================================================================
+\subsection{Gauge Groups from the Moore Neighborhood}
+% ===========================================================================
+
+The 26 neighbors of a voxel in $\mathbb{Z}^3$ decompose uniquely by distance into three sublattices. \epi{Theorem} A neighbor at displacement $(\Delta x, \Delta y, \Delta z)$ couples to the flux components corresponding to its nonzero coordinates:
+
+\begin{center}\small
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+Sublattice & Count & Distance & $\mathbf{J}$-components & Gauge group \\
+\midrule
+SC (face) & 6 & 1 & 1 & $\mathrm{U}(1)$ \\
+FCC (edge) & 12 & $\sqrt{2}$ & 2 & $\mathrm{SU}(2)$ \\
+BCC (corner) & 8 & $\sqrt{3}$ & 3 & $\mathrm{SU}(3)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The Standard Model gauge group $\mathrm{U}(1) \times \mathrm{SU}(2) \times \mathrm{SU}(3)$ is the unique orthogonal decomposition of $|\mathbf{J}|^2 = J_x^2 + J_y^2 + J_z^2$ by the Moore sublattices. It is not postulated. It is counted.
 
 % ===========================================================================
 \section{Coupling Constants (Layer 5)}
@@ -273,15 +296,20 @@ electromagnetism and gravity as a \emph{cross-domain} power of the coupling.
 
 \subsection{Absolute Scale}
 
-\noindent With $M_P = 1.221\times 10^{19}$\,GeV as the sole external input:
-
+\noindent In lattice natural units ($K_B = 1$, $a = 1$, $\tau = 1$), the electron mass \emph{is} the energy unit. The Planck mass is then derived, not imposed:
 \begin{equation}
-\boxed{m_e = M_P\,\sqrt{2\pi}\;\frac{N_\text{base}^2}{N_c}\;\alpha^{11}
-= M_P\,\sqrt{2\pi}\;\frac{16}{3}\;\alpha^{11}}
+\boxed{M_P \;=\; \frac{K_B}{\sqrt{2\pi}\;\dfrac{N_\text{base}^2}{N_c}\;\alpha^{11}}
+\;=\; \frac{1}{\sqrt{2\pi}\;\dfrac{16}{3}\;\alpha^{11}} \;\approx\; 2.39\times 10^{22}~\text{lattice units.}}
+\label{eq:mp}
+\end{equation}
+Converting to SI requires one unit convention: $K_B = 0.5100$\,MeV (the electron mass). This gives $M_P = 2.39\times 10^{22} \times 0.5100\,\text{MeV} = 1.22\times 10^{19}$\,GeV, matching the known Planck mass. \epi{Selection}
+
+Equivalently, the electron mass formula reads:
+\begin{equation}
+m_e = M_P\sqrt{2\pi}\;\frac{16}{3}\;\alpha^{11} = 0.5100~\text{MeV} \quad\text{(0.19\% from experimental 0.51100\,MeV).}
 \label{eq:me}
 \end{equation}
-
-\noindent Predicted: 0.510\,MeV; experimental: 0.511\,MeV (0.19\% error). \epi{Conjecture}
+\epi{Selection}
 
 \subsection{Integer Mass Ratios}
 
@@ -292,7 +320,7 @@ electromagnetism and gravity as a \emph{cross-domain} power of the coupling.
 \midrule
 $m_\mu/m_e$ & $3b_3(b_3+N_c)-N_c$ & 207 & 206.768 & 0.11\% \\
 $m_\tau/m_e$ & $(N_\text{eff}+N_\text{base})\cdot 207 - 2N_c b_3$ & 3477 & 3477.23 & 0.007\% \\
-$m_p/m_e$ & $N_\text{eff}\cdot\xp + T_{10}$ & 1836.5 & 1836.15 & 0.018\% \\
+$m_p/m_e$ & $N_\text{eff}\cdot\xp + T_{10}$ & 1836.47 & 1836.15 & 0.018\% \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -300,23 +328,26 @@ $m_p/m_e$ & $N_\text{eff}\cdot\xp + T_{10}$ & 1836.5 & 1836.15 & 0.018\% \\
 \noindent where $T_{10} = (b_3 + N_c)(b_3 + N_c + 1)/2 = 55$ is the 10th triangular number.
 The proton mass combines the EM contribution ($N_\text{eff}\cdot\xp$: valence quarks
 coupled to the fine structure) with a QCD binding correction ($T_{10}$,
-reflecting the $\binom{b_3 + N_c + 1}{2}$ gluon exchange channels). \epi{Conjecture}
+reflecting the $\binom{b_3 + N_c + 1}{2}$ gluon exchange channels). \epi{Selection}
 
 \subsection{Electroweak Sector}
 
 \begin{align}
 v &= M_P\,\sqrt{2\pi}\;\alpha^8 = 246.08\;\text{GeV}
-    & &\text{(0.05\% from 246.22)} \quad\epi{Conj.} \label{eq:vev}\\[4pt]
-m_H &= \frac{N_\text{eff}}{\alpha^2}\;m_e = 124.7\;\text{GeV}
-    & &\text{(0.28\% from 125.1)} \quad\epi{Sel.} \label{eq:mh}\\[4pt]
-m_W &= \frac{b_3(b_3+N_c)-N_c}{8\alpha^2}\;m_e = 80.37\;\text{GeV}
-    & &\text{(0.003\% from 80.37)} \quad\epi{Conj.} \label{eq:mw}\\[4pt]
-m_Z &= m_W/\!\cos\theta_W = 91.63\;\text{GeV}
-    & &\text{(0.49\% from 91.19)} \quad\epi{Conj.} \label{eq:mz}
+    & &\text{(0.05\% from 246.22)} \quad\epi{Conjecture} \label{eq:vev}\\[4pt]
+m_H &= v\sqrt{\tfrac{6}{23}} = 125.69\;\text{GeV}
+    & &\text{(0.35\% from 125.25)} \quad\epi{Selection} \label{eq:mh}\\[4pt]
+m_W &= \frac{e\,v}{2\sin\theta_W} = 77.56\;\text{GeV}
+    & &\text{(3.5\% from 80.37)} \quad\epi{Parametric Insertion} \label{eq:mw}\\[4pt]
+m_Z &= m_W/\!\cos\theta_W = 88.44\;\text{GeV}
+    & &\text{(3.0\% from 91.19)} \quad\epi{Parametric Insertion} \label{eq:mz}
 \end{align}
 
-\noindent The $m_Z$ error (0.49\%, the worst mass prediction) propagates entirely from
-$\sin^2\!\theta_W = 3/13$ vs.\ the measured $0.23122$; the $m_W$ input is excellent.
+\noindent The $m_W$ and $m_Z$ errors ($\sim 3\%$) are the worst mass predictions and propagate from
+$\sin^2\!\theta_W = 3/13 = 0.2308$ vs.\ the measured $0.23122$, combined with the FTD-derived $v = 246.08$~GeV.
+An alternative integer-ratio formula $m_W = [b_3(b_3+N_c)-N_c]/(8\alpha^2)\cdot m_e = 80.21$~GeV
+achieves 0.2\% accuracy but is not derived from the electroweak Lagrangian; it is an empirical observation
+whose theoretical status is \epi{Open}.
 
 % ===========================================================================
 \section{Mixing Matrices (CKM and PMNS)}
@@ -429,46 +460,46 @@ Falsification: if future CODATA measurements shift outside the correction range.
 \textbf{\#} & \textbf{Quantity} & \textbf{FTD Formula} & \textbf{FTD} & \textbf{Expt.} & \textbf{Err.} & \textbf{Tag} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{Coupling constants}} \\
-1 & $1/\alpha$ (tree) & $\xp$ & 137.036 & 137.036 & 1.3\,ppm & \epi{C} \\
-2 & $1/\alpha$ (corr.) & Eq.\,\eqref{eq:precision} & 137.036\,0 & 137.036\,0 & $<$1\,ppt & \epi{C} \\
-3 & $\sin^2\!\theta_W$ & $3/13$ & 0.2308 & 0.2312 & 0.19\% & \epi{C} \\
-4 & $\alpha_s(M_Z)$ & $7/59$ & 0.1186 & 0.1179 & 0.63\% & \epi{C} \\
-5 & $\alpha_G$ & Eq.\,\eqref{eq:alphaG} & $5.91\!\times\!10^{-39}$ & $5.91\!\times\!10^{-39}$ & 0.06\% & \epi{C} \\
+1 & $1/\alpha$ (tree) & $\xp$ & 137.036 & 137.036 & 1.3\,ppm & \epi{Conjecture} \\
+2 & $1/\alpha$ (corr.) & Eq.\,\eqref{eq:precision} & 137.036\,0 & 137.036\,0 & $<$1\,ppt & \epi{Conjecture} \\
+3 & $\sin^2\!\theta_W$ & $3/13$ & 0.2308 & 0.2312 & 0.19\% & \epi{Conjecture} \\
+4 & $\alpha_s(M_Z)$ & $7/59$ & 0.1186 & 0.1179 & 0.63\% & \epi{Conjecture} \\
+5 & $\alpha_G$ & Eq.\,\eqref{eq:alphaG} & $5.91\!\times\!10^{-39}$ & $5.91\!\times\!10^{-39}$ & 0.06\% & \epi{Conjecture} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{Masses}} \\
-6 & $m_e$ & Eq.\,\ref{eq:me} & 0.510\,MeV & 0.511 & 0.19\% & \epi{C} \\
-7 & $m_\mu/m_e$ & $3b_3(b_3\!+\!N_c)\!-\!N_c$ & 207 & 206.77 & 0.11\% & \epi{C} \\
-8 & $m_\tau/m_e$ & integer formula & 3477 & 3477.2 & 0.007\% & \epi{C} \\
-9 & $m_p$ & $N_\text{eff}\cdot\xp\!+\!T_{10}$ & 938.4 & 938.3 & 0.02\% & \epi{C} \\
-10 & $v$ (Higgs VEV) & Eq.\,\ref{eq:vev} & 246.08 & 246.22 & 0.05\% & \epi{C} \\
-11 & $m_H$ & Eq.\,\ref{eq:mh} & 124.7 & 125.1 & 0.28\% & \epi{S} \\
-12 & $m_W$ & Eq.\,\ref{eq:mw} & 80.37 & 80.37 & 0.003\% & \epi{S} \\
+6 & $m_e$ & Eq.\,\ref{eq:me} & 0.5100\,MeV & 0.51100 & 0.19\% & \epi{Selection} \\
+7 & $m_\mu/m_e$ & $3b_3(b_3\!+\!N_c)\!-\!N_c$ & 207 & 206.77 & 0.11\% & \epi{Selection} \\
+8 & $m_\tau/m_e$ & integer formula & 3477 & 3477.2 & 0.007\% & \epi{Selection} \\
+9 & $m_p$ & $N_\text{eff}\cdot\xp\!+\!T_{10}$ & 938.4 & 938.3 & 0.02\% & \epi{Selection} \\
+10 & $v$ (Higgs VEV) & Eq.\,\ref{eq:vev} & 246.08 & 246.22 & 0.05\% & \epi{Conjecture} \\
+11 & $m_H$ & Eq.\,\ref{eq:mh} & 125.69 & 125.25 & 0.35\% & \epi{Selection} \\
+12 & $m_W$ & Eq.\,\ref{eq:mw} & 77.56 & 80.37 & 3.5\% & \epi{Parametric Insertion} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{PMNS mixing}} \\
-13 & $\sin^2\!\theta_{12}$ & $3/10$ & 0.300 & 0.307 & 2.3\% & \epi{C} \\
-14 & $\sin^2\!\theta_{23}$ & $16/29$ & 0.552 & 0.546 & 1.0\% & \epi{C} \\
-15 & $\sin^2\!\theta_{13}$ & $1/52$ & 0.0192 & 0.0220 & 12.7\%$^\dagger$ & \epi{C} \\
-16 & $\Delta m^2$ ratio & $100/3$ & 33.33 & 32.85 & 1.5\% & \epi{C} \\
+13 & $\sin^2\!\theta_{12}$ & $3/10$ & 0.300 & 0.307 & 2.3\% & \epi{Conjecture} \\
+14 & $\sin^2\!\theta_{23}$ & $16/29$ & 0.552 & 0.546 & 1.0\% & \epi{Conjecture} \\
+15 & $\sin^2\!\theta_{13}$ & $1/52$ & 0.0192 & 0.0220 & 12.7\%$^\dagger$ & \epi{Conjecture} \\
+16 & $\Delta m^2$ ratio & $100/3$ & 33.33 & 32.85 & 1.5\% & \epi{Conjecture} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{CKM mixing}} \\
-17 & $\sin\theta_C$ & $\G/N_\text{eff}$ & 0.2276 & 0.2243 & 1.5\% & \epi{C} \\
-18 & $\sin\theta_{23}^{CKM}$ & $7/169$ & 0.0414 & 0.0408 & 1.5\% & \epi{C} \\
-19 & $\sin\theta_{13}^{CKM}$ & $(3/10)(\G/13)^3$ & 0.00354 & 0.00382 & 7.4\% & \epi{C} \\
-20 & $\delta_{CP}$ & $\arctan(7/3)$ & $66.8^\circ$ & $65.4^\circ$ & 2.1\% & \epi{C} \\
-21 & Jarlskog $J$ & from angles & $3.18\!\times\!10^{-5}$ & $3.08\!\times\!10^{-5}$ & 3.2\% & \epi{C} \\
+17 & $\sin\theta_C$ & $\G/N_\text{eff}$ & 0.2276 & 0.2243 & 1.5\% & \epi{Conjecture} \\
+18 & $\sin\theta_{23}^{CKM}$ & $7/169$ & 0.0414 & 0.0408 & 1.5\% & \epi{Conjecture} \\
+19 & $\sin\theta_{13}^{CKM}$ & $(3/10)(\G/13)^3$ & 0.00354 & 0.00382 & 7.4\% & \epi{Conjecture} \\
+20 & $\delta_{CP}$ & $\arctan(7/3)$ & $66.8^\circ$ & $65.4^\circ$ & 2.1\% & \epi{Conjecture} \\
+21 & Jarlskog $J$ & from angles & $3.18\!\times\!10^{-5}$ & $3.08\!\times\!10^{-5}$ & 3.2\% & \epi{Conjecture} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{Cosmology}} \\
-22 & $n_s$ & $1 - 2/N_e$ & 0.9645 & 0.9649 & 0.04\% & \epi{C} \\
-23 & $r$ & $4\alpha(N_c/N_\text{base})$ & 0.0219 & $<0.036$ & OK & \epi{C} \\
+22 & $n_s$ & $1 - 2/N_e$ & 0.9645 & 0.9649 & 0.04\% & \epi{Conjecture} \\
+23 & $r$ & $4\alpha(N_c/N_\text{base})$ & 0.0219 & $<0.036$ & OK & \epi{Conjecture} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{Structural}} \\
-24 & $N_\text{gen}$ & $\lfloor\xm\rfloor$ & 3 & 3 & exact & \epi{C} \\
-25 & $N_c$ & $\lfloor\xm\rfloor$ & 3 & 3 & exact & \epi{C} \\
-26 & Hierarchy & normal & NH & NH & --- & \epi{C} \\
+24 & $N_\text{gen}$ & $\lfloor\xm\rfloor$ & 3 & 3 & exact & \epi{Conjecture} \\
+25 & $N_c$ & $\lfloor\xm\rfloor$ & 3 & 3 & exact & \epi{Conjecture} \\
+26 & Hierarchy & normal & NH & NH & --- & \epi{Conjecture} \\
 \bottomrule
 \end{tabular}
 \caption{FTD predictions vs.\ experiment.
-Tags: \epi{C} = Conjecture, \epi{S} = Selection.
+Tags: \epi{Conjecture}, \epi{Selection}.
 Of 26 quantities: 20 within 2\%, 24 within 5\%, 25 within 13\%.
 $^\dagger$Worst prediction; $1/(N_\text{base}\cdot N_\text{eff})$ is the simplest
 integer-ratio approximation but overshoots.}
@@ -500,11 +531,11 @@ integer-ratio approximation but overshoots.}
 % ===========================================================================
 
 \noindent All numerical claims are verified by a deterministic proof suite
-(\texttt{simulations/proofs/}, 11 modules, 301 assertions, 301 PASS) requiring
+(\texttt{scripts/proofs/}, 11 modules, 301 assertions, 301 PASS) requiring
 only Python~3.10+, NumPy, and SciPy. The master entry point
 \texttt{proof\_10\_ultimate\_chain.py} executes the complete chain.
 Every constant is computed from scratch in \texttt{common.py}
-with no imports from the project's own constants module.
+with no imports from the project's own constants module. The computational engine~\cite{engine} implements these constants as \texttt{constexpr} values derived at compile time.
 
 % ===========================================================================
 % References
@@ -547,15 +578,26 @@ K.~G.~Wilson,
 Phys.\ Rev.\ D \textbf{10}, 2445 (1974).
 
 \bibitem{FTDFramework}
-C.~Montanez,
 ``Foundational Ternary Dynamics: A Discrete Ontology for Computational Physics,''
-framework specification v5.27 (2026).
-\url{https://github.com/cmontanez/Foundational-Ternary-Dynamics}
+framework specification (2026).
 
 \bibitem{FTDProofs}
-C.~Montanez,
-``FTD Proof Suite v5.27: 301 verified assertions,''
+``FTD Proof Suite: 301 verified assertions,''
 supplementary material (2026).
+
+\bibitem{bridge}
+``The Discrete--Continuous Bridge Through the Lemniscatic Lens,''
+companion paper (2026).
+
+\bibitem{lifecycle}
+``One Unit of Existence: The Lifecycle of a Hydrogen Atom from Lattice Geometry to Dissolution,''
+companion paper (2026).
+
+\bibitem{constructor}
+``The Instantiating Formula: An Ontological Constructor for Foundational Ternary Dynamics,''
+companion paper (2026).
+
+\bibitem{engine} ``The Lattice Engine: A Computational Implementation of Foundational Ternary Dynamics,'' companion paper (2026).
 
 \end{thebibliography}
 
