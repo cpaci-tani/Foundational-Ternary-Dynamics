@@ -363,4 +363,4 @@ Caffeine (C8H10N4O2) — one of 27 molecules available from H2 to NaCl crystals 
 
 ## License
 
-MIT License. See [LICENSE](LICENSE).
+This work is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) — you may share and adapt with attribution, but not for commercial use. See [LICENSE](LICENSE).
