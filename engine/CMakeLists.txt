@@ -284,6 +284,18 @@ if(FTD_ENABLE_CUDA)
 
     add_executable(test_gpu_experiments tests/test_gpu_experiments.cpp)
     target_link_libraries(test_gpu_experiments ftd_core ftd_cuda)
+
+    add_executable(test_gpu_shell_256 tests/test_gpu_shell_256.cpp)
+    target_link_libraries(test_gpu_shell_256 ftd_core ftd_cuda)
+
+    add_executable(test_gpu_shell_battery tests/test_gpu_shell_battery.cpp)
+    target_link_libraries(test_gpu_shell_battery ftd_core ftd_cuda)
+
+    add_executable(test_gpu_profile_compare tests/test_gpu_profile_compare.cpp)
+    target_link_libraries(test_gpu_profile_compare ftd_core ftd_cuda)
+
+    add_executable(test_gpu_dissipation tests/test_gpu_dissipation_source.cpp)
+    target_link_libraries(test_gpu_dissipation ftd_core ftd_cuda)
 endif()
 
 # ============================================================================
@@ -316,6 +328,9 @@ target_link_libraries(ftd_poisson_hydrogen ftd_core)
 
 add_executable(ftd_force_law tests/campaign_force_law.cpp)
 target_link_libraries(ftd_force_law ftd_core)
+
+add_executable(ftd_shell_predictions tests/campaign_shell_predictions.cpp)
+target_link_libraries(ftd_shell_predictions ftd_core)
 
 add_executable(ftd_energy_audit tests/campaign_energy_audit.cpp)
 target_link_libraries(ftd_energy_audit ftd_core)
@@ -672,6 +687,7 @@ add_test(NAME campaign_poisson_force_law COMMAND ftd_poisson_force_law)
 add_test(NAME campaign_poisson_binding COMMAND ftd_poisson_binding)
 add_test(NAME campaign_poisson_hydrogen COMMAND ftd_poisson_hydrogen)
 add_test(NAME campaign_force_law COMMAND ftd_force_law)
+add_test(NAME campaign_shell_predictions COMMAND ftd_shell_predictions)
 add_test(NAME campaign_energy_audit COMMAND ftd_energy_audit)
 add_test(NAME campaign_bound_lifetime COMMAND ftd_bound_lifetime)
 add_test(NAME campaign_spontaneous COMMAND ftd_spontaneous)
