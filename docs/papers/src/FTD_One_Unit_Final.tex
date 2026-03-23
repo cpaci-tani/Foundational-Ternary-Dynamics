@@ -1,0 +1,548 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{xcolor}
+
+% Shortcuts
+\newcommand{\Gstar}{{G^{*}}}
+\newcommand{\vpi}{\varpi}
+\newcommand{\Nc}{N_c}
+\newcommand{\Neff}{N_{\mathrm{eff}}}
+\newcommand{\KB}{K_B}
+\DeclareMathOperator{\csch}{csch}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\End}{End}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\QQ}{\mathbb{Q}}
+
+% Inline epistemic tags
+\newcommand{\etag}[1]{{\normalfont\textsc{\footnotesize [#1]}}}
+
+% Lightweight theorem-like environments
+\newtheoremstyle{compact}%
+  {6pt}{6pt}{\itshape}{}{\bfseries}{.}{.5em}{}
+\theoremstyle{compact}
+\newtheorem{claim}{Claim}
+\newtheorem*{claim*}{Claim}
+
+% Running header
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small\itshape One Unit of Existence}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\title{\textsc{One Unit of Existence}\\[6pt]
+\large The Lifecycle of a Hydrogen Atom\\
+from Lattice Geometry to Dissolution}
+
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+\noindent We trace the lifecycle of a hydrogen atom as a deductive chain within Foundational Ternary Dynamics (FTD), a framework postulating a cubic lattice $\ZZ^3$ with ternary states and local causality. The central object is the \emph{master quadratic} $x^2 - 16\Gstar^2 x + 16\Gstar^3 = 0$, whose coefficients are fixed by the lemniscatic constant $\Gstar = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$. Its roots yield $x_+ = 137.036\ldots$ (identified with $\alpha^{-1}$ at 1.26\,ppm) and $\lfloor x_- \rfloor = 3$ (the number of color charges, uniquely self-consistent in $D = 3$). From this single algebraic object, the gauge groups, the Higgs quartic $\lambda = 3/23$, the Bell violation $S = 2\sqrt{2}$, and the hydrogen spectrum follow. Every claim carries an epistemic tag: \etag{Axiom}, \etag{Theorem}, \etag{Selection}, \etag{Conjecture}, or \etag{Parametric Insertion}. Five selection principles are stated and critiqued. Falsification criteria are provided. This paper is accompanied by a complete derivation chain~\cite{chain}, a mathematical analysis of the discrete--continuous bridge~\cite{bridge}, and an ontological constructor unifying the component results~\cite{constructor}.
+\end{abstract}
+
+\smallskip
+
+\begin{quote}\itshape
+``What is a hydrogen atom?'' is a question that admits an answer at every level of description. This is the answer at the level where the description itself becomes the thing described.
+\end{quote}
+
+%=======================================================================
+\section{On Tautology and Deduction}
+\label{sec:tautology}
+%=======================================================================
+
+A common objection to deductive frameworks is that their results are ``merely tautological''---that anything derived from definitions is circular and therefore empty. This objection misunderstands what deduction does.
+
+Every theorem in mathematics is a tautology. The Pythagorean theorem adds no information beyond Euclid's axioms. The prime number theorem adds no information beyond the definition of the integers. The content of a theorem is not new information---it is the \emph{revelation of structure already present but not yet visible} in the axioms.
+
+The lemniscate constant $\vpi = 2\!\int_0^1 dx/\sqrt{1-x^4}$ is computable from pure arithmetic---no $\pi$ appears in the integrand or limits. The bridge constant $\Gstar = \Gamma(1/4)^2/(\sqrt{2}\,\Gamma(1/2)^2)$ is a ratio of Gamma functions at rational arguments, each definable by a $\pi$-free integral. From these two quantities, $\pi$ follows: $\pi = 4\vpi^2/\Gstar^2$. This is not circular---neither input requires $\pi$ for its computation. The identity $\Gamma(1/2)^2 = \pi$ is a \emph{consequence} of the Gaussian integral, not a premise. The three constants $\vpi$, $\Gstar$, and $\pi$ form a three-way invariant: each is expressible through the other two, but two of the three ($\vpi$ and $\Gstar$) admit $\pi$-free definitions while $\pi$ does not admit a $\vpi$-free or $\Gstar$-free definition of comparable simplicity. The tautology $\pi = 4\vpi^2/\Gstar^2$ is algebraically trivial but computationally non-trivial: it derives a transcendental number from two independently computable transcendental numbers.
+
+The same logic applies at every level. When the master quadratic produces $x_+ = 137.036\ldots$, the algebra is tautological. But if $x_+$ agrees with the measured $\alpha^{-1}$ to 1.26\,ppm, then the tautology has made contact with experiment. The framework has not ``predicted'' $\alpha$ in the sense of deriving it from nothing. It has shown that $\alpha$ is a \emph{necessary consequence} of the bridge constant $\Gstar$, the coefficient $16 = |\Aut(E)|^2$, and the quadratic form---three objects whose selection is explicit and critiqueable.
+
+A framework that produces wrong tautologies is falsified. A framework that produces correct tautologies and states its assumptions honestly is science at its most transparent.
+
+Throughout this paper, every step is deductive. Every assumption is tagged. The reader who follows the chain from axiom to hydrogen spectrum will find no gaps in logic---only gaps in justification for why \emph{these} axioms and not others. Those gaps are the selection principles, and we state them openly.
+
+%=======================================================================
+\section{The Axiom}
+\label{sec:axiom}
+%=======================================================================
+
+Before there is a hydrogen atom, before particles, before space itself---what is the minimal ontology from which physics can be built?
+
+\smallskip
+\noindent\textbf{Axiom Zero.} \etag{Axiom} Reality consists of \emph{voxels}. Each voxel has exactly two irreducible properties:
+\begin{enumerate}[nosep]
+  \item \textbf{State:} $s \in \{-1,\, 0,\, +1\}$ \quad (ternary).
+  \item \textbf{Position:} $x \in \ZZ^3$ \quad (cubic lattice).
+\end{enumerate}
+That is the entire ontology. Two properties per site, and everything else must emerge.
+
+\smallskip
+
+Each site also carries a continuous vector field $\mathbf{J} \in \RR^3$, the \emph{flux}. \etag{Axiom} The flux encodes what the substrate \emph{would do} if conditions for manifestation were met---it is dispositional, a field of tendency. The ternary state encodes what the site \emph{is}---it is actual, a fact. This two-layer structure, disposition and actuality, continuous potential and discrete determination, is the architecture from which all physics will be built.
+
+The void state $s = 0$ is not emptiness. It is the cancellation $0 = (-1) + (+1)$: perfect balance, every tendency met by its complement.
+
+Information propagates at most one lattice unit per discrete time step. \etag{Axiom} The causal neighborhood is the 26-site Moore neighborhood of $\ZZ^3$. The update rule is deterministic: the state at time $t+1$ is a function of the Moore neighborhood at time $t$. \etag{Axiom}
+
+Nothing has happened yet. No particles, no fields, no time. Only the lattice and a figure-eight curve that has been waiting since 1694.
+
+
+%=======================================================================
+\section{The Geometry}
+\label{sec:geometry}
+%=======================================================================
+
+The lemniscate of Bernoulli, $r^2 = \cos 2\theta$, is the simplest closed curve that crosses itself. Its half-perimeter defines the lemniscate constant: \etag{Theorem}
+\[
+\vpi \;=\; 2\int_0^1 \frac{dx}{\sqrt{1 - x^4}} \;=\; 2.62206\ldots
+\]
+The integral requires only the integer 4. Evaluating it via the substitution $u = x^4$ gives $\tfrac{1}{4}B(1/4,\,1/2)$, and the reflection formula $\Gamma(1/4)\Gamma(3/4) = \pi\sqrt{2}$ yields the closed form $\vpi = \Gamma(1/4)^2 / (2\sqrt{2\pi})$.
+
+From $\vpi$, the \emph{bridge constant}: \etag{Theorem}
+\[
+\Gstar \;=\; \frac{\Gamma(1/4)^2}{\sqrt{2}\;\Gamma(1/2)^2} \;=\; \frac{2\vpi}{\sqrt{\pi}} \;=\; 2.95868\ldots
+\]
+The first form is $\pi$-free: $\Gamma(1/4)$ and $\Gamma(1/2)$ are each definable by integrals involving only $e^{-t}$ and rational powers. The identity $\Gamma(1/2)^2 = \pi$ is a theorem (the Gaussian integral), not an input. From $\vpi$ and $\Gstar$---both computable without $\pi$---the number $\pi$ follows:
+\[
+\pi \;=\; \frac{4\,\vpi^2}{\Gstar^2}.
+\]
+This derivation is not circular. The three constants $\vpi$, $\Gstar$, and $\pi$ form a three-way invariant: each is expressible through the other two, but $\vpi$ and $\Gstar$ admit $\pi$-free definitions while $\pi$ does not. The deeper objects are $\vpi$ and $\Gstar$.
+
+$\Gstar$ is not arbitrary. It is an invariant of the elliptic curve $E: y^2 = x^3 - x$ over $\QQ$, which has $j$-invariant $1728 = 12^3$, endomorphism ring $\ZZ[i]$ (the Gaussian integers), and automorphism group $|\Aut(E)| = 4$. \etag{Theorem} Among all elliptic curves, this one has the maximal symmetry compatible with a square lattice, since $\ZZ[i] \cong \ZZ^2$ as additive groups.
+
+\smallskip
+\noindent\textbf{Selection Principle 1} (SP1). \etag{Selection} \textit{We select the CM curve $E: y^2 = x^3 - x$ with $j = 1728$. This is a symmetry argument: $E$ has the maximal $\ZZ_4$ automorphism group compatible with square lattice structure. The curve with $j = 0$ has $|\Aut| = 6 > 4$, but hexagonal symmetry---incompatible with a cubic lattice. No proof excludes all non-CM curves.}
+
+\smallskip
+
+The connection to the cubic lattice is through Watson's third integral~\cite{watson}---the lattice Green's function of the BCC sublattice (the 8 corner-neighbors of the Moore neighborhood): \etag{Theorem}
+\[
+W_3 \;=\; \frac{1}{\pi^3}\int_0^\pi\!\!\int_0^\pi\!\!\int_0^\pi \frac{d\theta_1\,d\theta_2\,d\theta_3}{1 - \cos\theta_1\cos\theta_2\cos\theta_3} \;=\; \frac{\Gamma(1/4)^4}{4\pi^3} \;=\; 1.3932\ldots
+\]
+and it satisfies $\Gstar = \sqrt{2\pi\,W_3}$. The BCC sublattice---the 8 sites at distance $\sqrt{3}$ that couple to all three flux components---is the sublattice associated with $\mathrm{SU}(3)$ in the Moore decomposition (\S\ref{sec:proton}). It is this sublattice, not the full SC lattice, whose Green's function produces $\Gstar$. The geometry of the lemniscate and the geometry of the BCC sublattice are the same geometry, seen from different angles. This is a theorem: Watson's BCC integral, when expressed through $\Gamma$-values, reproduces the period of the lemniscatic elliptic curve.
+
+
+%=======================================================================
+\section{The Master Quadratic}
+\label{sec:quadratic}
+%=======================================================================
+
+The geometry has produced a constant. The constant now produces an equation.
+
+\smallskip
+\noindent\textbf{Selection Principle 2} (SP2). \etag{Selection} \textit{The master equation is a quadratic in $x$ with coefficients built from powers of $\Gstar$. A quadratic is the minimal polynomial admitting two distinct roots; Vieta's formulas express both roots through simple powers of $\Gstar$. No principled argument excludes cubic or transcendental forms. This is a minimality argument.}
+
+\smallskip
+\noindent\textbf{Selection Principle 3} (SP3). \etag{Selection} \textit{The coefficient is $16 = |\Aut(E)|^2 = 4^2$. Six arithmetic invariants of $E$ converge on this value: the endomorphism ring units, the torsion group order $|E(\QQ)_{\mathrm{tors}}|^2$, the conductor $N/2 = 32/2$, the discriminant $|\Delta|/4 = 64/4$, the BSD denominator, and the unique non-trivial Lucas perfect square $L_3^2 = 4^2$. These are not independent---they are all properties of the same curve $E$---but their consistency is nontrivial: a different curve would not produce the same number from all six routes. It is strongly motivated but not uniquely forced.}
+
+\smallskip
+
+The master quadratic: \etag{Theorem (given SP1--SP3)}
+\begin{equation}
+\label{eq:master}
+x^2 \;-\; 16\,\Gstar^2\, x \;+\; 16\,\Gstar^3 \;=\; 0
+\end{equation}
+
+The discriminant is $\Delta = 64\,\Gstar^3(4\Gstar - 1) > 0$ since $\Gstar > 1$. Both roots are positive:
+\begin{align}
+x_+ &= 8\,\Gstar^2\!\left(1 + \sqrt{1 - \tfrac{1}{4\Gstar}}\right) = 137.036\,171\ldots \label{eq:xplus} \\
+x_- &= 8\,\Gstar^2\!\left(1 - \sqrt{1 - \tfrac{1}{4\Gstar}}\right) = 3.023\,964\ldots \label{eq:xminus}
+\end{align}
+with product $x_+ x_- = 16\Gstar^3 > 0$ and sum $x_+ + x_- = 16\Gstar^2 > 0$.
+
+\smallskip
+
+\noindent\textbf{Physical identification.} \etag{Conjecture} $x_+ = \alpha^{-1}$, the inverse fine-structure constant. The CODATA 2022 value $\alpha^{-1} = 137.035\,999\,177(21)$ agrees at 1.26\,ppm~\cite{codata}. $\lfloor x_- \rfloor = 3 = \Nc$, the number of color charges.
+
+This conjecture is the framework's sharpest empirical contact point and its most vulnerable. If $x_+$ diverges from $\alpha^{-1}$ beyond the precision formula's reach, the entire framework collapses.
+
+
+%=======================================================================
+\section{Why Three Dimensions}
+\label{sec:d3}
+%=======================================================================
+
+The Watson integral can be computed in any dimension. We apply the same master quadratic in each:
+
+\begin{center}
+\begin{tabular}{cccccc}
+\toprule
+$D$ & $W_D$ & $\Gstar_D$ & $x_+^{(D)}$ & $x_-^{(D)}$ & $\lfloor x_-^{(D)}\rfloor \stackrel{?}{=} D$ \\
+\midrule
+1 & $\infty$ & --- & --- & --- & N/A \\
+2 & 11.99 & 8.678 & 1196 & 8.74 & \textbf{No} ($8 \neq 2$) \\
+3 & 1.393 & 2.959 & 137.0 & 3.024 & \textbf{Yes} ($3 = 3$) \\
+4 & 1.118 & 2.651 & 109.7 & 2.716 & \textbf{No} ($2 \neq 4$) \\
+5 & 1.047 & 2.565 & 102.6 & 2.631 & \textbf{No} ($2 \neq 5$) \\
+6 & 1.020 & 2.532 & 100.0 & 2.598 & \textbf{No} ($2 \neq 6$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Only $D = 3$ closes the self-referential loop: the dimension determines the lattice geometry, which determines $\Gstar$, which determines the master quadratic, whose smaller root gives $\Nc = D$. Three spatial dimensions are not an axiom. They are the framework's unique fixed point. \etag{Theorem}
+
+This is tautological in the strongest possible sense. Given the lattice, $\Gstar$ is determined. Given $\Gstar$, the roots are determined. Given the roots, $\Nc$ is determined. The only value of $D$ for which the chain is self-consistent is 3. The tautology \emph{is} the selection.
+
+
+%=======================================================================
+\section{The Proton: Gauge Groups from Counting}
+\label{sec:proton}
+%=======================================================================
+
+The universe cools. At roughly $10^{-5}$\,s, the temperature drops below $\sim 150$\,MeV---the QCD confinement scale. Three quarks are confined into a proton: a discrete, countable object (baryon number $= 1$) whose internal structure is a continuous quantum field theory. Over 99\% of the proton's 938\,MeV mass is binding energy, not quark mass. The proton is made of motion, not of matter.
+
+The number of colors was selected by the dimension. The gauge symmetry is selected by the lattice geometry. \etag{Theorem}
+
+The 26 neighbors of a voxel in $\ZZ^3$ decompose uniquely by distance into three sublattices:
+\[
+26 \;=\; \underbrace{6}_{\text{SC}} \;+\; \underbrace{12}_{\text{FCC}} \;+\; \underbrace{8}_{\text{BCC}}
+\]
+A neighbor at displacement $(\Delta x, \Delta y, \Delta z)$ couples to the flux components corresponding to its nonzero coordinates. Face-neighbors (one nonzero coordinate) couple to one component: $\mathrm{U}(1)$. Edge-neighbors (two nonzero) couple to two: $\mathrm{SU}(2)$. Corner-neighbors (three nonzero) couple to three: $\mathrm{SU}(3)$.
+
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+Sublattice & Count & Distance & $\mathbf{J}$-components & Gauge group \\
+\midrule
+SC & 6 & 1 & 1 & $\mathrm{U}(1)$ \\
+FCC & 12 & $\sqrt{2}$ & 2 & $\mathrm{SU}(2)$ \\
+BCC & 8 & $\sqrt{3}$ & 3 & $\mathrm{SU}(3)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The Standard Model gauge group $\mathrm{U}(1) \times \mathrm{SU}(2) \times \mathrm{SU}(3)$ is the unique orthogonal decomposition of $|\mathbf{J}|^2 = J_x^2 + J_y^2 + J_z^2$ by the Moore sublattices. It is not postulated. It is counted.
+
+The one-loop QCD beta function coefficient $b_3 = (11\Nc - 2N_f)/3 = 7$ (for $N_f = 6$ quark flavors) sets the running of the strong coupling. The value $N_f = 6$ follows from $N_{\mathrm{gen}} = \Nc = 3$ generations with two quarks each---a self-consistency condition, not a linear derivation, since $N_{\mathrm{gen}} = \Nc$ is motivated partly by the requirement that $b_3$ be a positive integer. The proton's confinement is controlled by the same quadratic that will later determine its electromagnetic binding to an electron.
+
+\smallskip
+\noindent\textbf{The proton-electron mass ratio.} \etag{Selection (SP5; circularity risk)} The framework integers predict:
+\[
+\frac{m_p}{m_e} \;=\; \frac{\Neff}{\alpha} + T(b_3 + \Nc) \;=\; \frac{13}{\alpha} + T(10) \;=\; 1781.47 + 55 \;=\; 1836.47
+\]
+where $T(n) = n(n+1)/2$ is the $n$th triangular number, so $T(10) = 55$. Accuracy: 0.017\% vs.\ the measured $m_p/m_e = 1836.15$~\cite{codata}. Using the FTD-derived $m_e = 0.5100$\,MeV, this gives $m_p = 936.6$\,MeV (0.18\% from PDG $938.27$\,MeV)---the error in $m_p$ inherits from $m_e$, not from the mass ratio.
+
+The formula uses only derived quantities ($\alpha$ from $x_+$) and framework integers ($\Neff = 13$, $b_3 = 7$, $\Nc = 3$). However, it carries a circularity risk: the integers $\{3, 7, 13\}$ were identified from known physics that includes the mass ratios. The formula has no free parameters \emph{within} SP5, but SP5 itself may encode its targets. This is acknowledged as the weakest link in the derivation chain.
+
+
+%=======================================================================
+\section{The Atom Is Born}
+\label{sec:atom}
+%=======================================================================
+
+For 380,000 years, the universe is a plasma. Then the temperature drops below $\sim 3000$\,K, the photon bath no longer ionizes hydrogen, and nearly every proton captures an electron. The universe becomes transparent.
+
+This is the moment our hydrogen atom is born.
+
+The electron mass: \etag{Selection}
+\[
+m_e \;=\; m_P\,\sqrt{2\pi}\;\frac{16}{3}\;\alpha^{11} \;=\; 0.5100~\mathrm{MeV}/c^2
+\]
+where $m_P = 1.2209 \times 10^{19}$\,GeV is the Planck mass. The power $\alpha^{11}$ encodes a hierarchy: $\alpha^8$ from Planck to electroweak scale, $\alpha^3$ from Yukawa structure. Accuracy: 0.20\% vs.\ PDG 0.51100\,MeV/$c^2$~\cite{pdg}. This formula depends on the framework integers $\{3, 4\}$ and is classified as a selection---an argued choice, not a unique derivation.
+
+The Higgs quartic coupling: \etag{Selection} The three ternary states $\{-1, 0, +1\}$ decompose as 2 active $+$ 1 void. Identifying gauge weights $w_{\mathrm{SU}(2)} = 2$, $w_{\mathrm{U}(1)} = 1$ and using the ternary Weinberg angle $\sin^2\theta_W = 3/13$:
+\[
+\lambda \;=\; \frac{\sin^2\theta_W}{2 - \sin^2\theta_W} \;=\; \frac{3}{23} \;=\; 0.1304\ldots
+\]
+The Higgs vacuum expectation value $v = m_P\sqrt{2\pi}\,\alpha^8 = 246.08$\,GeV gives:
+\[
+m_H \;=\; v\sqrt{\frac{6}{23}} \;=\; 125.69~\mathrm{GeV} \quad (0.35\%~\text{vs.\ PDG}~125.25~\text{GeV}~\cite{cms_higgs}).
+\]
+
+The hydrogen atom now exists. Its entire energy spectrum follows from a single root of the master quadratic.
+
+\smallskip
+\noindent\textbf{The electron's self-field.} \etag{Emergent} In the lattice engine~\cite{engine}, a single manifested voxel ($s = +1$) sources a steady-state flux field whose structure is determined by the framework integers. The self-field converges (under vacuum-polarization damping at rate $\gamma = \alpha$) to a profile with characteristic radii $r_{50} = 5 = \Nc + 2$, $r_{90} = 17 = \Neff + N_{\mathrm{base}}$, and $r_{\mathrm{shell}} = 28 = N_{\mathrm{base}} \times b_3$ lattice units. The RMS radius is $r_{\mathrm{eff}} = \sqrt{\alpha^{-1}} \approx 11.7$---the geometric mean of the lattice scale and the electromagnetic scale. The total self-energy is $E_{\mathrm{self}} = \KB^2/(\Neff + N_{\mathrm{base}}) = \KB^2/17$: finite, calculable, and free of the ultraviolet divergence that plagues the point-electron in classical QED. The lattice regulates the self-energy naturally, and the regulated value is a ratio of framework integers.
+
+\smallskip
+\noindent\textbf{Hydrogen spectrum.} \etag{Parametric Insertion} The energy levels are given by standard quantum mechanics:
+\[
+E_n \;=\; -\frac{\alpha^2\,m_e c^2}{2n^2}\,, \qquad n = 1,\,2,\,3,\,\ldots
+\]
+FTD provides the inputs $(\alpha,\, m_e)$; the formula is external. Using $\alpha^{-1} = 137.036$ and $m_e = 0.5100$\,MeV:
+\[
+|E_1| \;=\; \frac{(1/137.036)^2 \times 0.5100~\mathrm{MeV}}{2} \;=\; 13.58~\mathrm{eV}
+\]
+which is 0.13\% below the measured 13.598\,eV (NIST ionization energy)---the same relative error as $m_e$ itself, inherited rather than independent. If the electron mass formula is refined, the hydrogen spectrum follows automatically. The tautology propagates: every spectral line is a necessary consequence of $\Gstar$.
+
+
+%=======================================================================
+\section{The Vacuum Speaks}
+\label{sec:vacuum}
+%=======================================================================
+
+Our hydrogen atom sits in its ground state. Silent, invisible, inert. Then a photon arrives carrying exactly $E_2 - E_1 = 10.2$\,eV, and the electron jumps to $n = 2$. Not approximately. Exactly. The atom either absorbs the photon or it does not. Discreteness is absolute.
+
+But the vacuum is not silent. The Lamb shift---1058\,MHz splitting of the $2S_{1/2}$ and $2P_{1/2}$ states---scales as $\alpha^5$~\cite{lamb}: five powers of the bridge constant's imprint. Each power represents one more layer of interaction between the discrete (energy levels) and the continuous (vacuum fluctuations).
+
+The hyperfine transition---1420.405\,MHz, the 21-cm line---scales as $\alpha^4(m_e/m_p)$. The mass ratio introduces the strong force (since $m_p$ is set by QCD running under $b_3 = 7$), so the hyperfine line is where electromagnetic and strong interactions meet, both encoded in the master quadratic.
+
+Every stage of the atom's existence exhibits the same architecture:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Event} & \textbf{Discrete} & \textbf{Continuous} \\
+\midrule
+Quark confinement & baryon number & QCD flux tubes \\
+Recombination & electron capture & photon field \\
+Absorption/emission & energy levels $E_n$ & electromagnetic field \\
+Lamb shift & atomic state & vacuum fluctuations \\
+Hyperfine transition & spin states & radio-frequency field \\
+Stellar fusion & nuclear binding & thermal plasma \\
+Proton decay & baryon number $\to 0$ & radiation field \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+At every transition, the bridge between the discrete and the continuous is controlled by $\vpi$, $\Gstar$, and the integers $\{3, 4, 7, 13\}$. The same structural crossing---from sum to integral, from lattice point to plane---appears in pure mathematics. The identity
+\[
+\sum_{n=0}^{\infty} \frac{1}{(n^2+1)^2} \;=\; \frac{2 + 4\ell\coth(4\ell) + 16\ell^2\csch^2(4\ell)}{4}
+\]
+where $\ell = \vpi^2/\Gstar^2 = \pi/4$ is the \emph{lemniscatic ratio} (not to be confused with the Higgs quartic $\lambda = 3/23$ of \S\ref{sec:atom}), passes from a discrete sum to a closed form through the Eisenstein series of the Gaussian lattice $\ZZ[i]$. The analogy is structural, not mechanistic: the Rydberg series comes from the Coulomb Green's function; the sum above comes from the Epstein zeta function. But both crossings are governed by the same constant.
+
+
+%=======================================================================
+\section{Bell's Theorem and the Gauss Constraint}
+\label{sec:bell}
+%=======================================================================
+
+Two hydrogen atoms, created together in a singlet state, are separated and measured along independently chosen axes. The correlations violate Bell's inequality~\cite{bell}. No local hidden variable theory reproduces them~\cite{chsh}. How does a deterministic lattice produce nonclassical correlations?
+
+The Gauss constraint $\nabla \cdot \mathbf{J} = \rho$ is one scalar equation on three flux components, reducing the physical degrees of freedom from 3 to 2. \etag{Theorem} The physical flux lives in the 2D transverse plane:
+\[
+\mathbf{J}_{\mathrm{phys}}(\mathbf{k}) \;=\; \mathbf{J}(\mathbf{k}) \;-\; \hat{\mathbf{k}}\bigl(\hat{\mathbf{k}} \cdot \mathbf{J}(\mathbf{k})\bigr).
+\]
+
+Without the Gauss constraint, the full three-component flux on $S^2$ yields: \etag{Theorem}
+\[
+E(\theta) \;=\; -\!\left(1 - \frac{2|\theta|}{\pi}\right) \qquad \Longrightarrow \qquad S = 2 \quad \text{(Bell bound)}
+\]
+
+After the Gauss projection, the transverse flux lives in a 2D plane. If a detector at angle $\theta$ measures $\mathrm{sgn}(\cos(\phi - \theta))$ against a uniform hidden variable $\phi \in [0, 2\pi)$, the cross-correlation of two such sign functions gives the \emph{triangle wave}: \etag{Theorem}
+\[
+E_{\mathrm{local}}(\theta) \;=\; \frac{1}{2\pi}\int_0^{2\pi} \mathrm{sgn}(\cos\phi)\,\mathrm{sgn}(\cos(\phi-\theta))\,d\phi \;=\; 1 - \frac{2|\theta|}{\pi}
+\]
+\[
+\Longrightarrow \qquad S \;=\; 2 \quad \text{(Bell bound, not exceeded)}
+\]
+This is the classical result: any local deterministic model with sign-function measurement gives the triangle wave and saturates the Bell bound at $S = 2$, never exceeding it.
+
+\smallskip
+\noindent\textbf{The nonclassical mechanism.} \etag{Selection} The engine nevertheless produces $S = 2\sqrt{2}$ in simulation. The mechanism is the Gauss constraint enforcement: at each tick, the Poisson equation $\nabla^2\phi = \nabla \cdot \mathbf{J} - s$ is solved \emph{globally}, and the correction $\mathbf{J} \leftarrow \mathbf{J} - \nabla\phi$ is applied to the entire lattice. When one particle's state changes (measurement), the constraint enforcement instantaneously redistributes flux at all other sites---including the distant entangled partner.
+
+This is a \emph{deterministic, non-local} hidden variable theory---structurally analogous to the quantum potential in Bohmian mechanics. The lattice dynamics are deterministic (no randomness), but the Gauss solver creates non-local correlations between distant sites within each tick. The Bell violation $S = 2\sqrt{2}$ is a computational fact of the engine, verified with $2 \times 10^6$ Monte Carlo samples. Its source is the global constraint, not a local integral.
+
+Two selections enter: the complexification $\psi = J_x + i\,J_y$ (motivated by the transverse geometry but not uniquely forced), and the identification of the Poisson solver's non-local update with physical measurement. Whether the global constraint enforcement represents a physical non-locality or a computational artifact of the solver is an \etag{Open} question. A local Gauss solver (e.g., iterative relaxation with finite propagation speed) would need to be tested to determine whether Bell violation persists without global constraint enforcement.
+
+\smallskip
+
+\noindent\textbf{The observer.} \etag{Selection} Measurement in FTD is dynamical, not epistemological. The observer $\mathcal{O} \subset \mathbf{L}$ is a manifested structure on the lattice. It couples to the rest of the lattice through the shared flux substrate via $\mathcal{L}_{\mathrm{coupling}} = -g_c \cdot s \cdot (\nabla \cdot \mathbf{J})$. Without a manifested entity ($s \neq 0$), the flux evolves linearly and no ``measurement'' occurs. Consciousness, in this reading, is the self-referential closure of the projection: the lattice computing itself, through itself, within itself.
+
+
+%=======================================================================
+\section{Gravity, Stars, and the Arrow of Time}
+\label{sec:gravity}
+%=======================================================================
+
+Our hydrogen atom drifts for hundreds of millions of years, part of a diffuse cloud. Then gravity gathers the cloud, compresses it, heats it to $\sim 10^7$\,K. The weakest force accomplishes what no other could: igniting fusion.
+
+The arrow of time comes first. \etag{Theorem} The projection $\Pi: \mathcal{V} \to \mathbf{L} \times \{-1,0,+1\}^{|\mathbf{L}|}$ from the infinite-dimensional space of smooth vector fields to the finite lattice is necessarily non-injective. The codomain has cardinality $3^{N^3}$; the domain is infinite-dimensional. Information is destroyed at each update cycle. Given irreversible projection loss at rate $\gamma > 0$, entropy $S = -\sum_v \rho(v)\ln\rho(v)$ is monotonically non-decreasing. The arrow of time is the direction of increasing projection loss.
+
+Gravity is the least certain part of this framework. \etag{Conjecture} The hypothesis: where manifested particles cluster densely, the lattice's finite update rate creates a local processing deficit, bending the effective metric. The perturbation $g_{\mu\nu}^{\mathrm{eff}} = \eta_{\mu\nu} + h_{\mu\nu}$ with $h_{\mu\nu} \propto \rho_{\mathrm{manifested}}$ recovers linearized general relativity. The full Einstein equations follow via the Deser iterative bootstrap~\cite{deser}---demanding that the gravitational field's own energy appear as source---and Lovelock's uniqueness theorem~\cite{lovelock} in $D = 4$ spacetime.
+
+This chain (bandwidth saturation $\to$ linearized GR $\to$ Deser bootstrap $\to$ full Einstein equations) is conjectural at the first step and rigorous thereafter. The conjecture is: \emph{why} does the lattice's processing deficit produce a metric perturbation proportional to matter density? A derivation from the update rules is needed and does not yet exist.
+
+Newton's constant in lattice units: $G_N = 1/(b_3 + \Nc)^2 = 1/(7 + 3)^2 = 0.01$. \etag{Conjecture} Stellar fusion proceeds by quantum tunneling through the Coulomb barrier, with the Gamow energy $E_G = 2m_r c^2(\pi\alpha Z_1 Z_2)^2$, in which $\alpha$ from the master quadratic appears yet again. The value falls in the narrow window compatible with stellar lifetimes of $\sim 10^{10}$ years.
+
+
+%=======================================================================
+\section{Death and Dissolution}
+\label{sec:death}
+%=======================================================================
+
+At $\sim 10^7$\,K, two protons fuse. One undergoes beta-plus decay; the result is a deuteron, a positron, and a neutrino. Our hydrogen atom's proton has become part of a deuterium nucleus. The atom, as a distinct entity, is gone.
+
+In more massive stars, the chain continues: helium to carbon, carbon to oxygen, up to iron-56 at the bottom of the valley of stability. Each step is a discrete nuclear transition in a continuous plasma, with rates set by coupling constants from the integers $\{3, 4, 7, 13\}$. The entire periodic table is a consequence of these four numbers.
+
+If the star is massive enough, the iron core collapses. The supernova disperses all elements heavier than helium back into the interstellar medium. Among the debris: new hydrogen atoms. The cycle begins again.
+
+And if baryon number is not exactly conserved---if the proton eventually decays ($\tau_p > 10^{34}$ years~\cite{superk})---then the last discrete object crosses the final bridge into the continuum of radiation. Photons have no rest mass, no charge, no baryon number. They are pure field, pure wave, pure continuity.
+
+The integer becomes the irrational. The lattice point dissolves into the plane.
+\[
+\sum \;\longrightarrow\; \int
+\]
+
+The ratio $\ell = \vpi^2/\Gstar^2$ was there before the atom, is there during the atom, and will be there after the atom. The atom is a transient excitation. The constants are not made of atoms.
+
+
+%=======================================================================
+\section{The Honest Ledger}
+\label{sec:ledger}
+%=======================================================================
+
+A framework that claims everything derives nothing. This section catalogs what FTD actually proves, what it inserts, and what it borrows.
+
+\begin{center}
+\small
+\begin{tabular}{llc}
+\toprule
+\textbf{Claim} & \textbf{Status} & \textbf{Section} \\
+\midrule
+Axiom Zero (voxel $=$ state $+$ position) & \etag{Axiom} & \ref{sec:axiom} \\
+Two-layer ontology (flux/state) & \etag{Axiom} & \ref{sec:axiom} \\
+$I_4$, $\vpi$, $\Gstar$ from $\Gamma$-functions & \etag{Theorem} & \ref{sec:geometry} \\
+Watson BCC integral $W_3 = \Gamma(1/4)^4/(4\pi^3)$ & \etag{Theorem} & \ref{sec:geometry} \\
+$\pi = 4\vpi^2/\Gstar^2$ & \etag{Theorem} & \ref{sec:geometry} \\
+Master quadratic roots $x_\pm$ & \etag{Theorem} & \ref{sec:quadratic} \\
+$x_+ = \alpha^{-1}$ (1.26\,ppm) & \etag{Conjecture} & \ref{sec:quadratic} \\
+$D = 3$ uniqueness & \etag{Theorem} & \ref{sec:d3} \\
+Gauge groups from Moore decomposition & \etag{Theorem} & \ref{sec:proton} \\
+Proton-electron mass ratio $m_p/m_e = 1836.47$ & \etag{Selection (SP5)} & \ref{sec:proton} \\
+Electron mass formula & \etag{Selection} & \ref{sec:atom} \\
+Higgs quartic $\lambda = 3/23$ & \etag{Selection} & \ref{sec:atom} \\
+Higgs mass $m_H = 125.69$\,GeV & \etag{Selection} & \ref{sec:atom} \\
+Hydrogen spectrum from $\alpha$, $m_e$ & \etag{Parametric Insertion} & \ref{sec:atom} \\
+Gauss constraint $\to$ 2D flux & \etag{Theorem} & \ref{sec:bell} \\
+Local sgn integral $\to$ $S = 2$ (triangle wave) & \etag{Theorem} & \ref{sec:bell} \\
+Bell violation $S = 2\sqrt{2}$ (non-local Gauss solver) & \etag{Selection + Open} & \ref{sec:bell} \\
+Projection is non-injective & \etag{Theorem} & \ref{sec:gravity} \\
+Arrow of time from projection loss & \etag{Theorem} & \ref{sec:gravity} \\
+Einstein equations (Deser bootstrap) & \etag{Conjecture} & \ref{sec:gravity} \\
+Lattice natural units ($\KB = 1$, $m_P$ derived) & \etag{Selection} & \ref{sec:atom} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{The Five Selection Principles---Typed and Ranked}
+
+The strongest results depend on five non-derivable choices. These are not all the same kind of assumption:
+
+\begin{enumerate}[nosep,label=\textbf{SP\arabic*}.]
+\item \textbf{The CM curve} ($j = 1728$). \textit{Type: symmetry argument.} Strongest of the five---$E: y^2 = x^3 - x$ is the unique elliptic curve with $\ZZ_4$ automorphism compatible with square lattice structure. Weakness: the hexagonal curve ($j = 0$, $|\Aut| = 6$) has higher symmetry.
+
+\item \textbf{The quadratic form.} \textit{Type: minimality argument.} A quadratic is the simplest polynomial with two roots. Weakness: simplicity is not a physical law.
+
+\item \textbf{Coefficient 16.} \textit{Type: consistency argument.} Six arithmetic invariants of $E$ converge on $|\Aut(E)|^2 = 16$. These invariants are not independent (they are properties of the same curve), but their mutual consistency is nontrivial. Weakness: convergence does not prove the coefficient must enter the physics this way.
+
+\item \textbf{The expansion parameter $\varepsilon = e^\pi - \pi - 20$.} \textit{Type: numerical observation.} The weakest of the five. The near-integer property $e^\pi \approx \pi + 20$ is a known curiosity without deep explanation. The decomposition $20 = 7 + 13 = b_3 + \Neff$ is suggestive but possibly coincidental.
+
+\item \textbf{Correction coefficients from $\{3,4,7,13\}$.} \textit{Type: fit.} With four free coefficients and a small expansion parameter, matching a 12-digit target is algebraically possible regardless of underlying physics. This is acknowledged as the least compelling element of the framework.
+\end{enumerate}
+
+\subsection*{Honest Accounting}
+
+The FTD project contains approximately:
+\begin{itemize}[nosep]
+\item $\sim 40$ genuine derivations (from $\Gstar$ and integers alone)
+\item $\sim 50$ parametric insertions (FTD values in standard physics formulas)
+\item $\sim 50+$ external physics results adopted without derivation
+\end{itemize}
+This paper focuses on the genuine derivations. The parametric insertions (e.g., $m_e$, hydrogen spectrum) and external physics (e.g., the pp chain, neutron degeneracy) are context, not claimed results.
+
+\subsection*{What FTD Does Not Explain}
+\begin{itemize}[nosep]
+\item The cosmological constant
+\item The absolute mass scale: all masses are derived as dimensionless ratios. In lattice natural units ($\KB = 1$, $a = 1$, $\tau = 1$), the Planck mass is computed as $m_P = \KB/(\sqrt{2\pi}\cdot 16/3 \cdot \alpha^{11}) \approx 2.39 \times 10^{22}$ lattice units. Converting to SI requires one unit convention ($\KB = 0.5100$~MeV), analogous to the SI definition of the meter via~$c$. This is a unit choice, not a physical input. \etag{Selection}
+\item Individual quark masses (only ratios)
+\item Why the axiom itself is realized in nature
+\end{itemize}
+
+
+%=======================================================================
+\section{Falsification}
+\label{sec:falsification}
+%=======================================================================
+
+A framework that cannot be wrong is not physics.
+
+\begin{enumerate}[nosep]
+\item \textbf{Precision $\alpha$ measurement.} If CODATA values diverge from $x_+ = 137.036\,17\ldots$ beyond 10\,ppm, the master quadratic is falsified. Current measurements are at 0.15\,ppb---already constraining.
+
+\item \textbf{Fourth fermion generation.} Discovery of a fourth generation with standard gauge couplings falsifies $\lfloor x_- \rfloor = 3$.
+
+\item \textbf{Failure of the Bell mechanism.} Proof that no ensemble of local deterministic lattice states can yield $S > 2$ falsifies the Gauss-constraint mechanism.
+
+\item \textbf{Observable Lorentz violation.} Energy-dependent photon speed with the wrong sign (superluminal) at high energies contradicts the lattice dispersion relation.
+
+\item \textbf{The Higgs quartic.} $\lambda = 3/23 = 0.1304$ is testable. Current measurement: $0.129 \pm 0.01$~\cite{cms_higgs}. The High-Luminosity LHC will sharpen this.
+
+\item \textbf{The lattice hypothesis itself.} If a phenomenon requiring fundamental continuous spacetime (not merely effective continuous behavior) is demonstrated---for example, exact Lorentz invariance at the Planck scale, or a physical process requiring infinite information density---the discrete lattice axiom is falsified. This criterion tests the deepest commitment of the framework, not merely its consequences.
+\end{enumerate}
+
+
+%=======================================================================
+\section*{Coda}
+%=======================================================================
+
+A cubic lattice with ternary states and local causality, combined with the geometry of the lemniscate of Bernoulli, produces a master quadratic whose roots determine the fine-structure constant and the number of color charges. From these two numbers and four framework integers, the gauge groups, the Higgs quartic, the Bell violation bound, and the hydrogen spectrum follow---conditionally on five stated selection principles of explicitly different types and weights.
+
+Every stage of a hydrogen atom's existence, from quark confinement to spectral lines to stellar fusion to final dissolution, is governed by this single algebraic structure.
+
+Whether this contact between geometry and physics reflects coincidence, selection, or necessity is not for the framework to decide. It is for experiment.
+
+\medskip
+
+\begin{center}\itshape
+The bridge is not $\pi$. The bridge is $\Gstar$.\\[3pt]
+And the story of one hydrogen atom is the story of every discrete thing\\
+that ever existed in a continuous universe.
+\end{center}
+
+
+%=======================================================================
+\begin{thebibliography}{99}
+%=======================================================================
+
+\bibitem{codata} E.~Tiesinga \textit{et al.}, ``CODATA recommended values of the fundamental physical constants: 2022,'' \textit{Rev.\ Mod.\ Phys.}\ \textbf{96} (2024), 015002.
+
+\bibitem{lamb} W.~E.~Lamb and R.~C.~Retherford, ``Fine structure of the hydrogen atom by a microwave method,'' \textit{Phys.\ Rev.}\ \textbf{72} (1947), 241--243.
+
+\bibitem{superk} Super-Kamiokande Collaboration, ``Search for proton decay via $p \to e^+\pi^0$ and $p \to \mu^+\pi^0$,'' \textit{Phys.\ Rev.\ D}\ \textbf{95} (2017), 012004.
+
+\bibitem{watson} G.~N.~Watson, ``Three triple integrals,'' \textit{Q.\ J.\ Math.}\ \textbf{10} (1939), 266--276.
+
+\bibitem{deser} S.~Deser, ``Self-interaction and gauge invariance,'' \textit{Gen.\ Relativ.\ Gravit.}\ \textbf{1} (1970), 9--18.
+
+\bibitem{tsirelson} B.~S.~Tsirelson, ``Quantum generalizations of Bell's inequality,'' \textit{Lett.\ Math.\ Phys.}\ \textbf{4} (1980), 93--100.
+
+\bibitem{chsh} J.~F.~Clauser, M.~A.~Horne, A.~Shimony, and R.~A.~Holt, ``Proposed experiment to test local hidden-variable theories,'' \textit{Phys.\ Rev.\ Lett.}\ \textbf{23} (1969), 880--884.
+
+\bibitem{lovelock} D.~Lovelock, ``The Einstein tensor and its generalizations,'' \textit{J.\ Math.\ Phys.}\ \textbf{12} (1971), 498--501.
+
+\bibitem{bell} J.~S.~Bell, ``On the Einstein--Podolsky--Rosen paradox,'' \textit{Physics}\ \textbf{1} (1964), 195--200.
+
+\bibitem{silverman} J.~H.~Silverman, \textit{The Arithmetic of Elliptic Curves}, 2nd ed., Springer (2009).
+
+\bibitem{pdg} R.~L.~Workman \textit{et al.}\ (Particle Data Group), ``Review of Particle Physics,'' \textit{Prog.\ Theor.\ Exp.\ Phys.}\ \textbf{2022}, 083C01.
+
+\bibitem{cms_higgs} CMS Collaboration, ``A measurement of the Higgs boson mass in the diphoton decay channel,'' \textit{Phys.\ Lett.\ B}\ \textbf{805} (2020), 135425.
+
+\bibitem{chain} ``The Ontic Derivation Chain: Twenty-Six Physical Constants from Two Inputs,'' companion paper (2026).
+
+\bibitem{bridge} ``The Discrete--Continuous Bridge Through the Lemniscatic Lens,'' companion paper (2026).
+
+\bibitem{constructor} ``The Instantiating Formula: An Ontological Constructor for Foundational Ternary Dynamics,'' companion paper (2026).
+
+\bibitem{engine} ``The Lattice Engine: A Computational Implementation of Foundational Ternary Dynamics,'' companion paper (2026).
+
+\end{thebibliography}
+
+\end{document}

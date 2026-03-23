@@ -539,6 +539,28 @@ target_link_libraries(test_triad_confinement PRIVATE ftd_core)
 add_executable(test_wz_mass tests/test_wz_mass.cpp)
 target_link_libraries(test_wz_mass PRIVATE ftd_core)
 
+# Tritium ternary compute library tests (header-only, no ftd_core dependency)
+add_executable(test_trit_packing tests/test_trit_packing.cpp)
+target_include_directories(test_trit_packing PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+add_executable(test_trit_arithmetic tests/test_trit_arithmetic.cpp)
+target_include_directories(test_trit_arithmetic PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+add_executable(test_trit_logic tests/test_trit_logic.cpp)
+target_include_directories(test_trit_logic PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+add_executable(test_trit_threshold tests/test_trit_threshold.cpp)
+target_include_directories(test_trit_threshold PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+add_executable(test_trit_vector tests/test_trit_vector.cpp)
+target_include_directories(test_trit_vector PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+add_executable(test_trit_matrix tests/test_trit_matrix.cpp)
+target_include_directories(test_trit_matrix PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+add_executable(test_trit_convolution tests/test_trit_convolution.cpp)
+target_include_directories(test_trit_convolution PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
 endif() # NOT EMSCRIPTEN — end of tests/campaigns/CLI
 
 # ============================================================================
@@ -666,6 +688,15 @@ set_tests_properties(
     measurement particle_toggles spin_statistics triad_confinement
     wz_mass
     PROPERTIES TIMEOUT 600)
+
+# Tritium ternary compute library tests
+add_test(NAME trit_packing COMMAND test_trit_packing)
+add_test(NAME trit_arithmetic COMMAND test_trit_arithmetic)
+add_test(NAME trit_logic COMMAND test_trit_logic)
+add_test(NAME trit_threshold COMMAND test_trit_threshold)
+add_test(NAME trit_vector COMMAND test_trit_vector)
+add_test(NAME trit_matrix COMMAND test_trit_matrix)
+add_test(NAME trit_convolution COMMAND test_trit_convolution)
 
 # GPU tests (only registered when CUDA is enabled)
 if(FTD_ENABLE_CUDA)
