@@ -1,0 +1,850 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+% Shortcuts
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Gstar}{{G^{*}}}
+\newcommand{\vpi}{\varpi}
+\DeclareMathOperator{\csch}{csch}
+\DeclareMathOperator{\sech}{sech}
+
+\title{The Discrete--Continuous Bridge Through the Lemniscatic Lens:\\[6pt]
+\large An Analysis of $\displaystyle\sum_{n=0}^{\infty}\frac{1}{(n^2+1)^2}$}
+
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a complete derivation of the closed-form identity
+\[
+\sum_{n=0}^{\infty}\frac{1}{(n^2+1)^2}
+\;=\;\frac{2+\pi\coth\pi+\pi^2\csch^2\pi}{4}\,,
+\]
+then recast the result entirely in terms of the lemniscate constant~$\vpi$
+and the bridge constant $\Gstar=2\vpi/\sqrt{\pi}$ of Foundational Ternary
+Dynamics~(FTD).  In the FTD rewriting, the ontic content of the identity
+reduces to the single ratio $\ell=\vpi^2/\Gstar^2=\pi/4$, revealing
+that every appearance of~$\pi$ in the standard formula is a derived
+consequence of this deeper lemniscatic ratio.
+
+We show that the sum is a restriction of the Epstein zeta function
+$Z_{\Z[i]}(s)$ at $s=2$, establish the exact identity
+$E_4(i)=3\,\Gstar^8/(256\,\vpi^4)$, and prove the Epstein factorisation
+$Z_{\Z[i]}(2)=4\,\zeta(2)\,L(2,\chi_{-4})=32\,\vpi^4\,G/(3\,\Gstar^4)$
+in ontic variables, where $G$ is Catalan's constant---the irreducible
+arithmetic residue encoding the distribution of Gaussian primes.
+
+We identify the exponential scale $e^{4\ell}=e^{\pi}$ (Gelfond's
+constant) as the natural decay parameter controlling the lattice's
+discrete-to-continuous transition, and show that the row restriction
+from~$\Z[i]$ to a single horizontal line eliminates the arithmetic factor,
+explaining why our one-dimensional sum admits a purely ontic closed form.
+
+We then place these results in a dimensional hierarchy: the Basel sum
+$\zeta(2) = \pi^2/6$ is the lattice zeta function of~$\Z$ at $s = 2$;
+the Eisenstein series $G_4$ encodes the period of~$\Z[i]$ through~$\vpi$;
+the Watson integral encodes the period of~$\Z^3$ through~$\Gstar$.
+Each dimension has its own ``circle constant,'' and only $D = 3$
+produces a self-consistent framework.
+
+This paper is one of five companion papers presenting Foundational Ternary
+Dynamics; see~\cite{chain} for the derivation chain,
+\cite{lifecycle} for the physical lifecycle, \cite{constructor} for
+the ontological constructor, and \cite{engine} for the computational
+implementation.
+\end{abstract}
+
+\tableofcontents
+
+%=======================================================================
+\section{The Problem}
+%=======================================================================
+
+We seek a closed form for the sum
+\begin{equation}\label{eq:S}
+S \;=\; \sum_{n=0}^{\infty}\frac{1}{(n^2+1)^2}\,.
+\end{equation}
+This is a convergent series of rational terms indexed by the non-negative
+integers.  Its evaluation requires passing from the discrete lattice~$\N$
+into the analytic structure of the complex plane, and the result is a
+transcendental number expressed in terms of hyperbolic functions of~$\pi$.
+The purpose of this note is to make the architecture of that passage
+explicit and to identify its ontic content.
+
+%=======================================================================
+\section{Standard Derivation}
+%=======================================================================
+
+\subsection{Strategy}
+
+The exponent~2 in the denominator of~\eqref{eq:S} makes direct summation
+difficult.  We proceed by first evaluating the simpler sum
+$\sum 1/(n^2+a)$ in closed form, then recovering~$S$ by differentiation
+with respect to the auxiliary parameter~$a$.
+
+\subsection{The Bilateral Sum}
+
+The Mittag-Leffler expansion of $\pi\cot(\pi z)$ gives the classical identity
+\begin{equation}\label{eq:bilateral}
+\sum_{n=-\infty}^{\infty}\frac{1}{n^2+a}
+\;=\;\frac{\pi}{\sqrt{a}}\,\coth(\pi\sqrt{a})\,,
+\qquad a>0.
+\end{equation}
+This can be derived from the partial fraction decomposition of
+$\pi\cot(\pi z)$, or equivalently from the Poisson summation formula
+applied to the Lorentzian $f(x)=1/(x^2+a)$.
+
+\begin{remark}[First bridge: lattice to analysis]\label{rem:bridge1}
+Equation~\eqref{eq:bilateral} is already a discrete-to-continuous bridge:
+the left side is a sum over the integer lattice~$\Z$, while the right side
+is a smooth function of the continuous parameter~$a$, expressed in terms of
+the hyperbolic cotangent.  The Poisson summation route makes the mechanism
+explicit: the Fourier transform converts the sum over direct-lattice points
+into a sum over reciprocal-lattice points, and the latter is dominated by a
+single exponential scale.
+\end{remark}
+
+\subsection{The Unilateral Sum}
+
+Since $1/(n^2+a)$ is symmetric in~$n$, the bilateral sum double-counts
+every term except the $n=0$ term.  Hence
+\begin{equation}\label{eq:unilateral}
+\sum_{n=0}^{\infty}\frac{1}{n^2+a}
+\;=\;\frac{1}{2}\!\left(\frac{\pi}{\sqrt{a}}\,\coth(\pi\sqrt{a})+\frac{1}{a}\right)
+\;=\;\frac{\pi\coth(\pi\sqrt{a})}{2\sqrt{a}}+\frac{1}{2a}\,.
+\end{equation}
+Note that every term on the left is positive, and the right side is
+manifestly positive for $a>0$, as required.
+
+\subsection{Differentiation with Respect to the Parameter}
+
+Observe that
+\begin{equation}\label{eq:diff-trick}
+\frac{1}{(n^2+a)^2}\;=\;-\frac{\partial}{\partial a}\!\left(\frac{1}{n^2+a}\right).
+\end{equation}
+Summing over $n\ge 0$ and exchanging the sum and derivative (justified by
+uniform convergence on compact subsets of $(0,\infty)$):
+\begin{equation}\label{eq:sum-diff}
+\sum_{n=0}^{\infty}\frac{1}{(n^2+a)^2}\;=\;-\frac{d}{da}\sum_{n=0}^{\infty}\frac{1}{n^2+a}\,.
+\end{equation}
+Define
+\begin{equation}\label{eq:g}
+g(a)\;=\;\frac{\pi\coth(\pi\sqrt{a})}{2\sqrt{a}}+\frac{1}{2a}\,.
+\end{equation}
+Then
+\begin{equation}\label{eq:S-gprime}
+S\;=\;-\,g'(1).
+\end{equation}
+
+\begin{remark}[Second bridge: discrete to continuous]\label{rem:bridge2}
+The fixed problem at $a=1$ has been embedded into a one-parameter
+continuous family.  The answer is recovered by differentiation followed by
+evaluation, converting a discrete summation problem into a calculus problem.
+\end{remark}
+
+\subsection{Computing $g'(a)$}
+
+Write $g=g_1+g_2$ with
+\[
+g_1(a)=\frac{\pi\coth(\pi\sqrt{a})}{2\sqrt{a}}\,,\qquad
+g_2(a)=\frac{1}{2a}\,.
+\]
+For $g_2$:
+\begin{equation}\label{eq:g2prime}
+g_2'(a)=-\frac{1}{2a^2}\,.
+\end{equation}
+For $g_1$, apply the product rule to
+$\frac{\pi}{2}\cdot\coth(\pi\sqrt{a})\cdot a^{-1/2}$:
+\begin{align}
+g_1'(a)
+&=\frac{\pi}{2}\left[\frac{d}{da}\bigl(\coth(\pi\sqrt{a})\bigr)\cdot a^{-1/2}
+  +\coth(\pi\sqrt{a})\cdot\bigl(-\tfrac{1}{2}\bigr)a^{-3/2}\right]\notag\\
+&=\frac{\pi}{2}\left[\bigl(-\csch^2(\pi\sqrt{a})\bigr)\cdot
+  \frac{\pi}{2\sqrt{a}}\cdot\frac{1}{\sqrt{a}}
+  -\frac{\coth(\pi\sqrt{a})}{2a^{3/2}}\right]\notag\\
+&=-\frac{\pi^2\csch^2(\pi\sqrt{a})}{4a}
+  -\frac{\pi\coth(\pi\sqrt{a})}{4a^{3/2}}\,.\label{eq:g1prime}
+\end{align}
+Combining:
+\begin{equation}\label{eq:gprime}
+g'(a)\;=\;
+-\frac{\pi^2\csch^2(\pi\sqrt{a})}{4a}
+-\frac{\pi\coth(\pi\sqrt{a})}{4a^{3/2}}
+-\frac{1}{2a^2}\,.
+\end{equation}
+
+\subsection{Evaluation at $a=1$}
+
+Setting $a=1$ in~\eqref{eq:gprime}:
+\[
+g'(1)=-\frac{\pi^2\csch^2\pi}{4}-\frac{\pi\coth\pi}{4}-\frac{1}{2}
+=-\frac{\pi^2\csch^2\pi+\pi\coth\pi+2}{4}\,.
+\]
+By~\eqref{eq:S-gprime}:
+\begin{equation}\label{eq:result}
+\boxed{
+S\;=\;\sum_{n=0}^{\infty}\frac{1}{(n^2+1)^2}
+\;=\;\frac{2+\pi\coth\pi+\pi^2\csch^2\pi}{4}
+\;\approx\;1.30683697542\,.
+}
+\end{equation}
+
+%=======================================================================
+\section{FTD Recasting: Eliminating $\pi$}\label{sec:ftd}
+%=======================================================================
+
+\subsection{The Ontic Constants}
+
+\begin{definition}[Lemniscate constant]\label{def:varpi}
+The lemniscate constant~$\vpi$ is defined by
+\[
+\vpi \;=\; 2\int_0^1\frac{dt}{\sqrt{1-t^4}}
+\;=\;\frac{\Gamma(1/4)^2}{2\sqrt{2\pi}}
+\;\approx\;2.62206\,.
+\]
+It is the half-perimeter of the lemniscate of Bernoulli and satisfies
+$\vpi=\pi/M(1,\sqrt{2})$, where $M$ denotes the arithmetic--geometric mean.
+\end{definition}
+
+\begin{definition}[Bridge constant]\label{def:Gstar}
+The FTD bridge constant is
+\[
+\Gstar \;=\; \frac{\Gamma(1/4)^2}{\sqrt{2}\;\Gamma(1/2)^2} \;=\; \frac{2\vpi}{\sqrt{\pi}} \;\approx\; 2.95868\,.
+\]
+The first form is $\pi$-free: both $\Gamma(1/4)$ and $\Gamma(1/2)$ are definable by $\pi$-free integrals ($\int_0^\infty t^{s-1}e^{-t}\,dt$ at $s = 1/4$ and $s = 1/2$). The equivalence of the two forms follows from $\Gamma(1/2)^2 = \pi$ (the Gaussian integral).
+\end{definition}
+
+\begin{definition}[Ontic ratio]\label{def:ell}
+Define
+\begin{equation}\label{eq:ell}
+\ell \;=\; \frac{\vpi^2}{\Gstar^2}\,.
+\end{equation}
+\end{definition}
+
+\begin{lemma}\label{lem:pi}
+$\pi = 4\ell = 4\vpi^2/\Gstar^2$.
+\end{lemma}
+\begin{proof}
+From $\Gstar=2\vpi/\sqrt{\pi}$ we obtain $\Gstar^2=4\vpi^2/\pi$,
+hence $\pi=4\vpi^2/\Gstar^2=4\ell$.
+\end{proof}
+
+\begin{remark}\label{rem:ontic-priority}
+In the FTD framework, $\vpi$ and $\Gstar$ (equivalently $\vpi$ and
+$\ell$) are treated as the ontic (structurally primary) constants.
+The number $\pi$ is a derived quantity: it is four times the ratio
+$\vpi^2/\Gstar^2$.  This reflects the claim that the lemniscatic lattice
+structure is ontologically prior to the circular one.
+\end{remark}
+
+\subsection{The Sum in Ontic Variables}
+
+\begin{theorem}[FTD form of the sum]\label{thm:ftd}
+\begin{equation}\label{eq:ftd-form}
+\boxed{
+\sum_{n=0}^{\infty}\frac{1}{(n^2+1)^2}
+\;=\;\frac{2+4\ell\coth(4\ell)+16\ell^2\csch^2(4\ell)}{4}\,,
+}
+\end{equation}
+where $\ell=\vpi^2/\Gstar^2$.
+\end{theorem}
+\begin{proof}
+Substitute $\pi=4\ell$ into~\eqref{eq:result}.
+\end{proof}
+
+\begin{remark}\label{rem:pi-disguised}
+Every appearance of $\pi$ in the standard result was a disguised occurrence
+of $4\vpi^2/\Gstar^2$.  The hyperbolic functions $\coth$ and $\csch^2$
+depend on a single transcendental argument: $4\ell=4\vpi^2/\Gstar^2$.
+\end{remark}
+
+\subsection{Gelfond's Constant as the Exponential Scale}
+
+\begin{proposition}\label{prop:gelfond}
+The exponential scale governing the hyperbolic functions
+in~\eqref{eq:ftd-form} is
+\[
+e^{4\ell}\;=\;e^{4\vpi^2/\Gstar^2}\;=\;e^{\pi}\;\approx\;23.1407\,,
+\]
+which is Gelfond's constant, $(-1)^{-i}$.
+\end{proposition}
+\begin{proof}
+$4\ell=\pi$ by Lemma~\ref{lem:pi}; $e^{\pi}=(-1)^{-i}$ by Euler's
+identity.
+\end{proof}
+
+The nome of the Gaussian lattice $\Z[i]$ (with respect to the modular
+parameter $\tau=i$) is
+\[
+q\;=\;e^{2\pi i\tau}\Big|_{\tau=i}\;=\;e^{-2\pi}\;=\;
+e^{-8\vpi^2/\Gstar^2}\;\approx\;1.87\times 10^{-3}\,.
+\]
+The smallness of~$q$ (controlled entirely by $\vpi^2/\Gstar^2$) is
+responsible for the rapid exponential suppression that makes the $\csch^2$
+correction contribute only ${\sim}1.4\%$ of the total sum, as we quantify
+in Section~\ref{sec:bridge-structure}.
+
+%=======================================================================
+\section{Connection to the Gaussian Lattice}\label{sec:gaussian}
+%=======================================================================
+
+\subsection{The Sum as a Lattice Restriction}
+
+Observe that $n^2+1=|n+i|^2$ for $n\in\Z$.  Therefore:
+\begin{equation}\label{eq:S-lattice}
+S\;=\;\sum_{n=0}^{\infty}\frac{1}{|n+i|^4}\,.
+\end{equation}
+The natural two-dimensional object associated to the Gaussian lattice
+$\Z[i]$ is the \textbf{Epstein zeta function}
+\begin{equation}\label{eq:epstein}
+Z_{\Z[i]}(s)\;=\;\sideset{}{'}\sum_{z\in\Z[i]}|z|^{-2s}
+\;=\;\sideset{}{'}\sum_{(m,n)\in\Z^2}(m^2+n^2)^{-s}\,,
+\end{equation}
+where the prime denotes omission of $(m,n)=(0,0)$.  Our sum~$S$ is the
+restriction of this lattice sum to the horizontal line $\mathrm{Im}(z)=1$
+(that is, $m$ arbitrary with $n=1$), further restricted to $m\ge 0$.
+Explicitly, the full $n=1$ row of $Z_{\Z[i]}(2)$ contributes
+$\sum_{m=-\infty}^{\infty}(m^2+1)^{-2}=2S-1$, since the $m=0$ term equals~1
+and the remaining terms pair symmetrically.
+
+\begin{remark}\label{rem:epstein-vs-eisenstein}
+Unlike the unnormalized Eisenstein series
+$G_4(\tau)=\sum'(m+n\tau)^{-4}$, which involves the \emph{fourth power}
+of a complex number, our sum involves the \emph{squared modulus} raised to
+the second power: $|m+ni|^{-4}=(m^2+n^2)^{-2}$.  These are distinct
+objects; $G_4$ is a holomorphic modular form, while the Epstein zeta
+function is real-valued and not holomorphic.  The connection to modular
+forms passes through the identity
+$Z_{\Z[i]}(s)=4\,\zeta(s)\,L(s,\chi_{-4})$, where $\chi_{-4}$ is the
+non-principal Dirichlet character modulo~4.
+\end{remark}
+
+\subsection{The Eisenstein Series in Ontic Variables}
+
+Although our sum is a restriction of the Epstein zeta function rather than
+of $G_4$ directly, the Eisenstein series at the Gaussian point still
+controls the lattice's fundamental structure.  The normalized Eisenstein
+series at $\tau=i$ is:
+\[
+E_4(i) \;=\; 1+240\sum_{n=1}^{\infty}\sigma_3(n)\,q^n\,,
+\qquad q=e^{-2\pi}\,.
+\]
+
+\begin{theorem}[Eisenstein $E_4(i)$ in FTD form]\label{thm:E4}
+\begin{equation}\label{eq:E4}
+E_4(i)\;=\;3\!\left(\frac{\vpi}{\pi}\right)^{\!4}
+\;=\;\frac{3\,\Gstar^8}{256\,\vpi^4}\,.
+\end{equation}
+\end{theorem}
+\begin{proof}
+The first equality is a classical result relating $E_4(i)$ to the
+lemniscate constant via the Weierstrass invariant~$g_2$ of the square
+lattice (see Zucker~\cite{zucker77}).  For the second equality, substitute
+$\pi=4\vpi^2/\Gstar^2$:
+\[
+3\!\left(\frac{\vpi}{\pi}\right)^{\!4}
+= 3\!\left(\frac{\vpi\,\Gstar^2}{4\vpi^2}\right)^{\!4}
+= 3\!\left(\frac{\Gstar^2}{4\vpi}\right)^{\!4}
+= \frac{3\,\Gstar^8}{256\,\vpi^4}\,.\qedhere
+\]
+\end{proof}
+
+\begin{remark}\label{rem:2d-ontic}
+The full two-dimensional lattice structure at the Gaussian point is
+controlled entirely by $\vpi$ and~$\Gstar$.  Our one-dimensional sum~$S$
+is a restriction of this structure, and the restriction to a single row is
+what introduces the circular constant~$\pi$ as an intermediary through the
+bilateral-sum formula~\eqref{eq:bilateral}.
+\end{remark}
+
+%=======================================================================
+\section{The Epstein--Lemniscatic Connection}\label{sec:epstein}
+%=======================================================================
+
+\subsection{The Epstein Factorisation in Ontic Variables}\label{sec:epstein-ontic}
+
+We now close the loop between the Epstein zeta function and the lemniscatic
+constants.  The classical factorisation of $Z_{\Z[i]}(s)$ through
+Dirichlet series gives:
+
+\begin{theorem}[Epstein factorisation]\label{thm:epstein-factor}
+\begin{equation}\label{eq:epstein-factor}
+Z_{\Z[i]}(s) \;=\; 4\,\zeta(s)\,L(s,\chi_{-4})\,,
+\end{equation}
+where $\zeta(s)$ is the Riemann zeta function and $L(s,\chi_{-4})$ is the
+Dirichlet $L$-function attached to the non-principal character modulo~$4$
+(the Kronecker symbol $\chi_{-4}(n)=\bigl(\frac{-4}{n}\bigr)$).
+\end{theorem}
+\begin{proof}
+The number of representations $r_2(k)=\#\{(m,n)\in\Z^2:m^2+n^2=k\}$
+satisfies $r_2(k)=4\sum_{d\mid k}\chi_{-4}(d)$, so
+\[
+Z_{\Z[i]}(s)=\sum_{k=1}^{\infty}r_2(k)\,k^{-s}
+=4\sum_{k=1}^{\infty}\biggl(\sum_{d\mid k}\chi_{-4}(d)\biggr)k^{-s}
+=4\,\zeta(s)\,L(s,\chi_{-4})\,.\qedhere
+\]
+\end{proof}
+
+At $s=2$, each factor acquires a specific identity:
+
+\begin{corollary}[Ontic form of $Z_{\Z[i]}(2)$]\label{cor:Z2-ontic}
+\begin{equation}\label{eq:Z2-ontic}
+Z_{\Z[i]}(2) \;=\; 4\,\zeta(2)\,G
+\;=\;\frac{32\,\vpi^4}{3\,\Gstar^4}\;\cdot\; G\,,
+\end{equation}
+where $G=L(2,\chi_{-4})\approx 0.915966$ is Catalan's constant.
+\end{corollary}
+\begin{proof}
+Substitute $\zeta(2)=\pi^2/6$ and $\pi=4\vpi^2/\Gstar^2$:
+\[
+\zeta(2)=\frac{\pi^2}{6}=\frac{16\vpi^4}{6\,\Gstar^4}
+=\frac{8\vpi^4}{3\,\Gstar^4}\,.
+\]
+Then $Z_{\Z[i]}(2)=4\cdot\dfrac{8\vpi^4}{3\,\Gstar^4}\cdot G
+=\dfrac{32\,\vpi^4\,G}{3\,\Gstar^4}$.
+\end{proof}
+
+\begin{remark}[The irreducible arithmetic residue]\label{rem:catalan}
+Catalan's constant
+\[
+G \;=\; \sum_{n=0}^{\infty}\frac{(-1)^n}{(2n+1)^2}
+\;=\; 1-\frac{1}{9}+\frac{1}{25}-\frac{1}{49}+\cdots
+\;\approx\;0.915966
+\]
+encodes the distribution of Gaussian primes: it measures the excess of
+primes $p\equiv 1\pmod{4}$ (which split in~$\Z[i]$) over primes
+$p\equiv 3\pmod{4}$ (which remain inert), weighted by $p^{-2}$.  This
+arithmetic content is intrinsic to the \emph{two-dimensional} Gaussian
+lattice and cannot be expressed in terms of $\vpi$ and~$\Gstar$ alone.
+It is the irreducible arithmetic residue that distinguishes the norm
+projection $|z|^{-2s}$ from the holomorphic projection $z^{-2s}$.
+\end{remark}
+
+%-----------------------------------------------------------------------
+\subsection{The Row Decomposition}\label{sec:row-decomp}
+%-----------------------------------------------------------------------
+
+The Epstein zeta function admits a natural decomposition by rows
+$n=\text{const}$:
+\begin{equation}\label{eq:row-decomp}
+Z_{\Z[i]}(2) \;=\; 2\,\zeta(4)
++ 2\sum_{n=1}^{\infty}\sum_{m=-\infty}^{\infty}\frac{1}{(m^2+n^2)^2}\,,
+\end{equation}
+where $2\,\zeta(4)=\sum'_m m^{-4}$ is the $n=0$ row and the factor of~$2$
+in front of the sum accounts for the $n$ and $-n$ rows.
+
+Each bilateral row sum can be evaluated by differentiating~\eqref{eq:bilateral}
+with respect to~$a$ and setting $a=n^2$:
+\begin{equation}\label{eq:bilateral-row}
+\sum_{m=-\infty}^{\infty}\frac{1}{(m^2+n^2)^2}
+\;=\;\frac{\pi^2\csch^2(n\pi)}{2n^2}+\frac{\pi\coth(n\pi)}{2n^3}\,.
+\end{equation}
+In ontic variables, each row depends on $n$ through $\coth(4n\ell)$
+and $\csch(4n\ell)$.
+
+\begin{proposition}[Row decomposition in ontic form]\label{prop:row-ontic}
+\begin{equation}\label{eq:row-ontic}
+Z_{\Z[i]}(2) = \frac{2^8\,\vpi^8}{45\,\Gstar^8}
++ 2\sum_{n=1}^{\infty}\left[
+\frac{8\vpi^4\csch^2(4n\ell)}{n^2\,\Gstar^4}
++ \frac{2\vpi^2\coth(4n\ell)}{n^3\,\Gstar^2}\right],
+\end{equation}
+where $\ell=\vpi^2/\Gstar^2$ and the leading term uses
+$\zeta(4)=\pi^4/90=2^8\vpi^8/(90\,\Gstar^8)$.
+\end{proposition}
+
+\begin{remark}[Why the row restriction eliminates $G$]\label{rem:row-kills-G}
+Each individual row sum~\eqref{eq:bilateral-row} is expressible purely in
+terms of $\vpi$ and~$\Gstar$ (via $\pi=4\vpi^2/\Gstar^2$).  Catalan's
+constant enters only when we sum the row contributions and equate them to
+the Dirichlet-series factorisation $4\,\zeta(2)\,L(2,\chi_{-4})$.  The row
+restriction to $n=1$ that yields our sum~$S$ bypasses this global
+arithmetic content entirely: it uses only the Poisson summation formula
+over~$\Z$, whose kernel is the Fourier transform of $1/(x^2+1)^2$ --- a
+smooth function controlled by the single period~$\vpi$.
+
+This explains why $S$ admits a purely ontic closed form
+(Theorem~\ref{thm:ftd}), while the full $Z_{\Z[i]}(2)$ does not: the
+two-dimensional lattice sum encodes arithmetic information (the
+distribution of sums of two squares) that the one-dimensional restriction
+projects away.
+\end{remark}
+
+%-----------------------------------------------------------------------
+\subsection{Two Projections of One Lattice}\label{sec:two-projections}
+%-----------------------------------------------------------------------
+
+The Gaussian lattice $\Z[i]$ supports two natural ``projections'' at
+weight~4, each revealing different content:
+
+\medskip
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Projection} & \textbf{Object} & \textbf{FTD form} & \textbf{Ontic purity}\\
+\midrule
+Holomorphic ($z^{-4}$) & $G_4(i),\;E_4(i)$
+  & $3\,\Gstar^8/(256\,\vpi^4)$
+  & Fully ontic\\[3pt]
+Norm ($|z|^{-4}$) & $Z_{\Z[i]}(2)$
+  & $32\,\vpi^4\,G/(3\,\Gstar^4)$
+  & Ontic $\times$ arithmetic\\[3pt]
+Row restriction & $S$
+  & $\dfrac{2+4\ell\coth 4\ell+16\ell^2\csch^2 4\ell}{4}$
+  & Fully ontic\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+The holomorphic projection $z^{-4}$ respects the four-fold symmetry of
+$\Z[i]$ and yields a holomorphic modular form whose value at $\tau=i$ is
+determined by the lattice periods $\vpi$ and $i\vpi$ alone.  The norm
+projection $|z|^{-4}$ discards phase information and introduces the
+arithmetic of $\Z[i]$ through the representation function $r_2(k)$, which
+carries Catalan's constant as its weight-2 residue.
+
+\begin{remark}\label{rem:bridge-is-Gstar}
+In both projections, the lemniscatic constants $\vpi$ and $\Gstar$ control
+the geometric structure of the lattice.  The \emph{arithmetic} factor $G$
+appears only when we ask a number-theoretic question (``how many lattice
+points lie on the circle $|z|^2=k$?'') rather than a geometric one
+(``what are the periods?'').  The bridge constant $\Gstar$ mediates the
+geometric content; Catalan's constant encodes the arithmetic residue.
+\end{remark}
+
+\subsection{Numerical Verification}\label{sec:numerical-ext}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Quantity} & \textbf{Value} & \textbf{Method}\\
+\midrule
+$S$ (direct summation, $10^5$ terms) & 1.306836975422908 & Numerical\\
+$S$ (closed form, Eq.\,\ref{eq:result}) & 1.306836975422909 & Analytic\\
+$S$ (FTD form, Eq.\,\ref{eq:ftd-form}) & 1.306836975422909 & Analytic\\
+$\pi$ via $4\vpi^2/\Gstar^2$ & 3.141592653589793 & Verified\\
+$E_4(i)$ ($q$-expansion, 500 terms) & 1.455762892268709 & Numerical\\
+$3\Gstar^8/(256\vpi^4)$ & 1.455762892268710 & Analytic\\
+\midrule
+$\zeta(2)$ & 1.644934066848226 & Standard\\
+$8\vpi^4/(3\Gstar^4)$ & 1.644934066848226 & Ontic\\
+Catalan $G = L(2,\chi_{-4})$ & 0.915965594177219 & Standard\\
+$Z_{\Z[i]}(2)$ via $4\,\zeta(2)\,G$ & 6.026812039691940 & Factored\\
+$32\vpi^4 G/(3\Gstar^4)$ & 6.026812039691940 & Ontic\\
+$Z_{\Z[i]}(2)$ via row decomposition & 6.026812039691940 & Row sum\\
+$n\!=\!1$ bilateral row & $1.613673950845818$ & Analytic\\
+$2S-1$ & $1.613673950845818$ & Verified\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%=======================================================================
+\section{Structure of the Discrete--Continuous Bridge}\label{sec:bridge-structure}
+%=======================================================================
+
+The derivation passes through three distinct bridges, each moving from a
+more discrete to a more continuous description:
+
+\medskip
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+\textbf{Step} & \textbf{From} & \textbf{To} & \textbf{Mechanism}\\
+\midrule
+1 & Integer lattice $\Z$ & Hyperbolic function of $a$ & Bilateral sum / Poisson\\
+2 & Fixed sum at $a=1$ & Continuous family in $a$ & Parameterisation\\
+3 & First-order sum & Squared denominator & Differentiation $-d/da$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+The final answer decomposes into three additive contributions (within the
+numerator):
+
+\medskip
+\begin{center}
+\begin{tabular}{llcl}
+\toprule
+\textbf{Term} & \textbf{Expression} & \textbf{Share} & \textbf{Interpretation}\\
+\midrule
+Constant    & $2/4=0.500$                   & 38.3\% & Pure discrete residue\\
+Linear in $\ell$ & $4\ell\coth(4\ell)/4$  & 60.3\% & Bridge term ($\Gstar$ mediation)\\
+Quadratic in $\ell$ & $16\ell^2\csch^2(4\ell)/4$ & 1.4\% & Curvature correction\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+The ``constant'' term $2/4=1/2$ is the part that would survive if the
+hyperbolic functions were replaced by their large-argument limits
+($\coth\to 1$, $\csch\to 0$), corresponding to $\ell\to\infty$ or
+equivalently $q\to 0$.  It represents the purely discrete contribution:
+the value the sum would approach if the lattice spacing were sent to zero
+relative to the period.
+
+The ``linear'' term $4\ell\coth(4\ell)/4$ carries 60.3\% of the
+answer and is dominated by the ratio $\vpi^2/\Gstar^2$.  This is the
+bridge term proper: it encodes the interaction between the discrete lattice
+and the continuous exponential.
+
+The ``quadratic'' correction $16\ell^2\csch^2(4\ell)/4$ contributes
+only 1.4\%.  Its suppression is a direct consequence of the smallness of
+the nome $q=e^{-8\ell}\approx 1.87\times 10^{-3}$, whose magnitude is
+set by $\ell=\vpi^2/\Gstar^2$ alone.
+
+%=======================================================================
+\section{The Genus-0 Projection}\label{sec:genus}
+%=======================================================================
+
+The bilateral sum formula~\eqref{eq:bilateral} ultimately rests on the
+partial-fraction expansion of $\pi\cot(\pi z)$, which is a genus-0
+(rational curve) identity.  The hyperbolic functions $\coth$ and $\csch$
+are all genus-0 objects: they parametrise the Riemann sphere $\mathbb{P}^1$.
+
+The Gaussian lattice $\Z[i]$, however, is a genus-1 object.  Its natural
+functions are the Weierstrass $\wp$-function and its derivatives, whose
+periods are $\vpi$ and~$i\vpi$, and whose invariants are expressible purely
+in terms of $\vpi$ and~$\Gstar$.  (For the square lattice, $g_3=0$ by
+four-fold symmetry, and $g_2$ is determined by~$\vpi$ alone.)
+
+The fact that the answer can be written in terms of $\coth$ and $\csch^2$
+of~$\pi$ is a consequence of the one-dimensional restriction collapsing the
+elliptic (genus-1) structure down to the circular (genus-0) one.
+Restricting to a single row $n=1$ in the Epstein sum replaces the
+doubly-periodic lattice with a singly-periodic one, and single periodicity
+is the domain of trigonometric and hyperbolic functions.
+
+In the FTD reading:
+\begin{quote}
+$\pi$ appears in this formula not because the sum is ``about'' circles,
+but because we chose to evaluate a lemniscatic object using circular tools.
+The ontic content is $\ell=\vpi^2/\Gstar^2$.  Everything else is
+projection.
+\end{quote}
+
+%=======================================================================
+\section{The Dimensional Ladder}\label{sec:ladder}
+%=======================================================================
+
+The genus-0 projection explains why $\pi$ appears in the answer: we
+evaluated a two-dimensional (genus-1) object using one-dimensional
+(genus-0) tools.  But this raises a deeper question: why $\pi$ at all?
+
+Euler's 1735 derivation of the Basel problem provides the answer.  His
+method was to observe that $\sin(\pi z)/(\pi z)$ vanishes at every
+nonzero integer, and to treat it---by analogy with finite
+polynomials---as an infinite product over its roots:
+\begin{equation}\label{eq:euler-product}
+\frac{\sin(\pi z)}{\pi z}
+\;=\; \prod_{n=1}^{\infty}\!\left(1 - \frac{z^2}{n^2}\right).
+\end{equation}
+Expanding the right side and comparing the $z^2$ coefficient with the
+Taylor series $\sin(\pi z)/(\pi z) = 1 - \pi^2 z^2/6 + \cdots$ gives
+$\sum 1/n^2 = \pi^2/6$.
+
+Now substitute $\pi = 4\ell$, where $\ell = \vpi^2/\Gstar^2$ is the
+ontic ratio:
+\[
+\frac{\sin(4\ell z)}{4\ell z}
+\;=\; \prod_{n=1}^{\infty}\!\left(1 - \frac{z^2}{n^2}\right),
+\qquad
+\sum_{n=1}^{\infty}\frac{1}{n^2}
+\;=\; \frac{(4\ell)^2}{6}
+\;=\; \frac{8\ell^2}{3}
+\;=\; \frac{8\vpi^4}{3\Gstar^4}\,.
+\]
+The right side of the product formula is unchanged---it depends only on
+the integers.  The left side has replaced $\pi$ with $4\ell$.  The
+substitution is algebraically trivial, but it reveals the structural
+origin: the number $\pi^2/6$ is the zeta function of the
+one-dimensional integer lattice~$\Z$ evaluated at $s = 2$.  The zeros
+of $\sin(\pi z)$ are the lattice points of~$\Z$.  The Basel sum is a
+\emph{lattice sum}.
+
+This observation generalises.  Each dimension has its own lattice, its
+own fundamental period, and its own zeta function:
+
+\medskip
+\begin{center}
+\begin{tabular}{cllll}
+\toprule
+$D$ & Lattice & Period & Lattice zeta at $s=2$ & Product formula\\
+\midrule
+1 & $\Z$ & $\pi = 4\ell$
+  & $\displaystyle\zeta(2) = \frac{\pi^2}{6} = \frac{8\vpi^4}{3\Gstar^4}$
+  & $\displaystyle\frac{\sin\pi z}{\pi z} = \prod\!\left(1-\frac{z^2}{n^2}\right)$\\[10pt]
+2 & $\Z[i]$ & $\vpi$
+  & $\displaystyle Z_{\Z[i]}(2) = 4\,\zeta(2)\,L(2,\chi_{-4})$
+  & Weierstrass $\sigma(z;\Z[i])$\\[10pt]
+3 & $\Z^3$ & $\Gstar$
+  & $\displaystyle W_3 = \frac{\Gstar^2}{2\pi} = \frac{\Gamma(1/4)^4}{4\pi^3}$
+  & Watson integral\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+In $D = 1$, the ``Euler move''---extending finite polynomial
+factorisations to infinite products---discovers $\pi$.  The same move
+applied to the Gaussian lattice $\Z[i]$ in $D = 2$ discovers $\vpi$:
+the Weierstrass $\sigma$-function of $\Z[i]$ is the doubly-periodic
+analogue of $\sin(\pi z)$, and its periods are $\vpi$ and $i\vpi$.  In
+$D = 3$, the lattice Green's function of $\Z^3$---the Watson
+integral---discovers $\Gstar$, which absorbs the geometric scaling
+between the lemniscatic and circular domains.
+
+Each lattice period is a ``circle constant'' for its dimension:
+\begin{itemize}
+\item $\pi$ measures how far you walk around a circle (the boundary of
+  the unit ball in $\R^1$ cross-section).
+\item $\vpi$ measures how far you walk around a lemniscate (the
+  fundamental domain boundary of $\Z[i]$).
+\item $\Gstar$ measures the lattice Green's function of $\Z^3$---the
+  propagator of the cubic lattice itself.
+\end{itemize}
+
+The reason $\pi$ appears ubiquitously in mathematics is not that circles
+are fundamental.  It is that $\Z$---the one-dimensional integer
+lattice---is the simplest lattice, and most classical formulas are
+computed over it.  When we compute over $\Z[i]$, we find $\vpi$.  When
+we compute over $\Z^3$, we find $\Gstar$.
+
+The connection to FTD's dimension selection is immediate.  The master
+quadratic $x^2 - 16\Gstar_D^2\,x + 16\Gstar_D^3 = 0$, applied to the
+Watson integral $W_D$ in each dimension, gives $\lfloor x_-^{(D)}\rfloor = D$
+only for $D = 3$~\cite{lifecycle}.  Among the infinite family of lattice
+periods $(\pi,\; \vpi,\; \Gstar,\; \Gstar_4,\; \ldots)$, only the
+$D = 3$ member produces a self-consistent framework in which the number
+of color charges equals the spatial dimension.
+
+The dimensional ladder is summarized in the following table:
+
+\begin{center}
+\begin{tabular}{cclll}
+\toprule
+$D$ & Lattice & Period & Zeta function & $\lfloor x_-^{(D)}\rfloor \stackrel{?}{=} D$ \\
+\midrule
+1 & $\Z$ & $\pi$ & $\zeta(2) = \pi^2/6$ & N/A \\
+2 & $\Z[i]$ & $\vpi$ & $G_4(i) \propto \vpi^4$ & \textbf{No} ($8 \neq 2$) \\
+3 & $\Z^3$ & $\Gstar$ & $W_3 = {\Gstar}^2/(2\pi)$ & \textbf{Yes} ($3 = 3$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Each dimension has its own ``circle constant.'' $\pi$ is the period of $\Z$. $\vpi$ is the period of $\Z[i]$. $\Gstar$ is the period of $\Z^3$. The relation $\pi = 4\vpi^2/{\Gstar}^2$ expresses the lowest-dimensional constant through the higher ones---$\pi$ is the projection of lemniscatic geometry onto a line.
+
+Euler's Basel problem is the one-dimensional shadow of a three-dimensional structure.
+
+%=======================================================================
+\section{Summary of Rewriting}\label{sec:summary}
+%=======================================================================
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Quantity} & \textbf{Standard Form} & \textbf{FTD (Ontic) Form}\\
+\midrule
+Argument of $\coth/\csch$ & $\pi$ & $4\vpi^2/\Gstar^2$\\
+Exponential scale & $e^{\pi}$ & $e^{4\vpi^2/\Gstar^2}$\\
+Lattice nome & $e^{-2\pi}$ & $e^{-8\vpi^2/\Gstar^2}$\\
+$E_4(i)$ & $3(\vpi/\pi)^4$ & $3\Gstar^8/(256\vpi^4)$\\
+Prefactor $\pi^2$ & $\pi^2$ & $16\vpi^4/\Gstar^4$\\
+$\zeta(2)$ & $\pi^2/6$ & $8\vpi^4/(3\Gstar^4)$\\
+Euler product & $\sin(\pi z)/(\pi z) = \prod(1-z^2/n^2)$ & $\sin(4\ell z)/(4\ell z) = \prod(1-z^2/n^2)$\\
+$Z_{\Z[i]}(2)$ & $4\,\zeta(2)\,G$ & $32\vpi^4 G/(3\Gstar^4)$\\
+Catalan $G$ & $L(2,\chi_{-4})$ & (irreducible arithmetic constant)\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+\noindent\textbf{Conclusion.}
+The discrete--continuous bridge in the evaluation of
+$\sum 1/(n^2+1)^2$ is real, but the conventional language in terms of
+$\pi$ obscures its structural origin.  The bridge is not~$\pi$.  The
+bridge is~$\Gstar$.
+
+The Epstein zeta factorisation~\eqref{eq:epstein-factor} reveals an
+additional layer: the full two-dimensional lattice sum carries an
+irreducible arithmetic factor (Catalan's constant~$G$) that encodes the
+distribution of Gaussian primes.  This factor is eliminated by the row
+restriction that produces our one-dimensional sum~$S$, explaining why~$S$
+admits a purely ontic closed form while the full $Z_{\Z[i]}(2)$ does not.
+
+%=======================================================================
+\section*{Epistemic Classification}
+%=======================================================================
+
+Following FTD conventions:
+
+\begin{itemize}
+\item \textbf{THEOREM} (exact algebraic): Equations~\eqref{eq:result},
+\eqref{eq:ftd-form}, \eqref{eq:E4}, \eqref{eq:epstein-factor},
+\eqref{eq:Z2-ontic}, and Lemma~\ref{lem:pi}.
+These are mathematically exact identities, verifiable by direct computation.
+
+\item \textbf{THEOREM} (standard number theory):
+The factorisation $Z_{\Z[i]}(2)=4\,\zeta(2)\,L(2,\chi_{-4})$ and the
+identification of Catalan's constant as the irreducible arithmetic
+residue.  The row-restriction elimination of the arithmetic factor follows
+from Poisson summation.
+
+\item \textbf{SELECTION PRINCIPLE} (pending proof):
+The claim that $\vpi$ and $\Gstar$ are ontologically prior to~$\pi$.
+This is a well-motivated structural claim supported by the lemniscatic
+lattice framework but not provable within conventional mathematics, which
+treats all equivalent parametrisations as interchangeable.
+
+\item \textbf{HYPOTHESIS} (empirical fit):
+The identification of $\Gstar$ as the mediator of all
+discrete--continuous transitions in physics.  This is a broader FTD claim
+that this example illustrates but does not prove.
+\end{itemize}
+
+%=======================================================================
+\begin{thebibliography}{9}
+
+\bibitem{zucker77}
+I.\,J.~Zucker,
+``The evaluation in terms of $\Gamma$-functions of the periods of elliptic
+curves admitting complex multiplication,''
+\textit{Math.\ Proc.\ Camb.\ Phil.\ Soc.} \textbf{82} (1977), 111--118.
+
+\bibitem{chain}
+``The Ontic Derivation Chain: Twenty-Six Physical Constants from Two Inputs,''
+companion paper (2026).
+
+\bibitem{lifecycle}
+``One Unit of Existence: The Lifecycle of a Hydrogen Atom from Lattice Geometry to Dissolution,''
+companion paper (2026).
+
+\bibitem{constructor}
+``The Instantiating Formula: An Ontological Constructor for Foundational Ternary Dynamics,''
+companion paper (2026).
+
+\bibitem{engine} ``The Lattice Engine: A Computational Implementation of Foundational Ternary Dynamics,'' companion paper (2026).
+
+\end{thebibliography}
+
+\end{document}

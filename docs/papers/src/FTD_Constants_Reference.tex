@@ -1,0 +1,305 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small\itshape FTD Constants Reference}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\Gstar}{{G^{*}}}
+\newcommand{\vpi}{\varpi}
+
+\title{\textsc{FTD Constants Reference}\\[6pt]
+\large Canonical Values to 25-Digit Precision\\
+Computed from $D = 3$ and $\vpi$}
+
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{quote}\itshape
+All dimensionless quantities are computed from $D = 3$ and $\vpi$; one external unit calibration $K_B = 0.5100$~MeV sets SI units. The Planck mass $m_P = K_B / (\sqrt{2\pi}\cdot\tfrac{16}{3}\cdot\alpha^{11})$ is derived, not an independent input.
+\end{quote}
+
+\smallskip
+
+\noindent\textbf{Conventions.} $D = 3$ is the spatial dimension (axiom); $\mathcal{D} = N_c N_{\mathrm{base}}^2 - 1 = 47$ is the constraint denominator (derived integer). All masses and couplings use the 4-term corrected $\alpha$ unless tagged ``tree.'' The tree-level value $\alpha_{\mathrm{tree}} = 1/x_+$ appears only in the Layer~5 table and in $r_{\mathrm{eff}}$, where the uncorrected root is the relevant quantity. $T(n) = n(n+1)/2$ is the $n$th triangular number.
+
+\bigskip
+
+%=======================================================================
+\section*{Layer 0: Transcendental Seed}
+%=======================================================================
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$\Gamma(1/4)$ & Euler gamma function at $1/4$ &
+$3.6256099082219083119306851\ldots$ \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Layer 1: Lemniscatic Geometry}
+%=======================================================================
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$\vpi$ & $\displaystyle 2\!\int_0^1 \frac{dx}{\sqrt{1-x^4}}$%
+\footnote{Closed form: $\vpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$. The integral definition is $\pi$-free.} &
+$2.6220575542921198104648396\ldots$ \\[8pt]
+$M$ & $\displaystyle\frac{\vpi}{\pi} = \frac{1}{\mathrm{AGM}(1,\sqrt{2})}$ &
+$0.8346268416740731862814297\ldots$ \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Layer 2: Bridge Constant}
+%=======================================================================
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$\Gstar$ & $\displaystyle\frac{\Gamma(1/4)^2}{\sqrt{2}\;\Gamma(1/2)^2}$%
+\footnote{Equivalent forms: $\Gstar = 2\vpi/\sqrt{\pi} = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$. The $\Gamma$-ratio form is $\pi$-free: both $\Gamma(1/4)$ and $\Gamma(1/2)$ are definable by integrals involving only $e^{-t}$ and rational powers of~$t$. The identity $\Gamma(1/2)^2 = \pi$ is a consequence, not an input.} &
+$2.9586751191886388923108214\ldots$ \\[8pt]
+$\pi$ & $\displaystyle\frac{4\,\vpi^2}{\Gstar^2} = 4\ell$ \quad (derived: not circular\footnote{$\vpi$ is computed by the $\pi$-free integral $2\!\int_0^1 dx/\sqrt{1-x^4}$. $\Gstar$ is computed by the $\pi$-free $\Gamma$-ratio above. Their combination gives $\pi = 4\vpi^2/\Gstar^2$ without $\pi$ appearing in any input.}) &
+$3.1415926535897932384626434\ldots$ \\[8pt]
+$\ell$ & $\displaystyle\frac{\vpi^2}{\Gstar^2} = \frac{\pi}{4}$ &
+$0.7853981633974483096156608\ldots$ \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Layer 3: Master Quadratic}
+%=======================================================================
+
+\noindent Equation: $\;x^2 - 16\,\Gstar^2\, x + 16\,\Gstar^3 = 0$
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$x_+$ & $8\Gstar^2\!\left(1 + \sqrt{1 - \frac{1}{4\Gstar}}\right)$ &
+$137.03617145815548388160057\ldots$ \\[8pt]
+$x_-$ & $8\Gstar^2\!\left(1 - \sqrt{1 - \frac{1}{4\Gstar}}\right)$ &
+$3.0239639163390210039527059\ldots$ \\[8pt]
+$x_+\! \cdot\! x_-$ & $16\,\Gstar^3$ &
+$414.39243772270942760105875\ldots$ \\[4pt]
+$x_+\!+\!x_-$ & $16\,\Gstar^2$ &
+$140.06013537449450488555328\ldots$ \\[4pt]
+$\Delta$ & $64\,\Gstar^3(4\Gstar - 1)$ &
+$17959.271770230889251899402\ldots$ \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Layer 3b: Precision Formula}
+%=======================================================================
+
+\noindent $\displaystyle\alpha^{-1} = x_+ - c_1|\varepsilon| + c_2|\varepsilon|^2 - c_3|\varepsilon|^3 - c_4|\varepsilon|^4$
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$\varepsilon$ & $e^\pi - \pi - 20$ &
+$-0.00090002081052423273355702\ldots$ \\[4pt]
+$c_1$ & $N_c^2/\mathcal{D} = 9/47$ &
+$0.19148936170212765957446809\ldots$ \\[4pt]
+$c_2$ & $(N_{\mathrm{eff}}\!-\!2N_{\mathrm{base}})/N_{\mathrm{base}}^3 = 5/64$ &
+$0.07812500000000000000000000\ldots$ \\[4pt]
+$c_3$ & $N_{\mathrm{base}}/(N_c\!\cdot\!\mathcal{D}) = 4/141$ &
+$0.02836879432624113475177305\ldots$ \\[4pt]
+$c_4$ & $(N_c\!\cdot\!\mathcal{D})/(b_3\!+\!N_{\mathrm{base}}) = 141/11$ &
+$12.818181818181818181818182\ldots$ \\[4pt]
+$\alpha^{-1}$ & (4-term result) &
+$137.03599917700004140583386\ldots$ \\
+\bottomrule
+\end{longtable}
+
+\noindent CODATA 2022: $\alpha^{-1} = 137.035\,999\,177(21)$. \quad Agreement: $< 0.001$~ppt.
+
+%=======================================================================
+\section*{Layer 4: Framework Integers}
+%=======================================================================
+
+\begin{longtable}{lp{6.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$N_c$ & $\lfloor x_- \rfloor$ & $3$ \\
+$N_{\mathrm{base}}$ & $2^{(D+1)/2}$ & $4$ \\
+$b_3$ & $(11N_c - 2N_f)/3$, \quad $N_f = 2N_c = 6$ & $7$ \\
+$N_{\mathrm{eff}}$ & $b_3 + 2N_c$ & $13$ \\
+$\mathcal{D}$ & $N_c N_{\mathrm{base}}^2 - 1$ & $47$ \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Layer 5: Coupling Constants}
+%=======================================================================
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$\alpha_{\mathrm{tree}}$ & $1/x_+$ &
+$0.0072973433901380833826792\ldots$ \\[4pt]
+$\alpha$ & $1/\alpha^{-1}_{\mathrm{prec}}$ \quad (4-term; used below) &
+$0.0072973525643314228253291\ldots$ \\[4pt]
+$g_c$ & $\sqrt{\alpha}$ &
+$0.0854245431028543624444677\ldots$ \\[4pt]
+$\alpha_s(M_Z)$ & $b_3/(b_3 + 4N_{\mathrm{eff}}) = 7/59$ &
+$0.1186440677966101694915254\ldots$ \\[4pt]
+$\sin^2\!\theta_W$ & $N_c/N_{\mathrm{eff}} = 3/13$ &
+$0.2307692307692307692307692\ldots$ \\[4pt]
+$G_N$ & $1/(b_3 + N_c)^2 = 1/100$ &
+$0.0100000000000000000000000\ldots$ \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Layer 6: Mass Scales}
+%=======================================================================
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$m_e/m_P$ & $\sqrt{2\pi}\cdot\frac{16}{3}\cdot\alpha^{11}$ &
+$4.1774117506818401689118\ldots\times 10^{-23}$ \\[6pt]
+$K_B = m_e$ & (lattice natural unit) & $1$ \quad ($= 0.5100$~MeV) \\[4pt]
+$K_{\mathrm{genesis}}$ & $N_c \cdot K_B$ & $3$ \quad ($= 1.530$~MeV) \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Layer 7: Mass Ratios (Exact Integers)}
+%=======================================================================
+
+\begin{longtable}{lp{6cm}r}
+\toprule
+\textbf{Ratio} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$m_\mu/m_e$ & $3b_3(b_3 + N_c) - N_c$ & $207$ \\[4pt]
+$m_\tau/m_e$ & $(N_{\mathrm{eff}} + N_{\mathrm{base}})\cdot 207 - 2N_c b_3$ & $3477$ \\[4pt]
+$m_p/m_e$ & $N_{\mathrm{eff}}/\alpha + T(b_3\!+\!N_c)$, \; $T(10) = 55$ &
+$1836.4679893010005382758\ldots$ \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Layer 8: Higgs Sector}
+%=======================================================================
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$m_P$ & $K_B / (\sqrt{2\pi}\cdot\tfrac{16}{3}\cdot\alpha^{11})$ &
+$2.3938267513054687\ldots \times 10^{22}$~lattice units\rlap{$^{\dagger}$} \\[4pt]
+$v$ & $m_P\sqrt{2\pi}\;\alpha^8$ &
+$246.07951397853684\ldots$~GeV \\[6pt]
+$\lambda_H$ & $\displaystyle\frac{\sin^2\!\theta_W}{2 - \sin^2\!\theta_W} = \frac{3}{23}$ &
+$0.1304347826086956521739130\ldots$ \\[8pt]
+$m_H$ & $v\sqrt{6/23}$ &
+$125.68607601610095\ldots$~GeV \\
+\bottomrule
+\end{longtable}
+
+\noindent{\small $^{\dagger}$\textit{Unit conversion.} $m_P$ is computed in lattice units (l.u.), where $K_B = 1$. To obtain GeV values for $v$ and $m_H$: multiply $m_P$ by $K_B = 0.5100\times10^{-3}$~GeV, giving $m_P \approx 1.22085\times 10^{19}$~GeV; then $v = m_P\sqrt{2\pi}\,\alpha^8$ and $m_H = v\sqrt{6/23}$ follow in GeV. No additional input enters.}
+
+\medskip
+
+%=======================================================================
+\section*{Derived Quantities}
+%=======================================================================
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$W_3$ & $\displaystyle\frac{\Gamma(1/4)^4}{4\pi^3} = \frac{\Gstar^2}{2\pi}$ &
+$1.3932039296856768591842463\ldots$ \\[8pt]
+$c$ & $1/\sqrt{3}$ &
+$0.5773502691896257645091488\ldots$ \\[4pt]
+$r_{\mathrm{eff}}$ & $\sqrt{x_+} = \sqrt{\alpha_{\mathrm{tree}}^{-1}}$ &
+$11.706244976855536653552629\ldots$ \\[4pt]
+$1/17$ & $1/(N_{\mathrm{eff}} + N_{\mathrm{base}})$ &
+$0.0588235294117647058823529\ldots$ \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Confinement (from $x_-$)}
+%=======================================================================
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Symbol} & \textbf{Formula} & \textbf{Value} \\
+\midrule
+\endhead
+$u_p(x_-)$ & $I_1(x_-)/I_0(x_-)$ &
+$0.8117414116844551696351218\ldots$ \\[4pt]
+$\sigma(x_-)$ & $-\ln\,u_p$ &
+$0.2085734480558214996554668\ldots$ \\
+\bottomrule
+\end{longtable}
+
+%=======================================================================
+\section*{Key Identities}
+%=======================================================================
+
+\begin{longtable}{lp{5.5cm}r}
+\toprule
+\textbf{Identity} & \textbf{Verification} & \textbf{Value} \\
+\midrule
+\endhead
+$e^\pi$ & Gelfond's constant &
+$23.140692632779269005729086\ldots$ \\[4pt]
+$e^\pi - \pi - 20$ & $= \varepsilon$ &
+$-0.00090002081052423273355702\ldots$ \\[4pt]
+$4\ell$ & $= \pi$ &
+$3.1415926535897932384626434\ldots$ \\[4pt]
+$16\Gstar^2$ & $= x_+ + x_-$ &
+$140.06013537449450488555328\ldots$ \\[4pt]
+$16\Gstar^3$ & $= x_+ \cdot x_-$ &
+$414.39243772270942760105875\ldots$ \\
+\bottomrule
+\end{longtable}
+
+\bigskip
+
+\begin{center}\itshape
+All values computed with \texttt{mpmath} at 80-digit internal precision; 25 digits displayed.\\
+Canonical source: \texttt{scripts/constants.py}.\\
+Engine mirror: \texttt{engine/include/ftd/ontic.h} (\texttt{constexpr}).
+\end{center}
+
+\end{document}
