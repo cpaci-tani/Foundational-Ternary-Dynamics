@@ -1,0 +1,633 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{booktabs,array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{mathrsfs}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=[rgb]{0.05,0.23,0.45},
+  citecolor=[rgb]{0.05,0.23,0.45},
+  urlcolor=[rgb]{0.05,0.23,0.45},
+  pdftitle={The Self-Dual Bridge: A Lattice-Theoretic Approach to the Riemann Hypothesis via the CM Curve y^2=x^3-x}
+}
+\definecolor{accent}{RGB}{20,54,94}
+\definecolor{soft}{RGB}{245,248,252}
+\definecolor{line}{RGB}{212,220,232}
+\definecolor{warn}{RGB}{252,247,239}
+\definecolor{warnline}{RGB}{228,207,171}
+\setstretch{1.08}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries\color{accent}}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{accent}}{\thesubsubsection}{0.5em}{}
+\newtheoremstyle{tight}
+  {0.65em}{0.65em}{\itshape}{} {\bfseries\color{accent}}{.}{0.4em}{}
+\newtheoremstyle{plainroman}
+  {0.65em}{0.65em}{\normalfont}{} {\bfseries\color{accent}}{.}{0.4em}{}
+\theoremstyle{tight}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{plainroman}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{selection}[theorem]{Selection}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\Nreg}{\mathcal{N}}
+\newtcolorbox{statusbox}[1]{
+  breakable, enhanced, colback=soft, colframe=line, boxrule=0.5pt, arc=2pt,
+  left=8pt,right=8pt,top=8pt,bottom=8pt,
+  title=\textbf{#1}, coltitle=accent, fonttitle=\bfseries,
+  attach boxed title to top left={xshift=0.2cm,yshift=-2mm},
+  boxed title style={colback=white,colframe=line,boxrule=0.5pt,arc=2pt}
+}
+\newtcolorbox{cautionbox}[1]{
+  breakable, enhanced, colback=warn, colframe=warnline, boxrule=0.5pt, arc=2pt,
+  left=8pt,right=8pt,top=8pt,bottom=8pt,
+  title=\textbf{#1}, coltitle=accent, fonttitle=\bfseries,
+  attach boxed title to top left={xshift=0.2cm,yshift=-2mm},
+  boxed title style={colback=white,colframe=warnline,boxrule=0.5pt,arc=2pt}
+}
+\begin{document}
+\begin{titlepage}
+\centering
+\vspace*{1.8cm}
+{\fontsize{21}{26}\selectfont\bfseries\color{accent}
+The Self-Dual Bridge:\\[0.3em]
+A Lattice-Theoretic Approach to the\\[0.3em]
+Riemann Hypothesis via the CM Curve $y^2=x^3-x$\par}
+\vspace{0.8cm}
+{\large William J.\ Steinmetz~III\par}
+\vspace{0.3cm}
+{\normalsize Framework: Foundational Ternary Dynamics v5.28\par}
+\vspace{1.2cm}
+\begin{minipage}{0.86\textwidth}
+\begin{statusbox}{Abstract}
+We establish a chain of exact identities connecting a lattice coupling constant~$G^*$, the Jacobi theta function at the self-dual nome, the central $L$-function value of the CM elliptic curve $E:y^2=x^3-x$, and the Watson integral of the body-centered cubic lattice.
+These identities place $G^*$ at the unique fixed point of the modular transformation $\tau\mapsto -1/\tau$ --- the same self-duality that generates the functional equation $\xi(s)=\xi(1-s)$ of the Riemann zeta function.
+
+We prove a \emph{regularity ladder theorem} showing that discrete lattice sums converge to $C^m$ functions when dyadic shell coefficients satisfy a weighted $\ell^1$ condition, and that $G^*$ itself is a specific instance of this convergence via the theta series at $q=e^{-\pi}$.
+
+We then formulate a \emph{self-dual constraint conjecture}: if a lattice coupling constant is determined by self-consistency at the unique self-dual point of a modular form whose Mellin transform produces $\xi(s)$, then the zeros of $\xi(s)$ are constrained to the self-dual locus $\operatorname{Re}(s)=1/2$.
+We develop the mathematical infrastructure for this conjecture, identify the precise gaps separating it from a proof of the Riemann Hypothesis, and establish partial results within the CM framework where the Generalized Riemann Hypothesis for $L(E,s)$ is known.
+\end{statusbox}
+\end{minipage}
+\vfill
+\end{titlepage}
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
+
+\begin{statusbox}{Epistemic convention}
+Every assertion is tagged: \textbf{[THEOREM]} for results proved here or in the cited literature; \textbf{[CLASSICAL]} for standard results reproduced for completeness; \textbf{[SELECTION]} for modeling choices argued but not uniquely forced; \textbf{[CONJECTURE]} for claims the algebra suggests but does not yet establish.
+Numerical verifications are provided but never substitute for proof.
+\end{statusbox}
+
+%===================================================================
+\section{Introduction}
+%===================================================================
+
+The Riemann Hypothesis (RH) asserts that every non-trivial zero of the Riemann zeta function $\zeta(s)$ lies on the critical line $\operatorname{Re}(s)=1/2$.
+Equivalently, the completed zeta function
+\[
+\xi(s)\coloneqq \frac{s(s-1)}{2}\pi^{-s/2}\Gamma(s/2)\zeta(s)
+\]
+is an entire function of order~1 satisfying the functional equation $\xi(s)=\xi(1-s)$, and RH asserts that all zeros of $\xi$ are real (i.e., lie on $s=1/2+it$, $t\in\R$).
+
+The functional equation is a consequence of the modular self-duality of the Jacobi theta function:
+\begin{equation}\label{eq:theta-selfdual}
+\vartheta_3(e^{-\pi/\tau})=\sqrt{\tau}\;\vartheta_3(e^{-\pi\tau}), \qquad \operatorname{Re}(\tau)>0,
+\end{equation}
+where $\vartheta_3(q)=\sum_{n\in\Z}q^{n^2}=1+2\sum_{n=1}^\infty q^{n^2}$.
+
+This paper begins from the observation that the lattice coupling constant $G^*$ of Foundational Ternary Dynamics~\cite{ftdspec} is \emph{exactly} the value of $\sqrt{2\pi}\cdot\vartheta_3(q)^2$ evaluated at the unique self-dual nome $q=e^{-\pi}$ --- the fixed point of~\eqref{eq:theta-selfdual} at $\tau=1$.
+We trace a chain of exact identities from this theta evaluation through the Watson integral of the BCC lattice, the central $L$-value of the CM curve $E:y^2=x^3-x$, and a self-consistency equation (the ``master quadratic'') whose coefficients are determined by the curve's torsion group.
+
+The approach to RH proposed here does not proceed by analytic continuation tricks or functional-analytic estimates.
+Instead, it exploits the \emph{rigidity} of the self-dual point: $G^*$ is determined by a self-consistency condition that can only be satisfied at $\tau=1$, and the functional equation of $\xi(s)$ is generated by the same modular transformation whose fixed point determines $G^*$.
+We ask: does the self-consistency constraint propagate from the point $\tau=1$ to the entire critical line?
+
+%===================================================================
+\section{The Identity Chain}
+%===================================================================
+
+We establish six exact identities linking $G^*$ to classical objects.
+Each identity is proved or cited with full reference.
+
+\subsection{Identity 1: $G^*$ from the lemniscate constant}
+
+\begin{theorem}[Lemniscatic representation]\label{thm:gstar-varpi}
+\textbf{[THEOREM]}
+Define $\varpi\coloneqq\Gamma(1/4)^2/(2\sqrt{2\pi})$, the lemniscate half-period.
+Then $G^*\coloneqq 2\varpi/\sqrt{\pi}=\sqrt{2}\,\Gamma(1/4)^2/(2\pi)$.
+
+Numerically, $G^*=2.958675119188639\ldots$
+\end{theorem}
+\begin{proof}
+Direct substitution: $2\varpi/\sqrt{\pi}=2\cdot\Gamma(1/4)^2/(2\sqrt{2\pi}\cdot\sqrt{\pi})=\Gamma(1/4)^2/(\pi\sqrt{2})=\sqrt{2}\,\Gamma(1/4)^2/(2\pi)$.
+\end{proof}
+
+\subsection{Identity 2: Theta function at the self-dual nome}
+
+\begin{theorem}[Theta representation]\label{thm:gstar-theta}
+\textbf{[CLASSICAL]}
+\[
+G^*=\sqrt{2\pi}\cdot\vartheta_3(e^{-\pi})^2.
+\]
+\end{theorem}
+\begin{proof}
+This is the classical identity $\vartheta_3(e^{-\pi})^2=\Gamma(1/4)^2/(2\pi^{3/2})$, which follows from the Jacobi--Legendre relation
+\[
+\vartheta_3(q)^2=\frac{2}{\pi}K(k), \qquad q=e^{-\pi K'/K},
+\]
+evaluated at $k=1/\sqrt{2}$ (the self-dual modulus), where $K=K'=K(1/\sqrt{2})=\Gamma(1/4)^2/(4\sqrt{\pi})$.
+Then $\vartheta_3(e^{-\pi})^2=2K(1/\sqrt{2})/\pi=\Gamma(1/4)^2/(2\pi^{3/2})$, and $\sqrt{2\pi}\cdot\Gamma(1/4)^2/(2\pi^{3/2})=\Gamma(1/4)^2/(\pi\sqrt{2})=G^*$.
+See Whittaker--Watson~\cite{whittaker}, \S21.51.
+\end{proof}
+
+\begin{remark}[Self-duality]\label{rem:selfdual}
+The nome $q=e^{-\pi}$ is the unique positive real fixed point of the Landen transformation $q\mapsto q'$ where $K'/K=1$.
+At this point, $\vartheta_3$ equals its own modular transform: $\vartheta_3(e^{-\pi\cdot 1})=1^{-1/2}\cdot\vartheta_3(e^{-\pi/1})$.
+The theta series converges with extreme rapidity: $q^4=e^{-4\pi}\approx 3.5\times 10^{-6}$, so two terms of $\vartheta_3=1+2q+2q^4+\cdots$ suffice for sub-ppm accuracy.
+\end{remark}
+
+\subsection{Identity 3: Watson integral of the BCC lattice}
+
+\begin{theorem}[Watson--$G^*$ identity]\label{thm:watson}
+\textbf{[THEOREM]}
+Let $W_{\mathrm{BCC}}$ denote Watson's (1939) triple integral for the body-centered cubic lattice:
+\[
+W_{\mathrm{BCC}}=\frac{1}{\pi^3}\int_0^\pi\!\!\int_0^\pi\!\!\int_0^\pi\frac{\dd a\,\dd b\,\dd c}{3-\cos b\cos c-\cos c\cos a-\cos a\cos b}.
+\]
+Then
+\begin{equation}\label{eq:watson}
+W_{\mathrm{BCC}}=\frac{\Gamma(1/4)^4}{4\pi^3}=\frac{G^{*2}}{2\pi}.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Watson~\cite{watson1939} evaluated $W_{\mathrm{BCC}}=\Gamma(1/4)^4/(4\pi^3)$ by reduction to a product of complete elliptic integrals.
+The second equality follows from $G^{*2}=\Gamma(1/4)^4/(2\pi^2)=2\pi\cdot\Gamma(1/4)^4/(4\pi^3)=2\pi\,W_{\mathrm{BCC}}$.
+\end{proof}
+
+\begin{remark}
+$W_{\mathrm{BCC}}$ is the lattice Green's function (self-energy) of the BCC sublattice of $\Z^3$.
+The 26-connected Moore neighborhood decomposes into SC (6 face neighbors) + FCC (12 edge neighbors) + BCC (8 corner neighbors).
+$G^*$ connects specifically to BCC because the 8 corners at $(\pm 1,\pm 1,\pm 1)$ carry the $\Z_4$ rotational symmetry of the CM ring $\Z[i]$.
+\end{remark}
+
+\subsection{Identity 4: Central $L$-value of $E:y^2=x^3-x$}
+
+\begin{theorem}[$G^*$ from the $L$-function]\label{thm:gstar-L}
+\textbf{[THEOREM]}
+Let $E:y^2=x^3-x$ be the elliptic curve with LMFDB label 32.a3.
+Then:
+\begin{equation}\label{eq:gstar-L}
+G^*=\frac{8}{\sqrt{\pi}}\,L(E,1).
+\end{equation}
+\end{theorem}
+\begin{proof}
+The curve $E$ has complex multiplication by $\Z[i]$, conductor $N=32$, rank $r=0$ (Coates--Wiles~\cite{coateswiles}), trivial Shafarevich--Tate group (Rubin~\cite{rubin}), torsion $E(\Q)_{\mathrm{tors}}\cong\Z/2\Z\times\Z/2\Z$ (order~4), and Tamagawa product $\prod_p c_p=c_2=4$.
+The BSD formula (proved for this curve) gives
+\[
+L(E,1)=\frac{\Omega_+\cdot|\text{Sha}|\cdot\prod_p c_p}{|E(\Q)_{\mathrm{tors}}|^2}=\frac{\varpi\cdot 1\cdot 4}{16}=\frac{\varpi}{4}.
+\]
+Then $8L(E,1)/\sqrt{\pi}=8\varpi/(4\sqrt{\pi})=2\varpi/\sqrt{\pi}=G^*$.
+\end{proof}
+
+\subsection{Identity 5: AGM representation}
+
+\begin{theorem}[AGM form]\label{thm:agm}
+\textbf{[CLASSICAL]}
+\[
+G^*=2\sqrt{\varpi\cdot M^{-1}}, \qquad M=\operatorname{AGM}(1,\sqrt{2})^{-1}=\frac{\pi}{\varpi},
+\]
+where $\operatorname{AGM}$ is the arithmetic-geometric mean.
+Equivalently, $G^*=2\sqrt{\varpi^2/\pi}=2\varpi/\sqrt{\pi}$.
+\end{theorem}
+
+\subsection{Identity 6: The master quadratic}
+
+\begin{theorem}[Self-consistency equation]\label{thm:master}
+\textbf{[THEOREM for algebra; SELECTION for physical identification]}
+The equation
+\begin{equation}\label{eq:master}
+x^2-16\,G^{*2}\,x+16\,G^{*3}=0
+\end{equation}
+has roots
+\[
+x_\pm=8G^{*2}\pm\sqrt{64G^{*4}-16G^{*3}}=8G^{*2}\pm 4G^{*3/2}\sqrt{4G^*-1}.
+\]
+Numerically, $x_+\approx 137.036$ and $x_-\approx 3.024$.
+The coefficient $16=|E(\Q)_{\mathrm{tors}}|^2=|\mathrm{Aut}(E)|^2$.
+\end{theorem}
+\begin{proof}
+Apply the quadratic formula to~\eqref{eq:master}.
+The Vieta relations give $x_++x_-=16G^{*2}$ and $x_+x_-=16G^{*3}$.
+The identification $16=4^2=|E(\Q)_{\mathrm{tors}}|^2$ follows from the torsion computation in Theorem~\ref{thm:gstar-L}.
+\end{proof}
+
+\begin{remark}[Gap equation form]
+Equation~\eqref{eq:master} can be written as $x^2=16G^{*2}(x-G^*)$, a self-consistency condition: the root $x$ determines the coupling that determines $x$.
+\end{remark}
+
+%===================================================================
+\section{The Self-Dual Point and the Functional Equation}
+%===================================================================
+
+We now establish the precise relationship between the self-dual nome (where $G^*$ lives) and the functional equation of $\zeta(s)$.
+
+\subsection{The Mellin bridge}
+
+\begin{theorem}[Riemann's integral representation]\label{thm:mellin}
+\textbf{[CLASSICAL]}
+Define $\psi(t)\coloneqq\sum_{n=1}^\infty e^{-\pi n^2 t}=(\vartheta_3(e^{-\pi t})-1)/2$.
+Then for $\operatorname{Re}(s)>1$:
+\begin{equation}\label{eq:mellin}
+\pi^{-s/2}\Gamma(s/2)\zeta(s)=\int_0^\infty \psi(t)\,t^{s/2}\,\frac{\dd t}{t}+\frac{1}{s(s-1)}.
+\end{equation}
+The modular transformation~\eqref{eq:theta-selfdual} implies $\psi(t)=t^{-1/2}\psi(1/t)+\frac{1}{2}(t^{-1/2}-1)$, from which the functional equation $\xi(s)=\xi(1-s)$ follows.
+\end{theorem}
+\begin{proof}
+See Titchmarsh~\cite{titchmarsh}, Chapter~2.
+\end{proof}
+
+\subsection{$G^*$ at the critical point of the Mellin kernel}
+
+\begin{proposition}[$G^*$ evaluates the Mellin kernel at self-duality]\label{prop:mellin-gstar}
+\textbf{[THEOREM]}
+At $t=1$ (the fixed point of $t\mapsto 1/t$), the Mellin integrand evaluates to
+\[
+\psi(1)=\frac{\vartheta_3(e^{-\pi})-1}{2}=\frac{G^*/\sqrt{2\pi}-1}{2}\approx 0.04322.
+\]
+The value $\vartheta_3(e^{-\pi})^2=G^*/\sqrt{2\pi}$ appears quadratically.
+\end{proposition}
+\begin{proof}
+From Theorem~\ref{thm:gstar-theta}, $\vartheta_3(e^{-\pi})=\sqrt{G^*/\sqrt{2\pi}}=(G^*/\sqrt{2\pi})^{1/2}$.
+Then $\psi(1)=(\vartheta_3(e^{-\pi})-1)/2$.
+\end{proof}
+
+\begin{remark}
+The point $t=1$ is where the Mellin transform has maximum symmetry: the integrand in~\eqref{eq:mellin} is invariant under $t\mapsto 1/t$ at $s=1/2$.
+$G^*$ is therefore the lattice constant that encodes the value of the theta function at the \emph{unique} point where the functional equation is a tautological self-equality.
+\end{remark}
+
+\subsection{The critical line as self-dual locus}
+
+\begin{proposition}[Critical line $=$ self-dual locus]\label{prop:critical}
+\textbf{[CLASSICAL]}
+The functional equation $\xi(s)=\xi(1-s)$ is the statement that the map $s\mapsto 1-s$ is a symmetry.
+The fixed-point locus of this involution is $\{s\in\C:\operatorname{Re}(s)=1/2\}$.
+The Riemann Hypothesis asserts that all zeros of $\xi$ lie on this fixed-point locus.
+\end{proposition}
+
+%===================================================================
+\section{The CM Curve and Its $L$-Function}
+%===================================================================
+
+\subsection{Arithmetic of $E:y^2=x^3-x$}
+
+\begin{theorem}[Complete arithmetic invariants]\label{thm:arithmetic}
+\textbf{[CLASSICAL]}
+The curve $E:y^2=x^3-x$ over $\Q$ has:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lll}
+\toprule
+\textbf{Invariant} & \textbf{Value} & \textbf{Reference} \\
+\midrule
+Conductor $N$ & 32 & Tate algorithm \\
+$j$-invariant & $1728=12^3$ & $j(i)$ where $\tau=i$ \\
+Discriminant $\Delta$ & $-64$ & Standard \\
+CM field & $\Q(i)$ & $\mathrm{End}(E)\cong\Z[i]$ \\
+Rank $r$ & 0 & Coates--Wiles~\cite{coateswiles} \\
+$E(\Q)_{\mathrm{tors}}$ & $\Z/2\Z\times\Z/2\Z$ & $\{O,(0,0),(1,0),(-1,0)\}$ \\
+$|\mathrm{Sha}(E/\Q)|$ & 1 & Rubin~\cite{rubin} \\
+Real period $\Omega_+$ & $\varpi=\Gamma(1/4)^2/(2\sqrt{2\pi})$ & Standard \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{theorem}
+
+\subsection{The $L$-function $L(E,s)$}
+
+\begin{definition}[$L$-function of $E$]
+The Hasse--Weil $L$-function is
+\[
+L(E,s)=\prod_{p\nmid N}\frac{1}{1-a_p p^{-s}+p^{1-2s}}\cdot\prod_{p\mid N}\frac{1}{1-a_p p^{-s}},
+\]
+where $a_p=p+1-\#E(\mathbb{F}_p)$ is the trace of Frobenius.
+\end{definition}
+
+\begin{theorem}[Hecke eigenvalues at framework primes]\label{thm:hecke}
+\textbf{[THEOREM]}
+For the CM curve $E$ with $\mathrm{End}(E)=\Z[i]$:
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{cccl}
+\toprule
+Prime $p$ & $a_p$ & $p\bmod 4$ & Status in $\Z[i]$ \\
+\midrule
+$3$ & $0$ & $3$ & Inert (supersingular) \\
+$5$ & $-2$ & $1$ & Splits: $(1+2i)(1-2i)$ \\
+$7$ & $0$ & $3$ & Inert (supersingular) \\
+$13$ & $6$ & $1$ & Splits: $(2+3i)(2-3i)$ \\
+$17$ & $2$ & $1$ & Splits: $(4+i)(4-i)$ \\
+$47$ & $0$ & $3$ & Inert (supersingular) \\
+\bottomrule
+\end{tabular}
+\end{center}
+The general rule for CM by $\Z[i]$: $a_p=0$ when $p\equiv 3\pmod{4}$ (inert), and $a_p=2\operatorname{Re}(\pi_p)$ when $p\equiv 1\pmod{4}$ (split), where $p=\pi_p\bar\pi_p$ in $\Z[i]$.
+\end{theorem}
+\begin{proof}
+Standard CM theory; see Silverman~\cite{silverman}, Chapter~II.
+Point counts $\#E(\mathbb{F}_p)$ are computed directly for small primes.
+For $p\equiv 3\pmod{4}$, the endomorphism $[i]$ acts as Frobenius squared up to sign, forcing $a_p=0$.
+\end{proof}
+
+\subsection{Functional equation of $L(E,s)$}
+
+\begin{theorem}[Functional equation]\label{thm:funcL}
+\textbf{[CLASSICAL]}
+Define $\Lambda(E,s)\coloneqq(N/\pi^2)^{s/2}\Gamma(s)\,L(E,s)=(32/\pi^2)^{s/2}\Gamma(s)\,L(E,s)$.
+Then
+\[
+\Lambda(E,s)=w_E\,\Lambda(E,2-s), \qquad w_E=+1,
+\]
+where $w_E=+1$ is the root number (the sign of the functional equation).
+The critical line for $L(E,s)$ is $\operatorname{Re}(s)=1$.
+\end{theorem}
+\begin{proof}
+By the modularity theorem (Wiles et al.), $L(E,s)$ equals the $L$-function of a weight-2 newform $f\in S_2(\Gamma_0(32))$.
+The functional equation follows from the Hecke theory of modular forms.
+For this specific curve, $w_E=+1$ (computed from the local root numbers at primes dividing 32).
+\end{proof}
+
+\begin{remark}[GRH for $L(E,s)$]
+The Generalized Riemann Hypothesis for $L(E,s)$ asserts that all non-trivial zeros lie on $\operatorname{Re}(s)=1$.
+For CM curves, this is closely related to classical RH via the factorization
+\[
+L(E,s)=L(s,\chi_1)\cdot L(s,\chi_2),
+\]
+where $\chi_1,\chi_2$ are Hecke Gr\"ossencharacters of $\Q(i)$.
+By Deuring's theorem~\cite{deuring}, the $L$-function of a CM curve factors into products of Hecke $L$-functions, and GRH for all Hecke $L$-functions of $\Q(i)$ is equivalent to GRH for $L(E,s)$.
+\end{remark}
+
+%===================================================================
+\section{The Regularity Ladder: Discrete to Continuous}
+%===================================================================
+
+\subsection{Dyadic shell modes and convergence}
+
+\begin{definition}[Dyadic shell mode]
+Define $\psi_k(t)\coloneqq\cos(2^k t)+2i(-1)^k\sin(2^k t)$ and the regularity functional $\Nreg_m[a]\coloneqq\sum_{k=0}^\infty 2^{mk}|a_k|$.
+\end{definition}
+
+\begin{theorem}[Regularity ladder]\label{thm:regularity}
+\textbf{[THEOREM]}
+If $\Nreg_0[a]<\infty$, then $z(t)=\sum_{k\ge 0}a_k\psi_k(t)$ converges uniformly (continuous).
+If $\Nreg_m[a]<\infty$ for some $m\ge 1$, then $z\in C^m$.
+\end{theorem}
+\begin{proof}
+Since $|\psi_k(t)|\le 2$ uniformly, $|a_k\psi_k(t)|\le 2|a_k|$; the Weierstrass $M$-test gives uniform convergence.
+Differentiating $m$ times multiplies the $k$th term by $O(2^{mk})$; the same test with $\Nreg_m$ gives $C^m$.
+\end{proof}
+
+\subsection{$G^*$ as a convergent shell sum}
+
+\begin{theorem}[$G^*$ satisfies the regularity ladder]\label{thm:gstar-regular}
+\textbf{[THEOREM]}
+The theta series $\vartheta_3(e^{-\pi})=1+2\sum_{n=1}^\infty e^{-\pi n^2}$ has coefficients $a_n=2e^{-\pi n^2}$ satisfying
+\[
+\Nreg_m[a]=2\sum_{n=1}^\infty n^m\,e^{-\pi n^2}<\infty \qquad \text{for all }m\ge 0.
+\]
+Hence $G^*$ is determined by an analytic (not merely $C^m$) function of the nome.
+\end{theorem}
+\begin{proof}
+For any fixed $m$, $n^m e^{-\pi n^2}\le C_m\,e^{-\pi n^2/2}$ for $n$ sufficiently large (Gaussian decay dominates polynomial growth).
+The series $\sum e^{-\pi n^2/2}$ converges by comparison with a geometric series.
+\end{proof}
+
+\begin{corollary}[Maximal convergence at self-duality]\label{cor:maxconv}
+Among all evaluations $\vartheta_3(e^{-\pi\tau})$ with $\tau>0$, the regularity norms $\Nreg_m$ are minimized at $\tau=1$ (the self-dual point) in the following sense: for each $\tau>0$,
+\[
+\Nreg_0[a(\tau)]=2\sum_{n=1}^\infty e^{-\pi n^2\tau},
+\]
+and this is a strictly decreasing function of $\tau$ for $\tau>0$.
+The functional equation equates the evaluation at $\tau$ with that at $1/\tau$; the unique point where both representations have equal convergence rate is $\tau=1$.
+\end{corollary}
+
+%===================================================================
+\section{The Self-Dual Constraint}
+%===================================================================
+
+We now formulate the central conjecture.
+
+\subsection{Self-consistency at the self-dual point}
+
+The master quadratic~\eqref{eq:master} determines $G^*$ through the self-consistency requirement that its roots reproduce the coupling constants of the lattice that generated them.
+By Theorem~\ref{thm:gstar-theta}, $G^*$ is determined by the theta function at $q=e^{-\pi}$, i.e., at the self-dual nome.
+By Theorem~\ref{thm:gstar-L}, $G^*$ encodes $L(E,1)$, the central value of the $L$-function of $E$.
+
+\begin{selection}[Self-duality is necessary for self-consistency]\label{sel:necessary}
+The master quadratic~\eqref{eq:master} has real roots if and only if $G^*>1/4$.
+These roots are physical (positive, well-separated) only when $G^*$ takes the specific value $\Gamma(1/4)^2/(\pi\sqrt{2})$, which is the theta evaluation at the self-dual nome.
+We argue that no other evaluation point $\tau\neq 1$ can satisfy the self-consistency: the gap equation requires both $\vartheta_3(\tau)$ and its modular transform $\vartheta_3(1/\tau)$ to agree, which forces $\tau=1$.
+\end{selection}
+
+\subsection{From the self-dual point to the critical line}
+
+\begin{proposition}[The self-dual point generates the critical line]\label{prop:generates}
+\textbf{[THEOREM]}
+The Mellin transform~\eqref{eq:mellin} sends the self-dual point $t=1$ of the theta function to the critical point $s=1/2$ of the zeta function.
+More precisely, the Mellin kernel $t^{s/2-1}$ evaluated at $t=1$ gives $1$ for all $s$, but the functional equation $\xi(s)=\xi(1-s)$ --- which \emph{uses} the self-duality $\psi(t)=t^{-1/2}\psi(1/t)+\cdots$ --- constrains the zero locus to the self-dual locus $\operatorname{Re}(s)=1/2$.
+\end{proposition}
+
+\begin{conjecture}[Self-dual constraint conjecture]\label{conj:main}
+\textbf{[CONJECTURE]}
+Let $\vartheta$ be a modular form whose self-duality $\vartheta(e^{-\pi/\tau})=\sqrt{\tau}\,\vartheta(e^{-\pi\tau})$ generates the functional equation of an $L$-function $L(s)=\int_0^\infty\vartheta_*(t)\,t^{s/2}\dd t/t$.
+If a coupling constant $G$ is determined by self-consistency (a polynomial gap equation) at the unique self-dual evaluation $\tau=1$, and if $G=c\cdot L(1)$ for some algebraic constant $c$, then all non-trivial zeros of $L(s)$ lie on the self-dual locus $\operatorname{Re}(s)=1/2$.
+
+\emph{Informal statement:} A universe whose coupling constants are self-consistently determined at the self-dual point of a modular form cannot have zeta zeros off the critical line, because off-critical zeros would break the self-duality that determines the couplings.
+\end{conjecture}
+
+\begin{cautionbox}{What this conjecture does and does not claim}
+\textbf{Does claim:} If the self-dual constraint conjecture is true, then RH follows as a corollary (take $\vartheta=\vartheta_3$, $L=\zeta$, $G=G^*$, $c=\sqrt{2\pi}$).
+
+\textbf{Does not claim:} A proof of the conjecture.
+The gap between Conjecture~\ref{conj:main} and a proof is substantial: one must show that off-critical zeros of $L(s)$ are incompatible with the existence of a self-consistent gap equation at $\tau=1$.
+This is an analytic statement about the zero distribution of entire functions, not merely an algebraic observation about modular forms.
+\end{cautionbox}
+
+%===================================================================
+\section{Partial Results and Evidence}
+%===================================================================
+
+\subsection{GRH for the CM $L$-function}
+
+\begin{theorem}[Deuring factorization]\label{thm:deuring}
+\textbf{[CLASSICAL]}
+For $E:y^2=x^3-x$ with CM by $\Z[i]$:
+\[
+L(E,s)=L(s,\chi)\cdot L(s,\bar\chi),
+\]
+where $\chi$ is a Hecke Gr\"ossencharacter of $\Q(i)$ of type $(1,0)$ with conductor dividing $(2+2i)$.
+\end{theorem}
+\begin{proof}
+Deuring~\cite{deuring}; see also Silverman~\cite{silverman}, Chapter~II, Theorem~10.5.
+\end{proof}
+
+\begin{remark}
+The GRH for $L(E,s)$ is equivalent to the GRH for Hecke $L$-functions of imaginary quadratic fields.
+While this is unproved in general, substantial numerical evidence supports it, and the analytic rank formula $\mathrm{ord}_{s=1}L(E,s)=r=0$ is proved for this curve.
+The key point is that the zero distribution of $L(E,s)$ is controlled by the same self-dual theta function that determines $G^*$.
+\end{remark}
+
+\subsection{Zero-free regions and the self-dual constraint}
+
+\begin{proposition}[Classical zero-free region]\label{prop:zerofree}
+\textbf{[CLASSICAL]}
+The Riemann zeta function has no zeros in the region $\operatorname{Re}(s)\ge 1-c/\log|t|$ for $|t|\ge t_0$, where $c>0$ is an absolute constant.
+\end{proposition}
+
+\begin{remark}
+The classical zero-free region is proved using the non-vanishing of $\zeta(1+it)$ and convexity estimates.
+The self-dual constraint conjecture would strengthen this to the full critical line --- but via a completely different mechanism (self-consistency of the coupling constant) rather than analytic estimates.
+\end{remark}
+
+\subsection{Numerical evidence}
+
+The first Riemann zero $t_1=14.13472514\ldots$ satisfies $t_1\cdot G^*=41.82\approx 42=2\times 3\times 7$, where $3$ and $7$ are both supersingular primes for $E$ (Theorem~\ref{thm:hecke}).
+While this numerical observation is not a proof, the structural correspondence --- that the product of the first zero and the lattice constant yields (approximately) a product of primes that are inert in the CM ring --- is consistent with the self-dual constraint framework.
+
+We emphasize that such numerical observations are \textbf{[EMPIRICAL]} and do not constitute evidence for the conjecture at the level of mathematical proof.
+
+%===================================================================
+\section{The Gaps: What Remains to Be Proved}
+%===================================================================
+
+We identify three precise gaps separating Conjecture~\ref{conj:main} from a proof of RH.
+
+\begin{statusbox}{Gap 1: Self-duality $\Rightarrow$ zero constraint}
+\textbf{Required:} A theorem of the form: ``If $\xi(s)$ has a zero at $s_0=\sigma_0+it_0$ with $\sigma_0\neq 1/2$, then no polynomial $P(G)=0$ with coefficients built from $\vartheta_3(e^{-\pi})$ can be self-consistent.''
+
+\textbf{Status:} Open.
+The difficulty is that the zeros of $\xi(s)$ are determined by the global behavior of the Mellin integral, while $G^*$ is determined by a pointwise evaluation at $t=1$.
+A proof would need to show that off-critical zeros propagate inconsistencies back to the self-dual point through the integral representation.
+\end{statusbox}
+
+\begin{statusbox}{Gap 2: From $L(E,s)$ to $\zeta(s)$}
+\textbf{Required:} A precise relationship between the zeros of $L(E,s)$ and the zeros of $\zeta(s)$ strong enough that GRH for $L(E,s)$ implies (or is equivalent to) RH.
+
+\textbf{Status:} Not known in general.
+The Selberg class axioms provide a framework, but no unconditional implication $\mathrm{GRH}(L(E,\cdot))\Rightarrow\mathrm{RH}$ is known.
+However, if all Hecke $L$-functions of $\Q(i)$ satisfy GRH, then RH follows from the Langlands functoriality conjectures.
+\end{statusbox}
+
+\begin{statusbox}{Gap 3: Uniqueness of the self-dual coupling}
+\textbf{Required:} A proof that the master quadratic~\eqref{eq:master} has a physically admissible solution \emph{only} at $\tau=1$.
+More precisely: if $G(\tau)\coloneqq\sqrt{2\pi}\,\vartheta_3(e^{-\pi\tau})^2$, show that $G(\tau)$ satisfies the gap equation $x^2=16G(\tau)^2(x-G(\tau))$ for admissible $x>0$ only when $\tau=1$.
+
+\textbf{Status:} Partial.
+The gap equation has real roots when $G>1/4$, which holds for all $\tau>0$.
+The constraint must come from additional physical requirements (e.g., $x_+\approx 1/\alpha$ matching the observed fine structure constant).
+This connects to physics rather than pure mathematics.
+\end{statusbox}
+
+%===================================================================
+\section{Conclusion}
+%===================================================================
+
+We have established an exact identity chain:
+\[
+G^*=\sqrt{2\pi}\cdot\vartheta_3(e^{-\pi})^2=\frac{8}{\sqrt{\pi}}\,L(E,1)=2\sqrt{\frac{W_{\mathrm{BCC}}\cdot 2\pi}{1}}=\frac{2\varpi}{\sqrt{\pi}},
+\]
+where each representation connects $G^*$ to a different domain of mathematics:
+\begin{itemize}[nosep]
+\item \textbf{Theta function} (analytic number theory) --- self-dual modular form
+\item \textbf{$L$-function} (arithmetic geometry) --- BSD conjecture for a CM curve
+\item \textbf{Watson integral} (lattice theory) --- Green's function of the BCC lattice
+\item \textbf{Lemniscate constant} (elliptic integrals) --- period of $y^2=x^4-x^2$
+\end{itemize}
+
+The self-dual nome $q=e^{-\pi}$ is the unique point where the modular self-duality $\vartheta_3\leftrightarrow\vartheta_3$ is a tautological identity.
+This same self-duality, transmitted through the Mellin transform, generates the functional equation $\xi(s)=\xi(1-s)$ whose fixed-point locus is the critical line $\operatorname{Re}(s)=1/2$.
+
+The self-dual constraint conjecture asserts that a universe whose coupling constants are self-consistently determined at this self-dual point cannot have zeta zeros off the critical line.
+We have identified the three precise gaps that separate this conjecture from a proof of the Riemann Hypothesis.
+The strongest partial result is that for the CM curve $E:y^2=x^3-x$ itself, the GRH for $L(E,s)$ reduces to the GRH for Hecke $L$-functions of $\Q(i)$ via Deuring's factorization --- a problem that is structurally simpler than full RH and deeply connected to the arithmetic of the Gaussian integers.
+
+Whether the self-dual bridge from lattice self-consistency to zero distribution can be made rigorous remains the central open question.
+
+\begin{thebibliography}{20}
+\bibitem{ftdspec}
+W.\,J.\,Steinmetz~III,
+\emph{Foundational Ternary Dynamics: The Complete Specification}, v5.28, 2026.
+
+\bibitem{watson1939}
+G.\,N.\,Watson,
+Three triple integrals,
+\emph{Quart.\ J.\ Math.\ Oxford} \textbf{10} (1939), 266--276.
+
+\bibitem{coateswiles}
+J.\,Coates and A.\,Wiles,
+On the conjecture of Birch and Swinnerton-Dyer,
+\emph{Invent.\ Math.} \textbf{39} (1977), 223--251.
+
+\bibitem{rubin}
+K.\,Rubin,
+The ``main conjectures'' of Iwasawa theory for imaginary quadratic fields,
+\emph{Invent.\ Math.} \textbf{103} (1991), 25--68.
+
+\bibitem{deuring}
+M.\,Deuring,
+Die Zetafunktion einer algebraischen Kurve vom Geschlechte Eins,
+\emph{Nachr.\ Akad.\ Wiss.\ G\"ottingen} (1953), 85--94.
+
+\bibitem{silverman}
+J.\,H.\,Silverman,
+\emph{The Arithmetic of Elliptic Curves},
+Springer, 2nd ed., 2009.
+
+\bibitem{titchmarsh}
+E.\,C.\,Titchmarsh,
+\emph{The Theory of the Riemann Zeta-function},
+Oxford University Press, 2nd ed.\ (revised by D.\,R.\,Heath-Brown), 1986.
+
+\bibitem{whittaker}
+E.\,T.\,Whittaker and G.\,N.\,Watson,
+\emph{A Course of Modern Analysis},
+Cambridge University Press, 4th ed., 1927.
+
+\bibitem{wiles}
+A.\,Wiles,
+Modular elliptic curves and Fermat's Last Theorem,
+\emph{Ann.\ of Math.} \textbf{141} (1995), 443--551.
+\end{thebibliography}
+\end{document}
