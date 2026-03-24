@@ -345,6 +345,76 @@ The failure is a property of the approximation, not of reality.
 \end{remark}
 
 %===================================================================
+\section{Superposition as Epistemic Composite}
+%===================================================================
+
+The ontic--epistemic distinction resolves the deepest confusion in quantum mechanics.
+
+\begin{selection}[Superposition is epistemic, not ontic]\label{sel:superposition}
+\textbf{[SELECTION]}
+At each tick~$t$, the lattice configuration is \emph{definite}: every voxel has $s(\mathbf v,t)\in\{-1,0,+1\}$ and $\mathbf J(\mathbf v,t)\in\R^3$ with specific values.
+This follows from Postulate~5 (determinism) --- given complete initial data, the evolution is unique.
+No voxel is ever ``in two states at once.''
+
+The path integral
+\[
+Z=\sum_{\{s\}}\int\mathcal D\mathbf J\;e^{-S_E[s,\mathbf J]}
+\]
+is a weighted sum over \emph{all possible} definite configurations.
+The result --- a complex-valued amplitude --- is an epistemic composite: it encodes the contributions of many definite frames, weighted by action-dependent phase.
+
+``Superposition'' is the name given to this weighted sum.
+It is a property of the \emph{description} (the path integral), not of any single \emph{configuration} (a tick).
+
+\medskip
+\noindent\textbf{A tick is a photograph.\quad Superposition is the flipbook.}
+\medskip
+
+The Existence Filter $E(x)=\Re(x)$ projects the complex epistemic composite to a real ontic observable --- stopping the animation to read one definite value.
+The ReLU crystallization $\max(0,z)$ is the irreversible version: it destroys the sub-threshold amplitude, collapsing the flipbook to a single frame permanently.
+\end{selection}
+
+\begin{remark}[Consequences]
+The epistemic nature of superposition resolves four persistent confusions:
+
+\begin{enumerate}[nosep]
+\item \textbf{Schr\"odinger's cat.}
+The cat is definite at every tick --- every voxel comprising the cat has $s\in\{-1,0,+1\}$.
+``Both alive and dead'' describes the path integral's weighted sum over configurations, not any physical configuration.
+The average family has 2.3 children; no family has 0.3 of a child.
+
+\item \textbf{Wave--particle duality.}
+A wave is the interference pattern across many action-weighted frames (the flipbook played fast).
+A particle is one frame (a definite voxel configuration at one tick).
+There is no ontological duality --- only two ways of looking at the same lattice: one frame at a time, or the statistics of many.
+
+\item \textbf{Quantum computing.}
+A quantum computer does not ``compute in superposition.''
+It maintains flux-field coherence (delays ReLU crystallization) so that the action-weighting can explore exponentially many configurations before the answer is crystallized.
+The computation happens in the \emph{weighting}, not in any blurred state.
+A classical computer crystallizes at every gate.
+A quantum computer lets the flipbook run.
+
+\item \textbf{Entanglement.}
+``Spooky action at a distance'' is a correlation in the path integral's phase structure, not a physical connection between distant voxels.
+Bell violation $S=2\sqrt{2}$ follows from the Gauss constraint $\nabla\!\cdot\!\mathbf J=s$ restricting the flux to a two-dimensional transverse subspace~\cite{ftdspec}, not from faster-than-light influence.
+The correlations were established when the voxels shared a common causal past --- they are \emph{memories} of a shared history, not signals between separated sites.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Why quantum mechanics works]
+None of this diminishes the predictive power of quantum mechanics.
+The path integral is the correct computational tool for extracting statistics from the lattice.
+The wave function $\psi$ encodes these statistics compactly.
+The Born rule $|\psi|^2$ gives the right probabilities.
+The formalism is spectacularly accurate because it \emph{is} computing the right thing: action-weighted sums over definite configurations.
+
+The error is not in the mathematics but in the interpretation --- treating the computational tool (the wave function, superposition, collapse) as if it were the reality.
+The wave function is a map.
+The lattice is the territory.
+\end{remark}
+
+%===================================================================
 \section{Formal Structure: The Ontic--Epistemic Partition}
 %===================================================================
 
