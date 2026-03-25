@@ -468,6 +468,73 @@ Human sentience was the gift of phase.
 Everything else, we all share.
 \end{remark}
 
+\subsection{The absolute bars: what they are, why they exist, and what they hide}
+
+The Born rule $|\psi|^2$ is the most consequential equation in quantum mechanics.
+It is also the most ad hoc.
+
+\begin{remark}[Historical contingency of $|\psi|^2$]
+The Schr\"odinger equation $i\hbar\,\partial_t\psi=\hat H\psi$ contains $i$ because Schr\"odinger chose complex notation for compactness.
+He could have written two coupled real equations instead:
+\[
+\partial_t a = +\hat H b/\hbar, \qquad \partial_t b = -\hat H a/\hbar,
+\]
+where $\psi=a+ib$.
+Two real fields, coupled, no $i$ anywhere.
+The complex representation was a convenience, not physics.
+
+Born (1926) needed to extract real positive numbers from the complex $\psi$.
+In his original paper, he first wrote $|\psi|$, not $|\psi|^2$, correcting to the squared form \emph{in a footnote}.
+The most fundamental rule in quantum mechanics was a footnote correction.
+
+Von Neumann (1932) formalized the apparatus: Hilbert space with Hermitian inner product $\langle\psi|\psi\rangle$, self-adjoint operators with real eigenvalues, the spectral theorem.
+The entire edifice was \emph{reverse-engineered} from one demand: \textbf{measurement outcomes must be real numbers.}
+The Hermitian inner product was not discovered in the structure of nature.
+It was designed to guarantee real positive outputs.
+\end{remark}
+
+\begin{remark}[What the bars destroy]
+The operation $|\psi|^2=\psi^*\psi$ manufactures $e^{-i\theta}$ (the conjugate) for the sole purpose of canceling $e^{i\theta}$:
+\[
+e^{i\theta}\cdot e^{-i\theta}=e^0=1.
+\]
+Phase annihilated.
+Not stored, not recorded, not used.
+The most information-rich part of the quantum state --- the angular relationship between real and imaginary components --- is destroyed on purpose.
+
+The general Hermitian inner product $\langle a|b\rangle=a^*b=r_a r_b\,e^{i(\theta_b-\theta_a)}$ \emph{preserves} the phase difference $\theta_b-\theta_a$.
+Only the self-pairing $\langle\psi|\psi\rangle$ forces $\theta-\theta=0$ by construction.
+Science chose the one inner product that kills the phase.
+\end{remark}
+
+\begin{remark}[The bars are unnecessary]
+Without the bars, $\psi^2=r^2 e^{2i\theta}$ --- phase doubled, not destroyed.
+The Born rule still emerges from the statistics: over many measurements, the cross-terms $e^{i(\theta_j-\theta_k)}$ with random phase differences average to zero, leaving only $r^2$.
+The bars are a \emph{shortcut} to the many-event limit, annihilating the phase algebraically instead of letting it cancel statistically.
+
+The lattice never needed the bars.
+The flux field $\mathbf J\in\R^3$ is real from the start --- no complex notation, no $i$, no conjugate, no need for $|\cdot|^2$.
+The bars appear exactly \emph{once} in the entire framework: the manifestation condition $|\mathbf J|>K_B$.
+Everything else runs bar-free, preserving direction (phase).
+\end{remark}
+
+\begin{remark}[Removing the bars recovers the ternary axiom]
+Without the bars, the ternary axiom emerges directly from phase interference:
+\[
+e^{i\cdot 0}+e^{i\pi}=1+(-1)=0.
+\]
+The void is destructive interference of two phases separated by half a turn.
+$+1$ is phase at $0$; $\;-1$ is phase at $\pi$; $\;0$ is their cancellation.
+This is the origin of everything.
+
+\emph{With} the bars: $|e^{i\cdot 0}|^2=1$ and $|e^{i\pi}|^2=1$.
+Both give~$1$.
+The bars cannot distinguish $+1$ from $-1$.
+The fundamental equation of reality --- $0=(-1)+(+1)$ --- is \emph{invisible} to $|\psi|^2$ because the bars erase the sign.
+The sign IS the phase at $\theta=0$ and $\theta=\pi$.
+The bars hide the origin of everything.
+\end{remark}
+
 %===================================================================
 \section{Formal Structure: The Ontic--Epistemic Partition}
 %===================================================================
