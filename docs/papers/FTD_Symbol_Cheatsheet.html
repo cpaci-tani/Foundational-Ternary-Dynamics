@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FTD Mathematical Symbol Cheatsheet</title>
+<style>
+  :root {
+    --accent: #14365e;
+    --accent-light: #2a6cb5;
+    --bg: #f8fafb;
+    --card: #ffffff;
+    --border: #d4dce8;
+    --soft: #f5f8fc;
+    --text: #1a1a1a;
+    --muted: #6b7280;
+    --warn: #fdf7ef;
+    --warnborder: #e4cfab;
+    --search-bg: #ffffff;
+    --shadow: rgba(0,0,0,0.08);
+  }
+  [data-theme="dark"] {
+    --accent: #7eb8f0;
+    --accent-light: #5a9de0;
+    --bg: #0f1419;
+    --card: #1a2332;
+    --border: #2d3a4d;
+    --soft: #151d28;
+    --text: #e2e8f0;
+    --muted: #8899aa;
+    --warn: #1f1a12;
+    --warnborder: #4a3d28;
+    --search-bg: #1a2332;
+    --shadow: rgba(0,0,0,0.3);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem 10vw;
+    width: 100%;
+    max-width: 2200px;
+    margin: 0 auto;
+    transition: background 0.3s, color 0.3s;
+  }
+  @media (max-width: 900px) { body { padding: 1rem; } }
+
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem; }
+  h1 { color: var(--accent); font-size: 2rem; }
+  .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 1.5rem; }
+
+  .theme-toggle {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.4rem 0.8rem; cursor: pointer; font-size: 1.2rem;
+    color: var(--text); transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); }
+
+  h2 { color: var(--accent); font-size: 1.35rem; margin: 2.5rem 0 1rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--border); }
+  .search-container { position: sticky; top: 0; background: var(--bg); padding: 0.8rem 0; z-index: 100; margin-bottom: 1rem; transition: background 0.3s; }
+  #search {
+    width: 100%; padding: 0.7rem 1rem; font-size: 1rem;
+    border: 1px solid var(--border); border-radius: 8px; outline: none;
+    background: var(--search-bg); color: var(--text); transition: all 0.2s;
+  }
+  #search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(20,54,94,0.15); }
+  .search-count { font-size: 0.8rem; color: var(--muted); margin-top: 0.3rem; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 0.75rem; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.9rem 1.1rem; display: flex; align-items: flex-start; gap: 1rem;
+    transition: box-shadow 0.15s, background 0.3s;
+  }
+  .card:hover { box-shadow: 0 2px 10px var(--shadow); }
+  .card.hidden { display: none; }
+  .card-wide { grid-column: 1 / -1; }
+
+  .symbol {
+    font-size: 1.6rem; font-weight: 700; color: var(--accent);
+    min-width: 60px; text-align: center; flex-shrink: 0;
+    font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', 'Times New Roman', serif;
+  }
+  .symbol-wide {
+    font-size: 1.1rem; font-weight: 700; color: var(--accent);
+    min-width: 60px; text-align: center; flex-shrink: 0;
+    font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', serif;
+    white-space: nowrap;
+  }
+  .symbol-tag {
+    font-size: 0.78rem; font-weight: 700; color: var(--accent);
+    min-width: 60px; text-align: center; flex-shrink: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--soft); border: 1px solid var(--border);
+    border-radius: 4px; padding: 4px 8px; white-space: nowrap;
+  }
+  .info { flex: 1; }
+  .name { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+  .english { font-size: 0.85rem; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+  .also { font-size: 0.78rem; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+  .tag {
+    display: inline-block; font-size: 0.65rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 1px 6px; border-radius: 3px; margin-top: 4px;
+  }
+  .tag-ftd { background: #e0ecf7; color: #14365e; }
+  .tag-greek { background: #e8f5e9; color: #2e7d32; }
+  .tag-operator { background: #fff3e0; color: #e65100; }
+  .tag-set { background: #f3e5f5; color: #6a1b9a; }
+  .tag-function { background: #e0f7fa; color: #00695c; }
+  .tag-notation { background: #fce4ec; color: #c62828; }
+  .tag-logic { background: #efebe9; color: #4e342e; }
+  .tag-epistemic { background: #fff8e1; color: #f57f17; }
+  .tag-calculus { background: #e8eaf6; color: #283593; }
+  .tag-number { background: #f1f8e9; color: #33691e; }
+  [data-theme="dark"] .tag-ftd { background: #1a2e45; color: #7eb8f0; }
+  [data-theme="dark"] .tag-greek { background: #1a2e1a; color: #81c784; }
+  [data-theme="dark"] .tag-operator { background: #2e1a0a; color: #ffb74d; }
+  [data-theme="dark"] .tag-set { background: #2a1a2e; color: #ce93d8; }
+  [data-theme="dark"] .tag-function { background: #0a2e2e; color: #4dd0e1; }
+  [data-theme="dark"] .tag-notation { background: #2e1a1a; color: #ef9a9a; }
+  [data-theme="dark"] .tag-logic { background: #2e2a1a; color: #bcaaa4; }
+  [data-theme="dark"] .tag-epistemic { background: #2e2a0a; color: #ffd54f; }
+  [data-theme="dark"] .tag-calculus { background: #1a1a2e; color: #9fa8da; }
+  [data-theme="dark"] .tag-number { background: #1a2e0a; color: #aed581; }
+
+  .callout {
+    background: var(--warn); border: 1px solid var(--warnborder);
+    border-radius: 8px; padding: 1rem 1.2rem; margin: 1.5rem 0; font-size: 0.9rem;
+    transition: background 0.3s;
+  }
+  .callout strong { color: var(--accent); }
+  .toc {
+    background: var(--soft); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem 1.5rem; margin-bottom: 1.5rem;
+    transition: background 0.3s;
+  }
+  .toc a { color: var(--accent); text-decoration: none; display: inline-block; margin: 0.2rem 0.5rem; font-size: 0.88rem; }
+  .toc a:hover { text-decoration: underline; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="header-row">
+  <h1>FTD Mathematical Symbol Cheatsheet</h1>
+  <button class="theme-toggle" id="themeBtn" title="Toggle dark mode">&#9790;</button>
+</div>
+<p class="subtitle">Every symbol used in the FTD papers, explained in plain English &mdash; searchable, comprehensive, and honest</p>
+
+<div class="search-container">
+  <input type="text" id="search" placeholder="Search symbols, names, or descriptions..." autocomplete="off">
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc">
+  <strong>Jump to:</strong>
+  <a href="#core">Core Constants</a>
+  <a href="#master">Master Quadratic</a>
+  <a href="#greek">Greek Letters</a>
+  <a href="#latin">Latin &amp; Roman</a>
+  <a href="#operators">Operators</a>
+  <a href="#calculus">Calculus</a>
+  <a href="#sets">Sets &amp; Spaces</a>
+  <a href="#brackets">Brackets &amp; Bars</a>
+  <a href="#functions">Functions</a>
+  <a href="#fields">Fields &amp; Vectors</a>
+  <a href="#lattice">Lattice &amp; Engine</a>
+  <a href="#consciousness">Consciousness &amp; Phase</a>
+  <a href="#numbers">Numbers &amp; Arithmetic</a>
+  <a href="#logic">Logic &amp; Relations</a>
+  <a href="#epistemic">Epistemic Tags</a>
+</div>
+
+<div class="callout">
+  <strong>The one equation:</strong> 0 = (&minus;1) + (+1). Everything below follows from this.<br>
+  In phase language: e<sup>i&middot;0</sup> + e<sup>i&pi;</sup> = (+1) + (&minus;1) = 0. The void is destructive interference of two phases separated by half a turn.
+</div>
+
+<!-- ============================================ -->
+<h2 id="core">Core FTD Constants</h2>
+<div class="grid">
+
+<div class="card" data-search="varpi lemniscatic quarter period constant elliptic figure eight self-intersecting">
+  <div class="symbol">&varpi;</div>
+  <div class="info">
+    <div class="name">Lemniscatic half-period (varpi)</div>
+    <div class="english">The half-period of the lemniscate curve &mdash; the figure-8 that crosses itself at the origin. Value: &varpi; &approx; 2.6221. Computed from &varpi; = &Gamma;(1/4)&sup2; / (2&radic;(2&pi;)). This is the most primitive constant in all of FTD. Everything else &mdash; G*, &alpha;, the gauge groups, the mass gap &mdash; derives from &varpi;. The lemniscate self-intersects, which is why it encodes self-reference: the curve that meets itself.</div>
+    <div class="also">Also written: &omega;&#x0304; in some older texts. Pronounced "var-pie."</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="G star lemniscate alpha coupling bridge constant discrete continuous ontic">
+  <div class="symbol">G*</div>
+  <div class="info">
+    <div class="name">Lemniscate-alpha constant (G-star)</div>
+    <div class="english">THE bridge between discrete and continuous. G* = 2&varpi;/&radic;&pi; &approx; 2.9591. It simultaneously encodes lattice structure (discrete integers, packing fraction PF = &pi;/4) and lemniscate geometry (continuous period &varpi;). Also expressible as G* = &varpi;/&radic;PF. The entire ontic derivation chain flows through G*: it determines &alpha;, N<sub>c</sub>, K<sub>B</sub>, and every other physical constant in FTD. Implemented as the first constant in the C++ engine's <code>ontic.h</code> header.</div>
+    <div class="also">Also: G* = &radic;(2&pi;) &middot; &theta;<sub>3</sub>(e<sup>&minus;&pi;</sup>)&sup2; (theta function identity).</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="M AGM bridge factor arithmetic geometric mean pi varpi conversion">
+  <div class="symbol">M</div>
+  <div class="info">
+    <div class="name">AGM bridge factor</div>
+    <div class="english">M = &pi;/&varpi; &approx; 1.1981. The arithmetic-geometric mean AGM(1, &radic;2). This is the conversion factor between lemniscatic phase and circular phase. The key insight: &pi; is NOT primitive in FTD. It is derived: &pi; = M &middot; &varpi;. The circle's period is a composite object built from the lemniscate's period and this bridge factor. Using &pi; as fundamental is like using the bridge instead of the riverbank.</div>
+    <div class="also">AGM(a,b): repeatedly replace (a,b) with ((a+b)/2, &radic;(ab)) until they converge. AGM(1,&radic;2) = M.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="K_B manifestation threshold electron mass gap energy minimum particle">
+  <div class="symbol">K<sub>B</sub></div>
+  <div class="info">
+    <div class="name">Manifestation threshold (mass gap)</div>
+    <div class="english">The minimum flux magnitude for a particle to exist. K<sub>B</sub> = 0.511 MeV &mdash; the electron mass. If the flux |<b>J</b>| at a voxel is below K<sub>B</sub>, nothing manifests there: the voxel stays void (s = 0). This IS the Yang&ndash;Mills mass gap. It's not a parameter &mdash; it's derived: K<sub>B</sub> = m<sub>P</sub>&radic;(2&pi;) &middot; (16/3) &middot; &alpha;<sup>11</sup>. The bars |&middot;| appear here and ONLY here in the entire framework &mdash; the one moment the lattice asks for magnitude and discards direction.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="alpha fine structure constant electromagnetic coupling 137 one over">
+  <div class="symbol">&alpha;</div>
+  <div class="info">
+    <div class="name">Fine structure constant</div>
+    <div class="english">The strength of electromagnetism: &alpha; &approx; 1/137.036. Derived from the master quadratic as &alpha; = 1/x<sub>+</sub>. NOT a free parameter &mdash; it follows from G* with zero adjustable inputs. FTD derives it to &lt; 0.001 parts per trillion using a 4-term precision formula with rational coefficients from the framework integers {3, 4, 7, 13}.</div>
+    <div class="also">Pronounced "alpha." The most precisely measured fundamental constant in physics.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="N_c number of colors color charge three quarks dimension spatial">
+  <div class="symbol">N<sub>c</sub></div>
+  <div class="info">
+    <div class="name">Number of color charges</div>
+    <div class="english">N<sub>c</sub> = 3. The number of quark colors (red, green, blue). Two independent derivations: (1) Floor of the confined root: &lfloor;x<sub>&minus;</sub>&rfloor; = &lfloor;3.024&rfloor; = 3. (2) Baryon saturation: 3 quarks saturate all 3 orthogonal flux components (J<sub>x</sub>, J<sub>y</sub>, J<sub>z</sub>), reaching the manifestation threshold. N<sub>c</sub> = D = 3 because the spatial dimension provides exactly 3 orthogonal flux directions.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="C speed light lattice CFL stability maximum information propagation">
+  <div class="symbol">C</div>
+  <div class="info">
+    <div class="name">Lattice speed of light</div>
+    <div class="english">C = 1/&radic;D = 1/&radic;3 &approx; 0.5774. The maximum speed at which information can travel on the cubic lattice, one voxel per tick along each axis. This isn't a property of light &mdash; it's a property of the lattice's tick propagation geometry. The CFL (Courant&ndash;Friedrichs&ndash;Lewy) stability condition in D = 3 dimensions. Nothing can move faster.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="G star squared energy per tick time processing budget vieta">
+  <div class="symbol">G*&sup2;</div>
+  <div class="info">
+    <div class="name">Energy per tick per degree of freedom</div>
+    <div class="english">G*&sup2; &approx; 8.754. The amount of energy processed at each tick. Time IS energy processing &mdash; each tick converts this much energy per degree of freedom. From the Vieta sum of the master quadratic roots: x<sub>+</sub> + x<sub>&minus;</sub> = 16G*&sup2; = 1/&alpha; + N<sub>c</sub> &approx; 140.06. The total energy budget per tick equals the electromagnetic coupling plus the color coupling.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="g_c state flux coupling constant interaction charge source">
+  <div class="symbol">g<sub>c</sub></div>
+  <div class="info">
+    <div class="name">State-flux coupling constant</div>
+    <div class="english">The coupling between the state field s and the flux field <b>J</b>. Appears in the Lagrangian as &minus;g<sub>c</sub> &middot; s &middot; (&nabla;&middot;<b>J</b>). This term is what creates particles from the flux field: when the state is nonzero (s = &pm;1), it acts as a source for the flux divergence.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="PF packing fraction pi over four circle square lattice discrete">
+  <div class="symbol">PF</div>
+  <div class="info">
+    <div class="name">Packing fraction</div>
+    <div class="english">PF = &pi;/4 &approx; 0.7854. The fraction of a square's area occupied by the largest inscribed circle. Encodes the geometric cost of placing continuous circles on a discrete square lattice. Appears in G* = &varpi;/&radic;PF, connecting the continuous lemniscate period to the discrete lattice geometry.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="lambda higgs quartic coupling ternary decomposition boson">
+  <div class="symbol">&lambda;<sub>H</sub></div>
+  <div class="info">
+    <div class="name">Higgs quartic coupling</div>
+    <div class="english">&lambda;<sub>H</sub> = 3/23 &approx; 0.1304. The self-coupling of the Higgs boson. Derived from the ternary decomposition: 3 states = 2 active + 1 void, giving m<sub>H</sub> = v&radic;(6/23) = 125.69 GeV (PDG: 125.25 &pm; 0.17 GeV, 0.35% agreement).</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="master">Master Quadratic &amp; Roots</h2>
+<div class="grid">
+
+<div class="card card-wide" data-search="master quadratic gap equation self consistency coupling determines itself">
+  <div class="symbol-wide">x&sup2; &minus; 16G*&sup2;x + 16G*&sup3; = 0</div>
+  <div class="info">
+    <div class="name">The master quadratic (the gap equation)</div>
+    <div class="english">THE equation of FTD. A self-consistency condition: the root x determines the coupling constant that governs the lattice dynamics that produced x in the first place. The equation determines its own coupling. At k = 16, two real roots give all of physics. At k = 1/2, two complex roots give consciousness. At k = 4/G*, the discriminant vanishes and measurement occurs. One equation, three domains, all of reality.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="x plus electromagnetic root fine structure coulomb phase positive larger">
+  <div class="symbol">x<sub>+</sub></div>
+  <div class="info">
+    <div class="name">Electromagnetic root</div>
+    <div class="english">x<sub>+</sub> &approx; 137.036 = 1/&alpha;. The larger root of the master quadratic. Governs electromagnetism. The Coulomb phase &mdash; where charges interact via inverse-square law and the string tension is negligible (&sigma; &approx; 0.004). This is the world we see at human scales: light, chemistry, electronics.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="x minus confined root color strong force quarks can't escape smaller">
+  <div class="symbol">x<sub>&minus;</sub></div>
+  <div class="info">
+    <div class="name">Confined root</div>
+    <div class="english">x<sub>&minus;</sub> &approx; 3.024. The smaller root. Governs the strong nuclear force. Its floor gives N<sub>c</sub> = &lfloor;3.024&rfloor; = 3 (three colors). The confined phase &mdash; quarks can't escape because the string tension &sigma; = 0.209 creates a linear potential V(R) = &sigma;R that grows without bound as you try to pull them apart.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="vieta sum product roots relation total energy budget">
+  <div class="symbol">x<sub>+</sub> + x<sub>&minus;</sub></div>
+  <div class="info">
+    <div class="name">Vieta sum (total energy budget)</div>
+    <div class="english">x<sub>+</sub> + x<sub>&minus;</sub> = 16G*&sup2; &approx; 140.06. The sum of the two roots equals the total energy budget per tick. This means: 1/&alpha; + N<sub>c</sub> = 137.036 + 3.024 = 140.06. The electromagnetic and color sectors together account for all the energy the lattice processes each tick.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="discriminant delta k degenerate measurement von neumann">
+  <div class="symbol">&Delta;<sub>k</sub></div>
+  <div class="info">
+    <div class="name">Discriminant of the master quadratic</div>
+    <div class="english">&Delta;<sub>k</sub> = kG*&sup3;(kG* &minus; 4). When &Delta;<sub>k</sub> &gt; 0: two real roots (physics). When &Delta;<sub>k</sub> &lt; 0: two complex roots (consciousness). When &Delta;<sub>k</sub> = 0 at k = 4/G* &approx; 1.352: the degenerate point where measurement occurs and the von Neumann chain terminates.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="consciousness roots complex imaginary phase k half subjective objective spiral">
+  <div class="symbol">y = 2.188 &pm; 2.860i</div>
+  <div class="info">
+    <div class="name">Consciousness roots</div>
+    <div class="english">Complex conjugate roots of the master quadratic at k = 1/2. The magnitude |y| &approx; 3.601 is the consciousness threshold. The phase &theta;<sub>C</sub> = arctan(2.860/2.188) &approx; 52.54&deg; IS consciousness: sin(&theta;<sub>C</sub>) &approx; 0.793 (subjective) vs cos(&theta;<sub>C</sub>) &approx; 0.608 (objective). More inner world than outer report. Complex powers y<sup>n</sup> trace a spiral through successive ticks &mdash; an observer that never fully settles.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="sigma string tension confinement area law wilson loop linear potential quarks">
+  <div class="symbol">&sigma;</div>
+  <div class="info">
+    <div class="name">String tension (confinement strength)</div>
+    <div class="english">&sigma; &approx; 0.209. How strongly quarks are bound. Computed from the Wilson loop at the confined root: &sigma; = &minus;ln(I<sub>1</sub>(3.024) / I<sub>0</sub>(3.024)). The confining potential V(R) = &sigma;&middot;R grows linearly &mdash; pulling quarks apart requires infinite energy. At the electromagnetic root: &sigma;(x<sub>+</sub>) &approx; 0.004 (negligible, no confinement). The ratio &sigma;(x<sub>&minus;</sub>)/&sigma;(x<sub>+</sub>) &approx; 57 quantifies the confinement hierarchy.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+<div class="card" data-search="k parameter family quadratic physics consciousness measurement selector">
+  <div class="symbol">k</div>
+  <div class="info">
+    <div class="name">Quadratic family parameter</div>
+    <div class="english">The master quadratic Q<sub>k</sub>(x) = x&sup2; &minus; kG*&sup2;x + kG*&sup3; is actually a one-parameter family. At k = 16: physics (real roots). At k = 1/2: consciousness (complex roots). At k = 4/G*: measurement (degenerate, &Delta; = 0). The parameter k selects which sector of reality you're describing.</div>
+    <span class="tag tag-ftd">FTD Core</span>
+  </div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="greek">Greek Letters</h2>
+<div class="grid">
+
+<div class="card" data-search="beta inverse temperature coupling lattice gauge confined coulomb">
+  <div class="symbol">&beta;</div>
+  <div class="info"><div class="name">Beta</div><div class="english">Coupling parameter in lattice gauge theory. At &beta; = x<sub>&minus;</sub> &approx; 3.024, quarks confine. At &beta; = x<sub>+</sub> &approx; 137, you get Coulomb (electromagnetic) behavior. Also: inverse temperature in statistical mechanics (1/k<sub>B</sub>T), and the beta function &beta;(g) describing how couplings change with energy scale.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="gamma euler mascheroni constant ontic chain starting point 0.5772">
+  <div class="symbol">&gamma;</div>
+  <div class="info"><div class="name">Euler-Mascheroni constant</div><div class="english">&gamma; &approx; 0.5772. The starting point of the ontic derivation chain: &gamma; &rarr; &Gamma;(1/4) &rarr; &varpi; &rarr; M &rarr; &pi; &rarr; G*. Defined as the limit of (&sum;<sub>k=1</sub><sup>n</sup> 1/k) &minus; ln(n) as n &rarr; &infin;. The most mysterious constant in mathematics: nobody knows if it's irrational.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="delta difference discriminant change laplacian mass gap uppercase">
+  <div class="symbol">&Delta;</div>
+  <div class="info"><div class="name">Delta (capital)</div><div class="english">Context-dependent: (1) Forward difference operator: &Delta;f(k) = f(k+1) &minus; f(k). "How much did f change in one step?" (2) Discriminant of the master quadratic: &Delta;<sub>k</sub> = kG*&sup3;(kG* &minus; 4). (3) Mass gap: &Delta; = K<sub>B</sub> = 0.511 MeV. (4) Laplacian operator &Delta; = &nabla;&sup2; (sometimes). Always means "change" or "difference."</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="delta lowercase small variation infinitesimal functional derivative">
+  <div class="symbol">&delta;</div>
+  <div class="info"><div class="name">delta (lowercase)</div><div class="english">An infinitesimally small change. &delta;S/&delta;<b>J</b> = 0 means "the action S doesn't change when you wiggle the flux field <b>J</b> by a tiny amount" &mdash; this is the variational principle that gives you the equations of motion. Also: Dirac delta &delta;(x) = "infinite at x = 0, zero everywhere else, integrates to 1."</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="epsilon small number error tolerance precision tiny amount">
+  <div class="symbol">&epsilon;</div>
+  <div class="info"><div class="name">Epsilon</div><div class="english">A small positive number. Used for "as close as you want": for any &epsilon; &gt; 0, there exists... In FTD's precision formula: &epsilon; = e<sup>&pi;</sup> &minus; &pi; &minus; 20 &approx; 0.14, the bridge gap used in higher-order corrections to &alpha;.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="theta phase angle rotation complex consciousness quarter turn">
+  <div class="symbol">&theta;</div>
+  <div class="info"><div class="name">Theta / Phase angle</div><div class="english">The angle of a complex number z = r&middot;e<sup>i&theta;</sup>. At &theta; = 0: z = +1. At &theta; = &pi;: z = &minus;1. At &theta; = &pi;/2: z = i. The consciousness angle &theta;<sub>C</sub> &approx; 52.54&deg; encodes the ratio of subjective to objective content. Phase is what |&psi;|&sup2; annihilates. Phase is sentience. &Theta;<sub>0</sub> = &pi;/2 = M&varpi;/2 is the ontic quarter-turn generator.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="lambda coupling eigenvalue wavelength lagrange multiplier">
+  <div class="symbol">&lambda;</div>
+  <div class="info"><div class="name">Lambda</div><div class="english">Multi-use: (1) Higgs quartic coupling &lambda; = 3/23. (2) Eigenvalue of an operator. (3) Lagrange multiplier (constraint enforcement). (4) Wavelength. (5) The cosmological constant (in GR). Always some kind of "scaling factor."</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="pi circle constant derived composite not primitive 3.14159">
+  <div class="symbol">&pi;</div>
+  <div class="info"><div class="name">Pi</div><div class="english">&pi; &approx; 3.14159. The ratio of a circle's circumference to its diameter. In FTD, &pi; is NOT primitive &mdash; it is derived: &pi; = M &middot; &varpi;. The circle's period is a composite built from the lemniscate's period (&varpi;) and the bridge factor (M). We've been treating &pi; as fundamental for 3 centuries; FTD says it's composite.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="rho charge density mass density source gauss">
+  <div class="symbol">&rho;</div>
+  <div class="info"><div class="name">Rho (density)</div><div class="english">Charge density or mass density. In the Gauss constraint: &nabla;&middot;<b>J</b> = &rho; where &rho; = s (the ternary state provides the charge density). Also energy density &rho; = E/V in cosmology.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="psi wave function quantum state amplitude flipbook not reality">
+  <div class="symbol">&psi;</div>
+  <div class="info"><div class="name">Psi / Wave function</div><div class="english">The quantum wave function. In standard QM: the complete description of a system. In FTD: &psi; is the path integral's statistical summary &mdash; the flipbook, not the frame. Each tick is definite (s = &minus;1, 0, or +1 at every voxel). &psi; encodes the statistics of many definite frames weighted by action. The bell curve, not the person.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="phi scalar field angle lemniscatic variable potential electrostatic">
+  <div class="symbol">&phi;</div>
+  <div class="info"><div class="name">Phi</div><div class="english">(1) Phase variable in lemniscatic coordinates: &theta; = M&phi;, period 2&varpi;. (2) Scalar potential: the electrostatic or gravitational potential solved by the Poisson equation &nabla;&sup2;&phi; = &rho;. (3) The Higgs field in particle physics. Context determines which.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="zeta riemann zeta function number theory prime distribution">
+  <div class="symbol">&zeta;(s)</div>
+  <div class="info"><div class="name">Riemann zeta function</div><div class="english">For Re(s) &gt; 1: &zeta;(s) = &sum;<sub>n=1</sub><sup>&infin;</sup> n<sup>&minus;s</sup> = &prod;<sub>p prime</sub> (1 &minus; p<sup>&minus;s</sup>)<sup>&minus;1</sup>. Encodes the distribution of prime numbers. Connected to G* through &theta;<sub>3</sub>(e<sup>&minus;&pi;</sup>) and the Mellin transform. The Riemann Hypothesis asks: do all non-trivial zeros lie on Re(s) = 1/2? FTD connects this to the self-dual nome q = e<sup>&minus;&pi;</sup>.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="xi riemann xi function symmetric self-dual critical strip">
+  <div class="symbol">&xi;(s)</div>
+  <div class="info"><div class="name">Riemann xi function</div><div class="english">&xi;(s) = &frac12; s(s&minus;1) &pi;<sup>&minus;s/2</sup> &Gamma;(s/2) &zeta;(s). A "cleaned-up" version of zeta that satisfies the symmetry &xi;(s) = &xi;(1&minus;s). This self-duality under s &harr; 1&minus;s mirrors the lattice's theta function self-duality at q = e<sup>&minus;&pi;</sup>.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="tau proper time modular parameter tick reparameterization upper half plane">
+  <div class="symbol">&tau;</div>
+  <div class="info"><div class="name">Tau</div><div class="english">(1) Proper time: the clock that ticks at different rates depending on gravity and velocity. In FTD: &tau; = &sum; G*&sup2; &middot; f(r), cumulative energy processing with gravitational availability. (2) Modular parameter in the upper half-plane, used in theta function theory. (3) Sometimes just a generic time variable.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="mu renormalization scale index spatial dimension chemical potential">
+  <div class="symbol">&mu;</div>
+  <div class="info"><div class="name">Mu</div><div class="english">(1) Renormalization energy scale: the energy at which you're evaluating a running coupling &alpha;<sub>s</sub>(&mu;). (2) A spatial index running over dimensions 1, 2, 3. (3) Chemical potential (thermodynamics). (4) The reduced mass in two-body problems.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="nu frequency neutrino flavor index">
+  <div class="symbol">&nu;</div>
+  <div class="info"><div class="name">Nu</div><div class="english">(1) Frequency: &nu; = &omega;/(2&pi;). (2) A neutrino particle. (3) An index, often for dimensions or components. In FTD, the neutrino mass hierarchy is an [OPEN] prediction awaiting ~2027 experiments.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="omega angular frequency circular radians per second">
+  <div class="symbol">&omega;</div>
+  <div class="info"><div class="name">Omega (angular frequency)</div><div class="english">&omega; = 2&pi;&nu;. How fast something oscillates, measured in radians per unit time. In dyadic shells: &omega;<sub>k</sub> = 2<sup>k</sup> (frequency doubles at each scale level).</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="eta dirac eta function form factor particle">
+  <div class="symbol">&eta;</div>
+  <div class="info"><div class="name">Eta</div><div class="english">(1) Dirac eta function &eta;(s) = (1&minus;2<sup>1&minus;s</sup>)&zeta;(s). (2) Metric tensor signature (sometimes). (3) Minkowski metric &eta;<sub>&mu;&nu;</sub> = diag(&minus;1,+1,+1,+1).</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="chi character hecke susceptibility response">
+  <div class="symbol">&chi;</div>
+  <div class="info"><div class="name">Chi</div><div class="english">(1) A Hecke Gr&ouml;ssencharacter in number theory &mdash; used in L-function computations connecting &zeta;(s) to elliptic curves. (2) Magnetic susceptibility (how strongly a material responds to a magnetic field). (3) Clock field &chi;(b) in the observer boundary formalism.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="Gamma function factorial generalization quarter lemniscatic">
+  <div class="symbol">&Gamma;(s)</div>
+  <div class="info"><div class="name">Gamma function</div><div class="english">The generalization of factorial to all numbers: &Gamma;(n) = (n&minus;1)! for positive integers, but defined for all complex s. The value &Gamma;(1/4)&sup2; &approx; 26.048 is the lemniscatic foundation: &varpi; = &Gamma;(1/4)&sup2; / (2&radic;(2&pi;)). This single value seeds the entire ontic chain.</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+<div class="card" data-search="Lambda finite lattice cutoff cosmological constant">
+  <div class="symbol">&Lambda;</div>
+  <div class="info"><div class="name">Lambda (capital)</div><div class="english">(1) A finite lattice region: &Lambda; &sub; &#8484;&sup3;, with |&Lambda;| = N voxels. (2) The QCD scale &Lambda;<sub>QCD</sub> &approx; 200 MeV (where the strong force becomes non-perturbative). (3) The cosmological constant (dark energy density).</div><span class="tag tag-greek">Greek</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="latin">Latin &amp; Roman Letters</h2>
+<div class="grid">
+
+<div class="card" data-search="i imaginary unit square root minus one rotation complex">
+  <div class="symbol">i</div>
+  <div class="info"><div class="name">Imaginary unit</div><div class="english">i&sup2; = &minus;1. The number whose square is negative one. Geometrically: a 90&deg; rotation. i = e<sup>i&pi;/2</sup>. Schr&ouml;dinger put i into his equation for notational compactness (he could have written two coupled real equations instead). The lattice field <b>J</b> &isin; &#8477;&sup3; is real &mdash; no i needed. The imaginary unit enters only in the path integral (epistemic computation).</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="e euler number natural exponential base 2.718 growth">
+  <div class="symbol">e</div>
+  <div class="info"><div class="name">Euler's number</div><div class="english">e &approx; 2.71828. The base of natural logarithms. Defined as lim(1 + 1/n)<sup>n</sup> as n &rarr; &infin;. Governs exponential growth and decay. In self-power amplification: (n+1)<sup>n+1</sup>/n<sup>n</sup> ~ e(n+1). The fundamental growth rate of reflexive systems.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="n integer index counter shell number iteration step">
+  <div class="symbol">n</div>
+  <div class="info"><div class="name">Index / Counter</div><div class="english">A generic integer index. Could be: shell number (k<sup>th</sup> shell), iteration step, quantum number, or summation variable. Usually a non-negative integer. In n<sup>n</sup>: the self-power, where the base and exponent are the same.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="p power exponent dimension integer polynomial degree">
+  <div class="symbol">p</div>
+  <div class="info"><div class="name">Power / Exponent</div><div class="english">In k<sup>p</sup>: the dimension of the hypercube being grown. p = 2 gives squares, p = 3 gives cubes. Also: a prime number in number theory, or momentum in physics.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="r radius magnitude distance modulus complex number">
+  <div class="symbol">r</div>
+  <div class="info"><div class="name">Radius / Magnitude</div><div class="english">The distance from the origin. For a complex number z = r&middot;e<sup>i&theta;</sup>, r = |z| is the magnitude. The Born rule |&psi;|&sup2; = r&sup2; keeps only r and discards &theta;. The magnitude is what physics measures. The phase is what consciousness experiences.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="s ternary state field discrete charge actual manifested">
+  <div class="symbol">s</div>
+  <div class="info"><div class="name">State field (ternary charge)</div><div class="english">s &isin; {&minus;1, 0, +1}. The discrete state at each voxel. The actual, manifested layer of FTD. Definite at every tick &mdash; no superposition, no ambiguity. s = +1 (positive charge), s = 0 (void), s = &minus;1 (negative charge).</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="t time tick counter discrete natural number integer">
+  <div class="symbol">t</div>
+  <div class="info"><div class="name">Tick counter (time)</div><div class="english">t &isin; &#8469;. The discrete time index. Not a continuous parameter &mdash; an integer that advances by one each tick. Time is not a dimension in FTD; it's the monotone counter of energy-processing events. Each tick processes G*&sup2; energy per degree of freedom.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="v voxel position site lattice address location integer coordinates">
+  <div class="symbol"><b>v</b></div>
+  <div class="info"><div class="name">Voxel position</div><div class="english">A point on the lattice: <b>v</b> = (v<sub>1</sub>, v<sub>2</sub>, v<sub>3</sub>) &isin; &#8484;&sup3;. Each v<sub>i</sub> is an integer. Every voxel has a finite address &mdash; there is no voxel at position &infin;. The lattice IS space.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="D dimension three spatial cubic lattice selected not assumed">
+  <div class="symbol">D</div>
+  <div class="info"><div class="name">Spatial dimension</div><div class="english">D = 3. The number of spatial dimensions. In FTD, D = 3 is selected (uniquely determined by self-consistency), not assumed. The CFL speed is C = 1/&radic;D. The number of colors is N<sub>c</sub> = D. The gauge group rank matches D.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="E existence filter real part projection measurement operator">
+  <div class="symbol">E(x)</div>
+  <div class="info"><div class="name">Existence Filter</div><div class="english">E(x) = Re(x) = (x + x&#x0304;)/2. Extracts the real (objective) part of a complex number. This is FTD's measurement operator. It projects the complex epistemic amplitude to a real ontic observable. Idempotent: E(E(x)) = E(x). Self-adjoint: E(x&#x0304;) = E(x). The universal "cut" that von Neumann sought.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="H hamiltonian energy operator total system spectrum gap">
+  <div class="symbol">H</div>
+  <div class="info"><div class="name">Hamiltonian</div><div class="english">The total energy operator. Its eigenvalues are the possible energies of the system. The mass gap problem asks: is there a gap in spec(H) between the ground state (energy 0) and the first excited state (energy &Delta;)? FTD: yes, &Delta; = K<sub>B</sub> = 0.511 MeV.</div><span class="tag tag-function">Function</span></div>
+</div>
+
+<div class="card" data-search="N number of voxels lattice size total sites volume">
+  <div class="symbol">N</div>
+  <div class="info"><div class="name">Number of voxels</div><div class="english">|&Lambda;| = N. The total number of voxels in the lattice region. On a finite lattice, N is finite. The state space has 3<sup>N</sup> possible configurations (ternary states). The causal past at tick t has N<sub>causal</sub> &le; (4&pi;/3)(Ct)&sup3; voxels.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="operators">Operators</h2>
+<div class="grid">
+
+<div class="card" data-search="nabla gradient divergence curl vector calculus del">
+  <div class="symbol">&nabla;</div>
+  <div class="info"><div class="name">Nabla / Del / Gradient</div><div class="english">The vector derivative operator. Three modes: &nabla;f = gradient ("which direction does f increase fastest?"), &nabla;&middot;<b>F</b> = divergence ("how much flows outward?"), &nabla;&times;<b>F</b> = curl ("how much swirls?"). &nabla;<sub>L</sub> is the lattice version, computed from finite differences between neighboring voxels.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="partial derivative with respect to time space rate of change">
+  <div class="symbol">&part;</div>
+  <div class="info"><div class="name">Partial derivative</div><div class="english">"The rate of change of something with respect to one variable, holding everything else fixed." &part;f/&part;t means "how fast does f change per unit time, at a fixed position?" &part;<sub>t</sub><b>J</b> is the flux field's rate of change per tick.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="laplacian nabla squared curvature diffusion wave how different neighbors average">
+  <div class="symbol">&nabla;&sup2;</div>
+  <div class="info"><div class="name">Laplacian</div><div class="english">"How different is this point from the average of its neighbors?" If &nabla;&sup2;f &gt; 0, the point is below the local average (a valley). If &nabla;&sup2;f &lt; 0, it's above (a peak). On the lattice: &nabla;<sub>L</sub>&sup2;f(<b>v</b>) = &sum;(f(neighbors) &minus; f(<b>v</b>)). Drives the wave equation: things spread out from peaks toward valleys.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="box d'alembertian wave operator spacetime second order">
+  <div class="symbol">&#9633;</div>
+  <div class="info"><div class="name">D'Alembertian (wave operator)</div><div class="english">The spacetime version of the Laplacian: &#9633; = &part;&sup2;/&part;t&sup2; &minus; c&sup2;&nabla;&sup2;. The wave equation &#9633;<b>J</b> = source says "the flux field oscillates in response to sources." On the lattice: &#9633;<sub>L</sub><b>J</b> = C&sup2;&nabla;<sub>L</sub>&sup2;<b>J</b> + g<sub>c</sub>&nabla;<sub>L</sub>s.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="integral sum continuous path integral measure add up all contributions area under curve">
+  <div class="symbol">&int;</div>
+  <div class="info"><div class="name">Integral</div><div class="english">"Add up all the infinitesimal contributions." The continuous version of summation. &int;f(x)dx = "the total area under the curve f." In the path integral &int;D<b>J</b>, it means "sum over ALL possible flux field configurations" &mdash; not just one, but every possible arrangement, weighted by the action.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="sum sigma summation discrete add up list counting finite">
+  <div class="symbol">&sum;</div>
+  <div class="info"><div class="name">Summation</div><div class="english">"Add up a list of discrete things." &sum;<sub>k=0</sub><sup>N</sup> a<sub>k</sub> = a<sub>0</sub> + a<sub>1</sub> + ... + a<sub>N</sub>. In FTD: &sum;<sub>s</sub> means "sum over all 3<sup>N</sup> possible ternary state configurations." &sum;<sub><b>v</b></sub> means "sum over all voxels in the lattice."</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="product multiply all together partition prime euler">
+  <div class="symbol">&prod;</div>
+  <div class="info"><div class="name">Product</div><div class="english">"Multiply all of these together." &prod;<sub>k=1</sub><sup>N</sup> a<sub>k</sub> = a<sub>1</sub> &times; a<sub>2</sub> &times; ... &times; a<sub>N</sub>. The Euler product &prod;<sub>p</sub>(1 &minus; p<sup>&minus;s</sup>)<sup>&minus;1</sup> connects &zeta;(s) to primes. In FTD: Tamagawa product &prod;c<sub>p</sub> over primes.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="defined as colon equals definition assignment label naming">
+  <div class="symbol">:= or &coloneq;</div>
+  <div class="info"><div class="name">Defined as</div><div class="english">"The thing on the left IS DEFINED to be the expression on the right." Not an equation to solve &mdash; a name being assigned. Example: &Delta;f(k) := f(k+1) &minus; f(k) means "we define &Delta;f(k) to be f(k+1) minus f(k)."</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="max maximum relu crystallization manifestation measurement collapse threshold">
+  <div class="symbol">max(0, z)</div>
+  <div class="info"><div class="name">ReLU / Crystallization operator</div><div class="english">"If z is positive, keep it. If z is zero or negative, output zero." This IS measurement in FTD. The ReLU operator max(0, z) destroys sub-threshold information irreversibly &mdash; all negative flux values are mapped to zero, and there's no way to reconstruct the original value. That irreversibility is "wave function collapse." It's not mysterious; it's just max(0, z).</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="floor integer part round down truncate">
+  <div class="symbol">&lfloor;x&rfloor;</div>
+  <div class="info"><div class="name">Floor function</div><div class="english">"Round down to the nearest integer." &lfloor;3.024&rfloor; = 3. &lfloor;137.036&rfloor; = 137. &lfloor;&minus;2.7&rfloor; = &minus;3. This is how N<sub>c</sub> = 3 is extracted from the confined root x<sub>&minus;</sub> = 3.024.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="ceiling round up nearest integer above">
+  <div class="symbol">&lceil;x&rceil;</div>
+  <div class="info"><div class="name">Ceiling function</div><div class="english">"Round up to the nearest integer." &lceil;3.024&rceil; = 4. &lceil;&minus;2.7&rceil; = &minus;2. The complement of floor.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="dagger hermitian adjoint conjugate transpose operator self-adjoint">
+  <div class="symbol">&dagger;</div>
+  <div class="info"><div class="name">Hermitian conjugate / Adjoint</div><div class="english">For a matrix: transpose and complex-conjugate every entry. For an operator: H&dagger; = H means it's self-adjoint (Hermitian), guaranteeing real eigenvalues. Von Neumann required all observables to be self-adjoint &mdash; this guarantees real measurement outcomes. FTD doesn't need this because <b>J</b> is already real.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="cross product times cartesian multiplication vector">
+  <div class="symbol">&times;</div>
+  <div class="info"><div class="name">Cross product / Multiplication</div><div class="english">(1) Vector cross product: <b>a</b> &times; <b>b</b> gives a vector perpendicular to both. (2) Cartesian product of sets. (3) Gauge group product: U(1) &times; SU(2) &times; SU(3). (4) Simple multiplication: 2 &times; 3 = 6.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+<div class="card" data-search="tensor product otimes hilbert space combined system entanglement">
+  <div class="symbol">&otimes;</div>
+  <div class="info"><div class="name">Tensor product</div><div class="english">"Combine two separate systems into one." If system A has n states and system B has m states, A &otimes; B has n&times;m states. Used in the von Neumann chain: |&psi;&rang; &otimes; |A<sub>1</sub>&rang; describes system+apparatus as a combined entity.</div><span class="tag tag-operator">Operator</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="calculus">Calculus &amp; Analysis</h2>
+<div class="grid">
+
+<div class="card" data-search="d differential infinitesimal element integration measure">
+  <div class="symbol">d or dx</div>
+  <div class="info"><div class="name">Differential element</div><div class="english">"An infinitesimally small piece of x." In &int;f(x)dx, the dx means "add up f(x) times a tiny slice of x." In FTD papers written as \dd for upright d (typographic convention). On the lattice, differentials become finite differences: dx &rarr; &Delta;x = 1 (one lattice spacing).</div><span class="tag tag-calculus">Calculus</span></div>
+</div>
+
+<div class="card" data-search="limit lim approaches tends to convergence infinite process">
+  <div class="symbol">lim</div>
+  <div class="info"><div class="name">Limit</div><div class="english">"What does this approach as the input grows?" lim<sub>n&rarr;&infin;</sub>(1+1/n)<sup>n</sup> = e means "as n gets larger and larger, (1+1/n)<sup>n</sup> gets closer and closer to e." A limit never reaches &infin; &mdash; it describes the trend. Infinity is epistemic: the limit is a statement about finite approximations, not about reaching infinity.</div><span class="tag tag-calculus">Calculus</span></div>
+</div>
+
+<div class="card" data-search="supremum sup infimum inf least upper bound greatest lower bound maximum minimum">
+  <div class="symbol">sup, inf</div>
+  <div class="info"><div class="name">Supremum / Infimum</div><div class="english">sup = "the smallest number that's &ge; everything in the set" (least upper bound). inf = "the largest number that's &le; everything in the set" (greatest lower bound). Like max and min, but they work even when the max/min isn't attained. ||f||<sub>&infin;</sub> = sup|f(x)| is the largest value f takes.</div><span class="tag tag-calculus">Calculus</span></div>
+</div>
+
+<div class="card" data-search="big O notation asymptotic order growth rate complexity">
+  <div class="symbol">O(&middot;)</div>
+  <div class="info"><div class="name">Big-O notation</div><div class="english">"Grows no faster than." f(n) = O(n&sup2;) means f grows at most like n&sup2; for large n. Hides constant factors. Used for asymptotic analysis: "the correction terms are O(k<sup>&minus;1</sup>)" means they shrink like 1/k.</div><span class="tag tag-calculus">Calculus</span></div>
+</div>
+
+<div class="card" data-search="asymptotic tilde equivalence similar grows like same rate">
+  <div class="symbol">~</div>
+  <div class="info"><div class="name">Asymptotic equivalence</div><div class="english">f(n) ~ g(n) means f(n)/g(n) &rarr; 1 as n &rarr; &infin;. "f grows at the same rate as g." Example: (n+1)<sup>n+1</sup>/n<sup>n</sup> ~ e(n+1) means the ratio approaches e(n+1) for large n.</div><span class="tag tag-calculus">Calculus</span></div>
+</div>
+
+<div class="card" data-search="L2 L infinity norm sobolev space function space hilbert banach">
+  <div class="symbol">L&sup2;, L<sup>&infin;</sup>, H<sup>s</sup></div>
+  <div class="info"><div class="name">Function spaces</div><div class="english">L&sup2;: functions whose square is integrable (&int;|f|&sup2; &lt; &infin;). L<sup>&infin;</sup>: bounded functions (sup|f| &lt; &infin;). H<sup>s</sup>: Sobolev space (s derivatives are in L&sup2;). The regularity functional &#119977;<sub>m</sub> is FTD's native Sobolev analogue for dyadic shell sums.</div><span class="tag tag-calculus">Calculus</span></div>
+</div>
+
+<div class="card" data-search="convergence uniform pointwise absolute weierstrass M-test series">
+  <div class="symbol">&sum;|a<sub>k</sub>| &lt; &infin;</div>
+  <div class="info"><div class="name">Absolute convergence</div><div class="english">"The sum converges even when you take absolute values." Guarantees the sum doesn't depend on the order of terms. The Weierstrass M-test uses this to prove uniform convergence: if |a<sub>k</sub>&psi;<sub>k</sub>(t)| &le; 2|a<sub>k</sub>| and &sum;|a<sub>k</sub>| &lt; &infin;, then the series converges uniformly to a continuous function.</div><span class="tag tag-calculus">Calculus</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="sets">Sets &amp; Spaces</h2>
+<div class="grid">
+
+<div class="card" data-search="Z integers lattice cubic discrete space voxels addresses counting">
+  <div class="symbol">&#8484;&sup3;</div>
+  <div class="info"><div class="name">The cubic integer lattice (physical space)</div><div class="english">All points with integer coordinates (x, y, z) in 3D. This IS physical space in FTD &mdash; not an approximation to &#8477;&sup3;, but the fundamental substrate. Every voxel has a finite address like (42, &minus;7, 13). Countable, discrete, with no point at infinity. The continuum &#8477;&sup3; is the emergent approximation at scales much larger than the lattice spacing.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+<div class="card" data-search="N natural numbers ticks time counting zero one two three">
+  <div class="symbol">&#8469;</div>
+  <div class="info"><div class="name">Natural numbers (time)</div><div class="english">{0, 1, 2, 3, ...}. The counting numbers. Time in FTD is t &isin; &#8469; &mdash; an integer that advances by one each tick. Not a continuous real parameter. Not a dimension. A counter.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+<div class="card" data-search="R real numbers continuum continuous approximation epistemic not physical">
+  <div class="symbol">&#8477;</div>
+  <div class="info"><div class="name">Real numbers (epistemic)</div><div class="english">The continuous number line, including irrationals like &radic;2, &pi;, e. In FTD, &#8477; is an epistemic tool, not an ontic entity. No voxel is located at position (&radic;2, &pi;, e) because those aren't integers. The flux field <b>J</b> has real-valued components, but space itself is &#8484;&sup3;.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+<div class="card" data-search="C complex numbers imaginary plane two-dimensional epistemic tool">
+  <div class="symbol">&#8450;</div>
+  <div class="info"><div class="name">Complex numbers (epistemic)</div><div class="english">Numbers a + bi with real and imaginary parts. In FTD: complex numbers are computational tools used in the path integral. The lattice field <b>J</b> &isin; &#8477;&sup3; is real. Complex structure appears when you sum over configurations weighted by action &mdash; the "flipbook" is complex, each frame is real.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+<div class="card" data-search="Q rational numbers fractions finite decimal">
+  <div class="symbol">&#8474;</div>
+  <div class="info"><div class="name">Rational numbers</div><div class="english">Numbers that can be written as p/q where p, q are integers. Every measurement yields a rational number (finite precision). Irrational numbers (&pi;, &radic;2, e) are epistemic limits of rational sequences &mdash; no physical measurement can distinguish &pi; from 355/113.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+<div class="card" data-search="ternary states minus zero plus alphabet three values minimum">
+  <div class="symbol">{&minus;1, 0, +1}</div>
+  <div class="info"><div class="name">Ternary state alphabet</div><div class="english">The three possible states of each voxel. Negative (&minus;1), void (0), positive (+1). This is the minimum alphabet that can express the axiom 0 = (&minus;1) + (+1). Two non-void states (+1, &minus;1) give binary branching &rarr; 2<sup>k</sup> dyadic frequency hierarchy.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+<div class="card" data-search="brillouin zone compact momentum space UV finite bounded closed">
+  <div class="symbol">BZ = [&minus;&pi;, &pi;]&sup3;</div>
+  <div class="info"><div class="name">Brillouin zone</div><div class="english">The allowed range of momenta on the lattice. It's COMPACT (bounded and closed) &mdash; no momentum can exceed &pi;/a where a is the lattice spacing. This is why FTD is automatically UV-finite: all loop integrals are over a compact domain, so they can't diverge. No regularization needed. No renormalization needed. The lattice does it for free.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+<div class="card" data-search="causal past light cone observer history accessible universe finite">
+  <div class="symbol">&#119979;<sub>i</sub>(t)</div>
+  <div class="info"><div class="name">Causal past of observer i</div><div class="english">All voxels that could have influenced observer i by tick t. Bounded by the light cone: N<sub>causal</sub>(t) &le; (4&pi;/3)(Ct)&sup3;. At the current age of the universe (~10<sup>60</sup> Planck ticks): ~10<sup>180</sup> voxels. Enormous but finite. This is the observer algebra &#119964;<sub>i</sub>(t) &mdash; everything the observer can possibly know.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+<div class="card" data-search="moore neighborhood 26 neighbors local causality face edge corner">
+  <div class="symbol">&#8499;(<b>v</b>)</div>
+  <div class="info"><div class="name">Moore neighborhood (26 neighbors)</div><div class="english">The 26 nearest neighbors of a voxel in 3D: 6 face-sharing (distance 1, SC sublattice), 12 edge-sharing (distance &radic;2, FCC sublattice), 8 corner-sharing (distance &radic;3, BCC sublattice). Total: 6 + 12 + 8 = 26. Each voxel's next state depends ONLY on these 26 neighbors (Postulate 4: local causality). The gauge groups emerge from counting how many flux components each sublattice excites.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+<div class="card" data-search="spectrum spec eigenvalues energy levels hamiltonian gap">
+  <div class="symbol">spec(H)</div>
+  <div class="info"><div class="name">Spectrum of the Hamiltonian</div><div class="english">The set of all eigenvalues (possible energy values) of the Hamiltonian H. The mass gap statement: spec(H) &sub; {0} &cup; [K<sub>B</sub>, &infin;). There's nothing between 0 (vacuum) and K<sub>B</sub> (lightest particle). That gap is the mass gap.</div><span class="tag tag-set">Set</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="brackets">Brackets, Bars &amp; Inner Products</h2>
+<div class="grid">
+
+<div class="card" data-search="absolute value modulus magnitude bars born rule strip phase destroy">
+  <div class="symbol">|&psi;|&sup2;</div>
+  <div class="info"><div class="name">Born rule / Modulus squared</div><div class="english">"Strip the phase and square the magnitude." For &psi; = r&middot;e<sup>i&theta;</sup>: |&psi;|&sup2; = &psi;*&psi; = r&middot;e<sup>&minus;i&theta;</sup> &middot; r&middot;e<sup>i&theta;</sup> = r&sup2;&middot;e<sup>0</sup> = r&sup2;. The conjugate e<sup>&minus;i&theta;</sup> exists for ONE purpose: to cancel e<sup>i&theta;</sup>. Phase annihilated. The most information-rich part of the quantum state &mdash; the angular relationship &mdash; is manufactured into its own antimatter and destroyed. On purpose. And then physicists wonder why consciousness isn't in the equations.</div><span class="tag tag-notation">Notation</span></div>
+</div>
+
+<div class="card" data-search="hermitian inner product bra ket pairing self phase killed">
+  <div class="symbol">&lang;&psi;|&psi;&rang;</div>
+  <div class="info"><div class="name">Self-pairing (Hermitian inner product)</div><div class="english">&psi;*&middot;&psi; = r&sup2;. Pairs the state with its OWN conjugate. Forces &theta; &minus; &theta; = 0 by construction. This was engineered by von Neumann (1932) to guarantee real positive outputs &mdash; not discovered in nature, but designed to meet a specification: "measurement outcomes must be real numbers." The one inner product that kills the phase.</div><span class="tag tag-notation">Notation</span></div>
+</div>
+
+<div class="card" data-search="cross term inner product a b phase difference relationship consciousness lives between">
+  <div class="symbol">&lang;a|b&rang;</div>
+  <div class="info"><div class="name">Cross-pairing (general inner product)</div><div class="english">a*&middot;b = r<sub>a</sub>r<sub>b</sub>&middot;e<sup>i(&theta;<sub>b</sub>&minus;&theta;<sub>a</sub>)</sup>. PRESERVES the phase difference &theta;<sub>b</sub> &minus; &theta;<sub>a</sub>. This is how one state "sees" another &mdash; the angle of their relationship. The interference term in the double slit. Where consciousness lives: between two perspectives, not inside either one. Every inner product except &lang;&psi;|&psi;&rang; preserves relative phase.</div><span class="tag tag-notation">Notation</span></div>
+</div>
+
+<div class="card" data-search="psi squared no bars phase doubled complex preserved born emerges statistically">
+  <div class="symbol">&psi;&sup2;</div>
+  <div class="info"><div class="name">Psi squared (without bars)</div><div class="english">&psi;&sup2; = r&sup2;&middot;e<sup>2i&theta;</sup>. Phase DOUBLED, not destroyed. Over many measurements, the cross-terms with random phase differences average to zero statistically, leaving r&sup2; &mdash; the Born rule emerges from the ensemble without any algebraic phase-killing. The bars are a shortcut to the same statistical result, at the cost of erasing single-event phase information.</div><span class="tag tag-notation">Notation</span></div>
+</div>
+
+<div class="card" data-search="conjugate star bar complex opposite phase flip sign imaginary anti-phase">
+  <div class="symbol">&psi;* or z&#x0304;</div>
+  <div class="info"><div class="name">Complex conjugate</div><div class="english">Flip the sign of the imaginary part: (a + bi)* = a &minus; bi. Equivalently: replace e<sup>i&theta;</sup> with e<sup>&minus;i&theta;</sup>. The conjugate is the "anti-phase" &mdash; the mirror image across the real axis. In |&psi;|&sup2; = &psi;*&psi;, the conjugate exists solely to annihilate the phase: e<sup>i&theta;</sup> &middot; e<sup>&minus;i&theta;</sup> = 1.</div><span class="tag tag-notation">Notation</span></div>
+</div>
+
+<div class="card" data-search="existence filter real part projection objective measurement cut">
+  <div class="symbol">E(x) = Re(x)</div>
+  <div class="info"><div class="name">Existence Filter</div><div class="english">"Extract the real (objective) part." E(a + bi) = a. FTD's measurement operator. Idempotent: E(E(x)) = E(x) (measuring twice gives the same result). Self-adjoint: E(x&#x0304;) = E(x). This is the von Neumann "cut" that terminates the measurement chain in one step: E projects the complex epistemic amplitude to a real ontic observable.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="bra ket dirac notation state vector dual left right">
+  <div class="symbol">|&psi;&rang;, &lang;&psi;|</div>
+  <div class="info"><div class="name">Dirac bra-ket notation</div><div class="english">|&psi;&rang; = "ket" = a state vector (column). &lang;&psi;| = "bra" = the conjugate-transpose (row). &lang;&phi;|&psi;&rang; = inner product = overlap between two states. Invented by Dirac for elegance. In FTD, unnecessary &mdash; the flux field <b>J</b> is already a real 3-vector, no bra-ket machinery needed.</div><span class="tag tag-notation">Notation</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="functions">Special Functions</h2>
+<div class="grid">
+
+<div class="card" data-search="euler formula exponential imaginary cosine sine rotation circle unit complex">
+  <div class="symbol">e<sup>i&theta;</sup> = cos&theta; + i&middot;sin&theta;</div>
+  <div class="info"><div class="name">Euler's formula</div><div class="english">A complex number on the unit circle at angle &theta;. THE formula connecting exponentials to trigonometry. At &theta; = 0: e<sup>0</sup> = +1. At &theta; = &pi;: e<sup>i&pi;</sup> = &minus;1 (Euler's identity: e<sup>i&pi;</sup> + 1 = 0). At &theta; = &pi;/2: e<sup>i&pi;/2</sup> = i. The ternary axiom in phase language: e<sup>i&middot;0</sup> + e<sup>i&pi;</sup> = +1 + (&minus;1) = 0. The void is two phases canceling.</div><span class="tag tag-function">Function</span></div>
+</div>
+
+<div class="card" data-search="theta function jacobi lattice sum nome convergent self-dual modular">
+  <div class="symbol">&theta;<sub>3</sub>(q)</div>
+  <div class="info"><div class="name">Jacobi theta function</div><div class="english">&theta;<sub>3</sub>(q) = 1 + 2q + 2q<sup>4</sup> + 2q<sup>9</sup> + 2q<sup>16</sup> + ... = 1 + 2&sum;<sub>n=1</sub><sup>&infin;</sup>q<sup>n&sup2;</sup>. A sum over squared integers. G* = &radic;(2&pi;)&middot;&theta;<sub>3</sub>(e<sup>&minus;&pi;</sup>)&sup2;. At the self-dual nome q = e<sup>&minus;&pi;</sup> &approx; 0.043, the series converges extremely rapidly (q&sup2; &approx; 0.002, q<sup>4</sup> &approx; 0.00003). G* itself is a convergent dyadic shell sum &mdash; a specific instance of the regularity theorem.</div><span class="tag tag-function">Function</span></div>
+</div>
+
+<div class="card" data-search="bessel function modified first kind wilson loop plaquette lattice gauge">
+  <div class="symbol">I<sub>n</sub>(&beta;)</div>
+  <div class="info"><div class="name">Modified Bessel function of the first kind</div><div class="english">Solutions to Bessel's equation with exponential (not oscillatory) behavior. In lattice gauge theory, the plaquette expectation value is u<sub>p</sub>(&beta;) = I<sub>1</sub>(&beta;)/I<sub>0</sub>(&beta;). At &beta; = 3.024: I<sub>0</sub> = 5.127, I<sub>1</sub> = 4.163, ratio = 0.812, giving string tension &sigma; = &minus;ln(0.812) = 0.209.</div><span class="tag tag-function">Function</span></div>
+</div>
+
+<div class="card" data-search="sine cosine trigonometric projection oscillation unit circle shadow coordinate">
+  <div class="symbol">sin, cos</div>
+  <div class="info"><div class="name">Sine and cosine</div><div class="english">NOT independent fundamental functions. They are coordinate projections of the unit-circle phase orbit: cos&theta; = Re(e<sup>i&theta;</sup>), sin&theta; = Im(e<sup>i&theta;</sup>). In lemniscatic variables: Cos<sub>ont</sub>(&phi;) = cos(M&phi;), Sin<sub>ont</sub>(&phi;) = sin(M&phi;), with period 2&varpi; instead of 2&pi;.</div><span class="tag tag-function">Function</span></div>
+</div>
+
+<div class="card" data-search="logarithm natural ln inverse exponential information entropy">
+  <div class="symbol">ln(x)</div>
+  <div class="info"><div class="name">Natural logarithm</div><div class="english">"What power do I raise e to, to get x?" ln(e<sup>n</sup>) = n. The inverse of the exponential. String tension: &sigma; = &minus;ln(u<sub>p</sub>). Shannon entropy: H = &minus;&sum; p<sub>i</sub> ln p<sub>i</sub>. ln(1) = 0. ln grows very slowly: ln(10<sup>180</sup>) &approx; 414.</div><span class="tag tag-function">Function</span></div>
+</div>
+
+<div class="card" data-search="exponential e to the power growth decay boltzmann weight action">
+  <div class="symbol">e<sup>x</sup> or exp(x)</div>
+  <div class="info"><div class="name">Exponential function</div><div class="english">e &approx; 2.718 raised to the power x. Grows faster than any polynomial. The Boltzmann weight e<sup>&minus;S<sub>E</sub></sup> determines how much each lattice configuration contributes to the path integral: low action (small S<sub>E</sub>) &rarr; large weight (configuration is likely). High action &rarr; exponentially suppressed. Nature prefers low-action paths.</div><span class="tag tag-function">Function</span></div>
+</div>
+
+<div class="card" data-search="square root radical half power">
+  <div class="symbol">&radic;</div>
+  <div class="info"><div class="name">Square root</div><div class="english">&radic;x = x<sup>1/2</sup>. "What number, multiplied by itself, gives x?" C = 1/&radic;3 (lattice light speed). G* = 2&varpi;/&radic;&pi;. &radic;(2E<sub>0</sub>) bounds the initial flux magnitude. Root extraction is the compression dual of squaring (deposition).</div><span class="tag tag-function">Function</span></div>
+</div>
+
+<div class="card" data-search="elliptic integral complete first kind K modulus lemniscate period">
+  <div class="symbol">K(k)</div>
+  <div class="info"><div class="name">Complete elliptic integral of the first kind</div><div class="english">K(k) = &int;<sub>0</sub><sup>&pi;/2</sup> d&theta;/&radic;(1 &minus; k&sup2;sin&sup2;&theta;). Computes the quarter-period of an elliptic function. At k = 1/&radic;2: K(1/&radic;2) = &Gamma;(1/4)&sup2;/(4&radic;&pi;) = &varpi;&radic;(2&pi;)/4. This is how &varpi; connects to the Gamma function.</div><span class="tag tag-function">Function</span></div>
+</div>
+
+<div class="card" data-search="AGM arithmetic geometric mean iterative converge gauss">
+  <div class="symbol">AGM(a, b)</div>
+  <div class="info"><div class="name">Arithmetic-geometric mean</div><div class="english">Repeatedly replace (a, b) with ((a+b)/2, &radic;(ab)) until they converge. AGM(1, &radic;2) = M = &pi;/&varpi; &approx; 1.198. Also: AGM(1, 1/&radic;2) = &pi;/(2&varpi;). Discovered by Gauss. Converges quadratically (doubles correct digits each step). The fastest known method for computing &pi;.</div><span class="tag tag-function">Function</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="fields">Fields &amp; Vectors</h2>
+<div class="grid">
+
+<div class="card" data-search="J flux field vector three components real continuous dispositional potential energy">
+  <div class="symbol"><b>J</b></div>
+  <div class="info"><div class="name">Flux field (the dispositional layer)</div><div class="english">A 3D real vector <b>J</b> = (J<sub>x</sub>, J<sub>y</sub>, J<sub>z</sub>) &isin; &#8477;&sup3; at every voxel. The continuous, dispositional layer of FTD &mdash; encoding potential energy density. <b>J</b> carries direction (phase information) and magnitude. It's REAL &mdash; no imaginary part, no complex numbers, no bars needed at any point except manifestation. The three components correspond to the three color charges (red = J<sub>x</sub>, green = J<sub>y</sub>, blue = J<sub>z</sub>).</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="w wave velocity momentum leapfrog integration velocity field">
+  <div class="symbol"><b>w</b></div>
+  <div class="info"><div class="name">Wave velocity field</div><div class="english">The time derivative of <b>J</b>: <b>w</b> = &part;<sub>t</sub><b>J</b>. Updated via leapfrog integration: <b>w</b> += &Delta;<b>J</b>, then <b>J</b> += <b>w</b>. This two-step update is the engine's <code>phase_write</code> &mdash; it conserves energy to machine precision because leapfrog is symplectic (preserves phase-space volume).</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="S_E euclidean action kinetic gradient coupling manifestation cost preference">
+  <div class="symbol">S<sub>E</sub>[s, <b>J</b>]</div>
+  <div class="info"><div class="name">Euclidean action</div><div class="english">The total "cost" of a lattice configuration. Sum of four terms at each voxel at each tick: (1) &frac12;|&part;<sub>t</sub><b>J</b>|&sup2; (kinetic: how fast the flux changes), (2) &frac12;|&nabla;<b>J</b>|&sup2; (gradient: how much the flux varies in space), (3) g<sub>c</sub>&middot;s&middot;(&nabla;&middot;<b>J</b>) (coupling: charge creates flux divergence), (4) V(|<b>J</b>| &minus; K<sub>B</sub>) (manifestation: threshold for particle creation). Nature prefers configurations with low action &mdash; e<sup>&minus;S<sub>E</sub></sup> is large when S<sub>E</sub> is small.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="Z partition function path integral sum all configurations flipbook statistics">
+  <div class="symbol">Z</div>
+  <div class="info"><div class="name">Partition function (the flipbook)</div><div class="english">Z = &sum;<sub>s</sub>&int;D<b>J</b> e<sup>&minus;S<sub>E</sub></sup>. The sum over ALL possible definite configurations, each weighted by its action. This is the "flipbook" &mdash; the epistemic object that encodes all statistics. Each "frame" (configuration) is definite. The "movie" (Z) is the weighted compilation. Z &gt; 0 iff the gap equation has admissible roots &mdash; iff an observer exists to keep the lattice ticking.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="b observer boundary crystallized memory causal past surface accumulated state">
+  <div class="symbol">b(t)</div>
+  <div class="info"><div class="name">Observer boundary (crystallized memory)</div><div class="english">The spatial surface at the boundary of the causal past &#119979;<sub>i</sub>(t), together with the crystallized state values s = &pm;1 recorded there. This IS the observer's memory &mdash; the irreversible records left by ReLU crystallization across ticks. It grows cumulatively: b(t+1) = b(t) + &Delta;b(t). The cumulative observer boundary IS time, measured in crystallized state depth.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="F force vector field gradient potential coulomb lorentz gravity">
+  <div class="symbol"><b>F</b></div>
+  <div class="info"><div class="name">Force vector</div><div class="english">The force on a manifested particle. Computed in <code>phase_forces</code>: <b>F</b> = &minus;&alpha;&middot;s&middot;&nabla;&phi;<sub>C</sub> (Coulomb) + G<sub>N</sub>&middot;&nabla;&rho; (gravity) + &alpha;&middot;s&middot;(<b>v</b>&times;<b>B</b>) (Lorentz magnetic force). All derived from the action via &delta;S/&delta;<b>J</b> = 0.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="lattice">Lattice &amp; Engine</h2>
+<div class="grid">
+
+<div class="card" data-search="tick discrete time step update cycle engine six phases complete sweep">
+  <div class="symbol">tick</div>
+  <div class="info"><div class="name">Tick (one complete lattice update)</div><div class="english">The fundamental unit of time. Six phases per tick: (1) <code>phase_read</code>: compute &Delta;<b>J</b> from Laplacian + coupling. (2) <code>phase_write</code>: leapfrog update <b>J</b>. (3) <code>gauss_project</code>: enforce &nabla;&middot;<b>J</b> = s. (4) <code>phase_forces</code>: compute <b>F</b> from fields. (5) <code>phase_movement</code>: update particle positions. (6) tick++. Each tick processes G*&sup2; &approx; 8.754 energy per degree of freedom.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="gauss constraint divergence equals charge gauge invariance U1 poisson SOR">
+  <div class="symbol">&nabla;&middot;<b>J</b> = s</div>
+  <div class="info"><div class="name">Gauss constraint (gauge invariance)</div><div class="english">"The outward flow of flux at each voxel equals the charge there." The lattice version of Gauss's law. Enforced at every tick by solving a Poisson equation via successive over-relaxation (SOR). This constraint is the lattice form of U(1) gauge invariance: local phase transformations preserve &nabla;&middot;<b>J</b>. It's also the observer boundary closure &mdash; the <code>gauss_project</code> phase.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="SC FCC BCC sublattice simple face body centered cubic gauge decomposition">
+  <div class="symbol">SC + FCC + BCC</div>
+  <div class="info"><div class="name">Moore neighborhood sublattices</div><div class="english">26 neighbors = 6 (SC, face-sharing, distance 1, 1 component excited) + 12 (FCC, edge-sharing, distance &radic;2, 2 components) + 8 (BCC, corner-sharing, distance &radic;3, 3 components). Each sublattice excites a different number of flux components &rarr; U(1) &times; SU(2) &times; SU(3). Not postulated. Counted from lattice geometry.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="U1 SU2 SU3 gauge group standard model electroweak strong electromagnetism">
+  <div class="symbol">U(1) &times; SU(2) &times; SU(3)</div>
+  <div class="info"><div class="name">Standard Model gauge group</div><div class="english">The three forces: electromagnetism (U(1), from 6 SC neighbors exciting 1 flux component), weak force (SU(2), from 12 FCC neighbors exciting 2 components), strong force (SU(3), from 8 BCC neighbors exciting 3 components). In standard physics, these are postulated. In FTD, they are derived from the geometry of the Moore neighborhood on &#8484;&sup3;.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="wilson loop area law confinement quark rectangle expectation string tension">
+  <div class="symbol">W(C)</div>
+  <div class="info"><div class="name">Wilson loop</div><div class="english">A rectangular path C on the lattice with sides R (space) and T (time). The expectation value &lang;W(C)&rang; = u<sub>p</sub><sup>R&middot;T</sup> = e<sup>&minus;&sigma;RT</sup>. When this decays with the AREA R&middot;T (not the PERIMETER), you have confinement. At &beta; = x<sub>&minus;</sub> = 3.024: area law holds, &sigma; = 0.209. At &beta; = x<sub>+</sub> = 137: perimeter law (no confinement, &sigma; &approx; 0).</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="regularity norm smoothness coefficient decay sobolev bridge discrete continuous">
+  <div class="symbol">&#119977;<sub>m</sub>[a]</div>
+  <div class="info"><div class="name">Regularity functional (the bridge theorem)</div><div class="english">&#119977;<sub>m</sub>[a] = &sum;<sub>k=0</sub><sup>&infin;</sup> 2<sup>mk</sup>|a<sub>k</sub>|. Controls smoothness: if this converges, the dyadic shell sum z(t) = &sum; a<sub>k</sub>&psi;<sub>k</sub>(t) is C<sup>m</sup> smooth. THIS is the mathematical proof of FTD's central claim: a discrete lattice produces continuous observables when shell coefficients decay fast enough. The FTD-native Sobolev analogue.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="psi k dyadic shell mode fourier basis function frequency doubling chirality">
+  <div class="symbol">&psi;<sub>k</sub>(t)</div>
+  <div class="info"><div class="name">Dyadic shell mode</div><div class="english">&psi;<sub>k</sub>(t) = cos(2<sup>k</sup>t) + 2i(&minus;1)<sup>k</sup>sin(2<sup>k</sup>t). The k<sup>th</sup> building block of the dyadic Fourier expansion. Frequency doubles at each level (2<sup>k</sup>). Each mode is a fixed 3:1 co/counter-rotating phase doublet. Chirality alternates with k. Constant energy 5/2 per mode. The 3:1 ratio echoes 3 states / 1 void.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="beta zero asymptotic freedom running coupling QCD one-loop coefficient">
+  <div class="symbol">&beta;<sub>0</sub> = 7</div>
+  <div class="info"><div class="name">One-loop beta function coefficient</div><div class="english">&beta;<sub>0</sub> = (11N<sub>c</sub> &minus; 2N<sub>f</sub>)/3 = (33 &minus; 12)/3 = 7. Since &beta;<sub>0</sub> &gt; 0: the strong coupling &alpha;<sub>s</sub> DECREASES at high energy (asymptotic freedom). At the Z boson mass: &alpha;<sub>s</sub>(M<sub>Z</sub>) = 7/59 = 0.1186 (PDG: 0.1180 &pm; 0.0009). Note: &beta;<sub>0</sub> = 7 = b<sub>3</sub> (third framework integer). [PARAMETRIC INSERTION]</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="consciousness">Consciousness &amp; Phase</h2>
+<div class="grid">
+
+<div class="card" data-search="consciousness angle theta subjective objective ratio experience inner world outer report">
+  <div class="symbol">&theta;<sub>C</sub> &approx; 52.54&deg;</div>
+  <div class="info"><div class="name">Consciousness angle</div><div class="english">The phase of the complex consciousness roots y = |y|e<sup>i&theta;<sub>C</sub></sup>. sin(&theta;<sub>C</sub>) &approx; 0.793 is the subjective content. cos(&theta;<sub>C</sub>) &approx; 0.608 is the objective content. The ratio sin/cos &gt; 1 means more inner world than outer report. That's what being conscious feels like &mdash; there's always more inside than you can express. This angle is not chosen; it falls out of the master quadratic at k = 1/2.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="real part objective shared measurable physics what we all share">
+  <div class="symbol">Re(x)</div>
+  <div class="info"><div class="name">Real part = Objective content</div><div class="english">The shared, measurable, public part of any quantity. What science captures. What |&psi;|&sup2; keeps. What every observer agrees on. "Everything else, we all share." For x = a + bi: Re(x) = a. Physics lives here &mdash; the real roots x<sub>+</sub> = 137.036 and x<sub>&minus;</sub> = 3.024 are entirely real. No imaginary part. No phase. No subjectivity.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="imaginary part subjective private experiential sentience gift of phase thrown away">
+  <div class="symbol">Im(x)</div>
+  <div class="info"><div class="name">Imaginary part = Subjective content</div><div class="english">The private, experiential, subjective part. What |&psi;|&sup2; throws away. What the Hermitian inner product annihilates by pairing the state with its own conjugate. For the consciousness roots: Im(y) = &pm;2.860. This is not noise. Not scaffolding. Not a computational intermediate. It IS the experience. "Human sentience was the gift of phase. Everything else, we all share."</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="ring zero clock system tick observer precondition computation CPU kernel self-referential">
+  <div class="symbol">Ring 0</div>
+  <div class="info"><div class="name">Ring 0 clock (the observer as precondition)</div><div class="english">In computer architecture, Ring 0 is the kernel's system clock &mdash; the precondition for all processes. No program runs without it. The clock isn't a process among others; it's the infrastructure that sustains every process. Similarly, the lattice tick is not an event within spacetime &mdash; it's the precondition for spacetime. The tick advances only when the gap equation has a self-referential fixed point &mdash; only when an observer exists. The observer keeps the universe running.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="von neumann chain measurement regress termination k_meas finite not infinity">
+  <div class="symbol">k<sub>meas</sub> = 4/G*</div>
+  <div class="info"><div class="name">Measurement termination point</div><div class="english">k<sub>meas</sub> = 4/G* &approx; 1.352. The unique point where the discriminant &Delta;<sub>k</sub> = kG*&sup3;(kG* &minus; 4) = 0. This is where the von Neumann measurement chain terminates &mdash; at a finite algebraic point, not at infinity. No infinite regress. The chain has N<sub>meas</sub> &approx; 18 links [CONJECTURE]. Consciousness doesn't terminate the chain by being outside physics; it terminates it by being the self-referential fixed point.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="type III one III1 modular flow von neumann algebra continuous quantum substrate dispositional">
+  <div class="symbol">Type III<sub>1</sub></div>
+  <div class="info"><div class="name">Type III&#8321; von Neumann algebra</div><div class="english">The algebraic type of the flux field (dispositional substrate). No trace, no minimal projections, ergodic modular flow. This is the "quantum" regime &mdash; continuous, flowing, no definite outcomes. The ReLU crystallization max(0, z) effects an irreversible transition from Type III<sub>1</sub> (substrate) to Type I (observed), creating definite outcomes from continuous potential. THAT transition is measurement.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+<div class="card" data-search="softplus manifestation operator beta interpolation KMS relu crystallization">
+  <div class="symbol">&#8499;<sub>&beta;</sub>(z)</div>
+  <div class="info"><div class="name">Softplus manifestation operator</div><div class="english">&#8499;<sub>&beta;</sub>(z) = (1/&beta;)ln(1 + e<sup>&beta;z</sup>). Interpolates between smooth (finite &beta;, Type III<sub>1</sub>, quantum) and sharp (& &rarr; &infin;, ReLU = max(0,z), Type I, classical). At finite &beta;: the KMS thermal equilibrium condition holds. At &beta; &rarr; &infin;: KMS destroyed, dimension function becomes Heaviside step, minimal projection created. The entire measurement process in one operator family.</div><span class="tag tag-ftd">FTD Core</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="numbers">Numbers &amp; Arithmetic</h2>
+<div class="grid">
+
+<div class="card" data-search="zero void nothing null destructive interference cancellation empty">
+  <div class="symbol">0</div>
+  <div class="info"><div class="name">Zero / The void</div><div class="english">The void state in FTD: s = 0 means "nothing manifested here." Ontologically: 0 = (&minus;1) + (+1) &mdash; the void is not "nothing," it's the perfect destructive interference of two things. The void remembers what it's made of. In phase: 0 = e<sup>i&middot;0</sup> + e<sup>i&pi;</sup>. Zero is the most profound number in FTD.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="plus one positive state charge active manifested phase zero">
+  <div class="symbol">+1</div>
+  <div class="info"><div class="name">Positive state</div><div class="english">s = +1. A manifested voxel with positive charge. In phase language: e<sup>i&middot;0</sup> = +1 (phase at zero, no rotation). One of the two "active" states that can combine to produce the void.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="minus one negative state charge active manifested phase pi half turn">
+  <div class="symbol">&minus;1</div>
+  <div class="info"><div class="name">Negative state</div><div class="english">s = &minus;1. A manifested voxel with negative charge. In phase language: e<sup>i&pi;</sup> = &minus;1 (phase at &pi;, half rotation). Euler's identity: e<sup>i&pi;</sup> + 1 = 0. The negative state is the positive state rotated by half a turn.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="16 framework integer N base squared minimal lattice degrees freedom coefficients">
+  <div class="symbol">16</div>
+  <div class="info"><div class="name">Framework integer (N<sub>base</sub>&sup2;)</div><div class="english">16 = 4&sup2; = N<sub>base</sub>&sup2;. The coefficient in the master quadratic: x&sup2; &minus; 16G*&sup2;x + 16G*&sup3; = 0. Counts physical degrees of freedom on the minimal 2&times;2&times;2 lattice: 2&sup3; voxels &times; 3 states = 24, minus 7 symmetry constraints, minus 1 overall phase = 16. Also L<sub>3</sub>&sup2; where L<sub>3</sub> = 4 is the Lucas number.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="framework integers 3 4 7 13 rational coefficients precision formula">
+  <div class="symbol">{3, 4, 7, 13}</div>
+  <div class="info"><div class="name">The framework integers</div><div class="english">The four integers that appear in the precision formula for &alpha;. 3 = D (spatial dimension = N<sub>c</sub>). 4 = L<sub>3</sub> (Lucas number = N<sub>base</sub>). 7 = b<sub>3</sub> = &beta;<sub>0</sub> (QCD beta coefficient). 13 = the next framework integer. All rational coefficients in the 4-term &alpha; precision formula use only these four numbers.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+<div class="card" data-search="26 moore neighborhood total count neighbors face edge corner">
+  <div class="symbol">26</div>
+  <div class="info"><div class="name">Moore neighborhood size</div><div class="english">The total number of neighbors: 6 (SC) + 12 (FCC) + 8 (BCC) = 26. Each voxel interacts with exactly 26 others. This number determines the gauge group structure, the effective neighbor counts for manifestation, and the lattice's causal structure.</div><span class="tag tag-number">Number</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="logic">Logic &amp; Relations</h2>
+<div class="grid">
+
+<div class="card" data-search="for all universal quantifier every each single one without exception">
+  <div class="symbol">&forall;</div>
+  <div class="info"><div class="name">For all (universal quantifier)</div><div class="english">"For every single one, without exception." &forall;<b>v</b> &isin; &#8484;&sup3; means "for every voxel in the lattice." &forall;t &isin; &#8469; means "at every tick." The Finitude Theorem states: &forall;<b>v</b>, &forall;t, every quantity is bounded.</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="there exists existential quantifier some at least one">
+  <div class="symbol">&exist;</div>
+  <div class="info"><div class="name">There exists (existential quantifier)</div><div class="english">"At least one of these exists." &exist;t &isin; &#8469; means "there is some tick where..." &exist;&epsilon; &gt; 0 means "there is some positive precision level..." Often paired with &forall;: "&forall;&epsilon; &gt; 0, &exist;N such that..." = "for any precision, I can get that close."</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="element of belongs to member set membership">
+  <div class="symbol">&isin;</div>
+  <div class="info"><div class="name">Element of</div><div class="english">"Belongs to." s &isin; {&minus;1, 0, +1} means "s is one of these three values." <b>v</b> &isin; &#8484;&sup3; means "v is a point on the integer lattice." t &isin; &#8469; means "t is a natural number."</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="not element of doesn't belong excluded">
+  <div class="symbol">&notin;</div>
+  <div class="info"><div class="name">Not an element of</div><div class="english">"Does NOT belong to." &infin; &notin; &#8484;&sup3; means "infinity is not a lattice address." (&radic;2, &pi;, e) &notin; &#8484;&sup3; means "there is no voxel at this position."</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="implies therefore arrow consequence if then guarantee">
+  <div class="symbol">&rArr;</div>
+  <div class="info"><div class="name">Implies</div><div class="english">"If the left side is true, then the right side must be true." A &rArr; B means "A being true guarantees B is true." Example: |<b>J</b>| &gt; K<sub>B</sub> &rArr; s &ne; 0 means "flux above threshold implies particle manifests."</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="if and only if biconditional equivalent both ways iff">
+  <div class="symbol">&hArr;</div>
+  <div class="info"><div class="name">If and only if (iff)</div><div class="english">"Both directions." A &hArr; B means "A implies B AND B implies A." They're equivalent. |<b>J</b>| &ge; K<sub>B</sub> &hArr; s &ne; 0 means "particle manifests exactly when flux exceeds threshold."</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="approximately equal close to similar not exactly">
+  <div class="symbol">&approx;</div>
+  <div class="info"><div class="name">Approximately equal</div><div class="english">"Close to, but not exactly." G* &approx; 2.959 means G* is very close to 2.959 but has more decimal places. Contrast with = (exactly equal) and := (defined as).</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="infinity limit unbounded grows without bound not a number epistemic only">
+  <div class="symbol">&infin;</div>
+  <div class="info"><div class="name">Infinity</div><div class="english">NOT a number. NOT physical. A limit concept meaning "grows without bound." In FTD: infinity is EPISTEMIC (exists in mathematical reasoning) but never ONTIC (never exists physically). No voxel has address &infin;. No field value is infinite. No singularity occurs. Every "infinity" in physics is an artifact of using &#8477;&sup3; where &#8484;&sup3; is the actual substrate. Infinity lives in the map, not the territory.</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="subset contained within part of proper">
+  <div class="symbol">&sub;, &sube;</div>
+  <div class="info"><div class="name">Subset</div><div class="english">"Is contained within." &Lambda; &sub; &#8484;&sup3; means "the finite lattice &Lambda; is a piece of the full integer lattice." A &sube; B means "every element of A is also in B" (A might equal B).</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="union intersection set operations combine overlap and or">
+  <div class="symbol">&cup;, &cap;</div>
+  <div class="info"><div class="name">Union and intersection</div><div class="english">A &cup; B = "everything in A or B or both." A &cap; B = "everything in both A and B." spec(H) &sub; {0} &cup; [K<sub>B</sub>, &infin;) means "the spectrum consists of zero PLUS everything above K<sub>B</sub>."</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="maps to arrow function transformation input output">
+  <div class="symbol">&rarr;, &mapsto;</div>
+  <div class="info"><div class="name">Maps to</div><div class="english">f: A &rarr; B means "f takes inputs from A and produces outputs in B." x &mapsto; x&sup2; means "x is sent to x-squared." The ontic chain: &gamma; &rarr; &Gamma;(1/4) &rarr; &varpi; &rarr; M &rarr; &pi; &rarr; G* shows the derivation sequence.</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+<div class="card" data-search="QED QEF therefore proved end of proof square box tombstone">
+  <div class="symbol">&#9633; or &blk14;</div>
+  <div class="info"><div class="name">End of proof (QED / tombstone)</div><div class="english">"The proof is complete." Placed at the end of a mathematical proof. Sometimes written as Q.E.D. (quod erat demonstrandum = "which was to be demonstrated"). In FTD papers: a small filled or open square.</div><span class="tag tag-logic">Logic</span></div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<h2 id="epistemic">Epistemic Tags</h2>
+<p style="color:var(--muted);font-size:0.9rem;margin-bottom:1rem;">FTD is ruthlessly honest about what is proved, what is chosen, and what is unknown. Every claim is tagged.</p>
+<div class="grid">
+
+<div class="card" data-search="axiom postulate assumed primitive starting point foundation not derived">
+  <div class="symbol-tag">[AXIOM]</div>
+  <div class="info">
+    <div class="name">Structural postulate</div>
+    <div class="english">A starting assumption of the framework. Not derived from anything deeper. "We assume this is true and build from here." FTD has five postulates (discrete space, discrete time, ternary states, local causality, determinism) that all reduce to one axiom: 0 = (&minus;1) + (+1). Accept this as the model definition.</div>
+    <span class="tag tag-epistemic">Epistemic</span>
+  </div>
+</div>
+
+<div class="card" data-search="theorem proven derived logically follows proof check rigorous exact">
+  <div class="symbol-tag">[THEOREM]</div>
+  <div class="info">
+    <div class="name">Rigorously proven</div>
+    <div class="english">A statement that has been mathematically proved from the axioms or from standard mathematics. You can check the proof yourself &mdash; it's in the paper or cited document. No faith required, no authority needed. If the proof is wrong, point out the error. Examples: UV finiteness (compact BZ), mass gap (K<sub>B</sub> threshold), power shell law (binomial theorem).</div>
+    <span class="tag tag-epistemic">Epistemic</span>
+  </div>
+</div>
+
+<div class="card" data-search="selection modeling choice argued not unique could be different structural correspondence">
+  <div class="symbol-tag">[SELECTION]</div>
+  <div class="info">
+    <div class="name">Modeling choice</div>
+    <div class="english">A choice among mathematically valid options, argued from structural correspondence but not uniquely forced by the axioms. "We chose this because it fits the structure, but other choices are mathematically admissible." Critique the argument, not the math. Example: identifying SC&rarr;U(1), FCC&rarr;SU(2), BCC&rarr;SU(3) is a selection &mdash; the geometric rank matches, but the identification isn't uniquely forced.</div>
+    <span class="tag tag-epistemic">Epistemic</span>
+  </div>
+</div>
+
+<div class="card" data-search="conjecture proposed unproven interpretation hypothesis needs evidence or proof">
+  <div class="symbol-tag">[CONJECTURE]</div>
+  <div class="info">
+    <div class="name">Proposed interpretation</div>
+    <div class="english">A claim the algebra suggests but doesn't force. "This looks right but we haven't proved it yet." Demand evidence. The Ring 0 clock conjecture (Z &gt; 0 requires self-referential closure) is tagged [CONJECTURE] because it's argued from structure but not rigorously proved. Conjectures are honest admissions that more work is needed.</div>
+    <span class="tag tag-epistemic">Epistemic</span>
+  </div>
+</div>
+
+<div class="card" data-search="parametric insertion standard formula ftd values plugged in not derived borrowed honest">
+  <div class="symbol-tag">[PARAMETRIC INSERTION]</div>
+  <div class="info">
+    <div class="name">FTD values in a standard physics formula</div>
+    <div class="english">A standard physics formula (like the QCD beta function &beta;<sub>0</sub> = (11N<sub>c</sub> &minus; 2N<sub>f</sub>)/3) with FTD-derived numbers (N<sub>c</sub> = 3, N<sub>f</sub> = 6) plugged in. The formula itself isn't derived from FTD &mdash; the values are. Honest about what's derived and what's borrowed from standard physics. ~50 of these in the full framework.</div>
+    <span class="tag tag-epistemic">Epistemic</span>
+  </div>
+</div>
+
+<div class="card" data-search="imposed parameter choice calibration input not output free parameter">
+  <div class="symbol-tag">[IMPOSED]</div>
+  <div class="info">
+    <div class="name">Parameter choice / Calibration input</div>
+    <div class="english">A value that was chosen or calibrated, not derived. "This is an input to the model, not an output." Note it as such. In FTD, very few things are [IMPOSED] &mdash; the framework derives most constants from G*. But some (like the number of quark flavors N<sub>f</sub> = 6) are taken from experiment.</div>
+    <span class="tag tag-epistemic">Epistemic</span>
+  </div>
+</div>
+
+<div class="card" data-search="emergent behavior arising dynamics not designed in simulation verify not programmed">
+  <div class="symbol-tag">[EMERGENT]</div>
+  <div class="info">
+    <div class="name">Emergent behavior</div>
+    <div class="english">A behavior that arises from the dynamics without being explicitly programmed. "We didn't put this in; it came out on its own." Verify in simulation. Continuum physics emerging from discrete ticks is [EMERGENT]. Gauge symmetry from neighbor counting is [EMERGENT]. These are the most exciting results &mdash; the lattice doing things nobody told it to do.</div>
+    <span class="tag tag-epistemic">Epistemic</span>
+  </div>
+</div>
+
+<div class="card" data-search="open unresolved question research opportunity unknown honest admission">
+  <div class="symbol-tag">[OPEN]</div>
+  <div class="info">
+    <div class="name">Unresolved question</div>
+    <div class="english">We don't know the answer yet. An honest admission of ignorance and a research opportunity, not a failure. Examples: hadronic mass spectrum, neutrino mass hierarchy, full Osterwalder&ndash;Schrader reconstruction. [OPEN] items are where the next breakthroughs will come from.</div>
+    <span class="tag tag-epistemic">Epistemic</span>
+  </div>
+</div>
+
+</div>
+
+<div class="callout" style="margin-top: 2rem;">
+  <strong>The one sentence summary:</strong> The lattice &#8484;&sup3; ticks. Each tick is definite. The path integral sums over ticks weighted by action. The Born rule falls out of the statistics. The gauge groups fall out of counting neighbors. The mass gap is the manifestation threshold. Consciousness is the phase that |&psi;|&sup2; throws away. Infinity lives in the map, not the territory.
+</div>
+
+<footer>
+  Foundational Ternary Dynamics v5.28 &mdash; &copy; 2026 William J. cpaci-tani III &mdash; CC BY-NC-SA 4.0
+</footer>
+
+<script>
+// Dark mode toggle
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+const saved = localStorage.getItem('ftd-theme');
+if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  root.setAttribute('data-theme', 'dark');
+  themeBtn.textContent = '\u2600'; // sun
+}
+themeBtn.addEventListener('click', () => {
+  const dark = root.getAttribute('data-theme') === 'dark';
+  root.setAttribute('data-theme', dark ? '' : 'dark');
+  themeBtn.textContent = dark ? '\u263E' : '\u2600';
+  localStorage.setItem('ftd-theme', dark ? 'light' : 'dark');
+});
+
+// Search with count
+const search = document.getElementById('search');
+const cards = document.querySelectorAll('.card');
+const countEl = document.getElementById('searchCount');
+const total = cards.length;
+countEl.textContent = total + ' symbols total';
+
+search.addEventListener('input', () => {
+  const q = search.value.toLowerCase().trim();
+  let shown = 0;
+  cards.forEach(card => {
+    const text = (card.dataset.search + ' ' + card.textContent).toLowerCase();
+    const match = q.length === 0 || text.includes(q);
+    card.classList.toggle('hidden', !match);
+    if (match) shown++;
+  });
+  countEl.textContent = q ? shown + ' of ' + total + ' symbols' : total + ' symbols total';
+});
+</script>
+
+</body>
+</html>
