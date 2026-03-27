@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Single Photon Source — Scientific Simulation</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden}
+h1{margin-top:16px;font-size:1.3em;font-weight:300;letter-spacing:.05em;color:#a0b8d8}
+.subtitle{font-size:.82em;color:#667;margin-bottom:6px;font-style:italic}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;margin:8px 0;max-width:1020px}
+.btn{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:.8em;transition:all .2s;white-space:nowrap}
+.btn:hover{background:#2a3a5a;border-color:#4a6a8a}
+.btn.active{background:#2a4a6a;border-color:#5a8aba;color:#fff}
+.toolbar label{font-size:.78em;color:#8899aa;display:flex;align-items:center;gap:4px}
+.toolbar input[type=range]{width:70px}
+.mode-label{font-size:.88em;color:#a0b8d8;margin:4px 0;text-align:center;min-height:1.3em}
+.main-layout{display:flex;gap:10px;align-items:flex-start;margin:4px 0}
+.canvas-container{position:relative}
+.canvas-container canvas{display:block;border:1px solid #1a1a2e;border-radius:4px}
+#overlayCanvas{position:absolute;top:0;left:0;pointer-events:none}
+.panel{width:270px;background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;font-size:.78em;max-height:722px;display:flex;flex-direction:column}
+.panel-header{padding:8px 10px;background:#111120;border-bottom:1px solid #1a1a2e;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:#a0b8d8;font-weight:500;user-select:none}
+.panel-body{padding:8px 10px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px}
+.panel-body.collapsed{display:none}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;color:#8899aa;font-family:monospace;font-size:.85em}
+.metrics .val{color:#c8d8e8}
+.plot-label{color:#667;font-size:.8em;margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+.plot-canvas{width:250px;height:120px;border:1px solid #1a1a2e;border-radius:3px;background:#08080d}
+.param-section{display:flex;flex-direction:column;gap:5px;border-top:1px solid #1a1a2e;padding-top:8px}
+.param-section label{display:flex;align-items:center;justify-content:space-between;color:#8899aa;font-size:.85em}
+.param-section input[type=range]{width:100px}
+.param-section .pval{color:#a0b8d8;font-family:monospace;min-width:40px;text-align:right}
+.param-fixed{color:#556;font-family:monospace;font-size:.85em}
+.export-section{display:flex;flex-direction:column;gap:4px;border-top:1px solid #1a1a2e;padding-top:8px}
+.export-section .btn{font-size:.78em;padding:4px 8px;text-align:left}
+.legend{display:flex;gap:14px;margin:6px 0;font-size:.75em;color:#667;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-swatch{width:12px;height:12px;border-radius:2px;border:1px solid #333}
+.info{max-width:1020px;padding:12px 18px;margin:6px 0 16px;background:#0d0d15;border:1px solid #1a1a2e;border-radius:6px;font-size:.82em;line-height:1.55;color:#889}
+.info em{color:#a0b8d8;font-style:normal}
+.info strong{color:#c8d8e8}
+.walkthrough{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,18,.95);border-top:2px solid #2a4a6a;padding:16px 24px;display:none;z-index:100}
+.wt-inner{max-width:800px;margin:0 auto}
+.wt-progress{font-size:.75em;color:#556;margin-bottom:4px;font-family:monospace}
+.wt-title{font-size:1.1em;color:#a0b8d8;margin-bottom:6px}
+.wt-text{color:#aab;line-height:1.5;font-size:.9em;margin-bottom:10px}
+.wt-text em{color:#c8d8e8;font-style:normal}
+.wt-buttons{display:flex;gap:8px}
+.gpu-banner{font-size:.72em;color:#4a6;background:#0a1a0a;border:1px solid #1a3a1a;padding:3px 10px;border-radius:3px;margin:4px 0}
+.cpu-banner{font-size:.72em;color:#a64;background:#1a0a0a;border:1px solid #3a1a1a;padding:3px 10px;border-radius:3px;margin:4px 0}
+</style>
+</head>
+<body>
+<h1>SINGLE PHOTON SOURCE &mdash; SCIENTIFIC SIMULATION</h1>
+<p class="subtitle">Huygens-Fresnel diffraction &middot; WebGPU accelerated &middot; c = 1/&radic;3</p>
+<div id="gpuStatus"></div>
+
+<div class="toolbar">
+  <button class="btn active" onclick="setMode(0)">&psi;</button>
+  <button class="btn" onclick="setMode(1)">Re(&psi;)</button>
+  <button class="btn" onclick="setMode(2)">Im(&psi;)</button>
+  <button class="btn" onclick="setMode(3)">&psi;&sup2;</button>
+  <button class="btn" onclick="setMode(4)">|&psi;|&sup2;</button>
+  <button class="btn" onclick="setMode(5)">Detector</button>
+  <button class="btn" onclick="setMode(6)">Ternary</button>
+  <label>Speed <input type="range" id="speedSlider" min="0.2" max="4" step="0.1" value="1"></label>
+  <button class="btn" onclick="resetSim()">Reset</button>
+  <button class="btn" id="btnGuide" onclick="startWalkthrough()">Guide</button>
+</div>
+
+<p class="mode-label" id="modeLabel">Full &psi; &mdash; amplitude as brightness, phase as color</p>
+
+<div class="main-layout">
+  <div class="canvas-container">
+    <canvas id="mainCanvas" width="720" height="720"></canvas>
+    <canvas id="overlayCanvas" width="720" height="720"></canvas>
+  </div>
+  <div class="panel" id="panel">
+    <div class="panel-header" onclick="togglePanel()">
+      <span>Analytics</span><span id="panelToggle">&#9662;</span>
+    </div>
+    <div class="panel-body" id="panelBody">
+      <div class="metrics">
+        <div>Frame</div><div class="val" id="mFrame">0</div>
+        <div>&int;|&psi;|&sup2;</div><div class="val" id="mEnergy">&mdash;</div>
+        <div>I<sub>max</sub></div><div class="val" id="mImax">&mdash;</div>
+        <div>Dots</div><div class="val" id="mDots">0</div>
+      </div>
+      <div class="plot-label">Intensity profile (midline)</div>
+      <canvas class="plot-canvas" id="intensityPlot" width="250" height="120"></canvas>
+      <div class="plot-label">Phase profile (midline)</div>
+      <canvas class="plot-canvas" id="phasePlot" width="250" height="120"></canvas>
+      <div class="param-section">
+        <label>&lambda; <input type="range" id="pLambda" min="10" max="100" value="32"> <span class="pval" id="vLambda">32</span></label>
+        <label>Wavelengths <input type="range" id="pNWl" min="1" max="20" value="1"> <span class="pval" id="vNWl">1</span></label>
+        <label>Spectral &Delta;&lambda;/&lambda; <input type="range" id="pSpecW" min="0" max="0.5" step="0.01" value="0"> <span class="pval" id="vSpecW">0</span></label>
+        <label>K<sub>B</sub> threshold <input type="range" id="pKB" min="0.005" max="0.5" step="0.005" value="0.05"> <span class="pval" id="vKB">0.05</span></label>
+        <label>Photon rate <input type="range" id="pRate" min="1" max="200" value="20"> <span class="pval" id="vRate">20</span></label>
+        <div class="param-fixed">c = 1/&radic;3 &asymp; 0.57735</div>
+      </div>
+      <div class="export-section">
+        <button class="btn" onclick="exportSnapshot()">Snapshot (JSON)</button>
+        <button class="btn" id="btnLog" onclick="toggleLog()">Start Log</button>
+        <button class="btn" onclick="exportDetector()">Detector (CSV)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legend" id="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#ff4444"></div> &theta;=0</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#44ff44"></div> &pi;/2</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#4488ff"></div> &pi;</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#cc44ff"></div> 3&pi;/2</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#111"></div> void</div>
+</div>
+
+<div class="info" id="infoBox"></div>
+
+<div class="walkthrough" id="walkthrough">
+  <div class="wt-inner">
+    <div class="wt-progress" id="wtProgress">Step 1 / 6</div>
+    <div class="wt-title" id="wtTitle"></div>
+    <div class="wt-text" id="wtText"></div>
+    <div class="wt-buttons">
+      <button class="btn" onclick="wtPrev()">&larr; Prev</button>
+      <button class="btn" onclick="wtNext()">Next &rarr;</button>
+      <button class="btn" onclick="closeWalkthrough()">&times; Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// Configuration
+// ============================================================
+const W = 720, H = 720;
+const C_SPEED = 1.0 / Math.sqrt(3.0);
+const TWO_PI = 2.0 * Math.PI;
+const SOURCE_X = W * 0.22, SOURCE_Y = H * 0.5;
+const FIELD_SIZE = W * H;
+
+// ============================================================
+// State
+// ============================================================
+let mode = 0; // 0=psi,1=re,2=im,3=psi2,4=born,5=dots,6=ternary
+let simTime = 0;
+let frameCount = 0;
+let useGPU = false;
+let lambda = 32, nWavelengths = 1, spectralWidth = 0;
+let kbThreshold = 0.05, photonRate = 20;
+
+let detectorDots = [];
+let probField = null; // cached |psi|^2 for rejection sampling
+let probFieldDirty = true;
+let recording = false;
+let recordedFrames = [];
+let wtActive = false, wtStep = 0;
+
+// CPU field arrays (for fallback and analytics)
+let cpuRe = new Float32Array(FIELD_SIZE);
+let cpuIm = new Float32Array(FIELD_SIZE);
+let midRe = new Float32Array(W);
+let midIm = new Float32Array(W);
+
+// GPU resources
+let gpuDevice, gpuCtx, gpuCanvasFormat;
+let computePipeline, renderPipeline;
+let computeBindGroup, renderBindGroup;
+let uniformBuf, renderUniformBuf;
+let fieldReBuf, fieldImBuf, stagingBuf;
+let readbackPending = false;
+
+// Canvases
+const mainCanvas = document.getElementById('mainCanvas');
+const overlayCanvas = document.getElementById('overlayCanvas');
+const overlayCtx = overlayCanvas.getContext('2d');
+let ctx2d = null; // Only used in CPU fallback
+
+// ============================================================
+// WGSL Compute Shader
+// ============================================================
+const COMPUTE_WGSL = `
+struct Params {
+  width: u32, height: u32, n_sources: u32, n_wavelengths: u32,
+  time: f32, c_speed: f32, time_scale: f32, _pad: f32,
+  sources: array<vec4<f32>, 4>,
+  wavelengths: array<vec4<f32>, 20>,
+};
+@group(0) @binding(0) var<uniform> p: Params;
+@group(0) @binding(1) var<storage, read_write> fre: array<f32>;
+@group(0) @binding(2) var<storage, read_write> fim: array<f32>;
+
+@compute @workgroup_size(16, 16)
+fn main(@builtin(global_invocation_id) gid: vec3u) {
+  let px = gid.x; let py = gid.y;
+  if (px >= p.width || py >= p.height) { return; }
+  let idx = py * p.width + px;
+  var re: f32 = 0.0; var im: f32 = 0.0;
+  for (var s = 0u; s < p.n_sources; s++) {
+    let sx = p.sources[s].x; let sy = p.sources[s].y;
+    let phi_s = p.sources[s].z;
+    let dx = f32(px) - sx; let dy = f32(py) - sy;
+    let r = max(sqrt(dx*dx + dy*dy), 0.5);
+    if (r < 2.0) { continue; }
+    let front = p.c_speed * p.time;
+    let causal = smoothstep(0.0, 8.0, front - r);
+    if (causal < 0.001) { continue; }
+    for (var n = 0u; n < p.n_wavelengths; n++) {
+      let k = p.wavelengths[n].x;
+      let w = p.wavelengths[n].y;
+      let omega = p.c_speed * k;
+      let phase = k * r - omega * p.time + phi_s;
+      let envelope = w * causal / sqrt(r);
+      re += envelope * cos(phase);
+      im += envelope * sin(phase);
+    }
+  }
+  fre[idx] = re;
+  fim[idx] = im;
+}
+`;
+
+// ============================================================
+// WGSL Render Shader
+// ============================================================
+const RENDER_WGSL = `
+struct RParams { width: u32, height: u32, mode: u32, kb: f32, };
+@group(0) @binding(0) var<uniform> rp: RParams;
+@group(0) @binding(1) var<storage, read> fre: array<f32>;
+@group(0) @binding(2) var<storage, read> fim: array<f32>;
+
+fn phase_rgb(th: f32) -> vec3f {
+  let h = ((th / 6.28318530718) % 1.0 + 1.0) % 1.0;
+  let hi = u32(h * 6.0) % 6u;
+  let f = h * 6.0 - f32(hi);
+  let q = 1.0 - f;
+  switch hi {
+    case 0u: { return vec3f(1.0, f, 0.0); }
+    case 1u: { return vec3f(q, 1.0, 0.0); }
+    case 2u: { return vec3f(0.0, 1.0, f); }
+    case 3u: { return vec3f(0.0, q, 1.0); }
+    case 4u: { return vec3f(f, 0.0, 1.0); }
+    case 5u: { return vec3f(1.0, 0.0, q); }
+    default: { return vec3f(0.0); }
+  }
+}
+
+fn diverging(v: f32) -> vec3f {
+  let c = clamp(v, -1.0, 1.0);
+  if (c >= 0.0) { return mix(vec3f(0.92,0.92,0.96), vec3f(0.85,0.15,0.12), c); }
+  else { return mix(vec3f(0.92,0.92,0.96), vec3f(0.12,0.15,0.85), -c); }
+}
+
+@vertex fn vs(@builtin(vertex_index) v: u32) -> @builtin(position) vec4f {
+  var pos = array<vec2f,3>(vec2f(-1,-1), vec2f(3,-1), vec2f(-1,3));
+  return vec4f(pos[v], 0, 1);
+}
+
+@fragment fn fs(@builtin(position) pos: vec4f) -> @location(0) vec4f {
+  let px = u32(pos.x); let py = u32(pos.y);
+  if (px >= rp.width || py >= rp.height) { return vec4f(0.039,0.039,0.059,1); }
+  let idx = py * rp.width + px;
+  let re = fre[idx]; let im = fim[idx];
+  let amp = sqrt(re*re + im*im);
+  let ph = atan2(im, re);
+  var c: vec3f;
+  switch rp.mode {
+    case 0u: { // Full psi
+      let rgb = phase_rgb(ph);
+      c = rgb * pow(min(1.0, amp * 5.0), 0.5);
+    }
+    case 1u: { c = diverging(re * 3.0); } // Re
+    case 2u: { c = diverging(im * 3.0); } // Im
+    case 3u: { // psi^2
+      let rgb = phase_rgb(ph * 2.0);
+      c = rgb * pow(min(1.0, amp*amp * 20.0), 0.5);
+    }
+    case 4u: { // |psi|^2
+      let b = pow(min(1.0, amp*amp * 40.0), 0.4);
+      c = vec3f(b);
+    }
+    case 5u: { c = vec3f(0.039, 0.039, 0.059); } // dots: black bg
+    case 6u: { // ternary
+      if (amp > rp.kb) {
+        if (re > 0.0) { c = vec3f(0.85, 0.18, 0.12); }
+        else { c = vec3f(0.12, 0.18, 0.85); }
+      } else { c = vec3f(0.02, 0.02, 0.03); }
+    }
+    default: { c = vec3f(0.0); }
+  }
+  return vec4f(c, 1.0);
+}
+`;
+
+// ============================================================
+// WebGPU Initialization
+// ============================================================
+async function initGPU() {
+  if (!navigator.gpu) return false;
+  try {
+    const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+    if (!adapter) return false;
+    gpuDevice = await adapter.requestDevice();
+    gpuCanvasFormat = navigator.gpu.getPreferredCanvasFormat();
+    gpuCtx = mainCanvas.getContext('webgpu');
+    gpuCtx.configure({ device: gpuDevice, format: gpuCanvasFormat, alphaMode: 'premultiplied' });
+
+    // Compute pipeline
+    const compModule = gpuDevice.createShaderModule({ code: COMPUTE_WGSL });
+    computePipeline = gpuDevice.createComputePipeline({ layout: 'auto', compute: { module: compModule, entryPoint: 'main' } });
+
+    // Render pipeline
+    const rendModule = gpuDevice.createShaderModule({ code: RENDER_WGSL });
+    renderPipeline = gpuDevice.createRenderPipeline({
+      layout: 'auto',
+      vertex: { module: rendModule, entryPoint: 'vs' },
+      fragment: { module: rendModule, entryPoint: 'fs', targets: [{ format: gpuCanvasFormat }] },
+      primitive: { topology: 'triangle-list' },
+    });
+
+    // Buffers
+    const paramSize = 32 + 4*16 + 20*16; // 416 bytes
+    uniformBuf = gpuDevice.createBuffer({ size: paramSize, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    renderUniformBuf = gpuDevice.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    const fieldBytes = FIELD_SIZE * 4;
+    fieldReBuf = gpuDevice.createBuffer({ size: fieldBytes, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+    fieldImBuf = gpuDevice.createBuffer({ size: fieldBytes, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+    const midlineBytes = W * 4 * 2; // Re + Im for one row
+    stagingBuf = gpuDevice.createBuffer({ size: midlineBytes, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+
+    // Bind groups
+    computeBindGroup = gpuDevice.createBindGroup({
+      layout: computePipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: uniformBuf } },
+        { binding: 1, resource: { buffer: fieldReBuf } },
+        { binding: 2, resource: { buffer: fieldImBuf } },
+      ]
+    });
+    renderBindGroup = gpuDevice.createBindGroup({
+      layout: renderPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: renderUniformBuf } },
+        { binding: 1, resource: { buffer: fieldReBuf } },
+        { binding: 2, resource: { buffer: fieldImBuf } },
+      ]
+    });
+
+    return true;
+  } catch (e) {
+    console.warn('WebGPU init failed:', e);
+    return false;
+  }
+}
+
+// ============================================================
+// Wavelength Configuration
+// ============================================================
+function getWavelengths() {
+  const wls = [];
+  if (nWavelengths === 1 || spectralWidth === 0) {
+    wls.push({ k: TWO_PI / lambda, weight: 1.0 });
+  } else {
+    for (let i = 0; i < nWavelengths; i++) {
+      const t = (i / (nWavelengths - 1)) - 0.5; // -0.5 to 0.5
+      const dl = t * spectralWidth * lambda;
+      const lam = lambda + dl;
+      const gaussW = Math.exp(-2 * t * t); // Gaussian spectral envelope
+      wls.push({ k: TWO_PI / lam, weight: gaussW });
+    }
+    // Normalize weights
+    const sum = wls.reduce((a, w) => a + w.weight, 0);
+    wls.forEach(w => w.weight /= sum);
+  }
+  return wls;
+}
+
+// ============================================================
+// GPU Uniform Update
+// ============================================================
+function writeGPUUniforms() {
+  const wls = getWavelengths();
+  const data = new ArrayBuffer(416);
+  const u32 = new Uint32Array(data);
+  const f32 = new Float32Array(data);
+
+  u32[0] = W; u32[1] = H; u32[2] = 1; u32[3] = wls.length;
+  f32[4] = simTime; f32[5] = C_SPEED; f32[6] = 1.0; f32[7] = 0;
+  // Source 0 at offset 32 (f32 index 8)
+  f32[8] = SOURCE_X; f32[9] = SOURCE_Y; f32[10] = 0; f32[11] = 1;
+  // Wavelengths at offset 96 (f32 index 24)
+  for (let i = 0; i < 20; i++) {
+    const off = 24 + i * 4;
+    f32[off] = i < wls.length ? wls[i].k : 0;
+    f32[off+1] = i < wls.length ? wls[i].weight : 0;
+    f32[off+2] = 0; f32[off+3] = 0;
+  }
+  gpuDevice.queue.writeBuffer(uniformBuf, 0, data);
+
+  // Render uniforms
+  const rd = new ArrayBuffer(16);
+  const ru = new Uint32Array(rd);
+  const rf = new Float32Array(rd);
+  ru[0] = W; ru[1] = H; ru[2] = mode; rf[3] = kbThreshold;
+  gpuDevice.queue.writeBuffer(renderUniformBuf, 0, rd);
+}
+
+// ============================================================
+// GPU Render
+// ============================================================
+function renderGPU() {
+  writeGPUUniforms();
+  const encoder = gpuDevice.createCommandEncoder();
+
+  // Compute pass
+  const comp = encoder.beginComputePass();
+  comp.setPipeline(computePipeline);
+  comp.setBindGroup(0, computeBindGroup);
+  comp.dispatchWorkgroups(Math.ceil(W/16), Math.ceil(H/16));
+  comp.end();
+
+  // Render pass
+  const textureView = gpuCtx.getCurrentTexture().createView();
+  const rp = encoder.beginRenderPass({
+    colorAttachments: [{ view: textureView, clearValue: {r:0.039,g:0.039,b:0.059,a:1}, loadOp:'clear', storeOp:'store' }]
+  });
+  rp.setPipeline(renderPipeline);
+  rp.setBindGroup(0, renderBindGroup);
+  rp.draw(3);
+  rp.end();
+
+  // Midline readback (every 4 frames, when not pending)
+  const doReadback = !readbackPending && frameCount % 4 === 0;
+  if (doReadback) {
+    const midRow = Math.floor(H / 2);
+    const rowBytes = W * 4;
+    const offset = midRow * rowBytes;
+    encoder.copyBufferToBuffer(fieldReBuf, offset, stagingBuf, 0, rowBytes);
+    encoder.copyBufferToBuffer(fieldImBuf, offset, stagingBuf, rowBytes, rowBytes);
+  }
+
+  gpuDevice.queue.submit([encoder.finish()]);
+
+  if (doReadback) {
+    readbackPending = true;
+    stagingBuf.mapAsync(GPUMapMode.READ).then(() => {
+      const mapped = new Float32Array(stagingBuf.getMappedRange());
+      midRe.set(mapped.subarray(0, W));
+      midIm.set(mapped.subarray(W, W * 2));
+      stagingBuf.unmap();
+      readbackPending = false;
+    }).catch(() => { readbackPending = false; });
+  }
+}
+
+// ============================================================
+// CPU Fallback
+// ============================================================
+function renderCPU() {
+  if (!ctx2d) ctx2d = mainCanvas.getContext('2d');
+  const imgData = ctx2d.createImageData(W, H);
+  const pixels = imgData.data;
+  const step = 3;
+  const wls = getWavelengths();
+
+  for (let py = 0; py < H; py += step) {
+    for (let px = 0; px < W; px += step) {
+      const dx = px - SOURCE_X, dy = py - SOURCE_Y;
+      const r = Math.max(Math.sqrt(dx*dx + dy*dy), 0.5);
+      let re = 0, im = 0;
+      if (r >= 2) {
+        const front = C_SPEED * simTime;
+        const causal = smoothstepJS(0, 8, front - r);
+        if (causal > 0.001) {
+          for (const wl of wls) {
+            const omega = C_SPEED * wl.k;
+            const phase = wl.k * r - omega * simTime;
+            const env = wl.weight * causal / Math.sqrt(r);
+            re += env * Math.cos(phase);
+            im += env * Math.sin(phase);
+          }
+        }
+      }
+      // Store in CPU arrays
+      const idx = py * W + px;
+      cpuRe[idx] = re; cpuIm[idx] = im;
+      // Colormap
+      const [cr, cg, cb] = colormapJS(re, im);
+      for (let sy = 0; sy < step && py+sy < H; sy++) {
+        for (let sx = 0; sx < step && px+sx < W; sx++) {
+          const pi = ((py+sy) * W + (px+sx)) * 4;
+          pixels[pi] = cr; pixels[pi+1] = cg; pixels[pi+2] = cb; pixels[pi+3] = 255;
+        }
+      }
+    }
+  }
+  ctx2d.putImageData(imgData, 0, 0);
+  // Fill midline arrays for analytics
+  const midRow = Math.floor(H / 2);
+  for (let x = 0; x < W; x++) {
+    midRe[x] = cpuRe[midRow * W + x];
+    midIm[x] = cpuIm[midRow * W + x];
+  }
+}
+
+function smoothstepJS(lo, hi, x) {
+  const t = Math.max(0, Math.min(1, (x - lo) / (hi - lo)));
+  return t * t * (3 - 2 * t);
+}
+
+// ============================================================
+// CPU Colormap
+// ============================================================
+function phaseToRGB(theta) {
+  const h = ((theta / TWO_PI) % 1 + 1) % 1;
+  const hi = Math.floor(h * 6) % 6;
+  const f = h * 6 - Math.floor(h * 6);
+  const q = 1 - f;
+  switch (hi) {
+    case 0: return [1, f, 0];
+    case 1: return [q, 1, 0];
+    case 2: return [0, 1, f];
+    case 3: return [0, q, 1];
+    case 4: return [f, 0, 1];
+    case 5: return [1, 0, q];
+  }
+  return [0,0,0];
+}
+
+function colormapJS(re, im) {
+  const amp = Math.sqrt(re*re + im*im);
+  const ph = Math.atan2(im, re);
+  let cr, cg, cb;
+  switch (mode) {
+    case 0: { // full psi
+      const [pr,pg,pb] = phaseToRGB(ph);
+      const b = Math.pow(Math.min(1, amp*5), 0.5);
+      cr = pr*b*255|0; cg = pg*b*255|0; cb = pb*b*255|0; break;
+    }
+    case 1: { // Re
+      const v = Math.max(-1, Math.min(1, re*3));
+      if (v >= 0) { cr = 235*(1-v)+217*v|0; cg = 235*(1-v)+38*v|0; cb = 245*(1-v)+31*v|0; }
+      else { cr = 235*(1+v)+31*(-v)|0; cg = 235*(1+v)+38*(-v)|0; cb = 245*(1+v)+217*(-v)|0; }
+      break;
+    }
+    case 2: { // Im (same diverging map)
+      const v = Math.max(-1, Math.min(1, im*3));
+      if (v >= 0) { cr = 235*(1-v)+217*v|0; cg = 235*(1-v)+38*v|0; cb = 245*(1-v)+31*v|0; }
+      else { cr = 235*(1+v)+31*(-v)|0; cg = 235*(1+v)+38*(-v)|0; cb = 245*(1+v)+217*(-v)|0; }
+      break;
+    }
+    case 3: { // psi^2
+      const [pr,pg,pb] = phaseToRGB(ph * 2);
+      const b = Math.pow(Math.min(1, amp*amp*20), 0.5);
+      cr = pr*b*255|0; cg = pg*b*255|0; cb = pb*b*255|0; break;
+    }
+    case 4: { // |psi|^2
+      const b = Math.pow(Math.min(1, amp*amp*40), 0.4);
+      cr = cg = cb = b*255|0; break;
+    }
+    case 5: cr = 10; cg = 10; cb = 15; break; // dots bg
+    case 6: { // ternary
+      if (amp > kbThreshold) {
+        if (re > 0) { cr = 217; cg = 46; cb = 31; }
+        else { cr = 31; cg = 46; cb = 217; }
+      } else { cr = 5; cg = 5; cb = 8; }
+      break;
+    }
+    default: cr = cg = cb = 0;
+  }
+  return [cr, cg, cb];
+}
+
+// ============================================================
+// Overlay Rendering (source, phase wheel, labels)
+// ============================================================
+function renderOverlay() {
+  const ctx = overlayCtx;
+  ctx.clearRect(0, 0, W, H);
+
+  // Source marker
+  ctx.beginPath();
+  ctx.arc(SOURCE_X, SOURCE_Y, 5, 0, TWO_PI);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(SOURCE_X, SOURCE_Y, 9, 0, TWO_PI);
+  ctx.strokeStyle = 'rgba(100,150,200,0.4)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.font = '10px monospace';
+  ctx.fillStyle = 'rgba(160,184,216,0.6)';
+  ctx.fillText('source', SOURCE_X - 16, SOURCE_Y + 22);
+
+  // Phase wheel (bottom-left)
+  if (mode === 0 || mode === 3) {
+    const cx = 50, cy = H - 50, r = 28;
+    for (let a = 0; a < TWO_PI; a += 0.15) {
+      const [pr, pg, pb] = phaseToRGB(a);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, -a, -a - 0.2, true);
+      ctx.closePath();
+      ctx.fillStyle = `rgb(${pr*200|0},${pg*200|0},${pb*200|0})`;
+      ctx.fill();
+    }
+    // Rotating needle (global phase)
+    const wls = getWavelengths();
+    const omega = C_SPEED * wls[0].k;
+    const needleAngle = -(omega * simTime) % TWO_PI;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(needleAngle), cy + r * Math.sin(needleAngle));
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, TWO_PI);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.font = '9px monospace';
+    ctx.fillStyle = 'rgba(160,184,216,0.5)';
+    ctx.fillText('phase', cx - 14, cy + r + 14);
+  }
+
+  // Detector dots
+  if (mode === 5) {
+    for (const dot of detectorDots) {
+      ctx.beginPath();
+      ctx.arc(dot.x, dot.y, 1.2, 0, TWO_PI);
+      ctx.fillStyle = `rgba(200,220,255,${dot.a})`;
+      ctx.fill();
+    }
+  }
+
+  // Midline indicator
+  if (mode !== 5) {
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(0, H/2);
+    ctx.lineTo(W, H/2);
+    ctx.strokeStyle = 'rgba(160,184,216,0.12)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+// ============================================================
+// Detector Mode
+// ============================================================
+function addDetectorDots() {
+  // Build probability field from midline if not cached
+  if (probFieldDirty || !probField) {
+    // Use current midline to estimate the full-field distribution
+    // For a point source the pattern is rotationally symmetric
+    probField = new Float32Array(W * H);
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const dx = x - SOURCE_X, dy = y - SOURCE_Y;
+        const r = Math.max(Math.sqrt(dx*dx + dy*dy), 1);
+        if (r < 3) { probField[y*W+x] = 0; continue; }
+        // 1/r^2 falloff with causal mask
+        const front = C_SPEED * simTime;
+        const c = smoothstepJS(0, 8, front - r);
+        probField[y*W+x] = c / r;
+      }
+    }
+    probFieldDirty = false;
+  }
+  // Rejection sampling
+  const maxProb = 1.0 / 3.0; // |1/sqrt(r)|^2 = 1/r, at r=3
+  for (let i = 0; i < photonRate; i++) {
+    let attempts = 0;
+    while (attempts < 100) {
+      attempts++;
+      const x = Math.random() * W;
+      const y = Math.random() * H;
+      const ix = Math.floor(x), iy = Math.floor(y);
+      if (ix < 0 || ix >= W || iy < 0 || iy >= H) continue;
+      const p = probField[iy * W + ix];
+      if (Math.random() < p / maxProb) {
+        detectorDots.push({ x, y, a: 0.3 + Math.random() * 0.7 });
+        break;
+      }
+    }
+  }
+}
+
+// ============================================================
+// Analytics
+// ============================================================
+function updateAnalytics() {
+  document.getElementById('mFrame').textContent = frameCount;
+
+  // Compute metrics from midline
+  let imax = 0, imin = Infinity, energy = 0;
+  const intensities = new Float32Array(W);
+  const phases = new Float32Array(W);
+  for (let x = 0; x < W; x++) {
+    const re = midRe[x], im = midIm[x];
+    const I = re*re + im*im;
+    intensities[x] = I;
+    phases[x] = Math.atan2(im, re);
+    if (I > imax) imax = I;
+    if (I < imin && x > SOURCE_X + 20) imin = I; // skip near source
+    energy += I;
+  }
+  document.getElementById('mEnergy').textContent = energy.toFixed(1);
+  document.getElementById('mImax').textContent = imax.toFixed(4);
+  document.getElementById('mDots').textContent = detectorDots.length;
+
+  // Intensity profile plot
+  drawLinePlot('intensityPlot', intensities, '#5588cc', 'I(x)', imax);
+
+  // Phase profile plot
+  drawLinePlot('phasePlot', phases, '#cc8855', 'arg(ψ)', Math.PI, -Math.PI);
+
+  // Record if logging
+  if (recording) {
+    recordedFrames.push({
+      frame: frameCount,
+      time: simTime,
+      midline_re: Array.from(midRe),
+      midline_im: Array.from(midIm),
+    });
+  }
+}
+
+function drawLinePlot(canvasId, data, color, label, ymax, ymin) {
+  const c = document.getElementById(canvasId);
+  const ctx = c.getContext('2d');
+  const cw = c.width, ch = c.height;
+  ctx.fillStyle = '#08080d';
+  ctx.fillRect(0, 0, cw, ch);
+
+  if (ymax === undefined) ymax = Math.max(...data) || 1;
+  if (ymin === undefined) ymin = 0;
+  const range = ymax - ymin || 1;
+  const margin = 4;
+
+  // Grid lines
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = margin + (ch - 2*margin) * i / 4;
+    ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(cw-margin, y); ctx.stroke();
+  }
+
+  // Data line
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let i = 0; i < data.length; i++) {
+    const x = margin + (cw - 2*margin) * i / data.length;
+    const y = margin + (ch - 2*margin) * (1 - (data[i] - ymin) / range);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Analytical theory overlay for single source: I ~ 1/r^2
+  if (canvasId === 'intensityPlot') {
+    ctx.strokeStyle = 'rgba(255,255,100,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,3]);
+    ctx.beginPath();
+    for (let i = 0; i < W; i++) {
+      const dx = i - SOURCE_X;
+      const r = Math.abs(dx);
+      const theory = r > 3 ? 1/r : 0;
+      const x = margin + (cw - 2*margin) * i / W;
+      const y = margin + (ch - 2*margin) * (1 - (theory - ymin) / range);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Label
+  ctx.font = '9px monospace';
+  ctx.fillStyle = 'rgba(160,184,216,0.5)';
+  ctx.fillText(label, margin + 2, margin + 10);
+  if (canvasId === 'intensityPlot') {
+    ctx.fillStyle = 'rgba(255,255,100,0.4)';
+    ctx.fillText('theory 1/r', cw - 62, margin + 10);
+  }
+}
+
+// ============================================================
+// Mode Switching
+// ============================================================
+const MODE_NAMES = [
+  'Full \u03c8 \u2014 amplitude as brightness, phase as color',
+  'Re(\u03c8) \u2014 real part of the wavefunction',
+  'Im(\u03c8) \u2014 imaginary part of the wavefunction',
+  '\u03c8\u00b2 \u2014 squared WITHOUT absolute value bars (phase preserved)',
+  '|\u03c8|\u00b2 \u2014 Born rule probability density (phase destroyed)',
+  'Detector \u2014 individual photon clicks accumulating',
+  'Ternary \u2014 FTD lattice states: +1 (red), \u22121 (blue), 0 (void)',
+];
+
+const MODE_INFO = [
+  `<strong>Full \u03c8:</strong> Each point shows the complex amplitude. <em>Color = phase</em> (angle in the complex plane). <em>Brightness = magnitude</em>. This is the <strong>complete information</strong>. The phase determines interference, diffraction, and every quantum effect. <strong>This is what the Hermitian inner product conjugates away.</strong>`,
+  `<strong>Re(\u03c8):</strong> The real component of the wavefunction. Red = positive, blue = negative. This is one of the two real-valued halves that \u27e8\u03c8| multiplies by e<sup>\u2212i\u03b8</sup> to annihilate.`,
+  `<strong>Im(\u03c8):</strong> The imaginary component. Together with Re(\u03c8), they form the full complex amplitude. The Hermitian inner product is <em>designed</em> to conjugate one against the other.`,
+  `<strong>\u03c8\u00b2 (no bars):</strong> Square without absolute value bars. The phase <em>doubles</em> (2\u03b8) but <strong>survives</strong>. Every color is still present. No information is destroyed. This is what you get if you simply don't apply Born's 1926 footnote.`,
+  `<strong>|\u03c8|\u00b2:</strong> The Born rule. All phase destroyed. Every color collapses to gray. You know <em>where</em> but not <em>how it was rotating</em>. <strong>The measurement problem is the question: "where did the color go?"</strong><br>Answer: you threw it away. Right here.`,
+  `<strong>Detector clicks:</strong> Each dot is one photon detected. They land as <em>single points</em> \u2014 particle-like. The pattern follows |\u03c8|\u00b2. <strong>Each dot had a phase.</strong> The detector only records <em>where</em>, never <em>how it was rotating</em>.`,
+  `<strong>Ternary mode:</strong> The FTD lattice view. Sites with |\u03c8| > K<sub>B</sub> manifest as <em>+1</em> (red) or <em>\u22121</em> (blue) based on Re(\u03c8). Everything below threshold is <strong>void</strong> (black). The ternary axiom: three states from continuous physics.`,
+];
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.toolbar .btn').forEach((b, i) => {
+    if (i < 7) b.classList.toggle('active', i === m);
+  });
+  document.getElementById('modeLabel').innerHTML = MODE_NAMES[m];
+  document.getElementById('infoBox').innerHTML = MODE_INFO[m];
+  const legend = document.getElementById('legend');
+  legend.style.display = (m === 0 || m === 3) ? 'flex' : 'none';
+  if (m === 5) probFieldDirty = true;
+}
+
+// ============================================================
+// Walkthrough
+// ============================================================
+const WT_STEPS = [
+  { title: 'Here is \u03c8', mode: 0,
+    text: 'Every point carries two numbers: how big (amplitude) and how it\'s rotating (phase). This is the <em>complete information</em>. The phase determines interference, diffraction, and every quantum effect.' },
+  { title: 'Re(\u03c8) and Im(\u03c8)', mode: 1,
+    text: 'These are the two real-valued components of the complex amplitude. The Hermitian inner product \u27e8\u03c8|\u03c8\u27e9 multiplies one by e<sup>\u2212i\u03b8</sup> to cancel the other. Toggle to Im(\u03c8) to see the second half.' },
+  { title: '\u03c8 squared', mode: 3,
+    text: 'Square <em>without</em> the absolute value bars. The phase doubles (2\u03b8) but <em>survives</em>. Every color is still present. No information is destroyed. This is what you get without Born\'s ad hoc shortcut.' },
+  { title: 'What the bars do', mode: 4,
+    text: 'The absolute value bars strip the phase. Every color collapses to gray. You know WHERE the photon might be, but not HOW IT WAS ROTATING when it arrived. Compare with the full \u03c8 view \u2014 all that color, gone.' },
+  { title: 'The bars are engineered', mode: 4,
+    text: 'Born added |\u00b7|\u00b2 in a footnote (1926). Von Neumann built Hilbert space backwards from "outputs must be real." The Hermitian inner product was <em>designed</em> to guarantee real positive outputs by annihilating e<sup>i\u03b8</sup> with e<sup>\u2212i\u03b8</sup>. <strong>The bars are a design choice, not a law of nature.</strong>' },
+  { title: 'The hard problem is self-inflicted', mode: 0,
+    text: 'Phase IS experience. \u27e8\u03c8|\u03c8\u27e9 was designed to destroy it. The measurement operator eliminates what it\'s looking for. <strong>The hard problem exists because the Born rule was engineered to produce it.</strong>' },
+];
+
+function startWalkthrough() {
+  wtActive = true; wtStep = 0;
+  applyWTStep();
+  document.getElementById('walkthrough').style.display = 'block';
+}
+function closeWalkthrough() {
+  wtActive = false;
+  document.getElementById('walkthrough').style.display = 'none';
+}
+function wtNext() { if (wtStep < WT_STEPS.length - 1) { wtStep++; applyWTStep(); } }
+function wtPrev() { if (wtStep > 0) { wtStep--; applyWTStep(); } }
+function applyWTStep() {
+  const s = WT_STEPS[wtStep];
+  document.getElementById('wtProgress').textContent = `Step ${wtStep+1} / ${WT_STEPS.length}`;
+  document.getElementById('wtTitle').textContent = s.title;
+  document.getElementById('wtText').innerHTML = s.text;
+  setMode(s.mode);
+}
+
+// ============================================================
+// Data Export
+// ============================================================
+function exportSnapshot() {
+  const snapshot = {
+    type: 'single_photon_source_snapshot',
+    frame: frameCount, time: simTime,
+    params: { lambda, nWavelengths, spectralWidth, kbThreshold, c: C_SPEED,
+              source: { x: SOURCE_X, y: SOURCE_Y } },
+    midline: { re: Array.from(midRe), im: Array.from(midIm) },
+    width: W, height: H,
+  };
+  downloadJSON(snapshot, `photon_snapshot_${frameCount}.json`);
+}
+
+function toggleLog() {
+  recording = !recording;
+  document.getElementById('btnLog').textContent = recording ? 'Stop Log' : 'Start Log';
+  document.getElementById('btnLog').classList.toggle('active', recording);
+  if (!recording && recordedFrames.length > 0) {
+    downloadJSON({
+      type: 'single_photon_log',
+      params: { lambda, nWavelengths, spectralWidth, c: C_SPEED },
+      frames: recordedFrames,
+    }, `photon_log_${Date.now()}.json`);
+    recordedFrames = [];
+  }
+}
+
+function exportDetector() {
+  if (detectorDots.length === 0) return;
+  let csv = 'x,y,alpha\n';
+  detectorDots.forEach(d => { csv += `${d.x.toFixed(2)},${d.y.toFixed(2)},${d.a.toFixed(3)}\n`; });
+  downloadCSV(csv, `detector_${detectorDots.length}dots.csv`);
+}
+
+function downloadJSON(obj, filename) {
+  const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function downloadCSV(text, filename) {
+  const blob = new Blob([text], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ============================================================
+// Reset
+// ============================================================
+function resetSim() {
+  simTime = 0; frameCount = 0;
+  detectorDots = [];
+  probFieldDirty = true;
+}
+
+// ============================================================
+// Panel Toggle
+// ============================================================
+function togglePanel() {
+  const body = document.getElementById('panelBody');
+  body.classList.toggle('collapsed');
+  document.getElementById('panelToggle').textContent = body.classList.contains('collapsed') ? '\u25b8' : '\u25be';
+}
+
+// ============================================================
+// Main Render Loop
+// ============================================================
+function render() {
+  const speed = parseFloat(document.getElementById('speedSlider').value);
+  simTime += 5.0 * speed;
+  frameCount++;
+
+  // Render field
+  if (useGPU) renderGPU();
+  else renderCPU();
+
+  // Overlay (source, phase wheel, dots)
+  if (mode === 5) addDetectorDots();
+  renderOverlay();
+
+  // Analytics (every 4 frames)
+  if (frameCount % 4 === 0) updateAnalytics();
+
+  requestAnimationFrame(render);
+}
+
+// ============================================================
+// Parameter Bindings
+// ============================================================
+function bindSlider(id, valId, setter) {
+  const el = document.getElementById(id);
+  const vel = document.getElementById(valId);
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value);
+    vel.textContent = v;
+    setter(v);
+  });
+}
+
+// ============================================================
+// Initialize
+// ============================================================
+async function init() {
+  useGPU = await initGPU();
+  const statusEl = document.getElementById('gpuStatus');
+  if (useGPU) {
+    statusEl.innerHTML = '<div class="gpu-banner">WebGPU active &mdash; GPU-accelerated Huygens-Fresnel diffraction</div>';
+  } else {
+    statusEl.innerHTML = '<div class="cpu-banner">WebGPU unavailable &mdash; CPU fallback (reduced resolution)</div>';
+    overlayCanvas.style.pointerEvents = 'none';
+  }
+
+  setMode(0);
+
+  bindSlider('pLambda', 'vLambda', v => { lambda = v; probFieldDirty = true; });
+  bindSlider('pNWl', 'vNWl', v => { nWavelengths = Math.round(v); });
+  bindSlider('pSpecW', 'vSpecW', v => { spectralWidth = v; });
+  bindSlider('pKB', 'vKB', v => { kbThreshold = v; });
+  bindSlider('pRate', 'vRate', v => { photonRate = Math.round(v); });
+
+  // Keyboard for walkthrough
+  document.addEventListener('keydown', e => {
+    if (!wtActive) return;
+    if (e.key === 'ArrowRight' || e.key === ' ') wtNext();
+    if (e.key === 'ArrowLeft') wtPrev();
+    if (e.key === 'Escape') closeWalkthrough();
+  });
+
+  requestAnimationFrame(render);
+}
+
+init();
+</script>
+</body>
+</html>
