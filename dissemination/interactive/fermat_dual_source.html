@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fermat Dual Source — Counter-Phase Photon Interference</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden}
+h1{margin-top:16px;font-size:1.3em;font-weight:300;letter-spacing:.05em;color:#a0b8d8}
+.subtitle{font-size:.82em;color:#667;margin-bottom:6px;font-style:italic}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;margin:8px 0;max-width:1120px}
+.btn{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:.8em;transition:all .2s;white-space:nowrap}
+.btn:hover{background:#2a3a5a;border-color:#4a6a8a}
+.btn.active{background:#2a4a6a;border-color:#5a8aba;color:#fff}
+.toolbar label{font-size:.78em;color:#8899aa;display:flex;align-items:center;gap:4px}
+.toolbar input[type=range]{width:70px}
+.mode-label{font-size:.88em;color:#a0b8d8;margin:4px 0;text-align:center;min-height:1.3em}
+.main-layout{display:flex;gap:10px;align-items:flex-start;margin:4px 0}
+.canvas-container{position:relative}
+.canvas-container canvas{display:block;border:1px solid #1a1a2e;border-radius:4px}
+#overlayCanvas{position:absolute;top:0;left:0;pointer-events:none}
+.panel{width:270px;background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;font-size:.78em;max-height:722px;display:flex;flex-direction:column}
+.panel-header{padding:8px 10px;background:#111120;border-bottom:1px solid #1a1a2e;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:#a0b8d8;font-weight:500;user-select:none}
+.panel-body{padding:8px 10px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px}
+.panel-body.collapsed{display:none}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;color:#8899aa;font-family:monospace;font-size:.85em}
+.metrics .val{color:#c8d8e8}
+.plot-label{color:#667;font-size:.8em;margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+.plot-canvas{width:250px;height:120px;border:1px solid #1a1a2e;border-radius:3px;background:#08080d}
+.param-section{display:flex;flex-direction:column;gap:5px;border-top:1px solid #1a1a2e;padding-top:8px}
+.param-section label{display:flex;align-items:center;justify-content:space-between;color:#8899aa;font-size:.85em}
+.param-section input[type=range]{width:100px}
+.param-section .pval{color:#a0b8d8;font-family:monospace;min-width:40px;text-align:right}
+.param-fixed{color:#556;font-family:monospace;font-size:.85em}
+.export-section{display:flex;flex-direction:column;gap:4px;border-top:1px solid #1a1a2e;padding-top:8px}
+.export-section .btn{font-size:.78em;padding:4px 8px;text-align:left}
+.legend{display:flex;gap:14px;margin:6px 0;font-size:.75em;color:#667;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-swatch{width:12px;height:12px;border-radius:2px;border:1px solid #333}
+.info{max-width:1020px;padding:12px 18px;margin:6px 0 16px;background:#0d0d15;border:1px solid #1a1a2e;border-radius:6px;font-size:.82em;line-height:1.55;color:#889}
+.info em{color:#a0b8d8;font-style:normal}
+.info strong{color:#c8d8e8}
+.walkthrough{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,18,.95);border-top:2px solid #2a4a6a;padding:16px 24px;display:none;z-index:100}
+.wt-inner{max-width:800px;margin:0 auto}
+.wt-progress{font-size:.75em;color:#556;margin-bottom:4px;font-family:monospace}
+.wt-title{font-size:1.1em;color:#a0b8d8;margin-bottom:6px}
+.wt-text{color:#aab;line-height:1.5;font-size:.9em;margin-bottom:10px}
+.wt-text em{color:#c8d8e8;font-style:normal}
+.wt-buttons{display:flex;gap:8px}
+.gpu-banner{font-size:.72em;color:#4a6;background:#0a1a0a;border:1px solid #1a3a1a;padding:3px 10px;border-radius:3px;margin:4px 0}
+.cpu-banner{font-size:.72em;color:#a64;background:#1a0a0a;border:1px solid #3a1a1a;padding:3px 10px;border-radius:3px;margin:4px 0}
+</style>
+</head>
+<body>
+<h1>FERMAT DUAL SOURCE &mdash; COUNTER-PHASE INTERFERENCE</h1>
+<p class="subtitle">Huygens-Fresnel diffraction &middot; WebGPU accelerated &middot; c = 1/&radic;3 &middot; &Delta;&phi; = &pi;</p>
+<div id="gpuStatus"></div>
+
+<div class="toolbar">
+  <button class="btn active" onclick="setMode(0)">&psi;</button>
+  <button class="btn" onclick="setMode(1)">Re(&psi;)</button>
+  <button class="btn" onclick="setMode(2)">Im(&psi;)</button>
+  <button class="btn" onclick="setMode(3)">&psi;&sup2;</button>
+  <button class="btn" onclick="setMode(4)">|&psi;|&sup2;</button>
+  <button class="btn" onclick="setMode(5)">Detector</button>
+  <button class="btn" onclick="setMode(6)">Ternary</button>
+  <button class="btn" onclick="setMode(7)">Single (compare)</button>
+  <label>Speed <input type="range" id="speedSlider" min="0.2" max="4" step="0.1" value="1"></label>
+  <button class="btn" onclick="resetSim()">Reset</button>
+  <button class="btn" id="btnGuide" onclick="startWalkthrough()">Guide</button>
+</div>
+
+<p class="mode-label" id="modeLabel">Full &psi; &mdash; two counter-phase sources interfere</p>
+
+<div class="main-layout">
+  <div class="canvas-container">
+    <canvas id="mainCanvas" width="720" height="720"></canvas>
+    <canvas id="overlayCanvas" width="720" height="720"></canvas>
+  </div>
+  <div class="panel" id="panel">
+    <div class="panel-header" onclick="togglePanel()">
+      <span>Analytics</span><span id="panelToggle">&#9662;</span>
+    </div>
+    <div class="panel-body" id="panelBody">
+      <div class="metrics">
+        <div>Frame</div><div class="val" id="mFrame">0</div>
+        <div>Visibility V</div><div class="val" id="mVisibility">&mdash;</div>
+        <div>Fringe &Delta;x</div><div class="val" id="mSpacing">&mdash;</div>
+        <div>Theory &Delta;x</div><div class="val" id="mTheory">&mdash;</div>
+        <div>&int;|&psi;|&sup2;</div><div class="val" id="mEnergy">&mdash;</div>
+        <div>Dots</div><div class="val" id="mDots">0</div>
+      </div>
+      <div class="plot-label">Intensity profile (midline)</div>
+      <canvas class="plot-canvas" id="intensityPlot" width="250" height="120"></canvas>
+      <div class="plot-label">Phase profile (midline)</div>
+      <canvas class="plot-canvas" id="phasePlot" width="250" height="120"></canvas>
+      <div class="plot-label">Coherence |&Gamma;(&tau;)|</div>
+      <canvas class="plot-canvas" id="coherencePlot" width="250" height="120"></canvas>
+      <div class="param-section">
+        <label>&lambda; <input type="range" id="pLambda" min="10" max="100" value="32"> <span class="pval" id="vLambda">32</span></label>
+        <label>Separation <input type="range" id="pSep" min="8" max="200" value="40"> <span class="pval" id="vSep">40</span></label>
+        <label>Wavelengths <input type="range" id="pNWl" min="1" max="20" value="1"> <span class="pval" id="vNWl">1</span></label>
+        <label>&Delta;&lambda;/&lambda; <input type="range" id="pSpecW" min="0" max="0.5" step="0.01" value="0"> <span class="pval" id="vSpecW">0</span></label>
+        <label>K<sub>B</sub> <input type="range" id="pKB" min="0.005" max="0.5" step="0.005" value="0.05"> <span class="pval" id="vKB">0.05</span></label>
+        <label>Photon rate <input type="range" id="pRate" min="1" max="200" value="20"> <span class="pval" id="vRate">20</span></label>
+        <div class="param-fixed">c = 1/&radic;3 &asymp; 0.57735</div>
+      </div>
+      <div class="export-section">
+        <button class="btn" onclick="exportSnapshot()">Snapshot (JSON)</button>
+        <button class="btn" id="btnLog" onclick="toggleLog()">Start Log</button>
+        <button class="btn" onclick="exportDetector()">Detector (CSV)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="legend" id="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#ff4444"></div> &theta;=0</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#44ff44"></div> &pi;/2</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#4488ff"></div> &pi;</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#cc44ff"></div> 3&pi;/2</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#111"></div> void / node</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:linear-gradient(90deg,#f66,#68f)"></div> A (&phi;=0) vs B (&phi;=&pi;)</div>
+</div>
+
+<div class="info" id="infoBox"></div>
+
+<div class="walkthrough" id="walkthrough">
+  <div class="wt-inner">
+    <div class="wt-progress" id="wtProgress">Step 1 / 9</div>
+    <div class="wt-title" id="wtTitle"></div>
+    <div class="wt-text" id="wtText"></div>
+    <div class="wt-buttons">
+      <button class="btn" onclick="wtPrev()">&larr; Prev</button>
+      <button class="btn" onclick="wtNext()">Next &rarr;</button>
+      <button class="btn" onclick="closeWalkthrough()">&times; Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// Configuration
+// ============================================================
+const W = 720, H = 720;
+const C_SPEED = 1.0 / Math.sqrt(3.0);
+const TWO_PI = 2.0 * Math.PI;
+const FIELD_SIZE = W * H;
+
+// ============================================================
+// State
+// ============================================================
+let mode = 0; // 0=psi,1=re,2=im,3=psi2,4=born,5=dots,6=ternary,7=single
+let simTime = 0;
+let frameCount = 0;
+let useGPU = false;
+let lambda = 32, separation = 40, nWavelengths = 1, spectralWidth = 0;
+let kbThreshold = 0.05, photonRate = 20;
+
+let detectorDots = [];
+let probField = null;
+let probFieldDirty = true;
+let recording = false;
+let recordedFrames = [];
+let wtActive = false, wtStep = 0;
+
+// CPU field arrays
+let cpuRe = new Float32Array(FIELD_SIZE);
+let cpuIm = new Float32Array(FIELD_SIZE);
+let midRe = new Float32Array(W);
+let midIm = new Float32Array(W);
+
+// GPU resources
+let gpuDevice, gpuCtx, gpuCanvasFormat;
+let computePipeline, renderPipeline;
+let computeBindGroup, renderBindGroup;
+let uniformBuf, renderUniformBuf;
+let fieldReBuf, fieldImBuf, stagingBuf;
+let readbackPending = false;
+
+// Canvases
+const mainCanvas = document.getElementById('mainCanvas');
+const overlayCanvas = document.getElementById('overlayCanvas');
+const overlayCtx = overlayCanvas.getContext('2d');
+let ctx2d = null;
+
+// Source positions (computed each frame from separation)
+function getSourceA() { return { x: W/2 - separation/2, y: H/2 }; }
+function getSourceB() { return { x: W/2 + separation/2, y: H/2 }; }
+
+// ============================================================
+// WGSL Compute Shader
+// ============================================================
+const COMPUTE_WGSL = `
+struct Params {
+  width: u32, height: u32, n_sources: u32, n_wavelengths: u32,
+  time: f32, c_speed: f32, time_scale: f32, _pad: f32,
+  sources: array<vec4<f32>, 4>,
+  wavelengths: array<vec4<f32>, 20>,
+};
+@group(0) @binding(0) var<uniform> p: Params;
+@group(0) @binding(1) var<storage, read_write> fre: array<f32>;
+@group(0) @binding(2) var<storage, read_write> fim: array<f32>;
+
+@compute @workgroup_size(16, 16)
+fn main(@builtin(global_invocation_id) gid: vec3u) {
+  let px = gid.x; let py = gid.y;
+  if (px >= p.width || py >= p.height) { return; }
+  let idx = py * p.width + px;
+  var re: f32 = 0.0; var im: f32 = 0.0;
+  for (var s = 0u; s < p.n_sources; s++) {
+    let sx = p.sources[s].x; let sy = p.sources[s].y;
+    let phi_s = p.sources[s].z;
+    let dx = f32(px) - sx; let dy = f32(py) - sy;
+    let r = max(sqrt(dx*dx + dy*dy), 0.5);
+    if (r < 2.0) { continue; }
+    let front = p.c_speed * p.time;
+    let causal = smoothstep(0.0, 8.0, front - r);
+    if (causal < 0.001) { continue; }
+    for (var n = 0u; n < p.n_wavelengths; n++) {
+      let k = p.wavelengths[n].x;
+      let w = p.wavelengths[n].y;
+      let omega = p.c_speed * k;
+      let phase = k * r - omega * p.time + phi_s;
+      let envelope = w * causal / sqrt(r);
+      re += envelope * cos(phase);
+      im += envelope * sin(phase);
+    }
+  }
+  fre[idx] = re;
+  fim[idx] = im;
+}
+`;
+
+// ============================================================
+// WGSL Render Shader
+// ============================================================
+const RENDER_WGSL = `
+struct RParams { width: u32, height: u32, mode: u32, kb: f32, };
+@group(0) @binding(0) var<uniform> rp: RParams;
+@group(0) @binding(1) var<storage, read> fre: array<f32>;
+@group(0) @binding(2) var<storage, read> fim: array<f32>;
+
+fn phase_rgb(th: f32) -> vec3f {
+  let h = ((th / 6.28318530718) % 1.0 + 1.0) % 1.0;
+  let hi = u32(h * 6.0) % 6u;
+  let f = h * 6.0 - f32(hi);
+  let q = 1.0 - f;
+  switch hi {
+    case 0u: { return vec3f(1.0, f, 0.0); }
+    case 1u: { return vec3f(q, 1.0, 0.0); }
+    case 2u: { return vec3f(0.0, 1.0, f); }
+    case 3u: { return vec3f(0.0, q, 1.0); }
+    case 4u: { return vec3f(f, 0.0, 1.0); }
+    case 5u: { return vec3f(1.0, 0.0, q); }
+    default: { return vec3f(0.0); }
+  }
+}
+
+fn diverging(v: f32) -> vec3f {
+  let c = clamp(v, -1.0, 1.0);
+  if (c >= 0.0) { return mix(vec3f(0.92,0.92,0.96), vec3f(0.85,0.15,0.12), c); }
+  else { return mix(vec3f(0.92,0.92,0.96), vec3f(0.12,0.15,0.85), -c); }
+}
+
+@vertex fn vs(@builtin(vertex_index) v: u32) -> @builtin(position) vec4f {
+  var pos = array<vec2f,3>(vec2f(-1,-1), vec2f(3,-1), vec2f(-1,3));
+  return vec4f(pos[v], 0, 1);
+}
+
+@fragment fn fs(@builtin(position) pos: vec4f) -> @location(0) vec4f {
+  let px = u32(pos.x); let py = u32(pos.y);
+  if (px >= rp.width || py >= rp.height) { return vec4f(0.039,0.039,0.059,1); }
+  let idx = py * rp.width + px;
+  let re = fre[idx]; let im = fim[idx];
+  let amp = sqrt(re*re + im*im);
+  let ph = atan2(im, re);
+  var c: vec3f;
+  switch rp.mode {
+    case 0u: { // Full psi
+      let rgb = phase_rgb(ph);
+      c = rgb * pow(min(1.0, amp * 5.0), 0.5);
+    }
+    case 1u: { c = diverging(re * 3.0); }
+    case 2u: { c = diverging(im * 3.0); }
+    case 3u: { // psi^2
+      let rgb = phase_rgb(ph * 2.0);
+      c = rgb * pow(min(1.0, amp*amp * 20.0), 0.5);
+    }
+    case 4u: { // |psi|^2
+      let b = pow(min(1.0, amp*amp * 40.0), 0.4);
+      c = vec3f(b);
+    }
+    case 5u: { c = vec3f(0.039, 0.039, 0.059); }
+    case 6u: { // ternary
+      if (amp > rp.kb) {
+        if (re > 0.0) { c = vec3f(0.85, 0.18, 0.12); }
+        else { c = vec3f(0.12, 0.18, 0.85); }
+      } else { c = vec3f(0.02, 0.02, 0.03); }
+    }
+    case 7u: { // single source compare — same as full psi (mode 0)
+      let rgb = phase_rgb(ph);
+      c = rgb * pow(min(1.0, amp * 5.0), 0.5);
+    }
+    default: { c = vec3f(0.0); }
+  }
+  return vec4f(c, 1.0);
+}
+`;
+
+// ============================================================
+// WebGPU Initialization
+// ============================================================
+async function initGPU() {
+  if (!navigator.gpu) return false;
+  try {
+    const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+    if (!adapter) return false;
+    gpuDevice = await adapter.requestDevice();
+    gpuCanvasFormat = navigator.gpu.getPreferredCanvasFormat();
+    gpuCtx = mainCanvas.getContext('webgpu');
+    gpuCtx.configure({ device: gpuDevice, format: gpuCanvasFormat, alphaMode: 'premultiplied' });
+
+    const compModule = gpuDevice.createShaderModule({ code: COMPUTE_WGSL });
+    computePipeline = gpuDevice.createComputePipeline({ layout: 'auto', compute: { module: compModule, entryPoint: 'main' } });
+
+    const rendModule = gpuDevice.createShaderModule({ code: RENDER_WGSL });
+    renderPipeline = gpuDevice.createRenderPipeline({
+      layout: 'auto',
+      vertex: { module: rendModule, entryPoint: 'vs' },
+      fragment: { module: rendModule, entryPoint: 'fs', targets: [{ format: gpuCanvasFormat }] },
+      primitive: { topology: 'triangle-list' },
+    });
+
+    const paramSize = 32 + 4*16 + 20*16; // 416 bytes
+    uniformBuf = gpuDevice.createBuffer({ size: paramSize, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    renderUniformBuf = gpuDevice.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    const fieldBytes = FIELD_SIZE * 4;
+    fieldReBuf = gpuDevice.createBuffer({ size: fieldBytes, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+    fieldImBuf = gpuDevice.createBuffer({ size: fieldBytes, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+    const midlineBytes = W * 4 * 2;
+    stagingBuf = gpuDevice.createBuffer({ size: midlineBytes, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+
+    computeBindGroup = gpuDevice.createBindGroup({
+      layout: computePipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: uniformBuf } },
+        { binding: 1, resource: { buffer: fieldReBuf } },
+        { binding: 2, resource: { buffer: fieldImBuf } },
+      ]
+    });
+    renderBindGroup = gpuDevice.createBindGroup({
+      layout: renderPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: renderUniformBuf } },
+        { binding: 1, resource: { buffer: fieldReBuf } },
+        { binding: 2, resource: { buffer: fieldImBuf } },
+      ]
+    });
+    return true;
+  } catch (e) {
+    console.warn('WebGPU init failed:', e);
+    return false;
+  }
+}
+
+// ============================================================
+// Wavelength Configuration
+// ============================================================
+function getWavelengths() {
+  const wls = [];
+  if (nWavelengths === 1 || spectralWidth === 0) {
+    wls.push({ k: TWO_PI / lambda, weight: 1.0 });
+  } else {
+    for (let i = 0; i < nWavelengths; i++) {
+      const t = (i / (nWavelengths - 1)) - 0.5;
+      const dl = t * spectralWidth * lambda;
+      const lam = lambda + dl;
+      const gaussW = Math.exp(-2 * t * t);
+      wls.push({ k: TWO_PI / lam, weight: gaussW });
+    }
+    const sum = wls.reduce((a, w) => a + w.weight, 0);
+    wls.forEach(w => w.weight /= sum);
+  }
+  return wls;
+}
+
+// ============================================================
+// GPU Uniform Update
+// ============================================================
+function writeGPUUniforms() {
+  const wls = getWavelengths();
+  const sA = getSourceA(), sB = getSourceB();
+  const isSingle = (mode === 7);
+  const nSrc = isSingle ? 1 : 2;
+
+  const data = new ArrayBuffer(416);
+  const u32 = new Uint32Array(data);
+  const f32 = new Float32Array(data);
+
+  u32[0] = W; u32[1] = H; u32[2] = nSrc; u32[3] = wls.length;
+  f32[4] = simTime; f32[5] = C_SPEED; f32[6] = 1.0; f32[7] = 0;
+  // Source A at offset 32 (index 8): phase = 0
+  f32[8] = isSingle ? W/2 : sA.x; f32[9] = isSingle ? H/2 : sA.y; f32[10] = 0; f32[11] = 1;
+  // Source B at offset 48 (index 12): phase = pi
+  if (!isSingle) {
+    f32[12] = sB.x; f32[13] = sB.y; f32[14] = Math.PI; f32[15] = 1;
+  }
+  // Wavelengths at offset 96 (index 24)
+  for (let i = 0; i < 20; i++) {
+    const off = 24 + i * 4;
+    f32[off] = i < wls.length ? wls[i].k : 0;
+    f32[off+1] = i < wls.length ? wls[i].weight : 0;
+    f32[off+2] = 0; f32[off+3] = 0;
+  }
+  gpuDevice.queue.writeBuffer(uniformBuf, 0, data);
+
+  const rd = new ArrayBuffer(16);
+  const ru = new Uint32Array(rd);
+  const rf = new Float32Array(rd);
+  ru[0] = W; ru[1] = H; ru[2] = mode; rf[3] = kbThreshold;
+  gpuDevice.queue.writeBuffer(renderUniformBuf, 0, rd);
+}
+
+// ============================================================
+// GPU Render
+// ============================================================
+function renderGPU() {
+  writeGPUUniforms();
+  const encoder = gpuDevice.createCommandEncoder();
+
+  const comp = encoder.beginComputePass();
+  comp.setPipeline(computePipeline);
+  comp.setBindGroup(0, computeBindGroup);
+  comp.dispatchWorkgroups(Math.ceil(W/16), Math.ceil(H/16));
+  comp.end();
+
+  const textureView = gpuCtx.getCurrentTexture().createView();
+  const rp = encoder.beginRenderPass({
+    colorAttachments: [{ view: textureView, clearValue: {r:0.039,g:0.039,b:0.059,a:1}, loadOp:'clear', storeOp:'store' }]
+  });
+  rp.setPipeline(renderPipeline);
+  rp.setBindGroup(0, renderBindGroup);
+  rp.draw(3);
+  rp.end();
+
+  const doReadback = !readbackPending && frameCount % 4 === 0;
+  if (doReadback) {
+    const midRow = Math.floor(H / 2);
+    const rowBytes = W * 4;
+    const offset = midRow * rowBytes;
+    encoder.copyBufferToBuffer(fieldReBuf, offset, stagingBuf, 0, rowBytes);
+    encoder.copyBufferToBuffer(fieldImBuf, offset, stagingBuf, rowBytes, rowBytes);
+  }
+
+  gpuDevice.queue.submit([encoder.finish()]);
+
+  if (doReadback) {
+    readbackPending = true;
+    stagingBuf.mapAsync(GPUMapMode.READ).then(() => {
+      const mapped = new Float32Array(stagingBuf.getMappedRange());
+      midRe.set(mapped.subarray(0, W));
+      midIm.set(mapped.subarray(W, W * 2));
+      stagingBuf.unmap();
+      readbackPending = false;
+    }).catch(() => { readbackPending = false; });
+  }
+}
+
+// ============================================================
+// CPU Fallback
+// ============================================================
+function renderCPU() {
+  if (!ctx2d) ctx2d = mainCanvas.getContext('2d');
+  const imgData = ctx2d.createImageData(W, H);
+  const pixels = imgData.data;
+  const step = 3;
+  const wls = getWavelengths();
+  const sA = getSourceA(), sB = getSourceB();
+  const isSingle = (mode === 7);
+
+  for (let py = 0; py < H; py += step) {
+    for (let px = 0; px < W; px += step) {
+      let re = 0, im = 0;
+      // Source A
+      const srcAx = isSingle ? W/2 : sA.x, srcAy = isSingle ? H/2 : sA.y;
+      const dxA = px - srcAx, dyA = py - srcAy;
+      const rA = Math.max(Math.sqrt(dxA*dxA + dyA*dyA), 0.5);
+      if (rA >= 2) {
+        const front = C_SPEED * simTime;
+        const cA = smoothstepJS(0, 8, front - rA);
+        if (cA > 0.001) {
+          for (const wl of wls) {
+            const omega = C_SPEED * wl.k;
+            const phase = wl.k * rA - omega * simTime;
+            const env = wl.weight * cA / Math.sqrt(rA);
+            re += env * Math.cos(phase);
+            im += env * Math.sin(phase);
+          }
+        }
+      }
+      // Source B (counter-phase)
+      if (!isSingle) {
+        const dxB = px - sB.x, dyB = py - sB.y;
+        const rB = Math.max(Math.sqrt(dxB*dxB + dyB*dyB), 0.5);
+        if (rB >= 2) {
+          const front = C_SPEED * simTime;
+          const cB = smoothstepJS(0, 8, front - rB);
+          if (cB > 0.001) {
+            for (const wl of wls) {
+              const omega = C_SPEED * wl.k;
+              const phase = wl.k * rB - omega * simTime + Math.PI;
+              const env = wl.weight * cB / Math.sqrt(rB);
+              re += env * Math.cos(phase);
+              im += env * Math.sin(phase);
+            }
+          }
+        }
+      }
+      const idx = py * W + px;
+      cpuRe[idx] = re; cpuIm[idx] = im;
+      const [cr, cg, cb] = colormapJS(re, im);
+      for (let sy = 0; sy < step && py+sy < H; sy++) {
+        for (let sx = 0; sx < step && px+sx < W; sx++) {
+          const pi = ((py+sy) * W + (px+sx)) * 4;
+          pixels[pi] = cr; pixels[pi+1] = cg; pixels[pi+2] = cb; pixels[pi+3] = 255;
+        }
+      }
+    }
+  }
+  ctx2d.putImageData(imgData, 0, 0);
+  const midRow = Math.floor(H / 2);
+  for (let x = 0; x < W; x++) {
+    midRe[x] = cpuRe[midRow * W + x];
+    midIm[x] = cpuIm[midRow * W + x];
+  }
+}
+
+function smoothstepJS(lo, hi, x) {
+  const t = Math.max(0, Math.min(1, (x - lo) / (hi - lo)));
+  return t * t * (3 - 2 * t);
+}
+
+// ============================================================
+// CPU Colormap
+// ============================================================
+function phaseToRGB(theta) {
+  const h = ((theta / TWO_PI) % 1 + 1) % 1;
+  const hi = Math.floor(h * 6) % 6;
+  const f = h * 6 - Math.floor(h * 6);
+  const q = 1 - f;
+  switch (hi) {
+    case 0: return [1, f, 0];
+    case 1: return [q, 1, 0];
+    case 2: return [0, 1, f];
+    case 3: return [0, q, 1];
+    case 4: return [f, 0, 1];
+    case 5: return [1, 0, q];
+  }
+  return [0,0,0];
+}
+
+function colormapJS(re, im) {
+  const amp = Math.sqrt(re*re + im*im);
+  const ph = Math.atan2(im, re);
+  let cr, cg, cb;
+  switch (mode) {
+    case 0: case 7: { // full psi (dual or single compare)
+      const [pr,pg,pb] = phaseToRGB(ph);
+      const b = Math.pow(Math.min(1, amp*5), 0.5);
+      cr = pr*b*255|0; cg = pg*b*255|0; cb = pb*b*255|0; break;
+    }
+    case 1: {
+      const v = Math.max(-1, Math.min(1, re*3));
+      if (v >= 0) { cr = 235*(1-v)+217*v|0; cg = 235*(1-v)+38*v|0; cb = 245*(1-v)+31*v|0; }
+      else { cr = 235*(1+v)+31*(-v)|0; cg = 235*(1+v)+38*(-v)|0; cb = 245*(1+v)+217*(-v)|0; }
+      break;
+    }
+    case 2: {
+      const v = Math.max(-1, Math.min(1, im*3));
+      if (v >= 0) { cr = 235*(1-v)+217*v|0; cg = 235*(1-v)+38*v|0; cb = 245*(1-v)+31*v|0; }
+      else { cr = 235*(1+v)+31*(-v)|0; cg = 235*(1+v)+38*(-v)|0; cb = 245*(1+v)+217*(-v)|0; }
+      break;
+    }
+    case 3: {
+      const [pr,pg,pb] = phaseToRGB(ph * 2);
+      const b = Math.pow(Math.min(1, amp*amp*20), 0.5);
+      cr = pr*b*255|0; cg = pg*b*255|0; cb = pb*b*255|0; break;
+    }
+    case 4: {
+      const b = Math.pow(Math.min(1, amp*amp*40), 0.4);
+      cr = cg = cb = b*255|0; break;
+    }
+    case 5: cr = 10; cg = 10; cb = 15; break;
+    case 6: {
+      if (amp > kbThreshold) {
+        if (re > 0) { cr = 217; cg = 46; cb = 31; }
+        else { cr = 31; cg = 46; cb = 217; }
+      } else { cr = 5; cg = 5; cb = 8; }
+      break;
+    }
+    default: cr = cg = cb = 0;
+  }
+  return [cr, cg, cb];
+}
+
+// ============================================================
+// Overlay Rendering
+// ============================================================
+function renderOverlay() {
+  const ctx = overlayCtx;
+  ctx.clearRect(0, 0, W, H);
+  const sA = getSourceA(), sB = getSourceB();
+  const isSingle = (mode === 7);
+
+  if (isSingle) {
+    // Single centered source
+    ctx.beginPath(); ctx.arc(W/2, H/2, 5, 0, TWO_PI);
+    ctx.fillStyle = '#ffffff'; ctx.fill();
+    ctx.beginPath(); ctx.arc(W/2, H/2, 9, 0, TWO_PI);
+    ctx.strokeStyle = 'rgba(100,150,200,0.4)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.font = '10px monospace';
+    ctx.fillStyle = 'rgba(160,184,216,0.5)';
+    ctx.fillText('single source', W/2 - 34, H/2 + 22);
+  } else {
+    // Source A (red)
+    ctx.beginPath(); ctx.arc(sA.x, sA.y, 5, 0, TWO_PI);
+    ctx.fillStyle = '#ff6666'; ctx.fill();
+    ctx.beginPath(); ctx.arc(sA.x, sA.y, 9, 0, TWO_PI);
+    ctx.strokeStyle = 'rgba(255,100,100,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+    // Source B (blue)
+    ctx.beginPath(); ctx.arc(sB.x, sB.y, 5, 0, TWO_PI);
+    ctx.fillStyle = '#6688ff'; ctx.fill();
+    ctx.beginPath(); ctx.arc(sB.x, sB.y, 9, 0, TWO_PI);
+    ctx.strokeStyle = 'rgba(100,136,255,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+    // Labels
+    ctx.font = '10px monospace';
+    ctx.fillStyle = 'rgba(255,100,100,0.6)';
+    ctx.fillText('A (\u03C6=0)', sA.x - 22, sA.y + 22);
+    ctx.fillStyle = 'rgba(100,136,255,0.6)';
+    ctx.fillText('B (\u03C6=\u03C0)', sB.x - 22, sB.y + 22);
+    // Phase offset indicator
+    ctx.fillStyle = 'rgba(160,184,216,0.35)';
+    ctx.fillText('\u0394\u03C6 = \u03C0', (sA.x + sB.x)/2 - 14, sA.y + 34);
+  }
+
+  // Phase wheel (bottom-left)
+  if (mode === 0 || mode === 3 || mode === 7) {
+    const cx = 50, cy = H - 50, r = 28;
+    for (let a = 0; a < TWO_PI; a += 0.15) {
+      const [pr, pg, pb] = phaseToRGB(a);
+      ctx.beginPath(); ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, -a, -a - 0.2, true);
+      ctx.closePath();
+      ctx.fillStyle = `rgb(${pr*200|0},${pg*200|0},${pb*200|0})`;
+      ctx.fill();
+    }
+    const wls = getWavelengths();
+    const omega = C_SPEED * wls[0].k;
+    const needleAngle = -(omega * simTime) % TWO_PI;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(needleAngle), cy + r * Math.sin(needleAngle));
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, 3, 0, TWO_PI);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.font = '9px monospace';
+    ctx.fillStyle = 'rgba(160,184,216,0.5)';
+    ctx.fillText('phase', cx - 14, cy + r + 14);
+  }
+
+  // Detector dots
+  if (mode === 5) {
+    for (const dot of detectorDots) {
+      ctx.beginPath(); ctx.arc(dot.x, dot.y, 1.2, 0, TWO_PI);
+      ctx.fillStyle = `rgba(200,220,255,${dot.a})`;
+      ctx.fill();
+    }
+  }
+
+  // Midline indicator
+  if (mode !== 5) {
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2);
+    ctx.strokeStyle = 'rgba(160,184,216,0.12)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Nodal line annotation on hover (static label for dual modes)
+  if (!isSingle && mode !== 5 && mode !== 6) {
+    ctx.font = '9px monospace';
+    ctx.fillStyle = 'rgba(160,184,216,0.25)';
+    ctx.fillText('0 = e\u2071\u03C0 + e\u2070 = (\u22121) + (+1)', W - 190, H - 16);
+  }
+}
+
+// ============================================================
+// Detector Mode
+// ============================================================
+function addDetectorDots() {
+  if (probFieldDirty || !probField) {
+    const sA = getSourceA(), sB = getSourceB();
+    const k = TWO_PI / lambda;
+    probField = new Float32Array(W * H);
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const dxA = x - sA.x, dyA = y - sA.y;
+        const rA = Math.sqrt(dxA*dxA + dyA*dyA);
+        const dxB = x - sB.x, dyB = y - sB.y;
+        const rB = Math.sqrt(dxB*dxB + dyB*dyB);
+        if (rA < 3 || rB < 3) { probField[y*W+x] = 0; continue; }
+        const front = C_SPEED * simTime;
+        const cA = smoothstepJS(0, 8, front - rA);
+        const cB = smoothstepJS(0, 8, front - rB);
+        // psi = A*e^(ikrA)/rA + A*e^(i(krB+pi))/rB
+        const ampA = cA / Math.sqrt(rA), ampB = cB / Math.sqrt(rB);
+        const reA = ampA * Math.cos(k * rA);
+        const imA = ampA * Math.sin(k * rA);
+        const reB = ampB * Math.cos(k * rB + Math.PI);
+        const imB = ampB * Math.sin(k * rB + Math.PI);
+        const re = reA + reB, im = imA + imB;
+        probField[y*W+x] = re*re + im*im;
+      }
+    }
+    probFieldDirty = false;
+  }
+  let maxProb = 0;
+  for (let i = 0; i < probField.length; i++) {
+    if (probField[i] > maxProb) maxProb = probField[i];
+  }
+  if (maxProb < 1e-10) return;
+  for (let i = 0; i < photonRate; i++) {
+    let attempts = 0;
+    while (attempts < 100) {
+      attempts++;
+      const x = Math.random() * W, y = Math.random() * H;
+      const ix = Math.floor(x), iy = Math.floor(y);
+      if (ix < 0 || ix >= W || iy < 0 || iy >= H) continue;
+      const p = probField[iy * W + ix];
+      if (Math.random() < p / maxProb) {
+        detectorDots.push({ x, y, a: 0.3 + Math.random() * 0.7 });
+        break;
+      }
+    }
+  }
+}
+
+// ============================================================
+// Analytics
+// ============================================================
+function updateAnalytics() {
+  document.getElementById('mFrame').textContent = frameCount;
+
+  const intensities = new Float32Array(W);
+  const phases = new Float32Array(W);
+  let imax = 0, imin = Infinity, energy = 0;
+  for (let x = 0; x < W; x++) {
+    const re = midRe[x], im = midIm[x];
+    const I = re*re + im*im;
+    intensities[x] = I;
+    phases[x] = Math.atan2(im, re);
+    if (I > imax) imax = I;
+    if (I < imin && x > 50 && x < W - 50) imin = I;
+    energy += I;
+  }
+
+  // Fringe visibility V = (Imax - Imin) / (Imax + Imin)
+  const V = (imax + imin > 0) ? (imax - imin) / (imax + imin) : 0;
+  document.getElementById('mVisibility').textContent = V.toFixed(3);
+
+  // Fringe spacing: auto-detect peaks
+  const peaks = [];
+  for (let x = 2; x < W - 2; x++) {
+    if (intensities[x] > intensities[x-1] && intensities[x] > intensities[x+1] &&
+        intensities[x] > intensities[x-2] && intensities[x] > intensities[x+2] &&
+        intensities[x] > imax * 0.1) {
+      peaks.push(x);
+    }
+  }
+  let avgSpacing = 0;
+  if (peaks.length >= 2) {
+    let totalGap = 0;
+    for (let i = 1; i < peaks.length; i++) totalGap += peaks[i] - peaks[i-1];
+    avgSpacing = totalGap / (peaks.length - 1);
+  }
+  document.getElementById('mSpacing').textContent = avgSpacing > 0 ? avgSpacing.toFixed(1) + 'px' : '\u2014';
+
+  // On the midline (collinear with both sources), path difference = 2*(x - W/2).
+  // For counter-phase sources, nodes at path_diff = n*lambda, i.e., x = W/2 + n*lambda/2.
+  // Fringe spacing on the midline = lambda/2 (exact, between the sources only).
+  const theorySpacing = lambda / 2;
+  document.getElementById('mTheory').textContent = theorySpacing.toFixed(1) + 'px';
+
+  document.getElementById('mEnergy').textContent = energy.toFixed(1);
+  document.getElementById('mDots').textContent = detectorDots.length;
+
+  // Intensity plot with Young's theory overlay
+  drawIntensityPlot(intensities, imax);
+  // Phase plot
+  drawLinePlot('phasePlot', phases, '#cc8855', 'arg(\u03C8)', Math.PI, -Math.PI);
+  // Coherence plot
+  drawCoherencePlot();
+
+  if (recording) {
+    recordedFrames.push({
+      frame: frameCount, time: simTime,
+      midline_re: Array.from(midRe), midline_im: Array.from(midIm),
+    });
+  }
+}
+
+function drawIntensityPlot(data, ymax) {
+  const c = document.getElementById('intensityPlot');
+  const ctx = c.getContext('2d');
+  const cw = c.width, ch = c.height;
+  ctx.fillStyle = '#08080d';
+  ctx.fillRect(0, 0, cw, ch);
+  if (!ymax) ymax = 1;
+  const margin = 4;
+
+  // Grid
+  ctx.strokeStyle = '#1a1a2e'; ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = margin + (ch - 2*margin) * i / 4;
+    ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(cw-margin, y); ctx.stroke();
+  }
+
+  // Simulation data
+  ctx.strokeStyle = '#5588cc'; ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let i = 0; i < data.length; i++) {
+    const x = margin + (cw - 2*margin) * i / data.length;
+    const y = margin + (ch - 2*margin) * (1 - data[i] / ymax);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Young's interference theory overlay: I ~ cos^2(pi*d*sin(theta)/lambda)
+  // At midline, sin(theta) ~ (x - W/2) / r, where r = distance from midpoint
+  // Simplified for 2D point sources: I(x) ~ cos^2(pi * d * (x-W/2) / (lambda * R))
+  if (mode !== 7 && separation > 0) {
+    const k = TWO_PI / lambda;
+    const sA = getSourceA(), sB = getSourceB();
+    ctx.strokeStyle = 'rgba(255,255,100,0.3)'; ctx.lineWidth = 1;
+    ctx.setLineDash([4,3]); ctx.beginPath();
+    let theoryMax = 0;
+    const theoryData = new Float32Array(W);
+    for (let x = 0; x < W; x++) {
+      const rA = Math.abs(x - sA.x), rB = Math.abs(x - sB.x);
+      if (rA < 3 || rB < 3) { theoryData[x] = 0; continue; }
+      // Two-source interference: |e^(ikrA)/sqrt(rA) + e^(i(krB+pi))/sqrt(rB)|^2
+      const ampA = 1/Math.sqrt(rA), ampB = 1/Math.sqrt(rB);
+      const re = ampA * Math.cos(k*rA) + ampB * Math.cos(k*rB + Math.PI);
+      const im = ampA * Math.sin(k*rA) + ampB * Math.sin(k*rB + Math.PI);
+      theoryData[x] = re*re + im*im;
+      if (theoryData[x] > theoryMax) theoryMax = theoryData[x];
+    }
+    // Normalize theory to match sim peak
+    const scale = theoryMax > 0 ? ymax / theoryMax : 1;
+    for (let i = 0; i < W; i++) {
+      const x = margin + (cw - 2*margin) * i / W;
+      const y = margin + (ch - 2*margin) * (1 - theoryData[i] * scale / ymax);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // Labels
+  ctx.font = '9px monospace';
+  ctx.fillStyle = 'rgba(160,184,216,0.5)';
+  ctx.fillText('I(x)', margin + 2, margin + 10);
+  if (mode !== 7) {
+    ctx.fillStyle = 'rgba(255,255,100,0.4)';
+    ctx.fillText('exact 2-source', cw - 85, margin + 10);
+  }
+}
+
+function drawLinePlot(canvasId, data, color, label, ymax, ymin) {
+  const c = document.getElementById(canvasId);
+  const ctx = c.getContext('2d');
+  const cw = c.width, ch = c.height;
+  ctx.fillStyle = '#08080d';
+  ctx.fillRect(0, 0, cw, ch);
+  if (ymax === undefined) ymax = Math.max(...data) || 1;
+  if (ymin === undefined) ymin = 0;
+  const range = ymax - ymin || 1;
+  const margin = 4;
+
+  ctx.strokeStyle = '#1a1a2e'; ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = margin + (ch - 2*margin) * i / 4;
+    ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(cw-margin, y); ctx.stroke();
+  }
+
+  ctx.strokeStyle = color; ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let i = 0; i < data.length; i++) {
+    const x = margin + (cw - 2*margin) * i / data.length;
+    const y = margin + (ch - 2*margin) * (1 - (data[i] - ymin) / range);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  ctx.font = '9px monospace';
+  ctx.fillStyle = 'rgba(160,184,216,0.5)';
+  ctx.fillText(label, margin + 2, margin + 10);
+}
+
+// Coherence: Gamma(tau) = <psi*(r1,t) * psi(r2,t+tau)>
+// For Gaussian spectral weights exp(-2t^2), the coherence envelope is Gaussian:
+// |Gamma(tau)| = exp(-pi^2 * sigma_nu^2 * tau^2 / 2)
+// where sigma_nu = C_SPEED * dk / 2, dk = (2pi/lambda) * spectralWidth
+function drawCoherencePlot() {
+  const c = document.getElementById('coherencePlot');
+  const ctx = c.getContext('2d');
+  const cw = c.width, ch = c.height;
+  ctx.fillStyle = '#08080d';
+  ctx.fillRect(0, 0, cw, ch);
+  const margin = 4;
+
+  ctx.strokeStyle = '#1a1a2e'; ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = margin + (ch - 2*margin) * i / 4;
+    ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(cw-margin, y); ctx.stroke();
+  }
+
+  const maxTau = 400; // in lattice units
+  const dk = (TWO_PI / lambda) * spectralWidth;
+  const sigmaNu = C_SPEED * dk / 2; // Gaussian sigma in frequency
+
+  // Gaussian coherence helper
+  function gammaEnvelope(tau) {
+    if (spectralWidth < 0.001 || sigmaNu < 1e-6) return 1.0;
+    return Math.exp(-Math.PI * Math.PI * sigmaNu * sigmaNu * tau * tau / 2);
+  }
+
+  // Envelope |Gamma(tau)|
+  ctx.strokeStyle = '#66aa88'; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 0; i < cw - 2*margin; i++) {
+    const tau = (i / (cw - 2*margin)) * maxTau;
+    const gammaAbs = gammaEnvelope(tau);
+    const x = margin + i;
+    const y = margin + (ch - 2*margin) * (1 - gammaAbs);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Re(Gamma) oscillation (faded)
+  ctx.strokeStyle = 'rgba(102,170,136,0.25)'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  const k0 = TWO_PI / lambda;
+  const omega0 = C_SPEED * k0;
+  for (let i = 0; i < cw - 2*margin; i++) {
+    const tau = (i / (cw - 2*margin)) * maxTau;
+    const reGamma = gammaEnvelope(tau) * Math.cos(omega0 * tau);
+    const x = margin + i;
+    const y = margin + (ch - 2*margin) * (0.5 - reGamma * 0.5);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Path difference indicator: d = separation
+  if (separation > 0) {
+    const tauPath = separation; // path difference in lattice units
+    const xPos = margin + (tauPath / maxTau) * (cw - 2*margin);
+    if (xPos < cw - margin) {
+      ctx.setLineDash([2,2]);
+      ctx.strokeStyle = 'rgba(255,150,100,0.4)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(xPos, margin); ctx.lineTo(xPos, ch - margin); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = '8px monospace';
+      ctx.fillStyle = 'rgba(255,150,100,0.5)';
+      ctx.fillText('d', xPos + 2, margin + 10);
+    }
+  }
+
+  ctx.font = '9px monospace';
+  ctx.fillStyle = 'rgba(160,184,216,0.5)';
+  ctx.fillText('|\u0393(\u03C4)|', margin + 2, margin + 10);
+}
+
+// ============================================================
+// Mode Switching
+// ============================================================
+const MODE_NAMES = [
+  'Full \u03c8 \u2014 two counter-phase sources, amplitude & phase',
+  'Re(\u03c8) \u2014 real part of the interference field',
+  'Im(\u03c8) \u2014 imaginary part of the interference field',
+  '\u03c8\u00b2 \u2014 squared WITHOUT absolute value bars (phase preserved)',
+  '|\u03c8|\u00b2 \u2014 Born rule: interference fringes in greyscale',
+  'Detector \u2014 individual photon clicks accumulating',
+  'Ternary \u2014 FTD lattice states: +1 (red), \u22121 (blue), 0 (void)',
+  'Single source (compare) \u2014 no interference, no partner',
+];
+
+const MODE_INFO = [
+  `<strong>Full \u03c8 (dual source):</strong> Two sources emit with <em>\u03c0 phase offset</em>. Watch the colors collide. Where red meets red: constructive. Where red meets blue (opposite phase): <em>destructive cancellation</em> \u2014 the field goes to zero.<br><br>The dark nodal lines are where the two complex amplitudes <em>exactly cancel</em>. This is interference at its most naked. <strong>A Hermitian inner product cannot see why these nodes exist.</strong> It only sees |\u03c8|\u00b2 = 0 there. The <em>reason</em> \u2014 phase cancellation \u2014 is invisible.`,
+  `<strong>Re(\u03c8):</strong> The real component of the dual-source interference field. Red = positive, blue = negative. The counter-phase sources create a rich antisymmetric pattern. This is one half of the information that \u27e8\u03c8| conjugates away.`,
+  `<strong>Im(\u03c8):</strong> The imaginary component. Together with Re(\u03c8), they encode the full interference pattern including the nodal structure. The Hermitian inner product annihilates this.`,
+  `<strong>\u03c8\u00b2 (no bars):</strong> Square without absolute value bars. The phase <em>doubles</em> (2\u03b8) but <strong>survives</strong>. The interference pattern is richer \u2014 you can see <em>why</em> certain regions cancel. This is what you get without Born's 1926 footnote.`,
+  `<strong>|\u03c8|\u00b2 (dual source):</strong> The Born rule collapses the interference to greyscale. You see bright fringes and dark nodes. The <em>pattern</em> is there.<br><br>But you cannot see <em>why</em>. The dark bands could be zero amplitude, or two equal amplitudes with opposite phase cancelling. |\u03c8|\u00b2 can't tell you which. <strong>The fringes are a photograph of interference. The phase is the interference itself.</strong>`,
+  `<strong>Detector clicks (dual source):</strong> Photons fired one at a time through two counter-phase sources. Each photon lands as a single dot.<br><br>But look: <em>dark bands</em> where no photons land. These are nodal lines of destructive interference. Each photon \u2014 individually \u2014 avoids these regions because its own wavefunction interferes with itself through both sources.<br><br><strong>The photon knows about both sources.</strong> Each single photon carries phase from both arms. The counter-phase means certain directions are forbidden.`,
+  `<strong>Ternary mode (dual source):</strong> On the FTD lattice, each site is +1, \u22121, or 0. The interference pattern <em>IS</em> the state field. Nodal lines produce 0 (void) states. Antinodes alternate +1/\u22121. The ternary axiom isn't imposed \u2014 it <em>emerges</em> from the counter-phase physics.`,
+  `<strong>Single source (compare):</strong> For comparison \u2014 one source, no partner, no interference. Clean circular wavefronts. No nodal lines. No forbidden directions.<br><br>Toggle back to \u03c8 or |\u03c8|\u00b2 to see what the second counter-phase source creates. <em>All that structure \u2014 every fringe, every node \u2014 comes from phase.</em><br><br>Without phase, there is no pattern. Without i, there is no coil.`,
+];
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.toolbar .btn').forEach((b, i) => {
+    if (i < 8) b.classList.toggle('active', i === m);
+  });
+  document.getElementById('modeLabel').innerHTML = MODE_NAMES[m];
+  document.getElementById('infoBox').innerHTML = MODE_INFO[m];
+  const legend = document.getElementById('legend');
+  legend.style.display = (m === 0 || m === 3 || m === 7) ? 'flex' : 'none';
+  if (m === 5) { probFieldDirty = true; }
+}
+
+// ============================================================
+// Walkthrough (all 9 steps)
+// ============================================================
+const WT_STEPS = [
+  { title: 'Here is \u03c8', mode: 7,
+    text: 'Every point carries two numbers: how big (amplitude) and how it\'s rotating (phase). This is the <em>complete information</em>. The phase determines interference, diffraction, and every quantum effect.' },
+  { title: 'Re(\u03c8) and Im(\u03c8)', mode: 1, useDual: false,
+    text: 'These are the two real-valued components of the complex amplitude. The Hermitian inner product \u27e8\u03c8|\u03c8\u27e9 multiplies one by e<sup>\u2212i\u03b8</sup> to cancel the other. Toggle to Im(\u03c8) to see the second half.' },
+  { title: '\u03c8 squared', mode: 3, useDual: false,
+    text: 'Square <em>without</em> the absolute value bars. The phase doubles (2\u03b8) but <em>survives</em>. Every color is still present. No information is destroyed. This is what you get without Born\'s ad hoc shortcut.' },
+  { title: 'What the bars do', mode: 4, useDual: false,
+    text: 'The absolute value bars strip the phase. Every color collapses to gray. You know WHERE the photon might be, but not HOW IT WAS ROTATING when it arrived. Compare with the full \u03c8 view \u2014 all that color, gone.' },
+  { title: 'The bars are engineered', mode: 4, useDual: false,
+    text: 'Born added |\u00b7|\u00b2 in a footnote (1926). Von Neumann built Hilbert space backwards from "outputs must be real." The Hermitian inner product was <em>designed</em> to guarantee real positive outputs by annihilating e<sup>i\u03b8</sup> with e<sup>\u2212i\u03b8</sup>. <strong>The bars are a design choice, not a law of nature.</strong>' },
+  { title: 'Two sources, opposite phase', mode: 0,
+    text: 'Now two sources with <em>\u03c0 phase offset</em>. Watch the colors collide. Where they match: constructive. Where they oppose: the field goes to zero. The entire fringe pattern is encoded in the phase relationship between the two arms.' },
+  { title: 'The void is destructive interference', mode: 0,
+    text: '0 = e<sup>i\u03c0</sup> + e<sup>i0</sup> = (\u22121) + (+1). The zero isn\'t absence \u2014 it\'s <em>perfect cancellation</em>. Two amplitudes of equal magnitude and opposite phase annihilate each other. <strong>The ternary axiom: void is the third state.</strong>' },
+  { title: 'The lattice sees this', mode: 6,
+    text: 'On the FTD lattice, each site is +1, \u22121, or 0. The interference pattern IS the state field. The ternary axiom isn\'t imposed \u2014 it <em>emerges</em> from the physics of counter-phase superposition.' },
+  { title: 'The hard problem is self-inflicted', mode: 0,
+    text: 'Phase IS experience. \u27e8\u03c8|\u03c8\u27e9 was designed to destroy it. The measurement operator eliminates what it\'s looking for. <strong>The hard problem exists because the Born rule was engineered to produce it.</strong>' },
+];
+
+function startWalkthrough() {
+  wtActive = true; wtStep = 0;
+  applyWTStep();
+  document.getElementById('walkthrough').style.display = 'block';
+}
+function closeWalkthrough() {
+  wtActive = false;
+  document.getElementById('walkthrough').style.display = 'none';
+}
+function wtNext() { if (wtStep < WT_STEPS.length - 1) { wtStep++; applyWTStep(); } }
+function wtPrev() { if (wtStep > 0) { wtStep--; applyWTStep(); } }
+function applyWTStep() {
+  const s = WT_STEPS[wtStep];
+  document.getElementById('wtProgress').textContent = `Step ${wtStep+1} / ${WT_STEPS.length}`;
+  document.getElementById('wtTitle').textContent = s.title;
+  document.getElementById('wtText').innerHTML = s.text;
+  setMode(s.mode);
+}
+
+// ============================================================
+// Data Export
+// ============================================================
+function exportSnapshot() {
+  const sA = getSourceA(), sB = getSourceB();
+  const snapshot = {
+    type: 'fermat_dual_source_snapshot',
+    frame: frameCount, time: simTime,
+    params: { lambda, separation, nWavelengths, spectralWidth, kbThreshold, c: C_SPEED,
+              sourceA: { x: sA.x, y: sA.y, phase: 0 },
+              sourceB: { x: sB.x, y: sB.y, phase: Math.PI } },
+    midline: { re: Array.from(midRe), im: Array.from(midIm) },
+    width: W, height: H,
+  };
+  downloadJSON(snapshot, `dual_snapshot_${frameCount}.json`);
+}
+
+function toggleLog() {
+  recording = !recording;
+  document.getElementById('btnLog').textContent = recording ? 'Stop Log' : 'Start Log';
+  document.getElementById('btnLog').classList.toggle('active', recording);
+  if (!recording && recordedFrames.length > 0) {
+    downloadJSON({
+      type: 'fermat_dual_log',
+      params: { lambda, separation, nWavelengths, spectralWidth, c: C_SPEED },
+      frames: recordedFrames,
+    }, `dual_log_${Date.now()}.json`);
+    recordedFrames = [];
+  }
+}
+
+function exportDetector() {
+  if (detectorDots.length === 0) return;
+  let csv = 'x,y,alpha\n';
+  detectorDots.forEach(d => { csv += `${d.x.toFixed(2)},${d.y.toFixed(2)},${d.a.toFixed(3)}\n`; });
+  downloadCSV(csv, `dual_detector_${detectorDots.length}dots.csv`);
+}
+
+function downloadJSON(obj, filename) {
+  const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+  URL.revokeObjectURL(a.href);
+}
+function downloadCSV(text, filename) {
+  const blob = new Blob([text], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ============================================================
+// Reset & Panel
+// ============================================================
+function resetSim() {
+  simTime = 0; frameCount = 0;
+  detectorDots = [];
+  probFieldDirty = true;
+}
+function togglePanel() {
+  const body = document.getElementById('panelBody');
+  body.classList.toggle('collapsed');
+  document.getElementById('panelToggle').textContent = body.classList.contains('collapsed') ? '\u25b8' : '\u25be';
+}
+
+// ============================================================
+// Main Render Loop
+// ============================================================
+function render() {
+  const speed = parseFloat(document.getElementById('speedSlider').value);
+  simTime += 5.0 * speed;
+  frameCount++;
+
+  if (useGPU) renderGPU();
+  else renderCPU();
+
+  if (mode === 5) addDetectorDots();
+  renderOverlay();
+
+  if (frameCount % 4 === 0) updateAnalytics();
+
+  requestAnimationFrame(render);
+}
+
+// ============================================================
+// Parameter Bindings
+// ============================================================
+function bindSlider(id, valId, setter) {
+  const el = document.getElementById(id);
+  const vel = document.getElementById(valId);
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value);
+    vel.textContent = v;
+    setter(v);
+  });
+}
+
+// ============================================================
+// Initialize
+// ============================================================
+async function init() {
+  useGPU = await initGPU();
+  const statusEl = document.getElementById('gpuStatus');
+  if (useGPU) {
+    statusEl.innerHTML = '<div class="gpu-banner">WebGPU active \u2014 GPU-accelerated Huygens-Fresnel dual-source diffraction</div>';
+  } else {
+    statusEl.innerHTML = '<div class="cpu-banner">WebGPU unavailable \u2014 CPU fallback (reduced resolution)</div>';
+    overlayCanvas.style.pointerEvents = 'none';
+  }
+
+  setMode(0);
+
+  bindSlider('pLambda', 'vLambda', v => { lambda = v; probFieldDirty = true; });
+  bindSlider('pSep', 'vSep', v => { separation = v; probFieldDirty = true; });
+  bindSlider('pNWl', 'vNWl', v => { nWavelengths = Math.round(v); });
+  bindSlider('pSpecW', 'vSpecW', v => { spectralWidth = v; });
+  bindSlider('pKB', 'vKB', v => { kbThreshold = v; });
+  bindSlider('pRate', 'vRate', v => { photonRate = Math.round(v); });
+
+  document.addEventListener('keydown', e => {
+    if (!wtActive) return;
+    if (e.key === 'ArrowRight' || e.key === ' ') wtNext();
+    if (e.key === 'ArrowLeft') wtPrev();
+    if (e.key === 'Escape') closeWalkthrough();
+  });
+
+  requestAnimationFrame(render);
+}
+
+init();
+</script>
+</body>
+</html>
