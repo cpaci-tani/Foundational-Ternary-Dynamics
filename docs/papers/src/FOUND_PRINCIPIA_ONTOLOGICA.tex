@@ -1,0 +1,499 @@
+% ======================================================================
+%  PRINCIPIA ONTOLOGICA
+%  The Axiomatic Architecture of the Rendered Universe
+%
+%  A Platonist Formalization of Foundational Ternary Dynamics
+%
+%  Author: William J. Steinmetz III
+%  February 2026
+% ======================================================================
+
+\documentclass[11pt,twoside]{article}
+
+% ---- Packages ----
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=green!50!black,urlcolor=blue!70!black]{hyperref}
+
+% ---- Page geometry ----
+\geometry{letterpaper, margin=1.15in, top=1.3in, bottom=1.3in}
+\setstretch{1.18}
+
+% ---- Headers ----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\small\textit{Steinmetz}}
+\fancyhead[RO]{\small\textit{Principia Ontologica}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---- Section formatting ----
+\titleformat{\section}{\large\bfseries}{}{0em}{}
+\titleformat{\subsection}{\normalsize\bfseries\itshape}{\thesubsection}{0.5em}{}
+
+% ---- Theorem environments ----
+\theoremstyle{definition}
+\newtheorem{axiom}{Axiom}
+\newtheorem{definition}[axiom]{Definition}
+\theoremstyle{plain}
+\newtheorem{proposition}[axiom]{Proposition}
+\newtheorem{theorem}[axiom]{Theorem}
+\newtheorem{corollary}[axiom]{Corollary}
+\newtheorem{conjecture}[axiom]{Conjecture}
+\theoremstyle{remark}
+\newtheorem{remark}[axiom]{Remark}
+\newtheorem{scholium}[axiom]{Scholium}
+
+% ---- Epistemic tags ----
+\newcommand{\etag}[1]{\,\textnormal{\textsc{\footnotesize[#1]}}}
+\newcommand{\proven}{\etag{Proven}}
+\newcommand{\selection}{\etag{Selection}}
+\newcommand{\conject}{\etag{Conjecture}}
+\newcommand{\imposed}{\etag{Imposed}}
+\newcommand{\openq}{\etag{Open}}
+
+% ---- Shorthand ----
+\newcommand{\Gstar}{G^{*}}
+\newcommand{\Void}{\mathcal{V}}
+\newcommand{\Lattice}{\mathbf{L}}
+\newcommand{\sLoop}{\mathcal{S}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\Natural}{\mathbb{N}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Hilbert}{\mathcal{H}}
+
+% ======================================================================
+\begin{document}
+
+% ---- Title ----
+\begin{center}
+    {\Huge\bfseries PRINCIPIA ONTOLOGICA}\\[8pt]
+    {\Large The Axiomatic Architecture of the Rendered Universe}\\[6pt]
+    {\large A Platonist Formalization of Foundational Ternary Dynamics}\\[18pt]
+    {\large William J.\ Steinmetz~III}\\[8pt]
+    {\normalsize\textit{February 2026}}\\[6pt]
+    {\small Epistemic Status: Formal Axiomatic Framework with Conjectured Physical Identification}
+\end{center}
+
+\vspace{1em}
+\hrule height 0.6pt
+\vspace{1.5em}
+
+% ---- Abstract ----
+\begin{abstract}
+\noindent We present an axiomatic ontology grounded in mathematical Platonism: the thesis that mathematical structure is ontologically prior to physical instantiation. Beginning from the single premise that a continuous, self-symmetric mathematical object (the \emph{Void}) constitutes the fundamental substrate of reality, we derive through strict logical entailment the necessity of discretization, the emergence of spatial extension, the origin of inertial mass as a \emph{projection residual}, and the thermodynamic arrow of time as irreversible information loss under projection. The framework identifies the fine-structure constant $\alpha$ with a specific algebraic invariant of the lemniscatic elliptic curve, achieving 1.26\,ppm agreement with the CODATA~2022 value from pure geometry alone. We present this identification as a conjecture whose confirmation or refutation would constitute a decisive test of mathematical Platonism in physics. Throughout, we maintain strict separation between what is proven, what is selected, and what is conjectured.
+\end{abstract}
+
+\vspace{1em}
+\hrule height 0.6pt
+\vspace{1.5em}
+
+\tableofcontents
+\newpage
+
+% ======================================================================
+\section*{Prolegomenon: On Method and Honesty}
+\addcontentsline{toc}{section}{Prolegomenon: On Method and Honesty}
+
+This document is organized as a chain of axioms, definitions, propositions, and conjectures. Every claim is tagged with its epistemic status:
+
+\begin{itemize}[nosep]
+    \item \textbf{Axiom}: A structural postulate, accepted as a premise of the framework.
+    \item \textbf{Proposition / Theorem}: A rigorous logical consequence of the axioms.
+    \item \textbf{Selection}: An argument from consistency or parsimony---motivated but not uniquely determined.
+    \item \textbf{Conjecture}: A proposed identification requiring empirical or mathematical validation.
+    \item \textbf{Open}: An unresolved question.
+\end{itemize}
+
+We follow Plato's distinction between \emph{episteme} (demonstrable knowledge) and \emph{doxa} (justified opinion). The axiomatic chain from Void to thermodynamic decay is \emph{episteme} within the framework. The identification of framework quantities with physical observables is \emph{doxa}---well-motivated but not established.
+
+The reader should note: a logically closed chain of deductions from axioms proves only that the axioms entail the conclusions. It does not prove that the axioms describe reality. That determination belongs to experiment.
+
+% ======================================================================
+\section{The Platonic Thesis}
+
+\begin{axiom}[Ontological Priority of Form]\label{ax:platonism}
+Mathematical structure exists independently of physical instantiation. Physical reality \emph{participates in} mathematical form; mathematical form does not depend on physical reality.
+\end{axiom}
+
+\begin{remark}
+This is the central commitment of the framework. It is not a theorem but a metaphysical orientation---the same one held by Plato (\emph{Republic} VII), adopted by Galileo (``the book of nature is written in the language of mathematics''), and articulated precisely by Tegmark as the Mathematical Universe Hypothesis. We adopt it as an axiom because it is the premise whose consequences we wish to explore, not because we claim to have proven it.
+\end{remark}
+
+\begin{scholium}[What Platonism Is Not]
+Mathematical Platonism does not assert that consciousness creates reality, that the universe is a computer simulation, or that an anthropomorphic deity renders the cosmos. It asserts only that mathematical truths---the properties of prime numbers, the structure of elliptic curves, the topology of manifolds---hold \emph{whether or not} any physical system instantiates them, and that physical law inherits its structure from this prior mathematical necessity.
+\end{scholium}
+
+% ======================================================================
+\section{Axiom 0: The Void (The Continuous Substrate)}
+
+\begin{axiom}[The Void]\label{ax:void}
+The fundamental ontological substrate is a continuous, self-symmetric mathematical object $\Void$ satisfying:
+\begin{enumerate}[label=(\roman*), nosep]
+    \item $\Void$ is a vector space over $\Real^3$ at every point of a continuum.
+    \item $\Void$ possesses exact additive symmetry: for every element $+v \in \Void$, there exists $-v \in \Void$ such that $v + (-v) = 0$.
+    \item $\Void$ carries no preferred decomposition into parts---it is globally defined.
+\end{enumerate}
+\end{axiom}
+
+\begin{remark}
+The Void is not ``nothing.'' It is the maximally symmetric continuous potential---the space of all possible configurations before any particular configuration is selected. In Platonic terms, it is the \emph{Receptacle} (Plato, \emph{Timaeus} 48e--52d): the formless substrate that receives determination from the Forms.
+\end{remark}
+
+\begin{proposition}[Non-Self-Sufficiency of Discrete Structure]\label{prop:discrete}
+A finite collection of discrete objects $\{p_1, \ldots, p_n\}$ cannot constitute a self-sufficient ontological foundation, because it presupposes:
+\begin{enumerate}[label=(\roman*), nosep]
+    \item A space in which the objects are located (spatial presupposition).
+    \item A principle distinguishing $p_i$ from $p_j$ (individuation presupposition).
+    \item Rules governing their interaction (dynamical presupposition).
+\end{enumerate}
+Each presupposition requires structure not contained in the collection itself.
+\end{proposition}
+
+\begin{proof}
+Suppose the $n$ objects constitute all of reality. Then spatial relations among them must either (a) be intrinsic properties of the objects---but then the objects encode continuous geometric information, contradicting their discreteness---or (b) be defined by a background structure, which is then more fundamental than the objects. Similarly, individuation requires a principle of identity ($p_i \neq p_j$), which is a logical relation, not a physical object. The dynamical rules are mathematical structures (differential equations, Lagrangians, Hamiltonians) that exist whether or not the objects do. In all cases, the discrete objects presuppose structure external to themselves. \qedhere
+\end{proof}
+
+\begin{scholium}
+This is not Zeno's paradox repackaged. We do not deny the existence of discrete structure; we deny its \emph{ontological priority}. Discrete structure is real but \emph{derived}---it is what happens when the continuous substrate is projected onto a finite basis, as we formalize below.
+\end{scholium}
+
+% ======================================================================
+\section{Axiom I: The Projection (The Emergence of Discreteness)}
+
+\begin{axiom}[Finite Projective Instantiation]\label{ax:projection}
+Physical reality is a projective instantiation of $\Void$ onto a finite discrete structure: a lattice $\Lattice \subset \Integer^3$ of side length $N$, where each site $v \in \Lattice$ is assigned a state $s(v) \in \{-1, 0, +1\}$.
+\end{axiom}
+
+\begin{definition}[The Projection Map]\label{def:projection}
+Let $\Void = C^\infty(\Real^3, \Real^3)$ be the space of smooth vector fields on $\Real^3$. The \textbf{projection} is a map
+\begin{equation}
+    \Pi: \Void \longrightarrow \Lattice \times \{-1, 0, +1\}^{|\Lattice|}
+\end{equation}
+that assigns to each smooth field configuration a discrete lattice state. The projection consists of:
+\begin{enumerate}[label=(\roman*), nosep]
+    \item \textbf{Spatial discretization}: restriction from $\Real^3$ to $\Integer^3 \cap [0,N)^3$.
+    \item \textbf{State quantization}: rounding of continuous field amplitudes to ternary values via a threshold $K_B > 0$.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Projection Is Necessarily Lossy]\label{prop:lossy}
+The projection $\Pi$ cannot be injective. Distinct elements of $\Void$ are mapped to the same lattice configuration.
+\end{proposition}
+
+\begin{proof}
+$\Void = C^\infty(\Real^3, \Real^3)$ is an infinite-dimensional function space. The codomain $\Lattice \times \{-1,0,+1\}^{|\Lattice|}$ is a finite set of cardinality $3^{N^3}$. No map from an infinite-dimensional space to a finite set can be injective. \qedhere
+\end{proof}
+
+\begin{remark}
+This is the correct formalization of the intuition behind ``Cantor's strike'' in the original draft. We do not invoke the diagonal argument (which concerns countability of the reals) or the Continuum Hypothesis (which is independent of ZFC). We invoke only the elementary fact that a finite codomain cannot faithfully encode an infinite-dimensional domain. The information lost under $\Pi$ is not a metaphor---it is a quantifiable deficit.
+\end{remark}
+
+% ======================================================================
+\section{Axiom II: The Residual (The Emergence of Mass)}
+
+\begin{definition}[Projection Residual]\label{def:residual}
+For a field configuration $\mathbf{J} \in \Void$ and its projected lattice state $\Pi(\mathbf{J})$, the \textbf{projection residual} at site $v$ is:
+\begin{equation}
+    \mathcal{R}(v) = \mathbf{J}(v) - \mathbf{J}_{\Pi}(v)
+\end{equation}
+where $\mathbf{J}_\Pi$ is the nearest ternary-compatible field configuration. The total residual is:
+\begin{equation}
+    \mathcal{R}_{\text{total}} = \sum_{v \in \Lattice} |\mathcal{R}(v)|^2.
+\end{equation}
+\end{definition}
+
+\begin{conjecture}[Mass as Projection Residual]\label{conj:mass}
+The inertial mass of a manifested particle at site $v$ is proportional to the projection residual:
+\begin{equation}
+    m(v) \propto \mathcal{R}(v).
+\end{equation}
+The lattice must expend dynamical bandwidth (update cycles) to maintain the manifested state against the residual's tendency to relax back to the continuous substrate. This maintenance cost manifests as inertia.
+\end{conjecture}
+
+\begin{remark}
+This is labeled \conject{} because, while the projection residual is mathematically well-defined, its identification with physical mass has not been derived from the FTD action principle $S[s, \mathbf{J}]$. A complete derivation would require showing that the Euler--Lagrange equations of $S$ produce an effective inertial term proportional to $\mathcal{R}$. This remains \openq.
+\end{remark}
+
+\begin{proposition}[The Higgs Mechanism as Projection Artifact]\label{prop:higgs}\conject
+If Conjecture~\ref{conj:mass} holds, then the Higgs field $\phi$ corresponds to the scalar component of $\mathcal{R}$, and the Higgs vacuum expectation value $v_H = 246$\,GeV corresponds to the characteristic scale of projection residuals at the electroweak transition. Within FTD, this scale is:
+\begin{equation}
+    v_H = m_P \sqrt{2\pi}\, \alpha^8 \approx 246.0\;\text{GeV} \quad (0.05\%\;\text{accuracy})
+\end{equation}
+where $m_P$ is the Planck mass and $\alpha$ the fine-structure constant.
+\end{proposition}
+
+\begin{remark}
+The numerical agreement is striking but the derivation chain passes through several selection principles (see Section~\ref{sec:selections}). The formula is a \emph{conditional theorem}: rigorous algebra given the selections, not an unconditional derivation from axioms alone.
+\end{remark}
+
+% ======================================================================
+\section{Axiom III: The Flux (The Dispositional Field)}
+
+\begin{axiom}[The Flux Field]\label{ax:flux}
+Each lattice site $v \in \Lattice$ carries, in addition to its ternary state $s(v)$, a continuous vector field $\mathbf{J}(v) \in \Real^3$, called the \textbf{flux}. The flux encodes the dispositional tendencies of the Void substrate at that site---what the substrate \emph{would do} if conditions for manifestation were met.
+\end{axiom}
+
+\begin{definition}[The Two-Layer Ontology]\label{def:layers}
+FTD posits a graded ontology:
+\begin{center}
+\begin{tabular}{lll}
+    \toprule
+    \textbf{Layer} & \textbf{Mathematical Object} & \textbf{Ontological Status} \\
+    \midrule
+    Void substrate & $\Void = C^\infty(\Real^3, \Real^3)$ & Fundamental (Platonic Form) \\
+    Flux field & $\mathbf{J}: \Lattice \to \Real^3$ & Dispositional (tendency) \\
+    Ternary state & $s: \Lattice \to \{-1, 0, +1\}$ & Actual (manifested) \\
+    \bottomrule
+\end{tabular}
+\end{center}
+\end{definition}
+
+\begin{proposition}[Complexification Yields Quantum Structure]\label{prop:complex}\proven
+The complexified flux $\psi(v) = J_x(v) + i\,J_y(v)$ defines an element of the Hilbert space $\Hilbert = L^2(\Lattice, \Complex)$. The inner product
+\begin{equation}
+    \langle \psi | \phi \rangle = \sum_{v \in \Lattice} \psi^*(v)\,\phi(v)
+\end{equation}
+endows $\Hilbert$ with the structure of a finite-dimensional complex Hilbert space. The Born rule $P(v) = |\psi(v)|^2 / \|\psi\|^2$ then follows from manifestation threshold statistics under the imposed sampling rule $|\mathbf{J}|^2 > K_B$.
+\end{proposition}
+
+\begin{remark}
+The Born rule's emergence depends on the sampling rule being $|\mathbf{J}|^2$ rather than $|\mathbf{J}|$ or $|\mathbf{J}|^4$. This is argued from conservation and maximum entropy but is ultimately a \selection{}, not a theorem. See the FTD reference document \S13.1 for the full discussion.
+\end{remark}
+
+% ======================================================================
+\section{Axiom IV: The Causal Bound (The Emergence of Relativity)}
+
+\begin{axiom}[Discrete Causality]\label{ax:causality}
+Information propagates on $\Lattice$ at a maximum rate of one lattice unit per discrete time step (tick). This defines the speed of causality: $C = 1$ in natural units.
+\end{axiom}
+
+\begin{proposition}[Emergent Lorentz Structure]\label{prop:lorentz}\selection
+At scales much larger than the lattice spacing ($\ell \gg 1$), the discrete wave equation
+\begin{equation}
+    \partial_t^2 \mathbf{J} = C^2 \nabla^2 \mathbf{J}
+\end{equation}
+recovers rotational isotropy and boost invariance. The residual anisotropy from the cubic lattice is of order $(E/E_{\text{Planck}})^4 \sim 10^{-80}$, far below any conceivable measurement.
+\end{proposition}
+
+\begin{scholium}[Gravity as Bandwidth Saturation]\label{sch:gravity}\conject
+Where manifested particles cluster densely, the lattice's finite update rate creates a local processing deficit. The effective metric experienced by flux waves propagating through this region is:
+\begin{equation}
+    g_{\mu\nu}^{\text{eff}}(x) = \eta_{\mu\nu} + h_{\mu\nu}(x), \qquad h_{\mu\nu} \propto \rho_{\text{manifested}}(x),
+\end{equation}
+recovering linearized general relativity. The full Einstein equations $R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = 8\pi G\, T_{\mu\nu}$ have been derived within FTD with the correct $8\pi G$ coefficient, though the derivation passes through interpretive identifications that are \selection{} rather than \proven{}.
+\end{scholium}
+
+% ======================================================================
+\section{Axiom V: The Dissipation (The Emergence of Time)}
+
+\begin{axiom}[Irreversible Projection Loss]\label{ax:dissipation}
+Each update cycle of the lattice incurs irreversible information loss at a rate $\gamma > 0$. Manifested states leak flux back into the unmanifested substrate:
+\begin{equation}
+    \mathbf{J}(v, t+1) = (1 - \gamma)\,\mathbf{J}(v, t) + \text{(propagation terms)}.
+\end{equation}
+\end{axiom}
+
+\begin{proposition}[The Arrow of Time]\label{prop:arrow}
+Given a low-entropy initial condition (few manifested sites, coherent flux) and the dissipation rate $\gamma > 0$, the entropy $S = -\sum_v \rho(v) \ln \rho(v)$ is monotonically non-decreasing. The arrow of time is the direction of increasing projection loss.
+\end{proposition}
+
+\begin{remark}
+The identification $\gamma = \alpha \approx 1/137.036$ is \imposed{}---it is motivated by the observation that electromagnetic coupling governs the rate of irreversible transitions, but it is a parameter choice, not a derivation. The FTD Assumption Ledger catalogs this as ASSUMP.6.
+\end{remark}
+
+\begin{scholium}[The Thermodynamic Reading]
+In Platonic terms: the Forms are eternal and unchanging. The physical world, as a projection of the Forms onto a finite substrate, is necessarily imperfect and transient. The second law of thermodynamics is not a contingent fact about our universe---it is a \emph{necessary consequence} of any finite projection of an infinite mathematical structure. Time is the measure of how far the projection has degraded from its initial fidelity.
+\end{scholium}
+
+% ======================================================================
+\section{The Algebraic Invariant: $\alpha$ from Geometry}
+
+We now arrive at the framework's most precise quantitative claim: that the fine-structure constant $\alpha$ is not a free parameter but an algebraic invariant of the mathematical structure underlying the lattice.
+
+\begin{definition}[The Lemniscatic Constant]\label{def:gstar}
+The lemniscatic constant is:
+\begin{equation}
+    \Gstar = \frac{\sqrt{2}\;\Gamma(1/4)^2}{(2\pi)} \approx 2.622\,057\,554\,292\ldots \times \frac{\sqrt{2}}{\phantom{2}} = 2.958\,675\,119\ldots
+\end{equation}
+It arises as $\Gstar = 2\omega_1$, twice the real half-period of the lemniscatic elliptic curve $y^2 = x^3 - x$, which has complex multiplication by $\Integer[i]$ and $j$-invariant $j = 1728$.
+\end{definition}
+
+\begin{axiom}[The Master Quadratic]\label{ax:quadratic}\selection
+The coupling constants of the projected lattice are determined by the roots of:
+\begin{equation}
+    x^2 - 16(\Gstar)^2\,x + 16(\Gstar)^3 = 0.
+\end{equation}
+The coefficient 16 counts the physical degrees of freedom on the minimal $2 \times 2 \times 2$ FTD cell: $2^4 \times 3 - 2^3 = 16$ after Gauss constraint projection.
+\end{axiom}
+
+\begin{proposition}[The Two Roots]\label{prop:roots}\proven
+The quadratic has two positive real roots:
+\begin{align}
+    x_+ &= 8(\Gstar)^2 + 8(\Gstar)^2\sqrt{1 - 1/\Gstar} = 137.036\,171\ldots \\
+    x_- &= 8(\Gstar)^2 - 8(\Gstar)^2\sqrt{1 - 1/\Gstar} = 3.023\,964\ldots
+\end{align}
+\end{proposition}
+
+\begin{proof}
+Direct application of the quadratic formula to Axiom~\ref{ax:quadratic}. The discriminant $\Delta = 256(\Gstar)^4 - 64(\Gstar)^3 = 64(\Gstar)^3(4\Gstar - 1) > 0$ since $\Gstar > 1$. Both roots are positive since $x_+\,x_- = 16(\Gstar)^3 > 0$ and $x_+ + x_- = 16(\Gstar)^2 > 0$. \qedhere
+\end{proof}
+
+\begin{conjecture}[Physical Identification]\label{conj:alpha}
+The roots correspond to physical constants:
+\begin{enumerate}[label=(\roman*), nosep]
+    \item $x_+ = \alpha^{-1} = 137.036\ldots$\; (the inverse fine-structure constant).
+    \item $\lfloor x_- \rfloor = N_c = 3$\; (the number of color charges in QCD).
+\end{enumerate}
+\end{conjecture}
+
+\begin{remark}
+The identification $x_+ \leftrightarrow \alpha^{-1}$ achieves 1.26\,ppm agreement with the CODATA~2022 value $\alpha^{-1} = 137.035\,999\,177(21)$. This is the framework's sharpest empirical contact point. However, it rests on Axiom~\ref{ax:quadratic}, which involves the selection of the lemniscatic curve (among all elliptic curves), the $j = 1728$ CM point (among all CM values), and the specific quadratic form (among all polynomial equations). These choices are motivated by parsimony and mathematical naturality but are not uniquely forced by the axioms. The project's own audit document identifies four such selection principles (SP1--SP4); see Section~\ref{sec:selections}.
+\end{remark}
+
+\begin{conjecture}[Precision Extension]\label{conj:precision}
+A four-term correction in the small parameter $\varepsilon = e^\pi - \pi - 20 \approx -9.0 \times 10^{-4}$, with rational coefficients constructed from the FTD integer set $\{3, 4, 7, 13\}$, closes the 1.26\,ppm gap to sub-parts-per-trillion:
+\begin{equation}
+    \alpha^{-1} = x_+ - \frac{9}{47}|\varepsilon| + \frac{5}{64}|\varepsilon|^2 - \frac{4}{141}|\varepsilon|^3 - \frac{141}{11}|\varepsilon|^4 = 137.035\,999\,177\,000\ldots
+\end{equation}
+\end{conjecture}
+
+\begin{remark}[Epistemic Warning]\label{rem:warning}
+This precision formula is labeled \conject{}, not \proven{}, for the following reason: a degree-4 polynomial in a parameter of order $10^{-3}$, with 4 free rational coefficients, possesses sufficient degrees of freedom to fit any 12-digit target. The sub-ppt agreement is therefore \emph{necessary but not sufficient} evidence for the formula's validity. The formula would become a \emph{theorem} only if each coefficient were independently derived from the FTD action principle without prior knowledge of the CODATA value. As of this writing, the coefficients are constructed from the integer set $\{3, 4, 7, 13\}$ in a manner that is systematic but not uniquely determined. A skeptic is entitled to regard this as a sophisticated numerical coincidence until an independent derivation is provided.
+\end{remark}
+
+% ======================================================================
+\section{The Self-Referential Closure}
+
+\begin{definition}[The sLoop]\label{def:sloop}
+A \textbf{self-referential loop} ($\sLoop$) is a causal structure in which the observing subsystem $\mathcal{O} \subset \Lattice$ is embedded within the system it observes:
+\begin{equation}
+    \mathcal{O} \subset \Lattice, \qquad \mathcal{O} \xleftrightarrow{\;\mathbf{J}\;} \Lattice \setminus \mathcal{O}.
+\end{equation}
+The observer and observed share the same flux substrate and exchange information through it.
+\end{definition}
+
+\begin{proposition}[Necessity of Self-Reference for Measurement]\label{prop:measurement}\selection
+In the FTD action principle, the coupling term $\mathcal{L}_{\text{coupling}} = -g_c \cdot s \cdot (\nabla \cdot \mathbf{J})$ requires a manifested entity ($s \neq 0$) to trigger flux concentration. Without a manifested observer, the flux evolves linearly and no ``measurement'' (manifestation event) occurs. Measurement is therefore not epistemological but \emph{dynamical}: it requires a physical participant.
+\end{proposition}
+
+\begin{scholium}[The Platonic Observer]
+Plato's \emph{Allegory of the Cave} describes prisoners who see only shadows (projections) of the Forms. The $\sLoop$ inverts this: the observer is itself a shadow---a projected, manifested structure on the lattice---yet through self-reference, it participates in the process that generates further projections. Consciousness, in this framework, is not the \emph{cause} of physical reality (as idealism would have it) nor an \emph{epiphenomenon} of matter (as materialism would have it). It is the \emph{self-referential closure} of the projection: the point where the shadow becomes aware that it is a shadow, and in so doing, participates in the casting of light.
+
+This is neither idealism nor materialism. It is \textbf{structural realism}: what exists fundamentally is mathematical structure, and both ``mind'' and ``matter'' are aspects of that structure---one the projection, the other the self-referential invariant of the projection.
+\end{scholium}
+
+% ======================================================================
+\section{The Deductive Chain}
+
+We summarize the logical architecture:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}clll@{}}
+    \toprule
+    \textbf{Step} & \textbf{From} & \textbf{Entails} & \textbf{Status} \\
+    \midrule
+    0 & Continuous Void ($\Void$) & Maximal mathematical potential & \textsc{Axiom} \\
+    I & $\Void$ + Finite instantiation & Discrete lattice $\Lattice$ & \textsc{Axiom} \\
+    II & $\Pi: \Void \to \Lattice$ is non-injective & Projection residual $\mathcal{R}$ & \textsc{Proven} \\
+    III & $\mathcal{R}(v) \neq 0$ for manifested $v$ & Mass as maintenance cost & \textsc{Conjecture} \\
+    IV & $C = 1$ on $\Lattice$ & Lorentz structure at large scales & \textsc{Selection} \\
+    V & Causal bound + dense manifestation & Effective metric $\to$ gravity & \textsc{Conjecture} \\
+    VI & Irreversible projection loss ($\gamma > 0$) & Arrow of time, entropy & \textsc{Proven} \\
+    VII & Lemniscatic elliptic structure & $\alpha^{-1} \approx x_+ = 137.036$ & \textsc{Conjecture} \\
+    VIII & Self-referential closure ($\sLoop$) & Observer as dynamical participant & \textsc{Selection} \\
+    \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+Of eight steps, two are axiomatic premises, two are rigorously proven consequences, two are selections (motivated but not unique), and two are conjectures (requiring further derivation or empirical confirmation). The chain is \emph{logically closed}---each step follows from the preceding---but it is not \emph{epistemically uniform}: some links are steel and some are rope.
+\end{remark}
+
+% ======================================================================
+\section{Hidden Selections and Honest Accounting}
+\label{sec:selections}
+
+In the spirit of the FTD project's own epistemic discipline, we catalog the selection principles on which the strongest claims depend:
+
+\begin{enumerate}[label=\textbf{SP\arabic*}., leftmargin=3em]
+    \item \textbf{Why the lemniscatic curve?} Among all elliptic curves, we select the one with $j = 1728$ (complex multiplication by $\Integer[i]$). This is motivated by maximal symmetry ($\mathbb{Z}_4$ automorphism group) and by the fact that $j = 1728 = 12^3$ connects to the 12 edges of the cuboctahedron, but it is not the unique choice.
+
+    \item \textbf{Why a quadratic master equation?} The polynomial $x^2 - 16\Gstar^2 x + 16\Gstar^3 = 0$ is selected among all polynomial relations involving $\Gstar$. The coefficient 16 has a lattice-counting interpretation, but other polynomials with other coefficients exist.
+
+    \item \textbf{Why $\varepsilon = e^\pi - \pi - 20$?} The near-integer property $e^\pi \approx \pi + 20$ is a known numerical coincidence in number theory. The decomposition $20 = 7 + 13 = b_3 + N_{\text{eff}}$ is suggestive but may be post hoc.
+
+    \item \textbf{Why these four correction coefficients?} The rationals $\{9/47, 5/64, 4/141, 141/11\}$ are constructed from $\{3, 4, 7, 13\}$, but the specific combinations are not derived from a unique principle. With four free coefficients and a small expansion parameter, matching a 12-digit target is algebraically possible regardless of the underlying physics.
+\end{enumerate}
+
+\begin{remark}
+The honest assessment: Axiom~\ref{ax:quadratic} and Conjecture~\ref{conj:alpha} together constitute the framework's most remarkable claim \emph{and} its most vulnerable point. If the identification $x_+ = \alpha^{-1}$ is coincidental, then FTD reduces to an interesting lattice model without predictive power for fundamental constants. If it is not coincidental, then the lemniscatic curve encodes something profound about the structure of electromagnetism. Distinguishing these possibilities requires either (a) an independent derivation of $\Gstar$ from quantum electrodynamics, or (b) a precision measurement of $\alpha$ that distinguishes the FTD prediction from the Standard Model at the sub-ppm level.
+\end{remark}
+
+% ======================================================================
+\section{Falsification Criteria}
+
+A framework that cannot be wrong is not physics. The \emph{Principia Ontologica} is falsified by:
+
+\begin{enumerate}[leftmargin=2em]
+    \item \textbf{Precision $\alpha$ measurement} incompatible with $x_+ = 137.036\,17\ldots$ at better than 10\,ppm. Current measurements are at 0.15\,ppb, already constraining the identification.
+
+    \item \textbf{Discovery of a 4th fermion generation} with standard gauge couplings, falsifying $\lfloor x_- \rfloor = 3$.
+
+    \item \textbf{Demonstration that no ensemble averaging} over local deterministic lattice states can yield Bell correlations $S > 2$, falsifying the substrate-to-aggregate transition.
+
+    \item \textbf{Observable Lorentz violation} with the wrong sign (superluminal high-energy photons rather than subluminal).
+
+    \item \textbf{Quantitative derivation} showing that projection residuals $\mathcal{R}$ do \emph{not} produce inertial behavior, falsifying Conjecture~\ref{conj:mass}.
+\end{enumerate}
+
+% ======================================================================
+\section{Conclusion: The Platonic Architecture}
+
+We have presented a formal axiomatic chain from a single ontological premise---the continuous, self-symmetric Void---to the emergence of space, mass, force, time, and the fine-structure constant. The architecture is:
+
+\begin{quote}
+\textbf{Form} (continuous mathematical structure) $\;\xrightarrow{\;\Pi\;}\;$ \textbf{Projection} (discrete lattice) $\;\xrightarrow{\;\mathcal{R}\;}\;$ \textbf{Residual} (mass) $\;\xrightarrow{\;\gamma\;}\;$ \textbf{Dissipation} (time).
+\end{quote}
+
+The framework does not ``prove'' that reality is Platonic any more than Newton's \emph{Principia} proved that space is absolute. It demonstrates that the Platonic thesis---mathematical structure is ontologically prior---can be made formally precise, that it generates a logically closed deductive chain, and that this chain makes contact with experiment through the algebraic invariant $\alpha^{-1} = x_+ = 137.036\ldots$
+
+Whether this contact is coincidence or revelation is not for the framework to decide. It is for experiment.
+
+\vspace{2em}
+\hrule height 0.6pt
+\vspace{1em}
+
+\small
+\noindent\textbf{Acknowledgments.} This work builds on the Foundational Ternary Dynamics research program. The author thanks the critical review process for enforcing epistemic honesty---the most difficult and most necessary discipline in foundational physics.
+
+\vspace{1em}
+\noindent\textbf{A note on scope.} This document is a philosophical formalization, not an experimental paper. Its claims about physical reality are \emph{conjectures} until confirmed by independent measurement. The mathematical content (propositions, proofs) is rigorous within the stated axioms. The physical identifications (conjectures, selections) are motivated but unproven. The reader is invited to hold both simultaneously---to take the mathematics seriously while remaining skeptical of the physics---which is, after all, the Platonic attitude.
+
+\begin{thebibliography}{99}
+\bibitem{CODATA2022} Tiesinga, E., et al., ``CODATA recommended values of the fundamental physical constants: 2022,'' \textit{Rev.\ Mod.\ Phys.}\ (2024).
+
+\bibitem{Steinmetz2026} Steinmetz, W.~J., III, ``A Precision Formula for the Fine-Structure Constant from Discrete Lattice Combinatorics,'' FTD Pre-print (2026).
+
+\bibitem{Tegmark2014} Tegmark, M., ``Our Mathematical Universe,'' Knopf (2014).
+
+\bibitem{Plato} Plato, \textit{Timaeus}, trans.\ Zeyl, D.~J., Hackett (2000).
+
+\bibitem{Lawvere1969} Lawvere, F.~W., ``Diagonal arguments and cartesian closed categories,'' \textit{Lecture Notes in Mathematics}\ \textbf{92}, 134--145 (1969).
+\end{thebibliography}
+
+\end{document}
