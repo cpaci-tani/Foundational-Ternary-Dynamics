@@ -266,4 +266,4 @@ Starting from the FTD action S[s,J]:
 ### Verification Files
 
 - `engine/tests/test_gpu_physics.cpp`: GP-KCOMP-SHELL campaign (10 checks)
-- `simulations/explore_kcomp_volumetric_shell.py`: Python Monte Carlo exploration (reference)
+- `scripts/exploration/explore_kcomp_volumetric_shell.py`: Python Monte Carlo exploration (reference)

@@ -1,0 +1,23 @@
+{
+  "script": "02_phase_gradient_field.py",
+  "description": "Phase gradient (local wavevector) entropy vs Born rule",
+  "parameters": {
+    "W": 512.0,
+    "H": 512.0,
+    "lam": 32.0,
+    "separation": 160.0,
+    "phase_offset": 3.141592653589793,
+    "t": 600.0,
+    "K_B": 0.05,
+    "N_clicks": 10000.0
+  },
+  "results": {
+    "H_gradient_bits": 2.572028601210455,
+    "H_born_gradient_bits": 0.0,
+    "bits_destroyed": 2.572028601210455,
+    "mean_grad_magnitude": 0.19276024723356847,
+    "max_grad_magnitude": 3.6756157701084584,
+    "valid_pixels": 249029,
+    "quiver_step": 16
+  }
+}

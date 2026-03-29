@@ -195,7 +195,7 @@ $$e^2_{\text{EM}} + e^2_C = \frac{1}{G^*}, \qquad e^2_{\text{EM}} \cdot e^2_C = 
 
 The coupling-space and charge-space polynomials are reciprocal polynomials (leading $\leftrightarrow$ constant coefficients swap; linear coefficient $-16G^{*2}$ is shared). The charge sum $1/G^*$ links directly to the dual-substrate observable $\psi = G^*$ per DoF.
 
-Full derivation: DERIV_CHARGE_QUARTIC_FROM_GSTAR.md. Verification: `simulations/verify_charge_quartic.py` (6/6 pass).
+Full derivation: DERIV_CHARGE_QUARTIC_FROM_GSTAR.md. Verification: `scripts/verification/verify_charge_quartic.py` (6/6 pass).
 
 ---
 

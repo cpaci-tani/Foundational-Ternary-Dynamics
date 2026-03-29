@@ -252,8 +252,8 @@ The second differences measure the "acceleration" of the walk. The walk starts f
 - **Constant atlas**: [EXPLR_ONTIC_CONSTANT_ATLAS.md](../09_mathematical/EXPLR_ONTIC_CONSTANT_ATLAS.md)
 - **G* derivation**: [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
 - **Dual substrate**: see `ontic.h` Layer 3b
-- **Numerical verification**: `simulations/explore_ladder_generating_rule.py`
-- **Algebraic proof of LGR-8**: `simulations/prove_dual_substrate_identity.py`
+- **Numerical verification**: `scripts/exploration/explore_ladder_generating_rule.py`
+- **Algebraic proof of LGR-8**: `scripts/proofs/prove_dual_substrate_identity.py`
 
 ---
 

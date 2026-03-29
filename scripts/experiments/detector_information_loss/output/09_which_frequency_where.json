@@ -1,0 +1,27 @@
+{
+  "script": "09_which_frequency_where.py",
+  "description": "STFT spectrograms of psi, |psi|^2, and detector histogram along midline",
+  "parameters": {
+    "W": 512.0,
+    "H": 512.0,
+    "lam": 32.0,
+    "separation": 160.0,
+    "phase_offset": 3.141592653589793,
+    "t": 600.0,
+    "K_B": 0.05,
+    "N_clicks": 10000.0
+  },
+  "stft_params": {
+    "nperseg": 128,
+    "window": "hann",
+    "noverlap": 64
+  },
+  "results": {
+    "mean_spectral_concentration_psi": 0.630995843943444,
+    "mean_spectral_concentration_born": 0.5653339290675808,
+    "mean_spectral_concentration_detector": 0.6669189048784748,
+    "H_max_bits": 7.0,
+    "n_position_bins_psi": 9,
+    "n_frequency_bins": 128
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "script": "05_spatial_coherence.py",
+  "description": "Mutual coherence Gamma vs intensity autocorrelation g^2",
+  "parameters": {
+    "W": 512.0,
+    "H": 512.0,
+    "lam": 32.0,
+    "separation": 160.0,
+    "phase_offset": 3.141592653589793,
+    "t": 600.0,
+    "K_B": 0.05,
+    "N_clicks": 10000.0
+  },
+  "results": {
+    "gamma_0": 0.022015858015383645,
+    "gamma_sign_changes": 11,
+    "g2_0": 3.864111762892159,
+    "max_displacement_px": 200,
+    "mutual_information": {
+      "separations": [
+        1,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128
+      ],
+      "MI_full_field_bits": [
+        2.659976691318788,
+        1.2302413314319722,
+        0.75949318557804,
+        2.283952094920353,
+        1.6854465362851192,
+        1.104566719570093,
+        0.9508446602631516
+      ],
+      "MI_born_field_bits": [
+        1.7862307231380463,
+        1.0596943679033457,
+        0.9665938917511275,
+        1.0808305274279135,
+        0.7426267140078692,
+        0.2712325309705377,
+        0.25757910791542027
+      ]
+    },
+    "avg_MI_ratio_full_over_born": 2.226060252696051
+  }
+}

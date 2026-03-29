@@ -1014,7 +1014,7 @@ m = m_Q + 2m_light + binding (≈ -0.3 GeV)
 
 All predictions have been verified against PDG 2024 values. See:
 - `docs/theory/DERIV_COMPLETE_PARTICLE_PHYSICS.md` for full derivations
-- `simulations/verify_complete_physics.py` for numerical verification
+- `scripts/verification/verify_complete_physics.py` for numerical verification
 
 ### 27.4 Statistical Significance
 

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gaussian Moats — The Inverse Prime Map</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a12; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; }
+
+#controls {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,18,0.95); padding: 8px 20px;
+    display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #333;
+    flex-wrap: wrap;
+}
+#controls h1 { font-size: 15px; color: #ff9966; white-space: nowrap; }
+#controls label { font-size: 12px; color: #aaa; white-space: nowrap; }
+#controls input[type=range] { width: 150px; accent-color: #ff6644; }
+#controls .val { font-size: 13px; color: #fff; font-weight: bold; min-width: 30px; }
+#controls select { background: #1a1a2a; color: #eee; border: 1px solid #444; padding: 3px 8px; font-size: 12px; }
+#controls .stat { font-size: 11px; color: #888; margin-left: auto; }
+
+#container { display: flex; width: 100vw; height: calc(100vh - 42px); margin-top: 42px; }
+.panel { flex: 1; position: relative; }
+.panel-label {
+    position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; color: #555; z-index: 10; pointer-events: none;
+}
+canvas { display: block; width: 100%; height: 100%; }
+.divider { width: 1px; background: #333; }
+</style>
+</head>
+<body>
+
+<div id="controls">
+    <h1>Gaussian Moats Explorer</h1>
+    <label>Bound:</label>
+    <input type="range" id="boundSlider" min="10" max="500" value="50" step="5">
+    <span class="val" id="boundVal">50</span>
+    <label>Color:</label>
+    <select id="colorMode">
+        <option value="binary">Binary (prime/composite)</option>
+        <option value="norm">By norm a²+b²</option>
+        <option value="factors">By smallest prime factor</option>
+        <option value="mod4">By a²+b² mod 4</option>
+        <option value="distance">Distance to nearest Gaussian prime</option>
+    </select>
+    <label>Speed:</label>
+    <input type="range" id="speedSlider" min="0" max="2000" value="0" step="50">
+    <span class="val" id="speedVal">Off</span>
+    <button id="playBtn" style="background:#1a1a2a;color:#eee;border:1px solid #444;padding:3px 12px;font-size:12px;cursor:pointer;">▶ Play</button>
+    <button id="resetBtn" style="background:#1a1a2a;color:#eee;border:1px solid #444;padding:3px 12px;font-size:12px;cursor:pointer;">⟲ Reset</button>
+    <span class="stat" id="stats"></span>
+</div>
+
+<div id="container">
+    <div class="panel" id="panelPrimes">
+        <div class="panel-label">Primes (where they ARE)</div>
+        <canvas id="canvasPrimes"></canvas>
+    </div>
+    <div class="divider"></div>
+    <div class="panel" id="panelMoats">
+        <div class="panel-label">Moats (where they are NOT)</div>
+        <canvas id="canvasMoats"></canvas>
+    </div>
+</div>
+
+<script>
+// =====================================================
+// SIEVE AND COMPUTATION
+// =====================================================
+
+function sievePrimes(max) {
+    const siv = new Uint8Array(max + 1);
+    siv[0] = siv[1] = 1;
+    for (let i = 2; i * i <= max; i++)
+        if (!siv[i]) for (let j = i * i; j <= max; j += i) siv[j] = 1;
+    return siv;
+}
+
+function smallestPrimeFactor(n, siv) {
+    if (n < 2) return 0;
+    for (let i = 2; i * i <= n; i++)
+        if (n % i === 0) return i;
+    return n; // n is prime
+}
+
+function computeGrid(bound) {
+    const maxNorm = 2 * bound * bound;
+    const siv = sievePrimes(maxNorm);
+    const size = 2 * bound + 1;
+
+    // Grid: 0 = not Gaussian prime, 1 = split (quadrant), 2 = inert (axis)
+    const primeGrid = new Uint8Array(size * size);
+    // Norm grid
+    const normGrid = new Uint32Array(size * size);
+    // Factor grid
+    const factorGrid = new Uint16Array(size * size);
+
+    const idx = (a, b) => (b + bound) * size + (a + bound);
+
+    for (let a = -bound; a <= bound; a++) {
+        for (let b = -bound; b <= bound; b++) {
+            const norm = a * a + b * b;
+            const i = idx(a, b);
+            normGrid[i] = norm;
+
+            if (norm > 0 && norm <= maxNorm) {
+                factorGrid[i] = smallestPrimeFactor(norm, siv);
+            }
+
+            if (a === 0 && b === 0) continue;
+
+            if (a === 0 || b === 0) {
+                const val = Math.abs(a || b);
+                if (val <= maxNorm && !siv[val] && val % 4 === 3) {
+                    primeGrid[i] = 2; // inert
+                }
+            } else {
+                if (norm <= maxNorm && !siv[norm]) {
+                    primeGrid[i] = 1; // split
+                }
+            }
+        }
+    }
+
+    // Distance to nearest Gaussian prime (BFS)
+    const distGrid = new Float32Array(size * size);
+    distGrid.fill(999);
+    const queue = [];
+
+    for (let i = 0; i < primeGrid.length; i++) {
+        if (primeGrid[i] > 0) {
+            distGrid[i] = 0;
+            queue.push(i);
+        }
+    }
+
+    // BFS with 8-connectivity
+    let head = 0;
+    const offsets = [-size-1, -size, -size+1, -1, 1, size-1, size, size+1];
+    const dists = [Math.SQRT2, 1, Math.SQRT2, 1, 1, Math.SQRT2, 1, Math.SQRT2];
+
+    while (head < queue.length) {
+        const ci = queue[head++];
+        const cd = distGrid[ci];
+        for (let k = 0; k < 8; k++) {
+            const ni = ci + offsets[k];
+            if (ni >= 0 && ni < distGrid.length) {
+                const nd = cd + dists[k];
+                if (nd < distGrid[ni]) {
+                    distGrid[ni] = nd;
+                    queue.push(ni);
+                }
+            }
+        }
+    }
+
+    return { primeGrid, normGrid, factorGrid, distGrid, size, bound };
+}
+
+// =====================================================
+// RENDERING
+// =====================================================
+
+const cPrimes = document.getElementById('canvasPrimes');
+const cMoats = document.getElementById('canvasMoats');
+const ctxP = cPrimes.getContext('2d');
+const ctxM = cMoats.getContext('2d');
+
+function hueToRgb(h, s, l) {
+    h = h / 360;
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    const hue2rgb = (p, q, t) => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+    };
+    return [
+        Math.round(hue2rgb(p, q, h + 1/3) * 255),
+        Math.round(hue2rgb(p, q, h) * 255),
+        Math.round(hue2rgb(p, q, h - 1/3) * 255)
+    ];
+}
+
+function getCompositeColor(i, data, colorMode) {
+    const norm = data.normGrid[i];
+    if (norm === 0) return [20, 20, 20];
+
+    switch (colorMode) {
+        case 'binary':
+            return [180, 140, 60];
+
+        case 'norm': {
+            const maxN = 2 * data.bound * data.bound;
+            const t = Math.sqrt(norm / maxN);
+            return hueToRgb(280 - t * 200, 0.8, 0.15 + t * 0.35);
+        }
+
+        case 'factors': {
+            const f = data.factorGrid[i];
+            if (f === 0) return [0, 0, 0];
+            const hue = (f * 137.508) % 360; // golden angle for spread
+            const isInert = (f > 2 && f % 4 === 3);
+            return hueToRgb(hue, 0.7, isInert ? 0.25 : 0.15);
+        }
+
+        case 'mod4': {
+            const m = norm % 4;
+            if (m === 0) return [40, 10, 10];     // 0 mod 4: dark red
+            if (m === 1) return [10, 30, 60];      // 1 mod 4: dark blue (split territory)
+            if (m === 2) return [30, 30, 10];      // 2 mod 4: dark yellow
+            return [40, 15, 5];                     // 3 mod 4: dark orange (inert territory)
+        }
+
+        case 'distance': {
+            const d = data.distGrid[i];
+            const t = Math.min(d / 8, 1);
+            // Bright where far from primes (deep moats)
+            return hueToRgb(60 - t * 60, 0.9, t * 0.6);
+        }
+    }
+    return [0, 0, 0];
+}
+
+function getPrimeColor(type) {
+    if (type === 1) return [68, 170, 255];  // split: blue
+    if (type === 2) return [255, 68, 50];   // inert: red
+    return [0, 0, 0];
+}
+
+function drawPanel(ctx, canvas, data, showPrimes) {
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    canvas.width = w;
+    canvas.height = h;
+
+    const { primeGrid, size, bound } = data;
+    const colorMode = document.getElementById('colorMode').value;
+
+    const imgData = ctx.createImageData(w, h);
+    const pixels = imgData.data;
+
+    const scale = Math.min(w, h) / size;
+
+    for (let py = 0; py < h; py++) {
+        for (let px = 0; px < w; px++) {
+            // Map pixel to grid
+            const ga = Math.round((px - w/2) / scale + bound);
+            const gb = Math.round((h/2 - py) / scale + bound); // flip Y
+
+            const pi = py * w + px;
+            const pi4 = pi * 4;
+
+            if (ga < 0 || ga >= size || gb < 0 || gb >= size) {
+                pixels[pi4] = 10; pixels[pi4+1] = 10; pixels[pi4+2] = 18; pixels[pi4+3] = 255;
+                continue;
+            }
+
+            const gi = gb * size + ga;
+            const isPrime = primeGrid[gi];
+
+            let r, g, b;
+
+            if (showPrimes) {
+                // PRIME VIEW: bright on primes, dark elsewhere
+                if (isPrime) {
+                    [r, g, b] = getPrimeColor(isPrime);
+                } else {
+                    [r, g, b] = [8, 8, 14];
+                }
+            } else {
+                // MOAT VIEW: color composites, primes are dark voids
+                if (isPrime) {
+                    [r, g, b] = [2, 2, 5]; // primes are near-black voids
+                } else {
+                    [r, g, b] = getCompositeColor(gi, data, colorMode);
+                }
+            }
+
+            pixels[pi4] = r;
+            pixels[pi4+1] = g;
+            pixels[pi4+2] = b;
+            pixels[pi4+3] = 255;
+        }
+    }
+
+    ctx.putImageData(imgData, 0, 0);
+
+    // Draw axis cross
+    ctx.strokeStyle = showPrimes ? 'rgba(255,255,255,0.1)' : 'rgba(255,100,50,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w/2, 0); ctx.lineTo(w/2, h);
+    ctx.moveTo(0, h/2); ctx.lineTo(w, h/2);
+    ctx.stroke();
+}
+
+// =====================================================
+// MAIN
+// =====================================================
+
+let currentData = null;
+let redrawQueued = false;
+
+function requestRedraw() {
+    if (redrawQueued) return;
+    redrawQueued = true;
+    requestAnimationFrame(() => {
+        redrawQueued = false;
+        if (!currentData) return;
+        drawPanel(ctxP, cPrimes, currentData, true);
+        drawPanel(ctxM, cMoats, currentData, false);
+    });
+}
+
+function update() {
+    const bound = parseInt(document.getElementById('boundSlider').value);
+    document.getElementById('boundVal').textContent = bound;
+
+    const t0 = performance.now();
+    currentData = computeGrid(bound);
+    const dt = (performance.now() - t0).toFixed(0);
+
+    let primeCount = 0, compositeCount = 0;
+    let maxDist = 0;
+    for (let i = 0; i < currentData.primeGrid.length; i++) {
+        if (currentData.primeGrid[i]) primeCount++;
+        else compositeCount++;
+        if (currentData.distGrid[i] < 900 && currentData.distGrid[i] > maxDist)
+            maxDist = currentData.distGrid[i];
+    }
+
+    document.getElementById('stats').textContent =
+        `${primeCount} primes | ${compositeCount} composites | ` +
+        `max moat depth: ${maxDist.toFixed(1)} | computed in ${dt}ms`;
+
+    requestRedraw();
+}
+
+let updateTimer = null;
+document.getElementById('boundSlider').addEventListener('input', () => {
+    document.getElementById('boundVal').textContent = document.getElementById('boundSlider').value;
+    clearTimeout(updateTimer);
+    updateTimer = setTimeout(update, 200);
+});
+document.getElementById('colorMode').addEventListener('change', requestRedraw);
+window.addEventListener('resize', requestRedraw);
+
+// =====================================================
+// ANIMATION CONTROLS
+// =====================================================
+
+let animInterval = null;
+let playing = false;
+
+function getSpeed() {
+    const v = parseInt(document.getElementById('speedSlider').value);
+    return v;
+}
+
+function updateSpeedLabel() {
+    const v = getSpeed();
+    document.getElementById('speedVal').textContent = v === 0 ? 'Off' : v + 'ms';
+}
+
+function stopAnimation() {
+    playing = false;
+    if (animInterval) { clearInterval(animInterval); animInterval = null; }
+    document.getElementById('playBtn').textContent = '▶ Play';
+    document.getElementById('playBtn').style.color = '#eee';
+}
+
+function startAnimation() {
+    const speed = getSpeed();
+    if (speed === 0) return;
+
+    playing = true;
+    document.getElementById('playBtn').textContent = '⏸ Pause';
+    document.getElementById('playBtn').style.color = '#ff9966';
+
+    if (animInterval) clearInterval(animInterval);
+    animInterval = setInterval(() => {
+        const slider = document.getElementById('boundSlider');
+        let val = parseInt(slider.value) + 10;
+        if (val > parseInt(slider.max)) {
+            stopAnimation();
+            return;
+        }
+        slider.value = val;
+        document.getElementById('boundVal').textContent = val;
+        update();
+    }, speed);
+}
+
+document.getElementById('playBtn').addEventListener('click', () => {
+    if (playing) {
+        stopAnimation();
+    } else {
+        if (getSpeed() === 0) {
+            document.getElementById('speedSlider').value = 500;
+            updateSpeedLabel();
+        }
+        startAnimation();
+    }
+});
+
+document.getElementById('speedSlider').addEventListener('input', () => {
+    updateSpeedLabel();
+    if (playing) {
+        stopAnimation();
+        startAnimation();
+    }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+    stopAnimation();
+    document.getElementById('boundSlider').value = 10;
+    document.getElementById('boundVal').textContent = '10';
+    update();
+});
+
+updateSpeedLabel();
+update();
+</script>
+</body>
+</html>

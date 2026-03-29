@@ -51,45 +51,45 @@
 
 | Claim ID | Statement | Status | Dependencies | Justified In | Falsification Criterion | Repro Script |
 |----------|-----------|--------|--------------|--------------|------------------------|--------------|
-| **ALPHA-1** | 1/α = 137.036 (1.26 ppm from CODATA) | **SELECTION + CONJECTURE** | S1, S2, S3, GAUSS-1 | paper §5.2, SPEC_FTD_REFERENCE.md §6 | Precision α measurement incompatible at >10 ppm after QED corrections | `simulations/verify_quadratic.py` |
-| **ALPHA-2** | x₋ = 3.024 → N_c = 3 via RG flow | **SELECTION + CONJECTURE** | S3, ALPHA-1 | paper §5.3, SPEC_FTD_REFERENCE.md §6 | Discovery of 4th generation fermion with standard gauge couplings | `simulations/verify_quadratic.py` |
-| **BORN-1** | Born rule P(v) = \|ψ(v)\|²/\|\|ψ\|\|² connects Spatial Potential to Epistemic Probability | **BRIDGE PROTOCOL** | A1-A4, EPISTEMIC_BRIDGE | BORN_RULE_DERIVATION.md | Failure of probability to track potential density | `simulations/verify_born_rule.py` (Corr: 0.94) |
-| **GAUSS-1** | Gauss constraint yields 16 DoF on 2×2×2 lattice | THEOREM | A1, A3 | paper Appendix T2 | Mathematical counterexample | `simulations/verify_quadratic.py` |
-| **SQRT2-1** | Critical coupling λ=1 gives ω=√2 | THEOREM | A1, A3 | paper Appendix T3-T4 | Mathematical counterexample | `simulations/verify_quadratic.py` |
-| **CM-1** | j=1728 selected by cubic lattice symmetry | SELECTION | S1, S2 | paper §6, Appendix C | Alternative CM curve shown compatible | `simulations/verify_quadratic.py` |
+| **ALPHA-1** | 1/α = 137.036 (1.26 ppm from CODATA) | **SELECTION + CONJECTURE** | S1, S2, S3, GAUSS-1 | paper §5.2, SPEC_FTD_REFERENCE.md §6 | Precision α measurement incompatible at >10 ppm after QED corrections | `scripts/verification/verify_quadratic.py` |
+| **ALPHA-2** | x₋ = 3.024 → N_c = 3 via RG flow | **SELECTION + CONJECTURE** | S3, ALPHA-1 | paper §5.3, SPEC_FTD_REFERENCE.md §6 | Discovery of 4th generation fermion with standard gauge couplings | `scripts/verification/verify_quadratic.py` |
+| **BORN-1** | Born rule P(v) = \|ψ(v)\|²/\|\|ψ\|\|² connects Spatial Potential to Epistemic Probability | **BRIDGE PROTOCOL** | A1-A4, EPISTEMIC_BRIDGE | BORN_RULE_DERIVATION.md | Failure of probability to track potential density | `scripts/verification/verify_born_rule.py` (Corr: 0.94) |
+| **GAUSS-1** | Gauss constraint yields 16 DoF on 2×2×2 lattice | THEOREM | A1, A3 | paper Appendix T2 | Mathematical counterexample | `scripts/verification/verify_quadratic.py` |
+| **SQRT2-1** | Critical coupling λ=1 gives ω=√2 | THEOREM | A1, A3 | paper Appendix T3-T4 | Mathematical counterexample | `scripts/verification/verify_quadratic.py` |
+| **CM-1** | j=1728 selected by cubic lattice symmetry | SELECTION | S1, S2 | paper §6, Appendix C | Alternative CM curve shown compatible | `scripts/verification/verify_quadratic.py` |
 | **HILBERT-1** | ψ = J_x + iJ_y defines Hilbert space H_FTD | AXIOM (construction) | A1, A2 | SPEC_FTD_REFERENCE.md §2.2 | n/a (definition) | n/a |
-| **BELL-1** | Spatial Domain is Local ($S \le 2$); Info speed limited to c | **CONFIRMED** | A1, Relativity | EPISTEMIC_BRIDGE §2.1 | Observation of FTL information transfer in Dom A | `simulations/verify_bell_inequality.py` (S=2.00) |
+| **BELL-1** | Spatial Domain is Local ($S \le 2$); Info speed limited to c | **CONFIRMED** | A1, Relativity | EPISTEMIC_BRIDGE §2.1 | Observation of FTL information transfer in Dom A | `scripts/experiments/verify_bell_inequality.py` (S=2.00) |
 | **PLANCK-1** | 1 voxel = Planck length identification | IMPOSED | (scale calibration) | CLAUDE.md §7.1 | n/a (calibration choice) | n/a |
-| **GAMMA-1** | γ = α in simulations | IMPOSED | (parameter identification) | CLAUDE.md §4.3, §7.3 | n/a (calibration choice) | `simulations/constants.py` |
-| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.27% error) | CONJECTURE | ALPHA-1, GAUSS-1 | archive/ARCH_LEMNISCATE_ALPHA_PAPER.md §7.2 | >1% discrepancy unexplained by known corrections | `simulations/verify_masses.py` |
-| **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² = 3.86×10⁻⁴⁷ GeV⁴ (1.0% error) | CONJECTURE | ALPHA-1, MASS-1, GAUSS-1 | DERIV_VACUUM_ENERGY_FORMULA.md §I | >5% discrepancy unexplained | `simulations/verify_vacuum_energy.py` |
+| **GAMMA-1** | γ = α in simulations | IMPOSED | (parameter identification) | CLAUDE.md §4.3, §7.3 | n/a (calibration choice) | `scripts/constants.py` |
+| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.27% error) | CONJECTURE | ALPHA-1, GAUSS-1 | archive/ARCH_LEMNISCATE_ALPHA_PAPER.md §7.2 | >1% discrepancy unexplained by known corrections | `scripts/verification/verify_masses.py` |
+| **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² = 3.86×10⁻⁴⁷ GeV⁴ (1.0% error) | CONJECTURE | ALPHA-1, MASS-1, GAUSS-1 | DERIV_VACUUM_ENERGY_FORMULA.md §I | >5% discrepancy unexplained | `scripts/verification/verify_vacuum_energy.py` |
 | **COLLAPSE-1** | Measurement = manifestation (s: 0 → ±1) | SELECTION | A4, HILBERT-1 | FOUND_SLOOP_FORMALIZATION.md | Alternative collapse mechanism shown viable within axioms | n/a |
 | **OBSERVER-1** | Observer = manifested structure (s≠0), not consciousness | SELECTION | COLLAPSE-1 | FOUND_SLOOP_FORMALIZATION.md §3.5 | Consciousness-specific effects observed | n/a |
 | **CONTINUUM-1** | FTD → Maxwell + Schrödinger as a→0 | THEOREM (correspondence) | A1-A4 | SPEC_FTD_REFERENCE.md §3 | Mathematical counterexample | verification code in Appendix A |
-| **SPINOR-1** | Fermi statistics from π₁(SO(3)) = Z₂ | THEOREM (construction) | framed flux | SPEC_FTD_REFERENCE.md §5 | Mathematical counterexample | `simulations/verify_symbolic.py` |
-| **WEINBERG-1** | sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% error) | DERIVED | framework integers | REF_CLAIMS_MATRIX.md (this doc) | >1% discrepancy unexplained | `simulations/verify_mixing.py` |
-| **STRONG-1** | α_s = b₃/(b₃+4N_eff) = 7/59 = 0.1186 (0.3σ) | DERIVED | framework integers | REF_CLAIMS_MATRIX.md (this doc) | RG flow incompatible with prediction | `simulations/verify_mixing.py` |
-| **PROTON-1** | m_p/m_e = N_eff/α + T(10) = 1836.47 (0.017% error) | CONJECTURE | ALPHA-1, framework integers | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `simulations/verify_masses.py` |
-| **WBOSON-1** | m_W = 67/(8α²) × m_e = 80.36 GeV (0.016% error) | CONJECTURE | ALPHA-1, MASS-1 | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `simulations/verify_masses.py` |
+| **SPINOR-1** | Fermi statistics from π₁(SO(3)) = Z₂ | THEOREM (construction) | framed flux | SPEC_FTD_REFERENCE.md §5 | Mathematical counterexample | `scripts/verification/verify_symbolic.py` |
+| **WEINBERG-1** | sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% error) | DERIVED | framework integers | REF_CLAIMS_MATRIX.md (this doc) | >1% discrepancy unexplained | `scripts/verification/verify_mixing.py` |
+| **STRONG-1** | α_s = b₃/(b₃+4N_eff) = 7/59 = 0.1186 (0.3σ) | DERIVED | framework integers | REF_CLAIMS_MATRIX.md (this doc) | RG flow incompatible with prediction | `scripts/verification/verify_mixing.py` |
+| **PROTON-1** | m_p/m_e = N_eff/α + T(10) = 1836.47 (0.017% error) | CONJECTURE | ALPHA-1, framework integers | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `scripts/verification/verify_masses.py` |
+| **WBOSON-1** | m_W = 67/(8α²) × m_e = 80.36 GeV (0.016% error) | CONJECTURE | ALPHA-1, MASS-1 | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `scripts/verification/verify_masses.py` |
 | **SUSY-0** | No superpartners at any energy | DERIVED | discrete lattice incompatible with SUSY | REF_CLAIMS_MATRIX.md (this doc) | Discovery of any superpartner | n/a (exclusion) |
 | **DIM-3** | D=3 is unique viable spatial dimension | THEOREM | stability + gauge theory requirements | REF_CLAIMS_MATRIX.md (this doc) | Detection of KK modes or 1/r² deviation | n/a (exclusion) |
 | **GEN-3** | N_gen = ⌊x₋⌋ = 3 exactly | DERIVED | S3, ALPHA-2 | REF_CLAIMS_MATRIX.md (this doc) | 4th generation with standard couplings | n/a (exclusion) |
 | **STRING-0** | String theory incompatible (requires D=10/11, SUSY, continuous spacetime) | DERIVED | DIM-3, SUSY-0, A1 | REF_CLAIMS_MATRIX.md (this doc) | Demonstration of string-FTD compatibility | n/a (exclusion) |
 | **DIGIT13-1** | 4-term precision formula predicts digit 13 of 1/α = 0 | **PREDICTION** | ALPHAP-1, ALPHAP-1b | DERIV_ALPHA_PRECISION_FORMULA.md | Digit 13 measured as non-zero | `scripts/verification/verify_precision_formula_v2.py` |
-| **DARKMATTER-1** | DM = sub-threshold flux (0 < \|J\| < K_B) | CONJECTURE | A1-A4 | SPEC_FTD_REFERENCE.md §12 | Confirmed WIMP detection | `simulations/verify_cosmology.py` |
-| **CKM-1** | sinθ_C = G*/n_eff = 0.2276 → θ₁₂ = 13.2° (1.4% error) | [SELECTION] | framework integers | See §Cabibbo Correction below | >3% discrepancy | `simulations/verify_mixing.py` |
-| **PMNS-1** | θ₁₂ = arctan√(4/7) = 33.1° (1.0% error) | DERIVED | framework integers | DERIV_COMPLETE_PARTICLE_PHYSICS.md | >3% discrepancy | `simulations/verify_mixing.py` |
-| **JARLSKOG-1** | J = (N_c×α³)/4 ≈ 2.9×10⁻⁷ [CONJECTURE] | [CONJECTURE] | ALPHA-1, framework integers | REF_CLAIMS_MATRIX.md (this doc) | Experimental J ≈ 3.0×10⁻⁵ (100× discrepancy) | `simulations/verify_mixing.py` |
+| **DARKMATTER-1** | DM = sub-threshold flux (0 < \|J\| < K_B) | CONJECTURE | A1-A4 | SPEC_FTD_REFERENCE.md §12 | Confirmed WIMP detection | `scripts/verification/verify_cosmology.py` |
+| **CKM-1** | sinθ_C = G*/n_eff = 0.2276 → θ₁₂ = 13.2° (1.4% error) | [SELECTION] | framework integers | See §Cabibbo Correction below | >3% discrepancy | `scripts/verification/verify_mixing.py` |
+| **PMNS-1** | θ₁₂ = arctan√(4/7) = 33.1° (1.0% error) | DERIVED | framework integers | DERIV_COMPLETE_PARTICLE_PHYSICS.md | >3% discrepancy | `scripts/verification/verify_mixing.py` |
+| **JARLSKOG-1** | J = (N_c×α³)/4 ≈ 2.9×10⁻⁷ [CONJECTURE] | [CONJECTURE] | ALPHA-1, framework integers | REF_CLAIMS_MATRIX.md (this doc) | Experimental J ≈ 3.0×10⁻⁵ (100× discrepancy) | `scripts/verification/verify_mixing.py` |
 | **STRONGCP-0** | θ_QCD = 0 exactly | THEOREM | discrete lattice (no continuous vacuum) | REF_CLAIMS_MATRIX.md (this doc) | θ_QCD ≠ 0 measured | n/a (structure theorem) |
-| **INFLATION-1** | n_s = 0.966 (spectral index) | **DERIVED (v5.0)** | sub-threshold flux dynamics | SPEC_FTD_REFERENCE.md §9.1 | n_s measurement > 3σ from 0.966 | `simulations/verify_cosmology.py` |
-| **INFLATION-2** | r = 0.022 (tensor-to-scalar) | **DERIVED (v5.0)** | sub-threshold flux dynamics | SPEC_FTD_REFERENCE.md §9.1 | r > 0.04 measured | `simulations/verify_cosmology.py` |
-| **BARYO-1** | η ~ 10⁻¹⁰ (baryon asymmetry) | **DERIVED (v5.0)** | CP violation + Sakharov conditions | SPEC_FTD_REFERENCE.md §9.2 | η order of magnitude wrong | `simulations/verify_cosmology.py` |
-| **GR-1** | R_μν - ½g_μν R = 8πG T_μν | **DERIVED (v5.0)** | flux density → effective metric | SPEC_FTD_REFERENCE.md §10 | GR coefficient wrong | `simulations/verify_cosmology.py` |
-| **ALPHAG-1** | α_G = 5.91×10⁻³⁹ (0.01% error) | **DERIVED (v5.0)** | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | SPEC_FTD_REFERENCE.md §7.1 | >1% discrepancy | `simulations/verify_cosmology.py` |
-| **NEUTRINO-1** | m₃ = m_P√(2π)(4/3)α¹⁴ = 49.6 meV | **SELECTION (v5.27)** | Seesaw (imported) + ALPHA-1, MASS-1 | DERIV_NEUTRINO_MASS_ABSOLUTE.md | Δm²₂₁ > 5% from experiment | `simulations/neutrino_mass_derivation.py` |
-| **NEUTRINO-2** | Σm_ν = 58.1 meV | **SELECTION (v5.27)** | NEUTRINO-1 + mass ratio 100/3 | DERIV_NEUTRINO_MASS_ABSOLUTE.md | Cosmological Σ < 58 meV or > 65 meV | `simulations/neutrino_mass_derivation.py` |
-| **NEUTRINO-3** | m₁ ≈ 4.1 neV (effectively zero) | **PREDICTION (v5.27)** | NEUTRINO-1 | DERIV_NEUTRINO_MASS_ABSOLUTE.md | m₁ > 1 meV measured | `simulations/neutrino_mass_derivation.py` |
-| **MODULAR-1** | G* = 4√(2/π) · L(E,1) for E: y²=x³−x | **THEOREM (v5.27)** | G* definition + BSD L-function | EXPLR_MODULAR_QUADRATIC.md | Mathematical counterexample | `simulations/modular_investigation.py` |
+| **INFLATION-1** | n_s = 0.966 (spectral index) | **DERIVED (v5.0)** | sub-threshold flux dynamics | SPEC_FTD_REFERENCE.md §9.1 | n_s measurement > 3σ from 0.966 | `scripts/verification/verify_cosmology.py` |
+| **INFLATION-2** | r = 0.022 (tensor-to-scalar) | **DERIVED (v5.0)** | sub-threshold flux dynamics | SPEC_FTD_REFERENCE.md §9.1 | r > 0.04 measured | `scripts/verification/verify_cosmology.py` |
+| **BARYO-1** | η ~ 10⁻¹⁰ (baryon asymmetry) | **DERIVED (v5.0)** | CP violation + Sakharov conditions | SPEC_FTD_REFERENCE.md §9.2 | η order of magnitude wrong | `scripts/verification/verify_cosmology.py` |
+| **GR-1** | R_μν - ½g_μν R = 8πG T_μν | **DERIVED (v5.0)** | flux density → effective metric | SPEC_FTD_REFERENCE.md §10 | GR coefficient wrong | `scripts/verification/verify_cosmology.py` |
+| **ALPHAG-1** | α_G = 5.91×10⁻³⁹ (0.01% error) | **DERIVED (v5.0)** | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | SPEC_FTD_REFERENCE.md §7.1 | >1% discrepancy | `scripts/verification/verify_cosmology.py` |
+| **NEUTRINO-1** | m₃ = m_P√(2π)(4/3)α¹⁴ = 49.6 meV | **SELECTION (v5.27)** | Seesaw (imported) + ALPHA-1, MASS-1 | DERIV_NEUTRINO_MASS_ABSOLUTE.md | Δm²₂₁ > 5% from experiment | `scripts/verification/neutrino_mass_derivation.py` |
+| **NEUTRINO-2** | Σm_ν = 58.1 meV | **SELECTION (v5.27)** | NEUTRINO-1 + mass ratio 100/3 | DERIV_NEUTRINO_MASS_ABSOLUTE.md | Cosmological Σ < 58 meV or > 65 meV | `scripts/verification/neutrino_mass_derivation.py` |
+| **NEUTRINO-3** | m₁ ≈ 4.1 neV (effectively zero) | **PREDICTION (v5.27)** | NEUTRINO-1 | DERIV_NEUTRINO_MASS_ABSOLUTE.md | m₁ > 1 meV measured | `scripts/verification/neutrino_mass_derivation.py` |
+| **MODULAR-1** | G* = 4√(2/π) · L(E,1) for E: y²=x³−x | **THEOREM (v5.27)** | G* definition + BSD L-function | EXPLR_MODULAR_QUADRATIC.md | Mathematical counterexample | `scripts/modular_investigation.py` |
 
 ---
 
@@ -162,7 +162,7 @@
 | `archive/ARCH_LEMNISCATE_ALPHA_PAPER.md` | MASS-1, LAMBDA-1 |
 | `DERIV_COMPLETE_PARTICLE_PHYSICS.md` | CKM-1, PMNS-1, JARLSKOG-1 |
 | `DERIV_RELATIVITY_DERIVATION.md` | Gravitational hierarchy derivation |
-| `simulations/` | Numerical validation scripts |
+| `scripts/` | Numerical validation scripts |
 | `CHANGELOG.md` | Version history (v4.1 → v5.0) |
 | `TOE_COMPLETION_SUMMARY.md` | Executive summary of TOE completion |
 
@@ -172,11 +172,11 @@
 
 | Claim | Verification Script | Expected Output |
 |-------|---------------------|-----------------|
-| ALPHA-1, ALPHA-2 | `simulations/g_star_from_trd.py` | x₊ = 137.036171..., x₋ = 3.02396... |
-| GAUSS-1 | `simulations/coefficient_16_from_lattice.py` | DoF = 16 |
-| SQRT2-1 | `simulations/critical_coupling_selection.py` | ω = 1.4142135... |
-| CM-1 | `simulations/cm_selection_proof.py` | j = 1728 only compatible |
-| BORN-1 | `simulations/born_rule_test.py` | Correlation > 0.9 |
+| ALPHA-1, ALPHA-2 | `scripts/g_star_from_trd.py` | x₊ = 137.036171..., x₋ = 3.02396... |
+| GAUSS-1 | `scripts/coefficient_16_from_lattice.py` | DoF = 16 |
+| SQRT2-1 | `scripts/critical_coupling_selection.py` | ω = 1.4142135... |
+| CM-1 | `scripts/cm_selection_proof.py` | j = 1728 only compatible |
+| BORN-1 | `scripts/born_rule_test.py` | Correlation > 0.9 |
 | BELL-1 | `sloop_bell_test.py` | S approaches 2√2 with overlap |
 
 See [REPRODUCIBILITY.md](REPRODUCIBILITY.md) for execution instructions and known-good outputs.

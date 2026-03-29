@@ -1,0 +1,22 @@
+{
+  "script": "08_spectral_information.py",
+  "description": "Power spectrum of psi vs |psi|^2 \u2014 spectral DOF destroyed by Born rule",
+  "parameters": {
+    "W": 512.0,
+    "H": 512.0,
+    "lam": 32.0,
+    "separation": 160.0,
+    "phase_offset": 3.141592653589793,
+    "t": 600.0,
+    "K_B": 0.05,
+    "N_clicks": 10000.0
+  },
+  "results": {
+    "n_components_psi": 1270,
+    "n_components_born": 263,
+    "spectral_dof_lost": 1007,
+    "total_power_psi": 843722455.3565311,
+    "total_power_born": 25604570.042879477,
+    "threshold_fraction": 0.001
+  }
+}

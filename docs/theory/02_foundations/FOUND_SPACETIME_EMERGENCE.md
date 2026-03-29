@@ -550,7 +550,7 @@ Quantum gravity is not "unifying space and time." It is understanding the **coup
 ## Verification
 
 - Dimensional emergence tests: `scripts/verification/verify_dimensional_emergence.py`
-- Space-time computations: `simulations/verify_space_time.py`
+- Space-time computations: `scripts/verification/verify_space_time.py`
 
 ---
 

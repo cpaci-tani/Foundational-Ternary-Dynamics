@@ -6,6 +6,7 @@
  */
 
 import { createBridge, MockBridge } from './wasm-bridge.js?v=20260318a';
+import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js?v=20260318a';
 import { FluxEnergyChart, ParticleChart } from './charts.js?v=20260304q';
 import { DiagnosticsPanel } from './diagnostics.js?v=20260304q';
@@ -541,19 +542,45 @@ async function init() {
     // Cache frequently-accessed DOM elements for animation loops
     _cacheDOM();
 
-    // Create bridge (tries WASM, falls back to mock)
+    // Create bridge: try Native GPU → WASM → Mock (in priority order)
     const latticeSize = parseInt(document.getElementById('lattice-size').value);
-    bridge = await createBridge(latticeSize);
-
-    // Update engine type indicator
     const engineEl = document.getElementById('status-engine');
-    if (bridge.isWasm && bridge.ready) {
-        engineEl.textContent = 'WASM Engine';
-        engineEl.style.color = '#4ade80';
+    const computeEl = document.getElementById('status-compute');
+
+    // 1. Try native GPU engine (WebSocket to local ws_server.exe)
+    console.log('[init] Trying native GPU engine on ws://localhost:9100...');
+    try {
+        bridge = await tryNativeBridge(latticeSize);
+    } catch (e) {
+        console.warn('[init] Native GPU bridge error:', e);
+        bridge = null;
+    }
+    console.log('[init] Native bridge result:', bridge ? 'connected' : 'unavailable');
+    if (bridge && bridge.ready) {
+        engineEl.textContent = 'Native Engine';
+        engineEl.style.color = '#c084fc';
+        computeEl.textContent = bridge.isNativeGPU ? 'GPU' : 'CPU';
+        computeEl.style.color = bridge.isNativeGPU ? '#4ade80' : '#60a5fa';
+        computeEl.title = bridge.isNativeGPU
+            ? 'Connected to native GPU engine (CUDA)'
+            : 'Connected to native CPU engine';
+        showToast('Native GPU engine connected — full CUDA acceleration active.', 'success');
     } else {
-        engineEl.textContent = 'Mock Engine';
-        engineEl.style.color = '#fbbf24';
-        showToast('WASM engine unavailable — running in Mock mode. Physics is approximate.', 'warning');
+        // 2. Try WASM, then Mock
+        bridge = await createBridge(latticeSize);
+        if (bridge.isWasm && bridge.ready) {
+            engineEl.textContent = 'WASM Engine';
+            engineEl.style.color = '#4ade80';
+            computeEl.textContent = 'CPU';
+            computeEl.style.color = '#60a5fa';
+            computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
+        } else {
+            engineEl.textContent = 'Mock Engine';
+            engineEl.style.color = '#fbbf24';
+            computeEl.textContent = 'CPU';
+            computeEl.style.color = '#667';
+            showToast('No engine available — running in Mock mode. Start ws_server.exe for GPU.', 'warning');
+        }
     }
 
     // Create 3D viewport
