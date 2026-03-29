@@ -4,7 +4,7 @@
 **Date:** February 14, 2026
 **Status:** Complete Analysis (Theory + Simulation)
 **Purpose:** Comprehensive Bell inequality analysis for FTD: honest theoretical assessment and systematic lattice simulation investigation
-**Script:** `simulations/bell_lattice_test.py`
+**Script:** `scripts/experiments/bell_lattice_test.py`
 
 > **Consolidation Note:** This document merges two earlier analyses into a single reference:
 > - Part I (Theory) originates from `AUDIT_BELL_MECHANISM_HONEST.md` (v2.0, February 5, 2026)
@@ -661,7 +661,7 @@ The quantum cosine and classical triangle agree at theta = 0, pi/2, pi but diffe
 | [REF_CLAIMS_MATRIX.md](REF_CLAIMS_MATRIX.md) | Bell violation listed as conjecture |
 | [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Technical reference manual |
 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | QM derivation (Hilbert space construction) |
-| `simulations/bell_lattice_test.py` | Simulation script |
+| `scripts/experiments/bell_lattice_test.py` | Simulation script |
 
 ---
 

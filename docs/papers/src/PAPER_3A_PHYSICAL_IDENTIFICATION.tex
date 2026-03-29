@@ -1,0 +1,293 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\geometry{letterpaper, margin=1in}
+\setstretch{1.15}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{selection}[theorem]{Selection Principle}
+\newtheorem{identification}[theorem]{Physical Identification}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{\textbf{From Lattice Geometry to Coupling Constants: \\[0.3cm]
+Physical Identification of the Master Quadratic Roots}}
+
+\author{W.\,J.\ cpaci-tani~III}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent Previous results establish, without physical assumptions, that the three-dimensional cubic lattice $\mathbb{Z}^3$ admits a self-consistency equation---the master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$---whose roots are $x_+ = 137.036$ and $x_- = 3.024$. This paper proposes the physical identification $x_+ = 1/\alpha$ (inverse fine structure constant) and $x_- \approx N_c$ (number of quark color charges). We state this identification as a \emph{conjecture}, catalog every assumption required to reach it, distinguish proven theorems from selections and impositions, and derive the falsification criteria. The identification, if correct, would determine the fine structure constant from pure lattice geometry with no adjustable parameters; if incorrect, it would be refuted by a precision measurement of $\alpha$ disagreeing with the predicted value at the $10^{-11}$ level.
+\end{abstract}
+
+\tableofcontents
+
+%------------------------------------------------------------------
+\section{Preamble: What Has Been Proven}
+\label{sec:preamble}
+%------------------------------------------------------------------
+
+The following results are established as theorems of pure mathematics, requiring no physical input:
+
+\begin{enumerate}[nosep]
+    \item The lemniscate constant $\varpi$, the Jacobi theta function $\theta_3(e^{-\pi})$, and the Watson integral $W_3$ of $\mathbb{Z}^3$ all evaluate to expressions in $\Gamma(1/4)^2$, because all three are periods of the CM curve $E\!: y^2 = x^3 - x$.
+
+    \item The bridge constant $G^*$, the lemniscate constant $\varpi$, and $\pi$ form a complete triad satisfying $\pi = 4\varpi^2/G^{*2}$.
+
+    \item The $\mathbb{Z}_4$ symmetry of the cubic lattice's coordinate planes forces the lemniscatic modulus $k = 1/\sqrt{2}$, selecting the CM curve $E$ uniquely.
+
+    \item The quadratic action on $\mathbb{Z}^3$ admits an exact Gaussian path integral whose self-consistency equation, given the coefficient $K = 16G^{*2}$, is $x^2 - 16G^{*2}x + 16G^{*3} = 0$ with roots $x_+ = 137.036$ and $x_- = 3.024$.
+
+    \item The roots satisfy: $1/y_+ + 1/y_- = 1$ (reciprocal budget), $H(x_+, x_-) = 2G^*$ (harmonic mean = critical root), and $v_+ v_- = 1$ (M\"obius duality centered on $G^*$).
+\end{enumerate}
+
+None of these results mention physics. They are theorems about $\mathbb{Z}^3$, the Gamma function, and a specific quadratic equation.
+
+%------------------------------------------------------------------
+\section{The Physical Axiom}
+\label{sec:axiom}
+%------------------------------------------------------------------
+
+We now introduce the single axiom that connects the mathematics to physics.
+
+\begin{axiom}[Lattice Ontology]
+\label{ax:lattice}
+Physical space is a cubic lattice $\mathbb{Z}^3$ with lattice spacing equal to the Planck length $\ell_P$. Each site $v \in \mathbb{Z}^3$ carries:
+\begin{enumerate}[nosep]
+    \item a ternary state $s(v) \in \{-1, 0, +1\}$, and
+    \item a continuous flux vector $\mathbf{J}(v) \in \mathbb{R}^3$.
+\end{enumerate}
+Dynamics proceed in discrete time steps (``ticks''), with information propagating at most one lattice unit per tick within the 26-neighbor Moore neighborhood.
+\end{axiom}
+
+\begin{remark}[What this axiom claims and does not claim]
+\mbox{}
+\begin{itemize}[nosep]
+    \item \emph{Claims:} Space is discrete, three-dimensional, and cubic. States are ternary. There exists a continuous vector field on the lattice.
+    \item \emph{Does not claim:} That we can observe individual voxels, that the lattice is the only possible discrete structure, or that the axiom is derived from a deeper principle.
+    \item \emph{Falsifiable by:} Detection of continuous spatial structure below the Planck scale, or observation of a fourth spatial dimension.
+\end{itemize}
+\end{remark}
+
+%------------------------------------------------------------------
+\section{Structural Selections}
+\label{sec:selections}
+%------------------------------------------------------------------
+
+The following structural choices are required to connect Axiom~\ref{ax:lattice} to the master quadratic. Each is well-motivated but not uniquely forced.
+
+\begin{selection}[Quadratic Action]
+\label{sel:action}
+The Euclidean action is quadratic in $\mathbf{J}$:
+\begin{equation}
+    S_E[s, \mathbf{J}] = \frac{1}{2}\sum_{\langle v,w\rangle} |\mathbf{J}(v) - \mathbf{J}(w)|^2 + g_c \sum_v s(v)\,\nabla_L \cdot \mathbf{J}(v)
+\end{equation}
+\emph{Motivation:} Unique quadratic form invariant under $O_h$, local, with parity-respecting scalar coupling. The quadratic form ensures exact Gaussian integrability.
+\end{selection}
+
+\begin{selection}[Self-Consistency Prescription]
+\label{sel:gap}
+The coupling constant $x = 1/g_c^2$ is determined by the self-consistency condition $x = K(1 - G^*/x)$, where $K = 16G^{*2}$.
+
+\emph{Motivation:} The effective coupling produced by the theory must equal the bare coupling. This is standard in gap equation physics (BCS, NJL, Schwinger--Dyson) and is the only determination available when no external coupling is imposed.
+\end{selection}
+
+%------------------------------------------------------------------
+\section{The Physical Identifications}
+\label{sec:identifications}
+%------------------------------------------------------------------
+
+We now state the conjectured identifications that connect the mathematical roots to measured physics.
+
+\begin{identification}[Electromagnetic Coupling]
+\label{id:alpha}
+The larger root $x_+$ of the master quadratic is the inverse fine structure constant:
+\begin{equation}
+    \boxed{\;x_+ = \frac{1}{\alpha} = 137.036\ldots\;}
+\end{equation}
+\end{identification}
+
+\begin{remark}[Evidence for Identification~\ref{id:alpha}]
+\mbox{}
+\begin{enumerate}[nosep]
+    \item \emph{Numerical:} $x_+ = 137.0362$ vs.\ $1/\alpha_{\mathrm{CODATA}} = 137.0360$. Agreement to 1.26\,ppm with zero continuously adjustable parameters. A look-elsewhere estimate (scanning $n = 1, \ldots, 100$ in the family $x^2 - nG^{*2}x + nG^{*3} = 0$) gives $< 10^{-3}$ probability of a random match at this precision.
+    \item \emph{Phase structure:} In compact $U(1)$ lattice gauge theory, the coupling $\beta = x_+$ lies deep in the Coulomb (deconfined) phase, consistent with electromagnetism being a long-range unconfined force.
+    \item \emph{Reciprocal budget:} The identity $G^*/x_+ + G^*/x_- = 1$ shows $x_+$ consumes only 2.2\% of the reciprocal coupling budget---consistent with $\alpha$ being a weak coupling.
+    \item \emph{Root locus:} At $x_+$, the partial fraction decomposition $K' = u + 1 + 1/(u-1)$ is dominated by the classical term $u \approx 46.3$, with the resonance term negligible. Electromagnetism is a ``classical'' force far from the lattice pole.
+\end{enumerate}
+\emph{What is missing:} A dynamical derivation (from RG fixed point, partition function extremum, or anomaly matching) that uniquely selects $x_+$ over $x_-$ as the electromagnetic coupling.
+\end{remark}
+
+\begin{identification}[Color Charge Number]
+\label{id:nc}
+The smaller root $x_-$ determines the number of quark color charges:
+\begin{equation}
+    \boxed{\;N_c = \lfloor x_- \rfloor = \lfloor 3.024 \rfloor = 3\;}
+\end{equation}
+\end{identification}
+
+\begin{remark}[Evidence for Identification~\ref{id:nc}]
+\mbox{}
+\begin{enumerate}[nosep]
+    \item \emph{Self-referential closure:} $D = 3$ is the unique spatial dimension for which $\lfloor x_-(D) \rfloor = D$. The lattice's dimensionality and its color structure are mutually determined.
+    \item \emph{Phase structure:} At $\beta = x_- = 3.024$, compact $U(1)$ lattice gauge theory is near the strong-coupling regime, consistent with color confinement.
+    \item \emph{Moore decomposition:} The BCC sublattice has 8 corners with all three flux components coupled. Three quarks, each exciting one $\mathbf{J}$-component, saturate $|\mathbf{J}|^2 = K_B^2$ at the manifestation threshold.
+    \item \emph{Root locus:} At $x_-$, the resonance term $1/(u_- - 1) \approx 45.3$ dominates---the color coupling lives near the pole at $G^*$.
+\end{enumerate}
+\emph{What is missing:} A proof that $\lfloor \cdot \rfloor$ (floor function) is the correct rounding operation, rather than round or ceiling.
+\end{remark}
+
+%------------------------------------------------------------------
+\section{Derived Consequences}
+\label{sec:consequences}
+%------------------------------------------------------------------
+
+Given the two identifications, the following quantities are determined with no additional freedom.
+
+\begin{proposition}[Framework Integers]
+\label{prop:integers}
+Setting $N_c = 3$ and $N_{\mathrm{base}} = 2^{(D+1)/2} = 4$ (the spinor dimension in $D = 3$), the QCD beta function coefficient is $b_3 = (11N_c - 2N_f)/3 = 7$ (where $N_f = 2N_c = 6$, requiring $N_{\mathrm{gen}} = N_c = 3$), and the effective degrees of freedom are $N_{\mathrm{eff}} = b_3 + 2N_c = 13$.
+\end{proposition}
+
+\begin{remark}
+The identification $N_{\mathrm{gen}} = N_c$ (three fermion generations = three color charges) is a \textbf{[SELECTION]}. It is supported by the cuboctahedral axis count---the FCC convex hull has exactly 3 types of rotation axes (C4, C3, C2)---but is not derived from Axiom~\ref{ax:lattice}.
+\end{remark}
+
+\begin{proposition}[Gauge Structure from Moore Decomposition]
+The 26 Moore neighbors decompose into three sublattices by Euclidean distance:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lcccl@{}}
+\toprule
+Sublattice & Count & Distance & $\mathbf{J}$-components & Gauge group \\
+\midrule
+SC (face) & 6 & 1 & 1 & $U(1)$ \\
+FCC (edge) & 12 & $\sqrt{2}$ & 2 & $SU(2)$ \\
+BCC (corner) & 8 & $\sqrt{3}$ & 3 & $SU(3)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The gauge group assignment follows from the number of $\mathbf{J}$-components coupled by each sublattice \textbf{[SELECTION]}.
+\end{proposition}
+
+\begin{proposition}[Coupling Constants]
+From the framework integers:
+\begin{align}
+    \sin^2\theta_W &= N_c / N_{\mathrm{eff}} = 3/13 = 0.2308 && (0.19\%\text{ from experiment}) \\
+    \alpha_s(M_Z) &= b_3 / (b_3 + 4N_{\mathrm{eff}}) = 7/59 = 0.1186 && (0.6\%\text{ from PDG})
+\end{align}
+\end{proposition}
+
+\begin{proposition}[Higgs Sector]
+The ternary state decomposition $3 = 2\text{ (active)} + 1\text{ (void)}$ determines \textbf{[SELECTION]}:
+\begin{align}
+    \lambda &= \frac{\sin^2\theta_W}{2 - \sin^2\theta_W} = \frac{3}{23} = 0.1304 \\
+    v &= M_P\sqrt{2\pi}\,\alpha^8 = 246.09\text{ GeV} && (0.05\%\text{ from experiment}) \\
+    m_H &= v\sqrt{2\lambda} = v\sqrt{6/23} = 125.69\text{ GeV} && (0.47\%\text{ from experiment})
+\end{align}
+\end{proposition}
+
+\begin{proposition}[Gravitational Coupling]
+\begin{equation}
+    G_N = \frac{1}{(b_3 + N_c)^2} = \frac{1}{100} \quad\text{(in lattice units)}
+\end{equation}
+The physical Newton constant is obtained by multiplying by $\ell_P^2 c / \hbar$ \textbf{[IMPOSED]}.
+\end{proposition}
+
+%------------------------------------------------------------------
+\section{Epistemic Ledger}
+\label{sec:ledger}
+%------------------------------------------------------------------
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}p{6.5cm}cl@{}}
+\toprule
+\textbf{Claim} & \textbf{Status} & \textbf{Paper} \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Mathematics (no physics):}} \\
+Three paths converge on $\Gamma(1/4)^2$ & Theorem & 0a \\
+$\pi = 4\varpi^2/G^{*2}$ (triad) & Theorem & 0b \\
+$\mathbb{Z}_4$ forces lemniscatic modulus & Theorem & 1a \\
+$D = 3$ unique: $\lfloor x_- \rfloor = D$ & Theorem & 1a \\
+Exact Gaussian path integral & Theorem & 2a \\
+$K = 16G^{*2}$ (three routes) & Theorem & 2a \\
+$1/y_+ + 1/y_- = 1$ & Theorem & 2a \\
+$v_+ v_- = 1$ (M\"obius duality) & Theorem & 2a \\
+$H(x_+, x_-) = 2G^*$ & Theorem & 2a \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Structural selections:}} \\
+Quadratic action (no quartic terms) & Selection & 2a \\
+Self-consistency prescription & Selection & 2a \\
+$N_{\mathrm{gen}} = N_c$ & Selection & 3a \\
+Gauge groups from $\mathbf{J}$-components & Selection & 3a \\
+$\lambda = \sin^2\theta_W/(2 - \sin^2\theta_W)$ & Selection & 3a \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Physical identifications:}} \\
+$x_+ = 1/\alpha$ & Identification & 3a \\
+$\lfloor x_- \rfloor = N_c$ & Identification & 3a \\
+Lattice spacing = Planck length & Imposition & 3a \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Acknowledged scope limitations:}} \\
+Diffeomorphism invariance & Violated & --- \\
+Lorentz invariance & Approximate & --- \\
+Renormalization group & Not addressed & --- \\
+SU(2), SU(3) gauge emergence & Conjectured & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%------------------------------------------------------------------
+\section{Falsification Criteria}
+\label{sec:falsification}
+%------------------------------------------------------------------
+
+The physical identifications are falsifiable by:
+
+\begin{enumerate}
+    \item \textbf{Precision $\alpha$ measurement.} The precision formula predicts $1/\alpha = 137.035\,999\,177\,000(1)$. A measurement determining $1/\alpha$ to $10^{-12}$ precision that disagrees with this value by more than $10^{-11}$ would falsify the identification.
+
+    \item \textbf{Fourth fermion generation.} Discovery of a fourth generation of fermions with standard gauge couplings would falsify $N_{\mathrm{gen}} = N_c = 3$.
+
+    \item \textbf{Neutrino mass sum.} The framework predicts $\sum m_\nu = 58.1$ meV. A measurement by DESI, JUNO, or Euclid determining $\sum m_\nu < 40$ meV or $\sum m_\nu > 75$ meV would create strong tension.
+
+    \item \textbf{Continuous spacetime.} Detection of spatial structure below the Planck scale (e.g., through gravitational wave dispersion) would falsify the lattice axiom.
+\end{enumerate}
+
+%------------------------------------------------------------------
+\section{What This Paper Does Not Claim}
+\label{sec:does-not}
+%------------------------------------------------------------------
+
+\begin{enumerate}[nosep]
+    \item That the lattice axiom is \emph{derived}---it is postulated.
+    \item That the gauge groups $SU(2)$ and $SU(3)$ are \emph{proven} to emerge---they are motivated by the Moore decomposition but not rigorously derived.
+    \item That the Standard Model dynamics (Fermi theory, HQET, ChPT) are \emph{replaced}---FTD provides coupling constants, not equations of motion.
+    \item That the consciousness claims in other FTD documents are entailed by this paper---they are not.
+    \item That ``zero free parameters'' is a valid description---there are two selections, two identifications, and one imposition. The correct description is: \emph{zero continuously adjustable parameters, given five discrete structural choices.}
+\end{enumerate}
+
+%------------------------------------------------------------------
+\begin{thebibliography}{9}
+%------------------------------------------------------------------
+
+\end{thebibliography}
+
+\end{document}

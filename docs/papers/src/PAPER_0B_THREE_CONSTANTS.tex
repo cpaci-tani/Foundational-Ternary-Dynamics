@@ -1,0 +1,303 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\geometry{letterpaper, margin=1in}
+\setstretch{1.15}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{\textbf{The Three Geometric Constants: \\[0.3cm]
+$\pi$, $\varpi$, and $G^*$}}
+
+\author{W.\,J.\ cpaci-tani~III}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent We identify three geometric constants---the circular constant $\pi$, the lemniscate constant $\varpi$, and the lattice bridge constant $G^*$---each defined by a canonical integral over a distinct geometric domain: the circle, the lemniscate, and the cubic lattice $\mathbb{Z}^3$. We prove that the three satisfy the triad relation $\pi = 4\varpi^2/G^{*2}$ and show that this relation is a consequence of all three constants being periods of the CM elliptic curve $E\!: y^2 = x^3 - x$. We argue that $G^*$ plays a role for discrete lattice geometry analogous to the role $\pi$ plays for circular geometry and $\varpi$ plays for lemniscatic geometry: it is the canonical measure of the lattice's self-interaction, defined independently of the other two but related to them by an exact algebraic identity. No physical interpretation is assumed.
+\end{abstract}
+
+\tableofcontents
+
+%------------------------------------------------------------------
+\section{Introduction}
+%------------------------------------------------------------------
+
+The circle constant $\pi$ has been known since antiquity. The lemniscate constant $\varpi$ was studied by Euler in the 1750s and appears in Gauss's mathematical diary (1796). Both are now recognized as periods of elliptic curves: $\pi$ of the degenerate curve $y^2 = 1 - x^2$, and $\varpi$ of the CM curve $E\!: y^2 = x^3 - x$.
+
+We identify a third constant, $G^* = \sqrt{2}\,\Gamma(1/4)^2/(2\pi) \approx 2.9587$, that completes a natural triad. While $G^*$ has appeared implicitly in lattice combinatorics since Watson's 1939 evaluation of the cubic lattice Green's function, its role as a geometric constant on par with $\pi$ and $\varpi$ has not been articulated. We make this case here.
+
+The three constants are not algebraically independent---they satisfy the exact relation $\pi = 4\varpi^2/G^{*2}$. But algebraic dependence does not disqualify a constant from being geometrically fundamental. The constant $\pi$ itself satisfies $\pi = \varpi / M$ where $M$ is the arithmetic-geometric mean of 1 and $\sqrt{2}$; this relation, discovered by Gauss, does not diminish $\pi$'s status. What makes a constant ``fundamental'' is not algebraic irreducibility but \emph{geometric irreplaceability}: each constant is the natural measure of a distinct geometric domain.
+
+%------------------------------------------------------------------
+\section{Three Constants, Three Integrals}
+\label{sec:three}
+%------------------------------------------------------------------
+
+\begin{definition}[The Circular Constant]
+\begin{equation}
+    \pi = 4\int_0^1 \frac{dx}{1 + x^2} = 3.14159265\ldots
+\end{equation}
+The half-perimeter of the unit circle. Equivalently, the area of the unit disk, or the period of $\sin$ and $\cos$. The integrand $1/(1+x^2)$ is \emph{rational} in $x$.
+\end{definition}
+
+\begin{definition}[The Lemniscate Constant]
+\begin{equation}
+    \varpi = 2\int_0^1 \frac{dx}{\sqrt{1-x^4}} = 2.62206\ldots
+\end{equation}
+The half-perimeter of the unit lemniscate $r^2 = \cos 2\theta$. The integrand $(1-x^4)^{-1/2}$ involves a \emph{quartic} under the radical---the simplest algebraic integrand that produces a genuinely new transcendental.
+\end{definition}
+
+\begin{definition}[The Lattice Bridge Constant]
+\begin{equation}
+    G^{*2} = \frac{2\pi}{(2\pi)^3}\int_{[-\pi,\pi]^3} \frac{d^3k}{3 - \cos k_1 - \cos k_2 - \cos k_3} = 2\pi W_3
+\end{equation}
+where $W_3$ is Watson's integral for the simple cubic lattice $\mathbb{Z}^3$. Equivalently, $G^* = \sqrt{2}\,\Gamma(1/4)^2/(2\pi) \approx 2.9587$. The integrand is a \emph{trigonometric sum}---the inverse of the lattice Laplacian in momentum space.
+\end{definition}
+
+\begin{remark}[Dimensional progression]
+The three integrals live in progressively higher dimensions:
+\begin{itemize}[nosep]
+    \item $\pi$: a 1-dimensional integral over $[0,1]$, defining a property of a curve in $\mathbb{R}^2$.
+    \item $\varpi$: a 1-dimensional integral over $[0,1]$, but involving a quartic (degree 4) algebraic curve.
+    \item $G^*$: a 3-dimensional integral over the Brillouin zone $[-\pi,\pi]^3$ of $\mathbb{Z}^3$.
+\end{itemize}
+The algebraic complexity increases at each step: rational $\to$ quartic radical $\to$ trigonometric lattice sum.
+\end{remark}
+
+%------------------------------------------------------------------
+\section{The Triad Relation}
+\label{sec:triad}
+%------------------------------------------------------------------
+
+\begin{theorem}[The Triad]
+\label{thm:triad}
+The three constants satisfy:
+\begin{equation}
+    \boxed{\;\pi = \frac{4\varpi^2}{G^{*2}}\;}
+    \label{eq:triad}
+\end{equation}
+Equivalently: $G^{*2}/\varpi^2 = 4/\pi$, or $\varpi/G^* = \sqrt{\pi}/2$.
+\end{theorem}
+
+\begin{proof}
+From the definitions: $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$ and $G^* = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$. Then:
+\[
+    \frac{4\varpi^2}{G^{*2}} = \frac{4 \cdot \Gamma(1/4)^4/(8\pi)}{2\,\Gamma(1/4)^4/(4\pi^2)} = \frac{4/(8\pi)}{2/(4\pi^2)} = \frac{4}{8\pi}\cdot\frac{4\pi^2}{2} = \frac{16\pi^2}{16\pi} = \pi. \qedhere
+\]
+\end{proof}
+
+\begin{remark}[Historical parallel]
+Gauss discovered the relation $\pi = \varpi/M$ where $M = \operatorname{agm}(1, \sqrt{2})$ is the arithmetic-geometric mean. The triad relation~\eqref{eq:triad} extends this: $G^* = 2\varpi/\sqrt{\pi} = 2\varpi \cdot M/\sqrt{\varpi M} = 2\sqrt{\varpi M}$. Thus $G^*$ is twice the geometric mean of the lemniscate constant and the AGM. The three relations form a triangle:
+\begin{align}
+    \pi &= \varpi / M && \text{(Gauss)} \\
+    G^* &= 2\varpi / \sqrt{\pi} && \text{(bridge)} \\
+    \pi &= 4\varpi^2 / G^{*2} && \text{(triad)}
+\end{align}
+Any two of these imply the third.
+\end{remark}
+
+%------------------------------------------------------------------
+\section{Three Geometric Operations}
+\label{sec:roles}
+%------------------------------------------------------------------
+
+Each constant is the canonical measure of a distinct geometric operation.
+
+\subsection{$\pi$ and closure}
+
+The circle is the unique curve that \emph{closes}: it returns to its starting point after traversing its full length. The constant $\pi$ measures this closure---it is half the length needed to close. Every periodic function with period $T$ involves $\pi$ through $\omega = 2\pi/T$. Closure is a topological property: the circle is contractible to a point but not to a segment.
+
+\subsection{$\varpi$ and self-crossing}
+
+The lemniscate is the simplest algebraic curve that \emph{crosses itself}. Its node at the origin is where the curve meets itself, creating two lobes. The constant $\varpi$ measures this self-crossing geometry. While the circle encloses space, the lemniscate \emph{partitions} it: the self-crossing divides the curve into two topologically distinct regions. The quartic exponent ($x^4$ in the integrand) is the minimal degree that allows algebraic self-crossing at a smooth node.
+
+\subsection{$G^*$ and self-energy}
+
+The Watson integral $W_3$ measures the cubic lattice's \emph{self-energy}: the probability that a random walk on $\mathbb{Z}^3$ returns to its origin, or equivalently, the diagonal element of the lattice Green's function. The constant $G^* = \sqrt{2\pi W_3}$ is the natural rescaling that converts this self-energy into a coupling amplitude. While $\pi$ measures a curve's interaction with \emph{space} (closure) and $\varpi$ measures a curve's interaction with \emph{itself} (crossing), $G^*$ measures a lattice's interaction with itself (self-energy). This is a third geometric operation, irreducible to the first two.
+
+\begin{proposition}[The three operations are distinct]
+\label{prop:distinct}
+No two of the three operations (closure, self-crossing, self-energy) are equivalent:
+\begin{enumerate}[nosep]
+    \item Closure does not require self-crossing (the circle does not cross itself).
+    \item Self-crossing does not require closure (an infinite lemniscatic spiral crosses itself without closing).
+    \item Self-energy does not require either (the lattice Green's function is defined for open lattices).
+\end{enumerate}
+\end{proposition}
+
+%------------------------------------------------------------------
+\section{A Common Ancestor}
+\label{sec:ancestor}
+%------------------------------------------------------------------
+
+Despite their distinct geometric roles, the three constants share a common algebraic origin.
+
+\begin{theorem}[Common CM Curve]
+\label{thm:common}
+All three constants are periods of the CM elliptic curve $E\!: y^2 = x^3 - x$ with $j(E) = 1728$, $\operatorname{Aut}(E) \cong \mathbb{Z}/4\mathbb{Z}$, and endomorphism ring $\mathbb{Z}[i]$:
+\begin{enumerate}[nosep]
+    \item $\varpi$ is the real period of $E$.
+    \item $\pi$ is related to $\varpi$ through the AGM, which computes the period ratio of $E$.
+    \item $G^*$ is related to $\varpi$ through $W_3$, which evaluates to a product of the periods of $E$ via Watson's contour integration \cite{watson1939}.
+\end{enumerate}
+\end{theorem}
+
+The triad relation $\pi = 4\varpi^2/G^{*2}$ is therefore not a coincidence but a consequence of all three constants being different projections of the same CM curve. The curve $E$ is the common ancestor; the three constants are its shadows in different geometric domains.
+
+%------------------------------------------------------------------
+\section{The Period Descent Perspective}
+\label{sec:descent}
+%------------------------------------------------------------------
+
+A Diophantine condition is proven for when the circular period $\pi$ can be eliminated from the mixed Gaussian trace $\mathcal{Z}(p,q)$. The fundamental solution $(p,q) = (3,2)$ produces $\mathcal{Z}(3,2) = \sqrt{2}\,\Gamma(1/4)^2$, which is $\pi$-free and lies in the period ring of $E$.
+
+Within this framework, the three constants occupy distinct positions:
+\begin{itemize}[nosep]
+    \item $\pi$ is the \emph{circular period}---present whenever $2p \neq 3q$.
+    \item $\varpi$ is the \emph{elliptic period}---the irreducible period of $E$ that survives descent.
+    \item $G^*$ is the \emph{bridge period}---the specific combination $2\varpi/\sqrt{\pi}$ that converts between the $\pi$-dependent and $\pi$-free regimes.
+\end{itemize}
+
+The existence of exactly three period types at the $(3,2)$ resonance is a structural property of the Chowla--Selberg formula at the self-dual point $\tau = i$.
+
+%------------------------------------------------------------------
+\section{Representations}
+\label{sec:reps}
+%------------------------------------------------------------------
+
+We collect all known representations of the three constants, organized by source domain.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Constant} & \textbf{Representation} & \textbf{Source} \\
+\midrule
+$\pi$ & $4\!\int_0^1\! dx/(1{+}x^2)$ & Leibniz--Gregory \\
+$\pi$ & $4\varpi^2/G^{*2}$ & Triad relation \\
+$\pi$ & $\varpi/M$ \; ($M = \operatorname{agm}(1,\sqrt{2})$) & Gauss \\[4pt]
+$\varpi$ & $2\!\int_0^1\! dx/\sqrt{1{-}x^4}$ & Euler \\
+$\varpi$ & $\Gamma(1/4)^2/(2\sqrt{2\pi})$ & Beta function \\
+$\varpi$ & $G^*\sqrt{\pi}/2$ & Bridge relation \\[4pt]
+$G^*$ & $\sqrt{2\pi W_3}$ \; ($W_3$ = Watson integral) & Watson (1939) \\
+$G^*$ & $\sqrt{2}\,\Gamma(1/4)^2/(2\pi)$ & Definition \\
+$G^*$ & $2\varpi/\sqrt{\pi}$ & Bridge relation \\
+$G^*$ & $\sqrt{2\pi}\;\theta_3(e^{-\pi})^2$ & Chowla--Selberg \\
+$G^*$ & $2\sqrt{\pi}/\operatorname{agm}(1,\sqrt{2})$ & Gauss--AGM \\
+$G^*$ & $B(1/4,1/4)/\sqrt{2\pi}$ & Beta function \\
+$G^*$ & $(2\sqrt{2}/\sqrt{\pi})\,K(1/\sqrt{2})$ & Elliptic integral \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+Every row is independently verifiable. The proliferation of representations for $G^*$ reflects its position at the nexus of multiple mathematical domains---modular forms, lattice combinatorics, special functions, and elliptic integrals. This is analogous to $\pi$'s hundreds of known representations, which reflect its centrality in mathematics.
+\end{remark}
+
+%------------------------------------------------------------------
+\section{Numerical Values}
+\label{sec:values}
+%------------------------------------------------------------------
+
+For reference, to 25 significant figures:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Constant} & \textbf{Value} \\
+\midrule
+$\pi$ & $3.141\,592\,653\,589\,793\,238\,462\,643\ldots$ \\
+$\varpi$ & $2.622\,057\,554\,292\,119\,810\,464\,840\ldots$ \\
+$G^*$ & $2.958\,675\,119\,188\,638\,892\,310\,821\ldots$ \\
+$\Gamma(1/4)$ & $3.625\,609\,908\,221\,908\,311\,930\,685\ldots$ \\
+\midrule
+$\varpi/G^*$ & $0.886\,226\,925\,452\,758\ldots = \sqrt{\pi}/2$ \\
+$G^*/\varpi$ & $1.128\,379\,167\,095\,513\ldots = 2/\sqrt{\pi}$ \\
+$4\varpi^2/G^{*2}$ & $3.141\,592\,653\,589\,793\ldots = \pi$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[All three from one function]
+The triad reduces to a single function at a single point. Since $\pi = \Gamma(1/2)^2$:
+\begin{align}
+    \varpi &= \Gamma(1/4)^2\,/\,(2\sqrt{2}\,\Gamma(1/2)) \\
+    G^* &= \sqrt{2}\,\Gamma(1/4)^2\,/\,(2\,\Gamma(1/2)^2) \\
+    \pi &= \Gamma(1/2)^2
+\end{align}
+The three ``geometric constants'' are three algebraic projections of one transcendental: $\Gamma(1/4)$. The triad relation $\pi = 4\varpi^2/G^{*2}$ is the algebraic identity connecting these projections. The Gamma function itself is forced by the Bohr--Mollerup theorem (the unique log-convex factorial extension), and the argument $1/4$ is selected by the $\mathbb{Z}_4$ symmetry of the cubic lattice.
+\end{remark}
+
+%------------------------------------------------------------------
+\section{Discussion: The Case for $G^*$}
+\label{sec:case}
+%------------------------------------------------------------------
+
+Why should $G^*$ be treated as a fundamental geometric constant rather than ``merely'' $2\varpi/\sqrt{\pi}$?
+
+\begin{enumerate}
+    \item \textbf{Independent definition.} $G^*$ can be defined purely from the cubic lattice $\mathbb{Z}^3$ via Watson's integral, with no reference to $\pi$ or $\varpi$. The identity $G^{*2} = 2\pi W_3$ is a \emph{theorem} connecting two independently defined quantities, not a definition of one in terms of the other.
+
+    \item \textbf{Distinct geometric role.} $\pi$ measures closure, $\varpi$ measures self-crossing, $G^*$ measures self-energy. These are three irreducible geometric operations (Proposition~\ref{prop:distinct}).
+
+    \item \textbf{Algebraic dependence is not disqualifying.} $\pi$ satisfies $\pi = \varpi/M$ (Gauss's AGM relation); this does not make $\pi$ ``merely a rescaled $\varpi$.'' Algebraic relations between constants reflect shared structure, not redundancy.
+
+    \item \textbf{Notational economy.} The constant $G^*$ appears in the Watson identity, the master quadratic, the bridge relation, the Jacobi theta evaluation, the Beta function identity, and the elliptic integral at the lemniscatic modulus. Writing $G^*$ rather than $2\varpi/\sqrt{\pi}$ each time is not merely convenient---it reflects the fact that $G^*$, not $\varpi$, is the natural coefficient in these contexts.
+
+    \item \textbf{The triad is complete.} $\pi$, $\varpi$, and $G^*$ satisfy exactly one algebraic relation (eq.~\ref{eq:triad}), leaving two algebraically independent constants. This is the maximum number of independent constants derivable from the single transcendental $\Gamma(1/4)$, given that $\pi$ and $\Gamma(1/4)$ are algebraically independent (Chudnovsky, 1984). The triad is therefore \emph{complete}: no fourth constant of the same type exists.
+\end{enumerate}
+
+%------------------------------------------------------------------
+\section{Summary}
+%------------------------------------------------------------------
+
+\begin{enumerate}
+    \item Three geometric constants---$\pi$ (circle), $\varpi$ (lemniscate), $G^*$ (lattice)---each arise from a canonical integral over a distinct geometric domain.
+
+    \item They satisfy the triad relation $\pi = 4\varpi^2/G^{*2}$, which follows from their shared origin as periods of the CM curve $E\!: y^2 = x^3 - x$.
+
+    \item Each constant measures a distinct geometric operation: closure ($\pi$), self-crossing ($\varpi$), self-energy ($G^*$). These operations are irreducible to one another.
+
+    \item The triad is complete: given the algebraic independence of $\pi$ and $\Gamma(1/4)$, exactly two independent constants can be formed from $\Gamma(1/4)$, and the three constants $\{\pi, \varpi, G^*\}$ with one relation exhaust this count.
+
+    \item No physical interpretation is assumed. The case for $G^*$ rests on lattice geometry, the Watson integral, and the theory of CM elliptic curves.
+\end{enumerate}
+
+%------------------------------------------------------------------
+\begin{thebibliography}{9}
+%------------------------------------------------------------------
+
+\bibitem{watson1939}
+G.\,N.\ Watson, ``Three triple integrals,'' \textit{Quart.\ J.\ Math.\ Oxford} \textbf{10} (1939), 266--276.
+
+\bibitem{chudnovsky}
+G.\,V.\ Chudnovsky, ``Contributions to the theory of transcendental numbers,'' \textit{Math.\ Surveys and Monographs} \textbf{19}, AMS (1984).
+
+\bibitem{cox}
+D.\,A.\ Cox, ``The arithmetic-geometric mean of Gauss,'' \textit{L'Enseign.\ Math.} \textbf{30} (1984), 275--330.
+
+\bibitem{silverman}
+J.\,H.\ Silverman, \textit{The Arithmetic of Elliptic Curves}, 2nd ed., Springer GTM~\textbf{106} (2009).
+
+\end{thebibliography}
+
+\end{document}

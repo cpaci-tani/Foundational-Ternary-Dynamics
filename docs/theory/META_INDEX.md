@@ -2,7 +2,7 @@
 
 **Framework:** Foundational Ternary Dynamics v5.28
 **Date:** March 17, 2026
-**Status:** Consolidated (114 core files, 68 archived)
+**Status:** Consolidated (114 core files, 67 archived)
 **Single Source of Truth:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 
 ---
@@ -39,7 +39,7 @@ Start here for comprehensive overviews.
 
 ---
 
-## 2. Ontological Foundations (16)
+## 2. Ontological Foundations (18)
 
 From void to physics — the emergence story.
 
@@ -66,7 +66,7 @@ From void to physics — the emergence story.
 
 ---
 
-## 3. Core Physics Derivations (29)
+## 3. Core Physics Derivations (37)
 
 Physics from first principles.
 
@@ -168,7 +168,7 @@ Self-reference, the observer, and the measurement problem.
 
 ---
 
-## 7. Critical Self-Assessment (6)
+## 7. Critical Self-Assessment (7)
 
 What is genuinely derived vs. claimed.
 
@@ -265,7 +265,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 ## Archived Documents
 
-68 files in `archive/` subdirectory:
+67 files in `archive/` subdirectory:
 - Historical context and session notes
 - Superseded versions of consolidated documents
 - Speculative extensions (philosophy, biology)
@@ -277,4 +277,4 @@ Access via `archive/[filename].md` if needed for historical reference.
 
 *Index updated: March 17, 2026*
 *Framework: Foundational Ternary Dynamics v5.28*
-*Structure: 114 core files (9 category folders) + 68 archived*
+*Structure: 114 core files (9 category folders) + 67 archived*

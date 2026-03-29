@@ -370,7 +370,7 @@ The modular selector (which picks the lemniscatic curve from all possible ellipt
 - **Spacetime emergence**: [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
 - **Consciousness**: [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
 - **Ontic chain**: `engine/include/ftd/ontic.h`
-- **Numerical verification**: `simulations/explore_ontic_constants.py`
+- **Numerical verification**: `scripts/exploration/explore_ontic_constants.py`
 
 ---
 

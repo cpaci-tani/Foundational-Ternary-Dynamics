@@ -1,11 +1,15 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[12pt]{article}
 
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{setspace}
 \usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{xcolor}
-\usepackage[margin=1in]{geometry}
+
+\geometry{letterpaper, margin=1in}
+\setstretch{1.15}
 
 % Theorem environments
 \newtheorem{theorem}{Theorem}[section]
@@ -19,15 +23,13 @@
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
-\newcommand{\Gstar}{{G^{*}}}
-\newcommand{\vpi}{\varpi}
 \DeclareMathOperator{\csch}{csch}
 \DeclareMathOperator{\sech}{sech}
 
 \title{The Discrete--Continuous Bridge Through the Lemniscatic Lens:\\[6pt]
 \large An Analysis of $\displaystyle\sum_{n=0}^{\infty}\frac{1}{(n^2+1)^2}$}
 
-\author{}
+\author{W.\,J.\ cpaci-tani~III}
 \date{}
 
 \begin{document}
@@ -39,17 +41,17 @@ We present a complete derivation of the closed-form identity
 \sum_{n=0}^{\infty}\frac{1}{(n^2+1)^2}
 \;=\;\frac{2+\pi\coth\pi+\pi^2\csch^2\pi}{4}\,,
 \]
-then recast the result entirely in terms of the lemniscate constant~$\vpi$
-and the bridge constant $\Gstar=2\vpi/\sqrt{\pi}$ of Foundational Ternary
+then recast the result entirely in terms of the lemniscate constant~$\varpi$
+and the bridge constant ${G^{*}}=2\varpi/\sqrt{\pi}$ of Foundational Ternary
 Dynamics~(FTD).  In the FTD rewriting, the ontic content of the identity
-reduces to the single ratio $\ell=\vpi^2/\Gstar^2=\pi/4$, revealing
+reduces to the single ratio $\ell=\varpi^2/{G^{*}}^2=\pi/4$, revealing
 that every appearance of~$\pi$ in the standard formula is a derived
 consequence of this deeper lemniscatic ratio.
 
 We show that the sum is a restriction of the Epstein zeta function
 $Z_{\Z[i]}(s)$ at $s=2$, establish the exact identity
-$E_4(i)=3\,\Gstar^8/(256\,\vpi^4)$, and prove the Epstein factorisation
-$Z_{\Z[i]}(2)=4\,\zeta(2)\,L(2,\chi_{-4})=32\,\vpi^4\,G/(3\,\Gstar^4)$
+$E_4(i)=3\,{G^{*}}^8/(256\,\varpi^4)$, and prove the Epstein factorisation
+$Z_{\Z[i]}(2)=4\,\zeta(2)\,L(2,\chi_{-4})=32\,\varpi^4\,G/(3\,{G^{*}}^4)$
 in ontic variables, where $G$ is Catalan's constant---the irreducible
 arithmetic residue encoding the distribution of Gaussian primes.
 
@@ -61,16 +63,13 @@ explaining why our one-dimensional sum admits a purely ontic closed form.
 
 We then place these results in a dimensional hierarchy: the Basel sum
 $\zeta(2) = \pi^2/6$ is the lattice zeta function of~$\Z$ at $s = 2$;
-the Eisenstein series $G_4$ encodes the period of~$\Z[i]$ through~$\vpi$;
-the Watson integral encodes the period of~$\Z^3$ through~$\Gstar$.
+the Eisenstein series $G_4$ encodes the period of~$\Z[i]$ through~$\varpi$;
+the Watson integral encodes the period of~$\Z^3$ through~${G^{*}}$.
 Each dimension has its own ``circle constant,'' and only $D = 3$
 produces a self-consistent framework.
 
-This paper is one of five companion papers presenting Foundational Ternary
-Dynamics; see~\cite{chain} for the derivation chain,
-\cite{lifecycle} for the physical lifecycle, \cite{constructor} for
-the ontological constructor, and \cite{engine} for the computational
-implementation.
+This paper is one of several papers presenting Foundational Ternary
+Dynamics.
 \end{abstract}
 
 \tableofcontents
@@ -215,20 +214,20 @@ S\;=\;\sum_{n=0}^{\infty}\frac{1}{(n^2+1)^2}
 \subsection{The Ontic Constants}
 
 \begin{definition}[Lemniscate constant]\label{def:varpi}
-The lemniscate constant~$\vpi$ is defined by
+The lemniscate constant~$\varpi$ is defined by
 \[
-\vpi \;=\; 2\int_0^1\frac{dt}{\sqrt{1-t^4}}
+\varpi \;=\; 2\int_0^1\frac{dt}{\sqrt{1-t^4}}
 \;=\;\frac{\Gamma(1/4)^2}{2\sqrt{2\pi}}
 \;\approx\;2.62206\,.
 \]
 It is the half-perimeter of the lemniscate of Bernoulli and satisfies
-$\vpi=\pi/M(1,\sqrt{2})$, where $M$ denotes the arithmetic--geometric mean.
+$\varpi=\pi/M(1,\sqrt{2})$, where $M$ denotes the arithmetic--geometric mean.
 \end{definition}
 
 \begin{definition}[Bridge constant]\label{def:Gstar}
 The FTD bridge constant is
 \[
-\Gstar \;=\; \frac{\Gamma(1/4)^2}{\sqrt{2}\;\Gamma(1/2)^2} \;=\; \frac{2\vpi}{\sqrt{\pi}} \;\approx\; 2.95868\,.
+{G^{*}} \;=\; \frac{\Gamma(1/4)^2}{\sqrt{2}\;\Gamma(1/2)^2} \;=\; \frac{2\varpi}{\sqrt{\pi}} \;\approx\; 2.95868\,.
 \]
 The first form is $\pi$-free: both $\Gamma(1/4)$ and $\Gamma(1/2)$ are definable by $\pi$-free integrals ($\int_0^\infty t^{s-1}e^{-t}\,dt$ at $s = 1/4$ and $s = 1/2$). The equivalence of the two forms follows from $\Gamma(1/2)^2 = \pi$ (the Gaussian integral).
 \end{definition}
@@ -236,23 +235,23 @@ The first form is $\pi$-free: both $\Gamma(1/4)$ and $\Gamma(1/2)$ are definable
 \begin{definition}[Ontic ratio]\label{def:ell}
 Define
 \begin{equation}\label{eq:ell}
-\ell \;=\; \frac{\vpi^2}{\Gstar^2}\,.
+\ell \;=\; \frac{\varpi^2}{{G^{*}}^2}\,.
 \end{equation}
 \end{definition}
 
 \begin{lemma}\label{lem:pi}
-$\pi = 4\ell = 4\vpi^2/\Gstar^2$.
+$\pi = 4\ell = 4\varpi^2/{G^{*}}^2$.
 \end{lemma}
 \begin{proof}
-From $\Gstar=2\vpi/\sqrt{\pi}$ we obtain $\Gstar^2=4\vpi^2/\pi$,
-hence $\pi=4\vpi^2/\Gstar^2=4\ell$.
+From ${G^{*}}=2\varpi/\sqrt{\pi}$ we obtain ${G^{*}}^2=4\varpi^2/\pi$,
+hence $\pi=4\varpi^2/{G^{*}}^2=4\ell$.
 \end{proof}
 
 \begin{remark}\label{rem:ontic-priority}
-In the FTD framework, $\vpi$ and $\Gstar$ (equivalently $\vpi$ and
+In the FTD framework, $\varpi$ and ${G^{*}}$ (equivalently $\varpi$ and
 $\ell$) are treated as the ontic (structurally primary) constants.
 The number $\pi$ is a derived quantity: it is four times the ratio
-$\vpi^2/\Gstar^2$.  This reflects the claim that the lemniscatic lattice
+$\varpi^2/{G^{*}}^2$.  This reflects the claim that the lemniscatic lattice
 structure is ontologically prior to the circular one.
 \end{remark}
 
@@ -265,7 +264,7 @@ structure is ontologically prior to the circular one.
 \;=\;\frac{2+4\ell\coth(4\ell)+16\ell^2\csch^2(4\ell)}{4}\,,
 }
 \end{equation}
-where $\ell=\vpi^2/\Gstar^2$.
+where $\ell=\varpi^2/{G^{*}}^2$.
 \end{theorem}
 \begin{proof}
 Substitute $\pi=4\ell$ into~\eqref{eq:result}.
@@ -273,8 +272,8 @@ Substitute $\pi=4\ell$ into~\eqref{eq:result}.
 
 \begin{remark}\label{rem:pi-disguised}
 Every appearance of $\pi$ in the standard result was a disguised occurrence
-of $4\vpi^2/\Gstar^2$.  The hyperbolic functions $\coth$ and $\csch^2$
-depend on a single transcendental argument: $4\ell=4\vpi^2/\Gstar^2$.
+of $4\varpi^2/{G^{*}}^2$.  The hyperbolic functions $\coth$ and $\csch^2$
+depend on a single transcendental argument: $4\ell=4\varpi^2/{G^{*}}^2$.
 \end{remark}
 
 \subsection{Gelfond's Constant as the Exponential Scale}
@@ -283,7 +282,7 @@ depend on a single transcendental argument: $4\ell=4\vpi^2/\Gstar^2$.
 The exponential scale governing the hyperbolic functions
 in~\eqref{eq:ftd-form} is
 \[
-e^{4\ell}\;=\;e^{4\vpi^2/\Gstar^2}\;=\;e^{\pi}\;\approx\;23.1407\,,
+e^{4\ell}\;=\;e^{4\varpi^2/{G^{*}}^2}\;=\;e^{\pi}\;\approx\;23.1407\,,
 \]
 which is Gelfond's constant, $(-1)^{-i}$.
 \end{proposition}
@@ -296,9 +295,9 @@ The nome of the Gaussian lattice $\Z[i]$ (with respect to the modular
 parameter $\tau=i$) is
 \[
 q\;=\;e^{2\pi i\tau}\Big|_{\tau=i}\;=\;e^{-2\pi}\;=\;
-e^{-8\vpi^2/\Gstar^2}\;\approx\;1.87\times 10^{-3}\,.
+e^{-8\varpi^2/{G^{*}}^2}\;\approx\;1.87\times 10^{-3}\,.
 \]
-The smallness of~$q$ (controlled entirely by $\vpi^2/\Gstar^2$) is
+The smallness of~$q$ (controlled entirely by $\varpi^2/{G^{*}}^2$) is
 responsible for the rapid exponential suppression that makes the $\csch^2$
 correction contribute only ${\sim}1.4\%$ of the total sum, as we quantify
 in Section~\ref{sec:bridge-structure}.
@@ -351,26 +350,26 @@ E_4(i) \;=\; 1+240\sum_{n=1}^{\infty}\sigma_3(n)\,q^n\,,
 
 \begin{theorem}[Eisenstein $E_4(i)$ in FTD form]\label{thm:E4}
 \begin{equation}\label{eq:E4}
-E_4(i)\;=\;3\!\left(\frac{\vpi}{\pi}\right)^{\!4}
-\;=\;\frac{3\,\Gstar^8}{256\,\vpi^4}\,.
+E_4(i)\;=\;3\!\left(\frac{\varpi}{\pi}\right)^{\!4}
+\;=\;\frac{3\,{G^{*}}^8}{256\,\varpi^4}\,.
 \end{equation}
 \end{theorem}
 \begin{proof}
 The first equality is a classical result relating $E_4(i)$ to the
 lemniscate constant via the Weierstrass invariant~$g_2$ of the square
 lattice (see Zucker~\cite{zucker77}).  For the second equality, substitute
-$\pi=4\vpi^2/\Gstar^2$:
+$\pi=4\varpi^2/{G^{*}}^2$:
 \[
-3\!\left(\frac{\vpi}{\pi}\right)^{\!4}
-= 3\!\left(\frac{\vpi\,\Gstar^2}{4\vpi^2}\right)^{\!4}
-= 3\!\left(\frac{\Gstar^2}{4\vpi}\right)^{\!4}
-= \frac{3\,\Gstar^8}{256\,\vpi^4}\,.\qedhere
+3\!\left(\frac{\varpi}{\pi}\right)^{\!4}
+= 3\!\left(\frac{\varpi\,{G^{*}}^2}{4\varpi^2}\right)^{\!4}
+= 3\!\left(\frac{{G^{*}}^2}{4\varpi}\right)^{\!4}
+= \frac{3\,{G^{*}}^8}{256\,\varpi^4}\,.\qedhere
 \]
 \end{proof}
 
 \begin{remark}\label{rem:2d-ontic}
 The full two-dimensional lattice structure at the Gaussian point is
-controlled entirely by $\vpi$ and~$\Gstar$.  Our one-dimensional sum~$S$
+controlled entirely by $\varpi$ and~${G^{*}}$.  Our one-dimensional sum~$S$
 is a restriction of this structure, and the restriction to a single row is
 what introduces the circular constant~$\pi$ as an intermediary through the
 bilateral-sum formula~\eqref{eq:bilateral}.
@@ -409,18 +408,18 @@ At $s=2$, each factor acquires a specific identity:
 \begin{corollary}[Ontic form of $Z_{\Z[i]}(2)$]\label{cor:Z2-ontic}
 \begin{equation}\label{eq:Z2-ontic}
 Z_{\Z[i]}(2) \;=\; 4\,\zeta(2)\,G
-\;=\;\frac{32\,\vpi^4}{3\,\Gstar^4}\;\cdot\; G\,,
+\;=\;\frac{32\,\varpi^4}{3\,{G^{*}}^4}\;\cdot\; G\,,
 \end{equation}
 where $G=L(2,\chi_{-4})\approx 0.915966$ is Catalan's constant.
 \end{corollary}
 \begin{proof}
-Substitute $\zeta(2)=\pi^2/6$ and $\pi=4\vpi^2/\Gstar^2$:
+Substitute $\zeta(2)=\pi^2/6$ and $\pi=4\varpi^2/{G^{*}}^2$:
 \[
-\zeta(2)=\frac{\pi^2}{6}=\frac{16\vpi^4}{6\,\Gstar^4}
-=\frac{8\vpi^4}{3\,\Gstar^4}\,.
+\zeta(2)=\frac{\pi^2}{6}=\frac{16\varpi^4}{6\,{G^{*}}^4}
+=\frac{8\varpi^4}{3\,{G^{*}}^4}\,.
 \]
-Then $Z_{\Z[i]}(2)=4\cdot\dfrac{8\vpi^4}{3\,\Gstar^4}\cdot G
-=\dfrac{32\,\vpi^4\,G}{3\,\Gstar^4}$.
+Then $Z_{\Z[i]}(2)=4\cdot\dfrac{8\varpi^4}{3\,{G^{*}}^4}\cdot G
+=\dfrac{32\,\varpi^4\,G}{3\,{G^{*}}^4}$.
 \end{proof}
 
 \begin{remark}[The irreducible arithmetic residue]\label{rem:catalan}
@@ -434,7 +433,7 @@ encodes the distribution of Gaussian primes: it measures the excess of
 primes $p\equiv 1\pmod{4}$ (which split in~$\Z[i]$) over primes
 $p\equiv 3\pmod{4}$ (which remain inert), weighted by $p^{-2}$.  This
 arithmetic content is intrinsic to the \emph{two-dimensional} Gaussian
-lattice and cannot be expressed in terms of $\vpi$ and~$\Gstar$ alone.
+lattice and cannot be expressed in terms of $\varpi$ and~${G^{*}}$ alone.
 It is the irreducible arithmetic residue that distinguishes the norm
 projection $|z|^{-2s}$ from the holomorphic projection $z^{-2s}$.
 \end{remark}
@@ -463,24 +462,24 @@ and $\csch(4n\ell)$.
 
 \begin{proposition}[Row decomposition in ontic form]\label{prop:row-ontic}
 \begin{equation}\label{eq:row-ontic}
-Z_{\Z[i]}(2) = \frac{2^8\,\vpi^8}{45\,\Gstar^8}
+Z_{\Z[i]}(2) = \frac{2^8\,\varpi^8}{45\,{G^{*}}^8}
 + 2\sum_{n=1}^{\infty}\left[
-\frac{8\vpi^4\csch^2(4n\ell)}{n^2\,\Gstar^4}
-+ \frac{2\vpi^2\coth(4n\ell)}{n^3\,\Gstar^2}\right],
+\frac{8\varpi^4\csch^2(4n\ell)}{n^2\,{G^{*}}^4}
++ \frac{2\varpi^2\coth(4n\ell)}{n^3\,{G^{*}}^2}\right],
 \end{equation}
-where $\ell=\vpi^2/\Gstar^2$ and the leading term uses
-$\zeta(4)=\pi^4/90=2^8\vpi^8/(90\,\Gstar^8)$.
+where $\ell=\varpi^2/{G^{*}}^2$ and the leading term uses
+$\zeta(4)=\pi^4/90=2^8\varpi^8/(90\,{G^{*}}^8)$.
 \end{proposition}
 
 \begin{remark}[Why the row restriction eliminates $G$]\label{rem:row-kills-G}
 Each individual row sum~\eqref{eq:bilateral-row} is expressible purely in
-terms of $\vpi$ and~$\Gstar$ (via $\pi=4\vpi^2/\Gstar^2$).  Catalan's
+terms of $\varpi$ and~${G^{*}}$ (via $\pi=4\varpi^2/{G^{*}}^2$).  Catalan's
 constant enters only when we sum the row contributions and equate them to
 the Dirichlet-series factorisation $4\,\zeta(2)\,L(2,\chi_{-4})$.  The row
 restriction to $n=1$ that yields our sum~$S$ bypasses this global
 arithmetic content entirely: it uses only the Poisson summation formula
 over~$\Z$, whose kernel is the Fourier transform of $1/(x^2+1)^2$ --- a
-smooth function controlled by the single period~$\vpi$.
+smooth function controlled by the single period~$\varpi$.
 
 This explains why $S$ admits a purely ontic closed form
 (Theorem~\ref{thm:ftd}), while the full $Z_{\Z[i]}(2)$ does not: the
@@ -503,10 +502,10 @@ weight~4, each revealing different content:
 \textbf{Projection} & \textbf{Object} & \textbf{FTD form} & \textbf{Ontic purity}\\
 \midrule
 Holomorphic ($z^{-4}$) & $G_4(i),\;E_4(i)$
-  & $3\,\Gstar^8/(256\,\vpi^4)$
+  & $3\,{G^{*}}^8/(256\,\varpi^4)$
   & Fully ontic\\[3pt]
 Norm ($|z|^{-4}$) & $Z_{\Z[i]}(2)$
-  & $32\,\vpi^4\,G/(3\,\Gstar^4)$
+  & $32\,\varpi^4\,G/(3\,{G^{*}}^4)$
   & Ontic $\times$ arithmetic\\[3pt]
 Row restriction & $S$
   & $\dfrac{2+4\ell\coth 4\ell+16\ell^2\csch^2 4\ell}{4}$
@@ -518,17 +517,17 @@ Row restriction & $S$
 
 The holomorphic projection $z^{-4}$ respects the four-fold symmetry of
 $\Z[i]$ and yields a holomorphic modular form whose value at $\tau=i$ is
-determined by the lattice periods $\vpi$ and $i\vpi$ alone.  The norm
+determined by the lattice periods $\varpi$ and $i\varpi$ alone.  The norm
 projection $|z|^{-4}$ discards phase information and introduces the
 arithmetic of $\Z[i]$ through the representation function $r_2(k)$, which
 carries Catalan's constant as its weight-2 residue.
 
 \begin{remark}\label{rem:bridge-is-Gstar}
-In both projections, the lemniscatic constants $\vpi$ and $\Gstar$ control
+In both projections, the lemniscatic constants $\varpi$ and ${G^{*}}$ control
 the geometric structure of the lattice.  The \emph{arithmetic} factor $G$
 appears only when we ask a number-theoretic question (``how many lattice
 points lie on the circle $|z|^2=k$?'') rather than a geometric one
-(``what are the periods?'').  The bridge constant $\Gstar$ mediates the
+(``what are the periods?'').  The bridge constant ${G^{*}}$ mediates the
 geometric content; Catalan's constant encodes the arithmetic residue.
 \end{remark}
 
@@ -542,15 +541,15 @@ geometric content; Catalan's constant encodes the arithmetic residue.
 $S$ (direct summation, $10^5$ terms) & 1.306836975422908 & Numerical\\
 $S$ (closed form, Eq.\,\ref{eq:result}) & 1.306836975422909 & Analytic\\
 $S$ (FTD form, Eq.\,\ref{eq:ftd-form}) & 1.306836975422909 & Analytic\\
-$\pi$ via $4\vpi^2/\Gstar^2$ & 3.141592653589793 & Verified\\
+$\pi$ via $4\varpi^2/{G^{*}}^2$ & 3.141592653589793 & Verified\\
 $E_4(i)$ ($q$-expansion, 500 terms) & 1.455762892268709 & Numerical\\
-$3\Gstar^8/(256\vpi^4)$ & 1.455762892268710 & Analytic\\
+$3{G^{*}}^8/(256\varpi^4)$ & 1.455762892268710 & Analytic\\
 \midrule
 $\zeta(2)$ & 1.644934066848226 & Standard\\
-$8\vpi^4/(3\Gstar^4)$ & 1.644934066848226 & Ontic\\
+$8\varpi^4/(3{G^{*}}^4)$ & 1.644934066848226 & Ontic\\
 Catalan $G = L(2,\chi_{-4})$ & 0.915965594177219 & Standard\\
 $Z_{\Z[i]}(2)$ via $4\,\zeta(2)\,G$ & 6.026812039691940 & Factored\\
-$32\vpi^4 G/(3\Gstar^4)$ & 6.026812039691940 & Ontic\\
+$32\varpi^4 G/(3{G^{*}}^4)$ & 6.026812039691940 & Ontic\\
 $Z_{\Z[i]}(2)$ via row decomposition & 6.026812039691940 & Row sum\\
 $n\!=\!1$ bilateral row & $1.613673950845818$ & Analytic\\
 $2S-1$ & $1.613673950845818$ & Verified\\
@@ -589,7 +588,7 @@ numerator):
 \textbf{Term} & \textbf{Expression} & \textbf{Share} & \textbf{Interpretation}\\
 \midrule
 Constant    & $2/4=0.500$                   & 38.3\% & Pure discrete residue\\
-Linear in $\ell$ & $4\ell\coth(4\ell)/4$  & 60.3\% & Bridge term ($\Gstar$ mediation)\\
+Linear in $\ell$ & $4\ell\coth(4\ell)/4$  & 60.3\% & Bridge term (${G^{*}}$ mediation)\\
 Quadratic in $\ell$ & $16\ell^2\csch^2(4\ell)/4$ & 1.4\% & Curvature correction\\
 \bottomrule
 \end{tabular}
@@ -604,14 +603,14 @@ the value the sum would approach if the lattice spacing were sent to zero
 relative to the period.
 
 The ``linear'' term $4\ell\coth(4\ell)/4$ carries 60.3\% of the
-answer and is dominated by the ratio $\vpi^2/\Gstar^2$.  This is the
+answer and is dominated by the ratio $\varpi^2/{G^{*}}^2$.  This is the
 bridge term proper: it encodes the interaction between the discrete lattice
 and the continuous exponential.
 
 The ``quadratic'' correction $16\ell^2\csch^2(4\ell)/4$ contributes
 only 1.4\%.  Its suppression is a direct consequence of the smallness of
 the nome $q=e^{-8\ell}\approx 1.87\times 10^{-3}$, whose magnitude is
-set by $\ell=\vpi^2/\Gstar^2$ alone.
+set by $\ell=\varpi^2/{G^{*}}^2$ alone.
 
 %=======================================================================
 \section{The Genus-0 Projection}\label{sec:genus}
@@ -624,9 +623,9 @@ are all genus-0 objects: they parametrise the Riemann sphere $\mathbb{P}^1$.
 
 The Gaussian lattice $\Z[i]$, however, is a genus-1 object.  Its natural
 functions are the Weierstrass $\wp$-function and its derivatives, whose
-periods are $\vpi$ and~$i\vpi$, and whose invariants are expressible purely
-in terms of $\vpi$ and~$\Gstar$.  (For the square lattice, $g_3=0$ by
-four-fold symmetry, and $g_2$ is determined by~$\vpi$ alone.)
+periods are $\varpi$ and~$i\varpi$, and whose invariants are expressible purely
+in terms of $\varpi$ and~${G^{*}}$.  (For the square lattice, $g_3=0$ by
+four-fold symmetry, and $g_2$ is determined by~$\varpi$ alone.)
 
 The fact that the answer can be written in terms of $\coth$ and $\csch^2$
 of~$\pi$ is a consequence of the one-dimensional restriction collapsing the
@@ -639,7 +638,7 @@ In the FTD reading:
 \begin{quote}
 $\pi$ appears in this formula not because the sum is ``about'' circles,
 but because we chose to evaluate a lemniscatic object using circular tools.
-The ontic content is $\ell=\vpi^2/\Gstar^2$.  Everything else is
+The ontic content is $\ell=\varpi^2/{G^{*}}^2$.  Everything else is
 projection.
 \end{quote}
 
@@ -663,7 +662,7 @@ Expanding the right side and comparing the $z^2$ coefficient with the
 Taylor series $\sin(\pi z)/(\pi z) = 1 - \pi^2 z^2/6 + \cdots$ gives
 $\sum 1/n^2 = \pi^2/6$.
 
-Now substitute $\pi = 4\ell$, where $\ell = \vpi^2/\Gstar^2$ is the
+Now substitute $\pi = 4\ell$, where $\ell = \varpi^2/{G^{*}}^2$ is the
 ontic ratio:
 \[
 \frac{\sin(4\ell z)}{4\ell z}
@@ -672,7 +671,7 @@ ontic ratio:
 \sum_{n=1}^{\infty}\frac{1}{n^2}
 \;=\; \frac{(4\ell)^2}{6}
 \;=\; \frac{8\ell^2}{3}
-\;=\; \frac{8\vpi^4}{3\Gstar^4}\,.
+\;=\; \frac{8\varpi^4}{3{G^{*}}^4}\,.
 \]
 The right side of the product formula is unchanged---it depends only on
 the integers.  The left side has replaced $\pi$ with $4\ell$.  The
@@ -692,13 +691,13 @@ own fundamental period, and its own zeta function:
 $D$ & Lattice & Period & Lattice zeta at $s=2$ & Product formula\\
 \midrule
 1 & $\Z$ & $\pi = 4\ell$
-  & $\displaystyle\zeta(2) = \frac{\pi^2}{6} = \frac{8\vpi^4}{3\Gstar^4}$
+  & $\displaystyle\zeta(2) = \frac{\pi^2}{6} = \frac{8\varpi^4}{3{G^{*}}^4}$
   & $\displaystyle\frac{\sin\pi z}{\pi z} = \prod\!\left(1-\frac{z^2}{n^2}\right)$\\[10pt]
-2 & $\Z[i]$ & $\vpi$
+2 & $\Z[i]$ & $\varpi$
   & $\displaystyle Z_{\Z[i]}(2) = 4\,\zeta(2)\,L(2,\chi_{-4})$
   & Weierstrass $\sigma(z;\Z[i])$\\[10pt]
-3 & $\Z^3$ & $\Gstar$
-  & $\displaystyle W_3 = \frac{\Gstar^2}{2\pi} = \frac{\Gamma(1/4)^4}{4\pi^3}$
+3 & $\Z^3$ & ${G^{*}}$
+  & $\displaystyle W_3 = \frac{{G^{*}}^2}{2\pi} = \frac{\Gamma(1/4)^4}{4\pi^3}$
   & Watson integral\\
 \bottomrule
 \end{tabular}
@@ -707,34 +706,34 @@ $D$ & Lattice & Period & Lattice zeta at $s=2$ & Product formula\\
 
 In $D = 1$, the ``Euler move''---extending finite polynomial
 factorisations to infinite products---discovers $\pi$.  The same move
-applied to the Gaussian lattice $\Z[i]$ in $D = 2$ discovers $\vpi$:
+applied to the Gaussian lattice $\Z[i]$ in $D = 2$ discovers $\varpi$:
 the Weierstrass $\sigma$-function of $\Z[i]$ is the doubly-periodic
-analogue of $\sin(\pi z)$, and its periods are $\vpi$ and $i\vpi$.  In
+analogue of $\sin(\pi z)$, and its periods are $\varpi$ and $i\varpi$.  In
 $D = 3$, the lattice Green's function of $\Z^3$---the Watson
-integral---discovers $\Gstar$, which absorbs the geometric scaling
+integral---discovers ${G^{*}}$, which absorbs the geometric scaling
 between the lemniscatic and circular domains.
 
 Each lattice period is a ``circle constant'' for its dimension:
 \begin{itemize}
 \item $\pi$ measures how far you walk around a circle (the boundary of
   the unit ball in $\R^1$ cross-section).
-\item $\vpi$ measures how far you walk around a lemniscate (the
+\item $\varpi$ measures how far you walk around a lemniscate (the
   fundamental domain boundary of $\Z[i]$).
-\item $\Gstar$ measures the lattice Green's function of $\Z^3$---the
+\item ${G^{*}}$ measures the lattice Green's function of $\Z^3$---the
   propagator of the cubic lattice itself.
 \end{itemize}
 
 The reason $\pi$ appears ubiquitously in mathematics is not that circles
 are fundamental.  It is that $\Z$---the one-dimensional integer
 lattice---is the simplest lattice, and most classical formulas are
-computed over it.  When we compute over $\Z[i]$, we find $\vpi$.  When
-we compute over $\Z^3$, we find $\Gstar$.
+computed over it.  When we compute over $\Z[i]$, we find $\varpi$.  When
+we compute over $\Z^3$, we find ${G^{*}}$.
 
 The connection to FTD's dimension selection is immediate.  The master
-quadratic $x^2 - 16\Gstar_D^2\,x + 16\Gstar_D^3 = 0$, applied to the
+quadratic $x^2 - 16{G^{*}}_D^2\,x + 16{G^{*}}_D^3 = 0$, applied to the
 Watson integral $W_D$ in each dimension, gives $\lfloor x_-^{(D)}\rfloor = D$
 only for $D = 3$~\cite{lifecycle}.  Among the infinite family of lattice
-periods $(\pi,\; \vpi,\; \Gstar,\; \Gstar_4,\; \ldots)$, only the
+periods $(\pi,\; \varpi,\; {G^{*}},\; {G^{*}}_4,\; \ldots)$, only the
 $D = 3$ member produces a self-consistent framework in which the number
 of color charges equals the spatial dimension.
 
@@ -746,15 +745,23 @@ The dimensional ladder is summarized in the following table:
 $D$ & Lattice & Period & Zeta function & $\lfloor x_-^{(D)}\rfloor \stackrel{?}{=} D$ \\
 \midrule
 1 & $\Z$ & $\pi$ & $\zeta(2) = \pi^2/6$ & N/A \\
-2 & $\Z[i]$ & $\vpi$ & $G_4(i) \propto \vpi^4$ & \textbf{No} ($8 \neq 2$) \\
-3 & $\Z^3$ & $\Gstar$ & $W_3 = {\Gstar}^2/(2\pi)$ & \textbf{Yes} ($3 = 3$) \\
+2 & $\Z[i]$ & $\varpi$ & $G_4(i) \propto \varpi^4$ & \textbf{No} ($8 \neq 2$) \\
+3 & $\Z^3$ & ${G^{*}}$ & $W_3 = {{G^{*}}}^2/(2\pi)$ & \textbf{Yes} ($3 = 3$) \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\noindent Each dimension has its own ``circle constant.'' $\pi$ is the period of $\Z$. $\vpi$ is the period of $\Z[i]$. $\Gstar$ is the period of $\Z^3$. The relation $\pi = 4\vpi^2/{\Gstar}^2$ expresses the lowest-dimensional constant through the higher ones---$\pi$ is the projection of lemniscatic geometry onto a line.
+\noindent Each dimension has its own ``circle constant.'' $\pi$ is the period of $\Z$. $\varpi$ is the period of $\Z[i]$. ${G^{*}}$ is the period of $\Z^3$. The relation $\pi = 4\varpi^2/{{G^{*}}}^2$ expresses the lowest-dimensional constant through the higher ones---$\pi$ is the projection of lemniscatic geometry onto a line.
 
 Euler's Basel problem is the one-dimensional shadow of a three-dimensional structure.
+
+\begin{proposition}[Uniqueness of $D = 3$]
+Among dimensions $D = 1, 2, \ldots, 6$, the gap equation $x^2 - 16G_D^{*2}x + 16G_D^{*3} = 0$ (where $G_D^* = \sqrt{2\pi W_D}$ and $W_D$ is the Watson integral for $\mathbb{Z}^D$) satisfies $\lfloor x_-(D) \rfloor = D$ if and only if $D = 3$.
+\end{proposition}
+
+\begin{remark}
+The monotonicity of $x_-(D)$ for $D \geq 4$ ensures this uniqueness extends to all $D \geq 1$.
+\end{remark}
 
 %=======================================================================
 \section{Summary of Rewriting}\label{sec:summary}
@@ -765,14 +772,14 @@ Euler's Basel problem is the one-dimensional shadow of a three-dimensional struc
 \toprule
 \textbf{Quantity} & \textbf{Standard Form} & \textbf{FTD (Ontic) Form}\\
 \midrule
-Argument of $\coth/\csch$ & $\pi$ & $4\vpi^2/\Gstar^2$\\
-Exponential scale & $e^{\pi}$ & $e^{4\vpi^2/\Gstar^2}$\\
-Lattice nome & $e^{-2\pi}$ & $e^{-8\vpi^2/\Gstar^2}$\\
-$E_4(i)$ & $3(\vpi/\pi)^4$ & $3\Gstar^8/(256\vpi^4)$\\
-Prefactor $\pi^2$ & $\pi^2$ & $16\vpi^4/\Gstar^4$\\
-$\zeta(2)$ & $\pi^2/6$ & $8\vpi^4/(3\Gstar^4)$\\
+Argument of $\coth/\csch$ & $\pi$ & $4\varpi^2/{G^{*}}^2$\\
+Exponential scale & $e^{\pi}$ & $e^{4\varpi^2/{G^{*}}^2}$\\
+Lattice nome & $e^{-2\pi}$ & $e^{-8\varpi^2/{G^{*}}^2}$\\
+$E_4(i)$ & $3(\varpi/\pi)^4$ & $3{G^{*}}^8/(256\varpi^4)$\\
+Prefactor $\pi^2$ & $\pi^2$ & $16\varpi^4/{G^{*}}^4$\\
+$\zeta(2)$ & $\pi^2/6$ & $8\varpi^4/(3{G^{*}}^4)$\\
 Euler product & $\sin(\pi z)/(\pi z) = \prod(1-z^2/n^2)$ & $\sin(4\ell z)/(4\ell z) = \prod(1-z^2/n^2)$\\
-$Z_{\Z[i]}(2)$ & $4\,\zeta(2)\,G$ & $32\vpi^4 G/(3\Gstar^4)$\\
+$Z_{\Z[i]}(2)$ & $4\,\zeta(2)\,G$ & $32\varpi^4 G/(3{G^{*}}^4)$\\
 Catalan $G$ & $L(2,\chi_{-4})$ & (irreducible arithmetic constant)\\
 \bottomrule
 \end{tabular}
@@ -783,7 +790,7 @@ Catalan $G$ & $L(2,\chi_{-4})$ & (irreducible arithmetic constant)\\
 The discrete--continuous bridge in the evaluation of
 $\sum 1/(n^2+1)^2$ is real, but the conventional language in terms of
 $\pi$ obscures its structural origin.  The bridge is not~$\pi$.  The
-bridge is~$\Gstar$.
+bridge is~${G^{*}}$.
 
 The Epstein zeta factorisation~\eqref{eq:epstein-factor} reveals an
 additional layer: the full two-dimensional lattice sum carries an
@@ -811,13 +818,13 @@ residue.  The row-restriction elimination of the arithmetic factor follows
 from Poisson summation.
 
 \item \textbf{SELECTION PRINCIPLE} (pending proof):
-The claim that $\vpi$ and $\Gstar$ are ontologically prior to~$\pi$.
+The claim that $\varpi$ and ${G^{*}}$ are ontologically prior to~$\pi$.
 This is a well-motivated structural claim supported by the lemniscatic
 lattice framework but not provable within conventional mathematics, which
 treats all equivalent parametrisations as interchangeable.
 
 \item \textbf{HYPOTHESIS} (empirical fit):
-The identification of $\Gstar$ as the mediator of all
+The identification of ${G^{*}}$ as the mediator of all
 discrete--continuous transitions in physics.  This is a broader FTD claim
 that this example illustrates but does not prove.
 \end{itemize}
@@ -830,20 +837,6 @@ I.\,J.~Zucker,
 ``The evaluation in terms of $\Gamma$-functions of the periods of elliptic
 curves admitting complex multiplication,''
 \textit{Math.\ Proc.\ Camb.\ Phil.\ Soc.} \textbf{82} (1977), 111--118.
-
-\bibitem{chain}
-``The Ontic Derivation Chain: Twenty-Six Physical Constants from Two Inputs,''
-companion paper (2026).
-
-\bibitem{lifecycle}
-``One Unit of Existence: The Lifecycle of a Hydrogen Atom from Lattice Geometry to Dissolution,''
-companion paper (2026).
-
-\bibitem{constructor}
-``The Instantiating Formula: An Ontological Constructor for Foundational Ternary Dynamics,''
-companion paper (2026).
-
-\bibitem{engine} ``The Lattice Engine: A Computational Implementation of Foundational Ternary Dynamics,'' companion paper (2026).
 
 \end{thebibliography}
 

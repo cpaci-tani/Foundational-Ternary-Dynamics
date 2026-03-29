@@ -38,6 +38,7 @@ public:
     EnergyAudit energy_audit();
 
     // --- Particle injection (uploads to GPU) ---
+    void inject_flux(int x, int y, int z, const Vec3& flux_val);
     void inject_particle(int x, int y, int z, int8_t state,
                          const Vec3& flux_val,
                          int8_t spin = 0, int8_t color = 0);

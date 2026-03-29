@@ -385,6 +385,19 @@ EnergyAudit GpuEngine::energy_audit() {
 
 // ---------- Injection ----------
 
+void GpuEngine::inject_flux(int x, int y, int z, const Vec3& flux_val) {
+    ensure_host_synced();
+    int idx = ((x % size_ + size_) % size_) * size_ * size_
+            + ((y % size_ + size_) % size_) * size_
+            + ((z % size_ + size_) % size_);
+    host_voxels_[idx].flux = flux_val;
+    if (toggles.dual_substrate) {
+        host_voxels_[idx].flux_L = flux_val * 0.5;
+        host_voxels_[idx].flux_R = flux_val * 0.5;
+    }
+    push_to_device();
+}
+
 void GpuEngine::inject_particle(int x, int y, int z, int8_t state,
                                 const Vec3& flux_val,
                                 int8_t spin, int8_t color) {

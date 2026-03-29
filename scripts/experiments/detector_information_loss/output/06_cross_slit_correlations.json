@@ -1,0 +1,35 @@
+{
+  "script": "06_cross_slit_correlations.py",
+  "description": "Decomposition of |psi|^2 into self-terms and cross-term",
+  "parameters": {
+    "W": 512.0,
+    "H": 512.0,
+    "lam": 32.0,
+    "separation": 160.0,
+    "phase_offset": 3.141592653589793,
+    "t": 600.0,
+    "K_B": 0.05,
+    "N_clicks": 10000.0
+  },
+  "results": {
+    "decomposition_error": 1.1102230246251565e-16,
+    "energy_fractions": {
+      "self_terms": 1.065507337544689,
+      "cross_positive": 0.2671694800665742,
+      "cross_negative": 0.3326768176112631,
+      "cross_net": -0.06550733754468889
+    },
+    "pixel_fractions": {
+      "constructive": 0.4171409606933594,
+      "destructive": 0.4784088134765625
+    },
+    "cross_term_range": {
+      "min": -0.1111111111111111,
+      "max": 0.05735393346764046
+    },
+    "total_range": {
+      "min": 0.0,
+      "max": 0.42677338550647775
+    }
+  }
+}

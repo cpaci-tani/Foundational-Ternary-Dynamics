@@ -1,10 +1,11 @@
-\documentclass[11pt, letterpaper]{article}
+\documentclass[12pt]{article}
 
 % ----- Packages -----
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amssymb, amsthm, mathtools}
 \usepackage{geometry}
-\geometry{margin=1.15in}
+\geometry{letterpaper, margin=1in}
+\usepackage{setspace}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{titlesec}
@@ -15,14 +16,14 @@
 
 % ----- Formatting -----
 \hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=black}
-\pdfstringdefDisableCommands{\def\G{G*}\def\xp{x+}\def\xm{x-}}
+\setstretch{1.15}
+% pdfstringdef commands for removed macros no longer needed
 \titleformat{\section}{\large\bfseries}{\thesection.}{1em}{}
 \titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
 
 % ----- Math Commands -----
-\newcommand{\G}{{G^*}}
-\newcommand{\xp}{x_+}
-\newcommand{\xm}{x_-}
+% G^{*} macro removed — using inline G^{*} for canonical style
+% x_+, x_- macros removed — using inline x_+ and x_- for canonical style
 \DeclareMathOperator{\AGM}{AGM}
 
 % ----- Theorem Environments -----
@@ -42,7 +43,7 @@
 % ----- Document -----
 \title{\vspace{-2em}\textbf{The Ontic Derivation Chain:\\[4pt]
 \large Twenty-Six Physical Constants from Two Inputs}}
-\author{}
+\author{W.\,J.\ cpaci-tani~III}
 \date{}
 
 \begin{document}
@@ -53,9 +54,9 @@
 From two inputs---the spatial dimension $D=3$ and the lemniscate constant
 $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$---a chain of algebraic identities
 yields twenty-six testable physical quantities (some sharing common roots). The chain proceeds:
-$\varpi \to M \to \G \to \pi$, where a master quadratic
-$x^2 - 16\,\G^2\,x + 16\,\G^3 = 0$ produces roots
-$\xp = 137.036$ and $\xm = 3.024$, identified with $1/\alpha$ (1.26\,ppm
+$\varpi \to M \to G^{*} \to \pi$, where a master quadratic
+$x^2 - 16\,G^{*2}\,x + 16\,G^{*3} = 0$ produces roots
+$x_+ = 137.036$ and $x_- = 3.024$, identified with $1/\alpha$ (1.26\,ppm
 tree-level; $<\!1$\,ppt corrected) and $N_c = 3$. An integer cascade
 yields $\{3,4,7,13,47\}$, from which follow
 $\sin^2\!\theta_W = 3/13$,
@@ -66,10 +67,10 @@ and the gravitational hierarchy $\alpha_G \propto \alpha^{20}$.
 A companion proof suite (301/301 checks, NumPy/SciPy) verifies every
 numerical claim. We present the framework as a self-consistent algebraic
 structure and state explicit falsification criteria.
-Companion papers trace the lifecycle of a hydrogen atom through these
-constants~\cite{lifecycle}, analyze the discrete--continuous bridge in pure
-mathematics~\cite{bridge}, and propose a unifying ontological
-constructor~\cite{constructor}.
+Other papers in this series trace the lifecycle of a hydrogen atom through these
+constants, analyze the discrete--continuous bridge in pure
+mathematics, and propose a unifying ontological
+constructor.
 \end{abstract}
 
 \smallskip
@@ -78,6 +79,10 @@ constructor~\cite{constructor}.
 \epi{Theorem} proven from axioms;
 \epi{Selection} argued, not uniquely proven;
 \epi{Conjecture} requires experimental validation.
+
+\begin{remark}[Epistemic status]
+Every result in this paper is conditional on the physical identifications $x_+ = 1/\alpha$ and $\lfloor x_- \rfloor = N_c = 3$. Given these identifications, all 26 constants follow as theorems of algebra from the master quadratic and the framework integers $\{3, 4, 7, 13\}$. Without the identifications, the results are mathematical facts about specific algebraic expressions, not physical predictions.
+\end{remark}
 
 \bigskip
 
@@ -106,12 +111,12 @@ $\displaystyle\varpi = \frac{\Gamma(1/4)^2}{2\sqrt{2\pi}} = 2.62206\ldots$
 \midrule
 $\varpi$ & $\Gamma(1/4)^2/(2\sqrt{2\pi})$ & $2.62206$ & 1 \\
 $M$ & $\varpi/\pi = 1/\AGM(1,\sqrt{2})$ & $0.83463$ & 1 \\
-$\G$ & $2\sqrt{\varpi\cdot M} = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$ & $2.95868$ & 2 \\
+$G^{*}$ & $2\sqrt{\varpi\cdot M} = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$ & $2.95868$ & 2 \\
 $k$ & Lattice DoF coefficient & $16$ & 3 \\
-$\xp$ & Larger root of master quadratic & $137.036$ & 3 \\
-$\xm$ & Smaller root & $3.024$ & 3 \\
-$\alpha$ & $1/\xp$ & $7.297\times10^{-3}$ & 5 \\
-$N_c$ & $\lfloor\xm\rfloor$ (color charges) & $3$ & 4 \\
+$x_+$ & Larger root of master quadratic & $137.036$ & 3 \\
+$x_-$ & Smaller root & $3.024$ & 3 \\
+$\alpha$ & $1/x_+$ & $7.297\times10^{-3}$ & 5 \\
+$N_c$ & $\lfloor x_-\rfloor$ (color charges) & $3$ & 4 \\
 $b_3$ & $(11N_c - 2N_f)/3$ (QCD beta) & $7$ & 4 \\
 $N_\text{eff}$ & $b_3 + 2N_c$ (effective DoF) & $13$ & 4 \\
 $\mathcal{D}$ & $N_c\cdot N_\text{base}^2 - 1$ & $47$ & 4 \\
@@ -141,30 +146,30 @@ $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi}) = 2.62206\ldots$
 $M = \varpi/\pi = 1/\AGM(1,\sqrt{2}) = 0.83463\ldots$
 \end{definition}
 
-\subsection{Layer 2: The Universal Operator $\G$}
+\subsection{Layer 2: The Universal Operator $G^{*}$}
 
-\begin{definition}[$\G$]\label{def:gstar}
-$\displaystyle\G = 2\sqrt{\varpi\cdot M}$
+\begin{definition}[$G^{*}$]\label{def:gstar}
+$\displaystyle G^{*} = 2\sqrt{\varpi\cdot M}$
 \end{definition}
 
 \begin{equation}
-\boxed{\G = \frac{\Gamma(1/4)^2}{\sqrt{2}\;\Gamma(1/2)^2} = \frac{2\varpi}{\sqrt{\pi}} = 2.95868\ldots}
+\boxed{G^{*} = \frac{\Gamma(1/4)^2}{\sqrt{2}\;\Gamma(1/2)^2} = \frac{2\varpi}{\sqrt{\pi}} = 2.95868\ldots}
 \end{equation}
 The first form is $\pi$-free: both $\Gamma(1/4)$ and $\Gamma(1/2)$ are definable by integrals over $e^{-t}$ and rational powers of~$t$. The identity $\Gamma(1/2)^2 = \pi$ is a consequence, not an input.
 
 \begin{corollary}[Derived $\pi$]
-$\pi = 4\varpi^2/\G^2$. Since both $\varpi$ (lemniscate integral) and $\G$ ($\Gamma$-ratio) are computable without $\pi$, this derivation is not circular. \epi{Theorem}
+$\pi = 4\varpi^2/G^{*2}$. Since both $\varpi$ (lemniscate integral) and $G^{*}$ ($\Gamma$-ratio) are computable without $\pi$, this derivation is not circular. \epi{Theorem}
 \end{corollary}
 
 \subsection{Layer 2b: Generalized Discriminant}
 
 \begin{lemma}[Three regimes]\label{lem:disc}
-The generalized quadratic $x^2 - k\,\G^2\,x + k\,\G^3 = 0$ has discriminant
-$\Delta = k\,\G^3(k\,\G - 4)$. Three domains:
+The generalized quadratic $x^2 - k\,G^{*2}\,x + k\,G^{*3} = 0$ has discriminant
+$\Delta = k\,G^{*3}(k\,G^{*} - 4)$. Three domains:
 \begin{enumerate}[nosep]
-\item $k\G > 4$ $(k=16)$: $\Delta > 0$, real roots $\to$ \textbf{physics}.
-\item $k\G = 4$ $(k=4/\G)$: $\Delta = 0$, degenerate $\to$ Born rule boundary.
-\item $k\G < 4$ $(k=1/2)$: $\Delta < 0$, complex conjugate roots (no physical interpretation in this paper).
+\item $kG^{*} > 4$ $(k=16)$: $\Delta > 0$, real roots $\to$ \textbf{physics}.
+\item $kG^{*} = 4$ $(k=4/G^{*})$: $\Delta = 0$, degenerate $\to$ Born rule boundary.
+\item $kG^{*} < 4$ $(k=1/2)$: $\Delta < 0$, complex conjugate roots (no physical interpretation in this paper).
 \end{enumerate}
 \end{lemma}
 
@@ -180,35 +185,35 @@ Equivalently, $16 = N_\text{base}^2 = 2^{D+1}$. \epi{Selection}
 The cubic lattice $\mathbb{Z}^3$ has $\mathbb{Z}_4$ rotation symmetry, selecting the
 unique elliptic curve with Complex Multiplication discriminant $j = 1728$: the
 lemniscatic curve $y^2 = x^3 - x$ at modulus $k = 1/\sqrt{2}$. This fixes
-$\G$ as the relevant elliptic constant. \epi{Selection}
+$G^{*}$ as the relevant elliptic constant. \epi{Selection}
 \end{lemma}
 
 \begin{remark}[Why this quadratic]
 The form $x^2 - kc^2\,x + kc^3 = 0$ is selected by requiring the
 Vieta product-to-sum ratio to equal $c$ itself:
-$\xp\,\xm/(\xp + \xm) = kc^3/(kc^2) = c = \G$.
-That is, $\G$ is half the harmonic mean of the two physics roots.
+$x_+\,x_-/(x_+ + x_-) = kc^3/(kc^2) = c = G^{*}$.
+That is, $G^{*}$ is half the harmonic mean of the two physics roots.
 The asymmetry between $c^2$ (sum) and $c^3$ (product) encodes the
 distinction between spatial amplitude and spacetime action per degree of freedom. \epi{Selection}
 \end{remark}
 
 \begin{theorem}[Master Quadratic]\label{thm:master}
 \begin{equation}
-\boxed{x^2 - 16\,\G^2\,x + 16\,\G^3 = 0}
+\boxed{x^2 - 16\,G^{*2}\,x + 16\,G^{*3} = 0}
 \end{equation}
 with roots
 \begin{align}
-\xp &= 8\G^2\!\left(1 + \sqrt{1 - \tfrac{1}{4\G}}\right) = 137.0362\ldots \label{eq:xplus}\\
-\xm &= 8\G^2\!\left(1 - \sqrt{1 - \tfrac{1}{4\G}}\right) = 3.0240\ldots \label{eq:xminus}
+x_+ &= 8G^{*2}\!\left(1 + \sqrt{1 - \tfrac{1}{4G^{*}}}\right) = 137.0362\ldots \label{eq:xplus}\\
+x_- &= 8G^{*2}\!\left(1 - \sqrt{1 - \tfrac{1}{4G^{*}}}\right) = 3.0240\ldots \label{eq:xminus}
 \end{align}
 \end{theorem}
 
 \noindent\textbf{Vieta's relations:}
-$\xp + \xm = 16\,\G^2$,\quad
-$\xp\cdot\xm = 16\,\G^3$.
+$x_+ + x_- = 16\,G^{*2}$,\quad
+$x_+\cdot x_- = 16\,G^{*3}$.
 
 \begin{remark}
-The harmonic mean identity $\G = \xp\,\xm/(\xp + \xm)$ shows $\G$ is half the harmonic mean of the two physics roots.
+The harmonic mean identity $G^{*} = x_+\,x_-/(x_+ + x_-)$ shows $G^{*}$ is half the harmonic mean of the two physics roots.
 \end{remark}
 
 % ===========================================================================
@@ -216,7 +221,7 @@ The harmonic mean identity $\G = \xp\,\xm/(\xp + \xm)$ shows $\G$ is half the ha
 % ===========================================================================
 
 \begin{proposition}[Framework integers]\label{prop:integers}
-From $\xm = 3.024\ldots$ and $D = 3$, the following integers are fixed:
+From $x_- = 3.024\ldots$ and $D = 3$, the following integers are fixed:
 \end{proposition}
 
 \begin{center}\small
@@ -224,7 +229,7 @@ From $\xm = 3.024\ldots$ and $D = 3$, the following integers are fixed:
 \toprule
 \textbf{Symbol} & \textbf{Formula} & \textbf{Value} & \textbf{Physics} & \textbf{Tag} \\
 \midrule
-$N_c$ & $\lfloor\xm\rfloor$ & 3 & Color charges & \epi{Conjecture} \\
+$N_c$ & $\lfloor x_-\rfloor$ & 3 & Color charges & \epi{Conjecture} \\
 $N_\text{gen}$ & $N_c$ & 3 & Fermion generations & \epi{Conjecture} \\
 $N_f$ & $2N_\text{gen}$ & 6 & Quark flavors & \epi{Theorem} \\
 $N_\text{base}$ & $2^{(D+1)/2}$ & 4 & Spinor dimension & \epi{Theorem} \\
@@ -264,10 +269,10 @@ The Standard Model gauge group $\mathrm{U}(1) \times \mathrm{SU}(2) \times \math
 \section{Coupling Constants (Layer 5)}
 % ===========================================================================
 
-\noindent Four coupling constants follow from the integers and $\xp$.
+\noindent Four coupling constants follow from the integers and $x_+$.
 
 \begin{equation}
-\boxed{\alpha = \frac{1}{\xp} = 7.297\times 10^{-3}}
+\boxed{\alpha = \frac{1}{x_+} = 7.297\times 10^{-3}}
 \quad\text{\epi{Conjecture}: tree-level, 1.26\,ppm from CODATA}
 \end{equation}
 
@@ -321,13 +326,13 @@ m_e = M_P\sqrt{2\pi}\;\frac{16}{3}\;\alpha^{11} = 0.5100~\text{MeV} \quad\text{(
 \midrule
 $m_\mu/m_e$ & $3b_3(b_3+N_c)-N_c$ & 207 & 206.768 & 0.11\% \\
 $m_\tau/m_e$ & $(N_\text{eff}+N_\text{base})\cdot 207 - 2N_c b_3$ & 3477 & 3477.23 & 0.007\% \\
-$m_p/m_e$ & $N_\text{eff}\cdot\xp + T_{10}$ & 1836.47 & 1836.15 & 0.018\% \\
+$m_p/m_e$ & $N_\text{eff}\cdot x_+ + T_{10}$ & 1836.47 & 1836.15 & 0.018\% \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \noindent where $T_{10} = (b_3 + N_c)(b_3 + N_c + 1)/2 = 55$ is the 10th triangular number.
-The proton mass combines the EM contribution ($N_\text{eff}\cdot\xp$: valence quarks
+The proton mass combines the EM contribution ($N_\text{eff}\cdot x_+$: valence quarks
 coupled to the fine structure) with a QCD binding correction ($T_{10}$,
 reflecting the $\binom{b_3 + N_c + 1}{2}$ gluon exchange channels). \epi{Selection}
 
@@ -375,13 +380,13 @@ whose theoretical status is \epi{Open}.
 
 \subsection{CKM (Quark Mixing)}
 
-\noindent Three angles from $\G$ and framework integers. \epi{Conjecture}
+\noindent Three angles from $G^{*}$ and framework integers. \epi{Conjecture}
 
 \begin{equation}
 \boxed{
-\sin\theta_C = \frac{\G}{N_\text{eff}},\qquad
+\sin\theta_C = \frac{G^{*}}{N_\text{eff}},\qquad
 \sin\theta_{23} = \frac{b_3}{N_\text{eff}^2} = \frac{7}{169},\qquad
-\sin\theta_{13} = \frac{N_c}{b_3+N_c}\!\left(\frac{\G}{N_\text{eff}}\right)^{\!3}
+\sin\theta_{13} = \frac{N_c}{b_3+N_c}\!\left(\frac{G^{*}}{N_\text{eff}}\right)^{\!3}
 }
 \end{equation}
 
@@ -419,12 +424,12 @@ First-row unitarity: $|V_{ud}|^2 + |V_{us}|^2 + |V_{ub}|^2 = 1.000000$ (exact by
 \section{Precision Formula (Layer 7)}
 % ===========================================================================
 
-\noindent The tree-level $1/\alpha = \xp$ is refined by a four-term correction using
+\noindent The tree-level $1/\alpha = x_+$ is refined by a four-term correction using
 the modular deviation $\varepsilon = e^\pi - \pi - (b_3 + N_\text{eff})
 = e^\pi - \pi - 20 \approx -9.00\times 10^{-4}$.
 
 \begin{equation}
-\boxed{\frac{1}{\alpha} = \xp - c_1|\varepsilon| + c_2|\varepsilon|^2
+\boxed{\frac{1}{\alpha} = x_+ - c_1|\varepsilon| + c_2|\varepsilon|^2
 - c_3|\varepsilon|^3 - c_4|\varepsilon|^4}
 \label{eq:precision}
 \end{equation}
@@ -461,7 +466,7 @@ Falsification: if future CODATA measurements shift outside the correction range.
 \textbf{\#} & \textbf{Quantity} & \textbf{FTD Formula} & \textbf{FTD} & \textbf{Expt.} & \textbf{Err.} & \textbf{Tag} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{Coupling constants}} \\
-1 & $1/\alpha$ (tree) & $\xp$ & 137.036 & 137.036 & 1.3\,ppm & \epi{Conjecture} \\
+1 & $1/\alpha$ (tree) & $x_+$ & 137.036 & 137.036 & 1.3\,ppm & \epi{Conjecture} \\
 2 & $1/\alpha$ (corr.) & Eq.\,\eqref{eq:precision} & 137.036\,0 & 137.036\,0 & $<$1\,ppt & \epi{Conjecture} \\
 3 & $\sin^2\!\theta_W$ & $3/13$ & 0.2308 & 0.2312 & 0.19\% & \epi{Conjecture} \\
 4 & $\alpha_s(M_Z)$ & $7/59$ & 0.1186 & 0.1179 & 0.63\% & \epi{Conjecture} \\
@@ -471,7 +476,7 @@ Falsification: if future CODATA measurements shift outside the correction range.
 6 & $m_e$ & Eq.\,\ref{eq:me} & 0.5100\,MeV & 0.51100 & 0.19\% & \epi{Selection} \\
 7 & $m_\mu/m_e$ & $3b_3(b_3\!+\!N_c)\!-\!N_c$ & 207 & 206.77 & 0.11\% & \epi{Selection} \\
 8 & $m_\tau/m_e$ & integer formula & 3477 & 3477.2 & 0.007\% & \epi{Selection} \\
-9 & $m_p$ & $N_\text{eff}\cdot\xp\!+\!T_{10}$ & 938.4 & 938.3 & 0.02\% & \epi{Selection} \\
+9 & $m_p$ & $N_\text{eff}\cdot x_+\!+\!T_{10}$ & 938.4 & 938.3 & 0.02\% & \epi{Selection} \\
 10 & $v$ (Higgs VEV) & Eq.\,\ref{eq:vev} & 246.08 & 246.22 & 0.05\% & \epi{Conjecture} \\
 11 & $m_H$ & Eq.\,\ref{eq:mh} & 125.69 & 125.25 & 0.35\% & \epi{Selection} \\
 12 & $m_W$ & Eq.\,\ref{eq:mw} & 77.56 & 80.37 & 3.5\% & \epi{Parametric Insertion} \\
@@ -483,9 +488,9 @@ Falsification: if future CODATA measurements shift outside the correction range.
 16 & $\Delta m^2$ ratio & $100/3$ & 33.33 & 32.85 & 1.5\% & \epi{Conjecture} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{CKM mixing}} \\
-17 & $\sin\theta_C$ & $\G/N_\text{eff}$ & 0.2276 & 0.2243 & 1.5\% & \epi{Conjecture} \\
+17 & $\sin\theta_C$ & $G^{*}/N_\text{eff}$ & 0.2276 & 0.2243 & 1.5\% & \epi{Conjecture} \\
 18 & $\sin\theta_{23}^{CKM}$ & $7/169$ & 0.0414 & 0.0408 & 1.5\% & \epi{Conjecture} \\
-19 & $\sin\theta_{13}^{CKM}$ & $(3/10)(\G/13)^3$ & 0.00354 & 0.00382 & 7.4\% & \epi{Conjecture} \\
+19 & $\sin\theta_{13}^{CKM}$ & $(3/10)(G^{*}/13)^3$ & 0.00354 & 0.00382 & 7.4\% & \epi{Conjecture} \\
 20 & $\delta_{CP}$ & $\arctan(7/3)$ & $66.8^\circ$ & $65.4^\circ$ & 2.1\% & \epi{Conjecture} \\
 21 & Jarlskog $J$ & from angles & $3.18\!\times\!10^{-5}$ & $3.08\!\times\!10^{-5}$ & 3.2\% & \epi{Conjecture} \\
 \midrule
@@ -494,8 +499,8 @@ Falsification: if future CODATA measurements shift outside the correction range.
 23 & $r$ & $4\alpha(N_c/N_\text{base})$ & 0.0219 & $<0.036$ & OK & \epi{Conjecture} \\
 \midrule
 \multicolumn{7}{@{}l}{\textit{Structural}} \\
-24 & $N_\text{gen}$ & $\lfloor\xm\rfloor$ & 3 & 3 & exact & \epi{Conjecture} \\
-25 & $N_c$ & $\lfloor\xm\rfloor$ & 3 & 3 & exact & \epi{Conjecture} \\
+24 & $N_\text{gen}$ & $\lfloor x_-\rfloor$ & 3 & 3 & exact & \epi{Conjecture} \\
+25 & $N_c$ & $\lfloor x_-\rfloor$ & 3 & 3 & exact & \epi{Conjecture} \\
 26 & Hierarchy & normal & NH & NH & --- & \epi{Conjecture} \\
 \bottomrule
 \end{tabular}
@@ -514,7 +519,7 @@ integer-ratio approximation but overshoots.}
 \noindent Seven conditions, each sufficient to falsify the framework:
 
 \begin{enumerate}[nosep,label=\textbf{F\arabic*.}]
-\item Precision $\alpha$ measurement deviating from $\xp = 137.036\ldots$ by $> 10$\,ppm
+\item Precision $\alpha$ measurement deviating from $x_+ = 137.036\ldots$ by $> 10$\,ppm
       (after accounting for QED corrections).
 \item Discovery of a fourth fermion generation with standard gauge couplings.
 \item $\sin^2\!\theta_W$ measured more than 1\% from $3/13$.
@@ -536,7 +541,7 @@ integer-ratio approximation but overshoots.}
 only Python~3.10+, NumPy, and SciPy. The master entry point
 \texttt{proof\_10\_ultimate\_chain.py} executes the complete chain.
 Every constant is computed from scratch in \texttt{common.py}
-with no imports from the project's own constants module. The computational engine~\cite{engine} implements these constants as \texttt{constexpr} values derived at compile time.
+with no imports from the project's own constants module. The computational engine implements these constants as \texttt{constexpr} values derived at compile time.
 
 % ===========================================================================
 % References
@@ -585,20 +590,6 @@ framework specification (2026).
 \bibitem{FTDProofs}
 ``FTD Proof Suite: 301 verified assertions,''
 supplementary material (2026).
-
-\bibitem{bridge}
-``The Discrete--Continuous Bridge Through the Lemniscatic Lens,''
-companion paper (2026).
-
-\bibitem{lifecycle}
-``One Unit of Existence: The Lifecycle of a Hydrogen Atom from Lattice Geometry to Dissolution,''
-companion paper (2026).
-
-\bibitem{constructor}
-``The Instantiating Formula: An Ontological Constructor for Foundational Ternary Dynamics,''
-companion paper (2026).
-
-\bibitem{engine} ``The Lattice Engine: A Computational Implementation of Foundational Ternary Dynamics,'' companion paper (2026).
 
 \end{thebibliography}
 
