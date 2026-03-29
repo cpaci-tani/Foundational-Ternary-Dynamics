@@ -252,7 +252,7 @@ Version 1.0 included multiple ad hoc formulas (m_e * integers, m_p * alpha^n, et
 - **Higgs VEV**: DERIV_COMPLETE_PARTICLE_PHYSICS.md
 - **Mass hierarchy**: DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md
 - **QFT bridge**: DERIV_QFT_GRT_BRIDGE.md (lattice propagators and QCD vertex)
-- **Constants**: simulations/constants.py (ALPHA_S = b_3/(b_3 + 4*N_eff))
+- **Constants**: scripts/constants.py (ALPHA_S = b_3/(b_3 + 4*N_eff))
 
 ---
 

@@ -1,10 +1,11 @@
-\documentclass[11pt, letterpaper]{article}
+\documentclass[12pt]{article}
 
 % ----- Packages -----
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amssymb, amsthm, mathrsfs, amsfonts, mathtools}
 \usepackage{geometry}
-\geometry{margin=1.15in}
+\geometry{letterpaper, margin=1in}
+\usepackage{setspace}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{titlesec}
@@ -23,6 +24,7 @@
     urlcolor=blue,
     citecolor=black,
 }
+\setstretch{1.15}
 \titleformat{\section}{\large\bfseries}{\thesection.}{1em}{}
 \titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
 
@@ -31,7 +33,7 @@
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\N}{\mathbb{N}}
-\newcommand{\G}{G^*}
+% G^{*} macro removed — using inline G^{*} for canonical style
 \newcommand{\PT}{\mathcal{PT}}
 \newcommand{\Man}{\mathcal{M}}
 \newcommand{\Hilb}{\mathcal{H}}
@@ -73,7 +75,7 @@
 
 % ----- Document Info -----
 \title{\vspace{-3em}\textbf{The Softplus-ReLU Duality in $\PT$-Symmetric Lattice Dynamics:\\ \large From Finite-Temperature Manifestation to the Sharp Phase Boundary}}
-\author[1]{William J. Steinmetz III}
+\author[1]{W.\,J.\ Steinmetz~III}
 \affil[1]{\textit{Foundational Ternary Dynamics Research}}
 \date{February 15, 2026 \\ \vspace{0.5em} \small Framework: FTD v5.24}
 
@@ -82,7 +84,7 @@
 \maketitle
 
 \begin{abstract}
-We prove that the Softplus function $\Man_\beta(z) = \beta^{-1}\ln(1 + e^{\beta z})$ is the \emph{unique} manifestation operator compatible with monotonicity, convexity, asymptotic linearity, and a single-species fermionic singularity structure (Theorem~\ref{thm:uniqueness}). The proof proceeds by mapping the analyticity strip to the punctured complex plane via $w = e^{\beta z}$, reducing the problem to the characterization of functions analytic on $\C \setminus (-\infty, 0]$ with a single logarithmic branch point at $w = -1$; Liouville's theorem then forces uniqueness. We show that the FTD master quadratic $x^2 - 16(\G)^2 x + 16(\G)^3 = 0$ admits a spectral representation as the characteristic polynomial of a $2 \times 2$ transfer matrix. In its canonical Frobenius companion form, the trace $16(\G)^2$ and determinant $16(\G)^3$ decompose identically into the lattice's $n = 16$ physical degrees of freedom and the lemniscate-alpha coupling $c = \G$ (Theorem~\ref{thm:spectral}). The discriminant $\Delta = 64c^3(4c - 1)$ defines a $\PT$-symmetry phase boundary with mean-field critical exponent $\nu = 1/2$ (Theorem~\ref{thm:pt_transition}). Finally, we establish a structural correspondence between the Softplus temperature parameter $\beta$ and the Wilsonian RG scale: the zero-temperature limit $\beta \to \infty$ (ReLU) corresponds to the deep infrared, while finite $\beta$ corresponds to the ultraviolet lattice theory with thermally active modes (Proposition~\ref{prop:rg}).
+We prove that the Softplus function $\Man_\beta(z) = \beta^{-1}\ln(1 + e^{\beta z})$ is the \emph{unique} manifestation operator compatible with monotonicity, convexity, asymptotic linearity, and a single-species fermionic singularity structure (Theorem~\ref{thm:uniqueness}). The proof proceeds by mapping the analyticity strip to the punctured complex plane via $w = e^{\beta z}$, reducing the problem to the characterization of functions analytic on $\C \setminus (-\infty, 0]$ with a single logarithmic branch point at $w = -1$; Liouville's theorem then forces uniqueness. We show that the FTD master quadratic $x^2 - 16(G^{*})^2 x + 16(G^{*})^3 = 0$ admits a spectral representation as the characteristic polynomial of a $2 \times 2$ transfer matrix. In its canonical Frobenius companion form, the trace $16(G^{*})^2$ and determinant $16(G^{*})^3$ decompose identically into the lattice's $n = 16$ physical degrees of freedom and the lemniscate-alpha coupling $c = G^{*}$ (Theorem~\ref{thm:spectral}). The discriminant $\Delta = 64c^3(4c - 1)$ defines a $\PT$-symmetry phase boundary with mean-field critical exponent $\nu = 1/2$ (Theorem~\ref{thm:pt_transition}). Finally, we establish a structural correspondence between the Softplus temperature parameter $\beta$ and the Wilsonian RG scale: the zero-temperature limit $\beta \to \infty$ (ReLU) corresponds to the deep infrared, while finite $\beta$ corresponds to the ultraviolet lattice theory with thermally active modes (Proposition~\ref{prop:rg}).
 \end{abstract}
 
 \vspace{1em}
@@ -307,7 +309,7 @@ The master quadratic of FTD admits a natural spectral interpretation. While the 
 On a minimal $2^3$ gauge lattice with cuboctahedral coordination:
 \begin{enumerate}[noitemsep]
     \item \textbf{Physical degrees of freedom} ($n = 16$): The lattice contains 8 vertices $\times$ 3 flux components yielding 24 total variables. In Fourier space, the Gauss constraint $\nabla \cdot J = 0$ restricts 7 independent longitudinal modes. Factoring one overall gauge freedom yields precisely $24 - 7 - 1 = 16$ degrees of freedom.
-    \item \textbf{Lemniscate-alpha constant} ($c = \G \approx 2.9587$): Derived from the complete elliptic integral $K(1/\sqrt{2})$ evaluated at the critical lattice coupling $\omega_c = \sqrt{2}$ and the CM-selected $j$-invariant $j = 1728$.
+    \item \textbf{Lemniscate-alpha constant} ($c = G^{*} \approx 2.9587$): Derived from the complete elliptic integral $K(1/\sqrt{2})$ evaluated at the critical lattice coupling $\omega_c = \sqrt{2}$ and the CM-selected $j$-invariant $j = 1728$.
 \end{enumerate}
 \end{definition}
 
@@ -318,7 +320,7 @@ On a minimal $2^3$ gauge lattice with cuboctahedral coordination:
 The FTD master quadratic
 \begin{equation}
 \label{eq:master_quadratic}
-    \lambda^2 - nc^2\lambda + nc^3 = 0 \qquad (n = 16,\; c = \G)
+    \lambda^2 - nc^2\lambda + nc^3 = 0 \qquad (n = 16,\; c = G^{*})
 \end{equation}
 is the characteristic polynomial of a $2 \times 2$ transfer matrix $\hat{M}$. In its canonical Frobenius companion form, this matrix is expressed as:
 \begin{equation}
@@ -327,8 +329,8 @@ is the characteristic polynomial of a $2 \times 2$ transfer matrix $\hat{M}$. In
 \end{equation}
 whose spectral invariants directly govern the lattice dynamics:
 \begin{align}
-    \Tr(\hat{M}) &= nc^2 = 16(\G)^2 \approx 140.06 \label{eq:trace}\\
-    \det(\hat{M}) &= nc^3 = 16(\G)^3 \approx 414.39 \label{eq:det}
+    \Tr(\hat{M}) &= nc^2 = 16(G^{*})^2 \approx 140.06 \label{eq:trace}\\
+    \det(\hat{M}) &= nc^3 = 16(G^{*})^3 \approx 414.39 \label{eq:det}
 \end{align}
 The resulting eigenvalues are:
 \begin{equation}
@@ -345,16 +347,16 @@ The discriminant expands to:
 \begin{equation}
     \Delta = \Tr(\hat{M})^2 - 4\det(\hat{M}) = n^2c^4 - 4nc^3 = nc^3(nc - 4)
 \end{equation}
-Evaluating at $n = 16$ and $c = \G \approx 2.96$ provides $nc \approx 47.3 \gg 4$. Therefore $\Delta > 0$, confirming both eigenvalues are real and strictly positive.
+Evaluating at $n = 16$ and $c = G^{*} \approx 2.96$ provides $nc \approx 47.3 \gg 4$. Therefore $\Delta > 0$, confirming both eigenvalues are real and strictly positive.
 \end{proof}
 
 \begin{corollary}[Algebraic Relations]
 \label{cor:vieta}
 Utilizing the prior identification $\lambda_+ = \alpha^{-1}$ and $\lambda_- = N_c$, the spectral decomposition dictates:
 \begin{align}
-    \alpha^{-1} + N_c &= 16(\G)^2 & \text{(Sum Rule)} \label{eq:sum_rule}\\
-    \alpha^{-1} \cdot N_c &= 16(\G)^3 & \text{(Product Rule)} \label{eq:product_rule}\\
-    \frac{\det(\hat{M})}{\Tr(\hat{M})} &= c = \G & \text{(Coupling Extraction)} \label{eq:coupling}
+    \alpha^{-1} + N_c &= 16(G^{*})^2 & \text{(Sum Rule)} \label{eq:sum_rule}\\
+    \alpha^{-1} \cdot N_c &= 16(G^{*})^3 & \text{(Product Rule)} \label{eq:product_rule}\\
+    \frac{\det(\hat{M})}{\Tr(\hat{M})} &= c = G^{*} & \text{(Coupling Extraction)} \label{eq:coupling}
 \end{align}
 \end{corollary}
 
@@ -384,7 +386,7 @@ By defining the effective coupling $\xi = knc$, the discriminant evaluates to $\
     \xi_{\text{crit}} = 4 \qquad \Longleftrightarrow \qquad k_{\text{crit}} = \frac{4}{nc}
 \end{equation}
 
-For $n = 16$ and $c = \G$, $k_{\text{crit}} = 1/(4\G) \approx 0.0845$. Since the physical vacuum ($k = 1$) is overwhelmingly greater than $0.0845$, the baseline universe rests safely deep inside the $\PT$-unbroken phase.
+For $n = 16$ and $c = G^{*}$, $k_{\text{crit}} = 1/(4G^{*}) \approx 0.0845$. Since the physical vacuum ($k = 1$) is overwhelmingly greater than $0.0845$, the baseline universe rests safely deep inside the $\PT$-unbroken phase.
 
 \begin{theorem}[$\PT$-Symmetry Phase Transition]
 \label{thm:pt_transition}
@@ -532,7 +534,7 @@ Points (1) and (2) are derived from Theorem~\ref{thm:pt_transition}. Point (3) f
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/FTD_Softplus_ReLU.png}
-    \caption{\textbf{The Softplus-ReLU phase structure.} \textbf{(A)} The Softplus $\Man_\beta(z)$ at three temperatures, converging mathematically to ReLU as $\beta \to \infty$. \textbf{(B)} The discriminant $\Delta(k)$ in the $n=1$ sector, locating the $\PT$-boundary exactly at $k_{\text{crit}} = 4/\G \approx 1.352$. \textbf{(C)} The $(k, 1/\beta)$ phase diagram mapped in the $n=16$ sector ($k_{\text{crit}} = 1/(4\G) \approx 0.085$), denoting the physical vacuum resting at $k = 1$. \textbf{(D)} Eigenvalue trajectories ($n=16$) tracking $k$ variations; notably at $k = 1$, eigenvalues split strictly to $\lambda_+ \approx 137.04$ and $\lambda_- \approx 3.02$.}
+    \caption{\textbf{The Softplus-ReLU phase structure.} \textbf{(A)} The Softplus $\Man_\beta(z)$ at three temperatures, converging mathematically to ReLU as $\beta \to \infty$. \textbf{(B)} The discriminant $\Delta(k)$ in the $n=1$ sector, locating the $\PT$-boundary exactly at $k_{\text{crit}} = 4/G^{*} \approx 1.352$. \textbf{(C)} The $(k, 1/\beta)$ phase diagram mapped in the $n=16$ sector ($k_{\text{crit}} = 1/(4G^{*}) \approx 0.085$), denoting the physical vacuum resting at $k = 1$. \textbf{(D)} Eigenvalue trajectories ($n=16$) tracking $k$ variations; notably at $k = 1$, eigenvalues split strictly to $\lambda_+ \approx 137.04$ and $\lambda_- \approx 3.02$.}
     \label{fig:phase}
 \end{figure}
 
@@ -547,7 +549,7 @@ The uniqueness theorem (Theorem~\ref{thm:uniqueness}) establishes a new characte
 
 \subsection{For Lattice Gauge Theory}
 
-The spectral representation (Theorem~\ref{thm:spectral}) provides algebraic constraints on any lattice theory with $n = 16$ physical degrees of freedom and lemniscatic regularization: $\lambda_+\lambda_- = 16(\G)^3$ and $\lambda_+ + \lambda_- = 16(\G)^2$, with the coupling extracted via $\det/\Tr = \G$.
+The spectral representation (Theorem~\ref{thm:spectral}) provides algebraic constraints on any lattice theory with $n = 16$ physical degrees of freedom and lemniscatic regularization: $\lambda_+\lambda_- = 16(G^{*})^3$ and $\lambda_+ + \lambda_- = 16(G^{*})^2$, with the coupling extracted via $\det/\Tr = G^{*}$.
 
 \subsection{Falsification Criteria}
 
@@ -573,7 +575,7 @@ We have established four formal results connecting the Softplus activation funct
 
 \begin{enumerate}[noitemsep]
     \item The Softplus is the unique manifestation operator satisfying four physically motivated axioms. The proof uses a conformal substitution $w = e^{\beta z}$ that maps the analyticity strip to the punctured plane, reducing the problem to showing that the only entire function compatible with the asymptotic constraints is identically zero (Liouville). This result is the strongest contribution of the paper and is independent of FTD.
-    \item The FTD master quadratic admits a spectral representation as a canonical $2 \times 2$ Frobenius companion matrix with trace $nc^2$ and determinant $nc^3$, where $n = 16$ (lattice degrees of freedom) and $c = \G$ (lemniscate-alpha coupling). The eigenvalue ratio depends only on $c$, not on $n$; the physical significance of this decoupling remains an open question.
+    \item The FTD master quadratic admits a spectral representation as a canonical $2 \times 2$ Frobenius companion matrix with trace $nc^2$ and determinant $nc^3$, where $n = 16$ (lattice degrees of freedom) and $c = G^{*}$ (lemniscate-alpha coupling). The eigenvalue ratio depends only on $c$, not on $n$; the physical significance of this decoupling remains an open question.
     \item $\PT$-symmetry breaking at $\xi_{\text{crit}} = knc = 4$ partitions the spectrum into real (physical) and complex (vacuum) domains, with exact mean-field exponent $\nu = 1/2$.
     \item The Softplus temperature $\beta$ and the Wilsonian RG scale $\mu$ provide structurally analogous descriptions of UV mode suppression, with $\beta \to \infty$ (ReLU) corresponding to the IR ground state and finite $\beta$ (Softplus) corresponding to the thermally active UV theory.
 \end{enumerate}

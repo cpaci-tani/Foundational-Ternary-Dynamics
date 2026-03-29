@@ -224,7 +224,7 @@ In D=3, these four mode types map exactly to the four forces. In D=2, the intern
 - **G* derivation**: [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
 - **SU(2) weak sector**: [DERIV_LATTICE_SU2_WEAK.md](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)
 - **SU(3) gauge theory**: [DERIV_LATTICE_SU3_GAUGE.md](../03_derivations/DERIV_LATTICE_SU3_GAUGE.md)
-- **Numerical verification**: `simulations/explore_force_structure.py`
+- **Numerical verification**: `scripts/exploration/explore_force_structure.py`
 
 ---
 

@@ -1,0 +1,26 @@
+{
+  "script": "11_fisher_information.py",
+  "description": "Fisher information and Cramer-Rao bounds for slit separation estimation",
+  "parameters": {
+    "separation": 160.0,
+    "delta": 0.5,
+    "W": 512,
+    "H": 512,
+    "lam": 32.0,
+    "N_clicks": 10000
+  },
+  "results": {
+    "F_born": 26.128246939519485,
+    "F_psi": 51111652.13525379,
+    "F_psi_re": 42595819.98208138,
+    "F_psi_im": 8515832.153172404,
+    "F_per_click": 0.008118028769092166,
+    "F_N_clicks": 81.18028769092166,
+    "CR_born": 0.03827275524128182,
+    "CR_psi": 1.956501029068202e-08,
+    "CR_N_clicks": 0.012318261346982506,
+    "N_star_born": 3218.545743394968,
+    "N_star_psi": 6296066888.781126,
+    "ratio_F_psi_over_F_born": 1956183.7521501074
+  }
+}

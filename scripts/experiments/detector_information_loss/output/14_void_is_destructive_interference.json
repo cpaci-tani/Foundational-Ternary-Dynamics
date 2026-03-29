@@ -1,0 +1,27 @@
+{
+  "script": "14_void_is_destructive_interference.py",
+  "description": "Classification of dark pixels: destructive interference vs genuine void",
+  "parameters": {
+    "W": 512.0,
+    "H": 512.0,
+    "lam": 32.0,
+    "separation": 160.0,
+    "phase_offset": 3.141592653589793,
+    "t": 600.0,
+    "K_B": 0.05,
+    "N_clicks": 10000.0
+  },
+  "results": {
+    "n_dark_pixels": 21143,
+    "n_total_pixels": 262144,
+    "dark_fraction": 0.08065414428710938,
+    "n_destructive_interference": 15618,
+    "n_genuine_void": 5525,
+    "frac_destructive_interference": 0.7386841980797427,
+    "frac_genuine_void": 0.2613158019202573,
+    "avg_energy_cancellation": 0.01076050425559648,
+    "avg_energy_genuine_void": 0.007669148527340906,
+    "dark_threshold": 0.0008291072404347298,
+    "energy_threshold_median": 0.008291072404347297
+  }
+}

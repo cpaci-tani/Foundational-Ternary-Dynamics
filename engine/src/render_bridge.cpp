@@ -29,6 +29,11 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <iostream>
+
+#ifdef FTD_ENABLE_CUDA
+#include "ftd/gpu_engine.h"
+#endif
 
 namespace ftd {
 
@@ -41,7 +46,41 @@ RenderBridge::RenderBridge(int lattice_size)
       phi_(lattice_.total_sites(), 0.0),
       phi_coulomb_(lattice_.total_sites(), 0.0),
       phi_latency_(lattice_.total_sites(), 0.0),
-      moved_(lattice_.total_sites(), 0) {}
+      moved_(lattice_.total_sites(), 0)
+{
+#ifdef FTD_ENABLE_CUDA
+    try {
+        gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
+        use_gpu_ = true;
+        std::cerr << "[RenderBridge] GPU backend active (CUDA, L=" << lattice_size << ")\n";
+    } catch (const std::exception& e) {
+        use_gpu_ = false;
+        std::cerr << "[RenderBridge] GPU init failed: " << e.what() << " — using CPU\n";
+    } catch (...) {
+        use_gpu_ = false;
+        std::cerr << "[RenderBridge] GPU init failed (unknown error) — using CPU\n";
+    }
+#endif
+}
+
+// Destructor must be in .cpp where GpuEngine is fully defined (unique_ptr needs it)
+RenderBridge::~RenderBridge() = default;
+
+#ifdef FTD_ENABLE_CUDA
+void RenderBridge::gpu_sync_to_host() {
+    if (use_gpu_ && gpu_dirty_) {
+        gpu_->sync_to_host(voxels_);
+        gpu_dirty_ = false;
+    }
+}
+
+void RenderBridge::gpu_push_to_device() {
+    if (use_gpu_) {
+        gpu_->upload_from_host(voxels_);
+        gpu_dirty_ = false;
+    }
+}
+#endif
 
 // ============================================================================
 // Discrete Operators (pure mathematics — no physics assumptions)
@@ -946,6 +985,18 @@ void RenderBridge::phase_movement() {
 // ============================================================================
 
 void RenderBridge::tick() {
+#ifdef FTD_ENABLE_CUDA
+  if (use_gpu_) {
+    // Sync toggles to GPU engine
+    gpu_->toggles = toggles;
+    gpu_->tick();
+    gpu_dirty_ = true;
+    physical_time_ += dt_;
+    ++tick_;
+    return;
+  }
+#endif
+
   // Rule 1: Wave propagation + state-flux coupling
   if (toggles.wave_propagation || toggles.coupling)
     phase_read();
@@ -1057,6 +1108,16 @@ void RenderBridge::tick() {
 }
 
 void RenderBridge::run(int num_ticks) {
+#ifdef FTD_ENABLE_CUDA
+  if (use_gpu_) {
+    gpu_->toggles = toggles;
+    gpu_->run(num_ticks);
+    gpu_dirty_ = true;
+    physical_time_ += dt_ * num_ticks;
+    tick_ += num_ticks;
+    return;
+  }
+#endif
   for (int i = 0; i < num_ticks; ++i) {
     tick();
   }
@@ -1227,9 +1288,15 @@ Vec3 RenderBridge::poynting_vector(int idx) const {
 // ============================================================================
 
 void RenderBridge::inject_flux(int x, int y, int z, const Vec3 &flux_val) {
+#ifdef FTD_ENABLE_CUDA
+  if (use_gpu_) {
+    gpu_->inject_flux(x, y, z, flux_val);
+    gpu_dirty_ = true;
+    return;
+  }
+#endif
   auto &v = voxels_[lattice_.index(x, y, z)];
   v.flux = flux_val;
-  // Dual-substrate: split equally if no polarity information
   if (toggles.dual_substrate) {
     v.flux_L = flux_val * 0.5;
     v.flux_R = flux_val * 0.5;
@@ -1239,6 +1306,13 @@ void RenderBridge::inject_flux(int x, int y, int z, const Vec3 &flux_val) {
 void RenderBridge::inject_particle(int x, int y, int z, int8_t state,
                                    const Vec3 &flux_val,
                                    int8_t spin, int8_t color) {
+#ifdef FTD_ENABLE_CUDA
+  if (use_gpu_) {
+    gpu_->inject_particle(x, y, z, state, flux_val, spin, color);
+    gpu_dirty_ = true;
+    return;
+  }
+#endif
   auto &v = voxels_[lattice_.index(x, y, z)];
   v.state = state;
   v.flux = flux_val;
@@ -1274,6 +1348,13 @@ void RenderBridge::inject_particle(int x, int y, int z, int8_t state,
 
 void RenderBridge::inject_wavepacket(int cx, int cy, int cz, int8_t state,
                                      double sigma, double amplitude) {
+#ifdef FTD_ENABLE_CUDA
+  if (use_gpu_) {
+    gpu_->inject_wavepacket(cx, cy, cz, state, sigma, amplitude);
+    gpu_dirty_ = true;
+    return;
+  }
+#endif
   int center = lattice_.index(cx, cy, cz);
   auto &vc = voxels_[center];
   vc.state = state;

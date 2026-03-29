@@ -72,21 +72,21 @@ ftd/                                     # Project root
 │   ├── reference/                # REF_EPISTEMIC_LABELS, REF_SYMBOL_GLOSSARY, etc.
 │   ├── papers/                   # Published/submitted PDFs and TeX sources
 │   └── internal/                 # Session summaries, exploration scripts
-├── engine/                       # C++ simulation engine (v2.8)
+├── engine/                       # C++ simulation engine (v2.11)
 │   ├── SPEC_ENGINE.md            # Engine reference document
-│   ├── include/ftd/              # 18 headers (ontic.h, voxel.h, lattice.h, etc.)
+│   ├── include/ftd/              # 28 headers (ontic.h, voxel.h, lattice.h, etc.)
 │   ├── src/                      # 7 source files
-│   ├── tests/                    # 156 CTests (152 CPU + 4 GPU)
+│   ├── tests/                    # 168 test files (119 unit + 49 campaign + 4 GPU)
 │   ├── cuda/                     # GPU acceleration (RTX 5090, 363x speedup)
 │   ├── wasm/                     # Emscripten bindings
-│   └── web/                      # Browser dashboard (Three.js)
-├── scripts/                      # ALL Python scripts (~124 scripts)
+│   └── web/                      # Browser dashboard (Three.js, 28 JS modules)
+├── scripts/                      # ALL Python scripts (~149 scripts)
 │   ├── constants.py              # Canonical shared constants (single source of truth)
-│   ├── verification/             # Formal derivation verification (35 scripts)
-│   ├── proofs/                   # Formal mathematical proofs with error bounds (32 scripts)
-│   ├── experiments/              # Bell tests, CERN analysis, physics sims (16 scripts)
+│   ├── verification/             # Formal derivation verification (40 scripts)
+│   ├── proofs/                   # Formal mathematical proofs with error bounds (57 scripts)
+│   ├── experiments/              # Bell tests, CERN analysis, physics sims (17 scripts)
 │   ├── exploration/              # Focused research investigations (9 scripts)
-│   ├── tests/                    # Python test suites — pytest (21 scripts)
+│   ├── tests/                    # Python test suites — pytest (11 scripts)
 │   │   └── comprehensive/        # 7-tier verification framework
 │   ├── visualization/            # Publication figure generation (11 scripts)
 │   └── runners/                  # Test protocol runners (2 scripts)
@@ -94,9 +94,9 @@ ftd/                                     # Project root
 ├── dissemination/                # All publication/outreach content
 │   ├── manuscript/               # 96-chapter Quarto book (src/ + media/images/)
 │   ├── whitepaper/               # LaTeX whitepaper + figures
-│   ├── book/                     # "The Golden Thread" narrative (46 .qmd chapters)
+│   ├── book/                     # "The Golden Thread" narrative (53 .qmd files)
 │   ├── notebooks/                # 12 Jupyter pedagogy notebooks
-│   └── interactive/              # 5 standalone HTML force simulations
+│   └── interactive/              # 6 standalone HTML force/photon simulations
 ├── models/                       # Physics derivation package (gitignored)
 ├── archive/                      # All legacy/superseded content (gitignored)
 │   ├── ftd_archive/              # Legacy engines (Python, Qt GUI, ImGUI, etc.)
@@ -112,7 +112,7 @@ ftd/                                     # Project root
 ## C++ Engine
 
 **Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release`
-**Test**: `cd engine/build && ctest --output-on-failure -C Release` (156 tests)
+**Test**: `cd engine/build && ctest --output-on-failure -C Release`
 **WASM**: `emcmake cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release && emmake cmake --build engine/build_wasm --target ftd_wasm`
 **Web UI**: `python -m http.server 8080 -d engine/web`
 

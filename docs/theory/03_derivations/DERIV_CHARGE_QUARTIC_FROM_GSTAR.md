@@ -28,7 +28,7 @@ This is pure algebra — the quartic IS the master quadratic viewed from charge 
 - Product identity: e_EM * e_C = 1/(4G\*^(3/2))
 - Splitting parameter: e^2_C / e^2_EM = x+/x- = (1+d)/(1-d), d = sqrt(1 - 1/(4G\*))
 
-**Verification:** All identities confirmed to machine epsilon (~1e-16) in `simulations/verify_charge_quartic.py`.
+**Verification:** All identities confirmed to machine epsilon (~1e-16) in `scripts/verification/verify_charge_quartic.py`.
 
 ---
 
@@ -244,7 +244,7 @@ Numerical check: d from formula = 0.956819063350846, d from roots = 0.9568190633
 | 6 | Splitting: e^2_C/e^2_EM = (1+d)/(1-d) | **[THEOREM]** | Algebraic identity from d definition |
 | 7 | "Inside-out" duality interpretation | **[SELECTION]** | Physical reading of reciprocal polynomial structure |
 
-**Simulation verification:** All 6 algebraic identities confirmed in `simulations/verify_charge_quartic.py` (6/6 tests pass, all residuals < 1e-12).
+**Simulation verification:** All 6 algebraic identities confirmed in `scripts/verification/verify_charge_quartic.py` (6/6 tests pass, all residuals < 1e-12).
 
 ---
 
@@ -258,4 +258,4 @@ Numerical check: d from formula = 0.956819063350846, d from roots = 0.9568190633
 | EXPLR_GSTAR_FLUX_TIME.md | G\*^3 as action scale; appears as 1/(charge product) |
 | FOUND_FORCE_STRUCTURE.md | Four forces from master quadratic; charge quartic adds charge-space view |
 | PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md | Section 2.6 integrates this result |
-| simulations/verify_charge_quartic.py | Numerical verification (6/6 tests pass) |
+| scripts/verification/verify_charge_quartic.py | Numerical verification (6/6 tests pass) |

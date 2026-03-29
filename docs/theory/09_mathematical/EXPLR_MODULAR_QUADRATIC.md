@@ -295,7 +295,7 @@ Whether this is a deep truth about physics or a mathematical coincidence remains
 All results can be reproduced by running:
 
 ```
-python simulations/modular_investigation.py
+python scripts/modular_investigation.py
 ```
 
 The script computes Hecke eigenvalues via brute-force point counting on E mod p, verifies the G*-L(E,1) identity to machine precision, and tests all three core questions systematically.
