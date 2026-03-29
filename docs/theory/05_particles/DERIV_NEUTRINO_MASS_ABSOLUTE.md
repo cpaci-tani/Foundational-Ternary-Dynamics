@@ -335,7 +335,7 @@ The ratio M_R / sqrt(v * m_P) = 1.18, close to unity. This is consistent with th
 
 ## Appendix A: Systematic Formula Scan
 
-The script `simulations/neutrino_mass_derivation.py` performs a systematic scan over 176 candidate (m_D, M_R) pairs, each expressible in the FTD mass pattern:
+The script `scripts/verification/neutrino_mass_derivation.py` performs a systematic scan over 176 candidate (m_D, M_R) pairs, each expressible in the FTD mass pattern:
 
 m_D = m_P * sqrt(2pi) * f_D * alpha^(n_D)
 M_R = m_P * sqrt(2pi) * f_R * alpha^(n_R)

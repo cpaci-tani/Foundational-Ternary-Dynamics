@@ -13,10 +13,15 @@
 
 #include <vector>
 #include <random>
+#include <memory>
 #include "lattice.h"
 #include "voxel.h"
 #include "hilbert.h"
 #include "term_toggles.h"
+
+#ifdef FTD_ENABLE_CUDA
+namespace ftd { namespace gpu { class GpuEngine; } }
+#endif
 
 namespace ftd {
 
@@ -84,13 +89,29 @@ struct EMFieldDiag {
 class RenderBridge {
 public:
     RenderBridge(int lattice_size);
+    ~RenderBridge();
 
-    // Access
+    // Access (GPU-aware: syncs device→host when needed)
     Lattice& lattice() { return lattice_; }
     const Lattice& lattice() const { return lattice_; }
-    std::vector<Voxel>& voxels() { return voxels_; }
-    const std::vector<Voxel>& voxels() const { return voxels_; }
-    Voxel& voxel_at(int x, int y, int z) { return voxels_[lattice_.index(x, y, z)]; }
+    std::vector<Voxel>& voxels() {
+#ifdef FTD_ENABLE_CUDA
+        gpu_sync_to_host();
+#endif
+        return voxels_;
+    }
+    const std::vector<Voxel>& voxels() const {
+#ifdef FTD_ENABLE_CUDA
+        const_cast<RenderBridge*>(this)->gpu_sync_to_host();
+#endif
+        return voxels_;
+    }
+    Voxel& voxel_at(int x, int y, int z) {
+#ifdef FTD_ENABLE_CUDA
+        gpu_sync_to_host();
+#endif
+        return voxels_[lattice_.index(x, y, z)];
+    }
     int current_tick() const { return tick_; }
     double physical_time() const { return physical_time_; }
     double dt() const { return dt_; }
@@ -224,6 +245,17 @@ private:
     // See CLAUDE.md §4.1 — manifestation is probabilistic, not deterministic.
     std::mt19937 rng_{42};
     std::uniform_real_distribution<double> uniform_{0.0, 1.0};
+
+#ifdef FTD_ENABLE_CUDA
+    // GPU backend: when available, tick() delegates to GpuEngine for 363x speedup.
+    // All injection/access methods sync between host voxels_ and device memory.
+    std::unique_ptr<gpu::GpuEngine> gpu_;
+    bool use_gpu_ = false;
+    bool gpu_dirty_ = false;  // true = GPU has newer data than host voxels_
+
+    void gpu_sync_to_host();   // Download GPU state to voxels_
+    void gpu_push_to_device(); // Upload voxels_ to GPU
+#endif
 };
 
 }  // namespace ftd

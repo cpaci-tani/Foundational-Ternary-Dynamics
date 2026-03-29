@@ -97,7 +97,7 @@ $$G^* = \frac{\sqrt{2} \cdot \Gamma(1/4)^2}{2\pi} = \frac{\Gamma(1/4)^2}{2\pi/\s
 
 ### 1.4 Relationship to Existing FTD Formula
 
-The existing formula in `simulations/constants.py` states G* = 2ϖ/√π. This is the same identity:
+The existing formula in `scripts/constants.py` states G* = 2ϖ/√π. This is the same identity:
 
 $$\frac{\varpi}{\sqrt{\pi/4}} = \varpi \cdot \frac{2}{\sqrt{\pi}} = \frac{2\varpi}{\sqrt{\pi}}$$
 

@@ -457,8 +457,8 @@ Whether this is a theory of everything or a very elaborate coincidence is an emp
 - **Bell mechanism:** [AUDIT_BELL_ANALYSIS.md](AUDIT_BELL_ANALYSIS.md)
 - **SM Lagrangian mapping:** [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md)
 - **Space-time separation:** [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
-- **Verification (trit):** [../../simulations/verify_trit_framework.py](../../simulations/verify_trit_framework.py)
-- **Verification (space-time):** [../../simulations/verify_space_time.py](../../simulations/verify_space_time.py)
+- **Verification (trit):** [../../scripts/verification/verify_trit_framework.py](../../scripts/verification/verify_trit_framework.py)
+- **Verification (space-time):** [../../scripts/verification/verify_space_time.py](../../scripts/verification/verify_space_time.py)
 
 ---
 

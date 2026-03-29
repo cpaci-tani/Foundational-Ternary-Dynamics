@@ -195,7 +195,7 @@ $$e^2_{\text{EM}} + e^2_C = \frac{1}{G^*}, \qquad e^2_{\text{EM}} \cdot e^2_C = 
 
 The first identity states that the total squared-charge budget per degree of freedom is exactly $1/G^* = 1/\psi$, linking charge space to the dual-substrate observable. The coupling-space and charge-space polynomials are **reciprocal polynomials** — the leading and constant coefficients swap while the linear coefficient $(-16G^{*2})$ is shared. This "inside-out duality" is pure algebra [THEOREM]; its physical interpretation as a coupling/charge complementarity is [SELECTION].
 
-Full derivation: [DERIV_CHARGE_QUARTIC_FROM_GSTAR.md](../03_derivations/DERIV_CHARGE_QUARTIC_FROM_GSTAR.md). Verified numerically: `simulations/verify_charge_quartic.py` (6/6 tests, all residuals < $10^{-12}$).
+Full derivation: [DERIV_CHARGE_QUARTIC_FROM_GSTAR.md](../03_derivations/DERIV_CHARGE_QUARTIC_FROM_GSTAR.md). Verified numerically: `scripts/verification/verify_charge_quartic.py` (6/6 tests, all residuals < $10^{-12}$).
 
 ---
 

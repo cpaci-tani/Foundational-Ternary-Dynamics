@@ -328,7 +328,7 @@ Following Gomez (arXiv: 2409.14253) who extended Craig-Ono to arithmetic progres
 - **Modular connections**: [EXPLR_MODULAR_QUADRATIC.md](EXPLR_MODULAR_QUADRATIC.md)
 - **Ladder generating rule**: [FOUND_LADDER_GENERATING_RULE.md](../02_foundations/FOUND_LADDER_GENERATING_RULE.md)
 - **Ontic constant atlas**: [EXPLR_ONTIC_CONSTANT_ATLAS.md](EXPLR_ONTIC_CONSTANT_ATLAS.md)
-- **Numerical verification**: `simulations/explore_partition_prime_detection.py`
+- **Numerical verification**: `scripts/exploration/explore_partition_prime_detection.py`
 - **Craig-Ono paper**: PNAS, September 2024 (reviewed by George Andrews)
 - **Gomez extension**: arXiv: 2409.14253
 

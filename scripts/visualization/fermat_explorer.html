@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fermat Prime Explorer — The EM/QCD Divide</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a12; color: #e0e0e0; font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; }
+
+#controls {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,18,0.95); padding: 10px 20px;
+    display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #333;
+}
+#controls h1 { font-size: 16px; color: #7eb8ff; white-space: nowrap; }
+#controls label { font-size: 13px; color: #aaa; white-space: nowrap; }
+#controls input[type=range] { width: 200px; accent-color: #5599ff; }
+#controls .val { font-size: 14px; color: #fff; font-weight: bold; min-width: 35px; }
+#controls .stat { font-size: 11px; color: #888; margin-left: auto; white-space: nowrap; }
+.tag-inert { color: #ff6644; font-weight: bold; }
+.tag-split { color: #44aaff; font-weight: bold; }
+
+#container { display: flex; width: 100vw; height: calc(100vh - 44px); margin-top: 44px; }
+#panel2d { flex: 1; position: relative; border-right: 1px solid #222; }
+#panel3d { flex: 1; position: relative; }
+.panel-label {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    font-size: 12px; color: #666; z-index: 10; pointer-events: none;
+}
+canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+
+<div id="controls">
+    <h1>Fermat Prime Explorer</h1>
+    <label>Bound:</label>
+    <input type="range" id="boundSlider" min="5" max="1000" value="30" step="5">
+    <span class="val" id="boundVal">30</span>
+    <span class="stat" id="stats"></span>
+</div>
+
+<div id="container">
+    <div id="panel2d">
+        <div class="panel-label">2D — Gaussian Primes in ℤ[i]</div>
+        <canvas id="canvas2d"></canvas>
+    </div>
+    <div id="panel3d">
+        <div class="panel-label">3D — Paraboloid z = a² + b²</div>
+        <canvas id="canvas3d"></canvas>
+    </div>
+</div>
+
+<script>
+// =====================================================
+// PRIME UTILITIES
+// =====================================================
+
+function isPrime(n) {
+    if (n < 2) return false;
+    if (n < 4) return true;
+    if (n % 2 === 0 || n % 3 === 0) return false;
+    for (let i = 5; i * i <= n; i += 6)
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+    return true;
+}
+
+function sievePrimes(max) {
+    const siv = new Uint8Array(max + 1);
+    siv[0] = siv[1] = 1;
+    for (let i = 2; i * i <= max; i++)
+        if (!siv[i]) for (let j = i * i; j <= max; j += i) siv[j] = 1;
+    return siv;
+}
+
+function computeGaussianPrimes(bound) {
+    const maxNorm = 2 * bound * bound;
+    const siv = sievePrimes(maxNorm);
+    const split = [];
+    const inert = [];
+
+    // Axis primes (inert)
+    for (let v = 3; v <= bound; v += 2) {
+        if (!siv[v] && v % 4 === 3) {
+            inert.push({ a: v, b: 0, p: v });
+            inert.push({ a: -v, b: 0, p: v });
+            inert.push({ a: 0, b: v, p: v });
+            inert.push({ a: 0, b: -v, p: v });
+        }
+    }
+
+    // Quadrant primes (split) — only compute first octant, reflect
+    for (let a = 1; a <= bound; a++) {
+        for (let b = 1; b <= bound; b++) {
+            const norm = a * a + b * b;
+            if (norm <= maxNorm && !siv[norm]) {
+                split.push({ a, b, p: norm });
+                split.push({ a: -a, b, p: norm });
+                split.push({ a, b: -b, p: norm });
+                split.push({ a: -a, b: -b, p: norm });
+                if (a !== b) {
+                    split.push({ a: b, b: a, p: norm });
+                    split.push({ a: -b, b: a, p: norm });
+                    split.push({ a: b, b: -a, p: norm });
+                    split.push({ a: -b, b: -a, p: norm });
+                }
+            }
+        }
+    }
+
+    return { split, inert };
+}
+
+// =====================================================
+// 2D CANVAS
+// =====================================================
+
+const c2d = document.getElementById('canvas2d');
+const ctx = c2d.getContext('2d');
+
+function draw2D(split, inert, bound) {
+    const W = c2d.width = c2d.clientWidth * devicePixelRatio;
+    const H = c2d.height = c2d.clientHeight * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    const w = c2d.clientWidth, h = c2d.clientHeight;
+
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(0, 0, w, h);
+
+    const margin = 30;
+    const scale = Math.min((w - 2 * margin) / (2 * bound), (h - 2 * margin) / (2 * bound));
+    const cx = w / 2, cy = h / 2;
+
+    const toX = a => cx + a * scale;
+    const toY = b => cy - b * scale;
+
+    // Grid
+    ctx.strokeStyle = '#1a1a2a';
+    ctx.lineWidth = 0.5;
+    for (let i = -bound; i <= bound; i += Math.max(1, Math.floor(bound / 10))) {
+        ctx.beginPath(); ctx.moveTo(toX(i), toY(-bound)); ctx.lineTo(toX(i), toY(bound)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(toX(-bound), toY(i)); ctx.lineTo(toX(bound), toY(i)); ctx.stroke();
+    }
+
+    // Axes
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(toX(-bound), cy); ctx.lineTo(toX(bound), cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, toY(-bound)); ctx.lineTo(cx, toY(bound)); ctx.stroke();
+
+    // Knight's move circle r = sqrt(5)
+    ctx.strokeStyle = 'rgba(100,255,100,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.sqrt(5) * scale, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    // Split primes (blue dots)
+    const dotSize = Math.max(0.5, Math.min(3, 90 / bound));
+    ctx.fillStyle = 'rgba(68,170,255,0.7)';
+    for (const { a, b } of split) {
+        ctx.fillRect(toX(a) - dotSize, toY(b) - dotSize, dotSize * 2, dotSize * 2);
+    }
+
+    // Inert primes (red squares)
+    const sqSize = Math.max(1.5, Math.min(5, 150 / bound));
+    ctx.fillStyle = '#ff4433';
+    for (const { a, b, p } of inert) {
+        ctx.fillRect(toX(a) - sqSize, toY(b) - sqSize, sqSize * 2, sqSize * 2);
+    }
+
+    // FTD primes labels (only if bound is small enough)
+    if (bound <= 60) {
+        ctx.font = '10px monospace';
+        ctx.fillStyle = '#ff8866';
+        for (const p of [3, 7, 47]) {
+            if (p <= bound) {
+                ctx.fillText(p.toString(), toX(p) + 4, cy - 4);
+            }
+        }
+        ctx.fillStyle = '#66aaff';
+        if (13 <= bound * bound) {
+            // 13 = 2^2 + 3^2
+            ctx.fillText('13', toX(2) + 4, toY(3) - 4);
+        }
+    }
+}
+
+// =====================================================
+// 3D CANVAS — Simple wireframe paraboloid
+// =====================================================
+
+const c3d = document.getElementById('canvas3d');
+const ctx3 = c3d.getContext('2d');
+
+let rotY = 0.7, rotX = 0.5;
+let dragging = false, lastMX, lastMY;
+
+c3d.addEventListener('mousedown', e => { dragging = true; lastMX = e.clientX; lastMY = e.clientY; });
+c3d.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    rotY += (e.clientX - lastMX) * 0.005;
+    rotX += (e.clientY - lastMY) * 0.005;
+    rotX = Math.max(-1.2, Math.min(1.2, rotX));
+    lastMX = e.clientX; lastMY = e.clientY;
+    requestRedraw();
+});
+c3d.addEventListener('mouseup', () => dragging = false);
+c3d.addEventListener('mouseleave', () => dragging = false);
+
+function project(a, b, z, w, h, bound) {
+    const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+
+    // Normalize coordinates
+    const maxZ = 2 * bound * bound;
+    const nx = a / bound, ny = b / bound, nz = z / maxZ * 2;
+
+    // Rotate Y then X
+    const x1 = nx * cosY - ny * sinY;
+    const y1 = nx * sinY + ny * cosY;
+    const z1 = nz;
+
+    const y2 = y1 * cosX - z1 * sinX;
+    const z2 = y1 * sinX + z1 * cosX;
+
+    // Perspective
+    const persp = 3;
+    const scale = Math.min(w, h) * 0.35;
+    const d = persp / (persp + z2);
+
+    return {
+        x: w / 2 + x1 * d * scale,
+        y: h / 2 - y2 * d * scale,
+        depth: z2
+    };
+}
+
+let currentSplit, currentInert, currentBound;
+
+function draw3D() {
+    const split = currentSplit, inert = currentInert, bound = currentBound;
+    if (!split) return;
+
+    const W = c3d.width = c3d.clientWidth * devicePixelRatio;
+    const H = c3d.height = c3d.clientHeight * devicePixelRatio;
+    ctx3.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    const w = c3d.clientWidth, h = c3d.clientHeight;
+
+    ctx3.fillStyle = '#0a0a12';
+    ctx3.fillRect(0, 0, w, h);
+
+    // Combine all points — subsample if too many for 3D
+    const MAX_3D = 20000;
+    let splitSub = split, inertSub = inert;
+    if (split.length > MAX_3D) {
+        const step = Math.ceil(split.length / MAX_3D);
+        splitSub = split.filter((_, i) => i % step === 0);
+    }
+
+    const points = [];
+    for (const { a, b, p } of splitSub) {
+        const proj = project(a, b, p, w, h, bound);
+        points.push({ ...proj, type: 'split', p });
+    }
+    for (const { a, b, p } of inertSub) {
+        const proj = project(a, b, p, w, h, bound);
+        points.push({ ...proj, type: 'inert', p });
+    }
+
+    // Sort back-to-front
+    points.sort((a, b) => a.depth - b.depth);
+
+    const maxP = 2 * bound * bound;
+
+    for (const pt of points) {
+        const t = pt.p / maxP;
+        if (pt.type === 'split') {
+            // Color by height (plasma-like)
+            const r = Math.floor(50 + 180 * t);
+            const g = Math.floor(100 + 100 * (1 - t));
+            const b = Math.floor(255 * (1 - t * 0.5));
+            ctx3.fillStyle = `rgba(${r},${g},${b},0.8)`;
+            const size = Math.max(1, 3 - pt.depth * 0.3);
+            ctx3.beginPath();
+            ctx3.arc(pt.x, pt.y, size, 0, 2 * Math.PI);
+            ctx3.fill();
+        } else {
+            ctx3.fillStyle = 'rgba(255,68,50,0.9)';
+            const size = Math.max(2, 4 - pt.depth * 0.3);
+            ctx3.fillRect(pt.x - size, pt.y - size, size * 2, size * 2);
+        }
+    }
+
+    // Draw axes
+    ctx3.strokeStyle = '#333';
+    ctx3.lineWidth = 1;
+    const o = project(0, 0, 0, w, h, bound);
+    const ax = project(bound, 0, 0, w, h, bound);
+    const ay = project(0, bound, 0, w, h, bound);
+    const az = project(0, 0, maxP, w, h, bound);
+    ctx3.beginPath(); ctx3.moveTo(o.x, o.y); ctx3.lineTo(ax.x, ax.y); ctx3.stroke();
+    ctx3.beginPath(); ctx3.moveTo(o.x, o.y); ctx3.lineTo(ay.x, ay.y); ctx3.stroke();
+    ctx3.beginPath(); ctx3.moveTo(o.x, o.y); ctx3.lineTo(az.x, az.y); ctx3.stroke();
+
+    // Labels
+    ctx3.font = '11px monospace';
+    ctx3.fillStyle = '#666';
+    ctx3.fillText('Re', ax.x + 5, ax.y);
+    ctx3.fillText('Im', ay.x + 5, ay.y);
+    ctx3.fillText('p', az.x + 5, az.y);
+
+    // Drag instruction
+    ctx3.fillStyle = '#444';
+    ctx3.font = '10px sans-serif';
+    ctx3.fillText('drag to rotate', 10, h - 10);
+}
+
+// =====================================================
+// MAIN LOOP
+// =====================================================
+
+let redrawQueued = false;
+function requestRedraw() {
+    if (redrawQueued) return;
+    redrawQueued = true;
+    requestAnimationFrame(() => {
+        redrawQueued = false;
+        draw2D(currentSplit, currentInert, currentBound);
+        draw3D();
+    });
+}
+
+function update() {
+    const bound = parseInt(document.getElementById('boundSlider').value);
+    document.getElementById('boundVal').textContent = bound;
+
+    const { split, inert } = computeGaussianPrimes(bound);
+    currentSplit = split;
+    currentInert = inert;
+    currentBound = bound;
+
+    document.getElementById('stats').innerHTML =
+        `<span class="tag-split">${split.length} split</span> + ` +
+        `<span class="tag-inert">${inert.length} inert</span> = ` +
+        `${split.length + inert.length} Gaussian primes | ` +
+        `R(5) = 20 = lattice points before Fermat gap`;
+
+    requestRedraw();
+}
+
+let updateTimer = null;
+document.getElementById('boundSlider').addEventListener('input', () => {
+    document.getElementById('boundVal').textContent = document.getElementById('boundSlider').value;
+    clearTimeout(updateTimer);
+    updateTimer = setTimeout(update, 150);
+});
+window.addEventListener('resize', requestRedraw);
+update();
+</script>
+</body>
+</html>

@@ -284,12 +284,12 @@ The minimum sequence of computations needed to close the bridge, ordered by depe
 | Component | Location | What It Provides |
 |-----------|----------|-----------------|
 | Density matrices + partial traces | `models/quantum_entropy.py` | `DensityMatrix` class, `from_pure_state()`, `partial_trace_B()`, `von_neumann_entropy()` |
-| Pauli matrices + tensor products | `simulations/verify_bell_quantum.py` | `sigma_x/y/z`, `tensor_product()`, `QubitState`, `TwoQubitState`, `compute_chsh()` |
+| Pauli matrices + tensor products | `scripts/experiments/verify_bell_quantum.py` | `sigma_x/y/z`, `tensor_product()`, `QubitState`, `TwoQubitState`, `compute_chsh()` |
 | Discrete Laplacian/gradient/curl | `ternary_matrix/model/geometry.py` | `laplacian()`, `gradient()`, `curl()` via `LatticeGeometry` abstract base |
 | Universe state arrays | `ternary_matrix/model/grid.py` | `Universe.states` (N,N,N int8), `Universe.flux` (N,N,N,3 float32), `Universe.density`, etc. |
-| ZPF equilibrium at beta = pi | `simulations/verify_zpf_equilibrium.py` | Demonstrates sigma_zpf^2 / DAMPING = K_B^2 / (2pi), manifest fraction = exp(-pi), effective beta = pi |
+| ZPF equilibrium at beta = pi | `scripts/verification/verify_zpf_equilibrium.py` | Demonstrates sigma_zpf^2 / DAMPING = K_B^2 / (2pi), manifest fraction = exp(-pi), effective beta = pi |
 | 12-phase tick cycle | `ternary_matrix/physics/master_equation.py` | Complete FTD time evolution: wave propagation, forces, movement, collisions, etc. |
-| sLoop-Bell experiment | `simulations/sloop_bell_experiment.py` | CHSH measurement on FTD Universe with sLoop coupling |
+| sLoop-Bell experiment | `scripts/experiments/sloop_bell_experiment.py` | CHSH measurement on FTD Universe with sLoop coupling |
 | Softplus/ReLU analysis | `docs/theory/EXPLR_RELU_TYPE_TRANSITION.md` | Complete descent chain III -> II -> I, KMS <-> Softplus identification |
 
 ### 4.2 Built Infrastructure (Steps 1-5, completed Feb 2026)

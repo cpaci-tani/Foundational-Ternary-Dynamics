@@ -5,7 +5,7 @@
 **Date:** February 5, 2026
 **Framework:** Foundational Ternary Dynamics v5.17
 **Status:** Foundational extension - Information-theoretic perspective
-**Verification:** `simulations/verify_trit_framework.py`
+**Verification:** `scripts/verification/verify_trit_framework.py`
 
 ---
 
@@ -448,13 +448,13 @@ The complete chain — from self-duality to i to consciousness to measurement re
 - **Consciousness formalization:** [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
 - **sLoop axioms:** [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md)
 - **Mandelbrot proof:** [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
-- **Verification script:** [../../simulations/verify_trit_framework.py](../../simulations/verify_trit_framework.py)
+- **Verification script:** [../../scripts/verification/verify_trit_framework.py](../../scripts/verification/verify_trit_framework.py)
 
 ---
 
 ## Verification
 
-Run `simulations/verify_trit_framework.py` to confirm:
+Run `scripts/verification/verify_trit_framework.py` to confirm:
 1. The G* = sqrt(2pi)*theta_3^2 identity (exact to machine precision)
 2. The trit distribution and Shannon entropy
 3. All claimed relationships with error analysis
