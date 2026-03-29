@@ -1,0 +1,28 @@
+{
+  "script": "04_nodal_line_topology.py",
+  "description": "Nodal line (Re=0, Im=0) topology vs dark fringe contours in |psi|^2",
+  "parameters": {
+    "W": 512.0,
+    "H": 512.0,
+    "lam": 32.0,
+    "separation": 160.0,
+    "phase_offset": 3.141592653589793,
+    "t": 600.0,
+    "K_B": 0.05,
+    "N_clicks": 10000.0
+  },
+  "results": {
+    "Re_zero_segments": 53,
+    "Re_zero_arc_length_px": 17692.976308027384,
+    "Im_zero_segments": 42,
+    "Im_zero_arc_length_px": 17745.13949830402,
+    "total_nodal_segments": 95,
+    "total_nodal_arc_length_px": 35438.11580633141,
+    "dark_fringe_segments": 16,
+    "dark_fringe_arc_length_px": 9991.853780088728,
+    "dark_fringe_threshold": 0.008535467710129556,
+    "Im_zero_lost_segments": 42,
+    "Im_zero_lost_arc_length_px": 17745.13949830402,
+    "fraction_topology_lost": 0.4421052631578947
+  }
+}

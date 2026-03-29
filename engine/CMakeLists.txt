@@ -24,6 +24,7 @@ if(FTD_ENABLE_CUDA AND NOT EMSCRIPTEN)
         set(CMAKE_CUDA_ARCHITECTURES "89;120")
     endif()
     message(STATUS "CUDA enabled — architectures: ${CMAKE_CUDA_ARCHITECTURES}")
+    add_compile_definitions(FTD_ENABLE_CUDA)
     add_subdirectory(cuda)
 endif()
 
@@ -43,11 +44,23 @@ target_include_directories(ftd_core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 if(OpenMP_CXX_FOUND)
     target_link_libraries(ftd_core PUBLIC OpenMP::OpenMP_CXX)
 endif()
+if(FTD_ENABLE_CUDA)
+    target_link_libraries(ftd_core PUBLIC ftd_cuda)
+endif()
 
 # Main simulation executable (native builds only)
 if(NOT EMSCRIPTEN)
 add_executable(ftd_sim src/main.cpp)
 target_link_libraries(ftd_sim ftd_core)
+endif()
+
+# WebSocket server executable (native builds only — bridges engine to web dashboard)
+if(NOT EMSCRIPTEN)
+add_executable(ws_server src/ws_server.cpp)
+target_link_libraries(ws_server ftd_core)
+if(WIN32)
+    target_link_libraries(ws_server ws2_32)
+endif()
 endif()
 
 # ============================================================================
@@ -445,6 +458,37 @@ target_link_libraries(ftd_hydrogen_spectrum ftd_core)
 add_executable(ftd_two_slit tests/campaign_two_slit.cpp)
 target_link_libraries(ftd_two_slit ftd_core)
 
+# Double-slit information loss campaigns (3D lattice experiments)
+# All use SimEngine (engine_select.h) for GPU acceleration when CUDA is enabled
+set(DS_CAMPAIGNS
+    ftd_ds_phase_recovery
+    ftd_ds_ternary_detector
+    ftd_ds_vortex_lines
+    ftd_ds_correlation_function
+    ftd_ds_void_classification
+    ftd_ds_information_cascade
+)
+set(DS_SOURCES
+    tests/campaign_ds_phase_recovery.cpp
+    tests/campaign_ds_ternary_detector.cpp
+    tests/campaign_ds_vortex_lines.cpp
+    tests/campaign_ds_correlation_function.cpp
+    tests/campaign_ds_void_classification.cpp
+    tests/campaign_ds_information_cascade.cpp
+)
+list(LENGTH DS_CAMPAIGNS DS_COUNT)
+math(EXPR DS_LAST "${DS_COUNT} - 1")
+foreach(idx RANGE ${DS_LAST})
+    list(GET DS_CAMPAIGNS ${idx} tgt)
+    list(GET DS_SOURCES ${idx} src)
+    add_executable(${tgt} ${src})
+    if(FTD_ENABLE_CUDA)
+        target_link_libraries(${tgt} ftd_core ftd_cuda)
+    else()
+        target_link_libraries(${tgt} ftd_core)
+    endif()
+endforeach()
+
 # Phase 12: Cosmology + Consciousness Sector
 add_executable(test_inflation tests/test_inflation.cpp)
 target_link_libraries(test_inflation ftd_core)
@@ -770,6 +814,12 @@ add_test(NAME falsifiability COMMAND test_falsifiability)
 add_test(NAME campaign_integer_sweep COMMAND ftd_integer_sweep)
 add_test(NAME campaign_hydrogen_spectrum COMMAND ftd_hydrogen_spectrum)
 add_test(NAME campaign_two_slit COMMAND ftd_two_slit)
+add_test(NAME campaign_ds_phase_recovery COMMAND ftd_ds_phase_recovery)
+add_test(NAME campaign_ds_ternary_detector COMMAND ftd_ds_ternary_detector)
+add_test(NAME campaign_ds_vortex_lines COMMAND ftd_ds_vortex_lines)
+add_test(NAME campaign_ds_correlation_function COMMAND ftd_ds_correlation_function)
+add_test(NAME campaign_ds_void_classification COMMAND ftd_ds_void_classification)
+add_test(NAME campaign_ds_information_cascade COMMAND ftd_ds_information_cascade)
 
 # Phase 12: Cosmology + Consciousness
 add_test(NAME inflation COMMAND test_inflation)

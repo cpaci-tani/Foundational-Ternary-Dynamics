@@ -177,7 +177,7 @@ See [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIO
 ftd/
   docs/
     SPEC_FTD.md                 # Authoritative specification
-    theory/                     # 114 core + 68 archived theory documents
+    theory/                     # 114 core + 67 archived theory documents
       01_reference/             # Master references and proofs
       02_foundations/            # Axiom Zero, ontology, emergence
       03_derivations/            # 37 physics derivations
@@ -188,20 +188,20 @@ ftd/
       08_structural/             # Geometry and information theory
       09_mathematical/           # Number theory connections
   engine/
-    include/ftd/                # 18 C++ headers (ontic.h is the constant chain)
+    include/ftd/                # 28 C++ headers (ontic.h is the constant chain)
     src/                        # 7 source files
-    tests/                      # 156 CTests (151 CPU + 4 GPU + 1 dark sector)
+    tests/                      # 168 test files (119 unit + 49 campaign + 4 GPU)
     cuda/                       # GPU acceleration (363x on RTX 5090)
     wasm/                       # WebAssembly bindings
     web/                        # Browser dashboard (Three.js, 211 scenarios across 4 scales)
   scripts/
     constants.py                # Canonical shared constants
-    verification/               # 35 formal verification scripts
-    proofs/                     # 32 mathematical proofs + computational checks
+    verification/               # 40 formal verification scripts
+    proofs/                     # 57 mathematical proofs + computational checks
     experiments/                # Bell tests, CERN analysis
-    tests/                      # pytest suites (21 scripts)
+    tests/                      # pytest suites + 7-tier comprehensive framework
     visualization/              # Publication figures
-  evaluation/                   # 19 math/physics assessment documents
+  evaluation/                   # Multi-domain assessment (19 files, 116 tracked issues)
   dissemination/                # Manuscript, whitepaper, notebooks
 ```
 
@@ -231,7 +231,7 @@ python scripts/proofs/proof_confinement_wilson.py  # Confinement proof (19/19)
 ```bash
 cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
 cmake --build engine/build --config Release
-cd engine/build && ctest --output-on-failure -C Release  # 156 tests
+cd engine/build && ctest --output-on-failure -C Release
 ```
 
 ### Launch the Web Dashboard

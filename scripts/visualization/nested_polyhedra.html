@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Z³ Nested Polyhedra — The Three Shells</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #06060e; color: #ddd; font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; }
+canvas { display: block; width: 100vw; height: 100vh; }
+
+#info {
+    position: fixed; top: 10px; left: 10px; z-index: 10;
+    background: rgba(6,6,14,0.85); padding: 12px 16px; border-radius: 8px;
+    border: 1px solid #333; max-width: 340px; font-size: 12px;
+}
+#info h1 { font-size: 15px; color: #88bbff; margin-bottom: 6px; }
+#info .shell { margin: 4px 0; }
+#info .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+#controls {
+    position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 10;
+    background: rgba(6,6,14,0.85); padding: 8px 16px; border-radius: 8px;
+    border: 1px solid #333; display: flex; gap: 12px; align-items: center; font-size: 12px;
+}
+#controls label { color: #888; }
+#controls input[type=checkbox] { accent-color: #5599ff; }
+#controls input[type=range] { width: 100px; accent-color: #5599ff; }
+</style>
+</head>
+<body>
+<div id="info">
+    <h1>Z³ Nested Polyhedra</h1>
+    <div class="shell"><span class="dot" style="background:#ff4444;"></span><b>Octahedron</b> — SC shell (6 pts, d=1) — U(1) EM</div>
+    <div class="shell"><span class="dot" style="background:#44ff88;"></span><b>Cuboctahedron</b> — FCC shell (12 pts, d=√2) — SU(2) Weak</div>
+    <div class="shell"><span class="dot" style="background:#4488ff;"></span><b>Cube</b> — BCC shell (8 pts, d=√3) — SU(3) Strong</div>
+    <div style="margin-top:8px; color:#666; font-size:11px;">
+        Rotation axes: <span style="color:#ff9944;">3(C4)</span> + <span style="color:#44ddaa;">4(C3)</span> + <span style="color:#aa88ff;">6(C2)</span> = <b style="color:#fff;">13 = N<sub>eff</sub></b>
+    </div>
+    <div style="margin-top:4px; color:#555; font-size:10px;">Drag to rotate · Scroll to zoom</div>
+</div>
+
+<div id="controls">
+    <label><input type="checkbox" id="showOct" checked> Octahedron</label>
+    <label><input type="checkbox" id="showCuboct" checked> Cuboctahedron</label>
+    <label><input type="checkbox" id="showCube" checked> Cube</label>
+    <label><input type="checkbox" id="showAxes" checked> Axes</label>
+    <label><input type="checkbox" id="showEdges" checked> Edges</label>
+    <label><input type="checkbox" id="showDual" > Rhombic Dodecahedron</label>
+    <label>Speed:</label>
+    <input type="range" id="speed" min="0" max="100" value="30">
+</div>
+
+<canvas id="c"></canvas>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+// Camera
+let rotX = 0.4, rotY = 0.6, rotZ = 0;
+let zoom = 200;
+let dragging = false, lastX, lastY;
+let autoRot = 0.003;
+
+canvas.addEventListener('mousedown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
+canvas.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    rotY += (e.clientX - lastX) * 0.005;
+    rotX += (e.clientY - lastY) * 0.005;
+    rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+    lastX = e.clientX; lastY = e.clientY;
+});
+canvas.addEventListener('mouseup', () => dragging = false);
+canvas.addEventListener('mouseleave', () => dragging = false);
+canvas.addEventListener('wheel', e => { zoom *= e.deltaY > 0 ? 0.95 : 1.05; zoom = Math.max(50, Math.min(800, zoom)); });
+
+// 3D projection
+function project(x, y, z) {
+    // Rotate Y
+    let cy = Math.cos(rotY), sy = Math.sin(rotY);
+    let x1 = x * cy - z * sy, z1 = x * sy + z * cy;
+    // Rotate X
+    let cx = Math.cos(rotX), sx = Math.sin(rotX);
+    let y1 = y * cx - z1 * sx, z2 = y * sx + z1 * cx;
+    // Perspective
+    let d = 5;
+    let scale = d / (d + z2) * zoom;
+    return { x: W/2 + x1 * scale, y: H/2 - y1 * scale, z: z2, scale };
+}
+
+// Geometry definitions
+
+// SC: octahedron vertices (distance 1)
+const SC = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+
+// Octahedron edges
+const OCT_EDGES = [];
+for (let i = 0; i < 6; i++)
+    for (let j = i+1; j < 6; j++) {
+        let dx = SC[i][0]-SC[j][0], dy = SC[i][1]-SC[j][1], dz = SC[i][2]-SC[j][2];
+        let d = Math.sqrt(dx*dx+dy*dy+dz*dz);
+        if (Math.abs(d - Math.sqrt(2)) < 0.01) OCT_EDGES.push([i, j]);
+    }
+
+// FCC: cuboctahedron vertices (distance sqrt(2))
+const FCC = [];
+for (let a of [-1,1]) for (let b of [-1,1]) {
+    FCC.push([a, b, 0]);
+    FCC.push([a, 0, b]);
+    FCC.push([0, a, b]);
+}
+
+// Cuboctahedron edges
+const CUBOCT_EDGES = [];
+for (let i = 0; i < 12; i++)
+    for (let j = i+1; j < 12; j++) {
+        let dx = FCC[i][0]-FCC[j][0], dy = FCC[i][1]-FCC[j][1], dz = FCC[i][2]-FCC[j][2];
+        let d = Math.sqrt(dx*dx+dy*dy+dz*dz);
+        if (Math.abs(d - Math.sqrt(2)) < 0.01) CUBOCT_EDGES.push([i, j]);
+    }
+
+// BCC: cube vertices (distance sqrt(3))
+const BCC = [];
+for (let a of [-1,1]) for (let b of [-1,1]) for (let c of [-1,1])
+    BCC.push([a, b, c]);
+
+// Cube edges
+const CUBE_EDGES = [];
+for (let i = 0; i < 8; i++)
+    for (let j = i+1; j < 8; j++) {
+        let dx = BCC[i][0]-BCC[j][0], dy = BCC[i][1]-BCC[j][1], dz = BCC[i][2]-BCC[j][2];
+        let d = Math.sqrt(dx*dx+dy*dy+dz*dz);
+        if (Math.abs(d - 2) < 0.01) CUBE_EDGES.push([i, j]);
+    }
+
+// Rhombic dodecahedron: dual of cuboctahedron
+// Vertices are the face centers of the cuboctahedron
+// 8 triangle centers + 6 square centers = 14 vertices
+const RD_VERTS = [];
+// Triangle face centers (8 triangles of cuboctahedron)
+// Each triangle connects 3 FCC vertices
+// Approximate: the 8 directions (+-1,+-1,+-1)/sqrt(3) scaled
+for (let a of [-1,1]) for (let b of [-1,1]) for (let c of [-1,1])
+    RD_VERTS.push([a*2/3, b*2/3, c*2/3]);
+// Square face centers (6 squares)
+for (let v of SC) RD_VERTS.push([v[0]*2/3*2, v[1]*2/3*2, v[2]*2/3*2]);
+
+// Approximate RD edges (connect vertices that form rhombus edges)
+const RD_EDGES = [];
+for (let i = 0; i < RD_VERTS.length; i++)
+    for (let j = i+1; j < RD_VERTS.length; j++) {
+        let dx = RD_VERTS[i][0]-RD_VERTS[j][0];
+        let dy = RD_VERTS[i][1]-RD_VERTS[j][1];
+        let dz = RD_VERTS[i][2]-RD_VERTS[j][2];
+        let d = Math.sqrt(dx*dx+dy*dy+dz*dz);
+        if (d > 0.6 && d < 1.05) RD_EDGES.push([i, j]);
+    }
+
+// Rotation axes of cuboctahedron
+const AXES_C4 = [[1,0,0],[0,1,0],[0,0,1]]; // 3 four-fold
+const AXES_C3 = [[1,1,1],[1,1,-1],[1,-1,1],[-1,1,1]].map(v => {
+    let l = Math.sqrt(3); return [v[0]/l, v[1]/l, v[2]/l];
+}); // 4 three-fold
+const AXES_C2 = [[1,1,0],[1,-1,0],[1,0,1],[1,0,-1],[0,1,1],[0,1,-1]].map(v => {
+    let l = Math.sqrt(2); return [v[0]/l, v[1]/l, v[2]/l];
+}); // 6 two-fold
+
+function drawEdge(p1, p2, color, width) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
+}
+
+function drawPoint(p, color, size) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, size * (p.scale / zoom), 0, 2 * Math.PI);
+    ctx.fill();
+}
+
+function drawAxis(axis, color, label, len) {
+    let p1 = project(-axis[0]*len, -axis[1]*len, -axis[2]*len);
+    let p2 = project(axis[0]*len, axis[1]*len, axis[2]*len);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+}
+
+function render() {
+    W = canvas.width = window.innerWidth * devicePixelRatio;
+    H = canvas.height = window.innerHeight * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    const w = window.innerWidth, h = window.innerHeight;
+    W = w; H = h;
+
+    ctx.fillStyle = '#06060e';
+    ctx.fillRect(0, 0, w, h);
+
+    // Auto-rotate
+    let speed = parseInt(document.getElementById('speed').value);
+    if (!dragging) rotY += autoRot * speed / 30;
+
+    const showOct = document.getElementById('showOct').checked;
+    const showCuboct = document.getElementById('showCuboct').checked;
+    const showCube = document.getElementById('showCube').checked;
+    const showAxes = document.getElementById('showAxes').checked;
+    const showEdges = document.getElementById('showEdges').checked;
+    const showDual = document.getElementById('showDual').checked;
+
+    // Draw rotation axes
+    if (showAxes) {
+        for (let a of AXES_C4) drawAxis(a, 'rgba(255,153,68,0.4)', 'C4', 1.8);
+        for (let a of AXES_C3) drawAxis(a, 'rgba(68,221,170,0.3)', 'C3', 1.8);
+        for (let a of AXES_C2) drawAxis(a, 'rgba(170,136,255,0.25)', 'C2', 1.8);
+    }
+
+    // Draw edges
+    if (showEdges) {
+        if (showCube) {
+            for (let [i, j] of CUBE_EDGES) {
+                let p1 = project(...BCC[i]), p2 = project(...BCC[j]);
+                drawEdge(p1, p2, 'rgba(68,136,255,0.3)', 1);
+            }
+        }
+        if (showCuboct) {
+            for (let [i, j] of CUBOCT_EDGES) {
+                let p1 = project(...FCC[i]), p2 = project(...FCC[j]);
+                drawEdge(p1, p2, 'rgba(68,255,136,0.35)', 1.2);
+            }
+        }
+        if (showOct) {
+            for (let [i, j] of OCT_EDGES) {
+                let p1 = project(...SC[i]), p2 = project(...SC[j]);
+                drawEdge(p1, p2, 'rgba(255,68,68,0.5)', 1.5);
+            }
+        }
+        if (showDual) {
+            for (let [i, j] of RD_EDGES) {
+                let p1 = project(...RD_VERTS[i]), p2 = project(...RD_VERTS[j]);
+                drawEdge(p1, p2, 'rgba(255,200,50,0.3)', 1);
+            }
+        }
+    }
+
+    // Collect all points for depth sorting
+    let allPoints = [];
+
+    if (showOct) {
+        for (let v of SC) {
+            let p = project(...v);
+            allPoints.push({ p, color: '#ff4444', size: 7, label: 'SC' });
+        }
+    }
+    if (showCuboct) {
+        for (let v of FCC) {
+            let p = project(...v);
+            allPoints.push({ p, color: '#44ff88', size: 5.5, label: 'FCC' });
+        }
+    }
+    if (showCube) {
+        for (let v of BCC) {
+            let p = project(...v);
+            allPoints.push({ p, color: '#4488ff', size: 6, label: 'BCC' });
+        }
+    }
+    if (showDual) {
+        for (let v of RD_VERTS) {
+            let p = project(...v);
+            allPoints.push({ p, color: '#ffcc33', size: 4, label: 'RD' });
+        }
+    }
+
+    // Sort back to front
+    allPoints.sort((a, b) => a.p.z - b.p.z);
+
+    // Draw points
+    for (let pt of allPoints) {
+        // Glow
+        ctx.shadowColor = pt.color;
+        ctx.shadowBlur = 12;
+        drawPoint(pt.p, pt.color, pt.size);
+        ctx.shadowBlur = 0;
+    }
+
+    // Draw origin
+    let origin = project(0, 0, 0);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.beginPath();
+    ctx.arc(origin.x, origin.y, 3, 0, 2 * Math.PI);
+    ctx.fill();
+
+    requestAnimationFrame(render);
+}
+
+render();
+</script>
+</body>
+</html>
