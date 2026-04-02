@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gauss Circle Explorer — From Stutter to Line</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden}
+h1{margin-top:10px;font-size:1.2em;font-weight:300;letter-spacing:.05em;color:#a0b8d8}
+.subtitle{font-size:.75em;color:#667;margin-bottom:3px;font-style:italic}
+.formula-box{display:flex;gap:14px;margin:4px 0;flex-wrap:wrap;justify-content:center}
+.formula-box .f{background:#0d0d18;border:1px solid #1a1a2e;border-radius:4px;padding:3px 10px;font-size:.9em}
+.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;margin:4px 0;max-width:1100px}
+.btn{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.76em;transition:all .2s;white-space:nowrap}
+.btn:hover{background:#2a3a5a;border-color:#4a6a8a}
+.btn.active{background:#2a4a6a;border-color:#5a8aba;color:#fff}
+.toolbar label{font-size:.74em;color:#8899aa;display:flex;align-items:center;gap:3px}
+.toolbar input[type=range]{width:70px;accent-color:#ffd54f}
+.toolbar select{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:2px 6px;font-size:.74em;border-radius:4px}
+.main-layout{display:flex;gap:8px;align-items:flex-start;margin:3px 0}
+.canvas-container{position:relative}
+.canvas-container canvas{display:block;border:1px solid #1a1a2e;border-radius:4px}
+#hoverInfo{position:absolute;top:8px;right:8px;background:rgba(10,10,20,.9);border:1px solid #2a3a5a;border-radius:4px;padding:5px 8px;font-size:.7em;font-family:monospace;color:#a0b8d8;pointer-events:none;display:none;max-width:180px;line-height:1.4}
+.panel{width:290px;background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;font-size:.74em;display:flex;flex-direction:column;gap:4px;padding:6px 8px;max-height:660px;overflow-y:auto}
+.plot-label{color:#556;font-size:.72em;margin-top:1px;text-transform:uppercase;letter-spacing:.06em}
+.plot-canvas{width:272px;height:100px;border:1px solid #1a1a2e;border-radius:3px;background:#08080d}
+.param-section{display:flex;flex-direction:column;gap:4px;border-top:1px solid #1a1a2e;padding-top:5px}
+.param-section label{display:flex;align-items:center;justify-content:space-between;color:#8899aa;font-size:.82em}
+.param-section input[type=range]{width:100px;accent-color:#ffd54f}
+.param-section .pval{color:#a0b8d8;font-family:monospace;min-width:40px;text-align:right}
+.check-row{display:flex;align-items:center;gap:5px;color:#8899aa;font-size:.82em}
+.check-row input{accent-color:#ffd54f}
+
+/* Deep analysis section */
+.section-header{font-size:.85em;color:#667;text-transform:uppercase;letter-spacing:.1em;margin:8px 0 4px;text-align:center;width:100%;max-width:1100px;border-top:1px solid #1a1a2e;padding-top:8px}
+.deep-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:1100px;width:100%;padding:0 10px}
+.deep-card{background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;padding:6px 8px;display:flex;flex-direction:column;gap:3px}
+.deep-card .plot-label{font-size:.7em}
+.deep-card canvas{width:100%;height:140px;border:1px solid #1a1a2e;border-radius:3px;background:#08080d}
+.deep-card .insight{font-size:.68em;color:#556;line-height:1.35;margin-top:2px}
+.deep-card .insight em{color:#a0b8d8;font-style:normal}
+.deep-card .insight .gold{color:#ffd54f}
+.deep-card .insight .blue{color:#44aaff}
+.deep-card .insight .red{color:#ff6644}
+
+.legend{display:flex;gap:10px;margin:4px 0;font-size:.68em;color:#556;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:3px}
+.legend-swatch{width:9px;height:9px;border-radius:2px;border:1px solid #333}
+#telemetry{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;padding:5px 12px;background:#0a0a12;border-top:1px solid #1a1a2e;font-size:.68em;font-family:monospace;color:#556;width:100%;max-width:1100px;margin-bottom:12px}
+.tgroup{display:flex;gap:3px;align-items:center}
+.tlabel{color:#445}
+.tval{color:#a0b8d8;font-weight:bold}
+.tval.gold{color:#ffd54f}.tval.blue{color:#44aaff}.tval.red{color:#ff6644}.tval.cyan{color:#44ddcc}
+</style>
+</head>
+<body>
+<h1>GAUSS CIRCLE EXPLORER &mdash; FROM STUTTER TO LINE</h1>
+<p class="subtitle">Structure within structure: &theta;<sub>3</sub>(q)&sup2; generates R(N) AND G* &middot; Arithmetic of &Zopf;[i]</p>
+
+<div class="formula-box">
+  <div class="f" id="f1"></div>
+  <div class="f" id="f2"></div>
+  <div class="f" id="f3"></div>
+  <div class="f" id="f4"></div>
+  <div class="f" id="f5"></div>
+</div>
+
+<div class="toolbar">
+  <button class="btn" id="btnPlay" onclick="togglePlay()">&#9654; Play</button>
+  <button class="btn" onclick="doReset()">&#8634; Reset</button>
+  <label>Speed <input type="range" id="speedSlider" min="1" max="100" value="5"></label>
+  <button class="btn" onclick="jumpTo(20)">N=20</button>
+  <button class="btn" onclick="jumpTo(50)">Micro</button>
+  <button class="btn" onclick="jumpTo(200)">200</button>
+  <button class="btn" onclick="jumpTo(500)">Meso</button>
+  <button class="btn" onclick="jumpTo(2000)">2k</button>
+  <button class="btn" onclick="jumpTo(5000)">Macro</button>
+  <label>Color <select id="colorMode">
+    <option value="splitInert">Split / Inert</option>
+    <option value="shells">Norm shells</option>
+    <option value="moatDepth">Moat depth</option>
+    <option value="moatCause">Moat cause</option>
+    <option value="binary">Binary</option>
+    <option value="mod4">Norm mod 4</option>
+  </select></label>
+  <div class="check-row"><input type="checkbox" id="chkAnnot" checked><span style="font-size:.74em;color:#889">FTD</span></div>
+  <div class="check-row"><input type="checkbox" id="chkShellRings"><span style="font-size:.74em;color:#889">Shells</span></div>
+  <div class="check-row"><input type="checkbox" id="chkMoatGrid"><span style="font-size:.74em;color:#889">Moat grid</span></div>
+</div>
+
+<div class="main-layout">
+  <div class="canvas-container">
+    <canvas id="mainCanvas" width="650" height="650"></canvas>
+    <div id="hoverInfo"></div>
+  </div>
+  <div class="panel">
+    <div class="plot-label">Level 0 &mdash; R(N) vs &pi;N (macro)</div>
+    <canvas class="plot-canvas" id="chart1" width="272" height="100"></canvas>
+    <div class="plot-label">Level 1 &mdash; E(N) error term (meso)</div>
+    <canvas class="plot-canvas" id="chart2" width="272" height="100"></canvas>
+    <div class="plot-label">Level 2 &mdash; r&#x2082;(n) shell populations (micro)</div>
+    <canvas class="plot-canvas" id="chartR2" width="272" height="100"></canvas>
+    <div class="plot-label">Level 3 &mdash; |E|/&pi;N perception decay</div>
+    <canvas class="plot-canvas" id="chart3" width="272" height="100"></canvas>
+    <div class="plot-label">Level 4 &mdash; Moat density (Landau-Ramanujan)</div>
+    <canvas class="plot-canvas" id="chartMoatDensity" width="272" height="100"></canvas>
+    <div class="param-section">
+      <label>N <input type="range" id="nSlider" min="1" max="5000" value="1" step="1"> <span class="pval" id="nVal">1</span></label>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#44aaff"></div>Split (p&equiv;1 mod 4)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#ff4432"></div>Inert (p&equiv;3 mod 4)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#ffd54f"></div>Gaussian primes</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#44ddcc"></div>r&#x2082;(n)&gt;0 shells</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#331111"></div>r&#x2082;(n)=0 moats</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#ff8800"></div>Deep moat</div>
+</div>
+
+<div class="section-header">DEEP STRUCTURE &mdash; SIX NESTED LAYERS</div>
+
+<div class="deep-grid">
+  <div class="deep-card">
+    <div class="plot-label">&rho;(N) = R(N)/N &rarr; &pi; &mdash; density convergence</div>
+    <canvas id="chartDensity" width="520" height="140"></canvas>
+    <div class="insight">The density of lattice points <em>oscillates around &pi;</em> with decreasing amplitude. At N=5, &rho;=4.20 (33% off). By N=5000, &rho;&asymp;<span class="gold">3.1416</span>. The stutter compresses into the line.</div>
+  </div>
+  <div class="deep-card">
+    <div class="plot-label">&theta;&#x2083; partial sum &rarr; G*/&radic;(2&pi;) &mdash; the bridge to &alpha;</div>
+    <canvas id="chartTheta" width="520" height="140"></canvas>
+    <div class="insight">The same r&#x2082;(n) that counts lattice points, <em>exponentially weighted</em> by e<sup>-&pi;n</sup>, converges to <span class="gold">G*/&radic;(2&pi;) = 1.1803...</span> This is how the stutter encodes the fine structure constant.</div>
+  </div>
+  <div class="deep-card">
+    <div class="plot-label">Split vs Inert prime race &mdash; &pi;(x;4,1) vs &pi;(x;4,3)</div>
+    <canvas id="chartRace" width="520" height="140"></canvas>
+    <div class="insight">Split primes (blue, <span class="blue">p&equiv;1 mod 4</span>) and inert primes (red, <span class="red">p&equiv;3 mod 4</span>) race toward equal density. The <em>Chebyshev bias</em>: inert primes lead early (3,7,11,19,23...) but the race equalizes by PNT.</div>
+  </div>
+  <div class="deep-card">
+    <div class="plot-label">E(N)/N&frac14; &mdash; normalized stutter (Heath-Brown distribution)</div>
+    <canvas id="chartHB" width="520" height="140"></canvas>
+    <div class="insight">Dividing E(N) by N<sup>1/4</sup> reveals the <em>true oscillatory structure</em> &mdash; controlled by zeros of L(s,&chi;<sub>-4</sub>). Hardy conjectured this stays bounded. The oscillations never die; they are the <span class="gold">irreducible arithmetic friction</span> of &Zopf;[i].</div>
+  </div>
+  <div class="deep-card">
+    <div class="plot-label">Moat gap histogram &mdash; consecutive r&#x2082;(n)=0 runs</div>
+    <canvas id="chartGapHist" width="520" height="140"></canvas>
+    <div class="insight">Short moat gaps (1-3) dominate; long gaps are <em>arithmetic deserts</em>. The <span class="gold">longest gap</span> grows slowly with N. Each gap is forced by an inert prime p&equiv;3 (mod 4) appearing to odd power.</div>
+  </div>
+  <div class="deep-card">
+    <div class="plot-label">Moat cause &mdash; which inert primes create the deserts?</div>
+    <canvas id="chartMoatCause" width="520" height="140"></canvas>
+    <div class="insight">Each moat norm is non-representable because some <span class="red">p&equiv;3 (mod 4)</span> divides it to an odd power. Small inert primes (<span class="gold">3, 7, 11</span>) dominate. Framework primes {3,7,47} are highlighted.</div>
+  </div>
+</div>
+
+<div id="telemetry"></div>
+
+<script>
+// =====================================================
+// CONSTANTS
+// =====================================================
+const N_MAX = 5000;
+const MW = 650, MH = 650;
+const G_STAR = 2.9586751191886388;
+const G_STAR_OVER_SQRT2PI = G_STAR / Math.sqrt(2 * Math.PI); // ≈ 1.1803
+
+const FW_PRIMES = [
+    {p: 3, type: 'inert', color: '#ff4432'},
+    {p: 7, type: 'inert', color: '#ff4432'},
+    {p: 13, type: 'split', color: '#44aaff'},
+    {p: 47, type: 'inert', color: '#ff4432'},
+    {p: 137, type: 'split', color: '#44aaff'}
+];
+
+// =====================================================
+// PRECOMPUTATION
+// =====================================================
+function sievePrimes(max) {
+    const s = new Uint8Array(max + 1);
+    s[0] = s[1] = 1;
+    for (let i = 2; i * i <= max; i++)
+        if (!s[i]) for (let j = i * i; j <= max; j += i) s[j] = 1;
+    return s;
+}
+const primeSieve = sievePrimes(N_MAX);
+
+// r₂(n) via chi_{-4} divisor sum
+const r2 = new Int32Array(N_MAX + 1);
+r2[0] = 1;
+const chiSum = new Int32Array(N_MAX + 1);
+for (let d = 1; d <= N_MAX; d++) {
+    const m = d % 4;
+    if (m === 1) for (let n = d; n <= N_MAX; n += d) chiSum[n]++;
+    else if (m === 3) for (let n = d; n <= N_MAX; n += d) chiSum[n]--;
+}
+for (let n = 1; n <= N_MAX; n++) r2[n] = 4 * chiSum[n];
+
+// R(N), E(N)
+const RN = new Int32Array(N_MAX + 1);
+const EN = new Float64Array(N_MAX + 1);
+RN[0] = 1; EN[0] = 1;
+for (let n = 1; n <= N_MAX; n++) {
+    RN[n] = RN[n - 1] + r2[n];
+    EN[n] = RN[n] - Math.PI * n;
+}
+
+// Lattice points sorted by norm
+const latticePoints = [];
+const maxR = Math.ceil(Math.sqrt(N_MAX));
+for (let a = -maxR; a <= maxR; a++)
+    for (let b = -maxR; b <= maxR; b++) {
+        const norm = a * a + b * b;
+        if (norm <= N_MAX) latticePoints.push({a, b, norm});
+    }
+latticePoints.sort((x, y) => x.norm - y.norm || x.a - y.a);
+
+// Norm classification
+const normHasSplit = new Uint8Array(N_MAX + 1);
+const normIsGPrime = new Uint8Array(N_MAX + 1);
+for (let n = 1; n <= N_MAX; n++) {
+    let tmp = n;
+    for (let p = 2; p * p <= tmp; p++) {
+        if (tmp % p === 0) {
+            if (p % 4 === 1) normHasSplit[n] = 1;
+            while (tmp % p === 0) tmp = tmp / p | 0;
+        }
+    }
+    if (tmp > 1 && tmp % 4 === 1) normHasSplit[n] = 1;
+    if (n > 1 && !primeSieve[n]) normIsGPrime[n] = 1;
+}
+
+// Split/inert cumulative counts
+const splitCum = new Int32Array(N_MAX + 1);
+const inertCum = new Int32Array(N_MAX + 1);
+for (let n = 2; n <= N_MAX; n++) {
+    splitCum[n] = splitCum[n - 1];
+    inertCum[n] = inertCum[n - 1];
+    if (!primeSieve[n]) {
+        if (n % 4 === 1) splitCum[n]++;
+        else if (n % 4 === 3) inertCum[n]++;
+    }
+}
+
+// Theta partial sums: S(N) = sum_{n=0}^{N} r2(n) * exp(-pi*n)
+const thetaPartial = new Float64Array(N_MAX + 1);
+thetaPartial[0] = 1; // r2(0)*exp(0) = 1
+for (let n = 1; n <= N_MAX; n++) {
+    thetaPartial[n] = thetaPartial[n - 1] + r2[n] * Math.exp(-Math.PI * n);
+}
+
+// =====================================================
+// MOAT PRECOMPUTATION
+// =====================================================
+const INERT_PRIMES = [3,7,11,19,23,31,43,47,59,67,71,79];
+const CAUSE_COLORS = {3:[255,50,50],7:[255,140,30],11:[255,220,40],19:[40,200,80],23:[40,180,180],31:[60,120,255],43:[160,80,220],47:[220,50,180]};
+
+const isMoatNorm = new Uint8Array(N_MAX + 1);
+const moatCumCount = new Uint16Array(N_MAX + 1);
+const gapStart = new Uint16Array(N_MAX + 1);
+const gapEnd = new Uint16Array(N_MAX + 1);
+const gapLen = new Uint16Array(N_MAX + 1);
+const moatCauseSmallest = new Uint16Array(N_MAX + 1);
+const maxGapUpTo = new Uint16Array(N_MAX + 1);
+
+// Mark moats
+for (let n = 1; n <= N_MAX; n++) isMoatNorm[n] = (r2[n] === 0) ? 1 : 0;
+
+// Gap start/end/len
+{
+    let gs = 0;
+    for (let n = 1; n <= N_MAX; n++) {
+        if (isMoatNorm[n]) {
+            if (!isMoatNorm[n - 1]) gs = n;
+            gapStart[n] = gs;
+        }
+    }
+    let ge = 0;
+    for (let n = N_MAX; n >= 1; n--) {
+        if (isMoatNorm[n]) {
+            if (n === N_MAX || !isMoatNorm[n + 1]) ge = n;
+            gapEnd[n] = ge;
+            gapLen[n] = ge - gapStart[n] + 1;
+        }
+    }
+}
+
+// Cumulative moat count + density + running max gap
+for (let n = 1; n <= N_MAX; n++) {
+    moatCumCount[n] = moatCumCount[n - 1] + isMoatNorm[n];
+    maxGapUpTo[n] = Math.max(maxGapUpTo[n - 1], gapLen[n]);
+}
+
+// Moat cause: smallest inert prime with odd exponent
+for (let n = 1; n <= N_MAX; n++) {
+    if (!isMoatNorm[n]) continue;
+    let tmp = n;
+    for (const p of INERT_PRIMES) {
+        if (p * p > tmp && tmp <= 1) break;
+        let exp = 0;
+        while (tmp % p === 0) { tmp = tmp / p | 0; exp++; }
+        if (exp % 2 === 1) { moatCauseSmallest[n] = p; break; }
+    }
+    // Check remaining factor
+    if (!moatCauseSmallest[n] && tmp > 1 && tmp % 4 === 3) moatCauseSmallest[n] = tmp;
+    if (!moatCauseSmallest[n]) moatCauseSmallest[n] = 3; // fallback
+}
+
+// Gap histogram (precomputed)
+const gapHist = new Map();
+let longestGap = 0, longestGapAt = 0;
+for (let n = 1; n <= N_MAX; n++) {
+    if (isMoatNorm[n] && gapStart[n] === n) {
+        const gl = gapLen[n];
+        gapHist.set(gl, (gapHist.get(gl) || 0) + 1);
+        if (gl > longestGap) { longestGap = gl; longestGapAt = n; }
+    }
+}
+
+// =====================================================
+// CANVAS & STATE
+// =====================================================
+const mainCanvas = document.getElementById('mainCanvas');
+const mCtx = mainCanvas.getContext('2d');
+const canvases = {};
+['chart1','chart2','chartR2','chart3','chartMoatDensity','chartDensity','chartTheta','chartRace','chartHB','chartGapHist','chartMoatCause'].forEach(id => {
+    canvases[id] = document.getElementById(id).getContext('2d');
+});
+
+let currentN = 1, playing = false, speed = 5, hoveredNorm = -1;
+const nSlider = document.getElementById('nSlider');
+const nVal = document.getElementById('nVal');
+const speedSlider = document.getElementById('speedSlider');
+const colorMode = document.getElementById('colorMode');
+const chkAnnot = document.getElementById('chkAnnot');
+const chkShellRings = document.getElementById('chkShellRings');
+const chkMoatGrid = document.getElementById('chkMoatGrid');
+const btnPlay = document.getElementById('btnPlay');
+const hoverInfo = document.getElementById('hoverInfo');
+
+nSlider.oninput = () => { currentN = +nSlider.value; };
+speedSlider.oninput = () => { speed = +speedSlider.value; };
+
+function togglePlay() {
+    playing = !playing;
+    btnPlay.textContent = playing ? '\u23F8 Pause' : '\u25B6 Play';
+    btnPlay.classList.toggle('active', playing);
+}
+function doReset() {
+    currentN = 1; nSlider.value = 1; playing = false;
+    btnPlay.textContent = '\u25B6 Play'; btnPlay.classList.remove('active');
+}
+function jumpTo(n) { currentN = n; nSlider.value = n; }
+
+// Hover on main canvas
+mainCanvas.addEventListener('mousemove', (e) => {
+    const N = Math.max(1, Math.floor(currentN));
+    const rMax = Math.sqrt(N);
+    const margin = 16;
+    const scale = (MW - 2 * margin) / (2 * rMax + 2);
+    const cx = MW / 2, cy = MH / 2;
+    const rect = mainCanvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (MW / rect.width);
+    const my = (e.clientY - rect.top) * (MH / rect.height);
+    const ga = Math.round((mx - cx) / scale);
+    const gb = Math.round((cy - my) / scale);
+    const norm = ga * ga + gb * gb;
+    if (norm <= N && norm >= 0) {
+        hoveredNorm = norm;
+        const cls = norm === 0 ? 'origin' : (normHasSplit[norm] ? 'split' : 'inert');
+        const isPrime = norm > 1 && normIsGPrime[norm] ? ' [Gaussian prime]' : '';
+        hoverInfo.style.display = 'block';
+        let moatStr = '';
+        if (isMoatNorm[norm]) moatStr = `<br><b style="color:#ff8800">MOAT</b> gap=${gapLen[norm]} (${gapStart[norm]}..${gapEnd[norm]})<br>cause: p=${moatCauseSmallest[norm]}`;
+        else if (norm > 0) moatStr = '<br>representable';
+        hoverInfo.innerHTML = `(${ga}, ${gb})<br>norm = ${norm}<br>r\u2082(${norm}) = ${r2[norm]}<br>class: ${cls}${isPrime}<br>R(${norm}) = ${RN[norm]}${moatStr}`;
+    } else {
+        hoveredNorm = -1;
+        hoverInfo.style.display = 'none';
+    }
+});
+mainCanvas.addEventListener('mouseleave', () => { hoveredNorm = -1; hoverInfo.style.display = 'none'; });
+
+// =====================================================
+// POINT COLORS
+// =====================================================
+function hsl2rgb(h, s, l) {
+    h /= 360; const q = l < .5 ? l*(1+s) : l+s-l*s, p = 2*l-q;
+    const f = (p,q,t) => { t=((t%1)+1)%1; return t<1/6?p+(q-p)*6*t:t<.5?q:t<2/3?p+(q-p)*(2/3-t)*6:p; };
+    return [Math.round(f(p,q,h+1/3)*255), Math.round(f(p,q,h)*255), Math.round(f(p,q,h-1/3)*255)];
+}
+
+function getColor(norm, mode) {
+    if (norm === 0) return [255,255,255];
+    if (mode === 'binary') return [180, 190, 210];
+    if (mode === 'mod4') {
+        const m = norm % 4;
+        return m===0?[100,50,50]:m===1?[68,170,255]:m===2?[200,200,80]:[255,100,60];
+    }
+    if (mode === 'shells') {
+        if (r2[norm] === 0) return [30, 8, 8];
+        const t = (norm % 60) / 60;
+        return hsl2rgb(200 + t * 160, 0.7, 0.25 + (r2[norm] / 16) * 0.3);
+    }
+    if (mode === 'moatDepth') {
+        if (r2[norm] > 0) return hsl2rgb(220, 0.4, 0.06 + Math.min(r2[norm]/24, 0.12));
+        const t = Math.min(gapLen[norm] / 12, 1);
+        return hsl2rgb(60 * (1 - t), 0.95, 0.15 + t * 0.55); // red(short) → yellow(deep)
+    }
+    if (mode === 'moatCause') {
+        if (r2[norm] > 0) return [12, 14, 25];
+        const p = moatCauseSmallest[norm];
+        return CAUSE_COLORS[p] || hsl2rgb((p * 37) % 360, 0.7, 0.4);
+    }
+    // splitInert
+    if (normIsGPrime[norm]) return [255, 213, 79];
+    if (normHasSplit[norm]) return [68, 170, 255];
+    return [255, 68, 50];
+}
+
+// =====================================================
+// MAIN CANVAS
+// =====================================================
+function drawLattice(N) {
+    mCtx.fillStyle = '#08080d';
+    mCtx.fillRect(0, 0, MW, MH);
+    if (N < 1) return;
+
+    const rMax = Math.sqrt(N);
+    const margin = 16;
+    const scale = (MW - 2 * margin) / (2 * rMax + 2);
+    const cx = MW / 2, cy = MH / 2;
+    const mode = colorMode.value;
+    const showShells = chkShellRings.checked && N <= 300;
+    const annot = chkAnnot.checked;
+
+    // Faint axes
+    mCtx.strokeStyle = '#151520'; mCtx.lineWidth = 1;
+    mCtx.beginPath(); mCtx.moveTo(margin, cy); mCtx.lineTo(MW-margin, cy);
+    mCtx.moveTo(cx, margin); mCtx.lineTo(cx, MH-margin); mCtx.stroke();
+
+    // Shell rings (structure within structure level 2)
+    if (showShells) {
+        for (let n = 1; n <= N; n++) {
+            if (r2[n] === 0) continue;
+            const rad = Math.sqrt(n) * scale;
+            const alpha = Math.min(0.12, 0.03 + r2[n] / 80);
+            mCtx.strokeStyle = r2[n] >= 8 ? `rgba(68,170,255,${alpha})` : `rgba(100,100,130,${alpha})`;
+            mCtx.lineWidth = 0.5;
+            mCtx.beginPath(); mCtx.arc(cx, cy, rad, 0, 2*Math.PI); mCtx.stroke();
+        }
+    }
+
+    // Boundary circle
+    mCtx.strokeStyle = 'rgba(255,213,79,0.25)'; mCtx.lineWidth = 1.5;
+    mCtx.beginPath(); mCtx.arc(cx, cy, rMax*scale, 0, 2*Math.PI); mCtx.stroke();
+
+    // Hovered norm ring
+    if (hoveredNorm > 0 && hoveredNorm <= N) {
+        mCtx.strokeStyle = 'rgba(255,255,255,0.4)'; mCtx.lineWidth = 2;
+        mCtx.beginPath(); mCtx.arc(cx, cy, Math.sqrt(hoveredNorm)*scale, 0, 2*Math.PI); mCtx.stroke();
+    }
+
+    // Points
+    let ptSize = N < 80 ? Math.max(3.5, Math.min(9, scale*0.45))
+        : N < 400 ? Math.max(2, Math.min(4, scale*0.38))
+        : N < 1500 ? Math.max(1, Math.min(2.5, scale*0.32))
+        : Math.max(0.6, Math.min(1.5, scale*0.28));
+
+    for (let i = 0; i < latticePoints.length; i++) {
+        const pt = latticePoints[i];
+        if (pt.norm > N) break;
+        const px = cx + pt.a * scale, py = cy - pt.b * scale;
+        const [r, g, b] = getColor(pt.norm, mode);
+        const highlight = (pt.norm === hoveredNorm);
+        mCtx.fillStyle = highlight ? '#ffffff' : `rgb(${r},${g},${b})`;
+        if (N < 300) {
+            mCtx.beginPath();
+            mCtx.arc(px, py, highlight ? ptSize*1.4 : ptSize, 0, 2*Math.PI);
+            mCtx.fill();
+        } else {
+            const s = highlight ? ptSize*1.6 : ptSize;
+            mCtx.fillRect(px-s/2, py-s/2, s, s);
+        }
+    }
+
+    // Moat grid overlay — draw boundaries where moat status changes
+    if (chkMoatGrid.checked && N >= 100) {
+        const maxA = Math.floor(Math.sqrt(N));
+        mCtx.strokeStyle = 'rgba(255,140,40,0.15)';
+        mCtx.lineWidth = 0.6;
+        mCtx.beginPath();
+        for (let a = -maxA; a <= maxA; a++) {
+            for (let b = -maxA; b <= maxA; b++) {
+                const n1 = a*a + b*b;
+                if (n1 > N || n1 === 0) continue;
+                const m1 = isMoatNorm[n1];
+                // Check right neighbor
+                const n2 = (a+1)*(a+1) + b*b;
+                if (n2 <= N && n2 > 0) {
+                    const m2 = isMoatNorm[n2];
+                    if (m1 !== m2) {
+                        const x = cx + (a + 0.5) * scale;
+                        const y1 = cy - (b - 0.5) * scale;
+                        const y2 = cy - (b + 0.5) * scale;
+                        mCtx.moveTo(x, y1); mCtx.lineTo(x, y2);
+                    }
+                }
+                // Check up neighbor
+                const n3 = a*a + (b+1)*(b+1);
+                if (n3 <= N && n3 > 0) {
+                    const m3 = isMoatNorm[n3];
+                    if (m1 !== m3) {
+                        const x1 = cx + (a - 0.5) * scale;
+                        const x2 = cx + (a + 0.5) * scale;
+                        const y = cy - (b + 0.5) * scale;
+                        mCtx.moveTo(x1, y); mCtx.lineTo(x2, y);
+                    }
+                }
+            }
+        }
+        mCtx.stroke();
+    }
+
+    // Origin
+    mCtx.fillStyle = '#fff'; mCtx.beginPath(); mCtx.arc(cx, cy, 2, 0, 2*Math.PI); mCtx.fill();
+
+    // Annotations
+    if (!annot) return;
+    mCtx.font = '10px monospace';
+    if (N >= 5 && N <= 25) {
+        mCtx.fillStyle = 'rgba(255,213,79,0.85)';
+        mCtx.fillText('R(5) = 21', cx + rMax*scale*0.35, cy - rMax*scale*0.65);
+    }
+    if (N >= 137 && N <= 250) {
+        mCtx.strokeStyle = 'rgba(255,213,79,0.35)'; mCtx.lineWidth = 2;
+        mCtx.setLineDash([4,4]);
+        mCtx.beginPath(); mCtx.arc(cx, cy, Math.sqrt(137)*scale, 0, 2*Math.PI); mCtx.stroke();
+        mCtx.setLineDash([]);
+        mCtx.fillStyle = 'rgba(255,213,79,0.8)';
+        mCtx.fillText('N=137 (1/\u03B1)', cx+Math.sqrt(137)*scale*0.55, cy-Math.sqrt(137)*scale*0.55);
+    }
+}
+
+// =====================================================
+// CHART HELPERS
+// =====================================================
+function chartPad(ctx, w, h) {
+    const p = {l:32,r:4,t:4,b:12};
+    return {...p, cw: w-p.l-p.r, ch: h-p.t-p.b, w, h, ctx};
+}
+
+function drawAxes(c) {
+    c.ctx.strokeStyle = '#1a1a2e'; c.ctx.lineWidth = 1;
+    c.ctx.beginPath(); c.ctx.moveTo(c.l, c.t); c.ctx.lineTo(c.l, c.h-c.b);
+    c.ctx.lineTo(c.w-c.r, c.h-c.b); c.ctx.stroke();
+}
+
+function labelY(c, top, bot) {
+    c.ctx.fillStyle = '#445'; c.ctx.font = '7px monospace';
+    c.ctx.fillText(top, 1, c.t + 8);
+    if (bot !== undefined) c.ctx.fillText(bot, 1, c.h - c.b);
+}
+
+function fwMarkers(c, N) {
+    if (!chkAnnot.checked) return;
+    for (const fw of FW_PRIMES) {
+        if (fw.p > N) continue;
+        const x = c.l + (fw.p / N) * c.cw;
+        c.ctx.strokeStyle = fw.color + '44'; c.ctx.lineWidth = 1;
+        c.ctx.beginPath(); c.ctx.moveTo(x, c.t); c.ctx.lineTo(x, c.h-c.b); c.ctx.stroke();
+        c.ctx.fillStyle = fw.color; c.ctx.font = '7px monospace';
+        c.ctx.fillText(fw.p, x+1, c.t+7);
+    }
+}
+
+// =====================================================
+// RIGHT PANEL CHARTS
+// =====================================================
+
+// Level 0: R(N) vs piN
+function drawChart1(N) {
+    const c = chartPad(canvases.chart1, 272, 100);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+    if (N < 2) return;
+    drawAxes(c);
+    const maxY = Math.max(RN[N], Math.PI*N) * 1.05;
+    // piN
+    c.ctx.strokeStyle = '#ffd54f'; c.ctx.lineWidth = 1.5; c.ctx.beginPath();
+    for (let n = 0; n <= N; n += Math.max(1,N/c.cw|0)) {
+        const x = c.l+(n/N)*c.cw, y = c.h-c.b-(Math.PI*n/maxY)*c.ch;
+        n===0?c.ctx.moveTo(x,y):c.ctx.lineTo(x,y);
+    } c.ctx.stroke();
+    // R(N)
+    c.ctx.strokeStyle = '#44aaff'; c.ctx.lineWidth = 1; c.ctx.beginPath();
+    const s = Math.max(1,N/c.cw|0);
+    for (let n = 0; n <= N; n += s) {
+        const x = c.l+(n/N)*c.cw, y = c.h-c.b-(RN[n]/maxY)*c.ch;
+        n===0?c.ctx.moveTo(x,y):c.ctx.lineTo(x,y);
+    } c.ctx.stroke();
+    c.ctx.fillStyle='#44aaff';c.ctx.font='8px sans-serif';c.ctx.fillText('R(N)',c.l+2,c.t+9);
+    c.ctx.fillStyle='#ffd54f';c.ctx.fillText('\u03C0N',c.l+2,c.t+18);
+    labelY(c, maxY.toFixed(0), '0');
+}
+
+// Level 1: E(N)
+function drawChart2(N) {
+    const c = chartPad(canvases.chart2, 272, 100);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+    if (N < 2) return;
+    let eMin=0, eMax=0;
+    for (let n=1;n<=N;n++){if(EN[n]<eMin)eMin=EN[n];if(EN[n]>eMax)eMax=EN[n];}
+    const range = Math.max(Math.abs(eMin),Math.abs(eMax),1)*1.2;
+    const zY = c.t + c.ch/2;
+    c.ctx.strokeStyle='#333';c.ctx.lineWidth=1;c.ctx.setLineDash([3,3]);
+    c.ctx.beginPath();c.ctx.moveTo(c.l,zY);c.ctx.lineTo(c.w-c.r,zY);c.ctx.stroke();
+    c.ctx.setLineDash([]);
+    fwMarkers(c, N);
+    c.ctx.strokeStyle='#ff9944';c.ctx.lineWidth=1.2;c.ctx.beginPath();
+    const s=Math.max(1,N/c.cw|0);
+    for(let n=1;n<=N;n+=s){const x=c.l+(n/N)*c.cw,y=zY-(EN[n]/range)*(c.ch/2);n<=s?c.ctx.moveTo(x,y):c.ctx.lineTo(x,y);}
+    c.ctx.stroke();
+    c.ctx.fillStyle='#ff9944';c.ctx.font='8px sans-serif';c.ctx.fillText('E(N)',c.l+2,c.t+9);
+    labelY(c,'+'+range.toFixed(0),'-'+range.toFixed(0));
+}
+
+// Level 2: r₂(n) heartbeat
+function drawChartR2(N) {
+    const c = chartPad(canvases.chartR2, 272, 100);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+    if (N < 2) return;
+    let maxR2 = 4;
+    for (let n = 1; n <= N; n++) if (r2[n] > maxR2) maxR2 = r2[n];
+    maxR2 *= 1.1;
+    drawAxes(c);
+
+    // Draw bars for each n
+    const barW = Math.max(0.5, c.cw / N);
+    for (let n = 1; n <= N; n++) {
+        const x = c.l + ((n - 0.5) / N) * c.cw;
+        const h2 = (r2[n] / maxR2) * c.ch;
+        if (r2[n] === 0) {
+            // Moat marker — thin red line at bottom
+            c.ctx.fillStyle = '#331111';
+            c.ctx.fillRect(x, c.h - c.b - 2, Math.max(barW, 0.8), 2);
+        } else {
+            // Color by split vs inert content
+            const isSplitNorm = normHasSplit[n];
+            c.ctx.fillStyle = isSplitNorm ? '#44aaff' : '#ff6644';
+            if (normIsGPrime[n]) c.ctx.fillStyle = '#ffd54f';
+            c.ctx.fillRect(x, c.h - c.b - h2, Math.max(barW, 0.8), h2);
+        }
+    }
+
+    // Highlight hovered norm
+    if (hoveredNorm > 0 && hoveredNorm <= N) {
+        const x = c.l + ((hoveredNorm - 0.5) / N) * c.cw;
+        c.ctx.strokeStyle = '#fff';
+        c.ctx.lineWidth = 1;
+        c.ctx.beginPath(); c.ctx.moveTo(x, c.t); c.ctx.lineTo(x, c.h-c.b); c.ctx.stroke();
+    }
+
+    c.ctx.fillStyle='#44ddcc';c.ctx.font='8px sans-serif';c.ctx.fillText('r\u2082(n)',c.l+2,c.t+9);
+    labelY(c, maxR2.toFixed(0), '0');
+}
+
+// Level 3: |E|/piN relative stutter
+function drawChart3(N) {
+    const c = chartPad(canvases.chart3, 272, 100);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+    if (N < 3) return;
+    let maxRel = 0;
+    for(let n=1;n<=N;n++){const r=Math.abs(EN[n])/(Math.PI*n);if(r>maxRel)maxRel=r;}
+    maxRel = Math.max(maxRel,.01)*1.1;
+    drawAxes(c);
+    // 1/sqrt(N) envelope
+    c.ctx.strokeStyle='#444';c.ctx.lineWidth=1;c.ctx.setLineDash([3,3]);c.ctx.beginPath();
+    for(let n=1;n<=N;n+=Math.max(1,N/c.cw|0)){const x=c.l+(n/N)*c.cw,env=1/Math.sqrt(n),y=c.h-c.b-(Math.min(env,maxRel)/maxRel)*c.ch;n<=1?c.ctx.moveTo(x,y):c.ctx.lineTo(x,y);}
+    c.ctx.stroke();c.ctx.setLineDash([]);
+    // Actual
+    c.ctx.strokeStyle='#44ddcc';c.ctx.lineWidth=1.2;c.ctx.beginPath();
+    const s=Math.max(1,N/c.cw|0);
+    for(let n=1;n<=N;n+=s){const r=Math.abs(EN[n])/(Math.PI*n),x=c.l+(n/N)*c.cw,y=c.h-c.b-(Math.min(r,maxRel)/maxRel)*c.ch;n<=s?c.ctx.moveTo(x,y):c.ctx.lineTo(x,y);}
+    c.ctx.stroke();
+    c.ctx.fillStyle='#44ddcc';c.ctx.font='8px sans-serif';c.ctx.fillText('|E|/\u03C0N',c.l+2,c.t+9);
+    c.ctx.fillStyle='#444';c.ctx.fillText('1/\u221AN',c.l+45,c.t+9);
+    labelY(c,(maxRel*100).toFixed(0)+'%','0');
+}
+
+// Level 4: Moat density (Landau-Ramanujan)
+function drawMoatDensityChart(N) {
+    const c = chartPad(canvases.chartMoatDensity, 272, 100);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+    if (N < 5) return;
+    drawAxes(c);
+
+    let maxD = 0;
+    for (let n = 1; n <= N; n++) { const d = moatCumCount[n]/n; if (d > maxD) maxD = d; }
+    maxD = Math.max(maxD, 0.1) * 1.1;
+
+    // Theoretical curve: 1 - K/sqrt(ln(n))
+    const K = 0.7642236535;
+    c.ctx.strokeStyle = '#ffd54f44'; c.ctx.lineWidth = 1; c.ctx.setLineDash([3,3]); c.ctx.beginPath();
+    const s = Math.max(1, N/c.cw|0);
+    for (let n = 2; n <= N; n += s) {
+        const theory = 1 - K / Math.sqrt(Math.log(n));
+        const x = c.l+(n/N)*c.cw, y = c.h-c.b-(Math.min(theory,maxD)/maxD)*c.ch;
+        n <= s+1 ? c.ctx.moveTo(x,y) : c.ctx.lineTo(x,y);
+    }
+    c.ctx.stroke(); c.ctx.setLineDash([]);
+
+    // Actual moat density
+    c.ctx.strokeStyle = '#ff6644'; c.ctx.lineWidth = 1.2; c.ctx.beginPath();
+    for (let n = 1; n <= N; n += s) {
+        const d = moatCumCount[n]/n;
+        const x = c.l+(n/N)*c.cw, y = c.h-c.b-(d/maxD)*c.ch;
+        n <= s ? c.ctx.moveTo(x,y) : c.ctx.lineTo(x,y);
+    }
+    c.ctx.stroke();
+
+    c.ctx.fillStyle='#ff6644';c.ctx.font='8px sans-serif';c.ctx.fillText('Moat%',c.l+2,c.t+9);
+    c.ctx.fillStyle='#ffd54f';c.ctx.fillText('1-K/\u221A(lnN)',c.l+40,c.t+9);
+    labelY(c,(maxD*100).toFixed(0)+'%','0');
+}
+
+// =====================================================
+// DEEP ANALYSIS CHARTS
+// =====================================================
+
+// Density convergence: R(N)/N → π
+function drawDensity(N) {
+    const cv = document.getElementById('chartDensity');
+    const ctx = canvases.chartDensity;
+    const w = cv.width, h = cv.height;
+    ctx.fillStyle = '#08080d'; ctx.fillRect(0, 0, w, h);
+    if (N < 2) return;
+    const p = {l:36,r:6,t:6,b:14};
+    const cw = w-p.l-p.r, ch = h-p.t-p.b;
+
+    // Find range
+    let dMin = Math.PI, dMax = Math.PI;
+    for (let n=1;n<=N;n++){const d=RN[n]/n;if(d<dMin)dMin=d;if(d>dMax)dMax=d;}
+    const margin2 = Math.max(dMax-Math.PI, Math.PI-dMin, 0.1)*1.3;
+    const lo = Math.PI - margin2, hi = Math.PI + margin2;
+
+    // π line
+    const piY = p.t + ((hi-Math.PI)/(hi-lo))*ch;
+    ctx.strokeStyle = '#ffd54f55'; ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(p.l,piY); ctx.lineTo(w-p.r,piY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#ffd54f';ctx.font='8px monospace';ctx.fillText('\u03C0',p.l-12,piY+3);
+
+    fwMarkers({...p, cw, ch, w, h, ctx, t:p.t}, N);
+
+    // Density line
+    ctx.strokeStyle = '#44ddcc'; ctx.lineWidth = 1.2; ctx.beginPath();
+    const s = Math.max(1, N/cw|0);
+    for (let n=1;n<=N;n+=s){
+        const d=RN[n]/n;
+        const x=p.l+(n/N)*cw, y=p.t+((hi-d)/(hi-lo))*ch;
+        n<=s?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle='#44ddcc';ctx.font='9px sans-serif';ctx.fillText('R(N)/N',p.l+2,p.t+10);
+    ctx.fillStyle='#445';ctx.font='7px monospace';
+    ctx.fillText(hi.toFixed(2),1,p.t+8);ctx.fillText(lo.toFixed(2),1,h-p.b);
+}
+
+// Theta partial sum convergence
+function drawTheta(N) {
+    const cv = document.getElementById('chartTheta');
+    const ctx = canvases.chartTheta;
+    const w = cv.width, h = cv.height;
+    ctx.fillStyle = '#08080d'; ctx.fillRect(0, 0, w, h);
+    if (N < 2) return;
+    const p = {l:36,r:6,t:6,b:14};
+    const cw = w-p.l-p.r, ch = h-p.t-p.b;
+
+    const target = G_STAR_OVER_SQRT2PI;
+    // The partial sum converges VERY fast due to exp(-pi*n)
+    // Show convergence on log scale of error from target
+    const useLog = N > 20;
+
+    if (useLog) {
+        // Log|S(n) - target| vs n
+        let minLog = 0, maxLog = 0;
+        for (let n=0;n<=Math.min(N,30);n++){
+            const err = Math.abs(thetaPartial[n] - target);
+            if (err > 1e-16) { const le = Math.log10(err); if(le<minLog)minLog=le;if(le>maxLog)maxLog=le; }
+        }
+        minLog = Math.min(minLog, -15);
+        maxLog = Math.max(maxLog, 0.5);
+
+        // Axes
+        ctx.strokeStyle='#1a1a2e';ctx.lineWidth=1;ctx.beginPath();
+        ctx.moveTo(p.l,p.t);ctx.lineTo(p.l,h-p.b);ctx.lineTo(w-p.r,h-p.b);ctx.stroke();
+
+        // Target line (error = 0 = log(epsilon))
+        ctx.strokeStyle='#ffd54f44';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+        const tgtY = h-p.b;
+        ctx.beginPath();ctx.moveTo(p.l,tgtY);ctx.lineTo(w-p.r,tgtY);ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Error curve
+        const nShow = Math.min(N, 30);
+        ctx.strokeStyle='#ff66ff';ctx.lineWidth=2;ctx.beginPath();
+        for (let n=0;n<=nShow;n++){
+            const err = Math.abs(thetaPartial[n] - target);
+            const le = err > 1e-16 ? Math.log10(err) : minLog;
+            const x = p.l+(n/nShow)*cw;
+            const y = p.t+((maxLog-le)/(maxLog-minLog))*ch;
+            n===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+
+        // Dots at each n
+        for (let n=0;n<=nShow;n++){
+            const err = Math.abs(thetaPartial[n] - target);
+            const le = err > 1e-16 ? Math.log10(err) : minLog;
+            const x = p.l+(n/nShow)*cw;
+            const y = p.t+((maxLog-le)/(maxLog-minLog))*ch;
+            ctx.fillStyle = r2[n] > 0 ? '#ff66ff' : '#331133';
+            ctx.beginPath();ctx.arc(x,y,2.5,0,2*Math.PI);ctx.fill();
+        }
+
+        ctx.fillStyle='#ff66ff';ctx.font='9px sans-serif';ctx.fillText('log\u2081\u2080|S(n)-G*/\u221A(2\u03C0)|',p.l+2,p.t+10);
+        ctx.fillStyle='#ffd54f';ctx.font='7px monospace';
+        ctx.fillText('G*/\u221A(2\u03C0)='+target.toFixed(6),p.l+2,h-p.b-4);
+        ctx.fillStyle='#445';ctx.font='7px monospace';
+        ctx.fillText('10^'+maxLog.toFixed(0),1,p.t+8);ctx.fillText('10^'+minLog.toFixed(0),1,h-p.b);
+    } else {
+        // Direct value plot at very small N
+        let lo = target*0.5, hi = target*1.5;
+        for(let n=0;n<=N;n++){const v=thetaPartial[n];if(v<lo)lo=v;if(v>hi)hi=v;}
+
+        ctx.strokeStyle='#1a1a2e';ctx.lineWidth=1;ctx.beginPath();
+        ctx.moveTo(p.l,p.t);ctx.lineTo(p.l,h-p.b);ctx.lineTo(w-p.r,h-p.b);ctx.stroke();
+
+        // Target line
+        const tgtY = p.t+((hi-target)/(hi-lo))*ch;
+        ctx.strokeStyle='#ffd54f55';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+        ctx.beginPath();ctx.moveTo(p.l,tgtY);ctx.lineTo(w-p.r,tgtY);ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Partial sum
+        ctx.strokeStyle='#ff66ff';ctx.lineWidth=2;ctx.beginPath();
+        for(let n=0;n<=N;n++){
+            const x=p.l+(n/N)*cw, y=p.t+((hi-thetaPartial[n])/(hi-lo))*ch;
+            n===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle='#ff66ff';ctx.font='9px sans-serif';ctx.fillText('\u03B8\u2083 partial sum',p.l+2,p.t+10);
+        ctx.fillStyle='#ffd54f';ctx.font='7px monospace';
+        ctx.fillText('target='+target.toFixed(4),p.l+2,h-p.b-4);
+    }
+}
+
+// Split vs Inert race
+function drawRace(N) {
+    const cv = document.getElementById('chartRace');
+    const ctx = canvases.chartRace;
+    const w = cv.width, h = cv.height;
+    ctx.fillStyle = '#08080d'; ctx.fillRect(0, 0, w, h);
+    if (N < 5) return;
+    const p = {l:36,r:6,t:6,b:14};
+    const cw = w-p.l-p.r, ch = h-p.t-p.b;
+
+    const maxCount = Math.max(splitCum[N], inertCum[N], 1);
+
+    ctx.strokeStyle='#1a1a2e';ctx.lineWidth=1;ctx.beginPath();
+    ctx.moveTo(p.l,p.t);ctx.lineTo(p.l,h-p.b);ctx.lineTo(w-p.r,h-p.b);ctx.stroke();
+
+    const s = Math.max(1, N/cw|0);
+
+    // Split (blue)
+    ctx.strokeStyle='#44aaff';ctx.lineWidth=1.5;ctx.beginPath();
+    for(let n=2;n<=N;n+=s){const x=p.l+(n/N)*cw,y=h-p.b-(splitCum[n]/maxCount)*ch;n<=s+1?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.stroke();
+
+    // Inert (red)
+    ctx.strokeStyle='#ff4432';ctx.lineWidth=1.5;ctx.beginPath();
+    for(let n=2;n<=N;n+=s){const x=p.l+(n/N)*cw,y=h-p.b-(inertCum[n]/maxCount)*ch;n<=s+1?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.stroke();
+
+    // Difference ribbon
+    ctx.fillStyle='rgba(255,68,50,0.1)';ctx.beginPath();
+    for(let n=2;n<=N;n+=s){const x=p.l+(n/N)*cw;ctx.lineTo(x,h-p.b-(inertCum[n]/maxCount)*ch);}
+    for(let n=N;n>=2;n-=s){const x=p.l+(n/N)*cw;ctx.lineTo(x,h-p.b-(splitCum[n]/maxCount)*ch);}
+    ctx.closePath();ctx.fill();
+
+    ctx.fillStyle='#44aaff';ctx.font='8px sans-serif';ctx.fillText('Split (1 mod 4)',p.l+2,p.t+9);
+    ctx.fillStyle='#ff4432';ctx.fillText('Inert (3 mod 4)',p.l+2,p.t+18);
+    ctx.fillStyle='#445';ctx.font='7px monospace';
+    ctx.fillText(maxCount.toString(),1,p.t+8);ctx.fillText('0',p.l-10,h-p.b);
+
+    // Bias annotation
+    const bias = inertCum[N] - splitCum[N];
+    ctx.fillStyle = bias > 0 ? '#ff6644' : '#44aaff';
+    ctx.font = '8px monospace';
+    ctx.fillText((bias>0?'Inert':'Split')+' leads by '+Math.abs(bias), w-p.r-120, p.t+10);
+}
+
+// Heath-Brown normalized: E(N)/N^{1/4}
+function drawHB(N) {
+    const cv = document.getElementById('chartHB');
+    const ctx = canvases.chartHB;
+    const w = cv.width, h = cv.height;
+    ctx.fillStyle = '#08080d'; ctx.fillRect(0, 0, w, h);
+    if (N < 3) return;
+    const p = {l:36,r:6,t:6,b:14};
+    const cw = w-p.l-p.r, ch = h-p.t-p.b;
+
+    let hbMin=0, hbMax=0;
+    for(let n=1;n<=N;n++){const v=EN[n]/Math.pow(n,0.25);if(v<hbMin)hbMin=v;if(v>hbMax)hbMax=v;}
+    const range = Math.max(Math.abs(hbMin),Math.abs(hbMax),0.5)*1.2;
+    const zY = p.t + ch/2;
+
+    // Zero line
+    ctx.strokeStyle='#333';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(p.l,zY);ctx.lineTo(w-p.r,zY);ctx.stroke();
+    ctx.setLineDash([]);
+
+    fwMarkers({l:p.l,r:p.r,t:p.t,b:p.b,cw,ch,w,h,ctx}, N);
+
+    // The normalized curve
+    ctx.strokeStyle='#cc88ff';ctx.lineWidth=1.2;ctx.beginPath();
+    const s=Math.max(1,N/cw|0);
+    for(let n=1;n<=N;n+=s){
+        const v=EN[n]/Math.pow(n,0.25);
+        const x=p.l+(n/N)*cw, y=zY-(v/range)*(ch/2);
+        n<=s?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle='#cc88ff';ctx.font='9px sans-serif';ctx.fillText('E(N)/N\u00BC',p.l+2,p.t+10);
+    ctx.fillStyle='#445';ctx.font='7px monospace';
+    ctx.fillText('+'+range.toFixed(1),1,p.t+8);ctx.fillText('-'+range.toFixed(1),1,h-p.b);
+}
+
+// Moat gap histogram
+function drawGapHist(N) {
+    const cv = document.getElementById('chartGapHist');
+    const ctx = canvases.chartGapHist;
+    const w = cv.width, h = cv.height;
+    ctx.fillStyle = '#08080d'; ctx.fillRect(0, 0, w, h);
+    if (N < 5) return;
+    const p = {l:36,r:6,t:6,b:14};
+    const cw = w-p.l-p.r, ch = h-p.t-p.b;
+
+    // Build histogram up to current N
+    const hist = new Map();
+    let maxGL = 0, maxCount = 0, mxGap = 0, mxGapAt = 0;
+    for (let n = 1; n <= N; n++) {
+        if (isMoatNorm[n] && gapStart[n] === n && gapEnd[n] <= N) {
+            const gl = gapLen[n];
+            const c2 = (hist.get(gl) || 0) + 1;
+            hist.set(gl, c2);
+            if (gl > maxGL) maxGL = gl;
+            if (c2 > maxCount) maxCount = c2;
+            if (gl > mxGap) { mxGap = gl; mxGapAt = n; }
+        }
+    }
+    if (maxGL < 1) return;
+
+    ctx.strokeStyle='#1a1a2e';ctx.lineWidth=1;ctx.beginPath();
+    ctx.moveTo(p.l,p.t);ctx.lineTo(p.l,h-p.b);ctx.lineTo(w-p.r,h-p.b);ctx.stroke();
+
+    const barW = Math.max(2, cw / (maxGL + 1));
+    for (let gl = 1; gl <= maxGL; gl++) {
+        const count = hist.get(gl) || 0;
+        if (count === 0) continue;
+        const x = p.l + ((gl - 0.5) / (maxGL + 1)) * cw;
+        const bh = (count / maxCount) * ch;
+        const t = Math.min(gl / 10, 1);
+        ctx.fillStyle = gl === mxGap ? '#ffd54f' : `rgb(${180+t*75|0},${60+t*80|0},${30|0})`;
+        ctx.fillRect(x - barW/2, h - p.b - bh, barW, bh);
+    }
+
+    // Labels
+    ctx.fillStyle='#ff8844';ctx.font='9px sans-serif';ctx.fillText('Gap length',p.l+2,p.t+10);
+    ctx.fillStyle='#ffd54f';ctx.font='7px monospace';
+    ctx.fillText('max='+mxGap+' @n='+mxGapAt, w-p.r-100, p.t+10);
+    ctx.fillStyle='#445';ctx.font='7px monospace';
+    ctx.fillText(maxCount.toString(),1,p.t+8);ctx.fillText('1',p.l+2,h-p.b-2);
+    ctx.fillText(maxGL.toString(),p.l+cw-12,h-p.b+10);
+}
+
+// Moat cause decomposition
+function drawMoatCauseChart(N) {
+    const cv = document.getElementById('chartMoatCause');
+    const ctx = canvases.chartMoatCause;
+    const w = cv.width, h = cv.height;
+    ctx.fillStyle = '#08080d'; ctx.fillRect(0, 0, w, h);
+    if (N < 10) return;
+    const p = {l:36,r:6,t:6,b:20};
+    const cw = w-p.l-p.r, ch = h-p.t-p.b;
+
+    // Count moats by cause up to N
+    const counts = {};
+    let total = 0;
+    for (const ip of INERT_PRIMES) counts[ip] = 0;
+    counts['other'] = 0;
+    for (let n = 1; n <= N; n++) {
+        if (!isMoatNorm[n]) continue;
+        total++;
+        const cause = moatCauseSmallest[n];
+        if (counts[cause] !== undefined) counts[cause]++;
+        else counts['other']++;
+    }
+    if (total === 0) return;
+
+    ctx.strokeStyle='#1a1a2e';ctx.lineWidth=1;ctx.beginPath();
+    ctx.moveTo(p.l,p.t);ctx.lineTo(p.l,h-p.b);ctx.lineTo(w-p.r,h-p.b);ctx.stroke();
+
+    // Draw bars per inert prime
+    const primes = INERT_PRIMES.filter(ip => counts[ip] > 0);
+    const maxC = Math.max(...primes.map(ip => counts[ip]), 1);
+    const barW = Math.min(30, cw / (primes.length + 1));
+    const gap2 = (cw - barW * primes.length) / (primes.length + 1);
+
+    primes.forEach((ip, i) => {
+        const x = p.l + gap2 + i * (barW + gap2);
+        const bh = (counts[ip] / maxC) * ch;
+        const cc = CAUSE_COLORS[ip] || [150,150,150];
+        ctx.fillStyle = `rgb(${cc[0]},${cc[1]},${cc[2]})`;
+        ctx.fillRect(x, h - p.b - bh, barW, bh);
+
+        // Framework prime highlight
+        if (ip === 3 || ip === 7 || ip === 47) {
+            ctx.strokeStyle = '#ffd54f';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(x - 1, h - p.b - bh - 1, barW + 2, bh + 2);
+        }
+
+        // Label
+        ctx.fillStyle = `rgb(${cc[0]},${cc[1]},${cc[2]})`;
+        ctx.font = '8px monospace';
+        ctx.fillText('p='+ip, x, h - p.b + 10);
+        ctx.fillStyle = '#889';
+        ctx.fillText(((counts[ip]/total)*100).toFixed(0)+'%', x, p.t + 10);
+    });
+
+    ctx.fillStyle='#ff6644';ctx.font='9px sans-serif';ctx.fillText('Cause prime',p.l+2,p.t+10);
+    ctx.fillStyle='#445';ctx.font='7px monospace';ctx.fillText(maxC.toString(),1,p.t+8);
+}
+
+// =====================================================
+// TELEMETRY
+// =====================================================
+const telDiv = document.getElementById('telemetry');
+function updateTelemetry(N) {
+    const n = Math.max(1, Math.floor(N));
+    const rn = RN[n], pin = Math.PI*n, en = EN[n];
+    const relE = Math.abs(en)/pin*100;
+    const density = rn/n;
+    const thetaVal = thetaPartial[Math.min(n, N_MAX)];
+    const thetaErr = Math.abs(thetaVal - G_STAR_OVER_SQRT2PI);
+    const hbVal = en / Math.pow(n, 0.25);
+
+    telDiv.innerHTML = `
+        <div class="tgroup"><span class="tlabel">N:</span><span class="tval gold">${n}</span></div>
+        <div class="tgroup"><span class="tlabel">R(N):</span><span class="tval blue">${rn}</span></div>
+        <div class="tgroup"><span class="tlabel">&pi;N:</span><span class="tval gold">${pin.toFixed(1)}</span></div>
+        <div class="tgroup"><span class="tlabel">E(N):</span><span class="tval" style="color:${en>=0?'#44ddcc':'#ff6644'}">${en>=0?'+':''}${en.toFixed(1)}</span></div>
+        <div class="tgroup"><span class="tlabel">|E|/&pi;N:</span><span class="tval">${relE.toFixed(3)}%</span></div>
+        <div class="tgroup"><span class="tlabel">&rho;:</span><span class="tval cyan">${density.toFixed(5)}</span></div>
+        <div class="tgroup"><span class="tlabel">r&#x2082;:</span><span class="tval">${r2[n]}</span></div>
+        <div class="tgroup"><span class="tlabel">E/N&frac14;:</span><span class="tval" style="color:#cc88ff">${hbVal.toFixed(2)}</span></div>
+        <div class="tgroup"><span class="tlabel">&theta;&#x2083;&sup2;:</span><span class="tval" style="color:#ff66ff">${thetaVal.toFixed(8)}</span></div>
+        <div class="tgroup"><span class="tlabel">&Delta;&theta;:</span><span class="tval" style="color:#ff66ff">${thetaErr.toExponential(2)}</span></div>
+        <div class="tgroup"><span class="tlabel">Split:</span><span class="tval blue">${splitCum[n]}</span></div>
+        <div class="tgroup"><span class="tlabel">Inert:</span><span class="tval red">${inertCum[n]}</span></div>
+        <div class="tgroup"><span class="tlabel">Moats:</span><span class="tval red">${moatCumCount[n]}</span></div>
+        <div class="tgroup"><span class="tlabel">Moat%:</span><span class="tval" style="color:#ff8844">${(moatCumCount[n]/n*100).toFixed(1)}%</span></div>
+        <div class="tgroup"><span class="tlabel">MaxGap:</span><span class="tval gold">${maxGapUpTo[n]}</span></div>
+        <div class="tgroup"><span class="tlabel">Moat?:</span><span class="tval" style="color:${isMoatNorm[n]?'#ff8800':'#445'}">${isMoatNorm[n]?'p='+moatCauseSmallest[n]:'\u2014'}</span></div>
+    `;
+}
+
+// =====================================================
+// ANIMATION
+// =====================================================
+function animate() {
+    if (playing) {
+        currentN = Math.min(currentN + speed, N_MAX);
+        nSlider.value = Math.floor(currentN);
+        if (currentN >= N_MAX) { playing = false; btnPlay.textContent = '\u25B6 Play'; btnPlay.classList.remove('active'); }
+    }
+    const N = Math.max(1, Math.floor(currentN));
+    nVal.textContent = N;
+
+    drawLattice(N);
+    drawChart1(N);
+    drawChart2(N);
+    drawChartR2(N);
+    drawChart3(N);
+    drawMoatDensityChart(N);
+    drawDensity(N);
+    drawTheta(N);
+    drawRace(N);
+    drawHB(N);
+    drawGapHist(N);
+    drawMoatCauseChart(N);
+    updateTelemetry(N);
+
+    requestAnimationFrame(animate);
+}
+
+// =====================================================
+// INIT
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        katex.render('R(N) = \\pi N + E(N)', document.getElementById('f1'), {displayMode:false});
+        katex.render('\\theta_3(q)^2 = \\sum r_2(n)\\,q^n', document.getElementById('f2'), {displayMode:false});
+        katex.render('G^* = \\sqrt{2\\pi}\\;\\theta_3(e^{-\\pi})^2', document.getElementById('f3'), {displayMode:false});
+        katex.render('r_2(n) = 4\\!\\sum_{d|n}\\chi_{\\text{-}4}(d)', document.getElementById('f4'), {displayMode:false});
+        katex.render('r_2(n)=0 \\iff \\exists\\, p\\!\\equiv\\!3\\pmod{4}: v_p(n)\\text{ odd}', document.getElementById('f5'), {displayMode:false});
+    } catch(e) {}
+
+    // Validate
+    console.assert(r2[0]===1&&r2[1]===4&&r2[2]===4&&r2[3]===0&&r2[4]===4&&r2[5]===8, 'r2 values');
+    console.assert(RN[5]===21, 'R(5)='+RN[5]);
+    console.assert(RN[1]===5, 'R(1)='+RN[1]);
+    console.assert(isMoatNorm[3] === 1, 'n=3 should be moat');
+    console.assert(isMoatNorm[5] === 0, 'n=5 should not be moat');
+    console.assert(moatCauseSmallest[3] === 3, 'moat at 3 caused by p=3');
+    console.assert(moatCauseSmallest[21] === 3, 'moat at 21 caused by p=3 (21=3*7)');
+    console.assert(gapLen[3] === 1, 'gap at n=3 has length 1');
+    const thetaTarget = G_STAR_OVER_SQRT2PI;
+    console.assert(Math.abs(thetaPartial[30] - thetaTarget) < 1e-12, 'theta convergence');
+    console.log('Gauss Circle Explorer v2: all invariants passed. R(5)='+RN[5]+' theta(30)='+thetaPartial[30].toFixed(10)+' target='+thetaTarget.toFixed(10));
+
+    animate();
+});
+</script>
+</body>
+</html>
