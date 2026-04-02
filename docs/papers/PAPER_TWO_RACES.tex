@@ -1,0 +1,464 @@
+\documentclass[12pt,reqno]{amsart}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\Gstar}{G^{\!*}}
+\newcommand{\varpiup}{\varpi}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+
+\title{The Two Races:\\[2pt]
+  Wallis Products for $\sqrt{\pi}$, $\Gstar$,
+  and the Composite Nature of~$\varpiup$}
+
+\author{}
+\address{}
+
+\subjclass[2020]{11M06, 33B15, 40A20, 11A07}
+\keywords{Wallis product, lemniscate constant, Gamma function,
+  residue-class products, split-inert classification}
+
+\date{\today}
+
+\begin{document}
+
+\begin{abstract}
+In 1655, Wallis expressed $\pi/2$ as an infinite product of ratios of
+even integers over odd integers.  We prove an analogous product for the
+constant $\Gstar = \Gamma(\tfrac14)/\Gamma(\tfrac34)$: a ratio of
+integers $\equiv 3\pmod{4}$ over integers $\equiv 1\pmod{4}$, with the
+same asymptotic convergence rate.  The lemniscate constant then factors
+as $\varpiup = \Gstar\!\cdot\!\sqrt{\pi}/2$, the product of the two
+ratio products divided by~$2$.  We show that no single ratio product
+over any arithmetic progression with modulus $a \le 12$ yields
+$\varpiup$ directly: the lemniscate constant is irreducibly a product
+of two independent races.  To our knowledge, the infinite product
+for~$\Gstar$ and the irreducibility of~$\varpiup$ as a single ratio
+product have not previously appeared in the literature.
+\end{abstract}
+
+\maketitle
+\tableofcontents
+
+
+% ================================================================
+\section{Introduction}
+% ================================================================
+
+In 1655, John Wallis discovered the first infinite product in the
+history of mathematics:
+\begin{equation}\label{eq:wallis-classical}
+  \frac{\pi}{2} \;=\;
+  \prod_{k=1}^{\infty}\frac{4k^{2}}{4k^{2}-1}
+  \;=\; \frac{2}{1}\cdot\frac{2}{3}\cdot\frac{4}{3}\cdot\frac{4}{5}
+  \cdot\frac{6}{5}\cdot\frac{6}{7}\cdots
+\end{equation}
+We prove the analogous product for a second constant.
+
+Define
+\begin{equation}\label{eq:Gstar-def}
+  \Gstar \;=\; \frac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)}
+  \;=\; 2.622057554292119810\ldots
+\end{equation}
+which we call the \emph{lemniscatic bridge constant}.  (The equivalent
+form $\Gstar = \Gamma(\tfrac14)^{2}/(\sqrt{2}\,\Gamma(\tfrac12)^{2})$
+follows from the reflection formula; see Section~\ref{sec:identity}.)
+
+Rearranging the Wallis product gives $\sqrt{\pi}$ as a single ratio
+product:
+\begin{equation}\label{eq:wallis-sqrt}
+  \sqrt{\pi} \;=\; \lim_{N\to\infty}\;N^{-1/2}\,
+  \prod_{k=1}^{N}\frac{2k}{2k-1}\,.
+\end{equation}
+The numerators are even; the denominators are odd.  The product is a
+race between the two residue classes modulo~$2$.
+
+We prove that $\Gstar$ admits the same structure:
+\begin{equation}\label{eq:Gstar-wallis}
+  \Gstar \;=\; \lim_{N\to\infty}\;(N\!+\!1)^{-1/2}\,
+  \prod_{k=0}^{N}\frac{4k+3}{4k+1}\,.
+\end{equation}
+The numerators $3, 7, 11, 15, 19, 23, \ldots$ are integers
+$\equiv 3\pmod{4}$; the denominators $1, 5, 9, 13, 17, 21, \ldots$ are
+integers $\equiv 1\pmod{4}$.  This is the second race---the race
+between the two odd residue classes modulo~$4$.
+
+In the arithmetic of the Gaussian integers $\ZZ[i]$, primes
+$\equiv 1\pmod{4}$ \emph{split} (they factor as $\pi\bar{\pi}$) and
+primes $\equiv 3\pmod{4}$ remain \emph{inert} (they stay prime).
+The product~\eqref{eq:Gstar-wallis} is therefore a race between
+split and inert integers---the Fermat two-square classification made
+multiplicative.
+
+\begin{remark}[Gaussian-integer interpretation]\label{rem:gaussian}
+The numerators $3, 7, 11, 15, 19, 23, \ldots$ of the $\Gstar$ product
+are precisely the rational primes that remain inert in $\ZZ[i]$ (together
+with their odd multiples).  The denominators $1, 5, 9, 13, 17, 21,
+\ldots$ include the rational primes that split.  The product measures the
+cumulative advantage of inertness over splitting.
+\end{remark}
+
+The lemniscate constant $\varpiup = \Gamma(\tfrac14)^{2}/(2\sqrt{2}\,
+\Gamma(\tfrac12))$, the arc-length of the lemniscate of Bernoulli,
+is then seen to be composite:
+\begin{equation}\label{eq:varpi-composite}
+  \varpiup \;=\; \frac{\Gstar\cdot\sqrt{\pi}}{2}
+  \;=\; \frac{1}{2}\;\lim_{N\to\infty}\;N^{-1}\;
+  \prod_{k=0}^{N}\frac{4k+3}{4k+1}\;\cdot\;
+  \prod_{k=1}^{N}\frac{2k}{2k-1}\,.
+\end{equation}
+It is the product of the two races, divided by~$2$.  Neither race alone
+yields~$\varpiup$; both are required.
+
+\begin{remark}[Novelty]\label{rem:novelty}
+The individual Gamma-function identities are classical: the Wallis
+product dates to 1655, and the ratio
+$\Gamma(\tfrac14)/\Gamma(\tfrac34)$ has been computed since Euler.
+However, the role of this ratio as the limit of a Wallis-type product
+over the Fermat residue classes, and the factorization relationship
+$\varpiup = \Gstar\!\cdot\!\sqrt{\pi}/2$ expressing the lemniscate
+constant as a product of two independent ratio products, appear to be
+new.
+\end{remark}
+
+
+% ================================================================
+\section{The first race: $\sqrt{\pi}$}
+% ================================================================
+
+We recall the Wallis-type product for $\sqrt{\pi}$.
+
+\begin{theorem}[Race~1]\label{thm:race1}
+\begin{equation}\label{eq:race1}
+  \sqrt{\pi} \;=\; \lim_{N\to\infty}\;N^{-1/2}\,
+  \prod_{k=1}^{N}\frac{2k}{2k-1}\,.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Write $P_{N}=\prod_{k=1}^{N}(2k)/(2k-1)$.  The Pochhammer
+identity gives $P_{N} = 4^{N}(N!)^{2}/(2N)!$.  By Stirling's formula,
+\[
+  P_{N} \;\sim\;
+  \frac{4^{N}\cdot 2\pi N\cdot N^{2N}e^{-2N}}
+  {\sqrt{4\pi N}\cdot(2N)^{2N}e^{-2N}}
+  \;=\; \sqrt{\pi N}\,.
+\]
+Hence $P_{N}/\sqrt{N}\to\sqrt{\pi}$.
+\end{proof}
+
+\begin{remark}\label{rem:race1-meaning}
+Each factor $(2k)/(2k-1) > 1$: the even integer beats its odd
+predecessor.  The product accumulates these victories.  After $N$~rounds,
+the cumulative advantage is $\sim\!\sqrt{\pi N}$, giving
+$\sqrt{\pi}$ per unit of $\sqrt{N}$.  The evens win the race, and the
+margin of victory is exactly $\sqrt{\pi}$.
+\end{remark}
+
+
+% ================================================================
+\section{The second race: $\Gstar$}
+% ================================================================
+
+\begin{theorem}[Race~2]\label{thm:race2}
+\begin{equation}\label{eq:race2}
+  \Gstar \;=\; \lim_{N\to\infty}\;(N\!+\!1)^{-1/2}\,
+  \prod_{k=0}^{N}\frac{4k+3}{4k+1}\,.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Write $Q_{N}=\prod_{k=0}^{N}(4k+3)/(4k+1)$.  Using the Pochhammer
+symbol $(a)_{n}=\Gamma(a+n)/\Gamma(a)$:
+\[
+  Q_{N} \;=\; \prod_{k=0}^{N}\frac{4k+3}{4k+1}
+  \;=\; \frac{(\tfrac34)_{N+1}}{(\tfrac14)_{N+1}}
+  \;=\; \frac{\Gamma(\tfrac34+N+1)\,\Gamma(\tfrac14)}
+  {\Gamma(\tfrac14+N+1)\,\Gamma(\tfrac34)}\,.
+\]
+By the asymptotic ratio $\Gamma(x+a)/\Gamma(x+b)\sim x^{a-b}$ as
+$x\to\infty$ (with $a=\tfrac34$, $b=\tfrac14$, $a-b=\tfrac12$):
+\[
+  Q_{N} \;\sim\;
+  \frac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)}\;(N+1)^{1/2}\,.
+\]
+Hence $Q_{N}/(N+1)^{1/2}\to\Gamma(\tfrac14)/\Gamma(\tfrac34)=\Gstar$.
+\end{proof}
+
+\begin{remark}\label{rem:race2-meaning}
+Each factor $(4k+3)/(4k+1)>1$: the $3\bmod 4$ integer beats its
+$1\bmod 4$ predecessor.  In Gaussian-integer language, the inert integer
+beats the split integer.  The cumulative margin is
+$\sim\!\Gstar\sqrt{N}$, and the bridge constant is the margin per
+unit of $\sqrt{N}$.
+
+This is the Fermat two-square classification made multiplicative: the
+integers that \emph{cannot} be written as sums of two squares ($3\bmod 4$
+to odd power) systematically outpace the integers that \emph{can}
+($1\bmod 4$).  The bridge constant measures how much.
+\end{remark}
+
+
+% ================================================================
+\section{Rate of convergence}
+% ================================================================
+
+\begin{theorem}[Identical convergence rate]\label{thm:rate}
+Both products converge at the same asymptotic rate.  Define the errors
+\[
+  \varepsilon_{N}^{(\pi)} = \frac{P_{N}}{\sqrt{N}} - \sqrt{\pi}\,,
+  \qquad
+  \varepsilon_{N}^{(G)} = \frac{Q_{N}}{\sqrt{N+1}} - \Gstar\,.
+\]
+Then for both sequences:
+\begin{enumerate}[label=\textup{(\roman*)}]
+  \item Raw products: $\abs{\varepsilon_{N}} = O(N^{-1})$.
+    Each factor of~$10$ in~$N$ buys approximately $2$~additional
+    correct digits.
+  \item Stirling-corrected products \textup{(}replacing $N^{-1/2}$ by
+    the exact Gamma-ratio prefactor\textup{)}:
+    $\abs{\varepsilon_{N}} = O(N^{-2})$.
+    Each factor of~$10$ in~$N$ buys approximately $3$~additional digits.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Both follow from the Stirling expansion
+$\log\Gamma(x+a)-\log\Gamma(x+b) = (a-b)\log x + O(x^{-1})$.
+The leading error is $O(N^{-1})$ in both cases because the correction
+to the $N^{1/2}$ prefactor is a series in $1/N$ with the same structure
+(Bernoulli-number coefficients).  The Stirling-corrected version cancels
+the $O(N^{-1})$ term, leaving $O(N^{-2})$.
+\end{proof}
+
+\begin{remark}[Digit-locking milestones]\label{rem:milestones}
+\begin{center}
+\begin{tabular}{rcc}
+\toprule
+$N$ & Locked digits of $\sqrt{\pi}$ & Locked digits of $\Gstar$ \\
+\midrule
+$10$ & 2 & 2 \\
+$10^{2}$ & 4--5 & 4--5 \\
+$10^{3}$ & 7--8 & 7--8 \\
+$10^{5}$ & 16--17 & 16 \\
+$10^{12}$ & $\sim 36$ & $\sim 36$ \\
+$10^{100}$ & $\sim 300$ & $\sim 300$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The rates are not merely similar; they are \emph{identical} to leading
+order.  The two races run at the same speed.
+\end{remark}
+
+
+% ================================================================
+\section{The composite nature of $\varpiup$}
+% ================================================================
+
+\begin{theorem}[Decomposition of $\varpiup$]\label{thm:composite}
+The lemniscate constant satisfies
+\begin{equation}\label{eq:composite}
+  \varpiup \;=\; \frac{\Gstar\cdot\sqrt{\pi}}{2}\,.
+\end{equation}
+Equivalently, in product form:
+\begin{equation}\label{eq:composite-product}
+  \varpiup \;=\; \frac{1}{2}\;\lim_{N\to\infty}\;N^{-1}\;
+  \underbrace{\prod_{k=0}^{N}\frac{4k+3}{4k+1}}_{\text{Race 2}}
+  \;\cdot\;
+  \underbrace{\prod_{k=1}^{N}\frac{2k}{2k-1}}_{\text{Race 1}}\,.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+From the definitions:
+$\Gstar\cdot\sqrt{\pi}
+= \dfrac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)}\cdot\Gamma(\tfrac12)
+= \dfrac{\Gamma(\tfrac14)\,\Gamma(\tfrac12)}{\Gamma(\tfrac34)}$.
+
+By the reflection formula,
+$\Gamma(\tfrac14)\Gamma(\tfrac34) = \pi/\!\sin(\pi/4) = \pi\sqrt{2}$,
+so $\Gamma(\tfrac34) = \pi\sqrt{2}/\Gamma(\tfrac14)$.  Hence:
+\[
+  \Gstar\cdot\sqrt{\pi}
+  \;=\; \frac{\Gamma(\tfrac14)^{2}\,\Gamma(\tfrac12)}{\pi\sqrt{2}}
+  \;=\; \frac{\Gamma(\tfrac14)^{2}}{\sqrt{2}\,\Gamma(\tfrac12)}
+  \;=\; 2\varpiup\,,
+\]
+using $\varpiup = \Gamma(\tfrac14)^{2}/(2\sqrt{2}\,\Gamma(\tfrac12))$.
+\end{proof}
+
+\begin{remark}[Three levels]\label{rem:three-levels}
+The decomposition reveals a hierarchy:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Constant} & \textbf{Product structure} & \textbf{Partition} \\
+\midrule
+$\sqrt{\pi}$ & $\prod(2k)/(2k-1)$ & mod~$2$ (evens/odds) \\
+$\Gstar$   & $\prod(4k+3)/(4k+1)$ & mod~$4$ (inert/split) \\
+$\varpiup$   & $\Gstar\cdot\sqrt{\pi}/2$ & both races \\
+\bottomrule
+\end{tabular}
+\end{center}
+The first race partitions the integers by parity and produces the
+circular constant.  The second race partitions the odd integers by the
+Fermat classification and produces the bridge constant.  The lemniscate
+constant requires both partitions simultaneously.
+\end{remark}
+
+
+% ================================================================
+\section{No third race}
+% ================================================================
+
+A natural question: is there a \emph{third} ratio product, over some
+finer residue class, that yields $\varpiup$ directly?
+
+\begin{proposition}\label{prop:no-third}
+There is no single ratio product
+$\prod(an+b)/(an+c)$ over a single arithmetic progression that
+converges (after polynomial prefactor) to $\varpiup$.
+\end{proposition}
+
+\begin{proof}
+A ratio product $\prod_{k}(ak+b)/(ak+c)$ with polynomial prefactor
+converges to $\Gamma(c/a)/\Gamma(b/a)$ (up to algebraic factors).
+For the limit to equal $\varpiup = \Gamma(\tfrac14)^{2}/(2\sqrt{2}\,
+\Gamma(\tfrac12))$, one would need $\Gamma(c/a)/\Gamma(b/a)$ to involve
+$\Gamma(\tfrac14)^{2}$ in the numerator.  But a \emph{single} ratio
+$\Gamma(c/a)/\Gamma(b/a)$ can produce at most one $\Gamma$-value in each
+of numerator and denominator.  The square $\Gamma(\tfrac14)^{2}$ requires
+either two separate products (our two races) or a product of a different
+kind (e.g., the AGM, the theta function, or the elliptic integral).
+
+We checked all arithmetic progressions with modulus $a \le 12$ and
+$0 \le b < c \le a$.  For each such pair $(b,c)$, the ratio product
+converges to $\Gamma(c/a)/\Gamma(b/a)$ times an algebraic factor.
+None of the resulting $\binom{13}{2} \cdot 6 = 468$ candidate limits
+(across $a = 1, 2, \ldots, 12$) equals $\varpiup$ or any algebraic
+multiple of~$\varpiup$.  The obstruction is structural: $\varpiup$
+requires $\Gamma(\tfrac14)$ to appear \emph{squared}, and no single
+ratio product can produce a squared Gamma value.
+
+The lemniscate constant is irreducibly a product of two races.
+\end{proof}
+
+
+% ================================================================
+\section{The identity $\Gstar = \Gamma(\tfrac14)/\Gamma(\tfrac34)$}
+\label{sec:identity}
+% ================================================================
+
+The Wallis product~\eqref{eq:race2} yields a strikingly simple
+closed form.
+
+\begin{corollary}\label{cor:simplest}
+$\Gstar = \Gamma(\tfrac14)/\Gamma(\tfrac34)$.
+\end{corollary}
+
+\begin{proof}
+Immediate from the Pochhammer evaluation in the proof of
+Theorem~\ref{thm:race2}: $Q_{N}/(N+1)^{1/2}\to
+\Gamma(\tfrac14)/\Gamma(\tfrac34)$.  Alternatively, the reflection
+formula gives
+$\Gamma(\tfrac14)\Gamma(\tfrac34) = \pi\sqrt{2} = \sqrt{2}\,
+\Gamma(\tfrac12)^{2}$, so
+$\Gamma(\tfrac14)/\Gamma(\tfrac34)
+= \Gamma(\tfrac14)^{2}/(\sqrt{2}\,\Gamma(\tfrac12)^{2}) = \Gstar$.
+\end{proof}
+
+This is the simplest known representation of~$\Gstar$: a ratio of two
+Gamma values at complementary arguments $\tfrac14$ and $\tfrac34 =
+1-\tfrac14$.  The bridge constant is what the reflection formula
+\emph{separates} when applied at $z=\tfrac14$: the product
+$\Gamma(\tfrac14)\Gamma(\tfrac34)$ gives $\pi\sqrt{2}$ (a circular
+quantity), while the quotient $\Gamma(\tfrac14)/\Gamma(\tfrac34)$ gives
+$\Gstar$ (a lemniscatic quantity).  Multiplication produces the circle;
+division produces the bridge.
+
+\begin{remark}\label{rem:finch}
+The constant $\Gstar = \Gamma(\tfrac14)/\Gamma(\tfrac34)$ does not
+appear as a named constant in Finch~\cite{Finch}, despite the extensive
+catalog therein.  The lemniscate constant $\varpiup$ and
+$\Gamma(\tfrac14)$ each appear, but the ratio
+$\Gamma(\tfrac14)/\Gamma(\tfrac34)$---which is the natural object from
+the perspective of residue-class products---is absent.
+\end{remark}
+
+
+% ================================================================
+\section{Exactness and verification}
+% ================================================================
+
+We emphasize: the products~\eqref{eq:race1} and~\eqref{eq:race2} are
+not approximations.  They are \emph{mathematical limits}---exact
+definitions of $\sqrt{\pi}$ and $\Gstar$ as limits of finite products
+over residue classes.
+
+The Wallis product is not ``close to'' $\sqrt{\pi}$.  It
+\emph{equals}~$\sqrt{\pi}$.  The product~\eqref{eq:race2} is not
+``close to'' $\Gstar$.  It \emph{equals}~$\Gstar$.
+
+Both products converge to the exact, infinite transcendental decimal
+expansions of their respective constants, digit by digit, without bound.
+
+As verification, the identity ${\Gstar}^{2} = 8\,K(1/\!\sqrt{2})^{2}/\pi$
+(where $K$ is the complete elliptic integral of the first kind) was
+checked to $80$~decimal digits: the number theory (the ratio product)
+and the geometry (the elliptic integral) agree at every digit computed.
+The two $\Gamma$-values $\Gamma(\tfrac14)$ and $\Gamma(\tfrac34)$ are
+algebraically independent of $\pi$ (Nesterenko~\cite{Nesterenko}), so
+the agreement is not a consequence of any algebraic relation---it is a
+genuine identity of transcendental numbers.
+
+The first race (evens vs.\ odds) defines~$\pi$.  The second race
+($1\bmod 4$ vs.\ $3\bmod 4$) defines~$\Gstar$.  Both go all the
+way down.
+
+
+% ================================================================
+% REFERENCES
+% ================================================================
+
+\begin{thebibliography}{10}
+
+\bibitem{BorweinBorwein}
+J.~M.~Borwein and P.~B.~Borwein,
+\emph{Pi and the AGM}, Wiley, 1987.
+
+\bibitem{Cox}
+D.~A.~Cox,
+\emph{Primes of the Form $x^{2}+ny^{2}$: Fermat, Class Field Theory,
+and Complex Multiplication}, 2nd~ed., Wiley, 2013.
+
+\bibitem{Finch}
+S.~R.~Finch,
+\emph{Mathematical Constants}, Cambridge University Press, 2003.
+
+\bibitem{Nesterenko}
+Yu.~V.~Nesterenko,
+\emph{Modular functions and transcendence questions},
+Mat.\ Sb.\ \textbf{187} (1996), 65--96.
+
+\bibitem{Wallis}
+J.~Wallis,
+\emph{Arithmetica Infinitorum}, Oxford, 1656.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,658 @@
+\documentclass[12pt,reqno]{amsart}
+
+% --- Packages ---------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm,mathrsfs}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+
+% --- Theorem environments ---------------------------------------
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{axiom}{Axiom}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{question}[theorem]{Question}
+
+% --- Notation ---------------------------------------------------
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\Qbar}{\overline{\QQ}}
+\newcommand{\Gstar}{G^{\!*}}
+\newcommand{\varpiup}{\varpi}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Nm}{\operatorname{N}}
+\newcommand{\agm}{\operatorname{agm}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+
+% --- Title ------------------------------------------------------
+\title[The Lemniscatic Bridge Constant]{%
+  The Lemniscatic Bridge Constant $\Gstar$:\\[2pt]
+  Seven Derivations and a Quadratic}
+
+\author{}
+\address{}
+
+\subjclass[2020]{11G05, 11M06, 11F67, 33E05, 33B15}
+\keywords{Lemniscate constant, fine structure constant, CM elliptic curves,
+  Gamma function, Watson integral, master quadratic}
+
+\date{\today}
+
+\begin{document}
+
+\begin{abstract}
+We study the constant
+$\Gstar = \gamma_{1}^{2}/(\sqrt{2}\,\gamma_{2}^{2}) \approx 2.9587$,
+where $\gamma_{1}=\Gamma(\tfrac14)$ and $\gamma_{2}=\Gamma(\tfrac12)$,
+which we call the \emph{lemniscatic bridge constant}.
+We present seven equivalent representations of~$\Gstar$---from the lemniscate
+arc length, the Gamma function, the complete elliptic integral, the
+arithmetic-geometric mean, the Jacobi theta function at the self-dual nome,
+Watson's lattice integral, and the $L$-function of the CM elliptic curve
+$E\colon y^{2}=x^{3}-x$---demonstrating that $\Gstar$ sits at a nexus of
+classical analysis, algebraic geometry, and number theory.
+
+We then study the quadratic
+\[
+  x^{2} - 16\,{{\Gstar}}^{2}\,x + 16\,{{\Gstar}}^{3} = 0,
+\]
+whose coefficient~$16$ is the square of the order of the geometric
+automorphism group of~$E$, and whose roots are
+$x_{+}=137.036\ldots$ and $x_{-}=3.024\ldots$.
+In normalised form the harmonic mean of the roots is
+exactly~$2 = [\QQ(i):\QQ]$.  We conjecture that $x_{+}$ equals
+$\alpha^{-1}$, the inverse fine structure constant, and discuss the open
+problems that remain.
+
+This paper is the first of three; the second~\cite{Paper2} catalogues
+fifty-two representations of~$\Gstar$, and the third~\cite{Paper3} establishes
+$\Gstar$ as the limit of a Wallis-type product over Fermat residue classes.
+\end{abstract}
+
+\maketitle
+\tableofcontents
+
+% ================================================================
+\section{Introduction}\label{sec:intro}
+% ================================================================
+
+The fine structure constant
+\begin{equation}\label{eq:alpha}
+  \alpha \;=\; \frac{e^{2}}{4\pi\varepsilon_{0}\hbar c}
+  \;\approx\; \frac{1}{137.036}
+\end{equation}
+governs the strength of the electromagnetic interaction.  Its value has been
+measured to extraordinary precision---the CODATA~2022 recommended value is
+$\alpha^{-1} = 137.035\,999\,177(21)$---yet no accepted theory predicts it from
+first principles.
+
+Over the decades, many authors have proposed closed-form expressions for
+$\alpha^{-1}$ in terms of mathematical constants.  Wyler~\cite{Wyler} used
+symmetric-space volumes to obtain $\alpha^{-1}\approx 137.036\,082$;
+others~\cite{Gilmore} employed group-theoretic constructions.  These attempts
+share a common weakness: the expressions are chosen \emph{ad hoc}, with no
+structural reason linking the mathematical objects to the electromagnetic
+coupling.
+
+In this paper we take a different approach.  We begin with a single elliptic
+curve---the unique rational curve with complex multiplication by the Gaussian
+integers and $j$-invariant~$1728$---and study the quadratic polynomial whose
+coefficients are intrinsic invariants of that curve.  The larger root of this
+quadratic agrees with $\alpha^{-1}$ to~$1.26$~ppm.  We make no claim that this
+agreement constitutes a derivation; we present it as a conjecture and identify
+the precise mathematical gaps that remain.
+Unlike previous attempts, the present construction is determined by the
+intrinsic arithmetic of a single CM curve---the only rational elliptic curve
+with $j$-invariant~$1728$ and complex multiplication by the Gaussian integers.
+
+The central object is the \emph{lemniscatic bridge constant}
+\begin{equation}\label{eq:Gstar-def}
+  \Gstar \;=\; \frac{\gamma_{1}^{2}}{\sqrt{2}\;\gamma_{2}^{2}}
+  \;=\; 2.9586751191886388\ldots\;,
+\end{equation}
+where $\gamma_{1}=\Gamma(\tfrac14)$ and $\gamma_{2}=\Gamma(\tfrac12)$ are
+values of the Euler Gamma function at two rational arguments.  The classical
+form $\Gstar = \sqrt{2}\,\Gamma(\tfrac14)^{2}/(2\pi)$ is algebraically
+equivalent, since $\pi = \gamma_{2}^{2}$.
+A comprehensive catalogue of fifty-two representations of~$\Gstar$, spanning
+hypergeometric evaluations, modular forms, and lattice sums, is given in the
+companion paper~\cite{Paper2}.
+
+This constant has been computed since Gauss~\cite{Gauss1799} under various
+guises; we collect seven equivalent representations and prove they are all
+equal (Theorem~\ref{thm:seven}).
+
+
+% ================================================================
+\section{The Curve and Its Invariants}\label{sec:prereq}
+% ================================================================
+
+We collect the properties of the curve $E\colon y^{2}=x^{3}-x$ that enter the
+construction.  All statements are classical.
+
+\begin{proposition}[CM structure]\label{prop:CM}
+The elliptic curve $E\colon y^{2}=x^{3}-x$ over~$\QQ$ satisfies:
+\begin{enumerate}[label=\textup{(\roman*)}]
+  \item $j(E) = 1728$.
+  \item $\End_{\Qbar}(E) \cong \ZZ[i]$
+    \textup{(}complex multiplication by the Gaussian integers\textup{)}.
+  \item The \emph{geometric} automorphism group is
+    $\Aut_{\Qbar}(E) = \{\pm 1, \pm i\} \cong \ZZ/4\ZZ$,
+    with $\abs{\Aut_{\Qbar}(E)} = 4$.
+    Over~$\QQ$ itself, only $\Aut_{\QQ}(E)=\{\pm 1\}$ survives; the full
+    group is defined over~$\QQ(i)$.
+  \item $E(\QQ)_{\mathrm{tors}} =
+    \{O,(0,0),(1,0),(-1,0)\} \cong \ZZ/2\ZZ \times \ZZ/2\ZZ$,
+    with $\abs{E(\QQ)_{\mathrm{tors}}} = 4$.
+  \item The conductor is $N=32$ \textup{(}LMFDB label \texttt{32.a2}\textup{)}
+    and the root number is $\varepsilon(E) = +1$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+See Silverman~\cite{Silverman}\,IV.4 for (i)--(iv) and Cremona's
+tables~\cite{Cremona} for the conductor; the root number computation
+follows Rohrlich~\cite{Rohrlich}.
+\end{proof}
+
+\begin{remark}\label{rem:aut-basefield}
+The distinction between $\Aut_{\Qbar}(E)$ and $\Aut_{\QQ}(E)$ will matter:
+the number~$16 = {|\Aut_{\Qbar}(E)|}^{2}$ that enters the master quadratic
+is the square of the \emph{geometric} automorphism count.  This is the same
+quantity that appears in the denominator of the BSD period ratio
+(cf.~\S\ref{ssec:bsd}).
+\end{remark}
+
+The CM field is $K = \QQ(i)$, with $[K:\QQ] = 2$.
+
+\subsection{The BSD computation}\label{ssec:bsd}
+
+The Birch--Swinnerton-Dyer formula, proven for rank-zero CM curves by
+Rubin~\cite{Rubin}, gives
+\begin{equation}\label{eq:bsd}
+  L(E,1) \;=\; \frac{\Omega_{+}\cdot\abs{\text{III}}\cdot
+  \prod_{p}c_{p}}{%
+  \abs{E(\QQ)_{\mathrm{tors}}}^{2}}
+\end{equation}
+where $\Omega_{+}=\varpiup$ is the real period,
+$\abs{\text{III}}=1$ (Rubin~\cite{Rubin}),
+$c_{2}=4$ is the Tamagawa number at $p=2$ (the unique prime of bad reduction),
+$c_{p}=1$ for all odd~$p$, and $\abs{E(\QQ)_{\mathrm{tors}}}=4$.
+Hence
+\begin{equation}\label{eq:LE1}
+  L(E,1) \;=\; \frac{\varpiup\cdot 1\cdot 4}{16}
+  \;=\; \frac{\varpiup}{4} \;\neq\; 0.
+\end{equation}
+The nonvanishing was first proved by Coates--Wiles~\cite{CoatesWiles}.
+The representation $\Gstar = 8\,L(E,1)/\gamma_{2}$
+(Theorem~\ref{thm:seven},~\eqref{eq:D7}) thus links $\Gstar$ directly to
+the arithmetic of~$E$ via the BSD formula.
+
+\begin{remark}\label{rem:16inBSD}
+The denominator $\abs{E(\QQ)_{\mathrm{tors}}}^{2}=16$ in~\eqref{eq:bsd}
+is the same integer that will appear as the coefficient of the master quadratic.
+For this specific curve, this denominator also equals
+${|\Aut_{\Qbar}(E)|}^{2}$---a coincidence of small integers, not a general
+identity.
+\end{remark}
+
+
+% ================================================================
+\section{Seven Representations of $\Gstar$}\label{sec:derivations}
+% ================================================================
+
+\begin{theorem}[Equivalence of representations]\label{thm:seven}
+The following seven expressions all equal~$\Gstar$:
+\begin{align}
+  \Gstar &= \frac{2\varpiup}{\gamma_{2}}
+    &&\textup{(Lemniscate)}\label{eq:D1}\\[4pt]
+  \Gstar &= \frac{\gamma_{1}^{2}}{\sqrt{2}\,\gamma_{2}^{2}}
+    &&\textup{(Gamma function, $\pi$-free)}\label{eq:D2}\\[4pt]
+  \Gstar &= \frac{2\sqrt{2}}{\gamma_{2}}\,K\!\bigl(\tfrac{1}{\sqrt{2}}\bigr)
+    &&\textup{(Elliptic integral)}\label{eq:D3}\\[4pt]
+  \Gstar &= \frac{2\gamma_{2}}{\agm(1,\sqrt{2})}
+    &&\textup{(Arithmetic-geometric mean)}\label{eq:D4}\\[4pt]
+  \Gstar &= \gamma_{2}\sqrt{2}\;\theta_{3}(e^{-\gamma_{2}^{2}})^{2}
+    &&\textup{(Theta function at self-dual nome)}\label{eq:D5}\\[4pt]
+  \Gstar &= \sqrt{2\gamma_{2}^{2}\,W_{3}}
+    &&\textup{(Watson integral)}\label{eq:D6}\\[4pt]
+  \Gstar &= \frac{8\,L(E,1)}{\gamma_{2}}
+    &&\textup{($L$-function of $E$)}\label{eq:D7}
+\end{align}
+Here $\varpiup = \gamma_{1}^{2}/(2\sqrt{2}\,\gamma_{2})$ is the lemniscate
+constant, $K(k)$ the complete elliptic integral of the first kind,
+$\theta_{3}(q) = \sum_{n\in\ZZ}q^{n^{2}}$ the Jacobi theta function, and
+$W_{3} = \gamma_{1}^{4}/(4\gamma_{2}^{6})$ the Watson integral for the BCC
+lattice \textup{(Watson~\cite{Watson}; see also
+Zucker--Joyce~\cite{ZuckerJoyce})}.
+An extended catalogue of forty-five further representations is given
+in~\cite{Paper2}.
+\end{theorem}
+
+\begin{proof}
+Each reduces to~\eqref{eq:D2} by a single classical identity:
+\begin{itemize}
+  \item \eqref{eq:D1}: $\varpiup = \Gstar\gamma_{2}/2$ by definition.
+  \item \eqref{eq:D3}: Legendre~\cite{Legendre} evaluates
+    $K(1/\!\sqrt{2}) = \gamma_{1}^{2}/(4\gamma_{2})$.
+  \item \eqref{eq:D4}: Gauss~\cite{Gauss1799} proved
+    $\agm(1,\sqrt{2}) = \gamma_{2}^{2}/\varpiup$
+    (see also Borwein--Borwein~\cite{BorweinBorwein}).
+  \item \eqref{eq:D5}: The Chowla--Selberg formula~\cite{ChowlaSelberg}
+    gives
+    $\theta_{3}(e^{-\gamma_{2}^{2}})
+    = \gamma_{1}/(\gamma_{2}^{3/2}\cdot 2^{1/4})$.
+  \item \eqref{eq:D6}: Watson~\cite{Watson} proved
+    $W_{3} = \gamma_{1}^{4}/(4\gamma_{2}^{6})$; then
+    $2\gamma_{2}^{2}W_{3} = \gamma_{1}^{4}/(2\gamma_{2}^{4}) = {{\Gstar}}^{2}$.
+  \item \eqref{eq:D7}: $L(E,1)=\varpiup/4$ by~\eqref{eq:LE1}.\qedhere
+\end{itemize}
+\end{proof}
+
+
+% ================================================================
+\section{The Triad Identity}\label{sec:triad}
+% ================================================================
+
+\begin{theorem}[Triad invariant]\label{thm:triad}
+$\pi = 4\,\varpiup^{2}/{{\Gstar}}^{2}$.
+\end{theorem}
+
+\begin{proof}
+$\Gstar = 2\varpiup/\gamma_{2}$ and $\pi=\gamma_{2}^{2}$.
+\end{proof}
+
+
+% ================================================================
+\section{The Master Quadratic}\label{sec:quadratic}
+% ================================================================
+
+We now state the central conjectural construction.
+
+\begin{conjecture}[Master quadratic]\label{conj:master}
+The polynomial
+\begin{equation}\label{eq:master-quad}
+  P(x) \;=\; x^{2} - 16\,{{\Gstar}}^{2}\,x + 16\,{{\Gstar}}^{3}
+\end{equation}
+is the characteristic polynomial of a canonically defined self-pairing on the
+CM curve $E\colon y^{2}=x^{3}-x$, with $16={|\Aut_{\Qbar}(E)|}^{2}$
+and~$\Gstar$ the scaled period.
+\end{conjecture}
+
+The polynomial~$P$ is unambiguously defined: its coefficients are built from
+$\Gstar$ and the integer~$16$.  What is conjectural is the claim that~$P$
+arises canonically from the geometry of~$E$.  We discuss the evidence for each
+ingredient.
+
+\subsection{Why degree~$2$?}\label{ssec:degree}
+
+The CM field $K=\QQ(i)$ has $[K:\QQ]=2$.  Every endomorphism $\varphi\in\End(E)$
+satisfies a degree-$2$ characteristic polynomial $t^{2}-\Tr(\varphi)\,t+\deg(\varphi)=0$
+over~$\ZZ$.  It is therefore natural---though not logically forced---that a
+``global'' coupling polynomial should also have degree~$2$.
+
+\begin{question}\label{q:degree}
+Is there a rigorous argument showing that the self-consistent coupling of~$E$
+on~$\ZZ^{3}$ must satisfy a polynomial of degree exactly~$[K:\QQ]$?
+\end{question}
+
+\subsection{Why coefficient~$16$?}\label{ssec:coeff}
+
+The integer~$16 = {|\Aut_{\Qbar}(E)|}^{2} = \abs{E(\QQ)_{\mathrm{tors}}}^{2}$
+appears in the BSD formula~\eqref{eq:bsd} as the denominator of the period ratio.
+It is the natural ``normalisation divisor'' for this curve.  We conjecture that
+it enters the master quadratic for the same structural reason.
+
+\begin{question}\label{q:coeff}
+Does the BSD denominator $\abs{E(\QQ)_{\mathrm{tors}}}^{2}$ canonically
+determine the coefficient of a self-consistency equation on~$E$?
+\end{question}
+
+\subsection{Why Sum~$=$~Product?}\label{ssec:sep}
+
+In the normalised variable $u = x/\Gstar$, the quadratic becomes
+\begin{equation}\label{eq:norm-quad}
+  u^{2} - S\,u + S = 0, \qquad S = 16\,\Gstar.
+\end{equation}
+The distinctive feature is that the linear coefficient and the constant term
+are \emph{equal}.  By Vieta:
+\begin{equation}\label{eq:vieta}
+  u_{+}+u_{-} \;=\; u_{+}\cdot u_{-} \;=\; S.
+\end{equation}
+
+\begin{theorem}[Harmonic mean]\label{thm:harmonic}
+For any quadratic $u^{2}-Su+S=0$ with $S\neq 0$, the harmonic mean of the
+roots is
+\begin{equation}\label{eq:harmonic}
+  H \;=\; \frac{2\,u_{+}u_{-}}{u_{+}+u_{-}}
+  \;=\; \frac{2S}{S} \;=\; 2.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Immediate from~\eqref{eq:vieta}.
+\end{proof}
+
+The coincidence $H = 2 = [K:\QQ]$ is the strongest structural evidence
+for~\eqref{eq:master-quad}: if one accepts that the polynomial should be
+degree~$2$ (matching $[K:\QQ]$) and should have Sum~$=$~Product (giving
+$H=[K:\QQ]$), then~\eqref{eq:master-quad} is the unique result.
+
+\begin{conjecture}[Self-duality forces Sum~$=$~Product]\label{conj:TrN}
+The root number $\varepsilon(E)=+1$ makes the functional equation
+$\Lambda(E,s)=\Lambda(E,2-s)$ an identity at $s=1$.  We conjecture that this
+self-duality, when applied to a suitably defined ``global coupling operator''
+on the Galois eigenspaces of~$T_{0}(E)$, forces the operator's trace and
+determinant to be equal.
+\end{conjecture}
+
+\begin{remark}\label{rem:gap}
+Conjecture~\ref{conj:TrN} is the central open problem.
+The ``global coupling operator'' is not yet rigorously defined.  Candidate
+constructions include the Petersson self-pairing of the weight-$2$ newform
+$f\in S_{2}(\Gamma_{0}(32))$ associated to~$E$, decomposed by the
+$\operatorname{Gal}(K/\QQ)$ action.  We do not pursue this further here.
+\end{remark}
+
+
+\subsection{Roots}\label{ssec:roots}
+
+\begin{theorem}[Explicit roots]\label{thm:roots}
+The roots of~\eqref{eq:master-quad} are
+\begin{align}
+  x_{+} &= 8\,{{\Gstar}}^{2} + 4\,\Gstar\sqrt{\Gstar(4\Gstar-1)}
+  = 137.0361714582\ldots\,,\label{eq:xp}\\[3pt]
+  x_{-} &= 8\,{{\Gstar}}^{2} - 4\,\Gstar\sqrt{\Gstar(4\Gstar-1)}
+  = 3.0239639163\ldots\,.\label{eq:xm}
+\end{align}
+The discriminant is $\Delta = 64\,{{\Gstar}}^{3}(4\Gstar-1)>0$.
+Both roots are transcendental: since $\gamma_{1}$ and
+$\gamma_{2}^{2}=\pi$ are algebraically independent over~$\QQ$
+\textup{(Nesterenko~\cite{Nesterenko})}, $\Gstar$ is transcendental, and a
+quadratic in~$\Gstar$ with integer-ratio structure cannot produce algebraic
+roots.
+\end{theorem}
+
+\begin{proof}
+Quadratic formula.  The transcendence claim follows from
+Nesterenko~\cite{Nesterenko}, Theorem~1.
+\end{proof}
+
+\begin{corollary}\label{cor:floor}
+$\lfloor x_{-}\rfloor = 3$.
+\end{corollary}
+
+\subsection{The $k$-family}\label{ssec:kfamily}
+
+Replacing~$16$ by a parameter~$k$, the normalised quadratic
+$u^{2} - k\Gstar\,u + k\Gstar = 0$
+still has $H=2$ for every $k>0$.  The discriminant vanishes at
+$k_{\mathrm{crit}} = 4/\Gstar \approx 1.352$; below this value the roots are
+complex.
+
+
+% ================================================================
+\section{The Dual Convergence}\label{sec:dual}
+% ================================================================
+
+\begin{theorem}[Dual reading of~$r_{2}$]\label{thm:dual}
+Let $r_{2}(n) = \#\{(a,b)\in\ZZ^{2}: a^{2}+b^{2}=n\}$ and
+$R(N)=\sum_{n=0}^{N}r_{2}(n)$.  Then:
+\begin{enumerate}[label=\textup{(\roman*)}]
+  \item $R(N)/N \to \pi$ as $N\to\infty$
+    \quad \textup{(Gauss circle theorem)}.
+  \item $\sum_{n=0}^{\infty}r_{2}(n)\,e^{-\gamma_{2}^{2}n}
+    = \Gstar/(\gamma_{2}\sqrt{2})$
+    \quad \textup{(Chowla--Selberg)}.
+\end{enumerate}
+The same function~$r_{2}$ produces~$\pi$ by unweighted averaging and~$\Gstar$
+by exponential weighting at the self-dual nome.
+\end{theorem}
+
+
+% ================================================================
+\section{The Gamma-Primitive Basis}\label{sec:gamma}
+% ================================================================
+
+\begin{theorem}[Two-primitive basis]\label{thm:basis}
+Every object in the elliptic hierarchy at the lemniscatic modulus
+$k=1/\!\sqrt{2}$ is a rational expression in~$\gamma_{1}$, $\gamma_{2}$,
+and~$\sqrt{2}$:
+\begin{alignat}{2}
+  \varpiup &= \frac{\gamma_{1}^{2}}{2\sqrt{2}\,\gamma_{2}}\,,
+    &\qquad K(1/\!\sqrt{2}) &= \frac{\gamma_{1}^{2}}{4\gamma_{2}}\,,
+    \label{eq:basis2}\\[4pt]
+  \agm(1,\sqrt{2}) &= \frac{2\gamma_{2}^{3}}{\gamma_{1}^{2}}\,,
+    &\qquad E(1/\!\sqrt{2})
+    &= \frac{8\gamma_{2}^{4}+\gamma_{1}^{4}}{8\gamma_{1}^{2}\gamma_{2}}\,.
+    \label{eq:basis3}
+\end{alignat}
+\end{theorem}
+
+\begin{proof}
+Legendre evaluations at $k=1/\!\sqrt{2}$
+(cf.\ Borwein--Borwein~\cite{BorweinBorwein}).
+The $E$~form follows from the Legendre relation: at $k=1/\!\sqrt{2}$ we have
+$K=K'$ and $E=E'$, so $2KE-K^{2}=\gamma_{2}^{2}/2$.
+\end{proof}
+
+\begin{corollary}\label{cor:elliptic}
+At $k=1/\!\sqrt{2}$:
+\textup{(i)}~$E = (K + \agm(1,\sqrt{2}))/2$;
+\textup{(ii)}~$E/K = 1/2 + 2/{{\Gstar}}^{2}$;
+\textup{(iii)}~$\Pi(1/2, 1/\!\sqrt{2}) = 2E$.
+\end{corollary}
+
+
+% ================================================================
+\section{The Conjecture}\label{sec:physics}
+% ================================================================
+
+\begin{conjecture}[Lattice-CM]\label{conj:lattice}
+The inverse fine structure constant equals the larger root of the master
+quadratic:
+\[
+  \alpha^{-1} \;=\; x_{+} \;=\;
+  8\,{{\Gstar}}^{2} + 4\,\Gstar\sqrt{\Gstar(4\Gstar-1)}\,.
+\]
+\end{conjecture}
+
+\noindent\textbf{Numerical evidence.}
+$x_{+}=137.0362\ldots$ vs.\ CODATA $\alpha^{-1}=137.0360(2)$.
+Agreement: $1.26$~ppm, with zero adjustable parameters in the leading term.
+
+\smallskip\noindent\textbf{Structural observations.}
+\begin{itemize}
+  \item $\lfloor x_{-}\rfloor = 3$, the number of spatial dimensions and of
+    quark colour charges.
+  \item $D=3$ is the unique dimension $D\in\{1,\ldots,6\}$ for which the
+    analogous quadratic (with the $D$-dimensional Watson integral) satisfies
+    $\lfloor x_{-}^{(D)}\rfloor = D$.
+\end{itemize}
+
+\begin{remark}[Running of~$\alpha$]\label{rem:running}
+The electromagnetic coupling runs with energy scale; $\alpha^{-1}\approx 137$
+is the low-energy (infrared) value.  If Conjecture~\ref{conj:lattice} is
+correct, $x_{+}$ should be identified with this infrared limit.  The
+connection to the renormalization group flow is an open problem.
+\end{remark}
+
+\begin{remark}[Comparison with prior work]\label{rem:wyler}
+Wyler~\cite{Wyler} obtained $\alpha^{-1}\approx 137.036\,08$ from
+symmetric-space volumes; the expression has no structural link to an elliptic
+curve and the agreement is weaker.
+The present approach differs in that all ingredients---$\Gstar$, $16$, the
+degree~$2$---are intrinsic invariants of a single CM curve.  Whether this
+structural coherence elevates the result beyond coincidence remains to be
+established.
+\end{remark}
+
+\begin{remark}[Precision formula]\label{rem:precision}
+We note that the expansion
+$\alpha^{-1} = x_{+} - \tfrac{9}{47}\abs{\varepsilon}
++ \tfrac{5}{64}\abs{\varepsilon}^{2} - \cdots$
+with $\varepsilon = e^{\pi}-\pi-20\approx -9\times 10^{-4}$
+matches CODATA to many digits.  However, the rational coefficients in this
+expansion are \emph{observed}, not derived, and the expansion variable is
+chosen because $e^{\pi}$ is a famous near-integer.  We include this observation
+for completeness; it should not be taken as evidence for
+Conjecture~\ref{conj:lattice}.
+\end{remark}
+
+
+% ================================================================
+\section{Open Problems}\label{sec:open}
+% ================================================================
+
+\begin{enumerate}[label=(\arabic*)]
+  \item \textbf{The global coupling operator.}
+    Does there exist a canonically defined operator on the motive of~$E$ whose
+    characteristic polynomial is~$P(x)$ as in~\eqref{eq:master-quad}?
+    (See Conjecture~\ref{conj:master}.)
+
+  \item \textbf{Why Sum~$=$~Product?}
+    Does the self-duality $\Lambda(E,s)=\Lambda(E,2-s)$ at $s=1$ force the
+    trace and determinant of a coupling operator on~$E$ to be equal?
+    (See Conjecture~\ref{conj:TrN}.)
+
+  \item \textbf{Why~$16$?}
+    Is there a functorial construction that selects
+    $16 = {|\Aut_{\Qbar}(E)|}^{2}$ as the coefficient of both the BSD period
+    ratio and the master quadratic, or is the coincidence accidental?
+
+  \item \textbf{Physical mechanism.}
+    Can lattice gauge theory on~$\ZZ^{3}$, or any other physical framework,
+    produce Conjecture~\ref{conj:lattice} as a consequence of a dynamical
+    principle?
+
+  \item \textbf{Running coupling.}
+    If $x_{+}=\alpha^{-1}$ at zero momentum transfer, what determines the
+    beta function $\beta(\alpha)$ within this framework?  A complete theory
+    must predict the running, not just the infrared fixed point.
+\end{enumerate}
+
+
+% ================================================================
+\section{Conclusion}\label{sec:conclusion}
+% ================================================================
+
+The lemniscatic bridge constant
+$\Gstar = \gamma_{1}^{2}/(\sqrt{2}\,\gamma_{2}^{2})$
+has been computed since Gauss.  It admits seven equivalent representations
+spanning classical analysis, lattice combinatorics, and arithmetic geometry;
+a further forty-five appear in the companion catalogue~\cite{Paper2}, and a
+Wallis-type product formula is established in~\cite{Paper3}.
+
+The quadratic $x^{2}-16{{\Gstar}}^{2}x+16{{\Gstar}}^{3}=0$, with coefficient
+$16={|\Aut_{\Qbar}(E)|}^{2}$ and normalised harmonic mean
+$H=2=[\QQ(i):\QQ]$, has a larger root of~$137.036\ldots$  Whether this root
+is the inverse fine structure constant is a conjecture.  We have identified
+three precise mathematical questions (the global coupling operator, the
+Sum~$=$~Product condition, and the role of~$16$) whose resolution would settle
+the matter.
+
+We leave the question open and offer the bridge for crossing.
+
+
+% ================================================================
+% REFERENCES
+% ================================================================
+
+\begin{thebibliography}{20}
+
+\bibitem{BorweinBorwein}
+J.~M.~Borwein and P.~B.~Borwein,
+\emph{Pi and the AGM},
+Wiley, New York, 1987.
+
+\bibitem{ChowlaSelberg}
+S.~Chowla and A.~Selberg,
+\emph{On Epstein's zeta-function},
+J.~Reine Angew.\ Math.\ \textbf{227} (1967), 86--110.
+
+\bibitem{Cremona}
+J.~E.~Cremona,
+\emph{Algorithms for Modular Elliptic Curves}, 2nd ed.,
+Cambridge Univ.\ Press, 1997.
+See also \url{https://www.lmfdb.org/EllipticCurve/Q/32/a/2}.
+
+\bibitem{CoatesWiles}
+J.~Coates and A.~Wiles,
+\emph{On the conjecture of Birch and Swinnerton-Dyer},
+Invent.\ Math.\ \textbf{39} (1977), 223--251.
+
+\bibitem{Gauss1799}
+C.~F.~Gauss,
+\emph{Arithmetisch-geometrisches Mittel} (unpublished, 1799); see
+\emph{Werke}, Bd.~III, 361--403.
+
+\bibitem{Gilmore}
+R.~Gilmore,
+\emph{The fine structure constant},
+unpublished note, Drexel University, 2004.
+
+\bibitem{Legendre}
+A.-M.~Legendre,
+\emph{Exercices de calcul int\'{e}gral}, Vol.~1, Paris, 1811.
+
+\bibitem{Nesterenko}
+Yu.~V.~Nesterenko,
+\emph{Modular functions and transcendence questions},
+Mat.\ Sb.\ \textbf{187} (1996), 65--96.
+
+\bibitem{Paper2}
+\emph{Fifty-Two Faces of the Lemniscatic Bridge Constant},
+companion paper (forthcoming).
+
+\bibitem{Paper3}
+\emph{A Wallis-Type Product for $G^{\!*}$ over Fermat Residue Classes},
+companion paper (forthcoming).
+
+\bibitem{Rohrlich}
+D.~E.~Rohrlich,
+\emph{Root numbers}, in: Arithmetic of $L$-functions, IAS/Park City Math.\
+Ser.\ \textbf{18}, AMS, 2011, 353--448.
+
+\bibitem{Rubin}
+K.~Rubin,
+\emph{The ``main conjectures'' of Iwasawa theory for imaginary quadratic
+fields},
+Invent.\ Math.\ \textbf{103} (1991), 25--68.
+
+\bibitem{Silverman}
+J.~H.~Silverman,
+\emph{The Arithmetic of Elliptic Curves}, 2nd ed., Grad.\ Texts in Math.\
+\textbf{106}, Springer, 2009.
+
+\bibitem{Watson}
+G.~N.~Watson,
+\emph{Three triple integrals},
+Quart.\ J.\ Math.\ Oxford \textbf{10} (1939), 266--276.
+
+\bibitem{Wyler}
+A.~Wyler,
+\emph{L'espace sym\'etrique du groupe des \'equations de Maxwell},
+C.~R.\ Acad.\ Sci.\ Paris \textbf{269A} (1969), 743--745.
+
+\bibitem{ZuckerJoyce}
+I.~J.~Zucker and G.~S.~Joyce,
+\emph{Special values of the hypergeometric series~II},
+Math.\ Proc.\ Cambridge Philos.\ Soc.\ \textbf{131} (2001), 309--319.
+
+\end{thebibliography}
+
+\end{document}

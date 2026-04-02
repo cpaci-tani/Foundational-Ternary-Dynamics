@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fermat Coil — Split/Inert Prime Spiral</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+h1{margin-top:10px;font-size:1.15em;font-weight:300;letter-spacing:.05em;color:#a0b8d8}
+.subtitle{font-size:.72em;color:#667;margin-bottom:4px;font-style:italic}
+.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;margin:5px 0;max-width:1100px}
+.btn{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.74em;transition:all .2s;white-space:nowrap}
+.btn:hover{background:#2a3a5a;border-color:#4a6a8a}
+.btn.active{background:#2a4a6a;border-color:#5a8aba;color:#fff}
+.toolbar label{font-size:.72em;color:#8899aa;display:flex;align-items:center;gap:3px}
+.toolbar input[type=range]{width:90px;accent-color:#ffd54f}
+.toolbar select{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:2px 6px;font-size:.72em;border-radius:4px}
+.check-row{display:flex;align-items:center;gap:4px;color:#8899aa;font-size:.72em}
+.check-row input{accent-color:#ffd54f}
+canvas{display:block;border:1px solid #1a1a2e;border-radius:4px;margin:4px 0}
+#hoverInfo{position:fixed;top:60px;right:20px;background:rgba(10,10,20,.93);border:1px solid #2a3a5a;border-radius:4px;padding:8px 12px;font-size:.75em;font-family:monospace;color:#a0b8d8;display:none;max-width:240px;line-height:1.5;z-index:10}
+.legend{display:flex;gap:10px;margin:4px 0;font-size:.66em;color:#556;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:3px}
+.legend-swatch{width:9px;height:9px;border-radius:2px;border:1px solid #333}
+#telemetry{display:flex;gap:11px;flex-wrap:wrap;justify-content:center;padding:5px 10px;background:#0a0a12;border-top:1px solid #1a1a2e;font-size:.66em;font-family:monospace;color:#556;width:100%;max-width:900px;margin-bottom:10px}
+.tgroup{display:flex;gap:3px;align-items:center}
+.tlabel{color:#445}.tval{color:#a0b8d8;font-weight:bold}
+.tval.gold{color:#ffd54f}.tval.blue{color:#44aaff}.tval.red{color:#ff6644}
+</style>
+</head>
+<body>
+<h1>FERMAT COIL &mdash; SPLIT / INERT PRIME SPIRAL</h1>
+<p class="subtitle">Each integer n plotted at (r=&radic;n, &theta;=n&times;c). Primes colored by Gaussian classification.</p>
+
+<div class="toolbar">
+  <button class="btn" id="btnPlay" onclick="togglePlay()">&#9654; Play</button>
+  <button class="btn" onclick="doReset()">&#8634; Reset</button>
+  <label>Speed <input type="range" id="speedSlider" min="1" max="50000" value="100"></label>
+  <button class="btn" onclick="jumpTo(1000)">1k</button>
+  <button class="btn" onclick="jumpTo(10000)">10k</button>
+  <button class="btn" onclick="jumpTo(100000)">100k</button>
+  <button class="btn" onclick="jumpTo(1000000)">1M</button>
+  <button class="btn" onclick="jumpTo(5000000)">5M</button>
+  <button class="btn" onclick="jumpTo(10000000)">10M</button>
+  <label>Angle <select id="angleMode">
+    <option value="golden">Golden (137.508&deg;)</option>
+    <option value="alpha">1/&alpha; (137.036&deg;)</option>
+    <option value="mod12">12-fold (30&deg;)</option>
+    <option value="custom">Custom</option>
+  </select></label>
+  <label id="customLabel" style="display:none">Deg <input type="range" id="customAngle" min="1" max="360" value="137" step="0.1"> <span id="customVal">137.0</span></label>
+  <label>Color <select id="colorMode">
+    <option value="splitInert">Split / Inert</option>
+    <option value="mod12">Mod 12 class</option>
+    <option value="channel">Channel A / B</option>
+    <option value="moat">Moat / Rep</option>
+  </select></label>
+  <div class="check-row"><input type="checkbox" id="chkComposites"><span>Show composites</span></div>
+  <div class="check-row"><input type="checkbox" id="chkRays"><span>Rays</span></div>
+  <label>N <input type="range" id="nSlider" min="10" max="10000000" value="10" step="1"> <span id="nVal" style="color:#a0b8d8;font-family:monospace;font-size:.74em;min-width:40px">10</span></label>
+</div>
+
+<canvas id="mainCanvas" width="800" height="800"></canvas>
+<div id="hoverInfo"></div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#44aaff"></div>Split prime (p&equiv;1 mod 4)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#ff4432"></div>Inert prime (p&equiv;3 mod 4)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#ffd54f"></div>Framework (3,7,13,47,137)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#44ddcc"></div>Ramified (p=2)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#1a1a30"></div>Composite</div>
+</div>
+
+<div id="telemetry"></div>
+
+<script>
+const N_MAX = 10000000; // 10 million
+const W = 800, H = 800;
+const CX = W/2, CY = H/2;
+
+// Sieve — segmented approach: build full sieve up to N_MAX
+console.time('sieve');
+const sieve = new Uint8Array(N_MAX + 1);
+sieve[0] = sieve[1] = 1;
+for (let i = 2; i * i <= N_MAX; i++)
+    if (!sieve[i]) for (let j = i * i; j <= N_MAX; j += i) sieve[j] = 1;
+console.timeEnd('sieve');
+
+// Build compact prime list: {n, type} where type: 1=split, 2=inert, 3=ramified
+console.time('primeList');
+const primeList = []; // [{n, type, mod12}]
+for (let n = 2; n <= N_MAX; n++) {
+    if (sieve[n]) continue;
+    const type = n === 2 ? 3 : (n % 4 === 1 ? 1 : 2);
+    primeList.push({n, type, mod12: n % 12});
+}
+console.timeEnd('primeList');
+console.log('Total primes up to ' + N_MAX + ': ' + primeList.length);
+
+const FW = new Set([3, 7, 13, 47, 137]);
+
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+const hoverInfo = document.getElementById('hoverInfo');
+
+let currentN = 10, playing = false, speed = 10;
+const nSlider = document.getElementById('nSlider');
+const nVal = document.getElementById('nVal');
+const speedSlider = document.getElementById('speedSlider');
+const angleMode = document.getElementById('angleMode');
+const customAngle = document.getElementById('customAngle');
+const customVal = document.getElementById('customVal');
+const customLabel = document.getElementById('customLabel');
+const colorMode = document.getElementById('colorMode');
+const chkComposites = document.getElementById('chkComposites');
+const chkRays = document.getElementById('chkRays');
+const btnPlay = document.getElementById('btnPlay');
+
+nSlider.oninput = () => { currentN = +nSlider.value; };
+speedSlider.oninput = () => { speed = +speedSlider.value; };
+customAngle.oninput = () => { customVal.textContent = (+customAngle.value).toFixed(1); };
+angleMode.onchange = () => { customLabel.style.display = angleMode.value === 'custom' ? '' : 'none'; };
+
+function togglePlay() { playing = !playing; btnPlay.textContent = playing ? '\u23F8 Pause' : '\u25B6 Play'; btnPlay.classList.toggle('active', playing); }
+function doReset() { currentN = 10; nSlider.value = 10; playing = false; btnPlay.textContent = '\u25B6 Play'; btnPlay.classList.remove('active'); }
+function jumpTo(n) { currentN = n; nSlider.value = n; }
+
+function getAngle() {
+    const mode = angleMode.value;
+    if (mode === 'golden') return Math.PI * (3 - Math.sqrt(5)); // 137.508°
+    if (mode === 'alpha') return 137.036 * Math.PI / 180;
+    if (mode === 'mod12') return 30 * Math.PI / 180; // 360/12
+    return (+customAngle.value) * Math.PI / 180;
+}
+
+function getPrimeColor(p, cm) {
+    if (FW.has(p.n)) return '#ffd54f';
+    if (cm === 'splitInert') {
+        return p.type === 1 ? '#44aaff' : p.type === 2 ? '#ff4432' : '#44ddcc';
+    }
+    if (cm === 'mod12') {
+        const m = p.mod12;
+        if (m === 1) return '#44aaff';
+        if (m === 5) return '#ff66ff';
+        if (m === 7) return '#ff4432';
+        if (m === 11) return '#ff8844';
+        return '#44ddcc';
+    }
+    if (cm === 'channel' || cm === 'moat') {
+        return p.type === 1 ? '#44aaff' : p.type === 2 ? '#ff4432' : '#44ddcc';
+    }
+    return '#888';
+}
+
+function draw(N) {
+    ctx.fillStyle = '#08080d';
+    ctx.fillRect(0, 0, W, H);
+
+    const angle = getAngle();
+    const maxR = Math.sqrt(N);
+    const scale = (Math.min(W, H) / 2 - 20) / maxR;
+    const cm = colorMode.value;
+
+    // Rays
+    if (chkRays.checked) {
+        ctx.strokeStyle = '#1a1a2e'; ctx.lineWidth = 0.5;
+        for (let k = 0; k < 12; k++) {
+            const a = k * angle;
+            ctx.beginPath(); ctx.moveTo(CX, CY);
+            ctx.lineTo(CX + Math.cos(a) * maxR * scale, CY - Math.sin(a) * maxR * scale);
+            ctx.stroke();
+        }
+    }
+
+    // Composites (only if checked AND N is small enough)
+    if (chkComposites.checked && N <= 200000) {
+        const cpSize = N < 500 ? 1.5 : N < 5000 ? 0.8 : 0.4;
+        ctx.fillStyle = '#0e0e16';
+        for (let n = 1; n <= N; n++) {
+            if (!sieve[n] || n > N_MAX) continue; // skip primes
+            const r = Math.sqrt(n) * scale;
+            const theta = n * angle;
+            ctx.fillRect(CX + Math.cos(theta) * r - cpSize/2, CY - Math.sin(theta) * r - cpSize/2, cpSize, cpSize);
+        }
+    }
+
+    // Primes — use binary search to find range
+    let lo = 0, hi = primeList.length - 1;
+    while (lo < hi) { const mid = (lo + hi + 1) >> 1; primeList[mid].n <= N ? lo = mid : hi = mid - 1; }
+    const maxIdx = primeList[lo].n <= N ? lo : lo - 1;
+
+    const ptSize = N < 500 ? 3.5 : N < 5000 ? 2.5 : N < 50000 ? 1.5 : N < 500000 ? 0.9 : N < 3000000 ? 0.5 : 0.3;
+
+    for (let i = 0; i <= maxIdx; i++) {
+        const p = primeList[i];
+        const r = Math.sqrt(p.n) * scale;
+        const theta = p.n * angle;
+        const x = CX + Math.cos(theta) * r;
+        const y = CY - Math.sin(theta) * r;
+
+        if (x < -5 || x > W + 5 || y < -5 || y > H + 5) continue;
+
+        const col = getPrimeColor(p, cm);
+        const isFW = FW.has(p.n);
+
+        if (isFW && ptSize > 0.3) {
+            ctx.fillStyle = col + '44';
+            ctx.beginPath(); ctx.arc(x, y, ptSize * 3.5, 0, 2 * Math.PI); ctx.fill();
+        }
+
+        ctx.fillStyle = col;
+        if (ptSize >= 1.2) {
+            ctx.beginPath(); ctx.arc(x, y, isFW ? ptSize * 1.8 : ptSize, 0, 2 * Math.PI); ctx.fill();
+        } else {
+            const s = isFW ? ptSize * 3 : ptSize;
+            ctx.fillRect(x - s/2, y - s/2, s, s);
+        }
+    }
+
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(CX, CY, 2, 0, 2 * Math.PI); ctx.fill();
+
+    ctx.fillStyle = '#445'; ctx.font = '10px monospace';
+    ctx.fillText('c = ' + (angle * 180 / Math.PI).toFixed(3) + '\u00B0  primes: ' + (maxIdx+1), 10, H - 10);
+}
+
+// Hover
+canvas.addEventListener('mousemove', (e) => {
+    const N = Math.floor(currentN);
+    const angle = getAngle();
+    const maxR = Math.sqrt(N);
+    const scale = (Math.min(W, H) / 2 - 20) / maxR;
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (W / rect.width) - CX;
+    const my = CY - (e.clientY - rect.top) * (H / rect.height);
+    const r = Math.sqrt(mx * mx + my * my) / scale;
+    const n = Math.round(r * r);
+    if (n >= 1 && n <= N) {
+        const cl = classify[n];
+        const type = cl === 0 ? 'composite' : cl === 1 ? 'SPLIT prime' : cl === 2 ? 'INERT prime' : 'RAMIFIED';
+        const mod12 = n % 12;
+        const moat = r2zero[n] ? 'MOAT' : 'representable';
+        hoverInfo.style.display = 'block';
+        hoverInfo.innerHTML = `n = ${n}<br>${type}<br>mod 4 = ${n%4}<br>mod 12 = ${mod12}<br>${moat}${FW.has(n)?'<br><b style="color:#ffd54f">FRAMEWORK PRIME</b>':''}`;
+    } else {
+        hoverInfo.style.display = 'none';
+    }
+});
+canvas.addEventListener('mouseleave', () => { hoverInfo.style.display = 'none'; });
+
+// Telemetry
+const telDiv = document.getElementById('telemetry');
+function updateTelemetry(N) {
+    const n = Math.floor(N);
+    // Binary search for count up to N
+    let lo = 0, hi = primeList.length - 1;
+    while (lo < hi) { const mid = (lo + hi + 1) >> 1; primeList[mid].n <= n ? lo = mid : hi = mid - 1; }
+    const cnt = primeList[lo].n <= n ? lo + 1 : lo;
+    let split = 0, inert = 0;
+    for (let i = 0; i < cnt; i++) {
+        if (primeList[i].type === 1) split++;
+        else if (primeList[i].type === 2) inert++;
+    }
+    telDiv.innerHTML = `
+        <div class="tgroup"><span class="tlabel">N:</span><span class="tval gold">${n.toLocaleString()}</span></div>
+        <div class="tgroup"><span class="tlabel">Primes:</span><span class="tval">${cnt.toLocaleString()}</span></div>
+        <div class="tgroup"><span class="tlabel">Split:</span><span class="tval blue">${split.toLocaleString()}</span></div>
+        <div class="tgroup"><span class="tlabel">Inert:</span><span class="tval red">${inert.toLocaleString()}</span></div>
+        <div class="tgroup"><span class="tlabel">Angle:</span><span class="tval gold">${(getAngle()*180/Math.PI).toFixed(3)}\u00B0</span></div>
+    `;
+}
+
+function animate() {
+    if (playing) {
+        currentN = Math.min(currentN + speed, N_MAX);
+        nSlider.value = Math.floor(currentN);
+        if (currentN >= N_MAX) { playing = false; btnPlay.textContent = '\u25B6 Play'; btnPlay.classList.remove('active'); }
+    }
+    const N = Math.max(2, Math.floor(currentN));
+    nVal.textContent = N;
+    draw(N);
+    updateTelemetry(N);
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>
