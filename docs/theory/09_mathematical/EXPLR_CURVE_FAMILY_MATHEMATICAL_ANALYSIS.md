@@ -153,7 +153,7 @@ y = sin(t)*cos(t) / (1 + sin^2(t))
 
 Despite being geometrically different, both curves produce the same G*:
 
-- **Bernoulli:** G* = sqrt(2) * Gamma(1/4)^2 / (2*pi) = 2.9586751191...
+- **Bernoulli:** G* = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2) = 2.9586751191... [pi-free Gamma-primitive form; equivalently sqrt(2)*Gamma(1/4)^2/(2*pi)]
 - **Alpha:** G* = L * 91/732 = 2.9586589... (5.45 ppm difference)
 
 **This agreement at 5.45 ppm from two independent constructions is statistically
@@ -625,7 +625,7 @@ are needed to generate all FTD structure.
 
 | Result | Precision | Method |
 |--------|-----------|--------|
-| G* = sqrt(2)*Gamma(1/4)^2/(2*pi) | Exact | Elliptic integral theory |
+| G* = Gamma(1/4)^2/(sqrt(2)*Gamma(1/2)^2) [pi-free; equiv. sqrt(2)*Gamma(1/4)^2/(2*pi)] | Exact | Elliptic integral theory |
 | floor(delta) = 4, floor(delta+G*) = 7, floor(delta*G*) = 13 | Exact | Numerical |
 | Beat frequency = 2*pi/137 | Exact | Harmonic analysis |
 | Arc length * 91/732 = G* | 5.45 ppm | Two constructions |

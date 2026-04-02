@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Precision Cascade — Watching Digits Lock In</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Courier New',monospace;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px 10px}
+h1{font-family:Georgia,serif;font-size:1.2em;font-weight:300;letter-spacing:.04em;color:#a0b8d8;margin-bottom:2px}
+.subtitle{font-family:Georgia,serif;font-size:.75em;color:#667;margin-bottom:16px;font-style:italic}
+.controls{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.btn{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:5px 14px;border-radius:4px;cursor:pointer;font-size:.8em;font-family:inherit}
+.btn:hover{background:#2a3a5a}.btn.active{background:#2a4a6a;border-color:#5a8aba;color:#fff}
+.controls label{font-size:.72em;color:#889;display:flex;align-items:center;gap:4px}
+.controls input[type=range]{width:140px;accent-color:#ffd54f}
+.constants-row{display:flex;gap:24px;margin-bottom:10px;flex-wrap:wrap;justify-content:center}
+.const-block{text-align:center}
+.const-name{font-family:Georgia,serif;font-size:1.1em;margin-bottom:4px}
+.const-name.red{color:#e05545}.const-name.blue{color:#4488ee}.const-name.gold{color:#ddaa33}
+.digit-display{display:flex;align-items:baseline;justify-content:center;margin-bottom:2px;min-height:3.2em}
+.digit{display:inline-block;transition:all 0.4s ease;font-weight:bold}
+.digit.locked{color:#fff}
+.digit.changing{color:#ff6644;opacity:0.6}
+.digit.decimal{color:#556}
+.digit.large{font-size:2.8em}
+.digit.med{font-size:1.8em}
+.digit.small{font-size:1.0em}
+.digit.tiny{font-size:0.7em}
+.terms-label{font-size:.65em;color:#556;margin-top:2px}
+.product-display{margin:16px 0;padding:14px 20px;background:#0d0d18;border:1px solid #1a1a2e;border-radius:6px;max-width:900px;width:100%;overflow-x:auto}
+.product-title{font-family:Georgia,serif;font-size:.8em;color:#667;margin-bottom:8px}
+.term-row{display:flex;flex-wrap:wrap;gap:3px;align-items:center;margin-bottom:6px}
+.term{padding:2px 6px;border-radius:3px;font-size:.82em;transition:all 0.3s}
+.term.active{opacity:1}.term.inactive{opacity:0.2}
+.term.red-bg{background:#2a1515;border:1px solid #4a2525;color:#e05545}
+.term.blue-bg{background:#151525;border:1px solid #252545;color:#4488ee}
+.term.gold-bg{background:#1a1a10;border:1px solid #3a3a20;color:#ddaa33}
+.term-equals{color:#556;font-size:.9em;margin:0 4px}
+.relation{margin:12px 0;text-align:center;font-family:Georgia,serif;font-size:1em;color:#889}
+.relation em{font-style:normal;color:#ddaa33}
+.relation .red{color:#e05545}.relation .blue{color:#4488ee}
+</style>
+</head>
+<body>
+
+<h1>PRECISION CASCADE</h1>
+<p class="subtitle">Watch digits lock in as each term of the Wallis product is added</p>
+
+<div class="controls">
+  <button class="btn active" id="btnPlay" onclick="togglePlay()">&#9654; Play</button>
+  <button class="btn" onclick="resetTerms()">&#8634; Reset</button>
+  <label>Speed <input type="range" id="speedSlider" min="200" max="3000" value="1200" step="100"></label>
+  <label>Terms: <span id="termCount">1</span> <input type="range" id="termSlider" min="1" max="40" value="1" step="1"></label>
+</div>
+
+<div class="constants-row">
+  <div class="const-block">
+    <div class="const-name red">&radic;&pi; &nbsp; Race 1 (evens / odds)</div>
+    <div class="digit-display" id="sqrtpi-digits"></div>
+    <div class="terms-label" id="sqrtpi-label"></div>
+  </div>
+  <div class="const-block">
+    <div class="const-name blue">G* &nbsp; Race 2 (inert / split)</div>
+    <div class="digit-display" id="gstar-digits"></div>
+    <div class="terms-label" id="gstar-label"></div>
+  </div>
+  <div class="const-block">
+    <div class="const-name gold">&varpi; = G*&middot;&radic;&pi; / 2</div>
+    <div class="digit-display" id="varpi-digits"></div>
+    <div class="terms-label" id="varpi-label"></div>
+  </div>
+</div>
+
+<div class="relation">
+  <em>&varpi;</em> = <span class="blue">G*</span> &times; <span class="red">&radic;&pi;</span> / 2
+  &nbsp;&mdash;&nbsp; the sentence is the grammar times the vocabulary
+</div>
+
+<div class="product-display">
+  <div class="product-title" style="color:#e05545">&radic;&pi; = lim N<sup>-1/2</sup> &times; product of (2k)/(2k-1):</div>
+  <div class="term-row" id="sqrtpi-terms"></div>
+</div>
+
+<div class="product-display">
+  <div class="product-title" style="color:#4488ee">G* = lim N<sup>-1/2</sup> &times; product of (4k+3)/(4k+1):</div>
+  <div class="term-row" id="gstar-terms"></div>
+</div>
+
+<script>
+const SQRT_PI_EXACT = '1.7724538509055159';
+const GSTAR_EXACT   = '2.9586751191886388';
+const VARPI_EXACT   = '2.6220575542921120';
+
+const MAX_TERMS = 40;
+let currentTerms = 1;
+let playing = false;
+let timer = null;
+
+function sqrtPiPartial(n) {
+    let prod = 1;
+    for (let k = 1; k <= n; k++) prod *= (2*k) / (2*k - 1);
+    return prod / Math.sqrt(n);
+}
+
+function gstarPartial(n) {
+    let prod = 1;
+    for (let k = 0; k <= n; k++) prod *= (4*k + 3) / (4*k + 1);
+    return prod / Math.sqrt(n + 1);
+}
+
+function formatDigits(value, exact, colorClass) {
+    const valStr = value.toFixed(16);
+    const html = [];
+    let locked = true;
+
+    for (let i = 0; i < Math.min(valStr.length, exact.length, 18); i++) {
+        const ch = valStr[i];
+        const ex = exact[i];
+
+        if (ch === '.') {
+            html.push(`<span class="digit decimal" style="font-size:1.4em">.</span>`);
+            continue;
+        }
+
+        const pos = i < 2 ? 0 : i < 4 ? 1 : i < 7 ? 2 : 3;
+        const sizeClass = ['large', 'med', 'small', 'tiny'][pos];
+
+        if (locked && ch === ex) {
+            html.push(`<span class="digit locked ${sizeClass}">${ch}</span>`);
+        } else {
+            locked = false;
+            html.push(`<span class="digit changing ${sizeClass}">${ch}</span>`);
+        }
+    }
+    return html.join('');
+}
+
+function countLockedDigits(value, exact) {
+    const valStr = value.toFixed(16);
+    let count = 0;
+    for (let i = 0; i < Math.min(valStr.length, exact.length); i++) {
+        if (valStr[i] === '.' ) continue;
+        if (valStr[i] === exact[i]) count++;
+        else break;
+    }
+    return count;
+}
+
+function buildTerms(n, type) {
+    const container = document.getElementById(type + '-terms');
+    let html = '';
+    const max = type === 'sqrtpi' ? n : n + 1;
+
+    for (let k = (type === 'sqrtpi' ? 1 : 0); k < max; k++) {
+        const num = type === 'sqrtpi' ? 2*k : 4*k+3;
+        const den = type === 'sqrtpi' ? 2*k-1 : 4*k+1;
+        const active = true;
+        const bg = type === 'sqrtpi' ? 'red-bg' : 'blue-bg';
+        html += `<span class="term ${bg} active">${num}/${den}</span>`;
+        if (k < max - 1) html += `<span class="term-equals">&times;</span>`;
+    }
+
+    html += `<span class="term-equals">&times; N<sup>-1/2</sup></span>`;
+    container.innerHTML = html;
+}
+
+function update(n) {
+    currentTerms = n;
+    document.getElementById('termSlider').value = n;
+    document.getElementById('termCount').textContent = n;
+
+    const sp = sqrtPiPartial(n);
+    const gs = gstarPartial(n);
+    const vp = gs * sp / 2;
+
+    const spLocked = countLockedDigits(sp, SQRT_PI_EXACT);
+    const gsLocked = countLockedDigits(gs, GSTAR_EXACT);
+    const vpLocked = countLockedDigits(vp, VARPI_EXACT);
+
+    document.getElementById('sqrtpi-digits').innerHTML = formatDigits(sp, SQRT_PI_EXACT, 'red');
+    document.getElementById('gstar-digits').innerHTML = formatDigits(gs, GSTAR_EXACT, 'blue');
+    document.getElementById('varpi-digits').innerHTML = formatDigits(vp, VARPI_EXACT, 'gold');
+
+    document.getElementById('sqrtpi-label').textContent = `${n} terms, ${spLocked} digits locked`;
+    document.getElementById('gstar-label').textContent = `${n} terms, ${gsLocked} digits locked`;
+    document.getElementById('varpi-label').textContent = `${n} terms, ${vpLocked} digits locked`;
+
+    buildTerms(n, 'sqrtpi');
+    buildTerms(n, 'gstar');
+}
+
+function togglePlay() {
+    playing = !playing;
+    document.getElementById('btnPlay').textContent = playing ? '\u23F8 Pause' : '\u25B6 Play';
+    document.getElementById('btnPlay').classList.toggle('active', playing);
+    if (playing) advance();
+    else if (timer) { clearTimeout(timer); timer = null; }
+}
+
+function advance() {
+    if (!playing) return;
+    if (currentTerms < MAX_TERMS) {
+        update(currentTerms + 1);
+        const speed = +document.getElementById('speedSlider').value;
+        timer = setTimeout(advance, speed);
+    } else {
+        playing = false;
+        document.getElementById('btnPlay').textContent = '\u25B6 Play';
+        document.getElementById('btnPlay').classList.remove('active');
+    }
+}
+
+function resetTerms() {
+    playing = false;
+    document.getElementById('btnPlay').textContent = '\u25B6 Play';
+    document.getElementById('btnPlay').classList.remove('active');
+    if (timer) { clearTimeout(timer); timer = null; }
+    update(1);
+}
+
+document.getElementById('termSlider').oninput = function() {
+    update(+this.value);
+};
+
+// Init
+update(1);
+</script>
+</body>
+</html>

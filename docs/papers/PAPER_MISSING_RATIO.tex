@@ -1,0 +1,373 @@
+\documentclass[12pt,reqno]{amsart}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{question}[theorem]{Question}
+
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\Gstar}{G^{\!*}}
+\newcommand{\varpiup}{\varpi}
+\newcommand{\agm}{\operatorname{agm}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+
+\title{The Missing Ratio:\\[2pt]
+  $\Gamma(\tfrac14)/\Gamma(\tfrac34)$ as a Fundamental Constant}
+
+\author{}
+\address{}
+
+\subjclass[2020]{33B15, 11M06, 01A55, 33E05}
+\keywords{Gamma function, reflection formula, lemniscate constant,
+  Euler, fundamental constants, Wallis product}
+
+\date{\today}
+
+\begin{document}
+
+\begin{abstract}
+The Euler reflection formula at $z=\tfrac14$ gives
+$\Gamma(\tfrac14)\,\Gamma(\tfrac34) = \pi\sqrt{2}$.
+This \emph{product} is classical and well studied.  We observe that the
+\emph{ratio} $\Gamma(\tfrac14)/\Gamma(\tfrac34) \approx 2.9587$---which
+we denote $\Gstar$ and call the \emph{lemniscatic bridge constant}---has
+received almost no independent attention, despite admitting a Wallis-type
+infinite product, appearing as the scaled period of the CM elliptic curve
+$y^{2}=x^{3}-x$, and factoring the lemniscate constant as
+$\varpiup = {\Gstar}\sqrt{\pi}/2$.
+
+We argue that $\Gstar$ deserves recognition as a fundamental constant on
+the same footing as $\pi$ and $\varpiup$, and that its historical
+absence from the literature is an accident of convention, not of
+substance.
+\end{abstract}
+
+\maketitle
+\tableofcontents
+
+
+% ================================================================
+\section{The reflection formula produces two objects}
+% ================================================================
+
+The Euler reflection formula states that for all $z\notin\ZZ$,
+\begin{equation}\label{eq:reflection}
+  \Gamma(z)\,\Gamma(1-z) \;=\; \frac{\pi}{\sin(\pi z)}\,.
+\end{equation}
+At $z = \tfrac14$:
+\begin{equation}\label{eq:product}
+  \Gamma(\tfrac14)\,\Gamma(\tfrac34)
+  \;=\; \frac{\pi}{\sin(\pi/4)}
+  \;=\; \pi\sqrt{2}\,.
+\end{equation}
+This is the \emph{product}.  It yields a circular quantity ($\pi$,
+modified by $\sqrt{2}$) and has been known since Euler.  It appears in
+hundreds of papers and textbooks.
+
+The same two Gamma values also determine a \emph{ratio}:
+\begin{equation}\label{eq:ratio}
+  \frac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)}
+  \;=\; \frac{\Gamma(\tfrac14)^{2}}{\pi\sqrt{2}}
+  \;=\; 2.9586751191886388\ldots
+\end{equation}
+This number, which we denote $\Gstar$, has---to our knowledge---never
+been given a standard name or symbol, despite being as elementary as
+the product.
+
+\begin{remark}
+Every evaluation of the reflection formula at a rational argument
+$z = p/q$ produces a product and a ratio.  At $z = \tfrac12$, the
+product $\Gamma(\tfrac12)^{2} = \pi$ yields the circle constant itself,
+and the ratio $\Gamma(\tfrac12)/\Gamma(\tfrac12) = 1$ is trivial.
+At $z = \tfrac14$, the product yields $\pi\sqrt{2}$ and the ratio
+yields $\Gstar$.  This is the \emph{first} non-trivial ratio produced
+by the reflection formula at a point of the form $z = 1/(2n)$.
+\end{remark}
+
+
+% ================================================================
+\section{Why the ratio was overlooked}
+% ================================================================
+
+We identify three historical reasons why $\Gstar$ was not recognised as
+a fundamental constant.
+
+\subsection{The tradition of periods}
+
+Since Euler, the preferred objects in elliptic function theory have been
+\emph{periods}---the arc lengths, areas, and integrals that arise as
+lattice generators.  The lemniscate constant
+\begin{equation}\label{eq:varpi}
+  \varpiup \;=\; \frac{\Gamma(\tfrac14)^{2}}{2\sqrt{2}\,\Gamma(\tfrac12)}
+  \;=\; 2.6220575542921120\ldots
+\end{equation}
+is the half-perimeter of the lemniscate $r^{2}=\cos 2\theta$ and a
+period of the elliptic curve $y^{2}=x^{3}-x$.  As a period, it has
+geometric meaning: it is a length one can draw.  The constant $\Gstar$
+is not directly a period; it is a \emph{ratio} of two Gamma values.
+Periods were named and studied; ratios were computed and discarded.
+
+\subsection{The dominance of $\pi$}
+
+The reflection formula~\eqref{eq:product} was primarily used to compute
+$\pi$ and its relatives, not to study the Gamma function's internal
+structure.  The product $\Gamma(\tfrac14)\Gamma(\tfrac34) = \pi\sqrt{2}$
+was valued because it gave $\pi$; the ratio was an intermediate quantity
+with no known application.
+
+\subsection{The $\pi$-contaminated notation}
+
+The standard representation
+$\varpiup = \Gamma(\tfrac14)^{2}/(2\sqrt{2\pi})$ merges $\Gamma(\tfrac14)$
+and $\pi$ into a single expression, hiding the factorisation
+$\varpiup = \Gstar\sqrt{\pi}/2$.  In this notation, $\Gstar$ is invisible:
+it appears only as a ratio of two subexpressions of $\varpiup$ that are
+never separated.  The notation discouraged the decomposition.
+
+
+% ================================================================
+\section{The constant and its properties}
+% ================================================================
+
+\begin{definition}\label{def:Gstar}
+The \emph{lemniscatic bridge constant} is
+\begin{equation}\label{eq:Gstar}
+  {\Gstar} \;=\; \frac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)}
+  \;=\; 2.9586751191886388\ldots
+\end{equation}
+\end{definition}
+
+We collect its principal representations, all classical:
+\begin{align}
+  {\Gstar} &= \frac{\Gamma(\tfrac14)^{2}}{\sqrt{2}\,\Gamma(\tfrac12)^{2}}
+    &&\text{($\pi$-free form)}\label{eq:pifree}\\[4pt]
+  {\Gstar} &= \frac{2\varpiup}{\sqrt{\pi}}
+    &&\text{(lemniscate form)}\label{eq:lem}\\[4pt]
+  {\Gstar} &= \frac{2\sqrt{2}}{\sqrt{\pi}}\,
+    K\!\bigl(\tfrac{1}{\sqrt{2}}\bigr)
+    &&\text{(elliptic integral)}\label{eq:elliptic}\\[4pt]
+  {\Gstar} &= \frac{2\sqrt{\pi}}{\agm(1,\sqrt{2})}
+    &&\text{(AGM)}\label{eq:agm}\\[4pt]
+  {\Gstar} &= \sqrt{2\pi}\;\theta_{3}(e^{-\pi})^{2}
+    &&\text{(theta function at self-dual nome)}\label{eq:theta}\\[4pt]
+  {\Gstar} &= \frac{8\,L(E,1)}{\sqrt{\pi}}
+    &&\text{($L$-function of $y^{2}=x^{3}-x$)}\label{eq:Lfunction}
+\end{align}
+
+Each representation is known; none was previously attributed to a named
+constant.
+
+
+% ================================================================
+\section{What the ratio knows that the product does not}
+% ================================================================
+
+The product $\Gamma(\tfrac14)\Gamma(\tfrac34)$ is \emph{symmetric}: it
+treats $z=\tfrac14$ and $z=\tfrac34$ on equal footing.  Swapping them
+changes nothing.  The product yields $\pi\sqrt{2}$, a quantity that
+depends only on the \emph{sum} $z + (1-z) = 1$, not on the specific
+partition into $\tfrac14$ and $\tfrac34$.
+
+The ratio $\Gamma(\tfrac14)/\Gamma(\tfrac34)$ is \emph{asymmetric}: it
+distinguishes $z=\tfrac14$ from $z=\tfrac34$.  It measures \emph{how much
+larger} $\Gamma(\tfrac14)$ is than $\Gamma(\tfrac34)$.  This asymmetry
+carries information:
+
+\begin{theorem}[Wallis product for the ratio]\label{thm:wallis}
+\begin{equation}\label{eq:wallis-ratio}
+  {\Gstar} \;=\; \lim_{N\to\infty}\;(N+1)^{-1/2}
+  \prod_{k=0}^{N}\frac{4k+3}{4k+1}\,.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Write $Q_{N} = \prod_{k=0}^{N}(4k+3)/(4k+1)
+= (\tfrac34)_{N+1}/(\tfrac14)_{N+1}
+= \Gamma(\tfrac34+N+1)\Gamma(\tfrac14)/
+[\Gamma(\tfrac14+N+1)\Gamma(\tfrac34)]$.
+By the asymptotic ratio $\Gamma(x+a)/\Gamma(x+b)\sim x^{a-b}$,
+$Q_{N}\sim [\Gamma(\tfrac14)/\Gamma(\tfrac34)]\,(N+1)^{1/2}$.
+\end{proof}
+
+The numerators $3, 7, 11, 15, 19, 23, \ldots$ are integers
+$\equiv 3\pmod{4}$.  The denominators $1, 5, 9, 13, 17, 21, \ldots$
+are integers $\equiv 1\pmod{4}$.  In the arithmetic of the Gaussian
+integers $\ZZ[i]$, the former are \emph{inert} (they remain prime) and
+the latter include the \emph{split} primes (they factor as
+$\pi\bar{\pi}$).  The ratio measures the cumulative advantage of
+inertness over splitting---the Fermat two-square classification made
+multiplicative.
+
+The product knows about $\pi$.  The ratio knows about the lattice.
+
+
+% ================================================================
+\section{The triad and the composite nature of $\varpiup$}
+% ================================================================
+
+\begin{theorem}[Factorisation of $\varpiup$]\label{thm:factor}
+\begin{equation}\label{eq:factor}
+  \varpiup \;=\; \frac{{\Gstar}\cdot\sqrt{\pi}}{2}\,.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+$\Gstar\sqrt{\pi}/2
+= [\Gamma(\tfrac14)/\Gamma(\tfrac34)]\cdot\Gamma(\tfrac12)/2$.
+By reflection, $\Gamma(\tfrac34)=\pi\sqrt{2}/\Gamma(\tfrac14)$, so
+$\Gstar\sqrt{\pi}/2
+= \Gamma(\tfrac14)^{2}\Gamma(\tfrac12)/(2\pi\sqrt{2})
+= \Gamma(\tfrac14)^{2}/(2\sqrt{2}\Gamma(\tfrac12)) = \varpiup$.
+\end{proof}
+
+The lemniscate constant, treated since Euler as a single irreducible
+period, factors into two independent pieces:
+\begin{itemize}
+  \item $\sqrt{\pi}$, which arises from the Wallis product over the
+    even/odd partition (the mod-$2$ ``race'');
+  \item $\Gstar$, which arises from the Wallis product over the
+    $1\bmod 4$ / $3\bmod 4$ partition (the mod-$4$ ``race'').
+\end{itemize}
+Neither piece alone yields $\varpiup$; both are required.
+
+\begin{proposition}[No single-product representation of $\varpiup$]
+\label{prop:no-third}
+There is no ratio product $\prod(an+b)/(an+c)$ over a single arithmetic
+progression that converges (after polynomial prefactor) to $\varpiup$.
+\end{proposition}
+
+\begin{proof}[Argument]
+Such a product converges to a ratio $\Gamma(c/a)/\Gamma(b/a)$ (times
+algebraic factors), which involves $\Gamma(\tfrac14)$ at most once.
+The lemniscate constant requires $\Gamma(\tfrac14)^{2}$ in the
+numerator, which cannot be produced by a single ratio.
+\end{proof}
+
+
+% ================================================================
+\section{The triad identity}
+% ================================================================
+
+\begin{theorem}\label{thm:triad}
+$\pi = 4\varpiup^{2}/{\Gstar}^{2}$.
+\end{theorem}
+
+\begin{proof}
+$4\varpiup^{2}/{\Gstar}^{2}
+= 4\cdot({\Gstar}\sqrt{\pi}/2)^{2}/{\Gstar}^{2}
+= 4\cdot{\Gstar}^{2}\pi/(4{\Gstar}^{2}) = \pi$.
+\end{proof}
+
+This expresses the circle constant as a ratio of two lemniscatic
+objects.  In the hierarchy
+$\Gamma(\tfrac14) \to \Gstar \to \varpiup \to \pi$,
+the ratio precedes the period, and the period precedes the circle.
+
+
+% ================================================================
+\section{Why this matters}
+% ================================================================
+
+The constant $\Gstar = \Gamma(\tfrac14)/\Gamma(\tfrac34)$ appears
+identically in at least seven branches of mathematics (see~\cite{Paper2}
+for a catalogue of fifty-two representations):
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Branch} & \textbf{Form} \\
+\midrule
+Complex analysis & Gamma ratio $\Gamma(\tfrac14)/\Gamma(\tfrac34)$ \\
+Classical geometry & Scaled lemniscate arc length $2\varpiup/\sqrt{\pi}$ \\
+Elliptic integrals & $2\sqrt{2}\,K(1/\!\sqrt{2})/\sqrt{\pi}$ \\
+Computational number theory & $2\sqrt{\pi}/\agm(1,\sqrt{2})$ \\
+Modular forms & $\sqrt{2\pi}\,\theta_{3}(e^{-\pi})^{2}$ \\
+Lattice combinatorics & $\sqrt{2\pi\,W_{3}}$ (Watson integral) \\
+Arithmetic geometry & $8\,L(E,1)/\sqrt{\pi}$ (BSD formula) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+No other unnamed constant connects this many domains.  The constant
+$\pi$ is the product side of the reflection formula; $\Gstar$ is the
+ratio side.  Both are outputs of the same algebraic identity at the
+same evaluation point.  One was elevated to the most famous number
+in mathematics.  The other was left on the floor.
+
+The oversight is understandable.  The product gives $\pi$, which has
+obvious geometric meaning (circumference, area, periodicity).  The
+ratio gives $\Gstar$, which has no simple geometric interpretation as
+a length or an area.  But $\Gstar$ has \emph{arithmetic} meaning: it
+is the limit of the Wallis product over the Fermat residue classes,
+the scaled period of the simplest CM curve, the bridge between the
+lattice and the circle.
+
+The question is not whether $\Gstar$ is new---it is not.
+The question is whether it is fundamental.  We believe the evidence
+presented here, and in the companion papers~\cite{Paper2,Paper3},
+answers in the affirmative.
+
+
+% ================================================================
+\section{A note on naming}
+% ================================================================
+
+We have used the notation $\Gstar$ throughout, following its role as the
+``bridge constant'' in Foundational Ternary Dynamics.  We note that the
+constant admits a simpler description than any notation suggests:
+
+\medskip
+\begin{center}
+\emph{$\Gstar$ is the ratio of the Gamma function at the
+quarter-point to its reflection.}
+\end{center}
+\medskip
+
+\noindent
+A dedicated symbol is warranted by the same criterion that warranted
+$\pi$ and $\varpiup$: the constant appears independently in enough
+contexts that writing it out in full each time obscures the structure
+it reveals.
+
+
+% ================================================================
+% REFERENCES
+% ================================================================
+
+\begin{thebibliography}{10}
+
+\bibitem{BorweinBorwein}
+J.~M.~Borwein and P.~B.~Borwein,
+\emph{Pi and the AGM}, Wiley, 1987.
+
+\bibitem{Finch}
+S.~R.~Finch,
+\emph{Mathematical Constants}, Cambridge Univ.\ Press, 2003.
+
+\bibitem{Paper2}
+\emph{Fifty-two faces of the lemniscatic bridge constant},
+companion paper.
+
+\bibitem{Paper3}
+\emph{The two races: Wallis products for $\sqrt{\pi}$, $\Gstar$, and
+the composite nature of $\varpiup$},
+companion paper.
+
+\bibitem{Wallis}
+J.~Wallis,
+\emph{Arithmetica Infinitorum}, Oxford, 1656.
+
+\end{thebibliography}
+
+\end{document}

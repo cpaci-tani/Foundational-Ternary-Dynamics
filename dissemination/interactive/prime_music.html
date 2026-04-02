@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Prime Music — The Sound of Split and Inert</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+h1{margin-top:14px;font-size:1.15em;font-weight:300;letter-spacing:.05em;color:#a0b8d8}
+.subtitle{font-size:.72em;color:#667;margin-bottom:6px;font-style:italic;text-align:center;max-width:700px;line-height:1.4}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.btn{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:6px 16px;border-radius:4px;cursor:pointer;font-size:.82em;transition:all .2s}
+.btn:hover{background:#2a3a5a}
+.btn.play-btn{background:#1a3a2a;border-color:#2a5a3a;font-size:1.1em;padding:10px 28px}
+.btn.play-btn:hover{background:#2a5a3a}
+.btn.play-btn.active{background:#3a1a1a;border-color:#5a2a2a}
+.toolbar label{font-size:.74em;color:#8899aa;display:flex;align-items:center;gap:4px}
+.toolbar input[type=range]{width:100px;accent-color:#ffd54f}
+canvas{border:1px solid #1a1a2e;border-radius:4px;margin:6px 0}
+.now-playing{font-family:monospace;font-size:.85em;min-height:1.8em;margin:4px 0;text-align:center}
+.info{max-width:900px;width:100%;background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;padding:10px 16px;margin:8px 0;font-size:.72em;color:#667;line-height:1.5}
+.info em{color:#a0b8d8;font-style:normal}
+.info .mag{color:#ff66ff}.info .red{color:#ff4432}.info .gold{color:#ffd54f}
+</style>
+</head>
+<body>
+<h1>PRIME MUSIC &mdash; THE SOUND OF SPLIT AND INERT</h1>
+<p class="subtitle">A generative composition where prime arithmetic drives melody, harmony, and rhythm. The mod-12 structure creates the chord progression. The split/inert alternation creates the groove.</p>
+
+<div class="toolbar">
+  <button class="btn play-btn" id="btnPlay" onclick="toggle()">&#9654; PLAY</button>
+  <label>Tempo <input type="range" id="tempoSlider" min="80" max="200" value="120" oninput="tempoVal.textContent=this.value"> <span id="tempoVal">120</span></label>
+  <label>Density <input type="range" id="densitySlider" min="1" max="8" value="4" oninput="densityVal.textContent=this.value"> <span id="densityVal">4</span></label>
+</div>
+
+<canvas id="viz" width="900" height="280"></canvas>
+<div class="now-playing" id="nowPlaying">Press PLAY</div>
+
+<div class="info">
+  <b>How it works:</b><br>
+  <em>Chord progression:</em> The <span class="gold">4 active mod-12 residue classes</span> map to 4 chords: 1→Cmaj7, 5→Fmaj7, 7→Am7, 11→Em7. Each bar's chord is chosen by the next prime's residue class.<br>
+  <em>Melody:</em> <span class="mag">Split primes</span> trigger melody notes. The Gaussian angle (0°–45°) selects the pitch within the current chord voicing. Framework primes get an octave boost.<br>
+  <em>Bass:</em> <span class="red">Inert primes</span> trigger deep bass notes on the chord root. The bass is the heartbeat of confinement.<br>
+  <em>Rhythm:</em> The <em>alternation bias</em> (61% S↔I) creates natural syncopation — the primes prefer to alternate, giving a push-pull feel.<br>
+  <em>12 semitones = 12 mod period:</em> The octave and the prime sieve share the same number. This isn't a coincidence we're exploiting — it's a coincidence we're <em>hearing</em>.
+</div>
+
+<script>
+// =====================================================
+// PRIME DATA
+// =====================================================
+const N_MAX = 10000;
+const sieve = new Uint8Array(N_MAX + 1);
+sieve[0] = sieve[1] = 1;
+for (let i = 2; i * i <= N_MAX; i++)
+    if (!sieve[i]) for (let j = i * i; j <= N_MAX; j += i) sieve[j] = 1;
+
+const DEG = 180 / Math.PI;
+const primes = [];
+const maxC = Math.ceil(Math.sqrt(N_MAX));
+for (let a = 0; a <= maxC; a++) {
+    for (let b = 0; b <= a; b++) {
+        const norm = a * a + b * b;
+        if (norm < 2 || norm > N_MAX) continue;
+        if (b === 0) {
+            if (a > 1 && !sieve[a] && a % 4 === 3)
+                primes.push({norm, angle: 0, type: 'inert', mod12: norm % 12, a, b});
+        } else if (!sieve[norm]) {
+            primes.push({norm, angle: Math.atan2(b, a) * DEG, type: 'split', mod12: norm % 12, a, b});
+        }
+    }
+}
+primes.sort((x, y) => x.norm - y.norm);
+const FW = new Set([3, 7, 13, 47, 137]);
+
+// =====================================================
+// MUSICAL SYSTEM
+// =====================================================
+
+// 4 chords from the 4 active mod-12 classes
+// 1 mod 12 → Cmaj7 (bright, open)     [C E G B]
+// 5 mod 12 → Fmaj7 (warm, resolved)   [F A C E]
+// 7 mod 12 → Am7   (minor, introspective) [A C E G]
+// 11 mod 12 → Em7  (dark, suspended)  [E G B D]
+const CHORDS = {
+    1:  {name: 'Cmaj7', notes: [48,52,55,59,60,64,67,71], bass: 36, color: '#44aaff'},
+    5:  {name: 'Fmaj7', notes: [53,57,60,64,65,69,72,76], bass: 41, color: '#ff66ff'},
+    7:  {name: 'Am7',   notes: [45,48,52,55,57,60,64,67], bass: 33, color: '#ff4432'},
+    11: {name: 'Em7',   notes: [40,43,47,50,52,55,59,62], bass: 28, color: '#ff8844'},
+};
+const CHORD_ORDER = [1, 5, 7, 11]; // the 4 active residue classes
+
+function midiToFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+
+// =====================================================
+// AUDIO ENGINE
+// =====================================================
+let ctx = null, playing = false, masterGain = null;
+let nextBeat = 0, primeIdx = 0, currentChord = null, barCount = 0;
+let schedulerTimer = null;
+const vizData = []; // for visualizer
+
+function createReverb() {
+    const len = ctx.sampleRate * 1.5;
+    const buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+        const data = buf.getChannelData(ch);
+        for (let i = 0; i < len; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5);
+        }
+    }
+    const conv = ctx.createConvolver();
+    conv.buffer = buf;
+    return conv;
+}
+
+function synth(freq, start, dur, vol, type, pan) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const panner = ctx.createStereoPanner();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, start);
+    filter.type = 'lowpass';
+
+    if (type === 'sine') {
+        // Pad / bass
+        filter.frequency.setValueAtTime(800, start);
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(vol * 0.2, start + 0.05);
+        gain.gain.setValueAtTime(vol * 0.2, start + dur * 0.7);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+    } else {
+        // Melody
+        filter.frequency.setValueAtTime(3000, start);
+        filter.frequency.exponentialRampToValueAtTime(600, start + dur * 0.8);
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(vol * 0.25, start + 0.01);
+        gain.gain.exponentialRampToValueAtTime(vol * 0.08, start + dur * 0.4);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+    }
+
+    panner.pan.setValueAtTime(pan, start);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(panner);
+    panner.connect(masterGain);
+    osc.start(start);
+    osc.stop(start + dur + 0.05);
+}
+
+function playMelody(chord, angle, start, dur, isFW) {
+    // Map angle (0-45°) to chord tone index
+    const t = Math.min(angle / 45, 1);
+    const idx = Math.round(t * (chord.notes.length - 1));
+    let midi = chord.notes[idx];
+    if (isFW) midi += 12; // octave boost for framework
+    const pan = (t - 0.5) * 0.6; // stereo spread by angle
+    synth(midiToFreq(midi), start, dur, isFW ? 1.0 : 0.7, 'triangle', pan);
+    return midi;
+}
+
+function playBass(chord, start, dur, isFW) {
+    synth(midiToFreq(chord.bass), start, dur * 1.5, isFW ? 0.8 : 0.5, 'sine', 0);
+    // Sub bass
+    synth(midiToFreq(chord.bass - 12), start, dur * 1.2, 0.3, 'sine', 0);
+    return chord.bass;
+}
+
+function playPad(chord, start, dur) {
+    // Soft pad with 3 chord tones
+    const tones = [chord.notes[0], chord.notes[2], chord.notes[4] || chord.notes[3]];
+    for (const midi of tones) {
+        synth(midiToFreq(midi), start, dur, 0.15, 'sine', (Math.random() - 0.5) * 0.3);
+    }
+}
+
+// =====================================================
+// SCHEDULER
+// =====================================================
+function scheduler() {
+    if (!playing || !ctx) return;
+    const tempo = +document.getElementById('tempoSlider').value;
+    const density = +document.getElementById('densitySlider').value;
+    const beatDur = 60 / tempo;
+    const lookAhead = 0.2; // schedule 200ms ahead
+
+    while (nextBeat < ctx.currentTime + lookAhead) {
+        if (primeIdx >= primes.length) { primeIdx = 0; barCount = 0; } // loop
+
+        const p = primes[primeIdx];
+        const isFW = FW.has(p.norm);
+
+        // Choose chord from mod-12 class
+        const chordKey = CHORD_ORDER.includes(p.mod12) ? p.mod12 : CHORD_ORDER[barCount % 4];
+        currentChord = CHORDS[chordKey];
+
+        // Pad on every 4th prime (background harmony)
+        if (primeIdx % 4 === 0) {
+            playPad(currentChord, nextBeat, beatDur * 4);
+        }
+
+        let midi;
+        if (p.type === 'split') {
+            midi = playMelody(currentChord, p.angle, nextBeat, beatDur * 0.8, isFW);
+            vizData.push({time: nextBeat, midi, type: 'split', norm: p.norm, isFW, chord: currentChord.name, color: currentChord.color});
+        } else {
+            midi = playBass(currentChord, nextBeat, beatDur * 1.2, isFW);
+            vizData.push({time: nextBeat, midi, type: 'inert', norm: p.norm, isFW, chord: currentChord.name, color: '#ff4432'});
+            barCount++;
+        }
+
+        // Timing: use density to control how many primes per beat
+        const gap = primeIdx + 1 < primes.length ? primes[primeIdx + 1].norm - p.norm : 8;
+        const normalizedGap = Math.max(gap / (density * 4), 0.1);
+        nextBeat += beatDur * Math.min(normalizedGap, 2);
+
+        primeIdx++;
+
+        // Keep vizData from growing too large
+        while (vizData.length > 200) vizData.shift();
+    }
+
+    schedulerTimer = setTimeout(scheduler, 50);
+}
+
+// =====================================================
+// VISUALIZER
+// =====================================================
+const vizCanvas = document.getElementById('viz');
+const vizCtx = vizCanvas.getContext('2d');
+
+function drawViz() {
+    if (!playing) return;
+    vizCtx.fillStyle = '#08080d';
+    vizCtx.fillRect(0, 0, 900, 280);
+
+    const now = ctx ? ctx.currentTime : 0;
+    let currentInfo = null;
+
+    // Draw notes
+    for (const note of vizData) {
+        const age = now - note.time;
+        if (age < -1 || age > 8) continue;
+        const x = 450 - age * 100; // scroll right to left
+        if (x < -20 || x > 920) continue;
+
+        const y = 270 - ((note.midi - 24) / 60) * 250;
+        const alpha = age < 0 ? 0.5 : Math.max(0.1, 1 - age / 6);
+        const isCurrent = age >= 0 && age < 0.3;
+        if (isCurrent) currentInfo = note;
+
+        const r = isCurrent ? 7 : (note.isFW ? 5 : 3);
+        vizCtx.fillStyle = note.isFW ? `rgba(255,213,79,${alpha})` :
+            note.type === 'split' ? `rgba(255,102,255,${alpha})` :
+            `rgba(255,68,50,${alpha})`;
+        vizCtx.beginPath(); vizCtx.arc(x, y, r, 0, 2 * Math.PI); vizCtx.fill();
+
+        // Trail
+        if (age > 0 && age < 4) {
+            vizCtx.strokeStyle = vizCtx.fillStyle;
+            vizCtx.lineWidth = isCurrent ? 2 : 0.5;
+            vizCtx.beginPath(); vizCtx.moveTo(x, y); vizCtx.lineTo(x + age * 30, y); vizCtx.stroke();
+        }
+    }
+
+    // Playhead
+    vizCtx.strokeStyle = '#ffd54f33'; vizCtx.lineWidth = 2;
+    vizCtx.beginPath(); vizCtx.moveTo(450, 0); vizCtx.lineTo(450, 280); vizCtx.stroke();
+
+    // Chord name
+    if (currentChord) {
+        vizCtx.fillStyle = currentChord.color + '88';
+        vizCtx.font = '24px sans-serif';
+        vizCtx.fillText(currentChord.name, 780, 30);
+    }
+
+    // Now playing
+    const np = document.getElementById('nowPlaying');
+    if (currentInfo) {
+        const col = currentInfo.type === 'split' ? '#ff66ff' : '#ff4432';
+        const fw = currentInfo.isFW ? ' <span style="color:#ffd54f">[FRAMEWORK]</span>' : '';
+        np.innerHTML = `<span style="color:${col}">${currentInfo.type}</span> p=${currentInfo.norm} → ${currentInfo.chord}${fw}`;
+    }
+
+    requestAnimationFrame(drawViz);
+}
+
+// =====================================================
+// CONTROLS
+// =====================================================
+function toggle() {
+    if (playing) {
+        playing = false;
+        if (schedulerTimer) clearTimeout(schedulerTimer);
+        if (ctx) { ctx.close(); ctx = null; }
+        document.getElementById('btnPlay').textContent = '\u25B6 PLAY';
+        document.getElementById('btnPlay').classList.remove('active');
+    } else {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = ctx.createGain();
+        masterGain.gain.setValueAtTime(0.7, ctx.currentTime);
+        const reverb = createReverb();
+        const reverbGain = ctx.createGain();
+        reverbGain.gain.setValueAtTime(0.3, ctx.currentTime);
+        masterGain.connect(ctx.destination);
+        masterGain.connect(reverb);
+        reverb.connect(reverbGain);
+        reverbGain.connect(ctx.destination);
+
+        playing = true;
+        primeIdx = 0;
+        barCount = 0;
+        nextBeat = ctx.currentTime + 0.1;
+        vizData.length = 0;
+
+        document.getElementById('btnPlay').textContent = '\u23F8 PAUSE';
+        document.getElementById('btnPlay').classList.add('active');
+
+        scheduler();
+        drawViz();
+    }
+}
+</script>
+</body>
+</html>

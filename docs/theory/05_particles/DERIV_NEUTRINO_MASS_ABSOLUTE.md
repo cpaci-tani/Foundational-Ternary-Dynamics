@@ -241,7 +241,8 @@ D = 3 [AXIOM]
 varpi (lemniscate constant) [MATHEMATICAL]
   |
   v
-G* = sqrt(2) * Gamma(1/4)^2 / (2*pi) [THEOREM]
+G* = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2) [THEOREM]
+    [pi-free Gamma-primitive form; equivalently sqrt(2)*Gamma(1/4)^2/(2*pi)]
   |
   v
 Master Quadratic: x^2 - 16*G*^2*x + 16*G*^3 = 0 [THEOREM]
