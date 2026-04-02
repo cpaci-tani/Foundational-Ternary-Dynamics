@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>First Octant Prime Explorer — The Irreducible Wedge</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden}
+h1{margin-top:10px;font-size:1.15em;font-weight:300;letter-spacing:.05em;color:#a0b8d8}
+.subtitle{font-size:.72em;color:#667;margin-bottom:3px;font-style:italic}
+.formula-box{display:flex;gap:12px;margin:4px 0;flex-wrap:wrap;justify-content:center}
+.formula-box .f{background:#0d0d18;border:1px solid #1a1a2e;border-radius:4px;padding:3px 10px;font-size:.85em}
+.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;margin:4px 0;max-width:1200px}
+.btn{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:.74em;transition:all .2s;white-space:nowrap}
+.btn:hover{background:#2a3a5a;border-color:#4a6a8a}
+.btn.active{background:#2a4a6a;border-color:#5a8aba;color:#fff}
+.toolbar label{font-size:.72em;color:#8899aa;display:flex;align-items:center;gap:3px}
+.toolbar input[type=range]{width:70px;accent-color:#ffd54f}
+.toolbar select{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:2px 6px;font-size:.72em;border-radius:4px}
+.check-row{display:flex;align-items:center;gap:4px;color:#8899aa;font-size:.74em}
+.check-row input{accent-color:#ffd54f}
+.main-layout{display:flex;gap:8px;align-items:flex-start;margin:3px 0}
+.canvas-container{position:relative}
+.canvas-container canvas{display:block;border:1px solid #1a1a2e;border-radius:4px}
+#hoverInfo{position:absolute;top:8px;left:8px;background:rgba(10,10,20,.92);border:1px solid #2a3a5a;border-radius:4px;padding:6px 10px;font-size:.72em;font-family:monospace;color:#a0b8d8;pointer-events:none;display:none;max-width:220px;line-height:1.45}
+.panel{width:310px;background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;font-size:.72em;display:flex;flex-direction:column;gap:4px;padding:6px 8px;max-height:720px;overflow-y:auto}
+.plot-label{color:#556;font-size:.7em;margin-top:1px;text-transform:uppercase;letter-spacing:.06em}
+.plot-canvas{width:292px;height:105px;border:1px solid #1a1a2e;border-radius:3px;background:#08080d}
+.param-section{display:flex;flex-direction:column;gap:4px;border-top:1px solid #1a1a2e;padding-top:5px}
+.param-section label{display:flex;align-items:center;justify-content:space-between;color:#8899aa;font-size:.82em}
+.param-section input[type=range]{width:110px;accent-color:#ffd54f}
+.param-section .pval{color:#a0b8d8;font-family:monospace;min-width:42px;text-align:right}
+.legend{display:flex;gap:10px;margin:4px 0;font-size:.66em;color:#556;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:3px}
+.legend-swatch{width:9px;height:9px;border-radius:2px;border:1px solid #333}
+#telemetry{display:flex;gap:11px;flex-wrap:wrap;justify-content:center;padding:5px 10px;background:#0a0a12;border-top:1px solid #1a1a2e;font-size:.66em;font-family:monospace;color:#556;width:100%;max-width:1200px;margin-bottom:10px}
+.tgroup{display:flex;gap:3px;align-items:center}
+.tlabel{color:#445}.tval{color:#a0b8d8;font-weight:bold}
+.tval.gold{color:#ffd54f}.tval.blue{color:#44aaff}.tval.red{color:#ff6644}.tval.cyan{color:#44ddcc}.tval.mag{color:#cc88ff}
+</style>
+</head>
+<body>
+<h1>FIRST OCTANT PRIME EXPLORER &mdash; THE IRREDUCIBLE WEDGE</h1>
+<p class="subtitle">D&#x2084; symmetry: one octant determines all. a &ge; b &ge; 0 &middot; Split primes on checkerboard, inert on axis</p>
+
+<div class="formula-box">
+  <div class="f" id="f1"></div>
+  <div class="f" id="f2"></div>
+  <div class="f" id="f3"></div>
+</div>
+
+<div class="toolbar">
+  <button class="btn" id="btnPlay" onclick="togglePlay()">&#9654; Play</button>
+  <button class="btn" onclick="doReset()">&#8634; Reset</button>
+  <label>Speed <input type="range" id="speedSlider" min="1" max="500" value="5"></label>
+  <button class="btn" onclick="jumpTo(50)">50</button>
+  <button class="btn" onclick="jumpTo(200)">200</button>
+  <button class="btn" onclick="jumpTo(1000)">1k</button>
+  <button class="btn" onclick="jumpTo(5000)">5k</button>
+  <button class="btn" onclick="jumpTo(20000)">20k</button>
+  <button class="btn" onclick="jumpTo(50000)">50k</button>
+  <button class="btn" onclick="jumpTo(100000)">100k</button>
+  <label>View <select id="viewMode">
+    <option value="grid">a,b grid</option>
+    <option value="polar">Polar (r, &theta;)</option>
+    <option value="walk">Prime walk</option>
+    <option value="treering">Tree rings</option>
+  </select></label>
+  <div class="check-row"><input type="checkbox" id="chkChannels" checked><span>Channels</span></div>
+  <div class="check-row"><input type="checkbox" id="chkConnect"><span>Connect</span></div>
+  <div class="check-row"><input type="checkbox" id="chkLabels" checked><span>Labels</span></div>
+</div>
+
+<div class="main-layout">
+  <div class="canvas-container">
+    <canvas id="mainCanvas" width="700" height="700"></canvas>
+    <div id="hoverInfo"></div>
+  </div>
+  <div class="panel">
+    <div class="plot-label">Angular distribution (0&deg;&ndash;45&deg;)</div>
+    <canvas class="plot-canvas" id="chartAngle" width="292" height="105"></canvas>
+    <div class="plot-label">Cumulative prime count vs &radic;N</div>
+    <canvas class="plot-canvas" id="chartCount" width="292" height="105"></canvas>
+    <div class="plot-label">Angle sequence &mdash; the zigzag</div>
+    <canvas class="plot-canvas" id="chartZigzag" width="292" height="105"></canvas>
+    <div class="plot-label">Channel A (even,odd) vs Channel B (odd,even)</div>
+    <canvas class="plot-canvas" id="chartChannels" width="292" height="105"></canvas>
+    <div class="plot-label">r&#x2082; growth along powers of split primes</div>
+    <canvas class="plot-canvas" id="chartR2Growth" width="292" height="105"></canvas>
+    <div class="param-section">
+      <label>Max norm <input type="range" id="nSlider" min="10" max="100000" value="10" step="1"> <span class="pval" id="nVal">10</span></label>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#44aaff"></div>Channel A (even a, odd b)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#ff66ff"></div>Channel B (odd a, even b)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#ffd54f"></div>Framework primes (13, 137)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#ff4432"></div>Inert (axis, b=0)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#44ddcc"></div>Diagonal (a=b)</div>
+</div>
+
+<div id="telemetry"></div>
+
+<script>
+const N_MAX = 100000;
+const MW = 700, MH = 700;
+const DEG = 180 / Math.PI;
+const G_STAR = 2.9586751191886388;
+
+// Sieve — need up to N_MAX for norm primality, and up to sqrt(N_MAX) for axis primes
+function sievePrimes(max) {
+    const s = new Uint8Array(max + 1);
+    s[0] = s[1] = 1;
+    for (let i = 2; i * i <= max; i++)
+        if (!s[i]) for (let j = i * i; j <= max; j += i) s[j] = 1;
+    return s;
+}
+const primeSieve = sievePrimes(N_MAX);
+
+// Build first-octant Gaussian prime catalog
+console.time('catalog');
+const octPrimes = []; // {a, b, norm, angle, type, channel}
+const maxCoord = Math.ceil(Math.sqrt(N_MAX));
+for (let a = 0; a <= maxCoord; a++) {
+    for (let b = 0; b <= a; b++) {
+        const norm = a * a + b * b;
+        if (norm < 2 || norm > N_MAX) continue;
+        if (b === 0) {
+            if (a > 1 && !primeSieve[a] && a % 4 === 3) {
+                octPrimes.push({a, b, norm, angle: 0, type: 'inert', channel: 'axis'});
+            }
+        } else if (!primeSieve[norm]) {
+            const ch = (a % 2 === 0) ? 'A' : 'B';
+            octPrimes.push({a, b, norm, angle: Math.atan2(b, a) * DEG, type: 'split', channel: ch});
+        }
+    }
+}
+octPrimes.sort((x, y) => x.norm - y.norm);
+console.timeEnd('catalog');
+
+// Lightweight lattice points — only store for small N rendering (cap at 5000)
+const OCT_POINTS_MAX = 5000;
+const octPoints = [];
+for (let a = 0; a <= Math.ceil(Math.sqrt(OCT_POINTS_MAX)) + 1; a++) {
+    for (let b = 0; b <= a; b++) {
+        const norm = a * a + b * b;
+        if (norm > OCT_POINTS_MAX || norm === 0) continue;
+        octPoints.push({a, b, norm});
+    }
+}
+octPoints.sort((x, y) => x.norm - y.norm);
+
+// Framework primes
+const FW = new Set([13, 137]);
+const FW_INERT = new Set([3, 7, 11, 47]);
+
+// Cumulative prime counts — O(N) via prefix sum (NOT O(N × primes))
+console.time('cumulative');
+const deltaA = new Int32Array(N_MAX + 2);
+const deltaB = new Int32Array(N_MAX + 2);
+const deltaI = new Int32Array(N_MAX + 2);
+for (const p of octPrimes) {
+    if (p.type === 'inert') deltaI[p.norm]++;
+    else if (p.channel === 'A') deltaA[p.norm]++;
+    else deltaB[p.norm]++;
+}
+const splitCumA = new Int32Array(N_MAX + 1);
+const splitCumB = new Int32Array(N_MAX + 1);
+const inertCum = new Int32Array(N_MAX + 1);
+const totalCum = new Int32Array(N_MAX + 1);
+for (let n = 1; n <= N_MAX; n++) {
+    splitCumA[n] = splitCumA[n-1] + deltaA[n];
+    splitCumB[n] = splitCumB[n-1] + deltaB[n];
+    inertCum[n] = inertCum[n-1] + deltaI[n];
+    totalCum[n] = splitCumA[n] + splitCumB[n] + inertCum[n];
+}
+console.timeEnd('cumulative');
+
+// =====================================================
+const mainCanvas = document.getElementById('mainCanvas');
+const mCtx = mainCanvas.getContext('2d');
+const canvases = {};
+['chartAngle','chartCount','chartZigzag','chartChannels','chartR2Growth'].forEach(id => {
+    canvases[id] = document.getElementById(id).getContext('2d');
+});
+
+let currentN = 10, playing = false, speed = 3, hoveredPrime = null;
+const nSlider = document.getElementById('nSlider');
+const nVal = document.getElementById('nVal');
+const speedSlider = document.getElementById('speedSlider');
+const viewMode = document.getElementById('viewMode');
+const chkChannels = document.getElementById('chkChannels');
+const chkConnect = document.getElementById('chkConnect');
+const chkLabels = document.getElementById('chkLabels');
+const btnPlay = document.getElementById('btnPlay');
+const hoverInfo = document.getElementById('hoverInfo');
+
+nSlider.oninput = () => { currentN = +nSlider.value; };
+speedSlider.oninput = () => { speed = +speedSlider.value; };
+function togglePlay() { playing = !playing; btnPlay.textContent = playing ? '\u23F8 Pause' : '\u25B6 Play'; btnPlay.classList.toggle('active', playing); }
+function doReset() { currentN = 10; nSlider.value = 10; playing = false; btnPlay.textContent = '\u25B6 Play'; btnPlay.classList.remove('active'); }
+function jumpTo(n) { currentN = n; nSlider.value = n; }
+
+// =====================================================
+// MAIN CANVAS — THREE VIEW MODES
+// =====================================================
+
+function primeColor(p) {
+    if (FW.has(p.norm)) return '#ffd54f';
+    if (p.type === 'inert') return FW_INERT.has(p.a) ? '#ff8844' : '#ff4432';
+    return p.channel === 'A' ? '#44aaff' : '#ff66ff';
+}
+
+function drawGrid(N) {
+    mCtx.fillStyle = '#08080d';
+    mCtx.fillRect(0, 0, MW, MH);
+    const maxA = Math.ceil(Math.sqrt(N)) + 1;
+    const margin = 40;
+    const scale = (MW - 2 * margin) / (maxA + 1);
+    const ox = margin, oy = MH - margin;
+
+    // Grid lines
+    mCtx.strokeStyle = '#111118'; mCtx.lineWidth = 0.5;
+    for (let a = 0; a <= maxA; a++) {
+        const x = ox + a * scale;
+        mCtx.beginPath(); mCtx.moveTo(x, oy); mCtx.lineTo(x, oy - maxA * scale); mCtx.stroke();
+    }
+    for (let b = 0; b <= maxA; b++) {
+        const y = oy - b * scale;
+        mCtx.beginPath(); mCtx.moveTo(ox, y); mCtx.lineTo(ox + maxA * scale, y); mCtx.stroke();
+    }
+
+    // Diagonal line a=b
+    mCtx.strokeStyle = '#44ddcc22'; mCtx.lineWidth = 1.5;
+    mCtx.beginPath(); mCtx.moveTo(ox, oy); mCtx.lineTo(ox + maxA * scale, oy - maxA * scale); mCtx.stroke();
+
+    // Channel checkerboard background — only at low N where cells are visible
+    if (chkChannels.checked && scale > 6 && N <= 2000) {
+        for (let a = 0; a <= maxA; a++) {
+            for (let b = 0; b <= Math.min(a, maxA); b++) {
+                if (a === 0 && b === 0) continue;
+                const x = ox + a * scale - scale / 2;
+                const y = oy - b * scale - scale / 2;
+                if ((a + b) % 2 === 1) { // opposite parity: prime-eligible
+                    mCtx.fillStyle = a % 2 === 0 ? 'rgba(68,170,255,0.04)' : 'rgba(255,102,255,0.04)';
+                } else {
+                    mCtx.fillStyle = 'rgba(30,10,10,0.08)'; // same parity: no primes
+                }
+                mCtx.fillRect(x, y, scale, scale);
+            }
+        }
+    }
+
+    // Norm circles
+    const normRadii = [5, 13, 25, 50, 100, 137, 200, 500, 1000, 2000, 5000].filter(r => r <= N);
+    for (const nr of normRadii) {
+        const r = Math.sqrt(nr) * scale;
+        mCtx.strokeStyle = FW.has(nr) ? 'rgba(255,213,79,0.2)' : 'rgba(255,255,255,0.04)';
+        mCtx.lineWidth = FW.has(nr) ? 1.5 : 0.5;
+        // Draw arc from 0° to 45° in the grid coordinate system
+        mCtx.beginPath();
+        for (let t = 0; t <= 45; t += 1) {
+            const rad = t / DEG;
+            const x = ox + Math.cos(rad) * r;
+            const y = oy - Math.sin(rad) * r;
+            t === 0 ? mCtx.moveTo(x, y) : mCtx.lineTo(x, y);
+        }
+        mCtx.stroke();
+    }
+
+    // Lattice points (non-prime, representable) — only at low N for clarity
+    if (N <= OCT_POINTS_MAX) {
+        const ptSize = Math.max(1.5, Math.min(5, scale * 0.2));
+        for (const pt of octPoints) {
+            if (pt.norm > N) break;
+            const x = ox + pt.a * scale;
+            const y = oy - pt.b * scale;
+            mCtx.fillStyle = '#1a1a30';
+            mCtx.beginPath(); mCtx.arc(x, y, ptSize * 0.6, 0, 2 * Math.PI); mCtx.fill();
+        }
+    }
+
+    // Connect consecutive primes
+    const visiblePrimes = octPrimes.filter(p => p.norm <= N);
+    if (chkConnect.checked && visiblePrimes.length > 1) {
+        mCtx.strokeStyle = 'rgba(255,255,255,0.08)'; mCtx.lineWidth = 0.8;
+        mCtx.beginPath();
+        const p0 = visiblePrimes[0];
+        mCtx.moveTo(ox + p0.a * scale, oy - p0.b * scale);
+        for (let i = 1; i < visiblePrimes.length; i++) {
+            const p = visiblePrimes[i];
+            mCtx.lineTo(ox + p.a * scale, oy - p.b * scale);
+        }
+        mCtx.stroke();
+    }
+
+    // Primes
+    const prSize = N < 200 ? Math.max(3, Math.min(8, scale * 0.35))
+        : N < 2000 ? Math.max(2, Math.min(5, scale * 0.3))
+        : N < 20000 ? Math.max(1.2, Math.min(3, scale * 0.25))
+        : Math.max(0.6, Math.min(2, scale * 0.2));
+
+    for (const p of visiblePrimes) {
+        const x = ox + p.a * scale;
+        const y = oy - p.b * scale;
+        if (x < 0 || x > MW || y < 0 || y > MH) continue;
+        const col = primeColor(p);
+        const isHovered = hoveredPrime && hoveredPrime.norm === p.norm && hoveredPrime.a === p.a;
+
+        // Glow for framework
+        if (FW.has(p.norm) || (p.type === 'inert' && FW_INERT.has(p.a))) {
+            mCtx.fillStyle = col + '33';
+            mCtx.beginPath(); mCtx.arc(x, y, prSize * 2.5, 0, 2 * Math.PI); mCtx.fill();
+        }
+
+        mCtx.fillStyle = isHovered ? '#ffffff' : col;
+        if (prSize >= 2) {
+            mCtx.beginPath(); mCtx.arc(x, y, isHovered ? prSize * 1.3 : prSize, 0, 2 * Math.PI); mCtx.fill();
+        } else {
+            const s = isHovered ? prSize * 2 : prSize;
+            mCtx.fillRect(x - s/2, y - s/2, s, s);
+        }
+
+        // Label — only at low density or for framework primes
+        if (chkLabels.checked && (
+            (scale > 8 && visiblePrimes.length < 30) ||
+            (FW.has(p.norm) && scale > 3) ||
+            (p.type === 'inert' && FW_INERT.has(p.a) && scale > 3)
+        )) {
+            mCtx.fillStyle = col;
+            mCtx.font = '9px monospace';
+            mCtx.fillText(p.norm + (p.b > 0 ? '' : 'i'), x + prSize + 2, y - 2);
+        }
+    }
+
+    // Axis labels
+    mCtx.fillStyle = '#445'; mCtx.font = '10px sans-serif';
+    mCtx.fillText('a (real) \u2192', MW - 80, oy + 16);
+    mCtx.save(); mCtx.translate(ox - 18, 60); mCtx.rotate(-Math.PI / 2);
+    mCtx.fillText('b (imag) \u2192', 0, 0); mCtx.restore();
+    mCtx.fillText('a = b', ox + maxA * scale * 0.6, oy - maxA * scale * 0.65);
+}
+
+function drawPolar(N) {
+    mCtx.fillStyle = '#08080d';
+    mCtx.fillRect(0, 0, MW, MH);
+    const cx = 80, cy = MH / 2;
+    const chartW = MW - 100, chartH = MH - 60;
+    const maxR = Math.sqrt(N);
+
+    // Axes: x = angle (0-45°), y = radius (0 to √N)
+    mCtx.strokeStyle = '#1a1a2e'; mCtx.lineWidth = 1;
+    mCtx.beginPath(); mCtx.moveTo(cx, 30); mCtx.lineTo(cx, cy * 2 - 30);
+    mCtx.lineTo(cx + chartW, cy * 2 - 30); mCtx.stroke();
+
+    // Grid: angle ticks every 5°
+    mCtx.strokeStyle = '#111118'; mCtx.lineWidth = 0.5;
+    for (let a = 0; a <= 45; a += 5) {
+        const x = cx + (a / 45) * chartW;
+        mCtx.beginPath(); mCtx.moveTo(x, 30); mCtx.lineTo(x, cy * 2 - 30); mCtx.stroke();
+        mCtx.fillStyle = '#445'; mCtx.font = '8px monospace';
+        mCtx.fillText(a + '\u00B0', x - 6, cy * 2 - 18);
+    }
+
+    // Primes as dots: x = angle, y = √norm (radius)
+    const visiblePrimes = octPrimes.filter(p => p.norm <= N && p.type === 'split' && p.b > 0);
+    const prSize = Math.max(0.6, Math.min(5, 300 / Math.sqrt(visiblePrimes.length)));
+
+    for (const p of visiblePrimes) {
+        const x = cx + (p.angle / 45) * chartW;
+        const y = cy * 2 - 30 - (Math.sqrt(p.norm) / maxR) * (chartH - 30);
+        const col = primeColor(p);
+        mCtx.fillStyle = col;
+        mCtx.beginPath(); mCtx.arc(x, y, prSize, 0, 2 * Math.PI); mCtx.fill();
+    }
+
+    // Inert primes on left edge (angle = 0)
+    const inerts = octPrimes.filter(p => p.norm <= N && p.type === 'inert');
+    for (const p of inerts) {
+        const x = cx;
+        const y = cy * 2 - 30 - (Math.sqrt(p.norm) / maxR) * (chartH - 30);
+        mCtx.fillStyle = primeColor(p);
+        mCtx.beginPath(); mCtx.arc(x, y, prSize * 1.2, 0, 2 * Math.PI); mCtx.fill();
+    }
+
+    mCtx.fillStyle = '#667'; mCtx.font = '10px sans-serif';
+    mCtx.fillText('\u03B8 (angle in octant)', cx + chartW / 2 - 50, cy * 2 - 4);
+    mCtx.save(); mCtx.translate(cx - 30, cy); mCtx.rotate(-Math.PI / 2);
+    mCtx.fillText('\u221A(norm) = radius', 0, 0); mCtx.restore();
+}
+
+function drawWalk(N) {
+    mCtx.fillStyle = '#08080d';
+    mCtx.fillRect(0, 0, MW, MH);
+    const margin = 50;
+    const visiblePrimes = octPrimes.filter(p => p.norm <= N);
+    if (visiblePrimes.length < 2) return;
+
+    const chartW = MW - 2 * margin, chartH = MH - 2 * margin;
+
+    // Walk: x = prime index, y = angle (0-45° for split, 0 for inert)
+    const count = visiblePrimes.length;
+    const xScale = chartW / count;
+
+    // Background bands for channels
+    mCtx.fillStyle = 'rgba(68,170,255,0.03)';
+    mCtx.fillRect(margin, margin, chartW, chartH / 2);
+    mCtx.fillStyle = 'rgba(255,102,255,0.03)';
+    mCtx.fillRect(margin, margin + chartH / 2, chartW, chartH / 2);
+
+    // 22.5° reference line (expected mean)
+    const midY = margin + chartH * (1 - 22.5 / 45);
+    mCtx.strokeStyle = '#ffd54f22'; mCtx.lineWidth = 1; mCtx.setLineDash([4, 4]);
+    mCtx.beginPath(); mCtx.moveTo(margin, midY); mCtx.lineTo(margin + chartW, midY); mCtx.stroke();
+    mCtx.setLineDash([]);
+
+    // Connect consecutive
+    mCtx.strokeStyle = 'rgba(255,255,255,0.12)'; mCtx.lineWidth = 0.8;
+    mCtx.beginPath();
+    visiblePrimes.forEach((p, i) => {
+        const x = margin + (i + 0.5) * xScale;
+        const y = margin + chartH * (1 - p.angle / 45);
+        i === 0 ? mCtx.moveTo(x, y) : mCtx.lineTo(x, y);
+    });
+    mCtx.stroke();
+
+    // Dots
+    const dotSize = Math.max(0.6, Math.min(4, 400 / Math.sqrt(count)));
+    visiblePrimes.forEach((p, i) => {
+        const x = margin + (i + 0.5) * xScale;
+        const y = margin + chartH * (1 - p.angle / 45);
+        mCtx.fillStyle = primeColor(p);
+        mCtx.beginPath(); mCtx.arc(x, y, dotSize, 0, 2 * Math.PI); mCtx.fill();
+    });
+
+    mCtx.fillStyle = '#667'; mCtx.font = '10px sans-serif';
+    mCtx.fillText('Prime index (ordered by norm)', MW / 2 - 80, MH - 10);
+    mCtx.fillText('45\u00B0', margin - 22, margin + 4);
+    mCtx.fillText('0\u00B0', margin - 16, margin + chartH + 4);
+    mCtx.fillStyle = '#ffd54f55'; mCtx.fillText('22.5\u00B0', margin - 28, midY + 4);
+}
+
+function drawTreeRing(N) {
+    mCtx.fillStyle = '#08080d';
+    mCtx.fillRect(0, 0, MW, MH);
+    const margin = 30;
+    const maxR = Math.sqrt(N);
+    const scale = (MW - 2 * margin) / (maxR + 2);
+    const ox = margin, oy = MH - margin;
+
+    // Draw the octant boundary
+    mCtx.strokeStyle = '#1a1a2e'; mCtx.lineWidth = 1;
+    // Real axis
+    mCtx.beginPath(); mCtx.moveTo(ox, oy); mCtx.lineTo(ox + maxR * scale, oy); mCtx.stroke();
+    // Diagonal
+    const diagLen = maxR * scale / Math.SQRT2;
+    mCtx.beginPath(); mCtx.moveTo(ox, oy); mCtx.lineTo(ox + diagLen, oy - diagLen); mCtx.stroke();
+
+    const visiblePrimes = octPrimes.filter(p => p.norm <= N);
+    if (visiblePrimes.length < 2) return;
+
+    // Draw ARCS for each prime norm — the "tree rings"
+    const primeNormSet = new Set(visiblePrimes.map(p => p.norm));
+    const sortedNorms = [...primeNormSet].sort((a, b) => a - b);
+
+    // Determine which rings to draw based on density
+    const maxRings = 600;
+    const step = Math.max(1, Math.floor(sortedNorms.length / maxRings));
+
+    for (let i = 0; i < sortedNorms.length; i += step) {
+        const norm = sortedNorms[i];
+        const r = Math.sqrt(norm) * scale;
+
+        // Color by norm gap to next ring (wider gap = brighter)
+        const nextNorm = i + step < sortedNorms.length ? sortedNorms[i + step] : norm + 20;
+        const gapToNext = nextNorm - norm;
+        const t = Math.min(gapToNext / 60, 1);
+
+        // Framework norms get gold
+        const isFW = FW.has(norm);
+        const isInert = visiblePrimes.some(p => p.norm === norm && p.type === 'inert');
+
+        if (isFW) {
+            mCtx.strokeStyle = 'rgba(255,213,79,0.6)';
+            mCtx.lineWidth = 2;
+        } else if (isInert) {
+            mCtx.strokeStyle = `rgba(255,68,50,${0.15 + t * 0.3})`;
+            mCtx.lineWidth = 1;
+        } else {
+            const channel = visiblePrimes.find(p => p.norm === norm && p.type === 'split');
+            const isA = channel && channel.channel === 'A';
+            if (isA) {
+                mCtx.strokeStyle = `rgba(68,170,255,${0.08 + t * 0.25})`;
+            } else {
+                mCtx.strokeStyle = `rgba(255,102,255,${0.08 + t * 0.25})`;
+            }
+            mCtx.lineWidth = 0.5 + t * 1.5;
+        }
+
+        // Draw arc from θ=0 to θ=45° in the octant
+        mCtx.beginPath();
+        for (let deg = 0; deg <= 45; deg += 1) {
+            const rad = deg * Math.PI / 180;
+            const x = ox + Math.cos(rad) * r;
+            const y = oy - Math.sin(rad) * r;
+            deg === 0 ? mCtx.moveTo(x, y) : mCtx.lineTo(x, y);
+        }
+        mCtx.stroke();
+    }
+
+    // Draw connecting spiral through consecutive primes (split only)
+    const splitPrimes = visiblePrimes.filter(p => p.type === 'split' && p.b > 0);
+    if (chkConnect.checked && splitPrimes.length > 1) {
+        mCtx.strokeStyle = 'rgba(255,255,255,0.06)';
+        mCtx.lineWidth = 0.5;
+        mCtx.beginPath();
+        for (let i = 0; i < splitPrimes.length; i++) {
+            const p = splitPrimes[i];
+            const r = Math.sqrt(p.norm) * scale;
+            const rad = p.angle * Math.PI / 180;
+            const x = ox + Math.cos(rad) * r;
+            const y = oy - Math.sin(rad) * r;
+            i === 0 ? mCtx.moveTo(x, y) : mCtx.lineTo(x, y);
+        }
+        mCtx.stroke();
+    }
+
+    // Draw prime dots on their rings
+    const dotR = N < 500 ? 3 : N < 5000 ? 2 : N < 30000 ? 1.2 : 0.7;
+    for (const p of visiblePrimes) {
+        const r = Math.sqrt(p.norm) * scale;
+        const rad = p.angle * Math.PI / 180;
+        const x = ox + Math.cos(rad) * r;
+        const y = oy - Math.sin(rad) * r;
+        if (x < 0 || x > MW || y < 0 || y > MH) continue;
+
+        mCtx.fillStyle = primeColor(p);
+        if (dotR >= 1.5) {
+            mCtx.beginPath(); mCtx.arc(x, y, dotR, 0, 2 * Math.PI); mCtx.fill();
+        } else {
+            mCtx.fillRect(x - dotR/2, y - dotR/2, dotR, dotR);
+        }
+    }
+
+    // Labels
+    mCtx.fillStyle = '#445'; mCtx.font = '10px sans-serif';
+    mCtx.fillText('a (real) \u2192', MW - 80, oy + 16);
+    mCtx.fillText('Tree rings: each arc = a prime norm shell', margin + 5, 18);
+    if (N <= 500) {
+        mCtx.fillStyle = '#ffd54f'; mCtx.font = '9px monospace';
+        for (const n of [5, 13, 137]) {
+            if (n > N) continue;
+            const r = Math.sqrt(n) * scale;
+            mCtx.fillText('n=' + n, ox + r + 3, oy + 12);
+        }
+    }
+}
+
+function drawMain(N) {
+    const mode = viewMode.value;
+    if (mode === 'grid') drawGrid(N);
+    else if (mode === 'polar') drawPolar(N);
+    else if (mode === 'treering') drawTreeRing(N);
+    else drawWalk(N);
+}
+
+// Hover
+mainCanvas.addEventListener('mousemove', (e) => {
+    const N = Math.floor(currentN);
+    const rect = mainCanvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (MW / rect.width);
+    const my = (e.clientY - rect.top) * (MH / rect.height);
+
+    if (viewMode.value === 'grid') {
+        const maxA = Math.ceil(Math.sqrt(N)) + 1;
+        const margin = 40;
+        const scale = (MW - 2 * margin) / (maxA + 1);
+        const a = Math.round((mx - margin) / scale);
+        const b = Math.round((MH - margin - my) / scale);
+        if (a >= 0 && b >= 0 && b <= a) {
+            const norm = a * a + b * b;
+            const found = octPrimes.find(p => p.a === a && p.b === b && p.norm <= N);
+            hoveredPrime = found || null;
+            if (norm <= N) {
+                hoverInfo.style.display = 'block';
+                const isPrime = found ? `<br><b style="color:${primeColor(found)}">${found.type.toUpperCase()} PRIME</b> (${found.channel})` : '';
+                const pyth = (b > 0 && found) ? `<br>Pythagorean: (${a*a-b*b}, ${2*a*b}, ${norm})` : '';
+                const gauss = b > 0 ? `<br>Gaussian: (${a}+${b}i)(${a}-${b}i)` : '';
+                hoverInfo.innerHTML = `(${a}, ${b})<br>norm = a\u00B2+b\u00B2 = ${norm}<br>\u03B8 = ${(Math.atan2(b, a) * DEG).toFixed(2)}\u00B0${isPrime}${gauss}${pyth}`;
+            } else { hoverInfo.style.display = 'none'; }
+        } else { hoveredPrime = null; hoverInfo.style.display = 'none'; }
+    } else { hoveredPrime = null; hoverInfo.style.display = 'none'; }
+});
+mainCanvas.addEventListener('mouseleave', () => { hoveredPrime = null; hoverInfo.style.display = 'none'; });
+
+// =====================================================
+// CHARTS
+// =====================================================
+function chartPad(ctx, w, h) {
+    const p = {l: 32, r: 4, t: 4, b: 12};
+    return {...p, cw: w - p.l - p.r, ch: h - p.t - p.b, w, h, ctx};
+}
+
+// Angular distribution histogram
+function drawAngleChart(N) {
+    const c = chartPad(canvases.chartAngle, 292, 105);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+    const primes = octPrimes.filter(p => p.norm <= N && p.type === 'split' && p.b > 0);
+    if (primes.length < 3) return;
+
+    const bins = 9; // 5° each
+    const counts = new Array(bins).fill(0);
+    const countsA = new Array(bins).fill(0);
+    const countsB = new Array(bins).fill(0);
+    for (const p of primes) {
+        const bin = Math.min(Math.floor(p.angle / 5), bins - 1);
+        counts[bin]++;
+        if (p.channel === 'A') countsA[bin]++; else countsB[bin]++;
+    }
+    const maxC = Math.max(...counts, 1);
+
+    c.ctx.strokeStyle = '#1a1a2e'; c.ctx.lineWidth = 1;
+    c.ctx.beginPath(); c.ctx.moveTo(c.l, c.t); c.ctx.lineTo(c.l, c.h - c.b);
+    c.ctx.lineTo(c.w - c.r, c.h - c.b); c.ctx.stroke();
+
+    const barW = c.cw / bins;
+    for (let i = 0; i < bins; i++) {
+        const x = c.l + i * barW;
+        // Channel A (bottom)
+        const hA = (countsA[i] / maxC) * c.ch;
+        c.ctx.fillStyle = '#44aaff';
+        c.ctx.fillRect(x + 1, c.h - c.b - hA, barW / 2 - 1, hA);
+        // Channel B (top stacked)
+        const hB = (countsB[i] / maxC) * c.ch;
+        c.ctx.fillStyle = '#ff66ff';
+        c.ctx.fillRect(x + barW / 2, c.h - c.b - hB, barW / 2 - 1, hB);
+    }
+
+    // Expected uniform line
+    const expected = primes.length / bins;
+    const expY = c.h - c.b - (expected / maxC) * c.ch;
+    c.ctx.strokeStyle = '#ffd54f44'; c.ctx.lineWidth = 1; c.ctx.setLineDash([3, 3]);
+    c.ctx.beginPath(); c.ctx.moveTo(c.l, expY); c.ctx.lineTo(c.w - c.r, expY); c.ctx.stroke();
+    c.ctx.setLineDash([]);
+
+    c.ctx.fillStyle = '#667'; c.ctx.font = '7px monospace';
+    c.ctx.fillText('0\u00B0', c.l, c.h - 1); c.ctx.fillText('45\u00B0', c.w - 20, c.h - 1);
+    c.ctx.fillStyle = '#445'; c.ctx.fillText(maxC.toString(), 2, c.t + 8);
+}
+
+// Cumulative prime count
+function drawCountChart(N) {
+    const c = chartPad(canvases.chartCount, 292, 105);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+    if (N < 5) return;
+    const maxCount = totalCum[N] || 1;
+
+    c.ctx.strokeStyle = '#1a1a2e'; c.ctx.lineWidth = 1;
+    c.ctx.beginPath(); c.ctx.moveTo(c.l, c.t); c.ctx.lineTo(c.l, c.h - c.b);
+    c.ctx.lineTo(c.w - c.r, c.h - c.b); c.ctx.stroke();
+
+    // Total
+    c.ctx.strokeStyle = '#a0b8d8'; c.ctx.lineWidth = 1.5; c.ctx.beginPath();
+    const s = Math.max(1, N / c.cw | 0);
+    for (let n = 2; n <= N; n += s) {
+        const x = c.l + (n / N) * c.cw;
+        const y = c.h - c.b - (totalCum[n] / maxCount) * c.ch;
+        n <= s + 1 ? c.ctx.moveTo(x, y) : c.ctx.lineTo(x, y);
+    }
+    c.ctx.stroke();
+
+    // Theoretical: ~ N / (2 ln N) for first-octant primes (rough approximation)
+    c.ctx.strokeStyle = '#ffd54f33'; c.ctx.lineWidth = 1; c.ctx.setLineDash([3, 3]); c.ctx.beginPath();
+    for (let n = 5; n <= N; n += s) {
+        const approx = n / (2 * Math.log(n));
+        const x = c.l + (n / N) * c.cw;
+        const y = c.h - c.b - (approx / maxCount) * c.ch;
+        n <= 5 ? c.ctx.moveTo(x, y) : c.ctx.lineTo(x, y);
+    }
+    c.ctx.stroke(); c.ctx.setLineDash([]);
+
+    c.ctx.fillStyle = '#a0b8d8'; c.ctx.font = '8px sans-serif'; c.ctx.fillText('Total', c.l + 2, c.t + 9);
+    c.ctx.fillStyle = '#445'; c.ctx.font = '7px monospace'; c.ctx.fillText(maxCount.toString(), 2, c.t + 8);
+}
+
+// Angle zigzag
+function drawZigzag(N) {
+    const c = chartPad(canvases.chartZigzag, 292, 105);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+    const primes = octPrimes.filter(p => p.norm <= N);
+    if (primes.length < 3) return;
+
+    c.ctx.strokeStyle = '#1a1a2e'; c.ctx.lineWidth = 1;
+    c.ctx.beginPath(); c.ctx.moveTo(c.l, c.t); c.ctx.lineTo(c.l, c.h - c.b);
+    c.ctx.lineTo(c.w - c.r, c.h - c.b); c.ctx.stroke();
+
+    // 22.5° line
+    const midY = c.t + c.ch * (1 - 22.5 / 45);
+    c.ctx.strokeStyle = '#ffd54f22'; c.ctx.lineWidth = 1; c.ctx.setLineDash([3, 3]);
+    c.ctx.beginPath(); c.ctx.moveTo(c.l, midY); c.ctx.lineTo(c.w - c.r, midY); c.ctx.stroke();
+    c.ctx.setLineDash([]);
+
+    const count = primes.length;
+    const xStep = c.cw / count;
+
+    // Line
+    c.ctx.strokeStyle = 'rgba(255,255,255,0.15)'; c.ctx.lineWidth = 0.8; c.ctx.beginPath();
+    primes.forEach((p, i) => {
+        const x = c.l + (i + 0.5) * xStep;
+        const y = c.t + c.ch * (1 - p.angle / 45);
+        i === 0 ? c.ctx.moveTo(x, y) : c.ctx.lineTo(x, y);
+    });
+    c.ctx.stroke();
+
+    // Dots
+    const dotR = Math.max(0.5, Math.min(3, 200 / Math.sqrt(count)));
+    primes.forEach((p, i) => {
+        const x = c.l + (i + 0.5) * xStep;
+        const y = c.t + c.ch * (1 - p.angle / 45);
+        c.ctx.fillStyle = primeColor(p);
+        c.ctx.beginPath(); c.ctx.arc(x, y, dotR, 0, 2 * Math.PI); c.ctx.fill();
+    });
+
+    c.ctx.fillStyle = '#667'; c.ctx.font = '7px monospace';
+    c.ctx.fillText('45\u00B0', 4, c.t + 6); c.ctx.fillText('0\u00B0', 8, c.h - c.b);
+}
+
+// Channel race
+function drawChannels(N) {
+    const c = chartPad(canvases.chartChannels, 292, 105);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+    if (N < 10) return;
+    const maxCount = Math.max(splitCumA[N], splitCumB[N], inertCum[N], 1);
+
+    c.ctx.strokeStyle = '#1a1a2e'; c.ctx.lineWidth = 1;
+    c.ctx.beginPath(); c.ctx.moveTo(c.l, c.t); c.ctx.lineTo(c.l, c.h - c.b);
+    c.ctx.lineTo(c.w - c.r, c.h - c.b); c.ctx.stroke();
+
+    const s = Math.max(1, N / c.cw | 0);
+
+    // Channel A
+    c.ctx.strokeStyle = '#44aaff'; c.ctx.lineWidth = 1.5; c.ctx.beginPath();
+    for (let n = 2; n <= N; n += s) {
+        const x = c.l + (n / N) * c.cw, y = c.h - c.b - (splitCumA[n] / maxCount) * c.ch;
+        n <= s + 1 ? c.ctx.moveTo(x, y) : c.ctx.lineTo(x, y);
+    } c.ctx.stroke();
+
+    // Channel B
+    c.ctx.strokeStyle = '#ff66ff'; c.ctx.lineWidth = 1.5; c.ctx.beginPath();
+    for (let n = 2; n <= N; n += s) {
+        const x = c.l + (n / N) * c.cw, y = c.h - c.b - (splitCumB[n] / maxCount) * c.ch;
+        n <= s + 1 ? c.ctx.moveTo(x, y) : c.ctx.lineTo(x, y);
+    } c.ctx.stroke();
+
+    // Inert
+    c.ctx.strokeStyle = '#ff4432'; c.ctx.lineWidth = 1; c.ctx.beginPath();
+    for (let n = 2; n <= N; n += s) {
+        const x = c.l + (n / N) * c.cw, y = c.h - c.b - (inertCum[n] / maxCount) * c.ch;
+        n <= s + 1 ? c.ctx.moveTo(x, y) : c.ctx.lineTo(x, y);
+    } c.ctx.stroke();
+
+    c.ctx.fillStyle = '#44aaff'; c.ctx.font = '8px sans-serif'; c.ctx.fillText('Ch.A', c.l + 2, c.t + 9);
+    c.ctx.fillStyle = '#ff66ff'; c.ctx.fillText('Ch.B', c.l + 30, c.t + 9);
+    c.ctx.fillStyle = '#ff4432'; c.ctx.fillText('Inert', c.l + 58, c.t + 9);
+    c.ctx.fillStyle = '#445'; c.ctx.font = '7px monospace'; c.ctx.fillText(maxCount.toString(), 2, c.t + 8);
+}
+
+// r₂ growth for split primes
+function drawR2Growth(N) {
+    const c = chartPad(canvases.chartR2Growth, 292, 105);
+    c.ctx.fillStyle = '#08080d'; c.ctx.fillRect(0, 0, c.w, c.h);
+
+    c.ctx.strokeStyle = '#1a1a2e'; c.ctx.lineWidth = 1;
+    c.ctx.beginPath(); c.ctx.moveTo(c.l, c.t); c.ctx.lineTo(c.l, c.h - c.b);
+    c.ctx.lineTo(c.w - c.r, c.h - c.b); c.ctx.stroke();
+
+    // For each of a few split primes, show r₂(pⁿ) = 4(n+1)
+    const primes = [5, 13, 17, 137];
+    const colors = ['#44aaff', '#ffd54f', '#44ddcc', '#ff66ff'];
+    const maxPow = 6;
+
+    primes.forEach((p, pi) => {
+        c.ctx.strokeStyle = colors[pi]; c.ctx.lineWidth = 1.5; c.ctx.beginPath();
+        let pk = 1;
+        for (let k = 1; k <= maxPow; k++) {
+            pk *= p;
+            if (pk > N_MAX) break;
+            const r2val = 4 * (k + 1);
+            const x = c.l + (k / maxPow) * c.cw;
+            const y = c.h - c.b - (r2val / (4 * (maxPow + 1))) * c.ch;
+            k === 1 ? c.ctx.moveTo(x, y) : c.ctx.lineTo(x, y);
+            c.ctx.fillStyle = colors[pi];
+            c.ctx.beginPath(); c.ctx.arc(x, y, 2.5, 0, 2 * Math.PI); c.ctx.fill();
+        }
+        c.ctx.stroke();
+        c.ctx.fillStyle = colors[pi]; c.ctx.font = '7px monospace';
+        c.ctx.fillText('p=' + p, c.l + 2 + pi * 38, c.t + 8);
+    });
+
+    // Theoretical line: 4(n+1)
+    c.ctx.strokeStyle = '#ffffff22'; c.ctx.lineWidth = 1; c.ctx.setLineDash([2, 2]); c.ctx.beginPath();
+    for (let k = 1; k <= maxPow; k++) {
+        const x = c.l + (k / maxPow) * c.cw;
+        const y = c.h - c.b - (4 * (k + 1) / (4 * (maxPow + 1))) * c.ch;
+        k === 1 ? c.ctx.moveTo(x, y) : c.ctx.lineTo(x, y);
+    }
+    c.ctx.stroke(); c.ctx.setLineDash([]);
+    c.ctx.fillStyle = '#445'; c.ctx.font = '7px monospace';
+    c.ctx.fillText('r\u2082=4(n+1)', c.w - 60, c.t + 8);
+}
+
+// =====================================================
+// TELEMETRY
+// =====================================================
+const telDiv = document.getElementById('telemetry');
+function updateTelemetry(N) {
+    const n = Math.floor(N);
+    const primes = octPrimes.filter(p => p.norm <= n);
+    const splits = primes.filter(p => p.type === 'split');
+    const inerts = primes.filter(p => p.type === 'inert');
+    const chA = splits.filter(p => p.channel === 'A').length;
+    const chB = splits.filter(p => p.channel === 'B').length;
+    const avgAngle = splits.length > 0 ? (splits.reduce((s, p) => s + p.angle, 0) / splits.length) : 0;
+    const last = primes.length > 0 ? primes[primes.length - 1] : null;
+
+    telDiv.innerHTML = `
+        <div class="tgroup"><span class="tlabel">MaxNorm:</span><span class="tval gold">${n}</span></div>
+        <div class="tgroup"><span class="tlabel">Total:</span><span class="tval">${primes.length}</span></div>
+        <div class="tgroup"><span class="tlabel">Split:</span><span class="tval blue">${splits.length}</span></div>
+        <div class="tgroup"><span class="tlabel">Inert:</span><span class="tval red">${inerts.length}</span></div>
+        <div class="tgroup"><span class="tlabel">Ch.A:</span><span class="tval blue">${chA}</span></div>
+        <div class="tgroup"><span class="tlabel">Ch.B:</span><span class="tval mag">${chB}</span></div>
+        <div class="tgroup"><span class="tlabel">A/B:</span><span class="tval">${chB > 0 ? (chA / chB).toFixed(3) : '\u2014'}</span></div>
+        <div class="tgroup"><span class="tlabel">Avg\u03B8:</span><span class="tval cyan">${avgAngle.toFixed(2)}\u00B0</span></div>
+        <div class="tgroup"><span class="tlabel">Last:</span><span class="tval">${last ? last.a + '+' + last.b + 'i=' + last.norm : '\u2014'}</span></div>
+    `;
+}
+
+// =====================================================
+// ANIMATION
+// =====================================================
+function animate() {
+    if (playing) {
+        currentN = Math.min(currentN + speed, N_MAX);
+        nSlider.value = Math.floor(currentN);
+        if (currentN >= N_MAX) { playing = false; btnPlay.textContent = '\u25B6 Play'; btnPlay.classList.remove('active'); }
+    }
+    const N = Math.max(5, Math.floor(currentN));
+    nVal.textContent = N;
+
+    drawMain(N);
+    drawAngleChart(N);
+    drawCountChart(N);
+    drawZigzag(N);
+    drawChannels(N);
+    drawR2Growth(N);
+    updateTelemetry(N);
+
+    requestAnimationFrame(animate);
+}
+
+// =====================================================
+// INIT
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        katex.render('p = a^2+b^2 \\;\\Leftrightarrow\\; p \\equiv 1\\pmod{4}', document.getElementById('f1'), {displayMode: false});
+        katex.render('\\pi_p = a+bi,\\; N(\\pi_p)=p', document.getElementById('f2'), {displayMode: false});
+        katex.render('(a^2\\!-\\!b^2,\\; 2ab,\\; p) \\text{ Pythagorean}', document.getElementById('f3'), {displayMode: false});
+    } catch (e) {}
+
+    console.log('First Octant Explorer: ' + octPrimes.length + ' Gaussian primes cataloged (norm \u2264 ' + N_MAX + ')');
+    console.log('Split: ' + octPrimes.filter(p => p.type === 'split').length + ', Inert: ' + octPrimes.filter(p => p.type === 'inert').length);
+    console.log('Channel A: ' + octPrimes.filter(p => p.channel === 'A').length + ', Channel B: ' + octPrimes.filter(p => p.channel === 'B').length);
+
+    animate();
+});
+</script>
+</body>
+</html>

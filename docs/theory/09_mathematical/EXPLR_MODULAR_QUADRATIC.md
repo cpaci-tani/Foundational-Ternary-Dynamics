@@ -107,14 +107,15 @@ Therefore: **L(E, 1) = Omega_1 * 4 / 16 = Omega_1 / 4 = omega / 2 = 0.92704**
 
 **Proof:**
 
-G* = sqrt(2) * Gamma(1/4)^2 / (2*pi)
+G* = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2)
+    [pi-free Gamma-primitive form; equivalently sqrt(2)*Gamma(1/4)^2/(2*pi)]
 
 L(E,1) = Omega_1/4 = omega/2 = Gamma(1/4)^2 / (8*sqrt(pi))
 
 Therefore:
 4*sqrt(2/pi)*L(E,1) = 4*sqrt(2/pi) * Gamma(1/4)^2 / (8*sqrt(pi))
                      = sqrt(2/pi) * Gamma(1/4)^2 / (2*sqrt(pi))
-                     = sqrt(2) * Gamma(1/4)^2 / (2*pi)
+                     = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2)
                      = G*
 
 **Numerical verification:** Both sides equal 2.958675119188639 to 15 decimal places.

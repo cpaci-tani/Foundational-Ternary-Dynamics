@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Two Races — Convergence of sqrt(pi), G*, and varpi</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#fff;color:#222;font-family:'Georgia','Times New Roman',serif;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:1.3em;font-weight:normal;margin-bottom:4px;color:#333}
+.subtitle{font-size:.85em;color:#666;margin-bottom:12px;font-style:italic}
+.panels{display:flex;gap:0;border:1px solid #ccc}
+canvas{display:block}
+.legend{display:flex;gap:20px;margin-top:12px;font-size:.8em;flex-wrap:wrap;justify-content:center}
+.leg-item{display:flex;align-items:center;gap:5px}
+.leg-swatch{width:20px;height:3px}
+.caption{max-width:900px;font-size:.78em;color:#555;line-height:1.5;margin-top:14px;text-align:center}
+.formula{font-family:'Times New Roman',serif;font-style:italic}
+</style>
+</head>
+<body>
+<h1>The Two Races: Convergence of &radic;&pi;, G*, and &varpi;</h1>
+<p class="subtitle">Partial products S<sub>n</sub> of three Wallis-type infinite products, zooming in at four scales</p>
+
+<div class="panels">
+  <canvas id="c1" width="240" height="520"></canvas>
+  <canvas id="c2" width="220" height="520"></canvas>
+  <canvas id="c3" width="220" height="520"></canvas>
+  <canvas id="c4" width="220" height="520"></canvas>
+</div>
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-swatch" style="background:#d42;height:3px"></div><span style="color:#d42;font-weight:bold">&radic;&pi;</span> = Race 1 (evens/odds)</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#26c;height:3px"></div><span style="color:#26c;font-weight:bold">G*</span> = Race 2 (inert/split)</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#c80;height:3px"></div><span style="color:#c80;font-weight:bold">&varpi;</span> = Race 1 &times; Race 2 / 2</div>
+</div>
+
+<p class="caption">
+<b>Left to right:</b> successive zooms into the convergence region.
+<span class="formula">&radic;&pi;</span> converges via the Wallis product
+&prod;(2k)/(2k&minus;1) &mdash; the mod-2 partition.
+<span class="formula">G*</span> converges via &prod;(4k+3)/(4k+1) &mdash;
+the mod-4 (Fermat/split-inert) partition.
+<span class="formula">&varpi;</span> = G*&middot;&radic;&pi;/2 is neither race alone
+but both running simultaneously &mdash; the complete sentence.
+</p>
+
+<script>
+// Exact targets
+const SQRT_PI = 1.7724538509055159;
+const G_STAR  = 2.9586751191886388;
+const VARPI   = 2.6220575542921120;
+
+// Compute partial products up to N terms
+const N = 24;
+
+// Race 1: sqrt(pi) = lim N^{-1/2} * prod_{k=1}^{N} (2k)/(2k-1)
+function sqrtPiPartial(n) {
+    let prod = 1;
+    for (let k = 1; k <= n; k++) prod *= (2*k) / (2*k - 1);
+    return prod / Math.sqrt(n);
+}
+
+// Race 2: G* = lim N^{-1/2} * prod_{k=0}^{N} (4k+3)/(4k+1)
+function gstarPartial(n) {
+    let prod = 1;
+    for (let k = 0; k <= n; k++) prod *= (4*k + 3) / (4*k + 1);
+    return prod / Math.sqrt(n + 1);
+}
+
+// varpi = G* * sqrt(pi) / 2, using the partial products
+function varpiPartial(n) {
+    return gstarPartial(n) * sqrtPiPartial(n) / 2;
+}
+
+// Precompute
+const sqrtPiVals = [], gstarVals = [], varpiVals = [];
+for (let n = 1; n <= N; n++) {
+    sqrtPiVals.push(sqrtPiPartial(n));
+    gstarVals.push(gstarPartial(n));
+    varpiVals.push(varpiPartial(n));
+}
+
+// Four zoom levels
+const zooms = [
+    {canvas: 'c1', xMin: 1.2, xMax: 4.0, label: 'S_n', showLegend: true},
+    {canvas: 'c2', xMin: 1.7, xMax: 3.1, label: 'S_n'},
+    {canvas: 'c3', xMin: 2.55, xMax: 2.98, label: 'S_n'},
+    {canvas: 'c4', xMin: 2.61, xMax: 2.97, label: 'S_n'},
+];
+
+function drawPanel(zoom, panelIdx) {
+    const canvas = document.getElementById(zoom.canvas);
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const pad = {t: 35, b: 15, l: 30, r: 10};
+    const cw = W - pad.l - pad.r;
+    const ch = H - pad.t - pad.b;
+
+    // Background
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 0.5;
+    const nRows = N;
+    for (let i = 1; i <= nRows; i++) {
+        const y = pad.t + (i - 0.5) / nRows * ch;
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+    }
+    // Vertical grid
+    const xRange = zoom.xMax - zoom.xMin;
+    const xStep = xRange < 1 ? 0.05 : xRange < 2 ? 0.1 : 0.5;
+    for (let x = Math.ceil(zoom.xMin / xStep) * xStep; x <= zoom.xMax; x += xStep) {
+        const px = pad.l + (x - zoom.xMin) / xRange * cw;
+        ctx.beginPath(); ctx.moveTo(px, pad.t); ctx.lineTo(px, H - pad.b); ctx.stroke();
+    }
+
+    function toX(val) { return pad.l + (val - zoom.xMin) / xRange * cw; }
+    function toY(n) { return pad.t + (n - 0.5) / nRows * ch; } // n is 1-indexed
+
+    // Target lines (vertical)
+    function drawTarget(val, color, label) {
+        const x = toX(val);
+        if (x < pad.l || x > W - pad.r) return;
+        ctx.strokeStyle = color + '44';
+        ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, H - pad.b); ctx.stroke();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, H - pad.b); ctx.stroke();
+        // Label at top
+        ctx.fillStyle = color;
+        ctx.font = 'bold 10px Georgia';
+        ctx.fillText(label, x + 3, pad.t + 12);
+    }
+
+    drawTarget(SQRT_PI, '#d42', '√π');
+    drawTarget(G_STAR, '#26c', 'G*');
+    drawTarget(VARPI, '#c80', 'ϖ');
+
+    // Draw convergence traces
+    function drawTrace(vals, color, symbol) {
+        // Connect with lines
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        for (let i = 0; i < vals.length; i++) {
+            const x = toX(vals[i]);
+            const y = toY(i + 1);
+            if (x < pad.l - 20 || x > W - pad.r + 20) { continue; }
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw markers
+        for (let i = 0; i < vals.length; i++) {
+            const x = toX(vals[i]);
+            const y = toY(i + 1);
+            if (x < pad.l - 10 || x > W - pad.r + 10) continue;
+
+            ctx.fillStyle = '#fff';
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+
+            if (symbol === 'x') {
+                // X marker
+                const s = 4;
+                ctx.beginPath(); ctx.moveTo(x-s, y-s); ctx.lineTo(x+s, y+s); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(x+s, y-s); ctx.lineTo(x-s, y+s); ctx.stroke();
+            } else if (symbol === 'diamond') {
+                const s = 5;
+                ctx.beginPath();
+                ctx.moveTo(x, y-s); ctx.lineTo(x+s, y); ctx.lineTo(x, y+s); ctx.lineTo(x-s, y);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+            } else if (symbol === 'circle') {
+                ctx.beginPath(); ctx.arc(x, y, 4, 0, 2*Math.PI);
+                ctx.fill(); ctx.stroke();
+            }
+        }
+    }
+
+    drawTrace(sqrtPiVals, '#d42', 'x');
+    drawTrace(gstarVals, '#26c', 'diamond');
+    drawTrace(varpiVals, '#c80', 'circle');
+
+    // Y-axis labels (n)
+    ctx.fillStyle = '#666';
+    ctx.font = '10px Georgia';
+    for (let n = 2; n <= N; n += 2) {
+        const y = toY(n);
+        ctx.fillText(n.toString(), 4, y + 3);
+    }
+
+    // X-axis labels
+    ctx.fillStyle = '#666';
+    ctx.font = '9px Georgia';
+    const labelStep = xRange < 0.5 ? 0.05 : xRange < 1 ? 0.1 : xRange < 2 ? 0.2 : 0.5;
+    for (let x = Math.ceil(zoom.xMin / labelStep) * labelStep; x <= zoom.xMax; x += labelStep) {
+        const px = toX(x);
+        if (px > pad.l + 5 && px < W - pad.r - 5) {
+            ctx.fillText(x.toFixed(xRange < 1 ? 2 : 1), px - 10, pad.t - 5);
+        }
+    }
+
+    // Top labels
+    ctx.fillStyle = '#444';
+    ctx.font = 'italic 11px Georgia';
+    ctx.fillText('S_n', W/2 - 8, 12);
+
+    // n label
+    ctx.fillStyle = '#444';
+    ctx.font = 'italic 11px Georgia';
+    ctx.fillText('n', 10, pad.t + ch / 2);
+
+    // Zoom arrow (except last panel)
+    if (panelIdx < 3) {
+        ctx.fillStyle = '#999';
+        ctx.font = '16px sans-serif';
+        ctx.fillText('→', W - 14, 12);
+    }
+
+    // Border
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(pad.l, pad.t, cw, ch);
+}
+
+zooms.forEach((z, i) => drawPanel(z, i));
+</script>
+</body>
+</html>
