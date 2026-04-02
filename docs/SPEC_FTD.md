@@ -1627,7 +1627,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.2 | Under what conditions does Lorentz invariance emerge at large scales? | ✅ **VERIFIED** | Wave isotropy, Coulomb isotropy, time dilation isotropy all confirmed |
 | OPEN.3 | Can U(1) gauge emergence be verified in simulation? | ✅ **VERIFIED** | 2 transverse modes, longitudinal suppressed <3% |
 | OPEN.4 | Can SU(3) color interpretation be made rigorous? | ✅ **VERIFIED** | N_c≈3.024 from geometry, color neutrality, confinement all confirmed |
-| OPEN.5 | Can coupling constants be derived within FTD assumptions? | ✅ **DERIVED** | G* = √2Γ(1/4)²/(2π) follows from FTD axioms as presented; see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md, simulations/ |
+| OPEN.5 | Can coupling constants be derived within FTD assumptions? | ✅ **DERIVED** | G* = Γ(1/4)²/(√2·Γ(1/2)²) follows from FTD axioms (pi-free form); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md, simulations/ |
 | OPEN.6 | What is the testable difference between sLoop and superdeterminism? | ⬜ **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
 | OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? | ⬜ **OPEN** | Theoretically consistent; Planck-scale departures proposed as test |
 | OPEN.8 | Can particle masses be derived from FTD? | ✅ **DERIVED** | m_e = m_P √(2π) (16/3) α¹¹ (0.27% accuracy); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dual Convergence — π and G* from the Same Source</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+h1{margin-top:14px;font-size:1.2em;font-weight:300;letter-spacing:.06em;color:#a0b8d8}
+.subtitle{font-size:.76em;color:#667;margin-bottom:6px;font-style:italic;text-align:center;max-width:800px;line-height:1.4}
+.formula-row{display:flex;gap:16px;margin:6px 0;flex-wrap:wrap;justify-content:center}
+.formula-row .f{background:#0d0d18;border:1px solid #1a1a2e;border-radius:4px;padding:4px 14px;font-size:.9em}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;margin:6px 0}
+.btn{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:.78em;transition:all .2s;white-space:nowrap}
+.btn:hover{background:#2a3a5a}.btn.active{background:#2a4a6a;border-color:#5a8aba;color:#fff}
+.toolbar label{font-size:.74em;color:#8899aa;display:flex;align-items:center;gap:4px}
+.toolbar input[type=range]{width:120px;accent-color:#ffd54f}
+
+.dual-container{display:flex;gap:0;align-items:stretch;margin:8px 0;max-width:1100px;width:100%}
+.panel-left,.panel-right{flex:1;background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;padding:10px;display:flex;flex-direction:column;align-items:center}
+.panel-left{border-right:none;border-radius:4px 0 0 4px}
+.panel-right{border-left:none;border-radius:0 4px 4px 0}
+.bridge{width:80px;background:#0a0a12;border-top:1px solid #1a1a2e;border-bottom:1px solid #1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px 4px}
+.bridge-arrow{color:#ffd54f;font-size:1.5em}
+.bridge-label{font-size:.6em;color:#667;text-align:center;line-height:1.3}
+.bridge-highlight{color:#ffd54f;font-size:.68em;font-weight:bold}
+
+.panel-title{font-size:.78em;color:#667;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.panel-formula{margin-bottom:6px}
+canvas{border:1px solid #1a1a2e;border-radius:3px;background:#08080d}
+.panel-value{font-family:monospace;font-size:1.4em;margin-top:6px;letter-spacing:.02em}
+.panel-error{font-family:monospace;font-size:.72em;color:#556;margin-top:2px}
+.panel-insight{font-size:.68em;color:#556;margin-top:8px;text-align:center;line-height:1.4;max-width:380px}
+.panel-insight em{color:#a0b8d8;font-style:normal}
+.panel-insight .gold{color:#ffd54f}
+
+.cascade{max-width:1100px;width:100%;background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;padding:12px 20px;margin:8px 0;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:.76em}
+.cascade-step{background:#111120;border:1px solid #1a1a2e;border-radius:4px;padding:6px 12px;text-align:center}
+.cascade-arrow{color:#ffd54f;font-size:1.1em}
+.cascade-step .label{font-size:.68em;color:#556}
+.cascade-step .val{color:#a0b8d8;font-family:monospace;font-size:1.05em}
+.cascade-step.highlight{border-color:#ffd54f55;background:#1a1a10}
+
+.r2-bar-section{max-width:1100px;width:100%;margin:6px 0}
+.r2-label{font-size:.7em;color:#556;text-transform:uppercase;letter-spacing:.06em;text-align:center;margin-bottom:3px}
+
+#telemetry{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;padding:6px 14px;background:#0a0a12;border-top:1px solid #1a1a2e;font-size:.68em;font-family:monospace;color:#556;width:100%;max-width:1100px;margin-bottom:14px}
+.tgroup{display:flex;gap:3px;align-items:center}
+.tlabel{color:#445}.tval{color:#a0b8d8;font-weight:bold}
+.tval.gold{color:#ffd54f}.tval.cyan{color:#44ddcc}.tval.mag{color:#ff66ff}
+</style>
+</head>
+<body>
+<h1>DUAL CONVERGENCE &mdash; &pi; AND G* FROM THE SAME SOURCE</h1>
+<p class="subtitle">The representation function r&#x2082;(n) generates two fundamental constants through two different weightings. One controls geometry. The other controls physics. Both emerge from &theta;&#x2083;(q)&sup2;.</p>
+
+<div class="formula-row">
+  <div class="f" id="f1"></div>
+  <div class="f" id="f2"></div>
+  <div class="f" id="f3"></div>
+</div>
+
+<div class="toolbar">
+  <button class="btn" id="btnPlay" onclick="togglePlay()">&#9654; Play</button>
+  <button class="btn" onclick="doReset()">&#8634; Reset</button>
+  <label>Speed <input type="range" id="speedSlider" min="1" max="100" value="5"></label>
+  <button class="btn" onclick="jumpTo(5)">N=5</button>
+  <button class="btn" onclick="jumpTo(50)">50</button>
+  <button class="btn" onclick="jumpTo(200)">200</button>
+  <button class="btn" onclick="jumpTo(1000)">1k</button>
+  <button class="btn" onclick="jumpTo(5000)">5k</button>
+  <label>N <input type="range" id="nSlider" min="1" max="5000" value="1" step="1"> <span id="nVal" style="color:#ffd54f;font-family:monospace;font-size:.8em">1</span></label>
+</div>
+
+<div class="dual-container">
+  <div class="panel-left">
+    <div class="panel-title">Macro: &rho;(N) = R(N)/N &rarr; &pi;</div>
+    <div class="panel-formula" id="fLeft"></div>
+    <canvas id="canvasLeft" width="420" height="260"></canvas>
+    <div class="panel-value" id="rhoValue" style="color:#44ddcc">---</div>
+    <div class="panel-error" id="rhoError"></div>
+    <div class="panel-insight">The <em>unweighted average</em> of r&#x2082;(n) converges to &pi;. This is what the lattice looks like from <em>infinitely far away</em>. Convergence is <span class="gold">glacial</span> &mdash; power-law: error ~ 1/&radic;N.</div>
+  </div>
+
+  <div class="bridge">
+    <div class="bridge-label">Same<br>r&#x2082;(n)</div>
+    <div class="bridge-arrow">&larr; &rarr;</div>
+    <div class="bridge-label">Two<br>readings</div>
+    <div style="width:1px;height:20px;background:#2a3a5a"></div>
+    <div class="bridge-highlight">&theta;&#x2083;(q)&sup2;</div>
+    <div class="bridge-label">q=0: &pi;<br>q=e<sup>-&pi;</sup>: G*</div>
+  </div>
+
+  <div class="panel-right">
+    <div class="panel-title">Micro: &theta;&#x2083;&sup2; partial sum &rarr; G*/&radic;(2&pi;)</div>
+    <div class="panel-formula" id="fRight"></div>
+    <canvas id="canvasRight" width="420" height="260"></canvas>
+    <div class="panel-value" id="thetaValue" style="color:#ff66ff">---</div>
+    <div class="panel-error" id="thetaError"></div>
+    <div class="panel-insight">The <em>exponentially weighted</em> sum of r&#x2082;(n) converges to G*/&radic;(2&pi;). This is what the lattice looks like through the <em>self-dual lens</em> q=e<sup>-&pi;</sup>. Convergence is <span class="gold">explosive</span> &mdash; exponential: 3 digits per term.</div>
+  </div>
+</div>
+
+<div class="r2-bar-section">
+  <div class="r2-label">r&#x2082;(n) &mdash; the shared source (bars show contribution to each sum)</div>
+  <canvas id="canvasR2" width="1060" height="100"></canvas>
+</div>
+
+<div class="cascade">
+  <div class="cascade-step"><div class="label">Source</div><div class="val">r&#x2082;(n)</div></div>
+  <div class="cascade-arrow">&rarr;</div>
+  <div class="cascade-step"><div class="label">Unweighted</div><div class="val">&rho; &rarr; &pi;</div></div>
+  <div class="cascade-arrow">&nbsp;</div>
+  <div class="cascade-step"><div class="label">Source</div><div class="val">r&#x2082;(n)</div></div>
+  <div class="cascade-arrow">&rarr;</div>
+  <div class="cascade-step"><div class="label">Weighted by e<sup>-&pi;n</sup></div><div class="val">&theta;&#x2083;&sup2; &rarr; G*/&radic;(2&pi;)</div></div>
+  <div class="cascade-arrow">&rarr;</div>
+  <div class="cascade-step highlight"><div class="label">Master quadratic</div><div class="val">G* &rarr; 1/&alpha; = 137.036</div></div>
+</div>
+
+<div id="telemetry"></div>
+
+<script>
+const N_MAX = 5000;
+const G_STAR = 2.9586751191886388;
+const TARGET = G_STAR / Math.sqrt(2 * Math.PI);
+
+// Precomputation
+const r2 = new Int32Array(N_MAX + 1);
+r2[0] = 1;
+const chiSum = new Int32Array(N_MAX + 1);
+for (let d = 1; d <= N_MAX; d++) {
+    const m = d % 4;
+    if (m === 1) for (let n = d; n <= N_MAX; n += d) chiSum[n]++;
+    else if (m === 3) for (let n = d; n <= N_MAX; n += d) chiSum[n]--;
+}
+for (let n = 1; n <= N_MAX; n++) r2[n] = 4 * chiSum[n];
+
+const RN = new Int32Array(N_MAX + 1);
+RN[0] = 1;
+for (let n = 1; n <= N_MAX; n++) RN[n] = RN[n - 1] + r2[n];
+
+const thetaPartial = new Float64Array(N_MAX + 1);
+thetaPartial[0] = 1;
+for (let n = 1; n <= N_MAX; n++) {
+    thetaPartial[n] = thetaPartial[n - 1] + r2[n] * Math.exp(-Math.PI * n);
+}
+
+// Canvas contexts
+const ctxL = document.getElementById('canvasLeft').getContext('2d');
+const ctxR = document.getElementById('canvasRight').getContext('2d');
+const ctxB = document.getElementById('canvasR2').getContext('2d');
+
+// State
+let currentN = 1, playing = false, speed = 5;
+const nSlider = document.getElementById('nSlider');
+const nValEl = document.getElementById('nVal');
+const speedSlider = document.getElementById('speedSlider');
+const btnPlay = document.getElementById('btnPlay');
+
+nSlider.oninput = () => { currentN = +nSlider.value; };
+speedSlider.oninput = () => { speed = +speedSlider.value; };
+function togglePlay() { playing = !playing; btnPlay.textContent = playing ? '\u23F8 Pause' : '\u25B6 Play'; btnPlay.classList.toggle('active', playing); }
+function doReset() { currentN = 1; nSlider.value = 1; playing = false; btnPlay.textContent = '\u25B6 Play'; btnPlay.classList.remove('active'); }
+function jumpTo(n) { currentN = n; nSlider.value = n; }
+
+// LEFT: ρ(N) → π
+function drawLeft(N) {
+    const w = 420, h = 260;
+    ctxL.fillStyle = '#08080d'; ctxL.fillRect(0, 0, w, h);
+    if (N < 2) return;
+    const p = {l: 50, r: 10, t: 10, b: 20};
+    const cw = w - p.l - p.r, ch = h - p.t - p.b;
+
+    // Find range
+    let lo = Math.PI, hi = Math.PI;
+    for (let n = 1; n <= N; n++) {
+        const rho = RN[n] / n;
+        if (rho < lo) lo = rho;
+        if (rho > hi) hi = rho;
+    }
+    const margin = Math.max(hi - Math.PI, Math.PI - lo, 0.05) * 1.2;
+    lo = Math.PI - margin; hi = Math.PI + margin;
+
+    // Axes
+    ctxL.strokeStyle = '#1a1a2e'; ctxL.lineWidth = 1;
+    ctxL.beginPath(); ctxL.moveTo(p.l, p.t); ctxL.lineTo(p.l, h - p.b);
+    ctxL.lineTo(w - p.r, h - p.b); ctxL.stroke();
+
+    // π line
+    const piY = p.t + ((hi - Math.PI) / (hi - lo)) * ch;
+    ctxL.strokeStyle = '#ffd54f55'; ctxL.lineWidth = 1.5; ctxL.setLineDash([5, 3]);
+    ctxL.beginPath(); ctxL.moveTo(p.l, piY); ctxL.lineTo(w - p.r, piY); ctxL.stroke();
+    ctxL.setLineDash([]);
+    ctxL.fillStyle = '#ffd54f'; ctxL.font = '11px monospace';
+    ctxL.fillText('\u03C0 = 3.14159...', p.l + 4, piY - 5);
+
+    // ρ(N) curve
+    ctxL.strokeStyle = '#44ddcc'; ctxL.lineWidth = 1.8; ctxL.beginPath();
+    const step = Math.max(1, Math.floor(N / cw));
+    for (let n = 1; n <= N; n += step) {
+        const rho = RN[n] / n;
+        const x = p.l + (n / N) * cw;
+        const y = p.t + ((hi - rho) / (hi - lo)) * ch;
+        n <= step ? ctxL.moveTo(x, y) : ctxL.lineTo(x, y);
+    }
+    ctxL.stroke();
+
+    // Current value dot
+    const curRho = RN[N] / N;
+    const cx = w - p.r;
+    const cy = p.t + ((hi - curRho) / (hi - lo)) * ch;
+    ctxL.fillStyle = '#44ddcc';
+    ctxL.beginPath(); ctxL.arc(cx, cy, 4, 0, 2 * Math.PI); ctxL.fill();
+
+    // Y-axis labels
+    ctxL.fillStyle = '#445'; ctxL.font = '9px monospace';
+    ctxL.fillText(hi.toFixed(2), 2, p.t + 10);
+    ctxL.fillText(lo.toFixed(2), 2, h - p.b);
+    ctxL.fillText('N=' + N, p.l + 4, h - 4);
+
+    // Update value display
+    document.getElementById('rhoValue').textContent = '\u03C1 = ' + curRho.toFixed(6);
+    const err = Math.abs(curRho - Math.PI);
+    const pctErr = (err / Math.PI * 100);
+    document.getElementById('rhoError').textContent = '\u0394 = ' + err.toFixed(6) + ' (' + pctErr.toFixed(3) + '% from \u03C0)';
+}
+
+// RIGHT: θ₃² → G*/√(2π)
+function drawRight(N) {
+    const w = 420, h = 260;
+    ctxR.fillStyle = '#08080d'; ctxR.fillRect(0, 0, w, h);
+    if (N < 1) return;
+    const p = {l: 50, r: 10, t: 10, b: 20};
+    const cw = w - p.l - p.r, ch = h - p.t - p.b;
+
+    const nShow = Math.min(N, 30); // Theta converges by n≈10, show max 30 terms
+
+    // Find range
+    let lo = TARGET * 0.8, hi = TARGET * 1.05;
+    for (let n = 0; n <= nShow; n++) {
+        const v = thetaPartial[n];
+        if (v < lo) lo = v;
+        if (v > hi) hi = v;
+    }
+    lo = Math.min(lo, TARGET - 0.02);
+    hi = Math.max(hi, TARGET + 0.02);
+
+    // Axes
+    ctxR.strokeStyle = '#1a1a2e'; ctxR.lineWidth = 1;
+    ctxR.beginPath(); ctxR.moveTo(p.l, p.t); ctxR.lineTo(p.l, h - p.b);
+    ctxR.lineTo(w - p.r, h - p.b); ctxR.stroke();
+
+    // Target line
+    const tgtY = p.t + ((hi - TARGET) / (hi - lo)) * ch;
+    ctxR.strokeStyle = '#ffd54f55'; ctxR.lineWidth = 1.5; ctxR.setLineDash([5, 3]);
+    ctxR.beginPath(); ctxR.moveTo(p.l, tgtY); ctxR.lineTo(w - p.r, tgtY); ctxR.stroke();
+    ctxR.setLineDash([]);
+    ctxR.fillStyle = '#ffd54f'; ctxR.font = '11px monospace';
+    ctxR.fillText('G*/\u221A(2\u03C0) = ' + TARGET.toFixed(6), p.l + 4, tgtY - 5);
+
+    // Staircase curve
+    ctxR.strokeStyle = '#ff66ff'; ctxR.lineWidth = 2; ctxR.beginPath();
+    for (let n = 0; n <= nShow; n++) {
+        const x = p.l + (n / nShow) * cw;
+        const y = p.t + ((hi - thetaPartial[n]) / (hi - lo)) * ch;
+        if (n === 0) ctxR.moveTo(x, y);
+        else {
+            // Horizontal step then vertical jump
+            const xPrev = p.l + ((n - 1) / nShow) * cw;
+            const yPrev = p.t + ((hi - thetaPartial[n - 1]) / (hi - lo)) * ch;
+            ctxR.lineTo(x, yPrev); // horizontal
+            ctxR.lineTo(x, y); // vertical jump
+        }
+    }
+    ctxR.stroke();
+
+    // Dots at each term
+    for (let n = 0; n <= nShow; n++) {
+        const x = p.l + (n / nShow) * cw;
+        const y = p.t + ((hi - thetaPartial[n]) / (hi - lo)) * ch;
+        ctxR.fillStyle = r2[n] > 0 ? '#ff66ff' : '#331133';
+        ctxR.beginPath(); ctxR.arc(x, y, n <= N ? 3.5 : 1.5, 0, 2 * Math.PI); ctxR.fill();
+
+        // r₂ annotation at each step
+        if (nShow <= 20 && r2[n] > 0) {
+            ctxR.fillStyle = '#88668855';
+            ctxR.font = '8px monospace';
+            ctxR.fillText('r\u2082=' + r2[n], x + 4, y - 4);
+        }
+    }
+
+    // Labels
+    ctxR.fillStyle = '#445'; ctxR.font = '9px monospace';
+    ctxR.fillText(hi.toFixed(3), 2, p.t + 10);
+    ctxR.fillText(lo.toFixed(3), 2, h - p.b);
+    ctxR.fillText('n=' + nShow + ' terms', p.l + 4, h - 4);
+
+    // Update value display
+    const curTheta = thetaPartial[Math.min(N, N_MAX)];
+    const err = Math.abs(curTheta - TARGET);
+    const digits = err > 0 ? Math.max(0, -Math.floor(Math.log10(err))) : 16;
+    document.getElementById('thetaValue').textContent = '\u03B8\u2083\u00B2 = ' + curTheta.toFixed(Math.min(12, digits + 2));
+    document.getElementById('thetaError').textContent = digits + ' digits of G*/\u221A(2\u03C0) | \u0394 = ' + err.toExponential(2);
+}
+
+// BOTTOM: r₂(n) bar chart showing BOTH contributions
+function drawR2Bars(N) {
+    const w = 1060, h = 100;
+    ctxB.fillStyle = '#08080d'; ctxB.fillRect(0, 0, w, h);
+    if (N < 2) return;
+
+    const nShow = Math.min(N, 200); // Show first 200 terms max
+    const p = {l: 30, r: 10, t: 8, b: 14};
+    const cw = w - p.l - p.r, ch = h - p.t - p.b;
+
+    let maxR2 = 4;
+    for (let n = 1; n <= nShow; n++) if (r2[n] > maxR2) maxR2 = r2[n];
+
+    const barW = Math.max(1, cw / nShow);
+
+    for (let n = 0; n <= nShow; n++) {
+        if (r2[n] === 0 && n > 0) {
+            // Moat marker
+            ctxB.fillStyle = '#1a0808';
+            ctxB.fillRect(p.l + n * barW, h - p.b - 2, Math.max(barW - 0.5, 0.5), 2);
+            continue;
+        }
+        const x = p.l + n * barW;
+        const barH = (r2[n] / maxR2) * ch;
+
+        // Left half: contribution to π (unweighted, cyan)
+        const piContrib = r2[n] / (nShow * maxR2) * ch * 20; // scaled for visibility
+        ctxB.fillStyle = '#44ddcc44';
+        ctxB.fillRect(x, h - p.b - barH, barW / 2 - 0.3, barH);
+
+        // Right half: contribution to θ₃² (weighted, magenta)
+        const weight = Math.exp(-Math.PI * n);
+        const thetaContrib = r2[n] * weight;
+        const thetaH = Math.min((thetaContrib / 0.2) * ch, barH); // scale relative to first term
+        ctxB.fillStyle = '#ff66ff44';
+        ctxB.fillRect(x + barW / 2, h - p.b - thetaH, barW / 2 - 0.3, thetaH);
+
+        // Bright cap on the weighted bar to show exponential decay
+        if (thetaH > 1) {
+            ctxB.fillStyle = '#ff66ff';
+            ctxB.fillRect(x + barW / 2, h - p.b - thetaH, barW / 2 - 0.3, Math.min(2, thetaH));
+        }
+    }
+
+    ctxB.fillStyle = '#44ddcc'; ctxB.font = '9px sans-serif';
+    ctxB.fillText('\u03C1 contribution', p.l, p.t + 8);
+    ctxB.fillStyle = '#ff66ff';
+    ctxB.fillText('\u03B8\u2083\u00B2 contribution (e^{-\u03C0n} weighted)', p.l + 100, p.t + 8);
+    ctxB.fillStyle = '#445'; ctxB.font = '8px monospace';
+    ctxB.fillText('0', p.l - 8, h - p.b + 10);
+    ctxB.fillText(nShow.toString(), p.l + cw - 10, h - p.b + 10);
+}
+
+// Telemetry
+const telDiv = document.getElementById('telemetry');
+function updateTelemetry(N) {
+    const n = Math.max(1, Math.floor(N));
+    const rho = RN[n] / n;
+    const theta = thetaPartial[Math.min(n, N_MAX)];
+    const piErr = Math.abs(rho - Math.PI);
+    const gErr = Math.abs(theta - TARGET);
+    const digits = gErr > 0 ? Math.max(0, -Math.floor(Math.log10(gErr))) : 16;
+
+    telDiv.innerHTML = `
+        <div class="tgroup"><span class="tlabel">N:</span><span class="tval gold">${n}</span></div>
+        <div class="tgroup"><span class="tlabel">&rho;:</span><span class="tval cyan">${rho.toFixed(5)}</span></div>
+        <div class="tgroup"><span class="tlabel">&pi; err:</span><span class="tval">${piErr.toFixed(5)}</span></div>
+        <div class="tgroup"><span class="tlabel">&pi; %:</span><span class="tval">${(piErr/Math.PI*100).toFixed(3)}%</span></div>
+        <div class="tgroup"><span class="tlabel">&theta;&sup2;:</span><span class="tval mag">${theta.toFixed(10)}</span></div>
+        <div class="tgroup"><span class="tlabel">G* digits:</span><span class="tval gold">${digits}</span></div>
+        <div class="tgroup"><span class="tlabel">R(N):</span><span class="tval">${RN[n]}</span></div>
+        <div class="tgroup"><span class="tlabel">r&sup2;(N):</span><span class="tval">${r2[n]}</span></div>
+        <div class="tgroup"><span class="tlabel">E(N):</span><span class="tval">${(RN[n] - Math.PI*n).toFixed(1)}</span></div>
+    `;
+}
+
+// Animation
+function animate() {
+    if (playing) {
+        currentN = Math.min(currentN + speed, N_MAX);
+        nSlider.value = Math.floor(currentN);
+        if (currentN >= N_MAX) { playing = false; btnPlay.textContent = '\u25B6 Play'; btnPlay.classList.remove('active'); }
+    }
+    const N = Math.max(1, Math.floor(currentN));
+    nValEl.textContent = N;
+
+    drawLeft(N);
+    drawRight(N);
+    drawR2Bars(N);
+    updateTelemetry(N);
+
+    requestAnimationFrame(animate);
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        katex.render('\\frac{R(N)}{N} = \\frac{1}{N}\\sum_{n=0}^{N} r_2(n) \\;\\longrightarrow\\; \\pi', document.getElementById('f1'), {displayMode: false});
+        katex.render('\\sum_{n=0}^{\\infty} r_2(n)\\,e^{-\\pi n} \\;\\longrightarrow\\; \\frac{G^*}{\\sqrt{2\\pi}}', document.getElementById('f2'), {displayMode: false});
+        katex.render('G^* \\;\\xrightarrow{\\text{master quad}}\\; \\frac{1}{\\alpha} = 137.036', document.getElementById('f3'), {displayMode: false});
+        katex.render('\\rho(N) = R(N)/N', document.getElementById('fLeft'), {displayMode: false});
+        katex.render('\\theta_3(e^{-\\pi})^2 = \\sum r_2(n)\\,e^{-\\pi n}', document.getElementById('fRight'), {displayMode: false});
+    } catch (e) {}
+
+    console.assert(RN[5] === 21, 'R(5)=' + RN[5]);
+    console.assert(r2[0] === 1 && r2[1] === 4 && r2[3] === 0 && r2[5] === 8, 'r2 values');
+    console.assert(Math.abs(thetaPartial[30] - TARGET) < 1e-12, 'theta convergence');
+    console.log('Dual Convergence: R(5)=' + RN[5] + ', theta(30)=' + thetaPartial[30].toFixed(10) + ', target=' + TARGET.toFixed(10));
+
+    animate();
+});
+</script>
+</body>
+</html>

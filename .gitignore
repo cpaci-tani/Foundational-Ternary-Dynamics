@@ -43,6 +43,9 @@ dissemination/media/
 archive/
 docs/internal/
 
+# Lean 4 build artifacts
+lean4_proof/.lake/
+
 # C++ engine build artifacts
 engine/.vs/
 engine/out/

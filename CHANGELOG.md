@@ -1,5 +1,95 @@
 # Foundational Ternary Dynamics Changelog
 
+## G* Mathematics, Wallis Products, Lean 4 Verification, and Four Papers (April 1, 2026)
+
+### The Missing Ratio: G* = Gamma(1/4)/Gamma(3/4)
+
+The Euler reflection formula at z=1/4 produces two objects: a product (giving pi*sqrt(2),
+studied for 300 years) and a ratio (giving G* = 2.9587..., unnamed until now). This release
+establishes G* as a fundamental constant connecting seven branches of mathematics.
+
+### New Mathematical Results
+
+- **Wallis product for G***: G* = lim_{N->inf} (N+1)^{-1/2} prod_{k=0}^{N} (4k+3)/(4k+1).
+  The numerators (3,7,11,...) are inert primes in Z[i]; the denominators (1,5,9,...) include
+  the split primes. G* measures the cumulative advantage of inertness over splitting.
+- **Composite nature of varpi**: varpi = G*·sqrt(pi)/2. The lemniscate constant factors into
+  two independent Wallis products — Race 1 (mod 2, giving sqrt(pi)) and Race 2 (mod 4,
+  giving G*). Neither alone yields varpi; both are required.
+- **No Third Race theorem**: No single ratio product over any arithmetic progression converges
+  to varpi. The factorization is irreducible.
+- **Triad identity**: pi = 4·varpi^2/G*^2 — the circle constant as a ratio of lemniscatic objects.
+- **Pi-free G* reformulation**: G* = gamma_1^2/(sqrt(2)·gamma_2^2) where gamma_1 = Gamma(1/4),
+  gamma_2 = Gamma(1/2). Pi never appears because pi = gamma_2^2 is itself derived.
+- **Continued fraction analysis**: G* is Khinchin-typical. CF of G*^2 = [8; 1, 3, 16, ...]
+  embeds BCC=8, N_c=3, |Aut|^2=16 in its first four terms.
+- **250-digit verification**: All three triad merge directions verified to 250+ decimal places
+  using mpmath at 300-digit internal precision.
+
+### Four LaTeX Papers
+
+1. **PAPER_GSTAR_BRIDGE_CONSTANT.tex** — Seven derivations, master quadratic, alpha conjecture.
+   Red-teamed: Schneider-Chudnovsky reframed, coefficient 16 as Question, BSD shown explicitly.
+2. **PAPER_GSTAR_IDENTITIES.tex** — 52 identities across 12 families (Gamma, lemniscate,
+   elliptic, AGM, theta, eta, Watson, L-function, series, triad, Wallis, modular).
+3. **PAPER_TWO_RACES.tex** — The Wallis products for sqrt(pi) and G*, composite varpi,
+   identical convergence rates, the no-third-race theorem.
+4. **PAPER_MISSING_RATIO.tex** — Why G* = Gamma(1/4)/Gamma(3/4) was historically overlooked:
+   tradition of periods, dominance of pi, pi-contaminated notation.
+
+### Lean 4 Formal Verification (lean4_proof/)
+
+Complete Lean 4 project with 11 modules, 149 machine-verified theorems, 0 sorry:
+
+| Module | Theorems | Content |
+|--------|----------|---------|
+| Constants | 9 | Framework integers, Gamma-primitive definitions |
+| Algebra | 7 | Vieta relations, cloud boundary, field degree |
+| NumberTheory | 68 | Mod-4 classification, FizzBuzz sieve, moats, Mersenne/Fermat |
+| MasterQuadratic | 5 checks | Roots, Sum=Product, H=2, triad, floor(x-)=3 |
+| Precision | 14 | Epsilon parameter, all coefficients from {3,4,7,13,47} |
+| FineStructure | 17 | Complete alpha derivation chain, progressive precision, CODATA match |
+| GaussianIntegers | 15 | Z[i] norms, split factorizations, conductor |
+| EllipticCurve | 19 | j=1728, disc=64, |Aut|^2=|Tors|^2=16, BSD components |
+| GammaFoundation | 6 checks | Pi-free basis, triad, reflection, missing ratio, identity chain |
+| LFunction | 8 axioms | Coates-Wiles, BSD, Watson, Chowla-Selberg, Nesterenko |
+| SelfDuality | 2 axioms | Conjecture 5.5 (Tr=N) + physical axiom (x+=1/alpha) |
+
+All numerical verifications PASS. Leading alpha deviation: 1.26 ppm.
+4-term precision formula: sub-ppb match to CODATA 2022.
+
+### Interactive Visualizations (dissemination/interactive/)
+
+8 standalone HTML applications for exploring the mathematics:
+
+- **gauss_circle_explorer.html** — Gauss circle R(N)=piN+E(N) with moat analysis, 6 charts
+- **octant_prime_explorer.html** — First octant grid/polar/walk/treering, N_MAX=100K
+- **fermat_coil.html** — Fermat spiral with split/inert coloring, N_MAX=10M
+- **dual_convergence.html** — Pi and G* from same r_2(n) theta series
+- **prime_music.html** — Sonification with chord progression from mod-12
+- **master_quadratic_explorer.html** — k-family, cloud boundary, harmonic mean
+- **convergence_races.html** — Four-panel zoom convergence Race 1 vs Race 2
+- **precision_cascade.html** — Digit-locking animation for precision formula
+
+### Theory Documents
+
+- **MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md** — Comprehensive reference: 7 derivations, triad,
+  master quadratic, self-pairing interpretation, 52 representations
+- **PROOF_ALPHA_FROM_SELF_DUALITY.md** — Full proof chain: 6 theorem steps + 1 axiom
+- **CONJ_ALPHA_FROM_CM.md** — Formal conjecture statement with attack vectors
+
+### Scripts
+
+- **scripts/constants.py** — Updated to pi-free G* definition globally
+- **scripts/visualization/triad_250digits.py** — 250-digit mpmath verification
+- **scripts/visualization/triad_250digits_visual.py** — 250-digit matplotlib rendering
+- **scripts/visualization/triad_visualization.py** — 7-panel triad visualization
+- **scripts/visualization/continued_fraction_gstar.py** — CF analysis, 6-panel visualization
+- **scripts/exploration/lattice_partition_L2.py** — L=2 torus partition function (negative result)
+- **scripts/exploration/lattice_partition_moore.py** — Moore neighborhood computation (negative result)
+
+---
+
 ## Engine v2.11 — Scale 1+2 Scenario Expansion + Phase 3 Forces (March 17, 2026)
 
 ### Scale 1 (ParticleEngine): 15 New Scenarios

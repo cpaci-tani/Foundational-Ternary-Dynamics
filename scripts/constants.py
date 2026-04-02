@@ -27,25 +27,39 @@ N_gen = 3        # Number of generations = floor(x_-)
 # MATHEMATICAL CONSTANTS
 # =============================================================================
 
-# FTD Master Coefficient G* (scaled lemniscate constant)
-# G* = sqrt(2) * Gamma(1/4)^2 / (2*pi) ~ 2.9587
-# Note: This is NOT the same as the classical lemniscate constant varpi ~ 2.6221
-GAMMA_QUARTER = gamma(0.25)
-G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
+# FTD Master Coefficient G* (lemniscatic bridge constant)
+#
+# GAMMA-PRIMITIVE (pi-free) DEFINITION:
+#   G* = gamma_1^2 / (sqrt(2) * gamma_2^2)
+#   where gamma_1 = Gamma(1/4), gamma_2 = Gamma(1/2)
+#
+# This is the canonical form. Pi does NOT appear because pi = gamma_2^2
+# is itself DERIVED from the Gamma function. The classical form
+#   G* = sqrt(2) * Gamma(1/4)^2 / (2*pi)
+# is algebraically equivalent but imports pi as if it were primitive.
+#
+# Single-parameter form: r = gamma_1^2 / gamma_2^2 ≈ 4.184, G* = r/sqrt(2)
+#
+GAMMA_QUARTER = gamma(0.25)       # gamma_1 = Gamma(1/4) ≈ 3.6256
+GAMMA_HALF = gamma(0.5)           # gamma_2 = Gamma(1/2) ≈ 1.7725 (= sqrt(pi))
+G_STAR = GAMMA_QUARTER**2 / (np.sqrt(2) * GAMMA_HALF**2)  # ≈ 2.9586751
+
+# The single dimensionless ratio controlling the entire framework
+R_GAMMA = GAMMA_QUARTER**2 / GAMMA_HALF**2  # r ≈ 4.184, G* = r/sqrt(2)
 
 # IMPORTANT: VARPI (ϖ) and G* are DIFFERENT mathematical constants!
-# VARPI = Γ(1/4)²/(2√(2π)) ≈ 2.6220575 (classical lemniscate constant)
-# G*    = √2 × Γ(1/4)²/(2π) ≈ 2.9586751 (FTD master quadratic coefficient)
-# Relationship: G* = 2 × VARPI / √π
-VARPI_CLASSICAL = GAMMA_QUARTER**2 / (2 * np.sqrt(2 * np.pi))  # ≈ 2.6220575
+# VARPI = gamma_1^2 / (2*sqrt(2)*gamma_2) ≈ 2.6220575 (classical lemniscate constant)
+# G*    = gamma_1^2 / (sqrt(2)*gamma_2^2)  ≈ 2.9586751 (lemniscatic bridge constant)
+# Relationship: G* = 2*VARPI / sqrt(pi) = 2*VARPI / gamma_2
+VARPI_CLASSICAL = GAMMA_QUARTER**2 / (2 * np.sqrt(2) * GAMMA_HALF)  # ≈ 2.6220575
 
 # Golden ratio
 PHI = (1 + np.sqrt(5)) / 2
 
-# Packing fraction: circle-in-square ratio (PF = pi/4)
+# Packing fraction: circle-in-square ratio (PF = gamma_2^2/4)
 # This is the canonical "PF" in FTD — see DERIV_GSTAR_PF_BRIDGE.md
-# G* = varpi / sqrt(PF) = 2*varpi / sqrt(pi)
-PF = np.pi / 4
+# G* = varpi / sqrt(PF) = 2*varpi / gamma_2
+PF = GAMMA_HALF**2 / 4  # = pi/4, but computed without importing pi
 
 # Division algebra tower sum: dim(R) + dim(C) + dim(H) + dim(O) = 1+2+4+8
 # Appears in vacuum energy denominators: 60 = N_base * D_SIGMA

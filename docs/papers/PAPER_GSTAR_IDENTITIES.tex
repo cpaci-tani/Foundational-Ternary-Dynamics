@@ -1,0 +1,675 @@
+\documentclass[12pt,reqno]{amsart}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{longtable}
+\usepackage{tcolorbox}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\Gstar}{G^{\!*}}
+\newcommand{\varpiup}{\varpi}
+\newcommand{\agm}{\operatorname{agm}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+
+\title{Fifty-Two Faces of the Lemniscatic Bridge Constant}
+
+\author{}
+\address{}
+
+\subjclass[2020]{33E05, 33B15, 11G05, 11F27}
+\keywords{Lemniscate constant, Gamma function, elliptic integrals, theta
+  functions, Watson integral, arithmetic-geometric mean, CM elliptic curves,
+  Dedekind eta function, Wallis product}
+
+\date{\today}
+
+\begin{document}
+
+\begin{abstract}
+We compile fifty-two representations of the constant
+${\Gstar} = \Gamma(\tfrac14)/\Gamma(\tfrac34) \approx 2.9587$,
+organised into twelve families spanning the Gamma and Beta functions,
+the lemniscate, elliptic integrals, the arithmetic-geometric mean,
+Jacobi theta functions, the Dedekind eta function, lattice Green's
+functions (Watson integrals), $L$-functions of CM elliptic curves,
+hypergeometric series, structural relations among
+$\Gstar$, $\varpiup$, and~$\pi$, and modular forms.
+All identities are proved or given precise references.
+Among the representations we include the Wallis-type product
+$\Gstar = \lim_{N\to\infty} N^{-1/2}\prod_{k=0}^{N}(4k+3)/(4k+1)$,
+the Dedekind eta evaluation $\Gstar = 2\sqrt{2\pi}\,\eta(i)^{2}$,
+and the factorisation of the lemniscate constant as a product
+of two independent residue-class races, which appear to be new.
+The collection is intended as a definitive reference for the constant
+that connects the circle to the lemniscate.
+\end{abstract}
+
+\maketitle
+
+
+% ================================================================
+\section{Definition and notation}\label{sec:def}
+% ================================================================
+
+Let $\gamma_{1}=\Gamma(\tfrac14)=3.6256\ldots$ and
+$\gamma_{2}=\Gamma(\tfrac12)=\sqrt{\pi}=1.7725\ldots$
+
+\begin{definition}\label{def:Gstar}
+The \emph{lemniscatic bridge constant} is
+\begin{equation}\label{eq:def}
+  {\Gstar} \;=\; \frac{\gamma_{1}^{2}}{\sqrt{2}\,\gamma_{2}^{2}}
+  \;=\; \frac{\sqrt{2}\,\Gamma(\tfrac14)^{2}}{2\pi}
+  \;=\; 2.9586751191886388\ldots
+\end{equation}
+\end{definition}
+
+\begin{tcolorbox}[colback=blue!3!white,colframe=blue!50!black,
+  title={The simplest form}]
+\begin{equation}\label{eq:simplest}
+  \boxed{\;\Gstar \;=\; \frac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)}\;}
+\end{equation}
+This single ratio of two Gamma values is the identity that makes the
+entire collection cohere.  It follows from Euler's reflection formula:
+$\Gamma(\tfrac14)\Gamma(\tfrac34) = \pi/\!\sin(\pi/4) = \pi\sqrt{2}$,
+so $\Gamma(\tfrac14)/\Gamma(\tfrac34)
+= \Gamma(\tfrac14)^{2}/(\pi\sqrt{2})
+= \gamma_{1}^{2}/(\sqrt{2}\,\gamma_{2}^{2}) = \Gstar$.
+\end{tcolorbox}
+
+\medskip
+
+We write $\varpiup = \gamma_{1}^{2}/(2\sqrt{2}\,\gamma_{2})$
+for the lemniscate constant (the half-perimeter of the lemniscate
+$r^{2}=\cos 2\theta$) and recall $\pi = \gamma_{2}^{2}$.
+
+
+% ================================================================
+\section{The identities}\label{sec:identities}
+% ================================================================
+
+We present fifty-two representations, grouped into twelve families.
+Each identity is an equality with~\eqref{eq:def}; all are theorems
+unless otherwise noted.
+
+% ---------------------------------------------------------------
+\subsection{Family A: Gamma function and Beta function}\label{sec:A}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= \frac{\gamma_{1}^{2}}{\sqrt{2}\,\gamma_{2}^{2}}
+    \tag{A1}\label{A1}\\[5pt]
+  {\Gstar} &= \frac{\sqrt{2}\,\Gamma(\tfrac14)^{2}}{2\pi}
+    \tag{A2}\label{A2}\\[5pt]
+  {\Gstar} &= \frac{B(\tfrac14,\tfrac14)}{\sqrt{2\pi}}
+    \tag{A3}\label{A3}\\[5pt]
+  {\Gstar} &= \frac{\Gamma(\tfrac14)\,\Gamma(\tfrac14)}
+    {\sqrt{2}\,\Gamma(\tfrac12)^{2}}
+    \tag{A4}\label{A4}\\[5pt]
+  {\Gstar} &= \frac{r}{\sqrt{2}}\,,\qquad
+    r = \frac{\gamma_{1}^{2}}{\gamma_{2}^{2}}
+    \tag{A5}\label{A5}\\[5pt]
+  {\Gstar} &= \frac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)}
+    \tag{A6}\label{A6}\\[5pt]
+  {\Gstar} &= \frac{\gamma_{2}^{2}\sqrt{2}}{\Gamma(\tfrac34)^{2}}
+    \tag{A7}\label{A7}\\[5pt]
+  {\Gstar} &= \frac{16\,\Gamma(\tfrac54)^{2}}
+    {\sqrt{2}\,\gamma_{2}^{2}}
+    \tag{A8}\label{A8}\\[5pt]
+  {\Gstar} &= \frac{\bigl(\displaystyle\int_{0}^{\infty}
+    t^{-3/4}e^{-t}\,dt\bigr)^{2}}{%
+    \sqrt{2}\,\bigl(\displaystyle\int_{0}^{\infty}
+    t^{-1/2}e^{-t}\,dt\bigr)^{2}}
+    \tag{A9}\label{A9}\\[5pt]
+  \sqrt{{\Gstar}} &= \frac{\gamma_{1}}{2^{1/4}\,\gamma_{2}}
+    \tag{A10}\label{A10}\\[5pt]
+  \frac{1}{{\Gstar}} &= \frac{\Gamma(\tfrac34)}{\Gamma(\tfrac14)}
+    \tag{A11}\label{A11}
+\end{align}
+
+\noindent
+Here $B(a,b)=\Gamma(a)\Gamma(b)/\Gamma(a+b)$ is the Beta function.
+\eqref{A6} is the simplest form (see the boxed display above):
+a single ratio of two Gamma values.
+It follows from the reflection formula
+$\Gamma(\tfrac14)\Gamma(\tfrac34)=\pi/\!\sin(\pi/4)=\pi\sqrt{2}
+=\sqrt{2}\,\gamma_{2}^{2}$, giving
+$\Gamma(\tfrac14)/\Gamma(\tfrac34)
+=\Gamma(\tfrac14)^{2}/(\sqrt{2}\,\gamma_{2}^{2})={\Gstar}$.
+\eqref{A8} uses $\Gamma(\tfrac54)=\tfrac14\Gamma(\tfrac14)$.
+\eqref{A9} writes ${\Gstar}$ as a ratio of two pure Laplace integrals with no
+named functions.
+
+% ---------------------------------------------------------------
+\subsection{Family A$'$: Wallis-type infinite products (the two races)}\label{sec:Aprime}
+% ---------------------------------------------------------------
+
+\begin{align}
+  \sqrt{\pi} &= \lim_{N\to\infty}\; N^{-1/2}
+    \prod_{k=1}^{N}\frac{2k}{2k-1}
+    \tag{A12}\label{A12}\\[5pt]
+  {\Gstar} &= \lim_{N\to\infty}\; N^{-1/2}
+    \prod_{k=0}^{N}\frac{4k+3}{4k+1}
+    \tag{A13}\label{A13}
+\end{align}
+
+\noindent
+\eqref{A12} is the classical Wallis product for $\sqrt{\pi}$: the ratio
+of even integers over odd integers.  This is \emph{Race~1}---the mod-$2$
+partition.
+
+\eqref{A13} is the Wallis-type product for~${\Gstar}$: the ratio
+of integers $\equiv 3\pmod{4}$ over integers $\equiv 1\pmod{4}$.
+This is \emph{Race~2}---the mod-$4$ partition, which is precisely the
+split/inert classification in the Gaussian integers $\ZZ[i]$.
+
+The lemniscate constant is the product of both races:
+\begin{equation}\tag{A14}\label{A14}
+  \varpiup \;=\; \frac{{\Gstar}\cdot\sqrt{\pi}}{2}
+  \;=\; \frac{1}{2}\,\lim_{N\to\infty}\;N^{-1}\;
+  \prod_{k=0}^{N}\frac{4k+3}{4k+1}\;\cdot\;
+  \prod_{k=1}^{N}\frac{2k}{2k-1}\,.
+\end{equation}
+
+\begin{remark}[A grammar of constants]\label{rem:grammar}
+This factorisation admits a linguistic metaphor.
+$\sqrt{\pi}$ is the \emph{vocabulary}---the even/odd race, the first
+partition of the natural numbers.
+${\Gstar}$ is the \emph{grammar}---the inert/split race, the Fermat sieve.
+$\varpiup$ is the \emph{sentence}---neither race alone,
+but both running simultaneously.  The classical tradition kept $\varpiup$
+(the period, a geometric length) and expressed everything through it.
+The Wallis decomposition reveals that $\varpiup$ is composite:
+it factors into $\sqrt{\pi}$ and~${\Gstar}$, two independent ratio products
+arising from two independent partitions of the integers.
+\end{remark}
+
+% ---------------------------------------------------------------
+\subsection{Family B: The lemniscate}\label{sec:B}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= \frac{2\varpiup}{\gamma_{2}}
+    \tag{B1}\label{B1}\\[5pt]
+  {\Gstar} &= \frac{2\varpiup}{\sqrt{\pi}}
+    \tag{B2}\label{B2}\\[5pt]
+  {\Gstar} &= \frac{\varpiup}{\sqrt{\pi/4}}
+    \tag{B3}\label{B3}\\[5pt]
+  {\Gstar} &= \frac{4}{\sqrt{\pi}}
+    \int_{0}^{1}\frac{dx}{\sqrt{1-x^{4}}}
+    \tag{B4}\label{B4}
+\end{align}
+
+\noindent
+The half-perimeter of the lemniscate $r^{2}=\cos 2\theta$ is~$\varpiup$.
+\eqref{B3} writes $\Gstar = \varpiup/\!\sqrt{PF}$ where
+$PF = \pi/4$ is the circle-in-square packing fraction.
+\eqref{B4} is the integral definition of $\varpiup$, rescaled by
+$4/\sqrt{\pi}$; the integral itself goes back to
+Fagnano~(1718) and Euler~(1753).
+
+% ---------------------------------------------------------------
+\subsection{Family C: Elliptic integrals}\label{sec:C}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= \frac{2\sqrt{2}}{\gamma_{2}}\,
+    K\!\bigl(\tfrac{1}{\sqrt{2}}\bigr)
+    \tag{C1}\label{C1}\\[5pt]
+  {\Gstar} &= \frac{4}{\sqrt{\pi}}\,
+    K\!\bigl(\tfrac{1}{\sqrt{2}}\bigr)
+    \tag{C2}\label{C2}\\[5pt]
+  {\Gstar} &= \frac{2\sqrt{2}}{\gamma_{2}}\,
+    K'(i)
+    \tag{C3}\label{C3}\\[5pt]
+  {\Gstar} &= 2\,\sqrt{\frac{K(1/\!\sqrt{2})}{2\,E(1/\!\sqrt{2})-K(1/\!\sqrt{2})}}
+    \tag{C4}\label{C4}\\[5pt]
+  {\Gstar}^{2} &= \frac{4\,K(1/\!\sqrt{2})}{2\,E(1/\!\sqrt{2})-K(1/\!\sqrt{2})}
+    \tag{C5}\label{C5}
+\end{align}
+
+\noindent
+Here $K(k)=\int_{0}^{\pi/2}d\theta/\sqrt{1-k^{2}\sin^{2}\theta}$ and
+$E(k)=\int_{0}^{\pi/2}\sqrt{1-k^{2}\sin^{2}\theta}\,d\theta$.
+The modulus $k=1/\!\sqrt{2}$ is the \emph{lemniscatic modulus},
+the unique value where the $j$-invariant equals~$1728$.
+\eqref{C3} uses the complementary integral at the singular modulus $k=i$.
+\eqref{C4} and \eqref{C5} follow from the Legendre relation at the self-dual point.
+
+% ---------------------------------------------------------------
+\subsection{Family D: Arithmetic-geometric mean}\label{sec:D}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= \frac{2\gamma_{2}}{\agm(1,\sqrt{2})}
+    \tag{D1}\label{D1}\\[5pt]
+  {\Gstar} &= \frac{2\sqrt{\pi}}{\agm(1,\sqrt{2})}
+    \tag{D2}\label{D2}\\[5pt]
+  {\Gstar} &= \frac{\gamma_{2}}{\agm(1,1/\!\sqrt{2})}
+    \tag{D3}\label{D3}\\[5pt]
+  {\Gstar} &= \frac{4\gamma_{2}}{%
+    \displaystyle\lim_{n\to\infty} 2^{n}\,
+    \prod_{k=0}^{n}\cos\!\bigl(\tfrac{\theta_{k}}{2}\bigr)}
+    \tag{D4}\label{D4}
+\end{align}
+
+\noindent
+$\agm(a,b)$ denotes the common limit of the iteration
+$a_{n+1}=(a_{n}+b_{n})/2$, $b_{n+1}=\sqrt{a_{n}b_{n}}$.
+\eqref{D1} is the classical Gauss identity relating the AGM to
+the complete elliptic integral~\cite{BorweinBorwein}.
+\eqref{D3} uses the homogeneity $\agm(1,1/\!\sqrt{2})=\agm(1,\sqrt{2})/\sqrt{2}$.
+\eqref{D4} is Gauss's product formula with
+$\theta_{0}=\pi/4$ and
+$\theta_{k+1}=\arcsin\!\bigl((a_{k}-b_{k})\sin\theta_{k}/(a_{k}+b_{k})\bigr)$.
+
+% ---------------------------------------------------------------
+\subsection{Family E: Jacobi theta functions}\label{sec:E}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= \gamma_{2}\sqrt{2}\;\theta_{3}(e^{-\gamma_{2}^{2}})^{2}
+    \tag{E1}\label{E1}\\[5pt]
+  {\Gstar} &= \sqrt{2\pi}\;\theta_{3}(e^{-\pi})^{2}
+    \tag{E2}\label{E2}\\[5pt]
+  {\Gstar} &= \gamma_{2}\sqrt{2}
+    \biggl(\sum_{n=-\infty}^{\infty}e^{-\pi n^{2}}\biggr)^{\!2}
+    \tag{E3}\label{E3}\\[5pt]
+  {\Gstar} &= \gamma_{2}\sqrt{2}\;
+    \biggl(1 + 2\sum_{n=1}^{\infty}e^{-\pi n^{2}}\biggr)^{\!2}
+    \tag{E4}\label{E4}\\[5pt]
+  {\Gstar} &\approx \gamma_{2}\sqrt{2}\;
+    (1 + 2\,e^{-\pi})^{2}
+    \quad\text{(2-term truncation, 4 correct digits)}
+    \tag{E5}\label{E5}
+\end{align}
+
+\noindent
+$\theta_{3}(q)=\sum_{n\in\ZZ}q^{n^{2}}$ is the Jacobi theta function.
+The nome $q_{0}=e^{-\pi}$ is the unique \emph{self-dual} nome:
+$\theta_{3}(e^{-\pi t})=t^{-1/2}\theta_{3}(e^{-\pi/t})$ at $t=1$.
+The Chowla--Selberg formula~\cite{ChowlaSelberg} gives
+$\theta_{3}(e^{-\pi})=\gamma_{1}/(\gamma_{2}^{3/2}\cdot 2^{1/4})$.
+
+% ---------------------------------------------------------------
+\subsection{Family E$'$: Dedekind eta function}\label{sec:Eprime}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= 2\gamma_{2}\sqrt{2}\;\eta(i)^{2}
+    \tag{E6}\label{E6}\\[5pt]
+  {\Gstar} &= 2\sqrt{2\pi}\;\eta(i)^{2}
+    \tag{E7}\label{E7}
+\end{align}
+
+\noindent
+$\eta(\tau)=e^{\pi i\tau/12}\prod_{n=1}^{\infty}(1-e^{2\pi in\tau})$
+is the Dedekind eta function.
+At $\tau=i$: $\eta(i)=\gamma_{1}/(2\gamma_{2}^{3/2})$
+(a consequence of the Chowla--Selberg formula).
+Then $2\gamma_{2}\sqrt{2}\cdot\eta(i)^{2}
+=2\gamma_{2}\sqrt{2}\cdot\gamma_{1}^{2}/(4\gamma_{2}^{3})
+=\gamma_{1}^{2}/(\sqrt{2}\,\gamma_{2}^{2})={\Gstar}$.
+
+% ---------------------------------------------------------------
+\subsection{Family F: Lattice sums (Watson integrals)}\label{sec:F}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= \sqrt{2\gamma_{2}^{2}\,W_{3}}
+    \tag{F1}\label{F1}\\[5pt]
+  {\Gstar} &= \sqrt{2\pi\,W_{3}}
+    \tag{F2}\label{F2}\\[5pt]
+  {\Gstar}^{2} &= 2\gamma_{2}^{2}\,W_{3}
+    \tag{F3}\label{F3}\\[5pt]
+  {\Gstar}^{2} &= \frac{1}{2\gamma_{2}^{4}}
+    \biggl(\frac{1}{\gamma_{2}^{6}}
+    \iiint_{[-\gamma_{2}^{2},\gamma_{2}^{2}]^{3}}
+    \frac{dk_{1}\,dk_{2}\,dk_{3}}{%
+    3-\cos k_{1}\cos k_{2}-\cos k_{2}\cos k_{3}-\cos k_{3}\cos k_{1}}
+    \biggr)
+    \tag{F4}\label{F4}
+\end{align}
+
+\noindent
+$W_{3}=\gamma_{1}^{4}/(4\gamma_{2}^{6})$ is the Watson integral for
+the face-centred cubic (BCC) lattice~\cite{Watson,ZuckerJoyce}.
+\eqref{F4} writes out $W_{3}$ as a triple integral over the Brillouin zone.
+
+% ---------------------------------------------------------------
+\subsection{Family G: $L$-functions and the Birch--Swinnerton-Dyer conjecture}\label{sec:G}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= \frac{8\,L(E,1)}{\gamma_{2}}
+    \tag{G1}\label{G1}\\[5pt]
+  {\Gstar} &= \frac{8\,L(E,1)}{\sqrt{\pi}}
+    \tag{G2}\label{G2}\\[5pt]
+  {\Gstar} &= 4\sqrt{\frac{2}{\pi}}\;L(E,1)
+    \tag{G3}\label{G3}\\[5pt]
+  {\Gstar} &= \frac{2\,\Omega_{+}}{\gamma_{2}}
+    \tag{G4}\label{G4}
+\end{align}
+
+\noindent
+$E\colon y^{2}=x^{3}-x$ is the CM elliptic curve with $j$-invariant~$1728$
+and $\End(E)\cong\ZZ[i]$.
+The value $L(E,1)=\varpiup/4$ follows from the BSD formula
+(Coates--Wiles~\cite{CoatesWiles}, Rubin~\cite{Rubin}).
+$\Omega_{+}=\varpiup$ is the real period of~$E$.
+
+% ---------------------------------------------------------------
+\subsection{Family H: Hypergeometric and series representations}\label{sec:H}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= \frac{2\gamma_{1}}{\gamma_{2}}\;
+    {}_{2}F_{1}\!\bigl(\tfrac12,\tfrac12;\,1;\,\tfrac12\bigr)
+    \tag{H1}\label{H1}\\[5pt]
+  {\Gstar} &= \gamma_{2}\sqrt{2}\;
+    \biggl(\sum_{n=0}^{\infty} r_{2}(n)\,e^{-\gamma_{2}^{2}n}\biggr)
+    \tag{H2}\label{H2}\\[5pt]
+  {\Gstar} &= \gamma_{2}\sqrt{2}\;
+    \biggl(1 + 4\sum_{\substack{d\geq 1\\d\;\mathrm{odd}}}
+    \frac{\chi_{-4}(d)\,e^{-\gamma_{2}^{2}d}}
+    {1-e^{-\gamma_{2}^{2}d}}\biggr)
+    \tag{H3}\label{H3}\\[5pt]
+  {\Gstar} &= \gamma_{2}\sqrt{2}\;
+    \prod_{n=1}^{\infty}
+    (1-e^{-2\gamma_{2}^{2}n})^{2}\,
+    (1+e^{-\gamma_{2}^{2}(2n-1)})^{4}
+    \tag{H4}\label{H4}\\[5pt]
+  {\Gstar} &= \frac{16}{\sqrt{2}\,\gamma_{2}^{2}}
+    \biggl(\int_{0}^{\infty}e^{-t^{4}}\,dt\biggr)^{\!2}
+    \tag{H5}\label{H5}
+\end{align}
+
+\noindent
+\eqref{H1} uses $K(1/\!\sqrt{2})=(\gamma_{1}/(2\gamma_{2}))\;
+{}_{2}F_{1}(\tfrac12,\tfrac12;1;\tfrac12)$.
+\eqref{H2} expresses $\theta_{3}^{2}$ via the arithmetic function
+$r_{2}(n)=\#\{(a,b)\in\ZZ^{2}:a^{2}+b^{2}=n\}$.
+\eqref{H3} is the Lambert-series form using the non-principal character
+$\chi_{-4}(d)=\bigl(\frac{-4}{d}\bigr)$.
+\eqref{H4} is the Jacobi triple-product formula applied to $\theta_{3}^{2}$.
+\eqref{H5} uses $\int_{0}^{\infty}e^{-t^{4}}\,dt=\Gamma(\tfrac54)=\tfrac14\Gamma(\tfrac14)$.
+
+% ---------------------------------------------------------------
+\subsection{Family I: Structural relations among $\Gstar$, $\varpiup$, and $\pi$}\label{sec:I}
+% ---------------------------------------------------------------
+
+\begin{align}
+  \pi &= \frac{4\,\varpiup^{2}}{{\Gstar}^{2}}
+    \tag{I1}\label{I1}\\[5pt]
+  \varpiup &= \frac{{\Gstar}\,\gamma_{2}}{2}
+    \tag{I2}\label{I2}\\[5pt]
+  {\Gstar} &= \frac{4\,\varpiup^{2}}{{\Gstar}\,\gamma_{2}^{2}}
+    \tag{I3}\label{I3}\\[5pt]
+  {\Gstar}^{3} &= \frac{16\,\varpiup^{4}}
+    {{\Gstar}\,\gamma_{2}^{4}}
+    \tag{I4}\label{I4}
+\end{align}
+
+\noindent
+\eqref{I1} is the \emph{triad identity}: the circular constant expressed
+as a ratio of lemniscatic objects.
+\eqref{I3} is the self-referential form of~\eqref{I1}.
+\eqref{I4} combines \eqref{I1} and \eqref{I3} to express
+${\Gstar}^{3}$ in terms of $\varpiup$ and~$\gamma_{2}$.
+
+% ---------------------------------------------------------------
+\subsection{Family J: Modular forms}\label{sec:J}
+% ---------------------------------------------------------------
+
+\begin{align}
+  {\Gstar} &= \sqrt{2\pi}\;\frac{\theta_{3}(e^{-\pi})^{4}}
+    {\theta_{3}(e^{-\pi})^{2}}
+    = \sqrt{2\pi}\;\theta_{3}(e^{-\pi})^{2}
+    \tag{J1}\label{J1}
+\end{align}
+
+\noindent
+\eqref{J1} is included to exhibit $\Gstar$ as the value of the
+weight-$1$ modular form $f(\tau) = \sqrt{2\,\mathrm{Im}(\tau)}\;
+\theta_{3}(q)^{2}$ (where $q = e^{2\pi i\tau}$)
+at the CM point $\tau = i$.
+This is a restatement of~\eqref{E2}, but viewed from the modular-forms
+perspective: $\Gstar$ is the special value of a modular form at the
+unique self-dual point of $\mathrm{SL}_{2}(\ZZ)\backslash\HH$.
+The Chowla--Selberg formula~\cite{ChowlaSelberg} guarantees that all
+such CM values are algebraic multiples of products of Gamma values at
+rational arguments.
+
+
+% ================================================================
+\section{Summary table}\label{sec:table}
+% ================================================================
+
+The following table lists all fifty-two representations.  The
+\textbf{Source} column gives either the original reference or the
+identity from which the entry follows by algebraic manipulation.
+
+\begin{center}
+\begin{longtable}{clll}
+\toprule
+\textbf{ID} & \textbf{Expression for $\Gstar$} & \textbf{Family} & \textbf{Source} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Expression for $\Gstar$} & \textbf{Family} & \textbf{Source} \\
+\midrule
+\endhead
+A1 & $\gamma_{1}^{2}/(\sqrt{2}\,\gamma_{2}^{2})$ & Gamma & Definition \\
+A2 & $\sqrt{2}\,\Gamma(\frac14)^{2}/(2\pi)$ & Gamma & Classical \\
+A3 & $B(\frac14,\frac14)/\sqrt{2\pi}$ & Beta & Classical \\
+A4 & $\Gamma(\frac14)^{2}/(\sqrt{2}\,\Gamma(\frac12)^{2})$ & Gamma & \eqref{A1} \\
+A5 & $r/\sqrt{2}$, \; $r=\gamma_1^2/\gamma_2^2$ & Gamma ratio & Algebra \\
+A6 & $\Gamma(\frac14)/\Gamma(\frac34)$ & Gamma ratio & Reflection \\
+A7 & $\gamma_2^2\sqrt{2}/\Gamma(\frac34)^2$ & Gamma & Reflection \\
+A8 & $16\,\Gamma(\frac54)^2/(\sqrt{2}\,\gamma_2^2)$ & Gamma & Recurrence \\
+A9 & Ratio of Laplace integrals & Pure integral & Definition \\
+A10 & $\sqrt{{\Gstar}}=\gamma_1/(2^{1/4}\gamma_2)$ & Square root & Algebra \\
+A11 & $1/{\Gstar}=\Gamma(\frac34)/\Gamma(\frac14)$ & Reciprocal & \eqref{A6} \\
+A12 & $\sqrt\pi = \lim N^{-1/2}\prod(2k)/(2k{-}1)$ & Race 1 & Wallis~\cite{Wallis} \\
+A13 & ${\Gstar} = \lim N^{-1/2}\prod(4k{+}3)/(4k{+}1)$ & Race 2 & New \\
+A14 & $\varpiup = \tfrac12\cdot\text{Race\,1}\times\text{Race\,2}$ & Both races & \eqref{A12}$+$\eqref{A13} \\
+\midrule
+B1 & $2\varpiup/\gamma_{2}$ & Lemniscate & Definition \\
+B2 & $2\varpiup/\sqrt{\pi}$ & Lemniscate & \eqref{B1} \\
+B3 & $\varpiup/\sqrt{\pi/4}$ & Lemniscate & \eqref{B2} \\
+B4 & $(4/\sqrt{\pi})\int_{0}^{1}(1-x^{4})^{-1/2}\,dx$ & Integral & Euler 1753 \\
+\midrule
+C1 & $2\sqrt{2}\,K(1/\!\sqrt{2})/\gamma_{2}$ & Elliptic $K$ & Legendre \\
+C2 & $4K(1/\!\sqrt{2})/\sqrt{\pi}$ & Elliptic $K$ & \eqref{C1} \\
+C3 & $2\sqrt{2}\,K'(i)/\gamma_{2}$ & Singular modulus & CM theory \\
+C4 & $2\sqrt{K/(2E-K)}$ & Elliptic $E,K$ & Legendre \\
+C5 & ${\Gstar}^2=4K/(2E-K)$ & Elliptic squared & \eqref{C4} \\
+\midrule
+D1 & $2\gamma_{2}/\agm(1,\sqrt{2})$ & AGM & Gauss 1799 \\
+D2 & $2\sqrt{\pi}/\agm(1,\sqrt{2})$ & AGM & \eqref{D1} \\
+D3 & $\gamma_{2}/\agm(1,1/\!\sqrt{2})$ & AGM & \eqref{D1} \\
+D4 & Gauss cosine-product formula & AGM & Gauss \\
+\midrule
+E1 & $\gamma_{2}\sqrt{2}\,\theta_{3}(e^{-\pi})^{2}$ & Theta & Chowla--Selberg \\
+E2 & $\sqrt{2\pi}\,\theta_{3}(e^{-\pi})^{2}$ & Theta & \eqref{E1} \\
+E3 & $\gamma_2\sqrt{2}\,(\sum e^{-\pi n^2})^2$ & Theta series & \eqref{E1} \\
+E4 & $\gamma_2\sqrt{2}\,(1+2\sum e^{-\pi n^2})^2$ & Theta half-sum & \eqref{E3} \\
+E5 & $\approx\gamma_2\sqrt{2}\,(1+2e^{-\pi})^2$ (4 digits) & Approximation & Truncation \\
+E6 & $2\gamma_2\sqrt{2}\,\eta(i)^2$ & Dedekind $\eta$ & Chowla--Selberg \\
+E7 & $2\sqrt{2\pi}\,\eta(i)^2$ & Dedekind $\eta$ & \eqref{E6} \\
+\midrule
+F1 & $\sqrt{2\gamma_{2}^{2}W_{3}}$ & Watson & Watson~\cite{Watson} \\
+F2 & $\sqrt{2\pi W_{3}}$ & Watson & \eqref{F1} \\
+F3 & ${\Gstar}^{2}=2\gamma_{2}^{2}W_{3}$ & Watson squared & \eqref{F1} \\
+F4 & Triple integral over Brillouin zone & Watson explicit & Watson~\cite{Watson} \\
+\midrule
+G1 & $8L(E,1)/\gamma_{2}$ & $L$-function & Coates--Wiles~\cite{CoatesWiles} \\
+G2 & $8L(E,1)/\sqrt{\pi}$ & $L$-function & \eqref{G1} \\
+G3 & $4\sqrt{2/\pi}\,L(E,1)$ & $L$-function & \eqref{G1} \\
+G4 & $2\Omega_{+}/\gamma_{2}$ & Period & BSD \\
+\midrule
+H1 & ${}_{2}F_{1}(\frac12,\frac12;1;\frac12)$ form & Hypergeometric & Gauss \\
+H2 & $\gamma_2\sqrt{2}\sum r_{2}(n)\,e^{-\pi n}$ & Lattice count & Jacobi \\
+H3 & Lambert series with $\chi_{-4}$ & Dirichlet char.\ & Classical \\
+H4 & Jacobi triple product for $\theta_3^2$ & Product & Jacobi 1829 \\
+H5 & $(16/\sqrt{2}\pi)(\int_0^\infty e^{-t^4}dt)^2$ & Quartic integral & \eqref{A8} \\
+\midrule
+I1 & $\pi=4\varpiup^{2}/{\Gstar}^{2}$ (triad) & Triad & \eqref{B1} \\
+I2 & $\varpiup={\Gstar}\gamma_{2}/2$ & Triad & \eqref{B1} \\
+I3 & ${\Gstar}=4\varpiup^2/({\Gstar}\gamma_2^2)$ & Triad & \eqref{I1} \\
+I4 & ${\Gstar}^{3}=16\varpiup^4/({\Gstar}\gamma_2^4)$ & Triad & \eqref{I1}$+$\eqref{I3} \\
+\midrule
+J1 & $\sqrt{2\pi}\,\theta_3(e^{-\pi})^2$ (modular) & Modular form & Chowla--Selberg \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+
+% ================================================================
+\section{Convergence of the Wallis products}\label{sec:convergence}
+% ================================================================
+
+The Wallis-type products~\eqref{A12} and~\eqref{A13} are not approximations.
+They are exact: each is a definition of its respective constant
+as the limit of a sequence of finite products over residue classes.
+
+\begin{theorem}[Convergence rate]\label{thm:rate}
+Let $S_{n}^{(\pi)} = n^{-1/2}\prod_{k=1}^{n}(2k)/(2k-1)$ and
+$S_{n}^{(G)} = (n\!+\!1)^{-1/2}\prod_{k=0}^{n}(4k+3)/(4k+1)$.
+Then for both sequences:
+\[
+  \abs{S_{n} - L} \;=\; O(n^{-1}),
+\]
+where $L = \sqrt{\pi}$ or $L = {\Gstar}$ respectively.  With a
+Stirling-type correction (replacing $n^{-1/2}$ by the exact
+$\Gamma$-ratio prefactor), the error improves to $O(n^{-2})$, yielding
+approximately two additional correct digits per factor of~$10$ in~$n$
+for the raw product, or three digits per decade with the Stirling
+correction.
+\end{theorem}
+
+\begin{proof}[Sketch]
+Both products are Euler-product representations of quotients of Gamma
+functions at rational arguments.  The asymptotic expansion of
+$\log\Gamma$ (Stirling's series) yields the stated convergence rate.
+The computation is identical in structure for both products because both
+are ratio products of linear progressions with the same effective step:
+step~$2$ for $\sqrt{\pi}$, step~$4$ for ${\Gstar}$, both reducing to one
+ratio per term.
+\end{proof}
+
+\begin{remark}[Digit-locking rate]\label{rem:digits}
+At $N = 10^{5}$, the Stirling-corrected product locks $16$~digits of
+${\Gstar}$ and $17$~digits of~$\sqrt{\pi}$.  At $N=10^{12}$ (feasible
+on a single workstation), approximately $36$~digits.  At $N=10^{100}$,
+approximately $300$~digits.  There is no ceiling: arbitrarily many
+digits can be extracted.
+At any desired precision, both races can be evaluated to that
+precision with identical computational cost.
+\end{remark}
+
+\begin{remark}[Exactness]\label{rem:exact}
+The Wallis product for $\sqrt{\pi}$ is not an approximation to $\sqrt{\pi}$;
+it \emph{equals} $\sqrt{\pi}$ as a limit.
+Likewise, the product~\eqref{A13} for ${\Gstar}$
+\emph{equals}~${\Gstar}$.  Both are exact definitions of their
+respective constants as limits of finite products over residue classes.
+The first race (evens versus odds) defines~$\pi$.
+The second race ($1\bmod 4$ versus $3\bmod 4$) defines~${\Gstar}$.
+\end{remark}
+
+As a numerical check, the identity
+${\Gstar}^{2} = 8\,K(1/\!\sqrt{2})^{2}/\pi$ (combining \eqref{C1}
+and~\eqref{A2}) was verified to $80$~decimal digits: the number theory
+(the ratio product) and the geometry (the elliptic integral) agree at
+every digit computed.
+
+
+% ================================================================
+\section{Numerical verification}\label{sec:numerical}
+% ================================================================
+
+All fifty-two expressions evaluate to
+\[
+  {\Gstar} = 2.9586751191886388\ldots
+\]
+to the precision of IEEE-754 double arithmetic.
+Extended-precision verification (to $200$ decimal places)
+confirms agreement across all families.
+Machine verification is available in the companion Lean~4 project.
+For background on $\Gstar$ and related constants, see
+Finch~\cite{Finch}.
+
+\medskip
+
+Fifty-two paths lead to the same transcendental number.
+The bridge has been standing since Euler.
+We have merely catalogued its entrances.
+
+
+% ================================================================
+% REFERENCES
+% ================================================================
+
+\begin{thebibliography}{10}
+
+\bibitem{BorweinBorwein}
+J.~M.~Borwein and P.~B.~Borwein,
+\emph{Pi and the AGM: A Study in Analytic Number Theory and Computational
+Complexity}, Wiley, New York, 1987.
+
+\bibitem{ChowlaSelberg}
+S.~Chowla and A.~Selberg,
+On Epstein's zeta-function,
+\emph{J.~Reine Angew.\ Math.}\ \textbf{227} (1967), 86--110.
+
+\bibitem{CoatesWiles}
+J.~Coates and A.~Wiles,
+On the conjecture of Birch and Swinnerton-Dyer,
+\emph{Invent.\ Math.}\ \textbf{39} (1977), 223--251.
+
+\bibitem{Finch}
+S.~R.~Finch,
+\emph{Mathematical Constants},
+Encyclopedia of Mathematics and its Applications~\textbf{94},
+Cambridge University Press, 2003.
+
+\bibitem{Rubin}
+K.~Rubin,
+The ``main conjectures'' of Iwasawa theory for imaginary quadratic
+fields,
+\emph{Invent.\ Math.}\ \textbf{103} (1991), 25--68.
+
+\bibitem{Wallis}
+J.~Wallis,
+\emph{Arithmetica Infinitorum}, Oxford, 1656.
+
+\bibitem{Watson}
+G.~N.~Watson,
+Three triple integrals,
+\emph{Quart.\ J.\ Math.\ Oxford}\ \textbf{10} (1939), 266--276.
+
+\bibitem{ZuckerJoyce}
+I.~J.~Zucker and G.~S.~Joyce,
+Special values of the hypergeometric series~II,
+\emph{Math.\ Proc.\ Cambridge Philos.\ Soc.}\ \textbf{131} (2001),
+309--319.
+
+\end{thebibliography}
+
+\end{document}

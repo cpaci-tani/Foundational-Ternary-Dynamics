@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Master Quadratic Explorer — The k-Family of Universes</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden}
+h1{margin-top:12px;font-size:1.15em;font-weight:300;letter-spacing:.05em;color:#a0b8d8}
+.subtitle{font-size:.72em;color:#667;margin-bottom:4px;font-style:italic;text-align:center;max-width:800px}
+.formula-row{display:flex;gap:14px;margin:5px 0;flex-wrap:wrap;justify-content:center}
+.formula-row .f{background:#0d0d18;border:1px solid #1a1a2e;border-radius:4px;padding:3px 12px;font-size:.88em}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;margin:6px 0;max-width:1000px}
+.controls label{font-size:.74em;color:#8899aa;display:flex;align-items:center;gap:4px}
+.controls input[type=range]{width:300px;accent-color:#ffd54f;height:6px}
+.k-display{font-family:monospace;font-size:1.8em;color:#ffd54f;min-width:80px;text-align:center}
+.presets{display:flex;gap:5px;flex-wrap:wrap}
+.preset{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:.7em}
+.preset:hover{background:#2a3a5a}.preset.active{background:#2a4a6a;border-color:#ffd54f;color:#ffd54f}
+
+.main{display:flex;gap:10px;margin:6px 0;align-items:flex-start;max-width:1100px;width:100%}
+canvas{border:1px solid #1a1a2e;border-radius:4px;background:#08080d}
+.side{width:320px;display:flex;flex-direction:column;gap:6px}
+.card{background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;padding:8px 10px;font-size:.72em}
+.card-title{font-size:.7em;color:#556;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.val-row{display:flex;justify-content:space-between;margin:2px 0;font-family:monospace}
+.val-label{color:#667}.val-num{color:#a0b8d8;font-weight:bold}
+.val-num.gold{color:#ffd54f}.val-num.blue{color:#44aaff}.val-num.red{color:#ff4432}
+.val-num.mag{color:#ff66ff}.val-num.cyan{color:#44ddcc}.val-num.green{color:#44cc66}
+.insight{font-size:.68em;color:#556;line-height:1.4;margin-top:4px;padding-top:4px;border-top:1px solid #1a1a2e}
+.insight em{color:#a0b8d8;font-style:normal}
+.insight .gold{color:#ffd54f}.insight .red{color:#ff4432}
+.phase-tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:bold;margin:2px 0}
+.phase-real{background:#1a2a1a;border:1px solid #2a5a2a;color:#44cc66}
+.phase-critical{background:#2a2a1a;border:1px solid #5a5a2a;color:#ffd54f}
+.phase-complex{background:#2a1a1a;border:1px solid #5a2a2a;color:#ff4432}
+</style>
+</head>
+<body>
+<h1>MASTER QUADRATIC EXPLORER &mdash; THE k-FAMILY OF UNIVERSES</h1>
+<p class="subtitle">u&sup2; &minus; kG*u + kG* = 0 &middot; Harmonic mean fixed at 2 = [Q(i):Q] &middot; k controls the split between EM and confinement</p>
+
+<div class="formula-row">
+  <div class="f" id="f1"></div>
+  <div class="f" id="f2"></div>
+  <div class="f" id="f3"></div>
+</div>
+
+<div class="controls">
+  <span class="k-display" id="kDisplay">k = 16</span>
+  <input type="range" id="kSlider" min="0.1" max="24" step="0.01" value="16">
+  <div class="presets">
+    <div class="preset active" onclick="setK(16)">k=16 (vacuum)</div>
+    <div class="preset" onclick="setK(8)">k=8 (BCC)</div>
+    <div class="preset" onclick="setK(6)">k=6 (SC)</div>
+    <div class="preset" onclick="setK(4)">k=4 (|Aut|)</div>
+    <div class="preset" onclick="setK(4/G_STAR)">k=4/G* (unify)</div>
+    <div class="preset" onclick="setK(1)">k=1 (minimal)</div>
+    <div class="preset" onclick="setK(0.5)">k=0.5 (complex)</div>
+  </div>
+</div>
+
+<div class="main">
+  <canvas id="mainCanvas" width="700" height="600"></canvas>
+  <div class="side">
+    <div class="card">
+      <div class="card-title">Phase</div>
+      <div id="phaseTag"></div>
+      <div id="phaseDesc"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Roots (normalized u = x/G*)</div>
+      <div class="val-row"><span class="val-label">u&plus; (EM)</span><span class="val-num blue" id="uPlus">—</span></div>
+      <div class="val-row"><span class="val-label">u&minus; (strong)</span><span class="val-num red" id="uMinus">—</span></div>
+      <div class="val-row"><span class="val-label">Harmonic mean</span><span class="val-num gold" id="hMean">—</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Physical couplings (x = u &times; G*)</div>
+      <div class="val-row"><span class="val-label">x&plus; (1/&alpha;)</span><span class="val-num blue" id="xPlus">—</span></div>
+      <div class="val-row"><span class="val-label">x&minus; (N_c)</span><span class="val-num red" id="xMinus">—</span></div>
+      <div class="val-row"><span class="val-label">&lfloor;x&minus;&rfloor;</span><span class="val-num gold" id="floorXm">—</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Quadratic invariants</div>
+      <div class="val-row"><span class="val-label">Sum = Prod = kG*</span><span class="val-num cyan" id="sumProd">—</span></div>
+      <div class="val-row"><span class="val-label">Discriminant</span><span class="val-num" id="disc">—</span></div>
+      <div class="val-row"><span class="val-label">k &times; G*</span><span class="val-num" id="kGstar">—</span></div>
+      <div class="val-row"><span class="val-label">k_critical = 4/G*</span><span class="val-num gold" id="kCrit">—</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Universe properties</div>
+      <div class="val-row"><span class="val-label">&alpha; (EM strength)</span><span class="val-num blue" id="alphaVal">—</span></div>
+      <div class="val-row"><span class="val-label">N_c (colors)</span><span class="val-num red" id="ncVal">—</span></div>
+      <div class="val-row"><span class="val-label">Asymmetry x&plus;/x&minus;</span><span class="val-num mag" id="asymmetry">—</span></div>
+      <div class="insight" id="insightText"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Lemniscate geometry</div>
+      <canvas id="lemCanvas" width="300" height="150"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+const G_STAR = 2.9586751191886388;
+const K_CRIT = 4 / G_STAR;
+
+const mainCanvas = document.getElementById('mainCanvas');
+const ctx = mainCanvas.getContext('2d');
+const lemCanvas = document.getElementById('lemCanvas');
+const lctx = lemCanvas.getContext('2d');
+const kSlider = document.getElementById('kSlider');
+
+let currentK = 16;
+
+kSlider.oninput = () => { currentK = +kSlider.value; draw(); };
+function setK(k) { currentK = k; kSlider.value = k; draw(); }
+
+function solve(k) {
+    const S = k * G_STAR;
+    const disc = S * S - 4 * S; // = kG*(kG*-4)
+    if (disc >= 0) {
+        const sq = Math.sqrt(disc);
+        return {real: true, uPlus: (S + sq) / 2, uMinus: (S - sq) / 2, disc, S};
+    } else {
+        const sq = Math.sqrt(-disc);
+        return {real: false, re: S / 2, im: sq / 2, disc, S};
+    }
+}
+
+function draw() {
+    const W = 700, H = 600;
+    const k = currentK;
+    const sol = solve(k);
+
+    // Update display
+    document.getElementById('kDisplay').textContent = 'k = ' + k.toFixed(k === Math.round(k) ? 0 : 2);
+    document.getElementById('kCrit').textContent = K_CRIT.toFixed(4);
+    document.getElementById('kGstar').textContent = (k * G_STAR).toFixed(3);
+    document.getElementById('sumProd').textContent = (k * G_STAR).toFixed(4);
+    document.getElementById('disc').textContent = sol.disc.toFixed(4);
+    document.getElementById('disc').style.color = sol.disc >= 0 ? '#44cc66' : '#ff4432';
+
+    if (sol.real) {
+        document.getElementById('uPlus').textContent = sol.uPlus.toFixed(4);
+        document.getElementById('uMinus').textContent = sol.uMinus.toFixed(4);
+        document.getElementById('hMean').textContent = (2).toFixed(4);
+        document.getElementById('xPlus').textContent = (sol.uPlus * G_STAR).toFixed(3);
+        document.getElementById('xMinus').textContent = (sol.uMinus * G_STAR).toFixed(4);
+        document.getElementById('floorXm').textContent = Math.floor(sol.uMinus * G_STAR);
+        document.getElementById('alphaVal').textContent = '1/' + (sol.uPlus * G_STAR).toFixed(2);
+        document.getElementById('ncVal').textContent = Math.floor(sol.uMinus * G_STAR).toString();
+        document.getElementById('asymmetry').textContent = (sol.uPlus / sol.uMinus).toFixed(2) + ':1';
+
+        if (Math.abs(k - 16) < 0.1) {
+            document.getElementById('phaseTag').innerHTML = '<span class="phase-tag phase-real">OUR UNIVERSE</span>';
+            document.getElementById('phaseDesc').textContent = 'k=16: α≈1/137, N_c=3. The vacuum we inhabit.';
+            document.getElementById('insightText').innerHTML = 'Asymmetry <em>45:1</em> between EM and strong coupling. EM is gentle, strong is tight. Chemistry is possible.';
+        } else if (sol.disc < 0.5) {
+            document.getElementById('phaseTag').innerHTML = '<span class="phase-tag phase-critical">NEAR UNIFICATION</span>';
+            document.getElementById('phaseDesc').textContent = 'Forces almost equal. x₊ ≈ x₋ ≈ 2G*.';
+            document.getElementById('insightText').innerHTML = 'The <span class="gold">cloud boundary</span> is near. EM and strong merge. No chemistry, no structure, no life.';
+        } else {
+            document.getElementById('phaseTag').innerHTML = '<span class="phase-tag phase-real">REAL PHYSICS</span>';
+            document.getElementById('phaseDesc').textContent = 'Two real roots. Observable universe possible.';
+            document.getElementById('insightText').innerHTML = 'Different k = different universe. N_c = <span class="red">' + Math.floor(sol.uMinus*G_STAR) + '</span> colors. α ≈ 1/' + (sol.uPlus*G_STAR).toFixed(0) + '.';
+        }
+    } else {
+        document.getElementById('uPlus').textContent = sol.re.toFixed(3) + ' + ' + sol.im.toFixed(3) + 'i';
+        document.getElementById('uMinus').textContent = sol.re.toFixed(3) + ' - ' + sol.im.toFixed(3) + 'i';
+        document.getElementById('hMean').textContent = (2).toFixed(4) + ' (still!)';
+        document.getElementById('xPlus').textContent = 'complex';
+        document.getElementById('xMinus').textContent = 'complex';
+        document.getElementById('floorXm').textContent = '—';
+        document.getElementById('alphaVal').textContent = 'undefined';
+        document.getElementById('ncVal').textContent = 'undefined';
+        document.getElementById('asymmetry').textContent = 'evanescent';
+        document.getElementById('phaseTag').innerHTML = '<span class="phase-tag phase-complex">BEYOND THE CLOUD</span>';
+        document.getElementById('phaseDesc').textContent = 'Complex roots. No real physics. Algebraic phase transition.';
+        document.getElementById('insightText').innerHTML = 'The representability condition fails. Like a moat where r₂(n)=0 — the lattice point <em>cannot exist</em>. Not because something blocks it. Because the arithmetic doesn\'t factor.';
+    }
+
+    // =====================================================
+    // MAIN CANVAS: The quadratic landscape
+    // =====================================================
+    ctx.fillStyle = '#08080d';
+    ctx.fillRect(0, 0, W, H);
+
+    const margin = {l: 60, r: 30, t: 40, b: 50};
+    const cw = W - margin.l - margin.r;
+    const ch = H - margin.t - margin.b;
+
+    // Draw the parabola f(u) = u² - kG*u + kG* for current k
+    // And a horizontal line at y = 0 (the root condition)
+    const uMax = Math.max(sol.real ? sol.uPlus * 1.3 : 10, 20);
+    const uMin = -2;
+
+    function toX(u) { return margin.l + ((u - uMin) / (uMax - uMin)) * cw; }
+    function fQuad(u) { return u * u - k * G_STAR * u + k * G_STAR; }
+
+    // Y range
+    let fMin = 0, fMax = 0;
+    for (let u = uMin; u <= uMax; u += 0.1) {
+        const f = fQuad(u);
+        if (f < fMin) fMin = f;
+        if (f > fMax) fMax = f;
+    }
+    fMax = Math.max(fMax, 10);
+    fMin = Math.min(fMin, -10);
+    const fRange = fMax - fMin;
+
+    function toY(f) { return margin.t + ((fMax - f) / fRange) * ch; }
+
+    // Grid
+    ctx.strokeStyle = '#111118'; ctx.lineWidth = 0.5;
+    // Zero line
+    ctx.strokeStyle = '#2a2a3a'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(margin.l, toY(0)); ctx.lineTo(W - margin.r, toY(0)); ctx.stroke();
+    // u=2 line (harmonic mean)
+    ctx.strokeStyle = '#ffd54f22'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(toX(2), margin.t); ctx.lineTo(toX(2), H - margin.b); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#ffd54f44'; ctx.font = '10px monospace';
+    ctx.fillText('u=2 (H.M.)', toX(2) + 4, margin.t + 12);
+
+    // Draw parabolas for reference k values (faded)
+    const refKs = [16, 8, 4, K_CRIT];
+    for (const rk of refKs) {
+        if (Math.abs(rk - k) < 0.05) continue;
+        ctx.strokeStyle = rk === 16 ? '#44aaff15' : rk === K_CRIT ? '#ffd54f15' : '#ffffff08';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let u = uMin; u <= uMax; u += 0.2) {
+            const f = u * u - rk * G_STAR * u + rk * G_STAR;
+            const x = toX(u), y = toY(f);
+            if (y < margin.t - 50 || y > H - margin.b + 50) continue;
+            u <= uMin + 0.2 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+
+    // Current parabola (bright)
+    const parColor = sol.real ? (Math.abs(k - 16) < 0.1 ? '#44aaff' : '#44cc66') : '#ff4432';
+    ctx.strokeStyle = parColor; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    let started = false;
+    for (let u = uMin; u <= uMax; u += 0.1) {
+        const f = fQuad(u);
+        const x = toX(u), y = toY(f);
+        if (y < margin.t - 100 || y > H - margin.b + 100) { started = false; continue; }
+        !started ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        started = true;
+    }
+    ctx.stroke();
+
+    // Root markers
+    if (sol.real) {
+        // u+ (EM)
+        ctx.fillStyle = '#44aaff';
+        ctx.beginPath(); ctx.arc(toX(sol.uPlus), toY(0), 7, 0, 2 * Math.PI); ctx.fill();
+        ctx.fillStyle = '#44aaff'; ctx.font = '11px monospace';
+        ctx.fillText('u₊=' + sol.uPlus.toFixed(2), toX(sol.uPlus) - 20, toY(0) - 12);
+        ctx.fillText('x₊=' + (sol.uPlus * G_STAR).toFixed(1), toX(sol.uPlus) - 20, toY(0) + 20);
+
+        // u- (strong)
+        ctx.fillStyle = '#ff4432';
+        ctx.beginPath(); ctx.arc(toX(sol.uMinus), toY(0), 7, 0, 2 * Math.PI); ctx.fill();
+        ctx.fillStyle = '#ff4432'; ctx.font = '11px monospace';
+        ctx.fillText('u₋=' + sol.uMinus.toFixed(3), toX(sol.uMinus) + 10, toY(0) - 12);
+        ctx.fillText('x₋=' + (sol.uMinus * G_STAR).toFixed(3), toX(sol.uMinus) + 10, toY(0) + 20);
+
+        // Minimum of parabola at u = kG*/2
+        const uMin2 = k * G_STAR / 2;
+        const fMin2 = fQuad(uMin2);
+        ctx.fillStyle = '#ffffff33';
+        ctx.beginPath(); ctx.arc(toX(uMin2), toY(fMin2), 4, 0, 2 * Math.PI); ctx.fill();
+
+        // Shaded region between roots
+        ctx.fillStyle = sol.disc > 20 ? 'rgba(68,170,255,0.03)' : 'rgba(255,213,79,0.05)';
+        ctx.beginPath();
+        ctx.moveTo(toX(sol.uMinus), toY(0));
+        for (let u = sol.uMinus; u <= sol.uPlus; u += 0.2) {
+            ctx.lineTo(toX(u), toY(Math.min(fQuad(u), 0)));
+        }
+        ctx.lineTo(toX(sol.uPlus), toY(0));
+        ctx.closePath(); ctx.fill();
+    } else {
+        // Complex roots: show the "below zero" region
+        ctx.fillStyle = 'rgba(255,68,50,0.08)';
+        ctx.beginPath();
+        const uCenter = k * G_STAR / 2;
+        const spread = 3;
+        for (let u = uCenter - spread; u <= uCenter + spread; u += 0.1) {
+            const f = fQuad(u);
+            if (f < 0) {
+                ctx.lineTo(toX(u), toY(f));
+            }
+        }
+        ctx.lineTo(toX(uCenter + spread), toY(0));
+        ctx.lineTo(toX(uCenter - spread), toY(0));
+        ctx.closePath(); ctx.fill();
+
+        // Mark the complex conjugate pair
+        ctx.fillStyle = '#ff4432';
+        ctx.font = '11px monospace';
+        ctx.fillText(sol.re.toFixed(2) + ' ± ' + sol.im.toFixed(2) + 'i', toX(sol.re) - 30, toY(fQuad(sol.re)) - 15);
+        ctx.fillText('COMPLEX — no real physics', toX(sol.re) - 60, toY(fQuad(sol.re)) + 25);
+    }
+
+    // k_critical marker on the parabola
+    const solCrit = solve(K_CRIT);
+    ctx.fillStyle = '#ffd54f'; ctx.font = '10px monospace';
+    ctx.fillText('k_crit = ' + K_CRIT.toFixed(3), 10, H - 10);
+
+    // Axes labels
+    ctx.fillStyle = '#667'; ctx.font = '11px sans-serif';
+    ctx.fillText('u = x/G*', W - 60, H - margin.b + 30);
+    ctx.fillText('f(u) = u² - kG*u + kG*', margin.l + 10, margin.t - 10);
+
+    // Title with current k
+    ctx.fillStyle = parColor; ctx.font = 'bold 14px monospace';
+    ctx.fillText('k = ' + k.toFixed(2), W - 120, margin.t + 20);
+
+    // =====================================================
+    // LEMNISCATE: Small canvas showing the self-crossing structure
+    // =====================================================
+    lctx.fillStyle = '#08080d';
+    lctx.fillRect(0, 0, 300, 150);
+    const lcx = 150, lcy = 75;
+    const lScale = 25;
+
+    // Draw lemniscate r² = cos(2θ) scaled by coupling
+    if (sol.real) {
+        // Outer loop (EM, u+)
+        const rOuter = Math.sqrt(sol.uPlus) * 0.6;
+        lctx.strokeStyle = '#44aaff'; lctx.lineWidth = 1.5;
+        lctx.beginPath();
+        for (let t = -Math.PI/4; t <= Math.PI/4; t += 0.02) {
+            const r = rOuter * Math.sqrt(Math.max(Math.cos(2 * t), 0));
+            const x = lcx + r * Math.cos(t) * lScale / 3;
+            const y = lcy - r * Math.sin(t) * lScale / 3;
+            t <= -Math.PI/4 + 0.02 ? lctx.moveTo(x, y) : lctx.lineTo(x, y);
+        }
+        for (let t = Math.PI/4; t >= -Math.PI/4; t -= 0.02) {
+            const r = rOuter * Math.sqrt(Math.max(Math.cos(2 * t), 0));
+            const x = lcx + r * Math.cos(t + Math.PI) * lScale / 3;
+            const y = lcy - r * Math.sin(t + Math.PI) * lScale / 3;
+            lctx.lineTo(x, y);
+        }
+        lctx.stroke();
+
+        // Inner loop (strong, u-)
+        const rInner = Math.sqrt(sol.uMinus) * 0.6;
+        lctx.strokeStyle = '#ff4432'; lctx.lineWidth = 2;
+        lctx.beginPath();
+        for (let t = -Math.PI/4; t <= Math.PI/4; t += 0.02) {
+            const r = rInner * Math.sqrt(Math.max(Math.cos(2 * t), 0));
+            const x = lcx + r * Math.cos(t) * lScale;
+            const y = lcy - r * Math.sin(t) * lScale;
+            t <= -Math.PI/4 + 0.02 ? lctx.moveTo(x, y) : lctx.lineTo(x, y);
+        }
+        for (let t = Math.PI/4; t >= -Math.PI/4; t -= 0.02) {
+            const r = rInner * Math.sqrt(Math.max(Math.cos(2 * t), 0));
+            const x = lcx + r * Math.cos(t + Math.PI) * lScale;
+            const y = lcy - r * Math.sin(t + Math.PI) * lScale;
+            lctx.lineTo(x, y);
+        }
+        lctx.stroke();
+
+        // Crossing point
+        lctx.fillStyle = '#ffd54f';
+        lctx.beginPath(); lctx.arc(lcx, lcy, 3, 0, 2 * Math.PI); lctx.fill();
+    } else {
+        // Complex: draw a fading spiral
+        lctx.strokeStyle = '#ff443266'; lctx.lineWidth = 1.5;
+        lctx.beginPath();
+        for (let t = 0; t < 4 * Math.PI; t += 0.05) {
+            const r = 40 * Math.exp(-t / 8);
+            const x = lcx + r * Math.cos(t);
+            const y = lcy + r * Math.sin(t);
+            t === 0 ? lctx.moveTo(x, y) : lctx.lineTo(x, y);
+        }
+        lctx.stroke();
+        lctx.fillStyle = '#ff4432'; lctx.font = '10px sans-serif';
+        lctx.fillText('evanescent', lcx - 28, lcy + 50);
+    }
+
+    // Presets highlighting
+    document.querySelectorAll('.preset').forEach(el => el.classList.remove('active'));
+    if (Math.abs(k - 16) < 0.05) document.querySelector('.preset:nth-child(1)')?.classList.add('active');
+    else if (Math.abs(k - 8) < 0.05) document.querySelector('.preset:nth-child(2)')?.classList.add('active');
+    else if (Math.abs(k - K_CRIT) < 0.05) document.querySelector('.preset:nth-child(5)')?.classList.add('active');
+}
+
+// Init KaTeX
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        katex.render('u^2 - kG^*u + kG^* = 0', document.getElementById('f1'), {displayMode: false});
+        katex.render('H = \\frac{2}{1/u_+ + 1/u_-} = 2 = [\\mathbb{Q}(i):\\mathbb{Q}]', document.getElementById('f2'), {displayMode: false});
+        katex.render('k_{\\text{crit}} = 4/G^* \\approx 1.352', document.getElementById('f3'), {displayMode: false});
+    } catch(e) {}
+    draw();
+});
+</script>
+</body>
+</html>
