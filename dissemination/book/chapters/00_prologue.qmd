@@ -42,7 +42,7 @@ At the heart of this book lies a mathematical object: a quadratic equation whose
 
 $$f(x) = x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
-Where G* is the lemniscatic constant, approximately 2.6220575542..., arising from the theory of elliptic curves.
+Where G* = Γ(1/4)/Γ(3/4) ≈ 2.9586751192... is the lemniscatic bridge constant, arising from the CM elliptic curve E_i: y² = x³ − x.
 
 This equation has two real solutions:
 

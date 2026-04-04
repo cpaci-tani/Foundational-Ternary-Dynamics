@@ -251,7 +251,9 @@ The roots are:
 | x_+ | 137.036 | 1/alpha (fine structure) | 1.26 ppm | [SELECTION] |
 | x_- | 3.024 | N_c (color charges) | 0.8% | [SELECTION] |
 
-**The derivation chain to the master quadratic has 10 steps** (see DERIV_MASTER_QUADRATIC_GAP_EQUATION.md, Part V, and definitive_gap_analysis in agent memory):
+**Note (April 2026):** An updated 13-step chain starting from "i exists" is now canonical — see [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md). The coefficient 16 is now [THEOREM] via dual derivation (|Aut(E_i)|^2 = |O_h|/3 = 16, see DERIV_DUAL_DERIVATION_OF_16.md). The one-loop lattice correction closes 99.2% of the gap (9.6 ppb).
+
+**The original 10-step chain** (retained for historical reference):
 
 | Step | Content | Status |
 |------|---------|--------|
