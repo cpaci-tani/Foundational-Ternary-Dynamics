@@ -280,7 +280,7 @@ Given axioms SP1-SP5 (and optionally SP6), all derived quantities become **condi
 ### 7.2 Dependency Map
 
 ```
-SP1 (CM curve, j=1728) ──→ G* = √2·Γ(1/4)²/(2π)
+SP1 (CM curve, j=1728) ──→ G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π)
                               │
 SP2 (quadratic form) ────────┤
                               │
@@ -308,7 +308,7 @@ SP5 (integers) ────┤
 ### 7.3 Conditional Theorem Template
 
 Given SP1-SP3:
-1. $G^* = \sqrt{2} \cdot \Gamma(1/4)^2/(2\pi) \approx 2.9587$ **[THEOREM]**
+1. $G^* = \Gamma(1/4)/\Gamma(3/4) = \sqrt{2} \cdot \Gamma(1/4)^2/(2\pi) \approx 2.9587$ **[THEOREM]**
 2. $x_+ = 8G^{*2}(1 + \sqrt{1 - 1/G^*}) = 137.036\ldots$ **[THEOREM]**
 3. $x_- = 8G^{*2}(1 - \sqrt{1 - 1/G^*}) = 3.024\ldots$ **[THEOREM]**
 

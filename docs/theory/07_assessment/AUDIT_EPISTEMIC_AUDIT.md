@@ -1,8 +1,8 @@
 # FTD Epistemic Audit: What Is Genuinely Derived vs. Imported
 
-**Document Version:** 2.1
-**Date:** February 26, 2026
-**Framework:** Foundational Ternary Dynamics v5.27-neutrino
+**Document Version:** 2.2
+**Date:** April 3, 2026
+**Framework:** Foundational Ternary Dynamics v5.29
 **Status:** Critical Self-Assessment (Comprehensive Update)
 **Purpose:** Honest accounting of FTD's derivation claims in response to rigorous scrutiny
 
@@ -16,7 +16,7 @@ This document provides a **brutally honest assessment** of what FTD actually der
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| **Genuine Derivations** | ~30 | Derived from G* and integer structure alone (20 original + 4 trit framework + 4 recent + 2 neutrino/modularity) |
+| **Genuine Derivations** | ~35 | Derived from G* and integer structure alone (20 original + 4 trit framework + 4 recent + 2 neutrino/modularity + 5 April 2026: phi³ EFT, one-loop alpha, D=3 automorphism, dual 16, stabilizer) |
 | **Parametric Insertions** | ~50 | FTD integers inserted into standard physics formulas |
 | **External Physics Adopted** | ~50+ | Standard Model mechanisms used without derivation |
 | **Explicit Inputs** | 3-5 | Parameters that MUST be acknowledged |
@@ -29,6 +29,17 @@ This document provides a **brutally honest assessment** of what FTD actually der
 - 7-term precision formula confirmed at 24-digit precision (all coefficients from {3,4,7,13})
 - Gap 1 (Bell) upgraded from "undemonstrated" to "structurally characterized"
 - New genuine derivations added (items 25-28)
+
+**What changed in v2.2:**
+- phi³ exact EFT: cubic potential expansion terminates exactly at third order; three Wilson coefficients (vacuum, mass, λ₃=1/3=1/D) [THEOREM]
+- One-loop lattice correction: tadpole on Z[i]³ with a=2/D=2/3 gives x₊(1-loop) = 137.036000 (9.6 ppb from NIST, 99.2% gap closure) [DERIVED given a=2/D]
+- D=3 from automorphism: |Aut(E_i)|² = 2^D·(D-1)! uniquely gives D=3 (second independent proof, complementing Watson approach) [THEOREM]
+- Dual derivation of 16: |Aut(E_i)|² = |O_h|/3 via stabilizer decomposition Stab_{O_h}(axis) = D₄ × Z/2Z [THEOREM]
+- Anti-correlation theorem: ζ(s)/β(s) alternate in π-reducibility at integers [THEOREM]
+- log G* identity: absorbs all unsolved L-values with rational coefficients [THEOREM]
+- 13-step blind derivation chain: "i exists" → α⁻¹ with only two selections
+- New genuine derivations added (items 31-35)
+- Total genuine derivations: ~30 → ~35
 
 **What changed in v2.1:**
 - Absolute neutrino mass scale derived via Type-I seesaw with FTD integer factors: m₃ = 49.6 meV, m₂ = 8.6 meV, m₁ = 4.1 neV [SELECTION]
@@ -77,6 +88,17 @@ Result: 24-digit precision (extended from 4-term sub-ppt)
 **Status:** ✅ [CONDITIONAL THEOREM] — Given selection principles SP1-SP4 (see AUDIT_HIDDEN_SELECTIONS.md), this is rigorous algebra. The 7-term precision formula achieves 24-digit accuracy. See DERIV_ALPHA_PRECISION_FORMULA.md.
 
 **What critics acknowledge:** This is remarkable. The connection between elliptic curve geometry and the fine structure constant, if not coincidental, represents a profound discovery.
+
+**One-Loop Lattice Correction (April 2026):**
+```
+phi³ EFT on Z[i]³, spacing a = 2/D = 2/3:
+  Tree:      137.036171  (1.26 ppm from NIST)
+  One-loop:  137.036000  (9.6 ppb from NIST)
+  NIST:      137.035999177
+
+Gap closed: 99.2%. Loop parameter g²I₁ = 0.061 (perturbative).
+```
+**Status:** The one-loop computation is standard lattice QFT [THEOREM]. The lattice spacing a = 2/D is a [SELECTION PRINCIPLE] — the boundary-to-bulk ratio in D=3, but not uniquely derived from first principles. The combined result is [DERIVED given a = 2/D]. See DERIV_ONE_LOOP_LATTICE_ALPHA.md.
 
 **What critics question:** Why this particular curve? Why CM curves? The "selection principle" (j = 1728 for maximal symmetry) is aesthetic, not derived from dynamics.
 

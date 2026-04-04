@@ -96,8 +96,8 @@ Still not alpha. Closer, but off by a factor of ~4.
 The Arithmetic-Geometric Mean (AGM) connects to the lemniscatic constant via:
 
 ```
-G* = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2) = 2 * varpi / sqrt(pi)
-[pi-free Gamma-primitive form; the classical form sqrt(2)*Gamma(1/4)^2/(2*pi) is algebraically equivalent]
+G* = Gamma(1/4) / Gamma(3/4) = 2.9587...
+[equivalently Gamma(1/4)^2/(sqrt(2)*Gamma(1/2)^2) = 2*varpi/sqrt(pi) = sqrt(2)*Gamma(1/4)^2/(2*pi)]
 ```
 
 where varpi = pi / AGM(1, sqrt(2)) is the lemniscate constant. Gauss's constant is:

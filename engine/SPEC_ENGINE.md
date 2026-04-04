@@ -214,7 +214,7 @@ The derivation chain lives in `ontic.h` (9+ layers). `constants.h` re-exports ev
 | 0 | `EULER_GAMMA`, `GAMMA_QUARTER` | Transcendental seeds |
 | 0b | `NOME_LEMNISCATIC`, `THETA_LEMNISCATIC` | Modular selection |
 | 1 | `VARPI`, `GAUSS_CONSTANT_M`, `PI` | Elliptic geometry |
-| 2 | `PF`, `G_STAR`, `SQRT_GSTAR` | Universal operator: G* = sqrt(2) Gamma(1/4)^2 / (2pi) |
+| 2 | `PF`, `G_STAR`, `SQRT_GSTAR` | Universal operator: G* = Gamma(1/4)/Gamma(3/4) ≈ 2.9587 |
 | 2b | `K_CRIT`, `X_BORN` | Euler's identity / emergence of i |
 | 3 | `COEFFICIENT` (16 G*^2), `X_PLUS` (137.036 = 1/alpha), `X_MINUS` (3.024 ~ N_c) | Master quadratic |
 | 3b | `DELTA_SQ`, `DELTA_APPROX` | Dual-substrate splitting: delta^2 = (4G*-1)/(4G*) |

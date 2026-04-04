@@ -315,7 +315,7 @@ $$G_F = \frac{1}{\sqrt{2} \times (246.09)^2} = \frac{1}{85636} = 1.1677 \times 1
 D = 3 (lattice axiom)
   → ϖ (lemniscate constant, pure math)
   → PF = π/4 (packing fraction, geometry)
-  → G* = ϖ/√PF = 2.9587
+  → G* = Γ(1/4)/Γ(3/4) = ϖ/√PF = 2.9587
   → master quadratic → x₊ = 137.036 → α
   → m_P (lattice spacing identification)
   → v = m_P · √(2π) · α⁸ = 246.09 GeV

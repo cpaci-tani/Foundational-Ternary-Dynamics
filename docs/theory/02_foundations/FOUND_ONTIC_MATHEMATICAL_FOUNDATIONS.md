@@ -129,7 +129,7 @@ The ordering γ → ϖ → M → π → G* is not by numerical magnitude but by 
 
 **Level 2 → 3 (M → π):** From AGM rate to circular constant. π = ϖ · M combines the self-crossing period with the convergence bridge. This step adds **closure** (the circle is the simplest closed curve).
 
-**Level 3 → 4 (π → G*):** From circular to lemniscatic with √2 scaling. G* = 2ϖ/√π = √2 · Γ(1/4)²/(2π) introduces the √2 from the FCC/Gauss constraint geometry. This step adds **constraint physics** — the discrete lattice's Gauss law.
+**Level 3 → 4 (π → G*):** From circular to lemniscatic with √2 scaling. G* = Γ(1/4)/Γ(3/4) = 2ϖ/√π = √2 · Γ(1/4)²/(2π) introduces the √2 from the FCC/Gauss constraint geometry. This step adds **constraint physics** — the discrete lattice's Gauss law.
 
 ### 2.3 γ as the Logarithmic Inversion Term
 

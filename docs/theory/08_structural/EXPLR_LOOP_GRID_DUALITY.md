@@ -34,7 +34,7 @@ The flux J(v,t) in R^3 is continuous (takes any real value), propagates as waves
 
 ### 2.2 The Lemniscate Constant
 
-The lemniscatic constant G* = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2) = 2.9587... [pi-free Gamma-primitive form; equivalently sqrt(2)*Gamma(1/4)^2/(2*pi)] arises from the lemniscate of Bernoulli -- the simplest self-crossing closed curve. The lemniscate is the "Loop" made geometric: a curve that crosses itself, creating a self-referential structure.
+The lemniscatic constant G* = Gamma(1/4) / Gamma(3/4) = 2.9587... [equivalently Gamma(1/4)^2/(sqrt(2)*Gamma(1/2)^2) = sqrt(2)*Gamma(1/4)^2/(2*pi)] arises from the lemniscate of Bernoulli -- the simplest self-crossing closed curve. The lemniscate is the "Loop" made geometric: a curve that crosses itself, creating a self-referential structure.
 
 The master quadratic x^2 - 16*G*^2*x + 16*G*^3 = 0 is the algebraic encoding of the Loop's self-intersection.
 
