@@ -1,5 +1,63 @@
 # Foundational Ternary Dynamics Changelog
 
+## phi^3 Exact EFT, One-Loop Lattice Alpha, Blind Derivation Chain (April 3, 2026)
+
+### The phi^3 Exact Effective Field Theory
+
+The cubic potential V(x) = x^3/3 - 8G*^2 x^2 + 16G*^3 x has critical points at the master
+quadratic roots x+ and x-. Expanding around x+ gives the **exact** EFT (no truncation — the
+cubic terminates):
+
+- **L_EFT = (1/2)(dphi)^2 - (1/2)m^2 phi^2 - (1/3)phi^3**
+- Three Wilson coefficients: vacuum V(x+) = -400,505; mass m^2 = 134.012; coupling lambda_3 = 1/3
+- The self-coupling 1/3 = 1/D is universal (dimension-dependent, G*-independent)
+- phi^3, NOT phi^4: every fundamental vertex is three-point; Higgs quartic emergent
+- No higher operators — UV-complete in field space by construction
+
+### One-Loop Lattice Correction to Alpha
+
+The phi^3 EFT on the Z[i]^3 lattice with spacing a = 2/D = 2/3:
+
+- Tadpole integral I_1 = 0.015274 (150^3 lattice, Brillouin zone)
+- VEV shift delta_x = -1.710e-4
+- **x+(one-loop) = 137.036000** (9.6 ppb from NIST, closes 99.2% of tree-level gap)
+- Loop expansion parameter g^2 * I_1 = 0.061 (perturbative)
+- Two-loop sunset I_sunset = 0.1168 (~23% of one-loop, positive direction)
+
+### The 13-Step Blind Derivation Chain
+
+Complete derivation from "i exists" to alpha^{-1} = 137.036000 without referencing physics:
+
+1. i exists → 2. Z[i] → 3. E_i: y^2=x^3-x → 4. |Aut|=4 → 5. Gamma(1/4), Gamma(3/4) →
+6. G* = 2.9587 → 7. |Aut|^2=16 → 8. D=3 (unique) → 9. Quadratic (exponents 2,3) →
+10. x+=137.036, x-=3.024 → 11. Cubic potential → 12. One-loop (a=2/3) → 13. x+=137.036000
+
+Two selection principles remain (steps 9 and 12). Everything else is forced by "i exists."
+
+### Number Theory: Anti-Correlation Theorem and log G* Identity
+
+- **Anti-correlation theorem** [THEOREM]: At integer s >= 2, zeta(s) and beta(s) alternate in
+  pi-reducibility. Mechanism: chain rule sign (-1)^n in Hurwitz decomposition.
+- **log G* identity** [THEOREM]: log G* = (gamma + 3 log 2)/2 + sum of all unsolved L-values
+  with rational coefficients. G* absorbs every unsolved constant; pi carries the solved ones.
+
+### Structural: Dual Derivation of 16 and Stabilizer Decomposition
+
+- **D = 3 from automorphism** [THEOREM]: |Aut(E_i)|^2 = 2^D*(D-1)! has unique solution D=3
+  (simpler proof than Watson integral approach)
+- **Dual derivation of 16**: |Aut(E_i)|^2 = |O_h|/3 = 16 from two independent routes
+- **Stabilizer decomposition**: Stab_{O_h}(axis) = D_4 x Z/2Z connects CM theory to cubic geometry
+
+### New Documentation
+
+- 8 new theory documents across 4 categories
+- 5 new verification scripts (phi^3 EFT, one-loop alpha, anti-correlation, log G*, blind derivation)
+- 2 new proof scripts (blind derivation chain, stabilizer decomposition)
+- constants.py updated with EFT parameters and one-loop constants
+- Version bump: 5.28 → 5.29
+
+---
+
 ## G* Mathematics, Wallis Products, Lean 4 Verification, and Four Papers (April 1, 2026)
 
 ### The Missing Ratio: G* = Gamma(1/4)/Gamma(3/4)

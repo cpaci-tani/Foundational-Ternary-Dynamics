@@ -197,6 +197,77 @@ eps = abs(EPSILON)
 X_PLUS_PRECISION = X_PLUS - c1*eps + c2*eps**2 - c3*eps**3 - c4*eps**4
 
 # =============================================================================
+# G* AS SIMPLE GAMMA RATIO (April 2026)
+# =============================================================================
+
+# G* = Gamma(1/4) / Gamma(3/4) — the ratio form, algebraically independent of pi
+# This is the form used in Paper I and the blind derivation chain.
+# Equivalent to the gamma-primitive form: gamma_1^2 / (sqrt(2) * gamma_2^2)
+GAMMA_THREE_QUARTER = gamma(0.75)  # Gamma(3/4) ≈ 1.2254
+G_STAR_RATIO = GAMMA_QUARTER / GAMMA_THREE_QUARTER  # = G_STAR (verified)
+
+# =============================================================================
+# PHI^3 EXACT EFT (April 2026)
+# =============================================================================
+#
+# The cubic potential V(x) = x^3/3 - 8*G*^2*x^2 + 16*G*^3*x
+# whose critical points are the master quadratic roots x+ and x-.
+# Expanding around x+ gives the EXACT phi^3 EFT (no truncation: cubic terminates).
+#
+# L_EFT = (1/2)(dphi)^2 - (1/2)*m^2*phi^2 - (1/3)*phi^3
+#
+# Three Wilson coefficients:
+#   Vacuum energy: V(x+)
+#   Mass: m^2 = x+ - x- = V''(x+)
+#   Self-coupling: lambda_3 = 1/3 = 1/D (universal, does not depend on G*)
+
+D_SPATIAL = 3  # Spatial dimensions (derived from |Aut(E_i)|^2 = 2^D * (D-1)!)
+
+# EFT mass squared = root separation
+MASS_SQUARED_EFT = X_PLUS - X_MINUS  # = 134.012
+
+# Universal self-coupling (1/D, independent of G*)
+LAMBDA_3 = 1.0 / D_SPATIAL  # = 1/3
+
+# Vacuum energy at the stable minimum
+VACUUM_ENERGY_EFT = (X_PLUS**3 / 3
+                     - 8 * G_STAR**2 * X_PLUS**2
+                     + 16 * G_STAR**3 * X_PLUS)
+
+# =============================================================================
+# ONE-LOOP LATTICE PARAMETERS (April 2026)
+# =============================================================================
+#
+# phi^3 EFT on Z[i]^3 with lattice spacing a = 2/D = 2/3.
+# Tadpole integral closes 99.2% of the tree-level gap to NIST.
+
+# Lattice spacing [SELECTION PRINCIPLE]: boundary-to-bulk ratio in D=3
+LATTICE_SPACING = 2.0 / D_SPATIAL  # = 2/3
+
+# Mass in lattice units
+MASS_SQUARED_LATTICE = MASS_SQUARED_EFT * LATTICE_SPACING**2  # = 59.561
+
+# Bare coupling
+G_COUPLING = 2.0  # V''' = 2
+
+# Tadpole integral (computed on 150^3 lattice)
+TADPOLE_I1 = 0.015274  # integral over BZ of 1/(k_hat^2 + m^2_lat)
+
+# VEV shift
+DELTA_PHI_LATTICE = -TADPOLE_I1 / MASS_SQUARED_LATTICE  # lattice units
+DELTA_X_PHYSICAL = DELTA_PHI_LATTICE * LATTICE_SPACING    # physical units
+
+# One-loop corrected x+
+X_PLUS_ONE_LOOP = X_PLUS + DELTA_X_PHYSICAL  # = 137.036000...
+
+# Loop expansion parameter (perturbative if < 1)
+LOOP_EXPANSION = G_COUPLING**2 * TADPOLE_I1  # = 0.061
+
+# NIST comparison
+ALPHA_INV_NIST = 137.035999177  # CODATA 2022
+ONE_LOOP_RESIDUAL_PPB = abs(X_PLUS_ONE_LOOP - ALPHA_INV_NIST) / ALPHA_INV_NIST * 1e9
+
+# =============================================================================
 # COUPLING CONSTANTS
 # =============================================================================
 

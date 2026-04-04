@@ -107,8 +107,8 @@ Therefore: **L(E, 1) = Omega_1 * 4 / 16 = Omega_1 / 4 = omega / 2 = 0.92704**
 
 **Proof:**
 
-G* = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2)
-    [pi-free Gamma-primitive form; equivalently sqrt(2)*Gamma(1/4)^2/(2*pi)]
+G* = Gamma(1/4) / Gamma(3/4) = 2.9587...
+    [equivalently Gamma(1/4)^2/(sqrt(2)*Gamma(1/2)^2) = sqrt(2)*Gamma(1/4)^2/(2*pi)]
 
 L(E,1) = Omega_1/4 = omega/2 = Gamma(1/4)^2 / (8*sqrt(pi))
 

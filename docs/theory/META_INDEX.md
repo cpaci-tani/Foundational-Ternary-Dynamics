@@ -1,15 +1,15 @@
 # FTD Theory Documentation Index
 
-**Framework:** Foundational Ternary Dynamics v5.28
-**Date:** March 17, 2026
-**Status:** Consolidated (114 core files, 67 archived)
+**Framework:** Foundational Ternary Dynamics v5.29
+**Date:** April 3, 2026
+**Status:** Consolidated (123 core files, 67 archived)
 **Single Source of Truth:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 
 ---
 
 ## Document Organization
 
-This index organizes all 114 core theory documents into 10 logical categories (9 subdirectories + this file).
+This index organizes all 123 core theory documents into 10 logical categories (9 subdirectories + this file).
 Archived documents (67 files) are in `archive/` subdirectory.
 
 ---
@@ -63,6 +63,8 @@ From void to physics — the emergence story.
 | 2.15 | [FOUND_DIMENSIONAL_COUNTING.md](02_foundations/FOUND_DIMENSIONAL_COUNTING.md) | **Dimensional counting:** Constructive 0.5D→1D→2D→3D via pairing ontology + time; D=3 → Moore(26) → BCC(8) → G\* via Watson integral; **coefficient 16 = z_BCC × 2 derived from BCC + ternary ReLU**; self-referential closure α→K_B→p≈1→n_DOF=16→α; DC-4 (time→3D) is [CONJECTURE], rest is [THEOREM] |
 | 2.16 | [DERIV_D3_UNIQUENESS.md](02_foundations/DERIV_D3_UNIQUENESS.md) | **D=3 uniqueness:** Watson integral W_D computed for D=1..6; D=3 is the unique dimension where floor(x_-)=D (self-referential N_c=D); D=1 diverges, D>=4 gives floor(x_-)=2; proven by exhaustive check |
 | 2.17 | ~~DERIV_MOORE_GAUGE_ORTHOGONAL.md~~ | **SUPERSEDED** by 3.43 DERIV_MOORE_GAUGE_STRUCTURE.md (more complete, 32/32 tests); retained in `02_foundations/` for historical reference |
+| 2.18 | [FOUND_BLIND_DERIVATION_CHAIN.md](02_foundations/FOUND_BLIND_DERIVATION_CHAIN.md) | **The Blind Derivation:** 13-step chain from "i exists" to α⁻¹ = 137.036000 (9.6 ppb); no physics invoked; two selection principles (Vieta exponents, lattice spacing); per-step epistemic classification; capstone organizational document |
+| 2.19 | [DERIV_D3_FROM_AUTOMORPHISM.md](02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) | **D=3 from automorphism group:** \|Aut(E_i)\|² = 2^D·(D-1)! uniquely gives D=3; purely algebraic finite check; complements 2.16 (Watson approach); no self-reference needed |
 
 ---
 
@@ -119,7 +121,7 @@ Physics from first principles.
 
 ---
 
-## 4. Coupling Constants and Precision (9)
+## 4. Coupling Constants and Precision (12)
 
 The lemniscatic structure and α derivation.
 
@@ -135,6 +137,8 @@ The lemniscatic structure and α derivation.
 | 4.8 | [DERIV_PLANCK_MASS_AND_LAMBDA_QCD.md](04_coupling/DERIV_PLANCK_MASS_AND_LAMBDA_QCD.md) | Closing the external input loop: Λ_QCD [THEOREM] + M_P self-consistency [SELECTION] |
 | 4.9 | [DERIV_ALPHA_LATTICE_MECHANISM.md](04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md) | **Physical mechanism:** Z³ → cuboctahedron → CM curve → G* → α; traces the complete chain from lattice axiom to fine structure constant; addresses SP4 |
 | 4.10 | [DERIV_WATSON_GSTAR_IDENTITY.md](04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) | **W₃ = G\*²/(2π):** The Watson integral (3D cubic lattice self-energy) IS a G\*-derived quantity [THEOREM]; 1/α + N_c = 32πW₃; master quadratic coefficients built from lattice self-energy; the lattice and the lemniscate share the quartic integral I₄ |
+| 4.11 | [DERIV_PHI3_EXACT_EFT.md](04_coupling/DERIV_PHI3_EXACT_EFT.md) | **phi³ exact EFT:** Cubic potential V(x) = x³/3 − 8G\*²x² + 16G\*³x; expansion around x₊ terminates exactly; three Wilson coefficients (vacuum, mass m²=134, coupling λ₃=1/3=1/D); no higher operators; UV-complete in field space [THEOREM] |
+| 4.12 | [DERIV_ONE_LOOP_LATTICE_ALPHA.md](04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md) | **One-loop lattice α:** phi³ EFT on Z[i]³ with a=2/D=2/3; tadpole I₁=0.015274; x₊(1-loop)=137.036000 (9.6 ppb, 99.2% gap closure); g²I₁=0.061 perturbative; spacing is [SELECTION PRINCIPLE]; integral is [THEOREM] |
 
 ---
 
@@ -186,7 +190,7 @@ What is genuinely derived vs. claimed.
 
 ---
 
-## 8. Structural Principles (6)
+## 8. Structural Principles (9)
 
 Geometry, scale, information, and recursion.
 
@@ -199,10 +203,12 @@ Geometry, scale, information, and recursion.
 | 8.5 | [EXPLR_VACUUM_DRAG_DERIVATION.md](08_structural/EXPLR_VACUUM_DRAG_DERIVATION.md) | Toward deriving gamma = alpha from geometry |
 | 8.6 | [EXPLR_TRIT_INFORMATION_THEORY.md](08_structural/EXPLR_TRIT_INFORMATION_THEORY.md) | Information-theoretic perspective on G* via self-dual trits |
 | 8.7 | [DERIV_CUBOCTAHEDRAL_INTEGERS.md](08_structural/DERIV_CUBOCTAHEDRAL_INTEGERS.md) | Deriving {3, 4, 7, 13} from lattice geometry [THEOREM]; resolves integer circularity (SP5) |
+| 8.8 | [DERIV_DUAL_DERIVATION_OF_16.md](08_structural/DERIV_DUAL_DERIVATION_OF_16.md) | **Dual derivation of 16:** Number theory (\|Aut(E_i)\|²=16) and geometry (\|O_h\|/3=16) independently yield the master quadratic coefficient; bridge via stabilizer decomposition [THEOREM] |
+| 8.9 | [DERIV_STABILIZER_DECOMPOSITION.md](08_structural/DERIV_STABILIZER_DECOMPOSITION.md) | **Stabilizer decomposition:** Stab_{O_h}(axis) = D₄ × Z/2Z; \|Stab\|=\|Aut(E_i)\|²=16; connects CM theory (complex analysis) to cuboctahedral geometry (3D packing) [THEOREM] |
 
 ---
 
-## 9. Mathematical Connections (13 active + 1 archived)
+## 9. Mathematical Connections (16 active + 1 archived)
 
 Number theory and special functions.
 
@@ -222,6 +228,9 @@ Number theory and special functions.
 | 9.12 | [EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md](09_mathematical/EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md) | Kinematic topology of Fourcier lobes |
 | 9.13 | [EXPLR_HALF_MOBIUS_LEMNISCATE.md](09_mathematical/EXPLR_HALF_MOBIUS_LEMNISCATE.md) | Discriminant trichotomy via molecular orbital analogy |
 | 9.14 | [DERIV_LFUNCTION_GSTAR_CONNECTION.md](09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md) | **L-function connection:** G\* = 8L(E,1)/sqrt(pi) [THEOREM]; 16 = torsion² from BSD; Hecke eigenvalues at framework primes (3,7,47 supersingular; 13 ordinary with a₁₃=2N_c); open question connecting Z_FTD to Langlands program |
+| 9.15 | [MATH_FAMILY_OF_RACES.md](09_mathematical/MATH_FAMILY_OF_RACES.md) | **Family of races:** R(1/q) = Γ(1/q)/Γ(1−1/q) for q≥2; duplication laws; universal odd-zeta spine; q=4 uniquely matches α⁻¹; shared zeta values across all towers |
+| 9.16 | [MATH_ANTI_CORRELATION_THEOREM.md](09_mathematical/MATH_ANTI_CORRELATION_THEOREM.md) | **Anti-correlation theorem:** At integer s≥2, ζ(s) and β(s) alternate in π-reducibility; mechanism: chain rule sign (−1)^n in Hurwitz decomposition; D₄ symmetry interpretation; pure number theory [THEOREM] |
+| 9.17 | [MATH_LOG_GSTAR_IDENTITY.md](09_mathematical/MATH_LOG_GSTAR_IDENTITY.md) | **log G\* identity:** log G\* = (γ+3log2)/2 + Σ(all unsolved L-values); G\* absorbs every unsolved constant, π carries the solved ones; rational coefficients for β(2m) and ζ(2m+1); PSLQ null results at 80+ digits [THEOREM] |
 
 ---
 
