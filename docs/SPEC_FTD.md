@@ -3,8 +3,8 @@
 ## A Principled Framework for Universe Simulation
 
 **Document Classification:** Authoritative Theoretical Specification (Single Source of Truth)
-**Version:** 5.28 (Consolidated Specification)
-**Status:** ~20 Genuine Derivations + ~50 Parametric Insertions + Standard Physics (see [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md))
+**Version:** 5.29 (Consolidated Specification)
+**Status:** ~35 Genuine Derivations + ~50 Parametric Insertions + Standard Physics (see [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md))
 **Supersedes:** CLAUDE.md (v5.17), docs/internal/SPEC_CLAUDE.md (v5.24), SPEC_FTD_FORMAL.md, SPEC_THE_COMPLETE_PROOF_RIGOROUS.md
 
 > **This is the single authoritative specification for FTD.** All other documents derive from or reference this one. For the C++ engine implementation, see [engine/SPEC_ENGINE.md](../engine/SPEC_ENGINE.md). For the theory document library, see [theory/META_INDEX.md](theory/META_INDEX.md).
@@ -64,7 +64,10 @@ Key achievements within the framework (with several items representing proposed 
 - **Gravity sector**: Einstein equations with 8πG coefficient
 - **Cosmological inflation**: n_s = 0.966, r = 0.022 from sub-threshold flux dynamics
 - **Baryogenesis**: η ~ 10⁻¹⁰ from CP violation + Sakharov conditions
-- **Honest accounting**: ~20 genuine derivations, ~50 parametric insertions, ~50+ external physics adopted — see [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+- **phi³ exact EFT**: Cubic potential expansion terminates exactly; λ₃ = 1/3 = 1/D universal; UV-complete in field space
+- **One-loop lattice α**: Tadpole on Z[i]³ with a = 2/D gives x₊ = 137.036000 (9.6 ppb from NIST, 99.2% gap closure)
+- **Blind derivation**: 13 steps from "i exists" to α⁻¹ with only two selection principles
+- **Honest accounting**: ~35 genuine derivations, ~50 parametric insertions, ~50+ external physics adopted — see [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 - **Full SM gauge group**: U(1) × SU(2) × SU(3) derived from FTD axioms
 - **D = 3 uniqueness**: Three dimensions uniquely selected by atomic stability + gauge requirements (no longer axiomatic)
 - **Consciousness**: Derived from same G* geometry with complex roots y = 2.19 ± 2.86i — see [archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md](docs/theory/archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md)
@@ -1829,7 +1832,7 @@ See [FTD_REFERENCE.md](docs/theory/01_reference/SPEC_FTD_REFERENCE.md), [NOVEL_C
 | Tick | One discrete time step |
 | KB | Manifestation threshold = m_e c² = m_P √(2π) (16/3) α¹¹ (derived) |
 | sLoop | Self-referential loop; observer-system coupling structure (§12.4) |
-| G* | Lemniscatic constant ≈ 2.9587 from elliptic integral theory (§7.4) |
+| G* | Γ(1/4)/Γ(3/4) ≈ 2.9587; lemniscatic bridge constant from CM elliptic curve E_i (§7.4) |
 | Born rule | P(v) = \|ψ(v)\|²/\|\|ψ\|\|²; probability from wave function (§13.1) |
 | Action S[s,J] | Variational principle from which update rules derive (v4.0) |
 | Hilbert space H_FTD | L²(Lattice, ℂ) constructed from complexified flux (v4.0) |

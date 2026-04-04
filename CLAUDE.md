@@ -1,6 +1,6 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.28
+**Version:** 5.29
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
 
 ---
@@ -37,7 +37,7 @@ A discrete computational framework for simulating physical systems from explicit
 **Five postulates:** Discrete space (3D cubic lattice), discrete time (ticks), ternary states, local causality (26-neighbor Moore), determinism.
 
 **Key results** (within framework assumptions):
-- Fine structure constant α = 1/137.036 derived from lemniscatic constant G* (1.26 ppm; < 0.001 ppt with 4-term expansion)
+- Fine structure constant α = 1/137.036 derived from lemniscatic constant G* (1.26 ppm tree-level; 9.6 ppb one-loop; < 0.001 ppt with 4-term expansion)
 - Electron mass m_e = m_P √(2π) (16/3) α¹¹ (0.27% error)
 - Higgs mass m_H = v√(6/23) = 125.69 GeV (0.47% error) from ternary quartic λ = 3/23
 - Color charge number N_c = 3 from RG flow + topological quantization
@@ -47,7 +47,7 @@ A discrete computational framework for simulating physical systems from explicit
 - Full nonlinear Einstein equations via Deser iterative bootstrap
 - D = 3 uniquely selected (no longer axiomatic)
 
-**Honest accounting:** ~40 genuine derivations, ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
+**Honest accounting:** ~35 genuine derivations, ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
 
 ---
 
@@ -120,7 +120,7 @@ ftd/                                     # Project root
 
 | Constant | Value | Origin |
 |----------|-------|--------|
-| G* (lemniscatic) | 2.62206... | √2·Γ(1/4)²/(2π) |
+| G* (lemniscatic) | 2.95868... | Γ(1/4)/Γ(3/4) |
 | α (fine structure) | 1/137.036 | Master quadratic x₊ |
 | N_c (colors) | 3 | Master quadratic x₋ |
 | K_B (manifestation) | 0.511 | m_e = m_P·√(2π)·(16/3)·α¹¹ |
