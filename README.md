@@ -8,7 +8,7 @@
 
 **One axiom. Two properties. Zero free parameters.**
 
-A voxel has state s ∈ {−1, 0, +1} and position x ∈ ℤ³. Nothing else. From this, the fine structure constant α = 1/137.035999177 (matching every measured digit), the gauge groups U(1) × SU(2) × SU(3), the Higgs mass, confinement, Bell violation, and the Einstein field equations emerge through a single self-consistency equation.
+A lattice site has state s ∈ {−1, 0, +1} and position x ∈ ℤ³. From these two properties, the fine structure constant α = 1/137.035999177 (matching every measured digit), the gauge groups U(1) × SU(2) × SU(3), the Higgs mass, confinement, Bell violation, and the Einstein field equations follow from a single self-consistency equation.
 
 **Author:** William J cpaci-tani III | **Version:** 5.29 | **Date:** April 2026
 
@@ -72,7 +72,7 @@ print(f"1/alpha (one-loop):   {x_corrected:.6f}")      # 137.036000
 print(f"1/alpha (NIST):       137.035999177")           # 9.6 ppb residual
 ```
 
-One quadratic. Three regimes. All of physics:
+The discriminant of the master quadratic selects three physical regimes:
 
 | Discriminant | Roots | Physics |
 |---|---|---|
@@ -106,9 +106,9 @@ See [FOUND_BLIND_DERIVATION_CHAIN.md](docs/theory/02_foundations/FOUND_BLIND_DER
 
 ---
 
-## Ontic Derivation Program (March 2026)
+## Lattice Derivation Program (March 2026)
 
-12 derivation tiers, 172 computational tests, 0 failures. Each tier closes a gap from axioms to physics:
+12 derivation tiers, 172 computational tests, 0 failures. Each tier closes a gap from postulates to physics:
 
 | Tier | Derivation | Tests | Key Result |
 |---|---|---|---|
@@ -147,7 +147,7 @@ FTD maintains transparent accounting. Every claim is tagged:
 
 | Tag | Meaning | Count |
 |---|---|---|
-| [AXIOM] | Starting postulate (state + position) | 1 |
+| [AXIOM] | Lattice postulate (state + position) | 1 |
 | [THEOREM] | Proven from axioms | ~35 |
 | [SELECTION] | Argued but not uniquely forced | ~5 (physical identifications) |
 | [IMPOSED] | Standard physics adopted | ~50 |
@@ -190,16 +190,16 @@ ftd/
     SPEC_FTD.md                 # Authoritative specification
     theory/                     # 123 core + 67 archived theory documents
       01_reference/             # Master references and proofs
-      02_foundations/            # Axiom Zero, ontology, emergence
+      02_foundations/            # Lattice postulates, dimensional selection
       03_derivations/           # 37 physics derivations
       04_coupling/              # Coupling constants and precision
       05_particles/             # Particle physics
-      06_consciousness/         # Measurement, von Neumann algebras
+      06_measurement/           # Measurement theory, von Neumann algebras
       07_assessment/            # Epistemic audits
       08_structural/            # Geometry and information theory
       09_mathematical/          # Number theory connections
   engine/
-    include/ftd/                # 28 C++ headers (ontic.h is the constant chain)
+    include/ftd/                # 28 C++ headers (ontic.h defines the constant chain)
     src/                        # 7 source files
     tests/                      # 168 test files (119 unit + 49 campaign + 4 GPU)
     cuda/                       # GPU acceleration (363× on RTX 5090)
@@ -298,7 +298,7 @@ Flux dipole on the 32³ cubic lattice. Each voxel carries state s ∈ {−1, 0, 
 
 ![Scale 0: Flux Dipole](engine/web/screenshots/scale0_dipole.png)
 
-Pair production with energy density heatmap (blue = low, red = high). Particles manifest when |J| exceeds the threshold K_B = 0.511.
+Pair production with energy density heatmap (blue = low, red = high). Particles are created when |J| exceeds the threshold K_B = 0.511.
 
 ![Scale 0: Pair Production](engine/web/screenshots/scale0_pair_production.png)
 
@@ -338,11 +338,11 @@ Caffeine (C₈H₁₀N₄O₂) — one of 27 molecules available from H₂ to Na
 
 | Document | Content |
 |---|---|
-| [Axiom Zero](docs/theory/02_foundations/FOUND_AXIOM_ZERO.md) | State + position, everything derived |
+| [Lattice Postulate](docs/theory/02_foundations/FOUND_AXIOM_ZERO.md) | State + position: the two lattice properties |
 | [Master Quadratic](docs/theory/01_reference/MATH_MASTER_QUADRATIC.md) | Complete algebraic structure |
 | [Gap Equation from ℤ](docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_FROM_Z.md) | Master quadratic from partition function |
 | [Watson–G\* Identity](docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) | I₁ = G\*²/(2π) and lattice symmetry theorem |
-| [Higgs from Manifestation](docs/theory/03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md) | λ=3/23, mH=125.69 GeV |
+| [Higgs from State Transition](docs/theory/03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md) | λ=3/23, mH=125.69 GeV |
 | [Confinement](docs/theory/03_derivations/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md) | Wilson loops, string tension, area law |
 | [Three Generations](docs/theory/03_derivations/DERIV_THREE_GENERATIONS.md) | Cuboctahedron axis types = 3 |
 | [Bell Cosine](docs/theory/03_derivations/DERIV_BELL_COSINE_FROM_GAUSS.md) | E(θ)=−cos(θ) from Gauss constraint |
@@ -371,7 +371,7 @@ Caffeine (C₈H₁₀N₄O₂) — one of 27 molecules available from H₂ to Na
 - Hadronic mass spectrum — quarks are confined; their "masses" are scheme-dependent parameters, not direct observables. Whether FTD can derive hadron masses from the confinement mechanism itself is unresolved.
 - Neutrino mass structure — predictions exist but await experimental reach
 
-**The honest status:** A mathematically rigorous derivation chain from one axiom to α, the gauge groups, confinement, and the Higgs mass, with every algebraic step verified. The remaining assumptions are standard lattice gauge theory. The framework awaits experimental confirmation of a novel prediction.
+**Status:** A derivation chain from one lattice postulate to α, the gauge groups, confinement, and the Higgs mass, with every algebraic step verified computationally. The remaining assumptions are standard lattice gauge theory. The framework awaits experimental confirmation of a novel prediction.
 
 ---
 
