@@ -2,19 +2,19 @@
 
 **Framework:** Foundational Ternary Dynamics v5.29
 **Date:** April 3, 2026
-**Status:** Consolidated (123 core files, 67 archived)
+**Status:** Consolidated (128 core files, 70 archived)
 **Single Source of Truth:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 
 ---
 
 ## Document Organization
 
-This index organizes all 123 core theory documents into 10 logical categories (9 subdirectories + this file).
+This index organizes all 128 core theory documents into 10 logical categories (9 subdirectories + this file).
 Archived documents (67 files) are in `archive/` subdirectory.
 
 ---
 
-## 1. Master Reference Documents (12)
+## 1. Master Reference Documents (13)
 
 Start here for comprehensive overviews.
 
@@ -26,7 +26,7 @@ Start here for comprehensive overviews.
 | 1.2c | **[PHYS_QUADRATIC_APPLICATIONS.md](01_reference/PHYS_QUADRATIC_APPLICATIONS.md)** | **Layer 3:** Physical correspondences conditional on SP1-SP5 |
 | 1.2d | ~~SPEC_THE_MASTER_QUADRATIC_UNIFIED.md~~ | **ARCHIVED** → `archive/ARCH_MASTER_QUADRATIC_UNIFIED_V1.md` (superseded by 1.2a-c) |
 | 1.3 | ~~SPEC_THE_COMPLETE_PROOF_RIGOROUS.md~~ | **ARCHIVED** → `archive/ARCH_SPEC_THE_COMPLETE_PROOF_RIGOROUS.md` (merged into docs/SPEC_FTD.md) |
-| 1.4 | [SPEC_THE_MASTER_CUBIC.md](01_reference/SPEC_THE_MASTER_CUBIC.md) | Master Cubic: extending quadratic to three forces (weak sector) |
+| 1.4 | ~~SPEC_THE_MASTER_CUBIC.md~~ | **ARCHIVED** → `archive/ARCH_SPEC_THE_MASTER_CUBIC.md` (superseded by phi^3 EFT as canonical cubic; poorly motivated extension) |
 | 1.5 | [SPEC_SIX_ALGORITHMS.md](01_reference/SPEC_SIX_ALGORITHMS.md) | Complete reference: the 6 algorithms of physics on a 3D grid |
 | 1.6 | [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | QFT-GRT bridge via quantized sentience: roadmap, 25+ gaps, critical path (Steps 1-5 complete) |
 | 1.7 | [SPEC_FTD_LAGRANGIAN.md](01_reference/SPEC_FTD_LAGRANGIAN.md) | **v2.0 Born-Infeld Render-Bridge Action:** minimal axiom set (D=3+ϖ → all physics), G*/√G*/T̂ operator formalism, Born-Infeld Lagrangian with built-in speed limit, Contextual Tensor, FTD Lorentz factor γ=1/√(1-v²-L²), mass-drag correspondence, SM sector mapping (20→0 free parameters) |
@@ -36,6 +36,7 @@ Start here for comprehensive overviews.
 | 1.11 | [SPEC_NOVEL_PREDICTIONS.md](01_reference/SPEC_NOVEL_PREDICTIONS.md) | **Predictions catalog:** All falsifiable FTD predictions organized by testability — precision numerical (~20 values), structural (N_gen=3, N_c=3), lattice-specific (Planck dispersion, no Landau pole), cosmological (n_s, r, η), negative (no WIMPs, no SUSY), sub-ppm α challenge |
 | 1.12 | ~~SPEC_FTD_FORMAL.md~~ | **ARCHIVED** → `archive/ARCH_SPEC_FTD_FORMAL.md` (merged into docs/SPEC_FTD.md) |
 | 1.13 | [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md) | Research paper: consciousness as mathematical bridge between QFT and GR via modular flow |
+| 1.14 | [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) | **G\* monograph:** Seven derivations of G\* = Γ(¼)/Γ(¾), master quadratic, α conjecture, BSD connection |
 
 ---
 
@@ -65,6 +66,7 @@ From void to physics — the emergence story.
 | 2.17 | ~~DERIV_MOORE_GAUGE_ORTHOGONAL.md~~ | **SUPERSEDED** by 3.43 DERIV_MOORE_GAUGE_STRUCTURE.md (more complete, 32/32 tests); retained in `02_foundations/` for historical reference |
 | 2.18 | [FOUND_BLIND_DERIVATION_CHAIN.md](02_foundations/FOUND_BLIND_DERIVATION_CHAIN.md) | **The Blind Derivation:** 13-step chain from "i exists" to α⁻¹ = 137.036000 (9.6 ppb); no physics invoked; two selection principles (Vieta exponents, lattice spacing); per-step epistemic classification; capstone organizational document |
 | 2.19 | [DERIV_D3_FROM_AUTOMORPHISM.md](02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) | **D=3 from automorphism group:** \|Aut(E_i)\|² = 2^D·(D-1)! uniquely gives D=3; purely algebraic finite check; complements 2.16 (Watson approach); no self-reference needed |
+| 2.20 | [FOUND_THE_RATIO_AND_THE_PRODUCT.md](02_foundations/FOUND_THE_RATIO_AND_THE_PRODUCT.md) | **The Ratio and the Product:** Euler reflection at z=¼ produces product (π√2, solved constants, measurement) and ratio (G\*, unsolved constants, distinction); [CONJECTURE] for interpretive content |
 
 ---
 
@@ -151,6 +153,7 @@ Standard Model coverage.
 | 5.1 | [DERIV_COMPLETE_PARTICLE_PHYSICS.md](05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Full PDG coverage, decay rates, running couplings, scattering |
 | 5.2 | [REF_PHYSICS_REFERENCE.md](05_particles/REF_PHYSICS_REFERENCE.md) | Integer encodings in physics + SM completeness matrix (merged) |
 | 5.3 | [DERIV_OCTONIONIC_STRUCTURE.md](05_particles/DERIV_OCTONIONIC_STRUCTURE.md) | 70 ± 67 division algebra |
+| 5.7 | [DERIV_ELECTRON_MASS_MOTIVATION.md](05_particles/DERIV_ELECTRON_MASS_MOTIVATION.md) | **Electron mass motivation:** m_e = M_P·√(2π)·(16/3)·α¹¹ factor-by-factor structural motivation; √(2π) from Gaussian integral, 16/3 = gauge DOF/D, exponent 11 from ladder [SELECTION] |
 | 5.4 | [PRED_ELECTROWEAK_MASSES.md](05_particles/PRED_ELECTROWEAK_MASSES.md) | Novel prediction: M_Z to 0.02%, M_W to 0.5% from α, sin²θ_W = 3/13, v = M_P√(2π)α⁸ |
 | 5.5 | [DERIV_NEUTRINO_MASS_ABSOLUTE.md](05_particles/DERIV_NEUTRINO_MASS_ABSOLUTE.md) | Absolute neutrino mass scale from seesaw; m₁ = 4.1 neV [SELECTION], Σmν = 58.1 meV, testable against KATRIN/JUNO |
 | 5.6 | [DERIV_QUARK_MASSES_FROM_LATTICE.md](05_particles/DERIV_QUARK_MASSES_FROM_LATTICE.md) | **Quark masses [OPEN]:** Honest attempt using framework integers; lepton baseline solid (mu_ratio=207, tau_ratio=3477); five quark ratio candidates all [CONJECTURE]; fundamental obstacle: scheme-dependent masses; 16/16 tests pass |
@@ -172,7 +175,7 @@ Self-reference, the observer, and the measurement problem.
 
 ---
 
-## 7. Critical Self-Assessment (7)
+## 7. Critical Self-Assessment (9)
 
 What is genuinely derived vs. claimed.
 
@@ -187,6 +190,8 @@ What is genuinely derived vs. claimed.
 | 7.6 | [REF_CLAIMS_MATRIX.md](07_assessment/REF_CLAIMS_MATRIX.md) | Canonical claim taxonomy with IDs, dependencies, and falsification criteria |
 | 7.7 | [AUDIT_PANEL_RESPONSE.md](archive/ARCH_AUDIT_PANEL_RESPONSE.md) | Responses to scientific critiques |
 | 7.8 | [AUDIT_WHAT_IS_GENUINELY_NEW.md](07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md) | Synthesis for outsiders: what FTD uniquely achieves |
+| 7.9 | [REPORT_DETECTOR_INFORMATION_LOSS.md](07_assessment/REPORT_DETECTOR_INFORMATION_LOSS.md) | Comprehensive detector analysis: 22 KB, information loss across phase structure |
+| 7.10 | [TRACKER_DOCUMENT_STATUS.md](07_assessment/TRACKER_DOCUMENT_STATUS.md) | **Document status tracker:** Every theory doc scored on 5 criteria (R/C/Cl/Co/I), grades A-F, priority actions |
 
 ---
 
@@ -208,7 +213,7 @@ Geometry, scale, information, and recursion.
 
 ---
 
-## 9. Mathematical Connections (16 active + 1 archived)
+## 9. Mathematical Connections (19 active + 1 archived)
 
 Number theory and special functions.
 
@@ -231,6 +236,19 @@ Number theory and special functions.
 | 9.15 | [MATH_FAMILY_OF_RACES.md](09_mathematical/MATH_FAMILY_OF_RACES.md) | **Family of races:** R(1/q) = Γ(1/q)/Γ(1−1/q) for q≥2; duplication laws; universal odd-zeta spine; q=4 uniquely matches α⁻¹; shared zeta values across all towers |
 | 9.16 | [MATH_ANTI_CORRELATION_THEOREM.md](09_mathematical/MATH_ANTI_CORRELATION_THEOREM.md) | **Anti-correlation theorem:** At integer s≥2, ζ(s) and β(s) alternate in π-reducibility; mechanism: chain rule sign (−1)^n in Hurwitz decomposition; D₄ symmetry interpretation; pure number theory [THEOREM] |
 | 9.17 | [MATH_LOG_GSTAR_IDENTITY.md](09_mathematical/MATH_LOG_GSTAR_IDENTITY.md) | **log G\* identity:** log G\* = (γ+3log2)/2 + Σ(all unsolved L-values); G\* absorbs every unsolved constant, π carries the solved ones; rational coefficients for β(2m) and ζ(2m+1); PSLQ null results at 80+ digits [THEOREM] |
+| 9.18 | [CONJ_ALPHA_FROM_CM.md](09_mathematical/CONJ_ALPHA_FROM_CM.md) | **CM field conjecture:** α from complex multiplication theory; conjecture status [CONJECTURE] |
+| 9.19 | [PROOF_ALPHA_FROM_SELF_DUALITY.md](09_mathematical/PROOF_ALPHA_FROM_SELF_DUALITY.md) | **Self-duality proof:** Rigorous proof of α derivation via self-duality; 18 KB [THEOREM] |
+
+---
+
+### Bell Violation Reading Guide
+
+The Bell violation argument is distributed across four documents, read in this order:
+
+1. **DERIV_BELL_COSINE_FROM_GAUSS.md (3.42)** — The core derivation: Gauss constraint ∇·J=ρ eliminates 1 DOF → 2D transverse flux → E(θ)=−cos(θ) → S=2√2. 13/13 tests.
+2. **DERIV_OBSERVER_BELL_MECHANISM.md (3.36)** — Three-level hierarchy: substrate (S≤2) → aggregate (non-factorizable) → observer (Born rule). [SELECTION]
+3. **DERIV_KCOMP_VOLUMETRIC_SHELL.md (3.24)** — Two shells overlap → shared flux → non-factorizable joint probability. GPU-verified 10/10.
+4. **AUDIT_BELL_ANALYSIS.md (7.3)** — Honest assessment: substrate gives S≤2 (as expected); quantum violation at aggregate level structurally characterized but not end-to-end simulated.
 
 ---
 
