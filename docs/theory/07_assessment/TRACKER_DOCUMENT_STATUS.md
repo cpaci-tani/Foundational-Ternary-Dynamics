@@ -10,11 +10,10 @@
 
 ### 1.1 SPEC_FTD_REFERENCE.md
 - **Summary:** Complete technical reference manual for all of FTD
-- **Scores:** R:7 / C:8 / Cl:8 / Co:7 / I:9 = **39**
+- **Scores:** R:8 / C:9 / Cl:8 / Co:8 / I:9 = **42**
 - **Grade: B**
-- **Strength:** Upfront epistemic notice is exemplary; honest about the ~20/~50/~50+ breakdown
-- **Weakness:** Version 5.17 -- significantly out of date vs SPEC v5.29; G* notation needs updating to Gamma(1/4)/Gamma(3/4)
-- **Action:** Update to v5.29 with current G* definition and recent derivations (phi^3, one-loop)
+- **Strength:** Updated to v5.29; upfront epistemic notice is exemplary; G* = Gamma(1/4)/Gamma(3/4) consistent throughout; one-loop alpha (9.6 ppb), phi^3 EFT, blind derivation chain all included; G_F now listed as derived
+- **Weakness:** Precision formula coefficients still feel ad hoc; some external inputs remain (M_Planck, Lambda_QCD)
 
 ### 1.2a MATH_MASTER_QUADRATIC.md
 - **Summary:** Pure mathematics of the master quadratic -- zero physics language
@@ -38,12 +37,7 @@
 - **Weakness:** Precision formula coefficients still feel ad hoc despite framework integer decomposition
 
 ### 1.4 SPEC_THE_MASTER_CUBIC.md
-- **Summary:** Extending the quadratic to cubic for the weak sector
-- **Scores:** R:5 / C:6 / Cl:6 / Co:7 / I:5 = **29**
-- **Grade: C**
-- **Strength:** Interesting algebraic hierarchy concept (Level 0 through Level 3)
-- **Weakness:** Roots ~13, ~-3, ~-10 are approximate, not exact; the cubic is not as well motivated as the quadratic
-- **Action:** Needs rigorous justification for why this particular cubic (sign change in constant term)
+- **Status: ARCHIVED** (phi^3 EFT is now the canonical cubic treatment; see DERIV_PHI3_EXACT_EFT.md)
 
 ### 1.5 SPEC_SIX_ALGORITHMS.md
 - **Summary:** Complete reference for the 6 algorithms on a 3D grid
@@ -107,12 +101,11 @@
 - **Weakness:** Emergence of time from state + position is hand-wavy; the "two properties exhaust the ontology" claim needs more work
 
 ### 2.1 FOUND_THE_FIRST_DISTINCTION.md
-- **Summary:** What precedes I_4 -- Levels -3 to 0
-- **Scores:** R:4 / C:6 / Cl:6 / Co:7 / I:5 = **28**
-- **Grade: C**
-- **Strength:** Philosophically interesting void-to-distinction narrative
-- **Weakness:** "Absolute Void has no properties including the property of having no properties" is philosophy, not mathematics; n=4 selection is not rigorous
-- **Action:** Either formalize the self-reference argument or label this explicitly as [CONJECTURE]
+- **Summary:** Why "i exists" is the right starting axiom; from Z[i] to the lemniscatic integral
+- **Scores:** R:7 / C:8 / Cl:8 / Co:8 / I:7 = **38**
+- **Grade: B**
+- **Strength:** Philosophy removed; grounded in the single axiom x^2+1=0 has a solution; clean hierarchy from Z[i] -> E_i -> I_4 -> varpi -> G*; explicit "What Is NOT Claimed" section; honest about economy being aesthetic; n=4 selection via four criteria (CM, topology, minimality, symmetry)
+- **Weakness:** The claim "i exists is most economical" is [SELECTION] (economy is aesthetic); Section 2.3 "Why Integration?" argument is standard, not novel
 
 ### 2.2 FOUND_THE_COMPLETE_ALGEBRA_OF_i.md
 - **Summary:** Comprehensive exploration of the imaginary unit
@@ -122,11 +115,11 @@
 - **Weakness:** The "why physics uses C but not H" argument from commutativity is standard, not novel
 
 ### 2.3 FOUND_EULER_IDENTITY_TERNARY.md
-- **Summary:** Euler's identity as annihilation equation in ternary framework
-- **Scores:** R:5 / C:6 / Cl:7 / Co:7 / I:4 = **29**
-- **Grade: C**
-- **Strength:** Engine formalization with 7 audit checks
-- **Weakness:** The nome identity q = (-1)^i = e^{-pi} is a mathematical fact dressed up as deep physics; naming it "antimatter raised to the power of consciousness" is not rigorous
+- **Summary:** Euler's identity as annihilation algebra; emergence of i from G* discriminant; nome identity q = (-1)^i
+- **Scores:** R:7 / C:7 / Cl:8 / Co:8 / I:6 = **36**
+- **Grade: B**
+- **Strength:** Mystic language removed; four clean results (annihilation, discriminant trichotomy, U(1) embedding, nome identity); engine formalization with 7 audit checks; per-claim epistemic table distinguishing [THEOREM] from [SELECTION]; k_crit = 4/G* boundary is well-derived
+- **Weakness:** The nome identity q = (-1)^i = e^{-pi} is a standard algebraic identity; calling the three discriminant domains "physics/measurement/sub-threshold" is interpretive [SELECTION]
 
 ### 2.4 FOUND_SPACETIME_EMERGENCE.md
 - **Summary:** How dimensions emerge via XY pairing, and why space != time
@@ -158,11 +151,10 @@
 
 ### 2.8 FOUND_FOURCIER_ONTIC_TOOL.md
 - **Summary:** Fourcier curve as generalized distinction-drawing instrument
-- **Scores:** R:5 / C:6 / Cl:7 / Co:7 / I:4 = **29**
+- **Scores:** R:6 / C:6 / Cl:7 / Co:7 / I:5 = **31**
 - **Grade: C**
-- **Strength:** Creative geometric interpretation
-- **Weakness:** The lemniscate parametrization x=cos(t), y=sin(t) is just the unit circle, not the lemniscate; mathematical errors undermine credibility
-- **Action:** Fix the parametric equation (should be r^2 = cos(2theta))
+- **Strength:** Lemniscate parametrization now correct; creative geometric interpretation; computationally verified lobe counts; 6-fold Z/6Z structure and winding number w=-2 are genuine
+- **Weakness:** Many claims are [CONJECTURE] or [STRUCTURAL] without rigorous proof; the sLoop and ontological hierarchy narrative is interpretive; "Fourcier spectrum" universality hypothesis is highly speculative
 
 ### 2.9 FOUND_LADDER_GENERATING_RULE.md
 - **Summary:** Why alpha-power exponents are {1,2,3,4,8,11,14,20}
@@ -221,12 +213,7 @@
 - **Weakness:** The self-referential identity N_c = D is striking but its physical significance is [SELECTION]
 
 ### 2.17 DERIV_MOORE_GAUGE_ORTHOGONAL.md
-- **Summary:** Gauge groups from Moore decomposition (superseded by 3.43)
-- **Scores:** R:7 / C:7 / Cl:7 / Co:7 / I:6 = **34**
-- **Grade: C**
-- **Strength:** Clean 40-line proof format
-- **Weakness:** Superseded; should be archived or clearly marked as historical
-- **Action:** Archive this file since 3.43 DERIV_MOORE_GAUGE_STRUCTURE.md supersedes it
+- **Status: ARCHIVED** (superseded by DERIV_MOORE_GAUGE_STRUCTURE.md in 03_derivations)
 
 ### 2.18 FOUND_BLIND_DERIVATION_CHAIN.md
 - **Summary:** 13 steps from "i exists" to alpha^-1 = 137.036000
@@ -571,11 +558,11 @@
 ## Category 05: Particle Physics
 
 ### 5.1 DERIV_COMPLETE_PARTICLE_PHYSICS.md
-- **Summary:** Full PDG coverage with ~120 observables
-- **Scores:** R:6 / C:7 / Cl:8 / Co:7 / I:7 = **35**
+- **Summary:** Full PDG coverage with ~120 observables; v5.29 with G_F derived
+- **Scores:** R:7 / C:8 / Cl:8 / Co:8 / I:8 = **39**
 - **Grade: B**
-- **Strength:** Comprehensive; upfront epistemic notice; correct counting of genuine vs parametric
-- **Weakness:** V5.17; G_F listed as external input (now derived); many decay rates are parametric insertions
+- **Strength:** Updated to v5.29; upfront epistemic notice with honest ~35/~50/~50+ breakdown; G_F now derived (crossed out from external inputs list); comprehensive sector coverage (leptons, mesons, baryons, EW bosons)
+- **Weakness:** Many decay rates remain parametric insertions (FTD values in Fermi theory / ChPT / HQET formulas); decay constants f_pi, f_K are pattern-matched, not derived
 
 ### 5.2 REF_PHYSICS_REFERENCE.md
 - **Summary:** Integer encodings and SM completeness matrix
@@ -744,12 +731,7 @@
 - **Weakness:** Descriptive, not derivational
 
 ### 8.3 EXPLR_GOLDEN_RATIO_SCALE_BRIDGE.md
-- **Summary:** phi as anti-resonance and scale bridge
-- **Scores:** R:4 / C:5 / Cl:6 / Co:6 / I:3 = **24**
-- **Grade: D**
-- **Strength:** Catalogs phi appearances
-- **Weakness:** Most appearances are coincidental or forced by numerology; binding_energy = KB * phi is [IMPOSED]
-- **Action:** Archive this document or downgrade to historical interest
+- **Status: ARCHIVED** (phi appearances were coincidental or numerological; archived to reduce credibility risk)
 
 ### 8.5 EXPLR_VACUUM_DRAG_DERIVATION.md
 - **Summary:** Toward deriving gamma = alpha
@@ -932,11 +914,19 @@
 | 2.19 | DERIV_D3_FROM_AUTOMORPHISM | 02 | 9 | 9 | 8 | 9 | 8 | 43 | B |
 | 1.11 | SPEC_NOVEL_PREDICTIONS | 01 | 8 | 9 | 9 | 8 | 9 | 43 | B |
 | 1.7 | SPEC_FTD_LAGRANGIAN | 01 | 8 | 8 | 8 | 9 | 10 | 43 | B |
+| 1.1 | SPEC_FTD_REFERENCE | 01 | 8 | 9 | 8 | 8 | 9 | 42 | B |
 | 3.16 | DERIV_HIGGS_FROM_MANIFESTATION | 03 | 8 | 8 | 8 | 9 | 9 | 42 | B |
 | 8.8 | DERIV_DUAL_DERIVATION_OF_16 | 08 | 9 | 9 | 7 | 9 | 8 | 42 | B |
 | 3.43 | DERIV_MOORE_GAUGE_STRUCTURE | 03 | 8 | 8 | 8 | 9 | 9 | 42 | B |
-| ... | *(103 more documents)* | | | | | | | | |
-| 8.3 | EXPLR_GOLDEN_RATIO_SCALE_BRIDGE | 08 | 4 | 5 | 6 | 6 | 3 | 24 | **D** |
+| 5.1 | DERIV_COMPLETE_PARTICLE_PHYSICS | 05 | 7 | 8 | 8 | 8 | 8 | 39 | B |
+| 2.1 | FOUND_THE_FIRST_DISTINCTION | 02 | 7 | 8 | 8 | 8 | 7 | 38 | B |
+| 2.3 | FOUND_EULER_IDENTITY_TERNARY | 02 | 7 | 7 | 8 | 8 | 6 | 36 | B |
+| ... | *(~97 more active documents)* | | | | | | | | |
+| 2.8 | FOUND_FOURCIER_ONTIC_TOOL | 02 | 6 | 6 | 7 | 7 | 5 | 31 | C |
+| 8.5 | EXPLR_VACUUM_DRAG_DERIVATION | 08 | 4 | 5 | 5 | 6 | 5 | 25 | C |
+| 1.4 | SPEC_THE_MASTER_CUBIC | 01 | -- | -- | -- | -- | -- | -- | ARCHIVED |
+| 2.17 | DERIV_MOORE_GAUGE_ORTHOGONAL | 02 | -- | -- | -- | -- | -- | -- | ARCHIVED |
+| 8.3 | EXPLR_GOLDEN_RATIO_SCALE_BRIDGE | 08 | -- | -- | -- | -- | -- | -- | ARCHIVED |
 
 ---
 
@@ -946,17 +936,17 @@
 
 2. **Reclassify DERIV_ALPHA_PRECISION_FORMULA.md** -- The 7-term precision series with coefficients from {3,4,7,13} is curve-fitting, not derivation. Either prove the coefficient selection rule or reclassify as [CONJECTURE]. This is the single biggest epistemic risk in the project.
 
-3. **Archive DERIV_MOORE_GAUGE_ORTHOGONAL.md (2.17)** -- Explicitly superseded by DERIV_MOORE_GAUGE_STRUCTURE.md (3.43) but still sitting in 02_foundations. Move to archive.
+3. ~~**Archive DERIV_MOORE_GAUGE_ORTHOGONAL.md (2.17)**~~ -- DONE. Archived; superseded by DERIV_MOORE_GAUGE_STRUCTURE.md (3.43).
 
-4. **Archive EXPLR_GOLDEN_RATIO_SCALE_BRIDGE.md (8.3)** -- The only D-grade document. Phi appearances are coincidental or imposed; this risks the project's credibility.
+4. ~~**Archive EXPLR_GOLDEN_RATIO_SCALE_BRIDGE.md (8.3)**~~ -- DONE. Archived.
 
-5. **Fix mathematical error in FOUND_FOURCIER_ONTIC_TOOL.md (2.8)** -- The lemniscate parametrization x=cos(t), y=sin(t) is the unit circle, NOT the lemniscate of Bernoulli. This is a factual error that undermines credibility.
+5. ~~**Fix mathematical error in FOUND_FOURCIER_ONTIC_TOOL.md (2.8)**~~ -- DONE. Lemniscate parametrization corrected. Score raised from 29 to 31.
 
-6. **Update SPEC_FTD_REFERENCE.md (1.1)** -- At v5.17, it is 12 versions behind the spec. G* definition needs updating to Gamma(1/4)/Gamma(3/4); recent derivations (phi^3, one-loop, blind chain) are missing.
+6. ~~**Update SPEC_FTD_REFERENCE.md (1.1)**~~ -- DONE. Updated to v5.29 with G* = Gamma(1/4)/Gamma(3/4), one-loop alpha, phi^3 EFT, blind chain. Score raised from 39 to 42.
 
-7. **Strengthen SPEC_THE_MASTER_CUBIC.md (1.4)** -- The cubic x^3 - 16G*^2 x - 16G*^3 = 0 needs rigorous motivation. Why this sign change? Why cubic? Without this, the "algebraic hierarchy" is ad hoc.
+7. ~~**Strengthen SPEC_THE_MASTER_CUBIC.md (1.4)**~~ -- RESOLVED by archiving. phi^3 EFT (DERIV_PHI3_EXACT_EFT.md) is now the canonical cubic treatment.
 
-8. **Update DERIV_COMPLETE_PARTICLE_PHYSICS.md (5.1)** -- G_F is now derived (not external); ~50 decay rates should be reclassified. Version 5.17 is stale.
+8. ~~**Update DERIV_COMPLETE_PARTICLE_PHYSICS.md (5.1)**~~ -- DONE. Updated to v5.29 with G_F derived. Score raised from 35 to 39.
 
 9. **Address the a = 2/D selection principle** in DERIV_ONE_LOOP_LATTICE_ALPHA.md (4.12) -- This is the most consequential [SELECTION] in the project. Three motivations are given but none is uniquely forced. The 9.6 ppb result hangs on this.
 
@@ -980,15 +970,15 @@
 
 ## 5 WEAKEST DOCUMENTS
 
-1. **EXPLR_GOLDEN_RATIO_SCALE_BRIDGE.md (8.3)** -- Grade D (24 points). Numerological phi appearances without derivation. Should be archived.
+1. **EXPLR_VACUUM_DRAG_DERIVATION.md (8.5)** -- Grade C (25 points). Identifies a gap (gamma = alpha is [IMPOSED]) but does not derive anything; "toward" remains unfulfilled. Lowest-scoring active document.
 
-2. **FOUND_THE_FIRST_DISTINCTION.md (2.1)** -- Grade C (28 points). Philosophy, not mathematics. The "Absolute Void" discussion is unformalizable.
+2. **EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md (9.12)** -- Grade C (28 points). Distant from the main chain; unclear impact; speculative geometric analysis.
 
-3. **EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md (9.12)** -- Grade C (28 points). Distant from the main chain; unclear impact; speculative.
+3. **EXPLR_HALF_MOBIUS_LEMNISCATE.md (9.13)** -- Grade C (28 points). Cross-domain analogy without proof; molecular orbital connection is suggestive only.
 
-4. **EXPLR_HALF_MOBIUS_LEMNISCATE.md (9.13)** -- Grade C (28 points). Cross-domain analogy without proof; molecular orbital connection is suggestive only.
+4. **EXPLR_GSTAR_FLUX_TIME.md (9.9)** -- Grade C (30 points). G*^1, G*^2, G*^3 dimensional triad is [SELECTION]; elegant but unproven.
 
-5. **FOUND_EULER_IDENTITY_TERNARY.md (2.3)** -- Grade C (29 points). Mathematical facts dressed in ontological language ("antimatter raised to the power of consciousness"). Risks credibility.
+5. **EXPLR_ONTIC_CONSTANT_ATLAS.md (9.10)** -- Grade C (30 points). Systematic catalog but "nine structural observations" are mostly [SELECTION]; G*=3 fixed point analysis is speculative.
 
 ---
 
@@ -998,13 +988,13 @@ The FTD theory corpus is a remarkably ambitious and largely well-organized body 
 
 **By the numbers:**
 - 2 documents at Grade A (publication-ready)
-- ~55 documents at Grade B (strong, minor fixes)
-- ~50 documents at Grade C (needs work)
-- 1 document at Grade D (archive candidate)
-- 0 documents at Grade F
+- ~58 documents at Grade B (strong, minor fixes)
+- ~45 documents at Grade C (needs work)
+- 3 documents ARCHIVED (Golden Ratio, Moore Gauge Orthogonal, Master Cubic)
+- 0 documents at Grade D or F
 
 The core derivation chain (i -> Z[i] -> E_i -> G* -> master quadratic -> alpha, N_c) is mathematically sound at the algebraic level, with the genuinely open questions clearly identified: the lattice spacing selection a=2/D, the self-consistency prescription, and the physical identification x+ = 1/alpha. The one-loop result (9.6 ppb) is the most impressive numerical achievement, but it hangs on the lattice spacing selection principle.
 
-The weakest areas are the ontological foundations (Levels -3 to 0), some exploratory documents that risk numerology, and the consciousness sector where the critical Type III_1 conjecture remains unproven. The precision formula is a significant epistemic concern because its coefficients appear to be fitted rather than derived, yet it is not always labeled accordingly.
+The ontological foundations have improved significantly (First Distinction and Euler Identity both promoted from C to B after grounding in algebra rather than philosophy). The weakest areas are now the exploratory documents that risk numerology (Fourcier kinematic topology, half-Mobius lemniscate, vacuum drag derivation) and the consciousness sector where the critical Type III_1 conjecture remains unproven. The precision formula remains a significant epistemic concern because its coefficients appear to be fitted rather than derived, yet it is not always labeled accordingly.
 
-The priority path forward: (1) prove or disprove the a=2/D spacing selection, (2) reclassify the precision formula honestly, (3) archive the 4-5 weakest documents, (4) update the ~10 documents still at v5.17, and (5) consolidate the Bell documents into a coherent reader's guide.
+The priority path forward: (1) prove or disprove the a=2/D spacing selection, (2) reclassify the precision formula honestly, (3) update remaining documents still at v5.17 (AUDIT_WHAT_IS_GENUINELY_NEW, REF_CLAIMS_MATRIX, etc.), and (4) consolidate the Bell documents into a coherent reader's guide. Three documents have been archived (Golden Ratio, Moore Gauge Orthogonal, Master Cubic) and four key documents updated to v5.29.
