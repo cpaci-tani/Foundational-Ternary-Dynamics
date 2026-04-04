@@ -391,7 +391,7 @@ print(f"  continuous manifestation threshold (0.511).")
 
 print("\n--- Section 7: G* from BCC [THEOREM] ---")
 
-# G* = 2.622... comes specifically from the BCC Watson integral.
+# G* = 2.959... (= Gamma(1/4)/Gamma(3/4)) comes specifically from the BCC Watson integral.
 # WHY? Because BCC is the only sublattice where every neighbor excites
 # ALL 3 J-components simultaneously. It's the only sublattice that
 # "sees" the full J^2 = J_x^2 + J_y^2 + J_z^2.

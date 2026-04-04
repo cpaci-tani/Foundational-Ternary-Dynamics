@@ -472,7 +472,7 @@ suite.assert_equal("Total axes = N_EFF = 13",
 
 print("\n--- Section 8: G* from BCC [THEOREM] ---\n")
 
-# G* = 2.622... is derived from the BCC Watson integral W_3.
+# G* = 2.959... (= Gamma(1/4)/Gamma(3/4)) is derived from the BCC Watson integral W_3.
 # The BCC sublattice is the ONLY sublattice that couples to all 3
 # J-components simultaneously (each BCC neighbor has all 3 coordinates nonzero).
 #
