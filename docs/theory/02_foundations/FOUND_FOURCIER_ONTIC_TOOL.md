@@ -31,9 +31,11 @@ The First Distinction (Level -1 in the FTD hierarchy) is the emergence of {0, 1}
 
 A distinction partitions a space into **regions**. The minimal non-trivial partition of the plane into connected regions by a single closed curve is the **lemniscate**: a figure-eight that creates exactly 2 lobes.
 
-$$\text{Lemniscate} = x(t) = \cos(t), \quad y(t) = \sin(t)$$
+$$\text{Lemniscate of Bernoulli (polar):} \quad r^2 = \cos(2\theta)$$
 
-This is the Fourcier curve with ONE harmonic (n = 0, frequency 1). It is the geometric realization of the First Distinction:
+$$\text{Parametrically:} \quad x(t) = \frac{\cos t}{1 + \sin^2 t}, \quad y(t) = \frac{\cos t \,\sin t}{1 + \sin^2 t}$$
+
+This self-crossing figure-eight is the geometric realization of the First Distinction:
 
 | First Distinction | Lemniscate |
 |---|---|
@@ -42,7 +44,7 @@ This is the Fourcier curve with ONE harmonic (n = 0, frequency 1). It is the geo
 | {0, 1} | Two connected regions |
 | Self-crossing (self-reference) | Crossing at origin |
 
-But the lemniscate IS a circle — a single harmonic produces a circle with 1 lobe, not 2. The true lemniscate r² = cos(2θ) requires the relationship between frequencies 1 and 2 — which IS the first Cayley-Dickson doubling (ℝ → ℂ).
+Note that the lemniscate r² = cos(2θ) is fundamentally distinct from the circle r = 1 (which has a single lobe and no self-crossing). The lemniscate's two-lobed topology requires the interplay between frequencies 1 and 2 — which IS the first Cayley-Dickson doubling (ℝ → ℂ).
 
 > **Claim OT-1 [STRUCTURAL]:** The Bernoulli lemniscate, as the minimal self-crossing algebraic curve, is the geometric realization of the First Distinction. Adding the frequency-2 harmonic (ℂ level) to the fundamental frequency (ℝ level) is what creates the self-crossing topology.
 
