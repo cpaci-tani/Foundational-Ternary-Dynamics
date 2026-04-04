@@ -55,7 +55,7 @@ Note: The quadratic has +16G*³ (positive), the cubic has -16G*³ (negative).
 
 $$x^3 - 16G^{*2}x - 16G^{*3} = 0$$
 
-With G* = √2 × Γ(1/4)² / (2π) ≈ 2.9586751192, this becomes:
+With G* = Γ(1/4)/Γ(3/4) ≈ 2.9586751192 (equivalently √2 × Γ(1/4)² / (2π)), this becomes:
 
 $$x^3 - 140.0601x - 414.3924 = 0$$
 

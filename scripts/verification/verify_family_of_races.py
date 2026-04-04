@@ -133,18 +133,18 @@ check(f"q=3 gives floor(x-)=2 (wrong)", int(xm3) != 3)
 print()
 
 # === 6. Asymptotic ===
-print("--- 6. Asymptotic: R(1/q) ~ q + (1 - 2*gamma) + O(1/q) ---")
+print("--- 6. Asymptotic: R_q = q - 2*gamma + O(1/q) ---")
 euler_gamma = 0.5772156649
-limit = 1 - 2 * euler_gamma  # -0.15443...
-print(f"  Predicted limit: 1 - 2*gamma_Euler = {limit:.10f}")
+target = -2 * euler_gamma  # -1.15443...
+print(f"  Predicted: R_q - q -> -2*gamma = {target:.10f}")
 for q in [10, 50, 100, 1000]:
     R_val = gamma(1.0/q) / gamma(1.0 - 1.0/q)
-    correction = R_val - (q - 1)
+    correction = R_val - q
     if q >= 100:
-        check(f"q={q}: correction = {correction:.6f} (limit = {limit:.6f})",
-              abs(correction - limit) < 0.01)
+        check(f"q={q}: R-q = {correction:.6f} (target = {target:.6f})",
+              abs(correction - target) < 0.01)
     else:
-        print(f"  q={q}: R-(q-1) = {correction:.6f}")
+        print(f"  q={q}: R-q = {correction:.6f}")
 print()
 
 # === Summary ===

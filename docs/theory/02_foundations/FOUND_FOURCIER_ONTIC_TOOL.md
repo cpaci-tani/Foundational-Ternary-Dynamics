@@ -301,7 +301,7 @@ MATHEMATICAL FOUNDATION
 =======================
 Level  1: PURE INTEGRAL       I₄ = 1.311...
 Level  2: LEMNISCATE CONST    ϖ = 2I₄
-Level  3: SCALED CONSTANT     G* = 2ϖ/√π
+Level  3: SCALED CONSTANT     G* = Γ(1/4)/Γ(3/4) = 2ϖ/√π
 
 FOURCIER INTERFACE (NEW)
 ========================
