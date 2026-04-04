@@ -298,6 +298,10 @@ if(FTD_ENABLE_CUDA)
     add_executable(test_gpu_experiments tests/test_gpu_experiments.cpp)
     target_link_libraries(test_gpu_experiments ftd_core ftd_cuda)
 
+    # e+e- annihilation angular distribution (Einstein's scattering experiment)
+    add_executable(ftd_annihilation_angular_gpu tests/campaign_annihilation_angular.cpp)
+    target_link_libraries(ftd_annihilation_angular_gpu ftd_core ftd_cuda)
+
     add_executable(test_gpu_shell_256 tests/test_gpu_shell_256.cpp)
     target_link_libraries(test_gpu_shell_256 ftd_core ftd_cuda)
 
