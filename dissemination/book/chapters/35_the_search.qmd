@@ -24,8 +24,8 @@ The question is how to tell the difference.
 The search might lead to elliptic functions—the generalization of trigonometry to more complex curves.
 
 The lemniscate (figure-eight curve) was studied by Johann Bernoulli and Euler in the 18th century. It has beautiful properties:
-- Its arc length involves a constant, now called the **lemniscatic constant** G* ≈ 2.6220...
-- Wait—that's the arc length constant. The constant that appears in our framework is different.
+- Its arc length involves a constant called the **lemniscate constant** ϖ (varpi) ≈ 2.6220...
+- But the constant that appears in our framework is different — it's a ratio, not an arc length.
 
 Let us be precise:
 

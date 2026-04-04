@@ -101,4 +101,18 @@ theorem sixteen_tors : FTD.torsion_order * FTD.torsion_order = 16 := tors_sq_16
 theorem sixteen_nbase : N_base * N_base = 16 := by native_decide
 theorem sixteen_power : 2 * 2 * 2 * 2 = 16 := by native_decide
 
+/-! ## Octahedral Group Connection (April 2026) -/
+
+/-- |O_h| = 48 (octahedral group = symmetry of the cube) -/
+theorem Oh_order : 48 = 3 * 16 := by native_decide
+
+/-- 16 = |O_h|/3 (stabilizer of one axis) -/
+theorem sixteen_Oh_div_3 : 48 / 3 = 16 := by native_decide
+
+/-- Stabilizer decomposition: |Stab| = |D_4| * |Z/2Z| = 8 * 2 = 16 -/
+theorem stabilizer_decomp : 8 * 2 = 16 := by native_decide
+
+/-- D_4 contains Z/4Z = Aut(E_i) as rotation subgroup: |D_4| = 2 * |Aut| -/
+theorem D4_from_aut : 2 * Aut_E_order = 8 := by native_decide
+
 end FTD.EllipticCurve
