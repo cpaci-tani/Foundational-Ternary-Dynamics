@@ -10,7 +10,7 @@
 
 A voxel has state s in {-1, 0, +1} and position x in Z^3. Nothing else. From this, the fine structure constant alpha = 1/137.035999177 (matching every measured digit), the gauge groups U(1) x SU(2) x SU(3), the Higgs mass, confinement, Bell violation, and the Einstein field equations emerge through a single self-consistency equation.
 
-**Author:** William J Steinmetz III | **Version:** 5.28 | **Date:** March 2026
+**Author:** William J Steinmetz III | **Version:** 5.29 | **Date:** April 2026
 
 ---
 
@@ -55,7 +55,7 @@ No fitting. No free parameters. The integers {3, 4, 7, 13} are the only ones sat
 from scipy.special import gamma
 import numpy as np
 
-G_star = np.sqrt(2) * gamma(0.25)**2 / (2 * np.pi)   # 2.9587
+G_star = gamma(0.25) / gamma(0.75)                    # 2.9587
 a, b, c = 1, -16 * G_star**2, 16 * G_star**3
 x_plus = (-b + np.sqrt(b**2 - 4*a*c)) / 2
 
@@ -138,7 +138,7 @@ FTD maintains transparent accounting. Every claim is tagged:
 | Tag | Meaning | Count |
 |---|---|---|
 | [AXIOM] | Starting postulate (state + position) | 1 |
-| [THEOREM] | Proven from axioms | ~40 |
+| [THEOREM] | Proven from axioms | ~35 |
 | [SELECTION] | Argued but not uniquely forced | ~5 (physical identifications) |
 | [IMPOSED] | Standard physics adopted | ~50 |
 | [OPEN] | Unresolved | ~8 |
@@ -155,6 +155,7 @@ See [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIO
 |---|---|---|---|
 | **1/alpha (7-term series)** | **137.035999177000000000000** | **137.035999177(21)** | **24 digits** |
 | 1/alpha (4-term, established) | 137.0359991770000 | 137.035999177(21) | < 0.001 ppt |
+| 1/alpha (one-loop lattice) | 137.036000 | 137.035999177 | 9.6 ppb |
 | 1/alpha (master quadratic) | 137.0362 | 137.0360 | 1.26 ppm |
 | sin^2 theta_W (Weinberg) | 0.2308 | 0.2312 | **0.19%** |
 | alpha_s (strong coupling) | 0.1186 | 0.1179 | **0.6%** |
@@ -177,7 +178,7 @@ See [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIO
 ftd/
   docs/
     SPEC_FTD.md                 # Authoritative specification
-    theory/                     # 114 core + 67 archived theory documents
+    theory/                     # 123 core + 67 archived theory documents
       01_reference/             # Master references and proofs
       02_foundations/            # Axiom Zero, ontology, emergence
       03_derivations/            # 37 physics derivations
@@ -338,6 +339,9 @@ Caffeine (C8H10N4O2) — one of 27 molecules available from H2 to NaCl crystals 
 | [Nonlinear Einstein](docs/theory/03_derivations/DERIV_EINSTEIN_NONLINEAR_FROM_LATTICE.md) | Full EFE via Deser bootstrap |
 | [Moore Gauge Structure](docs/theory/03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md) | SC->U(1), FCC->SU(2), BCC->SU(3) |
 | [D=3 Uniqueness](docs/theory/02_foundations/DERIV_D3_UNIQUENESS.md) | Only D=3 satisfies floor(x-)=D |
+| [Blind Derivation](docs/theory/02_foundations/FOUND_BLIND_DERIVATION_CHAIN.md) | 13 steps from "i exists" to alpha (9.6 ppb) |
+| [phi^3 Exact EFT](docs/theory/04_coupling/DERIV_PHI3_EXACT_EFT.md) | Exact cubic potential, lambda_3 = 1/3 = 1/D |
+| [One-Loop Alpha](docs/theory/04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md) | Tadpole on Z[i]^3 closes 99.2% of gap |
 | [Von Neumann Construction](docs/theory/06_consciousness/DERIV_VON_NEUMANN_CONSTRUCTION.md) | Type III_1 -> Type I transition |
 | [Hidden Selections Audit](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md) | Honest accounting of all assumptions |
 
