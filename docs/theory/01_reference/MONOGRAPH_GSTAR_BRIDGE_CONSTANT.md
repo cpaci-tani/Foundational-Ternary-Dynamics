@@ -12,9 +12,9 @@
 
 ### 1.1 The Number
 
-$$G^* = \frac{\Gamma(1/4)^2}{\sqrt{2}\,\Gamma(1/2)^2} = 2.9586751191886388\ldots$$
+$$G^* = \frac{\Gamma(1/4)}{\Gamma(3/4)} = 2.9586751191886388\ldots$$
 
-This is a transcendental number (Nesterenko, 1996) built from two evaluations of the Gamma function: Γ(1/4) and Γ(1/2). No circular constant appears — π = Γ(1/2)² is itself a derived quantity. The classical form G* = √2·Γ(1/4)²/(2π) is algebraically equivalent but imports π as if it were primitive.
+This is a transcendental number (Nesterenko, 1996) built from two evaluations of the Gamma function at quarter-integer arguments. Equivalently, G* = Γ(1/4)²/(√2·Γ(1/2)²) = √2·Γ(1/4)²/(2π). The latter classical forms are algebraically equivalent but import π as if it were primitive, whereas Γ(1/4)/Γ(3/4) is the most direct expression.
 
 ### 1.2 The Coincidence
 

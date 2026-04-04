@@ -153,7 +153,7 @@ y = sin(t)*cos(t) / (1 + sin^2(t))
 
 Despite being geometrically different, both curves produce the same G*:
 
-- **Bernoulli:** G* = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2) = 2.9586751191... [pi-free Gamma-primitive form; equivalently sqrt(2)*Gamma(1/4)^2/(2*pi)]
+- **Bernoulli:** G* = Gamma(1/4) / Gamma(3/4) = 2.9586751191... [equivalently Gamma(1/4)^2/(sqrt(2)*Gamma(1/2)^2) = sqrt(2)*Gamma(1/4)^2/(2*pi)]
 - **Alpha:** G* = L * 91/732 = 2.9586589... (5.45 ppm difference)
 
 **This agreement at 5.45 ppm from two independent constructions is statistically

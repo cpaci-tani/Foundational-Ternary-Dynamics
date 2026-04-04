@@ -17,7 +17,7 @@
 
 ## Abstract
 
-The FTD master constant G* = √2 · Γ(1/4)²/(2π) ≈ 2.9587 decomposes exactly as:
+The FTD master constant G* = Γ(1/4)/Γ(3/4) ≈ 2.9587 (equivalently √2 · Γ(1/4)²/(2π)) decomposes exactly as:
 
 $$G^* = \frac{\varpi}{\sqrt{\text{PF}}}$$
 

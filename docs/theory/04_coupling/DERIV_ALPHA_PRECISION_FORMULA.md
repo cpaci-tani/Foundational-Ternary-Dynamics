@@ -44,7 +44,7 @@ Where:
 - **epsilon** = e^pi - pi - 20 ~ -0.0009 (modular deviation)
 - **|epsilon|** ~ 1/1111 (inverse of framework product)
 
-**Note on Terminology:** G* = sqrt(2) x Gamma(1/4)^2 / (2 pi) ~ 2.9587 is related to the **classical lemniscate constant** varpi (also written omega-bar) = Gamma(1/4)^2 / (2 sqrt(2 pi)) ~ 2.6221 by the relationship:
+**Note on Terminology:** G* = Gamma(1/4)/Gamma(3/4) ~ 2.9587 (equivalently sqrt(2) x Gamma(1/4)^2 / (2 pi)) is related to the **classical lemniscate constant** varpi (also written omega-bar) = Gamma(1/4)^2 / (2 sqrt(2 pi)) ~ 2.6221 by the relationship:
 
 $$G^* = \frac{2\varpi}{\sqrt{\pi}}$$
 
