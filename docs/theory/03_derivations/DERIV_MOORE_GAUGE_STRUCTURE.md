@@ -61,7 +61,7 @@ The Standard Model gauge group **U(1) × SU(2) × SU(3)** is not postulated — 
 
 ## 4. G* from BCC: The Only Complete Sublattice [THEOREM]
 
-The universal coupling constant G* = 2.622... is derived from the BCC Watson integral. This is now structurally explained:
+The universal coupling constant G* = Γ(1/4)/Γ(3/4) = 2.959... is derived from the BCC Watson integral. This is now structurally explained:
 
 - **SC** couples to 1 J-component → sees J_i², not full J²
 - **FCC** couples to 2 J-components → sees J_i² + J_j², not full J²

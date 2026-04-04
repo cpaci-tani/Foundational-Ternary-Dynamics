@@ -30,6 +30,9 @@ import FTD.GammaFoundation
 import FTD.FineStructure
 import FTD.LFunction
 import FTD.SelfDuality
+import FTD.DimensionalUniqueness
+import FTD.Phi3EFT
+import FTD.OneLoopAlpha
 
 -- Axioms.lean is subsumed by LFunction.lean and SelfDuality.lean.
 -- Keeping the import for backward compatibility:
@@ -50,16 +53,19 @@ import FTD.Axioms
   - Precision.lean:      13 theorems + 1 #eval
 
   **Tier 2 (Integer-level, no Mathlib):**
-  - GaussianIntegers.lean: 12 theorems
-  - EllipticCurve.lean:    20 theorems
-  - GammaFoundation.lean:  1 #eval (6 numerical checks)
+  - GaussianIntegers.lean:       12 theorems
+  - EllipticCurve.lean:          24 theorems (incl. O_h stabilizer)
+  - GammaFoundation.lean:        1 #eval (6 numerical checks)
+  - DimensionalUniqueness.lean:  12 theorems + 1 #eval (D=3 from |Aut|^2)
+  - Phi3EFT.lean:                5 theorems + 1 #eval (exact cubic EFT)
+  - OneLoopAlpha.lean:           3 theorems + 1 #eval (9.6 ppb correction)
 
   **Tier 3 (Axiomatized):**
   - LFunction.lean:     8 axioms (all proven in literature)
   - SelfDuality.lean:   2 axioms (1 conjecture + 1 physical)
   - Axioms.lean:        12 axioms (legacy, overlaps with above)
 
-  **Total: ~113 verified theorems + 22 axioms + 3 #eval blocks**
+  **Total: ~133 verified theorems + 23 axioms + 6 #eval blocks**
 
   ### Sorry Count
   - Tier 1-2: 0 sorry (all proofs complete)
