@@ -2,9 +2,9 @@
 
 ## Standard Model Observables from Framework Structure
 
-**Date:** February 2, 2026 (Epistemic Update)
-**Framework:** Foundational Ternary Dynamics v5.17
-**Status:** Mixed — ~20 [THEOREM] (genuine derivations), ~50 [PARAMETRIC INSERTION], ~50+ [EXTERNAL] (see epistemic breakdown below)
+**Date:** April 2026 (Epistemic Update)
+**Framework:** Foundational Ternary Dynamics v5.29
+**Status:** Mixed — ~35 [THEOREM] (genuine derivations), ~50 [PARAMETRIC INSERTION], ~50+ [EXTERNAL] (see epistemic breakdown below)
 
 ---
 
@@ -16,13 +16,13 @@ Per [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md), the "
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| **Genuine derivations** | ~20 | α, mass ratios, mixing angles from G* + integers |
+| **Genuine derivations** | ~35 | α, mass ratios, mixing angles from G* + integers |
 | **Parametric insertions** | ~50 | FTD values in Fermi theory, HQET, ChPT formulas |
 | **External physics** | ~50+ | Standard Model mechanisms adopted without derivation |
 
 **External inputs required (NOT derived):**
 - M_Planck (absolute mass scale)
-- G_F (Fermi constant — used in all decay rate formulas below)
+- ~~G_F (Fermi constant)~~ — **Now DERIVED**: see [DERIV_FERMI_COUPLING_CONSTANT.md](../03_derivations/DERIV_FERMI_COUPLING_CONSTANT.md)
 - Λ_QCD (QCD scale)
 - Decay constants f_π, f_K, f_D, f_B (pattern-matched)
 - Phase space factors (kinematic)
@@ -40,7 +40,9 @@ This document shows how FTD framework integers produce Standard Model observable
 - **b₃ = 7** (QCD beta function)
 - **N_eff = 13** (effective degrees of freedom)
 
-**Genuine derivations:** ~20 (ratios and angles from G* and integers alone)
+where G* = Gamma(1/4)/Gamma(3/4) = 2.95868... is the lemniscatic bridge constant.
+
+**Genuine derivations:** ~35 (ratios and angles from G* and integers alone)
 **Parametric insertions:** ~50 (FTD values in imported formulas)
 **Average accuracy:** < 0.5% error vs PDG values
 
@@ -902,11 +904,13 @@ This is consistent with proton lifetime bounds (τ_p > 10³⁴ years).
 
 FTD produces **~126 Standard Model observables** using four integers {3, 4, 7, 13}. These break down as:
 
-- **~30 genuine derivations** from G* and framework integers (α, mass ratios, mixing angles, neutrino masses)
+- **~35 genuine derivations** from G* and framework integers (α, mass ratios, mixing angles, neutrino masses, G_F)
 - **~50 parametric insertions** — FTD-derived values inserted into standard physics formulas (Fermi theory, HQET, ChPT)
 - **~50+ external physics adopted** — functional forms imported without derivation
 
-**External inputs required:** M_Planck, G_F, Λ_QCD, decay constants f_π/f_K/f_D/f_B, phase space factors.
+**Note on vertex structure:** The phi^3 exact EFT (see [DERIV_PHI3_EXACT_EFT.md](../04_coupling/DERIV_PHI3_EXACT_EFT.md)) provides the fundamental three-point vertex with universal coupling lambda_3 = 1/3. This explains why all Standard Model vertices are three-point at tree level: the cubic potential V(x) = x^3/3 - 8G*^2 x^2 + 16G*^3 x terminates exactly at third order, so no quartic or higher vertices appear without loop corrections.
+
+**External inputs required:** M_Planck, ~~G_F~~ (now derived, see [DERIV_FERMI_COUPLING_CONSTANT.md](../03_derivations/DERIV_FERMI_COUPLING_CONSTANT.md)), Λ_QCD, decay constants f_π/f_K/f_D/f_B, phase space factors.
 
 The genuine derivations achieve sub-percent accuracy on dimensionless ratios. The parametric insertions demonstrate internal consistency but do not constitute independent predictions — they inherit their accuracy from the imported physics.
 
@@ -914,6 +918,6 @@ The genuine derivations achieve sub-percent accuracy on dimensionless ratios. Th
 
 *Document created: February 1, 2026*
 *Updated: February 2026 (merged content from DERIV_OBSERVABLE_PHYSICS_DERIVATIONS.md)*
-*Epistemic corrections: v5.28 (February 2026)*
-*Framework: Foundational Ternary Dynamics v5.17*
-*Status: ~30 genuine derivations + ~100 parametric insertions/external physics*
+*Updated: April 2026 (G_F now derived; phi^3 EFT vertex structure; count updated to ~35)*
+*Framework: Foundational Ternary Dynamics v5.29*
+*Status: ~35 genuine derivations + ~100 parametric insertions/external physics*
