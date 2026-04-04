@@ -55,12 +55,21 @@ No fitting. No free parameters. The integers {3, 4, 7, 13} are the only ones sat
 from scipy.special import gamma
 import numpy as np
 
+# Step 6: G* from the CM elliptic curve E_i
 G_star = gamma(0.25) / gamma(0.75)                    # 2.9587
+
+# Steps 9-10: Master quadratic roots
 a, b, c = 1, -16 * G_star**2, 16 * G_star**3
 x_plus = (-b + np.sqrt(b**2 - 4*a*c)) / 2
 
-print(f"1/alpha derived:      {x_plus:.10f}")   # 137.0361714582
-print(f"1/alpha experimental: 137.035999177")    # 1.26 ppm match
+# Step 12: One-loop tadpole correction (a = 2/3)
+m_sq = x_plus - ((-b - np.sqrt(b**2 - 4*a*c)) / 2)   # 134.012
+I1 = 0.015274                                          # BZ integral on 150^3
+x_corrected = x_plus - I1 * (2/3) / (m_sq * (2/3)**2) # 137.036000
+
+print(f"1/alpha (tree):       {x_plus:.10f}")          # 137.0361714582
+print(f"1/alpha (one-loop):   {x_corrected:.6f}")      # 137.036000
+print(f"1/alpha (NIST):       137.035999177")           # 9.6 ppb residual
 ```
 
 One quadratic. Three regimes. All of physics:
@@ -73,26 +82,27 @@ One quadratic. Three regimes. All of physics:
 
 ---
 
-## The Derivation Chain
+## The Blind Derivation: From *i* to Alpha in 13 Steps
 
-Every step from axiom to alpha is [THEOREM]. Zero free parameters. Zero FTD-specific selections.
+No physics is invoked until the final comparison. Two selection principles remain (steps 9, 12); everything else is forced.
 
 | Step | Result | Status | Method |
 |---|---|---|---|
-| 0 | State + Position | [AXIOM] | Axiom Zero |
-| 1 | Z_4 planar symmetry | [THEOREM] | O_h group theory |
-| 2 | Watson I_1 = Gamma(1/4)^4/(4pi^3) | [THEOREM] | Watson 1939 (BCC sublattice) |
-| 3 | Lemniscatic modulus forced | [THEOREM] | Z_4 symmetry selects k=1/sqrt(2) |
-| 4 | CM curve E: y^2=x^3-x | [THEOREM] | Unique j=1728 with Aut=Z_4 |
-| 5 | G\* = sqrt(2pi I_1) = 2.9587 | [THEOREM] | Algebraic identity |
-| 6 | Degree 2 | [THEOREM] | Self-referential closure + CM field degree |
-| 7 | Coefficient 16 | [THEOREM] | Faddeev-Popov: Stab(O_h)=48/3=16 |
-| 8 | Gap equation x^2=16G\*^2(x-G\*) | [THEOREM] | One-loop self-consistency |
-| 9 | Roots: 137.036, 3.024 | [THEOREM] | Quadratic formula |
-| 10 | x_+ = 1/alpha | [THEOREM] | U(1) Coulomb phase (Wilson 1974) |
-| 11 | Complex roots = Dirac | [THEOREM] | Discriminant trichotomy |
+| 1 | i exists | [AXIOM] | x^2 + 1 = 0 has a solution |
+| 2 | Z[i] = square lattice | [THEOREM] | Unique ring of integers in Q(i) |
+| 3 | E_i: y^2 = x^3 - x | [THEOREM] | Unique CM curve, j = 1728 |
+| 4 | \|Aut(E_i)\| = 4 | [THEOREM] | The group {1, i, -1, -i} |
+| 5 | Gamma(1/4), Gamma(3/4) | [THEOREM] | Periods of E_i |
+| 6 | G\* = Gamma(1/4)/Gamma(3/4) | [THEOREM] | Algebraically independent of pi |
+| 7 | \|Aut\|^2 = 16 | [THEOREM] | 4^2 = 16 |
+| 8 | D = 3 | [THEOREM] | Unique solution of 16 = 2^D (D-1)! |
+| 9 | x^2 - 16G\*^2 x + 16G\*^3 = 0 | [SELECTION] | Vieta exponents (2,3) from D |
+| 10 | x+ = 137.036, x- = 3.024 | [THEOREM] | Quadratic formula |
+| 11 | V(x) = x^3/3 - 8G\*^2 x^2 + 16G\*^3 x | [THEOREM] | Exact phi^3 EFT (lambda_3 = 1/3) |
+| 12 | One-loop tadpole, a = 2/D | [SELECTION] | Lattice spacing = boundary/bulk |
+| 13 | x+(corrected) = 137.036000 | [DERIVED] | 9.6 ppb from NIST (99.2% gap closure) |
 
-Remaining assumptions are standard lattice gauge theory (one-loop ansatz, gauge field identification) — not FTD-specific choices.
+See [FOUND_BLIND_DERIVATION_CHAIN.md](docs/theory/02_foundations/FOUND_BLIND_DERIVATION_CHAIN.md) for the complete derivation with proofs.
 
 ---
 

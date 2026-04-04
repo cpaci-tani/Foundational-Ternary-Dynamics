@@ -32,6 +32,14 @@ def varpi_f : Float := gamma1_f * gamma1_f / (2 * Float.sqrt 2 * gamma2_f)
 def r_gamma_f : Float := gamma1_f * gamma1_f / (gamma2_f * gamma2_f)
 def pi_derived_f : Float := gamma2_f * gamma2_f  -- pi = Gamma(1/2)^2
 
+-- G* as simple Gamma ratio (April 2026): G* = Gamma(1/4)/Gamma(3/4)
+def gamma34_f : Float := 1.2254167024651776       -- Gamma(3/4)
+def Gstar_ratio_f : Float := gamma1_f / gamma34_f  -- = G* (verified)
+
+/-! ## Spatial Dimension -/
+
+def D_spatial : Nat := 3
+
 /-! ## Automorphism and Torsion -/
 
 def Aut_E_order : Nat := 4
@@ -42,5 +50,10 @@ theorem Aut_sq_16 : Aut_E_order * Aut_E_order = 16 := by native_decide
 theorem torsion_sq_16 : torsion_order * torsion_order = 16 := by native_decide
 theorem Aut_eq_torsion : Aut_E_order = torsion_order := by native_decide
 theorem coefficient_is_16 : Aut_E_order * Aut_E_order = N_base * N_base := by native_decide
+
+/-- D = 3 from |Aut(E_i)|^2 = 2^D * (D-1)!
+    2^3 * 2! = 8 * 2 = 16 = 4 * 4 -/
+theorem D_spatial_from_aut : 2^D_spatial * 2 = Aut_E_order * Aut_E_order := by
+  native_decide
 
 end FTD

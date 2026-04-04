@@ -17,7 +17,7 @@ from scipy.special import gamma
 
 N_c = 3          # Number of colors (first FLT-forbidden exponent)
 N_base = 4       # Base dimension (second FLT-forbidden exponent)
-b_3 = 7          # QCD beta function coefficient = 11 - 4/3 * N_c * N_f (N_f=0)
+b_3 = 7          # QCD beta function coefficient = (11*N_c - 2*N_f)/3 = (33-12)/3 (N_f=6)
 N_eff = 13       # Effective degrees of freedom (Fibonacci F_7)
 
 # Derived integers
@@ -182,7 +182,7 @@ EPSILON = np.exp(np.pi) - np.pi - (b_3 + N_eff)
 # Derived denominator: D = N_c * N_base^2 - 1 = 3 * 16 - 1 = 47
 D = N_c * N_base**2 - 1  # = 47
 
-# Complete 4-term precision formula (v5.12)
+# Complete 4-term precision formula (v5.29)
 # All coefficients derived from framework integers {3, 4, 7, 13}:
 #   c1 = 9/47   = N_c^2 / D                       (first order)
 #   c2 = 5/64   = (N_eff - 2*N_base) / N_base^3   (second order)
@@ -370,7 +370,7 @@ def ppt_error(derived, experimental):
 def print_framework_summary():
     """Print a summary of all framework constants."""
     print("=" * 70)
-    print("FOUNDATIONAL TERNARY DYNAMICS - FRAMEWORK CONSTANTS (v5.12)")
+    print("FOUNDATIONAL TERNARY DYNAMICS - FRAMEWORK CONSTANTS (v5.29)")
     print("=" * 70)
     print()
     print("FRAMEWORK INTEGERS:")

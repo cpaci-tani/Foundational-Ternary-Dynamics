@@ -746,7 +746,7 @@ class TestEpistemicSummary(unittest.TestCase):
         summary = """
 THEOREMS (Mathematically Proven):
 ---------------------------------
-  [T1] G* = sqrt(2)*Gamma(1/4)^2/(2*pi) = 2.622...  (Definition)
+  [T1] G* = Gamma(1/4)/Gamma(3/4) = 2.959...  (Definition)
   [T2] Quadratic roots from x^2 - 16G*^2x + 16G*^3 = 0  (Algebra)
   [T3] Fibonacci constraint: b_3 + 2*N_c = N_eff  (Arithmetic)
   [T4] Coefficient 16 via 4 routes  (Multiple proofs)
