@@ -1,5 +1,0 @@
-stage,label,entropy_bits_per_voxel,pct_of_original
-1,full_field,19.9765,100.000000
-2,born_rule,4.58538,22.9539
-3,ternary,0.000140707,0.00070436
-4,boolean,0.000140707,0.00070436
