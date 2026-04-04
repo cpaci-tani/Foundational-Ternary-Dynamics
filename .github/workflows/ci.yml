@@ -1,5 +1,6 @@
 # FTD Continuous Integration Pipeline
-# Runs tests, linting, and builds on every push and pull request
+# Runs Python tests, linting, and physics validation on every push and pull request
+# C++ engine and Quarto manuscript are built locally (not in CI)
 
 name: CI
 
@@ -62,42 +63,6 @@ jobs:
       - name: Check code formatting with black
         run: black --check --diff .
 
-  build-manuscript:
-    runs-on: ubuntu-latest
-    # Quarto rendering may fail if chapters reference missing compute artifacts
-    # (execute: freeze means pre-computed results must be checked in)
-    continue-on-error: true
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Render Quarto manuscript (HTML)
-        run: |
-          cd dissemination/manuscript/src
-          quarto render --profile html
-        timeout-minutes: 30
-
-      - name: Upload manuscript artifacts
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: manuscript-html
-          path: dissemination/manuscript/_webbook/
-          retention-days: 7
-
   validate-physics:
     runs-on: ubuntu-latest
 
@@ -114,14 +79,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run physics validation tests
+      - name: Validate core constants
         run: |
           python -c "
-          # Quick validation of core FTD constants
           import math
 
-          # Lemniscatic constant G*
-          G_star = math.sqrt(2) * (math.gamma(0.25)**2) / (2 * math.pi)
+          # G* = Gamma(1/4) / Gamma(3/4)
+          G_star = math.gamma(0.25) / math.gamma(0.75)
 
           # Master quadratic: x^2 - 16*G*^2 * x + 16*G*^3 = 0
           a = 1
@@ -131,36 +95,16 @@ jobs:
           x_plus = (-b + math.sqrt(disc)) / (2*a)
           x_minus = (-b - math.sqrt(disc)) / (2*a)
 
-          # Verify alpha derivation
           alpha_inv_exp = 137.035999177
           error_ppm = abs(x_plus - alpha_inv_exp) / alpha_inv_exp * 1e6
 
           print(f'G* = {G_star:.10f}')
           print(f'x+ (1/alpha) = {x_plus:.10f}')
           print(f'x- (N_c)     = {x_minus:.10f}')
-          print(f'1/alpha exp  = {alpha_inv_exp}')
           print(f'Error = {error_ppm:.2f} ppm')
 
           assert error_ppm < 10, f'Alpha derivation error {error_ppm} ppm exceeds 10 ppm threshold'
           assert abs(x_minus - 3.0) < 0.1, f'x- = {x_minus}, expected ~3.0'
+          assert abs(G_star - 2.9587) < 0.001, f'G* = {G_star}, expected ~2.9587'
           print('Physics validation PASSED')
           "
-
-  cpp-engine:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install build tools
-        run: sudo apt-get update && sudo apt-get install -y cmake g++ ninja-build
-
-      - name: Configure
-        run: cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release -G Ninja
-
-      - name: Build
-        run: cmake --build engine/build --config Release
-
-      - name: Run tests
-        run: cd engine/build && ctest --output-on-failure -C Release
-        timeout-minutes: 15
