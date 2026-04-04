@@ -1,10 +1,10 @@
 # Foundational Ternary Dynamics
 
-[![CI](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/workflows/CI/badge.svg)](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/actions)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
-[![CUDA](https://img.shields.io/badge/CUDA-13.0+-76B900.svg)](https://developer.nvidia.com/cuda-toolkit)
+[![Lean 4](https://img.shields.io/badge/Lean_4-v4.29-blueviolet.svg)](https://leanprover.github.io/)
+[![Tests: 157/157](https://img.shields.io/badge/tests-157%2F157_pass-brightgreen.svg)](scripts/verification/)
 
 **One axiom. Two properties. Zero free parameters.**
 
