@@ -6,23 +6,29 @@
 [![Lean 4](https://img.shields.io/badge/Lean_4-v4.29-blueviolet.svg)](https://leanprover.github.io/)
 [![Tests: 157/157](https://img.shields.io/badge/tests-157%2F157_pass-brightgreen.svg)](scripts/verification/)
 
-**One axiom. Two properties. Zero free parameters.**
+A discrete framework built on the CM elliptic curve Eᵢ: y² = x³ − x and its period ratio G\* = Γ(¼)/Γ(¾).
 
-A lattice site has state s ∈ {−1, 0, +1} and position x ∈ ℤ³. From these two properties, the fine structure constant α = 1/137.035999177 (matching every measured digit), the gauge groups U(1) × SU(2) × SU(3), the Higgs mass, confinement, Bell violation, and the Einstein field equations follow from a single self-consistency equation.
+The quadratic x² − 16G\*²x + 16G\*³ = 0 has roots x₊ = 137.036 and x₋ = 3.024. The coefficient 16 = |Aut(Eᵢ)|². A one-loop lattice correction on ℤ[i]³ brings x₊ to within 9.6 ppb of the measured fine structure constant. The same algebraic structure yields the gauge groups U(1) × SU(2) × SU(3), the Higgs mass (125.69 GeV, 0.47%), confinement, and the Einstein field equations.
 
 **Author:** William J Steinmetz III | **Version:** 5.29 | **Date:** April 2026
 
 ---
 
-## The Primary Prediction
+## G\* and the Master Quadratic
 
-The fine structure constant — to every measured digit and beyond — from one lattice constant:
+Everything begins with the constant G\* = Γ(¼)/Γ(¾) = 2.958675..., the period ratio of the CM elliptic curve Eᵢ: y² = x³ − x. The master quadratic
 
 ```
-1/α = x₊ + Σₙ₌₁⁷ sₙ · cₙ · |ε|ⁿ
+x² − 16G*²x + 16G*³ = 0
 ```
 
-where x₊ = 137.036171458... is the master quadratic root, ε = eᵖ − π − 20, and every coefficient is a rational combination of the framework integers {3, 4, 7, 13}:
+encodes the coupling constants of the framework. Its roots approximate α⁻¹ and α_s⁻¹. A 7-term correction series refines x₊ to 24 digits:
+
+```
+1/α = x₊ + Σₙ₌₁⁷ sₙ · cₙ · |ε|ⁿ       where ε = eᵖ − π − 20
+```
+
+Every coefficient is a rational combination of four integers {3, 4, 7, 13} derived from lattice geometry:
 
 | Term | Coefficient | Sign | Framework Expression | Precision |
 |------|-------------|------|---------------------|-----------|
