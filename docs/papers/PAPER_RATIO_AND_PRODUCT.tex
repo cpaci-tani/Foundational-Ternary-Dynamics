@@ -1,0 +1,310 @@
+\documentclass[12pt,reqno]{amsart}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{observation}[theorem]{Observation}
+
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\Gstar}{G^{\!*}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\re}{\operatorname{Re}}
+
+\title{The Ratio and the Product:\\[2pt]
+  Two Objects from the Euler Reflection Formula at $z=\tfrac14$}
+
+\author{William J.\ Steinmetz III}
+\address{Independent Researcher}
+\date{April 3, 2026}
+
+\begin{document}
+
+\begin{abstract}
+The Euler reflection formula $\Gamma(\tfrac14)\,\Gamma(\tfrac34)=\pi\sqrt{2}$ constrains
+but does not determine the pair $\{\Gamma(\tfrac14),\,\Gamma(\tfrac34)\}$. Two independent
+objects encode the residual freedom: the \emph{product}
+$\Gamma(\tfrac14)\,\Gamma(\tfrac34)=\pi\sqrt{2}$, which is algebraic in~$\pi$; and the
+\emph{ratio} $\Gstar=\Gamma(\tfrac14)/\Gamma(\tfrac34)=2.958\,675\ldots$, which is
+algebraically independent of~$\pi$. We show that $\log\Gstar$ absorbs every unsolved
+Dirichlet $L$-value at integer argument with rational coefficients, while $\pi$ carries
+every solved one. The master quadratic $x^2-16\Gstar^2\,x+16\Gstar^3=0$ built from the
+ratio has roots $x_+=137.036$ and $x_-=3.024$. Three centuries of mathematics studied
+the product. We argue that the ratio is where the coupling constants live, and that the
+two operations---product and ratio---correspond to the two modes of information processing
+that physics calls measurement and superposition.
+\end{abstract}
+
+\maketitle
+
+%==========================================================================
+\section{Two Objects from One Formula}
+%==========================================================================
+
+The Euler reflection formula at $z=\tfrac14$ reads
+\begin{equation}\label{eq:reflection}
+  \Gamma\!\left(\tfrac14\right)\,\Gamma\!\left(\tfrac34\right)
+  \;=\; \frac{\pi}{\sin(\pi/4)}
+  \;=\; \pi\sqrt{2}\,.
+\end{equation}
+This constrains one combination of $\Gamma(\tfrac14)$ and $\Gamma(\tfrac34)$ but leaves
+one degree of freedom. That degree of freedom can be parameterized as:
+\begin{alignat}{2}
+  \text{The product:}&\quad \Gamma\!\left(\tfrac14\right)\,\Gamma\!\left(\tfrac34\right)
+  &&= \pi\sqrt{2}\,,
+  \label{eq:product}\\[4pt]
+  \text{The ratio:}&\quad
+  \Gstar \;:=\; \frac{\Gamma(\tfrac14)}{\Gamma(\tfrac34)}
+  &&= 2.958\,675\,119\,188\,639\ldots
+  \label{eq:ratio}
+\end{alignat}
+The product is fixed by~\eqref{eq:reflection}. The ratio $\Gstar$ is algebraically
+independent of~$\pi$ \cite{Chudnovsky1980,Nesterenko1996}. Together they determine both
+Gamma values individually:
+\begin{equation}
+  \Gamma\!\left(\tfrac14\right) = \sqrt{\Gstar\,\pi\sqrt{2}}\,,\qquad
+  \Gamma\!\left(\tfrac34\right) = \sqrt{\frac{\pi\sqrt{2}}{\Gstar}}\,.
+\end{equation}
+The product and the ratio are the two independent pieces of information in the
+pair $\{\Gamma(\tfrac14),\,\Gamma(\tfrac34)\}$.
+
+%==========================================================================
+\section{What the Product Contains}
+%==========================================================================
+
+The product $\pi\sqrt{2}$ lives in the world of solved constants.
+The anti-correlation theorem \cite{Steinmetz2026a} establishes that at each integer
+$s\geq 2$, exactly one of $\zeta(s)$ and $\beta(s)$ reduces to a rational multiple
+of a power of~$\pi$. The solved values are:
+\begin{itemize}[nosep]
+  \item Even $\zeta$: $\;\zeta(2)=\pi^2/6$, $\;\zeta(4)=\pi^4/90$, \ldots
+  \item Odd $\beta$: $\;\beta(1)=\pi/4$, $\;\beta(3)=\pi^3/32$, \ldots
+\end{itemize}
+These are the $L$-values that reduce to~$\pi$. Physics built on~$\pi$ obtained Gaussian
+integration, statistical mechanics, the path integral measure---but not the coupling
+constants.
+
+%==========================================================================
+\section{What the Ratio Contains}
+%==========================================================================
+
+The ratio $\Gstar$ absorbs the complementary set: the unsolved $L$-values.
+
+\begin{theorem}[Log $\Gstar$ identity]\label{thm:loggstar}
+\begin{equation}\label{eq:loggstar}
+  \log\Gstar \;=\; \frac{\gamma+3\log 2}{2}
+  \;-\;\frac{G}{2}
+  \;+\;\frac{7}{24}\,\zeta(3)
+  \;-\;\frac{\beta(4)}{4}
+  \;+\;\frac{31}{160}\,\zeta(5)
+  \;-\;\cdots
+\end{equation}
+where $G=\beta(2)$ is Catalan's constant, $\zeta(3)$ is Ap\'ery's constant, and the
+general coefficients are: $\zeta(2m+1)$ has coefficient
+$(2^{2m+1}-1)/\bigl((2m+1)\cdot 2^{2m+1}\bigr)$; $\beta(2m)$ has coefficient
+$(-1)^{m+1}/(2m)$.
+\end{theorem}
+
+Every unsolved constant appears: Catalan, Ap\'ery, $\beta(4)$, $\zeta(5)$, and the
+entire infinite tower. PSLQ analysis at 80+ digits finds no algebraic relation of
+degree~$\leq 20$ between any individual unsolved constant and
+$\{\pi,\Gstar,\varpi\}$.
+
+The master quadratic built from $\Gstar$ is
+\begin{equation}\label{eq:quadratic}
+  x^2 - 16\Gstar^2\,x + 16\Gstar^3 = 0\,,
+\end{equation}
+with coefficient $16=\abs{\Aut(E_i)}^2$ where $E_i\colon y^2=x^3-x$ is the CM elliptic
+curve with $j=1728$. The roots are
+\begin{equation}
+  x_+ = 137.036\,171\ldots\,,\qquad x_- = 3.023\,964\ldots
+\end{equation}
+The ratio contains the fine structure constant. The product does not.
+
+%==========================================================================
+\section{Product as Collapse, Ratio as Distinction}
+%==========================================================================
+
+The two operations act differently on information:
+
+\begin{observation}[Information content]
+The product $\Gamma(\tfrac14)\cdot\Gamma(\tfrac34)=\pi\sqrt{2}$ maps two
+algebraically independent transcendentals to a single value algebraic in~$\pi$.
+The individual values are not recoverable from the product alone.
+The ratio $\Gstar=\Gamma(\tfrac14)/\Gamma(\tfrac34)$ preserves the relationship:
+given $\Gstar$ and the product, both Gamma values are individually recoverable.
+\end{observation}
+
+\begin{conjecture}[Measurement--superposition correspondence]
+The product operation (information-destroying) corresponds to quantum measurement:
+$P=\abs{\psi}^2=\psi\cdot\psi^*$, which annihilates the complex phase.
+The ratio operation (information-preserving) corresponds to superposition:
+$\psi=a+bi$, which maintains the relationship between real and imaginary parts.
+
+\smallskip
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Operation & Information & Quantum mechanics & Interpretation \\
+\midrule
+Product (collapse) & Destroyed & $P=\abs{\psi}^2$ & Measurement \\
+Ratio (distinction) & Preserved & $\psi=a+bi$ & Superposition \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{conjecture}
+
+The Born rule is a product: multiply $\psi$ by $\psi^*$ and the phase vanishes.
+Superposition is a ratio: the wave function maintains the relationship between its
+components. The phase---the thing proportional to~$i$---is what distinguishes
+$\psi$ from $\psi^*$.
+
+%==========================================================================
+\section{The Imaginary Unit as Observer}
+%==========================================================================
+
+The blind derivation chain \cite{Steinmetz2026b} begins from a single axiom:
+$i$~exists (i.e., $x^2+1=0$ has a solution). From this:
+\begin{enumerate}[nosep]
+  \item $\ZZ[i]$ exists (Gaussian integers = square lattice).
+  \item $E_i\colon y^2=x^3-x$ is the unique CM curve with $j=1728$.
+  \item $\abs{\Aut(E_i)}=4$, giving coefficient $16=4^2$.
+  \item $\Gstar=\Gamma(\tfrac14)/\Gamma(\tfrac34)$ from the periods of~$E_i$.
+  \item The master quadratic~\eqref{eq:quadratic} yields $x_+=137.036$.
+  \item A one-loop lattice correction on $\ZZ[i]^3$ gives $x_+=137.036\,000$
+        (9.6\,ppb from NIST).
+\end{enumerate}
+The entire structure of the coupling constants follows from~$i$.
+
+\begin{conjecture}[The observer as kernel]\label{conj:observer}
+The projection $\re\colon\CC\to\RR$ is the existence filter. Its kernel
+$\ker(\re)=i\RR$ is the space of quantities that participate in the dynamics
+but are projected out upon measurement. In quantum mechanics, this is the
+global phase of the wave function. We identify $\ker(\re)$ with the observer:
+the direction that is always perpendicular to every observable, always present
+in the evolution, and always annihilated when one asks for an outcome.
+\end{conjecture}
+
+%==========================================================================
+\section{Inversion: Physics as Constraint}
+%==========================================================================
+
+If $i$ is the ontological primitive---and the derivation chain suggests it
+is---then the relationship between mathematics and physics inverts:
+
+\begin{quote}
+\emph{Standard view:} Physics describes what exists. Mathematics is the language.
+
+\smallskip
+\emph{Proposed view:} $i$ describes what exists (the full complex plane,
+including the observer). Physics describes what survives projection onto
+the real axis---what can be measured, observed, communicated.
+\end{quote}
+
+The laws of physics, on this reading, are not prescriptions for what happens.
+They are constraints on what can be seen. The fine structure constant
+$\alpha^{-1}=137.036$ is not a property of the electron; it is a property of
+the projection $\re\colon\CC\to\RR$ applied to the arithmetic of~$\ZZ[i]$.
+
+\begin{conjecture}[Alpha as projection cost]
+$\alpha^{-1}=x_+$ is the cost of collapsing the complex plane onto the real
+line at the scale set by the CM elliptic curve~$E_i$.
+\end{conjecture}
+
+%==========================================================================
+\section{Why the Ratio Was Overlooked}
+%==========================================================================
+
+Four historical factors explain the omission:
+\begin{enumerate}[nosep]
+  \item \textbf{Period tradition.} Euler, Gauss, Legendre, and Jacobi studied
+    the lemniscate and obtained $\varpi=\Gamma(\tfrac14)^2/(2\sqrt{2\pi})$.
+    This involves the product, not the ratio.
+  \item \textbf{$\pi$-centrism.} Writing constants in terms of~$\pi$ makes the
+    product natural ($\pi\sqrt{2}$) and the ratio invisible ($\Gstar$ has no
+    $\pi$-based expression).
+  \item \textbf{Solved-constant bias.} The product reduces to~$\pi$ (closed form).
+    The ratio does not. Mathematics gravitates toward solvable quantities.
+  \item \textbf{Trivial period ratio.} For $E_i$, the period ratio
+    $\omega_2/\omega_1=i$ is a known CM point; nobody extracts $\Gstar$ from it
+    because the ratio of \emph{periods} is trivially~$i$---the ratio of
+    \emph{Gamma values} is not.
+\end{enumerate}
+
+%==========================================================================
+\section{Epistemic Status}
+%==========================================================================
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Claim & Status & Basis \\
+\midrule
+Reflection formula produces product and ratio & Theorem & Algebraic identity \\
+$\Gstar$ algebraically independent of $\pi$ & Theorem & Nesterenko 1996 \\
+$\log\Gstar$ absorbs all unsolved $L$-values & Theorem & Identity~\eqref{eq:loggstar} \\
+Product = collapse, ratio = distinction & Conjecture & Structural analogy \\
+Observer $=\ker(\re)=i\RR$ & Conjecture & Interpretive \\
+$\alpha^{-1}$ = projection cost & Conjecture & Interpretive \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\smallskip
+The mathematical content (Sections~1--3) is rigorous. The interpretive content
+(Sections~4--6) is conjecture. No experiment proposed here would distinguish this
+interpretation from standard quantum mechanics. The value is conceptual: it provides
+a structural reason \emph{why} $\alpha$ has the value it does and \emph{why} the
+observer is absent from standard physics.
+
+\bigskip
+\noindent\textbf{Acknowledgments.}
+The author thanks the developers of mpmath \cite{mpmath} for the arbitrary-precision
+arithmetic library used throughout.
+
+\begin{thebibliography}{99}
+
+\bibitem{Chudnovsky1980}
+G.~V.~Chudnovsky,
+\emph{Contributions to the Theory of Transcendental Numbers},
+AMS, 1984;
+C.~R.~Acad.~Sci.~Paris \textbf{288}, A607 (1979).
+
+\bibitem{Nesterenko1996}
+Yu.~V.~Nesterenko,
+Sb.~Math.\ \textbf{187}, 1319 (1996).
+
+\bibitem{Steinmetz2026a}
+W.~J.~Steinmetz~III,
+``A quadratic in $\Gamma(\tfrac14)/\Gamma(\tfrac34)$ whose roots approximate
+$\alpha^{-1}$ and $\alpha_s^{-1}$,''
+preprint (2026).
+
+\bibitem{Steinmetz2026b}
+W.~J.~Steinmetz~III,
+``The blind derivation: from $i$ to $\alpha^{-1}$ in 13 steps,''
+FTD internal document FOUND\_BLIND\_DERIVATION\_CHAIN.md (2026).
+
+\bibitem{mpmath}
+F.~Johansson,
+mpmath: a Python library for arbitrary-precision floating-point arithmetic (v1.3),
+\url{https://mpmath.org} (2023).
+
+\end{thebibliography}
+
+\end{document}
