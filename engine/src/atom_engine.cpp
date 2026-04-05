@@ -74,7 +74,7 @@ int AtomEngine::add_atom(int Z, Vec3 position, Vec3 velocity,
     a.vdw_epsilon = props.vdw_epsilon;
     a.vdw_sigma = props.vdw_sigma;
     a.max_bonds = props.max_bonds;
-    a.valence_electrons = props.max_bonds;  // Initially all available
+    a.valence_electrons = props.valence_e;  // From periodic table (VSEPR geometry)
     a.electronegativity = props.electronegativity;
 
     atoms_.push_back(a);

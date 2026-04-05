@@ -78,8 +78,9 @@ static void test_single_tick_parity() {
     std::printf("\n--- GP2: Single Tick Parity (1 particle) ---\n");
     constexpr int L = 32;
 
-    // CPU engine
+    // CPU engine (force CPU-only so we get a true CPU reference)
     RenderBridge cpu(L);
+    cpu.force_cpu();
     cpu.toggles.enable_all();
     cpu.toggles.genesis = false;       // Disable stochastic processes
     cpu.toggles.movement = false;      // Keep particle stationary
@@ -124,19 +125,15 @@ static void test_vacuum_wave_parity() {
     // Set up identical initial conditions: flux pulse at center
     auto setup = [&](auto& engine) {
         // Disable particles and Gauss/Coulomb (pure wave test)
+        engine.toggles.disable_all();
         engine.toggles.wave_propagation = true;
-        engine.toggles.coupling = false;
         engine.toggles.damping = true;
-        engine.toggles.selective_damping = false;
-        engine.toggles.genesis = false;
-        engine.toggles.gauss_projection = false;
-        engine.toggles.forces = false;
-        engine.toggles.movement = false;
-        engine.toggles.poisson_coulomb = false;
-        engine.toggles.lorentz_force = false;
+        // Explicitly OFF: dual_substrate, coupling, genesis, gauss, forces, movement
+        // This ensures single-substrate wave equation: flux is propagated directly.
     };
 
     RenderBridge cpu(L);
+    cpu.force_cpu();
     setup(cpu);
     // Inject flux pulse at center (no manifested state, just flux)
     int cx = L/2, cy = L/2, cz = L/2;
@@ -186,6 +183,7 @@ static void test_wavepacket_parity() {
     constexpr int L = 32;
 
     RenderBridge cpu(L);
+    cpu.force_cpu();
     cpu.inject_wavepacket(L/2, L/2, L/2, +1, 3.0, K_B);
 
     gpu::GpuEngine gpu(L);
@@ -216,6 +214,7 @@ static void test_energy_audit_parity() {
     };
 
     RenderBridge cpu(L);
+    cpu.force_cpu();
     setup(cpu);
     cpu.inject_particle(L/2, L/2, L/2, +1, Vec3(0, 0, K_B), +1, 1);
 
@@ -254,6 +253,7 @@ static void test_gauss_quality() {
     };
 
     RenderBridge cpu(L);
+    cpu.force_cpu();
     setup(cpu);
     cpu.inject_particle(L/2, L/2, L/2, +1, Vec3(0, 0, K_B), +1, 1);
 

@@ -113,8 +113,8 @@ export class Viewport {
         // Controls
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
-        this.controls.dampingFactor = 0.08;
-        this.controls.rotateSpeed = 0.8;
+        this.controls.dampingFactor = 0.12;
+        this.controls.rotateSpeed = 0.6;
         this.controls.zoomSpeed = 1.2;
         this.controls.minDistance = 0.5;
         this.controls.maxDistance = 500;
@@ -133,7 +133,7 @@ export class Viewport {
         // Boundary / wireframe
         this.wireframe = null;
         this.showWireframe = true;
-        this.showFlux = false;
+        this.showFlux = true;  // flux volume ON by default
         this.showHeatmap = false;
         this._showAxes = true;   // user preference for axes visibility
         this._showGrid = true;   // user preference for grid visibility
@@ -176,12 +176,13 @@ export class Viewport {
         geometry.setDrawRange(0, 0);
 
         const material = new THREE.ShaderMaterial({
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.95 } },
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.9 } },
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
             transparent: true,
             depthWrite: false,
-            blending: THREE.AdditiveBlending,
+            depthTest: true,
+            blending: THREE.NormalBlending,
         });
 
         this.particles = new THREE.Points(geometry, material);
@@ -209,7 +210,8 @@ export class Viewport {
         if (shape === 'none') return;
 
         const mat = new THREE.LineBasicMaterial({
-            color: 0x2a3a5a, transparent: true, opacity: 0.3,
+            color: 0x1e2d44, transparent: true, opacity: 0.18,
+            depthWrite: false,
         });
 
         let group;
@@ -270,9 +272,9 @@ export class Viewport {
             vertices.push(...corners[a], ...corners[b]);
         }
 
-        // Subdivision lines only in lattice mode
+        // Subdivision lines only in lattice mode (sparse — just midpoint cross)
         if (mode === 'lattice') {
-            const step = Math.max(4, Math.floor(s / 4));
+            const step = Math.max(8, Math.floor(s / 2));
             for (let i = step; i < s; i += step) {
                 vertices.push(i,0,0, i,s,0);
                 vertices.push(i,0,s, i,s,s);
@@ -1120,14 +1122,16 @@ export class Viewport {
         const mat = new THREE.ShaderMaterial({
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.55 } },
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
             transparent: true,
             depthWrite: false,
+            depthTest: true,
             blending: THREE.NormalBlending,
         });
 
         this._fluxVolume = new THREE.Points(geo, mat);
         this._fluxVolume.visible = false;
+        this._fluxVolume.renderOrder = 10; // render after background stars (order 0)
         this._fluxVolumeSize = cap;
         this.scene.add(this._fluxVolume);
     }
@@ -1158,14 +1162,16 @@ export class Viewport {
         // Clip to boundary shape (normalized coords -1..1 from lattice center)
         let count = 0;
         const maxPts = posAttr.array.length / 3;
-        const BASE_SIZE = 0.8;      // subtle base dot for inactive voxels
-        const MAX_SIZE  = 18.0;     // bright active voxel
-        const FLUX_THRESHOLD = 0.003; // below this = "inactive" (dark dot)
+        const MAX_SIZE  = 10.0;     // active voxel (capped to prevent axis-aligned bloom)
+        const FLUX_THRESHOLD = 0.005; // below this = skip entirely (no ghost dots)
         const halfN = N / 2;
 
-        for (let z = 0; z < N && count < maxPts; z++) {
-            for (let y = 0; y < N && count < maxPts; y++) {
-                for (let x = 0; x < N && count < maxPts; x++) {
+        // Subsample for large lattices: step=2 for L>48 (renders 1/8 of voxels)
+        const step = N > 48 ? 2 : 1;
+
+        for (let z = 0; z < N && count < maxPts; z += step) {
+            for (let y = 0; y < N && count < maxPts; y += step) {
+                for (let x = 0; x < N && count < maxPts; x += step) {
                     // Boundary clipping: normalize to -1..1 from center
                     const nx = (x - halfN + 0.5) / halfN;
                     const ny = (y - halfN + 0.5) / halfN;
@@ -1178,19 +1184,16 @@ export class Viewport {
                     posAttr.array[count * 3 + 1] = y;
                     posAttr.array[count * 3 + 2] = z;
 
-                    if (mag < FLUX_THRESHOLD || maxFlux < 1e-20) {
-                        colAttr.array[count * 3]     = 0.10;
-                        colAttr.array[count * 3 + 1] = 0.12;
-                        colAttr.array[count * 3 + 2] = 0.18;
-                        sizeAttr.array[count] = BASE_SIZE;
-                    } else {
-                        const [r, g, b] = fluxToColor(mag, maxFlux);
-                        colAttr.array[count * 3]     = r;
-                        colAttr.array[count * 3 + 1] = g;
-                        colAttr.array[count * 3 + 2] = b;
-                        const t = mag / (maxFlux + 1e-20);
-                        sizeAttr.array[count] = BASE_SIZE + (MAX_SIZE - BASE_SIZE) * t;
-                    }
+                    // Skip inactive voxels entirely — no ghost dots
+                    if (mag < FLUX_THRESHOLD || maxFlux < 1e-20) continue;
+
+                    const [r, g, b] = fluxToColor(mag, maxFlux);
+                    colAttr.array[count * 3]     = r;
+                    colAttr.array[count * 3 + 1] = g;
+                    colAttr.array[count * 3 + 2] = b;
+                    const t = mag / (maxFlux + 1e-20);
+                    const sizeScale = step > 1 ? step * 0.8 : 1.0; // compensate for subsampling
+                    sizeAttr.array[count] = (1.0 + (MAX_SIZE - 1.0) * t) * sizeScale;
 
                     count++;
                 }

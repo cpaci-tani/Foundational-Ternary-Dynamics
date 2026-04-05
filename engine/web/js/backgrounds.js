@@ -9,8 +9,8 @@ import * as THREE from 'three';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 // ── Constants ────────────────────────────────────────────────────────
-const BG_RADIUS     = 400;   // sphere radius for star/nebula placement
-const STAR_COUNT    = 6000;
+const BG_RADIUS     = 500;   // sphere radius for star/nebula placement (pushed further out)
+const STAR_COUNT    = 3000;  // reduced from 6000 to prevent grid-like patterns at rotation
 const NEBULA_CLOUDS = 10;
 const NEBULA_PTS    = 3000;  // per cloud layer
 const FOAM_COUNT    = 12000;
@@ -84,7 +84,7 @@ function buildStarField() {
                 vColor = particleColor;
                 vec4 mv = modelViewMatrix * vec4(position, 1.0);
                 gl_PointSize = size * (200.0 / -mv.z);
-                gl_PointSize = clamp(gl_PointSize, 0.5, 6.0);
+                gl_PointSize = clamp(gl_PointSize, 0.3, 3.0);
                 gl_Position = projectionMatrix * mv;
             }
         `,
@@ -94,7 +94,7 @@ function buildStarField() {
                 float d = length(gl_PointCoord - vec2(0.5));
                 if (d > 0.5) discard;
                 float a = 1.0 - smoothstep(0.0, 0.5, d);
-                gl_FragColor = vec4(vColor, a * 0.9);
+                gl_FragColor = vec4(vColor, a * 0.45);
             }
         `,
         transparent: true,
@@ -103,6 +103,7 @@ function buildStarField() {
     });
 
     const pts = new THREE.Points(geom, mat);
+    pts.renderOrder = -10; // always behind the simulation
     group.add(pts);
 
     group.userData = { sizes, baseAlpha, geom };

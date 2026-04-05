@@ -85,6 +85,7 @@ struct AtomicProperties {
     double vdw_epsilon;   // LJ well depth (from α² perturbation theory)
     double vdw_sigma;     // LJ zero-crossing distance
     int max_bonds;        // maximum covalent bonds (valence)
+    int valence_e;        // valence electrons (for VSEPR lone-pair counting)
     double electronegativity; // Pauling chi value
 };
 
@@ -131,6 +132,26 @@ inline AtomicProperties compute_atomic_properties(int Z, int N = 0) {
         3,  3,  2,  3,  4,  3,  2,  1,  0        // Z=110-118
     };
     p.max_bonds = (Z >= 1 && Z <= 118) ? max_bonds_table[Z] : ((Z <= 2) ? Z : 4);
+
+    // Valence electron count (electrons in outermost shell for VSEPR geometry)
+    // Required for correct lone-pair counting: lone_pairs = valence_electrons - bonds
+    // Example: O (Z=8) has 6 valence electrons, 2 bonds → 2 lone pairs → bent geometry
+    static constexpr int valence_table[119] = {
+    //  0   1   2   3   4   5   6   7   8   9
+        0,  1,  2,  1,  2,  3,  4,  5,  6,  7,  // Z=0-9   (H=1,He=2,Li=1,Be=2,B=3,C=4,N=5,O=6,F=7)
+        8,  1,  2,  3,  4,  5,  6,  7,  8,  1,  // Z=10-19 (Ne=8,Na=1,...,Ar=8,K=1)
+        2,  3,  4,  5,  6,  7,  8,  9, 10, 11,  // Z=20-29 (Ca=2, transition metals approx)
+        2,  3,  4,  5,  6,  7,  8,  1,  2,  3,  // Z=30-39 (Zn=2,Ga=3,...,Y=3)
+        4,  5,  6,  7,  8,  9, 10, 11,  2,  3,  // Z=40-49
+        4,  5,  6,  7,  8,  1,  2,  3,  4,  4,  // Z=50-59
+        3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  // Z=60-69 (lanthanides ~3)
+        3,  3,  4,  5,  6,  7,  8,  9, 10, 11,  // Z=70-79
+        2,  3,  4,  5,  6,  7,  8,  1,  2,  3,  // Z=80-89
+        4,  5,  6,  5,  4,  3,  3,  3,  3,  3,  // Z=90-99
+        3,  3,  2,  3,  4,  5,  6,  7,  8,  9,  // Z=100-109
+       10, 11,  2,  3,  4,  5,  6,  7,  8        // Z=110-118
+    };
+    p.valence_e = (Z >= 1 && Z <= 118) ? valence_table[Z] : 4;
 
     // Pauling electronegativity lookup (common elements)
     static constexpr double chi_table[19] = {
