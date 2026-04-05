@@ -231,6 +231,8 @@ __global__ void phase_movement_kernel(
     int32_t* __restrict__ particle_id,
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
+    int32_t* __restrict__ pair_id,
+    double* __restrict__ accel_mag,
     double dt,
     int L
 ) {
@@ -278,6 +280,8 @@ __global__ void phase_movement_kernel(
         particle_id[target] = particle_id[i];
         spin[target] = spin[i];
         color[target] = color[i];
+        pair_id[target] = pair_id[i];
+        accel_mag[target] = accel_mag[i];
 
         // Portable self-field transfer
         double old_rho = sqrt(flux_x[i]*flux_x[i] + flux_y[i]*flux_y[i] + flux_z[i]*flux_z[i]);
@@ -304,6 +308,8 @@ __global__ void phase_movement_kernel(
         particle_id[i] = -1;
         spin[i] = 0;
         color[i] = 0;
+        pair_id[i] = -1;
+        accel_mag[i] = 0.0;
     } else if (old == -state[i]) {
         // Opposite charge at target: annihilation
         // Both particles return to void (use atomic store for thread safety)
@@ -690,6 +696,7 @@ void launch_phase_movement(GpuBuffers& bufs, double dt) {
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
         bufs.d_locked,
         bufs.d_particle_id, bufs.d_spin, bufs.d_color,
+        bufs.d_pair_id, bufs.d_accel_mag,
         dt, L
     );
     CUDA_CHECK(cudaGetLastError());

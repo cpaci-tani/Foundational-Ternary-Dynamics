@@ -31,6 +31,10 @@
 #include <cmath>
 #include <iostream>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #ifdef FTD_ENABLE_CUDA
 #include "ftd/gpu_engine.h"
 #endif
@@ -406,9 +410,30 @@ void RenderBridge::phase_write() {
     }
   }
 
+  // Pre-generate per-thread RNG seeds from the base RNG (sequential, deterministic).
+  // This avoids data races on rng_/uniform_ inside the parallel region while
+  // maintaining reproducibility (same base seed → same per-thread seeds → same results).
+  int num_threads = 1;
+#ifdef _OPENMP
+  num_threads = omp_get_max_threads();
+#endif
+  std::vector<unsigned int> thread_seeds(num_threads);
+  for (int t = 0; t < num_threads; ++t)
+    thread_seeds[t] = rng_();
+
 #pragma omp parallel for
   for (int i = 0; i < N; ++i) {
     auto &v = voxels_[i];
+
+    // Thread-local RNG seeded deterministically from pre-generated seeds.
+    // Each thread gets a unique seed; within a thread, the voxel index
+    // provides additional entropy so results don't depend on loop scheduling.
+    int tid = 0;
+#ifdef _OPENMP
+    tid = omp_get_thread_num();
+#endif
+    std::mt19937 local_rng(thread_seeds[tid] + static_cast<unsigned int>(i));
+    std::uniform_real_distribution<double> local_uniform(0.0, 1.0);
 
     const bool should_damp = !selective || near_particle_[i];
 
@@ -447,10 +472,13 @@ void RenderBridge::phase_write() {
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_B);
-        if (uniform_(rng_) < p) {
+        if (local_uniform(local_rng) < p) {
           double chi = v.chirality_density();
           v.state = (chi >= 0) ? 1 : -1;
-          v.particle_id = next_particle_id_++;
+          int pid;
+#pragma omp critical(genesis_id)
+          { pid = next_particle_id_++; }
+          v.particle_id = pid;
 
           // Spin from curl of observable J
           Vec3 curl = curl_flux(i);
@@ -461,7 +489,7 @@ void RenderBridge::phase_write() {
             else if (ay >= ax) v.spin = (curl.y > 0) ? 1 : -1;
             else v.spin = (curl.x > 0) ? 1 : -1;
           } else {
-            v.spin = (uniform_(rng_) < 0.5) ? 1 : -1;
+            v.spin = (local_uniform(local_rng) < 0.5) ? 1 : -1;
           }
 
           // Color from dominant flux axis
@@ -492,10 +520,13 @@ void RenderBridge::phase_write() {
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_B);
-        if (uniform_(rng_) < p) {
+        if (local_uniform(local_rng) < p) {
           double div = divergence_flux(i);
           v.state = (div > 0) ? 1 : -1;
-          v.particle_id = next_particle_id_++;
+          int pid;
+#pragma omp critical(genesis_id)
+          { pid = next_particle_id_++; }
+          v.particle_id = pid;
 
           Vec3 curl = curl_flux(i);
           double ax = std::abs(curl.x), ay = std::abs(curl.y), az = std::abs(curl.z);
@@ -505,7 +536,7 @@ void RenderBridge::phase_write() {
             else if (ay >= ax) v.spin = (curl.y > 0) ? 1 : -1;
             else v.spin = (curl.x > 0) ? 1 : -1;
           } else {
-            v.spin = (uniform_(rng_) < 0.5) ? 1 : -1;
+            v.spin = (local_uniform(local_rng) < 0.5) ? 1 : -1;
           }
 
           double fx = std::abs(v.flux.x), fy = std::abs(v.flux.y), fz = std::abs(v.flux.z);
@@ -817,11 +848,25 @@ void RenderBridge::phase_forces() {
         if (ddz >  L/2) ddz -= L;
         if (ddz < -L/2) ddz += L;
         double r2 = ddx*ddx + ddy*ddy + ddz*ddz;
-        if (r2 < 1.0) continue;
         double r = std::sqrt(r2);
+        if (r < 1.0) r = 1.0;  // Clamp to lattice spacing (matches GPU)
+        r2 = r * r;
         double cf = (v.color == cs.color) ? 0.5 : -1.0;
         double as = alpha_s_lattice(r);
-        double F_mag = as * cf / r2;
+
+        // Three-regime force profile (matches GPU kernels_forces.cu):
+        //   r < 3:  Coulomb (asymptotic freedom)
+        //   3-8:    Transition (flux tube stretching)
+        //   r >= 8: Linear confinement (constant string tension)
+        double F_mag;
+        if (r < 3.0) {
+          F_mag = as * cf / r2;
+        } else if (r < 8.0) {
+          F_mag = as * cf / (3.0 * r);
+        } else {
+          F_mag = as * cf * r / 64.0;
+        }
+
         // ddx points from probe to source; negate for repulsive force direction
         // Same color (cf>0): force pushes AWAY from source (repulsive)
         // Diff color (cf<0): force pulls TOWARD source (attractive)

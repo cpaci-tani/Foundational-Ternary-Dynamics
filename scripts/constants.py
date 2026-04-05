@@ -179,8 +179,8 @@ X_PLUS, X_MINUS = master_quadratic_roots()
 # epsilon = e^pi - pi - 20 (where 20 = b_3 + N_eff)
 EPSILON = np.exp(np.pi) - np.pi - (b_3 + N_eff)
 
-# Derived denominator: D = N_c * N_base^2 - 1 = 3 * 16 - 1 = 47
-D = N_c * N_base**2 - 1  # = 47
+# Derived denominator: D_CONSTRAINT = N_c * N_base^2 - 1 = 3 * 16 - 1 = 47
+D_CONSTRAINT = N_c * N_base**2 - 1  # = 47
 
 # Complete 4-term precision formula (v5.29)
 # All coefficients derived from framework integers {3, 4, 7, 13}:
@@ -188,10 +188,10 @@ D = N_c * N_base**2 - 1  # = 47
 #   c2 = 5/64   = (N_eff - 2*N_base) / N_base^3   (second order)
 #   c3 = 4/141  = N_base / (N_c * D)              (third order)
 #   c4 = 141/11 = (N_c * D) / (b_3 + N_base)      (fourth order)
-c1 = N_c**2 / D                           # 9/47
+c1 = N_c**2 / D_CONSTRAINT                 # 9/47
 c2 = (N_eff - 2*N_base) / N_base**3       # 5/64
-c3 = N_base / (N_c * D)                   # 4/141
-c4 = (N_c * D) / (b_3 + N_base)           # 141/11
+c3 = N_base / (N_c * D_CONSTRAINT)        # 4/141
+c4 = (N_c * D_CONSTRAINT) / (b_3 + N_base) # 141/11
 
 eps = abs(EPSILON)
 X_PLUS_PRECISION = X_PLUS - c1*eps + c2*eps**2 - c3*eps**3 - c4*eps**4
@@ -300,6 +300,36 @@ M_ELECTRON_DERIVED = M_PLANCK * np.sqrt(2*np.pi) * (N_base**2/N_c) * ALPHA**11
 MEV_PER_GEV = 1000
 
 # =============================================================================
+# LAYER 6: MASS THRESHOLDS AND RATIOS
+# =============================================================================
+
+K_B = 0.511           # MeV — electron mass / manifestation threshold
+K_GENESIS = K_B * N_c # 1.533 MeV — genesis threshold (fill all N_c color channels)
+C_SPEED = 1.0 / np.sqrt(3.0)  # CFL speed limit on cubic lattice
+C_WAVE = C_SPEED      # Wave propagation speed = speed limit
+DAMPING = ALPHA        # Dissipation rate gamma = alpha
+
+# Mass ratios (framework-derived)
+MU_RATIO = 3 * b_3 * (b_3 + N_c) - N_c  # 207 (muon/electron)
+TAU_RATIO = (N_eff + N_base) * MU_RATIO - 2 * N_c * b_3  # 3477 (tau/electron)
+
+# Higgs sector
+V_HIGGS = 246.09       # GeV (Higgs VEV)
+M_HIGGS = 124.8        # GeV = (N_eff/alpha^2)*m_e
+G_N = 1.0 / (b_3 + N_c)**2  # 0.01 — gravitational coupling on lattice
+
+# =============================================================================
+# LAYER 8: CONSCIOUSNESS CONSTANTS
+# =============================================================================
+
+K_NOETIC = 0.5         # Consciousness coefficient k = 1/2
+Y_REAL = G_STAR**2 / 4.0    # Real part of consciousness roots
+K_C_SQUARED = G_STAR**3 / 2.0  # |y|^2
+COS2_THETA_C = G_STAR / 8.0    # Observable consciousness fraction
+SIN2_THETA_C = 1.0 - COS2_THETA_C  # Subjective consciousness fraction
+C_MANDELBROT = 1.0 / G_STAR  # Mandelbrot sLoop fixed point
+
+# =============================================================================
 # EXPERIMENTAL VALUES (for comparison)
 # =============================================================================
 
@@ -378,7 +408,7 @@ def print_framework_summary():
     print(f"  N_base            = {N_base}")
     print(f"  b_3 (QCD beta)    = {b_3}")
     print(f"  N_eff             = {N_eff}")
-    print(f"  D (constraint)    = {D} = N_c*N_base^2 - 1")
+    print(f"  D (constraint)    = {D_CONSTRAINT} = N_c*N_base^2 - 1")
     print()
     print("MATHEMATICAL CONSTANTS:")
     print(f"  G* (lemniscate)   = {G_STAR:.10f}")

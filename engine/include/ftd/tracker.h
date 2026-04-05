@@ -43,26 +43,50 @@ struct ParticleHistory {
         return last - genesis_tick;
     }
 
-    // Mean speed over trajectory
-    double mean_speed() const {
+    // Minimum-image displacement for periodic boundaries
+    static int wrap_delta(int d, int L) {
+        if (d >  L/2) d -= L;
+        if (d < -L/2) d += L;
+        return d;
+    }
+
+    // Mean speed over trajectory (with periodic boundary wrapping)
+    double mean_speed(int lattice_size = 0) const {
         if (trajectory.size() < 2) return 0.0;
         double sum = 0.0;
         for (size_t i = 1; i < trajectory.size(); ++i) {
-            double dx = trajectory[i].x - trajectory[i-1].x;
-            double dy = trajectory[i].y - trajectory[i-1].y;
-            double dz = trajectory[i].z - trajectory[i-1].z;
-            sum += std::sqrt(dx*dx + dy*dy + dz*dz);
+            int dx = trajectory[i].x - trajectory[i-1].x;
+            int dy = trajectory[i].y - trajectory[i-1].y;
+            int dz = trajectory[i].z - trajectory[i-1].z;
+            if (lattice_size > 0) {
+                dx = wrap_delta(dx, lattice_size);
+                dy = wrap_delta(dy, lattice_size);
+                dz = wrap_delta(dz, lattice_size);
+            }
+            sum += std::sqrt(static_cast<double>(dx*dx + dy*dy + dz*dz));
         }
         return sum / (trajectory.size() - 1);
     }
 
-    // Displacement from start to end
-    double net_displacement() const {
+    // Displacement from start to end (with periodic boundary wrapping)
+    double net_displacement(int lattice_size = 0) const {
         if (trajectory.size() < 2) return 0.0;
-        double dx = trajectory.back().x - trajectory.front().x;
-        double dy = trajectory.back().y - trajectory.front().y;
-        double dz = trajectory.back().z - trajectory.front().z;
-        return std::sqrt(dx*dx + dy*dy + dz*dz);
+        // Accumulate wrapped displacements for true physical displacement
+        double total_dx = 0, total_dy = 0, total_dz = 0;
+        for (size_t i = 1; i < trajectory.size(); ++i) {
+            int dx = trajectory[i].x - trajectory[i-1].x;
+            int dy = trajectory[i].y - trajectory[i-1].y;
+            int dz = trajectory[i].z - trajectory[i-1].z;
+            if (lattice_size > 0) {
+                dx = wrap_delta(dx, lattice_size);
+                dy = wrap_delta(dy, lattice_size);
+                dz = wrap_delta(dz, lattice_size);
+            }
+            total_dx += dx;
+            total_dy += dy;
+            total_dz += dz;
+        }
+        return std::sqrt(total_dx*total_dx + total_dy*total_dy + total_dz*total_dz);
     }
 };
 

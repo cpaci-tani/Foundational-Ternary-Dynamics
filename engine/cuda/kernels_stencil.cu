@@ -438,18 +438,23 @@ __global__ void genesis_kernel(
                        + (flux_y[yp] - flux_y[ym])
                        + (flux_z[zp] - flux_z[zm]));
 
-    state[i] = (div >= 0) ? 1 : -1;
+    state[i] = (div > 0) ? 1 : -1;  // Matches CPU: strictly > 0 (not >=)
 
-    // Assign spin from dominant curl component
+    // Assign spin from dominant curl component (z-first priority, matches CPU)
     double curl_x = 0.5 * ((flux_z[yp] - flux_z[ym]) - (flux_y[zp] - flux_y[zm]));
     double curl_y = 0.5 * ((flux_x[zp] - flux_x[zm]) - (flux_z[xp] - flux_z[xm]));
     double curl_z = 0.5 * ((flux_y[xp] - flux_y[xm]) - (flux_x[yp] - flux_x[ym]));
 
-    double max_curl = fmax(fabs(curl_x), fmax(fabs(curl_y), fabs(curl_z)));
+    double acx = fabs(curl_x), acy = fabs(curl_y), acz = fabs(curl_z);
+    double max_curl = fmax(acx, fmax(acy, acz));
     if (max_curl > 1e-15) {
-        double dominant = (fabs(curl_x) >= fabs(curl_y) && fabs(curl_x) >= fabs(curl_z)) ? curl_x
-                        : (fabs(curl_y) >= fabs(curl_z)) ? curl_y : curl_z;
-        spin[i] = (dominant > 0) ? 1 : -1;
+        // z-first priority to match CPU render_bridge.cpp
+        if (acz >= acx && acz >= acy) spin[i] = (curl_z > 0) ? 1 : -1;
+        else if (acy >= acx)          spin[i] = (curl_y > 0) ? 1 : -1;
+        else                          spin[i] = (curl_x > 0) ? 1 : -1;
+    } else {
+        // Zero curl: assign +1 (deterministic fallback, matches CPU's random with seed)
+        spin[i] = 1;
     }
 
     // Assign color from dominant flux axis

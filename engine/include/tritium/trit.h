@@ -19,7 +19,7 @@ inline int popcount64(uint64_t x) {
 #if defined(_MSC_VER)
     return static_cast<int>(__popcnt64(x));
 #elif defined(__GNUC__) || defined(__clang__)
-    return popcount64(x);
+    return static_cast<int>(__builtin_popcountll(x));
 #else
     x = x - ((x >> 1) & 0x5555555555555555ULL);
     x = (x & 0x3333333333333333ULL) + ((x >> 2) & 0x3333333333333333ULL);

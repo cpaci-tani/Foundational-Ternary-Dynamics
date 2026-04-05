@@ -3,7 +3,7 @@
 // Returns arrays of Float32Array vertex positions for Three.js LineSegments.
 
 /**
- * Trilinear interpolation of a vector field on a regular grid.
+ * Nearest-neighbor lookup of a vector field on a regular grid.
  * @param {Float32Array} positions  - Flat array [x0,y0,z0, x1,y1,z1, ...]
  * @param {Float32Array} vectors    - Flat array [vx0,vy0,vz0, ...]
  * @param {number}       count      - Number of sample points
@@ -12,10 +12,10 @@
  * @param {number}       px         - Query x
  * @param {number}       py         - Query y
  * @param {number}       pz         - Query z
- * @returns {[number,number,number]} Interpolated vector [vx,vy,vz]
+ * @returns {[number,number,number]} Field vector at nearest sample point [vx,vy,vz]
  */
 export function interpolateField(positions, vectors, count, N, stride, px, py, pz) {
-    // Nearest-neighbor lookup (fast; good enough for streamlines at stride 2-4)
+    // Nearest-neighbor lookup via linear scan (fast; good enough for streamlines at stride 2-4)
     let bestDist = Infinity;
     let bx = 0, by = 0, bz = 0;
     for (let i = 0; i < count; i++) {

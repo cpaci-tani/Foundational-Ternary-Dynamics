@@ -17,7 +17,8 @@ import {
 export const M_ELECTRON = K_B;                      // 0.511 MeV
 export const M_MUON     = K_B * MU_RATIO;           // 105.7 MeV
 export const M_TAU      = K_B * TAU_RATIO;          // 1776.7 MeV (0.007%)
-export const M_NEUTRON  = M_PROTON + 1.293;         // neutron-proton mass difference
+export const M_PROTON_PHYS = 938.272;                // Physical proton mass (PDG)
+export const M_NEUTRON  = M_PROTON_PHYS + 1.293;    // neutron = proton + 1.293 MeV
 export const M_PION_CHARGED = 139.57;               // MeV (input)
 export const M_PION_NEUTRAL = 135.0;                // MeV (input)
 
@@ -184,11 +185,11 @@ export function particleDecayInfo(name) {
         },
         'proton': {
             name: 'Proton (p)',
-            mass_MeV: M_PROTON,
+            mass_MeV: 938.272,  // Physical mass (PDG); framework scale = K_B * PROTON_RATIO
             lifetime_s: Infinity,
             primary_channel: 'Stable (τ > 10³⁴ yr)',
             branching: 'N/A',
-            origin: `m_p = m_e × ${(M_PROTON / K_B).toFixed(1)}`
+            origin: `Physical: 938.3 MeV; FTD scale: ${M_PROTON.toFixed(1)} MeV`
         }
     };
     return catalog[name] || null;

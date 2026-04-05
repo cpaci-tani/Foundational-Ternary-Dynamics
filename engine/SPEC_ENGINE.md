@@ -2,8 +2,8 @@
 
 **Living document for AI agents and developers.**
 **Last updated:** 2026-03-05
-**Engine version:** 2.10 (Logic-First + Perfected EM + Multi-Scale Physics + CUDA GPU)
-**Test count:** 157 test files, 156 CTests (152 CPU + 4 GPU-conditional). 10-Phase Proof-Out: 125+ checks, all PASS. GPU conditional on `FTD_ENABLE_CUDA`.
+**Engine version:** 2.11 (Logic-First + Perfected EM + Multi-Scale Physics + CUDA GPU)
+**Test count:** 175+ registered tests (170 CPU+GPU + 5 Five Minds campaigns). GPU parity: 21/21 PASS. Five Minds campaigns: 15/15 PASS. GPU conditional on `FTD_ENABLE_CUDA`.
 
 ---
 
@@ -27,7 +27,7 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 - Latency/bandwidth/proper-time system
 
 **Toggle-gated extensions** (default OFF, for pedagogy and exploration):
-- Larmor radiation: acceleration-dependent damping (v2.8)
+- Larmor radiation: acceleration-dependent damping (v2.11)
 - Dual substrate: J_L + J_R chirality physics
 - Color forces, strong force, weak transmutation, triad binding, pair production, exchange force
 
@@ -79,7 +79,7 @@ engine/
     kernels_forces.cu         # GPU forces + movement + color/strong/weak/exchange kernels (737L)
     CMakeLists.txt            # CUDA build rules (35L)
   tests/
-    157 test files            # All registered as CTests (152 CPU + 4 GPU-conditional)
+    175+ test files           # All registered as CTests (170 CPU+GPU + 5 Five Minds campaigns)
   wasm/
     ftd_wasm.cpp              # Emscripten Embind bindings -- full engine API (1492L)
     CMakeLists.txt            # WASM build rules (Emscripten-only)
@@ -233,7 +233,7 @@ The derivation chain lives in `ontic.h` (9+ layers). `constants.h` re-exports ev
 |----------|-------|---------|
 | `ALPHA` | 0.00729 | Coulomb force, damping, exchange force |
 | `K_B` | 0.511 | Evaporation threshold, wavepacket amplitude, Larmor scale |
-| `G_C` | alpha^2 | State-flux coupling (phase_read) |
+| `G_C` | sqrt(alpha) | State-flux coupling (phase_read) |
 | `G_N` | 0.01 | Gravitational force |
 | `C_WAVE` | 1/sqrt(3) | Wave propagation speed (Laplacian coefficient) |
 | `C_SPEED` | 1/sqrt(3) | Movement speed limit |
@@ -378,15 +378,20 @@ The `TermToggles` struct provides **20 runtime booleans** for the pedagogy syste
 | `poisson_coulomb` | Poisson-based Coulomb (default). false = legacy grad(div J) |
 | `lorentz_force` | Magnetic Lorentz force F = alpha*s*(v x B) |
 
-### Extension toggles (default OFF)
+### Extension toggles (default ON — promoted from OFF based on physics validation)
+
+| Toggle | Default | Description |
+|--------|---------|-------------|
+| `selective_damping` | ON | Only damp sites near particles; vacuum waves propagate without loss |
+| `dual_substrate` | ON | Split flux into J_L + J_R substrates with chirality |
+| `weak_transmutation` | ON | Stress-threshold polarity flip (+1 <-> -1) |
+
+### Extension toggles (default OFF — for exploration)
 
 | Toggle | Description |
 |--------|-------------|
-| `selective_damping` | Only damp sites near particles; vacuum waves propagate without loss |
 | `larmor_radiation` | Acceleration-dependent damping (requires `selective_damping`) |
-| `dual_substrate` | Split flux into J_L + J_R substrates with chirality |
 | `color_forces` | SU(3)-inspired color-dependent pairwise force |
-| `weak_transmutation` | Stress-threshold polarity flip (+1 <-> -1) |
 | `strong_force` | Yukawa short-range nuclear force |
 | `triad_binding` | Detect 3-particle triads, set locked=true |
 | `pair_production` | Correlated +1/-1 pairs from high-flux void |
@@ -462,9 +467,10 @@ Files: `scale.h` (68L), `scale_bridge.cpp` (202L).
 |----------|-------|--------|
 | Unit tests (test_*) | 108 | ~600+ |
 | Campaign tests (campaign_*) | 47 | ~400+ |
-| **Total** | **155** | **1000+** |
+| Five Minds campaigns | 5 | 15 |
+| **Total** | **175+** | **1000+** |
 
-All 155 tests are registered as CTests (151 CPU + 4 GPU-conditional). GPU tests (4 files) are conditional on `FTD_ENABLE_CUDA`.
+All tests registered as CTests (170 CPU+GPU + 5 Five Minds campaigns). GPU tests (4 files) conditional on `FTD_ENABLE_CUDA`. GPU parity: 21/21 PASS. Five Minds campaigns: 15/15 PASS.
 
 ### Test categories
 
@@ -543,10 +549,17 @@ All 155 tests are registered as CTests (151 CPU + 4 GPU-conditional). GPU tests 
 - `campaign_two_slit` (7 checks) -- Interference fringes from two coherent sources
 
 **GPU/CUDA** (conditional on `FTD_ENABLE_CUDA`):
-- `gpu_parity` -- 21 checks: SoA round-trip, vacuum wave parity, energy parity
+- `gpu_parity` -- 21 checks: SoA round-trip, vacuum wave parity, energy parity (21/21 PASS)
 - `gpu_benchmark` -- Performance timing (363x at 64^3)
 - `gpu_physics` -- 26 campaigns, 100+ checks: GP-COULOMB, GP-GAUSS, GP-WAVE-SPEED, GP-ENERGY-LONG, GP-GRAVITY, GP-ANNIHILATION, GP-MAXWELL-AMPERE, GP-EM-ENERGY, GP-CONTINUITY, GP-KCOMP-SHELL, GP-WEAK, GP-COLOR, GP-STRONG, GP-TRIAD, GP-PAIRS, GP-EXCHANGE, GP-BOUNCE, GP-DUAL-SUBSTRATE
 - `gpu_experiments` -- Extended GPU experiments (timeout: 1800s)
+
+**Five Minds Campaign Tests** (15/15 PASS):
+- `campaign_plato` -- Ontological faithfulness (dispositional ratio, genesis threshold, void energy)
+- `campaign_einstein` -- Conservation & covariance (energy conservation, Lorentz contraction, gravitational redshift)
+- `campaign_vonneumann` -- Computational convergence (Coulomb scaling, wave speed, hydrogen binding)
+- `campaign_wigner` -- Symmetry (octahedral O_h, parity violation, CPT invariance)
+- `campaign_grothendieck` -- Structural universality (color force running, scale bridge, alpha from scattering)
 
 ---
 
@@ -726,7 +739,7 @@ ftd_core (C++ library)
 
 ```
 +------------------------------------------------------+
-|  FTD Engine v2.8    [Scenario] [Size] [Speed] Play   |  Toolbar
+|  FTD Engine v2.11   [Scenario] [Size] [Speed] Play   |  Toolbar
 +------------------------------------------------------+
 |  [Field toggles: E B Energy div-J Flux Forces ...]   |  Overlay
 |                                                       |

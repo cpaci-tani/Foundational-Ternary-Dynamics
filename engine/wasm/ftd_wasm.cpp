@@ -42,7 +42,7 @@ val get_particle_data(ftd::RenderBridge& rb) {
     int idx = 0;
     for (int i = 0; i < total; i++) {
         const auto& v = voxels[i];
-        if (v.state == 0 && v.density() <= ftd::K_B * 0.05) continue;
+        if (v.state == 0 && v.density() <= ftd::K_B * 0.3) continue;
 
         // Position from lattice index
         auto c = rb.lattice().coord(i);
