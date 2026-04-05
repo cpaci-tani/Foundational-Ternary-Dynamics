@@ -238,6 +238,8 @@ Number theory and special functions.
 | 9.17 | [MATH_LOG_GSTAR_IDENTITY.md](09_mathematical/MATH_LOG_GSTAR_IDENTITY.md) | **log G\* identity:** log G\* = (γ+3log2)/2 + Σ(all unsolved L-values); G\* absorbs every unsolved constant, π carries the solved ones; rational coefficients for β(2m) and ζ(2m+1); PSLQ null results at 80+ digits [THEOREM] |
 | 9.18 | [CONJ_ALPHA_FROM_CM.md](09_mathematical/CONJ_ALPHA_FROM_CM.md) | **CM field conjecture:** α from complex multiplication theory; conjecture status [CONJECTURE] |
 | 9.19 | [PROOF_ALPHA_FROM_SELF_DUALITY.md](09_mathematical/PROOF_ALPHA_FROM_SELF_DUALITY.md) | **Self-duality proof:** Rigorous proof of α derivation via self-duality; 18 KB [THEOREM] |
+| 9.20 | [EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md](09_mathematical/EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md) | **Born rule as Joukowski transform:** F[psi]=circle, F[\|psi\|^2]=lemniscate; 79.3% DOF loss; measurement as First Distinction [EMERGENT] |
+| 9.21 | [EXPLR_SPECTRAL_ARTIFACT_DISCOVERY.md](09_mathematical/EXPLR_SPECTRAL_ARTIFACT_DISCOVERY.md) | **Honest negative:** 2D FFT gauge-group selection was square-grid artifact; 3D engine shows all N produce correct peaks; lesson in simulation validation [EMERGENT] |
 
 ---
 
