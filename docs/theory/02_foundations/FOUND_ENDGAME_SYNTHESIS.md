@@ -82,7 +82,7 @@ This is [THEOREM] for the Vieta stratification, [SELECTION] for the mapping to o
 | Challenge | Result | Next Step |
 |-----------|--------|-----------|
 | **Motivic sheaf** | F = R¹π_*Ω¹_{S/C\*} constructed on K3 fibration. CM fiber at t = 1. | Compute Picard-Fuchs equation explicitly |
-| **Scattering simulation** | Full e⁺e⁻ → γγ protocol: 128³ lattice, angular extraction, compare to (1+cos²θ) | Implement in C++ engine |
+| **Scattering simulation** | e⁺e⁻ → γγ implemented on GPU (128³). Angular distribution B = -0.20 (near isotropic), not B = 1.0 (QED quadrupolar). **Honest negative**: directed beams produce the same result as wavepackets — the lattice dynamics do not yet reproduce the (1+cos²θ) distribution. | Investigate whether higher resolution or modified initial conditions are needed |
 | **Novel prediction** | r = 0.022 (tensor-to-scalar ratio = N_c · α). Testable by LiteBIRD ~2032 | State in Paper I |
 | **Observer threshold** | Sym³ minimum: determinant is first non-injective Vieta polynomial | Tighten with Liouville argument at Sym² |
 | **Clean derivation** | Cannot be done from P1-P5 alone. Break at ℤ² → E_i (imports algebraic geometry) | Reframe: α is a property of the stage, not derived from the dynamics |
@@ -118,3 +118,15 @@ This is [THEOREM] for the Vieta stratification, [SELECTION] for the mapping to o
 3. **State r = 0.022 in Paper I.** This is the falsifiable prediction that earns or loses credibility by 2032.
 
 4. **Test α universality.** Run standard lattice QED on ℤ³ at the self-dual coupling and verify that the self-consistent coupling is α. If true for ANY ℤ³ gauge theory, FTD's contribution is the observation, not the framework.
+
+---
+
+## Honest Negatives (April 4, 2026)
+
+Two investigations produced negative results that are documented for epistemic completeness:
+
+1. **e⁺e⁻ angular distribution:** The lattice produces B = -0.20 (near isotropic), not B = 1.0 (QED quadrupolar). Directed beams and wavepackets both give the same result. The engine does not yet reproduce the (1+cos²θ) angular distribution from lattice dynamics alone.
+
+2. **2D spectral gauge-group selection:** A 2D FFT analysis of N-particle Born-rule spectral patterns appeared to show the Born rule filtering for Lie algebra gauge groups (N=5 fails, crystallographic N preferred). This was a **square-grid FFT artifact**. The real 3D cubic lattice engine shows all N values produce clean peaks at correct particle angles with monotonically decreasing concentration. See [EXPLR_SPECTRAL_ARTIFACT_DISCOVERY.md](../09_mathematical/EXPLR_SPECTRAL_ARTIFACT_DISCOVERY.md).
+
+Both results demonstrate that the engine is the ground truth and preliminary analytical work must always be validated against it.
