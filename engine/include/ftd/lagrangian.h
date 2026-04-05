@@ -100,17 +100,18 @@ inline double field_gradient_term(const Vec3& flux_here,
 // Composite Lagrangian Densities
 // ============================================================================
 
-// Interaction-only Lagrangian density (4 terms — excludes field sector)
+// Full interaction Lagrangian density (4 terms — excludes field sector)
+// Includes velocity coupling (Lorentz/magnetic sector).
 inline double lagrangian_density(const Voxel& v, double divJ, double rho_charge) {
-    return born_infeld_term(v) + coupling_term(v, divJ) + gauss_term(divJ, rho_charge);
-}
-
-// Interaction-only with velocity coupling (4 terms — excludes field sector)
-inline double lagrangian_density_full(const Voxel& v, double divJ, double rho_charge) {
     return born_infeld_term(v)
          + coupling_term(v, divJ)
          + velocity_coupling_term(v)
          + gauss_term(divJ, rho_charge);
+}
+
+// Alias for backward compatibility
+inline double lagrangian_density_full(const Voxel& v, double divJ, double rho_charge) {
+    return lagrangian_density(v, divJ, rho_charge);
 }
 
 // ============================================================================
@@ -126,7 +127,7 @@ inline double hamiltonian_density(const Voxel& v, double divJ, double rho_charge
     } else {
         h_bi = K_B / std::sqrt(1.0 - spd2);
     }
-    return h_bi - coupling_term(v, divJ) - gauss_term(divJ, rho_charge);
+    return h_bi - coupling_term(v, divJ) - velocity_coupling_term(v) - gauss_term(divJ, rho_charge);
 }
 
 // ============================================================================

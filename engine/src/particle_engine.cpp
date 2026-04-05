@@ -108,16 +108,23 @@ Vec3 ParticleEngine::compute_force(int i) const {
             if (diag) diag->f_exchange += fe;
         }
 
-        // 4. Strong: Yukawa + confinement for colored particles
+        // 4. Strong: running alpha_s + confinement for colored particles
+        // Uses unsoftened distance for both coupling AND force denominator
+        // to maintain physical consistency (matches GPU kernel convention).
         if (toggles.strong && pi.color != 0 && pj.color != 0) {
             double cf = (pi.color == pj.color) ? 0.5 : -1.0;
             double raw_r = std::sqrt(r_vec.mag2());  // unsoftened
+            if (raw_r < 1.0) raw_r = 1.0;            // clamp to lattice spacing
+            double raw_r2 = raw_r * raw_r;
             double F_strong_mag;
-            if (raw_r > 1e-30 && raw_r < R_CONFINEMENT) {
+            if (raw_r < 3.0) {
                 double as = alpha_s_lattice(raw_r);
-                F_strong_mag = as * cf / r2;
+                F_strong_mag = as * cf / raw_r2;       // Coulomb regime
+            } else if (raw_r < 8.0) {
+                double as = alpha_s_lattice(raw_r);
+                F_strong_mag = as * cf / (3.0 * raw_r); // Transition
             } else {
-                F_strong_mag = SIGMA_STRING * cf;
+                F_strong_mag = SIGMA_STRING * cf;        // Linear confinement
             }
             Vec3 fs = r_hat * (-F_strong_mag);
             f += fs;

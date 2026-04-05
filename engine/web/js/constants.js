@@ -72,13 +72,13 @@ export const MU_RATIO  = 3 * B_3 * (B_3 + N_C) - N_C;           // 207
 export const TAU_RATIO = (N_EFF + N_BASE) * MU_RATIO - 2 * N_C * B_3;  // 3477
 export const PROTON_RATIO = N_EFF / ALPHA + TAU_RATIO * (B_3 + N_C) / (N_EFF + B_3);
 export const M_PROTON = K_B * PROTON_RATIO;
-export const R_BOHR   = 4.0 * Math.PI / (K_B * ALPHA);
+export const R_BOHR   = 4.0 * PI_FTD / (K_B * ALPHA);  // Ontic-derived pi
 
 // ── Electroweak Scale ───────────────────────────────────────────────
 export const M_Z = 91.1876;                           // Z boson mass (GeV)
 export const M_W = M_Z * Math.sqrt(1.0 - SIN2_WEINBERG); // W boson mass (GeV)
 export const V_HIGGS = 246.09;                         // Higgs VEV (GeV)
-export const M_HIGGS = 124.8;                          // Higgs mass (GeV)
+export const M_HIGGS = 124.8;                          // Higgs mass (GeV) = (N_eff/α²)·m_e
 export const G_FERMI = Math.PI * ALPHA / (Math.sqrt(2) * M_W * M_W); // Fermi coupling (GeV^-2)
 
 // ── Layer 7: Precision Formula ──────────────────────────────────────

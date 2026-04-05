@@ -24,6 +24,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <memory>
 #include <vector>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
@@ -60,11 +61,12 @@ void check_close(const char* name, double a, double b, double tol) {
     }
 }
 
-// Helper: set up a minimal engine with latency enabled, everything else off
-ftd::RenderBridge make_latency_engine(int L) {
-    ftd::RenderBridge rb(L);
-    rb.toggles.disable_all();
-    rb.toggles.latency_field = true;
+// Helper: set up a minimal engine with latency enabled, everything else off.
+// Returns unique_ptr to avoid copy (RenderBridge is non-copyable when GPU is enabled).
+std::unique_ptr<ftd::RenderBridge> make_latency_engine(int L) {
+    auto rb = std::make_unique<ftd::RenderBridge>(L);
+    rb->toggles.disable_all();
+    rb->toggles.latency_field = true;
     return rb;
 }
 
@@ -94,13 +96,13 @@ int main() {
         int cx = L/2, cy = L/2, cz = L/2;
 
         // Place a single +1 particle at center with flux
-        rb.inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb->inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
 
         // Run 1 tick to trigger latency solver
-        rb.tick();
+        rb->tick();
 
-        double L_center = rb.voxel_at(cx, cy, cz).latency;
-        double L_edge = rb.voxel_at(0, 0, 0).latency;
+        double L_center = rb->voxel_at(cx, cy, cz).latency;
+        double L_edge = rb->voxel_at(0, 0, 0).latency;
 
         // NOTE: A single particle on a 32³ periodic lattice produces very weak
         // latency due to mean-subtraction in the Poisson gauge. The solver works
@@ -110,9 +112,9 @@ int main() {
         check_soft("LAT-1b: Latency at center > latency at edge", L_center > L_edge);
 
         // Check monotonic decay: latency should decrease with distance from center
-        double L_near = rb.voxel_at(cx+2, cy, cz).latency;
-        double L_mid  = rb.voxel_at(cx+5, cy, cz).latency;
-        double L_far  = rb.voxel_at(cx+10, cy, cz).latency;
+        double L_near = rb->voxel_at(cx+2, cy, cz).latency;
+        double L_mid  = rb->voxel_at(cx+5, cy, cz).latency;
+        double L_far  = rb->voxel_at(cx+10, cy, cz).latency;
         check_soft("LAT-1c: Monotonic decay (near > mid)", L_near > L_mid);
         check_soft("LAT-1d: Monotonic decay (mid > far)", L_mid > L_far);
     }
@@ -130,17 +132,17 @@ int main() {
         // Config A: single particle
         auto rb_a = make_latency_engine(L);
         int cx = L/2, cy = L/2, cz = L/2;
-        rb_a.inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-        rb_a.tick();
-        double L_single = rb_a.voxel_at(cx, cy, cz).latency;
+        rb_a->inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb_a->tick();
+        double L_single = rb_a->voxel_at(cx, cy, cz).latency;
 
         // Config B: 3 adjacent particles (more mass)
         auto rb_b = make_latency_engine(L);
-        rb_b.inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-        rb_b.inject_particle(cx+1, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-        rb_b.inject_particle(cx-1, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-        rb_b.tick();
-        double L_triple = rb_b.voxel_at(cx, cy, cz).latency;
+        rb_b->inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb_b->inject_particle(cx+1, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb_b->inject_particle(cx-1, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb_b->tick();
+        double L_triple = rb_b->voxel_at(cx, cy, cz).latency;
 
         check_soft("LAT-2a: Single particle latency > 0", L_single > 0.0);
         check_soft("LAT-2b: Triple mass latency > single mass", L_triple > L_single);
@@ -157,16 +159,16 @@ int main() {
 
         // Single particle at cx-5
         auto rb_single = make_latency_engine(L);
-        rb_single.inject_particle(cx-5, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-        rb_single.tick();
-        double L_mid_single = rb_single.voxel_at(cx, cy, cz).latency;
+        rb_single->inject_particle(cx-5, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb_single->tick();
+        double L_mid_single = rb_single->voxel_at(cx, cy, cz).latency;
 
         // Two particles at cx-5 and cx+5
         auto rb_double = make_latency_engine(L);
-        rb_double.inject_particle(cx-5, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-        rb_double.inject_particle(cx+5, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-        rb_double.tick();
-        double L_mid_double = rb_double.voxel_at(cx, cy, cz).latency;
+        rb_double->inject_particle(cx-5, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb_double->inject_particle(cx+5, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb_double->tick();
+        double L_mid_double = rb_double->voxel_at(cx, cy, cz).latency;
 
         check_soft("LAT-3a: Midpoint with two sources > single source",
               L_mid_double > L_mid_single);
@@ -187,17 +189,17 @@ int main() {
         for (int dx = -2; dx <= 2; ++dx)
             for (int dy = -2; dy <= 2; ++dy)
                 for (int dz = -2; dz <= 2; ++dz)
-                    rb.inject_particle(cx+dx, cy+dy, cz+dz, +1,
+                    rb->inject_particle(cx+dx, cy+dy, cz+dz, +1,
                                        {ftd::K_B, 0.0, 0.0});
 
         // Run several ticks for solver to converge
-        for (int t = 0; t < 5; ++t) rb.tick();
+        for (int t = 0; t < 5; ++t) rb->tick();
 
         // Check all sites
-        const int N = rb.lattice().total_sites();
+        const int N = rb->lattice().total_sites();
         double max_L = 0.0;
         for (int i = 0; i < N; ++i) {
-            double lat = rb.voxels()[i].latency;
+            double lat = rb->voxels()[i].latency;
             if (lat > max_L) max_L = lat;
         }
         check("LAT-4a: Max latency < 1.0", max_L < 1.0);
@@ -211,18 +213,18 @@ int main() {
     std::cout << "\n--- LAT-5: Toggle OFF → latency = 0 ---\n";
     {
         const int L = 16;
-        ftd::RenderBridge rb(L);
-        rb.toggles.disable_all();
-        rb.toggles.latency_field = false;  // Explicitly OFF
+        auto rb = std::make_unique<ftd::RenderBridge>(L);
+        rb->toggles.disable_all();
+        rb->toggles.latency_field = false;  // Explicitly OFF
         // Need wave propagation for basic engine operation
         int cx = L/2, cy = L/2, cz = L/2;
-        rb.inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-        rb.tick();
+        rb->inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb->tick();
 
-        const int N = rb.lattice().total_sites();
+        const int N = rb->lattice().total_sites();
         bool all_zero = true;
         for (int i = 0; i < N; ++i) {
-            if (rb.voxels()[i].latency != 0.0) {
+            if (rb->voxels()[i].latency != 0.0) {
                 all_zero = false;
                 break;
             }
@@ -240,26 +242,26 @@ int main() {
         int cx = L/2, cy = L/2, cz = L/2;
 
         // Central mass source
-        rb.inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb->inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
 
         // Two "clock" particles at different distances
         // Clock A: close to mass (r=3)
-        rb.inject_particle(cx+3, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb->inject_particle(cx+3, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
         // Clock B: far from mass (r=12)
-        rb.inject_particle(cx+12, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb->inject_particle(cx+12, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
 
-        int idx_close = rb.lattice().index(cx+3, cy, cz);
-        int idx_far   = rb.lattice().index(cx+12, cy, cz);
+        int idx_close = rb->lattice().index(cx+3, cy, cz);
+        int idx_far   = rb->lattice().index(cx+12, cy, cz);
 
         // Reset tau
-        rb.voxels()[idx_close].tau = 0.0;
-        rb.voxels()[idx_far].tau = 0.0;
+        rb->voxels()[idx_close].tau = 0.0;
+        rb->voxels()[idx_far].tau = 0.0;
 
         // Run several ticks (with movement off so particles stay in place)
-        for (int t = 0; t < 50; ++t) rb.tick();
+        for (int t = 0; t < 50; ++t) rb->tick();
 
-        double tau_close = rb.voxels()[idx_close].tau;
-        double tau_far   = rb.voxels()[idx_far].tau;
+        double tau_close = rb->voxels()[idx_close].tau;
+        double tau_far   = rb->voxels()[idx_far].tau;
 
         check("LAT-6a: Both clocks accumulated τ > 0", tau_close > 0 && tau_far > 0);
         // NOTE: tau accumulation requires latency > 0 at the particle site.
@@ -281,17 +283,17 @@ int main() {
 
         // Setup: particle close to a mass source
         auto rb = make_latency_engine(L);
-        rb.toggles.forces = true;
-        rb.toggles.gravity = true;
+        rb->toggles.forces = true;
+        rb->toggles.gravity = true;
         // Keep wave propagation for self-field but no movement to measure constraint
         int cx = L/2, cy = L/2, cz = L/2;
 
         // Mass source
-        rb.inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-        rb.tick(); // Solve latency
+        rb->inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb->tick(); // Solve latency
 
-        double L_near = rb.voxel_at(cx+3, cy, cz).latency;
-        double L_far  = rb.voxel_at(cx+12, cy, cz).latency;
+        double L_near = rb->voxel_at(cx+3, cy, cz).latency;
+        double L_far  = rb->voxel_at(cx+12, cy, cz).latency;
 
         // Effective speed limits
         double f_near = 1.0 - L_near * L_near;
@@ -317,21 +319,21 @@ int main() {
         auto rb = make_latency_engine(L);
         int cx = L/2, cy = L/2, cz = L/2;
 
-        rb.inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb->inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
 
         // Run several ticks for solver convergence
-        for (int t = 0; t < 10; ++t) rb.tick();
+        for (int t = 0; t < 10; ++t) rb->tick();
 
         // Sample L² at various radii along x-axis
         // Expect L² ∝ 1/r → L²·r ≈ const at large r
         double product_r5  = 0.0, product_r10 = 0.0, product_r15 = 0.0;
         int r5 = 5, r10 = 10, r15 = 15;
 
-        double L2_r5  = rb.voxel_at(cx+r5,  cy, cz).latency;
+        double L2_r5  = rb->voxel_at(cx+r5,  cy, cz).latency;
         L2_r5  *= L2_r5;
-        double L2_r10 = rb.voxel_at(cx+r10, cy, cz).latency;
+        double L2_r10 = rb->voxel_at(cx+r10, cy, cz).latency;
         L2_r10 *= L2_r10;
-        double L2_r15 = rb.voxel_at(cx+r15, cy, cz).latency;
+        double L2_r15 = rb->voxel_at(cx+r15, cy, cz).latency;
         L2_r15 *= L2_r15;
 
         product_r5  = L2_r5  * r5;
@@ -365,29 +367,29 @@ int main() {
     {
         const int L = 32;
         auto rb = make_latency_engine(L);
-        rb.toggles.genesis = false;  // No spontaneous manifestation
+        rb->toggles.genesis = false;  // No spontaneous manifestation
         int cx = L/2, cy = L/2, cz = L/2;
 
         // Place particle at center
-        rb.inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        rb->inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
 
         // Run to establish baseline latency
-        for (int t = 0; t < 20; ++t) rb.tick();
+        for (int t = 0; t < 20; ++t) rb->tick();
 
         // Record latency at a monitoring point
         int monitor_r = 8;
-        double L_baseline = rb.voxel_at(cx+monitor_r, cy, cz).latency;
+        double L_baseline = rb->voxel_at(cx+monitor_r, cy, cz).latency;
 
         // Now oscillate the mass: remove and re-add at shifted position
         // This creates a time-varying mass distribution → gravitational wave
-        int src_idx = rb.lattice().index(cx, cy, cz);
-        rb.voxels()[src_idx].state = 0;  // Remove particle
-        rb.inject_particle(cx+1, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+        int src_idx = rb->lattice().index(cx, cy, cz);
+        rb->voxels()[src_idx].state = 0;  // Remove particle
+        rb->inject_particle(cx+1, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
 
         // Run more ticks to let the change propagate
-        for (int t = 0; t < 20; ++t) rb.tick();
+        for (int t = 0; t < 20; ++t) rb->tick();
 
-        double L_after = rb.voxel_at(cx+monitor_r, cy, cz).latency;
+        double L_after = rb->voxel_at(cx+monitor_r, cy, cz).latency;
 
         // The latency at the monitoring point should have changed
         check_soft("LAT-9a: Latency changed at monitor after mass shift",
@@ -400,10 +402,10 @@ int main() {
         double max_delta = 0.0;
         for (int r = 3; r <= 14; ++r) {
             auto rb2 = make_latency_engine(L);
-            rb2.inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
-            for (int t = 0; t < 20; ++t) rb2.tick();
-            double L_ref = rb2.voxel_at(cx+r, cy, cz).latency;
-            double L_cur = rb.voxel_at(cx+r, cy, cz).latency;
+            rb2->inject_particle(cx, cy, cz, +1, {ftd::K_B, 0.0, 0.0});
+            for (int t = 0; t < 20; ++t) rb2->tick();
+            double L_ref = rb2->voxel_at(cx+r, cy, cz).latency;
+            double L_cur = rb->voxel_at(cx+r, cy, cz).latency;
             double delta = std::abs(L_cur - L_ref);
             if (delta > max_delta) max_delta = delta;
         }

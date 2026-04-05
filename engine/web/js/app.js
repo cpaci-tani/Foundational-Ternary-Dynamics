@@ -9,7 +9,7 @@ import { createBridge, MockBridge } from './wasm-bridge.js?v=20260318a';
 import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js?v=20260318a';
 import { FluxEnergyChart, ParticleChart } from './charts.js?v=20260304q';
-import { DiagnosticsPanel } from './diagnostics.js?v=20260304q';
+import { DiagnosticsPanel, Sparkline } from './diagnostics.js?v=20260304q';
 import { LagrangianChart } from './lagrangian.js?v=20260304q';
 import { Inspector } from './inspector.js?v=20260304q';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js?v=20260304q';
@@ -47,6 +47,10 @@ let diagnostics = null;
 let fluxEnergyChart = null;
 let particleChart = null;
 let lagrangianChart = null;
+let chartCharge = null;
+let chartEBEnergy = null;
+let chartGauss = null;
+let chartEntropy = null;
 let peTelemetry = null;
 
 let running = false;
@@ -181,18 +185,33 @@ function wireConsciousnessSubTabs() {
     });
 }
 
-function _resetAllVisualState() {
-    // ── Charts & telemetry ──
+// Reset simulation data caches (always on scenario change) but PRESERVE visual toggles
+function _resetSimCaches() {
     clearCharts();
     if (peTelemetry) peTelemetry.clear();
-
-    // ── Trail / orbit history ──
     _trailHistory.clear();
     _fieldGrid = null;
     if (viewport) {
         viewport.clearTrails();
         viewport.clearElementLabels();
     }
+    _fieldNeedsUpdate = true;
+    _latticeNeedsUpload = true;
+}
+
+// Full visual reset — only called on ENGINE MODE SWITCH (scale change), not scenario change
+function _resetAllVisualState() {
+    _resetSimCaches();
+
+    // ── Scale 0: reset flux slice OFF, keep flux volume and grid ON (defaults) ──
+    if (viewport) {
+        viewport.toggleFluxVolume(true);  // default ON
+        viewport.toggleFluxSlice(false);
+    }
+    const fvBtn = document.getElementById('toggle-flux-volume');
+    if (fvBtn) fvBtn.classList.add('active');
+    const fsBtn = document.getElementById('toggle-flux-slice');
+    if (fsBtn) fsBtn.classList.remove('active');
 
     // ── Scale 0: field visualization overlays ──
     _showEField = false;
@@ -310,6 +329,13 @@ function _resetAllVisualState() {
         viewport.toggleAEForceVdw(false);
         viewport.toggleAEForceBond(false);
         viewport.toggleAEForceNet(false);
+    }
+
+    // ── Scale 2/3: AE field heatmap + bond lines ──
+    if (viewport) {
+        viewport.toggleFieldHeatmap(false);
+        viewport.toggleFieldVectors(false);
+        viewport.toggleBondLines(false);
     }
 
     // ── AE energy drift reference ──
@@ -534,20 +560,37 @@ function showToast(msg, severity = 'info') {
     setTimeout(() => { if (toast.parentElement) toast.remove(); }, 8000);
 }
 
+// ── Loading Progress ─────────────────────────────────────────────────
+function _loadProgress(pct, msg) {
+    const bar = document.getElementById('load-bar');
+    const status = document.getElementById('load-status');
+    if (bar) bar.style.width = pct + '%';
+    if (status) status.textContent = msg;
+}
+
 // ── Initialization ───────────────────────────────────────────────────
+// Safety timeout: dismiss loading overlay after 8s even if init is slow
+setTimeout(() => {
+    const lo = document.getElementById('loading-overlay');
+    if (lo && !lo.classList.contains('hidden')) {
+        lo.classList.add('hidden');
+        console.log('[loading] Safety timeout dismissed overlay');
+    }
+}, 8000);
+
 async function init() {
     if (_initialized) return;
     _initialized = true;
 
-    // Cache frequently-accessed DOM elements for animation loops
+    _loadProgress(5, 'Caching DOM...');
     _cacheDOM();
 
-    // Create bridge: try Native GPU → WASM → Mock (in priority order)
+    _loadProgress(10, 'Probing GPU engine...');
     const latticeSize = parseInt(document.getElementById('lattice-size').value);
     const engineEl = document.getElementById('status-engine');
     const computeEl = document.getElementById('status-compute');
 
-    // 1. Try native GPU engine (WebSocket to local ws_server.exe)
+    // 1. Try native GPU engine
     console.log('[init] Trying native GPU engine on ws://localhost:9100...');
     try {
         bridge = await tryNativeBridge(latticeSize);
@@ -557,6 +600,7 @@ async function init() {
     }
     console.log('[init] Native bridge result:', bridge ? 'connected' : 'unavailable');
     if (bridge && bridge.ready) {
+        _loadProgress(30, 'GPU engine connected');
         engineEl.textContent = 'Native Engine';
         engineEl.style.color = '#c084fc';
         computeEl.textContent = bridge.isNativeGPU ? 'GPU' : 'CPU';
@@ -566,15 +610,17 @@ async function init() {
             : 'Connected to native CPU engine';
         showToast('Native GPU engine connected — full CUDA acceleration active.', 'success');
     } else {
-        // 2. Try WASM, then Mock
+        _loadProgress(20, 'Compiling WASM engine...');
         bridge = await createBridge(latticeSize);
         if (bridge.isWasm && bridge.ready) {
+            _loadProgress(30, 'WASM engine ready');
             engineEl.textContent = 'WASM Engine';
             engineEl.style.color = '#4ade80';
             computeEl.textContent = 'CPU';
             computeEl.style.color = '#60a5fa';
             computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
         } else {
+            _loadProgress(30, 'Mock engine (fallback)');
             engineEl.textContent = 'Mock Engine';
             engineEl.style.color = '#fbbf24';
             computeEl.textContent = 'CPU';
@@ -584,15 +630,25 @@ async function init() {
     }
 
     // Create 3D viewport
+    _loadProgress(40, 'Building 3D viewport...');
     const viewportContainer = document.getElementById('viewport');
     viewport = new Viewport(viewportContainer);
     viewport.setLatticeSize(latticeSize);
 
-    // Create panels
+    _loadProgress(50, 'Creating panels...');
     diagnostics = new DiagnosticsPanel();
     fluxEnergyChart = new FluxEnergyChart(document.getElementById('chart-flux-energy'));
     particleChart = new ParticleChart(document.getElementById('chart-particles'));
     lagrangianChart = new LagrangianChart(document.getElementById('chart-lagrangian'));
+    // Additional chart sparklines
+    const ccEl = document.getElementById('chart-charge');
+    if (ccEl) chartCharge = new Sparkline(ccEl);
+    const ebEl = document.getElementById('chart-eb-energy');
+    if (ebEl) chartEBEnergy = new Sparkline(ebEl);
+    const cgEl = document.getElementById('chart-gauss');
+    if (cgEl) chartGauss = new Sparkline(cgEl);
+    const ceEl = document.getElementById('chart-entropy');
+    if (ceEl) chartEntropy = new Sparkline(ceEl);
     inspector = new Inspector(viewport, bridge);
     peTelemetry = new PETelemetryPanel();
 
@@ -603,24 +659,24 @@ async function init() {
     buildElementScenarios();
     buildScale3MoleculeDropdown();
 
-    // Phase 1: Ontic Observatory
+    _loadProgress(60, 'Initializing observatory...');
     observatory = new OnticObservatory();
     aggregateDetector = new AggregateDetector();
     scaleBridgeViz = new ScaleBridgeVisualizer();
     emergenceMonitor = new EmergenceMonitor(500);
     initOnticPhysicsHierarchy();
 
-    // Wire up all UI controls
+    _loadProgress(70, 'Wiring controls...');
     wireToolbar();
     wireTabs();
     wireControls();
     wireViewportToggles();
     wireKeyboard();
 
-    // Initialize Particle Zoo panel
+    _loadProgress(80, 'Loading particle zoo...');
     initZoo(bridge);
 
-    // Enable flux volume visualization by default for Scale 0
+    _loadProgress(85, 'Configuring viewport...');
     viewport.toggleFluxVolume(true);
 
     // Initialize environment backgrounds
@@ -649,8 +705,17 @@ async function init() {
         if (_fluxMock && _fluxMock.setReflectiveBoundary) _fluxMock.setReflectiveBoundary(on);
     });
 
+    _loadProgress(95, 'Loading scenario...');
+
     // Load default scenario (flux-pulse: pure substrate wave propagation)
     loadScenario('flux-pulse');
+
+    // Done — dismiss loading overlay
+    _loadProgress(100, 'Ready');
+    setTimeout(() => {
+        const lo = document.getElementById('loading-overlay');
+        if (lo) lo.classList.add('hidden');
+    }, 400); // brief pause at 100% so user sees completion
 
     // Start frame loop
     requestAnimationFrame(animate);
@@ -686,21 +751,31 @@ function animate(now) {
 let _latticeNeedsUpload = true; // set true on scenario load / step / resume
 
 function animateLattice(now) {
+    const L = bridge.latticeSize || 32;
+
     // Tick simulation if running
+    // For large lattices (L>48), throttle to avoid frame drops in JS MockBridge.
+    // The wave equation is O(L^3 * 18) per tick — at L=64 that's ~14M ops.
     if (running) {
         _tickAccumulator += ticksPerFrame;
         const wholeTicks = Math.floor(_tickAccumulator);
         _tickAccumulator -= wholeTicks;
-        for (let i = 0; i < wholeTicks; i++) {
+
+        // Throttle: large lattices get fewer ticks per frame
+        const maxTicksPerFrame = L > 48 ? 1 : (L > 32 ? 2 : wholeTicks);
+        const ticksToRun = Math.min(wholeTicks, maxTicksPerFrame);
+
+        for (let i = 0; i < ticksToRun; i++) {
             bridge.tick();
-            // Tick parallel JS flux + particle simulation for visualization
             if (_fluxMock) _fluxMock.tick();
         }
         _latticeNeedsUpload = true;
     }
 
     // Only re-upload GPU buffers when data has actually changed
-    if (_latticeNeedsUpload) {
+    // For large lattices, throttle volume updates to every Nth frame
+    const volUpdateInterval = L > 48 ? 3 : 1;
+    if (_latticeNeedsUpload && (frameCount % volUpdateInterval === 0)) {
         let particleData = bridge.getParticleData();
         // Fall back to MockBridge particles when main bridge has none (JS-only scenarios)
         if ((!particleData || particleData.count === 0) && _fluxMock) {
@@ -748,11 +823,12 @@ function animateLattice(now) {
     // _fieldNeedsUpdate bypasses throttle for immediate response on toggle.
     _fieldFrame++;
 
-    if (_anyFieldActive && (_fieldNeedsUpdate || _fieldFrame % 3 === 0)) {
+    const fieldThrottle = L > 48 ? 6 : 3;
+    if (_anyFieldActive && (_fieldNeedsUpdate || _fieldFrame % fieldThrottle === 0)) {
         _fieldNeedsUpdate = false;
         const fieldBridge = _fluxMock || bridge;
         const L = bridge.latticeSize || 32;
-        const stride = L > 32 ? 4 : 2;
+        const stride = L > 48 ? 6 : L > 32 ? 4 : 2;
 
         // E-field streamlines
         if (_showEField) {
@@ -939,6 +1015,9 @@ function animateLattice(now) {
         diagnostics.update(diag);
         fluxEnergyChart.push(diag);
         particleChart.push(diag);
+        // Push to additional charts
+        if (chartCharge) chartCharge.push(diag.chargeBalance || 0);
+        if (chartEntropy) chartEntropy.push(diag.entropy || 0);
 
         const lag = _fluxMock ? _fluxMock.getLagrangian() : bridge.getLagrangian();
         lagrangianChart.push(lag);
@@ -951,10 +1030,18 @@ function animateLattice(now) {
                 const ea = _fluxMock ? _fluxMock.getEnergyAudit() : bridge.getEnergyAudit();
                 diagnostics.updateEnergyAudit(ea);
                 break;
-            case 'charts':
+            case 'charts': {
                 fluxEnergyChart.draw();
                 particleChart.draw();
+                const eaC = _fluxMock ? _fluxMock.getEnergyAudit() : bridge.getEnergyAudit();
+                if (eaC) {
+                    if (chartEBEnergy) { chartEBEnergy.push((eaC.EFieldEnergy || eaC.eFieldEnergy || 0) - (eaC.BFieldEnergy || eaC.bFieldEnergy || 0)); chartEBEnergy.draw('#a78bfa'); }
+                    if (chartGauss) { chartGauss.push(eaC.gaussViolation || 0); chartGauss.draw('#fbbf24'); }
+                }
+                if (chartCharge) chartCharge.draw('#4ade80');
+                if (chartEntropy) chartEntropy.draw('#60a5fa');
                 break;
+            }
             case 'lagrangian':
                 lagrangianChart.draw();
                 break;
@@ -2370,16 +2457,6 @@ function wireControls() {
 
 // ── Viewport Toggle Wiring ───────────────────────────────────────────
 function wireViewportToggles() {
-    const wireBtn = document.getElementById('toggle-wireframe');
-    wireBtn.addEventListener('click', () => {
-        wireBtn.classList.toggle('active');
-        viewport.toggleWireframe(wireBtn.classList.contains('active'));
-        _latticeNeedsUpload = true;
-        // Keep universal Grid toggle in sync (wireframe IS the grid at Scale 0)
-        const gb = document.getElementById('toggle-grid');
-        if (gb) gb.classList.toggle('active', wireBtn.classList.contains('active'));
-    });
-
     // Universal toggles (visible on all scales)
     const axesBtn = document.getElementById('toggle-axes');
     if (axesBtn) {
@@ -2388,16 +2465,14 @@ function wireViewportToggles() {
             viewport.toggleAxes(axesBtn.classList.contains('active'));
         });
     }
+    // Grid button also controls the wireframe (lattice boundary box) at Scale 0
     const gridBtn = document.getElementById('toggle-grid');
     if (gridBtn) {
         gridBtn.addEventListener('click', () => {
             gridBtn.classList.toggle('active');
-            viewport.toggleGrid(gridBtn.classList.contains('active'));
-            // Keep Scale 0 wireframe button in sync when grid toggle changes it
-            if (engineMode === 'lattice') {
-                const wb = document.getElementById('toggle-wireframe');
-                if (wb) wb.classList.toggle('active', gridBtn.classList.contains('active'));
-            }
+            const on = gridBtn.classList.contains('active');
+            viewport.toggleGrid(on);
+            viewport.toggleWireframe(on);
         });
     }
 
@@ -2421,14 +2496,14 @@ function wireViewportToggles() {
 
     // PE mode visual overlay toggles
     const velBtn = document.getElementById('toggle-velocities');
-    velBtn.addEventListener('click', () => {
+    if (velBtn) velBtn.addEventListener('click', () => {
         velBtn.classList.toggle('active');
         _showVelocities = velBtn.classList.contains('active');
         viewport.toggleVelocityVectors(_showVelocities);
     });
 
     const trailBtn = document.getElementById('toggle-trails');
-    trailBtn.addEventListener('click', () => {
+    if (trailBtn) trailBtn.addEventListener('click', () => {
         trailBtn.classList.toggle('active');
         _showTrails = trailBtn.classList.contains('active');
         viewport.toggleTrails(_showTrails);
@@ -2639,7 +2714,10 @@ function switchEngineMode(mode) {
         _csEngine = null;
     }
 
-    // Initialize the appropriate engine (each loadXxx calls _resetAllVisualState)
+    // Full visual reset on ENGINE MODE SWITCH (scale change) — clears all toggles
+    _resetAllVisualState();
+
+    // Initialize the appropriate engine for the new scale
     if (mode === 'consciousness') {
         loadConsciousnessScenario(document.getElementById('cs-scenario-select').value);
     } else if (mode === 'molecules') {
@@ -3811,6 +3889,10 @@ function clearCharts() {
     if (particleChart) particleChart.clear();
     if (lagrangianChart) lagrangianChart.clear();
     if (diagnostics) diagnostics.clear();
+    if (chartCharge) chartCharge.clear();
+    if (chartEBEnergy) chartEBEnergy.clear();
+    if (chartGauss) chartGauss.clear();
+    if (chartEntropy) chartEntropy.clear();
 }
 
 function formatNumber(n) {
