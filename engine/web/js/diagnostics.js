@@ -106,11 +106,24 @@ export class DiagnosticsPanel {
             colorR:     document.getElementById('diag-color-r'),
             colorG:     document.getElementById('diag-color-g'),
             colorB:     document.getElementById('diag-color-b'),
-            // Energy audit
+            colorless:      document.getElementById('diag-colorless'),
+            angularMom:     document.getElementById('diag-angular-mom'),
+            // Energy audit (full)
             fieldEnergy:    document.getElementById('diag-field-energy'),
             waveEnergy:     document.getElementById('diag-wave-energy'),
+            particleKE:     document.getElementById('diag-particle-ke'),
             coulombPE:      document.getElementById('diag-coulomb-pe'),
+            eFieldEnergy:   document.getElementById('diag-e-field-energy'),
+            bFieldEnergy:   document.getElementById('diag-b-field-energy'),
+            poynting:       document.getElementById('diag-poynting'),
             gaussViolation: document.getElementById('diag-gauss-violation'),
+            maxGauss:       document.getElementById('diag-max-gauss'),
+            selfField:      document.getElementById('diag-self-field'),
+            // Dual substrate
+            eLeft:          document.getElementById('diag-e-left'),
+            eRight:         document.getElementById('diag-e-right'),
+            chirality:      document.getElementById('diag-chirality'),
+            waveLR:         document.getElementById('diag-wave-lr'),
         };
 
         // Sparklines
@@ -139,6 +152,13 @@ export class DiagnosticsPanel {
         this.els.colorR.textContent = diag.colorRed || 0;
         this.els.colorG.textContent = diag.colorGreen || 0;
         this.els.colorB.textContent = diag.colorBlue || 0;
+        if (this.els.colorless) this.els.colorless.textContent = diag.colorless || 0;
+        if (this.els.angularMom) {
+            const ax = (diag.angMomX || 0).toFixed(3);
+            const ay = (diag.angMomY || 0).toFixed(3);
+            const az = (diag.angMomZ || 0).toFixed(3);
+            this.els.angularMom.textContent = `${ax}, ${ay}, ${az}`;
+        }
 
         // Push to sparklines
         this.sparklines.manifested.push(diag.manifested);
@@ -150,10 +170,37 @@ export class DiagnosticsPanel {
 
     updateEnergyAudit(ea) {
         if (!ea) return;
-        this.els.fieldEnergy.textContent = formatEnergy(ea.fieldEnergy, 0).text;
-        this.els.waveEnergy.textContent = formatEnergy(ea.waveEnergy, 0).text;
-        this.els.coulombPE.textContent = formatEnergy(ea.coulombPE, 0).text;
-        this.els.gaussViolation.textContent = fmtSci(ea.gaussViolation) + ' Pl';
+        const fmt = (v) => formatEnergy(v || 0, 0).text;
+        const sci = (v) => fmtSci(v || 0);
+
+        // Energy budget
+        if (this.els.fieldEnergy) this.els.fieldEnergy.textContent = fmt(ea.fieldEnergy);
+        if (this.els.waveEnergy) this.els.waveEnergy.textContent = fmt(ea.waveEnergy);
+        if (this.els.particleKE) this.els.particleKE.textContent = fmt(ea.particleKE);
+        if (this.els.coulombPE) this.els.coulombPE.textContent = fmt(ea.coulombPE);
+
+        // EM sector
+        if (this.els.eFieldEnergy) this.els.eFieldEnergy.textContent = fmt(ea.EFieldEnergy || ea.eFieldEnergy);
+        if (this.els.bFieldEnergy) this.els.bFieldEnergy.textContent = fmt(ea.BFieldEnergy || ea.bFieldEnergy);
+        if (this.els.poynting) {
+            const px = ea.totalPoynting?.x || ea.poyntingX || 0;
+            const py = ea.totalPoynting?.y || ea.poyntingY || 0;
+            const pz = ea.totalPoynting?.z || ea.poyntingZ || 0;
+            this.els.poynting.textContent = sci(Math.sqrt(px*px + py*py + pz*pz));
+        }
+
+        // Constraints
+        if (this.els.gaussViolation) this.els.gaussViolation.textContent = sci(ea.gaussViolation);
+        if (this.els.maxGauss) this.els.maxGauss.textContent = sci(ea.maxGaussError);
+        if (this.els.selfField) this.els.selfField.textContent = sci(ea.selfFieldInjection);
+
+        // Dual substrate
+        if (this.els.eLeft) this.els.eLeft.textContent = fmt(ea.ELTotal || ea.eLTotal);
+        if (this.els.eRight) this.els.eRight.textContent = fmt(ea.ERTotal || ea.eRTotal);
+        if (this.els.chirality) this.els.chirality.textContent = sci(ea.chiralityTotal);
+        if (this.els.waveLR) {
+            this.els.waveLR.textContent = `${fmt(ea.wvLTotal || 0)} / ${fmt(ea.wvRTotal || 0)}`;
+        }
     }
 
     drawSparklines() {

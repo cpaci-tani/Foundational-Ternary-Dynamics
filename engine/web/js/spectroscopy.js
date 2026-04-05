@@ -52,9 +52,9 @@ export function spectralSeries(Z = 1, n_max = 7) {
             const E_f = hydrogenEnergyLevel(n_f, Z);
             const dE = E_f - E_i; // negative (photon emitted), take abs
 
-            // Wavelength: lambda = hbar*c / |dE|, convert MeV -> nm
+            // Wavelength: lambda = 2*pi*hbar*c / |dE|, convert MeV -> nm
             // hbar*c = 197.327 MeV*fm, 1 fm = 1e-6 nm
-            const lambda_fm = HBAR_C_MEV_FM / Math.abs(dE);
+            const lambda_fm = 2.0 * PI_FTD * HBAR_C_MEV_FM / Math.abs(dE);
             const lambda_nm = lambda_fm * 1e-6; // fm -> nm
 
             transitions.push({

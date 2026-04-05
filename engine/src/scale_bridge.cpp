@@ -32,7 +32,8 @@ std::vector<Particle> coarsen_to_particles(const RenderBridge& rb) {
         Particle p;
         p.id = v.particle_id;
         p.charge = v.state;
-        p.mass = K_B;
+        // Mass from flux energy density, floored at K_B (electron mass threshold)
+        p.mass = std::max(v.density(), K_B);
         p.r_eff = R_EFF_DEFAULT;
 
         // Position: integer coord + sub-lattice remainder
@@ -82,6 +83,7 @@ void refine_to_voxels(const Particle& p, RenderBridge& rb) {
     v.color = p.color;
     v.pair_id = p.pair_id;
     v.locked = p.locked;
+    v.particle_id = p.id;  // Restore particle identity for tracking
 }
 
 // ============================================================================
@@ -151,7 +153,7 @@ std::vector<Atom> coarsen_to_atoms(const ParticleEngine& pe) {
         a.vdw_epsilon = props.vdw_epsilon;
         a.vdw_sigma = props.vdw_sigma;
         a.max_bonds = props.max_bonds;
-        a.valence_electrons = props.max_bonds;
+        a.valence_electrons = props.valence_e;  // VSEPR geometry (matches atom_engine.cpp)
         a.position = centroid;
         a.locked = true;  // Preserve locked state from protons
 

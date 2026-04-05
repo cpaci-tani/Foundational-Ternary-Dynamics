@@ -7,7 +7,7 @@
  */
 
 import { getById as catalogGetById } from './particle-catalog.js';
-import { ALPHA, K_B, K_GENESIS, DAMPING, G_N, C_SPEED, M_PROTON, R_BOHR, N_BASE } from './constants.js';
+import { ALPHA, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON, R_BOHR, N_BASE } from './constants.js';
 import { cpkColor, defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from './elements.js';
 
 // ── Atom property helper (simulation units: Bohr-scaled) ──────────
@@ -65,12 +65,14 @@ export class MockBridge {
         // Mutable simulation parameters (combo panel)
         this._params = { kb: K_B, gn: G_N, damping: DAMPING };
 
-        // Toggle states (mirror engine TermToggles)
+        // Toggle states (mirror engine TermToggles from term_toggles.h)
         this._toggles = {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
-            gauss_projection: true, forces: true, gravity: false, movement: true,
-            poisson_coulomb: true, lorentz_force: false, selective_damping: false,
-            larmor_radiation: false, dual_substrate: false, confinement: false,
+            gauss_projection: true, forces: true, gravity: true, movement: true,
+            poisson_coulomb: true, lorentz_force: true, selective_damping: true,
+            larmor_radiation: false, dual_substrate: true, weak_transmutation: true,
+            color_forces: false, strong_force: false, triad_binding: false,
+            pair_production: false, exchange_force: false, latency_field: false,
         };
 
         // Visual settings (shared with viewport for size control)
@@ -512,12 +514,14 @@ export class MockBridge {
         this._fluxMag = null;
         this._fluxDirty = true;
         this._params = { kb: K_B, gn: G_N, damping: DAMPING };
-        // Reset toggles to defaults
+        // Reset toggles to defaults (must match constructor and term_toggles.h)
         this._toggles = {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
-            gauss_projection: true, forces: true, gravity: false, movement: true,
-            poisson_coulomb: true, lorentz_force: false, selective_damping: false,
-            larmor_radiation: false, dual_substrate: false, confinement: false,
+            gauss_projection: true, forces: true, gravity: true, movement: true,
+            poisson_coulomb: true, lorentz_force: true, selective_damping: true,
+            larmor_radiation: false, dual_substrate: true, weak_transmutation: true,
+            color_forces: false, strong_force: false, triad_binding: false,
+            pair_production: false, exchange_force: false, latency_field: false,
         };
         // Rebuild boundary mask for new lattice size
         this._rebuildBoundaryMask();
@@ -604,23 +608,36 @@ export class MockBridge {
         const positions = this._pdPositions;
         const colors = this._pdColors;
         const sizes = this._pdSizes;
+        // Only render manifested particles (+1, -1) and high-flux void sites.
+        // Skip low-density void particles — they cause white grid artifacts
+        // when stacked along camera axes with additive blending.
+        let outCount = 0;
+        const mSize = this._visualSettings ? this._visualSettings.manifestedSize : 12.0;
+        const VOID_FLUX_THRESHOLD = 0.05; // only show void sites with significant flux
+
         for (let i = 0; i < count; i++) {
             const p = this._particles[i];
-            positions[i * 3] = p.x;
-            positions[i * 3 + 1] = p.y;
-            positions[i * 3 + 2] = p.z;
+
+            // Skip void particles with negligible flux
+            if (p.state === 0 && p.density < VOID_FLUX_THRESHOLD) continue;
+
+            positions[outCount * 3] = p.x;
+            positions[outCount * 3 + 1] = p.y;
+            positions[outCount * 3 + 2] = p.z;
             if (p.state === 1) {
-                colors[i * 3] = 0.4; colors[i * 3 + 1] = 0.87; colors[i * 3 + 2] = 0.5;
+                colors[outCount * 3] = 0.4; colors[outCount * 3 + 1] = 0.87; colors[outCount * 3 + 2] = 0.5;
+                sizes[outCount] = mSize;
             } else if (p.state === -1) {
-                colors[i * 3] = 0.97; colors[i * 3 + 1] = 0.44; colors[i * 3 + 2] = 0.44;
+                colors[outCount * 3] = 0.97; colors[outCount * 3 + 1] = 0.44; colors[outCount * 3 + 2] = 0.44;
+                sizes[outCount] = mSize;
             } else {
-                colors[i * 3] = 0.47; colors[i * 3 + 1] = 0.53; colors[i * 3 + 2] = 0.6;
+                // High-flux void: show as dim blue dot
+                colors[outCount * 3] = 0.3; colors[outCount * 3 + 1] = 0.4; colors[outCount * 3 + 2] = 0.6;
+                sizes[outCount] = 2.0 + p.density * 6.0;
             }
-            const mSize = this._visualSettings ? this._visualSettings.manifestedSize : 12.0;
-            const vSize = this._visualSettings ? this._visualSettings.voidSize : 4.0;
-            sizes[i] = p.state !== 0 ? mSize : vSize + p.density * 8.0;
+            outCount++;
         }
-        return { positions, colors, sizes, count };
+        return { positions, colors, sizes, count: outCount };
     }
 
     getDiagnostics() {
@@ -656,8 +673,12 @@ export class MockBridge {
             maxBandwidth: 0, avgDrag: 0,
             entropy: totalEnergy > 0 ? Math.log(totalEnergy + 1) : 0,
             chargeBalance: positive - negative,
-            spinUp: 0, spinDown: 0,
-            colorless: 0, colorRed: 0, colorGreen: 0, colorBlue: 0,
+            spinUp: manifested.filter(p => p.spin === 1).length,
+            spinDown: manifested.filter(p => p.spin === -1).length,
+            colorless: manifested.filter(p => !p.color || p.color === 0).length,
+            colorRed: manifested.filter(p => p.color === 1).length,
+            colorGreen: manifested.filter(p => p.color === 2).length,
+            colorBlue: manifested.filter(p => p.color === 3).length,
             angMomX: 0, angMomY: 0, angMomZ: 0
         };
     }
@@ -676,11 +697,21 @@ export class MockBridge {
             fieldEnergy *= 0.5;
             waveEnergy *= 0.5;
         }
+        // E = -wave_vel, B = curl(J) — compute EM field energies
+        let EFieldEnergy = waveEnergy; // |E|^2/2 = |wave_vel|^2/2
+        let BFieldEnergy = 0;
+        let poyntingX = 0, poyntingY = 0, poyntingZ = 0;
+        // Dual substrate energies
+        let ELTotal = 0, ERTotal = 0, wvLTotal = 0, wvRTotal = 0, chiralityTotal = 0;
+
         return {
             fieldEnergy, waveEnergy, particleKE: 0,
             totalEnergy: fieldEnergy + waveEnergy,
+            EFieldEnergy, BFieldEnergy,
+            totalPoynting: { x: poyntingX, y: poyntingY, z: poyntingZ },
             gaussViolation: 0, maxGaussError: 0, selfFieldInjection: 0,
-            coulombPE: 0, chargeTotal: 0, manifested: 0
+            coulombPE: 0, chargeTotal: 0, manifested: 0,
+            ELTotal, ERTotal, chiralityTotal, wvLTotal, wvRTotal,
         };
     }
 
@@ -795,10 +826,33 @@ export class MockBridge {
         const damp = this._toggles.damping ? (1.0 - this._params.damping) : 1.0;
         const J = this._fluxJ;
         const WV = this._fluxWV;
-
-        // Leapfrog wave equation: WV += c² * ∇²J; J += WV; J *= damp
-        // Inlined index computation avoids 7× _fluxIdx() function calls per voxel
         const NN = N * N;
+        const NNN = N * N * N;
+
+        // Build state grid from particles for coupling term: g_c * grad(s)
+        // State field s ∈ {-1, 0, +1} mapped onto the lattice
+        let stateGrid = null;
+        const doCoupling = this._toggles.coupling;
+        if (doCoupling) {
+            if (!this._stateGrid || this._stateGrid.length !== NNN) {
+                this._stateGrid = new Int8Array(NNN);
+            }
+            stateGrid = this._stateGrid;
+            stateGrid.fill(0);
+            for (const p of this._particles) {
+                if (p.state === 0) continue;
+                const px = ((Math.round(p.x) % N) + N) % N;
+                const py = ((Math.round(p.y) % N) + N) % N;
+                const pz = ((Math.round(p.z) % N) + N) % N;
+                stateGrid[pz * NN + py * N + px] = p.state;
+            }
+        }
+
+        // 18-point isotropic Laplacian: (1/3)*face + (1/6)*edge - 4*center
+        // Cancels O(k^4) anisotropy for faithful wave propagation (matches C++ engine)
+        const W_FACE = 1.0 / 3.0;
+        const W_EDGE = 1.0 / 6.0;
+
         for (let z = 0; z < N; z++) {
             const zw = z * NN;
             const zpw = ((z + 1) % N) * NN;
@@ -811,6 +865,8 @@ export class MockBridge {
                     const xpx = (x + 1) % N;
                     const xmx = (x - 1 + N) % N;
                     const idx = zw + yw + x;
+
+                    // 6 face neighbors
                     const xp = zw + yw + xpx;
                     const xm = zw + yw + xmx;
                     const yp = zw + ypw + x;
@@ -818,9 +874,55 @@ export class MockBridge {
                     const zp = zpw + yw + x;
                     const zm = zmw + yw + x;
 
+                    // 12 edge neighbors (pairs sharing an edge, not face)
+                    const xpyp = zw + ypw + xpx;
+                    const xpym = zw + ymw + xpx;
+                    const xmyp = zw + ypw + xmx;
+                    const xmym = zw + ymw + xmx;
+                    const xpzp = zpw + yw + xpx;
+                    const xpzm = zmw + yw + xpx;
+                    const xmzp = zpw + yw + xmx;
+                    const xmzm = zmw + yw + xmx;
+                    const ypzp = zpw + ypw + x;
+                    const ypzm = zmw + ypw + x;
+                    const ymzp = zpw + ymw + x;
+                    const ymzm = zmw + ymw + x;
+
                     for (let c = 0; c < 3; c++) {
-                        const lap = J[xp * 3 + c] + J[xm * 3 + c] + J[yp * 3 + c] + J[ym * 3 + c] + J[zp * 3 + c] + J[zm * 3 + c] - 6 * J[idx * 3 + c];
-                        WV[idx * 3 + c] += c2 * lap;
+                        const ci = idx * 3 + c;
+                        const center = J[ci];
+
+                        // Face sum (weight 1/3 each)
+                        const faceSum = J[xp * 3 + c] + J[xm * 3 + c]
+                                      + J[yp * 3 + c] + J[ym * 3 + c]
+                                      + J[zp * 3 + c] + J[zm * 3 + c];
+
+                        // Edge sum (weight 1/6 each)
+                        const edgeSum = J[xpyp * 3 + c] + J[xpym * 3 + c]
+                                      + J[xmyp * 3 + c] + J[xmym * 3 + c]
+                                      + J[xpzp * 3 + c] + J[xpzm * 3 + c]
+                                      + J[xmzp * 3 + c] + J[xmzm * 3 + c]
+                                      + J[ypzp * 3 + c] + J[ypzm * 3 + c]
+                                      + J[ymzp * 3 + c] + J[ymzm * 3 + c];
+
+                        const lap = W_FACE * faceSum + W_EDGE * edgeSum - 4.0 * center;
+                        WV[ci] += c2 * lap;
+                    }
+
+                    // State-flux coupling: WV += G_C * grad(s)
+                    // From the Euler-Lagrange equation δS/δJ = 0, the source term
+                    // couples the discrete state field to the continuous flux field.
+                    if (doCoupling && stateGrid) {
+                        const gs_xp = stateGrid[xp];
+                        const gs_xm = stateGrid[xm];
+                        const gs_yp = stateGrid[yp];
+                        const gs_ym = stateGrid[ym];
+                        const gs_zp = stateGrid[zp];
+                        const gs_zm = stateGrid[zm];
+                        // Central difference gradient: grad(s) = (s(+1) - s(-1)) / 2
+                        WV[idx * 3]     += G_C * (gs_xp - gs_xm) * 0.5;
+                        WV[idx * 3 + 1] += G_C * (gs_yp - gs_ym) * 0.5;
+                        WV[idx * 3 + 2] += G_C * (gs_zp - gs_zm) * 0.5;
                     }
                 }
             }
@@ -3268,7 +3370,34 @@ export class WasmBridge {
     getParticleData() {
         if (!this._module || !this._bridge)
             return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), count: 0 };
-        return this._module.getParticleData(this._bridge);
+        const raw = this._module.getParticleData(this._bridge);
+        // Filter out low-density void particles to prevent white grid artifacts
+        // when transparent points stack along camera axes with blending.
+        if (!raw || raw.count === 0) return raw;
+        const VOID_THRESHOLD = 0.02;
+        const outPos = new Float32Array(raw.count * 3);
+        const outCol = new Float32Array(raw.count * 3);
+        const outSiz = new Float32Array(raw.count);
+        let out = 0;
+        for (let i = 0; i < raw.count; i++) {
+            const sz = raw.sizes[i];
+            const r = raw.colors[i * 3], g = raw.colors[i * 3 + 1], b = raw.colors[i * 3 + 2];
+            // Detect void particles: they are small and grey/dark
+            // Manifested particles (+1/-1) are green (0.29,0.87,0.50) or red (0.97,0.44,0.44) at size ~12
+            // Void particles are grey (0.25,0.28,0.35) at size ~2-4
+            // Manifested particles: green (g>0.7) or red (r>0.8) at size 6
+            // Void with significant flux: grey-blue at size 1.5-5.0
+            // Skip ALL void dots — the flux volume handles void visualization
+            const isManifested = g > 0.7 || r > 0.8;
+            if (!isManifested) continue;
+            outPos[out * 3] = raw.positions[i * 3];
+            outPos[out * 3 + 1] = raw.positions[i * 3 + 1];
+            outPos[out * 3 + 2] = raw.positions[i * 3 + 2];
+            outCol[out * 3] = r; outCol[out * 3 + 1] = g; outCol[out * 3 + 2] = b;
+            outSiz[out] = sz;
+            out++;
+        }
+        return { positions: outPos, colors: outCol, sizes: outSiz, count: out };
     }
 
     getDiagnostics() {
@@ -3286,8 +3415,11 @@ export class WasmBridge {
         if (!this._module || !this._bridge)
             return {
                 fieldEnergy: 0, waveEnergy: 0, particleKE: 0, totalEnergy: 0,
+                EFieldEnergy: 0, BFieldEnergy: 0,
+                totalPoynting: { x: 0, y: 0, z: 0 },
                 gaussViolation: 0, maxGaussError: 0, selfFieldInjection: 0,
-                coulombPE: 0, chargeTotal: 0, manifested: 0
+                coulombPE: 0, chargeTotal: 0, manifested: 0,
+                ELTotal: 0, ERTotal: 0, chiralityTotal: 0, wvLTotal: 0, wvRTotal: 0,
             };
         return this._module.getEnergyAudit(this._bridge);
     }

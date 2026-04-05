@@ -25,12 +25,14 @@ export class WebSocketBridge {
         this.ready = false;
         this.latticeSize = 32;
 
-        // Toggle state mirror (updated from server)
+        // Toggle state mirror (updated from server, defaults match term_toggles.h)
         this._toggles = {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
-            gauss_projection: true, forces: true, gravity: false, movement: true,
-            poisson_coulomb: true, lorentz_force: false, selective_damping: false,
-            larmor_radiation: false, dual_substrate: false, confinement: false,
+            gauss_projection: true, forces: true, gravity: true, movement: true,
+            poisson_coulomb: true, lorentz_force: true, selective_damping: true,
+            larmor_radiation: false, dual_substrate: true, weak_transmutation: true,
+            color_forces: false, strong_force: false, triad_binding: false,
+            pair_production: false, exchange_force: false, latency_field: false,
         };
 
         // Cached particle data (reused between frames)
