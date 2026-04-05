@@ -86,3 +86,15 @@ The lemniscate appearing in F[|psi|^2] is not any lemniscate -- it is the **Four
 The Joukowski map (circle -> lemniscate) therefore has ontological meaning: it is the mathematical form of the transition from Level 0 (the full wave function, undistinguished totality) to Level -1 (the First Distinction, the act of measurement that separates the world into what is observed and what is not).
 
 **The Born rule does not merely calculate probabilities. It performs the First Distinction in spectral space.**
+
+---
+
+## 7. Subsequent 3D Validation
+
+The circle-to-lemniscate Joukowski result (Sections 1-6 above) remains valid: it describes the spectral transformation of a single propagating wave function under |psi|^2 and is algebraically exact.
+
+Separately from this work, a 2D FFT analysis of multi-particle (N-body) spectral fingerprints appeared to show that the Born rule selects for Lie algebra gauge groups (crystallographic N preferred over non-crystallographic N). This was a distinct investigation from the Joukowski analysis above.
+
+**That multi-particle gauge-group-selection result was a square-grid FFT artifact.** Testing on the real 3D WASM engine (32^3 cubic lattice) showed all N values produce clean peaks at correct particle angles, including N=5. Concentration decreases monotonically with N, with no special role for crystallographic dimensions. See [EXPLR_SPECTRAL_ARTIFACT_DISCOVERY.md](EXPLR_SPECTRAL_ARTIFACT_DISCOVERY.md) for the full analysis and data.
+
+The Joukowski result in this document is unaffected because it analyzes a single wave function's spectral support (circle vs lemniscate shape), not multi-particle angular distributions.
