@@ -120,6 +120,21 @@ public:
     // Re-seed the internal RNG (for ensemble runs with independent realizations)
     void seed_rng(unsigned int seed) { rng_.seed(seed); }
 
+    // Force CPU-only execution (disables GPU backend even if CUDA is available).
+    // Used by parity tests that need a true CPU reference.
+    void force_cpu() {
+#ifdef FTD_ENABLE_CUDA
+        use_gpu_ = false;
+#endif
+    }
+
+    // Ensure host voxels_ is up-to-date with GPU device memory.
+    void sync_from_gpu() {
+#ifdef FTD_ENABLE_CUDA
+        gpu_sync_to_host();
+#endif
+    }
+
     // Physics term toggles (pedagogy system)
     TermToggles toggles;
 
@@ -238,7 +253,7 @@ private:
     double dt_ = 1.0;             // Time step multiplier (≥1.0). Scales damping, forces, movement.
     double physical_time_ = 0.0;  // Accumulated physical time (sum of dt_ per tick)
     int next_pair_id_ = 0;  // Counter for entangled pair IDs
-    int next_particle_id_ = 0;  // Monotonic counter for particle IDs
+    int next_particle_id_ = 0;  // Monotonic counter for particle IDs (thread-safe via local atomic in phase_write)
 
     // RNG for stochastic genesis (Born rule manifestation)
     // Genesis probability: p = 1 - exp(-(|J| - K_GENESIS) / K_B)

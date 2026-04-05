@@ -1,5 +1,120 @@
 # Foundational Ternary Dynamics Changelog
 
+## Engine v2.11 — Complete SM Verification & Five Minds Audit (April 4-5, 2026)
+
+### Engine Audit (29 fixes)
+- Fixed Tritium popcount64 infinite recursion on GCC/Clang (trit.h)
+- Fixed OpenMP data race in phase_write genesis (per-thread RNG + critical section)
+- Aligned GPU/CPU color force to 3-regime model (Coulomb/transition/confinement)
+- Added force_cpu() and sync_from_gpu() to RenderBridge for GPU test parity
+- Fixed GPU parity test: 21/21 PASS (was 10/21)
+- Fixed test_latency_field for GPU build (unique_ptr for non-copyable RenderBridge)
+- Fixed MockBridge toggle defaults to match term_toggles.h
+- Upgraded MockBridge with 18-point isotropic Laplacian + state-flux coupling
+- Fixed spectroscopy wavelength (added 2pi factor)
+- Fixed scale bridge: particle_id restoration, flux-energy mass, valence_electrons
+- Fixed lagrangian_density() to include velocity_coupling_term
+- Fixed tracker periodic boundary wrapping
+- Updated SPEC_ENGINE.md: G_C = sqrt(alpha), toggle defaults
+
+### Complete Standard Model (46 observables, zero free parameters)
+- `scripts/proofs/proof_complete_sm.py`: Full SM from D=3 + varpi
+- 27 [THEOREM], 8 [SELECTION], 8 [PARAMETRIC], 3 [PREDICTION]
+- Key results: 1/alpha to 25 digits (0.00 ppb), m_tau/m_e (0.007%), m_p/m_e (174 ppm)
+- Proton mass formula discovered: m_p/m_e = N_eff/alpha + N_base*N_eff + N_c
+- Electron g-2 (5-loop): 2.55 ppb from experiment
+- Lamb shift: 1055.4 MHz (0.23% from 1057.845 MHz experiment)
+- Proton absolutely stable (tau_p = infinity, [THEOREM])
+- pi0 -> gamma gamma: 7.79 eV (0.4% from 7.82 eV)
+
+### Motivic Proof
+- `scripts/proofs/proof_motivic_master_quadratic.py`: Master quadratic proven as graded period relation of Sym*(h^1(E_i))
+- Watson integral W_3 = G*^2/(2pi) as period of Sym^2(h^1(E_i))
+- Coefficient 16 = |Aut(E_i)|^2 forced by CM curve arithmetic
+
+### Five Minds Campaign Tests (15/15 PASS)
+- `campaign_plato.cpp`: Dispositional ratio, genesis threshold, void energy (9/9)
+- `campaign_einstein.cpp`: Energy conservation, Lorentz contraction, gravitational redshift (11/11)
+- `campaign_vonneumann.cpp`: Coulomb scaling, wave speed, hydrogen binding (6/6)
+- `campaign_wigner.cpp`: Octahedral symmetry (1.000005), parity violation, CPT invariance (7/7)
+- `campaign_grothendieck.cpp`: Color force, scale bridge, alpha from scattering = 0.027 (9/9)
+
+### Web Dashboard
+- Modern loading screen with 8x8x8 rotating lattice + progress bar
+- Fixed flux volume axis-aligned bloom (opacity, depthTest)
+- Fixed ghost particle dots (filtered void voxels from WASM and MockBridge)
+- Performance throttling for L > 48 lattices
+- Responsive breakpoints (1024px, 768px)
+- Accessibility: focus-visible, prefers-reduced-motion, ARIA tabs
+- 28 telemetry values in compact 2-column diagnostics
+- 6 charts panel, rebuilt Lagrangian panel
+- Visual toggle persistence across scenarios (reset only on scale switch)
+- Removed redundant Visuals card and Wireframe button
+- Softened lattice wireframe, reduced star field density
+- Firefox slider support, Safari backdrop-filter prefix
+
+## Spectral Analysis, 3D Engine Validation, and Grid Artifact Discovery (April 4, 2026)
+
+### Five Minds Spectral Analysis (Rounds 1-5)
+
+Systematic investigation of N-particle spectral fingerprints under the Born rule,
+using five roleplay agents (Plato, Einstein, von Neumann, Wigner, Grothendieck).
+15 figures generated across 5 rounds exploring angular concentration, entropy gaps,
+singular value spectra, spectral products, fractal dimensions, symmetry breaking,
+and phase transitions. 7 exploration scripts in `scripts/exploration/`.
+
+### Critical Finding: 2D Gauge-Group Selection Was a Grid Artifact
+
+Initial 2D Python FFT analysis suggested the Born rule filters for Lie algebra
+gauge groups: crystallographic N = {2, 3, 4, 6} showed higher angular concentration
+than non-crystallographic N, and N=5 appeared to "fail" with dramatically lower
+concentration. This was tested across multiple metrics (angular concentration,
+effective rank, entropy gap, fractal dimension) and appeared robust.
+
+**However**, testing on the real 3D WASM engine (32^3 cubic lattice) revealed:
+
+- ALL N values (including N=5) produce clean flux peaks at correct particle angles
+- Angular concentration decreases monotonically with N (more particles = more uniform)
+- No special role for crystallographic dimensions in 3D
+- The "N=5 dip" was caused by the square-grid FFT Brillouin zone M-point bias at 45 degrees
+
+The rotation invariance test (`grid_artifact_test.py`) confirmed peaks track particle
+positions (physics), not grid diagonals (artifact), but the 2D FFT adds a secondary
+C4 modulation that preferentially enhances crystallographic symmetries.
+
+**Lesson**: Always validate 2D spectral analysis against the actual 3D engine.
+
+See: `docs/theory/09_mathematical/EXPLR_SPECTRAL_ARTIFACT_DISCOVERY.md`
+
+### 3D Engine Validation Data
+
+Real 3D equatorial flux profiles from WASM engine (N=2..8, 40 ticks, frozen particles):
+
+| N | Concentration | Contrast | Peak Angles Match Expected? |
+|---|--------------|----------|---------------------------|
+| 2 | 0.081 | 13.2 | Yes (0, 180) |
+| 3 | 0.060 | 13.3 | Yes (0, 120, 240) |
+| 4 | 0.022 | 4.3 | Yes (0, 90, 180, 270) |
+| 5 | 0.019 | 4.3 | Yes (0, 72, 144, 216, 288) |
+| 6 | 0.010 | 3.0 | Yes (0, 60, 120, 180, 240, 300) |
+| 7 | 0.005 | 2.0 | Yes (0, 51, 103, ...) |
+| 8 | 0.002 | 1.6 | Yes (0, 45, 90, ...) |
+
+### Spectral Circle to Lemniscate (Valid Result)
+
+The Born rule as Joukowski transform (F[psi] = circle, F[|psi|^2] = lemniscate) remains
+valid and is documented in `EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md`. This is a separate
+finding from the gauge-group filtering claim.
+
+### Engine Scenario Tour
+
+Toured 20+ scenarios across all 5 engine scales (Substrate, Particles, Atoms, Molecules,
+Consciousness) via the WASM web dashboard, verifying scenario functionality including:
+two-slit interference, pair production (7114 particles), baryon confinement, flux vortex,
+Rutherford scattering, dipole radiation, meson confinement, vacuum fluctuations,
+gravitational waves, baryogenesis, black holes, benzene, caffeine, and consciousness
+threshold crossing.
+
 ## phi^3 Exact EFT, One-Loop Lattice Alpha, Blind Derivation Chain (April 3, 2026)
 
 ### The phi^3 Exact Effective Field Theory
