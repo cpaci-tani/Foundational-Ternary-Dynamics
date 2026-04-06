@@ -21,6 +21,26 @@
 
         /* ── Design Tokens ─────────────────────────────────── */
         :root {
+            /* UI Scale: 0.85 = compact, 1.0 = default, 1.15 = large, 1.3 = x-large */
+            --ui-scale: 1.1;
+
+            /* Scaled font sizes (base * scale) */
+            --fs-xs:    calc(10px * var(--ui-scale));
+            --fs-sm:    calc(11px * var(--ui-scale));
+            --fs-base:  calc(12px * var(--ui-scale));
+            --fs-md:    calc(13px * var(--ui-scale));
+            --fs-lg:    calc(14px * var(--ui-scale));
+            --fs-xl:    calc(16px * var(--ui-scale));
+            --fs-2xl:   calc(20px * var(--ui-scale));
+            --fs-3xl:   calc(24px * var(--ui-scale));
+
+            /* Scaled spacing */
+            --sp-xs:    calc(2px * var(--ui-scale));
+            --sp-sm:    calc(4px * var(--ui-scale));
+            --sp-md:    calc(8px * var(--ui-scale));
+            --sp-lg:    calc(12px * var(--ui-scale));
+            --sp-xl:    calc(16px * var(--ui-scale));
+
             --bg-deep: #111827;
             --bg-surface: #1f2937;
             --bg-card: #283548;
@@ -70,7 +90,7 @@
             background: var(--bg-deep);
             color: var(--text-primary);
             font-family: var(--font-body);
-            font-size: 14px;
+            font-size: var(--fs-lg);
             line-height: 1.4;
         }
 
@@ -78,7 +98,7 @@
         #app {
             display: grid;
             height: 100vh;
-            grid-template-rows: 48px 1fr auto auto 28px;
+            grid-template-rows: calc(48px * var(--ui-scale)) 1fr auto auto calc(28px * var(--ui-scale));
             grid-template-areas:
                 "toolbar"
                 "viewport"
@@ -100,7 +120,7 @@
 
         #toolbar .brand {
             font-weight: 600;
-            font-size: 14px;
+            font-size: var(--fs-lg);
             letter-spacing: 0.5px;
             color: var(--text-primary);
             margin-right: 8px;
@@ -123,14 +143,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
+            width: calc(36px * var(--ui-scale));
+            height: calc(36px * var(--ui-scale));
             background: var(--bg-input);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             color: var(--text-secondary);
             cursor: pointer;
-            font-size: 14px;
+            font-size: var(--fs-lg);
             transition: all 0.15s;
         }
 
@@ -147,14 +167,14 @@
         }
 
         .tb-select {
-            height: 32px;
-            padding: 0 10px;
+            height: calc(32px * var(--ui-scale));
+            padding: 0 var(--sp-md);
             background: var(--bg-input);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             color: var(--text-primary);
             font-family: var(--font-body);
-            font-size: 12px;
+            font-size: var(--fs-base);
             cursor: pointer;
         }
 
@@ -165,7 +185,7 @@
 
         .tb-label {
             color: var(--text-muted);
-            font-size: 11px;
+            font-size: var(--fs-sm);
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -207,7 +227,7 @@
 
         .tb-value {
             font-family: var(--font-mono);
-            font-size: 11px;
+            font-size: var(--fs-sm);
             color: var(--accent);
             min-width: 24px;
             text-align: right;
@@ -241,8 +261,8 @@
         }
 
         .view-toggle {
-            padding: 4px 10px;
-            font-size: 11px;
+            padding: var(--sp-sm) var(--sp-md);
+            font-size: var(--fs-sm);
             font-weight: 500;
             background: rgba(31, 41, 55, 0.85);
             border: 1px solid var(--border);
@@ -418,8 +438,8 @@
         }
 
         .tab {
-            padding: 8px 20px;
-            font-size: 12px;
+            padding: var(--sp-md) calc(var(--sp-xl) + 4px);
+            font-size: var(--fs-base);
             font-weight: 500;
             color: var(--text-muted);
             cursor: pointer;
@@ -495,7 +515,7 @@
         /* Panel layout helpers */
         .panel-grid {
             display: grid;
-            gap: 12px;
+            gap: var(--sp-lg);
         }
 
         .panel-grid-2 {
@@ -514,38 +534,43 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 12px;
+            padding: var(--sp-lg);
+            min-width: 0;
+            overflow: hidden;
         }
 
         .card-title {
-            font-size: 10px;
+            font-size: var(--fs-xs);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--text-muted);
-            margin-bottom: 8px;
+            margin-bottom: var(--sp-md);
         }
 
         .unit-hint {
             font-weight: 400;
             text-transform: none;
             opacity: 0.6;
-            font-size: 9px;
+            font-size: calc(var(--fs-xs) - 1px);
         }
 
         /* Stat display */
         .stat-value {
             font-family: var(--font-mono);
-            font-size: 20px;
+            font-size: var(--fs-2xl);
             font-weight: 500;
             color: var(--text-primary);
             line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .stat-unit {
-            font-size: 11px;
+            font-size: var(--fs-sm);
             color: var(--text-muted);
-            margin-left: 4px;
+            margin-left: var(--sp-sm);
         }
 
         .stat-sparkline {
@@ -557,7 +582,7 @@
         #pe-telemetry { margin-top: 12px; }
         .pe-telem-section { margin-bottom: 10px; }
         .pe-telem-title {
-            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            font-size: var(--fs-sm); font-weight: 600; text-transform: uppercase;
             letter-spacing: 0.8px; color: var(--accent); margin-bottom: 8px;
         }
         .pe-conservation-row {
@@ -704,7 +729,7 @@
 
         /* Scale context header above controls grid */
         .panel-scale-header {
-            font-size: 10px;
+            font-size: var(--fs-xs);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -844,7 +869,7 @@
             padding: 0 16px;
             background: var(--bg-deep);
             border-top: 1px solid var(--border);
-            font-size: 11px;
+            font-size: var(--fs-sm);
             color: var(--text-muted);
         }
 
@@ -2078,6 +2103,45 @@
                 <span class="tb-label">Speed</span>
                 <input type="range" class="tb-slider" id="ticks-per-frame" min="0" max="100" step="0.1" value="50">
                 <span class="tb-value" id="tpf-display">1.0</span>
+            </div>
+            <div style="margin-left:auto;"></div>
+            <button class="tb-btn" id="btn-settings" title="Settings" style="font-size:16px;">&#9881;</button>
+        </div>
+
+        <!-- ── Settings Modal ────────────────────────── -->
+        <div id="settings-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.5);">
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+                        background:var(--bg-surface); border:1px solid var(--border-light); border-radius:var(--radius-lg);
+                        padding:24px; min-width:340px; max-width:440px; box-shadow:0 16px 48px rgba(0,0,0,0.5);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <div style="font-size:var(--fs-xl); font-weight:600;">Settings</div>
+                    <button id="settings-close" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">&times;</button>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:var(--fs-md); font-weight:500; color:var(--text-secondary); margin-bottom:8px;">
+                        UI Scale
+                    </label>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <input type="range" id="settings-ui-scale" min="0.8" max="1.5" step="0.05" value="1.0"
+                               style="flex:1; accent-color:var(--accent); height:6px;">
+                        <span id="settings-scale-val" style="font-family:var(--font-mono); font-size:var(--fs-lg); font-weight:bold; color:var(--accent); min-width:40px; text-align:center;">100%</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:var(--fs-xs); color:var(--text-muted);">
+                        <span>Compact</span><span>Default</span><span>Large</span><span>X-Large</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+                    <button class="settings-preset tb-btn" data-scale="0.85" style="flex:1;">Compact</button>
+                    <button class="settings-preset tb-btn" data-scale="1.0" style="flex:1;">Default</button>
+                    <button class="settings-preset tb-btn" data-scale="1.15" style="flex:1;">Large</button>
+                    <button class="settings-preset tb-btn" data-scale="1.3" style="flex:1;">X-Large</button>
+                </div>
+
+                <div style="border-top:1px solid var(--border); padding-top:12px; text-align:right;">
+                    <button class="tb-btn" id="settings-reset" style="width:auto; height:auto; padding:6px 16px; font-size:var(--fs-base);">Reset to Default</button>
+                </div>
             </div>
         </div>
 
