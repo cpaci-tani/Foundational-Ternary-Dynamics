@@ -2764,6 +2764,29 @@ function loadMetaScenario() {
     running = false;
     updatePlayButton();
 
+    // Hide ALL Scale 0 visuals — flux volume, wireframe, particles, fields
+    if (viewport) {
+        viewport.toggleFluxVolume(false);
+        viewport.toggleFluxSlice(false);
+        viewport.toggleGrid(false);
+        // Clear existing particle cloud
+        if (viewport.particles) viewport.particles.visible = false;
+        // Hide any field lines
+        viewport.toggleEFieldLines(false);
+        viewport.toggleBFieldLines(false);
+    }
+    const fvBtn = document.getElementById('toggle-flux-volume');
+    if (fvBtn) fvBtn.classList.remove('active');
+    const gridBtn = document.getElementById('toggle-grid');
+    if (gridBtn) gridBtn.classList.remove('active');
+
+    // Position camera for meta view (close-up, centered on origin)
+    if (viewport.camera && viewport.controls) {
+        viewport.controls.target.set(0, 0, 0);
+        viewport.camera.position.set(5, 3.5, 5);
+        viewport.controls.update();
+    }
+
     // Create MetaUnit if not already present
     if (!metaUnit && viewport.scene) {
         metaUnit = new MetaUnit(viewport.scene, viewport.camera, viewport.renderer);
