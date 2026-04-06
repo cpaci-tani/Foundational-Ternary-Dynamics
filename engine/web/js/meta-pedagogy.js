@@ -1,134 +1,411 @@
 /**
- * Meta Pedagogy — Info panels and walkthroughs for the Existential Unit.
- * Displays framework integer correspondences, self-consistency equation,
- * representation theory, Vieta structure, and parity decompositions.
+ * Meta Pedagogy — Interactive exploration of the 3³ Existential Unit.
+ *
+ * UX philosophy: the panel DRIVES the visualization.
+ * Each section is a collapsible card with interactive buttons that
+ * highlight the corresponding geometry in the 3D view.
  */
 
-// ── Framework Constants ─────────────────────────────────────────────
 const N_C = 3, N_BASE = 4, B_3 = 7, N_EFF = 13;
-const D_CONSTRAINT = N_C * N_BASE * N_BASE - 1; // 47
 
-// ── Self-consistency slider data ────────────────────────────────────
 function selfConsistencyValue(n) {
-    // n + 4 + (n+4) + (n²+4) vs n³
     const lhs = n + N_BASE + (n + N_BASE) + (n * n + N_BASE);
-    const rhs = n * n * n;
-    return { lhs, rhs, match: lhs === rhs };
+    return { lhs, rhs: n * n * n, match: lhs === n * n * n };
 }
 
-// ── Build the info panel HTML ───────────────────────────────────────
-export function buildMetaInfoPanel(container) {
-    container.innerHTML = `
-    <div class="meta-info" style="font-family:var(--font-mono);font-size:12px;color:#e0e0e0;padding:8px;">
+// ── Main builder ────────────────────────────────────────────────────
+export function buildMetaInfoPanel(container, metaUnit) {
+    container.innerHTML = '';
+    const root = document.createElement('div');
+    root.className = 'meta-panel-root';
+    root.innerHTML = `<style>
+        .meta-panel-root {
+            font-family: var(--font-mono, monospace);
+            font-size: 12px;
+            color: #e0e0e0;
+            padding: 6px 8px;
+            user-select: none;
+        }
+        .meta-hero {
+            text-align: center;
+            padding: 12px 0 8px;
+            border-bottom: 1px solid #2a2a40;
+            margin-bottom: 8px;
+        }
+        .meta-hero-title { font-size: 11px; letter-spacing: 2px; color: #9ca3af; text-transform: uppercase; }
+        .meta-hero-number { font-size: 32px; font-weight: bold; color: #fff; line-height: 1.1; }
+        .meta-hero-number span { color: #FFD700; }
+        .meta-hero-sub { font-size: 10px; color: #6b7280; margin-top: 2px; }
 
-        <div style="text-align:center;margin-bottom:12px;">
-            <div style="font-size:16px;font-weight:bold;color:#FFD700;">THE EXISTENTIAL UNIT</div>
-            <div style="font-size:22px;font-weight:bold;color:#fff;">3<sup>3</sup> = 27</div>
-            <div style="font-size:11px;color:#9ca3af;">Minimal Complete Lattice</div>
+        .meta-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #1f2937;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .meta-card:hover { border-color: #374151; }
+        .meta-card-head {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+            font-size: 12px; font-weight: 600;
+        }
+        .meta-card-head .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .meta-card-head .arrow { margin-left: auto; font-size: 10px; color: #6b7280; transition: transform 0.2s; }
+        .meta-card.open .meta-card-head .arrow { transform: rotate(90deg); }
+        .meta-card-body { display: none; padding: 4px 10px 10px; }
+        .meta-card.open .meta-card-body { display: block; }
+
+        .meta-shell-row {
+            display: flex; align-items: center; gap: 6px;
+            padding: 5px 6px; margin: 2px 0;
+            border-radius: 4px; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .meta-shell-row:hover { background: rgba(255,255,255,0.06); }
+        .meta-shell-row.active { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); }
+        .meta-shell-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .meta-shell-name { flex: 1; font-size: 12px; }
+        .meta-shell-count { font-size: 14px; font-weight: bold; min-width: 20px; text-align: right; }
+        .meta-shell-desc { font-size: 9px; color: #6b7280; }
+
+        .meta-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 4px 10px; margin: 2px;
+            border-radius: 4px; border: 1px solid #374151;
+            background: rgba(255,255,255,0.04);
+            color: #d1d5db; font-size: 10px; font-family: inherit;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .meta-btn:hover { background: rgba(255,255,255,0.1); border-color: #4b5563; }
+        .meta-btn.active { background: rgba(255,215,0,0.12); border-color: #FFD700; color: #FFD700; }
+        .meta-btn .swatch { width: 6px; height: 6px; border-radius: 2px; }
+
+        .meta-eq {
+            text-align: center; padding: 8px;
+            background: rgba(0,0,0,0.2); border-radius: 4px;
+            margin: 6px 0;
+        }
+        .meta-eq-main { font-size: 15px; color: #fff; font-weight: bold; }
+        .meta-eq-sub { font-size: 10px; color: #9ca3af; margin-top: 2px; }
+        .meta-eq-result { font-size: 12px; margin-top: 4px; font-weight: bold; }
+
+        .meta-slider-row {
+            display: flex; align-items: center; gap: 8px; margin-top: 6px;
+        }
+        .meta-slider-row input[type=range] { flex: 1; accent-color: #FFD700; }
+        .meta-slider-val {
+            min-width: 24px; text-align: center;
+            font-size: 18px; font-weight: bold; color: #FFD700;
+        }
+
+        .meta-stat-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+            margin: 6px 0;
+        }
+        .meta-stat {
+            background: rgba(0,0,0,0.15); border-radius: 4px;
+            padding: 6px 8px; text-align: center;
+        }
+        .meta-stat-val { font-size: 16px; font-weight: bold; }
+        .meta-stat-label { font-size: 9px; color: #6b7280; margin-top: 1px; }
+
+        .meta-inspect {
+            border-top: 1px solid #1f2937;
+            padding: 8px 0 4px;
+            margin-top: 4px;
+        }
+        .meta-inspect-empty { color: #4b5563; font-size: 10px; font-style: italic; text-align: center; padding: 12px; }
+    </style>
+
+    <!-- Hero -->
+    <div class="meta-hero">
+        <div class="meta-hero-title">The Existential Unit</div>
+        <div class="meta-hero-number"><span>3</span><sup style="font-size:18px;">3</sup> = <span>27</span></div>
+        <div class="meta-hero-sub">minimal complete lattice</div>
+    </div>
+
+    <!-- 1. Explore Shells -->
+    <div class="meta-card open" data-card="shells">
+        <div class="meta-card-head">
+            <div class="dot" style="background:#FFD700;"></div>
+            Explore Shells
+            <span class="arrow">&#9654;</span>
         </div>
+        <div class="meta-card-body">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">Click a shell to isolate it in the 3D view</div>
 
-        <div class="meta-section" style="margin-bottom:10px;">
-            <div style="color:#FFD700;font-weight:bold;margin-bottom:4px;">Shell Decomposition</div>
-            <table style="width:100%;font-size:11px;border-collapse:collapse;">
-                <tr><td style="color:#FFD700;">Center</td><td>1</td><td style="color:#808080;">CM point i</td></tr>
-                <tr><td style="color:#00CED1;">Octahedron</td><td>6</td><td style="color:#808080;">SC (d=1)</td></tr>
-                <tr><td style="color:#FF00FF;">Cuboctahedron</td><td>12</td><td style="color:#808080;">FCC (d=&radic;2)</td></tr>
-                <tr><td style="color:#7FFF00;">Cube</td><td>8</td><td style="color:#808080;">BCC (d=&radic;3)</td></tr>
-                <tr style="border-top:1px solid #404060;font-weight:bold;">
-                    <td>Total</td><td>27</td><td style="color:#FFD700;">= N<sub>c</sub>&sup3;</td>
-                </tr>
-            </table>
+            <div class="meta-shell-row active" data-shell="all">
+                <div class="meta-shell-dot" style="background:linear-gradient(135deg,#FFD700,#00CED1,#FF00FF,#7FFF00);"></div>
+                <div class="meta-shell-name">All Shells</div>
+                <div class="meta-shell-count">27</div>
+                <div class="meta-shell-desc">= N<sub>c</sub>&sup3;</div>
+            </div>
+            <div class="meta-shell-row" data-shell="center">
+                <div class="meta-shell-dot" style="background:#FFD700;"></div>
+                <div class="meta-shell-name">Center</div>
+                <div class="meta-shell-count" style="color:#FFD700;">1</div>
+                <div class="meta-shell-desc">CM point <i>i</i></div>
+            </div>
+            <div class="meta-shell-row" data-shell="octahedron">
+                <div class="meta-shell-dot" style="background:#00CED1;"></div>
+                <div class="meta-shell-name">Octahedron</div>
+                <div class="meta-shell-count" style="color:#00CED1;">6</div>
+                <div class="meta-shell-desc">SC &middot; d=1</div>
+            </div>
+            <div class="meta-shell-row" data-shell="cuboctahedron">
+                <div class="meta-shell-dot" style="background:#FF00FF;"></div>
+                <div class="meta-shell-name">Cuboctahedron</div>
+                <div class="meta-shell-count" style="color:#FF00FF;">12</div>
+                <div class="meta-shell-desc">FCC &middot; d=&radic;2</div>
+            </div>
+            <div class="meta-shell-row" data-shell="cube">
+                <div class="meta-shell-dot" style="background:#7FFF00;"></div>
+                <div class="meta-shell-name">Cube (2 tetra)</div>
+                <div class="meta-shell-count" style="color:#7FFF00;">8</div>
+                <div class="meta-shell-desc">BCC &middot; d=&radic;3</div>
+            </div>
+
+            <div style="margin-top:8px;">
+                <div style="font-size:10px;color:#6b7280;margin-bottom:4px;">Wireframes</div>
+                <button class="meta-btn" data-action="tetra-plus"><span class="swatch" style="background:#00FFAA;"></span>Tetra T+</button>
+                <button class="meta-btn" data-action="tetra-minus"><span class="swatch" style="background:#FF5555;"></span>Tetra T&minus;</button>
+                <button class="meta-btn" data-action="connections"><span class="swatch" style="background:#888;"></span>Links</button>
+            </div>
         </div>
+    </div>
 
-        <div class="meta-section" style="margin-bottom:10px;">
-            <div style="color:#FFD700;font-weight:bold;margin-bottom:4px;">Self-Consistency</div>
-            <div style="text-align:center;font-size:13px;color:#fff;">
-                N<sub>c</sub> + N<sub>base</sub> + b<sub>3</sub> + N<sub>eff</sub> = N<sub>c</sub>&sup3;
+    <!-- 2. Self-Consistency -->
+    <div class="meta-card" data-card="consistency">
+        <div class="meta-card-head">
+            <div class="dot" style="background:#00CED1;"></div>
+            Why N<sub>c</sub> = 3?
+            <span class="arrow">&#9654;</span>
+        </div>
+        <div class="meta-card-body">
+            <div class="meta-eq">
+                <div class="meta-eq-main">N<sub>c</sub> + N<sub>base</sub> + b<sub>3</sub> + N<sub>eff</sub> = N<sub>c</sub>&sup3;</div>
+                <div class="meta-eq-sub">The framework integers must fill the lattice</div>
             </div>
-            <div style="text-align:center;font-size:13px;color:#00CED1;">
-                3 + 4 + 7 + 13 = 27
+
+            <div class="meta-slider-row">
+                <span style="font-size:10px;color:#6b7280;">N<sub>c</sub></span>
+                <input type="range" min="1" max="8" value="3" step="1" id="meta-nc-input">
+                <div class="meta-slider-val" id="meta-nc-val">3</div>
             </div>
-            <div style="text-align:center;font-size:10px;color:#9ca3af;margin-top:2px;">
-                (N<sub>c</sub> &minus; 3)(N<sub>c</sub>&sup2; + 2N<sub>c</sub> + 4) = 0
-            </div>
-            <div id="meta-nc-slider" style="margin-top:6px;">
-                <input type="range" min="1" max="8" value="3" step="1"
-                    style="width:100%;accent-color:#FFD700;" id="meta-nc-input">
-                <div id="meta-nc-result" style="text-align:center;font-size:11px;margin-top:2px;"></div>
+            <div class="meta-eq" id="meta-nc-result" style="margin-top:6px;"></div>
+
+            <div style="font-size:10px;color:#6b7280;margin-top:8px;text-align:center;">
+                Factors as (N<sub>c</sub> &minus; 3)(N<sub>c</sub>&sup2; + 2N<sub>c</sub> + 4) = 0<br>
+                Quadratic has no real roots &rarr; <span style="color:#FFD700;">N<sub>c</sub> = 3 is unique</span>
             </div>
         </div>
+    </div>
 
-        <div class="meta-section" style="margin-bottom:10px;">
-            <div style="color:#FFD700;font-weight:bold;margin-bottom:4px;">Representation Theory (O<sub>h</sub>)</div>
-            <div style="font-size:10px;color:#9ca3af;margin-bottom:4px;">
-                27 = 4&middot;A<sub>1g</sub> + A<sub>2u</sub> + 2&middot;E<sub>g</sub> + T<sub>1g</sub> + T<sub>2g</sub> + 3&middot;T<sub>1u</sub> + T<sub>2u</sub>
-            </div>
-            <table style="width:100%;font-size:10px;border-collapse:collapse;">
-                <tr style="color:#9ca3af;"><th style="text-align:left;">Quantity</th><th>Value</th><th>= </th></tr>
-                <tr><td>Scalar (A<sub>1g</sub>) reps</td><td style="color:#FF00FF;font-weight:bold;">4</td><td style="color:#808080;">N<sub>base</sub></td></tr>
-                <tr><td>Vector (T<sub>1u</sub>) reps</td><td style="color:#00CED1;font-weight:bold;">3</td><td style="color:#808080;">N<sub>c</sub></td></tr>
-                <tr><td>Distinct irreps used</td><td style="color:#7FFF00;font-weight:bold;">7</td><td style="color:#808080;">b<sub>3</sub></td></tr>
-                <tr><td>Triplet dimensions</td><td style="font-weight:bold;">18</td><td style="color:#808080;">18-pt stencil</td></tr>
-            </table>
+    <!-- 3. Parity Modes -->
+    <div class="meta-card" data-card="parity">
+        <div class="meta-card-head">
+            <div class="dot" style="background:#FF00FF;"></div>
+            Parity &amp; Symmetry
+            <span class="arrow">&#9654;</span>
         </div>
+        <div class="meta-card-body">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">Toggle coloring modes to see how 27 decomposes</div>
 
-        <div class="meta-section" style="margin-bottom:10px;">
-            <div style="color:#FFD700;font-weight:bold;margin-bottom:4px;">Parity Decompositions</div>
-            <table style="width:100%;font-size:10px;border-collapse:collapse;">
-                <tr><td>Inversion (g/u)</td><td style="color:#4ade80;">13g</td><td>+</td><td style="color:#fb923c;">13u</td><td style="color:#808080;">= N<sub>eff</sub>+N<sub>eff</sub></td></tr>
-                <tr><td>Translation (BCC/FCC)</td><td style="color:#4488FF;">13</td><td>+</td><td style="color:#FF4444;">14</td><td style="color:#808080;">= N<sub>eff</sub>+2b<sub>3</sub></td></tr>
-            </table>
-        </div>
-
-        <div class="meta-section" style="margin-bottom:10px;">
-            <div style="color:#FFD700;font-weight:bold;margin-bottom:4px;">Vieta Coefficients</div>
-            <div style="font-size:10px;">
-                P(x) = (x&minus;3)(x&minus;4)(x&minus;7)(x&minus;13)
+            <button class="meta-btn" data-action="bcc-fcc" style="width:100%;justify-content:center;">
+                <span class="swatch" style="background:#4488FF;"></span>/<span class="swatch" style="background:#FF4444;"></span>
+                BCC / FCC Split &mdash; 13 + 14
+            </button>
+            <div style="font-size:10px;color:#6b7280;text-align:center;margin:2px 0 6px;">
+                = N<sub>eff</sub> + 2&middot;b<sub>3</sub>
             </div>
+
+            <button class="meta-btn" data-action="gerade" style="width:100%;justify-content:center;">
+                <span class="swatch" style="background:#44CC44;"></span>/<span class="swatch" style="background:#FF8800;"></span>
+                Gerade / Ungerade &mdash; 13 + 13
+            </button>
+            <div style="font-size:10px;color:#6b7280;text-align:center;margin:2px 0 6px;">
+                = N<sub>eff</sub> + N<sub>eff</sub> (Moore neighborhood under inversion)
+            </div>
+
+            <button class="meta-btn" data-action="reset-colors" style="width:100%;justify-content:center;">
+                Reset Colors
+            </button>
+
+            <div style="margin-top:10px;">
+                <div style="font-size:10px;color:#6b7280;margin-bottom:4px;">Symmetry Elements</div>
+                <button class="meta-btn" data-action="axes"><span class="swatch" style="background:#FFFF00;"></span>Rotation Axes</button>
+                <button class="meta-btn" data-action="mirrors"><span class="swatch" style="background:#fff;opacity:0.5;"></span>Mirror Planes</button>
+            </div>
+
+            <div class="meta-stat-grid" style="margin-top:8px;">
+                <div class="meta-stat"><div class="meta-stat-val" style="color:#FFD700;">48</div><div class="meta-stat-label">|O<sub>h</sub>|</div></div>
+                <div class="meta-stat"><div class="meta-stat-val" style="color:#00CED1;">1296</div><div class="meta-stat-label">Full group = 6<sup>4</sup></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Framework Integers -->
+    <div class="meta-card" data-card="framework">
+        <div class="meta-card-head">
+            <div class="dot" style="background:#7FFF00;"></div>
+            Framework Integers
+            <span class="arrow">&#9654;</span>
+        </div>
+        <div class="meta-card-body">
+            <div class="meta-stat-grid">
+                <div class="meta-stat"><div class="meta-stat-val" style="color:#00CED1;">3</div><div class="meta-stat-label">N<sub>c</sub> (colors)</div></div>
+                <div class="meta-stat"><div class="meta-stat-val" style="color:#FF00FF;">4</div><div class="meta-stat-label">N<sub>base</sub> (|Aut|)</div></div>
+                <div class="meta-stat"><div class="meta-stat-val" style="color:#7FFF00;">7</div><div class="meta-stat-label">b<sub>3</sub> (Betti)</div></div>
+                <div class="meta-stat"><div class="meta-stat-val" style="color:#FF6B6B;">13</div><div class="meta-stat-label">N<sub>eff</sub> (DOF)</div></div>
+            </div>
+
+            <div style="font-size:10px;color:#6b7280;margin-top:6px;">Where they appear in O<sub>h</sub>:</div>
             <table style="width:100%;font-size:10px;border-collapse:collapse;margin-top:4px;">
-                <tr><td>e<sub>1</sub> = sum</td><td style="color:#FFD700;font-weight:bold;">27 = 3&sup3;</td></tr>
-                <tr><td>e<sub>2</sub> = pairs</td><td style="color:#FFD700;font-weight:bold;">243 = 3<sup>5</sup></td></tr>
-                <tr><td>e<sub>4</sub> = product</td><td>1092 = 3&middot;4&middot;7&middot;13</td></tr>
+                <tr><td style="padding:2px 0;">Scalar reps (A<sub>1g</sub>)</td><td style="text-align:right;color:#FF00FF;font-weight:bold;">4</td><td style="color:#4b5563;padding-left:6px;">= N<sub>base</sub></td></tr>
+                <tr><td style="padding:2px 0;">Vector reps (T<sub>1u</sub>)</td><td style="text-align:right;color:#00CED1;font-weight:bold;">3</td><td style="color:#4b5563;padding-left:6px;">= N<sub>c</sub></td></tr>
+                <tr><td style="padding:2px 0;">Distinct irreps used</td><td style="text-align:right;color:#7FFF00;font-weight:bold;">7</td><td style="color:#4b5563;padding-left:6px;">= b<sub>3</sub></td></tr>
+                <tr><td style="padding:2px 0;">Triplet dimensions</td><td style="text-align:right;font-weight:bold;">18</td><td style="color:#4b5563;padding-left:6px;">= stencil</td></tr>
+                <tr><td style="padding:2px 0;">Cuboct stabilizer</td><td style="text-align:right;color:#FF00FF;font-weight:bold;">4</td><td style="color:#4b5563;padding-left:6px;">= |Aut(E<sub>i</sub>)|</td></tr>
             </table>
-            <div style="font-size:10px;color:#9ca3af;margin-top:4px;">
-                P(x) mod 27 = (x&minus;1)(x&minus;3)(x&sup2;+4x+13)
+
+            <div style="margin-top:8px;font-size:10px;color:#6b7280;">Vieta coefficients of P(x)=(x&minus;3)(x&minus;4)(x&minus;7)(x&minus;13):</div>
+            <div style="display:flex;gap:6px;margin-top:4px;">
+                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:14px;">27</div><div class="meta-stat-label">e<sub>1</sub> = 3&sup3;</div></div>
+                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:14px;">243</div><div class="meta-stat-label">e<sub>2</sub> = 3<sup>5</sup></div></div>
+                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="font-size:14px;">1092</div><div class="meta-stat-label">e<sub>4</sub> = product</div></div>
             </div>
         </div>
+    </div>
 
-        <div class="meta-section" style="margin-bottom:10px;">
-            <div style="color:#FFD700;font-weight:bold;margin-bottom:4px;">Symmetry Group</div>
-            <div style="font-size:11px;">
-                (Z/3Z)&sup3; &rtimes; O<sub>h</sub>
-            </div>
-            <div style="font-size:11px;color:#00CED1;">
-                |G| = 1296 = |Aut|&sup2; &middot; N<sub>c</sub><sup>4</sup> = 6<sup>4</sup>
-            </div>
-        </div>
+    <!-- 5. Inspect (populated on click) -->
+    <div class="meta-inspect" id="meta-inspect-area">
+        <div class="meta-inspect-empty">Click a site in the 3D view to inspect it</div>
+    </div>
+    `;
 
-        <div class="meta-section" style="margin-bottom:6px;">
-            <div style="color:#FFD700;font-weight:bold;margin-bottom:4px;">Stabilizers</div>
-            <table style="width:100%;font-size:10px;border-collapse:collapse;">
-                <tr style="color:#9ca3af;"><th style="text-align:left;">Shell</th><th>|Stab|</th><th>Group</th></tr>
-                <tr><td style="color:#FFD700;">Center</td><td>48</td><td style="color:#808080;">O<sub>h</sub></td></tr>
-                <tr><td style="color:#00CED1;">Octahedron</td><td>8</td><td style="color:#808080;">C<sub>4v</sub></td></tr>
-                <tr><td style="color:#FF00FF;">Cuboctahedron</td><td style="color:#FFD700;font-weight:bold;">4</td><td style="color:#808080;">C<sub>2v</sub> = |Aut(E<sub>i</sub>)|</td></tr>
-                <tr><td style="color:#7FFF00;">Cube</td><td>6</td><td style="color:#808080;">C<sub>3v</sub></td></tr>
-            </table>
-        </div>
+    container.appendChild(root);
 
-    </div>`;
+    // ── Wire interactions ────────────────────────────────────────────
 
-    // Wire up the N_c slider
-    const slider = container.querySelector('#meta-nc-input');
-    const result = container.querySelector('#meta-nc-result');
-    if (slider && result) {
+    // Collapsible cards
+    root.querySelectorAll('.meta-card-head').forEach(head => {
+        head.addEventListener('click', () => {
+            head.parentElement.classList.toggle('open');
+        });
+    });
+
+    // Shell isolation
+    root.querySelectorAll('.meta-shell-row').forEach(row => {
+        row.addEventListener('click', () => {
+            if (!metaUnit) return;
+            const shell = row.dataset.shell;
+            // Deactivate all rows, activate this one
+            root.querySelectorAll('.meta-shell-row').forEach(r => r.classList.remove('active'));
+            row.classList.add('active');
+
+            if (shell === 'all') {
+                metaUnit.toggleCenter(true);
+                metaUnit.toggleOctahedron(true);
+                metaUnit.toggleCuboctahedron(true);
+                metaUnit.toggleCube(true);
+            } else {
+                metaUnit.toggleCenter(shell === 'center');
+                metaUnit.toggleOctahedron(shell === 'octahedron');
+                metaUnit.toggleCuboctahedron(shell === 'cuboctahedron');
+                metaUnit.toggleCube(shell === 'cube');
+            }
+            // Sync toolbar buttons
+            _syncToolbarButton('meta-toggle-center', shell === 'all' || shell === 'center');
+            _syncToolbarButton('meta-toggle-oct', shell === 'all' || shell === 'octahedron');
+            _syncToolbarButton('meta-toggle-cuboct', shell === 'all' || shell === 'cuboctahedron');
+            _syncToolbarButton('meta-toggle-cube', shell === 'all' || shell === 'cube');
+        });
+    });
+
+    // Action buttons
+    root.querySelectorAll('.meta-btn[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!metaUnit) return;
+            const action = btn.dataset.action;
+            switch (action) {
+                case 'tetra-plus':
+                    btn.classList.toggle('active');
+                    metaUnit.toggleTetraPlus(btn.classList.contains('active'));
+                    _syncToolbarButton('meta-toggle-tetra-plus', btn.classList.contains('active'));
+                    break;
+                case 'tetra-minus':
+                    btn.classList.toggle('active');
+                    metaUnit.toggleTetraMinus(btn.classList.contains('active'));
+                    _syncToolbarButton('meta-toggle-tetra-minus', btn.classList.contains('active'));
+                    break;
+                case 'connections':
+                    btn.classList.toggle('active');
+                    metaUnit.toggleConnections(btn.classList.contains('active'));
+                    _syncToolbarButton('meta-toggle-connections', btn.classList.contains('active'));
+                    break;
+                case 'bcc-fcc':
+                    btn.classList.toggle('active');
+                    metaUnit.toggleBCCFCC(btn.classList.contains('active'));
+                    _syncToolbarButton('meta-toggle-bcc-fcc', btn.classList.contains('active'));
+                    // Deactivate the other parity button
+                    const guBtn = root.querySelector('[data-action="gerade"]');
+                    if (guBtn && btn.classList.contains('active')) { guBtn.classList.remove('active'); }
+                    break;
+                case 'gerade':
+                    btn.classList.toggle('active');
+                    metaUnit.toggleGeradeUngerade(btn.classList.contains('active'));
+                    _syncToolbarButton('meta-toggle-gerade', btn.classList.contains('active'));
+                    const bfBtn = root.querySelector('[data-action="bcc-fcc"]');
+                    if (bfBtn && btn.classList.contains('active')) { bfBtn.classList.remove('active'); }
+                    break;
+                case 'reset-colors':
+                    metaUnit.toggleBCCFCC(false);
+                    metaUnit.toggleGeradeUngerade(false);
+                    root.querySelectorAll('[data-action="bcc-fcc"],[data-action="gerade"]').forEach(b => b.classList.remove('active'));
+                    _syncToolbarButton('meta-toggle-bcc-fcc', false);
+                    _syncToolbarButton('meta-toggle-gerade', false);
+                    break;
+                case 'axes':
+                    btn.classList.toggle('active');
+                    metaUnit.toggleRotationAxes(btn.classList.contains('active'));
+                    _syncToolbarButton('meta-toggle-axes', btn.classList.contains('active'));
+                    break;
+                case 'mirrors':
+                    btn.classList.toggle('active');
+                    metaUnit.toggleMirrorPlanes(btn.classList.contains('active'));
+                    _syncToolbarButton('meta-toggle-mirrors', btn.classList.contains('active'));
+                    break;
+            }
+        });
+    });
+
+    // N_c slider
+    const slider = root.querySelector('#meta-nc-input');
+    const sliderVal = root.querySelector('#meta-nc-val');
+    const resultBox = root.querySelector('#meta-nc-result');
+    if (slider && resultBox) {
         function updateSlider() {
             const n = parseInt(slider.value);
+            if (sliderVal) sliderVal.textContent = n;
             const { lhs, rhs, match } = selfConsistencyValue(n);
+            const nBase = N_BASE;
+            const b3 = n + nBase;
+            const nEff = n * n + nBase;
             if (match) {
-                result.innerHTML = `<span style="color:#4ade80;">N<sub>c</sub>=${n}: ${lhs} = ${rhs} &#10003; UNIQUE SOLUTION</span>`;
+                resultBox.innerHTML = `
+                    <div class="meta-eq-main" style="color:#4ade80;">${n} + ${nBase} + ${b3} + ${nEff} = ${rhs}</div>
+                    <div class="meta-eq-sub" style="color:#4ade80;">&#10003; ${lhs} = ${rhs}</div>
+                `;
+                resultBox.style.borderColor = 'rgba(74,222,128,0.3)';
             } else {
-                result.innerHTML = `<span style="color:#f87171;">N<sub>c</sub>=${n}: ${lhs} &ne; ${rhs}</span>`;
+                resultBox.innerHTML = `
+                    <div class="meta-eq-main" style="color:#f87171;">${n} + ${nBase} + ${b3} + ${nEff} = ${lhs}</div>
+                    <div class="meta-eq-sub" style="color:#f87171;">&#10007; ${lhs} &ne; ${rhs} = ${n}&sup3;</div>
+                `;
+                resultBox.style.borderColor = 'rgba(248,113,113,0.2)';
             }
         }
         slider.addEventListener('input', updateSlider);
@@ -136,34 +413,41 @@ export function buildMetaInfoPanel(container) {
     }
 }
 
-// ── Site inspection panel ───────────────────────────────────────────
+// ── Sync toolbar toggle buttons with panel state ────────────────────
+function _syncToolbarButton(id, active) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (active) el.classList.add('active');
+    else el.classList.remove('active');
+}
+
+// ── Site inspection (called from outside when a site is clicked) ────
 export function buildSiteInspectPanel(container, siteInfo) {
+    const area = container.querySelector('#meta-inspect-area') || container;
     if (!siteInfo) {
-        container.innerHTML = '<div style="padding:8px;color:#9ca3af;font-size:11px;">Click a site to inspect</div>';
+        area.innerHTML = '<div class="meta-inspect-empty">Click a site in the 3D view to inspect it</div>';
         return;
     }
 
-    const shellColors = {
-        'Center': '#FFD700',
-        'Octahedron': '#00CED1',
-        'Cuboctahedron': '#FF00FF',
-        'Cube': '#7FFF00'
+    const colors = {
+        'center': '#FFD700', 'octahedron': '#00CED1',
+        'cuboctahedron': '#FF00FF', 'cube': '#7FFF00'
     };
-    const color = shellColors[siteInfo.shell] || '#ffffff';
+    const c = colors[siteInfo.shell] || '#fff';
 
-    container.innerHTML = `
-    <div style="padding:8px;font-family:var(--font-mono);font-size:11px;">
-        <div style="color:${color};font-weight:bold;font-size:13px;margin-bottom:6px;">
-            ${siteInfo.shell}
+    area.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <div style="width:12px;height:12px;border-radius:50%;background:${c};"></div>
+            <div style="font-size:13px;font-weight:bold;color:${c};">${siteInfo.shell.charAt(0).toUpperCase() + siteInfo.shell.slice(1)}</div>
         </div>
-        <table style="width:100%;font-size:11px;border-collapse:collapse;">
-            <tr><td style="color:#9ca3af;">Position</td><td>(${siteInfo.position.map(v => v.toFixed(0)).join(', ')})</td></tr>
-            <tr><td style="color:#9ca3af;">Distance</td><td>${siteInfo.distance}</td></tr>
-            <tr><td style="color:#9ca3af;">Sublattice</td><td>${siteInfo.sublattice}</td></tr>
-            <tr><td style="color:#9ca3af;">Stabilizer</td><td>${siteInfo.stabilizer} (|Stab| = ${siteInfo.stabOrder})</td></tr>
-            <tr><td style="color:#9ca3af;">Irrep sector</td><td>${siteInfo.irrep}</td></tr>
-            <tr><td style="color:#9ca3af;">Parity (x+y+z)</td><td>${siteInfo.parity}</td></tr>
-            <tr><td style="color:#9ca3af;">Inversion</td><td>${siteInfo.inversion}</td></tr>
-        </table>
-    </div>`;
+        <div class="meta-stat-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:12px;">(${siteInfo.position.map(v => v.toFixed(0)).join(',')})</div><div class="meta-stat-label">position</div></div>
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:12px;">${siteInfo.distance}</div><div class="meta-stat-label">distance</div></div>
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:12px;">${siteInfo.sublattice}</div><div class="meta-stat-label">sublattice</div></div>
+        </div>
+        <div class="meta-stat-grid" style="margin-top:2px;">
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:11px;">${siteInfo.stabilizer}</div><div class="meta-stat-label">stabilizer (|Stab|=${siteInfo.stabOrder || '?'})</div></div>
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:11px;">${siteInfo.irrep}</div><div class="meta-stat-label">irrep sector</div></div>
+        </div>
+    `;
 }

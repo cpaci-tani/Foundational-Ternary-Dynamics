@@ -2792,10 +2792,10 @@ function loadMetaScenario() {
         metaUnit = new MetaUnit(viewport.scene, viewport.camera, viewport.renderer);
     }
 
-    // Build the info panel
+    // Build the info panel (pass metaUnit so panel buttons can drive the 3D view)
     const infoContainer = document.getElementById('meta-info-panel');
     if (infoContainer) {
-        buildMetaInfoPanel(infoContainer);
+        buildMetaInfoPanel(infoContainer, metaUnit);
     }
 
     // Wire up meta toggles
