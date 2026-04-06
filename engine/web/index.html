@@ -150,16 +150,65 @@
             background: linear-gradient(180deg, #242933 0%, #2e3440 100%) !important;
         }
 
-        /* Light/parchment: active toggles need white text on accent bg */
+        /* ── Light/Parchment theme fixes ─────────────────── */
+
+        /* Active toggles need white text on accent bg */
         html[data-theme="light"] .view-toggle.active,
         html[data-theme="parchment"] .view-toggle.active {
             color: #fff;
         }
-        /* Light/parchment: ensure select option dropdowns are readable */
-        html[data-theme="light"] .viewport-select-group label,
-        html[data-theme="parchment"] .viewport-select-group label {
-            color: var(--text-primary);
-            text-shadow: 0 0 4px var(--bg-surface);
+
+        /* Viewport overlay labels need to be readable over dark 3D canvas */
+        .viewport-bottom-bar,
+        #viewport-toggles-universal,
+        #viewport-overlay {
+            /* All viewport overlays: ensure text is always light on dark canvas */
+        }
+        .viewport-select-group label {
+            color: #e0e0e0 !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .viewport-select-group select,
+        #viewport-overlay .view-toggle,
+        #viewport-toggles-universal .view-toggle {
+            background: rgba(17, 24, 39, 0.85) !important;
+            color: #d1d5db !important;
+            border-color: rgba(75, 85, 99, 0.7) !important;
+            backdrop-filter: blur(8px);
+        }
+        #viewport-overlay .view-toggle.active,
+        #viewport-toggles-universal .view-toggle.active {
+            background: var(--accent-dim) !important;
+            color: #fff !important;
+            border-color: var(--accent) !important;
+        }
+        #viewport-overlay .view-toggle:hover,
+        #viewport-toggles-universal .view-toggle:hover {
+            color: #fff !important;
+            border-color: #6b7280 !important;
+        }
+        .viewport-select-group select option {
+            background: #1f2937 !important;
+            color: #f3f4f6 !important;
+        }
+
+        /* Cards: add subtle shadow on light themes for definition */
+        html[data-theme="light"] .card,
+        html[data-theme="parchment"] .card {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border-color: rgba(0,0,0,0.1);
+        }
+
+        /* Checkbox accent on all themes */
+        input[type="checkbox"] {
+            accent-color: var(--accent);
+        }
+
+        /* ── Smooth theme transitions ────────────────────── */
+        body, #toolbar, #tab-bar, .tab, #panel-area, .panel, .card,
+        #status-bar, .tb-btn, .tb-select, .view-toggle, .meta-card,
+        .meta-btn, .meta-shell-row, .meta-stat, .settings-box {
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
         }
 
         /* ── Accessibility ────────────────────────────────────── */
@@ -208,11 +257,15 @@
             grid-area: toolbar;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 0 16px;
+            gap: var(--sp-lg);
+            padding: 0 var(--sp-xl);
             background: var(--bg-surface);
             border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none; /* Firefox */
         }
+        #toolbar::-webkit-scrollbar { display: none; }
 
         #toolbar .brand {
             font-weight: 600;
@@ -670,8 +723,8 @@
         }
 
         .stat-sparkline {
-            margin-top: 6px;
-            height: 24px;
+            margin-top: var(--sp-sm);
+            height: calc(24px * var(--ui-scale));
         }
 
         /* PE Telemetry Panel */
@@ -961,18 +1014,21 @@
             grid-area: status;
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 0 16px;
+            gap: var(--sp-xl);
+            padding: 0 var(--sp-xl);
             background: var(--bg-deep);
             border-top: 1px solid var(--border);
             font-size: var(--fs-sm);
             color: var(--text-muted);
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         #status-bar .status-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: var(--sp-sm);
+            flex-shrink: 0;
         }
 
         #status-bar .status-value {
@@ -2201,7 +2257,7 @@
                 <span class="tb-value" id="tpf-display">1.0</span>
             </div>
             <div style="margin-left:auto;"></div>
-            <button class="tb-btn" id="btn-settings" title="Settings" style="font-size:16px;">&#9881;</button>
+            <button class="tb-btn" id="btn-settings" title="Settings" style="font-size:var(--fs-xl);" aria-label="Settings">&#9881;&#xFE0E;</button>
         </div>
 
         <!-- ── Settings Modal ────────────────────────── -->
@@ -2236,7 +2292,13 @@
             .theme-swatch-colors div { flex:1; }
             .theme-swatch-name { font-size:var(--fs-xs); color:var(--text-secondary); font-weight:500; }
             .settings-footer { border-top:1px solid var(--border); padding-top:12px; text-align:right; }
-            .settings-footer button { width:auto; height:auto; padding:6px 16px; font-size:var(--fs-base); }
+            .settings-footer button {
+                width:auto; height:auto; padding:8px 20px; font-size:var(--fs-base);
+                border-radius:var(--radius); cursor:pointer;
+                background:var(--bg-input); color:var(--text-secondary); border:1px solid var(--border);
+                transition: all 0.15s;
+            }
+            .settings-footer button:hover { background:var(--bg-card); color:var(--text-primary); border-color:var(--border-light); }
         </style>
         <div id="settings-modal">
             <div class="settings-box">
