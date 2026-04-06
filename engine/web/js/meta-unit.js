@@ -485,19 +485,22 @@ export class MetaUnit {
     }
 
     toggleOctahedron(on) {
-        const v = on !== undefined ? on : !this._groups.wireOctahedron.visible;
+        const v = on !== undefined ? on : !this._groups.octahedron.visible;
+        this._groups.octahedron.visible = v;
         this._groups.wireOctahedron.visible = v;
         return v;
     }
 
     toggleCuboctahedron(on) {
-        const v = on !== undefined ? on : !this._groups.wireCuboctahedron.visible;
+        const v = on !== undefined ? on : !this._groups.cuboctahedron.visible;
+        this._groups.cuboctahedron.visible = v;
         this._groups.wireCuboctahedron.visible = v;
         return v;
     }
 
     toggleCube(on) {
-        const v = on !== undefined ? on : !this._groups.wireCube.visible;
+        const v = on !== undefined ? on : !this._groups.cube.visible;
+        this._groups.cube.visible = v;
         this._groups.wireCube.visible = v;
         return v;
     }
