@@ -2343,25 +2343,66 @@ function wireControls() {
     });
 
     // Quick actions
-    document.getElementById('btn-enable-all').addEventListener('click', () => {
+    const btnEnableAll = document.getElementById('btn-enable-all');
+    if (btnEnableAll) btnEnableAll.addEventListener('click', () => {
         for (const [elId] of Object.entries(toggleMap)) {
             const el = document.getElementById(elId);
             if (el) { el.checked = true; bridge.setToggle(toggleMap[elId], true); }
         }
     });
 
-    document.getElementById('btn-disable-all').addEventListener('click', () => {
+    const btnDisableAll = document.getElementById('btn-disable-all');
+    if (btnDisableAll) btnDisableAll.addEventListener('click', () => {
         for (const [elId] of Object.entries(toggleMap)) {
             const el = document.getElementById(elId);
             if (el) { el.checked = false; bridge.setToggle(toggleMap[elId], false); }
         }
     });
 
-    document.getElementById('btn-clear-particles').addEventListener('click', () => {
+    const btnClearParticles = document.getElementById('btn-clear-particles');
+    if (btnClearParticles) btnClearParticles.addEventListener('click', () => {
         bridge.reset(bridge.latticeSize);
         viewport.setLatticeSize(bridge.latticeSize);
         clearCharts();
     });
+
+    // ── Flux Volume Controls ──
+    const fluxShapeSelect = document.getElementById('flux-shape-select');
+    if (fluxShapeSelect) {
+        fluxShapeSelect.addEventListener('change', () => {
+            viewport.setFluxShape(parseInt(fluxShapeSelect.value));
+        });
+    }
+
+    const fluxOpacitySlider = document.getElementById('flux-opacity');
+    const fluxOpacityVal = document.getElementById('flux-opacity-val');
+    if (fluxOpacitySlider) {
+        fluxOpacitySlider.addEventListener('input', () => {
+            const v = parseFloat(fluxOpacitySlider.value);
+            fluxOpacityVal.textContent = v.toFixed(2);
+            viewport.setFluxOpacity(v);
+        });
+    }
+
+    const fluxScaleSlider = document.getElementById('flux-point-scale');
+    const fluxScaleVal = document.getElementById('flux-point-scale-val');
+    if (fluxScaleSlider) {
+        fluxScaleSlider.addEventListener('input', () => {
+            const v = parseFloat(fluxScaleSlider.value);
+            fluxScaleVal.textContent = v.toFixed(1);
+            viewport.setFluxPointScale(v);
+        });
+    }
+
+    const fluxThreshSlider = document.getElementById('flux-threshold');
+    const fluxThreshVal = document.getElementById('flux-threshold-val');
+    if (fluxThreshSlider) {
+        fluxThreshSlider.addEventListener('input', () => {
+            const v = parseFloat(fluxThreshSlider.value);
+            fluxThreshVal.textContent = v.toFixed(3);
+            viewport.setFluxThreshold(v);
+        });
+    }
 
     // Scale 0 dt slider
     const s0DtSlider = document.getElementById('s0-dt-slider');
