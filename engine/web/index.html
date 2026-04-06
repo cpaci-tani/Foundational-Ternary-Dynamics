@@ -1069,6 +1069,28 @@
             display: none !important;
         }
 
+        /* ── Meta Scale visibility ── */
+        #app.mode-meta .scale0-only { display: none !important; }
+        #app.mode-meta .scale1-only { display: none !important; }
+        #app.mode-meta .scale2-only { display: none !important; }
+        #app.mode-meta .scale3-only { display: none !important; }
+        #app.mode-meta .scale4-only { display: none !important; }
+        #app.mode-meta .scale23-only { display: none !important; }
+        #app.mode-meta .scale-ae { display: none !important; }
+        /* Hide Meta elements in other modes */
+        #app.mode-lattice .scale5-only { display: none !important; }
+        #app.mode-particles .scale5-only { display: none !important; }
+        #app.mode-atoms .scale5-only { display: none !important; }
+        #app.mode-molecules .scale5-only { display: none !important; }
+        #app.mode-consciousness .scale5-only { display: none !important; }
+        /* Meta mode dark background */
+        #app.mode-meta #viewport { background: #080818; }
+        /* Meta tab hiding */
+        #app.mode-meta .tab[data-scales="0"],
+        #app.mode-meta .tab[data-scales="1"],
+        #app.mode-meta .tab[data-scales="1,2,3"],
+        #app.mode-meta .tab[data-scales="4"] { display: none !important; }
+
         /* Consciousness mode dark atmosphere */
         #app.mode-consciousness #viewport {
             background: #050510;
@@ -1753,6 +1775,7 @@
                     <option value="atoms">Scale 2 (Atoms)</option>
                     <option value="molecules">Scale 3 (Molecules)</option>
                     <option value="consciousness">Scale 4 (Consciousness)</option>
+                    <option value="meta">Meta (Existential Unit)</option>
                 </select>
             </div>
             <div class="separator"></div>
@@ -2006,6 +2029,27 @@
                     Audio
                 </label>
             </div>
+            <!-- Meta Scale controls -->
+            <div class="tb-group scale5-only" id="meta-controls" style="flex-wrap:wrap;gap:4px;">
+                <span class="tb-label" style="width:100%;color:#FFD700;font-weight:bold;">Existential Unit</span>
+                <button class="view-toggle active" id="meta-toggle-center" title="Center (CM point i)">Center</button>
+                <button class="view-toggle active" id="meta-toggle-oct" title="Octahedron (6 SC)">Oct</button>
+                <button class="view-toggle active" id="meta-toggle-cuboct" title="Cuboctahedron (12 FCC)">Cuboct</button>
+                <button class="view-toggle active" id="meta-toggle-cube" title="Cube (8 BCC)">Cube</button>
+                <span class="field-sep"></span>
+                <button class="view-toggle" id="meta-toggle-tetra-plus" title="Tetrahedron T+ (even)">T+</button>
+                <button class="view-toggle" id="meta-toggle-tetra-minus" title="Tetrahedron T- (odd)">T-</button>
+                <button class="view-toggle" id="meta-toggle-connections" title="Neighbor connections">Links</button>
+                <span class="field-sep"></span>
+                <button class="view-toggle" id="meta-toggle-bcc-fcc" title="BCC/FCC parity coloring">BCC/FCC</button>
+                <button class="view-toggle" id="meta-toggle-gerade" title="Gerade/ungerade coloring">g/u</button>
+                <span class="field-sep"></span>
+                <button class="view-toggle" id="meta-toggle-axes" title="Rotation axes (C2,C3,C4)">Axes</button>
+                <button class="view-toggle" id="meta-toggle-mirrors" title="Mirror planes">Mirrors</button>
+                <span class="field-sep"></span>
+                <button class="view-toggle active" id="meta-toggle-labels" title="Framework labels">Labels</button>
+                <button class="view-toggle active" id="meta-toggle-rotate" title="Auto-rotate">Rotate</button>
+            </div>
             <div class="separator"></div>
             <div class="tb-group scale0-only" id="lattice-size-group">
                 <span class="tb-label">Size</span>
@@ -2184,6 +2228,7 @@
             <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="physics" data-scales="1,2,3">Physics</div>
             <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="hierarchy">Hierarchy</div>
             <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="consciousness" data-scales="4">Consciousness</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="meta-info" data-scales="5">Meta</div>
             <button id="btn-panel-toggle" title="Collapse/expand panels" aria-label="Collapse or expand panels">&#9660;</button>
         </div>
 
@@ -2197,6 +2242,7 @@
                     <span class="scale2-only">Scale 2 &middot; Atom Engine</span>
                     <span class="scale3-only">Scale 3 &middot; Molecular Engine</span>
                     <span class="scale4-only">Scale 4 &middot; Consciousness</span>
+                    <span class="scale5-only">Meta &middot; Existential Unit</span>
                 </div>
                 <div class="panel-grid panel-grid-2">
                     <div class="card scale0-only">
@@ -3224,6 +3270,16 @@
                             <button class="tb-btn" id="cs-walk-next" title="Next">Next &rarr;</button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Meta Info Panel -->
+            <div class="panel" id="panel-meta-info">
+                <div id="meta-info-panel" style="overflow-y:auto;max-height:calc(100vh - 200px);">
+                    <!-- Populated by meta-pedagogy.js -->
+                </div>
+                <div id="meta-inspect-panel" style="border-top:1px solid var(--border);margin-top:8px;">
+                    <div style="padding:8px;color:var(--text-muted);font-size:11px;">Click a site to inspect</div>
                 </div>
             </div>
         </div>

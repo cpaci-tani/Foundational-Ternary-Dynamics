@@ -210,6 +210,7 @@ Geometry, scale, information, and recursion.
 | 8.7 | [DERIV_CUBOCTAHEDRAL_INTEGERS.md](08_structural/DERIV_CUBOCTAHEDRAL_INTEGERS.md) | Deriving {3, 4, 7, 13} from lattice geometry [THEOREM]; resolves integer circularity (SP5) |
 | 8.8 | [DERIV_DUAL_DERIVATION_OF_16.md](08_structural/DERIV_DUAL_DERIVATION_OF_16.md) | **Dual derivation of 16:** Number theory (\|Aut(E_i)\|²=16) and geometry (\|O_h\|/3=16) independently yield the master quadratic coefficient; bridge via stabilizer decomposition [THEOREM] |
 | 8.9 | [DERIV_STABILIZER_DECOMPOSITION.md](08_structural/DERIV_STABILIZER_DECOMPOSITION.md) | **Stabilizer decomposition:** Stab_{O_h}(axis) = D₄ × Z/2Z; \|Stab\|=\|Aut(E_i)\|²=16; connects CM theory (complex analysis) to cuboctahedral geometry (3D packing) [THEOREM] |
+| 8.10 | [DERIV_EXISTENTIAL_UNIT.md](08_structural/DERIV_EXISTENTIAL_UNIT.md) | **The existential unit:** 3³ minimal complete lattice; self-consistency N_c+N_base+b_3+N_eff=N_c³ uniquely gives N_c=3; O_h irrep decomposition recovers all framework integers; Vieta coefficients e₁=3³, e₂=3⁵; parity splits 13+13=N_eff+N_eff [THEOREM] |
 
 ---
 
