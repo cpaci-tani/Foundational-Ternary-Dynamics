@@ -2675,6 +2675,56 @@ function wireKeyboard() {
     });
 }
 
+// ── Settings Modal ──────────────────────────────────────────────────
+{
+    const modal = document.getElementById('settings-modal');
+    const btnOpen = document.getElementById('btn-settings');
+    const btnClose = document.getElementById('settings-close');
+    const slider = document.getElementById('settings-ui-scale');
+    const valDisplay = document.getElementById('settings-scale-val');
+    const btnReset = document.getElementById('settings-reset');
+
+    function applyScale(s) {
+        document.documentElement.style.setProperty('--ui-scale', s);
+        if (slider) slider.value = s;
+        if (valDisplay) valDisplay.textContent = Math.round(s * 100) + '%';
+        // Highlight active preset
+        document.querySelectorAll('.settings-preset').forEach(b => {
+            b.classList.toggle('active', parseFloat(b.dataset.scale) === s);
+        });
+        try { localStorage.setItem('ftd-ui-scale', s); } catch (e) {}
+        // Resize viewport after scale change
+        if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 100);
+    }
+
+    // Load saved scale
+    try {
+        const saved = localStorage.getItem('ftd-ui-scale');
+        if (saved) applyScale(parseFloat(saved));
+    } catch (e) {}
+
+    if (btnOpen && modal) {
+        btnOpen.addEventListener('click', () => { modal.style.display = ''; });
+    }
+    if (btnClose && modal) {
+        btnClose.addEventListener('click', () => { modal.style.display = 'none'; });
+    }
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.style.display = 'none';
+        });
+    }
+    if (slider) {
+        slider.addEventListener('input', () => applyScale(parseFloat(slider.value)));
+    }
+    document.querySelectorAll('.settings-preset').forEach(btn => {
+        btn.addEventListener('click', () => applyScale(parseFloat(btn.dataset.scale)));
+    });
+    if (btnReset) {
+        btnReset.addEventListener('click', () => applyScale(1.0));
+    }
+}
+
 // ── Engine Mode Switching ────────────────────────────────────────────
 function switchEngineMode(mode) {
     engineMode = mode;
