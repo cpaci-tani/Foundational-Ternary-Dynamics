@@ -1162,8 +1162,8 @@ export class Viewport {
         // Clip to boundary shape (normalized coords -1..1 from lattice center)
         let count = 0;
         const maxPts = posAttr.array.length / 3;
-        const MAX_SIZE  = 10.0;     // active voxel (capped to prevent axis-aligned bloom)
-        const FLUX_THRESHOLD = 0.005; // below this = skip entirely (no ghost dots)
+        const MAX_SIZE  = (this._fluxPointScale || 1.0) * 10.0;
+        const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
         const halfN = N / 2;
 
         // Subsample for large lattices: step=2 for L>48 (renders 1/8 of voxels)
@@ -1276,6 +1276,28 @@ export class Viewport {
         this._fieldHeatmap.visible = on;
         this.showHeatmap = on;
         if (!on) this._fieldHeatmap.geometry.setDrawRange(0, 0);
+    }
+
+    // ── Flux Volume Controls ──────────────────────────────────────────
+
+    setFluxOpacity(val) {
+        if (!this._fluxVolume) return;
+        this._fluxVolume.material.uniforms.uOpacity.value = val;
+    }
+
+    setFluxShape(shapeIndex) {
+        if (!this._fluxVolume) return;
+        this._fluxVolume.material.uniforms.shapeType.value = shapeIndex;
+    }
+
+    setFluxPointScale(scale) {
+        // Store scale factor; applied in updateFluxVolume via _fluxPointScale
+        this._fluxPointScale = scale;
+    }
+
+    setFluxThreshold(val) {
+        // Store threshold; applied in updateFluxVolume
+        this._fluxThreshold = val;
     }
 
     // ══════════════════════════════════════════════════════════════════
