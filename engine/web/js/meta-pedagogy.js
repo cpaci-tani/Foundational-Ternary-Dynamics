@@ -21,7 +21,7 @@ export function buildMetaInfoPanel(container, metaUnit) {
     root.innerHTML = `<style>
         .meta-panel-root {
             font-family: var(--font-mono, monospace);
-            font-size: 12px;
+            font-size: 14px;
             color: #e0e0e0;
             padding: 6px 8px;
             user-select: none;
@@ -32,10 +32,10 @@ export function buildMetaInfoPanel(container, metaUnit) {
             border-bottom: 1px solid #2a2a40;
             margin-bottom: 8px;
         }
-        .meta-hero-title { font-size: 11px; letter-spacing: 2px; color: #9ca3af; text-transform: uppercase; }
-        .meta-hero-number { font-size: 32px; font-weight: bold; color: #fff; line-height: 1.1; }
+        .meta-hero-title { font-size: 13px; letter-spacing: 2px; color: #9ca3af; text-transform: uppercase; }
+        .meta-hero-number { font-size: 38px; font-weight: bold; color: #fff; line-height: 1.1; }
         .meta-hero-number span { color: #FFD700; }
-        .meta-hero-sub { font-size: 10px; color: #6b7280; margin-top: 2px; }
+        .meta-hero-sub { font-size: 13px; color: #6b7280; margin-top: 4px; }
 
         .meta-card {
             background: rgba(255,255,255,0.03);
@@ -48,35 +48,35 @@ export function buildMetaInfoPanel(container, metaUnit) {
         .meta-card:hover { border-color: #374151; }
         .meta-card-head {
             display: flex; align-items: center; gap: 8px;
-            padding: 8px 10px;
+            padding: 10px 12px;
             cursor: pointer;
-            font-size: 12px; font-weight: 600;
+            font-size: 15px; font-weight: 600;
         }
         .meta-card-head .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .meta-card-head .arrow { margin-left: auto; font-size: 10px; color: #6b7280; transition: transform 0.2s; }
+        .meta-card-head .arrow { margin-left: auto; font-size: 12px; color: #6b7280; transition: transform 0.2s; }
         .meta-card.open .meta-card-head .arrow { transform: rotate(90deg); }
         .meta-card-body { display: none; padding: 4px 10px 10px; }
         .meta-card.open .meta-card-body { display: block; }
 
         .meta-shell-row {
-            display: flex; align-items: center; gap: 6px;
-            padding: 5px 6px; margin: 2px 0;
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 8px; margin: 2px 0;
             border-radius: 4px; cursor: pointer;
             transition: background 0.15s;
         }
         .meta-shell-row:hover { background: rgba(255,255,255,0.06); }
         .meta-shell-row.active { background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); }
         .meta-shell-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-        .meta-shell-name { flex: 1; font-size: 12px; }
-        .meta-shell-count { font-size: 14px; font-weight: bold; min-width: 20px; text-align: right; }
-        .meta-shell-desc { font-size: 9px; color: #6b7280; }
+        .meta-shell-name { flex: 1; font-size: 14px; }
+        .meta-shell-count { font-size: 18px; font-weight: bold; min-width: 24px; text-align: right; }
+        .meta-shell-desc { font-size: 11px; color: #6b7280; }
 
         .meta-btn {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 4px 10px; margin: 2px;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px; margin: 3px;
             border-radius: 4px; border: 1px solid #374151;
             background: rgba(255,255,255,0.04);
-            color: #d1d5db; font-size: 10px; font-family: inherit;
+            color: #d1d5db; font-size: 13px; font-family: inherit;
             cursor: pointer; transition: all 0.15s;
         }
         .meta-btn:hover { background: rgba(255,255,255,0.1); border-color: #4b5563; }
@@ -88,17 +88,17 @@ export function buildMetaInfoPanel(container, metaUnit) {
             background: rgba(0,0,0,0.2); border-radius: 4px;
             margin: 6px 0;
         }
-        .meta-eq-main { font-size: 15px; color: #fff; font-weight: bold; }
-        .meta-eq-sub { font-size: 10px; color: #9ca3af; margin-top: 2px; }
-        .meta-eq-result { font-size: 12px; margin-top: 4px; font-weight: bold; }
+        .meta-eq-main { font-size: 17px; color: #fff; font-weight: bold; }
+        .meta-eq-sub { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+        .meta-eq-result { font-size: 14px; margin-top: 4px; font-weight: bold; }
 
         .meta-slider-row {
             display: flex; align-items: center; gap: 8px; margin-top: 6px;
         }
         .meta-slider-row input[type=range] { flex: 1; accent-color: #FFD700; }
         .meta-slider-val {
-            min-width: 24px; text-align: center;
-            font-size: 18px; font-weight: bold; color: #FFD700;
+            min-width: 30px; text-align: center;
+            font-size: 22px; font-weight: bold; color: #FFD700;
         }
 
         .meta-stat-grid {
@@ -107,17 +107,17 @@ export function buildMetaInfoPanel(container, metaUnit) {
         }
         .meta-stat {
             background: rgba(0,0,0,0.15); border-radius: 4px;
-            padding: 6px 8px; text-align: center;
+            padding: 8px 10px; text-align: center;
         }
-        .meta-stat-val { font-size: 16px; font-weight: bold; }
-        .meta-stat-label { font-size: 9px; color: #6b7280; margin-top: 1px; }
+        .meta-stat-val { font-size: 22px; font-weight: bold; }
+        .meta-stat-label { font-size: 12px; color: #6b7280; margin-top: 2px; }
 
         .meta-inspect {
             border-top: 1px solid #1f2937;
             padding: 8px 0 4px;
             margin-top: 4px;
         }
-        .meta-inspect-empty { color: #4b5563; font-size: 10px; font-style: italic; text-align: center; padding: 12px; }
+        .meta-inspect-empty { color: #4b5563; font-size: 12px; font-style: italic; text-align: center; padding: 12px; }
     </style>
 
     <!-- Hero -->
@@ -273,9 +273,9 @@ export function buildMetaInfoPanel(container, metaUnit) {
 
             <div style="margin-top:8px;font-size:10px;color:#6b7280;">Vieta coefficients of P(x)=(x&minus;3)(x&minus;4)(x&minus;7)(x&minus;13):</div>
             <div style="display:flex;gap:6px;margin-top:4px;">
-                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:14px;">27</div><div class="meta-stat-label">e<sub>1</sub> = 3&sup3;</div></div>
-                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:14px;">243</div><div class="meta-stat-label">e<sub>2</sub> = 3<sup>5</sup></div></div>
-                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="font-size:14px;">1092</div><div class="meta-stat-label">e<sub>4</sub> = product</div></div>
+                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:18px;">27</div><div class="meta-stat-label">e<sub>1</sub> = 3&sup3;</div></div>
+                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:18px;">243</div><div class="meta-stat-label">e<sub>2</sub> = 3<sup>5</sup></div></div>
+                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="font-size:18px;">1092</div><div class="meta-stat-label">e<sub>4</sub> = product</div></div>
             </div>
         </div>
     </div>
