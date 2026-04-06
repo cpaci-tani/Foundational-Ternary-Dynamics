@@ -2652,13 +2652,38 @@
                             <button class="ctrl-btn-secondary" id="btn-random-flux">Random Flux</button>
                         </div>
                     </div>
-                    <!-- Visuals card removed — redundant controls (shape/alpha/scale/void) -->
+                    <!-- Flux Volume Controls -->
                     <div class="card scale0-only">
-                        <div class="card-title">Quick Actions</div>
-                        <div style="display:flex;flex-direction:column;gap:6px">
-                            <button class="ctrl-btn-secondary" id="btn-enable-all">Enable All Terms</button>
-                            <button class="ctrl-btn-secondary" id="btn-disable-all">Disable All Terms</button>
-                            <button class="ctrl-btn-secondary" id="btn-clear-particles">Clear All Particles</button>
+                        <div class="card-title">Flux Volume</div>
+
+                        <div class="combo-section-label">Shape</div>
+                        <select class="tb-select" id="flux-shape-select" style="width:100%;margin-bottom:8px;">
+                            <option value="0" selected>Circle</option>
+                            <option value="1">Square</option>
+                            <option value="2">Diamond</option>
+                            <option value="3">Star</option>
+                            <option value="4">Triangle</option>
+                            <option value="5">Hexagon</option>
+                            <option value="6">Ring</option>
+                            <option value="7">Cross</option>
+                        </select>
+
+                        <div class="combo-section-label">Opacity</div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                            <input type="range" class="pe-slider" id="flux-opacity" min="0.0" max="1.0" step="0.01" value="0.70" style="flex:1;">
+                            <span class="pe-ctrl-value" id="flux-opacity-val">0.70</span>
+                        </div>
+
+                        <div class="combo-section-label">Point Size</div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                            <input type="range" class="pe-slider" id="flux-point-scale" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1;">
+                            <span class="pe-ctrl-value" id="flux-point-scale-val">1.0</span>
+                        </div>
+
+                        <div class="combo-section-label">Threshold</div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                            <input type="range" class="pe-slider" id="flux-threshold" min="0.0" max="0.1" step="0.001" value="0.005" style="flex:1;">
+                            <span class="pe-ctrl-value" id="flux-threshold-val">0.005</span>
                         </div>
                     </div>
                     <!-- Scale 1 PE Controls -->
