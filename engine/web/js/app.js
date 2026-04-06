@@ -2391,6 +2391,7 @@ function wireControls() {
             const v = parseFloat(fluxScaleSlider.value);
             fluxScaleVal.textContent = v.toFixed(1);
             viewport.setFluxPointScale(v);
+            _latticeNeedsUpload = true; // force re-render with new scale
         });
     }
 
@@ -2401,6 +2402,7 @@ function wireControls() {
             const v = parseFloat(fluxThreshSlider.value);
             fluxThreshVal.textContent = v.toFixed(3);
             viewport.setFluxThreshold(v);
+            _latticeNeedsUpload = true; // force re-render with new threshold
         });
     }
 
