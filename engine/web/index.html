@@ -150,15 +150,16 @@
             background: linear-gradient(180deg, #242933 0%, #2e3440 100%) !important;
         }
 
-        /* Light/parchment mode: invert some specific dark-mode-only styles */
-        html[data-theme="light"] .view-toggle,
-        html[data-theme="parchment"] .view-toggle {
-            background: rgba(255,255,255,0.85);
-        }
+        /* Light/parchment: active toggles need white text on accent bg */
         html[data-theme="light"] .view-toggle.active,
         html[data-theme="parchment"] .view-toggle.active {
-            background: var(--accent);
             color: #fff;
+        }
+        /* Light/parchment: ensure select option dropdowns are readable */
+        html[data-theme="light"] .viewport-select-group label,
+        html[data-theme="parchment"] .viewport-select-group label {
+            color: var(--text-primary);
+            text-shadow: 0 0 4px var(--bg-surface);
         }
 
         /* ── Accessibility ────────────────────────────────────── */
@@ -359,7 +360,7 @@
             padding: var(--sp-sm) var(--sp-md);
             font-size: var(--fs-sm);
             font-weight: 500;
-            background: rgba(31, 41, 55, 0.85);
+            background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             color: var(--text-secondary);
@@ -443,9 +444,9 @@
             letter-spacing: 0.5px;
         }
         .viewport-select-group select {
-            font-size: 11px;
+            font-size: var(--fs-sm);
             padding: 3px 8px;
-            background: rgba(31, 41, 55, 0.85);
+            background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             color: var(--text-secondary);
@@ -460,7 +461,7 @@
             border-color: var(--border-light);
         }
         .viewport-select-group select option {
-            background: #1f2937;
+            background: var(--bg-surface);
             color: var(--text-primary);
         }
 
@@ -470,13 +471,13 @@
             top: 12px;
             left: 12px;
             z-index: 100;
-            background: rgba(31, 41, 55, 0.88);
+            background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             backdrop-filter: blur(8px);
             padding: 8px 10px;
             min-width: 90px;
-            font-size: 11px;
+            font-size: var(--fs-sm);
             color: var(--text-secondary);
             pointer-events: none;
         }
@@ -1469,7 +1470,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(17, 24, 39, 0.95);
+            background: var(--bg-deep);
         }
 
         #error-overlay .error-box {
