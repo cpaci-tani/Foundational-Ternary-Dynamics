@@ -2684,44 +2684,61 @@ function wireKeyboard() {
     const valDisplay = document.getElementById('settings-scale-val');
     const btnReset = document.getElementById('settings-reset');
 
+    // ── Scale ──
     function applyScale(s) {
         document.documentElement.style.setProperty('--ui-scale', s);
         if (slider) slider.value = s;
         if (valDisplay) valDisplay.textContent = Math.round(s * 100) + '%';
-        // Highlight active preset
         document.querySelectorAll('.settings-preset').forEach(b => {
-            b.classList.toggle('active', parseFloat(b.dataset.scale) === s);
+            b.classList.toggle('active', Math.abs(parseFloat(b.dataset.scale) - s) < 0.01);
         });
-        try { localStorage.setItem('ftd-ui-scale', s); } catch (e) {}
-        // Resize viewport after scale change
+        try { localStorage.setItem('ftd-ui-scale', String(s)); } catch (e) {}
         if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 100);
     }
 
-    // Load saved scale
+    // ── Theme ──
+    function applyTheme(name) {
+        if (name === 'default') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', name);
+        }
+        document.querySelectorAll('.theme-swatch').forEach(sw => {
+            sw.classList.toggle('active', sw.dataset.theme === name);
+        });
+        try { localStorage.setItem('ftd-theme', name); } catch (e) {}
+    }
+
+    // ── Load saved settings ──
     try {
-        const saved = localStorage.getItem('ftd-ui-scale');
-        if (saved) applyScale(parseFloat(saved));
+        const savedScale = localStorage.getItem('ftd-ui-scale');
+        if (savedScale) applyScale(parseFloat(savedScale));
+        const savedTheme = localStorage.getItem('ftd-theme');
+        if (savedTheme) applyTheme(savedTheme);
     } catch (e) {}
 
-    if (btnOpen && modal) {
-        btnOpen.addEventListener('click', () => { modal.style.display = ''; });
-    }
-    if (btnClose && modal) {
-        btnClose.addEventListener('click', () => { modal.style.display = 'none'; });
-    }
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.style.display = 'none';
-        });
-    }
-    if (slider) {
-        slider.addEventListener('input', () => applyScale(parseFloat(slider.value)));
-    }
+    // ── Modal open/close ──
+    if (btnOpen && modal) btnOpen.addEventListener('click', () => { modal.style.display = 'flex'; });
+    if (btnClose && modal) btnClose.addEventListener('click', () => { modal.style.display = 'none'; });
+    if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+    // ── Scale controls ──
+    if (slider) slider.addEventListener('input', () => applyScale(parseFloat(slider.value)));
     document.querySelectorAll('.settings-preset').forEach(btn => {
         btn.addEventListener('click', () => applyScale(parseFloat(btn.dataset.scale)));
     });
+
+    // ── Theme controls ──
+    document.querySelectorAll('.theme-swatch').forEach(sw => {
+        sw.addEventListener('click', () => applyTheme(sw.dataset.theme));
+    });
+
+    // ── Reset all ──
     if (btnReset) {
-        btnReset.addEventListener('click', () => applyScale(1.0));
+        btnReset.addEventListener('click', () => {
+            applyScale(1.1);
+            applyTheme('default');
+        });
     }
 }
 
