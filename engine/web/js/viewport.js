@@ -2625,6 +2625,45 @@ export class Viewport {
     setEngineMode(mode) {
         this._engineMode = mode;
 
+        // ── Meta mode: hide all physics visuals, keep scene clean ──
+        if (mode === 'meta') {
+            this._boundaryMode = 'origin';
+            // Hide everything from other scales
+            if (this.wireframe) this.wireframe.visible = false;
+            if (this.axes) this.axes.visible = false;
+            if (this.peAxes) this.peAxes.visible = false;
+            if (this.peGrid) this.peGrid.visible = false;
+            if (this.particles) this.particles.visible = false;
+            if (this._fluxVolume) this._fluxVolume.visible = false;
+            if (this._fluxSlice) this._fluxSlice.visible = false;
+            if (this._eFieldLines) this._eFieldLines.visible = false;
+            if (this._bFieldLines) this._bFieldLines.visible = false;
+            if (this._bondCylinders) this._bondCylinders.visible = false;
+            if (this._bondLight) this._bondLight.visible = false;
+            if (this._nucleusShells) this._nucleusShells.visible = false;
+            if (this._orbitalShells) this._orbitalShells.visible = false;
+            if (this._orbitalLobes) this._orbitalLobes.visible = false;
+            if (this.velocityVectors) this.velocityVectors.visible = false;
+            if (this.trails) this.trails.visible = false;
+            if (this.bondLines) this.bondLines.visible = false;
+            // Hide boundary box
+            if (this._boundary) this._boundary.visible = false;
+            // Camera: close-up at origin, allow very close zoom
+            this.controls.minDistance = 0.1;
+            this.controls.target.set(0, 0, 0);
+            this.camera.position.set(5, 3.5, 5);
+            this.camera.near = 0.005;
+            this.camera.updateProjectionMatrix();
+            this.controls.update();
+            return;
+        }
+
+        // ── Leaving meta mode — restore camera limits ──
+        this.controls.minDistance = 0.5;
+        this.camera.near = 0.01;
+        this.camera.updateProjectionMatrix();
+        if (this._boundary) this._boundary.visible = true;
+
         // ── Consciousness mode: dark background, bloom, centered camera ──
         if (mode === 'consciousness') {
             this.scene.background = new THREE.Color(0x050510);
