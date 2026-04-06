@@ -2821,6 +2821,8 @@ function loadMetaScenario() {
                 el.classList.toggle('active');
                 metaUnit[method](el.classList.contains('active'));
             };
+            // Apply initial state from button's active class
+            metaUnit[method](el.classList.contains('active'));
         }
     }
 
