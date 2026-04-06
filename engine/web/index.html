@@ -1085,11 +1085,9 @@
         #app.mode-consciousness .scale5-only { display: none !important; }
         /* Meta mode dark background */
         #app.mode-meta #viewport { background: #080818; }
-        /* Meta tab hiding */
-        #app.mode-meta .tab[data-scales="0"],
-        #app.mode-meta .tab[data-scales="1"],
-        #app.mode-meta .tab[data-scales="1,2,3"],
-        #app.mode-meta .tab[data-scales="4"] { display: none !important; }
+        /* Meta mode: hide non-meta tabs that lack data-scales */
+        #app.mode-meta .tab[data-panel="ontic"],
+        #app.mode-meta .tab[data-panel="hierarchy"] { display: none !important; }
 
         /* Consciousness mode dark atmosphere */
         #app.mode-consciousness #viewport {
@@ -1117,7 +1115,8 @@
         #app.mode-particles .tab[data-scales="0"],
         #app.mode-atoms .tab[data-scales="0"],
         #app.mode-molecules .tab[data-scales="0"],
-        #app.mode-consciousness .tab[data-scales="0"] {
+        #app.mode-consciousness .tab[data-scales="0"],
+        #app.mode-meta .tab[data-scales="0"] {
             display: none !important;
         }
 
@@ -1125,13 +1124,15 @@
         #app.mode-lattice .tab[data-scales="1"],
         #app.mode-atoms .tab[data-scales="1"],
         #app.mode-molecules .tab[data-scales="1"],
-        #app.mode-consciousness .tab[data-scales="1"] {
+        #app.mode-consciousness .tab[data-scales="1"],
+        #app.mode-meta .tab[data-scales="1"] {
             display: none !important;
         }
 
         /* data-scales="1,2,3"  →  particles, atoms, molecules */
         #app.mode-lattice .tab[data-scales="1,2,3"],
-        #app.mode-consciousness .tab[data-scales="1,2,3"] {
+        #app.mode-consciousness .tab[data-scales="1,2,3"],
+        #app.mode-meta .tab[data-scales="1,2,3"] {
             display: none !important;
         }
 
@@ -1139,12 +1140,23 @@
         #app.mode-lattice .tab[data-scales="4"],
         #app.mode-particles .tab[data-scales="4"],
         #app.mode-atoms .tab[data-scales="4"],
-        #app.mode-molecules .tab[data-scales="4"] {
+        #app.mode-molecules .tab[data-scales="4"],
+        #app.mode-meta .tab[data-scales="4"] {
             display: none !important;
         }
 
-        /* data-scales="0,1,2,3"  →  not consciousness */
-        #app.mode-consciousness .tab[data-scales="0,1,2,3"] {
+        /* data-scales="0,1,2,3"  →  not consciousness or meta */
+        #app.mode-consciousness .tab[data-scales="0,1,2,3"],
+        #app.mode-meta .tab[data-scales="0,1,2,3"] {
+            display: none !important;
+        }
+
+        /* data-scales="5"  →  only meta */
+        #app.mode-lattice .tab[data-scales="5"],
+        #app.mode-particles .tab[data-scales="5"],
+        #app.mode-atoms .tab[data-scales="5"],
+        #app.mode-molecules .tab[data-scales="5"],
+        #app.mode-consciousness .tab[data-scales="5"] {
             display: none !important;
         }
 
