@@ -33,6 +33,8 @@ import { BackgroundManager } from './backgrounds.js?v=20260304s';
 import { PETelemetryPanel } from './pe-telemetry.js?v=20260304q';
 import { ConsciousnessEngine } from './consciousness.js?v=20260305e';
 import { ConsciousnessPedagogy, addInfoTooltips } from './consciousness-pedagogy.js?v=20260317a';
+import { MetaUnit } from './meta-unit.js?v=20260405a';
+import { buildMetaInfoPanel, buildSiteInspectPanel } from './meta-pedagogy.js?v=20260405a';
 
 console.log('[FTD] App version 20260318a loaded (cache-busted)');
 
@@ -60,7 +62,8 @@ let activeTab = 'controls';
 let frameCount = 0;
 let lastFpsTime = performance.now();
 let fpsDisplay = 0;
-let engineMode = 'lattice'; // 'lattice', 'particles', 'atoms', 'molecules', or 'consciousness'
+let engineMode = 'lattice'; // 'lattice', 'particles', 'atoms', 'molecules', 'consciousness', or 'meta'
+let metaUnit = null; // MetaUnit instance for meta scale
 let _csEngine = null;          // ConsciousnessEngine instance (Scale 4)
 let _csPedagogy = null;        // ConsciousnessPedagogy instance (Theory/Walkthrough panels)
 let _csScenarioMeta = { name: '', domain: 'Real (k=16)', thetaMode: 'static', sloopDepth: 0, bellS: null };
@@ -725,7 +728,10 @@ async function init() {
 function animate(now) {
     requestAnimationFrame(animate);
 
-    if (engineMode === 'consciousness') {
+    if (engineMode === 'meta') {
+        if (metaUnit) metaUnit.update(1/60);
+        viewport.render();
+    } else if (engineMode === 'consciousness') {
         animateConsciousness(now);
     } else if (engineMode === 'atoms' || engineMode === 'molecules') {
         animateAE(now);
@@ -2685,12 +2691,13 @@ function switchEngineMode(mode) {
     app.classList.toggle('mode-atoms', mode === 'atoms');
     app.classList.toggle('mode-molecules', mode === 'molecules');
     app.classList.toggle('mode-consciousness', mode === 'consciousness');
+    app.classList.toggle('mode-meta', mode === 'meta');
 
     // If the active tab is hidden for this scale, fall back to Controls
     const activeTabEl = document.querySelector('#tab-bar .tab.active');
     if (activeTabEl) {
         const scales = activeTabEl.dataset.scales;
-        const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', consciousness: '4' }[mode];
+        const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', consciousness: '4', meta: '5' }[mode];
         if (scales && !scales.split(',').includes(scaleIndex)) {
             // Current tab not available at this scale — click Controls
             const controlsTab = document.querySelector('#tab-bar .tab[data-panel="controls"]');
@@ -2714,11 +2721,19 @@ function switchEngineMode(mode) {
         _csEngine = null;
     }
 
+    // Cleanup meta unit when leaving Meta scale
+    if (mode !== 'meta' && metaUnit) {
+        metaUnit.dispose();
+        metaUnit = null;
+    }
+
     // Full visual reset on ENGINE MODE SWITCH (scale change) — clears all toggles
     _resetAllVisualState();
 
     // Initialize the appropriate engine for the new scale
-    if (mode === 'consciousness') {
+    if (mode === 'meta') {
+        loadMetaScenario();
+    } else if (mode === 'consciousness') {
         loadConsciousnessScenario(document.getElementById('cs-scenario-select').value);
     } else if (mode === 'molecules') {
         // Ensure bond lines are visible (atoms mode hides them)
@@ -2741,6 +2756,56 @@ function switchEngineMode(mode) {
         const scenario = document.getElementById('scenario-select').value;
         loadScenario(scenario);
     }
+}
+
+function loadMetaScenario() {
+    // Initialize the Meta Scale: 3^3 existential unit visualization
+    _resetAllVisualState();
+    running = false;
+    updatePlayButton();
+
+    // Create MetaUnit if not already present
+    if (!metaUnit && viewport.scene) {
+        metaUnit = new MetaUnit(viewport.scene, viewport.camera, viewport.renderer);
+    }
+
+    // Build the info panel
+    const infoContainer = document.getElementById('meta-info-panel');
+    if (infoContainer) {
+        buildMetaInfoPanel(infoContainer);
+    }
+
+    // Wire up meta toggles
+    const toggleIds = [
+        ['meta-toggle-center', 'toggleCenter'],
+        ['meta-toggle-oct', 'toggleOctahedron'],
+        ['meta-toggle-cuboct', 'toggleCuboctahedron'],
+        ['meta-toggle-cube', 'toggleCube'],
+        ['meta-toggle-tetra-plus', 'toggleTetraPlus'],
+        ['meta-toggle-tetra-minus', 'toggleTetraMinus'],
+        ['meta-toggle-bcc-fcc', 'toggleBCCFCC'],
+        ['meta-toggle-gerade', 'toggleGeradeUngerade'],
+        ['meta-toggle-connections', 'toggleConnections'],
+        ['meta-toggle-axes', 'toggleRotationAxes'],
+        ['meta-toggle-mirrors', 'toggleMirrorPlanes'],
+        ['meta-toggle-labels', 'toggleFrameworkLabels'],
+        ['meta-toggle-rotate', 'toggleAutoRotate'],
+    ];
+    for (const [elId, method] of toggleIds) {
+        const el = document.getElementById(elId);
+        if (el && metaUnit) {
+            el.onclick = () => {
+                el.classList.toggle('active');
+                metaUnit[method](el.classList.contains('active'));
+            };
+        }
+    }
+
+    // Auto-select the Meta tab in the sidebar
+    const metaTab = document.querySelector('.tab[data-panel="meta-info"]');
+    if (metaTab) metaTab.click();
+
+    console.log('[FTD] Meta Scale: Existential Unit loaded');
 }
 
 function loadPEScenario(name) {
