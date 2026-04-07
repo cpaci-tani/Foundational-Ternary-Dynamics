@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hamiltonian Bridge Explorer — Centered {pi, varpi, G*} Channels</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden}
+h1{margin-top:12px;font-size:1.15em;font-weight:300;letter-spacing:.05em;color:#a0b8d8}
+.subtitle{font-size:.72em;color:#667;margin-bottom:6px;font-style:italic;text-align:center;max-width:900px;line-height:1.4}
+
+.main{display:flex;gap:10px;margin:8px 0;align-items:flex-start;max-width:1200px;width:100%;padding:0 10px}
+canvas{border:1px solid #1a1a2e;border-radius:4px;background:#08080d}
+.col{display:flex;flex-direction:column;gap:6px}
+.card{background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;padding:8px 10px;font-size:.72em}
+.card-title{font-size:.7em;color:#556;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.val-row{display:flex;justify-content:space-between;margin:2px 0;font-family:monospace}
+.val-label{color:#667}.val-num{color:#a0b8d8;font-weight:bold}
+.val-num.gold{color:#ffd54f}.val-num.red{color:#ff4432}.val-num.blue{color:#44aaff}
+.val-num.green{color:#44cc66}.val-num.mag{color:#ff66ff}
+
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;margin:6px 0;max-width:1000px}
+.ctrl-group{display:flex;flex-direction:column;align-items:center;gap:2px}
+.ctrl-group label{font-size:.7em;color:#8899aa}
+.ctrl-group input[type=range]{width:220px;accent-color:#ffd54f;height:6px}
+.ctrl-group .val-display{font-family:monospace;font-size:1em;color:#ffd54f;min-width:70px;text-align:center}
+
+.presets{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin:4px 0}
+.preset{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:.7em}
+.preset:hover{background:#2a3a5a}.preset.active{background:#2a4a6a;border-color:#ffd54f;color:#ffd54f}
+
+.formula{font-family:monospace;font-size:.85em;background:#0d0d18;border:1px solid #1a1a2e;border-radius:4px;padding:4px 14px;text-align:center;margin:4px 0}
+.insight{font-size:.68em;color:#556;line-height:1.4;margin-top:4px;padding-top:4px;border-top:1px solid #1a1a2e}
+.insight em{color:#a0b8d8;font-style:normal}
+</style>
+</head>
+<body>
+<h1>HAMILTONIAN BRIDGE EXPLORER &mdash; CENTERED {&pi;, &varpi;, G*} CHANNELS</h1>
+<p class="subtitle">
+  H = &mu;I + H<sub>rel</sub> &nbsp;where&nbsp;
+  H<sub>rel</sub> = [[+&Delta;, g, 0], [g, &beta;, g], [0, g, &minus;&Delta;]]
+  &nbsp;&middot;&nbsp; &pi; and G* are mirror channels around &mu; &nbsp;&middot;&nbsp; &varpi; mediates
+</p>
+
+<div class="formula" id="formulaBar">
+  &mu; = (&pi;+G*)/2 = 3.0501 &nbsp;&nbsp; &Delta; = (&pi;&minus;G*)/2 = 0.0915 &nbsp;&nbsp; &beta; = &varpi;&minus;&mu; = &minus;0.4281
+</div>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <label>Coupling g</label>
+    <input type="range" id="gSlider" min="0" max="2" step="0.001" value="0.091">
+    <span class="val-display" id="gDisplay">g = 0.091</span>
+  </div>
+  <div class="ctrl-group">
+    <label>Time t</label>
+    <input type="range" id="tSlider" min="0" max="50" step="0.1" value="0">
+    <span class="val-display" id="tDisplay">t = 0.0</span>
+  </div>
+</div>
+
+<div class="presets">
+  <div class="preset" onclick="setG(0)">g=0 (uncoupled)</div>
+  <div class="preset active" onclick="setG(0.0915)">g=&Delta; (matched)</div>
+  <div class="preset" onclick="setG(0.214)">g=|&beta;|/2</div>
+  <div class="preset" onclick="setG(0.4281)">g=|&beta;| (strong)</div>
+  <div class="preset" onclick="setG(0.0854)">g=&radic;&alpha;</div>
+  <div class="preset" onclick="setG(1.0)">g=1 (ultra)</div>
+</div>
+
+<div class="main">
+  <div class="col">
+    <canvas id="energyCanvas" width="500" height="300"></canvas>
+    <canvas id="evolCanvas" width="500" height="250"></canvas>
+    <canvas id="tensorCanvas" width="500" height="220"></canvas>
+  </div>
+  <div class="col" style="width:320px">
+    <div class="card">
+      <div class="card-title">FTD Constants</div>
+      <div class="val-row"><span class="val-label">&pi; (derived)</span><span class="val-num blue" id="vPi">3.14159265</span></div>
+      <div class="val-row"><span class="val-label">G* (bridge)</span><span class="val-num red" id="vGs">2.95867512</span></div>
+      <div class="val-row"><span class="val-label">&varpi; (lemniscate)</span><span class="val-num green" id="vVp">2.62205755</span></div>
+      <div class="val-row"><span class="val-label">&mu; = (&pi;+G*)/2</span><span class="val-num gold" id="vMu">3.05013389</span></div>
+      <div class="val-row"><span class="val-label">&Delta; = (&pi;&minus;G*)/2</span><span class="val-num" id="vDelta">0.09145877</span></div>
+      <div class="val-row"><span class="val-label">&beta; = &varpi;&minus;&mu;</span><span class="val-num mag" id="vBeta">&minus;0.42807633</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Eigenvalues of H<sub>rel</sub></div>
+      <div class="val-row"><span class="val-label">&lambda;<sub>1</sub> (lowest)</span><span class="val-num red" id="ev1">—</span></div>
+      <div class="val-row"><span class="val-label">&lambda;<sub>2</sub> (middle)</span><span class="val-num gold" id="ev2">—</span></div>
+      <div class="val-row"><span class="val-label">&lambda;<sub>3</sub> (highest)</span><span class="val-num blue" id="ev3">—</span></div>
+      <div class="val-row"><span class="val-label">&lambda;<sub>3</sub>&minus;&lambda;<sub>1</sub> (spread)</span><span class="val-num" id="evSpread">—</span></div>
+      <div class="val-row"><span class="val-label">&lambda;<sub>2</sub> / &Delta;</span><span class="val-num" id="evMidRatio">—</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Eigenvectors (|&pi;&rang;, |&varpi;&rang;, |G*&rang;)</div>
+      <div id="evecDisplay" style="font-family:monospace;font-size:.72em;line-height:1.5"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">State Populations at time t</div>
+      <div class="val-row"><span class="val-label">|&langle;&pi;|&psi;(t)&rangle;|&sup2;</span><span class="val-num blue" id="popPi">—</span></div>
+      <div class="val-row"><span class="val-label">|&langle;&varpi;|&psi;(t)&rangle;|&sup2;</span><span class="val-num green" id="popVp">—</span></div>
+      <div class="val-row"><span class="val-label">|&langle;G*|&psi;(t)&rangle;|&sup2;</span><span class="val-num red" id="popGs">—</span></div>
+      <div class="insight">
+        Initial state: |&psi;(0)&rangle; = |&pi;&rangle; (pure &pi;-channel).
+        Time evolution shows transfer through the &varpi;-bridge to G*.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Regime</div>
+      <div id="regimeDisplay" style="font-size:.78em;line-height:1.5"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">27-State Tensor Product (Moore Shells)</div>
+      <div class="val-row"><span class="val-label">H<sub>full</sub> = H&otimes;I&otimes;I + I&otimes;H&otimes;I + I&otimes;I&otimes;H</span></div>
+      <div style="margin-top:4px">
+        <div class="val-row"><span class="val-label" style="color:#ffd54f">&#9632; Center (0,0,0)</span><span class="val-num" id="shellCenter">1</span></div>
+        <div class="val-row"><span class="val-label" style="color:#44aaff">&#9632; SC / Octahedron</span><span class="val-num" id="shellSC">6</span></div>
+        <div class="val-row"><span class="val-label" style="color:#44cc66">&#9632; FCC / Cuboctahedron</span><span class="val-num" id="shellFCC">12</span></div>
+        <div class="val-row"><span class="val-label" style="color:#ff4432">&#9632; BCC / Cube corners</span><span class="val-num" id="shellBCC">8</span></div>
+      </div>
+      <div class="val-row" style="margin-top:4px"><span class="val-label">Distinct eigenvalues</span><span class="val-num gold" id="nDistinct27">—</span></div>
+      <div class="val-row"><span class="val-label">Spectral width</span><span class="val-num" id="specWidth27">—</span></div>
+      <div class="insight">
+        At g=0: eigenstates ARE the phase lattice states.
+        As g grows, Moore shells mix but eigenvalue
+        sum structure &lambda;<sub>i</sub>+&lambda;<sub>j</sub>+&lambda;<sub>k</sub> persists.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// FTD Constants (ontic chain: pi derived from varpi and G*)
+const GAMMA_QUARTER = 3.6256099082219083;
+const GAMMA_HALF = 1.7724538509055159;
+const G_STAR = GAMMA_QUARTER**2 / (Math.sqrt(2) * GAMMA_HALF**2);
+const VARPI = GAMMA_QUARTER**2 / (2 * Math.sqrt(2) * GAMMA_HALF);
+const PI_DERIVED = 4 * VARPI**2 / G_STAR**2;
+
+// Centered Hamiltonian parameters
+const MU = (PI_DERIVED + G_STAR) / 2;
+const DELTA = (PI_DERIVED - G_STAR) / 2;
+const BETA = VARPI - MU;
+
+// Sliders
+const gSlider = document.getElementById('gSlider');
+const tSlider = document.getElementById('tSlider');
+const gDisplay = document.getElementById('gDisplay');
+const tDisplay = document.getElementById('tDisplay');
+
+// Canvases
+const enCanvas = document.getElementById('energyCanvas');
+const enCtx = enCanvas.getContext('2d');
+const evCanvas = document.getElementById('evolCanvas');
+const evCtx = evCanvas.getContext('2d');
+const tnCanvas = document.getElementById('tensorCanvas');
+const tnCtx = tnCanvas.getContext('2d');
+
+// State
+let animating = false;
+
+function setG(val) {
+  gSlider.value = val;
+  document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+  update();
+}
+
+// 3x3 real symmetric eigendecomposition (Jacobi-like for small matrix)
+function eigen3x3(H) {
+  // Use characteristic polynomial for 3x3 symmetric
+  const a = H[0][0], b = H[0][1], c = H[0][2];
+  const d = H[1][1], e = H[1][2];
+  const f = H[2][2];
+
+  const p1 = b*b + c*c + e*e;
+  if (p1 < 1e-30) {
+    // Already diagonal
+    let evals = [a, d, f];
+    let evecs = [[1,0,0],[0,1,0],[0,0,1]];
+    // Sort
+    let idx = [0,1,2]; idx.sort((i,j) => evals[i] - evals[j]);
+    return {
+      values: idx.map(i => evals[i]),
+      vectors: idx.map(i => evecs[i])
+    };
+  }
+
+  const q = (a + d + f) / 3;
+  const p2 = (a-q)**2 + (d-q)**2 + (f-q)**2 + 2*p1;
+  const p = Math.sqrt(p2 / 6);
+
+  // B = (1/p)(H - qI)
+  const B = [
+    [(a-q)/p, b/p, c/p],
+    [b/p, (d-q)/p, e/p],
+    [c/p, e/p, (f-q)/p]
+  ];
+
+  // det(B)
+  const detB = B[0][0]*(B[1][1]*B[2][2] - B[1][2]*B[2][1])
+             - B[0][1]*(B[1][0]*B[2][2] - B[1][2]*B[2][0])
+             + B[0][2]*(B[1][0]*B[2][1] - B[1][1]*B[2][0]);
+
+  let phi = Math.acos(Math.max(-1, Math.min(1, detB / 2))) / 3;
+
+  let eig1 = q + 2*p*Math.cos(phi);
+  let eig3 = q + 2*p*Math.cos(phi + 2*Math.PI/3);
+  let eig2 = 3*q - eig1 - eig3;
+
+  let evals = [eig1, eig2, eig3].sort((a,b) => a - b);
+
+  // Compute eigenvectors by null space of (H - lambda*I)
+  let evecs = evals.map(lam => {
+    let M = [
+      [H[0][0]-lam, H[0][1], H[0][2]],
+      [H[1][0], H[1][1]-lam, H[1][2]],
+      [H[2][0], H[2][1], H[2][2]-lam]
+    ];
+    // Cross product of two rows gives null vector
+    let v = cross(M[0], M[1]);
+    let norm = Math.sqrt(v[0]**2 + v[1]**2 + v[2]**2);
+    if (norm < 1e-12) {
+      v = cross(M[0], M[2]);
+      norm = Math.sqrt(v[0]**2 + v[1]**2 + v[2]**2);
+    }
+    if (norm < 1e-12) {
+      v = cross(M[1], M[2]);
+      norm = Math.sqrt(v[0]**2 + v[1]**2 + v[2]**2);
+    }
+    if (norm < 1e-12) return [1,0,0];
+    return [v[0]/norm, v[1]/norm, v[2]/norm];
+  });
+
+  return { values: evals, vectors: evecs };
+}
+
+function cross(a, b) {
+  return [
+    a[1]*b[2] - a[2]*b[1],
+    a[2]*b[0] - a[0]*b[2],
+    a[0]*b[1] - a[1]*b[0]
+  ];
+}
+
+function update() {
+  const g = parseFloat(gSlider.value);
+  const t = parseFloat(tSlider.value);
+  gDisplay.textContent = `g = ${g.toFixed(4)}`;
+  tDisplay.textContent = `t = ${t.toFixed(1)}`;
+
+  // Build H_rel
+  const H = [
+    [DELTA, g, 0],
+    [g, BETA, g],
+    [0, g, -DELTA]
+  ];
+
+  const eig = eigen3x3(H);
+  const vals = eig.values;
+  const vecs = eig.vectors;
+
+  // Update eigenvalue display
+  document.getElementById('ev1').textContent = vals[0].toFixed(8);
+  document.getElementById('ev2').textContent = vals[1].toFixed(8);
+  document.getElementById('ev3').textContent = vals[2].toFixed(8);
+  document.getElementById('evSpread').textContent = (vals[2] - vals[0]).toFixed(8);
+  document.getElementById('evMidRatio').textContent = (vals[1] / DELTA).toFixed(6);
+
+  // Eigenvector display
+  let evHTML = '';
+  const colors = ['#ff4432', '#ffd54f', '#44aaff'];
+  const labels = ['&lambda;<sub>1</sub>', '&lambda;<sub>2</sub>', '&lambda;<sub>3</sub>'];
+  for (let i = 0; i < 3; i++) {
+    const v = vecs[i];
+    evHTML += `<span style="color:${colors[i]}">${labels[i]}</span>: ` +
+      `(${v[0].toFixed(4)}, ${v[1].toFixed(4)}, ${v[2].toFixed(4)})<br>`;
+  }
+  document.getElementById('evecDisplay').innerHTML = evHTML;
+
+  // Time evolution: |psi(0)> = |pi> = (1, 0, 0) in the basis (pi, varpi, G*)
+  // But H_rel diagonal is (Delta, beta, -Delta) which corresponds to (pi, varpi, G*)
+  const psi0 = [1, 0, 0]; // start in pi channel
+
+  // Decompose psi0 in eigenbasis
+  const coeffs = vecs.map(v => v[0]*psi0[0] + v[1]*psi0[1] + v[2]*psi0[2]);
+
+  // Evolve: psi(t) = sum_k c_k * e^{-i*lambda_k*t} * |v_k>
+  // Populations: |<j|psi(t)>|^2
+  let pops = [0, 0, 0];
+  for (let j = 0; j < 3; j++) {
+    let re = 0, im = 0;
+    for (let k = 0; k < 3; k++) {
+      const phase = -vals[k] * t;
+      re += coeffs[k] * vecs[k][j] * Math.cos(phase);
+      im += coeffs[k] * vecs[k][j] * Math.sin(phase);
+    }
+    pops[j] = re*re + im*im;
+  }
+
+  document.getElementById('popPi').textContent = pops[0].toFixed(6);
+  document.getElementById('popVp').textContent = pops[1].toFixed(6);
+  document.getElementById('popGs').textContent = pops[2].toFixed(6);
+
+  // Regime display
+  let regime = '';
+  const ratio = g / Math.abs(DELTA);
+  if (ratio < 0.1) {
+    regime = '<span style="color:#44cc66">Weak coupling</span>: g &lt;&lt; &Delta;. Channels nearly independent. Minimal mixing.';
+  } else if (ratio < 1.5) {
+    regime = '<span style="color:#ffd54f">Matched coupling</span>: g ~ &Delta;. Bridge begins to hybridize the mirror channels.';
+  } else if (g < Math.abs(BETA)) {
+    regime = '<span style="color:#ff8844">Intermediate</span>: &Delta; &lt; g &lt; |&beta;|. Bridge active but mediator asymmetry dominates.';
+  } else {
+    regime = '<span style="color:#ff4432">Strong coupling</span>: g &ge; |&beta;|. Full hybridization. Middle eigenvalue approaches zero.';
+  }
+  regime += `<br><br>g/&Delta; = ${ratio.toFixed(2)}, g/|&beta;| = ${(g/Math.abs(BETA)).toFixed(3)}`;
+  document.getElementById('regimeDisplay').innerHTML = regime;
+
+  drawEnergyLevels(g, vals, vecs);
+  drawEvolution(g, vals, vecs);
+  drawTensorProduct(vals);
+}
+
+function drawEnergyLevels(g, vals, vecs) {
+  const W = enCanvas.width, H = enCanvas.height;
+  enCtx.clearRect(0, 0, W, H);
+
+  // Background
+  enCtx.fillStyle = '#08080d';
+  enCtx.fillRect(0, 0, W, H);
+
+  // Title
+  enCtx.fillStyle = '#556';
+  enCtx.font = '11px system-ui';
+  enCtx.textAlign = 'center';
+  enCtx.fillText('ENERGY LEVELS: H_rel eigenvalues vs coupling g', W/2, 14);
+
+  // Plot eigenvalues as function of g (sweep)
+  const margin = { l: 50, r: 20, t: 30, b: 30 };
+  const pw = W - margin.l - margin.r;
+  const ph = H - margin.t - margin.b;
+
+  // Axes
+  enCtx.strokeStyle = '#222';
+  enCtx.lineWidth = 1;
+  enCtx.beginPath();
+  enCtx.moveTo(margin.l, margin.t);
+  enCtx.lineTo(margin.l, H - margin.b);
+  enCtx.lineTo(W - margin.r, H - margin.b);
+  enCtx.stroke();
+
+  // Energy range
+  const gMax = 2.0;
+  const eMin = -1.8, eMax = 1.5;
+
+  // Axis labels
+  enCtx.fillStyle = '#556';
+  enCtx.font = '10px monospace';
+  enCtx.textAlign = 'center';
+  enCtx.fillText('g (coupling)', W/2, H - 5);
+  enCtx.save();
+  enCtx.translate(12, H/2);
+  enCtx.rotate(-Math.PI/2);
+  enCtx.fillText('Energy', 0, 0);
+  enCtx.restore();
+
+  // Grid lines
+  enCtx.strokeStyle = '#151520';
+  enCtx.lineWidth = 0.5;
+  for (let e = -1.5; e <= 1.5; e += 0.5) {
+    const y = margin.t + ph * (1 - (e - eMin) / (eMax - eMin));
+    enCtx.beginPath();
+    enCtx.moveTo(margin.l, y);
+    enCtx.lineTo(W - margin.r, y);
+    enCtx.stroke();
+    enCtx.fillStyle = '#334';
+    enCtx.textAlign = 'right';
+    enCtx.fillText(e.toFixed(1), margin.l - 4, y + 3);
+  }
+
+  // Zero line
+  const y0 = margin.t + ph * (1 - (0 - eMin) / (eMax - eMin));
+  enCtx.strokeStyle = '#333';
+  enCtx.lineWidth = 1;
+  enCtx.setLineDash([4, 4]);
+  enCtx.beginPath();
+  enCtx.moveTo(margin.l, y0);
+  enCtx.lineTo(W - margin.r, y0);
+  enCtx.stroke();
+  enCtx.setLineDash([]);
+
+  // Sweep eigenvalues
+  const colors = ['#ff4432', '#ffd54f', '#44aaff'];
+  const nSteps = 200;
+
+  for (let band = 0; band < 3; band++) {
+    enCtx.strokeStyle = colors[band];
+    enCtx.lineWidth = 2;
+    enCtx.beginPath();
+    let started = false;
+    for (let i = 0; i <= nSteps; i++) {
+      const gi = (i / nSteps) * gMax;
+      const Hi = [
+        [DELTA, gi, 0],
+        [gi, BETA, gi],
+        [0, gi, -DELTA]
+      ];
+      const ev = eigen3x3(Hi).values;
+      const x = margin.l + (gi / gMax) * pw;
+      const y = margin.t + ph * (1 - (ev[band] - eMin) / (eMax - eMin));
+      if (!started) { enCtx.moveTo(x, y); started = true; }
+      else enCtx.lineTo(x, y);
+    }
+    enCtx.stroke();
+  }
+
+  // Mark current g
+  const gCur = parseFloat(gSlider.value);
+  const xCur = margin.l + (gCur / gMax) * pw;
+  enCtx.strokeStyle = '#ffd54f44';
+  enCtx.lineWidth = 1;
+  enCtx.setLineDash([3, 3]);
+  enCtx.beginPath();
+  enCtx.moveTo(xCur, margin.t);
+  enCtx.lineTo(xCur, H - margin.b);
+  enCtx.stroke();
+  enCtx.setLineDash([]);
+
+  // Mark current eigenvalues
+  for (let i = 0; i < 3; i++) {
+    const y = margin.t + ph * (1 - (vals[i] - eMin) / (eMax - eMin));
+    enCtx.fillStyle = colors[i];
+    enCtx.beginPath();
+    enCtx.arc(xCur, y, 5, 0, 2*Math.PI);
+    enCtx.fill();
+  }
+
+  // Mark Delta and -Delta as reference
+  enCtx.fillStyle = '#33445566';
+  enCtx.font = '9px monospace';
+  const yD = margin.t + ph * (1 - (DELTA - eMin) / (eMax - eMin));
+  const ymD = margin.t + ph * (1 - (-DELTA - eMin) / (eMax - eMin));
+  enCtx.fillStyle = '#445';
+  enCtx.textAlign = 'left';
+  enCtx.fillText('+\u0394', W - margin.r + 3, yD + 3);
+  enCtx.fillText('-\u0394', W - margin.r + 3, ymD + 3);
+  const yBeta = margin.t + ph * (1 - (BETA - eMin) / (eMax - eMin));
+  enCtx.fillText('\u03B2', W - margin.r + 3, yBeta + 3);
+
+  // g axis ticks
+  for (let gi = 0; gi <= gMax; gi += 0.5) {
+    const x = margin.l + (gi / gMax) * pw;
+    enCtx.fillStyle = '#334';
+    enCtx.textAlign = 'center';
+    enCtx.fillText(gi.toFixed(1), x, H - margin.b + 14);
+  }
+
+  // Legend
+  enCtx.font = '10px system-ui';
+  const lx = margin.l + 10;
+  const ly = margin.t + 14;
+  for (let i = 0; i < 3; i++) {
+    enCtx.fillStyle = colors[i];
+    enCtx.fillRect(lx, ly + i*14, 12, 8);
+    const names = ['\u03BB\u2081 (lowest)', '\u03BB\u2082 (middle)', '\u03BB\u2083 (highest)'];
+    enCtx.fillText(names[i], lx + 16, ly + i*14 + 8);
+  }
+}
+
+function drawEvolution(g, vals, vecs) {
+  const W = evCanvas.width, H = evCanvas.height;
+  evCtx.clearRect(0, 0, W, H);
+
+  evCtx.fillStyle = '#08080d';
+  evCtx.fillRect(0, 0, W, H);
+
+  evCtx.fillStyle = '#556';
+  evCtx.font = '11px system-ui';
+  evCtx.textAlign = 'center';
+  evCtx.fillText('TIME EVOLUTION: populations starting from |\u03C0\u27E9', W/2, 14);
+
+  const margin = { l: 50, r: 20, t: 30, b: 30 };
+  const pw = W - margin.l - margin.r;
+  const ph = H - margin.t - margin.b;
+  const tMax = 50;
+
+  // Axes
+  evCtx.strokeStyle = '#222';
+  evCtx.lineWidth = 1;
+  evCtx.beginPath();
+  evCtx.moveTo(margin.l, margin.t);
+  evCtx.lineTo(margin.l, H - margin.b);
+  evCtx.lineTo(W - margin.r, H - margin.b);
+  evCtx.stroke();
+
+  evCtx.fillStyle = '#556';
+  evCtx.font = '10px monospace';
+  evCtx.textAlign = 'center';
+  evCtx.fillText('t', W/2, H - 5);
+
+  // Y axis ticks
+  for (let p = 0; p <= 1; p += 0.25) {
+    const y = margin.t + ph * (1 - p);
+    evCtx.strokeStyle = '#151520';
+    evCtx.beginPath();
+    evCtx.moveTo(margin.l, y);
+    evCtx.lineTo(W - margin.r, y);
+    evCtx.stroke();
+    evCtx.fillStyle = '#334';
+    evCtx.textAlign = 'right';
+    evCtx.fillText(p.toFixed(2), margin.l - 4, y + 3);
+  }
+
+  // Decompose psi0 = |pi> = (1,0,0) in eigenbasis
+  const psi0 = [1, 0, 0];
+  const coeffs = vecs.map(v => v[0]*psi0[0] + v[1]*psi0[1] + v[2]*psi0[2]);
+
+  // Plot three populations
+  const channelColors = ['#44aaff', '#44cc66', '#ff4432']; // pi, varpi, G*
+  const channelNames = ['|\u27E8\u03C0|\u03C8\u27E9|\u00B2', '|\u27E8\u03D6|\u03C8\u27E9|\u00B2', '|\u27E8G*|\u03C8\u27E9|\u00B2'];
+  const nSteps = 400;
+
+  for (let ch = 0; ch < 3; ch++) {
+    evCtx.strokeStyle = channelColors[ch];
+    evCtx.lineWidth = 1.5;
+    evCtx.beginPath();
+    let started = false;
+    for (let i = 0; i <= nSteps; i++) {
+      const ti = (i / nSteps) * tMax;
+      let re = 0, im = 0;
+      for (let k = 0; k < 3; k++) {
+        const phase = -vals[k] * ti;
+        re += coeffs[k] * vecs[k][ch] * Math.cos(phase);
+        im += coeffs[k] * vecs[k][ch] * Math.sin(phase);
+      }
+      const pop = re*re + im*im;
+      const x = margin.l + (ti / tMax) * pw;
+      const y = margin.t + ph * (1 - pop);
+      if (!started) { evCtx.moveTo(x, y); started = true; }
+      else evCtx.lineTo(x, y);
+    }
+    evCtx.stroke();
+  }
+
+  // Mark current time
+  const tCur = parseFloat(tSlider.value);
+  const xCur = margin.l + (tCur / tMax) * pw;
+  evCtx.strokeStyle = '#ffd54f44';
+  evCtx.lineWidth = 1;
+  evCtx.setLineDash([3, 3]);
+  evCtx.beginPath();
+  evCtx.moveTo(xCur, margin.t);
+  evCtx.lineTo(xCur, H - margin.b);
+  evCtx.stroke();
+  evCtx.setLineDash([]);
+
+  // Legend
+  evCtx.font = '10px system-ui';
+  const lx = W - margin.r - 120;
+  const ly = margin.t + 10;
+  for (let i = 0; i < 3; i++) {
+    evCtx.fillStyle = channelColors[i];
+    evCtx.fillRect(lx, ly + i*14, 12, 8);
+    evCtx.fillText(channelNames[i], lx + 16, ly + i*14 + 8);
+  }
+}
+
+function drawTensorProduct(vals) {
+  const W = tnCanvas.width, H = tnCanvas.height;
+  tnCtx.clearRect(0, 0, W, H);
+  tnCtx.fillStyle = '#08080d';
+  tnCtx.fillRect(0, 0, W, H);
+
+  tnCtx.fillStyle = '#556';
+  tnCtx.font = '11px system-ui';
+  tnCtx.textAlign = 'center';
+  tnCtx.fillText('27-STATE TENSOR PRODUCT: H\u2297I\u2297I + I\u2297H\u2297I + I\u2297I\u2297H', W/2, 14);
+
+  const margin = { l: 50, r: 20, t: 30, b: 30 };
+  const pw = W - margin.l - margin.r;
+  const ph = H - margin.t - margin.b;
+
+  // Build all 27 eigenvalues: lambda_i + lambda_j + lambda_k
+  // and classify by Moore shell
+  const states = [];
+  const shellColors = { 0: '#ffd54f', 1: '#44aaff', 2: '#44cc66', 3: '#ff4432' };
+  const shellNames = ['Center', 'SC', 'FCC', 'BCC'];
+
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      for (let k = 0; k < 3; k++) {
+        const ev = vals[i] + vals[j] + vals[k];
+        // Shell = how many axes differ from the middle eigenvalue (index 1)
+        const nonMid = (i !== 1 ? 1 : 0) + (j !== 1 ? 1 : 0) + (k !== 1 ? 1 : 0);
+        states.push({ ev, shell: nonMid, idx: [i, j, k] });
+      }
+    }
+  }
+
+  states.sort((a, b) => a.ev - b.ev);
+
+  // Update shell counts in sidebar
+  const counts = [0, 0, 0, 0];
+  states.forEach(s => counts[s.shell]++);
+  document.getElementById('shellCenter').textContent = counts[0];
+  document.getElementById('shellSC').textContent = counts[1];
+  document.getElementById('shellFCC').textContent = counts[2];
+  document.getElementById('shellBCC').textContent = counts[3];
+
+  // Distinct eigenvalues
+  const rounded = states.map(s => Math.round(s.ev * 1e6) / 1e6);
+  const distinct = new Set(rounded).size;
+  document.getElementById('nDistinct27').textContent = distinct;
+  document.getElementById('specWidth27').textContent =
+    (states[26].ev - states[0].ev).toFixed(6);
+
+  // Energy range
+  const eMin = states[0].ev - 0.15;
+  const eMax = states[26].ev + 0.15;
+
+  // Axes
+  tnCtx.strokeStyle = '#222';
+  tnCtx.lineWidth = 1;
+  tnCtx.beginPath();
+  tnCtx.moveTo(margin.l, margin.t);
+  tnCtx.lineTo(margin.l, H - margin.b);
+  tnCtx.lineTo(W - margin.r, H - margin.b);
+  tnCtx.stroke();
+
+  // Y axis label
+  tnCtx.fillStyle = '#556';
+  tnCtx.font = '10px monospace';
+  tnCtx.save();
+  tnCtx.translate(12, H / 2);
+  tnCtx.rotate(-Math.PI / 2);
+  tnCtx.textAlign = 'center';
+  tnCtx.fillText('Energy', 0, 0);
+  tnCtx.restore();
+
+  // Zero line
+  if (eMin < 0 && eMax > 0) {
+    const y0 = margin.t + ph * (1 - (0 - eMin) / (eMax - eMin));
+    tnCtx.strokeStyle = '#333';
+    tnCtx.setLineDash([4, 4]);
+    tnCtx.beginPath();
+    tnCtx.moveTo(margin.l, y0);
+    tnCtx.lineTo(W - margin.r, y0);
+    tnCtx.stroke();
+    tnCtx.setLineDash([]);
+  }
+
+  // Draw each eigenvalue as a colored horizontal bar
+  const barW = Math.max(2, (pw - 40) / 27 - 1);
+  const gap = (pw - 40) / 27;
+
+  for (let n = 0; n < 27; n++) {
+    const s = states[n];
+    const x = margin.l + 20 + n * gap;
+    const y = margin.t + ph * (1 - (s.ev - eMin) / (eMax - eMin));
+    const color = shellColors[s.shell];
+
+    // Bar from zero to eigenvalue
+    const y0 = margin.t + ph * (1 - (0 - eMin) / (eMax - eMin));
+    tnCtx.fillStyle = color + '88';
+    const barTop = Math.min(y, y0);
+    const barH = Math.abs(y - y0);
+    tnCtx.fillRect(x, barTop, barW, barH);
+
+    // Dot at eigenvalue
+    tnCtx.fillStyle = color;
+    tnCtx.beginPath();
+    tnCtx.arc(x + barW / 2, y, 3, 0, 2 * Math.PI);
+    tnCtx.fill();
+  }
+
+  // Y axis ticks
+  tnCtx.font = '9px monospace';
+  tnCtx.fillStyle = '#334';
+  tnCtx.textAlign = 'right';
+  const step = (eMax - eMin) / 5;
+  for (let i = 0; i <= 5; i++) {
+    const e = eMin + i * step;
+    const y = margin.t + ph * (1 - (e - eMin) / (eMax - eMin));
+    tnCtx.fillText(e.toFixed(2), margin.l - 4, y + 3);
+    tnCtx.strokeStyle = '#151520';
+    tnCtx.lineWidth = 0.5;
+    tnCtx.beginPath();
+    tnCtx.moveTo(margin.l, y);
+    tnCtx.lineTo(W - margin.r, y);
+    tnCtx.stroke();
+  }
+
+  // Legend
+  tnCtx.font = '9px system-ui';
+  tnCtx.textAlign = 'left';
+  const lx = margin.l + 10;
+  const ly = margin.t + 8;
+  for (let sh = 0; sh < 4; sh++) {
+    tnCtx.fillStyle = shellColors[sh];
+    tnCtx.fillRect(lx + sh * 90, ly, 8, 8);
+    tnCtx.fillText(`${shellNames[sh]} (${counts[sh]})`, lx + sh * 90 + 12, ly + 8);
+  }
+
+  // X axis label
+  tnCtx.fillStyle = '#556';
+  tnCtx.font = '10px monospace';
+  tnCtx.textAlign = 'center';
+  tnCtx.fillText('27 states (sorted by energy)', W / 2, H - 5);
+}
+
+// Event listeners
+gSlider.addEventListener('input', update);
+tSlider.addEventListener('input', update);
+
+// Initial render
+update();
+</script>
+</body>
+</html>

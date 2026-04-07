@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>27-State Ternary Cube — Spectral Geometry of {+, 0, -}^3</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden}
+h1{margin-top:10px;font-size:1.1em;font-weight:300;letter-spacing:.05em;color:#a0b8d8}
+.subtitle{font-size:.7em;color:#667;margin-bottom:4px;font-style:italic;text-align:center;max-width:950px;line-height:1.3}
+
+.controls{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;justify-content:center;margin:6px 0;max-width:1100px}
+.ctrl-group{display:flex;flex-direction:column;align-items:center;gap:1px}
+.ctrl-group label{font-size:.68em;color:#8899aa}
+.ctrl-group input[type=range]{width:180px;accent-color:#ffd54f;height:5px}
+.ctrl-group .vd{font-family:monospace;font-size:.9em;color:#ffd54f;min-width:60px;text-align:center}
+
+.presets{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:3px 0}
+.preset{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:2px 8px;border-radius:3px;cursor:pointer;font-size:.65em}
+.preset:hover{background:#2a3a5a}
+
+.main{display:flex;gap:8px;margin:4px 0;align-items:flex-start;max-width:1250px;width:100%;padding:0 8px}
+canvas{border:1px solid #1a1a2e;border-radius:4px;background:#08080d}
+.col{display:flex;flex-direction:column;gap:5px}
+.card{background:#0d0d15;border:1px solid #1a1a2e;border-radius:4px;padding:6px 8px;font-size:.68em}
+.card-title{font-size:.65em;color:#556;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.val-row{display:flex;justify-content:space-between;margin:1px 0;font-family:monospace;font-size:.92em}
+.val-label{color:#667}.val-num{color:#a0b8d8;font-weight:bold}
+.val-num.gold{color:#ffd54f}.val-num.red{color:#ff4432}.val-num.blue{color:#44aaff}
+.val-num.green{color:#44cc66}.val-num.mag{color:#ff66ff}
+.insight{font-size:.65em;color:#556;line-height:1.3;margin-top:3px;padding-top:3px;border-top:1px solid #1a1a2e}
+
+.init-row{display:flex;gap:4px;flex-wrap:wrap;margin:2px 0}
+.init-btn{background:#1a2a3a;border:1px solid #2a3a4a;color:#a0b8d8;padding:2px 6px;border-radius:2px;cursor:pointer;font-size:.7em;font-family:monospace}
+.init-btn:hover{background:#2a3a5a}.init-btn.active{background:#2a4a6a;border-color:#ffd54f;color:#ffd54f}
+</style>
+</head>
+<body>
+<h1>27-STATE TERNARY CUBE &mdash; INTERACTING SPECTRAL GEOMETRY</h1>
+<p class="subtitle">
+  H = H<sub>1</sub>&otimes;I&otimes;I + I&otimes;H<sub>1</sub>&otimes;I + I&otimes;I&otimes;H<sub>1</sub>
+  + J(Z&otimes;Z&otimes;I + Z&otimes;I&otimes;Z + I&otimes;Z&otimes;Z)
+  &nbsp;&middot;&nbsp; J=0: separable &nbsp;&middot;&nbsp; J&ne;0: correlated cube
+</p>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <label>&Delta; (mirror split)</label>
+    <input type="range" id="deltaSlider" min="0.001" max="1" step="0.001" value="0.0915">
+    <span class="vd" id="deltaDisp">&Delta;=0.0915</span>
+  </div>
+  <div class="ctrl-group">
+    <label>&beta; (mediator offset)</label>
+    <input type="range" id="betaSlider" min="-1" max="0.5" step="0.001" value="-0.428">
+    <span class="vd" id="betaDisp">&beta;=-0.428</span>
+  </div>
+  <div class="ctrl-group">
+    <label>g (coupling)</label>
+    <input type="range" id="gSlider" min="0" max="1.5" step="0.001" value="0.091">
+    <span class="vd" id="gDisp">g=0.091</span>
+  </div>
+  <div class="ctrl-group">
+    <label>J (inter-axis)</label>
+    <input type="range" id="jSlider" min="0" max="0.5" step="0.001" value="0">
+    <span class="vd" id="jDisp">J=0.000</span>
+  </div>
+  <div class="ctrl-group">
+    <label>Time t</label>
+    <input type="range" id="tSlider" min="0" max="80" step="0.1" value="0">
+    <span class="vd" id="tDisp">t=0.0</span>
+  </div>
+</div>
+
+<div class="presets">
+  <div class="preset" onclick="setParams(0.0915,-0.428,0.091,0)">FTD separable</div>
+  <div class="preset" onclick="setParams(0.0915,0,0.091,0)">&beta;=0 separable</div>
+  <div class="preset" onclick="setParams(0.0915,-0.428,0.091,0.05)">FTD + weak J</div>
+  <div class="preset" onclick="setParams(0.0915,0,0.2,0.1)">&beta;=0 interacting</div>
+  <div class="preset" onclick="setParams(0.0915,-0.428,0.4281,0.2)">Strong g+J</div>
+  <div class="preset" onclick="setParams(0.3,0,0.3,0.15)">Balanced + J</div>
+</div>
+
+<div class="main">
+  <div class="col">
+    <canvas id="cubeCanvas" width="420" height="420"></canvas>
+    <canvas id="specCanvas" width="420" height="180"></canvas>
+  </div>
+  <div class="col">
+    <canvas id="flowCanvas" width="380" height="280"></canvas>
+    <div class="card" style="width:380px">
+      <div class="card-title">Initial State</div>
+      <div class="init-row" id="initRow"></div>
+      <div class="insight">Click a state to start time evolution from that corner/site.</div>
+    </div>
+  </div>
+  <div class="col" style="width:240px">
+    <div class="card">
+      <div class="card-title">Single-Axis Eigenvalues</div>
+      <div class="val-row"><span class="val-label">&lambda;<sub>1</sub></span><span class="val-num red" id="ev1">-</span></div>
+      <div class="val-row"><span class="val-label">&lambda;<sub>2</sub></span><span class="val-num gold" id="ev2">-</span></div>
+      <div class="val-row"><span class="val-label">&lambda;<sub>3</sub></span><span class="val-num blue" id="ev3">-</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">27-State Spectrum</div>
+      <div class="val-row"><span class="val-label">Distinct energies</span><span class="val-num gold" id="nDist">-</span></div>
+      <div class="val-row"><span class="val-label">E<sub>min</sub></span><span class="val-num red" id="eMin">-</span></div>
+      <div class="val-row"><span class="val-label">E<sub>max</sub></span><span class="val-num blue" id="eMax">-</span></div>
+      <div class="val-row"><span class="val-label">Width</span><span class="val-num" id="eWidth">-</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Energy Shells (degeneracy)</div>
+      <div id="shellTable" style="font-family:monospace;font-size:.85em;line-height:1.4"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Moore Shells</div>
+      <div class="val-row"><span class="val-label" style="color:#ffd54f">&#9632; Center</span><span class="val-num">1</span></div>
+      <div class="val-row"><span class="val-label" style="color:#44aaff">&#9632; SC (face)</span><span class="val-num">6</span></div>
+      <div class="val-row"><span class="val-label" style="color:#44cc66">&#9632; FCC (edge)</span><span class="val-num">12</span></div>
+      <div class="val-row"><span class="val-label" style="color:#ff4432">&#9632; BCC (corner)</span><span class="val-num">8</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Population at t</div>
+      <div class="val-row"><span class="val-label">P(center)</span><span class="val-num gold" id="pCenter">-</span></div>
+      <div class="val-row"><span class="val-label">P(SC)</span><span class="val-num blue" id="pSC">-</span></div>
+      <div class="val-row"><span class="val-label">P(FCC)</span><span class="val-num green" id="pFCC">-</span></div>
+      <div class="val-row"><span class="val-label">P(BCC)</span><span class="val-num red" id="pBCC">-</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// === CONSTANTS ===
+const GAMMA_Q = 3.6256099082219083, GAMMA_H = 1.7724538509055159;
+const G_STAR = GAMMA_Q**2 / (Math.sqrt(2) * GAMMA_H**2);
+const VARPI = GAMMA_Q**2 / (2 * Math.sqrt(2) * GAMMA_H);
+const PI_D = 4 * VARPI**2 / G_STAR**2;
+const MU_FTD = (PI_D + G_STAR) / 2;
+const DELTA_FTD = (PI_D - G_STAR) / 2;
+const BETA_FTD = VARPI - MU_FTD;
+
+// === 27 BASIS STATES ===
+// Each state is [a,b,c] where a,b,c in {0,1,2} mapping to {+,0,-}
+const LABELS = ['+','0','-'];
+const states27 = [];
+for (let a = 0; a < 3; a++)
+  for (let b = 0; b < 3; b++)
+    for (let c = 0; c < 3; c++)
+      states27.push([a, b, c]);
+
+// Moore shell: number of non-zero axes (where 0-index='+', 1-index='0', 2-index='-')
+// In offset coords: + -> +1, 0 -> 0, - -> -1
+function stateOffset(s) { return s.map(x => x === 0 ? 1 : x === 1 ? 0 : -1); }
+function mooreShell(s) {
+  const off = stateOffset(s);
+  return off.filter(x => x !== 0).length;
+}
+
+const SHELL_COLORS = ['#ffd54f', '#44aaff', '#44cc66', '#ff4432'];
+const SHELL_NAMES = ['Center','SC','FCC','BCC'];
+
+// === 3x3 EIGEN ===
+function eigen3(H) {
+  const a=H[0], b=H[1], c=H[2], d=H[3], e=H[4], f=H[5]; // upper triangle: [00,01,02,11,12,22]
+  // H = [[a,b,c],[b,d,e],[c,e,f]]
+  const p1 = b*b + c*c + e*e;
+  if (p1 < 1e-30) {
+    let ev = [a,d,f]; let idx=[0,1,2]; idx.sort((i,j)=>ev[i]-ev[j]);
+    return { vals: idx.map(i=>ev[i]), vecs: idx.map(i=>[i===0?1:0,i===1?1:0,i===2?1:0]) };
+  }
+  const q = (a+d+f)/3;
+  const p2 = (a-q)**2 + (d-q)**2 + (f-q)**2 + 2*p1;
+  const p = Math.sqrt(p2/6);
+  const B00=(a-q)/p, B01=b/p, B02=c/p, B11=(d-q)/p, B12=e/p, B22=(f-q)/p;
+  const detB = B00*(B11*B22-B12*B12) - B01*(B01*B22-B12*B02) + B02*(B01*B12-B11*B02);
+  const phi = Math.acos(Math.max(-1,Math.min(1,detB/2)))/3;
+  let e1=q+2*p*Math.cos(phi), e3=q+2*p*Math.cos(phi+2*Math.PI/3), e2=3*q-e1-e3;
+  let vals = [e1,e2,e3].sort((a,b)=>a-b);
+  // Eigenvectors via null space
+  let vecs = vals.map(lam => {
+    const M = [[a-lam,b,c],[b,d-lam,e],[c,e,f-lam]];
+    let v = cross3(M[0],M[1]);
+    let n = Math.sqrt(v[0]**2+v[1]**2+v[2]**2);
+    if(n<1e-12){v=cross3(M[0],M[2]);n=Math.sqrt(v[0]**2+v[1]**2+v[2]**2);}
+    if(n<1e-12){v=cross3(M[1],M[2]);n=Math.sqrt(v[0]**2+v[1]**2+v[2]**2);}
+    return n>1e-12?[v[0]/n,v[1]/n,v[2]/n]:[1,0,0];
+  });
+  return {vals, vecs};
+}
+function cross3(a,b){return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+
+// === 27x27 JACOBI EIGENDECOMPOSITION ===
+// For real symmetric NxN matrix. Returns {vals, vecs} sorted ascending.
+function eigenSymmetric(A, N) {
+  // Copy A into working matrix and init eigenvectors to identity
+  const H = [];
+  for (let i=0;i<N;i++) { H[i]=new Float64Array(N); for(let j=0;j<N;j++) H[i][j]=A[i][j]; }
+  const V = [];
+  for (let i=0;i<N;i++) { V[i]=new Float64Array(N); V[i][i]=1; }
+
+  const maxIter = 500;
+  for (let iter=0; iter<maxIter; iter++) {
+    // Find largest off-diagonal
+    let maxVal=0, p=0, q=1;
+    for (let i=0;i<N;i++) for(let j=i+1;j<N;j++) {
+      if (Math.abs(H[i][j])>maxVal) { maxVal=Math.abs(H[i][j]); p=i; q=j; }
+    }
+    if (maxVal < 1e-13) break;
+
+    // Jacobi rotation
+    const hpp=H[p][p], hqq=H[q][q], hpq=H[p][q];
+    let theta;
+    if (Math.abs(hpp-hqq)<1e-15) theta=Math.PI/4;
+    else theta = 0.5*Math.atan2(2*hpq, hpp-hqq);
+    const c=Math.cos(theta), s=Math.sin(theta);
+
+    // Update H
+    const newHpp = c*c*hpp + 2*s*c*hpq + s*s*hqq;
+    const newHqq = s*s*hpp - 2*s*c*hpq + c*c*hqq;
+    H[p][p]=newHpp; H[q][q]=newHqq; H[p][q]=0; H[q][p]=0;
+    for (let i=0;i<N;i++) {
+      if (i===p||i===q) continue;
+      const hip=H[i][p], hiq=H[i][q];
+      H[i][p]=H[p][i]= c*hip+s*hiq;
+      H[i][q]=H[q][i]=-s*hip+c*hiq;
+    }
+    // Update V
+    for (let i=0;i<N;i++) {
+      const vip=V[i][p], viq=V[i][q];
+      V[i][p]= c*vip+s*viq;
+      V[i][q]=-s*vip+c*viq;
+    }
+  }
+
+  // Extract eigenvalues and sort
+  const evals = []; for(let i=0;i<N;i++) evals.push(H[i][i]);
+  const idx = Array.from({length:N},(_,i)=>i);
+  idx.sort((a,b)=>evals[a]-evals[b]);
+  const vals = idx.map(i=>evals[i]);
+  const vecs = idx.map(i => { const v=[]; for(let j=0;j<N;j++) v.push(V[j][i]); return v; });
+  return {vals, vecs};
+}
+
+// Z operator eigenvalue for channel index: + -> +1, 0 -> 0, - -> -1
+function zVal(chIdx) { return chIdx===0 ? 1 : chIdx===1 ? 0 : -1; }
+
+// Build full 27x27 Hamiltonian
+function buildH27(delta, beta, g, J) {
+  const N=27;
+  const H = [];
+  for(let i=0;i<N;i++) { H[i]=new Float64Array(N); }
+
+  // Diagonal energies from single-axis: e(+)=delta, e(0)=beta, e(-)=-delta
+  const eDiag = [delta, beta, -delta];
+
+  for (let n=0;n<N;n++) {
+    const [a,b,c] = states27[n];
+    // Kronecker sum diagonal: sum of single-axis energies
+    H[n][n] = eDiag[a] + eDiag[b] + eDiag[c];
+    // ZZ interaction diagonal: J*(z_a*z_b + z_a*z_c + z_b*z_c)
+    const za=zVal(a), zb=zVal(b), zc=zVal(c);
+    H[n][n] += J*(za*zb + za*zc + zb*zc);
+  }
+
+  // Off-diagonal: single-axis hopping g (tridiagonal on each axis)
+  // Axis 1: states differ only in first index, by +/-1
+  // Axis 2: differ only in second index
+  // Axis 3: differ only in third index
+  for (let n=0;n<N;n++) {
+    const [a,b,c] = states27[n];
+    // Axis 1 hop
+    if (a<2) { const m = (a+1)*9+b*3+c; H[n][m]+=g; H[m][n]+=g; }
+    // Axis 2 hop
+    if (b<2) { const m = a*9+(b+1)*3+c; H[n][m]+=g; H[m][n]+=g; }
+    // Axis 3 hop
+    if (c<2) { const m = a*9+b*3+(c+1); H[n][m]+=g; H[m][n]+=g; }
+  }
+
+  // Note: the above double-counts off-diag for pairs where both n<m and m<n
+  // Actually no — we only add when index+1, so each pair is hit once from the
+  // lower index. But we set both H[n][m] and H[m][n]. The += could double if
+  // the same pair is reached from two different axis checks, but that can't
+  // happen since each pair differs on exactly one axis.
+
+  return H;
+}
+
+// === SLIDERS ===
+const dSl=document.getElementById('deltaSlider'), bSl=document.getElementById('betaSlider');
+const gSl=document.getElementById('gSlider'), tSl=document.getElementById('tSlider');
+const jSl=document.getElementById('jSlider');
+const dD=document.getElementById('deltaDisp'), bD=document.getElementById('betaDisp');
+const gD=document.getElementById('gDisp'), tD=document.getElementById('tDisp');
+const jD=document.getElementById('jDisp');
+
+let initState = 13; // center = (0,0,0) = index for [1,1,1]
+
+function setParams(delta,beta,g,J) {
+  dSl.value=delta; bSl.value=beta; gSl.value=g; jSl.value=J; update();
+}
+
+// Build initial state buttons
+function buildInitButtons() {
+  const row = document.getElementById('initRow');
+  row.innerHTML = '';
+  const interesting = [
+    {idx:0, label:'|+++>'}, {idx:13, label:'|000>'}, {idx:26, label:'|--->'},
+    {idx:1, label:'|++0>'}, {idx:9, label:'|0+->'},  {idx:4, label:'|+0+>'}
+  ];
+  for (const {idx,label} of interesting) {
+    const btn = document.createElement('span');
+    btn.className = 'init-btn' + (idx===initState?' active':'');
+    btn.textContent = label;
+    btn.onclick = () => { initState=idx; buildInitButtons(); update(); };
+    row.appendChild(btn);
+  }
+}
+buildInitButtons();
+
+// === CACHED EIGEN RESULT (avoid re-diagonalizing for flow sweep) ===
+let cachedEig27 = null;
+let cachedCoeffs = null;
+
+// === MAIN UPDATE ===
+function update() {
+  const delta = parseFloat(dSl.value);
+  const beta = parseFloat(bSl.value);
+  const g = parseFloat(gSl.value);
+  const J = parseFloat(jSl.value);
+  const t = parseFloat(tSl.value);
+  dD.textContent = `\u0394=${delta.toFixed(4)}`;
+  bD.textContent = `\u03B2=${beta.toFixed(3)}`;
+  gD.textContent = `g=${g.toFixed(4)}`;
+  jD.textContent = `J=${J.toFixed(3)}`;
+  tD.textContent = `t=${t.toFixed(1)}`;
+
+  // Single-axis eigenvalues (for display only)
+  const eig1 = eigen3([delta,g,0, beta,g, -delta]);
+  document.getElementById('ev1').textContent = eig1.vals[0].toFixed(6);
+  document.getElementById('ev2').textContent = eig1.vals[1].toFixed(6);
+  document.getElementById('ev3').textContent = eig1.vals[2].toFixed(6);
+
+  // Full 27x27 Hamiltonian (includes ZZ interactions when J>0)
+  const H27 = buildH27(delta, beta, g, J);
+  const eig27 = eigenSymmetric(H27, 27);
+  cachedEig27 = eig27;
+
+  const energies27 = eig27.vals;
+  const vecs27 = eig27.vecs;
+
+  // Coefficients: c_m = <eig_m | initState>
+  const coeffs = vecs27.map(v => v[initState]);
+  cachedCoeffs = coeffs;
+
+  // Populations at time t
+  const pops = new Float64Array(27);
+  for (let n=0;n<27;n++) {
+    let re=0, im=0;
+    for (let m=0;m<27;m++) {
+      const phase = -energies27[m]*t;
+      re += coeffs[m] * vecs27[m][n] * Math.cos(phase);
+      im += coeffs[m] * vecs27[m][n] * Math.sin(phase);
+    }
+    pops[n] = re*re + im*im;
+  }
+
+  // Shell populations
+  let pShell = [0,0,0,0];
+  for (let n=0;n<27;n++) pShell[mooreShell(states27[n])] += pops[n];
+  document.getElementById('pCenter').textContent = pShell[0].toFixed(4);
+  document.getElementById('pSC').textContent = pShell[1].toFixed(4);
+  document.getElementById('pFCC').textContent = pShell[2].toFixed(4);
+  document.getElementById('pBCC').textContent = pShell[3].toFixed(4);
+
+  // Energy spectrum stats
+  const eSorted = [...energies27].sort((a,b)=>a-b);
+  const eRound = eSorted.map(e=>Math.round(e*1e4)/1e4);
+  const distinct = [...new Set(eRound)];
+  document.getElementById('nDist').textContent = distinct.length;
+  document.getElementById('eMin').textContent = eSorted[0].toFixed(6);
+  document.getElementById('eMax').textContent = eSorted[26].toFixed(6);
+  document.getElementById('eWidth').textContent = (eSorted[26]-eSorted[0]).toFixed(6);
+
+  // Shell table (energy -> degeneracy)
+  const degMap = {};
+  for (const e of eRound) degMap[e] = (degMap[e]||0) + 1;
+  let shellHTML = '<span style="color:#667">Energy &rarr; Deg</span><br>';
+  for (const e of distinct) {
+    shellHTML += `${Number(e).toFixed(4)} &rarr; <span style="color:#ffd54f">${degMap[e]}</span><br>`;
+  }
+  document.getElementById('shellTable').innerHTML = shellHTML;
+
+  drawCube(pops, delta, beta);
+  drawSpectrum(energies27);
+  drawFlow(energies27, vecs27, coeffs);
+}
+
+// === 3D CUBE VISUALIZATION ===
+function drawCube(pops, delta, beta) {
+  const cv = document.getElementById('cubeCanvas');
+  const ctx = cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#08080d'; ctx.fillRect(0,0,W,H);
+
+  ctx.fillStyle='#556'; ctx.font='11px system-ui'; ctx.textAlign='center';
+  ctx.fillText('TERNARY CUBE: 27 sites colored by population', W/2, 14);
+
+  // Isometric projection of 3x3x3 cube
+  const cx=W/2, cy=H/2+10;
+  const scale = 70;
+  // Isometric axes
+  const ax = [scale*0.866, scale*0.5];   // x-axis projection
+  const ay = [-scale*0.866, scale*0.5];  // y-axis projection
+  const az = [0, -scale*0.9];            // z-axis projection
+
+  function project(a,b,c) {
+    // a,b,c in {-1,0,1}
+    return [
+      cx + a*ax[0] + b*ay[0] + c*az[0],
+      cy + a*ax[1] + b*ay[1] + c*az[1]
+    ];
+  }
+
+  // Draw edges first (faint)
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 0.5;
+  for (let n=0;n<27;n++) {
+    const off1 = stateOffset(states27[n]);
+    for (let m=n+1;m<27;m++) {
+      const off2 = stateOffset(states27[m]);
+      // Adjacent if differ by 1 on exactly one axis
+      let diffCount=0, maxDiff=0;
+      for(let d=0;d<3;d++){const dd=Math.abs(off1[d]-off2[d]);if(dd>0)diffCount++;maxDiff=Math.max(maxDiff,dd);}
+      if(diffCount===1 && maxDiff===1) {
+        const [x1,y1]=project(...off1);
+        const [x2,y2]=project(...off2);
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      }
+    }
+  }
+
+  // Sort states by depth (back to front) for proper overlap
+  const depthOrder = states27.map((s,i)=>({i, depth: stateOffset(s).reduce((a,b)=>a+b,0)}));
+  depthOrder.sort((a,b)=>a.depth-b.depth);
+
+  // Draw nodes
+  for (const {i} of depthOrder) {
+    const off = stateOffset(states27[i]);
+    const [px,py] = project(...off);
+    const pop = pops[i];
+    const shell = mooreShell(states27[i]);
+    const baseColor = SHELL_COLORS[shell];
+
+    // Size proportional to population (min 4, max 18)
+    const r = 4 + pop * 40;
+
+    // Glow for high population
+    if (pop > 0.01) {
+      ctx.beginPath();
+      const grad = ctx.createRadialGradient(px,py,0,px,py,r*2);
+      grad.addColorStop(0, baseColor+'66');
+      grad.addColorStop(1, baseColor+'00');
+      ctx.fillStyle = grad;
+      ctx.arc(px,py,r*2,0,2*Math.PI);
+      ctx.fill();
+    }
+
+    // Node
+    ctx.beginPath();
+    ctx.arc(px,py,Math.max(r,3),0,2*Math.PI);
+    ctx.fillStyle = pop > 0.001 ? baseColor : baseColor+'44';
+    ctx.fill();
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+
+    // Label for corners and center
+    if (shell===0 || shell===3) {
+      const s = states27[i];
+      const lbl = LABELS[s[0]]+LABELS[s[1]]+LABELS[s[2]];
+      ctx.fillStyle = '#99aabb';
+      ctx.font = '8px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(lbl, px, py-r-3);
+    }
+  }
+
+  // Axis labels
+  ctx.font = '10px system-ui';
+  const [lx1,ly1]=project(1.6,0,0); ctx.fillStyle='#44aaff'; ctx.fillText('Axis 1',lx1,ly1);
+  const [lx2,ly2]=project(0,1.6,0); ctx.fillStyle='#44cc66'; ctx.fillText('Axis 2',lx2,ly2);
+  const [lx3,ly3]=project(0,0,1.6); ctx.fillStyle='#ff8844'; ctx.fillText('Axis 3',lx3,ly3);
+}
+
+// === SPECTRUM BAR CHART ===
+function drawSpectrum(energies27) {
+  const cv=document.getElementById('specCanvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#08080d'; ctx.fillRect(0,0,W,H);
+
+  ctx.fillStyle='#556'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  ctx.fillText('ENERGY SPECTRUM: 27 eigenvalues by Moore shell', W/2, 12);
+
+  const margin={l:40,r:15,t:22,b:22};
+  const pw=W-margin.l-margin.r, ph=H-margin.t-margin.b;
+
+  // Sort with shell info
+  const sorted = states27.map((s,i)=>({e:energies27[i],shell:mooreShell(s)}));
+  sorted.sort((a,b)=>a.e-b.e);
+
+  const eMin=sorted[0].e-0.1, eMax=sorted[26].e+0.1;
+
+  // Axes
+  ctx.strokeStyle='#222'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(margin.l,margin.t); ctx.lineTo(margin.l,H-margin.b);
+  ctx.lineTo(W-margin.r,H-margin.b); ctx.stroke();
+
+  // Zero line
+  if(eMin<0&&eMax>0){
+    const y0=margin.t+ph*(1-(0-eMin)/(eMax-eMin));
+    ctx.strokeStyle='#333'; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(margin.l,y0); ctx.lineTo(W-margin.r,y0); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Bars
+  const gap=pw/27;
+  for(let n=0;n<27;n++){
+    const x=margin.l+n*gap+1;
+    const bw=gap-2;
+    const y=margin.t+ph*(1-(sorted[n].e-eMin)/(eMax-eMin));
+    const y0=margin.t+ph*(1-(0-eMin)/(eMax-eMin));
+    const color=SHELL_COLORS[sorted[n].shell];
+    ctx.fillStyle=color+'88';
+    ctx.fillRect(x,Math.min(y,y0),bw,Math.abs(y-y0));
+    ctx.fillStyle=color;
+    ctx.beginPath(); ctx.arc(x+bw/2,y,2.5,0,2*Math.PI); ctx.fill();
+  }
+
+  // Y ticks
+  ctx.font='8px monospace'; ctx.fillStyle='#334'; ctx.textAlign='right';
+  const step=(eMax-eMin)/4;
+  for(let i=0;i<=4;i++){
+    const e=eMin+i*step;
+    const y=margin.t+ph*(1-(e-eMin)/(eMax-eMin));
+    ctx.fillText(e.toFixed(2),margin.l-3,y+3);
+  }
+}
+
+// === FLOW: shell populations over time ===
+function drawFlow(energies27, vecs27, coeffs) {
+  const cv=document.getElementById('flowCanvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#08080d'; ctx.fillRect(0,0,W,H);
+
+  ctx.fillStyle='#556'; ctx.font='10px system-ui'; ctx.textAlign='center';
+  ctx.fillText('SHELL POPULATIONS vs TIME', W/2, 12);
+
+  const margin={l:40,r:15,t:24,b:24};
+  const pw=W-margin.l-margin.r, ph=H-margin.t-margin.b;
+  const tMax=80;
+
+  // Axes
+  ctx.strokeStyle='#222'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(margin.l,margin.t); ctx.lineTo(margin.l,H-margin.b);
+  ctx.lineTo(W-margin.r,H-margin.b); ctx.stroke();
+
+  ctx.fillStyle='#556'; ctx.font='9px monospace'; ctx.textAlign='center';
+  ctx.fillText('t', W/2, H-4);
+
+  // Y ticks
+  ctx.textAlign='right';
+  for(let p=0;p<=1;p+=0.25){
+    const y=margin.t+ph*(1-p);
+    ctx.strokeStyle='#151520'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(margin.l,y); ctx.lineTo(W-margin.r,y); ctx.stroke();
+    ctx.fillStyle='#334'; ctx.fillText(p.toFixed(2),margin.l-3,y+3);
+  }
+
+  // Sweep time and compute shell populations using full 27x27 eigensystem
+  const nSteps=200;
+  const shellTraces = [[],[],[],[]];
+
+  for(let step=0;step<=nSteps;step++){
+    const ti=(step/nSteps)*tMax;
+    const pShell=[0,0,0,0];
+
+    for(let n=0;n<27;n++){
+      let re=0,im=0;
+      for(let m=0;m<27;m++){
+        const phase=-energies27[m]*ti;
+        re+=coeffs[m]*vecs27[m][n]*Math.cos(phase);
+        im+=coeffs[m]*vecs27[m][n]*Math.sin(phase);
+      }
+      pShell[mooreShell(states27[n])] += re*re+im*im;
+    }
+    for(let s=0;s<4;s++) shellTraces[s].push(pShell[s]);
+  }
+
+  // Draw traces
+  for(let s=3;s>=0;s--){
+    ctx.strokeStyle=SHELL_COLORS[s];
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    for(let step=0;step<=nSteps;step++){
+      const x=margin.l+(step/nSteps)*pw;
+      const y=margin.t+ph*(1-shellTraces[s][step]);
+      step===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+
+  // Current time marker
+  const tCur=parseFloat(tSl.value);
+  const xCur=margin.l+(tCur/tMax)*pw;
+  ctx.strokeStyle='#ffd54f44'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(xCur,margin.t); ctx.lineTo(xCur,H-margin.b); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Legend
+  ctx.font='9px system-ui'; ctx.textAlign='left';
+  for(let s=0;s<4;s++){
+    ctx.fillStyle=SHELL_COLORS[s];
+    ctx.fillRect(margin.l+5+s*80, margin.t+4, 10, 7);
+    ctx.fillText(SHELL_NAMES[s], margin.l+18+s*80, margin.t+11);
+  }
+}
+
+// === EVENT LISTENERS ===
+dSl.addEventListener('input', update);
+bSl.addEventListener('input', update);
+gSl.addEventListener('input', update);
+jSl.addEventListener('input', update);
+tSl.addEventListener('input', update);
+
+update();
+</script>
+</body>
+</html>
