@@ -88,6 +88,9 @@ target_link_libraries(test_energy ftd_core)
 add_executable(test_gauss tests/test_gauss.cpp)
 target_link_libraries(test_gauss ftd_core)
 
+add_executable(test_intervoxel_coupling tests/test_intervoxel_coupling.cpp)
+target_link_libraries(test_intervoxel_coupling ftd_core)
+
 add_executable(test_stress_energy tests/test_stress_energy.cpp)
 target_link_libraries(test_stress_energy ftd_core)
 
@@ -647,6 +650,7 @@ add_test(NAME lattice COMMAND test_lattice)
 add_test(NAME born_infeld COMMAND test_born_infeld)
 add_test(NAME energy COMMAND test_energy)
 add_test(NAME gauss COMMAND test_gauss)
+add_test(NAME intervoxel_coupling COMMAND test_intervoxel_coupling)
 add_test(NAME stress_energy COMMAND test_stress_energy)
 add_test(NAME thermodynamics COMMAND test_thermodynamics)
 add_test(NAME lagrangian COMMAND test_lagrangian)
