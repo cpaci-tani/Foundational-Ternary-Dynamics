@@ -20,20 +20,20 @@ import { G_N, OMEGA_LAMBDA, OMEGA_MATTER } from '../constants.js';
 // Stars/NS/WD:     medium — collisionless, moderate smoothing
 // DM:              large — diffuse halo, suppresses two-body relaxation
 // Gas/Nebula:      medium — collisional, SPH-like smoothing
-// At N~800, no body should act as a true point source. The softening
-// represents the unresolved internal structure at this particle count.
-// BH softening is comparable to stars — its dominance comes from MASS
-// (500 vs ~2 per star), not from having sharper gravity.
+// At N~800, softening must be large to suppress two-body relaxation.
+// Mean inter-particle spacing ~ (200^3/800)^(1/3) ~ 13.5 units.
+// Softening should be ~50% of this (~6-7) for stability.
+// BH gets smaller softening so it can anchor the core via close-range gravity.
 const SOFTENING = {
-    [-3]: 3.0,  // DARK_ENERGY
-    [-2]: 2.0,  // QUASAR
-    [-1]: 2.0,  // BLACK_HOLE — same as stars; dominates via mass, not sharpness
-    [0]:  3.5,  // DARK_MATTER — diffuse halo
-    [1]:  2.5,  // GAS
-    [2]:  2.5,  // STAR
-    [3]:  2.0,  // NEUTRON_STAR
-    [4]:  2.5,  // NEBULA
-    [5]:  2.5,  // WHITE_DWARF
+    [-3]: 6.0,  // DARK_ENERGY
+    [-2]: 3.0,  // QUASAR
+    [-1]: 3.0,  // BLACK_HOLE — smaller than others, anchors core
+    [0]:  7.0,  // DARK_MATTER — very diffuse, prevents halo collapse
+    [1]:  5.0,  // GAS
+    [2]:  6.0,  // STAR — large, prevents artificial disk collapse
+    [3]:  4.0,  // NEUTRON_STAR
+    [4]:  5.0,  // NEBULA
+    [5]:  6.0,  // WHITE_DWARF
 };
 
 export class CosmicMockBridge {
@@ -97,7 +97,7 @@ export class CosmicMockBridge {
 
         if (name === 'cosmic-galaxy') {
             const M_total = 5000;
-            const M_bh = 500; // 10% — dominates core
+            const M_bh = 50; // 1% — realistic SMBH fraction, still 25x any particle
             const M_dm = (M_total - M_bh) * 0.85;
             const M_disk = (M_total - M_bh) * 0.15;
             const r_s = 30;
