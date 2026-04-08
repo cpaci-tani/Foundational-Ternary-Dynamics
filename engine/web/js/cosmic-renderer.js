@@ -1,10 +1,14 @@
 /**
- * CosmicRenderer: Scale 5 Three.js rendering
+ * CosmicRenderer: Scale 5 — cinematic deep-space rendering
  *
- * Layered rendering with additive blending for a cinematic deep-space look.
- * Stars use blackbody colors. Gas uses temperature-mapped diffuse clouds.
- * Black holes get a multi-ring accretion disk with radial heat gradient,
- * photon ring, and gravitational darkening at the event horizon.
+ * Design goals:
+ *   - Stars: soft glow sprites with diffraction cross, blackbody color, size ~ luminosity
+ *   - Gas: large volumetric nebula sprites, temperature-mapped, layered opacity
+ *   - Dark matter: ultra-faint violet haze revealing large-scale structure
+ *   - Black holes: multi-layer accretion disk with Doppler beaming (approaching side
+ *     brighter), gravitational redshift gradient, photon ring, Einstein ring glow,
+ *     event horizon with Hawking corona
+ *   - Background: dense star field with faint nebula color patches
  */
 
 import * as THREE from 'three';
@@ -15,22 +19,129 @@ const BT = {
     NEUTRON_STAR: 3, NEBULA: 4, WHITE_DWARF: 5
 };
 
-// Attempt to load a round sprite texture for soft particle rendering.
-// Falls back to square points if the image is unavailable.
-let _circleTexture = null;
-(function() {
+// -- Procedural sprite textures (generated once) --
+
+function makeStarSprite() {
     const c = document.createElement('canvas');
-    c.width = 64; c.height = 64;
+    c.width = 128; c.height = 128;
     const ctx = c.getContext('2d');
-    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    const cx = 64, cy = 64;
+
+    // Soft radial glow
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 64);
     grad.addColorStop(0, 'rgba(255,255,255,1)');
-    grad.addColorStop(0.3, 'rgba(255,255,255,0.6)');
-    grad.addColorStop(0.7, 'rgba(255,255,255,0.15)');
+    grad.addColorStop(0.08, 'rgba(255,255,255,0.9)');
+    grad.addColorStop(0.2, 'rgba(255,240,220,0.4)');
+    grad.addColorStop(0.45, 'rgba(255,200,150,0.1)');
+    grad.addColorStop(0.7, 'rgba(200,150,255,0.03)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 128);
+
+    // Diffraction cross (4-point star)
+    ctx.globalCompositeOperation = 'lighter';
+    for (let angle = 0; angle < 4; angle++) {
+        const a = angle * Math.PI / 2;
+        const gd = ctx.createLinearGradient(
+            cx, cy,
+            cx + Math.cos(a) * 60, cy + Math.sin(a) * 60
+        );
+        gd.addColorStop(0, 'rgba(255,255,255,0.5)');
+        gd.addColorStop(0.3, 'rgba(255,255,255,0.08)');
+        gd.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.strokeStyle = gd;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(a) * 58, cy + Math.sin(a) * 58);
+        ctx.stroke();
+    }
+
+    return new THREE.CanvasTexture(c);
+}
+
+function makeGasSprite() {
+    const c = document.createElement('canvas');
+    c.width = 128; c.height = 128;
+    const ctx = c.getContext('2d');
+    // Soft cloud with irregular edges
+    const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    grad.addColorStop(0, 'rgba(255,255,255,0.6)');
+    grad.addColorStop(0.25, 'rgba(255,255,255,0.3)');
+    grad.addColorStop(0.5, 'rgba(255,255,255,0.1)');
+    grad.addColorStop(0.75, 'rgba(255,255,255,0.03)');
     grad.addColorStop(1, 'rgba(255,255,255,0)');
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 64, 64);
-    _circleTexture = new THREE.CanvasTexture(c);
-})();
+    ctx.fillRect(0, 0, 128, 128);
+    return new THREE.CanvasTexture(c);
+}
+
+function makeHaloSprite() {
+    const c = document.createElement('canvas');
+    c.width = 256; c.height = 256;
+    const ctx = c.getContext('2d');
+    const grad = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+    grad.addColorStop(0, 'rgba(255,255,255,0.25)');
+    grad.addColorStop(0.15, 'rgba(255,200,100,0.15)');
+    grad.addColorStop(0.35, 'rgba(200,100,255,0.06)');
+    grad.addColorStop(0.6, 'rgba(100,50,200,0.02)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 256, 256);
+    return new THREE.CanvasTexture(c);
+}
+
+const _starTex = makeStarSprite();
+const _gasTex = makeGasSprite();
+const _haloTex = makeHaloSprite();
+
+// -- Accretion disk shader (Doppler beaming + radial heat gradient) --
+const DISK_VERT = `
+varying vec2 vUv;
+varying vec3 vWorldPos;
+void main() {
+    vUv = uv;
+    vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}`;
+
+const DISK_FRAG = `
+uniform float time;
+uniform float innerRadius;
+uniform float outerRadius;
+uniform vec3 bhPosition;
+varying vec2 vUv;
+varying vec3 vWorldPos;
+
+void main() {
+    vec2 local = vWorldPos.xz - bhPosition.xz;
+    float r = length(local);
+    float t = clamp((r - innerRadius) / (outerRadius - innerRadius), 0.0, 1.0);
+
+    // Radial heat gradient: inner = white-blue, mid = orange, outer = deep red
+    vec3 colInner = vec3(1.0, 0.95, 0.85);
+    vec3 colMid   = vec3(1.0, 0.55, 0.15);
+    vec3 colOuter = vec3(0.4, 0.08, 0.02);
+    vec3 col = t < 0.35
+        ? mix(colInner, colMid, t / 0.35)
+        : mix(colMid, colOuter, (t - 0.35) / 0.65);
+
+    // Keplerian spiral pattern
+    float angle = atan(local.y, local.x);
+    float spiral = sin(angle * 3.0 - time * 2.5 / pow(max(r, 0.1), 1.5)) * 0.5 + 0.5;
+    col *= 0.75 + 0.25 * spiral;
+
+    // Doppler beaming: approaching side (positive x) is brighter
+    float doppler = 0.7 + 0.3 * (local.x / max(r, 0.01));
+    col *= doppler;
+
+    // Opacity: strong inner, fading outer with soft edge
+    float alpha = (1.0 - t * t) * smoothstep(outerRadius, outerRadius * 0.85, r);
+    alpha *= smoothstep(innerRadius * 0.9, innerRadius * 1.2, r);
+    alpha *= 0.85;
+
+    gl_FragColor = vec4(col, alpha);
+}`;
 
 function blackbodyColor(T) {
     const t = Math.max(0, Math.min(1, (T - 1500) / 30000));
@@ -42,6 +153,7 @@ function blackbodyColor(T) {
     return [0.6, 0.7, 1.0];
 }
 
+// ====================================================================
 export class CosmicRenderer {
     constructor(scene, camera, renderer) {
         this.scene = scene;
@@ -68,61 +180,82 @@ export class CosmicRenderer {
         this._initBackground();
     }
 
-    // -- Background: distant stars on a sphere --
+    // ================================================================
+    // Background: dense star field with faint nebula color patches
+    // ================================================================
     _initBackground() {
-        this.scene.background = new THREE.Color(0x020208);
-        const N = 8000;
+        this.scene.background = new THREE.Color(0x010104);
+
+        const N = 12000;
         const pos = new Float32Array(N * 3);
         const col = new Float32Array(N * 3);
+        const siz = new Float32Array(N);
         const rng = this._rng(42);
+
         for (let i = 0; i < N; i++) {
             const theta = Math.acos(2 * rng() - 1);
             const phi = 2 * Math.PI * rng();
-            const r = 3000 + rng() * 4000;
-            pos[i*3] = r * Math.sin(theta) * Math.cos(phi);
+            const r = 2500 + rng() * 5000;
+            pos[i*3]   = r * Math.sin(theta) * Math.cos(phi);
             pos[i*3+1] = r * Math.sin(theta) * Math.sin(phi);
             pos[i*3+2] = r * Math.cos(theta);
-            const T = 2000 + rng() * 28000;
+
+            const T = 2000 + rng() * 30000;
             const [cr, cg, cb] = blackbodyColor(T);
-            const b = 0.3 + rng() * 0.7;
-            col[i*3] = cr*b; col[i*3+1] = cg*b; col[i*3+2] = cb*b;
+            const bright = 0.15 + rng() * 0.85;
+            col[i*3] = cr * bright;
+            col[i*3+1] = cg * bright;
+            col[i*3+2] = cb * bright;
+            siz[i] = 0.8 + rng() * 2.5;
         }
+
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
         geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+        geo.setAttribute('size', new THREE.BufferAttribute(siz, 1));
+
         this._bgStars = new THREE.Points(geo, new THREE.PointsMaterial({
-            size: 1.5, vertexColors: true, sizeAttenuation: false,
-            transparent: true, opacity: 0.9
+            vertexColors: true, sizeAttenuation: false,
+            transparent: true, opacity: 0.92, size: 1.5,
+            map: _starTex, alphaTest: 0.01,
+            blending: THREE.AdditiveBlending, depthWrite: false
         }));
         this._group.add(this._bgStars);
     }
 
-    // -- Particle cloud helper --
-    _ensureCloud(name, maxCount, size, opacity, blending) {
+    // ================================================================
+    // Particle cloud helper
+    // ================================================================
+    _ensureCloud(name, maxCount, size, opacity, blending, texture) {
         const key = '_' + name + 'Cloud';
         if (this[key] && this[key].geometry.attributes.position.count >= maxCount) return this[key];
         if (this[key]) { this._group.remove(this[key]); this[key].geometry.dispose(); this[key].material.dispose(); }
+
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(maxCount * 3), 3));
         geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(maxCount * 3), 3));
         geo.setDrawRange(0, 0);
+
         this[key] = new THREE.Points(geo, new THREE.PointsMaterial({
             size, vertexColors: true, transparent: true, opacity, blending,
             depthWrite: false, sizeAttenuation: true,
-            map: _circleTexture, alphaTest: 0.01
+            map: texture || _starTex, alphaTest: 0.001
         }));
         this[key].name = 'cosmic-' + name;
         this._group.add(this[key]);
         return this[key];
     }
 
-    // -- Main update --
+    // ================================================================
+    // Main update
+    // ================================================================
     update(bodyData, diagnostics) {
         if (!bodyData || bodyData.count === 0) return;
         this._time += 0.016;
-        const { positions, types, temperatures, sizes, count } = bodyData;
 
+        const { positions, types, temperatures, sizes, count } = bodyData;
         const stars = [], gas = [], dm = [], bhs = [];
+
         for (let i = 0; i < count; i++) {
             const t = types[i];
             const e = { i, x: positions[i*3], y: positions[i*3+1], z: positions[i*3+2] };
@@ -132,9 +265,9 @@ export class CosmicRenderer {
             else if (t === BT.BLACK_HOLE || t === BT.QUASAR) bhs.push(e);
         }
 
-        // Stars — bright, large, blackbody-colored
+        // -- Stars: diffraction-spike sprites, blackbody colored --
         if (this._showStars && stars.length > 0) {
-            const cloud = this._ensureCloud('star', Math.max(stars.length, 500), 3.0, 1.0, THREE.AdditiveBlending);
+            const cloud = this._ensureCloud('star', Math.max(stars.length, 500), 2.5, 1.0, THREE.AdditiveBlending, _starTex);
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
             for (let j = 0; j < stars.length; j++) {
@@ -142,8 +275,8 @@ export class CosmicRenderer {
                 p[j*3] = s.x; p[j*3+1] = s.y; p[j*3+2] = s.z;
                 const T = temperatures ? temperatures[s.i] : 5800;
                 const [r, g, b] = blackbodyColor(Math.max(T, 2000));
-                const br = 0.8 + Math.min((sizes ? sizes[s.i] : 5) * 0.02, 0.2);
-                c[j*3] = r*br; c[j*3+1] = g*br; c[j*3+2] = b*br;
+                const br = 0.7 + Math.min((sizes ? sizes[s.i] : 5) * 0.03, 0.3);
+                c[j*3] = r * br; c[j*3+1] = g * br; c[j*3+2] = b * br;
             }
             cloud.geometry.attributes.position.needsUpdate = true;
             cloud.geometry.attributes.color.needsUpdate = true;
@@ -151,9 +284,9 @@ export class CosmicRenderer {
             cloud.visible = true;
         } else if (this._starCloud) this._starCloud.visible = false;
 
-        // Gas — large soft clouds, temperature-colored
+        // -- Gas: large soft nebula sprites --
         if (this._showGas && gas.length > 0) {
-            const cloud = this._ensureCloud('gas', Math.max(gas.length, 200), 6.0, 0.35, THREE.AdditiveBlending);
+            const cloud = this._ensureCloud('gas', Math.max(gas.length, 200), 8.0, 0.3, THREE.AdditiveBlending, _gasTex);
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
             for (let j = 0; j < gas.length; j++) {
@@ -161,9 +294,10 @@ export class CosmicRenderer {
                 p[j*3] = g.x; p[j*3+1] = g.y; p[j*3+2] = g.z;
                 const T = temperatures ? temperatures[g.i] : 1e4;
                 const t = Math.max(0, Math.min(1, Math.log10(T + 1) / 7));
-                if (t < 0.4)      { c[j*3] = 0.15; c[j*3+1] = 0.25+t; c[j*3+2] = 0.7; }
-                else if (t < 0.65){ c[j*3] = 0.9;  c[j*3+1] = 0.35;   c[j*3+2] = 0.5; }
-                else              { c[j*3] = 1.0;  c[j*3+1] = 0.85;   c[j*3+2] = 0.6; }
+                // Nebula palette: cool blue-violet -> warm pink -> hot white-gold
+                if (t < 0.35)      { c[j*3] = 0.15; c[j*3+1] = 0.12 + t * 0.5; c[j*3+2] = 0.5 + t * 0.5; }
+                else if (t < 0.6)  { c[j*3] = 0.7 + t * 0.3; c[j*3+1] = 0.2; c[j*3+2] = 0.4; }
+                else               { c[j*3] = 1.0; c[j*3+1] = 0.8; c[j*3+2] = 0.5; }
             }
             cloud.geometry.attributes.position.needsUpdate = true;
             cloud.geometry.attributes.color.needsUpdate = true;
@@ -171,14 +305,15 @@ export class CosmicRenderer {
             cloud.visible = true;
         } else if (this._gasCloud) this._gasCloud.visible = false;
 
-        // Dark matter — faint purple haze
+        // -- Dark matter: ultra-faint violet revealing structure --
         if (this._showDM && dm.length > 0) {
-            const cloud = this._ensureCloud('dm', Math.max(dm.length, 500), 5.0, 0.08, THREE.AdditiveBlending);
+            const cloud = this._ensureCloud('dm', Math.max(dm.length, 500), 4.0, 0.06, THREE.AdditiveBlending, _gasTex);
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
             for (let j = 0; j < dm.length; j++) {
-                const d = dm[j]; p[j*3] = d.x; p[j*3+1] = d.y; p[j*3+2] = d.z;
-                c[j*3] = 0.3; c[j*3+1] = 0.18; c[j*3+2] = 0.55;
+                const d = dm[j];
+                p[j*3] = d.x; p[j*3+1] = d.y; p[j*3+2] = d.z;
+                c[j*3] = 0.25; c[j*3+1] = 0.15; c[j*3+2] = 0.5;
             }
             cloud.geometry.attributes.position.needsUpdate = true;
             cloud.geometry.attributes.color.needsUpdate = true;
@@ -186,109 +321,156 @@ export class CosmicRenderer {
             cloud.visible = true;
         } else if (this._dmCloud) this._dmCloud.visible = false;
 
-        // Black holes
+        // -- Black holes --
         this._updateBlackHoles(bhs, bodyData);
     }
 
-    // -- Black hole: event horizon + multi-layer accretion disk + photon ring --
+    // ================================================================
+    // Black holes: event horizon + shader accretion disk + photon ring
+    // ================================================================
     _updateBlackHoles(bhs, bodyData) {
-        for (const m of this._bhMeshes) { this._group.remove(m); m.geometry.dispose(); m.material.dispose(); }
+        for (const m of this._bhMeshes) {
+            this._group.remove(m);
+            if (m.geometry) m.geometry.dispose();
+            if (m.material) {
+                if (m.material.map) m.material.map = null;
+                m.material.dispose();
+            }
+        }
         this._bhMeshes = [];
         if (!this._showBH) return;
 
         for (const bh of bhs) {
             const mass = bodyData.sizes ? bodyData.sizes[bh.i] : 100;
-            const rs = Math.max(0.8, Math.cbrt(mass) * 0.25);
+            const rs = Math.max(0.6, Math.cbrt(mass) * 0.2);
+            const bhPos = new THREE.Vector3(bh.x, bh.y, bh.z);
 
-            // Event horizon — dark sphere with subtle purple rim
-            const sGeo = new THREE.SphereGeometry(rs, 32, 32);
-            const sMat = new THREE.MeshBasicMaterial({ color: 0x030006 });
+            // --- Event horizon: pure black sphere ---
+            const sGeo = new THREE.SphereGeometry(rs, 48, 48);
+            const sMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
             const sphere = new THREE.Mesh(sGeo, sMat);
-            sphere.position.set(bh.x, bh.y, bh.z);
-            this._group.add(sphere); this._bhMeshes.push(sphere);
+            sphere.position.copy(bhPos);
+            this._group.add(sphere);
+            this._bhMeshes.push(sphere);
+
+            // --- Hawking corona: faint warm glow just outside horizon ---
+            const coronaGeo = new THREE.SphereGeometry(rs * 1.15, 32, 32);
+            const coronaMat = new THREE.MeshBasicMaterial({
+                color: 0x331100, transparent: true, opacity: 0.25,
+                blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide
+            });
+            const corona = new THREE.Mesh(coronaGeo, coronaMat);
+            corona.position.copy(bhPos);
+            this._group.add(corona);
+            this._bhMeshes.push(corona);
 
             if (!this._showDisks) continue;
 
-            // Photon ring — thin bright ring at 1.5 rs (photon sphere)
-            const prGeo = new THREE.TorusGeometry(rs * 1.5, rs * 0.06, 8, 64);
+            // --- Photon ring: bright thin torus at 1.5 rs ---
+            const prGeo = new THREE.TorusGeometry(rs * 1.5, rs * 0.04, 12, 96);
             const prMat = new THREE.MeshBasicMaterial({
-                color: 0xffcc44, transparent: true, opacity: 0.7,
+                color: 0xffdd66, transparent: true, opacity: 0.8,
                 blending: THREE.AdditiveBlending, depthWrite: false
             });
             const photonRing = new THREE.Mesh(prGeo, prMat);
-            photonRing.position.set(bh.x, bh.y, bh.z);
+            photonRing.position.copy(bhPos);
             photonRing.rotation.x = Math.PI * 0.5;
-            this._group.add(photonRing); this._bhMeshes.push(photonRing);
+            this._group.add(photonRing);
+            this._bhMeshes.push(photonRing);
 
-            // Accretion disk — 3 concentric rings with heat gradient
-            const diskLayers = [
-                { inner: rs * 2.0, outer: rs * 4.5,  opacity: 0.85, colors: [[1,1,0.85],[1,0.7,0.3]] },
-                { inner: rs * 4.5, outer: rs * 8.0,  opacity: 0.6,  colors: [[1,0.6,0.2],[0.9,0.3,0.08]] },
-                { inner: rs * 8.0, outer: rs * 14.0, opacity: 0.3,  colors: [[0.8,0.25,0.05],[0.3,0.08,0.02]] },
-            ];
+            // --- Accretion disk: shader-based with Doppler beaming ---
+            const innerR = rs * 2.0;
+            const outerR = rs * 16.0;
+            const diskGeo = new THREE.RingGeometry(innerR, outerR, 128, 8);
+            const diskMat = new THREE.ShaderMaterial({
+                vertexShader: DISK_VERT,
+                fragmentShader: DISK_FRAG,
+                uniforms: {
+                    time: { value: this._time },
+                    innerRadius: { value: innerR },
+                    outerRadius: { value: outerR },
+                    bhPosition: { value: bhPos }
+                },
+                transparent: true,
+                side: THREE.DoubleSide,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            const disk = new THREE.Mesh(diskGeo, diskMat);
+            disk.position.copy(bhPos);
+            disk.rotation.x = Math.PI * 0.5;
+            this._group.add(disk);
+            this._bhMeshes.push(disk);
 
-            for (const layer of diskLayers) {
-                const rGeo = new THREE.RingGeometry(layer.inner, layer.outer, 96, 3);
-                const colors = new Float32Array(rGeo.attributes.position.count * 3);
-                for (let v = 0; v < rGeo.attributes.position.count; v++) {
-                    const px = rGeo.attributes.position.getX(v);
-                    const py = rGeo.attributes.position.getY(v);
-                    const r = Math.sqrt(px*px + py*py);
-                    const t = Math.max(0, Math.min(1, (r - layer.inner) / (layer.outer - layer.inner)));
-                    const c0 = layer.colors[0], c1 = layer.colors[1];
-                    colors[v*3]   = c0[0] + (c1[0] - c0[0]) * t;
-                    colors[v*3+1] = c0[1] + (c1[1] - c0[1]) * t;
-                    colors[v*3+2] = c0[2] + (c1[2] - c0[2]) * t;
-                }
-                rGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-                const rMat = new THREE.MeshBasicMaterial({
-                    vertexColors: true, transparent: true, opacity: layer.opacity,
-                    side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
-                });
-                const ring = new THREE.Mesh(rGeo, rMat);
-                ring.position.set(bh.x, bh.y, bh.z);
-                ring.rotation.x = Math.PI * 0.5;
-                ring.rotation.z = this._time * 0.08;
-                this._group.add(ring); this._bhMeshes.push(ring);
-            }
+            // --- Secondary thin disk (tilted, fainter — visual depth) ---
+            const disk2Geo = new THREE.RingGeometry(innerR * 1.1, outerR * 0.7, 96, 4);
+            const disk2Mat = new THREE.ShaderMaterial({
+                vertexShader: DISK_VERT,
+                fragmentShader: DISK_FRAG,
+                uniforms: {
+                    time: { value: this._time * 1.3 },
+                    innerRadius: { value: innerR * 1.1 },
+                    outerRadius: { value: outerR * 0.7 },
+                    bhPosition: { value: bhPos }
+                },
+                transparent: true,
+                side: THREE.DoubleSide,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            const disk2 = new THREE.Mesh(disk2Geo, disk2Mat);
+            disk2.position.copy(bhPos);
+            disk2.rotation.x = Math.PI * 0.5 + 0.08; // slight tilt for parallax
+            disk2.rotation.z = 0.5;
+            this._group.add(disk2);
+            this._bhMeshes.push(disk2);
 
-            // Inner glow — bright hot spot at center
+            // --- Einstein ring glow: large soft halo ---
+            const einsteinGeo = new THREE.BufferGeometry();
+            einsteinGeo.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array([bhPos.x, bhPos.y, bhPos.z]), 3));
+            const einstein = new THREE.Points(einsteinGeo, new THREE.PointsMaterial({
+                size: rs * 28, color: 0x5533aa, transparent: true, opacity: 0.08,
+                blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+                map: _haloTex
+            }));
+            this._group.add(einstein);
+            this._bhMeshes.push(einstein);
+
+            // --- Inner hot glow ---
             const glowGeo = new THREE.BufferGeometry();
-            glowGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([bh.x, bh.y, bh.z]), 3));
+            glowGeo.setAttribute('position', new THREE.BufferAttribute(
+                new Float32Array([bhPos.x, bhPos.y, bhPos.z]), 3));
             const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial({
-                size: rs * 6, color: 0xffaa33, transparent: true, opacity: 0.4,
+                size: rs * 5, color: 0xffaa44, transparent: true, opacity: 0.35,
                 blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
-                map: _circleTexture
+                map: _haloTex
             }));
-            this._group.add(glow); this._bhMeshes.push(glow);
+            this._group.add(glow);
+            this._bhMeshes.push(glow);
+        }
 
-            // Outer halo — faint wide glow
-            const haloGeo = new THREE.BufferGeometry();
-            haloGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([bh.x, bh.y, bh.z]), 3));
-            const halo = new THREE.Points(haloGeo, new THREE.PointsMaterial({
-                size: rs * 20, color: 0x4422aa, transparent: true, opacity: 0.12,
-                blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
-                map: _circleTexture
-            }));
-            this._group.add(halo); this._bhMeshes.push(halo);
+        // Update disk shader time uniforms
+        for (const m of this._bhMeshes) {
+            if (m.material && m.material.uniforms && m.material.uniforms.time) {
+                m.material.uniforms.time.value = this._time;
+            }
         }
     }
 
+    // ================================================================
     setCameraPreset(name, bodyData) {
         const presets = {
             overview:  { pos: [0, 300, 400], target: [0, 0, 0], fov: 60 },
-            galaxy:    { pos: [30, 50, 70],  target: [0, 0, 0], fov: 50 },
-            blackhole: { pos: [0, 30, 60],   target: [0, 0, 0], fov: 45 },
-            merger:    { pos: [0, 80, 160],  target: [0, 0, 0], fov: 55 },
-            quasar:    { pos: [0, 20, 40],   target: [0, 0, 0], fov: 45 }
+            galaxy:    { pos: [25, 45, 65],  target: [0, 0, 0], fov: 50 },
+            blackhole: { pos: [0, 25, 55],   target: [0, 0, 0], fov: 40 },
+            merger:    { pos: [0, 70, 150],  target: [0, 0, 0], fov: 55 },
+            quasar:    { pos: [0, 15, 35],   target: [0, 0, 0], fov: 42 }
         };
         const p = presets[name] || presets.overview;
         this.camera.position.set(p.pos[0], p.pos[1], p.pos[2]);
         this.camera.lookAt(p.target[0], p.target[1], p.target[2]);
-        if (p.fov && this.camera.fov !== p.fov) {
-            this.camera.fov = p.fov;
-            this.camera.updateProjectionMatrix();
-        }
+        if (p.fov) { this.camera.fov = p.fov; this.camera.updateProjectionMatrix(); }
     }
 
     toggleDarkMatter(on)     { this._showDM = on; }
@@ -301,7 +483,7 @@ export class CosmicRenderer {
         if (this._starCloud) { this._group.remove(this._starCloud); this._starCloud.geometry.dispose(); this._starCloud.material.dispose(); }
         if (this._gasCloud) { this._group.remove(this._gasCloud); this._gasCloud.geometry.dispose(); this._gasCloud.material.dispose(); }
         if (this._dmCloud) { this._group.remove(this._dmCloud); this._dmCloud.geometry.dispose(); this._dmCloud.material.dispose(); }
-        for (const m of this._bhMeshes) { this._group.remove(m); m.geometry.dispose(); m.material.dispose(); }
+        for (const m of this._bhMeshes) { this._group.remove(m); if (m.geometry) m.geometry.dispose(); if (m.material) m.material.dispose(); }
         if (this._bgStars) { this._group.remove(this._bgStars); this._bgStars.geometry.dispose(); this._bgStars.material.dispose(); }
         this.scene.remove(this._group);
     }
