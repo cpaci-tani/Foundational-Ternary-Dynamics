@@ -342,7 +342,8 @@ export class CosmicRenderer {
 
         for (const bh of bhs) {
             const mass = bodyData.sizes ? bodyData.sizes[bh.i] : 100;
-            const rs = Math.max(0.6, Math.cbrt(mass) * 0.2);
+            // BH visual size grows with mass (accretion makes it bigger)
+            const rs = Math.max(0.6, Math.cbrt(mass) * 0.35);
             const bhPos = new THREE.Vector3(bh.x, bh.y, bh.z);
 
             // --- Event horizon: pure black sphere ---
