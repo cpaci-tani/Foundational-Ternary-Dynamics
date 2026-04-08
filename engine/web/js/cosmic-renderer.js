@@ -367,21 +367,9 @@ export class CosmicRenderer {
 
             if (!this._showDisks) continue;
 
-            // --- Photon ring: bright thin torus at 1.5 rs ---
-            const prGeo = new THREE.TorusGeometry(rs * 1.5, rs * 0.04, 12, 96);
-            const prMat = new THREE.MeshBasicMaterial({
-                color: 0xffdd66, transparent: true, opacity: 0.8,
-                blending: THREE.AdditiveBlending, depthWrite: false
-            });
-            const photonRing = new THREE.Mesh(prGeo, prMat);
-            photonRing.position.copy(bhPos);
-            photonRing.rotation.x = Math.PI * 0.5;
-            this._group.add(photonRing);
-            this._bhMeshes.push(photonRing);
-
-            // --- Accretion disk: shader-based with Doppler beaming ---
-            const innerR = rs * 2.0;
-            const outerR = rs * 16.0;
+            // --- Accretion disk: starts right at the event horizon ---
+            const innerR = rs * 1.05;  // just outside the black sphere
+            const outerR = rs * 14.0;
             const diskGeo = new THREE.RingGeometry(innerR, outerR, 128, 8);
             const diskMat = new THREE.ShaderMaterial({
                 vertexShader: DISK_VERT,
@@ -404,7 +392,7 @@ export class CosmicRenderer {
             this._bhMeshes.push(disk);
 
             // --- Secondary thin disk (tilted, fainter — visual depth) ---
-            const disk2Geo = new THREE.RingGeometry(innerR * 1.1, outerR * 0.7, 96, 4);
+            const disk2Geo = new THREE.RingGeometry(innerR * 1.05, outerR * 0.7, 96, 4);
             const disk2Mat = new THREE.ShaderMaterial({
                 vertexShader: DISK_VERT,
                 fragmentShader: DISK_FRAG,
