@@ -2934,11 +2934,12 @@ function loadCosmicScenario(scenarioName = 'cosmic-galaxy') {
     running = false;
     updatePlayButton();
 
-    // Hide all Scale 0 visuals
+    // Hide all non-cosmic visuals
     if (viewport) {
         viewport.toggleFluxVolume(false);
         viewport.toggleFluxSlice(false);
         viewport.toggleGrid(false);
+        viewport.toggleAxes(false);
         if (viewport.particles) viewport.particles.visible = false;
     }
 
