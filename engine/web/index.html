@@ -765,8 +765,44 @@
                     <span class="scale2-only">Scale 2 &middot; Atom Engine</span>
                     <span class="scale3-only">Scale 3 &middot; Molecular Engine</span>
                     <span class="scale4-only">Scale 4 &middot; Consciousness</span>
+                    <span class="scale-cosmic-only">Scale 5 &middot; Cosmic Engine</span>
                     <span class="scale5-only">Meta &middot; Existential Unit</span>
                 </div>
+                <!-- Cosmic Controls (visible only in cosmic mode) -->
+                <div class="scale-cosmic-only" style="padding:8px 0;">
+                    <div class="panel-grid panel-grid-3">
+                        <div class="card">
+                            <div class="card-title">Simulation</div>
+                            <div style="font-size:11px;color:var(--text);line-height:1.6;font-family:var(--font-mono);" id="cosmic-ctrl-sim">
+                                <div>Bodies: <span id="cosmic-n-bodies">--</span></div>
+                                <div>Tick: <span id="cosmic-tick">--</span></div>
+                                <div>H(t): <span id="cosmic-hubble">--</span></div>
+                                <div>a(t): <span id="cosmic-scale-factor">--</span></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Cosmology (FTD)</div>
+                            <div style="font-size:11px;color:var(--text-muted);line-height:1.7;">
+                                <div>&Omega;<sub>m</sub> = 1/3 &nbsp; &Omega;<sub>&Lambda;</sub> = 2/3</div>
+                                <div>DM frac = 17/27 &asymp; 63%</div>
+                                <div>G<sub>N</sub> = 1/(b<sub>3</sub>+N<sub>c</sub>)&sup2; = 0.01</div>
+                                <div>&gamma; = (D+2)/D = 5/3</div>
+                                <div>c = 1/&radic;3</div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Body Count</div>
+                            <div style="font-size:11px;color:var(--text);line-height:1.6;font-family:var(--font-mono);" id="cosmic-ctrl-bodies">
+                                <div>DM: <span id="cosmic-n-dm">--</span></div>
+                                <div>Gas: <span id="cosmic-n-gas">--</span></div>
+                                <div>Stars: <span id="cosmic-n-stars">--</span></div>
+                                <div>BH: <span id="cosmic-n-bh">--</span></div>
+                                <div>KE: <span id="cosmic-ke">--</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="panel-grid panel-grid-3">
                     <div class="card scale0-only">
                         <div class="card-title">Physics Toggles</div>
