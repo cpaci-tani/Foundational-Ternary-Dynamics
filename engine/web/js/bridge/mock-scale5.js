@@ -248,6 +248,90 @@ export class CosmicMockBridge {
             this._dt = 0.04;
             this._enableSubgrid = false;
 
+        } else if (name === 'cosmic-ftd-collapse') {
+            // ============================================================
+            // FTD Black Hole: Emergent gravitational collapse
+            //
+            // No pre-placed black hole. A dense cloud of gas and stars
+            // collapses under self-gravity. When central density exceeds
+            // the critical threshold (escape velocity > c = 1/sqrt(3)),
+            // the region becomes an emergent "black hole" — not a
+            // singularity, but a saturated latency well on the lattice.
+            //
+            // FTD predicts:
+            //   - No infinities (discrete lattice, finite states)
+            //   - No true event horizon (L → 1 but never reaches it)
+            //   - BH is a configuration, not a fundamental object
+            //   - Must form FROM something (has a seed)
+            //   - Information trapped for cosmological time, not forever
+            //
+            // The scenario starts as a uniform-density gas cloud with
+            // slight random perturbations. Over time:
+            //   1. Cloud contracts under self-gravity
+            //   2. Core density increases, temperature rises
+            //   3. Some gas converts to stars (Jeans collapse)
+            //   4. Central region reaches v_escape > c → emergent BH
+            //   5. The "BH" grows by accreting surrounding material
+            // ============================================================
+
+            const M_cloud = 3000;  // total cloud mass
+            const R_cloud = 40;    // initial cloud radius
+            const N_gas = 500;
+            const N_dm = 200;      // small DM seed to help collapse
+
+            // Dense gas cloud — uniform sphere with random perturbations
+            for (let i = 0; i < N_gas; i++) {
+                // Uniform random position in sphere
+                let rx, ry, rz, r2;
+                do {
+                    rx = (rng() - 0.5) * 2;
+                    ry = (rng() - 0.5) * 2;
+                    rz = (rng() - 0.5) * 2;
+                    r2 = rx*rx + ry*ry + rz*rz;
+                } while (r2 > 1.0);
+                const x = rx * R_cloud;
+                const y = ry * R_cloud;
+                const z = rz * R_cloud;
+
+                // Small initial inward velocity (cloud is collapsing)
+                const r = Math.sqrt(x*x + y*y + z*z) + 0.01;
+                const v_infall = -0.1 * Math.sqrt(G_N * M_cloud / R_cloud);
+                // Plus small random tangential velocity (angular momentum)
+                const ph = Math.atan2(z, x);
+                const v_tang = 0.15 * Math.sqrt(G_N * M_cloud / R_cloud);
+
+                this.addBody(T.GAS, M_cloud * 0.8 / N_gas,
+                    x, y, z,
+                    v_infall * x/r + v_tang * (-Math.sin(ph)) * (Math.random()*0.5 + 0.5),
+                    v_infall * y/r + randn() * v_tang * 0.3,
+                    v_infall * z/r + v_tang * (Math.cos(ph)) * (Math.random()*0.5 + 0.5),
+                    1e4 + rng() * 5e4);
+            }
+
+            // DM seed — concentrated near center, helps initiate collapse
+            for (let i = 0; i < N_dm; i++) {
+                let rx, ry, rz, r2;
+                do {
+                    rx = randn() * 0.4; // Gaussian, concentrated
+                    ry = randn() * 0.4;
+                    rz = randn() * 0.4;
+                    r2 = rx*rx + ry*ry + rz*rz;
+                } while (r2 > 1.0);
+                const x = rx * R_cloud * 0.5;  // inner half of cloud
+                const y = ry * R_cloud * 0.5;
+                const z = rz * R_cloud * 0.5;
+
+                const sigma = 0.05 * Math.sqrt(G_N * M_cloud / R_cloud);
+                this.addBody(T.DARK_MATTER, M_cloud * 0.2 / N_dm,
+                    x, y, z,
+                    sigma * randn(), sigma * randn(), sigma * randn());
+            }
+
+            this._boxSize = 120;
+            this._softening = 3.0;
+            this._dt = 0.03;
+            this._enableSubgrid = true;  // need cooling for collapse + star formation
+
         } else {
             // Cosmic web
             for (let i = 0; i < 700; i++) {
@@ -521,7 +605,40 @@ export class CosmicMockBridge {
             }
         }
 
-        // ── SUBGRID ONLY (BH accretion scenario) ──
+        // ── Emergent BH formation (FTD prediction) ──
+        // When a region becomes dense enough that v_escape > c = 1/sqrt(3),
+        // the densest body converts to a BLACK_HOLE. This is NOT a singularity —
+        // it's a lattice configuration where the latency field saturates.
+        // Check: for each non-BH body, count nearby mass within softening radius.
+        // If enclosed mass gives v_esc = sqrt(2*G*M_enc/r) > C_SPEED, convert.
+        const C_SPEED = 1.0 / Math.sqrt(3.0);
+        for (const b of this._bodies) {
+            if (isBH(b.type)) continue;
+            if (b.mass <= 0) continue;
+            // Count enclosed mass within 2*softening
+            const checkR = this._softening * 2;
+            const checkR2 = checkR * checkR;
+            let M_enc = 0;
+            for (const other of this._bodies) {
+                if (other.id === b.id) continue;
+                const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
+                if (dr2 < checkR2) M_enc += other.mass;
+            }
+            // Escape velocity at the edge of this region
+            const v_esc = Math.sqrt(2 * G * M_enc / checkR);
+            if (v_esc > C_SPEED && M_enc > 50) {
+                // This region has collapsed past the FTD threshold!
+                // Convert this body to a black hole — it becomes the seed.
+                b.type = T.BLACK_HOLE;
+                b.temperature = 0;
+                b.luminosity = 0;
+                b.tidal_stretch = 0;
+                // It keeps its mass — nearby matter will be accreted naturally
+                // through the existing horizon absorption mechanism.
+            }
+        }
+
+        // ── SUBGRID ONLY (BH accretion / FTD collapse scenarios) ──
 
         if (this._enableSubgrid) {
             const baseSoft2 = this._softening * this._softening;
