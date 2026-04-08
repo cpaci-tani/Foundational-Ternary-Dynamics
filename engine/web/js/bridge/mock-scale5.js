@@ -69,6 +69,8 @@ export class CosmicMockBridge {
             density: 0, pressure: 0,
             luminosity: type === 2 ? Math.pow(mass, 3.5) : 0,
             radius: Math.cbrt(mass) * 0.1,
+            tidal_stretch: 0, // 0 = normal, grows toward 1.0 as star is disrupted
+            original_mass: mass, // for tracking how much has been shed
         });
         return id;
     }
@@ -429,10 +431,15 @@ export class CosmicMockBridge {
             }
         }
 
-        // Tidal disruption events (TDE): stars within tidal radius get
-        // shredded into a stream of gas particles.
-        // r_tidal ~ R_star * (M_BH / M_star)^(1/3)
-        // In our units: r_tidal ~ softening * (M_BH / M_star)^(1/3)
+        // Gradual tidal disruption (spaghettification):
+        // Stars near a BH don't instantly convert — they gradually stretch
+        // and shed mass along their orbit over many ticks.
+        //
+        // Phase 1 (r < 2*r_tidal): tidal_stretch increases each tick
+        // Phase 2 (stretch > 0.3): star starts shedding gas along velocity vector
+        // Phase 3 (stretch > 1.0 or mass < 20% original): star fully dissolved
+        //
+        // The shed gas forms a thin stream along the orbit — visible spaghettification.
         const newGas = [];
         for (const bh of this._bodies) {
             if (!isBH(bh.type)) continue;
@@ -441,33 +448,55 @@ export class CosmicMockBridge {
                 const dx = star.x - bh.x, dy = star.y - bh.y, dz = star.z - bh.z;
                 const r2 = dx*dx + dy*dy + dz*dz;
                 const r = Math.sqrt(r2 + 0.01);
-                // Tidal disruption radius
+
+                // Tidal disruption radius: r_t ~ 2 * (M_BH/M_star)^(1/3)
                 const r_tidal = 2.0 * Math.pow(bh.mass / (star.mass + 0.01), 1/3);
-                if (r > r_tidal) continue;
-                // Star is disrupted! Split into 3-5 gas fragments along the orbit
-                const nFrags = 3 + Math.floor(Math.random() * 3);
-                const fragMass = star.mass / nFrags;
-                const invR = 1.0 / r;
-                const rx = dx * invR, ry = dy * invR, rz = dz * invR;
-                // Tangential direction (perpendicular to radial)
-                const tx = -rz, ty = 0, tz = rx; // approximate tangent
-                const tMag = Math.sqrt(tx*tx + ty*ty + tz*tz) + 0.01;
-                for (let f = 0; f < nFrags; f++) {
-                    // Spread fragments along the stream with velocity dispersion
-                    const spread = (f - nFrags/2) * 0.5;
-                    const vSpread = (f - nFrags/2) * 0.1;
-                    newGas.push({
-                        mass: fragMass,
-                        x: star.x + spread * rx + (Math.random()-0.5)*0.3,
-                        y: star.y + spread * ry + (Math.random()-0.5)*0.3,
-                        z: star.z + spread * rz + (Math.random()-0.5)*0.3,
-                        vx: star.vx + vSpread * tx/tMag,
-                        vy: star.vy + vSpread * 0.1,
-                        vz: star.vz + vSpread * tz/tMag,
-                        temp: 1e5 // shock-heated
-                    });
+
+                if (r < r_tidal * 2.0) {
+                    // Inside tidal influence zone — stretch increases
+                    // Closer = faster stretching (tidal force ~ 1/r^3)
+                    const tidalForce = bh.mass / (r2 * r + 0.01);
+                    star.tidal_stretch = Math.min(1.5, (star.tidal_stretch || 0) + tidalForce * 0.0005);
+                } else {
+                    // Outside zone — stretch relaxes slowly (star re-compacts)
+                    star.tidal_stretch = Math.max(0, (star.tidal_stretch || 0) - 0.002);
                 }
-                star.mass = 0; // star destroyed
+
+                // Phase 2: shedding mass when stretched enough
+                if ((star.tidal_stretch || 0) > 0.3 && r < r_tidal * 1.5) {
+                    // Shed a small gas fragment along the velocity direction each tick
+                    // This creates the visible "spaghetti stream"
+                    const shedFraction = Math.min(0.05, star.tidal_stretch * 0.02);
+                    const shedMass = star.mass * shedFraction;
+                    if (shedMass > 0.01) {
+                        star.mass -= shedMass;
+                        // Place fragment slightly behind the star along its velocity
+                        const v = Math.sqrt(star.vx*star.vx + star.vy*star.vy + star.vz*star.vz) + 0.01;
+                        const jitter = 0.15; // small random spread for stream width
+                        newGas.push({
+                            mass: shedMass,
+                            x: star.x - star.vx/v * 0.5 + (Math.random()-0.5)*jitter,
+                            y: star.y - star.vy/v * 0.5 + (Math.random()-0.5)*jitter,
+                            z: star.z - star.vz/v * 0.5 + (Math.random()-0.5)*jitter,
+                            vx: star.vx * (0.9 + Math.random()*0.2), // slight velocity spread
+                            vy: star.vy * (0.9 + Math.random()*0.2),
+                            vz: star.vz * (0.9 + Math.random()*0.2),
+                            temp: 5e4 * (1 + star.tidal_stretch) // hotter as more stretched
+                        });
+                    }
+                }
+
+                // Phase 3: fully dissolved when mass drops below 20% of original
+                if (star.mass < (star.original_mass || star.mass) * 0.2 && (star.tidal_stretch || 0) > 0.8) {
+                    // Final burst — remaining mass becomes gas
+                    if (star.mass > 0.02) {
+                        newGas.push({
+                            mass: star.mass, x: star.x, y: star.y, z: star.z,
+                            vx: star.vx, vy: star.vy, vz: star.vz, temp: 1e5
+                        });
+                    }
+                    star.mass = 0;
+                }
             }
         }
         for (const g of newGas) {
@@ -610,17 +639,21 @@ export class CosmicMockBridge {
         const sizes = new Float32Array(n);
         const densities = new Float32Array(n);
         const luminosities = new Float32Array(n);
+        const stretches = new Float32Array(n);
 
         for (let i = 0; i < n; i++) {
             const b = this._bodies[i];
             positions[i*3] = b.x; positions[i*3+1] = b.y; positions[i*3+2] = b.z;
             types[i] = b.type;
-            temperatures[i] = b.temperature;
-            sizes[i] = Math.cbrt(b.mass);
+            // Disrupting stars get hotter (redder) and bloated (larger) as they stretch
+            const stretch = b.tidal_stretch || 0;
+            temperatures[i] = b.temperature + stretch * 15000; // redshift toward hot
+            sizes[i] = Math.cbrt(b.mass) * (1 + stretch * 2); // bloat as disrupted
             densities[i] = b.density || 0.1;
-            luminosities[i] = b.luminosity;
+            luminosities[i] = b.luminosity * (1 - stretch * 0.5); // dimming
+            stretches[i] = stretch;
         }
-        return { positions, types, temperatures, sizes, densities, luminosities, count: n };
+        return { positions, types, temperatures, sizes, densities, luminosities, stretches, count: n };
     }
 
     getDiagnostics() {
