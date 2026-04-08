@@ -292,7 +292,7 @@ export class CosmicMockBridge {
             if (v2 < 1e-20) continue;
             // Coulomb logarithm ~ ln(b_max/b_min) ~ ln(box/softening) ~ 5
             const lnLambda = 5.0;
-            const drag = 4 * Math.PI * G * G * b.mass * lnLambda / (v2 + 1e-10);
+            const drag = 4 * Math.PI * G * G * b.mass * b.mass * lnLambda / (v2 + 1e-10);
             // Estimate local density from total mass / box volume (crude)
             const rho_local = this._bodies.reduce((s, p) => s + p.mass, 0) / Math.pow(this._boxSize, 3);
             const fric = drag * rho_local;
