@@ -1142,58 +1142,55 @@ void CosmicEngine::enforce_speed_limit() {
 // ============================================================================
 
 void CosmicEngine::tick() {
+    // ================================================================
+    // Tick cycle follows Gadget-2 conventions:
+    //   1. Compute forces at current positions
+    //   2. Kick-drift-kick (Velocity Verlet)
+    //   3. Post-integration updates (mass changes, mergers, cleanup)
+    //
+    // Mass changes (accretion, star formation, mergers) happen AFTER
+    // integration, never during force computation. This preserves
+    // energy conservation and prevents mid-loop state corruption.
+    // ================================================================
+
+    // ── Phase A: Compute forces at CURRENT positions ──
     int n = (int)bodies_.size();
     forces_.assign(n, {});
     force_diag_.assign(n, {});
 
-    // Phase 1: Structure
     build_octree();
-
-    // Phase 2: Gravity (O(N log N))
     compute_gravity();
-
-    // Phase 3-4: SPH hydrodynamics
     compute_sph_density();
     compute_sph_forces();
-
-    // Phase 5-6: Cosmology
     apply_hubble_expansion();
     apply_dark_energy();
-
-    // Phase 7-8: Compact objects
-    compute_accretion();
-    compute_relativistic_jets();
-
-    // Phase 9-10: Stellar physics
-    check_star_formation();
-    check_stellar_evolution();
-
-    // Phase 11-12: Extended physics
     compute_magnetic_fields();
     compute_radiation_pressure();
 
-    // Phase 13-14: Gravitational waves
-    detect_gw_events();
-    propagate_gw();
+    // ── Phase B: Velocity Verlet integration ──
+    half_kick();                    // v += 0.5 * dt * a (current forces)
+    drift();                        // x += dt * v
 
-    // Phase 15: first half-kick
-    half_kick();
-    // Phase 16: drift
-    drift();
-    // Phase 17: RECOMPUTE forces at new positions (critical for symplecticity)
+    // Recompute forces at NEW positions (symplecticity requirement)
     int n2 = (int)bodies_.size();
     forces_.assign(n2, {});
     force_diag_.assign(n2, {});
     build_octree();
     compute_gravity();
     if (toggles.sph_gas) { compute_sph_density(); compute_sph_forces(); }
-    // Phase 18: second half-kick with FRESH forces
-    half_kick();
 
-    // Enforce speed limit
+    half_kick();                    // v += 0.5 * dt * a (fresh forces)
+
+    // ── Phase C: Post-integration updates (Gadget-2 convention) ──
+    // Mass changes, particle creation/destruction happen HERE, not in forces.
+    compute_accretion();
+    compute_relativistic_jets();
+    check_star_formation();
+    check_stellar_evolution();
+    detect_gw_events();
+    propagate_gw();
     enforce_speed_limit();
 
-    // Phase 18
     tick_++;
 }
 
