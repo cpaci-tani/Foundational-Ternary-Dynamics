@@ -79,7 +79,7 @@ export class CosmicMockBridge {
             // BH doesn't receive N-body kicks (pinned by code), so even 7x is enough
             // to be the dominant attractor in the inner region.
             const M_total = 5000;
-            const M_bh = 100;
+            const M_bh = 500; // 10% — must dominate core to prevent star-cluster inversion
             const M_dm = (M_total - M_bh) * 0.85;
             const M_disk = (M_total - M_bh) * 0.15;
             const r_s = 30;      // Scale radius
@@ -186,7 +186,7 @@ export class CosmicMockBridge {
 
             // Galaxy 1
             const cx1 = -sep / 2, cz1 = -b / 2;
-            this.addBody(T.BLACK_HOLE, M1 * 0.02, cx1, 0, cz1, v_approach, 0, v_approach * 0.15);
+            this.addBody(T.BLACK_HOLE, M1 * 0.05, cx1, 0, cz1, v_approach, 0, v_approach * 0.15);
             for (let i = 0; i < 250; i++) {
                 const r = rng() * r_s1 * 1.8;
                 const ph = PI2 * rng();
@@ -196,7 +196,7 @@ export class CosmicMockBridge {
                 const M_enc = this._enclosedMass(r, M1, r_s1);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
 
-                const M1_remaining = M1 * 0.98; // after BH takes 2%
+                const M1_remaining = M1 * 0.95; // after BH takes 5%
                 this.addBody(t, (t === T.DARK_MATTER ? M1_remaining * 0.85 : M1_remaining * 0.15) / 125,
                     cx1 + r * Math.cos(ph), zz, cz1 + r * Math.sin(ph),
                     v_approach - vc * Math.sin(ph), 0, v_approach * 0.15 + vc * Math.cos(ph),
@@ -205,7 +205,7 @@ export class CosmicMockBridge {
 
             // Galaxy 2
             const cx2 = sep / 2, cz2 = b / 2;
-            this.addBody(T.BLACK_HOLE, M2 * 0.02, cx2, 0, cz2, -v_approach, 0, -v_approach * 0.15);
+            this.addBody(T.BLACK_HOLE, M2 * 0.05, cx2, 0, cz2, -v_approach, 0, -v_approach * 0.15);
             for (let i = 0; i < 200; i++) {
                 const r = rng() * r_s2 * 1.8;
                 const ph = PI2 * rng();
@@ -215,7 +215,7 @@ export class CosmicMockBridge {
                 const M_enc = this._enclosedMass(r, M2, r_s2);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
 
-                const M2_remaining = M2 * 0.98;
+                const M2_remaining = M2 * 0.95;
                 this.addBody(t, (t === T.DARK_MATTER ? M2_remaining * 0.85 : M2_remaining * 0.15) / 100,
                     cx2 + r * Math.cos(ph), zz, cz2 + r * Math.sin(ph),
                     -v_approach - vc * Math.sin(ph), 0, -v_approach * 0.15 + vc * Math.cos(ph),
@@ -280,15 +280,10 @@ export class CosmicMockBridge {
             }
         }
 
-        // ── Tidal forces / spaghettification ──
-        // Near a BH, the gravitational gradient across a particle's extent
-        // stretches it radially and compresses it laterally:
-        //   a_tidal_radial  = +2 * G * M_BH * dr / r^3  (stretch along r)
-        //   a_tidal_lateral = -1 * G * M_BH * dr / r^3  (squeeze perpendicular)
-        // We approximate this as a velocity perturbation: particles near a BH
-        // get their radial velocity amplified and tangential velocity damped,
-        // creating visible tidal streams.
-        for (const bh of this._bodies) {
+        // ── Tidal forces / spaghettification (BH accretion scenario only) ──
+        // Only enabled with subgrid — in galaxy/merger the non-conservative
+        // tidal perturbation destabilizes disk orbits at low particle counts.
+        if (this._enableSubgrid) for (const bh of this._bodies) {
             if (bh.type !== CosmicMockBridge.TYPE.BLACK_HOLE &&
                 bh.type !== CosmicMockBridge.TYPE.QUASAR) continue;
             const r_tidal = Math.max(8.0, Math.cbrt(bh.mass) * 1.5); // tidal influence radius
