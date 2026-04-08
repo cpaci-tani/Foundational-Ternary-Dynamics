@@ -291,21 +291,39 @@ export class CosmicMockBridge {
         const dt = this._dt;
 
         // Velocity Verlet (symplectic): kick-drift-recompute-kick
+        // BH/Quasar types are gravitational anchors — they source gravity
+        // but their own motion is governed by dynamical friction only,
+        // not individual particle kicks (prevents unphysical wobble).
+        const BH = CosmicMockBridge.TYPE.BLACK_HOLE;
+        const QS = CosmicMockBridge.TYPE.QUASAR;
         for (const b of this._bodies) {
+            if (b.type === BH || b.type === QS) continue;
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;
         }
         for (const b of this._bodies) {
+            if (b.type === BH || b.type === QS) continue;
             b.x += dt * b.vx;
             b.y += dt * b.vy;
             b.z += dt * b.vz;
         }
         this._computeForces();
         for (const b of this._bodies) {
+            if (b.type === BH || b.type === QS) continue;
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;
+        }
+        // BH/Quasar: apply only dynamical friction (computed in _computeForces)
+        for (const b of this._bodies) {
+            if (b.type !== BH && b.type !== QS) continue;
+            b.vx += dt * b.ax; // friction-only acceleration
+            b.vy += dt * b.ay;
+            b.vz += dt * b.az;
+            b.x += dt * b.vx;
+            b.y += dt * b.vy;
+            b.z += dt * b.vz;
         }
 
         this._t_cosmic += dt;
