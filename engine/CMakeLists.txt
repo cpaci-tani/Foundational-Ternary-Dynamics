@@ -38,6 +38,7 @@ add_library(ftd_core
     src/lagrangian.cpp
     src/particle_engine.cpp
     src/atom_engine.cpp
+    src/cosmic_engine.cpp
     src/scale_bridge.cpp
 )
 target_include_directories(ftd_core PUBLIC ${CMAKE_SOURCE_DIR}/include)

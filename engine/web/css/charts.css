@@ -1,0 +1,100 @@
+/* ============================================================
+ *  charts.css
+ *  Particle Engine (PE) controls, diagnostic panel styles,
+ *  PE telemetry / inspector styles, and combo panel layout
+ *  for the FTD web dashboard.
+ *
+ *  Includes:
+ *    - PE control card (sliders, labels, values)
+ *    - Combo panel buttons and section labels
+ *    - PE inspector selected highlight, catalog dot,
+ *      header, name, symbol
+ * ============================================================ */
+
+/* PE controls card */
+.pe-ctrl-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.pe-ctrl-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    min-width: 70px;
+}
+
+.pe-ctrl-value {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    min-width: 40px;
+    text-align: right;
+}
+
+.pe-slider {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+}
+
+.pe-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.pe-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+/* Combo panel */
+.combo-btn-row { display:flex; gap:4px; flex-wrap:wrap; }
+.combo-btn-row .ctrl-btn-secondary { padding:4px 8px; font-size:11px; flex:1; min-width:0; white-space:nowrap; }
+.combo-section-label { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); margin:6px 0 4px 0; opacity:0.7; }
+
+/* PE inspector selected highlight */
+.pe-insp-selected {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 1px var(--accent-dim);
+}
+
+.pe-insp-catalog-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+.pe-insp-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.pe-insp-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.pe-insp-symbol {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+}

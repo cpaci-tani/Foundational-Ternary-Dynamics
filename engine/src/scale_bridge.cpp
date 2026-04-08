@@ -13,6 +13,7 @@
 #include "ftd/scale.h"
 #include "ftd/particle_engine.h"
 #include "ftd/atom_engine.h"
+#include "ftd/cosmic_engine.h"
 #include "ftd/render_bridge.h"
 #include <cmath>
 #include <algorithm>
@@ -196,6 +197,84 @@ std::vector<Particle> refine_to_particles(const Atom& a) {
         p.position.y += a.radius * std::sin(angle);
         p.locked = false;
         result.push_back(p);
+    }
+
+    return result;
+}
+
+// ============================================================================
+// Scale 2 → Scale 5: coarsen atoms to cosmic bodies
+// ============================================================================
+
+std::vector<CosmicBody> coarsen_to_cosmic(const AtomEngine& ae) {
+    std::vector<CosmicBody> result;
+    const auto& atoms = ae.atoms();
+    if (atoms.empty()) return result;
+
+    // Each atom becomes a gas particle at cosmic scale
+    // (The real coarsening would cluster atoms, but for the bridge interface
+    // we provide a direct mapping — scenario builders handle realistic distributions)
+    double total_mass = 0.0;
+    Vec3 centroid;
+    for (const auto& a : atoms) {
+        total_mass += a.mass;
+        centroid.x += a.position.x * a.mass;
+        centroid.y += a.position.y * a.mass;
+        centroid.z += a.position.z * a.mass;
+    }
+    if (total_mass > 0.0) {
+        centroid.x /= total_mass;
+        centroid.y /= total_mass;
+        centroid.z /= total_mass;
+    }
+
+    // Create a single gas body from all atoms
+    CosmicBody gas;
+    gas.id = 0;
+    gas.type = CosmicBodyType::GAS;
+    gas.mass = total_mass;
+    gas.position = centroid;
+    gas.temperature = 1e4; // Default warm gas
+    gas.radius = 1.0;
+    result.push_back(gas);
+
+    return result;
+}
+
+// ============================================================================
+// Scale 5 → Scale 2: refine cosmic body to atoms
+// ============================================================================
+
+std::vector<Atom> refine_to_atoms(const CosmicBody& cb) {
+    std::vector<Atom> result;
+
+    // Decompose cosmic body into hydrogen atoms (simplified)
+    // Real composition: H:He:metals = 73:25:2 by mass
+    // For the bridge, just return hydrogen count
+    double m_H = M_PROTON + K_B; // proton + electron
+    int n_atoms = std::max(1, static_cast<int>(cb.mass / m_H));
+
+    // Cap at 1000 atoms for practical refinement
+    n_atoms = std::min(n_atoms, 1000);
+
+    double spacing = cb.radius / std::cbrt(static_cast<double>(n_atoms));
+
+    for (int i = 0; i < n_atoms; ++i) {
+        Atom a;
+        a.id = i;
+        a.Z = 1; // Hydrogen
+        a.N = 0;
+        a.charge = 0;
+        a.mass = m_H;
+        a.radius = R_BOHR;
+
+        // Distribute in a sphere
+        double phi = 2.0 * PI * i / n_atoms;
+        double r = spacing * std::cbrt(static_cast<double>(i + 1));
+        a.position = cb.position;
+        a.position.x += r * std::cos(phi);
+        a.position.y += r * std::sin(phi);
+        result.push_back(a);
     }
 
     return result;
