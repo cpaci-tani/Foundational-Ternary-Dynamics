@@ -291,29 +291,10 @@ export class CosmicMockBridge {
             }
         }
 
-        // BH hard core: prevent bodies from passing through BH center.
-        // Plummer softening makes F→0 at r→0, so bodies on radial orbits
-        // sail through. This adds a repulsive barrier at r < r_core that
-        // deflects approaching bodies, mimicking an unresolved central cusp.
-        const BHT = CosmicMockBridge.TYPE.BLACK_HOLE;
-        const QST = CosmicMockBridge.TYPE.QUASAR;
-        for (const bh of this._bodies) {
-            if (bh.type !== BHT && bh.type !== QST) continue;
-            const r_core = Math.max(1.5, Math.cbrt(bh.mass) * 0.15);
-            const r_core2 = r_core * r_core;
-            for (const b of this._bodies) {
-                if (b.id === bh.id) continue;
-                const dx = b.x - bh.x, dy = b.y - bh.y, dz = b.z - bh.z;
-                const r2 = dx * dx + dy * dy + dz * dz;
-                if (r2 > r_core2 || r2 < 1e-6) continue;
-                const r = Math.sqrt(r2);
-                // Repulsive force ~ 1/r^4 inside core (steep wall)
-                const fmag = G * bh.mass * r_core2 / (r2 * r2 + 0.01);
-                b.ax += fmag * dx / r;
-                b.ay += fmag * dy / r;
-                b.az += fmag * dz / r;
-            }
-        }
+        // No hard-core repulsion needed — bodies that reach the event horizon
+        // are absorbed in _postUpdates(). The Plummer softening (BH eps=3.0)
+        // prevents force singularity at r=0. Bodies on radial orbits either
+        // get tidally disrupted (stars) or absorbed (everything) at the horizon.
 
         // Sub-grid physics (BH accretion scenario only)
         if (!this._enableSubgrid) return;
@@ -449,10 +430,11 @@ export class CosmicMockBridge {
                 const r2 = dx*dx + dy*dy + dz*dz;
                 const r = Math.sqrt(r2 + 0.01);
 
-                // Tidal disruption radius: r_t ~ 2 * (M_BH/M_star)^(1/3)
-                const r_tidal = 2.0 * Math.pow(bh.mass / (star.mass + 0.01), 1/3);
+                // Tidal disruption radius: r_t ~ 0.5 * (M_BH/M_star)^(1/3)
+                // Small coefficient so only stars very close to BH get shredded
+                const r_tidal = 0.5 * Math.pow(bh.mass / (star.mass + 0.01), 1/3);
 
-                if (r < r_tidal * 2.0) {
+                if (r < r_tidal * 1.5) {
                     // Inside tidal influence zone — stretch increases
                     // Closer = faster stretching (tidal force ~ 1/r^3)
                     const tidalForce = bh.mass / (r2 * r + 0.01);
@@ -463,7 +445,7 @@ export class CosmicMockBridge {
                 }
 
                 // Phase 2: shedding mass when stretched enough
-                if ((star.tidal_stretch || 0) > 0.3 && r < r_tidal * 1.5) {
+                if ((star.tidal_stretch || 0) > 0.3 && r < r_tidal * 1.2) {
                     // Shed a small gas fragment along the velocity direction each tick
                     // This creates the visible "spaghetti stream"
                     const shedFraction = Math.min(0.05, star.tidal_stretch * 0.02);
