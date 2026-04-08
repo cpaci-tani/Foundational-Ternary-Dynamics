@@ -403,63 +403,78 @@ export class CosmicMockBridge {
     // ================================================================
 
     _postUpdates() {
-        if (!this._enableSubgrid) {
-            // Even without subgrid, enforce speed limit
-            this._enforceSpeedLimit();
-            return;
-        }
-
         const T = CosmicMockBridge.TYPE;
         const G = G_N;
         const isGas = (t) => t === T.GAS || t === T.NEBULA;
         const isBH = (t) => t === T.BLACK_HOLE || t === T.QUASAR;
-        const baseSoft2 = this._softening * this._softening;
+        const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
 
-        // Star formation (dense cold gas → star)
-        const newStars = [];
-        for (const b of this._bodies) {
-            if (!isGas(b.type) || b.mass < 0.5) continue;
-            let nearby = 0;
-            for (const other of this._bodies) {
-                if (other.id === b.id || !isGas(other.type)) continue;
-                const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
-                if (dr2 < baseSoft2 * 9) nearby++;
-            }
-            if (nearby > 10 && b.temperature < 3000 && Math.random() < 0.01) {
-                const starMass = b.mass * 0.15;
-                b.mass -= starMass;
-                newStars.push({type: T.STAR, mass: starMass,
-                    x: b.x, y: b.y, z: b.z, vx: b.vx, vy: b.vy, vz: b.vz,
-                    temp: 5800, lum: Math.pow(starMass, 3.5)});
-            }
-        }
-        for (const s of newStars) {
-            this.addBody(s.type, s.mass, s.x, s.y, s.z, s.vx, s.vy, s.vz, s.temp);
-            this._bodies[this._bodies.length - 1].luminosity = s.lum;
-        }
+        // ── ALWAYS ACTIVE (all scenarios) ──
 
-        // BH accretion (bound gas → BH)
+        // Event horizon absorption: ANY body crossing the Schwarzschild radius
+        // is consumed by the BH. Mass transfers, body is destroyed.
+        // This is the "point of no return" — nothing escapes.
         for (const bh of this._bodies) {
             if (!isBH(bh.type)) continue;
-            const r_acc = Math.max(1.5, Math.cbrt(bh.mass) * 0.3);
-            const r_acc2 = r_acc * r_acc;
-            for (const gas of this._bodies) {
-                if (!isGas(gas.type) || gas.mass <= 0) continue;
-                const dx = gas.x - bh.x, dy = gas.y - bh.y, dz = gas.z - bh.z;
-                const r2 = dx * dx + dy * dy + dz * dz;
-                if (r2 > r_acc2) continue;
-                const dvx = gas.vx - bh.vx, dvy = gas.vy - bh.vy, dvz = gas.vz - bh.vz;
-                const v_rel2 = dvx*dvx + dvy*dvy + dvz*dvz;
-                const r = Math.sqrt(r2 + 0.01);
-                if (v_rel2 > 2 * G * bh.mass / r) continue; // only bound gas
-                const rate = 0.005 * bh.mass / (v_rel2 + 0.1);
-                const dm = Math.min(gas.mass * 0.1, gas.mass * rate * 0.001);
-                bh.mass += dm;
-                gas.mass -= dm;
+            const r_horizon = Math.max(0.8, Math.cbrt(bh.mass) * 0.12);
+            const r_h2 = r_horizon * r_horizon;
+            for (const b of this._bodies) {
+                if (b.id === bh.id || b.mass <= 0) continue;
+                const dx = b.x - bh.x, dy = b.y - bh.y, dz = b.z - bh.z;
+                if (dx*dx + dy*dy + dz*dz < r_h2) {
+                    // Swallowed: mass absorbed, body destroyed
+                    bh.mass += b.mass;
+                    b.mass = 0;
+                }
             }
         }
 
-        // BH-BH mergers
+        // Tidal disruption events (TDE): stars within tidal radius get
+        // shredded into a stream of gas particles.
+        // r_tidal ~ R_star * (M_BH / M_star)^(1/3)
+        // In our units: r_tidal ~ softening * (M_BH / M_star)^(1/3)
+        const newGas = [];
+        for (const bh of this._bodies) {
+            if (!isBH(bh.type)) continue;
+            for (const star of this._bodies) {
+                if (!isStar(star.type) || star.mass <= 0) continue;
+                const dx = star.x - bh.x, dy = star.y - bh.y, dz = star.z - bh.z;
+                const r2 = dx*dx + dy*dy + dz*dz;
+                const r = Math.sqrt(r2 + 0.01);
+                // Tidal disruption radius
+                const r_tidal = 2.0 * Math.pow(bh.mass / (star.mass + 0.01), 1/3);
+                if (r > r_tidal) continue;
+                // Star is disrupted! Split into 3-5 gas fragments along the orbit
+                const nFrags = 3 + Math.floor(Math.random() * 3);
+                const fragMass = star.mass / nFrags;
+                const invR = 1.0 / r;
+                const rx = dx * invR, ry = dy * invR, rz = dz * invR;
+                // Tangential direction (perpendicular to radial)
+                const tx = -rz, ty = 0, tz = rx; // approximate tangent
+                const tMag = Math.sqrt(tx*tx + ty*ty + tz*tz) + 0.01;
+                for (let f = 0; f < nFrags; f++) {
+                    // Spread fragments along the stream with velocity dispersion
+                    const spread = (f - nFrags/2) * 0.5;
+                    const vSpread = (f - nFrags/2) * 0.1;
+                    newGas.push({
+                        mass: fragMass,
+                        x: star.x + spread * rx + (Math.random()-0.5)*0.3,
+                        y: star.y + spread * ry + (Math.random()-0.5)*0.3,
+                        z: star.z + spread * rz + (Math.random()-0.5)*0.3,
+                        vx: star.vx + vSpread * tx/tMag,
+                        vy: star.vy + vSpread * 0.1,
+                        vz: star.vz + vSpread * tz/tMag,
+                        temp: 1e5 // shock-heated
+                    });
+                }
+                star.mass = 0; // star destroyed
+            }
+        }
+        for (const g of newGas) {
+            this.addBody(T.GAS, g.mass, g.x, g.y, g.z, g.vx, g.vy, g.vz, g.temp);
+        }
+
+        // BH-BH mergers (always active — needed for merger scenario)
         for (let i = 0; i < this._bodies.length; i++) {
             const bi = this._bodies[i];
             if (!isBH(bi.type) || bi.mass <= 0) continue;
@@ -474,15 +489,63 @@ export class CosmicMockBridge {
                 bi.vx = (bi.vx*bi.mass + bj.vx*bj.mass) / m_total;
                 bi.vy = (bi.vy*bi.mass + bj.vy*bj.mass) / m_total;
                 bi.vz = (bi.vz*bi.mass + bj.vz*bj.mass) / m_total;
-                bi.mass = m_total * 0.95;
+                bi.mass = m_total * 0.95; // 5% GW
                 bj.mass = 0;
             }
         }
 
-        // Speed limit
-        this._enforceSpeedLimit();
+        // ── SUBGRID ONLY (BH accretion scenario) ──
 
-        // Remove depleted bodies
+        if (this._enableSubgrid) {
+            const baseSoft2 = this._softening * this._softening;
+
+            // Star formation (dense cold gas → star)
+            const newStars = [];
+            for (const b of this._bodies) {
+                if (!isGas(b.type) || b.mass < 0.5) continue;
+                let nearby = 0;
+                for (const other of this._bodies) {
+                    if (other.id === b.id || !isGas(other.type)) continue;
+                    const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
+                    if (dr2 < baseSoft2 * 9) nearby++;
+                }
+                if (nearby > 10 && b.temperature < 3000 && Math.random() < 0.01) {
+                    const starMass = b.mass * 0.15;
+                    b.mass -= starMass;
+                    newStars.push({type: T.STAR, mass: starMass,
+                        x: b.x, y: b.y, z: b.z, vx: b.vx, vy: b.vy, vz: b.vz,
+                        temp: 5800, lum: Math.pow(starMass, 3.5)});
+                }
+            }
+            for (const s of newStars) {
+                this.addBody(s.type, s.mass, s.x, s.y, s.z, s.vx, s.vy, s.vz, s.temp);
+                this._bodies[this._bodies.length - 1].luminosity = s.lum;
+            }
+
+            // BH accretion of bound gas (Bondi-like)
+            for (const bh of this._bodies) {
+                if (!isBH(bh.type)) continue;
+                const r_acc = Math.max(1.5, Math.cbrt(bh.mass) * 0.3);
+                const r_acc2 = r_acc * r_acc;
+                for (const gas of this._bodies) {
+                    if (!isGas(gas.type) || gas.mass <= 0) continue;
+                    const dx = gas.x - bh.x, dy = gas.y - bh.y, dz = gas.z - bh.z;
+                    const r2 = dx * dx + dy * dy + dz * dz;
+                    if (r2 > r_acc2) continue;
+                    const dvx = gas.vx-bh.vx, dvy = gas.vy-bh.vy, dvz = gas.vz-bh.vz;
+                    const v_rel2 = dvx*dvx + dvy*dvy + dvz*dvz;
+                    const r = Math.sqrt(r2 + 0.01);
+                    if (v_rel2 > 2 * G * bh.mass / r) continue;
+                    const rate = 0.005 * bh.mass / (v_rel2 + 0.1);
+                    const dm = Math.min(gas.mass * 0.1, gas.mass * rate * 0.001);
+                    bh.mass += dm;
+                    gas.mass -= dm;
+                }
+            }
+        }
+
+        // Speed limit + cleanup (always)
+        this._enforceSpeedLimit();
         this._bodies = this._bodies.filter(b => b.mass > 0.01);
     }
 
