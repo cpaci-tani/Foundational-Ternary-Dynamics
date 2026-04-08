@@ -255,22 +255,41 @@ export class CosmicMockBridge {
         }
     }
 
-    // Compute gravitational accelerations (O(N^2) with Plummer softening)
+    // Compute gravitational accelerations (O(N^2) with mass-dependent Plummer softening)
+    //
+    // Mass-dependent softening: each body's gravity is softened proportional to
+    // how "spread out" it represents. A BH (point mass) gets tiny softening;
+    // a DM/star particle (representing a huge swarm) gets large softening.
+    // This prevents low-mass particles from creating artificially deep potential
+    // wells when they cluster, while letting the BH dominate at close range.
+    //
+    // eps_i = base_softening / sqrt(m_i / m_median)
+    // Heavy body → small eps → concentrated, point-like gravity
+    // Light body → large eps → diffuse, smeared-out gravity
     _computeForces() {
         const G = G_N;
         const n = this._bodies.length;
-        const soft2 = this._softening * this._softening;
+        const baseSoft = this._softening;
+
+        // Compute median mass for scaling reference
+        const masses = this._bodies.map(b => b.mass).sort((a, b) => a - b);
+        const medianMass = masses[Math.floor(n / 2)] || 1;
 
         for (const b of this._bodies) { b.ax = 0; b.ay = 0; b.az = 0; }
 
         for (let i = 0; i < n; i++) {
             const bi = this._bodies[i];
+            // Per-body softening: heavy bodies are point-like, light bodies are diffuse
+            const si = baseSoft / Math.sqrt(Math.max(bi.mass / medianMass, 0.1));
             for (let j = i + 1; j < n; j++) {
                 const bj = this._bodies[j];
+                const sj = baseSoft / Math.sqrt(Math.max(bj.mass / medianMass, 0.1));
+                // Pairwise softening: geometric mean of the two
+                const eps2 = si * sj;
                 const dx = bj.x - bi.x;
                 const dy = bj.y - bi.y;
                 const dz = bj.z - bi.z;
-                const r2 = dx * dx + dy * dy + dz * dz + soft2;
+                const r2 = dx * dx + dy * dy + dz * dz + eps2;
                 const invR3 = 1.0 / (r2 * Math.sqrt(r2));
 
                 const Gj = G * bj.mass * invR3;
