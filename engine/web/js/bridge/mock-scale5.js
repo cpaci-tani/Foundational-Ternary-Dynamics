@@ -275,16 +275,41 @@ export class CosmicMockBridge {
             }
         }
 
-        // BH/Quasar: zero out N-body gravity (they are anchors, not kicked by particles)
-        // They still SOURCE gravity (other bodies felt their pull above) but don't receive it.
-        // Only dynamical friction (below) moves them — prevents wobble.
+        // BH/Quasar: keep gravity from OTHER BHs (so they attract and merge)
+        // but zero out gravity from individual particles (prevents wobble).
+        // Then add dynamical friction for orbital decay.
         const BHT = CosmicMockBridge.TYPE.BLACK_HOLE;
         const QST = CosmicMockBridge.TYPE.QUASAR;
-        for (const b of this._bodies) {
-            if (b.type === BHT || b.type === QST) { b.ax = 0; b.ay = 0; b.az = 0; }
+
+        // Compute BH-BH gravity separately (before zeroing particle contributions)
+        const bhBodies = this._bodies.filter(b => b.type === BHT || b.type === QST);
+        const bhGrav = new Map(); // id -> {ax, ay, az} from other BHs only
+        for (const bh of bhBodies) {
+            let gx = 0, gy = 0, gz = 0;
+            for (const other of bhBodies) {
+                if (other.id === bh.id) continue;
+                const dx = other.x - bh.x;
+                const dy = other.y - bh.y;
+                const dz = other.z - bh.z;
+                const r2 = dx * dx + dy * dy + dz * dz + soft2;
+                const invR3 = 1.0 / (r2 * Math.sqrt(r2));
+                gx += G * other.mass * invR3 * dx;
+                gy += G * other.mass * invR3 * dy;
+                gz += G * other.mass * invR3 * dz;
+            }
+            bhGrav.set(bh.id, { ax: gx, ay: gy, az: gz });
         }
 
-        // Chandrasekhar dynamical friction on BHs (the ONLY force that moves them)
+        // Replace BH accelerations: BH-BH gravity only (no particle wobble)
+        for (const b of this._bodies) {
+            if (b.type !== BHT && b.type !== QST) continue;
+            const g = bhGrav.get(b.id) || { ax: 0, ay: 0, az: 0 };
+            b.ax = g.ax;
+            b.ay = g.ay;
+            b.az = g.az;
+        }
+
+        // Chandrasekhar dynamical friction on BHs (decelerates toward local rest frame)
         for (const b of this._bodies) {
             if (b.type !== BHT && b.type !== QST) continue;
             const v2 = b.vx * b.vx + b.vy * b.vy + b.vz * b.vz;
