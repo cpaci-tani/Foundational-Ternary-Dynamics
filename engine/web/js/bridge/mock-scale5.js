@@ -74,12 +74,11 @@ export class CosmicMockBridge {
 
         if (name === 'cosmic-galaxy') {
             // Spiral galaxy: M_total=5000, r_disk=50 => v_c ~ sqrt(0.01*5000/50) = 1.0
-            // BH = 500 (10% of total) so it dominates the inner 10 kpc.
-            // Real galaxies: BH ~ 0.1-1% of bulge, but here we need it to be
-            // visually dominant, and each DM particle is M_dm/300 ~ 12 so BH must
-            // be >> 12 to anchor the core.
+            // BH = 2% of total (100). Each DM particle ~ 14, so BH is 7x a particle.
+            // BH doesn't receive N-body kicks (pinned by code), so even 7x is enough
+            // to be the dominant attractor in the inner region.
             const M_total = 5000;
-            const M_bh = 500;
+            const M_bh = 100;
             const M_dm = (M_total - M_bh) * 0.85;
             const M_disk = (M_total - M_bh) * 0.15;
             const r_s = 30;      // Scale radius
@@ -184,7 +183,7 @@ export class CosmicMockBridge {
 
             // Galaxy 1
             const cx1 = -sep / 2, cz1 = -b / 2;
-            this.addBody(T.BLACK_HOLE, M1 * 0.10, cx1, 0, cz1, v_approach, 0, v_approach * 0.15);
+            this.addBody(T.BLACK_HOLE, M1 * 0.02, cx1, 0, cz1, v_approach, 0, v_approach * 0.15);
             for (let i = 0; i < 250; i++) {
                 const r = rng() * r_s1 * 1.8;
                 const ph = PI2 * rng();
@@ -194,7 +193,7 @@ export class CosmicMockBridge {
                 const M_enc = this._enclosedMass(r, M1, r_s1);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
 
-                const M1_remaining = M1 * 0.90; // after BH takes 10%
+                const M1_remaining = M1 * 0.98; // after BH takes 2%
                 this.addBody(t, (t === T.DARK_MATTER ? M1_remaining * 0.85 : M1_remaining * 0.15) / 125,
                     cx1 + r * Math.cos(ph), zz, cz1 + r * Math.sin(ph),
                     v_approach - vc * Math.sin(ph), 0, v_approach * 0.15 + vc * Math.cos(ph),
@@ -203,7 +202,7 @@ export class CosmicMockBridge {
 
             // Galaxy 2
             const cx2 = sep / 2, cz2 = b / 2;
-            this.addBody(T.BLACK_HOLE, M2 * 0.10, cx2, 0, cz2, -v_approach, 0, -v_approach * 0.15);
+            this.addBody(T.BLACK_HOLE, M2 * 0.02, cx2, 0, cz2, -v_approach, 0, -v_approach * 0.15);
             for (let i = 0; i < 200; i++) {
                 const r = rng() * r_s2 * 1.8;
                 const ph = PI2 * rng();
@@ -213,7 +212,7 @@ export class CosmicMockBridge {
                 const M_enc = this._enclosedMass(r, M2, r_s2);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
 
-                const M2_remaining = M2 * 0.90;
+                const M2_remaining = M2 * 0.98;
                 this.addBody(t, (t === T.DARK_MATTER ? M2_remaining * 0.85 : M2_remaining * 0.15) / 100,
                     cx2 + r * Math.cos(ph), zz, cz2 + r * Math.sin(ph),
                     -v_approach - vc * Math.sin(ph), 0, -v_approach * 0.15 + vc * Math.cos(ph),
