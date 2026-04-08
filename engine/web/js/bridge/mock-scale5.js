@@ -305,8 +305,9 @@ export class CosmicMockBridge {
                 if (dr2 < soft2 * 25) localDensity += other.mass;
             }
             // Cooling ~ rho^2 * Lambda(T), capped to prevent overcooling
-            // Gentle: ~0.02% per tick for isolated gas, up to 0.2% in dense regions
-            const coolingRate = Math.min(0.002, 0.00005 * localDensity);
+            // Very gentle: gas should orbit many times before sinking appreciably
+            // Target: ~5% KE loss per 10 orbits (orbit ~ 400 ticks at r=50)
+            const coolingRate = Math.min(0.0002, 0.000002 * localDensity);
             b.ax -= coolingRate * b.vx;
             b.ay -= coolingRate * b.vy;
             b.az -= coolingRate * b.vz;
@@ -363,12 +364,12 @@ export class CosmicMockBridge {
                 const r = Math.sqrt(r2);
                 // Radiation pressure: F = L / (4*pi*r^2*c)
                 const c_sim = 0.577; // C_SPEED in sim units
-                const f_rad = star.luminosity / (4 * Math.PI * r2 * c_sim) * 0.01; // scaled down
+                const f_rad = star.luminosity / (4 * Math.PI * r2 * c_sim) * 0.001; // very gentle
                 gas.ax += f_rad * dx / r;
                 gas.ay += f_rad * dy / r;
                 gas.az += f_rad * dz / r;
                 // Heating from radiation
-                gas.temperature += star.luminosity * 0.0001 / (r2 + 1);
+                gas.temperature += star.luminosity * 0.00001 / (r2 + 1);
             }
         }
 
@@ -384,9 +385,10 @@ export class CosmicMockBridge {
                 const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
                 if (dr2 < soft2 * 9) nearby++;
             }
-            // Jeans: form star when dense (>5 neighbors) and cool (<5000 K)
-            if (nearby > 5 && b.temperature < 5000) {
-                const starMass = b.mass * 0.3;
+            // Jeans: form star when very dense (>10 neighbors) and cool (<3000 K)
+            // Rare event — most gas should stay as gas for many orbits
+            if (nearby > 10 && b.temperature < 3000 && Math.random() < 0.01) {
+                const starMass = b.mass * 0.15; // only 15% converts
                 b.mass -= starMass;
                 newStars.push({
                     type: T.STAR, mass: starMass,
