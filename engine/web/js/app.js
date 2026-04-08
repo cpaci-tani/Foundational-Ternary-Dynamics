@@ -2992,17 +2992,18 @@ function loadCosmicScenario(scenarioName = 'cosmic-galaxy') {
                 + `<div>\u03A9<sub>m</sub>: ${diag.omegaMatter.toFixed(3)}  \u03A9<sub>\u039B</sub>: ${diag.omegaLambda.toFixed(3)}</div>`
                 + `<div>Mass: ${diag.totalMass.toExponential(2)}  KE: ${diag.totalKE.toExponential(2)}</div>`;
         }
-        // Panel diagnostics
-        const pd = document.getElementById('cosmic-panel-diagnostics');
-        if (pd) {
-            const c = diag.countsByType || [];
-            pd.innerHTML = `<div>Tick: ${diag.tick} | Bodies: ${diag.bodyCount}</div>`
-                + `<div>DM: ${c[3]||0} | Gas: ${c[4]||0} | Stars: ${c[5]||0} | BH: ${c[2]||0}</div>`
-                + `<div>H(t) = ${diag.hubbleParameter.toFixed(5)} | a(t) = ${diag.scaleFactor.toFixed(5)}</div>`
-                + `<div>\u03A9<sub>m</sub> = ${diag.omegaMatter.toFixed(4)} | \u03A9<sub>\u039B</sub> = ${diag.omegaLambda.toFixed(4)}</div>`
-                + `<div>Total mass: ${diag.totalMass.toExponential(3)}</div>`
-                + `<div>Kinetic energy: ${diag.totalKE.toExponential(3)}</div>`;
-        }
+        // Controls panel cards
+        const c = diag.countsByType || [];
+        const _set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+        _set('cosmic-n-bodies', diag.bodyCount);
+        _set('cosmic-tick', diag.tick);
+        _set('cosmic-hubble', diag.hubbleParameter.toFixed(5));
+        _set('cosmic-scale-factor', diag.scaleFactor.toFixed(5));
+        _set('cosmic-n-dm', c[3] || 0);
+        _set('cosmic-n-gas', c[4] || 0);
+        _set('cosmic-n-stars', c[5] || 0);
+        _set('cosmic-n-bh', c[2] || 0);
+        _set('cosmic-ke', diag.totalKE.toExponential(2));
         viewport.render();
     }, 33); // ~30fps
 }
