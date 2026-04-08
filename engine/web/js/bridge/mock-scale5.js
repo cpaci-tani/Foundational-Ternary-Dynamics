@@ -275,53 +275,12 @@ export class CosmicMockBridge {
             }
         }
 
-        // BH/Quasar: keep gravity from OTHER BHs (so they attract and merge)
-        // but zero out gravity from individual particles (prevents wobble).
-        // Then add dynamical friction for orbital decay.
-        const BHT = CosmicMockBridge.TYPE.BLACK_HOLE;
-        const QST = CosmicMockBridge.TYPE.QUASAR;
-
-        // Compute BH-BH gravity separately (before zeroing particle contributions)
-        const bhBodies = this._bodies.filter(b => b.type === BHT || b.type === QST);
-        const bhGrav = new Map(); // id -> {ax, ay, az} from other BHs only
-        for (const bh of bhBodies) {
-            let gx = 0, gy = 0, gz = 0;
-            for (const other of bhBodies) {
-                if (other.id === bh.id) continue;
-                const dx = other.x - bh.x;
-                const dy = other.y - bh.y;
-                const dz = other.z - bh.z;
-                const r2 = dx * dx + dy * dy + dz * dz + soft2;
-                const invR3 = 1.0 / (r2 * Math.sqrt(r2));
-                gx += G * other.mass * invR3 * dx;
-                gy += G * other.mass * invR3 * dy;
-                gz += G * other.mass * invR3 * dz;
-            }
-            bhGrav.set(bh.id, { ax: gx, ay: gy, az: gz });
-        }
-
-        // Replace BH accelerations: BH-BH gravity only (no particle wobble)
-        for (const b of this._bodies) {
-            if (b.type !== BHT && b.type !== QST) continue;
-            const g = bhGrav.get(b.id) || { ax: 0, ay: 0, az: 0 };
-            b.ax = g.ax;
-            b.ay = g.ay;
-            b.az = g.az;
-        }
-
-        // Chandrasekhar dynamical friction on BHs (decelerates toward local rest frame)
-        for (const b of this._bodies) {
-            if (b.type !== BHT && b.type !== QST) continue;
-            const v2 = b.vx * b.vx + b.vy * b.vy + b.vz * b.vz;
-            if (v2 < 1e-20) continue;
-            const lnLambda = 5.0;
-            const drag = 4 * Math.PI * G * G * b.mass * b.mass * lnLambda / (v2 + 1e-10);
-            const rho_local = this._bodies.reduce((s, p) => s + p.mass, 0) / Math.pow(this._boxSize, 3);
-            const fric = drag * rho_local;
-            b.ax -= fric * b.vx;
-            b.ay -= fric * b.vy;
-            b.az -= fric * b.vz;
-        }
+        // BHs receive full N-body gravity (like all other bodies) so they're
+        // pulled toward mass concentrations and each other. No special treatment.
+        // Wobble is minimal when BH mass >> individual particle mass.
+        // No dynamical friction — it was overpowering the BH-BH attraction
+        // and causing artificial repulsion. Real inspiral comes from
+        // gravitational interaction with the surrounding stellar/DM mass.
     }
 
     tick() {
@@ -330,39 +289,22 @@ export class CosmicMockBridge {
         const dt = this._dt;
 
         // Velocity Verlet (symplectic): kick-drift-recompute-kick
-        // BH/Quasar types are gravitational anchors — they source gravity
-        // but their own motion is governed by dynamical friction only,
-        // not individual particle kicks (prevents unphysical wobble).
-        const BH = CosmicMockBridge.TYPE.BLACK_HOLE;
-        const QS = CosmicMockBridge.TYPE.QUASAR;
+        // All bodies (including BHs) integrated uniformly.
         for (const b of this._bodies) {
-            if (b.type === BH || b.type === QS) continue;
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;
         }
         for (const b of this._bodies) {
-            if (b.type === BH || b.type === QS) continue;
             b.x += dt * b.vx;
             b.y += dt * b.vy;
             b.z += dt * b.vz;
         }
         this._computeForces();
         for (const b of this._bodies) {
-            if (b.type === BH || b.type === QS) continue;
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;
-        }
-        // BH/Quasar: apply only dynamical friction (computed in _computeForces)
-        for (const b of this._bodies) {
-            if (b.type !== BH && b.type !== QS) continue;
-            b.vx += dt * b.ax; // friction-only acceleration
-            b.vy += dt * b.ay;
-            b.vz += dt * b.az;
-            b.x += dt * b.vx;
-            b.y += dt * b.vy;
-            b.z += dt * b.vz;
         }
 
         this._t_cosmic += dt;
