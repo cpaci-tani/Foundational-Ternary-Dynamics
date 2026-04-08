@@ -99,25 +99,25 @@ export class CosmicMockBridge {
 
         if (name === 'cosmic-galaxy') {
             const M_total = 5000;
-            const M_bh = 50; // 1% — realistic SMBH fraction, still 25x any particle
+            const M_bh = 50;
             const M_dm = (M_total - M_bh) * 0.85;
             const M_disk = (M_total - M_bh) * 0.15;
-            const r_s = 30;
-            const r_disk = 50;
+            const r_s = 40;       // Scale radius — larger for more spread
+            const r_disk = 80;    // Disk extent — wider galaxy
 
             this.addBody(T.BLACK_HOLE, M_bh, 0, 0, 0);
 
             // DM halo (Hernquist profile, virial equilibrium)
+            // Extends well beyond the disk — spherical, puffy
             for (let i = 0; i < 300; i++) {
                 const u = rng() * 0.95;
                 const su = Math.sqrt(u);
-                const r = Math.min(r_s * su / (1.0 - su), 120);
+                const r = Math.min(r_s * su / (1.0 - su), 150);
                 const th = Math.acos(2 * rng() - 1);
                 const ph = PI2 * rng();
 
                 const M_enc = this._enclosedMass(r, M_total, r_s);
-                // Virial dispersion: sigma ~ 0.7 * v_c for Hernquist equilibrium
-                const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 2)) * 0.7;
+                const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 3)) * 0.7;
                 this.addBody(T.DARK_MATTER, M_dm / 300,
                     r * Math.sin(th) * Math.cos(ph),
                     r * Math.sin(th) * Math.sin(ph),
@@ -125,17 +125,20 @@ export class CosmicMockBridge {
                     sigma * randn(), sigma * randn(), sigma * randn());
             }
 
-            // Stellar disk (with z-dispersion for vertical stability)
+            // Stellar disk — thicker, more dispersed, starts further from BH
+            // Real galaxies have a thick disk + thin disk; we model a puffy disk
             for (let i = 0; i < 350; i++) {
-                const r = 2 + rng() * r_disk;
+                const r = 8 + rng() * r_disk;  // starts at r=8, not r=2
                 const arm = Math.floor(rng() * 2);
-                const phi_base = arm * Math.PI + 0.4 * Math.log(r + 1);
-                const ph = phi_base + (rng() - 0.5) * 0.7;
-                const zz = randn() * 1.5;
+                const phi_base = arm * Math.PI + 0.3 * Math.log(r + 1);
+                const ph = phi_base + (rng() - 0.5) * 0.9;
+                // Thick disk: z-height scales with radius (flared disk)
+                const z_scale = 4.0 + r * 0.06;  // 4 units at center, 9 at edge
+                const zz = randn() * z_scale;
 
-                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.5);
-                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 2));
-                const vz = randn() * vc * 0.1; // z-velocity dispersion for vertical support
+                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.4);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 3));
+                const vz = randn() * vc * 0.15;  // more z-velocity for thick disk
 
                 this.addBody(T.STAR, M_disk * 0.6 / 350,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
@@ -143,25 +146,26 @@ export class CosmicMockBridge {
                     3000 + rng() * 25000);
             }
 
-            // Gas disk
+            // Gas disk — wider and thicker than before, extends beyond stars
             for (let i = 0; i < 150; i++) {
-                const r = 3 + rng() * r_disk * 1.3;
+                const r = 10 + rng() * r_disk * 1.2;
                 const arm = Math.floor(rng() * 2);
-                const phi_base = arm * Math.PI + 0.4 * Math.log(r + 1);
-                const ph = phi_base + (rng() - 0.5) * 1.0;
-                const zz = randn() * 1.0;
+                const phi_base = arm * Math.PI + 0.3 * Math.log(r + 1);
+                const ph = phi_base + (rng() - 0.5) * 1.2;
+                const z_scale = 3.0 + r * 0.04;
+                const zz = randn() * z_scale;
 
-                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.5);
-                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 2));
+                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.4);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 3));
 
                 this.addBody(T.GAS, M_disk * 0.4 / 150,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
-                    -vc * Math.sin(ph), 0, vc * Math.cos(ph),
+                    -vc * Math.sin(ph), randn() * vc * 0.05, vc * Math.cos(ph),
                     5000 + rng() * 15000);
             }
 
-            this._boxSize = 200;
-            this._softening = 5.0;
+            this._boxSize = 250;
+            this._softening = 6.0;
             this._dt = 0.05;
             this._enableSubgrid = false;
 
@@ -169,19 +173,26 @@ export class CosmicMockBridge {
             const M_bh = 500;
             this.addBody(T.BLACK_HOLE, M_bh, 0, 0, 0);
 
+            // Accretion disk with volume — not razor thin.
+            // Real disks have H/r ~ 0.1-0.3 (geometrically thick for hot disks).
+            // Inner region is thinner (geometrically thin), outer is puffier.
             for (let i = 0; i < 500; i++) {
                 const u = rng();
-                const r = 4 + u * u * 46;
+                const r = 5 + u * u * 55;  // r in [5, 60], wider spread
                 const ph = PI2 * rng();
-                const zz = randn() * 0.25 * (r / 10);
+                // Disk thickness: H/r ~ 0.15 inner, ~0.25 outer (flared)
+                const H = r * (0.15 + 0.1 * (r / 60));
+                const zz = randn() * H;
 
                 const vk = Math.sqrt(G_N * M_bh / r);
                 const v_factor = 0.99 - 0.01 * rng();
+                // Small z-velocity to support the disk thickness
+                const vz = randn() * vk * 0.05;
 
                 this.addBody(T.GAS, 0.2,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
-                    -vk * v_factor * Math.sin(ph), 0, vk * v_factor * Math.cos(ph),
-                    1e6 * Math.pow(4 / r, 0.75));
+                    -vk * v_factor * Math.sin(ph), vz, vk * v_factor * Math.cos(ph),
+                    1e6 * Math.pow(5 / r, 0.75));
             }
 
             this._boxSize = 120;
