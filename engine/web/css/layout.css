@@ -1,0 +1,719 @@
+/* =========================================================================
+ * layout.css — FTD Engine layout styles
+ *
+ * Viewport overlays, app grid, toolbar, viewport, status bar,
+ * scrollbar, scale-mode visibility, tab-visibility rules, responsive.
+ *
+ * Extracted from engine/web/index.html <style> block.
+ * ========================================================================= */
+
+/* ── Light/Parchment theme fixes ─────────────────── */
+
+/* Active toggles need white text on accent bg */
+html[data-theme="light"] .view-toggle.active,
+html[data-theme="parchment"] .view-toggle.active {
+    color: #fff;
+}
+
+/* Viewport overlay labels need to be readable over dark 3D canvas */
+.viewport-bottom-bar,
+#viewport-toggles-universal,
+#viewport-overlay {
+    /* All viewport overlays: ensure text is always light on dark canvas */
+}
+.viewport-select-group label {
+    color: #e0e0e0 !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+.viewport-select-group select,
+#viewport-overlay .view-toggle,
+#viewport-toggles-universal .view-toggle {
+    background: rgba(17, 24, 39, 0.85) !important;
+    color: #d1d5db !important;
+    border-color: rgba(75, 85, 99, 0.7) !important;
+    backdrop-filter: blur(8px);
+}
+#viewport-overlay .view-toggle.active,
+#viewport-toggles-universal .view-toggle.active {
+    background: var(--accent-dim) !important;
+    color: #fff !important;
+    border-color: var(--accent) !important;
+}
+#viewport-overlay .view-toggle:hover,
+#viewport-toggles-universal .view-toggle:hover {
+    color: #fff !important;
+    border-color: #6b7280 !important;
+}
+.viewport-select-group select option {
+    background: #1f2937 !important;
+    color: #f3f4f6 !important;
+}
+
+/* Cards: add subtle shadow on light themes for definition */
+html[data-theme="light"] .card,
+html[data-theme="parchment"] .card {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-color: rgba(0,0,0,0.1);
+}
+
+/* Checkbox accent on all themes */
+input[type="checkbox"] {
+    accent-color: var(--accent);
+}
+
+/* ── Smooth theme transitions ────────────────────── */
+body, #toolbar, #tab-bar, .tab, #panel-area, .panel, .card,
+#status-bar, .tb-btn, .tb-select, .view-toggle, .meta-card,
+.meta-btn, .meta-shell-row, .meta-stat, .settings-box {
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+/* ── Accessibility ────────────────────────────────────── */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *:not(#loading-overlay *):not(#loading-overlay),
+    *:not(#loading-overlay *)::before,
+    *:not(#loading-overlay *)::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── Base ──────────────────────────────────────────── */
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: var(--fs-lg);
+    line-height: 1.4;
+}
+
+/* ── App Shell ─────────────────────────────────────── */
+#app {
+    display: grid;
+    height: 100vh;
+    grid-template-rows: calc(48px * var(--ui-scale)) 1fr auto auto calc(28px * var(--ui-scale));
+    grid-template-areas:
+        "toolbar"
+        "viewport"
+        "tabs"
+        "panel"
+        "status";
+}
+
+/* ── Toolbar ───────────────────────────────────────── */
+#toolbar {
+    grid-area: toolbar;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-lg);
+    padding: 0 var(--sp-xl);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none; /* Firefox */
+}
+#toolbar::-webkit-scrollbar { display: none; }
+
+#toolbar .brand {
+    font-weight: 600;
+    font-size: var(--fs-lg);
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    margin-right: 8px;
+}
+
+#toolbar .brand span {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+#toolbar .separator {
+    width: 1px;
+    height: 24px;
+    background: var(--border-light);
+    margin: 0 4px;
+}
+
+/* Toolbar controls */
+.tb-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(36px * var(--ui-scale));
+    height: calc(36px * var(--ui-scale));
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: var(--fs-lg);
+    transition: all 0.15s;
+}
+
+.tb-btn:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+
+.tb-btn.active {
+    background: var(--accent-dim);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.tb-select {
+    height: calc(32px * var(--ui-scale));
+    padding: 0 var(--sp-md);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    cursor: pointer;
+}
+
+.tb-select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.tb-label {
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tb-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tb-slider {
+    width: 80px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+}
+
+.tb-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.tb-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+.tb-value {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    color: var(--accent);
+    min-width: 24px;
+    text-align: right;
+}
+
+.tb-value-wide {
+    min-width: 30px;
+}
+
+.tb-checkbox-label {
+    cursor: pointer;
+}
+
+.tb-checkbox-label input {
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+/* ── Viewport ──────────────────────────────────────── */
+#viewport {
+    grid-area: viewport;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0f1729 0%, #162033 100%);
+}
+
+#viewport canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.view-toggle {
+    padding: var(--sp-sm) var(--sp-md);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.15s;
+}
+
+.view-toggle:hover {
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+
+.view-toggle.active {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+}
+
+.field-swatch {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.field-sep {
+    display: inline-block;
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    margin: 0 4px;
+    vertical-align: middle;
+}
+
+.dynamics-toggle {
+    border: 1px dashed var(--border) !important;
+    color: var(--text-secondary);
+}
+
+.dynamics-toggle.active {
+    border-color: var(--warning) !important;
+    color: var(--warning);
+    background: rgba(255, 167, 38, 0.1);
+}
+
+#viewport-overlay {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    max-width: 100%;
+    align-items: center;
+    z-index: 10;
+}
+
+/* ── Environment Background Selector ─────────────── */
+/* ── Viewport Bottom Selectors (Env + Boundary) ── */
+.viewport-bottom-bar {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 100;
+}
+.viewport-select-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.viewport-select-group label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.viewport-select-group select {
+    font-size: var(--fs-sm);
+    padding: 3px 8px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    outline: none;
+    transition: all 0.15s;
+}
+.viewport-select-group select:hover,
+.viewport-select-group select:focus {
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+.viewport-select-group select option {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+}
+
+/* ── Element Legend (Scale 2) ─────────────────────── */
+.ae-legend {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 100;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(8px);
+    padding: 8px 10px;
+    min-width: 90px;
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.ae-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 2px 0;
+}
+
+.ae-legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+}
+
+.ae-legend-sym {
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    min-width: 18px;
+}
+
+.ae-legend-name {
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.ae-legend-sep {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+}
+
+.ae-legend-header {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 0 1px;
+}
+
+/* ── Status Bar ────────────────────────────────────── */
+#status-bar {
+    grid-area: status;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-xl);
+    padding: 0 var(--sp-xl);
+    background: var(--bg-deep);
+    border-top: 1px solid var(--border);
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#status-bar .status-item {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    flex-shrink: 0;
+}
+
+#status-bar .status-value {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+}
+
+#status-bar .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--positive);
+}
+
+#status-bar .status-dot.idle {
+    background: var(--text-muted);
+}
+
+/* ── Scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-surface);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* ── Scale mode visibility ────────────────────── */
+#app.mode-particles .scale0-only {
+    display: none !important;
+}
+
+#app.mode-particles .scale2-only {
+    display: none !important;
+}
+
+#app.mode-particles .scale3-only {
+    display: none !important;
+}
+
+#app.mode-lattice .scale1-only {
+    display: none !important;
+}
+
+#app.mode-lattice .scale2-only {
+    display: none !important;
+}
+
+#app.mode-lattice .scale3-only {
+    display: none !important;
+}
+
+#app.mode-atoms .scale0-only {
+    display: none !important;
+}
+
+#app.mode-atoms .scale1-only {
+    display: none !important;
+}
+
+#app.mode-atoms .scale3-only {
+    display: none !important;
+}
+
+#app.mode-molecules .scale0-only {
+    display: none !important;
+}
+
+#app.mode-molecules .scale1-only {
+    display: none !important;
+}
+
+#app.mode-molecules .scale2-only {
+    display: none !important;
+}
+
+/* ── Scale 4 (Consciousness) visibility rules ── */
+#app.mode-consciousness .scale0-only {
+    display: none !important;
+}
+#app.mode-consciousness .scale1-only {
+    display: none !important;
+}
+#app.mode-consciousness .scale2-only {
+    display: none !important;
+}
+#app.mode-consciousness .scale3-only {
+    display: none !important;
+}
+
+/* ── Scale 2+3 combined visibility (atom/molecule visual controls) ── */
+#app.mode-lattice .scale23-only { display: none !important; }
+#app.mode-particles .scale23-only { display: none !important; }
+#app.mode-consciousness .scale23-only { display: none !important; }
+#app.mode-consciousness .scale-ae {
+    display: none !important;
+}
+/* Hide Scale 4 elements in other modes */
+#app.mode-lattice .scale4-only {
+    display: none !important;
+}
+#app.mode-particles .scale4-only {
+    display: none !important;
+}
+#app.mode-atoms .scale4-only {
+    display: none !important;
+}
+#app.mode-molecules .scale4-only {
+    display: none !important;
+}
+
+/* ── Meta Scale visibility ── */
+#app.mode-meta .scale0-only { display: none !important; }
+#app.mode-meta .scale1-only { display: none !important; }
+#app.mode-meta .scale2-only { display: none !important; }
+#app.mode-meta .scale3-only { display: none !important; }
+#app.mode-meta .scale4-only { display: none !important; }
+#app.mode-meta .scale23-only { display: none !important; }
+#app.mode-meta .scale-ae { display: none !important; }
+/* Hide Meta elements in other modes */
+#app.mode-lattice .scale5-only { display: none !important; }
+#app.mode-particles .scale5-only { display: none !important; }
+#app.mode-atoms .scale5-only { display: none !important; }
+#app.mode-molecules .scale5-only { display: none !important; }
+#app.mode-consciousness .scale5-only { display: none !important; }
+/* ── Cosmic Scale visibility ── */
+#app.mode-cosmic .scale0-only { display: none !important; }
+#app.mode-cosmic .scale1-only { display: none !important; }
+#app.mode-cosmic .scale2-only { display: none !important; }
+#app.mode-cosmic .scale3-only { display: none !important; }
+#app.mode-cosmic .scale4-only { display: none !important; }
+#app.mode-cosmic .scale5-only { display: none !important; }
+#app.mode-cosmic .scale23-only { display: none !important; }
+#app.mode-cosmic .scale-ae { display: none !important; }
+/* Hide Cosmic elements in other modes */
+#app.mode-lattice .scale-cosmic-only { display: none !important; }
+#app.mode-particles .scale-cosmic-only { display: none !important; }
+#app.mode-atoms .scale-cosmic-only { display: none !important; }
+#app.mode-molecules .scale-cosmic-only { display: none !important; }
+#app.mode-consciousness .scale-cosmic-only { display: none !important; }
+#app.mode-meta .scale-cosmic-only { display: none !important; }
+/* Cosmic mode deep space background */
+#app.mode-cosmic #viewport { background: #020208; }
+
+/* Meta mode dark background */
+#app.mode-meta #viewport { background: #080818; }
+/* Meta mode: hide non-meta tabs that lack data-scales */
+#app.mode-meta .tab[data-panel="ontic"],
+#app.mode-meta .tab[data-panel="hierarchy"] { display: none !important; }
+/* Cosmic mode: hide non-cosmic tabs that lack data-scales */
+#app.mode-cosmic .tab[data-panel="ontic"],
+#app.mode-cosmic .tab[data-panel="hierarchy"] { display: none !important; }
+
+/* Consciousness mode dark atmosphere */
+#app.mode-consciousness #viewport {
+    background: #050510;
+}
+/* (consciousness tab hiding now handled by generic rules in "Tab visibility per scale" block) */
+
+/* Consciousness tokens now in main :root block (line 43) */
+
+/* .scale-ae = visible at BOTH Scale 2 (atoms) and Scale 3 (molecules) */
+#app.mode-lattice .scale-ae {
+    display: none !important;
+}
+
+#app.mode-particles .scale-ae {
+    display: none !important;
+}
+
+/* ── Tab visibility per scale ─────────────────── */
+/* Generic: tabs with data-scales are hidden unless the current
+   mode's scale number appears in their comma-separated list.
+   Scale mapping: lattice=0, particles=1, atoms=2, molecules=3, consciousness=4 */
+
+/* data-scales="0"  →  only lattice */
+#app.mode-particles .tab[data-scales="0"],
+#app.mode-atoms .tab[data-scales="0"],
+#app.mode-molecules .tab[data-scales="0"],
+#app.mode-consciousness .tab[data-scales="0"],
+#app.mode-cosmic .tab[data-scales="0"],
+#app.mode-meta .tab[data-scales="0"] {
+    display: none !important;
+}
+
+/* data-scales="1"  →  only particles */
+#app.mode-lattice .tab[data-scales="1"],
+#app.mode-atoms .tab[data-scales="1"],
+#app.mode-molecules .tab[data-scales="1"],
+#app.mode-consciousness .tab[data-scales="1"],
+#app.mode-cosmic .tab[data-scales="1"],
+#app.mode-meta .tab[data-scales="1"] {
+    display: none !important;
+}
+
+/* data-scales="1,2,3"  →  particles, atoms, molecules */
+#app.mode-lattice .tab[data-scales="1,2,3"],
+#app.mode-consciousness .tab[data-scales="1,2,3"],
+#app.mode-cosmic .tab[data-scales="1,2,3"],
+#app.mode-meta .tab[data-scales="1,2,3"] {
+    display: none !important;
+}
+
+/* data-scales="4"  →  only consciousness */
+#app.mode-lattice .tab[data-scales="4"],
+#app.mode-particles .tab[data-scales="4"],
+#app.mode-atoms .tab[data-scales="4"],
+#app.mode-molecules .tab[data-scales="4"],
+#app.mode-cosmic .tab[data-scales="4"],
+#app.mode-meta .tab[data-scales="4"] {
+    display: none !important;
+}
+
+/* data-scales="0,1,2,3"  →  not consciousness, cosmic, or meta */
+#app.mode-consciousness .tab[data-scales="0,1,2,3"],
+#app.mode-cosmic .tab[data-scales="0,1,2,3"],
+#app.mode-meta .tab[data-scales="0,1,2,3"] {
+    display: none !important;
+}
+
+/* data-scales="5"  →  only meta */
+#app.mode-lattice .tab[data-scales="5"],
+#app.mode-particles .tab[data-scales="5"],
+#app.mode-atoms .tab[data-scales="5"],
+#app.mode-molecules .tab[data-scales="5"],
+#app.mode-consciousness .tab[data-scales="5"],
+#app.mode-cosmic .tab[data-scales="5"] {
+    display: none !important;
+}
+
+/* data-scales="6"  →  only cosmic */
+#app.mode-lattice .tab[data-scales="6"],
+#app.mode-particles .tab[data-scales="6"],
+#app.mode-atoms .tab[data-scales="6"],
+#app.mode-molecules .tab[data-scales="6"],
+#app.mode-consciousness .tab[data-scales="6"],
+#app.mode-meta .tab[data-scales="6"] {
+    display: none !important;
+}
+
+/* ── Responsive ────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .panel-grid-4 { grid-template-columns: 1fr 1fr; }
+    .panel-grid-3 { grid-template-columns: 1fr 1fr; }
+    #toolbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 8px 16px; }
+    #app { grid-template-rows: auto 1fr auto auto 28px; }
+}
+
+@media (max-width: 768px) {
+    .panel-grid-4, .panel-grid-3, .panel-grid-2 { grid-template-columns: 1fr; }
+    #toolbar .tb-group { flex-wrap: wrap; }
+    .tb-label { display: none; }
+    #tab-bar { overflow-x: auto; flex-wrap: nowrap; }
+    .tab { white-space: nowrap; flex-shrink: 0; }
+}

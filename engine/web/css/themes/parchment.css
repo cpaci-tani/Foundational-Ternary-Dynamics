@@ -1,0 +1,27 @@
+/* FTD Engine — Parchment theme (warm tan/sepia tones)
+ * Extracted from index.html inline styles.
+ * Part of the modular CSS architecture (Phase 0).
+ */
+
+/* Parchment — warm tan/sepia tones */
+html[data-theme="parchment"] {
+    --bg-deep: #f5f0e8;
+    --bg-surface: #ece5d8;
+    --bg-card: #e2dace;
+    --bg-input: #d5cdc0;
+    --border: #c4baa8;
+    --border-light: #b0a590;
+    --text-primary: #2c2416;
+    --text-secondary: #5c5040;
+    --text-muted: #7a6e5c;
+    --accent: #8b6914;
+    --accent-dim: #a07818;
+    --positive: #3d7a24;
+    --negative: #a63020;
+    --warning: #b8860b;
+}
+
+/* Viewport background override (shared with light) */
+html[data-theme="parchment"] #viewport {
+    background: linear-gradient(180deg, #e0e4ea 0%, #c8cdd6 100%) !important;
+}

@@ -35,6 +35,10 @@ import { ConsciousnessEngine } from './consciousness.js?v=20260305e';
 import { ConsciousnessPedagogy, addInfoTooltips } from './consciousness-pedagogy.js?v=20260317a';
 import { MetaUnit } from './meta-unit.js?v=20260405a';
 import { buildMetaInfoPanel, buildSiteInspectPanel } from './meta-pedagogy.js?v=20260405a';
+import { CosmicRenderer } from './cosmic-renderer.js';
+import { CosmicMockBridge } from './wasm-bridge.js?v=20260318a';
+import { SCALE0_TOGGLES, SCALE2_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from './config/toggles.js';
+import { CS_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
 
 console.log('[FTD] App version 20260318a loaded (cache-busted)');
 
@@ -65,6 +69,8 @@ let fpsDisplay = 0;
 let engineMode = 'lattice'; // 'lattice', 'particles', 'atoms', 'molecules', 'consciousness', or 'meta'
 let metaUnit = null; // MetaUnit instance for meta scale
 let _csEngine = null;          // ConsciousnessEngine instance (Scale 4)
+let _cosmicRenderer = null;    // CosmicRenderer instance (Scale 5)
+let _cosmicBridge = null;      // CosmicMockBridge instance (Scale 5)
 let _csPedagogy = null;        // ConsciousnessPedagogy instance (Theory/Walkthrough panels)
 let _csScenarioMeta = { name: '', domain: 'Real (k=16)', thetaMode: 'static', sloopDepth: 0, bellS: null };
 let _mandelbrotZ_re = 0, _mandelbrotZ_im = 0, _mandelbrotIter = 0;
@@ -139,17 +145,8 @@ function _recomputeAnyFieldActive() {
  */
 // ── Consciousness Sub-tab Wiring ──────────────────────────────────────
 
-const SCENARIO_DESCRIPTIONS = {
-    'cs-threshold':      'Flux starts below the consciousness threshold K_C \u2248 3.60. As flux energy builds, the discriminant \u0394_k passes through zero, and roots transition from real (physics) through degenerate (measurement) to complex (consciousness). Watch the Domain indicator change.',
-    'cs-high-coupling':  'Four-source flux interference with coupling and forces enabled. High flux density pushes well above K_C, producing strong consciousness intensity. The holographic figure becomes vivid as the observer\u2019s self-model stabilizes.',
-    'cs-self-ref':       'Standing wave pattern: the observer meets itself. sLoop depth = 1 \u2014 a fixed point of the gap equation x\u00B2 = K(x \u2212 G*). The lattice determines its own coupling.',
-    'cs-nested-sloop':   'Two orthogonal standing waves: aware of self-awareness. sLoop depth = 2. This is the algebraic expression of recursive self-referential closure.',
-    'cs-chirality':      'Dual substrate with left/right asymmetric injection demonstrating parity violation. The chirality split mirrors the 3:1 alternating handedness of the dyadic Fourier shells.',
-    'cs-boundary-orbit': 'Mandelbrot iteration at c = 1/G* \u2248 0.338, tracking the edge of chaos. The fixed points of z \u2192 z\u00B2 + c are exactly the consciousness roots y = 2.19 \u00B1 2.86i.',
-    'cs-entangled':      'Full coupling with Bell parameter S = 2\u221A2 \u2248 2.83. All forces, genesis, and movement enabled. Demonstrates observer-lattice entanglement via complexification + sLoop coupling.',
-    'cs-flow':           'Fast vortex pattern with effective \u03B8 < 52.54\u00B0 (object-dominant flow state). The holographic figure responds with rapid, outward-focused dynamics.',
-    'cs-meditation':     'Gentle centered pulse with effective \u03B8 > 52.54\u00B0 (subject-dominant contemplative state). The observer turns inward, producing slow, resonant breathing patterns.',
-};
+// Scenario descriptions imported from config/scenarios.js
+const SCENARIO_DESCRIPTIONS = CS_SCENARIO_DESCRIPTIONS;
 
 function wireConsciousnessSubTabs() {
     const subtabs = document.querySelectorAll('.cs-subtab');
@@ -346,22 +343,8 @@ function _resetAllVisualState() {
 }
 
 // Default toggle states for Scale 0 scenarios (name, default, DOM element id)
-const DEFAULT_TOGGLES = [
-    ['wave_propagation', true,  't-wave'],
-    ['coupling',         true,  't-coupling'],
-    ['damping',          true,  't-damping'],
-    ['genesis',          true,  't-genesis'],
-    ['gauss_projection', true,  't-gauss'],
-    ['forces',           true,  't-forces'],
-    ['gravity',          false, 't-gravity'],
-    ['movement',         true,  't-movement'],
-    ['poisson_coulomb',  true,  't-poisson'],
-    ['lorentz_force',    false, 't-lorentz'],
-    ['selective_damping',false, 't-selective'],
-    ['larmor_radiation', false, 't-larmor'],
-    ['dual_substrate',   false, 't-dual'],
-    ['confinement',      false, 't-confinement'],
-];
+// Toggle definitions imported from config/toggles.js
+const DEFAULT_TOGGLES = SCALE0_TOGGLES;
 
 // Phase 1-3 state
 let observatory = null;
@@ -731,6 +714,8 @@ function animate(now) {
     if (engineMode === 'meta') {
         if (metaUnit) metaUnit.update(1/60);
         viewport.render();
+    } else if (engineMode === 'cosmic') {
+        animateCosmic(now);
     } else if (engineMode === 'consciousness') {
         animateConsciousness(now);
     } else if (engineMode === 'atoms' || engineMode === 'molecules') {
@@ -1680,6 +1665,26 @@ function wireToolbar() {
         });
     }
 
+    // Cosmic scenario selector
+    const cosmicSelect = document.getElementById('cosmic-scenario-select');
+    if (cosmicSelect) {
+        cosmicSelect.addEventListener('change', (e) => {
+            running = false;
+            updatePlayButton();
+            loadCosmicScenario(e.target.value);
+        });
+    }
+    // Cosmic camera selector
+    const cosmicCamera = document.getElementById('cosmic-camera-select');
+    if (cosmicCamera) {
+        cosmicCamera.addEventListener('change', (e) => {
+            if (_cosmicRenderer && _cosmicBridge) {
+                const data = _cosmicBridge.getCosmicData();
+                _cosmicRenderer.setCameraPreset(e.target.value, data);
+            }
+        });
+    }
+
     // Consciousness scenario selector
     const csSelect = document.getElementById('cs-scenario-select');
     if (csSelect) {
@@ -1849,6 +1854,41 @@ function wireTabs() {
             if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 250);
         });
     }
+}
+
+// ── Cosmic Mode (Scale 5) ────────────────────────────────────────────
+
+function animateCosmic(now) {
+    if (!_cosmicBridge || !_cosmicRenderer) {
+        // Fallback: still render viewport
+        viewport.render();
+        return;
+    }
+
+    if (running) {
+        // Run N-body ticks per frame (adjustable)
+        const ticksPerFrame = 5;
+        _cosmicBridge.run(ticksPerFrame);
+    }
+
+    // Update renderer with current state
+    const data = _cosmicBridge.getCosmicData();
+    const diag = _cosmicBridge.getDiagnostics();
+    _cosmicRenderer.update(data, diag);
+
+    // Update diagnostics display
+    const cosmicDiagEl = document.getElementById('cosmic-diagnostics');
+    if (cosmicDiagEl) {
+        cosmicDiagEl.innerHTML = `
+            <div>Tick: ${diag.tick}  Bodies: ${diag.bodyCount}</div>
+            <div>H(t): ${diag.hubbleParameter.toFixed(4)}  a(t): ${diag.scaleFactor.toFixed(4)}</div>
+            <div>&Omega;<sub>m</sub>: ${diag.omegaMatter.toFixed(3)}  &Omega;<sub>&Lambda;</sub>: ${diag.omegaLambda.toFixed(3)}</div>
+            <div>Total Mass: ${diag.totalMass.toExponential(2)}  KE: ${diag.totalKE.toExponential(2)}</div>
+        `;
+    }
+
+    // Render using standard viewport (post-processing added later)
+    viewport.render();
 }
 
 // ── Consciousness Mode (Scale 4) ─────────────────────────────────────
@@ -2801,13 +2841,14 @@ function switchEngineMode(mode) {
     app.classList.toggle('mode-atoms', mode === 'atoms');
     app.classList.toggle('mode-molecules', mode === 'molecules');
     app.classList.toggle('mode-consciousness', mode === 'consciousness');
+    app.classList.toggle('mode-cosmic', mode === 'cosmic');
     app.classList.toggle('mode-meta', mode === 'meta');
 
     // If the active tab is hidden for this scale, fall back to Controls
     const activeTabEl = document.querySelector('#tab-bar .tab.active');
     if (activeTabEl) {
         const scales = activeTabEl.dataset.scales;
-        const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', consciousness: '4', meta: '5' }[mode];
+        const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', consciousness: '4', cosmic: '5', meta: '6' }[mode];
         if (scales && !scales.split(',').includes(scaleIndex)) {
             // Current tab not available at this scale — click Controls
             const controlsTab = document.querySelector('#tab-bar .tab[data-panel="controls"]');
@@ -2831,6 +2872,19 @@ function switchEngineMode(mode) {
         _csEngine = null;
     }
 
+    // Cleanup cosmic renderer when leaving Scale 5
+    if (mode !== 'cosmic') {
+        if (window._cosmicInterval) {
+            clearInterval(window._cosmicInterval);
+            window._cosmicInterval = null;
+        }
+        if (_cosmicRenderer) {
+            _cosmicRenderer.dispose();
+            _cosmicRenderer = null;
+        }
+        _cosmicBridge = null;
+    }
+
     // Cleanup meta unit when leaving Meta scale
     if (mode !== 'meta' && metaUnit) {
         metaUnit.dispose();
@@ -2841,7 +2895,9 @@ function switchEngineMode(mode) {
     _resetAllVisualState();
 
     // Initialize the appropriate engine for the new scale
-    if (mode === 'meta') {
+    if (mode === 'cosmic') {
+        loadCosmicScenario(document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
+    } else if (mode === 'meta') {
         loadMetaScenario();
     } else if (mode === 'consciousness') {
         loadConsciousnessScenario(document.getElementById('cs-scenario-select').value);
@@ -2866,6 +2922,89 @@ function switchEngineMode(mode) {
         const scenario = document.getElementById('scenario-select').value;
         loadScenario(scenario);
     }
+}
+
+// ── Cosmic Scale 5 ──────────────────────────────────────────────────
+function loadCosmicScenario(scenarioName = 'cosmic-galaxy') {
+    _resetAllVisualState();
+    running = false;
+    updatePlayButton();
+
+    // Hide all Scale 0 visuals
+    if (viewport) {
+        viewport.toggleFluxVolume(false);
+        viewport.toggleFluxSlice(false);
+        viewport.toggleGrid(false);
+        if (viewport.particles) viewport.particles.visible = false;
+    }
+
+    // Create cosmic bridge (JS-only mock for now)
+    _cosmicBridge = new CosmicMockBridge();
+    _cosmicBridge.setupScenario(scenarioName);
+
+    // Create cosmic renderer
+    if (_cosmicRenderer) _cosmicRenderer.dispose();
+    _cosmicRenderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer);
+
+    // Configure camera for cosmic scale
+    viewport.camera.near = 0.1;
+    viewport.camera.far = 50000;
+    viewport.camera.updateProjectionMatrix();
+    viewport.controls.minDistance = 5;
+    viewport.controls.maxDistance = 5000;
+
+    // Initial render
+    const data = _cosmicBridge.getCosmicData();
+    _cosmicRenderer.update(data, _cosmicBridge.getDiagnostics());
+
+    // Set camera preset based on scenario
+    const presetMap = {
+        'cosmic-galaxy': 'galaxy',
+        'cosmic-cluster': 'overview',
+        'cosmic-web': 'overview',
+        'cosmic-black-hole': 'blackhole',
+        'cosmic-merger': 'merger',
+        'cosmic-quasar': 'quasar'
+    };
+    _cosmicRenderer.setCameraPreset(presetMap[scenarioName] || 'overview', data);
+
+    // Auto-play
+    running = true;
+    updatePlayButton();
+
+    // Cosmic frame loop (independent of rAF to avoid module caching issues)
+    if (window._cosmicInterval) clearInterval(window._cosmicInterval);
+    window._cosmicInterval = setInterval(() => {
+        if (engineMode !== 'cosmic' || !_cosmicBridge || !_cosmicRenderer) {
+            clearInterval(window._cosmicInterval);
+            window._cosmicInterval = null;
+            return;
+        }
+        if (running) _cosmicBridge.run(3);
+        const data = _cosmicBridge.getCosmicData();
+        const diag = _cosmicBridge.getDiagnostics();
+        _cosmicRenderer.update(data, diag);
+        // Toolbar diagnostics
+        const el = document.getElementById('cosmic-diagnostics');
+        if (el) {
+            el.innerHTML = `<div>Tick: ${diag.tick}  Bodies: ${diag.bodyCount}</div>`
+                + `<div>H(t): ${diag.hubbleParameter.toFixed(4)}  a(t): ${diag.scaleFactor.toFixed(4)}</div>`
+                + `<div>\u03A9<sub>m</sub>: ${diag.omegaMatter.toFixed(3)}  \u03A9<sub>\u039B</sub>: ${diag.omegaLambda.toFixed(3)}</div>`
+                + `<div>Mass: ${diag.totalMass.toExponential(2)}  KE: ${diag.totalKE.toExponential(2)}</div>`;
+        }
+        // Panel diagnostics
+        const pd = document.getElementById('cosmic-panel-diagnostics');
+        if (pd) {
+            const c = diag.countsByType || [];
+            pd.innerHTML = `<div>Tick: ${diag.tick} | Bodies: ${diag.bodyCount}</div>`
+                + `<div>DM: ${c[3]||0} | Gas: ${c[4]||0} | Stars: ${c[5]||0} | BH: ${c[2]||0}</div>`
+                + `<div>H(t) = ${diag.hubbleParameter.toFixed(5)} | a(t) = ${diag.scaleFactor.toFixed(5)}</div>`
+                + `<div>\u03A9<sub>m</sub> = ${diag.omegaMatter.toFixed(4)} | \u03A9<sub>\u039B</sub> = ${diag.omegaLambda.toFixed(4)}</div>`
+                + `<div>Total mass: ${diag.totalMass.toExponential(3)}</div>`
+                + `<div>Kinetic energy: ${diag.totalKE.toExponential(3)}</div>`;
+        }
+        viewport.render();
+    }, 33); // ~30fps
 }
 
 function loadMetaScenario() {
@@ -3727,20 +3866,8 @@ function buildElementScenarios() {
 
 // Sync AE params from UI sliders (shared helper for Scale 2/3 loaders)
 // Default AE toggle states: [elId, defaultChecked, setterName]
-const AE_DEFAULT_TOGGLES = [
-    ['ae-ionic', true, 'aeSetIonic'],
-    ['ae-vdw', true, 'aeSetVdw'],
-    ['ae-bonds-force', true, 'aeSetBondsForce'],
-    ['ae-bonding', true, 'aeSetBonding'],
-    ['ae-damping', false, 'aeSetDamping'],
-    ['ae-speed-limit', true, 'aeSetSpeedLimit'],
-    // Phase 3 (all off by default — scenarios enable as needed)
-    ['ae-hbonds', false, 'aeSetHBonds'],
-    ['ae-angle', false, 'aeSetAngleStrain'],
-    ['ae-dipole', false, 'aeSetDipoleDipole'],
-    ['ae-thermostat', false, 'aeSetThermostat'],
-    ['ae-electronegativity', false, 'aeSetElectronegativity'],
-];
+// AE toggle definitions imported from config/toggles.js
+const AE_DEFAULT_TOGGLES = SCALE2_TOGGLES;
 
 function _syncAEParamsFromUI() {
     const dtEl = document.getElementById('ae-dt-slider');
@@ -3939,91 +4066,19 @@ function loadScenario(name) {
         if (el) el.checked = val;
     }
 
-    // Scenario-specific toggle overrides
-    if (name === 'flux-dual-substrate') {
-        bridge.setToggle('dual_substrate', true);
-        const el = document.getElementById('t-dual');
-        if (el) el.checked = true;
-    }
-    if (name === 'flux-cosmic-web' || name === 'flux-gravitational-wave' ||
-        name === 'flux-triad' || name === 'flux-baryon' || name === 'flux-black-hole') {
-        bridge.setToggle('gravity', true);
-        const el = document.getElementById('t-gravity');
-        if (el) el.checked = true;
-    }
-    if (name === 'flux-black-hole') {
-        bridge.setToggle('genesis', false);
-        const genEl = document.getElementById('t-genesis');
-        if (genEl) genEl.checked = false;
-    }
-    if (name === 'flux-stable-vortex') {
-        bridge.setToggle('damping', false);
-        bridge.setToggle('genesis', false);
-        const dEl = document.getElementById('t-damping');
-        if (dEl) dEl.checked = false;
-        const genEl = document.getElementById('t-genesis');
-        if (genEl) genEl.checked = false;
-    }
-    if (name === 'flux-cyclotron') {
-        bridge.setToggle('lorentz_force', true);
-        const el = document.getElementById('t-lorentz');
-        if (el) el.checked = true;
-    }
-    // QCD scenarios: enable confinement
-    if (name === 'flux-meson' || name === 'flux-baryon') {
-        bridge.setToggle('confinement', true);
-        bridge.setToggle('genesis', false);
-        const cEl = document.getElementById('t-confinement');
-        if (cEl) cEl.checked = true;
-        const genEl = document.getElementById('t-genesis');
-        if (genEl) genEl.checked = false;
-    }
-    if (name === 'flux-string-breaking') {
-        bridge.setToggle('confinement', true);
-        bridge.setToggle('genesis', true);
-        const cEl = document.getElementById('t-confinement');
-        if (cEl) cEl.checked = true;
-        const genEl = document.getElementById('t-genesis');
-        if (genEl) genEl.checked = true;
-    }
-    if (name === 'flux-dark-matter') {
-        bridge.setToggle('gravity', true);
-        bridge.setToggle('genesis', false);
-        const gEl = document.getElementById('t-gravity');
-        if (gEl) gEl.checked = true;
-        const genEl = document.getElementById('t-genesis');
-        if (genEl) genEl.checked = false;
-    }
-    if (name === 'flux-baryogenesis') {
-        bridge.setToggle('genesis', true);
-        bridge.setToggle('gravity', true);
-        const genEl = document.getElementById('t-genesis');
-        if (genEl) genEl.checked = true;
-        const gEl = document.getElementById('t-gravity');
-        if (gEl) gEl.checked = true;
-    }
-    if (name === 'flux-vacuum-foam') {
-        bridge.setToggle('genesis', true);
-        bridge.setToggle('damping', true);
-        const genEl = document.getElementById('t-genesis');
-        if (genEl) genEl.checked = true;
-        const dEl = document.getElementById('t-damping');
-        if (dEl) dEl.checked = true;
+    // Scenario-specific toggle overrides (data-driven from config/toggles.js)
+    const overrides = SCALE0_SCENARIO_OVERRIDES[name];
+    if (overrides) {
+        for (const [key, val, elId] of overrides) {
+            bridge.setToggle(key, val);
+            const el = document.getElementById(elId);
+            if (el) el.checked = val;
+        }
     }
 
-    // Light scenarios: wave propagation + selective damping only (pure EM)
+    // Light scenarios: pure EM wave propagation (no matter coupling)
     if (name.startsWith('light-')) {
-        const lightOverrides = [
-            ['selective_damping', true, 't-selective'],
-            ['coupling',   false, 't-coupling'],
-            ['damping',    false, 't-damping'],
-            ['genesis',    false, 't-genesis'],
-            ['gauss_projection', false, 't-gauss'],
-            ['forces',     false, 't-forces'],
-            ['movement',   false, 't-movement'],
-            ['poisson_coulomb', false, 't-poisson'],
-        ];
-        for (const [key, val, elId] of lightOverrides) {
+        for (const [key, val, elId] of LIGHT_SCENARIO_OVERRIDES) {
             bridge.setToggle(key, val);
             const el = document.getElementById(elId);
             if (el) el.checked = val;

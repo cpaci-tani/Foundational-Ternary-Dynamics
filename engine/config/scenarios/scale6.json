@@ -1,0 +1,31 @@
+{
+  "scale": 6,
+  "name": "Meta (Existential Unit)",
+  "engineMode": "meta",
+  "selectId": null,
+  "note": "Meta scale has no scenario dropdown. It displays the Moore neighborhood existential unit with toggle controls for layers (Oct, Cuboct, Cube), tetrahedra (T+, T-), connections, coloring modes (BCC/FCC, g/u), symmetry elements (Axes, Mirrors), and display options (Labels, Rotate).",
+  "scenarios": [
+    {
+      "id": "meta-existential-unit",
+      "name": "Existential Unit",
+      "group": null,
+      "description": "The 26-neighbor Moore neighborhood decomposed into octahedron (6 SC), cuboctahedron (12 FCC), and cube (8 BCC) layers. Single interactive visualization with toggle controls.",
+      "default": true
+    }
+  ],
+  "toggles": [
+    { "id": "meta-toggle-center", "name": "Center", "description": "Center (CM point i)", "defaultActive": true },
+    { "id": "meta-toggle-oct", "name": "Oct", "description": "Octahedron (6 SC)", "defaultActive": true },
+    { "id": "meta-toggle-cuboct", "name": "Cuboct", "description": "Cuboctahedron (12 FCC)", "defaultActive": true },
+    { "id": "meta-toggle-cube", "name": "Cube", "description": "Cube (8 BCC)", "defaultActive": true },
+    { "id": "meta-toggle-tetra-plus", "name": "T+", "description": "Tetrahedron T+ (even)", "defaultActive": false },
+    { "id": "meta-toggle-tetra-minus", "name": "T-", "description": "Tetrahedron T- (odd)", "defaultActive": false },
+    { "id": "meta-toggle-connections", "name": "Links", "description": "Neighbor connections", "defaultActive": false },
+    { "id": "meta-toggle-bcc-fcc", "name": "BCC/FCC", "description": "BCC/FCC parity coloring", "defaultActive": false },
+    { "id": "meta-toggle-gerade", "name": "g/u", "description": "Gerade/ungerade coloring", "defaultActive": false },
+    { "id": "meta-toggle-axes", "name": "Axes", "description": "Rotation axes (C2,C3,C4)", "defaultActive": false },
+    { "id": "meta-toggle-mirrors", "name": "Mirrors", "description": "Mirror planes", "defaultActive": false },
+    { "id": "meta-toggle-labels", "name": "Labels", "description": "Framework labels", "defaultActive": true },
+    { "id": "meta-toggle-rotate", "name": "Rotate", "description": "Auto-rotate", "defaultActive": true }
+  ]
+}

@@ -25,6 +25,8 @@ struct Particle;
 class ParticleEngine;
 struct Atom;
 class AtomEngine;
+struct CosmicBody;
+class CosmicEngine;
 
 // Scale levels in the ontic hierarchy
 enum class ScaleLevel : int {
@@ -32,7 +34,8 @@ enum class ScaleLevel : int {
     PARTICLE = 1,   // Effective point particles with analytical forces
     ATOM     = 2,   // Bound states (hydrogen, helium, ...)
     MOLECULE = 3,   // Chemical bonds
-    BULK     = 4    // Thermodynamic limit
+    BULK     = 4,   // Thermodynamic limit
+    COSMIC   = 5    // N-body + SPH cosmic simulation
 };
 
 // The universal ternary triple: {state, energy, boundary}
@@ -64,5 +67,17 @@ std::vector<Atom> coarsen_to_atoms(const ParticleEngine& pe);
 // Scale 2 → Scale 1: decompose atom into constituent particles
 // Returns Z locked protons at center + (Z - charge) electrons at radius
 std::vector<Particle> refine_to_particles(const Atom& a);
+
+// ============================================================================
+// Scale Bridge: coarsen/refine transitions between Scale 2 and Scale 5
+// ============================================================================
+
+// Scale 2 → Scale 5: group atoms into cosmic bodies
+// Large clusters become GAS, very dense clusters become STAR
+std::vector<CosmicBody> coarsen_to_cosmic(const AtomEngine& ae);
+
+// Scale 5 → Scale 2: decompose cosmic body into constituent atoms
+// Gas/star bodies → hydrogen/helium/metals at mass ratios 73:25:2
+std::vector<Atom> refine_to_atoms(const CosmicBody& cb);
 
 }  // namespace ftd

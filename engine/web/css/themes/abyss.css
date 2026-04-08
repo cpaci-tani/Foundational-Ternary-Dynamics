@@ -1,0 +1,24 @@
+/* FTD Engine — Abyss theme (OLED-friendly deep black)
+ * Extracted from index.html inline styles.
+ * Part of the modular CSS architecture (Phase 0).
+ */
+
+/* Abyss — even darker, OLED-friendly */
+html[data-theme="abyss"] {
+    --bg-deep: #000000;
+    --bg-surface: #0a0a0f;
+    --bg-card: #111118;
+    --bg-input: #1a1a24;
+    --border: #1a1a28;
+    --border-light: #2a2a3a;
+    --text-primary: #e8e8f0;
+    --text-secondary: #8888a0;
+    --text-muted: #606078;
+    --accent: #6366f1;
+    --accent-dim: #4f46e5;
+}
+
+/* Viewport background override */
+html[data-theme="abyss"] #viewport {
+    background: linear-gradient(180deg, #000005 0%, #050510 100%) !important;
+}

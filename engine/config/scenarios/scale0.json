@@ -1,0 +1,225 @@
+{
+  "scale": 0,
+  "name": "Lattice Dynamics",
+  "engineMode": "lattice",
+  "selectId": "scenario-select",
+  "scenarios": [
+    {
+      "id": "empty",
+      "name": "Empty Lattice",
+      "group": null,
+      "description": "Empty lattice with no initial conditions."
+    },
+    {
+      "id": "flux-pulse",
+      "name": "Flux Pulse",
+      "group": "Wave Dynamics",
+      "description": "Single flux pulse propagating through the lattice.",
+      "default": true
+    },
+    {
+      "id": "flux-dipole",
+      "name": "Flux Dipole",
+      "group": "Wave Dynamics",
+      "description": "Positive/negative flux dipole pair."
+    },
+    {
+      "id": "flux-standing",
+      "name": "Standing Wave",
+      "group": "Wave Dynamics",
+      "description": "Standing wave pattern in the lattice."
+    },
+    {
+      "id": "flux-nested-standing",
+      "name": "Nested Standing",
+      "group": "Wave Dynamics",
+      "description": "Nested standing wave pattern."
+    },
+    {
+      "id": "flux-dispersion",
+      "name": "Dispersion",
+      "group": "Wave Dynamics",
+      "description": "Wave dispersion demonstration."
+    },
+    {
+      "id": "flux-soliton",
+      "name": "Soliton",
+      "group": "Wave Dynamics",
+      "description": "Soliton wave propagation."
+    },
+    {
+      "id": "flux-interference",
+      "name": "4-Source Interference",
+      "group": "Wave Dynamics",
+      "description": "Four-source interference pattern."
+    },
+    {
+      "id": "flux-vortex",
+      "name": "Flux Vortex (Spin)",
+      "group": "Wave Dynamics",
+      "description": "Flux vortex demonstrating spin."
+    },
+    {
+      "id": "flux-stable-vortex",
+      "name": "Stable Vortex (Rotating)",
+      "group": "Wave Dynamics",
+      "description": "Stable rotating vortex configuration."
+    },
+    {
+      "id": "flux-annihilation",
+      "name": "Pair Annihilation",
+      "group": "Particle Physics",
+      "description": "Particle-antiparticle annihilation."
+    },
+    {
+      "id": "flux-pair-production",
+      "name": "Pair Production",
+      "group": "Particle Physics",
+      "description": "Particle-antiparticle pair production."
+    },
+    {
+      "id": "flux-hydrogen",
+      "name": "Hydrogen Atom",
+      "group": "Particle Physics",
+      "description": "Hydrogen atom in the lattice."
+    },
+    {
+      "id": "flux-random-genesis",
+      "name": "Random Genesis",
+      "group": "Particle Physics",
+      "description": "Random particle genesis from vacuum."
+    },
+    {
+      "id": "flux-meson",
+      "name": "Meson (Confinement)",
+      "group": "Particle Physics",
+      "description": "Meson demonstrating color confinement."
+    },
+    {
+      "id": "flux-string-breaking",
+      "name": "String Breaking",
+      "group": "Particle Physics",
+      "description": "QCD string breaking between quarks."
+    },
+    {
+      "id": "flux-baryon",
+      "name": "Baryon (3-Quark)",
+      "group": "Particle Physics",
+      "description": "Three-quark baryon system."
+    },
+    {
+      "id": "light-rainbow",
+      "name": "Rainbow (3 Colors)",
+      "group": "Light & Color",
+      "description": "Three-color rainbow dispersion."
+    },
+    {
+      "id": "light-prism",
+      "name": "Lattice Prism",
+      "group": "Light & Color",
+      "description": "Prism effect on the lattice."
+    },
+    {
+      "id": "light-dipole",
+      "name": "Dipole Radiation",
+      "group": "Light & Color",
+      "description": "Electromagnetic dipole radiation pattern."
+    },
+    {
+      "id": "light-two-slit",
+      "name": "Two-Slit Interference",
+      "group": "Light & Color",
+      "description": "Double-slit interference experiment."
+    },
+    {
+      "id": "light-photon-race",
+      "name": "Photon Race",
+      "group": "Light & Color",
+      "description": "Photon race across the lattice."
+    },
+    {
+      "id": "flux-rutherford",
+      "name": "Rutherford Scattering",
+      "group": "Experiments",
+      "description": "Rutherford scattering experiment."
+    },
+    {
+      "id": "flux-cyclotron",
+      "name": "Cyclotron Motion",
+      "group": "Experiments",
+      "description": "Charged particle cyclotron motion."
+    },
+    {
+      "id": "flux-screening",
+      "name": "Charge Screening",
+      "group": "Experiments",
+      "description": "Electric charge screening effect."
+    },
+    {
+      "id": "flux-gravitational-wave",
+      "name": "Gravitational Wave",
+      "group": "Experiments",
+      "description": "Gravitational wave propagation."
+    },
+    {
+      "id": "flux-triad",
+      "name": "Triad Formation",
+      "group": "Experiments",
+      "description": "Triad structure formation."
+    },
+    {
+      "id": "flux-thermalization",
+      "name": "Thermalization",
+      "group": "Experiments",
+      "description": "System thermalization process."
+    },
+    {
+      "id": "flux-dark-matter",
+      "name": "Dark Matter Halo",
+      "group": "Cosmology",
+      "description": "Dark matter halo formation."
+    },
+    {
+      "id": "flux-baryogenesis",
+      "name": "Baryogenesis",
+      "group": "Cosmology",
+      "description": "Matter-antimatter asymmetry genesis."
+    },
+    {
+      "id": "flux-vacuum-foam",
+      "name": "Vacuum Fluctuations",
+      "group": "Cosmology",
+      "description": "Quantum vacuum fluctuations."
+    },
+    {
+      "id": "flux-cosmic-web",
+      "name": "Cosmic Web",
+      "group": "Cosmology",
+      "description": "Large-scale cosmic web structure."
+    },
+    {
+      "id": "flux-black-hole",
+      "name": "Black Hole / Wormhole",
+      "group": "Cosmology",
+      "description": "Black hole and wormhole simulation."
+    },
+    {
+      "id": "flux-cascade",
+      "name": "Genesis Cascade",
+      "group": "Advanced",
+      "description": "Cascading genesis events."
+    },
+    {
+      "id": "flux-damping",
+      "name": "Damping Demo",
+      "group": "Advanced",
+      "description": "Flux damping demonstration."
+    },
+    {
+      "id": "flux-dual-substrate",
+      "name": "Dual Substrate",
+      "group": "Advanced",
+      "description": "Dual substrate configuration."
+    }
+  ]
+}

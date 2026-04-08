@@ -3825,11 +3825,8 @@ export class WasmBridge {
     aeClear() { this.resetAE(); }
 }
 
-// ── Factory ────────────────────────────────────────────────────────
-export async function createBridge(latticeSize = 32) {
-    const wasm = new WasmBridge();
-    const ok = await wasm.init(latticeSize);
-    if (ok) return wasm;
-    const mock = new MockBridge(latticeSize);
-    return mock;
-}
+// ── Re-exports from extracted modules ────────────────────────────────
+// CosmicMockBridge moved to bridge/mock-scale5.js (Scale 5 N-body sim)
+// createBridge factory moved to bridge/bridge-factory.js
+export { CosmicMockBridge } from './bridge/mock-scale5.js';
+export { createBridge } from './bridge/bridge-factory.js';
