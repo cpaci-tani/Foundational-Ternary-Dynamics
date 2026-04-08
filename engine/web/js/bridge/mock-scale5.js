@@ -26,6 +26,7 @@ export class CosmicMockBridge {
         this._softening = 1.0;
         this._gwEvents = [];
         this._t_cosmic = 0.0;
+        this._enableSubgrid = false; // sub-grid physics off by default
     }
 
     static TYPE = {
@@ -99,7 +100,7 @@ export class CosmicMockBridge {
                 const z = r * Math.cos(th);
 
                 const M_enc = this._enclosedMass(r, M_total, r_s);
-                const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 2)) * 0.35;
+                const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 2)) * 0.55;
                 this.addBody(T.DARK_MATTER, M_dm / 300, x, y, z,
                     sigma * (rng() - 0.5) * 2,
                     sigma * (rng() - 0.5) * 2,
@@ -114,7 +115,7 @@ export class CosmicMockBridge {
                 const ph = phi_base + (rng() - 0.5) * 0.7;
                 const zz = (rng() - 0.5) * 1.5;
 
-                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s);
+                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.5);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 2));
 
                 this.addBody(T.STAR, M_disk * 0.6 / 350,
@@ -131,7 +132,7 @@ export class CosmicMockBridge {
                 const ph = phi_base + (rng() - 0.5) * 1.0;
                 const zz = (rng() - 0.5) * 1.0;
 
-                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s);
+                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.5);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 2));
 
                 this.addBody(T.GAS, M_disk * 0.4 / 150,
@@ -141,8 +142,9 @@ export class CosmicMockBridge {
             }
 
             this._boxSize = 200;
-            this._softening = 2.0;
+            this._softening = 5.0; // large: suppresses two-body relaxation at N=800
             this._dt = 0.05;
+            this._enableSubgrid = false;
 
         } else if (name === 'cosmic-black-hole') {
             // BH accretion: M_bh=500, disk at r=5..50 => v_k = sqrt(0.01*500/10) ~ 0.7
@@ -165,8 +167,9 @@ export class CosmicMockBridge {
             }
 
             this._boxSize = 120;
-            this._softening = 0.8;
+            this._softening = 2.0;
             this._dt = 0.03;
+            this._enableSubgrid = true; // accretion disk needs cooling + accretion
 
         } else if (name === 'cosmic-merger') {
             // Two galaxies: M1=3000, M2=2000, sep=80
@@ -220,8 +223,9 @@ export class CosmicMockBridge {
             }
 
             this._boxSize = 250;
-            this._softening = 1.5;
+            this._softening = 4.0; // suppress relaxation for merger
             this._dt = 0.04;
+            this._enableSubgrid = false;
 
         } else {
             // Cosmic web: DM particles with Zel'dovich perturbations
@@ -245,8 +249,9 @@ export class CosmicMockBridge {
                 this.addBody(T.GAS, 5, x, y, z, 0, 0, 0, 1e4);
             }
             this._boxSize = 200;
-            this._softening = 3.0;
+            this._softening = 6.0;
             this._dt = 0.08;
+            this._enableSubgrid = false;
         }
     }
 
@@ -278,13 +283,12 @@ export class CosmicMockBridge {
         // ============================================================
         // Body-type-specific physics (beyond universal gravity)
         //
-        // Interaction matrix:
-        //   DM, Stars, WD, NS: collisionless — gravity only
-        //   Gas, Nebula:        collisional — gravity + pressure + cooling + viscosity
-        //   BH, Quasar:         accretors — eat gas, merge with other BHs
-        //   Star → Gas:         radiation pressure heats/pushes nearby gas
-        //   Dense Gas → Star:   Jeans-like star formation
+        // Only enabled for scenarios where it matters (BH accretion).
+        // For galaxy/merger/web, pure collisionless N-body is more stable
+        // at low particle counts (N~800) where two-body relaxation dominates.
         // ============================================================
+
+        if (!this._enableSubgrid) return; // galaxy, merger, web: gravity only
 
         const T = CosmicMockBridge.TYPE;
         const isGas = (t) => t === T.GAS || t === T.NEBULA;
