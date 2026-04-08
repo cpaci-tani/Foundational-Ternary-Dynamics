@@ -280,6 +280,49 @@ export class CosmicMockBridge {
             }
         }
 
+        // ── Tidal forces / spaghettification ──
+        // Near a BH, the gravitational gradient across a particle's extent
+        // stretches it radially and compresses it laterally:
+        //   a_tidal_radial  = +2 * G * M_BH * dr / r^3  (stretch along r)
+        //   a_tidal_lateral = -1 * G * M_BH * dr / r^3  (squeeze perpendicular)
+        // We approximate this as a velocity perturbation: particles near a BH
+        // get their radial velocity amplified and tangential velocity damped,
+        // creating visible tidal streams.
+        for (const bh of this._bodies) {
+            if (bh.type !== CosmicMockBridge.TYPE.BLACK_HOLE &&
+                bh.type !== CosmicMockBridge.TYPE.QUASAR) continue;
+            const r_tidal = Math.max(8.0, Math.cbrt(bh.mass) * 1.5); // tidal influence radius
+            const r_tidal2 = r_tidal * r_tidal;
+            for (const b of this._bodies) {
+                if (b.id === bh.id) continue;
+                const dx = b.x - bh.x;
+                const dy = b.y - bh.y;
+                const dz = b.z - bh.z;
+                const r2 = dx * dx + dy * dy + dz * dz;
+                if (r2 > r_tidal2 || r2 < 0.01) continue;
+                const r = Math.sqrt(r2);
+                const invR = 1.0 / r;
+                // Unit radial vector from BH to body
+                const rx = dx * invR, ry = dy * invR, rz = dz * invR;
+                // Tidal strength: stronger closer to BH (scales as 1/r^3)
+                const tidalStrength = G * bh.mass / (r2 * r) * 0.5;
+                // Radial component of body's velocity
+                const v_radial = b.vx * rx + b.vy * ry + b.vz * rz;
+                // Tangential velocity components
+                const vt_x = b.vx - v_radial * rx;
+                const vt_y = b.vy - v_radial * ry;
+                const vt_z = b.vz - v_radial * rz;
+                // Stretch radially: accelerate along r-hat
+                b.ax += tidalStrength * rx;
+                b.ay += tidalStrength * ry;
+                b.az += tidalStrength * rz;
+                // Squeeze laterally: decelerate perpendicular to r-hat
+                b.ax -= tidalStrength * 0.5 * vt_x / (Math.abs(v_radial) + 0.1);
+                b.ay -= tidalStrength * 0.5 * vt_y / (Math.abs(v_radial) + 0.1);
+                b.az -= tidalStrength * 0.5 * vt_z / (Math.abs(v_radial) + 0.1);
+            }
+        }
+
         // ============================================================
         // Body-type-specific physics (beyond universal gravity)
         //
