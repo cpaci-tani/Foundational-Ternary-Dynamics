@@ -1870,9 +1870,8 @@ function animateCosmic(now) {
     }
 
     if (running) {
-        // Run N-body ticks per frame (adjustable)
-        const ticksPerFrame = 5;
-        _cosmicBridge.run(ticksPerFrame);
+        // Respect the global speed slider (ticksPerFrame from app scope)
+        // — not used by the interval loop, but kept for rAF fallback
     }
 
     // Update renderer with current state
@@ -2976,7 +2975,7 @@ function loadCosmicScenario(scenarioName = 'cosmic-galaxy') {
             window._cosmicInterval = null;
             return;
         }
-        if (running) _cosmicBridge.run(5);
+        if (running) _cosmicBridge.run(Math.max(1, Math.round(ticksPerFrame)));
         const data = _cosmicBridge.getCosmicData();
         const diag = _cosmicBridge.getDiagnostics();
         _cosmicRenderer.update(data, diag);
