@@ -20,16 +20,20 @@ import { G_N, OMEGA_LAMBDA, OMEGA_MATTER } from '../constants.js';
 // Stars/NS/WD:     medium — collisionless, moderate smoothing
 // DM:              large — diffuse halo, suppresses two-body relaxation
 // Gas/Nebula:      medium — collisional, SPH-like smoothing
+// At N~800, no body should act as a true point source. The softening
+// represents the unresolved internal structure at this particle count.
+// BH softening is comparable to stars — its dominance comes from MASS
+// (500 vs ~2 per star), not from having sharper gravity.
 const SOFTENING = {
-    [-3]: 2.0,  // DARK_ENERGY
-    [-2]: 0.5,  // QUASAR
-    [-1]: 0.5,  // BLACK_HOLE
-    [0]:  3.0,  // DARK_MATTER
-    [1]:  1.5,  // GAS
-    [2]:  2.0,  // STAR
-    [3]:  1.0,  // NEUTRON_STAR
-    [4]:  1.5,  // NEBULA
-    [5]:  2.0,  // WHITE_DWARF
+    [-3]: 3.0,  // DARK_ENERGY
+    [-2]: 2.0,  // QUASAR
+    [-1]: 2.0,  // BLACK_HOLE — same as stars; dominates via mass, not sharpness
+    [0]:  3.5,  // DARK_MATTER — diffuse halo
+    [1]:  2.5,  // GAS
+    [2]:  2.5,  // STAR
+    [3]:  2.0,  // NEUTRON_STAR
+    [4]:  2.5,  // NEBULA
+    [5]:  2.5,  // WHITE_DWARF
 };
 
 export class CosmicMockBridge {
