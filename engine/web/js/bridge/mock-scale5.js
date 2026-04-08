@@ -95,7 +95,7 @@ export class CosmicMockBridge {
                 const z = clampR * Math.cos(th);
 
                 // Isotropic velocity dispersion ~ sqrt(G * M_enc / r)
-                const M_enc = M_total * clampR * clampR / ((clampR + r_s) * (clampR + r_s));
+                const M_enc = this._enclosedMass(clampR, M_total, r_s);
                 const sigma = Math.sqrt(G_N * M_enc / (clampR + 1)) * 0.4;
                 this.addBody(T.DARK_MATTER, M_dm / N_dm, x, y, z,
                     sigma * (rng() - 0.5) * 2,
@@ -113,8 +113,8 @@ export class CosmicMockBridge {
                 const zz = (rng() - 0.5) * 1.5;
 
                 // Circular velocity from enclosed mass (flat rotation curve)
-                const M_enc = (M_bh + M_dm * clampR * clampR / ((clampR + r_s) * (clampR + r_s)));
-                const vc = Math.sqrt(G_N * M_enc / (clampR + 0.5));
+                const M_enc = M_bh + this._enclosedMass(clampR, M_dm, r_s);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(clampR, this._softening));
 
                 this.addBody(T.STAR, M_disk * 0.6 / N_star,
                     clampR * Math.cos(ph), zz, clampR * Math.sin(ph),
@@ -131,8 +131,8 @@ export class CosmicMockBridge {
                 const ph = phi_base + (rng() - 0.5) * 1.0;
                 const zz = (rng() - 0.5) * 1.0;
 
-                const M_enc = (M_bh + M_dm * clampR * clampR / ((clampR + r_s) * (clampR + r_s)));
-                const vc = Math.sqrt(G_N * M_enc / (clampR + 0.5));
+                const M_enc = M_bh + this._enclosedMass(clampR, M_dm, r_s);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(clampR, this._softening));
 
                 this.addBody(T.GAS, M_disk * 0.4 / N_gas,
                     clampR * Math.cos(ph), zz, clampR * Math.sin(ph),
@@ -201,8 +201,8 @@ export class CosmicMockBridge {
                 const t = i < N1 * 0.5 ? T.DARK_MATTER : T.STAR;
 
                 // Internal circular velocity
-                const M_enc = M1 * r * r / ((r + r_s1) * (r + r_s1));
-                const vc = Math.sqrt(G_N * M_enc / (r + 0.5));
+                const M_enc = this._enclosedMass(r, M1, r_s1);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, this._softening));
 
                 this.addBody(t, (t === T.DARK_MATTER ? M1 * 0.85 : M1 * 0.15) / (N1 / 2),
                     cx1 + r * Math.cos(ph), zz, cz1 + r * Math.sin(ph),
@@ -219,8 +219,8 @@ export class CosmicMockBridge {
                 const zz = (rng() - 0.5) * 2;
                 const t = i < N2 * 0.5 ? T.DARK_MATTER : T.STAR;
 
-                const M_enc = M2 * r * r / ((r + r_s2) * (r + r_s2));
-                const vc = Math.sqrt(G_N * M_enc / (r + 0.5));
+                const M_enc = this._enclosedMass(r, M2, r_s2);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, this._softening));
 
                 this.addBody(t, (t === T.DARK_MATTER ? M2 * 0.85 : M2 * 0.15) / (N2 / 2),
                     cx2 + r * Math.cos(ph), zz, cz2 + r * Math.sin(ph),
