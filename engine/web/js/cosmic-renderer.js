@@ -462,11 +462,11 @@ export class CosmicRenderer {
     // ================================================================
     setCameraPreset(name, bodyData) {
         const presets = {
-            overview:  { pos: [0, 300, 400], target: [0, 0, 0], fov: 60 },
-            galaxy:    { pos: [25, 45, 65],  target: [0, 0, 0], fov: 50 },
-            blackhole: { pos: [0, 25, 55],   target: [0, 0, 0], fov: 40 },
-            merger:    { pos: [0, 70, 150],  target: [0, 0, 0], fov: 55 },
-            quasar:    { pos: [0, 15, 35],   target: [0, 0, 0], fov: 42 }
+            overview:  { pos: [0, 350, 450], target: [0, 0, 0], fov: 60 },
+            galaxy:    { pos: [40, 70, 100],  target: [0, 0, 0], fov: 55 },
+            blackhole: { pos: [0, 35, 70],   target: [0, 0, 0], fov: 45 },
+            merger:    { pos: [0, 80, 170],  target: [0, 0, 0], fov: 55 },
+            quasar:    { pos: [0, 20, 45],   target: [0, 0, 0], fov: 42 }
         };
         const p = presets[name] || presets.overview;
         this.camera.position.set(p.pos[0], p.pos[1], p.pos[2]);
