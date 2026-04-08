@@ -1,17 +1,36 @@
 /**
  * CosmicMockBridge — JS-only N-body simulation for cosmic scale (Scale 5).
  *
- * Unit system (simulation units):
- *   G = G_N = 0.01 (from FTD ontic chain)
- *   Masses chosen so v_circular = sqrt(G*M/r) ~ O(1) for visual dynamics
- *   Positions span ~100 units, velocities ~ 0.5-2 units/tick
- *   dt chosen so displacement ~ 0.1-0.5 units/frame (3 ticks/frame)
+ * Architecture follows Gadget-2 conventions:
+ *   1. _computeForces():  gravity + hydro + external (NO mass changes)
+ *   2. tick():            kick-drift-recompute-kick (Velocity Verlet)
+ *   3. _postUpdates():    accretion, star formation, mergers, cleanup
  *
- * This is NOT in physical CGS/SI — it's a dimensionless system tuned for
- * visual dynamics while preserving correct gravitational scaling.
+ * Softening: fixed per body type (energy-conserving).
+ * Pairwise rule: eps = max(eps_i, eps_j) per Gadget-2 standard.
+ *
+ * Unit system: G = G_N = 0.01 (FTD ontic chain). Masses and distances
+ * scaled so v_circular ~ O(1) for visual dynamics.
  */
 
 import { G_N, OMEGA_LAMBDA, OMEGA_MATTER } from '../constants.js';
+
+// Fixed softening per body type (Gadget-2 convention: constant, energy-conserving)
+// BH/Quasar:       tiny — point-like, dominates core
+// Stars/NS/WD:     medium — collisionless, moderate smoothing
+// DM:              large — diffuse halo, suppresses two-body relaxation
+// Gas/Nebula:      medium — collisional, SPH-like smoothing
+const SOFTENING = {
+    [-3]: 2.0,  // DARK_ENERGY
+    [-2]: 0.5,  // QUASAR
+    [-1]: 0.5,  // BLACK_HOLE
+    [0]:  3.0,  // DARK_MATTER
+    [1]:  1.5,  // GAS
+    [2]:  2.0,  // STAR
+    [3]:  1.0,  // NEUTRON_STAR
+    [4]:  1.5,  // NEBULA
+    [5]:  2.0,  // WHITE_DWARF
+};
 
 export class CosmicMockBridge {
     constructor() {
@@ -23,10 +42,10 @@ export class CosmicMockBridge {
         this._adot = 0.0;
         this._H0 = 0.001;
         this._boxSize = 200;
-        this._softening = 1.0;
+        this._softening = 5.0; // base softening (used as fallback)
         this._gwEvents = [];
         this._t_cosmic = 0.0;
-        this._enableSubgrid = false; // sub-grid physics off by default
+        this._enableSubgrid = false;
     }
 
     static TYPE = {
@@ -42,18 +61,21 @@ export class CosmicMockBridge {
             x, y, z, vx, vy, vz,
             ax: 0, ay: 0, az: 0,
             temperature: temp,
+            internal_energy: Math.max(temp * 0.001, 0.01),
             density: 0, pressure: 0,
             luminosity: type === 2 ? Math.pow(mass, 3.5) : 0,
             radius: Math.cbrt(mass) * 0.1,
-            smoothing: 1.0
         });
         return id;
     }
 
-    // Plummer enclosed mass: M_enc = M * r^3 / (r^2 + a^2)^(3/2)
     _enclosedMass(r, M_total, rs) {
         return M_total * r * r * r / Math.pow(r * r + rs * rs, 1.5);
     }
+
+    // ================================================================
+    // SCENARIOS
+    // ================================================================
 
     setupScenario(name) {
         this._bodies = [];
@@ -66,61 +88,52 @@ export class CosmicMockBridge {
         const T = CosmicMockBridge.TYPE;
         const rng = this._rng(42);
         const PI2 = Math.PI * 2;
-
-        // ================================================================
-        // All scenarios use natural units where G=0.01:
-        //   v_c = sqrt(G*M/r) ~ sqrt(0.01 * M_total / r_scale) ~ 1
-        //   => M_total / r_scale ~ 100
-        // ================================================================
+        // Box-Muller for Gaussian random numbers (needed for z-dispersion)
+        const randn = () => Math.sqrt(-2 * Math.log(rng() + 1e-10)) * Math.cos(PI2 * rng());
 
         if (name === 'cosmic-galaxy') {
-            // Spiral galaxy: M_total=5000, r_disk=50 => v_c ~ sqrt(0.01*5000/50) = 1.0
-            // BH = 2% of total (100). Each DM particle ~ 14, so BH is 7x a particle.
-            // BH doesn't receive N-body kicks (pinned by code), so even 7x is enough
-            // to be the dominant attractor in the inner region.
             const M_total = 5000;
-            const M_bh = 500; // 10% — must dominate core to prevent star-cluster inversion
+            const M_bh = 500; // 10% — dominates core
             const M_dm = (M_total - M_bh) * 0.85;
             const M_disk = (M_total - M_bh) * 0.15;
-            const r_s = 30;      // Scale radius
-            const r_disk = 50;   // Disk extent
+            const r_s = 30;
+            const r_disk = 50;
 
-            // Central black hole
             this.addBody(T.BLACK_HOLE, M_bh, 0, 0, 0);
 
-            // DM halo (spherical, Hernquist profile)
+            // DM halo (Hernquist profile, virial equilibrium)
             for (let i = 0; i < 300; i++) {
                 const u = rng() * 0.95;
                 const su = Math.sqrt(u);
                 const r = Math.min(r_s * su / (1.0 - su), 120);
                 const th = Math.acos(2 * rng() - 1);
                 const ph = PI2 * rng();
-                const x = r * Math.sin(th) * Math.cos(ph);
-                const y = r * Math.sin(th) * Math.sin(ph);
-                const z = r * Math.cos(th);
 
                 const M_enc = this._enclosedMass(r, M_total, r_s);
-                const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 2)) * 0.55;
-                this.addBody(T.DARK_MATTER, M_dm / 300, x, y, z,
-                    sigma * (rng() - 0.5) * 2,
-                    sigma * (rng() - 0.5) * 2,
-                    sigma * (rng() - 0.5) * 2);
+                // Virial dispersion: sigma ~ 0.7 * v_c for Hernquist equilibrium
+                const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 2)) * 0.7;
+                this.addBody(T.DARK_MATTER, M_dm / 300,
+                    r * Math.sin(th) * Math.cos(ph),
+                    r * Math.sin(th) * Math.sin(ph),
+                    r * Math.cos(th),
+                    sigma * randn(), sigma * randn(), sigma * randn());
             }
 
-            // Stellar disk with spiral arms
+            // Stellar disk (with z-dispersion for vertical stability)
             for (let i = 0; i < 350; i++) {
                 const r = 2 + rng() * r_disk;
                 const arm = Math.floor(rng() * 2);
                 const phi_base = arm * Math.PI + 0.4 * Math.log(r + 1);
                 const ph = phi_base + (rng() - 0.5) * 0.7;
-                const zz = (rng() - 0.5) * 1.5;
+                const zz = randn() * 1.5;
 
                 const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.5);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 2));
+                const vz = randn() * vc * 0.1; // z-velocity dispersion for vertical support
 
                 this.addBody(T.STAR, M_disk * 0.6 / 350,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
-                    -vc * Math.sin(ph), 0, vc * Math.cos(ph),
+                    -vc * Math.sin(ph), vz, vc * Math.cos(ph),
                     3000 + rng() * 25000);
             }
 
@@ -130,7 +143,7 @@ export class CosmicMockBridge {
                 const arm = Math.floor(rng() * 2);
                 const phi_base = arm * Math.PI + 0.4 * Math.log(r + 1);
                 const ph = phi_base + (rng() - 0.5) * 1.0;
-                const zz = (rng() - 0.5) * 1.0;
+                const zz = randn() * 1.0;
 
                 const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.5);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 2));
@@ -142,95 +155,81 @@ export class CosmicMockBridge {
             }
 
             this._boxSize = 200;
-            this._softening = 5.0; // large: suppresses two-body relaxation at N=800
+            this._softening = 5.0;
             this._dt = 0.05;
             this._enableSubgrid = false;
 
         } else if (name === 'cosmic-black-hole') {
-            // BH accretion: M_bh=500, disk at r=5..50 => v_k = sqrt(0.01*500/10) ~ 0.7
             const M_bh = 500;
             this.addBody(T.BLACK_HOLE, M_bh, 0, 0, 0);
 
             for (let i = 0; i < 500; i++) {
                 const u = rng();
-                const r = 4 + u * u * 46; // r in [4, 50], concentrated near center
+                const r = 4 + u * u * 46;
                 const ph = PI2 * rng();
-                const zz = (rng() - 0.5) * 0.5 * (r / 10); // thinner near center
+                const zz = randn() * 0.25 * (r / 10);
 
                 const vk = Math.sqrt(G_N * M_bh / r);
-                const v_factor = 0.98 - 0.02 * rng(); // sub-Keplerian for viscous inflow
+                const v_factor = 0.99 - 0.01 * rng();
 
                 this.addBody(T.GAS, 0.2,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
                     -vk * v_factor * Math.sin(ph), 0, vk * v_factor * Math.cos(ph),
-                    1e6 * Math.pow(4 / r, 0.75)); // T ~ r^(-3/4)
+                    1e6 * Math.pow(4 / r, 0.75));
             }
 
             this._boxSize = 120;
             this._softening = 2.0;
             this._dt = 0.03;
-            this._enableSubgrid = true; // accretion disk needs cooling + accretion
+            this._enableSubgrid = true;
 
         } else if (name === 'cosmic-merger') {
-            // Two galaxies: M1=3000, M2=2000, sep=80
-            // v_esc = sqrt(2*G*(M1+M2)/sep) = sqrt(2*0.01*5000/80) = 1.12
-            // v_approach = 0.5 * v_esc = 0.56
             const M1 = 3000, M2 = 2000;
             const sep = 80;
-            const M_total = M1 + M2;
-            const v_esc = Math.sqrt(2 * G_N * M_total / sep);
+            const v_esc = Math.sqrt(2 * G_N * (M1 + M2) / sep);
             const v_approach = v_esc * 0.45;
-            const b = 10; // impact parameter
-
+            const b = 10;
             const r_s1 = 20, r_s2 = 16;
 
-            // Galaxy 1
             const cx1 = -sep / 2, cz1 = -b / 2;
             this.addBody(T.BLACK_HOLE, M1 * 0.05, cx1, 0, cz1, v_approach, 0, v_approach * 0.15);
             for (let i = 0; i < 250; i++) {
                 const r = rng() * r_s1 * 1.8;
                 const ph = PI2 * rng();
-                const zz = (rng() - 0.5) * 1.5;
+                const zz = randn() * 1.5;
                 const t = i < 125 ? T.DARK_MATTER : T.STAR;
-
                 const M_enc = this._enclosedMass(r, M1, r_s1);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
-
-                const M1_remaining = M1 * 0.95; // after BH takes 5%
+                const M1_remaining = M1 * 0.95;
                 this.addBody(t, (t === T.DARK_MATTER ? M1_remaining * 0.85 : M1_remaining * 0.15) / 125,
                     cx1 + r * Math.cos(ph), zz, cz1 + r * Math.sin(ph),
-                    v_approach - vc * Math.sin(ph), 0, v_approach * 0.15 + vc * Math.cos(ph),
+                    v_approach - vc * Math.sin(ph), randn() * vc * 0.05, v_approach * 0.15 + vc * Math.cos(ph),
                     t === T.STAR ? 4000 + rng() * 18000 : 0);
             }
 
-            // Galaxy 2
             const cx2 = sep / 2, cz2 = b / 2;
             this.addBody(T.BLACK_HOLE, M2 * 0.05, cx2, 0, cz2, -v_approach, 0, -v_approach * 0.15);
             for (let i = 0; i < 200; i++) {
                 const r = rng() * r_s2 * 1.8;
                 const ph = PI2 * rng();
-                const zz = (rng() - 0.5) * 1.5;
+                const zz = randn() * 1.5;
                 const t = i < 100 ? T.DARK_MATTER : T.STAR;
-
                 const M_enc = this._enclosedMass(r, M2, r_s2);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
-
                 const M2_remaining = M2 * 0.95;
                 this.addBody(t, (t === T.DARK_MATTER ? M2_remaining * 0.85 : M2_remaining * 0.15) / 100,
                     cx2 + r * Math.cos(ph), zz, cz2 + r * Math.sin(ph),
-                    -v_approach - vc * Math.sin(ph), 0, -v_approach * 0.15 + vc * Math.cos(ph),
+                    -v_approach - vc * Math.sin(ph), randn() * vc * 0.05, -v_approach * 0.15 + vc * Math.cos(ph),
                     t === T.STAR ? 4000 + rng() * 18000 : 0);
             }
 
             this._boxSize = 250;
-            this._softening = 4.0; // suppress relaxation for merger
+            this._softening = 4.0;
             this._dt = 0.04;
             this._enableSubgrid = false;
 
         } else {
-            // Cosmic web: DM particles with Zel'dovich perturbations
-            // M_per_particle=5, box=200 => total M = 3500+500 = 4000
-            // Collapse timescale ~ 1/sqrt(G*rho) ~ 1/sqrt(0.01*4000/200^3) ~ 70
+            // Cosmic web
             for (let i = 0; i < 700; i++) {
                 const x = (rng() - 0.5) * 200;
                 const y = (rng() - 0.5) * 200;
@@ -243,10 +242,7 @@ export class CosmicMockBridge {
                     -amp * kx * Math.sin(kx * z) * (1 + 0.5 * Math.cos(kx * x)));
             }
             for (let i = 0; i < 100; i++) {
-                const x = (rng() - 0.5) * 200;
-                const y = (rng() - 0.5) * 200;
-                const z = (rng() - 0.5) * 200;
-                this.addBody(T.GAS, 5, x, y, z, 0, 0, 0, 1e4);
+                this.addBody(T.GAS, 5, (rng()-0.5)*200, (rng()-0.5)*200, (rng()-0.5)*200, 0, 0, 0, 1e4);
             }
             this._boxSize = 200;
             this._softening = 6.0;
@@ -255,37 +251,27 @@ export class CosmicMockBridge {
         }
     }
 
-    // Compute gravitational accelerations (O(N^2) with mass-dependent Plummer softening)
-    //
-    // Mass-dependent softening: each body's gravity is softened proportional to
-    // how "spread out" it represents. A BH (point mass) gets tiny softening;
-    // a DM/star particle (representing a huge swarm) gets large softening.
-    // This prevents low-mass particles from creating artificially deep potential
-    // wells when they cluster, while letting the BH dominate at close range.
-    //
-    // eps_i = base_softening / sqrt(m_i / m_median)
-    // Heavy body → small eps → concentrated, point-like gravity
-    // Light body → large eps → diffuse, smeared-out gravity
+    // ================================================================
+    // FORCE COMPUTATION — pure forces only, no mass changes
+    // ================================================================
+
     _computeForces() {
         const G = G_N;
         const n = this._bodies.length;
-        const baseSoft = this._softening;
-
-        // Compute median mass for scaling reference
-        const masses = this._bodies.map(b => b.mass).sort((a, b) => a - b);
-        const medianMass = masses[Math.floor(n / 2)] || 1;
 
         for (const b of this._bodies) { b.ax = 0; b.ay = 0; b.az = 0; }
 
+        // Pairwise gravity with fixed per-type softening
         for (let i = 0; i < n; i++) {
             const bi = this._bodies[i];
-            // Per-body softening: heavy bodies are point-like, light bodies are diffuse
-            const si = baseSoft / Math.sqrt(Math.max(bi.mass / medianMass, 0.1));
+            const si = SOFTENING[bi.type] || 2.0;
             for (let j = i + 1; j < n; j++) {
                 const bj = this._bodies[j];
-                const sj = baseSoft / Math.sqrt(Math.max(bj.mass / medianMass, 0.1));
-                // Pairwise softening: geometric mean of the two
-                const eps2 = si * sj;
+                const sj = SOFTENING[bj.type] || 2.0;
+                // Gadget-2 rule: eps = max(eps_i, eps_j)
+                const eps = Math.max(si, sj);
+                const eps2 = eps * eps;
+
                 const dx = bj.x - bi.x;
                 const dy = bj.y - bi.y;
                 const dz = bj.z - bi.z;
@@ -299,85 +285,52 @@ export class CosmicMockBridge {
             }
         }
 
-        // ── Tidal forces / spaghettification (BH accretion scenario only) ──
-        // Only enabled with subgrid — in galaxy/merger the non-conservative
-        // tidal perturbation destabilizes disk orbits at low particle counts.
-        if (this._enableSubgrid) for (const bh of this._bodies) {
-            if (bh.type !== CosmicMockBridge.TYPE.BLACK_HOLE &&
-                bh.type !== CosmicMockBridge.TYPE.QUASAR) continue;
-            const r_tidal = Math.max(8.0, Math.cbrt(bh.mass) * 1.5); // tidal influence radius
+        // Sub-grid physics (BH accretion scenario only)
+        if (!this._enableSubgrid) return;
+
+        const T = CosmicMockBridge.TYPE;
+        const isGas = (t) => t === T.GAS || t === T.NEBULA;
+        const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
+        const isBH = (t) => t === T.BLACK_HOLE || t === T.QUASAR;
+        const baseSoft2 = this._softening * this._softening;
+
+        // Tidal spaghettification (conservative — radial stretch only)
+        for (const bh of this._bodies) {
+            if (!isBH(bh.type)) continue;
+            const r_tidal = Math.max(8.0, Math.cbrt(bh.mass) * 1.5);
             const r_tidal2 = r_tidal * r_tidal;
             for (const b of this._bodies) {
                 if (b.id === bh.id) continue;
-                const dx = b.x - bh.x;
-                const dy = b.y - bh.y;
-                const dz = b.z - bh.z;
+                const dx = b.x - bh.x, dy = b.y - bh.y, dz = b.z - bh.z;
                 const r2 = dx * dx + dy * dy + dz * dz;
                 if (r2 > r_tidal2 || r2 < 0.01) continue;
                 const r = Math.sqrt(r2);
                 const invR = 1.0 / r;
-                // Unit radial vector from BH to body
                 const rx = dx * invR, ry = dy * invR, rz = dz * invR;
-                // Tidal strength: stronger closer to BH (scales as 1/r^3)
-                const tidalStrength = G * bh.mass / (r2 * r) * 0.5;
-                // Radial component of body's velocity
-                const v_radial = b.vx * rx + b.vy * ry + b.vz * rz;
-                // Tangential velocity components
-                const vt_x = b.vx - v_radial * rx;
-                const vt_y = b.vy - v_radial * ry;
-                const vt_z = b.vz - v_radial * rz;
-                // Stretch radially: accelerate along r-hat
+                // Conservative tidal stretch: a = +2*G*M/(r^3) along r-hat
+                const tidalStrength = 2.0 * G * bh.mass / (r2 * r) * 0.3;
                 b.ax += tidalStrength * rx;
                 b.ay += tidalStrength * ry;
                 b.az += tidalStrength * rz;
-                // Squeeze laterally: decelerate perpendicular to r-hat
-                b.ax -= tidalStrength * 0.5 * vt_x / (Math.abs(v_radial) + 0.1);
-                b.ay -= tidalStrength * 0.5 * vt_y / (Math.abs(v_radial) + 0.1);
-                b.az -= tidalStrength * 0.5 * vt_z / (Math.abs(v_radial) + 0.1);
             }
         }
 
-        // ============================================================
-        // Body-type-specific physics (beyond universal gravity)
-        //
-        // Only enabled for scenarios where it matters (BH accretion).
-        // For galaxy/merger/web, pure collisionless N-body is more stable
-        // at low particle counts (N~800) where two-body relaxation dominates.
-        // ============================================================
-
-        if (!this._enableSubgrid) return; // galaxy, merger, web: gravity only
-
-        const T = CosmicMockBridge.TYPE;
-        const isGas = (t) => t === T.GAS || t === T.NEBULA;
-        const isBH  = (t) => t === T.BLACK_HOLE || t === T.QUASAR;
-        const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
-
-        // ── 1. Gas radiative cooling (density-dependent) ──
-        // Cooling rate scales as n² (bremsstrahlung): denser gas loses energy faster.
-        // This drives gas to sink toward center and form accretion disks/structures.
-        // DM and stars are collisionless — they cannot radiate.
+        // Gas cooling — reduces internal energy (NOT velocity drag)
         for (const b of this._bodies) {
             if (!isGas(b.type)) continue;
-            // Estimate local density from number of gas neighbors within smoothing
-            let localDensity = b.mass; // self
+            let localDensity = b.mass;
             for (const other of this._bodies) {
                 if (other.id === b.id || !isGas(other.type)) continue;
                 const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
-                if (dr2 < soft2 * 25) localDensity += other.mass;
+                if (dr2 < baseSoft2 * 25) localDensity += other.mass;
             }
-            // Cooling ~ rho^2 * Lambda(T), capped to prevent overcooling
-            // Very gentle: gas should orbit many times before sinking appreciably
-            // Target: ~5% KE loss per 10 orbits (orbit ~ 400 ticks at r=50)
             const coolingRate = Math.min(0.0002, 0.000002 * localDensity);
-            b.ax -= coolingRate * b.vx;
-            b.ay -= coolingRate * b.vy;
-            b.az -= coolingRate * b.vz;
-            // Temperature decreases with cooling (gas cools as it radiates)
-            b.temperature = Math.max(100, b.temperature * (1 - coolingRate * 0.1));
+            // Energy-based cooling: reduce internal energy → pressure drops naturally
+            b.internal_energy = Math.max(0.001, b.internal_energy * (1 - coolingRate));
+            b.temperature = Math.max(100, b.internal_energy * 1000);
         }
 
-        // ── 2. Gas pressure (SPH-like repulsion) ──
-        // Prevents gas from collapsing to a point. Stars/DM pass through freely.
+        // Gas pressure (SPH-like repulsion)
         const h_press = this._softening * 2.5;
         const h_press2 = h_press * h_press;
         for (let i = 0; i < n; i++) {
@@ -386,109 +339,91 @@ export class CosmicMockBridge {
             for (let j = i + 1; j < n; j++) {
                 const bj = this._bodies[j];
                 if (!isGas(bj.type)) continue;
-                const dx = bj.x - bi.x;
-                const dy = bj.y - bi.y;
-                const dz = bj.z - bi.z;
+                const dx = bj.x - bi.x, dy = bj.y - bi.y, dz = bj.z - bi.z;
                 const r2 = dx * dx + dy * dy + dz * dz;
                 if (r2 > h_press2 || r2 < 1e-10) continue;
                 const r = Math.sqrt(r2);
                 const q = r / h_press;
-                // Pressure force: repulsive, scales with (1-q)^2
-                // Stronger for hotter gas (temperature-dependent)
-                const T_avg = 0.5 * (bi.temperature + bj.temperature);
-                const pressScale = 1.0 + T_avg * 1e-6; // hotter gas pushes harder
-                const fmag = G * pressScale * 0.3 * (bi.mass + bj.mass) * (1 - q) * (1 - q) / (r2 + soft2);
+                const T_avg = 0.5 * (bi.internal_energy + bj.internal_energy);
+                const pressScale = 1.0 + T_avg * 0.1;
+                const fmag = G * pressScale * 0.3 * (bi.mass + bj.mass) * (1 - q) * (1 - q) / (r2 + baseSoft2);
                 bi.ax -= fmag * dx / r; bi.ay -= fmag * dy / r; bi.az -= fmag * dz / r;
                 bj.ax += fmag * dx / r; bj.ay += fmag * dy / r; bj.az += fmag * dz / r;
-                // Compression heats gas (PdV work)
-                const vij_dot_rij = (bi.vx-bj.vx)*dx + (bi.vy-bj.vy)*dy + (bi.vz-bj.vz)*dz;
-                if (vij_dot_rij < 0) { // approaching → compressive heating
-                    const heating = -vij_dot_rij * 0.001 * (1 - q);
-                    bi.temperature += heating;
-                    bj.temperature += heating;
-                }
             }
         }
 
-        // ── 3. Star → Gas radiation pressure ──
-        // Luminous stars heat and push nearby gas (stellar feedback).
-        // Prevents runaway gas collapse, creates feedback-regulated star formation.
+        // Stellar radiation pressure on gas
         for (const star of this._bodies) {
             if (!isStar(star.type) || star.luminosity <= 0) continue;
             for (const gas of this._bodies) {
                 if (!isGas(gas.type)) continue;
-                const dx = gas.x - star.x;
-                const dy = gas.y - star.y;
-                const dz = gas.z - star.z;
-                const r2 = dx * dx + dy * dy + dz * dz + soft2;
-                if (r2 > 400) continue; // only within 20 units
+                const dx = gas.x - star.x, dy = gas.y - star.y, dz = gas.z - star.z;
+                const r2 = dx * dx + dy * dy + dz * dz + baseSoft2;
+                if (r2 > 400) continue;
                 const r = Math.sqrt(r2);
-                // Radiation pressure: F = L / (4*pi*r^2*c)
-                const c_sim = 0.577; // C_SPEED in sim units
-                const f_rad = star.luminosity / (4 * Math.PI * r2 * c_sim) * 0.001; // very gentle
+                const f_rad = star.luminosity / (4 * Math.PI * r2 * 0.577) * 0.001;
                 gas.ax += f_rad * dx / r;
                 gas.ay += f_rad * dy / r;
                 gas.az += f_rad * dz / r;
-                // Heating from radiation
-                gas.temperature += star.luminosity * 0.00001 / (r2 + 1);
             }
         }
+    }
 
-        // ── 4. Dense gas → star formation (Jeans criterion) ──
-        // When gas density exceeds threshold and temperature is low, convert to star.
+    // ================================================================
+    // POST-INTEGRATION UPDATES — mass changes, mergers, cleanup
+    // Called AFTER velocity Verlet is complete (Gadget-2 convention)
+    // ================================================================
+
+    _postUpdates() {
+        if (!this._enableSubgrid) {
+            // Even without subgrid, enforce speed limit
+            this._enforceSpeedLimit();
+            return;
+        }
+
+        const T = CosmicMockBridge.TYPE;
+        const G = G_N;
+        const isGas = (t) => t === T.GAS || t === T.NEBULA;
+        const isBH = (t) => t === T.BLACK_HOLE || t === T.QUASAR;
+        const baseSoft2 = this._softening * this._softening;
+
+        // Star formation (dense cold gas → star)
         const newStars = [];
         for (const b of this._bodies) {
             if (!isGas(b.type) || b.mass < 0.5) continue;
-            // Count nearby gas (density proxy)
             let nearby = 0;
             for (const other of this._bodies) {
                 if (other.id === b.id || !isGas(other.type)) continue;
                 const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
-                if (dr2 < soft2 * 9) nearby++;
+                if (dr2 < baseSoft2 * 9) nearby++;
             }
-            // Jeans: form star when very dense (>10 neighbors) and cool (<3000 K)
-            // Rare event — most gas should stay as gas for many orbits
             if (nearby > 10 && b.temperature < 3000 && Math.random() < 0.01) {
-                const starMass = b.mass * 0.15; // only 15% converts
+                const starMass = b.mass * 0.15;
                 b.mass -= starMass;
-                newStars.push({
-                    type: T.STAR, mass: starMass,
-                    x: b.x, y: b.y, z: b.z,
-                    vx: b.vx, vy: b.vy, vz: b.vz,
-                    temperature: 5800, // newborn star
-                    luminosity: Math.pow(starMass, 3.5)
-                });
+                newStars.push({type: T.STAR, mass: starMass,
+                    x: b.x, y: b.y, z: b.z, vx: b.vx, vy: b.vy, vz: b.vz,
+                    temp: 5800, lum: Math.pow(starMass, 3.5)});
             }
         }
         for (const s of newStars) {
-            this.addBody(s.type, s.mass, s.x, s.y, s.z, s.vx, s.vy, s.vz, s.temperature);
-            // Set luminosity on the newly added body
-            this._bodies[this._bodies.length - 1].luminosity = s.luminosity;
+            this.addBody(s.type, s.mass, s.x, s.y, s.z, s.vx, s.vy, s.vz, s.temp);
+            this._bodies[this._bodies.length - 1].luminosity = s.lum;
         }
 
-        // ── 5. BH/Quasar accretion (gas → BH mass transfer) ──
-        // Only gas that is gravitationally bound AND slow (relative to BH)
-        // gets accreted. Fast-moving gas in a flyby escapes.
-        // Rate is Bondi-like: mdot ~ M^2 / (cs^2 + v_rel^2)^(3/2)
+        // BH accretion (bound gas → BH)
         for (const bh of this._bodies) {
             if (!isBH(bh.type)) continue;
             const r_acc = Math.max(1.5, Math.cbrt(bh.mass) * 0.3);
             const r_acc2 = r_acc * r_acc;
             for (const gas of this._bodies) {
                 if (!isGas(gas.type) || gas.mass <= 0) continue;
-                const dx = gas.x - bh.x;
-                const dy = gas.y - bh.y;
-                const dz = gas.z - bh.z;
+                const dx = gas.x - bh.x, dy = gas.y - bh.y, dz = gas.z - bh.z;
                 const r2 = dx * dx + dy * dy + dz * dz;
                 if (r2 > r_acc2) continue;
-                // Relative velocity determines if gas is bound
                 const dvx = gas.vx - bh.vx, dvy = gas.vy - bh.vy, dvz = gas.vz - bh.vz;
                 const v_rel2 = dvx*dvx + dvy*dvy + dvz*dvz;
                 const r = Math.sqrt(r2 + 0.01);
-                const v_esc2 = 2 * G * bh.mass / r; // escape velocity squared
-                // Only accrete if relative velocity < escape velocity (bound gas)
-                if (v_rel2 > v_esc2) continue;
-                // Bondi-like rate: slower gas accretes faster
+                if (v_rel2 > 2 * G * bh.mass / r) continue; // only bound gas
                 const rate = 0.005 * bh.mass / (v_rel2 + 0.1);
                 const dm = Math.min(gas.mass * 0.1, gas.mass * rate * 0.001);
                 bh.mass += dm;
@@ -496,72 +431,85 @@ export class CosmicMockBridge {
             }
         }
 
-        // ── 6. BH-BH / compact object merger ──
+        // BH-BH mergers
         for (let i = 0; i < this._bodies.length; i++) {
             const bi = this._bodies[i];
-            if (!isBH(bi.type)) continue;
-            if (bi.mass <= 0) continue;
+            if (!isBH(bi.type) || bi.mass <= 0) continue;
             for (let j = i + 1; j < this._bodies.length; j++) {
                 const bj = this._bodies[j];
                 if (!isBH(bj.type) || bj.mass <= 0) continue;
-                const dx = bj.x - bi.x;
-                const dy = bj.y - bi.y;
-                const dz = bj.z - bi.z;
-                const r2 = dx * dx + dy * dy + dz * dz;
+                const dx = bj.x-bi.x, dy = bj.y-bi.y, dz = bj.z-bi.z;
+                const r2 = dx*dx + dy*dy + dz*dz;
                 const r_merge = Math.cbrt(bi.mass + bj.mass) * 0.3;
                 if (r2 > r_merge * r_merge) continue;
                 const m_total = bi.mass + bj.mass;
-                bi.vx = (bi.vx * bi.mass + bj.vx * bj.mass) / m_total;
-                bi.vy = (bi.vy * bi.mass + bj.vy * bj.mass) / m_total;
-                bi.vz = (bi.vz * bi.mass + bj.vz * bj.mass) / m_total;
-                bi.mass = m_total * 0.95; // 5% GW radiation
+                bi.vx = (bi.vx*bi.mass + bj.vx*bj.mass) / m_total;
+                bi.vy = (bi.vy*bi.mass + bj.vy*bj.mass) / m_total;
+                bi.vz = (bi.vz*bi.mass + bj.vz*bj.mass) / m_total;
+                bi.mass = m_total * 0.95;
                 bj.mass = 0;
             }
         }
 
-        // ── 7. Speed limit: v < c = 1/sqrt(3) ──
-        const c2 = 1.0 / 3.0; // C_SPEED^2
-        for (const b of this._bodies) {
-            const v2 = b.vx * b.vx + b.vy * b.vy + b.vz * b.vz;
-            if (v2 > c2) {
-                const scale = Math.sqrt(c2 / v2);
-                b.vx *= scale; b.vy *= scale; b.vz *= scale;
-            }
-        }
+        // Speed limit
+        this._enforceSpeedLimit();
 
-        // ── Cleanup: remove depleted bodies ──
+        // Remove depleted bodies
         this._bodies = this._bodies.filter(b => b.mass > 0.01);
     }
+
+    _enforceSpeedLimit() {
+        const c2 = 1.0 / 3.0;
+        for (const b of this._bodies) {
+            const v2 = b.vx*b.vx + b.vy*b.vy + b.vz*b.vz;
+            if (v2 > c2) {
+                const s = Math.sqrt(c2 / v2);
+                b.vx *= s; b.vy *= s; b.vz *= s;
+            }
+        }
+    }
+
+    // ================================================================
+    // TICK — Velocity Verlet (Gadget-2 kick-drift-kick)
+    // ================================================================
 
     tick() {
         const n = this._bodies.length;
         if (n === 0) return;
         const dt = this._dt;
 
-        // Velocity Verlet (symplectic): kick-drift-recompute-kick
-        // All bodies (including BHs) integrated uniformly.
+        // Step 1: half-kick with CURRENT accelerations
         for (const b of this._bodies) {
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;
         }
+        // Step 2: drift
         for (const b of this._bodies) {
             b.x += dt * b.vx;
             b.y += dt * b.vy;
             b.z += dt * b.vz;
         }
+        // Step 3: recompute forces at NEW positions
         this._computeForces();
+        // Step 4: second half-kick with FRESH forces
         for (const b of this._bodies) {
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;
         }
+        // Step 5: post-integration updates (mass changes, mergers, cleanup)
+        this._postUpdates();
 
         this._t_cosmic += dt;
         this._tick++;
     }
 
     run(nTicks) { for (let i = 0; i < nTicks; i++) this.tick(); }
+
+    // ================================================================
+    // DATA OUTPUT
+    // ================================================================
 
     getCosmicData() {
         const n = this._bodies.length;
@@ -574,16 +522,13 @@ export class CosmicMockBridge {
 
         for (let i = 0; i < n; i++) {
             const b = this._bodies[i];
-            positions[i * 3] = b.x;
-            positions[i * 3 + 1] = b.y;
-            positions[i * 3 + 2] = b.z;
+            positions[i*3] = b.x; positions[i*3+1] = b.y; positions[i*3+2] = b.z;
             types[i] = b.type;
             temperatures[i] = b.temperature;
             sizes[i] = Math.cbrt(b.mass);
             densities[i] = b.density || 0.1;
             luminosities[i] = b.luminosity;
         }
-
         return { positions, types, temperatures, sizes, densities, luminosities, count: n };
     }
 
@@ -592,7 +537,7 @@ export class CosmicMockBridge {
         const counts = new Array(9).fill(0);
         for (const b of this._bodies) {
             totalMass += b.mass;
-            totalKE += 0.5 * b.mass * (b.vx * b.vx + b.vy * b.vy + b.vz * b.vz);
+            totalKE += 0.5 * b.mass * (b.vx*b.vx + b.vy*b.vy + b.vz*b.vz);
             const idx = b.type + 3;
             if (idx >= 0 && idx < 9) counts[idx]++;
         }
