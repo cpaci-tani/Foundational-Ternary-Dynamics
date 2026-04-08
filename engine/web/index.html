@@ -451,7 +451,7 @@
                 </label>
             </div>
             <!-- Scale 5 (Cosmic) controls -->
-            <div class="tb-group scale-cosmic-only" id="cosmic-controls" style="flex-wrap:wrap;gap:4px;">
+            <div class="tb-group scale-cosmic-only" id="cosmic-controls">
                 <span class="tb-label">Scenario</span>
                 <select class="tb-select" id="cosmic-scenario-select" style="max-width:180px">
                     <option value="cosmic-galaxy" selected>Spiral Galaxy</option>
@@ -459,14 +459,18 @@
                     <option value="cosmic-merger">Galaxy Merger</option>
                     <option value="cosmic-web">Cosmic Web</option>
                 </select>
-                <span class="tb-label" style="margin-left:8px;">Camera</span>
+                <span class="tb-label">Camera</span>
                 <select class="tb-select" id="cosmic-camera-select" style="max-width:130px">
                     <option value="overview">Overview</option>
                     <option value="galaxy" selected>Galaxy</option>
                     <option value="blackhole">Black Hole</option>
                     <option value="merger">Merger</option>
                 </select>
-                <div id="cosmic-diagnostics" style="font-size:10px;color:var(--text-muted);width:100%;margin-top:4px;line-height:1.4;font-family:var(--ff-mono);"></div>
+            </div>
+            <div class="tb-group scale-cosmic-only" id="cosmic-telemetry" style="gap:12px;">
+                <span class="tb-value" id="cosmic-tb-bodies" title="Body count">--</span>
+                <span class="tb-value" id="cosmic-tb-tick" title="Simulation tick">--</span>
+                <span class="tb-value" id="cosmic-tb-hubble" title="Hubble parameter H(t)">--</span>
             </div>
             <!-- Meta Scale controls -->
             <div class="tb-group scale5-only" id="meta-controls" style="flex-wrap:wrap;gap:4px;">

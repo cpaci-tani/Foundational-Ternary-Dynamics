@@ -1880,16 +1880,7 @@ function animateCosmic(now) {
     const diag = _cosmicBridge.getDiagnostics();
     _cosmicRenderer.update(data, diag);
 
-    // Update diagnostics display
-    const cosmicDiagEl = document.getElementById('cosmic-diagnostics');
-    if (cosmicDiagEl) {
-        cosmicDiagEl.innerHTML = `
-            <div>Tick: ${diag.tick}  Bodies: ${diag.bodyCount}</div>
-            <div>H(t): ${diag.hubbleParameter.toFixed(4)}  a(t): ${diag.scaleFactor.toFixed(4)}</div>
-            <div>&Omega;<sub>m</sub>: ${diag.omegaMatter.toFixed(3)}  &Omega;<sub>&Lambda;</sub>: ${diag.omegaLambda.toFixed(3)}</div>
-            <div>Total Mass: ${diag.totalMass.toExponential(2)}  KE: ${diag.totalKE.toExponential(2)}</div>
-        `;
-    }
+    // Toolbar telemetry is updated by the setInterval in loadCosmicScenario
 
     // Render using standard viewport (post-processing added later)
     viewport.render();
@@ -2989,14 +2980,11 @@ function loadCosmicScenario(scenarioName = 'cosmic-galaxy') {
         const data = _cosmicBridge.getCosmicData();
         const diag = _cosmicBridge.getDiagnostics();
         _cosmicRenderer.update(data, diag);
-        // Toolbar diagnostics
-        const el = document.getElementById('cosmic-diagnostics');
-        if (el) {
-            el.innerHTML = `<div>Tick: ${diag.tick}  Bodies: ${diag.bodyCount}</div>`
-                + `<div>H(t): ${diag.hubbleParameter.toFixed(4)}  a(t): ${diag.scaleFactor.toFixed(4)}</div>`
-                + `<div>\u03A9<sub>m</sub>: ${diag.omegaMatter.toFixed(3)}  \u03A9<sub>\u039B</sub>: ${diag.omegaLambda.toFixed(3)}</div>`
-                + `<div>Mass: ${diag.totalMass.toExponential(2)}  KE: ${diag.totalKE.toExponential(2)}</div>`;
-        }
+        // Toolbar telemetry (compact inline values)
+        const _tb = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+        _tb('cosmic-tb-bodies', diag.bodyCount + ' bodies');
+        _tb('cosmic-tb-tick', 'T ' + diag.tick);
+        _tb('cosmic-tb-hubble', 'H=' + diag.hubbleParameter.toFixed(4));
         // Controls panel cards
         const c = diag.countsByType || [];
         const _set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
