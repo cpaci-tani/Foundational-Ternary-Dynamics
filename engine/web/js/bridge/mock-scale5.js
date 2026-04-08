@@ -270,9 +270,18 @@ export class CosmicMockBridge {
             }
         }
 
-        // Chandrasekhar dynamical friction on BHs
+        // BH/Quasar: zero out N-body gravity (they are anchors, not kicked by particles)
+        // They still SOURCE gravity (other bodies felt their pull above) but don't receive it.
+        // Only dynamical friction (below) moves them — prevents wobble.
+        const BHT = CosmicMockBridge.TYPE.BLACK_HOLE;
+        const QST = CosmicMockBridge.TYPE.QUASAR;
         for (const b of this._bodies) {
-            if (b.type !== CosmicMockBridge.TYPE.BLACK_HOLE) continue;
+            if (b.type === BHT || b.type === QST) { b.ax = 0; b.ay = 0; b.az = 0; }
+        }
+
+        // Chandrasekhar dynamical friction on BHs (the ONLY force that moves them)
+        for (const b of this._bodies) {
+            if (b.type !== BHT && b.type !== QST) continue;
             const v2 = b.vx * b.vx + b.vy * b.vy + b.vz * b.vz;
             if (v2 < 1e-20) continue;
             const lnLambda = 5.0;
