@@ -2976,7 +2976,7 @@ function loadCosmicScenario(scenarioName = 'cosmic-galaxy') {
             window._cosmicInterval = null;
             return;
         }
-        if (running) _cosmicBridge.run(3);
+        if (running) _cosmicBridge.run(5);
         const data = _cosmicBridge.getCosmicData();
         const diag = _cosmicBridge.getDiagnostics();
         _cosmicRenderer.update(data, diag);
