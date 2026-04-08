@@ -612,29 +612,33 @@ export class CosmicMockBridge {
         // Check: for each non-BH body, count nearby mass within softening radius.
         // If enclosed mass gives v_esc = sqrt(2*G*M_enc/r) > C_SPEED, convert.
         const C_SPEED = 1.0 / Math.sqrt(3.0);
-        for (const b of this._bodies) {
-            if (isBH(b.type)) continue;
-            if (b.mass <= 0) continue;
-            // Count enclosed mass within 2*softening
+        // Only form a BH if none exist yet — one seed per simulation.
+        // Find the single densest point and convert only that one body.
+        const hasBH = this._bodies.some(b => isBH(b.type));
+        if (!hasBH) {
+            let bestBody = null, bestMenc = 0;
             const checkR = this._softening * 2;
             const checkR2 = checkR * checkR;
-            let M_enc = 0;
-            for (const other of this._bodies) {
-                if (other.id === b.id) continue;
-                const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
-                if (dr2 < checkR2) M_enc += other.mass;
+            for (const b of this._bodies) {
+                if (b.mass <= 0) continue;
+                let M_enc = 0;
+                for (const other of this._bodies) {
+                    if (other.id === b.id) continue;
+                    const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
+                    if (dr2 < checkR2) M_enc += other.mass;
+                }
+                if (M_enc > bestMenc) { bestMenc = M_enc; bestBody = b; }
             }
-            // Escape velocity at the edge of this region
-            const v_esc = Math.sqrt(2 * G * M_enc / checkR);
-            if (v_esc > C_SPEED && M_enc > 50) {
-                // This region has collapsed past the FTD threshold!
-                // Convert this body to a black hole — it becomes the seed.
-                b.type = T.BLACK_HOLE;
-                b.temperature = 0;
-                b.luminosity = 0;
-                b.tidal_stretch = 0;
-                // It keeps its mass — nearby matter will be accreted naturally
-                // through the existing horizon absorption mechanism.
+            if (bestBody) {
+                const v_esc = Math.sqrt(2 * G * bestMenc / checkR);
+                if (v_esc > C_SPEED && bestMenc > 50) {
+                    // The densest point has collapsed past the FTD threshold.
+                    // One body becomes the seed black hole.
+                    bestBody.type = T.BLACK_HOLE;
+                    bestBody.temperature = 0;
+                    bestBody.luminosity = 0;
+                    bestBody.tidal_stretch = 0;
+                }
             }
         }
 
