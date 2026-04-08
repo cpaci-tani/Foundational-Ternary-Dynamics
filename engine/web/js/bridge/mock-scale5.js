@@ -275,12 +275,104 @@ export class CosmicMockBridge {
             }
         }
 
-        // BHs receive full N-body gravity (like all other bodies) so they're
-        // pulled toward mass concentrations and each other. No special treatment.
-        // Wobble is minimal when BH mass >> individual particle mass.
-        // No dynamical friction — it was overpowering the BH-BH attraction
-        // and causing artificial repulsion. Real inspiral comes from
-        // gravitational interaction with the surrounding stellar/DM mass.
+        // ── Body-type-specific physics (beyond gravity) ──
+        // Different body types have different interaction physics:
+        //   DM, Stars, WD, NS: collisionless (gravity only) — no extra forces
+        //   Gas, Nebula: dissipative (radiative cooling) — lose kinetic energy
+        //   BH, Quasar: accrete nearby gas — mass transfer
+
+        const T = CosmicMockBridge.TYPE;
+
+        // Gas dissipation: radiative cooling removes kinetic energy.
+        // Gas can radiate away orbital energy, causing it to sink inward
+        // and form denser structures (disk, accretion flows). DM cannot.
+        // Implemented as gentle velocity damping (energy loss ~ 0.1% per tick).
+        const gasCooling = 0.001; // fractional energy loss per tick
+        for (const b of this._bodies) {
+            if (b.type !== T.GAS && b.type !== T.NEBULA) continue;
+            b.ax -= gasCooling * b.vx;
+            b.ay -= gasCooling * b.vy;
+            b.az -= gasCooling * b.vz;
+        }
+
+        // Gas pressure: simple repulsion at close range prevents gas collapse.
+        // SPH-like: when two gas particles are within 2*softening, they repel.
+        // This gives gas a finite "size" that DM/stars lack.
+        const pressureRange = this._softening * 2.5;
+        const pressureRange2 = pressureRange * pressureRange;
+        for (let i = 0; i < n; i++) {
+            const bi = this._bodies[i];
+            if (bi.type !== T.GAS && bi.type !== T.NEBULA) continue;
+            for (let j = i + 1; j < n; j++) {
+                const bj = this._bodies[j];
+                if (bj.type !== T.GAS && bj.type !== T.NEBULA) continue;
+                const dx = bj.x - bi.x;
+                const dy = bj.y - bi.y;
+                const dz = bj.z - bi.z;
+                const r2 = dx * dx + dy * dy + dz * dz;
+                if (r2 > pressureRange2 || r2 < 1e-10) continue;
+                const r = Math.sqrt(r2);
+                const q = r / pressureRange;
+                // Repulsive force ~ (1-q)^2 / r (cubic spline-like)
+                const fmag = G * 0.5 * (bi.mass + bj.mass) * (1 - q) * (1 - q) / (r2 + soft2);
+                bi.ax -= fmag * dx / r;
+                bi.ay -= fmag * dy / r;
+                bi.az -= fmag * dz / r;
+                bj.ax += fmag * dx / r;
+                bj.ay += fmag * dy / r;
+                bj.az += fmag * dz / r;
+            }
+        }
+
+        // BH/Quasar accretion: gas within accretion radius gets absorbed.
+        // Mass transfers from gas to BH. Gas particle removed when depleted.
+        const accretionFactor = 0.02; // fraction of gas mass accreted per tick
+        for (const bh of this._bodies) {
+            if (bh.type !== T.BLACK_HOLE && bh.type !== T.QUASAR) continue;
+            const r_acc = Math.max(3.0, Math.cbrt(bh.mass) * 0.5); // accretion radius
+            const r_acc2 = r_acc * r_acc;
+            for (const gas of this._bodies) {
+                if (gas.type !== T.GAS && gas.type !== T.NEBULA) continue;
+                if (gas.mass <= 0) continue;
+                const dx = gas.x - bh.x;
+                const dy = gas.y - bh.y;
+                const dz = gas.z - bh.z;
+                const r2 = dx * dx + dy * dy + dz * dz;
+                if (r2 > r_acc2) continue;
+                // Transfer mass
+                const dm = gas.mass * accretionFactor;
+                bh.mass += dm;
+                gas.mass -= dm;
+            }
+        }
+
+        // BH-BH merger: when two BHs are within mutual Schwarzschild radius
+        for (let i = 0; i < this._bodies.length; i++) {
+            const bi = this._bodies[i];
+            if (bi.type !== T.BLACK_HOLE && bi.type !== T.QUASAR) continue;
+            if (bi.mass <= 0) continue;
+            for (let j = i + 1; j < this._bodies.length; j++) {
+                const bj = this._bodies[j];
+                if (bj.type !== T.BLACK_HOLE && bj.type !== T.QUASAR) continue;
+                if (bj.mass <= 0) continue;
+                const dx = bj.x - bi.x;
+                const dy = bj.y - bi.y;
+                const dz = bj.z - bi.z;
+                const r2 = dx * dx + dy * dy + dz * dz;
+                const r_merge = Math.cbrt(bi.mass + bj.mass) * 0.3;
+                if (r2 > r_merge * r_merge) continue;
+                // Merge: conserve momentum, lose 5% mass to GW
+                const m_total = bi.mass + bj.mass;
+                bi.vx = (bi.vx * bi.mass + bj.vx * bj.mass) / m_total;
+                bi.vy = (bi.vy * bi.mass + bj.vy * bj.mass) / m_total;
+                bi.vz = (bi.vz * bi.mass + bj.vz * bj.mass) / m_total;
+                bi.mass = m_total * 0.95; // 5% radiated as GW
+                bj.mass = 0; // mark for removal
+            }
+        }
+
+        // Remove depleted bodies (mass <= 0 from accretion or merger)
+        this._bodies = this._bodies.filter(b => b.mass > 0.01);
     }
 
     tick() {
