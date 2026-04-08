@@ -1577,7 +1577,11 @@ function wireToolbar() {
     document.getElementById('btn-reset').addEventListener('click', () => {
         running = false;
         updatePlayButton();
-        if (engineMode === 'consciousness') {
+        if (engineMode === 'cosmic') {
+            loadCosmicScenario(document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
+        } else if (engineMode === 'meta') {
+            loadMetaScenario();
+        } else if (engineMode === 'consciousness') {
             loadConsciousnessScenario(document.getElementById('cs-scenario-select').value);
         } else if (engineMode === 'molecules') {
             loadMoleculeScenario(document.getElementById('mol-scenario-select').value);
