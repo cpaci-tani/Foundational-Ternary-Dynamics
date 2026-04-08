@@ -1,15 +1,14 @@
 /**
  * CosmicMockBridge — JS-only N-body simulation for cosmic scale (Scale 5).
  *
- * Physics:
- *   - Newtonian gravity with Plummer softening: F = G * m_i * m_j / (r^2 + eps^2)
- *   - Velocity Verlet (symplectic, energy-conserving to machine precision)
- *   - Keplerian circular velocities for disk initialization: v_c = sqrt(G * M_enc / r)
- *   - Merger approach velocity from parabolic orbit: v = sqrt(2 * G * M_total / r)
- *   - Dynamical friction on massive bodies (Chandrasekhar formula, simplified)
- *   - Accretion disk gas gets viscous angular momentum transport
+ * Unit system (simulation units):
+ *   G = G_N = 0.01 (from FTD ontic chain)
+ *   Masses chosen so v_circular = sqrt(G*M/r) ~ O(1) for visual dynamics
+ *   Positions span ~100 units, velocities ~ 0.5-2 units/tick
+ *   dt chosen so displacement ~ 0.1-0.5 units/frame (3 ticks/frame)
  *
- * All constants from FTD ontic chain via constants.js.
+ * This is NOT in physical CGS/SI — it's a dimensionless system tuned for
+ * visual dynamics while preserving correct gravitational scaling.
  */
 
 import { G_N, OMEGA_LAMBDA, OMEGA_MATTER } from '../constants.js';
@@ -19,13 +18,14 @@ export class CosmicMockBridge {
         this._bodies = [];
         this._tick = 0;
         this._nextId = 0;
-        this._dt = 0.001;
+        this._dt = 0.01;
         this._a = 1.0;
         this._adot = 0.0;
-        this._H0 = 0.07;
-        this._boxSize = 1000;
+        this._H0 = 0.001;
+        this._boxSize = 200;
         this._softening = 1.0;
         this._gwEvents = [];
+        this._t_cosmic = 0.0;
     }
 
     static TYPE = {
@@ -49,8 +49,7 @@ export class CosmicMockBridge {
         return id;
     }
 
-    // Plummer enclosed mass: M_enc = M_total * r^3 / (r^2 + a^2)^(3/2)
-    // Smooth profile that avoids central singularity; converges to M_total at large r.
+    // Plummer enclosed mass: M_enc = M * r^3 / (r^2 + a^2)^(3/2)
     _enclosedMass(r, M_total, rs) {
         return M_total * r * r * r / Math.pow(r * r + rs * rs, 1.5);
     }
@@ -61,203 +60,192 @@ export class CosmicMockBridge {
         this._tick = 0;
         this._a = 1.0;
         this._gwEvents = [];
+        this._t_cosmic = 0.0;
 
         const T = CosmicMockBridge.TYPE;
         const rng = this._rng(42);
         const PI2 = Math.PI * 2;
 
-        if (name === 'cosmic-galaxy') {
-            // ── Spiral galaxy with proper Keplerian rotation curve ──
-            // Total mass budget: 1e12 (DM halo dominates)
-            const M_total = 1e12;
-            const M_bh = 4e9;           // SMBH ~ 0.4% of total
-            const M_dm = M_total * 0.85; // 85% dark matter
-            const M_disk = M_total * 0.1; // 10% disk (stars + gas)
-            const r_s = 40;              // Scale radius for rotation curve
-            const r_disk = 50;           // Disk truncation radius
-            const N_dm = 300, N_star = 350, N_gas = 150;
+        // ================================================================
+        // All scenarios use natural units where G=0.01:
+        //   v_c = sqrt(G*M/r) ~ sqrt(0.01 * M_total / r_scale) ~ 1
+        //   => M_total / r_scale ~ 100
+        // ================================================================
 
-            // Central SMBH (fixed at origin)
+        if (name === 'cosmic-galaxy') {
+            // Spiral galaxy: M_total=5000, r_disk=50 => v_c ~ sqrt(0.01*5000/50) = 1.0
+            const M_total = 5000;
+            const M_bh = 20;
+            const M_dm = M_total * 0.85;
+            const M_disk = M_total * 0.15;
+            const r_s = 30;      // Scale radius
+            const r_disk = 50;   // Disk extent
+
+            // Central black hole
             this.addBody(T.BLACK_HOLE, M_bh, 0, 0, 0);
 
-            // DM halo — spherical Hernquist profile
-            for (let i = 0; i < N_dm; i++) {
-                // Hernquist CDF inversion: r = a * sqrt(u) / (1 - sqrt(u))
-                // Clamped to avoid infinite radius when u -> 1
-                const u = rng() * 0.98; // cap at 98th percentile to avoid extreme outliers
+            // DM halo (spherical, Hernquist profile)
+            for (let i = 0; i < 300; i++) {
+                const u = rng() * 0.95;
                 const su = Math.sqrt(u);
-                const r = r_s * su / (1.0 - su);
-                const clampR = Math.min(r, 250);
+                const r = Math.min(r_s * su / (1.0 - su), 120);
                 const th = Math.acos(2 * rng() - 1);
                 const ph = PI2 * rng();
-                const x = clampR * Math.sin(th) * Math.cos(ph);
-                const y = clampR * Math.sin(th) * Math.sin(ph);
-                const z = clampR * Math.cos(th);
+                const x = r * Math.sin(th) * Math.cos(ph);
+                const y = r * Math.sin(th) * Math.sin(ph);
+                const z = r * Math.cos(th);
 
-                // Isotropic velocity dispersion ~ sqrt(G * M_enc / r)
-                const M_enc = this._enclosedMass(clampR, M_total, r_s);
-                const sigma = Math.sqrt(G_N * M_enc / (clampR + 1)) * 0.4;
-                this.addBody(T.DARK_MATTER, M_dm / N_dm, x, y, z,
+                const M_enc = this._enclosedMass(r, M_total, r_s);
+                const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 2)) * 0.35;
+                this.addBody(T.DARK_MATTER, M_dm / 300, x, y, z,
                     sigma * (rng() - 0.5) * 2,
                     sigma * (rng() - 0.5) * 2,
                     sigma * (rng() - 0.5) * 2);
             }
 
-            // Stellar disk — exponential profile with spiral density wave
-            for (let i = 0; i < N_star; i++) {
-                const r = -r_disk * 0.3 * Math.log(rng() + 0.001);
-                const clampR = Math.min(r, r_disk * 1.5);
+            // Stellar disk with spiral arms
+            for (let i = 0; i < 350; i++) {
+                const r = 2 + rng() * r_disk;
                 const arm = Math.floor(rng() * 2);
-                const phi_base = arm * Math.PI + 0.35 * Math.log(clampR + 1);
+                const phi_base = arm * Math.PI + 0.4 * Math.log(r + 1);
                 const ph = phi_base + (rng() - 0.5) * 0.7;
                 const zz = (rng() - 0.5) * 1.5;
 
-                // Circular velocity from enclosed mass (flat rotation curve)
-                const M_enc = M_bh + this._enclosedMass(clampR, M_dm, r_s);
-                const vc = Math.sqrt(G_N * M_enc / Math.max(clampR, this._softening));
+                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 2));
 
-                this.addBody(T.STAR, M_disk * 0.6 / N_star,
-                    clampR * Math.cos(ph), zz, clampR * Math.sin(ph),
+                this.addBody(T.STAR, M_disk * 0.6 / 350,
+                    r * Math.cos(ph), zz, r * Math.sin(ph),
                     -vc * Math.sin(ph), 0, vc * Math.cos(ph),
                     3000 + rng() * 25000);
             }
 
-            // Gas disk — wider, with spiral
-            for (let i = 0; i < N_gas; i++) {
-                const r = -r_disk * 0.4 * Math.log(rng() + 0.001);
-                const clampR = Math.min(r, r_disk * 2.0);
+            // Gas disk
+            for (let i = 0; i < 150; i++) {
+                const r = 3 + rng() * r_disk * 1.3;
                 const arm = Math.floor(rng() * 2);
-                const phi_base = arm * Math.PI + 0.35 * Math.log(clampR + 1);
+                const phi_base = arm * Math.PI + 0.4 * Math.log(r + 1);
                 const ph = phi_base + (rng() - 0.5) * 1.0;
                 const zz = (rng() - 0.5) * 1.0;
 
-                const M_enc = M_bh + this._enclosedMass(clampR, M_dm, r_s);
-                const vc = Math.sqrt(G_N * M_enc / Math.max(clampR, this._softening));
+                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 2));
 
-                this.addBody(T.GAS, M_disk * 0.4 / N_gas,
-                    clampR * Math.cos(ph), zz, clampR * Math.sin(ph),
+                this.addBody(T.GAS, M_disk * 0.4 / 150,
+                    r * Math.cos(ph), zz, r * Math.sin(ph),
                     -vc * Math.sin(ph), 0, vc * Math.cos(ph),
                     5000 + rng() * 15000);
             }
 
-            this._boxSize = 300;
-            this._softening = 2.0; // Plummer softening ~ inter-particle spacing
-            this._dt = 0.0015;
+            this._boxSize = 200;
+            this._softening = 2.0;
+            this._dt = 0.05;
 
         } else if (name === 'cosmic-black-hole') {
-            // ── Black hole with Keplerian accretion disk ──
-            const M_bh = 1e10;
+            // BH accretion: M_bh=500, disk at r=5..50 => v_k = sqrt(0.01*500/10) ~ 0.7
+            const M_bh = 500;
             this.addBody(T.BLACK_HOLE, M_bh, 0, 0, 0);
-            const rs = 2 * G_N * M_bh; // Schwarzschild radius in sim units
-            const r_isco = rs * 3;      // Innermost stable circular orbit
 
             for (let i = 0; i < 500; i++) {
-                // Distribute logarithmically (more particles near center)
                 const u = rng();
-                const r = r_isco + (rng() * 0.3 + u * u * 0.7) * rs * 80;
+                const r = 4 + u * u * 46; // r in [4, 50], concentrated near center
                 const ph = PI2 * rng();
-                const zz = (rng() - 0.5) * rs * 0.15 * (r / (rs * 10)); // Thinner near center
+                const zz = (rng() - 0.5) * 0.5 * (r / 10); // thinner near center
 
-                // Keplerian velocity: v_k = sqrt(G * M / r)
                 const vk = Math.sqrt(G_N * M_bh / r);
-                // Slight sub-Keplerian for viscous inflow
-                const v_factor = 0.98 - 0.02 * rng();
+                const v_factor = 0.98 - 0.02 * rng(); // sub-Keplerian for viscous inflow
 
-                this.addBody(T.GAS, 1e3,
+                this.addBody(T.GAS, 0.2,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
                     -vk * v_factor * Math.sin(ph), 0, vk * v_factor * Math.cos(ph),
-                    1e6 * Math.pow(r_isco / r, 0.75)); // T ~ r^(-3/4) Shakura-Sunyaev
+                    1e6 * Math.pow(4 / r, 0.75)); // T ~ r^(-3/4)
             }
 
-            this._boxSize = rs * 120;
-            this._softening = rs * 0.5;
-            this._dt = 0.0003;
+            this._boxSize = 120;
+            this._softening = 0.8;
+            this._dt = 0.03;
 
         } else if (name === 'cosmic-merger') {
-            // ── Galaxy merger with proper parabolic approach ──
-            // Two galaxies on a bound orbit (not escape trajectory)
-            const M1 = 8e11, M2 = 5e11;
-            const sep = 100;           // Initial separation
+            // Two galaxies: M1=3000, M2=2000, sep=80
+            // v_esc = sqrt(2*G*(M1+M2)/sep) = sqrt(2*0.01*5000/80) = 1.12
+            // v_approach = 0.5 * v_esc = 0.56
+            const M1 = 3000, M2 = 2000;
+            const sep = 80;
             const M_total = M1 + M2;
-
-            // Parabolic approach: v = sqrt(2 * G * M / r) gives marginally bound
-            // Use 70% of escape velocity for a bound elliptical orbit
             const v_esc = Math.sqrt(2 * G_N * M_total / sep);
-            const v_approach = v_esc * 0.5; // Well below escape — guaranteed capture
+            const v_approach = v_esc * 0.45;
+            const b = 10; // impact parameter
 
-            // Impact parameter: slight offset for tidal tails
-            const b = 15; // perpendicular offset
+            const r_s1 = 20, r_s2 = 16;
 
-            const r_s1 = 25, r_s2 = 20; // Scale radii
-            const N1 = 300, N2 = 200;
-
-            // Galaxy 1: approaching from left
+            // Galaxy 1
             const cx1 = -sep / 2, cz1 = -b / 2;
             this.addBody(T.BLACK_HOLE, M1 * 0.005, cx1, 0, cz1, v_approach, 0, v_approach * 0.15);
-            for (let i = 0; i < N1; i++) {
-                const r = rng() * r_s1 * 2;
+            for (let i = 0; i < 250; i++) {
+                const r = rng() * r_s1 * 1.8;
                 const ph = PI2 * rng();
-                const zz = (rng() - 0.5) * 2;
-                const t = i < N1 * 0.5 ? T.DARK_MATTER : T.STAR;
+                const zz = (rng() - 0.5) * 1.5;
+                const t = i < 125 ? T.DARK_MATTER : T.STAR;
 
-                // Internal circular velocity
                 const M_enc = this._enclosedMass(r, M1, r_s1);
-                const vc = Math.sqrt(G_N * M_enc / Math.max(r, this._softening));
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
 
-                this.addBody(t, (t === T.DARK_MATTER ? M1 * 0.85 : M1 * 0.15) / (N1 / 2),
+                this.addBody(t, (t === T.DARK_MATTER ? M1 * 0.85 : M1 * 0.15) / 125,
                     cx1 + r * Math.cos(ph), zz, cz1 + r * Math.sin(ph),
                     v_approach - vc * Math.sin(ph), 0, v_approach * 0.15 + vc * Math.cos(ph),
                     t === T.STAR ? 4000 + rng() * 18000 : 0);
             }
 
-            // Galaxy 2: approaching from right
+            // Galaxy 2
             const cx2 = sep / 2, cz2 = b / 2;
             this.addBody(T.BLACK_HOLE, M2 * 0.005, cx2, 0, cz2, -v_approach, 0, -v_approach * 0.15);
-            for (let i = 0; i < N2; i++) {
-                const r = rng() * r_s2 * 2;
+            for (let i = 0; i < 200; i++) {
+                const r = rng() * r_s2 * 1.8;
                 const ph = PI2 * rng();
-                const zz = (rng() - 0.5) * 2;
-                const t = i < N2 * 0.5 ? T.DARK_MATTER : T.STAR;
+                const zz = (rng() - 0.5) * 1.5;
+                const t = i < 100 ? T.DARK_MATTER : T.STAR;
 
                 const M_enc = this._enclosedMass(r, M2, r_s2);
-                const vc = Math.sqrt(G_N * M_enc / Math.max(r, this._softening));
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
 
-                this.addBody(t, (t === T.DARK_MATTER ? M2 * 0.85 : M2 * 0.15) / (N2 / 2),
+                this.addBody(t, (t === T.DARK_MATTER ? M2 * 0.85 : M2 * 0.15) / 100,
                     cx2 + r * Math.cos(ph), zz, cz2 + r * Math.sin(ph),
                     -v_approach - vc * Math.sin(ph), 0, -v_approach * 0.15 + vc * Math.cos(ph),
                     t === T.STAR ? 4000 + rng() * 18000 : 0);
             }
 
-            this._boxSize = 350;
+            this._boxSize = 250;
             this._softening = 1.5;
-            this._dt = 0.001;
+            this._dt = 0.04;
 
         } else {
-            // ── Cosmic web: Zel'dovich perturbations on uniform grid ──
+            // Cosmic web: DM particles with Zel'dovich perturbations
+            // M_per_particle=5, box=200 => total M = 3500+500 = 4000
+            // Collapse timescale ~ 1/sqrt(G*rho) ~ 1/sqrt(0.01*4000/200^3) ~ 70
             for (let i = 0; i < 700; i++) {
-                const x = (rng() - 0.5) * 800;
-                const y = (rng() - 0.5) * 800;
-                const z = (rng() - 0.5) * 800;
-                const kx = 2 * Math.PI / 400;
-                this.addBody(T.DARK_MATTER, 5e5, x, y, z,
-                    -0.05 * kx * Math.sin(kx * x) * (1 + 0.5 * Math.cos(kx * y)),
-                    -0.05 * kx * Math.sin(kx * y) * (1 + 0.5 * Math.cos(kx * z)),
-                    -0.05 * kx * Math.sin(kx * z) * (1 + 0.5 * Math.cos(kx * x)));
+                const x = (rng() - 0.5) * 200;
+                const y = (rng() - 0.5) * 200;
+                const z = (rng() - 0.5) * 200;
+                const kx = 2 * Math.PI / 100;
+                const amp = 0.3;
+                this.addBody(T.DARK_MATTER, 5, x, y, z,
+                    -amp * kx * Math.sin(kx * x) * (1 + 0.5 * Math.cos(kx * y)),
+                    -amp * kx * Math.sin(kx * y) * (1 + 0.5 * Math.cos(kx * z)),
+                    -amp * kx * Math.sin(kx * z) * (1 + 0.5 * Math.cos(kx * x)));
             }
             for (let i = 0; i < 100; i++) {
-                const x = (rng() - 0.5) * 800;
-                const y = (rng() - 0.5) * 800;
-                const z = (rng() - 0.5) * 800;
-                this.addBody(T.GAS, 5e4, x, y, z, 0, 0, 0, 1e4);
+                const x = (rng() - 0.5) * 200;
+                const y = (rng() - 0.5) * 200;
+                const z = (rng() - 0.5) * 200;
+                this.addBody(T.GAS, 5, x, y, z, 0, 0, 0, 1e4);
             }
-            this._boxSize = 800;
-            this._softening = 5.0;
-            this._dt = 0.003;
+            this._boxSize = 200;
+            this._softening = 3.0;
+            this._dt = 0.08;
         }
     }
 
-    // Compute gravitational accelerations for all bodies (O(N^2) with Plummer softening).
-    // Separated from tick() so it can be called twice per Verlet step.
+    // Compute gravitational accelerations (O(N^2) with Plummer softening)
     _computeForces() {
         const G = G_N;
         const n = this._bodies.length;
@@ -265,7 +253,6 @@ export class CosmicMockBridge {
 
         for (const b of this._bodies) { b.ax = 0; b.ay = 0; b.az = 0; }
 
-        // Pairwise gravity: a_i += G * m_j * dr / |dr|^3  (Plummer-softened)
         for (let i = 0; i < n; i++) {
             const bi = this._bodies[i];
             for (let j = i + 1; j < n; j++) {
@@ -283,17 +270,13 @@ export class CosmicMockBridge {
             }
         }
 
-        // Chandrasekhar dynamical friction on BHs:
-        // F_fric ~ -4*pi*G^2*M^2*rho*ln(Lambda) * v_hat / v^2
-        // Simplified: use local density estimate from nearest neighbors
+        // Chandrasekhar dynamical friction on BHs
         for (const b of this._bodies) {
             if (b.type !== CosmicMockBridge.TYPE.BLACK_HOLE) continue;
             const v2 = b.vx * b.vx + b.vy * b.vy + b.vz * b.vz;
             if (v2 < 1e-20) continue;
-            // Coulomb logarithm ~ ln(b_max/b_min) ~ ln(box/softening) ~ 5
             const lnLambda = 5.0;
             const drag = 4 * Math.PI * G * G * b.mass * b.mass * lnLambda / (v2 + 1e-10);
-            // Estimate local density from total mass / box volume (crude)
             const rho_local = this._bodies.reduce((s, p) => s + p.mass, 0) / Math.pow(this._boxSize, 3);
             const fric = drag * rho_local;
             b.ax -= fric * b.vx;
@@ -307,37 +290,25 @@ export class CosmicMockBridge {
         if (n === 0) return;
         const dt = this._dt;
 
-        // Proper Velocity Verlet (symplectic, time-reversible):
-        //   1. Half-kick using CURRENT forces
-        //   2. Drift positions
-        //   3. Recompute forces at NEW positions
-        //   4. Half-kick using NEW forces
-        // This preserves energy to machine precision over long runs.
-
-        // Step 1: half-kick with current accelerations
+        // Velocity Verlet (symplectic): kick-drift-recompute-kick
         for (const b of this._bodies) {
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;
         }
-
-        // Step 2: drift positions
         for (const b of this._bodies) {
             b.x += dt * b.vx;
             b.y += dt * b.vy;
             b.z += dt * b.vz;
         }
-
-        // Step 3: recompute forces at new positions
         this._computeForces();
-
-        // Step 4: second half-kick with FRESH forces
         for (const b of this._bodies) {
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;
         }
 
+        this._t_cosmic += dt;
         this._tick++;
     }
 
