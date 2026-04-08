@@ -275,103 +275,188 @@ export class CosmicMockBridge {
             }
         }
 
-        // ── Body-type-specific physics (beyond gravity) ──
-        // Different body types have different interaction physics:
-        //   DM, Stars, WD, NS: collisionless (gravity only) — no extra forces
-        //   Gas, Nebula: dissipative (radiative cooling) — lose kinetic energy
-        //   BH, Quasar: accrete nearby gas — mass transfer
+        // ============================================================
+        // Body-type-specific physics (beyond universal gravity)
+        //
+        // Interaction matrix:
+        //   DM, Stars, WD, NS: collisionless — gravity only
+        //   Gas, Nebula:        collisional — gravity + pressure + cooling + viscosity
+        //   BH, Quasar:         accretors — eat gas, merge with other BHs
+        //   Star → Gas:         radiation pressure heats/pushes nearby gas
+        //   Dense Gas → Star:   Jeans-like star formation
+        // ============================================================
 
         const T = CosmicMockBridge.TYPE;
+        const isGas = (t) => t === T.GAS || t === T.NEBULA;
+        const isBH  = (t) => t === T.BLACK_HOLE || t === T.QUASAR;
+        const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
 
-        // Gas dissipation: radiative cooling removes kinetic energy.
-        // Gas can radiate away orbital energy, causing it to sink inward
-        // and form denser structures (disk, accretion flows). DM cannot.
-        // Implemented as gentle velocity damping (energy loss ~ 0.1% per tick).
-        const gasCooling = 0.001; // fractional energy loss per tick
+        // ── 1. Gas radiative cooling (density-dependent) ──
+        // Cooling rate scales as n² (bremsstrahlung): denser gas loses energy faster.
+        // This drives gas to sink toward center and form accretion disks/structures.
+        // DM and stars are collisionless — they cannot radiate.
         for (const b of this._bodies) {
-            if (b.type !== T.GAS && b.type !== T.NEBULA) continue;
-            b.ax -= gasCooling * b.vx;
-            b.ay -= gasCooling * b.vy;
-            b.az -= gasCooling * b.vz;
+            if (!isGas(b.type)) continue;
+            // Estimate local density from number of gas neighbors within smoothing
+            let localDensity = b.mass; // self
+            for (const other of this._bodies) {
+                if (other.id === b.id || !isGas(other.type)) continue;
+                const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
+                if (dr2 < soft2 * 25) localDensity += other.mass;
+            }
+            // Cooling ~ rho^2 * Lambda(T), capped to prevent overcooling
+            const coolingRate = Math.min(0.005, 0.0002 * localDensity);
+            b.ax -= coolingRate * b.vx;
+            b.ay -= coolingRate * b.vy;
+            b.az -= coolingRate * b.vz;
+            // Temperature decreases with cooling (gas cools as it radiates)
+            b.temperature = Math.max(100, b.temperature * (1 - coolingRate * 0.1));
         }
 
-        // Gas pressure: simple repulsion at close range prevents gas collapse.
-        // SPH-like: when two gas particles are within 2*softening, they repel.
-        // This gives gas a finite "size" that DM/stars lack.
-        const pressureRange = this._softening * 2.5;
-        const pressureRange2 = pressureRange * pressureRange;
+        // ── 2. Gas pressure (SPH-like repulsion) ──
+        // Prevents gas from collapsing to a point. Stars/DM pass through freely.
+        const h_press = this._softening * 2.5;
+        const h_press2 = h_press * h_press;
         for (let i = 0; i < n; i++) {
             const bi = this._bodies[i];
-            if (bi.type !== T.GAS && bi.type !== T.NEBULA) continue;
+            if (!isGas(bi.type)) continue;
             for (let j = i + 1; j < n; j++) {
                 const bj = this._bodies[j];
-                if (bj.type !== T.GAS && bj.type !== T.NEBULA) continue;
+                if (!isGas(bj.type)) continue;
                 const dx = bj.x - bi.x;
                 const dy = bj.y - bi.y;
                 const dz = bj.z - bi.z;
                 const r2 = dx * dx + dy * dy + dz * dz;
-                if (r2 > pressureRange2 || r2 < 1e-10) continue;
+                if (r2 > h_press2 || r2 < 1e-10) continue;
                 const r = Math.sqrt(r2);
-                const q = r / pressureRange;
-                // Repulsive force ~ (1-q)^2 / r (cubic spline-like)
-                const fmag = G * 0.5 * (bi.mass + bj.mass) * (1 - q) * (1 - q) / (r2 + soft2);
-                bi.ax -= fmag * dx / r;
-                bi.ay -= fmag * dy / r;
-                bi.az -= fmag * dz / r;
-                bj.ax += fmag * dx / r;
-                bj.ay += fmag * dy / r;
-                bj.az += fmag * dz / r;
+                const q = r / h_press;
+                // Pressure force: repulsive, scales with (1-q)^2
+                // Stronger for hotter gas (temperature-dependent)
+                const T_avg = 0.5 * (bi.temperature + bj.temperature);
+                const pressScale = 1.0 + T_avg * 1e-6; // hotter gas pushes harder
+                const fmag = G * pressScale * 0.3 * (bi.mass + bj.mass) * (1 - q) * (1 - q) / (r2 + soft2);
+                bi.ax -= fmag * dx / r; bi.ay -= fmag * dy / r; bi.az -= fmag * dz / r;
+                bj.ax += fmag * dx / r; bj.ay += fmag * dy / r; bj.az += fmag * dz / r;
+                // Compression heats gas (PdV work)
+                const vij_dot_rij = (bi.vx-bj.vx)*dx + (bi.vy-bj.vy)*dy + (bi.vz-bj.vz)*dz;
+                if (vij_dot_rij < 0) { // approaching → compressive heating
+                    const heating = -vij_dot_rij * 0.001 * (1 - q);
+                    bi.temperature += heating;
+                    bj.temperature += heating;
+                }
             }
         }
 
-        // BH/Quasar accretion: gas within accretion radius gets absorbed.
-        // Mass transfers from gas to BH. Gas particle removed when depleted.
-        const accretionFactor = 0.02; // fraction of gas mass accreted per tick
+        // ── 3. Star → Gas radiation pressure ──
+        // Luminous stars heat and push nearby gas (stellar feedback).
+        // Prevents runaway gas collapse, creates feedback-regulated star formation.
+        for (const star of this._bodies) {
+            if (!isStar(star.type) || star.luminosity <= 0) continue;
+            for (const gas of this._bodies) {
+                if (!isGas(gas.type)) continue;
+                const dx = gas.x - star.x;
+                const dy = gas.y - star.y;
+                const dz = gas.z - star.z;
+                const r2 = dx * dx + dy * dy + dz * dz + soft2;
+                if (r2 > 400) continue; // only within 20 units
+                const r = Math.sqrt(r2);
+                // Radiation pressure: F = L / (4*pi*r^2*c)
+                const c_sim = 0.577; // C_SPEED in sim units
+                const f_rad = star.luminosity / (4 * Math.PI * r2 * c_sim) * 0.01; // scaled down
+                gas.ax += f_rad * dx / r;
+                gas.ay += f_rad * dy / r;
+                gas.az += f_rad * dz / r;
+                // Heating from radiation
+                gas.temperature += star.luminosity * 0.0001 / (r2 + 1);
+            }
+        }
+
+        // ── 4. Dense gas → star formation (Jeans criterion) ──
+        // When gas density exceeds threshold and temperature is low, convert to star.
+        const newStars = [];
+        for (const b of this._bodies) {
+            if (!isGas(b.type) || b.mass < 0.5) continue;
+            // Count nearby gas (density proxy)
+            let nearby = 0;
+            for (const other of this._bodies) {
+                if (other.id === b.id || !isGas(other.type)) continue;
+                const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
+                if (dr2 < soft2 * 9) nearby++;
+            }
+            // Jeans: form star when dense (>5 neighbors) and cool (<5000 K)
+            if (nearby > 5 && b.temperature < 5000) {
+                const starMass = b.mass * 0.3;
+                b.mass -= starMass;
+                newStars.push({
+                    type: T.STAR, mass: starMass,
+                    x: b.x, y: b.y, z: b.z,
+                    vx: b.vx, vy: b.vy, vz: b.vz,
+                    temperature: 5800, // newborn star
+                    luminosity: Math.pow(starMass, 3.5)
+                });
+            }
+        }
+        for (const s of newStars) {
+            this.addBody(s.type, s.mass, s.x, s.y, s.z, s.vx, s.vy, s.vz, s.temperature);
+            // Set luminosity on the newly added body
+            this._bodies[this._bodies.length - 1].luminosity = s.luminosity;
+        }
+
+        // ── 5. BH/Quasar accretion (gas → BH mass transfer) ──
+        const accretionFactor = 0.02;
         for (const bh of this._bodies) {
-            if (bh.type !== T.BLACK_HOLE && bh.type !== T.QUASAR) continue;
-            const r_acc = Math.max(3.0, Math.cbrt(bh.mass) * 0.5); // accretion radius
+            if (!isBH(bh.type)) continue;
+            const r_acc = Math.max(2.0, Math.cbrt(bh.mass) * 0.4);
             const r_acc2 = r_acc * r_acc;
             for (const gas of this._bodies) {
-                if (gas.type !== T.GAS && gas.type !== T.NEBULA) continue;
-                if (gas.mass <= 0) continue;
+                if (!isGas(gas.type) || gas.mass <= 0) continue;
                 const dx = gas.x - bh.x;
                 const dy = gas.y - bh.y;
                 const dz = gas.z - bh.z;
                 const r2 = dx * dx + dy * dy + dz * dz;
                 if (r2 > r_acc2) continue;
-                // Transfer mass
                 const dm = gas.mass * accretionFactor;
                 bh.mass += dm;
                 gas.mass -= dm;
+                // Accretion heats the gas (gravitational energy → thermal)
+                gas.temperature = Math.min(1e8, gas.temperature * 1.5);
             }
         }
 
-        // BH-BH merger: when two BHs are within mutual Schwarzschild radius
+        // ── 6. BH-BH / compact object merger ──
         for (let i = 0; i < this._bodies.length; i++) {
             const bi = this._bodies[i];
-            if (bi.type !== T.BLACK_HOLE && bi.type !== T.QUASAR) continue;
+            if (!isBH(bi.type)) continue;
             if (bi.mass <= 0) continue;
             for (let j = i + 1; j < this._bodies.length; j++) {
                 const bj = this._bodies[j];
-                if (bj.type !== T.BLACK_HOLE && bj.type !== T.QUASAR) continue;
-                if (bj.mass <= 0) continue;
+                if (!isBH(bj.type) || bj.mass <= 0) continue;
                 const dx = bj.x - bi.x;
                 const dy = bj.y - bi.y;
                 const dz = bj.z - bi.z;
                 const r2 = dx * dx + dy * dy + dz * dz;
                 const r_merge = Math.cbrt(bi.mass + bj.mass) * 0.3;
                 if (r2 > r_merge * r_merge) continue;
-                // Merge: conserve momentum, lose 5% mass to GW
                 const m_total = bi.mass + bj.mass;
                 bi.vx = (bi.vx * bi.mass + bj.vx * bj.mass) / m_total;
                 bi.vy = (bi.vy * bi.mass + bj.vy * bj.mass) / m_total;
                 bi.vz = (bi.vz * bi.mass + bj.vz * bj.mass) / m_total;
-                bi.mass = m_total * 0.95; // 5% radiated as GW
-                bj.mass = 0; // mark for removal
+                bi.mass = m_total * 0.95; // 5% GW radiation
+                bj.mass = 0;
             }
         }
 
-        // Remove depleted bodies (mass <= 0 from accretion or merger)
+        // ── 7. Speed limit: v < c = 1/sqrt(3) ──
+        const c2 = 1.0 / 3.0; // C_SPEED^2
+        for (const b of this._bodies) {
+            const v2 = b.vx * b.vx + b.vy * b.vy + b.vz * b.vz;
+            if (v2 > c2) {
+                const scale = Math.sqrt(c2 / v2);
+                b.vx *= scale; b.vy *= scale; b.vz *= scale;
+            }
+        }
+
+        // ── Cleanup: remove depleted bodies ──
         this._bodies = this._bodies.filter(b => b.mass > 0.01);
     }
 
