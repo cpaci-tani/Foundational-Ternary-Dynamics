@@ -125,40 +125,43 @@ export class CosmicMockBridge {
                     sigma * randn(), sigma * randn(), sigma * randn());
             }
 
-            // Stellar disk — thicker, more dispersed, starts further from BH
-            // Real galaxies have a thick disk + thin disk; we model a puffy disk
-            for (let i = 0; i < 350; i++) {
-                const r = 8 + rng() * r_disk;  // starts at r=8, not r=2
-                const arm = Math.floor(rng() * 2);
-                const phi_base = arm * Math.PI + 0.3 * Math.log(r + 1);
-                const ph = phi_base + (rng() - 0.5) * 0.9;
-                // Thick disk: z-height scales with radius (flared disk)
-                const z_scale = 4.0 + r * 0.06;  // 4 units at center, 9 at edge
+            // Stellar disk — full 360° continuous spiral, volumetric
+            // More particles for density. Logarithmic spiral: phi = k * ln(r)
+            // gives a natural winding pattern around the BH.
+            const N_stars = 500;  // more particles for volume
+            for (let i = 0; i < N_stars; i++) {
+                // Exponential radial profile: denser near center
+                const u = rng();
+                const r = 5 + (1 - Math.pow(1 - u, 2)) * r_disk; // r in [5, 85]
+                // Full 360° with logarithmic spiral winding
+                const ph = PI2 * rng() + 0.35 * Math.log(r + 1);
+                // Flared thick disk: thicker at larger radius
+                const z_scale = 3.0 + r * 0.07;
                 const zz = randn() * z_scale;
 
                 const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.4);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 3));
-                const vz = randn() * vc * 0.15;  // more z-velocity for thick disk
+                const vz = randn() * vc * 0.12;
 
-                this.addBody(T.STAR, M_disk * 0.6 / 350,
+                this.addBody(T.STAR, M_disk * 0.6 / N_stars,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
                     -vc * Math.sin(ph), vz, vc * Math.cos(ph),
                     3000 + rng() * 25000);
             }
 
-            // Gas disk — wider and thicker than before, extends beyond stars
-            for (let i = 0; i < 150; i++) {
-                const r = 10 + rng() * r_disk * 1.2;
-                const arm = Math.floor(rng() * 2);
-                const phi_base = arm * Math.PI + 0.3 * Math.log(r + 1);
-                const ph = phi_base + (rng() - 0.5) * 1.2;
-                const z_scale = 3.0 + r * 0.04;
+            // Gas — full 360° distribution, wider and puffier
+            const N_gas = 200;
+            for (let i = 0; i < N_gas; i++) {
+                const u = rng();
+                const r = 8 + (1 - Math.pow(1 - u, 2)) * r_disk * 1.2;
+                const ph = PI2 * rng() + 0.3 * Math.log(r + 1);
+                const z_scale = 2.5 + r * 0.05;
                 const zz = randn() * z_scale;
 
                 const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.4);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 3));
 
-                this.addBody(T.GAS, M_disk * 0.4 / 150,
+                this.addBody(T.GAS, M_disk * 0.4 / N_gas,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
                     -vc * Math.sin(ph), randn() * vc * 0.05, vc * Math.cos(ph),
                     5000 + rng() * 15000);
