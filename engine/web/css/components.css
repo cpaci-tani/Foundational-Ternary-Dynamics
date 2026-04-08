@@ -896,7 +896,7 @@
     z-index: 9999;
     transition: opacity 0.3s;
 }
-#loading-overlay.hidden { opacity: 0; pointer-events: none; }
+#loading-overlay.hidden { opacity: 0; pointer-events: none; display: none; }
 
 /* ── Modern Loading Screen ─────────────────────── */
 .load-lattice {
