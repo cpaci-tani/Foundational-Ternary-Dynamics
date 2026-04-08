@@ -430,9 +430,11 @@ export class CosmicMockBridge {
                 const r2 = dx*dx + dy*dy + dz*dz;
                 const r = Math.sqrt(r2 + 0.01);
 
-                // Tidal disruption radius: r_t ~ 0.5 * (M_BH/M_star)^(1/3)
-                // Small coefficient so only stars very close to BH get shredded
-                const r_tidal = 0.5 * Math.pow(bh.mass / (star.mass + 0.01), 1/3);
+                // Tidal disruption radius (Rees 1988):
+                //   r_t = R_star × (M_BH / M_star)^(1/3)
+                // R_star is the body's physical radius (set at creation as cbrt(mass)*0.1)
+                const R_star = star.radius || Math.cbrt(star.mass) * 0.1;
+                const r_tidal = R_star * Math.pow(bh.mass / (star.mass + 0.01), 1/3);
 
                 if (r < r_tidal * 1.5) {
                     // Inside tidal influence zone — stretch increases
