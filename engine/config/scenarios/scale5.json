@@ -1,0 +1,42 @@
+{
+  "scale": 5,
+  "name": "Cosmic",
+  "engineMode": "cosmic",
+  "selectId": "cosmic-scenario-select",
+  "scenarios": [
+    {
+      "id": "cosmic-galaxy",
+      "name": "Spiral Galaxy",
+      "group": null,
+      "description": "Spiral galaxy simulation.",
+      "default": true
+    },
+    {
+      "id": "cosmic-black-hole",
+      "name": "Black Hole Close-up",
+      "group": null,
+      "description": "Close-up black hole visualization."
+    },
+    {
+      "id": "cosmic-merger",
+      "name": "Galaxy Merger",
+      "group": null,
+      "description": "Two galaxies merging."
+    },
+    {
+      "id": "cosmic-web",
+      "name": "Cosmic Web",
+      "group": null,
+      "description": "Large-scale cosmic web structure."
+    }
+  ],
+  "cameras": {
+    "selectId": "cosmic-camera-select",
+    "options": [
+      { "id": "overview", "name": "Overview" },
+      { "id": "galaxy", "name": "Galaxy", "default": true },
+      { "id": "blackhole", "name": "Black Hole" },
+      { "id": "merger", "name": "Merger" }
+    ]
+  }
+}
