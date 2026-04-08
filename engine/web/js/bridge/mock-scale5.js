@@ -305,7 +305,8 @@ export class CosmicMockBridge {
                 if (dr2 < soft2 * 25) localDensity += other.mass;
             }
             // Cooling ~ rho^2 * Lambda(T), capped to prevent overcooling
-            const coolingRate = Math.min(0.005, 0.0002 * localDensity);
+            // Gentle: ~0.02% per tick for isolated gas, up to 0.2% in dense regions
+            const coolingRate = Math.min(0.002, 0.00005 * localDensity);
             b.ax -= coolingRate * b.vx;
             b.ay -= coolingRate * b.vy;
             b.az -= coolingRate * b.vz;
@@ -403,10 +404,12 @@ export class CosmicMockBridge {
         }
 
         // ── 5. BH/Quasar accretion (gas → BH mass transfer) ──
-        const accretionFactor = 0.02;
+        // Only gas that is gravitationally bound AND slow (relative to BH)
+        // gets accreted. Fast-moving gas in a flyby escapes.
+        // Rate is Bondi-like: mdot ~ M^2 / (cs^2 + v_rel^2)^(3/2)
         for (const bh of this._bodies) {
             if (!isBH(bh.type)) continue;
-            const r_acc = Math.max(2.0, Math.cbrt(bh.mass) * 0.4);
+            const r_acc = Math.max(1.5, Math.cbrt(bh.mass) * 0.3);
             const r_acc2 = r_acc * r_acc;
             for (const gas of this._bodies) {
                 if (!isGas(gas.type) || gas.mass <= 0) continue;
@@ -415,11 +418,18 @@ export class CosmicMockBridge {
                 const dz = gas.z - bh.z;
                 const r2 = dx * dx + dy * dy + dz * dz;
                 if (r2 > r_acc2) continue;
-                const dm = gas.mass * accretionFactor;
+                // Relative velocity determines if gas is bound
+                const dvx = gas.vx - bh.vx, dvy = gas.vy - bh.vy, dvz = gas.vz - bh.vz;
+                const v_rel2 = dvx*dvx + dvy*dvy + dvz*dvz;
+                const r = Math.sqrt(r2 + 0.01);
+                const v_esc2 = 2 * G * bh.mass / r; // escape velocity squared
+                // Only accrete if relative velocity < escape velocity (bound gas)
+                if (v_rel2 > v_esc2) continue;
+                // Bondi-like rate: slower gas accretes faster
+                const rate = 0.005 * bh.mass / (v_rel2 + 0.1);
+                const dm = Math.min(gas.mass * 0.1, gas.mass * rate * 0.001);
                 bh.mass += dm;
                 gas.mass -= dm;
-                // Accretion heats the gas (gravitational energy → thermal)
-                gas.temperature = Math.min(1e8, gas.temperature * 1.5);
             }
         }
 
