@@ -110,6 +110,7 @@ uniform float time;
 uniform float innerRadius;
 uniform float outerRadius;
 uniform vec3 bhPosition;
+uniform float opacity;
 varying vec2 vUv;
 varying vec3 vWorldPos;
 
@@ -140,7 +141,7 @@ void main() {
     alpha *= smoothstep(innerRadius * 0.9, innerRadius * 1.2, r);
     alpha *= 0.85;
 
-    gl_FragColor = vec4(col, alpha);
+    gl_FragColor = vec4(col, alpha * opacity);
 }`;
 
 function blackbodyColor(T) {
@@ -176,6 +177,7 @@ export class CosmicRenderer {
         this._showStars = true;
         this._showBH = true;
         this._showDisks = true;
+        this._bhAge = new Map(); // track when each BH first appeared (for fade-in)
 
         this._initBackground();
     }
@@ -342,9 +344,13 @@ export class CosmicRenderer {
 
         for (const bh of bhs) {
             const mass = bodyData.sizes ? bodyData.sizes[bh.i] : 100;
-            // BH visual size grows with mass (accretion makes it bigger)
             const rs = Math.max(0.6, Math.cbrt(mass) * 0.35);
             const bhPos = new THREE.Vector3(bh.x, bh.y, bh.z);
+
+            // Track BH age for fade-in (disk appears gradually over ~5 seconds)
+            if (!this._bhAge.has(bh.i)) this._bhAge.set(bh.i, this._time);
+            const age = this._time - this._bhAge.get(bh.i);
+            const fadeIn = Math.min(1.0, age / 5.0); // 0→1 over 5 seconds
 
             // --- Event horizon: pure black sphere ---
             const sGeo = new THREE.SphereGeometry(rs, 48, 48);
@@ -357,7 +363,7 @@ export class CosmicRenderer {
             // --- Hawking corona: faint warm glow just outside horizon ---
             const coronaGeo = new THREE.SphereGeometry(rs * 1.15, 32, 32);
             const coronaMat = new THREE.MeshBasicMaterial({
-                color: 0x331100, transparent: true, opacity: 0.25,
+                color: 0x331100, transparent: true, opacity: 0.25 * fadeIn,
                 blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide
             });
             const corona = new THREE.Mesh(coronaGeo, coronaMat);
@@ -378,7 +384,8 @@ export class CosmicRenderer {
                     time: { value: this._time },
                     innerRadius: { value: innerR },
                     outerRadius: { value: outerR },
-                    bhPosition: { value: bhPos }
+                    bhPosition: { value: bhPos },
+                    opacity: { value: fadeIn }
                 },
                 transparent: true,
                 side: THREE.DoubleSide,
@@ -400,7 +407,8 @@ export class CosmicRenderer {
                     time: { value: this._time * 1.3 },
                     innerRadius: { value: innerR * 1.1 },
                     outerRadius: { value: outerR * 0.7 },
-                    bhPosition: { value: bhPos }
+                    bhPosition: { value: bhPos },
+                    opacity: { value: fadeIn * 0.7 }
                 },
                 transparent: true,
                 side: THREE.DoubleSide,
@@ -419,7 +427,7 @@ export class CosmicRenderer {
             einsteinGeo.setAttribute('position', new THREE.BufferAttribute(
                 new Float32Array([bhPos.x, bhPos.y, bhPos.z]), 3));
             const einstein = new THREE.Points(einsteinGeo, new THREE.PointsMaterial({
-                size: rs * 28, color: 0x5533aa, transparent: true, opacity: 0.08,
+                size: rs * 28, color: 0x5533aa, transparent: true, opacity: 0.08 * fadeIn,
                 blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
                 map: _haloTex
             }));
@@ -431,7 +439,7 @@ export class CosmicRenderer {
             glowGeo.setAttribute('position', new THREE.BufferAttribute(
                 new Float32Array([bhPos.x, bhPos.y, bhPos.z]), 3));
             const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial({
-                size: rs * 5, color: 0xffaa44, transparent: true, opacity: 0.35,
+                size: rs * 5, color: 0xffaa44, transparent: true, opacity: 0.35 * fadeIn,
                 blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
                 map: _haloTex
             }));
