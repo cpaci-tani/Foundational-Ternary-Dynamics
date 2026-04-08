@@ -1,0 +1,27 @@
+/* FTD Engine — Nord theme (cool blue-gray palette)
+ * Extracted from index.html inline styles.
+ * Part of the modular CSS architecture (Phase 0).
+ */
+
+/* Nord — cool blue-gray palette */
+html[data-theme="nord"] {
+    --bg-deep: #2e3440;
+    --bg-surface: #3b4252;
+    --bg-card: #434c5e;
+    --bg-input: #4c566a;
+    --border: #4c566a;
+    --border-light: #616e88;
+    --text-primary: #eceff4;
+    --text-secondary: #d8dee9;
+    --text-muted: #a0aec0;
+    --accent: #88c0d0;
+    --accent-dim: #5e81ac;
+    --positive: #a3be8c;
+    --negative: #bf616a;
+    --warning: #ebcb8b;
+}
+
+/* Viewport background override */
+html[data-theme="nord"] #viewport {
+    background: linear-gradient(180deg, #242933 0%, #2e3440 100%) !important;
+}

@@ -1,8 +1,8 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-03-05
-**Engine version:** 2.11 (Logic-First + Perfected EM + Multi-Scale Physics + CUDA GPU)
+**Last updated:** 2026-04-08
+**Engine version:** 2.12 (Logic-First + Perfected EM + Multi-Scale Physics + CUDA GPU + Cosmic Scale + Modular Architecture)
 **Test count:** 175+ registered tests (170 CPU+GPU + 5 Five Minds campaigns). GPU parity: 21/21 PASS. Five Minds campaigns: 15/15 PASS. GPU conditional on `FTD_ENABLE_CUDA`.
 
 ---
@@ -31,6 +31,22 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 - Dual substrate: J_L + J_R chirality physics
 - Color forces, strong force, weak transmutation, triad binding, pair production, exchange force
 
+### Scale 5: Cosmic Engine (v2.12)
+
+N-body + SPH cosmic simulation with Barnes-Hut octree gravity. All physics driven by FTD-derived constants (zero free parameters):
+- **9 body types**: Dark matter, gas, stars, neutron stars, black holes, quasars, nebulae, white dwarfs, dark energy field
+- **18-phase cosmic tick cycle**: octree build, gravity, SPH density/forces, Friedmann expansion, dark energy, accretion, jets, star formation, stellar evolution, magnetic fields, radiation pressure, gravitational waves, Verlet integration
+- **14 toggles**: gravity, sph_gas, hubble_expansion (core ON); dark_energy, dark_matter_halos, black_hole_accretion, cosmic_radiation, star_formation, stellar_evolution, galaxy_mergers, magnetic_fields, radiation_pressure, relativistic_jets, gravitational_waves (extensions OFF)
+- **FTD constants**: G_N=0.01, Omega_Lambda=2/3, DM_frac=17/27, gamma=5/3, c=1/sqrt(3)
+
+### Abstract Base Class: ScaleEngine (v2.12)
+
+All scale engines (ParticleEngine, CosmicEngine) inherit from `ScaleEngine`, providing:
+- Unified `tick()`, `run()`, `current_tick()`, `dt()`, `set_dt()` interface
+- String-based `get_toggle(name)` / `set_toggle(name, value)` for unified registry
+- `base_diagnostics()` returning common metrics across all scales
+- `scale_level()` and `scale_name()` for runtime type identification
+
 ### Performance
 
 Forces are O(N) field-mediated (single loop over manifested particles) instead of O(N^2) pairwise. Inherently faster for large particle counts.
@@ -45,17 +61,19 @@ engine/
   SPEC_ENGINE.md              # This document
   print_ontic.py              # Utility to print ontic chain values
   include/ftd/
+    scale_engine.h            # [v2.12] Abstract base class for all scale engines (111L)
     ontic.h                   # Ontic derivation chain (9+ layers), D=3 + varpi -> all constants (1221L)
-    constants.h               # Re-exports ontic + engine-specific constants (276L)
+    constants.h               # Re-exports ontic + engine-specific constants (279L)
     voxel.h                   # Vec3, ForceDiag, Voxel struct (203L)
     lattice.h                 # Lattice class -- 3D cubic grid with periodic boundaries (59L)
     render_bridge.h           # RenderBridge -- main engine API, tick(), diagnostics() (239L)
     lagrangian.h              # 4-term Lagrangian + Rayleigh dissipation (218L)
     term_toggles.h            # 20 runtime toggles for pedagogy system (62L)
     csv_export.h              # Header-only CSV export (flux field, density slice, timeseries) (385L)
-    particle_engine.h         # ParticleEngine -- Scale 1 continuous-position particles (190L)
-    atom_engine.h             # AtomEngine -- Scale 2 composite atoms + bonds (306L)
-    scale.h                   # OnticEntity + scale bridge declarations (68L)
+    particle_engine.h         # ParticleEngine : ScaleEngine -- Scale 1 particles (247L)
+    atom_engine.h             # AtomEngine -- Scale 2 composite atoms + bonds (327L)
+    cosmic_engine.h           # [v2.12] CosmicEngine : ScaleEngine -- Scale 5 N-body+SPH (523L)
+    scale.h                   # OnticEntity + scale bridge declarations (83L)
     correlations.h            # Correlation function analysis (205L)
     ensemble.h                # Statistical ensemble infrastructure (200L)
     spectral.h                # Spectral analysis utilities (195L)
@@ -64,13 +82,14 @@ engine/
     gpu_engine.h              # GpuEngine -- CUDA GPU drop-in for RenderBridge (115L)
     gpu_buffers.h             # SoA device memory layout (124L)
   src/
-    render_bridge.cpp         # Logic-first engine -- 6-phase tick cycle (1420L)
+    render_bridge.cpp         # Logic-first engine -- 6-phase tick cycle (1538L)
     lattice.cpp               # Lattice implementation (index, coord, wrap, neighbors) (66L)
     lagrangian.cpp            # compute_lagrangian_diagnostics() -- 4 active terms (166L)
     main.cpp                  # CLI entry point (scenarios A-K) (937L)
-    particle_engine.cpp       # ParticleEngine: Velocity Verlet + analytical forces (379L)
-    atom_engine.cpp           # AtomEngine: ionic + vdW + covalent forces (691L)
-    scale_bridge.cpp          # Scale 0<->1<->2 coarsen/refine round-trip (202L)
+    particle_engine.cpp       # ParticleEngine: Velocity Verlet + analytical forces (394L)
+    atom_engine.cpp           # AtomEngine: ionic + vdW + covalent forces (762L)
+    cosmic_engine.cpp         # [v2.12] CosmicEngine: Barnes-Hut + SPH + Friedmann (900L)
+    scale_bridge.cpp          # Scale 0<->1<->2<->5 coarsen/refine round-trip (283L)
   cuda/
     gpu_buffers.cu            # SoA device allocation, upload, download (445L)
     gpu_engine.cu             # GpuEngine tick loop, host<->device sync (496L)
@@ -78,40 +97,65 @@ engine/
     kernels_poisson.cu        # FFT Poisson solver (cuFFT spectral) (328L)
     kernels_forces.cu         # GPU forces + movement + color/strong/weak/exchange kernels (737L)
     CMakeLists.txt            # CUDA build rules (35L)
+  config/                     # [v2.12] Data-driven configuration
+    toggles.json              # Unified toggle registry -- 48 toggles across all scales
+    scenarios/                # Scenario manifests per scale (JSON)
+      scale0.json             # 36 lattice scenarios
+      scale1.json             # 25 particle scenarios
+      scale2.json             # 20 atom scenarios + 118 element entries
+      scale3.json             # 27 molecule scenarios
+      scale4.json             # 10 consciousness scenarios + 12 figures
+      scale5.json             # 4 cosmic scenarios + camera presets
+      scale6.json             # Meta scenario + 13 toggle controls
   tests/
     175+ test files           # All registered as CTests (170 CPU+GPU + 5 Five Minds campaigns)
   wasm/
-    ftd_wasm.cpp              # Emscripten Embind bindings -- full engine API (1492L)
+    ftd_wasm.cpp              # Emscripten Embind bindings -- full engine API (1512L)
     CMakeLists.txt            # WASM build rules (Emscripten-only)
   web/
-    index.html                # Browser dashboard (HTML + CSS + tab system)
-    js/                       # 27 JS modules (~19K lines total)
-      app.js                  # Main controller: WASM loading, frame loop, 3 scale modes
-      viewport.js             # Three.js 3D: particles, bonds, orbitals, shells, lobes, force arrows
-      wasm-bridge.js          # WasmBridge + MockBridge (auto-fallback, identical API)
-      fieldlines.js           # RK4 streamline computation, spatial indexing
-      charts.js               # Ring-buffered time-series charts
-      diagnostics.js          # Live number displays with sparkline mini-charts
-      lagrangian.js           # Stacked area chart (5 terms) + constraint display
-      inspector.js            # Click-to-inspect voxel properties + force decomposition
+    index.html                # Browser dashboard (structural HTML, no inline CSS) (1888L)
+    css/                      # [v2.12] Modular CSS architecture (10 files)
+      tokens.css              # Design tokens, reset, base styles
+      layout.css              # App grid, toolbar, viewport, status bar
+      components.css          # Cards, tabs, panels, toggles, modals, settings
+      scale-visibility.css    # Per-mode show/hide rules (48 selectors)
+      charts.css              # Chart + diagnostic component styles
+      themes/                 # 5 theme override files
+        midnight.css           abyss.css           light.css
+        parchment.css          nord.css
+    js/                       # [v2.12] Modular JS architecture (~40 modules)
+      app.js                  # Main coordinator: init, frame loop, scale dispatch
       constants.js            # JS mirror of ontic.h derivation chain
-      particle-catalog.js     # Complete SM particle data with FTD mass formulas
-      zoo.js                  # Interactive particle zoo table
-      fields.js               # Force field visualization (heatmap + arrows)
-      elements.js             # Periodic table data (118 elements with CPK colors)
-      atomic-energy.js        # Bethe-Weizsacker nuclear binding energies
-      spectroscopy.js         # Hydrogen energy levels and spectral series
-      cross-sections.js       # Scattering cross-sections from ontic chain
-      decay-rates.js          # Particle lifetimes from Fermi theory + FTD constants
-      ontic-observatory.js    # Ontic incompleteness theorems
-      aggregation-bridge.js   # 4-level aggregation hierarchy + emergence monitoring
-      orbitals.js             # Electron orbital cloud + nuclear structure + bonding clouds
-      molecules.js            # 25-molecule library for Scale 2
-      backgrounds.js          # Environment backgrounds: star field, nebula, quantum foam, etc.
+      core/                   # Shared infrastructure
+        state.js              # Centralized runtime state singleton
+        event-bus.js           # Pub/sub for decoupled module communication
+        bridge.js              # UnifiedBridge -- scale-agnostic simulation interface
+      config/                 # Extracted configuration data
+        toggles.js            # Toggle definitions + scenario override maps
+        scenarios.js          # Consciousness scenario descriptions
+      bridge/                 # Simulation bridge layer
+        bridge-factory.js     # createBridge() factory (WASM -> MockBridge fallback)
+        mock-scale5.js        # CosmicMockBridge (JS-only N-body for dev)
+      scales/                 # Per-scale controllers (each owns its own state)
+        scale0/controller.js  # Lattice: animateLattice, loadScenario, field viz (702L)
+        scale1/controller.js  # Particles: animatePE, cloud rendering, trails (912L)
+        scale2/controller.js  # Atoms: animateAE, orbital clouds, force arrows (1056L)
+        scale3/controller.js  # Molecules: loadMolecule, reuses Scale 2 animate (217L)
+        scale4/controller.js  # Consciousness: sLoop, Mandelbrot, hologram (443L)
+        scale5/controller.js  # Cosmic: N-body, galaxy rendering (193L)
+        scale6/controller.js  # Meta: existential unit, geometry toggles (150L)
+      viewport.js             # Three.js 3D: particles, bonds, orbitals, fields, camera
+      wasm-bridge.js          # WasmBridge + MockBridge (auto-fallback)
+      cosmic-renderer.js      # [v2.12] Photorealistic cosmic body rendering
+      consciousness.js        # ConsciousnessEngine (sLoop, measurement cascade)
+      consciousness-pedagogy.js  # Pedagogical visualizations (Canvas 2D)
+      consciousness-figure.js    # Holographic figure (Three.js)
+      meta-unit.js            # MetaUnit (3x3x3 Moore neighborhood)
+      meta-pedagogy.js        # Meta info/inspect panels
+      [+ 15 additional library modules: elements, orbitals, molecules, fields, etc.]
     wasm/
       ftd_core.js             # Emscripten JS loader (generated)
       ftd_core.wasm           # WebAssembly binary (generated)
-  thirdparty/glad/            # OpenGL loader (legacy)
   build/                      # CPU build directory
   build_wasm/                 # WASM build directory
   build_cuda/                 # CUDA build directory (when FTD_ENABLE_CUDA=ON)
@@ -121,12 +165,15 @@ engine/
 
 | Component | Lines |
 |-----------|-------|
-| Headers (`include/ftd/*.h`) | 4,360 |
-| Sources (`src/*.cpp`) | 3,861 |
+| Headers (`include/ftd/*.h`) | ~5,500 |
+| Sources (`src/*.cpp`) | ~5,000 |
 | CUDA (`cuda/*.cu + CMakeLists`) | 3,218 |
-| WASM bindings | 1,492 |
-| Web frontend (HTML + JS) | ~18,000 |
-| **Total engine C++** | **~12,900** |
+| WASM bindings | 1,512 |
+| Web CSS (external) | ~2,000 |
+| Web JS (all modules) | ~25,000 |
+| Config (JSON) | ~600 |
+| **Total engine C++** | **~15,200** |
+| **Total web frontend** | **~28,500** |
 
 ### Archived Components
 ```

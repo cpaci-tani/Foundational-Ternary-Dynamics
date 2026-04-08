@@ -1,0 +1,237 @@
+/* ============================================================
+ *  scale-visibility.css
+ *  Scale-specific visibility rules for the FTD web dashboard.
+ *
+ *  Controls which UI elements are shown/hidden based on the
+ *  active scale mode (lattice, particles, atoms, molecules,
+ *  consciousness, cosmic, meta).  Includes:
+ *    - scaleN-only element hiding per mode
+ *    - scale-ae shared visibility (atoms + molecules)
+ *    - scale23-only combined visibility
+ *    - scale-cosmic-only visibility
+ *    - Tab visibility per scale (data-scales attribute)
+ *    - Viewport background overrides per mode
+ *    - Panel/tab hiding per mode (ontic, hierarchy)
+ *    - .mode-unavailable placeholder
+ * ============================================================ */
+
+/* ── Scale mode visibility ────────────────────── */
+#app.mode-particles .scale0-only {
+    display: none !important;
+}
+
+#app.mode-particles .scale2-only {
+    display: none !important;
+}
+
+#app.mode-particles .scale3-only {
+    display: none !important;
+}
+
+#app.mode-lattice .scale1-only {
+    display: none !important;
+}
+
+#app.mode-lattice .scale2-only {
+    display: none !important;
+}
+
+#app.mode-lattice .scale3-only {
+    display: none !important;
+}
+
+#app.mode-atoms .scale0-only {
+    display: none !important;
+}
+
+#app.mode-atoms .scale1-only {
+    display: none !important;
+}
+
+#app.mode-atoms .scale3-only {
+    display: none !important;
+}
+
+#app.mode-molecules .scale0-only {
+    display: none !important;
+}
+
+#app.mode-molecules .scale1-only {
+    display: none !important;
+}
+
+#app.mode-molecules .scale2-only {
+    display: none !important;
+}
+
+/* ── Scale 4 (Consciousness) visibility rules ── */
+#app.mode-consciousness .scale0-only {
+    display: none !important;
+}
+#app.mode-consciousness .scale1-only {
+    display: none !important;
+}
+#app.mode-consciousness .scale2-only {
+    display: none !important;
+}
+#app.mode-consciousness .scale3-only {
+    display: none !important;
+}
+
+/* ── Scale 2+3 combined visibility (atom/molecule visual controls) ── */
+#app.mode-lattice .scale23-only { display: none !important; }
+#app.mode-particles .scale23-only { display: none !important; }
+#app.mode-consciousness .scale23-only { display: none !important; }
+#app.mode-consciousness .scale-ae {
+    display: none !important;
+}
+/* Hide Scale 4 elements in other modes */
+#app.mode-lattice .scale4-only {
+    display: none !important;
+}
+#app.mode-particles .scale4-only {
+    display: none !important;
+}
+#app.mode-atoms .scale4-only {
+    display: none !important;
+}
+#app.mode-molecules .scale4-only {
+    display: none !important;
+}
+
+/* ── Meta Scale visibility ── */
+#app.mode-meta .scale0-only { display: none !important; }
+#app.mode-meta .scale1-only { display: none !important; }
+#app.mode-meta .scale2-only { display: none !important; }
+#app.mode-meta .scale3-only { display: none !important; }
+#app.mode-meta .scale4-only { display: none !important; }
+#app.mode-meta .scale23-only { display: none !important; }
+#app.mode-meta .scale-ae { display: none !important; }
+/* Hide Meta elements in other modes */
+#app.mode-lattice .scale5-only { display: none !important; }
+#app.mode-particles .scale5-only { display: none !important; }
+#app.mode-atoms .scale5-only { display: none !important; }
+#app.mode-molecules .scale5-only { display: none !important; }
+#app.mode-consciousness .scale5-only { display: none !important; }
+/* ── Cosmic Scale visibility ── */
+#app.mode-cosmic .scale0-only { display: none !important; }
+#app.mode-cosmic .scale1-only { display: none !important; }
+#app.mode-cosmic .scale2-only { display: none !important; }
+#app.mode-cosmic .scale3-only { display: none !important; }
+#app.mode-cosmic .scale4-only { display: none !important; }
+#app.mode-cosmic .scale5-only { display: none !important; }
+#app.mode-cosmic .scale23-only { display: none !important; }
+#app.mode-cosmic .scale-ae { display: none !important; }
+/* Hide Cosmic elements in other modes */
+#app.mode-lattice .scale-cosmic-only { display: none !important; }
+#app.mode-particles .scale-cosmic-only { display: none !important; }
+#app.mode-atoms .scale-cosmic-only { display: none !important; }
+#app.mode-molecules .scale-cosmic-only { display: none !important; }
+#app.mode-consciousness .scale-cosmic-only { display: none !important; }
+#app.mode-meta .scale-cosmic-only { display: none !important; }
+/* Cosmic mode deep space background */
+#app.mode-cosmic #viewport { background: #020208; }
+
+/* Meta mode dark background */
+#app.mode-meta #viewport { background: #080818; }
+/* Meta mode: hide non-meta tabs that lack data-scales */
+#app.mode-meta .tab[data-panel="ontic"],
+#app.mode-meta .tab[data-panel="hierarchy"] { display: none !important; }
+/* Cosmic mode: hide non-cosmic tabs that lack data-scales */
+#app.mode-cosmic .tab[data-panel="ontic"],
+#app.mode-cosmic .tab[data-panel="hierarchy"] { display: none !important; }
+
+/* Consciousness mode dark atmosphere */
+#app.mode-consciousness #viewport {
+    background: #050510;
+}
+/* (consciousness tab hiding now handled by generic rules in "Tab visibility per scale" block) */
+
+/* Consciousness tokens now in main :root block (line 43) */
+
+/* .scale-ae = visible at BOTH Scale 2 (atoms) and Scale 3 (molecules) */
+#app.mode-lattice .scale-ae {
+    display: none !important;
+}
+
+#app.mode-particles .scale-ae {
+    display: none !important;
+}
+
+/* ── Tab visibility per scale ─────────────────── */
+/* Generic: tabs with data-scales are hidden unless the current
+   mode's scale number appears in their comma-separated list.
+   Scale mapping: lattice=0, particles=1, atoms=2, molecules=3, consciousness=4 */
+
+/* data-scales="0"  →  only lattice */
+#app.mode-particles .tab[data-scales="0"],
+#app.mode-atoms .tab[data-scales="0"],
+#app.mode-molecules .tab[data-scales="0"],
+#app.mode-consciousness .tab[data-scales="0"],
+#app.mode-cosmic .tab[data-scales="0"],
+#app.mode-meta .tab[data-scales="0"] {
+    display: none !important;
+}
+
+/* data-scales="1"  →  only particles */
+#app.mode-lattice .tab[data-scales="1"],
+#app.mode-atoms .tab[data-scales="1"],
+#app.mode-molecules .tab[data-scales="1"],
+#app.mode-consciousness .tab[data-scales="1"],
+#app.mode-cosmic .tab[data-scales="1"],
+#app.mode-meta .tab[data-scales="1"] {
+    display: none !important;
+}
+
+/* data-scales="1,2,3"  →  particles, atoms, molecules */
+#app.mode-lattice .tab[data-scales="1,2,3"],
+#app.mode-consciousness .tab[data-scales="1,2,3"],
+#app.mode-cosmic .tab[data-scales="1,2,3"],
+#app.mode-meta .tab[data-scales="1,2,3"] {
+    display: none !important;
+}
+
+/* data-scales="4"  →  only consciousness */
+#app.mode-lattice .tab[data-scales="4"],
+#app.mode-particles .tab[data-scales="4"],
+#app.mode-atoms .tab[data-scales="4"],
+#app.mode-molecules .tab[data-scales="4"],
+#app.mode-cosmic .tab[data-scales="4"],
+#app.mode-meta .tab[data-scales="4"] {
+    display: none !important;
+}
+
+/* data-scales="0,1,2,3"  →  not consciousness, cosmic, or meta */
+#app.mode-consciousness .tab[data-scales="0,1,2,3"],
+#app.mode-cosmic .tab[data-scales="0,1,2,3"],
+#app.mode-meta .tab[data-scales="0,1,2,3"] {
+    display: none !important;
+}
+
+/* data-scales="5"  →  only meta */
+#app.mode-lattice .tab[data-scales="5"],
+#app.mode-particles .tab[data-scales="5"],
+#app.mode-atoms .tab[data-scales="5"],
+#app.mode-molecules .tab[data-scales="5"],
+#app.mode-consciousness .tab[data-scales="5"],
+#app.mode-cosmic .tab[data-scales="5"] {
+    display: none !important;
+}
+
+/* data-scales="6"  →  only cosmic */
+#app.mode-lattice .tab[data-scales="6"],
+#app.mode-particles .tab[data-scales="6"],
+#app.mode-atoms .tab[data-scales="6"],
+#app.mode-molecules .tab[data-scales="6"],
+#app.mode-consciousness .tab[data-scales="6"],
+#app.mode-meta .tab[data-scales="6"] {
+    display: none !important;
+}
+
+.mode-unavailable {
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    padding: 40px;
+    font-size: 13px;
+}

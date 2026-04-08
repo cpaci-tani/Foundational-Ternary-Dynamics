@@ -16,11 +16,13 @@
  * Mirrors Scale 0 TermToggles pattern. Future forces (Phase 2) stubbed as toggles.
  */
 
-#include "voxel.h"       // Vec3
-#include "constants.h"   // ALPHA, G_N, K_B, PI, C_SPEED, DAMPING
-#include "scale.h"       // OnticEntity, ScaleLevel
+#include "voxel.h"         // Vec3
+#include "constants.h"     // ALPHA, G_N, K_B, PI, C_SPEED, DAMPING
+#include "scale.h"         // OnticEntity, ScaleLevel
+#include "scale_engine.h"  // ScaleEngine base class
 #include <vector>
 #include <cstdint>
+#include <string>
 
 namespace ftd {
 
@@ -123,7 +125,7 @@ struct ParticleDiagnostics {
 // ParticleEngine
 // ============================================================================
 
-class ParticleEngine {
+class ParticleEngine : public ScaleEngine {
 public:
     ParticleEngine();
 
@@ -142,9 +144,9 @@ public:
     // Access
     std::vector<Particle>& particles() { return particles_; }
     const std::vector<Particle>& particles() const { return particles_; }
-    int current_tick() const { return tick_; }
-    double dt() const { return dt_; }
-    void set_dt(double dt) { dt_ = dt; }
+    int current_tick() const override { return tick_; }
+    double dt() const override { return dt_; }
+    void set_dt(double d) override { dt_ = d; }
     double softening() const { return soft_; }
     void set_softening(double s) { soft_ = s; }
 
@@ -158,13 +160,68 @@ public:
     const std::vector<ParticleForceDiag>& force_diag() const { return force_diag_; }
 
     // Advance one time step (Velocity Verlet)
-    void tick();
+    void tick() override;
 
     // Advance N time steps
-    void run(int num_ticks);
+    void run(int num_ticks) override;
 
     // Compute diagnostics for current state
     ParticleDiagnostics diagnostics() const;
+
+    // ====================================================================
+    // ScaleEngine overrides — polymorphic interface for bridge dispatch
+    // ====================================================================
+
+    int scale_level() const override { return static_cast<int>(ScaleLevel::PARTICLE); }
+    const char* scale_name() const override { return "ParticleEngine"; }
+    int entity_count() const override { return static_cast<int>(particles_.size()); }
+
+    void clear() override {
+        particles_.clear();
+        forces_.clear();
+        force_diag_.clear();
+        tick_ = 0;
+        next_id_ = 0;
+    }
+
+    bool get_toggle(const std::string& name) const override {
+        if (name == "coulomb")         return toggles.coulomb;
+        if (name == "gravity")         return toggles.gravity;
+        if (name == "damping")         return toggles.damping;
+        if (name == "lorentz")         return toggles.lorentz;
+        if (name == "exchange")        return toggles.exchange;
+        if (name == "strong")          return toggles.strong;
+        if (name == "radiation")       return toggles.radiation;
+        if (name == "spin_orbit")      return toggles.spin_orbit;
+        if (name == "relativistic")    return toggles.relativistic;
+        if (name == "magnetic_dipole") return toggles.magnetic_dipole;
+        return false;
+    }
+
+    void set_toggle(const std::string& name, bool value) override {
+        if (name == "coulomb")         { toggles.coulomb = value; return; }
+        if (name == "gravity")         { toggles.gravity = value; return; }
+        if (name == "damping")         { toggles.damping = value; return; }
+        if (name == "lorentz")         { toggles.lorentz = value; return; }
+        if (name == "exchange")        { toggles.exchange = value; return; }
+        if (name == "strong")          { toggles.strong = value; return; }
+        if (name == "radiation")       { toggles.radiation = value; return; }
+        if (name == "spin_orbit")      { toggles.spin_orbit = value; return; }
+        if (name == "relativistic")    { toggles.relativistic = value; return; }
+        if (name == "magnetic_dipole") { toggles.magnetic_dipole = value; return; }
+    }
+
+    ScaleBaseDiagnostics base_diagnostics() const override {
+        auto d = diagnostics();
+        ScaleBaseDiagnostics b;
+        b.tick = d.tick;
+        b.entity_count = d.particle_count;
+        b.total_energy = d.total_energy;
+        b.total_ke = d.total_ke;
+        b.total_pe = d.total_pe;
+        b.total_momentum = d.total_momentum;
+        return b;
+    }
 
     // Compute force on particle i from all others
     Vec3 compute_force(int i) const;

@@ -1,0 +1,159 @@
+{
+  "scale": 1,
+  "name": "Particles",
+  "engineMode": "particles",
+  "selectId": "pe-scenario-select",
+  "scenarios": [
+    {
+      "id": "pe-hydrogen",
+      "name": "Hydrogen Atom (p + e\u207b)",
+      "group": "Leptons",
+      "description": "Proton-electron bound state.",
+      "default": true
+    },
+    {
+      "id": "pe-helium",
+      "name": "Helium Atom (He\u00b2\u207a + 2e\u207b)",
+      "group": "Leptons",
+      "description": "Two-electron helium atom."
+    },
+    {
+      "id": "pe-positronium",
+      "name": "Positronium (e\u207ae\u207b)",
+      "group": "Leptons",
+      "description": "Electron-positron bound state."
+    },
+    {
+      "id": "pe-muonium",
+      "name": "Muonium (\u03bc\u207ae\u207b)",
+      "group": "Leptons",
+      "description": "Muon-electron bound state."
+    },
+    {
+      "id": "pe-true-muonium",
+      "name": "True Muonium (\u03bc\u207a\u03bc\u207b)",
+      "group": "Leptons",
+      "description": "Muon-antimuon bound state."
+    },
+    {
+      "id": "pe-tauonium",
+      "name": "Tauonium (\u03c4\u207a\u03c4\u207b)",
+      "group": "Leptons",
+      "description": "Tau-antitau bound state."
+    },
+    {
+      "id": "pe-tau-atom",
+      "name": "Tauonic Hydrogen (\u03c4\u207b + p)",
+      "group": "Leptons",
+      "description": "Tau replacing electron in hydrogen."
+    },
+    {
+      "id": "pe-pionic-hydrogen",
+      "name": "Pionic Hydrogen (\u03c0\u207b + p)",
+      "group": "Exotic Atoms",
+      "description": "Pion-proton exotic atom."
+    },
+    {
+      "id": "pe-kaonic-hydrogen",
+      "name": "Kaonic Hydrogen (K\u207b + p)",
+      "group": "Exotic Atoms",
+      "description": "Kaon-proton exotic atom."
+    },
+    {
+      "id": "pe-sigma-plus-atom",
+      "name": "Sigma\u207a Atom (\u03a3\u207a + e\u207b)",
+      "group": "Exotic Atoms",
+      "description": "Sigma-plus baryon with orbiting electron."
+    },
+    {
+      "id": "pe-antiprotonic-hydrogen",
+      "name": "Protonium (p\u0304 + p)",
+      "group": "Exotic Atoms",
+      "description": "Antiproton-proton bound state."
+    },
+    {
+      "id": "pe-pion-orbit",
+      "name": "Pionium (\u03c0\u207a\u03c0\u207b)",
+      "group": "Hadrons",
+      "description": "Pion-antipion bound state."
+    },
+    {
+      "id": "pe-kaon-pair",
+      "name": "Kaonium (K\u207aK\u207b)",
+      "group": "Hadrons",
+      "description": "Kaon-antikaon bound state."
+    },
+    {
+      "id": "pe-delta-system",
+      "name": "Delta\u207a\u207a System (\u0394\u207a\u207a + 2e\u207b)",
+      "group": "Hadrons",
+      "description": "Doubly-charged delta baryon with electrons."
+    },
+    {
+      "id": "pe-omega-scattering",
+      "name": "Omega\u207b Scattering (\u03a9\u207b + e\u207a)",
+      "group": "Hadrons",
+      "description": "Omega baryon scattering off positron."
+    },
+    {
+      "id": "pe-deuteron",
+      "name": "Deuteron (p + n + e\u207b)",
+      "group": "Nuclear",
+      "description": "Deuterium nucleus with orbiting electron."
+    },
+    {
+      "id": "pe-tritium",
+      "name": "Tritium (p + 2n + e\u207b)",
+      "group": "Nuclear",
+      "description": "Tritium nucleus with orbiting electron."
+    },
+    {
+      "id": "pe-helion",
+      "name": "Helion / He-3 (2p + n + 2e\u207b)",
+      "group": "Nuclear",
+      "description": "Helium-3 nucleus with two electrons."
+    },
+    {
+      "id": "pe-w-pair",
+      "name": "W\u207aW\u207b Pair",
+      "group": "Bosons",
+      "description": "W boson pair production."
+    },
+    {
+      "id": "pe-scattering",
+      "name": "Proton\u2013Electron Scattering",
+      "group": "Scattering",
+      "description": "Proton-electron scattering process."
+    },
+    {
+      "id": "pe-three-body",
+      "name": "Three-Body (p\u207a p\u207a e\u207b)",
+      "group": "Scattering",
+      "description": "Three-body scattering problem."
+    },
+    {
+      "id": "pe-meson-scattering",
+      "name": "\u03c0\u207a off Proton",
+      "group": "Scattering",
+      "description": "Pion-proton scattering."
+    },
+    {
+      "id": "pe-muon-scattering",
+      "name": "\u03bc\u207b off Proton",
+      "group": "Scattering",
+      "description": "Muon-proton scattering."
+    },
+    {
+      "id": "pe-micro-bh",
+      "name": "Micro Black Hole (Accretion)",
+      "group": "Gravity",
+      "description": "Microscopic black hole accretion."
+    },
+    {
+      "id": "pe-custom",
+      "name": "Custom (Manual)",
+      "group": "Custom",
+      "description": "User-defined particle configuration."
+    }
+  ]
+}

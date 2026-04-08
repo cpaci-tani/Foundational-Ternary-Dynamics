@@ -1,0 +1,27 @@
+/* FTD Engine — Light theme (clean daylight mode)
+ * Extracted from index.html inline styles.
+ * Part of the modular CSS architecture (Phase 0).
+ */
+
+/* Light — clean daylight mode */
+html[data-theme="light"] {
+    --bg-deep: #f8f9fb;
+    --bg-surface: #ffffff;
+    --bg-card: #f0f2f5;
+    --bg-input: #e5e7eb;
+    --border: #d1d5db;
+    --border-light: #c0c4cc;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
+    --accent: #2563eb;
+    --accent-dim: #1d4ed8;
+    --positive: #16a34a;
+    --negative: #dc2626;
+    --warning: #d97706;
+}
+
+/* Viewport background override */
+html[data-theme="light"] #viewport {
+    background: linear-gradient(180deg, #e0e4ea 0%, #c8cdd6 100%) !important;
+}
