@@ -289,6 +289,30 @@ export class CosmicMockBridge {
             }
         }
 
+        // BH hard core: prevent bodies from passing through BH center.
+        // Plummer softening makes F→0 at r→0, so bodies on radial orbits
+        // sail through. This adds a repulsive barrier at r < r_core that
+        // deflects approaching bodies, mimicking an unresolved central cusp.
+        const BHT = CosmicMockBridge.TYPE.BLACK_HOLE;
+        const QST = CosmicMockBridge.TYPE.QUASAR;
+        for (const bh of this._bodies) {
+            if (bh.type !== BHT && bh.type !== QST) continue;
+            const r_core = Math.max(1.5, Math.cbrt(bh.mass) * 0.15);
+            const r_core2 = r_core * r_core;
+            for (const b of this._bodies) {
+                if (b.id === bh.id) continue;
+                const dx = b.x - bh.x, dy = b.y - bh.y, dz = b.z - bh.z;
+                const r2 = dx * dx + dy * dy + dz * dz;
+                if (r2 > r_core2 || r2 < 1e-6) continue;
+                const r = Math.sqrt(r2);
+                // Repulsive force ~ 1/r^4 inside core (steep wall)
+                const fmag = G * bh.mass * r_core2 / (r2 * r2 + 0.01);
+                b.ax += fmag * dx / r;
+                b.ay += fmag * dy / r;
+                b.az += fmag * dz / r;
+            }
+        }
+
         // Sub-grid physics (BH accretion scenario only)
         if (!this._enableSubgrid) return;
 
