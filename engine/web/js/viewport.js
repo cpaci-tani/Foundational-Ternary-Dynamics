@@ -491,7 +491,7 @@ export class Viewport {
     toggleAxes(on) {
         this._showAxes = on;
         const mode = this._engineMode || 'lattice';
-        if (mode === 'consciousness') return;
+        if (mode === 'consciousness' || mode === 'cosmic' || mode === 'meta') return;
         if (mode === 'lattice') {
             if (this.axes) this.axes.visible = on;
         } else {
@@ -502,7 +502,7 @@ export class Viewport {
     toggleGrid(on) {
         this._showGrid = on;
         const mode = this._engineMode || 'lattice';
-        if (mode === 'consciousness') return;
+        if (mode === 'consciousness' || mode === 'cosmic' || mode === 'meta') return;
         if (mode === 'lattice') {
             // Scale 0: the wireframe cube serves as the grid reference
             if (this.wireframe) this.wireframe.visible = on;
@@ -2646,6 +2646,29 @@ export class Viewport {
     // Switch between lattice wireframe (Scale 0), coordinate axes (Scale 1), atom view (Scale 2), molecule view (Scale 3)
     setEngineMode(mode) {
         this._engineMode = mode;
+
+        // ── Cosmic mode: hide all non-cosmic visuals ──
+        if (mode === 'cosmic') {
+            if (this.wireframe) this.wireframe.visible = false;
+            if (this.axes) this.axes.visible = false;
+            if (this.peAxes) this.peAxes.visible = false;
+            if (this.peGrid) this.peGrid.visible = false;
+            if (this.particles) this.particles.visible = false;
+            if (this._fluxVolume) this._fluxVolume.visible = false;
+            if (this._fluxSlice) this._fluxSlice.visible = false;
+            if (this._eFieldLines) this._eFieldLines.visible = false;
+            if (this._bFieldLines) this._bFieldLines.visible = false;
+            if (this._bondCylinders) this._bondCylinders.visible = false;
+            if (this._bondLight) this._bondLight.visible = false;
+            if (this._nucleusShells) this._nucleusShells.visible = false;
+            if (this._orbitalShells) this._orbitalShells.visible = false;
+            if (this._orbitalLobes) this._orbitalLobes.visible = false;
+            if (this.velocityVectors) this.velocityVectors.visible = false;
+            if (this.trails) this.trails.visible = false;
+            if (this.bondLines) this.bondLines.visible = false;
+            if (this._boundary) this._boundary.visible = false;
+            return;
+        }
 
         // ── Meta mode: hide all physics visuals, keep scene clean ──
         if (mode === 'meta') {
