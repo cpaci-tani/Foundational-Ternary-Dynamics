@@ -124,6 +124,7 @@ export const ONTIC_LAYERS = [
     { layer: 6,   name: 'Mass Scale',            symbols: ['K_B','K_genesis','masses'], count: 3 },
     { layer: 7,   name: 'Precision Formula',     symbols: ['epsilon','c1-c4'], count: 5 },
     { layer: 8,   name: 'Consciousness',         symbols: ['y_real','theta_C'], count: 2 },
+    { layer: 9,   name: 'Cosmic Scale',          symbols: ['Omega_L','DM_frac','gamma'], count: 3 },
 ];
 
 // Total ontic chain constants: sum of all counts
@@ -138,3 +139,15 @@ export const TICK_PHASES = [
     'phase_movement (position integration)',
     'tick++ (clock advance)',
 ];
+
+// ── Layer 9: Cosmic Scale ──────────────────────────────────────────
+// Dark energy fraction: Omega_Lambda = 2/3 from FTD [THEOREM]
+export const OMEGA_LAMBDA = 2.0 / 3.0;
+// Matter fraction: 1 - Omega_Lambda = 1/3
+export const OMEGA_MATTER = 1.0 / 3.0;
+// Dark matter fraction: 17/27 from Moore theorem [THEOREM]
+export const DM_FRACTION = 17.0 / 27.0;
+// Baryonic fraction: 10/27 [THEOREM]
+export const BARYON_FRACTION = 10.0 / 27.0;
+// Adiabatic index: gamma = (D+2)/D = 5/3 for D=3 [THEOREM]
+export const GAMMA_ADIABATIC = 5.0 / 3.0;

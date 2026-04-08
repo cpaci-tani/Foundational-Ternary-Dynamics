@@ -1,0 +1,86 @@
+{
+  "scale": 4,
+  "name": "Consciousness",
+  "engineMode": "consciousness",
+  "selectId": "cs-scenario-select",
+  "scenarios": [
+    {
+      "id": "cs-threshold",
+      "name": "Threshold Crossing",
+      "group": "Observer Modes",
+      "description": "Flux starts below the consciousness threshold K_C \u2248 3.60. As flux energy builds, the discriminant \u0394_k passes through zero, and roots transition from real (physics) through degenerate (measurement) to complex (consciousness). Watch the Domain indicator change.",
+      "default": true
+    },
+    {
+      "id": "cs-high-coupling",
+      "name": "High Coupling",
+      "group": "Observer Modes",
+      "description": "Four-source flux interference with coupling and forces enabled. High flux density pushes well above K_C, producing strong consciousness intensity. The holographic figure becomes vivid as the observer\u2019s self-model stabilizes."
+    },
+    {
+      "id": "cs-self-ref",
+      "name": "Self-Reference",
+      "group": "sLoop",
+      "description": "Standing wave pattern: the observer meets itself. sLoop depth = 1 \u2014 a fixed point of the gap equation x\u00b2 = K(x \u2212 G*). The lattice determines its own coupling."
+    },
+    {
+      "id": "cs-nested-sloop",
+      "name": "Nested sLoop",
+      "group": "sLoop",
+      "description": "Two orthogonal standing waves: aware of self-awareness. sLoop depth = 2. This is the algebraic expression of recursive self-referential closure."
+    },
+    {
+      "id": "cs-chirality",
+      "name": "Chirality Split",
+      "group": "Duality",
+      "description": "Dual substrate with left/right asymmetric injection demonstrating parity violation. The chirality split mirrors the 3:1 alternating handedness of the dyadic Fourier shells."
+    },
+    {
+      "id": "cs-boundary-orbit",
+      "name": "Boundary Orbit",
+      "group": "Duality",
+      "description": "Mandelbrot iteration at c = 1/G* \u2248 0.338, tracking the edge of chaos. The fixed points of z \u2192 z\u00b2 + c are exactly the consciousness roots y = 2.19 \u00b1 2.86i."
+    },
+    {
+      "id": "cs-entangled",
+      "name": "Entangled Pair",
+      "group": "Duality",
+      "description": "Full coupling with Bell parameter S = 2\u221a2 \u2248 2.83. All forces, genesis, and movement enabled. Demonstrates observer-lattice entanglement via complexification + sLoop coupling."
+    },
+    {
+      "id": "cs-flow",
+      "name": "Flow State",
+      "group": "Phase States",
+      "description": "Fast vortex pattern with effective \u03b8 < 52.54\u00b0 (object-dominant flow state). The holographic figure responds with rapid, outward-focused dynamics."
+    },
+    {
+      "id": "cs-meditation",
+      "name": "Meditation",
+      "group": "Phase States",
+      "description": "Gentle centered pulse with effective \u03b8 > 52.54\u00b0 (subject-dominant contemplative state). The observer turns inward, producing slow, resonant breathing patterns."
+    },
+    {
+      "id": "cs-custom",
+      "name": "Custom (Manual)",
+      "group": "Custom",
+      "description": "User-defined consciousness configuration."
+    }
+  ],
+  "figures": {
+    "selectId": "cs-figure-select",
+    "options": [
+      { "id": "aetheric", "name": "Aetheric Body", "group": "Ethereal" },
+      { "id": "spirit", "name": "Spirit in the Sky", "group": "Ethereal" },
+      { "id": "plasmoid", "name": "Plasmoid Cloud", "group": "Ethereal", "default": true },
+      { "id": "god", "name": "God Figure", "group": "Divine" },
+      { "id": "demiurge", "name": "Demiurge", "group": "Divine" },
+      { "id": "yahweh", "name": "Yahweh (Pillar)", "group": "Divine" },
+      { "id": "hotep", "name": "Hotep", "group": "Historical" },
+      { "id": "jesus", "name": "Jesus", "group": "Historical" },
+      { "id": "mayan-sun", "name": "Mayan Sun God", "group": "Historical" },
+      { "id": "death-cloud", "name": "Death Cloud", "group": "Dark" },
+      { "id": "humanoid", "name": "Humanoid", "group": "Classic" },
+      { "id": "alien", "name": "Alien", "group": "Classic" }
+    ]
+  }
+}

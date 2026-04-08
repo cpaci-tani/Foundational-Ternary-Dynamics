@@ -1,0 +1,172 @@
+{
+  "scale": 3,
+  "name": "Molecules",
+  "engineMode": "molecules",
+  "selectId": "mol-scenario-select",
+  "note": "Molecule scenarios are dynamically built by buildScale3MoleculeDropdown() from molecules.js. The default is mol-h2.",
+  "scenarios": [
+    {
+      "id": "mol-h2",
+      "name": "H\u2082 Hydrogen",
+      "group": "Diatomic Molecules",
+      "description": "Simplest covalent molecule \u2014 two hydrogen atoms sharing electrons.",
+      "default": true
+    },
+    {
+      "id": "mol-o2",
+      "name": "O\u2082 Oxygen",
+      "group": "Diatomic Molecules",
+      "description": "Diatomic oxygen \u2014 double bond, paramagnetic."
+    },
+    {
+      "id": "mol-n2",
+      "name": "N\u2082 Nitrogen",
+      "group": "Diatomic Molecules",
+      "description": "Diatomic nitrogen \u2014 triple bond, extremely stable."
+    },
+    {
+      "id": "mol-hcl",
+      "name": "HCl Hydrogen Chloride",
+      "group": "Diatomic Molecules",
+      "description": "Polar covalent bond \u2014 electronegativity difference."
+    },
+    {
+      "id": "mol-water",
+      "name": "H\u2082O Water",
+      "group": "Simple Inorganic",
+      "description": "Bent geometry (104.5\u00b0) \u2014 universal solvent, life's medium."
+    },
+    {
+      "id": "mol-nacl",
+      "name": "NaCl Sodium Chloride",
+      "group": "Simple Inorganic",
+      "description": "Ionic bond \u2014 electrostatic attraction between Na\u207a and Cl\u207b."
+    },
+    {
+      "id": "mol-noble",
+      "name": "He + Ne Noble Gases",
+      "group": "Simple Inorganic",
+      "description": "Van der Waals interaction only \u2014 no covalent or ionic bonds."
+    },
+    {
+      "id": "mol-co2",
+      "name": "CO\u2082 Carbon Dioxide",
+      "group": "Simple Inorganic",
+      "description": "Linear molecule (180\u00b0) \u2014 greenhouse gas, double bonds."
+    },
+    {
+      "id": "mol-nh3",
+      "name": "NH\u2083 Ammonia",
+      "group": "Simple Inorganic",
+      "description": "Trigonal pyramidal (107.8\u00b0) \u2014 lone pair pushes geometry."
+    },
+    {
+      "id": "mol-h2o2",
+      "name": "H\u2082O\u2082 Hydrogen Peroxide",
+      "group": "Simple Inorganic",
+      "description": "O-O bond with dihedral angle \u2014 3D geometry."
+    },
+    {
+      "id": "mol-h2s",
+      "name": "H\u2082S Hydrogen Sulfide",
+      "group": "Simple Inorganic",
+      "description": "Bent geometry (92.1\u00b0) \u2014 compare with water's 104.5\u00b0."
+    },
+    {
+      "id": "mol-methane",
+      "name": "CH\u2084 Methane",
+      "group": "Organic Molecules",
+      "description": "Perfect tetrahedral geometry (109.5\u00b0) \u2014 simplest alkane."
+    },
+    {
+      "id": "mol-ethane",
+      "name": "C\u2082H\u2086 Ethane",
+      "group": "Organic Molecules",
+      "description": "C-C single bond \u2014 two methyl groups in staggered configuration."
+    },
+    {
+      "id": "mol-ethylene",
+      "name": "C\u2082H\u2084 Ethylene",
+      "group": "Organic Molecules",
+      "description": "C=C double bond \u2014 planar molecule, 120\u00b0 angles."
+    },
+    {
+      "id": "mol-acetylene",
+      "name": "C\u2082H\u2082 Acetylene",
+      "group": "Organic Molecules",
+      "description": "C\u2261C triple bond \u2014 linear molecule."
+    },
+    {
+      "id": "mol-methanol",
+      "name": "CH\u2083OH Methanol",
+      "group": "Organic Molecules",
+      "description": "Hydroxyl group (-OH) \u2014 simplest alcohol."
+    },
+    {
+      "id": "mol-formaldehyde",
+      "name": "CH\u2082O Formaldehyde",
+      "group": "Organic Molecules",
+      "description": "C=O carbonyl group \u2014 trigonal planar geometry."
+    },
+    {
+      "id": "mol-benzene",
+      "name": "C\u2086H\u2086 Benzene",
+      "group": "Organic Molecules",
+      "description": "Aromatic ring \u2014 six-fold symmetry, delocalized electrons."
+    },
+    {
+      "id": "mol-ethanol",
+      "name": "C\u2082H\u2085OH Ethanol",
+      "group": "Organic Molecules",
+      "description": "Common alcohol \u2014 C-C-O chain with hydroxyl group."
+    },
+    {
+      "id": "mol-acetic_acid",
+      "name": "CH\u2083COOH Acetic Acid",
+      "group": "Organic Molecules",
+      "description": "Carboxyl group (-COOH) \u2014 simplest organic acid (vinegar)."
+    },
+    {
+      "id": "mol-glycine",
+      "name": "C\u2082H\u2085NO\u2082 Glycine",
+      "group": "Biochemical & Crystals",
+      "description": "Simplest amino acid \u2014 H\u2082N-CH\u2082-COOH, building block of proteins."
+    },
+    {
+      "id": "mol-urea",
+      "name": "CO(NH\u2082)\u2082 Urea",
+      "group": "Biochemical & Crystals",
+      "description": "First organic compound synthesized from inorganic \u2014 planar C center."
+    },
+    {
+      "id": "mol-adenine",
+      "name": "C\u2085H\u2085N\u2085 Adenine",
+      "group": "Biochemical & Crystals",
+      "description": "Purine base \u2014 found in DNA, RNA, and ATP."
+    },
+    {
+      "id": "mol-diamond",
+      "name": "C\u2088 Diamond Cell",
+      "group": "Biochemical & Crystals",
+      "description": "Diamond cubic unit cell \u2014 sp\u00b3 carbon network, hardest material."
+    },
+    {
+      "id": "mol-caffeine",
+      "name": "C\u2088H\u2081\u2080N\u2084O\u2082 Caffeine",
+      "group": "Biochemical & Crystals",
+      "description": "Purine alkaloid \u2014 the world's most consumed psychoactive substance."
+    },
+    {
+      "id": "mol-crystal",
+      "name": "NaCl Crystal (3\u00d73\u00d73)",
+      "group": "Special",
+      "description": "Sodium chloride crystal lattice."
+    },
+    {
+      "id": "mol-custom",
+      "name": "Custom",
+      "group": "Special",
+      "description": "User-defined molecular configuration."
+    }
+  ]
+}
