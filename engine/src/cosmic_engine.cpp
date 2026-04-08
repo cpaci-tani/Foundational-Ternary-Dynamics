@@ -836,8 +836,10 @@ void CosmicEngine::compute_accretion() {
                 if (denom > 0.0) {
                     double mdot = 4.0 * PI * G_N * G_N * bh.mass * bh.mass *
                                   bodies_[j].density / denom;
-                    // Eddington limit: cap accretion at L_edd / (efficiency * c^2)
-                    double mdot_edd = 4.0 * PI * G_N * bh.mass / (C_SPEED * 0.4); // sigma_T ~ 0.4 in sim units
+                    // Eddington limit: L_edd = 4*pi*G*M*c/sigma_T, then mdot_edd = L_edd/(eta*c^2)
+                    // sigma_T ~ 0.4 in simulation units, eta = BONDI_EFFICIENCY
+                    double L_edd = 4.0 * PI * G_N * bh.mass * C_SPEED / 0.4;
+                    double mdot_edd = L_edd / (cosmic::BONDI_EFFICIENCY * C_SPEED * C_SPEED);
                     mdot = std::min(mdot, mdot_edd);
                     double dm = std::min(mdot * dt_, bodies_[j].mass * 0.1);
                     bh.mass += dm;
@@ -1059,11 +1061,17 @@ void CosmicEngine::detect_gw_events() {
                 gw.current_radius = 0.0;
                 gw_events_.push_back(gw);
 
-                // Merge bodies: j is absorbed into i
-                bodies_[i].mass += bodies_[j].mass;
+                // Merge bodies: j absorbed into i, ~5% mass radiated as GWs
+                double m_total = bodies_[i].mass + bodies_[j].mass;
+                double gw_mass_loss = 0.05; // ~5% of rest mass radiated (equal-mass limit)
+                // Momentum-conserving velocity merge (before mass loss)
                 bodies_[i].velocity.x = (bodies_[i].velocity.x * bodies_[i].mass +
-                                         bodies_[j].velocity.x * bodies_[j].mass) /
-                                        (bodies_[i].mass + bodies_[j].mass);
+                                         bodies_[j].velocity.x * bodies_[j].mass) / m_total;
+                bodies_[i].velocity.y = (bodies_[i].velocity.y * bodies_[i].mass +
+                                         bodies_[j].velocity.y * bodies_[j].mass) / m_total;
+                bodies_[i].velocity.z = (bodies_[i].velocity.z * bodies_[i].mass +
+                                         bodies_[j].velocity.z * bodies_[j].mass) / m_total;
+                bodies_[i].mass = m_total * (1.0 - gw_mass_loss);
                 // Mark j for removal
                 bodies_[j].mass = 0.0;
                 bodies_[j].type = CosmicBodyType::DARK_ENERGY; // Will be cleaned
