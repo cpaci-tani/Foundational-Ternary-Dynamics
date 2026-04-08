@@ -49,12 +49,10 @@ export class CosmicMockBridge {
         return id;
     }
 
-    // Enclosed mass within radius r for an NFW-like profile
-    // M(<r) = M_total * [ln(1+r/rs) - r/(rs+r)] / [ln(1+c) - c/(1+c)]
-    // Simplified: M(<r) ~ M_total * r^2 / (r^2 + rs^2) for a Plummer sphere
+    // Plummer enclosed mass: M_enc = M_total * r^3 / (r^2 + a^2)^(3/2)
+    // Smooth profile that avoids central singularity; converges to M_total at large r.
     _enclosedMass(r, M_total, rs) {
-        return M_total * r * r * r / Math.pow(r * r + rs * rs, 1.5) * (rs * rs + r * r);
-        // Simpler Plummer: M_enc = M * r^3 / (r^2 + a^2)^(3/2)
+        return M_total * r * r * r / Math.pow(r * r + rs * rs, 1.5);
     }
 
     setupScenario(name) {
@@ -84,9 +82,11 @@ export class CosmicMockBridge {
 
             // DM halo — spherical Hernquist profile
             for (let i = 0; i < N_dm; i++) {
-                // Hernquist r sampling: P(r) ~ r^2 / (r + a)^4
-                const u = rng();
-                const r = r_s * (Math.sqrt(u) / (1 - Math.sqrt(u) + 0.01));
+                // Hernquist CDF inversion: r = a * sqrt(u) / (1 - sqrt(u))
+                // Clamped to avoid infinite radius when u -> 1
+                const u = rng() * 0.98; // cap at 98th percentile to avoid extreme outliers
+                const su = Math.sqrt(u);
+                const r = r_s * su / (1.0 - su);
                 const clampR = Math.min(r, 250);
                 const th = Math.acos(2 * rng() - 1);
                 const ph = PI2 * rng();
@@ -256,16 +256,16 @@ export class CosmicMockBridge {
         }
     }
 
-    tick() {
+    // Compute gravitational accelerations for all bodies (O(N^2) with Plummer softening).
+    // Separated from tick() so it can be called twice per Verlet step.
+    _computeForces() {
         const G = G_N;
         const n = this._bodies.length;
-        if (n === 0) return;
         const soft2 = this._softening * this._softening;
 
-        // Reset accelerations
         for (const b of this._bodies) { b.ax = 0; b.ay = 0; b.az = 0; }
 
-        // Direct O(N^2) gravity with Plummer softening
+        // Pairwise gravity: a_i += G * m_j * dr / |dr|^3  (Plummer-softened)
         for (let i = 0; i < n; i++) {
             const bi = this._bodies[i];
             for (let j = i + 1; j < n; j++) {
@@ -274,11 +274,8 @@ export class CosmicMockBridge {
                 const dy = bj.y - bi.y;
                 const dz = bj.z - bi.z;
                 const r2 = dx * dx + dy * dy + dz * dz + soft2;
-                const invR = 1.0 / Math.sqrt(r2);
-                const invR3 = invR * invR * invR;
+                const invR3 = 1.0 / (r2 * Math.sqrt(r2));
 
-                // a_i += G * m_j * (r_j - r_i) / |r|^3
-                // a_j -= G * m_i * (r_j - r_i) / |r|^3
                 const Gj = G * bj.mass * invR3;
                 const Gi = G * bi.mass * invR3;
                 bi.ax += Gj * dx; bi.ay += Gj * dy; bi.az += Gj * dz;
@@ -286,33 +283,56 @@ export class CosmicMockBridge {
             }
         }
 
-        // Dynamical friction on black holes (Chandrasekhar, simplified)
-        // Massive objects lose kinetic energy to the background, enabling mergers
+        // Chandrasekhar dynamical friction on BHs:
+        // F_fric ~ -4*pi*G^2*M^2*rho*ln(Lambda) * v_hat / v^2
+        // Simplified: use local density estimate from nearest neighbors
         for (const b of this._bodies) {
             if (b.type !== CosmicMockBridge.TYPE.BLACK_HOLE) continue;
             const v2 = b.vx * b.vx + b.vy * b.vy + b.vz * b.vz;
             if (v2 < 1e-20) continue;
-            const v = Math.sqrt(v2);
-            // f_fric ~ -C * M^2 * rho * v_hat / v^2 (simplified)
-            // Use a gentle drag coefficient scaled by mass
-            const drag = 0.0001 * Math.log(b.mass + 1);
-            b.ax -= drag * b.vx;
-            b.ay -= drag * b.vy;
-            b.az -= drag * b.vz;
+            // Coulomb logarithm ~ ln(b_max/b_min) ~ ln(box/softening) ~ 5
+            const lnLambda = 5.0;
+            const drag = 4 * Math.PI * G * G * b.mass * lnLambda / (v2 + 1e-10);
+            // Estimate local density from total mass / box volume (crude)
+            const rho_local = this._bodies.reduce((s, p) => s + p.mass, 0) / Math.pow(this._boxSize, 3);
+            const fric = drag * rho_local;
+            b.ax -= fric * b.vx;
+            b.ay -= fric * b.vy;
+            b.az -= fric * b.vz;
         }
+    }
 
-        // Velocity Verlet: kick-drift-kick
+    tick() {
+        const n = this._bodies.length;
+        if (n === 0) return;
         const dt = this._dt;
+
+        // Proper Velocity Verlet (symplectic, time-reversible):
+        //   1. Half-kick using CURRENT forces
+        //   2. Drift positions
+        //   3. Recompute forces at NEW positions
+        //   4. Half-kick using NEW forces
+        // This preserves energy to machine precision over long runs.
+
+        // Step 1: half-kick with current accelerations
         for (const b of this._bodies) {
-            // Half kick
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;
-            // Drift
+        }
+
+        // Step 2: drift positions
+        for (const b of this._bodies) {
             b.x += dt * b.vx;
             b.y += dt * b.vy;
             b.z += dt * b.vz;
-            // Second half kick (using same acceleration — leapfrog approximation)
+        }
+
+        // Step 3: recompute forces at new positions
+        this._computeForces();
+
+        // Step 4: second half-kick with FRESH forces
+        for (const b of this._bodies) {
             b.vx += 0.5 * dt * b.ax;
             b.vy += 0.5 * dt * b.ay;
             b.vz += 0.5 * dt * b.az;

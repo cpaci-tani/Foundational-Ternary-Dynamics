@@ -586,9 +586,11 @@ void CosmicEngine::compute_gravity() {
 // ============================================================================
 
 double CosmicEngine::sph_kernel_w(double r, double h) const {
-    // Cubic spline kernel (Monaghan 1992)
+    // 3D cubic spline kernel (Monaghan 1992)
+    // W(r,h) = (1/pi*h^3) * { 1 - 1.5*q^2 + 0.75*q^3  if q<1
+    //                        { 0.25*(2-q)^3             if q<2
     double q = r / h;
-    double norm = 10.0 / (7.0 * PI * h * h * h);
+    double norm = 1.0 / (PI * h * h * h);
     if (q < 1.0) {
         return norm * (1.0 - 1.5 * q * q + 0.75 * q * q * q);
     } else if (q < 2.0) {
@@ -602,7 +604,7 @@ Vec3 CosmicEngine::sph_kernel_grad(const Vec3& rij, double h) const {
     double r = rij.mag();
     if (r < 1e-10) return {};
     double q = r / h;
-    double norm = 10.0 / (7.0 * PI * h * h * h * h); // extra 1/h for gradient
+    double norm = 1.0 / (PI * h * h * h * h); // 3D gradient: extra 1/h for derivative
     double dw = 0.0;
     if (q < 1.0) {
         dw = norm * (-3.0 * q + 2.25 * q * q);
@@ -714,6 +716,7 @@ void CosmicEngine::compute_sph_forces() {
             double vij_dot_rij = vij.dot(rij);
             if (vij_dot_rij < 0.0) { // Only when approaching
                 double r2 = rij.mag2();
+                // 0.01*h^2 is intentionally small to avoid over-damping; standard is h^2
                 double mu = h_avg * vij_dot_rij / (r2 + 0.01 * h_avg * h_avg);
                 double rho_avg = 0.5 * (rho_i + rho_j);
                 double c_avg = 0.5 * (bodies_[i].sound_speed() + bodies_[j].sound_speed());
@@ -833,12 +836,13 @@ void CosmicEngine::compute_accretion() {
                 if (denom > 0.0) {
                     double mdot = 4.0 * PI * G_N * G_N * bh.mass * bh.mass *
                                   bodies_[j].density / denom;
-                    mdot *= cosmic::BONDI_EFFICIENCY;
+                    // Eddington limit: cap accretion at L_edd / (efficiency * c^2)
+                    double mdot_edd = 4.0 * PI * G_N * bh.mass / (C_SPEED * 0.4); // sigma_T ~ 0.4 in sim units
+                    mdot = std::min(mdot, mdot_edd);
                     double dm = std::min(mdot * dt_, bodies_[j].mass * 0.1);
                     bh.mass += dm;
                     bodies_[j].mass -= dm;
                     bh.accretion_rate = mdot;
-                    // Update luminosity for quasars
                     if (bh.type == CosmicBodyType::QUASAR) {
                         bh.luminosity = mdot * cosmic::BONDI_EFFICIENCY * C_SPEED * C_SPEED;
                     }
@@ -873,12 +877,16 @@ void CosmicEngine::compute_relativistic_jets() {
             jet_dir.z /= j_mag;
         }
 
-        // Inject jet particles (simplified: add momentum to BH)
-        double jet_power = b.accretion_rate * cosmic::BONDI_EFFICIENCY *
-                          C_SPEED * C_SPEED * cosmic::JET_COLLIMATION;
-        b.velocity.x += jet_dir.x * jet_power / b.mass * dt_;
-        b.velocity.y += jet_dir.y * jet_power / b.mass * dt_;
-        b.velocity.z += jet_dir.z * jet_power / b.mass * dt_;
+        // Jet kinetic luminosity: fraction of accretion luminosity
+        double L_jet = b.accretion_rate * cosmic::BONDI_EFFICIENCY * C_SPEED * C_SPEED * 0.1;
+        // Momentum flux: p_dot = L_jet / v_jet (for relativistic material)
+        double p_dot = L_jet / (v_jet + 1e-20);
+        // Recoil on BH (Newton's third law) — bipolar, so net recoil is zero for symmetric jets
+        // Add slight asymmetry for realistic kick
+        double asymmetry = 0.05;
+        b.velocity.x += jet_dir.x * p_dot * asymmetry / b.mass * dt_;
+        b.velocity.y += jet_dir.y * p_dot * asymmetry / b.mass * dt_;
+        b.velocity.z += jet_dir.z * p_dot * asymmetry / b.mass * dt_;
     }
 }
 
@@ -919,10 +927,9 @@ void CosmicEngine::check_stellar_evolution() {
     for (auto& b : bodies_) {
         if (b.type != CosmicBodyType::STAR) continue;
 
-        // Simplified stellar lifetime: t ~ M^(-2.5) * 1e4 (in cosmic ticks)
-        double lifetime = std::pow(b.mass, -2.5) * 1e4;
-        // Use tick as proxy for age (simplified)
-        if (tick_ > lifetime) {
+        // Stellar lifetime: t ~ (M+1)^(-2.5) * 1e7 (cosmic time units)
+        double lifetime = std::pow(b.mass + 1.0, -2.5) * 1e7;
+        if (t_cosmic_ > lifetime) {
             if (b.mass > cosmic::M_SUPERNOVA) {
                 if (b.mass > cosmic::M_TOV * 10.0) {
                     // Massive star -> Black hole
@@ -932,8 +939,9 @@ void CosmicEngine::check_stellar_evolution() {
                 } else {
                     // Medium star -> Neutron star + supernova nebula
                     b.type = CosmicBodyType::NEUTRON_STAR;
-                    double ejected = b.mass * 0.8;
-                    b.mass -= ejected;
+                    double m_remnant = std::min(b.mass * 0.15 + 1.2, cosmic::M_TOV); // ~1.4-2.2 M_sun
+                    double ejected = b.mass - m_remnant;
+                    b.mass = m_remnant;
                     CosmicBody nebula;
                     nebula.id = next_id_++;
                     nebula.type = CosmicBodyType::NEBULA;
@@ -1044,9 +1052,10 @@ void CosmicEngine::detect_gw_events() {
                 };
                 gw.emission_tick = tick_;
                 gw.total_mass = bodies_[i].mass + bodies_[j].mass;
-                // GW strain: h ~ G*M*v^2 / (r*c^4)
+                // GW strain: h ~ 4*G*M*v^2 / (r*c^4) — distance factor is critical
                 double v2 = (bodies_[i].velocity.mag2() + bodies_[j].velocity.mag2()) * 0.5;
-                gw.strain = G_N * gw.total_mass * v2 / (C_SPEED * C_SPEED * C_SPEED * C_SPEED);
+                double r_source = std::max(dr.mag(), softening_);
+                gw.strain = 4.0 * G_N * gw.total_mass * v2 / (r_source * C_SPEED * C_SPEED * C_SPEED * C_SPEED);
                 gw.current_radius = 0.0;
                 gw_events_.push_back(gw);
 
@@ -1159,12 +1168,18 @@ void CosmicEngine::tick() {
     detect_gw_events();
     propagate_gw();
 
-    // Phase 15-17: Velocity Verlet integration
+    // Phase 15: first half-kick
     half_kick();
+    // Phase 16: drift
     drift();
-
-    // Recompute forces for second half-kick
-    // (Simplified: reuse same forces for both kicks in this implementation)
+    // Phase 17: RECOMPUTE forces at new positions (critical for symplecticity)
+    int n2 = (int)bodies_.size();
+    forces_.assign(n2, {});
+    force_diag_.assign(n2, {});
+    build_octree();
+    compute_gravity();
+    if (toggles.sph_gas) { compute_sph_density(); compute_sph_forces(); }
+    // Phase 18: second half-kick with FRESH forces
     half_kick();
 
     // Enforce speed limit
