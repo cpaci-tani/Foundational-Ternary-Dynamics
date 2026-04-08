@@ -235,3 +235,8 @@
     padding: 40px;
     font-size: 13px;
 }
+
+/* Hide axes/grid toggles in cosmic and meta modes — not useful at those scales */
+#app.mode-cosmic #viewport-toggles-universal { display: none !important; }
+#app.mode-meta #viewport-toggles-universal { display: none !important; }
+
