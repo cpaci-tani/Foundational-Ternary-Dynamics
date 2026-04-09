@@ -373,9 +373,13 @@ export class CosmicRenderer {
 
             if (!this._showDisks) continue;
 
-            // --- Accretion disk: starts right at the event horizon ---
-            const innerR = rs * 1.05;  // just outside the black sphere
-            const outerR = rs * 14.0;
+            // --- Accretion disk: grows slowly to full size ---
+            // Starts tiny (just outside horizon), expands over 10 seconds
+            // as material falls in and circularizes into a disk.
+            const growFactor = Math.min(1.0, age / 10.0); // 0→1 over 10 seconds
+            const easeGrow = growFactor * growFactor * (3 - 2 * growFactor); // smooth ease-in-out
+            const innerR = rs * 1.05;
+            const outerR = rs * (1.5 + 12.5 * easeGrow); // 1.5*rs → 14*rs
             const diskGeo = new THREE.RingGeometry(innerR, outerR, 128, 8);
             const diskMat = new THREE.ShaderMaterial({
                 vertexShader: DISK_VERT,
@@ -427,7 +431,7 @@ export class CosmicRenderer {
             einsteinGeo.setAttribute('position', new THREE.BufferAttribute(
                 new Float32Array([bhPos.x, bhPos.y, bhPos.z]), 3));
             const einstein = new THREE.Points(einsteinGeo, new THREE.PointsMaterial({
-                size: rs * 28, color: 0x5533aa, transparent: true, opacity: 0.08 * fadeIn,
+                size: rs * (4 + 24 * easeGrow), color: 0x5533aa, transparent: true, opacity: 0.08 * fadeIn,
                 blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
                 map: _haloTex
             }));
@@ -439,7 +443,7 @@ export class CosmicRenderer {
             glowGeo.setAttribute('position', new THREE.BufferAttribute(
                 new Float32Array([bhPos.x, bhPos.y, bhPos.z]), 3));
             const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial({
-                size: rs * 5, color: 0xffaa44, transparent: true, opacity: 0.35 * fadeIn,
+                size: rs * (1 + 4 * easeGrow), color: 0xffaa44, transparent: true, opacity: 0.35 * fadeIn,
                 blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
                 map: _haloTex
             }));
