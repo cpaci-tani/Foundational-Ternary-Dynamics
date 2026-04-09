@@ -260,7 +260,8 @@ export class CosmicRenderer {
 
         for (let i = 0; i < count; i++) {
             const t = types[i];
-            const e = { i, x: positions[i*3], y: positions[i*3+1], z: positions[i*3+2] };
+            const bodyId = bodyData.ids ? bodyData.ids[i] : i;
+            const e = { i, id: bodyId, x: positions[i*3], y: positions[i*3+1], z: positions[i*3+2] };
             if (t === BT.STAR || t === BT.WHITE_DWARF || t === BT.NEUTRON_STAR) stars.push(e);
             else if (t === BT.GAS || t === BT.NEBULA) gas.push(e);
             else if (t === BT.DARK_MATTER || t === BT.DARK_ENERGY) dm.push(e);
@@ -347,9 +348,9 @@ export class CosmicRenderer {
             const rs = Math.max(0.6, Math.cbrt(mass) * 0.35);
             const bhPos = new THREE.Vector3(bh.x, bh.y, bh.z);
 
-            // Track BH age for fade-in (disk appears gradually over ~5 seconds)
-            if (!this._bhAge.has(bh.i)) this._bhAge.set(bh.i, this._time);
-            const age = this._time - this._bhAge.get(bh.i);
+            // Track BH age by STABLE ID (not array index which shifts as bodies die)
+            if (!this._bhAge.has(bh.id)) this._bhAge.set(bh.id, this._time);
+            const age = this._time - this._bhAge.get(bh.id);
             const fadeIn = Math.min(1.0, age / 5.0); // 0→1 over 5 seconds
 
             // --- Event horizon: pure black sphere ---
