@@ -759,20 +759,21 @@ export class CosmicMockBridge {
         const densities = new Float32Array(n);
         const luminosities = new Float32Array(n);
         const stretches = new Float32Array(n);
+        const ids = new Int32Array(n); // stable body IDs (survive index shifts)
 
         for (let i = 0; i < n; i++) {
             const b = this._bodies[i];
             positions[i*3] = b.x; positions[i*3+1] = b.y; positions[i*3+2] = b.z;
             types[i] = b.type;
-            // Disrupting stars get hotter (redder) and bloated (larger) as they stretch
+            ids[i] = b.id;
             const stretch = b.tidal_stretch || 0;
-            temperatures[i] = b.temperature + stretch * 15000; // redshift toward hot
-            sizes[i] = Math.cbrt(b.mass) * (1 + stretch * 2); // bloat as disrupted
+            temperatures[i] = b.temperature + stretch * 15000;
+            sizes[i] = Math.cbrt(b.mass) * (1 + stretch * 2);
             densities[i] = b.density || 0.1;
-            luminosities[i] = b.luminosity * (1 - stretch * 0.5); // dimming
+            luminosities[i] = b.luminosity * (1 - stretch * 0.5);
             stretches[i] = stretch;
         }
-        return { positions, types, temperatures, sizes, densities, luminosities, stretches, count: n };
+        return { positions, types, temperatures, sizes, densities, luminosities, stretches, ids, count: n };
     }
 
     getDiagnostics() {
