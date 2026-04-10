@@ -2960,6 +2960,7 @@ function loadCosmicScenario(scenarioName = 'cosmic-galaxy') {
         'cosmic-black-hole': 'blackhole',
         'cosmic-merger': 'merger',
         'cosmic-quasar': 'quasar',
+        'cosmic-stellar-lifecycle': 'overview',
         'cosmic-ftd-collapse': 'overview'
     };
     _cosmicRenderer.setCameraPreset(presetMap[scenarioName] || 'overview', data);
