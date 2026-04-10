@@ -132,6 +132,19 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | Second law | Entropy increases | Lattice dynamics are reversible but coarse-graining produces effective irreversibility | Selection |
 | Boltzmann distribution | Probability ~ exp(-E/kT) | Emerges from microstate counting over lattice configurations | Recovered |
 
+## Biology / Aging
+
+| Phenomenon | Empirical observation | Lattice definition | Status |
+|---|---|---|---|
+| Life | Self-maintaining organisms | Active resonance: O-structure that maintains its own resonator | Conjecture |
+| Aging | Progressive functional decline | Harmonic accumulation in resonance pattern; approach to Weierstrass fractal limit (ab -> 1) | Conjecture |
+| Lifespan (cross-species) | Total lifetime mutations ~constant (~3500) across species (Cagan 2022) | N_crit = G*^3/alpha = 3549 (1.4% match); T_life = G*^3/(alpha * mutation_rate) | Conjecture |
+| Hayflick limit | Cells divide ~50 times max | At b=2 (division doubling), a_crit = 1/2 gives ab = 1.0 exactly at threshold | Conjecture |
+| DNA repair | Enzymes fix DNA damage | Harmonic damping: repair rate rho damps accumulated mutations to maintain ab < 1 | Conjecture |
+| Cancer | Uncontrolled cell growth, incidence ~ age^5 | Parasitic sub-resonance: subset of harmonics forming independent self-maintaining O-structure | Conjecture |
+| Negligible senescence | Hydra, naked mole rat | Repair rate > accumulation rate (rho*N_ss > mu): system never reaches N_crit | Conjecture |
+| Death | Cessation of biological function | Weierstrass limit: O-structure can no longer extract coherent signal from shell | Conjecture |
+
 ---
 
 ## The 2^3 / 3^3 Distinction: Matter vs Life (April 2026)
