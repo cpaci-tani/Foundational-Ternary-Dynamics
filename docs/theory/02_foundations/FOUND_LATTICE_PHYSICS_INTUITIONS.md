@@ -134,6 +134,35 @@ Physics phenomena to recover from empirical observation, paired with their latti
 
 ---
 
+## The 2^3 / 3^3 Distinction: Matter vs Life (April 2026)
+
+Two minimal cubic lattices encode two fundamentally different modes of being:
+
+| Structure | Definition | Properties | Models |
+|---|---|---|---|
+| F = {0,1}^3 | 2x2x2 cube, 8 vertices | No center, all boundary, extensional | Matter as occupancy: being there |
+| O = {-1,0,+1}^3 | 3x3x3 cube, 27 sites | Unique center, 26-shell, interior/exterior | Life as centered integration: being there for itself |
+
+F sits inside O as the 8 corner vertices. But F has no center. The step from F to O is the step from extension to interiority.
+
+**Three layers:**
+
+| Layer | Definition | Criterion |
+|---|---|---|
+| Matter | F-structure | Occupancy, exclusion, extension |
+| Organic matter | F configured into stable boundary-bearing assemblies | Membrane closure, local energy handling, recursive coupling |
+| Life | O emerging when such assemblies sustain center-shell integration | Persistent lambda_x^{t+1} = F(lambda_x^t, Sigma_x^t) maintaining centered organization |
+
+**Formal mapping to FTD:**
+- F = the state field (s in {-1,0,+1} at each site) — discrete occupancy
+- O = the tick cycle (center voxel reads 26 neighbors, integrates, writes) — centered integration
+- The tick IS the O-operation: M_x = Phi(lambda_x, Sigma_x)
+- Life = patterns that persistently maintain their own O-structure against perturbation
+
+**Key claim:** Life is not a new substance. It is a new topology of relation — matter organized so that occupancy becomes interiority.
+
+---
+
 ## Two-Mechanism Gravity (April 2026 Finding)
 
 GR has one gravitational mechanism: spacetime curvature. FTD has two:
