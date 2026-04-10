@@ -205,6 +205,49 @@ Scripts: `scripts/exploration/explore_ftd_vs_schwarzschild.py`, `explore_deser_b
 
 ---
 
+## Tension Resolution Status (April 2026)
+
+Three open tensions explored systematically:
+
+### Tension 1: Metric Scaling (1/r^2 vs 1/r) -- SHARPENED
+
+The FTD metric correction (f = 1-1/r^2) differs from Schwarzschild (f = 1-1/r) only at **2PN order**. All 1PN solar system tests (precession, bending, Shapiro) are handled by the Sommerfeld mechanism, not the metric. First detectable differences:
+
+| Observable | FTD vs GR difference | Current precision | Detectable? |
+|---|---|---|---|
+| Solar system (all) | ~10^-10 (2PN) | 10^-5 | NO |
+| LIGO ringdown | +14% | 3% | **YES -- potential falsification** |
+| EHT shadow | -12% | 10-15% | MARGINAL |
+| X-ray ISCO | -53% | 10-20% | **YES** |
+
+**LIGO ringdown is the strongest near-term test.** FTD predicts GW150914 ringdown at 285 Hz vs observed 251 +/- 8 Hz. This is outside error bars. Either the two-mechanism model modifies ringdown differently than the simple estimate, or this is a falsification point.
+
+### Tension 2: Sommerfeld Coincidence -- RESOLVED [THEOREM]
+
+The Sommerfeld equality (SR momentum + Newtonian force = GR geodesic for orbits) is a **mathematical theorem**, not a coincidence:
+
+- The Binet orbit equations are algebraically identical for 1/r^2 forces
+- Exact to ALL PN orders for orbit shape (not just 1PN)
+- Specific to 1/r^2 forces (fails for 1/r^3, 1/r^4)
+- Traces to D=3: the Laplacian Green's function in 3D is 1/r, giving grad ~ 1/r^2
+- Does NOT hold for light bending at 2PN (28% difference in 2PN coefficient)
+
+The lattice produces 1/r^2 force because D=3. The Sommerfeld equality then follows necessarily. Status upgraded from [OPEN] to [THEOREM].
+
+### Tension 3: N_crit = G*^3/alpha -- STILL CONJECTURE
+
+The formula N_crit = G*^3/alpha = 3549 (matching ~3500 observed) is:
+- Physically motivated (cumulative error = action budget)
+- Numerically consistent (1.4%)
+- Best among FTD-motivated formulas (next best: 16*G*^5 at 3.6%)
+- 12/14 species within 50% using T_life = N_crit / mutation_rate
+- But: 3500 is small enough that ~1% matches can be coincidental
+- Status remains [CONJECTURE]
+
+Scripts: `explore_metric_scaling_test.py`, `explore_sommerfeld_decomposition.py`, `explore_ncrit_derivation.py`
+
+---
+
 ## Status Key
 
 | Status | Meaning |
