@@ -50,6 +50,8 @@ export class CosmicMockBridge {
         this._gwEvents = [];
         this._t_cosmic = 0.0;
         this._enableSubgrid = false;
+        this._stellarEvolution = false;
+        this._hawkingEvaporation = false;
     }
 
     static TYPE = {
@@ -71,6 +73,11 @@ export class CosmicMockBridge {
             radius: Math.cbrt(mass) * 0.1,
             tidal_stretch: 0, // 0 = normal, grows toward 1.0 as star is disrupted
             original_mass: mass, // for tracking how much has been shed
+            fuel_fraction: type === 2 ? 1.0 : 0, // 1.0 = full fuel, 0.0 = exhausted
+            fuel_stage: 0,       // 0=H, 1=He, 2=C, 3=O, 4=Si, 5=Fe (dead)
+            budget_income: 0,    // fusion energy per tick (for budget overlay)
+            budget_expense: 0,   // gravitational + radiation drain per tick
+            age: 0,              // ticks since creation
         });
         return id;
     }
@@ -247,6 +254,88 @@ export class CosmicMockBridge {
             this._softening = 4.0;
             this._dt = 0.04;
             this._enableSubgrid = false;
+
+        } else if (name === 'cosmic-stellar-lifecycle') {
+            // ============================================================
+            // Stellar Lifecycle: Birth → Main Sequence → Death → Remnant
+            //
+            // A massive gas cloud seeded by dark matter scaffolding collapses,
+            // forms stars, the most massive star evolves through fusion stages,
+            // exhausts fuel, and collapses to a remnant (WD, NS, or BH
+            // depending on mass). Demonstrates the full lifecycle from the
+            // theory narrative (DERIV_STELLAR_LIFECYCLE_LATTICE.md):
+            //
+            //   Stage 3: Cloud gathers under self-gravity
+            //   Stage 4: Dark matter scaffolding seeds collapse
+            //   Stage 5: Star ignites — balanced budget era
+            //   Stage 6: Fuel exhaustion → budget deficit → death
+            //   Stage 7-8: Remnant formation (BH if massive enough)
+            //   Stage 9: Hawking evaporation (if BH, accelerated timescale)
+            //
+            // Stars track fuel_fraction (1.0 = full, 0.0 = exhausted).
+            // Fuel burns at a rate proportional to luminosity.
+            // When fuel hits 0, the star enters death sequence:
+            //   - mass < 1.4 M_ch → WHITE_DWARF
+            //   - mass < 3.0 M_ch → NEUTRON_STAR (+ supernova ejecta)
+            //   - mass > 3.0 M_ch → BLACK_HOLE (+ supernova ejecta)
+            // ============================================================
+
+            const M_cloud = 5000;
+            const R_cloud = 50;
+            const N_gas = 600;
+            const N_dm = 250;
+
+            // Dark matter scaffolding — forms the potential well first
+            // (Stage 4: invisible architecture that seeds baryonic collapse)
+            for (let i = 0; i < N_dm; i++) {
+                let rx, ry, rz, r2;
+                do {
+                    rx = randn() * 0.5;
+                    ry = randn() * 0.5;
+                    rz = randn() * 0.5;
+                    r2 = rx*rx + ry*ry + rz*rz;
+                } while (r2 > 1.0);
+                const x = rx * R_cloud * 0.7;
+                const y = ry * R_cloud * 0.7;
+                const z = rz * R_cloud * 0.7;
+                const sigma = 0.04 * Math.sqrt(G_N * M_cloud / R_cloud);
+                this.addBody(T.DARK_MATTER, M_cloud * 0.25 / N_dm,
+                    x, y, z,
+                    sigma * randn(), sigma * randn(), sigma * randn());
+            }
+
+            // Gas cloud — diffuse, slowly collapsing
+            // (Stage 3: the gathering, Jeans instability in progress)
+            for (let i = 0; i < N_gas; i++) {
+                let rx, ry, rz, r2;
+                do {
+                    rx = (rng() - 0.5) * 2;
+                    ry = (rng() - 0.5) * 2;
+                    rz = (rng() - 0.5) * 2;
+                    r2 = rx*rx + ry*ry + rz*rz;
+                } while (r2 > 1.0);
+                const x = rx * R_cloud;
+                const y = ry * R_cloud;
+                const z = rz * R_cloud;
+                const r = Math.sqrt(x*x + y*y + z*z) + 0.01;
+                const v_infall = -0.08 * Math.sqrt(G_N * M_cloud / R_cloud);
+                const ph = Math.atan2(z, x);
+                const v_tang = 0.12 * Math.sqrt(G_N * M_cloud / R_cloud);
+
+                this.addBody(T.GAS, M_cloud * 0.75 / N_gas,
+                    x, y, z,
+                    v_infall * x/r + v_tang * (-Math.sin(ph)) * (rng()*0.5 + 0.5),
+                    v_infall * y/r + randn() * v_tang * 0.2,
+                    v_infall * z/r + v_tang * (Math.cos(ph)) * (rng()*0.5 + 0.5),
+                    5e3 + rng() * 2e4);
+            }
+
+            this._boxSize = 140;
+            this._softening = 3.5;
+            this._dt = 0.025;
+            this._enableSubgrid = true;
+            this._stellarEvolution = true;  // Enable fuel tracking + death sequence
+            this._hawkingEvaporation = true; // Enable BH mass loss
 
         } else if (name === 'cosmic-ftd-collapse') {
             // ============================================================
@@ -692,6 +781,169 @@ export class CosmicMockBridge {
             }
         }
 
+        // ── STELLAR EVOLUTION (lifecycle scenario) ──
+        // Stars burn fuel over time. When fuel runs out, they die.
+        // Fuel burn rate ~ luminosity (L ~ M^3.5), so massive stars die fast.
+        if (this._stellarEvolution) {
+            const M_chandrasekhar = 70;  // ~1.4 solar masses in lattice units
+            const M_tov = 150;           // ~3 solar masses (Tolman-Oppenheimer-Volkoff)
+            const newEjecta = [];
+
+            for (const b of this._bodies) {
+                b.age = (b.age || 0) + 1;
+
+                if (!isStar(b.type) || b.mass <= 0) continue;
+                if (b.type === T.NEUTRON_STAR || b.type === T.WHITE_DWARF) continue;
+
+                // Fuel consumption: rate proportional to luminosity
+                // L ~ M^3.5, so massive stars burn ~1000x faster than small ones
+                const fuelRate = 0.00002 * Math.pow(b.mass / 50, 2.5);
+                b.fuel_fraction = Math.max(0, (b.fuel_fraction || 1.0) - fuelRate);
+
+                // Energy budget tracking
+                const fusionIncome = b.luminosity * 0.001;
+                const gravDrain = G_N * b.mass * b.mass * 0.0001;
+                const radLoss = b.luminosity * 0.0005;
+                b.budget_income = fusionIncome * (b.fuel_fraction > 0 ? 1 : 0);
+                b.budget_expense = gravDrain + radLoss;
+
+                // Update luminosity based on fuel stage
+                // As fuel depletes, star evolves: luminosity changes
+                if (b.fuel_fraction > 0.3) {
+                    // Main sequence: steady luminosity (Stage 5: balanced budget)
+                    b.luminosity = Math.pow(b.mass, 3.5);
+                    b.temperature = 5800 * Math.pow(b.mass / 50, 0.5);
+                    b.fuel_stage = 0;
+                } else if (b.fuel_fraction > 0.15) {
+                    // Red giant phase: luminosity spikes, temp drops
+                    b.luminosity = Math.pow(b.mass, 3.5) * 3.0;
+                    b.temperature = 3500;
+                    b.radius = Math.cbrt(b.mass) * 0.4; // expanded
+                    b.fuel_stage = 1;
+                } else if (b.fuel_fraction > 0.05) {
+                    // Late burning (He/C/O): shrinks, heats up
+                    b.luminosity = Math.pow(b.mass, 3.5) * 1.5;
+                    b.temperature = 15000;
+                    b.radius = Math.cbrt(b.mass) * 0.08;
+                    b.fuel_stage = Math.min(4, Math.floor((0.15 - b.fuel_fraction) / 0.025) + 2);
+                } else if (b.fuel_fraction <= 0) {
+                    // ========================================
+                    // DEATH — Stage 6: Budget Deficit
+                    // ========================================
+                    b.fuel_stage = 5; // Iron — no more fusion
+
+                    if (b.mass < M_chandrasekhar) {
+                        // White dwarf: electron degeneracy halts collapse
+                        b.type = T.WHITE_DWARF;
+                        b.luminosity = Math.pow(b.mass, 0.5) * 0.01;
+                        b.temperature = 12000;
+                        b.radius = Math.cbrt(b.mass) * 0.02;
+                        b.fuel_fraction = 0;
+
+                    } else if (b.mass < M_tov) {
+                        // Neutron star: supernova ejects outer layers
+                        const ejectMass = b.mass * 0.7;
+                        b.mass -= ejectMass;
+                        b.type = T.NEUTRON_STAR;
+                        b.luminosity = 0.1;
+                        b.temperature = 1e6;
+                        b.radius = Math.cbrt(b.mass) * 0.005;
+                        b.fuel_fraction = 0;
+                        // Supernova ejecta — expanding shell of hot gas
+                        for (let k = 0; k < 12; k++) {
+                            const theta = Math.acos(2 * Math.random() - 1);
+                            const phi = Math.PI * 2 * Math.random();
+                            const v_eject = 2.0 + Math.random() * 1.0;
+                            newEjecta.push({
+                                mass: ejectMass / 12,
+                                x: b.x + Math.sin(theta) * Math.cos(phi) * 1.5,
+                                y: b.y + Math.sin(theta) * Math.sin(phi) * 1.5,
+                                z: b.z + Math.cos(theta) * 1.5,
+                                vx: b.vx + v_eject * Math.sin(theta) * Math.cos(phi),
+                                vy: b.vy + v_eject * Math.sin(theta) * Math.sin(phi),
+                                vz: b.vz + v_eject * Math.cos(theta),
+                                temp: 1e6
+                            });
+                        }
+
+                    } else {
+                        // Black hole: nothing stops collapse (Stage 7)
+                        const ejectMass = b.mass * 0.5;
+                        b.mass -= ejectMass;
+                        b.type = T.BLACK_HOLE;
+                        b.luminosity = 0;
+                        b.temperature = 0;
+                        b.fuel_fraction = 0;
+                        // Supernova ejecta
+                        for (let k = 0; k < 15; k++) {
+                            const theta = Math.acos(2 * Math.random() - 1);
+                            const phi = Math.PI * 2 * Math.random();
+                            const v_eject = 2.5 + Math.random() * 1.5;
+                            newEjecta.push({
+                                mass: ejectMass / 15,
+                                x: b.x + Math.sin(theta) * Math.cos(phi) * 2.0,
+                                y: b.y + Math.sin(theta) * Math.sin(phi) * 2.0,
+                                z: b.z + Math.cos(theta) * 2.0,
+                                vx: b.vx + v_eject * Math.sin(theta) * Math.cos(phi),
+                                vy: b.vy + v_eject * Math.sin(theta) * Math.sin(phi),
+                                vz: b.vz + v_eject * Math.cos(theta),
+                                temp: 2e6
+                            });
+                        }
+                    }
+                }
+            }
+            // Spawn supernova ejecta as nebula gas
+            for (const e of newEjecta) {
+                this.addBody(T.NEBULA, e.mass, e.x, e.y, e.z, e.vx, e.vy, e.vz, e.temp);
+            }
+        }
+
+        // ── HAWKING EVAPORATION (Stage 9) ──
+        // BHs slowly lose mass via Hawking radiation. T_H ~ 1/M, so
+        // smaller BHs evaporate faster. The mass loss rate is:
+        //   dM/dt ~ -1/M^2 (in natural units)
+        // We use accelerated timescale for visual effect.
+        if (this._hawkingEvaporation) {
+            for (const b of this._bodies) {
+                if (!isBH(b.type) || b.mass <= 0) continue;
+
+                // Hawking temperature (arbitrary units, scaled for visibility)
+                const T_hawking = 500.0 / (b.mass + 1);
+
+                // Mass loss rate: dM/dt = -sigma * T^4 * A ~ -1/M^2
+                // Accelerated by a factor for visual dynamics
+                const hawkingRate = 0.0001 / (b.mass * b.mass + 1);
+                const dm = Math.min(b.mass * 0.01, hawkingRate);
+                b.mass -= dm;
+
+                // Store Hawking temperature for renderer (glow effect)
+                b.hawking_temp = T_hawking;
+                b.budget_expense = dm; // budget leak rate
+
+                // When BH mass drops very low, it "pops" — final burst
+                if (b.mass < 2.0) {
+                    // Final evaporation burst (Stage 9 endgame)
+                    const burstEnergy = b.mass;
+                    b.mass = 0; // BH gone
+                    // Emit burst radiation as hot nebula
+                    for (let k = 0; k < 6; k++) {
+                        const theta = Math.acos(2 * Math.random() - 1);
+                        const phi = Math.PI * 2 * Math.random();
+                        const v_burst = 3.0;
+                        this.addBody(T.NEBULA, burstEnergy / 6,
+                            b.x + Math.sin(theta) * Math.cos(phi),
+                            b.y + Math.sin(theta) * Math.sin(phi),
+                            b.z + Math.cos(theta),
+                            v_burst * Math.sin(theta) * Math.cos(phi),
+                            v_burst * Math.sin(theta) * Math.sin(phi),
+                            v_burst * Math.cos(theta),
+                            1e7);
+                    }
+                }
+            }
+        }
+
         // Speed limit + cleanup (always)
         this._enforceSpeedLimit();
         this._bodies = this._bodies.filter(b => b.mass > 0.01);
@@ -760,6 +1012,8 @@ export class CosmicMockBridge {
         const luminosities = new Float32Array(n);
         const stretches = new Float32Array(n);
         const ids = new Int32Array(n); // stable body IDs (survive index shifts)
+        const fuel_stages = new Int8Array(n);
+        const fuel_fractions = new Float32Array(n);
 
         for (let i = 0; i < n; i++) {
             const b = this._bodies[i];
@@ -772,8 +1026,10 @@ export class CosmicMockBridge {
             densities[i] = b.density || 0.1;
             luminosities[i] = b.luminosity * (1 - stretch * 0.5);
             stretches[i] = stretch;
+            fuel_stages[i] = b.fuel_stage || 0;
+            fuel_fractions[i] = b.fuel_fraction != null ? b.fuel_fraction : 1.0;
         }
-        return { positions, types, temperatures, sizes, densities, luminosities, stretches, ids, count: n };
+        return { positions, types, temperatures, sizes, densities, luminosities, stretches, ids, fuel_stages, fuel_fractions, count: n };
     }
 
     getDiagnostics() {

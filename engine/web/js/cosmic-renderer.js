@@ -279,7 +279,25 @@ export class CosmicRenderer {
                 const T = temperatures ? temperatures[s.i] : 5800;
                 const [r, g, b] = blackbodyColor(Math.max(T, 2000));
                 const br = 0.7 + Math.min((sizes ? sizes[s.i] : 5) * 0.03, 0.3);
-                c[j*3] = r * br; c[j*3+1] = g * br; c[j*3+2] = b * br;
+
+                // Fuel stage overlay: modulate color to show evolutionary state
+                const fuelStage = bodyData.fuel_stages ? bodyData.fuel_stages[s.i] : 0;
+                const fuelFrac = bodyData.fuel_fractions ? bodyData.fuel_fractions[s.i] : 1.0;
+                if (fuelStage === 1) {
+                    // Red giant: force reddish color, larger sprite
+                    c[j*3] = 1.0 * br; c[j*3+1] = 0.3 * br; c[j*3+2] = 0.05 * br;
+                } else if (fuelStage >= 2 && fuelStage <= 4) {
+                    // Late burning: blue-white, pulsing slightly
+                    const pulse = 0.9 + 0.1 * Math.sin(this._time * 5 + s.i);
+                    c[j*3] = 0.6 * br * pulse; c[j*3+1] = 0.7 * br * pulse; c[j*3+2] = 1.0 * br * pulse;
+                } else if (fuelStage >= 5) {
+                    // Iron core / dying: dim, flickering
+                    const flicker = 0.3 + 0.7 * Math.random();
+                    c[j*3] = 0.8 * br * flicker; c[j*3+1] = 0.2 * br * flicker; c[j*3+2] = 0.1 * br * flicker;
+                } else {
+                    // Normal main sequence
+                    c[j*3] = r * br; c[j*3+1] = g * br; c[j*3+2] = b * br;
+                }
             }
             cloud.geometry.attributes.position.needsUpdate = true;
             cloud.geometry.attributes.color.needsUpdate = true;
