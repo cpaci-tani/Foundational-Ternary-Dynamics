@@ -248,7 +248,7 @@ SR momentum (mechanism A) in a Newtonian 1/r^2 potential (mechanism B) produces 
 
     d^2u/dphi^2 + u = GM/h^2 + 3*GM*u^2/c^2
 
-Same ODE. Same solutions. Exact at all post-Newtonian orders. [THEOREM]
+Same ODE. Same solutions for the orbit shape u(phi). Exact at all PN orders for the orbit shape; the energy-momentum map differs at 2PN+. [THEOREM for orbit shape]
 
 This holds **only** for the 1/r^2 force law — which the lattice produces because D=3 (the Laplacian Green's function in 3D is 1/r, giving force ~ 1/r^2). For D != 3, the Sommerfeld equality fails.
 
@@ -258,24 +258,28 @@ This holds **only** for the 1/r^2 force law — which the lattice produces becau
 |---|---|---|---|---|
 | Newtonian force (1/r^2) | B | Exact | Exact | [THEOREM] |
 | Mercury precession | A+B (Sommerfeld) | 42.94"/c | 42.98"/c | [THEOREM] |
-| Solar light bending | B (refraction) | 1.75" | 1.75" | [THEOREM] |
+| Solar light bending | A+B (temporal + spatial refraction) | 1.75" | 1.75" | [THEOREM] |
 | GPS correction | A+B | +38.5 us/day | +38.5 us/day | [THEOREM] |
 | Pound-Rebka redshift | B (potential) | 2.46e-15 | 2.46e-15 | [THEOREM] |
-| Shapiro delay | B (refraction) | gamma=1 | 1.000021+/-23 | [THEOREM] |
+| Shapiro delay | A+B (temporal + spatial refraction) | gamma=1 | 1.000021+/-23 | [THEOREM] |
 | Grav wave speed | B (lattice wave eq) | c | c (10^-15) | [THEOREM] |
 | Grav wave polarization | B (Gauss constraint) | 2 | 2 | [THEOREM] |
-| Geodetic precession | A+B (Thomas) | ~6630 mas/yr | 6601+/-18 | [THEOREM] |
+| Geodetic precession | A+B (Thomas) | 6606.1 mas/yr (exact from Sommerfeld) | 6601+/-18 | [THEOREM] |
 | Frame dragging | A+B (dual BI) | 39.2 mas/yr | 37.2+/-7.2 | [SELECTION] |
 
 10/10 observations. All mechanisms A+B. No separate latency field L needed.
 
-**Proof scripts:** `explore_gr_decomposition.py`, `explore_two_mechanism_gravity.py`, `explore_frame_dragging_data.py`, `explore_sommerfeld_decomposition.py`
+**Proof scripts:** `explore_two_mechanism_gravity.py`, `explore_sommerfeld_decomposition.py`, `explore_frame_dragging_data.py`
+
+**Note:** `explore_gr_decomposition.py` is STALE — it uses the old 3-mechanism picture (A+B+C with L as a separate field) and makes strong-field predictions (285 Hz ringdown, 12% shadow deficit) that are superseded by the 2-mechanism analysis. Its weak-field results (10/10 observations) remain valid. Its strong-field predictions should be disregarded.
 
 ## 4.4 L Is Not Fundamental
 
 The latency field L is sourced by |s| (manifested particle count) via Poisson solve: laplacian(L) = 4*pi*G*rho_mass. It is a diagnostic measuring local flux saturation, not a dynamical field.
 
 The gravitational Lagrangian -(1/8piG)|grad(L)|^2 is scaffolding. The physical content is in A+B dynamics, which produce the full Schwarzschild effective geometry via the Sommerfeld-Schwarzschild identity.
+
+**Clarification:** In the 2-mechanism picture, f in the BI action is the Schwarzschild metric component f = 1 - r_s/r (from the Sommerfeld dynamics), NOT f = 1 - L^2 (from the Poisson solve). The engine implements f = 1 - L^2, which gives the 1/r^2 scaling; the physics gives f = 1 - r_s/r, which is the correct Schwarzschild. This discrepancy is an implementation detail, not a physical prediction.
 
 ---
 
@@ -414,7 +418,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 |---|---|---|
 | x+ = 1/alpha | [SELECTION] (1.26 ppm, sub-ppb with corrections) | Derive that partition function coupling = EM coupling |
 | floor(x-) = N_c = 3 | [SELECTION] | Derive topological quantization mechanism |
-| Frame dragging factor of 2 from dual BI | [SELECTION] | Derive from Euler-Lagrange in rotating background |
+| Frame dragging factor of 2 from dual BI contribution | [CONJECTURE] | Qualitative argument only; needs explicit derivation from BI Lagrangian in rotating background |
 | QM = epistemology, not ontology | [SELECTION] | Prove that QM statistics follow necessarily from lattice + partial observation |
 | Born rule from |J|^2 manifestation | [THEOREM] | Wave energy density ~ amplitude^2 (Parseval's theorem on the lattice wave equation) |
 
