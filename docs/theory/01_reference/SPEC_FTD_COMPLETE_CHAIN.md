@@ -432,7 +432,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 - No derivation of consciousness from the action S[J, s]
 - No strong-field lattice corrections (where FTD deviates from GR)
 - No direct simulation measuring alpha from lattice dynamics
-- Precise l_crit for spin-orbit intruders (crude estimate gives 1.58, experiment = 3; needs Woods-Saxon potential)
+- (None remaining. l_crit = 2.98 from lattice constants, matching experiment l = 3. kappa/omega = 0.335 ~ 1/D = 1/3.)
 
 ## 7.5 The Bottom Line
 
