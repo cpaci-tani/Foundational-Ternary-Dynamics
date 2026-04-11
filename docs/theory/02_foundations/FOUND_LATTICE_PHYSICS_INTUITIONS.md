@@ -57,11 +57,11 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | Phenomenon | Empirical observation | Lattice definition | Status |
 |---|---|---|---|
 | Wave-particle duality | Particles show interference patterns | Flux field (wave) + manifestation events (particle) = two-layer ontology | Recovered |
-| Born rule | Probability = |psi|^2 | Multiple derivations: threshold crossing, max entropy, Gleason-style | Recovered |
+| Born rule | Probability = |psi|^2 | Wave energy density ~ amplitude^2 (Parseval's theorem). Manifestation rate ~ available energy ~ |J|^2. Classical wave physics, not quantum postulate. | Recovered |
 | Pauli exclusion | No two identical fermions in same state | pi_1(SO(3)) = Z_2 from frame bundle topology; ternary constraint | Recovered |
 | Uncertainty principle | Delta_x Delta_p >= hbar/2 | Lattice spacing provides minimum Delta_x; Brillouin zone bounds Delta_p | Recovered |
 | Measurement / collapse | Wavefunction -> eigenstate on observation | ReLU crystallization: Softplus -> ReLU as beta -> infinity; Type III -> Type I | Recovered |
-| Bell inequality violation | S = 2sqrt(2) > 2 | Gauss constraint -> 2D transverse flux; statistical aggregate behavior | Recovered |
+| Bell inequality violation | S = 2sqrt(2) > 2 | Cosine correlation is CLASSICAL: <(v.a)(-v.b)> = -cos(theta) for continuous projections. Triangle (S<=2) from binarizing. Bell assumes binary; lattice flux is continuous. The violation is the continuous-to-discrete projection gap. | Recovered |
 | Spin-1/2 | Fermion rotation properties | pi_1(SO(3)) = Z_2 from frame bundle topology | Recovered |
 
 ## Particle Physics
