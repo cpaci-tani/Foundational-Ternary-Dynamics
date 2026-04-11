@@ -57,11 +57,11 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | Phenomenon | Empirical observation | Lattice definition | Status |
 |---|---|---|---|
 | Wave-particle duality | Particles show interference patterns | Flux field (wave) + manifestation events (particle) = two-layer ontology | Recovered |
-| Born rule | Probability = |psi|^2 | Wave energy density ~ amplitude^2 (Parseval's theorem). Manifestation rate ~ available energy ~ |J|^2. Classical wave physics, not quantum postulate. | Recovered |
+| Born rule | Probability = |psi|^2 | Parseval: wave energy ~ |J|^2. But identifying energy fraction with detection probability IS the Born rule, not a derivation of it. | Selection |
 | Pauli exclusion | No two identical fermions in same state | pi_1(SO(3)) = Z_2 from frame bundle topology; ternary constraint | Recovered |
 | Uncertainty principle | Delta_x Delta_p >= hbar/2 | Lattice spacing provides minimum Delta_x; Brillouin zone bounds Delta_p | Recovered |
 | Measurement / collapse | Wavefunction -> eigenstate on observation | ReLU crystallization: Softplus -> ReLU as beta -> infinity; Type III -> Type I | Recovered |
-| Bell inequality violation | S = 2sqrt(2) > 2 | Cosine correlation is CLASSICAL: <(v.a)(-v.b)> = -cos(theta) for continuous projections. Triangle (S<=2) from binarizing. Bell assumes binary; lattice flux is continuous. The violation is the continuous-to-discrete projection gap. | Recovered |
+| Bell inequality violation | S = 2sqrt(2) > 2 | Lattice gives S <= 2 (verified). Cosine SHAPE from continuous projections but amplitude 1/3 (raw S = 0.94). Gap between S = 2 and S = 2.83 is the biggest open problem. Three resolution paths (superdeterminism, detection loophole, continuous projection) none complete. | Open |
 | Spin-1/2 | Fermion rotation properties | pi_1(SO(3)) = Z_2 from frame bundle topology | Recovered |
 
 ## Particle Physics

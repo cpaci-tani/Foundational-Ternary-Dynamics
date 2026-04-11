@@ -103,19 +103,19 @@ The experimenter experiences the choice as free. The O-operation (center integra
 
 **The resolution (discovered April 10, 2026):**
 
-The cosine correlation E(theta) = -cos(theta) is NOT quantum. It is the classical correlation of continuous vector projections:
+The continuous flux projections correlate as:
 
-    <(v . a)((-v) . b)> = -(a . b) = -cos(theta)
+    <(v . a)((-v) . b)> = -(1/3) cos(theta)
 
-This is the dot product. Linear algebra. Verified numerically to 4 decimal places at all angles.
+The cosine SHAPE is classical (dot product geometry of random 3D unit vectors). The amplitude is 1/3 (from the 3D averaging integral). When normalized (Pearson correlation coefficient), this gives the familiar -cos(theta).
 
-The TRIANGLE correlation E = -(1 - 2*theta/pi) comes from BINARIZING — taking sign(v . a) instead of the continuous value v . a. The sign function destroys the smooth cosine and creates the piecewise-linear triangle.
+Binary sign measurements give the triangle -(1 - 2*theta/pi), with S <= 2.
 
-Bell's theorem assumes binary predetermined outcomes (sign measurements), giving S <= 2 (triangle). The lattice has continuous flux values (J . axis), giving the cosine and S = 2*sqrt(2). The violation is the difference between what the lattice DOES (continuous) and what Bell's theorem ASSUMES (binary).
+The gap: Bell tests use binary outcomes (+/-1) where raw and normalized correlations coincide. The lattice flux is continuous, where they differ by the 1/3 factor. The continuous-projection CHSH value (using raw <AB>) is S = 2*sqrt(2)/3 ≈ 0.94 — below 2, not above.
 
-The lattice is local. The correlations are cosine. The cosine comes from continuous projections. Bell's theorem doesn't apply because its premise (binary predetermined outcomes) doesn't match the lattice (continuous flux values binarized at detection).
+The Bell violation (S = 2.83 in experiments) is NOT explained by the continuous-to-binary distinction alone. It remains the single biggest [OPEN] problem in FTD. Three resolution paths exist (superdeterminism, detection loophole, continuous-to-discrete projection) but none individually closes the gap.
 
-Status: [THEOREM] — the cosine is the classical correlation of continuous vectors. Verified numerically.
+What IS established: the lattice is local and deterministic, gives S <= 2 for binary measurements (verified), and the cosine shape arises from continuous vector geometry. What is NOT established: why experiments see S = 2.83.
 
 ---
 
@@ -160,7 +160,7 @@ It misidentifies the statistics as ontology. The distribution is not the electro
 | Tensor products = joint possibility space | [SELECTION] | Consistent with the framework |
 | Complex structure from Gauss constraint | [SELECTION] | Natural but not uniquely forced |
 | Collapse = Bayesian update | [THEOREM given epistemic interpretation] | If QM is epistemic, collapse is updating |
-| Bell violation from continuous-to-binary projection | [THEOREM] | Cosine = classical continuous correlation. Triangle = binarized. Bell assumes binary; lattice is continuous. |
+| Bell violation (S = 2.83) | [OPEN] | Cosine shape is classical; amplitude 1/3 means raw S < 2. Three resolution paths, none complete. |
 | Free will = O-operation experience | [CONJECTURE] | Conceptual |
 | The distribution matching QM specifically | [OPEN] | Not derived from lattice axioms |
 
