@@ -1,9 +1,15 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-04-08
+**Last updated:** 2026-04-10
 **Engine version:** 2.12 (Logic-First + Perfected EM + Multi-Scale Physics + CUDA GPU + Cosmic Scale + Modular Architecture)
-**Test count:** 175+ registered tests (170 CPU+GPU + 5 Five Minds campaigns). GPU parity: 21/21 PASS. Five Minds campaigns: 15/15 PASS. GPU conditional on `FTD_ENABLE_CUDA`.
+**Test count:** 182 test files (120 unit + 62 campaign). 177 registered in CMakeLists. GPU conditional on `FTD_ENABLE_CUDA`.
+
+### April 2026 Session Additions
+- **Stellar Lifecycle scenario** (Scale 5 JS): cloud collapse -> star formation -> death -> WD/NS/BH + Hawking evaporation
+- **Fuel tracking and stellar evolution** in mock-scale5.js (fuel_fraction, fuel_stage, supernova ejecta)
+- **Fuel-stage-aware rendering** in cosmic-renderer.js (red giants, late burners, dying stars)
+- **Master verification script**: `scripts/proofs/proof_master_verification.py` (54/54 checks across 10 domains)
 
 ---
 
