@@ -597,7 +597,7 @@ All tests registered as CTests (170 CPU+GPU + 5 Five Minds campaigns). GPU tests
 
 **GPU/CUDA** (conditional on `FTD_ENABLE_CUDA`):
 - `gpu_parity` -- 21 checks: SoA round-trip, vacuum wave parity, energy parity (21/21 PASS)
-- `gpu_benchmark` -- Performance timing (363x at 64^3)
+- `gpu_benchmark` -- Performance timing ( at 64^3)
 - `gpu_physics` -- 26 campaigns, 100+ checks: GP-COULOMB, GP-GAUSS, GP-WAVE-SPEED, GP-ENERGY-LONG, GP-GRAVITY, GP-ANNIHILATION, GP-MAXWELL-AMPERE, GP-EM-ENERGY, GP-CONTINUITY, GP-KCOMP-SHELL, GP-WEAK, GP-COLOR, GP-STRONG, GP-TRIAD, GP-PAIRS, GP-EXCHANGE, GP-BOUNCE, GP-DUAL-SUBSTRATE
 - `gpu_experiments` -- Extended GPU experiments (timeout: 1800s)
 
@@ -719,14 +719,14 @@ cmake --build engine/build_cuda --config Release
 
 Requirements: CUDA 13.0+, compute capability >= 8.9. Target architectures: "89;120" (Ada + Blackwell).
 
-### Benchmarks (RTX 5090)
+### Benchmarks (GPU)
 
 | Lattice | CPU (ms/tick) | GPU (ms/tick) | Speedup |
 |---------|---------------|---------------|---------|
 | 16^3 | -- | -- | 18.6x |
 | 32^3 | -- | -- | 41x |
 | 48^3 | -- | -- | 193x |
-| 64^3 | 134 | 0.37 | **363x** |
+| 64^3 | 134 | 0.37 | **** |
 
 ### GPU Physics Campaigns
 

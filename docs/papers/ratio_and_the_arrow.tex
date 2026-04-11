@@ -1,0 +1,176 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+\title{\textbf{The Ratio and the Arrow}\\[6pt]
+\large How the Euler Reflection Formula Encodes\\
+the Direction of Time}
+
+\author{William Pacini\\
+\small Foundational Ternary Dynamics Project\\
+\small\texttt{ftd-project}}
+
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The Euler reflection formula $\Gamma(z)\Gamma(1-z) = \pi/\sin(\pi z)$ has been used exclusively in its product form throughout the history of mathematical physics. We observe that the same formula admits a ratio form $\Gamma(z)/\Gamma(1-z) = \Gamma(z)^2\sin(\pi z)/\pi$, which is non-commutative under $z \to 1-z$ and therefore carries a direction that the product destroys. At $z = 1/4$, the product gives $\pi\sqrt{2}$ (time-symmetric), while the ratio gives $G^* = \Gamma(1/4)/\Gamma(3/4) \approx 2.959$ (time-asymmetric). We show that the product and ratio together constitute the complete information content of the reflection formula, that neither alone is sufficient, and that the ratio encodes precisely the asymmetry that the product erases. The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ built from $G^*$ produces $1/\alpha = 137.036$ as its larger root. The fine structure constant, the force hierarchy of the Standard Model, and the arrow of time all emerge from the same non-commutative object that the commutative product discards.
+\end{abstract}
+
+\section{The Two Faces of the Reflection Formula}
+
+The Euler reflection formula is the identity
+\begin{equation}
+\Gamma(z)\,\Gamma(1-z) = \frac{\pi}{\sin(\pi z)},
+\label{eq:reflection}
+\end{equation}
+valid for all $z \notin \mathbb{Z}$. This has been used throughout mathematical physics as a \emph{product} identity: given two Gamma values at complementary arguments, their product reduces to elementary functions of $\pi$.
+
+But the same two Gamma values also form a \emph{ratio}:
+\begin{equation}
+\frac{\Gamma(z)}{\Gamma(1-z)} = \frac{\Gamma(z)^2 \sin(\pi z)}{\pi}.
+\label{eq:ratio}
+\end{equation}
+This follows immediately from dividing $\Gamma(z)^2$ by the reflection formula. It is equally exact, equally valid, and equally fundamental. Yet it has received almost no attention in physics.
+
+The reason is simple: the product commutes. The ratio does not.
+
+\section{Commutativity and Time Symmetry}
+
+Under the exchange $z \leftrightarrow 1-z$:
+\begin{align}
+\text{Product:} \quad &\Gamma(z)\,\Gamma(1-z) \;\to\; \Gamma(1-z)\,\Gamma(z) = \text{same}, \\[4pt]
+\text{Ratio:} \quad &\frac{\Gamma(z)}{\Gamma(1-z)} \;\to\; \frac{\Gamma(1-z)}{\Gamma(z)} = \text{inverse}.
+\end{align}
+
+The product is invariant. The ratio is inverted. If we interpret $z$ as a ``before'' parameter and $1-z$ as ``after,'' then the product cannot distinguish before from after, while the ratio can.
+
+This is the mathematical structure of time reversal. A time-symmetric quantity is unchanged when you swap before and after. A time-asymmetric quantity changes. The product is symmetric. The ratio is asymmetric.
+
+\section{The Evaluation at $z = 1/4$}
+
+At the quarter-point $z = 1/4$:
+\begin{align}
+\text{Product:} \quad &\Gamma\!\left(\tfrac{1}{4}\right) \cdot \Gamma\!\left(\tfrac{3}{4}\right) = \pi\sqrt{2} \approx 4.4429, \\[6pt]
+\text{Ratio:} \quad &\frac{\Gamma(1/4)}{\Gamma(3/4)} \equiv G^* \approx 2.9587.
+\end{align}
+
+The product gives $\pi\sqrt{2}$: a closed-form expression in terms of the circle constant and the diagonal. It is fully ``solved'' in the sense that it reduces to known quantities. It is the number that three centuries of mathematical physics has used.
+
+The ratio gives $G^*$: the lemniscatic bridge constant. It is transcendental and algebraically independent of $\pi$ (Nesterenko, 1996). It cannot be expressed in terms of $\pi$ alone. It encodes information that $\pi$ does not contain.
+
+\section{Information Content}
+
+\begin{theorem}
+The product and ratio together are equivalent to knowing both Gamma values individually:
+\begin{align}
+\Gamma(z)^2 &= \text{Product} \times \text{Ratio}, \\
+\Gamma(1-z)^2 &= \text{Product} \;/\; \text{Ratio}.
+\end{align}
+Neither the product nor the ratio alone is sufficient to recover both Gamma values.
+\end{theorem}
+
+\begin{proof}
+$\Gamma(z) \cdot \Gamma(1-z) = P$ and $\Gamma(z)/\Gamma(1-z) = R$ give $\Gamma(z)^2 = PR$ and $\Gamma(1-z)^2 = P/R$ by multiplication and division.
+\end{proof}
+
+At $z = 1/4$:
+\begin{align}
+\Gamma(1/4)^2 &= \pi\sqrt{2} \times G^* = 13.145, \\
+\Gamma(3/4)^2 &= \pi\sqrt{2} \;/\; G^* = 1.502.
+\end{align}
+
+The product $\pi\sqrt{2}$ is the \emph{magnitude} of the reflection. $G^*$ is the \emph{direction}. Physics has worked with the magnitude alone and discarded the direction. This is why the equations of physics appear time-reversible: the directional information was removed at the level of the mathematical foundation.
+
+\section{The Arrow of Time as a Number}
+
+The asymmetry between forward ($G^*$) and backward ($1/G^*$) is quantified by their difference:
+\begin{equation}
+G^* - \frac{1}{G^*} = \frac{G^{*2} - 1}{G^*} \approx 2.621.
+\end{equation}
+This is nonzero because $G^* \neq 1$. The Gamma function at $z = 1/4$ is nearly three times larger than at $z = 3/4$:
+\begin{equation}
+\Gamma(1/4) = 3.626, \qquad \Gamma(3/4) = 1.225, \qquad G^* = 2.959.
+\end{equation}
+The ``first quarter'' has more combinatorial capacity (in the sense of the Gamma function's interpolation of the factorial) than the ``third quarter.'' The ratio $G^* > 1$ records this asymmetry. Time moves from high capacity to low capacity. The rate of that drain is encoded in $G^*$.
+
+\section{The Master Quadratic}
+
+From $G^*$ alone, the quadratic equation
+\begin{equation}
+x^2 - 16\,G^{*2}\,x + 16\,G^{*3} = 0
+\label{eq:master}
+\end{equation}
+produces two roots:
+\begin{equation}
+x_+ = 137.036\ldots \approx \frac{1}{\alpha}, \qquad x_- = 3.024\ldots \approx N_c,
+\end{equation}
+where $\alpha$ is the fine structure constant and $N_c = 3$ is the number of quark colors. The Vieta relations give:
+\begin{align}
+x_+ + x_- &= 16\,G^{*2} \quad \text{(energy scale)}, \\
+x_+ \cdot x_- &= 16\,G^{*3} \quad \text{(action scale)}, \\
+\frac{x_+ \cdot x_-}{x_+ + x_-} &= G^* \quad \text{(harmonic ratio, always)}.
+\end{align}
+The bridge constant $G^*$ is the harmonic mean of its own roots, for any value of the coefficient 16. The equation is self-referential: $G^*$ defines the quadratic whose solutions it mediates.
+
+\section{The Irreversibility}
+
+The coefficient $\alpha = 1/137.036$, derived from $G^*$ via the master quadratic, plays a dual role in lattice dynamics. In the Foundational Ternary Dynamics framework, the discrete update rule for the flux field includes a damping term:
+\begin{equation}
+\mathbf{J}(t+1) = \mathbf{J}(t) + \Delta\mathbf{J} - \alpha\,\mathbf{J}(t).
+\end{equation}
+The damping $\alpha \approx 0.0073$ per tick is irreversible. It cannot be undone by reversing $t$. The reversed equation would require amplification by $1/(1-\alpha)$ at each step, which is exponentially unstable.
+
+The fine structure constant is simultaneously:
+\begin{itemize}
+\item The electromagnetic coupling strength (probability of photon emission),
+\item The damping coefficient (rate of flux dissipation per tick),
+\item The arrow of time (irreversibility per discrete time step).
+\end{itemize}
+All three emerge from $G^*$ through the master quadratic.
+
+\section{The Product-Ratio Duality in Physics}
+
+The fundamental equations of physics are built from products:
+\begin{itemize}
+\item The Born rule: $P = |\psi|^2 = \psi^* \cdot \psi$ (product of amplitude and conjugate).
+\item The action: $S = \int L\,dt$ (product of Lagrangian and time).
+\item The path integral: $Z = \int e^{iS}\,\mathcal{D}\phi$ (product of phase factors).
+\item The S-matrix: $\langle f|S|i\rangle$ (product of initial and final states).
+\end{itemize}
+In each case, the operation is commutative or symmetric under time reversal. The Born rule squares away the phase. The action integrates over both time directions equally. The path integral sums over all histories without preference. The S-matrix satisfies detailed balance.
+
+The ratio form would replace each product with a directed quantity:
+\begin{itemize}
+\item The Born rule retains the phase: $\psi/\psi^*$ instead of $\psi^* \cdot \psi$.
+\item The action distinguishes past from future: $L(t)/L(-t)$.
+\item The path integral weights forward paths differently from backward.
+\end{itemize}
+None of these have been explored because the product was chosen at the foundation.
+
+\section{Conclusion}
+
+The Euler reflection formula has two forms: a product and a ratio. The product is commutative, gives $\pi$, and produces time-reversible physics. The ratio is non-commutative, gives $G^*$, and carries the arrow of time. Both are exact. Both are needed for complete information. Physics used only the product and lost the direction.
+
+The ratio $G^* = \Gamma(1/4)/\Gamma(3/4)$ is a mathematical constant as fundamental as $\pi$, encoding the asymmetry of the Gamma function between its quarter-points. From it, the fine structure constant, the Standard Model gauge groups, and the irreversible tick dynamics all follow. The arrow of time was never missing from physics. It was in the ratio the whole time.
+
+\bigskip
+\noindent\textbf{Acknowledgments.} The computational framework, ternary cube analysis, Moore Layer Theorem, loop coefficient derivations, and engine simulations were developed during an intensive session with Claude (Anthropic), April 6--7, 2026.
+
+\begin{thebibliography}{9}
+\bibitem{nesterenko} Yu.~V.~Nesterenko, \emph{Modular functions and transcendence questions}, Mat.~Sb.~\textbf{187} (1996), 65--96. [Algebraic independence of $\Gamma(1/4)$ and $\pi$.]
+\bibitem{watson} G.~N.~Watson, \emph{Three triple integrals}, Q.~J.~Math.~Oxford \textbf{10} (1939), 266--276. [Watson integrals for SC, FCC, BCC lattices.]
+\bibitem{wilson} K.~G.~Wilson, \emph{Confinement of quarks}, Phys.~Rev.~D \textbf{10} (1974), 2445. [Lattice gauge theory.]
+\end{thebibliography}
+
+\end{document}

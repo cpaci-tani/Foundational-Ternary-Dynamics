@@ -112,7 +112,7 @@ ftd/
 │   ├── include/ftd/                 # 28 headers (ontic.h is the constant chain)
 │   ├── src/                         # 7 source files
 │   ├── tests/                       # 168 test files (119 unit + 49 campaign)
-│   ├── cuda/                        # 5 GPU kernels (RTX 5090, 363x speedup)
+│   ├── cuda/                        # 5 GPU kernels (GPU,  speedup)
 │   ├── wasm/                        # Emscripten WASM bindings
 │   └── web/                         # Three.js browser dashboard (28 JS modules)
 │

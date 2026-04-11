@@ -2,7 +2,7 @@
  * GPU Shell Predictions at 256^3 — High-Precision Measurement
  *
  * Tests three structural predictions about the electron's self-field
- * at 256^3 lattice resolution on GPU (RTX 5090).
+ * at 256^3 lattice resolution on GPU (GPU).
  *
  * Predictions (from 128^3 GPU data):
  *   P1: r_eff = 2*b_3 + 1 = 15       (0.20% at 128^3)
@@ -40,7 +40,7 @@ void check(const char* name, bool condition) {
 
 int main() {
     std::printf("================================================================\n");
-    std::printf("  GPU Shell Predictions at 256^3 — RTX 5090\n");
+    std::printf("  GPU Shell Predictions at 256^3 — GPU\n");
     std::printf("================================================================\n");
 
     constexpr int L = 256;

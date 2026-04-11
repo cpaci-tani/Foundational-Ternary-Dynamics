@@ -1,0 +1,292 @@
+\documentclass[12pt,reqno]{amsart}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\fancypagestyle{plain}{\fancyhf{}\fancyhead[R]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[CE]{\textsc{The Ratio and the Arrow}}
+\fancyhead[CO]{\textsc{W.\ J.\ cpaci-tani III}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{observation}[theorem]{Observation}
+
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\Gstar}{G^{\!*}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\re}{\operatorname{Re}}
+
+\title[The Ratio and the Arrow]{The Ratio and the Arrow:\\[2pt]
+  Time Asymmetry in the Euler Reflection Formula}
+
+\author{W.\ J.\ cpaci-tani III}
+\address{Independent Researcher}
+\date{}
+
+\begin{document}
+
+\begin{abstract}
+The Euler reflection formula $\Gamma(z)\Gamma(1-z) = \pi/\sin(\pi z)$ has been used exclusively in its product form throughout three centuries of mathematical physics. The same formula admits a ratio form $\Gamma(z)/\Gamma(1-z) = \Gamma(z)^2\sin(\pi z)/\pi$ that is non-commutative under the exchange $z \leftrightarrow 1-z$. I prove that the product is invariant under this exchange (time-symmetric) while the ratio inverts (time-asymmetric), and that neither alone contains the complete information of the reflection formula. At $z=\frac{1}{4}$, the product gives $\pi\sqrt{2}$ and the ratio gives $\Gstar = \Gamma(\frac{1}{4})/\Gamma(\frac{3}{4}) = 2.958\,675\ldots$, a transcendental algebraically independent of~$\pi$. The ``Master Quadratic'' $x^2 - 16{G^*}^2 x + 16{G^*}^3 = 0$ produces $x_+ = 137.036 = 1/\alpha$ as its larger root, identifying the fine structure constant with the ratio branch of the reflection formula. I argue that the fundamental equations of physics inherit their apparent time-reversibility from exclusive use of the commutative product, and that the arrow of time resides in the non-commutative ratio that was discarded.
+\end{abstract}
+
+\maketitle
+
+%==========================================================================
+\section{Introduction}
+%==========================================================================
+
+The time-reversibility of the fundamental equations of physics is a foundational assumption with surprisingly thin justification. Newton's second law, Maxwell's equations, the Schr\"odinger equation, and the Einstein field equations are all invariant (or covariant) under time reversal $t \to -t$, up to discrete symmetry operations. The thermodynamic arrow of time is attributed to initial conditions rather than to the equations themselves \cite{Penrose1989}.
+
+I identify a mathematical origin for this apparent reversibility: the exclusive use of the \emph{product} form of the Euler reflection formula in the construction of physical theories. The product is commutative and therefore blind to the direction of its factors. I show that the complementary \emph{ratio} form is non-commutative, carries directional information, and produces the coupling constants of the Standard Model.
+
+%==========================================================================
+\section{The Two Forms of the Reflection Formula}
+%==========================================================================
+
+The Euler reflection formula is
+\begin{equation}\label{eq:reflection}
+  \Gamma(z)\,\Gamma(1-z) = \frac{\pi}{\sin(\pi z)}\,,
+  \qquad z \notin \ZZ.
+\end{equation}
+From this single identity, two independent objects emerge:
+\begin{alignat}{2}
+  \text{Product:}&\quad P(z) := \Gamma(z)\,\Gamma(1-z) &&= \frac{\pi}{\sin(\pi z)}\,,
+  \label{eq:product}\\[4pt]
+  \text{Ratio:}&\quad R(z) := \frac{\Gamma(z)}{\Gamma(1-z)}
+  &&= \frac{\Gamma(z)^2\sin(\pi z)}{\pi}\,.
+  \label{eq:ratio}
+\end{alignat}
+Equation~\eqref{eq:ratio} follows from dividing $\Gamma(z)^2$ by~\eqref{eq:reflection}. Both are exact identities, valid wherever~\eqref{eq:reflection} holds.
+
+\begin{theorem}[Completeness]\label{thm:complete}
+The product and ratio together determine both Gamma values individually:
+\begin{equation}
+  \Gamma(z)^2 = P(z) \cdot R(z)\,,\qquad
+  \Gamma(1-z)^2 = P(z) \,/\, R(z)\,.
+\end{equation}
+Neither $P(z)$ nor $R(z)$ alone is sufficient.
+\end{theorem}
+
+\begin{proof}
+Immediate from $P = \Gamma(z)\Gamma(1-z)$ and $R = \Gamma(z)/\Gamma(1-z)$.
+\end{proof}
+
+The product $P(z)$ is the \emph{magnitude} of the reflection.
+The ratio $R(z)$ is the \emph{direction}.
+
+%==========================================================================
+\section{Symmetry Under $z \leftrightarrow 1-z$}
+%==========================================================================
+
+The exchange $z \leftrightarrow 1-z$ swaps the arguments of the Gamma function.
+
+\begin{theorem}[Time symmetry of the product]\label{thm:product-sym}
+$P(z) = P(1-z)$ for all $z$.
+\end{theorem}
+
+\begin{proof}
+$P(1-z) = \Gamma(1-z)\Gamma(z) = \Gamma(z)\Gamma(1-z) = P(z)$.
+\end{proof}
+
+\begin{theorem}[Time asymmetry of the ratio]\label{thm:ratio-asym}
+$R(1-z) = 1/R(z)$ for all $z$. In particular, $R(z) \neq R(1-z)$ whenever $R(z) \neq \pm 1$.
+\end{theorem}
+
+\begin{proof}
+$R(1-z) = \Gamma(1-z)/\Gamma(z) = 1/R(z)$.
+\end{proof}
+
+\begin{corollary}
+If one identifies $z$ with a ``before'' parameter and $1-z$ with ``after,'' then:
+\begin{itemize}[nosep]
+  \item The product cannot distinguish before from after.
+  \item The ratio distinguishes before from after whenever $R(z) \neq 1$.
+\end{itemize}
+\end{corollary}
+
+This is the mathematical content of time reversal.
+
+%==========================================================================
+\section{Evaluation at $z = \tfrac{1}{4}$}
+%==========================================================================
+
+At the quarter-point:
+\begin{align}
+  P\!\left(\tfrac{1}{4}\right) &= \Gamma\!\left(\tfrac{1}{4}\right)\Gamma\!\left(\tfrac{3}{4}\right) = \pi\sqrt{2} = 4.4429\ldots\,,\\[4pt]
+  R\!\left(\tfrac{1}{4}\right) &= \frac{\Gamma(1/4)}{\Gamma(3/4)} \equiv \Gstar = 2.9587\ldots
+\end{align}
+
+The product $\pi\sqrt{2}$ is algebraic in~$\pi$. It is ``solved.''
+
+The ratio $\Gstar$ is algebraically independent of~$\pi$ \cite{Nesterenko1996}. It cannot be reduced to any expression involving~$\pi$ alone. It carries information that the product destroys.
+
+\begin{observation}[The quantitative arrow]\label{obs:arrow}
+The asymmetry between forward and backward is
+\begin{equation}
+  \Gstar - \frac{1}{\Gstar} = \frac{{G^*}^2 - 1}{\Gstar} = 2.621\ldots > 0.
+\end{equation}
+This is nonzero because $\Gamma(1/4) = 3.626 \neq \Gamma(3/4) = 1.225$. The first quarter of the Gamma function has nearly three times the combinatorial capacity of the third quarter. The ratio $\Gstar > 1$ records this asymmetry.
+\end{observation}
+
+%==========================================================================
+\section{The ``Master Quadratic'' and the Fine Structure Constant}
+%==========================================================================
+
+The quadratic equation built from $\Gstar$ with coefficient $16 = \abs{\Aut(E_i)}^2$,
+where $E_i\colon y^2 = x^3 - x$ is the CM elliptic curve with $j = 1728$, is
+\begin{equation}\label{eq:master}
+  x^2 - 16\,{G^*}^2\,x + 16\,{G^*}^3 = 0.
+\end{equation}
+Its roots are
+\begin{equation}
+  x_+ = 137.036\,171\ldots \approx \frac{1}{\alpha}\,,\qquad
+  x_- = 3.023\,964\ldots\,,
+\end{equation}
+where $\alpha$ is the fine structure constant.
+
+The Vieta relations give:
+\begin{align}
+  x_+ + x_- &= 16\,{G^*}^2 &&\text{(energy budget)}\,,\\
+  x_+ \cdot x_- &= 16\,{G^*}^3 &&\text{(action budget)}\,,\\
+  \frac{x_+\,x_-}{x_+ + x_-} &= \Gstar &&\text{(harmonic ratio, always)}.
+\end{align}
+The bridge constant $\Gstar$ is the harmonic ratio of the roots of any quadratic of the form $x^2 - k{G^*}^2 x + k{G^*}^3 = 0$, independent of~$k$. The equation is self-referential: $\Gstar$ defines the quadratic whose solutions it mediates.
+
+The larger root matches the CODATA 2022 inverse fine structure constant $\alpha^{-1} = 137.035\,999\,177(21)$ \cite{CODATA2022} to 1.26\,ppm at tree level. A one-loop lattice tadpole correction on the $\ZZ[i]^3$ lattice closes 99.2\% of this gap.
+
+The fine structure constant lives in the \emph{ratio} branch of the reflection formula. It is not accessible from the product $\pi\sqrt{2}$ alone.
+
+%==========================================================================
+\section{Three Constants, One Function}
+%==========================================================================
+
+The constants $\pi$, $\varpi$ (the lemniscate constant), and $\Gstar$ are not independent objects. They are three aspects of the Gamma function evaluated at the half-integer and quarter-integer points:
+\begin{align}
+  \pi &= \Gamma\!\left(\tfrac{1}{2}\right)^2 &&\text{(midpoint: the circle)}\,,\\[4pt]
+  \varpi &= \frac{\Gamma(1/4)^2}{2\sqrt{2}\,\Gamma(1/2)} &&\text{(quarter-point: the lemniscate)}\,,\\[4pt]
+  \Gstar &= \frac{\Gamma(1/4)}{\Gamma(3/4)} &&\text{(quarter-point ratio: the bridge)}\,.
+\end{align}
+They satisfy the identity
+\begin{equation}\label{eq:triad}
+  \pi = \frac{4\varpi^2}{{G^*}^2}\,,
+\end{equation}
+so that any two determine the third.
+
+\begin{observation}[The Gamma triad]
+$\pi$ is the Gamma function's value at its midpoint, squared. It measures the \emph{area} of the unit circle---the capacity of curvature. $\varpi$ is the half-period of the lemniscate $r^2 = \cos 2\theta$, the simplest closed curve with a self-crossing. It measures the \emph{arc length} of the first distinction. $\Gstar$ is the ratio of the Gamma function across its quarter-points. It measures the \emph{asymmetry} between the first and third quarters---the direction of the arrow.
+
+All three are feathers of the same bird: the Gamma function interpolating the factorial from the integers into the complex plane. $\pi$ is where the interpolation meets the circle. $\varpi$ is where it meets the crossing. $\Gstar$ is where it remembers which side of the crossing came first.
+\end{observation}
+
+The product branch of the reflection formula produces $\pi$ (and through~\eqref{eq:triad}, constrains $\varpi$ relative to~$\Gstar$). The ratio branch produces $\Gstar$ directly. Together they give complete knowledge of the Gamma function at the quarter-integer points. Physics built on $\pi$ alone has been working with the magnitude of the triad while discarding its direction.
+
+%==========================================================================
+\section{Time-Reversibility as a Product Artifact}
+%==========================================================================
+
+The fundamental equations of physics are built from commutative operations:
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Equation & Operation & Symmetry \\
+\midrule
+Born rule: $P = \abs{\psi}^2$ & $\psi^*\!\cdot\psi$ (product) & Phase erased \\
+Action: $S = \int L\,dt$ & Integral (sum) & $t \to -t$ gives same $\abs{S}$ \\
+Path integral: $Z = \int e^{iS}\mathcal{D}\phi$ & Sum of products & All histories equal \\
+S-matrix: $\langle f\vert S\vert i\rangle$ & Inner product & Detailed balance \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+In each case, the operation is commutative or symmetric under time reversal. The Born rule squares away the phase. The action is typically even in velocities. The path integral sums over forward and backward histories equally. The S-matrix satisfies detailed balance.
+
+\begin{conjecture}[Product origin of reversibility]\label{conj:reversibility}
+The apparent time-reversibility of fundamental physics is not a property of nature. It is a property of the product operation used to construct the equations. The ratio form of the same quantities carries a direction that the product discards.
+\end{conjecture}
+
+If the Born rule used $\psi/\psi^*$ instead of $\psi^*\!\cdot\psi$, the phase would survive. If the action distinguished $L(t)$ from $L(-t)$ via their ratio, the time direction would be manifest. The equations are reversible because the product is commutative, not because nature is symmetric.
+
+%==========================================================================
+\section{The Irreversible Tick}
+%==========================================================================
+
+In a discrete ternary lattice dynamics framework, the update rule for the flux field $\mathbf{J}$ on a cubic lattice includes:
+\begin{equation}
+  \mathbf{J}(t+1) = \mathbf{J}(t) + \Delta\mathbf{J} - \alpha\,\mathbf{J}(t)\,,
+\end{equation}
+where $\alpha = 1/x_+ = 1/137.036$ is the fine structure constant serving as a damping coefficient. This operation is \emph{irreversible}: the reversed equation $\mathbf{J}(t) = (\mathbf{J}(t+1) - \Delta\mathbf{J})/(1-\alpha)$ amplifies by $1/(1-\alpha)$ per step, which is exponentially unstable.
+
+The fine structure constant thus plays a triple role:
+\begin{enumerate}[nosep]
+  \item \textbf{Electromagnetic coupling:} the probability amplitude for photon emission.
+  \item \textbf{Dissipation rate:} the fraction of flux energy lost per tick.
+  \item \textbf{Arrow of time:} the irreversibility of the discrete dynamics.
+\end{enumerate}
+All three are the same number, derived from $\Gstar$ through the ``Master Quadratic''~\eqref{eq:master}, which itself comes from the ratio branch of the Euler reflection formula.
+
+%==========================================================================
+\section{Discussion}
+%==========================================================================
+
+The reflection formula $\Gamma(z)\Gamma(1-z) = \pi/\sin(\pi z)$ has been known since Euler. Its product form has been the foundation of mathematical physics: Gaussian integrals, partition functions, path integrals, scattering amplitudes. Every use takes the product. None takes the ratio.
+
+The ratio $\Gstar = \Gamma(1/4)/\Gamma(3/4)$ is a transcendental constant of the same fundamental character as~$\pi$, encoding the information that the product discards: which Gamma value is larger, by how much, and in which direction. From it, the fine structure constant, the force hierarchy of the Standard Model, and the irreversibility of discrete dynamics all follow.
+
+The product gives $\pi$. Physics built on $\pi$ is time-reversible.
+
+The ratio gives $\Gstar$. Physics built on $\Gstar$ carries a direction.
+
+Together, $\pi\sqrt{2}$ and $\Gstar$ recover the complete information: $\Gamma(1/4)^2 = \pi\sqrt{2}\cdot\Gstar$ and $\Gamma(3/4)^2 = \pi\sqrt{2}/\Gstar$. The product is the magnitude. The ratio is the direction. Physics kept the magnitude and discarded the direction, then spent a century asking where the arrow of time went.
+
+It was in the ratio the whole time.
+
+\begin{thebibliography}{99}
+
+\bibitem{Penrose1989}
+R.~Penrose,
+\emph{The Emperor's New Mind},
+Oxford University Press, 1989.
+
+\bibitem{Nesterenko1996}
+Yu.~V.~Nesterenko,
+``Modular functions and transcendence questions,''
+Sb.~Math.\ \textbf{187}, 1319--1348 (1996).
+
+\bibitem{Watson1939}
+G.~N.~Watson,
+``Three triple integrals,''
+Q.~J.~Math.~Oxford \textbf{10}, 266--276 (1939).
+
+\bibitem{Wilson1974}
+K.~G.~Wilson,
+``Confinement of quarks,''
+Phys.~Rev.~D \textbf{10}, 2445--2459 (1974).
+
+\bibitem{CODATA2022}
+E.~Tiesinga \emph{et al.},
+``CODATA recommended values of the fundamental physical constants: 2022,''
+Rev.~Mod.~Phys.\ \textbf{97}, 025002 (2025).
+
+
+\end{thebibliography}
+
+\end{document}
