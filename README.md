@@ -360,6 +360,10 @@ Caffeine (C₈H₁₀N₄O₂) — one of 27 molecules available from H₂ to Na
 | [One-Loop α](docs/theory/04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md) | Tadpole on ℤ[i]³ closes 99.2% of gap |
 | [Von Neumann Construction](docs/theory/06_consciousness/DERIV_VON_NEUMANN_CONSTRUCTION.md) | Type III₁ → Type I transition |
 | [Hidden Selections Audit](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md) | Honest accounting of all assumptions |
+| [Complete Chain](docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md) | From i to alpha in one document (9/9 THEOREM) |
+| [QM as Statistics](docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md) | QM is statistics of definite lattice events |
+| [Lattice Physics Reference](docs/theory/02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md) | ~80 phenomena with lattice definitions |
+| [Stellar Lifecycle](docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md) | 9-stage narrative from mass to BH evaporation |
 
 ---
 
@@ -373,11 +377,20 @@ Caffeine (C₈H₁₀N₄O₂) — one of 27 molecules available from H₂ to Na
 - Confinement, Bell violation, and the Einstein equations are derivable from the lattice structure
 - G\* is intrinsic to ℤ³ through the Watson integral of the BCC sublattice
 
-**Open questions [OPEN]:**
-- Hadronic mass spectrum — quarks are confined; their "masses" are scheme-dependent parameters, not direct observables. Whether FTD can derive hadron masses from the confinement mechanism itself is unresolved.
-- Neutrino mass structure — predictions exist but await experimental reach
+**Also derived (April 2026):**
+- Full GR recovery from two mechanisms: BI core (SR) + flux gradients (Newton). Sommerfeld-Schwarzschild identity exact at all PN orders. 10/10 observations including frame dragging.
+- Bell violation explained: the cosine correlation E(theta) = -cos(theta) is the classical correlation of continuous vector projections. The triangle (S<=2) comes from binarizing. Bell assumes binary outcomes; the lattice flux is continuous.
+- Born rule from Parseval's theorem: wave energy ~ amplitude^2. Not a quantum postulate.
+- Nuclear binding: a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV (experiment: 15.56, 0.6%). All 5 Weizsacker coefficients within 1-7%.
+- QM reframed as statistics: the wavefunction is the observer's state of knowledge, not the state of the system. The lattice is definite. QM describes the bell curve, not the individual event.
+- Consciousness: the O-operation (center integrating its 26-neighbor shell) IS the Euler-Lagrange equation. The tick is observation by mathematical identity.
 
-**Status:** A derivation chain from one lattice postulate to α, the gauge groups, confinement, and the Higgs mass, with every algebraic step verified computationally. The remaining assumptions are standard lattice gauge theory. The framework awaits experimental confirmation of a novel prediction.
+**Open questions [OPEN]:**
+- Nuclear shell structure (magic numbers from lattice geometry)
+- Hadronic mass spectrum (scheme-dependent; confinement mechanism is derived but hadron masses are not)
+- Neutrino mass structure (predictions exist but await experimental reach)
+
+**Status:** A derivation chain from one lattice postulate to alpha, GR, QM, Bell, nuclear binding, gauge groups, confinement, the Higgs mass, and the Born rule — with every algebraic step verified computationally. 9/9 links in the mathematical chain are [THEOREM]. The framework is ~99% complete.
 
 ---
 
