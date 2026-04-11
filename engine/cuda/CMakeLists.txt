@@ -1,5 +1,5 @@
 # CUDA library for FTD GPU acceleration
-# Requires: CUDA Toolkit 12.8+ (SM 120 for Blackwell/RTX 5090)
+# Requires: CUDA Toolkit 12.8+ (SM 120 for Blackwell/GPU)
 
 add_library(ftd_cuda STATIC
     gpu_buffers.cu
