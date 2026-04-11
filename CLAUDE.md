@@ -38,21 +38,24 @@ A discrete computational framework for simulating physical systems from explicit
 
 **Key results** (within framework assumptions):
 - Fine structure constant α = 1/137.036 derived from lemniscatic constant G* (1.26 ppm tree-level; 9.6 ppb one-loop; < 0.001 ppt with 7-term expansion)
+- Loop coefficients c1–c3 derived from lattice Feynman diagrams: c1 = 9/47 (0.8%), c2 = 5/64 via gauge factor 13/9 (0.07%), c3 = 4/141 via gauge factor 11/6 (0.33%)
 - Electron mass m_e = m_P √(2π) (16/3) α¹¹ (0.27% error)
 - Higgs mass m_H = (N_eff/α²)·m_e = 124.8 GeV (0.24% error), λ_H = m_H²/(2v²)
 - Proton mass m_p/m_e = N_eff/α + N_base·N_eff + N_c = 1836.47 (174 ppm)
 - Electron g-2: a_e = α/(2π) to 5-loop = 2.55 ppb
 - Lamb shift: 1055.4 MHz (0.23% from experiment)
 - Color charge number N_c = 3 from RG flow + topological quantization
-- Gauge groups U(1)×SU(2)×SU(3) from Moore neighborhood J² orthogonal decomposition
+- **Moore Layer Theorem**: gauge groups U(1)×SU(2)×SU(3), 3 generations of 4 fermions, matter-antimatter symmetry, 17 dark states — all from Moore neighborhood polyhedral decomposition (octahedron + cuboctahedron + stella octangula)
 - Confinement from area-law Wilson loops at x₋ (σ = 0.209)
 - Bell violation S = 2√2 from Gauss constraint → 2D transverse flux
 - Full nonlinear Einstein equations via Deser iterative bootstrap
 - D = 3 uniquely selected (no longer axiomatic)
-- 46 SM observables from zero free parameters
+- Cyclotomic structure: Hamiltonian parameters are Phi_4, Phi_1·Phi_2, Phi_6 evaluated at sqrt(pi)
+- The Ratio and the Arrow: Euler reflection product (commutative, gives pi, time-symmetric) vs ratio (non-commutative, gives G*, time-asymmetric)
+- 50 physics predictions tested across three tiers: `scripts/exploration/test_all_physics.py`
 - Complete Standard Model computation: `scripts/proofs/proof_complete_sm.py`
 
-**Honest accounting:** ~46 observables total, ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
+**Honest accounting:** ~50 predictions tested (20 structural theorems, 20 G*-derived, 10 novel cube predictions), ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
 
 ---
 
@@ -81,7 +84,7 @@ ftd/                                     # Project root
 │   ├── SPEC_ENGINE.md            # Engine reference document
 │   ├── include/ftd/              # 28 headers (ontic.h, voxel.h, lattice.h, etc.)
 │   ├── src/                      # 7 source files
-│   ├── tests/                    # 168 test files (119 unit + 49 campaign + 4 GPU)
+│   ├── tests/                    # 169+ test files (120 unit + 49 campaign + 4 GPU)
 │   ├── cuda/                     # GPU acceleration (RTX 5090, 363x speedup)
 │   ├── wasm/                     # Emscripten bindings
 │   └── web/                      # Browser dashboard (Three.js, 28 JS modules)
@@ -90,7 +93,7 @@ ftd/                                     # Project root
 │   ├── verification/             # Formal derivation verification (40 scripts)
 │   ├── proofs/                   # Formal mathematical proofs with error bounds (57 scripts)
 │   ├── experiments/              # Bell tests, CERN analysis, physics sims (17 scripts)
-│   ├── exploration/              # Focused research investigations (9 scripts)
+│   ├── exploration/              # Focused research investigations (25+ scripts)
 │   ├── tests/                    # Python test suites — pytest (11 scripts)
 │   │   └── comprehensive/        # 7-tier verification framework
 │   ├── visualization/            # Publication figure generation (11 scripts)
@@ -101,7 +104,7 @@ ftd/                                     # Project root
 │   ├── whitepaper/               # LaTeX whitepaper + figures
 │   ├── book/                     # "The Golden Thread" narrative (53 .qmd files)
 │   ├── notebooks/                # 12 Jupyter pedagogy notebooks
-│   └── interactive/              # 6 standalone HTML force/photon simulations
+│   └── interactive/              # 8+ standalone HTML simulations (forces, photon, Hamiltonian bridge, ternary cube)
 ├── models/                       # Physics derivation package (gitignored)
 ├── archive/                      # All legacy/superseded content (gitignored)
 │   ├── ftd_archive/              # Legacy engines (Python, Qt GUI, ImGUI, etc.)
@@ -150,6 +153,17 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Changelog**: `CHANGELOG.md`
 - **Complete SM**: `scripts/proofs/proof_complete_sm.py`
 - **Motivic proof**: `scripts/proofs/proof_motivic_master_quadratic.py`
+- **Moore Layer Theorem**: `docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md`
+- **Phase lattice**: `docs/theory/08_structural/EXPLR_PHASE_LATTICE_MOORE.md`
+- **50-test battery**: `scripts/exploration/test_all_physics.py`
+- **Loop derivations**: `scripts/exploration/compute_c2.py`, `derive_all_loops.py`, `gauge_loops.py`
+- **Arrow paper**: `docs/papers/PAPER_RATIO_AND_THE_ARROW.tex`
+- **Engine coupling test**: `engine/tests/test_intervoxel_coupling.cpp`
+- **Complete Chain** (April 2026): `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md`
+- **QM as Statistics** (April 2026): `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md`
+- **Lattice Physics Reference** (April 2026): `docs/theory/02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md`
+- **Stellar Lifecycle** (April 2026): `docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md`
+- **Master Verification** (April 2026): `scripts/proofs/proof_master_verification.py` (54/54 checks)
 
 ---
 

@@ -36,6 +36,7 @@ Start here for comprehensive overviews.
 | 1.11 | [SPEC_NOVEL_PREDICTIONS.md](01_reference/SPEC_NOVEL_PREDICTIONS.md) | **Predictions catalog:** All falsifiable FTD predictions organized by testability — precision numerical (~20 values), structural (N_gen=3, N_c=3), lattice-specific (Planck dispersion, no Landau pole), cosmological (n_s, r, η), negative (no WIMPs, no SUSY), sub-ppm α challenge |
 | 1.12 | ~~SPEC_FTD_FORMAL.md~~ | **ARCHIVED** → `archive/ARCH_SPEC_FTD_FORMAL.md` (merged into docs/SPEC_FTD.md) |
 | 1.13 | [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md) | Research paper: consciousness as mathematical bridge between QFT and GR via modular flow |
+| 1.14 | **[SPEC_FTD_COMPLETE_CHAIN.md](01_reference/SPEC_FTD_COMPLETE_CHAIN.md)** | **The Complete Chain:** from i to alpha in one document. 7/9 THEOREM. GR recovery, Bell, Born rule, nuclear binding, consciousness, lattice corrections. (April 2026) |
 | 1.14 | [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) | **G\* monograph:** Seven derivations of G\* = Γ(¼)/Γ(¾), master quadratic, α conjecture, BSD connection |
 
 ---
@@ -66,6 +67,7 @@ From void to physics — the emergence story.
 | 2.17 | ~~DERIV_MOORE_GAUGE_ORTHOGONAL.md~~ | **SUPERSEDED** by 3.43 DERIV_MOORE_GAUGE_STRUCTURE.md (more complete, 32/32 tests); retained in `02_foundations/` for historical reference |
 | 2.18 | [FOUND_BLIND_DERIVATION_CHAIN.md](02_foundations/FOUND_BLIND_DERIVATION_CHAIN.md) | **The Blind Derivation:** 13-step chain from "i exists" to α⁻¹ = 137.036000 (9.6 ppb); no physics invoked; two selection principles (Vieta exponents, lattice spacing); per-step epistemic classification; capstone organizational document |
 | 2.19 | [DERIV_D3_FROM_AUTOMORPHISM.md](02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) | **D=3 from automorphism group:** \|Aut(E_i)\|² = 2^D·(D-1)! uniquely gives D=3; purely algebraic finite check; complements 2.16 (Watson approach); no self-reference needed |
+| 2.20 | **[FOUND_LATTICE_PHYSICS_INTUITIONS.md](02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md)** | **Lattice Physics Reference:** ~80 phenomena with lattice definitions and status tags. Two-mechanism gravity, Bell/Born as aggregate statistics, nuclear binding, magic numbers, aging model, 2^3/3^3 distinction, prime splitting. Living document. (April 2026) |
 | 2.20 | [FOUND_THE_RATIO_AND_THE_PRODUCT.md](02_foundations/FOUND_THE_RATIO_AND_THE_PRODUCT.md) | **The Ratio and the Product:** Euler reflection at z=¼ produces product (π√2, solved constants, measurement) and ratio (G\*, unsolved constants, distinction); [CONJECTURE] for interpretive content |
 
 ---
@@ -119,6 +121,8 @@ Physics from first principles.
 | 3.41 | [DERIV_EINSTEIN_NONLINEAR_FROM_LATTICE.md](03_derivations/DERIV_EINSTEIN_NONLINEAR_FROM_LATTICE.md) | **Nonlinear Einstein equations:** Deser iterative bootstrap from linearized EFE; converges in 6 iterations to machine precision; 8πG coefficient from G_N=1/(b₃+N_c)²; post-Newtonian expansion verified; 12/12 tests pass |
 | 3.42 | [DERIV_BELL_COSINE_FROM_GAUSS.md](03_derivations/DERIV_BELL_COSINE_FROM_GAUSS.md) | **Bell cosine from Gauss constraint:** ∇·J=ρ eliminates 1 DOF → 2D transverse flux → E(θ)=-cos(θ) → S=2√2 (Tsirelson); without constraint S≤2 (Bell); Monte Carlo verified; 13/13 tests pass |
 | 3.43 | [DERIV_MOORE_GAUGE_STRUCTURE.md](03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md) | **Gauge groups from J² orthogonality:** Moore 26=6+12+8; SC→U(1) (1 J-comp), FCC→SU(2) (2 J-comp), BCC→SU(3) (3 J-comp); baryon=3 quarks saturating J²=K_B²; meson unstable (2/3 threshold); N_EFF=13 max sub-threshold; G* from BCC; 6 C2 axes=6 quark flavors; dark matter=sub-threshold J²; 32/32 tests pass |
+| 3.44 | **[DERIV_QM_FROM_LATTICE.md](03_derivations/DERIV_QM_FROM_LATTICE.md)** | **QM as Statistics:** QM is the aggregate statistics of definite ternary events observed with partial access. Born rule from Parseval [SELECTION]. Bell violation as aggregate detection statistic [SELECTION]. Cosine shape classical (1/3 factor). v4.0. (April 2026) |
+| 3.45 | **[DERIV_STELLAR_LIFECYCLE_LATTICE.md](03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md)** | **Stellar Lifecycle:** 9-stage narrative from mass to BH evaporation in lattice terms. Spatial picture + energy budget at each stage. Fusion, degeneracy pressure, horizons, Hawking radiation. (April 2026) |
 | 3.44 | [DERIV_DARK_SECTOR_DYNAMICS.md](03_derivations/DERIV_DARK_SECTOR_DYNAMICS.md) | **Dark sector dynamics:** Dark energy + dark matter from lattice mechanics [SELECTION]; coupling source and selective damping; depends on cosmological constant derivation |
 
 ---
