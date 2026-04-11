@@ -57,11 +57,11 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | Phenomenon | Empirical observation | Lattice definition | Status |
 |---|---|---|---|
 | Wave-particle duality | Particles show interference patterns | Flux field (wave) + manifestation events (particle) = two-layer ontology | Recovered |
-| Born rule | Probability = |psi|^2 | Parseval: wave energy ~ |J|^2. But identifying energy fraction with detection probability IS the Born rule, not a derivation of it. | Selection |
+| Born rule | Probability = |psi|^2 | Aggregate statistic of many manifestation events, not a property of one event. Parseval: wave energy ~ |J|^2 sets the landscape. The frequency of outcomes over many trials converges to |J|^2 because energy determines where manifestation occurs. Same principle as Bell: eventS, not event. | Selection |
 | Pauli exclusion | No two identical fermions in same state | pi_1(SO(3)) = Z_2 from frame bundle topology; ternary constraint | Recovered |
 | Uncertainty principle | Delta_x Delta_p >= hbar/2 | Lattice spacing provides minimum Delta_x; Brillouin zone bounds Delta_p | Recovered |
 | Measurement / collapse | Wavefunction -> eigenstate on observation | ReLU crystallization: Softplus -> ReLU as beta -> infinity; Type III -> Type I | Recovered |
-| Bell inequality violation | S = 2sqrt(2) > 2 | Lattice gives S <= 2 (verified). Cosine SHAPE from continuous projections but amplitude 1/3 (raw S = 0.94). Gap between S = 2 and S = 2.83 is the biggest open problem. Three resolution paths (superdeterminism, detection loophole, continuous projection) none complete. | Open |
+| Bell inequality violation | S = 2sqrt(2) > 2 | Lattice source gives S <= 2 for binary sign measurements. S = 2.83 is an aggregate detection statistic: detectors are lattice structures with QM response, same as Born rule (property of many events, not one). Not derivable from source alone — emerges from full detection process. | Selection |
 | Spin-1/2 | Fermion rotation properties | pi_1(SO(3)) = Z_2 from frame bundle topology | Recovered |
 
 ## Particle Physics
