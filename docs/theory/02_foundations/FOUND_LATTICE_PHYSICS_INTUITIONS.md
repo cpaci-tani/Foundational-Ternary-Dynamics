@@ -110,7 +110,7 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | BH shadow size | EHT: ~42 uas (M87*), ~52 uas (Sgr A*) | A+B Sommerfeld dynamics produce exact GR photon sphere and shadow (b_c = 3*sqrt(3)*GM/c^2) | Recovered |
 | Accretion disk | Infalling matter forms hot disk | Orbiting flux spiraling inward; Bondi accretion with Eddington cap | Recovered |
 | Kerr black hole | Rotating BH with ergosphere | Rotating flux field produces vortical pattern; frame dragging from dual BI contribution | Selection |
-| Frame dragging | GP-B: 37.2 +/- 7.2 mas/yr (GR: 39.2) | Velocity coupling + spatial BI nonlinearity give factor 2 (matching GR). chi^2/DOF = 0.02 | Recovered |
+| Frame dragging | GP-B: 37.2 +/- 7.2 mas/yr (GR: 39.2) | Velocity coupling gives factor 1; second factor claimed from spatial BI but not derived. Data matches GR (chi^2/DOF = 0.02) but FTD mechanism is [CONJECTURE] | Conjecture |
 | LIGO ringdown | GW150914: 251 +/- 8 Hz | Flux perturbation equation = Regge-Wheeler; A+B dynamics give exact GR QNM | Recovered |
 | Penrose process | Energy extraction from rotating BH | Budget extraction from ergosphere region where f < 0 but horizon not yet reached | Open |
 
