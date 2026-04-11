@@ -85,7 +85,7 @@ ftd/                                     # Project root
 │   ├── include/ftd/              # 28 headers (ontic.h, voxel.h, lattice.h, etc.)
 │   ├── src/                      # 7 source files
 │   ├── tests/                    # 169+ test files (120 unit + 49 campaign + 4 GPU)
-│   ├── cuda/                     # GPU acceleration (RTX 5090, 363x speedup)
+│   ├── cuda/                     # GPU acceleration
 │   ├── wasm/                     # Emscripten bindings
 │   └── web/                      # Browser dashboard (Three.js, 28 JS modules)
 ├── scripts/                      # ALL Python scripts (~149 scripts)

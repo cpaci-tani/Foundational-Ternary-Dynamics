@@ -4,7 +4,7 @@
  * Validates that the FTD lattice produces the expected angular distribution
  * for e+e- -> gamma gamma annihilation radiation.
  *
- * Uses GpuEngine for CUDA-accelerated simulation on RTX 5090.
+ * Uses GpuEngine for CUDA-accelerated simulation on GPU.
  * 128^3 lattice (~2M voxels), production-quality resolution.
  *
  * KEY CHANGE from v1: Uses counter-propagating BEAM initial conditions

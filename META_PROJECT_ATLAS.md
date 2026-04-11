@@ -19,7 +19,7 @@ FTD is organized into four primary layers:
     *   `include/ftd/` - 28 headers (ontic.h is the constant derivation chain).
     *   `src/` - 7 core source files.
     *   `tests/` - 168 test files (119 unit tests + 49 physics campaigns).
-    *   `cuda/` - 5 GPU kernels (363x speedup on RTX 5090).
+    *   `cuda/` - 5 GPU kernels ( speedup on GPU).
     *   `wasm/` - Emscripten WASM bindings.
     *   `web/` - Three.js browser dashboard (28 JS modules, 211 scenarios across 4 scales).
 

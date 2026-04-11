@@ -15,7 +15,7 @@
 - [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) -- Gauss constraint and U(1) gauge emergence
 - [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md) -- sLoop quintuple axiomatization
 
-**Verification:** `engine/tests/test_gpu_physics.cpp` campaign GP-KCOMP-SHELL (10/10 checks pass on RTX 5090, 128^3 lattice)
+**Verification:** `engine/tests/test_gpu_physics.cpp` campaign GP-KCOMP-SHELL (10/10 checks pass on GPU, 128^3 lattice)
 
 > **Abstract.** This document provides the dynamical mechanism that closes the gap identified in DERIV_OBSERVER_BELL_MECHANISM.md Section 6.3 point 2: "Can the joint probability table be derived from the FTD action S[s,J] without imposing it?" The answer is yes, via the **K_comp volumetric shell** -- the spatially extended self-field envelope that every manifested particle builds through the coupling term g_c*s*div(J). When two particles' shells overlap, their flux budgets become dynamically coupled through conservation, producing non-factorizable joint probabilities without any additional postulate. GPU simulation at 128^3 confirms all predictions: shell existence, conservation, two-particle overlap, interaction energy, and a finite macroscopic measurement threshold.
 
@@ -71,7 +71,7 @@ The self-field peak is approximately J_peak ~ 0.03 (measured at 128^3), which is
 
 ### 2.3 GPU-Measured Shell Properties
 
-From the GP-KCOMP-SHELL campaign (128^3 lattice, 1000-tick settling, RTX 5090):
+From the GP-KCOMP-SHELL campaign (128^3 lattice, 1000-tick settling, GPU):
 
 | Property | Measured Value | Significance |
 |----------|---------------|--------------|

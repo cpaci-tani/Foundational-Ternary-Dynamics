@@ -109,7 +109,7 @@ void print_metrics(const char* label, const ShellMetrics& m) {
 int main() {
     std::printf("================================================================\n");
     std::printf("  GPU Shell Battery — Self-Field Dynamics Study\n");
-    std::printf("  Lattice: 128^3 | GPU: RTX 5090\n");
+    std::printf("  Lattice: 128^3 | GPU: GPU\n");
     std::printf("================================================================\n\n");
 
     constexpr int L = 128;

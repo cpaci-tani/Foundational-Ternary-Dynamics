@@ -18,7 +18,7 @@ if(FTD_ENABLE_CUDA AND NOT EMSCRIPTEN)
     enable_language(CUDA)
     find_package(CUDAToolkit REQUIRED)
     set(CMAKE_CUDA_STANDARD 17)
-    # Default: Ada (89: RTX 4060-4090, 5070-5080) + Blackwell (120: RTX 5090)
+    # Default: Ada (89: RTX 4060-4090, 5070-5080) + Blackwell (120: GPU)
     # Override: cmake -DCMAKE_CUDA_ARCHITECTURES="86;89;120" for Ampere support
     if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES OR CMAKE_CUDA_ARCHITECTURES STREQUAL "")
         set(CMAKE_CUDA_ARCHITECTURES "89;120")
