@@ -353,31 +353,25 @@ The arrow is not emergent from entropy, statistics, or initial conditions. It is
 
 Bell's theorem: no local hidden variable theory with measurement independence gives S > 2. The FTD lattice is local and deterministic. The lattice gives S <= 2 in simulation (verified). Experiments give S = 2*sqrt(2) = 2.83.
 
-## 6.5.2 The Resolution [THEOREM]
+## 6.5.2 The Current Understanding [OPEN]
 
-The cosine correlation E(theta) = -cos(theta) is NOT quantum. It is the classical correlation of continuous vector projections:
+The continuous flux projections correlate as:
 
-    <(v . a)((-v) . b)> = -(a . b) = -cos(theta)
+    <(v . a)((-v) . b)> = -(1/3)(a . b) = -(1/3) cos(theta)
 
-This is the dot product of unit vectors. Linear algebra. Verified numerically to 4 decimal places at all angles.
+The cosine SHAPE is classical (dot product geometry). However, the amplitude is 1/3 (from averaging over 3D unit vectors). Bell tests use binary outcomes (+/-1) where <A^2> = 1, so the raw and normalized correlations coincide. For continuous projections, they differ by this factor of 3.
 
-The TRIANGLE correlation E = -(1 - 2*theta/pi) that gives S <= 2 comes from BINARIZING — replacing the continuous projection v . a with its sign, sign(v . a) = +/-1. The sign function destroys the smooth cosine and creates the piecewise-linear triangle.
+The binary sign measurements (sign(v.a)) produce the triangle correlation -(1 - 2*theta/pi), giving S <= 2. This is Bell's theorem applied correctly.
 
-Bell's theorem proves: if measurement outcomes are binary and predetermined, S <= 2. This is correct. But the lattice doesn't have binary outcomes. The flux at a detector is J . axis — a continuous real number. The detector reports a binary result (+1 or -1), but the underlying physics is continuous.
+The gap between the lattice (S <= 2) and experiment (S = 2.83) remains the single biggest open problem in FTD. Three possible resolution paths exist but none is complete:
 
-The Bell violation S = 2*sqrt(2) is the gap between:
-- What the lattice computes: continuous projections, cosine correlation
-- What Bell's theorem assumes: binary predetermined outcomes, triangle correlation
+1. **Superdeterminism:** Measurement independence fails because the experimenter is part of the deterministic lattice. Logically consistent but unfalsifiable and must address loophole-free Bell tests (2015+).
 
-The lattice is local. The correlations are cosine. The cosine comes from continuous flux projections. Bell's theorem doesn't apply because its binary-outcome premise doesn't match the continuous-flux lattice.
+2. **Detection loophole:** The ternary-to-binary projection (discarding s=0 events) creates selection bias correlated with the hidden variable. Numerically demonstrated (S_selected > 2 in 4 tests). However, loophole-free experiments claim to close this with >95% detection efficiency.
 
-## 6.5.3 The Mechanism
+3. **Continuous-to-discrete projection:** The flux is continuous but measurements are binary. The gap between continuous and discrete correlations (cosine shape vs triangle shape) is structural. However, the 1/3 normalization factor means the continuous CHSH value is S = 2*sqrt(2)/3 ≈ 0.94, which is below 2, not above it.
 
-Two layers produce two correlations:
-- The flux field J is continuous (R^3 at each site). Its projections correlate as cosine.
-- The state field s is discrete ({-1, 0, +1}). Its sign measurements correlate as triangle.
-
-Bell tests measure the state field (discrete clicks) but the correlations are set by the flux field (continuous waves). The flux correlation is cosine. The state correlation is triangle. The gap between them (S = 2.83 vs S = 2) is the information lost in the continuous-to-discrete projection — the same two-layer ontology that defines FTD.
+None of these individually closes the gap to S = 2.83. The resolution likely requires understanding how the lattice's two-layer ontology (continuous flux + discrete states) produces the specific QM correlation structure. This is [OPEN].
 
 ## 6.5.4 The Angular Connection
 
@@ -403,10 +397,10 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 | 10/10 GR observations from A+B | [THEOREM] | Numerical verification |
 | 137 splits in Z[i], 3 is inert | [THEOREM] | Number theory |
 | G* encodes prime distribution via L-function | [THEOREM] | Euler product |
-| Cosine correlation from continuous flux projections | [THEOREM] | <(v.a)(-v.b)> = -cos(theta), verified numerically |
-| Bell violation = continuous-to-binary projection gap | [THEOREM] | Cosine (continuous, S=2.83) vs triangle (binary, S=2) |
-| Born rule P ~ |J|^2 from wave energy density | [THEOREM] | E/|J|^2 = constant (Parseval), verified numerically |
+| Cosine SHAPE from continuous flux projections | [THEOREM] | <(v.a)(-v.b)> = -(1/3)cos(theta); shape is cosine, amplitude is 1/3 |
+| Born rule P ~ |J|^2 | [SELECTION] | Parseval shows E ~ |J|^2; identification of energy fraction with detection probability is the Born rule itself, not a derivation of it |
 | x+ = 1/alpha by definition (x = 1/g_c^2) | [THEOREM] | g_c IS the EM coupling in continuum limit |
+| Bell violation (S = 2.83 vs lattice S <= 2) | [OPEN] | Three resolution paths identified, none complete |
 | O-operation = Euler-Lagrange equation | [THEOREM] | Action extremization IS center integrating shell |
 | Nuclear binding (5 Weizsacker coefficients) | [THEOREM] | a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV (exp: 15.56, 0.6%) |
 | Schrodinger = continuum limit of lattice wave eq | [THEOREM] | Each QM feature = unique limit of lattice feature |
@@ -440,7 +434,9 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 
 ## 7.5 The Bottom Line
 
-The mathematical chain from i to the master quadratic roots is rigorous: 9/9 links [THEOREM] (x = 1/alpha is now definitional, not a selection). The GR recovery is complete: 10/10 observations from two mechanisms. The Bell violation is resolved: the cosine correlation is classical (continuous vector projections); the triangle is from binarizing; Bell assumes binary but the lattice is continuous. The Born rule is resolved: wave energy ~ amplitude^2 (Parseval). The O-operation is identified with the Euler-Lagrange equation (mathematical identity, not interpretation).
+The mathematical chain from i to the master quadratic roots is rigorous: 9/9 links [THEOREM] (x = 1/alpha is definitional). The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
+
+**The Bell violation (S = 2.83 vs lattice S <= 2) remains [OPEN].** Three resolution paths exist but none is complete. The Born rule (P ~ |J|^2) is [SELECTION] — Parseval gives E ~ |J|^2 but identifying energy fraction with detection probability is the Born rule itself.
 
 Nuclear binding energies are recovered from FTD constants to ~1%: a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV (exp: 15.56), all five Weizsacker coefficients within 1-7% of experiment, iron-56 binding at 99% of observed value (see archive/atoms/nuclear-explorer.html).
 
