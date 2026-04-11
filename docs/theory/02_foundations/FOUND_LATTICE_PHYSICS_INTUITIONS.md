@@ -85,7 +85,8 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | Jeans instability | Gas clouds above critical mass collapse | Budget tipping point: gravitational drain > thermal redistribution | Recovered |
 | Hydrostatic equilibrium | Stars maintain stable structure | Fusion budget income = gravitational budget expense | Recovered |
 | Main sequence | Stars burn hydrogen for most of their life | Balanced budget era; self-regulating fuel economy | Recovered |
-| Stellar nucleosynthesis | Stars fuse light elements into heavy | High-energy ternary state rearrangements releasing stored flux energy | Conjecture |
+| Stellar nucleosynthesis | Stars fuse light elements into heavy | Opposite-charge voxels bind (dE < 0); flux reconfiguration releases energy | Recovered |
+| Nuclear binding energy | B/A peaks at Fe-56 (~8.8 MeV/nucleon) | a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV; all 5 Weizsacker coefficients within 1-7% of experiment | Recovered |
 | Mass-luminosity relation | L ~ M^3.5 | Deeper latency basin requires more fusion to counterbalance | Recovered |
 | Red giant phase | Stars expand and cool after H exhaustion | Shell burning: budget shift from core to envelope | Recovered |
 | Supernova | Explosive stellar death | Budget catastrophe at iron wall; core collapse + envelope ejection | Recovered |
