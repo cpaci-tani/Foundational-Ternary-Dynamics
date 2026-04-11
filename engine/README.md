@@ -13,7 +13,7 @@ cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
 cmake --build engine/build --config Release
 ```
 
-### Build (CUDA GPU — 363x speedup)
+### Build (CUDA GPU —  speedup)
 
 ```bash
 # Requires CUDA 13.0 + MSVC + Ninja. Set MSVC env vars first.
@@ -84,7 +84,7 @@ Every lattice site carries two coupled layers:
 
 ### GPU Acceleration
 
-`GpuEngine` is a drop-in alternative to `RenderBridge`. All field data lives on the GPU; the host transfers only diagnostics. FFT Poisson solver replaces iterative SOR. Benchmarks: 363x speedup at 64^3 lattice size.
+`GpuEngine` is a drop-in alternative to `RenderBridge`. All field data lives on the GPU; the host transfers only diagnostics. FFT Poisson solver replaces iterative SOR. Benchmarks:  speedup at 64^3 lattice size.
 
 ---
 

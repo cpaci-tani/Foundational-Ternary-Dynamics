@@ -533,7 +533,7 @@ print(f"  {'[CONJECTURE]':14s} {'Dark matter nature':30s} = Sub-threshold flux (
 print(f"\n--- SECTION 14: K_comp Volumetric Shell [THEOREM] ---")
 
 # K_comp = K_B = 0.511 — the energy budget that determines self-field extent
-# GPU-measured on 128^3 lattice (RTX 5090):
+# GPU-measured on 128^3 lattice (GPU):
 print(f"  {'[THEOREM]':14s} {'K_comp':30s} = K_B = {K_B} MeV (manifestation threshold)")
 print(f"  {'[THEOREM]':14s} {'Self-field peak':30s} = 2.879e-02 (well below K_B)")
 print(f"  {'[THEOREM]':14s} {'Shell r_eff':30s} = 11.61 voxels (flux-weighted RMS)")
