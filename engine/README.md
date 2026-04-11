@@ -13,7 +13,7 @@ cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
 cmake --build engine/build --config Release
 ```
 
-### Build (CUDA GPU —  speedup)
+### Build (CUDA GPU)
 
 ```bash
 # Requires CUDA 13.0 + MSVC + Ninja. Set MSVC env vars first.
@@ -73,18 +73,21 @@ Every lattice site carries two coupled layers:
 5. **Field-mediated forces**: F = -alpha*s*grad(phi_C) + G_N*grad(rho) + alpha*s*(v x B)
 6. **Movement + Collision**: remainder accumulation, speed limit C = 1/sqrt(3), annihilation on contact
 
-### Three Scales
+### Seven Scales
 
 | Scale | Engine | Description |
 |-------|--------|-------------|
-| 0 | `RenderBridge` | Voxel-level field dynamics on a cubic lattice |
+| 0 | `RenderBridge` | Voxel-level field dynamics on a cubic lattice (WASM) |
 | 1 | `ParticleEngine` | Continuous-position particles with Velocity Verlet integration |
 | 2 | `AtomEngine` | Composite atoms with ionic, van der Waals, and covalent bond forces |
 | 3 | `AtomEngine` (bonding) | Molecules — pre-bonded multi-atom structures with 1-3 exclusion |
+| 4 | `ConsciousnessEngine` (JS) | Observer modes, sLoop, phase states (visualization) |
+| 5 | `CosmicEngine` / `CosmicMockBridge` (JS) | N-body + SPH cosmic simulation, stellar lifecycle |
+| 6 | `MetaUnit` (JS) | Existential unit — Moore layer decomposition visualization |
 
 ### GPU Acceleration
 
-`GpuEngine` is a drop-in alternative to `RenderBridge`. All field data lives on the GPU; the host transfers only diagnostics. FFT Poisson solver replaces iterative SOR. Benchmarks:  speedup at 64^3 lattice size.
+`GpuEngine` is a drop-in alternative to `RenderBridge`. All field data lives on the GPU; the host transfers only diagnostics. FFT Poisson solver replaces iterative SOR.
 
 ---
 
@@ -117,6 +120,16 @@ The master quadratic x^2 - 16*G*^2*x + 16*G*^3 = 0 yields:
 - x- = 3.024 (N_c, color charges)
 
 All other constants — coupling strengths, mass scales, mixing angles — cascade deterministically.
+
+---
+
+## Scale 5: Cosmic Simulation
+
+### C++ Engine (cosmic_engine.h/cpp)
+Full N-body + SPH simulation with Barnes-Hut octree gravity, 18-phase tick cycle, 9 body types, 14 toggles. Includes stellar lifecycle: main sequence -> red giant -> supernova -> WD/NS/BH. FTD-derived constants throughout (G_N=0.01, Omega_Lambda=2/3, DM_frac=17/27). **Not yet bound to WASM.**
+
+### JS Mock Bridge (web/js/bridge/mock-scale5.js)
+Browser implementation with: pairwise gravity, SPH gas, star formation (Jeans criterion), stellar evolution (fuel tracking, red giant/late burning phases), emergent BH formation (v_esc > c), Hawking evaporation, supernova ejecta, tidal disruption. 6 scenarios: Spiral Galaxy, Black Hole Close-up, Galaxy Merger, Stellar Lifecycle, FTD Collapse, Cosmic Web.
 
 ---
 
