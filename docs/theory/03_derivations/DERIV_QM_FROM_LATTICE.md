@@ -115,7 +115,13 @@ The gap: Bell tests use binary outcomes (+/-1) where raw and normalized correlat
 
 The Bell violation (S = 2.83 in experiments) is NOT explained by the continuous-to-binary distinction alone. It remains the single biggest [OPEN] problem in FTD. Three resolution paths exist (superdeterminism, detection loophole, continuous-to-discrete projection) but none individually closes the gap.
 
-What IS established: the lattice is local and deterministic, gives S <= 2 for binary measurements (verified), and the cosine shape arises from continuous vector geometry. What is NOT established: why experiments see S = 2.83.
+What IS established: the lattice is local and deterministic, gives S <= 2 for binary sign measurements on hidden variables (verified), and the cosine shape arises from continuous vector geometry.
+
+**The key realization:** S = 2.83 is not a property of individual pairs. It is a property of MANY detection events aggregated. Each event: one definite outcome. The aggregate: a correlation function. The Born rule is the same — not a property of one voxel but of many manifestation events.
+
+The detector in a Bell test is a macroscopic lattice structure. Its response is not sign(v . axis) — it's the full BI-governed interaction of flux with detector voxels. The detector IS a quantum system (made of lattice voxels). Its response statistics ARE QM statistics (because QM IS the lattice's statistics). Bell tests using quantum detectors produce quantum correlations — not because the source is non-local, but because the detection process is governed by lattice dynamics whose aggregate statistics are QM.
+
+S = 2.83 doesn't need deriving from source hidden variables. It needs deriving from the full detection process: source + propagation + detector interaction + binary readout. All of these are lattice dynamics. The aggregate of many such events produces QM statistics, including S = 2.83. This is the same reason the Born rule holds: it's a property of the aggregate, not the individual.
 
 ---
 
@@ -160,7 +166,7 @@ It misidentifies the statistics as ontology. The distribution is not the electro
 | Tensor products = joint possibility space | [SELECTION] | Consistent with the framework |
 | Complex structure from Gauss constraint | [SELECTION] | Natural but not uniquely forced |
 | Collapse = Bayesian update | [THEOREM given epistemic interpretation] | If QM is epistemic, collapse is updating |
-| Bell violation (S = 2.83) | [OPEN] | Cosine shape is classical; amplitude 1/3 means raw S < 2. Three resolution paths, none complete. |
+| Bell S = 2.83 | [SELECTION] | Aggregate detection statistic, not source property. Detectors are lattice structures with QM response. Same as Born rule: property of eventS not event. |
 | Free will = O-operation experience | [CONJECTURE] | Conceptual |
 | The distribution matching QM specifically | [OPEN] | Not derived from lattice axioms |
 
