@@ -399,10 +399,10 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 | G* encodes prime distribution via L-function | [THEOREM] | Euler product |
 | Cosine SHAPE from continuous flux projections | [THEOREM] | <(v.a)(-v.b)> = -(1/3)cos(theta); shape is cosine, amplitude is 1/3 |
 | Born rule P ~ |J|^2 | [SELECTION] | Parseval shows E ~ |J|^2; identification of energy fraction with detection probability is the Born rule itself, not a derivation of it |
-| x+ = 1/alpha by definition (x = 1/g_c^2) | [THEOREM] | g_c IS the EM coupling in continuum limit |
+| x+ = 1/alpha | [SELECTION] | 1.26 ppm match; g_c = sqrt(alpha) in continuum limit but identification requires QED recovery |
 | Bell violation (S = 2.83 vs lattice S <= 2) | [OPEN] | Three resolution paths identified, none complete |
 | O-operation = Euler-Lagrange equation | [THEOREM] | Action extremization IS center integrating shell |
-| Nuclear binding (5 Weizsacker coefficients) | [THEOREM] | a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV (exp: 15.56, 0.6%) |
+| Nuclear binding (5 Weizsacker coefficients) | [INSERTION] | a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV (exp: 15.56); FTD values in standard SEMF structure |
 | Schrodinger = continuum limit of lattice wave eq | [THEOREM] | Each QM feature = unique limit of lattice feature |
 | 360/16 = CHSH angle = Z[i] automorphism angle | [THEOREM] | Arithmetic |
 
@@ -434,7 +434,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 
 ## 7.5 The Bottom Line
 
-The mathematical chain from i to the master quadratic roots is rigorous: 9/9 links [THEOREM] (x = 1/alpha is definitional). The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
+The mathematical chain from i to the master quadratic roots is rigorous: 7/9 links [THEOREM], 2/9 [SELECTION] (x+ = 1/alpha identification and floor(x-) = N_c). The argument that x = 1/g_c^2 makes the identification "definitional" is disputed — whether g_c in the continuum limit IS the EM coupling requires proving the continuum limit recovers QED, which is established but involves standard physics adoption. The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
 
 **The Bell violation (S = 2.83 vs lattice S <= 2) remains [OPEN].** Three resolution paths exist but none is complete. The Born rule (P ~ |J|^2) is [SELECTION] — Parseval gives E ~ |J|^2 but identifying energy fraction with detection probability is the Born rule itself.
 
