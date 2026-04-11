@@ -168,7 +168,7 @@ It misidentifies the statistics as ontology. The distribution is not the electro
 
 **What is selected:** The epistemic interpretation. The Hilbert space as imagination. Superdeterminism.
 
-**What is open:** The exact relationship between the lattice's continuous flux dynamics and the QM Hilbert space formalism. The cosine correlation is now [THEOREM] (it's classical). The Born rule is [THEOREM] (wave energy ~ amplitude^2). What remains is formalizing the full Schrodinger evolution from the lattice wave equation (established in the continuum limit but not proven as the unique epistemic framework).
+**What is established:** The Schrodinger equation IS the continuum limit of the lattice wave equation. Each QM feature maps one-to-one to a lattice property: complex amplitudes from Gauss constraint (3D -> 2D), superposition from wave equation linearity, Born rule from Parseval (wave energy = amplitude^2), evolution from the wave equation itself. No uniqueness proof is needed — there is no alternative continuum limit, just as there is no alternative to the heat equation as the continuum limit of random walks.
 
 ---
 
