@@ -1,7 +1,7 @@
 /**
  * GPU Physics Test Suite — Testing Ontic Predictions at Scale
  *
- * Leverages the CUDA GpuEngine (363x speedup) to run physics campaigns
+ * Leverages the CUDA GpuEngine ( speedup) to run physics campaigns
  * at lattice sizes and tick counts impractical on CPU.
  *
  * Campaigns (Phase 1 — established):

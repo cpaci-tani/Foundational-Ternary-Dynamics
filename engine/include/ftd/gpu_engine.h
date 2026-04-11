@@ -7,7 +7,7 @@
  * transfers happen only for diagnostics or injection.
  *
  * Requires: CUDA Toolkit 12.8+, cuFFT, cuRAND
- * Target: RTX 5090 (SM 120, 32 GB VRAM)
+ * Target: GPU (SM 120, 32 GB VRAM)
  */
 
 #include "voxel.h"

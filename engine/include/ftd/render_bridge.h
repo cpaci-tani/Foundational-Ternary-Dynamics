@@ -262,7 +262,7 @@ private:
     std::uniform_real_distribution<double> uniform_{0.0, 1.0};
 
 #ifdef FTD_ENABLE_CUDA
-    // GPU backend: when available, tick() delegates to GpuEngine for 363x speedup.
+    // GPU backend: when available, tick() delegates to GpuEngine for  speedup.
     // All injection/access methods sync between host voxels_ and device memory.
     std::unique_ptr<gpu::GpuEngine> gpu_;
     bool use_gpu_ = false;

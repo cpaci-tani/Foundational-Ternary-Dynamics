@@ -208,7 +208,7 @@ ftd/
     include/ftd/                # 28 C++ headers (ontic.h defines the constant chain)
     src/                        # 7 source files
     tests/                      # 168 test files (119 unit + 49 campaign + 4 GPU)
-    cuda/                       # GPU acceleration (363× on RTX 5090)
+    cuda/                       # GPU acceleration
     wasm/                       # WebAssembly bindings
     web/                        # Browser dashboard (Three.js, 211 scenarios across 4 scales)
   scripts/
@@ -286,7 +286,7 @@ phase_read → phase_write → gauss_project → phase_forces → phase_movement
 
 ### GPU Acceleration
 
-CUDA backend with cuFFT spectral Poisson solver. **363× speedup** at 64³ on RTX 5090. Build with `-DFTD_ENABLE_CUDA=ON`.
+CUDA backend with cuFFT spectral Poisson solver. Build with `-DFTD_ENABLE_CUDA=ON`.
 
 ### WebAssembly
 
