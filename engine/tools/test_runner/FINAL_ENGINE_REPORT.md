@@ -1,5 +1,8 @@
 # FTD Test Bench — Final Engine Report
 
+> **Superseded for current state** by [`TEST_AUDIT_2026_04_14.md`](TEST_AUDIT_2026_04_14.md).
+> Retained as the historical snapshot of the post-WIP-merge ctest baseline (94/175).
+
 Closing report for the "finish strong with the engine" session. Covers the
 state of `main` after the FTD Test Bench merge, the full-engine build +
 test results, known failure categories, and what's ready to hand off.
