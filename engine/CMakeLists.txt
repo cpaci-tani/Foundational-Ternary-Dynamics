@@ -35,6 +35,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 add_library(ftd_core
     src/lattice.cpp
     src/render_bridge.cpp
+    src/dag_engine.cpp
     src/lagrangian.cpp
     src/particle_engine.cpp
     src/atom_engine.cpp
@@ -100,6 +101,10 @@ target_link_libraries(test_thermodynamics ftd_core)
 
 add_executable(test_lagrangian tests/test_lagrangian.cpp)
 target_link_libraries(test_lagrangian ftd_core)
+
+# DAG Engine Phase 3
+add_executable(test_dag_engine tests/test_dag_engine.cpp)
+target_link_libraries(test_dag_engine ftd_core)
 
 # Ontic physics
 add_executable(test_ontic_chain tests/test_ontic_chain.cpp)
@@ -224,6 +229,22 @@ target_link_libraries(test_scale_bridge ftd_core)
 add_executable(test_hydrogen_scale1 tests/test_hydrogen_scale1.cpp)
 target_link_libraries(test_hydrogen_scale1 ftd_core)
 
+# Multi-scale physics recovery tests (April 2026)
+add_executable(test_hydrogen_spectrum_scale1 tests/test_hydrogen_spectrum_scale1.cpp)
+target_link_libraries(test_hydrogen_spectrum_scale1 ftd_core)
+
+add_executable(test_fine_structure_scale1 tests/test_fine_structure_scale1.cpp)
+target_link_libraries(test_fine_structure_scale1 ftd_core)
+
+add_executable(test_scale_proof_chain tests/test_scale_proof_chain.cpp)
+target_link_libraries(test_scale_proof_chain ftd_core)
+
+add_executable(test_helium_scale1 tests/test_helium_scale1.cpp)
+target_link_libraries(test_helium_scale1 ftd_core)
+
+add_executable(test_radiative_decay_scale1 tests/test_radiative_decay_scale1.cpp)
+target_link_libraries(test_radiative_decay_scale1 ftd_core)
+
 # Phase 8: Atom engine (Scale 2)
 add_executable(test_atom_engine tests/test_atom_engine.cpp)
 target_link_libraries(test_atom_engine ftd_core)
@@ -312,6 +333,9 @@ if(FTD_ENABLE_CUDA)
     add_executable(test_gpu_shell_battery tests/test_gpu_shell_battery.cpp)
     target_link_libraries(test_gpu_shell_battery ftd_core ftd_cuda)
 
+    add_executable(test_gpu_parity_complete tests/test_gpu_parity_complete.cpp)
+    target_link_libraries(test_gpu_parity_complete ftd_core ftd_cuda)
+
     add_executable(test_gpu_profile_compare tests/test_gpu_profile_compare.cpp)
     target_link_libraries(test_gpu_profile_compare ftd_core ftd_cuda)
 
@@ -385,6 +409,21 @@ target_link_libraries(ftd_dispersion_convergence ftd_core)
 add_executable(ftd_coulomb_convergence tests/campaign_coulomb_convergence.cpp)
 target_link_libraries(ftd_coulomb_convergence ftd_core)
 
+add_executable(ftd_benchmark_engine_theory tests/benchmark_engine_theory.cpp)
+target_link_libraries(ftd_benchmark_engine_theory ftd_core)
+
+add_executable(ftd_emergent_alpha tests/benchmark_emergent_alpha.cpp)
+target_link_libraries(ftd_emergent_alpha ftd_core)
+
+add_executable(ftd_budget_equation tests/benchmark_budget_equation.cpp)
+target_link_libraries(ftd_budget_equation ftd_core)
+
+add_executable(ftd_bh_thermo tests/benchmark_black_hole_thermo.cpp)
+target_link_libraries(ftd_bh_thermo ftd_core)
+
+add_executable(ftd_wilson_loops tests/benchmark_wilson_loops.cpp)
+target_link_libraries(ftd_wilson_loops ftd_core)
+
 add_executable(ftd_sm_observables tests/campaign_sm_observables.cpp)
 target_link_libraries(ftd_sm_observables ftd_core)
 
@@ -432,6 +471,8 @@ add_executable(ftd_confinement tests/campaign_confinement.cpp)
 target_link_libraries(ftd_confinement ftd_core)
 add_executable(ftd_baryon_formation tests/campaign_baryon_formation.cpp)
 target_link_libraries(ftd_baryon_formation ftd_core)
+add_executable(ftd_gluon_dynamics tests/campaign_gluon_dynamics.cpp)
+target_link_libraries(ftd_gluon_dynamics ftd_core)
 
 # Phase 6: Weak Sector & SU(2)
 add_executable(ftd_weak_transmutation tests/campaign_weak_transmutation.cpp)
@@ -470,6 +511,8 @@ target_link_libraries(ftd_novel_predictions ftd_core)
 # Phase 12: Gravity Sector (latency field, proper time, bandwidth constraint)
 add_executable(test_latency_field tests/test_latency_field.cpp)
 target_link_libraries(test_latency_field ftd_core)
+add_executable(test_einstein_equations tests/test_einstein_equations.cpp)
+target_link_libraries(test_einstein_equations ftd_core)
 
 # Phase 11: Scientific Validation (negative results, uniqueness, quantitative benchmarks)
 add_executable(test_falsifiability tests/test_falsifiability.cpp)
@@ -655,6 +698,7 @@ add_test(NAME intervoxel_coupling COMMAND test_intervoxel_coupling)
 add_test(NAME stress_energy COMMAND test_stress_energy)
 add_test(NAME thermodynamics COMMAND test_thermodynamics)
 add_test(NAME lagrangian COMMAND test_lagrangian)
+add_test(NAME dag_engine COMMAND test_dag_engine)
 add_test(NAME ontic_chain COMMAND test_ontic_chain)
 add_test(NAME dual_substrate COMMAND test_dual_substrate)
 add_test(NAME genesis COMMAND test_genesis)
@@ -691,6 +735,11 @@ add_test(NAME wavepacket COMMAND test_wavepacket)
 add_test(NAME particle_engine COMMAND test_particle_engine)
 add_test(NAME scale_bridge COMMAND test_scale_bridge)
 add_test(NAME hydrogen_scale1 COMMAND test_hydrogen_scale1)
+add_test(NAME hydrogen_spectrum_scale1 COMMAND test_hydrogen_spectrum_scale1)
+add_test(NAME fine_structure_scale1 COMMAND test_fine_structure_scale1)
+add_test(NAME scale_proof_chain COMMAND test_scale_proof_chain)
+add_test(NAME helium_scale1 COMMAND test_helium_scale1)
+add_test(NAME radiative_decay_scale1 COMMAND test_radiative_decay_scale1)
 add_test(NAME atom_engine COMMAND test_atom_engine)
 add_test(NAME atom_scale_bridge COMMAND test_atom_scale_bridge)
 add_test(NAME multiscale_bridge COMMAND test_multiscale_bridge)
@@ -712,6 +761,7 @@ add_test(NAME spectral COMMAND test_spectral)
 add_test(NAME tracker COMMAND test_tracker)
 add_test(NAME benchmark COMMAND test_benchmark)
 add_test(NAME latency_field COMMAND test_latency_field)
+add_test(NAME einstein_equations COMMAND test_einstein_equations)
 
 # Scale 1 Phase 2: PE force expansion
 add_test(NAME pe_exchange COMMAND test_pe_exchange)
@@ -769,10 +819,11 @@ add_test(NAME trit_convolution COMMAND test_trit_convolution)
 # GPU tests (only registered when CUDA is enabled)
 if(FTD_ENABLE_CUDA)
     add_test(NAME gpu_parity COMMAND test_gpu_parity)
+    add_test(NAME gpu_parity_complete COMMAND test_gpu_parity_complete)
     add_test(NAME gpu_benchmark COMMAND test_gpu_benchmark)
     add_test(NAME gpu_physics COMMAND test_gpu_physics)
     add_test(NAME gpu_experiments COMMAND test_gpu_experiments)
-    set_tests_properties(gpu_parity gpu_benchmark gpu_physics PROPERTIES TIMEOUT 600)
+    set_tests_properties(gpu_parity gpu_parity_complete gpu_benchmark gpu_physics PROPERTIES TIMEOUT 600)
     set_tests_properties(gpu_experiments PROPERTIES TIMEOUT 1800)
 endif()
 
@@ -817,6 +868,7 @@ add_test(NAME campaign_color_force COMMAND ftd_color_force)
 add_test(NAME campaign_color_neutral COMMAND ftd_color_neutral)
 add_test(NAME campaign_confinement COMMAND ftd_confinement)
 add_test(NAME campaign_baryon_formation COMMAND ftd_baryon_formation)
+add_test(NAME campaign_gluon_dynamics COMMAND ftd_gluon_dynamics)
 
 # Phase 6: Weak Sector & SU(2) campaigns
 add_test(NAME campaign_weak_transmutation COMMAND ftd_weak_transmutation)
@@ -885,7 +937,7 @@ set_tests_properties(
     campaign_hydrogen_binding campaign_triad_energy
     campaign_inertial_mass campaign_structure_stability
     campaign_color_force campaign_color_neutral
-    campaign_confinement campaign_baryon_formation
+    campaign_confinement campaign_baryon_formation campaign_gluon_dynamics
     campaign_weak_transmutation campaign_parity_violation
     campaign_weak_decay
     campaign_gravitational_wave campaign_gravity_profile
@@ -955,7 +1007,7 @@ set_tests_properties(
     campaign_born_rule campaign_bell_substrate campaign_epr_correlation
     campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
     campaign_structure_stability campaign_color_force campaign_color_neutral
-    campaign_confinement campaign_baryon_formation
+    campaign_confinement campaign_baryon_formation campaign_gluon_dynamics
     campaign_weak_transmutation campaign_parity_violation campaign_weak_decay
     campaign_gravitational_wave campaign_gravity_profile campaign_gravity_hierarchy
     campaign_triad_binding campaign_neutrino_sector
