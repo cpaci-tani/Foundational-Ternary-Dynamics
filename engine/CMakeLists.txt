@@ -965,6 +965,8 @@ set_tests_properties(
     ae_electronegativity campaign_ae_water
     inflation dark_matter cosmological_constant consciousness sloop
     lorentz_invariance electroweak hydrogen_em_only campaign_lorentz_measure
+    helium_scale1 fine_structure_scale1 hydrogen_spectrum_scale1
+    radiative_decay_scale1 scale_proof_chain
     PROPERTIES TIMEOUT 600)
 
 # Heavy campaigns with 64^3 grids or multi-phase dynamics need more time (30 min)
