@@ -24,7 +24,8 @@
 namespace ftd::testrunner {
 
 // ============================================================================
-// Category rules — ported verbatim from engine/run_tests_live.py:38-71
+// Category rules — ported verbatim from the retired engine/run_tests_live.py
+// SSE dashboard (Python). See git history for the original table if needed.
 // ============================================================================
 namespace {
 

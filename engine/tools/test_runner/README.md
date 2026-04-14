@@ -12,9 +12,10 @@ that land in Phases 4-6.
 Phase 3 ships the scaffold + core runner pipeline:
 
 - **`TestModel`** — `QAbstractItemModel` that reads `ctest --show-only=json-v1`,
-  groups tests into categories (rules ported from `engine/run_tests_live.py`),
-  detects GPU-heavy tests from the CTest `gpu` label, and extracts the first
-  line of each test's `/** Test: ... */` header comment as a description.
+  groups tests into categories (rules ported from the retired SSE dashboard
+  at `engine/run_tests_live.py`, now superseded by this runner), detects
+  GPU-heavy tests from the CTest `gpu` label, and extracts the first line
+  of each test's `/** Test: ... */` header comment as a description.
 - **`TestRunner`** — spawns one `QProcess` per test, feeds its stdout through
   an `NdjsonParser`, and re-emits structured events (`testStarted`,
   `checkReceived`, `metricReceived`, `snapshotReceived`, `testFinished`).
