@@ -96,6 +96,66 @@ export const SCALE0_SCENARIO_OVERRIDES = {
         ['genesis', true, 't-genesis'],
         ['damping', true, 't-damping'],
     ],
+    'quantum-born-rule': [
+        ['genesis', true, 't-genesis'],
+        ['damping', true, 't-damping'],
+    ],
+    'quantum-double-slit': [
+        ['selective_damping', true, 't-selective'],
+        ['coupling', false, 't-coupling'],
+        ['genesis', true, 't-genesis'],
+        ['gauss_projection', false, 't-gauss'],
+        ['forces', false, 't-forces'],
+        ['movement', false, 't-movement'],
+    ],
+    'quantum-tunnel': [
+        ['coupling', true, 't-coupling'],
+        ['genesis', false, 't-genesis'],
+    ],
+    'quantum-well': [
+        ['coupling', false, 't-coupling'],
+        ['damping', false, 't-damping'],
+        ['genesis', false, 't-genesis'],
+    ],
+    'quantum-entangle': [
+        ['genesis', true, 't-genesis'],
+        ['coupling', true, 't-coupling'],
+    ],
+    'quantum-aharonov-bohm': [
+        ['coupling', true, 't-coupling'],
+        ['genesis', false, 't-genesis'],
+    ],
+    'quantum-casimir': [
+        ['genesis', false, 't-genesis'],
+        ['damping', true, 't-damping'],
+    ],
+    'quantum-zeno': [
+        ['genesis', true, 't-genesis'],
+        ['damping', true, 't-damping'],
+    ],
+    // ── Standard Model scenarios ──
+    'sm-particle-zoo': [
+        ['genesis', false, 't-genesis'],
+    ],
+    'sm-higgs-field': [
+        ['genesis', false, 't-genesis'],
+        ['damping', false, 't-damping'],
+    ],
+    'sm-higgs-mechanism': [
+        ['genesis', false, 't-genesis'],
+        ['damping', false, 't-damping'],
+    ],
+    'sm-electroweak': [
+        ['genesis', false, 't-genesis'],
+    ],
+    'sm-three-generations': [
+        ['genesis', false, 't-genesis'],
+    ],
+    'sm-qcd-vacuum': [
+        ['confinement', true, 't-confinement'],
+        ['genesis', false, 't-genesis'],
+        ['gravity', true, 't-gravity'],
+    ],
 };
 
 // Light scenarios: pure EM wave propagation (no matter coupling)

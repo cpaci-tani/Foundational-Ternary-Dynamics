@@ -30,135 +30,137 @@
 </head>
 
 <body>
+    <!-- Skip-link: styled via .skip-link in components.css, focus/blur handled via :focus-visible -->
+    <a href="#viewport" class="skip-link">Skip to simulation</a>
     <!-- Loading overlay — minimal modern design with progress -->
-    <div id="loading-overlay">
+    <div id="loading-overlay" role="status" aria-live="polite">
         <div class="load-lattice">
             <canvas id="load-cube" width="512" height="512"></canvas>
         </div>
         <script>
-        // Minimal wireframe cube — thin lines, slow rotation, 8 vertices + 12 edges
-        (() => {
-            const cv = document.getElementById('load-cube');
-            if (!cv) return;
-            const c = cv.getContext('2d');
-            const S = 16.8, CX = 256, CY = 256;
-            const N = 8;
+            // Minimal wireframe cube — thin lines, slow rotation, 8 vertices + 12 edges
+            (() => {
+                const cv = document.getElementById('load-cube');
+                if (!cv) return;
+                const c = cv.getContext('2d');
+                const S = 16.8, CX = 256, CY = 256;
+                const N = 8;
 
-            // Build 8x8x8 lattice vertices
-            const V = [];
-            for (let x = 0; x < N; x++)
-                for (let y = 0; y < N; y++)
-                    for (let z = 0; z < N; z++)
-                        V.push([x - (N-1)/2, y - (N-1)/2, z - (N-1)/2]);
+                // Build 8x8x8 lattice vertices
+                const V = [];
+                for (let x = 0; x < N; x++)
+                    for (let y = 0; y < N; y++)
+                        for (let z = 0; z < N; z++)
+                            V.push([x - (N - 1) / 2, y - (N - 1) / 2, z - (N - 1) / 2]);
 
-            // Edges: connect face-adjacent nodes (only along outer shell to keep it clean)
-            const E = [];
-            const idx = (x,y,z) => x*N*N + y*N + z;
-            for (let x = 0; x < N; x++)
-                for (let y = 0; y < N; y++)
-                    for (let z = 0; z < N; z++) {
-                        // Only draw edges on the 6 faces of the cube (not interior)
-                        const onFace = x===0||x===N-1||y===0||y===N-1||z===0||z===N-1;
-                        if (!onFace) continue;
-                        if (x < N-1 && (y===0||y===N-1||z===0||z===N-1)) E.push([idx(x,y,z), idx(x+1,y,z)]);
-                        if (y < N-1 && (x===0||x===N-1||z===0||z===N-1)) E.push([idx(x,y,z), idx(x,y+1,z)]);
-                        if (z < N-1 && (x===0||x===N-1||y===0||y===N-1)) E.push([idx(x,y,z), idx(x,y,z+1)]);
-                    }
+                // Edges: connect face-adjacent nodes (only along outer shell to keep it clean)
+                const E = [];
+                const idx = (x, y, z) => x * N * N + y * N + z;
+                for (let x = 0; x < N; x++)
+                    for (let y = 0; y < N; y++)
+                        for (let z = 0; z < N; z++) {
+                            // Only draw edges on the 6 faces of the cube (not interior)
+                            const onFace = x === 0 || x === N - 1 || y === 0 || y === N - 1 || z === 0 || z === N - 1;
+                            if (!onFace) continue;
+                            if (x < N - 1 && (y === 0 || y === N - 1 || z === 0 || z === N - 1)) E.push([idx(x, y, z), idx(x + 1, y, z)]);
+                            if (y < N - 1 && (x === 0 || x === N - 1 || z === 0 || z === N - 1)) E.push([idx(x, y, z), idx(x, y + 1, z)]);
+                            if (z < N - 1 && (x === 0 || x === N - 1 || y === 0 || y === N - 1)) E.push([idx(x, y, z), idx(x, y, z + 1)]);
+                        }
 
-            // Node states cycle slowly
-            const states = V.map(() => ({ s: 0, t: Math.random() * 12 }));
+                // Node states cycle slowly
+                const states = V.map(() => ({ s: 0, t: Math.random() * 12 }));
 
-            function proj(x, y, z, a) {
-                const ca = Math.cos(a), sa = Math.sin(a);
-                const x1 = x*ca - z*sa, z1 = x*sa + z*ca;
-                const cb = Math.cos(0.45), sb = Math.sin(0.45);
-                const y1 = y*cb - z1*sb, z2 = y*sb + z1*cb;
-                const d = 220 / (220 + z2);
-                return [CX + x1*S*d, CY + y1*S*d, d];
-            }
+                function proj(x, y, z, a) {
+                    const ca = Math.cos(a), sa = Math.sin(a);
+                    const x1 = x * ca - z * sa, z1 = x * sa + z * ca;
+                    const cb = Math.cos(0.45), sb = Math.sin(0.45);
+                    const y1 = y * cb - z1 * sb, z2 = y * sb + z1 * cb;
+                    const d = 220 / (220 + z2);
+                    return [CX + x1 * S * d, CY + y1 * S * d, d];
+                }
 
-            let angle = 0;
-            function draw() {
-                if (document.getElementById('loading-overlay')?.classList.contains('hidden')) return;
+                let angle = 0;
+                function draw() {
+                    if (document.getElementById('loading-overlay')?.classList.contains('hidden')) return;
+                    requestAnimationFrame(draw);
+                    angle += 0.008;
+                    c.clearRect(0, 0, 512, 512);
+
+                    // Update states
+                    states.forEach(s => {
+                        s.t += 0.016;
+                        const phase = (s.t % 6);
+                        s.s = phase < 2 ? 0 : phase < 3 ? 1 : phase < 5 ? 0 : -1;
+                    });
+
+                    // Project vertices
+                    const P = V.map(v => proj(v[0], v[1], v[2], angle));
+
+                    // Draw edges (back first by avg depth)
+                    const edgeData = E.map(([a, b]) => ({ a, b, z: (P[a][2] + P[b][2]) / 2 }));
+                    edgeData.sort((a, b) => a.z - b.z);
+
+                    edgeData.forEach(({ a, b, z }) => {
+                        const alpha = 0.12 + z * 0.08;
+                        c.strokeStyle = `rgba(96,165,250,${alpha})`;
+                        c.lineWidth = 0.5;
+                        c.beginPath();
+                        c.moveTo(P[a][0], P[a][1]);
+                        c.lineTo(P[b][0], P[b][1]);
+                        c.stroke();
+                    });
+
+                    // Draw nodes (depth-sorted)
+                    const nodeData = P.map((p, i) => ({ p, i, z: p[2] }));
+                    nodeData.sort((a, b) => a.z - b.z);
+
+                    nodeData.forEach(({ p, i }) => {
+                        const s = states[i].s;
+                        const r = 1.0 + p[2] * 0.8; // smaller dots
+
+                        // Per-node shade variation based on index (deterministic, varied)
+                        const h = ((i * 137) % 256) / 256; // hash for variety
+                        let col;
+                        if (s > 0) {
+                            // Greens: vary hue 130-160, saturation 50-90%
+                            const hue = 130 + h * 30;
+                            const sat = 50 + h * 40;
+                            const lit = 50 + h * 20;
+                            col = `hsl(${hue},${sat}%,${lit}%)`;
+                        } else if (s < 0) {
+                            // Reds: vary hue 0-20, saturation 60-90%
+                            const hue = h * 20;
+                            const sat = 60 + h * 30;
+                            const lit = 50 + h * 20;
+                            col = `hsl(${hue},${sat}%,${lit}%)`;
+                        } else {
+                            // Blues/cyans: vary hue 200-230, low saturation
+                            const hue = 200 + h * 30;
+                            const sat = 30 + h * 40;
+                            const lit = 40 + h * 25;
+                            col = `hsl(${hue},${sat}%,${lit}%)`;
+                        }
+                        const alpha = s === 0 ? 0.15 + h * 0.15 : 0.5 + h * 0.4;
+
+                        // Soft glow for manifested
+                        if (s !== 0) {
+                            const g = c.createRadialGradient(p[0], p[1], 0, p[0], p[1], r * 5);
+                            g.addColorStop(0, (s > 0 ? 'rgba(74,222,128,' : 'rgba(248,113,113,') + '0.15)');
+                            g.addColorStop(1, (s > 0 ? 'rgba(74,222,128,' : 'rgba(248,113,113,') + '0)');
+                            c.fillStyle = g;
+                            c.fillRect(p[0] - r * 5, p[1] - r * 5, r * 10, r * 10);
+                        }
+
+                        c.globalAlpha = alpha;
+                        c.beginPath();
+                        c.arc(p[0], p[1], r, 0, Math.PI * 2);
+                        c.fillStyle = col;
+                        c.fill();
+                        c.globalAlpha = 1;
+                    });
+                }
                 requestAnimationFrame(draw);
-                angle += 0.008;
-                c.clearRect(0, 0, 512, 512);
-
-                // Update states
-                states.forEach(s => {
-                    s.t += 0.016;
-                    const phase = (s.t % 6);
-                    s.s = phase < 2 ? 0 : phase < 3 ? 1 : phase < 5 ? 0 : -1;
-                });
-
-                // Project vertices
-                const P = V.map(v => proj(v[0], v[1], v[2], angle));
-
-                // Draw edges (back first by avg depth)
-                const edgeData = E.map(([a,b]) => ({ a, b, z: (P[a][2]+P[b][2])/2 }));
-                edgeData.sort((a,b) => a.z - b.z);
-
-                edgeData.forEach(({a, b, z}) => {
-                    const alpha = 0.12 + z * 0.08;
-                    c.strokeStyle = `rgba(96,165,250,${alpha})`;
-                    c.lineWidth = 0.5;
-                    c.beginPath();
-                    c.moveTo(P[a][0], P[a][1]);
-                    c.lineTo(P[b][0], P[b][1]);
-                    c.stroke();
-                });
-
-                // Draw nodes (depth-sorted)
-                const nodeData = P.map((p, i) => ({ p, i, z: p[2] }));
-                nodeData.sort((a,b) => a.z - b.z);
-
-                nodeData.forEach(({p, i}) => {
-                    const s = states[i].s;
-                    const r = 1.0 + p[2] * 0.8; // smaller dots
-
-                    // Per-node shade variation based on index (deterministic, varied)
-                    const h = ((i * 137) % 256) / 256; // hash for variety
-                    let col;
-                    if (s > 0) {
-                        // Greens: vary hue 130-160, saturation 50-90%
-                        const hue = 130 + h * 30;
-                        const sat = 50 + h * 40;
-                        const lit = 50 + h * 20;
-                        col = `hsl(${hue},${sat}%,${lit}%)`;
-                    } else if (s < 0) {
-                        // Reds: vary hue 0-20, saturation 60-90%
-                        const hue = h * 20;
-                        const sat = 60 + h * 30;
-                        const lit = 50 + h * 20;
-                        col = `hsl(${hue},${sat}%,${lit}%)`;
-                    } else {
-                        // Blues/cyans: vary hue 200-230, low saturation
-                        const hue = 200 + h * 30;
-                        const sat = 30 + h * 40;
-                        const lit = 40 + h * 25;
-                        col = `hsl(${hue},${sat}%,${lit}%)`;
-                    }
-                    const alpha = s === 0 ? 0.15 + h * 0.15 : 0.5 + h * 0.4;
-
-                    // Soft glow for manifested
-                    if (s !== 0) {
-                        const g = c.createRadialGradient(p[0], p[1], 0, p[0], p[1], r*5);
-                        g.addColorStop(0, (s > 0 ? 'rgba(74,222,128,' : 'rgba(248,113,113,') + '0.15)');
-                        g.addColorStop(1, (s > 0 ? 'rgba(74,222,128,' : 'rgba(248,113,113,') + '0)');
-                        c.fillStyle = g;
-                        c.fillRect(p[0]-r*5, p[1]-r*5, r*10, r*10);
-                    }
-
-                    c.globalAlpha = alpha;
-                    c.beginPath();
-                    c.arc(p[0], p[1], r, 0, Math.PI*2);
-                    c.fillStyle = col;
-                    c.fill();
-                    c.globalAlpha = 1;
-                });
-            }
-            requestAnimationFrame(draw);
-        })();
+            })();
         </script>
         <div class="load-logo">
             <span class="letter">F</span>
@@ -176,10 +178,10 @@
         <div class="load-version">v2.11</div>
     </div>
 
-    <div id="app" class="mode-lattice">
+    <div id="app" class="mode-lattice" data-active-scale="0">
         <!-- ── Toolbar ──────────────────────────────── -->
-        <div id="toolbar">
-            <div class="brand">FTD Engine <span>v2.11</span></div>
+        <nav id="toolbar" aria-label="Simulation controls">
+            <h1 class="brand">FTD Engine <span>v2.11</span></h1>
             <div class="separator"></div>
             <div class="tb-group">
                 <button class="tb-btn" id="btn-play" title="Play / Pause (Space)">&#9654;</button>
@@ -188,21 +190,22 @@
             </div>
             <div class="separator"></div>
             <div class="tb-group">
-                <span class="tb-label">Engine</span>
-                <select class="tb-select" id="engine-mode">
+                <label class="tb-label" for="engine-mode">Engine</label>
+                <select class="tb-select" id="engine-mode" title="Select simulation scale">
                     <option value="lattice" selected>Scale 0 (Lattice)</option>
                     <option value="particles">Scale 1 (Particles)</option>
                     <option value="atoms">Scale 2 (Atoms)</option>
                     <option value="molecules">Scale 3 (Molecules)</option>
-                    <option value="consciousness">Scale 4 (Consciousness)</option>
+                    <option value="planetary">Scale 4 (Planetary)</option>
                     <option value="cosmic">Scale 5 (Cosmic)</option>
                     <option value="meta">Meta (Existential Unit)</option>
+                    <option value="consciousness">Scale 11 (Consciousness)</option>
                 </select>
             </div>
             <div class="separator"></div>
             <!-- Scale 0 controls -->
             <div class="tb-group scale0-only" id="lattice-controls">
-                <span class="tb-label">Scenario</span>
+                <label class="tb-label" for="scenario-select">Scenario</label>
                 <select class="tb-select" id="scenario-select" style="max-width:200px">
                     <option value="empty">Empty Lattice</option>
                     <optgroup label="Wave Dynamics">
@@ -247,16 +250,34 @@
                         <option value="flux-cosmic-web">Cosmic Web</option>
                         <option value="flux-black-hole">Black Hole / Wormhole</option>
                     </optgroup>
+                    <optgroup label="Standard Model">
+                        <option value="sm-particle-zoo">SM Particle Zoo (All 17)</option>
+                        <option value="sm-higgs-field">Higgs Field (VEV)</option>
+                        <option value="sm-higgs-mechanism">Higgs Mechanism</option>
+                        <option value="sm-electroweak">Electroweak (Beta Decay)</option>
+                        <option value="sm-three-generations">Three Generations</option>
+                        <option value="sm-qcd-vacuum">QCD Vacuum (Confinement)</option>
+                    </optgroup>
                     <optgroup label="Advanced">
                         <option value="flux-cascade">Genesis Cascade</option>
                         <option value="flux-damping">Damping Demo</option>
                         <option value="flux-dual-substrate">Dual Substrate</option>
                     </optgroup>
+                    <optgroup label="Quantum Lab">
+                        <option value="quantum-born-rule">Born Rule Test</option>
+                        <option value="quantum-double-slit">Double-Slit (Quantitative)</option>
+                        <option value="quantum-tunnel">Quantum Tunneling</option>
+                        <option value="quantum-well">Particle in a Box</option>
+                        <option value="quantum-entangle">Entanglement Correlation</option>
+                        <option value="quantum-aharonov-bohm">Aharonov-Bohm Effect</option>
+                        <option value="quantum-casimir">Casimir Effect</option>
+                        <option value="quantum-zeno">Quantum Zeno Effect</option>
+                    </optgroup>
                 </select>
             </div>
             <!-- Scale 1 controls -->
             <div class="tb-group scale1-only" id="pe-controls">
-                <span class="tb-label">Scenario</span>
+                <label class="tb-label" for="pe-scenario-select">Scenario</label>
                 <select class="tb-select" id="pe-scenario-select">
                     <optgroup label="Leptons">
                         <option value="pe-hydrogen" selected>Hydrogen Atom (p + e⁻)</option>
@@ -303,7 +324,7 @@
             </div>
             <!-- Scale 2 controls -->
             <div class="tb-group scale2-only" id="ae-controls">
-                <span class="tb-label">Scenario</span>
+                <label class="tb-label" for="ae-scenario-select">Scenario</label>
                 <select class="tb-select" id="ae-scenario-select" style="max-width:200px">
                     <!-- Element periods injected by buildElementScenarios() -->
                     <optgroup label="Noble Gas Clusters">
@@ -348,6 +369,21 @@
                     Orbitals
                 </label>
             </div>
+            <!-- Scale 3 controls -->
+            <div class="tb-group scale3-only" id="mol-controls">
+                <label class="tb-label" for="mol-scenario-select">Scenario</label>
+                <select class="tb-select" id="mol-scenario-select" style="max-width:200px">
+                    <!-- Populated by buildMoleculeScenarios3() in app.js -->
+                    <optgroup label="Special">
+                        <option value="mol-crystal">NaCl Crystal</option>
+                        <option value="mol-custom">Custom (Manual)</option>
+                    </optgroup>
+                </select>
+                <label class="tb-check" style="margin-left:8px" title="Show electron orbital probability clouds">
+                    <input type="checkbox" id="mol-show-clouds" checked>
+                    Orbitals
+                </label>
+            </div>
             <!-- Scale 2+3 enhanced visual controls (visible on atoms AND molecules) -->
             <div class="tb-group scale23-only" id="ae-visual-controls" style="margin-top:4px">
                 <label class="tb-check" title="Show strong force glow shells around nuclei">
@@ -372,29 +408,36 @@
             <!-- Scale 2+3 force arrows (visible on atoms AND molecules) -->
             <div class="tb-group scale23-only" id="ae-force-controls" style="margin-top:4px">
                 <span class="tb-label">Forces</span>
-                <button class="view-toggle" id="ae-force-ionic" title="Coulomb (ionic) forces" style="color:#ff4444">F<sub>C</sub></button>
-                <button class="view-toggle" id="ae-force-vdw" title="Van der Waals forces" style="color:#44ff44">F<sub>vdW</sub></button>
-                <button class="view-toggle" id="ae-force-bond" title="Bond spring forces" style="color:#ff8844">F<sub>B</sub></button>
-                <button class="view-toggle" id="ae-force-net" title="Net force" style="color:#ffffff">F<sub>net</sub></button>
+                <button class="view-toggle" id="ae-force-ionic" title="Coulomb (ionic) forces"
+                    style="color:#ff4444">F<sub>C</sub></button>
+                <button class="view-toggle" id="ae-force-vdw" title="Van der Waals forces"
+                    style="color:#44ff44">F<sub>vdW</sub></button>
+                <button class="view-toggle" id="ae-force-bond" title="Bond spring forces"
+                    style="color:#ff8844">F<sub>B</sub></button>
+                <button class="view-toggle" id="ae-force-net" title="Net force"
+                    style="color:#ffffff">F<sub>net</sub></button>
             </div>
-            <!-- Scale 3 controls -->
-            <div class="tb-group scale3-only" id="mol-controls">
-                <span class="tb-label">Scenario</span>
-                <select class="tb-select" id="mol-scenario-select" style="max-width:200px">
-                    <!-- Populated by buildMoleculeScenarios3() in app.js -->
-                    <optgroup label="Special">
-                        <option value="mol-crystal">NaCl Crystal</option>
-                        <option value="mol-custom">Custom (Manual)</option>
+            <!-- Scale 4 controls (Planetary) -->
+            <div class="tb-group scale4-only" id="planetary-controls">
+                <label class="tb-label" for="planetary-scenario-select">Scenario</label>
+                <select class="tb-select" id="planetary-scenario-select" style="max-width:200px">
+                    <optgroup label="Standard Models">
+                        <option value="planetary-solar" selected>Solar System</option>
+                        <option value="planetary-binary">Binary Star System</option>
+                        <option value="planetary-threebody">Three-Body Problem</option>
+                    </optgroup>
+                    <optgroup label="NASA Exoplanet Archive Data">
+                        <option value="exo-TRAPPIST-1">TRAPPIST-1 System</option>
+                        <option value="exo-Kepler-90">Kepler-90 System</option>
+                        <option value="exo-Kepler-11">Kepler-11 System</option>
+                        <option value="exo-HR 8799">HR 8799 System</option>
+                        <option value="exo-Kepler-20">Kepler-20 System</option>
                     </optgroup>
                 </select>
-                <label class="tb-check" style="margin-left:8px" title="Show electron orbital probability clouds">
-                    <input type="checkbox" id="mol-show-clouds" checked>
-                    Orbitals
-                </label>
             </div>
-            <!-- Scale 4 controls -->
-            <div class="tb-group scale4-only" id="cs-controls">
-                <span class="tb-label">Scenario</span>
+            <!-- Scale 11 controls (Consciousness) -->
+            <div class="tb-group scale11-only" id="cs-controls">
+                <label class="tb-label" for="cs-scenario-select">Scenario</label>
                 <select class="tb-select" id="cs-scenario-select" style="max-width:200px">
                     <optgroup label="Observer Modes">
                         <option value="cs-threshold" selected>Threshold Crossing</option>
@@ -417,10 +460,10 @@
                         <option value="cs-custom">Custom (Manual)</option>
                     </optgroup>
                 </select>
-                        <details class="cs-scenario-desc" id="cs-scenario-desc">
-                            <summary>What does this scenario demonstrate?</summary>
-                            <p id="cs-scenario-desc-text">Select a scenario to see its description.</p>
-                        </details>
+                <details class="cs-scenario-desc" id="cs-scenario-desc">
+                    <summary>What does this scenario demonstrate?</summary>
+                    <p id="cs-scenario-desc-text">Select a scenario to see its description.</p>
+                </details>
                 <select class="tb-select" id="cs-figure-select" style="max-width:140px; margin-left:6px">
                     <optgroup label="Ethereal">
                         <option value="aetheric">Aetheric Body</option>
@@ -450,18 +493,21 @@
                     Audio
                 </label>
             </div>
-            <!-- Scale 5 (Cosmic) controls -->
-            <div class="tb-group scale-cosmic-only" id="cosmic-controls">
-                <span class="tb-label">Scenario</span>
+            <div class="tb-group scale5-only" id="cosmic-controls">
+                <label class="tb-label" for="cosmic-scenario-select">Scenario</label>
                 <select class="tb-select" id="cosmic-scenario-select" style="max-width:180px">
                     <option value="cosmic-galaxy" selected>Spiral Galaxy</option>
-                    <option value="cosmic-black-hole">Black Hole Close-up</option>
+                    <option value="cosmic-cartwheel-collision">Cartwheel Collision</option>
+                    <option value="cosmic-super-cluster">Supercluster Interaction</option>
                     <option value="cosmic-merger">Galaxy Merger</option>
-                    <option value="cosmic-stellar-lifecycle">Stellar Lifecycle</option>
+                    <option value="cosmic-binary-agn">Binary Quasars</option>
+                    <option value="cosmic-globular-cluster">Globular Cluster</option>
+                    <option value="cosmic-black-hole">Black Hole Close-up</option>
                     <option value="cosmic-ftd-collapse">FTD Collapse (Emergent BH)</option>
+                    <option value="cosmic-stellar-lifecycle">Stellar Lifecycle</option>
                     <option value="cosmic-web">Cosmic Web</option>
                 </select>
-                <span class="tb-label">Camera</span>
+                <label class="tb-label" for="cosmic-camera-select">Camera</label>
                 <select class="tb-select" id="cosmic-camera-select" style="max-width:130px">
                     <option value="overview">Overview</option>
                     <option value="galaxy" selected>Galaxy</option>
@@ -469,17 +515,18 @@
                     <option value="merger">Merger</option>
                 </select>
             </div>
-            <div class="tb-group scale-cosmic-only" id="cosmic-telemetry" style="gap:12px;">
+            <div class="tb-group scale5-only" id="cosmic-telemetry" style="gap:12px;">
                 <span class="tb-value" id="cosmic-tb-bodies" title="Body count">--</span>
                 <span class="tb-value" id="cosmic-tb-tick" title="Simulation tick">--</span>
                 <span class="tb-value" id="cosmic-tb-hubble" title="Hubble parameter H(t)">--</span>
             </div>
             <!-- Meta Scale controls -->
-            <div class="tb-group scale5-only" id="meta-controls" style="flex-wrap:wrap;gap:4px;">
+            <div class="tb-group scale12-only" id="meta-controls" style="flex-wrap:wrap;gap:4px;">
                 <span class="tb-label" style="width:100%;color:#FFD700;font-weight:bold;">Existential Unit</span>
                 <button class="view-toggle active" id="meta-toggle-center" title="Center (CM point i)">Center</button>
                 <button class="view-toggle active" id="meta-toggle-oct" title="Octahedron (6 SC)">Oct</button>
-                <button class="view-toggle active" id="meta-toggle-cuboct" title="Cuboctahedron (12 FCC)">Cuboct</button>
+                <button class="view-toggle active" id="meta-toggle-cuboct"
+                    title="Cuboctahedron (12 FCC)">Cuboct</button>
                 <button class="view-toggle active" id="meta-toggle-cube" title="Cube (8 BCC)">Cube</button>
                 <span class="field-sep"></span>
                 <button class="view-toggle" id="meta-toggle-tetra-plus" title="Tetrahedron T+ (even)">T+</button>
@@ -497,31 +544,37 @@
             </div>
             <div class="separator"></div>
             <div class="tb-group scale0-only" id="lattice-size-group">
-                <span class="tb-label">Size</span>
-                <select class="tb-select" id="lattice-size">
+                <label class="tb-label" for="lattice-size">Size</label>
+                <select class="tb-select" id="lattice-size" title="Lattice edge dimension (N x N x N)">
                     <option value="8">8</option>
                     <option value="16">16</option>
                     <option value="24">24</option>
                     <option value="32" selected>32</option>
                     <option value="48">48</option>
                     <option value="64">64</option>
+                    <option value="96">96</option>
+                    <option value="128">128</option>
                 </select>
             </div>
             <div class="tb-group">
-                <span class="tb-label">Speed</span>
-                <input type="range" class="tb-slider" id="ticks-per-frame" min="0" max="100" step="0.1" value="50">
+                <label class="tb-label" for="ticks-per-frame">Speed</label>
+                <input type="range" class="tb-slider" id="ticks-per-frame" min="0" max="100" step="0.1" value="50"
+                    title="Simulation speed (ticks per animation frame)">
                 <span class="tb-value" id="tpf-display">1.0</span>
             </div>
             <div style="margin-left:auto;"></div>
-            <button class="tb-btn" id="btn-settings" title="Settings" style="font-size:var(--fs-xl);" aria-label="Settings">&#9881;&#xFE0E;</button>
-        </div>
+            <button class="tb-btn tb-btn-settings" id="btn-settings" title="Settings (Ctrl+,)"
+                aria-label="Settings">&#9881;&#xFE0E;</button>
+        </nav>
 
-        <!-- ── Settings Modal (styles in css/components.css) ── -->
-        <div id="settings-modal">
+        <!-- ── Settings Modal (styles in css/components.css) ──
+             NOTE: aria-modal="true" + role="dialog" declared.
+             JS must trap focus (Tab/Shift+Tab cycle within modal) and close on Escape. -->
+        <div id="settings-modal" role="dialog" aria-modal="true" aria-label="Settings">
             <div class="settings-box">
                 <div class="settings-header">
                     <div class="settings-title">Settings</div>
-                    <button id="settings-close" class="settings-close-btn">&times;</button>
+                    <button id="settings-close" class="settings-close-btn" aria-label="Close settings" title="Close (Escape)">&times;</button>
                 </div>
 
                 <!-- Theme -->
@@ -598,53 +651,68 @@
         </div>
 
         <!-- ── 3D Viewport ──────────────────────────── -->
-        <div id="viewport">
+        <main id="viewport">
             <div id="viewport-overlay" class="scale0-only">
                 <button class="view-toggle active" id="toggle-flux-volume">Flux Volume</button>
                 <button class="view-toggle" id="toggle-flux-slice">Flux Slice</button>
                 <span class="field-sep"></span>
-                <button class="view-toggle field-toggle" id="toggle-e-field" title="Electric field lines (E = -wave_vel)">
+                <button class="view-toggle field-toggle" id="toggle-e-field"
+                    title="Electric field lines (E = -wave_vel)">
                     <span class="field-swatch" style="background:#4dd0e1"></span>E Field
                 </button>
                 <button class="view-toggle field-toggle" id="toggle-b-field" title="Magnetic field lines (B = curl J)">
                     <span class="field-swatch" style="background:#66bb6a"></span>B Field
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-poynting" title="Poynting vector (energy flow S = E x B)">
+                <button class="view-toggle field-toggle" id="toggle-poynting"
+                    title="Poynting vector (energy flow S = E x B)">
                     <span class="field-swatch" style="background:#ffa726"></span>Energy
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-div-field" title="Divergence of J (charge sources/sinks)">
-                    <span class="field-swatch" style="background:linear-gradient(90deg,#e53935,#1e88e5)"></span>&nabla;&middot;J
+                <button class="view-toggle field-toggle" id="toggle-div-field"
+                    title="Divergence of J (charge sources/sinks)">
+                    <span class="field-swatch"
+                        style="background:linear-gradient(90deg,#e53935,#1e88e5)"></span>&nabla;&middot;J
                 </button>
                 <button class="view-toggle field-toggle" id="toggle-flux-lines" title="Flux streamlines (J field)">
-                    <span class="field-swatch" style="background:linear-gradient(90deg,#1565c0,#ffee58,#e53935)"></span>Flux Lines
+                    <span class="field-swatch"
+                        style="background:linear-gradient(90deg,#1565c0,#ffee58,#e53935)"></span>Flux Lines
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-force-volume" title="3D force vectors (net force field)">
+                <button class="view-toggle field-toggle" id="toggle-force-volume"
+                    title="3D force vectors (net force field)">
                     <span class="field-swatch" style="background:#78909c"></span>Forces
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-dual-substrate" title="Dual substrate J_L (warm) / J_R (cool)">
+                <button class="view-toggle field-toggle" id="toggle-dual-substrate"
+                    title="Dual substrate J_L (warm) / J_R (cool)">
                     <span class="field-swatch" style="background:linear-gradient(90deg,#ff7043,#42a5f5)"></span>Dual J
                 </button>
                 <button class="view-toggle field-toggle" id="toggle-chirality" title="Chirality field (|J_L| - |J_R|)">
-                    <span class="field-swatch" style="background:linear-gradient(90deg,#ef5350,#42a5f5)"></span>Chirality
+                    <span class="field-swatch"
+                        style="background:linear-gradient(90deg,#ef5350,#42a5f5)"></span>Chirality
                 </button>
                 <button class="view-toggle field-toggle" id="toggle-light" title="Light field (|Poynting| glow)">
                     <span class="field-swatch" style="background:#ffeb3b"></span>Light
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-gravity-field" title="Gravity field vectors (density gradient attraction)">
+                <button class="view-toggle field-toggle" id="toggle-gravity-field"
+                    title="Gravity field vectors (density gradient attraction)">
                     <span class="field-swatch" style="background:#b0bec5"></span>Gravity
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-dark-halo" title="Dark matter halo (sub-threshold flux envelope, gravitates but invisible)">
+                <button class="view-toggle field-toggle" id="toggle-dark-halo"
+                    title="Dark matter halo (sub-threshold flux envelope, gravitates but invisible)">
                     <span class="field-swatch" style="background:#7c3aed"></span>DM Halo
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-damping-zones" title="Selective damping boundary (1-hop zones around particles where energy dissipates)">
+                <button class="view-toggle field-toggle" id="toggle-damping-zones"
+                    title="Selective damping boundary (1-hop zones around particles where energy dissipates)">
                     <span class="field-swatch" style="background:#ef4444"></span>Damping
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-genesis-iso" title="Genesis threshold isosurface (where |J| = K_GENESIS; particles crystallize here)">
+                <button class="view-toggle field-toggle" id="toggle-genesis-iso"
+                    title="Genesis threshold isosurface (where |J| = K_GENESIS; particles crystallize here)">
                     <span class="field-swatch" style="background:#22c55e"></span>Genesis
                 </button>
+                <button class="view-toggle field-toggle" id="toggle-confinement"
+                    title="SU(3) Confinement flux strings between particles">
+                    <span class="field-swatch" style="background:#ec407a"></span>Confinement
+                </button>
             </div>
-            <div id="pe-viewport-overlay" class="scale1-only"
-                style="position:absolute;top:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:620px;justify-content:flex-end">
+            <div id="pe-viewport-overlay" class="scale1-only viewport-overlay-panel">
                 <button class="view-toggle field-toggle" id="toggle-velocities" title="Velocity vectors">
                     <span class="field-swatch" style="background:#ffa726"></span>Velocities
                 </button>
@@ -654,44 +722,45 @@
                 <button class="view-toggle field-toggle" id="toggle-pe-efield" title="Coulomb E-field streamlines">
                     <span class="field-swatch" style="background:#42a5f5"></span>E Field
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-pe-potential" title="Coulomb potential heatmap (XZ plane)">
-                    <span class="field-swatch" style="background:linear-gradient(90deg,#ef5350,#42a5f5)"></span>Potential
+                <button class="view-toggle field-toggle" id="toggle-pe-potential"
+                    title="Coulomb potential heatmap (XZ plane)">
+                    <span class="field-swatch"
+                        style="background:linear-gradient(90deg,#ef5350,#42a5f5)"></span>Potential
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-pe-gravity-field" title="Gravity force vectors (XZ plane)">
+                <button class="view-toggle field-toggle" id="toggle-pe-gravity-field"
+                    title="Gravity force vectors (XZ plane)">
                     <span class="field-swatch" style="background:#78909c"></span>Gravity F
                 </button>
                 <button class="view-toggle field-toggle" id="toggle-pe-forces" title="Net force arrows per particle">
                     <span class="field-swatch" style="background:#66bb6a"></span>Forces
                 </button>
                 <span class="field-sep"></span>
-                <button class="view-toggle dynamics-toggle active" id="toggle-pe-gravity" title="Toggle gravitational force (dynamics)">
+                <button class="view-toggle dynamics-toggle active" id="toggle-pe-gravity"
+                    title="Toggle gravitational force (dynamics)">
                     Gravity
                 </button>
-                <button class="view-toggle dynamics-toggle" id="toggle-pe-damping" title="Toggle velocity damping (dynamics)">
+                <button class="view-toggle dynamics-toggle" id="toggle-pe-damping"
+                    title="Toggle velocity damping (dynamics)">
                     Damping
                 </button>
             </div>
-            <div id="ae-viewport-overlay" class="scale2-only"
-                style="position:absolute;top:12px;right:12px;display:flex;gap:6px">
+            <div id="ae-viewport-overlay" class="scale2-only viewport-overlay-panel"
                 <button class="view-toggle" id="toggle-ae-field"
                     title="Show force field heatmap + vectors">Fields</button>
             </div>
             <div id="ae-legend" class="scale2-only ae-legend"></div>
-            <div id="mol-viewport-overlay" class="scale3-only"
-                style="position:absolute;top:12px;right:12px;display:flex;gap:6px">
+            <div id="mol-viewport-overlay" class="scale3-only viewport-overlay-panel"
                 <button class="view-toggle active" id="toggle-mol-bonds" title="Show covalent bonds">Bonds</button>
                 <button class="view-toggle" id="toggle-mol-field"
                     title="Show force field heatmap + vectors">Fields</button>
             </div>
             <div id="mol-legend" class="scale3-only ae-legend"></div>
             <!-- Universal viewport toggles (visible on all scales) -->
-            <div id="viewport-toggles-universal"
-                style="position:absolute;bottom:32px;right:12px;display:flex;gap:6px">
-                <button class="view-toggle active" id="toggle-axes" title="XYZ axis indicator">Axes</button>
-                <button class="view-toggle active" id="toggle-grid" title="Reference grid (XZ plane)">Grid</button>
+            <div id="viewport-toggles-universal" class="viewport-overlay-bottom"
+                <button class="view-toggle active scale4-hide" id="toggle-axes" title="XYZ axis indicator">Axes</button>
+                <button class="view-toggle active scale4-hide" id="toggle-grid" title="Reference grid (XZ plane)">Grid</button>
             </div>
-            <div id="cs-viewport-overlay" class="scale4-only"
-                style="position:absolute;top:12px;right:12px;display:flex;gap:6px;align-items:center">
+            <div id="cs-viewport-overlay" class="scale4-only viewport-overlay-panel" style="align-items:center"
                 <span style="color:var(--consciousness-primary);font-size:11px;opacity:0.7" id="cs-status-label">
                     Observable: <span id="cs-observable-pct">37%</span> &middot;
                     &theta;<sub>C</sub> = <span id="cs-theta-val">52.5&deg;</span>
@@ -736,10 +805,11 @@
                 </div>
                 <div class="toggle-row" style="margin-left:12px;">
                     <input type="checkbox" id="reflective-boundary" checked>
-                    <label for="reflective-boundary" style="font-size:11px;color:var(--text-secondary);cursor:pointer;">Reflective</label>
+                    <label for="reflective-boundary"
+                        style="font-size:11px;color:var(--text-secondary);cursor:pointer;">Reflective</label>
                 </div>
             </div>
-        </div>
+        </main>
 
         <!-- ── Tab Bar ──────────────────────────────── -->
         <!-- data-scales = comma-separated scale numbers where tab is visible
@@ -747,22 +817,37 @@
              Omit data-scales for tabs visible on ALL scales -->
         <div id="tab-bar" role="tablist" aria-label="Dashboard panels">
             <div class="tab active" role="tab" tabindex="0" aria-selected="true" data-panel="controls">Controls</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="diagnostics" data-scales="0,1,2,3">Diagnostics</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="charts" data-scales="0,1,2,3">Charts</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="lagrangian" data-scales="0">Lagrangian</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="inspector" data-scales="0,1,2,3">Inspector</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="zoo" data-scales="1">Particle Zoo</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="ontic">Ontic</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="physics" data-scales="1,2,3">Physics</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="hierarchy">Hierarchy</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="consciousness" data-scales="4">Consciousness</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="cosmic-info" data-scales="6">Cosmic</div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="meta-info" data-scales="5">Meta</div>
-            <button id="btn-panel-toggle" title="Collapse/expand panels" aria-label="Collapse or expand panels">&#9660;</button>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="diagnostics"
+                data-scales="0,1,2,3">Diagnostics</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="charts" data-scales="0,1,2,3">
+                Charts</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="lagrangian" data-scales="0">
+                Lagrangian</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="inspector"
+                data-scales="0,1,2,3,4,5">Inspector</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="planetary" data-scales="4">
+                System Explorer</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="zoo" data-scales="1">Particle
+                Zoo</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="ontic" data-scales="0,1,2,3">Ontic</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="physics" data-scales="1,2,3">
+                Physics</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="hierarchy" data-scales="0,1,2,3">Hierarchy</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="consciousness" data-scales="11">
+                Consciousness</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="cosmic-info" data-scales="5">
+                Cosmic</div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-panel="meta-info" data-scales="12">Meta
+            </div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false"
+                data-panel="quantum-lab" data-scales="0">Quantum Lab</div>
+            <button id="btn-panel-toggle" title="Collapse/expand panels"
+                aria-label="Collapse or expand panels">&#9660;</button>
         </div>
 
         <!-- ── Panel Area ───────────────────────────── -->
         <div id="panel-area">
+            <div id="panel-resizer"><span></span></div>
             <!-- Controls -->
             <div class="panel active" id="panel-controls">
                 <div class="panel-scale-header">
@@ -770,16 +855,37 @@
                     <span class="scale1-only">Scale 1 &middot; Particle Engine</span>
                     <span class="scale2-only">Scale 2 &middot; Atom Engine</span>
                     <span class="scale3-only">Scale 3 &middot; Molecular Engine</span>
-                    <span class="scale4-only">Scale 4 &middot; Consciousness</span>
-                    <span class="scale-cosmic-only">Scale 5 &middot; Cosmic Engine</span>
-                    <span class="scale5-only">Meta &middot; Existential Unit</span>
+                    <span class="scale4-only">Scale 4 &middot; Planetary Sandbox</span>
+                    <span class="scale5-only">Scale 5 &middot; Cosmic Engine</span>
+                    <span class="scale11-only">Scale 11 &middot; Consciousness</span>
+                    <span class="scale12-only">Meta &middot; Existential Unit</span>
+                </div>
+                <!-- Planetary Controls (visible only in planetary mode) -->
+                <div class="scale4-only" style="padding:8px 0;">
+                    <div class="panel-grid panel-grid-2">
+                        <div class="card">
+                            <div class="card-title">FTD Sandbox Physics</div>
+                            <div style="font-size:11px;color:var(--text-primary);line-height:1.6;font-family:var(--font-mono);">
+                                <div>Gravity ($G_N$): <span>0.01</span></div>
+                                <div>Verlet $\Delta t$: <span>0.0001 (N-body)</span></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Planet Genesis</div>
+                            <div style="font-size:11px;color:var(--text-primary);line-height:1.6;font-family:var(--font-mono);">
+                                <div>Renderer: <span>Procedural GLSL FBM</span></div>
+                                <div>Source: <span>NASA Exoplanet Archive</span></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- Cosmic Controls (visible only in cosmic mode) -->
-                <div class="scale-cosmic-only" style="padding:8px 0;">
+                <div class="scale5-only" style="padding:8px 0;">
                     <div class="panel-grid panel-grid-3">
                         <div class="card">
                             <div class="card-title">Simulation</div>
-                            <div style="font-size:11px;color:var(--text);line-height:1.6;font-family:var(--font-mono);" id="cosmic-ctrl-sim">
+                            <div style="font-size:11px;color:var(--text-primary);line-height:1.6;font-family:var(--font-mono);"
+                                id="cosmic-ctrl-sim">
                                 <div>Bodies: <span id="cosmic-n-bodies">--</span></div>
                                 <div>Tick: <span id="cosmic-tick">--</span></div>
                                 <div>H(t): <span id="cosmic-hubble">--</span></div>
@@ -798,7 +904,8 @@
                         </div>
                         <div class="card">
                             <div class="card-title">Body Count</div>
-                            <div style="font-size:11px;color:var(--text);line-height:1.6;font-family:var(--font-mono);" id="cosmic-ctrl-bodies">
+                            <div style="font-size:11px;color:var(--text-primary);line-height:1.6;font-family:var(--font-mono);"
+                                id="cosmic-ctrl-bodies">
                                 <div>DM: <span id="cosmic-n-dm">--</span></div>
                                 <div>Gas: <span id="cosmic-n-gas">--</span></div>
                                 <div>Stars: <span id="cosmic-n-stars">--</span></div>
@@ -815,40 +922,54 @@
 
                         <div class="combo-section-label">Wave & Field</div>
                         <div class="toggle-row"><input type="checkbox" id="t-wave" checked><label for="t-wave"
-                                title="Flux wave equation: J evolves via discrete Laplacian (c^2 nabla^2 J)">Wave Propagation</label></div>
+                                title="Flux wave equation: J evolves via discrete Laplacian (c^2 nabla^2 J)">Wave
+                                Propagation</label></div>
                         <div class="toggle-row"><input type="checkbox" id="t-coupling" checked><label for="t-coupling"
-                                title="Manifested particles source flux via coupling term g_c * grad(s)">State-Flux Coupling</label></div>
+                                title="Manifested particles source flux via coupling term g_c * grad(s)">State-Flux
+                                Coupling</label></div>
                         <div class="toggle-row"><input type="checkbox" id="t-damping" checked><label for="t-damping"
-                                title="Exponential flux decay at rate alpha per tick (energy dissipation)">Dissipation</label></div>
+                                title="Exponential flux decay at rate alpha per tick (energy dissipation)">Dissipation</label>
+                        </div>
                         <div class="toggle-row"><input type="checkbox" id="t-gauss" checked><label for="t-gauss"
-                                title="Enforce div(J) = charge density via SOR solver on void sites">Gauss Projection</label></div>
+                                title="Enforce div(J) = charge density via SOR solver on void sites">Gauss
+                                Projection</label></div>
 
                         <div class="combo-section-label">Matter</div>
                         <div class="toggle-row"><input type="checkbox" id="t-genesis" checked><label for="t-genesis"
-                                title="Particles manifest when |J| exceeds K_B; evaporate when field energy drains">Genesis / Evaporation</label></div>
+                                title="Particles manifest when |J| exceeds K_B; evaporate when field energy drains">Genesis
+                                / Evaporation</label></div>
                         <div class="toggle-row"><input type="checkbox" id="t-movement" checked><label for="t-movement"
-                                title="Particles accumulate force into velocity remainder and move on the lattice">Movement</label></div>
+                                title="Particles accumulate force into velocity remainder and move on the lattice">Movement</label>
+                        </div>
 
                         <div class="combo-section-label">Forces</div>
                         <div class="toggle-row"><input type="checkbox" id="t-forces" checked><label for="t-forces"
-                                title="Master switch: apply electromagnetic and gravitational forces to manifested particles">Forces (EM + Gravity)</label></div>
+                                title="Master switch: apply electromagnetic and gravitational forces to manifested particles">Forces
+                                (EM + Gravity)</label></div>
                         <div class="toggle-row"><input type="checkbox" id="t-poisson" checked><label for="t-poisson"
-                                title="Solve Poisson equation for Coulomb potential (SOR, replaces direct div gradient)">Poisson Coulomb</label></div>
+                                title="Solve Poisson equation for Coulomb potential (SOR, replaces direct div gradient)">Poisson
+                                Coulomb</label></div>
                         <div class="toggle-row"><input type="checkbox" id="t-gravity" checked><label for="t-gravity"
-                                title="Attractive force from smoothed density gradient: F = G_N * grad(rho)">Gravity</label></div>
+                                title="Attractive force from smoothed density gradient: F = G_N * grad(rho)">Gravity</label>
+                        </div>
                         <div class="toggle-row"><input type="checkbox" id="t-lorentz" checked><label for="t-lorentz"
-                                title="Magnetic force: F = alpha * s * (v x B) where B = curl(J). Does zero work">Lorentz Force</label></div>
+                                title="Magnetic force: F = alpha * s * (v x B) where B = curl(J). Does zero work">Lorentz
+                                Force</label></div>
                         <div class="toggle-row"><input type="checkbox" id="t-confinement"><label for="t-confinement"
-                                title="Linear confinement: opposite-sign pairs feel string tension beyond R_CRIT. String breaks if genesis is ON.">Confinement</label></div>
+                                title="Linear confinement: opposite-sign pairs feel string tension beyond R_CRIT. String breaks if genesis is ON.">Confinement</label>
+                        </div>
 
                         <details class="toggle-advanced">
                             <summary>Advanced</summary>
                             <div class="toggle-row"><input type="checkbox" id="t-selective"><label for="t-selective"
-                                    title="Only damp flux near particles; vacuum EM waves propagate losslessly">Selective Damping</label></div>
+                                    title="Only damp flux near particles; vacuum EM waves propagate losslessly">Selective
+                                    Damping</label></div>
                             <div class="toggle-row"><input type="checkbox" id="t-larmor"><label for="t-larmor"
-                                    title="Accelerating charges radiate energy: damping proportional to a^2 (needs selective damping ON)">Larmor Radiation</label></div>
+                                    title="Accelerating charges radiate energy: damping proportional to a^2 (needs selective damping ON)">Larmor
+                                    Radiation</label></div>
                             <div class="toggle-row"><input type="checkbox" id="t-dual"><label for="t-dual"
-                                    title="Split flux into J_L + J_R chirality pair; observable psi = J_L + J_R">Dual Substrate</label></div>
+                                    title="Split flux into J_L + J_R chirality pair; observable psi = J_L + J_R">Dual
+                                    Substrate</label></div>
                         </details>
 
                         <div style="margin-top:8px;font-size:10px;color:var(--text-muted);opacity:0.5">
@@ -857,7 +978,6 @@
                     </div>
                     <div class="card scale0-only">
                         <div class="card-title">Substrate Controls</div>
-
                         <div class="combo-section-label">Inject</div>
                         <div class="ctrl-row" style="margin-bottom:4px">
                             <span class="ctrl-label" style="min-width:28px">Pos</span>
@@ -865,38 +985,47 @@
                             <input type="number" class="ctrl-input" id="inj-y" value="16" style="width:54px">
                             <input type="number" class="ctrl-input" id="inj-z" value="16" style="width:54px">
                             <button class="ctrl-btn-secondary" id="btn-center" title="Center position"
-                                    style="padding:4px 6px;font-size:10px;min-width:0">Center</button>
+                                style="padding:4px 6px;font-size:10px;min-width:0">Center</button>
                             <button class="ctrl-btn-secondary" id="btn-random" title="Random position"
-                                    style="padding:4px 6px;font-size:10px;min-width:0">Rand</button>
+                                style="padding:4px 6px;font-size:10px;min-width:0">Rand</button>
                         </div>
                         <div class="ctrl-row" style="margin-bottom:4px">
                             <span class="ctrl-label" style="min-width:28px">State</span>
                             <div class="combo-btn-row" style="flex:1;gap:2px">
-                                <button class="ctrl-btn-secondary active" id="inj-state-pos" style="flex:1" title="Positive manifestation">+1</button>
-                                <button class="ctrl-btn-secondary" id="inj-state-neg" style="flex:1" title="Negative manifestation">&minus;1</button>
+                                <button class="ctrl-btn-secondary active" id="inj-state-pos" style="flex:1"
+                                    title="Positive manifestation">+1</button>
+                                <button class="ctrl-btn-secondary" id="inj-state-neg" style="flex:1"
+                                    title="Negative manifestation">&minus;1</button>
                             </div>
                         </div>
                         <div class="combo-btn-row">
-                            <button class="ctrl-btn-secondary" id="btn-inject" title="Inject point particle">Particle</button>
-                            <button class="ctrl-btn-secondary" id="btn-inject-wave" title="Inject wavepacket">Wave</button>
-                            <button class="ctrl-btn-secondary" id="btn-inject-flux" title="Inject flux at position">Flux</button>
-                            <button class="ctrl-btn-secondary" id="btn-inject-pair" title="Create entangled pair">Pair</button>
+                            <button class="ctrl-btn-secondary" id="btn-inject"
+                                title="Inject point particle">Particle</button>
+                            <button class="ctrl-btn-secondary" id="btn-inject-wave"
+                                title="Inject wavepacket">Wave</button>
+                            <button class="ctrl-btn-secondary" id="btn-inject-flux"
+                                title="Inject flux at position">Flux</button>
+                            <button class="ctrl-btn-secondary" id="btn-inject-pair"
+                                title="Create entangled pair">Pair</button>
                         </div>
 
                         <div class="combo-section-label">Parameters</div>
                         <div class="pe-ctrl-row">
-                            <span class="pe-ctrl-label" style="min-width:50px">K<sub>B</sub></span>
-                            <input type="range" class="pe-slider" id="combo-kb" min="0.05" max="2.0" step="0.01" value="0.511">
+                            <span class="pe-ctrl-label" style="min-width:70px" title="Genesis Threshold (K_B)">K<sub>B</sub> (Thresh)</span>
+                            <input type="range" class="pe-slider" id="combo-kb" min="0.05" max="2.0" step="0.01"
+                                value="0.511">
                             <span class="pe-ctrl-value" id="combo-kb-val">0.511</span>
                         </div>
                         <div class="pe-ctrl-row">
-                            <span class="pe-ctrl-label" style="min-width:50px">G<sub>N</sub></span>
-                            <input type="range" class="pe-slider" id="combo-gn" min="0.0" max="0.1" step="0.001" value="0.010">
+                            <span class="pe-ctrl-label" style="min-width:70px" title="Gravitational Constant (G_N)">G<sub>N</sub> (Gravity)</span>
+                            <input type="range" class="pe-slider" id="combo-gn" min="0.0" max="0.1" step="0.001"
+                                value="0.010">
                             <span class="pe-ctrl-value" id="combo-gn-val">0.010</span>
                         </div>
                         <div class="pe-ctrl-row">
                             <span class="pe-ctrl-label" style="min-width:50px">Damp</span>
-                            <input type="range" class="pe-slider" id="combo-damp" min="0.0" max="0.05" step="0.0001" value="0.0073">
+                            <input type="range" class="pe-slider" id="combo-damp" min="0.0" max="0.05" step="0.0001"
+                                value="0.0073">
                             <span class="pe-ctrl-value" id="combo-damp-val">0.0073</span>
                         </div>
 
@@ -924,19 +1053,29 @@
 
                         <div class="combo-section-label">Opacity</div>
                         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                            <input type="range" class="pe-slider" id="flux-opacity" min="0.0" max="1.0" step="0.01" value="0.70" style="flex:1;">
+                            <input type="range" class="pe-slider" id="flux-opacity" min="0.0" max="1.0" step="0.01"
+                                value="0.70" style="flex:1;">
                             <span class="pe-ctrl-value" id="flux-opacity-val">0.70</span>
                         </div>
 
                         <div class="combo-section-label">Point Size</div>
                         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                            <input type="range" class="pe-slider" id="flux-point-scale" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1;">
+                            <input type="range" class="pe-slider" id="flux-point-scale" min="0.1" max="3.0" step="0.05"
+                                value="1.0" style="flex:1;">
                             <span class="pe-ctrl-value" id="flux-point-scale-val">1.0</span>
+                        </div>
+
+                        <div class="combo-section-label">Scenario Scale</div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                            <input type="range" class="pe-slider" id="flux-scenario-scale" min="0.1" max="5.0"
+                                step="0.1" value="1.0" style="flex:1;">
+                            <span class="pe-ctrl-value" id="flux-scenario-scale-val">1.0</span>
                         </div>
 
                         <div class="combo-section-label">Threshold</div>
                         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                            <input type="range" class="pe-slider" id="flux-threshold" min="0.0" max="0.1" step="0.001" value="0.005" style="flex:1;">
+                            <input type="range" class="pe-slider" id="flux-threshold" min="0.0" max="0.1" step="0.001"
+                                value="0.005" style="flex:1;">
                             <span class="pe-ctrl-value" id="flux-threshold-val">0.005</span>
                         </div>
                     </div>
@@ -947,36 +1086,44 @@
                         <div class="combo-section-label">Forces</div>
                         <div class="toggle-row">
                             <input type="checkbox" id="pe-coulomb" checked>
-                            <label for="pe-coulomb" title="Coulomb: F = -alpha * q_i * q_j / (4*pi*r^2) (EM pairwise)">Coulomb</label>
+                            <label for="pe-coulomb"
+                                title="Coulomb: F = -alpha * q_i * q_j / (4*pi*r^2) (EM pairwise)">Coulomb</label>
                         </div>
                         <div class="toggle-row">
                             <input type="checkbox" id="pe-gravity" checked>
-                            <label for="pe-gravity" title="Gravity: F = +G_N * m_i * m_j / r^2 (always attractive)">Gravity</label>
+                            <label for="pe-gravity"
+                                title="Gravity: F = +G_N * m_i * m_j / r^2 (always attractive)">Gravity</label>
                         </div>
 
                         <div class="combo-section-label">Dynamics</div>
                         <div class="toggle-row">
                             <input type="checkbox" id="pe-damping" checked>
-                            <label for="pe-damping" title="Velocity damping: v *= (1 - DAMPING*dt) per tick">Damping</label>
+                            <label for="pe-damping"
+                                title="Velocity damping: v *= (1 - DAMPING*dt) per tick">Damping</label>
                         </div>
 
                         <details class="toggle-details">
-                            <summary style="font-size:11px;color:var(--text-muted);cursor:pointer;margin:4px 0">Advanced Forces (Phase 2)</summary>
+                            <summary style="font-size:11px;color:var(--text-muted);cursor:pointer;margin:4px 0">Advanced
+                                Forces (Phase 2)</summary>
                             <div class="toggle-row">
                                 <input type="checkbox" id="pe-lorentz-p">
-                                <label for="pe-lorentz-p" title="Lorentz force: v × B from magnetic dipoles">Lorentz</label>
+                                <label for="pe-lorentz-p"
+                                    title="Lorentz force: v × B from magnetic dipoles">Lorentz</label>
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="pe-exchange">
-                                <label for="pe-exchange" title="Exchange / Pauli exclusion (same spin + charge)">Exchange</label>
+                                <label for="pe-exchange"
+                                    title="Exchange / Pauli exclusion (same spin + charge)">Exchange</label>
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="pe-strong">
-                                <label for="pe-strong" title="Strong force: Yukawa + linear confinement (color-dependent)">Strong</label>
+                                <label for="pe-strong"
+                                    title="Strong force: Yukawa + linear confinement (color-dependent)">Strong</label>
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="pe-magnetic-dipole">
-                                <label for="pe-magnetic-dipole" title="Magnetic dipole-dipole interaction (spin_axis)">Mag. Dipole</label>
+                                <label for="pe-magnetic-dipole"
+                                    title="Magnetic dipole-dipole interaction (spin_axis)">Mag. Dipole</label>
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="pe-spin-orbit">
@@ -984,11 +1131,13 @@
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="pe-radiation">
-                                <label for="pe-radiation" title="Radiation reaction / Abraham-Lorentz damping">Radiation</label>
+                                <label for="pe-radiation"
+                                    title="Radiation reaction / Abraham-Lorentz damping">Radiation</label>
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="pe-relativistic">
-                                <label for="pe-relativistic" title="Relativistic mass correction: F/gamma">Relativistic</label>
+                                <label for="pe-relativistic"
+                                    title="Relativistic mass correction: F/gamma">Relativistic</label>
                             </div>
                         </details>
 
@@ -1016,68 +1165,87 @@
                         <div class="combo-section-label">Forces</div>
                         <div class="toggle-row">
                             <input type="checkbox" id="ae-ionic" checked>
-                            <label for="ae-ionic" title="Coulomb force: F = -k·Q_i·Q_j / r² (attractive/repulsive between ions)">Ionic (Coulomb)</label>
+                            <label for="ae-ionic"
+                                title="Coulomb force: F = -k·Q_i·Q_j / r² (attractive/repulsive between ions)">Ionic
+                                (Coulomb)</label>
                         </div>
                         <div class="toggle-row">
                             <input type="checkbox" id="ae-vdw" checked>
-                            <label for="ae-vdw" title="Lennard-Jones 12-6: steric repulsion at short range, dispersion attraction at long range">Van der Waals</label>
+                            <label for="ae-vdw"
+                                title="Lennard-Jones 12-6: steric repulsion at short range, dispersion attraction at long range">Van
+                                der Waals</label>
                         </div>
                         <div class="toggle-row">
                             <input type="checkbox" id="ae-bonds-force" checked>
-                            <label for="ae-bonds-force" title="Harmonic spring between bonded atoms: F = -k·(r - r_eq)">Bond Springs</label>
+                            <label for="ae-bonds-force"
+                                title="Harmonic spring between bonded atoms: F = -k·(r - r_eq)">Bond Springs</label>
                         </div>
 
                         <div class="combo-section-label">Dynamics</div>
                         <div class="toggle-row">
                             <input type="checkbox" id="ae-bonding" checked>
-                            <label for="ae-bonding" title="Automatically form/break covalent bonds based on distance and valence">Auto-Bonding</label>
+                            <label for="ae-bonding"
+                                title="Automatically form/break covalent bonds based on distance and valence">Auto-Bonding</label>
                         </div>
                         <div class="toggle-row">
                             <input type="checkbox" id="ae-damping">
-                            <label for="ae-damping" title="Velocity damping: v *= (1 - 0.02·dt) per tick (thermostat)">Damping</label>
+                            <label for="ae-damping"
+                                title="Velocity damping: v *= (1 - 0.02·dt) per tick (thermostat)">Damping</label>
                         </div>
                         <div class="toggle-row">
                             <input type="checkbox" id="ae-speed-limit" checked>
-                            <label for="ae-speed-limit" title="Cap atomic velocities at maximum speed (prevents numerical explosion)">Speed Limit</label>
+                            <label for="ae-speed-limit"
+                                title="Cap atomic velocities at maximum speed (prevents numerical explosion)">Speed
+                                Limit</label>
                         </div>
 
                         <details class="toggle-details">
-                            <summary style="font-size:11px;color:var(--text-muted);cursor:pointer;margin:4px 0">Advanced Forces</summary>
+                            <summary style="font-size:11px;color:var(--text-muted);cursor:pointer;margin:4px 0">Advanced
+                                Forces</summary>
                             <div class="toggle-row">
                                 <input type="checkbox" id="ae-hbonds">
-                                <label for="ae-hbonds" title="Hydrogen bonds: directional LJ 10-12 between electronegative atoms">H-Bonds</label>
+                                <label for="ae-hbonds"
+                                    title="Hydrogen bonds: directional LJ 10-12 between electronegative atoms">H-Bonds</label>
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="ae-dipole">
-                                <label for="ae-dipole" title="Dipole-dipole interactions from partial charges">Dipole-Dipole</label>
+                                <label for="ae-dipole"
+                                    title="Dipole-dipole interactions from partial charges">Dipole-Dipole</label>
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="ae-angle">
-                                <label for="ae-angle" title="Bond angle strain: VSEPR preferred angles">Angle Strain</label>
+                                <label for="ae-angle" title="Bond angle strain: VSEPR preferred angles">Angle
+                                    Strain</label>
                             </div>
                             <div class="toggle-row" style="opacity:0.4">
                                 <input type="checkbox" id="ae-torsional" disabled>
-                                <label for="ae-torsional" title="Torsional / dihedral angle forces (Phase 4 — not yet implemented)">Torsional</label>
+                                <label for="ae-torsional"
+                                    title="Torsional / dihedral angle forces (Phase 4 — not yet implemented)">Torsional</label>
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="ae-thermostat">
-                                <label for="ae-thermostat" title="Berendsen thermostat for constant temperature MD">Thermostat</label>
+                                <label for="ae-thermostat"
+                                    title="Berendsen thermostat for constant temperature MD">Thermostat</label>
                             </div>
                             <div class="toggle-row">
                                 <input type="checkbox" id="ae-electronegativity">
-                                <label for="ae-electronegativity" title="Electronegativity-driven bond polarity and formation threshold">Electronegativity</label>
+                                <label for="ae-electronegativity"
+                                    title="Electronegativity-driven bond polarity and formation threshold">Electronegativity</label>
                             </div>
                         </details>
 
                         <div class="combo-section-label">Parameters</div>
                         <div class="pe-ctrl-row">
-                            <span class="pe-ctrl-label" title="Velocity Verlet integration time step (smaller = more accurate, slower)">Time Step</span>
+                            <span class="pe-ctrl-label"
+                                title="Velocity Verlet integration time step (smaller = more accurate, slower)">Time
+                                Step</span>
                             <input type="range" class="pe-slider" id="ae-dt-slider" min="0.01" max="0.5" step="0.01"
                                 value="0.10">
                             <span class="pe-ctrl-value" id="ae-dt-value">0.10</span>
                         </div>
                         <div class="pe-ctrl-row">
-                            <span class="pe-ctrl-label" title="Force softening length: prevents singularity at r→0">Softening</span>
+                            <span class="pe-ctrl-label"
+                                title="Force softening length: prevents singularity at r→0">Softening</span>
                             <input type="range" class="pe-slider" id="ae-soft-slider" min="0.1" max="2.0" step="0.1"
                                 value="0.3">
                             <span class="pe-ctrl-value" id="ae-soft-value">0.30</span>
@@ -1093,60 +1261,108 @@
             <!-- Diagnostics -->
             <div class="panel" id="panel-diagnostics">
                 <!-- Scale 0: Complete Telemetry — compact 2-column list -->
-                <div class="scale0-only" style="display:grid;grid-template-columns:1fr 1fr;gap:0 32px;font-family:var(--font-mono);font-size:12px">
+                <div class="scale0-only"
+                    style="display:grid;grid-template-columns:1fr 1fr;gap:0 32px;font-family:var(--font-mono);font-size:12px">
                     <!-- Left Column -->
                     <div>
                         <div class="combo-section-label" style="margin-bottom:4px">Particle State</div>
                         <div class="inspector-grid">
-                            <dt>Manifested</dt><dd id="diag-manifested">0</dd>
-                            <dt>Positive</dt><dd id="diag-positive" style="color:var(--positive)">0</dd>
-                            <dt>Negative</dt><dd id="diag-negative" style="color:var(--negative)">0</dd>
-                            <dt>Charge (net)</dt><dd id="diag-charge">0</dd>
-                            <dt>Spin +1 / -1</dt><dd><span id="diag-spin-up">0</span> / <span id="diag-spin-down">0</span></dd>
-                            <dt>Color R/G/B</dt><dd><span id="diag-color-r" style="color:var(--negative)">0</span>/<span id="diag-color-g" style="color:var(--positive)">0</span>/<span id="diag-color-b" style="color:var(--accent)">0</span></dd>
-                            <dt>Colorless</dt><dd id="diag-colorless">0</dd>
+                            <dt>Manifested</dt>
+                            <dd id="diag-manifested">0</dd>
+                            <dt>Positive</dt>
+                            <dd id="diag-positive" style="color:var(--positive)">0</dd>
+                            <dt>Negative</dt>
+                            <dd id="diag-negative" style="color:var(--negative)">0</dd>
+                            <dt>Charge (net)</dt>
+                            <dd id="diag-charge">0</dd>
+                            <dt>Spin Up/Down</dt>
+                            <dd style="display:flex;gap:6px;align-items:center;">
+                                <span style="background:rgba(255,255,255,0.1);padding:0 6px;border-radius:4px;font-size:10px;" id="diag-spin-up">0</span>
+                                <span style="background:rgba(255,255,255,0.1);padding:0 6px;border-radius:4px;font-size:10px;" id="diag-spin-down">0</span>
+                            </dd>
+                            <dt>Color R/G/B</dt>
+                            <dd style="display:flex;gap:6px;align-items:center;">
+                                <span style="background:rgba(248,113,113,0.15);color:var(--negative);padding:0 6px;border-radius:4px;font-size:10px;" id="diag-color-r">0</span>
+                                <span style="background:rgba(74,222,128,0.15);color:var(--positive);padding:0 6px;border-radius:4px;font-size:10px;" id="diag-color-g">0</span>
+                                <span style="background:rgba(96,165,250,0.15);color:var(--accent);padding:0 6px;border-radius:4px;font-size:10px;" id="diag-color-b">0</span>
+                            </dd>
+                            <dt>Colorless</dt>
+                            <dd id="diag-colorless">0</dd>
                         </div>
                         <div class="combo-section-label" style="margin-top:10px;margin-bottom:4px">Energy Budget</div>
                         <div class="inspector-grid">
-                            <dt>Total Energy</dt><dd id="diag-energy">0.0000</dd>
-                            <dt>Field |J|&sup2;</dt><dd id="diag-field-energy">0.0000</dd>
-                            <dt>Wave |w|&sup2;</dt><dd id="diag-wave-energy">0.0000</dd>
-                            <dt>Particle KE</dt><dd id="diag-particle-ke">0.0000</dd>
-                            <dt>Coulomb PE</dt><dd id="diag-coulomb-pe">0.0000</dd>
-                            <dt>Total Flux</dt><dd id="diag-flux">0.0000</dd>
-                            <dt>Entropy</dt><dd id="diag-entropy">0.0000</dd>
+                            <dt>Total Energy</dt>
+                            <dd id="diag-energy">0.0000</dd>
+                            <dt>Field |J|&sup2;</dt>
+                            <dd id="diag-field-energy">0.0000</dd>
+                            <dt>Wave |w|&sup2;</dt>
+                            <dd id="diag-wave-energy">0.0000</dd>
+                            <dt>Particle KE</dt>
+                            <dd id="diag-particle-ke">0.0000</dd>
+                            <dt>Coulomb PE</dt>
+                            <dd id="diag-coulomb-pe">0.0000</dd>
+                            <dt>Total Flux</dt>
+                            <dd id="diag-flux">0.0000</dd>
+                            <dt>Entropy</dt>
+                            <dd id="diag-entropy">0.0000</dd>
                         </div>
                     </div>
                     <!-- Right Column -->
                     <div>
                         <div class="combo-section-label" style="margin-bottom:4px">Electromagnetic</div>
                         <div class="inspector-grid">
-                            <dt>E-Field |E|&sup2;/2</dt><dd id="diag-e-field-energy">0.0000</dd>
-                            <dt>B-Field |B|&sup2;/2</dt><dd id="diag-b-field-energy">0.0000</dd>
-                            <dt>Poynting |S|</dt><dd id="diag-poynting">0.0000</dd>
-                            <dt>Angular Mom</dt><dd id="diag-angular-mom" style="font-size:10px">0, 0, 0</dd>
+                            <dt>E-Field |E|&sup2;/2</dt>
+                            <dd id="diag-e-field-energy">0.0000</dd>
+                            <dt>B-Field |B|&sup2;/2</dt>
+                            <dd id="diag-b-field-energy">0.0000</dd>
+                            <dt>Poynting |S|</dt>
+                            <dd id="diag-poynting">0.0000</dd>
+                            <dt>Angular Mom</dt>
+                            <dd id="diag-angular-mom" style="font-size:10px">0, 0, 0</dd>
                         </div>
                         <div class="combo-section-label" style="margin-top:10px;margin-bottom:4px">Constraints</div>
                         <div class="inspector-grid">
-                            <dt>Gauss &sum;(div J-s)&sup2;</dt><dd id="diag-gauss-violation">0.0000</dd>
-                            <dt>Max Gauss err</dt><dd id="diag-max-gauss">0.0000</dd>
-                            <dt>Self-field inj</dt><dd id="diag-self-field">0.0000</dd>
+                            <dt>Gauss &sum;(div J-s)&sup2;</dt>
+                            <dd id="diag-gauss-violation">0.0000</dd>
+                            <dt>Max Gauss err</dt>
+                            <dd id="diag-max-gauss">0.0000</dd>
+                            <dt>Self-field inj</dt>
+                            <dd id="diag-self-field">0.0000</dd>
                         </div>
                         <div class="combo-section-label" style="margin-top:10px;margin-bottom:4px">Dual Substrate</div>
                         <div class="inspector-grid">
-                            <dt>E<sub>L</sub> (left)</dt><dd id="diag-e-left">0.0000</dd>
-                            <dt>E<sub>R</sub> (right)</dt><dd id="diag-e-right">0.0000</dd>
-                            <dt>Chirality</dt><dd id="diag-chirality">0.0000</dd>
-                            <dt>Wave L / R</dt><dd id="diag-wave-lr">0 / 0</dd>
+                            <dt>E<sub>L</sub> (left)</dt>
+                            <dd id="diag-e-left">0.0000</dd>
+                            <dt>E<sub>R</sub> (right)</dt>
+                            <dd id="diag-e-right">0.0000</dd>
+                            <dt>Chirality</dt>
+                            <dd id="diag-chirality">0.0000</dd>
+                            <dt>Wave L / R</dt>
+                            <dd id="diag-wave-lr">0 / 0</dd>
                         </div>
                     </div>
                     <!-- Sparklines row (below both columns) -->
                     <div style="grid-column:1/-1;display:flex;gap:12px;margin-top:10px">
-                        <div style="flex:1"><div class="combo-section-label" style="margin-bottom:2px">Manifested</div><canvas class="stat-sparkline" id="spark-manifested"></canvas></div>
-                        <div style="flex:1"><div class="combo-section-label" style="margin-bottom:2px">Charge</div><canvas class="stat-sparkline" id="spark-charges"></canvas></div>
-                        <div style="flex:1"><div class="combo-section-label" style="margin-bottom:2px">Flux</div><canvas class="stat-sparkline" id="spark-flux"></canvas></div>
-                        <div style="flex:1"><div class="combo-section-label" style="margin-bottom:2px">Energy</div><canvas class="stat-sparkline" id="spark-energy"></canvas></div>
-                        <div style="flex:1"><div class="combo-section-label" style="margin-bottom:2px">Entropy</div><canvas class="stat-sparkline" id="spark-entropy"></canvas></div>
+                        <div style="flex:1">
+                            <div class="combo-section-label" style="margin-bottom:2px">Manifested</div><canvas
+                                class="stat-sparkline" id="spark-manifested"></canvas>
+                        </div>
+                        <div style="flex:1">
+                            <div class="combo-section-label" style="margin-bottom:2px">Charge</div><canvas
+                                class="stat-sparkline" id="spark-charges"></canvas>
+                        </div>
+                        <div style="flex:1">
+                            <div class="combo-section-label" style="margin-bottom:2px">Flux</div><canvas
+                                class="stat-sparkline" id="spark-flux"></canvas>
+                        </div>
+                        <div style="flex:1">
+                            <div class="combo-section-label" style="margin-bottom:2px">Energy</div><canvas
+                                class="stat-sparkline" id="spark-energy"></canvas>
+                        </div>
+                        <div style="flex:1">
+                            <div class="combo-section-label" style="margin-bottom:2px">Entropy</div><canvas
+                                class="stat-sparkline" id="spark-entropy"></canvas>
+                        </div>
                     </div>
                 </div>
                 <!-- Scale 1 PE Telemetry Panel -->
@@ -1184,23 +1400,56 @@
                     <details class="pe-telem-details" open>
                         <summary class="pe-telem-summary">System Properties</summary>
                         <div class="panel-grid panel-grid-3" style="margin-top:8px">
-                            <div class="card"><div class="card-title">Particles</div><div class="stat-value" id="pet-count">0</div></div>
-                            <div class="card"><div class="card-title">Virial 2K/|U|</div><div class="stat-value" id="pet-virial">—</div></div>
-                            <div class="card"><div class="card-title">Temperature <span class="unit-hint">(MeV)</span></div><div class="stat-value" id="pet-temp">—</div></div>
+                            <div class="card">
+                                <div class="card-title">Particles</div>
+                                <div class="stat-value" id="pet-count">0</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Virial 2K/|U|</div>
+                                <div class="stat-value" id="pet-virial">—</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Temperature <span class="unit-hint">(MeV)</span></div>
+                                <div class="stat-value" id="pet-temp">—</div>
+                            </div>
                         </div>
                         <div class="panel-grid panel-grid-3" style="margin-top:8px">
-                            <div class="card"><div class="card-title">RMS Velocity <span class="unit-hint">(c)</span></div><div class="stat-value" id="pet-vrms">—</div></div>
-                            <div class="card"><div class="card-title">System Radius <span class="unit-hint">(lu)</span></div><div class="stat-value" id="pet-radius">—</div></div>
-                            <div class="card"><div class="card-title">Tick</div><div class="stat-value" id="pet-tick">0</div></div>
+                            <div class="card">
+                                <div class="card-title">RMS Velocity <span class="unit-hint">(c)</span></div>
+                                <div class="stat-value" id="pet-vrms">—</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">System Radius <span class="unit-hint">(lu)</span></div>
+                                <div class="stat-value" id="pet-radius">—</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Tick</div>
+                                <div class="stat-value" id="pet-tick">0</div>
+                            </div>
                         </div>
                         <div class="panel-grid panel-grid-3" style="margin-top:8px">
-                            <div class="card"><div class="card-title">KE <span class="unit-hint">(MeV)</span></div><div class="stat-value" id="pet-ke">0.000000</div></div>
-                            <div class="card"><div class="card-title">PE <span class="unit-hint">(MeV)</span></div><div class="stat-value" id="pet-pe">0.000000</div></div>
-                            <div class="card"><div class="card-title">CoM</div><div class="stat-value" id="pet-com" style="font-size:12px">—</div></div>
+                            <div class="card">
+                                <div class="card-title">KE <span class="unit-hint">(MeV)</span></div>
+                                <div class="stat-value" id="pet-ke">0.000000</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">PE <span class="unit-hint">(MeV)</span></div>
+                                <div class="stat-value" id="pet-pe">0.000000</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">CoM</div>
+                                <div class="stat-value" id="pet-com" style="font-size:12px">—</div>
+                            </div>
                         </div>
                         <div class="panel-grid panel-grid-2" style="margin-top:4px">
-                            <div class="card"><div class="card-title">PE (Coulomb) <span class="unit-hint">(MeV)</span></div><div class="stat-value" id="pet-pe-coulomb">0.000000</div></div>
-                            <div class="card"><div class="card-title">PE (Gravity) <span class="unit-hint">(MeV)</span></div><div class="stat-value" id="pet-pe-gravity">0.000000</div></div>
+                            <div class="card">
+                                <div class="card-title">PE (Coulomb) <span class="unit-hint">(MeV)</span></div>
+                                <div class="stat-value" id="pet-pe-coulomb">0.000000</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">PE (Gravity) <span class="unit-hint">(MeV)</span></div>
+                                <div class="stat-value" id="pet-pe-gravity">0.000000</div>
+                            </div>
                         </div>
                     </details>
 
@@ -1211,8 +1460,15 @@
                             <table class="pe-table">
                                 <thead>
                                     <tr>
-                                        <th>ID</th><th>q</th><th>m <span class="unit-hint">(MeV)</span></th><th>|r| <span class="unit-hint">(lu)</span></th>
-                                        <th>|v| <span class="unit-hint">(c)</span></th><th>|a|</th><th>|F| <span class="unit-hint">(Pl)</span></th><th>KE <span class="unit-hint">(MeV)</span></th><th>Lk</th>
+                                        <th>ID</th>
+                                        <th>q</th>
+                                        <th>m <span class="unit-hint">(MeV)</span></th>
+                                        <th>|r| <span class="unit-hint">(lu)</span></th>
+                                        <th>|v| <span class="unit-hint">(c)</span></th>
+                                        <th>|a|</th>
+                                        <th>|F| <span class="unit-hint">(Pl)</span></th>
+                                        <th>KE <span class="unit-hint">(MeV)</span></th>
+                                        <th>Lk</th>
                                     </tr>
                                 </thead>
                                 <tbody id="pet-particle-tbody"></tbody>
@@ -1224,18 +1480,42 @@
                     <details class="pe-telem-details" id="pet-orbital-section" style="display:none">
                         <summary class="pe-telem-summary">Orbital Mechanics (2-body)</summary>
                         <div class="panel-grid panel-grid-3" style="margin-top:8px">
-                            <div class="card"><div class="card-title">Separation r <span class="unit-hint">(lu)</span></div><div class="stat-value" id="pet-orb-r">—</div></div>
-                            <div class="card"><div class="card-title">Reduced Mass μ <span class="unit-hint">(MeV)</span></div><div class="stat-value" id="pet-orb-mu">—</div></div>
-                            <div class="card"><div class="card-title">Spec. Ang. Mom h</div><div class="stat-value" id="pet-orb-h">—</div></div>
+                            <div class="card">
+                                <div class="card-title">Separation r <span class="unit-hint">(lu)</span></div>
+                                <div class="stat-value" id="pet-orb-r">—</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Reduced Mass μ <span class="unit-hint">(MeV)</span></div>
+                                <div class="stat-value" id="pet-orb-mu">—</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Spec. Ang. Mom h</div>
+                                <div class="stat-value" id="pet-orb-h">—</div>
+                            </div>
                         </div>
                         <div class="panel-grid panel-grid-3" style="margin-top:8px">
-                            <div class="card"><div class="card-title">Semi-major a <span class="unit-hint">(lu)</span></div><div class="stat-value" id="pet-orb-a">—</div></div>
-                            <div class="card"><div class="card-title">Eccentricity e</div><div class="stat-value" id="pet-orb-e">—</div></div>
-                            <div class="card"><div class="card-title">Period T</div><div class="stat-value" id="pet-orb-T">—</div></div>
+                            <div class="card">
+                                <div class="card-title">Semi-major a <span class="unit-hint">(lu)</span></div>
+                                <div class="stat-value" id="pet-orb-a">—</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Eccentricity e</div>
+                                <div class="stat-value" id="pet-orb-e">—</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Period T</div>
+                                <div class="stat-value" id="pet-orb-T">—</div>
+                            </div>
                         </div>
                         <div class="panel-grid panel-grid-2" style="margin-top:8px">
-                            <div class="card"><div class="card-title">Vis-viva Check</div><div class="stat-value" id="pet-orb-visviva" style="font-size:12px">—</div></div>
-                            <div class="card"><div class="card-title">Phase Space (r, v_r)</div><canvas id="pet-phase-space" style="width:100%;height:80px"></canvas></div>
+                            <div class="card">
+                                <div class="card-title">Vis-viva Check</div>
+                                <div class="stat-value" id="pet-orb-visviva" style="font-size:12px">—</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">Phase Space (r, v_r)</div><canvas id="pet-phase-space"
+                                    style="width:100%;height:80px"></canvas>
+                            </div>
                         </div>
                     </details>
 
@@ -1243,7 +1523,9 @@
                     <details class="pe-telem-details">
                         <summary class="pe-telem-summary">Time-Series</summary>
                         <div style="margin-top:8px">
-                            <div class="pe-ts-label">Energy <span class="unit-hint">(MeV)</span> — KE <span style="color:#60a5fa">●</span> PE <span style="color:#f87171">●</span> Total <span style="color:#e5e7eb">●</span></div>
+                            <div class="pe-ts-label">Energy <span class="unit-hint">(MeV)</span> — KE <span
+                                    style="color:#60a5fa">●</span> PE <span style="color:#f87171">●</span> Total <span
+                                    style="color:#e5e7eb">●</span></div>
                             <canvas class="pe-ts-chart" id="pet-ts-energy"></canvas>
                             <div class="pe-ts-label">|p| <span style="color:#4ade80">●</span></div>
                             <canvas class="pe-ts-chart" id="pet-ts-momentum"></canvas>
@@ -1384,37 +1666,65 @@
                         </div>
                         <!-- Term toggles inline -->
                         <div style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px">
-                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#66bb6a"><input type="checkbox" id="lt-field-kinetic" checked style="width:13px;height:13px">Field KE</label>
-                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#26a69a"><input type="checkbox" id="lt-field-gradient" checked style="width:13px;height:13px">Gradient</label>
-                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#ef5350"><input type="checkbox" id="lt-bi" checked style="width:13px;height:13px">Born-Infeld</label>
-                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#fb8c00"><input type="checkbox" id="lt-coupling" checked style="width:13px;height:13px">Coupling</label>
-                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#fdd835"><input type="checkbox" id="lt-velocity" checked style="width:13px;height:13px">Velocity</label>
-                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#42a5f5"><input type="checkbox" id="lt-gauss" checked style="width:13px;height:13px">Gauss</label>
-                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#78909c"><input type="checkbox" id="lt-dissipation" checked style="width:13px;height:13px">Dissipation</label>
+                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#66bb6a"><input
+                                    type="checkbox" id="lt-field-kinetic" checked style="width:13px;height:13px">Field
+                                KE</label>
+                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#26a69a"><input
+                                    type="checkbox" id="lt-field-gradient" checked
+                                    style="width:13px;height:13px">Gradient</label>
+                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#ef5350"><input
+                                    type="checkbox" id="lt-bi" checked
+                                    style="width:13px;height:13px">Born-Infeld</label>
+                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#fb8c00"><input
+                                    type="checkbox" id="lt-coupling" checked
+                                    style="width:13px;height:13px">Coupling</label>
+                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#fdd835"><input
+                                    type="checkbox" id="lt-velocity" checked
+                                    style="width:13px;height:13px">Velocity</label>
+                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#42a5f5"><input
+                                    type="checkbox" id="lt-gauss" checked style="width:13px;height:13px">Gauss</label>
+                            <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:#78909c"><input
+                                    type="checkbox" id="lt-dissipation" checked
+                                    style="width:13px;height:13px">Dissipation</label>
                         </div>
                     </div>
                     <!-- Right: Data columns -->
                     <div style="font-family:var(--font-mono);font-size:12px">
                         <div class="combo-section-label" style="margin-bottom:4px">Action &amp; Constraints</div>
                         <dl class="inspector-grid">
-                            <dt>Action S</dt><dd id="lag-action">--</dd>
-                            <dt>Gauss ||div J-s||</dt><dd id="lag-gauss-viol">--</dd>
-                            <dt>Max Gauss err</dt><dd id="lag-max-gauss">--</dd>
-                            <dt>Total |J|</dt><dd id="lag-flux-mag">--</dd>
-                            <dt>Wave KE</dt><dd id="lag-wave-ke">--</dd>
-                            <dt>Manifested</dt><dd id="lag-manifested">--</dd>
-                            <dt>Locked</dt><dd id="lag-locked">--</dd>
+                            <dt>Action S</dt>
+                            <dd id="lag-action">--</dd>
+                            <dt>Gauss ||div J-s||</dt>
+                            <dd id="lag-gauss-viol">--</dd>
+                            <dt>Max Gauss err</dt>
+                            <dd id="lag-max-gauss">--</dd>
+                            <dt>Total |J|</dt>
+                            <dd id="lag-flux-mag">--</dd>
+                            <dt>Wave KE</dt>
+                            <dd id="lag-wave-ke">--</dd>
+                            <dt>Manifested</dt>
+                            <dd id="lag-manifested">--</dd>
+                            <dt>Locked</dt>
+                            <dd id="lag-locked">--</dd>
                         </dl>
                         <div class="combo-section-label" style="margin-top:12px;margin-bottom:4px">Ontic Constants</div>
                         <dl class="inspector-grid">
-                            <dt>G*</dt><dd id="const-gstar">2.9586751</dd>
-                            <dt>1/&alpha;</dt><dd id="const-alpha-inv">137.03600</dd>
-                            <dt>&alpha;</dt><dd id="const-alpha">0.0072974</dd>
-                            <dt>K<sub>B</sub></dt><dd id="const-kb">0.5110000</dd>
-                            <dt>G<sub>N</sub></dt><dd id="const-gn">0.0100000</dd>
-                            <dt>g<sub>c</sub></dt><dd id="const-gc">0.0854245</dd>
-                            <dt>N<sub>c</sub></dt><dd id="const-nc">3</dd>
-                            <dt>N<sub>eff</sub></dt><dd id="const-neff">13</dd>
+                            <dt>G*</dt>
+                            <dd id="const-gstar">2.9586751</dd>
+                            <dt>1/&alpha;</dt>
+                            <dd id="const-alpha-inv">137.03600</dd>
+                            <dt>&alpha;</dt>
+                            <dd id="const-alpha">0.0072974</dd>
+                            <dt>K<sub>B</sub></dt>
+                            <dd id="const-kb">0.5110000</dd>
+                            <dt>G<sub>N</sub></dt>
+                            <dd id="const-gn">0.0100000</dd>
+                            <dt>g<sub>c</sub></dt>
+                            <dd id="const-gc">0.0854245</dd>
+                            <dt>N<sub>c</sub></dt>
+                            <dd id="const-nc">3</dd>
+                            <dt>N<sub>eff</sub></dt>
+                            <dd id="const-neff">13</dd>
                         </dl>
                     </div>
                 </div>
@@ -1425,7 +1735,7 @@
                 <div style="margin-bottom:10px;display:flex;gap:8px;align-items:center">
                     <input type="text" class="ctrl-input" id="zoo-search" placeholder="Search particles..."
                         style="max-width:300px">
-                    <select class="tb-select" id="zoo-filter">
+                    <select class="tb-select" id="zoo-filter" title="Filter particle zoo by category">
                         <option value="all">All Categories</option>
                         <option value="leptons">Leptons</option>
                         <option value="quarks">Quarks</option>
@@ -1441,10 +1751,23 @@
             <!-- Inspector -->
             <div class="panel" id="panel-inspector">
                 <!-- Scale 0 Lattice Inspector -->
+                <div class="card scale0-only" style="margin-bottom: 10px;">
+                    <div class="toggle-row">
+                        <span>Hit Radius</span>
+                        <div class="slider-group">
+                            <input type="range" id="raycast-threshold" min="0.1" max="10.0" step="0.1" value="2.0">
+                            <span id="raycast-threshold-val" class="slider-val">2.0</span>
+                        </div>
+                    </div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Increases pixel radius to make selecting sparse voxels easier.</div>
+                </div>
                 <div class="inspector-empty scale0-only" id="inspector-empty">
                     Click a particle in the 3D viewport to inspect its properties
                 </div>
                 <div id="inspector-content" class="scale0-only" style="display:none">
+                    <div style="margin-bottom: 8px; text-align: right;">
+                        <button id="btn-focus-voxel" class="ctrl-btn" title="Focus camera on the selected voxel">Focus Camera on Voxel</button>
+                    </div>
                     <div class="panel-grid panel-grid-3">
                         <div class="card">
                             <div class="card-title">Identity</div>
@@ -1454,7 +1777,13 @@
                                 <dt>State</dt>
                                 <dd id="insp-state">--</dd>
                                 <dt>Position</dt>
-                                <dd id="insp-pos">--</dd>
+                                <dd id="insp-pos">
+                                    <div style="display:flex; gap:2px;">
+                                        <input type="number" id="insp-pos-x" class="insp-pos-input" min="0" max="64">
+                                        <input type="number" id="insp-pos-y" class="insp-pos-input" min="0" max="64">
+                                        <input type="number" id="insp-pos-z" class="insp-pos-input" min="0" max="64">
+                                    </div>
+                                </dd>
                                 <dt>Spin</dt>
                                 <dd id="insp-spin">--</dd>
                                 <dt>Color</dt>
@@ -1507,6 +1836,15 @@
                                 <dt>Exchange</dt>
                                 <dd id="insp-f-exchange">--</dd>
                             </dl>
+                        </div>
+                        <div class="card" style="grid-column: 1 / -1; margin-top: 8px;">
+                            <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+                                <span>Moore Neighborhood</span>
+                                <span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">Z-1 | Z | Z+1</span>
+                            </div>
+                            <div id="insp-moore-grid" style="display: flex; justify-content: space-around; font-family: monospace; text-align: center; padding: 4px 0;">
+                                <!-- Populated dynamically -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1649,7 +1987,8 @@
                         </div>
                         <div class="card">
                             <div class="card-title">Neighbors</div>
-                            <dl class="inspector-grid scale3-only" id="ae-insp-bonds" style="max-height:140px;overflow-y:auto">
+                            <dl class="inspector-grid scale3-only" id="ae-insp-bonds"
+                                style="max-height:140px;overflow-y:auto">
                                 <!-- Bond list populated dynamically (Scale 3 only) -->
                             </dl>
                             <div style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px">
@@ -1671,6 +2010,94 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Planetary click-to-inspect -->
+                <div class="inspector-empty scale4-only" id="planetary-inspector-empty" style="display:none">
+                    Click an Exoplanet or Star in the 3D viewport to inspect its telemetry
+                </div>
+                <div id="planetary-inspector-content" class="scale4-only" style="display:none">
+                    <div class="panel-grid panel-grid-2">
+                        <div class="card">
+                            <div class="card-title">Astrophysical Identity</div>
+                            <div class="pe-insp-header">
+                                <span class="pe-insp-catalog-dot" id="planetary-insp-dot"></span>
+                                <span class="pe-insp-name" id="planetary-insp-type">--</span>
+                            </div>
+                            <dl class="inspector-grid">
+                                <dt>Body ID</dt>
+                                <dd id="planetary-insp-id">--</dd>
+                                <dt>Mass (sol)</dt>
+                                <dd id="planetary-insp-mass">--</dd>
+                                <dt>Temp (K)</dt>
+                                <dd id="planetary-insp-temp">--</dd>
+                                <dt>Biome</dt>
+                                <dd id="planetary-insp-biome">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Orbital Dynamics</div>
+                            <dl class="inspector-grid">
+                                <dt>Pos (AU)</dt>
+                                <dd id="planetary-insp-pos">--</dd>
+                                <dt>Velocity</dt>
+                                <dd id="planetary-insp-vel">--</dd>
+                                <dt>Speed</dt>
+                                <dd id="planetary-insp-speed">--</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cosmic click-to-inspect -->
+                <div class="inspector-empty scale-cosmic" id="cosmic-inspector-empty" style="display:none">
+                    Click a body (Star, Black Hole, Gas) in the 3D viewport to inspect its telemetry
+                </div>
+                <div id="cosmic-inspector-content" class="scale-cosmic" style="display:none">
+                    <div class="panel-grid panel-grid-3">
+                        <div class="card">
+                            <div class="card-title">Astrophysical Identity</div>
+                            <div class="pe-insp-header">
+                                <span class="pe-insp-catalog-dot" id="cosmic-insp-dot"></span>
+                                <span class="pe-insp-name" id="cosmic-insp-type">--</span>
+                            </div>
+                            <dl class="inspector-grid">
+                                <dt>Body ID</dt>
+                                <dd id="cosmic-insp-id">--</dd>
+                                <dt>Mass</dt>
+                                <dd id="cosmic-insp-mass">--</dd>
+                                <dt>Radius</dt>
+                                <dd id="cosmic-insp-radius">--</dd>
+                                <dt>Age</dt>
+                                <dd id="cosmic-insp-age">--</dd>
+                                <dt>Temp (K)</dt>
+                                <dd id="cosmic-insp-temp">--</dd>
+                                <dt>Luminosity</dt>
+                                <dd id="cosmic-insp-lum">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Orbital Dynamics</div>
+                            <dl class="inspector-grid">
+                                <dt>Position</dt>
+                                <dd id="cosmic-insp-pos">--</dd>
+                                <dt>Velocity</dt>
+                                <dd id="cosmic-insp-vel">--</dd>
+                                <dt>Speed</dt>
+                                <dd id="cosmic-insp-speed">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Evolution State</div>
+                            <dl class="inspector-grid">
+                                <dt>Fuel Rem.</dt>
+                                <dd id="cosmic-insp-fuel-frac">--</dd>
+                                <dt>Stellar Phase</dt>
+                                <dd id="cosmic-insp-fuel-stage">--</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Ontic Observatory (Phase 1) -->
@@ -1722,6 +2149,35 @@
                 </div>
             </div>
 
+        <!-- ── System Explorer (Planetary) ──────────────────────── -->
+        <div class="panel" id="panel-planetary" style="display:none;">
+            <div class="panel-section">
+                <!-- Celestial Hierarchy -->
+                <div class="card">
+                    <div class="card-title">Celestial Hierarchy</div>
+                    <ul id="planetary-layer-list" class="zoo-list" style="max-height:250px; overflow-y:auto; border:1px solid var(--border); padding:5px; list-style:none; margin:0; cursor:pointer;">
+                        <!-- Dynamically populated by mock-scale4.js/app_dag.js via _planetaryBridge -->
+                    </ul>
+                </div>
+                <!-- Visual Toggles -->
+                <div class="card" style="margin-top:10px;">
+                    <div class="card-title">Visualization Overlays</div>
+                    <div class="engine-toggles grid-cols-1" style="gap:10px;">
+                        <label class="toggle-control">
+                            <input type="checkbox" id="planetary-opt-orbits" checked>
+                            <span class="control"></span>
+                            <span class="label">Show Orbital Traces</span>
+                        </label>
+                        <label class="toggle-control">
+                            <input type="checkbox" id="planetary-opt-axes">
+                            <span class="control"></span>
+                            <span class="label">Show Rotational Axes</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
             <!-- Aggregation Hierarchy (Phase 3) -->
             <div class="panel" id="panel-hierarchy">
                 <div class="panel-grid panel-grid-3">
@@ -1751,57 +2207,72 @@
                 <div class="cs-subpanel active" id="cs-diagnostics">
                     <!-- Row 1: Theory Constants -->
                     <div class="panel-grid panel-grid-4">
-                        <div class="card" title="Consciousness phase angle: arctan(Y_IMAG / Y_REAL) = 52.54°. Divides subject-dominant (above) from object-dominant (below) awareness.">
+                        <div class="card"
+                            title="Consciousness phase angle: arctan(Y_IMAG / Y_REAL) = 52.54°. Divides subject-dominant (above) from object-dominant (below) awareness.">
                             <div class="card-title">&theta;<sub>C</sub> (Theory)</div>
-                            <div class="stat-value" id="cs-diag-theta" style="color:var(--consciousness-primary)">52.54&deg;</div>
+                            <div class="stat-value" id="cs-diag-theta" style="color:var(--consciousness-primary)">
+                                52.54&deg;</div>
                         </div>
-                        <div class="card" title="cos²(θ_C) = G*/8 ≈ 37%. The fraction of reality accessible to a conscious observer — 63% remains hidden.">
+                        <div class="card"
+                            title="cos²(θ_C) = G*/8 ≈ 37%. The fraction of reality accessible to a conscious observer — 63% remains hidden.">
                             <div class="card-title">Observable Fraction</div>
-                            <div class="stat-value" id="cs-diag-observable" style="color:var(--consciousness-primary)">37.0%</div>
+                            <div class="stat-value" id="cs-diag-observable" style="color:var(--consciousness-primary)">
+                                37.0%</div>
                         </div>
-                        <div class="card" title="√(G*³/2) ≈ 3.599. Flux intensity must exceed K_C for the consciousness quadratic to produce complex (conscious) roots.">
+                        <div class="card"
+                            title="√(G*³/2) ≈ 3.599. Flux intensity must exceed K_C for the consciousness quadratic to produce complex (conscious) roots.">
                             <div class="card-title">K<sub>C</sub> Threshold</div>
-                            <div class="stat-value" id="cs-diag-kc" style="color:var(--consciousness-secondary)">3.599</div>
+                            <div class="stat-value" id="cs-diag-kc" style="color:var(--consciousness-secondary)">3.599
+                            </div>
                         </div>
-                        <div class="card" title="Self-referential loop depth. 0 = none, 1 = observer observes itself (standing wave), 2 = aware of self-awareness (nested standing waves).">
+                        <div class="card"
+                            title="Self-referential loop depth. 0 = none, 1 = observer observes itself (standing wave), 2 = aware of self-awareness (nested standing waves).">
                             <div class="card-title">sLoop Depth</div>
                             <div class="stat-value" id="cs-diag-sloop">0</div>
                         </div>
                     </div>
                     <!-- Row 2: Dynamic Measurements -->
                     <div class="panel-grid panel-grid-4" style="margin-top:12px">
-                        <div class="card" title="Measured phase angle from wave/field energy ratio. Below 52.54° = object-dominant (flow). Above = subject-dominant (meditation).">
+                        <div class="card"
+                            title="Measured phase angle from wave/field energy ratio. Below 52.54° = object-dominant (flow). Above = subject-dominant (meditation).">
                             <div class="card-title">Effective &theta;</div>
                             <div class="stat-value" id="cs-diag-eff-theta">--</div>
                         </div>
-                        <div class="card" title="Peak flux as ratio of consciousness threshold K_C ≈ 3.599. Below 1.0 = sub-threshold. Above 1.0 = consciousness possible.">
+                        <div class="card"
+                            title="Peak flux as ratio of consciousness threshold K_C ≈ 3.599. Below 1.0 = sub-threshold. Above 1.0 = consciousness possible.">
                             <div class="card-title">Flux / K<sub>C</sub></div>
                             <div class="stat-value" id="cs-diag-flux-ratio">0.000</div>
                         </div>
-                        <div class="card" title="Quadratic domain: Real (k=16) = physics, Degenerate (k≈1.35) = measurement boundary, Complex (k=½) = consciousness with imaginary roots.">
+                        <div class="card"
+                            title="Quadratic domain: Real (k=16) = physics, Degenerate (k≈1.35) = measurement boundary, Complex (k=½) = consciousness with imaginary roots.">
                             <div class="card-title">Domain</div>
                             <div class="stat-value" id="cs-diag-domain" style="font-size:11px">--</div>
                         </div>
-                        <div class="card" title="Bell inequality parameter. Substrate S ≤ 2 (local deterministic). Entangled observer S = 2√2 via complexification + sLoop coupling.">
+                        <div class="card"
+                            title="Bell inequality parameter. Substrate S ≤ 2 (local deterministic). Entangled observer S = 2√2 via complexification + sLoop coupling.">
                             <div class="card-title">Bell S</div>
                             <div class="stat-value" id="cs-diag-bell">--</div>
                         </div>
                     </div>
                     <!-- Row 3: Consciousness Metrics -->
                     <div class="panel-grid panel-grid-4" style="margin-top:12px">
-                        <div class="card" title="Real part of consciousness quadratic root, scaled by flux ratio. Theory value Y_REAL = G*²/4 ≈ 2.189.">
+                        <div class="card"
+                            title="Real part of consciousness quadratic root, scaled by flux ratio. Theory value Y_REAL = G*²/4 ≈ 2.189.">
                             <div class="card-title">y (Real)</div>
                             <div class="stat-value" id="cs-diag-yreal">0.000</div>
                         </div>
-                        <div class="card" title="Imaginary part of consciousness quadratic root, scaled by flux ratio. Theory value Y_IMAG ≈ 2.863. Non-zero = consciousness.">
+                        <div class="card"
+                            title="Imaginary part of consciousness quadratic root, scaled by flux ratio. Theory value Y_IMAG ≈ 2.863. Non-zero = consciousness.">
                             <div class="card-title">y (Imaginary)</div>
                             <div class="stat-value" id="cs-diag-yimag">0.000i</div>
                         </div>
-                        <div class="card" title="Intensity: |y_eff| − K_C. Positive (green) = above consciousness threshold. Negative (red) = sub-threshold.">
+                        <div class="card"
+                            title="Intensity: |y_eff| − K_C. Positive (green) = above consciousness threshold. Negative (red) = sub-threshold.">
                             <div class="card-title">Consciousness I</div>
                             <div class="stat-value" id="cs-diag-intensity">--</div>
                         </div>
-                        <div class="card" title="Mandelbrot iteration at c = 1/G* ≈ 0.338. Boundary-orbit tracks z → z² + c per frame. Bounded |z| < 2 = on Mandelbrot boundary.">
+                        <div class="card"
+                            title="Mandelbrot iteration at c = 1/G* ≈ 0.338. Boundary-orbit tracks z → z² + c per frame. Bounded |z| < 2 = on Mandelbrot boundary.">
                             <div class="card-title">Mandelbrot |z|</div>
                             <div class="stat-value" id="cs-diag-mandelbrot">c=0.338</div>
                         </div>
@@ -1871,18 +2342,47 @@
                         N-body + SPH cosmic simulation driven by FTD-derived constants.
                         All physics traces to D=3 and the lemniscate constant.
                     </p>
-                    <table style="width:100%;font-size:11px;color:var(--text);border-collapse:collapse;">
-                        <tr><td style="padding:3px 6px;color:var(--text-muted);">G<sub>N</sub></td><td>= 1/(b<sub>3</sub>+N<sub>c</sub>)<sup>2</sup> = 0.01</td><td style="color:var(--text-muted);">Gravity</td></tr>
-                        <tr><td style="padding:3px 6px;color:var(--text-muted);">&Omega;<sub>&Lambda;</sub></td><td>= 2/3</td><td style="color:var(--text-muted);">Dark energy</td></tr>
-                        <tr><td style="padding:3px 6px;color:var(--text-muted);">&Omega;<sub>m</sub></td><td>= 1/3</td><td style="color:var(--text-muted);">Matter</td></tr>
-                        <tr><td style="padding:3px 6px;color:var(--text-muted);">DM frac</td><td>= 17/27 &asymp; 63%</td><td style="color:var(--text-muted);">Moore theorem</td></tr>
-                        <tr><td style="padding:3px 6px;color:var(--text-muted);">&gamma;</td><td>= (D+2)/D = 5/3</td><td style="color:var(--text-muted);">Adiabatic index</td></tr>
-                        <tr><td style="padding:3px 6px;color:var(--text-muted);">c</td><td>= 1/&radic;3</td><td style="color:var(--text-muted);">CFL speed</td></tr>
-                        <tr><td style="padding:3px 6px;color:var(--text-muted);">r<sub>s</sub></td><td>= 2G<sub>N</sub>M</td><td style="color:var(--text-muted);">Schwarzschild</td></tr>
+                    <table style="width:100%;font-size:11px;color:var(--text-primary);border-collapse:collapse;">
+                        <tr>
+                            <td style="padding:3px 6px;color:var(--text-muted);">G<sub>N</sub></td>
+                            <td>= 1/(b<sub>3</sub>+N<sub>c</sub>)<sup>2</sup> = 0.01</td>
+                            <td style="color:var(--text-muted);">Gravity</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 6px;color:var(--text-muted);">&Omega;<sub>&Lambda;</sub></td>
+                            <td>= 2/3</td>
+                            <td style="color:var(--text-muted);">Dark energy</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 6px;color:var(--text-muted);">&Omega;<sub>m</sub></td>
+                            <td>= 1/3</td>
+                            <td style="color:var(--text-muted);">Matter</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 6px;color:var(--text-muted);">DM frac</td>
+                            <td>= 17/27 &asymp; 63%</td>
+                            <td style="color:var(--text-muted);">Moore theorem</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 6px;color:var(--text-muted);">&gamma;</td>
+                            <td>= (D+2)/D = 5/3</td>
+                            <td style="color:var(--text-muted);">Adiabatic index</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 6px;color:var(--text-muted);">c</td>
+                            <td>= 1/&radic;3</td>
+                            <td style="color:var(--text-muted);">CFL speed</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:3px 6px;color:var(--text-muted);">r<sub>s</sub></td>
+                            <td>= 2G<sub>N</sub>M</td>
+                            <td style="color:var(--text-muted);">Schwarzschild</td>
+                        </tr>
                     </table>
                     <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:8px;">
                         <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Live Diagnostics</div>
-                        <div id="cosmic-panel-diagnostics" style="font-family:var(--ff-mono);font-size:11px;color:var(--text);line-height:1.6;"></div>
+                        <div id="cosmic-panel-diagnostics"
+                            style="font-family:var(--font-mono);font-size:11px;color:var(--text-primary);line-height:1.6;"></div>
                     </div>
                 </div>
             </div>
@@ -1896,13 +2396,81 @@
                     <div style="padding:8px;color:var(--text-muted);font-size:11px;">Click a site to inspect</div>
                 </div>
             </div>
+            <div class="panel" id="panel-quantum-lab">
+                <div class="panel-scale-header"><span class="scale0-only">Quantum Lab</span></div>
+                <div class="scale0-only" style="padding:0 4px">
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+                        <label class="tb-label" for="qlab-experiment" style="margin:0">Experiment</label>
+                        <select id="qlab-experiment" class="tb-select" style="flex:1;max-width:220px">
+                            <option value="quantum-born-rule">Born Rule Convergence</option>
+                            <option value="quantum-double-slit">Double-Slit Interference</option>
+                            <option value="quantum-tunnel">Quantum Tunneling</option>
+                            <option value="quantum-well">Energy Quantization (FFT)</option>
+                            <option value="quantum-entangle">Entanglement Correlation</option>
+                            <option value="quantum-aharonov-bohm">Aharonov-Bohm Effect</option>
+                            <option value="quantum-casimir">Casimir Effect</option>
+                            <option value="quantum-zeno">Quantum Zeno Effect</option>
+                        </select>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+                        <label style="font-size:11px;color:var(--text-muted)">Trials</label>
+                        <select id="qlab-trials" class="tb-select" style="width:80px">
+                            <option value="10">10</option>
+                            <option value="100" selected>100</option>
+                            <option value="500">500</option>
+                            <option value="1000">1000</option>
+                            <option value="5000">5000</option>
+                            <option value="10000">10000</option>
+                        </select>
+                        <label style="font-size:11px;color:var(--text-muted)">Ticks/Trial</label>
+                        <input type="number" id="qlab-ticks" value="200" min="10" max="5000" step="10"
+                            style="width:65px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:2px 6px;font-size:11px;font-family:var(--font-mono)">
+                        <button id="qlab-run" class="qlab-btn-primary">Run Experiment</button>
+                        <button id="qlab-abort" class="qlab-btn-secondary" style="display:none">Abort</button>
+                    </div>
+                    <div id="qlab-progress-wrap" style="display:none;margin-bottom:10px">
+                        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-bottom:3px">
+                            <span id="qlab-progress-label">Trial 0 / 100</span>
+                            <span id="qlab-progress-pct">0%</span>
+                        </div>
+                        <div style="height:4px;background:var(--bg-input);border-radius:2px;overflow:hidden">
+                            <div id="qlab-progress-bar" style="height:100%;width:0%;background:var(--accent);transition:width 0.15s"></div>
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:12px">
+                        <div>
+                            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px" id="qlab-chart-title">Distribution</div>
+                            <canvas id="qlab-histogram" width="400" height="200" style="width:100%;height:200px;background:var(--bg-card);border-radius:var(--radius-md)"></canvas>
+                        </div>
+                        <div>
+                            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Statistics</div>
+                            <dl class="inspector-grid" id="qlab-stats" style="font-size:11px">
+                                <dt>Trials</dt><dd id="qlab-stat-n">--</dd>
+                                <dt>Mean</dt><dd id="qlab-stat-mean">--</dd>
+                                <dt>Std Dev</dt><dd id="qlab-stat-std">--</dd>
+                                <dt>Min</dt><dd id="qlab-stat-min">--</dd>
+                                <dt>Max</dt><dd id="qlab-stat-max">--</dd>
+                            </dl>
+                            <div style="font-size:11px;color:var(--text-muted);margin-top:10px;margin-bottom:4px">Theory</div>
+                            <p id="qlab-description" style="font-size:11px;color:var(--text-secondary);line-height:1.4;margin:0">
+                                Select an experiment and click Run.
+                            </p>
+                            <div style="display:flex;gap:6px;margin-top:10px">
+                                <button id="qlab-export-csv" class="qlab-btn-secondary" style="font-size:10px;padding:3px 8px" disabled>CSV</button>
+                                <button id="qlab-export-json" class="qlab-btn-secondary" style="font-size:10px;padding:3px 8px" disabled>JSON</button>
+                                <button id="qlab-copy" class="qlab-btn-secondary" style="font-size:10px;padding:3px 8px" disabled>Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- ── Toast Notifications ─────────────────── -->
-        <div id="toast-container"></div>
+        <div id="toast-container" role="alert" aria-live="assertive"></div>
 
         <!-- ── Status Bar ───────────────────────────── -->
-        <div id="status-bar">
+        <footer id="status-bar">
             <div class="status-item">
                 <div class="status-dot idle" id="status-dot"></div>
                 <span id="status-state">Idle</span>
@@ -1921,11 +2489,17 @@
             <div class="status-item">
                 <span id="status-compute" style="color:var(--text-muted)">--</span>
             </div>
+        </footer>
+        <div id="floating-symmetry-panel" class="scale0-only sym-panel">
+           <div class="sym-panel-title">Symmetry Aggregation</div>
+           <label class="sym-panel-label"><input type="checkbox" id="sym-u1"> U(1) [Faces - 6]</label>
+           <label class="sym-panel-label"><input type="checkbox" id="sym-su2"> SU(2) [Edges - 12]</label>
+           <label class="sym-panel-label"><input type="checkbox" id="sym-su3"> SU(3) [Corners - 8]</label>
         </div>
     </div>
 
     <!-- ── Application Scripts ──────────────────────── -->
-    <script type="module" src="js/app.js?v=20260408b"></script>
+    <script type="module" src="js/app_dag.js?v=20260408b"></script>
 </body>
 
 </html>
