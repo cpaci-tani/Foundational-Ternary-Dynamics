@@ -247,8 +247,11 @@ add_executable(test_logic_engine tests/test_logic_engine.cpp)
 target_link_libraries(test_logic_engine ftd_core)
 
 # Phase 3: Poisson-based Coulomb
-add_executable(test_poisson_coulomb tests/test_poisson_coulomb.cpp)
-target_link_libraries(test_poisson_coulomb ftd_core)
+# Wave 4c.8: test_poisson_coulomb + campaign_coulomb_convergence +
+# campaign_force_law + campaign_poisson_force_law + campaign_poisson_binding
+# merged into campaign_coulomb_force_law (NEW target)
+ftd_add_test(ftd_coulomb_force_law tests/campaign_coulomb_force_law.cpp
+             CTEST_NAME campaign_coulomb_force_law TIMEOUT 1800)
 
 # Wave 4a.3 (2026-04-14): test_energy + test_energy_tracking merged into
 # test_energy_conservation (self-ref target). Registered via ftd_add_test.
@@ -324,8 +327,7 @@ target_link_libraries(test_larmor ftd_core)
 add_executable(test_dipole_radiation tests/test_dipole_radiation.cpp)
 target_link_libraries(test_dipole_radiation ftd_core)
 
-add_executable(test_dispersion_relation tests/test_dispersion_relation.cpp)
-target_link_libraries(test_dispersion_relation ftd_core)
+# (test_dispersion_relation merged into campaign_dispersion via Wave 4b.7)
 
 add_executable(test_thomson_scattering tests/test_thomson_scattering.cpp)
 target_link_libraries(test_thomson_scattering ftd_core)
@@ -388,8 +390,10 @@ endif()
 # Simulation Campaigns
 # ============================================================================
 
-add_executable(ftd_dispersion tests/campaign_dispersion.cpp)
-target_link_libraries(ftd_dispersion ftd_core)
+# Wave 4b.7: test_dispersion_relation + campaign_dispersion_convergence
+# merged into campaign_dispersion (self-ref target)
+ftd_add_test(ftd_dispersion tests/campaign_dispersion.cpp
+             CTEST_NAME campaign_dispersion GPU_HEAVY TIMEOUT 1800)
 
 add_executable(ftd_gauge_dynamics tests/campaign_gauge_dynamics.cpp)
 target_link_libraries(ftd_gauge_dynamics ftd_core)
@@ -403,17 +407,12 @@ target_link_libraries(ftd_free_dynamics ftd_core)
 add_executable(ftd_aggregate_interaction tests/campaign_aggregate_interaction.cpp)
 target_link_libraries(ftd_aggregate_interaction ftd_core)
 
-add_executable(ftd_poisson_force_law tests/campaign_poisson_force_law.cpp)
-target_link_libraries(ftd_poisson_force_law ftd_core)
-
-add_executable(ftd_poisson_binding tests/campaign_poisson_binding.cpp)
-target_link_libraries(ftd_poisson_binding ftd_core)
+# (campaign_poisson_force_law + campaign_poisson_binding merged into campaign_coulomb_force_law)
 
 add_executable(ftd_poisson_hydrogen tests/campaign_poisson_hydrogen.cpp)
 target_link_libraries(ftd_poisson_hydrogen ftd_core)
 
-add_executable(ftd_force_law tests/campaign_force_law.cpp)
-target_link_libraries(ftd_force_law ftd_core)
+# (campaign_force_law merged into campaign_coulomb_force_law)
 
 add_executable(ftd_shell_predictions tests/campaign_shell_predictions.cpp)
 target_link_libraries(ftd_shell_predictions ftd_core)
@@ -444,11 +443,9 @@ add_executable(ftd_statistical_convergence tests/campaign_statistical_convergenc
 target_link_libraries(ftd_statistical_convergence ftd_core)
 
 # Phase 2: Continuum Limit campaigns
-add_executable(ftd_dispersion_convergence tests/campaign_dispersion_convergence.cpp)
-target_link_libraries(ftd_dispersion_convergence ftd_core)
+# (campaign_dispersion_convergence merged into campaign_dispersion via Wave 4b.7)
 
-add_executable(ftd_coulomb_convergence tests/campaign_coulomb_convergence.cpp)
-target_link_libraries(ftd_coulomb_convergence ftd_core)
+# (campaign_coulomb_convergence merged into campaign_coulomb_force_law)
 
 # Benchmark suites (April 2026). Registered via ftd_add_test so they appear
 # in ctest and get the "benchmark" label auto-applied by the macro. All use
@@ -734,7 +731,7 @@ add_test(NAME bridge_dynamics COMMAND test_bridge_dynamics)
 add_test(NAME maxwell COMMAND test_maxwell)
 add_test(NAME csv_export COMMAND test_csv_export)
 add_test(NAME logic_engine COMMAND test_logic_engine)
-add_test(NAME poisson_coulomb COMMAND test_poisson_coulomb)
+# (poisson_coulomb merged into campaign_coulomb_force_law)
 # (energy_tracking + energy_conservation merged via ftd_add_test above)
 add_test(NAME selffield_profile COMMAND test_selffield_profile)
 add_test(NAME wavepacket COMMAND test_wavepacket)
@@ -758,7 +755,7 @@ add_test(NAME continuity COMMAND test_continuity)
 add_test(NAME poynting COMMAND test_poynting)
 add_test(NAME larmor COMMAND test_larmor)
 add_test(NAME dipole_radiation COMMAND test_dipole_radiation)
-add_test(NAME dispersion_relation COMMAND test_dispersion_relation)
+# (dispersion_relation merged into campaign_dispersion)
 add_test(NAME thomson_scattering COMMAND test_thomson_scattering)
 add_test(NAME light COMMAND test_light)
 add_test(NAME ensemble COMMAND test_ensemble)
@@ -820,15 +817,14 @@ if(FTD_ENABLE_CUDA)
 endif()
 
 # Campaign tests
-add_test(NAME campaign_dispersion COMMAND ftd_dispersion)
+# (campaign_dispersion registered via ftd_add_test above)
 add_test(NAME campaign_gauge_dynamics COMMAND ftd_gauge_dynamics)
 add_test(NAME campaign_gauge_constraint COMMAND ftd_gauge_constraint)
 add_test(NAME campaign_free_dynamics COMMAND ftd_free_dynamics)
 add_test(NAME campaign_aggregate_interaction COMMAND ftd_aggregate_interaction)
-add_test(NAME campaign_poisson_force_law COMMAND ftd_poisson_force_law)
-add_test(NAME campaign_poisson_binding COMMAND ftd_poisson_binding)
+# (campaign_poisson_force_law + campaign_poisson_binding merged)
 add_test(NAME campaign_poisson_hydrogen COMMAND ftd_poisson_hydrogen)
-add_test(NAME campaign_force_law COMMAND ftd_force_law)
+# (campaign_force_law merged)
 add_test(NAME campaign_shell_predictions COMMAND ftd_shell_predictions)
 add_test(NAME campaign_energy_audit COMMAND ftd_energy_audit)
 add_test(NAME campaign_bound_lifetime COMMAND ftd_bound_lifetime)
@@ -843,8 +839,8 @@ add_test(NAME campaign_born_ensemble COMMAND ftd_born_ensemble)
 add_test(NAME campaign_h2_molecule COMMAND ftd_h2_molecule)
 add_test(NAME campaign_multiscale_pipeline COMMAND ftd_multiscale_pipeline)
 add_test(NAME campaign_statistical_convergence COMMAND ftd_statistical_convergence)
-add_test(NAME campaign_dispersion_convergence COMMAND ftd_dispersion_convergence)
-add_test(NAME campaign_coulomb_convergence COMMAND ftd_coulomb_convergence)
+# (campaign_dispersion_convergence merged into campaign_dispersion)
+# (campaign_coulomb_convergence merged)
 add_test(NAME campaign_sm_observables COMMAND ftd_sm_observables)
 # (campaign_wave_isotropy merged into campaign_wave_dynamics)
 add_test(NAME campaign_born_rule COMMAND ftd_born_rule)
@@ -922,7 +918,7 @@ set_tests_properties(
     em_energy_conservation continuity poynting larmor
     ensemble correlations spectral tracker
     campaign_statistical_convergence
-    campaign_dispersion_convergence campaign_coulomb_convergence
+    campaign_coulomb_convergence
     campaign_born_rule campaign_quantum_correlations
     campaign_hydrogen_binding campaign_triad_energy
     campaign_inertial_mass campaign_structure_stability
@@ -976,7 +972,7 @@ set_property(TEST
     selffield_profile wavepacket particle_engine scale_bridge hydrogen_scale1
     atom_engine atom_scale_bridge multiscale_bridge em_fields
     selective_damping em_energy_conservation continuity poynting
-    larmor dipole_radiation dispersion_relation thomson_scattering light
+    larmor dipole_radiation thomson_scattering light
     ensemble correlations spectral tracker benchmark latency_field
     # pe_forces and tritium_algebra auto-labeled as "unit" by ftd_add_test()
     # atom_engine_forces auto-labeled as "unit" by ftd_add_test()
@@ -994,12 +990,12 @@ set_property(TEST
 set_property(TEST
     campaign_dispersion campaign_gauge_dynamics campaign_gauge_constraint
     campaign_free_dynamics campaign_aggregate_interaction
-    campaign_poisson_force_law campaign_poisson_binding campaign_poisson_hydrogen
-    campaign_force_law campaign_energy_audit campaign_bound_lifetime
+    campaign_poisson_hydrogen
+    campaign_coulomb_force_law
+    campaign_energy_audit campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
     campaign_h2_molecule campaign_multiscale_pipeline
-    campaign_statistical_convergence campaign_dispersion_convergence
-    campaign_coulomb_convergence campaign_wave_dynamics
+    campaign_statistical_convergence campaign_wave_dynamics
     campaign_born_rule
     campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
     campaign_structure_stability campaign_color_force campaign_color_neutral
@@ -1063,10 +1059,9 @@ if(FTD_ENABLE_CUDA)
         maxwell
         em_energy_conservation
         poynting
-        dispersion_relation
         spectral
-        campaign_dispersion
-        campaign_dispersion_convergence
+        # (campaign_dispersion now has "gpu" via GPU_HEAVY in ftd_add_test;
+        #  campaign_dispersion_convergence merged into campaign_dispersion)
         campaign_grothendieck
         campaign_ds_vortex_lines
         campaign_ds_correlation_function
