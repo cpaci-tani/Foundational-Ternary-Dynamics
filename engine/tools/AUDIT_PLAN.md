@@ -292,8 +292,8 @@ This plan audits the FTD simulation engine across six phases, progressing from m
 - [x] **6.12** Scale 0 scenarios: 30+ scenarios in 5 optgroups (Flux, Light, EM, Pedagogical, Cosmological)
 - [x] **6.13** Scale 1 (PE) scenarios: 8 fully implemented
 - [x] **6.14** Scale 2 (AE) scenarios: periodic table (118 elements) + custom + individual elements
-- [x] **6.15** Test dashboard: static JSON mode in tests.js (499 lines), category rendering, 404 fallback
-- [x] **6.16** Test dashboard: live SSE via run_tests_live.py (374 lines), incremental DOM, auto-scroll
+- [~] **6.15** Test dashboard (legacy): static JSON mode in tests.js — RETIRED; superseded by the native Qt6 FTD Test Bench at `engine/tools/test_runner/`
+- [~] **6.16** Test dashboard (legacy): live SSE via run_tests_live.py — RETIRED; superseded by the native Qt6 runner (subprocess + NDJSON protocol, smart GPU/CPU dispatch, live 3D lattice viewer, QtCharts telemetry, SQLite history)
 - [~] **6.17** JS code review: minimal error handling (8 try/catch, 3 console.error across 18K lines)
 
 ### Test Infrastructure
