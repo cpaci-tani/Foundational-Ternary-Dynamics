@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include <QSet>
 #include <QString>
 #include <QVariantMap>
 #include <QWidget>
@@ -50,6 +51,11 @@ private:
 
     int m_lineCount = 0;
     static constexpr int kSoftLimit = 20000;  // trim when exceeded
+
+    // Track "first occurrence" of each (testName, metricName) pair so we
+    // log only the first time a metric appears (the rest goes to
+    // TelemetryCharts, un-throttled). Clear on clear().
+    QSet<QString> m_seenMetricKeys;
 };
 
 }  // namespace ftd::testrunner
