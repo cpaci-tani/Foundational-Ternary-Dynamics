@@ -116,6 +116,11 @@ static FitResult log_log_fit(const std::vector<double>& x,
 // ================================================================
 static std::unique_ptr<RenderBridge> make_einstein_engine(int L) {
     auto rb = std::make_unique<RenderBridge>(L);
+    // CRITICAL: force_cpu() is required because CUDA kernels do not
+    // implement solve_latency_poisson — phi_latency_ stays at zero
+    // on GPU. Every Einstein/phi-dependent assertion fails as a result.
+    // See render_bridge.cpp:696-747 for the CPU implementation.
+    rb->force_cpu();
     rb->toggles.disable_all();
     rb->toggles.latency_field = true;
     // Wave propagation OFF: we only want the Poisson solver, no flux dynamics
@@ -190,14 +195,22 @@ static void test_poisson_signal() {
 
     // Sign convention (line 709): nabla^2 phi = +4*pi*G*rho
     // Positive source -> positive phi near mass (after gauge pin)
-    check("EIN-1c: phi at center > 0 (attractive convention: positive near mass)",
-          phi_center > 0.0);
-    check("EIN-1d: phi at r=3 > 0", phi_r3 > 0.0);
+    // SIGN CONVENTION: The Poisson equation ∇²φ = +4πGρ with positive-density
+    // mass gives NEGATIVE phi near mass (standard attractive gravity). The test
+    // was originally written assuming positive-near-mass but that contradicts
+    // the solver's actual convention (render_bridge.cpp:709-746, April 13 fix).
+    // The physically meaningful "depth" is |phi|, which is what voxel.latency
+    // uses via sqrt(|phi|). All sign-dependent checks have been flipped to
+    // match the engine's actual ∇²φ = +4πGρ convention.
+    check("EIN-1c: phi at center < 0 (attractive: negative near mass)",
+          phi_center < 0.0);
+    check("EIN-1d: phi at r=3 < 0", phi_r3 < 0.0);
 
-    // Monotonic decay away from mass
-    check("EIN-1e: phi(center) > phi(r=3)", phi_center > phi_r3);
-    check("EIN-1f: phi(r=3) > phi(r=8)", phi_r3 > phi_r8);
-    check("EIN-1g: phi(r=8) > phi(r=15)", phi_r8 > phi_r15);
+    // Monotonic behavior: |phi| larger near mass (or equivalently, phi is
+    // more negative near mass so phi(center) < phi(r=3) < ... in signed terms).
+    check("EIN-1e: |phi(center)| > |phi(r=3)|", std::abs(phi_center) > std::abs(phi_r3));
+    check("EIN-1f: |phi(r=3)| > |phi(r=8)|", std::abs(phi_r3) > std::abs(phi_r8));
+    check("EIN-1g: |phi(r=8)| > |phi(r=15)|", std::abs(phi_r8) > std::abs(phi_r15));
 
     // Also check that voxel.latency is nonzero at center
     // (phi > 0 -> sqrt(clamp(phi, 0, 0.998)) > 0)
@@ -236,11 +249,13 @@ static void test_one_over_r_profile() {
 
     // Sample phi along x-axis from r=5 to r=25
     // (Skip r < 5 to avoid near-field lattice artifacts from the cluster)
+    // Use |phi| for the log-log fit: phi is negative near mass in the
+    // ∇²φ = +4πGρ convention, and log() doesn't accept negatives.
     std::vector<double> r_vals, phi_vals;
-    std::cout << "         r       phi(r)        phi*r\n";
+    std::cout << "         r       |phi(r)|      |phi*r|\n";
     for (int r = 5; r <= 25; ++r) {
         int idx = rb->lattice().index(mid + r, mid, mid);
-        double p = phi[idx];
+        double p = std::abs(phi[idx]);
         r_vals.push_back(static_cast<double>(r));
         phi_vals.push_back(p);
         std::cout << "         " << std::setw(2) << r
@@ -248,7 +263,7 @@ static void test_one_over_r_profile() {
                   << "  " << std::setw(14) << std::setprecision(8) << p * r << "\n";
     }
 
-    // Log-log fit: phi ~ A * r^slope, expect slope ~ -1
+    // Log-log fit: |phi| ~ A * r^slope, expect slope ~ -1
     auto fit = log_log_fit(r_vals, phi_vals);
     std::cout << "         Log-log fit: slope = " << std::setprecision(4) << fit.slope
               << ", R^2 = " << fit.r_squared
@@ -321,13 +336,14 @@ static void test_extract_G_N() {
 
     const auto& phi = rb->phi_latency();
 
-    // Average phi*r over the intermediate range r = 8..20
+    // Average |phi|*r over the intermediate range r = 8..20
     // (avoid near-field lattice artifacts and far-field periodic images)
+    // Use |phi| because phi is negative near mass in the ∇²φ = +4πGρ convention.
     double sum_phi_r = 0.0;
     int count = 0;
     for (int r = 8; r <= 20; ++r) {
         int idx = rb->lattice().index(mid + r, mid, mid);
-        double p = phi[idx];
+        double p = std::abs(phi[idx]);
         if (p > 1e-15) {
             sum_phi_r += p * r;
             ++count;
@@ -359,7 +375,7 @@ static void test_extract_G_N() {
                       << "(periodic BC / convergence effects)\n";
         }
     } else {
-        std::cout << "  FAIL  EIN-3a: No positive phi values in range\n";
+        std::cout << "  FAIL  EIN-3a: No nonzero |phi| values in range\n";
         ++failures;
     }
 }
@@ -471,16 +487,14 @@ static void test_proper_time_dilation() {
 // ================================================================
 // EIN-5: Sign convention verification
 //
-// The Poisson equation uses nabla^2 phi = +4*pi*G*rho (line 709).
-// After mean-subtraction, phi should be POSITIVE at the mass center
-// and decrease toward zero (or slightly negative) far away.
-//
-// This directly tests the sign chain that previously caused the
-// "zero latency" bug: if phi were negative near mass, the
-// sqrt(clamp(phi, 0, ...)) on line 737 would produce zero.
+// The Poisson equation uses nabla^2 phi = +4*pi*G*rho (line 709). With
+// the April 13 sqrt(|phi|) fix, phi is NEGATIVE at the mass center
+// (standard attractive potential) and voxel.latency = sqrt(|phi|). The
+// signed value of phi at the center is LESS than at the corner (more
+// negative), while |phi| is LARGER at the center.
 // ================================================================
 static void test_sign_convention() {
-    std::cout << "\n--- EIN-5: Sign convention (phi > 0 near mass) ---\n";
+    std::cout << "\n--- EIN-5: Sign convention (phi < 0 near mass) ---\n";
 
     const int L = 32;
     const int mid = L / 2;
@@ -498,20 +512,21 @@ static void test_sign_convention() {
     std::cout << "         phi(center) = " << std::setprecision(8) << phi_center << "\n";
     std::cout << "         phi(corner) = " << std::setprecision(8) << phi_corner << "\n";
 
-    check("EIN-5a: phi at mass center > 0 (positive convention)", phi_center > 0.0);
-    check("EIN-5b: phi at center > phi at corner", phi_center > phi_corner);
+    check("EIN-5a: phi at mass center < 0 (attractive convention)", phi_center < 0.0);
+    check("EIN-5b: |phi(center)| > |phi(corner)|",
+          std::abs(phi_center) > std::abs(phi_corner));
 
-    // The corner should be near zero or slightly negative (gauge choice)
+    // The corner should be near zero (gauge choice after mean-subtraction)
     // The absolute magnitude of phi(center) should scale with 4*pi*G_N*M
     double M_cluster = 33 * K_B;  // ~33 particles * K_B
     double expected_scale = 4.0 * PI * G_N * M_cluster;
     std::cout << "         Expected scale 4*pi*G_N*M = " << expected_scale << "\n";
-    std::cout << "         phi(center) / scale = "
-              << phi_center / expected_scale << "\n";
+    std::cout << "         |phi(center)| / scale = "
+              << std::abs(phi_center) / expected_scale << "\n";
 
-    // phi should be at least 1% of the scale (SOR may not fully converge)
-    check("EIN-5c: phi(center) > 0.01 * 4*pi*G_N*M",
-          phi_center > 0.01 * expected_scale);
+    // |phi| should be at least 1% of the scale (SOR may not fully converge)
+    check("EIN-5c: |phi(center)| > 0.01 * 4*pi*G_N*M",
+          std::abs(phi_center) > 0.01 * expected_scale);
 }
 
 // ================================================================
@@ -542,7 +557,10 @@ static void test_superposition() {
     double phi_b = rb_b->phi_latency()[rb_b->lattice().index(mid + 8, mid, mid)];
 
     double mass_ratio = static_cast<double>(mass_b) / mass_a;
-    double phi_ratio = (std::abs(phi_a) > 1e-15) ? phi_b / phi_a : 0.0;
+    // Use |phi| ratio — phi is negative near mass, so raw ratio could be
+    // positive (both negative) but we want to compare magnitudes.
+    double phi_ratio = (std::abs(phi_a) > 1e-15)
+                       ? std::abs(phi_b) / std::abs(phi_a) : 0.0;
 
     std::cout << "         Mass A: " << mass_a << " particles, phi(r=8) = "
               << std::setprecision(8) << phi_a << "\n";
@@ -551,8 +569,9 @@ static void test_superposition() {
     std::cout << "         Mass ratio = " << std::setprecision(4) << mass_ratio << "\n";
     std::cout << "         Phi ratio  = " << std::setprecision(4) << phi_ratio << "\n";
 
-    check("EIN-6a: Both phi values > 0", phi_a > 0.0 && phi_b > 0.0);
-    check("EIN-6b: More mass -> larger phi", phi_b > phi_a);
+    check("EIN-6a: Both phi values nonzero",
+          std::abs(phi_a) > 1e-15 && std::abs(phi_b) > 1e-15);
+    check("EIN-6b: More mass -> larger |phi|", std::abs(phi_b) > std::abs(phi_a));
 
     // The phi ratio should be close to the mass ratio (linearity)
     // Accept within factor of 2 due to near-field effects of different cluster sizes
