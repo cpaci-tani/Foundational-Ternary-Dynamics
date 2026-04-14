@@ -10,6 +10,7 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 #include "ftd/render_bridge.h"
+#include "ftd/dag_engine.h"
 #include "ftd/lagrangian.h"
 #include "ftd/particle_engine.h"
 #include "ftd/atom_engine.h"
@@ -1417,6 +1418,12 @@ EMSCRIPTEN_BINDINGS(ftd_module) {
         .function("tick", &ftd::RenderBridge::tick)
         .function("run",  &ftd::RenderBridge::run)
         .function("currentTick", &ftd::RenderBridge::current_tick)
+        ;
+
+    class_<ftd::DagEngine>("DagEngine")
+        .constructor<int>()
+        .function("tick", &ftd::DagEngine::tick)
+        .function("clear", &ftd::DagEngine::clear)
         ;
 
     // Data extraction

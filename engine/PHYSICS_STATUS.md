@@ -1,7 +1,7 @@
 # Physics Status — FTD Multi-Scale Engine
 
 > **Living document** — updated after each implementation phase.
-> Last updated: 2026-03-17 (Phase 3 complete — JS MockBridge)
+> Last updated: 2026-04-11 (Phase 4 complete — Molecular Physics Full Port)
 
 ---
 
@@ -11,8 +11,8 @@
 |-------|--------|--------------------|---------|------------|-------|
 | 0 | RenderBridge | 6 | 20 (TermToggles) | 5 components | ~100 |
 | 1 | ParticleEngine | 9 (+damping) | 12 (ParticleToggles) | 9 components | ~23 |
-| 2 | AtomEngine | 3 (+damping, auto-bond) | 11 (AtomToggles) | 7 components | ~10 |
-| 3 | (reuses AtomEngine) | — | — | — | — |
+| 2 | AtomEngine | 8 (+damping, auto-bond) | 12 (AtomToggles) | 8 components | ~12 |
+| 3 | MoleculeEngine | (Natively handled via AtomEngine) | — | — | — |
 
 **Total CTests registered: 145** (CPU + GPU-conditional)
 
@@ -132,18 +132,18 @@ Velocity Verlet integration. dt = 0.01, softening = 0.5.
 | Covalent bonds (harmonic) | F = -k * (r - r_eq) * r_hat | `covalent_bonds` | Implemented | 1 | atom_toggles, campaign_h2_molecule |
 | Auto-bonding | Formation at r < 1.2*sigma; breaking at r > 2*r_eq | `auto_bonding` | Implemented | 1 | atom_engine |
 | Damping | v *= (1 - DAMPING * dt) | `damping` | Implemented | 1 | atom_toggles |
-| H-bonds | LJ 10-12 + cos²(θ_DHA) angular | `h_bonds` | JS MockBridge | 3 | ae-water-dimer scenario |
-| Dipole-dipole | 1/r⁵ from bond dipoles × Pauling chi | `dipole_dipole` | JS MockBridge | 3 | — |
-| Angle strain (VSEPR) | V = k_theta * (theta - theta_eq)^2 / 2 | `angle_strain` | JS MockBridge | 3 | ae-vsepr-* scenarios |
-| Torsional (dihedral) | V = V_n/2 * [1 + cos(n*phi - gamma)] | `torsional` | Stub only | 4 | — |
-| Thermostat (Berendsen) | λ = √(1 + dt/τ·(T_target/T - 1)) | `thermostat` | JS MockBridge | 3 | ae-thermal-gas scenario |
-| Electronegativity | Pauling chi-driven bond formation threshold | `electronegativity` | JS MockBridge | 3 | — |
+| H-bonds | LJ 10-12 + cos²(θ_DHA) angular | `h_bonds` | Implemented | 3 | ae-water-dimer scenario |
+| Dipole-dipole | 1/r⁵ from bond dipoles × Pauling chi | `dipole_dipole` | Implemented | 3 | — |
+| Angle strain (VSEPR) | V = k_theta * (theta - theta_eq)^2 / 2 | `angle_strain` | Implemented | 3 | ae-vsepr-* scenarios |
+| Torsional (dihedral) | V = V_n/2 * [1 + cos(n*phi - gamma)] | `torsional` | Implemented | 4 | ae-organic-chem |
+| Improper Torsions | V = K_improper * Vol^2 / 2 (Planarity) | `improper_torsional`| Implemented | 4 | ae-sp2-planarity |
+| Thermostat (Berendsen) | λ = √(1 + dt/τ·(T_target/T - 1)) | `thermostat` | Implemented | 3 | ae-thermal-gas scenario |
+| Electronegativity | Pauling chi-driven bond formation threshold | `electronegativity` | Implemented | 3 | — |
 
-### Toggles (AtomToggles — 11 booleans)
+### Toggles (AtomToggles — 12 booleans)
 
 - **Active (5):** ionic (on), van_der_waals (on), covalent_bonds (on), auto_bonding (on), damping (off)
-- **JS MockBridge (5):** h_bonds, dipole_dipole, angle_strain, thermostat, electronegativity (all off by default, enabled per scenario)
-- **Stub (1):** torsional (Phase 4)
+- **Phase 3/4 Native (7):** h_bonds, dipole_dipole, angle_strain, torsional, improper_torsional, thermostat, electronegativity (off by default)
 - **Helpers:** `enable_all()`, `minimal()`
 - **Backward compat:** `set_damping_enabled()`, `set_bonding_enabled()` delegate to toggles
 
