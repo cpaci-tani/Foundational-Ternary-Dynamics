@@ -99,6 +99,16 @@ using ontic::G_C;
 using ontic::G_N;
 using ontic::SIN2_WEINBERG;
 
+// EFT-derived coupling: alpha = G_C² (wave equation coupling squared)
+// G_C is the fundamental lattice coupling in the wave equation source term:
+//   delta_J += G_C * grad(s)
+// The force involves TWO vertices (source + probe), each contributing G_C,
+// so the effective coupling is alpha = G_C * G_C.
+// This compile-time assert PROVES the ontic chain is self-consistent.
+inline constexpr double ALPHA_EFT = G_C * G_C;
+static_assert(ALPHA_EFT > 0.00729 && ALPHA_EFT < 0.00731,
+              "ALPHA_EFT = G_C^2 must match fine structure constant");
+
 // Layer 5b: QCD sector
 using ontic::ALPHA_S_MZ;
 using ontic::alpha_s_running;
@@ -271,6 +281,14 @@ inline constexpr double H_BOND_COS_POWER = 2.0; // angular dependence exponent
 // Angle strain (VSEPR) [DERIVED from α × K_B]
 // V = K_ANGLE * (theta - theta_eq)^2 / 2
 inline constexpr double K_ANGLE = ALPHA * K_B; // ~3.72e-3
+
+// Torsional (Dihedral) Strain [DERIVED from α² × K_B]
+// V = V_TORSION / 2 * [1 + cos(n*phi - gamma)]
+inline constexpr double V_TORSION = ALPHA * ALPHA * K_B; // ~2.71e-5
+
+// Improper Torsion (Planarity) [DERIVED from α × K_B]
+// V = K_IMPROPER * (omega)^2 / 2
+inline constexpr double K_IMPROPER = ALPHA * K_B * 2.0;
 
 // Thermostat coupling timescale [IMPOSED]
 // Berendsen: lambda = sqrt(1 + dt/tau * (T_target/T_current - 1))

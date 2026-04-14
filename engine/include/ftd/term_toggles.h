@@ -25,6 +25,7 @@ struct TermToggles {
     bool pair_production = false;  // genesis: correlated +1/-1 pairs from high-flux void [CLAUDE.md §4.1]
     bool exchange_force = false;   // phase_forces: Pauli exclusion repulsion (same-spin) [CLAUDE.md §11]
     bool latency_field = false;    // Poisson-based latency field ∇²L = 4πGρ (gravity potential)
+    bool emergent_forces = false;  // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
 
     void enable_all() {
         wave_propagation = coupling = damping = genesis = true;
