@@ -905,11 +905,11 @@ add_test(NAME campaign_lorentz_measure COMMAND ftd_lorentz_measure)
 # Timeouts for long-running tests (10 min)
 set_tests_properties(
     benchmark logic_engine energy_conservation
-    poisson_coulomb selffield_profile wavepacket
+    selffield_profile wavepacket
     particle_lifetime
     campaign_dispersion campaign_gauge_dynamics campaign_gauge_constraint
-    campaign_poisson_force_law campaign_poisson_binding campaign_poisson_hydrogen
-    campaign_force_law campaign_energy_audit campaign_bound_lifetime
+    campaign_poisson_hydrogen
+    campaign_energy_audit campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
     particle_engine scale_bridge hydrogen_scale1
     atom_engine atom_scale_bridge multiscale_bridge campaign_h2_molecule
@@ -918,7 +918,6 @@ set_tests_properties(
     em_energy_conservation continuity poynting larmor
     ensemble correlations spectral tracker
     campaign_statistical_convergence
-    campaign_coulomb_convergence
     campaign_born_rule campaign_quantum_correlations
     campaign_hydrogen_binding campaign_triad_energy
     campaign_inertial_mass campaign_structure_stability
@@ -968,7 +967,7 @@ set_property(TEST
     flux_mediated variational_coulomb
     dissipation portable_field particle_lifetime vortex voxel_properties
     lattice_operators discrete_operators bridge_dynamics maxwell csv_export
-    logic_engine poisson_coulomb energy_conservation
+    logic_engine energy_conservation
     selffield_profile wavepacket particle_engine scale_bridge hydrogen_scale1
     atom_engine atom_scale_bridge multiscale_bridge em_fields
     selective_damping em_energy_conservation continuity poynting
