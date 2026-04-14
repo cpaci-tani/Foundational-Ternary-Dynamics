@@ -122,8 +122,9 @@ ftd_add_test(test_telemetry_selftest tests/test_telemetry_selftest.cpp NO_CORE)
 add_executable(test_constants tests/test_constants.cpp)
 target_link_libraries(test_constants ftd_core)
 
-add_executable(test_lorentz tests/test_lorentz.cpp)
-target_link_libraries(test_lorentz ftd_core)
+# Wave 4b.6: test_lorentz_force + test_lorentz_invariance + test_magnetic +
+# test_magnetic_lagrangian merged into test_lorentz (self-ref target)
+ftd_add_test(test_lorentz tests/test_lorentz.cpp CTEST_NAME lorentz TIMEOUT 600)
 
 add_executable(test_lattice tests/test_lattice.cpp)
 target_link_libraries(test_lattice ftd_core)
@@ -192,8 +193,7 @@ target_link_libraries(test_polarization ftd_core)
 add_executable(test_momentum tests/test_momentum.cpp)
 target_link_libraries(test_momentum ftd_core)
 
-add_executable(test_magnetic tests/test_magnetic.cpp)
-target_link_libraries(test_magnetic ftd_core)
+# (test_magnetic merged into test_lorentz via Wave 4b.6)
 
 add_executable(test_flux_mediated tests/test_flux_mediated.cpp)
 target_link_libraries(test_flux_mediated ftd_core)
@@ -205,8 +205,7 @@ target_link_libraries(test_flux_mediated ftd_core)
 add_executable(test_variational_coulomb tests/test_variational_coulomb.cpp)
 target_link_libraries(test_variational_coulomb ftd_core)
 
-add_executable(test_magnetic_lagrangian tests/test_magnetic_lagrangian.cpp)
-target_link_libraries(test_magnetic_lagrangian ftd_core)
+# (test_magnetic_lagrangian merged into test_lorentz via Wave 4b.6)
 
 add_executable(test_dissipation tests/test_dissipation.cpp)
 target_link_libraries(test_dissipation ftd_core)
@@ -304,8 +303,7 @@ target_link_libraries(test_em_fields ftd_core)
 
 # (test_gauss_convergence merged into test_gauss via Wave 4b.5)
 
-add_executable(test_lorentz_force tests/test_lorentz_force.cpp)
-target_link_libraries(test_lorentz_force ftd_core)
+# (test_lorentz_force merged into test_lorentz via Wave 4b.6)
 
 add_executable(test_selective_damping tests/test_selective_damping.cpp)
 target_link_libraries(test_selective_damping ftd_core)
@@ -618,8 +616,7 @@ add_executable(test_sloop tests/test_sloop.cpp)
 target_link_libraries(test_sloop ftd_core)
 
 # Phase 12b: Precision + Electroweak Sector
-add_executable(test_lorentz_invariance tests/test_lorentz_invariance.cpp)
-target_link_libraries(test_lorentz_invariance ftd_core)
+# (test_lorentz_invariance merged into test_lorentz via Wave 4b.6)
 add_executable(test_electroweak tests/test_electroweak.cpp)
 target_link_libraries(test_electroweak ftd_core)
 add_executable(test_hydrogen_em_only tests/test_hydrogen_em_only.cpp)
@@ -700,7 +697,7 @@ enable_testing()
 
 # Unit tests
 add_test(NAME constants COMMAND test_constants)
-add_test(NAME lorentz COMMAND test_lorentz)
+# (lorentz registered via ftd_add_test above)
 add_test(NAME lattice COMMAND test_lattice)
 add_test(NAME born_infeld COMMAND test_born_infeld)
 # (test_energy merged into energy_conservation)
@@ -721,11 +718,11 @@ add_test(NAME wave_collapse COMMAND test_wave_collapse)
 add_test(NAME gauge COMMAND test_gauge)
 add_test(NAME polarization COMMAND test_polarization)
 add_test(NAME momentum COMMAND test_momentum)
-add_test(NAME magnetic COMMAND test_magnetic)
+# (magnetic merged into lorentz)
 add_test(NAME flux_mediated COMMAND test_flux_mediated)
 # (entanglement merged into campaign_quantum_correlations)
 add_test(NAME variational_coulomb COMMAND test_variational_coulomb)
-add_test(NAME magnetic_lagrangian COMMAND test_magnetic_lagrangian)
+# (magnetic_lagrangian merged into lorentz)
 add_test(NAME dissipation COMMAND test_dissipation)
 add_test(NAME portable_field COMMAND test_portable_field)
 add_test(NAME particle_lifetime COMMAND test_particle_lifetime)
@@ -754,7 +751,7 @@ add_test(NAME atom_scale_bridge COMMAND test_atom_scale_bridge)
 add_test(NAME multiscale_bridge COMMAND test_multiscale_bridge)
 add_test(NAME em_fields COMMAND test_em_fields)
 # (gauss_convergence merged into gauss)
-add_test(NAME lorentz_force COMMAND test_lorentz_force)
+# (lorentz_force merged into lorentz)
 add_test(NAME selective_damping COMMAND test_selective_damping)
 add_test(NAME em_energy_conservation COMMAND test_em_energy_conservation)
 add_test(NAME continuity COMMAND test_continuity)
@@ -904,7 +901,7 @@ add_test(NAME cosmological_constant COMMAND test_cosmological_constant)
 add_test(NAME consciousness COMMAND test_consciousness)
 add_test(NAME sloop COMMAND test_sloop)
 # Phase 12b: Precision + Electroweak Sector
-add_test(NAME lorentz_invariance COMMAND test_lorentz_invariance)
+# (lorentz_invariance merged into lorentz)
 add_test(NAME electroweak COMMAND test_electroweak)
 add_test(NAME hydrogen_em_only COMMAND test_hydrogen_em_only)
 add_test(NAME campaign_lorentz_measure COMMAND ftd_lorentz_measure)
@@ -945,7 +942,7 @@ set_tests_properties(
     campaign_pe_fine_structure
     atom_engine_forces campaign_ae_water
     inflation dark_matter cosmological_constant consciousness sloop
-    lorentz_invariance electroweak hydrogen_em_only campaign_lorentz_measure
+    electroweak hydrogen_em_only campaign_lorentz_measure
     helium_scale1 fine_structure_scale1 hydrogen_spectrum_scale1
     radiative_decay_scale1 scale_proof_chain
     PROPERTIES TIMEOUT 600)
@@ -967,18 +964,18 @@ set_tests_properties(
 # overwriting it. Tests that are BOTH unit AND scale1 (e.g. pe_forces,
 # particle_engine) will end up with labels=[unit, scale1].
 set_property(TEST
-    constants lorentz lattice born_infeld gauss stress_energy
+    constants lattice born_infeld gauss stress_energy
     thermodynamics lagrangian ontic_chain dual_substrate genesis
     gravity_dynamics annihilation annihilation_conservation wave_collapse
     # wave_speed/interference merged into campaign_wave_dynamics
-    gauge polarization momentum magnetic
-    flux_mediated variational_coulomb magnetic_lagrangian
+    gauge polarization momentum
+    flux_mediated variational_coulomb
     dissipation portable_field particle_lifetime vortex voxel_properties
     lattice_operators discrete_operators bridge_dynamics maxwell csv_export
     logic_engine poisson_coulomb energy_conservation
     selffield_profile wavepacket particle_engine scale_bridge hydrogen_scale1
     atom_engine atom_scale_bridge multiscale_bridge em_fields
-    lorentz_force selective_damping em_energy_conservation continuity poynting
+    selective_damping em_energy_conservation continuity poynting
     larmor dipole_radiation dispersion_relation thomson_scattering light
     ensemble correlations spectral tracker benchmark latency_field
     # pe_forces and tritium_algebra auto-labeled as "unit" by ftd_add_test()
@@ -988,7 +985,7 @@ set_property(TEST
     entanglement_basis flavor_physics higgs_mechanism hilbert measurement
     particle_toggles spin_statistics triad_confinement wz_mass
     falsifiability inflation dark_matter cosmological_constant consciousness
-    sloop lorentz_invariance electroweak hydrogen_em_only
+    sloop electroweak hydrogen_em_only
     APPEND PROPERTY LABELS "unit")
 
 # Campaign tests (47 campaign_*.cpp files)
@@ -1017,13 +1014,13 @@ set_property(TEST
 
 # Foundation tests (fast math/constants checks)
 set_property(TEST
-    constants lorentz lattice ontic_chain born_infeld voxel_properties
-    lattice_operators discrete_operators dissipation magnetic_lagrangian
+    constants lattice ontic_chain born_infeld voxel_properties
+    lattice_operators discrete_operators dissipation
     APPEND PROPERTY LABELS "foundation")
 
 # Lagrangian & variational tests
 set_property(TEST
-    lagrangian variational_coulomb magnetic_lagrangian dissipation
+    lagrangian variational_coulomb dissipation
     action_stationarity
     APPEND PROPERTY LABELS "lagrangian")
 
@@ -1062,7 +1059,7 @@ if(FTD_ENABLE_CUDA)
         # under ctest -j 24 due to single-RTX-5090 contention. Serializing
         # them via the "gpu" label eliminates the false TIMEOUT failures.
         # Confirmed contention list from AUDIT_LATENCY_2026_04_14.md.
-        magnetic
+        lorentz
         maxwell
         em_energy_conservation
         poynting
