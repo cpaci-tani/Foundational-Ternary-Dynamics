@@ -175,6 +175,42 @@ runs (the serial run was killed early to restart with `-j 24`):
 **Conclusion**: the 52.6% pass rate is the **real engine state on
 current main**, not an artifact of parallelism or the FTD Test Bench merge.
 
+### Post-WIP rerun (after committing the user's 177-file WIP)
+
+After committing the user's uncommitted WIP as 6 chunks (commits `68971a2`
+through `c173031`) and rebuilding from scratch, I reran both ctest passes
+against the now-fully-committed state:
+
+- **Pass 1 (CPU `-j 24 -LE gpu`)**: 89/171 passed, 792.47 sec wall
+- **Pass 2 (GPU `-j 1 -L gpu`)**: 4/4 passed, 502.85 sec wall
+- **Combined: 93/175 = 53.1%**
+
+Cross-validated pre-WIP vs post-WIP:
+- **Zero regressions** from committing the WIP — no test that was passing
+  pre-WIP fails post-WIP.
+- **One improvement** — `campaign_grothendieck` went Timeout → Passed
+  (saved 600s wall clock, +1 on pass count).
+- **One new failure surfaced** — `helium_scale1` (a brand-new test added
+  in the WIP) segfaults after successful particle construction but before
+  reaching diagnostics. The 2 locked protons at identical positions
+  `(0,0,0)` were my first suspect (Barnes-Hut degenerate case) but
+  offsetting them by `1e-10` didn't fix it. Per-line debug showed the
+  crash is NOT on the `particles()[2].r_eff = 0.01` assignment (that
+  works) — it's later, possibly in the diagnostics path or during
+  the first tick. Tried to bisect but got diminishing returns on
+  diagnosis time; left as a new WIP issue for the engine author.
+
+Net post-WIP: 93/175 = **53.1%** (up from 92/175 = 52.6% pre-WIP).
+One net test improvement (grothendieck fixed) minus one new regression
+(helium_scale1 segfault) = 93 - 1 + 1 = 93 passing, 1 net improvement
+on the suite.
+
+The pre-existing failure cluster (EM/latency sign bug) was NOT fixed
+by the user's WIP commits. Those need deeper engine work targeting
+`render_bridge.cpp`'s `solve_latency_poisson()` and the `phi_latency`
+sign handling — which appears to be what the user is actively
+developing and is intentionally out of this session's scope.
+
 ## Known pre-existing failures — categorized by physics sector
 
 The 83 non-passing tests cluster tightly into these families. Most are
