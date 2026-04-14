@@ -534,8 +534,9 @@ add_executable(ftd_cosmological_predictions tests/campaign_cosmological_predicti
 target_link_libraries(ftd_cosmological_predictions ftd_core)
 
 # Phase 9b: Dark Sector Dynamics campaign
-add_executable(ftd_dark_sector tests/campaign_dark_sector.cpp)
-target_link_libraries(ftd_dark_sector ftd_core)
+# Wave 4c.11: 7 dark-sector tests merged into campaign_dark_sector (self-ref)
+ftd_add_test(ftd_dark_sector tests/campaign_dark_sector.cpp
+             CTEST_NAME campaign_dark_sector GPU_HEAVY TIMEOUT 1800)
 
 # Phase 10: Novel Predictions & Falsifiability campaign
 add_executable(ftd_novel_predictions tests/campaign_novel_predictions.cpp)
@@ -558,36 +559,7 @@ ftd_add_test(ftd_wave_dynamics tests/campaign_wave_dynamics.cpp
              CTEST_NAME campaign_wave_dynamics TIMEOUT 600)
 # (campaign_two_slit merged into campaign_wave_dynamics)
 
-# Double-slit information loss campaigns (3D lattice experiments)
-# All use SimEngine (engine_select.h) for GPU acceleration when CUDA is enabled
-set(DS_CAMPAIGNS
-    ftd_ds_phase_recovery
-    ftd_ds_ternary_detector
-    ftd_ds_vortex_lines
-    ftd_ds_correlation_function
-    ftd_ds_void_classification
-    ftd_ds_information_cascade
-)
-set(DS_SOURCES
-    tests/campaign_ds_phase_recovery.cpp
-    tests/campaign_ds_ternary_detector.cpp
-    tests/campaign_ds_vortex_lines.cpp
-    tests/campaign_ds_correlation_function.cpp
-    tests/campaign_ds_void_classification.cpp
-    tests/campaign_ds_information_cascade.cpp
-)
-list(LENGTH DS_CAMPAIGNS DS_COUNT)
-math(EXPR DS_LAST "${DS_COUNT} - 1")
-foreach(idx RANGE ${DS_LAST})
-    list(GET DS_CAMPAIGNS ${idx} tgt)
-    list(GET DS_SOURCES ${idx} src)
-    add_executable(${tgt} ${src})
-    if(FTD_ENABLE_CUDA)
-        target_link_libraries(${tgt} ftd_core ftd_cuda)
-    else()
-        target_link_libraries(${tgt} ftd_core)
-    endif()
-endforeach()
+# (Wave 4c.11: 6 campaign_ds_* tests merged into campaign_dark_sector above)
 
 # Phase 12: Cosmology + Consciousness Sector
 add_executable(test_inflation tests/test_inflation.cpp)
@@ -860,7 +832,7 @@ add_test(NAME campaign_neutrino_sector COMMAND ftd_neutrino_sector)
 
 # Phase 9: Cosmological Predictions campaign
 add_test(NAME campaign_cosmological_predictions COMMAND ftd_cosmological_predictions)
-add_test(NAME campaign_dark_sector COMMAND ftd_dark_sector)
+# (campaign_dark_sector registered via ftd_add_test above)
 
 # Phase 10: Novel Predictions & Falsifiability campaign
 add_test(NAME campaign_novel_predictions COMMAND ftd_novel_predictions)
@@ -870,12 +842,7 @@ add_test(NAME falsifiability COMMAND test_falsifiability)
 add_test(NAME campaign_integer_sweep COMMAND ftd_integer_sweep)
 # (campaign_hydrogen_spectrum registered via ftd_add_test)
 # (campaign_two_slit merged into campaign_wave_dynamics)
-add_test(NAME campaign_ds_phase_recovery COMMAND ftd_ds_phase_recovery)
-add_test(NAME campaign_ds_ternary_detector COMMAND ftd_ds_ternary_detector)
-add_test(NAME campaign_ds_vortex_lines COMMAND ftd_ds_vortex_lines)
-add_test(NAME campaign_ds_correlation_function COMMAND ftd_ds_correlation_function)
-add_test(NAME campaign_ds_void_classification COMMAND ftd_ds_void_classification)
-add_test(NAME campaign_ds_information_cascade COMMAND ftd_ds_information_cascade)
+# (6 campaign_ds_* tests merged into campaign_dark_sector)
 
 # Phase 12: Cosmology + Consciousness
 add_test(NAME inflation COMMAND test_inflation)
@@ -1045,8 +1012,8 @@ if(FTD_ENABLE_CUDA)
         # (campaign_dispersion now has "gpu" via GPU_HEAVY in ftd_add_test;
         #  campaign_dispersion_convergence merged into campaign_dispersion)
         campaign_grothendieck
-        campaign_ds_vortex_lines
-        campaign_ds_correlation_function
+        # (campaign_ds_vortex_lines + campaign_ds_correlation_function
+        #  merged into campaign_dark_sector; it has GPU_HEAVY + gpu label)
     )
     foreach(_t IN LISTS _ftd_gpu_tests)
         if(TEST ${_t})
