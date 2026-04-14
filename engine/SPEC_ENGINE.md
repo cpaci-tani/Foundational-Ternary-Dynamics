@@ -1,11 +1,32 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-04-10
-**Engine version:** 2.12 (Logic-First + Perfected EM + Multi-Scale Physics + CUDA GPU + Cosmic Scale + Modular Architecture)
-**Test count:** 182 test files (120 unit + 62 campaign). 177 registered in CMakeLists. GPU conditional on `FTD_ENABLE_CUDA`.
+**Last updated:** 2026-04-13
+**Engine version:** 2.14 (Logic-First + EFT Reconstruction + 20-Benchmark Bridge + Wilson/Gluon/Einstein/BH)
+**Test count:** 190+ test files (120 unit + 62 campaign + 7 benchmarks). GPU conditional on `FTD_ENABLE_CUDA`.
 
-### April 2026 Session Additions
+### April 13, 2026: Engine-Theory Bridge, EFT, GR Unlocked, 3 Theorem Papers
+- **20-benchmark suite** (`benchmark_engine_theory.cpp`): first quantitative engine-to-theory comparison
+- **EFT reconstruction**: `ALPHA_EFT = G_C * G_C` — alpha derived as coupling squared, not independent input
+- **Emergent forces toggle**: computes force from flux field gradient without Poisson solver
+- **6 emergence experiments** (`benchmark_emergent_alpha.cpp`): self-energy, interaction potential, emergent force, bound state, null baseline, EFT force
+- **Budget equation** (`benchmark_budget_equation.cpp`): x/K + G*/x = 1 verified to 0.2% on lattice
+- **Wilson loops** (`benchmark_wilson_loops.cpp`): 12/17 pass, flux tube collimation detected, area law sigma > 0
+- **Gluon dynamics** (`campaign_gluon_dynamics.cpp`): 7/11 pass, linear E(r), E/r ~ constant
+- **Einstein equations** (`test_einstein_equations.cpp`): gravitational superposition to 0.08%, **time dilation 0.004% match (after latency fix)**
+- **BH thermodynamics** (`benchmark_black_hole_thermo.cpp`): **L_peak=0.62, proper time dilation** (after latency fix), Smarr S*T=M/2 exact
+- **LATENCY FIX** (one line): `sqrt(max(phi,0))` -> `sqrt(|phi|)` in render_bridge.cpp line 735. Unlocks entire GR sector.
+- **Three theorem papers** (conditional [THEOREM] upgrades):
+  - `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — x+ = 1/alpha
+  - `DERIV_SINGLET_FROM_VOID_EVENT.md` — Bell loop via void event
+  - `DERIV_NC_FROM_TOPOLOGY.md` — N_c = 3 from 4 independent routes
+- **WASM rebuilt and deployed**: ftd_core.js + ftd_core.wasm now in engine/web/wasm/
+- **DagEngine fixed**: added 4 missing pure virtual overrides (current_tick, dt, set_dt, entity_count)
+- **6 SM visualization scenarios**: Particle Zoo, Higgs Field, Higgs Mechanism, Electroweak, Three Generations, QCD Vacuum
+- **Scientific status: C+ -> B+** (20 benchmarks + 4 physics domains + GR + 3 theorems)
+- Consolidated index.html (removed index_dag.html), fixed dag_engine.h missing include
+
+### April 10-11, 2026 Session Additions
 - **Stellar Lifecycle scenario** (Scale 5 JS): cloud collapse -> star formation -> death -> WD/NS/BH + Hawking evaporation
 - **Fuel tracking and stellar evolution** in mock-scale5.js (fuel_fraction, fuel_stage, supernova ejecta)
 - **Fuel-stage-aware rendering** in cosmic-renderer.js (red giants, late burners, dying stars)
@@ -53,10 +74,15 @@ All scale engines (ParticleEngine, CosmicEngine) inherit from `ScaleEngine`, pro
 - `base_diagnostics()` returning common metrics across all scales
 - `scale_level()` and `scale_name()` for runtime type identification
 
-### Performance
+### Scaling and Performance Constraints
 
-Forces are O(N) field-mediated (single loop over manifested particles) instead of O(N^2) pairwise. Inherently faster for large particle counts.
+**Lattice Engine (Scale 0)**
+Forces are $O(N)$ field-mediated (single loop over manifested particles summing their interactions with the local lattice neighborhood) instead of $O(N^2)$ explicit pairwise. Inherently faster for large particle counts processing raw flux.
 
+**Macro Engines (Scales 1, 2, 5)**
+The `ParticleEngine`, `AtomEngine`, and `CosmicEngine` all rely on a dynamically re-calculated **Barnes-Hut Octree** (see `barnes_hut.h`) to approximate macroscopic limits of long-range $1/r^2$ isotropic potentials (e.g. Gravity and Coulomb).
+- Achieves $\mathcal{O}(N \log N)$ computation scaling by terminating monopole traversals at a critical opening angle threshold ($\theta < 0.5$).
+- `AtomEngine`'s discrete covalent interactions traverse a fully pre-separated $O(N)$ topographical linked-list ensuring that discrete bounds like `Angle Strain` do not invoke continuous $O(N^2)$ matrices.
 ---
 
 ## 2. Directory Layout

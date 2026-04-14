@@ -2,9 +2,11 @@
 
 **The Card Catalog** — Find any document in two clicks.
 
-**Last updated:** March 27, 2026
-**Framework version:** v5.28-consolidated
-**Engine version:** v2.11
+**Last updated:** April 13, 2026
+**Framework version:** v5.30
+**Engine version:** v2.14
+
+For current documentation drift, cleanup status, and deferred remediation items, see [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
 
 ---
 
@@ -13,8 +15,11 @@
 | If you want to... | Start here |
 |-------------------|------------|
 | Understand FTD from scratch | [docs/SPEC_FTD.md](docs/SPEC_FTD.md) — **the single source of truth** |
-| See the core mathematics | [docs/theory/01_reference/SPEC_THE_MASTER_CUBIC.md](docs/theory/01_reference/SPEC_THE_MASTER_CUBIC.md) |
-| Assess what's genuinely derived | [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) (~30 genuine) |
+| Get contributor onboarding | [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — balanced guide across theory, engine, verification, and critique |
+| Audit documentation drift | [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) — cleanup ledger, status model, and remediation queue |
+| Check project health | [evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md](evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md) — weighted project health scorecard and priorities |
+| See the core mathematics | [docs/theory/01_reference/MATH_MASTER_QUADRATIC.md](docs/theory/01_reference/MATH_MASTER_QUADRATIC.md) |
+| Assess what's genuinely derived | [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) (~35 genuine) |
 | Run the verification suite | `python scripts/tests/run_all_tests.py` |
 | Read the manuscript (book) | `cd dissemination/manuscript && quarto render` |
 
@@ -36,9 +41,9 @@
 
 ### For Programmers
 1. [engine/SPEC_ENGINE.md](engine/SPEC_ENGINE.md) — Engine architecture and API
-2. [docs/internal/META_WALKTHROUGH.md](docs/internal/META_WALKTHROUGH.md) — Navigation guide
+2. [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — Public contributor guide
 3. `engine/` — C++ simulation engine with Three.js web dashboard
-4. `engine/tests/` — 168 test files (119 unit + 49 campaign)
+4. `engine/tests/` — Large native test surface; see `engine/SPEC_ENGINE.md` for the current breakdown
 
 ### For Experimentalists
 1. [SPEC_NOVEL_PREDICTIONS.md](docs/theory/01_reference/SPEC_NOVEL_PREDICTIONS.md) — Falsifiable predictions catalog
@@ -58,26 +63,28 @@
 ```
 ftd/
 ├── README.md                        # Public overview + epistemic notice
-├── CHANGELOG.md                     # Version history (v5.0 → v5.28)
+├── CHANGELOG.md                     # Version history
 ├── CONTRIBUTING.md                  # How to contribute
 ├── CLAUDE.md                        # AI agent project instructions
+├── AUDIT_DOCUMENT_CLEANUP_LEDGER.md # Repo-wide documentation cleanup ledger
 ├── META_DOCUMENTATION_MAP.md        # THIS FILE — the card catalog
 ├── META_PROJECT_ATLAS.md            # AI agent navigation guide
 │
 ├── docs/
 │   ├── SPEC_FTD.md                  # THE authoritative FTD specification
-│   ├── theory/                      # 114 active + 67 archived theory documents
-│   │   ├── META_INDEX.md            # Complete catalog (9 categories)
-│   │   ├── 01_reference/ (12)       # Master references and proofs
-│   │   ├── 02_foundations/ (18)     # Ontological emergence
-│   │   ├── 03_derivations/ (37)     # Core physics derivations
-│   │   ├── 04_coupling/ (9)         # Coupling constants
-│   │   ├── 05_particles/ (6)        # Particle physics
-│   │   ├── 06_consciousness/ (6)    # Consciousness and measurement
-│   │   ├── 07_assessment/ (7)       # Epistemic audits
-│   │   ├── 08_structural/ (6)       # Geometry and information theory
-│   │   ├── 09_mathematical/ (13)    # Number theory and connections
-│   │   └── archive/ (67)            # Superseded/historical documents
+│   ├── theory/                      # Curated theory catalog plus archive
+│   │   ├── META_INDEX.md            # Curated catalog; raw directory counts may be higher during cleanup
+│   │   ├── 01_reference/            # Master references and proofs
+│   │   ├── 02_foundations/          # Ontological emergence
+│   │   ├── 03_derivations/          # Core physics derivations
+│   │   ├── 04_coupling/             # Coupling constants
+│   │   ├── 05_particles/            # Particle physics
+│   │   ├── 06_consciousness/        # Consciousness and measurement
+│   │   ├── 07_assessment/           # Epistemic audits
+│   │   ├── 08_structural/           # Geometry and information theory
+│   │   │   └── DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md  # BCC multiplicative structure: Watson identity + SU(3) (April 2026)
+│   │   ├── 09_mathematical/         # Number theory and connections
+│   │   └── archive/                 # Superseded/historical documents
 │   │
 │   ├── reference/                   # Canonical reference materials
 │   │   ├── REF_EPISTEMIC_LABELS.md  # Tag definitions ([AXIOM], [THEOREM], etc.)
@@ -87,9 +94,10 @@ ftd/
 │   │   └── REF_NAMING_CONVENTIONS.md  # File naming standards
 │   │
 │   ├── papers/                      # Published/submitted papers
-│   │   ├── *.tex, *.pdf             # Core papers (TeX+PDF pairs or PDF-only)
-│   │   ├── speculative/             # Millennium Prize problems, speculative extensions
-│   │   ├── src/                     # LaTeX sources + figures for complete papers
+│   │   ├── *.pdf                    # Single active PDF shelf for papers and exported figure PDFs
+│   │   ├── *.tex, *.md              # Root-level companion sources and paper indexes
+│   │   ├── speculative/             # Speculative TeX source tree (active PDFs publish to root)
+│   │   ├── src/                     # Main LaTeX source tree + figures (active PDFs publish to root)
 │   │   └── archive/                 # Historical versions and unused figures
 │   │
 │   ├── articles/                    # Popular writing
@@ -97,7 +105,7 @@ ftd/
 │   │
 │   └── internal/                    # Working documents & editorial guidance (gitignored)
 │       ├── SPEC_CLAUDE.md           # Simulation manual
-│       ├── META_WALKTHROUGH.md      # How to read the project
+│       ├── META_WALKTHROUGH.md      # Local-only working walkthrough
 │       ├── META_IMPLEMENTATION_PLAN.md
 │       ├── META_BULLETPROOFING_STRATEGY.md
 │       ├── REF_IMAGE_INVENTORY.md   # Image catalog
@@ -107,40 +115,52 @@ ftd/
 │           ├── mandelbrot/          # Mandelbrot-FTD connections
 │           └── number_theory/       # Number theory explorations
 │
-├── engine/                          # C++ simulation engine (v2.11)
+├── engine/                          # C++ simulation engine (see engine/SPEC_ENGINE.md for current version details)
 │   ├── SPEC_ENGINE.md               # Engine reference document
 │   ├── include/ftd/                 # 28 headers (ontic.h is the constant chain)
 │   ├── src/                         # 7 source files
-│   ├── tests/                       # 168 test files (119 unit + 49 campaign)
-│   ├── cuda/                        # 5 GPU kernels (GPU,  speedup)
+│   ├── tests/                       # Large CTest surface (CPU, campaign, optional GPU)
+│   ├── cuda/                        # GPU acceleration
 │   ├── wasm/                        # Emscripten WASM bindings
-│   └── web/                         # Three.js browser dashboard (28 JS modules)
+│   └── web/                         # Three.js browser dashboard
 │
-├── scripts/                         # Python scripts (~149 total)
+├── scripts/                         # Python verification and proof stack
 │   ├── constants.py                 # Canonical shared constants
-│   ├── verification/ (40)           # Formal derivation verification
-│   ├── proofs/ (57)                 # Formal mathematical proofs with error bounds
-│   ├── experiments/ (17)            # Bell tests, CERN analysis, physics sims
-│   ├── exploration/ (9)             # Focused research investigations
-│   ├── tests/ (11+)                 # Python test suites (pytest)
+│   ├── verification/                # Formal derivation verification
+│   ├── proofs/                      # Formal mathematical proofs with error bounds
+│   │   └── proof_modular_hamiltonian.py  # Tomita-Takesaki modular operator on finite FTD lattice (April 2026)
+│   ├── experiments/                 # Bell tests, CERN analysis, physics sims
+│   ├── exploration/                 # Focused research investigations
+│   │   ├── gap_equation_layer_convergence.py  # Sublattice Watson integrals and gap equation convergence (April 2026)
+│   │   ├── verify_zero_modes.py               # Zero mode count verification across lattice types (April 2026)
+│   │   └── verify_nmeas_18.py                 # Three routes to N_meas = 18 — all negative (April 2026)
+│   ├── tests/                       # Python test suites (pytest)
 │   │   └── comprehensive/           # 7-tier verification framework
-│   ├── visualization/ (11)          # Publication figure generation
-│   └── runners/ (2)                 # Test protocol runners
+│   ├── visualization/               # Publication figure generation
+│   └── runners/                     # Test protocol runners
 │
 ├── evaluation/                      # Multi-domain assessment
-│   ├── agent_findings/ (6)          # AI domain evaluations
-│   ├── expert_reviews/ (6)          # Expert reviews + physicist final report
-│   ├── findings/ (4)               # Cross-cutting domain findings
+│   ├── agent_findings/              # AI domain evaluations
+│   ├── expert_reviews/              # Expert reviews + physicist final report
+│   ├── findings/                    # Cross-cutting domain findings
 │   ├── AUDIT_UNRESOLVED_ISSUES.md   # Post-defense mandatory acknowledgments
 │   ├── AUDIT_WEAKNESSES_MASTER.md   # Master weakness compilation (18 agents)
 │   └── ISSUE_TRACKER.md             # 116 prioritized issues (12 P0, 35 P1)
 │
 ├── dissemination/                   # Publication pipeline
-│   ├── manuscript/                  # Quarto book (96 .qmd chapters)
-│   ├── book/                        # "The Golden Thread" narrative (53 .qmd files)
+│   ├── manuscript/                  # Quarto manuscript (original)
+│   ├── manuscript_v2/               # Complete rewrite for physicists (April 2026)
+│   │   ├── CHECKLIST.md             # Live progress tracker
+│   │   ├── src/
+│   │   │   ├── _quarto.yml          # 17-part book config
+│   │   │   ├── index.qmd            # Introduction
+│   │   │   ├── preface.qmd          # Preface
+│   │   │   └── chapters/            # 83 .qmd files (26 new + 57 from v1)
+│   │   └── media/ -> ../manuscript/media  # Symlink to shared images
+│   ├── book/                        # Narrative companion book
 │   ├── whitepaper/                  # LaTeX academic paper
-│   ├── notebooks/ (12)              # Jupyter pedagogy tutorials
-│   ├── interactive/ (6)             # Standalone HTML force/photon simulations
+│   ├── notebooks/                   # Jupyter pedagogy tutorials
+│   ├── interactive/                 # Standalone HTML simulations and explainers
 │   └── FTD_Symbol_Cheatsheet.html   # Interactive symbol reference (~130 cards)
 │
 ├── models/                          # Physics derivation package
@@ -158,22 +178,28 @@ ftd/
 
 ---
 
-## Theory Documents at a Glance
+## Theory Documents At A Glance
 
-The 114 core theory documents in `docs/theory/` are organized into 9 categories.
-See [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md) for the complete catalog with descriptions.
+Use [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md) as the **curated theory catalog**.
 
-| # | Category | Files | Key Documents |
-|---|----------|-------|---------------|
-| 1 | Master Reference | 12 | FTD_REFERENCE, MASTER_QUADRATIC (3-layer), MASTER_CUBIC, SIX_ALGORITHMS, LAGRANGIAN, SM_REPLACEMENT, COMPARATIVE_PHYSICS, NOVEL_PREDICTIONS |
-| 2 | Ontological Foundations | 18 | THE_FIRST_DISTINCTION, COMPLETE_ALGEBRA_OF_i, SPACETIME_EMERGENCE, ONTOLOGICAL_GENESIS, ONTIC_FOUNDATIONS, EULER_IDENTITY, D3_UNIQUENESS |
-| 3 | Core Physics | 37 | BOTTOM_UP_PHYSICS, QM_RESOLVED, RELATIVITY, HIGGS, PATH_INTEGRAL, EINSTEIN, BLACK_HOLES, CONFINEMENT, BELL_COSINE, MOORE_GAUGE_STRUCTURE |
-| 4 | Coupling Constants | 9 | LEMNISCATE_WHITEPAPER, ALPHA_PRECISION, LAMBDA_QCD, WATSON_GSTAR_IDENTITY, COSMOLOGICAL_CONSTANT |
-| 5 | Particle Physics | 6 | COMPLETE_PARTICLE_PHYSICS, ELECTROWEAK_MASSES, NEUTRINO_MASS_ABSOLUTE, QUARK_MASSES |
-| 6 | Consciousness | 6 | EXISTENCE_FILTER, CONSCIOUSNESS_QFT_GR_SYNTHESIS, VON_NEUMANN_CHAIN, COLLAPSE_MECHANISM |
-| 7 | Critical Self-Assessment | 7 | EPISTEMIC_AUDIT, BELL_ANALYSIS, HIDDEN_SELECTIONS, CLAIMS_MATRIX, GENUINELY_NEW |
-| 8 | Structural Principles | 6 | CUBOCTAHEDRAL_INTEGERS, LOOP_GRID_DUALITY, GOLDEN_RATIO, TRIT_INFORMATION |
-| 9 | Mathematical Connections | 13 | NUMBER_THEORY, RIEMANN_ZETA, CAYLEY_DICKSON, MODULAR_QUADRATIC, LFUNCTION_GSTAR, PARTITION_PRIMES |
+Cleanup note:
+
+- The curated index and the raw filesystem are not the same thing right now.
+- The live theory tree currently contains more active-category Markdown files than the indexed catalog because some superseded or historical-in-place documents still live outside `archive/`.
+- For current cleanup findings and raw-count context, see [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
+- For category boundaries and archive rules, see [docs/theory/META_STRUCTURE.md](docs/theory/META_STRUCTURE.md).
+
+The current theory categories are:
+
+1. Master Reference
+2. Ontological Foundations
+3. Core Physics Derivations
+4. Coupling Constants and Precision
+5. Particle Physics Applications
+6. Consciousness and Measurement
+7. Critical Self-Assessment
+8. Structural Principles
+9. Mathematical Connections
 
 ---
 
@@ -188,6 +214,8 @@ Located in `docs/reference/`:
 | [REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md) | What FTD does NOT address — required acknowledgments |
 | [REF_EXPERIMENTAL_STATUS.md](docs/reference/REF_EXPERIMENTAL_STATUS.md) | Current testing and validation status |
 | [REF_NAMING_CONVENTIONS.md](docs/reference/REF_NAMING_CONVENTIONS.md) | File and code naming standards |
+| [AUDIT_PROJECT_HEALTH_SCORECARD.md](evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md) | Current weighted project health scorecard |
+| [REF_PROJECT_HEALTH_SCORING.md](evaluation/REF_PROJECT_HEALTH_SCORING.md) | Stable methodology for future health scoring |
 
 ---
 
