@@ -18,7 +18,7 @@ import re
 from datetime import datetime
 
 # Add project root to path
-PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 sys.path.insert(0, PROJECT_ROOT)
 
 from scripts.tests.comprehensive.ftd_test_utils import TierResult, compute_verdict, format_verdict_report
