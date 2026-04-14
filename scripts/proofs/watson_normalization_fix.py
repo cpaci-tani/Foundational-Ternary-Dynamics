@@ -21,9 +21,118 @@ The document claims BOTH equal W_3, but they differ by a factor of 6!
 
 Let me compute both numerically.
 """
+# Phase 8b (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# The hot triple Python for-loops at N=400 and the convergence sweep at
+# N in [100..400] are vectorized through broadcasting reductions, with
+# chunking along i1 to bound peak memory.
+
+import os
+import sys
 import numpy as np
 from scipy.special import gamma
 from scipy.integrate import tplquad
+
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
+
+
+def _watson_norm_sums_torch(N):
+    """Sum 1/hat_k^2, 1/sigma, 1/D over the N**3 midpoint grid (torch)."""
+    dk = np.pi / N
+    idx = TORCH.arange(N, device=DEVICE, dtype=DTYPE)
+    c = TORCH.cos((idx + 0.5) * dk)                 # (N,)
+    c23 = c.unsqueeze(0) + c.unsqueeze(1)           # (N, N)
+    chunk = min(N, 128)
+    t_hatk2 = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    t_sigma = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    t_watson = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c_sum = c[start:stop].view(-1, 1, 1) + c23.unsqueeze(0)  # c1+c2+c3
+        hatk2 = 6.0 - 2.0 * c_sum
+        sigma = 1.0 - c_sum / 3.0
+        D = 3.0 - c_sum
+        t_hatk2 = t_hatk2 + (1.0 / hatk2).sum()
+        t_sigma = t_sigma + (1.0 / sigma).sum()
+        t_watson = t_watson + (1.0 / D).sum()
+    return float(t_hatk2.item()), float(t_sigma.item()), float(t_watson.item())
+
+
+def _watson_norm_sums_numpy(N):
+    """Same three sums, vectorized NumPy + chunking along i1."""
+    dk = np.pi / N
+    idx = np.arange(N, dtype=np.float64)
+    c = np.cos((idx + 0.5) * dk)
+    c23 = c[:, None] + c[None, :]                   # (N, N)
+    chunk = min(N, 128)
+    t_hatk2 = 0.0
+    t_sigma = 0.0
+    t_watson = 0.0
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c_sum = c[start:stop].reshape(-1, 1, 1) + c23[None, :, :]  # c1+c2+c3
+        hatk2 = 6.0 - 2.0 * c_sum
+        sigma = 1.0 - c_sum / 3.0
+        D = 3.0 - c_sum
+        t_hatk2 += float(np.sum(1.0 / hatk2))
+        t_sigma += float(np.sum(1.0 / sigma))
+        t_watson += float(np.sum(1.0 / D))
+    return t_hatk2, t_sigma, t_watson
+
+
+def _watson_norm_sums(N):
+    if TORCH is not None:
+        return _watson_norm_sums_torch(N)
+    return _watson_norm_sums_numpy(N)
+
+
+def _watson_hatk2_sum_torch(N):
+    """Sum 1/hat_k^2 over the N**3 midpoint grid (torch)."""
+    dk = np.pi / N
+    idx = TORCH.arange(N, device=DEVICE, dtype=DTYPE)
+    c = TORCH.cos((idx + 0.5) * dk)
+    c23 = c.unsqueeze(0) + c.unsqueeze(1)
+    chunk = min(N, 128)
+    total = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c_sum = c[start:stop].view(-1, 1, 1) + c23.unsqueeze(0)
+        hatk2 = 6.0 - 2.0 * c_sum
+        total = total + (1.0 / hatk2).sum()
+    return float(total.item())
+
+
+def _watson_hatk2_sum_numpy(N):
+    """Sum 1/hat_k^2 over the N**3 midpoint grid (NumPy)."""
+    dk = np.pi / N
+    idx = np.arange(N, dtype=np.float64)
+    c = np.cos((idx + 0.5) * dk)
+    c23 = c[:, None] + c[None, :]
+    chunk = min(N, 128)
+    total = 0.0
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c_sum = c[start:stop].reshape(-1, 1, 1) + c23[None, :, :]
+        hatk2 = 6.0 - 2.0 * c_sum
+        total += float(np.sum(1.0 / hatk2))
+    return total
+
+
+def _watson_hatk2_sum(N):
+    if TORCH is not None:
+        return _watson_hatk2_sum_torch(N)
+    return _watson_hatk2_sum_numpy(N)
+
 
 Gamma14 = gamma(0.25)
 G14_4 = Gamma14**4
@@ -51,25 +160,7 @@ def integrand_sigma(k3, k2, k1):
 # Using dense grid (tplquad has issues near k=0)
 N = 400
 dk = np.pi / N
-total_hatk2 = 0.0
-total_sigma = 0.0
-total_watson_orig = 0.0  # Watson's original: (1/pi^3) int_0^pi dk/(3-c1-c2-c3)
-
-for i1 in range(N):
-    k1 = (i1 + 0.5) * dk
-    c1 = np.cos(k1)
-    for i2 in range(N):
-        k2 = (i2 + 0.5) * dk
-        c2 = np.cos(k2)
-        for i3 in range(N):
-            k3 = (i3 + 0.5) * dk
-            c3 = np.cos(k3)
-            hatk2 = 6 - 2*(c1+c2+c3)
-            sigma = 1 - (c1+c2+c3)/3
-            D = 3 - c1 - c2 - c3
-            total_hatk2 += 1.0 / hatk2
-            total_sigma += 1.0 / sigma
-            total_watson_orig += 1.0 / D
+total_hatk2, total_sigma, total_watson_orig = _watson_norm_sums(N)
 
 # Normalize: integral over [0,pi]^3 with midpoint rule
 # The full BZ is [-pi,pi]^3, so 8x the [0,pi]^3 integral
@@ -143,22 +234,13 @@ print()
 vals = {}
 for N in [100, 200, 300, 400]:
     dk = np.pi / N
-    t_hatk2 = 0.0
-    t_sigma = 0.0
-    t_watson = 0.0
-    for i1 in range(N):
-        k1 = (i1 + 0.5) * dk
-        c1 = np.cos(k1)
-        for i2 in range(N):
-            k2 = (i2 + 0.5) * dk
-            c2 = np.cos(k2)
-            for i3 in range(N):
-                k3 = (i3 + 0.5) * dk
-                c3 = np.cos(k3)
-                hatk2 = 6 - 2*(c1+c2+c3)
-                t_hatk2 += 1.0/hatk2
-                t_sigma += 6.0/hatk2
-                t_watson += 2.0/hatk2
+    t_hatk2 = _watson_hatk2_sum(N)
+    # These replicate the original's pattern of computing sigma and watson
+    # sums from hatk2: note that in the loop above the accumulators were
+    #   t_sigma += 6.0/hatk2, t_watson += 2.0/hatk2
+    # so t_sigma = 6 * t_hatk2 and t_watson = 2 * t_hatk2 exactly.
+    t_sigma = 6.0 * t_hatk2
+    t_watson = 2.0 * t_hatk2
     cell = dk**3
     vol = np.pi**3
     vals[N] = {
