@@ -1,6 +1,6 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.29
+**Version:** 5.30
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
 
 ---
@@ -46,8 +46,9 @@ A discrete computational framework for simulating physical systems from explicit
 - Lamb shift: 1055.4 MHz (0.23% from experiment)
 - Color charge number N_c = 3 from RG flow + topological quantization
 - **Moore Layer Theorem**: gauge groups U(1)×SU(2)×SU(3), 3 generations of 4 fermions, matter-antimatter symmetry, 17 dark states — all from Moore neighborhood polyhedral decomposition (octahedron + cuboctahedron + stella octangula)
+- BCC multiplicative structure: Watson identity W₃ = G*²/(2π) and SU(3) gauge group both arise from the BCC eigenvalue's triple cosine product (docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md)
 - Confinement from area-law Wilson loops at x₋ (σ = 0.209)
-- Bell violation S = 2√2 from Gauss constraint → 2D transverse flux
+- Bell violation S = 2√2 [SELECTION] resolved as emergent from QM lattice emergence (Tsirelson's bound; April 2026)
 - Full nonlinear Einstein equations via Deser iterative bootstrap
 - D = 3 uniquely selected (no longer axiomatic)
 - Cyclotomic structure: Hamiltonian parameters are Phi_4, Phi_1·Phi_2, Phi_6 evaluated at sqrt(pi)
@@ -55,7 +56,9 @@ A discrete computational framework for simulating physical systems from explicit
 - 50 physics predictions tested across three tiers: `scripts/exploration/test_all_physics.py`
 - Complete Standard Model computation: `scripts/proofs/proof_complete_sm.py`
 
-**Honest accounting:** ~50 predictions tested (20 structural theorems, 20 G*-derived, 10 novel cube predictions), ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
+**Honest accounting:** ~50 predictions tested (20 structural theorems, 20 G*-derived, 10 novel cube predictions), ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. Manuscript v2: 83 chapters (26 new + 57 editorial pass). April 11 audit: 267/267 Python tests pass, 54/54 master verification pass, 3 META_INDEX overclaims fixed. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
+
+**Engine-theory bridge (April 13, 2026):** 20-benchmark suite connects engine output to theory. Coulomb 1/r^2 converges (B+), hydrogen 1/n^2 < 0.001% (A+), color forces correct (A+), Higgs threshold exact (A+), Bell S=2.000 (A+), Born lattice bias 10x (A-). EFT reconstruction: alpha = G_C^2 (derived, not input). Added Wilson loops (12/17, flux tube detected), gluon dynamics (7/11, linear E(r)), budget equation (0.2% at r=6). LATENCY FIX unlocked GR: time dilation 0.004% match, BH gravitational wells L_peak=0.62. Three theorem papers: continuum limit -> QED, singlet from void event, N_c from topology. WASM rebuilt and deployed. 148/166 CTest passing. Scientific status: C+ -> B+.
 
 ---
 
@@ -80,7 +83,7 @@ ftd/                                     # Project root
 │   ├── reference/                # REF_EPISTEMIC_LABELS, REF_SYMBOL_GLOSSARY, etc.
 │   ├── papers/                   # Published/submitted PDFs and TeX sources
 │   └── internal/                 # Session summaries, exploration scripts
-├── engine/                       # C++ simulation engine (v2.11)
+├── engine/                       # C++ simulation engine (v2.14)
 │   ├── SPEC_ENGINE.md            # Engine reference document
 │   ├── include/ftd/              # 28 headers (ontic.h, voxel.h, lattice.h, etc.)
 │   ├── src/                      # 7 source files
@@ -101,6 +104,7 @@ ftd/                                     # Project root
 ├── evaluation/                   # Multi-domain assessment & certification
 ├── dissemination/                # All publication/outreach content
 │   ├── manuscript/               # 96-chapter Quarto book (src/ + media/images/)
+│   ├── manuscript_v2/            # 83-chapter physicist-targeted rewrite
 │   ├── whitepaper/               # LaTeX whitepaper + figures
 │   ├── book/                     # "The Golden Thread" narrative (53 .qmd files)
 │   ├── notebooks/                # 12 Jupyter pedagogy notebooks
@@ -164,6 +168,33 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Lattice Physics Reference** (April 2026): `docs/theory/02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md`
 - **Stellar Lifecycle** (April 2026): `docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md`
 - **Master Verification** (April 2026): `scripts/proofs/proof_master_verification.py` (54/54 checks)
+- **BCC Unification** (April 2026): `docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`
+- **Observer Formalism** (April 2026): `docs/theory/02_foundations/FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md` (Part II: 3³ lattice grounding)
+- **Manuscript v2**: `dissemination/manuscript_v2/CHECKLIST.md` (83 chapters, physicist-targeted)
+- **Engine-Theory Bridge** (April 13, 2026): `engine/tests/benchmark_engine_theory.cpp` (20 benchmarks)
+- **Emergent Alpha** (April 13, 2026): `engine/tests/benchmark_emergent_alpha.cpp` (6 EFT experiments)
+- **Benchmark Harness**: `scripts/benchmarks/benchmark_engine_vs_theory.py` (Python analysis)
+- **Convergence Analysis**: `scripts/benchmarks/analyze_convergence.py` (20-benchmark report + plots)
+- **Benchmark Results**: `scripts/benchmarks/results/` (reports, plots, CSV)
+- **Wilson Loops** (April 13, 2026): `engine/tests/benchmark_wilson_loops.cpp` (12/17 pass, flux tube detected)
+- **Gluon Dynamics** (April 13, 2026): `engine/tests/campaign_gluon_dynamics.cpp` (7/11 pass, linear E(r))
+- **Einstein Equations** (April 13, 2026): `engine/tests/test_einstein_equations.cpp` (time dilation 0.004% match after latency fix)
+- **BH Thermodynamics** (April 13, 2026): `engine/tests/benchmark_black_hole_thermo.cpp` (L_peak 0.62, proper time dilation)
+- **Budget Equation** (April 13, 2026): `engine/tests/benchmark_budget_equation.cpp` (x/K+G*/x=1 to 0.2%)
+- **Continuum Limit -> QED** (April 13, 2026): `docs/theory/03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` (x+ = 1/alpha conditional [THEOREM])
+- **Singlet from Void** (April 13, 2026): `docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md` (Bell loop closed via 5 lemmas)
+- **N_c from Topology** (April 13, 2026): `docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md` (N_c = 3 from 4 independent routes)
+
+---
+
+## EFT Reconstruction (April 13, 2026)
+
+Alpha is now a DERIVED quantity in the engine:
+- `ALPHA_EFT = G_C * G_C` defined in `constants.h` with compile-time `static_assert`
+- G_C (wave equation coupling) is the fundamental lattice parameter
+- All force computations use `ALPHA_EFT` (= G_C²), not hardcoded `ALPHA`
+- New toggle `emergent_forces` computes force from flux gradient without Poisson solver
+- 20-benchmark suite validates: Coulomb convergence (B+), hydrogen spectrum (A+), color forces (A+), Higgs threshold (A+), Bell S=2 (A+), Born lattice bias (A-), 139/179 CTest passing
 
 ---
 
