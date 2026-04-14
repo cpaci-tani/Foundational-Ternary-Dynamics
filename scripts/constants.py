@@ -11,6 +11,64 @@ See docs/theory/SPEC_FTD_LAGRANGIAN.md (v2.0) for the complete derivation chain.
 import numpy as np
 from scipy.special import gamma
 
+# ============================================================================
+# PyTorch / CUDA integration (Phase 8, FTD Test Bench)
+# ============================================================================
+# Provides DEVICE / DTYPE / t() for scripts that want GPU-accelerated tensor
+# operations. Fails gracefully if torch is not installed -- scripts that don't
+# use these names are unaffected. FTD physics requires double precision, so
+# DTYPE defaults to torch.float64.
+#
+# Usage pattern for a hot Monte Carlo loop:
+#
+#     from constants import DEVICE, DTYPE, t, to_numpy, TORCH
+#
+#     if TORCH is not None:
+#         samples = TORCH.rand((N, 3), device=DEVICE, dtype=DTYPE)
+#         result = (samples * samples).sum(dim=1).sqrt().mean().item()
+#     else:
+#         samples = np.random.rand(N, 3)
+#         result = float(np.sqrt((samples * samples).sum(axis=1)).mean())
+#
+# `TORCH is None` means torch is not installed, so callers should use the
+# original NumPy path. All converted Phase 8 scripts preserve their NumPy
+# code path unchanged as the fallback.
+
+try:
+    import torch as _torch
+    _HAS_TORCH = True
+    DEVICE = _torch.device('cuda' if _torch.cuda.is_available() else 'cpu')
+    DTYPE = _torch.float64  # FTD physics needs double precision
+
+    def t(value, device=None, dtype=None):
+        """Convert a scalar / list / ndarray to a torch tensor on DEVICE."""
+        return _torch.tensor(value,
+                             device=device or DEVICE,
+                             dtype=dtype or DTYPE)
+
+    def to_numpy(tensor):
+        """Move a torch tensor back to CPU numpy (identity for ndarray input)."""
+        if _HAS_TORCH and isinstance(tensor, _torch.Tensor):
+            return tensor.detach().cpu().numpy()
+        return tensor
+
+    TORCH = _torch  # explicit export so scripts can `from constants import TORCH`
+except ImportError:
+    _HAS_TORCH = False
+    DEVICE = None
+    DTYPE = None
+    TORCH = None
+
+    def t(value, device=None, dtype=None):
+        raise RuntimeError(
+            "PyTorch not installed. Install with:\n"
+            "  pip install torch --index-url https://download.pytorch.org/whl/cu121\n"
+            "(or the CUDA version matching your driver)")
+
+    def to_numpy(tensor):
+        return tensor
+# ============================================================================
+
 # =============================================================================
 # FRAMEWORK INTEGERS (The Four Pillars)
 # =============================================================================
