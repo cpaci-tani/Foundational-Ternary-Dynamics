@@ -14,6 +14,10 @@ What this proves:
   [SELECTION] The coefficient 16 is assumed to hold for all D
 """
 
+# Phase 8 (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# See docs/superpowers/plans/concurrent-watching-crane.md Phase 8.
+
 import sys
 import os
 import math
@@ -31,6 +35,20 @@ from common import (
     ProofSuite, G_STAR, GAMMA_QUARTER, X_PLUS, X_MINUS,
     MACHINE_EPS, PPM_1, PERCENT_1,
 )
+
+# Try to pick up the project-level PyTorch / CUDA helpers from scripts/constants.py.
+# Fall back to NumPy when torch is not installed.
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
 
 suite = ProofSuite("D=3 Uniqueness from Watson Integral")
 
@@ -93,10 +111,25 @@ def watson_integral_3d():
     return GAMMA_QUARTER**4 / (4.0 * PI**3)
 
 
+def _watson_mc_torch(D, n_samples, seed):
+    """GPU-accelerated MC estimate of the D-dimensional BCC Watson integral.
+
+    Uses torch.rand on DEVICE for the random draw and the full reduction
+    pipeline (cos, prod, 1/(1-x), mean) so no large tensor leaves the GPU.
+    """
+    gen = TORCH.Generator(device=DEVICE).manual_seed(seed)
+    k = TORCH.rand((n_samples, D), generator=gen, device=DEVICE, dtype=DTYPE) * PI
+    cos_prod = TORCH.prod(TORCH.cos(k), dim=1)
+    integrand = 1.0 / (1.0 - cos_prod)
+    return integrand.mean().item()
+
+
 def watson_integral_4d():
     """W_4 = BCC Watson integral in 4D (Monte Carlo)."""
-    rng = np.random.default_rng(42)
     n_samples = 5_000_000
+    if TORCH is not None:
+        return _watson_mc_torch(4, n_samples, seed=42)
+    rng = np.random.default_rng(42)
     k = rng.uniform(0, PI, size=(n_samples, 4))
     cos_prod = np.cos(k[:, 0]) * np.cos(k[:, 1]) * np.cos(k[:, 2]) * np.cos(k[:, 3])
     integrand = 1.0 / (1.0 - cos_prod)
@@ -105,8 +138,10 @@ def watson_integral_4d():
 
 def watson_integral_5d():
     """W_5 = BCC Watson integral in 5D (Monte Carlo)."""
-    rng = np.random.default_rng(42)
     n_samples = 5_000_000
+    if TORCH is not None:
+        return _watson_mc_torch(5, n_samples, seed=42)
+    rng = np.random.default_rng(42)
     k = rng.uniform(0, PI, size=(n_samples, 5))
     cos_prod = (np.cos(k[:, 0]) * np.cos(k[:, 1]) * np.cos(k[:, 2])
                 * np.cos(k[:, 3]) * np.cos(k[:, 4]))
@@ -116,8 +151,10 @@ def watson_integral_5d():
 
 def watson_integral_6d():
     """W_6 = BCC Watson integral in 6D (Monte Carlo)."""
-    rng = np.random.default_rng(42)
     n_samples = 5_000_000
+    if TORCH is not None:
+        return _watson_mc_torch(6, n_samples, seed=42)
+    rng = np.random.default_rng(42)
     k = rng.uniform(0, PI, size=(n_samples, 6))
     cos_prod = (np.cos(k[:, 0]) * np.cos(k[:, 1]) * np.cos(k[:, 2])
                 * np.cos(k[:, 3]) * np.cos(k[:, 4]) * np.cos(k[:, 5]))
