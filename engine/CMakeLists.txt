@@ -587,20 +587,8 @@ add_executable(ftd_lorentz_measure tests/campaign_lorentz_measure.cpp)
 target_link_libraries(ftd_lorentz_measure ftd_core)
 
 # Scale 1 Phase 2: ParticleEngine force expansion (7 new forces)
-add_executable(test_pe_exchange tests/test_pe_exchange.cpp)
-target_link_libraries(test_pe_exchange ftd_core)
-add_executable(test_pe_strong tests/test_pe_strong.cpp)
-target_link_libraries(test_pe_strong ftd_core)
-add_executable(test_pe_lorentz tests/test_pe_lorentz.cpp)
-target_link_libraries(test_pe_lorentz ftd_core)
-add_executable(test_pe_magnetic_dipole tests/test_pe_magnetic_dipole.cpp)
-target_link_libraries(test_pe_magnetic_dipole ftd_core)
-add_executable(test_pe_spin_orbit tests/test_pe_spin_orbit.cpp)
-target_link_libraries(test_pe_spin_orbit ftd_core)
-add_executable(test_pe_radiation tests/test_pe_radiation.cpp)
-target_link_libraries(test_pe_radiation ftd_core)
-add_executable(test_pe_relativistic tests/test_pe_relativistic.cpp)
-target_link_libraries(test_pe_relativistic ftd_core)
+# Phase 1+2b POC: consolidated into test_pe_forces (see below)
+ftd_add_test(test_pe_forces tests/test_pe_forces.cpp)
 add_executable(ftd_pe_fine_structure tests/campaign_pe_fine_structure.cpp)
 target_link_libraries(ftd_pe_fine_structure ftd_core)
 
@@ -655,26 +643,8 @@ add_executable(test_wz_mass tests/test_wz_mass.cpp)
 target_link_libraries(test_wz_mass PRIVATE ftd_core)
 
 # Tritium ternary compute library tests (header-only, no ftd_core dependency)
-add_executable(test_trit_packing tests/test_trit_packing.cpp)
-target_include_directories(test_trit_packing PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_arithmetic tests/test_trit_arithmetic.cpp)
-target_include_directories(test_trit_arithmetic PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_logic tests/test_trit_logic.cpp)
-target_include_directories(test_trit_logic PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_threshold tests/test_trit_threshold.cpp)
-target_include_directories(test_trit_threshold PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_vector tests/test_trit_vector.cpp)
-target_include_directories(test_trit_vector PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_matrix tests/test_trit_matrix.cpp)
-target_include_directories(test_trit_matrix PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_convolution tests/test_trit_convolution.cpp)
-target_include_directories(test_trit_convolution PRIVATE ${CMAKE_SOURCE_DIR}/include)
+# Phase 1+2b POC: consolidated into test_tritium_algebra (7 legacy files merged)
+ftd_add_test(test_tritium_algebra tests/test_tritium_algebra.cpp NO_CORE)
 
 endif() # NOT EMSCRIPTEN — end of tests/campaigns/CLI
 
@@ -762,13 +732,8 @@ add_test(NAME benchmark COMMAND test_benchmark)
 add_test(NAME latency_field COMMAND test_latency_field)
 
 # Scale 1 Phase 2: PE force expansion
-add_test(NAME pe_exchange COMMAND test_pe_exchange)
-add_test(NAME pe_strong COMMAND test_pe_strong)
-add_test(NAME pe_lorentz COMMAND test_pe_lorentz)
-add_test(NAME pe_magnetic_dipole COMMAND test_pe_magnetic_dipole)
-add_test(NAME pe_spin_orbit COMMAND test_pe_spin_orbit)
-add_test(NAME pe_radiation COMMAND test_pe_radiation)
-add_test(NAME pe_relativistic COMMAND test_pe_relativistic)
+# Phase 1+2b POC: 7 legacy pe_* CTest entries consolidated under pe_forces
+# (registered by ftd_add_test() above).
 add_test(NAME campaign_pe_fine_structure COMMAND ftd_pe_fine_structure)
 
 # Scale 2 Phase 3: AE force expansion
@@ -806,13 +771,8 @@ set_tests_properties(
     PROPERTIES TIMEOUT 600)
 
 # Tritium ternary compute library tests
-add_test(NAME trit_packing COMMAND test_trit_packing)
-add_test(NAME trit_arithmetic COMMAND test_trit_arithmetic)
-add_test(NAME trit_logic COMMAND test_trit_logic)
-add_test(NAME trit_threshold COMMAND test_trit_threshold)
-add_test(NAME trit_vector COMMAND test_trit_vector)
-add_test(NAME trit_matrix COMMAND test_trit_matrix)
-add_test(NAME trit_convolution COMMAND test_trit_convolution)
+# Phase 1+2b POC: 7 legacy trit_* CTest entries consolidated under tritium_algebra
+# (registered by ftd_add_test() above).
 
 # GPU tests (only registered when CUDA is enabled)
 if(FTD_ENABLE_CUDA)
@@ -944,8 +904,7 @@ set_tests_properties(
     falsifiability campaign_integer_sweep
     campaign_hydrogen_spectrum campaign_two_slit
     latency_field
-    pe_exchange pe_strong pe_lorentz pe_magnetic_dipole
-    pe_spin_orbit pe_radiation pe_relativistic
+    pe_forces tritium_algebra
     campaign_pe_fine_structure
     ae_hbonds ae_angle_strain ae_dipole ae_thermostat
     ae_electronegativity campaign_ae_water
@@ -979,8 +938,7 @@ set_tests_properties(
     lorentz_force selective_damping em_energy_conservation continuity poynting
     larmor dipole_radiation dispersion_relation thomson_scattering light
     ensemble correlations spectral tracker benchmark latency_field
-    pe_exchange pe_strong pe_lorentz pe_magnetic_dipole pe_spin_orbit
-    pe_radiation pe_relativistic
+    # pe_forces and tritium_algebra auto-labeled as "unit" by ftd_add_test()
     ae_hbonds ae_angle_strain ae_dipole ae_thermostat ae_electronegativity
     action_stationarity asymptotic_freedom atom_toggles atomic_energy
     baryogenesis bell_aggregate born_rule_ensemble confinement_test
@@ -1026,8 +984,7 @@ set_tests_properties(
 
 # Scale 1: ParticleEngine tests
 set_tests_properties(
-    particle_engine pe_exchange pe_strong pe_lorentz pe_magnetic_dipole
-    pe_spin_orbit pe_radiation pe_relativistic particle_toggles
+    particle_engine pe_forces particle_toggles
     campaign_pe_fine_structure
     PROPERTIES LABELS "scale1")
 
