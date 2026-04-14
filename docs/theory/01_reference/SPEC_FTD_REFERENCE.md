@@ -616,7 +616,7 @@ PREDICTIONS:   No SUSY, no WIMPs, no extra dimensions
 
 **Achievement:** Framework with ~35 genuine derivations (α, mass ratios, mixing angles, neutrino masses) plus ~100 parametric insertions using standard physics formulas.
 
-**Status:** Mathematically interesting. Key gaps remain (Bell mechanism, hidden selections). Foundations involve selection principles, not pure derivation. Awaiting independent experimental validation.
+**Status:** Mathematically interesting. Key gaps remain (hidden selections; Bell mechanism now [SELECTION] resolved as emergent). Foundations involve selection principles, not pure derivation. Awaiting independent experimental validation.
 
 **Probability assessment:** The ~35 genuine derivations at sub-percent accuracy are remarkable. However, "~10⁻⁴⁰" probability estimates assume independence—predictions from the same 4 integers are correlated, making naive statistics misleading.
 

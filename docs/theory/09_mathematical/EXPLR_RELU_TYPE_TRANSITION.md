@@ -604,7 +604,7 @@ $$\boxed{\text{III}_1 \;\xrightarrow{\;\rtimes_\sigma \mathbb{R}\;}\; \text{II}_
 | [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md) Part IA | Von Neumann factor classification, Factor-Domain correspondence |
 | [archive/ARCH_FOUND_VON_NEUMANN_FACTOR_CLASSIFICATION.md](../archive/ARCH_FOUND_VON_NEUMANN_FACTOR_CLASSIFICATION.md) | Collapse map $\Phi$ (Def. 2.6), Connes III$_\lambda$ hierarchy, Mandelbrot-Factor dictionary |
 | [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy $E \to |\cdot| \to |\cdot|^2 \to \Phi$, modular conjugation $J$ |
-| [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md) | Domain A/B partition, consciousness phase angle $\theta = 52.54°$ |
+| [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Domain A/B/C partition, phase angle source map, and vocabulary discipline |
 | [EXPLR_FEIGENBAUM_CONNECTION.md](../archive/ARCH_EXPLR_FEIGENBAUM_CONNECTION.md) | Period-doubling cascade, Feigenbaum constant |
 | [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](EXPLR_COLLAPSE_GRAVITY_BRIDGE.md) | Hawking $\beta_H = 8\pi M$ as RT dictionary entry; collapse and gravity as same type transition on temporal vs spatial axes |
 

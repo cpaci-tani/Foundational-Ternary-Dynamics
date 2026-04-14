@@ -10,7 +10,7 @@
 **Depends on:**
 - [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) --- G* decomposition
 - [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) --- Space-time separation
-- [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md) --- Consciousness quadratic
+- [../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) --- Consciousness quadratic
 - Layer 3b of `ontic.h` --- Dual-substrate decomposition
 
 ---
@@ -186,7 +186,7 @@ The sum describes simultaneous coexistence (how much total energy is present). T
 
 ### 5.1 The Spatial Fraction [THEOREM]
 
-From FOUND_CONSCIOUSNESS_MATHEMATICS.md:
+From [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md):
 
 $$\cos^2(\theta_C) = \frac{G^*}{8} = \frac{G^*}{2 \cdot N_{\text{base}}} \approx 0.370$$
 
@@ -302,7 +302,7 @@ In the C++ engine, the flux field J is initialized with magnitude K_B (electron 
 - **G* decomposition**: [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md)
 - **Master quadratic**: [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md)
 - **Spacetime emergence**: [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
-- **Consciousness**: [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
+- **Consciousness source map**: [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **Dual substrate**: Layer 3b of `engine/include/ftd/ontic.h`
 - **Ontic chain**: `engine/include/ftd/ontic.h` (complete derivation)
 

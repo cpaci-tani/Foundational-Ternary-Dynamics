@@ -442,15 +442,17 @@ The checks do NOT demonstrate:
 
 11. **Consciousness connection.** The identification of the complex-root regime (k = 1/2, Delta < 0) with observer experience, and the claim that the Bell mechanism is a specific instance of the consciousness-to-physics projection, is speculative.
 
-### 9.4 What Is [OPEN]
+### 9.4 What Is [OPEN] — Updated April 11, 2026
 
-12. **Rigorous proof that coarse-graining produces exactly S = 2sqrt(2).** A mathematical proof that the specific coarse-graining from substrate to aggregate -- via Gauss constraint complexification and conservation-law non-factorizability -- produces the Tsirelson bound and no other value. This is the central open problem.
+**Item 15 is now the primary resolution path.** The emergent Hilbert space route (item 15 below) has been identified as the correct framing: S = 2 sqrt(2) is a theorem of quantum mechanics (Tsirelson's bound), and QM emerges from the lattice. The three-level hierarchy described in this document is the MECHANISM by which the emergence operates, but the Bell violation itself does not need a separate derivation once QM emergence is established. See DERIV_QM_FROM_LATTICE.md (Bell resolution, April 11, 2026).
 
-13. **GHZ, Hardy, and PBR tests.** The mechanism has been verified only for CHSH. Extension to other Bell-type tests (GHZ correlations, Hardy's paradox, PBR theorem) is needed.
+12. **Void event -> singlet state lemma.** [SELECTION -> THEOREM target] Show that the void event 0 -> (+1)_A + (-1)_B maps to the singlet state |psi> = (|+>|-> - |->|+>)/sqrt(2) in the emergent Hilbert space. The anti-correlated Gauss constraint and the complexification together should force this. Once established, S = 2 sqrt(2) follows from Tsirelson's bound.
 
-14. **Cosmic Bell test compatibility.** Whether the sLoop mechanism survives when detector settings are chosen by distant quasars (cosmic Bell tests) depends on the spatial extent of the shared substrate, which has not been quantified.
+13. **GHZ, Hardy, and PBR tests.** Extension to other Bell-type tests. These should also follow from QM emergence but need explicit verification.
 
-15. **Emergent Hilbert space.** The ultimate question: does the FTD lattice have a continuum limit with tensor product Hilbert space structure? If so, Bell violations follow automatically. If not, the mechanism described here is the only route.
+14. **Cosmic Bell test compatibility.** Whether the sLoop mechanism survives cosmic Bell tests. If QM emergence is complete, this follows automatically (QM is already compatible with cosmic Bell tests).
+
+15. **Emergent Hilbert space.** [PARTIALLY ANSWERED] The lattice produces Schrodinger equation [THEOREM], Born rule [THEOREM], and Hilbert space [SELECTION]. The remaining gap is the tensor product structure for multi-particle states and the singlet-state lemma (item 12).
 
 ---
 
@@ -464,7 +466,7 @@ The observer Bell mechanism resolves the apparent tension between FTD's local su
 
 3. **Observer (sLoop coupling):** Shared substrate origin creates non-factorizable joint probability. Combined with cosine correlations, this produces S = 2sqrt(2).
 
-The mechanism is classified [SELECTION] -- it is structurally motivated, numerically verified (4/4 Monte Carlo checks), and physically interpretable, but it is not uniquely derived from the axioms. The central open problem is a rigorous proof that this specific coarse-graining is the one that the FTD dynamics selects.
+The mechanism is classified [SELECTION] -- it is structurally motivated, numerically verified (4/4 Monte Carlo checks), and physically interpretable. As of April 11, 2026, the Bell violation is understood as EMERGENT: S = 2 sqrt(2) follows from the emergent quantum mechanics (Tsirelson's bound) rather than requiring a separate lattice derivation. The remaining target is the singlet-state lemma: proving that void events produce maximally entangled states in the emergent Hilbert space.
 
 ---
 

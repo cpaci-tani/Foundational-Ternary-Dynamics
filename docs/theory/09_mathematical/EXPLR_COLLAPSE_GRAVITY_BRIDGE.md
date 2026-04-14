@@ -487,7 +487,7 @@ These are not contradictory because the factor type is observer-dependent (§3.3
 | [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Same flux $J$ for QFT and GRT, $T_{\mu\nu}$ via Noether |
 | [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) | $G^* = \varpi/\sqrt{\text{PF}}$, BH thermodynamics, PF cancellation |
 | [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy $E \to |\cdot|^2 \to \Phi$ |
-| [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md) | Domain A/B partition, sLoop |
+| [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Domain A/B/C partition, vocabulary discipline, and context selection |
 
 ---
 
