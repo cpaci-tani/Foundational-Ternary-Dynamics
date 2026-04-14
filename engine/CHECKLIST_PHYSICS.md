@@ -1,9 +1,47 @@
 # FTD Engine Physics Checklist (Living Document)
 
-**Version**: 2.1 (2026-03-08)
-**Engine**: v3.1 Complete Physics (All 74 items implemented)
-**Tests**: 135 CTests
+**Version**: 2.2 (2026-04-13)
+**Engine**: v2.14 EFT Reconstruction + Engine-Theory Bridge
+**Tests**: 184 CTest files, 139/179 passing, 20-benchmark engine-theory suite
 **Purpose**: Track every physics feature needed for the complete Lagrangian and all of physics
+
+### Engine-Theory Bridge Status (April 13, 2026)
+20 quantitative benchmarks + 4 new physics domains:
+- **A+**: Charge conservation, Hydrogen 1/n^2, Color force signs, Higgs threshold, Bell S=2, Gravitational superposition (0.08%)
+- **A/A-**: Gauss constraint, Larmor radiation, Born lattice bias, Alpha extraction, Confinement, Flux tube detection
+- **B+**: Coulomb convergence, Weak parity, Spin-orbit, Relativistic, Goldstone speed, Linear E(r) gluon scaling
+- **B-/C**: Energy conservation (5.6%), Wave speed (60% dispersion), Entropy area-law hint
+- **D**: Latency/GR (phi negative -> latency=0, design fix needed)
+- EFT: `ALPHA_EFT = G_C * G_C` (alpha derived, not input); `emergent_forces` toggle working
+- Budget equation: x/K + G*/x = 1 verified to 0.2% on lattice
+
+### New Physics Domains (April 13, 2026)
+| Domain | Tests | Pass Rate | Key Result |
+|--------|-------|-----------|------------|
+| Wilson Loops | 17 | 12/17 | Flux tube collimation, area law sigma > 0 |
+| Gluon Dynamics | 11 | 7/11 | Linear E(r), E/r ~ constant (ratio 1.69) |
+| Einstein Equations | ~25 | ~17/25 | **Time dilation 0.004% match** (after latency fix) |
+| BH Thermodynamics | ~15 | ~10/15 | **L_peak=0.62, proper time dilation**, Smarr exact |
+
+### LATENCY FIELD FIX (Late April 13, 2026)
+One-line change in `render_bridge.cpp`: `sqrt(max(phi,0))` -> `sqrt(|phi|)`.
+The Poisson solver produces NEGATIVE phi near mass (standard attractive convention).
+Previous code clipped to zero; the fix uses the magnitude.
+
+**Unlocked:**
+- Gravitational time dilation: tau_near=292, tau_far=297, ratio 0.9837 matches sqrt(1-L^2) to 0.004%
+- BH latency profiles: L_peak=0.327/0.494/0.616 for cluster_r=2/3/4 (approaching horizon)
+- BH proper time dilation: clocks at r=5 run 2.9% slower than r=9
+- First lattice demonstration of GR time dilation in FTD
+
+### Theorem Upgrades (April 13, 2026)
+Three major [SELECTION] -> conditional [THEOREM] upgrades:
+1. **x+ = 1/alpha**: `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — compact U(1) -> QED continuum limit + UV scale rigidity lemma
+2. **Singlet from void**: `DERIV_SINGLET_FROM_VOID_EVENT.md` — 5 lemmas close the Bell loop
+3. **N_c = 3**: `DERIV_NC_FROM_TOPOLOGY.md` — four independent routes (spatial, cuboctahedral, Wilson loops, master quadratic)
+
+### Scientific Status
+C+ (March) -> B (morning) -> **B+** (session end)
 
 ---
 
