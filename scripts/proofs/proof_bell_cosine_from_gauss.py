@@ -15,6 +15,10 @@ What this proves:
   [SELECTION]  Gauss constraint is the mechanism that elevates S from 2 to 2*sqrt(2)
 """
 
+# Phase 8 (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# See docs/superpowers/plans/concurrent-watching-crane.md Phase 8.
+
 import sys
 import os
 import io
@@ -30,6 +34,20 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (
     ProofSuite, D_SPATIAL, MACHINE_EPS, PPM_1, PERCENT_1, PERCENT_5,
 )
+
+# Try to pick up the project-level PyTorch / CUDA helpers from scripts/constants.py.
+# Fall back to NumPy when torch is not installed.
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
 
 suite = ProofSuite("Bell Cosine from Gauss Constraint (Tier 2.4)")
 
@@ -392,14 +410,26 @@ for i, theta in enumerate(theta_values):
     # P(B=+1 | A=+1) = sin^2(theta/2), P(B=-1 | A=+1) = cos^2(theta/2)
     # P(B=+1 | A=-1) = cos^2(theta/2), P(B=-1 | A=-1) = sin^2(theta/2)
 
-    alice = rng.choice([-1, 1], size=n_mc)
-    r_bob = rng.uniform(0, 1, size=n_mc)
+    if TORCH is not None:
+        # Draw the numpy RNG samples first so the numpy stream is advanced
+        # identically to the fallback path, then ship them to GPU for the
+        # vectorized product + mean reduction.
+        alice_np = rng.choice([-1, 1], size=n_mc)
+        r_bob_np = rng.uniform(0, 1, size=n_mc)
+        alice_t = TORCH.from_numpy(alice_np).to(device=DEVICE, dtype=DTYPE)
+        r_bob_t = TORCH.from_numpy(r_bob_np).to(device=DEVICE, dtype=DTYPE)
+        p_same = math.sin(theta / 2) ** 2
+        bob_t = TORCH.where(r_bob_t < p_same, alice_t, -alice_t)
+        E_mc[i] = (alice_t * bob_t).mean().item()
+    else:
+        alice = rng.choice([-1, 1], size=n_mc)
+        r_bob = rng.uniform(0, 1, size=n_mc)
 
-    # Conditional Bob outcomes
-    p_same = np.sin(theta / 2) ** 2  # P(B = A | theta)
-    bob = np.where(r_bob < p_same, alice, -alice)
+        # Conditional Bob outcomes
+        p_same = np.sin(theta / 2) ** 2  # P(B = A | theta)
+        bob = np.where(r_bob < p_same, alice, -alice)
 
-    E_mc[i] = np.mean(alice * bob)
+        E_mc[i] = np.mean(alice * bob)
 
 mc_match = np.max(np.abs(E_mc - E_target))
 print(f"  Monte Carlo ({n_mc:,} samples) vs -cos(theta): max deviation = {mc_match:.4f}")
@@ -519,21 +549,34 @@ E_triangle = -(1.0 - 2.0 * theta_test / PI)
 for i, theta in enumerate(theta_test):
     # Hidden variable: random unit vector on S^2
     raw = rng.standard_normal((n_mc_3d, 3))
-    norms = np.linalg.norm(raw, axis=1, keepdims=True)
-    lam = raw / norms  # unit vectors on S^2
+    if TORCH is not None:
+        # Move the already-drawn Gaussians to GPU and finish the pipeline there.
+        raw_t = TORCH.from_numpy(raw).to(device=DEVICE, dtype=DTYPE)
+        norms_t = TORCH.linalg.norm(raw_t, dim=1, keepdim=True)
+        lam_t = raw_t / norms_t  # unit vectors on S^2
+        A_t = TORCH.sign(lam_t[:, 2])
+        b_hat_t = TORCH.tensor([math.sin(theta), 0.0, math.cos(theta)],
+                               device=DEVICE, dtype=DTYPE)
+        B_t = TORCH.sign(-(lam_t @ b_hat_t))
+        A_t = TORCH.where(A_t == 0, TORCH.tensor(1.0, device=DEVICE, dtype=DTYPE), A_t)
+        B_t = TORCH.where(B_t == 0, TORCH.tensor(1.0, device=DEVICE, dtype=DTYPE), B_t)
+        E_3d_mc[i] = (A_t * B_t).mean().item()
+    else:
+        norms = np.linalg.norm(raw, axis=1, keepdims=True)
+        lam = raw / norms  # unit vectors on S^2
 
-    # Alice measures along z-axis: A = sign(lambda_z)
-    A = np.sign(lam[:, 2])
+        # Alice measures along z-axis: A = sign(lambda_z)
+        A = np.sign(lam[:, 2])
 
-    # Bob measures along (sin(theta), 0, cos(theta)): B = sign(-lambda . b_hat)
-    b_hat = np.array([np.sin(theta), 0.0, np.cos(theta)])
-    B = np.sign(-(lam @ b_hat))  # anti-correlated
+        # Bob measures along (sin(theta), 0, cos(theta)): B = sign(-lambda . b_hat)
+        b_hat = np.array([np.sin(theta), 0.0, np.cos(theta)])
+        B = np.sign(-(lam @ b_hat))  # anti-correlated
 
-    # Replace exact zeros (measure zero event)
-    A[A == 0] = 1.0
-    B[B == 0] = 1.0
+        # Replace exact zeros (measure zero event)
+        A[A == 0] = 1.0
+        B[B == 0] = 1.0
 
-    E_3d_mc[i] = np.mean(A * B)
+        E_3d_mc[i] = np.mean(A * B)
 
 mc_3d_match = np.max(np.abs(E_3d_mc - E_triangle))
 print(f"  3D MC vs triangle: max deviation = {mc_3d_match:.4f}")
