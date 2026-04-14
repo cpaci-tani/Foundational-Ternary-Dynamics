@@ -9,24 +9,68 @@ if(NOT EMSCRIPTEN)
     find_package(OpenMP)
 endif()
 
-# CUDA GPU acceleration (optional — requires CUDA Toolkit 12.0+)
-option(FTD_ENABLE_CUDA "Enable CUDA GPU acceleration (requires NVIDIA GPU)" OFF)
-if(FTD_ENABLE_CUDA AND NOT EMSCRIPTEN)
-    # Allow VS 2025 (v18) — CUDA 13.0 officially supports up to VS 2022,
-    # but VS 2025 works with this flag. Must be set BEFORE enable_language.
+# CUDA GPU acceleration — DEFAULT ON via AUTO probe (Phase 0: FTD Test Bench).
+#
+# Tests are 10–100x faster on GPU. CUDA is now opt-OUT rather than opt-in.
+# If CUDAToolkit is not found on the system (e.g. CI runners without a GPU),
+# we gracefully downgrade to a CPU-only build with a status message.
+#
+# Override behaviors:
+#   -DFTD_ENABLE_CUDA=OFF     → force CPU build even if CUDA is available
+#   -DFTD_ENABLE_CUDA=ON      → require CUDA (error if not found)
+#   (unset / AUTO)            → use CUDA if found, else CPU (default)
+#
+# Probe strategy: find_package(CUDAToolkit) succeeds as long as nvcc exists
+# in PATH, and does NOT require a working host compiler (unlike
+# check_language(CUDA) which tries to compile a test program). This makes
+# the probe robust across both Developer Command Prompt and plain shells.
+#
+if(NOT DEFINED FTD_ENABLE_CUDA)
+    set(FTD_ENABLE_CUDA "AUTO" CACHE STRING "Enable CUDA (ON/OFF/AUTO)")
+endif()
+
+set(_ftd_cuda_active OFF)
+if(NOT EMSCRIPTEN AND NOT FTD_ENABLE_CUDA STREQUAL "OFF")
+    # Non-REQUIRED probe so OFF-path stays clean.
+    find_package(CUDAToolkit QUIET)
+    if(CUDAToolkit_FOUND)
+        set(_ftd_cuda_active ON)
+    elseif(FTD_ENABLE_CUDA STREQUAL "ON")
+        message(FATAL_ERROR "FTD_ENABLE_CUDA=ON but CUDAToolkit not found. "
+                            "Install CUDA Toolkit or set -DFTD_ENABLE_CUDA=OFF.")
+    else()
+        message(STATUS "CUDAToolkit not found — building CPU-only. "
+                       "Install CUDA and re-run cmake for 10-100x test speedup.")
+    endif()
+endif()
+
+if(_ftd_cuda_active)
+    # Allow VS 2025+ (v18) — CUDA 13.0 officially supports up to VS 2022,
+    # but VS 2025/2026 work with this flag. Must be set BEFORE enable_language.
     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --allow-unsupported-compiler")
-    enable_language(CUDA)
-    find_package(CUDAToolkit REQUIRED)
-    set(CMAKE_CUDA_STANDARD 17)
-    # Default: Ada (89: RTX 4060-4090, 5070-5080) + Blackwell (120: RTX 5090)
+
+    # Default architectures: Ada (89: RTX 4060-4090) + Blackwell (120: RTX 5090+)
+    # Must be set BEFORE enable_language(CUDA) — otherwise CMake 3.24+ picks
+    # its own default (often 75 / Turing).
     # Override: cmake -DCMAKE_CUDA_ARCHITECTURES="86;89;120" for Ampere support
     if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES OR CMAKE_CUDA_ARCHITECTURES STREQUAL "")
         set(CMAKE_CUDA_ARCHITECTURES "89;120")
     endif()
+
+    enable_language(CUDA)
+    set(CMAKE_CUDA_STANDARD 17)
     message(STATUS "CUDA enabled — architectures: ${CMAKE_CUDA_ARCHITECTURES}")
     add_compile_definitions(FTD_ENABLE_CUDA)
+    # Make FTD_ENABLE_CUDA boolean-true for downstream if() checks.
+    set(FTD_ENABLE_CUDA ON CACHE STRING "CUDA is enabled" FORCE)
     add_subdirectory(cuda)
+else()
+    set(FTD_ENABLE_CUDA OFF CACHE STRING "CUDA is disabled" FORCE)
 endif()
+
+# Test runner macros (Phase 0 of FTD Test Bench)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(FtdAddTest)
 
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -988,3 +1032,29 @@ set_tests_properties(
     atom_engine atom_scale_bridge ae_hbonds ae_angle_strain ae_dipole
     ae_thermostat ae_electronegativity atom_toggles campaign_ae_water
     PROPERTIES LABELS "scale2")
+
+# ============================================================================
+# GPU labels (Phase 0, FTD Test Bench)
+# ============================================================================
+#
+# Tests marked with the "gpu" label need a dedicated CUDA device and should
+# be dispatched serially by the test runner's SmartDispatcher. All other
+# tests can run in parallel on CPU workers.
+#
+# Uses set_property(... APPEND ...) so labels stack cleanly with the earlier
+# "unit" / "campaign" / "foundation" labels.
+#
+if(FTD_ENABLE_CUDA)
+    set(_ftd_gpu_tests
+        gpu_parity
+        gpu_benchmark
+        gpu_physics
+        gpu_experiments
+    )
+    foreach(_t IN LISTS _ftd_gpu_tests)
+        if(TEST ${_t})
+            set_property(TEST ${_t} APPEND PROPERTY LABELS "gpu")
+        endif()
+    endforeach()
+    unset(_ftd_gpu_tests)
+endif()
