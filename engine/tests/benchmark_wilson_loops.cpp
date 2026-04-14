@@ -309,9 +309,13 @@ static LinFit linear_fit(const std::vector<double>& x, const std::vector<double>
 
 // ================================================================
 // Setup: Create a quark-antiquark pair with color forces and equilibrate
+//
+// Takes the RenderBridge by reference (out-param) rather than returning
+// by value, because RenderBridge is non-copyable (owns unique_ptr<GpuEngine>
+// in CUDA builds) and has no explicit move constructor defined.
 // ================================================================
-static RenderBridge setup_color_field(int L, int separation, int eq_ticks) {
-    RenderBridge rb(L);
+static void setup_color_field(RenderBridge& rb, int separation, int eq_ticks) {
+    const int L = rb.lattice().size();
     rb.toggles.genesis = false;       // no spontaneous pair production
     rb.toggles.gravity = false;       // isolate color dynamics
     rb.toggles.color_forces = true;   // enable SU(3)-inspired forces
@@ -333,7 +337,6 @@ static RenderBridge setup_color_field(int L, int separation, int eq_ticks) {
     // Equilibrate: let the flux field settle under wave propagation,
     // Gauss projection, and color forces
     rb.run(eq_ticks);
-    return rb;
 }
 
 // ================================================================
@@ -343,7 +346,8 @@ void benchmark_wl1_sanity(int L, int eq_ticks) {
     std::cout << "\n=== WL1: Wilson Loop Sanity Checks ===\n";
 
     int sep = std::min(8, L / 4);
-    RenderBridge rb = setup_color_field(L, sep, eq_ticks);
+    RenderBridge rb(L);
+    setup_color_field(rb, sep, eq_ticks);
 
     // Test small loops near the source
     int mid = L / 2;
@@ -386,7 +390,8 @@ void benchmark_wl2_area_law(int L, int eq_ticks) {
     std::cout << "\n=== WL2: Area Law Test ===\n";
 
     int sep = std::min(10, L / 3);
-    RenderBridge rb = setup_color_field(L, sep, eq_ticks);
+    RenderBridge rb(L);
+    setup_color_field(rb, sep, eq_ticks);
 
     // Compute <W(R,T)> for a range of square loops R=T
     int max_R = std::min(L / 4, 8);
@@ -466,7 +471,8 @@ void benchmark_wl3_creutz(int L, int eq_ticks) {
     std::cout << "\n=== WL3: Creutz Ratio (sigma extraction) ===\n";
 
     int sep = std::min(10, L / 3);
-    RenderBridge rb = setup_color_field(L, sep, eq_ticks);
+    RenderBridge rb(L);
+    setup_color_field(rb, sep, eq_ticks);
 
     int max_dim = std::min(L / 4, 7);
     int stride = std::max(1, L / 16);
@@ -548,7 +554,8 @@ void benchmark_wl4_sigma_comparison(int L, int eq_ticks) {
     std::cout << "\n=== WL4: String Tension Comparison ===\n";
 
     int sep = std::min(10, L / 3);
-    RenderBridge rb = setup_color_field(L, sep, eq_ticks);
+    RenderBridge rb(L);
+    setup_color_field(rb, sep, eq_ticks);
 
     int stride = std::max(1, L / 16);
 
@@ -645,7 +652,8 @@ void benchmark_wl5_isotropy(int L, int eq_ticks) {
     std::cout << "\n=== WL5: Wilson Loop Isotropy ===\n";
 
     int sep = std::min(8, L / 4);
-    RenderBridge rb = setup_color_field(L, sep, eq_ticks);
+    RenderBridge rb(L);
+    setup_color_field(rb, sep, eq_ticks);
 
     int stride = std::max(1, L / 16);
     int R = 3, T = 3;
@@ -687,7 +695,8 @@ void benchmark_wl6_flux_tube(int L, int eq_ticks) {
     std::cout << "\n=== WL6: Flux Tube Profile ===\n";
 
     int sep = std::min(10, L / 3);
-    RenderBridge rb = setup_color_field(L, sep, eq_ticks);
+    RenderBridge rb(L);
+    setup_color_field(rb, sep, eq_ticks);
 
     int mid = L / 2;
     int px = mid + sep;
