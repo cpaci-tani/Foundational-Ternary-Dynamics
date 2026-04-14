@@ -26,6 +26,7 @@ set(TEST_RUNNER_SOURCES
     src/OutputPanel.cpp
     src/LatticeViewer.cpp
     src/FieldLines.cpp
+    src/TelemetryCharts.cpp
 )
 
 set(TEST_RUNNER_HEADERS
@@ -37,6 +38,7 @@ set(TEST_RUNNER_HEADERS
     include/OutputPanel.h
     include/LatticeViewer.h
     include/FieldLines.h
+    include/TelemetryCharts.h
     src/LatticeViewer_shaders.h
 )
 
