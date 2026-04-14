@@ -1,0 +1,110 @@
+% Titlepage Preamble - Elite Physics Textbook Design
+% =============================================================================
+% Uses the goldthread/darkblue palette from the main preamble.
+% No author name displayed. Title + subtitle + epigraph + year.
+% =============================================================================
+
+% Required packages for title page
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{eso-pic}
+
+% Parchment background for title page only
+\definecolor{parchment}{RGB}{253,245,230}
+
+% Ornamental line command (gold dots and rules)
+\newcommand{\ornamentalline}{%
+  \begin{center}
+    \begin{tikzpicture}
+      \draw[goldthread, line width=0.5pt] (0,0) -- (2,0);
+      \fill[goldthread] (2.2,0) circle (2pt);
+      \draw[goldthread, line width=0.5pt] (2.4,0) -- (4.4,0);
+      \fill[goldthread] (4.6,0) circle (2pt);
+      \draw[goldthread, line width=0.5pt] (4.8,0) -- (6.8,0);
+    \end{tikzpicture}
+  \end{center}
+}
+
+% Custom title page
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{titlepage}
+    \newgeometry{top=1in,bottom=1in,left=1.25in,right=1in}
+
+    % Background color - subtle parchment
+    \pagecolor{parchment}
+
+    \begin{center}
+      % Top ornamental border
+      \vspace*{0.3in}
+      \begin{tikzpicture}
+        \draw[goldthread, line width=0.8pt] (0,0) rectangle (4in,0.015in);
+      \end{tikzpicture}
+
+      \vspace{0.3in}
+
+      % Lemniscate-Alpha Logo
+      \IfFileExists{media/images/fig-lemniscate-alpha-logo.png}{%
+        \includegraphics[width=1.5in]{media/images/fig-lemniscate-alpha-logo.png}%
+      }{%
+        % Fallback: lemniscate symbol if logo not found
+        \textcolor{goldthread}{\fontsize{48}{56}\selectfont$\infty$}%
+      }
+
+      \vspace{0.25in}
+
+      % Ornamental line
+      \ornamentalline
+
+      \vspace{0.15in}
+
+      % Title
+      {\fontsize{24}{28}\selectfont\bfseries\color{darkblue}%
+        FOUNDATIONAL\\[0.08in]
+        TERNARY\\[0.08in]
+        DYNAMICS}
+
+      \vspace{0.2in}
+
+      % Ornamental line
+      \ornamentalline
+
+      \vspace{0.15in}
+
+      % Subtitle
+      {\fontsize{11}{14}\selectfont\itshape\color{darkblue!70}%
+        From Atoms to Cosmos --- The Lattice Universe at Every Scale}
+
+      \vspace{0.4in}
+
+      % Epigraph
+      {\fontsize{9}{12}\selectfont\color{darkblue!60}%
+        \textit{``From the void emerges manifestation;\\[2pt]
+        from manifestation, structure;\\[2pt]
+        from structure, cosmos.''}}
+
+      \vfill
+
+      % Year with ornaments (no author)
+      \begin{tikzpicture}
+        \draw[goldthread, line width=0.5pt] (0,0) -- (1.2,0);
+        \node[darkblue] at (1.7,0) {\fontsize{11}{13}\selectfont\bfseries 2026};
+        \draw[goldthread, line width=0.5pt] (2.2,0) -- (3.4,0);
+      \end{tikzpicture}
+
+      \vspace{0.3in}
+
+      % Bottom ornamental border
+      \begin{tikzpicture}
+        \draw[goldthread, line width=0.8pt] (0,0) rectangle (4in,0.015in);
+      \end{tikzpicture}
+
+    \end{center}
+
+    % Reset page color
+    \afterpage{\nopagecolor}
+
+    \restoregeometry
+  \end{titlepage}
+}
+\makeatother

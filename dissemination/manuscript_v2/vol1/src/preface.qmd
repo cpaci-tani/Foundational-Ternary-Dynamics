@@ -1,0 +1,17 @@
+# Preface {.unnumbered}
+
+This work began as a computational experiment: simulate a discrete lattice with ternary states and see what emerges. What emerged was unexpected.
+
+The 26-neighbor Moore neighborhood on $\mathbb{Z}^3$ decomposes into three sublattices --- simple cubic (6 face-adjacent), face-centered cubic (12 edge-adjacent), and body-centered cubic (8 corner-adjacent). Each sublattice excites a different number of flux components, generating exactly the Standard Model gauge group $U(1) \times SU(2) \times SU(3)$. The BCC sublattice's eigenvalue --- a product of cosines, $1 - \cos k_1 \cos k_2 \cos k_3$ --- connects through Watson's 1939 integral identity to the lemniscatic constant $G^* = \Gamma(1/4)^2/(\sqrt{2}\pi)$. A self-consistency gap equation with coefficient 16 (the square of the CM curve automorphism count) then produces two roots: $1/\alpha = 137.036$ and $N_c = 3$. Everything else follows.
+
+The framework has five postulates, six derived constants, and zero free parameters. It computes 46 Standard Model observables, recovers the full nonlinear Einstein equations, and resolves the measurement problem through an algebraic type transition (Type III$_1$ to Type I) that requires no external observer.
+
+This manuscript is written for working physicists. It assumes familiarity with quantum field theory, general relativity, and lattice gauge theory. Motivation and philosophy are minimal; derivations are explicit. Every claim carries an epistemic tag indicating whether it is a theorem, a selection principle, a conjecture, or an open question.
+
+The author makes no claim that this is the final theory of physics. It is a framework that produces the right numbers from discrete geometry. Whether it is the *right* framework --- or merely a remarkably efficient parametrization --- is for the reader to judge. The falsification criteria are in Chapter 24.
+
+::: {.callout-note}
+## Methodology
+
+This work was developed through computationally-guided mathematical discovery (CGMD): systematic lattice simulation revealing structural identities that were then proven analytically. The master quadratic was discovered by simulation, not deduction. The proofs came after.
+:::

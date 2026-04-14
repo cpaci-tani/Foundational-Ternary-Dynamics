@@ -1,0 +1,279 @@
+% =============================================================================
+% FTD MANUSCRIPT v2 — ELITE PHYSICS TEXTBOOK TYPOGRAPHY
+% =============================================================================
+% Design language: Gold = achievement, Darkblue = authority,
+% Purple = foundational (axiom), Blue = proven (theorem),
+% Teal = reference (definition), Gold-dashed = argued (selection),
+% Orange = speculative (conjecture)
+% =============================================================================
+
+% --- FONTS: Palatino (the physics monograph standard) ---
+\usepackage{mathpazo}         % Palatino text + Palatino math
+\usepackage[T1]{fontenc}      % Proper glyph encoding
+\usepackage{microtype}        % Optical margin alignment, font expansion
+\usepackage{textcomp}         % Additional text symbols
+
+% --- COLOR SYSTEM ---
+\usepackage{xcolor}
+
+% Primary palette (from The Golden Thread)
+\definecolor{goldthread}{RGB}{201, 162, 39}
+\definecolor{darkblue}{RGB}{44, 62, 80}
+
+% Epistemic callout colors
+\definecolor{axiomPurple}{RGB}{93, 33, 182}
+\definecolor{axiomBg}{RGB}{250, 248, 255}
+\definecolor{theoremBlue}{RGB}{37, 99, 235}
+\definecolor{theoremBg}{RGB}{248, 250, 255}
+\definecolor{definitionTeal}{RGB}{13, 148, 136}
+\definecolor{definitionBg}{RGB}{248, 253, 252}
+\definecolor{selectionGold}{RGB}{202, 138, 4}
+\definecolor{selectionBg}{RGB}{255, 254, 245}
+\definecolor{conjectureBurn}{RGB}{234, 88, 12}
+\definecolor{conjectureBg}{RGB}{255, 250, 245}
+\definecolor{warningRed}{RGB}{220, 38, 38}
+\definecolor{tableStripe}{RGB}{245, 245, 250}
+
+% Override Quarto's default callout colors
+\definecolor{quarto-callout-note-color}{RGB}{44, 62, 80}
+\definecolor{quarto-callout-important-color}{RGB}{220, 38, 38}
+\definecolor{quarto-callout-warning-color}{RGB}{234, 88, 12}
+\definecolor{quarto-callout-tip-color}{RGB}{13, 148, 136}
+\definecolor{quarto-callout-caution-color}{RGB}{202, 138, 4}
+
+% --- CALLOUT BOXES (tcolorbox) ---
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+% AXIOM: purple left bar, light purple background
+\newtcolorbox{ftdaxiom}[1][]{%
+  enhanced, breakable,
+  colback=axiomBg,
+  colframe=axiomPurple,
+  coltitle=axiomPurple,
+  fonttitle=\bfseries\scshape,
+  title={#1},
+  left=4mm, right=4mm, top=3mm, bottom=3mm,
+  borderline west={3pt}{0pt}{axiomPurple},
+  frame hidden, boxrule=0pt, sharp corners,
+  before upper={\setlength{\parindent}{0pt}},
+}
+
+% THEOREM: gold top rule, white body, blue title
+\newtcolorbox{ftdtheorem}[1][]{%
+  enhanced, breakable,
+  colback=white,
+  colframe=theoremBlue,
+  coltitle=theoremBlue,
+  fonttitle=\bfseries,
+  title={#1},
+  left=4mm, right=4mm, top=3mm, bottom=3mm,
+  borderline north={2pt}{0pt}{goldthread},
+  frame hidden, boxrule=0pt, sharp corners,
+  before upper={\setlength{\parindent}{0pt}},
+}
+
+% DEFINITION: teal left bar + thin border
+\newtcolorbox{ftddefinition}[1][]{%
+  enhanced, breakable,
+  colback=definitionBg,
+  colframe=definitionTeal,
+  coltitle=definitionTeal,
+  fonttitle=\bfseries,
+  title={#1},
+  left=4mm, right=4mm, top=3mm, bottom=3mm,
+  borderline west={3pt}{0pt}{definitionTeal},
+  borderline={0.5pt}{0pt}{definitionTeal!30},
+  sharp corners,
+  before upper={\setlength{\parindent}{0pt}},
+}
+
+% SELECTION: dashed gold border (signals "not fully proven")
+\newtcolorbox{ftdselection}[1][]{%
+  enhanced, breakable,
+  colback=selectionBg,
+  colframe=selectionGold,
+  coltitle=selectionGold!80!black,
+  fonttitle=\bfseries,
+  title={#1},
+  left=4mm, right=4mm, top=3mm, bottom=3mm,
+  borderline={1pt}{0pt}{goldthread, dashed},
+  sharp corners,
+  before upper={\setlength{\parindent}{0pt}},
+}
+
+% CONJECTURE: orange left bar, italic label, warm background
+\newtcolorbox{ftdconjecture}[1][]{%
+  enhanced, breakable,
+  colback=conjectureBg,
+  colframe=conjectureBurn,
+  coltitle=conjectureBurn,
+  fonttitle=\bfseries\itshape,
+  title={#1},
+  left=4mm, right=4mm, top=3mm, bottom=3mm,
+  borderline west={3pt}{0pt}{conjectureBurn},
+  frame hidden, boxrule=0pt, sharp corners,
+  before upper={\setlength{\parindent}{0pt}},
+}
+
+% --- CHAPTER TITLE DESIGN (titlesec) ---
+\usepackage{titlesec}
+
+% Chapter: gold number on own line, darkblue title, gold rule below
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}
+  {\textcolor{goldthread}{\fontsize{60}{72}\selectfont\thechapter}}
+  {10pt}
+  {\color{darkblue}\Huge}
+  [\vspace{4pt}{\color{goldthread}\titlerule[1.5pt]}]
+
+\titlespacing*{\chapter}{0pt}{40pt}{30pt}
+
+% Part: centered, gold label, darkblue name
+\titleformat{\part}[display]
+  {\centering\normalfont}
+  {\textcolor{goldthread}{\fontsize{14}{16}\selectfont\scshape\partname\ \thepart}}
+  {12pt}
+  {\fontsize{24}{28}\selectfont\color{darkblue}\bfseries}
+  [\vspace{8pt}{\color{goldthread}\titlerule[1.5pt]}]
+
+% Section headings in darkblue
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{darkblue}}
+  {\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{darkblue}}
+  {\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{darkblue}}
+  {\thesubsubsection}{1em}{}
+
+% --- HEADERS AND FOOTERS (fancyhdr) ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+
+% Even pages: book title (left header)
+\fancyhead[LE]{\small\scshape\textcolor{darkblue}{Foundational Ternary Dynamics}}
+% Odd pages: section name (right header)
+\fancyhead[RO]{\small\scshape\textcolor{darkblue}{\nouppercase{\rightmark}}}
+% Page numbers in outer footer
+\fancyfoot[LE,RO]{\textcolor{darkblue}{\thepage}}
+
+% Gold header rule
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{%
+  \color{goldthread}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0pt}
+
+% Plain style for chapter-opening pages
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[C]{\textcolor{darkblue}{\thepage}}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% --- TABLE DESIGN ---
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{colortbl}
+
+% Gold top/bottom rules, subtle midrules
+\arrayrulecolor{darkblue!30}
+
+% Professional captions
+\usepackage{caption}
+\captionsetup{
+  font={small, it},
+  labelfont={bf, color=darkblue},
+  labelsep=period,
+  skip=6pt,
+}
+\captionsetup[table]{position=below}
+\captionsetup[figure]{position=below}
+
+% --- MATH ENHANCEMENT ---
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{bm}
+
+% Gold QED symbol — requires amsthm which Quarto may not load
+% \renewcommand{\qedsymbol}{$\textcolor{goldthread}{\blacksquare}$}
+
+% --- DROP CAPS ---
+\usepackage{lettrine}
+\setcounter{DefaultLines}{2}
+\renewcommand{\DefaultLoversize}{0.1}
+\renewcommand{\DefaultLraise}{0}
+\renewcommand{\DefaultLhang}{0.15}
+\renewcommand{\LettrineFontHook}{\color{darkblue}\bfseries}
+
+% --- EPIGRAPH SUPPORT ---
+\usepackage{epigraph}
+\setlength{\epigraphwidth}{0.75\textwidth}
+\renewcommand{\epigraphflush}{center}
+\renewcommand{\sourceflush}{center}
+\renewcommand{\epigraphrule}{0pt}
+
+% --- LEMNISCATE SECTION SEPARATOR ---
+\newcommand{\sectionbreak}{%
+  \vspace{1.5em}%
+  \begin{center}%
+    \textcolor{goldthread}{\Large$\infty$}%
+  \end{center}%
+  \vspace{1.5em}%
+}
+
+% --- PARAGRAPH STYLE: indent, no skip (academic book convention) ---
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0pt plus 1pt}
+
+% --- STRIP EPISTEMIC TAGS FROM RUNNING HEADERS ---
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+
+% --- TYPOGRAPHY CONTROLS ---
+\widowpenalty=10000
+\clubpenalty=10000
+\hyphenpenalty=500
+\tolerance=1000
+
+% Float placement
+\renewcommand{\floatpagefraction}{0.8}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+
+% Clean lists
+\usepackage{enumitem}
+\setlist{itemsep=2pt, parsep=2pt}
+
+% --- TABLE OF CONTENTS ---
+\usepackage{tocloft}
+\setlength{\cftchapnumwidth}{2.5em}
+\setlength{\cftsecnumwidth}{3.0em}
+\setlength{\cftsubsecnumwidth}{3.8em}
+\renewcommand{\cftchapfont}{\bfseries\color{darkblue}}
+\renewcommand{\cftchappagefont}{\bfseries\color{darkblue}}
+\renewcommand{\cftsecfont}{\color{darkblue!80}}
+\renewcommand{\cftsecpagefont}{\color{darkblue!80}}
+
+% --- HYPERREF CONFIGURATION (deferred until hyperref is loaded) ---
+\AtBeginDocument{%
+  \hypersetup{
+    colorlinks=true,
+    linkcolor=darkblue,
+    urlcolor=goldthread,
+    citecolor=darkblue!80,
+    pdftitle={Foundational Ternary Dynamics},
+    pdfsubject={Deriving the Standard Model from Five Lattice Postulates},
+  }%
+}
+
+% --- UTILITY COMMANDS ---
+\newcommand{\keynumber}[1]{\textbf{\textcolor{darkblue}{#1}}}
+
+% Afterpage for title page background cleanup
+\usepackage{afterpage}

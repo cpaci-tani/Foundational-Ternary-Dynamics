@@ -1,0 +1,81 @@
+# The Two-Layer Ontology {#sec-ontology}
+
+The lattice carries two fields: a discrete state field and a continuous flux field. Their interaction --- mediated by the Gauss constraint --- is the engine of all dynamics.
+
+## The state field
+
+The **state field** $s : \mathbb{Z}^3 \times \mathbb{N} \to \{-1, 0, +1\}$ assigns a ternary value to each voxel at each tick. It is the **actual** layer: what has manifested. In the language of dispositionalism, the state field records what *is* the case.
+
+- $s(v) = 0$: the voxel is void (no manifestation)
+- $s(v) = +1$: positive charge manifestation
+- $s(v) = -1$: negative charge manifestation
+
+The charge density is the state field itself: $\rho(v) = s(v)$.
+
+## The flux field
+
+The **flux field** $\mathbf{J} : \mathbb{Z}^3 \times \mathbb{N} \to \mathbb{R}^3$ assigns a continuous three-component vector to each voxel at each tick. It is the **dispositional** layer: what *could* manifest. The flux encodes potential energy density, force-carrying capacity, and the substrate for wave propagation.
+
+The flux field is real but not directly observable. Only its consequences --- through the manifestation threshold and the Gauss constraint --- are empirically accessible.
+
+## The Gauss constraint {#sec-gauss}
+
+The two fields are coupled by the **Gauss constraint**:
+
+$$
+\nabla \cdot \mathbf{J}(v) = \rho(v) = s(v)
+\tag{2.1}
+$$
+
+where $\nabla \cdot$ is the discrete divergence operator on $\mathbb{Z}^3$:
+
+$$
+(\nabla \cdot \mathbf{J})(v) = \sum_{\mu = 1}^{3} \left[ J_\mu(v + \hat{e}_\mu) - J_\mu(v) \right]
+$$
+
+The Gauss constraint is the lattice version of $\nabla \cdot \mathbf{E} = \rho$ from electrostatics. It is not a dynamical equation but a **constraint** enforced at every tick by the Gauss projector (SOR Poisson solver in the engine implementation).
+
+::: {.callout-theorem}
+## Theorem 2.1 (Gauss reduces degrees of freedom)
+On a finite lattice of $N$ sites with periodic boundary conditions, the Gauss constraint $\nabla \cdot \mathbf{J} = s$ removes $N - 1$ degrees of freedom from the $3N$-dimensional flux space (one constraint per site, minus one redundancy from charge conservation $\sum_v s(v) = Q$). The physical flux space has dimension $2N + 1$.
+:::
+
+*Proof.* The divergence operator $\nabla \cdot : \mathbb{R}^{3N} \to \mathbb{R}^N$ has rank $N - 1$ on a periodic lattice (the constant vector is in the kernel). The constraint $\nabla \cdot \mathbf{J} = s$ fixes $N - 1$ components of $\mathbf{J}$, leaving $3N - (N-1) = 2N + 1$ free. $\square$
+
+## The manifestation threshold {#sec-threshold}
+
+A voxel transitions from void ($s = 0$) to manifested ($s = \pm 1$) when the local flux magnitude exceeds the **manifestation threshold**:
+
+$$
+|\mathbf{J}(v)| \geq K_B
+\tag{2.2}
+$$
+
+where $K_B = 0.511$ in lattice units (identified with the electron mass in MeV in the continuum correspondence). [SELECTION for the identification; THEOREM for the mechanism.]
+
+The threshold is not imposed: it is derived from the action principle as the minimum flux energy required for a stable manifested state (@sec-action). The value $K_B = m_P \sqrt{2\pi} \cdot (16/3) \cdot \alpha^{11}$ follows from the mass formula derived in @sec-masses.
+
+The reverse process --- **annihilation** --- occurs when $|\mathbf{J}(v)| < K_B$ at a manifested site: $s \to 0$, returning the voxel to the void.
+
+## The ontological interpretation
+
+The two-layer structure embodies a specific ontological claim:
+
+| Layer | Field | Domain | Ontological status |
+|-------|-------|--------|-------------------|
+| Dispositional | $\mathbf{J} \in \mathbb{R}^3$ | Continuous, everywhere | Real but not directly observable |
+| Actual | $s \in \{-1, 0, +1\}$ | Discrete, sparse | Observable, definite |
+
+The flux field is not "hidden" in the sense of hidden-variable theories --- it is fully determined by the Gauss constraint and the dynamics. But it is not *manifested*: a region with $|\mathbf{J}| < K_B$ has real flux that gravitates but produces no state-field signature. This is the FTD candidate for **dark matter** (Chapter 22).
+
+The actual/dispositional distinction maps onto the quantum measurement problem: the flux field is the "quantum state" (continuous, superposed, wavelike) and the state field is the "measurement outcome" (discrete, definite, particle-like). The transition between them is the manifestation threshold, which replaces the Copenhagen collapse postulate with a deterministic algebraic mechanism (Chapter 20).
+
+## Summary of ontology
+
+The complete ontology at any tick $t$ is:
+
+$$
+\text{Configuration}(t) = \left\{ s(v,t), \, \mathbf{J}(v,t) \right\}_{v \in \mathbb{Z}^3}
+$$
+
+subject to the Gauss constraint (2.1). Given this configuration, the next tick's configuration is uniquely determined (Postulate 5). The entire dynamical content of FTD is encoded in the update rule $f : \mathcal{A} \to \mathcal{A}$, derived from the action principle in @sec-action.

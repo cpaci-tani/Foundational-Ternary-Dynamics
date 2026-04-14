@@ -1,0 +1,81 @@
+# Epistemic Framework and Conventions {#sec-epistemic}
+
+This chapter establishes the classification system that tags every claim in the manuscript. The system is not optional: it is part of the theory's content. A claim without a tag is an unvetted claim.
+
+## P.1.1 The epistemic tags
+
+Every substantive claim carries one of the following tags:
+
+| Tag | Meaning | Reader expectation |
+|-----|---------|-------------------|
+| **[AXIOM]** | Structural postulate, not derivable within the framework | Accept as model definition |
+| **[THEOREM]** | Rigorously proven from the axioms | Check the proof |
+| **[SELECTION]** | Argued from consistency but not uniquely proven | Critique the argument; propose alternatives |
+| **[CONJECTURE]** | Proposed interpretation requiring validation | Demand evidence before accepting |
+| **[IMPOSED]** | Parameter choice or model calibration | Note as input, not output |
+| **[EMERGENT]** | Behavior arising from dynamics, not designed in | Verify in simulation or derivation |
+| **[OPEN]** | Unresolved question | Research opportunity |
+
+The distinction between [THEOREM] and [SELECTION] is the most important. A [THEOREM] has a proof that can be checked. A [SELECTION] has a motivation that can be debated. This manuscript contains both. The reader should know which is which at every point.
+
+## P.1.2 The assumption ledger
+
+FTD has the following explicit inputs:
+
+**Axioms (5):**
+
+1. Space is $\mathbb{Z}^3$ (Postulate 1)
+2. Time is $\mathbb{N}$ (Postulate 2)
+3. States are $\{-1, 0, +1\}$ (Postulate 3, but see Theorem 1.1 for necessity)
+4. Moore neighborhood locality (Postulate 4)
+5. Determinism (Postulate 5)
+
+**External inputs (3):**
+
+1. $m_P = 1.221 \times 10^{19}$ GeV (Planck mass, sets the energy scale)
+2. $N_f = 6$ (number of quark flavors, used in $b_3 = (11N_c - 2N_f)/3$; derivable from generation count but currently [SELECTION])
+3. CODATA value of $\alpha$ for comparison (not used in derivation, only for validation)
+
+**Selection principles (2):**
+
+1. $x_+ = 1/\alpha$ (larger root of master quadratic is the inverse fine structure constant) [SELECTION]
+2. $\lfloor x_- \rfloor = N_c$ (smaller root rounds to the number of colors) [SELECTION]
+
+Everything else is derived. The derivation chain is: Postulates $\to$ Moore decomposition $\to$ BCC Watson identity $\to$ $G^*$ $\to$ master quadratic $\to$ roots $\to$ integers $\to$ masses $\to$ Standard Model.
+
+## P.1.3 Honest accounting
+
+| Category | Count | Examples |
+|----------|-------|---------|
+| Genuine FTD derivations | ~35 | $\alpha$, gauge groups, $G_N$, vacuum energy, GR recovery |
+| Parametric insertions | ~50 | Mass formulas, decay rates (FTD values in standard QFT formulas) |
+| External physics adopted | ~50+ | Fermi theory, HQET, ChPT, Weinberg-Salam structure |
+
+A **parametric insertion** is not a derivation. When this manuscript writes "$m_H = v\sqrt{6/23}$," the formula structure comes from standard electroweak theory and the numbers ($v$, $\sin^2\theta_W$) come from FTD. This is honest and useful but must not be confused with deriving the Higgs mechanism from first principles.
+
+## P.1.4 Scope limitations
+
+This framework does **not**:
+
+- Derive quark masses individually (scheme-dependent; see Ch. 13)
+- Prove confinement rigorously (the lattice strong-coupling expansion shows area-law Wilson loops, but a rigorous proof is a Millennium Prize problem)
+- Achieve continuous diffeomorphism invariance (the lattice violates this; see Ch. 15)
+- Derive the Born rule from the axioms alone (Parseval gives $E \propto |\psi|^2$; identifying energy fraction with detection probability is the Born rule, which is [SELECTION])
+- Explain why anything exists rather than nothing (this is a metaphysical question, not a physics one)
+
+## P.1.5 Notation conventions
+
+| Symbol | Meaning | Defined in |
+|--------|---------|-----------|
+| $v$ | Lattice site (voxel) | Ch. 1 |
+| $s(v)$ | Ternary state at $v$ | Ch. 1 |
+| $\mathbf{J}(v)$ | Flux vector at $v$ | Ch. 2 |
+| $N^M(v)$ | Moore neighborhood of $v$ | Ch. 1 |
+| $G^*$ | Lemniscatic bridge constant | Ch. 7 |
+| $\alpha$ | Fine structure constant ($= 1/x_+$) | Ch. 9 |
+| $N_c, N_{\text{base}}, b_3, N_{\text{eff}}$ | Framework integers $\{3, 4, 7, 13\}$ | Ch. 10 |
+| $K_B$ | Manifestation threshold (0.511) | Ch. 2 |
+| $K$ | DOF coefficient (= 16) | Ch. 8 |
+| $c$ | CFL speed ($= 1/\sqrt{3}$) | Ch. 1 |
+
+Complete notation table in @sec-prerequisites.

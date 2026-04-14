@@ -1,0 +1,151 @@
+# Complex Molecules {#sec-complex-molecules}
+
+::: {.callout-warning}
+## Pedagogical Context [NOT DERIVED FROM FTD]
+This chapter provides **standard organic chemistry context**. The content describes known molecular structures for pedagogical completeness. **No quantitative predictions** are derived from FTD axioms at this scale.
+:::
+
+*"Organic chemistry and beyond"*
+
+::: {.callout-note}
+## Key Revelation
+Carbon's ability to form four bonds creates unlimited molecular possibilities. Add nitrogen, oxygen, and other atoms, and you have the chemistry of life.
+:::
+
+## Carbon: The Backbone of Complexity
+
+Why carbon?
+- 4 valence electrons → 4 bonds
+- Can bond to itself → chains and rings
+- Right size → stable bonds
+- Multiple bond types → single, double, triple
+
+## Hydrocarbons
+
+Molecules of just carbon and hydrogen.
+
+### Alkanes (Single Bonds)
+
+| Formula | Name | Structure | Notes |
+|---------|------|-----------|-------|
+| $\text{CH}_4$ | Methane | Tetrahedral | Natural gas |
+| $\text{C}_2\text{H}_6$ | Ethane | Two tetrahedra | |
+| $\text{C}_3\text{H}_8$ | Propane | Chain | Fuel |
+| $\text{C}_4\text{H}_{10}$ | Butane | Chain | Lighter fluid |
+| $\text{C}_5\text{H}_{12}$ | Pentane | Chain | Solvent |
+
+General formula: $\text{C}_n\text{H}_{2n+2}$
+
+### Alkenes (Double Bonds)
+
+| Formula | Name | Notes |
+|---------|------|-------|
+| $\text{C}_2\text{H}_4$ | Ethylene | Planar, ripening agent |
+| $\text{C}_3\text{H}_6$ | Propene | Plastic precursor |
+
+General formula: $\text{C}_n\text{H}_{2n}$
+
+### Alkynes (Triple Bonds)
+
+| Formula | Name | Notes |
+|---------|------|-------|
+| $\text{C}_2\text{H}_2$ | Acetylene | Linear, welding fuel |
+| $\text{C}_3\text{H}_4$ | Propyne | |
+
+General formula: $\text{C}_n\text{H}_{2n-2}$
+
+### Aromatic Compounds
+
+Ring structures with alternating double bonds.
+
+![Benzene ring structure: six carbons in a hexagonal ring with alternating double bonds.](../../media/images/fig-benzene.png){#fig-benzene}
+
+Benzene ($\text{C}_6\text{H}_6$) features a six-membered ring with resonance: electrons delocalize around the entire ring rather than alternating between fixed single and double bonds.
+
+## Functional Groups
+
+The reactive parts of molecules.
+
+| Group | Formula | Name | Example |
+|-------|---------|------|---------|
+| -OH | R-OH | Alcohol | Ethanol |
+| -CHO | R-CHO | Aldehyde | Formaldehyde |
+| -COOH | R-COOH | Carboxylic acid | Acetic acid |
+| $-\text{NH}_2$ | $\text{R-NH}_2$ | Amine | Methylamine |
+| -SH | R-SH | Thiol | Methanethiol |
+| C=O | R-CO-R' | Ketone | Acetone |
+| -O- | R-O-R' | Ether | Diethyl ether |
+| -COO- | R-COO-R' | Ester | Ethyl acetate |
+
+### Alcohols
+
+Hydroxyl group (-OH) on carbon:
+
+![Ethanol molecule showing hydroxyl group.](../../media/images/fig-ethanol.png){#fig-ethanol}
+
+Ethanol (CH₃CH₂OH) is the "drinking alcohol" found in beer, wine, and spirits.
+
+### Acids and Bases
+
+**Carboxylic acids** donate $\text{H}^+$: R-COOH $\to$ R-COO$^-$ + $\text{H}^+$
+
+**Amines** accept $\text{H}^+$: $\text{R-NH}_2$ + $\text{H}^+$ $\to$ $\text{R-NH}_3^+$
+
+## Isomers
+
+Same formula, different structure.
+
+### Structural Isomers
+
+Different connectivity: **Butane** (CH₃-CH₂-CH₂-CH₃) is a straight chain, while **Isobutane** (CH₃-CH(CH₃)-CH₃) is branched. Same formula (C₄H₁₀), different structure.
+
+### Stereoisomers
+
+Same connectivity, different spatial arrangement:
+- **Cis-trans**: Around double bonds
+- **Enantiomers**: Mirror images (chirality)
+
+### Chirality
+
+A carbon with 4 different groups is chiral:
+
+![Chirality: a carbon bonded to four different groups has non-superimposable mirror images.](../../media/images/fig-chirality.png){#fig-chirality}
+
+Mirror images are not superimposable. This matters in biology: life uses only one "handedness" of amino acids.
+
+## Reactions
+
+### Combustion
+
+$\text{CH}_4 + 2\text{O}_2 \to \text{CO}_2 + 2\text{H}_2\text{O}$ + energy
+
+### Substitution
+One group replaces another.
+
+### Addition
+Atoms add across double bond.
+
+### Elimination
+Double bond forms, atoms leave.
+
+## Experiments
+
+### Molecule Builder
+Construct organic molecules from atoms. See 3D geometries.
+
+### Reaction Simulator
+Watch reactions occur: bonds breaking, bonds forming.
+
+### Isomer Explorer
+Find all isomers for a given formula.
+
+## Concepts
+
+- **hydrocarbon**: C and H only
+- **functional-group**: Reactive part of molecule
+- **isomer**: Same formula, different structure
+- **chirality**: Mirror-image asymmetry
+
+## Transition
+
+Complex molecules are still small compared to the giants of chemistry. Next, we explore macromolecules: proteins, polymers, and DNA.

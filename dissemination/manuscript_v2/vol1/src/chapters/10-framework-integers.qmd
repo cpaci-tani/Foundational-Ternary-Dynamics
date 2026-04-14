@@ -1,0 +1,94 @@
+# The Framework Integers {#sec-integers}
+
+The four integers $\{3, 4, 7, 13\}$ are not inputs to FTD. They are outputs of the master quadratic and the Moore neighborhood geometry. This chapter derives each integer and establishes the relations among them.
+
+## The four integers [THEOREM given the master quadratic roots]
+
+From the roots of the master quadratic (@sec-roots) and the lattice geometry (@sec-moore):
+
+| Integer | Symbol | Value | Derivation |
+|---------|--------|-------|------------|
+| Colors | $N_c$ | 3 | $\lfloor x_- \rfloor = \lfloor 3.024 \rfloor = 3$ |
+| Base | $N_{\text{base}}$ | 4 | $|\text{Aut}(E_i)| = |\mathbb{Z}[i]^*| = 4$ |
+| QCD beta | $b_3$ | 7 | $(11N_c - 2N_f)/3 = (33 - 12)/3 = 7$ |
+| Effective DOF | $N_{\text{eff}}$ | 13 | $b_3 + 2N_c = 7 + 6 = 13$ |
+
+Each derivation is detailed below.
+
+## $N_c = 3$: the number of colors [SELECTION]
+
+From $x_- = 3.024$ and topological quantization of color charge: $N_c = \lfloor x_- \rfloor = 3$. This is the number of quark colors in QCD, the dimension of the fundamental representation of $SU(3)$, and the BCC flux-component count.
+
+The fractional part $x_- - N_c = 0.024$ is interpreted as a confining correction: the running coupling at the confinement scale differs from the integer by approximately $\alpha_s(M_Z) / (4\pi) \approx 0.009$. [SELECTION]
+
+## $N_{\text{base}} = 4$: the base dimension [THEOREM]
+
+The automorphism group of the CM curve $E_i: y^2 = x^3 - x$ is:
+$$
+\text{Aut}(E_i) = \{1, -1, i, -i\} \cong \mathbb{Z}_4
+$$
+
+This is the group of units of $\mathbb{Z}[i]$. Its order is $N_{\text{base}} = 4$. Equivalently:
+
+- $N_{\text{base}} = \sqrt{K} = \sqrt{16} = 4$ (from the DOF coefficient)
+- $N_{\text{base}} = D + 1 = 4$ (spatial dimensions plus time)
+- $N_{\text{base}} = $ number of Hurwitz quaternion units modulo sign $= 4$
+
+## $b_3 = 7$: the QCD beta function coefficient [THEOREM]
+
+The one-loop beta function coefficient of $SU(N_c)$ gauge theory with $N_f$ quark flavors is:
+$$
+b_0 = \frac{11N_c - 2N_f}{3}
+$$
+
+With $N_c = 3$ and $N_f = 6$ (the Standard Model has 6 quark flavors):
+$$
+b_3 = \frac{11 \times 3 - 2 \times 6}{3} = \frac{33 - 12}{3} = 7
+$$
+
+The value $N_f = 6$ is itself derivable: the Moore Layer Theorem gives 3 generations of quarks, each with 2 flavors (up-type and down-type), giving $N_f = 3 \times 2 = 6$. So $b_3 = 7$ is a consequence of $N_c = 3$ and the generation count. [THEOREM given $N_c = 3$ and $N_f = 6$]
+
+## $N_{\text{eff}} = 13$: effective degrees of freedom [THEOREM]
+
+$$
+N_{\text{eff}} = b_3 + 2N_c = 7 + 6 = 13
+$$
+
+$N_{\text{eff}}$ appears throughout the framework:
+
+- **Strong coupling at $M_Z$:** $\alpha_s(M_Z) = b_3 / (b_3 + 4N_{\text{eff}}) = 7/59 = 0.1186$ (experimental: $0.1179 \pm 0.0009$)
+- **Proton mass ratio:** $m_p/m_e = N_{\text{eff}}/\alpha + \ldots = 13 \times 137.036 + \ldots = 1836.47$
+- **Moore eigenvalue:** 13 appears as a distinct eigenvalue of the $27 \times 27$ Moore adjacency matrix
+- **Fibonacci:** $N_{\text{eff}} = F_7 = 13$ (the 7th Fibonacci number)
+
+## Relations among the integers [THEOREM]
+
+The four integers satisfy:
+
+$$
+N_c + N_{\text{base}} + b_3 + N_{\text{eff}} = 3 + 4 + 7 + 13 = 27 = 3^3 = |N^M(v)|
+\tag{10.1}
+$$
+
+$$
+b_3 = N_c + N_{\text{base}} = 3 + 4 = 7
+\tag{10.2}
+$$
+
+$$
+N_{\text{eff}} = b_3 + 2N_c = N_c + N_{\text{base}} + 2N_c = 3N_c + N_{\text{base}} = 13
+\tag{10.3}
+$$
+
+$$
+N_{\text{base}}^2 = K = 16 \qquad (\text{DOF coefficient})
+\tag{10.4}
+$$
+
+Relation (10.1) is numerically exact but its interpretation is [CONJECTURE]: the sum of the framework integers equals the Moore neighborhood size. Whether this reflects a deep partition of the 27 voxels into four functionally distinct subsets is an open question.
+
+## The Fibonacci connection [THEOREM for the arithmetic]
+
+The sequence $3, 4, 7$ is Fibonacci-like: $3 + 4 = 7$. The next term, $7 + 6 = 13$, is the actual Fibonacci number $F_7$. The sequence continues: $7 + 13 = 20$, $13 + 20 = 33$, where 33 = $11 N_c$ (the numerator of $b_3$).
+
+The Fibonacci connection is [CONJECTURE] --- it may reflect the recursive self-similar structure of the lattice dynamics or may be numerological coincidence. It is noted for completeness.

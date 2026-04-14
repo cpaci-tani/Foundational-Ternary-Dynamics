@@ -1,0 +1,85 @@
+# The Bridge Constant $\Gs$ {#sec-gstar}
+
+The lemniscatic bridge constant $\Gs$ is the single number that connects the lattice geometry to the physics. It is not a free parameter: it is a ratio of Gamma function values forced by the BCC Watson integral. This chapter defines $\Gs$, proves its key properties, and establishes the CM curve connection.
+
+## Definition [THEOREM]
+
+::: {.callout-definition}
+## Definition 7.1 (The bridge constant)
+$$
+\Gs \equiv \frac{\Gamma(1/4)^2}{\sqrt{2}\,\pi} = \frac{\Gamma(1/4)}{\Gamma(3/4)} = 2.9586751\ldots
+\tag{7.1}
+$$
+
+Equivalently, in the **gamma-primitive form** (avoiding imported $\pi$):
+$$
+\Gs = \frac{\gamma_1^2}{\sqrt{2}\,\gamma_2^2}
+$$
+where $\gamma_1 = \Gamma(1/4)$ and $\gamma_2 = \Gamma(1/2) = \sqrt{\pi}$.
+:::
+
+The two forms in (7.1) are equivalent via the Gamma reflection formula at $s = 1/4$:
+$$
+\Gamma(1/4)\,\Gamma(3/4) = \frac{\pi}{\sin(\pi/4)} = \pi\sqrt{2}
+$$
+
+so $\Gamma(3/4) = \pi\sqrt{2}/\Gamma(1/4)$, giving $\Gamma(1/4)/\Gamma(3/4) = \Gamma(1/4)^2/(\sqrt{2}\pi) = \Gs$.
+
+## Relation to the lemniscate constant [THEOREM]
+
+The classical **lemniscate constant** is:
+
+$$
+\varpi = \frac{\Gamma(1/4)^2}{2\sqrt{2\pi}} = 2.6220575\ldots
+\tag{7.2}
+$$
+
+This is the half-period of the lemniscate of Bernoulli $r^2 = \cos(2\theta)$, analogous to $\pi$ being the half-period of the circle $r = 1$. The relationship:
+
+$$
+\Gs = \frac{2\varpi}{\sqrt{\pi}} = \frac{\varpi}{\Gamma(1/2)/2}
+\tag{7.3}
+$$
+
+$\Gs$ is the **ratio** of the lemniscate period to the circle period (up to normalization). It bridges between the quartic geometry of the lemniscate ($r^2 = \cos 2\theta$, related to the elliptic curve $E_i$) and the quadratic geometry of the circle ($r = 1$, related to $\pi$).
+
+## The CM curve [THEOREM]
+
+The elliptic curve $E_i: y^2 = x^3 - x$ has **complex multiplication** (CM) by the Gaussian integers $\mathbb{Z}[i]$. This means the endomorphism ring of $E_i$ is isomorphic to $\mathbb{Z}[i]$, not just $\mathbb{Z}$.
+
+Key properties of $E_i$:
+
+- **$j$-invariant:** $j(E_i) = 1728 = 12^3$. This is the unique $j$-invariant for CM by $\mathbb{Z}[i]$.
+- **Automorphism group:** $\text{Aut}(E_i) = \{1, -1, i, -i\}$, isomorphic to the units of $\mathbb{Z}[i]$. Order: $|\text{Aut}(E_i)| = 4$. Its square: $|\text{Aut}(E_i)|^2 = 16$.
+- **Periods:** The real period of $E_i$ is $\omega_1 = \varpi$ (the lemniscate constant). The complex period is $\omega_2 = i\varpi$.
+- **$L$-function:** The Hasse-Weil $L$-function of $E_i$ factors through Hecke $L$-functions of $\mathbb{Q}(i)$, connecting the curve to Gaussian prime distribution.
+
+The **Chowla-Selberg formula** expresses the period in terms of Gamma values:
+$$
+\omega_1 = \frac{\Gamma(1/4)^2}{2\sqrt{2\pi}} = \varpi
+\tag{7.4}
+$$
+
+This is the link between the CM curve and the bridge constant: $\Gs = 2\omega_1/\sqrt{\pi}$.
+
+## CM uniqueness [THEOREM]
+
+Among all elliptic curves with complex multiplication by an imaginary quadratic field $\mathbb{Q}(\sqrt{-d})$, there are finitely many $j$-invariants. The class number $h(-d)$ determines how many. For the fields relevant to lattice symmetry:
+
+| Field | $d$ | Class number | $j$-invariant(s) | Gamma connection |
+|-------|-----|-------------|-------------------|------------------|
+| $\mathbb{Q}(i)$ | 1 | 1 | 1728 | $\Gamma(1/4)$ |
+| $\mathbb{Q}(\sqrt{-3})$ | 3 | 1 | 0 | $\Gamma(1/3)$ |
+| $\mathbb{Q}(\sqrt{-2})$ | 2 | 1 | 8000 | $\Gamma(1/8)$ |
+
+The lattice $\mathbb{Z}^3$ has octahedral symmetry $O_h$ with a $\mathbb{Z}_4$ rotational subgroup about each axis. This $\mathbb{Z}_4$ symmetry selects the Gaussian integers $\mathbb{Z}[i]$ as the CM ring, which uniquely determines $j = 1728$ and hence $\Gamma(1/4)$.
+
+If FTD had been formulated on an FCC lattice (which has $\mathbb{Z}_3$ rotational symmetry), the CM ring would be $\mathbb{Z}[\omega]$ (Eisenstein integers), the $j$-invariant would be 0, and the bridge constant would involve $\Gamma(1/3)$ instead of $\Gamma(1/4)$, producing entirely different physics. The lattice structure selects the arithmetic. [THEOREM]
+
+## Summary of the bridge
+
+$$
+\underbrace{\mathbb{Z}^3}_{\text{lattice}} \xrightarrow{\text{BCC Green's fn}} \underbrace{W_3 = \frac{\Gssq}{2\pi}}_{\text{Watson identity}} \xrightarrow{\text{CM curve}} \underbrace{E_i: y^2 = x^3 - x}_{\text{$j = 1728$}} \xrightarrow{\text{Chowla-Selberg}} \underbrace{\Gs = \frac{\Gamma(1/4)^2}{\sqrt{2}\pi}}_{\text{bridge constant}}
+$$
+
+The chain is: lattice geometry $\to$ BCC multiplicative eigenvalue $\to$ Watson integral $\to$ CM elliptic curve $\to$ Gamma function values $\to$ numerical constant. No step involves a choice. Each arrow is a theorem.

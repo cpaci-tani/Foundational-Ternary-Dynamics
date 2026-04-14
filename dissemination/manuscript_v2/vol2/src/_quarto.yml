@@ -1,0 +1,114 @@
+project:
+  type: book
+  output-dir: ../_book
+
+book:
+  title: "Foundational Ternary Dynamics"
+  subtitle: "From Atoms to Cosmos — The Lattice Universe at Every Scale"
+  date: "2026"
+
+  chapters:
+    - index.qmd
+
+    - part: "The Atomic Realm"
+      chapters:
+        - chapters/3.1-stable-structures.qmd
+        - chapters/3.2-the-periodic-table.qmd
+        - chapters/3.3-electron-dynamics.qmd
+        - chapters/3.4-nuclear-physics.qmd
+
+    - part: "The Molecular Realm"
+      chapters:
+        - chapters/4.1-chemical-bonds.qmd
+        - chapters/4.2-simple-molecules.qmd
+        - chapters/4.3-complex-molecules.qmd
+        - chapters/4.4-macromolecules.qmd
+
+    - part: "States of Matter"
+      chapters:
+        - chapters/5.1-states-of-matter.qmd
+        - chapters/5.2-phase-transitions.qmd
+        - chapters/5.3-exotic-states.qmd
+
+    - part: "Structures and Materials"
+      chapters:
+        - chapters/6.1-crystal-lattices.qmd
+        - chapters/6.2-metals-and-conductors.qmd
+        - chapters/6.3-semiconductors.qmd
+        - chapters/6.4-biological-structures.qmd
+
+    - part: "The Planetary Realm"
+      chapters:
+        - chapters/7.1-gravity-wells.qmd
+        - chapters/7.2-atmospheres.qmd
+        - chapters/7.3-geology.qmd
+        - chapters/7.4-magnetospheres.qmd
+
+    - part: "The Stellar Realm"
+      chapters:
+        - chapters/8.1-stellar-formation.qmd
+        - chapters/8.2-main-sequence.qmd
+        - chapters/8.3-stellar-nucleosynthesis.qmd
+        - chapters/8.4-stellar-death.qmd
+        - chapters/8.5-compact-objects.qmd
+
+    - part: "The Galactic Realm"
+      chapters:
+        - chapters/9.1-galaxy-formation.qmd
+        - chapters/9.2-galaxy-types.qmd
+        - chapters/9.3-the-milky-way.qmd
+        - chapters/9.4-galaxy-interactions.qmd
+
+    - part: "The Cosmic Realm"
+      chapters:
+        - chapters/10.1-large-scale-structure.qmd
+        - chapters/10.2-dark-matter.qmd
+        - chapters/10.3-dark-energy.qmd
+        - chapters/10.4-cosmological-epochs.qmd
+
+    - part: "Extreme Phenomena"
+      chapters:
+        - chapters/11.1-black-holes.qmd
+        - chapters/11.2-gravitational-waves.qmd
+        - chapters/11.3-cosmic-rays.qmd
+        - chapters/11.4-vacuum-fluctuations.qmd
+
+    - part: "Emergent Phenomena"
+      chapters:
+        - chapters/12.0-definition-of-life.qmd
+        - chapters/12.1-self-organization.qmd
+        - chapters/12.1a-hierarchy-of-sentience.qmd
+        - chapters/12.2-information-and-entropy.qmd
+        - chapters/12.3-complexity.qmd
+        - chapters/12.4-the-anthropic-window.qmd
+
+    - part: "The End"
+      chapters:
+        - chapters/13.1-heat-death.qmd
+        - chapters/13.2-alternative-endings.qmd
+        - chapters/13.3-return-to-void.qmd
+
+bibliography: references.bib
+
+format:
+  pdf:
+    documentclass: book
+    classoption: [twoside, openright]
+    toc: true
+    toc-title: "Contents"
+    toc-depth: 2
+    number-sections: true
+    colorlinks: true
+    papersize: letter
+    fontsize: 11pt
+    geometry:
+      - top=1.15in
+      - bottom=1in
+      - left=1.35in
+      - right=1.15in
+    linestretch: 1.4
+    indent: true
+    include-in-header:
+      - preamble.tex
+      - titlepage-preamble.tex
+    keep-tex: true

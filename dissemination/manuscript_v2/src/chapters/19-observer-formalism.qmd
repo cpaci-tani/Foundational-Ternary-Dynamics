@@ -1,0 +1,102 @@
+# The Observer Formalism {#sec-observer}
+
+The observer in FTD is not an external entity appended to the physics. It is a structural property of the lattice: any coherent configuration that processes information from its Moore neighborhood and produces structured output is an observer. This chapter formalizes the observer as a $3^3$ lattice cluster and derives the three observation modes.
+
+## 19.1 The universal structural unit [CONJECTURE]
+
+::: {.callout-definition}
+## Definition 19.1 (The $3^3$ cluster)
+For any voxel $v_c \in \mathbb{Z}^3$, the **$3^3$ cluster** centered at $v_c$ is:
+$$
+\Omega(v_c) = \{ u \in \mathbb{Z}^3 : \|u - v_c\|_\infty \leq 1 \} = \{v_c\} \cup N^M(v_c)
+$$
+This is 1 center voxel + 26 Moore neighbors = 27 voxels.
+:::
+
+Every entity in FTD --- whether observer or object --- has the same 27-voxel internal architecture. The distinction between observer and object is **relational**, not structural: an observer is a cluster whose context includes another cluster's output.
+
+**Individuality** comes from configuration, not geometry. A void cluster ($s = 0$ everywhere, $|\mathbf{J}| \ll K_B$) has the geometry but no operative capacity. A particle (coherent flux pattern exceeding $K_B$) is a cluster with rich internal dynamics. The observer is not any voxel but a **coherent structure** --- a dynamically stabilized pattern.
+
+## 19.2 The Potential Core hierarchy [DEFINITION]
+
+Each cluster carries a hierarchy of operative capacity:
+
+| Concept | Symbol | Lattice realization |
+|---------|--------|---------------------|
+| **Potential Core** | $P_c$ | Center voxel $v_c$ |
+| **Generative Interior** | $G(P_c)$ | Admissible $(\Delta s, \Delta \mathbf{J})$ modes across 26 neighbors |
+| **Context State** | $C$ | $(s, \mathbf{J}, \nabla \cdot \mathbf{J}, E_{\text{env}}, F_{\text{obs}})$ on $\Omega(v_c)$ |
+| **Contextual Interior** | $G_C(P_c)$ | Modes activated under current context |
+| **Manifest Boundary** | $B_C$ | Frontier of $\Omega$ where effects couple outward |
+| **Manifest Output** | $M_C$ | Measurable expression at the boundary |
+
+The Generative Interior decomposes by Moore layer:
+$$
+G(P_c) = G_{\text{SC}}(P_c) \cup G_{\text{FCC}}(P_c) \cup G_{\text{BCC}}(P_c)
+$$
+
+corresponding to electromagnetic (SC, $U(1)$), weak (FCC, $SU(2)$), and strong (BCC, $SU(3)$) channels of operative capacity.
+
+## 19.3 Observer and object [DEFINITION]
+
+::: {.callout-definition}
+## Definition 19.2 (Object and observer)
+An **object** is a cluster $\Omega(v_c^{\text{obj}})$ whose Manifest Output $M_C$ is the quantity of interest.
+
+An **observer** is a cluster $\Omega(v_c^{\text{obs}})$ whose Context State includes, as part of its measurement frame $F_{\text{obs}}$, the Manifest Output of at least one object cluster.
+:::
+
+The coupling is **asymmetric**: the observer's context includes the object's output, but the object's context does not include the observer's internal states. The object does not "know" it is being observed. [CONJECTURE]
+
+The transfer function $\Phi$ mapping object output to observer context is **not a new operator**. It is the existing lattice dynamics:
+- **For distant clusters** ($d > 2$): $\Phi$ is the lattice propagator. Information travels at $c = 1/\sqrt{3}$.
+- **For overlapping clusters** ($1 \leq d \leq 2$): $\Phi$ is the identity on shared voxels.
+- **For self-observation** ($d = 0$): $\Phi$ is the tick cycle itself.
+
+## 19.4 The three observation modes [THEOREM + CONJECTURE]
+
+::: {.callout-theorem}
+## Theorem 19.1 (Completeness of observation modes)
+For any two $3^3$ clusters on $\mathbb{Z}^3$, exactly one of three modes applies, partitioned by Chebyshev distance $d = \|v_c^{\text{obs}} - v_c^{\text{obj}}\|_\infty$:
+
+1. **External** ($d > 2$): disjoint neighborhoods. All information transfer at $c$.
+2. **Overlapping** ($1 \leq d \leq 2$): shared voxels in both clusters' interiors. Correlations without causal propagation.
+3. **Self-referential** ($d = 0$): same cluster. Output re-enters as input.
+:::
+
+*Proof.* The three conditions are exhaustive (every non-negative integer is $> 2$, in $\{1,2\}$, or $= 0$) and mutually exclusive. For $d = 0$, the clusters are identical. For $d \in \{1,2\}$, at least one voxel is within both clusters' $r = 1$ neighborhoods. For $d > 2$, no overlap exists. $\square$
+
+## 19.5 The context activation operator [DEFINITION]
+
+The **gate functions** selecting which modes are active:
+
+| Gate | Engine phase | What it checks |
+|------|-------------|----------------|
+| $\chi_{\text{struct}}$ | `phase_read` + `phase_write` | Local causality, ternary compatibility |
+| $\chi_{\text{flux}}$ | `gauss_project` | Gauss constraint, flux budget, threshold $K_B$ |
+| $\chi_{\text{frame}}$ | `phase_forces` + `phase_movement` | Field coupling, collision, speed clamping |
+
+The activation operator $\text{Activate}_C$ is **not a new operator**. It is the tick cycle restricted to the local Moore neighborhood:
+
+$$
+G_C(P_c) = \{ m \in G(P_c) : \chi_{\text{struct}} \cdot \chi_{\text{flux}} \cdot \chi_{\text{frame}} = 1 \}
+$$
+
+The three gates execute in the tick cycle's phase order. A mode failing $\chi_{\text{struct}}$ is excluded before $\chi_{\text{flux}}$ is evaluated. [DEFINITION --- the mapping to engine phases is exact]
+
+## 19.6 Self-referential observation and the sLoop
+
+When $d = 0$ (self-observation), the cluster's output at tick $t$ enters its own context at tick $t+1$. The cluster must produce a Manifest Output that, when re-entered as input, reproduces itself. This is a **fixed-point condition**:
+
+$$
+M_C(P_c) = f(M_C(P_c))
+$$
+
+which is the gap equation $x^2 = 16G^{*2}(x - G^*)$ from @sec-quadratic. The self-referential loop (sLoop) is the lattice-facing realization of the gap equation's self-consistency.
+
+The sLoop requires **all three Moore layers** because:
+- The BCC propagator provides $G^*$ (via the multiplicative Watson identity, @sec-bcc)
+- The FCC channel provides relational coupling
+- The SC channel provides immediate feedback
+
+A cluster engaging only SC + FCC (18 voxels) can participate in measurement but cannot close the self-referential loop. The loop requires the BCC multiplicative 3-axis coupling to generate the $\Gamma(1/4)^4$ that determines $G^*$.

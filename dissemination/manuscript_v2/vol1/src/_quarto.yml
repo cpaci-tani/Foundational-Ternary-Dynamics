@@ -1,0 +1,93 @@
+project:
+  type: book
+  output-dir: ../_book
+
+book:
+  title: "Foundational Ternary Dynamics"
+  subtitle: "Deriving the Standard Model from Five Lattice Postulates"
+  date: "2026"
+
+  chapters:
+    - index.qmd
+    - preface.qmd
+
+    - part: "Prolegomena"
+      chapters:
+        - chapters/P1-epistemic-framework.qmd
+        - chapters/P2-mathematical-prerequisites.qmd
+
+    - part: "The Lattice and Its Algebra"
+      chapters:
+        - chapters/01-five-postulates.qmd
+        - chapters/02-two-layer-ontology.qmd
+        - chapters/03-why-d-equals-3.qmd
+        - chapters/04-moore-decomposition.qmd
+        - chapters/05-gauge-groups.qmd
+        - chapters/06-bcc-eigenvalue-watson.qmd
+        - chapters/07-bridge-constant-gstar.qmd
+        - chapters/08-master-quadratic.qmd
+
+    - part: "Physical Content"
+      chapters:
+        - chapters/09-roots-alpha-and-nc.qmd
+        - chapters/10-framework-integers.qmd
+        - chapters/11-precision-formula.qmd
+        - chapters/12-mass-spectrum.qmd
+        - chapters/13-complete-standard-model.qmd
+        - chapters/14-action-principle-forces.qmd
+        - chapters/15-gravity-from-lattice.qmd
+        - chapters/16-qm-from-flux.qmd
+        - chapters/17-bell-tsirelson.qmd
+        - chapters/18-matter-antimatter-confinement.qmd
+
+    - part: "The Observer and the Cosmos"
+      chapters:
+        - chapters/19-observer-formalism.qmd
+        - chapters/20-measurement.qmd
+        - chapters/21-consciousness.qmd
+        - chapters/22-dark-matter-energy.qmd
+        - chapters/23-vacuum-energy.qmd
+        - chapters/24-predictions-status.qmd
+
+    - part: "Appendices"
+      chapters:
+        - chapters/14.1-constants-reference.qmd
+        - chapters/14.2-equations-reference.qmd
+        - chapters/14.3-glossary.qmd
+        - chapters/14.4-particle-catalog.qmd
+        - chapters/14.5-assumption-ledger.qmd
+        - chapters/14.6-self-consistency.qmd
+        - chapters/14.8-information-quantification.qmd
+        - chapters/14.10-number-theory.qmd
+        - chapters/15.1-observational-confirmations.qmd
+
+bibliography: references.bib
+
+filters:
+  - ftd-callouts.lua
+
+format:
+  pdf:
+    documentclass: book
+    classoption: [twoside, openany]
+    toc: true
+    toc-title: "Contents"
+    toc-depth: 2
+    number-sections: true
+    colorlinks: true
+    papersize: letter
+    fontsize: 11pt
+    geometry:
+      - top=1.15in
+      - bottom=1in
+      - left=1.35in
+      - right=1.15in
+    linestretch: 1.4
+    indent: true
+    #pdf-engine: default (lualatex via Quarto)
+    include-in-header:
+      - preamble.tex
+      - titlepage-preamble.tex
+    include-before-body:
+      - before-body.tex
+    keep-tex: true

@@ -1,0 +1,88 @@
+# The Five Postulates
+
+The framework rests on five postulates. Each is minimal: it states what exists and what is permitted, nothing more. The physical content --- gauge groups, coupling constants, masses --- is not postulated but derived in subsequent chapters.
+
+## The postulates
+
+::: {.callout-axiom}
+## Postulate 1: Discrete space
+The spatial arena is the integer lattice $\mathbb{Z}^3$. Each lattice site $v = (v_x, v_y, v_z) \in \mathbb{Z}^3$ is called a **voxel**.
+:::
+
+::: {.callout-axiom}
+## Postulate 2: Discrete time
+Time advances in integer steps $t \in \mathbb{N}$. Each step is called a **tick**. No sub-tick dynamics exist.
+:::
+
+::: {.callout-axiom}
+## Postulate 3: Ternary states
+Each voxel carries a state $s(v, t) \in \{-1, 0, +1\}$. These are the only ontic values. The state $s = 0$ is the **void**; $s = \pm 1$ are **manifestations** of opposite charge.
+:::
+
+::: {.callout-axiom}
+## Postulate 4: Local causality
+The state of a voxel at tick $t+1$ depends only on the states and fluxes within its **Moore neighborhood** at tick $t$:
+$$
+N^M(v) = \{ u \in \mathbb{Z}^3 : \|u - v\|_\infty \leq 1 \}
+$$
+This is the set of 26 neighbors plus the center voxel itself, giving $|N^M(v)| = 27 = 3^3$. Information propagates at most one lattice unit per tick.
+:::
+
+::: {.callout-axiom}
+## Postulate 5: Determinism
+Given the complete configuration $(s, \mathbf{J})$ at tick $t$, the configuration at tick $t+1$ is uniquely determined. There are no hidden degrees of freedom and no probabilistic elements in the update rule.
+:::
+
+These five postulates define the arena. The dynamics (the specific update rule) are not postulated but derived from an action principle in @sec-action.
+
+## Immediate consequences
+
+Several structural facts follow from the postulates alone, before any dynamics are specified.
+
+**Finite causal volume.** [THEOREM] By Postulate 4, the causal past of any event $(v, t)$ is contained in $N^M_t(v) = \{ u : \|u - v\|_\infty \leq t \}$, a cube of side $2t + 1$. The causal volume grows as $(2t+1)^3$, polynomially in $t$. No infinite regress is possible in finite time.
+
+**CFL speed.** [THEOREM] The maximum propagation speed is $c = 1$ voxel/tick in the Chebyshev metric ($\ell^\infty$ norm). In physical units where the face-adjacent lattice spacing is the unit of length, the CFL speed is $c = 1/\sqrt{3}$. This arises because the body-diagonal distance is $\sqrt{3}$ lattice units but is traversed in 1 tick.
+
+**Configuration space.** [THEOREM] At each tick, the global configuration is a pair $(s, \mathbf{J})$ where $s : \mathbb{Z}^3 \to \{-1, 0, +1\}$ is the state field and $\mathbf{J} : \mathbb{Z}^3 \to \mathbb{R}^3$ is the flux field (introduced in @sec-ontology). On a finite lattice of $N$ sites, the state field has $3^N$ configurations. The full configuration space $\mathcal{A} = \{-1, 0, +1\}^N \times (\mathbb{R}^3)^N$ is hybrid discrete-continuous.
+
+## Why ternary {#sec-ternary}
+
+The choice of three states is not arbitrary. It is the minimal state space satisfying three simultaneous requirements.
+
+::: {.callout-theorem}
+## Theorem 1.1 (Ternary necessity)
+The state space $\{-1, 0, +1\}$ is the unique minimal set satisfying:
+
+1. **Charge conservation.** Pair creation from the void requires $0 \to (+1) + (-1)$, which needs at least three values: positive, negative, and neutral. Binary $\{0, 1\}$ cannot represent charge-neutral pair creation.
+
+2. **Stable vacuum.** The void state $s = 0$ must be a fixed point when $\mathbf{J} = 0$. Binary $\{-1, +1\}$ has no neutral element; the vacuum is dynamically unstable.
+
+3. **Destructive interference.** Annihilation $(+1) + (-1) \to 0$ requires an additive identity that is also a state. This is the ternary axiom $0 = (-1) + (+1)$.
+
+No state space with fewer than three elements satisfies all three. No state space with more than three is needed, since $\{-1, 0, +1\}$ is closed under the ternary constraint.
+:::
+
+*Proof.* Binary $\{0, 1\}$: fails (1), since pair creation would require $0 \to 1 + (-1)$ but $-1 \notin \{0,1\}$. Binary $\{-1, +1\}$: fails (2), since there is no neutral element. Ternary $\{-1, 0, +1\}$: satisfies (1) via $0 \to (+1) + (-1)$, (2) via $s = 0$ as fixed point, (3) via $(+1) + (-1) = 0$. Quaternary or higher: $\{-1, 0, +1\}$ already satisfies all three, so no additional states are needed. $\square$
+
+## The Moore neighborhood
+
+The 27-voxel Moore neighborhood $N^M(v)$ is the fundamental locality structure. Its geometry is analyzed in detail in @sec-moore, where it decomposes into three sublattices that generate the Standard Model gauge groups. The basic enumeration:
+
+| Shell | Offset type | Distance | Count | Geometry |
+|-------|------------|----------|-------|----------|
+| Center | $(0,0,0)$ | 0 | 1 | Point |
+| SC (face) | $(\pm 1, 0, 0)$ etc. | 1 | 6 | Octahedron |
+| FCC (edge) | $(\pm 1, \pm 1, 0)$ etc. | $\sqrt{2}$ | 12 | Cuboctahedron |
+| BCC (corner) | $(\pm 1, \pm 1, \pm 1)$ | $\sqrt{3}$ | 8 | Cube vertices |
+| **Total** | | | **27** | |
+
+The decomposition $27 = 1 + 6 + 12 + 8$ is the starting point for the entire derivation chain.
+
+## What the postulates do not specify
+
+The postulates deliberately leave unspecified:
+
+- **The update rule.** The function mapping tick $t$ to $t+1$ is derived from $\delta S = 0$ in @sec-action. It is not a free choice.
+- **The flux field.** The continuous layer $\mathbf{J} \in \mathbb{R}^3$ is introduced in @sec-ontology as the second ontological layer.
+- **The dimensionality.** $D = 3$ is shown to be uniquely selected in @sec-d3. The cubic lattice is forced, not chosen.
+- **The coupling constants.** All numerical values ($\alpha$, $N_c$, $K_B$, $G_N$) are derived from the lattice geometry in @sec-bcc through @sec-masses.

@@ -1,0 +1,101 @@
+# Quantum Mechanics from Flux {#sec-qm}
+
+Quantum mechanics is not postulated in FTD. It emerges from the lattice dynamics through three steps: complexification of the flux field via the Gauss constraint, construction of a Hilbert space, and derivation of the Schrodinger equation as the continuum limit of the lattice wave equation.
+
+## Complexification [THEOREM]
+
+The Gauss constraint $\nabla \cdot \mathbf{J} = s$ on the 3-component flux field $\mathbf{J} = (J_x, J_y, J_z)$ removes one degree of freedom per site (the longitudinal component). In Coulomb gauge ($\nabla \cdot \mathbf{J}_\perp = 0$), the remaining **two** transverse components define a complex amplitude:
+
+$$
+\psi(v) = J_x(v) + i \, J_y(v)
+\tag{16.1}
+$$
+
+This identification is not arbitrary: the Gauss constraint forces the physical degrees of freedom to be transverse, and two real transverse components naturally combine into one complex field. The choice of which two components to combine is a gauge choice (the third is fixed by $\nabla \cdot \mathbf{J} = s$).
+
+::: {.callout-theorem}
+## Theorem 16.1 (Complexification)
+The Gauss constraint on $\mathbb{Z}^3$ reduces the physical flux field from $\mathbb{R}^3$ per site to $\mathbb{R}^2 \cong \mathbb{C}$ per site. The resulting complex field $\psi = J_x + iJ_y$ carries a natural $U(1)$ phase symmetry inherited from rotation in the $(J_x, J_y)$ plane.
+:::
+
+## The Hilbert space [SELECTION]
+
+The FTD Hilbert space is constructed as:
+
+$$
+\mathcal{H}_{\text{FTD}} = L^2(\mathbb{Z}^3, \mathbb{C})
+\tag{16.2}
+$$
+
+the space of square-summable complex-valued functions on the lattice. The inner product is:
+
+$$
+\langle \psi | \phi \rangle = \sum_{v \in \mathbb{Z}^3} \overline{\psi(v)} \, \phi(v)
+\tag{16.3}
+$$
+
+This is a standard lattice Hilbert space. The physical content is that it arises from the flux field via complexification, not from a separate quantum postulate.
+
+[SELECTION: the identification of this Hilbert space with the quantum mechanical state space. The mathematical construction is [THEOREM]; the physical interpretation is [SELECTION].]
+
+## The Schrodinger equation [THEOREM]
+
+The lattice wave equation (@sec-action, Eq. 14.6) in the continuum limit becomes:
+
+$$
+i\hbar \frac{\partial \psi}{\partial t} = -\frac{\hbar^2}{2m} \nabla^2 \psi + V\psi
+\tag{16.4}
+$$
+
+*Derivation sketch.* The lattice equation $\Delta J_\mu = c^2 \nabla^2 J_\mu + g_c \partial_\mu s$ is a damped wave equation. In the low-energy sector (wavelengths $\gg$ lattice spacing), the second time derivative becomes negligible relative to the first (the non-relativistic limit). Combining the two transverse components into $\psi = J_x + iJ_y$ and identifying $\hbar$ with the lattice action quantum, $m = K_B/c^2$, and $V = g_c s / |\mathbf{r}|$ (Coulomb potential), the lattice equation reduces to (16.4).
+
+Each element of the correspondence:
+
+| Lattice quantity | QM quantity |
+|-----------------|-------------|
+| $\psi = J_x + iJ_y$ | Wave function |
+| $|\psi|^2 = J_x^2 + J_y^2$ | Probability density (Born rule) |
+| Lattice Laplacian $\nabla^2$ | Kinetic energy operator |
+| $g_c s / r$ | Potential energy |
+| Tick $\to$ continuous time | Time evolution |
+| CFL speed $c = 1/\sqrt{3}$ | Speed of light |
+
+## The Born rule [THEOREM within the framework]
+
+Four independent derivations of $P \propto |\psi|^2$:
+
+**Derivation 1: Parseval (energy conservation).** [THEOREM]
+The total flux energy on the lattice is $E = \sum_v |\mathbf{J}(v)|^2$. By Parseval's theorem, this equals the sum of squared Fourier amplitudes. The energy fraction at site $v$ is $|\mathbf{J}(v)|^2 / E = |\psi(v)|^2 / \sum |\psi|^2$. If manifestation probability is proportional to local energy density, then $P(v) \propto |\psi(v)|^2$.
+
+**Derivation 2: Gleason's theorem.** [THEOREM given the Hilbert space]
+On a Hilbert space of dimension $\geq 3$, the only probability measure consistent with the lattice structure of projections is $P(\psi) = \text{Tr}(\rho |\psi\rangle\langle\psi|) = |\langle\psi|\phi\rangle|^2$. This is Gleason's theorem (1957), which applies once the Hilbert space (16.2) is established.
+
+**Derivation 3: Decision-theoretic.** [SELECTION]
+A rational agent who knows the lattice dynamics and has partial information about the initial conditions should assign credences proportional to $|\psi|^2$. This follows the Deutsch-Wallace program applied to the deterministic lattice.
+
+**Derivation 4: The existence filter.** [THEOREM for the algebraic structure]
+The projection $E(z) = \text{Re}(z) = (z + \bar{z})/2$ is idempotent ($E^2 = E$) and self-adjoint ($E^\dagger = E$). For $|z| = 1$: $|E(z)|^2 + |E(iz)|^2 = |\text{Re}(z)|^2 + |\text{Im}(z)|^2 = |z|^2$. This reconstructs the Born rule from two orthogonal applications of the existence filter.
+
+## Superposition and interference [THEOREM]
+
+The lattice wave equation is **linear** in $\mathbf{J}$ (the nonlinearity enters only through the ternary state field $s$ and the manifestation threshold). For sub-threshold flux ($|\mathbf{J}| < K_B$, no manifestation), the dynamics are purely linear:
+
+$$
+\mathbf{J}_{\text{total}} = \mathbf{J}_1 + \mathbf{J}_2
+\tag{16.5}
+$$
+
+This is superposition. Interference follows from the complex structure:
+
+$$
+|\psi_1 + \psi_2|^2 = |\psi_1|^2 + |\psi_2|^2 + 2\text{Re}(\overline{\psi_1}\psi_2)
+\tag{16.6}
+$$
+
+The cross-term $2\text{Re}(\overline{\psi_1}\psi_2)$ is **constructive** when the relative phase is small and **destructive** when the relative phase is near $\pi$. This is the lattice origin of the double-slit pattern.
+
+## What QM is, in FTD
+
+Quantum mechanics is the mathematical framework for computing probability distributions over definite outcomes observed by agents with partial access to a deterministic lattice. It is not a fundamental theory but an **effective statistical description** of the lattice dynamics, analogous to thermodynamics being an effective description of molecular dynamics.
+
+The lattice is always in a definite state $(s, \mathbf{J})$. The "quantum state" $\psi$ is the complex projection of the flux field, which an observer uses to compute manifestation probabilities. "Collapse" is the moment the observer learns which state actually manifested --- Bayesian updating, not a physical process.
