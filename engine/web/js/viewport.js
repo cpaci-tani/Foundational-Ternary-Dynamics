@@ -13,8 +13,10 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { getById } from './particle-catalog.js';
 import { potentialToColor, magnitudeToColor, fluxToColor } from './fields.js';
 
+// Pre-allocated buffer sizes. Particle buffer is fixed at init to avoid
+// dynamic GPU reallocation; draw range controls visible count each frame.
 const MAX_PARTICLES = 100000;
-const MAX_FIELD_GRID = 4096;  // up to 64×64 grid points (must cover lattice²)
+const MAX_FIELD_GRID = 16384;  // up to 128x128 grid points (must cover lattice^2)
 
 // Custom particle shaders
 const PARTICLE_VERT = `
@@ -170,9 +172,15 @@ export class Viewport {
         const colors = new Float32Array(MAX_PARTICLES * 3);
         const sizes = new Float32Array(MAX_PARTICLES);
 
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('particleColor', new THREE.BufferAttribute(colors, 3));
-        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+        const posAttr = new THREE.BufferAttribute(positions, 3);
+        const colAttr = new THREE.BufferAttribute(colors, 3);
+        const sizeAttr = new THREE.BufferAttribute(sizes, 1);
+        posAttr.setUsage(THREE.DynamicDrawUsage);
+        colAttr.setUsage(THREE.DynamicDrawUsage);
+        sizeAttr.setUsage(THREE.DynamicDrawUsage);
+        geometry.setAttribute('position', posAttr);
+        geometry.setAttribute('particleColor', colAttr);
+        geometry.setAttribute('size', sizeAttr);
         geometry.setDrawRange(0, 0);
 
         const material = new THREE.ShaderMaterial({
@@ -186,6 +194,7 @@ export class Viewport {
         });
 
         this.particles = new THREE.Points(geometry, material);
+        this.particles.frustumCulled = false; // skip bounding sphere recompute for dynamic geometry
         this.scene.add(this.particles);
     }
 
@@ -216,14 +225,14 @@ export class Viewport {
 
         let group;
         switch (shape) {
-            case 'cube':        group = this._buildCubeBoundary(mat, mode); break;
-            case 'sphere':      group = this._buildSphereBoundary(mat); break;
+            case 'cube': group = this._buildCubeBoundary(mat, mode); break;
+            case 'sphere': group = this._buildSphereBoundary(mat); break;
             case 'dodecahedron': group = this._buildPlatonicBoundary('dodecahedron', mat); break;
-            case 'icosahedron':  group = this._buildPlatonicBoundary('icosahedron', mat); break;
-            case 'octahedron':   group = this._buildPlatonicBoundary('octahedron', mat); break;
-            case 'cylinder':     group = this._buildCylinderBoundary(mat); break;
-            case 'torus':        group = this._buildTorusBoundary(mat); break;
-            default:             group = this._buildCubeBoundary(mat, mode); break;
+            case 'icosahedron': group = this._buildPlatonicBoundary('icosahedron', mat); break;
+            case 'octahedron': group = this._buildPlatonicBoundary('octahedron', mat); break;
+            case 'cylinder': group = this._buildCylinderBoundary(mat); break;
+            case 'torus': group = this._buildTorusBoundary(mat); break;
+            default: group = this._buildCubeBoundary(mat, mode); break;
         }
 
         // Scale and position based on mode
@@ -261,12 +270,12 @@ export class Viewport {
         // 12 edges of bounding cube
         const h = s / 2;
         const corners = (mode === 'lattice')
-            ? [[0,0,0],[s,0,0],[s,s,0],[0,s,0],[0,0,s],[s,0,s],[s,s,s],[0,s,s]]
-            : [[-h,-h,-h],[h,-h,-h],[h,h,-h],[-h,h,-h],[-h,-h,h],[h,-h,h],[h,h,h],[-h,h,h]];
+            ? [[0, 0, 0], [s, 0, 0], [s, s, 0], [0, s, 0], [0, 0, s], [s, 0, s], [s, s, s], [0, s, s]]
+            : [[-h, -h, -h], [h, -h, -h], [h, h, -h], [-h, h, -h], [-h, -h, h], [h, -h, h], [h, h, h], [-h, h, h]];
         const edges = [
-            [0,1],[1,2],[2,3],[3,0],
-            [4,5],[5,6],[6,7],[7,4],
-            [0,4],[1,5],[2,6],[3,7]
+            [0, 1], [1, 2], [2, 3], [3, 0],
+            [4, 5], [5, 6], [6, 7], [7, 4],
+            [0, 4], [1, 5], [2, 6], [3, 7]
         ];
         for (const [a, b] of edges) {
             vertices.push(...corners[a], ...corners[b]);
@@ -276,12 +285,12 @@ export class Viewport {
         if (mode === 'lattice') {
             const step = Math.max(8, Math.floor(s / 2));
             for (let i = step; i < s; i += step) {
-                vertices.push(i,0,0, i,s,0);
-                vertices.push(i,0,s, i,s,s);
-                vertices.push(0,i,0, s,i,0);
-                vertices.push(0,i,s, s,i,s);
-                vertices.push(0,0,i, s,0,i);
-                vertices.push(0,s,i, s,s,i);
+                vertices.push(i, 0, 0, i, s, 0);
+                vertices.push(i, 0, s, i, s, s);
+                vertices.push(0, i, 0, s, i, 0);
+                vertices.push(0, i, s, s, i, s);
+                vertices.push(0, 0, i, s, 0, i);
+                vertices.push(0, s, i, s, s, i);
             }
         }
 
@@ -327,8 +336,8 @@ export class Viewport {
         const detail = 0;
         switch (shape) {
             case 'dodecahedron': solidGeo = new THREE.DodecahedronGeometry(1, detail); break;
-            case 'icosahedron':  solidGeo = new THREE.IcosahedronGeometry(1, detail); break;
-            case 'octahedron':   solidGeo = new THREE.OctahedronGeometry(1, detail); break;
+            case 'icosahedron': solidGeo = new THREE.IcosahedronGeometry(1, detail); break;
+            case 'octahedron': solidGeo = new THREE.OctahedronGeometry(1, detail); break;
         }
         const edgesGeo = new THREE.EdgesGeometry(solidGeo);
         group.add(new THREE.LineSegments(edgesGeo, mat));
@@ -404,7 +413,7 @@ export class Viewport {
                     [phi, 0, 1], [-phi, 0, 1], [phi, 0, -1], [-phi, 0, -1],
                 ];
                 for (const n of normals) {
-                    const len = Math.sqrt(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]);
+                    const len = Math.sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
                     const d = (nx * n[0] + ny * n[1] + nz * n[2]) / len;
                     if (d > ir) return false;
                 }
@@ -418,12 +427,12 @@ export class Viewport {
                 const normals = [
                     [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
                     [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1],
-                    [0, phi, 1/phi], [0, phi, -1/phi], [0, -phi, 1/phi], [0, -phi, -1/phi],
-                    [1/phi, 0, phi], [-1/phi, 0, phi], [1/phi, 0, -phi], [-1/phi, 0, -phi],
-                    [phi, 1/phi, 0], [phi, -1/phi, 0], [-phi, 1/phi, 0], [-phi, -1/phi, 0],
+                    [0, phi, 1 / phi], [0, phi, -1 / phi], [0, -phi, 1 / phi], [0, -phi, -1 / phi],
+                    [1 / phi, 0, phi], [-1 / phi, 0, phi], [1 / phi, 0, -phi], [-1 / phi, 0, -phi],
+                    [phi, 1 / phi, 0], [phi, -1 / phi, 0], [-phi, 1 / phi, 0], [-phi, -1 / phi, 0],
                 ];
                 for (const n of normals) {
-                    const len = Math.sqrt(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]);
+                    const len = Math.sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
                     const d = (nx * n[0] + ny * n[1] + nz * n[2]) / len;
                     if (d > ir) return false;
                 }
@@ -443,18 +452,18 @@ export class Viewport {
     }
 
     _buildAxes() {
-        // Small axis indicator at origin
-        const axisLen = 3;
+        // Axis indicator at origin — length scales with lattice size
+        const axisLen = Math.max(3, this.latticeSize * 0.1);
         const axisGeo = new THREE.BufferGeometry();
         axisGeo.setAttribute('position', new THREE.Float32BufferAttribute([
-            0,0,0, axisLen,0,0,  // X
-            0,0,0, 0,axisLen,0,  // Y
-            0,0,0, 0,0,axisLen,  // Z
+            0, 0, 0, axisLen, 0, 0,  // X
+            0, 0, 0, 0, axisLen, 0,  // Y
+            0, 0, 0, 0, 0, axisLen,  // Z
         ], 3));
         axisGeo.setAttribute('color', new THREE.Float32BufferAttribute([
-            0.9,0.3,0.3, 0.9,0.3,0.3,  // X = red
-            0.3,0.9,0.3, 0.3,0.9,0.3,  // Y = green
-            0.3,0.3,0.9, 0.3,0.3,0.9,  // Z = blue
+            0.9, 0.3, 0.3, 0.9, 0.3, 0.3,  // X = red
+            0.3, 0.9, 0.3, 0.3, 0.9, 0.3,  // Y = green
+            0.3, 0.3, 0.9, 0.3, 0.3, 0.9,  // Z = blue
         ], 3));
         const axisMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.5 });
         this.axes = new THREE.LineSegments(axisGeo, axisMat);
@@ -465,6 +474,20 @@ export class Viewport {
         this.latticeSize = size;
         this._halfN = size / 2;
         this._buildBoundary(this._boundaryShape, this._boundaryMode);
+        
+        // Rebuild void box for raycasting
+        if (this._voidBox) {
+            this.scene.remove(this._voidBox);
+            this._voidBox.geometry.dispose();
+            this._voidBox.material.dispose();
+        }
+        const boxGeo = new THREE.BoxGeometry(size, size, size);
+        const boxMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide });
+        this._voidBox = new THREE.Mesh(boxGeo, boxMat);
+        const c = size / 2;
+        this._voidBox.position.set(c, c, c);
+        this.scene.add(this._voidBox);
+
         // Rebuild flux volume for new size
         if (this._fluxVolume) {
             this.scene.remove(this._fluxVolume);
@@ -473,6 +496,35 @@ export class Viewport {
             this._fluxVolume = null;
             this._fluxVolumeSize = 0;
         }
+        // Rebuild field heatmap for new lattice capacity
+        if (this._fieldHeatmap) {
+            this.scene.remove(this._fieldHeatmap);
+            this._fieldHeatmap.geometry.dispose();
+            this._fieldHeatmap.material.dispose();
+            this._fieldHeatmap = null;
+        }
+
+        // Clear draw ranges on all field overlays so stale data from old L
+        // doesn't persist until the next field update frame
+        const fieldOverlays = [
+            this._eFieldLines, this._bFieldLines, this._poyntingVectors,
+            this._divField, this._fluxStreamlines, this._forceVolume,
+            this._gravityField, this._darkMatterHalo, this._dampingZones,
+            this._genesisIsosurface, this._confinementStrings,
+            this._dualFluxVolume, this._chiralityField, this._lightField
+        ];
+        for (const obj of fieldOverlays) {
+            if (obj && obj.geometry) obj.geometry.setDrawRange(0, 0);
+        }
+
+        // Rebuild axes so length scales with lattice
+        if (this.axes) {
+            this.scene.remove(this.axes);
+            this.axes.geometry.dispose();
+            this.axes.material.dispose();
+        }
+        this._buildAxes();
+
         // Recenter camera for lattice mode
         if (this._boundaryMode === 'lattice') {
             const center = size / 2;
@@ -481,6 +533,7 @@ export class Viewport {
             this.camera.position.set(center + dist, center + dist * 0.5, center + dist);
             this.controls.update();
         }
+        if (this._applyScenarioScale) this._applyScenarioScale();
     }
 
     toggleWireframe(on) {
@@ -497,6 +550,62 @@ export class Viewport {
         } else {
             if (this.peAxes) this.peAxes.visible = on;
         }
+    }
+
+    setVoxelHighlight(x, y, z, active) {
+        if (!this._voxelHighlight) {
+            const geo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+            const edges = new THREE.EdgesGeometry(geo);
+            const mat = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 2 });
+            this._voxelHighlight = new THREE.LineSegments(edges, mat);
+            this.scene.add(this._voxelHighlight);
+        }
+        if (active) {
+            this._voxelHighlight.position.set(x, y, z);
+            this._voxelHighlight.visible = true;
+        } else {
+            this._voxelHighlight.visible = false;
+        }
+    }
+
+    setSymmetryHighlights(x, y, z, u1, su2, su3) {
+        if (!this._symHighlights) {
+            const geo = new THREE.BoxGeometry(1.0, 1.0, 1.0);
+            const edges = new THREE.EdgesGeometry(geo);
+            const mat = new THREE.LineBasicMaterial({ color: 0x4ade80, linewidth: 1, transparent: true, opacity: 0.6 });
+            this._symHighlights = new THREE.InstancedMesh(edges, mat, 26);
+            this._symHighlights.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+            this.scene.add(this._symHighlights);
+        }
+        
+        let count = 0;
+        const dummy = new THREE.Object3D();
+        
+        if (u1 || su2 || su3) {
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dz = -1; dz <= 1; dz++) {
+                        if (dx === 0 && dy === 0 && dz === 0) continue;
+                        
+                        const norm = Math.abs(dx) + Math.abs(dy) + Math.abs(dz);
+                        let include = false;
+                        if (u1 && norm === 1) include = true;   // Face
+                        if (su2 && norm === 2) include = true;  // Edge
+                        if (su3 && norm === 3) include = true;  // Corner
+                        
+                        if (include) {
+                            dummy.position.set(x + dx, y + dy, z + dz);
+                            dummy.updateMatrix();
+                            this._symHighlights.setMatrixAt(count++, dummy.matrix);
+                        }
+                    }
+                }
+            }
+        }
+        
+        this._symHighlights.count = count;
+        this._symHighlights.instanceMatrix.needsUpdate = true;
+        this._symHighlights.visible = count > 0;
     }
 
     toggleGrid(on) {
@@ -545,7 +654,7 @@ export class Viewport {
             const vx = velocities[i * 3], vy = velocities[i * 3 + 1], vz = velocities[i * 3 + 2];
 
             // Start point (particle center)
-            posAttr.array[i * 6]     = px;
+            posAttr.array[i * 6] = px;
             posAttr.array[i * 6 + 1] = py;
             posAttr.array[i * 6 + 2] = pz;
             // End point (position + velocity * scale)
@@ -557,7 +666,7 @@ export class Viewport {
             const speed = Math.sqrt(vx * vx + vy * vy + vz * vz);
             const t = Math.min(speed * 20, 1);
             // Start: bright yellow
-            colAttr.array[i * 6]     = 1.0;
+            colAttr.array[i * 6] = 1.0;
             colAttr.array[i * 6 + 1] = 0.9 - t * 0.3;
             colAttr.array[i * 6 + 2] = 0.2;
             // End: orange/red
@@ -627,7 +736,7 @@ export class Viewport {
                 const idx1 = (start + j + 1) % maxLen;
 
                 // Segment start
-                posAttr.array[seg * 6]     = trail.positions[idx0 * 3];
+                posAttr.array[seg * 6] = trail.positions[idx0 * 3];
                 posAttr.array[seg * 6 + 1] = trail.positions[idx0 * 3 + 1];
                 posAttr.array[seg * 6 + 2] = trail.positions[idx0 * 3 + 2];
                 // Segment end
@@ -637,7 +746,7 @@ export class Viewport {
 
                 // Fade: old segments dim, new segments bright
                 const fade = (j + 1) / len;
-                colAttr.array[seg * 6]     = cr * fade * 0.8;
+                colAttr.array[seg * 6] = cr * fade * 0.8;
                 colAttr.array[seg * 6 + 1] = cg * fade * 0.8;
                 colAttr.array[seg * 6 + 2] = cb * fade * 0.8;
                 colAttr.array[seg * 6 + 3] = cr * fade;
@@ -663,82 +772,6 @@ export class Viewport {
         if (this.trails) {
             this.trails.geometry.setDrawRange(0, 0);
         }
-    }
-
-    // ── Confinement Strings ───────────────────────────────────────────
-    _buildConfinementStrings() {
-        const MAX_STRINGS = 50;
-        const vertices = new Float32Array(MAX_STRINGS * 2 * 3);
-        const colors = new Float32Array(MAX_STRINGS * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.9, linewidth: 2,
-        });
-        this.confinementStrings = new THREE.LineSegments(geo, mat);
-        this.confinementStrings.visible = false;
-        this.scene.add(this.confinementStrings);
-    }
-
-    updateConfinementStrings(particles, N) {
-        if (!this.confinementStrings) this._buildConfinementStrings();
-        if (!particles || particles.length === 0) {
-            this.confinementStrings.geometry.setDrawRange(0, 0);
-            return;
-        }
-
-        const posAttr = this.confinementStrings.geometry.getAttribute('position');
-        const colAttr = this.confinementStrings.geometry.getAttribute('color');
-        const halfN = N / 2;
-        const R_BREAK = N / 4;
-        let seg = 0;
-        const maxSegs = posAttr.array.length / 6;
-
-        for (let i = 0; i < particles.length && seg < maxSegs; i++) {
-            const pi = particles[i];
-            if (pi.state === 0) continue;
-            for (let j = i + 1; j < particles.length && seg < maxSegs; j++) {
-                const pj = particles[j];
-                if (pj.state === 0 || pi.state * pj.state >= 0) continue;
-                let dx = pj.x - pi.x, dy = pj.y - pi.y, dz = pj.z - pi.z;
-                if (dx > halfN) dx -= N; else if (dx < -halfN) dx += N;
-                if (dy > halfN) dy -= N; else if (dy < -halfN) dy += N;
-                if (dz > halfN) dz -= N; else if (dz < -halfN) dz += N;
-                const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                if (r > R_BREAK) continue;
-                // Tension color: orange (low) → red (high)
-                const tension = Math.min(r / R_BREAK, 1.0);
-                const cr1 = 1.0, cg1 = 0.6 * (1 - tension), cb1 = 0.1 * (1 - tension);
-                const cr2 = 1.0, cg2 = 0.3 * (1 - tension), cb2 = 0.0;
-                // Positions
-                posAttr.array[seg * 6]     = pi.x;
-                posAttr.array[seg * 6 + 1] = pi.y;
-                posAttr.array[seg * 6 + 2] = pi.z;
-                posAttr.array[seg * 6 + 3] = pi.x + dx;
-                posAttr.array[seg * 6 + 4] = pi.y + dy;
-                posAttr.array[seg * 6 + 5] = pi.z + dz;
-                // Colors
-                colAttr.array[seg * 6]     = cr1;
-                colAttr.array[seg * 6 + 1] = cg1;
-                colAttr.array[seg * 6 + 2] = cb1;
-                colAttr.array[seg * 6 + 3] = cr2;
-                colAttr.array[seg * 6 + 4] = cg2;
-                colAttr.array[seg * 6 + 5] = cb2;
-                seg++;
-            }
-        }
-
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this.confinementStrings.geometry.setDrawRange(0, seg * 2);
-    }
-
-    toggleConfinementStrings(on) {
-        if (!this.confinementStrings) this._buildConfinementStrings();
-        this.confinementStrings.visible = on;
-        if (!on) this.confinementStrings.geometry.setDrawRange(0, 0);
     }
 
     // ── Bond Lines (Scale 2 — Atom mode) ──────────────────────────────
@@ -775,7 +808,7 @@ export class Viewport {
             const idxB = atomData.bonds[b * 2 + 1];
 
             // Start vertex (atom A position)
-            posAttr.array[b * 6]     = atomData.positions[idxA * 3];
+            posAttr.array[b * 6] = atomData.positions[idxA * 3];
             posAttr.array[b * 6 + 1] = atomData.positions[idxA * 3 + 1];
             posAttr.array[b * 6 + 2] = atomData.positions[idxA * 3 + 2];
             // End vertex (atom B position)
@@ -786,7 +819,7 @@ export class Viewport {
             // Bond color: blend the two atom colors
             const rA = atomData.colors[idxA * 3], gA = atomData.colors[idxA * 3 + 1], bA = atomData.colors[idxA * 3 + 2];
             const rB = atomData.colors[idxB * 3], gB = atomData.colors[idxB * 3 + 1], bB = atomData.colors[idxB * 3 + 2];
-            colAttr.array[b * 6]     = rA;
+            colAttr.array[b * 6] = rA;
             colAttr.array[b * 6 + 1] = gA;
             colAttr.array[b * 6 + 2] = bA;
             colAttr.array[b * 6 + 3] = rB;
@@ -816,7 +849,9 @@ export class Viewport {
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
         geo.setDrawRange(0, 0);
+        // Uniforms must match PARTICLE_FRAG expectations (shapeType, uOpacity)
         const mat = new THREE.ShaderMaterial({
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.9 } },
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
             transparent: true,
@@ -825,6 +860,7 @@ export class Viewport {
         });
         this._fieldHeatmap = new THREE.Points(geo, mat);
         this._fieldHeatmap.visible = false;
+        this._fieldHeatmap.frustumCulled = false;
         this._fieldHeatmap.renderOrder = -1;
         this.scene.add(this._fieldHeatmap);
     }
@@ -837,12 +873,12 @@ export class Viewport {
         const n = Math.min(count, MAX_FIELD_GRID);
 
         for (let i = 0; i < n; i++) {
-            posAttr.array[i * 3]     = gridPositions[i * 3];
+            posAttr.array[i * 3] = gridPositions[i * 3];
             posAttr.array[i * 3 + 1] = gridPositions[i * 3 + 1] - 0.3;
             posAttr.array[i * 3 + 2] = gridPositions[i * 3 + 2];
 
             const [r, g, b] = potentialToColor(potentials[i], maxAbsPotential);
-            colAttr.array[i * 3]     = r;
+            colAttr.array[i * 3] = r;
             colAttr.array[i * 3 + 1] = g;
             colAttr.array[i * 3 + 2] = b;
 
@@ -890,7 +926,7 @@ export class Viewport {
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
 
             // Start (grid point)
-            posAttr.array[i * 6]     = gx;
+            posAttr.array[i * 6] = gx;
             posAttr.array[i * 6 + 1] = gy;
             posAttr.array[i * 6 + 2] = gz;
 
@@ -902,7 +938,7 @@ export class Viewport {
 
             // Color: dim tail → bright tip
             const [cr, cg, cb] = magnitudeToColor(mag, maxForce);
-            colAttr.array[i * 6]     = cr * 0.5;
+            colAttr.array[i * 6] = cr * 0.5;
             colAttr.array[i * 6 + 1] = cg * 0.5;
             colAttr.array[i * 6 + 2] = cb * 0.5;
             colAttr.array[i * 6 + 3] = cr;
@@ -951,7 +987,7 @@ export class Viewport {
             const nPts = line.length / 3;
             for (let i = 0; i < nPts - 1 && vi + 2 <= maxVerts; i++) {
                 // Segment: point i → point i+1
-                posAttr.array[vi * 3]     = line[i * 3];
+                posAttr.array[vi * 3] = line[i * 3];
                 posAttr.array[vi * 3 + 1] = line[i * 3 + 1];
                 posAttr.array[vi * 3 + 2] = line[i * 3 + 2];
                 posAttr.array[vi * 3 + 3] = line[(i + 1) * 3];
@@ -961,7 +997,7 @@ export class Viewport {
                 // Color: fade from bright to dim along line
                 const t = i / Math.max(1, nPts - 2);
                 const bright = 1.0 - t * 0.6;
-                colAttr.array[vi * 3]     = 0.26 * bright;
+                colAttr.array[vi * 3] = 0.26 * bright;
                 colAttr.array[vi * 3 + 1] = 0.65 * bright;
                 colAttr.array[vi * 3 + 2] = 0.97 * bright;
                 colAttr.array[vi * 3 + 3] = 0.26 * bright * 0.8;
@@ -1010,7 +1046,7 @@ export class Viewport {
             const fx = forces[i * 3], fy = forces[i * 3 + 1], fz = forces[i * 3 + 2];
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
 
-            posAttr.array[i * 6]     = gx;
+            posAttr.array[i * 6] = gx;
             posAttr.array[i * 6 + 1] = gy;
             posAttr.array[i * 6 + 2] = gz;
 
@@ -1022,7 +1058,7 @@ export class Viewport {
             // Grey color for gravity
             const t = mag / (maxForce + 1e-20);
             const c = 0.3 + 0.5 * t;
-            colAttr.array[i * 6]     = c * 0.5;
+            colAttr.array[i * 6] = c * 0.5;
             colAttr.array[i * 6 + 1] = c * 0.55;
             colAttr.array[i * 6 + 2] = c * 0.6;
             colAttr.array[i * 6 + 3] = c;
@@ -1071,7 +1107,7 @@ export class Viewport {
             const fx = forces[i * 3], fy = forces[i * 3 + 1], fz = forces[i * 3 + 2];
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
 
-            posAttr.array[i * 6]     = px;
+            posAttr.array[i * 6] = px;
             posAttr.array[i * 6 + 1] = py;
             posAttr.array[i * 6 + 2] = pz;
 
@@ -1082,7 +1118,7 @@ export class Viewport {
 
             // Green color for net force
             const t = mag / (maxForce + 1e-20);
-            colAttr.array[i * 6]     = 0.2;
+            colAttr.array[i * 6] = 0.2;
             colAttr.array[i * 6 + 1] = 0.4 + 0.3 * t;
             colAttr.array[i * 6 + 2] = 0.2;
             colAttr.array[i * 6 + 3] = 0.3;
@@ -1101,22 +1137,32 @@ export class Viewport {
         if (!on) this._particleForces.geometry.setDrawRange(0, 0);
     }
 
-    // ── Flux Volume Rendering (Scale 0 — substrate mode) ──────────────
-    // Sparse instanced points that glow where flux is nonzero.
-    // Updated each frame from getFluxVolume() or getFluxSlice() data.
+    // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
+    // Renders the continuous flux field J as sparse point cloud.
+    // Each voxel above threshold emits a colored dot sized by magnitude.
+    // Subsampling tiers: step=1 for L<=48, step=2 for L<=96, step=4 for L>96.
+    // Boundary clipping uses _insideBoundary() for non-cube shapes.
 
     _buildFluxVolume(latticeSize) {
-        // Pre-allocate for full lattice (capped at 64^3 for performance)
-        const cap = Math.min(latticeSize, 64);
-        const maxPts = cap * cap * cap;
+        // Compute the subsampled grid dimension to determine buffer capacity.
+        // Subsampling mirrors updateFluxVolume: step=4 for L>96, step=2 for L>48, else 1.
+        const step = latticeSize > 96 ? 4 : (latticeSize > 48 ? 2 : 1);
+        const sampledN = Math.ceil(latticeSize / step);
+        const maxPts = sampledN * sampledN * sampledN;
         const positions = new Float32Array(maxPts * 3);
         const colors = new Float32Array(maxPts * 3);
         const sizes = new Float32Array(maxPts);
 
         const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        const posAttr = new THREE.Float32BufferAttribute(positions, 3);
+        const colAttr = new THREE.Float32BufferAttribute(colors, 3);
+        const sizeAttr = new THREE.Float32BufferAttribute(sizes, 1);
+        posAttr.setUsage(THREE.DynamicDrawUsage);
+        colAttr.setUsage(THREE.DynamicDrawUsage);
+        sizeAttr.setUsage(THREE.DynamicDrawUsage);
+        geo.setAttribute('position', posAttr);
+        geo.setAttribute('particleColor', colAttr);
+        geo.setAttribute('size', sizeAttr);
         geo.setDrawRange(0, 0);
 
         const mat = new THREE.ShaderMaterial({
@@ -1131,8 +1177,9 @@ export class Viewport {
 
         this._fluxVolume = new THREE.Points(geo, mat);
         this._fluxVolume.visible = false;
+        this._fluxVolume.frustumCulled = false; // skip bounding sphere recompute for dynamic geometry
         this._fluxVolume.renderOrder = 10; // render after background stars (order 0)
-        this._fluxVolumeSize = cap;
+        this._fluxVolumeSize = latticeSize;
         this.scene.add(this._fluxVolume);
     }
 
@@ -1144,12 +1191,27 @@ export class Viewport {
      * @param {number} latticeSize — side length N
      */
     updateFluxVolume(volumeData, latticeSize) {
-        if (!this._fluxVolume) this._buildFluxVolume(latticeSize);
+        // Rebuild if missing or if lattice size changed (buffer capacity depends on L)
+        if (!this._fluxVolume || this._fluxVolumeSize !== latticeSize) {
+            if (this._fluxVolume) {
+                this.scene.remove(this._fluxVolume);
+                this._fluxVolume.geometry.dispose();
+                this._fluxVolume.material.dispose();
+                this._fluxVolume = null;
+            }
+            this._buildFluxVolume(latticeSize);
+        }
 
         const posAttr = this._fluxVolume.geometry.getAttribute('position');
         const colAttr = this._fluxVolume.geometry.getAttribute('particleColor');
         const sizeAttr = this._fluxVolume.geometry.getAttribute('size');
-        const N = Math.min(latticeSize, this._fluxVolumeSize);
+        const N = latticeSize;
+
+        // Early exit if no data
+        if (!volumeData || volumeData.length === 0) {
+            this._fluxVolume.geometry.setDrawRange(0, 0);
+            return;
+        }
 
         // Find max for normalization
         let maxFlux = 0;
@@ -1158,16 +1220,25 @@ export class Viewport {
             if (volumeData[i] > maxFlux) maxFlux = volumeData[i];
         }
 
+        // Skip full scan if field is essentially zero
+        if (maxFlux < 1e-20) {
+            this._fluxVolume.geometry.setDrawRange(0, 0);
+            return;
+        }
+
         // Render every voxel — base dots + flux-driven glow
         // Clip to boundary shape (normalized coords -1..1 from lattice center)
         let count = 0;
         const maxPts = posAttr.array.length / 3;
-        const MAX_SIZE  = (this._fluxPointScale || 1.0) * 10.0;
+        const MAX_SIZE = (this._fluxPointScale || 1.0) * 10.0;
         const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
         const halfN = N / 2;
 
-        // Subsample for large lattices: step=2 for L>48 (renders 1/8 of voxels)
-        const step = N > 48 ? 2 : 1;
+        // Subsample for large lattices to maintain interactive frame rates:
+        //   L<=48:  step=1  → up to 48^3 = 110K points
+        //   L<=96:  step=2  → up to 48^3 = 110K points (from 96^3)
+        //   L>96:   step=4  → up to 32^3 =  32K points (from 128^3)
+        const step = N > 96 ? 4 : (N > 48 ? 2 : 1);
 
         for (let z = 0; z < N && count < maxPts; z += step) {
             for (let y = 0; y < N && count < maxPts; y += step) {
@@ -1180,15 +1251,16 @@ export class Viewport {
 
                     const mag = volumeData[z * N * N + y * N + x];
 
-                    posAttr.array[count * 3]     = x;
+                    // Skip inactive voxels before writing any attributes,
+                    // otherwise stale color/size from a prior frame leak through
+                    if (mag < FLUX_THRESHOLD || maxFlux < 1e-20) continue;
+
+                    posAttr.array[count * 3] = x;
                     posAttr.array[count * 3 + 1] = y;
                     posAttr.array[count * 3 + 2] = z;
 
-                    // Skip inactive voxels entirely — no ghost dots
-                    if (mag < FLUX_THRESHOLD || maxFlux < 1e-20) continue;
-
                     const [r, g, b] = fluxToColor(mag, maxFlux);
-                    colAttr.array[count * 3]     = r;
+                    colAttr.array[count * 3] = r;
                     colAttr.array[count * 3 + 1] = g;
                     colAttr.array[count * 3 + 2] = b;
                     const t = mag / (maxFlux + 1e-20);
@@ -1235,9 +1307,9 @@ export class Viewport {
             const a = Math.floor(i / N);
             const b = i % N;
             let x, y, z;
-            if (axis === 0)      { x = index; y = a; z = b; }
+            if (axis === 0) { x = index; y = a; z = b; }
             else if (axis === 1) { x = a; y = index; z = b; }
-            else                 { x = a; y = b; z = index; }
+            else { x = a; y = b; z = index; }
 
             // Clip to boundary shape
             const nx = (x - halfN + 0.5) / halfN;
@@ -1245,16 +1317,18 @@ export class Viewport {
             const nz = (z - halfN + 0.5) / halfN;
             if (!this._insideBoundary(nx, ny, nz)) continue;
 
-            posAttr.array[count * 3]     = x;
+            posAttr.array[count * 3] = x;
             posAttr.array[count * 3 + 1] = y;
             posAttr.array[count * 3 + 2] = z;
 
             const [r, g, b2] = fluxToColor(sliceData[i], maxFlux);
-            colAttr.array[count * 3]     = r;
+            colAttr.array[count * 3] = r;
             colAttr.array[count * 3 + 1] = g;
             colAttr.array[count * 3 + 2] = b2;
 
-            sizeAttr.array[count] = 8.0 + 8.0 * (sliceData[i] / (maxFlux + 1e-20));
+            // Scale point size with lattice: at L=32 base=8, at L=128 base=2
+            const baseSize = Math.max(2.0, 8.0 * (32 / N));
+            sizeAttr.array[count] = baseSize + baseSize * (sliceData[i] / (maxFlux + 1e-20));
             count++;
         }
 
@@ -1300,6 +1374,24 @@ export class Viewport {
         this._fluxThreshold = val;
     }
 
+    setScenarioScale(scale) {
+        this._scenarioScale = scale;
+        this._applyScenarioScale();
+    }
+
+    _applyScenarioScale() {
+        if (this._engineMode === 'lattice' || !this._engineMode) {
+            const scale = this._scenarioScale || 1.0;
+            const N = this.latticeSize || 32;
+            const offset = (1 - scale) * N / 2;
+            this.scene.scale.setScalar(scale);
+            this.scene.position.set(offset, offset, offset);
+        } else {
+            this.scene.scale.setScalar(1);
+            this.scene.position.set(0, 0, 0);
+        }
+    }
+
     // ══════════════════════════════════════════════════════════════════
     // ── Field Visualization Overlays (Scale 0) ───────────────────────
     // E-field, B-field, Poynting, Divergence, Flux streamlines, Forces,
@@ -1342,13 +1434,13 @@ export class Viewport {
                 // Cyan: (0.3, 0.82, 0.88) fading to dim
                 const r = 0.3 * alpha, g = 0.82 * alpha, b = 0.88 * alpha;
 
-                posAttr.array[vi * 3]     = sx;
+                posAttr.array[vi * 3] = sx;
                 posAttr.array[vi * 3 + 1] = sy;
                 posAttr.array[vi * 3 + 2] = sz;
                 colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
                 vi++;
 
-                posAttr.array[vi * 3]     = line[(i + 1) * 3];
+                posAttr.array[vi * 3] = line[(i + 1) * 3];
                 posAttr.array[vi * 3 + 1] = line[(i + 1) * 3 + 1];
                 posAttr.array[vi * 3 + 2] = line[(i + 1) * 3 + 2];
                 colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
@@ -1402,13 +1494,13 @@ export class Viewport {
                 // Green: (0.4, 0.73, 0.42)
                 const r = 0.4 * alpha, g = 0.73 * alpha, b = 0.42 * alpha;
 
-                posAttr.array[vi * 3]     = sx;
+                posAttr.array[vi * 3] = sx;
                 posAttr.array[vi * 3 + 1] = sy;
                 posAttr.array[vi * 3 + 2] = sz;
                 colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
                 vi++;
 
-                posAttr.array[vi * 3]     = line[(i + 1) * 3];
+                posAttr.array[vi * 3] = line[(i + 1) * 3];
                 posAttr.array[vi * 3 + 1] = line[(i + 1) * 3 + 1];
                 posAttr.array[vi * 3 + 2] = line[(i + 1) * 3 + 2];
                 colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
@@ -1454,31 +1546,33 @@ export class Viewport {
         if (!this._magCache || this._magCache.length < count) this._magCache = new Float32Array(count);
         const mags = this._magCache;
         for (let i = 0; i < count; i++) {
-            const a = vectors[i*3], b = vectors[i*3+1], c = vectors[i*3+2];
-            const m = Math.sqrt(a*a + b*b + c*c);
+            const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
+            const m = Math.sqrt(a * a + b * b + c * c);
             mags[i] = m;
             if (m > maxMag) maxMag = m;
         }
         const threshold = maxMag * 0.05;
         const halfN = this._halfN;
+        // Scale arrow length with lattice size so arrows remain visible at large L
+        const arrowBase = 3 * (this.latticeSize / 32);
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxArrows; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
-            const vx = vectors[i*3], vy = vectors[i*3+1], vz = vectors[i*3+2];
+            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
 
-            const px = positions[i*3], py = positions[i*3+1], pz = positions[i*3+2];
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
-            const scale = Math.log(1 + mag / maxMag) * 3;
-            const nx = vx/mag * scale, ny = vy/mag * scale, nz = vz/mag * scale;
+            const scale = Math.log(1 + mag / maxMag) * arrowBase;
+            const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
 
             // Arrow base (darker orange)
-            posAttr.array[vi*6]   = px; posAttr.array[vi*6+1] = py; posAttr.array[vi*6+2] = pz;
-            colAttr.array[vi*6]   = 0.8; colAttr.array[vi*6+1] = 0.55; colAttr.array[vi*6+2] = 0.15;
+            posAttr.array[vi * 6] = px; posAttr.array[vi * 6 + 1] = py; posAttr.array[vi * 6 + 2] = pz;
+            colAttr.array[vi * 6] = 0.8; colAttr.array[vi * 6 + 1] = 0.55; colAttr.array[vi * 6 + 2] = 0.15;
             // Arrow tip (bright yellow)
-            posAttr.array[vi*6+3] = px+nx; posAttr.array[vi*6+4] = py+ny; posAttr.array[vi*6+5] = pz+nz;
-            colAttr.array[vi*6+3] = 1.0; colAttr.array[vi*6+4] = 0.85; colAttr.array[vi*6+5] = 0.15;
+            posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
+            colAttr.array[vi * 6 + 3] = 1.0; colAttr.array[vi * 6 + 4] = 0.85; colAttr.array[vi * 6 + 5] = 0.15;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -1504,6 +1598,7 @@ export class Viewport {
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
         geo.setDrawRange(0, 0);
         const mat = new THREE.ShaderMaterial({
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.8 } },
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
             transparent: true,
@@ -1512,6 +1607,7 @@ export class Viewport {
         });
         this._divField = new THREE.Points(geo, mat);
         this._divField.visible = false;
+        this._divField.frustumCulled = false;
         this.scene.add(this._divField);
     }
 
@@ -1529,28 +1625,30 @@ export class Viewport {
         }
         const threshold = maxVal * 0.01;
         const halfN = this._halfN;
+        // Scale point size with lattice so dots remain visible at large L
+        const sizeScale = this.latticeSize / 32;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxPts; i++) {
             const v = values[i];
             if (Math.abs(v) < threshold) continue;
 
-            const px = positions[i*3], py = positions[i*3+1], pz = positions[i*3+2];
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
-            posAttr.array[vi*3]   = px;
-            posAttr.array[vi*3+1] = py;
-            posAttr.array[vi*3+2] = pz;
+            posAttr.array[vi * 3] = px;
+            posAttr.array[vi * 3 + 1] = py;
+            posAttr.array[vi * 3 + 2] = pz;
 
             const t = Math.abs(v) / maxVal;
             if (v > 0) {
                 // Red (positive divergence = source)
-                colAttr.array[vi*3] = 0.9; colAttr.array[vi*3+1] = 0.2; colAttr.array[vi*3+2] = 0.15;
+                colAttr.array[vi * 3] = 0.9; colAttr.array[vi * 3 + 1] = 0.2; colAttr.array[vi * 3 + 2] = 0.15;
             } else {
                 // Blue (negative divergence = sink)
-                colAttr.array[vi*3] = 0.15; colAttr.array[vi*3+1] = 0.3; colAttr.array[vi*3+2] = 0.9;
+                colAttr.array[vi * 3] = 0.15; colAttr.array[vi * 3 + 1] = 0.3; colAttr.array[vi * 3 + 2] = 0.9;
             }
-            sizeAttr.array[vi] = 4 + 12 * t;
+            sizeAttr.array[vi] = (4 + 12 * t) * sizeScale;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -1600,13 +1698,13 @@ export class Viewport {
                 const t = i / (nPts - 1);
                 const [r, g, b] = fluxToColor(t * (maxFluxMag || 1), maxFluxMag || 1);
 
-                posAttr.array[vi * 3]     = sx;
+                posAttr.array[vi * 3] = sx;
                 posAttr.array[vi * 3 + 1] = sy;
                 posAttr.array[vi * 3 + 2] = sz;
                 colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
                 vi++;
 
-                posAttr.array[vi * 3]     = line[(i + 1) * 3];
+                posAttr.array[vi * 3] = line[(i + 1) * 3];
                 posAttr.array[vi * 3 + 1] = line[(i + 1) * 3 + 1];
                 posAttr.array[vi * 3 + 2] = line[(i + 1) * 3 + 2];
                 colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
@@ -1652,31 +1750,33 @@ export class Viewport {
         if (!this._magCache || this._magCache.length < count) this._magCache = new Float32Array(count);
         const mags = this._magCache;
         for (let i = 0; i < count; i++) {
-            const a = vectors[i*3], b = vectors[i*3+1], c = vectors[i*3+2];
-            const m = Math.sqrt(a*a + b*b + c*c);
+            const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
+            const m = Math.sqrt(a * a + b * b + c * c);
             mags[i] = m;
             if (m > maxMag) maxMag = m;
         }
         const threshold = maxMag * 0.03;
         const halfN = this._halfN;
+        // Scale arrow length with lattice size so arrows remain visible at large L
+        const arrowBase = 2 * (this.latticeSize / 32);
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxArrows; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
-            const vx = vectors[i*3], vy = vectors[i*3+1], vz = vectors[i*3+2];
+            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
 
-            const px = positions[i*3], py = positions[i*3+1], pz = positions[i*3+2];
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
-            const scale = Math.log(1 + mag / maxMag) * 2;
-            const nx = vx/mag * scale, ny = vy/mag * scale, nz = vz/mag * scale;
+            const scale = Math.log(1 + mag / maxMag) * arrowBase;
+            const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
 
             // Base (dark steel)
-            posAttr.array[vi*6]   = px; posAttr.array[vi*6+1] = py; posAttr.array[vi*6+2] = pz;
-            colAttr.array[vi*6]   = 0.47; colAttr.array[vi*6+1] = 0.56; colAttr.array[vi*6+2] = 0.61;
+            posAttr.array[vi * 6] = px; posAttr.array[vi * 6 + 1] = py; posAttr.array[vi * 6 + 2] = pz;
+            colAttr.array[vi * 6] = 0.47; colAttr.array[vi * 6 + 1] = 0.56; colAttr.array[vi * 6 + 2] = 0.61;
             // Tip (brighter steel)
-            posAttr.array[vi*6+3] = px+nx; posAttr.array[vi*6+4] = py+ny; posAttr.array[vi*6+5] = pz+nz;
-            colAttr.array[vi*6+3] = 0.7; colAttr.array[vi*6+4] = 0.78; colAttr.array[vi*6+5] = 0.82;
+            posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
+            colAttr.array[vi * 6 + 3] = 0.7; colAttr.array[vi * 6 + 4] = 0.78; colAttr.array[vi * 6 + 5] = 0.82;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -1718,36 +1818,38 @@ export class Viewport {
         if (!this._magCache || this._magCache.length < count) this._magCache = new Float32Array(count);
         const mags = this._magCache;
         for (let i = 0; i < count; i++) {
-            const a = vectors[i*3], b = vectors[i*3+1], c = vectors[i*3+2];
-            const m = Math.sqrt(a*a + b*b + c*c);
+            const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
+            const m = Math.sqrt(a * a + b * b + c * c);
             mags[i] = m;
             if (m > maxMag) maxMag = m;
         }
         const threshold = maxMag * 0.05;
         const halfN = this._halfN;
+        // Scale arrow length with lattice size so arrows remain visible at large L
+        const arrowBase = 2.5 * (this.latticeSize / 32);
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxArrows; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
-            const vx = vectors[i*3], vy = vectors[i*3+1], vz = vectors[i*3+2];
+            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
 
-            const px = positions[i*3], py = positions[i*3+1], pz = positions[i*3+2];
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
             const t = mag / maxMag; // 0..1
-            const scale = Math.log(1 + t) * 2.5;
-            const nx = vx/mag * scale, ny = vy/mag * scale, nz = vz/mag * scale;
+            const scale = Math.log(1 + t) * arrowBase;
+            const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
 
             // Base: cool blue-grey
-            posAttr.array[vi*6]   = px; posAttr.array[vi*6+1] = py; posAttr.array[vi*6+2] = pz;
-            colAttr.array[vi*6]   = 0.55 + t * 0.3;
-            colAttr.array[vi*6+1] = 0.60 + t * 0.25;
-            colAttr.array[vi*6+2] = 0.68 + t * 0.2;
+            posAttr.array[vi * 6] = px; posAttr.array[vi * 6 + 1] = py; posAttr.array[vi * 6 + 2] = pz;
+            colAttr.array[vi * 6] = 0.55 + t * 0.3;
+            colAttr.array[vi * 6 + 1] = 0.60 + t * 0.25;
+            colAttr.array[vi * 6 + 2] = 0.68 + t * 0.2;
             // Tip: bright white-blue
-            posAttr.array[vi*6+3] = px+nx; posAttr.array[vi*6+4] = py+ny; posAttr.array[vi*6+5] = pz+nz;
-            colAttr.array[vi*6+3] = 0.85 + t * 0.15;
-            colAttr.array[vi*6+4] = 0.88 + t * 0.12;
-            colAttr.array[vi*6+5] = 0.92 + t * 0.08;
+            posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
+            colAttr.array[vi * 6 + 3] = 0.85 + t * 0.15;
+            colAttr.array[vi * 6 + 4] = 0.88 + t * 0.12;
+            colAttr.array[vi * 6 + 5] = 0.92 + t * 0.08;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -1780,6 +1882,7 @@ export class Viewport {
         });
         this._darkMatterHalo = new THREE.Points(geo, mat);
         this._darkMatterHalo.visible = false;
+        this._darkMatterHalo.frustumCulled = false;
         this._darkMatterHalo.renderOrder = 1;
         this.scene.add(this._darkMatterHalo);
     }
@@ -1795,8 +1898,9 @@ export class Viewport {
         const maxPts = 8000;
 
         // For each voxel: if sub-threshold flux AND void state -> dark matter
-        // Sample every 2nd voxel for performance on 32^3
-        const step = N > 24 ? 2 : 1;
+        // Subsample for performance: step=4 for N>64, step=2 for N>24, else 1
+        // (avoids 110K+ iterations at L=96 with step=2)
+        const step = N > 64 ? 4 : (N > 24 ? 2 : 1);
         for (let z = 0; z < N && vi < maxPts; z += step) {
             for (let y = 0; y < N && vi < maxPts; y += step) {
                 for (let x = 0; x < N && vi < maxPts; x += step) {
@@ -1806,14 +1910,15 @@ export class Viewport {
                     if (mag > 0.003 && mag < kGen) {
                         const t = mag / kGen; // 0..1 normalized
                         // Use raw lattice coordinates (matches updateFluxVolume and updateParticles)
-                        posAttr.array[vi * 3]     = x;
+                        posAttr.array[vi * 3] = x;
                         posAttr.array[vi * 3 + 1] = y;
                         posAttr.array[vi * 3 + 2] = z;
                         // Purple gradient: faint → bright purple as flux approaches threshold
-                        colAttr.array[vi * 3]     = 0.3 + t * 0.4;  // R
+                        colAttr.array[vi * 3] = 0.3 + t * 0.4;  // R
                         colAttr.array[vi * 3 + 1] = 0.1 + t * 0.15; // G
                         colAttr.array[vi * 3 + 2] = 0.5 + t * 0.4;  // B
-                        sizeAttr.array[vi] = 1.5 + t * 6.0;
+                        const stepScale = step > 1 ? step * 0.7 : 1.0;
+                        sizeAttr.array[vi] = (1.5 + t * 6.0) * stepScale;
                         vi++;
                     }
                 }
@@ -1902,9 +2007,9 @@ export class Viewport {
         // 12 edges of a unit cube, scaled to 3x3x3 around particle
         // Particles use raw lattice coordinates (not centered), matching updateParticles()
         const edges = [
-            [0,0,0, 1,0,0], [0,1,0, 1,1,0], [0,0,1, 1,0,1], [0,1,1, 1,1,1],
-            [0,0,0, 0,1,0], [1,0,0, 1,1,0], [0,0,1, 0,1,1], [1,0,1, 1,1,1],
-            [0,0,0, 0,0,1], [1,0,0, 1,0,1], [0,1,0, 0,1,1], [1,1,0, 1,1,1],
+            [0, 0, 0, 1, 0, 0], [0, 1, 0, 1, 1, 0], [0, 0, 1, 1, 0, 1], [0, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 1, 0], [1, 0, 0, 1, 1, 0], [0, 0, 1, 0, 1, 1], [1, 0, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 1], [1, 0, 0, 1, 0, 1], [0, 1, 0, 0, 1, 1], [1, 1, 0, 1, 1, 1],
         ];
 
         for (const p of particles) {
@@ -1912,15 +2017,15 @@ export class Viewport {
             const cx = p.x, cy = p.y, cz = p.z;
             for (const e of edges) {
                 const i = si * 6;
-                posAttr.array[i]     = cx - 1.5 + e[0] * 3;
+                posAttr.array[i] = cx - 1.5 + e[0] * 3;
                 posAttr.array[i + 1] = cy - 1.5 + e[1] * 3;
                 posAttr.array[i + 2] = cz - 1.5 + e[2] * 3;
                 posAttr.array[i + 3] = cx - 1.5 + e[3] * 3;
                 posAttr.array[i + 4] = cy - 1.5 + e[4] * 3;
                 posAttr.array[i + 5] = cz - 1.5 + e[5] * 3;
                 // Red tint
-                colAttr.array[i] = 0.8; colAttr.array[i+1] = 0.2; colAttr.array[i+2] = 0.2;
-                colAttr.array[i+3] = 0.8; colAttr.array[i+4] = 0.2; colAttr.array[i+5] = 0.2;
+                colAttr.array[i] = 0.8; colAttr.array[i + 1] = 0.2; colAttr.array[i + 2] = 0.2;
+                colAttr.array[i + 3] = 0.8; colAttr.array[i + 4] = 0.2; colAttr.array[i + 5] = 0.2;
                 si++;
             }
         }
@@ -1954,6 +2059,7 @@ export class Viewport {
         });
         this._genesisIsosurface = new THREE.Points(geo, mat);
         this._genesisIsosurface.visible = false;
+        this._genesisIsosurface.frustumCulled = false;
         this._genesisIsosurface.renderOrder = 1;
         this.scene.add(this._genesisIsosurface);
     }
@@ -1967,22 +2073,27 @@ export class Viewport {
         let vi = 0;
         const band = kGenesis * 0.15; // 15% band around threshold
 
-        for (let z = 0; z < N && vi < 4000; z++) {
-            for (let y = 0; y < N && vi < 4000; y++) {
-                for (let x = 0; x < N && vi < 4000; x++) {
+        // Subsample for large lattices: step=4 for N>64, step=2 for N>24, else 1
+        // (aligned with DarkMatter halo thresholds to avoid 110K+ iterations at L=48/96)
+        const step = N > 64 ? 4 : (N > 24 ? 2 : 1);
+
+        for (let z = 0; z < N && vi < 4000; z += step) {
+            for (let y = 0; y < N && vi < 4000; y += step) {
+                for (let x = 0; x < N && vi < 4000; x += step) {
                     const mag = fluxMag[z * N * N + y * N + x];
                     const dist = Math.abs(mag - kGenesis);
                     if (dist < band && mag > 0.01) {
                         const t = 1.0 - dist / band; // 1=on threshold, 0=edge of band
                         // Raw lattice coordinates (matches updateFluxVolume)
-                        posAttr.array[vi * 3]     = x;
+                        posAttr.array[vi * 3] = x;
                         posAttr.array[vi * 3 + 1] = y;
                         posAttr.array[vi * 3 + 2] = z;
                         // Green glow: bright at threshold, fading at band edges
-                        colAttr.array[vi * 3]     = 0.15 + t * 0.15;
+                        colAttr.array[vi * 3] = 0.15 + t * 0.15;
                         colAttr.array[vi * 3 + 1] = 0.7 + t * 0.3;
                         colAttr.array[vi * 3 + 2] = 0.2 + t * 0.15;
-                        sizeAttr.array[vi] = 2.0 + t * 5.0;
+                        const stepScale = step > 1 ? step * 0.7 : 1.0;
+                        sizeAttr.array[vi] = (2.0 + t * 5.0) * stepScale;
                         vi++;
                     }
                 }
@@ -2000,6 +2111,93 @@ export class Viewport {
         if (!on) this._genesisIsosurface.geometry.setDrawRange(0, 0);
     }
 
+    // ── Confinement Strings (SU(3) 1D topological defects) ───────────
+    // O(N^2) pair evaluation for manifest particles. Performance note:
+    // with typical particle counts (<200) this is negligible, but would
+    // need spatial hashing if counts exceed ~1000.
+    _buildConfinementStrings() {
+        const maxVerts = 400 * 2; // 400 strings
+        const positions = new Float32Array(maxVerts * 3);
+        const colors = new Float32Array(maxVerts * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.9,
+            linewidth: 2, depthWrite: false, blending: THREE.AdditiveBlending
+        });
+        this._confinementStrings = new THREE.LineSegments(geo, mat);
+        this._confinementStrings.visible = false;
+        this.scene.add(this._confinementStrings);
+    }
+
+    updateConfinementStrings(bridge) {
+        if (!this._confinementStrings) this._buildConfinementStrings();
+
+        const posAttr = this._confinementStrings.geometry.getAttribute('position');
+        const colAttr = this._confinementStrings.geometry.getAttribute('color');
+        const maxVerts = posAttr.array.length / 3;
+
+        let vi = 0;
+        const kb = bridge.getParam ? bridge.getParam('kb') : 0.511;
+        const J2_threshold_dist2 = 120.0; // Break threshold scale mimicking V(r) ~ sigma*r tension snap
+
+        // This utilizes getParticleData from the active engine
+        const ptData = bridge.getParticleData();
+        if (!ptData || ptData.count < 2) {
+            this._confinementStrings.geometry.setDrawRange(0, 0);
+            return;
+        }
+
+        // O(N^2) evaluation for topological deformation between manifest states
+        for (let i = 0; i < ptData.count; i++) {
+            if (ptData.states[i * 4 + 3] === 0) continue; // Only process active manifest nodes
+            for (let j = i + 1; j < ptData.count; j++) {
+                if (ptData.states[j * 4 + 3] === 0) continue;
+
+                const dx = ptData.states[j * 4] - ptData.states[i * 4];
+                const dy = ptData.states[j * 4 + 1] - ptData.states[i * 4 + 1];
+                const dz = ptData.states[j * 4 + 2] - ptData.states[i * 4 + 2];
+                const r2 = dx * dx + dy * dy + dz * dz;
+
+                // If they are separated but before the snap point (hadronization)
+                if (r2 > 1.0 && r2 < J2_threshold_dist2) {
+                    const t = r2 / J2_threshold_dist2;
+                    const alpha = 1.0 - t * 0.4;
+                    // Color axis simulation (Mapping spatial differentiation to RGB SU(3) proxies)
+                    const r = (Math.abs(dx) / Math.sqrt(r2)) * alpha + 0.2;
+                    const g = (Math.abs(dy) / Math.sqrt(r2)) * alpha + 0.2;
+                    const b = (Math.abs(dz) / Math.sqrt(r2)) * alpha + 0.2;
+
+                    if (vi + 2 > maxVerts) break;
+
+                    posAttr.array[vi * 3] = ptData.states[i * 4];
+                    posAttr.array[vi * 3 + 1] = ptData.states[i * 4 + 1];
+                    posAttr.array[vi * 3 + 2] = ptData.states[i * 4 + 2];
+                    colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
+                    vi++;
+
+                    posAttr.array[vi * 3] = ptData.states[j * 4];
+                    posAttr.array[vi * 3 + 1] = ptData.states[j * 4 + 1];
+                    posAttr.array[vi * 3 + 2] = ptData.states[j * 4 + 2];
+                    colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
+                    vi++;
+                }
+            }
+        }
+
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._confinementStrings.geometry.setDrawRange(0, vi);
+    }
+
+    toggleConfinement(on) {
+        if (!this._confinementStrings) this._buildConfinementStrings();
+        this._confinementStrings.visible = on;
+        if (!on) this._confinementStrings.geometry.setDrawRange(0, 0);
+    }
+
     // ── Dual Substrate Volume (Warm L / Cool R) ─────────────────────
     _buildDualFluxVolume() {
         const maxPts = 8000;
@@ -2012,6 +2210,7 @@ export class Viewport {
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
         geo.setDrawRange(0, 0);
         const mat = new THREE.ShaderMaterial({
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
             transparent: true,
@@ -2020,6 +2219,7 @@ export class Viewport {
         });
         this._dualFluxVolume = new THREE.Points(geo, mat);
         this._dualFluxVolume.visible = false;
+        this._dualFluxVolume.frustumCulled = false;
         this.scene.add(this._dualFluxVolume);
     }
 
@@ -2036,19 +2236,21 @@ export class Viewport {
         if (!this._magCacheDual || this._magCacheDual.length < totalDual) this._magCacheDual = new Float32Array(totalDual);
         const dualMags = this._magCacheDual;
         for (let i = 0; i < lCount; i++) {
-            const a = lData.vectors[i*3], b = lData.vectors[i*3+1], c = lData.vectors[i*3+2];
-            const m = Math.sqrt(a*a + b*b + c*c);
+            const a = lData.vectors[i * 3], b = lData.vectors[i * 3 + 1], c = lData.vectors[i * 3 + 2];
+            const m = Math.sqrt(a * a + b * b + c * c);
             dualMags[i] = m;
             if (m > maxL) maxL = m;
         }
         for (let i = 0; i < rCount; i++) {
-            const a = rData.vectors[i*3], b = rData.vectors[i*3+1], c = rData.vectors[i*3+2];
-            const m = Math.sqrt(a*a + b*b + c*c);
+            const a = rData.vectors[i * 3], b = rData.vectors[i * 3 + 1], c = rData.vectors[i * 3 + 2];
+            const m = Math.sqrt(a * a + b * b + c * c);
             dualMags[lCount + i] = m;
             if (m > maxR) maxR = m;
         }
         const maxVal = Math.max(maxL, maxR, 1e-20);
         const threshold = maxVal * 0.02;
+        // Scale point size with lattice so dots remain visible at large L
+        const sizeScale = this.latticeSize / 32;
         let vi = 0;
 
         // Boundary clipping for dual substrate
@@ -2058,24 +2260,24 @@ export class Viewport {
         for (let i = 0; i < lCount && vi < maxPts; i++) {
             const mag = dualMags[i];
             if (mag < threshold) continue;
-            const px = lData.positions[i*3], py = lData.positions[i*3+1], pz = lData.positions[i*3+2];
+            const px = lData.positions[i * 3], py = lData.positions[i * 3 + 1], pz = lData.positions[i * 3 + 2];
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
-            posAttr.array[vi*3] = px; posAttr.array[vi*3+1] = py; posAttr.array[vi*3+2] = pz;
+            posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
-            colAttr.array[vi*3] = 0.9 * t; colAttr.array[vi*3+1] = 0.4 * t; colAttr.array[vi*3+2] = 0.15 * t;
-            sizeAttr.array[vi] = 4 + 12 * t;
+            colAttr.array[vi * 3] = 0.9 * t; colAttr.array[vi * 3 + 1] = 0.4 * t; colAttr.array[vi * 3 + 2] = 0.15 * t;
+            sizeAttr.array[vi] = (4 + 12 * t) * sizeScale;
             vi++;
         }
         // R substrate (cool: blue-purple)
         for (let i = 0; i < rCount && vi < maxPts; i++) {
             const mag = dualMags[lCount + i];
             if (mag < threshold) continue;
-            const px = rData.positions[i*3], py = rData.positions[i*3+1], pz = rData.positions[i*3+2];
+            const px = rData.positions[i * 3], py = rData.positions[i * 3 + 1], pz = rData.positions[i * 3 + 2];
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
-            posAttr.array[vi*3] = px; posAttr.array[vi*3+1] = py; posAttr.array[vi*3+2] = pz;
+            posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
-            colAttr.array[vi*3] = 0.3 * t; colAttr.array[vi*3+1] = 0.2 * t; colAttr.array[vi*3+2] = 0.9 * t;
-            sizeAttr.array[vi] = 4 + 12 * t;
+            colAttr.array[vi * 3] = 0.3 * t; colAttr.array[vi * 3 + 1] = 0.2 * t; colAttr.array[vi * 3 + 2] = 0.9 * t;
+            sizeAttr.array[vi] = (4 + 12 * t) * sizeScale;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -2102,6 +2304,7 @@ export class Viewport {
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
         geo.setDrawRange(0, 0);
         const mat = new THREE.ShaderMaterial({
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
             transparent: true,
@@ -2110,6 +2313,7 @@ export class Viewport {
         });
         this._chiralityField = new THREE.Points(geo, mat);
         this._chiralityField.visible = false;
+        this._chiralityField.frustumCulled = false;
         this.scene.add(this._chiralityField);
     }
 
@@ -2127,28 +2331,30 @@ export class Viewport {
         }
         const threshold = maxVal * 0.02;
         const halfN = this._halfN;
+        // Scale point size with lattice so dots remain visible at large L
+        const sizeScale = this.latticeSize / 32;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxPts; i++) {
             const v = values[i];
             if (Math.abs(v) < threshold) continue;
 
-            const px = positions[i*3], py = positions[i*3+1], pz = positions[i*3+2];
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
-            posAttr.array[vi*3]   = px;
-            posAttr.array[vi*3+1] = py;
-            posAttr.array[vi*3+2] = pz;
+            posAttr.array[vi * 3] = px;
+            posAttr.array[vi * 3 + 1] = py;
+            posAttr.array[vi * 3 + 2] = pz;
 
             const t = Math.abs(v) / maxVal;
             if (v > 0) {
                 // L-dominant: warm red
-                colAttr.array[vi*3] = 0.9 * t; colAttr.array[vi*3+1] = 0.25 * t; colAttr.array[vi*3+2] = 0.15 * t;
+                colAttr.array[vi * 3] = 0.9 * t; colAttr.array[vi * 3 + 1] = 0.25 * t; colAttr.array[vi * 3 + 2] = 0.15 * t;
             } else {
                 // R-dominant: cool blue
-                colAttr.array[vi*3] = 0.15 * t; colAttr.array[vi*3+1] = 0.35 * t; colAttr.array[vi*3+2] = 0.9 * t;
+                colAttr.array[vi * 3] = 0.15 * t; colAttr.array[vi * 3 + 1] = 0.35 * t; colAttr.array[vi * 3 + 2] = 0.9 * t;
             }
-            sizeAttr.array[vi] = 4 + 12 * t;
+            sizeAttr.array[vi] = (4 + 12 * t) * sizeScale;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -2175,6 +2381,7 @@ export class Viewport {
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
         geo.setDrawRange(0, 0);
         const mat = new THREE.ShaderMaterial({
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.8 } },
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
             transparent: true,
@@ -2183,6 +2390,7 @@ export class Viewport {
         });
         this._lightField = new THREE.Points(geo, mat);
         this._lightField.visible = false;
+        this._lightField.frustumCulled = false;
         this.scene.add(this._lightField);
     }
 
@@ -2197,32 +2405,34 @@ export class Viewport {
         // Compute |S| magnitudes and find max
         let maxMag = 0;
         for (let i = 0; i < count; i++) {
-            const sx = vectors[i*3], sy = vectors[i*3+1], sz = vectors[i*3+2];
-            const m = Math.sqrt(sx*sx + sy*sy + sz*sz);
+            const sx = vectors[i * 3], sy = vectors[i * 3 + 1], sz = vectors[i * 3 + 2];
+            const m = Math.sqrt(sx * sx + sy * sy + sz * sz);
             if (m > maxMag) maxMag = m;
         }
         const threshold = maxMag * 0.03;
         const halfN = this._halfN;
+        // Scale point size with lattice so glow dots remain visible at large L
+        const sizeScale = this.latticeSize / 32;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxPts; i++) {
-            const sx = vectors[i*3], sy = vectors[i*3+1], sz = vectors[i*3+2];
-            const mag = Math.sqrt(sx*sx + sy*sy + sz*sz);
+            const sx = vectors[i * 3], sy = vectors[i * 3 + 1], sz = vectors[i * 3 + 2];
+            const mag = Math.sqrt(sx * sx + sy * sy + sz * sz);
             if (mag < threshold) continue;
 
-            const px = positions[i*3], py = positions[i*3+1], pz = positions[i*3+2];
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
-            posAttr.array[vi*3]   = px;
-            posAttr.array[vi*3+1] = py;
-            posAttr.array[vi*3+2] = pz;
+            posAttr.array[vi * 3] = px;
+            posAttr.array[vi * 3 + 1] = py;
+            posAttr.array[vi * 3 + 2] = pz;
 
             // Warm yellow-white: brighter at higher |S|
             const t = mag / maxMag;
-            colAttr.array[vi*3]   = 1.0 * t;         // R
-            colAttr.array[vi*3+1] = 0.92 * t;        // G
-            colAttr.array[vi*3+2] = 0.23 * t;        // B (warm yellow)
-            sizeAttr.array[vi] = 6 + 16 * t;
+            colAttr.array[vi * 3] = 1.0 * t;         // R
+            colAttr.array[vi * 3 + 1] = 0.92 * t;        // G
+            colAttr.array[vi * 3 + 2] = 0.23 * t;        // B (warm yellow)
+            sizeAttr.array[vi] = (6 + 16 * t) * sizeScale;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -2298,6 +2508,9 @@ export class Viewport {
         this.scene.add(this._bondLight);
     }
 
+    // Renders covalent bonds as oriented cylinders. Single/double/triple bonds
+    // use 1/2/3 parallel cylinders respectively. Each bond creates new Vector3
+    // temporaries -- acceptable because atom counts are typically <200.
     updateBondCylinders(atomData) {
         if (!this._bondCylinders) this._buildBondCylinders();
         if (!atomData || atomData.bondCount === 0) { this._bondCylinders.count = 0; return; }
@@ -2562,13 +2775,13 @@ export class Viewport {
     _getLobeAxes(l) {
         if (l === 1) {
             // p-orbitals: px, py, pz
-            return [[1,0,0], [0,1,0], [0,0,1]];
+            return [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
         } else if (l === 2) {
             // d-orbitals: dz², dxz, dyz, dx²-y², dxy (simplified to 4 main axes)
-            return [[1,0,0], [0,1,0], [0,0,1], [0.707,0.707,0]];
+            return [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0.707, 0.707, 0]];
         } else {
             // f-orbitals: 6 axes for symmetry
-            return [[1,0,0], [0,1,0], [0,0,1], [0.707,0.707,0], [0.707,0,0.707], [0,0.707,0.707]];
+            return [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0.707, 0.707, 0], [0.707, 0, 0.707], [0, 0.707, 0.707]];
         }
     }
 
@@ -2594,9 +2807,9 @@ export class Viewport {
         };
 
         this._aeForceIonic = createArrowSet(0xff4444); // red for Coulomb
-        this._aeForceVdw   = createArrowSet(0x44ff44); // green for vdW
-        this._aeForceBond  = createArrowSet(0xff8844); // orange for bond
-        this._aeForceNet   = createArrowSet(0xffffff); // white for net
+        this._aeForceVdw = createArrowSet(0x44ff44); // green for vdW
+        this._aeForceBond = createArrowSet(0xff8844); // orange for bond
+        this._aeForceNet = createArrowSet(0xffffff); // white for net
     }
 
     updateAEForces(positions, forceData, count) {
@@ -2619,7 +2832,7 @@ export class Viewport {
                 const fmag = Math.sqrt(fx * fx + fy * fy + fz * fz);
                 const logScale = fmag > 1e-10 ? scale * Math.log1p(fmag) / fmag : 0;
 
-                posAttr.array[i * 6]     = px;
+                posAttr.array[i * 6] = px;
                 posAttr.array[i * 6 + 1] = py;
                 posAttr.array[i * 6 + 2] = pz;
                 posAttr.array[i * 6 + 3] = px + fx * logScale;
@@ -2637,9 +2850,9 @@ export class Viewport {
     }
 
     toggleAEForceIonic(on) { if (!this._aeForceIonic) this._buildAEForceArrows(); this._aeForceIonic.visible = on; }
-    toggleAEForceVdw(on)   { if (!this._aeForceVdw)   this._buildAEForceArrows(); this._aeForceVdw.visible = on; }
-    toggleAEForceBond(on)  { if (!this._aeForceBond)  this._buildAEForceArrows(); this._aeForceBond.visible = on; }
-    toggleAEForceNet(on)   { if (!this._aeForceNet)   this._buildAEForceArrows(); this._aeForceNet.visible = on; }
+    toggleAEForceVdw(on) { if (!this._aeForceVdw) this._buildAEForceArrows(); this._aeForceVdw.visible = on; }
+    toggleAEForceBond(on) { if (!this._aeForceBond) this._buildAEForceArrows(); this._aeForceBond.visible = on; }
+    toggleAEForceNet(on) { if (!this._aeForceNet) this._buildAEForceArrows(); this._aeForceNet.visible = on; }
 
     // ══════════════════════════════════════════════════════════════════
 
@@ -2647,52 +2860,59 @@ export class Viewport {
     setEngineMode(mode) {
         this._engineMode = mode;
 
-        // ── Cosmic mode: hide all non-cosmic visuals ──
-        if (mode === 'cosmic') {
+        // Helper to hide all overlays from ALL scales unconditionally
+        const hideAllOverlays = () => {
             if (this.wireframe) this.wireframe.visible = false;
             if (this.axes) this.axes.visible = false;
             if (this.peAxes) this.peAxes.visible = false;
             if (this.peGrid) this.peGrid.visible = false;
             if (this.particles) this.particles.visible = false;
-            if (this._fluxVolume) this._fluxVolume.visible = false;
-            if (this._fluxSlice) this._fluxSlice.visible = false;
-            if (this._eFieldLines) this._eFieldLines.visible = false;
-            if (this._bFieldLines) this._bFieldLines.visible = false;
+            if (this.velocityVectors) this.velocityVectors.visible = false;
+            if (this.trails) this.trails.visible = false;
+            if (this.bondLines) this.bondLines.visible = false;
             if (this._bondCylinders) this._bondCylinders.visible = false;
             if (this._bondLight) this._bondLight.visible = false;
             if (this._nucleusShells) this._nucleusShells.visible = false;
             if (this._orbitalShells) this._orbitalShells.visible = false;
             if (this._orbitalLobes) this._orbitalLobes.visible = false;
-            if (this.velocityVectors) this.velocityVectors.visible = false;
-            if (this.trails) this.trails.visible = false;
-            if (this.bondLines) this.bondLines.visible = false;
+            if (this._elementLabels) this._elementLabels.visible = false;
+            if (this._aeForceIonic) this._aeForceIonic.visible = false;
+            if (this._aeForceVdw) this._aeForceVdw.visible = false;
+            if (this._aeForceBond) this._aeForceBond.visible = false;
+            if (this._aeForceNet) this._aeForceNet.visible = false;
+            if (this._fieldHeatmap) this._fieldHeatmap.visible = false;
+            if (this._fieldVectors) this._fieldVectors.visible = false;
+            // Scale 0 specific visuals
+            if (this._fluxVolume) this._fluxVolume.visible = false;
+            if (this._fluxSlice) this._fluxSlice.visible = false;
+            if (this._eFieldLines) this._eFieldLines.visible = false;
+            if (this._bFieldLines) this._bFieldLines.visible = false;
+            if (this._poyntingVectors) this._poyntingVectors.visible = false;
+            if (this._divField) this._divField.visible = false;
+            if (this._fluxStreamlines) this._fluxStreamlines.visible = false;
+            if (this._forceVolume) this._forceVolume.visible = false;
+            if (this._gravityField) this._gravityField.visible = false;
+            if (this._dualFluxVolume) this._dualFluxVolume.visible = false;
+            if (this._chiralityField) this._chiralityField.visible = false;
+            if (this._lightField) this._lightField.visible = false;
+            if (this._darkMatterHalo) this._darkMatterHalo.visible = false;
+            if (this._dampingZones) this._dampingZones.visible = false;
+            if (this._genesisIsosurface) this._genesisIsosurface.visible = false;
+            if (this._confinementStrings) this._confinementStrings.visible = false;
+            // Boundary box
             if (this._boundary) this._boundary.visible = false;
+        };
+
+        // ── Cosmic mode: hide all non-cosmic visuals ──
+        if (mode === 'cosmic') {
+            hideAllOverlays();
             return;
         }
 
         // ── Meta mode: hide all physics visuals, keep scene clean ──
         if (mode === 'meta') {
             this._boundaryMode = 'origin';
-            // Hide everything from other scales
-            if (this.wireframe) this.wireframe.visible = false;
-            if (this.axes) this.axes.visible = false;
-            if (this.peAxes) this.peAxes.visible = false;
-            if (this.peGrid) this.peGrid.visible = false;
-            if (this.particles) this.particles.visible = false;
-            if (this._fluxVolume) this._fluxVolume.visible = false;
-            if (this._fluxSlice) this._fluxSlice.visible = false;
-            if (this._eFieldLines) this._eFieldLines.visible = false;
-            if (this._bFieldLines) this._bFieldLines.visible = false;
-            if (this._bondCylinders) this._bondCylinders.visible = false;
-            if (this._bondLight) this._bondLight.visible = false;
-            if (this._nucleusShells) this._nucleusShells.visible = false;
-            if (this._orbitalShells) this._orbitalShells.visible = false;
-            if (this._orbitalLobes) this._orbitalLobes.visible = false;
-            if (this.velocityVectors) this.velocityVectors.visible = false;
-            if (this.trails) this.trails.visible = false;
-            if (this.bondLines) this.bondLines.visible = false;
-            // Hide boundary box
-            if (this._boundary) this._boundary.visible = false;
+            hideAllOverlays();
             // Camera: close-up at origin, allow very close zoom
             this.controls.minDistance = 0.1;
             this.controls.target.set(0, 0, 0);
@@ -2707,42 +2927,13 @@ export class Viewport {
         this.controls.minDistance = 0.5;
         this.camera.near = 0.01;
         this.camera.updateProjectionMatrix();
-        if (this._boundary) this._boundary.visible = true;
 
         // ── Consciousness mode: dark background, bloom, centered camera ──
         if (mode === 'consciousness') {
             this.scene.background = new THREE.Color(0x050510);
             this._boundaryMode = 'origin';
             this._buildBoundary(this._boundaryShape, 'origin');
-            if (this.wireframe) this.wireframe.visible = false;
-            if (this.axes) this.axes.visible = false;
-            if (this.peAxes) this.peAxes.visible = false;
-            if (this.peGrid) this.peGrid.visible = false;
-            // Hide all overlays
-            if (this.velocityVectors) this.velocityVectors.visible = false;
-            if (this.trails) this.trails.visible = false;
-            if (this.bondLines) this.bondLines.visible = false;
-            if (this._bondCylinders) this._bondCylinders.visible = false;
-            if (this._bondLight) this._bondLight.visible = false;
-            if (this._nucleusShells) this._nucleusShells.visible = false;
-            if (this._orbitalShells) this._orbitalShells.visible = false;
-            if (this._orbitalLobes) this._orbitalLobes.visible = false;
-            if (this._aeForceIonic) this._aeForceIonic.visible = false;
-            if (this._aeForceVdw) this._aeForceVdw.visible = false;
-            if (this._aeForceBond) this._aeForceBond.visible = false;
-            if (this._aeForceNet) this._aeForceNet.visible = false;
-            if (this._fluxVolume) this._fluxVolume.visible = false;
-            if (this._eFieldLines) this._eFieldLines.visible = false;
-            if (this._bFieldLines) this._bFieldLines.visible = false;
-            if (this._poyntingVectors) this._poyntingVectors.visible = false;
-            if (this._divField) this._divField.visible = false;
-            if (this._fluxStreamlines) this._fluxStreamlines.visible = false;
-            if (this._forceVolume) this._forceVolume.visible = false;
-            if (this._gravityField) this._gravityField.visible = false;
-            if (this._dualFluxVolume) this._dualFluxVolume.visible = false;
-            if (this._chiralityField) this._chiralityField.visible = false;
-            if (this._lightField) this._lightField.visible = false;
-            this.particles.visible = false;
+            hideAllOverlays();
             // Camera: closer, centered at origin, wider FOV
             this.camera.fov = 55;
             this.camera.updateProjectionMatrix();
@@ -2760,76 +2951,44 @@ export class Viewport {
             this.scene.background = new THREE.Color(0x0f1729);
             this.camera.fov = 45;
             this.camera.updateProjectionMatrix();
-            this.particles.visible = true;
         }
 
         if (mode === 'particles' || mode === 'atoms' || mode === 'molecules') {
+            hideAllOverlays();
             // Rebuild boundary at origin for PE/AE/molecule modes
             this._boundaryMode = 'origin';
             this._buildBoundary(this._boundaryShape, 'origin');
-            if (this.axes) this.axes.visible = false;
             if (!this.peAxes) this._buildPEAxes();
             this.peAxes.visible = this._showAxes;
             if (this.peGrid) this.peGrid.visible = this._showGrid;
+            this.particles.visible = true; // Particles point cloud used by Scale 1, 2, 3
+            if (this._boundary) this._boundary.visible = true;
+
             // Recenter camera at origin
             this.controls.target.set(0, 0, 0);
             this.camera.position.set(40, 30, 40);
             this.controls.update();
-            // Toggle overlays
-            if (this.velocityVectors) this.velocityVectors.visible = false;
-            if (this.trails) this.trails.visible = false;
+
             const isAtomMol = (mode === 'atoms' || mode === 'molecules');
-            if (this.bondLines) this.bondLines.visible = false; // replaced by cylinders
             if (this._bondCylinders) this._bondCylinders.visible = isAtomMol;
             if (this._bondLight) this._bondLight.visible = isAtomMol;
             if (this._nucleusShells) this._nucleusShells.visible = isAtomMol;
-            // Shells and lobes default OFF (user toggleable)
-            if (this._orbitalShells) this._orbitalShells.visible = false;
-            if (this._orbitalLobes) this._orbitalLobes.visible = false;
-            // Force arrows default OFF
-            if (this._aeForceIonic) this._aeForceIonic.visible = false;
-            if (this._aeForceVdw) this._aeForceVdw.visible = false;
-            if (this._aeForceBond) this._aeForceBond.visible = false;
-            if (this._aeForceNet) this._aeForceNet.visible = false;
-            if (this._fieldHeatmap) this._fieldHeatmap.visible = false;
-            if (this._fieldVectors) this._fieldVectors.visible = false;
-            // Hide flux volume (Scale 0 only)
-            if (this._fluxVolume) this._fluxVolume.visible = false;
-            // Hide all field visualization overlays (Scale 0 only)
-            if (this._eFieldLines) this._eFieldLines.visible = false;
-            if (this._bFieldLines) this._bFieldLines.visible = false;
-            if (this._poyntingVectors) this._poyntingVectors.visible = false;
-            if (this._divField) this._divField.visible = false;
-            if (this._fluxStreamlines) this._fluxStreamlines.visible = false;
-            if (this._forceVolume) this._forceVolume.visible = false;
-            if (this._gravityField) this._gravityField.visible = false;
-            if (this._dualFluxVolume) this._dualFluxVolume.visible = false;
-            if (this._chiralityField) this._chiralityField.visible = false;
-            if (this._lightField) this._lightField.visible = false;
+            // Element Labels (e.g. H H) only valid in Atoms/Molecules scale
+            if (this._elementLabels) this._elementLabels.visible = isAtomMol;
         } else {
+            hideAllOverlays();
             // Rebuild boundary at lattice center for Scale 0
             this._boundaryMode = 'lattice';
             this._buildBoundary(this._boundaryShape, 'lattice');
             if (this.axes) this.axes.visible = this._showAxes;
-            if (this.peAxes) this.peAxes.visible = false;
-            if (this.peGrid) this.peGrid.visible = false;
-            // Hide PE/AE overlays
-            if (this.velocityVectors) this.velocityVectors.visible = false;
-            if (this.trails) this.trails.visible = false;
-            if (this.bondLines) this.bondLines.visible = false;
-            if (this._bondCylinders) this._bondCylinders.visible = false;
-            if (this._bondLight) this._bondLight.visible = false;
-            if (this._nucleusShells) this._nucleusShells.visible = false;
-            if (this._orbitalShells) this._orbitalShells.visible = false;
-            if (this._orbitalLobes) this._orbitalLobes.visible = false;
-            if (this._aeForceIonic) this._aeForceIonic.visible = false;
-            if (this._aeForceVdw) this._aeForceVdw.visible = false;
-            if (this._aeForceBond) this._aeForceBond.visible = false;
-            if (this._aeForceNet) this._aeForceNet.visible = false;
+            this.particles.visible = true; // Lattice fallback point cloud
+            if (this._boundary) this._boundary.visible = true;
+
             if (this._fieldHeatmap) this._fieldHeatmap.visible = this.showHeatmap;
-            if (this._fieldVectors) this._fieldVectors.visible = false;
-            // Restore flux volume if enabled
+            // Restore flux volume/slice if enabled
             if (this._fluxVolume) this._fluxVolume.visible = this.showFlux;
+            if (this._fluxSlice) this._fluxSlice.visible = this.showSlice ?? false;
+
             // Recenter at lattice center
             const center = this.latticeSize / 2;
             const dist = this.latticeSize * 1.6;
@@ -2837,6 +2996,7 @@ export class Viewport {
             this.camera.position.set(center + dist, center + dist * 0.5, center + dist);
             this.controls.update();
         }
+        if (this._applyScenarioScale) this._applyScenarioScale();
     }
 
     _buildPEAxes() {
@@ -2846,14 +3006,14 @@ export class Viewport {
         const axVerts = [];
         const axColors = [];
         // X axis (red)
-        axVerts.push(-len,0,0, len,0,0);
-        axColors.push(0.5,0.2,0.2, 0.9,0.3,0.3);
+        axVerts.push(-len, 0, 0, len, 0, 0);
+        axColors.push(0.5, 0.2, 0.2, 0.9, 0.3, 0.3);
         // Y axis (green)
-        axVerts.push(0,-len,0, 0,len,0);
-        axColors.push(0.2,0.5,0.2, 0.3,0.9,0.3);
+        axVerts.push(0, -len, 0, 0, len, 0);
+        axColors.push(0.2, 0.5, 0.2, 0.3, 0.9, 0.3);
         // Z axis (blue)
-        axVerts.push(0,0,-len, 0,0,len);
-        axColors.push(0.2,0.2,0.5, 0.3,0.3,0.9);
+        axVerts.push(0, 0, -len, 0, 0, len);
+        axColors.push(0.2, 0.2, 0.5, 0.3, 0.3, 0.9);
 
         const axGeo = new THREE.BufferGeometry();
         axGeo.setAttribute('position', new THREE.Float32BufferAttribute(axVerts, 3));
@@ -2868,10 +3028,10 @@ export class Viewport {
         const grColors = [];
         for (let i = -len; i <= len; i += 5) {
             if (i === 0) continue;
-            grVerts.push(i,0,-len, i,0,len);
-            grColors.push(0.15,0.18,0.25, 0.15,0.18,0.25);
-            grVerts.push(-len,0,i, len,0,i);
-            grColors.push(0.15,0.18,0.25, 0.15,0.18,0.25);
+            grVerts.push(i, 0, -len, i, 0, len);
+            grColors.push(0.15, 0.18, 0.25, 0.15, 0.18, 0.25);
+            grVerts.push(-len, 0, i, len, 0, i);
+            grColors.push(0.15, 0.18, 0.25, 0.15, 0.18, 0.25);
         }
         const grGeo = new THREE.BufferGeometry();
         grGeo.setAttribute('position', new THREE.Float32BufferAttribute(grVerts, 3));
@@ -2904,10 +3064,10 @@ export class Viewport {
                 const nz = (pz - halfN + 0.5) / halfN;
                 if (!this._insideBoundary(nx, ny, nz)) continue;
             }
-            posAttr.array[count * 3]     = px;
+            posAttr.array[count * 3] = px;
             posAttr.array[count * 3 + 1] = py;
             posAttr.array[count * 3 + 2] = pz;
-            colAttr.array[count * 3]     = data.colors[i * 3];
+            colAttr.array[count * 3] = data.colors[i * 3];
             colAttr.array[count * 3 + 1] = data.colors[i * 3 + 1];
             colAttr.array[count * 3 + 2] = data.colors[i * 3 + 2];
             sizeAttr.array[count] = data.sizes[i] * this.visualSettings.globalScale;
@@ -3028,6 +3188,15 @@ export class Viewport {
         this._labelPool = [];
     }
 
+    clearMolecularMeshes() {
+        if (this._bondCylinders) this._bondCylinders.count = 0;
+        if (this.bondLines) this.bondLines.geometry.setDrawRange(0, 0);
+        if (this._nucleusShells) this._nucleusShells.count = 0;
+        if (this._orbitalShells) this._orbitalShells.count = 0;
+        if (this._orbitalLobes) this._orbitalLobes.count = 0;
+        if (this._aeForceIonic) [this._aeForceIonic, this._aeForceVdw, this._aeForceBond, this._aeForceNet].forEach(l => l.geometry.setDrawRange(0, 0));
+    }
+
     // Override colors from catalog type map (PE mode)
     applyParticleColors(data, typeMap) {
         if (!typeMap || typeMap.size === 0) return;
@@ -3105,62 +3274,84 @@ export class Viewport {
 
     dispose() {
         this._resizeObserver.disconnect();
+
+        // Helper: dispose geometry+material for any Three.js Object3D
+        const disposeMesh = (obj) => {
+            if (!obj) return;
+            this.scene.remove(obj);
+            if (obj.geometry) obj.geometry.dispose();
+            if (obj.material) {
+                if (obj.material.map) obj.material.map.dispose();
+                obj.material.dispose();
+            }
+        };
+
+        // Helper: dispose a Group by traversing all children
+        const disposeGroup = (group) => {
+            if (!group) return;
+            this.scene.remove(group);
+            group.traverse(child => {
+                if (child.geometry) child.geometry.dispose();
+                if (child.material) {
+                    if (child.material.map) child.material.map.dispose();
+                    child.material.dispose();
+                }
+            });
+        };
+
         this.renderer.dispose();
-        this.particles.geometry.dispose();
-        this.particles.material.dispose();
-        if (this.wireframe) {
-            this.wireframe.geometry.dispose();
-            this.wireframe.material.dispose();
+        disposeMesh(this.particles);
+
+        // Wireframe is a Group containing LineSegments — traverse children
+        disposeGroup(this.wireframe);
+
+        // Post-processing composer render targets
+        if (this._composer) {
+            this._composer.renderTarget1.dispose();
+            this._composer.renderTarget2.dispose();
+            this._composer = null;
         }
-        if (this.velocityVectors) {
-            this.velocityVectors.geometry.dispose();
-            this.velocityVectors.material.dispose();
-        }
-        if (this.trails) {
-            this.trails.geometry.dispose();
-            this.trails.material.dispose();
-        }
-        if (this.bondLines) {
-            this.bondLines.geometry.dispose();
-            this.bondLines.material.dispose();
-        }
-        if (this._fieldHeatmap) {
-            this._fieldHeatmap.geometry.dispose();
-            this._fieldHeatmap.material.dispose();
-        }
-        if (this._fieldVectors) {
-            this._fieldVectors.geometry.dispose();
-            this._fieldVectors.material.dispose();
-        }
-        if (this._fluxVolume) {
-            this._fluxVolume.geometry.dispose();
-            this._fluxVolume.material.dispose();
-        }
-        // Atom/molecule visual enhancements
+
+        // Core overlays (geometry+material pairs)
+        const simpleOverlays = [
+            'velocityVectors', 'trails', 'bondLines',
+            '_fieldHeatmap', '_fieldVectors', '_fluxVolume',
+            '_peStreamlines', '_gravityVectors', '_particleForces',
+        ];
+        for (const name of simpleOverlays) disposeMesh(this[name]);
+
+        // Atom/molecule visual enhancements (InstancedMesh or LineSegments)
         const atomOverlays = [
             '_nucleusShells', '_bondCylinders', '_orbitalShells', '_orbitalLobes',
             '_aeForceIonic', '_aeForceVdw', '_aeForceBond', '_aeForceNet'
         ];
-        for (const name of atomOverlays) {
-            if (this[name]) {
-                this[name].geometry.dispose();
-                this[name].material.dispose();
-            }
-        }
+        for (const name of atomOverlays) disposeMesh(this[name]);
         if (this._bondLight) this.scene.remove(this._bondLight);
 
-        // Field visualization overlays
+        // Field visualization overlays (Scale 0 streamlines, volumes, etc.)
         const fieldOverlays = [
             '_eFieldLines', '_bFieldLines', '_poyntingVectors', '_divField',
-            '_fluxStreamlines', '_forceVolume', '_gravityField', '_dualFluxVolume', '_chiralityField',
-            '_lightField'
+            '_fluxStreamlines', '_forceVolume', '_gravityField', '_dualFluxVolume',
+            '_chiralityField', '_lightField',
+            '_darkMatterHalo', '_dampingZones', '_genesisIsosurface',
+            '_confinementStrings',
         ];
-        for (const name of fieldOverlays) {
-            if (this[name]) {
-                this[name].geometry.dispose();
-                this[name].material.dispose();
-            }
-        }
+        for (const name of fieldOverlays) disposeMesh(this[name]);
+
+        // Raycasting/inspector helpers
+        disposeMesh(this._voidBox);
+        disposeMesh(this._voxelHighlight);
+        disposeMesh(this._symHighlights);
+
+        // Event horizon (black hole visualization)
+        disposeMesh(this._eventHorizonSphere);
+        disposeMesh(this._eventHorizonRing);
+
+        // Coordinate helpers
+        disposeMesh(this.axes);
+        disposeMesh(this.peAxes);
+        disposeMesh(this.peGrid);
+
         this.clearElementLabels();
     }
 }

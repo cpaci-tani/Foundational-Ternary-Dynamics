@@ -121,18 +121,20 @@ export class LagrangianChart {
 
     draw() {
         const canvas = this.canvas;
-        const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
+        if (!canvas) return;
         const rect = canvas.getBoundingClientRect();
         const w = rect.width;
         const h = rect.height;
-
+        // PERF: Skip drawing when canvas is hidden (zero-size or offscreen)
         if (w === 0 || h === 0) return;
+
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
 
         if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
             canvas.width = w * dpr;
             canvas.height = h * dpr;
-            ctx.scale(dpr, dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
         ctx.clearRect(0, 0, w, h);

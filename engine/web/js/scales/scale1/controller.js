@@ -53,7 +53,7 @@ import {
 import {
     computeStreamlines, generateEFieldSeeds
 } from '../../fieldlines.js?v=20260304q';
-import { C_SPEED, G_N } from '../../constants.js?v=20260305e';
+import { ALPHA, C_SPEED, G_N } from '../../constants.js?v=20260305e';
 
 
 // =====================================================================
@@ -98,6 +98,12 @@ const _BH_TEST_MASS = 0.511;
 
 // -- Tick accumulator (sub-1 speed fractional ticks) ------------------
 let _tickAccumulator = 0;
+
+// -- Paused-state dedup (avoid redundant work when simulation idle) ----
+let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
+let _diagPushedWhilePaused = false;
+let _lastCloudTime = -1;           // cached `t` for cloud breathing; skip recompute when paused
+let _lastCloudData = null;         // cached cloud output when paused
 
 
 // =====================================================================
@@ -326,6 +332,11 @@ export function resetScale1(ctx) {
     // Reset tick accumulator
     _tickAccumulator = 0;
 
+    // Clear paused-state caches
+    _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
+    _diagPushedWhilePaused = false;
+    _lastCloudData = null;
+
     // Clear viewport overlays if available
     if (viewport) {
         viewport.togglePEStreamlines(false);
@@ -394,10 +405,19 @@ export function animatePE(ctx) {
     }
 
     // ── 3. Cloud expansion: particle centers -> flux cloud points ───
+    // PERF: When paused, skip the expensive cloud expansion (up to 100K
+    // sin/cos per frame for breathing animation).  Reuse cached output
+    // until the simulation resumes or particle data changes.
     const peData  = bridge.peGetParticleData();
     const typeMap = bridge.peGetParticleTypes();
     const t       = now * 0.001; // seconds for smooth animation
-    const cloud   = expandPEToCloud(peData, typeMap, t);
+    let cloud;
+    if (!running && _lastCloudData && _lastCloudData.count > 0) {
+        cloud = _lastCloudData;  // reuse cached cloud — positions haven't changed
+    } else {
+        cloud = expandPEToCloud(peData, typeMap, t);
+        _lastCloudData = cloud;
+    }
     viewport.updateParticles(cloud);
 
     // Update inspector with cloud-to-particle mapping
@@ -419,9 +439,10 @@ export function animatePE(ctx) {
     }
 
     // ── 5. PE Field Overlays (individual force decomposition) ───────
+    // PERF: Skip field recomputation when paused — particle positions haven't changed.
 
     // Coulomb potential heatmap + force vectors (XZ plane)
-    if (_showPEPotential && peData.count > 0) {
+    if (_showPEPotential && running && peData.count > 0) {
         if (!_fieldGrid) _fieldGrid = generateGridXZ(25, 20);
         const src   = bridge.peGetFieldSources();
         const field = samplePECoulombOnly(src, _fieldGrid.positions, _fieldGrid.count);
@@ -432,7 +453,7 @@ export function animatePE(ctx) {
     }
 
     // Coulomb E-field streamlines (3D, throttled every 5 frames)
-    if (_showPEEField && peData.count > 0 && frameCount % 5 === 0) {
+    if (_showPEEField && running && peData.count > 0 && frameCount % 5 === 0) {
         const src     = bridge.peGetFieldSources();
         const fieldFn = makePECoulombFieldFn(src, 0.5);
         // Convert flat positions array to {x,y,z} objects for generateEFieldSeeds.
@@ -452,7 +473,7 @@ export function animatePE(ctx) {
     }
 
     // Gravity field vectors (XZ plane)
-    if (_showPEGravField && peData.count > 0) {
+    if (_showPEGravField && running && peData.count > 0) {
         if (!_fieldGrid) _fieldGrid = generateGridXZ(25, 20);
         const src   = bridge.peGetFieldSources();
         const field = samplePEGravityField(src, _fieldGrid.positions, _fieldGrid.count);
@@ -461,7 +482,7 @@ export function animatePE(ctx) {
     }
 
     // Per-particle net force arrows
-    if (_showPEForces && peData.count > 0) {
+    if (_showPEForces && running && peData.count > 0) {
         const fd = bridge.peGetForces();
         viewport.updateParticleForces(fd.positions, fd.forces, fd.count, fd.maxForce);
     }
@@ -470,22 +491,24 @@ export function animatePE(ctx) {
     viewport.render();
 
     // ── 7. PE diagnostics (throttled to every 3rd frame) ────────────
-    if (frameCount % 3 === 0) {
+    // PERF: When paused, data is identical — push once then skip.
+    if (frameCount % 3 === 0 && (running || !_diagPushedWhilePaused)) {
         const diag = bridge.peGetDiagnostics();
 
-        // Update status bar with PE-specific info
-        dom.statusTick.textContent      = formatNumber(diag.tick);
-        dom.statusPtime.textContent     = formatNumber(diag.tick);
-        dom.statusParticles.textContent = diag.particleCount;
-        dom.statusEnergy.textContent    = formatEnergy(diag.totalEnergy, 1).text;
+        // Update status bar with dedup (avoids DOM thrash when paused)
+        const sTick = formatNumber(diag.tick);
+        const sParticles = String(diag.particleCount);
+        const sEnergy = formatEnergy(diag.totalEnergy, 1).text;
+        const sState = running ? 'Running' : 'Idle';
 
-        // Update status dot (running vs idle)
-        if (running) {
-            dom.statusDot.classList.remove('idle');
-            dom.statusState.textContent = 'Running';
-        } else {
-            dom.statusDot.classList.add('idle');
-            dom.statusState.textContent = 'Idle';
+        if (_statusCache.tick !== sTick) { dom.statusTick.textContent = sTick; dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
+        if (_statusCache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; _statusCache.particles = sParticles; }
+        if (_statusCache.energy !== sEnergy) { dom.statusEnergy.textContent = sEnergy; _statusCache.energy = sEnergy; }
+        if (_statusCache.state !== sState) {
+            dom.statusState.textContent = sState;
+            _statusCache.state = sState;
+            if (running) dom.statusDot.classList.remove('idle');
+            else dom.statusDot.classList.add('idle');
         }
 
         // Update PE telemetry panel
@@ -505,8 +528,15 @@ export function animatePE(ctx) {
         fluxEnergyChart.push(diagAdapted);
         particleChart.push(diagAdapted);
 
+        // Track paused-state dedup
+        if (!running) _diagPushedWhilePaused = true;
+        else _diagPushedWhilePaused = false;
+
         // Update active side-panel visuals
         switch (activeTab) {
+            case 'diagnostics':
+                if (peTelemetry) peTelemetry.drawCharts();
+                break;
             case 'charts':
                 fluxEnergyChart.draw();
                 particleChart.draw();
@@ -582,7 +612,7 @@ export function loadPEScenario(ctx, name) {
     // Plummer force: F = alpha * |Q| * r / (4pi * (r^2 + soft^2)^(3/2))
     // Equilibrium:   m * v^2 / r = F
     //            ->  v = sqrt(alpha * |Q| * r / (4pi * m * (r^2 + soft^2)))
-    const ALPHA_PE = 0.00729;
+    const ALPHA_PE = ALPHA; // use imported ALPHA (full precision 1/137.036...)
     const soft2 = 0.01;  // 0.1^2
     const orbitalV = (m, r, Q = 1) =>
         Math.sqrt(ALPHA_PE * Q * r / (4 * Math.PI * m * (r * r + soft2)));
