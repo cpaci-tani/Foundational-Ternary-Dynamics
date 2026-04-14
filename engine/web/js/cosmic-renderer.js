@@ -12,6 +12,7 @@
  */
 
 import * as THREE from 'three';
+import { BaseRenderer } from './core/BaseRenderer.js';
 
 const BT = {
     DARK_ENERGY: -3, QUASAR: -2, BLACK_HOLE: -1,
@@ -144,6 +145,56 @@ void main() {
     gl_FragColor = vec4(col, alpha * opacity);
 }`;
 
+const JET_VERT = `
+varying vec2 vUv;
+varying vec3 vWorldPos;
+void main() {
+    vUv = uv;
+    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+    vWorldPos = worldPosition.xyz;
+    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+}`;
+
+const JET_FRAG = `
+uniform float time;
+uniform float intensity;
+varying vec2 vUv;
+varying vec3 vWorldPos;
+
+float hash1( float n ) { return fract(sin(n)*43758.5453); }
+float noise( in vec2 x ) {
+    vec2 p = floor(x);
+    vec2 f = fract(x);
+    f = f*f*(3.0-2.0*f);
+    float n = p.x + p.y*57.0;
+    return mix(mix(hash1(n+0.0), hash1(n+1.0),f.x),
+               mix(hash1(n+57.0), hash1(n+58.0),f.x),f.y);
+}
+
+void main() {
+    float y = vUv.y;
+    // Smooth cylinder shape
+    float r = sin(vUv.x * 3.14159);
+    float alpha = sin(y * 3.14159) * r;
+    
+    // Core of the jet is intensely white, outer bounds are brilliant blue
+    float core = smoothstep(0.4, 1.0, r); 
+    vec3 color = mix(vec3(0.05, 0.3, 1.0), vec3(1.0, 1.0, 1.0), core);
+    
+    // Organic upward flowing turbulent plasma noise
+    // Using scaled time from the physics engine to respect the speed slider
+    float turb = noise(vec2(vUv.x * 4.0, vUv.y * 8.0 - time * 6.0)) * 0.6 + 0.4;
+    alpha *= turb;
+    
+    // Vertical intensity gradient: brighter near the base (BH), tapering heavily at the tip, and soft at the very root
+    float rootFade = smoothstep(0.0, 0.1, y); // soft connection to the black hole
+    float tipFade = smoothstep(1.0, 0.3, y); // long taper fading out towards the tip
+    alpha *= (rootFade * tipFade);
+    
+    gl_FragColor = vec4(color, alpha * intensity * 1.2); // slight global brightness bump
+}`;
+
+
 function blackbodyColor(T) {
     const t = Math.max(0, Math.min(1, (T - 1500) / 30000));
     if (t < 0.15) return [1.0, 0.3, 0.05];
@@ -155,16 +206,12 @@ function blackbodyColor(T) {
 }
 
 // ====================================================================
-export class CosmicRenderer {
+export class CosmicRenderer extends BaseRenderer {
     constructor(scene, camera, renderer) {
-        this.scene = scene;
-        this.camera = camera;
-        this.renderer = renderer;
+        super(scene, camera, renderer);
         this._time = 0;
 
-        this._group = new THREE.Group();
         this._group.name = 'cosmic-layer';
-        this.scene.add(this._group);
 
         this._starCloud = null;
         this._gasCloud = null;
@@ -172,12 +219,40 @@ export class CosmicRenderer {
         this._bhMeshes = [];
         this._bgStars = null;
 
+        this._cleanGeometries = () => {
+            if (this._starCloud) { this._starCloud.geometry.dispose(); this._starCloud.material.dispose(); }
+            if (this._gasCloud) { this._gasCloud.geometry.dispose(); this._gasCloud.material.dispose(); }
+            if (this._dmCloud) { this._dmCloud.geometry.dispose(); this._dmCloud.material.dispose(); }
+            if (this._bhMeshes && this._bhMeshes.length > 0) {
+                this._bhMeshes.forEach(bundle => {
+                    if (!bundle) return;
+                    Object.values(bundle).forEach(mesh => {
+                        if (mesh && mesh.geometry) mesh.geometry.dispose();
+                        if (mesh && mesh.material) mesh.material.dispose();
+                    });
+                });
+                this._bhMeshes = [];
+            }
+            if (this._bhMeshCache) {
+                this._bhMeshCache.forEach(bundle => {
+                    if (!bundle) return;
+                    Object.values(bundle).forEach(mesh => {
+                        if (mesh && mesh.geometry) mesh.geometry.dispose();
+                        if (mesh && mesh.material) mesh.material.dispose();
+                    });
+                });
+                this._bhMeshCache.clear();
+            }
+            if (this._bgStars) { this._bgStars.geometry.dispose(); this._bgStars.material.dispose(); }
+        }
+
         this._showDM = true;
         this._showGas = true;
         this._showStars = true;
         this._showBH = true;
         this._showDisks = true;
         this._bhAge = new Map(); // track when each BH first appeared (for fade-in)
+        this._bhMeshCache = new Map(); // persistent mesh caching
 
         this._initBackground();
     }
@@ -226,44 +301,29 @@ export class CosmicRenderer {
     }
 
     // ================================================================
-    // Particle cloud helper
-    // ================================================================
-    _ensureCloud(name, maxCount, size, opacity, blending, texture) {
-        const key = '_' + name + 'Cloud';
-        if (this[key] && this[key].geometry.attributes.position.count >= maxCount) return this[key];
-        if (this[key]) { this._group.remove(this[key]); this[key].geometry.dispose(); this[key].material.dispose(); }
 
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(maxCount * 3), 3));
-        geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(maxCount * 3), 3));
-        geo.setDrawRange(0, 0);
-
-        this[key] = new THREE.Points(geo, new THREE.PointsMaterial({
-            size, vertexColors: true, transparent: true, opacity, blending,
-            depthWrite: false, sizeAttenuation: true,
-            map: texture || _starTex, alphaTest: 0.001
-        }));
-        this[key].name = 'cosmic-' + name;
-        this._group.add(this[key]);
-        return this[key];
-    }
 
     // ================================================================
     // Main update
     // ================================================================
     update(bodyData, diagnostics) {
         if (!bodyData || bodyData.count === 0) return;
-        this._time += 0.016;
+        
+        // Use the physics engine's time so visuals respect the speed slider (dt)
+        // If not provided, fallback to standard real-time tick (but it should be passed from app)
+        const simTime = diagnostics ? diagnostics.tick * 0.05 : this._time + 0.016;
+        this._time = simTime;
 
         const { positions, types, temperatures, sizes, count } = bodyData;
-        const stars = [], gas = [], dm = [], bhs = [];
+        const stars = [], gas = [], nebulae = [], dm = [], bhs = [];
 
         for (let i = 0; i < count; i++) {
             const t = types[i];
             const bodyId = bodyData.ids ? bodyData.ids[i] : i;
             const e = { i, id: bodyId, x: positions[i*3], y: positions[i*3+1], z: positions[i*3+2] };
             if (t === BT.STAR || t === BT.WHITE_DWARF || t === BT.NEUTRON_STAR) stars.push(e);
-            else if (t === BT.GAS || t === BT.NEBULA) gas.push(e);
+            else if (t === BT.GAS) gas.push(e);
+            else if (t === BT.NEBULA) nebulae.push(e);
             else if (t === BT.DARK_MATTER || t === BT.DARK_ENERGY) dm.push(e);
             else if (t === BT.BLACK_HOLE || t === BT.QUASAR) bhs.push(e);
         }
@@ -273,9 +333,11 @@ export class CosmicRenderer {
             const cloud = this._ensureCloud('star', Math.max(stars.length, 500), 2.5, 1.0, THREE.AdditiveBlending, _starTex);
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
+            const ids = cloud.userData.ids;
             for (let j = 0; j < stars.length; j++) {
                 const s = stars[j];
                 p[j*3] = s.x; p[j*3+1] = s.y; p[j*3+2] = s.z;
+                ids[j] = s.id;
                 const T = temperatures ? temperatures[s.i] : 5800;
                 const [r, g, b] = blackbodyColor(Math.max(T, 2000));
                 const br = 0.7 + Math.min((sizes ? sizes[s.i] : 5) * 0.03, 0.3);
@@ -310,9 +372,11 @@ export class CosmicRenderer {
             const cloud = this._ensureCloud('gas', Math.max(gas.length, 200), 8.0, 0.3, THREE.AdditiveBlending, _gasTex);
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
+            const ids = cloud.userData.ids;
             for (let j = 0; j < gas.length; j++) {
                 const g = gas[j];
                 p[j*3] = g.x; p[j*3+1] = g.y; p[j*3+2] = g.z;
+                ids[j] = g.id;
                 const T = temperatures ? temperatures[g.i] : 1e4;
                 const t = Math.max(0, Math.min(1, Math.log10(T + 1) / 7));
                 // Nebula palette: cool blue-violet -> warm pink -> hot white-gold
@@ -326,14 +390,59 @@ export class CosmicRenderer {
             cloud.visible = true;
         } else if (this._gasCloud) this._gasCloud.visible = false;
 
+        // -- Nebulae: giant structured dust clouds --
+        if (this._showGas && nebulae.length > 0) {
+            const cloud = this._ensureCloud('nebula', Math.max(nebulae.length, 600), 25.0, 0.20, THREE.AdditiveBlending, _gasTex, true);
+            const p = cloud.geometry.attributes.position.array;
+            const c = cloud.geometry.attributes.color.array;
+            const ids = cloud.userData.ids;
+            const s = cloud.geometry.attributes.size ? cloud.geometry.attributes.size.array : null;
+            // The orientation angle for horizontal elongation
+            const a = cloud.geometry.attributes.angle ? cloud.geometry.attributes.angle.array : null;
+            // Radial distance to center
+            const rad = cloud.geometry.attributes.radius ? cloud.geometry.attributes.radius.array : null;
+            
+            for (let j = 0; j < nebulae.length; j++) {
+                const n = nebulae[j];
+                p[j*3] = n.x; p[j*3+1] = n.y; p[j*3+2] = n.z;
+                ids[j] = n.id;
+                
+                if (s) {
+                    s[j] = sizes ? sizes[n.i] : 25.0; // Custom radii
+                }
+                if (a) {
+                    // Orbital tangent is perpendicular to the radial vector
+                    a[j] = Math.atan2(n.z, n.x); 
+                }
+                if (rad) {
+                    rad[j] = Math.max(0.1, Math.sqrt(n.x*n.x + n.y*n.y + n.z*n.z)); // Export radial distance
+                }
+                
+                // Deep space dust colors: crimson, dark purple, and gold
+                const T = temperatures ? temperatures[n.i] : 4000;
+                const t = Math.max(0, Math.min(1, Math.log10(T + 1) / 5));
+                if (t < 0.4)      { c[j*3] = 0.35; c[j*3+1] = 0.05; c[j*3+2] = 0.15; }
+                else if (t < 0.7) { c[j*3] = 0.2; c[j*3+1] = 0.1; c[j*3+2] = 0.3; }
+                else              { c[j*3] = 0.4; c[j*3+1] = 0.2; c[j*3+2] = 0.05; }
+            }
+            cloud.geometry.attributes.position.needsUpdate = true;
+            cloud.geometry.attributes.color.needsUpdate = true;
+            if (s) cloud.geometry.attributes.size.needsUpdate = true;
+            if (a) cloud.geometry.attributes.angle.needsUpdate = true;
+            cloud.geometry.setDrawRange(0, nebulae.length);
+            cloud.visible = true;
+        } else if (this._nebulaCloud) this._nebulaCloud.visible = false;
+
         // -- Dark matter: ultra-faint violet revealing structure --
         if (this._showDM && dm.length > 0) {
             const cloud = this._ensureCloud('dm', Math.max(dm.length, 500), 4.0, 0.06, THREE.AdditiveBlending, _gasTex);
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
+            const ids = cloud.userData.ids;
             for (let j = 0; j < dm.length; j++) {
                 const d = dm[j];
                 p[j*3] = d.x; p[j*3+1] = d.y; p[j*3+2] = d.z;
+                ids[j] = d.id;
                 c[j*3] = 0.25; c[j*3+1] = 0.15; c[j*3+2] = 0.5;
             }
             cloud.geometry.attributes.position.needsUpdate = true;
@@ -349,132 +458,204 @@ export class CosmicRenderer {
     // ================================================================
     // Black holes: event horizon + shader accretion disk + photon ring
     // ================================================================
+    // ================================================================
+    // Black holes: event horizon + shader accretion disk + photon ring
+    // ================================================================
     _updateBlackHoles(bhs, bodyData) {
-        for (const m of this._bhMeshes) {
-            this._group.remove(m);
-            if (m.geometry) m.geometry.dispose();
-            if (m.material) {
-                if (m.material.map) m.material.map = null;
-                m.material.dispose();
+        if (!this._bhMeshCache) this._bhMeshCache = new Map();
+        
+        // Track alive IDs to prune dead/merged black holes
+        const aliveSet = new Set();
+        for (const bh of bhs) aliveSet.add(bh.id);
+        
+        for (const [id, bundle] of this._bhMeshCache.entries()) {
+            if (!aliveSet.has(id)) {
+                for (const m of bundle.meshes) {
+                    this._group.remove(m);
+                    if (m.geometry) m.geometry.dispose();
+                    if (m.material) {
+                        if (m.material.map) m.material.map = null;
+                        m.material.dispose();
+                    }
+                }
+                this._bhMeshCache.delete(id);
+                this._bhAge.delete(id);
             }
         }
-        this._bhMeshes = [];
-        if (!this._showBH) return;
+
+        if (!this._showBH) {
+            for (const bundle of this._bhMeshCache.values()) {
+                for (const m of bundle.meshes) m.visible = false;
+            }
+            return;
+        }
 
         for (const bh of bhs) {
             const mass = bodyData.sizes ? bodyData.sizes[bh.i] : 100;
             const rs = Math.max(0.6, Math.cbrt(mass) * 0.35);
             const bhPos = new THREE.Vector3(bh.x, bh.y, bh.z);
 
-            // Track BH age by STABLE ID (not array index which shifts as bodies die)
             if (!this._bhAge.has(bh.id)) this._bhAge.set(bh.id, this._time);
             const age = this._time - this._bhAge.get(bh.id);
-            const fadeIn = Math.min(1.0, age / 5.0); // 0→1 over 5 seconds
-
-            // --- Event horizon: pure black sphere ---
-            const sGeo = new THREE.SphereGeometry(rs, 48, 48);
-            const sMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-            const sphere = new THREE.Mesh(sGeo, sMat);
-            sphere.position.copy(bhPos);
-            this._group.add(sphere);
-            this._bhMeshes.push(sphere);
-
-            // --- Hawking corona: faint warm glow just outside horizon ---
-            const coronaGeo = new THREE.SphereGeometry(rs * 1.15, 32, 32);
-            const coronaMat = new THREE.MeshBasicMaterial({
-                color: 0x331100, transparent: true, opacity: 0.25 * fadeIn,
-                blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide
-            });
-            const corona = new THREE.Mesh(coronaGeo, coronaMat);
-            corona.position.copy(bhPos);
-            this._group.add(corona);
-            this._bhMeshes.push(corona);
-
-            if (!this._showDisks) continue;
-
-            // --- Accretion disk: grows slowly to full size ---
-            // Starts tiny (just outside horizon), expands over 10 seconds
-            // as material falls in and circularizes into a disk.
-            const growFactor = Math.min(1.0, age / 10.0); // 0→1 over 10 seconds
-            const easeGrow = growFactor * growFactor * (3 - 2 * growFactor); // smooth ease-in-out
+            const fadeIn = Math.min(1.0, age / 5.0); 
+            const growFactor = Math.min(1.0, age / 10.0); 
+            const easeGrow = growFactor * growFactor * (3 - 2 * growFactor); 
             const innerR = rs * 1.05;
-            const outerR = rs * (1.5 + 12.5 * easeGrow); // 1.5*rs → 14*rs
-            const diskGeo = new THREE.RingGeometry(innerR, outerR, 128, 8);
-            const diskMat = new THREE.ShaderMaterial({
-                vertexShader: DISK_VERT,
-                fragmentShader: DISK_FRAG,
-                uniforms: {
-                    time: { value: this._time },
-                    innerRadius: { value: innerR },
-                    outerRadius: { value: outerR },
-                    bhPosition: { value: bhPos },
-                    opacity: { value: fadeIn }
-                },
-                transparent: true,
-                side: THREE.DoubleSide,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
-            });
-            const disk = new THREE.Mesh(diskGeo, diskMat);
-            disk.position.copy(bhPos);
-            disk.rotation.x = Math.PI * 0.5;
-            this._group.add(disk);
-            this._bhMeshes.push(disk);
+            const outerR = rs * (1.5 + 7.5 * easeGrow); // Toned down from 12.5
 
-            // --- Secondary thin disk (tilted, fainter — visual depth) ---
-            const disk2Geo = new THREE.RingGeometry(innerR * 1.05, outerR * 0.7, 96, 4);
-            const disk2Mat = new THREE.ShaderMaterial({
-                vertexShader: DISK_VERT,
-                fragmentShader: DISK_FRAG,
-                uniforms: {
-                    time: { value: this._time * 1.3 },
-                    innerRadius: { value: innerR * 1.1 },
-                    outerRadius: { value: outerR * 0.7 },
-                    bhPosition: { value: bhPos },
-                    opacity: { value: fadeIn * 0.7 }
-                },
-                transparent: true,
-                side: THREE.DoubleSide,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
-            });
-            const disk2 = new THREE.Mesh(disk2Geo, disk2Mat);
-            disk2.position.copy(bhPos);
-            disk2.rotation.x = Math.PI * 0.5 + 0.08; // slight tilt for parallax
-            disk2.rotation.z = 0.5;
-            this._group.add(disk2);
-            this._bhMeshes.push(disk2);
+            let bundle = this._bhMeshCache.get(bh.id);
+            
+            if (!bundle) {
+                // Construct unit-scale geometries exactly ONCE per Black Hole
+                const sGeo = new THREE.SphereGeometry(1.0, 48, 48);
+                const sMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const sphere = new THREE.Mesh(sGeo, sMat);
+                sphere.userData.id = bh.id;
+                
+                const coronaGeo = new THREE.SphereGeometry(1.15, 32, 32);
+                const coronaMat = new THREE.MeshBasicMaterial({
+                    color: 0x331100, transparent: true, opacity: 0.0,
+                    blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide
+                });
+                const corona = new THREE.Mesh(coronaGeo, coronaMat);
 
-            // --- Einstein ring glow: large soft halo ---
-            const einsteinGeo = new THREE.BufferGeometry();
-            einsteinGeo.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array([bhPos.x, bhPos.y, bhPos.z]), 3));
-            const einstein = new THREE.Points(einsteinGeo, new THREE.PointsMaterial({
-                size: rs * (4 + 24 * easeGrow), color: 0x5533aa, transparent: true, opacity: 0.08 * fadeIn,
-                blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
-                map: _haloTex
-            }));
-            this._group.add(einstein);
-            this._bhMeshes.push(einstein);
+                // Use maximum max bounds for RingGeometry so it doesn't clip when expanded
+                const diskGeo = new THREE.RingGeometry(1.05, 14.0, 128, 8);
+                const diskMat = new THREE.ShaderMaterial({
+                    vertexShader: DISK_VERT, fragmentShader: DISK_FRAG,
+                    uniforms: {
+                        time: { value: this._time },
+                        innerRadius: { value: innerR },
+                        outerRadius: { value: outerR },
+                        bhPosition: { value: new THREE.Vector3() },
+                        opacity: { value: 0 }
+                    },
+                    transparent: true, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
+                });
+                const disk = new THREE.Mesh(diskGeo, diskMat);
+                disk.rotation.x = Math.PI * 0.5;
 
-            // --- Inner hot glow ---
-            const glowGeo = new THREE.BufferGeometry();
-            glowGeo.setAttribute('position', new THREE.BufferAttribute(
-                new Float32Array([bhPos.x, bhPos.y, bhPos.z]), 3));
-            const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial({
-                size: rs * (1 + 4 * easeGrow), color: 0xffaa44, transparent: true, opacity: 0.35 * fadeIn,
-                blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
-                map: _haloTex
-            }));
-            this._group.add(glow);
-            this._bhMeshes.push(glow);
-        }
+                const disk2Geo = new THREE.RingGeometry(1.1, 10.0, 96, 4);
+                const disk2Mat = new THREE.ShaderMaterial({
+                    vertexShader: DISK_VERT, fragmentShader: DISK_FRAG,
+                    uniforms: {
+                        time: { value: this._time * 1.3 },
+                        innerRadius: { value: innerR * 1.1 },
+                        outerRadius: { value: outerR * 0.7 },
+                        bhPosition: { value: new THREE.Vector3() },
+                        opacity: { value: 0 }
+                    },
+                    transparent: true, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
+                });
+                const disk2 = new THREE.Mesh(disk2Geo, disk2Mat);
+                disk2.rotation.x = Math.PI * 0.5 + 0.08;
+                disk2.rotation.z = 0.5;
 
-        // Update disk shader time uniforms
-        for (const m of this._bhMeshes) {
-            if (m.material && m.material.uniforms && m.material.uniforms.time) {
-                m.material.uniforms.time.value = this._time;
+                const ptsGeo = new THREE.BufferGeometry();
+                ptsGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,0,0]), 3));
+                const einstein = new THREE.Points(ptsGeo, new THREE.PointsMaterial({
+                    size: 1.0, color: 0x5533aa, transparent: true, opacity: 0.0,
+                    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, map: _haloTex
+                }));
+
+                const glow = new THREE.Points(ptsGeo, new THREE.PointsMaterial({
+                    size: 1.0, color: 0xffaa44, transparent: true, opacity: 0.0,
+                    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, map: _haloTex
+                }));
+
+                const jetGeo = new THREE.CylinderGeometry(0.3, 0.3, 1.0, 16, 1, true);
+                jetGeo.translate(0, 0.5, 0); // Base at the origin
+                const jetMat = new THREE.ShaderMaterial({
+                    vertexShader: JET_VERT, fragmentShader: JET_FRAG,
+                    uniforms: { time: { value: this._time }, intensity: { value: 0 } },
+                    transparent: true, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
+                });
+                const jetUp = new THREE.Mesh(jetGeo, jetMat);
+                const jetDown = new THREE.Mesh(jetGeo, jetMat.clone());
+                jetDown.rotation.x = Math.PI;
+
+                // Add to scene graph
+                this._group.add(sphere, corona, disk, disk2, einstein, glow, jetUp, jetDown);
+                
+                bundle = { 
+                    sphere, corona, disk, disk2, einstein, glow, jetUp, jetDown,
+                    meshes: [sphere, corona, disk, disk2, einstein, glow, jetUp, jetDown] 
+                };
+                this._bhMeshCache.set(bh.id, bundle);
             }
+
+            // Real-time Update Path (Zero Allocations)
+            for (const m of bundle.meshes) m.visible = true;
+            
+            // Sync positions (Points meshes use absolute buffer pos, regular meshes use obj pos)
+            bundle.sphere.position.copy(bhPos);
+            bundle.corona.position.copy(bhPos);
+            bundle.disk.position.copy(bhPos);
+            bundle.disk2.position.copy(bhPos);
+            bundle.einstein.geometry.attributes.position.array[0] = bhPos.x;
+            bundle.einstein.geometry.attributes.position.array[1] = bhPos.y;
+            bundle.einstein.geometry.attributes.position.array[2] = bhPos.z;
+            bundle.einstein.geometry.attributes.position.needsUpdate = true;
+            bundle.glow.geometry.attributes.position.array[0] = bhPos.x;
+            bundle.glow.geometry.attributes.position.array[1] = bhPos.y;
+            bundle.glow.geometry.attributes.position.array[2] = bhPos.z;
+            bundle.glow.geometry.attributes.position.needsUpdate = true;
+            bundle.jetUp.position.copy(bhPos);
+            bundle.jetDown.position.copy(bhPos);
+            bundle.glow.geometry.attributes.position.array[2] = bhPos.z;
+            bundle.glow.geometry.attributes.position.needsUpdate = true;
+
+            // Sync scales referencing `rs`
+            bundle.sphere.scale.setScalar(rs);
+            bundle.corona.scale.setScalar(rs);
+            bundle.disk.scale.setScalar(rs);
+            bundle.disk2.scale.setScalar(rs);
+
+            // Sync shader uniforms
+            if (this._showDisks) {
+                bundle.disk.visible = true;
+                bundle.disk2.visible = true;
+                
+                bundle.disk.material.uniforms.time.value = this._time;
+                bundle.disk.material.uniforms.innerRadius.value = innerR;
+                bundle.disk.material.uniforms.outerRadius.value = outerR;
+                bundle.disk.material.uniforms.bhPosition.value.copy(bhPos);
+                bundle.disk.material.uniforms.opacity.value = fadeIn * 0.75;
+                
+                bundle.disk2.material.uniforms.time.value = this._time * 1.3;
+                bundle.disk2.material.uniforms.innerRadius.value = innerR * 1.1;
+                bundle.disk2.material.uniforms.outerRadius.value = outerR * 0.7;
+                bundle.disk2.material.uniforms.bhPosition.value.copy(bhPos);
+                bundle.disk2.material.uniforms.opacity.value = fadeIn * 0.45;
+            } else {
+                bundle.disk.visible = false;
+                bundle.disk2.visible = false;
+            }
+
+            // Sync procedural material values
+            bundle.corona.material.opacity = 0.20 * fadeIn;
+            bundle.einstein.material.opacity = 0.05 * fadeIn;
+            bundle.einstein.material.size = rs * (4 + 14 * easeGrow); // Toned down from 24
+            bundle.glow.material.opacity = 0.25 * fadeIn;
+            bundle.glow.material.size = rs * (1 + 3 * easeGrow);
+
+            // Fetch procedural jet intensity (packed loosely in luminosities array)
+            const powerLevel = bodyData.luminosities ? bodyData.luminosities[bh.i] : 0;
+            
+            // Smoothly interpolate the rendering intensity so it draws out and fades organically
+            bundle.jetIntensity = bundle.jetIntensity || 0;
+            bundle.jetIntensity += (powerLevel - bundle.jetIntensity) * 0.05;
+            
+            const jetRenderIntensity = Math.min(bundle.jetIntensity * 0.05, 1.5) * fadeIn;
+            
+            // Jet dynamic drawing/flicker
+            bundle.jetUp.material.uniforms.time.value = this._time;
+            bundle.jetUp.material.uniforms.intensity.value = jetRenderIntensity;
+            bundle.jetUp.scale.set(rs * 1.5, rs * (3 + jetRenderIntensity * 15), rs * 1.5);
+            
+            bundle.jetDown.material.uniforms.time.value = this._time;
+            bundle.jetDown.material.uniforms.intensity.value = jetRenderIntensity;
+            bundle.jetDown.scale.set(rs * 1.5, rs * (3 + jetRenderIntensity * 15), rs * 1.5);
         }
     }
 
@@ -499,13 +680,127 @@ export class CosmicRenderer {
     toggleBlackHoles(on)     { this._showBH = on; }
     toggleAccretionDisks(on) { this._showDisks = on; }
 
-    dispose() {
-        if (this._starCloud) { this._group.remove(this._starCloud); this._starCloud.geometry.dispose(); this._starCloud.material.dispose(); }
-        if (this._gasCloud) { this._group.remove(this._gasCloud); this._gasCloud.geometry.dispose(); this._gasCloud.material.dispose(); }
-        if (this._dmCloud) { this._group.remove(this._dmCloud); this._dmCloud.geometry.dispose(); this._dmCloud.material.dispose(); }
-        for (const m of this._bhMeshes) { this._group.remove(m); if (m.geometry) m.geometry.dispose(); if (m.material) m.material.dispose(); }
-        if (this._bgStars) { this._group.remove(this._bgStars); this._bgStars.geometry.dispose(); this._bgStars.material.dispose(); }
-        this.scene.remove(this._group);
+    _ensureCloud(name, maxCount, defaultSize, opacity, blending, map, useSizes = false) {
+        let cloud = name === 'star' ? this._starCloud : 
+                    name === 'gas' ? this._gasCloud : 
+                    name === 'nebula' ? this._nebulaCloud :
+                    this._dmCloud;
+                    
+        if (!cloud || cloud.geometry.attributes.position.count < maxCount) {
+            if (cloud) { this._group.remove(cloud); cloud.geometry.dispose(); cloud.material.dispose(); }
+            
+            const g = new THREE.BufferGeometry();
+            g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(maxCount * 3), 3));
+            g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(maxCount * 3), 3));
+            
+            let mat;
+            // If the buffer geometry needs variable per-particle sizes, we must use a custom ShaderMaterial
+            // because THREE.PointsMaterial size element is uniform unless heavily modified
+            if (useSizes) {
+                g.setAttribute('size', new THREE.BufferAttribute(new Float32Array(maxCount), 1));
+                g.setAttribute('angle', new THREE.BufferAttribute(new Float32Array(maxCount), 1));
+                g.setAttribute('radius', new THREE.BufferAttribute(new Float32Array(maxCount), 1));
+                mat = new THREE.ShaderMaterial({
+                    uniforms: {
+                        color: { value: new THREE.Color(0xffffff) },
+                        pointTexture: { value: map },
+                        globalOpacity: { value: opacity }
+                    },
+                    vertexShader: `
+                        attribute float size;
+                        attribute float angle;
+                        attribute float radius;
+                        varying vec3 vColor;
+                        varying float vAngle;
+                        varying float vRad;
+                        void main() {
+                            vColor = color;
+                            vAngle = angle;
+                            vRad = radius;
+                            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                            gl_PointSize = size * (300.0 / -mvPosition.z);
+                            gl_Position = projectionMatrix * mvPosition;
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform sampler2D pointTexture;
+                        uniform float globalOpacity;
+                        varying vec3 vColor;
+                        varying float vAngle;
+                        varying float vRad;
+                        void main() {
+                            vec2 uv = gl_PointCoord;
+                            
+                            // 1. Shift origin to center
+                            uv -= 0.5;
+                            
+                            // 2. Rotate to orbital tangent
+                            float c = cos(vAngle);
+                            float s = sin(vAngle);
+                            mat2 rMat = mat2(c, -s, s, c);
+                            uv = rMat * uv;
+                            
+                            // 3. Dynamic spaghettification based on radial distance
+                            float stretch = clamp(vRad / 30.0, 0.15, 0.8); // Relaxed extreme compression
+                            uv.x *= stretch;
+                            
+                            // 4. Shift back
+                            uv += 0.5;
+                            
+                            // Smoothly fade texture sampling at boundaries based purely on UV map radius
+                            float distFromCenter = length(uv - 0.5);
+                            float edgeFade = smoothstep(0.48, 0.20, distFromCenter);
+                            
+                            vec4 texColor = texture2D(pointTexture, gl_PointCoord); // Use original for the sprite, apply fade via alpha
+                            gl_FragColor = vec4(vColor, globalOpacity * edgeFade) * texColor;
+                        }
+                    `,
+                    blending: blending,
+                    depthWrite: false,
+                    depthTest: false,
+                    transparent: true,
+                    vertexColors: true
+                });
+            } else {
+                mat = new THREE.PointsMaterial({
+                    size: defaultSize,
+                    map: map,
+                    blending: blending,
+                    depthWrite: false,
+                    transparent: true,
+                    opacity: opacity,
+                    vertexColors: true,
+                    sizeAttenuation: true
+                });
+            }
+            
+            cloud = new THREE.Points(g, mat);
+            cloud.frustumCulled = false;
+            cloud.name = 'cosmic-' + name;
+            cloud.userData.ids = new Int32Array(maxCount);
+            this._group.add(cloud);
+            if (name === 'star') this._starCloud = cloud;
+            else if (name === 'gas') this._gasCloud = cloud;
+            else if (name === 'nebula') this._nebulaCloud = cloud;
+            else this._dmCloud = cloud;
+        }
+        return cloud;
+    }
+
+    getInteractables() {
+        const arr = [];
+        if (this._starCloud && this._showStars) arr.push(this._starCloud);
+        if (this._gasCloud && this._showGas) arr.push(this._gasCloud);
+        if (this._nebulaCloud && this._showGas) arr.push(this._nebulaCloud);
+        if (this._dmCloud && this._showDM) arr.push(this._dmCloud);
+        if (this._bhMeshCache && this._showBH) {
+            for (const bundle of this._bhMeshCache.values()) {
+                if (bundle.meshes && bundle.meshes.length > 0) {
+                    arr.push(bundle.meshes[0]); // sphere with userData.id
+                }
+            }
+        }
+        return arr;
     }
 
     _rng(seed) {

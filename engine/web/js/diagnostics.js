@@ -42,7 +42,7 @@ export class Sparkline {
         if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
             canvas.width = w * dpr;
             canvas.height = h * dpr;
-            ctx.scale(dpr, dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
         ctx.clearRect(0, 0, w, h);
@@ -214,12 +214,6 @@ export class DiagnosticsPanel {
     clear() {
         for (const s of Object.values(this.sparklines)) s.clear();
     }
-}
-
-function fmt(v) {
-    if (typeof v !== 'number' || isNaN(v)) return '0.0000';
-    if (Math.abs(v) >= 10000) return v.toExponential(2);
-    return v.toFixed(4);
 }
 
 function fmtSci(v) {

@@ -210,14 +210,28 @@ function integrateDirection(fieldFn, x0, y0, z0, h, maxSteps, minMag, bounds, or
     const verts = [x0, y0, z0];
     let x = x0, y = y0, z = z0;
 
+    // Shared fallback direction for RK4 intermediate evaluations.
+    // Updated at each step to the normalized field at the current position.
+    // When an intermediate RK4 query (k2/k3/k4) lands in a region with no
+    // nearby field data, the wrapper returns this fallback instead of zero
+    // -- preventing the RK4 step from collapsing when the spatial index
+    // has sparse coverage.
+    let fbx = 0, fby = 0, fbz = 0;
+
+    const normFieldFn = (px, py, pz) => {
+        const [vx, vy, vz] = fieldFn(px, py, pz);
+        const m = Math.sqrt(vx * vx + vy * vy + vz * vz);
+        if (m < minMag) return [fbx, fby, fbz]; // fallback to current step direction
+        return [vx / m, vy / m, vz / m];
+    };
+
     for (let step = 0; step < maxSteps; step++) {
         const [vx, vy, vz] = fieldFn(x, y, z);
         const mag = Math.sqrt(vx * vx + vy * vy + vz * vz);
         if (mag < minMag) break;
 
-        // Normalize field direction for uniform step length
-        const nx = vx / mag, ny = vy / mag, nz = vz / mag;
-        const normFieldFn = () => [nx, ny, nz];
+        // Update fallback direction for this step's RK4 intermediate queries
+        fbx = vx / mag; fby = vy / mag; fbz = vz / mag;
 
         const [x1, y1, z1] = rk4Step(normFieldFn, x, y, z, h);
 
