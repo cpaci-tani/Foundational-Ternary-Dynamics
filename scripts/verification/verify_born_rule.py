@@ -17,8 +17,30 @@ This script performs a Monte Carlo simulation of noisy flux to demonstrate
 this relationship matches the Born rule.
 """
 
+# Phase 8b (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# The hot Monte Carlo at 20 amplitudes x 2 x 1e6 Gaussian draws per amplitude
+# moves to DEVICE when torch is installed; otherwise keeps the legacy NumPy
+# numpy path. The baseline has no RNG seed, so run-to-run noise of order 1e-4
+# is expected regardless of backend.
+
+import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
+
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
+
 
 def run_born_verification(n_samples=1000000, threshold=1.0):
     print("="*60)
@@ -45,34 +67,49 @@ def run_born_verification(n_samples=1000000, threshold=1.0):
     results = []
     
     for A in amplitudes:
-        # Signal + Noise
-        # The "State" biases the flux in a direction
-        # J_total = Signal + Noise
-        # Signal magnitude = A
-        
-        # We model the flux vector J as distributed around mean A
-        # P(Manifest) = P(|J + noise| > Threshold)
-        
-        noise = np.random.normal(0, noise_scale, n_samples)
-        
-        # For simple 1D model (magnitude only behavior for simplicity of proof)
-        # In FTD, J is 3D vector. Let's use 1D projection for the core logic:
-        # Or better: Signal is magnitude A. Noise adds vectorially.
-        
-        # Vector simulation
-        # Signal vector S = [A, 0]
-        # Noise vector N = [nx, ny]
-        nx = np.random.normal(0, noise_scale, n_samples)
-        ny = np.random.normal(0, noise_scale, n_samples)
-        
-        Jx = A + nx
-        Jy = 0 + ny
-        
-        J_mag = np.sqrt(Jx**2 + Jy**2)
-        
-        # Count crossings
-        manifestations = np.sum(J_mag > threshold)
-        prob = manifestations / n_samples
+        if TORCH is not None:
+            # GPU-accelerated: sample both Gaussian noise channels, compute
+            # |J|, and reduce to the threshold-crossing fraction in one shot.
+            # Note: the original also draws an unused `noise` sample; we
+            # preserve that draw to keep any global RNG-state consumption
+            # equivalent when a seed is later added. The original RNG is
+            # NumPy's, so we keep the unused draw on CPU regardless of backend.
+            _ = np.random.normal(0, noise_scale, n_samples)  # unused, mirrors original
+            nx = TORCH.randn(n_samples, device=DEVICE, dtype=DTYPE) * noise_scale
+            ny = TORCH.randn(n_samples, device=DEVICE, dtype=DTYPE) * noise_scale
+            Jx = nx + A
+            Jy = ny
+            J_mag = TORCH.sqrt(Jx * Jx + Jy * Jy)
+            prob = float((J_mag > threshold).to(DTYPE).mean().item())
+        else:
+            # Signal + Noise
+            # The "State" biases the flux in a direction
+            # J_total = Signal + Noise
+            # Signal magnitude = A
+
+            # We model the flux vector J as distributed around mean A
+            # P(Manifest) = P(|J + noise| > Threshold)
+
+            noise = np.random.normal(0, noise_scale, n_samples)
+
+            # For simple 1D model (magnitude only behavior for simplicity of proof)
+            # In FTD, J is 3D vector. Let's use 1D projection for the core logic:
+            # Or better: Signal is magnitude A. Noise adds vectorially.
+
+            # Vector simulation
+            # Signal vector S = [A, 0]
+            # Noise vector N = [nx, ny]
+            nx = np.random.normal(0, noise_scale, n_samples)
+            ny = np.random.normal(0, noise_scale, n_samples)
+
+            Jx = A + nx
+            Jy = 0 + ny
+
+            J_mag = np.sqrt(Jx**2 + Jy**2)
+
+            # Count crossings
+            manifestations = np.sum(J_mag > threshold)
+            prob = manifestations / n_samples
         probabilities.append(prob)
         
         # We expect P approx proportional to A^2 for small A in certain noise regimes,
