@@ -9,9 +9,31 @@ So 1/sigma ~ 6/k^2 (integrable singularity in 3D)
 
 Strategy: subtract the singular part and integrate it analytically.
 """
+
+# Phase 8 (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# See docs/superpowers/plans/concurrent-watching-crane.md Phase 8.
+
+import os
+import sys
 import numpy as np
 from scipy.special import gamma
 from scipy.integrate import tplquad
+
+# Try to pick up the project-level PyTorch / CUDA helpers from scripts/constants.py.
+# Fall back to vectorized NumPy (still much faster than the original triple
+# Python for-loop) when torch is not installed.
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
 
 Gamma14 = gamma(0.25)
 FTD_W3 = Gamma14**4 / (4 * np.pi**3)
@@ -20,21 +42,51 @@ FTD_W3 = Gamma14**4 / (4 * np.pi**3)
 print("Method 1: Midpoint rule convergence")
 print("-"*60)
 
+
+def _midpoint_sum_torch(N):
+    """Midpoint-rule sum of 1 / (1 - (c1+c2+c3)/3) on GPU.
+
+    Chunked along the outermost (i1) axis to keep memory bounded.
+    """
+    dk = np.pi / N
+    idx = TORCH.arange(N, device=DEVICE, dtype=DTYPE)
+    c = TORCH.cos((idx + 0.5) * dk)  # shape (N,)
+    # Chunk the outer loop to cap memory at O(N^2) per chunk.
+    chunk = min(N, 128)
+    total = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    # c[:, None] + c[None, :] is the (c2 + c3) table, (N, N).
+    c23 = c.unsqueeze(0) + c.unsqueeze(1)  # (N, N)
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c1_chunk = c[start:stop].view(-1, 1, 1)  # (chunk, 1, 1)
+        sigma = 1.0 - (c1_chunk + c23.unsqueeze(0)) / 3.0  # (chunk, N, N)
+        total = total + (1.0 / sigma).sum()
+    return float(total.item())
+
+
+def _midpoint_sum_numpy(N):
+    """Same computation vectorized with NumPy and chunked along i1."""
+    dk = np.pi / N
+    idx = np.arange(N, dtype=np.float64)
+    c = np.cos((idx + 0.5) * dk)
+    c23 = c[:, None] + c[None, :]  # (N, N)
+    chunk = min(N, 128)
+    total = 0.0
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c1_chunk = c[start:stop].reshape(-1, 1, 1)
+        sigma = 1.0 - (c1_chunk + c23[None, :, :]) / 3.0  # (chunk, N, N)
+        total += float(np.sum(1.0 / sigma))
+    return total
+
+
 results = []
 for N in [50, 100, 200, 400, 800]:
     dk = np.pi / N
-    total = 0.0
-    for i1 in range(N):
-        k1 = (i1 + 0.5) * dk
-        c1 = np.cos(k1)
-        for i2 in range(N):
-            k2 = (i2 + 0.5) * dk
-            c2 = np.cos(k2)
-            for i3 in range(N):
-                k3 = (i3 + 0.5) * dk
-                c3 = np.cos(k3)
-                sigma = 1 - (c1+c2+c3)/3
-                total += 1.0/sigma
+    if TORCH is not None:
+        total = _midpoint_sum_torch(N)
+    else:
+        total = _midpoint_sum_numpy(N)
     val = total * dk**3 / np.pi**3
     results.append((N, val))
     print(f"  N={N:4d}: I_sigma = {val:.12f}")
