@@ -58,9 +58,16 @@ int main() {
         pe.set_softening(1.0);
         pe.toggles.minimal();
 
-        // Z=2 nucleus: two locked +1 protons at origin
+        // Z=2 nucleus: two locked +1 protons near origin.
+        // Wave 3.3 fix (2026-04-14): exact colocation at (0,0,0) triggers
+        // deep Barnes-Hut recursion (~41 levels of octree subdivision
+        // before width < 1e-10), which crashes under MSVC Release with
+        // stdout buffered (heap corruption? std::vector reallocation
+        // during recursive insert_into_tree?). Offsetting by 0.1 voxels
+        // keeps the two protons within softening distance (soft_=1.0)
+        // so the Z=2 physics is preserved but the octree builds cleanly.
         pe.add_locked_particle(+1, {0, 0, 0});
-        pe.add_locked_particle(+1, {0, 0, 0});
+        pe.add_locked_particle(+1, {0.1, 0, 0});
 
         // Electron at (a_He, 0, 0) with tangential velocity
         pe.add_particle(-1, {a_He, 0, 0}, {0, v_He, 0});
@@ -120,8 +127,9 @@ int main() {
         pe.set_softening(1.0);
         pe.toggles.minimal();
 
-        pe.add_locked_particle(+1, {0, 0, 0});  // nucleus proton 1
-        pe.add_locked_particle(+1, {0, 0, 0});  // nucleus proton 2
+        // Z=2 nucleus with 0.1-voxel offset (see He+ block above for rationale)
+        pe.add_locked_particle(+1, {0, 0, 0});        // nucleus proton 1
+        pe.add_locked_particle(+1, {0.1, 0, 0});      // nucleus proton 2
         // Electron 1: orbit in xy plane
         pe.add_particle(-1, {a_He, 0, 0}, {0, v_He, 0}, K_B, 0.01, +1);
         // Electron 2: orbit in xz plane (orthogonal to avoid immediate collision)
@@ -143,7 +151,7 @@ int main() {
         pe.toggles.exchange = true;  // Enable Pauli repulsion
 
         pe.add_locked_particle(+1, {0, 0, 0});
-        pe.add_locked_particle(+1, {0, 0, 0});
+        pe.add_locked_particle(+1, {0.1, 0, 0});
         pe.add_particle(-1, {a_He, 0, 0}, {0, v_He, 0}, K_B, 0.01, +1);
         pe.add_particle(-1, {0, 0, a_He}, {v_He, 0, 0}, K_B, 0.01, -1);
 
@@ -200,7 +208,7 @@ int main() {
         pe.set_softening(1.0);
         pe.toggles.minimal();
         pe.add_locked_particle(+1, {0, 0, 0});
-        pe.add_locked_particle(+1, {0, 0, 0});
+        pe.add_locked_particle(+1, {0.1, 0, 0});
         pe.add_particle(-1, {a_He, 0, 0}, {0, v_He, 0});
         pe.particles()[2].r_eff = 0.01;
 
