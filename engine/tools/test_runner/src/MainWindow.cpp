@@ -3,6 +3,7 @@
 // ============================================================================
 
 #include "MainWindow.h"
+#include "LatticeViewer.h"
 #include "OutputPanel.h"
 #include "SmartDispatcher.h"
 #include "TestModel.h"
@@ -164,10 +165,8 @@ void MainWindow::buildCentralWidget() {
     m_output = new OutputPanel(this);
     tabs->addTab(m_output, QStringLiteral("Output"));
 
-    auto* latticePlaceholder = new QLabel(
-        QStringLiteral("LatticeViewer lands in Phase 4"), this);
-    latticePlaceholder->setAlignment(Qt::AlignCenter);
-    tabs->addTab(latticePlaceholder, QStringLiteral("Live Lattice"));
+    m_latticeViewer = new LatticeViewer(this);
+    tabs->addTab(m_latticeViewer, QStringLiteral("Live Lattice"));
 
     auto* telemetryPlaceholder = new QLabel(
         QStringLiteral("TelemetryCharts lands in Phase 5"), this);
@@ -316,9 +315,11 @@ void MainWindow::onMetricReceived(const QString& testName, const QVariantMap& ev
     m_output->appendMetric(testName, evt);
 }
 
-void MainWindow::onSnapshotReceived(const QString& /*testName*/,
-                                    const QVariantMap& /*evt*/) {
-    // Silently consumed in Phase 3 — Phase 4 will route to LatticeViewer.
+void MainWindow::onSnapshotReceived(const QString& testName,
+                                    const QVariantMap& evt) {
+    if (m_latticeViewer) {
+        m_latticeViewer->onSnapshotEvent(testName, evt);
+    }
 }
 
 void MainWindow::onSectionReceived(const QString& testName, const QString& sectionName) {
