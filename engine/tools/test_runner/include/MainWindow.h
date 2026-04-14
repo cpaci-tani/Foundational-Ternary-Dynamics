@@ -36,6 +36,7 @@ class QCheckBox;
 
 namespace ftd::testrunner {
 
+class LatticeViewer;
 class OutputPanel;
 class SmartDispatcher;
 class TestModel;
@@ -85,6 +86,7 @@ private:
     // Widgets.
     QTreeView* m_tree = nullptr;
     OutputPanel* m_output = nullptr;
+    LatticeViewer* m_latticeViewer = nullptr;
 
     // Toolbar actions.
     QAction* m_actRun = nullptr;
