@@ -1,0 +1,170 @@
+# Semiconductors {#sec-semiconductors}
+
+::: {.callout-warning}
+## Pedagogical Context [NOT DERIVED FROM FTD]
+This chapter provides **standard semiconductor physics context**. **No quantitative predictions** (band gaps, doping effects) are derived from FTD axioms at this scale.
+:::
+
+*"The foundation of computing"*
+
+::: {.callout-note}
+## Key Revelation
+Semiconductors can be switched between conducting and insulating. This controllability enables transistors, and transistors enable computers.
+:::
+
+## Between Metal and Insulator
+
+| Material | Band Gap | Conductivity |
+|----------|----------|--------------|
+| Metal | 0 | High |
+| Semiconductor | 0.1-3 eV | Moderate |
+| Insulator | >3 eV | Very low |
+
+## Intrinsic Semiconductors
+
+Pure silicon or germanium.
+
+### Band Structure
+
+![Semiconductor band structure: a moderate energy gap (1.1 eV for silicon) separates the filled valence band from the empty conduction band.](../../media/images/fig-band-structure.png){#fig-band-structure}
+
+At absolute zero, the valence band is completely filled and the conduction band is empty. The band gap (1.1 eV for silicon) determines the semiconductor's properties.
+
+### Thermal Excitation
+
+At T > 0, some electrons gain enough energy to jump the gap:
+$$
+n = n_0 \exp\left(-\frac{E_g}{2k_BT}\right)
+$$
+
+### Carriers
+
+- **Electrons**: Negative carriers in conduction band
+- **Holes**: Positive carriers in valence band (missing electrons)
+
+Both contribute to conductivity.
+
+## Doping
+
+Adding impurities to control carrier concentration.
+
+### n-Type (Add Group V: P, As, Sb)
+
+![n-type doping: a Group V atom (like phosphorus) in a silicon lattice provides one extra electron.](../../media/images/fig-n-type-doping.png){#fig-n-type-doping}
+
+Phosphorus has 5 valence electrons. Four bond with silicon neighbors, leaving one extra electron free to conduct.
+
+### p-Type (Add Group III: B, Ga, Al)
+
+![p-type doping: a Group III atom (like boron) in a silicon lattice creates one hole (missing electron).](../../media/images/fig-p-type-doping.png){#fig-p-type-doping}
+
+Boron has only 3 valence electrons. It bonds with four silicon neighbors, leaving one hole that can accept an electron.
+
+### Carrier Concentrations
+
+For n-type: $n >> p$, electrons dominate
+For p-type: $p >> n$, holes dominate
+
+## The p-n Junction
+
+Interface between p-type and n-type regions.
+
+### Formation
+
+![The p-n junction: when p-type and n-type semiconductors meet, electrons and holes recombine at the interface, creating a depletion zone.](../../media/images/fig-pn-junction.png){#fig-pn-junction}
+
+At the junction, electrons from the n-side diffuse into the p-side and recombine with holes. This creates a **depletion zone**: a region with no free carriers, only fixed charged ions (negative on p-side, positive on n-side).
+
+### Depletion Zone
+
+Region with no free carriers. Acts as insulator.
+
+### Built-in Voltage
+
+Electric field from exposed ions creates potential barrier.
+
+## Diode Behavior
+
+### Forward Bias (+ on p-side)
+
+Shrinks depletion zone. Current flows.
+
+### Reverse Bias (+ on n-side)
+
+Expands depletion zone. No current (blocking).
+
+### I-V Characteristic
+
+$$
+I = I_0 \left(e^{qV/k_BT} - 1\right)
+$$
+
+Exponential in forward direction, blocked in reverse.
+
+## Transistor
+
+The switch that enables computing.
+
+### Basic Types
+
+- **BJT** (Bipolar Junction Transistor): npn or pnp
+- **MOSFET** (Metal-Oxide-Semiconductor FET): Most common today
+
+### MOSFET Structure
+
+![MOSFET structure: gate voltage controls the conductivity of the channel between source and drain.](../../media/images/fig-mosfet.png){#fig-mosfet}
+
+The Metal-Oxide-Semiconductor Field-Effect Transistor has three terminals: source, drain, and gate. Applying voltage to the gate creates (or removes) a conducting channel between source and drain.
+
+### Switching
+
+- Gate voltage low: Channel off (insulating)
+- Gate voltage high: Channel on (conducting)
+
+This is how 0s and 1s are represented.
+
+## In Simulation
+
+```python
+class Semiconductor:
+    def __init__(self, base_material, dopant_type, dopant_concentration):
+        self.material = base_material
+        self.type = dopant_type
+        self.carrier_density = calculate_carriers(dopant_concentration)
+
+    def conductivity(self, temperature, electric_field):
+        # Intrinsic carriers
+        n_i = intrinsic_carrier(self.material, temperature)
+
+        # Doped carriers
+        if self.type == N_TYPE:
+            n = self.carrier_density
+            p = n_i**2 / n
+        else:
+            p = self.carrier_density
+            n = n_i**2 / p
+
+        return ELECTRON_MOBILITY * n + HOLE_MOBILITY * p
+```
+
+## Experiments
+
+### Doping Effect
+Add impurities to pure semiconductor. Watch conductivity change.
+
+### p-n Junction
+Build junction. Apply forward and reverse bias. See diode behavior.
+
+### Transistor Switch
+Build transistor. Control current with gate voltage.
+
+## Concepts
+
+- **band-gap**: Energy between valence and conduction bands
+- **doping**: Adding impurities to control carriers
+- **p-n-junction**: Interface between p-type and n-type
+- **transistor**: Voltage-controlled switch
+
+## Transition
+
+Semiconductors enable electronics. But life uses different structures: biological materials with unique properties. Next, we explore the building blocks of life.

@@ -1,0 +1,57 @@
+# Dark Matter and Dark Energy {#sec-dark}
+
+In FTD, dark matter is not a new particle. It is sub-threshold flux: regions where $0 < |\mathbf{J}| < K_B$. The flux gravitates but does not manifest electromagnetically. This chapter presents the mechanism and predictions.
+
+## 22.1 Sub-threshold flux as dark matter [SELECTION]
+
+The manifestation threshold $K_B$ (@sec-threshold) divides the flux field into two regimes:
+
+- **$|\mathbf{J}| \geq K_B$:** Manifested. State $s = \pm 1$. Electromagnetically active. Visible matter.
+- **$0 < |\mathbf{J}| < K_B$:** Sub-threshold. State $s = 0$. No electromagnetic coupling. Dark matter candidate.
+
+Sub-threshold flux gravitates (it contributes to the energy density and hence to the latency field $L^2$) but does not emit, absorb, or scatter photons. This matches the observed properties of dark matter: gravitationally active, electromagnetically invisible.
+
+## 22.2 The 17 dark states [THEOREM for counting, SELECTION for identification]
+
+The Moore Layer Theorem (@sec-gauge) assigns each of the $3^3 = 27$ Moore neighborhood configurations a role:
+
+- **10 visible states:** the Standard Model's 3 generations $\times$ (2 leptons + 2 quarks $\times$ 1 color representative) minus overlaps = the visible sector
+- **17 dark states:** sub-threshold configurations that couple gravitationally but not to the photon
+
+The count 17 arises from the combinatorics of ternary states on the Moore neighborhood that do not excite the SC sublattice (the electromagnetic channel). Specifically: configurations where $|\mathbf{J}_\text{SC}| < K_B$ but $|\mathbf{J}_\text{total}| > 0$.
+
+## 22.3 Predictions [CONJECTURE]
+
+FTD dark matter makes specific predictions distinguishable from particle dark matter (WIMPs, axions):
+
+| Property | FTD prediction | Particle DM prediction |
+|----------|---------------|----------------------|
+| Geometry | Spherical (pressure-supported) | Triaxial (collisionless) |
+| Self-interaction | Present (flux-flux coupling) | Absent (WIMP) or weak (SIDM) |
+| Rotation | Non-rotating (no angular momentum carrier) | Can rotate |
+| Core structure | Cored (flux smoothly distributed) | Cuspy (NFW profile) |
+| Annihilation | None (sub-threshold, not particle-antiparticle) | Present (WIMP annihilation) |
+
+The core-cusp prediction is potentially testable with current dwarf galaxy observations.
+
+## 22.4 The dark-to-baryonic ratio [SELECTION]
+
+The ratio of dark to baryonic matter density:
+
+$$
+\frac{\Omega_{\text{DM}}}{\Omega_b} \approx \frac{N_{\text{dark}}}{N_{\text{visible}}} \cdot f_{\text{threshold}}
+\tag{22.1}
+$$
+
+The single-site binomial estimate (17 dark / 10 visible $\approx 1.7$) underpredicts the observed ratio ($\sim 5.4$). The discrepancy requires accounting for spatial correlations between neighboring voxels, which enhance the dark-to-visible ratio. A full lattice simulation is needed for quantitative prediction. [OPEN]
+
+## 22.5 Dark energy from vacuum structure [SELECTION]
+
+The cosmological constant $\Lambda$ receives contributions from the lattice vacuum energy. The FTD resolution of the cosmological constant problem is in @sec-vacuum. The dark energy density is:
+
+$$
+\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2}
+\tag{22.2}
+$$
+
+matching the observed value to $\sim 1\%$ with zero free parameters. The $\alpha^{16}$ suppression arises from the 16 DOF on the minimal lattice cell --- the same $K = 16$ that appears in the master quadratic.

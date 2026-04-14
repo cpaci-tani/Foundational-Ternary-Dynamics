@@ -33,6 +33,19 @@ We do **not** claim that $\alpha$ = 1/137.036 is the unique physically possible 
 
 ### Condensed Assumption Ledger
 
+> **Scope Limitations Statement**
+>
+> Foundational Ternary Dynamics v1.0 is certified as a discrete computational framework for particle physics and cosmology with the following acknowledged limitations:
+>
+> 1. **Gravity:** Approximate recovery only; diffeomorphism invariance fundamentally violated by discrete lattice
+> 2. **Gauge theory:** U(1) emergence argued; SU(2) × SU(3) conjectured, not proven
+> 3. **Intermediate scales:** Chapters IV-VII provide pedagogical context only; no FTD-derived predictions
+> 4. **Renormalization:** Not addressed
+> 5. **Simulation:** Incomplete; physics validation pending v1.1
+> 6. **Falsifiability:** Limited near-term testable predictions
+>
+> These limitations do not invalidate the framework's achievements in particle physics numerical predictions but define the current scope of rigorous claims.
+
 **Foundational Axioms [AXIOM]:**
 
 | ID | Statement | Status |
