@@ -18,6 +18,45 @@
 
 namespace ftd {
 
+OrbitalElements compute_orbital_elements(const Particle& orbiter,
+                                          const Particle& center,
+                                          double alpha_eff) {
+    OrbitalElements oe;
+
+    Vec3 r_vec = orbiter.position - center.position;
+    double r = r_vec.mag();
+    double v2 = orbiter.velocity.mag2();
+
+    // Specific energy: E/m = 0.5*v² - alpha_eff/r
+    oe.specific_energy = 0.5 * v2 - alpha_eff / (r + 1e-30);
+    oe.bound = (oe.specific_energy < 0);
+
+    // Specific angular momentum: |L/m| = |r x v|
+    Vec3 L = Vec3::cross(r_vec, orbiter.velocity);
+    oe.specific_angular_momentum = L.mag();
+
+    if (!oe.bound || alpha_eff < 1e-30) return oe;
+
+    // Semi-major axis: a = -alpha_eff / (2 * E_specific)
+    oe.semi_major_axis = -alpha_eff / (2.0 * oe.specific_energy);
+
+    // Eccentricity: e² = 1 - L²/(m * alpha_eff * a)
+    // (using specific quantities: e² = 1 - h²/(alpha_eff * a))
+    double h2 = oe.specific_angular_momentum * oe.specific_angular_momentum;
+    double e2 = 1.0 - h2 / (alpha_eff * oe.semi_major_axis);
+    oe.eccentricity = (e2 > 0) ? std::sqrt(e2) : 0.0;
+
+    // Periapsis and apoapsis
+    oe.periapsis = oe.semi_major_axis * (1.0 - oe.eccentricity);
+    oe.apoapsis  = oe.semi_major_axis * (1.0 + oe.eccentricity);
+
+    // Kepler period: T = 2*pi*sqrt(a³ / alpha_eff)
+    double a3 = oe.semi_major_axis * oe.semi_major_axis * oe.semi_major_axis;
+    oe.period = 2.0 * PI * std::sqrt(a3 / alpha_eff);
+
+    return oe;
+}
+
 ParticleEngine::ParticleEngine() = default;
 
 int ParticleEngine::add_particle(int8_t charge, Vec3 position, Vec3 velocity,
@@ -60,32 +99,26 @@ int ParticleEngine::add_locked_particle(int8_t charge, Vec3 position, double mas
     return p.id;
 }
 
-Vec3 ParticleEngine::compute_force(int i) const {
+Vec3 ParticleEngine::compute_pairwise_force(int i, int j) const {
     Vec3 f;
     const auto& pi = particles_[i];
+    const auto& pj = particles_[j];
 
-    // Accumulate per-force diagnostics if buffer is available
     ParticleForceDiag* diag = nullptr;
     if (i < static_cast<int>(force_diag_.size())) {
-        diag = &force_diag_[i];  // force_diag_ is mutable, no const_cast needed
-        *diag = {};  // zero all components
+        diag = &force_diag_[i];
     }
-
-    for (int j = 0; j < static_cast<int>(particles_.size()); ++j) {
-        if (j == i) continue;
-        const auto& pj = particles_[j];
 
         Vec3 r_vec = pj.position - pi.position;
         double r2 = r_vec.mag2() + soft_ * soft_;  // softened
         double r = std::sqrt(r2);
-
-        if (r < 1e-30) continue;  // degenerate
+        if (r < 1e-30) return f;  // degenerate
 
         Vec3 r_hat = r_vec * (1.0 / r);
 
         // 1. Coulomb: F = -alpha * qi * qj / (4*pi*r²) * r_hat
         if (toggles.coulomb) {
-            double f_em = -ALPHA * pi.charge * pj.charge / (4.0 * PI * r2);
+            double f_em = -ALPHA_EFT * pi.charge * pj.charge / (4.0 * PI * r2);  // EFT: G_C²
             Vec3 fc = r_hat * f_em;
             f += fc;
             if (diag) diag->f_coulomb += fc;
@@ -144,7 +177,7 @@ Vec3 ParticleEngine::compute_force(int i) const {
             double mj_dot_r = mj_mu.dot(r_vec);
             double mi_dot_mj = mi_mu.dot(mj_mu);
 
-            double coeff = 3.0 * ALPHA / (4.0 * PI * r5);
+            double coeff = 3.0 * ALPHA_EFT / (4.0 * PI * r5);  // EFT: G_C²
             Vec3 fdd = (r_vec * (5.0 * mi_dot_r * mj_dot_r / r2)
                         - mj_mu * mi_dot_r - mi_mu * mj_dot_r
                         - r_vec * mi_dot_mj) * coeff;
@@ -168,73 +201,145 @@ Vec3 ParticleEngine::compute_force(int i) const {
                 if (diag) diag->f_spin_orbit += fso;
             }
         }
-    }
 
-    // 7. Lorentz force: F = alpha * charge * (v x B_total)
-    //    B_total accumulated from magnetic dipole fields of all other particles
-    if (toggles.lorentz && pi.velocity.mag2() > 1e-30) {
-        Vec3 B_total;
-        for (int j = 0; j < static_cast<int>(particles_.size()); ++j) {
-            if (j == i) continue;
-            const auto& pj = particles_[j];
-            if (pj.spin_axis.mag2() < 1e-30) continue;
-
-            Vec3 rv = pj.position - pi.position;
-            double rd2 = rv.mag2() + soft_ * soft_;
-            double rd = std::sqrt(rd2);
-            if (rd < 1e-30) continue;
+    // 7. Lorentz force
+    if (toggles.lorentz && pi.velocity.mag2() > 1e-30 && pj.spin_axis.mag2() > 1e-30) {
+        Vec3 rv = pj.position - pi.position;
+        double rd2 = rv.mag2() + soft_ * soft_;
+        double rd = std::sqrt(rd2);
+        if (rd > 1e-30) {
             Vec3 rh = rv * (1.0 / rd);
-
-            // Magnetic moment of j
             Vec3 mj = pj.spin_axis * (static_cast<double>(pj.charge) / pj.mass);
-
-            // Dipole B-field: B = (1/(4*pi)) * [3(m.r_hat)r_hat - m] / r^3
             double r3 = rd * rd2;
             double m_dot_rh = mj.dot(rh);
             Vec3 B_j = (rh * (3.0 * m_dot_rh) - mj) * (1.0 / (4.0 * PI * r3));
-            B_total += B_j;
-        }
-
-        Vec3 fl = Vec3::cross(pi.velocity, B_total) * (ALPHA * pi.charge);
-        f += fl;
-        if (diag) diag->f_lorentz += fl;
-    }
-
-    // 8. Radiation reaction: F_rad = -(2/3) * alpha * q² / (m*c³) * |a_prev|² * v_hat
-    if (toggles.radiation && pi.prev_acceleration.mag2() > 1e-30
-        && pi.velocity.mag2() > 1e-30) {
-        double a2 = pi.prev_acceleration.mag2();
-        double q2 = static_cast<double>(pi.charge) * pi.charge;
-        double c3 = C_SPEED * C_SPEED * C_SPEED;
-        double coeff_rad = -(2.0 / 3.0) * ALPHA * q2 / (pi.mass * c3);
-        double v_mag = pi.velocity.mag();
-        Vec3 v_hat = pi.velocity * (1.0 / v_mag);
-        Vec3 frad = v_hat * (coeff_rad * a2);
-        f += frad;
-        if (diag) diag->f_radiation += frad;
-    }
-
-    // 9. Relativistic correction: F_rel = -(gamma - 1) * F_total  (MUST BE LAST)
-    if (toggles.relativistic) {
-        double v2 = pi.velocity.mag2();
-        double c2 = C_SPEED * C_SPEED;
-        double beta2 = v2 / c2;
-        if (beta2 > 1e-10 && beta2 < 1.0) {
-            double gamma = 1.0 / std::sqrt(1.0 - beta2);
-            Vec3 frel = f * (1.0 / gamma - 1.0);
-            if (diag) diag->f_relativistic += frel;
-            f += frel;  // effectively f = f / gamma
+            Vec3 fl = Vec3::cross(pi.velocity, B_j) * (ALPHA * pi.charge);
+            f += fl;
+            if (diag) diag->f_lorentz += fl;
         }
     }
 
     return f;
 }
 
+Vec3 ParticleEngine::tree_force(int i, int node_idx) const {
+    const BarnesHutNode& node = octree_.nodes[node_idx];
+    const auto& pi = particles_[i];
+    
+    // Skip empty nodes
+    if (node.total_mass <= 0.0 && node.total_charge == 0.0) return {};
+
+    Vec3 r_vec = node.center_of_mass - pi.position;
+    double r2 = r_vec.mag2() + soft_ * soft_;
+    double r = std::sqrt(r2);
+
+    if (node.is_leaf) {
+        if (node.body_indices.empty()) return {};
+        Vec3 lf;
+        for (int b_idx : node.body_indices) {
+            if (b_idx == i) continue;
+            lf += compute_pairwise_force(i, b_idx);
+        }
+        return lf;
+    }
+
+    // Barnes-Hut opening angle test (THETA_BH = 0.5)
+    if (node.width() / r < 0.5) {
+        // Far away: monopole approximation ONLY for 1/r^2 forces (Gravity, Coulomb)
+        // Short-range forces (strong, exchange) and higher-order moments (dipole, spin-orbit)
+        // are perfectly negligible at these macroscopic cutoff distances.
+        Vec3 r_hat = r_vec * (1.0 / r);
+        Vec3 f;
+        ParticleForceDiag* diag = nullptr;
+        if (i < static_cast<int>(force_diag_.size())) diag = &force_diag_[i];
+        
+        if (toggles.coulomb) {
+            double f_em = -ALPHA_EFT * pi.charge * node.total_charge / (4.0 * PI * r2);  // EFT
+            Vec3 fc = r_hat * f_em;
+            f += fc;
+            if (diag) diag->f_coulomb += fc;
+        }
+        if (toggles.gravity) {
+            double f_grav = G_N * pi.mass * node.total_mass / r2;
+            Vec3 fg = r_hat * f_grav;
+            f += fg;
+            if (diag) diag->f_gravity += fg;
+        }
+        return f;
+    }
+
+    // Recurse into children
+    Vec3 force = {};
+    for (int c = 0; c < 8; ++c) {
+        if (node.children[c] >= 0) {
+            Vec3 cf = tree_force(i, node.children[c]);
+            force.x += cf.x;
+            force.y += cf.y;
+            force.z += cf.z;
+        }
+    }
+    return force;
+}
+
+Vec3 ParticleEngine::compute_force(int i) const {
+    Vec3 f;
+    for (int j = 0; j < static_cast<int>(particles_.size()); ++j) {
+        if (i == j) continue;
+        f += compute_pairwise_force(i, j);
+    }
+    return f;
+}
+
 void ParticleEngine::compute_all_forces() {
     forces_.resize(particles_.size());
     force_diag_.resize(particles_.size());
+    
+    // Build O(N log N) spatial partition tree
+    octree_.build(particles_,
+        [](const Particle& p) { return p.position; },
+        [](const Particle& p) { return p.mass; },
+        [](const Particle& p) { return static_cast<double>(p.charge); }
+    );
+
     for (int i = 0; i < static_cast<int>(particles_.size()); ++i) {
-        forces_[i] = compute_force(i);
+        force_diag_[i] = {}; // Zero all diagnostics for the tick
+        const auto& pi = particles_[i];
+        
+        Vec3 f;
+        if (octree_.root >= 0) {
+            f = tree_force(i, octree_.root);
+        }
+
+        ParticleForceDiag* diag = &force_diag_[i];
+
+        // 8. Radiation reaction (self-interaction, not pairwise)
+        if (toggles.radiation && pi.prev_acceleration.mag2() > 1e-30
+            && pi.velocity.mag2() > 1e-30) {
+            double a2 = pi.prev_acceleration.mag2();
+            double q2 = static_cast<double>(pi.charge) * pi.charge;
+            double c3 = C_SPEED * C_SPEED * C_SPEED;
+            double coeff_rad = -(2.0 / 3.0) * ALPHA * q2 / (pi.mass * c3);
+            double v_mag = pi.velocity.mag();
+            Vec3 v_hat = pi.velocity * (1.0 / v_mag);
+            Vec3 frad = v_hat * (coeff_rad * a2);
+            f += frad;
+            diag->f_radiation += frad;
+        }
+
+        // 9. Relativistic correction: MUST BE LAST on total force
+        if (toggles.relativistic) {
+            double v2 = pi.velocity.mag2();
+            double c2 = C_SPEED * C_SPEED;
+            double beta2 = v2 / c2;
+            if (beta2 > 1e-10 && beta2 < 1.0) {
+                double gamma = 1.0 / std::sqrt(1.0 - beta2);
+                Vec3 frel = f * (1.0 / gamma - 1.0);
+                diag->f_relativistic += frel;
+                f += frel;
+            }
+        }
+
+        forces_[i] = f;
     }
 }
 

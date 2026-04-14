@@ -730,16 +730,19 @@ void RenderBridge::solve_latency_poisson() {
   for (int i = 0; i < N; ++i)
     phi_latency_[i] -= phi_mean;
 
-  // Convert Poisson potential to latency: L = sqrt(clamp(phi, 0, 0.998))
+  // Convert Poisson potential to latency: L = sqrt(clamp(|phi|, 0, 0.998))
   // L ∈ [0, 0.999) — clamped below 1 to prevent horizon singularity.
+  //
+  // NOTE (April 13, 2026 fix): The Poisson equation ∇²φ = 4πGρ with attractive
+  // mass gives phi NEGATIVE near mass (standard physics convention). The
+  // magnitude |phi| is the gravitational potential depth. Taking sqrt(|phi|)
+  // instead of sqrt(max(phi,0)) unlocks the entire GR sector — time dilation,
+  // horizon formation, and gravitational wave propagation all depend on this.
   for (int i = 0; i < N; ++i) {
     double phi_val = phi_latency_[i];
-    if (phi_val > 0.0) {
-      double clamped = std::min(phi_val, 0.998);
-      voxels_[i].latency = std::sqrt(clamped);
-    } else {
-      voxels_[i].latency = 0.0;
-    }
+    double abs_phi = std::abs(phi_val);
+    double clamped = std::min(abs_phi, 0.998);
+    voxels_[i].latency = std::sqrt(clamped);
   }
 }
 
@@ -764,7 +767,8 @@ void RenderBridge::phase_forces() {
   const int L = lattice_.size();
 
   // Solve Coulomb potential (warm-started SOR)
-  if (toggles.poisson_coulomb)
+  // Skip when emergent_forces is ON — force comes from flux field directly
+  if (toggles.poisson_coulomb && !toggles.emergent_forces)
     solve_coulomb_poisson();
 
   // ── Color force: collect manifested colored particles ──────────────
@@ -790,14 +794,39 @@ void RenderBridge::phase_forces() {
     auto &v = voxels_[i];
     if (v.state == 0) continue;
 
-    // EM force: Poisson-based (1/r²) or legacy (∇∇J)
+    // EM force: three modes
+    //   1. Poisson-based:  F = -alpha·s·∇φ_C        (standard, most accurate)
+    //   2. Legacy gradient: F = -alpha·s·∇(∇·J)      (direct, short-range)
+    //   3. Emergent (EFT):  F = G_C·s·∇|J|_{tier2}   (force from flux field)
+    //      In mode 3, alpha = G_C² emerges: one G_C from this probe coupling,
+    //      one G_C already embedded in the flux amplitude from the wave equation.
     Vec3 f_em;
-    if (toggles.poisson_coulomb) {
+    if (toggles.emergent_forces) {
+      // EFT emergent force: read force FROM the flux field established by
+      // wave equation + Gauss constraint. No Poisson solver needed.
+      // Use tier-2 stencil (r=2 neighbors) to avoid self-field contamination.
+      auto ci = lattice_.coord(i);
+      int L = lattice_.size();
+      double grad_x = 0, grad_y = 0, grad_z = 0;
+      // Tier-2 finite differences (skip r=1 to avoid self-field wake)
+      auto safe = [&](int x, int y, int z) -> double {
+        int wx = ((x % L) + L) % L;
+        int wy = ((y % L) + L) % L;
+        int wz = ((z % L) + L) % L;
+        return voxels_[lattice_.index(wx, wy, wz)].density();
+      };
+      grad_x = (safe(ci.x+2, ci.y, ci.z) - safe(ci.x-2, ci.y, ci.z)) * 0.25;
+      grad_y = (safe(ci.x, ci.y+2, ci.z) - safe(ci.x, ci.y-2, ci.z)) * 0.25;
+      grad_z = (safe(ci.x, ci.y, ci.z+2) - safe(ci.x, ci.y, ci.z-2)) * 0.25;
+      Vec3 grad_rho_t2 = {grad_x, grad_y, grad_z};
+      // Force = G_C · state · ∇|J| (one vertex coupling; other G_C in flux)
+      f_em = grad_rho_t2 * (G_C * v.state);
+    } else if (toggles.poisson_coulomb) {
       Vec3 grad_phi = gradient_scalar(i, phi_coulomb_);
-      f_em = grad_phi * (-ALPHA * v.state);
+      f_em = grad_phi * (-ALPHA_EFT * v.state);  // EFT: alpha = G_C² (derived)
     } else {
       Vec3 grad_divJ = gradient_divergence(i);
-      f_em = grad_divJ * (-ALPHA * v.state);
+      f_em = grad_divJ * (-ALPHA_EFT * v.state);  // EFT: alpha = G_C² (derived)
     }
 
     // Gravitational force from density gradient
@@ -826,7 +855,7 @@ void RenderBridge::phase_forces() {
     Vec3 f_lorentz;
     if (toggles.lorentz_force && v.speed() > EPSILON_MAG) {
       Vec3 B = curl_flux(i);
-      f_lorentz = Vec3::cross(v.velocity, B) * (ALPHA * v.state);
+      f_lorentz = Vec3::cross(v.velocity, B) * (ALPHA_EFT * v.state);  // EFT: G_C²
     }
 
     // ── Color force: pairwise SU(3)-inspired interaction ─────────────
@@ -1286,7 +1315,7 @@ EnergyAudit RenderBridge::energy_audit() const {
   if (!phi_coulomb_.empty()) {
     for (int i = 0; i < N; ++i) {
       if (voxels_[i].state != 0)
-        a.coulomb_pe += ALPHA * voxels_[i].state * phi_coulomb_[i];
+        a.coulomb_pe += ALPHA_EFT * voxels_[i].state * phi_coulomb_[i];
     }
   }
 
