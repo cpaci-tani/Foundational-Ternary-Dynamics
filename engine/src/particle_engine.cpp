@@ -287,6 +287,43 @@ Vec3 ParticleEngine::compute_force(int i) const {
         if (i == j) continue;
         f += compute_pairwise_force(i, j);
     }
+
+    // Apply non-pairwise post-processing (radiation reaction + relativistic
+    // correction) so that direct `compute_force(i)` calls produce the same
+    // total force as `forces_[i]` after a full compute_all_forces pass.
+    //
+    // This used to be part of a shared helper before commit a4c75e4
+    // (engine: EFT reconstruction) split the work into two paths. Without
+    // these blocks here, any test that calls compute_force(i) directly with
+    // `toggles.relativistic = true` would see the uncorrected pairwise sum
+    // and fail the expected 1/gamma ratio (see test_pe_forces RE1/RE3/RE4).
+    const auto& pi = particles_[i];
+
+    // 8. Radiation reaction (self-interaction, not pairwise)
+    if (toggles.radiation && pi.prev_acceleration.mag2() > 1e-30
+        && pi.velocity.mag2() > 1e-30) {
+        double a2 = pi.prev_acceleration.mag2();
+        double q2 = static_cast<double>(pi.charge) * pi.charge;
+        double c3 = C_SPEED * C_SPEED * C_SPEED;
+        double coeff_rad = -(2.0 / 3.0) * ALPHA * q2 / (pi.mass * c3);
+        double v_mag = pi.velocity.mag();
+        Vec3 v_hat = pi.velocity * (1.0 / v_mag);
+        Vec3 frad = v_hat * (coeff_rad * a2);
+        f += frad;
+    }
+
+    // 9. Relativistic correction (MUST BE LAST on total force)
+    if (toggles.relativistic) {
+        double v2 = pi.velocity.mag2();
+        double c2 = C_SPEED * C_SPEED;
+        double beta2 = v2 / c2;
+        if (beta2 > 1e-10 && beta2 < 1.0) {
+            double gamma = 1.0 / std::sqrt(1.0 - beta2);
+            Vec3 frel = f * (1.0 / gamma - 1.0);
+            f += frel;
+        }
+    }
+
     return f;
 }
 
