@@ -39,6 +39,7 @@ namespace ftd::testrunner {
 class LatticeViewer;
 class OutputPanel;
 class SmartDispatcher;
+class TelemetryCharts;
 class TestModel;
 class TestRunner;
 
@@ -87,6 +88,7 @@ private:
     QTreeView* m_tree = nullptr;
     OutputPanel* m_output = nullptr;
     LatticeViewer* m_latticeViewer = nullptr;
+    TelemetryCharts* m_telemetryCharts = nullptr;
 
     // Toolbar actions.
     QAction* m_actRun = nullptr;
