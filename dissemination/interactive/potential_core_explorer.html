@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Potential Core Explorer — Generative Interior 3D Model</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, rgba(255,210,120,.12), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(76,155,255,.14), transparent 34%),
+    linear-gradient(160deg, #081018 0%, #0d1621 55%, #151414 100%);
+  color:#eef3f7;
+  font-family:Georgia,"Times New Roman",serif;
+}
+.page{
+  max-width:1380px;
+  margin:0 auto;
+  padding:20px 18px 28px;
+}
+h1{
+  font-size:1.4rem;
+  font-weight:500;
+  letter-spacing:.03em;
+  color:#f3dfba;
+}
+.subtitle{
+  margin-top:8px;
+  max-width:980px;
+  line-height:1.45;
+  font-size:.92rem;
+  color:#b8c7d8;
+}
+.formula{
+  margin-top:12px;
+  display:inline-block;
+  padding:8px 12px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  background:rgba(10,18,26,.55);
+  font-size:.88rem;
+  color:#d9e8f2;
+}
+.layout{
+  display:grid;
+  grid-template-columns:minmax(300px, 1.45fr) minmax(320px, .95fr);
+  gap:16px;
+  margin-top:18px;
+}
+.panel{
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:18px;
+  background:rgba(8,12,18,.62);
+  box-shadow:0 22px 60px rgba(0,0,0,.28);
+  overflow:hidden;
+}
+.viewer-wrap{
+  padding:14px;
+}
+canvas{
+  width:100%;
+  height:auto;
+  display:block;
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255,255,255,.035), transparent 32%),
+    radial-gradient(circle at 50% 55%, rgba(82,148,255,.07), transparent 58%),
+    linear-gradient(180deg, #071019 0%, #09131e 100%);
+  border:1px solid rgba(255,255,255,.07);
+}
+.controls{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(150px,1fr));
+  gap:10px 14px;
+  margin-top:14px;
+}
+.ctrl{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.ctrl label{
+  font-size:.78rem;
+  color:#b5c4d6;
+}
+.ctrl input[type=range]{
+  width:100%;
+  accent-color:#f0c97f;
+}
+.value{
+  font-family:"Consolas","Menlo",monospace;
+  font-size:.78rem;
+  color:#f0c97f;
+}
+.toggle-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 14px;
+  margin-top:12px;
+  font-size:.8rem;
+}
+.toggle-row label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:#ced8e2;
+}
+.hint{
+  margin-top:12px;
+  line-height:1.45;
+  font-size:.8rem;
+  color:#9eb0c5;
+}
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding:14px;
+}
+.card{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  background:rgba(13,20,28,.72);
+  padding:12px 13px;
+}
+.card h2{
+  font-size:.82rem;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#88a4bd;
+  margin-bottom:8px;
+}
+.legend{
+  display:grid;
+  gap:7px;
+}
+.legend-item{
+  display:grid;
+  grid-template-columns:14px 1fr;
+  gap:8px;
+  align-items:start;
+}
+.swatch{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.35);
+  margin-top:2px;
+}
+.legend-item strong{
+  display:block;
+  color:#f2efe4;
+  font-size:.88rem;
+  font-weight:600;
+}
+.legend-item span{
+  display:block;
+  line-height:1.35;
+  color:#c1cfda;
+  font-size:.8rem;
+}
+.metric{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-family:"Consolas","Menlo",monospace;
+  font-size:.8rem;
+}
+.metric:last-child{border-bottom:none}
+.metric .label{color:#8fa4b9}
+.metric .num{color:#f2cf8e}
+.notes{
+  display:grid;
+  gap:7px;
+  line-height:1.4;
+  color:#c8d2dc;
+  font-size:.82rem;
+}
+.notes code{
+  font-family:"Consolas","Menlo",monospace;
+  color:#f0c97f;
+}
+@media (max-width: 980px){
+  .layout{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>POTENTIAL CORE EXPLORER — RUNNING 3D SYSTEM</h1>
+  <p class="subtitle">
+    A data-driven spatial model of the Potential Core, Generative Interior, Context State, Contextual Generative Interior,
+    Manifest Boundary of Affect, and Manifest Output. The scene is intentionally conceptual: it is built to be edited incrementally
+    as the theory sharpens, not treated as a fixed proof artifact.
+  </p>
+  <div class="formula">
+    P<sub>c</sub> → G(P<sub>c</sub>) → C → G<sub>C</sub>(P<sub>c</sub>) → B<sub>C</sub>(P<sub>c</sub>, r) → M<sub>C</sub>(P<sub>c</sub>, r)
+  </div>
+
+  <div class="layout">
+    <section class="panel viewer-wrap">
+      <canvas id="scene" width="920" height="660"></canvas>
+
+      <div class="controls">
+        <div class="ctrl">
+          <label for="yaw">Yaw</label>
+          <input id="yaw" type="range" min="-180" max="180" value="24">
+          <div class="value" id="yawValue">24°</div>
+        </div>
+        <div class="ctrl">
+          <label for="pitch">Pitch</label>
+          <input id="pitch" type="range" min="-80" max="80" value="-18">
+          <div class="value" id="pitchValue">-18°</div>
+        </div>
+        <div class="ctrl">
+          <label for="zoom">Zoom</label>
+          <input id="zoom" type="range" min="0.7" max="1.6" step="0.01" value="1.05">
+          <div class="value" id="zoomValue">1.05×</div>
+        </div>
+        <div class="ctrl">
+          <label for="contextAperture">Context Aperture</label>
+          <input id="contextAperture" type="range" min="10" max="180" value="72">
+          <div class="value" id="contextApertureValue">72°</div>
+        </div>
+        <div class="ctrl">
+          <label for="reach">Manifest Reach r</label>
+          <input id="reach" type="range" min="0.6" max="1.5" step="0.01" value="1.0">
+          <div class="value" id="reachValue">1.00</div>
+        </div>
+        <div class="ctrl">
+          <label for="outputFlow">Output Flow</label>
+          <input id="outputFlow" type="range" min="0" max="1.6" step="0.01" value="0.95">
+          <div class="value" id="outputFlowValue">0.95</div>
+        </div>
+        <div class="ctrl">
+          <label for="envInput">Environmental Input</label>
+          <input id="envInput" type="range" min="0" max="1.6" step="0.01" value="0.82">
+          <div class="value" id="envInputValue">0.82</div>
+        </div>
+      </div>
+
+        <div class="toggle-row">
+          <label><input type="checkbox" id="showLabels" checked> Show labels</label>
+        <label><input type="checkbox" id="showRays" checked> Show output curves</label>
+        <label><input type="checkbox" id="showInputWave" checked> Show environmental input curve</label>
+        <label><input type="checkbox" id="showContextShell" checked> Show contextual shell</label>
+        <label><input type="checkbox" id="showGrid"> Show frame grid</label>
+      </div>
+
+      <p class="hint">
+        Drag the canvas to rotate. The editable model is defined near the top of the script as <code>MODEL</code>,
+        so future changes can happen by adjusting names, radii, colors, and descriptive text instead of rebuilding the scene.
+      </p>
+    </section>
+
+    <aside class="panel sidebar">
+      <section class="card">
+        <h2>Layer Legend</h2>
+        <div class="legend" id="legend"></div>
+      </section>
+
+      <section class="card">
+        <h2>Live Metrics</h2>
+        <div class="metric"><span class="label">Potential Core radius</span><span class="num" id="metricCore">0.00</span></div>
+        <div class="metric"><span class="label">Generative Interior radius</span><span class="num" id="metricInterior">0.00</span></div>
+        <div class="metric"><span class="label">Context aperture</span><span class="num" id="metricAperture">0°</span></div>
+        <div class="metric"><span class="label">Manifest boundary radius</span><span class="num" id="metricBoundary">0.00</span></div>
+        <div class="metric"><span class="label">Output curves</span><span class="num" id="metricOutputs">0</span></div>
+        <div class="metric"><span class="label">Input curve amplitude</span><span class="num" id="metricInput">0.00</span></div>
+      </section>
+
+      <section class="card">
+        <h2>Interpretation Notes</h2>
+        <div class="notes" id="notes"></div>
+      </section>
+
+      <section class="card">
+        <h2>Change Surface</h2>
+        <div class="notes">
+          <div><code>MODEL.layers</code> controls the named ontological layers.</div>
+          <div><code>MODEL.notes</code> controls the theory-facing interpretation text.</div>
+          <div><code>contextAperture</code> changes how much of the full interior is active under context.</div>
+          <div><code>reach</code> scales the manifest boundary without changing the full interior.</div>
+          <div><code>outputFlow</code> changes how strongly public expression leaves the boundary.</div>
+          <div><code>envInput</code> drives an orthogonal environmental input curve with the same geometry as the manifest output channel.</div>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script>
+const MODEL = {
+  title: "Potential Core / Generative Interior",
+  layers: [
+    {
+      key: "core",
+      name: "Potential Core",
+      color: "#f6d98a",
+      radius: 24,
+      alpha: 0.95,
+      description: "Minimal center voxel or ontic seed. Identity anchor and coherence center."
+    },
+    {
+      key: "interior",
+      name: "Generative Interior",
+      color: "#4d89ff",
+      radius: 126,
+      alpha: 0.22,
+      description: "Full space of operative capacities available in principle."
+    },
+    {
+      key: "context",
+      name: "Context State",
+      color: "#9ed6ff",
+      radius: 144,
+      alpha: 0.28,
+      description: "Frame-dependent selector that constrains or activates only part of the interior."
+    },
+    {
+      key: "contextualInterior",
+      name: "Contextual Generative Interior",
+      color: "#53d58d",
+      radius: 126,
+      alpha: 0.36,
+      description: "Active subset of the full interior under the current context."
+    },
+    {
+      key: "boundary",
+      name: "Manifest Boundary of Affect",
+      color: "#ff8b5f",
+      radius: 180,
+      alpha: 0.18,
+      description: "Scaled expressive surface where outward influence becomes available."
+    },
+    {
+      key: "output",
+      name: "Manifest Output",
+      color: "#fff2c8",
+      radius: 226,
+      alpha: 0.95,
+      description: "Measurable expression emerging from the boundary into the public layer."
+    },
+    {
+      key: "input",
+      name: "Environmental Input",
+      color: "#d887ff",
+      radius: 212,
+      alpha: 0.88,
+      description: "Environmental input rendered as the same channel geometry as manifestation, but rotated orthogonally."
+    }
+  ],
+  notes: [
+    "The Potential Core is not the same thing as the standard imaginary unit i.",
+    "The full Generative Interior is larger than any one context can activate.",
+    "Context does not create capacity from nothing; it selects the active subset.",
+    "The manifest boundary is not the whole interior. It is the expressive edge that externalizes effect.",
+    "Public output is rendered here as directed rays and particles, not as proof of a specific physical mechanism.",
+    "Environmental input is rendered as the same curve-form as manifestation, but rotated orthogonally."
+  ]
+};
+
+const canvas = document.getElementById("scene");
+const ctx = canvas.getContext("2d");
+
+const controls = {
+  yaw: document.getElementById("yaw"),
+  pitch: document.getElementById("pitch"),
+  zoom: document.getElementById("zoom"),
+  contextAperture: document.getElementById("contextAperture"),
+  reach: document.getElementById("reach"),
+  outputFlow: document.getElementById("outputFlow"),
+  envInput: document.getElementById("envInput"),
+  showLabels: document.getElementById("showLabels"),
+  showRays: document.getElementById("showRays"),
+  showInputWave: document.getElementById("showInputWave"),
+  showContextShell: document.getElementById("showContextShell"),
+  showGrid: document.getElementById("showGrid")
+};
+
+const valueDisplays = {
+  yaw: document.getElementById("yawValue"),
+  pitch: document.getElementById("pitchValue"),
+  zoom: document.getElementById("zoomValue"),
+  contextAperture: document.getElementById("contextApertureValue"),
+  reach: document.getElementById("reachValue"),
+  outputFlow: document.getElementById("outputFlowValue"),
+  envInput: document.getElementById("envInputValue")
+};
+
+const metrics = {
+  core: document.getElementById("metricCore"),
+  interior: document.getElementById("metricInterior"),
+  aperture: document.getElementById("metricAperture"),
+  boundary: document.getElementById("metricBoundary"),
+  outputs: document.getElementById("metricOutputs"),
+  input: document.getElementById("metricInput")
+};
+
+const legendEl = document.getElementById("legend");
+const notesEl = document.getElementById("notes");
+
+let drag = null;
+let time = 0;
+
+function buildSidebar() {
+  legendEl.innerHTML = "";
+  MODEL.layers.forEach(layer => {
+    const item = document.createElement("div");
+    item.className = "legend-item";
+    item.innerHTML = `
+      <div class="swatch" style="background:${layer.color}"></div>
+      <div>
+        <strong>${layer.name}</strong>
+        <span>${layer.description}</span>
+      </div>
+    `;
+    legendEl.appendChild(item);
+  });
+
+  notesEl.innerHTML = "";
+  MODEL.notes.forEach(note => {
+    const div = document.createElement("div");
+    div.textContent = note;
+    notesEl.appendChild(div);
+  });
+}
+
+function getState() {
+  return {
+    yaw: parseFloat(controls.yaw.value) * Math.PI / 180,
+    pitch: parseFloat(controls.pitch.value) * Math.PI / 180,
+    zoom: parseFloat(controls.zoom.value),
+    aperture: parseFloat(controls.contextAperture.value) * Math.PI / 180,
+    reach: parseFloat(controls.reach.value),
+    outputFlow: parseFloat(controls.outputFlow.value),
+    envInput: parseFloat(controls.envInput.value),
+    showLabels: controls.showLabels.checked,
+    showRays: controls.showRays.checked,
+    showInputWave: controls.showInputWave.checked,
+    showContextShell: controls.showContextShell.checked,
+    showGrid: controls.showGrid.checked
+  };
+}
+
+function updateValueDisplays(state) {
+  valueDisplays.yaw.textContent = `${Math.round(state.yaw * 180 / Math.PI)}°`;
+  valueDisplays.pitch.textContent = `${Math.round(state.pitch * 180 / Math.PI)}°`;
+  valueDisplays.zoom.textContent = `${state.zoom.toFixed(2)}×`;
+  valueDisplays.contextAperture.textContent = `${Math.round(state.aperture * 180 / Math.PI)}°`;
+  valueDisplays.reach.textContent = state.reach.toFixed(2);
+  valueDisplays.outputFlow.textContent = state.outputFlow.toFixed(2);
+  valueDisplays.envInput.textContent = state.envInput.toFixed(2);
+}
+
+function rotatePoint(p, yaw, pitch) {
+  const cy = Math.cos(yaw), sy = Math.sin(yaw);
+  const cp = Math.cos(pitch), sp = Math.sin(pitch);
+  const x1 = p.x * cy - p.z * sy;
+  const z1 = p.x * sy + p.z * cy;
+  const y2 = p.y * cp - z1 * sp;
+  const z2 = p.y * sp + z1 * cp;
+  return { x: x1, y: y2, z: z2 };
+}
+
+function project(p, zoom) {
+  const focal = 560;
+  const depth = focal / (focal - p.z);
+  return {
+    x: canvas.width / 2 + p.x * depth * zoom,
+    y: canvas.height / 2 + p.y * depth * zoom,
+    scale: depth * zoom
+  };
+}
+
+function drawSphereOutline(radius, color, alpha, state) {
+  const rings = 6;
+  const arcs = 5;
+  ctx.save();
+  ctx.strokeStyle = hexToRgba(color, alpha);
+  ctx.lineWidth = 1.1;
+  for (let i = 0; i < rings; i++) {
+    const lat = -Math.PI / 2 + (i + 1) * (Math.PI / (rings + 1));
+    const points = [];
+    for (let t = 0; t <= 80; t++) {
+      const lon = (t / 80) * Math.PI * 2;
+      const p = {
+        x: radius * Math.cos(lat) * Math.cos(lon),
+        y: radius * Math.sin(lat),
+        z: radius * Math.cos(lat) * Math.sin(lon)
+      };
+      const rot = rotatePoint(p, state.yaw, state.pitch);
+      points.push({ ...project(rot, state.zoom), z: rot.z });
+    }
+    traceVisibleLine(points);
+  }
+  for (let i = 0; i < arcs; i++) {
+    const lon0 = (i / arcs) * Math.PI;
+    const points = [];
+    for (let t = 0; t <= 80; t++) {
+      const lat = -Math.PI / 2 + (t / 80) * Math.PI;
+      const p = {
+        x: radius * Math.cos(lat) * Math.cos(lon0),
+        y: radius * Math.sin(lat),
+        z: radius * Math.cos(lat) * Math.sin(lon0)
+      };
+      const rot = rotatePoint(p, state.yaw, state.pitch);
+      points.push({ ...project(rot, state.zoom), z: rot.z });
+    }
+    traceVisibleLine(points);
+  }
+  ctx.restore();
+}
+
+function drawFilledCore(radius, color, state) {
+  const projected = project(rotatePoint({ x: 0, y: 0, z: 0 }, state.yaw, state.pitch), state.zoom);
+  const r = radius * projected.scale;
+  const grad = ctx.createRadialGradient(projected.x - r * 0.28, projected.y - r * 0.28, r * 0.15, projected.x, projected.y, r);
+  grad.addColorStop(0, "#fff7de");
+  grad.addColorStop(.34, color);
+  grad.addColorStop(1, "rgba(22, 20, 16, 0.9)");
+  ctx.beginPath();
+  ctx.fillStyle = grad;
+  ctx.arc(projected.x, projected.y, r, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawContextWedge(radius, color, state) {
+  const steps = 42;
+  const points = [];
+  const start = -state.aperture / 2;
+  const end = state.aperture / 2;
+  for (let i = 0; i <= steps; i++) {
+    const theta = start + ((end - start) * i / steps);
+    const phi = 0.72 + 0.1 * Math.sin(time * 0.7);
+    const p = {
+      x: radius * Math.cos(theta) * Math.cos(phi),
+      y: radius * Math.sin(theta),
+      z: radius * Math.cos(theta) * Math.sin(phi)
+    };
+    const rot = rotatePoint(p, state.yaw, state.pitch);
+    points.push({ ...project(rot, state.zoom), z: rot.z });
+  }
+  const center = project(rotatePoint({ x: 0, y: 0, z: 0 }, state.yaw, state.pitch), state.zoom);
+  ctx.save();
+  ctx.fillStyle = hexToRgba(color, 0.18);
+  ctx.strokeStyle = hexToRgba(color, 0.8);
+  ctx.lineWidth = 1.3;
+  ctx.beginPath();
+  ctx.moveTo(center.x, center.y);
+  points.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawBoundaryRing(radius, color, state) {
+  const effective = radius * state.reach;
+  drawSphereOutline(effective, color, 0.28, state);
+}
+
+function drawCurveBundle(boundaryRadius, outerRadius, color, state, intensity, phiBase, reverse = false, visible = true) {
+  if (!visible) return { count: 0, amplitude: 0 };
+  const curveCount = Math.max(6, Math.round(10 + intensity * 10));
+  const amplitude = 10 + intensity * 18;
+  const start = -state.aperture / 2;
+  const end = state.aperture / 2;
+  ctx.save();
+  ctx.lineWidth = 1.6;
+  ctx.strokeStyle = hexToRgba(color, 0.78);
+  ctx.fillStyle = hexToRgba(color, 0.88);
+  for (let i = 0; i < curveCount; i++) {
+    const t = curveCount === 1 ? 0.5 : i / (curveCount - 1);
+    const theta = start + (end - start) * t;
+    const phi = phiBase + 0.14 * Math.sin(time * 0.9 + i * 0.55);
+    const points = [];
+    for (let step = 0; step <= 34; step++) {
+      const u = step / 34;
+      const radialBase = boundaryRadius * state.reach + (outerRadius * (0.76 + 0.22 * intensity) - boundaryRadius * state.reach) * u;
+      const radial = reverse ? outerRadius * (0.76 + 0.22 * intensity) - (outerRadius * (0.76 + 0.22 * intensity) - boundaryRadius * state.reach) * u : radialBase;
+      const bend = Math.sin(u * Math.PI) * amplitude;
+      const p = {
+        x: radial * Math.cos(theta) * Math.cos(phi) + bend * Math.cos(phi + Math.PI / 2),
+        y: radial * Math.sin(theta) + Math.cos(u * Math.PI * 1.4 + i * 0.2) * amplitude * 0.22,
+        z: radial * Math.cos(theta) * Math.sin(phi) + bend * Math.sin(phi + Math.PI / 2)
+      };
+      const rot = rotatePoint(p, state.yaw, state.pitch);
+      points.push({ ...project(rot, state.zoom), z: rot.z });
+    }
+    traceVisibleLine(points);
+    const tip = reverse ? points[0] : points[points.length - 1];
+    ctx.beginPath();
+    ctx.arc(tip.x, tip.y, 3.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+  return { count: curveCount, amplitude };
+}
+
+function drawFrameGrid(state) {
+  if (!state.showGrid) return;
+  const size = 220;
+  ctx.save();
+  ctx.strokeStyle = "rgba(120,160,205,0.18)";
+  ctx.lineWidth = 1;
+  for (let i = -4; i <= 4; i++) {
+    const a1 = project(rotatePoint({ x: -size, y: i * 26, z: 0 }, state.yaw, state.pitch), state.zoom);
+    const a2 = project(rotatePoint({ x: size, y: i * 26, z: 0 }, state.yaw, state.pitch), state.zoom);
+    const b1 = project(rotatePoint({ x: i * 26, y: -size, z: 0 }, state.yaw, state.pitch), state.zoom);
+    const b2 = project(rotatePoint({ x: i * 26, y: size, z: 0 }, state.yaw, state.pitch), state.zoom);
+    ctx.beginPath();
+    ctx.moveTo(a1.x, a1.y);
+    ctx.lineTo(a2.x, a2.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(b1.x, b1.y);
+    ctx.lineTo(b2.x, b2.y);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawLabels(state) {
+  if (!state.showLabels) return;
+  const labelTargets = [
+    { text: "Potential Core", point: { x: 0, y: -12, z: 0 }, color: "#fff3d0" },
+    { text: "Generative Interior", point: { x: -138, y: -84, z: 18 }, color: "#9bc0ff" },
+    { text: "Context State", point: { x: 140, y: -120, z: 24 }, color: "#b8e7ff" },
+    { text: "Contextual Interior", point: { x: 126, y: -24, z: 70 }, color: "#77e7aa" },
+    { text: "Manifest Boundary", point: { x: 164 * state.reach, y: 104, z: 34 }, color: "#ffb393" },
+    { text: "Manifest Output", point: { x: 230, y: 6, z: 70 }, color: "#fff0c4" },
+    { text: "Environmental Input", point: { x: -24, y: -158, z: 198 }, color: "#efb2ff" }
+  ];
+  ctx.save();
+  ctx.font = "15px Georgia";
+  labelTargets.forEach(item => {
+    const pos = project(rotatePoint(item.point, state.yaw, state.pitch), state.zoom);
+    ctx.fillStyle = "rgba(0,0,0,.45)";
+    ctx.fillRect(pos.x - 6, pos.y - 18, ctx.measureText(item.text).width + 12, 24);
+    ctx.fillStyle = item.color;
+    ctx.fillText(item.text, pos.x, pos.y);
+  });
+  ctx.restore();
+}
+
+function traceVisibleLine(points) {
+  ctx.beginPath();
+  let started = false;
+  for (const p of points) {
+    if (p.z > 360) continue;
+    if (!started) {
+      ctx.moveTo(p.x, p.y);
+      started = true;
+    } else {
+      ctx.lineTo(p.x, p.y);
+    }
+  }
+  if (started) ctx.stroke();
+}
+
+function hexToRgba(hex, alpha) {
+  const h = hex.replace("#", "");
+  const bigint = parseInt(h, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function render() {
+  const state = getState();
+  updateValueDisplays(state);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawFrameGrid(state);
+  drawSphereOutline(MODEL.layers[1].radius, MODEL.layers[1].color, MODEL.layers[1].alpha, state);
+  if (state.showContextShell) {
+    drawSphereOutline(MODEL.layers[2].radius, MODEL.layers[2].color, 0.13, state);
+  }
+  drawContextWedge(MODEL.layers[3].radius, MODEL.layers[3].color, state);
+  drawBoundaryRing(MODEL.layers[4].radius, MODEL.layers[4].color, state);
+  drawSphereOutline(MODEL.layers[5].radius * (0.83 + 0.16 * state.outputFlow), MODEL.layers[5].color, 0.11, state);
+  drawSphereOutline(MODEL.layers[6].radius * (0.86 + 0.12 * state.envInput), MODEL.layers[6].color, 0.08, state);
+  drawFilledCore(MODEL.layers[0].radius, MODEL.layers[0].color, state);
+
+  const inputCurve = drawCurveBundle(MODEL.layers[4].radius, MODEL.layers[6].radius, MODEL.layers[6].color, state, state.envInput, 0.68 + Math.PI / 2, true, state.showInputWave);
+  const outputCurve = drawCurveBundle(MODEL.layers[4].radius, MODEL.layers[5].radius, MODEL.layers[5].color, state, state.outputFlow, 0.68, false, state.showRays);
+  drawLabels(state);
+
+  metrics.core.textContent = MODEL.layers[0].radius.toFixed(2);
+  metrics.interior.textContent = MODEL.layers[1].radius.toFixed(2);
+  metrics.aperture.textContent = `${Math.round(state.aperture * 180 / Math.PI)}°`;
+  metrics.boundary.textContent = (MODEL.layers[4].radius * state.reach).toFixed(2);
+  metrics.outputs.textContent = outputCurve.count;
+  metrics.input.textContent = inputCurve.amplitude.toFixed(2);
+}
+
+function animate() {
+  time += 0.016;
+  render();
+  requestAnimationFrame(animate);
+}
+
+canvas.addEventListener("pointerdown", event => {
+  drag = {
+    x: event.clientX,
+    y: event.clientY,
+    yaw: parseFloat(controls.yaw.value),
+    pitch: parseFloat(controls.pitch.value)
+  };
+  canvas.setPointerCapture(event.pointerId);
+});
+
+canvas.addEventListener("pointermove", event => {
+  if (!drag) return;
+  const dx = event.clientX - drag.x;
+  const dy = event.clientY - drag.y;
+  controls.yaw.value = String(Math.max(-180, Math.min(180, drag.yaw + dx * 0.4)));
+  controls.pitch.value = String(Math.max(-80, Math.min(80, drag.pitch + dy * 0.25)));
+});
+
+canvas.addEventListener("pointerup", () => { drag = null; });
+canvas.addEventListener("pointerleave", () => { drag = null; });
+
+Object.values(controls).forEach(control => {
+  control.addEventListener("input", render);
+  control.addEventListener("change", render);
+});
+
+buildSidebar();
+animate();
+</script>
+</body>
+</html>

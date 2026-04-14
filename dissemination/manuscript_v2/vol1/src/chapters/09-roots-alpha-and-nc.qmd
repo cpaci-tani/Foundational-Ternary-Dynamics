@@ -1,0 +1,88 @@
+# The Roots: $\alpha$ and $N_c$ {#sec-roots}
+
+The master quadratic has two real roots. Their identification with the fine structure constant and the number of quark colors is the central physical claim of FTD. This chapter states the identifications, quantifies their precision, and classifies their epistemic status.
+
+## The larger root: $x_+ = 1/\alpha$ [SELECTION]
+
+$$
+x_+ = 8\Gssq + 4\Gs\sqrt{\Gs(4\Gs - 1)} = 137.0361714582\ldots
+$$
+
+The CODATA 2022 recommended value of the inverse fine structure constant is:
+$$
+1/\alpha_{\text{CODATA}} = 137.035999177 \pm 0.000000021
+$$
+
+The **tree-level agreement** is:
+$$
+\frac{|x_+ - 1/\alpha_{\text{CODATA}}|}{1/\alpha_{\text{CODATA}}} = 1.26 \times 10^{-6} = 1.26 \text{ ppm}
+$$
+
+With the one-loop lattice correction (@sec-precision), the agreement improves to 9.6 ppb.
+
+::: {.callout-selection}
+## Selection Principle S1
+The identification $x_+ = 1/\alpha$ is [SELECTION], not [THEOREM]. The numerical agreement (1.26 ppm with zero free parameters, 9.6 ppb with one-loop correction) is striking but does not constitute a derivation. What would upgrade this to [THEOREM]: a proof that the lattice partition function's effective coupling in the continuum limit equals the electromagnetic coupling constant $e^2/(4\pi\hbar c)$.
+:::
+
+## The smaller root: $N_c = \lfloor x_- \rfloor = 3$ [SELECTION]
+
+$$
+x_- = 8\Gssq - 4\Gs\sqrt{\Gs(4\Gs - 1)} = 3.0239639163\ldots
+$$
+
+The number of quark colors in the Standard Model is $N_c = 3$ (exactly). The identification $N_c = \lfloor x_- \rfloor = \lfloor 3.024 \rfloor = 3$ requires a **topological quantization** argument: the confined coupling must be an integer because color charge is quantized.
+
+::: {.callout-selection}
+## Selection Principle S2
+The identification $\lfloor x_- \rfloor = N_c$ is [SELECTION]. What would upgrade this to [THEOREM]: a proof of topological charge quantization on $\mathbb{Z}^3$ forcing the confined coupling to an integer.
+:::
+
+## Prime classification of the roots [THEOREM]
+
+The two roots have different arithmetic properties in the Gaussian integers $\mathbb{Z}[i]$:
+
+**$x_+ \approx 137$: splits.** The integer 137 satisfies $137 \equiv 1 \pmod{4}$, so it **splits** in $\mathbb{Z}[i]$:
+$$
+137 = (4 + 11i)(4 - 11i) = 4^2 + 11^2
+$$
+A split prime factors into two conjugate Gaussian primes. Physically: the electromagnetic coupling admits particle-antiparticle pairs (matter and antimatter carry opposite $U(1)$ charge).
+
+**$x_- \approx 3$: inert.** The integer 3 satisfies $3 \equiv 3 \pmod{4}$, so it is **inert** in $\mathbb{Z}[i]$: it remains prime and does not factor. Physically: the color charge is confined (quarks cannot be isolated; the strong coupling does not decompose into independent sectors).
+
+| Root | Nearest integer | $\bmod 4$ | $\mathbb{Z}[i]$ status | Physics |
+|------|----------------|-----------|------------------------|---------|
+| $x_+$ | 137 | 1 | Split: $137 = 4^2 + 11^2$ | Deconfined (EM) |
+| $x_-$ | 3 | 3 | Inert | Confined (QCD) |
+
+The split/inert classification is a theorem of algebraic number theory. Its physical interpretation (deconfinement vs. confinement) is [SELECTION]. [THEOREM for the arithmetic; SELECTION for the physics]
+
+## The Vieta relations as physical constraints [THEOREM]
+
+The sum and product of the roots are determined by the quadratic's coefficients:
+
+$$
+x_+ + x_- = 16\Gssq = 140.060\ldots
+\tag{9.1}
+$$
+
+$$
+x_+ \cdot x_- = 16\Gscu = 414.392\ldots
+\tag{9.2}
+$$
+
+**Relation (9.1)** constrains the total coupling: $1/\alpha + x_- = 16\Gssq$. The EM and strong couplings are not independent; their sum is fixed by the BCC geometry.
+
+**Relation (9.2)** gives the product: $x_- / \alpha = 16\Gscu$, or equivalently $\alpha = x_- / (16\Gscu)$. This provides a second expression for $\alpha$ in terms of $x_-$ and $\Gs$.
+
+## The budget verification [THEOREM]
+
+Each root satisfies the budget equation (8.1):
+$$
+\frac{x_+}{16\Gssq} + \frac{\Gs}{x_+} = 1 \qquad \text{(Coulomb: 97.8\%, confined: 2.2\%)}
+$$
+$$
+\frac{x_-}{16\Gssq} + \frac{\Gs}{x_-} = 1 \qquad \text{(Coulomb: 2.2\%, confined: 97.8\%)}
+$$
+
+The large root $x_+$ allocates 97.8% of the budget to the Coulomb phase (long-range EM) and 2.2% to confinement. The small root $x_-$ inverts this allocation. The two roots describe the same physics seen from opposite ends of the coupling spectrum.
