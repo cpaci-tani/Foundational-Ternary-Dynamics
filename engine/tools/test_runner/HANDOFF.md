@@ -1,5 +1,9 @@
 # FTD Test Bench — Branch Handoff
 
+> **Superseded for current state** by [`TEST_AUDIT_2026_04_14.md`](TEST_AUDIT_2026_04_14.md).
+> Retained as the historical snapshot of the Phase 0–8 branch merge.
+> Family tables in this doc contain errors (QCD phantom files, ae_* count, dark sector grouping) — see the audit for corrections.
+
 **Branch:** `worktree-test-runner-unified`
 **Worktree:** `C:\Users\cpaci\Desktop\ftd\.claude\worktrees\test-runner-unified`
 **Merge base:** `c0f7d3a` (main HEAD at time of worktree creation)
