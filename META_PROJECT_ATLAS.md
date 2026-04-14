@@ -15,13 +15,13 @@ FTD is organized into four primary layers:
 ## Directory Index
 
 ### Core & Logic
-*   **engine/** - C++ simulation engine (v2.11) with Three.js web dashboard.
+*   **engine/** - C++ simulation engine with Three.js web dashboard. See [engine/SPEC_ENGINE.md](engine/SPEC_ENGINE.md) for current version details.
     *   `include/ftd/` - 28 headers (ontic.h is the constant derivation chain).
     *   `src/` - 7 core source files.
-    *   `tests/` - 168 test files (119 unit tests + 49 physics campaigns).
-    *   `cuda/` - 5 GPU kernels ( speedup on GPU).
+    *   `tests/` - Large native test surface (CPU, campaign, optional GPU).
+    *   `cuda/` - GPU kernels and acceleration path.
     *   `wasm/` - Emscripten WASM bindings.
-    *   `web/` - Three.js browser dashboard (28 JS modules, 211 scenarios across 4 scales).
+    *   `web/` - Three.js browser dashboard and WASM integration.
 
 ### Domain Models
 *   **models/** - Logical and physical interpretations of the ternary dynamics.
@@ -29,32 +29,32 @@ FTD is organized into four primary layers:
     *   Core modules: `ftd_core.py`, `particle_physics.py`, `cosmology.py`, `mixing_matrices.py`, etc.
 
 ### Verification & Execution
-*   **scripts/** - All Python scripts (~149 total).
+*   **scripts/** - Python verification, proofs, experiments, and test runners.
     *   `constants.py` - Canonical shared constants (single source of truth).
-    *   `verification/` (40) - Formal derivation verification.
-    *   `proofs/` (57) - Mathematical proofs with error bounds.
-    *   `experiments/` (17) - Bell tests, CERN analysis, photon simulations.
-    *   `exploration/` (9) - Focused research investigations.
-    *   `tests/` (11+) - pytest suites + `comprehensive/` 7-tier verification framework.
-    *   `visualization/` (11) - Manim scenes and figure generators.
-    *   `runners/` (2) - Test protocol orchestration.
+    *   `verification/` - Formal derivation verification.
+    *   `proofs/` - Mathematical proofs with error bounds.
+    *   `experiments/` - Bell tests, CERN analysis, photon simulations.
+    *   `exploration/` - Focused research investigations.
+    *   `tests/` - pytest suites + `comprehensive/` 7-tier verification framework.
+    *   `visualization/` - Manim scenes and figure generators.
+    *   `runners/` - Test protocol orchestration.
 
 ### Documentation
 *   **docs/** - All project documentation.
     *   `SPEC_FTD.md` - **Single source of truth** for the FTD specification.
-    *   `theory/` - 114 active + 67 archived theory documents in 9 categories. See [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md).
+    *   `theory/` - Curated theory catalog plus archive. See [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md) and [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
     *   `reference/` - 5 canonical reference materials (epistemic labels, symbol glossary, scope/limitations, naming conventions).
-    *   `papers/` - Published papers organized into main (core), `speculative/`, `src/` (TeX sources), and `archive/`.
+    *   `papers/` - Published paper surface: active PDFs at the root, source trees in `speculative/` and `src/`, archive in `archive/`.
     *   `articles/` - Popular writing.
-    *   `internal/` - Working documents, editorial guidance, explorations (gitignored).
+    *   `internal/` - Local working documents and editorial guidance (gitignored, not public-first).
 
 ### Dissemination
 *   **dissemination/** - Publication-ready outputs.
-    *   `manuscript/` - Quarto-based book (96 .qmd chapters).
-    *   `book/` - "The Golden Thread" narrative (53 .qmd files).
+    *   `manuscript/` - Quarto-based manuscript.
+    *   `book/` - Narrative companion book.
     *   `whitepaper/` - Academic whitepaper with LaTeX source.
-    *   `notebooks/` (12) - Jupyter pedagogy tutorials.
-    *   `interactive/` (6) - Standalone HTML force/photon simulations.
+    *   `notebooks/` - Jupyter pedagogy tutorials.
+    *   `interactive/` - Standalone HTML simulations and explainers.
 
 ### Assessment & Evaluation
 *   **evaluation/** - Multi-domain assessment framework.
@@ -75,8 +75,12 @@ FTD is organized into four primary layers:
 
 ## Technical Guides for AI Agents
 *   **Project Instructions**: See [CLAUDE.md](CLAUDE.md) — mandatory rules for AI work on this project.
+*   **Contributor Onboarding**: See [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — balanced public guide across theory, engine, verification, and critique.
+*   **Documentation Cleanup Ledger**: See [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) — repo-wide drift findings, status model, and remediation queue.
+*   **Project Health Scorecard**: See [evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md](evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md) and [evaluation/REF_PROJECT_HEALTH_SCORING.md](evaluation/REF_PROJECT_HEALTH_SCORING.md).
 *   **Documentation Map**: See [META_DOCUMENTATION_MAP.md](META_DOCUMENTATION_MAP.md) — the definitive navigation guide.
 *   **Theory Index**: See [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md) for theory document navigation.
+*   **Theory Structure Guide**: See [docs/theory/META_STRUCTURE.md](docs/theory/META_STRUCTURE.md) for category boundaries, placement rules, and archive guidance.
 *   **Engine Spec**: See [engine/SPEC_ENGINE.md](engine/SPEC_ENGINE.md) for engine architecture.
 *   **History**: See [CHANGELOG.md](CHANGELOG.md).
 
@@ -89,6 +93,9 @@ FTD is organized into four primary layers:
 | Run all Python tests | `python scripts/tests/run_all_tests.py` |
 | Run 7-tier verification | `python scripts/tests/comprehensive/run_ultimate_test.py` |
 | Run proof chain | `python scripts/proofs/proof_10_ultimate_chain.py` |
+| Contributor onboarding | `META_CONTRIBUTOR_ONBOARDING.md` |
+| Documentation cleanup ledger | `AUDIT_DOCUMENT_CLEANUP_LEDGER.md` |
+| Project health scorecard | `evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md` |
 | Build C++ engine | `cmake -S engine -B engine/build && cmake --build engine/build --config Release` |
 | Run C++ tests | `cd engine/build && ctest --output-on-failure -C Release` |
 | Build whitepaper PDF | `cd dissemination/whitepaper && pdflatex FTD_Whitepaper.tex` |
@@ -99,6 +106,6 @@ FTD is organized into four primary layers:
 
 ---
 
-*Last updated: March 27, 2026*
-*Project version: FTD v5.28-consolidated*
-*Engine version: v2.11*
+*Last updated: April 11, 2026*
+*Project version: FTD v5.29*
+*Engine version: v2.13*
