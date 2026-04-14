@@ -1,10 +1,11 @@
 /* ============================================================
  *  charts.css
- *  Particle Engine (PE) controls, diagnostic panel styles,
- *  PE telemetry / inspector styles, and combo panel layout
- *  for the FTD web dashboard.
+ *  LEGACY: All rules in this file are duplicated in
+ *  components.css. This file is kept for backward compatibility
+ *  but should be removed once confirmed safe. The canonical
+ *  source of these styles is components.css.
  *
- *  Includes:
+ *  Original contents:
  *    - PE control card (sliders, labels, values)
  *    - Combo panel buttons and section labels
  *    - PE inspector selected highlight, catalog dot,
@@ -35,30 +36,48 @@
 
 .pe-slider {
     flex: 1;
-    height: 4px;
+    height: 6px;
     -webkit-appearance: none;
     appearance: none;
-    background: var(--border);
-    border-radius: 2px;
+    background: var(--bg-input);
+    border: 1px inset var(--border);
+    border-radius: 3px;
     outline: none;
+    transition: border-color 0.2s;
+}
+
+.pe-slider:hover {
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .pe-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     background: var(--accent);
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 0 6px var(--accent-glow);
+    transition: transform 0.1s;
+}
+
+.pe-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
 }
 
 .pe-slider::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     background: var(--accent);
     border-radius: 50%;
     border: none;
     cursor: pointer;
+    box-shadow: 0 0 6px var(--accent-glow);
+    transition: transform 0.1s;
+}
+
+.pe-slider::-moz-range-thumb:hover {
+    transform: scale(1.15);
 }
 
 /* Combo panel */

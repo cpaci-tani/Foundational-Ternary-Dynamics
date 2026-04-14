@@ -189,10 +189,15 @@ function sampleOrbital(n, l, m, a0Eff, numPoints) {
         const rScaled = 2 * r / (n * a0Eff);
         const radial = Math.pow(rScaled, 2 + 2 * l) * Math.exp(-rScaled);
 
+        // Normalize radial by its peak value: peak at rScaled = 2+2l,
+        // peak value = (2+2l)^(2+2l) * exp(-(2+2l))
+        const peakR = 2 + 2 * l;
+        const radialNorm = peakR > 0 ? Math.pow(peakR, peakR) * Math.exp(-peakR) : 1;
+
         // Angular
         const angular = angularProb(l, m, cosTheta, sinTheta, phi);
 
-        const prob = radial * angular;
+        const prob = (radial / radialNorm) * angular;
         if (Math.random() < prob) {
             offsets[count * 3]     = r * sinTheta * Math.cos(phi);
             offsets[count * 3 + 1] = r * sinTheta * Math.sin(phi);

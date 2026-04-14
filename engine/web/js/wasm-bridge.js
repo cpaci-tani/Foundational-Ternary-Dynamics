@@ -763,15 +763,45 @@ export class MockBridge {
         const p = this._particles.find(p =>
             Math.round(p.x) === x && Math.round(p.y) === y && Math.round(p.z) === z
         );
-        if (!p) return null;
+        if (p) {
+            // Manifested voxel — read flux from grid if available
+            let fx = 0, fy = 0, fz = 0;
+            if (this._fluxJ) {
+                const idx = this._fluxIdx(x, y, z);
+                fx = this._fluxJ[idx * 3] || 0;
+                fy = this._fluxJ[idx * 3 + 1] || 0;
+                fz = this._fluxJ[idx * 3 + 2] || 0;
+            }
+            const Emag = Math.sqrt(fx*fx + fy*fy + fz*fz);
+            return {
+                state: p.state, particleId: p.id, pairId: p.pairId,
+                locked: p.locked, spin: p.spin, color: p.color,
+                fluxX: fx, fluxY: fy, fluxZ: fz, density: p.density,
+                waveVelX: 0, waveVelY: 0, waveVelZ: 0,
+                velX: p.vx, velY: p.vy, velZ: p.vz,
+                speed: Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz),
+                accelMag: 0, divJ: 0, curlX: 0, curlY: 0, curlZ: 0,
+                Emag: Emag, Bmag: 0
+            };
+        }
+        // Void voxel — still return flux data from the grid
+        let fx = 0, fy = 0, fz = 0;
+        if (this._fluxJ) {
+            const idx = this._fluxIdx(x, y, z);
+            fx = this._fluxJ[idx * 3] || 0;
+            fy = this._fluxJ[idx * 3 + 1] || 0;
+            fz = this._fluxJ[idx * 3 + 2] || 0;
+        }
+        const density = Math.sqrt(fx*fx + fy*fy + fz*fz);
         return {
-            state: p.state, particleId: p.id, pairId: p.pairId,
-            locked: p.locked, spin: p.spin, color: p.color,
-            fluxX: 0, fluxY: 0, fluxZ: 0, density: p.density,
+            state: 0, particleId: -1, pairId: -1,
+            locked: false, spin: 0, color: 0,
+            fluxX: fx, fluxY: fy, fluxZ: fz, density: density,
             waveVelX: 0, waveVelY: 0, waveVelZ: 0,
-            velX: p.vx, velY: p.vy, velZ: p.vz,
-            speed: Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz),
-            accelMag: 0, divJ: 0, curlX: 0, curlY: 0, curlZ: 0
+            velX: 0, velY: 0, velZ: 0,
+            speed: 0, accelMag: 0, divJ: 0,
+            curlX: 0, curlY: 0, curlZ: 0,
+            Emag: density, Bmag: 0
         };
     }
 

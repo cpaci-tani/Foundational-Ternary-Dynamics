@@ -101,6 +101,17 @@ let _showBonds           = true;    // bond rendering (shared with Scale 3)
 
 // -- Element legend cache (avoid DOM rebuilds) -----------------------
 let _prevLegendKey       = '';
+const _aeLegendZSet      = new Set();  // reusable Set for legend key computation
+const _aeLegendZArr      = [];         // reusable sorted array for legend key
+
+// -- Element label buffer (reuse to avoid per-atom alloc every frame)
+let _aeLabelBuf          = [];
+
+// -- AE cloud merge buffers (reused to avoid 3x Float32Array alloc per frame)
+let _aeMergeCap          = 0;
+let _aeMergePos          = null;
+let _aeMergeCol          = null;
+let _aeMergeSize         = null;
 
 // -- Energy drift tracking -------------------------------------------
 let _aeInitialEnergy     = null;    // captured at scenario load, before first tick
@@ -110,6 +121,10 @@ let _fieldGrid           = null;    // cached grid from generateGridXZ
 
 // -- Tick accumulator (sub-1 speed fractional ticks) -----------------
 let _tickAccumulator     = 0;
+
+// -- Paused-state dedup (avoid redundant work when simulation idle) --
+let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
+let _diagPushedWhilePaused = false;
 
 // -- AE toggle defaults (from config/toggles.js) ---------------------
 const AE_DEFAULT_TOGGLES = SCALE2_TOGGLES;
@@ -256,9 +271,18 @@ export function resetScale2(ctx) {
     _showAEField       = false;
     _showBonds         = true;
     _prevLegendKey     = '';
+    _aeLabelBuf        = [];
+    _aeMergeCap        = 0;
+    _aeMergePos        = null;
+    _aeMergeCol        = null;
+    _aeMergeSize       = null;
     _aeInitialEnergy   = null;
     _fieldGrid         = null;
     _tickAccumulator   = 0;
+
+    // Clear paused-state dedup caches
+    _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
+    _diagPushedWhilePaused = false;
 
     // Clear viewport AE-specific overlays if available
     if (viewport) {
@@ -412,20 +436,25 @@ export function animateAE(ctx) {
         cloudData = expandAEToOrbitalCloud(atomData, t);
 
         // ── 4. Merge bonding electron clouds into particle data ────
+        // Reuse merge buffers to avoid 3x Float32Array alloc per frame
         if (_bondStyle !== 'off' && atomData.bondCount > 0) {
             const bondCloud = generateBondingCloud(atomData);
             if (bondCloud.count > 0) {
                 const mergedCount = cloudData.count + bondCloud.count;
-                const mp = new Float32Array(mergedCount * 3);
-                const mc = new Float32Array(mergedCount * 3);
-                const ms = new Float32Array(mergedCount);
-                mp.set(cloudData.positions.subarray(0, cloudData.count * 3));
-                mc.set(cloudData.colors.subarray(0, cloudData.count * 3));
-                ms.set(cloudData.sizes.subarray(0, cloudData.count));
-                mp.set(bondCloud.positions.subarray(0, bondCloud.count * 3), cloudData.count * 3);
-                mc.set(bondCloud.colors.subarray(0, bondCloud.count * 3), cloudData.count * 3);
-                ms.set(bondCloud.sizes.subarray(0, bondCloud.count), cloudData.count);
-                cloudData = { positions: mp, colors: mc, sizes: ms, count: mergedCount };
+                // Grow merge buffers only when needed (capacity doubling)
+                if (mergedCount > _aeMergeCap) {
+                    _aeMergeCap = Math.max(mergedCount, _aeMergeCap * 2);
+                    _aeMergePos = new Float32Array(_aeMergeCap * 3);
+                    _aeMergeCol = new Float32Array(_aeMergeCap * 3);
+                    _aeMergeSize = new Float32Array(_aeMergeCap);
+                }
+                _aeMergePos.set(cloudData.positions.subarray(0, cloudData.count * 3));
+                _aeMergeCol.set(cloudData.colors.subarray(0, cloudData.count * 3));
+                _aeMergeSize.set(cloudData.sizes.subarray(0, cloudData.count));
+                _aeMergePos.set(bondCloud.positions.subarray(0, bondCloud.count * 3), cloudData.count * 3);
+                _aeMergeCol.set(bondCloud.colors.subarray(0, bondCloud.count * 3), cloudData.count * 3);
+                _aeMergeSize.set(bondCloud.sizes.subarray(0, bondCloud.count), cloudData.count);
+                cloudData = { positions: _aeMergePos, colors: _aeMergeCol, sizes: _aeMergeSize, count: mergedCount };
             }
         }
 
@@ -485,40 +514,45 @@ export function animateAE(ctx) {
     }
 
     // ── 8. Update element labels ───────────────────────────────────
+    // Reuse label objects to avoid per-atom alloc every frame
     if (atomData.count > 0 && atomData.atomicNums) {
-        const labels = [];
+        while (_aeLabelBuf.length < atomData.count) _aeLabelBuf.push({ x: 0, y: 0, z: 0, symbol: '', color: '#ffffff' });
+        _aeLabelBuf.length = atomData.count;
         for (let i = 0; i < atomData.count; i++) {
             const Z = atomData.atomicNums[i];
-            const sym = elementSymbol(Z);
             // Convert CPK color to CSS hex for canvas rendering
             const r = Math.round(atomData.colors[i * 3] * 255);
             const g = Math.round(atomData.colors[i * 3 + 1] * 255);
             const b = Math.round(atomData.colors[i * 3 + 2] * 255);
             // Use white text unless atom is very light-colored
             const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-            const hexColor = lum > 200 ? '#aaaaaa' : '#ffffff';
-            labels.push({
-                x: atomData.positions[i * 3],
-                y: atomData.positions[i * 3 + 1],
-                z: atomData.positions[i * 3 + 2],
-                symbol: sym,
-                color: hexColor,
-            });
+            const lbl = _aeLabelBuf[i];
+            lbl.x = atomData.positions[i * 3];
+            lbl.y = atomData.positions[i * 3 + 1];
+            lbl.z = atomData.positions[i * 3 + 2];
+            lbl.symbol = elementSymbol(Z);
+            lbl.color = lum > 200 ? '#aaaaaa' : '#ffffff';
         }
-        viewport.updateElementLabels(labels);
+        viewport.updateElementLabels(_aeLabelBuf);
     } else {
         viewport.updateElementLabels(null);
     }
 
     // Update element legend (only rebuild when set of elements changes)
-    if (dom.aeLegend && atomData.count > 0 && atomData.atomicNums) {
-        const zSet = new Set();
-        for (let i = 0; i < atomData.count; i++) zSet.add(atomData.atomicNums[i]);
-        const key = [...zSet].sort((a, b) => a - b).join(',') + (_showOrbitalClouds ? '+c' : '');
+    // Throttled to every 10th frame -- element set rarely changes mid-run
+    if (dom.aeLegend && atomData.count > 0 && atomData.atomicNums && frameCount % 10 === 0) {
+        _aeLegendZSet.clear();
+        for (let i = 0; i < atomData.count; i++) _aeLegendZSet.add(atomData.atomicNums[i]);
+        // Build key from sorted Z values + cloud flag
+        _aeLegendZArr.length = 0;
+        for (const z of _aeLegendZSet) _aeLegendZArr.push(z);
+        _aeLegendZArr.sort((a, b) => a - b);
+        const key = _aeLegendZArr.join(',') + (_showOrbitalClouds ? '+c' : '');
         if (key !== _prevLegendKey) {
             _prevLegendKey = key;
             let html = '<div class="ae-legend-header">Elements</div>';
-            for (const Z of [...zSet].sort((a, b) => a - b)) {
+            for (let k = 0; k < _aeLegendZArr.length; k++) {
+                const Z = _aeLegendZArr[k];
                 const el = getElement(Z);
                 const [r, g, b] = el.color;
                 const hex = `#${(r * 255 | 0).toString(16).padStart(2, '0')}${(g * 255 | 0).toString(16).padStart(2, '0')}${(b * 255 | 0).toString(16).padStart(2, '0')}`;
@@ -540,7 +574,8 @@ export function animateAE(ctx) {
     }
 
     // ── 9. Update force field overlay (heatmap + vectors) ──────────
-    if (_showAEField && atomData.count > 0) {
+    // PERF: Skip when paused — atom positions haven't changed.
+    if (_showAEField && running && atomData.count > 0) {
         // Auto-compute grid extent from atom bounding box
         let maxR = 5;
         for (let i = 0; i < atomData.count; i++) {
@@ -563,22 +598,24 @@ export function animateAE(ctx) {
     viewport.render();
 
     // ── 11. AE diagnostics (throttled to every 3rd frame) ──────────
-    if (frameCount % 3 === 0) {
+    // PERF: When paused, data is identical — push once then skip.
+    if (frameCount % 3 === 0 && (running || !_diagPushedWhilePaused)) {
         const diag = bridge.aeGetDiagnostics();
 
-        // Update status bar
-        dom.statusTick.textContent = formatNumber(diag.tick);
-        dom.statusPtime.textContent = formatNumber(diag.tick);
-        dom.statusParticles.textContent = diag.atomCount;
-        dom.statusEnergy.textContent = formatEnergy(diag.totalEnergy, 2).text;
+        // Update status bar with dedup
+        const sTick = formatNumber(diag.tick);
+        const sParticles = String(diag.atomCount);
+        const sEnergy = formatEnergy(diag.totalEnergy, 2).text;
+        const sState = running ? 'Running' : 'Idle';
 
-        // Update status dot
-        if (running) {
-            dom.statusDot.classList.remove('idle');
-            dom.statusState.textContent = 'Running';
-        } else {
-            dom.statusDot.classList.add('idle');
-            dom.statusState.textContent = 'Idle';
+        if (_statusCache.tick !== sTick) { dom.statusTick.textContent = sTick; dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
+        if (_statusCache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; _statusCache.particles = sParticles; }
+        if (_statusCache.energy !== sEnergy) { dom.statusEnergy.textContent = sEnergy; _statusCache.energy = sEnergy; }
+        if (_statusCache.state !== sState) {
+            dom.statusState.textContent = sState;
+            _statusCache.state = sState;
+            if (running) dom.statusDot.classList.remove('idle');
+            else dom.statusDot.classList.add('idle');
         }
 
         // Update AE diagnostic cards
@@ -592,7 +629,7 @@ export function animateAE(ctx) {
         dom.aeDiagTemp.textContent = formatTemperature(diag.temperature, 2).text;
         const pMag = Math.sqrt(diag.momentumX ** 2 + diag.momentumY ** 2 + diag.momentumZ ** 2);
         dom.aeDiagMomentum.textContent = pMag.toFixed(6) + ' AMU\u00b7\u00c5/step';
-        dom.aeDiagTick.textContent = formatNumber(diag.tick);
+        dom.aeDiagTick.textContent = sTick;
 
         // Energy drift tracking (reference captured at load time; fallback here)
         if (_aeInitialEnergy === null && diag.totalEnergy !== 0) {
@@ -618,6 +655,10 @@ export function animateAE(ctx) {
         };
         fluxEnergyChart.push(diagAdapted);
         particleChart.push(diagAdapted);
+
+        // Track paused-state dedup
+        if (!running) _diagPushedWhilePaused = true;
+        else _diagPushedWhilePaused = false;
 
         // Update active panel visuals
         switch (activeTab) {
