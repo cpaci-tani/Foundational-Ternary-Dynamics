@@ -27,6 +27,8 @@ set(TEST_RUNNER_SOURCES
     src/LatticeViewer.cpp
     src/FieldLines.cpp
     src/TelemetryCharts.cpp
+    src/HistoryDb.cpp
+    src/HistoryTab.cpp
 )
 
 set(TEST_RUNNER_HEADERS
@@ -39,6 +41,8 @@ set(TEST_RUNNER_HEADERS
     include/LatticeViewer.h
     include/FieldLines.h
     include/TelemetryCharts.h
+    include/HistoryDb.h
+    include/HistoryTab.h
     src/LatticeViewer_shaders.h
 )
 
