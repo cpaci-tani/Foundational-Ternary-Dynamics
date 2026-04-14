@@ -22,6 +22,7 @@
 #pragma once
 
 #include <QElapsedTimer>
+#include <QHash>
 #include <QMainWindow>
 #include <QString>
 #include <QVariantMap>
@@ -36,6 +37,8 @@ class QCheckBox;
 
 namespace ftd::testrunner {
 
+class HistoryDb;
+class HistoryTab;
 class LatticeViewer;
 class OutputPanel;
 class SmartDispatcher;
@@ -89,6 +92,20 @@ private:
     OutputPanel* m_output = nullptr;
     LatticeViewer* m_latticeViewer = nullptr;
     TelemetryCharts* m_telemetryCharts = nullptr;
+    HistoryTab* m_historyTab = nullptr;
+
+    // Persistent run history (SQLite). Outlives any single run.
+    HistoryDb* m_historyDb = nullptr;
+    qint64 m_currentRunId = -1;
+
+    // Per-test metadata captured at the start of each run, so that when
+    // a test finishes we can persist its category / GPU flag without
+    // reaching back into the tree model.
+    struct RunTestMeta {
+        QString category;
+        bool isGpuHeavy = false;
+    };
+    QHash<QString, RunTestMeta> m_runMeta;
 
     // Toolbar actions.
     QAction* m_actRun = nullptr;

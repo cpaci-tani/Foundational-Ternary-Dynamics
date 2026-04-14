@@ -3,6 +3,8 @@
 // ============================================================================
 
 #include "MainWindow.h"
+#include "HistoryDb.h"
+#include "HistoryTab.h"
 #include "LatticeViewer.h"
 #include "OutputPanel.h"
 #include "SmartDispatcher.h"
@@ -13,15 +15,19 @@
 #include <QAction>
 #include <QApplication>
 #include <QCheckBox>
+#include <QCoreApplication>
+#include <QDir>
 #include <QElapsedTimer>
 #include <QHeaderView>
 #include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QProcess>
 #include <QProgressBar>
 #include <QSplitter>
 #include <QStatusBar>
 #include <QTabWidget>
+#include <QThread>
 #include <QTimer>
 #include <QToolBar>
 #include <QTreeView>
@@ -29,12 +35,62 @@
 
 namespace ftd::testrunner {
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+namespace {
+
+// Run `git rev-parse --short HEAD` synchronously and return the trimmed SHA.
+// On failure returns QStringLiteral("unknown"). Uses a short (500 ms) wait so
+// a hung or missing git install never blocks the GUI startup.
+QString captureGitSha(const QString& workingDir) {
+    QProcess p;
+    if (!workingDir.isEmpty()) p.setWorkingDirectory(workingDir);
+    p.start(QStringLiteral("git"),
+            {QStringLiteral("rev-parse"),
+             QStringLiteral("--short"),
+             QStringLiteral("HEAD")});
+    if (!p.waitForStarted(500)) return QStringLiteral("unknown");
+    if (!p.waitForFinished(500)) {
+        p.kill();
+        p.waitForFinished(100);
+        return QStringLiteral("unknown");
+    }
+    if (p.exitStatus() != QProcess::NormalExit || p.exitCode() != 0) {
+        return QStringLiteral("unknown");
+    }
+    const QString sha = QString::fromLocal8Bit(p.readAllStandardOutput()).trimmed();
+    return sha.isEmpty() ? QStringLiteral("unknown") : sha;
+}
+
+// "CUDA" when built with FTD_ENABLE_CUDA, otherwise "CPU". The flag is a
+// compile-time decision so this is a constexpr-ish choice.
+QString currentBuildType() {
+#if defined(FTD_ENABLE_CUDA)
+    return QStringLiteral("CUDA");
+#else
+    return QStringLiteral("CPU");
+#endif
+}
+
+}  // namespace
+
 MainWindow::MainWindow(const QString& buildDir, QWidget* parent)
     : QMainWindow(parent), m_buildDir(buildDir) {
 
     m_model = new TestModel(this);
     m_runner = new TestRunner(this);
     m_dispatcher = new SmartDispatcher(m_runner, this);
+
+    // History database lives next to the runner exe so it's portable and
+    // doesn't end up in the source tree.
+    const QString dbPath = QCoreApplication::applicationDirPath() +
+                           QStringLiteral("/runs.sqlite");
+    m_historyDb = new HistoryDb(dbPath);
+    if (!m_historyDb->isOpen()) {
+        qWarning() << "MainWindow: HistoryDb failed to open at" << dbPath;
+    }
 
     buildUi();
 
@@ -59,7 +115,12 @@ MainWindow::MainWindow(const QString& buildDir, QWidget* parent)
     QTimer::singleShot(0, this, &MainWindow::onReload);
 }
 
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow() {
+    // HistoryDb is a plain (non-QObject) owner of a QSqlDatabase handle and
+    // must be destroyed before QApplication tears down the driver registry.
+    delete m_historyDb;
+    m_historyDb = nullptr;
+}
 
 // ============================================================================
 // UI construction
@@ -172,10 +233,8 @@ void MainWindow::buildCentralWidget() {
     m_telemetryCharts = new TelemetryCharts(this);
     tabs->addTab(m_telemetryCharts, QStringLiteral("Telemetry"));
 
-    auto* historyPlaceholder = new QLabel(
-        QStringLiteral("HistoryDb lands in Phase 6"), this);
-    historyPlaceholder->setAlignment(Qt::AlignCenter);
-    tabs->addTab(historyPlaceholder, QStringLiteral("History"));
+    m_historyTab = new HistoryTab(m_historyDb, this);
+    tabs->addTab(m_historyTab, QStringLiteral("History"));
 
     splitter->addWidget(tabs);
     splitter->setStretchFactor(0, 1);
@@ -229,9 +288,14 @@ void MainWindow::onRunSelected() {
     m_actStop->setEnabled(true);
     m_actReload->setEnabled(false);
 
-    // Mark all selected tests pending.
+    // Mark all selected tests pending and snapshot their metadata so that
+    // onTestFinished() can persist category / GPU flag without querying the
+    // model (which is mutated by status updates in between).
+    m_runMeta.clear();
+    m_runMeta.reserve(selected.size());
     for (const TestInfo& t : selected) {
         m_model->updateStatus(t.name, TestStatus::Pending);
+        m_runMeta.insert(t.name, {t.category, t.isGpuHeavy});
     }
 
     m_output->appendSystem(QStringLiteral("Running %1 tests").arg(selected.size()));
@@ -239,6 +303,19 @@ void MainWindow::onRunSelected() {
 
     m_wallClock.restart();
     m_elapsedTimer->start();
+
+    // Begin a new history row for this run (best-effort; if the DB is down
+    // the runner still works, we just don't persist).
+    if (m_historyDb && m_historyDb->isOpen()) {
+        const QString sha = captureGitSha(m_buildDir);
+        const QString build = currentBuildType();
+        const int cpuWorkers = QThread::idealThreadCount();
+        const bool gpuEnabled = m_gpuDefault && m_gpuDefault->isChecked();
+        m_currentRunId = m_historyDb->startRun(
+            sha, build, cpuWorkers, gpuEnabled, selected.size());
+    } else {
+        m_currentRunId = -1;
+    }
 
     updateStatusCounters();
     m_dispatcher->setTests(selected);
@@ -339,15 +416,20 @@ void MainWindow::onTestFinished(const QString& testName, int failures,
                                  double durationSec, int exitCode) {
     m_model->updateDuration(testName, durationSec);
     m_model->updateFailures(testName, failures);
+
+    QString statusStr;
     if (failures == 0 && exitCode == 0) {
         m_model->updateStatus(testName, TestStatus::Pass);
         ++m_passCount;
+        statusStr = QStringLiteral("pass");
     } else if (exitCode < 0) {
         m_model->updateStatus(testName, TestStatus::Error);
         ++m_failCount;
+        statusStr = QStringLiteral("crash");
     } else {
         m_model->updateStatus(testName, TestStatus::Fail);
         ++m_failCount;
+        statusStr = QStringLiteral("fail");
     }
     ++m_totalFinished;
 
@@ -355,6 +437,25 @@ void MainWindow::onTestFinished(const QString& testName, int failures,
     if (m_telemetryCharts) {
         m_telemetryCharts->onTestFinished(testName, failures, durationSec);
     }
+
+    // Persist per-test result for this run (best-effort).
+    if (m_historyDb && m_historyDb->isOpen() && m_currentRunId >= 0) {
+        TestResultRow row;
+        row.runId       = m_currentRunId;
+        row.testName    = testName;
+        row.status      = statusStr;
+        row.durationSec = durationSec;
+        row.nFails      = failures;
+        // Synthesise a check count: unknown at this layer, so leave at 0.
+        row.nChecks     = 0;
+        const auto it = m_runMeta.constFind(testName);
+        if (it != m_runMeta.constEnd()) {
+            row.category = it->category;
+            row.gpuUsed  = it->isGpuHeavy;
+        }
+        m_historyDb->recordResult(m_currentRunId, row);
+    }
+
     updateStatusCounters();
 }
 
@@ -372,6 +473,31 @@ void MainWindow::onAllComplete() {
     statusBar()->showMessage(msg);
     m_output->appendSystem(msg);
     m_progress->setValue(100);
+
+    // Close out the history row and surface regressions.
+    if (m_historyDb && m_historyDb->isOpen() && m_currentRunId >= 0) {
+        m_historyDb->finishRun(m_currentRunId,
+                               m_passCount, m_failCount, elapsed);
+
+        const QList<Regression> regs =
+            m_historyDb->findRegressions(m_currentRunId);
+        int regCount = 0;
+        for (const Regression& r : regs) {
+            if (r.sign > 0) ++regCount;
+        }
+        if (regCount > 0) {
+            const QString toast = tr("%1 regression(s) detected since "
+                                     "last run").arg(regCount);
+            statusBar()->showMessage(toast, 10000);
+            m_output->appendSystem(toast);
+        }
+
+        if (m_historyTab) {
+            m_historyTab->refresh();
+        }
+    }
+    m_currentRunId = -1;
+    m_runMeta.clear();
 }
 
 void MainWindow::tickElapsed() {
