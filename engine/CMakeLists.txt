@@ -1062,3 +1062,38 @@ if(FTD_ENABLE_CUDA)
     endforeach()
     unset(_ftd_gpu_tests)
 endif()
+
+# ============================================================================
+# FTD Test Bench (Phase 3+: Qt6 native test runner)
+# ============================================================================
+#
+# Builds engine/tools/test_runner/ — a Qt6 Widgets native desktop application
+# that drives the CTest inventory, streams NDJSON telemetry from the test
+# subprocesses (see engine/include/ftd/test_telemetry.h), and displays
+# results in a main window with a category tree, output panel, lattice
+# viewer (Phase 4), telemetry charts (Phase 5), and history DB (Phase 6).
+#
+# Controlled by FTD_BUILD_TEST_RUNNER:
+#   AUTO (default) — build if Qt6 is present, silently skip otherwise
+#   ON             — require Qt6; fail configure if not found
+#   OFF            — never build
+#
+# Pass -DCMAKE_PREFIX_PATH=C:/Qt/6.10.2/msvc2022_64 (or equivalent) on the
+# configure command line so find_package(Qt6) resolves.
+#
+set(FTD_BUILD_TEST_RUNNER "AUTO" CACHE STRING
+    "Build the Qt6 test runner GUI (ON/OFF/AUTO)")
+set_property(CACHE FTD_BUILD_TEST_RUNNER PROPERTY STRINGS ON OFF AUTO)
+
+if(NOT FTD_BUILD_TEST_RUNNER STREQUAL "OFF" AND NOT EMSCRIPTEN)
+    find_package(Qt6 QUIET COMPONENTS Core Widgets OpenGL OpenGLWidgets Sql Charts)
+    if(Qt6_FOUND)
+        message(STATUS "FTD Test Bench: enabled (Qt6 ${Qt6_VERSION})")
+        add_subdirectory(tools/test_runner)
+    elseif(FTD_BUILD_TEST_RUNNER STREQUAL "ON")
+        message(FATAL_ERROR "FTD_BUILD_TEST_RUNNER=ON but Qt6 not found. "
+                            "Install Qt6 or set -DFTD_BUILD_TEST_RUNNER=OFF.")
+    else()
+        message(STATUS "FTD Test Bench: disabled (Qt6 not found)")
+    endif()
+endif()
