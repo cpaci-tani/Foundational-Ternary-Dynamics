@@ -1,64 +1,179 @@
 /**
- * Campaign: Dispersion Relation — Quantitative Wave Physics
+ * Campaign: Dispersion Relation (consolidated suite)
  *
- * Measures the lattice dispersion relation omega(k) = 2*C_WAVE*|sin(k/2)|
- * from actual simulation time series, group velocity from wave packets,
- * energy decay rates, and transverse vs longitudinal mode structure.
+ * Merges 3 legacy dispersion test/campaign files into a single
+ * ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API:
  *
- * Goes beyond test_wave_speed.cpp (which only checks the formula analytically)
- * by performing simulation-measured frequency extraction.
+ *   test_dispersion_relation.cpp         -> section "dispersion_relation"
+ *   campaign_dispersion.cpp (old)        -> section "campaign_dispersion"
+ *   campaign_dispersion_convergence.cpp  -> section "campaign_dispersion_convergence"
  *
- * Theory: The 6-point discrete Laplacian on a cubic lattice gives:
- *   omega^2 = 4 * C_WAVE^2 * sum_i sin^2(k_i / 2)
- * For a 1D plane wave along x:  omega = 2*C_WAVE*|sin(k/2)|
- * Group velocity: v_g = d(omega)/dk = C_WAVE*cos(k/2)
+ * Every check(...) from the legacy files is preserved verbatim (same condition,
+ * same label) and routed through ftd::test::check for uniform telemetry.
  *
- * Sub-campaigns:
- *   5a — Dispersion curve omega(k) from zero-crossing measurement
- *   5b — Group velocity from wave packet center-of-mass tracking
- *   5c — Energy decay rate matches damping constant
- *   5d — Transverse vs longitudinal polarization modes
+ * Wave 4b.7 consolidation (2026-04-14).
  */
 
+#define _USE_MATH_DEFINES
 #include <cmath>
+#include <cstdio>
 #include <iostream>
 #include <iomanip>
 #include <vector>
 #include <algorithm>
 #include <numeric>
 #include "ftd/render_bridge.h"
+#include "ftd/spectral.h"
 #include "ftd/constants.h"
+#include "ftd/test_telemetry.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 // ============================================================================
-// Test infrastructure
+// Section: dispersion_relation  (from test_dispersion_relation.cpp)
 // ============================================================================
-static int g_failures = 0;
-static int g_passes   = 0;
 
-static void check(const char* name, bool cond) {
-    if (cond) { std::cout << "  PASS  " << name << "\n"; ++g_passes; }
-    else      { std::cout << "  FAIL  " << name << "\n"; ++g_failures; }
-}
+// Measure ω² for mode n on an L³ lattice using single-tick eigenvalue extraction
+static double measure_omega_sq_dr(int L, int n) {
+    ftd::RenderBridge rb(L);
+    rb.toggles.disable_all();
+    rb.toggles.wave_propagation = true;
 
-static void check_close(const char* name, double a, double b, double tol) {
-    bool ok = std::abs(a - b) < tol;
-    if (ok) { std::cout << "  PASS  " << name << "\n"; ++g_passes; }
-    else {
-        std::cout << "  FAIL  " << name
-                  << " (got " << std::setprecision(6) << a
-                  << ", expected " << b
-                  << ", diff " << std::abs(a - b) << ")\n";
-        ++g_failures;
+    double k = 2.0 * M_PI * n / L;
+    double AMP = 0.1;
+
+    // Initialize J_z = A * sin(k * x), wave_vel = 0
+    for (int x = 0; x < L; ++x) {
+        double jz = AMP * std::sin(k * x);
+        for (int y = 0; y < L; ++y)
+            for (int z = 0; z < L; ++z) {
+                rb.inject_flux(x, y, z, {0, 0, jz});
+            }
     }
+
+    // Sample J_z at a non-node site before tick
+    // x=1 gives sin(2πn/L) which is nonzero for n=1..L-1
+    int sample_idx = rb.lattice().index(1, 0, 0);
+    double J_before = rb.voxels()[sample_idx].flux.z;
+
+    // Run exactly 1 tick
+    rb.tick();
+
+    // After tick: wave_vel_z = c² * ∇²J_z = -ω² * J_z_before
+    double wv_after = rb.voxels()[sample_idx].wave_vel.z;
+
+    // ω² = |wv_after / J_before|
+    if (std::abs(J_before) < 1e-15) return 0.0;
+    return std::abs(wv_after / J_before);
+}
+
+static void section_dispersion_relation() {
+    std::printf("================================================================\n");
+    std::printf("  TEST: Lattice Photon Dispersion Relation — 8 Checks\n");
+    std::printf("================================================================\n");
+
+    constexpr int L = 32;
+    double c2 = ftd::C_WAVE * ftd::C_WAVE;  // 1/3
+
+    // Modes to test: n = 1, 4, 8, 12, 15
+    int modes[] = {1, 4, 8, 12, 15};
+    int num_modes = 5;
+
+    double omega_sq_meas[5];
+    double omega_sq_theory[5];
+    double k_vals[5];
+    double omega_meas[5];
+    double omega_theory[5];
+
+    std::printf("\n--- Dispersion relation: ω² = 4c²sin²(k/2) ---\n");
+    std::printf("  C_WAVE = %.6f, C_WAVE² = %.6f\n", ftd::C_WAVE, c2);
+    std::printf("  %-6s %-10s %-14s %-14s %-10s\n",
+                "n", "k", "ω²_theory", "ω²_measured", "error");
+
+    for (int i = 0; i < num_modes; ++i) {
+        int n = modes[i];
+        double k = 2.0 * M_PI * n / L;
+        double sin_half_k = std::sin(k / 2.0);
+        double theory = 4.0 * c2 * sin_half_k * sin_half_k;
+        double measured = measure_omega_sq_dr(L, n);
+
+        k_vals[i] = k;
+        omega_sq_theory[i] = theory;
+        omega_sq_meas[i] = measured;
+        omega_theory[i] = std::sqrt(theory);
+        omega_meas[i] = std::sqrt(measured);
+
+        double error = std::abs(measured - theory) / theory;
+        std::printf("  %-6d %-10.4f %-14.8f %-14.8f %-10.2e\n",
+                    n, k, theory, measured, error);
+    }
+
+    // DISP-1 through DISP-5: Each mode matches theory
+    std::printf("\n--- DISP-1..5: Mode-by-mode verification ---\n");
+    const char* check_names[] = {
+        "DISP-1: ω² matches theory for n=1 (long wavelength, < 0.1%)",
+        "DISP-2: ω² matches theory for n=4 (mid wavelength, < 0.1%)",
+        "DISP-3: ω² matches theory for n=8 (short wavelength, < 0.1%)",
+        "DISP-4: ω² matches theory for n=12 (near-Nyquist, < 0.1%)",
+        "DISP-5: ω² matches theory for n=15 (almost-Nyquist, < 0.1%)"
+    };
+    for (int i = 0; i < num_modes; ++i) {
+        double error = std::abs(omega_sq_meas[i] - omega_sq_theory[i]) / omega_sq_theory[i];
+        ftd::test::check(check_names[i], error < 0.001);
+    }
+
+    // DISP-6: Long-wavelength limit ω ≈ c·k
+    std::printf("\n--- DISP-6: Continuum limit ---\n");
+    double ratio_continuum = omega_meas[0] / (ftd::C_WAVE * k_vals[0]);
+    std::printf("  INFO: ω/(c·k) for n=1 = %.6f (expect ~1.0)\n", ratio_continuum);
+    ftd::test::check("DISP-6: Long-wavelength limit ω ≈ c·k (within 5%)",
+          std::abs(ratio_continuum - 1.0) < 0.05);
+
+    // DISP-7: Phase velocity decreases with k (normal dispersion)
+    std::printf("\n--- DISP-7: Phase velocity dispersion ---\n");
+    double v_phase[5];
+    for (int i = 0; i < num_modes; ++i) {
+        v_phase[i] = omega_meas[i] / k_vals[i];
+        std::printf("  INFO: v_phase(n=%d) = %.6f\n", modes[i], v_phase[i]);
+    }
+    bool monotonic_decrease = true;
+    for (int i = 1; i < num_modes; ++i) {
+        if (v_phase[i] >= v_phase[i-1]) {
+            monotonic_decrease = false;
+            break;
+        }
+    }
+    ftd::test::check("DISP-7: Phase velocity v_p = ω/k decreases with k (normal dispersion)",
+          monotonic_decrease);
+
+    // DISP-8: Group velocity v_g = c*cos(k/2) positive and ≤ C_WAVE
+    std::printf("\n--- DISP-8: Group velocity ---\n");
+    bool group_ok = true;
+    for (int i = 0; i < num_modes; ++i) {
+        double k = k_vals[i];
+        double v_group = ftd::C_WAVE * std::cos(k / 2.0);
+        std::printf("  INFO: v_group(n=%d) = %.6f\n", modes[i], v_group);
+        if (v_group < -0.01 || v_group > ftd::C_WAVE + 0.01) {
+            group_ok = false;
+        }
+    }
+    ftd::test::check("DISP-8: Group velocity v_g = c·cos(k/2) positive and ≤ C_WAVE",
+          group_ok);
 }
 
 // ============================================================================
-// 5a — Dispersion curve omega(k) from simulation
+// Section: campaign_dispersion  (from old campaign_dispersion.cpp)
 // ============================================================================
+
+// ----------------------------------------------------------------------------
+// 5a — Dispersion curve omega(k) from simulation
+// ----------------------------------------------------------------------------
 // For each wavenumber k = 2*pi*n/L, inject a plane wave J_z = A*sin(k*x),
 // record the time series of J_z at an observation point, and measure the
 // oscillation frequency from zero crossings.
-static void campaign_5a() {
+static void campaign_5a_cd() {
     std::cout << "\n================================================================\n";
     std::cout << "  Campaign 5a: Dispersion Curve omega(k) — Simulation Measured\n";
     std::cout << "================================================================\n";
@@ -132,20 +247,20 @@ static void campaign_5a() {
         if (crossings > 4) {
             double rel_err = std::abs(omega_measured - omega_theory) / omega_theory;
             std::cout << "    Relative error: " << rel_err * 100 << "%%\n";
-            check(label, rel_err < 0.15);
+            ftd::test::check(label, rel_err < 0.15);
         } else {
             std::cout << "    Too few crossings (" << crossings << ") to measure\n";
-            check(label, false);
+            ftd::test::check(label, false);
         }
     }
 }
 
-// ============================================================================
+// ----------------------------------------------------------------------------
 // 5b — Group velocity from wave packet tracking
-// ============================================================================
+// ----------------------------------------------------------------------------
 // Inject a Gaussian wave packet, track its center of mass over time.
 // Compare measured group velocity with theory: v_g = C_WAVE * cos(k0/2).
-static void campaign_5b() {
+static void campaign_5b_cd() {
     std::cout << "\n================================================================\n";
     std::cout << "  Campaign 5b: Group Velocity — Wave Packet Tracking\n";
     std::cout << "================================================================\n";
@@ -231,29 +346,32 @@ static void campaign_5b() {
     // group velocity is the derivative of the same relation, so it is implicitly
     // validated by 5a's success across multiple wavenumbers.
     if (displacement > 0) {
-        std::cout << "  PASS  5b: Wave packet moves in positive direction\n"; ++g_passes;
+        ftd::test::check("5b: Wave packet moves in positive direction", true);
         double rel_err = std::abs(vg_measured - vg_theory) / vg_theory;
         std::cout << "    Relative error = " << rel_err * 100 << "%\n";
         if (rel_err < 0.30) {
-            std::cout << "  PASS  5b: Group velocity within 30% of theory\n"; ++g_passes;
+            ftd::test::check("5b: Group velocity within 30% of theory", true);
         } else {
             std::cout << "  INFO  5b: Group velocity error " << rel_err * 100
-                      << "% — damping-limited COM measurement\n"; ++g_passes;
+                      << "% — damping-limited COM measurement\n";
+            ftd::test::check("5b: Group velocity within 30% of theory (soft pass)", true);
         }
     } else {
         std::cout << "  INFO  5b: Wave packet COM displacement = " << displacement
                   << " — damping dissipates asymmetry before measurable shift.\n"
                   << "        Dispersion relation validated by 5a frequency measurements.\n";
-        g_passes += 2;  // Soft pass — not a physics failure
+        // Soft pass — not a physics failure
+        ftd::test::check("5b: Wave packet moves in positive direction (soft pass)", true);
+        ftd::test::check("5b: Group velocity within 30% of theory (soft pass)", true);
     }
 }
 
-// ============================================================================
+// ----------------------------------------------------------------------------
 // 5c — Energy decay rate
-// ============================================================================
+// ----------------------------------------------------------------------------
 // Inject a localized pulse, track total flux energy over time.
 // Fit exponential decay and compare rate with DAMPING constant.
-static void campaign_5c() {
+static void campaign_5c_cd() {
     std::cout << "\n================================================================\n";
     std::cout << "  Campaign 5c: Energy Decay Rate\n";
     std::cout << "================================================================\n";
@@ -287,7 +405,7 @@ static void campaign_5c() {
     std::cout << "    E(99)  = " << energy[T_RUN - 1] << "\n";
 
     // Energy should decrease monotonically (damping)
-    check("5c: Energy decreases over time", energy[T_RUN - 1] < energy[0]);
+    ftd::test::check("5c: Energy decreases over time", energy[T_RUN - 1] < energy[0]);
 
     // Fit effective decay rate: E(t) = E0 * exp(-2*gamma_eff*t)
     // (factor of 2 because E ~ |J|^2 and J ~ exp(-gamma*t), so E ~ exp(-2*gamma*t))
@@ -298,7 +416,7 @@ static void campaign_5c() {
         std::cout << "    DAMPING constant   = " << ftd::DAMPING << "\n";
 
         // gamma_eff should be positive (energy decreasing)
-        check("5c: Effective decay rate is positive", gamma_eff > 0);
+        ftd::test::check("5c: Effective decay rate is positive", gamma_eff > 0);
 
         // Order of magnitude match: within factor of 10
         // Note: damping applies as multiplicative factor per tick, but
@@ -306,21 +424,21 @@ static void campaign_5c() {
         // So gamma_eff may exceed DAMPING due to 3D spreading.
         double ratio = gamma_eff / ftd::DAMPING;
         std::cout << "    gamma_eff / DAMPING = " << ratio << "\n";
-        check("5c: Decay rate within 100x of DAMPING", ratio > 0.01 && ratio < 100.0);
+        ftd::test::check("5c: Decay rate within 100x of DAMPING", ratio > 0.01 && ratio < 100.0);
     } else {
         std::cout << "    Energy dropped to zero — cannot fit decay\n";
-        check("5c: Effective decay rate is positive", true);
-        check("5c: Decay rate within 100x of DAMPING", true);
+        ftd::test::check("5c: Effective decay rate is positive", true);
+        ftd::test::check("5c: Decay rate within 100x of DAMPING", true);
     }
 }
 
-// ============================================================================
+// ----------------------------------------------------------------------------
 // 5d — Transverse vs Longitudinal polarization modes
-// ============================================================================
+// ----------------------------------------------------------------------------
 // Compare propagation of transverse (div-free) vs longitudinal (curl-free)
 // flux pulses. Transverse modes are physical (photon); longitudinal are
 // constrained by Gauss law.
-static void campaign_5d() {
+static void campaign_5d_cd() {
     std::cout << "\n================================================================\n";
     std::cout << "  Campaign 5d: Transverse vs Longitudinal Modes\n";
     std::cout << "================================================================\n";
@@ -366,7 +484,7 @@ static void campaign_5d() {
     std::cout << "    Initial |div(J)| transverse = " << div_trans_init << "\n";
     std::cout << "    Initial |div(J)| longitudinal = " << div_long_init << "\n";
 
-    check("5d: Transverse has smaller initial divergence",
+    ftd::test::check("5d: Transverse has smaller initial divergence",
           div_trans_init < div_long_init + 1e-10);
 
     // Run both
@@ -382,12 +500,12 @@ static void campaign_5d() {
     std::cout << "      Longitudinal: " << rho_long << "\n";
 
     // Both should have propagated some signal
-    check("5d: Transverse signal reaches observation point", rho_trans > 1e-10);
+    ftd::test::check("5d: Transverse signal reaches observation point", rho_trans > 1e-10);
 
     // Transverse should propagate more cleanly (physical mode)
     // In practice, both propagate via the Laplacian, but the longitudinal
     // component couples to the Gauss constraint and may be modified
-    check("5d: Transverse signal >= longitudinal at observation",
+    ftd::test::check("5d: Transverse signal >= longitudinal at observation",
           rho_trans >= rho_long * 0.5);
 
     // Check that the transverse pulse maintained zero divergence better
@@ -401,28 +519,125 @@ static void campaign_5d() {
     std::cout << "      Longitudinal: " << div_long_final << "\n";
 
     // Transverse should remain more divergence-free at observation point
-    check("5d: Transverse maintains lower divergence after propagation",
+    ftd::test::check("5d: Transverse maintains lower divergence after propagation",
           div_trans_final <= div_long_final + 0.01);
 }
 
-// ============================================================================
-// Main
-// ============================================================================
-int main() {
+static void section_campaign_dispersion() {
     std::cout << "================================================================\n";
     std::cout << "  CAMPAIGN: Dispersion Relation — Quantitative Wave Physics\n";
     std::cout << "  C_WAVE = " << ftd::C_WAVE << "  DAMPING = " << ftd::DAMPING << "\n";
     std::cout << "================================================================\n";
 
-    campaign_5a();
-    campaign_5b();
-    campaign_5c();
-    campaign_5d();
+    campaign_5a_cd();
+    campaign_5b_cd();
+    campaign_5c_cd();
+    campaign_5d_cd();
+}
 
-    std::cout << "\n================================================================\n";
-    std::cout << "  CAMPAIGN DISPERSION COMPLETE: "
-              << g_passes << " passed, " << g_failures << " failed\n";
+// ============================================================================
+// Section: campaign_dispersion_convergence  (from campaign_dispersion_convergence.cpp)
+// ============================================================================
+
+static void section_campaign_dispersion_convergence() {
     std::cout << "================================================================\n";
+    std::cout << "  CAMPAIGN: Dispersion Convergence (Phase 2) — 5 Checks\n";
+    std::cout << "================================================================\n";
+    std::cout << std::fixed << std::setprecision(6);
 
-    return g_failures;
+    // ----------------------------------------------------------------
+    // Measure dispersion at L=16 and L=32
+    // ----------------------------------------------------------------
+    struct SizeResult {
+        int L;
+        std::vector<ftd::DispersionPoint> points;
+    };
+
+    int sizes[] = {16, 32};
+    SizeResult results[2];
+
+    for (int s = 0; s < 2; ++s) {
+        int L = sizes[s];
+        std::cout << "\n--- L=" << L << " Dispersion Relation ---\n";
+
+        auto pts = ftd::dispersion_relation(L, 4, 512);
+        results[s] = {L, pts};
+
+        std::cout << "  Mode | k        | omega    | c_eff    | c_theory\n";
+        for (int m = 0; m < static_cast<int>(pts.size()); ++m) {
+            double k = pts[m].k;
+            // Exact lattice dispersion: ω = (2/√3)·sin(k/2)
+            double omega_exact = (2.0 / std::sqrt(3.0)) * std::sin(k / 2.0);
+            std::cout << "  " << (m+1)
+                      << "    | " << std::setw(8) << k
+                      << " | " << std::setw(8) << pts[m].omega
+                      << " | " << std::setw(8) << pts[m].c_eff
+                      << " | " << std::setw(8) << (omega_exact / k)
+                      << "\n";
+        }
+    }
+
+    // ----------------------------------------------------------------
+    // DC1: Mode 1 c_eff within 15% of C_WAVE (L=16)
+    // ----------------------------------------------------------------
+    double c_eff_16 = results[0].points[0].c_eff;
+    double c_theory = ftd::C_WAVE;  // 1/sqrt(3) ≈ 0.577
+    double err_16 = std::abs(c_eff_16 - c_theory) / c_theory;
+    std::cout << "\n--- Convergence Analysis ---\n";
+    std::cout << "  L=16: c_eff=" << c_eff_16 << " C_WAVE=" << c_theory
+              << " err=" << (err_16 * 100) << "%\n";
+    ftd::test::check("DC1: L=16 mode-1 c_eff within 15% of C_WAVE", err_16 < 0.15);
+
+    // ----------------------------------------------------------------
+    // DC2: Mode 1 c_eff within 10% of C_WAVE (L=32)
+    // ----------------------------------------------------------------
+    double c_eff_32 = results[1].points[0].c_eff;
+    double err_32 = std::abs(c_eff_32 - c_theory) / c_theory;
+    std::cout << "  L=32: c_eff=" << c_eff_32 << " C_WAVE=" << c_theory
+              << " err=" << (err_32 * 100) << "%\n";
+    ftd::test::check("DC2: L=32 mode-1 c_eff within 10% of C_WAVE", err_32 < 0.10);
+
+    // ----------------------------------------------------------------
+    // DC3: Convergence — L=32 closer to theory than L=16
+    // ----------------------------------------------------------------
+    ftd::test::check("DC3: L=32 error < L=16 error (convergence)", err_32 < err_16 + 1e-6);
+
+    // ----------------------------------------------------------------
+    // DC4: ω matches exact lattice formula within 25%
+    // ----------------------------------------------------------------
+    double k1 = results[1].points[0].k;
+    double omega_measured = results[1].points[0].omega;
+    double omega_exact = (2.0 / std::sqrt(3.0)) * std::sin(k1 / 2.0);
+    double omega_err = std::abs(omega_measured - omega_exact) / omega_exact;
+    std::cout << "  omega_measured=" << omega_measured
+              << " omega_exact=" << omega_exact
+              << " err=" << (omega_err * 100) << "%\n";
+    ftd::test::check("DC4: omega within 25% of lattice theory (mode 1, L=32)", omega_err < 0.25);
+
+    // ----------------------------------------------------------------
+    // DC5: ω(k) monotonically increasing (L=32)
+    // ----------------------------------------------------------------
+    bool monotonic = true;
+    for (size_t i = 1; i < results[1].points.size(); ++i) {
+        if (results[1].points[i].omega < results[1].points[i-1].omega - 1e-6) {
+            monotonic = false;
+            break;
+        }
+    }
+    ftd::test::check("DC5: omega(k) monotonically increasing (L=32)", monotonic);
+}
+
+// ============================================================================
+// Main
+// ============================================================================
+
+int main() {
+    ftd::test::init("campaign_dispersion");
+    ftd::test::section("dispersion_relation");
+    section_dispersion_relation();
+    ftd::test::section("campaign_dispersion");
+    section_campaign_dispersion();
+    ftd::test::section("campaign_dispersion_convergence");
+    section_campaign_dispersion_convergence();
+    return ftd::test::finalize();
 }
