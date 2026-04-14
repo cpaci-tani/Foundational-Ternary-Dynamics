@@ -8,6 +8,15 @@ These self-contained HTML simulations visualize the exact mathematical formulas 
 
 ## Simulations
 
+### 0. Potential Core Explorer (`potential_core_explorer.html`)
+**Model:** `P_c -> G(P_c) -> C -> G_C(P_c) -> B_C(P_c, r) -> M_C(P_c, r)`
+
+- Self-contained 3D-style conceptual explorer
+- Data-driven layer model for incremental edits
+- Shows Potential Core, Generative Interior, Context State, contextual activation wedge, manifest boundary, and output rays
+- Drag to rotate; sliders adjust context aperture, reach `r`, and output flow
+- Intended as a running theory diagram, not a finished proof graphic
+
 ### 1. Gravity Simulation (`gravity_simulation.html`)
 **Formula:** F_grav = G_N * nabla(rho_bar)
 

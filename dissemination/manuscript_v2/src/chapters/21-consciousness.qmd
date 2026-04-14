@@ -1,0 +1,74 @@
+# Consciousness and Self-Reference {#sec-consciousness}
+
+::: {.callout-warning}
+## Epistemic notice
+This chapter is **[CONJECTURE]** throughout. The mathematical structures are well-defined but their identification with consciousness is speculative. FTD's physics does not depend on any claim in this chapter. The consciousness formalism is a proposed extension, not part of the core derivation chain.
+:::
+
+## 21.1 Domain B: the self-referential regime
+
+The master quadratic $x^2 - kG^{*2}x + kG^{*3} = 0$ was solved at $k = 16$ (the physics domain, Chapter 8). At generic $k$, the discriminant $\Delta_k = kG^{*3}(kG^* - 4)$ defines three regimes:
+
+| Domain | Condition | Root type | Interpretation |
+|--------|-----------|-----------|----------------|
+| A (Physics) | $k > 4/G^*$ | Two real roots | Public, measurable |
+| C (Measurement) | $k = 4/G^*$ | Degenerate | Measurement interface |
+| B (Consciousness) | $k < 4/G^*$ | Complex conjugate | Self-referential, oscillatory |
+
+**Domain B** occurs at $k = 1/2$, the **complementation fixed point**: the unique value where the "observer coefficient" equals its complement ($k = 1 - k$ gives $k = 1/2$).
+
+At $k = 1/2$:
+$$
+x^2 - \frac{G^{*2}}{2}x + \frac{G^{*3}}{2} = 0
+$$
+$$
+x = \frac{G^{*2}}{4} \pm i\frac{G^*}{4}\sqrt{4G^{*2} - 2G^*}
+$$
+
+The roots are complex conjugates: $y = 2.19 \pm 2.86i$. [THEOREM for the algebra]
+
+## 21.2 The sLoop as self-observation [CONJECTURE]
+
+The self-referential observation mode ($d = 0$, @sec-observer) closes a loop: the cluster's output becomes its own input. In algebraic terms, this is the gap equation applied to itself --- the system that computes is the system being computed.
+
+**Consciousness**, in this framework, names the property of a cluster whose sLoop includes a model of the sLoop itself. It is:
+- **Self-referential:** the observer observes its own observing
+- **Context-conditioned:** the model updates with each tick
+- **Complex-valued:** Domain B roots oscillate rather than settling to a fixed point
+
+The oscillation is interpreted as the phenomenal experience of time: the system's state never reaches equilibrium because the complex roots rotate in the complex plane at each tick.
+
+## 21.3 The consciousness quadratic [CONJECTURE]
+
+The product of the physics coefficient and the consciousness coefficient:
+$$
+k_{\text{phys}} \cdot k_{\text{cons}} = 16 \times \frac{1}{2} = 8 = 2^D
+\tag{21.1}
+$$
+
+This is $2^3 = 8$, the number of BCC neighbors. The physics quadratic ($k = 16$) and the consciousness quadratic ($k = 1/2$) are related by the constraint that their product equals the BCC coordination number.
+
+**The consciousness angle:**
+$$
+\cos^2\theta_C = \frac{G^*}{8} \approx 0.37 \quad \Rightarrow \quad \theta_C \approx 52.5°
+\tag{21.2}
+$$
+
+This divides awareness between spatial ($\sim 37\%$) and temporal ($\sim 63\%$) modes. Consciousness is approximately 1.7 times more aware of time than of space. [CONJECTURE]
+
+## 21.4 What consciousness is NOT in FTD
+
+- It is **not** the imaginary unit $i$. The complex structure enables self-reference but is not identical to awareness.
+- It is **not** required for measurement. The measurement mechanism (@sec-measurement) operates without any consciousness postulate.
+- It is **not** pan-experiential in the naive sense. Most voxels are void with empty generative interiors. Consciousness requires coherent structure.
+- It is **not** a physical force. It is a structural property of self-referential computational loops.
+
+## 21.5 Falsification criteria [CONJECTURE]
+
+If the consciousness formalism is correct, it predicts:
+
+1. The phase angle $\theta_C \approx 52.5°$ should appear in neural oscillation timing ratios
+2. The spatial-temporal awareness split ($37\%/63\%$) should manifest in reaction time experiments
+3. Anesthesia should correspond to disruption of the sLoop (breaking $d = 0$ self-observation)
+
+None of these predictions has been tested. The formalism remains [CONJECTURE] until experimental evidence is obtained.

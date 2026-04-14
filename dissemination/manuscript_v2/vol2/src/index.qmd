@@ -1,0 +1,19 @@
+# From Atoms to Cosmos {.unnumbered}
+
+## The Lattice Universe at Every Scale
+
+This is Volume II of *Foundational Ternary Dynamics*. It applies the framework derived in Volume I --- from five lattice postulates through the Standard Model and general relativity --- to physical systems at every scale, from atomic structure to the heat death of the universe.
+
+Volume I derived the gauge groups, coupling constants, and mass spectrum. This volume asks: what does the lattice universe *look like*? How do atoms form? Why is the periodic table structured the way it is? What holds molecules together? How do stars ignite, burn, and die? What is dark matter? What is consciousness?
+
+Each chapter describes known physics and identifies where FTD offers a specific mechanism, prediction, or reinterpretation. Where FTD adds nothing beyond standard physics, this is stated honestly. Where FTD makes specific predictions distinguishable from the standard account, these are flagged.
+
+### Prerequisites
+
+This volume assumes familiarity with Volume I, particularly:
+- The five postulates and two-layer ontology (Vol. I, Chapters 1-2)
+- The manifestation threshold $K_B = 0.511$ (Vol. I, Chapter 2)
+- The gauge group assignment SC $\to$ U(1), FCC $\to$ SU(2), BCC $\to$ SU(3) (Vol. I, Chapter 5)
+- The framework integers $\{3, 4, 7, 13\}$ (Vol. I, Chapter 10)
+
+Standard undergraduate physics (quantum mechanics, thermodynamics, astrophysics) is assumed for the later chapters.

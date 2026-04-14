@@ -1,0 +1,87 @@
+# Bell's Theorem and Tsirelson's Bound {#sec-bell}
+
+Bell's theorem states that no local hidden variable theory can reproduce all predictions of quantum mechanics. FTD is a local hidden variable theory. This chapter explains why both statements are true simultaneously.
+
+## The apparent contradiction
+
+**Bell's theorem (1964):** Any theory satisfying locality + measurement independence gives CHSH parameter $S \leq 2$. [THEOREM --- standard result]
+
+**Tsirelson's bound (1980):** Quantum mechanics gives $S \leq 2\sqrt{2} \approx 2.83$ for maximally entangled states at optimal angles. [THEOREM --- standard result]
+
+**Experiment (Aspect 1982, loophole-free 2015):** $S = 2.83 \pm 0.02$. Quantum prediction confirmed.
+
+**FTD:** A deterministic lattice with local causality (Postulate 4). Bell's theorem applies. $S \leq 2$ at the substrate level. Confirmed in simulation.
+
+The resolution: **$S \leq 2$ and $S = 2\sqrt{2}$ describe different description levels of the same system.**
+
+## The two-level structure [EMERGENT — $S = 2\sqrt{2}$ emerges from QM which itself emerges from the lattice]
+
+| Level | Description | Correlation bound | Why |
+|-------|------------|-------------------|-----|
+| **Substrate** | Lattice $(s, \mathbf{J})$ deterministic, local | $S \leq 2$ | Bell's theorem applies (hidden variables) |
+| **Emergent** | QM ($\psi \in \mathcal{H}$), statistical | $S = 2\sqrt{2}$ | Tsirelson's bound (Hilbert space) |
+
+The substrate is a local hidden variable model. Bell's theorem correctly constrains it to $S \leq 2$. But the emergent quantum description --- constructed from the complexified flux field (@sec-qm) --- is a Hilbert space theory. Tsirelson's bound correctly gives $S = 2\sqrt{2}$ for this description. Both bounds hold at their respective levels.
+
+The "violation" is not the lattice breaking locality. It is the coarse-grained statistical description (QM) having a richer correlation structure than the fine-grained substrate allows. This is analogous to thermodynamic entropy increasing while microscopic dynamics are reversible.
+
+## The three-level mechanism [SELECTION]
+
+The transition from $S = 2$ (substrate) to $S = 2\sqrt{2}$ (emergent) proceeds through three stages:
+
+### Level 1: Substrate (local, deterministic) [THEOREM]
+
+On the lattice, a pair of particles created from a void event $0 \to (+1) + (-1)$ carries opposite charges and anti-correlated flux vectors. A measurement along axis $\hat{a}$ yields $\pm 1$ via sign projection: $A = \text{sign}(\mathbf{J}_A \cdot \hat{a})$.
+
+The correlation function for random 3D flux vectors is:
+$$
+E(\hat{a}, \hat{b}) = \langle A \cdot B \rangle = -1 + \frac{2\theta_{ab}}{\pi}
+\tag{17.1}
+$$
+
+the triangle function. CHSH: $S \leq 2$. [THEOREM --- verified in Monte Carlo]
+
+### Level 2: Complexification (Gauss constraint) [SELECTION]
+
+The Gauss constraint reduces the 3D flux $\mathbf{J} \in \mathbb{R}^3$ to a 2D complex amplitude $\psi = J_x + iJ_y$ (@sec-qm). The correlation function changes from triangle to **cosine**:
+
+$$
+E(\hat{a}, \hat{b}) = -\cos\theta_{ab}
+\tag{17.2}
+$$
+
+because the 2D projection induces a $\pi/2$ phase shift between the two components. The per-particle correlation enhancement is $\sqrt{2}$ (from the curvature of cosine vs. triangle).
+
+### Level 3: Entanglement (sLoop coupling) [SELECTION]
+
+The void event $0 \to (+1) + (-1)$ creates a pair with **shared flux history**. The Gauss constraint forces the pair's transverse flux fields to be anti-correlated: $\psi_B = -\overline{\psi_A}$ in the complexified description. This is the **singlet state**:
+
+$$
+|\psi\rangle = \frac{1}{\sqrt{2}}\left(|+\rangle|-\rangle - |-\rangle|+\rangle\right)
+\tag{17.3}
+$$
+
+The joint probability distribution is **non-factorizable**: $P(A, B | \hat{a}, \hat{b}) \neq P(A | \hat{a}) P(B | \hat{b})$. This non-factorizability, combined with the cosine correlation, produces $S = 2\sqrt{2}$.
+
+## The singlet-state lemma [SELECTION --- derivation target]
+
+::: {.callout-selection}
+## Open derivation target
+The remaining gap: **prove that the void event $0 \to (+1)_A + (-1)_B$ maps to the singlet state (17.3) in the emergent Hilbert space.**
+
+The argument: (a) the Gauss constraint forces anti-correlated transverse flux between the pair; (b) in the complexified description, anti-correlated real flux with correlated phase IS the singlet; (c) the singlet is the unique $S = 0$, $L = 0$ state, and the void event's perfect charge balance forces total spin zero.
+
+This is physically well-motivated but not yet a formal proof. Closing this lemma would upgrade the entire Bell resolution from [SELECTION] to [THEOREM].
+:::
+
+## Why the three paths were wrong
+
+The FTD literature previously explored three substrate-level resolution paths: (1) superdeterminism, (2) detection loophole, (3) continuous-to-discrete projection. All three attempted to get $S > 2$ from the substrate. This is impossible (Bell's theorem is correct) and unnecessary.
+
+$S = 2\sqrt{2}$ is a property of the **emergent** quantum description, not the substrate. Once QM emerges from the lattice (@sec-qm), Tsirelson's bound follows as a theorem of Hilbert space theory. No substrate-level mechanism is needed.
+
+## Experimental compatibility [SELECTION]
+
+The FTD prediction for Bell tests is identical to standard QM: $S = 2\sqrt{2}$ for maximally entangled photon pairs at CHSH-optimal angles ($\theta = \pi/8$). This is compatible with all loophole-free Bell experiments (Hensen et al. 2015, Giustina et al. 2015, Shalm et al. 2015).
+
+The distinction from standard QM: in FTD, the violation has a causal explanation (the shared flux history from the void event), while in standard QM, it is accepted as a brute feature of the Hilbert space structure. The experimental predictions are identical.

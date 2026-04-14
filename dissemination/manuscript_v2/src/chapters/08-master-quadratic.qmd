@@ -1,0 +1,107 @@
+# The Master Quadratic {#sec-quadratic}
+
+The gap equation is the self-consistency condition of the lattice: the coupling constant determined by the lattice's own Green's function must reproduce the lattice dynamics that generated it. Its solutions are the fine structure constant and the number of colors.
+
+## 8.1 The coefficient $K = 16$ [THEOREM]
+
+The gap equation has a coefficient $K$ counting the physical degrees of freedom. This coefficient is derived by four independent routes, all yielding 16:
+
+::: {.callout-theorem}
+## Theorem 8.1 (The coefficient 16)
+$K = 16$ follows from any of:
+
+1. **BCC coordination:** $K = z_{\text{BCC}} \times (\text{non-void states}) = 8 \times 2 = 16$
+2. **Automorphism squared:** $K = |\text{Aut}(E_i)|^2 = 4^2 = 16$
+3. **Binary DOF:** $K = 2^{D+1} = 2^4 = 16$ (binary degrees of freedom in $D+1$ causal dimensions)
+4. **Octahedral stabilizer:** $K = |O_h|/D = 48/3 = 16$
+:::
+
+Route 1 is the most physical: the BCC sublattice has 8 sites, each carrying a non-void state $s \in \{+1, -1\}$, giving $8 \times 2 = 16$ configurations. Route 2 connects to the CM curve: the automorphism group $\text{Aut}(E_i) \cong \mathbb{Z}_4$ has 4 elements, and $4^2 = 16$. Routes 3 and 4 are combinatorial checks. All four agree. [THEOREM]
+
+## 8.2 The budget equation [THEOREM]
+
+The lattice coupling $x = 1/g_c^2$ (inverse squared coupling) must satisfy a **budget constraint**: the total coupling splits between a Coulomb-like phase (proportional to $x$) and a confined phase (proportional to $G^*/x$), exhausting the available bandwidth:
+
+$$
+\frac{x}{K} + \frac{G^*}{x} = 1
+\tag{8.1}
+$$
+
+This is the self-consistency condition: the effective coupling $x$ appears on both sides. The Coulomb term $x/K$ is the fraction of coupling in the deconfined (electromagnetic) sector. The confined term $G^*/x$ is the fraction in the strong sector. Their sum must equal 1 (total bandwidth).
+
+## 8.3 The master quadratic [THEOREM]
+
+Multiplying (8.1) through by $Kx = 16G^{*2}x$:
+
+$$
+x^2 - 16G^{*2} x + 16G^{*3} = 0
+\tag{8.2}
+$$
+
+This is the **master quadratic**. Its coefficients are:
+$$
+a = 1, \quad b = -16G^{*2}, \quad c = 16G^{*3}
+$$
+
+The coefficient $b = -16G^{*2} = -K \cdot G^{*2}$ absorbs both the DOF count ($K = 16$) and the Watson identity ($G^{*2} = 2\pi W_3$). The constant term $c = 16G^{*3} = K \cdot G^{*3}$ ensures the product of roots is $K G^{*3}$.
+
+## 8.4 The discriminant [THEOREM]
+
+$$
+\Delta = b^2 - 4ac = (16G^{*2})^2 - 4 \cdot 16G^{*3} = 256G^{*4} - 64G^{*3} = 64G^{*3}(4G^* - 1)
+\tag{8.3}
+$$
+
+Since $G^* \approx 2.959 > 1/4$, the discriminant is positive: $\Delta > 0$. The quadratic has **two distinct real roots**. This is the **physics domain** (Domain A in the FTD domain partition).
+
+For comparison: replacing $K = 16$ with a generic parameter $k$ gives discriminant $\Delta_k = k^2 G^{*4} - 4kG^{*3} = kG^{*3}(kG^* - 4)$. The critical value $k_{\text{crit}} = 4/G^* \approx 1.352$ gives $\Delta = 0$ (degenerate roots, the measurement interface). For $k < k_{\text{crit}}$, the roots are complex (the consciousness domain). This trichotomy is explored in @sec-consciousness.
+
+## 8.5 The roots [THEOREM]
+
+By the quadratic formula:
+
+$$
+x_\pm = 8G^{*2} \pm 4G^* \sqrt{G^*(4G^* - 1)}
+\tag{8.4}
+$$
+
+Numerically:
+$$
+x_+ = 137.0361714582\ldots \qquad x_- = 3.0239639163\ldots
+$$
+
+**Vieta relations:**
+$$
+x_+ + x_- = 16G^{*2} = 140.0601\ldots
+\tag{8.5}
+$$
+$$
+x_+ \cdot x_- = 16G^{*3} = 414.368\ldots
+\tag{8.6}
+$$
+
+The identification $x_+ = 1/\alpha$ and $\lfloor x_- \rfloor = N_c = 3$ is the subject of the next chapter.
+
+## 8.6 Self-referential closure [THEOREM for structure]
+
+The gap equation (8.2) is not an externally imposed relation. It is the **self-consistency condition** of the lattice: the coupling $x$ appears in the lattice Hamiltonian, which determines the Green's function $G(0) = G^{*2}/(2\pi)$, which determines the self-energy, which determines the coupling. The equation's output is its own input.
+
+This circularity is not a defect. It is the mathematical content of the statement: "the lattice determines its own parameters." A non-circular derivation would require external input (a background theory that provides $\alpha$). The self-referential structure means FTD is a **closed** system: the observer IS the observed (@sec-observer).
+
+The gap equation can be written as a fixed-point iteration:
+$$
+x_{n+1} = 16G^{*2}\left(1 - \frac{G^*}{x_n}\right)
+\tag{8.7}
+$$
+
+Starting from any $x_0 > G^*$, this converges to $x_+$ with contraction rate $|G^*/(x_+ - G^*)| \approx 0.022$ --- rapid convergence in $\sim$10 iterations. The root $x_-$ is an unstable fixed point (contraction rate $\approx 45$). The stable fixed point is the electromagnetic coupling; the unstable one is the confining coupling. [THEOREM for convergence; SELECTION for physical identification]
+
+## 8.7 Summary
+
+The master quadratic encodes the entire coupling structure of the Standard Model in a single equation with coefficients determined by:
+
+- $G^*$ from the BCC Watson integral (Chapter 6)
+- $K = 16$ from degree-of-freedom counting (Section 8.1)
+- Self-consistency from the gap equation structure (Section 8.6)
+
+From these two numbers ($G^*$ and 16), the fine structure constant, the number of quark colors, and all derived coupling constants follow. This is the content of Book II.

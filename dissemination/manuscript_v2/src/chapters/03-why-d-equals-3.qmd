@@ -1,0 +1,87 @@
+# Why $D = 3$ {#sec-d3}
+
+The spatial dimensionality $D = 3$ is not axiomatic in FTD. It is uniquely selected by six independent constraints, each of which requires $D = 3$ and excludes all other values. This chapter collects and proves these constraints.
+
+## 3.1 The six arguments
+
+::: {.callout-theorem}
+## Theorem 3.1 (Dimensional uniqueness)
+The integer lattice $\mathbb{Z}^D$ supports a physically viable theory (stable orbits, non-trivial gauge structure, finite Green's functions, and self-consistent coupling) if and only if $D = 3$.
+:::
+
+The proof proceeds through six independent constraints, each eliminating different values of $D$.
+
+### Constraint 1: Stable bound orbits [THEOREM]
+
+In $D$ spatial dimensions, the gravitational (or Coulomb) potential satisfies $\nabla^2 \phi = 0$ with solution $\phi(r) \propto r^{2-D}$ for $D \geq 3$. The effective radial potential for an orbiting particle is:
+
+$$
+V_{\text{eff}}(r) = -\frac{\alpha}{r^{D-2}} + \frac{L^2}{2mr^2}
+$$
+
+For $D \geq 4$, the centrifugal barrier $L^2/r^2$ is always overcome by $\alpha/r^{D-2}$ at small $r$: all orbits spiral inward. For $D = 2$, the potential is logarithmic and orbits are marginally stable. Only $D = 3$ admits stable, closed Keplerian orbits.
+
+This is the Ehrenfest-Tangherlini argument (1917/1963). [THEOREM --- standard result in mathematical physics]
+
+### Constraint 2: Non-trivial Gauss constraint [THEOREM]
+
+The Gauss constraint $\nabla \cdot \mathbf{J} = \rho$ (@sec-gauss) requires the flux field $\mathbf{J}$ to have $D$ components. The constraint removes $N - 1$ degrees of freedom from $DN$ total, leaving $(D-1)N + 1$ physical degrees of freedom.
+
+For $D = 1$: the constraint fixes $\mathbf{J}$ completely (up to a constant). No propagating degrees of freedom remain. Physics is trivial.
+
+For $D = 2$: one transverse degree of freedom per site. Gauge theory exists but is confining at all scales (no deconfined phase). The Mermin-Wagner theorem prevents spontaneous symmetry breaking.
+
+For $D = 3$: two transverse degrees of freedom per site. This is the minimum for both propagating gauge bosons *and* a deconfined Coulomb phase. The Standard Model requires both. [THEOREM]
+
+For $D \geq 4$: more transverse DOF, but orbits are unstable (Constraint 1). [THEOREM]
+
+### Constraint 3: Convergent lattice Green's function [THEOREM]
+
+The lattice Green's function at the origin is:
+
+$$
+G(0) = \frac{1}{(2\pi)^D} \int_{[0,2\pi]^D} \frac{d^D k}{\sum_{\mu=1}^D (1 - \cos k_\mu)}
+$$
+
+This integral converges if and only if $D \geq 3$. For $D = 1$ and $D = 2$, the integral diverges logarithmically (the random walk is recurrent). For $D \geq 3$, the walk is transient and $G(0) < \infty$.
+
+The Watson integral $W_D$ exists as a finite constant only for $D \geq 3$. The master quadratic requires a finite self-energy coefficient, which requires a convergent Green's function. [THEOREM]
+
+### Constraint 4: The Sommerfeld-Schwarzschild identity [THEOREM]
+
+The relativistic orbital equation (Sommerfeld, 1916) and the Schwarzschild geodesic equation (1916) are identical if and only if $D = 3$. In $D$ dimensions, the Sommerfeld equation has a centrifugal term $\propto 1/r^2$ while the Schwarzschild equation has correction terms $\propto 1/r^{D-1}$. These match only when $D - 1 = 2$, i.e., $D = 3$.
+
+This identity is what allows FTD to recover general relativity from the lattice dynamics (@sec-gravity). It fails for $D \neq 3$. [THEOREM]
+
+### Constraint 5: BCC Watson integral produces $G^*$ [THEOREM]
+
+The BCC lattice Green's function at the origin (@sec-bcc) involves the integral:
+
+$$
+W_3^{(\text{BCC})} = \frac{1}{(2\pi)^D} \int \frac{d^D k}{1 - \prod_{\mu=1}^D \cos k_\mu}
+$$
+
+For $D = 3$, this evaluates to $\Gamma(1/4)^4 / (4\pi^3) = G^{*2}/(2\pi)$, connecting to the lemniscatic constant via the CM curve $y^2 = x^3 - x$ with $j = 1728$.
+
+For $D = 2$: the integral diverges (the 2D BCC lattice is equivalent to a rotated square lattice with a logarithmically divergent Green's function).
+
+For $D = 4$: the product $\prod_{\mu=1}^4 \cos k_\mu$ has 16 zero modes on the torus, and the resulting integral evaluates to a number involving $\Gamma(1/4)^8$ that does not simplify to a known CM curve period. No self-consistent gap equation can be formed. [THEOREM for the $D = 3$ identity; SELECTION for the claim that other $D$ yield no viable physics]
+
+### Constraint 6: Pairing ontology [SELECTION]
+
+The dimensional counting argument from FTD's pairing principle: a single axis is "half a dimension" ($D = 0.5$) because a direction without a reference frame is undetermined. A pair of axes in relation constitutes one full dimension: $D(\text{axis}_1 \otimes \text{axis}_2) = 1$. Three spatial dimensions therefore require six axes organized in three pairs. The number of ways to pair six objects is $6!/(2^3 \cdot 3!) = 15$, and the minimum pairing with a distinguished time axis gives $D = 3$.
+
+This argument is suggestive but not uniquely constraining. [SELECTION]
+
+## 3.2 Summary
+
+| Constraint | Excludes | Requires |
+|-----------|----------|----------|
+| Stable orbits | $D \geq 4$ | $D \leq 3$ |
+| Non-trivial gauge | $D = 1$ | $D \geq 2$ |
+| Convergent Green's function | $D \leq 2$ | $D \geq 3$ |
+| Sommerfeld-Schwarzschild | $D \neq 3$ | $D = 3$ |
+| BCC Watson = $G^{*2}/(2\pi)$ | $D \neq 3$ | $D = 3$ |
+| Pairing ontology | $D \neq 3$ | $D = 3$ |
+
+The intersection is $\{3\}$. The first four constraints are [THEOREM]; the fifth is [THEOREM] for the identity and [SELECTION] for the physical interpretation; the sixth is [SELECTION]. The result $D = 3$ holds even if the two [SELECTION] arguments are dropped.
