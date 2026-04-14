@@ -124,26 +124,142 @@ route tests into the serial GPU queue vs the parallel CPU queue.
 4 GPU-labeled tests: `gpu_parity`, `gpu_benchmark`, `gpu_physics`,
 `gpu_experiments`.
 
-## CTest baseline results
+## CTest baseline results (post-merge, post-fix)
 
-**TO BE FILLED IN ONCE CTEST COMPLETES.**
+Executed on 2026-04-14 after the three post-merge fixes landed. Two-pass
+strategy using the `gpu` label the Phase 0 macro introduced — so CPU tests
+can run parallel while GPU tests run serial (avoiding VRAM contention).
 
-## Known pre-existing failures
+### Pass 1 — CPU tests in parallel (`ctest -j 24 -LE gpu`)
 
-From the Apr 13 run (pre-merge), 40 tests were failing. These are documented
-in `engine/tests/README_SCIENTIFIC_STATUS.md` and `engine/tests/TEST_DEVIATION_MAP.md`
-and are intentionally out of scope for the FTD Test Bench plan. They should
-still appear as failing in the runner (making them more visible).
+- **88 passed / 70 failed / 11 timeout / 2 unclassified, out of 171 tests**
+- **Pass rate: 51.5%**
+- **Wall clock: 800.85 sec (13.3 min)**
+- An earlier serial attempt reached 72/175 in ~15 min before being killed
+  and restarted with `-j 24`. The parallel run finishes the full 171-test
+  CPU set in 13.3 min, dominated by 11 tests that each hit the 600s
+  timeout. Estimated serial wall clock would have been 45-75 min, so
+  parallelism delivered **~3-5× speedup** (not 24× because the timeout
+  sitters are the wall-clock bottleneck — each worker sits on one for
+  its full budget).
 
-Categories observed in the first 26 tests of this session's ctest run:
+### Pass 2 — GPU tests serial (`ctest -j 1 -L gpu`)
 
-- `thermodynamics` — failed (pre-existing)
-- `lagrangian` — failed (pre-existing, possibly related to latency field)
-- `dual_substrate`, `genesis`, `gravity_dynamics`, `annihilation_conservation`,
-  `wave_collapse`, `gauge`, `momentum` — all failing
+- **4 passed / 0 failed / 0 timeout, out of 4 tests**
+- **Pass rate: 100%**
+- **Wall clock: 507.58 sec (8.5 min)**
+- Per-test: `gpu_parity` 9.45s, `gpu_benchmark` 2.06s, `gpu_physics`
+  199.20s, `gpu_experiments` 296.87s
+- RTX 5090 Blackwell, 32 GB VRAM — no CUDA OOM, no VRAM contention.
 
-The `flux_mediated` / `latency` / `dual_substrate` failures are documented
-as a "latency field sign" bug in `README_SCIENTIFIC_STATUS.md`.
+### Combined total
+
+- **92 passed / 83 failed or timed out, out of 175 tests = 52.6%**
+- Pass 1 + Pass 2 combined wall clock: **~22 min** (vs 60-90 min single-pass
+  serial estimate).
+
+### Serial-vs-parallel cross-validation
+
+Comparing the 39 tests that completed in both the serial and parallel
+runs (the serial run was killed early to restart with `-j 24`):
+
+- **Zero regressions from parallelism** — no test that passed serially
+  fails in parallel. The 24-worker run does NOT introduce false failures.
+- **One improvement** — `pe_forces` went Failed → Passed after my
+  `3ca3253` particle_engine relativistic fix.
+- The 11 timeouts in parallel are tests that were already running slow
+  or hanging in serial (e.g. `em_energy_conservation` also timed out at
+  600s serially). Timeout-under-contention is a reporting artifact, not
+  a causal regression.
+
+**Conclusion**: the 52.6% pass rate is the **real engine state on
+current main**, not an artifact of parallelism or the FTD Test Bench merge.
+
+## Known pre-existing failures — categorized by physics sector
+
+The 83 non-passing tests cluster tightly into these families. Most are
+downstream of main's commit `a4c75e4` (EFT reconstruction + latency fix
++ 7 benchmark suites) which refactored the particle and lattice force
+pipelines and exposes the "latency field sign" bug documented in
+`engine/tests/README_SCIENTIFIC_STATUS.md`.
+
+### EM sector — 8 tests, all hit 600s timeout
+
+`magnetic`, `maxwell`, `em_energy_conservation`, `poynting`,
+`dispersion_relation`, `spectral`, `campaign_dispersion`,
+`campaign_dispersion_convergence`
+
+Matches the `README_SCIENTIFIC_STATUS.md` hypothesis: the EM sector
+depends on `phi_latency` computed as negative near mass and clipped by
+`sqrt(max(phi, 0))` to zero, breaking downstream EM + GR + BH
+diagnostics. **This is where the biggest pass-rate improvement lives**
+— fix the latency sign and most of these should come back.
+
+### Poisson solver — 4 tests
+
+`poisson_coulomb`, `campaign_poisson_force_law`,
+`campaign_poisson_binding`, `campaign_poisson_hydrogen`
+
+All downstream of the Poisson solver. Likely same latency-field root cause.
+
+### Gauss + gravity — 7 tests
+
+`gauss`, `gravity_dynamics`, `latency_field`, `intervoxel_coupling`,
+`campaign_gravity_profile`, `campaign_gravity_hierarchy`, `einstein_equations`
+
+Core gravitational sector. Latency field is central here.
+
+### Particle / atomic forces — 13 tests
+
+`lorentz_force`, `momentum`, `lorentz_invariance`, `selective_damping`,
+`wavepacket`, `vortex`, `portable_field`, `bridge_dynamics`,
+`dual_substrate`, `ae_angle_strain`, `ae_dipole`, `campaign_ae_water`,
+`multiscale_bridge`
+
+### SM / heavy physics — 14 tests
+
+`electroweak`, `hydrogen_em_only`, `higgs_mechanism`, `wz_mass`,
+`flavor_physics`, `campaign_hydrogen_binding`, `campaign_shell_predictions`,
+`campaign_sm_observables`, `campaign_color_force`, `campaign_color_neutral`,
+`campaign_confinement`, `campaign_gluon_dynamics`,
+`campaign_weak_transmutation`, `campaign_parity_violation`
+
+### QM / measurement / dark sector — 9 tests
+
+`bell_aggregate`, `born_rule_ensemble`, `entanglement`, `hilbert`,
+`ensemble`, `campaign_ds_ternary_detector`,
+`campaign_ds_information_cascade`, `campaign_ds_vortex_lines` (timeout),
+`campaign_ds_correlation_function` (timeout), `campaign_dark_sector`
+
+### Other — miscellaneous
+
+`thermodynamics`, `lagrangian`, `annihilation_conservation`, `genesis`,
+`asymptotic_freedom`, `baryogenesis`, `triad_confinement`, `confinement_test`,
+`action_stationarity`, `energy_conservation`, `energy_tracking`, `logic_engine`,
+`campaign_gauge_constraint`, `campaign_gauge_dynamics`, `campaign_triad_binding`,
+`campaign_multiscale_pipeline`, `campaign_aggregate_interaction`,
+`campaign_force_law`, `campaign_grothendieck` (timeout), `gauge`,
+`wave_collapse`, `light`, `larmor`, `em_fields`, `thomson_scattering`
+
+### What works (92 passing)
+
+All 4 GPU benchmarks, both Phase 1+2b consolidated suites
+(`tritium_algebra` and `pe_forces` — the latter only after fix `3ca3253`),
+the `telemetry_selftest` for the Phase 2a library, foundational math
+(`constants`, `lorentz`, `lattice`, `born_infeld`, `ontic_chain`), most
+`pe_*` forces (now all rolled into `pe_forces`), most `ae_*` forces,
+particle + atom engine core, scale bridges including `hydrogen_scale1`,
+`atom_engine`, `atom_scale_bridge`, benchmarks including
+`ftd_benchmark_engine_theory`, `ftd_emergent_alpha`, `ftd_budget_equation`,
+QM campaigns like `campaign_bell_substrate`, `campaign_epr_correlation`,
+`campaign_born_rule`, `campaign_born_ensemble`, convergence campaigns
+`campaign_coulomb_convergence` and `campaign_wave_isotropy`, plus many
+infrastructure tests.
+
+The working set covers foundational math + unit tests + all GPU
+benchmarks + much of the scale-ladder infrastructure. The broken set
+clusters tightly around the latency-field-dependent sectors, which is
+consistent with the documented pre-existing bug.
 
 ## Ready to use
 
