@@ -30,7 +30,27 @@ representation extracts more correlation from the same underlying data
 because cos(th) > 1 - 2*th/pi for 0 < th < pi/2.
 """
 
+# Phase 8 (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# See docs/superpowers/plans/concurrent-watching-crane.md Phase 8.
+
+import os
+import sys
 import numpy as np
+
+# Try to pick up the project-level PyTorch / CUDA helpers from scripts/constants.py.
+# Fall back to NumPy if torch is not installed.
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
 
 # =============================================================================
 # CONSTANTS
@@ -67,17 +87,28 @@ answer, determined at creation. Bell's theorem guarantees S <= 2.
 """)
 
 # Generate hidden variables
+# The numpy RNG state is advanced identically on both backends so the
+# downstream `independent_complex` / `entangled_joint` MC steps (which
+# use np.random.random) get the same sequence. When TORCH is available
+# the hot substrate `lam_gpu` tensor lives on DEVICE for the vectorized
+# substrate_correlation reductions.
 np.random.seed(42)
 lam = np.random.uniform(0, 2 * np.pi, N_SAMPLES)
+if TORCH is not None:
+    lam = TORCH.from_numpy(lam).to(device=DEVICE, dtype=DTYPE)
 
 def substrate_outcome(setting, lam):
     """Deterministic threshold measurement: sign(cos(lam - setting))"""
+    if TORCH is not None and isinstance(lam, TORCH.Tensor):
+        return TORCH.sign(TORCH.cos(lam - setting))
     return np.sign(np.cos(lam - setting))
 
 def substrate_correlation(a, b, lam):
     """E_sub(a,b) = <A(a,lam) * B(b,lam)> with anti-correlation"""
     A = substrate_outcome(a, lam)
     B = -substrate_outcome(b, lam)  # Anti-correlated pair
+    if TORCH is not None and isinstance(A, TORCH.Tensor):
+        return (A * B).mean().item()
     return np.mean(A * B)
 
 # Compute substrate correlations
@@ -291,7 +322,12 @@ field with the particles, creating joint dependency.
 """)
 
 # Generate hidden variables
+# (re-drawn here so Section 1's `lam` does not leak into Section 4 accidentally)
 lam = np.random.uniform(0, 2 * np.pi, N_SAMPLES)
+if TORCH is not None:
+    lam_t = TORCH.from_numpy(lam).to(device=DEVICE, dtype=DTYPE)
+else:
+    lam_t = None
 
 # --- Level 2: Independent complex measurement ---
 def independent_complex(setting, lam, anti=False):
@@ -375,9 +411,15 @@ for (sa, sb) in pairs:
     theta = a_val - b_val
 
     # Level 1: deterministic threshold
-    A1 = substrate_outcome(a_val, lam)
-    B1 = -substrate_outcome(b_val, lam)
-    e1 = np.mean(A1 * B1)
+    if TORCH is not None:
+        # GPU-accelerated substrate product + reduction
+        A1 = substrate_outcome(a_val, lam_t)
+        B1 = -substrate_outcome(b_val, lam_t)
+        e1 = (A1 * B1).mean().item()
+    else:
+        A1 = substrate_outcome(a_val, lam)
+        B1 = -substrate_outcome(b_val, lam)
+        e1 = np.mean(A1 * B1)
     E_L1.append(e1)
 
     # Level 2: independent complex (Born rule, each particle separate)
