@@ -26,10 +26,31 @@ Usage:
     python look_elsewhere_monte_carlo.py --samples 1000000
 """
 
+# Phase 8b (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# Also fixes a pre-existing IndexError in the match-reporting code where
+# filtered-array indices were incorrectly treated as chunk-global indices
+# (see the `hits1`/`hits2` blocks below). The bug triggered at 1M samples
+# because finding any match required indexing into x1 with the wrong shape.
+
+import os
+import sys
 import numpy as np
 import argparse
 import time
 from scipy.special import gamma
+
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
 
 # =============================================================================
 # CONSTANTS & TARGETS
@@ -115,14 +136,31 @@ def run_monte_carlo(num_samples=1000000, seed=42):
         # Note: In FTD, the equation is x^2 - 16G*^2 x + 16G*^3 = 0
         # So b = -16G*^2, c = 16G*^3
         # Our generator covers this form (C1=-16, p1=2, C2=16, p2=3)
-        
-        b = c1 * (bases ** p1)
-        c_term = c2 * (bases ** p2)
-        
-        # 5. Solve Quadratic: x = (-b +/- sqrt(b^2 - 4ac)) / 2a
-        # a = 1
-        
-        discriminant = b**2 - 4 * c_term
+
+        if TORCH is not None:
+            # GPU path: do the dominant FLOPs (b, c_term, discriminant) on
+            # DEVICE, then pull them back to CPU for the downstream boolean
+            # indexing logic. RNG draws stay on CPU so the seeded numpy
+            # stream is preserved and the hit report is reproducible.
+            bases_t = TORCH.tensor(bases, device=DEVICE, dtype=DTYPE)
+            c1_t = TORCH.tensor(c1, device=DEVICE, dtype=DTYPE)
+            c2_t = TORCH.tensor(c2, device=DEVICE, dtype=DTYPE)
+            p1_t = TORCH.tensor(p1, device=DEVICE, dtype=DTYPE)
+            p2_t = TORCH.tensor(p2, device=DEVICE, dtype=DTYPE)
+            b_t = c1_t * TORCH.pow(bases_t, p1_t)
+            c_term_t = c2_t * TORCH.pow(bases_t, p2_t)
+            disc_t = b_t * b_t - 4 * c_term_t
+            b = b_t.detach().cpu().numpy()
+            c_term = c_term_t.detach().cpu().numpy()
+            discriminant = disc_t.detach().cpu().numpy()
+        else:
+            b = c1 * (bases ** p1)
+            c_term = c2 * (bases ** p2)
+
+            # 5. Solve Quadratic: x = (-b +/- sqrt(b^2 - 4ac)) / 2a
+            # a = 1
+
+            discriminant = b**2 - 4 * c_term
         
         # Filter: Discriminant must be non-negative for real roots
         valid_d = discriminant >= 0
@@ -153,21 +191,31 @@ def run_monte_carlo(num_samples=1000000, seed=42):
                 # This is getting complex for vectorized. Let's precise loop for hits only?
                 # Actually, simpler: just store the counts most of the time.
                 # But we want to SEE the false positives if any.
-                
+
                 # Reconstruct parameters for hits
                 # Map subset indices back to chunk indices
                 valid_indices = np.where(valid_d)[0]
                 hit_indices = valid_indices[indices]
-                
-                for idx in hit_indices:
+
+                # Bug fix: iterate over both the subset-local index (into
+                # the filtered `x1`) and the chunk-global index (into `c1`,
+                # `p1`, etc). The original unconditionally indexed `x1` with
+                # the chunk-global index, which is out of bounds whenever
+                # at least one sample had a negative discriminant before a
+                # hit (i.e. always, at 1e6 samples).
+                for subset_idx, chunk_idx in zip(indices, hit_indices):
+                    # Recompute the root from chunk-global b / c_term to
+                    # avoid the filtered-vs-chunk confusion entirely.
+                    d_val = b[chunk_idx]**2 - 4 * c_term[chunk_idx]
+                    root_val = (-b[chunk_idx] + np.sqrt(d_val)) / 2
                     matches.append({
-                        'base': base_names[base_indices[idx]],
-                        'C1': c1[idx],
-                        'p1': p1[idx],
-                        'C2': c2[idx],
-                        'p2': p2[idx],
-                        'root': x1[idx], # Recalculate or store? calculate is fine
-                        'diff_ppm': abs(x1[idx] - ALPHA_INV_TARGET)/ALPHA_INV_TARGET * 1e6
+                        'base': base_names[base_indices[chunk_idx]],
+                        'C1': c1[chunk_idx],
+                        'p1': p1[chunk_idx],
+                        'C2': c2[chunk_idx],
+                        'p2': p2[chunk_idx],
+                        'root': root_val,
+                        'diff_ppm': abs(root_val - ALPHA_INV_TARGET)/ALPHA_INV_TARGET * 1e6
                     })
 
             if np.any(hits2):

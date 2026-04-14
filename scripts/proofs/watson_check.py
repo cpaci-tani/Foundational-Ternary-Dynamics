@@ -42,13 +42,68 @@ Hmm but that would give G(0) = 1.393/2 = 0.697, not matching standard results.
 
 Actually let me look up the standard result more carefully.
 """
+
+# Phase 8b (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# The hot triple Python for-loops at N=500 and the convergence sweep at
+# N in [50..500] are vectorized through broadcasting reductions, with
+# chunking along i1 to bound peak memory.
+
+import os
+import sys
 import numpy as np
 from scipy.special import gamma
 
-# The standard result is:
-# W_3 = sqrt(6)/(96*pi^3) * Gamma(1/4)^4
-# OR equivalently
-# W_3 = Gamma(1/4)^4 / (4*pi^3)  -- this is what FTD uses
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
+
+
+def _watson_sc_sum_torch(N):
+    """Sum of 1 / (3 - c1 - c2 - c3) over the N**3 midpoint grid (torch)."""
+    dk = np.pi / N
+    idx = TORCH.arange(N, device=DEVICE, dtype=DTYPE)
+    c = TORCH.cos((idx + 0.5) * dk)                 # (N,)
+    c23 = c.unsqueeze(0) + c.unsqueeze(1)           # (N, N)
+    chunk = min(N, 128)
+    total = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c1_chunk = c[start:stop].view(-1, 1, 1)     # (chunk, 1, 1)
+        D = 3.0 - c1_chunk - c23.unsqueeze(0)       # (chunk, N, N)
+        total = total + (1.0 / D).sum()
+    return float(total.item())
+
+
+def _watson_sc_sum_numpy(N):
+    """Same sum, vectorized with NumPy broadcasting + chunking along i1."""
+    dk = np.pi / N
+    idx = np.arange(N, dtype=np.float64)
+    c = np.cos((idx + 0.5) * dk)
+    c23 = c[:, None] + c[None, :]                   # (N, N)
+    chunk = min(N, 128)
+    total = 0.0
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c1_chunk = c[start:stop].reshape(-1, 1, 1)
+        D = 3.0 - c1_chunk - c23[None, :, :]        # (chunk, N, N)
+        total += float(np.sum(1.0 / D))
+    return total
+
+
+def _watson_sc_sum(N):
+    if TORCH is not None:
+        return _watson_sc_sum_torch(N)
+    return _watson_sc_sum_numpy(N)
+
 
 Gamma14 = gamma(0.25)
 print(f"Gamma(1/4) = {Gamma14:.12f}")
@@ -74,17 +129,7 @@ print()
 # Let me just compute numerically
 N = 500
 dk = np.pi / N
-total = 0.0
-for i1 in range(N):
-    k1 = (i1 + 0.5) * dk
-    c1 = np.cos(k1)
-    for i2 in range(N):
-        k2 = (i2 + 0.5) * dk
-        c2 = np.cos(k2)
-        for i3 in range(N):
-            k3 = (i3 + 0.5) * dk
-            c3 = np.cos(k3)
-            total += 1.0 / (3 - c1 - c2 - c3)
+total = _watson_sc_sum(N)
 
 # Watson's integral: (1/pi^3) * integral
 watson_numerical = total * dk**3 / np.pi**3
@@ -173,16 +218,6 @@ print()
 # near-singularity at k=0. Let me check convergence.
 for N in [50, 100, 200, 300, 400, 500]:
     dk = np.pi / N
-    total = 0.0
-    for i1 in range(N):
-        k1 = (i1 + 0.5) * dk
-        c1 = np.cos(k1)
-        for i2 in range(N):
-            k2 = (i2 + 0.5) * dk
-            c2 = np.cos(k2)
-            for i3 in range(N):
-                k3 = (i3 + 0.5) * dk
-                c3 = np.cos(k3)
-                total += 1.0 / (3 - c1 - c2 - c3)
+    total = _watson_sc_sum(N)
     result = total * dk**3 / np.pi**3
     print(f"  N={N:4d}: {result:.10f}")

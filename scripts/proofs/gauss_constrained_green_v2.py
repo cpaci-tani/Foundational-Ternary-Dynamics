@@ -16,8 +16,114 @@ The stencil mismatch means hat_k^2 does NOT cancel!
 
 Let me get the 18-point stencil correct.
 """
+# Phase 8b (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# Five compute_*(L) functions (range(L)^3 triple loops over 2*pi*n/L) are
+# re-expressed as vectorized broadcasting reductions. At L in [8..64] the
+# total work is small enough that a single unchunked broadcast fits in RAM.
+
+import os
+import sys
 import numpy as np
 from scipy.special import gamma
+
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
+
+
+def _v2_sums_torch(L, mask_origin=True):
+    """Return (total_6, total_18, total_ratio, total_inv, total_mod_W3).
+
+    All sums are over the L^3 discrete k-grid with k_i = 2*pi*n_i/L.
+    The k=0 origin is masked out to match the original code's
+    `if den < 1e-12: continue` guard (both hat_k2_6 and hat_k2_18 vanish
+    at k=0 and nowhere else on the grid).
+    """
+    idx = TORCH.arange(L, device=DEVICE, dtype=DTYPE)
+    k = 2.0 * np.pi * idx / L
+    c = TORCH.cos(k)                                # (L,)
+    # (L, L, L) grid of cos values
+    c1 = c.view(L, 1, 1)
+    c2 = c.view(1, L, 1)
+    c3 = c.view(1, 1, L)
+    h6 = 2.0 * (3.0 - (c1 + c2 + c3))
+    face = (1.0 - c1) + (1.0 - c2) + (1.0 - c3)
+    edge = (1.0 - c1 * c2) + (1.0 - c1 * c3) + (1.0 - c2 * c3)
+    h18 = (2.0 / 3.0) * face + (2.0 / 3.0) * edge
+    if mask_origin:
+        # Mask k=0 by zeroing the contribution. h6[0,0,0] = 0, h18[0,0,0] = 0,
+        # so replace with 1.0 for division safety and zero out the result.
+        mask = TORCH.ones((L, L, L), device=DEVICE, dtype=DTYPE)
+        mask[0, 0, 0] = 0.0
+        h6_safe = TORCH.where(mask > 0, h6, TORCH.ones_like(h6))
+        h18_safe = TORCH.where(mask > 0, h18, TORCH.ones_like(h18))
+        inv6 = mask * (1.0 / h6_safe)
+        inv18 = mask * (1.0 / h18_safe)
+        ratio = mask * (h6_safe / h18_safe)
+        inv_ratio = mask * (h18_safe / h6_safe)
+        mod_W3 = mask * (h18_safe / (h6_safe * h6_safe))
+    else:
+        inv6 = 1.0 / h6
+        inv18 = 1.0 / h18
+        ratio = h6 / h18
+        inv_ratio = h18 / h6
+        mod_W3 = h18 / (h6 * h6)
+    return (float(inv6.sum().item()),
+            float(inv18.sum().item()),
+            float(ratio.sum().item()),
+            float(inv_ratio.sum().item()),
+            float(mod_W3.sum().item()))
+
+
+def _v2_sums_numpy(L, mask_origin=True):
+    """Same five reductions with NumPy broadcasting."""
+    idx = np.arange(L, dtype=np.float64)
+    k = 2.0 * np.pi * idx / L
+    c = np.cos(k)
+    c1 = c.reshape(L, 1, 1)
+    c2 = c.reshape(1, L, 1)
+    c3 = c.reshape(1, 1, L)
+    h6 = 2.0 * (3.0 - (c1 + c2 + c3))
+    face = (1.0 - c1) + (1.0 - c2) + (1.0 - c3)
+    edge = (1.0 - c1 * c2) + (1.0 - c1 * c3) + (1.0 - c2 * c3)
+    h18 = (2.0 / 3.0) * face + (2.0 / 3.0) * edge
+    if mask_origin:
+        mask = np.ones((L, L, L), dtype=np.float64)
+        mask[0, 0, 0] = 0.0
+        h6_safe = np.where(mask > 0, h6, 1.0)
+        h18_safe = np.where(mask > 0, h18, 1.0)
+        inv6 = mask * (1.0 / h6_safe)
+        inv18 = mask * (1.0 / h18_safe)
+        ratio = mask * (h6_safe / h18_safe)
+        inv_ratio = mask * (h18_safe / h6_safe)
+        mod_W3 = mask * (h18_safe / (h6_safe * h6_safe))
+    else:
+        inv6 = 1.0 / h6
+        inv18 = 1.0 / h18
+        ratio = h6 / h18
+        inv_ratio = h18 / h6
+        mod_W3 = h18 / (h6 * h6)
+    return (float(inv6.sum()),
+            float(inv18.sum()),
+            float(ratio.sum()),
+            float(inv_ratio.sum()),
+            float(mod_W3.sum()))
+
+
+def _v2_sums(L, mask_origin=True):
+    if TORCH is not None:
+        return _v2_sums_torch(L, mask_origin)
+    return _v2_sums_numpy(L, mask_origin)
+
 
 # Constants
 VARPI = 2.622057554292119810
@@ -94,16 +200,7 @@ print("="*80)
 
 def compute_ratio_integral(L):
     """Compute sum_k hat_k^2_6(k) / hat_k^2_18(k) on L^3 lattice"""
-    total = 0.0
-    for n1 in range(L):
-        for n2 in range(L):
-            for n3 in range(L):
-                k = np.array([2*np.pi*n1/L, 2*np.pi*n2/L, 2*np.pi*n3/L])
-                num = hat_k2_6pt(k)
-                den = hat_k2_18pt(k)
-                if den < 1e-12:
-                    continue
-                total += num / den
+    _, _, total, _, _ = _v2_sums(L)
     return total / L**3
 
 for L in [8, 16, 32, 64]:
@@ -119,15 +216,7 @@ print("COMPUTATION B: Scalar Green's function with 18-point stencil")
 print("="*80)
 
 def compute_G_scalar_18(L):
-    total = 0.0
-    for n1 in range(L):
-        for n2 in range(L):
-            for n3 in range(L):
-                k = np.array([2*np.pi*n1/L, 2*np.pi*n2/L, 2*np.pi*n3/L])
-                den = hat_k2_18pt(k)
-                if den < 1e-12:
-                    continue
-                total += 1.0 / den
+    _, total, _, _, _ = _v2_sums(L)
     return total / L**3
 
 for L in [8, 16, 32, 64]:
@@ -136,15 +225,7 @@ for L in [8, 16, 32, 64]:
 
 # Watson integral with 6-point
 def compute_W3_lattice(L):
-    total = 0.0
-    for n1 in range(L):
-        for n2 in range(L):
-            for n3 in range(L):
-                k = np.array([2*np.pi*n1/L, 2*np.pi*n2/L, 2*np.pi*n3/L])
-                den = hat_k2_6pt(k)
-                if den < 1e-12:
-                    continue
-                total += 1.0 / den
+    total, _, _, _, _ = _v2_sums(L)
     return total / L**3
 
 print(f"\n  6-point W_3 (L=64) = {compute_W3_lattice(64):.10f}")
@@ -426,16 +507,7 @@ print()
 
 def compute_inverse_ratio(L):
     """Compute (1/V) sum_k hat_k2_18/hat_k2_6"""
-    total = 0.0
-    for n1 in range(L):
-        for n2 in range(L):
-            for n3 in range(L):
-                k = np.array([2*np.pi*n1/L, 2*np.pi*n2/L, 2*np.pi*n3/L])
-                r6 = hat_k2_6pt(k)
-                r18 = hat_k2_18pt(k)
-                if r6 < 1e-12:
-                    continue
-                total += r18 / r6
+    _, _, _, total, _ = _v2_sums(L)
     return total / L**3
 
 print("COMPUTATION: (1/V) sum_k hat_k2_18(k)/hat_k2_6(k)")
@@ -498,16 +570,7 @@ print()
 
 def compute_modified_W3(L):
     """(1/V) sum_k hat_k2_18/hat_k2_6^2"""
-    total = 0.0
-    for n1 in range(L):
-        for n2 in range(L):
-            for n3 in range(L):
-                k = np.array([2*np.pi*n1/L, 2*np.pi*n2/L, 2*np.pi*n3/L])
-                r6 = hat_k2_6pt(k)
-                r18 = hat_k2_18pt(k)
-                if r6 < 1e-12:
-                    continue
-                total += r18 / (r6 * r6)
+    _, _, _, _, total = _v2_sums(L)
     return total / L**3
 
 print("Modified Watson integrals:")
@@ -520,15 +583,9 @@ for L in [16, 32, 64]:
     print(f"  L={L:3d}: W3_std = {W3_std:.10f}  W3_mod = {W3_mod:.10f}  ratio = {W3_mod/W3_std:.10f}")
 
 def compute_W3_lattice(L):
-    total = 0.0
-    for n1 in range(L):
-        for n2 in range(L):
-            for n3 in range(L):
-                k = np.array([2*np.pi*n1/L, 2*np.pi*n2/L, 2*np.pi*n3/L])
-                den = hat_k2_6pt(k)
-                if den < 1e-12:
-                    continue
-                total += 1.0 / den
+    # Redefined here in the original script; identical body to the first
+    # definition above, so it calls through to the same vectorized path.
+    total, _, _, _, _ = _v2_sums(L)
     return total / L**3
 
 print()
