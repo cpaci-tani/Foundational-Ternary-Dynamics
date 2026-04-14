@@ -27,7 +27,7 @@ from datetime import datetime
 from io import StringIO
 
 # Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # Import all test modules
 from scripts.tests import test_framework_integers

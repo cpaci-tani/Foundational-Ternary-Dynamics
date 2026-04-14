@@ -15,7 +15,7 @@ import sys
 import os
 
 # Add project root to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")))
 
 # ternary_matrix is the archived Python engine (replaced by C++ engine).
 # Skip this entire module if unavailable.
