@@ -178,11 +178,11 @@ add_executable(test_wave_collapse tests/test_wave_collapse.cpp)
 target_link_libraries(test_wave_collapse ftd_core)
 
 # Phase 1: Lagrangian implications
-add_executable(test_wave_speed tests/test_wave_speed.cpp)
-target_link_libraries(test_wave_speed ftd_core)
+# Wave 4a.2 (2026-04-14): wave dynamics consolidated into
+# campaign_wave_dynamics (4 files → 1). Registered via ftd_add_test
+# near the other campaign tests.
 
-add_executable(test_interference tests/test_interference.cpp)
-target_link_libraries(test_interference ftd_core)
+# (test_interference merged into campaign_wave_dynamics)
 
 add_executable(test_gauge tests/test_gauge.cpp)
 target_link_libraries(test_gauge ftd_core)
@@ -478,8 +478,7 @@ ftd_add_test(ftd_wilson_loops tests/benchmark_wilson_loops.cpp GPU_HEAVY
 add_executable(ftd_sm_observables tests/campaign_sm_observables.cpp)
 target_link_libraries(ftd_sm_observables ftd_core)
 
-add_executable(ftd_wave_isotropy tests/campaign_wave_isotropy.cpp)
-target_link_libraries(ftd_wave_isotropy ftd_core)
+# (campaign_wave_isotropy merged into campaign_wave_dynamics)
 
 # Five Minds campaign tests (April 2026)
 add_executable(ftd_plato tests/campaign_plato.cpp)
@@ -572,8 +571,10 @@ add_executable(ftd_integer_sweep tests/campaign_integer_sweep.cpp)
 target_link_libraries(ftd_integer_sweep ftd_core)
 add_executable(ftd_hydrogen_spectrum tests/campaign_hydrogen_spectrum.cpp)
 target_link_libraries(ftd_hydrogen_spectrum ftd_core)
-add_executable(ftd_two_slit tests/campaign_two_slit.cpp)
-target_link_libraries(ftd_two_slit ftd_core)
+# Wave dynamics consolidation target
+ftd_add_test(ftd_wave_dynamics tests/campaign_wave_dynamics.cpp
+             CTEST_NAME campaign_wave_dynamics TIMEOUT 600)
+# (campaign_two_slit merged into campaign_wave_dynamics)
 
 # Double-slit information loss campaigns (3D lattice experiments)
 # All use SimEngine (engine_select.h) for GPU acceleration when CUDA is enabled
@@ -722,8 +723,7 @@ add_test(NAME gravity_dynamics COMMAND test_gravity_dynamics)
 add_test(NAME annihilation COMMAND test_annihilation)
 add_test(NAME annihilation_conservation COMMAND test_annihilation_conservation)
 add_test(NAME wave_collapse COMMAND test_wave_collapse)
-add_test(NAME wave_speed COMMAND test_wave_speed)
-add_test(NAME interference COMMAND test_interference)
+# (wave_speed + interference merged into campaign_wave_dynamics)
 add_test(NAME gauge COMMAND test_gauge)
 add_test(NAME polarization COMMAND test_polarization)
 add_test(NAME momentum COMMAND test_momentum)
@@ -856,7 +856,7 @@ add_test(NAME campaign_statistical_convergence COMMAND ftd_statistical_convergen
 add_test(NAME campaign_dispersion_convergence COMMAND ftd_dispersion_convergence)
 add_test(NAME campaign_coulomb_convergence COMMAND ftd_coulomb_convergence)
 add_test(NAME campaign_sm_observables COMMAND ftd_sm_observables)
-add_test(NAME campaign_wave_isotropy COMMAND ftd_wave_isotropy)
+# (campaign_wave_isotropy merged into campaign_wave_dynamics)
 add_test(NAME campaign_born_rule COMMAND ftd_born_rule)
 add_test(NAME campaign_bell_substrate COMMAND ftd_bell_substrate)
 add_test(NAME campaign_epr_correlation COMMAND ftd_epr_correlation)
@@ -897,7 +897,7 @@ add_test(NAME campaign_novel_predictions COMMAND ftd_novel_predictions)
 add_test(NAME falsifiability COMMAND test_falsifiability)
 add_test(NAME campaign_integer_sweep COMMAND ftd_integer_sweep)
 add_test(NAME campaign_hydrogen_spectrum COMMAND ftd_hydrogen_spectrum)
-add_test(NAME campaign_two_slit COMMAND ftd_two_slit)
+# (campaign_two_slit merged into campaign_wave_dynamics)
 add_test(NAME campaign_ds_phase_recovery COMMAND ftd_ds_phase_recovery)
 add_test(NAME campaign_ds_ternary_detector COMMAND ftd_ds_ternary_detector)
 add_test(NAME campaign_ds_vortex_lines COMMAND ftd_ds_vortex_lines)
@@ -934,7 +934,6 @@ set_tests_properties(
     ensemble correlations spectral tracker
     campaign_statistical_convergence
     campaign_dispersion_convergence campaign_coulomb_convergence
-    campaign_wave_isotropy
     campaign_born_rule campaign_bell_substrate campaign_epr_correlation
     campaign_hydrogen_binding campaign_triad_energy
     campaign_inertial_mass campaign_structure_stability
@@ -948,7 +947,7 @@ set_tests_properties(
     campaign_cosmological_predictions campaign_dark_sector
     campaign_novel_predictions
     falsifiability campaign_integer_sweep
-    campaign_hydrogen_spectrum campaign_two_slit
+    campaign_hydrogen_spectrum campaign_wave_dynamics
     latency_field
     pe_forces tritium_algebra
     campaign_pe_fine_structure
@@ -979,7 +978,8 @@ set_property(TEST
     constants lorentz lattice born_infeld energy gauss stress_energy
     thermodynamics lagrangian ontic_chain dual_substrate genesis
     gravity_dynamics annihilation annihilation_conservation wave_collapse
-    wave_speed interference gauge polarization momentum magnetic
+    # wave_speed/interference merged into campaign_wave_dynamics
+    gauge polarization momentum magnetic
     flux_mediated entanglement variational_coulomb magnetic_lagrangian
     dissipation portable_field particle_lifetime vortex voxel_properties
     lattice_operators discrete_operators bridge_dynamics maxwell csv_export
@@ -1010,7 +1010,7 @@ set_property(TEST
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
     campaign_h2_molecule campaign_multiscale_pipeline
     campaign_statistical_convergence campaign_dispersion_convergence
-    campaign_coulomb_convergence campaign_wave_isotropy
+    campaign_coulomb_convergence campaign_wave_dynamics
     campaign_born_rule campaign_bell_substrate campaign_epr_correlation
     campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
     campaign_structure_stability campaign_color_force campaign_color_neutral
@@ -1019,7 +1019,7 @@ set_property(TEST
     campaign_gravitational_wave campaign_gravity_profile campaign_gravity_hierarchy
     campaign_triad_binding campaign_neutrino_sector
     campaign_cosmological_predictions campaign_dark_sector campaign_novel_predictions
-    campaign_integer_sweep campaign_hydrogen_spectrum campaign_two_slit
+    campaign_integer_sweep campaign_hydrogen_spectrum
     campaign_pe_fine_structure campaign_ae_water campaign_lorentz_measure
     APPEND PROPERTY LABELS "campaign")
 
