@@ -113,6 +113,10 @@ endif()
 # ============================================================================
 if(NOT EMSCRIPTEN)
 
+# ---- Test Telemetry self-test (uses ftd_add_test macro for first time) ----
+# This test exercises the ftd::test NDJSON API. It doesn't need ftd_core.
+ftd_add_test(test_telemetry_selftest tests/test_telemetry_selftest.cpp NO_CORE)
+
 # Foundational
 add_executable(test_constants tests/test_constants.cpp)
 target_link_libraries(test_constants ftd_core)
