@@ -8,7 +8,7 @@ gamma = 0.5772156649015329  # Euler-Mascheroni
 # Layer 1: Elliptic Geometry
 gamma_quarter = math.gamma(0.25)  # Gamma(1/4)
 varpi = gamma_quarter**2 / (2.0 * math.sqrt(2.0 * math.pi))  # lemniscate constant
-M = 4.0 * math.pi / gamma_quarter**2  # Gauss constant = 1/AGM(1,sqrt(2))
+M = 2.0 * math.sqrt(2.0) * math.pi / gamma_quarter**2  # Gauss constant = 1/AGM(1,sqrt(2)) = varpi/pi
 pi_from_lem = varpi * gamma_quarter**2 / (2.0 * math.sqrt(2.0))
 
 # Layer 2: Universal Operator
@@ -57,9 +57,9 @@ ME_OVER_MP = math.sqrt(2.0*math.pi) * (N_BASE**2 / N_C) * ALPHA**11
 # CODATA comparison
 CODATA_ALPHA_INV = 137.035999177
 
-# Engine constants
-DAMPING = 0.05
-C_WAVE = 0.4
+# Engine constants (must match ontic.h)
+DAMPING = ALPHA  # = 1/X_PLUS, per ontic.h line 716
+C_WAVE = 1.0 / math.sqrt(3.0)  # CFL speed = 1/sqrt(D), per ontic.h line 690
 DRAG_PER_AXIS = 1.0 / N_BASE
 N_BASE_SQ = N_BASE * N_BASE
 

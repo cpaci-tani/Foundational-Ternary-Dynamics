@@ -165,26 +165,21 @@ bool AtomEngine::remove_bond(int id_a, int id_b) {
 // Force computation
 // ============================================================================
 
-Vec3 AtomEngine::compute_force(int i) const {
+Vec3 AtomEngine::compute_pairwise_force(int i, int j) const {
     Vec3 f;
     const auto& ai = atoms_[i];
+    const auto& aj = atoms_[j];
 
-    // Accumulate per-force diagnostics if buffer is available
     AtomForceDiag* diag = nullptr;
     if (i < static_cast<int>(force_diag_.size())) {
-        diag = &force_diag_[i];  // force_diag_ is mutable, no const_cast needed
-        *diag = {};  // zero all components
+        diag = &force_diag_[i];
     }
 
-    for (int j = 0; j < static_cast<int>(atoms_.size()); ++j) {
-        if (j == i) continue;
-        const auto& aj = atoms_[j];
+    Vec3 r_vec = aj.position - ai.position;
+    double r2 = r_vec.mag2() + soft_ * soft_;
+    double r = std::sqrt(r2);
 
-        Vec3 r_vec = aj.position - ai.position;
-        double r2 = r_vec.mag2() + soft_ * soft_;
-        double r = std::sqrt(r2);
-
-        if (r < 1e-30) continue;
+    if (r < 1e-30) return f;
 
         Vec3 r_hat = r_vec * (1.0 / r);
 
@@ -305,129 +300,136 @@ Vec3 AtomEngine::compute_force(int i) const {
             }
         }
 
-        // 4. Covalent bond force (harmonic spring)
-        if (toggles.covalent_bonds) {
-            for (const auto& bond : ai.bonds) {
-                if (bond.partner_id == aj.id) {
-                    double dr = r - bond.r_eq;
-                    double f_bond = bond.k_bond * dr;
-                    Vec3 fb = r_hat * f_bond;
-                    f += fb;
-                    if (diag) diag->f_bond += fb;
-                    break;
-                }
-            }
+        return f;
+}
+
+Vec3 AtomEngine::tree_force(int i, int node_idx) const {
+    const BarnesHutNode& node = octree_.nodes[node_idx];
+    const auto& ai = atoms_[i];
+    
+    // Skip empty nodes
+    if (node.total_mass <= 0.0 && node.total_charge == 0.0) return {};
+
+    Vec3 r_vec = node.center_of_mass - ai.position;
+    double r2 = r_vec.mag2() + soft_ * soft_;
+    double r = std::sqrt(r2);
+
+    if (node.is_leaf) {
+        if (node.body_indices.empty()) return {};
+        Vec3 lf;
+        for (int b_idx : node.body_indices) {
+            if (b_idx == i) continue;
+            lf += compute_pairwise_force(i, b_idx);
         }
+        return lf;
+    }
 
-        // 5. Dipole-dipole interaction
-        if (toggles.dipole_dipole) {
-            double mu_i_mag = ai.dipole_moment.mag();
-            double mu_j_mag = aj.dipole_moment.mag();
-            if (mu_i_mag > 1e-30 && mu_j_mag > 1e-30 && r > 1e-10) {
-                Vec3 mi = ai.dipole_moment;
-                Vec3 mj = aj.dipole_moment;
-                double mi_dot_r = mi.x*r_hat.x + mi.y*r_hat.y + mi.z*r_hat.z;
-                double mj_dot_r = mj.x*r_hat.x + mj.y*r_hat.y + mj.z*r_hat.z;
-                double mi_dot_mj = mi.x*mj.x + mi.y*mj.y + mi.z*mj.z;
 
-                // F_dd = (3*ALPHA)/(4*PI*r^5) * [5*(mi.r_hat)(mj.r_hat)*r_hat
-                //         - mj*(mi.r_hat) - mi*(mj.r_hat) - r_hat*(mi.mj)]
-                double coeff = 3.0 * ALPHA / (4.0 * PI * r2 * r2 * r);  // 1/r^5
-                Vec3 fdd = (r_hat * (5.0 * mi_dot_r * mj_dot_r / r2)
-                          - mj * mi_dot_r - mi * mj_dot_r
-                          - r_hat * mi_dot_mj) * coeff;
-                f += fdd;
-                if (diag) diag->f_dipole += fdd;
+    // Barnes-Hut opening angle test (THETA_BH = 0.5)
+    if (node.width() / r < 0.5) {
+        // Far away: monopole approximation ONLY for long-range 1/r^2 Ionic forces
+        Vec3 r_hat = r_vec * (1.0 / r);
+        Vec3 f;
+        AtomForceDiag* diag = nullptr;
+        if (i < static_cast<int>(force_diag_.size())) diag = &force_diag_[i];
+        
+        if (toggles.ionic && ai.charge != 0 && node.total_charge != 0.0) {
+            double f_ionic = -ALPHA * ai.charge * node.total_charge / (4.0 * PI * r2);
+            Vec3 fi = r_hat * f_ionic;
+            f += fi;
+            if (diag) diag->f_ionic += fi;
+        }
+        return f;
+    }
+
+    // Recurse into children
+    Vec3 force = {};
+    for (int c = 0; c < 8; ++c) {
+        if (node.children[c] >= 0) {
+            Vec3 cf = tree_force(i, node.children[c]);
+            force.x += cf.x;
+            force.y += cf.y;
+            force.z += cf.z;
+        }
+    }
+    return force;
+}
+
+Vec3 AtomEngine::compute_force(int i) const {
+    Vec3 f;
+    for (int j = 0; j < static_cast<int>(atoms_.size()); ++j) {
+        if (i == j) continue;
+        f += compute_pairwise_force(i, j);
+    }
+    // Also include bond forces for backward compatibility in tests
+    const auto& ai = atoms_[i];
+    if (toggles.covalent_bonds) {
+        for (const auto& bond : ai.bonds) {
+            int j = index_of(bond.partner_id);
+            if (j < 0) continue;
+            Vec3 r_vec = atoms_[j].position - ai.position;
+            double r2 = r_vec.mag2() + soft_ * soft_;
+            double r = std::sqrt(r2);
+            if (r > 1e-10) {
+                Vec3 r_hat = r_vec * (1.0 / r);
+                double dr = r - bond.r_eq;
+                double f_bond = bond.k_bond * dr;
+                f += r_hat * f_bond;
             }
         }
     }
-
-    // 6. Angle strain (VSEPR) — 3-body bonded triples
-    if (toggles.angle_strain) {
-        // For each pair of bonds on atom i, compute angle and apply restoring force
-        for (int b1 = 0; b1 < static_cast<int>(ai.bonds.size()); ++b1) {
-            for (int b2 = b1 + 1; b2 < static_cast<int>(ai.bonds.size()); ++b2) {
-                int j1 = index_of(ai.bonds[b1].partner_id);
-                int j2 = index_of(ai.bonds[b2].partner_id);
-                if (j1 < 0 || j2 < 0) continue;
-
-                Vec3 r1 = atoms_[j1].position - ai.position;
-                Vec3 r2v = atoms_[j2].position - ai.position;
-                double m1 = std::sqrt(r1.mag2());
-                double m2 = std::sqrt(r2v.mag2());
-                if (m1 < 1e-30 || m2 < 1e-30) continue;
-
-                // Current angle
-                double cos_theta = (r1.x*r2v.x + r1.y*r2v.y + r1.z*r2v.z) / (m1 * m2);
-                if (cos_theta > 1.0) cos_theta = 1.0;
-                if (cos_theta < -1.0) cos_theta = -1.0;
-                double theta = std::acos(cos_theta);
-
-                // Equilibrium angle from VSEPR
-                int nbonds = static_cast<int>(ai.bonds.size());
-                int lone_pairs = ai.valence_electrons - nbonds;
-                if (lone_pairs < 0) lone_pairs = 0;
-                int steric_number = nbonds + lone_pairs;
-
-                double theta_eq;
-                switch (steric_number) {
-                    case 2: theta_eq = PI; break;                // linear (180°)
-                    case 3: theta_eq = 2.0 * PI / 3.0; break;   // trigonal planar (120°)
-                    case 4:
-                        if (lone_pairs == 0) theta_eq = std::acos(-1.0/3.0);      // tetrahedral (109.47°)
-                        else if (lone_pairs == 1) theta_eq = 107.0 * PI / 180.0;  // trigonal pyramidal
-                        else theta_eq = 104.5 * PI / 180.0;                        // bent (water)
-                        break;
-                    default: theta_eq = std::acos(-1.0/3.0); break; // default tetrahedral
-                }
-
-                double delta_theta = theta - theta_eq;
-
-                // Force on central atom i: gradient of V = K_ANGLE * delta_theta^2 / 2
-                // dV/d(theta) = K_ANGLE * delta_theta
-                // Force on i = -dV/dr_i (pushes angle toward equilibrium)
-                // Use the angular force projection:
-                double sin_theta = std::sin(theta);
-                if (std::abs(sin_theta) < 1e-15) continue;
-
-                double dV = K_ANGLE * delta_theta;
-
-                // Force on j1 (perpendicular to r1, in the r1-r2 plane)
-                Vec3 r1_hat = r1 * (1.0 / m1);
-                Vec3 r2_hat = r2v * (1.0 / m2);
-                // Component of r2_hat perpendicular to r1_hat
-                Vec3 perp1 = r2_hat - r1_hat * cos_theta;
-                double perp1_mag = std::sqrt(perp1.mag2());
-                if (perp1_mag < 1e-30) continue;
-                perp1 = perp1 * (1.0 / perp1_mag);
-
-                // Force on atom i from this angle: push angle toward theta_eq
-                // On j1: along perp1 direction, magnitude dV / (m1 * sin_theta)
-                // On j2: along perp2 direction, magnitude dV / (m2 * sin_theta)
-                // On i: reaction force (Newton's 3rd law)
-                Vec3 f_j1 = perp1 * (dV / (m1 * sin_theta));
-                Vec3 perp2 = r1_hat - r2_hat * cos_theta;
-                double perp2_mag = std::sqrt(perp2.mag2());
-                if (perp2_mag < 1e-30) continue;
-                perp2 = perp2 * (1.0 / perp2_mag);
-                Vec3 f_j2 = perp2 * (dV / (m2 * sin_theta));
-
-                // Force on central atom i = -(f_j1 + f_j2) (reaction)
-                Vec3 f_angle = (f_j1 + f_j2) * (-1.0);
-                f += f_angle;
-                if (diag) diag->f_angle += f_angle;
-            }
-        }
-    }
-
     return f;
 }
 
 void AtomEngine::compute_all_forces() {
     forces_.resize(atoms_.size());
     force_diag_.resize(atoms_.size());
+    
+    // O(N) Initialization
     for (int i = 0; i < static_cast<int>(atoms_.size()); ++i) {
-        forces_[i] = compute_force(i);
+        force_diag_[i] = {};
+        forces_[i] = {};
+    }
+
+    // Build O(N log N) spatial partition tree
+    octree_.build(atoms_,
+        [](const Atom& a) { return a.position; },
+        [](const Atom& a) { return a.mass; },
+        [](const Atom& a) { return static_cast<double>(a.charge); }
+    );
+
+    // Tree force accumulation (Ionic Coulomb, LJ 12-6, Hbonds)
+    for (int i = 0; i < static_cast<int>(atoms_.size()); ++i) {
+        if (octree_.root >= 0) {
+            forces_[i] += tree_force(i, octree_.root);
+        }
+    }
+
+    // O(N) Topological Bond evaluations (Harmoic, Angle Strain)
+    for (int i = 0; i < static_cast<int>(atoms_.size()); ++i) {
+        const auto& ai = atoms_[i];
+        AtomForceDiag* diag = &force_diag_[i];
+
+        if (toggles.covalent_bonds) {
+            for (const auto& bond : ai.bonds) {
+                int j = index_of(bond.partner_id);
+                if (j < 0) continue;
+                
+                // Note: bonds are reciprocal, but we process them symmetrically 
+                // by looping over all atoms and pushing forces locally.
+                Vec3 r_vec = atoms_[j].position - ai.position;
+                double r2 = r_vec.mag2() + soft_ * soft_;
+                double r = std::sqrt(r2);
+                if (r > 1e-10) {
+                    Vec3 r_hat = r_vec * (1.0 / r);
+                    double dr = r - bond.r_eq;
+                    double f_bond = bond.k_bond * dr;
+                    Vec3 fb = r_hat * f_bond;
+                    forces_[i] += fb;
+                    diag->f_bond += fb;
+                }
+            }
+        }
     }
 
     // C5 fix: Distribute angle-strain forces to terminal atoms (Newton's 3rd law).
@@ -495,6 +497,120 @@ void AtomEngine::compute_all_forces() {
                     forces_[j1] += f_j1;
                     forces_[j2] += f_j2;
                 }
+            }
+        }
+    }
+
+    // 7. Torsional (Dihedral) Strain — 4-body chains (1-2-3-4)
+    if (toggles.torsional) {
+        for (int i2 = 0; i2 < static_cast<int>(atoms_.size()); ++i2) {
+            const auto& a2 = atoms_[i2];
+            for (const auto& b2 : a2.bonds) {
+                int i3 = index_of(b2.partner_id);
+                if (i2 >= i3) continue; // Process each central bond exactly once
+
+                const auto& a3 = atoms_[i3];
+                // For all other neighbors of i2 (atom 1)
+                for (const auto& b1 : a2.bonds) {
+                    int i1 = index_of(b1.partner_id);
+                    if (i1 == i3) continue;
+
+                    // For all other neighbors of i3 (atom 4)
+                    for (const auto& b3 : a3.bonds) {
+                        int i4 = index_of(b3.partner_id);
+                        if (i4 == i2 || i4 == i1) continue;
+
+                        // Chain found: i1 - i2 - i3 - i4
+                        Vec3 r1 = atoms_[i1].position;
+                        Vec3 r2 = a2.position;
+                        Vec3 r3 = a3.position;
+                        Vec3 r4 = atoms_[i4].position;
+
+                        Vec3 b1v = r2 - r1;
+                        Vec3 b2v = r3 - r2;
+                        Vec3 b3v = r4 - r3;
+
+                        Vec3 m = Vec3::cross(b1v, b2v);
+                        Vec3 n = Vec3::cross(b2v, b3v);
+                        double m2 = m.mag2();
+                        double n2 = n.mag2();
+                        double b2_mag_sq = b2v.mag2();
+                        double b2_mag = std::sqrt(b2_mag_sq);
+
+                        if (m2 < 1e-30 || n2 < 1e-30 || b2_mag < 1e-30) continue;
+
+                        double costheta = m.dot(n) / std::sqrt(m2 * n2);
+                        if (costheta > 1.0) costheta = 1.0;
+                        if (costheta < -1.0) costheta = -1.0;
+
+                        // Sign of dihedral
+                        double sign = b1v.dot(n);
+                        double phi = std::acos(costheta);
+                        if (sign < 0) phi = -phi;
+
+                        // Generic sp3 organic chemistry: 3-fold periodicity
+                        constexpr int n_fold = 3;
+                        constexpr double gamma = 0.0;
+                        double dV_dphi = -0.5 * V_TORSION * n_fold * std::sin(n_fold * phi - gamma);
+
+                        // Gradient chain rule for dihedral derivatives
+                        Vec3 f1 = m * (dV_dphi * b2_mag / m2);
+                        Vec3 f4 = n * (-dV_dphi * b2_mag / n2);
+
+                        double dot12 = b1v.dot(b2v) / b2_mag_sq;
+                        double dot23 = b2v.dot(b3v) / b2_mag_sq;
+
+                        Vec3 f2 = f1 * (dot12 - 1.0) - f4 * dot23;
+                        Vec3 f3 = f4 * (dot23 - 1.0) - f1 * dot12;
+
+                        forces_[i1] += f1;
+                        forces_[i2] += f2;
+                        forces_[i3] += f3;
+                        forces_[i4] += f4;
+                    }
+                }
+            }
+        }
+    }
+
+    // 8. Improper Torsions (Planarity) — 4-body (center + 3 neighbors)
+    if (toggles.improper_torsional) {
+        for (int i = 0; i < static_cast<int>(atoms_.size()); ++i) {
+            const auto& ai = atoms_[i];
+            int nbonds = static_cast<int>(ai.bonds.size());
+            int lone_pairs = ai.valence_electrons - nbonds;
+            if (lone_pairs < 0) lone_pairs = 0;
+            int steric_number = nbonds + lone_pairs;
+
+            // Apply to trigonal planar (sp2) centers
+            if (steric_number == 3 && lone_pairs == 0 && nbonds == 3) {
+                int j1 = index_of(ai.bonds[0].partner_id);
+                int j2 = index_of(ai.bonds[1].partner_id);
+                int j3 = index_of(ai.bonds[2].partner_id);
+                if (j1 < 0 || j2 < 0 || j3 < 0) continue;
+
+                // Polyhedral volume formulation (strictly conserves energy and momentum)
+                Vec3 v1 = atoms_[j1].position - ai.position;
+                Vec3 v2 = atoms_[j2].position - ai.position;
+                Vec3 v3 = atoms_[j3].position - ai.position;
+
+                Vec3 cross23 = Vec3::cross(v2, v3);
+                double vol = v1.dot(cross23);
+
+                // F_j1 = -dV/dr_j1 = -K * Vol * grad(Vol)
+                Vec3 cross31 = Vec3::cross(v3, v1);
+                Vec3 cross12 = Vec3::cross(v1, v2);
+
+                Vec3 f1 = cross23 * (-K_IMPROPER * vol);
+                Vec3 f2 = cross31 * (-K_IMPROPER * vol);
+                Vec3 f3 = cross12 * (-K_IMPROPER * vol);
+                Vec3 f0 = f1 + f2 + f3;
+                f0 = f0 * (-1.0); // Newton's 3rd law
+
+                forces_[j1] += f1;
+                forces_[j2] += f2;
+                forces_[j3] += f3;
+                forces_[i]  += f0;
             }
         }
     }

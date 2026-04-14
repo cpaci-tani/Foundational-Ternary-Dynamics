@@ -20,6 +20,7 @@
 #include "constants.h"     // ALPHA, G_N, K_B, PI, C_SPEED, DAMPING
 #include "scale.h"         // OnticEntity, ScaleLevel
 #include "scale_engine.h"  // ScaleEngine base class
+#include "barnes_hut.h"    // O(N log N) spatial partitioning
 #include <vector>
 #include <cstdint>
 #include <string>
@@ -120,6 +121,27 @@ struct ParticleDiagnostics {
     Vec3 total_momentum;         // sum m * v
     Vec3 total_angular_momentum; // sum r x (m*v)
 };
+
+// ============================================================================
+// Orbital element extraction — Kepler orbit characterization
+// ============================================================================
+
+struct OrbitalElements {
+    double semi_major_axis = 0.0;   // a: half the major axis
+    double eccentricity = 0.0;      // e: 0=circle, 0<e<1 ellipse
+    double periapsis = 0.0;         // closest approach = a*(1-e)
+    double apoapsis = 0.0;          // farthest point = a*(1+e)
+    double period = 0.0;            // T = 2*pi*sqrt(a^3 / alpha_eff)
+    double specific_energy = 0.0;   // E/m (should be negative for bound)
+    double specific_angular_momentum = 0.0; // |L|/m
+    bool bound = false;             // E < 0
+};
+
+// Compute orbital elements for particle orbiting a locked center.
+// alpha_eff = effective coupling (EM + gravity) = ALPHA/(4*PI) + G_N*m_center*m_orbiter
+OrbitalElements compute_orbital_elements(const Particle& orbiter,
+                                          const Particle& center,
+                                          double alpha_eff);
 
 // ============================================================================
 // ParticleEngine
@@ -223,7 +245,13 @@ public:
         return b;
     }
 
-    // Compute force on particle i from all others
+    // Compute exact 1-to-1 force
+    Vec3 compute_pairwise_force(int i, int j) const;
+
+    // Compute Barnes-Hut tree force
+    Vec3 tree_force(int i, int node_idx) const;
+
+    /// Compute specific exact force on particle i
     Vec3 compute_force(int i) const;
 
 private:
@@ -238,6 +266,13 @@ private:
     std::vector<Particle> particles_;
     std::vector<Vec3> forces_;             // Total force buffer (parallel to particles_)
     mutable std::vector<ParticleForceDiag> force_diag_;  // Per-force decomposition (mutable: written by const compute_force)
+
+    using ParticleTree = BarnesHutTree<Particle,
+        Vec3(*)(const Particle&),
+        double(*)(const Particle&),
+        double(*)(const Particle&)>;
+    ParticleTree octree_;
+
     int tick_ = 0;
     int next_id_ = 0;
     double dt_ = 1.0;           // Time step (default 1, can increase for Scale 1)
