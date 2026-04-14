@@ -9,24 +9,68 @@ if(NOT EMSCRIPTEN)
     find_package(OpenMP)
 endif()
 
-# CUDA GPU acceleration (optional — requires CUDA Toolkit 12.0+)
-option(FTD_ENABLE_CUDA "Enable CUDA GPU acceleration (requires NVIDIA GPU)" OFF)
-if(FTD_ENABLE_CUDA AND NOT EMSCRIPTEN)
-    # Allow VS 2025 (v18) — CUDA 13.0 officially supports up to VS 2022,
-    # but VS 2025 works with this flag. Must be set BEFORE enable_language.
+# CUDA GPU acceleration — DEFAULT ON via AUTO probe (Phase 0: FTD Test Bench).
+#
+# Tests are 10–100x faster on GPU. CUDA is now opt-OUT rather than opt-in.
+# If CUDAToolkit is not found on the system (e.g. CI runners without a GPU),
+# we gracefully downgrade to a CPU-only build with a status message.
+#
+# Override behaviors:
+#   -DFTD_ENABLE_CUDA=OFF     → force CPU build even if CUDA is available
+#   -DFTD_ENABLE_CUDA=ON      → require CUDA (error if not found)
+#   (unset / AUTO)            → use CUDA if found, else CPU (default)
+#
+# Probe strategy: find_package(CUDAToolkit) succeeds as long as nvcc exists
+# in PATH, and does NOT require a working host compiler (unlike
+# check_language(CUDA) which tries to compile a test program). This makes
+# the probe robust across both Developer Command Prompt and plain shells.
+#
+if(NOT DEFINED FTD_ENABLE_CUDA)
+    set(FTD_ENABLE_CUDA "AUTO" CACHE STRING "Enable CUDA (ON/OFF/AUTO)")
+endif()
+
+set(_ftd_cuda_active OFF)
+if(NOT EMSCRIPTEN AND NOT FTD_ENABLE_CUDA STREQUAL "OFF")
+    # Non-REQUIRED probe so OFF-path stays clean.
+    find_package(CUDAToolkit QUIET)
+    if(CUDAToolkit_FOUND)
+        set(_ftd_cuda_active ON)
+    elseif(FTD_ENABLE_CUDA STREQUAL "ON")
+        message(FATAL_ERROR "FTD_ENABLE_CUDA=ON but CUDAToolkit not found. "
+                            "Install CUDA Toolkit or set -DFTD_ENABLE_CUDA=OFF.")
+    else()
+        message(STATUS "CUDAToolkit not found — building CPU-only. "
+                       "Install CUDA and re-run cmake for 10-100x test speedup.")
+    endif()
+endif()
+
+if(_ftd_cuda_active)
+    # Allow VS 2025+ (v18) — CUDA 13.0 officially supports up to VS 2022,
+    # but VS 2025/2026 work with this flag. Must be set BEFORE enable_language.
     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --allow-unsupported-compiler")
-    enable_language(CUDA)
-    find_package(CUDAToolkit REQUIRED)
-    set(CMAKE_CUDA_STANDARD 17)
-    # Default: Ada (89: RTX 4060-4090, 5070-5080) + Blackwell (120: GPU)
+
+    # Default architectures: Ada (89: RTX 4060-4090) + Blackwell (120: RTX 5090+)
+    # Must be set BEFORE enable_language(CUDA) — otherwise CMake 3.24+ picks
+    # its own default (often 75 / Turing).
     # Override: cmake -DCMAKE_CUDA_ARCHITECTURES="86;89;120" for Ampere support
     if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES OR CMAKE_CUDA_ARCHITECTURES STREQUAL "")
         set(CMAKE_CUDA_ARCHITECTURES "89;120")
     endif()
+
+    enable_language(CUDA)
+    set(CMAKE_CUDA_STANDARD 17)
     message(STATUS "CUDA enabled — architectures: ${CMAKE_CUDA_ARCHITECTURES}")
     add_compile_definitions(FTD_ENABLE_CUDA)
+    # Make FTD_ENABLE_CUDA boolean-true for downstream if() checks.
+    set(FTD_ENABLE_CUDA ON CACHE STRING "CUDA is enabled" FORCE)
     add_subdirectory(cuda)
+else()
+    set(FTD_ENABLE_CUDA OFF CACHE STRING "CUDA is disabled" FORCE)
 endif()
+
+# Test runner macros (Phase 0 of FTD Test Bench)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(FtdAddTest)
 
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -69,6 +113,10 @@ endif()
 # Unit Tests (native builds only)
 # ============================================================================
 if(NOT EMSCRIPTEN)
+
+# ---- Test Telemetry self-test (uses ftd_add_test macro for first time) ----
+# This test exercises the ftd::test NDJSON API. It doesn't need ftd_core.
+ftd_add_test(test_telemetry_selftest tests/test_telemetry_selftest.cpp NO_CORE)
 
 # Foundational
 add_executable(test_constants tests/test_constants.cpp)
@@ -582,20 +630,8 @@ add_executable(ftd_lorentz_measure tests/campaign_lorentz_measure.cpp)
 target_link_libraries(ftd_lorentz_measure ftd_core)
 
 # Scale 1 Phase 2: ParticleEngine force expansion (7 new forces)
-add_executable(test_pe_exchange tests/test_pe_exchange.cpp)
-target_link_libraries(test_pe_exchange ftd_core)
-add_executable(test_pe_strong tests/test_pe_strong.cpp)
-target_link_libraries(test_pe_strong ftd_core)
-add_executable(test_pe_lorentz tests/test_pe_lorentz.cpp)
-target_link_libraries(test_pe_lorentz ftd_core)
-add_executable(test_pe_magnetic_dipole tests/test_pe_magnetic_dipole.cpp)
-target_link_libraries(test_pe_magnetic_dipole ftd_core)
-add_executable(test_pe_spin_orbit tests/test_pe_spin_orbit.cpp)
-target_link_libraries(test_pe_spin_orbit ftd_core)
-add_executable(test_pe_radiation tests/test_pe_radiation.cpp)
-target_link_libraries(test_pe_radiation ftd_core)
-add_executable(test_pe_relativistic tests/test_pe_relativistic.cpp)
-target_link_libraries(test_pe_relativistic ftd_core)
+# Phase 1+2b POC: consolidated into test_pe_forces (see below)
+ftd_add_test(test_pe_forces tests/test_pe_forces.cpp)
 add_executable(ftd_pe_fine_structure tests/campaign_pe_fine_structure.cpp)
 target_link_libraries(ftd_pe_fine_structure ftd_core)
 
@@ -650,26 +686,8 @@ add_executable(test_wz_mass tests/test_wz_mass.cpp)
 target_link_libraries(test_wz_mass PRIVATE ftd_core)
 
 # Tritium ternary compute library tests (header-only, no ftd_core dependency)
-add_executable(test_trit_packing tests/test_trit_packing.cpp)
-target_include_directories(test_trit_packing PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_arithmetic tests/test_trit_arithmetic.cpp)
-target_include_directories(test_trit_arithmetic PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_logic tests/test_trit_logic.cpp)
-target_include_directories(test_trit_logic PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_threshold tests/test_trit_threshold.cpp)
-target_include_directories(test_trit_threshold PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_vector tests/test_trit_vector.cpp)
-target_include_directories(test_trit_vector PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_matrix tests/test_trit_matrix.cpp)
-target_include_directories(test_trit_matrix PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_trit_convolution tests/test_trit_convolution.cpp)
-target_include_directories(test_trit_convolution PRIVATE ${CMAKE_SOURCE_DIR}/include)
+# Phase 1+2b POC: consolidated into test_tritium_algebra (7 legacy files merged)
+ftd_add_test(test_tritium_algebra tests/test_tritium_algebra.cpp NO_CORE)
 
 endif() # NOT EMSCRIPTEN — end of tests/campaigns/CLI
 
@@ -764,13 +782,8 @@ add_test(NAME latency_field COMMAND test_latency_field)
 add_test(NAME einstein_equations COMMAND test_einstein_equations)
 
 # Scale 1 Phase 2: PE force expansion
-add_test(NAME pe_exchange COMMAND test_pe_exchange)
-add_test(NAME pe_strong COMMAND test_pe_strong)
-add_test(NAME pe_lorentz COMMAND test_pe_lorentz)
-add_test(NAME pe_magnetic_dipole COMMAND test_pe_magnetic_dipole)
-add_test(NAME pe_spin_orbit COMMAND test_pe_spin_orbit)
-add_test(NAME pe_radiation COMMAND test_pe_radiation)
-add_test(NAME pe_relativistic COMMAND test_pe_relativistic)
+# Phase 1+2b POC: 7 legacy pe_* CTest entries consolidated under pe_forces
+# (registered by ftd_add_test() above).
 add_test(NAME campaign_pe_fine_structure COMMAND ftd_pe_fine_structure)
 
 # Scale 2 Phase 3: AE force expansion
@@ -808,13 +821,8 @@ set_tests_properties(
     PROPERTIES TIMEOUT 600)
 
 # Tritium ternary compute library tests
-add_test(NAME trit_packing COMMAND test_trit_packing)
-add_test(NAME trit_arithmetic COMMAND test_trit_arithmetic)
-add_test(NAME trit_logic COMMAND test_trit_logic)
-add_test(NAME trit_threshold COMMAND test_trit_threshold)
-add_test(NAME trit_vector COMMAND test_trit_vector)
-add_test(NAME trit_matrix COMMAND test_trit_matrix)
-add_test(NAME trit_convolution COMMAND test_trit_convolution)
+# Phase 1+2b POC: 7 legacy trit_* CTest entries consolidated under tritium_algebra
+# (registered by ftd_add_test() above).
 
 # GPU tests (only registered when CUDA is enabled)
 if(FTD_ENABLE_CUDA)
@@ -948,8 +956,7 @@ set_tests_properties(
     falsifiability campaign_integer_sweep
     campaign_hydrogen_spectrum campaign_two_slit
     latency_field
-    pe_exchange pe_strong pe_lorentz pe_magnetic_dipole
-    pe_spin_orbit pe_radiation pe_relativistic
+    pe_forces tritium_algebra
     campaign_pe_fine_structure
     ae_hbonds ae_angle_strain ae_dipole ae_thermostat
     ae_electronegativity campaign_ae_water
@@ -983,8 +990,7 @@ set_tests_properties(
     lorentz_force selective_damping em_energy_conservation continuity poynting
     larmor dipole_radiation dispersion_relation thomson_scattering light
     ensemble correlations spectral tracker benchmark latency_field
-    pe_exchange pe_strong pe_lorentz pe_magnetic_dipole pe_spin_orbit
-    pe_radiation pe_relativistic
+    # pe_forces and tritium_algebra auto-labeled as "unit" by ftd_add_test()
     ae_hbonds ae_angle_strain ae_dipole ae_thermostat ae_electronegativity
     action_stationarity asymptotic_freedom atom_toggles atomic_energy
     baryogenesis bell_aggregate born_rule_ensemble confinement_test
@@ -1030,8 +1036,7 @@ set_tests_properties(
 
 # Scale 1: ParticleEngine tests
 set_tests_properties(
-    particle_engine pe_exchange pe_strong pe_lorentz pe_magnetic_dipole
-    pe_spin_orbit pe_radiation pe_relativistic particle_toggles
+    particle_engine pe_forces particle_toggles
     campaign_pe_fine_structure
     PROPERTIES LABELS "scale1")
 
@@ -1040,3 +1045,64 @@ set_tests_properties(
     atom_engine atom_scale_bridge ae_hbonds ae_angle_strain ae_dipole
     ae_thermostat ae_electronegativity atom_toggles campaign_ae_water
     PROPERTIES LABELS "scale2")
+
+# ============================================================================
+# GPU labels (Phase 0, FTD Test Bench)
+# ============================================================================
+#
+# Tests marked with the "gpu" label need a dedicated CUDA device and should
+# be dispatched serially by the test runner's SmartDispatcher. All other
+# tests can run in parallel on CPU workers.
+#
+# Uses set_property(... APPEND ...) so labels stack cleanly with the earlier
+# "unit" / "campaign" / "foundation" labels.
+#
+if(FTD_ENABLE_CUDA)
+    set(_ftd_gpu_tests
+        gpu_parity
+        gpu_benchmark
+        gpu_physics
+        gpu_experiments
+    )
+    foreach(_t IN LISTS _ftd_gpu_tests)
+        if(TEST ${_t})
+            set_property(TEST ${_t} APPEND PROPERTY LABELS "gpu")
+        endif()
+    endforeach()
+    unset(_ftd_gpu_tests)
+endif()
+
+# ============================================================================
+# FTD Test Bench (Phase 3+: Qt6 native test runner)
+# ============================================================================
+#
+# Builds engine/tools/test_runner/ — a Qt6 Widgets native desktop application
+# that drives the CTest inventory, streams NDJSON telemetry from the test
+# subprocesses (see engine/include/ftd/test_telemetry.h), and displays
+# results in a main window with a category tree, output panel, lattice
+# viewer (Phase 4), telemetry charts (Phase 5), and history DB (Phase 6).
+#
+# Controlled by FTD_BUILD_TEST_RUNNER:
+#   AUTO (default) — build if Qt6 is present, silently skip otherwise
+#   ON             — require Qt6; fail configure if not found
+#   OFF            — never build
+#
+# Pass -DCMAKE_PREFIX_PATH=C:/Qt/6.10.2/msvc2022_64 (or equivalent) on the
+# configure command line so find_package(Qt6) resolves.
+#
+set(FTD_BUILD_TEST_RUNNER "AUTO" CACHE STRING
+    "Build the Qt6 test runner GUI (ON/OFF/AUTO)")
+set_property(CACHE FTD_BUILD_TEST_RUNNER PROPERTY STRINGS ON OFF AUTO)
+
+if(NOT FTD_BUILD_TEST_RUNNER STREQUAL "OFF" AND NOT EMSCRIPTEN)
+    find_package(Qt6 QUIET COMPONENTS Core Widgets OpenGL OpenGLWidgets Sql Charts)
+    if(Qt6_FOUND)
+        message(STATUS "FTD Test Bench: enabled (Qt6 ${Qt6_VERSION})")
+        add_subdirectory(tools/test_runner)
+    elseif(FTD_BUILD_TEST_RUNNER STREQUAL "ON")
+        message(FATAL_ERROR "FTD_BUILD_TEST_RUNNER=ON but Qt6 not found. "
+                            "Install Qt6 or set -DFTD_BUILD_TEST_RUNNER=OFF.")
+    else()
+        message(STATUS "FTD Test Bench: disabled (Qt6 not found)")
+    endif()
+endif()
