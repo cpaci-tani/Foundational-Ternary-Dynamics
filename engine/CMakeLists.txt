@@ -272,12 +272,14 @@ target_link_libraries(test_particle_engine ftd_core)
 add_executable(test_scale_bridge tests/test_scale_bridge.cpp)
 target_link_libraries(test_scale_bridge ftd_core)
 
-add_executable(test_hydrogen_scale1 tests/test_hydrogen_scale1.cpp)
-target_link_libraries(test_hydrogen_scale1 ftd_core)
+# Wave 4c.9: test_hydrogen_scale1 + test_hydrogen_em_only +
+# test_hydrogen_spectrum_scale1 + campaign_poisson_hydrogen merged
+# into campaign_hydrogen_spectrum (self-ref target)
+ftd_add_test(ftd_hydrogen_spectrum tests/campaign_hydrogen_spectrum.cpp
+             CTEST_NAME campaign_hydrogen_spectrum TIMEOUT 1800)
 
 # Multi-scale physics recovery tests (April 2026)
-add_executable(test_hydrogen_spectrum_scale1 tests/test_hydrogen_spectrum_scale1.cpp)
-target_link_libraries(test_hydrogen_spectrum_scale1 ftd_core)
+# (test_hydrogen_spectrum_scale1 merged into campaign_hydrogen_spectrum)
 
 add_executable(test_fine_structure_scale1 tests/test_fine_structure_scale1.cpp)
 target_link_libraries(test_fine_structure_scale1 ftd_core)
@@ -409,8 +411,7 @@ target_link_libraries(ftd_aggregate_interaction ftd_core)
 
 # (campaign_poisson_force_law + campaign_poisson_binding merged into campaign_coulomb_force_law)
 
-add_executable(ftd_poisson_hydrogen tests/campaign_poisson_hydrogen.cpp)
-target_link_libraries(ftd_poisson_hydrogen ftd_core)
+# (campaign_poisson_hydrogen merged into campaign_hydrogen_spectrum)
 
 # (campaign_force_law merged into campaign_coulomb_force_law)
 
@@ -558,8 +559,7 @@ add_executable(test_falsifiability tests/test_falsifiability.cpp)
 target_link_libraries(test_falsifiability ftd_core)
 add_executable(ftd_integer_sweep tests/campaign_integer_sweep.cpp)
 target_link_libraries(ftd_integer_sweep ftd_core)
-add_executable(ftd_hydrogen_spectrum tests/campaign_hydrogen_spectrum.cpp)
-target_link_libraries(ftd_hydrogen_spectrum ftd_core)
+# (ftd_hydrogen_spectrum already registered via ftd_add_test above)
 # Wave dynamics consolidation target
 ftd_add_test(ftd_wave_dynamics tests/campaign_wave_dynamics.cpp
              CTEST_NAME campaign_wave_dynamics TIMEOUT 600)
@@ -616,8 +616,7 @@ target_link_libraries(test_sloop ftd_core)
 # (test_lorentz_invariance merged into test_lorentz via Wave 4b.6)
 add_executable(test_electroweak tests/test_electroweak.cpp)
 target_link_libraries(test_electroweak ftd_core)
-add_executable(test_hydrogen_em_only tests/test_hydrogen_em_only.cpp)
-target_link_libraries(test_hydrogen_em_only ftd_core)
+# (test_hydrogen_em_only merged into campaign_hydrogen_spectrum)
 add_executable(ftd_lorentz_measure tests/campaign_lorentz_measure.cpp)
 target_link_libraries(ftd_lorentz_measure ftd_core)
 
@@ -737,8 +736,7 @@ add_test(NAME selffield_profile COMMAND test_selffield_profile)
 add_test(NAME wavepacket COMMAND test_wavepacket)
 add_test(NAME particle_engine COMMAND test_particle_engine)
 add_test(NAME scale_bridge COMMAND test_scale_bridge)
-add_test(NAME hydrogen_scale1 COMMAND test_hydrogen_scale1)
-add_test(NAME hydrogen_spectrum_scale1 COMMAND test_hydrogen_spectrum_scale1)
+# (hydrogen_scale1 + hydrogen_spectrum_scale1 merged into campaign_hydrogen_spectrum)
 add_test(NAME fine_structure_scale1 COMMAND test_fine_structure_scale1)
 add_test(NAME scale_proof_chain COMMAND test_scale_proof_chain)
 add_test(NAME helium_scale1 COMMAND test_helium_scale1)
@@ -823,7 +821,7 @@ add_test(NAME campaign_gauge_constraint COMMAND ftd_gauge_constraint)
 add_test(NAME campaign_free_dynamics COMMAND ftd_free_dynamics)
 add_test(NAME campaign_aggregate_interaction COMMAND ftd_aggregate_interaction)
 # (campaign_poisson_force_law + campaign_poisson_binding merged)
-add_test(NAME campaign_poisson_hydrogen COMMAND ftd_poisson_hydrogen)
+# (campaign_poisson_hydrogen merged)
 # (campaign_force_law merged)
 add_test(NAME campaign_shell_predictions COMMAND ftd_shell_predictions)
 add_test(NAME campaign_energy_audit COMMAND ftd_energy_audit)
@@ -881,7 +879,7 @@ add_test(NAME campaign_novel_predictions COMMAND ftd_novel_predictions)
 # Phase 11: Scientific Validation
 add_test(NAME falsifiability COMMAND test_falsifiability)
 add_test(NAME campaign_integer_sweep COMMAND ftd_integer_sweep)
-add_test(NAME campaign_hydrogen_spectrum COMMAND ftd_hydrogen_spectrum)
+# (campaign_hydrogen_spectrum registered via ftd_add_test)
 # (campaign_two_slit merged into campaign_wave_dynamics)
 add_test(NAME campaign_ds_phase_recovery COMMAND ftd_ds_phase_recovery)
 add_test(NAME campaign_ds_ternary_detector COMMAND ftd_ds_ternary_detector)
@@ -899,7 +897,7 @@ add_test(NAME sloop COMMAND test_sloop)
 # Phase 12b: Precision + Electroweak Sector
 # (lorentz_invariance merged into lorentz)
 add_test(NAME electroweak COMMAND test_electroweak)
-add_test(NAME hydrogen_em_only COMMAND test_hydrogen_em_only)
+# (hydrogen_em_only merged)
 add_test(NAME campaign_lorentz_measure COMMAND ftd_lorentz_measure)
 
 # Timeouts for long-running tests (10 min)
@@ -908,10 +906,9 @@ set_tests_properties(
     selffield_profile wavepacket
     particle_lifetime
     campaign_dispersion campaign_gauge_dynamics campaign_gauge_constraint
-    campaign_poisson_hydrogen
     campaign_energy_audit campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
-    particle_engine scale_bridge hydrogen_scale1
+    particle_engine scale_bridge
     atom_engine atom_scale_bridge multiscale_bridge campaign_h2_molecule
     campaign_multiscale_pipeline
     selective_damping stress_energy
@@ -937,8 +934,8 @@ set_tests_properties(
     campaign_pe_fine_structure
     atom_engine_forces campaign_ae_water
     inflation dark_matter cosmological_constant consciousness sloop
-    electroweak hydrogen_em_only campaign_lorentz_measure
-    helium_scale1 fine_structure_scale1 hydrogen_spectrum_scale1
+    electroweak campaign_lorentz_measure
+    helium_scale1 fine_structure_scale1
     radiative_decay_scale1 scale_proof_chain
     PROPERTIES TIMEOUT 600)
 
@@ -968,7 +965,7 @@ set_property(TEST
     dissipation portable_field particle_lifetime vortex voxel_properties
     lattice_operators discrete_operators bridge_dynamics maxwell csv_export
     logic_engine energy_conservation
-    selffield_profile wavepacket particle_engine scale_bridge hydrogen_scale1
+    selffield_profile wavepacket particle_engine scale_bridge
     atom_engine atom_scale_bridge multiscale_bridge em_fields
     selective_damping em_energy_conservation continuity poynting
     larmor dipole_radiation thomson_scattering light
@@ -980,7 +977,7 @@ set_property(TEST
     entanglement_basis flavor_physics higgs_mechanism hilbert measurement
     particle_toggles spin_statistics triad_confinement wz_mass
     falsifiability inflation dark_matter cosmological_constant consciousness
-    sloop electroweak hydrogen_em_only
+    sloop electroweak
     APPEND PROPERTY LABELS "unit")
 
 # Campaign tests (47 campaign_*.cpp files)
@@ -989,7 +986,6 @@ set_property(TEST
 set_property(TEST
     campaign_dispersion campaign_gauge_dynamics campaign_gauge_constraint
     campaign_free_dynamics campaign_aggregate_interaction
-    campaign_poisson_hydrogen
     campaign_coulomb_force_law
     campaign_energy_audit campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
