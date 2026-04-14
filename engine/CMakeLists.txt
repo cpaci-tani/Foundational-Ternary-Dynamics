@@ -134,8 +134,8 @@ target_link_libraries(test_born_infeld ftd_core)
 
 # (test_energy merged into test_energy_conservation via Wave 4a.3)
 
-add_executable(test_gauss tests/test_gauss.cpp)
-target_link_libraries(test_gauss ftd_core)
+# Wave 4b.5 (2026-04-14): test_gauss_convergence merged into test_gauss
+ftd_add_test(test_gauss tests/test_gauss.cpp CTEST_NAME gauss TIMEOUT 600)
 
 add_executable(test_intervoxel_coupling tests/test_intervoxel_coupling.cpp)
 target_link_libraries(test_intervoxel_coupling ftd_core)
@@ -302,8 +302,7 @@ target_link_libraries(test_multiscale_bridge ftd_core)
 add_executable(test_em_fields tests/test_em_fields.cpp)
 target_link_libraries(test_em_fields ftd_core)
 
-add_executable(test_gauss_convergence tests/test_gauss_convergence.cpp)
-target_link_libraries(test_gauss_convergence ftd_core)
+# (test_gauss_convergence merged into test_gauss via Wave 4b.5)
 
 add_executable(test_lorentz_force tests/test_lorentz_force.cpp)
 target_link_libraries(test_lorentz_force ftd_core)
@@ -705,7 +704,7 @@ add_test(NAME lorentz COMMAND test_lorentz)
 add_test(NAME lattice COMMAND test_lattice)
 add_test(NAME born_infeld COMMAND test_born_infeld)
 # (test_energy merged into energy_conservation)
-add_test(NAME gauss COMMAND test_gauss)
+# (gauss registered via ftd_add_test above)
 add_test(NAME intervoxel_coupling COMMAND test_intervoxel_coupling)
 add_test(NAME stress_energy COMMAND test_stress_energy)
 add_test(NAME thermodynamics COMMAND test_thermodynamics)
@@ -754,7 +753,7 @@ add_test(NAME atom_engine COMMAND test_atom_engine)
 add_test(NAME atom_scale_bridge COMMAND test_atom_scale_bridge)
 add_test(NAME multiscale_bridge COMMAND test_multiscale_bridge)
 add_test(NAME em_fields COMMAND test_em_fields)
-add_test(NAME gauss_convergence COMMAND test_gauss_convergence)
+# (gauss_convergence merged into gauss)
 add_test(NAME lorentz_force COMMAND test_lorentz_force)
 add_test(NAME selective_damping COMMAND test_selective_damping)
 add_test(NAME em_energy_conservation COMMAND test_em_energy_conservation)
@@ -978,7 +977,7 @@ set_property(TEST
     lattice_operators discrete_operators bridge_dynamics maxwell csv_export
     logic_engine poisson_coulomb energy_conservation
     selffield_profile wavepacket particle_engine scale_bridge hydrogen_scale1
-    atom_engine atom_scale_bridge multiscale_bridge em_fields gauss_convergence
+    atom_engine atom_scale_bridge multiscale_bridge em_fields
     lorentz_force selective_damping em_energy_conservation continuity poynting
     larmor dipole_radiation dispersion_relation thomson_scattering light
     ensemble correlations spectral tracker benchmark latency_field
