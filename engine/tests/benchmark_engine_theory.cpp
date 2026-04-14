@@ -605,6 +605,7 @@ void benchmark_latency(int L, int ticks) {
     const int mid = L / 2;
 
     ftd::RenderBridge rb(L);
+    rb.force_cpu();  // CUDA lacks solve_latency_poisson; force CPU path
     rb.toggles.genesis = false;
     rb.toggles.latency_field = true;
     rb.toggles.gravity = true;
