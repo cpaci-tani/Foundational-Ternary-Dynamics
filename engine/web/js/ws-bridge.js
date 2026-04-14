@@ -25,12 +25,15 @@ export class WebSocketBridge {
         this.ready = false;
         this.latticeSize = 32;
 
-        // Toggle state mirror (updated from server, defaults match term_toggles.h)
+        // Toggle state mirror (updated from server, defaults match config/toggles.js)
+        // These are overwritten by the server's actual state on connect,
+        // but provide sane fallbacks if the server is slow to respond.
         this._toggles = {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
-            gauss_projection: true, forces: true, gravity: true, movement: true,
-            poisson_coulomb: true, lorentz_force: true, selective_damping: true,
-            larmor_radiation: false, dual_substrate: true, weak_transmutation: true,
+            gauss_projection: true, forces: true, gravity: false, movement: true,
+            poisson_coulomb: true, lorentz_force: false, selective_damping: false,
+            larmor_radiation: false, dual_substrate: false, confinement: false,
+            weak_transmutation: true,
             color_forces: false, strong_force: false, triad_binding: false,
             pair_production: false, exchange_force: false, latency_field: false,
         };
@@ -47,6 +50,13 @@ export class WebSocketBridge {
     }
 
     async connect() {
+        // Guard: reject if already connected or connecting to prevent duplicate sockets
+        if (this._connected) {
+            return Promise.resolve(this);
+        }
+        if (this._ws && this._ws.readyState === WebSocket.CONNECTING) {
+            return Promise.reject(new Error('Connection already in progress'));
+        }
         return new Promise((resolve, reject) => {
             try {
                 this._ws = new WebSocket(this._url);
@@ -79,6 +89,13 @@ export class WebSocketBridge {
                     this._connected = false;
                     this.ready = false;
                     console.log('[ws-bridge] Disconnected');
+                    // Drain pending queue — reject all waiting promises
+                    while (this._pendingQueue.length > 0) {
+                        const pending = this._pendingQueue.shift();
+                        pending.reject(new Error('WebSocket closed'));
+                    }
+                    // Auto-reconnect with exponential backoff
+                    this._scheduleReconnect();
                 };
 
                 this._ws.onerror = (err) => {
@@ -100,11 +117,50 @@ export class WebSocketBridge {
         });
     }
 
+    /**
+     * Exponential backoff reconnection: 1s -> 2s -> 4s -> 8s -> ... -> 30s cap.
+     *
+     * The _reconnecting flag prevents duplicate reconnect chains (e.g., if
+     * onclose fires while a reconnect attempt is already in flight).
+     * On success, the flag is cleared and the delay resets for future disconnects.
+     * On failure, delay doubles up to maxDelay (30s), then retries indefinitely.
+     *
+     * NOTE: There is no maximum attempt count — reconnection continues forever.
+     * This is intentional for long-running simulation sessions where the native
+     * engine may be restarted. A UI indicator should show "disconnected" state.
+     */
+    _scheduleReconnect() {
+        if (this._reconnecting) return;
+        this._reconnecting = true;
+        const maxDelay = 30000;
+        let delay = 1000;
+        const attempt = () => {
+            console.log(`[ws-bridge] Reconnecting in ${delay / 1000}s...`);
+            setTimeout(() => {
+                this.connect().then(() => {
+                    this._reconnecting = false;
+                    console.log('[ws-bridge] Reconnected');
+                }).catch(() => {
+                    delay = Math.min(delay * 2, maxDelay);
+                    attempt();
+                });
+            }, delay);
+        };
+        attempt();
+    }
+
     // ── Command helpers ──────────────────────────────────────────────
 
     _sendJSON(obj) {
         return new Promise((resolve, reject) => {
             if (!this._connected) { reject(new Error('Not connected')); return; }
+            // Guard: cap pending queue at 64 to prevent unbounded memory growth
+            // if the server stops responding. Oldest entries are already timing
+            // out after 5s, but a burst of rapid calls could still accumulate.
+            if (this._pendingQueue.length >= 64) {
+                reject(new Error('Pending queue full (64 commands in flight)'));
+                return;
+            }
             // FIFO queue — server doesn't echo _id, so resolve in order
             this._pendingQueue.push({ resolve, reject });
             this._ws.send(JSON.stringify(obj));
@@ -142,12 +198,23 @@ export class WebSocketBridge {
 
     _handleBinary(buf) {
         // Format: [uint32 count][float32 pos[3N]][float32 col[3N]][float32 size[N]]
+        // Validate frame integrity before creating typed array views.
+        if (buf.byteLength < 4) {
+            console.warn('[ws-bridge] Binary frame too short:', buf.byteLength);
+            return;
+        }
         const view = new DataView(buf);
         const count = view.getUint32(0, true);  // little-endian
         const offset = 4;
         const posBytes = count * 3 * 4;
         const colBytes = count * 3 * 4;
         const sizeBytes = count * 4;
+        const expectedBytes = offset + posBytes + colBytes + sizeBytes;
+
+        if (buf.byteLength < expectedBytes) {
+            console.warn(`[ws-bridge] Truncated binary frame: got ${buf.byteLength}, expected ${expectedBytes} for ${count} particles`);
+            return;
+        }
 
         this._particleData = {
             positions: new Float32Array(buf, offset, count * 3),
@@ -181,6 +248,10 @@ export class WebSocketBridge {
         return this._particleData;
     }
 
+    // WARNING: Only one async particle request can be in flight at a time.
+    // Calling getParticleDataAsync() again before the previous resolves will
+    // orphan the old promise (it will never resolve). This is acceptable for
+    // the render loop (one request per frame), but callers must not queue these.
     async getParticleDataAsync() {
         return new Promise((resolve) => {
             this._binaryResolve = resolve;

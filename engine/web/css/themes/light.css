@@ -16,6 +16,7 @@ html[data-theme="light"] {
     --text-muted: #6b7280;
     --accent: #2563eb;
     --accent-dim: #1d4ed8;
+    --accent-glow: #2563eb44;
     --positive: #16a34a;
     --negative: #dc2626;
     --warning: #d97706;

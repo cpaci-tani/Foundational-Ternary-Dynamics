@@ -9,12 +9,13 @@
  * bodies as point clouds with type-coded colors (stars, gas, dark matter,
  * black holes).
  *
- * Physics preserved exactly from app.js:
- *   - N-body ticks per frame (adjustable, default 5 in rAF / 3 in interval)
+ * Physics preserved exactly from app_dag.js inline code:
+ *   - N-body ticks per frame (adjustable via ctx.ticksPerFrame)
  *   - Hubble parameter H(t), scale factor a(t)
  *   - Omega_matter, Omega_Lambda density fractions
  *   - Camera presets per scenario (galaxy, overview, blackhole, merger, quasar)
  *   - Independent 30fps interval loop (avoids module caching issues)
+ *   - Compact toolbar telemetry + controls panel cards
  */
 
 import { CosmicRenderer } from '../../cosmic-renderer.js';
@@ -32,14 +33,15 @@ let _cosmicBridge = null;      // CosmicMockBridge instance (N-body engine)
 // ---------------------------------------------------------------------------
 
 /**
- * Per-frame cosmic animation. Runs N-body ticks, updates the renderer
- * with current body positions and cosmological diagnostics, then renders.
+ * Per-frame cosmic animation. The setInterval in loadCosmicScenario handles
+ * physics ticks and telemetry updates; this rAF callback just re-renders
+ * the viewport so the camera controls stay responsive.
  *
  * @param {object} ctx - Shared context from the main app:
- *   { bridge, viewport, running, ticksPerFrame }
+ *   { viewport, running }
  */
 export function animateCosmic(ctx) {
-    const { viewport, running } = ctx;
+    const { viewport } = ctx;
 
     if (!_cosmicBridge || !_cosmicRenderer) {
         // Fallback: still render viewport
@@ -47,27 +49,12 @@ export function animateCosmic(ctx) {
         return;
     }
 
-    if (running) {
-        // Run N-body ticks per frame (adjustable)
-        const ticksPerFrame = 5;
-        _cosmicBridge.run(ticksPerFrame);
-    }
-
-    // Update renderer with current state
+    // Update renderer with current state (ticks run in the setInterval)
     const data = _cosmicBridge.getCosmicData();
     const diag = _cosmicBridge.getDiagnostics();
     _cosmicRenderer.update(data, diag);
 
-    // Update diagnostics display
-    const cosmicDiagEl = document.getElementById('cosmic-diagnostics');
-    if (cosmicDiagEl) {
-        cosmicDiagEl.innerHTML = `
-            <div>Tick: ${diag.tick}  Bodies: ${diag.bodyCount}</div>
-            <div>H(t): ${diag.hubbleParameter.toFixed(4)}  a(t): ${diag.scaleFactor.toFixed(4)}</div>
-            <div>&Omega;<sub>m</sub>: ${diag.omegaMatter.toFixed(3)}  &Omega;<sub>&Lambda;</sub>: ${diag.omegaLambda.toFixed(3)}</div>
-            <div>Total Mass: ${diag.totalMass.toExponential(2)}  KE: ${diag.totalKE.toExponential(2)}</div>
-        `;
-    }
+    // Toolbar telemetry is updated by the setInterval in loadCosmicScenario
 
     // Render using standard viewport (post-processing added later)
     viewport.render();
@@ -83,7 +70,8 @@ export function animateCosmic(ctx) {
  * and starts the independent 30fps interval loop.
  *
  * @param {object} ctx - Shared context:
- *   { bridge, viewport, running, updatePlayButton, _resetAllVisualState, engineMode }
+ *   { viewport, running, ticksPerFrame, engineMode,
+ *     _resetAllVisualState, updatePlayButton }
  * @param {string} scenarioName - Scenario key (default: 'cosmic-galaxy')
  */
 export function loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
@@ -93,11 +81,12 @@ export function loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
 
     const viewport = ctx.viewport;
 
-    // Hide all Scale 0 visuals
+    // Hide all non-cosmic visuals
     if (viewport) {
         viewport.toggleFluxVolume(false);
         viewport.toggleFluxSlice(false);
         viewport.toggleGrid(false);
+        viewport.toggleAxes(false);
         if (viewport.particles) viewport.particles.visible = false;
     }
 
@@ -123,11 +112,14 @@ export function loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
     // Set camera preset based on scenario
     const presetMap = {
         'cosmic-galaxy': 'galaxy',
+        'cosmic-super-cluster': 'overview',
         'cosmic-cluster': 'overview',
         'cosmic-web': 'overview',
         'cosmic-black-hole': 'blackhole',
         'cosmic-merger': 'merger',
-        'cosmic-quasar': 'quasar'
+        'cosmic-quasar': 'quasar',
+        'cosmic-stellar-lifecycle': 'overview',
+        'cosmic-ftd-collapse': 'overview'
     };
     _cosmicRenderer.setCameraPreset(presetMap[scenarioName] || 'overview', data);
 
@@ -143,31 +135,66 @@ export function loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
             window._cosmicInterval = null;
             return;
         }
-        if (ctx.running) _cosmicBridge.run(3);
+        if (ctx.running) _cosmicBridge.run(Math.max(1, Math.round(ctx.ticksPerFrame)));
         const data = _cosmicBridge.getCosmicData();
         const diag = _cosmicBridge.getDiagnostics();
         _cosmicRenderer.update(data, diag);
-        // Toolbar diagnostics
-        const el = document.getElementById('cosmic-diagnostics');
-        if (el) {
-            el.innerHTML = `<div>Tick: ${diag.tick}  Bodies: ${diag.bodyCount}</div>`
-                + `<div>H(t): ${diag.hubbleParameter.toFixed(4)}  a(t): ${diag.scaleFactor.toFixed(4)}</div>`
-                + `<div>\u03A9<sub>m</sub>: ${diag.omegaMatter.toFixed(3)}  \u03A9<sub>\u039B</sub>: ${diag.omegaLambda.toFixed(3)}</div>`
-                + `<div>Mass: ${diag.totalMass.toExponential(2)}  KE: ${diag.totalKE.toExponential(2)}</div>`;
-        }
-        // Panel diagnostics
-        const pd = document.getElementById('cosmic-panel-diagnostics');
-        if (pd) {
-            const c = diag.countsByType || [];
-            pd.innerHTML = `<div>Tick: ${diag.tick} | Bodies: ${diag.bodyCount}</div>`
-                + `<div>DM: ${c[3]||0} | Gas: ${c[4]||0} | Stars: ${c[5]||0} | BH: ${c[2]||0}</div>`
-                + `<div>H(t) = ${diag.hubbleParameter.toFixed(5)} | a(t) = ${diag.scaleFactor.toFixed(5)}</div>`
-                + `<div>\u03A9<sub>m</sub> = ${diag.omegaMatter.toFixed(4)} | \u03A9<sub>\u039B</sub> = ${diag.omegaLambda.toFixed(4)}</div>`
-                + `<div>Total mass: ${diag.totalMass.toExponential(3)}</div>`
-                + `<div>Kinetic energy: ${diag.totalKE.toExponential(3)}</div>`;
-        }
+        // Compact toolbar telemetry
+        const _tb = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+        _tb('cosmic-tb-bodies', diag.bodyCount + ' bodies');
+        _tb('cosmic-tb-tick', 'T ' + diag.tick);
+        _tb('cosmic-tb-hubble', 'H=' + diag.hubbleParameter.toFixed(4));
+        // Controls panel cards
+        const c = diag.countsByType || [];
+        const _set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+        _set('cosmic-n-bodies', diag.bodyCount);
+        _set('cosmic-tick', diag.tick);
+        _set('cosmic-hubble', diag.hubbleParameter.toFixed(5));
+        _set('cosmic-scale-factor', diag.scaleFactor.toFixed(5));
+        _set('cosmic-n-dm', c[3] || 0);
+        _set('cosmic-n-gas', c[4] || 0);
+        _set('cosmic-n-stars', c[5] || 0);
+        _set('cosmic-n-bh', c[2] || 0);
+        _set('cosmic-ke', diag.totalKE.toExponential(2));
         viewport.render();
-    }, 33); // ~30fps
+    }, 33); // 33ms = ~30fps; separate from rAF to decouple physics from render rate
+}
+
+// ---------------------------------------------------------------------------
+// step  -- single-tick step (called from Step button)
+// ---------------------------------------------------------------------------
+
+/**
+ * Advance the cosmic simulation by one tick and re-render.
+ * Called when the user clicks the Step button while in cosmic mode.
+ *
+ * @param {object} ctx - Shared context: { viewport }
+ */
+export function step(ctx) {
+    if (_cosmicBridge) {
+        _cosmicBridge.run(1);
+        if (_cosmicRenderer) {
+            const data = _cosmicBridge.getCosmicData();
+            _cosmicRenderer.update(data, _cosmicBridge.getDiagnostics());
+            ctx.viewport.render();
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// setCameraPreset  -- change camera view (called from camera selector)
+// ---------------------------------------------------------------------------
+
+/**
+ * Set the camera preset for the cosmic renderer.
+ *
+ * @param {string} preset - Camera preset name
+ */
+export function setCameraPreset(preset) {
+    if (_cosmicRenderer && _cosmicBridge) {
+        const data = _cosmicBridge.getCosmicData();
+        _cosmicRenderer.setCameraPreset(preset, data);
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -190,4 +217,8 @@ export function resetScale5(ctx) {
         _cosmicRenderer = null;
     }
     _cosmicBridge = null;
+    // Restore lattice particles visibility for other scales
+    if (ctx && ctx.viewport && ctx.viewport.particles) {
+        ctx.viewport.particles.visible = true;
+    }
 }
