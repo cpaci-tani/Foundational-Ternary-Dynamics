@@ -152,4 +152,4 @@ This identity is [THEOREM]. But the full functor from the lattice category to th
 - **The L-function connection:** [DERIV_LFUNCTION_GSTAR_CONNECTION.md](../09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md) — G\* = 8L(E,1)/√π
 - **The log G\* identity:** [MATH_LOG_GSTAR_IDENTITY.md](../09_mathematical/MATH_LOG_GSTAR_IDENTITY.md) — G\* absorbs all unsolved L-values
 - **The dimensional triad:** [EXPLR_GSTAR_FLUX_TIME.md](../09_mathematical/EXPLR_GSTAR_FLUX_TIME.md) — G\*¹ = flux, G\*² = energy, G\*³ = action
-- **Five Minds report:** [REPORT_FIVE_MINDS.md](../07_assessment/REPORT_FIVE_MINDS.md) — the five characterizations of G\*
+- **Five Minds report:** [ARCH_REPORT_FIVE_MINDS.md](../archive/ARCH_REPORT_FIVE_MINDS.md) — archived synthesis of five interpretive characterizations of G\*

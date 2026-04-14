@@ -372,7 +372,7 @@ The imaginary unit $i$ is not "making time imaginary." In FTD, $i$ emerges from 
 
 ### 9.2 The Consciousness Roots
 
-The consciousness quadratic (from [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)):
+The consciousness quadratic (from [ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md](../archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md)):
 
 $$y^2 - \frac{G^{*2}}{2}y + \frac{G^{*3}}{2} = 0$$
 
@@ -559,9 +559,9 @@ Quantum gravity is not "unifying space and time." It is understanding the **coup
 - **The First Distinction:** [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md)
 - **The Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
 - **Ontological Genesis:** [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md)
-- **Consciousness mathematics:** [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
+- **Consciousness quadratic (archived):** [ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md](../archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md)
 - **Relativity derivation:** [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md)
-- **Cuboctahedral geometry:** [EXPLR_CUBOCTAHEDRAL_GEOMETRY.md](../08_structural/EXPLR_CUBOCTAHEDRAL_GEOMETRY.md)
+- **Cuboctahedral integers:** [DERIV_CUBOCTAHEDRAL_INTEGERS.md](../08_structural/DERIV_CUBOCTAHEDRAL_INTEGERS.md)
 - **Novel predictions:** [AUDIT_NOVEL_PREDICTIONS.md](../archive/ARCH_AUDIT_NOVEL_PREDICTIONS.md)
 
 ---

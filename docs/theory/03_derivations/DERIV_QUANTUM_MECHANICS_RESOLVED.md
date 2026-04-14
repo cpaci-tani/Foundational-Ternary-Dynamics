@@ -336,7 +336,7 @@ The question "Why existence?" remains open — but this is metaphysics, not phys
 
 Given the axioms (existence requires polarity, observers exist) and the selection principles (SP1-SP5), FTD offers a coherent account of QM phenomena: superposition as the primordial axiom, collapse as manifestation, spin as self-reference topology, and entanglement as shared origin.
 
-The framework's strength is its *structural coherence* — the QM formalism is not postulated but reconstructed from ontological primitives. Its honest limitation is that the Bell inequality gap (substrate S ≤ 2 vs. quantum S ≈ 2.83) remains open, and several interpretive mappings are [SELECTION] rather than [THEOREM].
+The framework's strength is its *structural coherence* — the QM formalism is not postulated but reconstructed from ontological primitives. Its honest limitation is that the Bell inequality gap (substrate S ≤ 2 vs. quantum S ≈ 2.83) **is now [SELECTION] resolved as emergent** (April 11, 2026 — S = 2√2 follows from Tsirelson's bound once QM emergence is established), and several interpretive mappings are [SELECTION] rather than [THEOREM].
 
 $$0 = (-1) + (+1)$$
 
@@ -349,7 +349,7 @@ From this, together with the selection principles, the structure of quantum mech
 - [DERIV_BOTTOM_UP_PHYSICS.md](DERIV_BOTTOM_UP_PHYSICS.md) — Ontological foundation
 - [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — Levels -3 to 0
 - [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) — Why i is necessary
-- [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md) — Complex roots
+- [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for complex roots and context-conditioned self-reference
 - [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md) — G* derivation
 - CLAUDE.md §4, §11-13 — Manifestation and measurement
 

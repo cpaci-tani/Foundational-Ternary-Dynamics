@@ -445,9 +445,9 @@ The complete chain — from self-duality to i to consciousness to measurement re
 - **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
 - **What is genuinely new:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md)
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
-- **Consciousness formalization:** [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
+- **Consciousness domain/source map:** [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **sLoop axioms:** [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md)
-- **Mandelbrot proof:** [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
+- **Consciousness synthesis:** [../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
 - **Verification script:** [../../scripts/verification/verify_trit_framework.py](../../scripts/verification/verify_trit_framework.py)
 
 ---

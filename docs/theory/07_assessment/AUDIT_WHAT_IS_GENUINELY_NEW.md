@@ -428,7 +428,7 @@ FTD derives $\alpha = 1/137.036$ to 1.26 ppm from pure mathematics (elliptic cur
 
 The framework also derives $\sim$20 additional quantities (coupling ratios, mass ratios, mixing angles) from four integers and $G^*$, all within 0.007% to 7% of experiment.
 
-The critical gap is Bell: lattice dynamics alone give $S \leq 2$. Until this is resolved, FTD remains a mathematical framework, not a physical theory.
+The Bell gap is now [SELECTION] resolved (April 11, 2026): S = 2√2 is EMERGENT from the QM that itself emerges from the lattice (Tsirelson's bound). The substrate correctly gives S ≤ 2; the emergent theory gives S = 2√2. Remaining target: singlet-state lemma (void event → entangled pair). See DERIV_QM_FROM_LATTICE.md.
 
 ### For Consciousness Researchers
 
@@ -448,9 +448,9 @@ Whether this is a theory of everything or a very elaborate coincidence is an emp
 
 - **Master quadratic:** [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md)
 - **Trit information theory:** [EXPLR_TRIT_INFORMATION_THEORY.md](../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md)
-- **Consciousness formalization:** [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
+- **Consciousness domain/source map:** [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **sLoop axioms:** [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md)
-- **Mandelbrot proof:** [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
+- **Consciousness synthesis:** [../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
 - **Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md)
 - **Novel predictions:** [AUDIT_NOVEL_PREDICTIONS.md](../archive/ARCH_AUDIT_NOVEL_PREDICTIONS.md)

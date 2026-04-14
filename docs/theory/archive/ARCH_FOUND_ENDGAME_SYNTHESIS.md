@@ -3,7 +3,7 @@
 ## What FTD Is, After Eight Rounds of Scrutiny
 
 **Date:** April 4, 2026
-**Status:** Synthesis document — integrates results from extended analysis
+**Status:** Archived synthesis document — preserved for historical traceability, not part of the current canonical theory spine
 
 ---
 

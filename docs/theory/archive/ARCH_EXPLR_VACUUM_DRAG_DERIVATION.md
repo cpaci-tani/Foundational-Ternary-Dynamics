@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 **Date:** February 10, 2026
-**Status:** [CONJECTURE] -- Proposed derivation path for the dissipation rate
+**Status:** Archived [CONJECTURE] -- preserved as an unresolved exploratory proposal for the dissipation rate
 **Epistemic Tag:** [CONJECTURE]
 
 > The dissipation rate gamma = alpha is currently the most epistemically unsatisfying parameter in FTD. It is imposed (ASSUMP.6), not derived. This document proposes a geometric mechanism -- vacuum drag -- that could close the gap.

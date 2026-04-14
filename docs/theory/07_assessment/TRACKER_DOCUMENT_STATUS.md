@@ -1,8 +1,8 @@
 # FTD Theory Document Status Tracker
 
-**Date:** April 3, 2026
+**Date:** April 11, 2026
 **Framework:** v5.29
-**Documents reviewed:** ~120 active theory documents
+**Documents reviewed:** ~120 active theory documents (tracker still lags some April 2026 additions)
 **Scoring:** Rigor (R), Completeness (C), Clarity (Cl), Consistency (Co), Impact (I) — each 1-10
 **Grades:** A (45-50), B (35-44), C (25-34), D (15-24), F (<15)
 
@@ -710,18 +710,15 @@
 - **Scores:** R:8 / C:8 / Cl:9 / Co:7 / I:6 = **38**
 - **Grade: B**
 - **Strength:** 15 quantitative experiments; ternary detector preserves 1674x more info; solid numerical work
-- **Weakness:** Not in META_INDEX; loosely connected to core FTD theory
+- **Weakness:** Now cataloged, but still more loosely connected to the core derivation spine than the main audit docs
 
 ---
 
 ## Category 08: Structural Principles
 
 ### 8.1 EXPLR_CUBOCTAHEDRAL_GEOMETRY.md
-- **Summary:** {3,4,7,13} from cuboctahedron
-- **Scores:** R:5 / C:6 / Cl:7 / Co:7 / I:6 = **31**
-- **Grade: C**
-- **Strength:** Catalogs the geometric correspondences
-- **Weakness:** Tagged [MOTIVATED], not [THEOREM]; superseded by DERIV_CUBOCTAHEDRAL_INTEGERS
+- **Status: ARCHIVED** (2026-04-11)
+- **Reason:** Superseded by `DERIV_CUBOCTAHEDRAL_INTEGERS.md` and `THEOREM_MOORE_LAYER_DECOMPOSITION.md`
 
 ### 8.2 EXPLR_LOOP_GRID_DUALITY.md
 - **Summary:** Two-layer ontology interpretation
@@ -734,11 +731,8 @@
 - **Status: ARCHIVED** (phi appearances were coincidental or numerological; archived to reduce credibility risk)
 
 ### 8.5 EXPLR_VACUUM_DRAG_DERIVATION.md
-- **Summary:** Toward deriving gamma = alpha
-- **Scores:** R:4 / C:5 / Cl:5 / Co:6 / I:5 = **25**
-- **Grade: C**
-- **Strength:** Identifies a genuine gap (gamma = alpha is [IMPOSED])
-- **Weakness:** Does not actually derive anything; "toward" remains unfulfilled
+- **Status: ARCHIVED** (2026-04-11)
+- **Reason:** Preserved as a historical exploratory proposal; it identifies a real gap but does not close it and is no longer part of the active derivation spine
 
 ### 8.6 EXPLR_TRIT_INFORMATION_THEORY.md
 - **Summary:** G* from Jacobi theta at self-dual nome
@@ -836,11 +830,8 @@
 - **Weakness:** "Nine structural observations" are mostly [SELECTION]
 
 ### 9.11 EXPLR_PARTITION_PRIME_DETECTION.md
-- **Summary:** Partition-prime connections (Craig-van Ittersum-Ono 2024)
-- **Scores:** R:6 / C:6 / Cl:7 / Co:7 / I:5 = **31**
-- **Grade: C**
-- **Strength:** Connection to recent PNAS result; sigma_1 at FTD primes
-- **Weakness:** Most connections are [SELECTION]; "42-chain as partition-zero counting" risks numerology
+- **Status: ARCHIVED** (2026-04-11)
+- **Reason:** Interesting but low-signal mathematical connection; preserved historically rather than kept in the live theory path
 
 ### 9.12 EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md
 - **Summary:** Kinematic topology of Fourcier lobes
@@ -923,7 +914,7 @@
 | 2.3 | FOUND_EULER_IDENTITY_TERNARY | 02 | 7 | 7 | 8 | 8 | 6 | 36 | B |
 | ... | *(~97 more active documents)* | | | | | | | | |
 | 2.8 | FOUND_FOURCIER_ONTIC_TOOL | 02 | 6 | 6 | 7 | 7 | 5 | 31 | C |
-| 8.5 | EXPLR_VACUUM_DRAG_DERIVATION | 08 | 4 | 5 | 5 | 6 | 5 | 25 | C |
+| 8.5 | EXPLR_VACUUM_DRAG_DERIVATION | 08 | -- | -- | -- | -- | -- | -- | ARCHIVED |
 | 1.4 | SPEC_THE_MASTER_CUBIC | 01 | -- | -- | -- | -- | -- | -- | ARCHIVED |
 | 2.17 | DERIV_MOORE_GAUGE_ORTHOGONAL | 02 | -- | -- | -- | -- | -- | -- | ARCHIVED |
 | 8.3 | EXPLR_GOLDEN_RATIO_SCALE_BRIDGE | 08 | -- | -- | -- | -- | -- | -- | ARCHIVED |
@@ -932,7 +923,7 @@
 
 ## TOP 10 HIGHEST-PRIORITY ACTION ITEMS
 
-1. **Update META_INDEX.md** -- At least 5 active files are missing: DERIV_ELECTRON_MASS_MOTIVATION.md, CONJ_ALPHA_FROM_CM.md, PROOF_ALPHA_FROM_SELF_DUALITY.md, REPORT_DETECTOR_INFORMATION_LOSS.md. The index says 123 core files but actual disk count differs.
+1. **Finish tracker coverage for recent April 2026 additions** -- `FOUND_GSTAR_SCALE.md`, `THEOREM_MOORE_LAYER_DECOMPOSITION.md`, `FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md`, `FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md`, and several newer derivation documents are now cataloged, but this tracker still needs explicit scoring coverage for the newest active additions.
 
 2. **Reclassify DERIV_ALPHA_PRECISION_FORMULA.md** -- The 7-term precision series with coefficients from {3,4,7,13} is curve-fitting, not derivation. Either prove the coefficient selection rule or reclassify as [CONJECTURE]. This is the single biggest epistemic risk in the project.
 
@@ -970,15 +961,15 @@
 
 ## 5 WEAKEST DOCUMENTS
 
-1. **EXPLR_VACUUM_DRAG_DERIVATION.md (8.5)** -- Grade C (25 points). Identifies a gap (gamma = alpha is [IMPOSED]) but does not derive anything; "toward" remains unfulfilled. Lowest-scoring active document.
+1. **EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md (9.12)** -- Grade C (28 points). Distant from the main chain; unclear impact; speculative geometric analysis.
 
-2. **EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md (9.12)** -- Grade C (28 points). Distant from the main chain; unclear impact; speculative geometric analysis.
+2. **EXPLR_HALF_MOBIUS_LEMNISCATE.md (9.13)** -- Grade C (28 points). Cross-domain analogy without proof; molecular orbital connection is suggestive only.
 
-3. **EXPLR_HALF_MOBIUS_LEMNISCATE.md (9.13)** -- Grade C (28 points). Cross-domain analogy without proof; molecular orbital connection is suggestive only.
+3. **EXPLR_GSTAR_FLUX_TIME.md (9.9)** -- Grade C (30 points). G*^1, G*^2, G*^3 dimensional triad is [SELECTION]; elegant but unproven.
 
-4. **EXPLR_GSTAR_FLUX_TIME.md (9.9)** -- Grade C (30 points). G*^1, G*^2, G*^3 dimensional triad is [SELECTION]; elegant but unproven.
+4. **EXPLR_ONTIC_CONSTANT_ATLAS.md (9.10)** -- Grade C (30 points). Systematic catalog but "nine structural observations" are mostly [SELECTION]; G*=3 fixed point analysis is speculative.
 
-5. **EXPLR_ONTIC_CONSTANT_ATLAS.md (9.10)** -- Grade C (30 points). Systematic catalog but "nine structural observations" are mostly [SELECTION]; G*=3 fixed point analysis is speculative.
+5. **EXPLR_NUMBER_THEORY.md (9.1)** -- Grade C (32 points). Interesting catalog, but the probability-style framing and 42-centric presentation still need stronger epistemic tightening.
 
 ---
 

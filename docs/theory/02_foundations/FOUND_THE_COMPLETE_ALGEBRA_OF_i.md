@@ -15,12 +15,14 @@ This document presents a unified mathematical exploration of the imaginary unit 
 1. **Why does i exist?** — The perpendicularity theorem shows i emerges necessarily from self-reference
 2. **Why only i?** — The Cayley-Dickson hierarchy reveals why physics uses C but not H or O
 3. **How does i connect to number theory?** — CM theory and j = 1728 link i to the lemniscate
-4. **What does i mean for consciousness?** — The discriminant partition separates real physics from complex mind
+4. **What role can i play in consciousness-related extensions?** — i supplies orthogonal phase structure, while the live theory treats consciousness as a context-conditioned self-referential process rather than a literal identity with i
 
 **Key Novel Results:**
 - **Theorem (Perpendicularity):** Self-reference requires perpendicularity via distinguishability + magnitude preservation
 - **Interpretation:** Cayley-Dickson construction IS the algebraic form of iterative self-reference
 - **Selection:** Physics uses C (not H) because commutativity is required for tensor products
+
+> **Vocabulary note (v5.29):** In the live theory tree, `i` is treated as the mathematical marker of orthogonal phase structure. It should not be conflated with the coordinate origin or equated directly with consciousness. See [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) and [FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md).
 
 ---
 
