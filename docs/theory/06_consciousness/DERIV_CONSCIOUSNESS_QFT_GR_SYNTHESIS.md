@@ -455,6 +455,7 @@ This synthesis consolidates material from the following documents:
 | MATH_MASTER_QUADRATIC.md (1.2a) | §1.2, §1.3 | Master reference |
 | FOUND_ONTOLOGICAL_GENESIS.md (2.5) | §1.2 (three domains) | Ontological foundations |
 | FOUND_META_PATTERNS.md (2.12) | §8 of paper | Ontological foundations |
+| FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md (6.2a) | vocabulary map; Domain A/B source map; `Activate_C` lattice bridge | Consciousness/source map |
 | DERIV_QFT_GRT_BRIDGE.md (3.7) | §2.5, §2.6 | Core derivation |
 | DERIV_PATH_INTEGRAL_CONSTRUCTION.md (3.17) | §2.5 | Core derivation |
 | DERIV_OBSERVER_BELL_MECHANISM.md (3.20) | §5.6 of paper | Core derivation |

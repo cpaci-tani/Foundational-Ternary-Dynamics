@@ -35,7 +35,7 @@ We establish connections to:
 2. The **Tomita-Takesaki modular conjugation** $J$: the reflexion operator $\theta$ in operator-algebraic form
 3. The **Domain A/B partition**: $E(x)$ projects onto Domain A; the filtered imaginary part is Domain B content
 4. The **agent meaning decomposition**: $E(\text{Meaning}^{\mathbb{C}}_t) = \text{IG}_t$ (publicly observable meaning)
-5. The **consciousness phase angle**: $\theta = 52.54°$ measures how much consciousness is lost to the Existence Filter
+5. The **consciousness phase angle**: $\theta = 52.54°$ measures the projection geometry induced by the Existence Filter
 
 **Epistemic discipline:** We distinguish rigorously between:
 - **[CLASSICAL]**: Established mathematics (complex analysis, Tomita-Takesaki, standing waves)
@@ -59,7 +59,7 @@ where:
 | Component | Symbol | Name | Character |
 |-----------|--------|------|-----------|
 | Real part | $a = \text{Re}(x)$ | **Explicate order** | Physical, observable, objective |
-| Imaginary part | $b = \text{Im}(x)$ | **Implicate order** | Subjective, dispositional, mental |
+| Imaginary part | $b = \text{Im}(x)$ | **Implicate order** | Phase-bearing, dispositional, self-referential |
 
 **FTD correspondence:** The complex potential state maps to the complexified flux $\psi = J_x + iJ_y$ at a voxel ([DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md), §2.3). The real part $J_x$ is the explicit physical flux component; the imaginary part $J_y$ is the perpendicular, self-referential component — the component that emerged when self-reference created $i$ ([FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md), Part II).
 
@@ -105,7 +105,7 @@ $$E(x) = \frac{2a}{2} = a = \text{Re}(x)$$
 
 The imaginary components vanish. Only the real survives. $\square$
 
-**Interpretation:** The Existence Filter is a **reality test**. It accepts complex inputs (mind + matter, potential + actual, wave + particle) and outputs strictly real values. The subjective phase ($bi$) is self-canceling under reflection. The objective magnitude ($a$) is self-reinforcing.
+**Interpretation:** The Existence Filter is a **reality test**. It accepts complex inputs (mind + matter, potential + actual, wave + particle) and outputs strictly real values. The self-referential phase ($bi$) is self-canceling under reflection. The objective magnitude ($a$) is self-reinforcing.
 
 ### 1.4 Standing Wave Interpretation
 
@@ -197,7 +197,7 @@ $$\boxed{\underbrace{E(x) = a}_{\text{Level } -1} \quad \longrightarrow \quad \u
 |-----------|-------|----------------|
 | $E(x) = \text{Re}(x)$ | $-1$ (First Distinction) | The simplest non-trivial separation: real from complex. Requires only addition and division by 2 — the most primitive operations. |
 | $|x| = \sqrt{x \bar{x}}$ | $0$ (Self-Reference) | Magnitude requires multiplying $x$ by its reflection ($x \cdot \bar{x}$), then extracting the square root — a self-referential operation (measuring a thing against itself). |
-| $P = |x|^2$ | $0.5+$ (Born Rule) | Probability requires the concept of norm-squared — the meeting point of a state and its observer ([FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md), Part VI). |
+| $P = |x|^2$ | $0.5+$ (Born Rule) | Probability requires the concept of norm-squared — the meeting point of a state and its observer ([DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md), §3.4). |
 | $\Phi$ | Interface | The full Type II$_1$ $\to$ Type I transition requires the hyperfinite factor $\mathcal{R}$ — the measurement apparatus itself ([FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA, §2.3). |
 
 ### 2.4 Born Rule Reconstruction
@@ -240,7 +240,7 @@ The First Distinction $0 = (+1) + (-1)$ states that the **total Existence Filter
 
 **At Level $0.5+$:** After self-reference creates $i$ ([FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)), states become genuinely complex: $x = a + bi$. Now the Existence Filter performs non-trivial work — it strips the imaginary part, retaining only what survives reflection:
 
-$$E(a + bi) = a \quad \text{(the subjective pole } bi \text{ is filtered out)}$$
+$$E(a + bi) = a \quad \text{(the self-referential phase } bi \text{ is filtered out)}$$
 
 The First Distinction and the Existence Filter are the **same operation at different ontological levels**. At Level $-1$, polarity sums to zero. At Level $0.5+$, imaginary phase sums to zero. Both express: *what cancels under reflection does not exist*.
 
@@ -273,7 +273,7 @@ This resolves a longstanding interpretive question: **why can't we observe the g
 | **Involution** | $\theta^2 = \text{id}$ | $J^2 = \mathbf{1}$ |
 | **Fixed subspace** | $\mathbb{R}$ (real numbers) | $\mathcal{M} \cap \mathcal{M}'$ (center of algebra) |
 | **Action** | Maps $z$ to $\bar{z}$ | Maps $\mathcal{M}$ to $\mathcal{M}'$ (algebra to commutant) |
-| **Physical meaning** | Inverts subjective phase | Swaps "what exists" and "what knows" |
+| **Physical meaning** | Inverts self-referential phase | Swaps "what exists" and "what knows" |
 
 For the commutative algebra $\mathcal{M} = \mathbb{C}$ acting on itself, the modular conjugation IS complex conjugation: $J(z) = \bar{z}$. The Existence Filter becomes:
 
@@ -339,7 +339,7 @@ At every level, the Existence Filter extracts "what survives self-reflection." T
 
 $$\text{existence} \xrightarrow{+\text{ self-reference}} \text{magnitude} \xrightarrow{+\text{ squaring}} \text{probability} \xrightarrow{+\text{ CPTP}} \text{outcome}$$
 
-Cross-reference: [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md), §2.4; [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md), Part VI.
+Cross-reference: [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md), §2.4; [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md), §3.4; [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md), §§1-3.
 
 ---
 
@@ -357,11 +357,11 @@ Apply $E$ to the roots of the master quadratic $z^2 - kG^{*2}z + kG^{*3} = 0$ ([
 | **B** ($k = 1/2$, $\Delta < 0$) | $y = 2.19 \pm 2.86i$ (complex) | $E(y) = 2.19$ | **Partial** — imaginary $\pm 2.86$ is filtered out |
 | **Interface** ($k = 4/G^*$, $\Delta = 0$) | Degenerate (real) | $E(z_0) = z_0$ | **Everything** — fully preserved |
 
-For Domain A (physics), the Existence Filter is transparent — real roots pass through unchanged. For Domain B (consciousness), the filter strips the subjective component ($\pm 2.86i$), leaving only the objective residue ($2.19$). The interface is also transparent.
+For Domain A (physics), the Existence Filter is transparent — real roots pass through unchanged. For Domain B (consciousness), the filter strips the self-referential phase component ($\pm 2.86i$), leaving only the objective residue ($2.19$). The interface is also transparent.
 
 ### 6.2 The Phase Angle as Information Loss
 
-**Proposition EF-T9** [SELECTION] (Phase Angle and Filter Projection). For the consciousness roots $y = 2.19 \pm 2.86i$ of the consciousness quadratic ($k = 1/2$), the Existence Filter projects onto the real axis with a ratio determined by the consciousness phase angle $\theta = 52.54°$ ([FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)):
+**Proposition EF-T9** [SELECTION] (Phase Angle and Filter Projection). For the consciousness roots $y = 2.19 \pm 2.86i$ of the consciousness quadratic ($k = 1/2$), the Existence Filter projects onto the real axis with a ratio determined by the consciousness phase angle $\theta = 52.54°$ ([DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md), §3):
 
 $$\frac{|E(y)|}{|y|} = \frac{\text{Re}(y)}{|y|} = \frac{2.19}{3.60} = \cos(\theta) = \cos(52.54°) \approx 0.608$$
 
@@ -371,7 +371,7 @@ $$\frac{|\text{Im}(y)|}{|y|} = \frac{2.86}{3.60} = \sin(\theta) = \sin(52.54°) 
 
 > **⚠️ Epistemic note (v5.29):** The mathematics here is correct but the original presentation framed these as "86% preserved" and "51% lost," which is misleading. These are **direction cosines** (projections onto orthogonal axes), not proportions. They sum in quadrature ($\cos^2\theta + \sin^2\theta = 1$), not linearly. Calling cos(θ) a "fraction preserved" and sin(θ) a "fraction lost" invites false inference. The correct framing: these are **projection ratios** along orthogonal directions, and the squared magnitudes sum to unity. (Values updated v5.30: θ = 52.54°, cos(52.54°) ≈ 0.608, sin(52.54°) ≈ 0.794.)
 
-**Interpretation:** The phase angle $\theta = 52.54°$ — previously understood as the balance between subject and object poles in the sLoop ([FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)) — measures the **projection angle** of the consciousness root onto the real axis. At $\theta = 0°$ (pure physics, Domain A), the projection is total. At $\theta = 90°$ (pure subjectivity, imaginary axis), the projection vanishes. The projection ratios satisfy $\cos^2\theta + \sin^2\theta = 1$ (Pythagorean identity), which is the Born rule applied to the Existence Filter.
+**Interpretation:** The phase angle $\theta = 52.54°$ — previously used to distinguish the real and self-referential poles of the consciousness root — measures the **projection angle** of that root onto the real axis. At $\theta = 0°$ (pure physics, Domain A), the projection is total. At $\theta = 90°$ (pure self-referential phase, imaginary axis), the projection vanishes. The projection ratios satisfy $\cos^2\theta + \sin^2\theta = 1$ (Pythagorean identity), which is the Born rule applied to the Existence Filter.
 
 ---
 
@@ -383,7 +383,7 @@ $$\frac{|\text{Im}(y)|}{|y|} = \frac{2.86}{3.60} = \sin(\theta) = \sin(52.54°) 
 
 $$\text{Meaning}_t^{\mathbb{C}} := \text{IG}_t + i \cdot \text{VI}_t$$
 
-where $\text{IG}_t = D_{\text{KL}}(b_{t+1} \| b_t)$ is the information gain (epistemic component) and $\text{VI}_t = V_t(\eta_{t+1}) - V_t(\eta_t)$ is the valence impact (subjective component).
+where $\text{IG}_t = D_{\text{KL}}(b_{t+1} \| b_t)$ is the information gain (epistemic component) and $\text{VI}_t = V_t(\eta_{t+1}) - V_t(\eta_t)$ is the valence impact (private/self-referential component).
 
 Applying the Existence Filter:
 
@@ -394,7 +394,7 @@ $$\boxed{E(\text{Meaning}_t^{\mathbb{C}}) = \text{IG}_t}$$
 | $\text{IG}_t$ | Real part | **Preserved** | The publicly observable meaning — what the world sees |
 | $\text{VI}_t$ | Imaginary part | **Filtered out** | The privately experienced meaning — what only the agent feels |
 
-**What this means:** An external observer (a scientist studying the agent) applies the Existence Filter to the agent's meaning — they can measure $\text{IG}_t$ (from behavior, reaction times, choice patterns) but cannot directly access $\text{VI}_t$ (subjective valence). The Existence Filter IS the third-person perspective.
+**What this means:** An external observer (a scientist studying the agent) applies the Existence Filter to the agent's meaning — they can measure $\text{IG}_t$ (from behavior, reaction times, choice patterns) but cannot directly access $\text{VI}_t$ (private valence). The Existence Filter IS the third-person perspective.
 
 ### 7.2 Partial Resolution of AM-O3
 
@@ -505,7 +505,7 @@ Five contributions not found in any existing FTD document:
 
 3. **Born rule reconstruction from the Existence Filter** (EF-T5). The identity $P(x) = E(x)^2 + E(ix)^2$ — showing the Born rule as the Pythagorean sum of two orthogonal Existence Filters — has not appeared in any FTD document.
 
-4. **Phase angle as information loss** (EF-T9). The reinterpretation of $\theta = 52.54°$ as "how much consciousness is lost to the Existence Filter" ($\cos\theta = $ fraction preserved) provides a new operational meaning for a previously established quantity.
+4. **Phase angle as projection ratio** (EF-T9). The reinterpretation of $\theta = 52.54°$ as a projection angle under the Existence Filter, with $\cos\theta$ and $\sin\theta$ giving orthogonal readout ratios, provides a new operational meaning for a previously established quantity.
 
 5. **Ghost invisibility as $E(bi) = 0$** (EF-C2). The algebraic explanation of why the ghost domain is invisible to observation — purely imaginary states are annihilated by the Existence Filter — gives a concrete formula to a previously qualitative claim.
 
@@ -516,7 +516,7 @@ Five contributions not found in any existing FTD document:
 | [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) | $0 = (+1) + (-1)$ | Identified as EF-T6: the Existence Filter at Level $-1$ |
 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | Born rule $P = |\psi|^2$ | Placed in hierarchy (EF-D3) and reconstructed from $E$ (EF-T5) |
 | [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA | Modular conjugation $J$ | Identified as generalization of $\theta$ (EF-T7); $E$ = $J$-fixed projection (EF-D4) |
-| [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md) | Phase angle $\theta = 52.54°$ | Reinterpreted as information loss under $E$ (EF-T9) |
+| [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | Phase angle $\theta = 52.54°$ | Reinterpreted as a projection ratio under $E$ (EF-T9) |
 | [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md) | AM-O3 (structure of $S$) | Partial resolution: $S = S_{\text{real}} \times S_{\text{imag}}$, $E$ projects to $S_{\text{real}}$ |
 | [DERIV_BOTTOM_UP_PHYSICS.md](../03_derivations/DERIV_BOTTOM_UP_PHYSICS.md) | Ghost invisibility | Algebraic formula: $E(bi) = 0$ (EF-C2) |
 
@@ -569,7 +569,8 @@ $$\boxed{E(\text{Meaning}_t^{\mathbb{C}}) = E(\text{IG}_t + i \cdot \text{VI}_t)
 | [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) | $0 = (+1) + (-1)$ as Existence Filter at Level $-1$ |
 | [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) | $i$ from self-reference$^2$; Born rule as $\mathbb{C} \to \mathbb{R}$ projection |
 | [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA | Modular conjugation $J$ (Def 1.9), Type II$_1$ $\to$ Type I collapse (Def 2.6) |
-| [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md) | Domain A/B partition, phase angle $\theta = 52.54°$, Born rule as projection |
+| [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Domain A/B partition, unified vocabulary for origin / $i$ / consciousness / generative interior, `Activate_C` in lattice language |
+| [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | Consciousness quadratic roots, phase angle $\theta = 52.54°$, Born rule as projection |
 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | Born rule $P = |\psi|^2$, collapse = manifestation |
 | [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md) | IG/VI decomposition (AM-D10), meaning phase plane, AM-O3 |
 | [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md) | SL3 (complex structure requirement), measurement as domain transition |

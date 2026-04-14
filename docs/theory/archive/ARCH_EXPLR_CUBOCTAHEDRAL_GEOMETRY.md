@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 **Date:** February 10, 2026
-**Status:** Theoretical Analysis
+**Status:** Archived theoretical analysis — preserved historically; superseded in the live theory path
 **Epistemic Tag:** [MOTIVATED] -- Geometric correspondence is exact; physical interpretation is proposed
 
 > The four FTD framework integers {3, 4, 7, 13} are not arbitrary. They are the geometry of the cuboctahedron -- the unique closest-packing coordination shell in three dimensions.

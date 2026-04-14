@@ -317,6 +317,30 @@ These are standard results in finite-dimensional operator algebra and linear alg
 
 ## 9. References
 
+### Numerical Verification (April 11, 2026)
+
+`scripts/proofs/proof_modular_hamiltonian.py` computed the modular operator spectrum on finite FTD lattices (2-site chain through 2x2x2 cube):
+
+| Lattice | dim | Distinct modular ratios at beta=pi | At beta=1000 | Trend |
+|---------|-----|-----------------------------------|-------------|-------|
+| 2-site | 9 | 5 | 5 | Type I (near) |
+| 4-site chain | 81 | 13 | 22 | Type III-like |
+| 2x2 square | 81 | 15 | 15 | Type III-like |
+| **2x2x2 cube** | **6561** | **43** | **166** | **Type III-like, growing** |
+
+Key findings:
+
+1. **Finite lattice is always Type I** (discrete spectrum). This is expected — Type III_1 requires the thermodynamic limit.
+2. **The number of distinct modular eigenvalue ratios grows with system size** (5 -> 13 -> 43), consistent with the Connes spectrum approaching R_+ in the thermodynamic limit.
+3. **The ratio range widens dramatically with beta**: at beta=1000, the 8-site case shows ratios spanning [0, 10^76], consistent with Type III_1 (full positive reals).
+4. **Entropy evolution**: high-T regime (beta << 1) shows maximal entropy S -> log(3^N); low-T regime (beta >> 1) shows S -> log(3) (ground-state degeneracy); intermediate beta shows the Type III-like behavior.
+
+**What this advances:** Explicit numerical construction of the modular operator on the FTD lattice, demonstrating the expected finite-size precursor of Type III_1 with growing spectrum diversity.
+
+**What remains:** Thermodynamic limit extrapolation (tensor network / RG methods needed), non-diagonal Hamiltonian (full FTD Lagrangian with flux-flux coupling), and verification that the continuous Connes spectrum S = R_+ is achieved at N -> infinity.
+
+---
+
 ### Internal (FTD Documents)
 
 1. [SPEC_FTD.md](../../SPEC_FTD.md) -- Master FTD specification

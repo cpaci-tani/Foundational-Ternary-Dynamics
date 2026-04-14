@@ -1,19 +1,39 @@
 # FTD Papers
 
-Published and working papers for Foundational Ternary Dynamics.
+Published outputs and paper source trees for Foundational Ternary Dynamics.
+
+## Working Rule
+
+- Active PDFs live directly in `docs/papers/`.
+- Archived PDFs live under `docs/papers/archive/`.
+- TeX source trees live under `docs/papers/src/` and `docs/papers/speculative/`.
+- Figure source assets live under `docs/papers/src/figures/`.
+- New active PDFs should not be left behind in `src/` or `speculative/`.
 
 ## Directory Structure
 
 ```
 papers/
-├── *.tex, *.pdf         # Core papers (TeX+PDF pairs or PDF-only)
-├── speculative/          # Speculative extensions (Millennium Prize problems, etc.)
-├── src/                  # Source papers with complete TeX+PDF pairs
-│   └── figures/          # Figures referenced by src/ and speculative/ papers
-└── archive/              # Historical versions, superseded papers, unused figures
+├── *.pdf                # All active paper PDFs and exported figure PDFs
+├── *.tex, *.md          # Root-level companion files and paper indexes
+├── speculative/         # Speculative paper TeX sources; PDFs publish to root
+├── src/                 # Main paper TeX sources; PDFs publish to root
+│   └── figures/         # Figure sources and source-only support assets
+└── archive/             # Historical versions, superseded papers, unused figures
 ```
 
-## Core Papers (this directory)
+## Active PDF Library
+
+This directory is the single active PDF shelf for the project. It includes:
+
+- core/published paper PDFs
+- PDFs compiled from `src/`
+- PDFs compiled from `speculative/`
+- exported figure PDFs that are still active
+
+## Root-Level Companion Files
+
+Root `*.tex` and `*.md` files are companion sources or indexes for papers that are managed directly from `docs/papers/`.
 
 ### With TeX Sources
 
@@ -37,15 +57,21 @@ papers/
 | SPEC_MASTER_QUADRATIC_DISCRETE_SPACETIME | Master quadratic in discrete spacetime |
 | SPEC_MASTER_QUADRATIC_PAPER | Master quadratic paper |
 
-### Figures
+### Active Exported Figure PDFs
 
 | File | Used By |
 |------|---------|
-| fig1_cuboctahedron.png | PAPER_GAUGE_COUPLINGS_FROM_LATTICE_GEOMETRY |
+| FTD_KMS_Thermal_Time.pdf | Active exported figure |
+| FTD_Modular_Structure.pdf | Active exported figure |
+| FTD_Spatial_Correlations.pdf | Active exported figure |
+| FTD_Thermodynamic_Limit.pdf | Active exported figure |
 
 ## speculative/
 
-Speculative extensions and applications of FTD to open mathematical problems. All papers have complete TeX+PDF pairs.
+Speculative extensions and applications of FTD to open mathematical problems.
+
+- `speculative/` keeps the TeX source files.
+- Their active compiled PDFs now live in `docs/papers/`.
 
 | Paper | Description |
 |-------|-------------|
@@ -61,9 +87,13 @@ Speculative extensions and applications of FTD to open mathematical problems. Al
 
 ## src/
 
-Source papers with complete TeX+PDF pairs (the canonical source of truth for these papers).
+Main paper source tree.
 
-### Complete Papers (TeX + PDF)
+- `src/` keeps the TeX source files.
+- Their active compiled PDFs now live in `docs/papers/`.
+- `src/figures/` is for source figures and figure assets, not for the active PDF shelf.
+
+### TeX Source Papers
 
 | Paper | Description |
 |-------|-------------|
@@ -86,13 +116,9 @@ Source papers with complete TeX+PDF pairs (the canonical source of truth for the
 | FTD_One_Unit_of_Existence | One unit of existence (original) |
 | ontic_derivation_chain | Ontic derivation chain |
 
-### PDF-Only
+### PDF Outputs Published To Root
 
-| Paper | Notes |
-|-------|-------|
-| DERIV_GSTAR_CONTINUOUS_DISCRETE | No TeX source available |
-| FTD_One_Unit_of_Existence_v2 | Version 2, no TeX source |
-| One_Unit_of_Existence | Alternate format of FTD_One_Unit_of_Existence |
+Compiled PDFs from this source tree are published directly into `docs/papers/` so active PDFs stay in one place.
 
 ### TeX Fragments (no PDF)
 
@@ -107,7 +133,7 @@ Source papers with complete TeX+PDF pairs (the canonical source of truth for the
 | File | Purpose |
 |------|---------|
 | gen_alpha_figures.py | Figure generation script |
-| figures/ | Referenced figures (6 files) |
+| figures/ | Referenced figures and source assets |
 
 ## archive/
 
@@ -136,4 +162,4 @@ pdflatex <paper>.tex  # Run twice for TOC/references
 
 If `pdflatex` is not on your PATH (common on Windows), use the full MiKTeX path or add the MiKTeX `bin` directory to PATH.
 
-Papers in `speculative/` and some in `src/` reference `figures/` relative to `src/`. Compile from within the appropriate directory.
+Compile from the paper's source directory, then move or copy the active PDF into `docs/papers/` if your build tool does not already emit it there.

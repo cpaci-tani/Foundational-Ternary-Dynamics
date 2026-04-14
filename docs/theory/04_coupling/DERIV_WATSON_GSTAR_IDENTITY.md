@@ -268,6 +268,54 @@ This resolves **SP1a** from AUDIT_HIDDEN_SELECTIONS.md: the curve selection is *
 
 ---
 
+## Part VIII: Numerical Confirmation (April 11, 2026)
+
+Independent numerical verification via `scripts/exploration/gap_equation_layer_convergence.py`:
+
+### 8.1 Convergence by sublattice
+
+The normalized Green's function at origin was computed for each Moore sublattice Laplacian on L x L x L periodic tori at L = 64, 96, 128:
+
+| Sublattice | L=64 | L=96 | L=128 | Analytic limit | Matches G*^2/(2pi)? |
+|------------|------|------|-------|----------------|---------------------|
+| BCC (8) | 1.3650 | 1.3744 | 1.3791 | **G*^2/(2pi) = 1.3932** | **YES** (converging, 1.0% remaining at L=128) |
+| SC (6) | 1.4952 | 1.5023 | 1.5058 | ~1.5164 | NO (diverging from target) |
+| FCC (12) | 1.3090 | 1.3174 | 1.3222 | different | NO |
+| Moore (26) | 1.1445 | 1.1513 | 1.1571 | different | NO |
+
+BCC converges to 1.3932 from below. SC converges to ~1.516 (a different value). No other sublattice matches.
+
+### 8.2 Why BCC: the multiplicative eigenvalue [THEOREM — structural]
+
+The BCC Laplacian eigenvalue is `sigma_BCC(k) = 1 - cos k_1 * cos k_2 * cos k_3` — a **product** of cosines. The SC eigenvalue is `sigma_SC(k) = 1 - (cos k_1 + cos k_2 + cos k_3)/3` — a **sum**.
+
+The product structure is decisive:
+
+1. The BCC propagator `1/(1 - cos k_1 cos k_2 cos k_3)` expands as a geometric series: `sum_n (cos k_1 cos k_2 cos k_3)^n`
+2. Each term **factors across axes**: `[integral (cos k)^n dk]^3 = [C(2n,n)/4^n]^3`
+3. The sum of cubed central binomial coefficients evaluates to `Gamma(1/4)^4 / (4 pi^3) = G*^2/(2 pi)`
+4. SC's sum structure in the denominator cannot factor this way — no path to Gamma(1/4)^4
+
+### 8.3 Zero mode topology
+
+The sublattice Laplacians have different numbers of zero eigenvalues on the torus:
+
+- SC: **1 zero mode** (k = 0 only) — translation invariance
+- FCC: **2 zero modes** (k = 0 and k = (pi, pi, pi))
+- BCC: **4 zero modes** (k = 0 and k = (pi,pi,0), (pi,0,pi), (0,pi,pi))
+
+The BCC Laplacian's extra zero modes at the FCC reciprocal lattice points cause slow finite-lattice convergence (explaining why early simulations at L = 48 were misleading), but do not affect the L -> infinity limit.
+
+### 8.4 Gap equation consequence
+
+With n_DOF = 16, only the BCC Watson integral gives the correct gap equation coefficient:
+
+K = 16 * 2pi * W_BCC = 16 * 2pi * G*^2/(2pi) = 16 G*^2
+
+This reproduces the master quadratic `x^2 - 16G*^2 x + 16G*^3 = 0` with roots x+ = 1/alpha = 137.036 and x- = N_c = 3.024.
+
+---
+
 ## References
 
 - Watson, G. N. "Three Triple Integrals," *Quarterly Journal of Mathematics* **10** (1939), 266–276
