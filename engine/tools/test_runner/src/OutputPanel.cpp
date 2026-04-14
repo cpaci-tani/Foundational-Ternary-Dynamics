@@ -49,6 +49,7 @@ OutputPanel::~OutputPanel() = default;
 void OutputPanel::clear() {
     m_log->clear();
     m_lineCount = 0;
+    m_seenMetricKeys.clear();
     m_status->setText(QStringLiteral("Idle."));
 }
 
@@ -107,24 +108,30 @@ void OutputPanel::appendCheck(const QString& testName, const QVariantMap& evt) {
 }
 
 void OutputPanel::appendMetric(const QString& testName, const QVariantMap& evt) {
-    // Don't dump metrics into the main log; they can be overwhelming.
-    // For Phase 3, show only every 50th metric event to give users a signal
-    // that the test is alive without flooding the view. Phase 5 routes these
-    // to the TelemetryCharts.
-    static thread_local int counter = 0;
-    if ((counter++ % 50) != 0) return;
-
+    // Phase 5: TelemetryCharts receives every metric event un-throttled.
+    // OutputPanel only logs the FIRST occurrence of each (testName, metricName)
+    // pair so the log stays readable. Tick events are logged once per test
+    // (the first tick seen) for the same reason.
     const QString eventType = evt.value(QStringLiteral("event")).toString();
+
     if (eventType == QStringLiteral("tick")) {
+        const QString key = QStringLiteral("%1::__tick__").arg(testName);
+        if (m_seenMetricKeys.contains(key)) return;
+        m_seenMetricKeys.insert(key);
         const int tick = evt.value(QStringLiteral("tick")).toInt();
         const double dt = evt.value(QStringLiteral("dt")).toDouble();
-        appendLine(QStringLiteral("[%1] tick=%2 dt=%3")
+        appendLine(QStringLiteral("[%1] first tick=%2 dt=%3 (subsequent "
+                                  "ticks routed to Telemetry tab)")
                        .arg(testName).arg(tick).arg(dt),
                    QStringLiteral("#444444"));
     } else {
         const QString name = evt.value(QStringLiteral("name")).toString();
+        const QString key = QStringLiteral("%1::%2").arg(testName, name);
+        if (m_seenMetricKeys.contains(key)) return;
+        m_seenMetricKeys.insert(key);
         const double value = evt.value(QStringLiteral("value")).toDouble();
-        appendLine(QStringLiteral("[%1] metric %2 = %3")
+        appendLine(QStringLiteral("[%1] first metric %2 = %3 (subsequent "
+                                  "samples routed to Telemetry tab)")
                        .arg(testName, name).arg(value),
                    QStringLiteral("#444444"));
     }

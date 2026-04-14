@@ -6,6 +6,7 @@
 #include "LatticeViewer.h"
 #include "OutputPanel.h"
 #include "SmartDispatcher.h"
+#include "TelemetryCharts.h"
 #include "TestModel.h"
 #include "TestRunner.h"
 
@@ -168,10 +169,8 @@ void MainWindow::buildCentralWidget() {
     m_latticeViewer = new LatticeViewer(this);
     tabs->addTab(m_latticeViewer, QStringLiteral("Live Lattice"));
 
-    auto* telemetryPlaceholder = new QLabel(
-        QStringLiteral("TelemetryCharts lands in Phase 5"), this);
-    telemetryPlaceholder->setAlignment(Qt::AlignCenter);
-    tabs->addTab(telemetryPlaceholder, QStringLiteral("Telemetry"));
+    m_telemetryCharts = new TelemetryCharts(this);
+    tabs->addTab(m_telemetryCharts, QStringLiteral("Telemetry"));
 
     auto* historyPlaceholder = new QLabel(
         QStringLiteral("HistoryDb lands in Phase 6"), this);
@@ -305,6 +304,9 @@ void MainWindow::onAbout() {
 void MainWindow::onTestStarted(const QString& testName, qint64 /*pid*/) {
     m_model->updateStatus(testName, TestStatus::Running);
     m_output->appendSystem(QStringLiteral("Started %1").arg(testName));
+    if (m_telemetryCharts) {
+        m_telemetryCharts->onTestStarted(testName);
+    }
 }
 
 void MainWindow::onCheckReceived(const QString& testName, const QVariantMap& evt) {
@@ -313,6 +315,9 @@ void MainWindow::onCheckReceived(const QString& testName, const QVariantMap& evt
 
 void MainWindow::onMetricReceived(const QString& testName, const QVariantMap& evt) {
     m_output->appendMetric(testName, evt);
+    if (m_telemetryCharts) {
+        m_telemetryCharts->onMetricEvent(testName, evt);
+    }
 }
 
 void MainWindow::onSnapshotReceived(const QString& testName,
@@ -347,6 +352,9 @@ void MainWindow::onTestFinished(const QString& testName, int failures,
     ++m_totalFinished;
 
     m_output->appendFinished(testName, failures, durationSec, exitCode);
+    if (m_telemetryCharts) {
+        m_telemetryCharts->onTestFinished(testName, failures, durationSec);
+    }
     updateStatusCounters();
 }
 
