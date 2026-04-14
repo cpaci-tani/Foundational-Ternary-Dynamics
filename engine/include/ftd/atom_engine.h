@@ -18,6 +18,8 @@
 #include "voxel.h"       // Vec3
 #include "constants.h"   // ALPHA, K_B, PI, C_SPEED, DAMPING, R_BOHR, N_BASE, etc.
 #include "scale.h"       // OnticEntity, ScaleLevel
+#include "scale_engine.h"  // ScaleEngine base class
+#include "barnes_hut.h"    // FTD Generalized Barnes-Hut Tree
 #include <vector>
 #include <cstdint>
 #include <cmath>
@@ -36,23 +38,24 @@ struct AtomToggles {
     bool auto_bonding = true;
     bool damping = false;         // Off by default for energy conservation
 
-    // Phase 3 stubs (OFF by default until implemented)
+    // Phase 3 and 4 Extensions (OFF by default)
     bool h_bonds = false;
     bool dipole_dipole = false;
     bool angle_strain = false;
     bool torsional = false;
+    bool improper_torsional = false;
     bool thermostat = false;
     bool electronegativity = false;
 
     void enable_all() {
         ionic = van_der_waals = covalent_bonds = auto_bonding = damping = true;
-        h_bonds = dipole_dipole = angle_strain = torsional = true;
+        h_bonds = dipole_dipole = angle_strain = torsional = improper_torsional = true;
         thermostat = electronegativity = true;
     }
     void minimal() {
         ionic = van_der_waals = covalent_bonds = auto_bonding = true;
         damping = false;
-        h_bonds = dipole_dipole = angle_strain = torsional = false;
+        h_bonds = dipole_dipole = angle_strain = torsional = improper_torsional = false;
         thermostat = electronegativity = false;
     }
 };
@@ -69,9 +72,10 @@ struct AtomForceDiag {
     Vec3 f_dipole;
     Vec3 f_angle;
     Vec3 f_torsion;
+    Vec3 f_improper;
 
     Vec3 total() const {
-        return f_ionic + f_vdw + f_bond + f_hbond + f_dipole + f_angle + f_torsion;
+        return f_ionic + f_vdw + f_bond + f_hbond + f_dipole + f_angle + f_torsion + f_improper;
     }
 };
 
@@ -293,6 +297,12 @@ public:
     /// Compute diagnostics for current state
     AtomDiagnostics diagnostics() const;
 
+    // Fetch forces exact
+    Vec3 compute_pairwise_force(int i, int j) const;
+
+    // Barnes hut force approximation
+    Vec3 tree_force(int i, int node_idx) const;
+
     /// Compute force on atom i from all others
     Vec3 compute_force(int i) const;
 
@@ -316,10 +326,17 @@ private:
     std::vector<Atom> atoms_;
     std::vector<Vec3> forces_;             // Total force buffer (parallel to atoms_)
     mutable std::vector<AtomForceDiag> force_diag_;  // Per-force decomposition (mutable: written by const compute_force)
+
+    using AtomTree = BarnesHutTree<Atom, 
+        Vec3(*)(const Atom&), 
+        double(*)(const Atom&), 
+        double(*)(const Atom&)>;
+    AtomTree octree_;
+
     int tick_ = 0;
     int next_id_ = 0;
-    double dt_ = 0.01;          // Smaller than PE (stiffer forces)
-    double soft_ = 0.5;         // Softening length
+    double dt_ = 1.0;          // Time step (default 1 tick = ~1 fs/10)
+    double soft_ = 0.5;         // Softening length (smaller than Scale 1)
     double target_temperature_ = 0.0;  // Thermostat target (0 = disabled)
     double thermostat_tau_ = THERMOSTAT_TAU_DEFAULT; // Coupling timescale
 };

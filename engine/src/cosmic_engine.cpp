@@ -415,110 +415,16 @@ void CosmicEngine::setup_quasar(double mass, int n_gas) {
 // ============================================================================
 // Barnes-Hut Octree
 // ============================================================================
-
 void CosmicEngine::build_octree() {
-    octree_.clear();
-    if (bodies_.empty()) return;
-
-    // Find bounding box
-    Vec3 bmin = bodies_[0].position;
-    Vec3 bmax = bodies_[0].position;
-    for (const auto& b : bodies_) {
-        bmin.x = std::min(bmin.x, b.position.x);
-        bmin.y = std::min(bmin.y, b.position.y);
-        bmin.z = std::min(bmin.z, b.position.z);
-        bmax.x = std::max(bmax.x, b.position.x);
-        bmax.y = std::max(bmax.y, b.position.y);
-        bmax.z = std::max(bmax.z, b.position.z);
-    }
-
-    // Pad slightly to avoid boundary issues
-    double pad = 0.01 * std::max({bmax.x - bmin.x, bmax.y - bmin.y, bmax.z - bmin.z});
-    bmin.x -= pad; bmin.y -= pad; bmin.z -= pad;
-    bmax.x += pad; bmax.y += pad; bmax.z += pad;
-
-    // Make it cubic
-    double maxspan = std::max({bmax.x - bmin.x, bmax.y - bmin.y, bmax.z - bmin.z});
-    bmax = {bmin.x + maxspan, bmin.y + maxspan, bmin.z + maxspan};
-
-    // Create root node
-    octree_.reserve(bodies_.size() * 4);
-    OctreeNode root;
-    root.bbox_min = bmin;
-    root.bbox_max = bmax;
-    octree_.push_back(root);
-    octree_root_ = 0;
-
-    // Insert all bodies
-    for (int i = 0; i < (int)bodies_.size(); ++i) {
-        insert_into_tree(i, octree_root_);
-    }
-}
-
-void CosmicEngine::insert_into_tree(int body_idx, int node_idx) {
-    OctreeNode& node = octree_[node_idx];
-
-    if (node.is_leaf && node.body_index == -1) {
-        // Empty leaf — place body here
-        node.body_index = body_idx;
-        node.center_of_mass = bodies_[body_idx].position;
-        node.total_mass = bodies_[body_idx].mass;
-        return;
-    }
-
-    if (node.is_leaf) {
-        // Occupied leaf — split into 8 children
-        int existing = node.body_index;
-        node.body_index = -1;
-        node.is_leaf = false;
-
-        // Create 8 children
-        for (int c = 0; c < 8; ++c) {
-            OctreeNode child;
-            child.is_leaf = true;
-            node.child_bbox(c, child.bbox_min, child.bbox_max);
-            octree_.push_back(child);
-            // Note: node reference may be invalidated by push_back, re-fetch
-        }
-        // Re-fetch node after potential reallocation
-        OctreeNode& n = octree_[node_idx];
-        int base = (int)octree_.size() - 8;
-        for (int c = 0; c < 8; ++c) {
-            n.children[c] = base + c;
-        }
-
-        // Re-insert existing body
-        int oct_existing = n.octant(bodies_[existing].position);
-        insert_into_tree(existing, n.children[oct_existing]);
-    }
-
-    // Insert new body into appropriate child
-    OctreeNode& n = octree_[node_idx];
-    int oct = n.octant(bodies_[body_idx].position);
-    if (n.children[oct] == -1) {
-        // Create child on demand
-        OctreeNode child;
-        child.is_leaf = true;
-        n.child_bbox(oct, child.bbox_min, child.bbox_max);
-        octree_.push_back(child);
-        octree_[node_idx].children[oct] = (int)octree_.size() - 1;
-    }
-    insert_into_tree(body_idx, octree_[node_idx].children[oct]);
-
-    // Update center of mass (incremental)
-    OctreeNode& nn = octree_[node_idx];
-    double m_new = bodies_[body_idx].mass;
-    double m_total = nn.total_mass + m_new;
-    if (m_total > 0.0) {
-        nn.center_of_mass.x = (nn.center_of_mass.x * nn.total_mass + bodies_[body_idx].position.x * m_new) / m_total;
-        nn.center_of_mass.y = (nn.center_of_mass.y * nn.total_mass + bodies_[body_idx].position.y * m_new) / m_total;
-        nn.center_of_mass.z = (nn.center_of_mass.z * nn.total_mass + bodies_[body_idx].position.z * m_new) / m_total;
-    }
-    nn.total_mass = m_total;
+    octree_.build(bodies_,
+        [](const CosmicBody& b) { return b.position; },
+        [](const CosmicBody& b) { return b.mass; },
+        [](const CosmicBody& b) { return 0.0; }
+    );
 }
 
 Vec3 CosmicEngine::tree_force(int body_idx, int node_idx) const {
-    const OctreeNode& node = octree_[node_idx];
+    const BarnesHutNode& node = octree_.nodes[node_idx];
     const CosmicBody& body = bodies_[body_idx];
 
     if (node.total_mass <= 0.0) return {};
@@ -532,11 +438,24 @@ Vec3 CosmicEngine::tree_force(int body_idx, int node_idx) const {
     double r = std::sqrt(r2);
 
     if (node.is_leaf) {
-        if (node.body_index == body_idx) return {}; // Skip self
-        if (node.body_index == -1) return {};
-        // Direct force: F = G_N * m * M * r_hat / r^2
-        double f_mag = G_N * body.mass * node.total_mass / r2;
-        return {f_mag * dr.x / r, f_mag * dr.y / r, f_mag * dr.z / r};
+        if (node.body_indices.empty()) return {};
+        Vec3 lf;
+        for (int b_idx : node.body_indices) {
+            if (b_idx == body_idx) continue;
+            
+            Vec3 l_dr = {
+                bodies_[b_idx].position.x - body.position.x,
+                bodies_[b_idx].position.y - body.position.y,
+                bodies_[b_idx].position.z - body.position.z
+            };
+            double lr2 = l_dr.mag2() + softening_ * softening_;
+            double lr = std::sqrt(lr2);
+            double f_mag = G_N * body.mass * bodies_[b_idx].mass / lr2;
+            lf.x += f_mag * l_dr.x / lr;
+            lf.y += f_mag * l_dr.y / lr;
+            lf.z += f_mag * l_dr.z / lr;
+        }
+        return lf;
     }
 
     // Barnes-Hut opening angle test
@@ -565,10 +484,10 @@ Vec3 CosmicEngine::tree_force(int body_idx, int node_idx) const {
 // ============================================================================
 
 void CosmicEngine::compute_gravity() {
-    if (!toggles.gravity || octree_.empty()) return;
+    if (!toggles.gravity || octree_.nodes.empty()) return;
 
     for (int i = 0; i < (int)bodies_.size(); ++i) {
-        Vec3 fg = tree_force(i, octree_root_);
+        Vec3 fg = tree_force(i, octree_.root);
         // Acceleration = force / mass (but force already includes body mass)
         // Actually tree_force returns F = G*m_i*M*rhat/r^2, so a = F/m_i
         double m = bodies_[i].mass;

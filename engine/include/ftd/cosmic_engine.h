@@ -31,6 +31,7 @@
 #include "constants.h"     // All FTD constants
 #include "scale.h"         // OnticEntity, ScaleLevel
 #include "scale_engine.h"  // ScaleEngine base class
+#include "barnes_hut.h"    // FTD Generalized Barnes-Hut Tree
 #include <vector>
 #include <cstdint>
 #include <cmath>
@@ -237,53 +238,7 @@ struct GravWaveEvent {
     double current_radius = 0.0; // Current propagation radius
 };
 
-// ============================================================================
-// Barnes-Hut octree node
-// ============================================================================
-
-struct OctreeNode {
-    Vec3 center_of_mass;
-    double total_mass = 0.0;
-    Vec3 bbox_min, bbox_max;
-    std::array<int, 8> children; // -1 = empty, >=0 = index into node array
-    int body_index = -1;         // leaf: body index, branch: -1
-    bool is_leaf = true;
-
-    OctreeNode() { children.fill(-1); }
-
-    double width() const {
-        return bbox_max.x - bbox_min.x;
-    }
-
-    // Determine which octant a point falls in
-    int octant(const Vec3& p) const {
-        Vec3 mid = {
-            0.5 * (bbox_min.x + bbox_max.x),
-            0.5 * (bbox_min.y + bbox_max.y),
-            0.5 * (bbox_min.z + bbox_max.z)
-        };
-        int oct = 0;
-        if (p.x >= mid.x) oct |= 1;
-        if (p.y >= mid.y) oct |= 2;
-        if (p.z >= mid.z) oct |= 4;
-        return oct;
-    }
-
-    // Get bounding box for a child octant
-    void child_bbox(int oct, Vec3& cmin, Vec3& cmax) const {
-        Vec3 mid = {
-            0.5 * (bbox_min.x + bbox_max.x),
-            0.5 * (bbox_min.y + bbox_max.y),
-            0.5 * (bbox_min.z + bbox_max.z)
-        };
-        cmin.x = (oct & 1) ? mid.x : bbox_min.x;
-        cmax.x = (oct & 1) ? bbox_max.x : mid.x;
-        cmin.y = (oct & 2) ? mid.y : bbox_min.y;
-        cmax.y = (oct & 2) ? bbox_max.y : mid.y;
-        cmin.z = (oct & 4) ? mid.z : bbox_min.z;
-        cmax.z = (oct & 4) ? bbox_max.z : mid.z;
-    }
-};
+// (OctreeNode has been generalized to barnes_hut.h as BarnesHutNode)
 
 // ============================================================================
 // Cosmic-scale constants derived from FTD (zero free parameters)
@@ -458,7 +413,6 @@ private:
     // Phase 2: Gravity
     void compute_gravity();
     Vec3 tree_force(int body_idx, int node_idx) const;
-    void insert_into_tree(int body_idx, int node_idx);
 
     // Phase 3-4: SPH hydrodynamics
     void compute_sph_density();
@@ -500,8 +454,11 @@ private:
     std::vector<GravWaveEvent> gw_events_;
 
     // Barnes-Hut octree
-    std::vector<OctreeNode> octree_;
-    int octree_root_ = -1;
+    using CosmicTree = BarnesHutTree<CosmicBody, 
+        Vec3(*)(const CosmicBody&), 
+        double(*)(const CosmicBody&), 
+        double(*)(const CosmicBody&)>;
+    CosmicTree octree_;
 
     // SPH neighbor lists
     std::vector<std::vector<int>> sph_neighbors_;
