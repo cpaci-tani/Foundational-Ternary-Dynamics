@@ -639,16 +639,11 @@ add_executable(ftd_pe_fine_structure tests/campaign_pe_fine_structure.cpp)
 target_link_libraries(ftd_pe_fine_structure ftd_core)
 
 # Scale 2 Phase 3: AtomEngine force expansion (5 new forces)
-add_executable(test_ae_hbonds tests/test_ae_hbonds.cpp)
-target_link_libraries(test_ae_hbonds ftd_core)
-add_executable(test_ae_angle_strain tests/test_ae_angle_strain.cpp)
-target_link_libraries(test_ae_angle_strain ftd_core)
-add_executable(test_ae_dipole tests/test_ae_dipole.cpp)
-target_link_libraries(test_ae_dipole ftd_core)
-add_executable(test_ae_thermostat tests/test_ae_thermostat.cpp)
-target_link_libraries(test_ae_thermostat ftd_core)
-add_executable(test_ae_electronegativity tests/test_ae_electronegativity.cpp)
-target_link_libraries(test_ae_electronegativity ftd_core)
+# Wave 4a.1 (2026-04-14): ae_* forces consolidated into test_atom_engine_forces
+# (5 files → 1). Registered via ftd_add_test; see section_* functions in the
+# source for angle_strain, dipole, electronegativity, hbonds, thermostat.
+ftd_add_test(test_atom_engine_forces tests/test_atom_engine_forces.cpp
+             CTEST_NAME atom_engine_forces TIMEOUT 600)
 add_executable(ftd_ae_water tests/campaign_ae_water.cpp)
 target_link_libraries(ftd_ae_water ftd_core)
 
@@ -790,11 +785,7 @@ add_test(NAME einstein_equations COMMAND test_einstein_equations)
 add_test(NAME campaign_pe_fine_structure COMMAND ftd_pe_fine_structure)
 
 # Scale 2 Phase 3: AE force expansion
-add_test(NAME ae_hbonds COMMAND test_ae_hbonds)
-add_test(NAME ae_angle_strain COMMAND test_ae_angle_strain)
-add_test(NAME ae_dipole COMMAND test_ae_dipole)
-add_test(NAME ae_thermostat COMMAND test_ae_thermostat)
-add_test(NAME ae_electronegativity COMMAND test_ae_electronegativity)
+# (ae_* consolidated into atom_engine_forces via ftd_add_test above)
 add_test(NAME campaign_ae_water COMMAND ftd_ae_water)
 
 # Orphaned tests registered by I-04 audit (Mar 2026)
@@ -961,8 +952,7 @@ set_tests_properties(
     latency_field
     pe_forces tritium_algebra
     campaign_pe_fine_structure
-    ae_hbonds ae_angle_strain ae_dipole ae_thermostat
-    ae_electronegativity campaign_ae_water
+    atom_engine_forces campaign_ae_water
     inflation dark_matter cosmological_constant consciousness sloop
     lorentz_invariance electroweak hydrogen_em_only campaign_lorentz_measure
     helium_scale1 fine_structure_scale1 hydrogen_spectrum_scale1
@@ -1000,7 +990,7 @@ set_property(TEST
     larmor dipole_radiation dispersion_relation thomson_scattering light
     ensemble correlations spectral tracker benchmark latency_field
     # pe_forces and tritium_algebra auto-labeled as "unit" by ftd_add_test()
-    ae_hbonds ae_angle_strain ae_dipole ae_thermostat ae_electronegativity
+    # atom_engine_forces auto-labeled as "unit" by ftd_add_test()
     action_stationarity asymptotic_freedom atom_toggles atomic_energy
     baryogenesis bell_aggregate born_rule_ensemble confinement_test
     entanglement_basis flavor_physics higgs_mechanism hilbert measurement
@@ -1054,8 +1044,8 @@ set_property(TEST
 
 # Scale 2: AtomEngine tests
 set_property(TEST
-    atom_engine atom_scale_bridge ae_hbonds ae_angle_strain ae_dipole
-    ae_thermostat ae_electronegativity atom_toggles campaign_ae_water
+    atom_engine atom_scale_bridge atom_engine_forces
+    atom_toggles campaign_ae_water
     APPEND PROPERTY LABELS "scale2")
 
 # ============================================================================
