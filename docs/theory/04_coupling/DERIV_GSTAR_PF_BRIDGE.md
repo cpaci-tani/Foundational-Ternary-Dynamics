@@ -469,7 +469,7 @@ The roots $x_+ \approx 137.036$ (→ 1/α) and $x_- \approx 3.024$ (→ N_c) are
 | [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) | Master quadratic definition, coefficient 16, G* properties |
 | [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) | Lattice availability f = 1 - r_s/r, holographic bound A_min, PF cancellation in §§12–13 |
 | [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) | G* and four forces, 137-lobe structure |
-| [EXPLR_CUBOCTAHEDRAL_GEOMETRY.md](../08_structural/EXPLR_CUBOCTAHEDRAL_GEOMETRY.md) | FCC packing fraction (74% — distinct from PF = π/4), kissing number K(3) = 12 |
+| [DERIV_CUBOCTAHEDRAL_INTEGERS.md](../08_structural/DERIV_CUBOCTAHEDRAL_INTEGERS.md) | Cuboctahedral/FCC geometry, integer recovery, and 3D coordination structure |
 | [EXPLR_TRIT_INFORMATION_THEORY.md](../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md) | Information-theoretic perspective on G* |
 
 ---
@@ -493,6 +493,6 @@ The roots $x_+ \approx 137.036$ (→ 1/α) and $x_- \approx 3.024$ (→ N_c) are
 |----------|------------|---------|
 | **This document** (canonical) | PF = π/4 | Circle-in-square packing fraction |
 | DERIV_LATTICE_SCHWARZSCHILD.md §§11–13 | "PF" (informal) | Planck Frequency context |
-| EXPLR_CUBOCTAHEDRAL_GEOMETRY.md | η ≈ 0.7405 | FCC sphere packing fraction (distinct from PF) |
+| DERIV_CUBOCTAHEDRAL_INTEGERS.md | Integer structure from cuboctahedral geometry | Cuboctahedral/FCC coordination link |
 
 **Convention:** Throughout FTD, **PF ≡ π/4** unless explicitly stated otherwise.

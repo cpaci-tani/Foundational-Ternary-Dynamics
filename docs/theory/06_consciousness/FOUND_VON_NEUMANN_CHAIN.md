@@ -257,13 +257,21 @@ This is the number of voxels that must cooperate to effect a single measurement 
 - The ReLU threshold $K_B$ is exceeded cooperatively
 - The self-consistency of the gap equation is achievable (enough sites for the master quadratic to have a physically valid solution)
 
-**[OPEN]** Whether $N_{\text{meas}} = 18$ is exact or approximate, and whether it depends on the type of measurement, remains to be determined by lattice simulation. The engine's campaign test infrastructure (see `engine/tests/`) provides the framework for such investigations.
+**[OPEN]** Whether $N_{\text{meas}} = 18$ is exact or approximate, and whether it depends on the type of measurement, remains to be determined by lattice simulation.
 
 ### 6.3 Connection to the Moore Neighborhood
 
-**[CONJECTURE]** The 26-connected Moore neighborhood on $\mathbb{Z}^3$ decomposes as SC (6) + FCC (12) + BCC (8) = 26 neighbors. The measurement threshold $N_{\text{meas}} \approx 18$ lies between the SC+FCC count (18) and the full Moore count (26). This suggests that measurement involves coordination across the SC and FCC sub-lattices but not the BCC diagonal connections --- consistent with the finding that $G^*$ derives from BCC geometry alone (see project notes on Moore decomposition).
+**[CONJECTURE]** The 26-connected Moore neighborhood on $\mathbb{Z}^3$ decomposes as SC (6) + FCC (12) + BCC (8) = 26 neighbors. The measurement threshold $N_{\text{meas}} \approx 18$ matches the SC+FCC count (18).
 
-**[OPEN]** The precise relationship between $N_{\text{meas}}$ and the Moore decomposition is unexplored.
+**Simulation test (April 11, 2026):** `scripts/exploration/verify_nmeas_18.py` tested three independent routes to derive $N_{\text{meas}} = 18$:
+
+1. **Gauss constraint DOF counting:** Free flux DOF = 2N+1 (linear in N). No special value at N = 18. Does not single out 18.
+2. **Discriminant chain progression:** Modeling k(N) as decreasing from $k_{\text{phys}} = 16$ toward $k_{\text{meas}} = 4/G^*$, no natural rate parameter produces exactly 18 links. The rate $a = (16 - 4/G^*)/18 = 0.814$ has no known closed form in framework constants.
+3. **Flux distribution threshold:** Cumulative $|J|^2$ through Moore shells shows no sharp transition at the SC+FCC boundary.
+
+**Conclusion: $N_{\text{meas}} = 18$ does NOT follow from any single mechanism in isolation.** The coincidence 18 = |SC| + |FCC| remains [CONJECTURE]. The measurement chain termination likely arises from the COMBINATION of all four mechanisms (structural, algebraic, self-referential, discriminant) acting together, which may require full engine simulation to verify dynamically.
+
+**[OPEN]** The precise relationship between $N_{\text{meas}}$ and the Moore decomposition is unexplored. None of the three simple derivation routes tested produce 18 from first principles.
 
 ---
 

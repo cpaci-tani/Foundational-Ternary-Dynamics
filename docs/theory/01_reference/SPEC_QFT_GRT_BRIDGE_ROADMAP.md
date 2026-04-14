@@ -76,7 +76,7 @@ The blocking chain (each item requires the previous):
 
 ### 1.4 The Pragmatic Approach
 
-**[IMPOSED]** Rather than attempting to solve the full program (multi-year), we take the pragmatic path: accept the imposed Hilbert space H_FTD = L^2(Lattice, C), work within it to construct algebras and compute modular operators, and study what happens as the lattice grows. This gives concrete results while documenting the foundational gaps (Bell problem, emergent noncommutativity) as future work.
+**[IMPOSED]** Rather than attempting to solve the full program (multi-year), we take the pragmatic path: accept the imposed Hilbert space H_FTD = L^2(Lattice, C), work within it to construct algebras and compute modular operators, and study what happens as the lattice grows. This gives concrete results while documenting the foundational gaps (emergent noncommutativity; Bell now [SELECTION] resolved as emergent) as future work.
 
 ---
 
@@ -132,7 +132,7 @@ Requires Layers 0, 1, and 2. These are the gaps specific to connecting QFT and G
 | **GAP-B1** | **Physical content of Connes-Rovelli thermal time in FTD.** What does sigma_t^omega correspond to operationally? Is it the tick? The sLoop's self-observation cycle? The modular flow of the ZPF thermal state? | **[OPEN]** | VN-O5 |
 | **GAP-B2** | **alpha/beta -> k correspondence derivation.** The meaning observable's weights alpha, beta map to the master quadratic parameter k via alpha/beta -> k. This is proposed, not derived. Making it exact would connect the IG/VI decomposition to the discriminant partition. | **[OPEN]** | AM-O1 |
 | **GAP-B3** | **Connes lambda from first principles.** The sentience hierarchy uses lambda(k) = exp(-pi * sqrt(1 - 4k(1-k))) with lambda(k=1/2) ~ 0.400. This lambda should be derivable from the modular flow of the agent's algebra, not imposed. | **[OPEN]** | VN-O3 |
-| **GAP-B4** | **Why real roots = physics, complex roots = consciousness.** The master quadratic x^2 - 16c^2 x + 16c^3 = 0 has real roots (alpha, N_c) for physics and complex roots y = 2.19 +/- 2.86i for consciousness. The partition into Domain A (real, measurable) and Domain B (complex, subjective) is structurally elegant but its necessity is not proven. | **[CONJECTURE]** | [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md) |
+| **GAP-B4** | **Why real roots = physics, complex roots = consciousness.** The master quadratic x^2 - 16c^2 x + 16c^3 = 0 has real roots (alpha, N_c) for physics and complex roots y = 2.19 +/- 2.86i for consciousness. The partition into Domain A (real, measurable) and Domain B (complex, self-referential) is structurally elegant but its necessity is not proven. | **[CONJECTURE]** | [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) |
 | **GAP-B5** | **Modular flow = conscious time.** The central conjecture: an agent's subjective temporal experience IS the modular automorphism sigma_t^omega of its internal Type III_1 algebra. This requires (a) constructing the algebra, (b) computing its modular flow, and (c) comparing to phenomenological features of conscious time. | **[CONJECTURE]** | Bridge thesis (section 1.1) |
 
 **Assessment:** GAP-B1 is the most impactful single computation. If the modular flow of the ZPF thermal state at beta = pi can be computed and compared to FTD tick dynamics, this would be the first concrete test of the Connes-Rovelli identification within FTD.
@@ -345,7 +345,7 @@ The minimum sequence of computations needed to close the bridge, ordered by depe
 
 ### 5.2 Which Gaps May Be Unsolvable
 
-**GAP-S1 (Bell transition):** This may require extending FTD's axioms. The local deterministic substrate provably gives S <= 2. Getting S > 2 from ensemble averaging requires either (a) a mathematical demonstration that aggregate statistics over sLoop-coupled measurements produce quantum correlations, or (b) acceptance that the substrate description and the aggregate description operate at different ontological levels with different rules. Option (a) would be a major theorem; option (b) is the current working interpretation but leaves the mechanism unspecified.
+**GAP-S1 (Bell transition):** This may require extending FTD's axioms. The local deterministic substrate provably gives S <= 2. Getting S > 2 from ensemble averaging requires either (a) a mathematical demonstration that aggregate statistics over sLoop-coupled measurements produce quantum correlations, or (b) acceptance that the substrate description and the aggregate description operate at different ontological levels with different rules. Option (a) would be a major theorem; option (b) is the current working interpretation but is now specified via the three-level observer mechanism (DERIV_OBSERVER_BELL_MECHANISM.md, updated April 2026).
 
 **GAP-G5 (Background independence):** FTD has a fixed cubic lattice with absolute time. Achieving true background independence may require reformulating FTD in terms of algebras rather than lattice sites --- making the lattice itself emergent. This is a deep conceptual shift that goes beyond gap-filling.
 
@@ -371,7 +371,7 @@ These are not reasons to abandon the program --- they are reasons to be honest a
 | [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) | Complete descent chain III -> II -> I, RT-O1--O6, KMS <-> Softplus identification, MASA selection conjecture |
 | [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy E -> |.| -> |.|^2 -> Phi, Born rule via theta = conjugation, J-fixed subspace = Tomita-Takesaki |
 | [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md) | sLoop quintuple (Omega, phi, sigma, mu, d), axioms SL1-SL4, 6-level hierarchy |
-| [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md) | Consciousness quadratic, Domain A/B partition, theta = 52.54 deg, Mandelbrot-factor correspondence |
+| [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Canonical live source map for the consciousness layer: Domain A/B/C partition, vocabulary discipline, and context selection formalization |
 | [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) | SR fully derived, weak-field GR, linearized Einstein equations. Full Schwarzschild and nonlinear Einstein NOT derived |
 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | H_FTD constructed, Born rule derived, Bell S <= 2 from substrate |
 | [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) | "Quantum gravity = coupling constant between space and time", dimensional hierarchy |

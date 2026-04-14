@@ -1,7 +1,9 @@
 # FTD Paper Path — Complete
 
-**Status:** 11 papers, all written/edited. Math-first foundation → physics claims.
+**Status:** 11 path papers, all written/edited. Math-first foundation → physics claims.
 **Date:** March 28, 2026
+
+**Layout rule:** TeX sources for the path live in `docs/papers/src/`; active compiled PDFs live in `docs/papers/`; archived PDFs live in `docs/papers/archive/`.
 
 ---
 
@@ -60,6 +62,8 @@ At no point is the reader asked to accept something on faith before the math sup
 
 ---
 
-## All files in `docs/papers/src/`
+## File Locations
 
-Only path papers remain. Superseded, duplicate, and speculative files have been moved to `docs/papers/archive/superseded/`.
+- Path-paper TeX sources live in `docs/papers/src/`.
+- Active compiled PDFs for the path live in `docs/papers/`.
+- Archived and superseded PDFs live in `docs/papers/archive/`.

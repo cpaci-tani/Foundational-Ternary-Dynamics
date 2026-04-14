@@ -3,7 +3,7 @@
 ## A Principled Framework for Universe Simulation
 
 **Document Classification:** Authoritative Theoretical Specification (Single Source of Truth)
-**Version:** 5.29 (Consolidated Specification)
+**Version:** 5.30 (April 11, 2026)
 **Status:** ~35 Genuine Derivations + ~50 Parametric Insertions + Standard Physics (see [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md))
 **Supersedes:** CLAUDE.md (v5.17), docs/internal/SPEC_CLAUDE.md (v5.24), SPEC_FTD_FORMAL.md, SPEC_THE_COMPLETE_PROOF_RIGOROUS.md
 
@@ -501,6 +501,8 @@ PHASE 12: Increment
 
 **CAUTION**: The update order matters. Different orderings may produce different emergent behaviors. The specified order is a design choice.
 
+**Gate function identification (April 2026):** The abstract gate functions (Activate_C, etc.) from the theoretical formalism have been identified with concrete engine tick cycle phases (phase_read, phase_write, gauss_project, phase_forces, phase_movement). See [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](theory/02_foundations/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) §8.
+
 ---
 
 # Chapter 6: Force-Like Behaviors
@@ -711,6 +713,8 @@ The lemniscatic constant G* is now **derived from FTD axioms**, not merely obser
 1. **√2 factor**: Critical coupling from Gauss constraint geometry
 2. **Γ(1/4)² factor**: Lattice regularization → elliptic integral K(1/√2)
 3. **Coefficient 16**: Physical degrees of freedom on 2×2×2 minimal lattice (24 - 7 - 1 = 16)
+
+**BCC Watson integral (April 2026):** The identity W₃ = G*²/(2π) has been confirmed as the **BCC** Watson integral specifically (not SC or FCC). The BCC eigenvalue's multiplicative cosine product is what produces Γ(1/4)⁴/(4π³), connecting G* directly to BCC lattice geometry. See [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](theory/03_derivations/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md).
 
 The master quadratic (degree 2 is forced by self-referential closure of the ternary constraint AND by the degree-2 CM field $\mathbb{Q}(i)$; see [DERIV_QUADRATIC_NECESSITY.md](docs/theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md)):
 
@@ -1109,6 +1113,8 @@ FTD (sLoop):
 - **Measurement** requires sLoop (observer-substrate coupling)
 
 These are complementary, not conflicting.
+
+**Observer/object formalism (April 2026):** The observer/object distinction is grounded in the 3³ lattice: observer and object are structurally identical 3³ clusters, with the distinction being purely relational. Three observation modes emerge: external (disjoint clusters), overlapping (shared voxels), and self-referential (identical cluster). See [FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](theory/02_foundations/FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md) Part II.
 
 ---
 
@@ -1688,7 +1694,7 @@ A computational simulation based on:
 ### Quantum-Like Features
 - ✅ **Interference patterns** (flux superposition)
 - ✅ **Spinor behavior** (720° symmetry from framed flux)
-- ✅ **Bell locality**: Substrate gives S≤2 (expected for local axioms). Aggregate QM statistics (S>2) understood as ensemble property; emergence mechanism is open
+- ✅ **Bell locality**: Substrate gives S≤2 (expected for local axioms). Aggregate QM statistics (S>2) understood as ensemble property; emergence mechanism characterized as three-level observer hierarchy (April 2026); S = 2 sqrt(2) follows from Tsirelson's bound once QM emergence is established
 - ✅ **Born rule** (derived from flux concentration statistics)
 
 ### Derived Constants (v5.0 - Complete)

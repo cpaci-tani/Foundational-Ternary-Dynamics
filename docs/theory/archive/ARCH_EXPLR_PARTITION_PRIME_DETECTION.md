@@ -4,7 +4,7 @@
 
 **Date:** March 3, 2026
 **Framework:** FTD v5.27
-**Status:** Mathematical exploration — number-theoretic connections
+**Status:** Archived mathematical exploration — preserved historically, not part of the current live theory path
 **Epistemic Level:** [THEOREM] for algebraic identities; [SELECTION] for physical identification; [CONJECTURE] for deeper structure; [SPECULATIVE] for manifestation interpretation
 
 **Depends on:**

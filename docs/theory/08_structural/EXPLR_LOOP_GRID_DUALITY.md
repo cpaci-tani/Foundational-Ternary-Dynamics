@@ -213,7 +213,6 @@ FTD's two-layer ontology is not an accident of simulation design. It is the mini
 
 - CLAUDE.md, Sections 3.1 (Flux Field), 4.1 (Genesis), 13.1 (Measurement = Manifestation)
 - DERIV_ALPHA_PRECISION_FORMULA.md (G* derivation, sqrt(2) factor)
-- EXPLR_CUBOCTAHEDRAL_GEOMETRY.md (Oh symmetry invariance)
-- EXPLR_GOLDEN_RATIO_SCALE_BRIDGE.md (phi near sqrt(G* * G))
-- EXPLR_VACUUM_DRAG_DERIVATION.md (Gauss constant as resolution ratio)
+- DERIV_CUBOCTAHEDRAL_INTEGERS.md (cuboctahedral geometry and O_h structure)
+- FOUND_GSTAR_SCALE.md (graded G* hierarchy and structural scale)
 - Borwein, J.M. and Borwein, P.B. (1987). *Pi and the AGM.* Wiley. (AGM theory)

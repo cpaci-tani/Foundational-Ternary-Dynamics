@@ -405,7 +405,7 @@ This matches α_s(M_Z) ≈ 0.118 to 0.6%.
 
 - **Master quadratic:** [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
 - **α derivation:** [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md)
-- **Born rule:** [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md) §6
+- **Born rule / projection hierarchy:** [../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) §§2, 5
 - **Decay dynamics:** CLAUDE.md §4.3
 
 ---

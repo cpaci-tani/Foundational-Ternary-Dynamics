@@ -3,8 +3,8 @@
 ## How an Abstract Framework Found Its Specific Realization
 
 **Date:** April 4, 2026
-**Status:** [CONJECTURE] — structural identifications, not proofs
-**Depends on:** FOUND_GSTAR_SCALE.md, FOUND_THE_RATIO_AND_THE_PRODUCT.md, FOUND_BLIND_DERIVATION_CHAIN.md
+**Status:** Archived historical/intellectual-arc document — structural identifications, not proofs
+**Depends on:** ../02_foundations/FOUND_GSTAR_SCALE.md, ../02_foundations/FOUND_THE_RATIO_AND_THE_PRODUCT.md, ../02_foundations/FOUND_BLIND_DERIVATION_CHAIN.md
 
 ---
 
@@ -101,8 +101,8 @@ The progression is from abstract framework to specific realization. PCIR asked t
 
 ## Cross-References
 
-- **The G\* scale:** [FOUND_GSTAR_SCALE.md](FOUND_GSTAR_SCALE.md) — the graded hierarchy Sym\*(h^1(E_i))
-- **The ratio and the product:** [FOUND_THE_RATIO_AND_THE_PRODUCT.md](FOUND_THE_RATIO_AND_THE_PRODUCT.md) — G\* as the unsolved complement of pi
-- **The blind derivation:** [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md) — i -> G\* -> alpha in 13 steps
+- **The G\* scale:** [FOUND_GSTAR_SCALE.md](../02_foundations/FOUND_GSTAR_SCALE.md) — the graded hierarchy Sym\*(h^1(E_i))
+- **The ratio and the product:** [FOUND_THE_RATIO_AND_THE_PRODUCT.md](../02_foundations/FOUND_THE_RATIO_AND_THE_PRODUCT.md) — G\* as the unsolved complement of pi
+- **The blind derivation:** [FOUND_BLIND_DERIVATION_CHAIN.md](../02_foundations/FOUND_BLIND_DERIVATION_CHAIN.md) — i -> G\* -> alpha in 13 steps
 - **The master quadratic:** [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md) — the self-referential equation
 - **The Watson integral:** documented in FOUND_GSTAR_SCALE.md, Section 6
