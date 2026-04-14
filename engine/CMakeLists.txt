@@ -199,8 +199,7 @@ add_executable(test_flux_mediated tests/test_flux_mediated.cpp)
 target_link_libraries(test_flux_mediated ftd_core)
 
 # Phase 2: SM sectors (active subset)
-add_executable(test_entanglement tests/test_entanglement.cpp)
-target_link_libraries(test_entanglement ftd_core)
+# (test_entanglement merged into campaign_quantum_correlations via Wave 4a.4)
 
 # Phase 4: Variational forces
 add_executable(test_variational_coulomb tests/test_variational_coulomb.cpp)
@@ -493,11 +492,10 @@ target_link_libraries(ftd_grothendieck ftd_core)
 add_executable(ftd_born_rule tests/campaign_born_rule.cpp)
 target_link_libraries(ftd_born_rule ftd_core)
 
-add_executable(ftd_bell_substrate tests/campaign_bell_substrate.cpp)
-target_link_libraries(ftd_bell_substrate ftd_core)
-
-add_executable(ftd_epr_correlation tests/campaign_epr_correlation.cpp)
-target_link_libraries(ftd_epr_correlation ftd_core)
+# Wave 4a.4 (2026-04-14): test_entanglement + campaign_epr_correlation +
+# campaign_bell_substrate merged into campaign_quantum_correlations.
+ftd_add_test(ftd_quantum_correlations tests/campaign_quantum_correlations.cpp
+             CTEST_NAME campaign_quantum_correlations TIMEOUT 600)
 
 # Phase 4: Emergent Mass Spectrum
 add_executable(ftd_hydrogen_binding tests/campaign_hydrogen_binding.cpp)
@@ -726,7 +724,7 @@ add_test(NAME polarization COMMAND test_polarization)
 add_test(NAME momentum COMMAND test_momentum)
 add_test(NAME magnetic COMMAND test_magnetic)
 add_test(NAME flux_mediated COMMAND test_flux_mediated)
-add_test(NAME entanglement COMMAND test_entanglement)
+# (entanglement merged into campaign_quantum_correlations)
 add_test(NAME variational_coulomb COMMAND test_variational_coulomb)
 add_test(NAME magnetic_lagrangian COMMAND test_magnetic_lagrangian)
 add_test(NAME dissipation COMMAND test_dissipation)
@@ -854,8 +852,7 @@ add_test(NAME campaign_coulomb_convergence COMMAND ftd_coulomb_convergence)
 add_test(NAME campaign_sm_observables COMMAND ftd_sm_observables)
 # (campaign_wave_isotropy merged into campaign_wave_dynamics)
 add_test(NAME campaign_born_rule COMMAND ftd_born_rule)
-add_test(NAME campaign_bell_substrate COMMAND ftd_bell_substrate)
-add_test(NAME campaign_epr_correlation COMMAND ftd_epr_correlation)
+# (campaign_bell_substrate + campaign_epr_correlation merged above)
 add_test(NAME campaign_hydrogen_binding COMMAND ftd_hydrogen_binding)
 add_test(NAME campaign_triad_energy COMMAND ftd_triad_energy)
 add_test(NAME campaign_inertial_mass COMMAND ftd_inertial_mass)
@@ -930,7 +927,7 @@ set_tests_properties(
     ensemble correlations spectral tracker
     campaign_statistical_convergence
     campaign_dispersion_convergence campaign_coulomb_convergence
-    campaign_born_rule campaign_bell_substrate campaign_epr_correlation
+    campaign_born_rule campaign_quantum_correlations
     campaign_hydrogen_binding campaign_triad_energy
     campaign_inertial_mass campaign_structure_stability
     campaign_color_force campaign_color_neutral
@@ -976,7 +973,7 @@ set_property(TEST
     gravity_dynamics annihilation annihilation_conservation wave_collapse
     # wave_speed/interference merged into campaign_wave_dynamics
     gauge polarization momentum magnetic
-    flux_mediated entanglement variational_coulomb magnetic_lagrangian
+    flux_mediated variational_coulomb magnetic_lagrangian
     dissipation portable_field particle_lifetime vortex voxel_properties
     lattice_operators discrete_operators bridge_dynamics maxwell csv_export
     logic_engine poisson_coulomb energy_conservation
@@ -1007,7 +1004,7 @@ set_property(TEST
     campaign_h2_molecule campaign_multiscale_pipeline
     campaign_statistical_convergence campaign_dispersion_convergence
     campaign_coulomb_convergence campaign_wave_dynamics
-    campaign_born_rule campaign_bell_substrate campaign_epr_correlation
+    campaign_born_rule
     campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
     campaign_structure_stability campaign_color_force campaign_color_neutral
     campaign_confinement campaign_baryon_formation campaign_gluon_dynamics
