@@ -21,11 +21,31 @@ Author: FTD Verification Suite
 Date: 2026-01-25
 """
 
+# Phase 8 (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# See docs/superpowers/plans/concurrent-watching-crane.md Phase 8.
+
+import os
+import sys
 import numpy as np
 from scipy import linalg
 from scipy.stats import entropy
 from typing import Tuple, List, Dict
 import warnings
+
+# Try to pick up the project-level PyTorch / CUDA helpers from scripts/constants.py.
+# Fall back to NumPy if torch is not installed.
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
 
 def print_header(title: str):
     """Print formatted section header."""
@@ -189,19 +209,29 @@ def frequency_derivation() -> Dict:
     born_predictions = []
 
     for A in amplitudes:
-        # Signal: amplitude A in x-direction
-        # Noise: Gaussian in both x and y
-        nx = np.random.normal(0, noise_scale, n_samples)
-        ny = np.random.normal(0, noise_scale, n_samples)
+        if TORCH is not None:
+            # GPU-accelerated: sample both Gaussian noise channels, compute
+            # |J|, and reduce to the threshold-crossing fraction in one shot.
+            nx = TORCH.randn(n_samples, device=DEVICE, dtype=DTYPE) * noise_scale
+            ny = TORCH.randn(n_samples, device=DEVICE, dtype=DTYPE) * noise_scale
+            Jx = nx + A
+            Jy = ny
+            J_mag = TORCH.sqrt(Jx * Jx + Jy * Jy)
+            p_manifest = (J_mag > threshold).to(DTYPE).mean().item()
+        else:
+            # Signal: amplitude A in x-direction
+            # Noise: Gaussian in both x and y
+            nx = np.random.normal(0, noise_scale, n_samples)
+            ny = np.random.normal(0, noise_scale, n_samples)
 
-        Jx = A + nx
-        Jy = ny
+            Jx = A + nx
+            Jy = ny
 
-        # Total flux magnitude
-        J_mag = np.sqrt(Jx**2 + Jy**2)
+            # Total flux magnitude
+            J_mag = np.sqrt(Jx**2 + Jy**2)
 
-        # Manifestation probability
-        p_manifest = np.sum(J_mag > threshold) / n_samples
+            # Manifestation probability
+            p_manifest = np.sum(J_mag > threshold) / n_samples
         measured_probs.append(p_manifest)
 
         # Born prediction (proportional to |psi|^2 = A^2)
