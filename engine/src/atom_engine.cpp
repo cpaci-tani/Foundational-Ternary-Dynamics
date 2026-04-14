@@ -494,9 +494,102 @@ void AtomEngine::compute_all_forces() {
 
                     Vec3 f_j2 = perp2 * (dV / (m2 * sin_theta));
 
+                    // Newton's 3rd law: center atom gets the equal-and-opposite
+                    // reaction force. Without this, angle_strain would conserve
+                    // neither momentum nor energy, AND force_diag_[i].f_angle
+                    // would never be populated (causing AS6 and similar diag
+                    // checks to fail). Wave 4a.1 audit (2026-04-14).
+                    Vec3 f_center = {-(f_j1.x + f_j2.x),
+                                     -(f_j1.y + f_j2.y),
+                                     -(f_j1.z + f_j2.z)};
+
                     forces_[j1] += f_j1;
                     forces_[j2] += f_j2;
+                    forces_[i]  += f_center;
+                    force_diag_[i].f_angle += f_center;
+                    if (j1 < static_cast<int>(force_diag_.size())) force_diag_[j1].f_angle += f_j1;
+                    if (j2 < static_cast<int>(force_diag_.size())) force_diag_[j2].f_angle += f_j2;
                 }
+            }
+        }
+    }
+
+    // 6b. Dipole-Dipole interaction between polar atoms.
+    //
+    // The dipole_dipole toggle existed and force_diag had a f_dipole field,
+    // but the actual force computation was MISSING from atom_engine prior to
+    // this commit. compute_dipole_moments() populates mu_i from bond structure
+    // + electronegativity, but no code turned those moments into a force.
+    //
+    // Standard two-dipole interaction (point dipoles in vacuum):
+    //   U(r) = (1/(4πε₀ r³)) * [μ_i·μ_j - 3(μ_i·r̂)(μ_j·r̂)]
+    //   F_ij = -∇U = (3/(4πε₀ r⁴)) * [
+    //            (μ_i·μ_j) r̂
+    //          + (μ_i·r̂) μ_j
+    //          + (μ_j·r̂) μ_i
+    //          - 5 (μ_i·r̂)(μ_j·r̂) r̂
+    //       ]
+    //
+    // On the FTD lattice we use ALPHA for the 1/(4πε₀) prefactor (same
+    // convention as the ionic Coulomb block) and apply Newton's 3rd law
+    // by pushing -F_ij to j. Wave 4a.1 audit (2026-04-14).
+    if (toggles.dipole_dipole) {
+        for (int i = 0; i < static_cast<int>(atoms_.size()); ++i) {
+            const auto& ai = atoms_[i];
+            const Vec3& mu_i = ai.dipole_moment;
+            if (mu_i.mag2() < 1e-30) continue;
+            for (int j = i + 1; j < static_cast<int>(atoms_.size()); ++j) {
+                const auto& aj = atoms_[j];
+                const Vec3& mu_j = aj.dipole_moment;
+                if (mu_j.mag2() < 1e-30) continue;
+
+                // Skip bonded atom pairs: intra-molecular dynamics is handled
+                // by the harmonic bond + angle_strain terms. Counting
+                // dipole-dipole between bonded atoms would double-book the
+                // physics AND swamp the inter-molecular signal the toggle
+                // is designed to measure.
+                bool bonded = false;
+                for (const auto& b : ai.bonds) {
+                    if (b.partner_id == aj.id) { bonded = true; break; }
+                }
+                if (bonded) continue;
+
+                Vec3 r_vec = aj.position - ai.position;
+                double r2 = r_vec.mag2() + soft_ * soft_;
+                double r = std::sqrt(r2);
+                if (r < 1e-10) continue;
+                double inv_r = 1.0 / r;
+                double inv_r4 = inv_r * inv_r * inv_r * inv_r;
+                Vec3 r_hat = r_vec * inv_r;
+
+                double mu_i_dot_r = mu_i.x * r_hat.x + mu_i.y * r_hat.y + mu_i.z * r_hat.z;
+                double mu_j_dot_r = mu_j.x * r_hat.x + mu_j.y * r_hat.y + mu_j.z * r_hat.z;
+                double mu_i_dot_mu_j =
+                    mu_i.x * mu_j.x + mu_i.y * mu_j.y + mu_i.z * mu_j.z;
+
+                double coeff = 3.0 * ALPHA / (4.0 * PI) * inv_r4;
+                Vec3 f_ij;
+                f_ij.x = coeff * (mu_i_dot_mu_j * r_hat.x
+                                  + mu_i_dot_r * mu_j.x
+                                  + mu_j_dot_r * mu_i.x
+                                  - 5.0 * mu_i_dot_r * mu_j_dot_r * r_hat.x);
+                f_ij.y = coeff * (mu_i_dot_mu_j * r_hat.y
+                                  + mu_i_dot_r * mu_j.y
+                                  + mu_j_dot_r * mu_i.y
+                                  - 5.0 * mu_i_dot_r * mu_j_dot_r * r_hat.y);
+                f_ij.z = coeff * (mu_i_dot_mu_j * r_hat.z
+                                  + mu_i_dot_r * mu_j.z
+                                  + mu_j_dot_r * mu_i.z
+                                  - 5.0 * mu_i_dot_r * mu_j_dot_r * r_hat.z);
+
+                // Newton's 3rd law: force on i from j is +f_ij; on j from i is -f_ij
+                forces_[i] += f_ij;
+                forces_[j].x -= f_ij.x;
+                forces_[j].y -= f_ij.y;
+                forces_[j].z -= f_ij.z;
+                force_diag_[i].f_dipole += f_ij;
+                Vec3 neg_f_ij = {-f_ij.x, -f_ij.y, -f_ij.z};
+                force_diag_[j].f_dipole += neg_f_ij;
             }
         }
     }
