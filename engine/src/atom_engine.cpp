@@ -726,9 +726,20 @@ void AtomEngine::apply_thermostat() {
     double T_current = 2.0 * ke / (3.0 * free_count);
     if (T_current < 1e-30) return;
 
-    // Berendsen velocity rescaling
-    double lambda = std::sqrt(1.0 + dt_ / thermostat_tau_
-                              * (target_temperature_ / T_current - 1.0));
+    // Berendsen velocity rescaling.
+    // lambda^2 = 1 + (dt/tau)(T_target/T_current - 1)
+    // When T_current >> T_target and dt/tau >= 1, the argument can go
+    // negative and sqrt would produce NaN, corrupting all velocities and
+    // triggering downstream heap corruption in the Barnes-Hut octree.
+    // (Wave 3.3 audit, 2026-04-14 — found via test_ae_thermostat TH4
+    // crash: T_init=30, T_target=0.0001, dt/tau=2.0 → lambda^2 = -1.)
+    // Clamp to >= 0: when cooling is requested faster than the stable
+    // Berendsen limit, we take the maximum cooling step (lambda -> 0)
+    // rather than producing imaginary velocities.
+    double lambda_sq = 1.0 + dt_ / thermostat_tau_
+                           * (target_temperature_ / T_current - 1.0);
+    if (lambda_sq < 0.0) lambda_sq = 0.0;
+    double lambda = std::sqrt(lambda_sq);
     for (auto& a : atoms_) {
         if (!a.locked) a.velocity *= lambda;
     }
