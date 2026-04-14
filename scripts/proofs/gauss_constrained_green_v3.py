@@ -17,9 +17,96 @@ at the origin, but it differs from W_3 by finite-size corrections.
 
 Let me use numerical integration of the BZ integral instead.
 """
+# Phase 8b (FTD Test Bench) -- converted to PyTorch with CUDA default.
+# Original NumPy path preserved as fallback when torch is unavailable.
+# The N=200 triple loop over cos k evaluations is vectorized via broadcasting
+# reductions, chunked along i1 to bound peak memory.
+
+import os
+import sys
 import numpy as np
 from scipy.special import gamma
 from scipy import integrate
+
+_SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+try:
+    from constants import TORCH, DEVICE, DTYPE
+except ImportError:
+    TORCH = None
+    DEVICE = None
+    DTYPE = None
+
+print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
+
+
+def _bz_sums_torch(N):
+    """Accumulate 1/h6, 1/h18, h6/h18, h18/h6 over N**3 midpoint grid (torch)."""
+    dk = np.pi / N
+    idx = TORCH.arange(N, device=DEVICE, dtype=DTYPE)
+    k_mid = (idx + 0.5) * dk
+    c = TORCH.cos(k_mid)                    # (N,) -- cos values
+    c23 = c.unsqueeze(0) + c.unsqueeze(1)   # c2 + c3, (N, N)
+    cc23 = c.unsqueeze(0) * c.unsqueeze(1)  # c2 * c3, (N, N)
+    chunk = min(N, 128)
+    t_6 = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    t_18 = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    t_ratio = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    t_inv = TORCH.zeros((), device=DEVICE, dtype=DTYPE)
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c1_c = c[start:stop]                      # (chunk,)
+        c1b = c1_c.view(-1, 1, 1)                 # (chunk, 1, 1)
+        c_sum = c1b + c23.unsqueeze(0)            # c1+c2+c3, (chunk, N, N)
+        # h6 = 2*(1-c1) + 2*(1-c2) + 2*(1-c3) = 6 - 2*(c1+c2+c3)
+        h6 = 6.0 - 2.0 * c_sum
+        # c1*c2 + c1*c3 + c2*c3
+        c12c13 = c1b * c23.unsqueeze(0)           # c1*(c2+c3)
+        prod_sum = c12c13 + cc23.unsqueeze(0)     # c1*c2 + c1*c3 + c2*c3
+        # h18 = (2/3)*(3-c1-c2-c3) + (2/3)*(3-c1*c2-c1*c3-c2*c3)
+        h18 = (2.0 / 3.0) * (3.0 - c_sum) + (2.0 / 3.0) * (3.0 - prod_sum)
+        t_6 = t_6 + (1.0 / h6).sum()
+        t_18 = t_18 + (1.0 / h18).sum()
+        t_ratio = t_ratio + (h6 / h18).sum()
+        t_inv = t_inv + (h18 / h6).sum()
+    return (float(t_6.item()), float(t_18.item()),
+            float(t_ratio.item()), float(t_inv.item()))
+
+
+def _bz_sums_numpy(N):
+    """Same accumulators, vectorized NumPy with chunking along i1."""
+    dk = np.pi / N
+    idx = np.arange(N, dtype=np.float64)
+    k_mid = (idx + 0.5) * dk
+    c = np.cos(k_mid)                       # (N,)
+    c23 = c[:, None] + c[None, :]           # (N, N)
+    cc23 = c[:, None] * c[None, :]          # (N, N)
+    chunk = min(N, 128)
+    t_6 = 0.0
+    t_18 = 0.0
+    t_ratio = 0.0
+    t_inv = 0.0
+    for start in range(0, N, chunk):
+        stop = min(start + chunk, N)
+        c1b = c[start:stop].reshape(-1, 1, 1)       # (chunk, 1, 1)
+        c_sum = c1b + c23[None, :, :]
+        h6 = 6.0 - 2.0 * c_sum
+        c12c13 = c1b * c23[None, :, :]
+        prod_sum = c12c13 + cc23[None, :, :]
+        h18 = (2.0 / 3.0) * (3.0 - c_sum) + (2.0 / 3.0) * (3.0 - prod_sum)
+        t_6 += float(np.sum(1.0 / h6))
+        t_18 += float(np.sum(1.0 / h18))
+        t_ratio += float(np.sum(h6 / h18))
+        t_inv += float(np.sum(h18 / h6))
+    return t_6, t_18, t_ratio, t_inv
+
+
+def _bz_sums(N):
+    if TORCH is not None:
+        return _bz_sums_torch(N)
+    return _bz_sums_numpy(N)
+
 
 VARPI = 2.622057554292119810
 M_GAUSS = 0.8346268416740731
@@ -53,23 +140,7 @@ def hat_k2_18pt(k1, k2, k3):
 # Use a dense grid
 N = 200
 dk = np.pi / N
-total_6 = 0.0
-total_18 = 0.0
-total_ratio = 0.0  # hat_k2_6 / hat_k2_18
-total_inv_ratio = 0.0  # hat_k2_18 / hat_k2_6
-
-for i1 in range(N):
-    k1 = (i1 + 0.5) * dk
-    for i2 in range(N):
-        k2 = (i2 + 0.5) * dk
-        for i3 in range(N):
-            k3 = (i3 + 0.5) * dk
-            h6 = hat_k2_6pt(k1, k2, k3)
-            h18 = hat_k2_18pt(k1, k2, k3)
-            total_6 += 1.0 / h6
-            total_18 += 1.0 / h18
-            total_ratio += h6 / h18
-            total_inv_ratio += h18 / h6
+total_6, total_18, total_ratio, total_inv_ratio = _bz_sums(N)
 
 vol = (np.pi)**3  # volume of [0,pi]^3 quadrant
 norm = dk**3 / vol  # each cell has volume dk^3, normalize by total volume
