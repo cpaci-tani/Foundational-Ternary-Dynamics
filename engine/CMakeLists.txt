@@ -503,16 +503,9 @@ add_executable(ftd_structure_stability tests/campaign_structure_stability.cpp)
 target_link_libraries(ftd_structure_stability ftd_core)
 
 # Phase 5: Color Dynamics & SU(3)
-add_executable(ftd_color_force tests/campaign_color_force.cpp)
-target_link_libraries(ftd_color_force ftd_core)
-add_executable(ftd_color_neutral tests/campaign_color_neutral.cpp)
-target_link_libraries(ftd_color_neutral ftd_core)
-add_executable(ftd_confinement tests/campaign_confinement.cpp)
-target_link_libraries(ftd_confinement ftd_core)
-add_executable(ftd_baryon_formation tests/campaign_baryon_formation.cpp)
-target_link_libraries(ftd_baryon_formation ftd_core)
-add_executable(ftd_gluon_dynamics tests/campaign_gluon_dynamics.cpp)
-target_link_libraries(ftd_gluon_dynamics ftd_core)
+# Wave 4c.10: 5 QCD campaigns merged into campaign_qcd_forces
+ftd_add_test(ftd_qcd_forces tests/campaign_qcd_forces.cpp
+             CTEST_NAME campaign_qcd_forces TIMEOUT 1800)
 
 # Phase 6: Weak Sector & SU(2)
 add_executable(ftd_weak_transmutation tests/campaign_weak_transmutation.cpp)
@@ -849,11 +842,7 @@ add_test(NAME campaign_inertial_mass COMMAND ftd_inertial_mass)
 add_test(NAME campaign_structure_stability COMMAND ftd_structure_stability)
 
 # Phase 5: Color Dynamics & SU(3) campaigns
-add_test(NAME campaign_color_force COMMAND ftd_color_force)
-add_test(NAME campaign_color_neutral COMMAND ftd_color_neutral)
-add_test(NAME campaign_confinement COMMAND ftd_confinement)
-add_test(NAME campaign_baryon_formation COMMAND ftd_baryon_formation)
-add_test(NAME campaign_gluon_dynamics COMMAND ftd_gluon_dynamics)
+# (5 QCD campaigns merged into campaign_qcd_forces)
 
 # Phase 6: Weak Sector & SU(2) campaigns
 add_test(NAME campaign_weak_transmutation COMMAND ftd_weak_transmutation)
@@ -918,8 +907,7 @@ set_tests_properties(
     campaign_born_rule campaign_quantum_correlations
     campaign_hydrogen_binding campaign_triad_energy
     campaign_inertial_mass campaign_structure_stability
-    campaign_color_force campaign_color_neutral
-    campaign_confinement campaign_baryon_formation campaign_gluon_dynamics
+    campaign_qcd_forces
     campaign_weak_transmutation campaign_parity_violation
     campaign_weak_decay
     campaign_gravitational_wave campaign_gravity_profile
@@ -993,8 +981,7 @@ set_property(TEST
     campaign_statistical_convergence campaign_wave_dynamics
     campaign_born_rule
     campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
-    campaign_structure_stability campaign_color_force campaign_color_neutral
-    campaign_confinement campaign_baryon_formation campaign_gluon_dynamics
+    campaign_structure_stability campaign_qcd_forces
     campaign_weak_transmutation campaign_parity_violation campaign_weak_decay
     campaign_gravitational_wave campaign_gravity_profile campaign_gravity_hierarchy
     campaign_triad_binding campaign_neutrino_sector
