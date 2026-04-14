@@ -24,6 +24,8 @@ set(TEST_RUNNER_SOURCES
     src/SmartDispatcher.cpp
     src/NdjsonParser.cpp
     src/OutputPanel.cpp
+    src/LatticeViewer.cpp
+    src/FieldLines.cpp
 )
 
 set(TEST_RUNNER_HEADERS
@@ -33,6 +35,9 @@ set(TEST_RUNNER_HEADERS
     include/SmartDispatcher.h
     include/NdjsonParser.h
     include/OutputPanel.h
+    include/LatticeViewer.h
+    include/FieldLines.h
+    src/LatticeViewer_shaders.h
 )
 
 add_executable(ftd_test_runner WIN32
