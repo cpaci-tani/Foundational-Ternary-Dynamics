@@ -4,13 +4,16 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
 [![Lean 4](https://img.shields.io/badge/Lean_4-v4.29-blueviolet.svg)](https://leanprover.github.io/)
-[![Tests: 157/157](https://img.shields.io/badge/tests-157%2F157_pass-brightgreen.svg)](scripts/verification/)
+[![Tests: 190+](https://img.shields.io/badge/tests-190%2B-brightgreen.svg)](scripts/verification/)
 
 A discrete framework built on the CM elliptic curve Eᵢ: y² = x³ − x and its period ratio G\* = Γ(¼)/Γ(¾).
 
 The quadratic x² − 16G\*²x + 16G\*³ = 0 has roots x₊ = 137.036 and x₋ = 3.024. The coefficient 16 = |Aut(Eᵢ)|². A one-loop lattice correction on ℤ[i]³ brings x₊ to within 9.6 ppb of the measured fine structure constant. The same algebraic structure yields the gauge groups U(1) × SU(2) × SU(3), the Higgs mass (125.69 GeV, 0.47%), confinement, and the Einstein field equations.
 
-**Author:** William J cpaci-tani III | **Version:** 5.29 | **Date:** April 2026
+**Author:** William J cpaci-tani III | **Version:** 5.30 | **Date:** April 13, 2026
+
+**Navigation:** [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md)  
+**Documentation cleanup status:** [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md)
 
 ---
 
@@ -194,32 +197,32 @@ See [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIO
 ftd/
   docs/
     SPEC_FTD.md                 # Authoritative specification
-    theory/                     # 123 core + 67 archived theory documents
+    theory/                     # Curated theory catalog plus archive; see docs/theory/META_INDEX.md
       01_reference/             # Master references and proofs
-      02_foundations/            # Lattice postulates, dimensional selection
-      03_derivations/           # 37 physics derivations
+      02_foundations/           # Lattice postulates, dimensional selection
+      03_derivations/           # Core physics derivations
       04_coupling/              # Coupling constants and precision
       05_particles/             # Particle physics
-      06_measurement/           # Measurement theory, von Neumann algebras
+      06_consciousness/         # Consciousness and measurement
       07_assessment/            # Epistemic audits
       08_structural/            # Geometry and information theory
       09_mathematical/          # Number theory connections
   engine/
     include/ftd/                # 28 C++ headers (ontic.h defines the constant chain)
     src/                        # 7 source files
-    tests/                      # 168 test files (119 unit + 49 campaign + 4 GPU)
+    tests/                      # Large native test suite; see engine/SPEC_ENGINE.md for current breakdown
     cuda/                       # GPU acceleration
     wasm/                       # WebAssembly bindings
-    web/                        # Browser dashboard (Three.js, 211 scenarios across 4 scales)
+    web/                        # Browser dashboard (Three.js + WASM bridge)
   scripts/
     constants.py                # Canonical shared constants
-    verification/               # 40 formal verification scripts
-    proofs/                     # 57 mathematical proofs + computational checks
+    verification/               # Formal verification scripts
+    proofs/                     # Mathematical proofs + computational checks
     experiments/                # Bell tests, CERN analysis
     tests/                      # pytest suites + 7-tier comprehensive framework
     visualization/              # Publication figures
-  evaluation/                   # Multi-domain assessment (19 files, 116 tracked issues)
-  dissemination/                # Manuscript, whitepaper, notebooks
+  evaluation/                   # Multi-domain assessment and critique
+  dissemination/                # Manuscript, whitepaper, notebooks, interactive outputs
 ```
 
 ---
