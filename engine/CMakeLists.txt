@@ -1066,10 +1066,26 @@ set_property(TEST
 #
 if(FTD_ENABLE_CUDA)
     set(_ftd_gpu_tests
+        # Explicit GPU parity/benchmark/physics tests
         gpu_parity
         gpu_benchmark
         gpu_physics
         gpu_experiments
+        # Wave 2 (Apr 14, 2026): GPU-heavy tests previously false-timing out
+        # under ctest -j 24 due to single-RTX-5090 contention. Serializing
+        # them via the "gpu" label eliminates the false TIMEOUT failures.
+        # Confirmed contention list from AUDIT_LATENCY_2026_04_14.md.
+        magnetic
+        maxwell
+        em_energy_conservation
+        poynting
+        dispersion_relation
+        spectral
+        campaign_dispersion
+        campaign_dispersion_convergence
+        campaign_grothendieck
+        campaign_ds_vortex_lines
+        campaign_ds_correlation_function
     )
     foreach(_t IN LISTS _ftd_gpu_tests)
         if(TEST ${_t})
