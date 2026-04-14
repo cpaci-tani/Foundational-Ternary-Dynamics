@@ -457,20 +457,23 @@ target_link_libraries(ftd_dispersion_convergence ftd_core)
 add_executable(ftd_coulomb_convergence tests/campaign_coulomb_convergence.cpp)
 target_link_libraries(ftd_coulomb_convergence ftd_core)
 
-add_executable(ftd_benchmark_engine_theory tests/benchmark_engine_theory.cpp)
-target_link_libraries(ftd_benchmark_engine_theory ftd_core)
-
-add_executable(ftd_emergent_alpha tests/benchmark_emergent_alpha.cpp)
-target_link_libraries(ftd_emergent_alpha ftd_core)
-
-add_executable(ftd_budget_equation tests/benchmark_budget_equation.cpp)
-target_link_libraries(ftd_budget_equation ftd_core)
-
-add_executable(ftd_bh_thermo tests/benchmark_black_hole_thermo.cpp)
-target_link_libraries(ftd_bh_thermo ftd_core)
-
-add_executable(ftd_wilson_loops tests/benchmark_wilson_loops.cpp)
-target_link_libraries(ftd_wilson_loops ftd_core)
+# Benchmark suites (April 2026). Registered via ftd_add_test so they appear
+# in ctest and get the "benchmark" label auto-applied by the macro. All use
+# a 1800s TIMEOUT because benchmarks run longer than regular unit tests.
+# Wave 3.1 (2026-04-14): was previously just add_executable without add_test,
+# so ctest never ran them and their internal assertion failures never showed
+# up in the pass/fail tally. Registering them exposes ~28 internal asserts
+# that were invisible before.
+ftd_add_test(ftd_benchmark_engine_theory tests/benchmark_engine_theory.cpp
+             CTEST_NAME benchmark_engine_theory TIMEOUT 1800)
+ftd_add_test(ftd_emergent_alpha tests/benchmark_emergent_alpha.cpp
+             CTEST_NAME benchmark_emergent_alpha TIMEOUT 1800)
+ftd_add_test(ftd_budget_equation tests/benchmark_budget_equation.cpp
+             CTEST_NAME benchmark_budget_equation TIMEOUT 1800)
+ftd_add_test(ftd_bh_thermo tests/benchmark_black_hole_thermo.cpp
+             CTEST_NAME benchmark_bh_thermo TIMEOUT 1800)
+ftd_add_test(ftd_wilson_loops tests/benchmark_wilson_loops.cpp GPU_HEAVY
+             CTEST_NAME benchmark_wilson_loops TIMEOUT 1800)
 
 add_executable(ftd_sm_observables tests/campaign_sm_observables.cpp)
 target_link_libraries(ftd_sm_observables ftd_core)
