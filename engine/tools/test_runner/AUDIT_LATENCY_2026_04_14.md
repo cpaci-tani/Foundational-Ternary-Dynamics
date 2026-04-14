@@ -1,5 +1,8 @@
 # FTD Engine Test Audit — Latency Field Focus (2026-04-14)
 
+> **Superseded for current test state** by [`TEST_AUDIT_2026_04_14.md`](TEST_AUDIT_2026_04_14.md).
+> Retained as the authoritative root-cause analysis of the latency sign bug and GPU-contention false-timeouts.
+
 Session goal: audit all engine tests against the latest FTD lattice latency
 theory, identify root causes of the 83 failing tests from the post-WIP baseline,
 and apply fixes where surgical.
