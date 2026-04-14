@@ -132,8 +132,7 @@ target_link_libraries(test_lattice ftd_core)
 add_executable(test_born_infeld tests/test_born_infeld.cpp)
 target_link_libraries(test_born_infeld ftd_core)
 
-add_executable(test_energy tests/test_energy.cpp)
-target_link_libraries(test_energy ftd_core)
+# (test_energy merged into test_energy_conservation via Wave 4a.3)
 
 add_executable(test_gauss tests/test_gauss.cpp)
 target_link_libraries(test_gauss ftd_core)
@@ -253,12 +252,10 @@ target_link_libraries(test_logic_engine ftd_core)
 add_executable(test_poisson_coulomb tests/test_poisson_coulomb.cpp)
 target_link_libraries(test_poisson_coulomb ftd_core)
 
-add_executable(test_energy_tracking tests/test_energy_tracking.cpp)
-target_link_libraries(test_energy_tracking ftd_core)
-
-# Phase 4: Energy conservation
-add_executable(test_energy_conservation tests/test_energy_conservation.cpp)
-target_link_libraries(test_energy_conservation ftd_core)
+# Wave 4a.3 (2026-04-14): test_energy + test_energy_tracking merged into
+# test_energy_conservation (self-ref target). Registered via ftd_add_test.
+ftd_add_test(test_energy_conservation tests/test_energy_conservation.cpp
+             CTEST_NAME energy_conservation TIMEOUT 600)
 
 # Phase 6: Flux-aggregate particles
 add_executable(test_selffield_profile tests/test_selffield_profile.cpp)
@@ -709,7 +706,7 @@ add_test(NAME constants COMMAND test_constants)
 add_test(NAME lorentz COMMAND test_lorentz)
 add_test(NAME lattice COMMAND test_lattice)
 add_test(NAME born_infeld COMMAND test_born_infeld)
-add_test(NAME energy COMMAND test_energy)
+# (test_energy merged into energy_conservation)
 add_test(NAME gauss COMMAND test_gauss)
 add_test(NAME intervoxel_coupling COMMAND test_intervoxel_coupling)
 add_test(NAME stress_energy COMMAND test_stress_energy)
@@ -744,8 +741,7 @@ add_test(NAME maxwell COMMAND test_maxwell)
 add_test(NAME csv_export COMMAND test_csv_export)
 add_test(NAME logic_engine COMMAND test_logic_engine)
 add_test(NAME poisson_coulomb COMMAND test_poisson_coulomb)
-add_test(NAME energy_tracking COMMAND test_energy_tracking)
-add_test(NAME energy_conservation COMMAND test_energy_conservation)
+# (energy_tracking + energy_conservation merged via ftd_add_test above)
 add_test(NAME selffield_profile COMMAND test_selffield_profile)
 add_test(NAME wavepacket COMMAND test_wavepacket)
 add_test(NAME particle_engine COMMAND test_particle_engine)
@@ -919,7 +915,7 @@ add_test(NAME campaign_lorentz_measure COMMAND ftd_lorentz_measure)
 
 # Timeouts for long-running tests (10 min)
 set_tests_properties(
-    benchmark logic_engine energy_tracking energy_conservation
+    benchmark logic_engine energy_conservation
     poisson_coulomb selffield_profile wavepacket
     particle_lifetime
     campaign_dispersion campaign_gauge_dynamics campaign_gauge_constraint
@@ -975,7 +971,7 @@ set_tests_properties(
 # overwriting it. Tests that are BOTH unit AND scale1 (e.g. pe_forces,
 # particle_engine) will end up with labels=[unit, scale1].
 set_property(TEST
-    constants lorentz lattice born_infeld energy gauss stress_energy
+    constants lorentz lattice born_infeld gauss stress_energy
     thermodynamics lagrangian ontic_chain dual_substrate genesis
     gravity_dynamics annihilation annihilation_conservation wave_collapse
     # wave_speed/interference merged into campaign_wave_dynamics
@@ -983,7 +979,7 @@ set_property(TEST
     flux_mediated entanglement variational_coulomb magnetic_lagrangian
     dissipation portable_field particle_lifetime vortex voxel_properties
     lattice_operators discrete_operators bridge_dynamics maxwell csv_export
-    logic_engine poisson_coulomb energy_tracking energy_conservation
+    logic_engine poisson_coulomb energy_conservation
     selffield_profile wavepacket particle_engine scale_bridge hydrogen_scale1
     atom_engine atom_scale_bridge multiscale_bridge em_fields gauss_convergence
     lorentz_force selective_damping em_energy_conservation continuity poynting
