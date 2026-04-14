@@ -267,6 +267,7 @@ void benchmark_latency_profile(int L, int ticks) {
         if (mid - cr - L/3 < 0) continue;  // Skip if too big for lattice
 
         ftd::RenderBridge rb(L);
+        rb.force_cpu();  // CUDA lacks solve_latency_poisson; force CPU path
         rb.toggles.genesis = false;
         rb.toggles.gravity = true;
         rb.toggles.latency_field = true;
@@ -345,6 +346,7 @@ void benchmark_horizon_area(int L, int ticks) {
         if (cr + L/3 > mid) continue;
 
         ftd::RenderBridge rb(L);
+        rb.force_cpu();  // CUDA lacks solve_latency_poisson; force CPU path
         rb.toggles.genesis = false;
         rb.toggles.gravity = true;
         rb.toggles.latency_field = true;
@@ -431,6 +433,7 @@ void benchmark_entropy_area_law(int L, int ticks) {
     const int mid = L / 2;
 
     ftd::RenderBridge rb(L);
+    rb.force_cpu();  // CUDA lacks solve_latency_poisson; force CPU path
     rb.toggles.genesis = false;
     rb.toggles.gravity = true;
     rb.toggles.latency_field = true;
@@ -552,6 +555,7 @@ void benchmark_hawking_evaporation(int L, int ticks) {
         if (cr + L/3 > mid) continue;
 
         ftd::RenderBridge rb(L);
+        rb.force_cpu();  // CUDA lacks solve_latency_poisson; force CPU path
         rb.toggles.genesis = false;       // No spontaneous pair creation
         rb.toggles.gravity = true;
         rb.toggles.latency_field = true;
@@ -685,6 +689,7 @@ void benchmark_proper_time(int L, int ticks) {
     const int mid = L / 2;
 
     ftd::RenderBridge rb(L);
+    rb.force_cpu();  // CUDA lacks solve_latency_poisson; force CPU path
     rb.toggles.genesis = false;
     rb.toggles.gravity = true;
     rb.toggles.latency_field = true;
