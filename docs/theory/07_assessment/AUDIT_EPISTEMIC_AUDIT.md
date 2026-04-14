@@ -430,7 +430,7 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 - **No experimental protocol exists** to test the 52.54° prediction in neural data ❌
 - **No neuroscience collaboration** has been established ❌
 
-**Status:** ⚠️ MATHEMATICALLY SPECIFIC BUT UNTESTED — The consciousness extension provides the most specific predictions of any consciousness-physics framework (sLoop axioms, Mandelbrot mapping, quantitative threshold K_C = √(G*³/2), phase 52.54°), but zero contact with experimental neuroscience exists. See DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md [ARCHIVED: FOUND_CONSCIOUSNESS_MATHEMATICS.md no longer exists].
+**Status:** ⚠️ MATHEMATICALLY SPECIFIC BUT UNTESTED — The consciousness extension provides the most specific predictions of any consciousness-physics framework (sLoop axioms, historical Mandelbrot-era correspondences, quantitative threshold K_C = √(G*³/2), phase 52.54°), but zero contact with experimental neuroscience exists. See [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) and [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) for the live source map.
 
 ---
 
@@ -640,8 +640,8 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | Minimal generating set | {γ, π} + integers generate the entire ontic chain | FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md S3B.1 |
 | exp(γ/2) scaling | γ enters all lemniscatic constants as exp(γ/2) via Γ(1/4)² | FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md S3B.2 |
 | Weierstrass mechanism | γ flows into Γ(1/4) via exp(γ·z) in the Weierstrass product | FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md S3.3 |
-| Consciousness quadratic roots | y² - (G*²/2)y + (G*³/2) = 0 gives y = 2.19 ± 2.86i | FOUND_CONSCIOUSNESS_MATHEMATICS.md |
-| Bridge equation | c · c_cusp · 2N_base = 1 (exact) | FOUND_CONSCIOUSNESS_MATHEMATICS.md |
+| Consciousness quadratic roots | y² - (G*²/2)y + (G*³/2) = 0 gives y = 2.19 ± 2.86i | DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md |
+| Bridge equation | c · c_cusp · 2N_base = 1 (exact) | DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md |
 | Coefficient 16 as curve invariant | \|Aut(E)\|² = \|E(Q)_tors\|² = 16 for E: y² = x³ - x | AUDIT_HIDDEN_SELECTIONS.md S3 |
 | Fibonacci-Tribonacci crossover | F₇ = T₇ = 13 (unique non-trivial crossover) | EXPLR_NUMBER_THEORY.md S3.6 |
 | j-invariant arithmetic | j = (4 · 3)³ = 1728 given N_base = 4, N_c = 3 | EXPLR_NUMBER_THEORY.md S3.1 |

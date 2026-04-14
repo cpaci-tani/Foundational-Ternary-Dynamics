@@ -91,7 +91,19 @@ Images and other non-text assets:
 2. **Use UPPER_SNAKE_CASE** for the filename
 3. **Update META_INDEX.md** if adding to `docs/theory/`
 4. **Update META_DOCUMENTATION_MAP.md** if adding a new directory or category
-5. **Add cross-references** using the full prefixed filename
+5. **Update status/governance docs** if the new file changes public navigation or theory status expectations
+6. **Add cross-references** using the full prefixed filename
+
+## Maintenance Rule
+
+When a public-facing document is added, renamed, or materially repurposed:
+
+- Update the relevant navigation doc in the same change:
+  `META_DOCUMENTATION_MAP.md`, `META_PROJECT_ATLAS.md`, and any affected onboarding guide.
+- If the change affects theory categorization or status signaling, update:
+  `docs/theory/META_INDEX.md` and, when appropriate, `docs/theory/07_assessment/TRACKER_DOCUMENT_STATUS.md`.
+- Prefer removing brittle hard-coded counts over leaving stale numbers in public docs.
+- Internal working docs in `docs/internal/` should remain clearly local-only unless explicitly promoted.
 
 ---
 
@@ -105,4 +117,4 @@ When linking between documents:
 
 ---
 
-*This document is the authoritative reference for FTD file naming.*
+*This document is the authoritative reference for FTD file naming and the minimum maintenance actions tied to naming changes.*

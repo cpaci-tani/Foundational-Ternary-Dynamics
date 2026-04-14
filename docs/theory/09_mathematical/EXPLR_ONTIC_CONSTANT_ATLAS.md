@@ -368,7 +368,7 @@ The modular selector (which picks the lemniscatic curve from all possible ellipt
 - **Dimensional triad**: [EXPLR_GSTAR_FLUX_TIME.md](EXPLR_GSTAR_FLUX_TIME.md)
 - **G* decomposition**: [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md)
 - **Spacetime emergence**: [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
-- **Consciousness**: [FOUND_CONSCIOUSNESS_MATHEMATICS.md](FOUND_CONSCIOUSNESS_MATHEMATICS.md)
+- **Consciousness source map**: [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **Ontic chain**: `engine/include/ftd/ontic.h`
 - **Numerical verification**: `scripts/exploration/explore_ontic_constants.py`
 
