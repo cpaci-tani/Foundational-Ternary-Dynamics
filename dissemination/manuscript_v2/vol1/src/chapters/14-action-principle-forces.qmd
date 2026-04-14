@@ -1,0 +1,121 @@
+# The Action Principle and Force Laws {#sec-action}
+
+The update rule that governs the lattice dynamics is not postulated. It is derived from an action principle $\delta S = 0$, whose Euler-Lagrange equations yield the tick cycle. This chapter presents the action, derives the forces, and establishes the Noether symmetries.
+
+## The FTD action [THEOREM]
+
+The Euclidean action on the lattice is:
+
+$$
+S[s, \mathbf{J}] = \sum_v \left[ \mathcal{L}_{\text{flux}}(v) + \mathcal{L}_{\text{manifest}}(v) + \mathcal{L}_{\text{coupling}}(v) + \mathcal{L}_{\text{constraint}}(v) \right]
+\tag{14.1}
+$$
+
+with four terms:
+
+**Flux kinetic term:**
+$$
+\mathcal{L}_{\text{flux}} = \frac{1}{2} |\nabla \mathbf{J}|^2 = \frac{1}{2} \sum_{\mu} |\mathbf{J}(v + \hat{e}_\mu) - \mathbf{J}(v)|^2
+\tag{14.2}
+$$
+
+**Manifestation (Born-Infeld) term:**
+$$
+\mathcal{L}_{\text{manifest}} = -K_B \sqrt{1 - |\dot{\mathbf{x}}|^2/c^2 - L^2}
+\tag{14.3}
+$$
+
+where $\dot{\mathbf{x}}$ is the lattice velocity and $L$ is the topological latency (gravitational field). This is the Born-Infeld form that enforces the CFL speed limit $c = 1/\sqrt{3}$.
+
+**State-flux coupling:**
+$$
+\mathcal{L}_{\text{coupling}} = g_c \, s(v) \, \nabla \cdot \mathbf{J}(v)
+\tag{14.4}
+$$
+
+where $g_c = \sqrt{\alpha}$ is the coupling constant.
+
+**Gauss constraint (Lagrange multiplier):**
+$$
+\mathcal{L}_{\text{constraint}} = \lambda_G \left( \nabla \cdot \mathbf{J}(v) - s(v) \right)^2
+\tag{14.5}
+$$
+
+enforcing $\nabla \cdot \mathbf{J} = s$ with multiplier strength $\lambda_G \gg 1$.
+
+## The Euler-Lagrange equations [THEOREM]
+
+Varying $S$ with respect to $\mathbf{J}$:
+
+$$
+\frac{\delta S}{\delta \mathbf{J}} = 0 \quad \Longrightarrow \quad c^2 \nabla^2 \mathbf{J} + g_c \nabla s = \text{damping} + \text{forcing}
+\tag{14.6}
+$$
+
+This is a **damped wave equation** for the flux field, sourced by the gradient of the state field. In the engine implementation, this is `phase_read`: the Laplacian wave equation on the 26-neighbor Moore stencil.
+
+Varying with respect to $s$ (subject to ternary constraint):
+
+$$
+\frac{\delta S}{\delta s} = 0 \quad \Longrightarrow \quad s(v, t+1) = \text{argmax}_{s' \in \{-1,0,+1\}} \left[ -\mathcal{L}(s', \mathbf{J}(v,t)) \right]
+\tag{14.7}
+$$
+
+The ternary state updates to the value that minimizes the local action. This is deterministic given $\mathbf{J}$.
+
+## The tick cycle [THEOREM for structure]
+
+The Euler-Lagrange equations decompose into six sequential phases per tick:
+
+1. **`phase_read`**: Compute $\Delta \mathbf{J} = c^2 \nabla^2 \mathbf{J} + g_c \nabla s$ (wave equation)
+2. **`phase_write`**: Leapfrog integration $\mathbf{J} \leftarrow \mathbf{J} + \Delta \mathbf{J}$ with damping
+3. **`gauss_project`**: SOR Poisson solver enforcing $\nabla \cdot \mathbf{J} = s$ at void sites
+4. **`phase_forces`**: Field-mediated forces (EM, gravity, Lorentz)
+5. **`phase_movement`**: Collision detection, speed clamping at $c$, position update
+6. **`tick++`**: Increment time counter
+
+The tick cycle is the lattice's discrete approximation to continuous Hamiltonian evolution. Each phase corresponds to a term in the action.
+
+## The four forces [THEOREM for EM; SELECTION for identification of others]
+
+All forces arise from $\delta S = 0$ acting on different components of the flux field:
+
+**Electromagnetic force.** From the SC sublattice coupling ($k = 1$ component):
+$$
+\mathbf{F}_{\text{EM}} = q \, \nabla \phi + q \, \mathbf{v} \times \mathbf{B}
+\tag{14.8}
+$$
+
+where $\phi = -g_c s / |\mathbf{r}|$ is the Coulomb potential and $\mathbf{B} = \nabla \times \mathbf{J}$ is the magnetic field. The lattice curl is computed on the 6 SC neighbors. [THEOREM --- follows from the action]
+
+**Gravitational force.** From the Born-Infeld bandwidth constraint:
+$$
+\mathbf{F}_G = -\nabla \left( K_B \sqrt{1 - v^2/c^2 - L^2} \right)
+\tag{14.9}
+$$
+
+The latency $L$ encodes the gravitational potential via $L^2 = 2G_N M / (rc^2)$ where $G_N = 1/(b_3 + N_c)^2 = 1/100$. [THEOREM for the mechanism; SELECTION for the $G_N$ identification]
+
+**Strong force.** From the BCC sublattice coupling ($k = 3$ components):
+$$
+V_{\text{strong}}(r) = -\frac{4}{3} \frac{\alpha_s}{r} + \sigma r
+\tag{14.10}
+$$
+
+The Cornell potential with Coulomb ($1/r$) and confining ($\sigma r$) terms. The string tension $\sigma$ is derived from area-law Wilson loops at coupling $x_-$. [SELECTION]
+
+**Weak force.** From the FCC sublattice coupling ($k = 2$ components): short-range force mediated by $W^\pm$ and $Z^0$ bosons with masses $M_W, M_Z$ from the Higgs mechanism (@sec-masses). [SELECTION]
+
+## Noether symmetries [THEOREM]
+
+The action (14.1) has the following symmetries and associated conserved charges:
+
+| Symmetry | Transformation | Conserved quantity |
+|----------|---------------|-------------------|
+| Time translation | $t \to t + 1$ | Energy $E$ |
+| Space translation | $v \to v + \delta$ | Momentum $\mathbf{p}$ |
+| $U(1)$ gauge | $\mathbf{J} \to \mathbf{J} + \nabla \lambda$ | Electric charge $Q$ |
+| Ternary global | $s \to -s$ (charge conjugation) | Baryon number $B$ |
+| Parity | $v \to -v$ | Parity $P$ (broken by FCC chirality) |
+
+The discrete lattice breaks continuous translation symmetry to the lattice translation group $\mathbb{Z}^3$, yielding crystal momentum rather than continuous momentum. In the continuum limit, full Poincare symmetry is recovered.

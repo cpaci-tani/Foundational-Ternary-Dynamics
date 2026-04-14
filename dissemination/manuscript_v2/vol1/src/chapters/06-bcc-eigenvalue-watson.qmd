@@ -1,0 +1,121 @@
+# The BCC Eigenvalue and Watson Identity {#sec-bcc}
+
+This chapter contains the central algebraic identity of FTD: the BCC lattice Green's function at the origin equals $\Gssq/(2\pi)$, connecting the discrete lattice to the lemniscatic constant through a product of Gamma functions. The identity was first computed by Watson (1939) and independently rediscovered in FTD; its sublattice attribution was confirmed numerically in April 2026.
+
+## The multiplicative eigenvalue [THEOREM]
+
+The BCC sublattice Laplacian has a normalized eigenvalue that is a **product** of cosines:
+
+$$
+\sigma_{\text{BCC}}(\mathbf{k}) = 1 - \cos k_1 \cos k_2 \cos k_3
+\tag{6.1}
+$$
+
+This is structurally distinct from the SC eigenvalue (a **sum** of cosines) and the FCC eigenvalue (a **sum of pairwise products**). The distinction is decisive: products factor across axes; sums do not.
+
+## The Green's function at the origin [THEOREM]
+
+The BCC lattice Green's function at the origin on the infinite lattice $\mathbb{Z}^3$ is:
+
+$$
+G_{\text{BCC}}(0) = \frac{1}{(2\pi)^3} \int_0^{2\pi} \!\! \int_0^{2\pi} \!\! \int_0^{2\pi} \frac{dk_1 \, dk_2 \, dk_3}{1 - \cos k_1 \cos k_2 \cos k_3}
+\tag{6.2}
+$$
+
+where the zero modes (four points in the Brillouin zone where $\sigma_{\text{BCC}} = 0$) contribute integrable singularities.
+
+## The geometric series factorization [THEOREM]
+
+The key step: expand the integrand as a geometric series:
+
+$$
+\frac{1}{1 - x} = \sum_{n=0}^{\infty} x^n \quad \text{for } |x| < 1
+\tag{6.3}
+$$
+
+with $x = \cos k_1 \cos k_2 \cos k_3$. Since $|x| \leq 1$ and equals 1 only on a set of measure zero, the series converges almost everywhere:
+
+$$
+G_{\text{BCC}}(0) = \sum_{n=0}^{\infty} \frac{1}{(2\pi)^3} \int (\cos k_1 \cos k_2 \cos k_3)^n \, d^3k
+\tag{6.4}
+$$
+
+Because the integrand is a **product**, it factors across the three axes:
+
+$$
+G_{\text{BCC}}(0) = \sum_{n=0}^{\infty} \left[ \frac{1}{2\pi} \int_0^{2\pi} (\cos k)^n \, dk \right]^3
+\tag{6.5}
+$$
+
+The 1D integral vanishes for odd $n$. For even $n = 2m$:
+
+$$
+\frac{1}{2\pi} \int_0^{2\pi} (\cos k)^{2m} \, dk = \frac{1}{4^m} \binom{2m}{m}
+\tag{6.6}
+$$
+
+Therefore:
+
+$$
+G_{\text{BCC}}(0) = \sum_{m=0}^{\infty} \left[ \frac{1}{4^m} \binom{2m}{m} \right]^3
+\tag{6.7}
+$$
+
+This is the **cube of central binomial coefficients**, a classical object in combinatorics and special function theory.
+
+## The Watson identity [THEOREM]
+
+The sum of cubed central binomial coefficients evaluates to:
+
+$$
+\sum_{m=0}^{\infty} \left[ \frac{1}{4^m} \binom{2m}{m} \right]^3 = \frac{\Gamma(1/4)^4}{4\pi^3}
+\tag{6.8}
+$$
+
+This is Watson's integral $I_1$ (Watson, 1939). The connection to $\Gamma(1/4)$ arises because the central binomial coefficients $\binom{2m}{m}/4^m \to 1/\sqrt{\pi m}$ asymptotically, and their cube generates a hypergeometric function ${}_3F_2$ that reduces to products of Gamma values at quarter-integer arguments.
+
+::: {.callout-theorem}
+## Theorem 6.1 (Watson--$\Gs$ identity)
+$$
+G_{\text{BCC}}(0) = \frac{\Gamma(1/4)^4}{4\pi^3} = \frac{\Gssq}{2\pi}
+\tag{6.9}
+$$
+
+where $\Gs = \Gamma(1/4)^2 / (\sqrt{2}\pi)$ is the lemniscatic bridge constant defined in @sec-gstar.
+:::
+
+*Proof.* The first equality is Watson (1939), proved by contour integration or by the Chowla-Selberg formula applied to the CM curve $E_i: y^2 = x^3 - x$. The second equality is algebraic:
+$$
+\frac{\Gssq}{2\pi} = \frac{[\Gamma(1/4)^2/(\sqrt{2}\pi)]^2}{2\pi} = \frac{\Gamma(1/4)^4}{2\pi^2 \cdot 2\pi} = \frac{\Gamma(1/4)^4}{4\pi^3} \quad \square
+$$
+
+## Why SC and FCC cannot produce this identity [THEOREM]
+
+The SC Laplacian eigenvalue $\sigma_{\text{SC}} = 1 - (\cos k_1 + \cos k_2 + \cos k_3)/3$ is a **sum**, not a product. The Green's function $1/\sigma_{\text{SC}}$ does not admit a geometric series that factors across axes. The SC Watson integral evaluates to a different number ($\approx 1.516$ in the normalized convention used here), involving a more complex combination of Gamma values. It does not equal $\Gssq/(2\pi)$.
+
+Similarly, the FCC eigenvalue involves pairwise products $\cos k_\mu \cos k_\nu$, which partially factor but not completely. The FCC Watson integral is a third distinct number.
+
+**Numerical confirmation** (`scripts/exploration/gap_equation_layer_convergence.py`): On periodic tori of size $L = 64, 96, 128$, the BCC Green's function converges to $1.3932 = \Gssq/(2\pi)$ while the SC Green's function converges to $\approx 1.516$ (a different value):
+
+| $L$ | $G_{\text{BCC}}(0)$ | $G_{\text{SC}}(0)$ | Target: $\Gssq/(2\pi)$ |
+|-----|---------------------|---------------------|--------------------------|
+| 64 | 1.3650 | 1.4952 | 1.3932 |
+| 96 | 1.3744 | 1.5023 | 1.3932 |
+| 128 | 1.3791 | 1.5058 | 1.3932 |
+
+BCC converges to the target; SC does not. The BCC's slower convergence (1.0% remaining at $L = 128$ vs. SC's 8% overshoot) is due to its 4 zero modes causing stronger finite-size effects.
+
+## Physical interpretation
+
+The Watson--$\Gs$ identity connects **lattice geometry** (the BCC Green's function) to **number theory** (the Gamma function at quarter-integers) to **algebraic geometry** (the CM elliptic curve $E_i$). In subsequent chapters:
+
+- **Chapter 7**: $\Gs$ is identified as the bridge constant connecting the lattice to the lemniscate.
+- **Chapter 8**: The gap equation uses $16 \Gssq$ as its coefficient, producing the master quadratic.
+- **Chapter 18**: The same BCC multiplicative structure that produces $\Gs$ also generates the $SU(3)$ gauge group --- these are not independent facts but two aspects of the triple cosine product.
+
+The BCC sublattice is the structural heart of the theory. Its multiplicative eigenvalue is the single algebraic fact from which both the coupling constant and the gauge group flow.
+
+## References
+
+- Watson, G. N. "Three Triple Integrals," *Quarterly Journal of Mathematics* **10** (1939), 266--276.
+- Borwein, J. M. et al. "Densities of Short Uniform Random Walks," *Canadian J. Math.* **64** (2012), 961--990.

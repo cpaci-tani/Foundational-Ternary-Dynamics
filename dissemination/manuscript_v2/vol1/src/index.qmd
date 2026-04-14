@@ -1,0 +1,47 @@
+# Foundational Ternary Dynamics {.unnumbered}
+
+## A Discrete Ontology for the Standard Model and Gravity
+
+This manuscript presents Foundational Ternary Dynamics (FTD): a computational framework that derives the Standard Model gauge groups, coupling constants, and particle masses from five postulates about a discrete cubic lattice.
+
+The framework postulates a three-dimensional integer lattice $\mathbb{Z}^3$ where each site carries a ternary state $s \in \{-1, 0, +1\}$ and a continuous flux vector $\mathbf{J} \in \mathbb{R}^3$. From the lattice geometry alone --- specifically, the decomposition of the 26-neighbor Moore neighborhood into three sublattices (SC, FCC, BCC) --- the gauge group $U(1) \times SU(2) \times SU(3)$, the fine structure constant $\alpha = 1/137.036$ (to 1.26 ppm at tree level, 9.6 ppb with one-loop correction), and the complete mass spectrum emerge with zero free parameters.
+
+### What this manuscript does
+
+1. **Derives** the Standard Model gauge groups from lattice geometry (Book I)
+2. **Computes** 46 observables with zero free parameters (Book II)
+3. **Recovers** full nonlinear general relativity from discrete dynamics (Book II)
+4. **Resolves** the measurement problem via algebraic type transition (Book III)
+5. **Predicts** dark matter properties, vacuum energy, and proton decay (Book III)
+
+### What this manuscript does not do
+
+- Claim a theory of everything. FTD is a framework with explicit scope limitations.
+- Derive quark masses from first principles (scheme-dependent; see Ch. 13).
+- Prove confinement rigorously (see Ch. 18 for the current status).
+- Bypass the lattice's violation of continuous diffeomorphism invariance (see Ch. 15).
+
+### Epistemic discipline
+
+Every claim in this manuscript carries an explicit epistemic tag:
+
+| Tag | Meaning |
+|-----|---------|
+| **[AXIOM]** | Structural postulate |
+| **[THEOREM]** | Proven from axioms |
+| **[SELECTION]** | Argued from consistency, not uniquely proven |
+| **[CONJECTURE]** | Proposed, requiring validation |
+| **[IMPOSED]** | Parameter choice or calibration |
+| **[EMERGENT]** | Arising from dynamics |
+| **[OPEN]** | Unresolved question |
+
+The honest accounting: approximately 35 genuine derivations, 50 parametric insertions (FTD values in standard QFT formulas), and 50+ pieces of external physics adopted. The assumption ledger (Ch. 14.5) tracks every input.
+
+### Reading guide
+
+- **For the derivation chain:** Read Chapters 1--8 sequentially. Each builds on the previous.
+- **For specific results:** The Standard Model table is in Chapter 13. Gravity is Chapter 15. Bell's theorem is Chapter 17.
+- **For the observer problem:** Chapters 19--21 present the lattice-grounded formalism.
+- **For predictions:** Chapter 24 collects all testable claims with falsification criteria.
+
+**Framework version:** 5.30 (April 2026)

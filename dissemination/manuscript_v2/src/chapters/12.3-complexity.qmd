@@ -1,0 +1,273 @@
+# Complexity {#sec-complexity}
+
+*"Emergence at all scales"*
+
+::: {.callout-note}
+## Key Revelation
+The universe is not merely complicated: it is complex. Complexity means the whole has properties that no part possesses. From quarks to consciousness (see Ch. 21 for the formal treatment), each level of organization reveals new phenomena invisible from below.
+:::
+
+## Emergence
+
+### More Is Different
+
+Philip Anderson's insight: "More is different."
+
+Reductionism tells us what things are made of.
+It does not tell us what they do.
+
+### Examples
+
+| Parts | Whole | Emergent Property |
+|-------|-------|-------------------|
+| $\text{H}_2\text{O}$ molecules | Water | Wetness |
+| Neurons | Brain | Thought |
+| Ants | Colony | Intelligence |
+| Notes | Music | Emotion |
+| Atoms | Life | Purpose |
+
+### Strong vs Weak Emergence
+
+**Weak emergence**: In principle derivable from parts (just complex).
+
+**Strong emergence**: New causal powers not reducible to parts.
+
+This simulation suggests: All emergence is weak (derivable from rules), but practically strong (unpredictable without running it).
+
+## Levels of Organization
+
+### The Hierarchy
+
+The universe organizes itself into nested levels, each with its own emergent properties:
+
+| Level | Organization | Scale |
+|-------|--------------|-------|
+| 14 | Universe (Cosmic Structure) | ~$10^{26}$ m |
+| 13 | Galaxy Clusters | ~$10^{23}$ m |
+| 12 | Galaxies | ~$10^{21}$ m |
+| 11 | Star Systems | ~$10^{13}$ m |
+| 10 | Planets | ~$10^{7}$ m |
+| 9 | Ecosystems | ~$10^{3}$ m |
+| 8 | Organisms | ~$10^{0}$ m |
+| 7 | Organs | ~$10^{-1}$ m |
+| 6 | Cells | ~$10^{-5}$ m |
+| 5 | Organelles | ~$10^{-6}$ m |
+| 4 | Macromolecules | ~$10^{-8}$ m |
+| 3 | Molecules | ~$10^{-9}$ m |
+| 2 | Atoms | ~$10^{-10}$ m |
+| 1 | Particles | ~$10^{-15}$ m |
+| 0 | Voxels (Void + Flux) | ~$10^{-35}$ m |
+
+### Properties at Each Level
+
+Each level has:
+- Its own vocabulary
+- Its own laws (effective theories)
+- Its own entities
+- Downward causation on lower levels
+
+### Downward Causation
+
+Higher levels influence lower:
+- Organism behavior affects cell chemistry
+- Market forces affect individual decisions
+- Meaning affects brain states
+
+Not mystical: just complex feedback.
+
+## Measures of Complexity
+
+### Kolmogorov Complexity
+
+Length of shortest program to produce output:
+$$
+K(x) = \min_p \{ |p| : U(p) = x \}
+$$
+
+| Pattern | K | Type |
+|---------|---|------|
+| 000...0 | Small | Simple |
+| Random | $\approx$ Length | Incompressible |
+| $\pi$ digits | Small | Compressible (has program) |
+| Life | Intermediate | Complex |
+
+### The Mandelbrot Set: Complexity from Simplicity
+
+The Mandelbrot set is perhaps the purest example of complexity emerging from simplicity. The entire infinite structure is defined by a single iteration:
+
+$$z_{n+1} = z_n^2 + c$$
+
+This two-symbol formula has Kolmogorov complexity of approximately 50 bits. Yet it generates:
+
+- Infinite boundary length (fractal dimension ≈ 2)
+- Self-similar structure at all scales
+- Every possible pattern encoded somewhere in the boundary
+
+| Mandelbrot Property | Complexity Implication |
+|---------------------|------------------------|
+| Formula: ~50 bits | Extremely low K(program) |
+| Boundary: infinite detail | Infinite $K$(output) |
+| Computation: unbounded | High logical depth |
+| Self-similarity | High effective complexity |
+
+The Mandelbrot set demonstrates that **complexity is not about complicated rules**. The simplest self-referential iteration, applied repeatedly, generates infinite structure. This is the paradigm for how consciousness emerges from the sLoop: not through elaborate mechanisms but through the power of self-reference.
+
+![Seahorse Valley: zooming into the Mandelbrot boundary reveals infinite self-similar detail. The same simple rule, applied repeatedly, generates structure at every scale.](../../media/images/fig-mandelbrot-zoom.png){#fig-mandelbrot-zoom}
+
+### Logical Depth
+
+Time required for shortest program to run:
+- Simple: Short program, quick execution
+- Random: No program captures it
+- Complex: Short program, long execution
+
+Life is logically deep.
+
+### Effective Complexity
+
+Amount of regularity:
+$$
+C_{eff} = K(regularities)
+$$
+
+- Random: Low effective complexity (no regularities)
+- Simple: Low effective complexity (few regularities)
+- Complex: High effective complexity (many regularities)
+
+## Complex Adaptive Systems
+
+### Properties
+
+1. **Many interacting agents**
+2. **Nonlinear dynamics**
+3. **Feedback loops**
+4. **Adaptation and learning**
+5. **Emergence of higher-order structure**
+6. **Self-organization**
+
+### Examples
+
+| System | Agents | Emergent Structure |
+|--------|--------|-------------------|
+| Ecosystem | Organisms | Food webs |
+| Economy | People | Markets |
+| Brain | Neurons | Thoughts |
+| Immune system | Cells | Recognition |
+| Cities | People | Culture |
+
+## The Edge of Chaos Revisited
+
+### The Mandelbrot Boundary as Edge of Chaos
+
+The Mandelbrot set provides the clearest visualization of the edge of chaos:
+
+- **Inside the set (ordered)**: Orbits converge to fixed points or cycles. Predictable, stable, but computationally trivial.
+- **Outside the set (chaotic)**: Orbits escape to infinity. No structure, no memory, no computation.
+- **At the boundary (critical)**: Orbits neither converge nor escape. This is where all the complexity lives.
+
+The entire infinitely complex fractal boundary is the *edge* between order and chaos. This is not coincidence. The boundary is exactly where the iteration is "deciding" whether to persist or dissolve, whether to remain bounded or escape.
+
+**This is the locus of consciousness**: not in the stable interior (unconscious automation) nor in the chaotic exterior (no coherent process) but at the critical boundary where the sLoop perpetually balances between persistence and dissolution.
+
+### Phase Transitions in Computation
+
+| Regime | Properties | Computation | Mandelbrot Analog |
+|--------|------------|-------------|-------------------|
+| Ordered | Predictable, frozen | Memory only | Interior (bounded orbits) |
+| Chaotic | Random, unstable | Transmission only | Exterior (escaping orbits) |
+| Critical | Balanced, complex | Processing possible | Boundary (infinite detail) |
+
+### Lambda Parameter
+
+Langton's work on cellular automata showed that the "lambda parameter" controls the transition between frozen and chaotic dynamics. At $\lambda \approx 0.27$ lies the edge of chaos, where complexity is maximized: frozen dynamics at low $\lambda$, chaotic behavior at high $\lambda$, but maximum computational capability at the critical point between them.
+
+### Life at the Edge
+
+Biology may operate at criticality:
+- Gene regulatory networks
+- Neural dynamics
+- Ecosystems
+
+Evolution tunes toward the edge.
+
+## In the Simulation
+
+### Complexity Emerges Naturally
+
+```python
+def measure_complexity(grid):
+    # Structural complexity
+    structures = find_all_structures(grid)
+    structure_diversity = len(set(types(structures)))
+
+    # Dynamic complexity
+    patterns = analyze_flux_patterns(grid)
+    pattern_variety = entropy(patterns)
+
+    # Hierarchical complexity
+    levels = identify_organization_levels(grid)
+    hierarchy_depth = len(levels)
+
+    return {
+        'structural': structure_diversity,
+        'dynamic': pattern_variety,
+        'hierarchical': hierarchy_depth
+    }
+
+def complexity_evolution(universe):
+    history = []
+    for tick in range(many_ticks):
+        universe.step()
+        c = measure_complexity(universe.grid)
+        history.append(c)
+
+    # Complexity tends to increase, then plateau
+    # Peak at intermediate times
+    # Then heat death reduces complexity
+```
+
+### Why Complexity Peaks
+
+![The complexity curve over cosmic time: rising from genesis, peaking at intermediate times, then declining toward heat death. We may exist near the peak.](../../media/images/fig-complexity-curve.png){#fig-complexity-curve-time}
+
+Complexity rises after genesis as structure forms, reaches a maximum at intermediate times, then declines as the universe approaches heat death. We may exist at or near complexity's peak.
+
+## Computation and Complexity
+
+### Universe as Computer
+
+If the universe computes itself:
+- Input: Initial conditions
+- Program: Physical laws
+- Output: Current state
+
+### Computational Irreducibility
+
+Wolfram's observation:
+- Some systems cannot be predicted except by running them
+- No shortcut exists
+- Must simulate to know outcome
+
+This simulation may have computational irreducibility: we cannot predict what will emerge without running it.
+
+## Experiments
+
+### Complexity Measurement
+Track complexity metrics over time. See peak and decline.
+
+### Hierarchy Detection
+Identify spontaneous levels of organization.
+
+### Edge of Chaos
+Tune parameters to find critical point. Maximum complexity there.
+
+## Concepts
+
+- **emergence**: Properties of wholes absent in parts
+- **levels-of-organization**: Hierarchical structure
+- **kolmogorov-complexity**: Shortest program length
+- **edge-of-chaos**: Critical point for computation
+
+## Transition
+
+Complexity builds. But why does this particular complexity exist? Why these constants, these particles, this universe? Next, we explore the anthropic window: why the universe allows observers at all.

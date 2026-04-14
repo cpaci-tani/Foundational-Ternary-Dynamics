@@ -1,0 +1,99 @@
+# Matter, Antimatter, and Confinement {#sec-confinement}
+
+The matter-antimatter distinction, pair production, and quark confinement all arise from the BCC sublattice geometry. This chapter derives each from the stella octangula structure and the confining root $x_-$.
+
+## 18.1 Pair production from the Gauss constraint [THEOREM]
+
+Charge conservation requires $\sum_v s(v) = Q = \text{const}$. Creation of a charged particle from the void requires simultaneous creation of its antiparticle:
+
+$$
+0 \to (+1) + (-1)
+\tag{18.1}
+$$
+
+This is the ternary axiom $0 = (+1) + (-1)$ (@sec-ternary) realized as a dynamical process. It occurs when the local flux exceeds the manifestation threshold $|\mathbf{J}| \geq K_B$ at a void site, subject to the Gauss constraint ensuring the total divergence remains consistent.
+
+The reverse process (annihilation) occurs when a $+1$ and $-1$ site are adjacent and their combined flux drops below threshold: $(+1) + (-1) \to 0$.
+
+## 18.2 The stella octangula: matter-antimatter symmetry [THEOREM]
+
+The 8 BCC neighbors form two interlocking regular tetrahedra (@sec-moore, Section 4.2):
+
+$$
+T_+ = \{(+1,+1,+1), (+1,-1,-1), (-1,+1,-1), (-1,-1,+1)\} \quad (\text{4 voxels, product } = +1)
+$$
+$$
+T_- = \{(-1,-1,-1), (-1,+1,+1), (+1,-1,+1), (+1,+1,-1)\} \quad (\text{4 voxels, product } = -1)
+$$
+
+The parity assignment $P(\delta) = \delta_x \cdot \delta_y \cdot \delta_z$ splits the 8 BCC sites into two groups of 4. This is the **stella octangula** decomposition.
+
+::: {.callout-theorem}
+## Theorem 18.1 (Matter-antimatter from BCC parity)
+The stella octangula parity $P = \pm 1$ on the BCC sublattice provides a natural distinction between matter ($T_+$) and antimatter ($T_-$). The two tetrahedra are related by spatial inversion ($\delta \to -\delta$), which is charge conjugation in the ternary framework.
+:::
+
+Each tetrahedron has 4 vertices = $N_{\text{base}} = 4$. The full BCC has $2 \times N_{\text{base}} = 8$ sites. The pair structure ($T_+, T_-$) ensures that every matter configuration has a mirror antimatter configuration.
+
+## 18.3 Color charge from BCC [THEOREM for counting, SELECTION for SU(3)]
+
+Each BCC neighbor excites all 3 flux components (@sec-gauge). The three components $(J_x, J_y, J_z)$ serve as color charges. A quark carries one color; an antiquark carries the conjugate color.
+
+**Color neutrality.** A hadron (observable particle) must be a color singlet: $|\mathbf{J}|^2 = J_x^2 + J_y^2 + J_z^2$ is the gauge-invariant combination. The manifestation threshold $|\mathbf{J}| \geq K_B$ requires all three components to contribute cooperatively:
+- **Baryon:** 3 quarks, one per color ($J_x, J_y, J_z$ from three different quarks), combining to a singlet.
+- **Meson:** quark-antiquark pair, color + anticolor = singlet.
+
+Free quarks ($|\mathbf{J}_{\text{single color}}| < K_B$) cannot manifest individually. This is confinement at the threshold level.
+
+## 18.4 Confinement from Wilson loops [SELECTION]
+
+The static quark-antiquark potential on the lattice is extracted from Wilson loops:
+
+$$
+V(r) = -\frac{4}{3}\frac{\alpha_s}{r} + \sigma r
+\tag{18.2}
+$$
+
+the Cornell potential with Coulomb ($1/r$) and confining ($\sigma r$) terms.
+
+The **string tension** $\sigma$ is computed from the area law of Wilson loops at coupling $x_-$:
+
+$$
+\langle W(C) \rangle \sim \exp(-\sigma \cdot \text{Area}(C))
+\tag{18.3}
+$$
+
+Numerical estimate: $\sigma \approx 0.209$ in lattice units, corresponding to $\sigma \approx 0.18$ GeV$^2$ (experimental: $\sim 0.18$ GeV$^2$). [SELECTION for the numerical value]
+
+## 18.5 Asymptotic freedom [THEOREM given $b_3 = 7$]
+
+The running of the strong coupling:
+
+$$
+\alpha_s(\mu) = \frac{\alpha_s(M_Z)}{1 + \frac{b_3}{2\pi}\alpha_s(M_Z)\ln(\mu/M_Z)}
+\tag{18.4}
+$$
+
+with $b_3 = 7 > 0$ (one-loop beta function positive), the coupling **decreases** at high energies: asymptotic freedom. At low energies, $\alpha_s$ grows and confinement sets in.
+
+The FTD value $\alpha_s(M_Z) = 7/59 = 0.1186$ (experimental: $0.1179 \pm 0.0009$, agreement within $0.6\%$).
+
+## 18.6 Grand unification [SELECTION]
+
+The running couplings meet at:
+
+$$
+\alpha_{\text{GUT}} = \frac{1}{2 \cdot N_c \cdot b_3} = \frac{1}{2 \cdot 3 \cdot 7} = \frac{1}{42}
+\tag{18.5}
+$$
+
+at a scale $M_{\text{GUT}} \sim 2 \times 10^{16}$ GeV. Above this scale, the three gauge couplings are unified.
+
+**Proton decay.** Grand unification permits baryon number violation via dimension-6 operators. The predicted lifetime:
+
+$$
+\tau_p \sim \frac{M_{\text{GUT}}^4}{\alpha_{\text{GUT}}^2 m_p^5} \sim 10^{35} \text{ years}
+\tag{18.6}
+$$
+
+Current experimental bound: $\tau_p > 10^{34}$ years (Super-Kamiokande). FTD's prediction is above the bound but within reach of next-generation experiments (Hyper-Kamiokande). [SELECTION for the specific lifetime; THEOREM that proton decay occurs if grand unification holds]

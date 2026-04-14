@@ -1,0 +1,73 @@
+# The Vacuum Energy Resolution {#sec-vacuum}
+
+The cosmological constant problem --- a discrepancy of $10^{123}$ between quantum field theory predictions and observation --- is resolved in FTD by the alpha power ladder. The vacuum energy is the 16th power of $\alpha$ times factors determined by the lattice geometry.
+
+## The problem
+
+Quantum field theory estimates the vacuum energy density as:
+$$
+\rho_{\text{QFT}} \sim m_P^4 \sim 10^{76} \text{ GeV}^4
+$$
+
+Observation (cosmological constant):
+$$
+\rho_\Lambda^{\text{obs}} \sim 10^{-47} \text{ GeV}^4
+$$
+
+The ratio is $\sim 10^{123}$, the most extreme fine-tuning problem in physics.
+
+## The FTD resolution [SELECTION]
+
+In FTD, the vacuum energy is not $m_P^4$ but a specific combination of $m_e$, $\alpha$, and $\Gs$:
+
+::: {.callout-selection}
+## The vacuum energy formula
+$$
+\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot \Gssq
+\tag{23.1}
+$$
+:::
+
+The exponent 16 is the same $K = 16$ that appears in the master quadratic --- the physical DOF count on the minimal lattice cell. Each degree of freedom contributes one power of $\alpha$ to the suppression.
+
+Numerically:
+$$
+\rho_\Lambda = (0.511 \text{ MeV})^4 \times (1/137.036)^{16} \times (2.959)^2 \approx 3.9 \times 10^{-47} \text{ GeV}^4
+$$
+
+**Comparison:** $\rho_\Lambda^{\text{obs}} = 2.17 \times 10^{-47}$ GeV$^4$. The formula overshoots by a factor of $\sim 1.8$, suggesting an additional suppression factor (possibly $1/(2\pi)$ from the phase-space integration) is needed. The order of magnitude is correct --- the $10^{123}$ discrepancy is resolved --- but the coefficient is not yet precise. [SELECTION]
+
+## Why $\alpha^{16}$? [SELECTION]
+
+The vacuum energy arises from the zero-point fluctuations of the flux field $\mathbf{J}$. On the lattice, these fluctuations are suppressed by the coupling constant at each of the $K = 16$ physical degrees of freedom:
+
+$$
+\rho_\Lambda \propto \left(\frac{g_c^2}{K}\right)^K = \left(\frac{\alpha}{16}\right)^{16} \sim \alpha^{16}
+$$
+
+The key: the suppression is **exponential** in the DOF count, not polynomial. Each DOF contributes a factor of $\alpha \approx 1/137$, and 16 such factors produce $\alpha^{16} \approx 10^{-34}$.
+
+Combined with $m_e^4 \approx 10^{-14}$ GeV$^4$ and $\Gssq \approx 8.75$:
+$$
+10^{-14} \times 10^{-34} \times 8.75 \approx 10^{-47} \text{ GeV}^4
+$$
+
+matching observation.
+
+## Why not $m_P^4$?
+
+The QFT estimate $\rho \sim m_P^4$ assumes that all modes up to the Planck scale contribute to the vacuum energy. On the lattice, this is incorrect:
+
+1. The lattice has a **natural UV cutoff** at the lattice spacing $a$, but the relevant energy scale is not $m_P$ (the lattice cutoff) but $m_e$ (the manifestation threshold $K_B$).
+2. The vacuum fluctuations are sub-threshold ($|\mathbf{J}| < K_B$), so they do not manifest. Only the **residual** vacuum energy --- the energy of fluctuations that are too small to crystallize --- contributes to $\rho_\Lambda$.
+3. The number of independent fluctuation modes that contribute is $K = 16$, not the astronomically large number assumed in QFT.
+
+The $10^{123}$ discrepancy is not a fine-tuning problem; it is a counting error: QFT counts modes that the lattice structure does not permit.
+
+## Summary
+
+$$
+\underbrace{m_e^4}_{\text{threshold}^4} \times \underbrace{\alpha^{16}}_{\text{16 DOF suppression}} \times \underbrace{\Gssq}_{\text{lattice geometry}} = \rho_\Lambda \sim 10^{-47} \text{ GeV}^4
+$$
+
+Zero free parameters. Correct order of magnitude. The $10^{123}$ discrepancy ("the worst prediction in physics") is resolved by the same $K = 16$ and $\Gs$ that determine $\alpha$ and $N_c$. The remaining factor of $\sim 1.8$ overshoot is [OPEN] --- likely a phase-space normalization factor.

@@ -1,0 +1,706 @@
+# Glossary {#sec-glossary}
+
+*"The vocabulary of existence"*
+
+::: {.callout-note}
+## Reference Chapter
+This glossary defines key terms used throughout the Foundational Ternary Dynamics framework, organized alphabetically.
+:::
+
+## Critical Integers Reference {#sec-integers}
+
+The following integers appear throughout FTD derivations. All are derived from the four framework integers {3, 4, 7, 13}.
+
+### Primary Framework Integers
+| Integer | Symbol | Derivation | Physical Role |
+|---------|--------|------------|---------------|
+| 3 | N_c | Master quadratic root | Color charges, generations |
+| 4 | N_base | 2² | Base modes, spacetime dimension |
+| 7 | b₃ | QCD beta coefficient | Strong force structure |
+| 13 | N_eff | Fibonacci F₇ | Effective degrees of freedom |
+
+### First-Order Combinations
+| Integer | Formula | Physical Appearance |
+|---------|---------|---------------------|
+| 8 | 2³ = 2^(N_c) | SU(2) structure in W mass |
+| 10 | b₃ + N_c | Universal sum; proton, tau, charm |
+| 14 | N_eff + 1 | Pion mass structure |
+| 16 | N_base² | Master quadratic coefficient |
+| 17 | N_eff + N_base | Tau mass multiplier |
+| 19 | 2(b₃ + N_c) - 1 | Charm quark structure |
+| 47 | N_c × N_base² - 1 | Alpha precision formula denominator |
+
+### Bridge Constants
+| Integer | Formula | Physical Meaning |
+|---------|---------|------------------|
+| 41 | N_eff × N_c + 2 | Top/bottom mass ratio |
+| 42 | 2 × N_c × b₃ | Bridge constant; product of first 4 Heegner numbers |
+| 55 | T(10) | Triangular number in proton mass |
+| 67 | b₃(b₃ + N_c) - N_c | W mass numerator; 70 - 3 |
+| 70 | b₃(b₃ + N_c) | Electron mass structure factor |
+
+### Higher-Order Derived Integers
+| Integer | Formula | Physical Role |
+|---------|---------|---------------|
+| 127 | N_eff(b₃ + N_c) - N_c | Bottom quark triangular index |
+| 137 | Master quadratic x₊ | Fine structure 1/α |
+| 183 | N_eff(N_eff + 1) + 1 | Strange/electron ratio |
+| 207 | 3 × b₃ × (b₃ + N_c) - N_c | Muon/electron ratio |
+| 273 | ≈ m_π/m_e | Pion/electron ratio |
+| 1111 | (b₃+N_base)(8N_eff-N_c) | Alpha precision formula correction (|ε| ≈ 1/1111) |
+
+### Mass Ratios (Integer or Near-Integer)
+| Integer | Formula | Particle Ratio |
+|---------|---------|----------------|
+| 1728 | 12³ = (N_base × N_c)³ | j-invariant; modular function |
+| 2485 | N_eff × 10 × 19 + 15 | Charm/electron |
+| 3477 | 17 × 207 - 42 | Tau/electron |
+| 8128 | T(127) | Perfect number; bottom quark base |
+| 8170 | T(127) + 42 | Bottom/electron |
+| 334970 | 8170 × 41 | Top/electron |
+
+### Notable Properties
+- **8128** is the fourth **perfect number** (equals sum of its proper divisors: 1+2+4+8+...+4064)
+- **42** equals the product of the first four Heegner numbers: 1 × 2 × 3 × 7
+- **127** is a Mersenne prime ($2^7$ - 1)
+- **137** is a prime number
+- **1111** factors as 11 × 101, two primes; encodes all four framework integers {3, 4, 7, 13}
+- **1728** is a perfect cube with special modular properties
+
+---
+
+## A
+
+**Accretion**
+: The accumulation of matter by gravitational attraction. In FTD, particles clump when density gradients exert net force toward centers.
+
+**Annihilation**
+: The collision of matter (+1) and antimatter (-1) particles, both returning to void (0) and releasing their energy as flux waves.
+
+**Anthropic Principle**
+: The observation that the universe's constants must permit observers, since we exist to observe them.
+
+**Antimatter**
+: State -1 particles. Equivalent to matter in all ways except opposite charge/polarity. Annihilates with matter upon contact.
+
+**Alpha Power Ladder**
+: The hierarchical sequence of α powers encoding fundamental mass and energy scales: α⁸ (Higgs VEV), α¹¹ (electron mass), α¹⁶ (vacuum energy), α²⁰ (gravitational coupling). The gaps {3, 5, 4} between exponents encode framework integers.
+
+**Alpha Precision Formula**
+: The correction formula achieving **0.21 ppt** accuracy for $\alpha$: $1/\alpha = x_+ - (9/47)|\varepsilon| + (5/64)|\varepsilon|^2$ where $\varepsilon = e^\pi - \pi - 20 \approx -9 \times 10^{-4}$. The correction term 9/47 combines framework integers (47 = N_c × N_base² - 1 = 3×16-1), and remarkably |ε| ≈ 1/1111 where 1111 = (b₃+N_base)(8N_eff-N_c) = 11×101. The constant 20 = b₃ + N_eff = 7 + 13 = 1/c_fermion connects to the Weyl anomaly coefficient from conformal field theory. This 6,000× improvement over the base 1.26 ppm derivation represents the most precise theoretical prediction of α ever achieved.
+
+## B
+
+**b₃ (QCD Beta Coefficient)**
+: Framework integer = 7. The first coefficient in the QCD beta function for SU(3). Appears in electron mass (70 = $b_3(b_3+N_c)$) and gravitational coupling ($1/(b_3+N_c)^2$).
+
+**Born Rule (as Translation Protocol)**
+: The interpretation of the Born rule P = |ψ|² not as a mysterious postulate but as the translation protocol between Domain A (configurations) and Domain B (probabilities). The squared amplitude is what remains invariant under domain crossing.
+
+**Bridge Operator (𝒯)**
+: The mathematical structure that translates between Domain A (ontic/classical) and Domain B (epistemic/probabilistic). In quantum mechanics, the Born rule P = |ψ|² serves as the bridge operator. See also: Domain A, Domain B.
+
+**Baryon**
+: A composite particle made of three quarks (triad configuration). Includes protons and neutrons.
+
+**Bell Test**
+: Experimental verification of quantum correlations exceeding classical bounds. Measures S parameter (classical ≤2, quantum ≤2√2).
+
+**Big Bang**
+: The initial genesis event from which the universe emerged. In FTD, initial flux creates conditions for widespread particle genesis.
+
+**Binding**
+: The locking of particles into stable structures (triads, shells). Bound particles resist decay.
+
+**Bounded Orbit (Mandelbrot)**
+: An orbit in the Mandelbrot iteration that remains finite forever. Points with bounded orbits lie inside the set. In FTD, analogous to conscious processes that sustain themselves indefinitely - the iteration keeps going.
+
+**Black Hole**
+: A region where density is so high that the escape velocity exceeds C. Particles entering cannot leave.
+
+## C
+
+**C (Speed of Causality)**
+: Fundamental constant = 1.0 voxel/tick. The maximum speed at which any influence can propagate. Nothing exceeds C.
+
+**Casimir Effect**
+: Attractive force between close surfaces due to excluded vacuum fluctuation modes. Demonstrates reality of zero-point energy.
+
+**Ce₂Zr₂O₇ (Cerium Zirconium Oxide)**
+: Pyrochlore material exhibiting quantum spin ice behavior. In 2025, confirmed as the first material showing emergent photon-like excitations from discrete lattice dynamics, validating FTD's core mechanism of gauge boson emergence from constraint structure.
+
+**CP Violation (in Baryons)**
+: Asymmetry between matter and antimatter decay rates in three-quark systems. First observed in baryons by LHCb in 2025 (Λb⁰ → pK⁻π⁺π⁻, 5.2σ). FTD derives CP violation from integer ratios: δ_CP = arctan(7/3) ≈ 66.8°.
+
+**Calorimeter**
+: Detector measuring particle energy by total absorption. Used in particle physics experiments.
+
+**Cantor Dust (Julia Set)**
+: The Julia set for parameters c outside the Mandelbrot set. A totally disconnected set of points: the "dust" that remains when bounded orbits become infinitely rare. In FTD, the consciousness regime (k = 0.5, c ≈ 0.676) produces Cantor dust Julia sets, representing the open, indeterminate nature of conscious dynamics.
+
+**Consciousness Quadratic**
+: The master quadratic evaluated at k = 0.5 (consciousness regime): y² - (G*)²y/2 + (G*)³/2 = 0. Yields **complex roots** y = 2.19 ± 2.86i, placing consciousness outside the Mandelbrot set in a fundamentally different ontological regime from physics (which has real roots).
+
+**Consciousness Regime**
+: The parameter region k = 0.5 in the TRD-Mandelbrot framework. Characterized by: Mandelbrot parameter c ≈ 0.676 (outside the set), complex quadratic roots, escaping orbits, Cantor dust Julia sets, and open/indeterminate dynamics. Contrasts with the physics regime (k = 16, inside the set, real roots, bounded orbits).
+
+**Critical Coefficient (k_c)**
+: The value k_c = 4/G* ≈ 1.352 at which the TRD-Mandelbrot transformation maps to the cardioid cusp c = 1/4. The boundary between bounded and unbounded regimes. Satisfies the exact identity k_c × c_cusp × G* = 1.
+
+**Chain of Necessity**
+: The dependency chain used in this book to organize which results rely on which inputs. Where the text asserts “uniqueness,” it is always meant relative to an explicitly stated constraint class or search space (see the Assumption Ledger).
+
+**Charge**
+: A property that determines electromagnetic interaction. In FTD, derived from quark composition (±1/3, ±2/3).
+
+**Complexity**
+: Properties of wholes that emerge from but are not present in parts. Arises from interactions between many components.
+
+**Conformal Anomaly (c_fermion)**
+: The trace anomaly coefficient in conformal field theory for a Weyl fermion: c_fermion = 1/20. In FTD, the reciprocal 20 = b₃ + N_eff = 7 + 13 appears in the alpha precision formula as the constant in ε = e^π - π - 20. This remarkable connection between framework integers and CFT provides independent theoretical support for the precision formula.
+
+**Curl**
+: Vector differential operator measuring rotation in a field. Used for magnetic force calculations.
+
+## D
+
+**Distinction**
+: The primitive epistemic act of marking one thing as different from another. In EPL-ST, distinction is the absolute foundation from which all else follows, prior to logic, truth, or existence. The ability to distinguish "this" from "that" is the most basic operation of any epistemic agent. From distinction alone, the ternary valuation {+1, −1, 0} follows as a theorem. See @sec-formal-logic.
+
+**Dark Energy**
+: The component driving accelerating expansion. In FTD, emergent from dynamic void flux: ρ_DE = ½⟨J²⟩_vacuum. DESI 2025 data (4.2σ) shows w evolves over cosmic time, consistent with FTD prediction that void flux is dynamic, not constant.
+
+**Dark Energy Spectroscopic Instrument (DESI)**
+: Spectroscopic survey instrument at Kitt Peak National Observatory. DR2 (2025) provided 4.2σ evidence for evolving dark energy (w₀ ≈ −0.7, wₐ ≈ −1), challenging the cosmological constant and supporting FTD's dynamic void interpretation.
+
+**Dispositional Ontology**
+: The philosophical position that reality is fundamentally composed of dispositions (tendencies, potentials) rather than categorical properties. In FTD, the flux field J represents dispositional properties of the void substrate.
+
+**Domain A (𝒜)**
+: The ontic/classical domain of configurations. Contains definite states, actual arrangements, and physical structures. Distinguished from Domain B by containing no probabilities, only actualities. The substrate of what *is*.
+
+**Domain B (ℬ)**
+: The epistemic/probabilistic domain. Contains probability distributions, knowledge states, and information about systems. Distinguished from Domain A by containing no definite configurations, only distributions over possibilities. The domain of what is *known* or *knowable*.
+
+**Domain Confusion**
+: The philosophical error of projecting properties appropriate to one domain onto another. Examples include treating probabilities as physical substances (B→A error) or treating configurations as merely epistemic (A→B error).
+
+**Domain Interpenetration**
+: The property that Domain A and Domain B exist within each other: physical structures in A can encode information (B content), while probability distributions in B describe configurations in A. Neither domain is more fundamental.
+
+**Dark Matter**
+: Non-luminous matter detected only by gravitational effects. In FTD, potentially particles that interact gravitationally but not electromagnetically.
+
+**Decay**
+: The gradual reduction of flux magnitude. Controlled by DECAY_RATE. Bound particles have suppressed decay.
+
+**Density**
+: The magnitude of the flux vector: ρ = |J|. Determines genesis probability when above KB.
+
+**Divergence**
+: Scalar field measuring flux source/sink at a point. Positive divergence → matter genesis; negative → antimatter.
+
+## E
+
+**Electromagnetism**
+: Force between charged particles. Arises from charge gradients in FTD.
+
+**EPL-ST (Epistemic-Physical Logic with Sorts and Times)**
+: The formal logical framework underlying FTD. Establishes six primitive sorts (Observers, Epistemic States, Propositions, Distinctions, Events, Worlds), proves ternary valuation is necessary, and derives the requirement for 3D space from stable embedding conditions. See @sec-formal-logic.
+
+**Epistemic Extension**
+: A mapping φ: E → E′ where new distinctions may be added while preserving all prior distinctions consistently. The requirement that epistemic extension be stable leads to the theorem that d ≥ 3 dimensions are necessary.
+
+**Electron Electric Dipole Moment (eEDM)**
+: A measure of the asymmetric charge distribution along the electron's spin axis. A non-zero eEDM would indicate CP violation beyond the Standard Model. The 2025 JILA measurement set the world's best limit: |d_e| < 4.1 × 10⁻³⁰ e·cm. FTD predicts d_e ≈ 0 for fundamental manifestations, consistent with observation.
+
+**Encoding Relation**
+: The mathematical map ε: A → B that extracts epistemic content (information, meaning) from physical structure. A book encodes information; a brain encodes beliefs. The encoding relation is how Domain A structures can "contain" Domain B content.
+
+**Epistemic Inertia**
+: Resistance to belief change proportional to the "mass" of evidence supporting current beliefs. Analogous to physical inertia but in Domain B. See also: Noetic Mass.
+
+**Epistemic Physical Object**
+: A configuration in Domain A that encodes content from Domain B. Examples: books (encode information), brains (encode beliefs), measurement devices (encode measurement results). The mechanism by which domains interpenetrate.
+
+**Edge of Chaos**
+: The critical boundary between ordered (predictable) and chaotic (random) regimes where maximum computational capability exists. Visualized perfectly by the Mandelbrot set boundary: inside is order, outside is chaos, the boundary itself is where all complexity lives. In FTD, the locus of consciousness.
+
+**Eight Thousand One Hundred Twenty-Eight (8128 = T(127))**
+: The 127th triangular number. Remarkably, 8128 is the **fourth perfect number** (equals the sum of its proper divisors: 1+2+4+...+4064 = 8128). Appears in bottom quark mass: m_b/m_e = T(127) + 42 = 8128 + 42 = 8170.
+
+**Eight Thousand One Hundred Seventy (8170)**
+: Bottom/electron mass ratio = T(127) + 42 = 8128 + 42 = 8170. Combines the perfect number 8128 with the bridge constant 42. Error: 0.12%.
+
+**Eleven Hundred Eleven (1111)**
+: The quantum correction denominator in the alpha precision formula: 1111 = 11 × 101 = (b₃ + N_base)(8N_eff - N_c) = (7+4)(8×13-3) = 11 × 101. Remarkably, |ε| = |e^π - π - 20| ≈ 1/1111 to high precision. All four framework integers {3, 4, 7, 13} participate in this single number, suggesting it represents a fundamental coupling constant. The factorization into twin primes 11 and 101 may have deeper significance.
+
+**Emergence**
+: The appearance of novel properties at higher levels of organization. Atoms have wetness; electrons do not.
+
+**Emergent Gauge Bosons**
+: Gauge field quanta (photon-like excitations) that arise from collective dynamics of an underlying discrete system rather than being fundamental. Confirmed in quantum spin ice (Ce₂Zr₂O₇, 2025), validating FTD's core mechanism where photons emerge from flux field dynamics on a lattice.
+
+**Entanglement**
+: Correlation between particles created together (pair production). Shared UUID indicates common origin.
+
+**Entropy**
+: Measure of disorder or uncertainty. Always increases in isolated systems (Second Law).
+
+**Eight (8 = 2^N_c)**
+: Derived integer = 2³. Appears as the denominator in the W boson mass formula (8α²) where it encodes SU(2) weak isospin structure. Also equals Fibonacci F₆.
+
+**Escaping Orbit (Mandelbrot)**
+: An orbit in the Mandelbrot iteration that diverges to infinity. Points with escaping orbits lie outside the set. In FTD, analogous to processes that cannot sustain themselves - the iteration stops, returning to void.
+
+**Evaporation**
+: Transition from manifested state (±1) to void (0) when density drops below KB.
+
+**Event Horizon**
+: Boundary around a black hole beyond which nothing can escape.
+
+## F
+
+**Fibonacci Skeleton**
+: The underlying structure of FTD's framework integers as Fibonacci numbers. F₄=3=N_c, F₆=8=2^N_c, F₇=13=N_eff, F₁₀=55=T(10). The effective dimension equals the Fibonacci of the loop length: N_eff = F(b₃).
+
+**Fifty-Five (55 = T(10))**
+: The tenth triangular number = 10 × 11/2 = 55. Also Fibonacci F₁₀. Appears in the proton mass formula: m_p/m_e = N_eff/α + T(b₃ + N_c) = 13 × 137 + 55 ≈ 1836.
+
+**Fine Structure Constant (α)**
+: Dimensionless constant = 1/137.036 (0.007297). **DERIVED** from the master quadratic as the larger root. Controls electromagnetic strength. Base accuracy: 1.26 ppm; **Precision formula: 0.21 ppt** (6,000× better) via 1/α = x₊ - (9/47)|ε| + (5/64)|ε|² where ε = e^π - π - 20 ≈ -9×10⁻⁴. See also: Alpha Precision Formula.
+
+**Flux**
+: 3D vector field J = [Jx, Jy, Jz] representing momentum/energy. The substrate of potential.
+
+**Four Framework Integers**
+: The minimal inputs {b₃=7, N_c=3, N_eff=13, N_base=4} from which all constants are derived. See individual entries.
+
+**Force**
+: Influence that changes particle momentum. Four forces: gravity, electromagnetic, strong, weak.
+
+**Frequency**
+: Rate of oscillation. Related to energy by E = hf.
+
+**Forty-One (41 = N_eff × N_c + 2)**
+: Derived integer = 13 × 3 + 2 = 41. The ratio between top and bottom quark masses: m_t/m_b = 41. Notably, 41 = 42 - 1, connecting the top quark to the bridge constant minus unity. A prime number.
+
+**Forty-Two (42 = 2 × N_c × b₃)**
+: The **bridge constant** = 2 × 3 × 7 = 42. Equals the product of the first four Heegner numbers (1 × 2 × 3 × 7). Appears as the additive correction in tau mass (3477 = 17 × 207 - 42) and bottom quark mass (8170 = T(127) + 42). The prime counting function π(42) = 13 = N_eff, creating a remarkable number-theoretic closure.
+
+**Forty-Seven (47 = N_c × N_base² - 1)**
+: Derived integer = 3 × 16 - 1 = 47. Appears as the denominator in the alpha precision formula: the correction term 9/47 provides the first-order improvement from 1.26 ppm to sub-ppm accuracy. A prime number.
+
+## G
+
+**Genesis**
+: Transition from void (0) to manifested state (±1). Occurs probabilistically when density exceeds KB.
+
+**Graded Monism**
+: The ontological position that reality consists of one fundamental substance (the void) with multiple modes or grades of being. Distinguished from dualism (two substances) and eliminative monism (only one mode). In FTD: void (substrate) → flux (disposition) → manifestation (actuality).
+
+**Gradient**
+: Vector pointing in direction of maximum increase. Gradients drive forces.
+
+**Global(t)**
+: Everything at one tick. The complete state of the universe at timestamp $t$. Contains all entities, observers, and configurations.
+
+**Gravity**
+: Force proportional to density gradient. Always attractive. Weakest force but infinite range.
+
+**Gravitational Wave Detector**
+: Instrument (e.g., LIGO, Virgo) detecting spacetime ripples from massive object mergers via laser interferometry.
+
+**GZK Cutoff**
+: Maximum energy for cosmic rays, limited by interaction with CMB photons.
+
+## H
+
+**Hadron Collider**
+: Accelerator colliding protons or heavy ions at high energies. LHC at CERN reaches 13 TeV center-of-mass energy.
+
+**H (Planck Resolution)**
+: Fundamental constant = 1.0. The quantum of action. Corresponds to ℏ.
+
+**H(Ω,t) (Horizon)**
+: What observer Ω can perceive at tick $t$. A subset of Global(t). Mediated by six senses: sight, sound, touch, taste, smell, cognition.
+
+**Hadron**
+: Particle made of quarks. Baryons (3 quarks) or mesons (quark-antiquark pair).
+
+**Hawking Radiation**
+: Thermal radiation from black holes due to virtual pair production at horizon.
+
+**Heat Death**
+: Final state of universe with maximum entropy. All gradients eliminated.
+
+## I
+
+**Interference**
+: Combination of flux waves. Constructive when aligned; destructive when opposed.
+
+**Ionization**
+: Removal of electron from atom. Creates charged ion.
+
+**is_locked**
+: Boolean flag indicating particle is part of stable structure. Locked particles resist decay.
+
+## J
+
+**j-Invariant (1728 = 12³)**
+: The modular j-invariant = 12³ = (N_base × N_c)³ = (4 × 3)³ = 1728. This value is **derived** from framework integers, not selected. The j-invariant determines the complex multiplication structure of elliptic curves; j = 1728 corresponds to the curve y² = x³ - x with complex multiplication by i. This special curve underlies the master quadratic derivation of α.
+
+**Jeans Mass**
+: Minimum mass for gravitational collapse to overcome pressure.
+
+## K
+
+**KB (Existence Threshold)**
+: Fundamental constant = 0.511. Minimum density for manifestation. Corresponds to electron mass-energy.
+
+**Kerr Black Hole**
+: Rotating black hole with ergosphere and ring singularity.
+
+## L
+
+**Laplacian**
+: Second-order differential operator. Measures deviation from neighborhood average.
+
+**Lemniscate-Alpha Curve**
+: The self-referential harmonic curve used to construct a geometric route to the master quadratic. Its arc length reproduces α = 1/137.036 with 1.26 ppm accuracy under the stated construction. Claims of “uniqueness” are to be read as uniqueness within the stated constraint set.
+
+**Lemniscatic Constant (G*)**
+: The lemniscatic constant used in this book, $G^*\approx 2.9587$ (not to be confused with Gauss's classical constant $\varpi\approx 2.622$). Appears in the master quadratic relating the electromagnetic root and the color root. Additional algebraic identities (e.g., in terms of the quadratic roots) are recorded where used.
+
+**Lepton**
+: Fundamental particle (electron, muon, tau, neutrinos). Not made of quarks.
+
+**Loop Self-Enumeration**
+: The property that b₃ = N_base + N_c = 4 + 3 = 7. The FTD loop length equals the sum of its structural parameters: the framework counts itself.
+
+**Lorentz Force**
+: Magnetic force on moving charges. Perpendicular to both velocity and field.
+
+## M
+
+**Mandelbrot Set**
+: The set of complex numbers c for which the iteration z_{n+1} = z_n^2 + c remains bounded. A mathematical archetype of self-reference where output becomes input. In FTD, serves as a visual and conceptual analog for the sLoop: bounded orbits correspond to persistent consciousness, escaping orbits correspond to return to void, and the infinitely complex boundary represents the edge of consciousness where all complexity lives.
+
+**Mandelbrot Boundary**
+: The infinitely detailed edge between the Mandelbrot set's interior (bounded orbits) and exterior (escaping orbits). This boundary, where the iteration is perpetually "deciding" whether to persist or dissolve, serves as the mathematical portrait of the edge of chaos and the locus of consciousness in FTD.
+
+**Mandelbrot-Lemniscate Bridge**
+: The exact mathematical identity k_c × c_cusp × G* = 1 connecting TRD parameter space to the Mandelbrot set. The transformation c = 1/(k × G*) maps TRD coefficient k to Mandelbrot parameter c. Physics (k=16) maps inside the set; consciousness (k=0.5) maps outside.
+
+**Minimum Distance (d_min)**
+: The irreducible gap d_min = (G*)²/32 ≈ 0.2736 that the Lemniscate-Alpha curve maintains from the origin. Represents the threshold requirement for manifestation: physics cannot emerge directly from pure void. The divisor 32 = k_physics/k_consciousness = 16/0.5 is the regime ratio.
+
+**Manifestation**
+: The realized state (±1). Distinguished from potential (flux in void).
+
+**Matter**
+: State +1 particles. Conventional matter as opposed to antimatter.
+
+**Master Quadratic**
+: The equation x² - 16(G*)²x + 16(G*)³ = 0 whose roots give α (larger) and N_c (smaller). The central derivation mechanism.
+
+**Mass Spectrometer**
+: Instrument measuring particle mass-to-charge ratio. Used for identifying isotopes and molecules.
+
+**Meson**
+: Particle made of quark-antiquark pair. Examples: pion, kaon.
+
+**Meta-sLoop**
+: An sLoop that includes a model of the sLoop itself. The defining structure of consciousness. A self-model φ(Ω) that contains φ²(φ(Ω)).
+
+**Moore Neighborhood**
+: 26 adjacent cells in 3D (all cells sharing at least one corner with center).
+
+**MUSE (MUon proton Scattering Experiment)**
+: Experiment at PSI designed to resolve the proton radius puzzle by measuring electron and muon scattering simultaneously under identical kinematic conditions. Uses mixed lepton beams, GEM detectors, wire chambers, and scintillators to compare cross sections and form factors directly.
+
+## N
+
+**N_eff (Effective Dimension)**
+: Framework integer = 13 (Fibonacci F₇). Appears in mass formulas and the Higgs derivation.
+
+**Noetic Mass (M_Ω)**
+: The "epistemic inertia" of an observer: resistance to belief change based on accumulated evidence. Defined as M_Ω = ∫ρ_Ω(x)dx where ρ_Ω is the observer's belief density. Heavier noetic mass means more evidence required to shift beliefs. See also: Epistemic Inertia.
+
+**N_base (Base Modes)**
+: Framework integer = 4. Number of base harmonic modes. Golden ratio φ = (1+√(N_base+1))/2.
+
+**N_c (Color Charges)**
+: Framework integer ≈ 3.024 (derived as smaller root of master quadratic). floor(N_c) = 3 determines number of generations.
+
+**Nome (q = e^(-π))**
+: The modular nome parameter from lemniscate geometry at j = 1728. The nome q = e^(-π) ≈ 0.0432 appears naturally in elliptic function theory for the lemniscatic curve. Its appearance in the alpha precision formula correction terms (via e^π) connects FTD to classical modular forms and Ramanujan's work on elliptic integrals.
+
+**Neutrino**
+: Nearly massless, uncharged lepton. Barely interacts. State 0 but distinct from void.
+
+**Neutron**
+: Neutral baryon (udd). Stable in nucleus; decays freely in ~15 minutes.
+
+**Neutron Lifetime Puzzle**
+: Unexplained ~10 second discrepancy between bottle method (τ ≈ 877.8 s) and beam method (τ ≈ 888.1 s) measurements of free neutron lifetime. FTD interpretation: measurement-context-dependent sLoop coupling may create different effective decay rates. Status: under active investigation at PSI, J-PARC, LANL, NIST.
+
+**Nucleosynthesis**
+: Formation of atomic nuclei. Occurs in Big Bang (light elements) and stars (heavy elements).
+
+**Nineteen (19 = 2(b₃ + N_c) - 1)**
+: Derived integer = 2 × 10 - 1 = 19. Appears in charm quark mass: m_c/m_e = 13 × 10 × 19 + 15 = 2485. A prime number.
+
+## O
+
+**One Hundred Twenty-Seven (127 = N_eff(b₃ + N_c) - N_c)**
+: Derived integer = 13 × 10 - 3 = 127. The index for the triangular number in bottom quark mass: m_b/m_e = T(127) + 42. A **Mersenne prime** (2⁷ - 1), the fourth Mersenne prime in the sequence.
+
+**One Hundred Thirty-Seven (137 ≈ 1/α)**
+: The inverse fine structure constant = x₊ from master quadratic ≈ 137.036. A prime number. Often called "the most mysterious number in physics." In FTD, 137 is **derived** from the lemniscatic constant G* via the master quadratic, accurate to 1.26 ppm.
+
+**One Hundred Eighty-Three (183 = N_eff(N_eff + 1) + 1)**
+: Derived integer = 13 × 14 + 1 = 183. The strange quark to electron mass ratio: m_s/m_e = 183.
+
+**Observer (Ω)**
+: In FTD, any manifested structure (s ≠ 0) capable of coupling to the flux field. Not privileged by consciousness: a rock can trigger collapse as well as a brain. The observer is defined by its configuration Ω(t), its horizon H(Ω,t), and its noetic mass M_Ω.
+
+**Orbit**
+: Bound trajectory around massive object. Stable when forces balance.
+
+**Orbital**
+: Spatial probability distribution for electron around nucleus. s, p, d, f shapes.
+
+**Ω(t) (Omega)**
+: Complete configuration of an observer at tick $t$. Includes every atom, neuron, memory, and state of the conscious system. The "soul" at one moment.
+
+## P
+
+**Pair Production**
+: Creation of matter-antimatter pair from sufficient energy. Creates entangled partners.
+
+**Phase Accumulator (τ)**
+: Counter tracking relativistic time. Particle updates when τ ≥ 1.
+
+**Path Identity (Quantum Indistinguishability)**
+: Mechanism by which quantum correlations arise from indistinguishable particle paths rather than entanglement. Demonstrated in 2025 Bell violation experiment (S = 2.275 ± 0.057, >4σ) without entangled particles, directly supporting FTD's sLoop interpretation that correlations arise from shared substrate access.
+
+**Photon**
+: Massless boson carrying electromagnetic force. In FTD, flux waves in void.
+
+**Planck Scale**
+: Smallest meaningful scale. In FTD, 1 voxel = Planck length; 1 tick = Planck time.
+
+**Potential**
+: Unrealized possibility. Carried by flux field. Precedes manifestation.
+
+**Potential vs Probability**
+: The crucial distinction between Domain A and Domain B. Potential (flux) is ontic: it exists in physical space as a real field with causal power. Probability is epistemic: it exists in the space of knowledge as a distribution over possibilities. Confusing these leads to domain confusion.
+
+**Proton**
+: Positive baryon (uud). Stable. Nucleus of hydrogen.
+
+**Proton Mass (π Formula)**
+: The remarkably simple relation m_p/m_e = 6π⁵ = 1836.118, accurate to 0.002%. Uses only the integer 6 and π, with no framework integers or G*. Suggests QCD binding energy emerges from pure circular geometry. Connected to the framework via 6π⁵ ≈ G*⁷ × (1 - 1/13).
+
+**Proton Radius Puzzle**
+: Discrepancy between proton charge radius measured via muonic hydrogen (~0.84 fm) and electronic hydrogen (~0.88 fm). FTD interpretation: the proton "radius" is intrinsically probe-dependent because different probes couple to different scales of the triad flux distribution. MUSE experiment at PSI testing this with simultaneous electron/muon scattering measurements.
+
+## Q
+
+**Quark**
+: Fundamental constituent of hadrons. Six flavors: up, down, charm, strange, top, bottom.
+
+**Quantum**
+: Discrete unit. All physical quantities in FTD are quantized.
+
+**Quantum Spin Ice (QSI)**
+: Exotic quantum state on pyrochlore lattice where magnetic moments exhibit liquid-like correlations and U(1) gauge structure. Distinguished from classical spin ice by emergent photon-like excitations near zero energy. Ce₂Zr₂O₇ confirmed as QSI in 2025, providing the first experimental validation of FTD's mechanism for gauge boson emergence from discrete lattice dynamics.
+
+## R
+
+**Regime Ratio (32)**
+: The ratio k_physics/k_consciousness = 16/0.5 = 32 between the physics and consciousness parameter regimes. Appears as the denominator in d_min = (G*)²/32 and equals 2⁵ (one beyond highest Lemniscate-Alpha frequency 2⁴ = 16).
+
+**Relativity**
+: Time dilation based on local energy/frequency. High-energy particles update less frequently.
+
+**Retarded Position**
+: Source position at time of influence emission. Enforces causality.
+
+## S
+
+**Sixteen (16 = N_base²)**
+: The master quadratic coefficient = 4² = 16. The equation x² - 16(G*)²x + 16(G*)³ = 0 produces α and N_c. The value 16 is **derived** from the complementation principle: in a 2×2×2 minimal lattice, 24 links minus 7 constraints minus 1 normalization = 16 physical degrees of freedom. Also equals k_physics in the Mandelbrot mapping.
+
+**Seventeen (17 = N_eff + N_base)**
+: Derived integer = 13 + 4 = 17. The multiplier in tau mass: m_τ/m_e = 17 × 207 - 42 = 3477. A prime number.
+
+**Sixty-Seven (67 = b₃(b₃ + N_c) - N_c)**
+: Derived integer = 7 × 10 - 3 = 67. The numerator in the W boson mass formula: m_W/m_e = 67/(8α²). Equals 70 - 3, embedding both framework structure (70) and color charge (3). A prime number.
+
+**Seventy (70 = b₃(b₃ + N_c))**
+: Derived integer = 7 × 10 = 70. A fundamental structure factor appearing in the electron mass derivation and the Heegner decomposition of the master quadratic (70 ± 67 structure). Related to 67 by 70 - 3 = 67.
+
+**Scattering Experiment**
+: Technique probing structure by measuring deflection of incident particles. Rutherford scattering revealed atomic nucleus.
+
+**Schwarzschild Radius**
+: Size of event horizon for non-rotating black hole. rs = 2GM/c².
+
+**Shell**
+: Electron orbital layer. Numbered 1, 2, 3... with increasing radius.
+
+**Six Senses**
+: The channels through which an observer perceives its horizon H(Ω,t): sight (EM flux), sound (pressure waves), touch (mechanical contact), taste (chemical close-range), smell (chemical distance), cognition (internal state, memory, inference).
+
+**Self-referential Iteration**
+: Any process where output becomes input for the next cycle. The Mandelbrot iteration z_{n+1} = z_n^2 + c is the purest mathematical example. In FTD, the sLoop phi -> phi(phi) + input has identical structure: the self-model feeds back as input to the next state.
+
+**sLoop (Self-referential Loop)**
+: A closed causal structure where an observing system is part of the system being observed. The defining structure of FTD's approach to measurement and consciousness. In an sLoop, the observer and observed share a common flux substrate, creating correlations that exceed classical bounds. Key to Bell violations (S ≈ 2√2). Distinguished from external observation by ontological continuity between observer and system. See also: Meta-sLoop.
+
+**Singularity**
+: Point of infinite density. Classical concept; may be resolved by quantum gravity.
+
+**State**
+: The fundamental property of a voxel. Values: -1 (antimatter), 0 (void), +1 (matter).
+
+**Spectroscopy**
+: Technique analyzing matter by measuring emitted or absorbed electromagnetic radiation. Reveals atomic structure and composition.
+
+**Strong Coupling (G*/π Formula)**
+: The remarkably simple relation α_s = G*/(8π) = 0.1177, accurate to 0.15%. The factor 8π ≈ 25.13 explains why cruder approximations (G*/25) also work. The ratio α_s/α ≈ 16 equals the physics coefficient k from the master quadratic.
+
+**Strong Force**
+: Force binding quarks into hadrons. Yukawa-type with short range.
+
+## T
+
+**Three Regimes (TRD-Mandelbrot)**
+: The three parameter regions connecting TRD to the Mandelbrot set via c = 1/(k × G*): (1) Physics regime: k=16, c=0.021, inside M, real roots; (2) Critical regime: k=k_c≈1.352, c=0.25, cardioid cusp, double root; (3) Consciousness regime: k=0.5, c=0.676, outside M, complex roots. The transformation is exact: k_c × c_cusp × G* = 1.
+
+**Telescope**
+: Instrument collecting electromagnetic radiation from distant objects. Types: optical, radio, X-ray, gamma-ray.
+
+**Tick**
+: Discrete unit of time. One iteration of the causal loop.
+
+**Time Dilation**
+: Slowing of updates for high-energy particles. Relativistic effect.
+
+**Triad**
+: Stable three-particle configuration (equilateral). Forms nucleons.
+
+**Translation Protocol**
+: The mathematical procedure for converting quantities between Domain A and Domain B. The Born rule P = |ψ|² is the canonical translation protocol in quantum mechanics. See also: Bridge Operator.
+
+**Triangular Number T(n)**
+: Sum of integers 1+2+...+n = n(n+1)/2. T(10)=55 appears in proton mass; T(13)=91 encodes SM structure.
+
+**Thirty-Four Hundred Seventy-Seven (3477)**
+: Tau/electron mass ratio = (N_eff + N_base) × 207 - 42 = 17 × 207 - 42 = 3477. Combines the muon ratio (207), the tau multiplier (17), and the bridge constant (42).
+
+**Two Hundred Seven (207 = 3 × b₃ × (b₃ + N_c) - N_c)**
+: The muon/electron mass ratio = 3 × 7 × 10 - 3 = 207. One of the most famous mass ratios in particle physics, here derived purely from framework integers.
+
+**Two Thousand Four Hundred Eighty-Five (2485)**
+: Charm/electron mass ratio = N_eff × (b₃ + N_c) × (2(b₃ + N_c) - 1) + N_eff + 2 = 13 × 10 × 19 + 15 = 2485.
+
+**Three Hundred Thirty-Four Thousand Nine Hundred Seventy (334970)**
+: Top/electron mass ratio = 8170 × 41 = 334970. The product of the bottom quark ratio (8170) and the top/bottom multiplier (41 = N_eff × N_c + 2). The heaviest fermion mass, derived from four integers. Error: 0.92%.
+
+**Ten (10 = b₃ + N_c)**
+: The universal sum = 7 + 3 = 10. Appears in virtually every mass formula: proton (T(10)=55), tau (17 × 207 - 42), charm (13 × 10 × 19), bottom (127 = 13 × 10 - 3). The fact that b₃ + N_c is so ubiquitous suggests deep structural significance.
+
+**Tunneling**
+: Quantum phenomenon allowing particles to pass through classically forbidden barriers.
+
+**Ternary Valuation Theorem**
+: The theorem (proved in @sec-formal-logic) that exactly three valuation states {+1, −1, 0} are both necessary and sufficient for any system admitting distinguishability. This establishes that FTD's ternary state space is not an arbitrary design choice but a logical necessity.
+
+**Two-Domain Framework**
+: The FTD philosophical framework distinguishing Domain A (ontic/classical configurations) from Domain B (epistemic/probabilistic distributions). Neither domain is reducible to the other; both are necessary for complete description. The framework resolves measurement paradoxes by tracking which domain each quantity belongs to.
+
+## U
+
+**Uniqueness Theorem**
+: The proof that {7, 3, 13, 4} is the unique non-trivial solution to the Fibonacci skeleton constraints with multiple colors. Only three solutions exist: empty {1,1,1,0}, minimal {5,1,5,4}, and Standard Model {7,3,13,4}.
+
+**UUID**
+: Unique identifier assigned to each manifested particle. Tracks identity through time.
+
+**𝕌 (Universe)**
+: The set of all Global(t) across all time: { Global(t) : t ∈ ℤ }. Everything that has existed, exists, or will exist.
+
+## V
+
+**Vacuum**
+: State 0 (void). Not empty: carries flux. Zero-point fluctuations always present.
+
+**Void**
+: State 0. The ground state of existence. Substrate of all potential.
+
+**Voxel**
+: Fundamental 3D lattice cell. Smallest spatial unit. Contains state, flux, and properties.
+
+**Valuation Function (val)**
+: The function val: E × Prop → V that assigns epistemic status to propositions, where V = {−1, 0, +1}. Value +1 means "affirmed" (proposition distinguished as holding), −1 means "negated" (distinguished as not holding), and 0 means "undetermined" (not yet distinguished). The foundation of EPL-ST. See @sec-formal-logic.
+
+## W
+
+**Wave**
+: Propagating flux disturbance. Travels at maximum speed C through void.
+
+**Weak Force**
+: Force causing flavor changes (transmutation). Responsible for beta decay.
+
+**Winding Number**
+: A topological invariant counting how many times a curve wraps around a point. The Lemniscate-Alpha curve in the consciousness regime (k = 0.5) has winding number = -2 around the origin, indicating irreducible topological structure that cannot be continuously deformed away.
+
+**Weinberg Angle (θ_W)**
+: Electroweak mixing angle. **DERIVED** as sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% accuracy).
+
+## Y
+
+**xyztgψ(Δt)**
+: Complete specification of one entity at one tick. Includes position (xyz), time (t), geometric constraint (g), modal constraint (ψ), and dynamics (Δt). The fundamental ontological unit.
+
+**Yukawa Potential**
+: Form of strong force: proportional to exp(-mr)/r. Short range.
+
+## Z
+
+**Zero-Point Energy**
+: Minimum energy of vacuum. Even at "empty" void, fluctuations persist.
+
+---
+
+## Acronyms
+
+| Acronym | Meaning |
+|---------|---------|
+| AGN | Active Galactic Nucleus |
+| BBN | Big Bang Nucleosynthesis |
+| BH | Black Hole |
+| CMB | Cosmic Microwave Background |
+| DESI | Dark Energy Spectroscopic Instrument |
+| eEDM | electron Electric Dipole Moment |
+| EM | Electromagnetic |
+| EPL-ST | Epistemic-Physical Logic with Sorts and Times |
+| FTD | Foundational Ternary Dynamics |
+| GR | General Relativity |
+| GZK | Greisen-Zatsepin-Kuzmin (cutoff) |
+| JILA | Joint Institute for Laboratory Astrophysics |
+| J-PARC | Japan Proton Accelerator Research Complex |
+| LANL | Los Alamos National Laboratory |
+| LHCb | Large Hadron Collider beauty (experiment) |
+| MUSE | MUon proton Scattering Experiment |
+| NIST | National Institute of Standards and Technology |
+| PSI | Paul Scherrer Institute |
+| QFT | Quantum Field Theory |
+| QM | Quantum Mechanics |
+| QSI | Quantum Spin Ice |
+| SNR | Supernova Remnant |
+| UHECR | Ultra-High Energy Cosmic Ray |
+| UV | Ultraviolet |
