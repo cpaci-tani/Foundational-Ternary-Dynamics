@@ -1,0 +1,45 @@
+# Local gitignore for the test-runner-unified worktree.
+# The main repo's .gitignore is not committed (it's an uncommitted local
+# modification in the user's main workspace), so this worktree doesn't
+# inherit any ignore rules by default. Mirror the key build-artifact
+# exclusions here so commits don't accidentally include them.
+
+# C++ engine build artifacts
+engine/build/
+engine/build_*/
+build_log.txt
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.dll
+*.exe
+
+# CMake cruft
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+
+# Claude worktree metadata
+.claude/
+
+# Editor/IDE
+.vs/
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store

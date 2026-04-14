@@ -4,8 +4,8 @@
 //
 // Reads the CTest inventory via `ctest --show-only=json-v1` at construction,
 // classifies each test using the CATEGORY_RULES / PREFIX_RULES ported from
-// engine/run_tests_live.py, extracts a one-line description from the
-// `/** Test: ... */` header comment of the source file when it can find it,
+// the retired engine/run_tests_live.py SSE dashboard, extracts a one-line
+// description from the `/** Test: ... */` header comment of the source file,
 // and marks GPU-heavy tests (those bearing the CTest "gpu" label) with a
 // [GPU] decoration and an internal flag the SmartDispatcher honors.
 //
