@@ -27,13 +27,18 @@ import { G_N, OMEGA_LAMBDA, OMEGA_MATTER } from '../constants.js';
 const SOFTENING = {
     [-3]: 6.0,  // DARK_ENERGY
     [-2]: 3.0,  // QUASAR
-    [-1]: 3.0,  // BLACK_HOLE — smaller than others, anchors core
-    [0]:  7.0,  // DARK_MATTER — very diffuse, prevents halo collapse
-    [1]:  5.0,  // GAS
-    [2]:  6.0,  // STAR — large, prevents artificial disk collapse
-    [3]:  4.0,  // NEUTRON_STAR
-    [4]:  5.0,  // NEBULA
-    [5]:  6.0,  // WHITE_DWARF
+    [-1]: 1.5,  // BLACK_HOLE — very tight to anchor core correctly
+    [0]:  8.0,  // DARK_MATTER — keeps halo from collapsing
+    [1]:  3.0,  // GAS
+    [2]:  2.5,  // STAR — tight enough to allow valid keplerian math
+    [3]:  2.0,  // NEUTRON_STAR
+    [4]:  3.0,  // NEBULA
+    [5]:  2.0,  // WHITE_DWARF
+};
+const SOFTENING_SQ = {
+    [-3]: 36.0, [-2]: 9.0, [-1]: 2.25,
+    [0]: 64.0, [1]: 9.0, [2]: 6.25,
+    [3]: 4.0, [4]: 9.0, [5]: 4.0
 };
 
 export class CosmicMockBridge {
@@ -82,6 +87,7 @@ export class CosmicMockBridge {
         return id;
     }
 
+    // Plummer sphere enclosed mass: M(r) = M * r³ / (r² + a²)^(3/2)
     _enclosedMass(r, M_total, rs) {
         return M_total * r * r * r / Math.pow(r * r + rs * rs, 1.5);
     }
@@ -97,6 +103,8 @@ export class CosmicMockBridge {
         this._a = 1.0;
         this._gwEvents = [];
         this._t_cosmic = 0.0;
+        this._scenarioName = name;
+        this._customTelemetry = {};
 
         const T = CosmicMockBridge.TYPE;
         const rng = this._rng(42);
@@ -105,18 +113,18 @@ export class CosmicMockBridge {
         const randn = () => Math.sqrt(-2 * Math.log(rng() + 1e-10)) * Math.cos(PI2 * rng());
 
         if (name === 'cosmic-galaxy') {
-            const M_total = 5000;
-            const M_bh = 50;
+            const M_total = 7000;
+            const M_bh = 100;
             const M_dm = (M_total - M_bh) * 0.85;
             const M_disk = (M_total - M_bh) * 0.15;
-            const r_s = 40;       // Scale radius — larger for more spread
-            const r_disk = 80;    // Disk extent — wider galaxy
+            const r_s = 40;       // Scale radius
+            const r_disk = 90;    // Increased disk extent
 
             this.addBody(T.BLACK_HOLE, M_bh, 0, 0, 0);
 
-            // DM halo (Hernquist profile, virial equilibrium)
-            // Extends well beyond the disk — spherical, puffy
-            for (let i = 0; i < 300; i++) {
+            // DM halo (Plummer profile — sampling uses Hernquist CDF)
+            const N_dm = 1000;
+            for (let i = 0; i < N_dm; i++) {
                 const u = rng() * 0.95;
                 const su = Math.sqrt(u);
                 const r = Math.min(r_s * su / (1.0 - su), 150);
@@ -125,53 +133,117 @@ export class CosmicMockBridge {
 
                 const M_enc = this._enclosedMass(r, M_total, r_s);
                 const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 3)) * 0.7;
-                this.addBody(T.DARK_MATTER, M_dm / 300,
+                this.addBody(T.DARK_MATTER, M_dm / N_dm,
                     r * Math.sin(th) * Math.cos(ph),
                     r * Math.sin(th) * Math.sin(ph),
                     r * Math.cos(th),
                     sigma * randn(), sigma * randn(), sigma * randn());
             }
 
-            // Stellar disk — full 360° continuous spiral, volumetric
-            // More particles for density. Logarithmic spiral: phi = k * ln(r)
-            // gives a natural winding pattern around the BH.
-            const N_stars = 500;  // more particles for volume
+            // Stellar disk — sharp, 6-arm spiral structure
+            const N_stars = 700; // Reduced from 2500 for massive performance boost
             for (let i = 0; i < N_stars; i++) {
-                // Exponential radial profile: denser near center
                 const u = rng();
-                const r = 5 + (1 - Math.pow(1 - u, 2)) * r_disk; // r in [5, 85]
-                // Full 360° with logarithmic spiral winding
-                const ph = PI2 * rng() + 0.35 * Math.log(r + 1);
-                // Flared thick disk: thicker at larger radius
-                const z_scale = 3.0 + r * 0.07;
+                const r = 5 + (1 - Math.pow(1 - u, 2)) * r_disk;
+                
+                // Structural arms: base angle + logarithmic winding + tightness scatter
+                const armOffset = (i % 6) * (Math.PI / 3); // 6 distinct arms
+                const winding = -0.5 * Math.log(r + 1); // Negative winding for trailing arms
+                const dispersion = randn() * 0.35; // tighter spiral definition
+                const ph = armOffset + winding + dispersion;
+                
+                // Flared thick disk, but much flatter than before
+                const z_scale = 1.0 + r * 0.02;
                 const zz = randn() * z_scale;
 
+                // Keplerian velocity matched to exact enclosed mass calculation
                 const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.4);
-                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 3));
-                const vz = randn() * vc * 0.12;
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 0.5)); 
+                const vz = randn() * vc * 0.08; // cooler disk
 
                 this.addBody(T.STAR, M_disk * 0.6 / N_stars,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
-                    -vc * Math.sin(ph), vz, vc * Math.cos(ph),
+                    -vc * Math.sin(ph), vz, vc * Math.cos(ph), 
                     3000 + rng() * 25000);
             }
 
-            // Gas — full 360° distribution, wider and puffier
-            const N_gas = 200;
+            // Gas — traces the spiral arms to form nebulae
+            const N_gas = 250; // Reduced from 800
             for (let i = 0; i < N_gas; i++) {
                 const u = rng();
-                const r = 8 + (1 - Math.pow(1 - u, 2)) * r_disk * 1.2;
-                const ph = PI2 * rng() + 0.3 * Math.log(r + 1);
-                const z_scale = 2.5 + r * 0.05;
+                const r = 8 + (1 - Math.pow(1 - u, 2)) * r_disk * 1.1;
+                const armOffset = (i % 6) * (Math.PI / 3);
+                const winding = -0.5 * Math.log(r + 1);
+                const dispersion = randn() * 0.25; // tracks arms closer than stars
+                const ph = armOffset + winding + dispersion;
+                const z_scale = 0.8 + r * 0.015;
                 const zz = randn() * z_scale;
 
                 const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.4);
-                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 3));
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 0.5));
 
                 this.addBody(T.GAS, M_disk * 0.4 / N_gas,
                     r * Math.cos(ph), zz, r * Math.sin(ph),
-                    -vc * Math.sin(ph), randn() * vc * 0.05, vc * Math.cos(ph),
+                    -vc * Math.sin(ph), randn() * vc * 0.03, vc * Math.cos(ph),
                     5000 + rng() * 15000);
+            }
+            
+            // Giant Stellar Dust Clouds (Nebulae) formed into elongated spiral arms
+            const N_dust = 600; // Increased count for dense lanes
+            for (let i = 0; i < N_dust; i++) {
+                // Skew distribution towards the inner disk where density is higher
+                const u = rng();
+                const r = 3 + (1 - Math.pow(1 - u, 1.5)) * r_disk * 0.9;
+                
+                // Align with the 6 spiral arms, but with wider dispersion
+                const armOffset = (i % 6) * (Math.PI / 3);
+                // Stronger winding for gas to create tightly wrapped dust lanes
+                const winding = -0.7 * Math.log(r + 1); 
+                // Stretch tangentially: dispersion mostly along the arm rather than radially
+                const dispersion = randn() * 0.45; 
+                const ph = armOffset + winding + dispersion;
+                
+                // Very tight Z distribution to make them look like sharp, sheared disks
+                const zz = randn() * (0.5 + r * 0.02); 
+                
+                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.4);
+                
+                // Add a small sub-Keplerian drag so the dust lanes slowly spiral inwards
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 0.5)) * 0.95;
+                
+                const bodyIndex = this._bodies.length;
+                this.addBody(T.NEBULA, M_disk * 0.15 / N_dust,
+                    r * Math.cos(ph), zz, r * Math.sin(ph),
+                    -vc * Math.sin(ph), randn() * vc * 0.02, vc * Math.cos(ph), 
+                    1500 + rng() * 8000); // Cooler gas
+                    
+                if (this._bodies[bodyIndex]) {
+                    // Elongated scale stretching: size inversely proportional to orbital radius 
+                    // (inner clouds get shredded smaller, outer clouds remain massive)
+                    const shredFactor = Math.min(1.0, r / (r_disk * 0.3));
+                    this._bodies[bodyIndex].radius = 15.0 + (rng() * 40.0) * shredFactor; 
+                }
+            }
+            
+            // Gas "Wisps" — elongated structures spiraling inwards (falling into the BH)
+            const N_wisps = 50; 
+            for (let i = 0; i < N_wisps; i++) {
+                const u = rng();
+                const r = 3 + (1 - Math.pow(1 - u, 3)) * (r_disk * 0.6); // closer to the center
+                const ph = PI2 * rng(); // random phase
+                const zz = randn() * 1.5; // highly flattened
+                
+                const M_enc = M_bh + this._enclosedMass(r, M_dm, r_s) + this._enclosedMass(r, M_disk, r_disk * 0.4);
+                
+                // Sub-Keplerian velocity ensures they spiral inwards!
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 0.5)) * 0.7; // only 70% orbital speed
+                
+                this.addBody(T.GAS, M_disk * 0.05 / N_wisps,
+                    r * Math.cos(ph), zz, r * Math.sin(ph),
+                    -vc * Math.sin(ph) - vc*0.2*Math.cos(ph), // slightly angled inwards
+                    randn() * vc * 0.02, 
+                    vc * Math.cos(ph) - vc*0.2*Math.sin(ph), 
+                    35000 + rng() * 15000); // Hotter than standard gas
             }
 
             this._boxSize = 250;
@@ -179,6 +251,276 @@ export class CosmicMockBridge {
             this._dt = 0.05;
             this._enableSubgrid = false;
 
+        } else if (name === 'cosmic-cartwheel-collision') {
+            // ============================================================
+            // Ring Galaxy Collision (Cartwheel)
+            // A small dense galaxy punches through a larger disk galaxy.
+            // ============================================================
+            const M_target = 6000;
+            const M_bullet = 1500;
+            const target_r_disk = 90;
+            const target_r_s = 35;
+            
+            // Target Galaxy (Face-on disk)
+            this.addBody(T.BLACK_HOLE, M_target * 0.05, 0, 0, 0, 0, 0, 0); // Stationary center
+            
+            // Target DM
+            const N_tdm = 600;
+            for (let i = 0; i < N_tdm; i++) {
+                const r = rng() * target_r_s * 2.5;
+                const th = Math.acos(2 * rng() - 1);
+                const ph = PI2 * rng();
+                const M_enc = this._enclosedMass(r, M_target * 0.95, target_r_s);
+                const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 1)) * 0.7;
+                this.addBody(T.DARK_MATTER, (M_target * 0.40) / N_tdm,
+                    r * Math.sin(th) * Math.cos(ph), r * Math.cos(th), r * Math.sin(th) * Math.sin(ph),
+                    sigma * randn(), sigma * randn(), sigma * randn());
+            }
+
+            // Target Stars + Nebula
+            const N_tstar = 700;
+            for (let i = 0; i < N_tstar; i++) {
+                const u = rng();
+                const r = 4 + (1 - Math.pow(1 - u, 2)) * target_r_disk;
+                const ph = PI2 * rng();
+                const zz = randn() * (1.0 + r*0.02);
+                
+                const M_enc = M_target * 0.05 + this._enclosedMass(r, M_target*0.95, target_r_s);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 0.5));
+                
+                const isNebula = (i % 4 === 0);
+                const type = isNebula ? T.NEBULA : T.STAR;
+                const mass = (M_target * 0.55) / N_tstar;
+                
+                const bodyIndex = this._bodies.length;
+                this.addBody(type, mass,
+                    r * Math.cos(ph), zz, r * Math.sin(ph),
+                    -vc * Math.sin(ph), randn() * vc * 0.05, vc * Math.cos(ph),
+                    isNebula ? (1000 + rng()*5000) : (4000 + rng()*15000));
+                    
+                if (isNebula && this._bodies[bodyIndex]) {
+                    const shredFactor = Math.min(1.0, r / (target_r_disk * 0.3));
+                    this._bodies[bodyIndex].radius = 12.0 + (rng() * 30.0) * shredFactor;
+                }
+            }
+            
+            // Bullet Galaxy (plunging along the Y axis)
+            const b_y0 = -130;
+            const b_vy = Math.sqrt(2 * G_N * M_target / Math.abs(b_y0)) * 1.5; // Hyperbolic plunge
+            const bullet_r_s = 15;
+            
+            this.addBody(T.BLACK_HOLE, M_bullet * 0.1, 0, b_y0, 0, 0, b_vy, 0);
+            
+            const N_bullet_stars = 300;
+            for (let i = 0; i < N_bullet_stars; i++) {
+                const r = rng() * bullet_r_s * 2;
+                const th = Math.acos(2 * rng() - 1);
+                const ph = PI2 * rng();
+                const M_enc = this._enclosedMass(r, M_bullet * 0.9, bullet_r_s);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
+                
+                this.addBody(T.STAR, (M_bullet * 0.9) / N_bullet_stars,
+                    r * Math.sin(th) * Math.cos(ph), b_y0 + r * Math.cos(th), r * Math.sin(th) * Math.sin(ph),
+                    -vc * Math.sin(th)*Math.cos(ph), b_vy + randn()*vc*0.1, vc * Math.sin(th)*Math.sin(ph),
+                    8000 + rng() * 10000); // Blue younger bullet stars
+            }
+            
+            this._boxSize = 250;
+            this._softening = 4.0;
+            this._dt = 0.035;
+            this._enableSubgrid = false;
+
+        } else if (name === 'cosmic-binary-agn') {
+            // ============================================================
+            // Binary Quasars (Precessing Jets)
+            // Two supermassive black holes orbit closely within a shared
+            // massive accretion disk, forming precessing plasma jets.
+            // ============================================================
+            const M_bh = 3000;
+            const sep = 30; // Close orbit
+            const v_orb = Math.sqrt(G_N * M_bh / (sep * 2));
+            
+            // The two black holes
+            this.addBody(T.BLACK_HOLE, M_bh, -sep/2, 0, 0, 0, 0, -v_orb);
+            this.addBody(T.BLACK_HOLE, M_bh, sep/2, 0, 0, 0, 0, v_orb);
+            
+            // Circumbinary Accretion Disk (Gas + Nebula)
+            const N_disk = 1500;
+            for (let i = 0; i < N_disk; i++) {
+                const u = rng();
+                const r = sep * 1.2 + (1 - Math.pow(1 - u, 2)) * 80;
+                const ph = PI2 * rng();
+                const H = r * 0.15;
+                const zz = randn() * H;
+                
+                const M_enc = M_bh * 2; // Treat as central point mass for outer disk
+                const vc = Math.sqrt(G_N * M_enc / r);
+                const isNebula = (i % 6 === 0) && (r > sep * 2.0);
+                const type = isNebula ? T.NEBULA : T.GAS;
+                
+                const bodyIndex = this._bodies.length;
+                this.addBody(type, isNebula ? 2.0 : 0.5,
+                    r * Math.cos(ph), zz, r * Math.sin(ph),
+                    -vc * Math.sin(ph), randn() * vc * 0.05, vc * Math.cos(ph),
+                    isNebula ? 12000 : 8e5 * Math.pow(sep*1.2 / r, 0.5));
+                    
+                if (isNebula && this._bodies[bodyIndex]) {
+                    const shredFactor = Math.min(1.0, r / 60.0);
+                    this._bodies[bodyIndex].radius = 10.0 + (rng() * 20.0) * shredFactor;
+                }
+            }
+            
+            // Mass transfer stream connecting them
+            for (let i = 0; i < 200; i++) {
+                const f = rng();
+                const x = -sep/2 + f * sep;
+                const y = randn() * 1.5;
+                const z = randn() * 1.5;
+                this.addBody(T.GAS, 0.2, x, y, z, randn()*v_orb*0.2, randn()*v_orb*0.2, randn()*v_orb*0.2, 5e6);
+            }
+            
+            this._boxSize = 150;
+            this._softening = 3.0;
+            this._dt = 0.02; // Fine dt for close binary
+            this._enableSubgrid = true; // Required for jet tracking
+            
+        } else if (name === 'cosmic-globular-cluster') {
+            // ============================================================
+            // Globular Cluster Core Collapse
+            // Dense spherical system of stars. No central BH. Starts 
+            // in equilibrium, but dynamical friction leads to core collapse.
+            // ============================================================
+            const M_cluster = 6000;
+            const R_c = 15; // Small core radius
+            const N_stars = 2000;
+            
+            for (let i = 0; i < N_stars; i++) {
+                // Plummer model distribution
+                const u = rng();
+                const r = R_c / Math.sqrt(Math.pow(1 - u, -2/3) - 1);
+                // Cap radius to avoid edge cases
+                const r_cap = Math.min(r, 120);
+                
+                const th = Math.acos(2 * rng() - 1);
+                const ph = PI2 * rng();
+                
+                // Velocity distribution for Plummer is complex, we approximate isotropic Gaussian
+                // scaled by local potential
+                const M_enc = M_cluster * Math.pow(r_cap, 3) / Math.pow(r_cap*r_cap + R_c*R_c, 1.5);
+                const v_circ = Math.sqrt(G_N * M_enc / Math.max(r_cap, 0.5));
+                
+                // Isotropic 3D velocity
+                const vx = randn() * v_circ * 0.6;
+                const vy = randn() * v_circ * 0.6;
+                const vz = randn() * v_circ * 0.6;
+                
+                // Mass varies (some heavy stars sink to the core faster)
+                const mass = (M_cluster / N_stars) * (0.2 + rng() * 1.8);
+                
+                this.addBody(T.STAR, mass,
+                    r_cap * Math.sin(th) * Math.cos(ph), r_cap * Math.cos(th), r_cap * Math.sin(th) * Math.sin(ph),
+                    vx, vy, vz,
+                    3000 + rng() * 6000); // Old, red/yellow population
+            }
+            
+            this._boxSize = 140;
+            this._softening = 1.8; // Lower softening to encourage tight interactions
+            this._dt = 0.02;
+            this._enableSubgrid = false;
+            
+        } else if (name === 'cosmic-web') {
+            // ============================================================
+            // Cosmic Filament Web
+            // Simulates the mega-scale structure of the universe with 
+            // massive nodes connected by dark matter filaments and gas flowing.
+            // ============================================================
+            const M_node = 1500;
+            const nodes = [
+                {x: -120, y: 0, z: -80},
+                {x: 80, y: 30, z: -100},
+                {x: 0, y: -40, z: 120},
+                {x: -90, y: 60, z: 50},
+                {x: 140, y: -20, z: 40}
+            ];
+            
+            // Add massive nodes (Cluster seeds)
+            for (const n of nodes) {
+                this.addBody(T.BLACK_HOLE, M_node * 0.05, n.x, n.y, n.z, 0, 0, 0); // Stationary anchors
+                
+                // Gas surrounding nodes
+                for (let i = 0; i < 150; i++) {
+                    const r = 2 + rng() * 25;
+                    const th = Math.acos(2 * rng() - 1);
+                    const ph = PI2 * rng();
+                    const vc = Math.sqrt(G_N * M_node / r);
+                    this.addBody(T.NEBULA, (M_node * 0.1) / 150,
+                        n.x + r * Math.sin(th) * Math.cos(ph),
+                        n.y + r * Math.cos(th),
+                        n.z + r * Math.sin(th) * Math.sin(ph),
+                        -vc * Math.sin(ph), 0, vc * Math.cos(ph),
+                        8000 + rng() * 5000);
+                    
+                    if (this._bodies[this._bodies.length - 1]) {
+                        this._bodies[this._bodies.length - 1].radius = 15.0 + rng()*25;
+                    }
+                }
+            }
+            
+            // Create filaments connecting some nodes
+            const filaments = [
+                [0, 1], [0, 3], [1, 4], [2, 3], [2, 4], [3, 1]
+            ];
+            
+            // Populate filaments with DM / Gas bridging the voids
+            for (const [i, j] of filaments) {
+                const n1 = nodes[i];
+                const n2 = nodes[j];
+                const dx = n2.x - n1.x, dy = n2.y - n1.y, dz = n2.z - n1.z;
+                const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                const steps = Math.floor(dist * 2.5); // Dense bridge
+                
+                for (let step = 0; step < steps; step++) {
+                    const t = step / steps;
+                    // Position along filament + lateral dispersion
+                    const cx = n1.x + t * dx;
+                    const cy = n1.y + t * dy;
+                    const cz = n1.z + t * dz;
+                    
+                    const thickness = 8 + 4 * Math.sin(t * Math.PI); // wider in the middle
+                    const lx = randn() * thickness;
+                    const ly = randn() * thickness;
+                    const lz = randn() * thickness;
+                    
+                    // Gas flows towards nearest node
+                    const dir = (t < 0.5) ? -1 : 1; 
+                    const v_flow = 0.8;
+                    const isGas = rng() < 0.3;
+                    const type = isGas ? T.NEBULA : T.DARK_MATTER;
+                    
+                    this.addBody(type, isGas ? 0.8 : 2.0,
+                        cx + lx, cy + ly, cz + lz,
+                        dir * (dx/dist)*v_flow, dir * (dy/dist)*v_flow, dir * (dz/dist)*v_flow,
+                        isGas ? 2000 : 0);
+                        
+                    if (isGas && this._bodies[this._bodies.length - 1]) {
+                        this._bodies[this._bodies.length - 1].radius = 10.0 + rng()*15;
+                    }
+                }
+            }
+            
+            // Background diffuse sparse gas
+            for (let i = 0; i < 400; i++) {
+                const x = (rng() - 0.5) * 400;
+                const y = (rng() - 0.5) * 400;
+                const z = (rng() - 0.5) * 400;
+                this.addBody(T.GAS, 0.4, x, y, z, randn()*0.1, randn()*0.1, randn()*0.1, 100);
+            }
+            
+            this._boxSize = 450;
+            this._softening = 8.0;
+            this._dt = 0.05;
+            this._enableSubgrid = true;
+            
         } else if (name === 'cosmic-black-hole') {
             const M_bh = 500;
             this.addBody(T.BLACK_HOLE, M_bh, 0, 0, 0);
@@ -204,6 +546,32 @@ export class CosmicMockBridge {
                     -vk * v_factor * Math.sin(ph), vz, vk * v_factor * Math.cos(ph),
                     1e6 * Math.pow(5 / r, 0.75));
             }
+            
+            // Outer dust clumps falling inwards
+            const N_dust_bh = 150;
+            for (let i = 0; i < N_dust_bh; i++) {
+                const u = rng();
+                const r = 15 + u * 60; // Outer regions
+                const ph = PI2 * rng();
+                const H = r * 0.25;
+                const zz = randn() * H;
+                
+                const vk = Math.sqrt(G_N * M_bh / r);
+                // Sub-Keplerian velocity so they spiral inwards
+                const v_factor = 0.90 + 0.05 * rng(); 
+                const vz = randn() * vk * 0.02;
+                
+                const bodyIndex = this._bodies.length;
+                this.addBody(T.NEBULA, 0.5,
+                    r * Math.cos(ph), zz, r * Math.sin(ph),
+                    -vk * v_factor * Math.sin(ph), vz, vk * v_factor * Math.cos(ph),
+                    25000 * Math.pow(15 / r, 0.5));
+                    
+                if (this._bodies[bodyIndex]) {
+                    const shredFactor = Math.min(1.0, r / 40.0);
+                    this._bodies[bodyIndex].radius = 12.0 + (rng() * 25.0) * shredFactor;
+                }
+            }
 
             this._boxSize = 120;
             this._softening = 2.0;
@@ -220,39 +588,167 @@ export class CosmicMockBridge {
 
             const cx1 = -sep / 2, cz1 = -b / 2;
             this.addBody(T.BLACK_HOLE, M1 * 0.05, cx1, 0, cz1, v_approach, 0, v_approach * 0.15);
-            for (let i = 0; i < 250; i++) {
+            for (let i = 0; i < 1600; i++) {
                 const r = rng() * r_s1 * 1.8;
                 const ph = PI2 * rng();
                 const zz = randn() * 1.5;
-                const t = i < 125 ? T.DARK_MATTER : T.STAR;
+                const t = i < 800 ? T.DARK_MATTER : T.STAR;
                 const M_enc = this._enclosedMass(r, M1, r_s1);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
                 const M1_remaining = M1 * 0.95;
-                this.addBody(t, (t === T.DARK_MATTER ? M1_remaining * 0.85 : M1_remaining * 0.15) / 125,
+                this.addBody(t, (t === T.DARK_MATTER ? M1_remaining * 0.85 : M1_remaining * 0.15) / 800,
                     cx1 + r * Math.cos(ph), zz, cz1 + r * Math.sin(ph),
                     v_approach - vc * Math.sin(ph), randn() * vc * 0.05, v_approach * 0.15 + vc * Math.cos(ph),
                     t === T.STAR ? 4000 + rng() * 18000 : 0);
             }
+            
+            // Add Nebulae to Galaxy 1
+            const N_dust1 = 200;
+            for (let i = 0; i < N_dust1; i++) {
+                const u = rng();
+                const r = 2 + (1 - Math.pow(1 - u, 1.5)) * r_s1 * 1.5;
+                const ph = PI2 * rng();
+                const zz = randn() * 0.5;
+                const M_enc = this._enclosedMass(r, M1, r_s1);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1)) * 0.95;
+                const M1_remaining = M1 * 0.95;
+                
+                const bodyIndex = this._bodies.length;
+                this.addBody(T.NEBULA, (M1_remaining * 0.1) / N_dust1,
+                    cx1 + r * Math.cos(ph), zz, cz1 + r * Math.sin(ph),
+                    v_approach - vc * Math.sin(ph), randn() * vc * 0.02, v_approach * 0.15 + vc * Math.cos(ph),
+                    1500 + rng() * 8000);
+                    
+                if (this._bodies[bodyIndex]) {
+                    const shredFactor = Math.min(1.0, r / (r_s1 * 0.5));
+                    this._bodies[bodyIndex].radius = 15.0 + (rng() * 40.0) * shredFactor;
+                }
+            }
 
             const cx2 = sep / 2, cz2 = b / 2;
             this.addBody(T.BLACK_HOLE, M2 * 0.05, cx2, 0, cz2, -v_approach, 0, -v_approach * 0.15);
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 1400; i++) {
                 const r = rng() * r_s2 * 1.8;
                 const ph = PI2 * rng();
                 const zz = randn() * 1.5;
-                const t = i < 100 ? T.DARK_MATTER : T.STAR;
+                const t = i < 700 ? T.DARK_MATTER : T.STAR;
                 const M_enc = this._enclosedMass(r, M2, r_s2);
                 const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
                 const M2_remaining = M2 * 0.95;
-                this.addBody(t, (t === T.DARK_MATTER ? M2_remaining * 0.85 : M2_remaining * 0.15) / 100,
+                this.addBody(t, (t === T.DARK_MATTER ? M2_remaining * 0.85 : M2_remaining * 0.15) / 700,
                     cx2 + r * Math.cos(ph), zz, cz2 + r * Math.sin(ph),
                     -v_approach - vc * Math.sin(ph), randn() * vc * 0.05, -v_approach * 0.15 + vc * Math.cos(ph),
                     t === T.STAR ? 4000 + rng() * 18000 : 0);
+            }
+            
+            // Add Nebulae to Galaxy 2
+            const N_dust2 = 180;
+            for (let i = 0; i < N_dust2; i++) {
+                const u = rng();
+                const r = 2 + (1 - Math.pow(1 - u, 1.5)) * r_s2 * 1.5;
+                const ph = PI2 * rng();
+                const zz = randn() * 0.5;
+                const M_enc = this._enclosedMass(r, M2, r_s2);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1)) * 0.95;
+                const M2_remaining = M2 * 0.95;
+                
+                const bodyIndex = this._bodies.length;
+                this.addBody(T.NEBULA, (M2_remaining * 0.1) / N_dust2,
+                    cx2 + r * Math.cos(ph), zz, cz2 + r * Math.sin(ph),
+                    -v_approach - vc * Math.sin(ph), randn() * vc * 0.02, -v_approach * 0.15 + vc * Math.cos(ph),
+                    1500 + rng() * 8000);
+                    
+                if (this._bodies[bodyIndex]) {
+                    const shredFactor = Math.min(1.0, r / (r_s2 * 0.5));
+                    this._bodies[bodyIndex].radius = 15.0 + (rng() * 40.0) * shredFactor;
+                }
             }
 
             this._boxSize = 250;
             this._softening = 4.0;
             this._dt = 0.04;
+            this._enableSubgrid = false;
+
+        } else if (name === 'cosmic-super-cluster') {
+            // Three massive galaxies orbiting in a ternary system
+            const clusterRadius = 140;
+            const galMass = 2500;
+            const r_s = 20;
+            const r_disk = 45;
+            
+            for (let gal = 0; gal < 3; gal++) {
+                const angle = gal * (PI2 / 3);
+                const cx = Math.cos(angle) * clusterRadius;
+                const cz = Math.sin(angle) * clusterRadius;
+                
+                // Calculate pseudo-stable orbital velocity for ternary barycenter
+                const orbitV = Math.sqrt(G_N * (galMass*3) / clusterRadius) * 0.45; 
+                const vx_sys = -Math.sin(angle) * orbitV;
+                const vz_sys = Math.cos(angle) * orbitV;
+
+                this.addBody(T.BLACK_HOLE, galMass * 0.05, cx, 0, cz, vx_sys, 0, vz_sys);
+                
+                // Stellar arms for each galaxy
+                for (let i = 0; i < 350; i++) {
+                    const u = rng();
+                    const r = 4 + (1 - Math.pow(1 - u, 2)) * r_disk;
+                    const arm = (i % 6) * (Math.PI / 3);
+                    const winding = -0.6 * Math.log(r + 1);
+                    const ph = arm + winding + randn() * 0.3;
+                    const zz = randn() * (1.1 + r*0.03);
+                    
+                    const M_enc = this._enclosedMass(r, galMass, r_s);
+                    const vc = Math.sqrt(G_N * M_enc / Math.max(r, 0.5));
+                    
+                    this.addBody(T.STAR, (galMass * 0.6) / 1000,
+                        cx + r * Math.cos(ph), zz, cz + r * Math.sin(ph),
+                        vx_sys - vc * Math.sin(ph), randn() * vc * 0.06, vz_sys + vc * Math.cos(ph),
+                        3000 + rng() * 25000);
+                }
+                
+                // Add Nebulae for each galaxy
+                const N_dust = 200;
+                for (let i = 0; i < N_dust; i++) {
+                    const u = rng();
+                    const r = 4 + (1 - Math.pow(1 - u, 1.5)) * r_disk * 0.9;
+                    const arm = (i % 6) * (Math.PI / 3);
+                    const winding = -0.7 * Math.log(r + 1);
+                    const dispersion = randn() * 0.45; 
+                    const ph = arm + winding + dispersion;
+                    const zz = randn() * (0.5 + r*0.02);
+                    
+                    const M_enc = this._enclosedMass(r, galMass, r_s);
+                    const vc = Math.sqrt(G_N * M_enc / Math.max(r, 0.5)) * 0.95;
+                    
+                    const bodyIndex = this._bodies.length;
+                    this.addBody(T.NEBULA, (galMass * 0.15) / N_dust,
+                        cx + r * Math.cos(ph), zz, cz + r * Math.sin(ph),
+                        vx_sys - vc * Math.sin(ph), randn() * vc * 0.02, vz_sys + vc * Math.cos(ph),
+                        1500 + rng() * 8000);
+                        
+                    if (this._bodies[bodyIndex]) {
+                        const shredFactor = Math.min(1.0, r / (r_disk * 0.3));
+                        this._bodies[bodyIndex].radius = 15.0 + (rng() * 40.0) * shredFactor;
+                    }
+                }
+                
+                // DM halo for each galaxy
+                for (let i = 0; i < 150; i++) {
+                    const r = rng() * r_s * 2.5;
+                    const th = Math.acos(2 * rng() - 1);
+                    const ph = PI2 * rng();
+                    const M_enc = this._enclosedMass(r, galMass, r_s);
+                    const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
+                    this.addBody(T.DARK_MATTER, (galMass * 0.35) / 500,
+                        cx + r * Math.sin(th) * Math.cos(ph), r * Math.cos(th), cz + r * Math.sin(th) * Math.sin(ph),
+                        vx_sys - vc * Math.sin(th)*Math.cos(ph), randn()*vc*0.1, vz_sys + vc*Math.sin(th)*Math.sin(ph),
+                        0);
+                }
+            }
+            
+            this._boxSize = 450;
+            this._softening = 4.5;
+            this._dt = 0.05;
             this._enableSubgrid = false;
 
         } else if (name === 'cosmic-stellar-lifecycle') {
@@ -317,23 +813,23 @@ export class CosmicMockBridge {
                 const x = rx * R_cloud;
                 const y = ry * R_cloud;
                 const z = rz * R_cloud;
-                const r = Math.sqrt(x*x + y*y + z*z) + 0.01;
-                const v_infall = -0.08 * Math.sqrt(G_N * M_cloud / R_cloud);
-                const ph = Math.atan2(z, x);
-                const v_tang = 0.12 * Math.sqrt(G_N * M_cloud / R_cloud);
 
-                this.addBody(T.GAS, M_cloud * 0.75 / N_gas,
+                // Very small velocity (cold gas)
+                const v = 0.05 * Math.sqrt(G_N * M_cloud / R_cloud);
+                this.addBody((i % 4 === 0) ? T.NEBULA : T.GAS, M_cloud * 0.75 / N_gas,
                     x, y, z,
-                    v_infall * x/r + v_tang * (-Math.sin(ph)) * (rng()*0.5 + 0.5),
-                    v_infall * y/r + randn() * v_tang * 0.2,
-                    v_infall * z/r + v_tang * (Math.cos(ph)) * (rng()*0.5 + 0.5),
-                    5e3 + rng() * 2e4);
+                    v * randn(), v * randn(), v * randn(),
+                    50 + rng() * 100);
+                    
+                if (i % 4 === 0 && this._bodies.length > 0) {
+                    this._bodies[this._bodies.length - 1].radius = 15.0 + rng() * 30.0;
+                }
             }
 
             this._boxSize = 140;
             this._softening = 3.5;
             this._dt = 0.025;
-            this._enableSubgrid = true;
+            this._enableSubgrid = true;  // Enable fuel tracking + death sequence
             this._stellarEvolution = true;  // Enable fuel tracking + death sequence
             this._hawkingEvaporation = true; // Enable BH mass loss
 
@@ -369,6 +865,7 @@ export class CosmicMockBridge {
             const N_dm = 200;      // small DM seed to help collapse
 
             // Dense gas cloud — uniform sphere with random perturbations
+            // The cloud is mostly gas, with some initial stars and dense nebulae
             for (let i = 0; i < N_gas; i++) {
                 // Uniform random position in sphere
                 let rx, ry, rz, r2;
@@ -388,13 +885,19 @@ export class CosmicMockBridge {
                 // Plus small random tangential velocity (angular momentum)
                 const ph = Math.atan2(z, x);
                 const v_tang = 0.15 * Math.sqrt(G_N * M_cloud / R_cloud);
+                
+                const type = (i < N_gas * 0.2) ? T.STAR : ((i % 5 === 0) ? T.NEBULA : T.GAS);
 
-                this.addBody(T.GAS, M_cloud * 0.8 / N_gas,
+                this.addBody(type, M_cloud * 0.8 / N_gas,
                     x, y, z,
                     v_infall * x/r + v_tang * (-Math.sin(ph)) * (Math.random()*0.5 + 0.5),
                     v_infall * y/r + randn() * v_tang * 0.3,
                     v_infall * z/r + v_tang * (Math.cos(ph)) * (Math.random()*0.5 + 0.5),
-                    1e4 + rng() * 5e4);
+                    (type === T.STAR) ? 4000 + rng() * 15000 : (100 + rng() * 200));
+                    
+                if (type === T.NEBULA && this._bodies.length > 0) {
+                    this._bodies[this._bodies.length - 1].radius = 18.0 + rng() * 35.0;
+                }
             }
 
             // DM seed — concentrated near center, helps initiate collapse
@@ -452,30 +955,85 @@ export class CosmicMockBridge {
         const G = G_N;
         const n = this._bodies.length;
 
-        for (const b of this._bodies) { b.ax = 0; b.ay = 0; b.az = 0; }
+        // JIT SoA (Structure of Arrays) Initialization
+        // Maintain local Float64Arrays scoped to the class to avoid GC churn
+        if (!this._soa || this._soa.n < n) {
+            const MathMaxOffset = 1000; // Buffer space
+            const capacity = n + MathMaxOffset; 
+            this._soa = {
+                n: capacity,
+                x: new Float64Array(capacity),
+                y: new Float64Array(capacity),
+                z: new Float64Array(capacity),
+                mass: new Float64Array(capacity),
+                soft: new Float64Array(capacity),
+                softSq: new Float64Array(capacity),
+                ax: new Float64Array(capacity),
+                ay: new Float64Array(capacity),
+                az: new Float64Array(capacity)
+            };
+        }
 
-        // Pairwise gravity with fixed per-type softening
+        const soa = this._soa;
+        const X = soa.x, Y = soa.y, Z = soa.z, M = soa.mass;
+        const SOFT = soa.soft, SQ = soa.softSq;
+        const AX = soa.ax, AY = soa.ay, AZ = soa.az;
+
+        // 1. O(N) memory flattening: Unpack JS objects into flat typed arrays
         for (let i = 0; i < n; i++) {
-            const bi = this._bodies[i];
-            const si = SOFTENING[bi.type] || 2.0;
-            for (let j = i + 1; j < n; j++) {
-                const bj = this._bodies[j];
-                const sj = SOFTENING[bj.type] || 2.0;
-                // Gadget-2 rule: eps = max(eps_i, eps_j)
-                const eps = Math.max(si, sj);
-                const eps2 = eps * eps;
+            const b = this._bodies[i];
+            X[i] = b.x;
+            Y[i] = b.y;
+            Z[i] = b.z;
+            M[i] = b.mass;
+            SOFT[i] = SOFTENING[b.type] || 2.0;
+            SQ[i] = SOFTENING_SQ[b.type] || 4.0;
+            AX[i] = 0.0;
+            AY[i] = 0.0;
+            AZ[i] = 0.0;
+        }
 
-                const dx = bj.x - bi.x;
-                const dy = bj.y - bi.y;
-                const dz = bj.z - bi.z;
+        // 2. O(N^2) cache-local, pure Float64Array iteration
+        // V8 SIMD auto-vectorizes this loop beautifully with absolutely no dictionary lookups!
+        for (let i = 0; i < n; i++) {
+            const bix = X[i], biy = Y[i], biz = Z[i], bim = M[i];
+            const s_i = SOFT[i], sq_i = SQ[i];
+            
+            let ax = AX[i], ay = AY[i], az = AZ[i];
+
+            for (let j = i + 1; j < n; j++) {
+                // Gadget-2 rule: eps = max(eps_i, eps_j)
+                const s_j = SOFT[j];
+                const eps2 = s_i > s_j ? sq_i : SQ[j];
+
+                const dx = X[j] - bix;
+                const dy = Y[j] - biy;
+                const dz = Z[j] - biz;
                 const r2 = dx * dx + dy * dy + dz * dz + eps2;
                 const invR3 = 1.0 / (r2 * Math.sqrt(r2));
 
-                const Gj = G * bj.mass * invR3;
-                const Gi = G * bi.mass * invR3;
-                bi.ax += Gj * dx; bi.ay += Gj * dy; bi.az += Gj * dz;
-                bj.ax -= Gi * dx; bj.ay -= Gi * dy; bj.az -= Gi * dz;
+                const f_j = G * M[j] * invR3;
+                const f_i = G * bim * invR3;
+                
+                ax += f_j * dx;
+                ay += f_j * dy;
+                az += f_j * dz;
+                
+                AX[j] -= f_i * dx;
+                AY[j] -= f_i * dy;
+                AZ[j] -= f_i * dz;
             }
+            AX[i] = ax;
+            AY[i] = ay;
+            AZ[i] = az;
+        }
+        
+        // 3. O(N) mapping: Restitute results back to Javascript object instances
+        for (let i = 0; i < n; i++) {
+            const b = this._bodies[i];
+            b.ax = AX[i];
+            b.ay = AY[i];
+            b.az = AZ[i];
         }
 
         // No hard-core repulsion needed — bodies that reach the event horizon
@@ -583,17 +1141,28 @@ export class CosmicMockBridge {
 
         // Event horizon absorption: ANY body crossing the Schwarzschild radius
         // is consumed by the BH. Mass transfers, body is destroyed.
-        // This is the "point of no return" — nothing escapes.
+        // AGN Relativistic Jet logic: Tracks continuous accretion to power a shader
         for (const bh of this._bodies) {
             if (!isBH(bh.type)) continue;
+            
+            // Cool down jet intensity each tick
+            bh.luminosity = (bh.luminosity || 0) * 0.96;
+            
+            // The Schwarzschild boundary where things completely vanish.
+            // Visually let them travel into the shadow by halving the physical kill radius
             const r_horizon = Math.max(0.8, Math.cbrt(bh.mass) * 0.12);
-            const r_h2 = r_horizon * r_horizon;
+            const r_kill = r_horizon * 0.4; // They survive physically longer so the renderer draws them crossing the void
+            const r_h2 = r_kill * r_kill;
+            
             for (const b of this._bodies) {
                 if (b.id === bh.id || b.mass <= 0) continue;
                 const dx = b.x - bh.x, dy = b.y - bh.y, dz = b.z - bh.z;
                 if (dx*dx + dy*dy + dz*dz < r_h2) {
-                    // Swallowed: mass absorbed, body destroyed
                     bh.mass += b.mass;
+                    
+                    // Fuel the AGN jet intensity proportionally to consumed mass
+                    bh.luminosity = Math.min((bh.luminosity || 0) + b.mass * 8.0, 50.0);
+                    
                     b.mass = 0;
                 }
             }
@@ -944,6 +1513,9 @@ export class CosmicMockBridge {
             }
         }
 
+        // ── CUSTOM SCENARIO TELEMETRY ──
+        this._updateTelemetry();
+
         // Speed limit + cleanup (always)
         this._enforceSpeedLimit();
         this._bodies = this._bodies.filter(b => b.mass > 0.01);
@@ -958,6 +1530,78 @@ export class CosmicMockBridge {
                 b.vx *= s; b.vy *= s; b.vz *= s;
             }
         }
+    }
+
+    _updateTelemetry() {
+        const name = this._scenarioName;
+        const T = CosmicMockBridge.TYPE;
+        const G = G_N;
+        const isBH = (t) => t === T.BLACK_HOLE || t === T.QUASAR;
+        const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
+
+        const tel = {};
+
+        if (name === 'cosmic-merger' || name === 'cosmic-binary-agn') {
+            const bhs = this._bodies.filter(b => isBH(b.type)).sort((a,b) => b.mass - a.mass);
+            if (bhs.length >= 2) {
+                const dx = bhs[0].x - bhs[1].x, dy = bhs[0].y - bhs[1].y, dz = bhs[0].z - bhs[1].z;
+                const sep = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                tel['Core Separation'] = sep.toFixed(2) + ' lu';
+                if (name === 'cosmic-binary-agn') {
+                    tel['Peak Jet Power'] = Math.max(bhs[0].luminosity||0, bhs[1].luminosity||0).toExponential(2) + ' EJ/s';
+                }
+            } else if (bhs.length === 1) {
+                tel['Status'] = 'Merger Complete';
+                tel['Singularity Mass'] = bhs[0].mass.toFixed(1) + ' M\u2299';
+            }
+        } else if (name === 'cosmic-cartwheel-collision') {
+            const bhs = this._bodies.filter(b => isBH(b.type));
+            if (bhs.length >= 2) {
+                const dx = bhs[0].x - bhs[1].x, dy = bhs[0].y - bhs[1].y, dz = bhs[0].z - bhs[1].z;
+                const sep = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                tel['Bullet Distance'] = sep.toFixed(1) + ' lu';
+                tel['Impact Phase'] = (bhs[1].y > 0) ? 'Post-Collision' : 'Approach';
+            }
+        } else if (name === 'cosmic-globular-cluster') {
+            let coreStars = 0;
+            let M_core = 0;
+            for (const b of this._bodies) {
+                if (isStar(b.type)) {
+                    if (b.x*b.x + b.y*b.y + b.z*b.z < 100) { // core radius squared
+                        coreStars++;
+                        M_core += b.mass;
+                    }
+                }
+            }
+            tel['Core Population (r<10)'] = coreStars;
+            tel['Core Density'] = (M_core / (4/3 * Math.PI * 1000)).toExponential(2) + ' M\u2299/lu\u00B3';
+        } else if (name === 'cosmic-stellar-lifecycle') {
+            const wd = this._bodies.filter(b => b.type === T.WHITE_DWARF || b.type === T.NEUTRON_STAR).length;
+            const bh = this._bodies.filter(b => b.type === T.BLACK_HOLE).length;
+            tel['Deceased Stars'] = wd;
+            tel['Supernova Remnants (BH)'] = bh;
+        } else if (name === 'cosmic-black-hole') {
+            const bh = this._bodies.find(b => isBH(b.type));
+            if (bh) {
+                tel['BH Mass'] = bh.mass.toFixed(2) + ' M\u2299';
+                tel['Accretion Disk Lum'] = (bh.luminosity || 0).toExponential(2) + ' W';
+            }
+        } else if (name === 'cosmic-ftd-collapse') {
+            const bh = this._bodies.find(b => isBH(b.type));
+            if (bh) {
+                tel['Status'] = 'Collapsed (Singularity Born)';
+                tel['BH Mass'] = bh.mass.toFixed(1) + ' M\u2299';
+            } else {
+                tel['Status'] = 'Pre-Collapse (Increasing Density)';
+            }
+        } else if (name === 'cosmic-web') {
+            const nodes = this._bodies.filter(b => isBH(b.type)).length;
+            const gas = this._bodies.filter(b => b.type === T.NEBULA).length;
+            tel['Stable Anchor Nodes'] = nodes;
+            tel['Filament Gas Clumps'] = gas;
+        }
+
+        this._customTelemetry = tel;
     }
 
     // ================================================================
@@ -1022,14 +1666,32 @@ export class CosmicMockBridge {
             ids[i] = b.id;
             const stretch = b.tidal_stretch || 0;
             temperatures[i] = b.temperature + stretch * 15000;
-            sizes[i] = Math.cbrt(b.mass) * (1 + stretch * 2);
+            // Radius override if present, else fallback to mass-based
+            sizes[i] = b.radius || (Math.cbrt(b.mass) * (1 + stretch * 2));
             densities[i] = b.density || 0.1;
+            // Note: For BH, luminosity holds the Jet Intensity gauge!
             luminosities[i] = b.luminosity * (1 - stretch * 0.5);
             stretches[i] = stretch;
             fuel_stages[i] = b.fuel_stage || 0;
             fuel_fractions[i] = b.fuel_fraction != null ? b.fuel_fraction : 1.0;
         }
         return { positions, types, temperatures, sizes, densities, luminosities, stretches, ids, fuel_stages, fuel_fractions, count: n };
+    }
+
+    cosmicInspectBody(id) {
+        const b = this._bodies.find(x => x.id === id);
+        if (!b) return null;
+        return {
+            id: b.id, type: b.type, mass: b.mass,
+            x: b.x, y: b.y, z: b.z, vx: b.vx, vy: b.vy, vz: b.vz,
+            speed: Math.sqrt(b.vx*b.vx + b.vy*b.vy + b.vz*b.vz),
+            temperature: b.temperature || 0,
+            luminosity: b.luminosity || 0,
+            fuel_fraction: b.fuel_fraction != null ? b.fuel_fraction : 1.0,
+            fuel_stage: b.fuel_stage || 0,
+            age: b.age || 0,
+            radius: b.radius || (Math.cbrt(b.mass) * (1 + (b.tidal_stretch||0) * 2))
+        };
     }
 
     getDiagnostics() {
@@ -1045,7 +1707,8 @@ export class CosmicMockBridge {
             tick: this._tick, bodyCount: this._bodies.length,
             countsByType: counts, totalMass, totalKE,
             hubbleParameter: this._H0, scaleFactor: this._a,
-            omegaMatter: OMEGA_MATTER, omegaLambda: OMEGA_LAMBDA
+            omegaMatter: OMEGA_MATTER, omegaLambda: OMEGA_LAMBDA,
+            customTelemetry: this._customTelemetry
         };
     }
 

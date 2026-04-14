@@ -34,7 +34,8 @@ const HBAR_MEV_S = 6.582119569e-22; // MeV·s
  * M_W in MeV for consistent units.
  */
 const M_W_MEV = M_W * 1000; // GeV -> MeV
-const G_F_MEV = PI_FTD * ALPHA / (Math.sqrt(2) * M_W_MEV * M_W_MEV);
+// Tree-level relation: G_F = pi*alpha*sqrt(2) / (2*sin^2(theta_W)*M_W^2)
+const G_F_MEV = PI_FTD * ALPHA * Math.sqrt(2) / (2 * SIN2_WEINBERG * M_W_MEV * M_W_MEV);
 
 // ── Muon Lifetime ────────────────────────────────────────────────────
 
@@ -126,7 +127,6 @@ export function pionLifetime() {
 export function gamowFactor(Z, Q) {
     if (Q <= 0) return 0;
     // Alpha particle: Z_alpha = 2, A_alpha = 4
-    const m_alpha = 4 * M_PROTON / 1000; // rough alpha mass in GeV
     const m_alpha_MeV = 4 * 931.494; // 4 AMU in MeV
     const m_daughter_MeV = Z * 931.494; // approximate
     const m_red = m_alpha_MeV * m_daughter_MeV / (m_alpha_MeV + m_daughter_MeV);

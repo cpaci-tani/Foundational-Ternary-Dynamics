@@ -112,6 +112,7 @@ let _showGravityField = false;
 let _showDarkMatterHalo = false;
 let _showDampingZones = false;
 let _showGenesisIsosurface = false;
+let _showConfinement = false;
 let _fieldFrame = 0;            // throttle counter for field updates
 let _fieldNeedsUpdate = false;  // force immediate field compute on toggle activation
 let _anyFieldActive = false;    // cached OR of all field toggle flags
@@ -129,7 +130,7 @@ function _recomputeAnyFieldActive() {
         _showDivField || _showFluxLines || _showForceVolume ||
         _showDualSubstrate || _showChirality || _showLight ||
         _showGravityField || _showDarkMatterHalo || _showDampingZones ||
-        _showGenesisIsosurface;
+        _showGenesisIsosurface || _showConfinement;
 }
 
 /**
@@ -194,6 +195,8 @@ function _resetSimCaches() {
     if (viewport) {
         viewport.clearTrails();
         viewport.clearElementLabels();
+        viewport.clearMolecularMeshes();
+        viewport.updateParticles({ count: 0 });
     }
     _fieldNeedsUpdate = true;
     _latticeNeedsUpload = true;
@@ -203,15 +206,20 @@ function _resetSimCaches() {
 function _resetAllVisualState() {
     _resetSimCaches();
 
-    // ── Scale 0: reset flux slice OFF, keep flux volume and grid ON (defaults) ──
+    // ── Scale 0: reset flux slice OFF, keep flux volume ON only if lattice ──
     if (viewport) {
-        viewport.toggleFluxVolume(true);  // default ON
+        const isLattice = (engineMode === 'lattice');
+        viewport.toggleFluxVolume(isLattice);
         viewport.toggleFluxSlice(false);
+        
+        const fvBtn = document.getElementById('toggle-flux-volume');
+        if (fvBtn) {
+            if (isLattice) fvBtn.classList.add('active');
+            else fvBtn.classList.remove('active');
+        }
+        const fsBtn = document.getElementById('toggle-flux-slice');
+        if (fsBtn) fsBtn.classList.remove('active');
     }
-    const fvBtn = document.getElementById('toggle-flux-volume');
-    if (fvBtn) fvBtn.classList.add('active');
-    const fsBtn = document.getElementById('toggle-flux-slice');
-    if (fsBtn) fsBtn.classList.remove('active');
 
     // ── Scale 0: field visualization overlays ──
     _showEField = false;
@@ -227,6 +235,7 @@ function _resetAllVisualState() {
     _showDarkMatterHalo = false;
     _showDampingZones = false;
     _showGenesisIsosurface = false;
+    _showConfinement = false;
     _fieldNeedsUpdate = false;
     _recomputeAnyFieldActive();
 
@@ -236,7 +245,7 @@ function _resetAllVisualState() {
         'toggle-div-field', 'toggle-flux-lines', 'toggle-force-volume',
         'toggle-dual-substrate', 'toggle-chirality', 'toggle-light',
         'toggle-gravity-field', 'toggle-dark-halo', 'toggle-damping-zones',
-        'toggle-genesis-iso',
+        'toggle-genesis-iso', 'toggle-confinement',
     ]) {
         const btn = document.getElementById(id);
         if (btn) btn.classList.remove('active');
@@ -712,7 +721,7 @@ function animate(now) {
     requestAnimationFrame(animate);
 
     if (engineMode === 'meta') {
-        if (metaUnit) metaUnit.update(1/60);
+        if (metaUnit) metaUnit.update(1 / 60);
         viewport.render();
     } else if (engineMode === 'cosmic') {
         animateCosmic(now);
@@ -775,12 +784,9 @@ function animateLattice(now) {
         }
         viewport.updateParticles(particleData);
 
-        // Confinement string rendering
-        if (_fluxMock && _fluxMock._toggles.confinement) {
-            viewport.updateConfinementStrings(_fluxMock._particles, bridge.latticeSize || 32);
-            viewport.toggleConfinementStrings(true);
-        } else {
-            viewport.toggleConfinementStrings(false);
+        // Confinement strings updates via fieldBridge / MockBridge state evaluation
+        if (typeof _showConfinement !== 'undefined' && _showConfinement) {
+            viewport.updateConfinementStrings(bridge);
         }
 
         // Flux volume/slice rendering for Scale 0
@@ -820,6 +826,9 @@ function animateLattice(now) {
         const fieldBridge = _fluxMock || bridge;
         const L = bridge.latticeSize || 32;
         const stride = L > 48 ? 6 : L > 32 ? 4 : 2;
+        // Scale streamline max steps with lattice size so lines remain
+        // visible at L=64/128 (base tuned for L=32).
+        const stepsScale = Math.ceil(L / 32);
 
         // E-field streamlines
         if (_showEField) {
@@ -828,10 +837,10 @@ function animateLattice(now) {
                 const pData = bridge.getParticleData();
                 const particles = [];
                 for (let i = 0; i < pData.count; i++) {
-                    particles.push({ x: pData.positions[i*3], y: pData.positions[i*3+1], z: pData.positions[i*3+2] });
+                    particles.push({ x: pData.positions[i * 3], y: pData.positions[i * 3 + 1], z: pData.positions[i * 3 + 2] });
                 }
                 const seeds = particles.length > 0 ? generateEFieldSeeds(particles, 2, 120) : generateGridSeeds(L, 8, 120);
-                const lines = computeStreamlines(eData, seeds, { N: L, stride, maxSteps: 80, stepSize: 0.6 });
+                const lines = computeStreamlines(eData, seeds, { N: L, stride, maxSteps: 80 * stepsScale, stepSize: 0.6 });
                 viewport.updateEFieldLines(lines);
             }
         }
@@ -843,10 +852,10 @@ function animateLattice(now) {
                 const pData = bridge.getParticleData();
                 const particles = [];
                 for (let i = 0; i < pData.count; i++) {
-                    particles.push({ x: pData.positions[i*3], y: pData.positions[i*3+1], z: pData.positions[i*3+2] });
+                    particles.push({ x: pData.positions[i * 3], y: pData.positions[i * 3 + 1], z: pData.positions[i * 3 + 2] });
                 }
                 const seeds = particles.length > 0 ? generateBFieldSeeds(particles, 4, 120) : generateGridSeeds(L, 8, 120);
-                const lines = computeStreamlines(bData, seeds, { N: L, stride, maxSteps: 150, stepSize: 0.5, bidirectional: false });
+                const lines = computeStreamlines(bData, seeds, { N: L, stride, maxSteps: 150 * stepsScale, stepSize: 0.5, bidirectional: false });
                 viewport.updateBFieldLines(lines);
             }
         }
@@ -868,10 +877,10 @@ function animateLattice(now) {
             const jData = fieldBridge.getFluxVectorSampled(stride);
             if (jData.count > 0) {
                 const seeds = generateGridSeeds(L, 8, 150);
-                const lines = computeStreamlines(jData, seeds, { N: L, stride, maxSteps: 80, stepSize: 0.5 });
+                const lines = computeStreamlines(jData, seeds, { N: L, stride, maxSteps: 80 * stepsScale, stepSize: 0.5 });
                 let maxFlux = 0;
                 for (let i = 0; i < jData.count; i++) {
-                    const m = Math.sqrt(jData.vectors[i*3]**2 + jData.vectors[i*3+1]**2 + jData.vectors[i*3+2]**2);
+                    const m = Math.sqrt(jData.vectors[i * 3] ** 2 + jData.vectors[i * 3 + 1] ** 2 + jData.vectors[i * 3 + 2] ** 2);
                     if (m > maxFlux) maxFlux = m;
                 }
                 viewport.updateFluxStreamlines(lines, maxFlux);
@@ -891,19 +900,13 @@ function animateLattice(now) {
         }
 
         // Dark matter halo (sub-threshold flux envelope)
+        // Reuse _fluxMag maintained by _updateFluxMag/_ensureEnergyCache
+        // instead of recomputing 2M sqrt calls into a separate _fluxMagBuf.
         if (_showDarkMatterHalo && fieldBridge._fluxJ) {
             const N = fieldBridge.latticeSize;
-            const total = N * N * N;
-            // Compute per-voxel flux magnitude for the halo overlay
-            if (!fieldBridge._fluxMagBuf || fieldBridge._fluxMagBuf.length !== total) {
-                fieldBridge._fluxMagBuf = new Float32Array(total);
-            }
-            const J = fieldBridge._fluxJ;
-            for (let i = 0; i < total; i++) {
-                const jx = J[i*3], jy = J[i*3+1], jz = J[i*3+2];
-                fieldBridge._fluxMagBuf[i] = Math.sqrt(jx*jx + jy*jy + jz*jz);
-            }
-            viewport.updateDarkMatterHalo(fieldBridge._particles, fieldBridge._fluxMagBuf, N);
+            if (fieldBridge._updateFluxMag) fieldBridge._updateFluxMag();
+            const mag = fieldBridge._fluxMag;
+            if (mag) viewport.updateDarkMatterHalo(fieldBridge._particles, mag, N);
         }
 
         // Selective damping zones (wireframe cubes around damped voxels)
@@ -912,18 +915,12 @@ function animateLattice(now) {
         }
 
         // Genesis threshold isosurface (birth boundary)
+        // Reuse _fluxMag instead of recomputing 2M sqrt calls.
         if (_showGenesisIsosurface && fieldBridge._fluxJ) {
             const N = fieldBridge.latticeSize;
-            const total = N * N * N;
-            if (!fieldBridge._fluxMagBuf || fieldBridge._fluxMagBuf.length !== total) {
-                fieldBridge._fluxMagBuf = new Float32Array(total);
-            }
-            const J = fieldBridge._fluxJ;
-            for (let i = 0; i < total; i++) {
-                const jx = J[i*3], jy = J[i*3+1], jz = J[i*3+2];
-                fieldBridge._fluxMagBuf[i] = Math.sqrt(jx*jx + jy*jy + jz*jz);
-            }
-            viewport.updateGenesisIsosurface(fieldBridge._fluxMagBuf, N, K_GENESIS);
+            if (fieldBridge._updateFluxMag) fieldBridge._updateFluxMag();
+            const mag = fieldBridge._fluxMag;
+            if (mag) viewport.updateGenesisIsosurface(mag, N, K_GENESIS);
         }
 
         // Dual substrate (uses flux data split into L/R via delta)
@@ -954,8 +951,8 @@ function animateLattice(now) {
                 const lF = (1 + DELTA) / 2, rF = (1 - DELTA) / 2;
                 const values = new Float32Array(jData.count);
                 for (let i = 0; i < jData.count; i++) {
-                    const jx = jData.vectors[i*3], jy = jData.vectors[i*3+1], jz = jData.vectors[i*3+2];
-                    const mag = Math.sqrt(jx*jx + jy*jy + jz*jz);
+                    const jx = jData.vectors[i * 3], jy = jData.vectors[i * 3 + 1], jz = jData.vectors[i * 3 + 2];
+                    const mag = Math.sqrt(jx * jx + jy * jy + jz * jz);
                     values[i] = mag * (lF - rF);
                 }
                 viewport.updateChiralityField({ positions: jData.positions, values, count: jData.count });
@@ -1126,9 +1123,9 @@ function animatePE(now) {
         while (_srcParticlesBuf.length < src.count) _srcParticlesBuf.push({ x: 0, y: 0, z: 0 });
         _srcParticlesBuf.length = src.count;
         for (let i = 0; i < src.count; i++) {
-            _srcParticlesBuf[i].x = src.positions[i*3];
-            _srcParticlesBuf[i].y = src.positions[i*3+1];
-            _srcParticlesBuf[i].z = src.positions[i*3+2];
+            _srcParticlesBuf[i].x = src.positions[i * 3];
+            _srcParticlesBuf[i].y = src.positions[i * 3 + 1];
+            _srcParticlesBuf[i].z = src.positions[i * 3 + 2];
         }
         const seeds = generateEFieldSeeds(_srcParticlesBuf, 3, 100);
         const lines = computeStreamlines({ fieldFn }, seeds, { maxSteps: 80, stepSize: 0.5, bounds: 30 });
@@ -1778,9 +1775,9 @@ function wireToolbar() {
     // Force arrow toggles
     const forceToggles = [
         ['ae-force-ionic', '_showAEForceIonic', 'toggleAEForceIonic'],
-        ['ae-force-vdw',   '_showAEForceVdw',   'toggleAEForceVdw'],
-        ['ae-force-bond',  '_showAEForceBond',   'toggleAEForceBond'],
-        ['ae-force-net',   '_showAEForceNet',    'toggleAEForceNet'],
+        ['ae-force-vdw', '_showAEForceVdw', 'toggleAEForceVdw'],
+        ['ae-force-bond', '_showAEForceBond', 'toggleAEForceBond'],
+        ['ae-force-net', '_showAEForceNet', 'toggleAEForceNet'],
     ];
     for (const [id, flag, method] of forceToggles) {
         const btn = document.getElementById(id);
@@ -1789,9 +1786,9 @@ function wireToolbar() {
                 const isActive = btn.classList.toggle('active');
                 switch (flag) {
                     case '_showAEForceIonic': _showAEForceIonic = isActive; break;
-                    case '_showAEForceVdw':   _showAEForceVdw = isActive; break;
-                    case '_showAEForceBond':  _showAEForceBond = isActive; break;
-                    case '_showAEForceNet':   _showAEForceNet = isActive; break;
+                    case '_showAEForceVdw': _showAEForceVdw = isActive; break;
+                    case '_showAEForceBond': _showAEForceBond = isActive; break;
+                    case '_showAEForceNet': _showAEForceNet = isActive; break;
                 }
                 viewport[method](isActive);
             });
@@ -1856,6 +1853,37 @@ function wireTabs() {
             toggleBtn.title = collapsed ? 'Expand panels' : 'Collapse panels';
             // Notify Three.js viewport of resize
             if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 250);
+        });
+    }
+
+    // Custom Top-Center Panel Resizer
+    const panelResizer = document.getElementById('panel-resizer');
+    const panelAreaElement = document.getElementById('panel-area');
+    if (panelResizer && panelAreaElement) {
+        let isDraggingPanel = false;
+        let startY = 0;
+        let startHeight = 0;
+
+        panelResizer.addEventListener('mousedown', (e) => {
+            isDraggingPanel = true;
+            startY = e.clientY;
+            startHeight = panelAreaElement.getBoundingClientRect().height;
+            document.body.style.cursor = 'ns-resize';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDraggingPanel) return;
+            const dy = startY - e.clientY;
+            const newHeight = startHeight + dy;
+            panelAreaElement.style.height = `${newHeight}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDraggingPanel) {
+                isDraggingPanel = false;
+                document.body.style.cursor = '';
+            }
         });
     }
 }
@@ -2006,7 +2034,7 @@ function animateConsciousness(now) {
             fluxRatio,
             effTheta,
             consciousnessI,
-            mandelbrotZ: Math.sqrt(_mandelbrotZ_re**2 + _mandelbrotZ_im**2),
+            mandelbrotZ: Math.sqrt(_mandelbrotZ_re ** 2 + _mandelbrotZ_im ** 2),
         });
 
         // Update pedagogy panels with live engine data
@@ -2033,7 +2061,7 @@ function animateConsciousness(now) {
         if (domainEl) {
             domainEl.textContent = domainLabel;
             domainEl.style.color = domainLabel.includes('Complex') ? 'var(--consciousness-primary)' :
-                                   domainLabel.includes('Degenerate') ? 'var(--warning)' : 'var(--text-muted)';
+                domainLabel.includes('Degenerate') ? 'var(--warning)' : 'var(--text-muted)';
         }
 
         // Row 3: Consciousness metrics
@@ -2294,9 +2322,9 @@ function wireControls() {
 
     // ── Combo Panel: Parameter Sliders ──────────────────────────────
     const comboSliders = [
-        { id: 'combo-kb',   valId: 'combo-kb-val',   param: 'kb',      fmt: 3 },
-        { id: 'combo-gn',   valId: 'combo-gn-val',   param: 'gn',      fmt: 3 },
-        { id: 'combo-damp', valId: 'combo-damp-val',  param: 'damping', fmt: 3 },
+        { id: 'combo-kb', valId: 'combo-kb-val', param: 'kb', fmt: 3 },
+        { id: 'combo-gn', valId: 'combo-gn-val', param: 'gn', fmt: 3 },
+        { id: 'combo-damp', valId: 'combo-damp-val', param: 'damping', fmt: 3 },
     ];
     for (const s of comboSliders) {
         const slider = document.getElementById(s.id);
@@ -2440,6 +2468,16 @@ function wireControls() {
         });
     }
 
+    const fluxScenarioScaleSlider = document.getElementById('flux-scenario-scale');
+    const fluxScenarioScaleVal = document.getElementById('flux-scenario-scale-val');
+    if (fluxScenarioScaleSlider) {
+        fluxScenarioScaleSlider.addEventListener('input', () => {
+            const v = parseFloat(fluxScenarioScaleSlider.value);
+            fluxScenarioScaleVal.textContent = v.toFixed(1);
+            viewport.setScenarioScale(v);
+        });
+    }
+
     // Scale 0 dt slider
     const s0DtSlider = document.getElementById('s0-dt-slider');
     const s0DtValue = document.getElementById('s0-dt-value');
@@ -2453,16 +2491,16 @@ function wireControls() {
 
     // PE controls — force & dynamics toggles
     const peToggleMap = {
-        'pe-coulomb':         (v) => bridge.peSetCoulomb(v),
-        'pe-gravity':         (v) => bridge.peSetGravity(v),
-        'pe-damping':         (v) => bridge.peSetDamping(v),
-        'pe-lorentz-p':       (v) => bridge.peSetLorentz(v),
-        'pe-exchange':        (v) => bridge.peSetExchange(v),
-        'pe-strong':          (v) => bridge.peSetStrong(v),
+        'pe-coulomb': (v) => bridge.peSetCoulomb(v),
+        'pe-gravity': (v) => bridge.peSetGravity(v),
+        'pe-damping': (v) => bridge.peSetDamping(v),
+        'pe-lorentz-p': (v) => bridge.peSetLorentz(v),
+        'pe-exchange': (v) => bridge.peSetExchange(v),
+        'pe-strong': (v) => bridge.peSetStrong(v),
         'pe-magnetic-dipole': (v) => bridge.peSetMagneticDipole(v),
-        'pe-spin-orbit':      (v) => bridge.peSetSpinOrbit(v),
-        'pe-radiation':       (v) => bridge.peSetRadiation(v),
-        'pe-relativistic':    (v) => bridge.peSetRelativistic(v),
+        'pe-spin-orbit': (v) => bridge.peSetSpinOrbit(v),
+        'pe-radiation': (v) => bridge.peSetRadiation(v),
+        'pe-relativistic': (v) => bridge.peSetRelativistic(v),
     };
     for (const [elId, setter] of Object.entries(peToggleMap)) {
         const el = document.getElementById(elId);
@@ -2498,11 +2536,11 @@ function wireControls() {
 
     // AE controls — force & dynamics toggles
     const aeToggleMap = {
-        'ae-ionic':       (v) => bridge.aeSetIonic(v),
-        'ae-vdw':         (v) => bridge.aeSetVdw(v),
+        'ae-ionic': (v) => bridge.aeSetIonic(v),
+        'ae-vdw': (v) => bridge.aeSetVdw(v),
         'ae-bonds-force': (v) => bridge.aeSetBondsForce(v),
-        'ae-bonding':     (v) => bridge.aeSetBonding(v),
-        'ae-damping':     (v) => bridge.aeSetDamping(v),
+        'ae-bonding': (v) => bridge.aeSetBonding(v),
+        'ae-damping': (v) => bridge.aeSetDamping(v),
         'ae-speed-limit': (v) => bridge.aeSetSpeedLimit(v),
     };
     for (const [elId, setter] of Object.entries(aeToggleMap)) {
@@ -2594,10 +2632,10 @@ function wireViewportToggles() {
 
     // PE field overlay toggles (individual force decomposition)
     const peFieldToggles = [
-        ['toggle-pe-efield',        (on) => { _showPEEField = on; viewport.togglePEStreamlines(on); }],
-        ['toggle-pe-potential',     (on) => { _showPEPotential = on; viewport.toggleFieldHeatmap(on); viewport.toggleFieldVectors(on); }],
+        ['toggle-pe-efield', (on) => { _showPEEField = on; viewport.togglePEStreamlines(on); }],
+        ['toggle-pe-potential', (on) => { _showPEPotential = on; viewport.toggleFieldHeatmap(on); viewport.toggleFieldVectors(on); }],
         ['toggle-pe-gravity-field', (on) => { _showPEGravField = on; viewport.toggleGravityVectors(on); }],
-        ['toggle-pe-forces',        (on) => { _showPEForces = on; viewport.toggleParticleForces(on); }],
+        ['toggle-pe-forces', (on) => { _showPEForces = on; viewport.toggleParticleForces(on); }],
     ];
     for (const [id, handler] of peFieldToggles) {
         const btn = document.getElementById(id);
@@ -2657,19 +2695,20 @@ function wireViewportToggles() {
 
     // ── Field visualization toggles (Scale 0) ───────────────────────
     const fieldToggles = [
-        ['toggle-e-field',        '_showEField',        (on) => { _showEField = on; viewport.toggleEFieldLines(on); _fieldNeedsUpdate = true; }],
-        ['toggle-b-field',        '_showBField',        (on) => { _showBField = on; viewport.toggleBFieldLines(on); _fieldNeedsUpdate = true; }],
-        ['toggle-poynting',       '_showPoynting',      (on) => { _showPoynting = on; viewport.togglePoyntingVectors(on); _fieldNeedsUpdate = true; }],
-        ['toggle-div-field',      '_showDivField',      (on) => { _showDivField = on; viewport.toggleDivergenceField(on); _fieldNeedsUpdate = true; }],
-        ['toggle-flux-lines',     '_showFluxLines',     (on) => { _showFluxLines = on; viewport.toggleFluxStreamlines(on); _fieldNeedsUpdate = true; }],
-        ['toggle-force-volume',   '_showForceVolume',   (on) => { _showForceVolume = on; viewport.toggleForceVolume(on); _fieldNeedsUpdate = true; }],
+        ['toggle-e-field', '_showEField', (on) => { _showEField = on; viewport.toggleEFieldLines(on); _fieldNeedsUpdate = true; }],
+        ['toggle-b-field', '_showBField', (on) => { _showBField = on; viewport.toggleBFieldLines(on); _fieldNeedsUpdate = true; }],
+        ['toggle-poynting', '_showPoynting', (on) => { _showPoynting = on; viewport.togglePoyntingVectors(on); _fieldNeedsUpdate = true; }],
+        ['toggle-div-field', '_showDivField', (on) => { _showDivField = on; viewport.toggleDivergenceField(on); _fieldNeedsUpdate = true; }],
+        ['toggle-flux-lines', '_showFluxLines', (on) => { _showFluxLines = on; viewport.toggleFluxStreamlines(on); _fieldNeedsUpdate = true; }],
+        ['toggle-force-volume', '_showForceVolume', (on) => { _showForceVolume = on; viewport.toggleForceVolume(on); _fieldNeedsUpdate = true; }],
         ['toggle-dual-substrate', '_showDualSubstrate', (on) => { _showDualSubstrate = on; viewport.toggleDualFluxVolume(on); _fieldNeedsUpdate = true; }],
-        ['toggle-chirality',      '_showChirality',     (on) => { _showChirality = on; viewport.toggleChiralityField(on); _fieldNeedsUpdate = true; }],
-        ['toggle-light',          '_showLight',         (on) => { _showLight = on; viewport.toggleLightField(on); _fieldNeedsUpdate = true; }],
-        ['toggle-gravity-field',  '_showGravityField',  (on) => { _showGravityField = on; viewport.toggleGravityField(on); _fieldNeedsUpdate = true; }],
-        ['toggle-dark-halo',      '_showDarkMatterHalo',(on) => { _showDarkMatterHalo = on; viewport.toggleDarkMatterHalo(on); _fieldNeedsUpdate = true; }],
-        ['toggle-damping-zones',  '_showDampingZones',  (on) => { _showDampingZones = on; viewport.toggleDampingZones(on); _fieldNeedsUpdate = true; }],
-        ['toggle-genesis-iso',    '_showGenesisIsosurface', (on) => { _showGenesisIsosurface = on; viewport.toggleGenesisIsosurface(on); _fieldNeedsUpdate = true; }],
+        ['toggle-chirality', '_showChirality', (on) => { _showChirality = on; viewport.toggleChiralityField(on); _fieldNeedsUpdate = true; }],
+        ['toggle-light', '_showLight', (on) => { _showLight = on; viewport.toggleLightField(on); _fieldNeedsUpdate = true; }],
+        ['toggle-gravity-field', '_showGravityField', (on) => { _showGravityField = on; viewport.toggleGravityField(on); _fieldNeedsUpdate = true; }],
+        ['toggle-dark-halo', '_showDarkMatterHalo', (on) => { _showDarkMatterHalo = on; viewport.toggleDarkMatterHalo(on); _fieldNeedsUpdate = true; }],
+        ['toggle-damping-zones', '_showDampingZones', (on) => { _showDampingZones = on; viewport.toggleDampingZones(on); _fieldNeedsUpdate = true; }],
+        ['toggle-genesis-iso', '_showGenesisIsosurface', (on) => { _showGenesisIsosurface = on; viewport.toggleGenesisIsosurface(on); _fieldNeedsUpdate = true; }],
+        ['toggle-confinement', '_showConfinement', (on) => { _showConfinement = on; viewport.toggleConfinement(on); _fieldNeedsUpdate = true; }],
     ];
     for (const [id, , handler] of fieldToggles) {
         const btn = document.getElementById(id);
@@ -2769,7 +2808,7 @@ function wireKeyboard() {
         document.querySelectorAll('.settings-preset').forEach(b => {
             b.classList.toggle('active', Math.abs(parseFloat(b.dataset.scale) - s) < 0.01);
         });
-        try { localStorage.setItem('ftd-ui-scale', String(s)); } catch (e) {}
+        try { localStorage.setItem('ftd-ui-scale', String(s)); } catch (e) { }
         if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 100);
     }
 
@@ -2783,7 +2822,7 @@ function wireKeyboard() {
         document.querySelectorAll('.theme-swatch').forEach(sw => {
             sw.classList.toggle('active', sw.dataset.theme === name);
         });
-        try { localStorage.setItem('ftd-theme', name); } catch (e) {}
+        try { localStorage.setItem('ftd-theme', name); } catch (e) { }
     }
 
     // ── Load saved settings ──
@@ -2792,7 +2831,7 @@ function wireKeyboard() {
         if (savedScale) applyScale(parseFloat(savedScale));
         const savedTheme = localStorage.getItem('ftd-theme');
         if (savedTheme) applyTheme(savedTheme);
-    } catch (e) {}
+    } catch (e) { }
 
     // ── Modal open/close ──
     if (btnOpen && modal) btnOpen.addEventListener('click', () => { modal.style.display = 'flex'; });
@@ -2853,9 +2892,6 @@ function switchEngineMode(mode) {
     // Free JS flux sim when leaving Scale 0 (before loadXxx resets visual state)
     if (mode !== 'lattice') _fluxMock = null;
 
-    // Tell viewport to switch reference frame
-    viewport.setEngineMode(mode);
-
     // Tell inspector and zoo panel about mode change
     if (inspector) inspector.setEngineMode(mode);
     setZooMode(mode);
@@ -2887,6 +2923,9 @@ function switchEngineMode(mode) {
 
     // Full visual reset on ENGINE MODE SWITCH (scale change) — clears all toggles
     _resetAllVisualState();
+
+    // Tell viewport to switch reference frame (MUST happen after resetAllVisualState)
+    viewport.setEngineMode(mode);
 
     // Initialize the appropriate engine for the new scale
     if (mode === 'cosmic') {
@@ -2955,6 +2994,7 @@ function loadCosmicScenario(scenarioName = 'cosmic-galaxy') {
     // Set camera preset based on scenario
     const presetMap = {
         'cosmic-galaxy': 'galaxy',
+        'cosmic-super-cluster': 'overview',
         'cosmic-cluster': 'overview',
         'cosmic-web': 'overview',
         'cosmic-black-hole': 'blackhole',
@@ -3113,7 +3153,7 @@ function loadPEScenario(name) {
     //   Plummer force: F = α·|Q|·r / (4π·(r² + soft²)^(3/2))
     //   Equilibrium:   m·v²/r = F  →  v = sqrt(α·|Q|·r² / (4π·m·(r²+soft²)^(3/2)))
     //   For soft << r this simplifies to v ≈ sqrt(α·|Q|·r / (4π·m·(r²+soft²)))
-    const ALPHA = 0.00729;
+    // ALPHA imported from constants.js (full precision 1/137.036...)
     const soft2 = 0.01;  // 0.1²
     const orbitalV = (m, r, Q = 1) =>
         Math.sqrt(ALPHA * Q * r / (4 * Math.PI * m * (r * r + soft2)));
@@ -3122,10 +3162,10 @@ function loadPEScenario(name) {
     const mp = 938.272;  // proton mass MeV
     const mmu = 105.658;  // muon mass MeV
     const mn = 939.565;  // neutron mass MeV
-    const mpi  = 139.57;   // charged pion mass MeV
-    const mK   = 493.68;   // charged kaon mass MeV
+    const mpi = 139.57;   // charged pion mass MeV
+    const mK = 493.68;   // charged kaon mass MeV
     const mtau = 1776.86;  // tau mass MeV
-    const mW   = 80377.0;  // W boson mass MeV
+    const mW = 80377.0;  // W boson mass MeV
     const mSig = 1189.4;   // Sigma+ mass MeV
     const mOmg = 1672.5;   // Omega- mass MeV
     const mDel = 1232.0;   // Delta++ mass MeV
@@ -3477,44 +3517,50 @@ function loadAEScenario(name) {
         // ══════════════════════════════════════════════════════════════
         case 'ae-he-cluster': {
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
+            bridge.aeSetIonic(false); document.getElementById('ae-ionic').checked = false;
             const S = 5.5;
-            const hex = [[0,0,0],[S,0,0],[S*0.5,S*0.866,0],
-                         [0,0,S],[S,0,S],[S*0.5,S*0.866,S]];
+            const hex = [[0, 0, 0], [S, 0, 0], [S * 0.5, S * 0.866, 0],
+            [0, 0, S], [S, 0, S], [S * 0.5, S * 0.866, S]];
             for (const [x, y, z] of hex)
-                bridge.aeAddAtom(2, x - S*0.5, y - S*0.3, z - S*0.5,
-                    (Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'Helium Cluster',
+                bridge.aeAddAtom(2, x - S * 0.5, y - S * 0.3, z - S * 0.5,
+                    (Math.random() - 0.5) * 0.2, (Math.random() - 0.5) * 0.2, (Math.random() - 0.5) * 0.2, 0);
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Helium Cluster',
                 desc: 'Six He atoms — van der Waals (LJ 12-6) only. Watch them settle.',
-                fields: { 'Atoms': '6 × He', 'Force': 'vdW only', 'Bonding': 'None (noble gas)' }});
+                fields: { 'Atoms': '6 × He', 'Force': 'vdW only', 'Bonding': 'None (noble gas)' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
             break;
         }
         case 'ae-ar-cluster': {
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
+            bridge.aeSetIonic(false); document.getElementById('ae-ionic').checked = false;
             const S = 6.0;
             for (let ix = 0; ix < 2; ix++) for (let iy = 0; iy < 2; iy++) for (let iz = 0; iz < 2; iz++)
-                bridge.aeAddAtom(18, (ix-0.5)*S, (iy-0.5)*S, (iz-0.5)*S,
-                    (Math.random()-0.5)*0.15, (Math.random()-0.5)*0.15, (Math.random()-0.5)*0.15, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'Argon Cluster',
+                bridge.aeAddAtom(18, (ix - 0.5) * S, (iy - 0.5) * S, (iz - 0.5) * S,
+                    (Math.random() - 0.5) * 0.15, (Math.random() - 0.5) * 0.15, (Math.random() - 0.5) * 0.15, 0);
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Argon Cluster',
                 desc: 'Eight Ar atoms in a cube — vdW condensation dynamics.',
-                fields: { 'Atoms': '8 × Ar', 'Force': 'vdW only', 'Layout': '2×2×2 cube' }});
+                fields: { 'Atoms': '8 × Ar', 'Force': 'vdW only', 'Layout': '2×2×2 cube' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
             break;
         }
         case 'ae-noble-mix': {
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
+            bridge.aeSetIonic(false); document.getElementById('ae-ionic').checked = false;
             bridge.aeAddAtom(2, -12, 0, 0, 0.1, 0, 0, 0);
             bridge.aeAddAtom(2, -8, 0, 0, -0.1, 0, 0, 0);
             bridge.aeAddAtom(10, -2, 0, 0, 0.1, 0, 0, 0);
             bridge.aeAddAtom(10, 2, 0, 0, -0.1, 0, 0, 0);
             bridge.aeAddAtom(18, 7, 0, 0, 0.1, 0, 0, 0);
             bridge.aeAddAtom(18, 12, 0, 0, -0.1, 0, 0, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'Noble Gas Mix',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Noble Gas Mix',
                 desc: 'He + Ne + Ar — different sizes interact via vdW only.',
-                fields: { 'Atoms': '2 He + 2 Ne + 2 Ar', 'Force': 'vdW only' }});
+                fields: { 'Atoms': '2 He + 2 Ne + 2 Ar', 'Force': 'vdW only' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
             break;
         }
@@ -3526,9 +3572,11 @@ function loadAEScenario(name) {
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
             bridge.aeAddAtom(11, -12, 0, 0, 0.15, 0, 0, 1);   // Na+
             bridge.aeAddAtom(17, 12, 0, 0, -0.15, 0, 0, -1);  // Cl-
-            if (inspector) inspector.setScenarioInfo({ title: 'NaCl Formation',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'NaCl Formation',
                 desc: 'Na⁺ and Cl⁻ attract via Coulomb force — ionic bond formation.',
-                fields: { 'Atoms': 'Na⁺ + Cl⁻', 'Force': 'Ionic (Coulomb)', 'Bonding': 'None (ionic)' }});
+                fields: { 'Atoms': 'Na⁺ + Cl⁻', 'Force': 'Ionic (Coulomb)', 'Bonding': 'None (ionic)' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 40); viewport.controls.update(); }
             break;
         }
@@ -3539,11 +3587,13 @@ function loadAEScenario(name) {
             for (let ix = 0; ix < 3; ix++) for (let iy = 0; iy < 3; iy++) {
                 const charge = ((ix + iy) % 2 === 0) ? 1 : -1;
                 const Z = charge === 1 ? 11 : 17;
-                bridge.aeAddAtom(Z, (ix-1)*sp, (iy-1)*sp, 0, 0, 0, 0, charge);
+                bridge.aeAddAtom(Z, (ix - 1) * sp, (iy - 1) * sp, 0, 0, 0, 0, charge);
             }
-            if (inspector) inspector.setScenarioInfo({ title: 'NaCl 3×3 Lattice',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'NaCl 3×3 Lattice',
                 desc: 'Ionic crystal lattice — alternating Na⁺/Cl⁻ held by Coulomb.',
-                fields: { 'Atoms': '9 (Na⁺/Cl⁻ alternating)', 'Layout': '3×3 grid', 'Force': 'Ionic + vdW' }});
+                fields: { 'Atoms': '9 (Na⁺/Cl⁻ alternating)', 'Layout': '3×3 grid', 'Force': 'Ionic + vdW' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
             break;
         }
@@ -3552,9 +3602,11 @@ function loadAEScenario(name) {
             bridge.aeAddAtom(12, 0, 0, 0, 0, 0, 0, 2);     // Mg2+
             bridge.aeAddAtom(9, -15, 0, 0, 0.2, 0, 0, -1);  // F-
             bridge.aeAddAtom(9, 15, 0, 0, -0.2, 0, 0, -1);  // F-
-            if (inspector) inspector.setScenarioInfo({ title: 'MgF₂ Formation',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'MgF₂ Formation',
                 desc: 'Mg²⁺ attracts two F⁻ ions — ionic bond formation.',
-                fields: { 'Atoms': 'Mg²⁺ + 2 F⁻', 'Force': 'Ionic (Coulomb)' }});
+                fields: { 'Atoms': 'Mg²⁺ + 2 F⁻', 'Force': 'Ionic (Coulomb)' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
             break;
         }
@@ -3566,9 +3618,11 @@ function loadAEScenario(name) {
             bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
             bridge.aeAddAtom(1, -7, 0, 0, 0.08, 0, 0, 0);
             bridge.aeAddAtom(1, 7, 0, 0, -0.08, 0, 0, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'H₂ Formation',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'H₂ Formation',
                 desc: 'Two hydrogen atoms approach — vdW attracts, bond forms at r < 4.8.',
-                fields: { 'Atoms': '2 × H', 'Force': 'vdW + auto-bond', 'Threshold': '1.2 × σ_avg ≈ 4.8' }});
+                fields: { 'Atoms': '2 × H', 'Force': 'vdW + auto-bond', 'Threshold': '1.2 × σ_avg ≈ 4.8' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
             break;
         }
@@ -3577,9 +3631,11 @@ function loadAEScenario(name) {
             bridge.aeAddAtom(8, -5, 0, 0, 0.06, 0, 0, 0);
             bridge.aeAddAtom(8, 5, 0, 0, -0.06, 0, 0, 0);
             _aeSetPhase3({ angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'O₂ Formation',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'O₂ Formation',
                 desc: 'Two oxygen atoms approach and bond — double bond forms.',
-                fields: { 'Atoms': '2 × O', 'Force': 'vdW + auto-bond + angle strain' }});
+                fields: { 'Atoms': '2 × O', 'Force': 'vdW + auto-bond + angle strain' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
             break;
         }
@@ -3588,13 +3644,15 @@ function loadAEScenario(name) {
             _aeSetPhase3({ angle: true });
             const d = 9, t = 1 / Math.sqrt(3);
             bridge.aeAddAtom(6, 0, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, d*t, d*t, d*t, -0.05, -0.05, -0.05, 0);
-            bridge.aeAddAtom(1, d*t, -d*t, -d*t, -0.05, 0.05, 0.05, 0);
-            bridge.aeAddAtom(1, -d*t, d*t, -d*t, 0.05, -0.05, 0.05, 0);
-            bridge.aeAddAtom(1, -d*t, -d*t, d*t, 0.05, 0.05, -0.05, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'CH₄ Assembly',
+            bridge.aeAddAtom(1, d * t, d * t, d * t, -0.05, -0.05, -0.05, 0);
+            bridge.aeAddAtom(1, d * t, -d * t, -d * t, -0.05, 0.05, 0.05, 0);
+            bridge.aeAddAtom(1, -d * t, d * t, -d * t, 0.05, -0.05, 0.05, 0);
+            bridge.aeAddAtom(1, -d * t, -d * t, d * t, 0.05, 0.05, -0.05, 0);
+            if (inspector) inspector.setScenarioInfo({
+                title: 'CH₄ Assembly',
                 desc: 'Carbon + 4 hydrogens approach — bonds form, angle strain drives tetrahedral.',
-                fields: { 'Atoms': 'C + 4H', 'Target': '109.47° tetrahedral', 'Force': 'vdW + bond + angle' }});
+                fields: { 'Atoms': 'C + 4H', 'Target': '109.47° tetrahedral', 'Force': 'vdW + bond + angle' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 30); viewport.controls.update(); }
             break;
         }
@@ -3608,18 +3666,20 @@ function loadAEScenario(name) {
             // Molecule 1 (left)
             bridge.aeAddAtom(8, -7, 0, 0, 0, 0, 0, 0);
             bridge.aeAddAtom(1, -7 + rOH, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, -7 + rOH*Math.cos(ang), rOH*Math.sin(ang), 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, -7 + rOH * Math.cos(ang), rOH * Math.sin(ang), 0, 0, 0, 0, 0);
             // Molecule 2 (right, rotated so O faces mol1's H)
             bridge.aeAddAtom(8, 7, 0, 0, 0, 0, 0, 0);
             bridge.aeAddAtom(1, 7 - rOH, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, 7 - rOH*Math.cos(ang), -rOH*Math.sin(ang), 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, 7 - rOH * Math.cos(ang), -rOH * Math.sin(ang), 0, 0, 0, 0, 0);
             // Pre-bond to establish O-H covalent bonds
             bridge.aeSetBonding(true); bridge.aePreBond();
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
             _aeSetPhase3({ hbonds: true, angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'Water Dimer',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Water Dimer',
                 desc: 'Two H₂O molecules — H-bond attracts them. First Phase 3 demo!',
-                fields: { 'Atoms': '6 (2 × H₂O)', 'Force': 'Bond + H-bond + angle strain', 'H-bond': 'LJ 10-12 + angular' }});
+                fields: { 'Atoms': '6 (2 × H₂O)', 'Force': 'Bond + H-bond + angle strain', 'H-bond': 'LJ 10-12 + angular' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
             break;
         }
@@ -3634,20 +3694,22 @@ function loadAEScenario(name) {
                 // H1 pointing toward next molecule (H-bond donor)
                 const tn = (2 * Math.PI * (m + 1)) / N_mol;
                 const dnx = Math.cos(tn) - Math.cos(theta), dny = Math.sin(tn) - Math.sin(theta);
-                const dn = Math.sqrt(dnx*dnx + dny*dny);
-                bridge.aeAddAtom(1, ox + rOH*dnx/dn, oy + rOH*dny/dn, 0, 0, 0, 0, 0);
+                const dn = Math.sqrt(dnx * dnx + dny * dny);
+                bridge.aeAddAtom(1, ox + rOH * dnx / dn, oy + rOH * dny / dn, 0, 0, 0, 0, 0);
                 // H2 at HOH angle
-                const px = -dny/dn, py = dnx/dn;
-                const h2x = Math.cos(ang)*dnx/dn + Math.sin(ang)*px;
-                const h2y = Math.cos(ang)*dny/dn + Math.sin(ang)*py;
-                bridge.aeAddAtom(1, ox + rOH*h2x, oy + rOH*h2y, 0, 0, 0, 0, 0);
+                const px = -dny / dn, py = dnx / dn;
+                const h2x = Math.cos(ang) * dnx / dn + Math.sin(ang) * px;
+                const h2y = Math.cos(ang) * dny / dn + Math.sin(ang) * py;
+                bridge.aeAddAtom(1, ox + rOH * h2x, oy + rOH * h2y, 0, 0, 0, 0, 0);
             }
             bridge.aeSetBonding(true); bridge.aePreBond();
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
             _aeSetPhase3({ hbonds: true, angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'Water Pentamer',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Water Pentamer',
                 desc: 'Five H₂O molecules in a ring — H-bond network demonstration.',
-                fields: { 'Atoms': '15 (5 × H₂O)', 'Force': 'Bond + H-bond + angle', 'Pattern': 'Cyclic H-bond ring' }});
+                fields: { 'Atoms': '15 (5 × H₂O)', 'Force': 'Bond + H-bond + angle', 'Pattern': 'Cyclic H-bond ring' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
             break;
         }
@@ -3664,9 +3726,11 @@ function loadAEScenario(name) {
             bridge.aeSetBonding(true); bridge.aePreBond();
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
             _aeSetPhase3({ angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'CO₂ VSEPR',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'CO₂ VSEPR',
                 desc: 'CO₂ starts bent (90°) — angle strain drives it to linear (180°).',
-                fields: { 'Atoms': 'C + 2O', 'Start': '90°', 'Target': '180° (linear)', 'Steric #': '2' }});
+                fields: { 'Atoms': 'C + 2O', 'Start': '90°', 'Target': '180° (linear)', 'Steric #': '2' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
             break;
         }
@@ -3681,9 +3745,11 @@ function loadAEScenario(name) {
             bridge.aeSetBonding(true); bridge.aePreBond();
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
             _aeSetPhase3({ angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'CH₄ VSEPR',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'CH₄ VSEPR',
                 desc: 'CH₄ starts at 90° — angle strain relaxes to 109.47° tetrahedral.',
-                fields: { 'Atoms': 'C + 4H', 'Start': '90°', 'Target': '109.47°', 'Steric #': '4' }});
+                fields: { 'Atoms': 'C + 4H', 'Start': '90°', 'Target': '109.47°', 'Steric #': '4' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
             break;
         }
@@ -3693,13 +3759,15 @@ function loadAEScenario(name) {
             const theta0 = 150 * Math.PI / 180;
             bridge.aeAddAtom(8, 0, 0, 0, 0, 0, 0, 0);
             bridge.aeAddAtom(1, r, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, r*Math.cos(theta0), r*Math.sin(theta0), 0, 0, 0, 0, 0);
+            bridge.aeAddAtom(1, r * Math.cos(theta0), r * Math.sin(theta0), 0, 0, 0, 0, 0);
             bridge.aeSetBonding(true); bridge.aePreBond();
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
             _aeSetPhase3({ angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'H₂O VSEPR',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'H₂O VSEPR',
                 desc: 'H₂O starts at 150° — lone pairs drive H-O-H toward 104.5° bent.',
-                fields: { 'Atoms': 'O + 2H', 'Start': '150°', 'Target': '104.5°', 'Lone pairs': '2' }});
+                fields: { 'Atoms': 'O + 2H', 'Start': '150°', 'Target': '104.5°', 'Lone pairs': '2' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
             break;
         }
@@ -3709,19 +3777,21 @@ function loadAEScenario(name) {
         // ══════════════════════════════════════════════════════════════
         case 'ae-thermal-gas': {
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
+            bridge.aeSetIonic(false); document.getElementById('ae-ionic').checked = false;
             _aeSetPhase3({ thermostat: true, temp: 1.0 });
             const L = 15;
             for (let n = 0; n < 12; n++) {
-                const x = (Math.random()-0.5)*2*L, y = (Math.random()-0.5)*2*L, z = (Math.random()-0.5)*2*L;
-                const speed = 0.3 + Math.random()*0.5;
-                const phi = Math.random()*2*Math.PI, th = Math.acos(2*Math.random()-1);
+                const x = (Math.random() - 0.5) * 2 * L, y = (Math.random() - 0.5) * 2 * L, z = (Math.random() - 0.5) * 2 * L;
+                const speed = 0.3 + Math.random() * 0.5;
+                const phi = Math.random() * 2 * Math.PI, th = Math.acos(2 * Math.random() - 1);
                 bridge.aeAddAtom(18, x, y, z,
-                    speed*Math.sin(th)*Math.cos(phi), speed*Math.sin(th)*Math.sin(phi), speed*Math.cos(th), 0);
+                    speed * Math.sin(th) * Math.cos(phi), speed * Math.sin(th) * Math.sin(phi), speed * Math.cos(th), 0);
             }
-            if (inspector) inspector.setScenarioInfo({ title: 'Thermal Gas',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Thermal Gas',
                 desc: '12 Ar atoms with Berendsen thermostat — temperature stabilizes at T=1.',
-                fields: { 'Atoms': '12 × Ar', 'Force': 'vdW only', 'Thermostat': 'ON (T=1.0)' }});
+                fields: { 'Atoms': '12 × Ar', 'Force': 'vdW only', 'Thermostat': 'ON (T=1.0)' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
             break;
         }
@@ -3729,9 +3799,11 @@ function loadAEScenario(name) {
             bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
             bridge.aeAddAtom(18, -20, 0, 0, 0.4, 0, 0, 0);
             bridge.aeAddAtom(18, 20, 0, 0, -0.4, 0, 0, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'Head-On Collision',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Head-On Collision',
                 desc: 'Two Ar atoms approach at speed — LJ repulsion at short range.',
-                fields: { 'Atoms': '2 × Ar', 'Force': 'vdW (LJ 12-6)', 'Speed': '0.4 each' }});
+                fields: { 'Atoms': '2 × Ar', 'Force': 'vdW (LJ 12-6)', 'Speed': '0.4 each' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 50); viewport.controls.update(); }
             break;
         }
@@ -3748,12 +3820,14 @@ function loadAEScenario(name) {
             for (let ix = -1; ix <= 1; ix += 2)
                 for (let iy = -1; iy <= 1; iy += 2)
                     for (let iz = -1; iz <= 1; iz += 2)
-                        bridge.aeAddAtom(26, ix*a, iy*a, iz*a, 0, 0, 0, 0);
+                        bridge.aeAddAtom(26, ix * a, iy * a, iz * a, 0, 0, 0, 0);
             bridge.aeAddAtom(26, 0, 0, 0, 0, 0, 0, 0);
             bridge.aePreBond();
-            if (inspector) inspector.setScenarioInfo({ title: 'Fe BCC Cluster',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Fe BCC Cluster',
                 desc: 'Iron atoms in body-centered cubic arrangement — metallic bonding.',
-                fields: { 'Atoms': '9 × Fe', 'Layout': 'BCC (8 corners + center)', 'Force': 'vdW + bond' }});
+                fields: { 'Atoms': '9 × Fe', 'Layout': 'BCC (8 corners + center)', 'Force': 'vdW + bond' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 15); viewport.controls.update(); }
             break;
         }
@@ -3769,9 +3843,11 @@ function loadAEScenario(name) {
             bridge.aeAddAtom(29, 0, 0, a, 0, 0, 0, 0);     // +z
             bridge.aeAddAtom(29, 0, 0, -a, 0, 0, 0, 0);    // -z
             bridge.aePreBond();
-            if (inspector) inspector.setScenarioInfo({ title: 'Cu FCC Seed',
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Cu FCC Seed',
                 desc: 'Copper atoms in face-centered cubic seed — nearest-neighbor bonding.',
-                fields: { 'Atoms': '7 × Cu', 'Layout': 'FCC (center + 6 face)', 'Force': 'vdW + bond' }});
+                fields: { 'Atoms': '7 × Cu', 'Layout': 'FCC (center + 6 face)', 'Force': 'vdW + bond' }
+            });
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 15); viewport.controls.update(); }
             break;
         }
@@ -3928,10 +4004,10 @@ function loadMoleculeScenario(name) {
         const postData = bridge.aeGetAtomData();
         let maxDisp = 0;
         for (let i = 0; i < postData.count; i++) {
-            const dx = postData.positions[i*3] - preData.positions[i*3];
-            const dy = postData.positions[i*3+1] - preData.positions[i*3+1];
-            const dz = postData.positions[i*3+2] - preData.positions[i*3+2];
-            maxDisp = Math.max(maxDisp, Math.sqrt(dx*dx + dy*dy + dz*dz));
+            const dx = postData.positions[i * 3] - preData.positions[i * 3];
+            const dy = postData.positions[i * 3 + 1] - preData.positions[i * 3 + 1];
+            const dz = postData.positions[i * 3 + 2] - preData.positions[i * 3 + 2];
+            maxDisp = Math.max(maxDisp, Math.sqrt(dx * dx + dy * dy + dz * dz));
         }
         if (maxDisp > 1) console.warn(`[FTD] ${molId}: UNSTABLE — max displacement ${maxDisp.toFixed(4)}`);
 
@@ -4118,9 +4194,9 @@ function _markScenarioOverrides() {
 function _syncComboSliders() {
     const defaults = { kb: K_B, gn: G_N, damping: DAMPING };
     const map = [
-        { id: 'combo-kb',   valId: 'combo-kb-val',   param: 'kb',      fmt: 3 },
-        { id: 'combo-gn',   valId: 'combo-gn-val',   param: 'gn',      fmt: 3 },
-        { id: 'combo-damp', valId: 'combo-damp-val',  param: 'damping', fmt: 3 },
+        { id: 'combo-kb', valId: 'combo-kb-val', param: 'kb', fmt: 3 },
+        { id: 'combo-gn', valId: 'combo-gn-val', param: 'gn', fmt: 3 },
+        { id: 'combo-damp', valId: 'combo-damp-val', param: 'damping', fmt: 3 },
     ];
     for (const s of map) {
         const slider = document.getElementById(s.id);

@@ -1,6 +1,5 @@
 /* FTD Engine — Design tokens, CSS reset, and base styles
- * Extracted from index.html inline styles.
- * Part of the modular CSS architecture (Phase 0).
+ * Upgraded to Spatial Glassmorphism Architecture
  */
 
 /* ── Reset ─────────────────────────────────────────── */
@@ -18,41 +17,60 @@
     --ui-scale: 1.1;
 
     /* Scaled font sizes (base * scale) */
-    --fs-xs:    calc(10px * var(--ui-scale));
-    --fs-sm:    calc(11px * var(--ui-scale));
-    --fs-base:  calc(12px * var(--ui-scale));
-    --fs-md:    calc(13px * var(--ui-scale));
-    --fs-lg:    calc(14px * var(--ui-scale));
-    --fs-xl:    calc(16px * var(--ui-scale));
-    --fs-2xl:   calc(20px * var(--ui-scale));
-    --fs-3xl:   calc(24px * var(--ui-scale));
+    --fs-xs:    calc(10.5px * var(--ui-scale));
+    --fs-sm:    calc(11.5px * var(--ui-scale));
+    --fs-base:  calc(13px * var(--ui-scale));
+    --fs-md:    calc(14px * var(--ui-scale));
+    --fs-lg:    calc(15px * var(--ui-scale));
+    --fs-xl:    calc(18px * var(--ui-scale));
+    --fs-2xl:   calc(22px * var(--ui-scale));
+    --fs-3xl:   calc(28px * var(--ui-scale));
 
     /* Scaled spacing */
     --sp-xs:    calc(2px * var(--ui-scale));
-    --sp-sm:    calc(4px * var(--ui-scale));
-    --sp-md:    calc(8px * var(--ui-scale));
-    --sp-lg:    calc(12px * var(--ui-scale));
-    --sp-xl:    calc(16px * var(--ui-scale));
+    --sp-sm:    calc(6px * var(--ui-scale));
+    --sp-md:    calc(10px * var(--ui-scale));
+    --sp-lg:    calc(16px * var(--ui-scale));
+    --sp-xl:    calc(20px * var(--ui-scale));
 
-    --bg-deep: #111827;
-    --bg-surface: #1f2937;
-    --bg-card: #283548;
-    --bg-input: #374151;
-    --border: #374151;
-    --border-light: #4b5563;
-    --text-primary: #f3f4f6;
-    --text-secondary: #9ca3af;
-    --text-muted: #8b95a5;
-    --accent: #60a5fa;
-    --accent-dim: #3b82f6;
-    --positive: #4ade80;
-    --negative: #f87171;
-    --warning: #fbbf24;
-    --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Consolas', monospace;
-    --radius: 4px;
-    --radius-lg: 8px;
-    /* Consciousness mode tokens (merged from second :root) */
+    /* Color Palette - Vibrant Physics */
+    --bg-deep: #05080f; /* Pitch dark void */
+    
+    /* Glassmorphism Panels */
+    --bg-surface: rgba(10, 15, 26, 0.45);
+    --bg-card: rgba(18, 26, 47, 0.55);
+    --bg-input: rgba(25, 36, 60, 0.65);
+    
+    /* Borders */
+    --border: rgba(255, 255, 255, 0.1);
+    --border-light: rgba(255, 255, 255, 0.18);
+    --border-glow: rgba(0, 229, 255, 0.4);
+    
+    /* Text Hierarchy */
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-muted: rgba(255, 255, 255, 0.6);
+    
+    /* Vibrant Interaction Accents */
+    --accent: #00e5ff;       /* Pure cyan */
+    --accent-dim: #0088aa;   /* Deep cyan */
+    --accent-glow: #00e5ff88;
+    
+    --positive: #34d399;     /* Vibrant emerald */
+    --negative: #fb7185;     /* Vibrant rose */
+    --warning: #fbbf24;      /* Luminous amber */
+    
+    /* Typography */
+    --font-heading: 'Outfit', 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    
+    /* Radii */
+    --radius: 6px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* Consciousness mode overrides */
     --consciousness-primary: #00e5ff;
     --consciousness-secondary: #7c4dff;
     --consciousness-glow: #00bcd4;
@@ -60,20 +78,69 @@
 }
 
 /* ── Base ──────────────────────────────────────────── */
-html,
-body {
+html, body {
     height: 100%;
     overflow: hidden;
     background: var(--bg-deep);
     color: var(--text-primary);
     font-family: var(--font-body);
     font-size: var(--fs-lg);
-    line-height: 1.4;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Smooth theme transitions ────────────────────── */
+/* ── Form Element Primitives (Native Dark Theming) ── */
+input, select, textarea {
+    color-scheme: dark;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%2300e5ff" stroke-width="2"><path d="M16 15l-4-4-4 4"/><path d="M16 9l-4 4-4-4"/></svg>') no-repeat center center;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+input[type="number"]::-webkit-inner-spin-button:hover,
+input[type="number"]::-webkit-outer-spin-button:hover {
+    opacity: 1;
+}
+
+/* ── Smooth Dynamics ──────────────────────────────── */
 body, #toolbar, #tab-bar, .tab, #panel-area, .panel, .card,
 #status-bar, .tb-btn, .tb-select, .view-toggle, .meta-card,
-.meta-btn, .meta-shell-row, .meta-stat, .settings-box {
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+.meta-btn, .settings-box {
+    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Global Custom Scrollbar ────── */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(10, 15, 26, 0.45);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 229, 255, 0.2);
+    border-radius: 4px;
+    border: 1px solid rgba(0, 229, 255, 0.4);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 229, 255, 0.5);
+}
+::-webkit-resizer {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%2300e5ff" stroke-width="2"><line x1="21" y1="14" x2="14" y2="21"/><line x1="21" y1="8" x2="8" y2="21"/><line x1="21" y1="2" x2="2" y2="21"/></svg>') bottom right no-repeat;
+    opacity: 0.7;
 }

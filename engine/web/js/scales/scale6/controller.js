@@ -69,8 +69,12 @@ export function loadMetaScenario(ctx) {
         viewport.controls.update();
     }
 
-    // Create MetaUnit if not already present
-    if (!metaUnit && viewport.scene) {
+    // Dispose stale MetaUnit and recreate
+    if (metaUnit) {
+        if (metaUnit.dispose) metaUnit.dispose();
+        metaUnit = null;
+    }
+    if (viewport.scene) {
         metaUnit = new MetaUnit(viewport.scene, viewport.camera, viewport.renderer);
     }
 
@@ -120,16 +124,32 @@ export function loadMetaScenario(ctx) {
 // ---------------------------------------------------------------------------
 
 /**
- * Per-frame meta update. Currently a no-op since the MetaUnit handles its
- * own animation via auto-rotate. Reserved for future per-tick diagnostics
- * (e.g. animating symmetry operations or mode decomposition).
+ * Per-frame meta update. Drives auto-rotate and any future per-tick
+ * animations. Called from the main rAF loop.
  *
+ * @param {object} ctx - Shared context: { viewport }
  * @param {number} dt - Time delta in seconds since last frame
  */
-export function updateMeta(dt) {
+export function updateMeta(ctx, dt) {
     if (metaUnit && metaUnit.update) {
         metaUnit.update(dt);
     }
+    if (ctx && ctx.viewport) ctx.viewport.render();
+}
+
+// ---------------------------------------------------------------------------
+// step  -- single-tick step (called from Step button)
+// ---------------------------------------------------------------------------
+
+/**
+ * Advance the meta visualization by one frame step and re-render.
+ * Meta scale has no simulation; this just updates auto-rotate.
+ *
+ * @param {object} ctx - Shared context: { viewport }
+ */
+export function step(ctx) {
+    if (metaUnit && metaUnit.update) metaUnit.update(1 / 60);
+    if (ctx && ctx.viewport) ctx.viewport.render();
 }
 
 // ---------------------------------------------------------------------------
@@ -146,5 +166,9 @@ export function resetScale6(ctx) {
     if (metaUnit) {
         if (metaUnit.dispose) metaUnit.dispose();
         metaUnit = null;
+    }
+    // Restore lattice particles visibility for other scales
+    if (ctx && ctx.viewport && ctx.viewport.particles) {
+        ctx.viewport.particles.visible = true;
     }
 }

@@ -17,3 +17,14 @@ export const CS_SCENARIO_DESCRIPTIONS = {
     'cs-flow':           'Fast vortex pattern with effective \u03B8 < 52.54\u00B0 (object-dominant flow state). The holographic figure responds with rapid, outward-focused dynamics.',
     'cs-meditation':     'Gentle centered pulse with effective \u03B8 > 52.54\u00B0 (subject-dominant contemplative state). The observer turns inward, producing slow, resonant breathing patterns.',
 };
+
+export const QUANTUM_SCENARIO_DESCRIPTIONS = {
+    'quantum-born-rule': 'Born Rule Convergence: Tests that manifestation probability converges to |J|^2. Runs N trials with random-phase Gaussian flux, accumulates positions, verifies Born rule emergence from deterministic lattice dynamics. [THEOREM]',
+    'quantum-double-slit': 'Quantitative Double-Slit: Two coherent sources create interference on a detector screen. Measures fringe visibility V = (Imax-Imin)/(Imax+Imin) and fringe spacing. Tests wave-particle duality from the two-layer ontology.',
+    'quantum-tunnel': 'Quantum Tunneling: Flux packet encounters a potential barrier (locked charge wall). Measures transmission T vs barrier width W. Expected: T proportional to exp(-2 kappa W), demonstrating evanescent wave penetration.',
+    'quantum-well': 'Particle in a Box: Broadband flux confined between reflective walls. FFT of time series reveals discrete frequency peaks at f_n proportional to n^2, demonstrating energy quantization from boundary conditions.',
+    'quantum-entangle': 'Entanglement Correlation: Pair production creates correlated +1/-1 particles. Measures spin-charge correlation C(d) vs separation distance. Tests decoherence length and correlation decay.',
+    'quantum-aharonov-bohm': 'Aharonov-Bohm Effect: Two flux packets traverse paths around a confined solenoid. Phase shift at convergence point is proportional to enclosed flux, even though B=0 outside. Tests topological phase.',
+    'quantum-casimir': 'Casimir Effect: Two parallel reflective plates in a vacuum foam background. Energy density between plates differs from outside, creating boundary-modified vacuum pressure. Expected: F proportional to 1/d^4.',
+    'quantum-zeno': 'Quantum Zeno Effect: Near-threshold flux with periodic "measurement" (flux sampling). Frequent measurement suppresses decay (manifestation). Tests the measurement-inhibition prediction.',
+};

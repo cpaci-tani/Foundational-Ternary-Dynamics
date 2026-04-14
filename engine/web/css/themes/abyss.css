@@ -16,6 +16,8 @@ html[data-theme="abyss"] {
     --text-muted: #606078;
     --accent: #6366f1;
     --accent-dim: #4f46e5;
+    --accent-glow: #6366f188;
+    --text-muted: #7878a0;
 }
 
 /* Viewport background override */
