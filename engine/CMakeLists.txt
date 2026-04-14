@@ -976,7 +976,11 @@ set_tests_properties(
 # ============================================================================
 
 # Unit tests (108 test_*.cpp files)
-set_tests_properties(
+# Using set_property(... APPEND ...) so later scale1/scale2/lagrangian
+# blocks can stack their category labels on top of "unit" rather than
+# overwriting it. Tests that are BOTH unit AND scale1 (e.g. pe_forces,
+# particle_engine) will end up with labels=[unit, scale1].
+set_property(TEST
     constants lorentz lattice born_infeld energy gauss stress_energy
     thermodynamics lagrangian ontic_chain dual_substrate genesis
     gravity_dynamics annihilation annihilation_conservation wave_collapse
@@ -998,10 +1002,12 @@ set_tests_properties(
     particle_toggles spin_statistics triad_confinement wz_mass
     falsifiability inflation dark_matter cosmological_constant consciousness
     sloop lorentz_invariance electroweak hydrogen_em_only
-    PROPERTIES LABELS "unit")
+    APPEND PROPERTY LABELS "unit")
 
 # Campaign tests (47 campaign_*.cpp files)
-set_tests_properties(
+# APPEND is critical so campaign-level labels (scale1, scale2, gpu, etc.)
+# stack on top of these category labels rather than overwriting them.
+set_property(TEST
     campaign_dispersion campaign_gauge_dynamics campaign_gauge_constraint
     campaign_free_dynamics campaign_aggregate_interaction
     campaign_poisson_force_law campaign_poisson_binding campaign_poisson_hydrogen
@@ -1020,31 +1026,32 @@ set_tests_properties(
     campaign_cosmological_predictions campaign_dark_sector campaign_novel_predictions
     campaign_integer_sweep campaign_hydrogen_spectrum campaign_two_slit
     campaign_pe_fine_structure campaign_ae_water campaign_lorentz_measure
-    PROPERTIES LABELS "campaign")
+    APPEND PROPERTY LABELS "campaign")
 
 # Foundation tests (fast math/constants checks)
-set_tests_properties(
+set_property(TEST
     constants lorentz lattice ontic_chain born_infeld voxel_properties
     lattice_operators discrete_operators dissipation magnetic_lagrangian
-    PROPERTIES LABELS "foundation")
+    APPEND PROPERTY LABELS "foundation")
 
 # Lagrangian & variational tests
-set_tests_properties(
+set_property(TEST
     lagrangian variational_coulomb magnetic_lagrangian dissipation
     action_stationarity
-    PROPERTIES LABELS "lagrangian")
+    APPEND PROPERTY LABELS "lagrangian")
 
 # Scale 1: ParticleEngine tests
-set_tests_properties(
+# APPEND so pe_forces keeps both "unit" (from ftd_add_test) and "scale1".
+set_property(TEST
     particle_engine pe_forces particle_toggles
     campaign_pe_fine_structure
-    PROPERTIES LABELS "scale1")
+    APPEND PROPERTY LABELS "scale1")
 
 # Scale 2: AtomEngine tests
-set_tests_properties(
+set_property(TEST
     atom_engine atom_scale_bridge ae_hbonds ae_angle_strain ae_dipole
     ae_thermostat ae_electronegativity atom_toggles campaign_ae_water
-    PROPERTIES LABELS "scale2")
+    APPEND PROPERTY LABELS "scale2")
 
 # ============================================================================
 # GPU labels (Phase 0, FTD Test Bench)
