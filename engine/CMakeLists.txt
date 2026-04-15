@@ -857,6 +857,8 @@ add_test(NAME electroweak COMMAND test_electroweak)
 add_test(NAME campaign_lorentz_measure COMMAND ftd_lorentz_measure)
 
 # Timeouts for long-running tests (10 min)
+# Skip under EMSCRIPTEN — these native tests aren't built for WASM.
+if(NOT EMSCRIPTEN)
 set_tests_properties(
     benchmark logic_engine energy_conservation
     selffield_profile wavepacket
@@ -900,10 +902,14 @@ set_tests_properties(
     campaign_free_dynamics campaign_aggregate_interaction
     campaign_gravity_profile flux_mediated
     PROPERTIES TIMEOUT 1800)
+endif() # NOT EMSCRIPTEN — end of timeout blocks
 
 # ============================================================================
 # CTest Labels — run subsets with: ctest -L <label>
 # ============================================================================
+# Skip the entire label section under EMSCRIPTEN — native tests aren't
+# built for WASM, so set_property(TEST ...) would fail on nonexistent names.
+if(NOT EMSCRIPTEN)
 
 # Unit tests (108 test_*.cpp files)
 # Using set_property(... APPEND ...) so later scale1/scale2/lagrangian
@@ -1022,6 +1028,8 @@ if(FTD_ENABLE_CUDA)
     endforeach()
     unset(_ftd_gpu_tests)
 endif()
+
+endif() # NOT EMSCRIPTEN — end of CTest labels block
 
 # ============================================================================
 # FTD Test Bench (Phase 3+: Qt6 native test runner)
