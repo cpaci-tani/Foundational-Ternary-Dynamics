@@ -137,8 +137,18 @@ StampResult stella_octangula(RenderBridge& rb, Coord center, int8_t state) {
 }
 
 StampResult moore_cell(RenderBridge& rb, Coord center, int8_t state) {
-    (void)rb; (void)state;
-    return StampResult{"moore_cell", 1, center, {}};
+    auto r_oct  = octahedron(rb, center, state);
+    auto r_cub  = cuboctahedron(rb, center, state);
+    auto r_stel = stella_octangula(rb, center, state);
+
+    StampResult r{"moore_cell", 1, center, {}};
+    r.sites.reserve(r_oct.sites.size() + r_cub.sites.size() + r_stel.sites.size());
+    r.sites.insert(r.sites.end(), r_oct.sites.begin(),  r_oct.sites.end());
+    r.sites.insert(r.sites.end(), r_cub.sites.begin(),  r_cub.sites.end());
+    r.sites.insert(r.sites.end(), r_stel.sites.begin(), r_stel.sites.end());
+    std::sort(r.sites.begin(), r.sites.end());
+    r.sites.erase(std::unique(r.sites.begin(), r.sites.end()), r.sites.end());
+    return r;
 }
 
 }  // namespace ctor

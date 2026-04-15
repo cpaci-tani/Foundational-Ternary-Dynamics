@@ -323,6 +323,55 @@ static void section_level1a_stella_octangula() {
     ftd::test::check("S11: no leakage in 5x5x5 box", no_leakage(rb, center, r.sites));
 }
 
+static void section_level1a_moore_cell() {
+    ftd::test::section("Level 1A / moore_cell");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::moore_cell(rb, center, +1);
+
+    ftd::test::check("M1: name is 'moore_cell'", std::string(r.name) == "moore_cell");
+    ftd::test::check("M2: level is 1",           r.level == 1);
+    ftd::test::check("M3: exactly 26 sites",     r.sites.size() == 26);
+
+    bool all_set = true;
+    for (int idx : r.sites) {
+        if (rb.voxels()[idx].state != 1) { all_set = false; break; }
+    }
+    ftd::test::check("M4: every site has state=+1", all_set);
+
+    std::set<std::tuple<int,int,int>> expected;
+    for (int dx = -1; dx <= 1; ++dx)
+    for (int dy = -1; dy <= 1; ++dy)
+    for (int dz = -1; dz <= 1; ++dz)
+        if (dx || dy || dz) expected.insert({dx, dy, dz});
+    auto offs = offsets_from_sites(rb.lattice(), center, r.sites);
+    ftd::test::check("M5: offsets match full Moore neighborhood", offs == expected);
+
+    ftd::test::check("M6: invariant under 90deg rotation around x", is_rotation_invariant(offs, 0));
+    ftd::test::check("M7: invariant under 90deg rotation around y", is_rotation_invariant(offs, 1));
+    ftd::test::check("M8: invariant under 90deg rotation around z", is_rotation_invariant(offs, 2));
+
+    const auto& cvox = rb.voxels()[rb.lattice().index(8, 8, 8)];
+    ftd::test::check("M9: center voxel unmodified", cvox.state == 0);
+
+    ftd::test::check("M10: no leakage in 5x5x5 box", no_leakage(rb, center, r.sites));
+
+    // Union identity: moore_cell == octahedron union cuboctahedron union stella_octangula
+    ftd::RenderBridge rb2(16);
+    auto ro = ftd::ctor::octahedron(rb2, center, +1);
+    auto rc = ftd::ctor::cuboctahedron(rb2, center, +1);
+    auto rs = ftd::ctor::stella_octangula(rb2, center, +1);
+    std::set<int> union_set;
+    for (int i : ro.sites) union_set.insert(i);
+    for (int i : rc.sites) union_set.insert(i);
+    for (int i : rs.sites) union_set.insert(i);
+    std::set<int> moore_set(r.sites.begin(), r.sites.end());
+    ftd::test::check("M11: union identity (moore_cell = oct + cub + stella)",
+                     moore_set == union_set);
+}
+
 int main() {
     ftd::test::init("test_constructors");
     section_level0_flux();
@@ -332,5 +381,6 @@ int main() {
     section_level1a_octahedron();
     section_level1a_cuboctahedron();
     section_level1a_stella_octangula();
+    section_level1a_moore_cell();
     return ftd::test::finalize();
 }
