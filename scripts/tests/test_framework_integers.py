@@ -16,13 +16,12 @@ This test verifies:
 - No alternative integer sets work
 """
 
-import unittest
+import sys
+import os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))
+from constants import N_c, N_base, b_3, N_eff
 
-# Framework integers
-N_c = 3  # Number of colors (quark color charge)
-N_base = 4  # Base dimension constant
-b_3 = 7  # QCD beta function first coefficient
-N_eff = 13  # Effective degrees of freedom
+import unittest
 
 
 class TestFrameworkIntegers(unittest.TestCase):
