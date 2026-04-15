@@ -9,7 +9,8 @@
 import {
     ALPHA, K_B, PI_FTD, N_C, B_3, N_EFF, N_BASE,
     MU_RATIO, TAU_RATIO, M_PROTON,
-    SIN2_WEINBERG, M_W, M_Z, G_FERMI, HBAR_C_MEV_FM
+    SIN2_WEINBERG, M_W, M_Z, G_FERMI, HBAR_C_MEV_FM,
+    M_P_PHYS, M_PI_CH_PHYS, M_PI_0_PHYS
 } from './constants.js';
 
 // ── Masses from Ontic Chain ──────────────────────────────────────────
@@ -17,10 +18,12 @@ import {
 export const M_ELECTRON = K_B;                      // 0.511 MeV
 export const M_MUON     = K_B * MU_RATIO;           // 105.7 MeV
 export const M_TAU      = K_B * TAU_RATIO;          // 1776.7 MeV (0.007%)
-export const M_PROTON_PHYS = 938.272;                // Physical proton mass (PDG)
+// Re-export the PDG proton mass from constants.js as M_PROTON_PHYS so
+// existing consumers of this module keep working (Phase D.2).
+export const M_PROTON_PHYS = M_P_PHYS;              // Physical proton mass (PDG)
 export const M_NEUTRON  = M_PROTON_PHYS + 1.293;    // neutron = proton + 1.293 MeV
-export const M_PION_CHARGED = 139.57;               // MeV (input)
-export const M_PION_NEUTRAL = 135.0;                // MeV (input)
+export const M_PION_CHARGED = M_PI_CH_PHYS;         // charged pion (PDG)
+export const M_PION_NEUTRAL = M_PI_0_PHYS;          // neutral pion (PDG)
 
 // Conversion: hbar in MeV*s
 const HBAR_MEV_S = 6.582119569e-22; // MeV·s

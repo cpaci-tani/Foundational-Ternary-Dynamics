@@ -1045,40 +1045,72 @@ export class CosmicMockBridge {
         if (!this._enableSubgrid) return;
 
         const T = CosmicMockBridge.TYPE;
-        const isGas = (t) => t === T.GAS || t === T.NEBULA;
-        const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
-        const isBH = (t) => t === T.BLACK_HOLE || t === T.QUASAR;
         const baseSoft2 = this._softening * this._softening;
 
+        // Hoist _bodies once; indexed access is faster than `for..of` on
+        // the common hot path and avoids repeated `this.` lookups (Phase C.1).
+        const bodies = this._bodies;
+        const nb = bodies.length;
+
+        // Pre-classify bodies into index arrays so each sub-grid loop below
+        // can iterate only the relevant subset instead of scanning all N
+        // bodies and filtering inside the hot inner loop (Phase C.1).
+        const gasIdx  = [];
+        const starIdx = [];
+        const bhIdx   = [];
+        for (let i = 0; i < nb; i++) {
+            const t = bodies[i].type;
+            if (t === T.GAS || t === T.NEBULA) {
+                gasIdx.push(i);
+            } else if (t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF) {
+                starIdx.push(i);
+            } else if (t === T.BLACK_HOLE || t === T.QUASAR) {
+                bhIdx.push(i);
+            }
+        }
+        const nGas  = gasIdx.length;
+        const nStar = starIdx.length;
+        const nBH   = bhIdx.length;
+
         // Tidal spaghettification (conservative — radial stretch only)
-        for (const bh of this._bodies) {
-            if (!isBH(bh.type)) continue;
-            const r_tidal = Math.max(8.0, Math.cbrt(bh.mass) * 1.5);
+        for (let bi = 0; bi < nBH; bi++) {
+            const bh = bodies[bhIdx[bi]];
+            const bhMass = bh.mass;
+            const bhx = bh.x, bhy = bh.y, bhz = bh.z;
+            const bhId = bh.id;
+            const r_tidal = Math.max(8.0, Math.cbrt(bhMass) * 1.5);
             const r_tidal2 = r_tidal * r_tidal;
-            for (const b of this._bodies) {
-                if (b.id === bh.id) continue;
-                const dx = b.x - bh.x, dy = b.y - bh.y, dz = b.z - bh.z;
+            const tidalK = 2.0 * G * bhMass * 0.3; // invariant outside inner loop
+            for (let i = 0; i < nb; i++) {
+                const b = bodies[i];
+                if (b.id === bhId) continue;
+                const dx = b.x - bhx, dy = b.y - bhy, dz = b.z - bhz;
                 const r2 = dx * dx + dy * dy + dz * dz;
                 if (r2 > r_tidal2 || r2 < 0.01) continue;
                 const r = Math.sqrt(r2);
                 const invR = 1.0 / r;
-                const rx = dx * invR, ry = dy * invR, rz = dz * invR;
                 // Conservative tidal stretch: a = +2*G*M/(r^3) along r-hat
-                const tidalStrength = 2.0 * G * bh.mass / (r2 * r) * 0.3;
-                b.ax += tidalStrength * rx;
-                b.ay += tidalStrength * ry;
-                b.az += tidalStrength * rz;
+                // = tidalK / (r2 * r) along (dx,dy,dz)/r
+                const tidalStrength = tidalK / (r2 * r);
+                b.ax += tidalStrength * dx * invR;
+                b.ay += tidalStrength * dy * invR;
+                b.az += tidalStrength * dz * invR;
             }
         }
 
         // Gas cooling — reduces internal energy (NOT velocity drag)
-        for (const b of this._bodies) {
-            if (!isGas(b.type)) continue;
+        const coolRadius2 = baseSoft2 * 25;
+        for (let gi = 0; gi < nGas; gi++) {
+            const b = bodies[gasIdx[gi]];
+            const bx = b.x, by = b.y, bz = b.z;
             let localDensity = b.mass;
-            for (const other of this._bodies) {
-                if (other.id === b.id || !isGas(other.type)) continue;
-                const dr2 = (b.x-other.x)**2 + (b.y-other.y)**2 + (b.z-other.z)**2;
-                if (dr2 < baseSoft2 * 25) localDensity += other.mass;
+            // Iterate only other gas bodies (inner filter was O(N) scan before)
+            for (let gj = 0; gj < nGas; gj++) {
+                if (gj === gi) continue;
+                const other = bodies[gasIdx[gj]];
+                const dx = bx - other.x, dy = by - other.y, dz = bz - other.z;
+                const dr2 = dx*dx + dy*dy + dz*dz;
+                if (dr2 < coolRadius2) localDensity += other.mass;
             }
             const coolingRate = Math.min(0.0002, 0.000002 * localDensity);
             // Energy-based cooling: reduce internal energy → pressure drops naturally
@@ -1089,38 +1121,48 @@ export class CosmicMockBridge {
         // Gas pressure (SPH-like repulsion)
         const h_press = this._softening * 2.5;
         const h_press2 = h_press * h_press;
-        for (let i = 0; i < n; i++) {
-            const bi = this._bodies[i];
-            if (!isGas(bi.type)) continue;
-            for (let j = i + 1; j < n; j++) {
-                const bj = this._bodies[j];
-                if (!isGas(bj.type)) continue;
-                const dx = bj.x - bi.x, dy = bj.y - bi.y, dz = bj.z - bi.z;
+        for (let gi = 0; gi < nGas; gi++) {
+            const bi_idx = gasIdx[gi];
+            const bi = bodies[bi_idx];
+            const bix = bi.x, biy = bi.y, biz = bi.z;
+            const biMass = bi.mass;
+            const biE = bi.internal_energy;
+            for (let gj = gi + 1; gj < nGas; gj++) {
+                const bj = bodies[gasIdx[gj]];
+                const dx = bj.x - bix, dy = bj.y - biy, dz = bj.z - biz;
                 const r2 = dx * dx + dy * dy + dz * dz;
                 if (r2 > h_press2 || r2 < 1e-10) continue;
                 const r = Math.sqrt(r2);
                 const q = r / h_press;
-                const T_avg = 0.5 * (bi.internal_energy + bj.internal_energy);
+                const T_avg = 0.5 * (biE + bj.internal_energy);
                 const pressScale = 1.0 + T_avg * 0.1;
-                const fmag = G * pressScale * 0.3 * (bi.mass + bj.mass) * (1 - q) * (1 - q) / (r2 + baseSoft2);
-                bi.ax -= fmag * dx / r; bi.ay -= fmag * dy / r; bi.az -= fmag * dz / r;
-                bj.ax += fmag * dx / r; bj.ay += fmag * dy / r; bj.az += fmag * dz / r;
+                const fmag = G * pressScale * 0.3 * (biMass + bj.mass) * (1 - q) * (1 - q) / (r2 + baseSoft2);
+                const invR = 1.0 / r;
+                const fx = fmag * dx * invR, fy = fmag * dy * invR, fz = fmag * dz * invR;
+                bi.ax -= fx; bi.ay -= fy; bi.az -= fz;
+                bj.ax += fx; bj.ay += fy; bj.az += fz;
             }
         }
 
         // Stellar radiation pressure on gas
-        for (const star of this._bodies) {
-            if (!isStar(star.type) || star.luminosity <= 0) continue;
-            for (const gas of this._bodies) {
-                if (!isGas(gas.type)) continue;
-                const dx = gas.x - star.x, dy = gas.y - star.y, dz = gas.z - star.z;
+        const radMaxR2 = 400;
+        const radInvC = 1.0 / (4 * Math.PI * 0.577);
+        for (let si = 0; si < nStar; si++) {
+            const star = bodies[starIdx[si]];
+            if (!(star.luminosity > 0)) continue;
+            const sx = star.x, sy = star.y, sz = star.z;
+            const starK = star.luminosity * radInvC * 0.001;
+            for (let gi = 0; gi < nGas; gi++) {
+                const gas = bodies[gasIdx[gi]];
+                const dx = gas.x - sx, dy = gas.y - sy, dz = gas.z - sz;
                 const r2 = dx * dx + dy * dy + dz * dz + baseSoft2;
-                if (r2 > 400) continue;
+                if (r2 > radMaxR2) continue;
                 const r = Math.sqrt(r2);
-                const f_rad = star.luminosity / (4 * Math.PI * r2 * 0.577) * 0.001;
-                gas.ax += f_rad * dx / r;
-                gas.ay += f_rad * dy / r;
-                gas.az += f_rad * dz / r;
+                const f_rad = starK / r2;
+                const invR = 1.0 / r;
+                gas.ax += f_rad * dx * invR;
+                gas.ay += f_rad * dy * invR;
+                gas.az += f_rad * dz * invR;
             }
         }
     }

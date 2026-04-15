@@ -10,6 +10,8 @@
  * Also displays Hamiltonian, total Lagrangian, and discrete Action S.
  */
 
+import { createCachedCanvasRect } from './dom-utils.js';
+
 const BUFFER_SIZE = 400;
 const TERM_COLORS = {
     fieldKinetic:  '#66bb6a',
@@ -70,6 +72,8 @@ export class LagrangianChart {
     constructor(canvas) {
         this.canvas = canvas;
         this.buffer = new TermBuffer();
+        // Phase C.3: cache rect, refreshed via ResizeObserver
+        this._rectCache = canvas ? createCachedCanvasRect(canvas) : null;
         this.visible = {
             fieldKinetic: true,
             fieldGradient: true,
@@ -122,7 +126,7 @@ export class LagrangianChart {
     draw() {
         const canvas = this.canvas;
         if (!canvas) return;
-        const rect = canvas.getBoundingClientRect();
+        const rect = this._rectCache ? this._rectCache.get() : canvas.getBoundingClientRect();
         const w = rect.width;
         const h = rect.height;
         // PERF: Skip drawing when canvas is hidden (zero-size or offscreen)

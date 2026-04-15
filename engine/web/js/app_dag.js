@@ -5,7 +5,7 @@
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge, MockBridge } from './wasm-bridge-dag.js?v=20260408a';
+import { createBridge, MockBridge } from './wasm-bridge-dag.js?v=20260414a';
 import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js?v=20260318a';
 import { FluxEnergyChart, ParticleChart } from './charts.js?v=20260304q';
@@ -13,14 +13,11 @@ import { DiagnosticsPanel, Sparkline } from './diagnostics.js?v=20260304q';
 import { LagrangianChart } from './lagrangian.js?v=20260304q';
 import { Inspector } from './inspector.js?v=20260304q';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js?v=20260304q';
-import { getById } from './particle-catalog.js?v=20260304q';
-import { allElements, tablePosition, elementSymbol, getElement } from './elements.js?v=20260304q';
+import { getElement } from './elements.js?v=20260304q';
 import { getCategories, getMoleculesByCategory, getMolecule, loadMolecule } from './molecules.js?v=20260304q';
-import { expandAEToOrbitalCloud, generateBondingCloud, electronConfig, slaterZeff, A0_DISPLAY, nuclearShellRadius } from './orbitals.js?v=20260309c';
-import { atomicEnergy, periodicTableTotalEnergy, formatEnergy as formatEnergyAE } from './atomic-energy.js?v=20260304q';
-import { formatEnergy, formatTemperature, formatVelocity } from './units.js';
-import { generateGridXZ, samplePEField, samplePECoulombOnly, samplePEGravityField, makePECoulombFieldFn, sampleAEField } from './fields.js?v=20260304q';
-import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from './fieldlines.js?v=20260304q';
+import { atomicEnergy } from './atomic-energy.js?v=20260304q';
+import { formatEnergy } from './units.js';
+import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
 import * as Scale0Controller from './scales/scale0/controller.js';
@@ -43,15 +40,13 @@ import { BackgroundManager } from './backgrounds.js?v=20260304s';
 import { PETelemetryPanel } from './pe-telemetry.js?v=20260304q';
 // ConsciousnessEngine moved to Scale11Controller
 import { addInfoTooltips } from './consciousness-pedagogy.js?v=20260317a';
-import { PlanetaryRenderer } from './planetary-renderer.js';
-import { PlanetaryMockBridge } from './bridge/mock-scale4.js';
 import { SCALE0_TOGGLES, SCALE2_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from './config/toggles.js';
 import { QUANTUM_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
 import { MeasurementAccumulator, QUANTUM_EXPERIMENTS, computeHistogram,
          exportCSV, exportJSON, copyToClipboard } from './quantum-lab.js';
 
-console.log('[FTD] App version 20260318a loaded (cache-busted)');
+debugLog('[FTD] App version 20260318a loaded (cache-busted)');
 
 // ── Application State ────────────────────────────────────────────────
 let _initialized = false;
@@ -95,11 +90,9 @@ let _showBonds = true;
 let _showOrbitalClouds = true; // orbital electron clouds in AE mode
 let bgManager = null;          // BackgroundManager instance
 let _prevLegendKey = '';        // cached element-set key for legend rebuild
-let _showPEEField = false;      // E-field streamlines for Scale 1
-let _showPEPotential = false;   // Coulomb potential heatmap for Scale 1
-let _showPEGravField = false;   // Gravity field vectors for Scale 1
-let _showPEForces = false;      // Per-particle net force arrows for Scale 1
-let _showAEField = false;       // force field overlay for Scale 2
+// Scale 1 field viz flags (_showPEEField, _showPEPotential, _showPEGravField,
+// _showPEForces) moved to scales/scale1/controller.js.
+// Scale 2 field viz flag (_showAEField) moved to scales/scale2/controller.js.
 // Enhanced atom/molecule visual state
 let _showNucleusShells = true;    // strong force glow shells around nuclei
 let _bondStyle = 'cylinders';     // 'cylinders' | 'lines' | 'off'
@@ -116,34 +109,15 @@ let _fieldParticleBuf = [];     // reusable {x,y,z} array for E/B field seeds (S
 let _aeLabelBuf = [];           // reusable label objects for AE element labels
 const _aeLegendZSet = new Set(); // reusable Set for AE legend key computation
 const _aeLegendZArr = [];        // reusable sorted array for AE legend key
-// AE cloud merge buffers — reused to avoid 3x Float32Array alloc per frame
-let _aeMergeCap = 0;
-let _aeMergePos = null;
-let _aeMergeCol = null;
-let _aeMergeSize = null;
-// Scale 0 field viz buffers (_dualLVecs, _dualRVecs, _chiralValues, _fluxMock,
+// AE cloud merge buffers (_aeMergeCap/Pos/Col/Size) moved to
+// scales/scale2/controller.js when the AE animator was extracted.
+// Scale 0 field viz state (_dualLVecs, _dualRVecs, _chiralValues,
 // _show*Field flags, _fieldFrame, _fieldNeedsUpdate, _anyFieldActive)
-// MOVED to Scale0Controller. Access via getFluxMock(), setFieldToggle(), etc.
+// lives in Scale0Controller. Read/write via the controller's exported
+// getFieldState() / setFieldToggle() API. The _fluxMock instance below
+// is the ONLY piece of Scale 0 state that app_dag.js still owns; it is
+// used by the lattice-scenario wiring at ~line 2250 below.
 let _fluxMock = null;           // MockBridge for Scale 0 flux visualization fallback
-
-// Field visualization state (Scale 0)
-let _showEField = false;
-let _showBField = false;
-let _showPoynting = false;
-let _showDivField = false;
-let _showFluxLines = false;
-let _showForceVolume = false;
-let _showDualSubstrate = false;
-let _showChirality = false;
-let _showLight = false;
-let _showGravityField = false;
-let _showDarkMatterHalo = false;
-let _showDampingZones = false;
-let _showGenesisIsosurface = false;
-let _showConfinement = false;
-let _fieldFrame = 0;            // throttle counter for field updates
-let _fieldNeedsUpdate = false;  // force immediate field compute on toggle activation
-let _anyFieldActive = false;    // cached OR of all field toggle flags
 
 // Quantum Lab state
 let _quantumAccumulator = null;
@@ -161,15 +135,11 @@ let _bhHawkingTick = 0;
 const _BH_HAWKING_INTERVAL = 300;  // ticks between Hawking pair emissions
 const _BH_HORIZON_R = 3.0;         // visual event horizon radius
 const _BH_MASS = 5000;             // MeV (pedagogical, not physical)
-const _BH_TEST_MASS = 0.511;       // MeV (electron mass for test particles)
+const _BH_TEST_MASS = K_B;         // electron mass (MeV) for test particles
 
-function _recomputeAnyFieldActive() {
-    _anyFieldActive = _showEField || _showBField || _showPoynting ||
-        _showDivField || _showFluxLines || _showForceVolume ||
-        _showDualSubstrate || _showChirality || _showLight ||
-        _showGravityField || _showDarkMatterHalo || _showDampingZones ||
-        _showGenesisIsosurface || _showConfinement;
-}
+// _recomputeAnyFieldActive() removed — this logic lives inside
+// Scale0Controller. The app_dag.js copy was never called and referenced
+// module-local flags that have since moved to the controller.
 
 /**
  * Build a shared context object for scale controllers.
@@ -390,7 +360,7 @@ setTimeout(() => {
     const lo = document.getElementById('loading-overlay');
     if (lo && !lo.classList.contains('hidden')) {
         lo.classList.add('hidden');
-        console.log('[loading] Safety timeout dismissed overlay');
+        debugLog('[loading] Safety timeout dismissed overlay');
     }
 }, 8000);
 
@@ -407,14 +377,14 @@ async function init() {
     const computeEl = document.getElementById('status-compute');
 
     // 1. Try native GPU engine
-    console.log('[init] Trying native GPU engine on ws://localhost:9100...');
+    debugLog('[init] Trying native GPU engine on ws://localhost:9100...');
     try {
         bridge = await tryNativeBridge(latticeSize);
     } catch (e) {
         console.warn('[init] Native GPU bridge error:', e);
         bridge = null;
     }
-    console.log('[init] Native bridge result:', bridge ? 'connected' : 'unavailable');
+    debugLog('[init] Native bridge result:', bridge ? 'connected' : 'unavailable');
     if (bridge && bridge.ready) {
         _loadProgress(30, 'GPU engine connected');
         engineEl.textContent = 'Native Engine';
@@ -545,8 +515,8 @@ async function init() {
 // Always schedules next frame first (unconditional rAF) so the loop
 // never stalls, even if a mode-specific function throws.
 // NOTE: 'planetary' mode is a no-op here; it runs via setInterval
-// inside Scale4Controller.loadScenario. 'cosmic' also has a parallel
-// setInterval at ~30fps for physics ticks (line 3105).
+// inside Scale4Controller.loadScenario. All other modes (including
+// 'cosmic' after Phase B.1) drive physics + render from this rAF loop.
 function animate(now) {
     requestAnimationFrame(animate);
 
@@ -1170,14 +1140,14 @@ function wireControls() {
 
     document.getElementById('btn-inject-flux').addEventListener('click', () => {
         const { x, y, z } = _getInjPos();
-        const kb = (bridge.getParam && bridge.getParam('kb')) || 0.511;
+        const kb = (bridge.getParam && bridge.getParam('kb')) || K_B;
         bridge.injectFlux(x, y, z, kb * 0.8, 0, 0);
         Scale0Controller.setLatticeNeedsUpload();
     });
 
     document.getElementById('btn-inject-pair').addEventListener('click', () => {
         const { x, y, z } = _getInjPos();
-        const kb = (bridge.getParam && bridge.getParam('kb')) || 0.511;
+        const kb = (bridge.getParam && bridge.getParam('kb')) || K_B;
         bridge.createEntangledPair(x, y, z, kb, 0, 0);
         Scale0Controller.setLatticeNeedsUpload();
     });
