@@ -41,11 +41,12 @@
  *     resetAllVisualState - function, master visual state reset from app_dag
  */
 
-import { MockBridge } from '../../wasm-bridge-dag.js?v=20260408a';
+import { MockBridge } from '../../wasm-bridge-dag.js?v=20260414a';
 import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../fieldlines.js?v=20260304q';
 import { formatEnergy } from '../../units.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../constants.js?v=20260305e';
 import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from '../../config/toggles.js';
+import { createTickAccumulator, formatSI, throttleBySize } from '../scale-utils.js';
 
 // ── Field Visualization State (Scale 0 internal) ────────────────────
 // These flags track which field overlays are active. They are module-private;
@@ -73,7 +74,9 @@ let _fieldGrid = null;          // cached grid from generateGridXZ
 let _srcParticlesBuf = [];      // reusable {x,y,z} array for field seed generation
 let _fluxMock = null;           // MockBridge for Scale 0 flux visualization fallback
 let _latticeNeedsUpload = true; // set true on scenario load / step / resume
-let _tickAccumulator = 0;       // accumulates fractional ticks for sub-1 speed
+// Fractional-tick accumulator (sub-1 speed support) — uses shared helper
+// from scale-utils.js so every scale controller shares the same semantics.
+const _tickAcc = createTickAccumulator();
 
 // ── Reusable buffers for field visualization (avoid per-frame alloc) ─
 let _fieldParticleBuf = [];     // reusable {x,y,z} array for E/B field seeds
@@ -99,14 +102,8 @@ function _recomputeAnyFieldActive() {
         _showGenesisIsosurface || _showConfinement;
 }
 
-/**
- * Format large numbers with K/M suffixes for the status bar.
- */
-function formatNumber(n) {
-    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
-    return n.toString();
-}
+// formatNumber helper removed -- use formatSI from scale-utils.js instead
+// (it covers K/M/G/T with two-decimal precision).
 
 /**
  * Reuse _fieldParticleBuf to avoid per-frame {x,y,z} object allocation
@@ -146,12 +143,16 @@ export function animateLattice(ctx) {
     // Wave equation is O(L^3 x 18) per tick:
     //   L=32: ~1.8M ops, L=64: ~14M, L=96: ~48M, L=128: ~113M
     if (ctx.running) {
-        _tickAccumulator += ctx.ticksPerFrame;
-        const wholeTicks = Math.floor(_tickAccumulator);
-        _tickAccumulator -= wholeTicks;
+        const wholeTicks = _tickAcc.accumulate(ctx.ticksPerFrame);
 
-        // Throttle: large lattices get fewer ticks per frame
-        const maxTicksPerFrame = L > 96 ? 1 : (L > 48 ? 1 : (L > 32 ? 2 : wholeTicks));
+        // Throttle: large lattices get fewer ticks per frame (lookup table
+        // via throttleBySize from scale-utils so the pattern is shared).
+        const maxTicksPerFrame = throttleBySize(L, [
+            { above: 96, value: 1 },
+            { above: 48, value: 1 },
+            { above: 32, value: 2 },
+            { default: wholeTicks },
+        ]);
         const ticksToRun = Math.min(wholeTicks, maxTicksPerFrame);
 
         for (let i = 0; i < ticksToRun; i++) {
@@ -163,7 +164,12 @@ export function animateLattice(ctx) {
 
     // ── GPU buffer upload (only when data changed) ──────────────────
     // Volume upload throttle: L=128 -> every 6th frame, L=96 -> every 4th, L>48 -> every 3rd
-    const volUpdateInterval = L > 96 ? 6 : (L > 64 ? 4 : (L > 48 ? 3 : 1));
+    const volUpdateInterval = throttleBySize(L, [
+        { above: 96, value: 6 },
+        { above: 64, value: 4 },
+        { above: 48, value: 3 },
+        { default: 1 },
+    ]);
     if (_latticeNeedsUpload && (ctx.frameCount % volUpdateInterval === 0)) {
         let particleData = bridge.getParticleData();
         // Fall back to MockBridge particles when main bridge has none (JS-only scenarios)
@@ -374,11 +380,11 @@ export function animateLattice(ctx) {
             : wasmDiag;
 
         // Update status bar
-        ctx.dom.statusTick.textContent = formatNumber(diag.tick);
+        ctx.dom.statusTick.textContent = formatSI(diag.tick);
         if (diag.physicalTime !== undefined) {
-            ctx.dom.statusPtime.textContent = formatNumber(Math.round(diag.physicalTime));
+            ctx.dom.statusPtime.textContent = formatSI(Math.round(diag.physicalTime));
         } else {
-            ctx.dom.statusPtime.textContent = formatNumber(diag.tick);
+            ctx.dom.statusPtime.textContent = formatSI(diag.tick);
         }
         // Scale 0 shows flux stats; manifested count should be 0 for flux-only scenarios
         ctx.dom.statusParticles.textContent = diag.manifested || 0;
@@ -590,7 +596,7 @@ export function resetScale0(ctx) {
     }
 
     // Reset tick accumulator
-    _tickAccumulator = 0;
+    _tickAcc.reset();
 }
 
 

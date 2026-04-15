@@ -38,6 +38,7 @@ import {
     K_B, K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT
 } from '../../constants.js?v=20260305e';
 import { CS_SCENARIO_DESCRIPTIONS } from '../../config/scenarios.js';
+import { createListenerBag, createTickAccumulator } from '../scale-utils.js';
 
 // ── Module State ────────────────────────────────────────────────────
 
@@ -55,8 +56,12 @@ let _mandelbrotZ_re = 0;
 let _mandelbrotZ_im = 0;
 let _mandelbrotIter = 0;
 
-// Tick accumulator for fractional-tick support
-let _tickAccumulator = 0;
+// Tick accumulator for fractional-tick support (shared helper)
+const _tickAcc = createTickAccumulator();
+
+// DOM listener bag -- cleared on resetScale11 so re-entering consciousness
+// mode doesn't leak click/change handlers on .cs-subtab / #cs-* controls.
+let _subTabListeners = createListenerBag();
 
 // Scenario descriptions alias
 const SCENARIO_DESCRIPTIONS = CS_SCENARIO_DESCRIPTIONS;
@@ -80,9 +85,7 @@ export function animateConsciousness(ctx, now) {
 
     // Tick the underlying lattice for flux data
     if (running && bridge) {
-        _tickAccumulator += ticksPerFrame;
-        const wholeTicks = Math.floor(_tickAccumulator);
-        _tickAccumulator -= wholeTicks;
+        const wholeTicks = _tickAcc.accumulate(ticksPerFrame);
         for (let i = 0; i < wholeTicks; i++) {
             // Per-tick threshold injection: gradually build flux toward K_C
             if (_csScenarioMeta.name === 'cs-threshold') {
@@ -307,7 +310,7 @@ export function loadConsciousnessScenario(ctx, name = 'cs-threshold') {
     _mandelbrotZ_re  = 0;
     _mandelbrotZ_im  = 0;
     _mandelbrotIter  = 0;
-    _tickAccumulator = 0;
+    _tickAcc.reset();
 
     // Base toggles: flux-only mode (no particles, no forces -- just waves)
     bridge.setToggle('wave_propagation', true);
@@ -465,14 +468,22 @@ export function loadConsciousnessScenario(ctx, name = 'cs-threshold') {
  * Wire consciousness pedagogy sub-tab navigation (Theory, Walkthrough,
  * Diagnostics) and scenario description updates.
  *
+ * All listeners are attached via the module-level _subTabListeners bag
+ * so that resetScale11 can remove them cleanly. Re-entering consciousness
+ * mode simply clears the bag and re-wires, preventing listener leaks.
+ *
  * @param {object} ctx - Shared context (unused currently, reserved)
  */
 export function wireSubTabs(ctx) {
+    // Clear any previously-attached listeners from a prior consciousness
+    // session (safety net if resetScale11 was skipped somehow).
+    _subTabListeners.clear();
+
     const subtabs   = document.querySelectorAll('.cs-subtab');
     const subpanels = document.querySelectorAll('.cs-subpanel');
 
     subtabs.forEach(st => {
-        st.addEventListener('click', () => {
+        _subTabListeners.on(st, 'click', () => {
             subtabs.forEach(s => s.classList.remove('active'));
             st.classList.add('active');
             const target = st.dataset.cspanel;
@@ -494,30 +505,22 @@ export function wireSubTabs(ctx) {
 
     // Scenario description wiring
     const scenarioSel = document.getElementById('cs-scenario-select');
-    if (scenarioSel) {
-        scenarioSel.addEventListener('change', () => {
-            const descEl = document.getElementById('cs-scenario-desc-text');
-            if (descEl) descEl.textContent = SCENARIO_DESCRIPTIONS[scenarioSel.value] || '';
-        });
-    }
+    _subTabListeners.on(scenarioSel, 'change', () => {
+        const descEl = document.getElementById('cs-scenario-desc-text');
+        if (descEl) descEl.textContent = SCENARIO_DESCRIPTIONS[scenarioSel.value] || '';
+    });
 
     // Walkthrough prev/next
-    const prevBtn = document.getElementById('cs-walk-prev');
-    const nextBtn = document.getElementById('cs-walk-next');
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            if (_csPedagogy) {
-                _csPedagogy.setWalkthroughStep((_csPedagogy._walkthroughStep || 0) - 1);
-            }
-        });
-    }
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            if (_csPedagogy) {
-                _csPedagogy.setWalkthroughStep((_csPedagogy._walkthroughStep || 0) + 1);
-            }
-        });
-    }
+    _subTabListeners.on(document.getElementById('cs-walk-prev'), 'click', () => {
+        if (_csPedagogy) {
+            _csPedagogy.setWalkthroughStep((_csPedagogy._walkthroughStep || 0) - 1);
+        }
+    });
+    _subTabListeners.on(document.getElementById('cs-walk-next'), 'click', () => {
+        if (_csPedagogy) {
+            _csPedagogy.setWalkthroughStep((_csPedagogy._walkthroughStep || 0) + 1);
+        }
+    });
 }
 
 // ── step ────────────────────────────────────────────────────────────
@@ -539,7 +542,8 @@ export function step(ctx) {
 /**
  * Clean up Scale 11 state when leaving consciousness mode.
  * Disposes the ConsciousnessEngine, restores the original bridge,
- * and clears all module-level state.
+ * and resets iteration state. Leaves _csPedagogy and its wired-up
+ * DOM listeners alive for the page lifetime — see the comment below.
  *
  * @param {object} ctx - Shared context
  */
@@ -549,7 +553,19 @@ export function resetScale11(ctx) {
         _csEngine = null;
     }
 
-    _csPedagogy = null;
+    // NOTE: _csPedagogy is intentionally NOT nulled here (Phase B.2 fix).
+    // Its constructor attaches 'input'/'click' listeners to persistent
+    // DOM nodes (_kSlider, _betaSlider, filter canvas) that have no
+    // corresponding removeEventListener path. Re-creating the instance
+    // on every consciousness re-entry would leak a fresh set of listeners
+    // each cycle. Keeping the instance alive for the page lifetime is
+    // both cheaper and leak-free; nothing about the pedagogy state needs
+    // to be torn down between scale switches.
+    //
+    // For the same reason we do NOT call _subTabListeners.clear() here:
+    // wireSubTabs only runs once (gated by `if (!_csPedagogy)` in
+    // loadConsciousnessScenario), so the bag holds exactly one set of
+    // listeners for the page lifetime.
 
     // Restore the real bridge that was saved when entering consciousness mode
     if (_savedBridge) {
@@ -561,7 +577,7 @@ export function resetScale11(ctx) {
     _mandelbrotZ_re  = 0;
     _mandelbrotZ_im  = 0;
     _mandelbrotIter  = 0;
-    _tickAccumulator = 0;
+    _tickAcc.reset();
     _csScenarioMeta  = {
         name: '', domain: 'Real (k=16)', thetaMode: 'static',
         sloopDepth: 0, bellS: null

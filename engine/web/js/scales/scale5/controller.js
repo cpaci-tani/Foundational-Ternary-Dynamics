@@ -14,12 +14,14 @@
  *   - Hubble parameter H(t), scale factor a(t)
  *   - Omega_matter, Omega_Lambda density fractions
  *   - Camera presets per scenario (galaxy, overview, blackhole, merger, quasar)
- *   - Independent 30fps interval loop (avoids module caching issues)
+ *   - Physics ticks + telemetry updates at ~30 Hz (every other rAF frame),
+ *     rendering at ~60 Hz so OrbitControls stay smooth
  *   - Compact toolbar telemetry + controls panel cards
  */
 
 import { CosmicRenderer } from '../../cosmic-renderer.js';
-import { CosmicMockBridge } from '../../wasm-bridge.js?v=20260318a';
+import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
+import { createStatusBarCache } from '../scale-utils.js';
 
 // ---------------------------------------------------------------------------
 // Module-level state
@@ -27,36 +29,64 @@ import { CosmicMockBridge } from '../../wasm-bridge.js?v=20260318a';
 
 let _cosmicRenderer = null;    // CosmicRenderer instance (Three.js visuals)
 let _cosmicBridge = null;      // CosmicMockBridge instance (N-body engine)
+const _toolbarStatus = createStatusBarCache();
+const _panelStatus = createStatusBarCache();
 
 // ---------------------------------------------------------------------------
 // animateCosmic  -- per-frame update (called from the main rAF loop)
 // ---------------------------------------------------------------------------
 
 /**
- * Per-frame cosmic animation. The setInterval in loadCosmicScenario handles
- * physics ticks and telemetry updates; this rAF callback just re-renders
- * the viewport so the camera controls stay responsive.
+ * Per-frame cosmic animation. Drives physics ticks, renderer state updates,
+ * and toolbar/panel telemetry from the main rAF loop. Physics and telemetry
+ * update every other rAF frame (~30 Hz), matching the cadence of the
+ * pre-B.1 setInterval; the viewport is rendered every rAF frame (~60 Hz)
+ * so OrbitControls stay smooth.
  *
  * @param {object} ctx - Shared context from the main app:
- *   { viewport, running }
+ *   { viewport, running, ticksPerFrame, frameCount }
  */
 export function animateCosmic(ctx) {
     const { viewport } = ctx;
 
     if (!_cosmicBridge || !_cosmicRenderer) {
-        // Fallback: still render viewport
+        // Fallback: still render viewport so the scene isn't frozen
         viewport.render();
         return;
     }
 
-    // Update renderer with current state (ticks run in the setInterval)
-    const data = _cosmicBridge.getCosmicData();
-    const diag = _cosmicBridge.getDiagnostics();
-    _cosmicRenderer.update(data, diag);
+    // Match the pre-B.1 30 Hz physics cadence by ticking on every other
+    // rAF frame. Rendering still runs at full rAF rate below.
+    const isPhysicsFrame = (ctx.frameCount & 1) === 0;
 
-    // Toolbar telemetry is updated by the setInterval in loadCosmicScenario
+    if (isPhysicsFrame) {
+        if (ctx.running) {
+            _cosmicBridge.run(Math.max(1, Math.round(ctx.ticksPerFrame)));
+        }
 
-    // Render using standard viewport (post-processing added later)
+        const data = _cosmicBridge.getCosmicData();
+        const diag = _cosmicBridge.getDiagnostics();
+        _cosmicRenderer.update(data, diag);
+
+        // Compact toolbar telemetry
+        _toolbarStatus.update('cosmic-tb-bodies', diag.bodyCount + ' bodies');
+        _toolbarStatus.update('cosmic-tb-tick', 'T ' + diag.tick);
+        _toolbarStatus.update('cosmic-tb-hubble', 'H=' + diag.hubbleParameter.toFixed(4));
+
+        // Controls panel cards
+        const c = diag.countsByType || [];
+        _panelStatus.update('cosmic-n-bodies', String(diag.bodyCount));
+        _panelStatus.update('cosmic-tick', String(diag.tick));
+        _panelStatus.update('cosmic-hubble', diag.hubbleParameter.toFixed(5));
+        _panelStatus.update('cosmic-scale-factor', diag.scaleFactor.toFixed(5));
+        _panelStatus.update('cosmic-n-dm', String(c[3] || 0));
+        _panelStatus.update('cosmic-n-gas', String(c[4] || 0));
+        _panelStatus.update('cosmic-n-stars', String(c[5] || 0));
+        _panelStatus.update('cosmic-n-bh', String(c[2] || 0));
+        _panelStatus.update('cosmic-ke', diag.totalKE.toExponential(2));
+    }
+
+    // Render every rAF frame so OrbitControls stay responsive
     viewport.render();
 }
 
@@ -66,8 +96,9 @@ export function animateCosmic(ctx) {
 
 /**
  * Initialize and load a cosmic scenario by name. Creates the CosmicMockBridge
- * and CosmicRenderer, configures camera for cosmic scale, sets camera preset,
- * and starts the independent 30fps interval loop.
+ * and CosmicRenderer, configures camera for cosmic scale, and sets the
+ * camera preset. Physics ticks, telemetry, and rendering are driven by
+ * animateCosmic() on the main rAF loop.
  *
  * @param {object} ctx - Shared context:
  *   { viewport, running, ticksPerFrame, engineMode,
@@ -123,41 +154,9 @@ export function loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
     };
     _cosmicRenderer.setCameraPreset(presetMap[scenarioName] || 'overview', data);
 
-    // Auto-play
+    // Auto-play; animateCosmic() will advance physics from the main rAF loop.
     ctx.running = true;
     ctx.updatePlayButton();
-
-    // Cosmic frame loop (independent of rAF to avoid module caching issues)
-    if (window._cosmicInterval) clearInterval(window._cosmicInterval);
-    window._cosmicInterval = setInterval(() => {
-        if (ctx.engineMode !== 'cosmic' || !_cosmicBridge || !_cosmicRenderer) {
-            clearInterval(window._cosmicInterval);
-            window._cosmicInterval = null;
-            return;
-        }
-        if (ctx.running) _cosmicBridge.run(Math.max(1, Math.round(ctx.ticksPerFrame)));
-        const data = _cosmicBridge.getCosmicData();
-        const diag = _cosmicBridge.getDiagnostics();
-        _cosmicRenderer.update(data, diag);
-        // Compact toolbar telemetry
-        const _tb = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
-        _tb('cosmic-tb-bodies', diag.bodyCount + ' bodies');
-        _tb('cosmic-tb-tick', 'T ' + diag.tick);
-        _tb('cosmic-tb-hubble', 'H=' + diag.hubbleParameter.toFixed(4));
-        // Controls panel cards
-        const c = diag.countsByType || [];
-        const _set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
-        _set('cosmic-n-bodies', diag.bodyCount);
-        _set('cosmic-tick', diag.tick);
-        _set('cosmic-hubble', diag.hubbleParameter.toFixed(5));
-        _set('cosmic-scale-factor', diag.scaleFactor.toFixed(5));
-        _set('cosmic-n-dm', c[3] || 0);
-        _set('cosmic-n-gas', c[4] || 0);
-        _set('cosmic-n-stars', c[5] || 0);
-        _set('cosmic-n-bh', c[2] || 0);
-        _set('cosmic-ke', diag.totalKE.toExponential(2));
-        viewport.render();
-    }, 33); // 33ms = ~30fps; separate from rAF to decouple physics from render rate
 }
 
 // ---------------------------------------------------------------------------
@@ -203,15 +202,13 @@ export function setCameraPreset(preset) {
 
 /**
  * Clean up Scale 5 state when leaving cosmic mode.
- * Stops the interval loop, disposes the renderer, and clears the bridge.
+ * Disposes the renderer and clears the bridge. Physics/render is driven
+ * by animateCosmic() on the main rAF loop, which becomes a no-op once
+ * _cosmicBridge is nulled out, so no interval cleanup is needed.
  *
- * @param {object} ctx - Shared context (unused for now, reserved for future cleanup)
+ * @param {object} ctx - Shared context (used only to restore viewport state)
  */
 export function resetScale5(ctx) {
-    if (window._cosmicInterval) {
-        clearInterval(window._cosmicInterval);
-        window._cosmicInterval = null;
-    }
     if (_cosmicRenderer) {
         _cosmicRenderer.dispose();
         _cosmicRenderer = null;

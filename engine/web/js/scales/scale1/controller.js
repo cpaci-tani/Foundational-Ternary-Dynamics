@@ -1,7 +1,7 @@
 /**
  * Scale 1 (Particles) Controller
  *
- * Extracted from app.js to isolate the Particle Engine (PE) frame loop,
+ * Extracted from app_dag.js to isolate the Particle Engine (PE) frame loop,
  * scenario loader, cloud rendering, trail history, and field overlay logic.
  *
  * Owns all PE-specific state internally:
@@ -13,8 +13,8 @@
  *   - Field grid cache and source particle buffer
  *
  * Exports:
- *   animatePE(ctx)             — per-frame update (app.js lines ~1052-1207)
- *   loadPEScenario(ctx, name)  — scenario setup  (app.js lines ~3085-3423)
+ *   animatePE(ctx)             — per-frame update (app_dag.js lines ~1052-1207)
+ *   loadPEScenario(ctx, name)  — scenario setup  (app_dag.js lines ~3085-3423)
  *   resetScale1(ctx)           — clear PE-specific state for mode switch
  *
  * The ctx object provides shared app resources:
@@ -24,8 +24,8 @@
  *     updateOnticPanel, updateHierarchyPanel }
  *
  * ---------------------------------------------------------------
- * DELEGATION STUBS: after wiring this controller into app.js,
- * the following app.js functions should become thin wrappers:
+ * DELEGATION STUBS: after wiring this controller into app_dag.js,
+ * the following app_dag.js functions should become thin wrappers:
  *
  *   function animatePE(now) {
  *       return scale1Controller.animatePE({ ...ctx, now });
@@ -35,7 +35,7 @@
  *       return scale1Controller.loadPEScenario(ctx, name);
  *   }
  *
- * And the following app.js code blocks can be removed:
+ * And the following app_dag.js code blocks can be removed:
  *   - Cloud rendering section   (lines ~397-536)
  *   - PE state variables         (lines ~82-85, 119-126, 405-414)
  *   - expandPEToCloud()          (lines ~455-510)
@@ -53,7 +53,12 @@ import {
 import {
     computeStreamlines, generateEFieldSeeds
 } from '../../fieldlines.js?v=20260304q';
-import { ALPHA, C_SPEED, G_N } from '../../constants.js?v=20260305e';
+import {
+    ALPHA, C_SPEED, G_N, K_B,
+    M_P_PHYS, M_MU_PHYS, M_N_PHYS, M_PI_CH_PHYS, M_K_CH_PHYS,
+    M_TAU_PHYS, M_W_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS, M_DELTA_PHYS
+} from '../../constants.js?v=20260305e';
+import { createTickAccumulator, formatSI } from '../scale-utils.js';
 
 
 // =====================================================================
@@ -94,10 +99,10 @@ let _bhHawkingTick  = 0;
 const _BH_HAWKING_INTERVAL = 300;
 const _BH_HORIZON_R = 3.0;
 const _BH_MASS      = 5000;
-const _BH_TEST_MASS = 0.511;
+const _BH_TEST_MASS = K_B;   // electron mass (MeV) — Hawking test particle
 
-// -- Tick accumulator (sub-1 speed fractional ticks) ------------------
-let _tickAccumulator = 0;
+// -- Tick accumulator (sub-1 speed fractional ticks, shared helper) ----
+const _tickAcc = createTickAccumulator();
 
 // -- Paused-state dedup (avoid redundant work when simulation idle) ----
 let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
@@ -110,15 +115,7 @@ let _lastCloudData = null;         // cached cloud output when paused
 // Internal Helpers
 // =====================================================================
 
-/**
- * Format large numbers with K/M suffixes for the status bar.
- * Duplicated here to avoid importing a private app.js helper.
- */
-function formatNumber(n) {
-    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-    if (n >= 1000)    return (n / 1000).toFixed(1) + 'K';
-    return n.toString();
-}
+// formatNumber helper removed -- use formatSI from scale-utils.js instead
 
 /**
  * Generate (or retrieve cached) a Gaussian cloud template for a given
@@ -127,7 +124,7 @@ function formatNumber(n) {
  *
  * Template fields: { n, radius, offsets: Float32Array, brightness: Float32Array }
  *
- * Originally app.js lines ~416-453.
+ * Originally app_dag.js lines ~416-453.
  */
 function ensureCloudTemplate(catalogId, mass_mev) {
     if (_cloudTemplates.has(catalogId)) return _cloudTemplates.get(catalogId);
@@ -137,7 +134,7 @@ function ensureCloudTemplate(catalogId, mass_mev) {
     const n = Math.min(Math.max(nRaw, 50), 5000);
 
     // Cloud radius: lighter particles are more spread out (Compton-like)
-    const radius = 2.0 + 3.0 * Math.pow(0.511 / mass_mev, 0.15);
+    const radius = 2.0 + 3.0 * Math.pow(K_B / mass_mev, 0.15);
     const sigma = radius / 2.5; // ~95% within radius
 
     const offsets    = new Float32Array(n * 3);
@@ -177,7 +174,7 @@ function ensureCloudTemplate(catalogId, mass_mev) {
  * Returns { positions, colors, sizes, count } referencing the module-level
  * pre-allocated buffers (zero-copy for the viewport).
  *
- * Originally app.js lines ~455-510.
+ * Originally app_dag.js lines ~455-510.
  */
 function expandPEToCloud(peData, typeMap, t) {
     const srcCount = peData.count;
@@ -240,7 +237,7 @@ function expandPEToCloud(peData, typeMap, t) {
  * Record current particle positions into per-particle circular trail buffers.
  * Prunes trails for particles that no longer exist.
  *
- * Originally app.js lines ~512-535.
+ * Originally app_dag.js lines ~512-535.
  */
 function updateTrailHistory(peData) {
     for (let i = 0; i < peData.count; i++) {
@@ -272,7 +269,7 @@ function updateTrailHistory(peData) {
 // =====================================================================
 // Exported: Field Toggle Setters
 // =====================================================================
-// These are called by the UI wiring code in app.js when the user clicks
+// These are called by the UI wiring code in app_dag.js when the user clicks
 // Scale 1 overlay buttons.  They update module-internal toggle state.
 
 export function setPEEField(on)    { _showPEEField    = on; }
@@ -294,14 +291,14 @@ export function getTrailHistory()    { return _trailHistory; }
 // =====================================================================
 // Clear all PE-specific internal state.  Called on engine mode switch
 // (not on scenario change within Scale 1 -- that uses _resetAllVisualState
-// in app.js which delegates to the toggle resets below).
+// in app_dag.js which delegates to the toggle resets below).
 
 /**
  * Reset PE-internal state for a clean mode switch.
  * ctx.viewport is used to clear viewport overlays.
  *
  * NOTE: The visual toggle button DOM updates (removing .active class)
- * remain in app.js _resetAllVisualState() for now, because the DOM
+ * remain in app_dag.js _resetAllVisualState() for now, because the DOM
  * elements are shared across scales and managed by the central reset.
  */
 export function resetScale1(ctx) {
@@ -330,7 +327,7 @@ export function resetScale1(ctx) {
     _bhHawkingTick = 0;
 
     // Reset tick accumulator
-    _tickAccumulator = 0;
+    _tickAcc.reset();
 
     // Clear paused-state caches
     _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
@@ -354,7 +351,7 @@ export function resetScale1(ctx) {
 // Exported: animatePE(ctx)
 // =====================================================================
 // Per-frame update for Scale 1 (Particles).
-// Originally app.js lines ~1052-1207.
+// Originally app_dag.js lines ~1052-1207.
 //
 // Responsibilities:
 //   1. Tick the PE simulation (accumulator handles sub-1 speeds)
@@ -375,9 +372,7 @@ export function animatePE(ctx) {
 
     // ── 1. Tick PE simulation if running ────────────────────────────
     if (running) {
-        _tickAccumulator += ticksPerFrame;
-        const wholeTicks = Math.floor(_tickAccumulator);
-        _tickAccumulator -= wholeTicks;
+        const wholeTicks = _tickAcc.accumulate(ticksPerFrame);
         for (let i = 0; i < wholeTicks; i++) {
             bridge.peTick();
         }
@@ -496,7 +491,7 @@ export function animatePE(ctx) {
         const diag = bridge.peGetDiagnostics();
 
         // Update status bar with dedup (avoids DOM thrash when paused)
-        const sTick = formatNumber(diag.tick);
+        const sTick = formatSI(diag.tick);
         const sParticles = String(diag.particleCount);
         const sEnergy = formatEnergy(diag.totalEnergy, 1).text;
         const sState = running ? 'Running' : 'Idle';
@@ -562,10 +557,10 @@ export function animatePE(ctx) {
 // Initializes the PE bridge, configures physics toggles, and spawns
 // particles with appropriate masses, charges, and orbital velocities.
 //
-// Originally app.js lines ~3085-3423.
+// Originally app_dag.js lines ~3085-3423.
 //
 // NOTE: ctx.resetAllVisualState() is called first to clear all cross-scale
-// visual state.  That function lives in app.js because it touches DOM
+// visual state.  That function lives in app_dag.js because it touches DOM
 // elements and viewport toggles shared across all scales.
 
 export function loadPEScenario(ctx, name) {
@@ -573,7 +568,7 @@ export function loadPEScenario(ctx, name) {
 
     if (!bridge.initPE) return;
 
-    // Delegate to app.js master reset (clears charts, trails, field cache,
+// Delegate to app_dag.js master reset (clears charts, trails, field cache,
     // and resets all toggle buttons across all scales)
     ctx.resetAllVisualState();
 
@@ -618,18 +613,24 @@ export function loadPEScenario(ctx, name) {
         Math.sqrt(ALPHA_PE * Q * r / (4 * Math.PI * m * (r * r + soft2)));
 
     // ── Particle masses (MeV) ───────────────────────────────────────
-    const me   = 0.511;      // electron
-    const mp   = 938.272;    // proton
-    const mmu  = 105.658;    // muon
-    const mn   = 939.565;    // neutron
-    const mpi  = 139.57;     // charged pion
-    const mK   = 493.68;     // charged kaon
-    const mtau = 1776.86;    // tau
-    const mW   = 80377.0;    // W boson
-    const mSig = 1189.4;     // Sigma+
-    const mOmg = 1672.5;     // Omega-
-    const mDel = 1232.0;     // Delta++
-    const RE   = 0.1;        // effective radius (tiny -- no false annihilation)
+    // `me` uses K_B (the FTD-derived electron mass scale, which equals
+    // the PDG value 0.511 by construction). All remaining masses are
+    // PDG experimental reference values from constants.js; they are
+    // intentionally NOT unified with the FTD-derived M_PROTON etc.
+    // because the framework scale (M_PROTON ≈ 1798 MeV) differs from
+    // the physical scale (M_P_PHYS ≈ 938 MeV) by design (CLAUDE.md).
+    const me   = K_B;           // electron (FTD = PDG = 0.511 MeV)
+    const mp   = M_P_PHYS;      // proton
+    const mmu  = M_MU_PHYS;     // muon
+    const mn   = M_N_PHYS;      // neutron
+    const mpi  = M_PI_CH_PHYS;  // charged pion
+    const mK   = M_K_CH_PHYS;   // charged kaon
+    const mtau = M_TAU_PHYS;    // tau
+    const mW   = M_W_PHYS;      // W boson
+    const mSig = M_SIGMA_PHYS;  // Sigma+
+    const mOmg = M_OMEGA_PHYS;  // Omega-
+    const mDel = M_DELTA_PHYS;  // Delta++
+    const RE   = 0.1;           // effective radius (tiny -- no false annihilation)
 
     // ── Scenario switch ─────────────────────────────────────────────
     switch (name) {
