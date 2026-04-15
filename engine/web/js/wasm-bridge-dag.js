@@ -2925,7 +2925,7 @@ export class MockBridge {
         // ── Flux-only scenarios (Scale 0 substrate) ──
         if (name.startsWith('flux-')) {
             this._initFluxGrid();
-            const sigma = N / 8;
+            const sigma = N / 10;
             const amp = K_B * 2;
 
             switch (name) {
@@ -4934,4 +4934,4 @@ export class WasmBridge {
 // CosmicMockBridge moved to bridge/mock-scale5.js (Scale 5 N-body sim)
 // createBridge factory moved to bridge/bridge-factory-dag.js
 export { CosmicMockBridge } from './bridge/mock-scale5.js';
-export { createBridge } from './bridge/bridge-factory-dag.js?v=20260415h';
+export { createBridge } from './bridge/bridge-factory-dag.js?v=20260415i';
