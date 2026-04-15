@@ -924,6 +924,137 @@ export class CosmicMockBridge {
             this._dt = 0.03;
             this._enableSubgrid = true;  // need cooling for collapse + star formation
 
+        } else if (name === 'cosmic-dark-matter-halo') {
+            // ============================================================
+            // Dark Matter Halo (ported from Scale 0 flux-dark-matter)
+            // Pure DM halo with a few luminous tracers — shows how galaxies
+            // sit inside an invisible gravitational well.
+            // ============================================================
+            const M_halo = 4000;
+            const r_s = 50;        // scale radius
+            const N_dm = 1500;
+            const N_stars = 60;    // luminous tracers
+
+            // Dark matter halo (Hernquist / Plummer-like sampling)
+            for (let i = 0; i < N_dm; i++) {
+                const u = rng() * 0.95;
+                const su = Math.sqrt(u);
+                const r = Math.min(r_s * su / (1.0 - su), 180);
+                const th = Math.acos(2 * rng() - 1);
+                const ph = PI2 * rng();
+                const M_enc = this._enclosedMass(r, M_halo, r_s);
+                const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 3)) * 0.75;
+                this.addBody(T.DARK_MATTER, M_halo * 0.95 / N_dm,
+                    r * Math.sin(th) * Math.cos(ph),
+                    r * Math.sin(th) * Math.sin(ph),
+                    r * Math.cos(th),
+                    sigma * randn(), sigma * randn(), sigma * randn());
+            }
+
+            // Luminous tracers on circular-ish orbits — they feel the halo potential.
+            for (let i = 0; i < N_stars; i++) {
+                const r = 15 + rng() * 80;
+                const ph = PI2 * rng();
+                const th = Math.acos(2 * rng() - 1);
+                const M_enc = this._enclosedMass(r, M_halo, r_s);
+                const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1)) * 0.9;
+                this.addBody(T.STAR, M_halo * 0.02 / N_stars,
+                    r * Math.sin(th) * Math.cos(ph),
+                    r * Math.sin(th) * Math.sin(ph),
+                    r * Math.cos(th),
+                    -vc * Math.sin(ph), 0, vc * Math.cos(ph),
+                    5500 + rng() * 4000);
+            }
+
+            this._boxSize = 250;
+            this._softening = 6.0;
+            this._dt = 0.05;
+            this._enableSubgrid = false;
+
+        } else if (name === 'cosmic-gravitational-wave') {
+            // ============================================================
+            // Binary Black Hole Inspiral (ported from Scale 0 flux-gravitational-wave)
+            // Two equal-mass BHs in a close circular orbit. Without radiation
+            // reaction they orbit stably — the _gwEvents machinery still
+            // registers the strain pattern for visualization.
+            // ============================================================
+            const M_bh = 200;
+            const orbR = 12;
+            const vk = Math.sqrt(G_N * M_bh / (2 * orbR));  // circular velocity
+            // Two BHs along x-axis, tangential velocities along z
+            this.addBody(T.BLACK_HOLE, M_bh,  orbR, 0, 0,  0, 0,  vk);
+            this.addBody(T.BLACK_HOLE, M_bh, -orbR, 0, 0,  0, 0, -vk);
+
+            // Tracer gas ring around the binary — amplifies visual tidal effects
+            for (let i = 0; i < 300; i++) {
+                const r = 25 + rng() * 35;
+                const ph = PI2 * rng();
+                const zz = randn() * 1.2;
+                const M_enc = 2 * M_bh;
+                const vc = Math.sqrt(G_N * M_enc / r) * 0.95;
+                this.addBody(T.GAS, 0.3,
+                    r * Math.cos(ph), zz, r * Math.sin(ph),
+                    -vc * Math.sin(ph), randn() * vc * 0.03, vc * Math.cos(ph),
+                    1e5 + rng() * 1e5);
+            }
+
+            // Flag GW visualization via existing event tracker
+            this._gwEvents.push({ tick: 0, x: 0, y: 0, z: 0, amplitude: 1.0 });
+
+            this._boxSize = 120;
+            this._softening = 2.5;
+            this._dt = 0.02;
+            this._enableSubgrid = false;
+
+        } else if (name === 'cosmic-baryogenesis') {
+            // ============================================================
+            // Baryogenesis (ported from Scale 0 flux-baryogenesis)
+            // Matter/antimatter asymmetry demo: 8 "matter" stars + 6
+            // "antimatter" stars scattered in a spherical shell. The N-body
+            // evolution shows the residual clump after gravitational mixing.
+            // (Pure visualization — S5 has no annihilation physics.)
+            // ============================================================
+            const shellR = 55;
+            const phi_g = (1 + Math.sqrt(5)) / 2;
+            // Deterministic positions via golden-angle spiral
+            const place = (count, type, tempBase) => {
+                for (let i = 0; i < count; i++) {
+                    const t = (i + 0.5) / count;
+                    const inclination = Math.acos(1 - 2 * t);
+                    const azimuth = PI2 * i * phi_g;
+                    const r = shellR * (0.5 + 0.5 * rng());
+                    const x = r * Math.sin(inclination) * Math.cos(azimuth);
+                    const y = r * Math.sin(inclination) * Math.sin(azimuth);
+                    const z = r * Math.cos(inclination);
+                    // Infall velocity toward center
+                    const dist = Math.sqrt(x*x + y*y + z*z) + 0.01;
+                    const vin = -0.12 * Math.sqrt(G_N * 800 / shellR);
+                    this.addBody(type, 30,
+                        x, y, z,
+                        vin * x/dist, vin * y/dist, vin * z/dist,
+                        tempBase + rng() * 6000);
+                }
+            };
+            place(8, T.STAR, 6500);    // matter (yellow dwarfs)
+            place(6, T.NEBULA, 2500);  // antimatter proxy (cool red clouds)
+
+            // Background dark matter web to give things something to fall into
+            for (let i = 0; i < 600; i++) {
+                const r = shellR * 1.5 * rng();
+                const th = Math.acos(2 * rng() - 1);
+                const ph = PI2 * rng();
+                this.addBody(T.DARK_MATTER, 1.5,
+                    r * Math.sin(th) * Math.cos(ph),
+                    r * Math.cos(th),
+                    r * Math.sin(th) * Math.sin(ph),
+                    randn() * 0.2, randn() * 0.2, randn() * 0.2);
+            }
+
+            this._boxSize = 160;
+            this._softening = 4.0;
+            this._dt = 0.04;
+            this._enableSubgrid = false;
+
         } else {
             // Cosmic web
             for (let i = 0; i < 700; i++) {

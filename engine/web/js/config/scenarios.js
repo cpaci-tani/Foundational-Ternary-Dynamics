@@ -29,3 +29,73 @@ export const QUANTUM_SCENARIO_DESCRIPTIONS = {
     'quantum-casimir': 'Casimir Effect: Two parallel reflective plates in a vacuum foam background. Energy density between plates differs from outside, creating boundary-modified vacuum pressure. Expected: F proportional to 1/d^4.',
     'quantum-zeno': 'Quantum Zeno Effect: Near-threshold flux with periodic "measurement" (flux sampling). Frequent measurement suppresses decay (manifestation). Tests the measurement-inhibition prediction.',
 };
+
+// ─────────────────────────────────────────────────────────────────────
+// Scale 0 — FTD-derived SM particle seed scenarios.
+//
+// EPISTEMIC WARNING: This table is load-bearing. Every entry has its
+// status classified per the FTD epistemic tag system
+// (docs/theory/REF_EPISTEMIC_LABELS.md). Read each tag before acting on
+// the data. In particular, do NOT conflate [THEOREM] for a derived mass
+// with a [THEOREM] for a lattice configuration — FTD derives m_e but
+// not a structural test for "electron-ness". The configuration that
+// realizes m_e is [SELECTION], not [THEOREM].
+//
+// Allowed tags:
+//   [THEOREM]    — rigorously proven from FTD axioms
+//   [SELECTION]  — argued from consistency, not uniquely proven
+//   [CONJECTURE] — proposed interpretation requiring validation
+//   [IMPOSED]    — parameter choice or model calibration
+//   [OPEN]       — unresolved question
+//
+// DO NOT INVENT NEW TAGS. DO NOT UPGRADE A TAG WITHOUT A CORRESPONDING
+// THEORY DOCUMENT. Labelling a [SELECTION] as [THEOREM] in this file
+// constitutes an epistemic regression that the FTD project explicitly
+// forbids.
+// ─────────────────────────────────────────────────────────────────────
+export const S0_SEED_SCENARIO_METADATA = {
+    's0-seed-electron': {
+        title: 'Electron seed (unit negative charge + dressing)',
+        desc: 'Single s=\u22121 site at the lattice center with radial-inward flux envelope of scale K_B. This is the DERIV_DARK_SECTOR \u00a75.2 particle definition in the dispositional layer: { state, flux envelope, id }. No vortex, no topology \u2014 just a charged seed.',
+        epistemic: [
+            ['Configuration', '[SELECTION]', 'DERIV_DARK_SECTOR \u00a75.2 seed+envelope picture. Structurally motivated, not uniquely proven.'],
+            ['Name "electron"', '[IMPOSED]', 'FTD derives m_e but has no structural test for "electron-ness". The label is engineered, not derived.'],
+            ['Mass m_e', '[THEOREM]', 'm_e = m_P\u00b7\u221a(2\u03c0)\u00b7(16/3)\u00b7\u03b1\u00b9\u00b9 (0.27% error). Derived, but mass does NOT encode spatial structure.'],
+        ],
+    },
+    's0-seed-photon': {
+        title: 'Photon seed (transverse massless flux wave at c = 1/\u221a3)',
+        desc: 'State-0 everywhere (no matter) with a J_z-polarized Gaussian flux pulse launched at x \u2248 N/4, propagating in +x. The wave speed c = 1/\u221a3 emerges from CFL stability on the cubic lattice.',
+        epistemic: [
+            ['Wave propagation', '[THEOREM]', 'Massless transverse flux wave at c = 1/\u221a3 follows from the cubic-lattice wave equation + CFL stability.'],
+            ['Polarization (2 modes)', '[THEOREM]', 'Two transverse modes enforced by the Gauss constraint \u2207\u00b7J = 0.'],
+            ['Name "photon"', '[SELECTION]', 'Identifying the transverse flux wave with the SM photon is structurally consistent but not uniquely forced.'],
+        ],
+    },
+    's0-seed-proton-candidate': {
+        title: 'Proton candidate (3-site positive cluster) \u2014 NOT "uud"',
+        desc: 'Three s=+1 particles on an equilateral triangle at the lattice center with weak radial-outward flux dressing. The "u-u-d" story is NOT encoded: FTD has no color axis, no flavor label, no orientation-dependent quark identity. This scenario tests only whether a 3-body positive cluster persists under substrate dynamics.',
+        epistemic: [
+            ['3-site cluster configuration', '[SELECTION]', 'Consistent with baryon number 3. Triangle geometry is one choice among many \u2014 not uniquely forced.'],
+            ['Name "proton"', '[IMPOSED]', 'A label on the cluster. Do NOT read color, flavor, or quark identity from the triangle vertices.'],
+            ['Mass ratio m_p/m_e', '[THEOREM]', 'm_p/m_e = N_eff/\u03b1 + N_base\u00b7N_eff + N_c = 1836.47 (174 ppm). The ratio is derived, but has NO spatial expression.'],
+            ['LANDMINE', '[WARNING]', 'Do NOT interpret J_x-dominant flux as "red quark" or map vertices to u/d. The BCC\u2192SU(3) link is about the gluon propagator, not per-quark orientation.'],
+        ],
+    },
+};
+
+/**
+ * Render S0 seed metadata as a plain-text block suitable for the
+ * <details> description panel. Returns an empty string if no entry
+ * exists for this scenario.
+ */
+export function formatS0SeedMetadata(name) {
+    const meta = S0_SEED_SCENARIO_METADATA[name];
+    if (!meta) return '';
+    const lines = [meta.title, '', meta.desc, '', 'Epistemic status:'];
+    for (const [field, tag, note] of meta.epistemic) {
+        lines.push(`  \u2022 ${field}: ${tag}`);
+        lines.push(`      ${note}`);
+    }
+    return lines.join('\n');
+}

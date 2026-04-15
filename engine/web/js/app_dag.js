@@ -41,7 +41,7 @@ import { PETelemetryPanel } from './pe-telemetry.js';
 // ConsciousnessEngine moved to Scale11Controller
 import { addInfoTooltips } from './consciousness-pedagogy.js';
 import { SCALE0_TOGGLES, SCALE2_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from './config/toggles.js';
-import { QUANTUM_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
+import { QUANTUM_SCENARIO_DESCRIPTIONS, formatS0SeedMetadata } from './config/scenarios.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
 import { MeasurementAccumulator, QUANTUM_EXPERIMENTS, computeHistogram,
          exportCSV, exportJSON, copyToClipboard } from './quantum-lab.js';
@@ -702,6 +702,20 @@ function wireToolbar() {
         running = false;
         updatePlayButton();
         Scale0Controller.loadScenario(_makeCtx(), e.target.value);
+        // SM seed scenarios: show epistemic-tag panel
+        const latDesc = document.getElementById('lat-scenario-desc');
+        const latDescText = document.getElementById('lat-scenario-desc-text');
+        if (latDesc && latDescText) {
+            const meta = formatS0SeedMetadata(e.target.value);
+            if (meta) {
+                latDescText.textContent = meta;
+                latDesc.style.display = '';
+                latDesc.open = true;
+            } else {
+                latDesc.style.display = 'none';
+                latDesc.open = false;
+            }
+        }
         // Sync Quantum Lab experiment selector when a quantum-* scenario is picked
         if (e.target.value.startsWith('quantum-')) {
             const qlabSel = document.getElementById('qlab-experiment');
