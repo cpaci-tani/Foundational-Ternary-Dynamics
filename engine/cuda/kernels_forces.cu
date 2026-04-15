@@ -8,6 +8,7 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
+#include "ftd/constants_gpu.cuh"
 #include <cuda_runtime.h>
 #include <cmath>
 
@@ -453,13 +454,14 @@ __global__ void color_force_kernel(
         double as = alpha_s_lattice_d(r);
 
         // Three-regime force profile (magnitude; sign from cf)
+        // Regime boundaries from constants_gpu.cuh (shared single source of truth).
         double f_mag;
-        if (r < 3.0) {
-            f_mag = as * cf / r2;              // Coulomb
-        } else if (r < 8.0) {
-            f_mag = as * cf / (3.0 * r);       // Transition
+        if (r < COLOR_COULOMB_RADIUS) {
+            f_mag = as * cf / r2;                            // Coulomb
+        } else if (r < COLOR_TRANSITION_RADIUS) {
+            f_mag = as * cf / (COLOR_TRANSITION_DENOM * r); // Transition
         } else {
-            f_mag = as * cf * r / 64.0;        // Linear confinement
+            f_mag = as * cf * r / COLOR_LINEAR_DENOM;       // Linear confinement
         }
 
         // Direction: cf>0 pushes AWAY (repulsive), cf<0 pulls TOWARD (attractive)
