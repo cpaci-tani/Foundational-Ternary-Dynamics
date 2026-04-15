@@ -4118,16 +4118,26 @@ function loadScenario(name) {
     _resetAllVisualState();
     bridge.setupScenario(name);
 
-    // Create/reset MockBridge for JS-side flux visualization (fallback when WASM
-    // doesn't have getFluxVolume, or for the parallel JS wave equation demo)
+    // Dispose of any previous MockBridge (prevents ~2-5 MB leak per scenario).
+    if (_fluxMock && typeof _fluxMock.dispose === 'function') _fluxMock.dispose();
+    _fluxMock = null;
+
+    // Create MockBridge ONLY when WASM is not live. When the WASM engine is
+    // running, it provides all flux/field data natively — running MockBridge
+    // in parallel doubles CPU load every frame (JS Laplacian + JS field
+    // sampling) and is the root cause of the "sluggish" symptom.
+    // See: engine-expert performance audit 2026-04-14.
     const L = bridge.latticeSize || 32;
-    _fluxMock = new MockBridge(L);
-    // Sync boundary shape and reflective setting to new mock bridge
-    const boundaryEl = document.getElementById('boundary-select');
-    if (boundaryEl) _fluxMock.setBoundaryShape(boundaryEl.value);
-    const reflEl = document.getElementById('reflective-boundary');
-    if (reflEl) _fluxMock.setReflectiveBoundary(reflEl.checked);
-    _fluxMock.setupScenario(name);
+    const wasmIsLive = bridge && bridge.isWasm && bridge.ready;
+    if (!wasmIsLive) {
+        _fluxMock = new MockBridge(L);
+        // Sync boundary shape and reflective setting to new mock bridge
+        const boundaryEl = document.getElementById('boundary-select');
+        if (boundaryEl) _fluxMock.setBoundaryShape(boundaryEl.value);
+        const reflEl = document.getElementById('reflective-boundary');
+        if (reflEl) _fluxMock.setReflectiveBoundary(reflEl.checked);
+        _fluxMock.setupScenario(name);
+    }
 
     // Reset ALL toggles to defaults before applying scenario-specific overrides.
     // This prevents state leakage between scenarios (e.g., gravity staying ON).
