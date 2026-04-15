@@ -67,7 +67,6 @@ static void test_G1_color_force_running() {
         int d = separations[i];
 
         auto rb = std::make_unique<RenderBridge>(L);
-        rb->force_cpu();  // force_diag needs CPU path
         rb->toggles.disable_all();
         rb->toggles.forces = true;
         rb->toggles.color_forces = true;
@@ -263,7 +262,6 @@ static void test_G3_alpha_from_scattering() {
         std::cout << "--- G3a: Head-on collision (b=0) ---\n";
 
         auto rb = std::make_unique<RenderBridge>(L);
-        rb->force_cpu();  // Velocity set via direct voxel write — needs CPU path
         rb->toggles.enable_all();
         rb->toggles.genesis = false;
 
@@ -324,7 +322,6 @@ static void test_G3_alpha_from_scattering() {
         const int b = 4;  // Impact parameter in lattice units
 
         auto rb = std::make_unique<RenderBridge>(L);
-        rb->force_cpu();  // Velocity set via direct voxel write
         rb->toggles.enable_all();
         rb->toggles.genesis = false;
 
