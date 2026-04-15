@@ -41,7 +41,7 @@
  *     resetAllVisualState - function, master visual state reset from app_dag
  */
 
-import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415g';
+import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415h';
 import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../fieldlines.js?v=20260304q';
 import { formatEnergy } from '../../units.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../constants.js?v=20260305e';
@@ -532,11 +532,20 @@ export function loadScenario(ctx, name) {
     // around as a structural fallback (some scenarios are JS-only) but
     // don't tick it on every frame in the play loop. This single check
     // is the dominant FPS recovery on play.
+    //
+    // EXCEPTION: for pure-flux scenarios, always use the JS mock for display.
+    // The WASM C++ setup_scenario uses a fixed sigma=3 (not scaled to N) and
+    // integer mid=N/2 centering — causing wrap-around on small lattices (e.g.
+    // N=8) and a 0.5-voxel offset at all sizes. The JS mock uses sigma=N/8
+    // and midF=(N-1)/2 which gives a correctly-sized, centred Gaussian at any N.
+    const isFluxScenario = name.startsWith('flux-');
     let wasmHasFlux = false;
-    try {
-        const probe = bridge.getFluxVolume && bridge.getFluxVolume();
-        wasmHasFlux = !!(probe && probe.length > 0);
-    } catch (_e) { wasmHasFlux = false; }
+    if (!isFluxScenario) {
+        try {
+            const probe = bridge.getFluxVolume && bridge.getFluxVolume();
+            wasmHasFlux = !!(probe && probe.length > 0);
+        } catch (_e) { wasmHasFlux = false; }
+    }
     _useFluxMock = !wasmHasFlux;
 
     // Mark toggles that differ from defaults after scenario overrides
