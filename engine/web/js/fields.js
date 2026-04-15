@@ -8,7 +8,7 @@
 
 import { ALPHA, G_N } from './constants.js';
 
-const AE_K_COULOMB = 2.0;  // must match wasm-bridge.js
+const AE_K_COULOMB = 2.0;  // must match wasm-bridge-dag.js
 const FOUR_PI = 4.0 * Math.PI;
 
 // ── Grid Generation ──────────────────────────────────────────────────
