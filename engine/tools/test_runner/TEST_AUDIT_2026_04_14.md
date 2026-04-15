@@ -504,33 +504,81 @@ The 4 physics fixes added in `engine/src/atom_engine.cpp` + `test_helium_scale1.
 **None of the session's engine changes introduce CPU-only constructs**
 or block a future GPU port of AtomEngine.
 
-### 10.5 Recommended follow-up work (out of this session's scope)
+### 10.5 Recommended follow-up work — SHIPPED in Wave 5
 
-To further close the GPU-first gap:
+All four items from the original audit follow-up list have been addressed:
 
-1. **Implement `gpu::GpuEngine::solve_latency_poisson()`** in
-   `engine/cuda/kernels_poisson.cu`. This would eliminate 9 of the 11
-   `force_cpu()` workarounds (all latency-downstream ones) and let
-   those tests run on GPU. **High leverage** — single kernel unlocks
-   ~30 currently-CPU-bound tests.
+1. **✅ SHIPPED — `gpu::GpuEngine::solve_latency_poisson()`** (commit `6f8b9bc`,
+   Wave 5.1). Latency Poisson now runs on GPU via cuFFT Green's function
+   + dedicated kernels for mass_density, latency→voxel, and tau/bandwidth
+   accumulation. Eliminates 5 `force_cpu()` sites in
+   `test_einstein_equations`, `test_latency_field`, and `benchmark_bh_thermo`.
+   `test_latency_field` now 20/20 PASS on GPU, `test_einstein_equations`
+   22/25 (parity with CPU — 3 remaining are pre-existing EIN-2
+   periodic-BC 1/r convergence issues).
 
-2. **Write a GPU AtomEngine** (`engine/cuda/atom_engine_gpu.cu`)
-   implementing the same compute_all_forces / tick / diagnostics
-   API that AtomEngine currently has on CPU. Reuse the Barnes-Hut
-   octree pattern from the CPU version. Unlocks `test_atom_engine_forces`
-   on GPU.
+2. **✅ SHIPPED — `gpu::AtomEngine` Phase 1** (commit `51a625b`, Wave 5.3).
+   `engine/cuda/atom_engine_gpu.cu` ships an O(N²) pair-force kernel for
+   ionic Coulomb + van der Waals Lennard-Jones 12-6. `AtomEngine::use_gpu_`
+   defaults to true when CUDA is available, falls back to CPU Barnes-Hut
+   when `toggles.h_bonds` is on or `particles.size() < 8`. Multi-body
+   forces (bonds, angle strain, dipole-dipole, torsional, thermostat)
+   still run CPU in Phase 1.
 
-3. **Write a GPU ParticleEngine** (`engine/cuda/particle_engine_gpu.cu`)
-   with the same API. Unlocks `test_pe_forces`, `test_helium_scale1`,
-   `test_fine_structure_scale1`, etc. on GPU.
+   Parity evidence (new `cpu_gpu_parity` section in `test_atom_engine_forces`):
+   - Ionic: max abs err 5.9e-23, rel err 1.6e-16 (double-precision noise)
+   - Ionic+vdW: max abs err 1.55e-10 (out of 9.4e-9 CPU total)
 
-4. **Investigate `campaign_einstein.cpp` "GPU doesn't populate voxel
-   flux for direct reads"** — this is a different GPU gap from the
-   latency one. Might be a simple `sync_to_host()` missing, or a
-   deeper design issue.
+3. **✅ SHIPPED — `gpu::ParticleEngine` Phase 1** (commit `b186d46`, Wave 5.4).
+   `engine/cuda/particle_engine_gpu.cu` ships an O(N²) pair-force kernel
+   for Coulomb (using `ALPHA_EFT = G_C²`) + Newtonian gravity. Falls back
+   to CPU Barnes-Hut whenever any advanced toggle is on (strong, exchange,
+   lorentz, magnetic_dipole, spin_orbit, radiation, relativistic) or
+   `particles.size() < 8`. Radiation + relativistic post-processing still
+   runs CPU after the pair-force kernel (they need per-particle
+   prev_acceleration + velocity history).
+
+   Parity evidence (new `cpu_gpu_parity` section in `test_pe_forces`):
+   - Coulomb: max abs err 4.68e-24, rel err 1.41e-17 (vs direct pairwise
+     CPU reference — not Barnes-Hut, which uses monopole approximation)
+   - Gravity: max abs err 2.40e-21, rel err 1.79e-16
+   - Total: max abs err 2.40e-21
+
+4. **✅ ADDRESSED — Auto-push host voxel mutations to GPU** (commit `4bcddfc`,
+   Wave 5.2). `RenderBridge::voxels()` now sets a `host_mutated_` flag;
+   `gpu_flush_host_mutations()` is called at the top of every GPU tick
+   to re-upload modified voxels. This closes the campaign_einstein gap
+   from §10.5.4 — direct test writes like `voxels()[idx].locked = true`
+   between ticks are now preserved on GPU.
+
+   Unblocks 12 `force_cpu()` sites in `campaign_einstein`,
+   `campaign_grothendieck`, `campaign_sm_observables`, `campaign_vonneumann`.
+   Only 2 `force_cpu()` sites remain (`campaign_wigner` dual-substrate
+   diagnostics — different gap, deferred to Phase 2 instrumentation sweep).
+
+### 10.6 Wave 5 test impact summary
+
+| Wave | Commit | GPU follow-up | Tests unblocked / parity added |
+|---|---|---|---|
+| 5.1 | `6f8b9bc` | GPU latency Poisson + tau + bandwidth | latency_field 20/20, einstein_equations 22/25, benchmark_bh_thermo 5 sites |
+| 5.2 | `4bcddfc` | Auto-push voxels() host mutations to GPU | 12 `force_cpu()` sites removed across 4 campaigns |
+| 5.3 | `51a625b` | gpu::AtomEngine pair forces (ionic + vdW) | 6-check CGP parity section, 5/5 scale2 tests pass on GPU |
+| 5.4 | `b186d46` | gpu::ParticleEngine pair forces (coulomb + gravity) | 8-check PGP parity section, 6/6 scale1 tests pass on GPU |
+
+### 10.7 Deferred to Wave 6+
+
+- **AtomEngine Phase 2**: bond forces, angle strain, dipole-dipole,
+  thermostat, h-bond on GPU (needs bond-topology uploads)
+- **ParticleEngine Phase 2**: strong, exchange, lorentz, magnetic_dipole,
+  spin_orbit pair kernels
+- **Phase 3**: Barnes-Hut on device (only needed for large N)
+- **campaign_wigner** dual-substrate diagnostics — residual GPU gap
+- **Phase 2b instrumentation sweep** of the ~150 remaining tests to
+  `ftd::test::*` telemetry
 
 ---
 
-**Document last updated**: 2026-04-14, after Wave 4 final ctest + GPU-first audit.
-**Data sources**: `ctest --show-only=json-v1` (post-Wave-4),
-`/tmp/ctest_final_cpu.log`, git log since commit `8d7ed60`.
+**Document last updated**: 2026-04-14, after Wave 5.4 commit `b186d46`.
+**Data sources**: `ctest --show-only=json-v1` (post-Wave-4 baseline),
+`/tmp/ctest_final_cpu.log`, git log since commit `8d7ed60`, Wave 5
+parity sections in `test_atom_engine_forces` and `test_pe_forces`.
