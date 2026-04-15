@@ -612,6 +612,12 @@ export function resizeLattice(ctx, newSize) {
     bridge.setupScenario(scenarioName);
     viewport.setLatticeSize(newSize);
 
+    // setLatticeSize() removes the old flux volume geometry. Force an immediate
+    // rebuild at the new size so it's visible on this frame rather than waiting
+    // 1-3 frames for the lazy updateFluxVolume() path to run.
+    // toggleFluxVolume preserves the current showFlux state (no visual toggle).
+    viewport.toggleFluxVolume(viewport.showFlux);
+
     // Re-create the JS MockBridge at the new size (per-size instance)
     _fluxMock = new MockBridge(newSize);
 
