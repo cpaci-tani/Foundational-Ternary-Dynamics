@@ -5,18 +5,19 @@ Single source of truth for experimental values, FTD computations,
 scoring functions, and verdict generation.
 """
 
+import sys
+import os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', '..'))
+from constants import N_c, N_base, b_3, N_eff, D_CONSTRAINT as _D_CONSTRAINT
+
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple
 
 # =============================================================================
-# FRAMEWORK INTEGERS
+# FRAMEWORK INTEGERS (imported from constants.py)
 # =============================================================================
 
-N_c = 3
-N_base = 4
-b_3 = 7
-N_eff = 13
-D = N_c * N_base**2 - 1  # = 47
+D = _D_CONSTRAINT  # = N_c * N_base**2 - 1 = 47
 
 # =============================================================================
 # CODATA 2022 / PDG 2024 EXPERIMENTAL VALUES

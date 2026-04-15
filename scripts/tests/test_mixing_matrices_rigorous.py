@@ -18,30 +18,16 @@ KEY QUESTIONS:
 3. How do they compare to alternatives?
 """
 
+import sys
+import os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))
+from constants import N_c, N_base, b_3, N_eff, G_STAR, ALPHA, GAMMA_QUARTER
+
 import unittest
 import numpy as np
 from scipy.special import gamma
 
-# Framework integers
-N_c = 3
-N_base = 4
-b_3 = 7
-N_eff = 13
-
-# Derived constants
-GAMMA_QUARTER = gamma(0.25)
-G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
-
-
-def get_alpha():
-    c = G_STAR
-    disc = (16 * c**2) ** 2 - 4 * 16 * c**3
-    x_plus = (16 * c**2 + np.sqrt(disc)) / 2
-    return 1 / x_plus
-
-
-ALPHA = get_alpha()
-ALPHA_INV = 1 / ALPHA
+ALPHA_INV = 1.0 / ALPHA
 
 
 # =============================================================================

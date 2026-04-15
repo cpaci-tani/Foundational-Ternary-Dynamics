@@ -44,11 +44,13 @@ _SCRIPTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, _SCRIPTS_DIR)
 try:
-    from constants import TORCH, DEVICE, DTYPE
+    from constants import TORCH, DEVICE, DTYPE, G_STAR as _G_STAR_CANONICAL, GAMMA_QUARTER as _GQ_CANONICAL
 except ImportError:
     TORCH = None
     DEVICE = None
     DTYPE = None
+    _G_STAR_CANONICAL = None
+    _GQ_CANONICAL = None
 
 print(f"[backend] device={DEVICE}, torch={TORCH is not None}")
 
@@ -62,9 +64,9 @@ TOLERANCE_PPM = 1.26  # The match quality we achieved
 TOLERANCE_ABS = ALPHA_INV_TARGET * (TOLERANCE_PPM / 1e6)
 
 # The Base Constant: Lemniscatic Constant G*
-# Derived from G* = sqrt(2)*Gamma(1/4)^2 / (2*pi)
-GAMMA_QUARTER = gamma(0.25)
-G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
+# Imported from scripts/constants.py (canonical source)
+GAMMA_QUARTER = _GQ_CANONICAL if _GQ_CANONICAL is not None else gamma(0.25)
+G_STAR = _G_STAR_CANONICAL if _G_STAR_CANONICAL is not None else np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
 
 # Other "plausible" bases a numerologist might try
 BASES = {
