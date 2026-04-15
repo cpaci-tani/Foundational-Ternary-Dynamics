@@ -93,6 +93,7 @@ add_library(ftd_core
     src/scale_bridge.cpp
     src/ontic_audit.cpp    # RF-03: ontic_audit() body moved from ontic.h
     src/csv_export.cpp     # RF-05: csv export bodies moved from csv_export.h
+    src/constructors.cpp   # Constructor library (ftd::ctor::*) — see spec 2026-04-15
 )
 target_include_directories(ftd_core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 if(OpenMP_CXX_FOUND)
@@ -136,6 +137,9 @@ ftd_add_test(test_lorentz tests/test_lorentz.cpp CTEST_NAME lorentz TIMEOUT 600)
 
 add_executable(test_lattice tests/test_lattice.cpp)
 target_link_libraries(test_lattice ftd_core)
+
+# Constructor library tests — see spec 2026-04-15
+ftd_add_test(test_constructors tests/test_constructors.cpp)
 
 # Lagrangian verification
 add_executable(test_born_infeld tests/test_born_infeld.cpp)
