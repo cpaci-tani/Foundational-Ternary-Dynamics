@@ -10,12 +10,6 @@ import { getById as catalogGetById } from './particle-catalog.js';
 import { ALPHA, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON, R_BOHR, N_BASE, G_STAR, VARPI, N_C, B_3, N_EFF } from './constants.js';
 import { cpkColor, defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from './elements.js';
 
-// Module-load marker so we can verify the browser is actually running this file
-// (and not a cached older copy). Check in devtools: `window.__FTD_BRIDGE_TAG__`.
-if (typeof globalThis !== 'undefined') {
-    globalThis.__FTD_BRIDGE_TAG__ = 'RB-20260414d';
-}
-
 // ── Atom property helper (simulation units: Bohr-scaled) ──────────
 // C++ engine uses Planck units; JS MockBridge uses "simulation units"
 // where length = Bohr radius, mass = AMU, energy = tuned for visible
@@ -592,21 +586,6 @@ export class MockBridge {
     }
 
     run(n) { for (let i = 0; i < n; i++) this.tick(); }
-
-    // Release all Float32Array buffers so GC can reclaim them promptly.
-    // Called from scale0/controller.js::loadScenario() to prevent ~2-5 MB
-    // leak per scenario.
-    dispose() {
-        this._fluxJ = null;
-        this._fluxWV = null;
-        this._fluxMag = null;
-        this._stateGrid = null;
-        this._selectiveDampMask = null;
-        this._boundaryMask = null;
-        this._particles = [];
-        this._params = null;
-        this._toggles = null;
-    }
 
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
@@ -4341,13 +4320,7 @@ export class WasmBridge {
             this._module = await globalThis.createFTDModule({
                 locateFile: (path) => 'wasm/' + path
             });
-            // NOTE: the WASM's setup_scenario/injectParticle/injectFlux all take
-            // RenderBridge& (see engine/wasm/ftd_wasm.cpp). Even though this file
-            // is named "wasm-bridge-DAG", the underlying C++ object must be a
-            // RenderBridge — otherwise every scenario call throws BindingError.
-            // The "dag" suffix refers to the JS-side architecture branch, not the
-            // C++ class used.
-            this._bridge = new this._module.RenderBridge(latticeSize);
+            this._bridge = new this._module.DagEngine(latticeSize);
             this.ready = true;
             console.log('FTD WASM engine loaded successfully');
             return true;
@@ -4376,13 +4349,8 @@ export class WasmBridge {
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
         if (this._module) {
-            // Race-safe: construct new before deleting old so any in-flight
-            // animate frame reading this._bridge always sees a live pointer.
-            const oldBridge = this._bridge;
-            this._bridge = new this._module.RenderBridge(this.latticeSize);
-            if (oldBridge) {
-                try { oldBridge.delete(); } catch (e) { /* already deleted */ }
-            }
+            if (this._bridge) this._bridge.delete();
+            this._bridge = new this._module.DagEngine(this.latticeSize);
         }
     }
 
