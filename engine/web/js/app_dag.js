@@ -5,22 +5,22 @@
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge, MockBridge } from './wasm-bridge-dag.js?v=20260415k';
+import { createBridge, MockBridge } from './wasm-bridge-dag.js';
 import { tryNativeBridge } from './ws-bridge.js';
-import { Viewport } from './viewport.js?v=20260415k';
-import { FluxEnergyChart, ParticleChart } from './charts.js?v=20260304q';
-import { DiagnosticsPanel, Sparkline } from './diagnostics.js?v=20260304q';
-import { LagrangianChart } from './lagrangian.js?v=20260304q';
-import { Inspector } from './inspector.js?v=20260304q';
-import { initZoo, setEngineMode as setZooMode } from './zoo.js?v=20260304q';
-import { getElement } from './elements.js?v=20260304q';
-import { getCategories, getMoleculesByCategory, getMolecule, loadMolecule } from './molecules.js?v=20260304q';
-import { atomicEnergy } from './atomic-energy.js?v=20260304q';
+import { Viewport } from './viewport.js';
+import { FluxEnergyChart, ParticleChart } from './charts.js';
+import { DiagnosticsPanel, Sparkline } from './diagnostics.js';
+import { LagrangianChart } from './lagrangian.js';
+import { Inspector } from './inspector.js';
+import { initZoo, setEngineMode as setZooMode } from './zoo.js';
+import { getElement } from './elements.js';
+import { getCategories, getMoleculesByCategory, getMolecule, loadMolecule } from './molecules.js';
+import { atomicEnergy } from './atomic-energy.js';
 import { formatEnergy } from './units.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js?v=20260415k';
+import * as Scale0Controller from './scales/scale0/controller.js';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -29,17 +29,17 @@ import * as Scale4Controller from './scales/scale4/controller.js';
 import * as Scale5Controller from './scales/scale5/controller.js';
 import * as Scale6Controller from './scales/scale6/controller.js';
 import * as Scale11Controller from './scales/scale11/controller.js';
-import { OnticObservatory, renderFcCard, renderObserverCard, renderHierarchyTower as renderOnticHierarchy, renderInfoDynamics } from './ontic-observatory.js?v=20260304q';
-import { renderEnergyLevels } from './spectroscopy.js?v=20260304q';
-import { renderCrossSections } from './cross-sections.js?v=20260304q';
-import { renderDecayRates } from './decay-rates.js?v=20260304q';
-import { ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS, TICK_PHASES, ALPHA, K_B, K_GENESIS, G_N, DAMPING, G_STAR, VARPI, X_PLUS, X_MINUS, COS2_THETA_C, C_SPEED } from './constants.js?v=20260305e';
+import { OnticObservatory, renderFcCard, renderObserverCard, renderHierarchyTower as renderOnticHierarchy, renderInfoDynamics } from './ontic-observatory.js';
+import { renderEnergyLevels } from './spectroscopy.js';
+import { renderCrossSections } from './cross-sections.js';
+import { renderDecayRates } from './decay-rates.js';
+import { ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS, TICK_PHASES, ALPHA, K_B, K_GENESIS, G_N, DAMPING, G_STAR, VARPI, X_PLUS, X_MINUS, COS2_THETA_C, C_SPEED } from './constants.js';
 // K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT moved to Scale11Controller
-import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor, renderAggregationTower, renderScaleBridge, renderEmergenceMonitor } from './aggregation-bridge.js?v=20260304q';
-import { BackgroundManager } from './backgrounds.js?v=20260304s';
-import { PETelemetryPanel } from './pe-telemetry.js?v=20260304q';
+import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor, renderAggregationTower, renderScaleBridge, renderEmergenceMonitor } from './aggregation-bridge.js';
+import { BackgroundManager } from './backgrounds.js';
+import { PETelemetryPanel } from './pe-telemetry.js';
 // ConsciousnessEngine moved to Scale11Controller
-import { addInfoTooltips } from './consciousness-pedagogy.js?v=20260317a';
+import { addInfoTooltips } from './consciousness-pedagogy.js';
 import { SCALE0_TOGGLES, SCALE2_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from './config/toggles.js';
 import { QUANTUM_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller

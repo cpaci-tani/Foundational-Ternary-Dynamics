@@ -44,20 +44,20 @@
  * ---------------------------------------------------------------
  */
 
-import { getById } from '../../particle-catalog.js?v=20260304q';
+import { getById } from '../../particle-catalog.js';
 import { formatEnergy } from '../../units.js';
 import {
     generateGridXZ, samplePECoulombOnly,
     samplePEGravityField, makePECoulombFieldFn
-} from '../../fields.js?v=20260304q';
+} from '../../fields.js';
 import {
     computeStreamlines, generateEFieldSeeds
-} from '../../fieldlines.js?v=20260304q';
+} from '../../fieldlines.js';
 import {
     ALPHA, C_SPEED, G_N, K_B,
     M_P_PHYS, M_MU_PHYS, M_N_PHYS, M_PI_CH_PHYS, M_K_CH_PHYS,
     M_TAU_PHYS, M_W_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS, M_DELTA_PHYS
-} from '../../constants.js?v=20260305e';
+} from '../../constants.js';
 import { createTickAccumulator, formatSI } from '../scale-utils.js';
 
 

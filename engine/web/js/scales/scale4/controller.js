@@ -5,8 +5,8 @@
  * Extracted from app_dag.js to isolate planetary logic into a self-contained module.
  */
 
-import { PlanetaryMockBridge } from '../../bridge/mock-scale4.js?v=20260408b';
-import { PlanetaryRenderer } from '../../planetary-renderer.js?v=20260408b';
+import { PlanetaryMockBridge } from '../../bridge/mock-scale4.js';
+import { PlanetaryRenderer } from '../../planetary-renderer.js';
 
 let _planetaryBridge = null;
 let _planetaryRenderer = null;

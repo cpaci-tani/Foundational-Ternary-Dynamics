@@ -15,11 +15,11 @@
  */
 
 import * as THREE from 'three';
-import { FIGURE_REGISTRY } from './consciousness-figure.js?v=20260305e';
+import { FIGURE_REGISTRY } from './consciousness-figure.js';
 import {
     COS2_THETA_C, THETA_C_RAD, THETA_C_DEG, Y_REAL, Y_IMAG,
     K_C, C_MANDELBROT, SIN2_THETA_C, G_STAR, ALPHA, K_B
-} from './constants.js?v=20260304q';
+} from './constants.js';
 
 // ── Holographic Mesh Shader ──────────────────────────────────────────
 

@@ -4365,7 +4365,7 @@ export class WasmBridge {
                 if (!_wasmLoadPromise) {
                     _wasmLoadPromise = new Promise((resolve, reject) => {
                         const script = document.createElement('script');
-                        script.src = 'wasm/ftd_core.js?v=20260415b';
+                        script.src = 'wasm/ftd_core.js';
                         script.onload = resolve;
                         script.onerror = () => {
                             _wasmLoadPromise = null; // allow retry
@@ -4934,4 +4934,4 @@ export class WasmBridge {
 // CosmicMockBridge moved to bridge/mock-scale5.js (Scale 5 N-body sim)
 // createBridge factory moved to bridge/bridge-factory-dag.js
 export { CosmicMockBridge } from './bridge/mock-scale5.js';
-export { createBridge } from './bridge/bridge-factory-dag.js?v=20260415k';
+export { createBridge } from './bridge/bridge-factory-dag.js';
