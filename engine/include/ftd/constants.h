@@ -13,6 +13,8 @@
  */
 
 #include "ontic.h"
+#include "ftd/constants_gpu.cuh"
+#include <algorithm>
 #include <cmath>
 
 
@@ -284,12 +286,12 @@ inline constexpr double GAUSSIAN_CUTOFF_SIGMA = 3.0;
 // Tier-2 gravity gradient scale: 1/(2×2) for r=2 stencil
 inline constexpr double GRAD_TIER2_SCALE = 0.25;
 
-// Color force regime boundaries (must match GPU kernels_forces.cu).
-// Three-regime profile: Coulomb (r<3) → transition (3-8) → linear confinement (r>=8).
-inline constexpr double COLOR_COULOMB_RADIUS    = 3.0;   // r<3: F = α_s·cf/r²
-inline constexpr double COLOR_TRANSITION_RADIUS = 8.0;   // 3<r<8: F = α_s·cf/(3r)
-inline constexpr double COLOR_TRANSITION_DENOM  = 3.0;   // denom in transition formula
-inline constexpr double COLOR_LINEAR_DENOM      = 64.0;  // r>=8: F = α_s·cf·r/64
+// Color force regime boundaries — now defined in ftd/constants_gpu.cuh (shared with GPU).
+// Using declarations bring them into the ftd:: namespace so existing callers are unchanged.
+using ::COLOR_COULOMB_RADIUS;
+using ::COLOR_TRANSITION_RADIUS;
+using ::COLOR_TRANSITION_DENOM;
+using ::COLOR_LINEAR_DENOM;
 
 // Latency / horizon clamps used by the GR sector
 inline constexpr double LATENCY_HORIZON_CLAMP = 0.998;   // f = 1 - L² floor
