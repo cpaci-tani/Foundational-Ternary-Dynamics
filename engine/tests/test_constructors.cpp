@@ -62,9 +62,51 @@ static void section_level0_particle() {
     ftd::test::check("P8: site index is center", r.sites.size() == 1 && r.sites[0] == idx);
 }
 
+static void section_level0_entangled_pair() {
+    ftd::test::section("Level 0 / entangled_pair");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord at{8, 8, 8};
+    ftd::Vec3 J{0.0, 0.0, ftd::K_B};
+
+    auto r = ftd::ctor::entangled_pair(rb, at, J);
+
+    ftd::test::check("EP1: name is 'entangled_pair'", std::string(r.name) == "entangled_pair");
+    ftd::test::check("EP2: level is 0",               r.level == 0);
+    ftd::test::check("EP3: exactly 2 sites",          r.sites.size() == 2);
+
+    const int idx0 = rb.lattice().index(8, 8, 8);
+    ftd::test::check("EP4: center voxel state = +1", rb.voxels()[idx0].state == 1);
+
+    const int pair_id = rb.voxels()[idx0].pair_id;
+    ftd::test::check("EP5: primary has non-negative pair_id", pair_id >= 0);
+
+    auto nbrs = rb.lattice().neighbors_6(idx0);
+    int partners_found = 0;
+    for (int n : nbrs) {
+        const auto& v = rb.voxels()[n];
+        if (v.pair_id == pair_id && v.state == -1) ++partners_found;
+    }
+    ftd::test::check("EP6: exactly 1 face-neighbor partner with state=-1", partners_found == 1);
+
+    std::set<int> sites_set(r.sites.begin(), r.sites.end());
+    ftd::test::check("EP7: sites contains primary", sites_set.count(idx0) == 1);
+
+    bool partner_in_sites = false;
+    for (int n : nbrs) {
+        const auto& v = rb.voxels()[n];
+        if (v.pair_id == pair_id && v.state == -1 && sites_set.count(n)) {
+            partner_in_sites = true;
+            break;
+        }
+    }
+    ftd::test::check("EP8: sites contains partner", partner_in_sites);
+}
+
 int main() {
     ftd::test::init("test_constructors");
     section_level0_flux();
     section_level0_particle();
+    section_level0_entangled_pair();
     return ftd::test::finalize();
 }
