@@ -55,10 +55,11 @@ std::vector<int> diff_sites(const RenderBridge& rb, const Snapshot& before) {
 
 }  // anonymous namespace
 
-// Level 0 stubs
+// Level 0 implementations
 StampResult flux(RenderBridge& rb, Coord at, Vec3 J) {
-    (void)rb; (void)J;
-    return StampResult{"flux", 0, at, {}};
+    auto before = snapshot_box(rb, at, 0);
+    rb.inject_flux(at.x, at.y, at.z, J);
+    return StampResult{"flux", 0, at, diff_sites(rb, before)};
 }
 
 StampResult particle(RenderBridge& rb, Coord at, int8_t state, Vec3 J,
