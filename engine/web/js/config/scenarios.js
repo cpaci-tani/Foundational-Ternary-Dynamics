@@ -1,7 +1,8 @@
 /**
  * Scenario Descriptions — Metadata for scenario dropdowns and info panels.
  *
- * Extracted from app.js. Each scale's scenario descriptions live here.
+ * Extracted from the main dashboard controller. Each scale's scenario
+ * descriptions live here.
  * Human coders: add new scenario descriptions here when adding scenarios.
  */
 

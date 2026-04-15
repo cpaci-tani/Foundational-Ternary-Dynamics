@@ -10,7 +10,7 @@
  * handles all Three.js geometry; this controller wires the DOM toggles
  * and the info/inspect pedagogy panels.
  *
- * Physics preserved exactly from app.js:
+ * Physics preserved exactly from the main dashboard controller:
  *   - Camera preset: position (5, 3.5, 5), target origin
  *   - Toggle map: 13 geometric layers (center, oct, cuboct, cube,
  *     tetra+/-, BCC/FCC, gerade/ungerade, connections, axes, mirrors,
@@ -20,6 +20,7 @@
 
 import { MetaUnit } from '../../meta-unit.js?v=20260405a';
 import { buildMetaInfoPanel, buildSiteInspectPanel } from '../../meta-pedagogy.js?v=20260405a';
+import { debugLog } from '../../core/log.js';
 
 // ---------------------------------------------------------------------------
 // Module-level state
@@ -116,7 +117,7 @@ export function loadMetaScenario(ctx) {
     const metaTab = document.querySelector('.tab[data-panel="meta-info"]');
     if (metaTab) metaTab.click();
 
-    console.log('[FTD] Meta Scale: Existential Unit loaded');
+    debugLog('[FTD] Meta Scale: Existential Unit loaded');
 }
 
 // ---------------------------------------------------------------------------
