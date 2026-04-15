@@ -4317,7 +4317,7 @@ export class WasmBridge {
                 if (!_wasmLoadPromise) {
                     _wasmLoadPromise = new Promise((resolve, reject) => {
                         const script = document.createElement('script');
-                        script.src = 'wasm/ftd_core.js';
+                        script.src = 'wasm/ftd_core.js?v=20260415b';
                         script.onload = resolve;
                         script.onerror = () => {
                             _wasmLoadPromise = null; // allow retry
