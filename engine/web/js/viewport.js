@@ -77,6 +77,28 @@ const PARTICLE_VERT = `
     }
 `;
 
+// Flux-volume variant: sqrt depth scaling instead of linear 1/z.
+// For N=8 the camera is only ~9-19 units away, so linear 1/z gives a
+// 2× size ratio between near and far faces, making the sphere look
+// wildly asymmetric.  sqrt(60/z) compresses that to ~1.4× so both
+// hemispheres stay visually balanced regardless of lattice size.
+const FLUX_VOL_VERT = `
+    attribute float size;
+    attribute vec3 particleColor;
+    varying vec3 vColor;
+    varying float vSize;
+
+    void main() {
+        vColor = particleColor;
+        vSize = size;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        float depth = max(-mvPosition.z, 1.0);
+        gl_PointSize = size * sqrt(60.0 / depth);
+        gl_PointSize = clamp(gl_PointSize, 1.0, 64.0);
+        gl_Position = projectionMatrix * mvPosition;
+    }
+`;
+
 const PARTICLE_FRAG = `
     uniform int shapeType;
     uniform float uOpacity;
@@ -1208,7 +1230,7 @@ export class Viewport {
         geo.setDrawRange(0, 0);
 
         const mat = new THREE.ShaderMaterial({
-            vertexShader: PARTICLE_VERT,
+            vertexShader: FLUX_VOL_VERT,
             fragmentShader: PARTICLE_FRAG,
             uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
             transparent: true,
