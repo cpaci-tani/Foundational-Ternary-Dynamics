@@ -129,36 +129,28 @@ const std::vector<double>& RenderBridge::phi_latency() const {
 // Discrete Operators (pure mathematics — no physics assumptions)
 // ============================================================================
 
+// RF-09: 18-pt isotropic Laplacian templated on Voxel field.
+// (1/3)*sum_face + (1/6)*sum_edge − 4*center cancels O(k^4) anisotropy.
+template <Vec3 Voxel::*F>
+Vec3 RenderBridge::laplacian_impl(int idx) const {
+  const auto& face = lattice_.neighbors_6(idx);
+  const auto& edge = lattice_.neighbors_12(idx);
+  Vec3 lap;
+  for (int n : face) lap += voxels_[n].*F * (1.0/3.0);
+  for (int n : edge) lap += voxels_[n].*F * (1.0/6.0);
+  lap -= voxels_[idx].*F * 4.0;
+  return lap;
+}
+
+// Explicit instantiations (keeps template body in .cpp, avoids ODR issues).
+template Vec3 RenderBridge::laplacian_impl<&Voxel::flux  >(int) const;
+template Vec3 RenderBridge::laplacian_impl<&Voxel::flux_L>(int) const;
+template Vec3 RenderBridge::laplacian_impl<&Voxel::flux_R>(int) const;
+
 Vec3 RenderBridge::laplacian_flux(int idx) const {
-  // Isotropic 18-point Laplacian: (1/3)*sum_face + (1/6)*sum_edge - 4*center
-  // Cancels O(k^4) anisotropy of the 6-point stencil.
-  const auto& face = lattice_.neighbors_6(idx);
-  const auto& edge = lattice_.neighbors_12(idx);
-  Vec3 lap;
-  for (int n : face) lap += voxels_[n].flux * (1.0/3.0);
-  for (int n : edge) lap += voxels_[n].flux * (1.0/6.0);
-  lap -= voxels_[idx].flux * 4.0;
+  // Isotropic 18-point Laplacian on flux field.
+  Vec3 lap = laplacian_impl<&Voxel::flux>(idx);
   assert(!std::isnan(lap.x) && !std::isnan(lap.y) && !std::isnan(lap.z));
-  return lap;
-}
-
-Vec3 RenderBridge::laplacian_flux_L(int idx) const {
-  const auto& face = lattice_.neighbors_6(idx);
-  const auto& edge = lattice_.neighbors_12(idx);
-  Vec3 lap;
-  for (int n : face) lap += voxels_[n].flux_L * (1.0/3.0);
-  for (int n : edge) lap += voxels_[n].flux_L * (1.0/6.0);
-  lap -= voxels_[idx].flux_L * 4.0;
-  return lap;
-}
-
-Vec3 RenderBridge::laplacian_flux_R(int idx) const {
-  const auto& face = lattice_.neighbors_6(idx);
-  const auto& edge = lattice_.neighbors_12(idx);
-  Vec3 lap;
-  for (int n : face) lap += voxels_[n].flux_R * (1.0/3.0);
-  for (int n : edge) lap += voxels_[n].flux_R * (1.0/6.0);
-  lap -= voxels_[idx].flux_R * 4.0;
   return lap;
 }
 
@@ -244,53 +236,54 @@ Vec3 RenderBridge::curl_state_velocity(int idx) const {
   return curl;
 }
 
-double RenderBridge::compute_stress(int idx) const {
-  double div_mag = std::abs(divergence_flux(idx));
-  Vec3 c = curl_flux(idx);
-  double curl_mag = c.mag();
-  Vec3 gd = gradient_density(idx);
-  double grad_mag = gd.mag();
-  return div_mag + curl_mag + grad_mag;
-}
-
-double RenderBridge::compute_stress_left(int idx) const {
-  // Stress computed from J_L only (left-chiral component).
-  // Used for weak transmutation with parity violation in dual-substrate mode.
-  // In dual mode, +1 particles have J_L dominant → high weak stress → easy transmutation
-  //              -1 particles have J_R dominant → low weak stress → hard transmutation
-  // This gives maximal parity violation (δ ≈ 0.957).
+// RF-16: stress = |div(F)| + |curl(F)| + |grad(|F|)| templated on Voxel field.
+// Inlines the 6-neighbor stencil directly so it works for flux, flux_L, or flux_R
+// without depending on the helpers (divergence_flux, curl_flux, gradient_density)
+// which are hardcoded to Voxel::flux.
+// Note: (v.*F).component is the correct pointer-to-member access syntax.
+template <Vec3 Voxel::*F>
+double RenderBridge::stress_impl(int idx) const {
   const auto& nbrs = lattice_.neighbors_6(idx);
 
-  // Divergence of J_L
-  double div_L = 0.0;
-  div_L += (voxels_[nbrs[0]].flux_L.x - voxels_[nbrs[1]].flux_L.x) * 0.5;
-  div_L += (voxels_[nbrs[2]].flux_L.y - voxels_[nbrs[3]].flux_L.y) * 0.5;
-  div_L += (voxels_[nbrs[4]].flux_L.z - voxels_[nbrs[5]].flux_L.z) * 0.5;
-  double div_mag = std::abs(div_L);
+  // Divergence
+  double div = 0.0;
+  div += ((voxels_[nbrs[0]].*F).x - (voxels_[nbrs[1]].*F).x) * 0.5;
+  div += ((voxels_[nbrs[2]].*F).y - (voxels_[nbrs[3]].*F).y) * 0.5;
+  div += ((voxels_[nbrs[4]].*F).z - (voxels_[nbrs[5]].*F).z) * 0.5;
+  double div_mag = std::abs(div);
 
-  // Curl of J_L
-  Vec3 curl_L;
-  curl_L.x = (voxels_[nbrs[2]].flux_L.z - voxels_[nbrs[3]].flux_L.z) * 0.5 -
-             (voxels_[nbrs[4]].flux_L.y - voxels_[nbrs[5]].flux_L.y) * 0.5;
-  curl_L.y = (voxels_[nbrs[4]].flux_L.x - voxels_[nbrs[5]].flux_L.x) * 0.5 -
-             (voxels_[nbrs[0]].flux_L.z - voxels_[nbrs[1]].flux_L.z) * 0.5;
-  curl_L.z = (voxels_[nbrs[0]].flux_L.y - voxels_[nbrs[1]].flux_L.y) * 0.5 -
-             (voxels_[nbrs[2]].flux_L.x - voxels_[nbrs[3]].flux_L.x) * 0.5;
-  double curl_mag = curl_L.mag();
+  // Curl
+  Vec3 curl;
+  curl.x = ((voxels_[nbrs[2]].*F).z - (voxels_[nbrs[3]].*F).z) * 0.5 -
+           ((voxels_[nbrs[4]].*F).y - (voxels_[nbrs[5]].*F).y) * 0.5;
+  curl.y = ((voxels_[nbrs[4]].*F).x - (voxels_[nbrs[5]].*F).x) * 0.5 -
+           ((voxels_[nbrs[0]].*F).z - (voxels_[nbrs[1]].*F).z) * 0.5;
+  curl.z = ((voxels_[nbrs[0]].*F).y - (voxels_[nbrs[1]].*F).y) * 0.5 -
+           ((voxels_[nbrs[2]].*F).x - (voxels_[nbrs[3]].*F).x) * 0.5;
+  double curl_mag = curl.mag();
 
-  // Gradient of |J_L|
-  double rho_xp = voxels_[nbrs[0]].flux_L.mag();
-  double rho_xm = voxels_[nbrs[1]].flux_L.mag();
-  double rho_yp = voxels_[nbrs[2]].flux_L.mag();
-  double rho_ym = voxels_[nbrs[3]].flux_L.mag();
-  double rho_zp = voxels_[nbrs[4]].flux_L.mag();
-  double rho_zm = voxels_[nbrs[5]].flux_L.mag();
-  double gx = (rho_xp - rho_xm) * 0.5;
-  double gy = (rho_yp - rho_ym) * 0.5;
-  double gz = (rho_zp - rho_zm) * 0.5;
+  // Gradient of magnitude |F|
+  double gx = ((voxels_[nbrs[0]].*F).mag() - (voxels_[nbrs[1]].*F).mag()) * 0.5;
+  double gy = ((voxels_[nbrs[2]].*F).mag() - (voxels_[nbrs[3]].*F).mag()) * 0.5;
+  double gz = ((voxels_[nbrs[4]].*F).mag() - (voxels_[nbrs[5]].*F).mag()) * 0.5;
   double grad_mag = std::sqrt(gx*gx + gy*gy + gz*gz);
 
   return div_mag + curl_mag + grad_mag;
+}
+
+// Explicit instantiations.
+template double RenderBridge::stress_impl<&Voxel::flux  >(int) const;
+template double RenderBridge::stress_impl<&Voxel::flux_L>(int) const;
+
+double RenderBridge::compute_stress(int idx) const {
+  return stress_impl<&Voxel::flux>(idx);
+}
+
+double RenderBridge::compute_stress_left(int idx) const {
+  // Stress from J_L only (left-chiral). Produces maximal parity violation
+  // (δ ≈ 0.957): +1 particles (J_L-dominant) → high stress → easy transmutation;
+  // −1 particles (J_R-dominant) → low stress → nearly immune.
+  return stress_impl<&Voxel::flux_L>(idx);
 }
 
 double RenderBridge::born_probability(int idx) const {
@@ -412,8 +405,8 @@ void RenderBridge::phase_read() {
           lap_R = fR + eR - voxels_[i].flux_R * 4.0;
         } else {
           // Boundary slow path: modular wrapping via lattice neighbor tables.
-          lap_L = laplacian_flux_L(i);
-          lap_R = laplacian_flux_R(i);
+          lap_L = laplacian_impl<&Voxel::flux_L>(i);
+          lap_R = laplacian_impl<&Voxel::flux_R>(i);
         }
         delta_j_L_[i] = lap_L * cw2;
         delta_j_R_[i] = lap_R * cw2;
@@ -1300,6 +1293,13 @@ void RenderBridge::tick() {
     return;
   }
 #endif
+
+  // Validate toggle dependencies before any physics runs.
+  {
+      std::string validErr;
+      if (!toggles.validate(&validErr))
+          std::cerr << "[TermToggles] Invalid combination: " << validErr;
+  }
 
   // Rule 1: Wave propagation + state-flux coupling
   if (toggles.wave_propagation || toggles.coupling)

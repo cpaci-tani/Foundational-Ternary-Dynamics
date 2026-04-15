@@ -234,9 +234,17 @@ private:
     void solve_latency_poisson(); // SOR Poisson solver for gravitational latency field
 
     // Dual-substrate helpers
-    Vec3 laplacian_flux_L(int idx) const;  // 18-pt Laplacian on flux_L
-    Vec3 laplacian_flux_R(int idx) const;  // 18-pt Laplacian on flux_R
     void sync_observable();                 // Set flux = flux_L + flux_R for all voxels
+
+    // RF-09: pointer-to-member template for the 18-pt isotropic Laplacian.
+    // Instantiated explicitly for Voxel::flux, Voxel::flux_L, Voxel::flux_R.
+    template <Vec3 Voxel::*F>
+    Vec3 laplacian_impl(int idx) const;
+
+    // RF-16: pointer-to-member template for the (div+curl+grad_density) stress.
+    // Instantiated explicitly for Voxel::flux and Voxel::flux_L.
+    template <Vec3 Voxel::*F>
+    double stress_impl(int idx) const;
 
     Lattice lattice_;
     std::vector<Voxel> voxels_;
