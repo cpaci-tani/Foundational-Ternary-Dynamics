@@ -475,6 +475,10 @@ export function loadScenario(ctx, name) {
     // Use master visual state reset from app_dag (handles ALL scales)
     ctx.resetAllVisualState();
 
+    // Reset auxiliary settings to defaults (speed, boundary, view toggles).
+    // Per-spec: "Changing scenarios should reset ALL values/settings."
+    _resetAuxiliarySettings();
+
     bridge.setupScenario(name);
 
     // Create/reset MockBridge for JS-side flux visualization (fallback when WASM
@@ -542,6 +546,84 @@ export function loadScenario(ctx, name) {
     _syncComboSliders(bridge);
 
     _latticeNeedsUpload = true;
+}
+
+
+/**
+ * resizeLattice -- Change the lattice size WITHOUT resetting state.
+ *
+ * The WASM RenderBridge is fixed-size, so resizing requires recreating it.
+ * Unlike loadScenario(), this function:
+ *   - PRESERVES all toggle states, slider values, charts, play state, camera env
+ *   - Re-injects the CURRENT scenario into the new bridge (so the lattice has
+ *     a sensible flux pattern at the new size)
+ *   - Re-syncs the existing toggle state (read from HTML) to both bridges
+ *
+ * Per-spec: "Changing size should immediately set the size [for] the flux
+ * volume and all overlays and NOT reset the state of the simulation."
+ *
+ * Note: viewport.setLatticeSize() rebuilds the flux volume geometry and
+ * recenters the lattice mode camera, both of which are size-dependent.
+ *
+ * @param {object} ctx - Application context
+ * @param {number} newSize - New lattice side length
+ */
+export function resizeLattice(ctx, newSize) {
+    const { bridge, viewport } = ctx;
+
+    // Capture current scenario name BEFORE we touch anything
+    const scenarioEl = document.getElementById('scenario-select');
+    const scenarioName = scenarioEl ? scenarioEl.value : 'flux-pulse';
+
+    // Resize the WASM RenderBridge (destroys + recreates fresh at new size).
+    // The simulation tick counter and per-voxel state are necessarily lost
+    // because RenderBridge has no in-place resize.
+    bridge.reset(newSize);
+    viewport.setLatticeSize(newSize);
+
+    // Re-create the JS MockBridge at the new size (per-size instance)
+    _fluxMock = new MockBridge(newSize);
+
+    // Sync boundary settings (preserve the user's current choice)
+    const boundaryEl = document.getElementById('boundary-select');
+    if (boundaryEl) _fluxMock.setBoundaryShape(boundaryEl.value);
+    const reflEl = document.getElementById('reflective-boundary');
+    if (reflEl) _fluxMock.setReflectiveBoundary(reflEl.checked);
+
+    // Re-inject the CURRENT scenario at the new size so the lattice has
+    // sensible initial flux. (Without this the new bridge would be all-zeros
+    // and the user's "current scenario" dropdown would be a lie.)
+    bridge.setupScenario(scenarioName);
+    _fluxMock.setupScenario(scenarioName);
+
+    // CRITICAL: re-sync the EXISTING toggle states (from HTML) to the new
+    // bridge. Do NOT reset toggles to defaults — the user may have configured
+    // them and resizing should preserve their choices.
+    for (const [key, , elId] of DEFAULT_TOGGLES) {
+        const el = document.getElementById(elId);
+        if (el) {
+            bridge.setToggle(key, el.checked);
+            _fluxMock.setToggle(key, el.checked);
+        }
+    }
+
+    // Re-probe whether WASM has flux of its own (same as loadScenario)
+    let wasmHasFlux = false;
+    try {
+        const probe = bridge.getFluxVolume && bridge.getFluxVolume();
+        wasmHasFlux = !!(probe && probe.length > 0);
+    } catch (_e) { wasmHasFlux = false; }
+    _useFluxMock = !wasmHasFlux;
+
+    _latticeNeedsUpload = true;
+    _fieldNeedsUpdate = true;  // field overlays should refresh next frame
+    _tickAcc.reset();          // tick fractional accumulator restart is harmless
+
+    // Deliberately NOT done here:
+    //   - clearCharts()          (charts preserve play history across resize)
+    //   - resetAllVisualState()  (no overlay button reset)
+    //   - touching ctx.running   (preserve play/pause)
+    //   - resetting sliders      (preserve speed/kb/gn/damping)
 }
 
 
@@ -735,6 +817,54 @@ function _markScenarioOverrides() {
         }
     }
     if (advNeedsOpen && advDetails) advDetails.open = true;
+}
+
+/**
+ * Reset Scale 0 auxiliary settings to their defaults: speed slider,
+ * boundary shape, reflective boundary, flux volume/slice view toggles.
+ *
+ * Called from loadScenario as part of the "ALL values/settings" reset
+ * mandate. The Scale 0 toggles + combo sliders are handled separately
+ * by the existing reset paths in loadScenario itself.
+ *
+ * Each setting is set via .value/.checked AND a 'change'/'input' event
+ * is dispatched so that downstream listeners (which actually push the
+ * value into the WASM bridge / mock) take effect.
+ */
+function _resetAuxiliarySettings() {
+    // Speed slider — default 50 maps to ticksPerFrame = 1.0 via the
+    // piecewise curve in app_dag.js (see _sliderToSpeed).
+    const speed = document.getElementById('ticks-per-frame');
+    if (speed && speed.value !== '50') {
+        speed.value = '50';
+        speed.dispatchEvent(new Event('input'));
+    }
+
+    // Boundary shape — default 'cube' (no clipping)
+    const boundary = document.getElementById('boundary-select');
+    if (boundary && boundary.value !== 'cube') {
+        boundary.value = 'cube';
+        boundary.dispatchEvent(new Event('change'));
+    }
+
+    // Reflective boundary — default ON
+    const refl = document.getElementById('reflective-boundary');
+    if (refl && !refl.checked) {
+        refl.checked = true;
+        refl.dispatchEvent(new Event('change'));
+    }
+
+    // Flux Volume view toggle — default ON
+    const fvBtn = document.getElementById('toggle-flux-volume');
+    if (fvBtn && !fvBtn.classList.contains('active')) {
+        fvBtn.click();  // toggles .active and pushes to viewport
+    }
+
+    // Flux Slice view toggle — default OFF
+    const fsBtn = document.getElementById('toggle-flux-slice');
+    if (fsBtn && fsBtn.classList.contains('active')) {
+        fsBtn.click();
+    }
 }
 
 /**
