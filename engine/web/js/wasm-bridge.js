@@ -3351,8 +3351,16 @@ export class WasmBridge {
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
         if (this._module) {
-            if (this._bridge) this._bridge.delete();
+            // Construct the new bridge BEFORE deleting the old one, so that
+            // any concurrent access (e.g., an in-flight animate frame reading
+            // this._bridge) always sees a live pointer. Embind's delete()
+            // invalidates the C++ object synchronously, so null-out the
+            // reference before calling delete() to catch any stale readers.
+            const oldBridge = this._bridge;
             this._bridge = new this._module.RenderBridge(this.latticeSize);
+            if (oldBridge) {
+                try { oldBridge.delete(); } catch (e) { /* already deleted */ }
+            }
         }
     }
 
