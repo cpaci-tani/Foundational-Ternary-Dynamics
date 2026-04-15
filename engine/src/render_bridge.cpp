@@ -50,8 +50,19 @@ RenderBridge::RenderBridge(int lattice_size)
       phi_(lattice_.total_sites(), 0.0),
       phi_coulomb_(lattice_.total_sites(), 0.0),
       phi_latency_(lattice_.total_sites(), 0.0),
-      moved_(lattice_.total_sites(), 0)
+      moved_(lattice_.total_sites(), 0),
+      sor_source_(lattice_.total_sites(), 0.0)
 {
+    // PERF: pre-size per-tick scratch buffers so phase_write doesn't
+    // construct ~5KB of mt19937 state per voxel. Under WASM (no OpenMP)
+    // num_threads is always 1; native builds size to omp_get_max_threads().
+    int num_threads = 1;
+#ifdef _OPENMP
+    num_threads = omp_get_max_threads();
+#endif
+    thread_seeds_.resize(num_threads, 0u);
+    thread_rngs_.resize(num_threads);
+    colored_sites_cache_.reserve(256);
 #ifdef FTD_ENABLE_CUDA
     try {
         gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
@@ -438,29 +449,28 @@ void RenderBridge::phase_write() {
     }
   }
 
-  // Pre-generate per-thread RNG seeds from the base RNG (sequential, deterministic).
-  // This avoids data races on rng_/uniform_ inside the parallel region while
-  // maintaining reproducibility (same base seed → same per-thread seeds → same results).
+  // PERF: re-seed the per-thread RNG pool ONCE per phase_write (was
+  // constructing a fresh ~5KB mt19937 per voxel inside the parallel-for,
+  // costing ~1.3 GB/tick of stack churn at L=64). Buffers are bridge
+  // members presized in the ctor — no allocation here.
   int num_threads = 1;
 #ifdef _OPENMP
   num_threads = omp_get_max_threads();
 #endif
-  std::vector<unsigned int> thread_seeds(num_threads);
-  for (int t = 0; t < num_threads; ++t)
-    thread_seeds[t] = rng_();
+  for (int t = 0; t < num_threads; ++t) {
+    thread_seeds_[t] = rng_();
+    thread_rngs_[t].seed(thread_seeds_[t]);
+  }
 
 #pragma omp parallel for
   for (int i = 0; i < N; ++i) {
     auto &v = voxels_[i];
 
-    // Thread-local RNG seeded deterministically from pre-generated seeds.
-    // Each thread gets a unique seed; within a thread, the voxel index
-    // provides additional entropy so results don't depend on loop scheduling.
     int tid = 0;
 #ifdef _OPENMP
     tid = omp_get_thread_num();
 #endif
-    std::mt19937 local_rng(thread_seeds[tid] + static_cast<unsigned int>(i));
+    auto& local_rng = thread_rngs_[tid];
     std::uniform_real_distribution<double> local_uniform(0.0, 1.0);
 
     const bool should_damp = !selective || near_particle_[i];
@@ -609,30 +619,94 @@ void RenderBridge::phase_write() {
 // SOR ω=1.75 matches the Coulomb solver quality.
 // ============================================================================
 
+// ============================================================================
+// SOR sweep helper — isotropic 18-point Poisson stencil, interior/boundary split
+//
+// Replaces three near-identical inner SOR loops in gauss_project,
+// solve_coulomb_poisson, solve_latency_poisson. Interior voxels (not on the
+// boundary) use precomputed integer offsets and pay zero modulo wraps —
+// at L=64 that's ~97% of voxels on the fast path. Only the ~3% on a face
+// of the lattice take the slow modular path via lattice.neighbors_6/12.
+// ============================================================================
+static inline void sor_sweep_18pt(std::vector<double>& phi,
+                                  const std::vector<double>& source,
+                                  const Lattice& lattice,
+                                  double omega) {
+  constexpr double INV3 = 1.0 / 3.0;
+  constexpr double INV6 = 1.0 / 6.0;
+  constexpr double INV4 = 1.0 / 4.0;
+  const int L = lattice.size();
+  const int LL = L * L;
+  const int Nm1 = L - 1;
+
+  // Precomputed neighbor offsets for interior voxels — no modulo needed.
+  const int o_xp = 1,  o_xm = -1;
+  const int o_yp = L,  o_ym = -L;
+  const int o_zp = LL, o_zm = -LL;
+  const int o_xpyp = o_xp + o_yp, o_xpym = o_xp + o_ym;
+  const int o_xmyp = o_xm + o_yp, o_xmym = o_xm + o_ym;
+  const int o_xpzp = o_xp + o_zp, o_xpzm = o_xp + o_zm;
+  const int o_xmzp = o_xm + o_zp, o_xmzm = o_xm + o_zm;
+  const int o_ypzp = o_yp + o_zp, o_ypzm = o_yp + o_zm;
+  const int o_ymzp = o_ym + o_zp, o_ymzm = o_ym + o_zm;
+
+  // Interior fast path: ~97% of voxels at L=64. Zero modulo, contiguous
+  // index advancement so the JIT/auto-vectorizer can do their thing.
+  for (int z = 1; z < Nm1; ++z) {
+    for (int y = 1; y < Nm1; ++y) {
+      int idx = z * LL + y * L + 1;
+      for (int x = 1; x < Nm1; ++x, ++idx) {
+        const double face_sum = phi[idx + o_xp] + phi[idx + o_xm]
+                              + phi[idx + o_yp] + phi[idx + o_ym]
+                              + phi[idx + o_zp] + phi[idx + o_zm];
+        const double edge_sum = phi[idx + o_xpyp] + phi[idx + o_xpym]
+                              + phi[idx + o_xmyp] + phi[idx + o_xmym]
+                              + phi[idx + o_xpzp] + phi[idx + o_xpzm]
+                              + phi[idx + o_xmzp] + phi[idx + o_xmzm]
+                              + phi[idx + o_ypzp] + phi[idx + o_ypzm]
+                              + phi[idx + o_ymzp] + phi[idx + o_ymzm];
+        const double gs = (INV3 * face_sum + INV6 * edge_sum - source[idx]) * INV4;
+        phi[idx] += omega * (gs - phi[idx]);
+      }
+    }
+  }
+
+  // Boundary slow path: voxels on a lattice face. Uses lattice's modular
+  // neighbor lookups. Skips interior voxels already processed above.
+  for (int z = 0; z < L; ++z) {
+    const bool zEdge = (z == 0 || z == Nm1);
+    for (int y = 0; y < L; ++y) {
+      const bool yEdge = (y == 0 || y == Nm1);
+      for (int x = 0; x < L; ++x) {
+        if (!zEdge && !yEdge && x != 0 && x != Nm1) continue;
+        const int idx = z * LL + y * L + x;
+        const auto& face = lattice.neighbors_6(idx);
+        const auto& edge = lattice.neighbors_12(idx);
+        double face_sum = 0.0, edge_sum = 0.0;
+        for (int n : face) face_sum += phi[n];
+        for (int n : edge) edge_sum += phi[n];
+        const double gs = (INV3 * face_sum + INV6 * edge_sum - source[idx]) * INV4;
+        phi[idx] += omega * (gs - phi[idx]);
+      }
+    }
+  }
+}
+
 void RenderBridge::gauss_project() {
   const int N = static_cast<int>(lattice_.total_sites());
   constexpr int SOR_ITERS = SOR_ITERATIONS;
   constexpr double OMEGA = SOR_OMEGA;
 
-  std::vector<double> violation(N);
+  // Source term for the gauss SOR: violation = div(J) - state.
+  // sor_source_ is a bridge member — zero per-tick allocation.
 #pragma omp parallel for
   for (int i = 0; i < N; ++i) {
-    violation[i] = divergence_flux(i) - static_cast<double>(voxels_[i].state);
+    sor_source_[i] = divergence_flux(i) - static_cast<double>(voxels_[i].state);
   }
 
-  // Warm-started: phi_ retains values from previous tick (no cold-start reset).
-  // SOR is sequential (Gauss-Seidel based) — no parallel for in inner loop.
-  // Uses isotropic 18-point stencil: (1/3)*face + (1/6)*edge, divisor=4.
+  // Warm-started: phi_ retains values from previous tick.
   for (int iter = 0; iter < SOR_ITERS; ++iter) {
-    for (int i = 0; i < N; ++i) {
-      const auto& face = lattice_.neighbors_6(i);
-      const auto& edge = lattice_.neighbors_12(i);
-      double face_sum = 0.0, edge_sum = 0.0;
-      for (int n : face) face_sum += phi_[n];
-      for (int n : edge) edge_sum += phi_[n];
-      double gs = ((1.0/3.0) * face_sum + (1.0/6.0) * edge_sum - violation[i]) / 4.0;
-      phi_[i] += OMEGA * (gs - phi_[i]);
-    }
+    sor_sweep_18pt(phi_, sor_source_, lattice_, OMEGA);
   }
 
   // Phase 4 (Approach B): Skip Gauss correction at manifested sites.
@@ -682,30 +756,26 @@ void RenderBridge::solve_coulomb_poisson() {
   double charge_sum = 0.0;
   for (int i = 0; i < N; ++i)
     charge_sum += static_cast<double>(voxels_[i].state);
-  double mean_charge = charge_sum / N;
+  const double mean_charge = charge_sum / N;
 
-  // SOR iteration (warm-started from previous tick's phi_coulomb_)
-  // Note: ∇²φ = -s (standard electrostatic convention: ∇²V = -ρ/ε₀)
-  // so that F = -α·s·∇φ gives repulsion for like charges, attraction for unlike.
-  // Uses isotropic 18-point stencil: (1/3)*face + (1/6)*edge, divisor=4.
+  // Precompute source ONCE per tick (it doesn't depend on iter):
+  //   ∇²φ = -s  →  source = -(s - mean)
+#pragma omp parallel for
+  for (int i = 0; i < N; ++i) {
+    sor_source_[i] = -(static_cast<double>(voxels_[i].state) - mean_charge);
+  }
+
+  // Warm-started SOR; uses shared 18-point sweep helper.
   for (int iter = 0; iter < SOR_ITERS; ++iter) {
-    for (int i = 0; i < N; ++i) {
-      const auto& face = lattice_.neighbors_6(i);
-      const auto& edge = lattice_.neighbors_12(i);
-      double face_sum = 0.0, edge_sum = 0.0;
-      for (int n : face) face_sum += phi_coulomb_[n];
-      for (int n : edge) edge_sum += phi_coulomb_[n];
-      double source = -(static_cast<double>(voxels_[i].state) - mean_charge);
-      double phi_gs = ((1.0/3.0) * face_sum + (1.0/6.0) * edge_sum - source) / 4.0;
-      phi_coulomb_[i] = (1.0 - OMEGA) * phi_coulomb_[i] + OMEGA * phi_gs;
-    }
+    sor_sweep_18pt(phi_coulomb_, sor_source_, lattice_, OMEGA);
   }
 
   // Pin gauge: subtract mean of phi
   double phi_sum = 0.0;
   for (int i = 0; i < N; ++i)
     phi_sum += phi_coulomb_[i];
-  double phi_mean = phi_sum / N;
+  const double phi_mean = phi_sum / N;
+#pragma omp parallel for
   for (int i = 0; i < N; ++i)
     phi_coulomb_[i] -= phi_mean;
 }
@@ -731,30 +801,27 @@ void RenderBridge::solve_latency_poisson() {
   double mass_sum = 0.0;
   for (int i = 0; i < N; ++i)
     mass_sum += K_B * std::abs(voxels_[i].state);
-  double mean_mass = mass_sum / N;
+  const double mean_mass = mass_sum / N;
 
-  // SOR iteration (warm-started from previous tick's phi_latency_)
-  // Convention: ∇²φ = +4πGρ (positive: attractive potential is positive near mass)
-  // Uses isotropic 18-point stencil: (1/3)*face + (1/6)*edge, divisor=4.
+  // Precompute source ONCE per tick (independent of iter):
+  //   ∇²φ = +4πGρ  →  source = 4πG(ρ - mean)
+#pragma omp parallel for
+  for (int i = 0; i < N; ++i) {
+    const double rho_mass = K_B * std::abs(voxels_[i].state);
+    sor_source_[i] = FOUR_PI_G * (rho_mass - mean_mass);
+  }
+
+  // Warm-started SOR; uses shared 18-point sweep helper.
   for (int iter = 0; iter < SOR_ITERS; ++iter) {
-    for (int i = 0; i < N; ++i) {
-      const auto& face = lattice_.neighbors_6(i);
-      const auto& edge = lattice_.neighbors_12(i);
-      double face_sum = 0.0, edge_sum = 0.0;
-      for (int n : face) face_sum += phi_latency_[n];
-      for (int n : edge) edge_sum += phi_latency_[n];
-      double rho_mass = K_B * std::abs(voxels_[i].state);
-      double source = FOUR_PI_G * (rho_mass - mean_mass);
-      double phi_gs = ((1.0/3.0) * face_sum + (1.0/6.0) * edge_sum - source) / 4.0;
-      phi_latency_[i] = (1.0 - OMEGA) * phi_latency_[i] + OMEGA * phi_gs;
-    }
+    sor_sweep_18pt(phi_latency_, sor_source_, lattice_, OMEGA);
   }
 
   // Pin gauge: subtract mean of phi
   double phi_sum = 0.0;
   for (int i = 0; i < N; ++i)
     phi_sum += phi_latency_[i];
-  double phi_mean = phi_sum / N;
+  const double phi_mean = phi_sum / N;
+#pragma omp parallel for
   for (int i = 0; i < N; ++i)
     phi_latency_[i] -= phi_mean;
 
@@ -769,7 +836,7 @@ void RenderBridge::solve_latency_poisson() {
   for (int i = 0; i < N; ++i) {
     double phi_val = phi_latency_[i];
     double abs_phi = std::abs(phi_val);
-    double clamped = std::min(abs_phi, 0.998);
+    double clamped = std::min(abs_phi, LATENCY_HORIZON_CLAMP);
     voxels_[i].latency = std::sqrt(clamped);
   }
 }
@@ -806,14 +873,15 @@ void RenderBridge::phase_forces() {
   // Coupling: running α_s(r) with confinement clamping.
   // The Z_3 color labeling comes from dominant flux axis [EMERGENT].
   // The force coefficients come from SU(3) Casimir operators [IMPOSED].
-  struct ColoredSite { int idx; int8_t state; int8_t color; int cx, cy, cz; };
-  std::vector<ColoredSite> colored_sites;
+  // PERF: colored_sites_cache_ is a bridge member — clear+push reuses capacity,
+  // no per-tick malloc.
+  colored_sites_cache_.clear();
   if (toggles.color_forces) {
     for (int ii = 0; ii < N; ++ii) {
       if (voxels_[ii].state != 0 && voxels_[ii].color != 0) {
         auto cc = lattice_.coord(ii);
-        colored_sites.push_back({ii, voxels_[ii].state, voxels_[ii].color,
-                                 cc.x, cc.y, cc.z});
+        colored_sites_cache_.push_back({cc.x, cc.y, cc.z,
+                                        voxels_[ii].state, voxels_[ii].color});
       }
     }
   }
@@ -893,8 +961,9 @@ void RenderBridge::phase_forces() {
     Vec3 f_color;
     if (toggles.color_forces && v.color != 0) {
       auto ci = lattice_.coord(i);
-      for (auto& cs : colored_sites) {
-        if (cs.idx == i) continue;
+      for (auto& cs : colored_sites_cache_) {
+        // Skip self via coord equality (cheaper than carrying idx)
+        if (cs.cx == ci.x && cs.cy == ci.y && cs.cz == ci.z) continue;
         double ddx = cs.cx - ci.x;
         double ddy = cs.cy - ci.y;
         double ddz = cs.cz - ci.z;
@@ -912,16 +981,16 @@ void RenderBridge::phase_forces() {
         double as = alpha_s_lattice(r);
 
         // Three-regime force profile (matches GPU kernels_forces.cu):
-        //   r < 3:  Coulomb (asymptotic freedom)
-        //   3-8:    Transition (flux tube stretching)
-        //   r >= 8: Linear confinement (constant string tension)
+        //   r < COLOR_COULOMB_RADIUS:    Coulomb (asymptotic freedom)
+        //   transition:                  Flux tube stretching
+        //   r >= COLOR_TRANSITION_RADIUS: Linear confinement (constant string tension)
         double F_mag;
-        if (r < 3.0) {
+        if (r < COLOR_COULOMB_RADIUS) {
           F_mag = as * cf / r2;
-        } else if (r < 8.0) {
-          F_mag = as * cf / (3.0 * r);
+        } else if (r < COLOR_TRANSITION_RADIUS) {
+          F_mag = as * cf / (COLOR_TRANSITION_DENOM * r);
         } else {
-          F_mag = as * cf * r / 64.0;
+          F_mag = as * cf * r / COLOR_LINEAR_DENOM;
         }
 
         // ddx points from probe to source; negate for repulsive force direction

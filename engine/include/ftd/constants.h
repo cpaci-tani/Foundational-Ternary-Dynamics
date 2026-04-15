@@ -251,8 +251,14 @@ inline constexpr double EXCHANGE_RANGE_SQ = EXCHANGE_RANGE * EXCHANGE_RANGE;
 // Engine tuning constants (extracted from render_bridge.cpp)
 // ============================================================================
 
-// SOR solver parameters (used by gauss_project and solve_coulomb_poisson)
-inline constexpr int SOR_ITERATIONS = 30;
+// SOR solver parameters (used by gauss_project and solve_coulomb_poisson).
+//
+// The Coulomb solver is warm-started from the previous tick, so post-tick
+// drift converges in a handful of iterations. 30 was a silent bump from
+// the documented 10 (per CLAUDE.md / SPEC_ENGINE.md) — reverting to 10
+// because the perf cost is 60 sequential SOR sweeps per tick (30 here +
+// 30 in the Coulomb solver) and there's no tolerance regression at 10.
+inline constexpr int SOR_ITERATIONS = 10;
 inline constexpr double SOR_OMEGA = 1.75;
 
 // Evaporation: particle dies when 7-site neighborhood energy < K_B² × this
@@ -267,6 +273,16 @@ inline constexpr double GAUSSIAN_CUTOFF_SIGMA = 3.0;
 
 // Tier-2 gravity gradient scale: 1/(2×2) for r=2 stencil
 inline constexpr double GRAD_TIER2_SCALE = 0.25;
+
+// Color force regime boundaries (must match GPU kernels_forces.cu).
+// Three-regime profile: Coulomb (r<3) → transition (3-8) → linear confinement (r>=8).
+inline constexpr double COLOR_COULOMB_RADIUS    = 3.0;   // r<3: F = α_s·cf/r²
+inline constexpr double COLOR_TRANSITION_RADIUS = 8.0;   // 3<r<8: F = α_s·cf/(3r)
+inline constexpr double COLOR_TRANSITION_DENOM  = 3.0;   // denom in transition formula
+inline constexpr double COLOR_LINEAR_DENOM      = 64.0;  // r>=8: F = α_s·cf·r/64
+
+// Latency / horizon clamps used by the GR sector
+inline constexpr double LATENCY_HORIZON_CLAMP = 0.998;   // f = 1 - L² floor
 
 // ============================================================================
 // Scale 2 Phase 3 Constants — Inter-atomic forces

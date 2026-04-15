@@ -47,9 +47,6 @@ private:
     void phase_forces();
     void phase_movement();
 
-    // Collects active voxels + 1 halo boundary for minimal sweeps
-    void sweep_active_bounds();
-
     // Discrete physics operators over DAG
     Vec3 laplacian_flux(int x, int y, int z) const;
     Vec3 gradient_state(int x, int y, int z) const;
@@ -62,8 +59,10 @@ private:
 
     // Store deltas between phases
     std::vector<Vec3> delta_j_;
+    // active_indices_ is the only one of the originally-declared trio that's
+    // actually read (by entity_count). sweep_active_bounds() and
+    // has_active_flag_ were declared but never defined/written -- removed.
     std::vector<int> active_indices_;
-    std::vector<int> has_active_flag_;
 };
 
 } // namespace ftd
