@@ -738,6 +738,48 @@ export function loadAEScenario(ctx, name) {
         }
 
         // ══════════════════════════════════════════════════════════════
+        // SINGLE-ATOM PHYSICS -- hydrogen atom + scattering demos
+        // ══════════════════════════════════════════════════════════════
+        case 'ae-hydrogen-atom': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeSetIonic(true);    document.getElementById('ae-ionic').checked = true;
+            // Single locked hydrogen at origin — orbital cloud (from orbitals.js) shows 1s shape.
+            bridge.aeAddLockedAtom(1, 0, 0, 0);
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Hydrogen Atom',
+                desc: 'Single H atom \u2014 proton nucleus plus 1s electron cloud. Enable orbitals to see the probability shell.',
+                fields: {
+                    'Atoms': '1 \u00d7 H (locked)',
+                    'Shell': 'n=1, \u2113=0 (1s)',
+                    'Force': 'Nucleus-electron Coulomb',
+                }
+            });
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 15); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-rutherford-scattering': {
+            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
+            bridge.aeSetIonic(true);    document.getElementById('ae-ionic').checked = true;
+            // Locked gold nucleus (Z=79) at origin + incoming alpha particle (He2+) with impact parameter.
+            bridge.aeAddLockedAtom(79, 0, 0, 0);
+            const b = 3.5;  // impact parameter (Bohr radii)
+            const startX = -25, vx = 0.8;
+            bridge.aeAddAtom(2, startX, b, 0, vx, 0, 0, 2);  // He\u00b2\u207a projectile
+            if (inspector) inspector.setScenarioInfo({
+                title: 'Rutherford Scattering',
+                desc: '\u03b1 particle (He\u00b2\u207a) deflected by locked Au nucleus \u2014 Coulomb scattering.',
+                fields: {
+                    'Target': 'Au (Z=79, locked)',
+                    'Projectile': '\u03b1 / He\u00b2\u207a',
+                    'Impact param b': b.toFixed(1) + ' a\u2080',
+                    'Force': 'Coulomb',
+                }
+            });
+            if (viewport) { viewport.controls.target.set(-5, 0, 0); viewport.camera.position.set(0, 0, 50); viewport.controls.update(); }
+            break;
+        }
+
+        // ══════════════════════════════════════════════════════════════
         // NOBLE GAS CLUSTERS -- vdW only (no bonding, no ionic)
         // ══════════════════════════════════════════════════════════════
         case 'ae-he-cluster': {
