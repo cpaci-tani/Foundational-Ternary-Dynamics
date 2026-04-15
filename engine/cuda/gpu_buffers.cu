@@ -66,6 +66,13 @@ void GpuBuffers::allocate(int lattice_size) {
     // Solver potentials
     CUDA_CHECK(cudaMalloc(&d_phi, N * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_phi_coulomb, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_phi_latency, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_latency, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_tau, N * sizeof(double)));
+    // Zero-initialize the latency fields (warm-start = 0)
+    CUDA_CHECK(cudaMemset(d_phi_latency, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_latency, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_tau, 0, N * sizeof(double)));
 
     // Read-phase temporaries
     CUDA_CHECK(cudaMalloc(&d_delta_j_x, N * sizeof(double)));
@@ -182,6 +189,9 @@ void GpuBuffers::free() {
     if (d_accel_mag)     { cudaFree(d_accel_mag); d_accel_mag = nullptr; }
     if (d_phi)           { cudaFree(d_phi); d_phi = nullptr; }
     if (d_phi_coulomb)   { cudaFree(d_phi_coulomb); d_phi_coulomb = nullptr; }
+    if (d_phi_latency)   { cudaFree(d_phi_latency); d_phi_latency = nullptr; }
+    if (d_latency)       { cudaFree(d_latency); d_latency = nullptr; }
+    if (d_tau)           { cudaFree(d_tau); d_tau = nullptr; }
     if (d_delta_j_x)     { cudaFree(d_delta_j_x); d_delta_j_x = nullptr; }
     if (d_delta_j_y)     { cudaFree(d_delta_j_y); d_delta_j_y = nullptr; }
     if (d_delta_j_z)     { cudaFree(d_delta_j_z); d_delta_j_z = nullptr; }
@@ -238,6 +248,8 @@ void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
     std::vector<int8_t>  h_spin(N), h_color(N);
     std::vector<double>  h_accel(N);
     std::vector<int32_t> h_pair_id(N);
+    std::vector<double>  h_latency(N);
+    std::vector<double>  h_tau(N);
     // Dual-substrate staging
     std::vector<double>  h_fLx(N), h_fLy(N), h_fLz(N);
     std::vector<double>  h_fRx(N), h_fRy(N), h_fRz(N);
@@ -265,6 +277,8 @@ void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
         h_color[i]  = v.color;
         h_accel[i]  = v.accel_mag;
         h_pair_id[i] = v.pair_id;
+        h_latency[i] = v.latency;
+        h_tau[i]     = v.tau;
         // Dual-substrate
         h_fLx[i]    = v.flux_L.x;  h_fLy[i] = v.flux_L.y;  h_fLz[i] = v.flux_L.z;
         h_fRx[i]    = v.flux_R.x;  h_fRy[i] = v.flux_R.y;  h_fRz[i] = v.flux_R.z;
@@ -297,6 +311,8 @@ void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
     CUDA_CHECK(cudaMemcpy(d_color, h_color.data(), N * sizeof(int8_t), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_accel_mag, h_accel.data(), N * sizeof(double), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_pair_id, h_pair_id.data(), N * sizeof(int32_t), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_latency, h_latency.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_tau, h_tau.data(), N * sizeof(double), cudaMemcpyHostToDevice));
     // Dual-substrate
     CUDA_CHECK(cudaMemcpy(d_flux_L_x, h_fLx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_flux_L_y, h_fLy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
@@ -324,6 +340,12 @@ void GpuBuffers::download(std::vector<Voxel>& host_voxels,
     CUDA_CHECK(cudaMemcpy(host_phi_coulomb.data(), d_phi_coulomb, N * sizeof(double), cudaMemcpyDeviceToHost));
 }
 
+void GpuBuffers::download_phi_latency(std::vector<double>& out) const {
+    out.resize(N);
+    CUDA_CHECK(cudaMemcpy(out.data(), d_phi_latency, N * sizeof(double),
+                          cudaMemcpyDeviceToHost));
+}
+
 void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
     host_voxels.resize(N);
 
@@ -338,8 +360,12 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
     std::vector<int8_t>  h_spin(N), h_color(N);
     std::vector<double>  h_accel(N);
     std::vector<int32_t> h_pair_id_dl(N);
+    std::vector<double>  h_latency(N);
+    std::vector<double>  h_tau(N);
 
     CUDA_CHECK(cudaMemcpy(h_state.data(), d_state, N * sizeof(int8_t), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_latency.data(), d_latency, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_tau.data(), d_tau, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_fx.data(), d_flux_x, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_fy.data(), d_flux_y, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_fz.data(), d_flux_z, N * sizeof(double), cudaMemcpyDeviceToHost));
@@ -398,9 +424,9 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
         v.wave_vel_R  = {h_wvRx[i], h_wvRy[i], h_wvRz[i]};
         // Pair ID from device
         v.pair_id     = h_pair_id_dl[i];
-        // Toggle-gated fields stay at defaults
-        v.latency     = 0.0;
-        v.tau         = 0.0;
+        // Latency field + proper time from GPU (when latency_field toggle is on)
+        v.latency     = h_latency[i];
+        v.tau         = h_tau[i];
     }
 }
 

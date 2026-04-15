@@ -58,6 +58,8 @@ public:
 
     // Access Coulomb potential (downloads from GPU if stale)
     const std::vector<double>& phi_coulomb() { ensure_host_synced(); return host_phi_coulomb_; }
+    // Access latency potential (downloads from GPU on demand)
+    const std::vector<double>& phi_latency() { ensure_host_synced(); return host_phi_latency_; }
 
     // Physics toggles (same as CPU engine)
     TermToggles toggles;
@@ -69,6 +71,7 @@ private:
     void gpu_wave_update();  // fused read+write (single-substrate only)
     void gpu_gauss_project();
     void gpu_solve_coulomb();
+    void gpu_solve_latency();   // Wave 5: GPU latency Poisson (voxel.latency = sqrt(|phi|))
     void gpu_phase_forces();
     void gpu_phase_movement();
 
@@ -100,6 +103,7 @@ private:
     std::vector<Voxel> host_voxels_;
     std::vector<double> host_phi_;
     std::vector<double> host_phi_coulomb_;
+    std::vector<double> host_phi_latency_;  // Wave 5: GPU latency Poisson shadow
     bool host_dirty_ = true;  // true = device has newer data than host
 
     int next_particle_id_ = 0;
