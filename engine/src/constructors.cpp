@@ -120,8 +120,20 @@ StampResult cuboctahedron(RenderBridge& rb, Coord center, int8_t state) {
 }
 
 StampResult stella_octangula(RenderBridge& rb, Coord center, int8_t state) {
-    (void)rb; (void)state;
-    return StampResult{"stella_octangula", 1, center, {}};
+    static constexpr std::array<std::array<int,3>, 8> OFFSETS = {{
+        { 1, 1, 1}, { 1, 1,-1}, { 1,-1, 1}, { 1,-1,-1},
+        {-1, 1, 1}, {-1, 1,-1}, {-1,-1, 1}, {-1,-1,-1},
+    }};
+    const Lattice& lat = rb.lattice();
+    auto& vox = rb.voxels();
+    StampResult r{"stella_octangula", 1, center, {}};
+    r.sites.reserve(8);
+    for (const auto& o : OFFSETS) {
+        int idx = lat.index(center.x + o[0], center.y + o[1], center.z + o[2]);
+        vox[idx].state = state;
+        r.sites.push_back(idx);
+    }
+    return r;
 }
 
 StampResult moore_cell(RenderBridge& rb, Coord center, int8_t state) {
