@@ -62,7 +62,6 @@ static void test_thomson() {
 
     // Setup: particle + plane wave flux field
     RenderBridge rb(L);
-    rb.force_cpu();
     rb.toggles.enable_all();
     rb.toggles.genesis = false;
     rb.toggles.movement = false;  // Lock particle, measure force
@@ -128,7 +127,6 @@ static void test_coulomb_scattering() {
 
     // Measure force-distance profile from the Poisson-solved potential
     RenderBridge rb(L);
-    rb.force_cpu();
     rb.toggles.enable_all();
     rb.toggles.genesis = false;
     rb.toggles.movement = false;
@@ -199,7 +197,6 @@ static void test_annihilation_rate() {
     const int L = 32;
 
     RenderBridge rb(L);
-    rb.force_cpu();
     rb.toggles.enable_all();
     rb.toggles.genesis = false;
     rb.seed_rng(42);
@@ -262,7 +259,6 @@ static void test_bell_parameter() {
     // The K_comp mechanism predicts S = 2*sqrt(2) for overlapping shells.
 
     RenderBridge rb(L);
-    rb.force_cpu();
     rb.toggles.enable_all();
     rb.toggles.genesis = false;
     rb.toggles.movement = false;
@@ -327,7 +323,6 @@ static void test_gauss_quality() {
     const int L = 32;
 
     RenderBridge rb(L);
-    rb.force_cpu();
     rb.toggles.enable_all();
     rb.toggles.genesis = false;
     rb.seed_rng(99);
