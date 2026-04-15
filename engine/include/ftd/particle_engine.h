@@ -47,6 +47,21 @@ struct ParticleToggles {
     bool relativistic = false;
     bool magnetic_dipole = false;
 
+    // Validates known dependency constraints between toggles.
+    // Returns true if the combination is valid.
+    // If err != nullptr, appends a human-readable description of each violation.
+    bool validate(std::string* err = nullptr) const {
+        std::string msg;
+        // spin_orbit and magnetic_dipole act on spin axes; no other toggle gate,
+        // but they are meaningless without any pairwise force to perturb.
+        if (spin_orbit && !coulomb && !gravity)
+            msg += "spin_orbit has no effect without coulomb or gravity\n";
+        if (magnetic_dipole && !coulomb && !gravity)
+            msg += "magnetic_dipole has no effect without coulomb or gravity\n";
+        if (err) *err = msg;
+        return msg.empty();
+    }
+
     void enable_all() {
         coulomb = gravity = damping = true;
         lorentz = exchange = strong = radiation = true;

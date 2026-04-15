@@ -24,6 +24,7 @@
 #include <cstdint>
 #include <cmath>
 #include <memory>
+#include <string>
 
 namespace ftd {
 
@@ -47,6 +48,25 @@ struct AtomToggles {
     bool improper_torsional = false;
     bool thermostat = false;
     bool electronegativity = false;
+
+    // Validates known dependency constraints between toggles.
+    // Returns true if the combination is valid.
+    // If err != nullptr, appends a human-readable description of each violation.
+    bool validate(std::string* err = nullptr) const {
+        std::string msg;
+        if (angle_strain && !covalent_bonds)
+            msg += "angle_strain requires covalent_bonds (needs bond geometry)\n";
+        if (torsional && !covalent_bonds)
+            msg += "torsional requires covalent_bonds (needs dihedral chain)\n";
+        if (improper_torsional && !covalent_bonds)
+            msg += "improper_torsional requires covalent_bonds (needs bond topology)\n";
+        if (thermostat && !damping)
+            msg += "thermostat requires damping (Berendsen rescaling applies velocity damping)\n";
+        if (dipole_dipole && !electronegativity)
+            msg += "dipole_dipole requires electronegativity (dipole moments computed from chi)\n";
+        if (err) *err = msg;
+        return msg.empty();
+    }
 
     void enable_all() {
         ionic = van_der_waals = covalent_bonds = auto_bonding = damping = true;
