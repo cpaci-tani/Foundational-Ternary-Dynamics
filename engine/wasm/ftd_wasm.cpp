@@ -614,6 +614,15 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     const int N = rb.lattice().size();
     const int mid = N / 2;
 
+    // Scale factor: all Gaussian pulse sigmas and loop ranges scale with N,
+    // keeping the pulse at ~same FRACTION of the lattice at any size.
+    // At L=32 scale=1 (original behavior), L=64 scale=2, L=128 scale=4.
+    // The ">> std::max(mid-2, 1)" clamps the range so we never exceed the
+    // lattice bounds even if the user picks a very small size (L=8).
+    const double _scale = static_cast<double>(N) / 32.0;
+    const int _max_range = std::max(mid - 2, 1);
+    auto _clamp_range = [&](int r) { return std::min(r, _max_range); };
+
     // ── Scale 0: Flux-only scenarios (pure substrate, no particles) ──
 
     if (name == "empty") {
@@ -621,10 +630,11 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     } else if (name == "flux-pulse") {
         // Gaussian flux pulse at center — watch spherical wave propagation
         double amp = ftd::K_B * 0.8;
-        double sigma = 3.0;
-        for (int dx = -5; dx <= 5; ++dx) {
-            for (int dy = -5; dy <= 5; ++dy) {
-                for (int dz = -5; dz <= 5; ++dz) {
+        double sigma = 3.0 * _scale;
+        int range = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
+        for (int dx = -range; dx <= range; ++dx) {
+            for (int dy = -range; dy <= range; ++dy) {
+                for (int dz = -range; dz <= range; ++dz) {
                     double r2 = dx*dx + dy*dy + dz*dz;
                     double g = amp * std::exp(-r2 / (2.0 * sigma * sigma));
                     if (g > amp * 0.01) {
@@ -636,11 +646,12 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     } else if (name == "flux-dipole") {
         // Two opposite flux injections — watch interference pattern
         double amp = ftd::K_B * 0.6;
-        double sigma = 2.5;
+        double sigma = 2.5 * _scale;
         int off = N / 6;
-        for (int dx = -4; dx <= 4; ++dx) {
-            for (int dy = -4; dy <= 4; ++dy) {
-                for (int dz = -4; dz <= 4; ++dz) {
+        int range = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
+        for (int dx = -range; dx <= range; ++dx) {
+            for (int dy = -range; dy <= range; ++dy) {
+                for (int dz = -range; dz <= range; ++dz) {
                     double r2 = dx*dx + dy*dy + dz*dz;
                     double g = amp * std::exp(-r2 / (2.0 * sigma * sigma));
                     if (g > amp * 0.01) {
@@ -653,12 +664,14 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     } else if (name == "flux-standing") {
         // Two counter-propagating wave packets creating standing wave
         double amp = ftd::K_B * 0.5;
-        double sigma = 2.5;
+        double sigma = 2.5 * _scale;
         int off = N / 4;
+        int range_x = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
+        int range_yz = std::max(2, static_cast<int>(std::ceil(1.5 * _scale)));
         // Left-moving pulse (give it wave_vel to the right)
-        for (int dx = -4; dx <= 4; ++dx) {
-            for (int dy = -2; dy <= 2; ++dy) {
-                for (int dz = -2; dz <= 2; ++dz) {
+        for (int dx = -range_x; dx <= range_x; ++dx) {
+            for (int dy = -range_yz; dy <= range_yz; ++dy) {
+                for (int dz = -range_yz; dz <= range_yz; ++dz) {
                     double r2 = dx*dx + dy*dy + dz*dz;
                     double g = amp * std::exp(-r2 / (2.0 * sigma * sigma));
                     if (g > amp * 0.01) {
@@ -670,16 +683,17 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
         }
     } else if (name == "flux-dispersion") {
         // Sharp impulse at center — demonstrates lattice dispersion
-        // Single-site delta function
+        // Single-site delta function (scale-invariant by design)
         double amp = ftd::K_B * 2.0;
         rb.inject_flux(mid, mid, mid, ftd::Vec3(amp, 0, 0));
     } else if (name == "flux-soliton") {
         // Large amplitude pulse — explore nonlinear regime
         double amp = ftd::K_B * 3.0;
-        double sigma = 2.0;
-        for (int dx = -4; dx <= 4; ++dx) {
-            for (int dy = -4; dy <= 4; ++dy) {
-                for (int dz = -4; dz <= 4; ++dz) {
+        double sigma = 2.0 * _scale;
+        int range = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
+        for (int dx = -range; dx <= range; ++dx) {
+            for (int dy = -range; dy <= range; ++dy) {
+                for (int dz = -range; dz <= range; ++dz) {
                     double r2 = dx*dx + dy*dy + dz*dz;
                     double g = amp * std::exp(-r2 / (2.0 * sigma * sigma));
                     if (g > amp * 0.01) {
@@ -690,12 +704,12 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
         }
     } else if (name == "flux-cascade") {
         // Genesis threshold demo: inject above K_B, watch spontaneous manifestation
-        // Enable genesis for this scenario
-        double amp = ftd::K_GENESIS * 1.2;  // above genesis threshold
-        double sigma = 3.0;
-        for (int dx = -5; dx <= 5; ++dx) {
-            for (int dy = -5; dy <= 5; ++dy) {
-                for (int dz = -5; dz <= 5; ++dz) {
+        double amp = ftd::K_GENESIS * 1.2;
+        double sigma = 3.0 * _scale;
+        int range = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
+        for (int dx = -range; dx <= range; ++dx) {
+            for (int dy = -range; dy <= range; ++dy) {
+                for (int dz = -range; dz <= range; ++dz) {
                     double r2 = dx*dx + dy*dy + dz*dz;
                     double g = amp * std::exp(-r2 / (2.0 * sigma * sigma));
                     if (g > amp * 0.01) {
@@ -705,13 +719,14 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
             }
         }
     } else if (name == "flux-damping") {
-        // Demonstrate damping: two pulses, one near particle (selective), one in vacuum
+        // Demonstrate damping: two pulses
         double amp = ftd::K_B * 0.6;
-        double sigma = 2.5;
+        double sigma = 2.5 * _scale;
         int off = N / 4;
-        for (int dx = -4; dx <= 4; ++dx) {
-            for (int dy = -4; dy <= 4; ++dy) {
-                for (int dz = -4; dz <= 4; ++dz) {
+        int range = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
+        for (int dx = -range; dx <= range; ++dx) {
+            for (int dy = -range; dy <= range; ++dy) {
+                for (int dz = -range; dz <= range; ++dz) {
                     double r2 = dx*dx + dy*dy + dz*dz;
                     double g = amp * std::exp(-r2 / (2.0 * sigma * sigma));
                     if (g > amp * 0.01) {
@@ -745,12 +760,14 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
             {mid - q, mid, mid + q},
             {mid + q, mid, mid + q},
         };
+        double sigma = 2.45 * _scale;  // sqrt(6) ≈ 2.45, matches old exp(-r²/12) ≈ exp(-r²/(2σ²))
+        int range = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
         for (int s = 0; s < 4; ++s) {
-            for (int dz = -4; dz <= 4; ++dz)
-            for (int dy = -4; dy <= 4; ++dy)
-            for (int dx = -4; dx <= 4; ++dx) {
+            for (int dz = -range; dz <= range; ++dz)
+            for (int dy = -range; dy <= range; ++dy)
+            for (int dx = -range; dx <= range; ++dx) {
                 double r2 = dx*dx + dy*dy + dz*dz;
-                double val = amp * 1.5 * std::exp(-r2 / 12.0);
+                double val = amp * 1.5 * std::exp(-r2 / (2.0 * sigma * sigma));
                 if (val > 0.001)
                     rb.inject_flux(sources[s][0]+dx, sources[s][1]+dy, sources[s][2]+dz,
                                    ftd::Vec3(val, 0, 0));
@@ -780,12 +797,13 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
         int off = N / 3;
         rb.inject_wavepacket(mid - off, mid, mid, 1);
         rb.inject_wavepacket(mid + off, mid, mid, -1);
-        // Give them flux push toward each other
-        for (int d = -3; d <= 3; ++d)
-        for (int dy = -3; dy <= 3; ++dy)
-        for (int dx = -3; dx <= 3; ++dx) {
+        double sigma = 2.0 * _scale;  // sqrt(4) = 2.0
+        int range = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
+        for (int d = -range; d <= range; ++d)
+        for (int dy = -range; dy <= range; ++dy)
+        for (int dx = -range; dx <= range; ++dx) {
             double r2 = dx*dx + dy*dy + d*d;
-            double val = amp * std::exp(-r2 / 8.0);
+            double val = amp * std::exp(-r2 / (2.0 * sigma * sigma));
             if (val > 0.001) {
                 rb.inject_flux(mid - off + dx, mid + dy, mid + d, ftd::Vec3( val, 0, 0));
                 rb.inject_flux(mid + off + dx, mid + dy, mid + d, ftd::Vec3(-val, 0, 0));
@@ -794,11 +812,13 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     } else if (name == "flux-pair-production") {
         // Super-threshold flux burst → spontaneous ±1 pair genesis
         double bigAmp = ftd::K_GENESIS * 5.0;
-        for (int dz = -4; dz <= 4; ++dz)
-        for (int dy = -4; dy <= 4; ++dy)
-        for (int dx = -4; dx <= 4; ++dx) {
+        double sigma = 2.45 * _scale;  // sqrt(6) ≈ 2.45
+        int range = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
+        for (int dz = -range; dz <= range; ++dz)
+        for (int dy = -range; dy <= range; ++dy)
+        for (int dx = -range; dx <= range; ++dx) {
             double r2 = dx*dx + dy*dy + dz*dz;
-            double val = bigAmp * std::exp(-r2 / 12.0);
+            double val = bigAmp * std::exp(-r2 / (2.0 * sigma * sigma));
             if (val > 0.001)
                 rb.inject_flux(mid+dx, mid+dy, mid+dz,
                                ftd::Vec3(val, val*0.7, val*0.3));
@@ -807,13 +827,18 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
         // Locked +1 proton at center + free -1 electron nearby
         double amp = ftd::K_B * 2.0;
         rb.inject_wavepacket(mid, mid, mid, 1);
-        rb.inject_particle(mid + 6, mid, mid, -1, ftd::Vec3(0, 0, 0));
-        // Seed flux as Coulomb-like dressing around proton
-        for (int dz = -5; dz <= 5; ++dz)
-        for (int dy = -5; dy <= 5; ++dy)
-        for (int dx = -5; dx <= 5; ++dx) {
+        // Electron separation scales with lattice size (classical Bohr-ish).
+        int e_sep = std::max(3, static_cast<int>(std::round(6.0 * _scale)));
+        rb.inject_particle(mid + e_sep, mid, mid, -1, ftd::Vec3(0, 0, 0));
+        // Seed flux as Coulomb-like dressing around proton (scales with N)
+        int range = _clamp_range(static_cast<int>(std::ceil(5.0 * _scale)));
+        double r_max = static_cast<double>(range);
+        double r_max2 = r_max * r_max;
+        for (int dz = -range; dz <= range; ++dz)
+        for (int dy = -range; dy <= range; ++dy)
+        for (int dx = -range; dx <= range; ++dx) {
             double r2 = dx*dx + dy*dy + dz*dz;
-            if (r2 == 0 || r2 > 36) continue;
+            if (r2 == 0 || r2 > r_max2) continue;
             double r = std::sqrt(r2);
             double val = amp * 0.5 / r;
             rb.inject_flux(mid+dx, mid+dy, mid+dz,
@@ -864,11 +889,13 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
         // L/R chirality demo — two offset pulses
         double amp = ftd::K_B * 2.0;
         int off = N / 4;
-        for (int dz = -5; dz <= 5; ++dz)
-        for (int dy = -5; dy <= 5; ++dy)
-        for (int dx = -5; dx <= 5; ++dx) {
+        double sigma = 2.83 * _scale;  // sqrt(8) ≈ 2.83
+        int range = _clamp_range(static_cast<int>(std::ceil(3.0 * sigma)));
+        for (int dz = -range; dz <= range; ++dz)
+        for (int dy = -range; dy <= range; ++dy)
+        for (int dx = -range; dx <= range; ++dx) {
             double r2 = dx*dx + dy*dy + dz*dz;
-            double val = amp * 1.5 * std::exp(-r2 / 16.0);
+            double val = amp * 1.5 * std::exp(-r2 / (2.0 * sigma * sigma));
             if (val > 0.001) {
                 rb.inject_flux(mid - off + dx, mid + dy, mid + dz,
                                ftd::Vec3(val, val*0.5, -val*0.3));
