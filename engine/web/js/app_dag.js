@@ -5,9 +5,9 @@
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge, MockBridge } from './wasm-bridge-dag.js?v=20260415i';
+import { createBridge, MockBridge } from './wasm-bridge-dag.js?v=20260415j';
 import { tryNativeBridge } from './ws-bridge.js';
-import { Viewport } from './viewport.js?v=20260415i';
+import { Viewport } from './viewport.js?v=20260415j';
 import { FluxEnergyChart, ParticleChart } from './charts.js?v=20260304q';
 import { DiagnosticsPanel, Sparkline } from './diagnostics.js?v=20260304q';
 import { LagrangianChart } from './lagrangian.js?v=20260304q';
@@ -20,7 +20,7 @@ import { formatEnergy } from './units.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js?v=20260415i';
+import * as Scale0Controller from './scales/scale0/controller.js?v=20260415j';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
