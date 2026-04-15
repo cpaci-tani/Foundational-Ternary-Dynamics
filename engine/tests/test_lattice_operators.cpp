@@ -13,22 +13,12 @@
 #include <iostream>
 #include <set>
 #include "ftd/lattice.h"
+#include "ftd/test_telemetry.h"
 
-int failures = 0;
-
-void check(const char* name, bool condition) {
-    if (condition) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << "\n";
-        ++failures;
-    }
-}
+using ftd::test::check;
 
 int main() {
-    std::cout << "================================================================\n";
-    std::cout << "  TEST: Extended Lattice Operators\n";
-    std::cout << "================================================================\n\n";
+    ftd::test::init("test_lattice_operators");
 
     // ---- Coord/index roundtrip for small lattice ----
     {
@@ -163,13 +153,5 @@ int main() {
         check("Multi-size sanity (4, 8, 16, 32)", ok);
     }
 
-    std::cout << "\n================================================================\n";
-    if (failures == 0) {
-        std::cout << "  All extended lattice tests PASSED.\n";
-    } else {
-        std::cout << "  " << failures << " test(s) FAILED.\n";
-    }
-    std::cout << "================================================================\n";
-
-    return failures;
+    return ftd::test::finalize();
 }
