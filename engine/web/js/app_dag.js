@@ -714,14 +714,13 @@ function wireToolbar() {
         }
     });
 
-    // Lattice size
+    // Lattice size — delegates to Scale0Controller.resizeLattice which
+    // resizes the bridge + viewport while PRESERVING toggles, sliders,
+    // charts, play state, and camera. The current scenario is re-injected
+    // at the new size so the lattice is consistent with the dropdown.
     document.getElementById('lattice-size').addEventListener('change', (e) => {
         const size = parseInt(e.target.value);
-        bridge.reset(size);
-        viewport.setLatticeSize(size);
-        clearCharts();
-        const scenario = document.getElementById('scenario-select').value;
-        Scale0Controller.loadScenario(_makeCtx(), scenario);
+        Scale0Controller.resizeLattice(_makeCtx(), size);
     });
 
     // Speed slider: 0..100 maps to ticks-per-frame via piecewise curve:
