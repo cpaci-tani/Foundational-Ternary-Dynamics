@@ -2828,11 +2828,6 @@ export class MockBridge {
                     }
                     break;
                 }
-                case 'flux-dispersion': {
-                    // Sharp single-site impulse
-                    this._injectFlux(mid, mid, mid, amp * 5, amp * 5, amp * 5);
-                    break;
-                }
                 case 'flux-soliton': {
                     // Large amplitude nonlinear pulse — centered at midF
                     const sLo = Math.floor(midF) - 3, sHi = Math.ceil(midF) + 3;
@@ -2853,22 +2848,6 @@ export class MockBridge {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = bigAmp * Math.exp(-r2 / (2 * 4));
                         if (val > 0.001) this._injectFlux(x, y, z, val, 0, val * 0.5);
-                    }
-                    break;
-                }
-                case 'flux-damping': {
-                    // Two pulses for comparing damped vs undamped — poles symmetric about midF
-                    const off = Math.floor(N / 4);
-                    const pLx = Math.floor(midF) - off, pRx = Math.ceil(midF) + off;
-                    const yzLo = Math.floor(midF) - 4, yzHi = Math.ceil(midF) + 4;
-                    for (let z = yzLo; z <= yzHi; z++) for (let y = yzLo; y <= yzHi; y++) for (let dx = -4; dx <= 4; dx++) {
-                        const dy = y - midF, dz = z - midF;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * 9));
-                        if (val > 0.001) {
-                            this._injectFlux(pLx + dx, y, z, val, 0, 0);
-                            this._injectFlux(pRx + dx, y, z, 0, val, 0);
-                        }
                     }
                     break;
                 }
@@ -2917,26 +2896,6 @@ export class MockBridge {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = bigAmp * Math.exp(-r2 / (2 * 6));
                         if (val > 0.001) this._injectFlux(x, y, z, val, val * 0.7, val * 0.3);
-                    }
-                    break;
-                }
-                case 'flux-hydrogen': {
-                    // Locked +1 proton at center + free -1 electron nearby
-                    const hOff = Math.max(3, Math.floor(N / 6));
-                    const hDress = Math.max(3, Math.floor(N / 6));
-                    const hDress2 = hDress * hDress;
-                    const mc = Math.round(midF);
-                    this.injectParticle(mc, mc, mc, 1);             // proton (locked)
-                    this.injectParticle(mc + hOff, mc, mc, -1);    // electron
-                    // Coulomb-like flux dressing centered at midF
-                    const hLo = Math.floor(midF) - hDress, hHi = Math.ceil(midF) + hDress;
-                    for (let z = hLo; z <= hHi; z++) for (let y = hLo; y <= hHi; y++) for (let x = hLo; x <= hHi; x++) {
-                        const dx = x - midF, dy = y - midF, dz = z - midF;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 < 0.25 || r2 > hDress2) continue;
-                        const r = Math.sqrt(r2);
-                        const val = amp * 0.5 / r;
-                        this._injectFlux(x, y, z, val * dx / r, val * dy / r, val * dz / r);
                     }
                     break;
                 }
@@ -3119,27 +3078,6 @@ export class MockBridge {
 
                 // ── Experiment scenarios (from test suite) ──
 
-                case 'flux-rutherford': {
-                    // Rutherford scattering: locked +1 nucleus at center,
-                    // -1 projectile incoming with impact parameter b ≈ N/8
-                    // (from test_gpu_experiments GP-EXP-RUTHERFORD)
-                    const b = Math.floor(N / 8); // impact parameter
-                    const startX = Math.floor(N / 6);
-                    // Locked nucleus at center
-                    this.injectParticle(mid, mid, mid, 1);
-                    // Projectile offset in y by impact parameter, far left
-                    this.injectParticle(startX, mid + b, mid, -1);
-                    // Give projectile a flux kick toward +x
-                    for (let dx = -3; dx <= 3; dx++) for (let dy = -3; dy <= 3; dy++) for (let dz = -3; dz <= 3; dz++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * 0.8 * Math.exp(-r2 / (2 * 4));
-                        if (val > 0.001) {
-                            this._injectFlux(startX + dx, mid + b + dy, mid + dz, val, 0, 0);
-                        }
-                    }
-                    break;
-                }
-
                 case 'flux-cyclotron': {
                     // Cyclotron motion: uniform B-field (curl of J) + charged particle
                     // (from test_gpu_experiments GP-EXP-CYCLOTRON)
@@ -3191,26 +3129,6 @@ export class MockBridge {
                     break;
                 }
 
-                case 'flux-gravitational-wave': {
-                    // Binary system: two same-sign masses orbiting → grav wave emission
-                    // (from campaign_gravitational_wave)
-                    const orbR = Math.floor(N / 6);
-                    // Two +1 particles on opposite sides of center
-                    this.injectParticle(mid + orbR, mid, mid, 1);
-                    this.injectParticle(mid - orbR, mid, mid, 1);
-                    // Give them tangential flux kicks for orbital motion
-                    for (let d = -3; d <= 3; d++) for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
-                        const r2 = dx * dx + dy * dy + d * d;
-                        const val = amp * 0.6 * Math.exp(-r2 / (2 * 4));
-                        if (val > 0.001) {
-                            // Tangential kicks: +y for left mass, -y for right mass
-                            this._injectFlux(mid + orbR + dx, mid + dy, mid + d, 0, val, 0);
-                            this._injectFlux(mid - orbR + dx, mid + dy, mid + d, 0, -val, 0);
-                        }
-                    }
-                    break;
-                }
-
                 case 'flux-triad': {
                     // Triad formation: 3 same-sign particles in equilateral triangle
                     // (from campaign_triad_binding / campaign_baryon_formation)
@@ -3258,60 +3176,6 @@ export class MockBridge {
                 }
 
 
-                // ── Cosmology scenarios ──
-                case 'flux-dark-matter': {
-                    // Sub-threshold flux halo (dark matter) + 3 visible particles
-                    const haloR = Math.floor(N / 3);
-                    const haloSigma = haloR / 2;
-                    const haloAmp = K_B * 0.3; // well below genesis threshold
-                    // Fill spherical Gaussian halo
-                    for (let z = 0; z < N; z++)
-                    for (let y = 0; y < N; y++)
-                    for (let x = 0; x < N; x++) {
-                        const dx = x - mid, dy = y - mid, dz = z - mid;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 > haloR * haloR) continue;
-                        const r = Math.sqrt(r2) || 1;
-                        const val = haloAmp * Math.exp(-r2 / (2 * haloSigma * haloSigma));
-                        if (val < 1e-4) continue;
-                        // Radial flux direction (gentle outward)
-                        this._injectFlux(x, y, z, val * dx / r * 0.3, val * dy / r * 0.3, val * dz / r * 0.3);
-                    }
-                    // 3 visible particles at N/3 from center on different axes
-                    const pOff = Math.floor(N / 3);
-                    this.injectParticle(mid + pOff, mid, mid, 1);
-                    this.injectParticle(mid, mid + pOff, mid, 1);
-                    this.injectParticle(mid, mid, mid + pOff, -1);
-                    break;
-                }
-                case 'flux-baryogenesis': {
-                    // 8 matter + 6 antimatter → annihilation leaves 2 residual matter
-                    const spread = Math.floor(N / 4);
-                    // Deterministic pseudo-random positions using golden angle
-                    const phi_g = (1 + Math.sqrt(5)) / 2;
-                    const positions = [];
-                    for (let i = 0; i < 14; i++) {
-                        const t = i / 14;
-                        const inclination = Math.acos(1 - 2 * t);
-                        const azimuth = 2 * Math.PI * i * phi_g;
-                        const r = spread * (0.3 + 0.7 * Math.random());
-                        const px = mid + Math.round(r * Math.sin(inclination) * Math.cos(azimuth));
-                        const py = mid + Math.round(r * Math.sin(inclination) * Math.sin(azimuth));
-                        const pz = mid + Math.round(r * Math.cos(inclination));
-                        positions.push([px, py, pz]);
-                    }
-                    // First 8 = matter (+1), next 6 = antimatter (-1)
-                    for (let i = 0; i < 14; i++) {
-                        const [px, py, pz] = positions[i];
-                        const state = i < 8 ? 1 : -1;
-                        this.injectParticle(px, py, pz, state);
-                        // Small flux kick toward center
-                        const dx = mid - px, dy = mid - py, dz = mid - pz;
-                        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
-                        this._injectFlux(px, py, pz, amp * 0.3 * dx / dist, amp * 0.3 * dy / dist, amp * 0.3 * dz / dist);
-                    }
-                    break;
-                }
                 case 'flux-vacuum-foam': {
                     // Near-threshold flux everywhere → spontaneous pair creation/annihilation
                     const foamR = Math.floor(N / 3);
@@ -3332,147 +3196,6 @@ export class MockBridge {
                         const rz2 = (Math.random() - 0.5) * 2;
                         const rLen = Math.sqrt(rx * rx + ry * ry + rz2 * rz2) || 1;
                         this._injectFlux(x, y, z, val * rx / rLen, val * ry / rLen, val * rz2 / rLen);
-                    }
-                    break;
-                }
-                case 'flux-cosmic-web': {
-                    // 24 particles spread across lattice — gravity drives clustering
-                    const webSpread = Math.floor(N * 0.4);
-                    const phi_cw = (1 + Math.sqrt(5)) / 2;
-                    for (let i = 0; i < 24; i++) {
-                        const t = (i + 0.5) / 24;
-                        const inclination = Math.acos(1 - 2 * t);
-                        const azimuth = 2 * Math.PI * i * phi_cw;
-                        const r = webSpread * (0.4 + 0.6 * Math.random());
-                        const px = mid + Math.round(r * Math.sin(inclination) * Math.cos(azimuth));
-                        const py = mid + Math.round(r * Math.sin(inclination) * Math.sin(azimuth));
-                        const pz = mid + Math.round(r * Math.cos(inclination));
-                        // Alternate +1/-1
-                        const state = (i % 2 === 0) ? 1 : -1;
-                        this.injectParticle(
-                            Math.max(1, Math.min(N - 2, px)),
-                            Math.max(1, Math.min(N - 2, py)),
-                            Math.max(1, Math.min(N - 2, pz)),
-                            state
-                        );
-                    }
-                    // Small random flux kicks for initial motion
-                    for (const p of this._particles) {
-                        if (p.state === 0) continue;
-                        const kick = amp * 0.2;
-                        this._injectFlux(p.x, p.y, p.z,
-                            (Math.random() - 0.5) * kick,
-                            (Math.random() - 0.5) * kick,
-                            (Math.random() - 0.5) * kick);
-                    }
-                    break;
-                }
-
-                case 'flux-black-hole': {
-                    // Lattice black hole: radial inward flux sink at center
-                    // + orbiting particles + wormhole throat flux tube to offset
-                    const bhR = Math.floor(N / 3);
-                    const bhAmp = amp * 1.2;
-                    // Radial inward flux — gravitational "drain" centered at mid
-                    for (let z = 0; z < N; z++)
-                    for (let y = 0; y < N; y++)
-                    for (let x = 0; x < N; x++) {
-                        const dx = x - mid, dy = y - mid, dz = z - mid;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 < 1 || r2 > bhR * bhR) continue;
-                        const r = Math.sqrt(r2);
-                        // 1/r² radial inward flux (Schwarzschild-like drain)
-                        const val = bhAmp / (r * r);
-                        this._injectFlux(x, y, z,
-                            -val * dx / r, -val * dy / r, -val * dz / r);
-                    }
-                    // Wormhole throat: flux tube connecting center to offset exit
-                    const whExit = Math.floor(N / 4);
-                    const tubeR = 2;
-                    for (let t = 0; t <= whExit; t++) {
-                        const frac = t / whExit;
-                        const ty = mid + t;
-                        const tubeAmp = bhAmp * 0.8 * (1 - 0.5 * frac);
-                        for (let dz = -tubeR; dz <= tubeR; dz++)
-                        for (let dx = -tubeR; dx <= tubeR; dx++) {
-                            if (dx * dx + dz * dz > tubeR * tubeR) continue;
-                            this._injectFlux(mid + dx, ty, mid + dz, 0, tubeAmp, 0);
-                        }
-                    }
-                    // Radial outward burst at wormhole exit (white hole)
-                    const exitY = mid + whExit;
-                    for (let dz = -4; dz <= 4; dz++)
-                    for (let dy = -4; dy <= 4; dy++)
-                    for (let dx = -4; dx <= 4; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 < 1 || r2 > 16) continue;
-                        const r = Math.sqrt(r2);
-                        const val = bhAmp * 0.6 * Math.exp(-r2 / 8);
-                        this._injectFlux(mid + dx, exitY + dy, mid + dz,
-                            val * dx / r, val * dy / r, val * dz / r);
-                    }
-                    // 4 orbiting particles around the BH center
-                    const orbR_bh = Math.floor(N / 5);
-                    for (let i = 0; i < 4; i++) {
-                        const angle = (i / 4) * 2 * Math.PI;
-                        const px = mid + Math.round(orbR_bh * Math.cos(angle));
-                        const pz = mid + Math.round(orbR_bh * Math.sin(angle));
-                        this.injectParticle(px, mid, pz, i < 2 ? 1 : -1);
-                        // Tangential flux kick for orbital motion
-                        const kick = amp * 0.5;
-                        this._injectFlux(px, mid, pz,
-                            -kick * Math.sin(angle), 0, kick * Math.cos(angle));
-                    }
-                    break;
-                }
-
-                case 'flux-stable-vortex': {
-                    // Multi-layer stable vortex: concentric tangential flux rings
-                    // with counter-rotating layers for stability
-                    const nRings = 3;
-                    const radii = [
-                        Math.floor(N / 8),   // inner ring ~4
-                        Math.floor(N / 5),   // middle ring ~6
-                        Math.floor(N / 3.2), // outer ring ~10
-                    ];
-                    const amps = [amp * 3.0, amp * 2.2, amp * 1.5];
-                    const dirs = [1, -1, 1]; // alternating rotation for stability
-                    const nPts = [16, 24, 36];
-                    const ySpread = 3; // vertical extent of each ring
-
-                    for (let ring = 0; ring < nRings; ring++) {
-                        const rr = radii[ring];
-                        const aa = amps[ring];
-                        const dir = dirs[ring];
-                        const np = nPts[ring];
-                        for (let i = 0; i < np; i++) {
-                            const angle = (2 * Math.PI * i) / np;
-                            const rx = Math.round(mid + rr * Math.cos(angle));
-                            const rz = Math.round(mid + rr * Math.sin(angle));
-                            // Tangential flux (perpendicular to radius vector)
-                            const tX = -Math.sin(angle) * aa * dir;
-                            const tZ = Math.cos(angle) * aa * dir;
-                            // Helicity: upward component for spin structure
-                            const tY = aa * 0.3 * dir;
-                            // Spread vertically for 3D structure
-                            for (let dy = -ySpread; dy <= ySpread; dy++) {
-                                const falloff = Math.exp(-(dy * dy) / (ySpread * 0.8));
-                                this._injectFlux(rx, mid + dy, rz,
-                                    tX * falloff, tY * falloff, tZ * falloff);
-                            }
-                        }
-                    }
-                    // Central axial flux column (vortex core)
-                    const coreR = 2;
-                    const coreAmp = amp * 2.5;
-                    for (let dy = -Math.floor(N / 4); dy <= Math.floor(N / 4); dy++) {
-                        const yFalloff = Math.exp(-(dy * dy) / (N * N * 0.02));
-                        for (let dz = -coreR; dz <= coreR; dz++)
-                        for (let dx = -coreR; dx <= coreR; dx++) {
-                            if (dx * dx + dz * dz > coreR * coreR) continue;
-                            this._injectFlux(mid + dx, mid + dy, mid + dz,
-                                0, coreAmp * yFalloff, 0);
-                        }
                     }
                     break;
                 }
@@ -3508,16 +3231,6 @@ export class MockBridge {
                             this._injectFlux(x, y, z, fv[0], fv[1], fv[2]);
                             this._injectWaveVel(x, y, z, wv[0], wv[1], wv[2]);
                         }
-                    }
-                    break;
-                }
-                case 'light-prism': {
-                    // Delta pulse at x=mid — all frequencies, dispersive broadening
-                    const pAmp = 0.4;
-                    for (let y = 0; y < N; y++)
-                    for (let z = 0; z < N; z++) {
-                        this._injectFlux(mid, y, z, 0, 0, pAmp);
-                        this._injectWaveVel(mid, y, z, 0, 0, pAmp);
                     }
                     break;
                 }
@@ -3791,405 +3504,125 @@ export class MockBridge {
             return;
         }
 
-        // ── Standard Model scenarios ──
-        if (name.startsWith('sm-')) {
+        // ── SM particle seed scenarios (FTD-derived, epistemic-tagged) ──
+        //
+        // Seed scenarios corresponding to the FTD particle/substrate
+        // correspondences whose lattice configurations are theory-derivable
+        // today. Every seed here has its epistemic status documented in
+        // config/scenarios.js S0_SEED_SCENARIO_METADATA. Do NOT add new
+        // seeds to this block without writing the corresponding metadata
+        // entry AND grounding the configuration in an FTD theory doc.
+        //
+        // What is NOT here and why:
+        //   - Muon/tau     : [OPEN] — no spatial prescription
+        //   - Quarks       : [IMPOSED] if present at all (SPEC_FTD §10.1)
+        //   - W/Z          : [SELECTION] as operators, NOT configurations
+        //   - Higgs        : is a phase-transition process, not a lump
+        //   - Neutrinos    : indistinguishable from void on the substrate
+        if (name.startsWith('s0-seed-')) {
             this._initFluxGrid();
-            const amp = K_B * 2;
+            const mc = Math.round(midF);
 
             switch (name) {
-
-                // ────────────────────────────────────────────────────
-                // SM Particle Zoo: all 17 fundamental particles
-                // arranged as a 3D Standard Model table
-                // ────────────────────────────────────────────────────
-                case 'sm-particle-zoo': {
-                    const sp = Math.max(3, Math.floor(N / 7)); // spacing between particles
-                    // Centre the 6-column (x) and 2-position (z) grid exactly on mid.
-                    // old ox = mid - sp*3  →  grid centre at mid - sp/2 (off by sp/2 in X)
-                    // old z  = mid / mid+sp →  pair centre at mid + sp/2 (off by sp/2 in Z)
-                    const ox = Math.round(mid - sp * 2.5); // X: col 0 at ox, col 5 at ox+5sp, centre = mid
-                    const oz = Math.round(mid - sp * 0.5); // Z: flavour A at oz, flavour B at oz+sp, centre = mid
-
-                    // Helper: place a particle with flux dressing scaled by log(mass)
-                    const placeParticle = (gx, gy, gz, state, spin, color, massMeV, label) => {
-                        const x = Math.min(Math.max(gx, 2), N - 3);
-                        const y = Math.min(Math.max(gy, 2), N - 3);
-                        const z = Math.min(Math.max(gz, 2), N - 3);
-
-                        if (state !== 0) {
-                            this.injectParticle(x, y, z, state);
-                            const idx = this._particles.length - 1;
-                            this._particles[idx].spin = spin;
-                            this._particles[idx].color = color;
-                        }
-
-                        // Gaussian flux dressing: radius ~ log(mass/m_e + 1)
-                        const dressR = Math.max(1, Math.min(Math.floor(1.5 + Math.log10(massMeV / 0.511 + 1) * 1.2), sp - 1));
-                        const dressAmp = amp * (0.3 + 0.7 * Math.min(massMeV / 1000, 1));
-                        for (let dz = -dressR; dz <= dressR; dz++)
-                        for (let dy = -dressR; dy <= dressR; dy++)
-                        for (let dx = -dressR; dx <= dressR; dx++) {
-                            const r2 = dx * dx + dy * dy + dz * dz;
-                            if (r2 > dressR * dressR) continue;
-                            const val = dressAmp * Math.exp(-r2 / (2 * Math.max(1, dressR * 0.5) ** 2));
-                            if (val > 0.001) this._injectFlux(x + dx, y + dy, z + dz, val * 0.5, val * 0.3, val * 0.2);
-                        }
-                    };
-
-                    // Row 1: Quarks (y = mid + sp) — 3 generations × 2 flavors
-                    const qy = mid + sp;
-                    placeParticle(ox + sp * 0, qy, oz,      +1, 1, 1, 2.16,    'u');  // up (red)
-                    placeParticle(ox + sp * 0, qy, oz + sp, +1, 1, 2, 4.67,    'd');  // down (green)
-                    placeParticle(ox + sp * 2, qy, oz,      +1, 1, 2, 1270,    'c');  // charm (green)
-                    placeParticle(ox + sp * 2, qy, oz + sp, +1, 1, 3, 93.4,    's');  // strange (blue)
-                    placeParticle(ox + sp * 4, qy, oz,      +1, 1, 3, 172760,  't');  // top (blue)
-                    placeParticle(ox + sp * 4, qy, oz + sp, +1, 1, 1, 4180,    'b');  // bottom (red)
-
-                    // Row 2: Leptons (y = mid) — 3 generations
-                    placeParticle(ox + sp * 0, mid, oz,      -1, -1, 0, 0.511,     'e');   // electron
-                    placeParticle(ox + sp * 0, mid, oz + sp,  0,  1, 0, 0.000004,  'νe'); // e-neutrino (ghost)
-                    placeParticle(ox + sp * 2, mid, oz,      -1, -1, 0, 105.66,    'μ');   // muon
-                    placeParticle(ox + sp * 2, mid, oz + sp,  0,  1, 0, 0.0086,    'νμ'); // μ-neutrino (ghost)
-                    placeParticle(ox + sp * 4, mid, oz,      -1, -1, 0, 1776.86,   'τ');   // tau
-                    placeParticle(ox + sp * 4, mid, oz + sp,  0,  1, 0, 0.0496,    'ντ'); // τ-neutrino (ghost)
-
-                    // Row 3: Gauge bosons + Higgs (y = mid - sp)
-                    const by = mid - sp;
-                    // Photon: massless flux wave (no particle)
-                    for (let dx = -3; dx <= 3; dx++) {
-                        const val = amp * 1.5 * Math.cos(dx * Math.PI / 3);
-                        this._injectFlux(ox + sp * 0 + dx, by, mid, 0, val, 0);
-                    }
-                    // Gluon: color flux loop
-                    for (let i = 0; i < 8; i++) {
-                        const angle = 2 * Math.PI * i / 8;
-                        const gx = Math.round(ox + sp * 1 + 2 * Math.cos(angle));
-                        const gz = Math.round(mid + 2 * Math.sin(angle));
-                        this._injectFlux(gx, by, gz, -Math.sin(angle) * amp, 0, Math.cos(angle) * amp);
-                    }
-                    // W+ boson
-                    placeParticle(ox + sp * 2, by, mid, +1, 0, 0, 80377, 'W+');
-                    // W- boson
-                    placeParticle(ox + sp * 3, by, mid, -1, 0, 0, 80377, 'W-');
-                    // Z boson
-                    placeParticle(ox + sp * 4, by, mid, 0, 0, 0, 91188, 'Z');
-                    // Inject flux for Z since state=0
-                    for (let dz = -2; dz <= 2; dz++) for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+                case 's0-seed-electron': {
+                    // Electron seed = unit negative charge + radial-inward
+                    // flux envelope at scale K_B.
+                    //
+                    // Configuration : [SELECTION]  (DERIV_DARK_SECTOR §5.2)
+                    // Name          : [IMPOSED]    (structural test absent)
+                    // Mass m_e      : [THEOREM]    (m_P·√(2π)·(16/3)·α¹¹,
+                    //                              but has NO spatial form)
+                    this.injectParticle(mc, mc, mc, -1);
+                    const envR = Math.max(3, Math.floor(N / 6));
+                    const envSigma = envR / 2;
+                    const envAmp = K_B * 1.5;
+                    const envR2 = envR * envR;
+                    const eLo = Math.floor(midF) - envR;
+                    const eHi = Math.ceil(midF) + envR;
+                    for (let z = eLo; z <= eHi; z++)
+                    for (let y = eLo; y <= eHi; y++)
+                    for (let x = eLo; x <= eHi; x++) {
+                        const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * 3 * Math.exp(-r2 / (2 * 2));
-                        if (val > 0.01) this._injectFlux(ox + sp * 4 + dx, by + dy, mid + dz, val, val, val);
-                    }
-
-                    // HIGGS BOSON: central golden sphere with strong isotropic flux
-                    const hx = ox + sp * 5, hy = by, hz = mid;
-                    const higgsDress = Math.max(3, Math.floor(N / 8));
-                    const higgsAmp = amp * 4;
-                    for (let dz = -higgsDress; dz <= higgsDress; dz++)
-                    for (let dy = -higgsDress; dy <= higgsDress; dy++)
-                    for (let dx = -higgsDress; dx <= higgsDress; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 > higgsDress * higgsDress) continue;
-                        const val = higgsAmp * Math.exp(-r2 / (2 * (higgsDress * 0.4) ** 2));
-                        if (val > 0.001) {
-                            // Isotropic (scalar) flux — equal in all 3 components
-                            this._injectFlux(hx + dx, hy + dy, hz + dz, val, val, val);
-                        }
+                        if (r2 < 0.25 || r2 > envR2) continue;
+                        const r = Math.sqrt(r2);
+                        const val = envAmp * Math.exp(-r2 / (2 * envSigma * envSigma));
+                        if (val < 0.001) continue;
+                        // Radial INWARD (negative charge convention: J · r̂ < 0)
+                        this._injectFlux(x, y, z,
+                            -val * dx / r, -val * dy / r, -val * dz / r);
                     }
                     break;
                 }
 
-                // ────────────────────────────────────────────────────
-                // Higgs Field: VEV background + localized excitation
-                // + test particles showing mass acquisition
-                // ────────────────────────────────────────────────────
-                case 'sm-higgs-field': {
-                    // Uniform VEV background: low-level isotropic flux everywhere
-                    const vev = K_B * 0.08; // visible but subtle background
+                case 's0-seed-photon': {
+                    // Photon seed = J_z-polarized Gaussian pulse propagating +x.
+                    //
+                    // Propagation : [THEOREM]  (c = 1/√3 from cubic-lattice
+                    //                           wave equation + CFL)
+                    // Pol. (2)    : [THEOREM]  (Gauss constraint ∇·J = 0)
+                    // Name        : [SELECTION] (structurally consistent
+                    //                            with SM photon)
+                    const sigma = 3;
+                    const pAmp = K_B * 2;
+                    const pStartX = Math.max(4, Math.floor(N / 4));
+                    const halfR = 8;
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
-                    for (let x = 0; x < N; x++) {
-                        this._injectFlux(x, y, z, vev, vev, vev);
-                    }
-
-                    // Central Higgs boson: bright isotropic excitation above VEV
-                    const hR = Math.max(3, Math.floor(N / 7));
-                    const hAmp = K_B * 8;
-                    for (let dz = -hR; dz <= hR; dz++)
-                    for (let dy = -hR; dy <= hR; dy++)
-                    for (let dx = -hR; dx <= hR; dx++) {
+                    for (let dx = -halfR; dx <= halfR; dx++) {
+                        const x = pStartX + dx;
+                        if (x < 0 || x >= N) continue;
+                        const dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 > hR * hR) continue;
-                        const val = hAmp * Math.exp(-r2 / (2 * (hR * 0.35) ** 2));
-                        if (val > 0.01) this._injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
-                    }
-
-                    // Test particles at cardinal directions showing mass coupling
-                    const testR = Math.floor(N / 3);
-
-                    // +X: Electron (light mass, small dressing)
-                    this.injectParticle(mid + testR, mid, mid, -1);
-                    const eDress = 2;
-                    for (let d = -eDress; d <= eDress; d++) for (let dy = -eDress; dy <= eDress; dy++) for (let dx = -eDress; dx <= eDress; dx++) {
-                        const r2 = dx * dx + dy * dy + d * d;
-                        const val = K_B * 1.5 * Math.exp(-r2 / (2 * 1.5));
-                        if (val > 0.01) this._injectFlux(mid + testR + dx, mid + dy, mid + d, val, 0, 0);
-                    }
-
-                    // -X: W boson (heavy mass, large dressing)
-                    this.injectParticle(mid - testR, mid, mid, +1);
-                    const wDress = Math.max(3, Math.floor(N / 8));
-                    for (let dz = -wDress; dz <= wDress; dz++) for (let dy = -wDress; dy <= wDress; dy++) for (let dx = -wDress; dx <= wDress; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = K_B * 5 * Math.exp(-r2 / (2 * (wDress * 0.4) ** 2));
-                        if (val > 0.01) this._injectFlux(mid - testR + dx, mid + dy, mid + dz, val, val * 0.5, 0);
-                    }
-
-                    // +Z: Photon (massless, pure wave — no dressing, just propagating flux)
-                    for (let dx = -5; dx <= 5; dx++) {
-                        const val = amp * 2 * Math.cos(dx * Math.PI / 5);
-                        this._injectFlux(mid + dx, mid, mid + testR, 0, val, 0);
-                    }
-
-                    // -Z: Neutrino (ghost — sub-threshold flux, no manifested particle)
-                    const nuR = 2;
-                    for (let dz = -nuR; dz <= nuR; dz++) for (let dy = -nuR; dy <= nuR; dy++) for (let dx = -nuR; dx <= nuR; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = K_B * 0.01 * Math.exp(-r2 / (2 * 1));
-                        if (val > 0.0001) this._injectFlux(mid + dx, mid + dy, mid - testR + dz, val, val, val);
+                        const g = pAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                        if (g < 1e-6) continue;
+                        this._injectFlux(x, y, z, 0, 0, g);      // J_z polarized
+                        this._injectWaveVel(x, y, z, g, 0, 0);   // propagate +x
                     }
                     break;
                 }
 
-                // ────────────────────────────────────────────────────
-                // Higgs Mechanism: symmetry breaking visualization
-                // Mexican hat → W/Z gain mass, photon stays massless
-                // ────────────────────────────────────────────────────
-                case 'sm-higgs-mechanism': {
-                    // Mexican hat potential: toroidal flux ring
-                    const torusR = Math.max(4, Math.floor(N / 5));  // major radius
-                    const tubeR = Math.max(2, Math.floor(N / 12));  // tube radius
-                    const torusAmp = K_B * 6;
-
-                    // Build torus in xz-plane at y=mid
-                    for (let dz = -torusR - tubeR; dz <= torusR + tubeR; dz++)
-                    for (let dy = -tubeR; dy <= tubeR; dy++)
-                    for (let dx = -torusR - tubeR; dx <= torusR + tubeR; dx++) {
-                        const distFromRing = Math.sqrt(
-                            (Math.sqrt(dx * dx + dz * dz) - torusR) ** 2 + dy * dy
-                        );
-                        if (distFromRing <= tubeR) {
-                            const val = torusAmp * Math.exp(-distFromRing * distFromRing / (2 * (tubeR * 0.5) ** 2));
-                            if (val > 0.01) {
-                                this._injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
-                            }
-                        }
-                    }
-
-                    // Higgs excitation at center of torus (the "chosen" vacuum)
-                    const hcR = Math.max(2, Math.floor(tubeR * 1.5));
-                    for (let dz = -hcR; dz <= hcR; dz++)
-                    for (let dy = -hcR; dy <= hcR; dy++)
-                    for (let dx = -hcR; dx <= hcR; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = K_B * 10 * Math.exp(-r2 / (2 * (hcR * 0.4) ** 2));
-                        if (val > 0.01) this._injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
-                    }
-
-                    // 4 gauge bosons at compass points ON the torus ring:
-                    // W+ (heavy, +x)
-                    this.injectParticle(mid + torusR, mid, mid, +1);
-                    const mwIdx1 = this._particles.length - 1;
-                    this._particles[mwIdx1].spin = 1;
-                    // W- (heavy, -x)
-                    this.injectParticle(mid - torusR, mid, mid, -1);
-                    const mwIdx2 = this._particles.length - 1;
-                    this._particles[mwIdx2].spin = 1;
-                    // Z (heavy, +z) — neutral, use flux only
-                    for (let d = -2; d <= 2; d++) for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
-                        const r2 = dx * dx + dy * dy + d * d;
-                        const val = K_B * 4 * Math.exp(-r2 / 2);
-                        if (val > 0.01) this._injectFlux(mid + dx, mid + dy, mid + torusR + d, val, val, val);
-                    }
-                    // Photon (massless, -z) — propagating wave, escapes the hat
-                    for (let dx = -6; dx <= 6; dx++) {
-                        const val = amp * 2 * Math.cos(dx * Math.PI / 6);
-                        this._injectFlux(mid + dx, mid, mid - torusR, 0, val, 0);
-                        this._injectFlux(mid + dx, mid, mid - torusR - 2, 0, val * 0.7, 0);
-                        this._injectFlux(mid + dx, mid, mid - torusR - 4, 0, val * 0.4, 0);
-                    }
-                    break;
-                }
-
-                // ────────────────────────────────────────────────────
-                // Electroweak: beta decay d → u + W⁻ → e⁻ + ν̄_e
-                // ────────────────────────────────────────────────────
-                case 'sm-electroweak': {
-                    const ewOff = Math.floor(N / 4);
-
-                    // Neutron (3 quarks: u + d + d) at center-left
-                    // d-quark that will decay
-                    this.injectParticle(mid - ewOff, mid, mid, +1); // d-quark
-                    const dIdx = this._particles.length - 1;
-                    this._particles[dIdx].color = 1; // red
-                    this._particles[dIdx].spin = 1;
-                    // Other neutron quarks (locked, spectators)
-                    this.injectParticle(mid - ewOff, mid + 3, mid, +1); // u-quark
-                    const uIdx1 = this._particles.length - 1;
-                    this._particles[uIdx1].color = 2; // green
-                    this._particles[uIdx1].locked = true;
-                    this.injectParticle(mid - ewOff, mid - 3, mid, +1); // d-quark
-                    const dIdx2 = this._particles.length - 1;
-                    this._particles[dIdx2].color = 3; // blue
-                    this._particles[dIdx2].locked = true;
-
-                    // W⁻ boson propagating rightward (heavy flux pulse)
-                    const wAmp = K_B * 6;
-                    const wR = Math.max(2, Math.floor(N / 10));
-                    for (let dz = -wR; dz <= wR; dz++)
-                    for (let dy = -wR; dy <= wR; dy++)
-                    for (let dx = -wR; dx <= wR; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = wAmp * Math.exp(-r2 / (2 * (wR * 0.5) ** 2));
-                        if (val > 0.01) this._injectFlux(mid + dx, mid + dy, mid + dz, val, 0, 0);
-                    }
-
-                    // Decay products at right: electron + antineutrino
-                    this.injectParticle(mid + ewOff, mid + 2, mid, -1); // electron
-                    const eIdx = this._particles.length - 1;
-                    this._particles[eIdx].spin = -1;
-                    // Antineutrino: sub-threshold ghost flux only
-                    const nuFlux = K_B * 0.05;
-                    for (let d = -1; d <= 1; d++) for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
-                        this._injectFlux(mid + ewOff + dx, mid - 2 + dy, mid + d, nuFlux, nuFlux, nuFlux);
-                    }
-
-                    // Flux dressing on quarks
-                    for (let d = -3; d <= 3; d++) for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
-                        const r2 = dx * dx + dy * dy + d * d;
-                        const val = K_B * 1.5 * Math.exp(-r2 / (2 * 4));
-                        if (val > 0.01) this._injectFlux(mid - ewOff + dx, mid + dy, mid + d, val * 0.3, val * 0.3, val * 0.3);
-                    }
-                    break;
-                }
-
-                // ────────────────────────────────────────────────────
-                // Three Generations: e/μ/τ families with mass hierarchy
-                // ────────────────────────────────────────────────────
-                case 'sm-three-generations': {
-                    const genSp = Math.floor(N / 4); // spacing between generations
-                    const MU_RATIO = 207;
-                    const TAU_RATIO = 3477;
-
-                    // Dressing radius = log-scaled so tau doesn't eat the lattice
-                    const eDressR = 2;
-                    const muDressR = Math.min(Math.floor(eDressR + Math.log10(MU_RATIO) * 2), Math.floor(N / 6));
-                    const tauDressR = Math.min(Math.floor(eDressR + Math.log10(TAU_RATIO) * 2), Math.floor(N / 5));
-
-                    // Generation 1: electron + ν_e
-                    const g1x = mid - genSp;
-                    this.injectParticle(g1x, mid, mid, -1); // electron
-                    this._particles[this._particles.length - 1].spin = -1;
-                    for (let dz = -eDressR; dz <= eDressR; dz++) for (let dy = -eDressR; dy <= eDressR; dy++) for (let dx = -eDressR; dx <= eDressR; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = K_B * 2 * Math.exp(-r2 / (2 * 1.5));
-                        if (val > 0.01) this._injectFlux(g1x + dx, mid + dy, mid + dz, val, 0, 0);
-                    }
-                    // ν_e ghost
-                    this._injectFlux(g1x, mid + 4, mid, K_B * 0.01, K_B * 0.01, K_B * 0.01);
-
-                    // Generation 2: muon + ν_μ
-                    const g2x = mid;
-                    this.injectParticle(g2x, mid, mid, -1); // muon
-                    this._particles[this._particles.length - 1].spin = -1;
-                    for (let dz = -muDressR; dz <= muDressR; dz++) for (let dy = -muDressR; dy <= muDressR; dy++) for (let dx = -muDressR; dx <= muDressR; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 > muDressR * muDressR) continue;
-                        const val = K_B * 3 * Math.exp(-r2 / (2 * (muDressR * 0.4) ** 2));
-                        if (val > 0.01) this._injectFlux(g2x + dx, mid + dy, mid + dz, val, val * 0.3, 0);
-                    }
-                    // ν_μ ghost
-                    this._injectFlux(g2x, mid + 4, mid, K_B * 0.02, K_B * 0.02, K_B * 0.02);
-
-                    // Generation 3: tau + ν_τ
-                    const g3x = mid + genSp;
-                    this.injectParticle(g3x, mid, mid, -1); // tau
-                    this._particles[this._particles.length - 1].spin = -1;
-                    for (let dz = -tauDressR; dz <= tauDressR; dz++) for (let dy = -tauDressR; dy <= tauDressR; dy++) for (let dx = -tauDressR; dx <= tauDressR; dx++) {
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 > tauDressR * tauDressR) continue;
-                        const val = K_B * 5 * Math.exp(-r2 / (2 * (tauDressR * 0.4) ** 2));
-                        if (val > 0.01) this._injectFlux(g3x + dx, mid + dy, mid + dz, val, val * 0.5, val * 0.2);
-                    }
-                    // ν_τ ghost
-                    this._injectFlux(g3x, mid + 4, mid, K_B * 0.03, K_B * 0.03, K_B * 0.03);
-                    break;
-                }
-
-                // ────────────────────────────────────────────────────
-                // QCD Vacuum: gluon field + confined quarks + sea pairs
-                // ────────────────────────────────────────────────────
-                case 'sm-qcd-vacuum': {
-                    // Dense random gluon field (color flux)
-                    const gluonAmp = K_B * 0.3;
-                    const rng = (seed) => {
-                        let s = seed;
-                        return () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; };
-                    };
-                    const rand = rng(42);
-                    for (let z = 1; z < N - 1; z += 2)
-                    for (let y = 1; y < N - 1; y += 2)
-                    for (let x = 1; x < N - 1; x += 2) {
-                        const fx = (rand() - 0.5) * gluonAmp;
-                        const fy = (rand() - 0.5) * gluonAmp;
-                        const fz = (rand() - 0.5) * gluonAmp;
-                        this._injectFlux(x, y, z, fx, fy, fz);
-                    }
-
-                    // 3 quarks in equilateral triangle (red, green, blue)
-                    const qR = Math.max(3, Math.floor(N / 5));
+                case 's0-seed-proton-candidate': {
+                    // Proton candidate = 3 s=+1 particles on an equilateral
+                    // triangle + weak radial-outward flux dressing.
+                    //
+                    // Configuration : [SELECTION]  (consistent with baryon
+                    //                               number 3; geometry not
+                    //                               uniquely forced)
+                    // Name          : [IMPOSED]    (no color/flavor encoded)
+                    // m_p/m_e       : [THEOREM]    (1836.47, no spatial form)
+                    //
+                    // LANDMINE: do NOT label the three vertices u/u/d or
+                    // map J-axes to color charges. The BCC→SU(3) link is a
+                    // statement about the gluon propagator, not per-quark
+                    // orientation. Any u/d/color assignment here would be
+                    // post-hoc pattern matching.
+                    const bR = Math.max(2, Math.floor(N / 8));
                     for (let k = 0; k < 3; k++) {
-                        const angle = 2 * Math.PI * k / 3;
-                        const qx = Math.round(mid + qR * Math.cos(angle));
-                        const qz = Math.round(mid + qR * Math.sin(angle));
-                        this.injectParticle(qx, mid, qz, +1);
-                        const qi = this._particles.length - 1;
-                        this._particles[qi].color = k + 1; // 1=red, 2=green, 3=blue
-                        this._particles[qi].spin = (k === 0) ? 1 : -1;
-                        // Centripetal velocity for orbiting
-                        this._particles[qi].vx = -0.04 * Math.sin(angle);
-                        this._particles[qi].vz = 0.04 * Math.cos(angle);
+                        const angle = (2 * Math.PI * k) / 3;
+                        const bx = Math.round(midF + bR * Math.cos(angle));
+                        const bz = Math.round(midF + bR * Math.sin(angle));
+                        this.injectParticle(bx, mc, bz, 1);
                     }
-
-                    // Color flux tubes (confinement strings) between quark pairs
-                    const fluxTubeAmp = K_B * 2;
-                    for (let k = 0; k < 3; k++) {
-                        const a1 = 2 * Math.PI * k / 3;
-                        const a2 = 2 * Math.PI * ((k + 1) % 3) / 3;
-                        const x1 = mid + qR * Math.cos(a1), z1 = mid + qR * Math.sin(a1);
-                        const x2 = mid + qR * Math.cos(a2), z2 = mid + qR * Math.sin(a2);
-                        const steps = Math.max(5, qR);
-                        for (let s = 0; s <= steps; s++) {
-                            const t = s / steps;
-                            const tx = Math.round(x1 + t * (x2 - x1));
-                            const tz = Math.round(z1 + t * (z2 - z1));
-                            const dirX = (x2 - x1) / Math.sqrt((x2 - x1) ** 2 + (z2 - z1) ** 2 + 0.01);
-                            const dirZ = (z2 - z1) / Math.sqrt((x2 - x1) ** 2 + (z2 - z1) ** 2 + 0.01);
-                            this._injectFlux(tx, mid, tz, dirX * fluxTubeAmp, 0, dirZ * fluxTubeAmp);
-                            this._injectFlux(tx, mid + 1, tz, dirX * fluxTubeAmp * 0.5, 0, dirZ * fluxTubeAmp * 0.5);
-                            this._injectFlux(tx, mid - 1, tz, dirX * fluxTubeAmp * 0.5, 0, dirZ * fluxTubeAmp * 0.5);
-                        }
+                    const envR = Math.max(3, Math.floor(N / 5));
+                    const envSigma = envR / 2;
+                    const envAmp = K_B * 1.0;
+                    const envR2 = envR * envR;
+                    const eLo = Math.max(0, Math.floor(midF) - envR);
+                    const eHi = Math.min(N - 1, Math.ceil(midF) + envR);
+                    for (let z = eLo; z <= eHi; z++)
+                    for (let y = eLo; y <= eHi; y++)
+                    for (let x = eLo; x <= eHi; x++) {
+                        const dx = x - midF, dy = y - midF, dz = z - midF;
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        if (r2 < 0.25 || r2 > envR2) continue;
+                        const r = Math.sqrt(r2);
+                        const val = envAmp * Math.exp(-r2 / (2 * envSigma * envSigma));
+                        if (val < 0.001) continue;
+                        // Radial OUTWARD (positive cluster)
+                        this._injectFlux(x, y, z,
+                            val * dx / r, val * dy / r, val * dz / r);
                     }
-
-                    // Sea quark-antiquark pairs (2 pairs)
-                    const seaOff = Math.floor(qR * 0.5);
-                    this.injectParticle(mid + seaOff, mid + 3, mid + seaOff, +1);
-                    this._particles[this._particles.length - 1].color = 1;
-                    this.injectParticle(mid + seaOff + 2, mid + 3, mid + seaOff, -1);
-                    this._particles[this._particles.length - 1].color = 1;
-                    this.injectParticle(mid - seaOff, mid - 3, mid - seaOff, +1);
-                    this._particles[this._particles.length - 1].color = 2;
-                    this.injectParticle(mid - seaOff - 2, mid - 3, mid - seaOff, -1);
-                    this._particles[this._particles.length - 1].color = 2;
                     break;
                 }
             }
