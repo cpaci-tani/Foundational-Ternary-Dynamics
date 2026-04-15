@@ -10,6 +10,7 @@ import { getById as catalogGetById } from './particle-catalog.js';
 import { ALPHA, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON, R_BOHR, N_BASE, G_STAR, VARPI, N_C, B_3, N_EFF } from './constants.js';
 import { cpkColor, defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from './elements.js';
 import { debugLog } from './core/log.js';
+import { insideBoundary, reflectIntoBoundary } from './bridge/boundary.js';
 
 // ── Atom property helper (simulation units: Bohr-scaled) ──────────
 // C++ engine uses Planck units; JS MockBridge uses "simulation units"
@@ -195,166 +196,20 @@ export class MockBridge {
 
     /**
      * Test if a normalized point (-1..1 from center) is inside the boundary.
-     * Matches viewport._insideBoundary exactly.
+     * Delegates to the pure module function in bridge/boundary.js.
      */
     _insideBoundary(nx, ny, nz) {
-        switch (this._boundaryShape) {
-            case 'none':
-            case 'cube':
-                return true;
-            case 'sphere':
-                return (nx * nx + ny * ny + nz * nz) <= 1.0;
-            case 'octahedron':
-                return (Math.abs(nx) + Math.abs(ny) + Math.abs(nz)) <= 1.0;
-            case 'dodecahedron': {
-                const phi = 1.618033988749895;
-                const ir = 0.7946;
-                const normals = [
-                    [0, 1, phi], [0, -1, phi], [0, 1, -phi], [0, -1, -phi],
-                    [1, phi, 0], [-1, phi, 0], [1, -phi, 0], [-1, -phi, 0],
-                    [phi, 0, 1], [-phi, 0, 1], [phi, 0, -1], [-phi, 0, -1],
-                ];
-                for (const n of normals) {
-                    const len = Math.sqrt(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]);
-                    if ((nx * n[0] + ny * n[1] + nz * n[2]) / len > ir) return false;
-                }
-                return true;
-            }
-            case 'icosahedron': {
-                const phi = 1.618033988749895;
-                const ir = 0.7558;
-                const normals = [
-                    [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
-                    [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1],
-                    [0, phi, 1/phi], [0, phi, -1/phi], [0, -phi, 1/phi], [0, -phi, -1/phi],
-                    [1/phi, 0, phi], [-1/phi, 0, phi], [1/phi, 0, -phi], [-1/phi, 0, -phi],
-                    [phi, 1/phi, 0], [phi, -1/phi, 0], [-phi, 1/phi, 0], [-phi, -1/phi, 0],
-                ];
-                for (const n of normals) {
-                    const len = Math.sqrt(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]);
-                    if ((nx * n[0] + ny * n[1] + nz * n[2]) / len > ir) return false;
-                }
-                return true;
-            }
-            case 'cylinder':
-                return (nx * nx + nz * nz) <= 1.0 && Math.abs(ny) <= 1.0;
-            case 'torus': {
-                const dist_xz = Math.sqrt(nx * nx + nz * nz);
-                const dx = dist_xz - 0.7;
-                return (dx * dx + ny * ny) <= 0.09; // 0.3²
-            }
-            default:
-                return true;
-        }
+        return insideBoundary(this._boundaryShape, nx, ny, nz);
     }
 
     /**
      * Reflect a particle/atom back inside the boundary.
      * cx, cy, cz = center; R = half-extent (radius).
      * Modifies the object in-place (x,y,z,vx,vy,vz).
+     * Delegates to the pure module function in bridge/boundary.js.
      */
     _reflectIntoBoundary(p, cx, cy, cz, R) {
-        if (this._boundaryShape === 'cube' || this._boundaryShape === 'none') return;
-        const nx = (p.x - cx) / R;
-        const ny = (p.y - cy) / R;
-        const nz = (p.z - cz) / R;
-        if (this._insideBoundary(nx, ny, nz)) return;
-        // Absorbing boundary: let particle pass through (no reflection)
-        if (!this._reflectiveBoundary) return;
-
-        // Compute outward normal at boundary surface for reflection
-        let snx = 0, sny = 0, snz = 0;
-        switch (this._boundaryShape) {
-            case 'sphere': {
-                const r = Math.sqrt(nx*nx + ny*ny + nz*nz);
-                if (r < 1e-10) return;
-                snx = nx / r; sny = ny / r; snz = nz / r;
-                // Project back onto sphere surface
-                p.x = cx + snx * R * 0.99;
-                p.y = cy + sny * R * 0.99;
-                p.z = cz + snz * R * 0.99;
-                break;
-            }
-            case 'octahedron': {
-                // Normal = sign of coordinates (octahedron faces)
-                snx = Math.sign(nx) || 1;
-                sny = Math.sign(ny) || 1;
-                snz = Math.sign(nz) || 1;
-                const len = Math.sqrt(snx*snx + sny*sny + snz*snz);
-                snx /= len; sny /= len; snz /= len;
-                // Project back: move inward along normal
-                const dist = Math.abs(nx) + Math.abs(ny) + Math.abs(nz) - 1.0;
-                p.x = cx + (nx - snx * dist * 1.01) * R;
-                p.y = cy + (ny - sny * dist * 1.01) * R;
-                p.z = cz + (nz - snz * dist * 1.01) * R;
-                break;
-            }
-            case 'cylinder': {
-                const rXZ = Math.sqrt(nx*nx + nz*nz);
-                if (rXZ > 1.0) {
-                    snx = nx / rXZ; snz = nz / rXZ;
-                    p.x = cx + snx * R * 0.99;
-                    p.z = cz + snz * R * 0.99;
-                }
-                if (Math.abs(ny) > 1.0) {
-                    sny = Math.sign(ny);
-                    p.y = cy + sny * R * 0.99;
-                }
-                snx = nx / Math.max(rXZ, 0.01);
-                sny = Math.abs(ny) > 1.0 ? Math.sign(ny) : 0;
-                snz = nz / Math.max(rXZ, 0.01);
-                const nlen = Math.sqrt(snx*snx + sny*sny + snz*snz) || 1;
-                snx /= nlen; sny /= nlen; snz /= nlen;
-                break;
-            }
-            case 'torus': {
-                const dist_xz = Math.sqrt(nx*nx + nz*nz) || 0.001;
-                const cx_ring = 0.7 * nx / dist_xz;
-                const cz_ring = 0.7 * nz / dist_xz;
-                const dx = nx - cx_ring, dz = nz - cz_ring;
-                const dr = Math.sqrt(dx*dx + ny*ny) || 0.001;
-                snx = dx / dr; sny = ny / dr; snz = dz / dr;
-                p.x = cx + (cx_ring + snx * 0.29) * R;
-                p.y = cy + sny * 0.29 * R;
-                p.z = cz + (cz_ring + snz * 0.29) * R;
-                break;
-            }
-            default: {
-                // Dodecahedron / Icosahedron: use gradient of distance function
-                // Nudge inward along the most-violated face normal
-                const normals = this._boundaryShape === 'dodecahedron'
-                    ? [[0,1,1.618],[0,-1,1.618],[0,1,-1.618],[0,-1,-1.618],
-                       [1,1.618,0],[-1,1.618,0],[1,-1.618,0],[-1,-1.618,0],
-                       [1.618,0,1],[-1.618,0,1],[1.618,0,-1],[-1.618,0,-1]]
-                    : [[1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1],
-                       [-1,1,1],[-1,1,-1],[-1,-1,1],[-1,-1,-1],
-                       [0,1.618,0.618],[0,1.618,-0.618],[0,-1.618,0.618],[0,-1.618,-0.618],
-                       [0.618,0,1.618],[-0.618,0,1.618],[0.618,0,-1.618],[-0.618,0,-1.618],
-                       [1.618,0.618,0],[1.618,-0.618,0],[-1.618,0.618,0],[-1.618,-0.618,0]];
-                const ir = this._boundaryShape === 'dodecahedron' ? 0.7946 : 0.7558;
-                let maxD = -Infinity, bestN = null;
-                for (const n of normals) {
-                    const len = Math.sqrt(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]);
-                    const d = (nx * n[0] + ny * n[1] + nz * n[2]) / len;
-                    if (d > maxD) { maxD = d; bestN = [n[0]/len, n[1]/len, n[2]/len]; }
-                }
-                if (bestN) {
-                    const push = (maxD - ir) * 1.01;
-                    p.x = cx + (nx - bestN[0] * push) * R;
-                    p.y = cy + (ny - bestN[1] * push) * R;
-                    p.z = cz + (nz - bestN[2] * push) * R;
-                    snx = bestN[0]; sny = bestN[1]; snz = bestN[2];
-                }
-                break;
-            }
-        }
-        // Reflect velocity: v = v - 2(v·n)n
-        const dot = p.vx * snx + p.vy * sny + p.vz * snz;
-        if (dot > 0) { // only reflect if moving outward
-            p.vx -= 2 * dot * snx;
-            p.vy -= 2 * dot * sny;
-            p.vz -= 2 * dot * snz;
-        }
+        reflectIntoBoundary(this._boundaryShape, p, cx, cy, cz, R, this._reflectiveBoundary);
     }
 
     setDt(dt) { this._dt = Math.max(1.0, dt); }
