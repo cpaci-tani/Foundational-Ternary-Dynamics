@@ -28,20 +28,14 @@
 #include <algorithm>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/test_telemetry.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-static int g_failures = 0;
-
 static void check(const char* name, bool condition) {
-    if (condition) {
-        std::printf("  PASS  %s\n", name);
-    } else {
-        std::printf("  FAIL  %s\n", name);
-        ++g_failures;
-    }
+    ftd::test::check(name, condition);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -501,9 +495,7 @@ static void test_no_longitudinal() {
 // Main
 // ─────────────────────────────────────────────────────────────────────────────
 int main() {
-    std::printf("================================================================\n");
-    std::printf("  TEST: Light & Photon Properties — 8 Checks\n");
-    std::printf("================================================================\n");
+    ftd::test::init("test_light");
 
     test_zero_rest_mass();          // LIGHT-1
     test_energy_frequency();        // LIGHT-2
@@ -514,12 +506,5 @@ int main() {
     test_speed_identity();          // LIGHT-7
     test_no_longitudinal();         // LIGHT-8
 
-    std::printf("\n================================================================\n");
-    if (g_failures == 0)
-        std::printf("  All 8 light tests PASSED.\n");
-    else
-        std::printf("  %d test(s) FAILED.\n", g_failures);
-    std::printf("================================================================\n");
-
-    return g_failures;
+    return ftd::test::finalize();
 }

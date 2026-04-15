@@ -25,22 +25,12 @@
 #include <iomanip>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/test_telemetry.h"
 
-static int g_failures = 0;
-
-static void check(const char* name, bool condition) {
-    if (condition) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << "\n";
-        ++g_failures;
-    }
-}
+using ftd::test::check;
 
 int main() {
-    std::cout << "================================================================\n";
-    std::cout << "  TEST: Poynting Vector S = E x B — 6 Checks\n";
-    std::cout << "================================================================\n";
+    ftd::test::init("test_poynting");
 
     // ================================================================
     // PV-1: Zero for static uniform field
@@ -304,15 +294,5 @@ int main() {
               diff < 1e-10 && audit.total_poynting.x != 0);
     }
 
-    // ================================================================
-    // Summary
-    // ================================================================
-    std::cout << "\n================================================================\n";
-    if (g_failures == 0)
-        std::cout << "  All 6 Poynting vector tests PASSED.\n";
-    else
-        std::cout << "  " << g_failures << " test(s) FAILED.\n";
-    std::cout << "================================================================\n";
-
-    return g_failures;
+    return ftd::test::finalize();
 }
