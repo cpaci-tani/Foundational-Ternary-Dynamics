@@ -788,6 +788,208 @@ static void section_strong() {
     }
 }
 
+// ============================================================================
+// Section: cpu_gpu_parity  (Wave 5.4 Phase 1)
+//
+// Build a moderately-sized particle system that exercises the GPU threshold
+// (N >= 8), run compute_all_forces via tick() twice — once with use_gpu
+// off, once with use_gpu on — and compare the per-particle force components
+// term-by-term. This is the definitive CPU/GPU numerical parity check
+// for the Wave 5.4 pair-force kernel (Coulomb + gravity).
+// ============================================================================
+
+static void section_cpu_gpu_parity() {
+    // 12 particles in a 3x2x2 grid with spacing 30 (avoids r_eff annihilation
+    // contact ~5 and keeps the potential smooth). All particles locked so
+    // integration is a no-op and we can read force_diag from the first
+    // compute_all_forces call cleanly.
+    const double SPACING = 30.0;
+
+    auto build = [SPACING](ftd::ParticleEngine& pe) {
+        pe.set_damping_enabled(false);
+        pe.set_softening(1.0);
+
+        int id = 0;
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 2; ++j) {
+                for (int k = 0; k < 2; ++k) {
+                    int8_t charge = (id % 3 == 0) ? +1
+                                  : (id % 3 == 1) ? -1
+                                  : 0;
+                    double mass = ftd::K_B * (1.0 + 0.1 * (id % 5));
+                    int aid = pe.add_particle(charge,
+                        {static_cast<double>(i) * SPACING,
+                         static_cast<double>(j) * SPACING,
+                         static_cast<double>(k) * SPACING},
+                        {0, 0, 0}, mass);
+                    pe.particles()[aid].locked = true;  // freeze for force query
+                    ++id;
+                }
+            }
+        }
+        pe.toggles.coulomb = true;
+        pe.toggles.gravity = true;
+        pe.toggles.damping = false;
+        pe.toggles.strong = false;
+        pe.toggles.exchange = false;
+        pe.toggles.lorentz = false;
+        pe.toggles.magnetic_dipole = false;
+        pe.toggles.spin_orbit = false;
+        pe.toggles.radiation = false;
+        pe.toggles.relativistic = false;
+    };
+
+    // Note: CPU `compute_all_forces()` runs through Barnes-Hut with
+    // THETA_BH = 0.5, which opens monopole approximations for internal
+    // nodes. For 12 particles in a 3x2x2 grid this measurably diverges
+    // from exact O(N²). The GPU kernel is exact O(N²), so comparing
+    // `force_diag()` from CPU and GPU directly would confound a real
+    // parity bug with the Barnes-Hut approximation.
+    //
+    // Instead we build a "reference" CPU answer by looping
+    // `compute_pairwise_force(i, j)` directly — this is the same inner
+    // function the GPU kernel mirrors — and compare *that* to the GPU
+    // force_diag. Any deviation is a real parity bug in the kernel.
+
+    std::cout << "\n--- PGP1: GPU coulomb+gravity path produces forces ---\n";
+    ftd::ParticleEngine pe_gpu;
+    build(pe_gpu);
+    pe_gpu.set_use_gpu(true);
+    pe_gpu.run(1);
+    const auto& fd_gpu = pe_gpu.force_diag();
+    double gpu_total = 0.0;
+    for (const auto& d : fd_gpu) gpu_total += d.f_coulomb.mag() + d.f_gravity.mag();
+    std::cout << "  GPU N=" << fd_gpu.size()
+              << " sum|f_c|+|f_g|=" << gpu_total
+              << " f_c[0]=(" << fd_gpu[0].f_coulomb.x << ","
+              << fd_gpu[0].f_coulomb.y << ","
+              << fd_gpu[0].f_coulomb.z << ")\n";
+    ftd::test::check("PGP1: GPU path produces nonzero forces",
+                     gpu_total > 1e-30);
+
+    std::cout << "\n--- PGP2: CPU pairwise reference is computed ---\n";
+    // Build an independent CPU engine so we can call compute_pairwise_force
+    // without running the full octree-based compute_all_forces.
+    ftd::ParticleEngine pe_ref;
+    build(pe_ref);
+    pe_ref.set_use_gpu(false);
+    // Need force_diag to exist; trigger one tick to allocate it, then
+    // overwrite forces via direct pairwise loop.
+    pe_ref.run(1);
+    int N = static_cast<int>(pe_ref.particles().size());
+    std::vector<ftd::Vec3> ref_coulomb(N), ref_gravity(N), ref_total(N);
+    for (int i = 0; i < N; ++i) {
+        ftd::Vec3 fc, fg;
+        for (int j = 0; j < N; ++j) {
+            if (i == j) continue;
+            // Call CPU pair force with gravity toggle off to isolate
+            // coulomb-only contribution. Then call it again with coulomb
+            // off to isolate gravity-only. This is the cleanest "CPU
+            // reference" because it exercises the same single-pair code
+            // path the GPU kernel mirrors.
+            pe_ref.toggles.coulomb = true;
+            pe_ref.toggles.gravity = false;
+            fc += pe_ref.compute_pairwise_force(i, j);
+            pe_ref.toggles.coulomb = false;
+            pe_ref.toggles.gravity = true;
+            fg += pe_ref.compute_pairwise_force(i, j);
+            pe_ref.toggles.coulomb = true;
+            pe_ref.toggles.gravity = true;
+        }
+        ref_coulomb[i] = fc;
+        ref_gravity[i] = fg;
+        ref_total[i]   = fc + fg;
+    }
+    double ref_total_mag = 0.0;
+    for (int i = 0; i < N; ++i) ref_total_mag += ref_total[i].mag();
+    std::cout << "  REF N=" << N << " sum|F_total|=" << ref_total_mag
+              << " ref_coulomb[0]=(" << ref_coulomb[0].x << ","
+              << ref_coulomb[0].y << "," << ref_coulomb[0].z << ")\n";
+    ftd::test::check("PGP2: CPU pairwise reference nonzero", ref_total_mag > 1e-30);
+
+    std::cout << "\n--- PGP3: GPU vs CPU pairwise reference parity ---\n";
+    double max_c_abs = 0.0, max_c_rel = 0.0;
+    double max_g_abs = 0.0, max_g_rel = 0.0;
+    double max_total_abs = 0.0;
+    for (int i = 0; i < N && i < static_cast<int>(fd_gpu.size()); ++i) {
+        ftd::Vec3 dc = {
+            ref_coulomb[i].x - fd_gpu[i].f_coulomb.x,
+            ref_coulomb[i].y - fd_gpu[i].f_coulomb.y,
+            ref_coulomb[i].z - fd_gpu[i].f_coulomb.z,
+        };
+        ftd::Vec3 dg = {
+            ref_gravity[i].x - fd_gpu[i].f_gravity.x,
+            ref_gravity[i].y - fd_gpu[i].f_gravity.y,
+            ref_gravity[i].z - fd_gpu[i].f_gravity.z,
+        };
+        ftd::Vec3 dt = {
+            ref_total[i].x - (fd_gpu[i].f_coulomb.x + fd_gpu[i].f_gravity.x),
+            ref_total[i].y - (fd_gpu[i].f_coulomb.y + fd_gpu[i].f_gravity.y),
+            ref_total[i].z - (fd_gpu[i].f_coulomb.z + fd_gpu[i].f_gravity.z),
+        };
+        double c_abs = dc.mag();
+        double g_abs = dg.mag();
+        double t_abs = dt.mag();
+        double c_ref = ref_coulomb[i].mag();
+        double g_ref = ref_gravity[i].mag();
+        max_c_abs     = std::max(max_c_abs, c_abs);
+        max_g_abs     = std::max(max_g_abs, g_abs);
+        max_total_abs = std::max(max_total_abs, t_abs);
+        if (c_ref > 1e-30) max_c_rel = std::max(max_c_rel, c_abs / c_ref);
+        if (g_ref > 1e-30) max_g_rel = std::max(max_g_rel, g_abs / g_ref);
+    }
+    std::cout << "  max |F_c_ref - F_c_gpu| = " << max_c_abs
+              << " (rel " << max_c_rel << ")\n";
+    std::cout << "  max |F_g_ref - F_g_gpu| = " << max_g_abs
+              << " (rel " << max_g_rel << ")\n";
+    std::cout << "  max |F_total_ref - F_total_gpu| = " << max_total_abs << "\n";
+    ftd::test::check("PGP3: coulomb parity within 1e-12 abs", max_c_abs < 1e-12);
+    ftd::test::check("PGP4: coulomb parity within 1e-12 rel", max_c_rel < 1e-12);
+    ftd::test::check("PGP5: gravity parity within 1e-12 abs", max_g_abs < 1e-12);
+    ftd::test::check("PGP6: total force parity within 1e-12", max_total_abs < 1e-12);
+
+    std::cout << "\n--- PGP7: GPU threshold N<8 → CPU fallback ---\n";
+    ftd::ParticleEngine pe_tiny;
+    pe_tiny.set_damping_enabled(false);
+    pe_tiny.set_softening(1.0);
+    int t0 = pe_tiny.add_particle(+1, { 0,  0, 0});
+    int t1 = pe_tiny.add_particle(-1, {30,  0, 0});
+    int t2 = pe_tiny.add_particle(+1, { 0, 30, 0});
+    int t3 = pe_tiny.add_particle(-1, {30, 30, 0});
+    pe_tiny.particles()[t0].locked = true;
+    pe_tiny.particles()[t1].locked = true;
+    pe_tiny.particles()[t2].locked = true;
+    pe_tiny.particles()[t3].locked = true;
+    pe_tiny.toggles.coulomb = true;
+    pe_tiny.toggles.gravity = true;
+    pe_tiny.toggles.damping = false;
+    pe_tiny.set_use_gpu(true);
+    pe_tiny.run(1);
+    const auto& fd_tiny = pe_tiny.force_diag();
+    double tiny_total = 0.0;
+    for (const auto& d : fd_tiny) tiny_total += d.f_coulomb.mag() + d.f_gravity.mag();
+    std::cout << "  tiny N=" << fd_tiny.size()
+              << " sum|f|=" << tiny_total << "\n";
+    ftd::test::check("PGP7: N<8 system still computes nonzero forces via CPU fallback",
+                     tiny_total > 1e-30);
+
+    std::cout << "\n--- PGP8: advanced toggle (strong) forces CPU fallback ---\n";
+    ftd::ParticleEngine pe_adv;
+    build(pe_adv);
+    pe_adv.toggles.strong = true;   // any advanced toggle triggers CPU path
+    pe_adv.set_use_gpu(true);
+    pe_adv.run(1);
+    const auto& fd_adv = pe_adv.force_diag();
+    bool adv_has_forces = false;
+    for (const auto& d : fd_adv) {
+        if (d.f_coulomb.mag() + d.f_gravity.mag() > 1e-30) { adv_has_forces = true; break; }
+    }
+    std::cout << "  adv N=" << fd_adv.size()
+              << " has_forces=" << (adv_has_forces ? "yes" : "no") << "\n";
+    ftd::test::check("PGP8: advanced-toggle system produces forces via CPU fallback",
+                     adv_has_forces);
+}
+
 // --- main ---
 
 int main() {
@@ -813,6 +1015,9 @@ int main() {
 
     ftd::test::section("strong");
     section_strong();
+
+    ftd::test::section("cpu_gpu_parity");
+    section_cpu_gpu_parity();
 
     return ftd::test::finalize();
 }
