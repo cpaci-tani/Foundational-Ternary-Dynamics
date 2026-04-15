@@ -52,7 +52,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { getById } from './particle-catalog.js';
-import { potentialToColor, magnitudeToColor, fluxToColor } from './fields.js';
+import { potentialToColor, magnitudeToColor, fluxToColor, fluxToColorInto } from './fields.js';
 import { K_B } from './constants.js';
 
 // Pre-allocated buffer sizes. Particle buffer is fixed at init to avoid
@@ -1282,32 +1282,51 @@ export class Viewport {
         //   L>96:   step=4  → up to 32^3 =  32K points (from 128^3)
         const step = N > 96 ? 4 : (N > 48 ? 2 : 1);
 
-        for (let z = 0; z < N && count < maxPts; z += step) {
-            for (let y = 0; y < N && count < maxPts; y += step) {
-                for (let x = 0; x < N && count < maxPts; x += step) {
-                    // Boundary clipping: normalize to -1..1 from center
-                    const nx = (x - halfN + 0.5) / halfN;
-                    const ny = (y - halfN + 0.5) / halfN;
-                    const nz = (z - halfN + 0.5) / halfN;
-                    if (!this._insideBoundary(nx, ny, nz)) continue;
+        // PERF: hoist boundary-shape check OUT of the per-voxel loop. For the
+        // default 'cube'/'none' boundary _insideBoundary() always returns
+        // true, but the function-call overhead alone costs ~100K calls per
+        // upload at L=64. Skip the call (and the nx/ny/nz division) entirely
+        // when no clipping is needed.
+        const _bs = this._boundaryShape;
+        const needsClip = !(_bs === 'cube' || _bs === 'none' || _bs === undefined);
 
-                    const mag = volumeData[z * N * N + y * N + x];
+        // PERF: cache geometry attribute backing arrays as locals so the JIT
+        // can keep them in registers. posArr/colArr/sizeArr writes dominate
+        // the hot loop.
+        const posArr = posAttr.array;
+        const colArr = colAttr.array;
+        const sizeArr = sizeAttr.array;
+
+        for (let z = 0; z < N && count < maxPts; z += step) {
+            const zNN = z * N * N;
+            for (let y = 0; y < N && count < maxPts; y += step) {
+                const zNNyN = zNN + y * N;
+                for (let x = 0; x < N && count < maxPts; x += step) {
+                    if (needsClip) {
+                        const nx = (x - halfN + 0.5) / halfN;
+                        const ny = (y - halfN + 0.5) / halfN;
+                        const nz = (z - halfN + 0.5) / halfN;
+                        if (!this._insideBoundary(nx, ny, nz)) continue;
+                    }
+
+                    const mag = volumeData[zNNyN + x];
 
                     // Skip inactive voxels before writing any attributes,
                     // otherwise stale color/size from a prior frame leak through
-                    if (mag < FLUX_THRESHOLD || maxFlux < 1e-20) continue;
+                    if (mag < FLUX_THRESHOLD) continue;
 
-                    posAttr.array[count * 3] = x;
-                    posAttr.array[count * 3 + 1] = y;
-                    posAttr.array[count * 3 + 2] = z;
+                    const c3 = count * 3;
+                    posArr[c3]     = x;
+                    posArr[c3 + 1] = y;
+                    posArr[c3 + 2] = z;
 
-                    const [r, g, b] = fluxToColor(mag, maxFlux);
-                    colAttr.array[count * 3] = r;
-                    colAttr.array[count * 3 + 1] = g;
-                    colAttr.array[count * 3 + 2] = b;
+                    // PERF: in-place colormap write. Pre-fix this allocated a
+                    // fresh [r,g,b] array per voxel -- ~1.8M allocs/sec at L=32.
+                    fluxToColorInto(colArr, c3, mag, maxFlux);
+
                     const t = mag / (maxFlux + 1e-20);
                     const sizeScale = step > 1 ? step * 0.8 : 1.0; // compensate for subsampling
-                    sizeAttr.array[count] = (1.0 + (MAX_SIZE - 1.0) * t) * sizeScale;
+                    sizeArr[count] = (1.0 + (MAX_SIZE - 1.0) * t) * sizeScale;
 
                     count++;
                 }

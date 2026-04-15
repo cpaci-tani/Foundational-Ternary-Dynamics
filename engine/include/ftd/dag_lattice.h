@@ -4,9 +4,9 @@
 #include "lattice.h"
 #include <vector>
 #include <array>
+#include <cassert>
 #include <cstdint>
 #include <unordered_map>
-#include <stdexcept>
 
 namespace ftd {
 
@@ -30,9 +30,11 @@ struct DagNodeHash {
 class SparseVoxelDAG {
 public:
     explicit SparseVoxelDAG(int size) : size_(size) {
-        if ((size & (size - 1)) != 0 || size == 0) {
-            throw std::invalid_argument("DAG size must be a power of 2");
-        }
+        // Precondition: size must be a power of 2 and non-zero.
+        // Was throw std::invalid_argument; replaced with assert so the
+        // header compiles cleanly under -fno-exceptions for the WASM build.
+        assert(size != 0 && (size & (size - 1)) == 0
+               && "DAG size must be a non-zero power of 2");
         depth_ = 0;
         int temp = size;
         while (temp > 1) {

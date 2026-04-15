@@ -70,9 +70,13 @@ let _fieldNeedsUpdate = false;  // force immediate field compute on toggle activ
 let _anyFieldActive = false;    // cached OR of all field toggle flags
 
 // ── Simulation Caches (Scale 0 internal) ────────────────────────────
-let _fieldGrid = null;          // cached grid from generateGridXZ
-let _srcParticlesBuf = [];      // reusable {x,y,z} array for field seed generation
 let _fluxMock = null;           // MockBridge for Scale 0 flux visualization fallback
+// True when the WASM bridge does NOT provide its own flux data, so the JS
+// MockBridge must run a parallel wave simulation. Determined once per scenario
+// load by probing bridge.getFluxVolume(). When false, _fluxMock.tick() is
+// SKIPPED in the play loop -- this avoids running two full L^3 wave updates
+// per tick when WASM is already doing the work (the dominant FPS killer).
+let _useFluxMock = false;
 let _latticeNeedsUpload = true; // set true on scenario load / step / resume
 // Fractional-tick accumulator (sub-1 speed support) — uses shared helper
 // from scale-utils.js so every scale controller shares the same semantics.
@@ -86,6 +90,10 @@ let _chiralValues = null;       // chirality scalar values
 
 // Default toggle array alias (matches app_dag.js convention)
 const DEFAULT_TOGGLES = SCALE0_TOGGLES;
+
+// Dual-substrate L/R chirality factor: delta = sqrt((4G*-1)/(4G*)).
+// Hoisted to module scope so the per-frame field block doesn't redeclare it.
+const DUAL_DELTA = 0.9568;
 
 
 // ── Internal Helpers ────────────────────────────────────────────────
@@ -145,35 +153,34 @@ export function animateLattice(ctx) {
     if (ctx.running) {
         const wholeTicks = _tickAcc.accumulate(ctx.ticksPerFrame);
 
-        // Throttle: large lattices get fewer ticks per frame (lookup table
-        // via throttleBySize from scale-utils so the pattern is shared).
-        const maxTicksPerFrame = throttleBySize(L, [
-            { above: 96, value: 1 },
-            { above: 48, value: 1 },
-            { above: 32, value: 2 },
-            { default: wholeTicks },
-        ]);
+        // Throttle: large lattices get fewer ticks per frame.
+        // Inlined (was throttleBySize) to avoid a per-frame array literal alloc.
+        const maxTicksPerFrame = L > 96 ? 1 : (L > 48 ? 1 : (L > 32 ? 2 : wholeTicks));
         const ticksToRun = Math.min(wholeTicks, maxTicksPerFrame);
 
+        // PERF: only tick the JS MockBridge when its data is actually consumed.
+        // Pre-fix this ran a full L^3 wave update per tick *in addition* to
+        // bridge.tick() unconditionally, dominating the play-time CPU budget.
+        // Two consumers force the mock to stay live:
+        //   (1) WASM has no flux of its own (_useFluxMock true)
+        //   (2) Dark-matter-halo / genesis-isosurface overlays read _fluxJ
+        //       directly (legacy coupling — see RF-09 in audit)
+        const _tickMock = _fluxMock && (_useFluxMock || _showDarkMatterHalo || _showGenesisIsosurface);
         for (let i = 0; i < ticksToRun; i++) {
             bridge.tick();
-            if (_fluxMock) _fluxMock.tick();
+            if (_tickMock) _fluxMock.tick();
         }
         _latticeNeedsUpload = true;
     }
 
     // ── GPU buffer upload (only when data changed) ──────────────────
     // Volume upload throttle: L=128 -> every 6th frame, L=96 -> every 4th, L>48 -> every 3rd
-    const volUpdateInterval = throttleBySize(L, [
-        { above: 96, value: 6 },
-        { above: 64, value: 4 },
-        { above: 48, value: 3 },
-        { default: 1 },
-    ]);
+    // Inlined (was throttleBySize) to avoid per-frame array literal alloc.
+    const volUpdateInterval = L > 96 ? 6 : (L > 64 ? 4 : (L > 48 ? 3 : 1));
     if (_latticeNeedsUpload && (ctx.frameCount % volUpdateInterval === 0)) {
         let particleData = bridge.getParticleData();
         // Fall back to MockBridge particles when main bridge has none (JS-only scenarios)
-        if ((!particleData || particleData.count === 0) && _fluxMock) {
+        if (_useFluxMock && (!particleData || particleData.count === 0)) {
             const mockPD = _fluxMock.getParticleData();
             if (mockPD && mockPD.count > 0) particleData = mockPD;
         }
@@ -188,7 +195,7 @@ export function animateLattice(ctx) {
         if (viewport.showFlux) {
             // Try WASM first, fall back to MockBridge JS wave sim
             let vol = bridge.getFluxVolume();
-            if ((!vol || vol.length === 0) && _fluxMock) {
+            if ((!vol || vol.length === 0) && _useFluxMock) {
                 vol = _fluxMock.getFluxVolume();
             }
             if (vol && vol.length > 0) {
@@ -198,7 +205,7 @@ export function animateLattice(ctx) {
         if (viewport.showHeatmap) {
             const sliceIdx = Math.floor(L / 2);
             let slice = bridge.getFluxSlice(1, sliceIdx);
-            if ((!slice || slice.length === 0) && _fluxMock) {
+            if ((!slice || slice.length === 0) && _useFluxMock) {
                 slice = _fluxMock.getFluxSlice(1, sliceIdx);
             }
             if (slice && slice.length > 0) {
@@ -218,7 +225,13 @@ export function animateLattice(ctx) {
     const fieldThrottle = L > 96 ? 12 : (L > 48 ? 6 : 3);
     if (_anyFieldActive && (_fieldNeedsUpdate || _fieldFrame % fieldThrottle === 0)) {
         _fieldNeedsUpdate = false;
-        const fieldBridge = _fluxMock || bridge;
+        // fieldBridge is the source for *public* sampled-field getters
+        // (getEFieldSampled, getFluxVectorSampled, etc.). Prefer the WASM
+        // bridge when it has flux; fall back to the JS mock for JS-only
+        // scenarios. mockSource is the source for the legacy *private*
+        // _fluxJ peek used by halo/genesis-iso branches -- always the mock.
+        const fieldBridge = _useFluxMock ? _fluxMock : bridge;
+        const mockSource = _fluxMock;
         // Field sampling stride: L=128->8, L>48->6, L>32->4, else 2
         const stride = L > 96 ? 8 : (L > 48 ? 6 : (L > 32 ? 4 : 2));
         // Scale streamline max steps with lattice size so lines remain
@@ -226,6 +239,18 @@ export function animateLattice(ctx) {
         const stepsScale = Math.ceil(L / 32);
         // Adaptive seed spacing: clamp to [2, 8] so small lattices get enough seeds
         const seedSpacing = Math.max(2, Math.min(8, Math.floor(L / 4)));
+
+        // PERF: cache sampled-field results across overlay branches.
+        // Without these, getFluxVectorSampled() ran up to 3x per frame
+        // (flux-lines + dual-substrate + chirality) and getPoyntingSampled()
+        // ran up to 2x (poynting + light), each rebuilding the entire
+        // sampled grid from scratch. Each fetch is O(N^3 / stride^3).
+        let _jDataCache = null;
+        const _needFluxVec = _showFluxLines || _showDualSubstrate || _showChirality;
+        if (_needFluxVec) _jDataCache = fieldBridge.getFluxVectorSampled(stride);
+        let _sDataCache = null;
+        const _needPoynting = _showPoynting || _showLight;
+        if (_needPoynting) _sDataCache = fieldBridge.getPoyntingSampled(stride);
 
         // E-field streamlines
         if (_showEField) {
@@ -253,10 +278,9 @@ export function animateLattice(ctx) {
             }
         }
 
-        // Poynting vectors
-        if (_showPoynting) {
-            const sData = fieldBridge.getPoyntingSampled(stride);
-            if (sData.count > 0) viewport.updatePoyntingVectors(sData);
+        // Poynting vectors (uses cached _sDataCache)
+        if (_showPoynting && _sDataCache && _sDataCache.count > 0) {
+            viewport.updatePoyntingVectors(_sDataCache);
         }
 
         // Divergence field
@@ -265,19 +289,16 @@ export function animateLattice(ctx) {
             if (divData.count > 0) viewport.updateDivergenceField(divData);
         }
 
-        // Flux streamlines
-        if (_showFluxLines) {
-            const jData = fieldBridge.getFluxVectorSampled(stride);
-            if (jData.count > 0) {
-                const seeds = generateGridSeeds(L, seedSpacing, 150);
-                const lines = computeStreamlines(jData, seeds, { N: L, stride, maxSteps: 80 * stepsScale, stepSize: 0.5 });
-                let maxFlux = 0;
-                for (let i = 0; i < jData.count; i++) {
-                    const m = Math.sqrt(jData.vectors[i * 3] ** 2 + jData.vectors[i * 3 + 1] ** 2 + jData.vectors[i * 3 + 2] ** 2);
-                    if (m > maxFlux) maxFlux = m;
-                }
-                viewport.updateFluxStreamlines(lines, maxFlux);
+        // Flux streamlines (uses cached _jDataCache)
+        if (_showFluxLines && _jDataCache && _jDataCache.count > 0) {
+            const seeds = generateGridSeeds(L, seedSpacing, 150);
+            const lines = computeStreamlines(_jDataCache, seeds, { N: L, stride, maxSteps: 80 * stepsScale, stepSize: 0.5 });
+            let maxFlux = 0;
+            for (let i = 0; i < _jDataCache.count; i++) {
+                const m = Math.sqrt(_jDataCache.vectors[i * 3] ** 2 + _jDataCache.vectors[i * 3 + 1] ** 2 + _jDataCache.vectors[i * 3 + 2] ** 2);
+                if (m > maxFlux) maxFlux = m;
             }
+            viewport.updateFluxStreamlines(lines, maxFlux);
         }
 
         // Force volume
@@ -293,76 +314,65 @@ export function animateLattice(ctx) {
         }
 
         // Dark matter halo (sub-threshold flux envelope)
-        // Reuse _fluxMag maintained by _updateFluxMag/_ensureEnergyCache
-        // instead of recomputing 2M sqrt calls into a separate _fluxMagBuf.
-        if (_showDarkMatterHalo && fieldBridge._fluxJ) {
-            const N = fieldBridge.latticeSize;
-            if (fieldBridge._updateFluxMag) fieldBridge._updateFluxMag();
-            const mag = fieldBridge._fluxMag;
-            if (mag) viewport.updateDarkMatterHalo(fieldBridge._particles, mag, N);
+        // Reads MockBridge private state directly — leave coupling smell
+        // alone for now (RF-09 in audit), but always source from mockSource
+        // since the WASM bridge has no _fluxJ getter.
+        if (_showDarkMatterHalo && mockSource && mockSource._fluxJ) {
+            const N = mockSource.latticeSize;
+            if (mockSource._updateFluxMag) mockSource._updateFluxMag();
+            const mag = mockSource._fluxMag;
+            if (mag) viewport.updateDarkMatterHalo(mockSource._particles, mag, N);
         }
 
         // Selective damping zones (wireframe cubes around damped voxels)
-        if (_showDampingZones) {
-            viewport.updateDampingZones(fieldBridge._particles, fieldBridge.latticeSize);
+        if (_showDampingZones && mockSource) {
+            viewport.updateDampingZones(mockSource._particles, mockSource.latticeSize);
         }
 
-        // Genesis threshold isosurface (birth boundary)
-        // Reuse _fluxMag instead of recomputing 2M sqrt calls.
-        if (_showGenesisIsosurface && fieldBridge._fluxJ) {
-            const N = fieldBridge.latticeSize;
-            if (fieldBridge._updateFluxMag) fieldBridge._updateFluxMag();
-            const mag = fieldBridge._fluxMag;
+        // Genesis threshold isosurface (birth boundary) — same coupling caveat
+        if (_showGenesisIsosurface && mockSource && mockSource._fluxJ) {
+            const N = mockSource.latticeSize;
+            if (mockSource._updateFluxMag) mockSource._updateFluxMag();
+            const mag = mockSource._fluxMag;
             if (mag) viewport.updateGenesisIsosurface(mag, N, K_GENESIS);
         }
 
-        // Dual substrate (uses flux data split into L/R via delta)
-        // Reuse buffers to avoid 2x Float32Array alloc per throttled frame
-        if (_showDualSubstrate) {
-            const jData = fieldBridge.getFluxVectorSampled(stride);
-            if (jData.count > 0) {
-                const DELTA = 0.9568;
-                const lFactor = (1 + DELTA) / 2;
-                const rFactor = (1 - DELTA) / 2;
-                const vecLen = jData.vectors.length;
-                if (!_dualLVecs || _dualLVecs.length < vecLen) {
-                    _dualLVecs = new Float32Array(vecLen);
-                    _dualRVecs = new Float32Array(vecLen);
-                }
-                for (let i = 0; i < vecLen; i++) {
-                    _dualLVecs[i] = jData.vectors[i] * lFactor;
-                    _dualRVecs[i] = jData.vectors[i] * rFactor;
-                }
-                viewport.updateDualFluxVolume(
-                    { positions: jData.positions, vectors: _dualLVecs, count: jData.count },
-                    { positions: jData.positions, vectors: _dualRVecs, count: jData.count }
-                );
+        // Dual substrate (uses cached _jDataCache split into L/R via delta)
+        if (_showDualSubstrate && _jDataCache && _jDataCache.count > 0) {
+            const lFactor = (1 + DUAL_DELTA) / 2;
+            const rFactor = (1 - DUAL_DELTA) / 2;
+            const vecLen = _jDataCache.vectors.length;
+            if (!_dualLVecs || _dualLVecs.length < vecLen) {
+                _dualLVecs = new Float32Array(vecLen);
+                _dualRVecs = new Float32Array(vecLen);
             }
+            for (let i = 0; i < vecLen; i++) {
+                _dualLVecs[i] = _jDataCache.vectors[i] * lFactor;
+                _dualRVecs[i] = _jDataCache.vectors[i] * rFactor;
+            }
+            viewport.updateDualFluxVolume(
+                { positions: _jDataCache.positions, vectors: _dualLVecs, count: _jDataCache.count },
+                { positions: _jDataCache.positions, vectors: _dualRVecs, count: _jDataCache.count }
+            );
         }
 
-        // Chirality (|J_L| - |J_R| as scalar field)
-        // Reuse buffer to avoid Float32Array alloc per throttled frame
-        if (_showChirality) {
-            const jData = fieldBridge.getFluxVectorSampled(stride);
-            if (jData.count > 0) {
-                const DELTA = 0.9568;
-                const lF = (1 + DELTA) / 2, rF = (1 - DELTA) / 2;
-                if (!_chiralValues || _chiralValues.length < jData.count) {
-                    _chiralValues = new Float32Array(jData.count);
-                }
-                for (let i = 0; i < jData.count; i++) {
-                    const jx = jData.vectors[i * 3], jy = jData.vectors[i * 3 + 1], jz = jData.vectors[i * 3 + 2];
-                    const mag = Math.sqrt(jx * jx + jy * jy + jz * jz);
-                    _chiralValues[i] = mag * (lF - rF);
-                }
-                viewport.updateChiralityField({ positions: jData.positions, values: _chiralValues, count: jData.count });
+        // Chirality (|J_L| - |J_R| as scalar field) — uses cached _jDataCache
+        if (_showChirality && _jDataCache && _jDataCache.count > 0) {
+            const lMinusR = DUAL_DELTA;  // (1+d)/2 - (1-d)/2 = d
+            if (!_chiralValues || _chiralValues.length < _jDataCache.count) {
+                _chiralValues = new Float32Array(_jDataCache.count);
             }
+            for (let i = 0; i < _jDataCache.count; i++) {
+                const jx = _jDataCache.vectors[i * 3], jy = _jDataCache.vectors[i * 3 + 1], jz = _jDataCache.vectors[i * 3 + 2];
+                const mag = Math.sqrt(jx * jx + jy * jy + jz * jz);
+                _chiralValues[i] = mag * lMinusR;
+            }
+            viewport.updateChiralityField({ positions: _jDataCache.positions, values: _chiralValues, count: _jDataCache.count });
         }
 
-        // Light field (|Poynting| glow -- reuses Poynting data if already fetched)
-        if (_showLight) {
-            const sData = fieldBridge.getPoyntingSampled(stride);
-            if (sData.count > 0) viewport.updateLightField(sData);
+        // Light field (|Poynting| glow) — uses cached _sDataCache
+        if (_showLight && _sDataCache && _sDataCache.count > 0) {
+            viewport.updateLightField(_sDataCache);
         }
     }
 
@@ -373,8 +383,10 @@ export function animateLattice(ctx) {
         // Primary diagnostics from the WASM bridge (authoritative for particles,
         // energy, tick count). Fall back to MockBridge only when WASM has no
         // manifested particles AND the mock has flux data (JS-only wave demos).
+        // PERF: only consult mock when WASM doesn't own the flux data, so JS
+        // diagnostics aren't re-walked at 20Hz when WASM is authoritative.
         const wasmDiag = bridge.getDiagnostics();
-        const mockDiag = _fluxMock ? _fluxMock.getDiagnostics() : null;
+        const mockDiag = _useFluxMock ? _fluxMock.getDiagnostics() : null;
         const diag = (mockDiag && !wasmDiag.manifested && mockDiag.totalFlux > 0)
             ? { ...mockDiag, tick: wasmDiag.tick }
             : wasmDiag;
@@ -407,7 +419,7 @@ export function animateLattice(ctx) {
         if (ctx.chartCharge) ctx.chartCharge.push(diag.chargeBalance || 0);
         if (ctx.chartEntropy) ctx.chartEntropy.push(diag.entropy || 0);
 
-        const lag = _fluxMock ? _fluxMock.getLagrangian() : bridge.getLagrangian();
+        const lag = _useFluxMock ? _fluxMock.getLagrangian() : bridge.getLagrangian();
         ctx.lagrangianChart.push(lag);
 
         // Update active panel visuals
@@ -415,13 +427,13 @@ export function animateLattice(ctx) {
             case 'diagnostics':
                 ctx.diagnostics.drawSparklines();
                 if (ctx.peTelemetry) ctx.peTelemetry.drawCharts();
-                const ea = _fluxMock ? _fluxMock.getEnergyAudit() : bridge.getEnergyAudit();
+                const ea = _useFluxMock ? _fluxMock.getEnergyAudit() : bridge.getEnergyAudit();
                 ctx.diagnostics.updateEnergyAudit(ea);
                 break;
             case 'charts': {
                 ctx.fluxEnergyChart.draw();
                 ctx.particleChart.draw();
-                const eaC = _fluxMock ? _fluxMock.getEnergyAudit() : bridge.getEnergyAudit();
+                const eaC = _useFluxMock ? _fluxMock.getEnergyAudit() : bridge.getEnergyAudit();
                 if (eaC) {
                     if (ctx.chartEBEnergy) { ctx.chartEBEnergy.push((eaC.EFieldEnergy || eaC.eFieldEnergy || 0) - (eaC.BFieldEnergy || eaC.bFieldEnergy || 0)); ctx.chartEBEnergy.draw('#a78bfa'); }
                     if (ctx.chartGauss) { ctx.chartGauss.push(eaC.gaussViolation || 0); ctx.chartGauss.draw('#fbbf24'); }
@@ -511,6 +523,18 @@ export function loadScenario(ctx, name) {
         }
     }
 
+    // PERF: probe whether the WASM bridge has its own flux data. If yes,
+    // the JS MockBridge wave update is redundant -- we keep the instance
+    // around as a structural fallback (some scenarios are JS-only) but
+    // don't tick it on every frame in the play loop. This single check
+    // is the dominant FPS recovery on play.
+    let wasmHasFlux = false;
+    try {
+        const probe = bridge.getFluxVolume && bridge.getFluxVolume();
+        wasmHasFlux = !!(probe && probe.length > 0);
+    } catch (_e) { wasmHasFlux = false; }
+    _useFluxMock = !wasmHasFlux;
+
     // Mark toggles that differ from defaults after scenario overrides
     _markScenarioOverrides();
 
@@ -533,7 +557,6 @@ export function resetScale0(ctx) {
     const { viewport } = ctx;
 
     // Clear simulation data caches
-    _fieldGrid = null;
     _fieldNeedsUpdate = true;
     _latticeNeedsUpload = true;
 
@@ -627,7 +650,6 @@ export function getFieldState() {
         anyFieldActive: _anyFieldActive,
         fieldNeedsUpdate: _fieldNeedsUpdate,
         fluxMock: _fluxMock,
-        fieldGrid: _fieldGrid,
     };
 }
 

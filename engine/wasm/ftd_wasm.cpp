@@ -23,70 +23,67 @@ using namespace emscripten;
 // Format: { positions: Float32Array, colors: Float32Array, sizes: Float32Array, count: int }
 
 val get_particle_data(ftd::RenderBridge& rb) {
+    // PERF: zero-copy via typed_memory_view. Pre-fix this called val::set
+    // 7x per particle. Now positions/colors/sizes are heap views.
+    static std::vector<float> pos_cache, col_cache, size_cache;
     const auto& voxels = rb.voxels();
     const int N = rb.lattice().size();
     const int total = N * N * N;
 
-    // Count manifested + flux-carrying voxels for display
+    // First pass: count visible voxels
     int count = 0;
     for (int i = 0; i < total; i++) {
-        if (voxels[i].state != 0 || voxels[i].density() > ftd::K_B * 0.05) {
-            count++;
-        }
+        const auto& v = voxels[i];
+        if (v.state != 0 || v.density() > ftd::K_B * 0.3) count++;
     }
 
-    // Allocate JS typed arrays
-    val positions = val::global("Float32Array").new_(count * 3);
-    val colors    = val::global("Float32Array").new_(count * 3);
-    val sizes     = val::global("Float32Array").new_(count);
+    if (static_cast<int>(pos_cache.size()) < count * 3) {
+        pos_cache.resize(count * 3);
+        col_cache.resize(count * 3);
+        size_cache.resize(count);
+    }
 
     int idx = 0;
     for (int i = 0; i < total; i++) {
         const auto& v = voxels[i];
         if (v.state == 0 && v.density() <= ftd::K_B * 0.3) continue;
 
-        // Position from lattice index
         auto c = rb.lattice().coord(i);
-        int x = c.x, y = c.y, z = c.z;
+        const int o3 = idx * 3;
+        pos_cache[o3]     = static_cast<float>(c.x);
+        pos_cache[o3 + 1] = static_cast<float>(c.y);
+        pos_cache[o3 + 2] = static_cast<float>(c.z);
 
-        positions.set(idx * 3,     static_cast<float>(x));
-        positions.set(idx * 3 + 1, static_cast<float>(y));
-        positions.set(idx * 3 + 2, static_cast<float>(z));
-
-        // Color by state
         if (v.state == 1) {
-            colors.set(idx * 3,     0.29f);  // green
-            colors.set(idx * 3 + 1, 0.87f);
-            colors.set(idx * 3 + 2, 0.50f);
+            col_cache[o3]     = 0.29f;
+            col_cache[o3 + 1] = 0.87f;
+            col_cache[o3 + 2] = 0.50f;
         } else if (v.state == -1) {
-            colors.set(idx * 3,     0.97f);  // red
-            colors.set(idx * 3 + 1, 0.44f);
-            colors.set(idx * 3 + 2, 0.44f);
+            col_cache[o3]     = 0.97f;
+            col_cache[o3 + 1] = 0.44f;
+            col_cache[o3 + 2] = 0.44f;
         } else {
-            // Void with flux: blue-gray, brightness proportional to density
             float brightness = static_cast<float>(v.density() / (ftd::K_B * 2.0));
             if (brightness > 1.0f) brightness = 1.0f;
-            colors.set(idx * 3,     0.37f + brightness * 0.1f);
-            colors.set(idx * 3 + 1, 0.45f + brightness * 0.1f);
-            colors.set(idx * 3 + 2, 0.58f + brightness * 0.2f);
+            col_cache[o3]     = 0.37f + brightness * 0.1f;
+            col_cache[o3 + 1] = 0.45f + brightness * 0.1f;
+            col_cache[o3 + 2] = 0.58f + brightness * 0.2f;
         }
 
-        // Size: manifested particles larger, void proportional to density
         if (v.state != 0) {
-            sizes.set(idx, 6.0f);
+            size_cache[idx] = 6.0f;
         } else {
             float s = 1.5f + static_cast<float>(v.density() / ftd::K_B) * 3.0f;
             if (s > 5.0f) s = 5.0f;
-            sizes.set(idx, s);
+            size_cache[idx] = s;
         }
-
         idx++;
     }
 
     val result = val::object();
-    result.set("positions", positions);
-    result.set("colors", colors);
-    result.set("sizes", sizes);
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("colors",    val(typed_memory_view(count * 3, col_cache.data())));
+    result.set("sizes",     val(typed_memory_view(count,     size_cache.data())));
     result.set("count", count);
     return result;
 }
@@ -362,11 +359,13 @@ double get_physical_time(ftd::RenderBridge& rb) { return rb.physical_time(); }
 //   axis: 0=YZ (fixed X), 1=XZ (fixed Y), 2=XY (fixed Z)
 //   index: which slice along that axis
 val get_flux_slice(ftd::RenderBridge& rb, int axis, int index) {
+    // PERF: zero-copy via typed_memory_view (was N^2 per-element crossings).
+    static std::vector<double> cache;
     const int N = rb.lattice().size();
     const int sliceSize = N * N;
     const auto& voxels = rb.voxels();
 
-    val data = val::global("Float64Array").new_(sliceSize);
+    if (static_cast<int>(cache.size()) != sliceSize) cache.resize(sliceSize);
 
     for (int a = 0; a < N; ++a) {
         for (int b = 0; b < N; ++b) {
@@ -375,26 +374,32 @@ val get_flux_slice(ftd::RenderBridge& rb, int axis, int index) {
             else if (axis == 1) { x = a; y = index; z = b; }
             else                { x = a; y = b; z = index; }
             int idx = rb.lattice().index(x, y, z);
-            data.set(a * N + b, voxels[idx].density());
+            cache[a * N + b] = voxels[idx].density();
         }
     }
-
-    return data;
+    return val(typed_memory_view(sliceSize, cache.data()));
 }
 
 // getFluxVolume: returns Float64Array of all voxel flux magnitudes (N^3 values)
+//
+// PERF: zero-copy via typed_memory_view. Pre-fix this called val::set N^3 times
+// per call (262K crossings at L=64). Now it's a single boundary crossing — the
+// JS side gets a Float64Array view directly into the WASM heap.
+//
+// Lifetime contract: the returned view is valid until the next call to this
+// function. JS callers must consume (or copy) before the next getFluxVolume().
+// Currently safe because animateLattice consumes synchronously each frame.
 val get_flux_volume(ftd::RenderBridge& rb) {
+    static std::vector<double> cache;
     const int N = rb.lattice().size();
     const int total = N * N * N;
     const auto& voxels = rb.voxels();
 
-    val data = val::global("Float64Array").new_(total);
-
+    if (static_cast<int>(cache.size()) != total) cache.resize(total);
     for (int i = 0; i < total; ++i) {
-        data.set(i, voxels[i].density());
+        cache[i] = voxels[i].density();
     }
-
-    return data;
+    return val(typed_memory_view(total, cache.data()));
 }
 
 // ── Bulk Sampled Vector Field Exports ────────────────────────────────
@@ -402,13 +407,17 @@ val get_flux_volume(ftd::RenderBridge& rb) {
 // stride controls spatial sampling density (stride=2 → every other voxel).
 
 val get_e_field_sampled(ftd::RenderBridge& rb, int stride) {
+    // PERF: zero-copy via typed_memory_view.
+    static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
 
-    val positions = val::global("Float32Array").new_(maxPts * 3);
-    val vectors   = val::global("Float32Array").new_(maxPts * 3);
+    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+        pos_cache.resize(maxPts * 3);
+        vec_cache.resize(maxPts * 3);
+    }
 
     int count = 0;
     for (int z = 0; z < N; z += stride) {
@@ -416,34 +425,37 @@ val get_e_field_sampled(ftd::RenderBridge& rb, int stride) {
             for (int x = 0; x < N; x += stride) {
                 int idx = rb.lattice().index(x, y, z);
                 auto em = rb.em_field_at(idx);
-                double mag = em.E_mag;
-                if (mag < 1e-15) continue;
-                positions.set(count * 3,     static_cast<float>(x));
-                positions.set(count * 3 + 1, static_cast<float>(y));
-                positions.set(count * 3 + 2, static_cast<float>(z));
-                vectors.set(count * 3,       static_cast<float>(em.E.x));
-                vectors.set(count * 3 + 1,   static_cast<float>(em.E.y));
-                vectors.set(count * 3 + 2,   static_cast<float>(em.E.z));
+                if (em.E_mag < 1e-15) continue;
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x);
+                pos_cache[o3 + 1] = static_cast<float>(y);
+                pos_cache[o3 + 2] = static_cast<float>(z);
+                vec_cache[o3]     = static_cast<float>(em.E.x);
+                vec_cache[o3 + 1] = static_cast<float>(em.E.y);
+                vec_cache[o3 + 2] = static_cast<float>(em.E.z);
                 count++;
             }
         }
     }
 
     val result = val::object();
-    result.set("positions", positions);
-    result.set("vectors", vectors);
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
     result.set("count", count);
     return result;
 }
 
 val get_b_field_sampled(ftd::RenderBridge& rb, int stride) {
+    static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
 
-    val positions = val::global("Float32Array").new_(maxPts * 3);
-    val vectors   = val::global("Float32Array").new_(maxPts * 3);
+    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+        pos_cache.resize(maxPts * 3);
+        vec_cache.resize(maxPts * 3);
+    }
 
     int count = 0;
     for (int z = 0; z < N; z += stride) {
@@ -451,34 +463,37 @@ val get_b_field_sampled(ftd::RenderBridge& rb, int stride) {
             for (int x = 0; x < N; x += stride) {
                 int idx = rb.lattice().index(x, y, z);
                 auto em = rb.em_field_at(idx);
-                double mag = em.B_mag;
-                if (mag < 1e-15) continue;
-                positions.set(count * 3,     static_cast<float>(x));
-                positions.set(count * 3 + 1, static_cast<float>(y));
-                positions.set(count * 3 + 2, static_cast<float>(z));
-                vectors.set(count * 3,       static_cast<float>(em.B.x));
-                vectors.set(count * 3 + 1,   static_cast<float>(em.B.y));
-                vectors.set(count * 3 + 2,   static_cast<float>(em.B.z));
+                if (em.B_mag < 1e-15) continue;
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x);
+                pos_cache[o3 + 1] = static_cast<float>(y);
+                pos_cache[o3 + 2] = static_cast<float>(z);
+                vec_cache[o3]     = static_cast<float>(em.B.x);
+                vec_cache[o3 + 1] = static_cast<float>(em.B.y);
+                vec_cache[o3 + 2] = static_cast<float>(em.B.z);
                 count++;
             }
         }
     }
 
     val result = val::object();
-    result.set("positions", positions);
-    result.set("vectors", vectors);
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
     result.set("count", count);
     return result;
 }
 
 val get_poynting_sampled(ftd::RenderBridge& rb, int stride) {
+    static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
 
-    val positions = val::global("Float32Array").new_(maxPts * 3);
-    val vectors   = val::global("Float32Array").new_(maxPts * 3);
+    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+        pos_cache.resize(maxPts * 3);
+        vec_cache.resize(maxPts * 3);
+    }
 
     int count = 0;
     for (int z = 0; z < N; z += stride) {
@@ -486,34 +501,37 @@ val get_poynting_sampled(ftd::RenderBridge& rb, int stride) {
             for (int x = 0; x < N; x += stride) {
                 int idx = rb.lattice().index(x, y, z);
                 auto S_vec = rb.poynting_vector(idx);
-                double mag = S_vec.mag();
-                if (mag < 1e-15) continue;
-                positions.set(count * 3,     static_cast<float>(x));
-                positions.set(count * 3 + 1, static_cast<float>(y));
-                positions.set(count * 3 + 2, static_cast<float>(z));
-                vectors.set(count * 3,       static_cast<float>(S_vec.x));
-                vectors.set(count * 3 + 1,   static_cast<float>(S_vec.y));
-                vectors.set(count * 3 + 2,   static_cast<float>(S_vec.z));
+                if (S_vec.mag() < 1e-15) continue;
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x);
+                pos_cache[o3 + 1] = static_cast<float>(y);
+                pos_cache[o3 + 2] = static_cast<float>(z);
+                vec_cache[o3]     = static_cast<float>(S_vec.x);
+                vec_cache[o3 + 1] = static_cast<float>(S_vec.y);
+                vec_cache[o3 + 2] = static_cast<float>(S_vec.z);
                 count++;
             }
         }
     }
 
     val result = val::object();
-    result.set("positions", positions);
-    result.set("vectors", vectors);
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
     result.set("count", count);
     return result;
 }
 
 val get_divj_sampled(ftd::RenderBridge& rb, int stride) {
+    static std::vector<float> pos_cache, val_cache;
     const int N = rb.lattice().size();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
 
-    val positions = val::global("Float32Array").new_(maxPts * 3);
-    val values    = val::global("Float32Array").new_(maxPts);
+    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+        pos_cache.resize(maxPts * 3);
+        val_cache.resize(maxPts);
+    }
 
     int count = 0;
     for (int z = 0; z < N; z += stride) {
@@ -522,31 +540,35 @@ val get_divj_sampled(ftd::RenderBridge& rb, int stride) {
                 int idx = rb.lattice().index(x, y, z);
                 double div = rb.divergence_flux(idx);
                 if (std::abs(div) < 1e-15) continue;
-                positions.set(count * 3,     static_cast<float>(x));
-                positions.set(count * 3 + 1, static_cast<float>(y));
-                positions.set(count * 3 + 2, static_cast<float>(z));
-                values.set(count, static_cast<float>(div));
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x);
+                pos_cache[o3 + 1] = static_cast<float>(y);
+                pos_cache[o3 + 2] = static_cast<float>(z);
+                val_cache[count]  = static_cast<float>(div);
                 count++;
             }
         }
     }
 
     val result = val::object();
-    result.set("positions", positions);
-    result.set("values", values);
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
     result.set("count", count);
     return result;
 }
 
 val get_flux_vector_sampled(ftd::RenderBridge& rb, int stride) {
+    static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
     const auto& voxels = rb.voxels();
 
-    val positions = val::global("Float32Array").new_(maxPts * 3);
-    val vectors   = val::global("Float32Array").new_(maxPts * 3);
+    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+        pos_cache.resize(maxPts * 3);
+        vec_cache.resize(maxPts * 3);
+    }
 
     int count = 0;
     for (int z = 0; z < N; z += stride) {
@@ -554,57 +576,62 @@ val get_flux_vector_sampled(ftd::RenderBridge& rb, int stride) {
             for (int x = 0; x < N; x += stride) {
                 int idx = rb.lattice().index(x, y, z);
                 const auto& v = voxels[idx];
-                double mag = v.density();
-                if (mag < 1e-15) continue;
-                positions.set(count * 3,     static_cast<float>(x));
-                positions.set(count * 3 + 1, static_cast<float>(y));
-                positions.set(count * 3 + 2, static_cast<float>(z));
-                vectors.set(count * 3,       static_cast<float>(v.flux.x));
-                vectors.set(count * 3 + 1,   static_cast<float>(v.flux.y));
-                vectors.set(count * 3 + 2,   static_cast<float>(v.flux.z));
+                if (v.density() < 1e-15) continue;
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x);
+                pos_cache[o3 + 1] = static_cast<float>(y);
+                pos_cache[o3 + 2] = static_cast<float>(z);
+                vec_cache[o3]     = static_cast<float>(v.flux.x);
+                vec_cache[o3 + 1] = static_cast<float>(v.flux.y);
+                vec_cache[o3 + 2] = static_cast<float>(v.flux.z);
                 count++;
             }
         }
     }
 
     val result = val::object();
-    result.set("positions", positions);
-    result.set("vectors", vectors);
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
     result.set("count", count);
     return result;
 }
 
 val get_force_field_sampled(ftd::RenderBridge& rb, int stride) {
+    static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
 
-    val positions = val::global("Float32Array").new_(maxPts * 3);
-    val vectors   = val::global("Float32Array").new_(maxPts * 3);
+    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+        pos_cache.resize(maxPts * 3);
+        vec_cache.resize(maxPts * 3);
+    }
 
     int count = 0;
     for (int z = 0; z < N; z += stride) {
         for (int y = 0; y < N; y += stride) {
             for (int x = 0; x < N; x += stride) {
-                auto fd = rb.force_diag_at(x, y, z);
+                // Compute idx once instead of letting force_diag_at(x,y,z) re-resolve
+                int idx = rb.lattice().index(x, y, z);
+                const auto& fd = rb.force_diag_at(idx);
                 auto f = fd.f_coulomb + fd.f_gravity + fd.f_magnetic;
-                double mag = f.mag();
-                if (mag < 1e-15) continue;
-                positions.set(count * 3,     static_cast<float>(x));
-                positions.set(count * 3 + 1, static_cast<float>(y));
-                positions.set(count * 3 + 2, static_cast<float>(z));
-                vectors.set(count * 3,       static_cast<float>(f.x));
-                vectors.set(count * 3 + 1,   static_cast<float>(f.y));
-                vectors.set(count * 3 + 2,   static_cast<float>(f.z));
+                if (f.mag() < 1e-15) continue;
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x);
+                pos_cache[o3 + 1] = static_cast<float>(y);
+                pos_cache[o3 + 2] = static_cast<float>(z);
+                vec_cache[o3]     = static_cast<float>(f.x);
+                vec_cache[o3 + 1] = static_cast<float>(f.y);
+                vec_cache[o3 + 2] = static_cast<float>(f.z);
                 count++;
             }
         }
     }
 
     val result = val::object();
-    result.set("positions", positions);
-    result.set("vectors", vectors);
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
     result.set("count", count);
     return result;
 }

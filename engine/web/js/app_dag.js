@@ -103,8 +103,6 @@ let _showAEForceVdw = false;      // van der Waals force arrows
 let _showAEForceBond = false;     // bond spring force arrows
 let _showAEForceNet = false;      // net force arrows
 let _forceFrame = 0;              // throttle: compute forces every 2nd frame
-let _fieldGrid = null;          // cached grid from generateGridXZ
-let _srcParticlesBuf = [];      // reusable {x,y,z} array for field seed generation
 let _fieldParticleBuf = [];     // reusable {x,y,z} array for E/B field seeds (Scale 0)
 let _aeLabelBuf = [];           // reusable label objects for AE element labels
 const _aeLegendZSet = new Set(); // reusable Set for AE legend key computation
@@ -193,7 +191,6 @@ function _resetSimCaches() {
     clearCharts();
     if (peTelemetry) peTelemetry.clear();
     Scale1Controller.resetScale1({ viewport }); // clears trail history + cloud caches
-    _fieldGrid = null;
     if (viewport) {
         viewport.clearTrails();
         viewport.clearElementLabels();
