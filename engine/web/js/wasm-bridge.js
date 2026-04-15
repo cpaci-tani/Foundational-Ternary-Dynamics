@@ -501,20 +501,6 @@ export class MockBridge {
 
     run(n) { for (let i = 0; i < n; i++) this.tick(); }
 
-    // Release all Float32Array buffers so GC can reclaim them promptly.
-    // Called from app.js::loadScenario() to prevent ~2-5 MB leak per scenario.
-    dispose() {
-        this._fluxJ = null;
-        this._fluxWV = null;
-        this._fluxMag = null;
-        this._stateGrid = null;
-        this._selectiveDampMask = null;
-        this._boundaryMask = null;
-        this._particles = [];
-        this._params = null;
-        this._toggles = null;
-    }
-
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
         this._tick = 0;
@@ -3365,16 +3351,8 @@ export class WasmBridge {
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
         if (this._module) {
-            // Construct the new bridge BEFORE deleting the old one, so that
-            // any concurrent access (e.g., an in-flight animate frame reading
-            // this._bridge) always sees a live pointer. Embind's delete()
-            // invalidates the C++ object synchronously, so null-out the
-            // reference before calling delete() to catch any stale readers.
-            const oldBridge = this._bridge;
+            if (this._bridge) this._bridge.delete();
             this._bridge = new this._module.RenderBridge(this.latticeSize);
-            if (oldBridge) {
-                try { oldBridge.delete(); } catch (e) { /* already deleted */ }
-            }
         }
     }
 
