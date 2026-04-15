@@ -5,7 +5,7 @@
  * Extracted from the legacy bridge module to reduce monolith size.
  */
 
-import { WasmBridge, MockBridge } from '../wasm-bridge-dag.js?v=20260415f';
+import { WasmBridge, MockBridge } from '../wasm-bridge-dag.js?v=20260415g';
 import { CosmicMockBridge } from './mock-scale5.js';
 
 /**

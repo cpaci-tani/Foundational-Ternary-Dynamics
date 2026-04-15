@@ -41,7 +41,7 @@
  *     resetAllVisualState - function, master visual state reset from app_dag
  */
 
-import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415f';
+import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415g';
 import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../fieldlines.js?v=20260304q';
 import { formatEnergy } from '../../units.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../constants.js?v=20260305e';
