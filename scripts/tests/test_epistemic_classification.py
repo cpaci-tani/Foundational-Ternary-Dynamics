@@ -25,6 +25,14 @@ POLYMATH ANALYSIS CRITERIA:
 5. Predictive Power: Does it predict something we didn't use to construct it?
 """
 
+import sys
+import os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))
+from constants import (
+    N_c, N_base, b_3, N_eff, G_STAR, ALPHA, PHI, GAMMA_QUARTER, M_PLANCK,
+    X_PLUS, X_MINUS,
+)
+
 import unittest
 import numpy as np
 from scipy.special import gamma
@@ -69,35 +77,9 @@ class Derivation:
 
 
 # =============================================================================
-# FRAMEWORK CONSTANTS (These are the inputs)
-# =============================================================================
-
-# The four integers - these are IMPOSED (axioms of the framework)
-N_c = 3  # Colors - IMPOSED (but matches QCD)
-N_base = 4  # Base dimension - IMPOSED
-b_3 = 7  # QCD beta coefficient - DERIVED from N_c + N_base
-N_eff = 13  # Effective DoF - DERIVED from b_3 + 2*N_c (Fibonacci F_7)
-
-# Mathematical constants - THEOREM (pure mathematics)
-PHI = (1 + np.sqrt(5)) / 2
-GAMMA_QUARTER = gamma(0.25)
-G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
-
-# Planck mass - IMPOSED (scale identification)
-M_PLANCK = 1.220890e19  # GeV
-
-
-def compute_quadratic_roots():
-    """Solve master quadratic - THEOREM (quadratic formula is proven)."""
-    c = G_STAR
-    discriminant = (16 * c**2) ** 2 - 4 * 16 * c**3
-    x_plus = (16 * c**2 + np.sqrt(discriminant)) / 2
-    x_minus = (16 * c**2 - np.sqrt(discriminant)) / 2
-    return x_plus, x_minus
-
-
-X_PLUS, X_MINUS = compute_quadratic_roots()
-ALPHA = 1 / X_PLUS
+# FRAMEWORK CONSTANTS imported from constants.py
+# (N_c, N_base, b_3, N_eff, G_STAR, ALPHA, PHI, GAMMA_QUARTER, M_PLANCK,
+#  X_PLUS, X_MINUS are all imported at the top of this file)
 
 
 # =============================================================================

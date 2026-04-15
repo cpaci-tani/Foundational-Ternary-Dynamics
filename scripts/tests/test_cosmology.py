@@ -11,32 +11,14 @@ FTD makes specific predictions for cosmological observables:
 This test verifies cosmological predictions against Planck 2018 data.
 """
 
+import sys
+import os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))
+from constants import N_c, N_base, b_3, N_eff, G_STAR, ALPHA, GAMMA_QUARTER
+
 import unittest
 import numpy as np
 from scipy.special import gamma
-
-# Framework integers
-N_c = 3
-N_base = 4
-b_3 = 7
-N_eff = 13
-
-# Derived alpha
-GAMMA_QUARTER = gamma(0.25)
-G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
-
-
-def compute_alpha():
-    c = G_STAR
-    a = 1
-    b = -16 * c**2
-    c_coef = 16 * c**3
-    discriminant = b**2 - 4 * a * c_coef
-    x_plus = (-b + np.sqrt(discriminant)) / (2 * a)
-    return 1 / x_plus
-
-
-ALPHA = compute_alpha()
 
 
 # Experimental values (Planck 2018)
