@@ -41,7 +41,7 @@
  *     resetAllVisualState - function, master visual state reset from app_dag
  */
 
-import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415i';
+import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415j';
 import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../fieldlines.js?v=20260304q';
 import { formatEnergy } from '../../units.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../constants.js?v=20260305e';
@@ -192,11 +192,16 @@ export function animateLattice(ctx) {
         }
 
         // Flux volume/slice rendering for Scale 0
+        // When _useFluxMock is set (e.g. flux scenarios where WASM sigma/centering
+        // is wrong), query the JS mock first; otherwise prefer WASM and fall back.
         if (viewport.showFlux) {
-            // Try WASM first, fall back to MockBridge JS wave sim
-            let vol = bridge.getFluxVolume();
-            if ((!vol || vol.length === 0) && _useFluxMock) {
+            let vol;
+            if (_useFluxMock && _fluxMock) {
                 vol = _fluxMock.getFluxVolume();
+                if (!vol || vol.length === 0) vol = bridge.getFluxVolume();
+            } else {
+                vol = bridge.getFluxVolume();
+                if ((!vol || vol.length === 0) && _fluxMock) vol = _fluxMock.getFluxVolume();
             }
             if (vol && vol.length > 0) {
                 viewport.updateFluxVolume(vol, L);
@@ -204,9 +209,13 @@ export function animateLattice(ctx) {
         }
         if (viewport.showHeatmap) {
             const sliceIdx = Math.floor(L / 2);
-            let slice = bridge.getFluxSlice(1, sliceIdx);
-            if ((!slice || slice.length === 0) && _useFluxMock) {
+            let slice;
+            if (_useFluxMock && _fluxMock) {
                 slice = _fluxMock.getFluxSlice(1, sliceIdx);
+                if (!slice || slice.length === 0) slice = bridge.getFluxSlice(1, sliceIdx);
+            } else {
+                slice = bridge.getFluxSlice(1, sliceIdx);
+                if ((!slice || slice.length === 0) && _fluxMock) slice = _fluxMock.getFluxSlice(1, sliceIdx);
             }
             if (slice && slice.length > 0) {
                 viewport.updateFluxSlice(slice, L, 1, sliceIdx);
