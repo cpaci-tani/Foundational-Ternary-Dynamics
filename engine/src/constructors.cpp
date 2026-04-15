@@ -64,8 +64,9 @@ StampResult flux(RenderBridge& rb, Coord at, Vec3 J) {
 
 StampResult particle(RenderBridge& rb, Coord at, int8_t state, Vec3 J,
                      int8_t spin, int8_t color) {
-    (void)rb; (void)state; (void)J; (void)spin; (void)color;
-    return StampResult{"particle", 0, at, {}};
+    auto before = snapshot_box(rb, at, 0);
+    rb.inject_particle(at.x, at.y, at.z, state, J, spin, color);
+    return StampResult{"particle", 0, at, diff_sites(rb, before)};
 }
 
 StampResult wavepacket(RenderBridge& rb, Coord at, int8_t state, double sigma, double amp) {
