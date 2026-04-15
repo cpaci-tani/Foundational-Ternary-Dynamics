@@ -2,6 +2,8 @@
 // Runtime toggles for the logic-first engine.
 // 20 toggles: 10 core (logic-derived, default ON) + 10 extensions (default OFF).
 
+#include <string>
+
 namespace ftd {
 
 struct TermToggles {
@@ -26,6 +28,29 @@ struct TermToggles {
     bool exchange_force = false;   // phase_forces: Pauli exclusion repulsion (same-spin) [CLAUDE.md §11]
     bool latency_field = false;    // Poisson-based latency field ∇²L = 4πGρ (gravity potential)
     bool emergent_forces = false;  // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
+
+    // Validates known dependency constraints between toggles.
+    // Returns true if the combination is valid.
+    // If err != nullptr, appends a human-readable description of each violation.
+    bool validate(std::string* err = nullptr) const {
+        std::string msg;
+        if (weak_transmutation && !dual_substrate)
+            msg += "weak_transmutation requires dual_substrate (operates on J_L/J_R)\n";
+        if (lorentz_force && !forces)
+            msg += "lorentz_force requires forces\n";
+        if (triad_binding && !color_forces)
+            msg += "triad_binding requires color_forces\n";
+        if (exchange_force && !poisson_coulomb)
+            msg += "exchange_force requires poisson_coulomb\n";
+        if (emergent_forces && poisson_coulomb)
+            msg += "emergent_forces and poisson_coulomb are mutually exclusive\n";
+        if (larmor_radiation && !damping)
+            msg += "larmor_radiation requires damping\n";
+        if (latency_field && !gravity)
+            msg += "latency_field requires gravity\n";
+        if (err) *err = msg;
+        return msg.empty();
+    }
 
     void enable_all() {
         wave_propagation = coupling = damping = genesis = true;
