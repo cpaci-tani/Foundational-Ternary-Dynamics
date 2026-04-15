@@ -3905,7 +3905,11 @@ export class MockBridge {
                 // ────────────────────────────────────────────────────
                 case 'sm-particle-zoo': {
                     const sp = Math.max(3, Math.floor(N / 7)); // spacing between particles
-                    const ox = mid - sp * 3; // left edge of the table
+                    // Centre the 6-column (x) and 2-position (z) grid exactly on mid.
+                    // old ox = mid - sp*3  →  grid centre at mid - sp/2 (off by sp/2 in X)
+                    // old z  = mid / mid+sp →  pair centre at mid + sp/2 (off by sp/2 in Z)
+                    const ox = Math.round(mid - sp * 2.5); // X: col 0 at ox, col 5 at ox+5sp, centre = mid
+                    const oz = Math.round(mid - sp * 0.5); // Z: flavour A at oz, flavour B at oz+sp, centre = mid
 
                     // Helper: place a particle with flux dressing scaled by log(mass)
                     const placeParticle = (gx, gy, gz, state, spin, color, massMeV, label) => {
@@ -3935,20 +3939,20 @@ export class MockBridge {
 
                     // Row 1: Quarks (y = mid + sp) — 3 generations × 2 flavors
                     const qy = mid + sp;
-                    placeParticle(ox + sp * 0, qy, mid, +1, 1, 1, 2.16,    'u');  // up (red)
-                    placeParticle(ox + sp * 0, qy, mid + sp, +1, 1, 2, 4.67, 'd');  // down (green)
-                    placeParticle(ox + sp * 2, qy, mid, +1, 1, 2, 1270,    'c');  // charm (green)
-                    placeParticle(ox + sp * 2, qy, mid + sp, +1, 1, 3, 93.4, 's');  // strange (blue)
-                    placeParticle(ox + sp * 4, qy, mid, +1, 1, 3, 172760,  't');  // top (blue)
-                    placeParticle(ox + sp * 4, qy, mid + sp, +1, 1, 1, 4180, 'b');  // bottom (red)
+                    placeParticle(ox + sp * 0, qy, oz,      +1, 1, 1, 2.16,    'u');  // up (red)
+                    placeParticle(ox + sp * 0, qy, oz + sp, +1, 1, 2, 4.67,    'd');  // down (green)
+                    placeParticle(ox + sp * 2, qy, oz,      +1, 1, 2, 1270,    'c');  // charm (green)
+                    placeParticle(ox + sp * 2, qy, oz + sp, +1, 1, 3, 93.4,    's');  // strange (blue)
+                    placeParticle(ox + sp * 4, qy, oz,      +1, 1, 3, 172760,  't');  // top (blue)
+                    placeParticle(ox + sp * 4, qy, oz + sp, +1, 1, 1, 4180,    'b');  // bottom (red)
 
                     // Row 2: Leptons (y = mid) — 3 generations
-                    placeParticle(ox + sp * 0, mid, mid, -1, -1, 0, 0.511,   'e');   // electron
-                    placeParticle(ox + sp * 0, mid, mid + sp, 0, 1, 0, 0.000004, 'νe'); // e-neutrino (ghost)
-                    placeParticle(ox + sp * 2, mid, mid, -1, -1, 0, 105.66,  'μ');   // muon
-                    placeParticle(ox + sp * 2, mid, mid + sp, 0, 1, 0, 0.0086, 'νμ'); // μ-neutrino (ghost)
-                    placeParticle(ox + sp * 4, mid, mid, -1, -1, 0, 1776.86, 'τ');   // tau
-                    placeParticle(ox + sp * 4, mid, mid + sp, 0, 1, 0, 0.0496, 'ντ'); // τ-neutrino (ghost)
+                    placeParticle(ox + sp * 0, mid, oz,      -1, -1, 0, 0.511,     'e');   // electron
+                    placeParticle(ox + sp * 0, mid, oz + sp,  0,  1, 0, 0.000004,  'νe'); // e-neutrino (ghost)
+                    placeParticle(ox + sp * 2, mid, oz,      -1, -1, 0, 105.66,    'μ');   // muon
+                    placeParticle(ox + sp * 2, mid, oz + sp,  0,  1, 0, 0.0086,    'νμ'); // μ-neutrino (ghost)
+                    placeParticle(ox + sp * 4, mid, oz,      -1, -1, 0, 1776.86,   'τ');   // tau
+                    placeParticle(ox + sp * 4, mid, oz + sp,  0,  1, 0, 0.0496,    'ντ'); // τ-neutrino (ghost)
 
                     // Row 3: Gauge bosons + Higgs (y = mid - sp)
                     const by = mid - sp;
