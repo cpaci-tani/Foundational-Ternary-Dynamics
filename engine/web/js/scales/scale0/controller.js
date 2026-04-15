@@ -41,10 +41,10 @@
  *     resetAllVisualState - function, master visual state reset from app_dag
  */
 
-import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415k';
-import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../fieldlines.js?v=20260304q';
+import { MockBridge } from '../../wasm-bridge-dag.js';
+import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../fieldlines.js';
 import { formatEnergy } from '../../units.js';
-import { K_B, G_N, DAMPING, K_GENESIS } from '../../constants.js?v=20260305e';
+import { K_B, G_N, DAMPING, K_GENESIS } from '../../constants.js';
 import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from '../../config/toggles.js';
 import { createTickAccumulator, formatSI, throttleBySize } from '../scale-utils.js';
 
@@ -77,6 +77,28 @@ let _fluxMock = null;           // MockBridge for Scale 0 flux visualization fal
 // SKIPPED in the play loop -- this avoids running two full L^3 wave updates
 // per tick when WASM is already doing the work (the dominant FPS killer).
 let _useFluxMock = false;
+
+/**
+ * Return true when the JS MockBridge should supply flux data for rendering.
+ *
+ * Flux-prefixed scenarios always use the JS mock because the C++ setup_scenario
+ * bakes a fixed sigma=3 and integer mid=N/2 — incorrect centering/sizing at
+ * any N. The JS mock uses sigma=N/10 and midF=(N-1)/2 which are correct.
+ * For all other scenarios we probe bridge.getFluxVolume(): if WASM returns a
+ * non-empty volume the mock is redundant (and ticking it burns FPS).
+ *
+ * @param {object} bridge      - Active simulation bridge (WasmBridge or MockBridge)
+ * @param {string} scenarioName - Current scenario identifier
+ * @returns {boolean}
+ */
+function _shouldUseFluxMock(bridge, scenarioName) {
+    if (scenarioName.startsWith('flux-')) return true;
+    try {
+        const probe = bridge.getFluxVolume && bridge.getFluxVolume();
+        return !(probe && probe.length > 0);
+    } catch (_e) { return true; }
+}
+
 let _latticeNeedsUpload = true; // set true on scenario load / step / resume
 // Fractional-tick accumulator (sub-1 speed support) — uses shared helper
 // from scale-utils.js so every scale controller shares the same semantics.
@@ -536,26 +558,7 @@ export function loadScenario(ctx, name) {
         }
     }
 
-    // PERF: probe whether the WASM bridge has its own flux data. If yes,
-    // the JS MockBridge wave update is redundant -- we keep the instance
-    // around as a structural fallback (some scenarios are JS-only) but
-    // don't tick it on every frame in the play loop. This single check
-    // is the dominant FPS recovery on play.
-    //
-    // EXCEPTION: for pure-flux scenarios, always use the JS mock for display.
-    // The WASM C++ setup_scenario uses a fixed sigma=3 (not scaled to N) and
-    // integer mid=N/2 centering — causing wrap-around on small lattices (e.g.
-    // N=8) and a 0.5-voxel offset at all sizes. The JS mock uses sigma=N/8
-    // and midF=(N-1)/2 which gives a correctly-sized, centred Gaussian at any N.
-    const isFluxScenario = name.startsWith('flux-');
-    let wasmHasFlux = false;
-    if (!isFluxScenario) {
-        try {
-            const probe = bridge.getFluxVolume && bridge.getFluxVolume();
-            wasmHasFlux = !!(probe && probe.length > 0);
-        } catch (_e) { wasmHasFlux = false; }
-    }
-    _useFluxMock = !wasmHasFlux;
+    _useFluxMock = _shouldUseFluxMock(bridge, name);
 
     // Mark toggles that differ from defaults after scenario overrides
     _markScenarioOverrides();
@@ -657,17 +660,7 @@ export function resizeLattice(ctx, newSize) {
         }
     }
 
-    // Re-probe whether WASM has flux of its own (same as loadScenario).
-    // Flux scenarios always use JS mock (WASM sigma/centering is wrong for variable N).
-    const _isFluxScenario = scenarioName.startsWith('flux-');
-    let wasmHasFlux = false;
-    if (!_isFluxScenario) {
-        try {
-            const probe = bridge.getFluxVolume && bridge.getFluxVolume();
-            wasmHasFlux = !!(probe && probe.length > 0);
-        } catch (_e) { wasmHasFlux = false; }
-    }
-    _useFluxMock = !wasmHasFlux;
+    _useFluxMock = _shouldUseFluxMock(bridge, scenarioName);
 
     _latticeNeedsUpload = true;
     _fieldNeedsUpdate = true;  // field overlays should refresh next frame

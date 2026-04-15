@@ -18,8 +18,8 @@
  *   - Info panel built via buildMetaInfoPanel (pedagogy)
  */
 
-import { MetaUnit } from '../../meta-unit.js?v=20260405a';
-import { buildMetaInfoPanel, buildSiteInspectPanel } from '../../meta-pedagogy.js?v=20260405a';
+import { MetaUnit } from '../../meta-unit.js';
+import { buildMetaInfoPanel, buildSiteInspectPanel } from '../../meta-pedagogy.js';
 import { debugLog } from '../../core/log.js';
 
 // ---------------------------------------------------------------------------
