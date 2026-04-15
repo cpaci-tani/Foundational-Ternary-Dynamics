@@ -25,6 +25,11 @@ If we can show that ONLY c = G* satisfies all six constraints,
 then the quadratic is unique and the circularity is broken.
 """
 
+import sys
+import os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))
+from constants import G_STAR
+
 import numpy as np
 from scipy.special import gamma
 from scipy.optimize import fsolve
@@ -36,8 +41,7 @@ import matplotlib.pyplot as plt
 # MATHEMATICAL CONSTANTS
 # =============================================================================
 
-# Lemniscatic constant
-G_STAR = np.sqrt(2) * gamma(0.25)**2 / (2 * np.pi)
+# Lemniscatic constant G_STAR imported from constants.py
 
 # Other special constants to test against
 PI = np.pi

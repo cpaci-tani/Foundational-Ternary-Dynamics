@@ -21,6 +21,11 @@ A prediction is MEANINGFUL if:
 - Statistical significance p < 0.01
 """
 
+import sys
+import os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))
+from constants import N_c, N_base, b_3, N_eff, G_STAR, ALPHA, PHI, M_PLANCK
+
 import unittest
 import numpy as np
 from scipy.special import gamma
@@ -29,31 +34,7 @@ from scipy.special import gamma
 # CONSTANTS
 # =============================================================================
 
-# Framework integers
-N_c = 3
-N_base = 4
-b_3 = 7
-N_eff = 13
-
-# Mathematical constants
-GAMMA_QUARTER = gamma(0.25)
-G_STAR = np.sqrt(2) * GAMMA_QUARTER**2 / (2 * np.pi)
-PHI = (1 + np.sqrt(5)) / 2
-
-
-# Derived from quadratic
-def get_alpha():
-    c = G_STAR
-    disc = (16 * c**2) ** 2 - 4 * 16 * c**3
-    x_plus = (16 * c**2 + np.sqrt(disc)) / 2
-    return 1 / x_plus
-
-
-ALPHA = get_alpha()
-ALPHA_INV = 1 / ALPHA
-
-# Planck mass
-M_PLANCK = 1.220890e19  # GeV
+ALPHA_INV = 1.0 / ALPHA
 
 
 # Experimental values (PDG 2024)
