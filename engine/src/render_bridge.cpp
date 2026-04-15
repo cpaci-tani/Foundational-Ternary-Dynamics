@@ -84,6 +84,17 @@ void RenderBridge::gpu_push_to_device() {
         gpu_dirty_ = false;
     }
 }
+
+void RenderBridge::gpu_flush_host_mutations() {
+    // Wave 5.2 (2026-04-14): tick() calls this at the start so that any
+    // direct host writes done via voxels()[idx].field = ... since the
+    // previous tick get pushed back to the GPU before physics runs.
+    if (use_gpu_ && host_mutated_) {
+        gpu_->upload_from_host(voxels_);
+        gpu_dirty_ = false;
+        host_mutated_ = false;
+    }
+}
 #endif
 
 // Wave 5 (2026-04-14): GPU-aware phi_latency accessor.
@@ -1078,6 +1089,9 @@ void RenderBridge::phase_movement() {
 void RenderBridge::tick() {
 #ifdef FTD_ENABLE_CUDA
   if (use_gpu_) {
+    // Wave 5.2: flush any host-side mutations (e.g. test doing
+    // voxels()[idx].locked = true) back to the GPU before physics runs.
+    gpu_flush_host_mutations();
     // Sync toggles to GPU engine
     gpu_->toggles = toggles;
     gpu_->tick();
