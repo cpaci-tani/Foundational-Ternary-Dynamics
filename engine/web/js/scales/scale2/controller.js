@@ -4,11 +4,11 @@
  *
  * Owns the Atom Engine (AE) frame loop, scenario loading, force
  * decomposition rendering, element legend building, orbital cloud
- * merging, and all AE-specific visual state.  Extracted from app.js
+ * merging, and all AE-specific visual state.  Extracted from app_dag.js
  * to keep each scale's logic isolated and independently testable.
  *
  * WHY THIS EXISTS:
- *   app.js grew to 4500+ lines with six scale-specific animation loops
+ *   app_dag.js grew to 4500+ lines with six scale-specific animation loops
  *   and scenario loaders tangled together.  This module encapsulates
  *   everything Scale 2 needs so the main app becomes a thin dispatcher.
  *
@@ -23,7 +23,7 @@
  *
  * CONTEXT OBJECT (ctx):
  *   The caller passes a ctx bag containing shared application state.
- *   This avoids coupling to app.js module-level variables.
+ *   This avoids coupling to app_dag.js module-level variables.
  *
  *   Required ctx properties:
  *     bridge            - WASMBridge (with AE methods)
@@ -49,11 +49,11 @@
  *   loadAEScenario(ctx, name)     - atom scenario setup
  *   resetScale2(ctx)              - clear AE-specific state for mode switch
  *   syncAEParams(ctx)             - sync AE physics params from UI sliders
- *   getAEVisualState()            - read visual toggle flags (for app.js reset)
+ *   getAEVisualState()            - read visual toggle flags (for app_dag.js reset)
  *   setAEVisualToggle(key, value) - set a visual toggle flag from outside
  *
  * ---------------------------------------------------------------
- * DELEGATION STUBS: after wiring into app.js, the app.js functions
+ * DELEGATION STUBS: after wiring into app_dag.js, the app_dag.js functions
  * become thin wrappers:
  *
  *   function animateAE(now) {
@@ -77,6 +77,7 @@ import {
 import { formatEnergy, formatTemperature } from '../../units.js';
 import { generateGridXZ, sampleAEField } from '../../fields.js?v=20260304q';
 import { SCALE2_TOGGLES } from '../../config/toggles.js';
+import { createTickAccumulator, formatSI } from '../scale-utils.js';
 
 
 // =====================================================================
@@ -119,8 +120,8 @@ let _aeInitialEnergy     = null;    // captured at scenario load, before first t
 // -- Field computation cache -----------------------------------------
 let _fieldGrid           = null;    // cached grid from generateGridXZ
 
-// -- Tick accumulator (sub-1 speed fractional ticks) -----------------
-let _tickAccumulator     = 0;
+// -- Tick accumulator (sub-1 speed fractional ticks, shared helper) --
+const _tickAcc = createTickAccumulator();
 
 // -- Paused-state dedup (avoid redundant work when simulation idle) --
 let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
@@ -134,30 +135,14 @@ const AE_DEFAULT_TOGGLES = SCALE2_TOGGLES;
 // Internal Helpers
 // =====================================================================
 
-/**
- * Format large numbers with K/M suffixes for the status bar.
- * Duplicated here to avoid importing a private app.js helper.
- */
-function formatNumber(n) {
-    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-    if (n >= 1000)    return (n / 1000).toFixed(1) + 'K';
-    return n.toString();
-}
-
-/** Format a number with SI suffix (T/G/M/K). */
-function formatSI(n) {
-    if (Math.abs(n) >= 1e12) return (n / 1e12).toFixed(2) + 'T';
-    if (Math.abs(n) >= 1e9)  return (n / 1e9).toFixed(2) + 'G';
-    if (Math.abs(n) >= 1e6)  return (n / 1e6).toFixed(2) + 'M';
-    if (Math.abs(n) >= 1e3)  return (n / 1e3).toFixed(2) + 'K';
-    return n.toFixed(2);
-}
+// formatNumber / local formatSI helpers removed -- use the shared
+// formatSI from scale-utils.js (covers K/M/G/T with two decimals).
 
 /**
  * Update atomic energy display cards (nuclear binding, B/A, electron
  * binding, FTD mass) for single-element or multi-element views.
  *
- * Originally app.js lines ~1492-1521.
+ * Originally app_dag.js lines ~1492-1521.
  */
 function updateAtomicEnergyDisplay(dom, atomData) {
     if (!dom.aeDiagMass || !atomData || atomData.count === 0) return;
@@ -251,7 +236,7 @@ function _aeSetPhase3(bridge, flags) {
  * Clear all Scale 2 module state for a clean mode switch.
  *
  * NOTE: Cross-scale visual resets (shared viewport overlays, DOM button
- * deactivation) remain in app.js _resetAllVisualState() because those
+ * deactivation) remain in app_dag.js _resetAllVisualState() because those
  * elements are shared across scales and managed by the central reset.
  */
 export function resetScale2(ctx) {
@@ -278,7 +263,7 @@ export function resetScale2(ctx) {
     _aeMergeSize       = null;
     _aeInitialEnergy   = null;
     _fieldGrid         = null;
-    _tickAccumulator   = 0;
+    _tickAcc.reset();
 
     // Clear paused-state dedup caches
     _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
@@ -305,7 +290,7 @@ export function resetScale2(ctx) {
 // =====================================================================
 // Exported: getAEVisualState() / setAEVisualToggle()
 // =====================================================================
-// Allow app.js to read/write visual toggle flags for cross-scale resets
+// Allow app_dag.js to read/write visual toggle flags for cross-scale resets
 // and UI event handlers without directly accessing module state.
 
 export function getAEVisualState() {
@@ -348,7 +333,7 @@ export function setAEVisualToggle(key, value) {
 // =====================================================================
 /**
  * Sync AE physics parameters from UI sliders/checkboxes into the bridge.
- * Called by app.js after scenario load and when switching to Scale 2/3.
+ * Called by app_dag.js after scenario load and when switching to Scale 2/3.
  */
 export function syncAEParams(ctx) {
     _syncAEParamsFromUIInternal(ctx.bridge);
@@ -362,7 +347,7 @@ export function syncAEParams(ctx) {
 // Both scales share the same AtomEngine and render loop; Scale 3 just
 // loads molecule scenarios instead of individual atom scenarios.
 //
-// Originally app.js lines ~1209-1485.
+// Originally app_dag.js lines ~1209-1485.
 //
 // Responsibilities:
 //   1. Tick the AE simulation (accumulator handles sub-1 speeds)
@@ -388,9 +373,7 @@ export function animateAE(ctx) {
 
     // ── 1. Tick AE simulation if running ───────────────────────────
     if (running) {
-        _tickAccumulator += ticksPerFrame;
-        const wholeTicks = Math.floor(_tickAccumulator);
-        _tickAccumulator -= wholeTicks;
+        const wholeTicks = _tickAcc.accumulate(ticksPerFrame);
         for (let i = 0; i < wholeTicks; i++) {
             try {
                 bridge.aeTick();
@@ -603,7 +586,7 @@ export function animateAE(ctx) {
         const diag = bridge.aeGetDiagnostics();
 
         // Update status bar with dedup
-        const sTick = formatNumber(diag.tick);
+        const sTick = formatSI(diag.tick);
         const sParticles = String(diag.atomCount);
         const sEnergy = formatEnergy(diag.totalEnergy, 2).text;
         const sState = running ? 'Running' : 'Idle';
@@ -684,7 +667,7 @@ export function animateAE(ctx) {
 // Exported: loadAEScenario(ctx, name)
 // =====================================================================
 // Set up an atom scenario in the AE engine.
-// Originally app.js lines ~3426-3827.
+// Originally app_dag.js lines ~3426-3827.
 //
 // Handles:
 //   - Full 118-element periodic table layout
@@ -698,7 +681,7 @@ export function animateAE(ctx) {
 //   - Individual element scenarios (ae-el-1 through ae-el-118)
 //
 // NOTE: ctx.resetAllVisualState() is called first to clear cross-scale
-// visual state. That function lives in app.js because it touches DOM
+// visual state. That function lives in app_dag.js because it touches DOM
 // elements and viewport toggles shared across all scales.
 
 export function loadAEScenario(ctx, name) {

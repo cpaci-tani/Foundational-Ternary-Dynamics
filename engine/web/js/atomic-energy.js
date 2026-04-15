@@ -11,12 +11,18 @@
  */
 
 import { defaultNeutronCount } from './elements.js';
+import { M_P_PHYS, M_N_PHYS, M_E_PHYS } from './constants.js';
 
 // ── Physical Constants (MeV) ─────────────────────────────────────────
-const M_PROTON   = 938.27208816;   // proton mass (MeV/c²)
-const M_NEUTRON  = 939.56542052;   // neutron mass (MeV/c²)
-const M_ELECTRON = 0.51099895;     // electron mass (MeV/c²)
-const K_B        = M_ELECTRON;     // FTD manifestation threshold
+// Aliased from constants.js to keep the SEMF code below unchanged.
+const M_PROTON   = M_P_PHYS;
+const M_NEUTRON  = M_N_PHYS;
+const M_ELECTRON = M_E_PHYS;
+// K_B here is the precise PDG electron mass (used as the natural-unit
+// scale for the SEMF outputs), NOT the rounded 0.511 from constants.js.
+// The two differ by ~2e-4 MeV, well below SEMF accuracy, but the local
+// name keeps the output format deterministic across refactors.
+const K_B        = M_ELECTRON;
 
 // ── Bethe-Weizsäcker Parameters (MeV) ────────────────────────────────
 // Standard Wapstra parameterization

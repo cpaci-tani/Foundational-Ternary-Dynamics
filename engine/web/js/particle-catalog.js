@@ -19,6 +19,7 @@
 import {
     ALPHA, G_STAR, K_B, N_C, N_BASE, B_3, N_EFF,
     PI_FTD as PI, M_E, MU_RATIO, TAU_RATIO, PROTON_RATIO,
+    M_P_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS, M_PI_CH_PHYS, M_K_CH_PHYS,
 } from './constants.js';
 
 const PARTICLES = [
@@ -314,7 +315,7 @@ const PARTICLES = [
     {
         id: 'proton', name: 'Proton', symbol: 'p',
         category: 'baryons', generation: null,
-        mass_mev: 938.272, charge: 1, spin: 0.5,
+        mass_mev: M_P_PHYS, charge: 1, spin: 0.5,
         color_charge: 'singlet', antiparticle: 'antiproton',
         composition: 'uud',
         ftd_formula: 'm_e·(N_eff/α + T(b₃+N_c)) ≈ 1836.47·m_e',
@@ -324,7 +325,7 @@ const PARTICLES = [
     {
         id: 'antiproton', name: 'Antiproton', symbol: 'p̄',
         category: 'baryons', generation: null,
-        mass_mev: 938.272, charge: -1, spin: 0.5,
+        mass_mev: M_P_PHYS, charge: -1, spin: 0.5,
         color_charge: 'singlet', antiparticle: 'proton',
         composition: 'ūūd̄',
         ftd_formula: 'm_p (same mass)',
@@ -374,7 +375,7 @@ const PARTICLES = [
     {
         id: 'sigma_plus', name: 'Sigma+', symbol: 'Σ⁺',
         category: 'baryons', generation: null,
-        mass_mev: 1189.4, charge: 1, spin: 0.5,
+        mass_mev: M_SIGMA_PHYS, charge: 1, spin: 0.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'uus',
         ftd_formula: 'quark model + FTD masses',
@@ -424,7 +425,7 @@ const PARTICLES = [
     {
         id: 'omega_minus', name: 'Omega-', symbol: 'Ω⁻',
         category: 'baryons', generation: null,
-        mass_mev: 1672.5, charge: -1, spin: 1.5,
+        mass_mev: M_OMEGA_PHYS, charge: -1, spin: 1.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'sss',
         ftd_formula: 'quark model + FTD masses',
@@ -448,7 +449,7 @@ const PARTICLES = [
     {
         id: 'pion_plus', name: 'Pion+', symbol: 'π⁺',
         category: 'mesons', generation: null,
-        mass_mev: 139.57, charge: 1, spin: 0,
+        mass_mev: M_PI_CH_PHYS, charge: 1, spin: 0,
         color_charge: 'singlet', antiparticle: 'pion_minus',
         composition: 'ud̄',
         ftd_formula: 'm_e·MU_RATIO·N_c·sin²θ_W/α',
@@ -458,7 +459,7 @@ const PARTICLES = [
     {
         id: 'pion_minus', name: 'Pion-', symbol: 'π⁻',
         category: 'mesons', generation: null,
-        mass_mev: 139.57, charge: -1, spin: 0,
+        mass_mev: M_PI_CH_PHYS, charge: -1, spin: 0,
         color_charge: 'singlet', antiparticle: 'pion_plus',
         composition: 'dū',
         ftd_formula: 'm_π⁺ (same mass)',
@@ -478,7 +479,7 @@ const PARTICLES = [
     {
         id: 'kaon_plus', name: 'Kaon+', symbol: 'K⁺',
         category: 'mesons', generation: null,
-        mass_mev: 493.68, charge: 1, spin: 0,
+        mass_mev: M_K_CH_PHYS, charge: 1, spin: 0,
         color_charge: 'singlet', antiparticle: 'kaon_minus',
         composition: 'us̄',
         ftd_formula: 'ChPT with FTD quark masses',
@@ -488,7 +489,7 @@ const PARTICLES = [
     {
         id: 'kaon_minus', name: 'Kaon-', symbol: 'K⁻',
         category: 'mesons', generation: null,
-        mass_mev: 493.68, charge: -1, spin: 0,
+        mass_mev: M_K_CH_PHYS, charge: -1, spin: 0,
         color_charge: 'singlet', antiparticle: 'kaon_plus',
         composition: 'sū',
         ftd_formula: 'm_K⁺ (same mass)',
