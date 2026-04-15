@@ -23,33 +23,13 @@
 #include <iomanip>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/test_telemetry.h"
 
-int failures = 0;
-
-void check(const char* name, bool condition) {
-    if (condition) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << "\n";
-        ++failures;
-    }
-}
-
-void check_close(const char* name, double a, double b, double tol) {
-    bool ok = std::abs(a - b) < tol;
-    if (ok) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << " (got " << std::setprecision(8) << a
-                  << ", expected " << b << ", diff " << std::abs(a-b) << ")\n";
-        ++failures;
-    }
-}
+using ftd::test::check;
+using ftd::test::check_close;
 
 int main() {
-    std::cout << "================================================================\n";
-    std::cout << "  TEST: Gauge Invariance — J -> J + grad(lambda)\n";
-    std::cout << "================================================================\n";
+    ftd::test::init("test_gauge");
 
     // ================================================================
     // Section 1: curl(grad(lambda)) = 0 (mathematical identity)
@@ -236,13 +216,5 @@ int main() {
         check("No manifestation from divergence-free flux", diag.manifested_count == 0);
     }
 
-    std::cout << "\n================================================================\n";
-    if (failures == 0) {
-        std::cout << "  All gauge invariance tests PASSED.\n";
-    } else {
-        std::cout << "  " << failures << " test(s) FAILED.\n";
-    }
-    std::cout << "================================================================\n";
-
-    return failures;
+    return ftd::test::finalize();
 }
