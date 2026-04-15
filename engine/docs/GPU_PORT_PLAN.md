@@ -219,3 +219,52 @@ tests using them continue to run on CPU. No regression.
 
 **Next commit** (Wave 5.3 Phase 1): minimal gpu::AtomEngine with pair
 forces only. Validated by a new `test_gpu_atom_parity.cpp`.
+
+---
+
+## 8. Wave 5.3 Phase 1 shipped (51a625b)
+
+Landed as commit `gpu: Wave 5.3 Phase 1 — gpu::AtomEngine pair-force
+backend`. Coulomb + vdW Lennard-Jones handled on the device. Bonds,
+angle strain, dipole-dipole, thermostat, h-bonds still CPU.
+
+Parity evidence (from test_atom_engine_forces cpu_gpu_parity section):
+- Ionic: max abs err 5.9e-23, rel err 1.6e-16 (double-precision noise)
+- Ionic+vdW: max abs err 1.55e-10 (CPU total 9.4e-9)
+
+## 9. Wave 5.4 — gpu::ParticleEngine Phase 1 plan
+
+Parallel port for ParticleEngine. Phase 1 covers Coulomb + Gravity
+(the two toggles that ship ON by default in `minimal()`). Any test
+with `toggles.{strong, exchange, radiation, spin_orbit, relativistic,
+lorentz, magnetic_dipole}` on stays on the CPU path for now.
+
+**Files**:
+- `engine/include/ftd/gpu_particle_engine.h` (ParticleBuffers, ParticleEngineGpu)
+- `engine/cuda/particle_engine_gpu.cu` (pair-force kernel + host wrapper)
+- `engine/cuda/CMakeLists.txt` (add source)
+- `engine/include/ftd/particle_engine.h` (set_use_gpu, opaque pimpl)
+- `engine/src/particle_engine.cpp` (fast path in compute_all_forces)
+- `engine/tests/test_pe_forces.cpp` (new cpu_gpu_parity section)
+
+**Kernel scope** (`particle_pair_forces_kernel`):
+```
+for each i:
+    for j ≠ i:
+        r = pj.pos - pi.pos
+        r² = r·r + soft²
+        r̂ = r/|r|
+
+        if (coulomb):
+            F += -ALPHA_EFT q_i q_j / (4π r²) r̂
+        if (gravity):
+            F += +G_N m_i m_j / r² r̂
+
+    force_x[i] = F_x; force_y[i] = F_y; force_z[i] = F_z
+    f_coulomb[i] = ...;  f_gravity[i] = ...
+```
+
+**Phase 2** (deferred): strong, exchange, lorentz, magnetic_dipole,
+spin_orbit, radiation, relativistic. The non-pairwise radiation +
+relativistic corrections keep running CPU after the pair kernel
+returns (matches compute_all_forces order of operations).

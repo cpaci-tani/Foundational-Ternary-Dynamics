@@ -16,7 +16,19 @@
 #include <algorithm>
 #include <cmath>
 
+#ifdef FTD_ENABLE_CUDA
+#include "ftd/gpu_particle_engine.h"
+#endif
+
 namespace ftd {
+
+#ifdef FTD_ENABLE_CUDA
+// Opaque wrapper so particle_engine.h doesn't need to include <cuda_runtime.h>.
+// Holds the gpu::ParticleEngineGpu and is lazily instantiated on first use.
+struct ParticleEngine::GpuBackend {
+    gpu::ParticleEngineGpu engine;
+};
+#endif
 
 OrbitalElements compute_orbital_elements(const Particle& orbiter,
                                           const Particle& center,
@@ -58,6 +70,12 @@ OrbitalElements compute_orbital_elements(const Particle& orbiter,
 }
 
 ParticleEngine::ParticleEngine() = default;
+
+// Out-of-line destructor: required so unique_ptr<GpuBackend> can see the
+// complete GpuBackend type when deleting. Without this, every translation
+// unit that includes particle_engine.h and indirectly calls ~ParticleEngine
+// would need to see GpuBackend's definition.
+ParticleEngine::~ParticleEngine() = default;
 
 int ParticleEngine::add_particle(int8_t charge, Vec3 position, Vec3 velocity,
                                   double mass, double r_eff,
@@ -330,21 +348,59 @@ Vec3 ParticleEngine::compute_force(int i) const {
 void ParticleEngine::compute_all_forces() {
     forces_.resize(particles_.size());
     force_diag_.resize(particles_.size());
-    
-    // Build O(N log N) spatial partition tree
-    octree_.build(particles_,
-        [](const Particle& p) { return p.position; },
-        [](const Particle& p) { return p.mass; },
-        [](const Particle& p) { return static_cast<double>(p.charge); }
-    );
+
+    // =========================================================================
+    // Wave 5.4 Phase 1: GPU pair-force fast path
+    // =========================================================================
+    // When use_gpu_ is on AND CUDA is compiled in, upload particles to the
+    // device and run an O(N²) CUDA kernel for Coulomb + Newtonian gravity.
+    // Extended toggles (strong, exchange, lorentz, magnetic_dipole,
+    // spin_orbit) and non-pairwise post-processing (radiation, relativistic)
+    // require state that isn't on the device yet, so we fall back to the
+    // CPU Barnes-Hut path whenever any of them are on.
+    //
+    // Also fall back for tiny systems (< 8 particles) where upload/download
+    // overhead dwarfs kernel work.
+    bool gpu_pair_handled = false;
+#ifdef FTD_ENABLE_CUDA
+    const bool advanced_toggles_on =
+        toggles.strong || toggles.exchange || toggles.lorentz ||
+        toggles.magnetic_dipole || toggles.spin_orbit ||
+        toggles.radiation || toggles.relativistic;
+    if (use_gpu_ && !advanced_toggles_on && particles_.size() >= 8) {
+        if (!gpu_backend_) {
+            gpu_backend_ = std::make_unique<GpuBackend>();
+        }
+        gpu_backend_->engine.compute_pair_forces(
+            particles_, toggles, soft_, forces_, force_diag_);
+        gpu_pair_handled = true;
+    }
+#endif
+
+    // Build O(N log N) spatial partition tree — still needed for the CPU
+    // Barnes-Hut fallback path (radiation/relativistic/strong/etc.) and
+    // for tests that explicitly disable GPU.
+    if (!gpu_pair_handled) {
+        octree_.build(particles_,
+            [](const Particle& p) { return p.position; },
+            [](const Particle& p) { return p.mass; },
+            [](const Particle& p) { return static_cast<double>(p.charge); }
+        );
+    }
 
     for (int i = 0; i < static_cast<int>(particles_.size()); ++i) {
-        force_diag_[i] = {}; // Zero all diagnostics for the tick
         const auto& pi = particles_[i];
-        
+
         Vec3 f;
-        if (octree_.root >= 0) {
-            f = tree_force(i, octree_.root);
+        if (gpu_pair_handled) {
+            // Pair forces already populated in forces_[i] by the GPU path.
+            // force_diag_[i].f_coulomb / f_gravity already populated.
+            f = forces_[i];
+        } else {
+            force_diag_[i] = {}; // Zero all diagnostics for the tick
+            if (octree_.root >= 0) {
+                f = tree_force(i, octree_.root);
+            }
         }
 
         ParticleForceDiag* diag = &force_diag_[i];
