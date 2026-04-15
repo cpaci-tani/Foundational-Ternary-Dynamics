@@ -130,7 +130,6 @@ static void test_lorentz_contraction() {
     double J_rest_x, J_rest_y;
     {
         auto rb = std::make_unique<RenderBridge>(L);
-        rb->force_cpu();
         rb->toggles.genesis = false;
         rb->toggles.movement = false;
 
@@ -154,7 +153,6 @@ static void test_lorentz_contraction() {
     int px = 8, py = mid, pz = mid;
     {
         auto rb = std::make_unique<RenderBridge>(L);
-        rb->force_cpu();
         rb->toggles.genesis = false;
         rb->toggles.movement = true;  // Must move for Lorentz contraction to appear
 
@@ -216,7 +214,6 @@ static void test_gravitational_redshift() {
     const int L = 32;
     const int mid = L / 2;
     auto rb = std::make_unique<RenderBridge>(L);
-    rb->force_cpu();  // Latency field solver is CPU-only
 
     // Minimal toggles + latency field
     rb->toggles.disable_all();

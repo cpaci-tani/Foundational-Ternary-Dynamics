@@ -97,6 +97,10 @@ public:
     std::vector<Voxel>& voxels() {
 #ifdef FTD_ENABLE_CUDA
         gpu_sync_to_host();
+        // Wave 5.2: callers of the non-const overload may mutate the vector
+        // (e.g. tests doing `voxels()[idx].locked = true` between ticks).
+        // Flag it so the next tick() pushes the host state back to the GPU.
+        host_mutated_ = true;
 #endif
         return voxels_;
     }
@@ -109,6 +113,7 @@ public:
     Voxel& voxel_at(int x, int y, int z) {
 #ifdef FTD_ENABLE_CUDA
         gpu_sync_to_host();
+        host_mutated_ = true;  // Wave 5.2: same reason as voxels() non-const
 #endif
         return voxels_[lattice_.index(x, y, z)];
     }
@@ -264,14 +269,18 @@ private:
     std::uniform_real_distribution<double> uniform_{0.0, 1.0};
 
 #ifdef FTD_ENABLE_CUDA
-    // GPU backend: when available, tick() delegates to GpuEngine for  speedup.
+    // GPU backend: when available, tick() delegates to GpuEngine for speedup.
     // All injection/access methods sync between host voxels_ and device memory.
     std::unique_ptr<gpu::GpuEngine> gpu_;
     bool use_gpu_ = false;
-    bool gpu_dirty_ = false;  // true = GPU has newer data than host voxels_
+    bool gpu_dirty_ = false;   // true = GPU has newer data than host voxels_
+    mutable bool host_mutated_ = false;  // Wave 5.2: tracks non-const voxels() handouts
 
     void gpu_sync_to_host();   // Download GPU state to voxels_
     void gpu_push_to_device(); // Upload voxels_ to GPU
+    // Wave 5.2: invoked at the start of tick() to push out-of-band host writes
+    // (e.g. voxels()[idx].locked = true) back to the device before the next tick.
+    void gpu_flush_host_mutations();
 #endif
 };
 

@@ -140,7 +140,6 @@ static void test_wave_speed() {
     const int L = 32;
     const int mid = L / 2;  // 16
     auto rb = std::make_unique<ftd::RenderBridge>(L);
-    rb->force_cpu();  // Direct voxel writes need CPU path
 
     rb->toggles.disable_all();
     rb->toggles.wave_propagation = true;
