@@ -24,6 +24,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include <memory>
 
 namespace ftd {
 
@@ -150,6 +151,9 @@ OrbitalElements compute_orbital_elements(const Particle& orbiter,
 class ParticleEngine : public ScaleEngine {
 public:
     ParticleEngine();
+    ~ParticleEngine() override;  // Out-of-line so the forward-declared
+                                 // GpuBackend pimpl doesn't trip
+                                 // incomplete-type unique_ptr deletion.
 
     // Toggle struct — public for direct access (like TermToggles on RenderBridge)
     ParticleToggles toggles;
@@ -277,6 +281,31 @@ private:
     int next_id_ = 0;
     double dt_ = 1.0;           // Time step (default 1, can increase for Scale 1)
     double soft_ = 1.0;         // Softening length (matches lattice minimum)
+
+public:
+    // Wave 5.4 Phase 1: GPU acceleration for pair forces (coulomb + gravity).
+    // When use_gpu_ is true AND FTD_ENABLE_CUDA is defined, compute_all_forces
+    // uploads particles to the device, runs an O(N²) CUDA kernel for coulomb
+    // + gravity pair forces, and downloads the results. Extended forces
+    // (strong, exchange, lorentz, magnetic_dipole, spin_orbit) and
+    // non-pairwise post-processing (radiation, relativistic) still run on
+    // CPU in Phase 1.
+    //
+    // Falls back to CPU automatically when: any advanced toggle is on,
+    // or particles_.size() < 8 (upload/download overhead dominates).
+    void set_use_gpu(bool b) { use_gpu_ = b; }
+    bool use_gpu() const { return use_gpu_; }
+
+private:
+#ifdef FTD_ENABLE_CUDA
+    bool use_gpu_ = true;
+    // Opaque pointer to gpu::ParticleEngineGpu — avoids pulling cuda_runtime.h
+    // into this header, which would infect every CPU test of ftd_core.
+    struct GpuBackend;
+    std::unique_ptr<GpuBackend> gpu_backend_;
+#else
+    bool use_gpu_ = false;
+#endif
 };
 
 }  // namespace ftd
