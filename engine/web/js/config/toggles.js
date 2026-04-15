@@ -6,8 +6,8 @@
  *   - defaultValue: Boolean initial state when scenario loads
  *   - domElementId: HTML checkbox/button ID for UI sync
  *
- * Extracted from app.js to eliminate scattered toggle definitions.
- * Human coders: add new toggles here, not in app.js or wasm-bridge.js.
+ * Extracted from app_dag.js to eliminate scattered toggle definitions.
+ * Human coders: add new toggles here, not in app_dag.js or wasm-bridge-dag.js.
  */
 
 // Scale 0 (Lattice) — physics term toggles matching TermToggles in term_toggles.h
