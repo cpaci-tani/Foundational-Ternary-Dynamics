@@ -12,6 +12,7 @@
 import { Sparkline } from './diagnostics.js';
 import { ALPHA, G_N } from './constants.js';
 import { formatEnergy, formatVelocity, formatLength, formatForce, formatTemperature } from './units.js';
+import { createCachedCanvasRect } from './dom-utils.js';
 
 const TS_LEN = 200;  // Time-series buffer length (longer than sparkline 80)
 
@@ -26,6 +27,8 @@ class TimeSeriesChart {
             t.count = 0;
         }
         this._refLine = null; // optional horizontal reference line
+        // Phase C.3: cache rect dimensions; refreshed by ResizeObserver
+        this._rectCache = canvas ? createCachedCanvasRect(canvas) : null;
     }
 
     setRefLine(val) { this._refLine = val; }
@@ -48,7 +51,7 @@ class TimeSeriesChart {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
+        const rect = this._rectCache ? this._rectCache.get() : canvas.getBoundingClientRect();
         const w = rect.width, h = rect.height;
         if (w === 0 || h === 0) return;
 
@@ -190,6 +193,8 @@ export class PETelemetryPanel {
         this._phaseCanvas = document.getElementById('pet-phase-space');
         this._phaseBuf = []; // [{r, vr}] ring buffer
         this._phaseMax = 300;
+        // Phase C.3: cache rect dims, refreshed via ResizeObserver
+        this._phaseRectCache = this._phaseCanvas ? createCachedCanvasRect(this._phaseCanvas) : null;
 
         // Particle table body
         this._tbody = document.getElementById('pet-particle-tbody');
@@ -201,7 +206,7 @@ export class PETelemetryPanel {
     }
 
     /**
-     * Main update entry point — called every ~3 frames from app.js
+     * Main update entry point — called every ~3 frames from app_dag.js
      * @param {object} diag - from bridge.peGetDiagnostics()
      * @param {object|null} ext - from bridge.peGetExtendedData()
      */
@@ -437,7 +442,7 @@ export class PETelemetryPanel {
         if (!canvas || this._phaseBuf.length < 2) return;
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
+        const rect = this._phaseRectCache ? this._phaseRectCache.get() : canvas.getBoundingClientRect();
         const w = rect.width, h = rect.height;
         if (w === 0 || h === 0) return;
 
