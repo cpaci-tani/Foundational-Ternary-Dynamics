@@ -65,17 +65,17 @@
  * ---------------------------------------------------------------
  */
 
-import { allElements, tablePosition, elementSymbol, getElement } from '../../elements.js?v=20260304q';
+import { allElements, tablePosition, elementSymbol, getElement } from '../../elements.js';
 import {
     expandAEToOrbitalCloud, generateBondingCloud,
     electronConfig, slaterZeff, A0_DISPLAY, nuclearShellRadius
-} from '../../orbitals.js?v=20260309c';
+} from '../../orbitals.js';
 import {
     atomicEnergy, periodicTableTotalEnergy,
     formatEnergy as formatEnergyAE
-} from '../../atomic-energy.js?v=20260304q';
+} from '../../atomic-energy.js';
 import { formatEnergy, formatTemperature } from '../../units.js';
-import { generateGridXZ, sampleAEField } from '../../fields.js?v=20260304q';
+import { generateGridXZ, sampleAEField } from '../../fields.js';
 import { SCALE2_TOGGLES } from '../../config/toggles.js';
 import { createTickAccumulator, formatSI } from '../scale-utils.js';
 

@@ -40,7 +40,7 @@
  * ---------------------------------------------------------------
  */
 
-import { getMolecule, loadMolecule } from '../../molecules.js?v=20260304q';
+import { getMolecule, loadMolecule } from '../../molecules.js';
 import { SCALE2_TOGGLES } from '../../config/toggles.js';
 import { animateAE, syncAEParams } from '../scale2/controller.js';
 
