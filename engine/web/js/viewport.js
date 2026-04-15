@@ -1319,9 +1319,11 @@ export class Viewport {
                     if (mag < FLUX_THRESHOLD) continue;
 
                     const c3 = count * 3;
-                    posArr[c3]     = x;
-                    posArr[c3 + 1] = y;
-                    posArr[c3 + 2] = z;
+                    // +0.5: render at unit-cell centre so voxel 0 sits at 0.5
+                    // and voxel N-1 at N-0.5 — perfectly filling the [0,N] wireframe.
+                    posArr[c3]     = x + 0.5;
+                    posArr[c3 + 1] = y + 0.5;
+                    posArr[c3 + 2] = z + 0.5;
 
                     // PERF: in-place colormap write. Pre-fix this allocated a
                     // fresh [r,g,b] array per voxel -- ~1.8M allocs/sec at L=32.
@@ -1381,9 +1383,9 @@ export class Viewport {
             const nz = (z - halfN + 0.5) / halfN;
             if (!this._insideBoundary(nx, ny, nz)) continue;
 
-            posAttr.array[count * 3] = x;
-            posAttr.array[count * 3 + 1] = y;
-            posAttr.array[count * 3 + 2] = z;
+            posAttr.array[count * 3]     = x + 0.5;
+            posAttr.array[count * 3 + 1] = y + 0.5;
+            posAttr.array[count * 3 + 2] = z + 0.5;
 
             const [r, g, b2] = fluxToColor(sliceData[i], maxFlux);
             colAttr.array[count * 3] = r;
