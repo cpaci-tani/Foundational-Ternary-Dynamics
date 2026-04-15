@@ -420,6 +420,117 @@ transplanted verbatim with the same label, condition, and tolerance.
 
 ---
 
-**Document last updated**: 2026-04-14, after Wave 4 final ctest.
+## 10. GPU-first architecture compliance (audit addendum)
+
+**Design intent** (user-stated, 2026-04-14): All tests must be **GPU
+primary, CPU backup**. The only justified reasons to run on CPU are
+(a) the GPU engine is missing a specific feature, or (b) the test is
+explicitly a CPU-vs-GPU parity comparison.
+
+### 10.1 How engines relate to GPU/CPU
+
+| Class | Default path | GPU support | Notes |
+|---|---|---|---|
+| `ftd::SimEngine` (from `engine_select.h`) | **GPU** (`gpu::GpuEngine`) when `FTD_ENABLE_CUDA` | Yes | Pure GPU-first wrapper. Falls back to `RenderBridge` only if CUDA is disabled at compile time. |
+| `ftd::RenderBridge` | **GPU** (`use_gpu_ = true`) when `FTD_ENABLE_CUDA` | Yes | Holds both CPU + GPU state. Default path is GPU; `force_cpu()` is a deliberate escape hatch for tests that need CPU-only features. |
+| `ftd::ParticleEngine` | CPU | **No** | Pure C++ class. No GPU backend exists. Barnes-Hut octree runs on CPU. |
+| `ftd::AtomEngine` | CPU | **No** | Pure C++ class. No GPU backend exists. Shares Barnes-Hut with ParticleEngine. |
+| `ftd::CosmicEngine` | CPU | **No** | Pure C++ class. |
+
+**Architectural gap**: ParticleEngine / AtomEngine / CosmicEngine are
+CPU-only by class design. Tests using them (e.g. `test_pe_forces`,
+`test_atom_engine_forces`, `test_helium_scale1`) can only run on CPU
+until these classes get GPU backends. This is **not** something the
+consolidation session can fix — it requires new kernel code in
+`engine/cuda/` implementing SoA `Particle` / `Atom` force pipelines.
+
+### 10.2 `force_cpu()` call audit (all 11 sites, all pre-existing)
+
+No `force_cpu()` call was introduced or removed in this session. The
+complete inventory as of `e43e742`:
+
+| File | Calls | Justification |
+|---|---|---|
+| `benchmark_black_hole_thermo.cpp` | 5 | GPU lacks `solve_latency_poisson()` — commit `6697d5d` workaround |
+| `benchmark_engine_theory.cpp` | 1 | Same — latency-dependent sub-benchmark |
+| `test_einstein_equations.cpp` | 2 | Same — latency-downstream GR sector |
+| `test_latency_field.cpp` | 2 | Same — the test name IS the justification |
+| `campaign_einstein.cpp` | 4 | Different — GPU path doesn't populate voxel flux for direct reads |
+| `campaign_grothendieck.cpp` | 3 | Latency-downstream |
+| `campaign_sm_observables.cpp` | 5 | Latency-downstream |
+| `campaign_vonneumann.cpp` | 1 | Latency-downstream |
+| `campaign_wigner.cpp` | 2 | Latency-downstream |
+| `test_gpu_parity.cpp` | 5 | **Intentional** — this test's purpose IS parity comparison |
+| `test_gpu_parity_complete.cpp` | 19 | **Intentional** — comprehensive CPU vs GPU parity |
+
+**9 of 11** `force_cpu()` users are latency-related workarounds around
+the missing GPU `solve_latency_poisson()` kernel. **2 of 11** are GPU
+parity tests that legitimately need to run on both backends.
+
+### 10.3 Wave 4 consolidated files (no `force_cpu()`, no new CPU-only regressions)
+
+Every file created or rewritten in this session has been verified
+(`grep -c force_cpu`):
+
+| Consolidated file | force_cpu | Engine used |
+|---|---|---|
+| `test_atom_engine_forces.cpp` | 0 | AtomEngine (CPU-only class) |
+| `test_lorentz.cpp` | 0 | RenderBridge (GPU-first) + Voxel |
+| `test_gauss.cpp` | 0 | RenderBridge (GPU-first) |
+| `test_energy_conservation.cpp` | 0 | RenderBridge (GPU-first) |
+| `campaign_wave_dynamics.cpp` | 0 | RenderBridge (GPU-first) |
+| `campaign_quantum_correlations.cpp` | 0 | RenderBridge (GPU-first) |
+| `campaign_dispersion.cpp` | 0 | RenderBridge (GPU-first) — marked `GPU_HEAVY` in CMake |
+| `campaign_coulomb_force_law.cpp` | 0 | RenderBridge (GPU-first) |
+| `campaign_hydrogen_spectrum.cpp` | 0 | RenderBridge + ParticleEngine (mixed) |
+| `campaign_qcd_forces.cpp` | 0 | RenderBridge (GPU-first) |
+| `campaign_dark_sector.cpp` | 0 | `SimEngine` (pure GPU-first) + 1 `RenderBridge` in legacy section |
+| `test_helium_scale1.cpp` (Wave 3.3 fix) | 0 | ParticleEngine (CPU-only class) |
+
+**Summary**: every RenderBridge-using consolidated test defaults to the
+GPU backend when `FTD_ENABLE_CUDA` is on. The only tests that are
+CPU-only are those forced by class choice (ParticleEngine / AtomEngine),
+and those were CPU before this session too — nothing regressed.
+
+### 10.4 Engine fixes from this session — GPU compatibility
+
+The 4 physics fixes added in `engine/src/atom_engine.cpp` + `test_helium_scale1.cpp`:
+
+1. **Berendsen thermostat clamp** (Wave 3.3) — Pure scalar math, trivially GPU-portable when a GPU AtomEngine is written.
+2. **Barnes-Hut degenerate offset** (Wave 3.3) — Test-side change, no engine code impact.
+3. **Angle-strain reaction force** (Wave 4a.1) — Pure Vec3 math on `forces_` / `force_diag_` vectors; no CPU-specific constructs. GPU-portable.
+4. **Dipole-dipole force** (Wave 4a.1) — ~80 lines of Vec3 math with a bonded-pair exclusion check. Uses `std::vector` iteration which maps 1:1 to GPU SoA iteration in a future CUDA kernel. GPU-portable.
+
+**None of the session's engine changes introduce CPU-only constructs**
+or block a future GPU port of AtomEngine.
+
+### 10.5 Recommended follow-up work (out of this session's scope)
+
+To further close the GPU-first gap:
+
+1. **Implement `gpu::GpuEngine::solve_latency_poisson()`** in
+   `engine/cuda/kernels_poisson.cu`. This would eliminate 9 of the 11
+   `force_cpu()` workarounds (all latency-downstream ones) and let
+   those tests run on GPU. **High leverage** — single kernel unlocks
+   ~30 currently-CPU-bound tests.
+
+2. **Write a GPU AtomEngine** (`engine/cuda/atom_engine_gpu.cu`)
+   implementing the same compute_all_forces / tick / diagnostics
+   API that AtomEngine currently has on CPU. Reuse the Barnes-Hut
+   octree pattern from the CPU version. Unlocks `test_atom_engine_forces`
+   on GPU.
+
+3. **Write a GPU ParticleEngine** (`engine/cuda/particle_engine_gpu.cu`)
+   with the same API. Unlocks `test_pe_forces`, `test_helium_scale1`,
+   `test_fine_structure_scale1`, etc. on GPU.
+
+4. **Investigate `campaign_einstein.cpp` "GPU doesn't populate voxel
+   flux for direct reads"** — this is a different GPU gap from the
+   latency one. Might be a simple `sync_to_host()` missing, or a
+   deeper design issue.
+
+---
+
+**Document last updated**: 2026-04-14, after Wave 4 final ctest + GPU-first audit.
 **Data sources**: `ctest --show-only=json-v1` (post-Wave-4),
 `/tmp/ctest_final_cpu.log`, git log since commit `8d7ed60`.
