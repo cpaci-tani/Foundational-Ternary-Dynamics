@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { GLSL_SIMPLEX_NOISE_3D } from './constants.js?v=20260305e';
+import { GLSL_SIMPLEX_NOISE_3D } from './constants.js';
 import { BaseRenderer } from './core/BaseRenderer.js';
 
 const proceduralVertexShader = `

@@ -32,11 +32,11 @@
  *   to other scales would leave a dead bridge reference.
  */
 
-import { ConsciousnessEngine } from '../../consciousness.js?v=20260305e';
-import { ConsciousnessPedagogy, addInfoTooltips } from '../../consciousness-pedagogy.js?v=20260317a';
+import { ConsciousnessEngine } from '../../consciousness.js';
+import { ConsciousnessPedagogy, addInfoTooltips } from '../../consciousness-pedagogy.js';
 import {
     K_B, K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT
-} from '../../constants.js?v=20260305e';
+} from '../../constants.js';
 import { CS_SCENARIO_DESCRIPTIONS } from '../../config/scenarios.js';
 import { createListenerBag, createTickAccumulator } from '../scale-utils.js';
 
