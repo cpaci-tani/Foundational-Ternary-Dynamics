@@ -372,6 +372,58 @@ static void section_level1a_moore_cell() {
                      moore_set == union_set);
 }
 
+static void section_integration_periodic() {
+    ftd::test::section("Integration / periodic boundary wrap");
+
+    const int N = 16;
+    ftd::Coord origin{0, 0, 0};
+
+    // Octahedron at origin
+    {
+        ftd::RenderBridge rb(N);
+        auto r = ftd::ctor::octahedron(rb, origin, +1);
+        ftd::test::check("IP1: octahedron at origin -> 6 sites", r.sites.size() == 6);
+
+        std::set<int> expected = {
+            rb.lattice().index( 1,  0,  0), rb.lattice().index(N-1,  0,  0),
+            rb.lattice().index( 0,  1,  0), rb.lattice().index( 0, N-1,  0),
+            rb.lattice().index( 0,  0,  1), rb.lattice().index( 0,  0, N-1),
+        };
+        std::set<int> got(r.sites.begin(), r.sites.end());
+        ftd::test::check("IP2: octahedron sites wrap correctly", got == expected);
+    }
+
+    // Cuboctahedron at origin
+    {
+        ftd::RenderBridge rb(N);
+        auto r = ftd::ctor::cuboctahedron(rb, origin, +1);
+        ftd::test::check("IP3: cuboctahedron at origin -> 12 sites", r.sites.size() == 12);
+        bool all_set = true;
+        for (int idx : r.sites) if (rb.voxels()[idx].state != 1) { all_set = false; break; }
+        ftd::test::check("IP4: cuboctahedron wrap: every site state=+1", all_set);
+    }
+
+    // Stella octangula at origin
+    {
+        ftd::RenderBridge rb(N);
+        auto r = ftd::ctor::stella_octangula(rb, origin, +1);
+        ftd::test::check("IP5: stella_octangula at origin -> 8 sites", r.sites.size() == 8);
+        bool all_set = true;
+        for (int idx : r.sites) if (rb.voxels()[idx].state != 1) { all_set = false; break; }
+        ftd::test::check("IP6: stella wrap: every site state=+1", all_set);
+    }
+
+    // Moore cell at origin
+    {
+        ftd::RenderBridge rb(N);
+        auto r = ftd::ctor::moore_cell(rb, origin, +1);
+        ftd::test::check("IP7: moore_cell at origin -> 26 sites", r.sites.size() == 26);
+        bool all_set = true;
+        for (int idx : r.sites) if (rb.voxels()[idx].state != 1) { all_set = false; break; }
+        ftd::test::check("IP8: moore_cell wrap: every site state=+1", all_set);
+    }
+}
+
 int main() {
     ftd::test::init("test_constructors");
     section_level0_flux();
@@ -382,5 +434,6 @@ int main() {
     section_level1a_cuboctahedron();
     section_level1a_stella_octangula();
     section_level1a_moore_cell();
+    section_integration_periodic();
     return ftd::test::finalize();
 }
