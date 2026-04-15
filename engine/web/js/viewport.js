@@ -572,7 +572,7 @@ export class Viewport {
             const center = size / 2;
             const dist = size * 1.6;
             this.controls.target.set(center, center, center);
-            this.camera.position.set(center + dist, center + dist * 0.5, center + dist);
+            this.camera.position.set(center + dist * 0.3, center + dist * 0.4, center + dist);
             this.controls.update();
         }
         if (this._applyScenarioScale) this._applyScenarioScale();
@@ -3059,7 +3059,7 @@ export class Viewport {
             const center = this.latticeSize / 2;
             const dist = this.latticeSize * 1.6;
             this.controls.target.set(center, center, center);
-            this.camera.position.set(center + dist, center + dist * 0.5, center + dist);
+            this.camera.position.set(center + dist * 0.3, center + dist * 0.4, center + dist);
             this.controls.update();
         }
         if (this._applyScenarioScale) this._applyScenarioScale();
