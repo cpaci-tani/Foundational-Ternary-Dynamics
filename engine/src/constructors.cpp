@@ -70,8 +70,10 @@ StampResult particle(RenderBridge& rb, Coord at, int8_t state, Vec3 J,
 }
 
 StampResult wavepacket(RenderBridge& rb, Coord at, int8_t state, double sigma, double amp) {
-    (void)rb; (void)state; (void)sigma; (void)amp;
-    return StampResult{"wavepacket", 0, at, {}};
+    const int radius = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
+    auto before = snapshot_box(rb, at, radius);
+    rb.inject_wavepacket(at.x, at.y, at.z, state, sigma, amp);
+    return StampResult{"wavepacket", 0, at, diff_sites(rb, before)};
 }
 
 StampResult entangled_pair(RenderBridge& rb, Coord at, Vec3 J) {

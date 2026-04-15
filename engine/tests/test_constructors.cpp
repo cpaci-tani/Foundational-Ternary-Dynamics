@@ -103,10 +103,49 @@ static void section_level0_entangled_pair() {
     ftd::test::check("EP8: sites contains partner", partner_in_sites);
 }
 
+static void section_level0_wavepacket() {
+    ftd::test::section("Level 0 / wavepacket");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord at{16, 16, 16};
+    const double sigma = 3.0;
+    const double amp   = ftd::K_B;
+
+    auto r = ftd::ctor::wavepacket(rb, at, +1, sigma, amp);
+
+    ftd::test::check("W1: name is 'wavepacket'", std::string(r.name) == "wavepacket");
+    ftd::test::check("W2: level is 0",           r.level == 0);
+    ftd::test::check("W3: more than 1 site",     r.sites.size() > 1);
+
+    const int idx0 = rb.lattice().index(16, 16, 16);
+    std::set<int> sites_set(r.sites.begin(), r.sites.end());
+    ftd::test::check("W4: center is in sites", sites_set.count(idx0) == 1);
+    ftd::test::check("W5: center voxel state = +1", rb.voxels()[idx0].state == 1);
+
+    const double cutoff  = ftd::GAUSSIAN_CUTOFF_SIGMA * sigma;
+    const double cutoff2 = cutoff * cutoff;
+    bool all_within = true;
+    for (int idx : r.sites) {
+        ftd::Coord c = rb.lattice().coord(idx);
+        int dx = c.x - 16, dy = c.y - 16, dz = c.z - 16;
+        double r2 = static_cast<double>(dx*dx + dy*dy + dz*dz);
+        if (r2 > cutoff2 + 1e-9) { all_within = false; break; }
+    }
+    ftd::test::check("W6: every site within Gaussian L2 cutoff", all_within);
+
+    const int far_radius = static_cast<int>(cutoff) + 2;
+    int far_idx = rb.lattice().index(16 + far_radius, 16, 16);
+    const auto& far = rb.voxels()[far_idx];
+    bool far_unchanged = (far.state == 0)
+                      && (far.flux.x == 0 && far.flux.y == 0 && far.flux.z == 0);
+    ftd::test::check("W7: voxel outside cutoff is unchanged", far_unchanged);
+}
+
 int main() {
     ftd::test::init("test_constructors");
     section_level0_flux();
     section_level0_particle();
     section_level0_entangled_pair();
+    section_level0_wavepacket();
     return ftd::test::finalize();
 }
