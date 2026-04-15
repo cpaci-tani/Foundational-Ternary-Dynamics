@@ -1242,6 +1242,9 @@ export class Viewport {
                 this._fluxVolume = null;
             }
             this._buildFluxVolume(latticeSize);
+            // _buildFluxVolume initialises visible=false; restore the user's current
+            // showFlux state so the volume doesn't disappear after a size change.
+            this._fluxVolume.visible = this.showFlux;
         }
 
         const posAttr = this._fluxVolume.geometry.getAttribute('position');
