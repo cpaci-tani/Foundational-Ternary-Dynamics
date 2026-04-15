@@ -240,6 +240,48 @@ static void section_level1a_octahedron() {
     ftd::test::check("O11: no leakage in 5x5x5 box", no_leakage(rb, center, r.sites));
 }
 
+static void section_level1a_cuboctahedron() {
+    ftd::test::section("Level 1A / cuboctahedron");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::cuboctahedron(rb, center, +1);
+
+    ftd::test::check("C1: name is 'cuboctahedron'", std::string(r.name) == "cuboctahedron");
+    ftd::test::check("C2: level is 1",              r.level == 1);
+    ftd::test::check("C3: exactly 12 sites",        r.sites.size() == 12);
+
+    bool all_set = true;
+    for (int idx : r.sites) {
+        if (rb.voxels()[idx].state != 1) { all_set = false; break; }
+    }
+    ftd::test::check("C4: every site has state=+1", all_set);
+
+    auto offs = offsets_from_sites(rb.lattice(), center, r.sites);
+    bool all_distance_sqrt2 = true;
+    for (const auto& [dx, dy, dz] : offs) {
+        if (dx*dx + dy*dy + dz*dz != 2) { all_distance_sqrt2 = false; break; }
+    }
+    ftd::test::check("C5: every offset has L2 distance = sqrt(2)", all_distance_sqrt2);
+
+    std::set<std::tuple<int,int,int>> expected = {
+        { 1, 1, 0}, { 1,-1, 0}, {-1, 1, 0}, {-1,-1, 0},
+        { 1, 0, 1}, { 1, 0,-1}, {-1, 0, 1}, {-1, 0,-1},
+        { 0, 1, 1}, { 0, 1,-1}, { 0,-1, 1}, { 0,-1,-1},
+    };
+    ftd::test::check("C6: offsets match edge-neighbor pattern", offs == expected);
+
+    ftd::test::check("C7: invariant under 90deg rotation around x", is_rotation_invariant(offs, 0));
+    ftd::test::check("C8: invariant under 90deg rotation around y", is_rotation_invariant(offs, 1));
+    ftd::test::check("C9: invariant under 90deg rotation around z", is_rotation_invariant(offs, 2));
+
+    const auto& cvox = rb.voxels()[rb.lattice().index(8, 8, 8)];
+    ftd::test::check("C10: center voxel unmodified", cvox.state == 0);
+
+    ftd::test::check("C11: no leakage in 5x5x5 box", no_leakage(rb, center, r.sites));
+}
+
 int main() {
     ftd::test::init("test_constructors");
     section_level0_flux();
@@ -247,5 +289,6 @@ int main() {
     section_level0_entangled_pair();
     section_level0_wavepacket();
     section_level1a_octahedron();
+    section_level1a_cuboctahedron();
     return ftd::test::finalize();
 }
