@@ -53,6 +53,9 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_solve_coulomb(GpuBuffers& bufs,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
+    void launch_solve_latency(GpuBuffers& bufs,
+                              cufftHandle plan_fwd, cufftHandle plan_inv,
+                              cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
                              bool gravity, bool lorentz_force, double dt);
     void launch_phase_movement(GpuBuffers& bufs, double dt);
@@ -109,6 +112,7 @@ GpuEngine::GpuEngine(int lattice_size)
     host_voxels_.resize(N_);
     host_phi_.resize(N_, 0.0);
     host_phi_coulomb_.resize(N_, 0.0);
+    host_phi_latency_.resize(N_, 0.0);
     host_dirty_ = false;
 }
 
@@ -145,6 +149,13 @@ void GpuEngine::tick() {
         if (toggles.dual_substrate) {
             kernels::launch_gauss_sync_dual(bufs_);
         }
+    }
+
+    // Phase 3b: Latency Poisson (gravitational potential → voxel.latency)
+    // Wave 5 (2026-04-14): GPU now implements solve_latency_poisson().
+    // Tests that enable toggles.latency_field no longer need force_cpu().
+    if (toggles.latency_field) {
+        gpu_solve_latency();
     }
 
     // Phase 4: Forces (Coulomb Poisson + EM/gravity/Lorentz)
@@ -263,6 +274,18 @@ void GpuEngine::gpu_solve_coulomb() {
                                   fft_plan_inverse_f_);
 }
 
+// Wave 5 (2026-04-14): GPU latency Poisson solver.
+// Unblocks every test that previously had to call rb.force_cpu() because
+// CUDA lacked this feature. Matches CPU RenderBridge::solve_latency_poisson
+// exactly up to the FFT's automatic DC-mode cancellation (gauge freedom).
+void GpuEngine::gpu_solve_latency() {
+    kernels::launch_solve_latency(bufs_,
+                                  fft_plan_forward_,
+                                  fft_plan_inverse_,
+                                  fft_plan_forward_f_,
+                                  fft_plan_inverse_f_);
+}
+
 void GpuEngine::gpu_phase_forces() {
     // Solve Coulomb potential first (if Poisson mode)
     if (toggles.poisson_coulomb) {
@@ -326,6 +349,8 @@ void GpuEngine::gpu_triad_detection() {
 void GpuEngine::ensure_host_synced() {
     if (host_dirty_) {
         bufs_.download(host_voxels_, host_phi_, host_phi_coulomb_);
+        // Wave 5: also download phi_latency for tests that read it directly
+        bufs_.download_phi_latency(host_phi_latency_);
         host_dirty_ = false;
     }
 }

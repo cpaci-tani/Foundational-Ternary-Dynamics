@@ -213,8 +213,10 @@ public:
     // E = -wave_vel, B = ∇×J → S = (-wave_vel) × (∇×J)
     Vec3 poynting_vector(int idx) const;
 
-    // Latency (gravitational potential) field accessor
-    const std::vector<double>& phi_latency() const { return phi_latency_; }
+    // Latency (gravitational potential) field accessor.
+    // When the GPU backend is active, this syncs d_phi_latency → host first
+    // (Wave 5 GPU-first sweep). CPU path just returns the cached vector.
+    const std::vector<double>& phi_latency() const;
 
 private:
     // Sub-phases of a single G*-tick

@@ -64,13 +64,12 @@ void check_close(const char* name, double a, double b, double tol) {
 // Helper: set up a minimal engine with latency enabled, everything else off.
 // Returns unique_ptr to avoid copy (RenderBridge is non-copyable when GPU is enabled).
 //
-// CRITICAL: force_cpu() is required because the CUDA kernels do NOT implement
-// solve_latency_poisson — phi_latency_ stays at zero on GPU, making every
-// latency-dependent assertion fail. The CPU path has the correct implementation
-// with the sqrt(|phi|) fix from April 13, 2026 (see render_bridge.cpp:733-746).
+// Wave 5 (2026-04-14): GPU now implements solve_latency_poisson() via
+// kernels_poisson.cu::launch_solve_latency. The previous force_cpu() workaround
+// has been removed — this test now runs on the GPU by default when CUDA is
+// enabled, matching the GPU-first architecture requirement.
 std::unique_ptr<ftd::RenderBridge> make_latency_engine(int L) {
     auto rb = std::make_unique<ftd::RenderBridge>(L);
-    rb->force_cpu();
     rb->toggles.disable_all();
     rb->toggles.latency_field = true;
     return rb;

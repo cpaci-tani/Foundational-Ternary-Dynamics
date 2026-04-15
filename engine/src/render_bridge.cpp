@@ -86,6 +86,23 @@ void RenderBridge::gpu_push_to_device() {
 }
 #endif
 
+// Wave 5 (2026-04-14): GPU-aware phi_latency accessor.
+// When use_gpu_ is true, lazily fetches the latency Poisson potential
+// from the GPU buffer (d_phi_latency). When use_gpu_ is false, returns
+// the CPU SOR solver's cached vector directly.
+const std::vector<double>& RenderBridge::phi_latency() const {
+#ifdef FTD_ENABLE_CUDA
+    if (use_gpu_ && gpu_) {
+        // Mirror the GPU's phi_latency into our host vector so external
+        // callers get a stable reference.
+        const auto& gpu_phi = gpu_->phi_latency();
+        auto& dst = const_cast<std::vector<double>&>(phi_latency_);
+        dst = gpu_phi;
+    }
+#endif
+    return phi_latency_;
+}
+
 // ============================================================================
 // Discrete Operators (pure mathematics — no physics assumptions)
 // ============================================================================
