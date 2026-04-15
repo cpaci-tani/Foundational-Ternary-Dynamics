@@ -251,9 +251,15 @@ private:
     std::vector<uint8_t> near_particle_; // Phase D: selective damping mask (1 = near particle)
     std::vector<double> near_accel_;     // Phase D: max accel_mag of nearby particles (for Larmor)
 
-    // HIGH-3: Reusable buffer for triad binding scan (avoids heap alloc per tick)
-    struct TriadSite { int idx; int8_t state; int cx, cy, cz; };
-    std::vector<TriadSite> triad_sites_;
+    // PERF: per-tick scratch buffers, promoted from local-vars in tick phases
+    // to bridge members so they don't malloc/free every tick. Capacity is
+    // fixed once in the ctor (or grows once on first use); cleared in place.
+    std::vector<unsigned int> thread_seeds_;        // phase_write: per-thread RNG seeds
+    std::vector<std::mt19937> thread_rngs_;         // phase_write: per-thread RNGs (replaces per-voxel construction)
+    std::vector<double>       sor_source_;          // shared scratch for all 3 SOR Poisson solvers (sized N)
+    // Phase forces: ColoredSite list reused tick-to-tick (only filled when color_forces ON)
+    struct ColoredSiteCache { int cx, cy, cz; int8_t state, color; };
+    std::vector<ColoredSiteCache> colored_sites_cache_;
 
     double self_field_injection_ = 0.0;  // Energy injected by self-field floor this tick
     int tick_ = 0;

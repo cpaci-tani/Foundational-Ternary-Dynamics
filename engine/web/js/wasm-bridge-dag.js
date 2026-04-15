@@ -374,14 +374,20 @@ export class MockBridge {
             const Ng = this.latticeSize;
             const J = this._fluxJ;
             const maxNewPerTick = 4; // cap to prevent explosion
+            // PERF: compare squared magnitudes first so the sqrt + exp only
+            // run for the (rare) above-threshold voxels. Pre-fix this loop
+            // ran a full sqrt per voxel (~260K calls/tick at L=64) even
+            // though the early-out is hit on >99% of them.
+            const K_GENESIS_SQ = K_GENESIS * K_GENESIS;
             let created = 0;
             for (let z = 1; z < Ng - 1 && created < maxNewPerTick; z++) {
                 for (let y = 1; y < Ng - 1 && created < maxNewPerTick; y++) {
                     for (let x = 1; x < Ng - 1 && created < maxNewPerTick; x++) {
                         const idx = z * Ng * Ng + y * Ng + x;
                         const jx = J[idx * 3], jy = J[idx * 3 + 1], jz = J[idx * 3 + 2];
-                        const mag = Math.sqrt(jx * jx + jy * jy + jz * jz);
-                        if (mag < K_GENESIS) continue;
+                        const mag2 = jx * jx + jy * jy + jz * jz;
+                        if (mag2 < K_GENESIS_SQ) continue;
+                        const mag = Math.sqrt(mag2);
 
                         // Probability: p = 1 - exp(-(mag - K_GENESIS) / K_B)
                         const p = 1 - Math.exp(-(mag - K_GENESIS) / K_B);
@@ -954,8 +960,12 @@ export class MockBridge {
 
         // Build state grid from particles for coupling term: g_c * grad(s)
         // State field s ∈ {-1, 0, +1} mapped onto the lattice
+        // PERF: skip the entire NNN-byte fill+scan when no particles exist.
+        // The hot stencil loop checks `stateGrid` (null) to skip the coupling
+        // branch, so empty-lattice scenarios pay zero cost here. At L=128
+        // this saves ~2M Int8 writes per tick.
         let stateGrid = null;
-        const doCoupling = this._toggles.coupling;
+        const doCoupling = this._toggles.coupling && this._particles.length > 0;
         if (doCoupling) {
             if (!this._stateGrid || this._stateGrid.length !== NNN) {
                 this._stateGrid = new Int8Array(NNN);

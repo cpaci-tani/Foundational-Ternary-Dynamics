@@ -316,6 +316,46 @@ export function fluxToColor(mag, maxFlux) {
 }
 
 /**
+ * In-place flux colormap: writes RGB into out[offset], out[offset+1], out[offset+2].
+ *
+ * Same colormap as fluxToColor() but avoids the per-call [r,g,b] array literal.
+ * Used in viewport.updateFluxVolume's hot loop where it runs per-voxel and
+ * was the dominant GC pressure source on play (~1.8M allocations/sec at L=32).
+ *
+ * @param {Float32Array|Array} out  - Output buffer (typically a geometry attribute array)
+ * @param {number} offset           - Write offset in out
+ * @param {number} mag              - Flux magnitude |J|
+ * @param {number} maxFlux          - Normalization bound
+ */
+export function fluxToColorInto(out, offset, mag, maxFlux) {
+    if (maxFlux < 1e-20) {
+        out[offset]     = 0.02;
+        out[offset + 1] = 0.03;
+        out[offset + 2] = 0.08;
+        return;
+    }
+    let t = mag / maxFlux;
+    if (t < 0) t = 0; else if (t > 1) t = 1;
+    let r, g, b;
+    if (t < 0.25) {
+        const s = t / 0.25;
+        r = 0.02 + 0.03 * s; g = 0.03 + 0.12 * s; b = 0.08 + 0.52 * s;
+    } else if (t < 0.5) {
+        const s = (t - 0.25) / 0.25;
+        r = 0.05 + 0.05 * s; g = 0.15 + 0.65 * s; b = 0.60 + 0.30 * s;
+    } else if (t < 0.75) {
+        const s = (t - 0.5) / 0.25;
+        r = 0.10 + 0.85 * s; g = 0.80 + 0.15 * s; b = 0.90 - 0.30 * s;
+    } else {
+        const s = (t - 0.75) / 0.25;
+        r = 0.95 + 0.05 * s; g = 0.95 - 0.65 * s; b = 0.60 - 0.55 * s;
+    }
+    out[offset]     = r;
+    out[offset + 1] = g;
+    out[offset + 2] = b;
+}
+
+/**
  * Sequential colormap: dark → blue → cyan → yellow-white.
  * @param {number} mag    — force magnitude
  * @param {number} maxMag — normalization bound
