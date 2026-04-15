@@ -354,24 +354,72 @@ double RenderBridge::compute_entropy() const {
 
 void RenderBridge::phase_read() {
   const int N = static_cast<int>(lattice_.total_sites());
+  const int L = lattice_.size();
+  const int LL = L * L;
+  const int Nm1 = L - 1;
   const bool do_wave = toggles.wave_propagation;
   const bool do_coupling = toggles.coupling;
   const bool dual = toggles.dual_substrate;
+  const double cw2 = C_WAVE * C_WAVE;
+
+  // Isotropic 18-point Laplacian weights.
+  // For interior voxels we skip all modulo ops (same technique as sor_sweep_18pt):
+  //   coord decomposition:  iz = i % L  (stride 1), iy = (i/L) % L (stride L), ix = i/LL (stride LL)
+  //   interior iff all three coords ∈ [1, L-2].
+  // For the ~(L-2)³/L³ ≈ 97.7% interior fraction (L=64), this eliminates every modulo.
+  // Dual-substrate computes L and R Laplacians from the SAME 18 loaded neighbors — one
+  // pass, no redundant neighbor lookups compared to calling laplacian_flux_L + laplacian_flux_R
+  // separately.
+  constexpr double INV3 = 1.0 / 3.0;
+  constexpr double INV6 = 1.0 / 6.0;
 
   if (dual) {
-    // Dual-substrate: compute delta for J_L and J_R independently
-#pragma omp parallel for
+    // Dual-substrate: compute delta for J_L and J_R in a single neighbor sweep
+#pragma omp parallel for schedule(static)
     for (int i = 0; i < N; ++i) {
       delta_j_L_[i] = {};
       delta_j_R_[i] = {};
 
       if (do_wave) {
-        delta_j_L_[i] = laplacian_flux_L(i) * (C_WAVE * C_WAVE);
-        delta_j_R_[i] = laplacian_flux_R(i) * (C_WAVE * C_WAVE);
+        // Decompose flat index into lattice coordinates
+        const int iz = i % L;
+        const int iy = (i / L) % L;
+        const int ix = i / LL;
+
+        Vec3 lap_L, lap_R;
+        if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+          // Interior fast path: precomputed offsets, zero modulo operations.
+          // Neighbor offsets: ±1=±z, ±L=±y, ±LL=±x (matches lattice coord convention).
+          const Vec3 fL = (voxels_[i+1].flux_L  + voxels_[i-1].flux_L
+                         + voxels_[i+L].flux_L  + voxels_[i-L].flux_L
+                         + voxels_[i+LL].flux_L + voxels_[i-LL].flux_L) * INV3;
+          const Vec3 fR = (voxels_[i+1].flux_R  + voxels_[i-1].flux_R
+                         + voxels_[i+L].flux_R  + voxels_[i-L].flux_R
+                         + voxels_[i+LL].flux_R + voxels_[i-LL].flux_R) * INV3;
+          const Vec3 eL = (voxels_[i+1+L].flux_L  + voxels_[i+1-L].flux_L
+                         + voxels_[i-1+L].flux_L  + voxels_[i-1-L].flux_L
+                         + voxels_[i+1+LL].flux_L + voxels_[i+1-LL].flux_L
+                         + voxels_[i-1+LL].flux_L + voxels_[i-1-LL].flux_L
+                         + voxels_[i+L+LL].flux_L + voxels_[i+L-LL].flux_L
+                         + voxels_[i-L+LL].flux_L + voxels_[i-L-LL].flux_L) * INV6;
+          const Vec3 eR = (voxels_[i+1+L].flux_R  + voxels_[i+1-L].flux_R
+                         + voxels_[i-1+L].flux_R  + voxels_[i-1-L].flux_R
+                         + voxels_[i+1+LL].flux_R + voxels_[i+1-LL].flux_R
+                         + voxels_[i-1+LL].flux_R + voxels_[i-1-LL].flux_R
+                         + voxels_[i+L+LL].flux_R + voxels_[i+L-LL].flux_R
+                         + voxels_[i-L+LL].flux_R + voxels_[i-L-LL].flux_R) * INV6;
+          lap_L = fL + eL - voxels_[i].flux_L * 4.0;
+          lap_R = fR + eR - voxels_[i].flux_R * 4.0;
+        } else {
+          // Boundary slow path: modular wrapping via lattice neighbor tables.
+          lap_L = laplacian_flux_L(i);
+          lap_R = laplacian_flux_R(i);
+        }
+        delta_j_L_[i] = lap_L * cw2;
+        delta_j_R_[i] = lap_R * cw2;
       }
 
-      // Coupling source: split equally between L and R
-      // Each substrate receives half the state-flux coupling
+      // Coupling source: split equally between L and R substrates
       if (do_coupling) {
         Vec3 grad_s = gradient_state(i) * (G_C * 0.5);
         Vec3 curl_sv = curl_state_velocity(i) * (G_C * 0.5);
@@ -380,13 +428,35 @@ void RenderBridge::phase_read() {
       }
     }
   } else {
-    // Single-substrate (legacy)
-#pragma omp parallel for
+    // Single-substrate: inline Laplacian with the same interior/boundary split
+#pragma omp parallel for schedule(static)
     for (int i = 0; i < N; ++i) {
       delta_j_[i] = {};
 
-      if (do_wave)
-        delta_j_[i] = laplacian_flux(i) * (C_WAVE * C_WAVE);
+      if (do_wave) {
+        const int iz = i % L;
+        const int iy = (i / L) % L;
+        const int ix = i / LL;
+
+        Vec3 lap;
+        if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+          // Interior fast path
+          const Vec3 f = (voxels_[i+1].flux  + voxels_[i-1].flux
+                        + voxels_[i+L].flux  + voxels_[i-L].flux
+                        + voxels_[i+LL].flux + voxels_[i-LL].flux) * INV3;
+          const Vec3 e = (voxels_[i+1+L].flux  + voxels_[i+1-L].flux
+                        + voxels_[i-1+L].flux  + voxels_[i-1-L].flux
+                        + voxels_[i+1+LL].flux + voxels_[i+1-LL].flux
+                        + voxels_[i-1+LL].flux + voxels_[i-1-LL].flux
+                        + voxels_[i+L+LL].flux + voxels_[i+L-LL].flux
+                        + voxels_[i-L+LL].flux + voxels_[i-L-LL].flux) * INV6;
+          lap = f + e - voxels_[i].flux * 4.0;
+        } else {
+          // Boundary slow path
+          lap = laplacian_flux(i);
+        }
+        delta_j_[i] = lap * cw2;
+      }
 
       if (do_coupling) {
         delta_j_[i] += gradient_state(i) * G_C;
@@ -721,14 +791,32 @@ static inline void sor_sweep_18pt(std::vector<double>& phi,
 
 void RenderBridge::gauss_project() {
   const int N = static_cast<int>(lattice_.total_sites());
+  const int L = lattice_.size();
+  const int LL = L * L;
+  const int Nm1 = L - 1;
   constexpr int SOR_ITERS = SOR_ITERATIONS;
   constexpr double OMEGA = SOR_OMEGA;
 
   // Source term for the gauss SOR: violation = div(J) - state.
+  // Interior path uses direct offsets (no modulo). Boundary path falls back
+  // to divergence_flux() which handles periodic wrapping.
   // sor_source_ is a bridge member — zero per-tick allocation.
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
   for (int i = 0; i < N; ++i) {
-    sor_source_[i] = divergence_flux(i) - static_cast<double>(voxels_[i].state);
+    const int iz = i % L;
+    const int iy = (i / L) % L;
+    const int ix = i / LL;
+    double div;
+    if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+      // Interior: central difference with direct offsets (no modulo)
+      // nbrs order: [+x=+LL, -x=-LL, +y=+L, -y=-L, +z=+1, -z=-1]
+      div = (voxels_[i+LL].flux.x - voxels_[i-LL].flux.x) * 0.5
+          + (voxels_[i+L].flux.y  - voxels_[i-L].flux.y)  * 0.5
+          + (voxels_[i+1].flux.z  - voxels_[i-1].flux.z)  * 0.5;
+    } else {
+      div = divergence_flux(i);
+    }
+    sor_source_[i] = div - static_cast<double>(voxels_[i].state);
   }
 
   // Warm-started: phi_ retains values from previous tick.
@@ -746,15 +834,30 @@ void RenderBridge::gauss_project() {
   //   (a) Preserves the transverse flux that the wave equation builds
   //   (b) Still enforces Gauss at all void sites (where it matters)
   //   (c) Eliminates the Gauss/floor energy injection cycle
-#pragma omp parallel for
+  //
+  // Interior fast path: gradient_scalar uses central differences with
+  // 6 face neighbors — same interior/boundary split as phase_read.
+  const bool dual_gauss = toggles.dual_substrate;
+#pragma omp parallel for schedule(static)
   for (int i = 0; i < N; ++i) {
     if (voxels_[i].state != 0) continue;  // Skip manifested sites
-    Vec3 grad_phi = gradient_scalar(i, phi_);
+    Vec3 grad_phi;
+    const int iz = i % L;
+    const int iy = (i / L) % L;
+    const int ix = i / LL;
+    if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+      // Interior: direct offsets for central-difference gradient of phi_
+      grad_phi.x = (phi_[i+LL] - phi_[i-LL]) * 0.5;
+      grad_phi.y = (phi_[i+L]  - phi_[i-L])  * 0.5;
+      grad_phi.z = (phi_[i+1]  - phi_[i-1])  * 0.5;
+    } else {
+      grad_phi = gradient_scalar(i, phi_);
+    }
     voxels_[i].flux -= grad_phi;
 
     // Dual-substrate: split correction equally between L and R
     // This maintains div(J_L + J_R) = s while preserving L/R symmetry
-    if (toggles.dual_substrate) {
+    if (dual_gauss) {
       Vec3 half_corr = grad_phi * 0.5;
       voxels_[i].flux_L -= half_corr;
       voxels_[i].flux_R -= half_corr;
