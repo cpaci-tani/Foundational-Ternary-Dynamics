@@ -5,7 +5,7 @@
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge, MockBridge } from './wasm-bridge-dag.js?v=20260414a';
+import { createBridge, MockBridge } from './wasm-bridge-dag.js?v=20260415a';
 import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js?v=20260318a';
 import { FluxEnergyChart, ParticleChart } from './charts.js?v=20260304q';

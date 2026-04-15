@@ -4365,8 +4365,20 @@ export class WasmBridge {
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
         if (this._module) {
-            if (this._bridge) this._bridge.delete();
+            // Delete the old bridge BEFORE allocating the new one so peak
+            // memory stays at one bridge worth (not two). At L=96 a single
+            // RenderBridge allocates ~325 MB; build-then-swap would peak
+            // at ~650 MB and OOM the WASM heap.
+            //
+            // Trade-off: if `new RenderBridge` aborts (-fno-exceptions
+            // converts std::bad_alloc into abort()), the WASM module is
+            // permanently dead — but with MAXIMUM_MEMORY = 2 GB, abort
+            // is unreachable for any sane lattice size.
             // RenderBridge (not DagEngine) — see init() above for rationale.
+            if (this._bridge) {
+                this._bridge.delete();
+                this._bridge = null;
+            }
             this._bridge = new this._module.RenderBridge(this.latticeSize);
         }
     }
