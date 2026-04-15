@@ -75,8 +75,9 @@ StampResult wavepacket(RenderBridge& rb, Coord at, int8_t state, double sigma, d
 }
 
 StampResult entangled_pair(RenderBridge& rb, Coord at, Vec3 J) {
-    (void)rb; (void)J;
-    return StampResult{"entangled_pair", 0, at, {}};
+    auto before = snapshot_box(rb, at, 1);
+    rb.create_entangled_pair(at.x, at.y, at.z, J);
+    return StampResult{"entangled_pair", 0, at, diff_sites(rb, before)};
 }
 
 // Level 1A stubs
