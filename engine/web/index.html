@@ -213,55 +213,34 @@
                         <option value="flux-dipole">Flux Dipole</option>
                         <option value="flux-standing">Standing Wave</option>
                         <option value="flux-nested-standing">Nested Standing</option>
-                        <option value="flux-dispersion">Dispersion</option>
                         <option value="flux-soliton">Soliton</option>
                         <option value="flux-interference">4-Source Interference</option>
                         <option value="flux-vortex">Flux Vortex (Spin)</option>
-                        <option value="flux-stable-vortex">Stable Vortex (Rotating)</option>
+                        <option value="flux-dual-substrate">Dual Substrate</option>
                     </optgroup>
-                    <optgroup label="Particle Physics">
-                        <option value="flux-annihilation">Pair Annihilation</option>
-                        <option value="flux-pair-production">Pair Production</option>
-                        <option value="flux-hydrogen">Hydrogen Atom</option>
+                    <optgroup label="Genesis &amp; Manifestation">
+                        <option value="flux-cascade">Genesis Cascade</option>
                         <option value="flux-random-genesis">Random Genesis</option>
+                        <option value="flux-pair-production">Pair Production</option>
+                        <option value="flux-annihilation">Pair Annihilation</option>
+                        <option value="flux-vacuum-foam">Vacuum Fluctuations</option>
+                    </optgroup>
+                    <optgroup label="Confinement">
                         <option value="flux-meson">Meson (Confinement)</option>
                         <option value="flux-string-breaking">String Breaking</option>
                         <option value="flux-baryon">Baryon (3-Quark)</option>
                     </optgroup>
-                    <optgroup label="Light &amp; Color">
+                    <optgroup label="Substrate Physics">
+                        <option value="flux-cyclotron">Cyclotron Motion</option>
+                        <option value="flux-screening">Charge Screening</option>
+                        <option value="flux-thermalization">Thermalization</option>
+                        <option value="flux-triad">Triad Formation</option>
+                    </optgroup>
+                    <optgroup label="Light &amp; EM">
                         <option value="light-rainbow">Rainbow (3 Colors)</option>
-                        <option value="light-prism">Lattice Prism</option>
                         <option value="light-dipole">Dipole Radiation</option>
                         <option value="light-two-slit">Two-Slit Interference</option>
                         <option value="light-photon-race">Photon Race</option>
-                    </optgroup>
-                    <optgroup label="Experiments">
-                        <option value="flux-rutherford">Rutherford Scattering</option>
-                        <option value="flux-cyclotron">Cyclotron Motion</option>
-                        <option value="flux-screening">Charge Screening</option>
-                        <option value="flux-gravitational-wave">Gravitational Wave</option>
-                        <option value="flux-triad">Triad Formation</option>
-                        <option value="flux-thermalization">Thermalization</option>
-                    </optgroup>
-                    <optgroup label="Cosmology">
-                        <option value="flux-dark-matter">Dark Matter Halo</option>
-                        <option value="flux-baryogenesis">Baryogenesis</option>
-                        <option value="flux-vacuum-foam">Vacuum Fluctuations</option>
-                        <option value="flux-cosmic-web">Cosmic Web</option>
-                        <option value="flux-black-hole">Black Hole / Wormhole</option>
-                    </optgroup>
-                    <optgroup label="Standard Model">
-                        <option value="sm-particle-zoo">SM Particle Zoo (All 17)</option>
-                        <option value="sm-higgs-field">Higgs Field (VEV)</option>
-                        <option value="sm-higgs-mechanism">Higgs Mechanism</option>
-                        <option value="sm-electroweak">Electroweak (Beta Decay)</option>
-                        <option value="sm-three-generations">Three Generations</option>
-                        <option value="sm-qcd-vacuum">QCD Vacuum (Confinement)</option>
-                    </optgroup>
-                    <optgroup label="Advanced">
-                        <option value="flux-cascade">Genesis Cascade</option>
-                        <option value="flux-damping">Damping Demo</option>
-                        <option value="flux-dual-substrate">Dual Substrate</option>
                     </optgroup>
                     <optgroup label="Quantum Lab">
                         <option value="quantum-born-rule">Born Rule Test</option>
@@ -273,7 +252,16 @@
                         <option value="quantum-casimir">Casimir Effect</option>
                         <option value="quantum-zeno">Quantum Zeno Effect</option>
                     </optgroup>
+                    <optgroup label="SM Seeds (epistemic-tagged)">
+                        <option value="s0-seed-electron">Electron seed</option>
+                        <option value="s0-seed-photon">Photon seed</option>
+                        <option value="s0-seed-proton-candidate">Proton candidate (3-cluster)</option>
+                    </optgroup>
                 </select>
+                <details class="lat-scenario-desc" id="lat-scenario-desc" style="display:none">
+                    <summary>Epistemic status</summary>
+                    <pre id="lat-scenario-desc-text" style="white-space:pre-wrap;font-family:inherit;font-size:11px;color:var(--text-muted);margin:4px 0 0 0"></pre>
+                </details>
             </div>
             <!-- Scale 1 controls -->
             <div class="tb-group scale1-only" id="pe-controls">
@@ -327,6 +315,10 @@
                 <label class="tb-label" for="ae-scenario-select">Scenario</label>
                 <select class="tb-select" id="ae-scenario-select" style="max-width:200px">
                     <!-- Element periods injected by buildElementScenarios() -->
+                    <optgroup label="Single-Atom Physics">
+                        <option value="ae-hydrogen-atom">Hydrogen Atom (p + e\u207b)</option>
+                        <option value="ae-rutherford-scattering">Rutherford Scattering</option>
+                    </optgroup>
                     <optgroup label="Noble Gas Clusters">
                         <option value="ae-he-cluster">He Cluster (6 atoms, vdW)</option>
                         <option value="ae-ar-cluster">Ar Cluster (8 atoms, vdW)</option>
@@ -506,6 +498,9 @@
                     <option value="cosmic-ftd-collapse">FTD Collapse (Emergent BH)</option>
                     <option value="cosmic-stellar-lifecycle">Stellar Lifecycle</option>
                     <option value="cosmic-web">Cosmic Web</option>
+                    <option value="cosmic-dark-matter-halo">Dark Matter Halo</option>
+                    <option value="cosmic-gravitational-wave">Gravitational Wave (Binary)</option>
+                    <option value="cosmic-baryogenesis">Baryogenesis</option>
                 </select>
                 <label class="tb-label" for="cosmic-camera-select">Camera</label>
                 <select class="tb-select" id="cosmic-camera-select" style="max-width:130px">
