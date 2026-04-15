@@ -23,6 +23,7 @@
 #include <vector>
 #include <cstdint>
 #include <cmath>
+#include <memory>
 
 namespace ftd {
 
@@ -245,6 +246,8 @@ struct AtomDiagnostics {
 class AtomEngine {
 public:
     AtomEngine();
+    ~AtomEngine();  // Out-of-line so the forward-declared GpuBackend pimpl
+                    // doesn't trip incomplete-type unique_ptr deletion.
 
     // Toggle struct — public for direct access (like TermToggles on RenderBridge)
     AtomToggles toggles;
@@ -339,6 +342,29 @@ private:
     double soft_ = 0.5;         // Softening length (smaller than Scale 1)
     double target_temperature_ = 0.0;  // Thermostat target (0 = disabled)
     double thermostat_tau_ = THERMOSTAT_TAU_DEFAULT; // Coupling timescale
+
+public:
+    // Wave 5.3 Phase 1: GPU acceleration for pair forces (ionic + vdW).
+    // When use_gpu_ is true AND FTD_ENABLE_CUDA is defined, compute_all_forces
+    // uploads atoms to the device, runs an O(N²) CUDA kernel for pair forces,
+    // and downloads the results. Multi-body forces (bonds, angle strain,
+    // dipole-dipole, thermostat) still run on CPU in Phase 1.
+    //
+    // Defaults to FTD_ENABLE_CUDA (opt-in GPU-first) — tests with < 16 atoms
+    // stay on CPU for perf (upload/download dominates).
+    void set_use_gpu(bool b) { use_gpu_ = b; }
+    bool use_gpu() const { return use_gpu_; }
+
+private:
+#ifdef FTD_ENABLE_CUDA
+    bool use_gpu_ = true;
+    // Opaque pointer to gpu::AtomEngineGpu — avoids pulling in cuda_runtime.h
+    // into this header, which would infect every CPU test of ftd_core.
+    struct GpuBackend;
+    std::unique_ptr<GpuBackend> gpu_backend_;
+#else
+    bool use_gpu_ = false;
+#endif
 };
 
 }  // namespace ftd

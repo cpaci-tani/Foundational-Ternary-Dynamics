@@ -7,6 +7,7 @@ add_library(ftd_cuda STATIC
     kernels_stencil.cu
     kernels_poisson.cu
     kernels_forces.cu
+    atom_engine_gpu.cu  # Wave 5.3 Phase 1: gpu::AtomEngineGpu pair-force kernel
 )
 
 target_include_directories(ftd_cuda PUBLIC
