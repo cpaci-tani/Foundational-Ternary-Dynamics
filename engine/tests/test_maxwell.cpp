@@ -35,30 +35,10 @@
 #include <vector>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/test_telemetry.h"
 
-static int g_failures = 0;
-
-static void check(const char* name, bool condition) {
-    if (condition) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << "\n";
-        ++g_failures;
-    }
-}
-
-static void check_close(const char* name, double a, double b, double tol) {
-    bool ok = std::abs(a - b) < tol;
-    if (ok) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name
-                  << " (got " << std::setprecision(6) << a
-                  << ", expected " << b
-                  << ", diff " << std::abs(a - b) << ")\n";
-        ++g_failures;
-    }
-}
+using ftd::test::check;
+using ftd::test::check_close;
 
 // Helper: compute curl of wave_vel at a given lattice index.
 // Uses the same central-difference stencil as curl_flux().
@@ -128,7 +108,7 @@ static double div_B(ftd::RenderBridge& rb, int idx) {
 }
 
 int main() {
-    std::cout << "=== Maxwell Equation Recovery ===\n";
+    ftd::test::init("test_maxwell");
 
     // ================================================================
     // Section 1: Field Identification Sanity
@@ -769,8 +749,5 @@ int main() {
               transverse_ratio < 0.1);
     }
 
-    std::cout << "\n=== Maxwell Recovery: "
-              << (g_failures == 0 ? "ALL PASSED" : "FAILURES")
-              << " (" << g_failures << " failures) ===\n";
-    return g_failures;
+    return ftd::test::finalize();
 }

@@ -9,6 +9,8 @@
 
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
+#include <algorithm>
+#include <unordered_map>
 #include "ftd/render_bridge.h"
 #include "ftd/dag_engine.h"
 #include "ftd/lagrangian.h"
@@ -270,52 +272,43 @@ val get_constants() {
 }
 
 // ── Toggle wrapper ───────────────────────────────────────────────────
+// Pointer-to-member map for TermToggles (RenderBridge).
+using RbBoolPTM = bool ftd::TermToggles::*;
+static const std::unordered_map<std::string, RbBoolPTM>& rb_toggle_map() {
+    static const std::unordered_map<std::string, RbBoolPTM> kMap = {
+        {"wave_propagation",  &ftd::TermToggles::wave_propagation},
+        {"coupling",          &ftd::TermToggles::coupling},
+        {"damping",           &ftd::TermToggles::damping},
+        {"genesis",           &ftd::TermToggles::genesis},
+        {"gauss_projection",  &ftd::TermToggles::gauss_projection},
+        {"forces",            &ftd::TermToggles::forces},
+        {"gravity",           &ftd::TermToggles::gravity},
+        {"poisson_coulomb",   &ftd::TermToggles::poisson_coulomb},
+        {"movement",          &ftd::TermToggles::movement},
+        {"lorentz_force",     &ftd::TermToggles::lorentz_force},
+        {"selective_damping", &ftd::TermToggles::selective_damping},
+        {"larmor_radiation",  &ftd::TermToggles::larmor_radiation},
+        {"dual_substrate",    &ftd::TermToggles::dual_substrate},
+        {"color_forces",      &ftd::TermToggles::color_forces},
+        {"weak_transmutation",&ftd::TermToggles::weak_transmutation},
+        {"strong_force",      &ftd::TermToggles::strong_force},
+        {"triad_binding",     &ftd::TermToggles::triad_binding},
+        {"pair_production",   &ftd::TermToggles::pair_production},
+        {"exchange_force",    &ftd::TermToggles::exchange_force},
+        {"latency_field",     &ftd::TermToggles::latency_field},
+        {"emergent_forces",   &ftd::TermToggles::emergent_forces},
+    };
+    return kMap;
+}
+
 void set_toggle(ftd::RenderBridge& rb, const std::string& name, bool value) {
-    auto& t = rb.toggles;
-    if      (name == "wave_propagation") t.wave_propagation = value;
-    else if (name == "coupling")         t.coupling = value;
-    else if (name == "damping")          t.damping = value;
-    else if (name == "genesis")          t.genesis = value;
-    else if (name == "gauss_projection") t.gauss_projection = value;
-    else if (name == "forces")           t.forces = value;
-    else if (name == "gravity")          t.gravity = value;
-    else if (name == "poisson_coulomb")  t.poisson_coulomb = value;
-    else if (name == "movement")         t.movement = value;
-    else if (name == "lorentz_force")    t.lorentz_force = value;
-    else if (name == "selective_damping") t.selective_damping = value;
-    else if (name == "larmor_radiation") t.larmor_radiation = value;
-    else if (name == "dual_substrate")   t.dual_substrate = value;
-    else if (name == "color_forces")     t.color_forces = value;
-    else if (name == "weak_transmutation") t.weak_transmutation = value;
-    else if (name == "strong_force")     t.strong_force = value;
-    else if (name == "triad_binding")    t.triad_binding = value;
-    else if (name == "pair_production")  t.pair_production = value;
-    else if (name == "exchange_force")   t.exchange_force = value;
-    else if (name == "latency_field")    t.latency_field = value;
+    auto it = rb_toggle_map().find(name);
+    if (it != rb_toggle_map().end()) rb.toggles.*(it->second) = value;
 }
 
 bool get_toggle(ftd::RenderBridge& rb, const std::string& name) {
-    const auto& t = rb.toggles;
-    if      (name == "wave_propagation") return t.wave_propagation;
-    else if (name == "coupling")         return t.coupling;
-    else if (name == "damping")          return t.damping;
-    else if (name == "genesis")          return t.genesis;
-    else if (name == "gauss_projection") return t.gauss_projection;
-    else if (name == "forces")           return t.forces;
-    else if (name == "gravity")          return t.gravity;
-    else if (name == "poisson_coulomb")  return t.poisson_coulomb;
-    else if (name == "movement")         return t.movement;
-    else if (name == "lorentz_force")    return t.lorentz_force;
-    else if (name == "selective_damping") return t.selective_damping;
-    else if (name == "larmor_radiation") return t.larmor_radiation;
-    else if (name == "dual_substrate")   return t.dual_substrate;
-    else if (name == "color_forces")     return t.color_forces;
-    else if (name == "weak_transmutation") return t.weak_transmutation;
-    else if (name == "strong_force")     return t.strong_force;
-    else if (name == "triad_binding")    return t.triad_binding;
-    else if (name == "pair_production")  return t.pair_production;
-    else if (name == "exchange_force")   return t.exchange_force;
-    else if (name == "latency_field")    return t.latency_field;
+    auto it = rb_toggle_map().find(name);
+    if (it != rb_toggle_map().end()) return rb.toggles.*(it->second);
     return false;
 }
 
@@ -637,9 +630,14 @@ val get_force_field_sampled(ftd::RenderBridge& rb, int stride) {
 }
 
 // ── Scenario setup ───────────────────────────────────────────────────
+// NOTE: This function drives C++ setup. The JS MockBridge duplicates this logic.
+// After any change here, rebuild WASM: emcmake cmake && emmake cmake --build ... --target ftd_wasm
 void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     const int N = rb.lattice().size();
-    const int mid = N / 2;
+    const double midF = (N - 1) * 0.5;
+    const int    mid  = static_cast<int>(std::round(midF));
+    const double sigma_base = N / 10.0;
+    const int halfWidth = std::max(4, N / 4);
 
     // ── Scale 0: Flux-only scenarios (pure substrate, no particles) ──
 
@@ -648,10 +646,10 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     } else if (name == "flux-pulse") {
         // Gaussian flux pulse at center — watch spherical wave propagation
         double amp = ftd::K_B * 0.8;
-        double sigma = 3.0;
-        for (int dx = -5; dx <= 5; ++dx) {
-            for (int dy = -5; dy <= 5; ++dy) {
-                for (int dz = -5; dz <= 5; ++dz) {
+        double sigma = sigma_base;
+        for (int dx = -halfWidth; dx <= halfWidth; ++dx) {
+            for (int dy = -halfWidth; dy <= halfWidth; ++dy) {
+                for (int dz = -halfWidth; dz <= halfWidth; ++dz) {
                     double r2 = dx*dx + dy*dy + dz*dz;
                     double g = amp * std::exp(-r2 / (2.0 * sigma * sigma));
                     if (g > amp * 0.01) {
@@ -663,7 +661,7 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     } else if (name == "flux-dipole") {
         // Two opposite flux injections — watch interference pattern
         double amp = ftd::K_B * 0.6;
-        double sigma = 2.5;
+        double sigma = sigma_base * 1.25;
         int off = N / 6;
         for (int dx = -4; dx <= 4; ++dx) {
             for (int dy = -4; dy <= 4; ++dy) {
@@ -680,7 +678,7 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     } else if (name == "flux-standing") {
         // Two counter-propagating wave packets creating standing wave
         double amp = ftd::K_B * 0.5;
-        double sigma = 2.5;
+        double sigma = sigma_base * 1.25;
         int off = N / 4;
         // Left-moving pulse (give it wave_vel to the right)
         for (int dx = -4; dx <= 4; ++dx) {
@@ -703,7 +701,7 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     } else if (name == "flux-soliton") {
         // Large amplitude pulse — explore nonlinear regime
         double amp = ftd::K_B * 3.0;
-        double sigma = 2.0;
+        double sigma = sigma_base * 0.8;
         for (int dx = -4; dx <= 4; ++dx) {
             for (int dy = -4; dy <= 4; ++dy) {
                 for (int dz = -4; dz <= 4; ++dz) {
@@ -719,10 +717,10 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
         // Genesis threshold demo: inject above K_B, watch spontaneous manifestation
         // Enable genesis for this scenario
         double amp = ftd::K_GENESIS * 1.2;  // above genesis threshold
-        double sigma = 3.0;
-        for (int dx = -5; dx <= 5; ++dx) {
-            for (int dy = -5; dy <= 5; ++dy) {
-                for (int dz = -5; dz <= 5; ++dz) {
+        double sigma = sigma_base;
+        for (int dx = -halfWidth; dx <= halfWidth; ++dx) {
+            for (int dy = -halfWidth; dy <= halfWidth; ++dy) {
+                for (int dz = -halfWidth; dz <= halfWidth; ++dz) {
                     double r2 = dx*dx + dy*dy + dz*dz;
                     double g = amp * std::exp(-r2 / (2.0 * sigma * sigma));
                     if (g > amp * 0.01) {
@@ -734,7 +732,7 @@ void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     } else if (name == "flux-damping") {
         // Demonstrate damping: two pulses, one near particle (selective), one in vacuum
         double amp = ftd::K_B * 0.6;
-        double sigma = 2.5;
+        double sigma = sigma_base * 1.25;
         int off = N / 4;
         for (int dx = -4; dx <= 4; ++dx) {
             for (int dy = -4; dy <= 4; ++dy) {
@@ -1197,32 +1195,32 @@ void pe_clear(ftd::ParticleEngine& pe) {
 }
 
 // ── PE Toggle getter/setter (generic, by name) ────────────────────
+// Pointer-to-member map for ParticleToggles.
+using PeBoolPTM = bool ftd::ParticleToggles::*;
+static const std::unordered_map<std::string, PeBoolPTM>& pe_toggle_map() {
+    static const std::unordered_map<std::string, PeBoolPTM> kMap = {
+        {"coulomb",         &ftd::ParticleToggles::coulomb},
+        {"gravity",         &ftd::ParticleToggles::gravity},
+        {"damping",         &ftd::ParticleToggles::damping},
+        {"lorentz",         &ftd::ParticleToggles::lorentz},
+        {"exchange",        &ftd::ParticleToggles::exchange},
+        {"strong",          &ftd::ParticleToggles::strong},
+        {"radiation",       &ftd::ParticleToggles::radiation},
+        {"spin_orbit",      &ftd::ParticleToggles::spin_orbit},
+        {"relativistic",    &ftd::ParticleToggles::relativistic},
+        {"magnetic_dipole", &ftd::ParticleToggles::magnetic_dipole},
+    };
+    return kMap;
+}
+
 void pe_set_toggle(ftd::ParticleEngine& pe, const std::string& name, bool val) {
-    auto& t = pe.toggles;
-    if      (name == "coulomb")         t.coulomb = val;
-    else if (name == "gravity")         t.gravity = val;
-    else if (name == "damping")         t.damping = val;
-    else if (name == "lorentz")         t.lorentz = val;
-    else if (name == "exchange")        t.exchange = val;
-    else if (name == "strong")          t.strong = val;
-    else if (name == "radiation")       t.radiation = val;
-    else if (name == "spin_orbit")      t.spin_orbit = val;
-    else if (name == "relativistic")    t.relativistic = val;
-    else if (name == "magnetic_dipole") t.magnetic_dipole = val;
+    auto it = pe_toggle_map().find(name);
+    if (it != pe_toggle_map().end()) pe.toggles.*(it->second) = val;
 }
 
 bool pe_get_toggle(ftd::ParticleEngine& pe, const std::string& name) {
-    const auto& t = pe.toggles;
-    if      (name == "coulomb")         return t.coulomb;
-    else if (name == "gravity")         return t.gravity;
-    else if (name == "damping")         return t.damping;
-    else if (name == "lorentz")         return t.lorentz;
-    else if (name == "exchange")        return t.exchange;
-    else if (name == "strong")          return t.strong;
-    else if (name == "radiation")       return t.radiation;
-    else if (name == "spin_orbit")      return t.spin_orbit;
-    else if (name == "relativistic")    return t.relativistic;
-    else if (name == "magnetic_dipole") return t.magnetic_dipole;
+    auto it = pe_toggle_map().find(name);
+    if (it != pe_toggle_map().end()) return pe.toggles.*(it->second);
     return false;
 }
 
@@ -1391,34 +1389,34 @@ void ae_clear(ftd::AtomEngine& ae) {
 }
 
 // ── AE Toggle getter/setter (generic, by name) ────────────────────
+// Pointer-to-member map for AtomToggles.
+using AeBoolPTM = bool ftd::AtomToggles::*;
+static const std::unordered_map<std::string, AeBoolPTM>& ae_toggle_map() {
+    static const std::unordered_map<std::string, AeBoolPTM> kMap = {
+        {"ionic",               &ftd::AtomToggles::ionic},
+        {"van_der_waals",       &ftd::AtomToggles::van_der_waals},
+        {"covalent_bonds",      &ftd::AtomToggles::covalent_bonds},
+        {"auto_bonding",        &ftd::AtomToggles::auto_bonding},
+        {"damping",             &ftd::AtomToggles::damping},
+        {"h_bonds",             &ftd::AtomToggles::h_bonds},
+        {"dipole_dipole",       &ftd::AtomToggles::dipole_dipole},
+        {"angle_strain",        &ftd::AtomToggles::angle_strain},
+        {"torsional",           &ftd::AtomToggles::torsional},
+        {"improper_torsional",  &ftd::AtomToggles::improper_torsional},
+        {"thermostat",          &ftd::AtomToggles::thermostat},
+        {"electronegativity",   &ftd::AtomToggles::electronegativity},
+    };
+    return kMap;
+}
+
 void ae_set_toggle(ftd::AtomEngine& ae, const std::string& name, bool val) {
-    auto& t = ae.toggles;
-    if      (name == "ionic")            t.ionic = val;
-    else if (name == "van_der_waals")    t.van_der_waals = val;
-    else if (name == "covalent_bonds")   t.covalent_bonds = val;
-    else if (name == "auto_bonding")     t.auto_bonding = val;
-    else if (name == "damping")          t.damping = val;
-    else if (name == "h_bonds")          t.h_bonds = val;
-    else if (name == "dipole_dipole")    t.dipole_dipole = val;
-    else if (name == "angle_strain")     t.angle_strain = val;
-    else if (name == "torsional")        t.torsional = val;
-    else if (name == "thermostat")       t.thermostat = val;
-    else if (name == "electronegativity") t.electronegativity = val;
+    auto it = ae_toggle_map().find(name);
+    if (it != ae_toggle_map().end()) ae.toggles.*(it->second) = val;
 }
 
 bool ae_get_toggle(ftd::AtomEngine& ae, const std::string& name) {
-    const auto& t = ae.toggles;
-    if      (name == "ionic")            return t.ionic;
-    else if (name == "van_der_waals")    return t.van_der_waals;
-    else if (name == "covalent_bonds")   return t.covalent_bonds;
-    else if (name == "auto_bonding")     return t.auto_bonding;
-    else if (name == "damping")          return t.damping;
-    else if (name == "h_bonds")          return t.h_bonds;
-    else if (name == "dipole_dipole")    return t.dipole_dipole;
-    else if (name == "angle_strain")     return t.angle_strain;
-    else if (name == "torsional")        return t.torsional;
-    else if (name == "thermostat")       return t.thermostat;
-    else if (name == "electronegativity") return t.electronegativity;
+    auto it = ae_toggle_map().find(name);
+    if (it != ae_toggle_map().end()) return ae.toggles.*(it->second);
     return false;
 }
 

@@ -12,22 +12,12 @@
 
 #include <iostream>
 #include "ftd/lattice.h"
+#include "ftd/test_telemetry.h"
 
-int failures = 0;
-
-void check(const char* name, bool condition) {
-    if (condition) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << "\n";
-        ++failures;
-    }
-}
+using ftd::test::check;
 
 int main() {
-    std::cout << "================================================================\n";
-    std::cout << "  TEST: Lattice Operations\n";
-    std::cout << "================================================================\n\n";
+    ftd::test::init("test_lattice");
 
     ftd::Lattice lat(8);
 
@@ -42,7 +32,7 @@ int main() {
                 auto c = lat.coord(idx);
                 if (c.x != x || c.y != y || c.z != z) {
                     std::cout << "  FAIL  Index roundtrip at (" << x << "," << y << "," << z << ")\n";
-                    ++failures;
+                    ftd::test::mark_failure("Index roundtrip");
                     goto done_roundtrip;
                 }
             }
@@ -92,13 +82,5 @@ int main() {
     check("Corner -y wraps to 7", n6_corner[3] == lat.index(0, 7, 0));
     check("Corner -z wraps to 7", n6_corner[5] == lat.index(0, 0, 7));
 
-    std::cout << "\n================================================================\n";
-    if (failures == 0) {
-        std::cout << "  All lattice tests PASSED.\n";
-    } else {
-        std::cout << "  " << failures << " test(s) FAILED.\n";
-    }
-    std::cout << "================================================================\n";
-
-    return failures;
+    return ftd::test::finalize();
 }

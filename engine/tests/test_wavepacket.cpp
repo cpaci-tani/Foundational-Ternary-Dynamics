@@ -26,22 +26,12 @@
 #include <vector>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/test_telemetry.h"
 
-int failures = 0;
-
-void check(const char* name, bool condition) {
-    if (condition) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << "\n";
-        ++failures;
-    }
-}
+using ftd::test::check;
 
 int main() {
-    std::cout << "================================================================\n";
-    std::cout << "  TEST: Wavepacket Injection (Phase 6, Stage 2) — 8 Checks\n";
-    std::cout << "================================================================\n";
+    ftd::test::init("test_wavepacket");
 
     // ================================================================
     // WP1: Total energy after injection ≈ K_B²
@@ -257,16 +247,5 @@ int main() {
         check("WP8: Same-sign interaction PE > 0 (repulsion)", pe_interaction > 0.0);
     }
 
-    // ================================================================
-    // Summary
-    // ================================================================
-    std::cout << "\n================================================================\n";
-    if (failures == 0) {
-        std::cout << "  All wavepacket injection checks PASSED.\n";
-    } else {
-        std::cout << "  " << failures << " check(s) FAILED.\n";
-    }
-    std::cout << "================================================================\n";
-
-    return failures;
+    return ftd::test::finalize();
 }
