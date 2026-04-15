@@ -40,8 +40,12 @@ if(EMSCRIPTEN)
         -sEXPORT_NAME=createFTDModule
         -sMODULARIZE=1
         -sALLOW_MEMORY_GROWTH=1
-        -sINITIAL_MEMORY=134217728   # 128 MB — headroom for L=128 flux fields
-        -sMAXIMUM_MEMORY=536870912
+        # Lattice memory budget (Voxel = 232 bytes after padding):
+        #   L=32 → 12 MB total bridge  | L=64 → 95 MB
+        #   L=96 → 325 MB              | L=128 → 770 MB
+        # 2 GB max gives headroom for L=128 + transient resize spike.
+        -sINITIAL_MEMORY=134217728   # 128 MB — typical L<=64 startup
+        -sMAXIMUM_MEMORY=2147483648  # 2 GB — fits L=128 with margin
         -sSTACK_SIZE=1048576         # 1 MB stack (default 64 KB is risky)
         -sNO_EXIT_RUNTIME=1
         -sENVIRONMENT=web

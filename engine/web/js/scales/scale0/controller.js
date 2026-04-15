@@ -41,7 +41,7 @@
  *     resetAllVisualState - function, master visual state reset from app_dag
  */
 
-import { MockBridge } from '../../wasm-bridge-dag.js?v=20260414a';
+import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415a';
 import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../fieldlines.js?v=20260304q';
 import { formatEnergy } from '../../units.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../constants.js?v=20260305e';
@@ -575,10 +575,16 @@ export function resizeLattice(ctx, newSize) {
     const scenarioEl = document.getElementById('scenario-select');
     const scenarioName = scenarioEl ? scenarioEl.value : 'flux-pulse';
 
-    // Resize the WASM RenderBridge (destroys + recreates fresh at new size).
+    // Resize the WASM RenderBridge: set the new size on the wrapper and
+    // call setupScenario, which internally does ONE reset() at the new
+    // size + applies the scenario. (Calling bridge.reset(newSize) AND
+    // bridge.setupScenario(name) in sequence triggers a *double* reset
+    // because setupScenario itself starts with this.reset() — that doubles
+    // the WASM allocation churn and risks OOM under memory pressure.)
     // The simulation tick counter and per-voxel state are necessarily lost
     // because RenderBridge has no in-place resize.
-    bridge.reset(newSize);
+    bridge.latticeSize = newSize;
+    bridge.setupScenario(scenarioName);
     viewport.setLatticeSize(newSize);
 
     // Re-create the JS MockBridge at the new size (per-size instance)
@@ -589,11 +595,6 @@ export function resizeLattice(ctx, newSize) {
     if (boundaryEl) _fluxMock.setBoundaryShape(boundaryEl.value);
     const reflEl = document.getElementById('reflective-boundary');
     if (reflEl) _fluxMock.setReflectiveBoundary(reflEl.checked);
-
-    // Re-inject the CURRENT scenario at the new size so the lattice has
-    // sensible initial flux. (Without this the new bridge would be all-zeros
-    // and the user's "current scenario" dropdown would be a lie.)
-    bridge.setupScenario(scenarioName);
     _fluxMock.setupScenario(scenarioName);
 
     // CRITICAL: re-sync the EXISTING toggle states (from HTML) to the new
