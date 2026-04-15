@@ -16,7 +16,19 @@
 #include <algorithm>
 #include <cmath>
 
+#ifdef FTD_ENABLE_CUDA
+#include "ftd/gpu_atom_engine.h"
+#endif
+
 namespace ftd {
+
+#ifdef FTD_ENABLE_CUDA
+// Opaque wrapper so atom_engine.h doesn't need to include <cuda_runtime.h>.
+// Holds the gpu::AtomEngineGpu and is lazily instantiated on first use.
+struct AtomEngine::GpuBackend {
+    gpu::AtomEngineGpu engine;
+};
+#endif
 
 // ============================================================================
 // Default neutron count for common elements (N ≈ Z for light elements)
@@ -51,6 +63,12 @@ static int default_neutron_count(int Z) {
 // ============================================================================
 
 AtomEngine::AtomEngine() = default;
+
+// Out-of-line destructor: required so unique_ptr<GpuBackend> can see the
+// complete GpuBackend type when deleting. Without this, every translation
+// unit that includes atom_engine.h and indirectly calls ~AtomEngine would
+// need to see GpuBackend's definition.
+AtomEngine::~AtomEngine() = default;
 
 // ============================================================================
 // Add / remove atoms
@@ -384,24 +402,53 @@ Vec3 AtomEngine::compute_force(int i) const {
 void AtomEngine::compute_all_forces() {
     forces_.resize(atoms_.size());
     force_diag_.resize(atoms_.size());
-    
+
     // O(N) Initialization
     for (int i = 0; i < static_cast<int>(atoms_.size()); ++i) {
         force_diag_[i] = {};
         forces_[i] = {};
     }
 
-    // Build O(N log N) spatial partition tree
+    // =========================================================================
+    // Wave 5.3 Phase 1: GPU pair-force fast path
+    // =========================================================================
+    // When use_gpu_ is on AND CUDA is compiled in, upload atoms to the device
+    // and run an O(N²) CUDA kernel for ionic + vdW pair forces. Multi-body
+    // terms (bonds, angle strain, dipole-dipole, torsion, thermostat) still
+    // run on CPU below — they require atom-local topology (bond lists) that
+    // isn't on the device yet.
+    //
+    // Hydrogen bonds also stay on CPU: they need bond-topology lookups for
+    // donor identification + angular dependence. We fall back to the CPU
+    // Barnes-Hut path whenever toggles.h_bonds is on OR atom count is too
+    // small (< 8) for the GPU upload/download overhead to pay off.
+    bool gpu_pair_handled = false;
+#ifdef FTD_ENABLE_CUDA
+    if (use_gpu_ && !toggles.h_bonds && atoms_.size() >= 8) {
+        if (!gpu_backend_) {
+            gpu_backend_ = std::make_unique<GpuBackend>();
+        }
+        gpu_backend_->engine.compute_pair_forces(
+            atoms_, toggles, soft_, forces_, force_diag_);
+        gpu_pair_handled = true;
+    }
+#endif
+
+    // Build O(N log N) spatial partition tree — still needed on CPU for the
+    // H-bond fallback path and for deterministic diagnostics in GPU-off mode.
     octree_.build(atoms_,
         [](const Atom& a) { return a.position; },
         [](const Atom& a) { return a.mass; },
         [](const Atom& a) { return static_cast<double>(a.charge); }
     );
 
-    // Tree force accumulation (Ionic Coulomb, LJ 12-6, Hbonds)
-    for (int i = 0; i < static_cast<int>(atoms_.size()); ++i) {
-        if (octree_.root >= 0) {
-            forces_[i] += tree_force(i, octree_.root);
+    // Tree force accumulation (Ionic Coulomb, LJ 12-6, Hbonds) — only if the
+    // GPU fast path did not already handle the pair loop.
+    if (!gpu_pair_handled) {
+        for (int i = 0; i < static_cast<int>(atoms_.size()); ++i) {
+            if (octree_.root >= 0) {
+                forces_[i] += tree_force(i, octree_.root);
+            }
         }
     }
 
