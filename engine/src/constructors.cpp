@@ -82,10 +82,23 @@ StampResult entangled_pair(RenderBridge& rb, Coord at, Vec3 J) {
     return StampResult{"entangled_pair", 0, at, diff_sites(rb, before)};
 }
 
-// Level 1A stubs
+// Level 1A implementations
 StampResult octahedron(RenderBridge& rb, Coord center, int8_t state) {
-    (void)rb; (void)state;
-    return StampResult{"octahedron", 1, center, {}};
+    static constexpr std::array<std::array<int,3>, 6> OFFSETS = {{
+        { 1, 0, 0}, {-1, 0, 0},
+        { 0, 1, 0}, { 0,-1, 0},
+        { 0, 0, 1}, { 0, 0,-1},
+    }};
+    const Lattice& lat = rb.lattice();
+    auto& vox = rb.voxels();
+    StampResult r{"octahedron", 1, center, {}};
+    r.sites.reserve(6);
+    for (const auto& o : OFFSETS) {
+        int idx = lat.index(center.x + o[0], center.y + o[1], center.z + o[2]);
+        vox[idx].state = state;
+        r.sites.push_back(idx);
+    }
+    return r;
 }
 
 StampResult cuboctahedron(RenderBridge& rb, Coord center, int8_t state) {

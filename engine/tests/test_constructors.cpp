@@ -17,6 +17,63 @@
 #include "ftd/constants.h"
 #include "ftd/test_telemetry.h"
 
+namespace {
+
+std::tuple<int,int,int> rotate_offset_90(int dx, int dy, int dz, int axis) {
+    switch (axis) {
+        case 0: return { dx, -dz,  dy };
+        case 1: return { dz,  dy, -dx };
+        default: return { -dy, dx,  dz };
+    }
+}
+
+std::set<std::tuple<int,int,int>> offsets_from_sites(
+    const ftd::Lattice& lat,
+    ftd::Coord center,
+    const std::vector<int>& sites)
+{
+    std::set<std::tuple<int,int,int>> out;
+    const int N = lat.size();
+    for (int idx : sites) {
+        ftd::Coord c = lat.coord(idx);
+        int dx = c.x - center.x;
+        int dy = c.y - center.y;
+        int dz = c.z - center.z;
+        if (dx >  N/2) dx -= N;  if (dx < -N/2) dx += N;
+        if (dy >  N/2) dy -= N;  if (dy < -N/2) dy += N;
+        if (dz >  N/2) dz -= N;  if (dz < -N/2) dz += N;
+        out.insert({dx, dy, dz});
+    }
+    return out;
+}
+
+bool is_rotation_invariant(const std::set<std::tuple<int,int,int>>& s, int axis) {
+    std::set<std::tuple<int,int,int>> rotated;
+    for (const auto& [dx, dy, dz] : s) {
+        rotated.insert(rotate_offset_90(dx, dy, dz, axis));
+    }
+    return rotated == s;
+}
+
+bool no_leakage(const ftd::RenderBridge& rb, ftd::Coord center,
+                const std::vector<int>& stamped) {
+    std::set<int> touched(stamped.begin(), stamped.end());
+    const ftd::Lattice& lat = rb.lattice();
+    const auto& vox = rb.voxels();
+    for (int dx = -2; dx <= 2; ++dx)
+    for (int dy = -2; dy <= 2; ++dy)
+    for (int dz = -2; dz <= 2; ++dz) {
+        int idx = lat.index(center.x + dx, center.y + dy, center.z + dz);
+        if (touched.count(idx)) continue;
+        const auto& v = vox[idx];
+        if (v.state != 0) return false;
+        if (v.flux.x != 0 || v.flux.y != 0 || v.flux.z != 0) return false;
+    }
+    return true;
+}
+
+}  // anonymous namespace
+
 static void section_level0_flux() {
     ftd::test::section("Level 0 / flux");
 
@@ -141,11 +198,54 @@ static void section_level0_wavepacket() {
     ftd::test::check("W7: voxel outside cutoff is unchanged", far_unchanged);
 }
 
+static void section_level1a_octahedron() {
+    ftd::test::section("Level 1A / octahedron");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::octahedron(rb, center, +1);
+
+    ftd::test::check("O1: name is 'octahedron'", std::string(r.name) == "octahedron");
+    ftd::test::check("O2: level is 1",           r.level == 1);
+    ftd::test::check("O3: exactly 6 sites",      r.sites.size() == 6);
+
+    bool all_set = true;
+    for (int idx : r.sites) {
+        if (rb.voxels()[idx].state != 1) { all_set = false; break; }
+    }
+    ftd::test::check("O4: every site has state=+1", all_set);
+
+    auto offs = offsets_from_sites(rb.lattice(), center, r.sites);
+    bool all_distance_1 = true;
+    for (const auto& [dx, dy, dz] : offs) {
+        if (dx*dx + dy*dy + dz*dz != 1) { all_distance_1 = false; break; }
+    }
+    ftd::test::check("O5: every offset has L2 distance = 1", all_distance_1);
+
+    std::set<std::tuple<int,int,int>> expected = {
+        { 1, 0, 0}, {-1, 0, 0},
+        { 0, 1, 0}, { 0,-1, 0},
+        { 0, 0, 1}, { 0, 0,-1},
+    };
+    ftd::test::check("O6: offsets match face-neighbor pattern", offs == expected);
+
+    ftd::test::check("O7: invariant under 90deg rotation around x", is_rotation_invariant(offs, 0));
+    ftd::test::check("O8: invariant under 90deg rotation around y", is_rotation_invariant(offs, 1));
+    ftd::test::check("O9: invariant under 90deg rotation around z", is_rotation_invariant(offs, 2));
+
+    const auto& cvox = rb.voxels()[rb.lattice().index(8, 8, 8)];
+    ftd::test::check("O10: center voxel unmodified", cvox.state == 0);
+
+    ftd::test::check("O11: no leakage in 5x5x5 box", no_leakage(rb, center, r.sites));
+}
+
 int main() {
     ftd::test::init("test_constructors");
     section_level0_flux();
     section_level0_particle();
     section_level0_entangled_pair();
     section_level0_wavepacket();
+    section_level1a_octahedron();
     return ftd::test::finalize();
 }
