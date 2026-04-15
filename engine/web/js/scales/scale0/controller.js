@@ -41,7 +41,7 @@
  *     resetAllVisualState - function, master visual state reset from app_dag
  */
 
-import { MockBridge } from '../../wasm-bridge-dag.js?v=20260408a';
+import { MockBridge } from '../../wasm-bridge-dag.js?v=20260414c';
 import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../fieldlines.js?v=20260304q';
 import { formatEnergy } from '../../units.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../constants.js?v=20260305e';
@@ -459,16 +459,25 @@ export function loadScenario(ctx, name) {
 
     bridge.setupScenario(name);
 
-    // Create/reset MockBridge for JS-side flux visualization (fallback when WASM
-    // doesn't have getFluxVolume, or for the parallel JS wave equation demo)
+    // Dispose of any previous MockBridge (prevents ~2-5 MB leak per scenario).
+    if (_fluxMock && typeof _fluxMock.dispose === 'function') _fluxMock.dispose();
+    _fluxMock = null;
+
+    // Only create MockBridge when WASM is NOT live. When the WASM engine is
+    // running, it provides all flux/field data natively — running MockBridge
+    // in parallel doubles CPU load every frame (JS Laplacian + JS field
+    // sampling). That was the root cause of the "FPS drops on play" symptom.
     const L = bridge.latticeSize || 32;
-    _fluxMock = new MockBridge(L);
-    // Sync boundary shape and reflective setting to new mock bridge
-    const boundaryEl = document.getElementById('boundary-select');
-    if (boundaryEl) _fluxMock.setBoundaryShape(boundaryEl.value);
-    const reflEl = document.getElementById('reflective-boundary');
-    if (reflEl) _fluxMock.setReflectiveBoundary(reflEl.checked);
-    _fluxMock.setupScenario(name);
+    const wasmIsLive = bridge && bridge.isWasm && bridge.ready;
+    if (!wasmIsLive) {
+        _fluxMock = new MockBridge(L);
+        // Sync boundary shape and reflective setting to new mock bridge
+        const boundaryEl = document.getElementById('boundary-select');
+        if (boundaryEl) _fluxMock.setBoundaryShape(boundaryEl.value);
+        const reflEl = document.getElementById('reflective-boundary');
+        if (reflEl) _fluxMock.setReflectiveBoundary(reflEl.checked);
+        _fluxMock.setupScenario(name);
+    }
 
     // Reset ALL toggles to defaults before applying scenario-specific overrides.
     // This prevents state leakage between scenarios (e.g., gravity staying ON).
