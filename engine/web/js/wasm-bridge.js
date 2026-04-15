@@ -501,6 +501,20 @@ export class MockBridge {
 
     run(n) { for (let i = 0; i < n; i++) this.tick(); }
 
+    // Release all Float32Array buffers so GC can reclaim them promptly.
+    // Called from app.js::loadScenario() to prevent ~2-5 MB leak per scenario.
+    dispose() {
+        this._fluxJ = null;
+        this._fluxWV = null;
+        this._fluxMag = null;
+        this._stateGrid = null;
+        this._selectiveDampMask = null;
+        this._boundaryMask = null;
+        this._particles = [];
+        this._params = null;
+        this._toggles = null;
+    }
+
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
         this._tick = 0;
