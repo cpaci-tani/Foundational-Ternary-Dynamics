@@ -41,7 +41,7 @@
  *     resetAllVisualState - function, master visual state reset from app_dag
  */
 
-import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415j';
+import { MockBridge } from '../../wasm-bridge-dag.js?v=20260415k';
 import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../fieldlines.js?v=20260304q';
 import { formatEnergy } from '../../units.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../constants.js?v=20260305e';
@@ -657,12 +657,16 @@ export function resizeLattice(ctx, newSize) {
         }
     }
 
-    // Re-probe whether WASM has flux of its own (same as loadScenario)
+    // Re-probe whether WASM has flux of its own (same as loadScenario).
+    // Flux scenarios always use JS mock (WASM sigma/centering is wrong for variable N).
+    const _isFluxScenario = scenarioName.startsWith('flux-');
     let wasmHasFlux = false;
-    try {
-        const probe = bridge.getFluxVolume && bridge.getFluxVolume();
-        wasmHasFlux = !!(probe && probe.length > 0);
-    } catch (_e) { wasmHasFlux = false; }
+    if (!_isFluxScenario) {
+        try {
+            const probe = bridge.getFluxVolume && bridge.getFluxVolume();
+            wasmHasFlux = !!(probe && probe.length > 0);
+        } catch (_e) { wasmHasFlux = false; }
+    }
     _useFluxMock = !wasmHasFlux;
 
     _latticeNeedsUpload = true;
