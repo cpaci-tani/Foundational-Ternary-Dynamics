@@ -20,7 +20,7 @@ import {
     Y_REAL, Y_IMAG, K_C, THETA_C_RAD, THETA_C_DEG,
     COS2_THETA_C, SIN2_THETA_C, C_MANDELBROT,
     K_B, C_SPEED, TICK_PHASES, K_NOETIC, VARPI,
-} from './constants.js?v=20260317a';
+} from './constants.js';
 
 // ── Color Palette (mirrors CSS variables) ────────────────────────────
 
