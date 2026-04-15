@@ -4934,4 +4934,4 @@ export class WasmBridge {
 // CosmicMockBridge moved to bridge/mock-scale5.js (Scale 5 N-body sim)
 // createBridge factory moved to bridge/bridge-factory-dag.js
 export { CosmicMockBridge } from './bridge/mock-scale5.js';
-export { createBridge } from './bridge/bridge-factory-dag.js?v=20260415i';
+export { createBridge } from './bridge/bridge-factory-dag.js?v=20260415j';
