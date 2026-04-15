@@ -575,6 +575,31 @@ export function resizeLattice(ctx, newSize) {
     const scenarioEl = document.getElementById('scenario-select');
     const scenarioName = scenarioEl ? scenarioEl.value : 'flux-pulse';
 
+    // ── PRE-FLIGHT MEMORY CHECK ─────────────────────────────────────
+    // Voxel struct is 232 bytes. Estimate the new bridge's WASM heap
+    // requirement and refuse if it would exceed MAXIMUM_MEMORY (2 GB),
+    // which would otherwise abort() the WASM module catastrophically.
+    //
+    //   bytes ≈ N³ × ~330  (voxels=232 + force_diag=96 + delta_j×3+
+    //                       phi×4 + various small buffers, all per-voxel)
+    const VOXEL_BYTES_TOTAL = 330;
+    const MAX_WASM_MEMORY = 2 * 1024 * 1024 * 1024; // 2 GB ceiling
+    const SAFETY_FACTOR = 1.3;  // leave headroom for staging buffers + JS
+    const projectedBytes = Math.ceil(newSize ** 3 * VOXEL_BYTES_TOTAL * SAFETY_FACTOR);
+    if (projectedBytes >= MAX_WASM_MEMORY) {
+        const projGB = (projectedBytes / 1024 / 1024 / 1024).toFixed(2);
+        const msg = `L=${newSize} would need ~${projGB} GB of WASM heap (max 2 GB). Refusing to resize.`;
+        if (typeof window.showToast === 'function') {
+            window.showToast(msg, 'error');
+        } else {
+            console.warn('[Scale0] ' + msg);
+        }
+        // Revert the dropdown to the current bridge size
+        const sizeEl = document.getElementById('lattice-size');
+        if (sizeEl && bridge.latticeSize) sizeEl.value = String(bridge.latticeSize);
+        return;
+    }
+
     // Resize the WASM RenderBridge: set the new size on the wrapper and
     // call setupScenario, which internally does ONE reset() at the new
     // size + applies the scenario. (Calling bridge.reset(newSize) AND

@@ -620,13 +620,26 @@ void RenderBridge::phase_write() {
 // ============================================================================
 
 // ============================================================================
-// SOR sweep helper — isotropic 18-point Poisson stencil, interior/boundary split
+// SOR sweep helper — isotropic 18-point Poisson stencil with RED-BLACK ordering
 //
 // Replaces three near-identical inner SOR loops in gauss_project,
-// solve_coulomb_poisson, solve_latency_poisson. Interior voxels (not on the
-// boundary) use precomputed integer offsets and pay zero modulo wraps —
-// at L=64 that's ~97% of voxels on the fast path. Only the ~3% on a face
-// of the lattice take the slow modular path via lattice.neighbors_6/12.
+// solve_coulomb_poisson, solve_latency_poisson. Two performance tricks:
+//
+// (1) Interior/boundary split. Voxels not on a lattice face use precomputed
+//     integer offsets and pay zero modulo wraps — at L=64 that's ~97% of
+//     voxels on the fast path. The ~3% on a boundary face take the slow
+//     modular path via lattice.neighbors_6/12.
+//
+// (2) Red-black ordering. Each sweep does TWO passes: pass 0 updates only
+//     "red" voxels (where (x+y+z) parity == 0), pass 1 updates only "black".
+//     Since the 18-point stencil is bipartite (red voxels only have black
+//     neighbors and vice-versa), each color pass has zero loop-carried
+//     dependencies → the compiler can auto-vectorize the inner loop with
+//     -msimd128. Natural-ordering SOR has a write-then-read dependency
+//     between consecutive iterations that prevents vectorization.
+//
+//     Convergence rate is identical to natural-ordering SOR with the same
+//     omega (Hageman & Young 1981); we keep SOR_OMEGA = 1.75.
 // ============================================================================
 static inline void sor_sweep_18pt(std::vector<double>& phi,
                                   const std::vector<double>& source,
@@ -650,43 +663,57 @@ static inline void sor_sweep_18pt(std::vector<double>& phi,
   const int o_ypzp = o_yp + o_zp, o_ypzm = o_yp + o_zm;
   const int o_ymzp = o_ym + o_zp, o_ymzm = o_ym + o_zm;
 
-  // Interior fast path: ~97% of voxels at L=64. Zero modulo, contiguous
-  // index advancement so the JIT/auto-vectorizer can do their thing.
-  for (int z = 1; z < Nm1; ++z) {
-    for (int y = 1; y < Nm1; ++y) {
-      int idx = z * LL + y * L + 1;
-      for (int x = 1; x < Nm1; ++x, ++idx) {
-        const double face_sum = phi[idx + o_xp] + phi[idx + o_xm]
-                              + phi[idx + o_yp] + phi[idx + o_ym]
-                              + phi[idx + o_zp] + phi[idx + o_zm];
-        const double edge_sum = phi[idx + o_xpyp] + phi[idx + o_xpym]
-                              + phi[idx + o_xmyp] + phi[idx + o_xmym]
-                              + phi[idx + o_xpzp] + phi[idx + o_xpzm]
-                              + phi[idx + o_xmzp] + phi[idx + o_xmzm]
-                              + phi[idx + o_ypzp] + phi[idx + o_ypzm]
-                              + phi[idx + o_ymzp] + phi[idx + o_ymzm];
-        const double gs = (INV3 * face_sum + INV6 * edge_sum - source[idx]) * INV4;
-        phi[idx] += omega * (gs - phi[idx]);
+  for (int color = 0; color < 2; ++color) {
+    // ── Interior fast path (per color) ───────────────────────────────
+    // Inner x loop strides by 2 → red and black voxels are interleaved
+    // in cache lines but each pass touches only one color. The starting
+    // x for each row depends on (y + z + color) parity so adjacent rows
+    // alternate the offset.
+    for (int z = 1; z < Nm1; ++z) {
+      for (int y = 1; y < Nm1; ++y) {
+        // x_start ∈ {1, 2}: smallest x ≥ 1 with (x+y+z) parity == color
+        const int parity_yz = (y + z) & 1;
+        const int x_start = 1 + ((color ^ (parity_yz ^ 1)) & 1);
+        int idx = z * LL + y * L + x_start;
+        // No loop-carried dependency between iterations: each phi[idx]
+        // write reads only opposite-color neighbors (idx±1, idx±L,
+        // idx±L²) which are NOT touched again until the next color pass.
+        for (int x = x_start; x < Nm1; x += 2, idx += 2) {
+          const double face_sum = phi[idx + o_xp] + phi[idx + o_xm]
+                                + phi[idx + o_yp] + phi[idx + o_ym]
+                                + phi[idx + o_zp] + phi[idx + o_zm];
+          const double edge_sum = phi[idx + o_xpyp] + phi[idx + o_xpym]
+                                + phi[idx + o_xmyp] + phi[idx + o_xmym]
+                                + phi[idx + o_xpzp] + phi[idx + o_xpzm]
+                                + phi[idx + o_xmzp] + phi[idx + o_xmzm]
+                                + phi[idx + o_ypzp] + phi[idx + o_ypzm]
+                                + phi[idx + o_ymzp] + phi[idx + o_ymzm];
+          const double gs = (INV3 * face_sum + INV6 * edge_sum - source[idx]) * INV4;
+          phi[idx] += omega * (gs - phi[idx]);
+        }
       }
     }
-  }
 
-  // Boundary slow path: voxels on a lattice face. Uses lattice's modular
-  // neighbor lookups. Skips interior voxels already processed above.
-  for (int z = 0; z < L; ++z) {
-    const bool zEdge = (z == 0 || z == Nm1);
-    for (int y = 0; y < L; ++y) {
-      const bool yEdge = (y == 0 || y == Nm1);
-      for (int x = 0; x < L; ++x) {
-        if (!zEdge && !yEdge && x != 0 && x != Nm1) continue;
-        const int idx = z * LL + y * L + x;
-        const auto& face = lattice.neighbors_6(idx);
-        const auto& edge = lattice.neighbors_12(idx);
-        double face_sum = 0.0, edge_sum = 0.0;
-        for (int n : face) face_sum += phi[n];
-        for (int n : edge) edge_sum += phi[n];
-        const double gs = (INV3 * face_sum + INV6 * edge_sum - source[idx]) * INV4;
-        phi[idx] += omega * (gs - phi[idx]);
+    // ── Boundary slow path (per color) ───────────────────────────────
+    // Voxels on a lattice face. Uses lattice's modular neighbor lookups.
+    // Skips interior voxels already processed above AND wrong-color voxels.
+    for (int z = 0; z < L; ++z) {
+      const bool zEdge = (z == 0 || z == Nm1);
+      for (int y = 0; y < L; ++y) {
+        const bool yEdge = (y == 0 || y == Nm1);
+        for (int x = 0; x < L; ++x) {
+          const bool isInterior = !zEdge && !yEdge && x != 0 && x != Nm1;
+          if (isInterior) continue;
+          if (((x + y + z) & 1) != color) continue;
+          const int idx = z * LL + y * L + x;
+          const auto& face = lattice.neighbors_6(idx);
+          const auto& edge = lattice.neighbors_12(idx);
+          double face_sum = 0.0, edge_sum = 0.0;
+          for (int n : face) face_sum += phi[n];
+          for (int n : edge) edge_sum += phi[n];
+          const double gs = (INV3 * face_sum + INV6 * edge_sum - source[idx]) * INV4;
+          phi[idx] += omega * (gs - phi[idx]);
+        }
       }
     }
   }
