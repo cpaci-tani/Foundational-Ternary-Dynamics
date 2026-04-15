@@ -9,6 +9,7 @@
 import { getById as catalogGetById } from './particle-catalog.js';
 import { ALPHA, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON, R_BOHR, N_BASE, G_STAR, VARPI, N_C, B_3, N_EFF } from './constants.js';
 import { cpkColor, defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from './elements.js';
+import { debugLog } from './core/log.js';
 
 // ── Atom property helper (simulation units: Bohr-scaled) ──────────
 // C++ engine uses Planck units; JS MockBridge uses "simulation units"
@@ -2364,7 +2365,7 @@ export class MockBridge {
      */
     aePreBond() {
         if (!this._ae || !this._ae.bonding) {
-            console.log('[FTD aePreBond] skipped — ae:', !!this._ae, 'bonding:', this._ae?.bonding);
+            debugLog('[FTD aePreBond] skipped — ae:', !!this._ae, 'bonding:', this._ae?.bonding);
             return;
         }
         const atoms = this._ae.atoms;
@@ -2387,9 +2388,9 @@ export class MockBridge {
                 }
             }
         }
-        console.log(`[FTD aePreBond] ${atoms.length} atoms, ${bondsCreated} bonds created`);
+        debugLog(`[FTD aePreBond] ${atoms.length} atoms, ${bondsCreated} bonds created`);
         for (const a of atoms) {
-            console.log(`  atom ${a.id} Z=${a.Z} pos=(${a.x.toFixed(2)},${a.y.toFixed(2)},${a.z.toFixed(2)}) bonds=${a.bonds.length}/${a.max_bonds} sigma=${a.vdw_sigma.toFixed(2)}`);
+            debugLog(`  atom ${a.id} Z=${a.Z} pos=(${a.x.toFixed(2)},${a.y.toFixed(2)},${a.z.toFixed(2)}) bonds=${a.bonds.length}/${a.max_bonds} sigma=${a.vdw_sigma.toFixed(2)}`);
         }
     }
 
@@ -2473,10 +2474,10 @@ export class MockBridge {
 
         // Debug: log first 3 ticks
         if (tickNum < 3) {
-            console.log(`[FTD aeTick #${tickNum}] dt=${dt} atoms=${atoms.length}`);
+            debugLog(`[FTD aeTick #${tickNum}] dt=${dt} atoms=${atoms.length}`);
             for (let i = 0; i < Math.min(atoms.length, 4); i++) {
                 const a = atoms[i], f = forces[i];
-                console.log(`  atom ${a.id}: pos=(${a.x.toFixed(3)},${a.y.toFixed(3)},${a.z.toFixed(3)}) vel=(${a.vx.toFixed(4)},${a.vy.toFixed(4)},${a.vz.toFixed(4)}) force=(${f.fx.toFixed(4)},${f.fy.toFixed(4)},${f.fz.toFixed(4)}) bonds=${a.bonds.length}`);
+                debugLog(`  atom ${a.id}: pos=(${a.x.toFixed(3)},${a.y.toFixed(3)},${a.z.toFixed(3)}) vel=(${a.vx.toFixed(4)},${a.vy.toFixed(4)},${a.vz.toFixed(4)}) force=(${f.fx.toFixed(4)},${f.fy.toFixed(4)},${f.fz.toFixed(4)}) bonds=${a.bonds.length}`);
             }
         }
 
@@ -2523,7 +2524,7 @@ export class MockBridge {
         if (tickNum < 3) {
             for (let i = 0; i < Math.min(atoms.length, 4); i++) {
                 const a = atoms[i];
-                console.log(`  atom ${a.id} after tick: pos=(${a.x.toFixed(3)},${a.y.toFixed(3)},${a.z.toFixed(3)}) vel=(${a.vx.toFixed(4)},${a.vy.toFixed(4)},${a.vz.toFixed(4)})`);
+                debugLog(`  atom ${a.id} after tick: pos=(${a.x.toFixed(3)},${a.y.toFixed(3)},${a.z.toFixed(3)}) vel=(${a.vx.toFixed(4)},${a.vy.toFixed(4)},${a.vz.toFixed(4)})`);
             }
         }
 
@@ -4320,9 +4321,14 @@ export class WasmBridge {
             this._module = await globalThis.createFTDModule({
                 locateFile: (path) => 'wasm/' + path
             });
-            this._bridge = new this._module.DagEngine(latticeSize);
+            // Must be RenderBridge, not DagEngine: every module function in
+            // ftd_wasm.cpp (setupScenario, injectParticle, injectFlux, setDt,
+            // etc.) takes `ftd::RenderBridge&`. The DagEngine embind class
+            // only exposes .tick/.clear and cannot be passed to those
+            // functions (embind throws BindingError on type mismatch).
+            this._bridge = new this._module.RenderBridge(latticeSize);
             this.ready = true;
-            console.log('FTD WASM engine loaded successfully');
+            debugLog('FTD WASM engine loaded successfully');
             return true;
         } catch (e) {
             console.warn('WASM module not available, falling back to MockBridge:', e.message);
@@ -4350,7 +4356,8 @@ export class WasmBridge {
         this.latticeSize = latticeSize || this.latticeSize;
         if (this._module) {
             if (this._bridge) this._bridge.delete();
-            this._bridge = new this._module.DagEngine(this.latticeSize);
+            // RenderBridge (not DagEngine) — see init() above for rationale.
+            this._bridge = new this._module.RenderBridge(this.latticeSize);
         }
     }
 
@@ -4855,6 +4862,6 @@ export class WasmBridge {
 
 // ── Re-exports from extracted modules ────────────────────────────────
 // CosmicMockBridge moved to bridge/mock-scale5.js (Scale 5 N-body sim)
-// createBridge factory moved to bridge/bridge-factory.js
+// createBridge factory moved to bridge/bridge-factory-dag.js
 export { CosmicMockBridge } from './bridge/mock-scale5.js';
 export { createBridge } from './bridge/bridge-factory-dag.js';

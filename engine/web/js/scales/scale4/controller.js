@@ -7,7 +7,6 @@
 
 import { PlanetaryMockBridge } from '../../bridge/mock-scale4.js?v=20260408b';
 import { PlanetaryRenderer } from '../../planetary-renderer.js?v=20260408b';
-import { bus, EVENTS } from '../../core/event-bus.js';
 
 let _planetaryBridge = null;
 let _planetaryRenderer = null;
