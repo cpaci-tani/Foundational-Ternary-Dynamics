@@ -51,26 +51,12 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     'flux-dual-substrate': [
         ['dual_substrate', true, 't-dual'],
     ],
-    'flux-cosmic-web': [
-        ['gravity', true, 't-gravity'],
-    ],
-    'flux-gravitational-wave': [
-        ['gravity', true, 't-gravity'],
-    ],
     'flux-triad': [
         ['gravity', true, 't-gravity'],
     ],
     'flux-baryon': [
         ['gravity', true, 't-gravity'],
         ['confinement', true, 't-confinement'],
-        ['genesis', false, 't-genesis'],
-    ],
-    'flux-black-hole': [
-        ['gravity', true, 't-gravity'],
-        ['genesis', false, 't-genesis'],
-    ],
-    'flux-stable-vortex': [
-        ['damping', false, 't-damping'],
         ['genesis', false, 't-genesis'],
     ],
     'flux-cyclotron': [
@@ -83,14 +69,6 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     'flux-string-breaking': [
         ['confinement', true, 't-confinement'],
         ['genesis', true, 't-genesis'],
-    ],
-    'flux-dark-matter': [
-        ['gravity', true, 't-gravity'],
-        ['genesis', false, 't-genesis'],
-    ],
-    'flux-baryogenesis': [
-        ['genesis', true, 't-genesis'],
-        ['gravity', true, 't-gravity'],
     ],
     'flux-vacuum-foam': [
         ['genesis', true, 't-genesis'],
@@ -132,29 +110,6 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     'quantum-zeno': [
         ['genesis', true, 't-genesis'],
         ['damping', true, 't-damping'],
-    ],
-    // ── Standard Model scenarios ──
-    'sm-particle-zoo': [
-        ['genesis', false, 't-genesis'],
-    ],
-    'sm-higgs-field': [
-        ['genesis', false, 't-genesis'],
-        ['damping', false, 't-damping'],
-    ],
-    'sm-higgs-mechanism': [
-        ['genesis', false, 't-genesis'],
-        ['damping', false, 't-damping'],
-    ],
-    'sm-electroweak': [
-        ['genesis', false, 't-genesis'],
-    ],
-    'sm-three-generations': [
-        ['genesis', false, 't-genesis'],
-    ],
-    'sm-qcd-vacuum': [
-        ['confinement', true, 't-confinement'],
-        ['genesis', false, 't-genesis'],
-        ['gravity', true, 't-gravity'],
     ],
 };
 
