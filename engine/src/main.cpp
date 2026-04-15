@@ -18,6 +18,7 @@
 #define _USE_MATH_DEFINES
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
