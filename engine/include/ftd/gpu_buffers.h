@@ -51,6 +51,9 @@ struct GpuBuffers {
     // --- Solver fields ---
     double*   d_phi         = nullptr;  // Gauss potential (warm-started)
     double*   d_phi_coulomb = nullptr;  // Coulomb potential (warm-started)
+    double*   d_phi_latency = nullptr;  // Latency Poisson potential (warm-started)
+    double*   d_latency     = nullptr;  // voxel.latency = sqrt(clamp(|phi_latency|, 0, 0.998))
+    double*   d_tau         = nullptr;  // voxel.tau: accumulated proper time
 
     // --- Read-phase temporary (delta_j) ---
     double*   d_delta_j_x   = nullptr;
@@ -116,6 +119,9 @@ struct GpuBuffers {
 
     // Download only voxels (for diagnostics)
     void download_voxels(std::vector<Voxel>& host_voxels) const;
+
+    // Download phi_latency from device (Wave 5: GPU latency Poisson)
+    void download_phi_latency(std::vector<double>& out) const;
 
     // Precompute Green's function for FFT Poisson solver
     void precompute_green_function();

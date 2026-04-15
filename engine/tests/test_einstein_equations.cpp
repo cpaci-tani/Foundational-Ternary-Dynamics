@@ -116,11 +116,9 @@ static FitResult log_log_fit(const std::vector<double>& x,
 // ================================================================
 static std::unique_ptr<RenderBridge> make_einstein_engine(int L) {
     auto rb = std::make_unique<RenderBridge>(L);
-    // CRITICAL: force_cpu() is required because CUDA kernels do not
-    // implement solve_latency_poisson — phi_latency_ stays at zero
-    // on GPU. Every Einstein/phi-dependent assertion fails as a result.
-    // See render_bridge.cpp:696-747 for the CPU implementation.
-    rb->force_cpu();
+    // Wave 5 (2026-04-14): GPU now implements solve_latency_poisson
+    // (kernels_poisson.cu::launch_solve_latency), so this test runs on
+    // GPU by default. The old force_cpu() workaround has been removed.
     rb->toggles.disable_all();
     rb->toggles.latency_field = true;
     // Wave propagation OFF: we only want the Poisson solver, no flux dynamics
