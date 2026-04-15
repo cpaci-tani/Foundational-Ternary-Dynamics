@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FTD Engine</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' fill='%2300ffaa' text-anchor='middle'%3EΦ%3C/text%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -175,13 +176,13 @@
             </div>
             <div class="load-status" id="load-status"></div>
         </div>
-        <div class="load-version">v2.11</div>
+        <div class="load-version">v2.14</div>
     </div>
 
     <div id="app" class="mode-lattice" data-active-scale="0">
         <!-- ── Toolbar ──────────────────────────────── -->
         <nav id="toolbar" aria-label="Simulation controls">
-            <h1 class="brand">FTD Engine <span>v2.11</span></h1>
+            <h1 class="brand">FTD Engine <span>v2.14</span></h1>
             <div class="separator"></div>
             <div class="tb-group">
                 <button class="tb-btn" id="btn-play" title="Play / Pause (Space)">&#9654;</button>
@@ -2156,7 +2157,7 @@
                 <div class="card">
                     <div class="card-title">Celestial Hierarchy</div>
                     <ul id="planetary-layer-list" class="zoo-list" style="max-height:250px; overflow-y:auto; border:1px solid var(--border); padding:5px; list-style:none; margin:0; cursor:pointer;">
-                        <!-- Dynamically populated by mock-scale4.js/app_dag.js via _planetaryBridge -->
+                        <!-- Dynamically populated by mock-scale4.js/app.js via _planetaryBridge -->
                     </ul>
                 </div>
                 <!-- Visual Toggles -->
@@ -2499,7 +2500,7 @@
     </div>
 
     <!-- ── Application Scripts ──────────────────────── -->
-    <script type="module" src="js/app_dag.js?v=20260408b"></script>
+    <script type="module" src="js/app.js?v=20260414a"></script>
 </body>
 
 </html>
