@@ -2,10 +2,10 @@
  * Bridge Factory — creates the appropriate simulation bridge.
  *
  * Tries WASM first (WasmBridge); falls back to JS MockBridge.
- * Extracted from wasm-bridge.js to reduce monolith size.
+ * Extracted from the legacy bridge module to reduce monolith size.
  */
 
-import { WasmBridge, MockBridge } from '../wasm-bridge-dag.js';
+import { WasmBridge, MockBridge } from '../wasm-bridge-dag.js?v=20260414a';
 import { CosmicMockBridge } from './mock-scale5.js';
 
 /**

@@ -12,6 +12,8 @@
  * and communicates over WebSocket on localhost:9100.
  */
 
+import { debugLog } from './core/log.js';
+
 export class WebSocketBridge {
     constructor(url = 'ws://localhost:9100') {
         this._url = url;
@@ -65,12 +67,12 @@ export class WebSocketBridge {
                 this._ws.onopen = () => {
                     this._connected = true;
                     this.ready = true;
-                    console.log('[ws-bridge] Connected to native GPU engine');
+                    debugLog('[ws-bridge] Connected to native GPU engine');
                     // Query info
                     this._sendJSON({ cmd: 'info' }).then(info => {
                         this.latticeSize = info.latticeSize || 32;
                         this.isNativeGPU = info.gpu || false;
-                        console.log(`[ws-bridge] Engine: L=${this.latticeSize}, GPU=${this.isNativeGPU}`);
+                        debugLog(`[ws-bridge] Engine: L=${this.latticeSize}, GPU=${this.isNativeGPU}`);
                     });
                     resolve(this);
                 };
@@ -88,7 +90,7 @@ export class WebSocketBridge {
                 this._ws.onclose = () => {
                     this._connected = false;
                     this.ready = false;
-                    console.log('[ws-bridge] Disconnected');
+                    debugLog('[ws-bridge] Disconnected');
                     // Drain pending queue — reject all waiting promises
                     while (this._pendingQueue.length > 0) {
                         const pending = this._pendingQueue.shift();
@@ -135,11 +137,11 @@ export class WebSocketBridge {
         const maxDelay = 30000;
         let delay = 1000;
         const attempt = () => {
-            console.log(`[ws-bridge] Reconnecting in ${delay / 1000}s...`);
+            debugLog(`[ws-bridge] Reconnecting in ${delay / 1000}s...`);
             setTimeout(() => {
                 this.connect().then(() => {
                     this._reconnecting = false;
-                    console.log('[ws-bridge] Reconnected');
+                    debugLog('[ws-bridge] Reconnected');
                 }).catch(() => {
                     delay = Math.min(delay * 2, maxDelay);
                     attempt();
@@ -343,7 +345,7 @@ export async function tryNativeBridge(latticeSize = 32) {
         }
         return bridge;
     } catch (e) {
-        console.log('[ws-bridge] Native GPU engine not available:', e.message);
+        debugLog('[ws-bridge] Native GPU engine not available:', e.message);
         return null;
     }
 }
