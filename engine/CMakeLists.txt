@@ -4,6 +4,12 @@ project(ftd_engine VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Tell MSVC to interpret source files as UTF-8 so that hex-escaped multi-byte
+# sequences in string literals (e.g. ontic_audit.cpp) are accepted correctly.
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
+
 # OpenMP for multi-threaded tick phases (not available under Emscripten)
 if(NOT EMSCRIPTEN)
     find_package(OpenMP)
@@ -85,6 +91,8 @@ add_library(ftd_core
     src/atom_engine.cpp
     src/cosmic_engine.cpp
     src/scale_bridge.cpp
+    src/ontic_audit.cpp    # RF-03: ontic_audit() body moved from ontic.h
+    src/csv_export.cpp     # RF-05: csv export bodies moved from csv_export.h
 )
 target_include_directories(ftd_core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 if(OpenMP_CXX_FOUND)
@@ -1028,6 +1036,146 @@ if(FTD_ENABLE_CUDA)
     endforeach()
     unset(_ftd_gpu_tests)
 endif()
+
+# ============================================================================
+# RF-17: Speed labels (fast / slow / benchmark)
+# ============================================================================
+# fast  — typically <1 s (constants, lattice math, small unit tests)
+# slow  — typically >10 s (large-grid or multi-phase simulations)
+# benchmark — dedicated throughput/performance measurement suites
+# campaign  — already labeled above; also mark as slow
+# ============================================================================
+
+# Fast tests: pure math / constants / small lattice
+set_property(TEST
+    constants ontic_chain born_infeld voxel_properties
+    lattice_operators discrete_operators
+    dual_substrate genesis
+    action_stationarity asymptotic_freedom atom_toggles
+    flavor_physics higgs_mechanism hilbert measurement
+    spin_statistics wz_mass
+    APPEND PROPERTY LABELS "fast")
+
+# Slow tests: large grids, many ticks, multi-phase dynamics
+set_property(TEST
+    flux_mediated selffield_profile wavepacket
+    particle_lifetime
+    campaign_gauge_dynamics campaign_gauge_constraint
+    campaign_free_dynamics campaign_aggregate_interaction
+    campaign_energy_audit campaign_bound_lifetime
+    campaign_spontaneous campaign_cross_scale campaign_born_ensemble
+    campaign_h2_molecule campaign_multiscale_pipeline
+    campaign_statistical_convergence campaign_wave_dynamics
+    campaign_born_rule
+    campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
+    campaign_structure_stability campaign_qcd_forces
+    campaign_weak_transmutation campaign_parity_violation campaign_weak_decay
+    campaign_gravitational_wave campaign_gravity_profile campaign_gravity_hierarchy
+    campaign_triad_binding campaign_neutrino_sector
+    campaign_cosmological_predictions campaign_dark_sector campaign_novel_predictions
+    campaign_integer_sweep campaign_hydrogen_spectrum
+    campaign_pe_fine_structure campaign_ae_water campaign_lorentz_measure
+    particle_engine scale_bridge atom_engine atom_scale_bridge multiscale_bridge
+    selective_damping stress_energy em_energy_conservation continuity
+    poynting larmor ensemble correlations spectral tracker
+    inflation dark_matter cosmological_constant consciousness sloop
+    electroweak helium_scale1 fine_structure_scale1
+    radiative_decay_scale1 scale_proof_chain
+    APPEND PROPERTY LABELS "slow")
+
+# Benchmark tests: dedicated engine-vs-theory measurement suites
+set_property(TEST
+    benchmark_engine_theory benchmark_emergent_alpha
+    benchmark_budget_equation benchmark_bh_thermo benchmark_wilson_loops
+    benchmark
+    APPEND PROPERTY LABELS "benchmark;slow")
+
+# ============================================================================
+# RF-17: Domain labels (physics area)
+# ============================================================================
+
+# Electromagnetic domain
+set_property(TEST
+    maxwell em_fields em_energy_conservation
+    continuity poynting larmor
+    dipole_radiation thomson_scattering light
+    telemetry_selftest
+    lorentz gauge polarization
+    flux_mediated variational_coulomb
+    campaign_lorentz_measure
+    APPEND PROPERTY LABELS "em")
+
+# QCD / color domain
+set_property(TEST
+    campaign_qcd_forces
+    asymptotic_freedom confinement_test triad_confinement
+    campaign_triad_binding campaign_triad_energy
+    APPEND PROPERTY LABELS "qcd")
+
+# Gravity domain
+set_property(TEST
+    gravity_dynamics latency_field einstein_equations
+    campaign_gravitational_wave campaign_gravity_profile campaign_gravity_hierarchy
+    campaign_gravity_hierarchy inflation cosmological_constant
+    dark_matter campaign_cosmological_predictions
+    APPEND PROPERTY LABELS "gravity")
+
+# Lattice / geometry domain
+set_property(TEST
+    lattice lattice_operators discrete_operators voxel_properties
+    born_infeld bridge_dynamics
+    campaign_dispersion
+    APPEND PROPERTY LABELS "lattice")
+
+# Particle / quantum domain
+set_property(TEST
+    genesis annihilation annihilation_conservation wave_collapse
+    particle_lifetime particle_engine portable_field
+    baryogenesis bell_aggregate born_rule_ensemble
+    entanglement_basis
+    campaign_born_rule campaign_quantum_correlations
+    campaign_dark_sector campaign_novel_predictions
+    APPEND PROPERTY LABELS "particle")
+
+# Atomic / hydrogen domain
+set_property(TEST
+    atom_engine atom_scale_bridge atom_engine_forces
+    helium_scale1 fine_structure_scale1
+    radiative_decay_scale1 scale_proof_chain
+    campaign_hydrogen_spectrum campaign_hydrogen_binding
+    campaign_h2_molecule
+    APPEND PROPERTY LABELS "atom")
+
+# Consciousness / measurement domain
+set_property(TEST
+    consciousness sloop measurement hilbert
+    ensemble correlations spectral tracker
+    campaign_wigner campaign_vonneumann
+    APPEND PROPERTY LABELS "consciousness")
+
+# ============================================================================
+# RF-17: Phase labels (engine tick-phase relevance)
+# ============================================================================
+
+set_property(TEST
+    maxwell gauge continuity
+    campaign_gauge_dynamics campaign_gauge_constraint
+    APPEND PROPERTY LABELS "phase_read")
+
+set_property(TEST
+    annihilation annihilation_conservation genesis
+    campaign_spontaneous
+    APPEND PROPERTY LABELS "phase_write")
+
+set_property(TEST
+    gravity_dynamics latency_field einstein_equations
+    campaign_gravitational_wave
+    APPEND PROPERTY LABELS "phase_forces")
+
+set_property(TEST
+    particle_lifetime portable_field wavepacket
+    campaign_wave_dynamics
+    APPEND PROPERTY LABELS "phase_movement")
 
 endif() # NOT EMSCRIPTEN — end of CTest labels block
 

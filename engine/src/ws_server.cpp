@@ -610,7 +610,12 @@ bool handle_command(const std::string& json, SOCKET client,
         std::string name = json_string(json, "name");
         bool value = json_bool(json, "value");
         bool* ptr = find_toggle(rb->toggles, name);
-        if (ptr) *ptr = value;
+        if (ptr) {
+            *ptr = value;
+            std::string validErr;
+            if (!rb->toggles.validate(&validErr))
+                std::cerr << "[TermToggles] Invalid combination: " << validErr;
+        }
         return true;  // Fire-and-forget
     }
     else if (cmd == "set_param") {
