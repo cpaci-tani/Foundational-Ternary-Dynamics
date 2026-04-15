@@ -778,6 +778,198 @@ static void section_thermostat() {
 }
 
 // ============================================================================
+// Section: cpu_gpu_parity  (Wave 5.3 Phase 1)
+//
+// Build a moderately-sized atom system that exercises the GPU threshold
+// (N >= 8), run compute_all_forces via tick() twice — once with use_gpu
+// off, once with use_gpu on — and compare the per-atom force components
+// term-by-term. This is the definitive CPU/GPU numerical parity check
+// for the Wave 5.3 pair-force kernel (ionic + van der Waals).
+// ============================================================================
+
+static void section_cpu_gpu_parity() {
+    // Separation must be much larger than vdW sigma (~R_BOHR * N_BASE ~= 10000)
+    // or we need to disable vdW. We exercise the ionic kernel on its own, then
+    // a separate sub-check runs ionic + vdW at a safe spacing. Atoms are locked
+    // so we never integrate — all we need is the very first compute_all_forces
+    // call from tick() to populate force_diag.
+    const double SPACING_IONIC = 50.0;    // ionic only, close enough to see force
+    const double SPACING_VDW   = 15000.0; // beyond vdW sigma so forces are finite
+
+    auto build = [](ftd::AtomEngine& ae, double spacing, bool with_vdw) {
+        ae.set_damping_enabled(false);
+        ae.set_bonding_enabled(false);
+        ae.set_softening(0.5);
+
+        // 12 atoms in a 3x2x2 grid — above the 8-atom GPU threshold. All
+        // atoms locked so integration never moves them and we can read out
+        // the force on a stable configuration.
+        int id = 0;
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 2; ++j) {
+                for (int k = 0; k < 2; ++k) {
+                    int Z = (id % 3 == 0) ? 1 : (id % 3 == 1) ? 8 : 11;
+                    int charge = (id % 4 == 0) ? +1
+                               : (id % 4 == 1) ? -1
+                               : 0;
+                    int aid = ae.add_atom(Z,
+                        {static_cast<double>(i) * spacing,
+                         static_cast<double>(j) * spacing,
+                         static_cast<double>(k) * spacing},
+                        {0, 0, 0}, charge);
+                    ae.atoms()[aid].locked = true;  // freeze for force query
+                    ++id;
+                }
+            }
+        }
+        ae.toggles.ionic = true;
+        ae.toggles.van_der_waals = with_vdw;
+        ae.toggles.covalent_bonds = false;
+        ae.toggles.h_bonds = false;
+        ae.toggles.angle_strain = false;
+        ae.toggles.dipole_dipole = false;
+        ae.toggles.damping = false;
+        ae.toggles.auto_bonding = false;
+    };
+
+    // -----------------------------------------------------------------------
+    // Scenario A: ionic-only, 12 atoms at 50-unit spacing (GPU path)
+    // -----------------------------------------------------------------------
+    std::cout << "\n--- CGP1: CPU ionic-only path ---\n";
+    ftd::AtomEngine ae_cpu;
+    build(ae_cpu, SPACING_IONIC, /*with_vdw=*/false);
+    ae_cpu.set_use_gpu(false);
+    ae_cpu.run(1);  // integration is a no-op because all atoms are locked
+    const auto& fd_cpu = ae_cpu.force_diag();
+    double cpu_total = 0.0;
+    for (const auto& d : fd_cpu) cpu_total += d.f_ionic.mag();
+    std::cout << "  CPU atoms=" << fd_cpu.size()
+              << " sum|f_ionic|=" << cpu_total
+              << " f_ionic[0]=(" << fd_cpu[0].f_ionic.x << ","
+              << fd_cpu[0].f_ionic.y << ","
+              << fd_cpu[0].f_ionic.z << ")\n";
+    ftd::test::check("CGP1: CPU ionic-only path produces nonzero forces",
+                     cpu_total > 1e-12);
+
+    std::cout << "\n--- CGP2: GPU ionic-only path ---\n";
+    ftd::AtomEngine ae_gpu;
+    build(ae_gpu, SPACING_IONIC, /*with_vdw=*/false);
+    ae_gpu.set_use_gpu(true);
+    ae_gpu.run(1);
+    const auto& fd_gpu = ae_gpu.force_diag();
+    double gpu_total = 0.0;
+    for (const auto& d : fd_gpu) gpu_total += d.f_ionic.mag();
+    std::cout << "  GPU atoms=" << fd_gpu.size()
+              << " sum|f_ionic|=" << gpu_total
+              << " f_ionic[0]=(" << fd_gpu[0].f_ionic.x << ","
+              << fd_gpu[0].f_ionic.y << ","
+              << fd_gpu[0].f_ionic.z << ")\n";
+    ftd::test::check("CGP2: GPU ionic-only path produces nonzero forces",
+                     gpu_total > 1e-12);
+
+    std::cout << "\n--- CGP3: CPU vs GPU ionic force parity ---\n";
+    // CPU Barnes-Hut uses monopole at wide nodes; the 12-atom 3x2x2 grid
+    // with 50-unit spacing has width ~100 so opening-angle width/r ~= 1 for
+    // interior pairs → all leaves, no monopole approximation kicks in. We
+    // expect bit-identical results modulo summation order.
+    double max_ionic_abs_err = 0.0;
+    double max_ionic_rel_err = 0.0;
+    for (size_t i = 0; i < fd_cpu.size() && i < fd_gpu.size(); ++i) {
+        ftd::Vec3 d_ionic = {
+            fd_cpu[i].f_ionic.x - fd_gpu[i].f_ionic.x,
+            fd_cpu[i].f_ionic.y - fd_gpu[i].f_ionic.y,
+            fd_cpu[i].f_ionic.z - fd_gpu[i].f_ionic.z,
+        };
+        double abs_err = d_ionic.mag();
+        double ref     = fd_cpu[i].f_ionic.mag();
+        double rel_err = (ref > 1e-30) ? (abs_err / ref) : abs_err;
+        max_ionic_abs_err = std::max(max_ionic_abs_err, abs_err);
+        max_ionic_rel_err = std::max(max_ionic_rel_err, rel_err);
+    }
+    std::cout << "  max |F_ionic_cpu - F_ionic_gpu| = " << max_ionic_abs_err
+              << "  (rel " << max_ionic_rel_err << ")\n";
+    ftd::test::check("CGP3: ionic force parity within 1e-8 abs",
+                     max_ionic_abs_err < 1e-8);
+    ftd::test::check("CGP4: ionic force parity within 1e-8 rel",
+                     max_ionic_rel_err < 1e-8);
+
+    // -----------------------------------------------------------------------
+    // Scenario B: ionic + vdW, 12 atoms at 15000-unit spacing (safe for LJ)
+    // -----------------------------------------------------------------------
+    std::cout << "\n--- CGP5: CPU vs GPU ionic+vdW parity ---\n";
+    ftd::AtomEngine ae2_cpu, ae2_gpu;
+    build(ae2_cpu, SPACING_VDW, /*with_vdw=*/true);
+    build(ae2_gpu, SPACING_VDW, /*with_vdw=*/true);
+    ae2_cpu.set_use_gpu(false);
+    ae2_gpu.set_use_gpu(true);
+    ae2_cpu.run(1);
+    ae2_gpu.run(1);
+    const auto& fd2_cpu = ae2_cpu.force_diag();
+    const auto& fd2_gpu = ae2_gpu.force_diag();
+
+    double max_total_abs_err = 0.0;
+    double max_vdw_abs_err   = 0.0;
+    double cpu_total_mag     = 0.0;
+    double cpu_vdw_mag       = 0.0;
+    for (size_t i = 0; i < fd2_cpu.size() && i < fd2_gpu.size(); ++i) {
+        ftd::Vec3 dt = {
+            (fd2_cpu[i].f_ionic.x + fd2_cpu[i].f_vdw.x) -
+            (fd2_gpu[i].f_ionic.x + fd2_gpu[i].f_vdw.x),
+            (fd2_cpu[i].f_ionic.y + fd2_cpu[i].f_vdw.y) -
+            (fd2_gpu[i].f_ionic.y + fd2_gpu[i].f_vdw.y),
+            (fd2_cpu[i].f_ionic.z + fd2_cpu[i].f_vdw.z) -
+            (fd2_gpu[i].f_ionic.z + fd2_gpu[i].f_vdw.z),
+        };
+        ftd::Vec3 dv = {
+            fd2_cpu[i].f_vdw.x - fd2_gpu[i].f_vdw.x,
+            fd2_cpu[i].f_vdw.y - fd2_gpu[i].f_vdw.y,
+            fd2_cpu[i].f_vdw.z - fd2_gpu[i].f_vdw.z,
+        };
+        max_total_abs_err = std::max(max_total_abs_err, dt.mag());
+        max_vdw_abs_err   = std::max(max_vdw_abs_err,   dv.mag());
+        cpu_total_mag += fd2_cpu[i].f_ionic.mag() + fd2_cpu[i].f_vdw.mag();
+        cpu_vdw_mag   += fd2_cpu[i].f_vdw.mag();
+    }
+    std::cout << "  CPU ionic+vdW total = " << cpu_total_mag
+              << "  (vdW alone = " << cpu_vdw_mag << ")\n";
+    std::cout << "  max |F_total_cpu - F_total_gpu| = " << max_total_abs_err << "\n";
+    std::cout << "  max |F_vdw_cpu   - F_vdw_gpu  | = " << max_vdw_abs_err   << "\n";
+    // Loose-ish tolerance because Barnes-Hut may open different nodes
+    // at 15000-unit spacing; the GPU is exact O(N²).
+    ftd::test::check("CGP5: ionic+vdW parity within 1e-6 abs",
+                     max_total_abs_err < 1e-6);
+
+    // -----------------------------------------------------------------------
+    // Scenario C: small system (N<8) should stay on CPU and still compute
+    // forces via the Barnes-Hut path
+    // -----------------------------------------------------------------------
+    std::cout << "\n--- CGP6: GPU threshold N<8 → CPU fallback ---\n";
+    ftd::AtomEngine ae_tiny;
+    ae_tiny.set_damping_enabled(false);
+    ae_tiny.set_bonding_enabled(false);
+    ae_tiny.set_softening(0.5);
+    int t0 = ae_tiny.add_atom(1, {0,  0, 0}, {0,0,0}, +1);
+    int t1 = ae_tiny.add_atom(1, {50, 0, 0}, {0,0,0}, -1);
+    int t2 = ae_tiny.add_atom(8, {0, 50, 0}, {0,0,0},  0);
+    int t3 = ae_tiny.add_atom(8, {50,50, 0}, {0,0,0},  0);
+    ae_tiny.atoms()[t0].locked = true;
+    ae_tiny.atoms()[t1].locked = true;
+    ae_tiny.atoms()[t2].locked = true;
+    ae_tiny.atoms()[t3].locked = true;
+    ae_tiny.toggles.ionic = true;
+    ae_tiny.toggles.van_der_waals = false;  // disable vdW (sigma ~10k >> r)
+    ae_tiny.set_use_gpu(true);
+    ae_tiny.run(1);
+    const auto& fd_tiny = ae_tiny.force_diag();
+    double tiny_total = 0.0;
+    for (const auto& d : fd_tiny) tiny_total += d.f_ionic.mag();
+    std::cout << "  tiny N=" << fd_tiny.size()
+              << " sum|f_ionic|=" << tiny_total << "\n";
+    ftd::test::check("CGP6: N<8 system still computes nonzero forces via CPU fallback",
+                     tiny_total > 1e-12);
+}
+
+// ============================================================================
 // main
 // ============================================================================
 
@@ -798,6 +990,9 @@ int main() {
 
     ftd::test::section("thermostat");
     section_thermostat();
+
+    ftd::test::section("cpu_gpu_parity");
+    section_cpu_gpu_parity();
 
     return ftd::test::finalize();
 }
