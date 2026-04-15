@@ -7,6 +7,7 @@
  */
 
 import { formatEnergy, formatEntropy } from './units.js';
+import { createCachedCanvasRect } from './dom-utils.js';
 
 const SPARKLINE_LEN = 80;
 
@@ -16,6 +17,8 @@ export class Sparkline {
         this._buf = new Float32Array(SPARKLINE_LEN);
         this._head = 0;
         this._count = 0;
+        // Phase C.3: cache rect, refreshed only on ResizeObserver trigger
+        this._rectCache = canvas ? createCachedCanvasRect(canvas) : null;
     }
 
     push(value) {
@@ -33,7 +36,7 @@ export class Sparkline {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
+        const rect = this._rectCache ? this._rectCache.get() : canvas.getBoundingClientRect();
         const w = rect.width;
         const h = rect.height;
 

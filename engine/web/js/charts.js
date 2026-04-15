@@ -6,7 +6,21 @@
  *   - ParticleChart: total (white), positive (green), negative (red)
  */
 
+import { createCachedCanvasRect } from './dom-utils.js';
+
 const BUFFER_SIZE = 500;
+
+// Phase C.3: per-canvas cached rect (ResizeObserver-backed). Avoids
+// forcing a layout reflow on every frame's drawChart() call.
+const _rectCaches = new WeakMap();
+function _cachedRect(canvas) {
+    let c = _rectCaches.get(canvas);
+    if (!c) {
+        c = createCachedCanvasRect(canvas);
+        _rectCaches.set(canvas, c);
+    }
+    return c.get();
+}
 
 // ── Ring Buffer ──────────────────────────────────────────────────────
 class RingBuffer {
@@ -61,7 +75,7 @@ class RingBuffer {
 // ── Chart Renderer ───────────────────────────────────────────────────
 function drawChart(canvas, series, options = {}) {
     if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
+    const rect = _cachedRect(canvas);
     const w = rect.width;
     const h = rect.height;
     // PERF: Skip drawing when canvas is hidden (zero-size or offscreen)

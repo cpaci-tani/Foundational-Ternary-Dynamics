@@ -12,6 +12,7 @@
  *   createTickAccumulator()  - Fractional-tick accumulator for sub-1 speed
  *   throttleBySize(L, thr)   - Lattice-size-dependent throttle selector
  *   createStatusBarCache()   - Deduplicating DOM writer for status elements
+ *   createListenerBag()      - Trackable addEventListener bag for clean teardown
  */
 
 // ── formatNumber ────────────────────────────────────────────────────
@@ -128,5 +129,53 @@ export function createStatusBarCache() {
             const el = document.getElementById(id);
             if (el) el.textContent = value;
         }
+    };
+}
+
+// ── createListenerBag ───────────────────────────────────────────────
+/**
+ * Create a trackable event-listener bag for clean teardown.
+ *
+ * Scale controllers that wire up DOM listeners in their `load*`/`wire*`
+ * functions must remove those same listeners in `resetScale*` or the
+ * app leaks one set of closures per scale re-entry. Using a listener
+ * bag makes the lifecycle explicit:
+ *
+ *   const bag = createListenerBag();
+ *   bag.on(btn, 'click', () => { ... });
+ *   bag.on(select, 'change', () => { ... });
+ *   // ...
+ *   bag.clear(); // removes everything attached via this bag
+ *
+ * `on()` is a no-op (and returns silently) when `el` is null, so it's
+ * safe to call on `document.getElementById(...)` results without
+ * null-checking each one.
+ *
+ * @returns {{ on(el: EventTarget|null, evt: string, fn: Function, opts?: any): void,
+ *             clear(): void,
+ *             size(): number }}
+ */
+export function createListenerBag() {
+    const cleanups = [];
+    return {
+        /**
+         * Attach a listener and remember how to remove it.
+         * @param {EventTarget|null} el   - Target (no-op if null)
+         * @param {string}           evt  - Event name
+         * @param {Function}         fn   - Handler
+         * @param {any}              opts - Optional addEventListener options
+         */
+        on(el, evt, fn, opts) {
+            if (!el) return;
+            el.addEventListener(evt, fn, opts);
+            cleanups.push(() => el.removeEventListener(evt, fn, opts));
+        },
+        /** Remove all listeners attached via this bag and reset the bag. */
+        clear() {
+            for (const fn of cleanups) fn();
+            cleanups.length = 0;
+        },
+        /** Current number of live listeners in the bag. */
+        size() { return cleanups.length; }
     };
 }

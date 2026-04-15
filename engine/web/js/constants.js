@@ -110,6 +110,27 @@ export const C_MANDELBROT = 1.0 / G_STAR;              // Mandelbrot corresponde
 export const HBAR_C_MEV_FM = 197.3269804;              // hbar*c in MeV*fm
 export const M_PLANCK_GEV = 1.22089e19;                // Planck mass in GeV
 
+// ── Experimental Reference Masses (PDG) ─────────────────────────────
+// These are the measured (Particle Data Group) values, NOT the
+// FTD-derived framework values (which live above as K_B, M_PROTON, etc.).
+// Use these when comparing against experimental cross-sections, decay
+// rates, or particle-catalog entries. Framework vs physical scale
+// divergence is intentional — do not "unify" these with the derived
+// constants, they live in different epistemic categories per CLAUDE.md.
+export const M_E_PHYS      = 0.51099895;               // electron (MeV)
+export const M_MU_PHYS     = 105.6583755;              // muon (MeV)
+export const M_TAU_PHYS    = 1776.86;                  // tau (MeV)
+export const M_P_PHYS      = 938.27208816;             // proton (MeV)
+export const M_N_PHYS      = 939.56542;                // neutron (MeV)
+export const M_PI_CH_PHYS  = 139.57039;                // charged pion (MeV)
+export const M_PI_0_PHYS   = 134.9768;                 // neutral pion (MeV)
+export const M_K_CH_PHYS   = 493.677;                  // charged kaon (MeV)
+export const M_K_0_PHYS    = 497.611;                  // neutral kaon (MeV)
+export const M_SIGMA_PHYS  = 1189.37;                  // Sigma+ (MeV)
+export const M_OMEGA_PHYS  = 1672.45;                  // Omega- (MeV)
+export const M_DELTA_PHYS  = 1232.0;                   // Delta++ (MeV)
+export const M_W_PHYS      = 80377.0;                  // W boson (MeV, PDG 2022)
+
 // ── Ontic chain metadata (for observatory) ──────────────────────────
 export const ONTIC_LAYERS = [
     { layer: -1,  name: 'Self-Referential Seed', symbols: ['e'], count: 1 },

@@ -1,8 +1,49 @@
 /**
- * Three.js 3D Viewport — renders particles from the simulation bridge.
+ * Three.js 3D Viewport — renders particles and fields from the simulation bridge.
  *
  * Uses THREE.Points with custom ShaderMaterial for antialiased circles.
  * Orbital camera with smooth controls.
+ *
+ * ## Categorization of concerns
+ *
+ * This file is large (~3.3k LOC) and currently implements everything the
+ * Scale 0-3 dashboard needs in a single `Viewport` class. It groups the
+ * following areas (decomposition deferred — see docs/adr/0001-viewport-
+ * decomposition.md):
+ *
+ *   1. **Scene lifecycle** — constructor, post-processing pipeline, resize,
+ *      dispose, main render() (no-op fallback for scales that own their
+ *      own renderer).
+ *
+ *   2. **Camera & input** — perspective camera setup, OrbitControls wiring,
+ *      picking helpers (_pickParticle, screen-to-world conversion).
+ *
+ *   3. **Particle rendering** — _initParticles, updateParticles,
+ *      _buildVelocityVectors / updateVelocityVectors, _buildTrails /
+ *      updateTrails, _buildParticleForces / updateParticleForces.
+ *
+ *   4. **Boundary rendering** — _buildBoundary dispatches into the
+ *      _build{Cube,Sphere,Platonic,Cylinder,Torus}Boundary helpers;
+ *      _disposeBoundary tears them down; _insideBoundary is the
+ *      point-containment test used by the lattice wiring.
+ *
+ *   5. **Molecular rendering** — _buildBondLines / updateBondLines for
+ *      Scale 2 atoms and Scale 3 molecules.
+ *
+ *   6. **Field visualization** — E/B/Poynting/divergence/flux/force/gravity
+ *      grids and streamlines: _build*Field / update*Field pairs, plus the
+ *      dark matter halo, damping zones, genesis isosurface, and confinement
+ *      strings for the Scale 0 field overlays.
+ *
+ *   7. **Volumetric rendering** — _buildFluxVolume / updateFluxVolume and
+ *      the slice variant (updateFluxSlice) for 3D lattice visualization.
+ *
+ *   8. **Scenario chrome** — event horizon marker, axes, grid, ontic cube,
+ *      scenario-specific scale application (_applyScenarioScale).
+ *
+ * Keep new code grouped within the appropriate section. Any new concern
+ * that doesn't fit in 1-8 probably belongs in a separate module, not
+ * another method on Viewport.
  */
 
 import * as THREE from 'three';
@@ -12,6 +53,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { getById } from './particle-catalog.js';
 import { potentialToColor, magnitudeToColor, fluxToColor } from './fields.js';
+import { K_B } from './constants.js';
 
 // Pre-allocated buffer sizes. Particle buffer is fixed at init to avoid
 // dynamic GPU reallocation; draw range controls visible count each frame.
@@ -2140,7 +2182,7 @@ export class Viewport {
         const maxVerts = posAttr.array.length / 3;
 
         let vi = 0;
-        const kb = bridge.getParam ? bridge.getParam('kb') : 0.511;
+        const kb = bridge.getParam ? bridge.getParam('kb') : K_B;
         const J2_threshold_dist2 = 120.0; // Break threshold scale mimicking V(r) ~ sigma*r tension snap
 
         // This utilizes getParticleData from the active engine
@@ -3214,8 +3256,8 @@ export class Viewport {
             colAttr.array[i * 3] = r;
             colAttr.array[i * 3 + 1] = g;
             colAttr.array[i * 3 + 2] = b;
-            // Scale size by log mass
-            const s = 3.0 + 2.0 * Math.log10(p.mass_mev / 0.511 + 1.0);
+            // Scale size by log mass (relative to electron mass K_B)
+            const s = 3.0 + 2.0 * Math.log10(p.mass_mev / K_B + 1.0);
             sizeAttr.array[i] = Math.min(s, 40);
         }
         colAttr.needsUpdate = true;
