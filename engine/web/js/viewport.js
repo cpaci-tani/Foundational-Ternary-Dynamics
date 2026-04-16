@@ -3657,9 +3657,9 @@ export class Viewport {
             const py = data.positions[i * 3 + 1];
             const pz = data.positions[i * 3 + 2];
             if (needsClip) {
-                const nx = (px - halfN + 0.5) / halfN;
-                const ny = (py - halfN + 0.5) / halfN;
-                const nz = (pz - halfN + 0.5) / halfN;
+                const nx = (px - halfN) / halfN;
+                const ny = (py - halfN) / halfN;
+                const nz = (pz - halfN) / halfN;
                 if (!this._insideBoundary(nx, ny, nz)) continue;
             }
             posAttr.array[count * 3] = px;

@@ -599,9 +599,9 @@ export class MockBridge {
             // Skip void particles with negligible flux
             if (p.state === 0 && p.density < VOID_FLUX_THRESHOLD) continue;
 
-            positions[outCount * 3] = p.x;
-            positions[outCount * 3 + 1] = p.y;
-            positions[outCount * 3 + 2] = p.z;
+            positions[outCount * 3] = p.x + 0.5;
+            positions[outCount * 3 + 1] = p.y + 0.5;
+            positions[outCount * 3 + 2] = p.z + 0.5;
             if (p.state === 1) {
                 colors[outCount * 3] = 0.4; colors[outCount * 3 + 1] = 0.87; colors[outCount * 3 + 2] = 0.5;
                 sizes[outCount] = mSize;
@@ -1277,7 +1277,7 @@ export class MockBridge {
                     const ez = -this._fluxWV[idx * 3 + 2];
                     const mag = Math.sqrt(ex * ex + ey * ey + ez * ez);
                     if (mag < 1e-15) continue;
-                    positions[count * 3] = x; positions[count * 3 + 1] = y; positions[count * 3 + 2] = z;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
                     vectors[count * 3] = ex; vectors[count * 3 + 1] = ey; vectors[count * 3 + 2] = ez;
                     count++;
                 }
@@ -1306,7 +1306,7 @@ export class MockBridge {
                     const bz = (J[xp * 3 + 1] - J[xm * 3 + 1]) / 2 - (J[yp * 3] - J[ym * 3]) / 2;
                     const mag = Math.sqrt(bx * bx + by * by + bz * bz);
                     if (mag < 1e-15) continue;
-                    positions[count * 3] = x; positions[count * 3 + 1] = y; positions[count * 3 + 2] = z;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
                     vectors[count * 3] = bx; vectors[count * 3 + 1] = by; vectors[count * 3 + 2] = bz;
                     count++;
                 }
@@ -1342,7 +1342,7 @@ export class MockBridge {
                     const sz = ex * by - ey * bx;
                     const mag = Math.sqrt(sx * sx + sy * sy + sz * sz);
                     if (mag < 1e-15) continue;
-                    positions[count * 3] = x; positions[count * 3 + 1] = y; positions[count * 3 + 2] = z;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
                     vectors[count * 3] = sx; vectors[count * 3 + 1] = sy; vectors[count * 3 + 2] = sz;
                     count++;
                 }
@@ -1367,7 +1367,7 @@ export class MockBridge {
                     const zp = this._fluxIdx(x, y, z + 1), zm = this._fluxIdx(x, y, z - 1);
                     const div = (J[xp * 3] - J[xm * 3]) / 2 + (J[yp * 3 + 1] - J[ym * 3 + 1]) / 2 + (J[zp * 3 + 2] - J[zm * 3 + 2]) / 2;
                     if (Math.abs(div) < 1e-15) continue;
-                    positions[count * 3] = x; positions[count * 3 + 1] = y; positions[count * 3 + 2] = z;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
                     values[count] = div;
                     count++;
                 }
@@ -1391,7 +1391,7 @@ export class MockBridge {
                     const jx = J[idx * 3], jy = J[idx * 3 + 1], jz = J[idx * 3 + 2];
                     const mag = Math.sqrt(jx * jx + jy * jy + jz * jz);
                     if (mag < 1e-15) continue;
-                    positions[count * 3] = x; positions[count * 3 + 1] = y; positions[count * 3 + 2] = z;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
                     vectors[count * 3] = jx; vectors[count * 3 + 1] = jy; vectors[count * 3 + 2] = jz;
                     count++;
                 }
@@ -1441,9 +1441,9 @@ export class MockBridge {
             }
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
             if (mag < 1e-12) continue;
-            positions[count * 3] = x;
-            positions[count * 3 + 1] = y;
-            positions[count * 3 + 2] = z;
+            positions[count * 3] = x + 0.5;
+            positions[count * 3 + 1] = y + 0.5;
+            positions[count * 3 + 2] = z + 0.5;
             vectors[count * 3] = fx;
             vectors[count * 3 + 1] = fy;
             vectors[count * 3 + 2] = fz;
@@ -1481,9 +1481,9 @@ export class MockBridge {
             const gradZ = (density(x, y, z + 1) - density(x, y, z - 1)) * 0.5;
             const mag = Math.sqrt(gradX * gradX + gradY * gradY + gradZ * gradZ);
             if (mag < 1e-10) continue;
-            positions[count * 3] = x;
-            positions[count * 3 + 1] = y;
-            positions[count * 3 + 2] = z;
+            positions[count * 3] = x + 0.5;
+            positions[count * 3 + 1] = y + 0.5;
+            positions[count * 3 + 2] = z + 0.5;
             vectors[count * 3] = gn * gradX;
             vectors[count * 3 + 1] = gn * gradY;
             vectors[count * 3 + 2] = gn * gradZ;
@@ -1526,7 +1526,7 @@ export class MockBridge {
             }
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
             if (mag < 1e-12) continue;
-            positions[count * 3] = x; positions[count * 3 + 1] = y; positions[count * 3 + 2] = z;
+            positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
             vectors[count * 3] = fx; vectors[count * 3 + 1] = fy; vectors[count * 3 + 2] = fz;
             count++;
         }
@@ -1597,7 +1597,7 @@ export class MockBridge {
             }
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
             if (mag < 1e-12) continue;
-            positions[count * 3] = x; positions[count * 3 + 1] = y; positions[count * 3 + 2] = z;
+            positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
             vectors[count * 3] = fx; vectors[count * 3 + 1] = fy; vectors[count * 3 + 2] = fz;
             count++;
         }
