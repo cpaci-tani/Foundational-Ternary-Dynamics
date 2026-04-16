@@ -342,6 +342,35 @@ body, #toolbar, #tab-bar, .tab, #panel-area, .panel, .card,
     vertical-align: middle;
 }
 
+/* Force visualization style selector (segmented control) */
+.force-style-row {
+    display: flex;
+    gap: 0;
+    margin-top: 4px;
+}
+.style-btn {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: rgba(15, 23, 42, 0.7);
+    color: #94a3b8;
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    cursor: pointer;
+    transition: all 0.15s;
+    backdrop-filter: blur(8px);
+}
+.style-btn:first-child { border-radius: 4px 0 0 4px; }
+.style-btn:last-child  { border-radius: 0 4px 4px 0; }
+.style-btn:not(:first-child) { border-left: none; }
+.style-btn.active {
+    background: rgba(0, 229, 255, 0.15);
+    color: #e2e8f0;
+    border-color: rgba(0, 229, 255, 0.4);
+}
+.style-btn:hover {
+    background: rgba(0, 229, 255, 0.1);
+    color: #e2e8f0;
+}
+
 .dynamics-toggle {
     border: 1px dashed var(--border) !important;
     color: var(--text-secondary);
