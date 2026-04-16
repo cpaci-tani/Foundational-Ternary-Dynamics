@@ -92,9 +92,9 @@ const FLUX_VOL_VERT = `
         vColor = particleColor;
         vSize = size;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        float depth = max(-mvPosition.z, 1.0);
+        float depth = max(-mvPosition.z, 0.1);
         gl_PointSize = size * sqrt(60.0 / depth);
-        gl_PointSize = clamp(gl_PointSize, 1.0, 64.0);
+        gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
         gl_Position = projectionMatrix * mvPosition;
     }
 `;
@@ -166,7 +166,7 @@ export class Viewport {
         this.scene.background = new THREE.Color(0x0f1729);
 
         // Camera
-        this.camera = new THREE.PerspectiveCamera(45, 1, 0.01, 2000);
+        this.camera = new THREE.PerspectiveCamera(45, 1, 0.001, 2000);
         this.camera.position.set(60, 45, 60);
 
         // Renderer
@@ -182,7 +182,7 @@ export class Viewport {
         this.controls.dampingFactor = 0.12;
         this.controls.rotateSpeed = 0.6;
         this.controls.zoomSpeed = 1.2;
-        this.controls.minDistance = 0.5;
+        this.controls.minDistance = 0.01;
         this.controls.maxDistance = 500;
 
         // Particle system
@@ -3012,8 +3012,8 @@ export class Viewport {
         }
 
         // ── Leaving meta mode — restore camera limits ──
-        this.controls.minDistance = 0.5;
-        this.camera.near = 0.01;
+        this.controls.minDistance = 0.01;
+        this.camera.near = 0.001;
         this.camera.updateProjectionMatrix();
 
         // ── Consciousness mode: dark background, bloom, centered camera ──
