@@ -207,3 +207,31 @@ test('Constants: K_B matches 0.511 and is a named export', async ({ page }) => {
     expect(k.hasAlpha).toBe(true);
     expect(k.hasGStar).toBe(true);
 });
+
+test('Scale 0 module contract and scenario registry are wired', async ({ page }) => {
+    await page.goto('/index.html');
+    await expect.poll(() => page.evaluate(() => !!window._ftdBridge),
+        { timeout: 15_000 }).toBe(true);
+
+    const result = await page.evaluate(async () => {
+        const controller = await import('./js/scales/scale0/controller.js');
+        const registry = await import('./js/scales/scale0/scenario-registry.js');
+        const requiredFns = ['bindUI', 'enter', 'exit', 'loadScenario', 'animate', 'step', 'reset', 'resize'];
+        const moduleShapeOk = requiredFns.every((name) => typeof controller[name] === 'function');
+        const validation = registry.validateScale0ScenarioRegistry();
+        const select = document.getElementById('scenario-select');
+        return {
+            moduleShapeOk,
+            validation,
+            optionCount: select?.options.length || 0,
+            scenarioCount: registry.SCALE0_SCENARIOS.length,
+            firstScenario: registry.SCALE0_SCENARIOS[0]?.id,
+            firstOption: select?.options[0]?.value || null,
+        };
+    });
+
+    expect(result.moduleShapeOk).toBe(true);
+    expect(result.validation.ok, `Registry errors: ${result.validation.errors.join(', ')}`).toBe(true);
+    expect(result.optionCount).toBe(result.scenarioCount);
+    expect(result.firstOption).toBe(result.firstScenario);
+});
