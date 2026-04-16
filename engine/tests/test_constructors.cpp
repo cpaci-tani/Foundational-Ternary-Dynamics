@@ -424,6 +424,284 @@ static void section_integration_periodic() {
     }
 }
 
+// ============================================================================
+// Level 2 — field configurations
+// ============================================================================
+
+static void section_level2_plane_wave() {
+    ftd::test::section("Level 2 / plane_wave");
+
+    ftd::RenderBridge rb(16);
+    ftd::Vec3 dir{1, 0, 0};
+    ftd::Vec3 pol{0, 1, 0};
+    double wavelength = 8.0;
+    double amplitude = 0.5;
+
+    auto r = ftd::ctor::plane_wave(rb, dir, pol, wavelength, amplitude);
+
+    ftd::test::check("PW1: name is 'plane_wave'", std::string(r.name) == "plane_wave");
+    ftd::test::check("PW2: level is 2", r.level == 2);
+    ftd::test::check("PW3: sites count > 0", r.site_count() > 0);
+
+    // Check that flux is along polarization direction (y-axis)
+    bool found_nonzero_flux = false;
+    for (int idx : r.sites) {
+        const auto& v = rb.voxels()[idx];
+        if (std::abs(v.flux.y) > 1e-10) {
+            found_nonzero_flux = true;
+            // Flux should have no x or z component (polarized along y)
+            ftd::test::check("PW4: flux is along polarization (y)",
+                std::abs(v.flux.x) < 1e-12 && std::abs(v.flux.z) < 1e-12);
+            break;
+        }
+    }
+    ftd::test::check("PW4b: found nonzero flux site", found_nonzero_flux);
+
+    // Check that wave_vel is also along polarization
+    bool found_wvel = false;
+    for (int idx : r.sites) {
+        const auto& v = rb.voxels()[idx];
+        if (std::abs(v.wave_vel.y) > 1e-10) {
+            found_wvel = true;
+            break;
+        }
+    }
+    ftd::test::check("PW5: wave_vel is nonzero (propagating)", found_wvel);
+
+    // Symmetry: count positive and negative flux.y values
+    int pos_flux = 0, neg_flux = 0;
+    for (int idx : r.sites) {
+        double fy = rb.voxels()[idx].flux.y;
+        if (fy > 1e-10) ++pos_flux;
+        if (fy < -1e-10) ++neg_flux;
+    }
+    ftd::test::check("PW6: has both positive and negative phases",
+        pos_flux > 0 && neg_flux > 0);
+}
+
+static void section_level2_standing_wave() {
+    ftd::test::section("Level 2 / standing_wave");
+
+    ftd::RenderBridge rb(16);
+    ftd::Vec3 dir{0, 0, 1};
+    ftd::Vec3 pol{1, 0, 0};
+    double wavelength = 8.0;
+    double amplitude = 0.3;
+
+    auto r = ftd::ctor::standing_wave(rb, dir, pol, wavelength, amplitude);
+
+    ftd::test::check("SW1: name is 'standing_wave'", std::string(r.name) == "standing_wave");
+    ftd::test::check("SW2: level is 2", r.level == 2);
+    ftd::test::check("SW3: sites count > 0", r.site_count() > 0);
+
+    // Standing wave: wave_vel should be zero everywhere
+    bool all_wvel_zero = true;
+    for (int idx : r.sites) {
+        const auto& v = rb.voxels()[idx];
+        if (v.wave_vel.mag2() > 1e-20) { all_wvel_zero = false; break; }
+    }
+    ftd::test::check("SW4: wave_vel is zero everywhere (standing wave)", all_wvel_zero);
+
+    // Flux should be along polarization (x-axis)
+    bool found_flux = false;
+    for (int idx : r.sites) {
+        const auto& v = rb.voxels()[idx];
+        if (std::abs(v.flux.x) > 1e-10) {
+            found_flux = true;
+            ftd::test::check("SW5: flux is along polarization (x)",
+                std::abs(v.flux.y) < 1e-12 && std::abs(v.flux.z) < 1e-12);
+            break;
+        }
+    }
+    ftd::test::check("SW5b: found nonzero flux", found_flux);
+}
+
+static void section_level2_uniform_e() {
+    ftd::test::section("Level 2 / uniform_e");
+
+    ftd::RenderBridge rb(16);
+    ftd::Vec3 E{0.0, 0.0, 0.1};
+
+    auto r = ftd::ctor::uniform_e(rb, E);
+
+    ftd::test::check("UE1: name is 'uniform_e'", std::string(r.name) == "uniform_e");
+    ftd::test::check("UE2: level is 2", r.level == 2);
+    ftd::test::check("UE3: sites = N^3", r.site_count() == 16*16*16);
+
+    // wave_vel = -E at every site
+    int idx_check = rb.lattice().index(5, 7, 3);
+    const auto& v = rb.voxels()[idx_check];
+    ftd::test::check_close("UE4: wave_vel.z = -0.1", v.wave_vel.z, -0.1, 1e-12);
+    ftd::test::check_close("UE5: wave_vel.x = 0", v.wave_vel.x, 0.0, 1e-12);
+
+    // Flux should remain zero
+    ftd::test::check_close("UE6: flux stays zero", v.flux.mag(), 0.0, 1e-15);
+}
+
+static void section_level2_uniform_b() {
+    ftd::test::section("Level 2 / uniform_b");
+
+    ftd::RenderBridge rb(16);
+    ftd::Vec3 B{0.0, 0.0, 0.5};
+
+    auto r = ftd::ctor::uniform_b(rb, B);
+
+    ftd::test::check("UB1: name is 'uniform_b'", std::string(r.name) == "uniform_b");
+    ftd::test::check("UB2: level is 2", r.level == 2);
+    ftd::test::check("UB3: sites count > 0", r.site_count() > 0);
+
+    // At lattice center, flux should be ~zero (r=0)
+    double mid = (16 - 1) / 2.0;
+    int cx = static_cast<int>(mid);
+    int idx_center = rb.lattice().index(cx, cx, cx);
+    const auto& vc = rb.voxels()[idx_center];
+    ftd::test::check("UB4: flux near center is small", vc.flux.mag() < 0.5);
+
+    // Off-center site should have nonzero flux in xy plane
+    int idx_off = rb.lattice().index(cx + 3, cx, cx);
+    const auto& vo = rb.voxels()[idx_off];
+    ftd::test::check("UB5: off-center flux is nonzero", vo.flux.mag() > 1e-6);
+
+    // Flux should be perpendicular to B (in xy plane) for Bz field
+    ftd::test::check("UB6: flux.z is small (perpendicular to B)",
+        std::abs(vo.flux.z) < 1e-10);
+}
+
+static void section_level2_photon_pulse() {
+    ftd::test::section("Level 2 / photon_pulse");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+    ftd::Vec3 dir{1, 0, 0};
+    ftd::Vec3 pol{0, 0, 1};
+    double sigma = 4.0;
+    double amplitude = 1.0;
+
+    auto r = ftd::ctor::photon_pulse(rb, center, dir, pol, sigma, amplitude);
+
+    ftd::test::check("PP1: name is 'photon_pulse'", std::string(r.name) == "photon_pulse");
+    ftd::test::check("PP2: level is 2", r.level == 2);
+    ftd::test::check("PP3: sites count > 0", r.site_count() > 0);
+    ftd::test::check("PP4: fewer sites than full lattice (localized)",
+        r.site_count() < 32*32*32);
+
+    // Check Gaussian falloff: sites far from center should not be stamped
+    bool found_near = false;
+    for (int idx : r.sites) {
+        ftd::Coord c = rb.lattice().coord(idx);
+        int dx = c.x - 16, dy = c.y - 16, dz = c.z - 16;
+        double dist = std::sqrt(static_cast<double>(dx*dx + dy*dy + dz*dz));
+        if (dist < 2.0) { found_near = true; break; }
+    }
+    ftd::test::check("PP5: has sites near center", found_near);
+
+    // Check flux is along polarization (z)
+    bool found_flux_z = false;
+    for (int idx : r.sites) {
+        const auto& v = rb.voxels()[idx];
+        if (std::abs(v.flux.z) > 0.01) { found_flux_z = true; break; }
+    }
+    ftd::test::check("PP6: flux along polarization direction", found_flux_z);
+}
+
+static void section_level2_electric_dipole() {
+    ftd::test::section("Level 2 / electric_dipole");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+    ftd::Vec3 axis{0, 0, 1};
+    int separation = 4;
+
+    auto r = ftd::ctor::electric_dipole(rb, center, axis, separation);
+
+    ftd::test::check("ED1: name is 'electric_dipole'", std::string(r.name) == "electric_dipole");
+    ftd::test::check("ED2: level is 2", r.level == 2);
+    ftd::test::check("ED3: sites count > 2", r.site_count() > 2);
+
+    // Check that +1 and -1 charges exist
+    int idx_pos = rb.lattice().index(8, 8, 10); // center + axis*2
+    int idx_neg = rb.lattice().index(8, 8, 6);  // center - axis*2
+    ftd::test::check("ED4: positive charge state = +1",
+        rb.voxels()[idx_pos].state == +1);
+    ftd::test::check("ED5: negative charge state = -1",
+        rb.voxels()[idx_neg].state == -1);
+
+    // Coulomb dressing: some intermediate site should have nonzero flux
+    int idx_mid = rb.lattice().index(8, 8, 8);
+    ftd::test::check("ED6: midpoint has nonzero flux from dressing",
+        rb.voxels()[idx_mid].flux.mag() > 1e-10);
+}
+
+static void section_level2_magnetic_dipole() {
+    ftd::test::section("Level 2 / magnetic_dipole");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+    ftd::Vec3 moment{0, 0, 1};
+    int radius = 3;
+    double amplitude = 0.5;
+
+    auto r = ftd::ctor::magnetic_dipole(rb, center, moment, radius, amplitude);
+
+    ftd::test::check("MD1: name is 'magnetic_dipole'", std::string(r.name) == "magnetic_dipole");
+    ftd::test::check("MD2: level is 2", r.level == 2);
+    ftd::test::check("MD3: sites count > 0", r.site_count() > 0);
+
+    // All stamped sites should have flux perpendicular to moment (in xy plane)
+    bool all_perp = true;
+    for (int idx : r.sites) {
+        const auto& v = rb.voxels()[idx];
+        if (std::abs(v.flux.z) > 1e-10) { all_perp = false; break; }
+    }
+    ftd::test::check("MD4: flux is in plane perpendicular to moment", all_perp);
+
+    // Check that flux magnitude is approximately `amplitude`
+    bool found_correct_amp = false;
+    for (int idx : r.sites) {
+        double m = rb.voxels()[idx].flux.mag();
+        if (std::abs(m - amplitude) < 0.01) { found_correct_amp = true; break; }
+    }
+    ftd::test::check("MD5: at least one site has correct amplitude", found_correct_amp);
+}
+
+static void section_level2_vortex_line() {
+    ftd::test::section("Level 2 / vortex_line");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+    ftd::Vec3 axis{0, 0, 1};
+    double circulation = 2.0;
+
+    auto r = ftd::ctor::vortex_line(rb, center, axis, circulation);
+
+    ftd::test::check("VL1: name is 'vortex_line'", std::string(r.name) == "vortex_line");
+    ftd::test::check("VL2: level is 2", r.level == 2);
+    ftd::test::check("VL3: sites count > 0", r.site_count() > 0);
+
+    // Vortex extends through all z-slices: check sites in multiple z-planes
+    std::set<int> z_planes;
+    for (int idx : r.sites) {
+        ftd::Coord c = rb.lattice().coord(idx);
+        z_planes.insert(c.z);
+    }
+    ftd::test::check("VL4: vortex spans multiple z-planes", z_planes.size() > 1);
+
+    // Flux should be in xy-plane (perpendicular to z-axis)
+    bool all_xy = true;
+    for (int idx : r.sites) {
+        const auto& v = rb.voxels()[idx];
+        if (std::abs(v.flux.z) > 1e-10) { all_xy = false; break; }
+    }
+    ftd::test::check("VL5: flux is azimuthal (in xy-plane)", all_xy);
+
+    // 1/r falloff: site at r=1 should have stronger flux than r=5
+    int idx_near = rb.lattice().index(9, 8, 8); // r=1 from center in x
+    int idx_far  = rb.lattice().index(13, 8, 8); // r=5 from center in x
+    double mag_near = rb.voxels()[idx_near].flux.mag();
+    double mag_far  = rb.voxels()[idx_far].flux.mag();
+    ftd::test::check("VL6: 1/r falloff (near > far)", mag_near > mag_far);
+}
+
 int main() {
     ftd::test::init("test_constructors");
     section_level0_flux();
@@ -435,5 +713,13 @@ int main() {
     section_level1a_stella_octangula();
     section_level1a_moore_cell();
     section_integration_periodic();
+    section_level2_plane_wave();
+    section_level2_standing_wave();
+    section_level2_uniform_e();
+    section_level2_uniform_b();
+    section_level2_photon_pulse();
+    section_level2_electric_dipole();
+    section_level2_magnetic_dipole();
+    section_level2_vortex_line();
     return ftd::test::finalize();
 }
