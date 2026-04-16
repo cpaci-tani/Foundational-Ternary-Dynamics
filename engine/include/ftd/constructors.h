@@ -29,6 +29,18 @@
  *   magnetic_dipole       2      ~R     Current-loop analog
  *   vortex_line           2      N³     Azimuthal flux vortex
  *
+ *   electron             3      ~σ³    m_e initial condition (Gaussian inward flux)
+ *   positron             3      ~σ³    antimatter partner (Gaussian outward flux)
+ *   neutrino             3      ~σ³    chirality seed (flux_L/flux_R asymmetry)
+ *   quark                3      ~σ³    colored parton (charge + color + flux)
+ *   antiquark            3      ~σ³    antimatter quark (reversed charge + flux)
+ *   pion                 4      2×L3   quark-antiquark meson
+ *   proton               4      3×L3   uud color-singlet baryon
+ *   neutron              4      3×L3   udd color-singlet baryon
+ *   hydrogen             5      L4+L3  proton + orbital electron
+ *   helium               5      nuc+2L3  alpha nucleus + 2 electrons
+ *   h2_molecule          5      2×L5   covalent H-H bond
+ *
  * Design spec: docs/superpowers/specs/2026-04-15-ftd-constructors-design.md
  */
 
@@ -117,6 +129,64 @@ StampResult vortex_line(RenderBridge& rb,
                         Coord center,
                         Vec3 axis,
                         double circulation);
+
+// Level 3 — elementary particles (state + spin + color + flux envelope)
+// [SELECTION] These are initial conditions structurally consistent with
+// theory, not first-principles derivations. Mass does NOT encode spatial
+// structure (SPEC_FTD.md §Layer 6).
+
+/// Electron: state=-1, color=0, radial-inward Gaussian flux envelope.
+/// Theory: DERIV_SPIN_STATISTICS_BRIDGE.md, K_B = 0.511 (m_e).
+StampResult electron(RenderBridge& rb, Coord center, int8_t spin = -1);
+
+/// Positron: state=+1, color=0, radial-outward Gaussian flux envelope.
+/// Theory: antimatter partner of electron (CPT conjugate).
+StampResult positron(RenderBridge& rb, Coord center, int8_t spin = +1);
+
+/// Neutrino: state=0, chirality seed via flux_L/flux_R asymmetry.
+/// Theory: DERIV_SPIN_STATISTICS_BRIDGE.md §chirality.
+StampResult neutrino(RenderBridge& rb, Coord center, int8_t chirality = -1);
+
+/// Quark: colored parton with charge (+1=up, -1=down), color (1/2/3).
+/// Theory: THEOREM_MOORE_LAYER_DECOMPOSITION §color.
+StampResult quark(RenderBridge& rb, Coord center,
+                  int8_t charge, int8_t color, int8_t spin = +1);
+
+/// Antiquark: antimatter quark (state = -charge, reversed flux).
+/// Theory: CPT conjugate of quark.
+StampResult antiquark(RenderBridge& rb, Coord center,
+                      int8_t charge, int8_t color, int8_t spin = -1);
+
+// Level 4 — composite particles (compose Level 3 constructors)
+// [SELECTION] Quark content and geometry are conventional SM assignments.
+
+/// Pion (pi+): quark-antiquark meson (q + qbar at ±separation/2 along x).
+/// Theory: simplest color-singlet meson.
+StampResult pion(RenderBridge& rb, Coord center, int separation = 3);
+
+/// Proton: uud color-singlet baryon on equilateral triangle.
+/// Theory: DERIV_NC_FROM_TOPOLOGY.md, proton mass derivation.
+StampResult proton(RenderBridge& rb, Coord center, int radius = 2);
+
+/// Neutron: udd color-singlet baryon on equilateral triangle.
+/// Theory: same geometry as proton, different quark content.
+StampResult neutron(RenderBridge& rb, Coord center, int radius = 2);
+
+// Level 5 — atoms & molecules (compose Level 4 + Level 3)
+// [SELECTION] Orbital geometry uses lattice-scale Bohr radii.
+
+/// Hydrogen: proton at center + electron at orbital_radius along z.
+/// Theory: simplest atom; Bohr radius ~ orbital_radius lattice units.
+StampResult hydrogen(RenderBridge& rb, Coord center, int orbital_radius = 5);
+
+/// Helium: nucleus (charge +2) + 2 electrons at ±orbital_radius along z.
+/// Theory: He-4 nucleus simplified to single charged site.
+StampResult helium(RenderBridge& rb, Coord center, int orbital_radius = 4);
+
+/// H2 molecule: two hydrogen atoms separated by bond_length along x.
+/// Theory: covalent bond = shared electron density.
+StampResult h2_molecule(RenderBridge& rb, Coord center,
+                        int bond_length = 4, int orbital_radius = 5);
 
 }  // namespace ctor
 }  // namespace ftd
