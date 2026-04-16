@@ -96,6 +96,7 @@ function _shouldUseFluxMock(bridge, scenarioName) {
     // SM seed scenarios are only implemented in MockBridge.setupScenario;
     // the C++ engine does not know about them, so force the JS flux mock.
     if (scenarioName.startsWith('s0-seed-')) return true;
+    if (scenarioName.startsWith('s0-field-')) return true;
     try {
         const probe = bridge.getFluxVolume && bridge.getFluxVolume();
         return !(probe && probe.length > 0);
