@@ -119,6 +119,11 @@ export class MockBridge {
         this._pdColors = null;
         this._pdSizes = null;
 
+        // Per-force decomposition arrays (accumulated in _computePairwiseForces)
+        this._forceEM = [];       // per-particle EM force {x,y,z}
+        this._forceGravity = [];  // per-particle gravity force {x,y,z}
+        this._forceStrong = [];   // per-particle strong/confinement force {x,y,z}
+
         // Cached energy sums — avoids redundant O(L^3) loops across getDiagnostics/getEnergyAudit/getLagrangian
         this._energyCacheTick = -1;
         this._cachedFieldEnergy = 0;
@@ -401,8 +406,17 @@ export class MockBridge {
      * Periodic boundary: minimum image convention (halfN wrapping).
      */
     _computePairwiseForces(ps, N, halfN, soft, alpha4pi, gn, doGravity) {
-        // Zero accelerations
-        for (const p of ps) { p.ax = 0; p.ay = 0; p.az = 0; }
+        // Zero accelerations and per-force decomposition arrays
+        // Ensure per-force arrays are sized correctly
+        while (this._forceEM.length < ps.length) this._forceEM.push({ x: 0, y: 0, z: 0 });
+        while (this._forceGravity.length < ps.length) this._forceGravity.push({ x: 0, y: 0, z: 0 });
+        while (this._forceStrong.length < ps.length) this._forceStrong.push({ x: 0, y: 0, z: 0 });
+        for (let k = 0; k < ps.length; k++) {
+            ps[k].ax = 0; ps[k].ay = 0; ps[k].az = 0;
+            this._forceEM[k].x = 0; this._forceEM[k].y = 0; this._forceEM[k].z = 0;
+            this._forceGravity[k].x = 0; this._forceGravity[k].y = 0; this._forceGravity[k].z = 0;
+            this._forceStrong[k].x = 0; this._forceStrong[k].y = 0; this._forceStrong[k].z = 0;
+        }
         for (let i = 0; i < ps.length; i++) {
             const pi = ps[i];
             if (pi.state === 0 || pi.locked) continue;
@@ -418,16 +432,23 @@ export class MockBridge {
                 const r2 = r2raw + soft;
                 const invR2 = 1 / r2;
                 const invR = 1 / Math.sqrt(r2);
-                // Coulomb
+                // Coulomb (EM)
                 const qi = pi.state, qj = pj.state;
                 const fCoul = -alpha4pi * qi * qj * invR2 * invR;
-                let fx = fCoul * dx, fy = fCoul * dy, fz = fCoul * dz;
+                let emx = fCoul * dx, emy = fCoul * dy, emz = fCoul * dz;
+                let fx = emx, fy = emy, fz = emz;
+                // Accumulate EM component
+                this._forceEM[i].x += emx; this._forceEM[i].y += emy; this._forceEM[i].z += emz;
+                this._forceEM[j].x -= emx; this._forceEM[j].y -= emy; this._forceEM[j].z -= emz;
                 // Gravity
                 if (doGravity) {
                     const fGrav = gn * K_B * K_B * invR2 * invR;
-                    fx += fGrav * dx; fy += fGrav * dy; fz += fGrav * dz;
+                    const gx = fGrav * dx, gy = fGrav * dy, gz = fGrav * dz;
+                    fx += gx; fy += gy; fz += gz;
+                    this._forceGravity[i].x += gx; this._forceGravity[i].y += gy; this._forceGravity[i].z += gz;
+                    this._forceGravity[j].x -= gx; this._forceGravity[j].y -= gy; this._forceGravity[j].z -= gz;
                 }
-                // Linear confinement for opposite-sign pairs
+                // Linear confinement for opposite-sign pairs (Strong)
                 if (this._toggles.confinement && qi * qj < 0) {
                     const r = Math.sqrt(r2raw);
                     const SIGMA = 0.015;   // string tension
@@ -435,9 +456,10 @@ export class MockBridge {
                     if (r > R_CRIT) {
                         const fConf = SIGMA * (r - R_CRIT);
                         const invRc = 1 / r;
-                        fx -= fConf * dx * invRc;  // attractive (toward partner)
-                        fy -= fConf * dy * invRc;
-                        fz -= fConf * dz * invRc;
+                        const sx = -fConf * dx * invRc, sy = -fConf * dy * invRc, sz = -fConf * dz * invRc;
+                        fx += sx; fy += sy; fz += sz;
+                        this._forceStrong[i].x += sx; this._forceStrong[i].y += sy; this._forceStrong[i].z += sz;
+                        this._forceStrong[j].x -= sx; this._forceStrong[j].y -= sy; this._forceStrong[j].z -= sz;
                     }
                 }
                 // Newton's 3rd law: equal and opposite
@@ -464,6 +486,9 @@ export class MockBridge {
         // Release stale auxiliary buffers so they are reallocated at the new size
         this._stateGrid = null;
         this._selectiveDampMask = null;
+        this._forceEM = [];
+        this._forceGravity = [];
+        this._forceStrong = [];
         this._energyCacheTick = -1;
         this._params = { kb: K_B, gn: G_N, damping: DAMPING };
         // Reset toggles to defaults (must match constructor and config/toggles.js)
@@ -1462,6 +1487,118 @@ export class MockBridge {
             vectors[count * 3] = gn * gradX;
             vectors[count * 3 + 1] = gn * gradY;
             vectors[count * 3 + 2] = gn * gradZ;
+            count++;
+        }
+        return { positions, vectors, count };
+    }
+
+    /**
+     * Sample EM (Coulomb) force field at grid points from particles.
+     * Returns {positions, vectors, count} — same format as getForceFieldSampled.
+     */
+    getEMForceField(stride = 2) {
+        const ps = this._particles.filter(p => p.state !== 0);
+        if (ps.length === 0) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
+        const N = this.latticeSize;
+        const halfN = N / 2;
+        const alpha4pi = ALPHA / (4 * Math.PI);
+        const soft = 1.0;
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = new Float32Array(maxPts * 3);
+        const vectors = new Float32Array(maxPts * 3);
+        let count = 0;
+
+        for (let z = 0; z < N; z += stride)
+        for (let y = 0; y < N; y += stride)
+        for (let x = 0; x < N; x += stride) {
+            let fx = 0, fy = 0, fz = 0;
+            for (const p of ps) {
+                let dx = p.x - x, dy = p.y - y, dz = p.z - z;
+                if (dx > halfN) dx -= N; else if (dx < -halfN) dx += N;
+                if (dy > halfN) dy -= N; else if (dy < -halfN) dy += N;
+                if (dz > halfN) dz -= N; else if (dz < -halfN) dz += N;
+                const r2 = dx * dx + dy * dy + dz * dz + soft;
+                const invR2 = 1 / r2;
+                const invR = 1 / Math.sqrt(r2);
+                fx += -alpha4pi * p.state * invR2 * invR * dx;
+                fy += -alpha4pi * p.state * invR2 * invR * dy;
+                fz += -alpha4pi * p.state * invR2 * invR * dz;
+            }
+            const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
+            if (mag < 1e-12) continue;
+            positions[count * 3] = x; positions[count * 3 + 1] = y; positions[count * 3 + 2] = z;
+            vectors[count * 3] = fx; vectors[count * 3 + 1] = fy; vectors[count * 3 + 2] = fz;
+            count++;
+        }
+        return { positions, vectors, count };
+    }
+
+    /**
+     * Sample gravity force field at grid points.
+     * Alias for getGravityFieldSampled for consistent naming.
+     */
+    getGravityForceField(stride = 2) {
+        return this.getGravityFieldSampled(stride);
+    }
+
+    /**
+     * Sample strong/confinement force field at grid points.
+     * Computes linear confinement between opposite-sign particle pairs.
+     */
+    getStrongForceField(stride = 2) {
+        const ps = this._particles.filter(p => p.state !== 0);
+        if (ps.length < 2) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
+        const N = this.latticeSize;
+        const halfN = N / 2;
+        const soft = 1.0;
+        const SIGMA = 0.015;
+        const R_CRIT = 3.0;
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = new Float32Array(maxPts * 3);
+        const vectors = new Float32Array(maxPts * 3);
+        let count = 0;
+
+        // Find opposite-sign pairs for confinement strings
+        const pairs = [];
+        for (let i = 0; i < ps.length; i++) {
+            for (let j = i + 1; j < ps.length; j++) {
+                if (ps[i].state * ps[j].state < 0) pairs.push([ps[i], ps[j]]);
+            }
+        }
+        if (pairs.length === 0) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
+
+        for (let z = 0; z < N; z += stride)
+        for (let y = 0; y < N; y += stride)
+        for (let x = 0; x < N; x += stride) {
+            let fx = 0, fy = 0, fz = 0;
+            // Strong force: attraction toward nearest confinement pair midpoint
+            for (const [pi, pj] of pairs) {
+                let dxi = pi.x - x, dyi = pi.y - y, dzi = pi.z - z;
+                if (dxi > halfN) dxi -= N; else if (dxi < -halfN) dxi += N;
+                if (dyi > halfN) dyi -= N; else if (dyi < -halfN) dyi += N;
+                if (dzi > halfN) dzi -= N; else if (dzi < -halfN) dzi += N;
+                const r2i = dxi * dxi + dyi * dyi + dzi * dzi + soft;
+                const ri = Math.sqrt(r2i);
+                if (ri > R_CRIT * 3) continue; // only sample near the string
+                // Force toward the pair midpoint (represents flux tube)
+                let dxj = pj.x - x, dyj = pj.y - y, dzj = pj.z - z;
+                if (dxj > halfN) dxj -= N; else if (dxj < -halfN) dxj += N;
+                if (dyj > halfN) dyj -= N; else if (dyj < -halfN) dyj += N;
+                if (dzj > halfN) dzj -= N; else if (dzj < -halfN) dzj += N;
+                const r2j = dxj * dxj + dyj * dyj + dzj * dzj + soft;
+                const rj = Math.sqrt(r2j);
+                // Attraction toward nearer partner of the pair
+                const nearer = ri < rj ? { dx: dxi, dy: dyi, dz: dzi, r: ri } : { dx: dxj, dy: dyj, dz: dzj, r: rj };
+                const fStr = SIGMA * Math.max(0, nearer.r - R_CRIT * 0.5);
+                const invR = 1 / nearer.r;
+                fx += fStr * nearer.dx * invR;
+                fy += fStr * nearer.dy * invR;
+                fz += fStr * nearer.dz * invR;
+            }
+            const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
+            if (mag < 1e-12) continue;
+            positions[count * 3] = x; positions[count * 3 + 1] = y; positions[count * 3 + 2] = z;
+            vectors[count * 3] = fx; vectors[count * 3 + 1] = fy; vectors[count * 3 + 2] = fz;
             count++;
         }
         return { positions, vectors, count };
@@ -4319,6 +4456,20 @@ export class WasmBridge {
 
     getGravityFieldSampled(stride = 2) {
         // WASM doesn't have dedicated gravity field export — delegate to _fluxMock if available
+        return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
+    }
+
+    getEMForceField(stride = 2) {
+        // WASM doesn't have dedicated EM force field export — delegate to MockBridge
+        return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
+    }
+
+    getGravityForceField(stride = 2) {
+        return this.getGravityFieldSampled(stride);
+    }
+
+    getStrongForceField(stride = 2) {
+        // WASM doesn't have dedicated strong force field export — delegate to MockBridge
         return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
     }
 

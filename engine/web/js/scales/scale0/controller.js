@@ -56,11 +56,13 @@ let _showBField = false;
 let _showPoynting = false;
 let _showDivField = false;
 let _showFluxLines = false;
-let _showForceVolume = false;
+let _showForceEM = false;
+let _showForceGravity = false;
+let _showForceStrong = false;
+let _showForceWeak = false;
 let _showDualSubstrate = false;
 let _showChirality = false;
 let _showLight = false;
-let _showGravityField = false;
 let _showDarkMatterHalo = false;
 let _showDampingZones = false;
 let _showGenesisIsosurface = false;
@@ -113,6 +115,7 @@ let _fieldParticleBuf = [];     // reusable {x,y,z} array for E/B field seeds
 let _dualLVecs = null;          // dual substrate left-chirality vectors
 let _dualRVecs = null;          // dual substrate right-chirality vectors
 let _chiralValues = null;       // chirality scalar values
+let _weakValues = null;         // weak force scalar values (chirality-based)
 
 // Default toggle array alias (matches app_dag.js convention)
 const DEFAULT_TOGGLES = SCALE0_TOGGLES;
@@ -130,9 +133,10 @@ const DUAL_DELTA = 0.9568;
  */
 function _recomputeAnyFieldActive() {
     _anyFieldActive = _showEField || _showBField || _showPoynting ||
-        _showDivField || _showFluxLines || _showForceVolume ||
+        _showDivField || _showFluxLines || _showForceEM ||
+        _showForceGravity || _showForceStrong || _showForceWeak ||
         _showDualSubstrate || _showChirality || _showLight ||
-        _showGravityField || _showDarkMatterHalo || _showDampingZones ||
+        _showDarkMatterHalo || _showDampingZones ||
         _showGenesisIsosurface || _showConfinement;
 }
 
@@ -281,7 +285,7 @@ export function animateLattice(ctx) {
         // ran up to 2x (poynting + light), each rebuilding the entire
         // sampled grid from scratch. Each fetch is O(N^3 / stride^3).
         let _jDataCache = null;
-        const _needFluxVec = _showFluxLines || _showDualSubstrate || _showChirality;
+        const _needFluxVec = _showFluxLines || _showDualSubstrate || _showChirality || _showForceWeak;
         if (_needFluxVec) _jDataCache = fieldBridge.getFluxVectorSampled(stride);
         let _sDataCache = null;
         const _needPoynting = _showPoynting || _showLight;
@@ -336,16 +340,36 @@ export function animateLattice(ctx) {
             viewport.updateFluxStreamlines(lines, maxFlux);
         }
 
-        // Force volume
-        if (_showForceVolume) {
-            const fData = fieldBridge.getForceFieldSampled(stride);
-            if (fData.count > 0) viewport.updateForceVolume(fData);
+        // EM force (cyan arrows — Coulomb from particles)
+        if (_showForceEM) {
+            const emData = fieldBridge.getEMForceField(stride);
+            if (emData.count > 0) viewport.updateEMForceField(emData);
         }
 
-        // Gravity field (density gradient)
-        if (_showGravityField) {
-            const gData = fieldBridge.getGravityFieldSampled(stride);
-            if (gData.count > 0) viewport.updateGravityField(gData);
+        // Gravity force (amber arrows — density gradient)
+        if (_showForceGravity) {
+            const gData = fieldBridge.getGravityForceField(stride);
+            if (gData.count > 0) viewport.updateGravityForceField(gData);
+        }
+
+        // Strong force (red arrows — confinement/color force)
+        if (_showForceStrong) {
+            const sData = fieldBridge.getStrongForceField(stride);
+            if (sData.count > 0) viewport.updateStrongForceField(sData);
+        }
+
+        // Weak force (purple points — chirality-based overlay)
+        if (_showForceWeak && _jDataCache && _jDataCache.count > 0) {
+            const lMinusR = DUAL_DELTA;
+            if (!_weakValues || _weakValues.length < _jDataCache.count) {
+                _weakValues = new Float32Array(_jDataCache.count);
+            }
+            for (let i = 0; i < _jDataCache.count; i++) {
+                const jx = _jDataCache.vectors[i * 3], jy = _jDataCache.vectors[i * 3 + 1], jz = _jDataCache.vectors[i * 3 + 2];
+                const mag = Math.sqrt(jx * jx + jy * jy + jz * jz);
+                _weakValues[i] = mag * lMinusR;
+            }
+            viewport.updateWeakField({ positions: _jDataCache.positions, values: _weakValues, count: _jDataCache.count });
         }
 
         // Dark matter halo (sub-threshold flux envelope)
@@ -709,11 +733,13 @@ export function resetScale0(ctx) {
     _showPoynting = false;
     _showDivField = false;
     _showFluxLines = false;
-    _showForceVolume = false;
+    _showForceEM = false;
+    _showForceGravity = false;
+    _showForceStrong = false;
+    _showForceWeak = false;
     _showDualSubstrate = false;
     _showChirality = false;
     _showLight = false;
-    _showGravityField = false;
     _showDarkMatterHalo = false;
     _showDampingZones = false;
     _showGenesisIsosurface = false;
@@ -724,9 +750,10 @@ export function resetScale0(ctx) {
     // Deactivate Scale 0 field toggle buttons
     for (const id of [
         'toggle-e-field', 'toggle-b-field', 'toggle-poynting',
-        'toggle-div-field', 'toggle-flux-lines', 'toggle-force-volume',
+        'toggle-div-field', 'toggle-flux-lines',
+        'toggle-force-em', 'toggle-force-gravity', 'toggle-force-strong', 'toggle-force-weak',
         'toggle-dual-substrate', 'toggle-chirality', 'toggle-light',
-        'toggle-gravity-field', 'toggle-dark-halo', 'toggle-damping-zones',
+        'toggle-dark-halo', 'toggle-damping-zones',
         'toggle-genesis-iso', 'toggle-confinement',
     ]) {
         const btn = document.getElementById(id);
@@ -740,11 +767,13 @@ export function resetScale0(ctx) {
         viewport.togglePoyntingVectors(false);
         viewport.toggleDivergenceField(false);
         viewport.toggleFluxStreamlines(false);
-        viewport.toggleForceVolume(false);
+        viewport.showEMForce(false);
+        viewport.showGravityForce(false);
+        viewport.showStrongForce(false);
+        viewport.showWeakField(false);
         viewport.toggleDualFluxVolume(false);
         viewport.toggleChiralityField(false);
         viewport.toggleLightField(false);
-        viewport.toggleGravityField(false);
         viewport.toggleDarkMatterHalo(false);
         viewport.toggleDampingZones(false);
         viewport.toggleGenesisIsosurface(false);
@@ -771,11 +800,13 @@ export function getFieldState() {
         showPoynting: _showPoynting,
         showDivField: _showDivField,
         showFluxLines: _showFluxLines,
-        showForceVolume: _showForceVolume,
+        showForceEM: _showForceEM,
+        showForceGravity: _showForceGravity,
+        showForceStrong: _showForceStrong,
+        showForceWeak: _showForceWeak,
         showDualSubstrate: _showDualSubstrate,
         showChirality: _showChirality,
         showLight: _showLight,
-        showGravityField: _showGravityField,
         showDarkMatterHalo: _showDarkMatterHalo,
         showDampingZones: _showDampingZones,
         showGenesisIsosurface: _showGenesisIsosurface,
@@ -803,11 +834,13 @@ export function setFieldToggle(key, value) {
         case 'showPoynting': _showPoynting = value; break;
         case 'showDivField': _showDivField = value; break;
         case 'showFluxLines': _showFluxLines = value; break;
-        case 'showForceVolume': _showForceVolume = value; break;
+        case 'showForceEM': _showForceEM = value; break;
+        case 'showForceGravity': _showForceGravity = value; break;
+        case 'showForceStrong': _showForceStrong = value; break;
+        case 'showForceWeak': _showForceWeak = value; break;
         case 'showDualSubstrate': _showDualSubstrate = value; break;
         case 'showChirality': _showChirality = value; break;
         case 'showLight': _showLight = value; break;
-        case 'showGravityField': _showGravityField = value; break;
         case 'showDarkMatterHalo': _showDarkMatterHalo = value; break;
         case 'showDampingZones': _showDampingZones = value; break;
         case 'showGenesisIsosurface': _showGenesisIsosurface = value; break;

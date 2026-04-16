@@ -573,7 +573,8 @@ export class Viewport {
         const fieldOverlays = [
             this._eFieldLines, this._bFieldLines, this._poyntingVectors,
             this._divField, this._fluxStreamlines, this._forceVolume,
-            this._gravityField, this._darkMatterHalo, this._dampingZones,
+            this._gravityField, this._strongForce, this._weakField,
+            this._darkMatterHalo, this._dampingZones,
             this._genesisIsosurface, this._confinementStrings,
             this._dualFluxVolume, this._chiralityField, this._lightField
         ];
@@ -1810,7 +1811,7 @@ export class Viewport {
         if (!on) this._fluxStreamlines.geometry.setDrawRange(0, 0);
     }
 
-    // ── 3D Force Volume (Gray-steel arrows) ──────────────────────────
+    // ── EM Force Volume (Cyan arrows — repurposed from generic Forces) ──
     _buildForceVolume() {
         const maxArrows = 8000;
         const positions = new Float32Array(maxArrows * 2 * 3);
@@ -1859,12 +1860,12 @@ export class Viewport {
             const scale = Math.log(1 + mag / maxMag) * arrowBase;
             const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
 
-            // Base (dark steel)
+            // Base (cyan)
             posAttr.array[vi * 6] = px; posAttr.array[vi * 6 + 1] = py; posAttr.array[vi * 6 + 2] = pz;
-            colAttr.array[vi * 6] = 0.47; colAttr.array[vi * 6 + 1] = 0.56; colAttr.array[vi * 6 + 2] = 0.61;
-            // Tip (brighter steel)
+            colAttr.array[vi * 6] = 0.0; colAttr.array[vi * 6 + 1] = 0.9; colAttr.array[vi * 6 + 2] = 1.0;
+            // Tip (bright cyan)
             posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
-            colAttr.array[vi * 6 + 3] = 0.7; colAttr.array[vi * 6 + 4] = 0.78; colAttr.array[vi * 6 + 5] = 0.82;
+            colAttr.array[vi * 6 + 3] = 0.7; colAttr.array[vi * 6 + 4] = 1.0; colAttr.array[vi * 6 + 5] = 1.0;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -1928,16 +1929,16 @@ export class Viewport {
             const scale = Math.log(1 + t) * arrowBase;
             const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
 
-            // Base: cool blue-grey
+            // Base: amber
             posAttr.array[vi * 6] = px; posAttr.array[vi * 6 + 1] = py; posAttr.array[vi * 6 + 2] = pz;
-            colAttr.array[vi * 6] = 0.55 + t * 0.3;
-            colAttr.array[vi * 6 + 1] = 0.60 + t * 0.25;
-            colAttr.array[vi * 6 + 2] = 0.68 + t * 0.2;
-            // Tip: bright white-blue
+            colAttr.array[vi * 6] = 1.0;
+            colAttr.array[vi * 6 + 1] = 0.67;
+            colAttr.array[vi * 6 + 2] = 0.0;
+            // Tip: bright amber
             posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
-            colAttr.array[vi * 6 + 3] = 0.85 + t * 0.15;
-            colAttr.array[vi * 6 + 4] = 0.88 + t * 0.12;
-            colAttr.array[vi * 6 + 5] = 0.92 + t * 0.08;
+            colAttr.array[vi * 6 + 3] = 1.0;
+            colAttr.array[vi * 6 + 4] = 0.9;
+            colAttr.array[vi * 6 + 5] = 0.4;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -1950,6 +1951,136 @@ export class Viewport {
         this._gravityField.visible = on;
         if (!on) this._gravityField.geometry.setDrawRange(0, 0);
     }
+
+    // ── EM Force (alias to ForceVolume for new badge naming) ─────────
+    updateEMForceField(data) { this.updateForceVolume(data); }
+    showEMForce(on) { this.toggleForceVolume(on); }
+
+    // ── Gravity Force (alias to GravityField for new badge naming) ──
+    updateGravityForceField(data) { this.updateGravityField(data); }
+    showGravityForce(on) { this.toggleGravityField(on); }
+
+    // ── Strong Force Volume (Red arrows) ──────────────────────────────
+    _buildStrongForce() {
+        const maxArrows = 8000;
+        const positions = new Float32Array(maxArrows * 2 * 3);
+        const colors = new Float32Array(maxArrows * 2 * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.7,
+            depthWrite: false
+        });
+        this._strongForce = new THREE.LineSegments(geo, mat);
+        this._strongForce.visible = false;
+        this.scene.add(this._strongForce);
+    }
+
+    updateStrongForceField(fieldData) {
+        if (!this._strongForce) this._buildStrongForce();
+        const posAttr = this._strongForce.geometry.getAttribute('position');
+        const colAttr = this._strongForce.geometry.getAttribute('color');
+        const { positions, vectors, count } = fieldData;
+        const maxArrows = posAttr.array.length / 6;
+        let maxMag = 0;
+        if (!this._strongMagCache || this._strongMagCache.length < count) this._strongMagCache = new Float32Array(count);
+        const mags = this._strongMagCache;
+        for (let i = 0; i < count; i++) {
+            const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
+            const m = Math.sqrt(a * a + b * b + c * c);
+            mags[i] = m;
+            if (m > maxMag) maxMag = m;
+        }
+        const threshold = maxMag * 0.03;
+        const halfN = this._halfN;
+        const arrowBase = 2 * (this.latticeSize / 32);
+        let vi = 0;
+
+        for (let i = 0; i < count && vi < maxArrows; i++) {
+            const mag = mags[i];
+            if (mag < threshold) continue;
+            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            const scale = Math.log(1 + mag / maxMag) * arrowBase;
+            const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
+
+            // Base (red)
+            posAttr.array[vi * 6] = px; posAttr.array[vi * 6 + 1] = py; posAttr.array[vi * 6 + 2] = pz;
+            colAttr.array[vi * 6] = 1.0; colAttr.array[vi * 6 + 1] = 0.09; colAttr.array[vi * 6 + 2] = 0.27;
+            // Tip (bright red)
+            posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
+            colAttr.array[vi * 6 + 3] = 1.0; colAttr.array[vi * 6 + 4] = 0.5; colAttr.array[vi * 6 + 5] = 0.5;
+            vi++;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._strongForce.geometry.setDrawRange(0, vi * 2);
+    }
+
+    toggleStrongForce(on) {
+        if (!this._strongForce) this._buildStrongForce();
+        this._strongForce.visible = on;
+        if (!on) this._strongForce.geometry.setDrawRange(0, 0);
+    }
+
+    showStrongForce(on) { this.toggleStrongForce(on); }
+
+    // ── Weak Force Overlay (Purple points at chirality sites) ─────────
+    _buildWeakField() {
+        const maxPts = 4000;
+        const positions = new Float32Array(maxPts * 3);
+        const colors = new Float32Array(maxPts * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.PointsMaterial({
+            size: 3.0, vertexColors: true, transparent: true, opacity: 0.7,
+            depthWrite: false, sizeAttenuation: true
+        });
+        this._weakField = new THREE.Points(geo, mat);
+        this._weakField.visible = false;
+        this.scene.add(this._weakField);
+    }
+
+    updateWeakField(fieldData) {
+        if (!this._weakField) this._buildWeakField();
+        const posAttr = this._weakField.geometry.getAttribute('position');
+        const colAttr = this._weakField.geometry.getAttribute('color');
+        const { positions, values, count } = fieldData;
+        const maxPts = posAttr.array.length / 3;
+        let maxVal = 0;
+        for (let i = 0; i < count; i++) {
+            const v = Math.abs(values[i]);
+            if (v > maxVal) maxVal = v;
+        }
+        const threshold = maxVal * 0.1;
+        const halfN = this._halfN;
+        let vi = 0;
+        for (let i = 0; i < count && vi < maxPts; i++) {
+            if (Math.abs(values[i]) < threshold) continue;
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
+            // Purple color
+            colAttr.array[vi * 3] = 0.67; colAttr.array[vi * 3 + 1] = 0.0; colAttr.array[vi * 3 + 2] = 1.0;
+            vi++;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._weakField.geometry.setDrawRange(0, vi);
+    }
+
+    toggleWeakField(on) {
+        if (!this._weakField) this._buildWeakField();
+        this._weakField.visible = on;
+        if (!on) this._weakField.geometry.setDrawRange(0, 0);
+    }
+
+    showWeakField(on) { this.toggleWeakField(on); }
 
     // ── Dark Matter Halo Overlay (sub-threshold flux envelope) ──────
     _buildDarkMatterHalo() {
@@ -2980,6 +3111,8 @@ export class Viewport {
             if (this._fluxStreamlines) this._fluxStreamlines.visible = false;
             if (this._forceVolume) this._forceVolume.visible = false;
             if (this._gravityField) this._gravityField.visible = false;
+            if (this._strongForce) this._strongForce.visible = false;
+            if (this._weakField) this._weakField.visible = false;
             if (this._dualFluxVolume) this._dualFluxVolume.visible = false;
             if (this._chiralityField) this._chiralityField.visible = false;
             if (this._lightField) this._lightField.visible = false;
@@ -3419,7 +3552,7 @@ export class Viewport {
         // Field visualization overlays (Scale 0 streamlines, volumes, etc.)
         const fieldOverlays = [
             '_eFieldLines', '_bFieldLines', '_poyntingVectors', '_divField',
-            '_fluxStreamlines', '_forceVolume', '_gravityField', '_dualFluxVolume',
+            '_fluxStreamlines', '_forceVolume', '_gravityField', '_strongForce', '_weakField', '_dualFluxVolume',
             '_chiralityField', '_lightField',
             '_darkMatterHalo', '_dampingZones', '_genesisIsosurface',
             '_confinementStrings',
