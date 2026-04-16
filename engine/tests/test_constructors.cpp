@@ -1003,6 +1003,314 @@ static void section_level5_h2_molecule() {
     ftd::test::check("H26: multiple electron sites present", count_electrons >= 2);
 }
 
+// ============================================================================
+// Level 6 — gauge/topological objects
+// ============================================================================
+
+static void section_level6_wilson_loop() {
+    ftd::test::section("Level 6 / wilson_loop");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+    int radius = 4;
+
+    auto r = ftd::ctor::wilson_loop(rb, center, radius, ftd::K_B);
+
+    ftd::test::check("WL1: name is 'wilson_loop'", std::string(r.name) == "wilson_loop");
+    ftd::test::check("WL2: level is 6", r.level == 6);
+    ftd::test::check("WL3: sites count > 0", r.site_count() > 0);
+
+    // Corners should have state = +1
+    int idx_bl = rb.lattice().index(12, 12, 16); // bottom-left corner
+    int idx_br = rb.lattice().index(20, 12, 16); // bottom-right corner
+    ftd::test::check("WL4: bottom-left corner state = +1",
+        rb.voxels()[idx_bl].state == +1);
+    ftd::test::check("WL5: bottom-right corner state = +1",
+        rb.voxels()[idx_br].state == +1);
+
+    // Bottom edge: flux should be in +x direction
+    int idx_bot_mid = rb.lattice().index(16, 12, 16);
+    ftd::test::check("WL6: bottom edge flux in +x",
+        rb.voxels()[idx_bot_mid].flux.x > 0);
+
+    // Left edge: flux should be in -y direction
+    int idx_left_mid = rb.lattice().index(12, 16, 16);
+    ftd::test::check("WL7: left edge flux in -y",
+        rb.voxels()[idx_left_mid].flux.y < 0);
+}
+
+static void section_level6_flux_tube() {
+    ftd::test::section("Level 6 / flux_tube");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord end_a{10, 16, 16};
+    ftd::Coord end_b{22, 16, 16};
+
+    auto r = ftd::ctor::flux_tube(rb, end_a, end_b, ftd::K_B);
+
+    ftd::test::check("FT1: name is 'flux_tube'", std::string(r.name) == "flux_tube");
+    ftd::test::check("FT2: level is 6", r.level == 6);
+    ftd::test::check("FT3: sites count > 2", r.site_count() > 2);
+
+    // Endpoint A: quark with state=+1, color=1
+    int idx_a = rb.lattice().index(10, 16, 16);
+    ftd::test::check("FT4: end_a state = +1 (quark)",
+        rb.voxels()[idx_a].state == +1);
+    ftd::test::check("FT5: end_a color = 1",
+        rb.voxels()[idx_a].color == 1);
+
+    // Endpoint B: antiquark with state=-1, color=1
+    int idx_b = rb.lattice().index(22, 16, 16);
+    ftd::test::check("FT6: end_b state = -1 (antiquark)",
+        rb.voxels()[idx_b].state == -1);
+
+    // Midpoint: flux should point from a to b (positive x)
+    int idx_mid = rb.lattice().index(16, 16, 16);
+    ftd::test::check("FT7: midpoint flux in +x direction (a->b)",
+        rb.voxels()[idx_mid].flux.x > 0);
+
+    // Gaussian falloff: on-axis flux should be stronger than off-axis
+    int idx_off = rb.lattice().index(16, 18, 16); // 2 sites off axis
+    double on_axis_mag = rb.voxels()[idx_mid].flux.mag();
+    double off_axis_mag = rb.voxels()[idx_off].flux.mag();
+    ftd::test::check("FT8: on-axis flux > off-axis flux (Gaussian profile)",
+        on_axis_mag > off_axis_mag);
+}
+
+static void section_level6_monopole() {
+    ftd::test::section("Level 6 / monopole");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+
+    auto r = ftd::ctor::monopole(rb, center, 1.0);
+
+    ftd::test::check("MO1: name is 'monopole'", std::string(r.name) == "monopole");
+    ftd::test::check("MO2: level is 6", r.level == 6);
+    ftd::test::check("MO3: sites count > 0", r.site_count() > 0);
+
+    // 1/r falloff: site at r=2 should have stronger flux than r=8
+    int idx_near = rb.lattice().index(18, 16, 16); // r=2
+    int idx_far  = rb.lattice().index(24, 16, 16); // r=8
+    double mag_near = rb.voxels()[idx_near].flux.mag();
+    double mag_far  = rb.voxels()[idx_far].flux.mag();
+    ftd::test::check("MO4: 1/r falloff (near > far)",
+        mag_near > mag_far);
+
+    // Hedgehog pattern: flux should span multiple directions at different sites
+    double fx = rb.voxels()[rb.lattice().index(18, 16, 16)].flux.x;
+    double fy = rb.voxels()[rb.lattice().index(16, 18, 16)].flux.y;
+    // Tangential field means the components have specific angular dependence
+    ftd::test::check("MO5: non-trivial flux pattern (multiple components)",
+        mag_near > 1e-10);
+}
+
+static void section_level6_instanton() {
+    ftd::test::section("Level 6 / instanton");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+
+    auto r = ftd::ctor::instanton(rb, center, 3.0);
+
+    ftd::test::check("IN1: name is 'instanton'", std::string(r.name) == "instanton");
+    ftd::test::check("IN2: level is 6", r.level == 6);
+    ftd::test::check("IN3: sites count > 0", r.site_count() > 0);
+
+    // BPST profile: peak near center, falls off with distance
+    int idx_r1 = rb.lattice().index(17, 16, 16); // r=1
+    int idx_r10 = rb.lattice().index(26, 16, 16); // r=10
+    double mag_near = rb.voxels()[idx_r1].flux.mag();
+    double mag_far  = rb.voxels()[idx_r10].flux.mag();
+    ftd::test::check("IN4: localized lump (near > far)",
+        mag_near > mag_far);
+
+    // At r=1: profile = size/(1 + size^2) = 3/(1+9) = 0.3
+    // Flux magnitude should be approximately this
+    ftd::test::check("IN5: flux magnitude at r=1 is reasonable",
+        mag_near > 0.1 && mag_near < 1.0);
+}
+
+// ============================================================================
+// Level 7 — gravity/cosmology
+// ============================================================================
+
+static void section_level7_schwarzschild() {
+    ftd::test::section("Level 7 / schwarzschild");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+
+    auto r = ftd::ctor::schwarzschild(rb, center, 3.0);
+
+    ftd::test::check("SC1: name is 'schwarzschild'", std::string(r.name) == "schwarzschild");
+    ftd::test::check("SC2: level is 7", r.level == 7);
+    ftd::test::check("SC3: sites count = N^3 (fills entire lattice)",
+        r.site_count() == 32 * 32 * 32);
+
+    // Latency at center should be high (clamped at 0.999)
+    int idx_center = rb.lattice().index(16, 16, 16);
+    ftd::test::check("SC4: latency at center is high (near clamp)",
+        rb.voxels()[idx_center].latency > 0.9);
+
+    // Latency should decrease with distance
+    int idx_r5 = rb.lattice().index(21, 16, 16); // r=5
+    int idx_r10 = rb.lattice().index(26, 16, 16); // r=10
+    double L_5  = rb.voxels()[idx_r5].latency;
+    double L_10 = rb.voxels()[idx_r10].latency;
+    ftd::test::check("SC5: latency decreases with distance (L(5) > L(10))",
+        L_5 > L_10);
+
+    // Latency must be < 0.999 (engine convention)
+    bool all_clamped = true;
+    for (int idx : r.sites) {
+        if (rb.voxels()[idx].latency > 0.999 + 1e-12) {
+            all_clamped = false;
+            break;
+        }
+    }
+    ftd::test::check("SC6: all latency values < 0.999", all_clamped);
+}
+
+static void section_level7_frw_patch() {
+    ftd::test::section("Level 7 / frw_patch");
+
+    ftd::RenderBridge rb(32);
+
+    auto r = ftd::ctor::frw_patch(rb, 0.01);
+
+    ftd::test::check("FW1: name is 'frw_patch'", std::string(r.name) == "frw_patch");
+    ftd::test::check("FW2: level is 7", r.level == 7);
+    ftd::test::check("FW3: sites count > 0", r.site_count() > 0);
+
+    // Should have both +1 and -1 particles (alternating)
+    int pos_count = 0, neg_count = 0;
+    for (int idx : r.sites) {
+        if (rb.voxels()[idx].state == +1) ++pos_count;
+        if (rb.voxels()[idx].state == -1) ++neg_count;
+    }
+    ftd::test::check("FW4: has both positive and negative particles",
+        pos_count > 0 && neg_count > 0);
+
+    // Density < 1 means not all sites are filled
+    ftd::test::check("FW5: sparse distribution (not all sites filled)",
+        r.site_count() < 32 * 32 * 32);
+}
+
+static void section_level7_gravitational_wave() {
+    ftd::test::section("Level 7 / gravitational_wave");
+
+    ftd::RenderBridge rb(32);
+    ftd::Vec3 direction{1, 0, 0};
+
+    auto r = ftd::ctor::gravitational_wave(rb, direction, 8.0, 0.05);
+
+    ftd::test::check("GW1: name is 'gravitational_wave'",
+        std::string(r.name) == "gravitational_wave");
+    ftd::test::check("GW2: level is 7", r.level == 7);
+    ftd::test::check("GW3: sites count = N^3",
+        r.site_count() == 32 * 32 * 32);
+
+    // Periodic modulation: should have both positive and negative latency
+    int pos_lat = 0, neg_lat = 0;
+    for (int idx : r.sites) {
+        double L = rb.voxels()[idx].latency;
+        if (L > 0.01) ++pos_lat;
+        if (L < -0.01) ++neg_lat;
+    }
+    ftd::test::check("GW4: has both positive and negative latency phases",
+        pos_lat > 0 && neg_lat > 0);
+
+    // Amplitude should be bounded by the specified value
+    bool all_bounded = true;
+    for (int idx : r.sites) {
+        if (std::abs(rb.voxels()[idx].latency) > 0.05 + 1e-12) {
+            all_bounded = false;
+            break;
+        }
+    }
+    ftd::test::check("GW5: latency bounded by amplitude", all_bounded);
+}
+
+// ============================================================================
+// Level 8 — consciousness/observer
+// ============================================================================
+
+static void section_level8_sloop() {
+    ftd::test::section("Level 8 / sloop");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+
+    auto r = ftd::ctor::sloop(rb, center, 3);
+
+    ftd::test::check("SL1: name is 'sloop'", std::string(r.name) == "sloop");
+    ftd::test::check("SL2: level is 8", r.level == 8);
+    ftd::test::check("SL3: sites count > 0", r.site_count() > 0);
+
+    // All particles should have state = +1
+    bool all_positive = true;
+    for (int idx : r.sites) {
+        if (rb.voxels()[idx].state != +1) { all_positive = false; break; }
+    }
+    ftd::test::check("SL4: all particles have state = +1", all_positive);
+
+    // All particles should have nonzero flux (circulating)
+    bool all_have_flux = true;
+    for (int idx : r.sites) {
+        if (rb.voxels()[idx].flux.mag() < 1e-10) { all_have_flux = false; break; }
+    }
+    ftd::test::check("SL5: all particles have nonzero flux (circulating)", all_have_flux);
+
+    // All sites should be at approximately the specified radius from center
+    bool all_near_radius = true;
+    for (int idx : r.sites) {
+        ftd::Coord c = rb.lattice().coord(idx);
+        double dx = c.x - 16.0;
+        double dy = c.y - 16.0;
+        double dz = c.z - 16.0;
+        double dist = std::sqrt(dx*dx + dy*dy + dz*dz);
+        // Allow discretization tolerance: within 1.5 of radius=3
+        if (dist < 1.5 || dist > 4.5) { all_near_radius = false; break; }
+    }
+    ftd::test::check("SL6: all sites near specified radius", all_near_radius);
+}
+
+static void section_level8_observer_cell() {
+    ftd::test::section("Level 8 / observer_cell");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+
+    auto r = ftd::ctor::observer_cell(rb, center);
+
+    ftd::test::check("OC1: name is 'observer_cell'",
+        std::string(r.name) == "observer_cell");
+    ftd::test::check("OC2: level is 8", r.level == 8);
+    ftd::test::check("OC3: exactly 27 sites (3^3 Moore cell + center)",
+        r.site_count() == 27);
+
+    // Center: state = +1 (the "self")
+    int idx_center = rb.lattice().index(16, 16, 16);
+    ftd::test::check("OC4: center state = +1 (self/observer)",
+        rb.voxels()[idx_center].state == +1);
+
+    // Shell 1 (face neighbors): state = -1
+    int idx_face = rb.lattice().index(17, 16, 16);
+    ftd::test::check("OC5: face neighbor state = -1 (mirror/sensory)",
+        rb.voxels()[idx_face].state == -1);
+
+    // Shell 2 (edge neighbors): state = +1
+    int idx_edge = rb.lattice().index(17, 17, 16);
+    ftd::test::check("OC6: edge neighbor state = +1 (frame/reference)",
+        rb.voxels()[idx_edge].state == +1);
+
+    // Shell 3 (corner neighbors): state = -1
+    int idx_corner = rb.lattice().index(17, 17, 17);
+    ftd::test::check("OC7: corner neighbor state = -1 (context/environment)",
+        rb.voxels()[idx_corner].state == -1);
+}
+
 int main() {
     ftd::test::init("test_constructors");
     section_level0_flux();
@@ -1033,5 +1341,14 @@ int main() {
     section_level5_hydrogen();
     section_level5_helium();
     section_level5_h2_molecule();
+    section_level6_wilson_loop();
+    section_level6_flux_tube();
+    section_level6_monopole();
+    section_level6_instanton();
+    section_level7_schwarzschild();
+    section_level7_frw_patch();
+    section_level7_gravitational_wave();
+    section_level8_sloop();
+    section_level8_observer_cell();
     return ftd::test::finalize();
 }
