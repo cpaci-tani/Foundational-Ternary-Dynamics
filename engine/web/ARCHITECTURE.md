@@ -53,7 +53,13 @@ engine/web/
 │   │   ├── mock-scale4.js
 │   │   └── mock-scale5.js
 │   └── scales/
-│       ├── scale0/controller.js
+│       ├── scale0/
+│       │   ├── controller.js
+│       │   ├── scenario-registry.js
+│       │   ├── viewport-adapter.js
+│       │   ├── runtime/
+│       │   ├── state/
+│       │   └── ui/
 │       ├── scale1/controller.js
 │       ├── scale2/controller.js
 │       ├── scale3/controller.js
@@ -97,18 +103,30 @@ Browser DOM
 There are three main layers:
 
 1. Application shell
-   `app_dag.js` owns startup, global state, UI wiring, mode switching,
-   shared context construction, and the main `requestAnimationFrame`
-   loop.
+   `app_dag.js` owns startup, global state, shared context
+   construction, mode switching, and the main
+   `requestAnimationFrame` loop. After the Scale 0 refactor it is still
+   the composition root, but it no longer owns Scale 0 field-toggle,
+   force-style, boundary, or scenario-selector wiring.
 
 2. Scale controllers
    Each controller owns scenario loading plus the per-frame logic for a
-   mode. Controllers are leaves: they do not import `app_dag.js`.
+   mode. Scale 0 now also owns its own UI binding, internal runtime
+   phases, state store, and scenario registry. Controllers are leaves:
+   they do not import `app_dag.js`.
 
 3. Simulation backends
    The active controller talks to a bridge. That bridge may be a native
    WebSocket server, a browser WASM `RenderBridge` / `ParticleEngine`,
    or one of several JavaScript mocks.
+
+One more boundary now matters in practice:
+
+4. Capability and presentation adapters
+   Scale 0 talks to `bridge.capabilities.scale0` rather than poking at
+   bridge internals, and talks to `viewport.js` through a dedicated
+   `viewport-adapter.js` facade rather than treating `viewport` as one
+   undifferentiated API surface.
 
 ---
 
@@ -135,8 +153,8 @@ index.html
      -> initOnticPhysicsHierarchy()
      -> wireToolbar() / wireTabs() / wireControls() / wireViewportToggles()
      -> initZoo(bridge)
+     -> Scale0Controller.bindUI(_makeCtx())
      -> new BackgroundManager(viewport.scene)
-     -> wire boundary controls
      -> Scale0Controller.loadScenario(_makeCtx(), 'flux-pulse')
      -> requestAnimationFrame(animate)
 ```
@@ -180,6 +198,15 @@ objects:
 Controllers do not receive snapshots. `_makeCtx()` builds a context
 object with getters and setters, so controllers read and write the live
 module-level state.
+
+The shared app context also now exposes a few app-shell services that
+Scale 0 uses instead of reaching into the shell indirectly:
+
+- `pauseSimulation()`
+- `applyTicksPerFrameFromSlider(...)`
+- `applyBoundaryShape(...)`
+- `applyReflectiveBoundary(...)`
+- `switchToQuantumLabTab()`
 
 Example: a controller reading `ctx.running` is reading the real app
 state, not a copied boolean.
@@ -274,10 +301,7 @@ Step button
      -> cosmic: Scale5Controller.step(...)
      -> planetary: Scale4Controller.step()
      -> meta: Scale6Controller.step(...)
-     -> lattice:
-        -> bridge.tick()
-        -> if flux mock exists: fluxMock.tick()
-        -> Scale0Controller.setLatticeNeedsUpload()
+     -> lattice: Scale0Controller.step(_makeCtx())
 ```
 
 ### 6.3 Reset
@@ -295,7 +319,7 @@ Reset button
      -> molecules: loadMoleculeScenario(...)
      -> atoms: loadAEScenario(...)
      -> particles: loadPEScenario(...)
-     -> lattice: Scale0Controller.loadScenario(...)
+     -> lattice: Scale0Controller.reset(_makeCtx())
 ```
 
 ### 6.4 Mode switch
@@ -312,17 +336,18 @@ engine-mode <select>
      -> toggle root CSS mode classes
      -> set #app[data-active-scale]
      -> hide/show tabs by data-scales
-     -> if leaving lattice: Scale0Controller.clearFluxMock()
+     -> if leaving lattice: Scale0Controller.exit(_makeCtx())
      -> inspector.setEngineMode(mode)
      -> viewport.setEngineMode(mode)
      -> setZooMode(mode)
-     -> resync ticks-per-frame UI
+     -> applyTicksPerFrameFromSlider(current slider)
      -> cleanup old scale:
         -> Scale11Controller.resetScale11(...)
         -> Scale5Controller.resetScale5(...)
         -> Scale4Controller.dispose(...)
         -> Scale6Controller.resetScale6(...)
      -> load target scenario:
+        -> lattice enter hook is currently a no-op
         -> Scale0Controller.loadScenario(...)
         -> loadPEScenario(...)
         -> loadAEScenario(...)
@@ -391,6 +416,15 @@ browser-only session.
 - optional AE object `this._ae`
 
 Scale 0 and Scale 1 are truly backed by C++ in the browser today.
+
+As of the Scale 0 modularity pass, both `WasmBridge` and `MockBridge`
+also expose lazily-built capability surfaces:
+
+- `bridge.capabilities.scale0`
+- `bridge.capabilities.scale1`
+- `bridge.capabilities.scale2`
+
+Scale 0 uses these capability objects as its backend contract.
 
 ### 7.5 AtomEngine reality
 
@@ -478,46 +512,62 @@ Scale 0 is the most complex mode because it mixes:
 - real substrate stepping through `RenderBridge`
 - optional JS `MockBridge` flux ownership for some scenarios
 - heavy field / volume / overlay rendering through `viewport.js`
+- its own package-local state store, runtime phase modules, scenario
+  registry, and UI bindings
+
+Scale 0 now follows the target module contract more closely than the
+other scales. Its public controller surface is:
+
+- `bindUI(ctx)`
+- `enter(ctx, options)` (currently a no-op lifecycle placeholder)
+- `exit(ctx)`
+- `loadScenario(ctx, scenarioId, params?)`
+- `animate(ctx)`
+- `step(ctx)`
+- `reset(ctx)`
+- `resize(ctx, newSize)`
 
 Frame stack:
 
 ```text
 requestAnimationFrame
   -> app_dag.animate(now)
-  -> Scale0Controller.animateLattice(ctx)
-     -> if ctx.running:
-        -> wholeTicks = tickAccumulator.accumulate(ctx.ticksPerFrame)
-        -> for each tick:
-           -> if !_useFluxMock: bridge.tick()
-           -> if flux mock needed: _fluxMock.tick()
-        -> _latticeNeedsUpload = true
-     -> if upload needed:
-        -> particleData = bridge.getParticleData()
-        -> optional fallback: _fluxMock.getParticleData()
-        -> viewport.updateParticles(...)
-        -> flux volume from bridge.getFluxVolume() or _fluxMock.getFluxVolume()
-        -> flux slice from bridge.getFluxSlice() or mock
-        -> sampled E/B/Poynting/chiral/weak overlays
-     -> viewport.render()
-     -> bridge.getDiagnostics()
-     -> bridge.getEnergyAudit()
-     -> update charts / inspector / panels / ontic / hierarchy
+  -> Scale0Controller.animate(ctx)
+     -> advanceSimulation(ctx, state)
+        -> bridge.capabilities.scale0.tickScale0()
+        -> optional state.fluxMock.capabilities.scale0.tickScale0()
+     -> syncRenderableData(ctx, state, viewportAdapter)
+        -> getScale0ParticleFrame()
+        -> getScale0FluxVolume() / getScale0FluxSlice()
+        -> viewportAdapter.applyParticleFrame(...)
+     -> updateFieldOverlays(ctx, state, viewportAdapter)
+        -> sampleFieldState(...)
+        -> buildElectromagneticOverlayData(...)
+        -> buildForceOverlayData(...)
+        -> buildDerivedSubstrateData(...)
+        -> applyOverlayFrame(...)
+     -> viewportAdapter.render()
+     -> updateDiagnosticsAndPanels(ctx, state)
+        -> getScale0Diagnostics()
+        -> getScale0EnergyAudit()
+        -> getScale0Lagrangian()
+        -> update charts / inspector / panels / ontic / hierarchy
 ```
 
 Scenario load stack:
 
 ```text
-Scale0Controller.loadScenario(ctx, name)
+Scale0Controller.loadScenario(ctx, scenarioId)
   -> ctx.resetAllVisualState()
-  -> _resetAuxiliarySettings()
-  -> bridge.setupScenario(name)
-  -> _fluxMock = new MockBridge(L)
-  -> _fluxMock.setupScenario(name)
-  -> reset all toggles to defaults
-  -> apply scenario overrides
-  -> decide _useFluxMock by scenario + flux-volume probe
+  -> applyAuxiliaryDefaults(...)
+  -> getScale0Scenario(scenarioId)
+  -> scenario.load({ bridge, capabilities }, params)
+  -> new MockBridge(L)
+  -> fluxMock.capabilities.scale0.setupScenario(scenarioId)
+  -> apply toggle defaults and scenario overrides
+  -> setFluxMock(fluxMock, shouldUseFluxMock(...))
   -> mark overrides and resync sliders
-  -> _latticeNeedsUpload = true
+  -> state.latticeNeedsUpload = true
 ```
 
 Important nuance:
@@ -525,6 +575,9 @@ Important nuance:
 - `_useFluxMock` means the JS mock owns the physics for that scenario.
 - This is forced for `flux-*`, `s0-seed-*`, and `s0-field-*` scenarios,
   and also when real flux-volume export is unavailable.
+- The `scenario-select` dropdown is now populated from
+  `scale0/scenario-registry.js` rather than being treated as the sole
+  source of truth.
 
 ### 9.2 Scale 1 `particles`
 
@@ -875,6 +928,7 @@ primarily Playwright smoke coverage:
 - bridge initializes
 - scale transitions work
 - specific regression guards such as cosmic interval cleanup are covered
+- Scale 0 module-contract and scenario-registry wiring are covered
 
 This is not physics-validation coverage. Physics correctness still lives
 in:
