@@ -47,7 +47,7 @@ When in doubt, this audit uses the weaker label.
   they are runtime-sensitive rather than purely static.
   Evidence: native-bridge reconnection behavior, live inspector mapping,
   disposal cleanliness, and framerate-dependent claims were not executed
-  in a browser session during this pass.
+  exhaustively in a browser session during this pass.
 
 ---
 
@@ -72,6 +72,10 @@ When in doubt, this audit uses the weaker label.
 
 - **[x] [THEOREM]** The default boot scenario is `flux-pulse`.
   Evidence: `app_dag.js` `Scale0Controller.loadScenario(_makeCtx(), 'flux-pulse')`.
+
+- **[x] [THEOREM]** Scale 0 UI binding now happens during boot through
+  `Scale0Controller.bindUI(_makeCtx())`.
+  Evidence: `engine/web/js/app_dag.js`.
 
 - **[x] [EMERGENT]** The loading overlay should disappear after startup
   completes, with an 8-second safety timeout if init hangs.
@@ -103,6 +107,11 @@ When in doubt, this audit uses the weaker label.
 - **[x] [THEOREM]** Scale 0 and Scale 1 can use real C++ browser paths
   through WASM today.
   Evidence: `wasm-bridge-dag.js`, `ftd_wasm.cpp`.
+
+- **[x] [THEOREM]** `WasmBridge` and `MockBridge` now expose
+  lazily-built capability surfaces including `scale0`, `scale1`, and
+  `scale2`.
+  Evidence: `engine/web/js/wasm-bridge-dag.js`.
 
 - **[x] [THEOREM]** The web AE path is forced onto JavaScript fallback
   because `_aeHasWasm` returns `false`.
@@ -157,9 +166,17 @@ When in doubt, this audit uses the weaker label.
   entry points.
   Evidence: `app_dag.js` Step button handler.
 
+- **[x] [THEOREM]** Lattice step now dispatches through
+  `Scale0Controller.step(_makeCtx())`.
+  Evidence: `engine/web/js/app_dag.js`.
+
 - **[x] [THEOREM]** Reset reloads the current mode's scenario instead of
   performing a universal engine reset.
   Evidence: `app_dag.js` Reset button handler.
+
+- **[x] [THEOREM]** Lattice reset now dispatches through
+  `Scale0Controller.reset(_makeCtx())`.
+  Evidence: `engine/web/js/app_dag.js`.
 
 - **[x] [THEOREM]** `switchEngineMode()` is the sole mode-switch entry
   point.
@@ -168,6 +185,10 @@ When in doubt, this audit uses the weaker label.
 - **[x] [THEOREM]** Mode switching pauses simulation, updates CSS/tab
   visibility, performs scale cleanup, then loads the target scenario.
   Evidence: `app_dag.js` `switchEngineMode(mode)`.
+
+- **[x] [THEOREM]** Leaving lattice now routes cleanup through
+  `Scale0Controller.exit(_makeCtx())`.
+  Evidence: `engine/web/js/app_dag.js`.
 
 - **[ ] [OPEN]** Full cleanup correctness across long repeated mode
   switches was not re-run manually in this audit.
@@ -206,23 +227,48 @@ When in doubt, this audit uses the weaker label.
   Note: "most complex" is partly a documentation judgment; the concrete
   multi-bridge, multi-overlay behavior is source-verified.
 
-- **[x] [THEOREM]** `_useFluxMock` can cause the JS `MockBridge` to own
-  Scale 0 physics instead of the WASM bridge.
-  Evidence: `scale0/controller.js`.
+- **[x] [THEOREM]** Scale 0 now follows a package-style structure with
+  dedicated runtime, state, UI, scenario-registry, and viewport-adapter
+  modules.
+  Evidence: `engine/web/js/scales/scale0/`.
 
 - **[x] [THEOREM]** `_useFluxMock` is forced for `flux-*`,
   `s0-seed-*`, and `s0-field-*` scenarios, and otherwise decided by a
   flux-volume capability probe.
-  Evidence: `_shouldUseFluxMock()` in `scale0/controller.js`.
+  Evidence: `shouldUseFluxMock()` in
+  `engine/web/js/scales/scale0/runtime/scenario-loader.js`.
 
 - **[x] [THEOREM]** Scale 0 scenario load creates a fresh `_fluxMock`,
   resets toggles to defaults, applies overrides, and marks lattice data
   dirty.
-  Evidence: `Scale0Controller.loadScenario()`.
+  Evidence: `Scale0Controller.loadScenario()`,
+  `loadScale0Scenario()` in `scale0/runtime/scenario-loader.js`.
 
-- **[x] [THEOREM]** Scale 0's render path pulls particle data,
-  diagnostics, and energy audit data after ticking.
-  Evidence: `Scale0Controller.animateLattice()`.
+- **[x] [THEOREM]** Scale 0's frame path is explicitly decomposed into
+  simulation advance, renderable-data sync, overlay update, viewport
+  render, and diagnostics/panel refresh phases.
+  Evidence: `Scale0Controller.animate()`,
+  `scale0/runtime/tick.js`,
+  `scale0/runtime/frame-sync.js`,
+  `scale0/runtime/field-overlays.js`,
+  `scale0/runtime/diagnostics.js`.
+
+- **[x] [THEOREM]** Scale 0 UI ownership for field toggles, force-style
+  controls, boundary controls, flux volume/slice toggles, keyboard
+  shortcuts, and scenario selection now lives inside the Scale 0
+  package.
+  Evidence: `scale0/ui/bindings.js`, `app_dag.js`.
+
+- **[x] [THEOREM]** Scale 0 now consumes backend data through
+  `bridge.capabilities.scale0` rather than reading `MockBridge` private
+  fields directly.
+  Evidence: `scale0/runtime/*.js`, `wasm-bridge-dag.js`.
+
+- **[x] [THEOREM]** Scale 0 scenario selection is registry-driven and
+  can be validated through `validateScale0ScenarioRegistry()`.
+  Evidence: `scale0/scenario-registry.js`,
+  `scale0/ui/bindings.js`,
+  `engine/web/tests/scales.spec.js`.
 
 - **[ ] [OPEN]** Overlay correctness for every optional field layer
   was not audited live in-browser.
@@ -361,11 +407,16 @@ When in doubt, this audit uses the weaker label.
   interval regression, consciousness listener regression, and constants.
   Evidence: `tests/README.md`, `tests/scales.spec.js`.
 
+- **[x] [THEOREM]** The suite now also covers the Scale 0 module
+  contract surface and the validity of the Scale 0 scenario registry.
+  Evidence: `tests/scales.spec.js`.
+
 - **[x] [THEOREM]** The suite does not claim physics correctness.
   Evidence: `tests/README.md`, `scales.spec.js`.
 
-- **[ ] [OPEN]** This audit did not run the Playwright suite; it only
-  verified the declared coverage from source.
+- **[x] [THEOREM]** This documentation pass did run the Playwright
+  suite successfully after the Scale 0 refactor.
+  Evidence: local `npm test` result in `engine/web/tests`.
 
 ---
 
