@@ -4872,6 +4872,93 @@ export class WasmBridge {
     aeClear() { this.resetAE(); }
 }
 
+MockBridge.prototype.getScale0DerivedOverlayData = function (kind) {
+    if (kind === 'darkMatterHalo') {
+        if (!this._fluxJ) return null;
+        this._ensureEnergyCache();
+        return { particles: this._particles, magnitude: this._fluxMag, latticeSize: this.latticeSize };
+    }
+    if (kind === 'dampingZones') {
+        return { particles: this._particles, latticeSize: this.latticeSize };
+    }
+    if (kind === 'genesisIsosurface') {
+        if (!this._fluxJ) return null;
+        this._ensureEnergyCache();
+        return { magnitude: this._fluxMag, latticeSize: this.latticeSize, threshold: K_GENESIS };
+    }
+    return null;
+};
+
+function createScale0Capabilities(bridge) {
+    return {
+        tickScale0: () => bridge.tick(),
+        getScale0ParticleFrame: () => bridge.getParticleData(),
+        getScale0FluxVolume: () => bridge.getFluxVolume(),
+        getScale0FluxSlice: (axis, index) => bridge.getFluxSlice(axis, index),
+        getScale0FieldSamples: ({ kind, stride = 2 } = {}) => {
+            if (kind === 'e') return bridge.getEFieldSampled(stride);
+            if (kind === 'b') return bridge.getBFieldSampled(stride);
+            if (kind === 'poynting') return bridge.getPoyntingSampled(stride);
+            if (kind === 'divJ') return bridge.getDivJSampled(stride);
+            if (kind === 'fluxVector') return bridge.getFluxVectorSampled(stride);
+            return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
+        },
+        getScale0ForceField: (type, stride = 2) => {
+            if (type === 'em') return bridge.getEMForceField(stride);
+            if (type === 'gravity') return bridge.getGravityForceField(stride);
+            if (type === 'strong') return bridge.getStrongForceField(stride);
+            return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
+        },
+        getScale0Diagnostics: () => bridge.getDiagnostics(),
+        getScale0EnergyAudit: () => bridge.getEnergyAudit(),
+        getScale0Lagrangian: () => bridge.getLagrangian(),
+        getScale0DerivedOverlayData: (kind) => {
+            if (typeof bridge.getScale0DerivedOverlayData === 'function') return bridge.getScale0DerivedOverlayData(kind);
+            return null;
+        },
+        setBoundaryShape: (shape) => bridge.setBoundaryShape?.(shape),
+        setReflectiveBoundary: (on) => bridge.setReflectiveBoundary?.(on),
+        setupScenario: (name) => bridge.setupScenario(name),
+        setToggle: (key, value) => bridge.setToggle?.(key, value),
+        get latticeSize() { return bridge.latticeSize || 32; },
+    };
+}
+
+function createScale1Capabilities(bridge) {
+    return {
+        tickScale1: () => bridge.peTick?.(),
+        getScale1ParticleFrame: () => bridge.peGetParticleData?.(),
+        getScale1Diagnostics: () => bridge.peGetDiagnostics?.(),
+    };
+}
+
+function createScale2Capabilities(bridge) {
+    return {
+        tickScale2: () => bridge.aeTick?.(),
+        getScale2AtomFrame: () => bridge.aeGetAtomData?.(),
+        getScale2Diagnostics: () => bridge.aeGetDiagnostics?.(),
+    };
+}
+
+function installCapabilityGetter(proto) {
+    Object.defineProperty(proto, 'capabilities', {
+        configurable: true,
+        get() {
+            if (!this._capabilities) {
+                this._capabilities = {
+                    scale0: createScale0Capabilities(this),
+                    scale1: createScale1Capabilities(this),
+                    scale2: createScale2Capabilities(this),
+                };
+            }
+            return this._capabilities;
+        },
+    });
+}
+
+installCapabilityGetter(MockBridge.prototype);
+installCapabilityGetter(WasmBridge.prototype);
+
 // ── Re-exports from extracted modules ────────────────────────────────
 // CosmicMockBridge moved to bridge/mock-scale5.js (Scale 5 N-body sim)
 // createBridge factory moved to bridge/bridge-factory-dag.js

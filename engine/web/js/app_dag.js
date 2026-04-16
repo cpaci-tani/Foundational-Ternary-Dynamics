@@ -41,7 +41,7 @@ import { PETelemetryPanel } from './pe-telemetry.js';
 // ConsciousnessEngine moved to Scale11Controller
 import { addInfoTooltips } from './consciousness-pedagogy.js';
 import { SCALE0_TOGGLES, SCALE2_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from './config/toggles.js';
-import { QUANTUM_SCENARIO_DESCRIPTIONS, formatS0SeedMetadata } from './config/scenarios.js';
+import { QUANTUM_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
 import { MeasurementAccumulator, QUANTUM_EXPERIMENTS, computeHistogram,
          exportCSV, exportJSON, copyToClipboard } from './quantum-lab.js';
@@ -170,7 +170,56 @@ function _makeCtx() {
         resetAllVisualState: _resetAllVisualState,
         _resetAllVisualState,
         updatePlayButton,
+        pauseSimulation,
+        applyTicksPerFrameFromSlider,
+        applyBoundaryShape,
+        applyReflectiveBoundary,
+        switchToQuantumLabTab: _switchToQuantumLabTab,
     };
+}
+
+function pauseSimulation() {
+    running = false;
+    updatePlayButton();
+}
+
+function sliderValueToSpeed(s, modeValue = engineMode) {
+    if (modeValue === 'planetary') return Math.pow(10, (s - 50) / 25);
+    if (s <= 50) return Math.pow(10, (s - 50) / 25);
+    return 1.0 + (s - 50) / 50;
+}
+
+function speedLabel(tpf) {
+    if (tpf < 0.1) return tpf.toFixed(2);
+    if (tpf < 1) return tpf.toFixed(1);
+    return tpf.toFixed(1);
+}
+
+function applyTicksPerFrameFromSlider(value) {
+    const slider = document.getElementById('ticks-per-frame');
+    const display = document.getElementById('tpf-display');
+    if (slider) slider.value = String(value);
+    ticksPerFrame = sliderValueToSpeed(parseFloat(value), engineMode);
+    _tickAccumulator = 0;
+    if (display) display.textContent = speedLabel(ticksPerFrame);
+}
+
+function applyBoundaryShape(shape) {
+    const boundarySelect = document.getElementById('boundary-select');
+    if (boundarySelect) boundarySelect.value = shape;
+    viewport?.setBoundaryShape?.(shape);
+    if (bridge?.setBoundaryShape) bridge.setBoundaryShape(shape);
+    const fm = Scale0Controller.getFluxMock();
+    if (fm?.setBoundaryShape) fm.setBoundaryShape(shape);
+    Scale0Controller.setLatticeNeedsUpload();
+}
+
+function applyReflectiveBoundary(on) {
+    const reflectiveCheck = document.getElementById('reflective-boundary');
+    if (reflectiveCheck) reflectiveCheck.checked = !!on;
+    if (bridge?.setReflectiveBoundary) bridge.setReflectiveBoundary(on);
+    const fm = Scale0Controller.getFluxMock();
+    if (fm?.setReflectiveBoundary) fm.setReflectiveBoundary(on);
 }
 
 /**
@@ -456,6 +505,7 @@ async function init() {
     wireViewportToggles();
     wireQuantumLab();
     wireKeyboard();
+    Scale0Controller.bindUI(_makeCtx());
 
     _loadProgress(80, 'Loading particle zoo...');
     initZoo(bridge);
@@ -468,28 +518,6 @@ async function init() {
     const bgSelect = document.getElementById('bg-select');
     bgManager.set(bgSelect.value, viewport.renderer);
     bgSelect.addEventListener('change', () => bgManager.set(bgSelect.value, viewport.renderer));
-
-    // Initialize boundary shape selector
-    const boundarySelect = document.getElementById('boundary-select');
-    boundarySelect.addEventListener('change', () => {
-        const shape = boundarySelect.value;
-        viewport.setBoundaryShape(shape);
-        // Propagate to all simulation bridges for containment
-        if (bridge && bridge.setBoundaryShape) bridge.setBoundaryShape(shape);
-        const fm = Scale0Controller.getFluxMock();
-        if (fm && fm.setBoundaryShape) fm.setBoundaryShape(shape);
-        // Force immediate re-render so flux volume/particles clip to new boundary
-        Scale0Controller.setLatticeNeedsUpload();
-    });
-
-    // Reflective boundary toggle — when unchecked, flux/particles dissipate past boundary
-    const reflectiveCheck = document.getElementById('reflective-boundary');
-    reflectiveCheck.addEventListener('change', () => {
-        const on = reflectiveCheck.checked;
-        if (bridge && bridge.setReflectiveBoundary) bridge.setReflectiveBoundary(on);
-        const fm = Scale0Controller.getFluxMock();
-        if (fm && fm.setReflectiveBoundary) fm.setReflectiveBoundary(on);
-    });
 
     _loadProgress(95, 'Loading scenario...');
 
@@ -668,10 +696,7 @@ function wireToolbar() {
         } else if (engineMode === 'meta') {
             Scale6Controller.step(_makeCtx());
         } else {
-            bridge.tick();
-            const fm1 = Scale0Controller.getFluxMock();
-            if (fm1) fm1.tick();
-            Scale0Controller.setLatticeNeedsUpload();
+            Scale0Controller.step(_makeCtx());
         }
     });
 
@@ -692,83 +717,13 @@ function wireToolbar() {
         } else if (engineMode === 'particles') {
             loadPEScenario(document.getElementById('pe-scenario-select').value);
         } else {
-            const scenario = document.getElementById('scenario-select').value;
-            Scale0Controller.loadScenario(_makeCtx(), scenario);
+            Scale0Controller.reset(_makeCtx());
         }
     });
 
-    // Scenario select
-    document.getElementById('scenario-select').addEventListener('change', (e) => {
-        running = false;
-        updatePlayButton();
-        Scale0Controller.loadScenario(_makeCtx(), e.target.value);
-        // SM seed scenarios: show epistemic-tag panel
-        const latDesc = document.getElementById('lat-scenario-desc');
-        const latDescText = document.getElementById('lat-scenario-desc-text');
-        if (latDesc && latDescText) {
-            const meta = formatS0SeedMetadata(e.target.value);
-            if (meta) {
-                latDescText.textContent = meta;
-                latDesc.style.display = '';
-                latDesc.open = true;
-            } else {
-                latDesc.style.display = 'none';
-                latDesc.open = false;
-            }
-        }
-        // Sync Quantum Lab experiment selector when a quantum-* scenario is picked
-        if (e.target.value.startsWith('quantum-')) {
-            const qlabSel = document.getElementById('qlab-experiment');
-            if (qlabSel) qlabSel.value = e.target.value;
-            const descEl = document.getElementById('qlab-description');
-            if (descEl && QUANTUM_SCENARIO_DESCRIPTIONS[e.target.value]) {
-                descEl.textContent = QUANTUM_SCENARIO_DESCRIPTIONS[e.target.value];
-            }
-            _switchToQuantumLabTab();
-        }
-    });
-
-    // Lattice size — delegates to Scale0Controller.resizeLattice which
-    // resizes the bridge + viewport while PRESERVING toggles, sliders,
-    // charts, play state, and camera. The current scenario is re-injected
-    // at the new size so the lattice is consistent with the dropdown.
-    document.getElementById('lattice-size').addEventListener('change', (e) => {
-        const size = parseInt(e.target.value);
-        Scale0Controller.resizeLattice(_makeCtx(), size);
-    });
-
-    // Speed slider: 0..100 maps to ticks-per-frame via piecewise curve:
-    //   [0..50]  exponential: 10^((s-50)/25) — gives 0.01..1.0 tpf
-    //   [50..100] linear: 1.0 + (s-50)/50   — gives 1.0..2.0 tpf
-    // Sub-1 tpf uses _tickAccumulator for fractional tick accumulation.
-    // Planetary mode overrides with 4 orders of magnitude (0.01x..100x).
     const slider = document.getElementById('ticks-per-frame');
-    const display = document.getElementById('tpf-display');
-    function _sliderToSpeed(s) {
-        if (engineMode === 'planetary') {
-            // 4 orders of magnitude: 0.01x to 100.0x
-            return Math.pow(10, (s - 50) / 25);
-        }
-        if (s <= 50) {
-            // Exponential: 0.01 at s=0, 1.0 at s=50
-            return Math.pow(10, (s - 50) / 25);
-        }
-        // Linear: 1.0 at s=50, 2.0 at s=100
-        return 1.0 + (s - 50) / 50;
-    }
-    function _speedLabel(tpf) {
-        if (tpf < 0.1) return tpf.toFixed(2);
-        if (tpf < 1) return tpf.toFixed(1);
-        return tpf.toFixed(1);
-    }
-    // Initialize from default slider value
-    ticksPerFrame = _sliderToSpeed(parseFloat(slider.value));
-    display.textContent = _speedLabel(ticksPerFrame);
-    slider.addEventListener('input', () => {
-        ticksPerFrame = _sliderToSpeed(parseFloat(slider.value));
-        _tickAccumulator = 0;
-        display.textContent = _speedLabel(ticksPerFrame);
-    });
+    applyTicksPerFrameFromSlider(slider.value);
+    slider.addEventListener('input', () => applyTicksPerFrameFromSlider(slider.value));
 
     // Engine mode selector (Scale 0 / Scale 1)
     document.getElementById('engine-mode').addEventListener('change', (e) => {
@@ -1439,24 +1394,6 @@ function wireViewportToggles() {
         });
     }
 
-    const fluxVolBtn = document.getElementById('toggle-flux-volume');
-    if (fluxVolBtn) {
-        fluxVolBtn.addEventListener('click', () => {
-            fluxVolBtn.classList.toggle('active');
-            viewport.toggleFluxVolume(fluxVolBtn.classList.contains('active'));
-            Scale0Controller.setLatticeNeedsUpload(); // force re-render on toggle
-        });
-    }
-
-    const fluxSliceBtn = document.getElementById('toggle-flux-slice');
-    if (fluxSliceBtn) {
-        fluxSliceBtn.addEventListener('click', () => {
-            fluxSliceBtn.classList.toggle('active');
-            viewport.toggleFluxSlice(fluxSliceBtn.classList.contains('active'));
-            Scale0Controller.setLatticeNeedsUpload();
-        });
-    }
-
     // PE mode visual overlay toggles (delegated to Scale1Controller)
     const velBtn = document.getElementById('toggle-velocities');
     if (velBtn) velBtn.addEventListener('click', () => {
@@ -1538,98 +1475,6 @@ function wireViewportToggles() {
         });
     }
 
-    // ── Field visualization toggles (Scale 0) ───────────────────────
-    // Each entry: [button-id, controller-field-key, viewport-toggle-method]
-    const fieldToggles = [
-        ['toggle-e-field', 'showEField', (on) => viewport.toggleEFieldLines(on)],
-        ['toggle-b-field', 'showBField', (on) => viewport.toggleBFieldLines(on)],
-        ['toggle-poynting', 'showPoynting', (on) => viewport.togglePoyntingVectors(on)],
-        ['toggle-div-field', 'showDivField', (on) => viewport.toggleDivergenceField(on)],
-        ['toggle-flux-lines', 'showFluxLines', (on) => viewport.toggleFluxStreamlines(on)],
-        ['toggle-force-em', 'showForceEM', (on) => viewport.showEMForce(on)],
-        ['toggle-force-gravity', 'showForceGravity', (on) => viewport.showGravityForce(on)],
-        ['toggle-force-strong', 'showForceStrong', (on) => viewport.showStrongForce(on)],
-        ['toggle-force-weak', 'showForceWeak', (on) => viewport.showWeakField(on)],
-        ['toggle-dual-substrate', 'showDualSubstrate', (on) => viewport.toggleDualFluxVolume(on)],
-        ['toggle-chirality', 'showChirality', (on) => viewport.toggleChiralityField(on)],
-        ['toggle-light', 'showLight', (on) => viewport.toggleLightField(on)],
-        ['toggle-dark-halo', 'showDarkMatterHalo', (on) => viewport.toggleDarkMatterHalo(on)],
-        ['toggle-damping-zones', 'showDampingZones', (on) => viewport.toggleDampingZones(on)],
-        ['toggle-genesis-iso', 'showGenesisIsosurface', (on) => viewport.toggleGenesisIsosurface(on)],
-        ['toggle-confinement', 'showConfinement', (on) => viewport.toggleConfinement(on)],
-    ];
-    // Force-type field keys that are affected by the style selector
-    const forceFieldKeys = new Set(['showForceEM', 'showForceGravity', 'showForceStrong', 'showForceWeak']);
-
-    for (const [id, fieldKey, viewportToggle] of fieldToggles) {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.addEventListener('click', () => {
-                btn.classList.toggle('active');
-                const on = btn.classList.contains('active');
-                Scale0Controller.setFieldToggle(fieldKey, on);
-
-                // Force overlays route through the active style; non-force overlays use original path
-                if (forceFieldKeys.has(fieldKey)) {
-                    const style = Scale0Controller.getForceStyle();
-                    if (style === 'arrows') {
-                        viewportToggle(on);
-                    } else {
-                        // For non-arrow styles, the controller's animation loop handles
-                        // rendering; hide arrow meshes and show the active style layer
-                        viewportToggle(false); // always hide arrows for non-arrow styles
-                        if (style === 'heatmap') viewport.showForceHeatmap(on);
-                        else if (style === 'flow') viewport.showForceStreamlines_vis(on);
-                        else if (style === 'glyphs') viewport.showForceGlyphs(on);
-                    }
-                } else {
-                    viewportToggle(on);
-                }
-                Scale0Controller.setLatticeNeedsUpload(); // force immediate re-render on any toggle
-            });
-        }
-    }
-
-    // ── Force visualization style selector ──────────────────────────
-    const styleRow = document.getElementById('force-style-row');
-    if (styleRow) {
-        for (const btn of styleRow.querySelectorAll('.style-btn')) {
-            btn.addEventListener('click', () => {
-                const newStyle = btn.dataset.style;
-                const oldStyle = Scale0Controller.getForceStyle();
-                if (newStyle === oldStyle) return;
-
-                // Update button active state
-                for (const b of styleRow.querySelectorAll('.style-btn')) b.classList.remove('active');
-                btn.classList.add('active');
-
-                // Hide all force styles first
-                viewport.hideAllForceStyles();
-
-                // Set new style
-                Scale0Controller.setForceStyle(newStyle);
-
-                // Get current field state to know which forces are on
-                const fs = Scale0Controller.getFieldState();
-                const anyForceOn = fs.showForceEM || fs.showForceGravity || fs.showForceStrong || fs.showForceWeak;
-
-                if (anyForceOn) {
-                    if (newStyle === 'arrows') {
-                        // Re-show arrow meshes for active forces
-                        viewport.showArrowForces(fs);
-                    } else if (newStyle === 'heatmap') {
-                        viewport.showForceHeatmap(true);
-                    } else if (newStyle === 'flow') {
-                        // Streamlines will be populated on next field update
-                    } else if (newStyle === 'glyphs') {
-                        viewport.showForceGlyphs(true);
-                    }
-                }
-
-                Scale0Controller.setLatticeNeedsUpload();
-            });
-        }
-    }
 }
 
 // ── Quantum Lab Wiring ──────────────────────────────────────────────
@@ -1967,9 +1812,7 @@ function wireKeyboard() {
                 } else if (engineMode === 'particles') {
                     bridge.peTick();
                 } else {
-                    bridge.tick();
-                    { const fm = Scale0Controller.getFluxMock(); if (fm) fm.tick(); }
-                    Scale0Controller.setLatticeNeedsUpload();
+                    Scale0Controller.step(_makeCtx());
                 }
                 break;
             case 'r':
@@ -1984,30 +1827,14 @@ function wireKeyboard() {
                 } else if (engineMode === 'particles') {
                     loadPEScenario(document.getElementById('pe-scenario-select').value);
                 } else {
-                    const scenario = document.getElementById('scenario-select').value;
-                    Scale0Controller.loadScenario(_makeCtx(), scenario);
+                    Scale0Controller.reset(_makeCtx());
                 }
                 break;
         }
 
         // Field visualization shortcuts (1-8) — Scale 0 only
         if (engineMode === 'lattice') {
-            const fieldKeys = {
-                '1': 'toggle-e-field',
-                '2': 'toggle-b-field',
-                '3': 'toggle-poynting',
-                '4': 'toggle-div-field',
-                '5': 'toggle-flux-lines',
-                '6': 'toggle-force-em',
-                '7': 'toggle-dual-substrate',
-                '8': 'toggle-chirality',
-                '9': 'toggle-light',
-            };
-            const btnId = fieldKeys[e.key];
-            if (btnId) {
-                const btn = document.getElementById(btnId);
-                if (btn) btn.click();
-            }
+            if (Scale0Controller.handleShortcutKey(e.key)) e.preventDefault();
         }
     });
 }
@@ -2128,7 +1955,7 @@ function switchEngineMode(mode) {
     }
 
     // Free JS flux sim when leaving Scale 0 (before loadXxx resets visual state)
-    if (mode !== 'lattice') Scale0Controller.clearFluxMock();
+    if (mode !== 'lattice') Scale0Controller.exit(_makeCtx());
 
     // Tell inspector, viewport, and zoo panel about mode change
     if (inspector) inspector.setEngineMode(mode);
@@ -2136,7 +1963,7 @@ function switchEngineMode(mode) {
     setZooMode(mode);
 
     const tpfSlider = document.getElementById('ticks-per-frame');
-    if (tpfSlider) tpfSlider.dispatchEvent(new Event('input'));
+    if (tpfSlider) applyTicksPerFrameFromSlider(tpfSlider.value);
 
     // Disable universal grid / axes for planetary physics which has local overlays
     if (mode === 'planetary') {
@@ -2169,7 +1996,8 @@ function switchEngineMode(mode) {
     }
 
     if (mode === 'lattice') {
-        const scenario = document.getElementById('scenario-select')?.value || 'stable-universe';
+        const scenario = document.getElementById('scenario-select')?.value || 'flux-pulse';
+        Scale0Controller.enter(_makeCtx());
         Scale0Controller.loadScenario(_makeCtx(), scenario);
     } else if (mode === 'particles') {
         loadPEScenario(document.getElementById('pe-scenario-select')?.value || 'pe-hydrogen');
