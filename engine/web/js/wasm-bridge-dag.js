@@ -3625,6 +3625,424 @@ export class MockBridge {
                     }
                     break;
                 }
+
+                // ── Moore Seeds (geometric) ──────────────────────────
+                // Mirror the C++ ftd::ctor:: constructors (constructors.h)
+                // in JS so the dashboard can visualize them without a
+                // WASM rebuild. Theory: THEOREM_MOORE_LAYER_DECOMPOSITION.md
+
+                case 's0-seed-octahedron': {
+                    // Shell 1: 6 face-neighbors at L2 distance 1 (SC sublattice)
+                    this.injectParticle(mc, mc, mc, -1);  // center anchor
+                    const octOffsets = [
+                        [1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]
+                    ];
+                    for (const [dx,dy,dz] of octOffsets) {
+                        this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                    }
+                    break;
+                }
+
+                case 's0-seed-cuboctahedron': {
+                    // Shell 2: 12 edge-neighbors at L2 distance sqrt(2) (FCC sublattice)
+                    this.injectParticle(mc, mc, mc, -1);  // center anchor
+                    const cubOffsets = [
+                        [1,1,0],[1,-1,0],[-1,1,0],[-1,-1,0],
+                        [1,0,1],[1,0,-1],[-1,0,1],[-1,0,-1],
+                        [0,1,1],[0,1,-1],[0,-1,1],[0,-1,-1]
+                    ];
+                    for (const [dx,dy,dz] of cubOffsets) {
+                        this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                    }
+                    break;
+                }
+
+                case 's0-seed-stella-octangula': {
+                    // Shell 3: 8 corner-neighbors at L2 distance sqrt(3) (BCC sublattice)
+                    // Two interpenetrating tetrahedra
+                    this.injectParticle(mc, mc, mc, -1);  // center anchor
+                    const stelOffsets = [
+                        [1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1],
+                        [-1,1,1],[-1,1,-1],[-1,-1,1],[-1,-1,-1]
+                    ];
+                    for (const [dx,dy,dz] of stelOffsets) {
+                        this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                    }
+                    break;
+                }
+
+                case 's0-seed-moore-cell': {
+                    // Full 26-site Moore neighborhood (union of all 3 shells)
+                    this.injectParticle(mc, mc, mc, -1);  // center anchor
+                    for (let dx = -1; dx <= 1; dx++)
+                    for (let dy = -1; dy <= 1; dy++)
+                    for (let dz = -1; dz <= 1; dz++) {
+                        if (dx === 0 && dy === 0 && dz === 0) continue;
+                        this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                    }
+                    break;
+                }
+
+                case 's0-seed-moore-decomposition': {
+                    // All 3 shells with alternating states so they are
+                    // visually distinguishable: shell 1 (+1), shell 2 (-1),
+                    // shell 3 (+1), center (-1).
+                    this.injectParticle(mc, mc, mc, -1);  // center
+                    // Shell 1 — octahedron (face) — state +1
+                    for (const [dx,dy,dz] of [
+                        [1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]
+                    ]) this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                    // Shell 2 — cuboctahedron (edge) — state -1
+                    for (const [dx,dy,dz] of [
+                        [1,1,0],[1,-1,0],[-1,1,0],[-1,-1,0],
+                        [1,0,1],[1,0,-1],[-1,0,1],[-1,0,-1],
+                        [0,1,1],[0,1,-1],[0,-1,1],[0,-1,-1]
+                    ]) this.injectParticle(mc+dx, mc+dy, mc+dz, -1);
+                    // Shell 3 — stella octangula (corner) — state +1
+                    for (const [dx,dy,dz] of [
+                        [1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1],
+                        [-1,1,1],[-1,1,-1],[-1,-1,1],[-1,-1,-1]
+                    ]) this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                    break;
+                }
+
+                // ── Level 3-5: Particles, Composites, Atoms ──────────
+                // Helper: inject a particle + radial flux dressing
+                case 's0-seed-electron-l3':
+                case 's0-seed-positron':
+                case 's0-seed-neutrino':
+                case 's0-seed-quark':
+                case 's0-seed-antiquark':
+                case 's0-seed-pion':
+                case 's0-seed-proton-l4':
+                case 's0-seed-neutron':
+                case 's0-seed-hydrogen':
+                case 's0-seed-helium':
+                case 's0-seed-h2-molecule': {
+                    const _dp = (cx, cy, cz, st, sp, co, sig, amp) => {
+                        this.injectParticle(cx, cy, cz, st);
+                        const sn = st > 0 ? 1 : -1;
+                        const eR = Math.ceil(3 * sig);
+                        for (let dz2 = -eR; dz2 <= eR; dz2++)
+                        for (let dy2 = -eR; dy2 <= eR; dy2++)
+                        for (let dx2 = -eR; dx2 <= eR; dx2++) {
+                            if (dx2 === 0 && dy2 === 0 && dz2 === 0) continue;
+                            const r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
+                            const rr = Math.sqrt(r22);
+                            if (rr > 3 * sig) continue;
+                            const gg = amp * Math.exp(-r22 / (2 * sig * sig));
+                            if (gg < 0.001) continue;
+                            this._injectFlux(cx+dx2, cy+dy2, cz+dz2, sn*gg*dx2/rr, sn*gg*dy2/rr, sn*gg*dz2/rr);
+                        }
+                    };
+                    const _tri = (cx, cy, cz, charges, colors, rad) => {
+                        for (let k = 0; k < 3; k++) {
+                            const ang = (2 * Math.PI * k) / 3;
+                            const qx = Math.round(cx + rad * Math.cos(ang));
+                            const qy = Math.round(cy + rad * Math.sin(ang));
+                            _dp(qx, qy, cz, charges[k], (k%2===0)?1:-1, colors[k], 2, K_B*0.5);
+                        }
+                    };
+                    if (name === 's0-seed-electron-l3') _dp(mc, mc, mc, -1, -1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
+                    else if (name === 's0-seed-positron') _dp(mc, mc, mc, +1, +1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
+                    else if (name === 's0-seed-neutrino') {
+                        const sig = 2, eR = 6;
+                        for (let dz2=-eR; dz2<=eR; dz2++) for (let dy2=-eR; dy2<=eR; dy2++) for (let dx2=-eR; dx2<=eR; dx2++) {
+                            const r22=dx2*dx2+dy2*dy2+dz2*dz2; if(r22>eR*eR)continue;
+                            const gg=K_B*0.3*Math.exp(-r22/(2*sig*sig)); if(gg<0.001)continue;
+                            this._injectFlux(mc+dx2,mc+dy2,mc+dz2, gg*0.55, gg*0.45, 0);
+                        }
+                    }
+                    else if (name === 's0-seed-quark') _dp(mc, mc, mc, +1, +1, 1, 2, K_B*0.5);
+                    else if (name === 's0-seed-antiquark') _dp(mc, mc, mc, -1, -1, 1, 2, K_B*0.5);
+                    else if (name === 's0-seed-pion') {
+                        const sp=Math.max(3,Math.floor(N/8)), hf=Math.floor(sp/2);
+                        _dp(mc+hf,mc,mc, +1,+1,1, 2,K_B*0.5); _dp(mc-hf,mc,mc, -1,-1,1, 2,K_B*0.5);
+                    }
+                    else if (name === 's0-seed-proton-l4') { const bR=Math.max(2,Math.floor(N/8)); _tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); }
+                    else if (name === 's0-seed-neutron') { const bR=Math.max(2,Math.floor(N/8)); _tri(mc,mc,mc,[+1,-1,-1],[1,2,3],bR); }
+                    else if (name === 's0-seed-hydrogen') {
+                        const oR=Math.max(4,Math.floor(N/6)), bR=Math.max(2,Math.floor(N/12));
+                        _tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); _dp(mc,mc,mc+oR, -1,-1,0, 2,K_B);
+                    }
+                    else if (name === 's0-seed-helium') {
+                        const oR=Math.max(3,Math.floor(N/8));
+                        _dp(mc,mc,mc, +1,0,0, 2,K_B*3); _dp(mc,mc,mc+oR, -1,+1,0, 2,K_B*0.8); _dp(mc,mc,mc-oR, -1,-1,0, 2,K_B*0.8);
+                    }
+                    else if (name === 's0-seed-h2-molecule') {
+                        const bd=Math.max(4,Math.floor(N/6)), hf=Math.floor(bd/2), oR=Math.max(3,Math.floor(N/8)), bR=Math.max(1,Math.floor(N/16));
+                        _tri(mc-hf,mc,mc,[+1,+1,-1],[1,2,3],bR); _dp(mc-hf,mc,mc+oR, -1,-1,0, 2,K_B*0.8);
+                        _tri(mc+hf,mc,mc,[+1,+1,-1],[1,2,3],bR); _dp(mc+hf,mc,mc+oR, -1,+1,0, 2,K_B*0.8);
+                    }
+                    break;
+                }
+
+                // ── Level 6: Gauge / Topological ─────────────────────
+                case 's0-seed-wilson-loop': {
+                    const R = Math.max(3, Math.floor(N/8)), wAmp = K_B;
+                    for (let x=mc-R; x<=mc+R; x++) this._injectFlux(x, mc-R, mc, wAmp, 0, 0);
+                    for (let y=mc-R; y<=mc+R; y++) this._injectFlux(mc+R, y, mc, 0, wAmp, 0);
+                    for (let x=mc+R; x>=mc-R; x--) this._injectFlux(x, mc+R, mc, -wAmp, 0, 0);
+                    for (let y=mc+R; y>=mc-R; y--) this._injectFlux(mc-R, y, mc, 0, -wAmp, 0);
+                    this.injectParticle(mc-R,mc-R,mc,+1); this.injectParticle(mc+R,mc-R,mc,+1);
+                    this.injectParticle(mc+R,mc+R,mc,+1); this.injectParticle(mc-R,mc+R,mc,+1);
+                    break;
+                }
+                case 's0-seed-flux-tube': {
+                    const ftSep=Math.max(6,Math.floor(N/4)), ftH=Math.floor(ftSep/2);
+                    this.injectParticle(mc-ftH,mc,mc,+1); this.injectParticle(mc+ftH,mc,mc,-1);
+                    const ftSig=1.5;
+                    for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=mc-ftH;x<=mc+ftH;x++) {
+                        const dy2=y-mc,dz2=z-mc,p2=dy2*dy2+dz2*dz2;
+                        const g=K_B*Math.exp(-p2/(2*ftSig*ftSig)); if(g>0.001) this._injectFlux(x,y,z,g,0,0);
+                    }
+                    break;
+                }
+                case 's0-seed-monopole': {
+                    const mHalf=(N-1)/2.0;
+                    for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+                        const rx=x-mHalf,ry=y-mHalf,rz=z-mHalf;
+                        const r=Math.max(Math.sqrt(rx*rx+ry*ry+rz*rz),1.0);
+                        const mg=1.0/(4*Math.PI*r*r); if(mg<1e-6) continue;
+                        const rxy=Math.sqrt(rx*rx+ry*ry);
+                        if(rxy<0.5){this._injectFlux(x,y,z,0,0,mg);continue;}
+                        this._injectFlux(x,y,z, -ry/rxy*mg, rx/rxy*mg, 0);
+                    }
+                    break;
+                }
+                case 's0-seed-instanton': {
+                    const iSize=3.0, iHalf=(N-1)/2.0;
+                    for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+                        const rx=x-iHalf,ry=y-iHalf,rz=z-iHalf,r2=rx*rx+ry*ry+rz*rz,r=Math.sqrt(r2);
+                        const mg=iSize/(r2+iSize*iSize); if(mg<1e-6||r<0.5) continue;
+                        this._injectFlux(x,y,z, mg*rx/r, mg*ry/r, mg*rz/r);
+                    }
+                    break;
+                }
+
+                // ── Level 7: Gravity / Cosmology ─────────────────────
+                case 's0-seed-schwarzschild': {
+                    const sHalf=(N-1)/2.0, rs=3.0;
+                    this.injectParticle(mc,mc,mc,+1);
+                    for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+                        const rx=x-sHalf,ry=y-sHalf,rz=z-sHalf;
+                        const r=Math.max(Math.sqrt(rx*rx+ry*ry+rz*rz),0.5);
+                        const mg=K_B*rs/(r*r); if(mg<1e-6) continue;
+                        this._injectFlux(x,y,z, -mg*rx/r, -mg*ry/r, -mg*rz/r);
+                    }
+                    break;
+                }
+                case 's0-seed-frw-patch': {
+                    const frwStride=Math.round(1.0/Math.cbrt(0.01)); let frwSign=1;
+                    for (let z=0;z<N;z+=frwStride) for (let y=0;y<N;y+=frwStride) for (let x=0;x<N;x+=frwStride) {
+                        this.injectParticle(x,y,z,frwSign); frwSign=-frwSign;
+                    }
+                    break;
+                }
+                case 's0-seed-gravitational-wave': {
+                    const gwWl=Math.max(4,Math.floor(N/4)), gwK=2*Math.PI/gwWl, gwAmp=0.1;
+                    for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+                        const v=gwAmp*Math.sin(gwK*x); if(Math.abs(v)>1e-6) this._injectFlux(x,y,z, 0,v,0);
+                    }
+                    break;
+                }
+
+                // ── Level 8: Consciousness / Observer ────────────────
+                case 's0-seed-sloop': {
+                    const slR=Math.max(3,Math.floor(N/8)), slN=12, slA=K_B;
+                    for (let i=0;i<slN;i++) {
+                        const a=2*Math.PI*i/slN;
+                        const px=Math.round(mc+slR*Math.cos(a)), py=Math.round(mc+slR*Math.sin(a));
+                        this.injectParticle(px,py,mc,+1);
+                        this._injectFlux(px,py,mc, -Math.sin(a)*slA, Math.cos(a)*slA, 0);
+                    }
+                    break;
+                }
+                case 's0-seed-observer-cell': {
+                    this.injectParticle(mc,mc,mc,+1);
+                    for (const [dx,dy,dz] of [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]])
+                        this.injectParticle(mc+dx,mc+dy,mc+dz,-1);
+                    for (const [dx,dy,dz] of [[1,1,0],[1,-1,0],[-1,1,0],[-1,-1,0],[1,0,1],[1,0,-1],[-1,0,1],[-1,0,-1],[0,1,1],[0,1,-1],[0,-1,1],[0,-1,-1]])
+                        this.injectParticle(mc+dx,mc+dy,mc+dz,+1);
+                    for (const [dx,dy,dz] of [[1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1],[-1,1,1],[-1,1,-1],[-1,-1,1],[-1,-1,-1]])
+                        this.injectParticle(mc+dx,mc+dy,mc+dz,-1);
+                    break;
+                }
+            }
+            return;
+        }
+
+        // ── Field Configurations (Level 2) ───────────────────────────
+        // Mirror the C++ ftd::ctor:: field constructors in JS.
+        // Uses the MockBridge's _injectFlux and _injectWaveVel to stamp
+        // flux and wave_vel fields directly.
+
+        if (name.startsWith('s0-field-')) {
+            this._initFluxGrid();
+            const mc  = Math.round(midF);
+            const cSpeed = 1.0 / Math.sqrt(3.0);
+
+            switch (name) {
+                case 's0-field-plane-wave': {
+                    // Z-polarized plane wave propagating +x, wavelength N/4
+                    const wl  = N / 4;
+                    const amp = K_B * 2;
+                    const k   = 2 * Math.PI / wl;
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        const phase = k * x;
+                        const jz    = amp * Math.sin(phase);
+                        const wz    = amp * Math.cos(phase) * cSpeed;
+                        if (Math.abs(jz) > 1e-12 || Math.abs(wz) > 1e-12) {
+                            this._injectFlux(x, y, z, 0, 0, jz);
+                            this._injectWaveVel(x, y, z, wz, 0, 0);
+                        }
+                    }
+                    break;
+                }
+
+                case 's0-field-standing-wave': {
+                    // Z-polarized standing wave along x, wavelength N/4
+                    const wl  = N / 4;
+                    const amp = K_B * 2;
+                    const k   = 2 * Math.PI / wl;
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        const jz = amp * Math.sin(k * x);
+                        if (Math.abs(jz) > 1e-12) {
+                            this._injectFlux(x, y, z, 0, 0, jz);
+                        }
+                        // wave_vel = 0 for standing wave (no net propagation)
+                    }
+                    break;
+                }
+
+                case 's0-field-uniform-e': {
+                    // Uniform E field in the +x direction
+                    const eMag = 0.1;
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        // E = -wave_vel, so wave_vel = -E
+                        this._injectWaveVel(x, y, z, -eMag, 0, 0);
+                    }
+                    break;
+                }
+
+                case 's0-field-uniform-b': {
+                    // Uniform B field in +z via vector-potential-like flux
+                    // B = curl(J), so J = (-Bz*y/2, Bz*x/2, 0) relative to center
+                    const bMag = 0.05;
+                    const half = (N - 1) / 2.0;
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        const rx = x - half, ry = y - half;
+                        const jx = -bMag * ry / 2;
+                        const jy =  bMag * rx / 2;
+                        if (Math.abs(jx) > 1e-12 || Math.abs(jy) > 1e-12) {
+                            this._injectFlux(x, y, z, jx, jy, 0);
+                        }
+                    }
+                    break;
+                }
+
+                case 's0-field-photon-pulse': {
+                    // Gaussian-enveloped plane wave, z-polarized, propagating +x
+                    const sigma  = Math.max(3, Math.floor(N / 8));
+                    const amp    = K_B * 2;
+                    const lambdaEff = 4 * sigma;
+                    const k      = 2 * Math.PI / lambdaEff;
+                    const cutR   = 3.0 * sigma;
+                    const cutR2  = cutR * cutR;
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        const dx = x - mc, dy = y - mc, dz = z - mc;
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        if (r2 > cutR2) continue;
+                        const g     = Math.exp(-r2 / (2 * sigma * sigma));
+                        if (g < 1e-6) continue;
+                        const phase = k * dx;
+                        const jz    = amp * g * Math.sin(phase);
+                        const wz    = amp * g * Math.cos(phase) * cSpeed;
+                        this._injectFlux(x, y, z, 0, 0, jz);
+                        this._injectWaveVel(x, y, z, wz, 0, 0);
+                    }
+                    break;
+                }
+
+                case 's0-field-electric-dipole': {
+                    // Two charges along x-axis separated by N/8
+                    const sep  = Math.max(2, Math.floor(N / 8));
+                    const half = Math.floor(sep / 2);
+                    const px   = mc + half, nx = mc - half;
+                    this.injectParticle(px, mc, mc, +1);
+                    this.injectParticle(nx, mc, mc, -1);
+                    // Coulomb dressing: superposed 1/r^2 from both charges
+                    const alpha = 1.0 / 137.036;
+                    const amp   = alpha / (4 * Math.PI);
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        let jx = 0, jy = 0, jz = 0;
+                        // +1 charge at (px, mc, mc)
+                        const dx1 = x - px, dy1 = y - mc, dz1 = z - mc;
+                        const r2_1 = dx1*dx1 + dy1*dy1 + dz1*dz1 + 1;
+                        const f1   = amp / r2_1;
+                        jx += f1 * dx1; jy += f1 * dy1; jz += f1 * dz1;
+                        // -1 charge at (nx, mc, mc)
+                        const dx2 = x - nx, dy2 = y - mc, dz2 = z - mc;
+                        const r2_2 = dx2*dx2 + dy2*dy2 + dz2*dz2 + 1;
+                        const f2   = -amp / r2_2;
+                        jx += f2 * dx2; jy += f2 * dy2; jz += f2 * dz2;
+                        const mag = Math.sqrt(jx*jx + jy*jy + jz*jz);
+                        if (mag > 1e-6) {
+                            this._injectFlux(x, y, z, jx, jy, jz);
+                        }
+                    }
+                    break;
+                }
+
+                case 's0-field-magnetic-dipole': {
+                    // Current loop in the xy-plane, moment along z
+                    const loopR = Math.max(3, Math.floor(N / 8));
+                    const amp   = K_B;
+                    // For each angular position, find nearest lattice sites
+                    const nAngles = Math.max(36, loopR * 8);
+                    for (let i = 0; i < nAngles; i++) {
+                        const theta = 2 * Math.PI * i / nAngles;
+                        const lx = Math.round(mc + loopR * Math.cos(theta));
+                        const ly = Math.round(mc + loopR * Math.sin(theta));
+                        // Tangent direction = (-sin(theta), cos(theta), 0)
+                        const tx = -Math.sin(theta) * amp;
+                        const ty =  Math.cos(theta) * amp;
+                        // Stamp across all z slices at this (x,y)
+                        for (let z = 0; z < N; z++) {
+                            this._injectFlux(lx, ly, z, tx, ty, 0);
+                        }
+                    }
+                    break;
+                }
+
+                case 's0-field-vortex-line': {
+                    // Vortex along z-axis through center: J = (Gamma/2pi*r) * theta_hat
+                    const gamma = K_B * 4;
+                    const half  = (N - 1) / 2.0;
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        const rx = x - half, ry = y - half;
+                        const r  = Math.max(Math.sqrt(rx * rx + ry * ry), 1.0);
+                        const mag = gamma / (2 * Math.PI * r);
+                        if (mag < 1e-6) continue;
+                        // Azimuthal: theta_hat = (-ry/r, rx/r, 0)
+                        this._injectFlux(x, y, z, -mag * ry / r, mag * rx / r, 0);
+                    }
+                    break;
+                }
             }
             return;
         }
