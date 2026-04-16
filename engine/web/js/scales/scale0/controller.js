@@ -201,7 +201,10 @@ export function animateLattice(ctx) {
         //       directly (legacy coupling — see RF-09 in audit)
         const _tickMock = _fluxMock && (_useFluxMock || _showDarkMatterHalo || _showGenesisIsosurface);
         for (let i = 0; i < ticksToRun; i++) {
-            bridge.tick();
+            // When _useFluxMock is true (s0-seed-*, s0-field-* scenarios),
+            // the MockBridge owns the physics — skip the WASM bridge tick
+            // to avoid duplicate/conflicting particle dynamics.
+            if (!_useFluxMock) bridge.tick();
             if (_tickMock) _fluxMock.tick();
         }
         _latticeNeedsUpload = true;
@@ -632,6 +635,14 @@ export function loadScenario(ctx, name) {
         for (const [key, , elId] of DEFAULT_TOGGLES) {
             const el = document.getElementById(elId);
             if (el) _fluxMock.setToggle(key, el.checked);
+        }
+        // Also apply scenario overrides directly to MockBridge
+        // (some overrides — confinement, color_forces, strong_force — are
+        // essential for MockBridge particle physics in s0-seed scenarios)
+        if (overrides) {
+            for (const [key, val] of overrides) {
+                _fluxMock.setToggle(key, val);
+            }
         }
     }
 
