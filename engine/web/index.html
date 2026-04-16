@@ -720,10 +720,23 @@
                     <span class="field-swatch"
                         style="background:linear-gradient(90deg,#1565c0,#ffee58,#e53935)"></span>Flux Lines
                 </button>
-                <button class="view-toggle field-toggle" id="toggle-force-volume"
-                    title="3D force vectors (net force field)">
-                    <span class="field-swatch" style="background:#78909c"></span>Forces
+                <button class="view-toggle field-toggle" id="toggle-force-em"
+                    title="Electromagnetic force vectors (Coulomb + Lorentz)">
+                    <span class="field-swatch" style="background:#00e5ff"></span>EM
                 </button>
+                <button class="view-toggle field-toggle" id="toggle-force-gravity"
+                    title="Gravitational force vectors (density gradient attraction)">
+                    <span class="field-swatch" style="background:#ffab00"></span>Gravity
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-force-strong"
+                    title="Strong/color force vectors (confinement + color interaction)">
+                    <span class="field-swatch" style="background:#ff1744"></span>Strong
+                </button>
+                <button class="view-toggle field-toggle" id="toggle-force-weak"
+                    title="Weak force overlay (transmutation sites, chirality-based)">
+                    <span class="field-swatch" style="background:#aa00ff"></span>Weak
+                </button>
+                <span class="field-sep"></span>
                 <button class="view-toggle field-toggle" id="toggle-dual-substrate"
                     title="Dual substrate J_L (warm) / J_R (cool)">
                     <span class="field-swatch" style="background:linear-gradient(90deg,#ff7043,#42a5f5)"></span>Dual J
@@ -734,10 +747,6 @@
                 </button>
                 <button class="view-toggle field-toggle" id="toggle-light" title="Light field (|Poynting| glow)">
                     <span class="field-swatch" style="background:#ffeb3b"></span>Light
-                </button>
-                <button class="view-toggle field-toggle" id="toggle-gravity-field"
-                    title="Gravity field vectors (density gradient attraction)">
-                    <span class="field-swatch" style="background:#b0bec5"></span>Gravity
                 </button>
                 <button class="view-toggle field-toggle" id="toggle-dark-halo"
                     title="Dark matter halo (sub-threshold flux envelope, gravitates but invisible)">
@@ -1001,6 +1010,18 @@
                                 Force</label></div>
                         <div class="toggle-row"><input type="checkbox" id="t-confinement"><label for="t-confinement"
                                 title="Linear confinement: opposite-sign pairs feel string tension beyond R_CRIT. String breaks if genesis is ON.">Confinement</label>
+                        </div>
+                        <div class="toggle-row"><input type="checkbox" id="t-color-forces"><label for="t-color-forces"
+                                title="Color charge interactions between quarks (SU(3) gauge coupling)">Color Forces</label>
+                        </div>
+                        <div class="toggle-row"><input type="checkbox" id="t-strong-force"><label for="t-strong-force"
+                                title="Residual strong force between composite hadrons (nuclear binding)">Strong Force</label>
+                        </div>
+                        <div class="toggle-row"><input type="checkbox" id="t-exchange"><label for="t-exchange"
+                                title="Exchange interaction: spin-dependent force between overlapping particles">Exchange Force</label>
+                        </div>
+                        <div class="toggle-row"><input type="checkbox" id="t-weak"><label for="t-weak"
+                                title="Weak transmutation: flavor-changing interactions at short range">Weak Transmutation</label>
                         </div>
 
                         <details class="toggle-advanced">

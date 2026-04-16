@@ -26,6 +26,10 @@ export const SCALE0_TOGGLES = [
     ['larmor_radiation', false, 't-larmor'],
     ['dual_substrate',   false, 't-dual'],
     ['confinement',      false, 't-confinement'],
+    ['color_forces',     false, 't-color-forces'],
+    ['strong_force',     false, 't-strong-force'],
+    ['exchange_force',   false, 't-exchange'],
+    ['weak_transmutation', false, 't-weak'],
 ];
 
 // Scale 2/3 (Atoms/Molecules) — matching AtomToggles in atom_engine.h
