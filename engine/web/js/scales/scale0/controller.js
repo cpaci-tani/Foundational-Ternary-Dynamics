@@ -71,6 +71,9 @@ let _fieldFrame = 0;            // throttle counter for field updates
 let _fieldNeedsUpdate = false;  // force immediate field compute on toggle activation
 let _anyFieldActive = false;    // cached OR of all field toggle flags
 
+// Force visualization style: 'arrows' | 'heatmap' | 'flow' | 'glyphs'
+let _forceStyle = 'arrows';
+
 // ── Simulation Caches (Scale 0 internal) ────────────────────────────
 let _fluxMock = null;           // MockBridge for Scale 0 flux visualization fallback
 // True when the WASM bridge does NOT provide its own flux data, so the JS
@@ -116,6 +119,7 @@ let _dualLVecs = null;          // dual substrate left-chirality vectors
 let _dualRVecs = null;          // dual substrate right-chirality vectors
 let _chiralValues = null;       // chirality scalar values
 let _weakValues = null;         // weak force scalar values (chirality-based)
+let _weakVectors = null;        // weak force vector values (for non-arrow styles)
 
 // Default toggle array alias (matches app_dag.js convention)
 const DEFAULT_TOGGLES = SCALE0_TOGGLES;
@@ -340,36 +344,81 @@ export function animateLattice(ctx) {
             viewport.updateFluxStreamlines(lines, maxFlux);
         }
 
-        // EM force (cyan arrows — Coulomb from particles)
-        if (_showForceEM) {
-            const emData = fieldBridge.getEMForceField(stride);
-            if (emData.count > 0) viewport.updateEMForceField(emData);
-        }
+        // ── Force field updates (routed through active visualization style) ──
+        const _anyForceOn = _showForceEM || _showForceGravity || _showForceStrong || _showForceWeak;
 
-        // Gravity force (amber arrows — density gradient)
-        if (_showForceGravity) {
-            const gData = fieldBridge.getGravityForceField(stride);
-            if (gData.count > 0) viewport.updateGravityForceField(gData);
-        }
+        if (_anyForceOn) {
+            // Gather force data for each active force type
+            const forceDataSets = []; // { data, type, isWeak }
 
-        // Strong force (red arrows — confinement/color force)
-        if (_showForceStrong) {
-            const sData = fieldBridge.getStrongForceField(stride);
-            if (sData.count > 0) viewport.updateStrongForceField(sData);
-        }
-
-        // Weak force (purple points — chirality-based overlay)
-        if (_showForceWeak && _jDataCache && _jDataCache.count > 0) {
-            const lMinusR = DUAL_DELTA;
-            if (!_weakValues || _weakValues.length < _jDataCache.count) {
-                _weakValues = new Float32Array(_jDataCache.count);
+            if (_showForceEM) {
+                const emData = fieldBridge.getEMForceField(stride);
+                if (emData.count > 0) forceDataSets.push({ data: emData, type: 'em' });
             }
-            for (let i = 0; i < _jDataCache.count; i++) {
-                const jx = _jDataCache.vectors[i * 3], jy = _jDataCache.vectors[i * 3 + 1], jz = _jDataCache.vectors[i * 3 + 2];
-                const mag = Math.sqrt(jx * jx + jy * jy + jz * jz);
-                _weakValues[i] = mag * lMinusR;
+            if (_showForceGravity) {
+                const gData = fieldBridge.getGravityForceField(stride);
+                if (gData.count > 0) forceDataSets.push({ data: gData, type: 'gravity' });
             }
-            viewport.updateWeakField({ positions: _jDataCache.positions, values: _weakValues, count: _jDataCache.count });
+            if (_showForceStrong) {
+                const sData = fieldBridge.getStrongForceField(stride);
+                if (sData.count > 0) forceDataSets.push({ data: sData, type: 'strong' });
+            }
+            if (_showForceWeak && _jDataCache && _jDataCache.count > 0) {
+                const lMinusR = DUAL_DELTA;
+                if (!_weakValues || _weakValues.length < _jDataCache.count) {
+                    _weakValues = new Float32Array(_jDataCache.count);
+                }
+                // Build a synthetic vector field from chirality scalars for heatmap/glyph/flow
+                if (!_weakVectors || _weakVectors.length < _jDataCache.count * 3) {
+                    _weakVectors = new Float32Array(_jDataCache.count * 3);
+                }
+                for (let i = 0; i < _jDataCache.count; i++) {
+                    const jx = _jDataCache.vectors[i * 3], jy = _jDataCache.vectors[i * 3 + 1], jz = _jDataCache.vectors[i * 3 + 2];
+                    const mag = Math.sqrt(jx * jx + jy * jy + jz * jz);
+                    _weakValues[i] = mag * lMinusR;
+                    _weakVectors[i * 3]     = jx * lMinusR;
+                    _weakVectors[i * 3 + 1] = jy * lMinusR;
+                    _weakVectors[i * 3 + 2] = jz * lMinusR;
+                }
+                forceDataSets.push({
+                    data: { positions: _jDataCache.positions, vectors: _weakVectors, count: _jDataCache.count },
+                    type: 'weak',
+                    weakScalar: { positions: _jDataCache.positions, values: _weakValues, count: _jDataCache.count }
+                });
+            }
+
+            // Route through the active style
+            if (_forceStyle === 'arrows') {
+                for (const fds of forceDataSets) {
+                    if (fds.type === 'em') viewport.updateEMForceField(fds.data);
+                    else if (fds.type === 'gravity') viewport.updateGravityForceField(fds.data);
+                    else if (fds.type === 'strong') viewport.updateStrongForceField(fds.data);
+                    else if (fds.type === 'weak' && fds.weakScalar) viewport.updateWeakField(fds.weakScalar);
+                }
+            } else if (_forceStyle === 'heatmap') {
+                // Merge all active forces into a single heatmap pass (last type sets color)
+                for (const fds of forceDataSets) {
+                    viewport.updateForceHeatmap(fds.data, fds.type);
+                }
+            } else if (_forceStyle === 'flow') {
+                // Compute streamlines for each active force type
+                for (const fds of forceDataSets) {
+                    const seeds = generateGridSeeds(L, seedSpacing, 150);
+                    const flowLines = computeStreamlines(fds.data, seeds, {
+                        N: L, stride, maxSteps: 30 * stepsScale, stepSize: 0.5
+                    });
+                    viewport.updateForceStreamlines(flowLines, fds.type);
+                }
+            } else if (_forceStyle === 'glyphs') {
+                for (const fds of forceDataSets) {
+                    viewport.updateForceGlyphs(fds.data, fds.type);
+                }
+            }
+        }
+
+        // Animate streamline dash offset when flow style is active
+        if (_forceStyle === 'flow' && _anyForceOn) {
+            viewport.animateForceStreamlines(0.016);
         }
 
         // Dark matter halo (sub-threshold flux envelope)
@@ -760,6 +809,15 @@ export function resetScale0(ctx) {
         if (btn) btn.classList.remove('active');
     }
 
+    // Reset force style to arrows
+    _forceStyle = 'arrows';
+    const styleRow = document.getElementById('force-style-row');
+    if (styleRow) {
+        for (const btn of styleRow.querySelectorAll('.style-btn')) {
+            btn.classList.toggle('active', btn.dataset.style === 'arrows');
+        }
+    }
+
     // Tell viewport to hide all field overlays
     if (viewport) {
         viewport.toggleEFieldLines(false);
@@ -771,6 +829,9 @@ export function resetScale0(ctx) {
         viewport.showGravityForce(false);
         viewport.showStrongForce(false);
         viewport.showWeakField(false);
+        viewport.showForceHeatmap(false);
+        viewport.showForceStreamlines_vis(false);
+        viewport.showForceGlyphs(false);
         viewport.toggleDualFluxVolume(false);
         viewport.toggleChiralityField(false);
         viewport.toggleLightField(false);
@@ -850,6 +911,23 @@ export function setFieldToggle(key, value) {
     if (value) _fieldNeedsUpdate = true;
 }
 
+
+/**
+ * getForceStyle -- Return the current force visualization style.
+ * @returns {string} 'arrows' | 'heatmap' | 'flow' | 'glyphs'
+ */
+export function getForceStyle() { return _forceStyle; }
+
+/**
+ * setForceStyle -- Change the active force visualization style.
+ * The caller (app_dag) is responsible for hiding/showing the correct
+ * viewport overlays and triggering a field update.
+ * @param {string} style - 'arrows' | 'heatmap' | 'flow' | 'glyphs'
+ */
+export function setForceStyle(style) {
+    _forceStyle = style;
+    _fieldNeedsUpdate = true;
+}
 
 /**
  * setLatticeNeedsUpload -- Flag that lattice GPU buffers need refresh.

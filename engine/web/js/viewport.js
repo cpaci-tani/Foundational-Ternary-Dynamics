@@ -2082,6 +2082,378 @@ export class Viewport {
 
     showWeakField(on) { this.toggleWeakField(on); }
 
+    // ══════════════════════════════════════════════════════════════════
+    //  FORCE VISUALIZATION STYLES (Heatmap / Streamlines / Glyphs)
+    // ══════════════════════════════════════════════════════════════════
+
+    // Color palettes for each force type (low → mid → high)
+    static FORCE_PALETTES = {
+        em:      { low: [0.0, 0.2, 0.4], mid: [0.0, 0.9, 1.0], high: [0.7, 1.0, 1.0] },
+        gravity: { low: [0.4, 0.2, 0.0], mid: [1.0, 0.67, 0.0], high: [1.0, 1.0, 0.6] },
+        strong:  { low: [0.4, 0.0, 0.05], mid: [1.0, 0.09, 0.27], high: [1.0, 0.7, 0.7] },
+        weak:    { low: [0.2, 0.0, 0.4], mid: [0.67, 0.0, 1.0], high: [0.9, 0.6, 1.0] },
+    };
+
+    /**
+     * Interpolate a 3-stop color palette at parameter t in [0,1].
+     * @param {object} pal - { low: [r,g,b], mid: [r,g,b], high: [r,g,b] }
+     * @param {number} t   - 0..1
+     * @returns {[number,number,number]}
+     */
+    static _lerpPalette(pal, t) {
+        const tt = Math.max(0, Math.min(1, t));
+        if (tt < 0.5) {
+            const u = tt * 2;
+            return [
+                pal.low[0] + (pal.mid[0] - pal.low[0]) * u,
+                pal.low[1] + (pal.mid[1] - pal.low[1]) * u,
+                pal.low[2] + (pal.mid[2] - pal.low[2]) * u,
+            ];
+        }
+        const u = (tt - 0.5) * 2;
+        return [
+            pal.mid[0] + (pal.high[0] - pal.mid[0]) * u,
+            pal.mid[1] + (pal.high[1] - pal.mid[1]) * u,
+            pal.mid[2] + (pal.high[2] - pal.mid[2]) * u,
+        ];
+    }
+
+    // ── Gaussian Heatmap ─────────────────────────────────────────────
+    _buildForceHeatmap() {
+        const maxPts = 8000;
+        const positions = new Float32Array(maxPts * 3);
+        const colors    = new Float32Array(maxPts * 3);
+        const sizes     = new Float32Array(maxPts);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        geo.setDrawRange(0, 0);
+
+        // Custom Gaussian sprite shader for soft circular falloff
+        const heatVert = `
+            attribute float size;
+            attribute vec3 particleColor;
+            varying vec3 vColor;
+            varying float vSize;
+            void main() {
+                vColor = particleColor;
+                vSize = size;
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                gl_PointSize = size * (150.0 / -mvPosition.z);
+                gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
+                gl_Position = projectionMatrix * mvPosition;
+            }
+        `;
+        const heatFrag = `
+            uniform float uOpacity;
+            varying vec3 vColor;
+            void main() {
+                vec2 c = gl_PointCoord - vec2(0.5);
+                float r2 = dot(c, c);
+                if (r2 > 0.25) discard;
+                float gauss = exp(-r2 * 16.0);
+                gl_FragColor = vec4(vColor * gauss, gauss * uOpacity);
+            }
+        `;
+        const mat = new THREE.ShaderMaterial({
+            vertexShader: heatVert,
+            fragmentShader: heatFrag,
+            uniforms: { uOpacity: { value: 0.8 } },
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+        });
+        this._forceHeatmap = new THREE.Points(geo, mat);
+        this._forceHeatmap.visible = false;
+        this._forceHeatmap.frustumCulled = false;
+        this._forceHeatmap.renderOrder = 2;
+        this.scene.add(this._forceHeatmap);
+    }
+
+    initForceHeatmap() { if (!this._forceHeatmap) this._buildForceHeatmap(); }
+
+    updateForceHeatmap(fieldData, forceType) {
+        if (!this._forceHeatmap) this._buildForceHeatmap();
+        const posAttr  = this._forceHeatmap.geometry.getAttribute('position');
+        const colAttr  = this._forceHeatmap.geometry.getAttribute('particleColor');
+        const sizeAttr = this._forceHeatmap.geometry.getAttribute('size');
+        const { positions, vectors, count } = fieldData;
+        const maxPts = posAttr.array.length / 3;
+        const pal = Viewport.FORCE_PALETTES[forceType] || Viewport.FORCE_PALETTES.em;
+
+        // Compute magnitudes and max
+        let maxMag = 0;
+        if (!this._heatMagCache || this._heatMagCache.length < count) {
+            this._heatMagCache = new Float32Array(count);
+        }
+        const mags = this._heatMagCache;
+        for (let i = 0; i < count; i++) {
+            const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
+            mags[i] = Math.sqrt(a * a + b * b + c * c);
+            if (mags[i] > maxMag) maxMag = mags[i];
+        }
+        if (maxMag < 1e-15) maxMag = 1;
+        const threshold = maxMag * 0.02;
+        const halfN = this._halfN;
+        const sizeBase = 15 + 10 * (this.latticeSize / 64);
+        let vi = 0;
+
+        for (let i = 0; i < count && vi < maxPts; i++) {
+            const mag = mags[i];
+            if (mag < threshold) continue;
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+
+            const t = mag / maxMag;
+            const [r, g, b] = Viewport._lerpPalette(pal, t);
+            posAttr.array[vi * 3]     = px;
+            posAttr.array[vi * 3 + 1] = py;
+            posAttr.array[vi * 3 + 2] = pz;
+            colAttr.array[vi * 3]     = r;
+            colAttr.array[vi * 3 + 1] = g;
+            colAttr.array[vi * 3 + 2] = b;
+            sizeAttr.array[vi] = Math.log(1 + t * 9) / Math.log(10) * sizeBase;
+            vi++;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        sizeAttr.needsUpdate = true;
+        this._forceHeatmap.geometry.setDrawRange(0, vi);
+    }
+
+    showForceHeatmap(visible) {
+        if (!this._forceHeatmap) this._buildForceHeatmap();
+        this._forceHeatmap.visible = visible;
+        if (!visible) this._forceHeatmap.geometry.setDrawRange(0, 0);
+    }
+
+    // ── Animated Streamlines (Flow) ──────────────────────────────────
+    _buildForceStreamlines() {
+        // Pre-allocate a pool of Line objects with dashed materials.
+        // We reuse a fixed pool and control count via visibility.
+        this._forceStreamlinePool = [];
+        this._forceStreamlineMats = [];
+        const maxLines = 200;
+        const maxSegs = 40;
+        for (let i = 0; i < maxLines; i++) {
+            const posArr = new Float32Array((maxSegs + 1) * 3);
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(posArr, 3));
+            geo.setDrawRange(0, 0);
+            const mat = new THREE.LineDashedMaterial({
+                color: 0x00e5ff,
+                dashSize: 1.5,
+                gapSize: 0.8,
+                transparent: true,
+                opacity: 0.7,
+                depthWrite: false,
+            });
+            const line = new THREE.Line(geo, mat);
+            line.visible = false;
+            line.frustumCulled = false;
+            line.computeLineDistances();
+            this.scene.add(line);
+            this._forceStreamlinePool.push(line);
+            this._forceStreamlineMats.push(mat);
+        }
+        this._forceStreamlineCount = 0;
+    }
+
+    initForceStreamlines() { if (!this._forceStreamlinePool) this._buildForceStreamlines(); }
+
+    /**
+     * Update streamline geometries from pre-computed line arrays.
+     * @param {Array<Float32Array>} lines - Array of vertex arrays [x0,y0,z0, x1,y1,z1, ...]
+     * @param {string} forceType - 'em' | 'gravity' | 'strong' | 'weak'
+     */
+    updateForceStreamlines(lines, forceType) {
+        if (!this._forceStreamlinePool) this._buildForceStreamlines();
+        const pool = this._forceStreamlinePool;
+        const mats = this._forceStreamlineMats;
+        const pal = Viewport.FORCE_PALETTES[forceType] || Viewport.FORCE_PALETTES.em;
+        const baseColor = pal.mid;
+        const colorHex = new THREE.Color(baseColor[0], baseColor[1], baseColor[2]);
+
+        const usedCount = Math.min(lines.length, pool.length);
+        for (let li = 0; li < usedCount; li++) {
+            const verts = lines[li];
+            const line = pool[li];
+            const posAttr = line.geometry.getAttribute('position');
+            const maxVerts = posAttr.array.length / 3;
+            const vertCount = Math.min(verts.length / 3, maxVerts);
+
+            for (let v = 0; v < vertCount * 3; v++) {
+                posAttr.array[v] = verts[v];
+            }
+            posAttr.needsUpdate = true;
+            line.geometry.setDrawRange(0, vertCount);
+            line.geometry.computeBoundingSphere();
+            line.computeLineDistances();
+
+            mats[li].color.copy(colorHex);
+            // Fade opacity for shorter lines
+            mats[li].opacity = Math.min(0.8, 0.3 + vertCount / 40 * 0.5);
+            line.visible = true;
+        }
+
+        // Hide unused pool lines
+        for (let li = usedCount; li < pool.length; li++) {
+            pool[li].visible = false;
+        }
+        this._forceStreamlineCount = usedCount;
+    }
+
+    /**
+     * Animate dash offsets to show flow direction.
+     * Call once per frame when flow style is active.
+     * @param {number} dt - Time step (frame delta, ~0.016)
+     */
+    animateForceStreamlines(dt) {
+        if (!this._forceStreamlineMats) return;
+        const speed = 2.0;
+        for (let i = 0; i < this._forceStreamlineCount; i++) {
+            this._forceStreamlineMats[i].dashOffset -= speed * dt;
+        }
+    }
+
+    showForceStreamlines_vis(visible) {
+        if (!this._forceStreamlinePool) this._buildForceStreamlines();
+        for (let i = 0; i < this._forceStreamlinePool.length; i++) {
+            if (!visible) this._forceStreamlinePool[i].visible = false;
+        }
+        // When showing, visibility is set per-line by updateForceStreamlines
+    }
+
+    // ── Glyph Field (Instanced Cones) ────────────────────────────────
+    _buildForceGlyphs() {
+        const maxInstances = 2000;
+        const coneGeo = new THREE.ConeGeometry(0.3, 1.0, 6);
+        // Rotate cone so it points along +Y by default (lookAt will orient it)
+        coneGeo.rotateX(Math.PI / 2);
+        const mat = new THREE.MeshBasicMaterial({
+            transparent: true,
+            opacity: 0.7,
+            depthWrite: false,
+        });
+        this._forceGlyphs = new THREE.InstancedMesh(coneGeo, mat, maxInstances);
+        this._forceGlyphs.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        this._forceGlyphs.visible = false;
+        this._forceGlyphs.frustumCulled = false;
+        this._forceGlyphs.count = 0;
+        // Enable per-instance color
+        this._forceGlyphs.instanceColor = new THREE.InstancedBufferAttribute(
+            new Float32Array(maxInstances * 3), 3
+        );
+        this._forceGlyphs.instanceColor.setUsage(THREE.DynamicDrawUsage);
+        this.scene.add(this._forceGlyphs);
+        // Reusable math objects
+        this._glyphMatrix = new THREE.Matrix4();
+        this._glyphQuat = new THREE.Quaternion();
+        this._glyphUp = new THREE.Vector3(0, 0, 1); // cone default direction after rotateX
+        this._glyphDir = new THREE.Vector3();
+        this._glyphColor = new THREE.Color();
+    }
+
+    initForceGlyphs() { if (!this._forceGlyphs) this._buildForceGlyphs(); }
+
+    updateForceGlyphs(fieldData, forceType) {
+        if (!this._forceGlyphs) this._buildForceGlyphs();
+        const { positions, vectors, count } = fieldData;
+        const maxInstances = 2000;
+        const pal = Viewport.FORCE_PALETTES[forceType] || Viewport.FORCE_PALETTES.em;
+
+        // Compute magnitudes
+        let maxMag = 0;
+        if (!this._glyphMagCache || this._glyphMagCache.length < count) {
+            this._glyphMagCache = new Float32Array(count);
+        }
+        const mags = this._glyphMagCache;
+        for (let i = 0; i < count; i++) {
+            const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
+            mags[i] = Math.sqrt(a * a + b * b + c * c);
+            if (mags[i] > maxMag) maxMag = mags[i];
+        }
+        if (maxMag < 1e-15) maxMag = 1;
+        const threshold = maxMag * 0.03;
+        const halfN = this._halfN;
+        const scaleBase = 0.8 * (this.latticeSize / 32);
+        let vi = 0;
+
+        const mat4 = this._glyphMatrix;
+        const quat = this._glyphQuat;
+        const up = this._glyphUp;
+        const dir = this._glyphDir;
+        const col = this._glyphColor;
+        const colorArr = this._forceGlyphs.instanceColor.array;
+
+        for (let i = 0; i < count && vi < maxInstances; i++) {
+            const mag = mags[i];
+            if (mag < threshold) continue;
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+
+            const t = mag / maxMag;
+            const scale = Math.log(1 + t * 9) / Math.log(10) * scaleBase;
+
+            // Direction quaternion
+            dir.set(vectors[i * 3] / mag, vectors[i * 3 + 1] / mag, vectors[i * 3 + 2] / mag);
+            quat.setFromUnitVectors(up, dir);
+
+            // Build matrix: translation * rotation * scale
+            mat4.makeRotationFromQuaternion(quat);
+            mat4.scale(new THREE.Vector3(scale, scale, scale * 1.5));
+            mat4.setPosition(px, py, pz);
+            this._forceGlyphs.setMatrixAt(vi, mat4);
+
+            // Color
+            const [r, g, b] = Viewport._lerpPalette(pal, t);
+            colorArr[vi * 3]     = r;
+            colorArr[vi * 3 + 1] = g;
+            colorArr[vi * 3 + 2] = b;
+            vi++;
+        }
+
+        this._forceGlyphs.count = vi;
+        this._forceGlyphs.instanceMatrix.needsUpdate = true;
+        this._forceGlyphs.instanceColor.needsUpdate = true;
+    }
+
+    showForceGlyphs(visible) {
+        if (!this._forceGlyphs) this._buildForceGlyphs();
+        this._forceGlyphs.visible = visible;
+        if (!visible) this._forceGlyphs.count = 0;
+    }
+
+    /**
+     * Hide all force visualization styles (called on style switch).
+     */
+    hideAllForceStyles() {
+        // Arrows (existing meshes)
+        if (this._forceVolume) this._forceVolume.visible = false;
+        if (this._gravityField) this._gravityField.visible = false;
+        if (this._strongForce) this._strongForce.visible = false;
+        if (this._weakField) this._weakField.visible = false;
+        // Heatmap
+        this.showForceHeatmap(false);
+        // Streamlines
+        this.showForceStreamlines_vis(false);
+        // Glyphs
+        this.showForceGlyphs(false);
+    }
+
+    /**
+     * Re-show arrow-style force meshes for active forces.
+     * Called when switching back to arrows style.
+     * @param {object} fieldState - { showForceEM, showForceGravity, showForceStrong, showForceWeak }
+     */
+    showArrowForces(fieldState) {
+        if (fieldState.showForceEM) this.toggleForceVolume(true);
+        if (fieldState.showForceGravity) this.toggleGravityField(true);
+        if (fieldState.showForceStrong) this.toggleStrongForce(true);
+        if (fieldState.showForceWeak) this.toggleWeakField(true);
+    }
+
     // ── Dark Matter Halo Overlay (sub-threshold flux envelope) ──────
     _buildDarkMatterHalo() {
         const maxPts = 8000;
@@ -3113,6 +3485,11 @@ export class Viewport {
             if (this._gravityField) this._gravityField.visible = false;
             if (this._strongForce) this._strongForce.visible = false;
             if (this._weakField) this._weakField.visible = false;
+            if (this._forceHeatmap) this._forceHeatmap.visible = false;
+            if (this._forceGlyphs) this._forceGlyphs.visible = false;
+            if (this._forceStreamlinePool) {
+                for (const l of this._forceStreamlinePool) l.visible = false;
+            }
             if (this._dualFluxVolume) this._dualFluxVolume.visible = false;
             if (this._chiralityField) this._chiralityField.visible = false;
             if (this._lightField) this._lightField.visible = false;
@@ -3552,12 +3929,21 @@ export class Viewport {
         // Field visualization overlays (Scale 0 streamlines, volumes, etc.)
         const fieldOverlays = [
             '_eFieldLines', '_bFieldLines', '_poyntingVectors', '_divField',
-            '_fluxStreamlines', '_forceVolume', '_gravityField', '_strongForce', '_weakField', '_dualFluxVolume',
+            '_fluxStreamlines', '_forceVolume', '_gravityField', '_strongForce', '_weakField',
+            '_forceHeatmap', '_forceGlyphs',
+            '_dualFluxVolume',
             '_chiralityField', '_lightField',
             '_darkMatterHalo', '_dampingZones', '_genesisIsosurface',
             '_confinementStrings',
         ];
         for (const name of fieldOverlays) disposeMesh(this[name]);
+
+        // Force streamline pool (array of Line objects, not a single mesh)
+        if (this._forceStreamlinePool) {
+            for (const line of this._forceStreamlinePool) disposeMesh(line);
+            this._forceStreamlinePool = null;
+            this._forceStreamlineMats = null;
+        }
 
         // Raycasting/inspector helpers
         disposeMesh(this._voidBox);
