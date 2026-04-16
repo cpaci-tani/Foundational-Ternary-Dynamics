@@ -111,6 +111,47 @@ export const SCALE0_SCENARIO_OVERRIDES = {
         ['genesis', true, 't-genesis'],
         ['damping', true, 't-damping'],
     ],
+
+    // Gauge, Gravity, Consciousness — genesis off so the structure stays clean
+    's0-seed-wilson-loop':         [['genesis', false, 't-genesis']],
+    's0-seed-flux-tube':           [['genesis', false, 't-genesis']],
+    's0-seed-monopole':            [['genesis', false, 't-genesis']],
+    's0-seed-instanton':           [['genesis', false, 't-genesis']],
+    's0-seed-schwarzschild':       [['genesis', false, 't-genesis']],
+    's0-seed-frw-patch':           [['genesis', false, 't-genesis']],
+    's0-seed-gravitational-wave':  [['genesis', false, 't-genesis']],
+    's0-seed-sloop':               [['genesis', false, 't-genesis']],
+    's0-seed-observer-cell':       [['genesis', false, 't-genesis']],
+
+    // Particles, Composites, Atoms — genesis off so the structure stays clean
+    's0-seed-electron-l3':    [['genesis', false, 't-genesis']],
+    's0-seed-positron':       [['genesis', false, 't-genesis']],
+    's0-seed-neutrino':       [['genesis', false, 't-genesis']],
+    's0-seed-quark':          [['genesis', false, 't-genesis']],
+    's0-seed-antiquark':      [['genesis', false, 't-genesis']],
+    's0-seed-pion':           [['genesis', false, 't-genesis']],
+    's0-seed-proton-l4':      [['genesis', false, 't-genesis']],
+    's0-seed-neutron':        [['genesis', false, 't-genesis']],
+    's0-seed-hydrogen':       [['genesis', false, 't-genesis']],
+    's0-seed-helium':         [['genesis', false, 't-genesis']],
+    's0-seed-h2-molecule':    [['genesis', false, 't-genesis']],
+
+    // Field Configurations — genesis off so the field pattern stays clean
+    's0-field-plane-wave':       [['genesis', false, 't-genesis']],
+    's0-field-standing-wave':    [['genesis', false, 't-genesis']],
+    's0-field-uniform-e':        [['genesis', false, 't-genesis']],
+    's0-field-uniform-b':        [['genesis', false, 't-genesis']],
+    's0-field-photon-pulse':     [['genesis', false, 't-genesis']],
+    's0-field-electric-dipole':  [['genesis', false, 't-genesis']],
+    's0-field-magnetic-dipole':  [['genesis', false, 't-genesis']],
+    's0-field-vortex-line':      [['genesis', false, 't-genesis']],
+
+    // Moore Seeds — genesis off so the geometric pattern stays clean
+    's0-seed-octahedron':          [['genesis', false, 't-genesis']],
+    's0-seed-cuboctahedron':       [['genesis', false, 't-genesis']],
+    's0-seed-stella-octangula':    [['genesis', false, 't-genesis']],
+    's0-seed-moore-cell':          [['genesis', false, 't-genesis']],
+    's0-seed-moore-decomposition': [['genesis', false, 't-genesis']],
 };
 
 // Light scenarios: pure EM wave propagation (no matter coupling)
