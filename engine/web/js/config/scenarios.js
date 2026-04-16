@@ -82,6 +82,51 @@ export const S0_SEED_SCENARIO_METADATA = {
             ['LANDMINE', '[WARNING]', 'Do NOT interpret J_x-dominant flux as "red quark" or map vertices to u/d. The BCC\u2192SU(3) link is about the gluon propagator, not per-quark orientation.'],
         ],
     },
+
+    // ── Moore Seeds (geometric) ──────────────────────────────────────
+    // Theory: THEOREM_MOORE_LAYER_DECOMPOSITION.md
+    // C++ constructors: ftd::ctor::octahedron, cuboctahedron, stella_octangula, moore_cell
+
+    's0-seed-octahedron': {
+        title: 'Octahedron \u2014 Moore shell 1 (SC face-neighbors, 6 sites)',
+        desc: 'The 6 face-sharing neighbors of the center voxel, forming a regular octahedron. This is Shell 1 of the Moore neighborhood decomposition at L2 distance 1, corresponding to the simple-cubic (SC) sublattice. In the Moore Layer Theorem, this shell maps to the U(1) gauge sector.',
+        epistemic: [
+            ['Geometry (6 sites at distance 1)', '[THEOREM]', 'The 6 face-neighbors of any site on a cubic lattice form a regular octahedron. This is geometric fact, not a model choice.'],
+            ['U(1) sector identification', '[SELECTION]', 'Mapping shell 1 to U(1) follows from the Moore Layer Theorem decomposition. Structurally motivated, not uniquely proven.'],
+        ],
+    },
+    's0-seed-cuboctahedron': {
+        title: 'Cuboctahedron \u2014 Moore shell 2 (FCC edge-neighbors, 12 sites)',
+        desc: 'The 12 edge-sharing neighbors at L2 distance \u221a2, forming a cuboctahedron. Shell 2 of the Moore neighborhood, corresponding to the face-centered-cubic (FCC) sublattice. In the Moore Layer Theorem, this shell maps to the SU(2) gauge sector.',
+        epistemic: [
+            ['Geometry (12 sites at distance \u221a2)', '[THEOREM]', 'The 12 edge-neighbors form a cuboctahedron \u2014 geometric fact of the cubic lattice.'],
+            ['SU(2) sector identification', '[SELECTION]', 'Mapping shell 2 to SU(2) follows from the Moore Layer Theorem. Structurally consistent, not uniquely forced.'],
+        ],
+    },
+    's0-seed-stella-octangula': {
+        title: 'Stella octangula \u2014 Moore shell 3 (BCC corner-neighbors, 8 sites)',
+        desc: 'The 8 corner-neighbors at L2 distance \u221a3, forming a stella octangula (two interpenetrating tetrahedra). Shell 3 of the Moore neighborhood, corresponding to the body-centered-cubic (BCC) sublattice. In the Moore Layer Theorem, this shell maps to the SU(3) gauge sector. The BCC eigenvalue produces both Watson\u2019s integral W\u2083 and the SU(3) gauge group via the triple-cosine product (DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md).',
+        epistemic: [
+            ['Geometry (8 sites at distance \u221a3)', '[THEOREM]', 'The 8 corner-neighbors form a stella octangula \u2014 geometric fact of the cubic lattice.'],
+            ['SU(3) sector identification', '[THEOREM]', 'The BCC sublattice eigenvalue factorizes into the triple-cosine product that generates SU(3). See DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md.'],
+        ],
+    },
+    's0-seed-moore-cell': {
+        title: 'Moore cell \u2014 full 26-site neighborhood',
+        desc: 'All 26 neighbors of a central voxel: the union of octahedron (6) + cuboctahedron (12) + stella octangula (8). This is the complete Moore neighborhood that defines local causality in FTD. The center voxel is shown as negative (anchor), all neighbors as positive.',
+        epistemic: [
+            ['26-site Moore neighborhood', '[AXIOM]', 'The 26-connected Moore neighborhood is postulated as the causal neighborhood in FTD (Postulate 4: local causality).'],
+            ['6 + 12 + 8 = 26 decomposition', '[THEOREM]', 'The three shells are disjoint and exhaustive \u2014 this is the THEOREM_MOORE_LAYER_DECOMPOSITION.'],
+        ],
+    },
+    's0-seed-moore-decomposition': {
+        title: 'Moore decomposition \u2014 3 shells visualized by polarity',
+        desc: 'All three Moore shells shown simultaneously with alternating states so each shell is visually distinguishable: Shell 1 (octahedron, 6 sites) = positive, Shell 2 (cuboctahedron, 12 sites) = negative, Shell 3 (stella octangula, 8 sites) = positive, Center = negative. This lets you see the U(1) \u00d7 SU(2) \u00d7 SU(3) decomposition as three concentric geometric layers.',
+        epistemic: [
+            ['Polyhedral decomposition', '[THEOREM]', 'THEOREM_MOORE_LAYER_DECOMPOSITION: the 26-site Moore neighborhood decomposes uniquely into octahedron + cuboctahedron + stella octangula at distances 1, \u221a2, \u221a3.'],
+            ['Gauge group mapping', '[SELECTION]', 'U(1) \u00d7 SU(2) \u00d7 SU(3) identification follows from the theorem but is a selection principle, not a uniqueness proof.'],
+        ],
+    },
 };
 
 /**
