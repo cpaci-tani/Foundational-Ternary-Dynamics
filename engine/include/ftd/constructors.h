@@ -40,6 +40,15 @@
  *   hydrogen             5      L4+L3  proton + orbital electron
  *   helium               5      nuc+2L3  alpha nucleus + 2 electrons
  *   h2_molecule          5      2×L5   covalent H-H bond
+ *   wilson_loop          6      ~8R    rectangular closed flux circuit
+ *   flux_tube            6      ~L     color flux tube between quarks
+ *   monopole             6      ~R³    magnetic monopole hedgehog seed
+ *   instanton            6      ~R³    localized BPST-like energy lump
+ *   schwarzschild        7      ~R³    latency gravitational well
+ *   frw_patch            7      N³     uniform cosmological density patch
+ *   gravitational_wave   7      N³     periodic latency modulation (GW)
+ *   sloop                8      ~12    self-referential causal loop (observer)
+ *   observer_cell        8      27     3³ Moore observer cell (alternating polarity)
  *
  * Design spec: docs/superpowers/specs/2026-04-15-ftd-constructors-design.md
  */
@@ -187,6 +196,55 @@ StampResult helium(RenderBridge& rb, Coord center, int orbital_radius = 4);
 /// Theory: covalent bond = shared electron density.
 StampResult h2_molecule(RenderBridge& rb, Coord center,
                         int bond_length = 4, int orbital_radius = 5);
+
+// Level 6 — gauge/topological objects (flux circuits + monopoles)
+// [SELECTION] These are topological seeds; dynamics must confirm stability.
+
+/// Wilson loop: rectangular closed flux circuit in xy-plane.
+/// Theory: benchmark_wilson_loops.cpp, area-law confinement at x_-.
+StampResult wilson_loop(RenderBridge& rb, Coord center,
+                        int radius = 4, double flux_strength = K_B);
+
+/// Flux tube: color flux tube between two quarks.
+/// Theory: linear confinement E(r) ~ sigma*r (campaign_gluon_dynamics.cpp).
+StampResult flux_tube(RenderBridge& rb, Coord end_a, Coord end_b,
+                      double strength = K_B);
+
+/// Monopole: magnetic monopole seed (radial hedgehog flux pattern).
+/// Theory: topological defect; Dirac string approach with tangential J.
+StampResult monopole(RenderBridge& rb, Coord center, double charge = 1.0);
+
+/// Instanton: localized BPST-like self-dual flux concentration.
+/// Theory: gauge tunneling event; profile ~ size/(r^2 + size^2).
+StampResult instanton(RenderBridge& rb, Coord center, double size = 3.0);
+
+// Level 7 — gravity/cosmology (latency field configurations)
+// [SELECTION] Latency = gravitational potential; dynamics via Poisson solver.
+
+/// Schwarzschild: latency gravitational well around a point mass.
+/// Theory: test_einstein_equations.cpp, benchmark_black_hole_thermo.cpp.
+StampResult schwarzschild(RenderBridge& rb, Coord center, double r_s = 3.0);
+
+/// FRW patch: uniform-density cosmological patch.
+/// Theory: Friedmann-Robertson-Walker homogeneous expansion seed.
+StampResult frw_patch(RenderBridge& rb, double density = 0.01);
+
+/// Gravitational wave: periodic latency modulation.
+/// Theory: linearized GW in latency formalism.
+StampResult gravitational_wave(RenderBridge& rb, Vec3 direction,
+                               double wavelength = 8.0,
+                               double amplitude = 0.05);
+
+// Level 8 — consciousness/observer (self-referential structures)
+// [CONJECTURE] These encode the observer formalism; interpretation is open.
+
+/// sLoop: self-referential causal loop (ring of particles with circulating flux).
+/// Theory: FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md §sLoop.
+StampResult sloop(RenderBridge& rb, Coord center, int radius = 3);
+
+/// Observer cell: 3^3 = 27-site Moore cell with alternating polarity.
+/// Theory: FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md §observer.
+StampResult observer_cell(RenderBridge& rb, Coord center);
 
 }  // namespace ctor
 }  // namespace ftd
