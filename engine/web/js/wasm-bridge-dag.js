@@ -448,15 +448,41 @@ export class MockBridge {
                     this._forceGravity[i].x += gx; this._forceGravity[i].y += gy; this._forceGravity[i].z += gz;
                     this._forceGravity[j].x -= gx; this._forceGravity[j].y -= gy; this._forceGravity[j].z -= gz;
                 }
-                // Linear confinement for opposite-sign pairs (Strong)
-                if (this._toggles.confinement && qi * qj < 0) {
+                // Strong force: 3-regime model matching C++ engine (render_bridge.cpp)
+                //   r < 3:   Coulomb (1/r^2) with running alpha_s
+                //   3-8:     transition (1/(3r)) — flux tube stretching
+                //   r >= 8:  linear confinement (r/64)
+                // Active for ALL pairs when confinement, color_forces, or strong_force is on.
+                if (this._toggles.confinement || this._toggles.color_forces || this._toggles.strong_force) {
                     const r = Math.sqrt(r2raw);
-                    const SIGMA = 0.015;   // string tension
-                    const R_CRIT = 3.0;    // onset distance
-                    if (r > R_CRIT) {
-                        const fConf = SIGMA * (r - R_CRIT);
-                        const invRc = 1 / r;
-                        const sx = -fConf * dx * invRc, sy = -fConf * dy * invRc, sz = -fConf * dz * invRc;
+                    if (r > 0.5) {
+                        // Color factor: +0.5 for same-color (repulsive), -1.0 for different (attractive)
+                        const ci = pi.color || 0, cj = pj.color || 0;
+                        const cf = (ci > 0 && cj > 0 && ci === cj) ? 0.5 : -1.0;
+                        const ALPHA_S = 1.0;
+                        // Running alpha_s: decreases at short distance (asymptotic freedom)
+                        const alpha_s_r = ALPHA_S / (1.0 + 0.1 * Math.log(1.0 + r));
+                        let F_mag;  // unsigned force magnitude from the regime model
+                        if (r < 3.0) {
+                            F_mag = alpha_s_r / (r * r);         // Coulomb regime
+                        } else if (r < 8.0) {
+                            F_mag = alpha_s_r / (3.0 * r);       // Transition
+                        } else {
+                            F_mag = alpha_s_r * r / 64.0;        // Linear confinement
+                        }
+                        // Sign convention matching C++ engine (render_bridge.cpp):
+                        //   dx points from i toward j.
+                        //   For attraction (cf < 0): force on i should point toward j = +dx direction.
+                        //   C++ uses: F = -F_mag * ddx / r (where ddx = source - probe = toward source)
+                        //   In JS: dx = pj - pi (toward j). So: F_on_i = +cf * F_mag * dx / r
+                        //   cf < 0 → negative → but we want attraction...
+                        //   Actually: negate cf for the force direction:
+                        //   For different color (cf=-1): attractive → force = +F_mag * dx/r
+                        //   For same color (cf=+0.5): repulsive → force = -0.5*F_mag * dx/r
+                        const invRs = 1.0 / r;
+                        const sx = -cf * F_mag * dx * invRs;
+                        const sy = -cf * F_mag * dy * invRs;
+                        const sz = -cf * F_mag * dz * invRs;
                         fx += sx; fy += sy; fz += sz;
                         this._forceStrong[i].x += sx; this._forceStrong[i].y += sy; this._forceStrong[i].z += sz;
                         this._forceStrong[j].x -= sx; this._forceStrong[j].y -= sy; this._forceStrong[j].z -= sz;
@@ -1546,23 +1572,41 @@ export class MockBridge {
      * Computes linear confinement between opposite-sign particle pairs.
      */
     getStrongForceField(stride = 2) {
+        // Strong force visualization: 3-regime model matching C++ engine
+        //   r < 3:   Coulomb (1/r^2) — asymptotic freedom
+        //   3-8:     transition (1/(3r)) — flux tube stretching
+        //   r >= 8:  linear confinement (r/64)
+        //
+        // Shows: (1) flux tubes between particle pairs with force arrows pointing
+        //        INWARD from both ends (confinement), and (2) radial attraction
+        //        around each quark (short-range nuclear).
         const ps = this._particles.filter(p => p.state !== 0);
         if (ps.length < 2) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = this.latticeSize;
         const halfN = N / 2;
-        const soft = 1.0;
-        const SIGMA = 0.015;
-        const R_CRIT = 3.0;
+        const ALPHA_S = 1.0;
+        const TUBE_W  = 1.5;     // flux tube Gaussian width (visualization only)
         const maxPts = Math.ceil(N / stride) ** 3;
         const positions = new Float32Array(maxPts * 3);
         const vectors = new Float32Array(maxPts * 3);
         let count = 0;
 
-        // Find opposite-sign pairs for confinement strings
+        // Build ALL particle pairs with tube geometry
         const pairs = [];
         for (let i = 0; i < ps.length; i++) {
             for (let j = i + 1; j < ps.length; j++) {
-                if (ps[i].state * ps[j].state < 0) pairs.push([ps[i], ps[j]]);
+                let dx = ps[j].x - ps[i].x, dy = ps[j].y - ps[i].y, dz = ps[j].z - ps[i].z;
+                if (dx > halfN) dx -= N; else if (dx < -halfN) dx += N;
+                if (dy > halfN) dy -= N; else if (dy < -halfN) dy += N;
+                if (dz > halfN) dz -= N; else if (dz < -halfN) dz += N;
+                const sep = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                if (sep < 0.5) continue;
+                const invSep = 1 / sep;
+                pairs.push({
+                    ax: ps[i].x, ay: ps[i].y, az: ps[i].z,
+                    dx, dy, dz, sep, invSep,
+                    tx: dx * invSep, ty: dy * invSep, tz: dz * invSep
+                });
             }
         }
         if (pairs.length === 0) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
@@ -1571,32 +1615,68 @@ export class MockBridge {
         for (let y = 0; y < N; y += stride)
         for (let x = 0; x < N; x += stride) {
             let fx = 0, fy = 0, fz = 0;
-            // Strong force: attraction toward nearest confinement pair midpoint
-            for (const [pi, pj] of pairs) {
-                let dxi = pi.x - x, dyi = pi.y - y, dzi = pi.z - z;
-                if (dxi > halfN) dxi -= N; else if (dxi < -halfN) dxi += N;
-                if (dyi > halfN) dyi -= N; else if (dyi < -halfN) dyi += N;
-                if (dzi > halfN) dzi -= N; else if (dzi < -halfN) dzi += N;
-                const r2i = dxi * dxi + dyi * dyi + dzi * dzi + soft;
-                const ri = Math.sqrt(r2i);
-                if (ri > R_CRIT * 3) continue; // only sample near the string
-                // Force toward the pair midpoint (represents flux tube)
-                let dxj = pj.x - x, dyj = pj.y - y, dzj = pj.z - z;
-                if (dxj > halfN) dxj -= N; else if (dxj < -halfN) dxj += N;
-                if (dyj > halfN) dyj -= N; else if (dyj < -halfN) dyj += N;
-                if (dzj > halfN) dzj -= N; else if (dzj < -halfN) dzj += N;
-                const r2j = dxj * dxj + dyj * dyj + dzj * dzj + soft;
-                const rj = Math.sqrt(r2j);
-                // Attraction toward nearer partner of the pair
-                const nearer = ri < rj ? { dx: dxi, dy: dyi, dz: dzi, r: ri } : { dx: dxj, dy: dyj, dz: dzj, r: rj };
-                const fStr = SIGMA * Math.max(0, nearer.r - R_CRIT * 0.5);
-                const invR = 1 / nearer.r;
-                fx += fStr * nearer.dx * invR;
-                fy += fStr * nearer.dy * invR;
-                fz += fStr * nearer.dz * invR;
+
+            // 1. Flux tube visualization: force along tube, pointing INWARD from both ends
+            for (const pair of pairs) {
+                let rx = x - pair.ax, ry = y - pair.ay, rz = z - pair.az;
+                if (rx > halfN) rx -= N; else if (rx < -halfN) rx += N;
+                if (ry > halfN) ry -= N; else if (ry < -halfN) ry += N;
+                if (rz > halfN) rz -= N; else if (rz < -halfN) rz += N;
+
+                // Project onto tube axis
+                const t = rx * pair.tx + ry * pair.ty + rz * pair.tz;
+                if (t < -1.0 || t > pair.sep + 1.0) continue;
+
+                // Perpendicular distance from tube axis
+                const projX = t * pair.tx, projY = t * pair.ty, projZ = t * pair.tz;
+                const perpX = rx - projX, perpY = ry - projY, perpZ = rz - projZ;
+                const perp2 = perpX * perpX + perpY * perpY + perpZ * perpZ;
+                const tubeEnv = Math.exp(-perp2 / (2 * TUBE_W * TUBE_W));
+                if (tubeEnv < 0.01) continue;
+
+                // 3-regime force magnitude (matching C++ engine)
+                const r = Math.max(Math.sqrt(rx * rx + ry * ry + rz * rz), 0.5);
+                const alpha_s_r = ALPHA_S / (1.0 + 0.1 * Math.log(1.0 + r));
+                let fMag;
+                if (r < 3.0) {
+                    fMag = alpha_s_r / (r * r);         // Coulomb
+                } else if (r < 8.0) {
+                    fMag = alpha_s_r / (3.0 * r);       // Transition
+                } else {
+                    fMag = alpha_s_r * r / 64.0;        // Linear confinement
+                }
+                fMag *= tubeEnv;
+
+                // Direction: point INWARD from both ends toward the tube center
+                // Near A (t < sep/2): force toward B (+tube_dir)
+                // Near B (t > sep/2): force toward A (-tube_dir)
+                const sign = (t < pair.sep * 0.5) ? 1.0 : -1.0;
+                fx += fMag * pair.tx * sign;
+                fy += fMag * pair.ty * sign;
+                fz += fMag * pair.tz * sign;
             }
+
+            // 2. Short-range nuclear: radial attraction toward each quark
+            for (const p of ps) {
+                let rx = x - p.x, ry = y - p.y, rz = z - p.z;
+                if (rx > halfN) rx -= N; else if (rx < -halfN) rx += N;
+                if (ry > halfN) ry -= N; else if (ry < -halfN) ry += N;
+                if (rz > halfN) rz -= N; else if (rz < -halfN) rz += N;
+                const r = Math.sqrt(rx * rx + ry * ry + rz * rz + 0.5);
+                if (r > 5.0) continue;
+                // Coulomb-like at short range with asymptotic freedom
+                const alpha_s_r = ALPHA_S / (1.0 + 0.1 * Math.log(1.0 + r));
+                const fNuc = alpha_s_r / (r * r);
+                if (fNuc < 1e-4) continue;
+                // Attractive: toward the quark (rx points away, so negate)
+                fx -= fNuc * rx / r;
+                fy -= fNuc * ry / r;
+                fz -= fNuc * rz / r;
+            }
+
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
-            if (mag < 1e-12) continue;
+            if (mag < 1e-4) continue;
+            if (count >= maxPts) break;
             positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
             vectors[count * 3] = fx; vectors[count * 3 + 1] = fy; vectors[count * 3 + 2] = fz;
             count++;
@@ -3856,8 +3936,13 @@ export class MockBridge {
                 case 's0-seed-hydrogen':
                 case 's0-seed-helium':
                 case 's0-seed-h2-molecule': {
-                    const _dp = (cx, cy, cz, st, sp, co, sig, amp) => {
+                    const _dp = (cx, cy, cz, st, sp, co, sig, amp, lock = false) => {
                         this.injectParticle(cx, cy, cz, st);
+                        // Set color, spin, and locked on the just-injected particle
+                        const lastP = this._particles[this._particles.length - 1];
+                        if (co !== undefined && co >= 0) lastP.color = co;
+                        if (sp !== undefined) lastP.spin = sp;
+                        if (lock) lastP.locked = true;
                         const sn = st > 0 ? 1 : -1;
                         const eR = Math.ceil(3 * sig);
                         for (let dz2 = -eR; dz2 <= eR; dz2++)
@@ -3872,12 +3957,12 @@ export class MockBridge {
                             this._injectFlux(cx+dx2, cy+dy2, cz+dz2, sn*gg*dx2/rr, sn*gg*dy2/rr, sn*gg*dz2/rr);
                         }
                     };
-                    const _tri = (cx, cy, cz, charges, colors, rad) => {
+                    const _tri = (cx, cy, cz, charges, colors, rad, lock = true) => {
                         for (let k = 0; k < 3; k++) {
                             const ang = (2 * Math.PI * k) / 3;
                             const qx = Math.round(cx + rad * Math.cos(ang));
                             const qy = Math.round(cy + rad * Math.sin(ang));
-                            _dp(qx, qy, cz, charges[k], (k%2===0)?1:-1, colors[k], 2, K_B*0.5);
+                            _dp(qx, qy, cz, charges[k], (k%2===0)?1:-1, colors[k], 2, K_B*0.5, lock);
                         }
                     };
                     if (name === 's0-seed-electron-l3') _dp(mc, mc, mc, -1, -1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
@@ -3894,7 +3979,7 @@ export class MockBridge {
                     else if (name === 's0-seed-antiquark') _dp(mc, mc, mc, -1, -1, 1, 2, K_B*0.5);
                     else if (name === 's0-seed-pion') {
                         const sp=Math.max(3,Math.floor(N/8)), hf=Math.floor(sp/2);
-                        _dp(mc+hf,mc,mc, +1,+1,1, 2,K_B*0.5); _dp(mc-hf,mc,mc, -1,-1,1, 2,K_B*0.5);
+                        _dp(mc+hf,mc,mc, +1,+1,1, 2,K_B*0.5, true); _dp(mc-hf,mc,mc, -1,-1,1, 2,K_B*0.5, true);
                     }
                     else if (name === 's0-seed-proton-l4') { const bR=Math.max(2,Math.floor(N/8)); _tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); }
                     else if (name === 's0-seed-neutron') { const bR=Math.max(2,Math.floor(N/8)); _tri(mc,mc,mc,[+1,-1,-1],[1,2,3],bR); }
@@ -3904,7 +3989,7 @@ export class MockBridge {
                     }
                     else if (name === 's0-seed-helium') {
                         const oR=Math.max(3,Math.floor(N/8));
-                        _dp(mc,mc,mc, +1,0,0, 2,K_B*3); _dp(mc,mc,mc+oR, -1,+1,0, 2,K_B*0.8); _dp(mc,mc,mc-oR, -1,-1,0, 2,K_B*0.8);
+                        _dp(mc,mc,mc, +1,0,0, 2,K_B*3, true); _dp(mc,mc,mc+oR, -1,+1,0, 2,K_B*0.8); _dp(mc,mc,mc-oR, -1,-1,0, 2,K_B*0.8);
                     }
                     else if (name === 's0-seed-h2-molecule') {
                         const bd=Math.max(4,Math.floor(N/6)), hf=Math.floor(bd/2), oR=Math.max(3,Math.floor(N/8)), bR=Math.max(1,Math.floor(N/16));
