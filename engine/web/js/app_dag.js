@@ -1558,6 +1558,9 @@ function wireViewportToggles() {
         ['toggle-genesis-iso', 'showGenesisIsosurface', (on) => viewport.toggleGenesisIsosurface(on)],
         ['toggle-confinement', 'showConfinement', (on) => viewport.toggleConfinement(on)],
     ];
+    // Force-type field keys that are affected by the style selector
+    const forceFieldKeys = new Set(['showForceEM', 'showForceGravity', 'showForceStrong', 'showForceWeak']);
+
     for (const [id, fieldKey, viewportToggle] of fieldToggles) {
         const btn = document.getElementById(id);
         if (btn) {
@@ -1565,8 +1568,65 @@ function wireViewportToggles() {
                 btn.classList.toggle('active');
                 const on = btn.classList.contains('active');
                 Scale0Controller.setFieldToggle(fieldKey, on);
-                viewportToggle(on);
+
+                // Force overlays route through the active style; non-force overlays use original path
+                if (forceFieldKeys.has(fieldKey)) {
+                    const style = Scale0Controller.getForceStyle();
+                    if (style === 'arrows') {
+                        viewportToggle(on);
+                    } else {
+                        // For non-arrow styles, the controller's animation loop handles
+                        // rendering; hide arrow meshes and show the active style layer
+                        viewportToggle(false); // always hide arrows for non-arrow styles
+                        if (style === 'heatmap') viewport.showForceHeatmap(on);
+                        else if (style === 'flow') viewport.showForceStreamlines_vis(on);
+                        else if (style === 'glyphs') viewport.showForceGlyphs(on);
+                    }
+                } else {
+                    viewportToggle(on);
+                }
                 Scale0Controller.setLatticeNeedsUpload(); // force immediate re-render on any toggle
+            });
+        }
+    }
+
+    // ── Force visualization style selector ──────────────────────────
+    const styleRow = document.getElementById('force-style-row');
+    if (styleRow) {
+        for (const btn of styleRow.querySelectorAll('.style-btn')) {
+            btn.addEventListener('click', () => {
+                const newStyle = btn.dataset.style;
+                const oldStyle = Scale0Controller.getForceStyle();
+                if (newStyle === oldStyle) return;
+
+                // Update button active state
+                for (const b of styleRow.querySelectorAll('.style-btn')) b.classList.remove('active');
+                btn.classList.add('active');
+
+                // Hide all force styles first
+                viewport.hideAllForceStyles();
+
+                // Set new style
+                Scale0Controller.setForceStyle(newStyle);
+
+                // Get current field state to know which forces are on
+                const fs = Scale0Controller.getFieldState();
+                const anyForceOn = fs.showForceEM || fs.showForceGravity || fs.showForceStrong || fs.showForceWeak;
+
+                if (anyForceOn) {
+                    if (newStyle === 'arrows') {
+                        // Re-show arrow meshes for active forces
+                        viewport.showArrowForces(fs);
+                    } else if (newStyle === 'heatmap') {
+                        viewport.showForceHeatmap(true);
+                    } else if (newStyle === 'flow') {
+                        // Streamlines will be populated on next field update
+                    } else if (newStyle === 'glyphs') {
+                        viewport.showForceGlyphs(true);
+                    }
+                }
+
+                Scale0Controller.setLatticeNeedsUpload();
             });
         }
     }
