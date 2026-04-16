@@ -494,5 +494,374 @@ StampResult vortex_line(RenderBridge& rb,
     return result;
 }
 
+// ============================================================================
+// Level 3 — elementary particles
+// ============================================================================
+
+namespace {
+
+/// Merge sites from a sub-result into a parent result (sort + dedup).
+inline void merge_sites(std::vector<int>& dst, const std::vector<int>& src) {
+    dst.insert(dst.end(), src.begin(), src.end());
+    std::sort(dst.begin(), dst.end());
+    dst.erase(std::unique(dst.begin(), dst.end()), dst.end());
+}
+
+}  // anonymous namespace
+
+StampResult electron(RenderBridge& rb, Coord center, int8_t spin) {
+    const Lattice& lat = rb.lattice();
+    const int N = lat.size();
+    const double sigma = std::max(3.0, N / 10.0);
+    const double amplitude = K_B * 1.5;
+    const double inv_2sig2 = 1.0 / (2.0 * sigma * sigma);
+    const double cutoff_r2 = (GAUSSIAN_CUTOFF_SIGMA * sigma) *
+                             (GAUSSIAN_CUTOFF_SIGMA * sigma);
+
+    // Inject center particle
+    rb.inject_particle(center.x, center.y, center.z,
+                       /*state=*/-1, /*J=*/{0, 0, 0}, spin, /*color=*/0);
+
+    StampResult r{"electron", 3, center, {}};
+    auto& vox = rb.voxels();
+
+    int center_idx = lat.index(center.x, center.y, center.z);
+    r.sites.push_back(center_idx);
+
+    // Stamp radial-inward flux envelope
+    int range = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
+    for (int dx = -range; dx <= range; ++dx)
+    for (int dy = -range; dy <= range; ++dy)
+    for (int dz = -range; dz <= range; ++dz) {
+        if (dx == 0 && dy == 0 && dz == 0) continue;
+        double r2 = static_cast<double>(dx*dx + dy*dy + dz*dz);
+        if (r2 > cutoff_r2) continue;
+        double dist = std::sqrt(r2);
+        double g = amplitude * std::exp(-r2 * inv_2sig2);
+        // Flux pointing INWARD (toward center)
+        Vec3 dir{static_cast<double>(-dx) / dist,
+                 static_cast<double>(-dy) / dist,
+                 static_cast<double>(-dz) / dist};
+        Vec3 flux_val = dir * g;
+        int idx = lat.index(center.x + dx, center.y + dy, center.z + dz);
+        vox[idx].flux += flux_val;
+        r.sites.push_back(idx);
+    }
+
+    std::sort(r.sites.begin(), r.sites.end());
+    r.sites.erase(std::unique(r.sites.begin(), r.sites.end()), r.sites.end());
+    return r;
+}
+
+StampResult positron(RenderBridge& rb, Coord center, int8_t spin) {
+    const Lattice& lat = rb.lattice();
+    const int N = lat.size();
+    const double sigma = std::max(3.0, N / 10.0);
+    const double amplitude = K_B * 1.5;
+    const double inv_2sig2 = 1.0 / (2.0 * sigma * sigma);
+    const double cutoff_r2 = (GAUSSIAN_CUTOFF_SIGMA * sigma) *
+                             (GAUSSIAN_CUTOFF_SIGMA * sigma);
+
+    // Inject center particle
+    rb.inject_particle(center.x, center.y, center.z,
+                       /*state=*/+1, /*J=*/{0, 0, 0}, spin, /*color=*/0);
+
+    StampResult r{"positron", 3, center, {}};
+    auto& vox = rb.voxels();
+
+    int center_idx = lat.index(center.x, center.y, center.z);
+    r.sites.push_back(center_idx);
+
+    // Stamp radial-outward flux envelope
+    int range = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
+    for (int dx = -range; dx <= range; ++dx)
+    for (int dy = -range; dy <= range; ++dy)
+    for (int dz = -range; dz <= range; ++dz) {
+        if (dx == 0 && dy == 0 && dz == 0) continue;
+        double r2 = static_cast<double>(dx*dx + dy*dy + dz*dz);
+        if (r2 > cutoff_r2) continue;
+        double dist = std::sqrt(r2);
+        double g = amplitude * std::exp(-r2 * inv_2sig2);
+        // Flux pointing OUTWARD (away from center)
+        Vec3 dir{static_cast<double>(dx) / dist,
+                 static_cast<double>(dy) / dist,
+                 static_cast<double>(dz) / dist};
+        Vec3 flux_val = dir * g;
+        int idx = lat.index(center.x + dx, center.y + dy, center.z + dz);
+        vox[idx].flux += flux_val;
+        r.sites.push_back(idx);
+    }
+
+    std::sort(r.sites.begin(), r.sites.end());
+    r.sites.erase(std::unique(r.sites.begin(), r.sites.end()), r.sites.end());
+    return r;
+}
+
+StampResult neutrino(RenderBridge& rb, Coord center, int8_t chirality) {
+    const Lattice& lat = rb.lattice();
+    const double sigma = 2.0;
+    const double amp = K_B * 0.3;
+    const double delta = 0.1;
+    const double inv_2sig2 = 1.0 / (2.0 * sigma * sigma);
+    const int range = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
+
+    // State = 0 (no charge), spin = chirality
+    rb.inject_particle(center.x, center.y, center.z,
+                       /*state=*/0, /*J=*/{0, 0, 0},
+                       /*spin=*/chirality, /*color=*/0);
+
+    StampResult r{"neutrino", 3, center, {}};
+    auto& vox = rb.voxels();
+
+    int center_idx = lat.index(center.x, center.y, center.z);
+    r.sites.push_back(center_idx);
+
+    // Chirality seed: flux_L / flux_R asymmetry
+    double d = (chirality == -1) ? delta : -delta;
+    for (int dx = -range; dx <= range; ++dx)
+    for (int dy = -range; dy <= range; ++dy)
+    for (int dz = -range; dz <= range; ++dz) {
+        double r2 = static_cast<double>(dx*dx + dy*dy + dz*dz);
+        double cutoff_r2 = (GAUSSIAN_CUTOFF_SIGMA * sigma) *
+                           (GAUSSIAN_CUTOFF_SIGMA * sigma);
+        if (r2 > cutoff_r2) continue;
+        double g = std::exp(-r2 * inv_2sig2);
+        double base = amp * g;
+        int idx = lat.index(center.x + dx, center.y + dy, center.z + dz);
+        // flux_L dominant for left-handed, flux_R dominant for right-handed
+        double fl = base * (1.0 + d) / 2.0;
+        double fr = base * (1.0 - d) / 2.0;
+        vox[idx].flux_L = Vec3{fl, 0, 0};
+        vox[idx].flux_R = Vec3{fr, 0, 0};
+        r.sites.push_back(idx);
+    }
+
+    std::sort(r.sites.begin(), r.sites.end());
+    r.sites.erase(std::unique(r.sites.begin(), r.sites.end()), r.sites.end());
+    return r;
+}
+
+StampResult quark(RenderBridge& rb, Coord center,
+                  int8_t charge, int8_t color, int8_t spin) {
+    const Lattice& lat = rb.lattice();
+    const double sigma = 2.0;
+    const double amplitude = K_B * 0.5;
+    const double inv_2sig2 = 1.0 / (2.0 * sigma * sigma);
+    const int range = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
+    const double cutoff_r2 = (GAUSSIAN_CUTOFF_SIGMA * sigma) *
+                             (GAUSSIAN_CUTOFF_SIGMA * sigma);
+
+    // Inject center particle with state = charge, given spin and color
+    rb.inject_particle(center.x, center.y, center.z,
+                       /*state=*/charge, /*J=*/{0, 0, 0}, spin, color);
+
+    StampResult r{"quark", 3, center, {}};
+    auto& vox = rb.voxels();
+
+    int center_idx = lat.index(center.x, center.y, center.z);
+    r.sites.push_back(center_idx);
+
+    // Small flux envelope: inward for negative charge, outward for positive
+    double sign = (charge >= 0) ? -1.0 : 1.0;  // inward = toward center
+    for (int dx = -range; dx <= range; ++dx)
+    for (int dy = -range; dy <= range; ++dy)
+    for (int dz = -range; dz <= range; ++dz) {
+        if (dx == 0 && dy == 0 && dz == 0) continue;
+        double r2 = static_cast<double>(dx*dx + dy*dy + dz*dz);
+        if (r2 > cutoff_r2) continue;
+        double dist = std::sqrt(r2);
+        double g = amplitude * std::exp(-r2 * inv_2sig2);
+        Vec3 dir{sign * static_cast<double>(dx) / dist,
+                 sign * static_cast<double>(dy) / dist,
+                 sign * static_cast<double>(dz) / dist};
+        Vec3 flux_val = dir * g;
+        int idx = lat.index(center.x + dx, center.y + dy, center.z + dz);
+        vox[idx].flux += flux_val;
+        r.sites.push_back(idx);
+    }
+
+    std::sort(r.sites.begin(), r.sites.end());
+    r.sites.erase(std::unique(r.sites.begin(), r.sites.end()), r.sites.end());
+    return r;
+}
+
+StampResult antiquark(RenderBridge& rb, Coord center,
+                      int8_t charge, int8_t color, int8_t spin) {
+    const Lattice& lat = rb.lattice();
+    const double sigma = 2.0;
+    const double amplitude = K_B * 0.5;
+    const double inv_2sig2 = 1.0 / (2.0 * sigma * sigma);
+    const int range = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
+    const double cutoff_r2 = (GAUSSIAN_CUTOFF_SIGMA * sigma) *
+                             (GAUSSIAN_CUTOFF_SIGMA * sigma);
+
+    // Antimatter: state = -charge, flux direction reversed vs quark
+    int8_t anti_state = static_cast<int8_t>(-charge);
+    rb.inject_particle(center.x, center.y, center.z,
+                       anti_state, /*J=*/{0, 0, 0}, spin, color);
+
+    StampResult r{"antiquark", 3, center, {}};
+    auto& vox = rb.voxels();
+
+    int center_idx = lat.index(center.x, center.y, center.z);
+    r.sites.push_back(center_idx);
+
+    // Flux direction reversed relative to quark:
+    // quark with charge>=0 has inward flux, so antiquark has outward, and vice versa
+    double sign = (charge >= 0) ? 1.0 : -1.0;
+    for (int dx = -range; dx <= range; ++dx)
+    for (int dy = -range; dy <= range; ++dy)
+    for (int dz = -range; dz <= range; ++dz) {
+        if (dx == 0 && dy == 0 && dz == 0) continue;
+        double r2 = static_cast<double>(dx*dx + dy*dy + dz*dz);
+        if (r2 > cutoff_r2) continue;
+        double dist = std::sqrt(r2);
+        double g = amplitude * std::exp(-r2 * inv_2sig2);
+        Vec3 dir{sign * static_cast<double>(dx) / dist,
+                 sign * static_cast<double>(dy) / dist,
+                 sign * static_cast<double>(dz) / dist};
+        Vec3 flux_val = dir * g;
+        int idx = lat.index(center.x + dx, center.y + dy, center.z + dz);
+        vox[idx].flux += flux_val;
+        r.sites.push_back(idx);
+    }
+
+    std::sort(r.sites.begin(), r.sites.end());
+    r.sites.erase(std::unique(r.sites.begin(), r.sites.end()), r.sites.end());
+    return r;
+}
+
+// ============================================================================
+// Level 4 — composite particles
+// ============================================================================
+
+StampResult pion(RenderBridge& rb, Coord center, int separation) {
+    int half = separation / 2;
+
+    // Quark at center + (half, 0, 0)
+    Coord q_pos{center.x + half, center.y, center.z};
+    auto rq = quark(rb, q_pos, /*charge=*/+1, /*color=*/1, /*spin=*/+1);
+
+    // Antiquark at center - (half, 0, 0)
+    Coord aq_pos{center.x - half, center.y, center.z};
+    auto raq = antiquark(rb, aq_pos, /*charge=*/+1, /*color=*/1, /*spin=*/-1);
+
+    StampResult r{"pion", 4, center, {}};
+    merge_sites(r.sites, rq.sites);
+    merge_sites(r.sites, raq.sites);
+    return r;
+}
+
+StampResult proton(RenderBridge& rb, Coord center, int radius) {
+    // Three quarks on equilateral triangle in xy-plane:
+    // u(+1, red) at 0deg, u(+1, green) at 120deg, d(-1, blue) at 240deg
+    const double r = static_cast<double>(radius);
+
+    // Angle offsets: 0, 2pi/3, 4pi/3
+    int ux1 = center.x + static_cast<int>(std::round(r * std::cos(0.0)));
+    int uy1 = center.y + static_cast<int>(std::round(r * std::sin(0.0)));
+    auto r1 = quark(rb, {ux1, uy1, center.z}, /*charge=*/+1, /*color=*/1, /*spin=*/+1);
+
+    int ux2 = center.x + static_cast<int>(std::round(r * std::cos(2.0 * PI / 3.0)));
+    int uy2 = center.y + static_cast<int>(std::round(r * std::sin(2.0 * PI / 3.0)));
+    auto r2 = quark(rb, {ux2, uy2, center.z}, /*charge=*/+1, /*color=*/2, /*spin=*/-1);
+
+    int dx3 = center.x + static_cast<int>(std::round(r * std::cos(4.0 * PI / 3.0)));
+    int dy3 = center.y + static_cast<int>(std::round(r * std::sin(4.0 * PI / 3.0)));
+    auto r3 = quark(rb, {dx3, dy3, center.z}, /*charge=*/-1, /*color=*/3, /*spin=*/+1);
+
+    StampResult result{"proton", 4, center, {}};
+    merge_sites(result.sites, r1.sites);
+    merge_sites(result.sites, r2.sites);
+    merge_sites(result.sites, r3.sites);
+    return result;
+}
+
+StampResult neutron(RenderBridge& rb, Coord center, int radius) {
+    // Three quarks on equilateral triangle in xy-plane:
+    // u(+1, red) at 0deg, d(-1, green) at 120deg, d(-1, blue) at 240deg
+    const double r = static_cast<double>(radius);
+
+    int ux1 = center.x + static_cast<int>(std::round(r * std::cos(0.0)));
+    int uy1 = center.y + static_cast<int>(std::round(r * std::sin(0.0)));
+    auto r1 = quark(rb, {ux1, uy1, center.z}, /*charge=*/+1, /*color=*/1, /*spin=*/+1);
+
+    int dx2 = center.x + static_cast<int>(std::round(r * std::cos(2.0 * PI / 3.0)));
+    int dy2 = center.y + static_cast<int>(std::round(r * std::sin(2.0 * PI / 3.0)));
+    auto r2 = quark(rb, {dx2, dy2, center.z}, /*charge=*/-1, /*color=*/2, /*spin=*/-1);
+
+    int dx3 = center.x + static_cast<int>(std::round(r * std::cos(4.0 * PI / 3.0)));
+    int dy3 = center.y + static_cast<int>(std::round(r * std::sin(4.0 * PI / 3.0)));
+    auto r3 = quark(rb, {dx3, dy3, center.z}, /*charge=*/-1, /*color=*/3, /*spin=*/+1);
+
+    StampResult result{"neutron", 4, center, {}};
+    merge_sites(result.sites, r1.sites);
+    merge_sites(result.sites, r2.sites);
+    merge_sites(result.sites, r3.sites);
+    return result;
+}
+
+// ============================================================================
+// Level 5 — atoms & molecules
+// ============================================================================
+
+StampResult hydrogen(RenderBridge& rb, Coord center, int orbital_radius) {
+    // Proton at center
+    auto rp = proton(rb, center);
+
+    // Electron at center + (0, 0, orbital_radius)
+    Coord e_pos{center.x, center.y, center.z + orbital_radius};
+    auto re = electron(rb, e_pos, /*spin=*/-1);
+
+    StampResult result{"hydrogen", 5, center, {}};
+    merge_sites(result.sites, rp.sites);
+    merge_sites(result.sites, re.sites);
+    return result;
+}
+
+StampResult helium(RenderBridge& rb, Coord center, int orbital_radius) {
+    const Lattice& lat = rb.lattice();
+    auto& vox = rb.voxels();
+
+    StampResult result{"helium", 5, center, {}};
+
+    // Nucleus: single site with state=+1, flux amplitude 2*K_B (charge +2)
+    rb.inject_particle(center.x, center.y, center.z,
+                       /*state=*/+1, Vec3{0, 0, 2.0 * K_B},
+                       /*spin=*/0, /*color=*/0);
+    int nuc_idx = lat.index(center.x, center.y, center.z);
+    result.sites.push_back(nuc_idx);
+
+    // Electron 1 at +orbital_radius along z, spin up
+    Coord e1_pos{center.x, center.y, center.z + orbital_radius};
+    auto re1 = electron(rb, e1_pos, /*spin=*/+1);
+
+    // Electron 2 at -orbital_radius along z, spin down
+    Coord e2_pos{center.x, center.y, center.z - orbital_radius};
+    auto re2 = electron(rb, e2_pos, /*spin=*/-1);
+
+    merge_sites(result.sites, re1.sites);
+    merge_sites(result.sites, re2.sites);
+    return result;
+}
+
+StampResult h2_molecule(RenderBridge& rb, Coord center,
+                        int bond_length, int orbital_radius) {
+    int half = bond_length / 2;
+
+    // Hydrogen atom 1 at center - (half, 0, 0)
+    Coord h1_pos{center.x - half, center.y, center.z};
+    auto rh1 = hydrogen(rb, h1_pos, orbital_radius);
+
+    // Hydrogen atom 2 at center + (half, 0, 0)
+    Coord h2_pos{center.x + half, center.y, center.z};
+    auto rh2 = hydrogen(rb, h2_pos, orbital_radius);
+
+    StampResult result{"h2_molecule", 5, center, {}};
+    merge_sites(result.sites, rh1.sites);
+    merge_sites(result.sites, rh2.sites);
+    return result;
+}
+
 }  // namespace ctor
 }  // namespace ftd

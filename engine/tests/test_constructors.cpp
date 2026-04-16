@@ -5,6 +5,8 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
+#include <cstdlib>
 #include <set>
 #include <string>
 #include <tuple>
@@ -702,6 +704,305 @@ static void section_level2_vortex_line() {
     ftd::test::check("VL6: 1/r falloff (near > far)", mag_near > mag_far);
 }
 
+// ============================================================================
+// Level 3 — elementary particles
+// ============================================================================
+
+static void section_level3_electron() {
+    ftd::test::section("Level 3 / electron");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::electron(rb, center, /*spin=*/-1);
+
+    ftd::test::check("EL1: name is 'electron'", std::string(r.name) == "electron");
+    ftd::test::check("EL2: level is 3", r.level == 3);
+    ftd::test::check("EL3: sites count > 1 (flux envelope)", r.site_count() > 1);
+
+    const int idx = rb.lattice().index(8, 8, 8);
+    const auto& v = rb.voxels()[idx];
+    ftd::test::check("EL4: center state = -1", v.state == -1);
+    ftd::test::check("EL5: center spin = -1", v.spin == -1);
+    ftd::test::check("EL6: center color = 0 (colorless)", v.color == 0);
+
+    // Flux should point inward: at (9,8,8) flux.x should be negative
+    int idx_right = rb.lattice().index(9, 8, 8);
+    ftd::test::check("EL7: flux at +x points inward (negative x)",
+        rb.voxels()[idx_right].flux.x < 0);
+}
+
+static void section_level3_positron() {
+    ftd::test::section("Level 3 / positron");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::positron(rb, center, /*spin=*/+1);
+
+    ftd::test::check("POS1: name is 'positron'", std::string(r.name) == "positron");
+    ftd::test::check("POS2: level is 3", r.level == 3);
+    ftd::test::check("POS3: sites count > 1", r.site_count() > 1);
+
+    const int idx = rb.lattice().index(8, 8, 8);
+    const auto& v = rb.voxels()[idx];
+    ftd::test::check("POS4: center state = +1", v.state == +1);
+    ftd::test::check("POS5: center spin = +1", v.spin == +1);
+    ftd::test::check("POS6: center color = 0", v.color == 0);
+
+    // Flux should point outward: at (9,8,8) flux.x should be positive
+    int idx_right = rb.lattice().index(9, 8, 8);
+    ftd::test::check("POS7: flux at +x points outward (positive x)",
+        rb.voxels()[idx_right].flux.x > 0);
+}
+
+static void section_level3_neutrino() {
+    ftd::test::section("Level 3 / neutrino");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::neutrino(rb, center, /*chirality=*/-1);
+
+    ftd::test::check("NU1: name is 'neutrino'", std::string(r.name) == "neutrino");
+    ftd::test::check("NU2: level is 3", r.level == 3);
+    ftd::test::check("NU3: sites count > 0", r.site_count() > 0);
+
+    const int idx = rb.lattice().index(8, 8, 8);
+    const auto& v = rb.voxels()[idx];
+    ftd::test::check("NU4: center state = 0 (neutral)", v.state == 0);
+    ftd::test::check("NU5: spin = chirality = -1", v.spin == -1);
+
+    // Left-handed: flux_L should be >= flux_R at center
+    ftd::test::check("NU6: flux_L >= flux_R (left-handed chirality)",
+        v.flux_L.x >= v.flux_R.x);
+}
+
+static void section_level3_quark() {
+    ftd::test::section("Level 3 / quark");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::quark(rb, center, /*charge=*/+1, /*color=*/1, /*spin=*/+1);
+
+    ftd::test::check("QK1: name is 'quark'", std::string(r.name) == "quark");
+    ftd::test::check("QK2: level is 3", r.level == 3);
+    ftd::test::check("QK3: sites count > 1", r.site_count() > 1);
+
+    const int idx = rb.lattice().index(8, 8, 8);
+    const auto& v = rb.voxels()[idx];
+    ftd::test::check("QK4: center state = +1 (up-type)", v.state == +1);
+    ftd::test::check("QK5: center spin = +1", v.spin == +1);
+    ftd::test::check("QK6: center color = 1 (red)", v.color == 1);
+}
+
+static void section_level3_antiquark() {
+    ftd::test::section("Level 3 / antiquark");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::antiquark(rb, center, /*charge=*/+1, /*color=*/1, /*spin=*/-1);
+
+    ftd::test::check("AQ1: name is 'antiquark'", std::string(r.name) == "antiquark");
+    ftd::test::check("AQ2: level is 3", r.level == 3);
+    ftd::test::check("AQ3: sites count > 1", r.site_count() > 1);
+
+    const int idx = rb.lattice().index(8, 8, 8);
+    const auto& v = rb.voxels()[idx];
+    ftd::test::check("AQ4: center state = -1 (anti up-type)", v.state == -1);
+    ftd::test::check("AQ5: center spin = -1", v.spin == -1);
+    ftd::test::check("AQ6: center color = 1", v.color == 1);
+}
+
+// ============================================================================
+// Level 4 — composite particles
+// ============================================================================
+
+static void section_level4_pion() {
+    ftd::test::section("Level 4 / pion");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::pion(rb, center, /*separation=*/3);
+
+    ftd::test::check("PI1: name is 'pion'", std::string(r.name) == "pion");
+    ftd::test::check("PI2: level is 4", r.level == 4);
+    ftd::test::check("PI3: sites count > 2 (two quarks + envelopes)", r.site_count() > 2);
+
+    // Quark at center + (1, 0, 0) (half of sep=3 truncated)
+    int idx_q = rb.lattice().index(9, 8, 8);
+    ftd::test::check("PI4: quark position has state = +1",
+        rb.voxels()[idx_q].state == +1);
+
+    // Antiquark at center - (1, 0, 0): state = -charge = -1
+    int idx_aq = rb.lattice().index(7, 8, 8);
+    ftd::test::check("PI5: antiquark position has state = -1",
+        rb.voxels()[idx_aq].state == -1);
+}
+
+static void section_level4_proton() {
+    ftd::test::section("Level 4 / proton");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::proton(rb, center, /*radius=*/2);
+
+    ftd::test::check("PR1: name is 'proton'", std::string(r.name) == "proton");
+    ftd::test::check("PR2: level is 4", r.level == 4);
+    ftd::test::check("PR3: sites count > 3 (three quarks + envelopes)", r.site_count() > 3);
+
+    // First quark at angle=0: center + (2, 0, 0) = (10, 8, 8)
+    int idx_u1 = rb.lattice().index(10, 8, 8);
+    ftd::test::check("PR4: u-quark at 0deg has state = +1",
+        rb.voxels()[idx_u1].state == +1);
+    ftd::test::check("PR5: u-quark at 0deg has color = 1 (red)",
+        rb.voxels()[idx_u1].color == 1);
+
+    // Check that all three color charges are present among the quarks
+    std::set<int8_t> colors;
+    for (int idx : r.sites) {
+        int8_t c = rb.voxels()[idx].color;
+        if (c > 0) colors.insert(c);
+    }
+    ftd::test::check("PR6: all three colors present (color singlet)",
+        colors.count(1) && colors.count(2) && colors.count(3));
+}
+
+static void section_level4_neutron() {
+    ftd::test::section("Level 4 / neutron");
+
+    ftd::RenderBridge rb(16);
+    ftd::Coord center{8, 8, 8};
+
+    auto r = ftd::ctor::neutron(rb, center, /*radius=*/2);
+
+    ftd::test::check("NE1: name is 'neutron'", std::string(r.name) == "neutron");
+    ftd::test::check("NE2: level is 4", r.level == 4);
+    ftd::test::check("NE3: sites count > 3", r.site_count() > 3);
+
+    // First quark (u) at angle=0: center + (2, 0, 0) = (10, 8, 8)
+    int idx_u = rb.lattice().index(10, 8, 8);
+    ftd::test::check("NE4: u-quark at 0deg has state = +1",
+        rb.voxels()[idx_u].state == +1);
+
+    // Count manifested states: neutron has 1 up (+1) and 2 down (-1)
+    // Net charge should be +1 + (-1) + (-1) = -1
+    // But at quark positions specifically, check the content
+    // Second quark (d) at 120deg
+    double angle2 = 2.0 * ftd::PI / 3.0;
+    int dx2 = 8 + static_cast<int>(std::round(2.0 * std::cos(angle2)));
+    int dy2 = 8 + static_cast<int>(std::round(2.0 * std::sin(angle2)));
+    int idx_d = rb.lattice().index(dx2, dy2, 8);
+    ftd::test::check("NE5: d-quark at 120deg has state = -1",
+        rb.voxels()[idx_d].state == -1);
+
+    // All three colors should be present
+    std::set<int8_t> colors;
+    for (int idx : r.sites) {
+        int8_t c = rb.voxels()[idx].color;
+        if (c > 0) colors.insert(c);
+    }
+    ftd::test::check("NE6: all three colors present",
+        colors.count(1) && colors.count(2) && colors.count(3));
+}
+
+// ============================================================================
+// Level 5 — atoms & molecules
+// ============================================================================
+
+static void section_level5_hydrogen() {
+    ftd::test::section("Level 5 / hydrogen");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+
+    auto r = ftd::ctor::hydrogen(rb, center, /*orbital_radius=*/5);
+
+    ftd::test::check("HY1: name is 'hydrogen'", std::string(r.name) == "hydrogen");
+    ftd::test::check("HY2: level is 5", r.level == 5);
+    ftd::test::check("HY3: sites count > 5 (proton + electron + envelopes)", r.site_count() > 5);
+
+    // Proton: u-quark at center + (2, 0, 0) = (18, 16, 16) has state=+1
+    int idx_u = rb.lattice().index(18, 16, 16);
+    ftd::test::check("HY4: proton quark present (state=+1 at expected pos)",
+        rb.voxels()[idx_u].state == +1);
+
+    // Electron at (16, 16, 21)
+    int idx_e = rb.lattice().index(16, 16, 21);
+    ftd::test::check("HY5: electron present (state=-1)",
+        rb.voxels()[idx_e].state == -1);
+    ftd::test::check("HY6: electron spin = -1",
+        rb.voxels()[idx_e].spin == -1);
+}
+
+static void section_level5_helium() {
+    ftd::test::section("Level 5 / helium");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+
+    auto r = ftd::ctor::helium(rb, center, /*orbital_radius=*/4);
+
+    ftd::test::check("HE1: name is 'helium'", std::string(r.name) == "helium");
+    ftd::test::check("HE2: level is 5", r.level == 5);
+    ftd::test::check("HE3: sites count > 3 (nucleus + 2 electrons + envelopes)", r.site_count() > 3);
+
+    // Nucleus at center: state=+1
+    int idx_nuc = rb.lattice().index(16, 16, 16);
+    ftd::test::check("HE4: nucleus has state = +1",
+        rb.voxels()[idx_nuc].state == +1);
+
+    // Electron 1 at (16, 16, 20)
+    int idx_e1 = rb.lattice().index(16, 16, 20);
+    ftd::test::check("HE5: electron 1 present (state = -1)",
+        rb.voxels()[idx_e1].state == -1);
+
+    // Electron 2 at (16, 16, 12)
+    int idx_e2 = rb.lattice().index(16, 16, 12);
+    ftd::test::check("HE6: electron 2 present (state = -1)",
+        rb.voxels()[idx_e2].state == -1);
+
+    // Electrons should have opposite spins
+    ftd::test::check("HE7: electrons have opposite spins",
+        rb.voxels()[idx_e1].spin != rb.voxels()[idx_e2].spin);
+}
+
+static void section_level5_h2_molecule() {
+    ftd::test::section("Level 5 / h2_molecule");
+
+    ftd::RenderBridge rb(32);
+    ftd::Coord center{16, 16, 16};
+
+    auto r = ftd::ctor::h2_molecule(rb, center, /*bond_length=*/4, /*orbital_radius=*/5);
+
+    ftd::test::check("H21: name is 'h2_molecule'", std::string(r.name) == "h2_molecule");
+    ftd::test::check("H22: level is 5", r.level == 5);
+    ftd::test::check("H23: sites count > 10 (two hydrogens)", r.site_count() > 10);
+
+    // Hydrogen 1 centered at (14, 16, 16): electron at (14, 16, 21)
+    int idx_e1 = rb.lattice().index(14, 16, 21);
+    ftd::test::check("H24: H1 electron present (state = -1)",
+        rb.voxels()[idx_e1].state == -1);
+
+    // Hydrogen 2 centered at (18, 16, 16): proton u-quark at (20, 16, 16)
+    int idx_u2 = rb.lattice().index(20, 16, 16);
+    ftd::test::check("H25: H2 proton quark present (state = +1)",
+        rb.voxels()[idx_u2].state == +1);
+
+    // Both hydrogen atoms contribute electrons with state = -1
+    int count_electrons = 0;
+    for (int idx : r.sites) {
+        if (rb.voxels()[idx].state == -1 && rb.voxels()[idx].color == 0) {
+            ++count_electrons;
+        }
+    }
+    ftd::test::check("H26: multiple electron sites present", count_electrons >= 2);
+}
+
 int main() {
     ftd::test::init("test_constructors");
     section_level0_flux();
@@ -721,5 +1022,16 @@ int main() {
     section_level2_electric_dipole();
     section_level2_magnetic_dipole();
     section_level2_vortex_line();
+    section_level3_electron();
+    section_level3_positron();
+    section_level3_neutrino();
+    section_level3_quark();
+    section_level3_antiquark();
+    section_level4_pion();
+    section_level4_proton();
+    section_level4_neutron();
+    section_level5_hydrogen();
+    section_level5_helium();
+    section_level5_h2_molecule();
     return ftd::test::finalize();
 }
