@@ -1,0 +1,22 @@
+/* uPlot theme overrides — matches FTD engine design tokens. */
+
+.uplot { font-family: var(--font-body, Inter, sans-serif); }
+
+.uplot .u-title {
+    font-size: var(--fs-sm, 12px);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.uplot .u-legend {
+    font-family: var(--font-mono, JetBrains Mono, monospace);
+    font-size: 10px;
+    color: var(--text-muted);
+    padding: 4px 0 0;
+}
+.uplot .u-legend .u-marker { border-radius: 2px; }
+.uplot .u-legend .u-series { cursor: pointer; }
+.uplot .u-legend .u-series.u-off { opacity: 0.35; }
+
+.uplot .u-axis { font-variant-numeric: tabular-nums; }
