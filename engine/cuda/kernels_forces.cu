@@ -1,9 +1,10 @@
 /**
- * GPU kernels for Phase 4 (Forces) and Phase 5 (Movement).
+ * @file kernels_forces.cu
+ * @brief GPU kernels for Phase 4 (Forces) and Phase 5 (Movement).
  *
- * Forces: Coulomb (from Poisson potential), gravity (density gradient),
- *         Lorentz (v × B where B = curl(J))
- * Movement: remainder accumulation, speed clamping, collision detection
+ * [EXTENDED] Forces: Coulomb (from Poisson potential), gravity (density gradient),
+ * Lorentz (v × B where B = curl(J)). 
+ * Movement: remainder accumulation, speed clamping, collision detection.
  */
 
 #include "ftd/gpu_buffers.h"

@@ -1,4 +1,11 @@
-import { computeStreamlines, generateEFieldSeeds, generateBFieldSeeds, generateGridSeeds } from '../../../fieldlines.js';
+import {
+    computeStreamlines,
+    generateEFieldSeeds,
+    generateBFieldSeeds,
+    generateGridSeeds,
+    generateImportanceSeeds,
+    generateBImportanceSeeds,
+} from '../../../fieldlines.js?v=2';
 
 const DUAL_DELTA = 0.9568;
 
@@ -214,27 +221,51 @@ function fillFieldParticleBuf(state, particleData) {
     }
 }
 
-export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize, stride, stepsScale, seedSpacing) {
+export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize, stride, stepsScale, seedSpacing, params = {}) {
     const frame = {};
+    const {
+        stepSize = 0.5,
+        maxSteps = 100,
+        maxSeeds = 150,
+        maxLines = 200,
+        eOffset = 2,
+        bRadius = 4,
+    } = params;
+
     if (state.fieldFlags.showEField && sampled.eField?.count > 0) {
+        // E-field: lines start on positive charges and terminate on negative ones.
+        // When particles exist we anchor seeds to them (real sources); otherwise
+        // we importance-sample from |E| so seeds cluster where the field is strong
+        // (iron-filings effect). Bidirectional integration draws from each seed
+        // both toward the source and toward the sink, so the visible line spans
+        // the natural field-line path.
         const particleData = ctx.bridge.capabilities.scale0.getScale0ParticleFrame();
         fillFieldParticleBuf(state, particleData);
         const seeds = particleData.count > 0
-            ? generateEFieldSeeds(state.fieldParticleBuf, 2, 120)
-            : generateGridSeeds(latticeSize, seedSpacing, 120);
+            ? generateEFieldSeeds(state.fieldParticleBuf, eOffset, maxSeeds)
+            : generateImportanceSeeds(sampled.eField, maxSeeds);
         frame.eFieldLines = computeStreamlines(sampled.eField, seeds, {
-            N: latticeSize, stride, maxSteps: 80 * stepsScale, stepSize: 0.6,
+            N: latticeSize, stride, maxSteps, stepSize, maxLines, bidirectional: true,
         });
     }
 
     if (state.fieldFlags.showBField && sampled.bField?.count > 0) {
+        // B-field is divergence-free (∇·B=0), so lines must form closed loops.
+        // Anchor seeds to particles when present, else importance-sample with a
+        // perpendicular offset so seeds land on the loop circumference rather
+        // than at the center (where they'd integrate in place). Bidirectional
+        // integration is mandatory — half the loop runs each direction.
         const particleData = ctx.bridge.capabilities.scale0.getScale0ParticleFrame();
         fillFieldParticleBuf(state, particleData);
         const seeds = particleData.count > 0
-            ? generateBFieldSeeds(state.fieldParticleBuf, 4, 120)
-            : generateGridSeeds(latticeSize, seedSpacing, 120);
+            ? generateBFieldSeeds(state.fieldParticleBuf, bRadius, maxSeeds)
+            : generateBImportanceSeeds(sampled.bField, maxSeeds, bRadius);
         frame.bFieldLines = computeStreamlines(sampled.bField, seeds, {
-            N: latticeSize, stride, maxSteps: 150 * stepsScale, stepSize: 0.5, bidirectional: false,
+            N: latticeSize, stride,
+            // Loops need ~ 2·π·radius worth of steps to close — give B 1.5× the
+            // baseline so a typical loop completes inside the integration budget.
+            maxSteps: Math.ceil(maxSteps * 1.5),
+            stepSize, bidirectional: true, maxLines,
         });
     }
 
@@ -247,9 +278,11 @@ export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize
     }
 
     if (state.fieldFlags.showFluxLines && sampled.fluxVector?.count > 0) {
-        const seeds = generateGridSeeds(latticeSize, seedSpacing, 150);
+        // Flux ∇·J carries divergence (sources/sinks), same topology as E.
+        // Importance-sample by |J| so streamlines cluster on flux concentrations.
+        const seeds = generateImportanceSeeds(sampled.fluxVector, maxSeeds);
         const lines = computeStreamlines(sampled.fluxVector, seeds, {
-            N: latticeSize, stride, maxSteps: 80 * stepsScale, stepSize: 0.5,
+            N: latticeSize, stride, maxSteps, stepSize, maxLines, bidirectional: true,
         });
         let maxFlux = 0;
         for (let i = 0; i < sampled.fluxVector.count; i++) {
@@ -265,7 +298,7 @@ export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize
     return frame;
 }
 
-export function buildForceOverlayData(state, fieldCapability, sampled, latticeSize, stride, stepsScale, seedSpacing) {
+export function buildForceOverlayData(state, fieldCapability, sampled, latticeSize, stride, stepsScale, seedSpacing, params = {}) {
     const anyForceOn = state.fieldFlags.showForceEM || state.fieldFlags.showForceGravity ||
         state.fieldFlags.showForceStrong || state.fieldFlags.showForceWeak;
     if (!anyForceOn) return { anyForceOn: false, style: state.forceStyle, items: [] };
@@ -309,10 +342,17 @@ export function buildForceOverlayData(state, fieldCapability, sampled, latticeSi
     }
 
     if (state.forceStyle === 'flow') {
+        const { stepSize = 0.5, maxSteps = 100, maxSeeds = 150, maxLines = 200 } = params;
+        // Force flow lines stay shorter than EM streamlines (≈ 40% of full length)
+        // so the field-arrow visualization stays visually distinct from B/E lines.
+        const flowMaxSteps = Math.max(20, Math.ceil(maxSteps * 0.4));
         for (const item of items) {
-            const seeds = generateGridSeeds(latticeSize, seedSpacing, 150);
+            // Importance-sample by |force| so streamlines cluster where the
+            // interaction is strongest (e.g., near charges for EM, near masses
+            // for gravity), matching the iron-filing visualization metaphor.
+            const seeds = generateImportanceSeeds(item.data, maxSeeds);
             item.flowLines = computeStreamlines(item.data, seeds, {
-                N: latticeSize, stride, maxSteps: 30 * stepsScale, stepSize: 0.5,
+                N: latticeSize, stride, maxSteps: flowMaxSteps, stepSize, maxLines, bidirectional: true,
             });
         }
     }
@@ -414,22 +454,59 @@ export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame) {
     if (overlayFrame.gravPotential) viewportAdapter.applyGravPotential(overlayFrame.gravPotential);
 }
 
+// ── Lattice-size-aware streamline parameters ────────────────────────────
+// All E/B/Flux streamline knobs scale with the lattice size N so visual
+// density stays roughly constant from N=8 to N=128.
+//
+//   stride       — grow ~ N/16 (clamped 2..8): keeps sample count near constant
+//   stepSize     — fixed at 0.5 voxels until N>96, then grows with N so
+//                  maxSteps stays bounded (preserves curvature accuracy)
+//   maxSteps     — sized so a streamline can travel ~1.5× the lattice diameter
+//   seedSpacing  — ~ N/10 (clamped 3..10): finer at small N, coarser at large N
+//   maxSeeds     — grows ~ N²/28, capped at 250: more seeds when bigger
+//   maxLines     — grows with maxSeeds (drawn count cap inside fieldlines.js)
+function computeStreamlineParams(latticeSize) {
+    const stride = Math.max(2, Math.min(8, Math.round(latticeSize / 16)));
+    const seedSpacing = Math.max(3, Math.min(10, Math.round(latticeSize / 10)));
+    const maxSeeds = Math.max(60, Math.min(250, Math.round((latticeSize * latticeSize) / 28)));
+    const stepSize = Math.max(0.5, latticeSize / 96);
+    const targetLen = latticeSize * 1.5;
+    const maxSteps = Math.max(40, Math.ceil(targetLen / stepSize));
+    const maxLines = Math.max(120, Math.min(300, maxSeeds + 50));
+    // Particle-anchored seed offsets scale gently with N so seeds at large N
+    // don't sit right on top of the source.
+    const eOffset = Math.max(2, Math.round(latticeSize / 24));
+    const bRadius = Math.max(3, Math.round(latticeSize / 12));
+    const stepsScale = Math.ceil(latticeSize / 32); // legacy alias for callers
+    return { stride, seedSpacing, maxSeeds, stepSize, maxSteps, maxLines, eOffset, bRadius, stepsScale };
+}
+
 export function updateFieldOverlays(ctx, state, viewportAdapter) {
     state.fieldFrame += 1;
     const latticeSize = ctx.bridge.latticeSize || 32;
     const fieldThrottle = latticeSize > 96 ? 12 : (latticeSize > 48 ? 6 : 3);
     if (!state.anyFieldActive || (!state.fieldNeedsUpdate && state.fieldFrame % fieldThrottle !== 0)) return;
+    // Global pause freezes the visualization re-compute loop — no re-sampling,
+    // no streamline recompute, no random importance-seed reshuffle. We DO allow
+    // a single one-shot update when `fieldNeedsUpdate` is set (e.g. user just
+    // toggled an overlay during global pause and we need to draw one frame of
+    // the frozen state). The `fieldNeedsUpdate = false` reset below ensures
+    // we don't keep re-drawing every frame after that one shot.
+    //
+    // Without this guard B-field would visibly "shimmer" against frozen flux —
+    // importance sampling picks fresh random seeds every frame, so even though
+    // the underlying physics is paused the streamline geometry would jitter.
+    if (!ctx.running && !state.fieldNeedsUpdate) return;
 
     state.fieldNeedsUpdate = false;
     const fieldCapability = (state.useFluxMock ? state.fluxMock : ctx.bridge).capabilities.scale0;
     const mockCapability = state.fluxMock?.capabilities?.scale0 || null;
-    const stride = latticeSize > 96 ? 8 : (latticeSize > 48 ? 6 : (latticeSize > 32 ? 4 : 2));
-    const stepsScale = Math.ceil(latticeSize / 32);
-    const seedSpacing = Math.max(2, Math.min(8, Math.floor(latticeSize / 4)));
+    const params = computeStreamlineParams(latticeSize);
+    const { stride, seedSpacing, stepsScale } = params;
 
     const sampled = sampleFieldState(fieldCapability, state.fieldFlags, stride);
-    const overlayFrame = buildElectromagneticOverlayData(ctx, state, sampled, latticeSize, stride, stepsScale, seedSpacing);
-    const forceFrame = buildForceOverlayData(state, fieldCapability, sampled, latticeSize, stride, stepsScale, seedSpacing);
+    const overlayFrame = buildElectromagneticOverlayData(ctx, state, sampled, latticeSize, stride, stepsScale, seedSpacing, params);
+    const forceFrame = buildForceOverlayData(state, fieldCapability, sampled, latticeSize, stride, stepsScale, seedSpacing, params);
     Object.assign(overlayFrame, buildDerivedSubstrateData(state, sampled, mockCapability));
     Object.assign(overlayFrame, buildQuantumOverlayData(ctx, state, sampled));
     applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame);
