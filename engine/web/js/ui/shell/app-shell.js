@@ -1,6 +1,7 @@
 import { BreakpointService } from './breakpoint-service.js';
 import { ensureShellTemplate } from './shell-template.js';
 import { PanelDockController } from './panel-dock-controller.js';
+import { MobilePanelController } from './mobile-panel.js';
 import { LoadingOverlayComponent } from '../components/loading-overlay/component.js';
 import { TopbarComponent } from '../components/topbar/component.js';
 import { WorkspaceTabsComponent } from '../components/workspace-tabs/component.js';
@@ -39,6 +40,7 @@ export class AppShell {
         this.registry = null;
         this.breakpoints = null;
         this.panelDock = null;
+        this.mobilePanel = null;
         this.loadingOverlay = null;
         this.topbar = null;
         this.workspaceTabs = null;
@@ -114,6 +116,17 @@ export class AppShell {
             document.getElementById('btn-panel-hide-mobile')?.addEventListener('click', () => {
                 this.panelDock?.setCollapsed(true);
             });
+
+            // Mobile swipe-to-dismiss + body scroll lock
+            this.mobilePanel = new MobilePanelController({
+                app: this.app,
+                panelArea: this.getRegion('panels'),
+                resizer: document.getElementById('panel-resizer'),
+                dockController: this.panelDock,
+            }).init();
+
+            // Re-sync scroll lock on viewport resize (mobile ↔ desktop transitions)
+            window.addEventListener('resize', () => this.mobilePanel?._syncScrollLock(), { passive: true });
         }
         return this.panelDock;
     }
