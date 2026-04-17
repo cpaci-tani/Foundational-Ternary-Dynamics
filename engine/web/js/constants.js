@@ -1,14 +1,14 @@
 /**
- * FTD Constants — single source of truth for the web dashboard.
+ * @file constants.js
+ * @brief FTD Constants — single source of truth for the web dashboard.
  *
- * Values are taken from the C++ ontic.h derivation chain:
- *   e -> gamma -> Gamma(1/4) -> theta_3 -> varpi -> M -> G* -> pi -> all physics.
+ * [THEOREM] Values are taken from the C++ ontic.h derivation chain:
+ * e -> gamma -> Gamma(1/4) -> theta_3 -> varpi -> M -> G* -> pi -> all physics.
+ * Nine layers, each derived from the one above. The only inputs are D=3 
+ * (spatial dimensions) and the lemniscate constant varpi.
  *
- * Nine layers, each derived from the one above.
- * The only inputs are D=3 (spatial dimensions) and the lemniscate constant varpi.
- *
- * When WASM loads, the bridge can optionally overwrite these with the exact
- * C++ values via bridge.getConstants().  Until then, these JS values are
+ * [EXTENDED] When WASM loads, the bridge can optionally overwrite these with the exact
+ * C++ values via bridge.getConstants(). Until then, these JS values are
  * authoritative and match ontic.h to the precision shown.
  */
 

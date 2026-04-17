@@ -76,8 +76,30 @@ struct StampResult {
 };
 
 // Level 0 — primitive wrappers
+/**
+ * @brief Inject baseline continuous flux at a coordinate.
+ *
+ * @param rb Reference to the running render bridge.
+ * @param at Coordinate to modify.
+ * @param J 3D flux vector to inject.
+ * @return StampResult identifying the injected site.
+ */
 StampResult flux(RenderBridge& rb, Coord at, Vec3 J);
 
+/**
+ * @brief Instantiate a discrete point-particle with flux profile.
+ * 
+ * [AXIOM] Particles are localized structures defined by their ternary state, 
+ * baseline flux, and phase indicators (spin/color).
+ *
+ * @param rb Reference to the running render bridge.
+ * @param at Coordinate to manifest at.
+ * @param state Ternary ontic state (-1, 0, +1).
+ * @param J Core flux vector representation.
+ * @param spin Spin topology identifier.
+ * @param color Quantized color phase identifier.
+ * @return StampResult identifying the manifestation site.
+ */
 StampResult particle(RenderBridge& rb,
                      Coord  at,
                      int8_t state,
@@ -85,37 +107,92 @@ StampResult particle(RenderBridge& rb,
                      int8_t spin  = 0,
                      int8_t color = 0);
 
+/**
+ * @brief Initialize a Gaussian wavepacket disturbance.
+ * 
+ * @param rb Reference to the running render bridge.
+ * @param at Center coordinate of the wavepacket.
+ * @param state Center ternary state signature.
+ * @param sigma Gaussian spread value.
+ * @param amp Central amplitude.
+ * @return StampResult tracking all affected region sites.
+ */
 StampResult wavepacket(RenderBridge& rb,
                        Coord  at,
                        int8_t state,
                        double sigma = 3.0,
                        double amp   = K_B);
 
+/**
+ * @brief Initialize a paired set of wave-particles representing an entanglement.
+ * 
+ * [EMERGENT] Entangled pairs are bound by shared wave_vel resonance vectors.
+ * 
+ * @param rb Reference to the running render bridge.
+ * @param at Center coordinate separating the pair.
+ * @param J Momentum injection vector.
+ * @return StampResult covering the dual origin sites.
+ */
 StampResult entangled_pair(RenderBridge& rb, Coord at, Vec3 J);
 
 // Level 1A — Moore polyhedral seeds (state-only; flux left zero)
+
+/**
+ * @brief Stamps an Octahedral structural seed (6 face neighbors).
+ * [THEOREM] Corresponds to the inner shell of the Moore decomposition.
+ */
 StampResult octahedron(RenderBridge& rb, Coord center, int8_t state);
+
+/**
+ * @brief Stamps a Cuboctahedron structural seed (12 edge neighbors).
+ * [THEOREM] Corresponds to the secondary shell of the Moore decomposition.
+ */
 StampResult cuboctahedron(RenderBridge& rb, Coord center, int8_t state);
+
+/**
+ * @brief Stamps a Stella Octangula structural seed (8 corner neighbors).
+ * [THEOREM] Corresponds to the tertiary BCC shell of the Moore decomposition.
+ */
 StampResult stella_octangula(RenderBridge& rb, Coord center, int8_t state);
+
+/**
+ * @brief Completes a full 26-neighbor Moore Cell structure.
+ */
 StampResult moore_cell(RenderBridge& rb, Coord center, int8_t state);
 
 // Level 2 — field configurations (stamp flux and/or wave_vel)
+
+/**
+ * @brief Injects an infinite plane wave spanning the lattice.
+ */
 StampResult plane_wave(RenderBridge& rb,
                        Vec3 direction,
                        Vec3 polarization,
                        double wavelength,
                        double amplitude);
 
+/**
+ * @brief Constructs a stationary wave pattern from counter-propagating plane waves.
+ */
 StampResult standing_wave(RenderBridge& rb,
                           Vec3 direction,
                           Vec3 polarization,
                           double wavelength,
                           double amplitude);
 
+/**
+ * @brief Embeds a uniform longitudinal field configuration (Electric analogue).
+ */
 StampResult uniform_e(RenderBridge& rb, Vec3 E);
 
+/**
+ * @brief Embeds a uniform transverse field configuration (Magnetic analogue).
+ */
 StampResult uniform_b(RenderBridge& rb, Vec3 B);
 
+/**
+ * @brief Constructs a Gaussian-enveloped directional photon pulse.
+ */
 StampResult photon_pulse(RenderBridge& rb,
                          Coord center,
                          Vec3 direction,
@@ -123,17 +200,26 @@ StampResult photon_pulse(RenderBridge& rb,
                          double sigma,
                          double amplitude);
 
+/**
+ * @brief Constructs a classical ±1 electric dipole and associated Coulomb envelope.
+ */
 StampResult electric_dipole(RenderBridge& rb,
                             Coord center,
                             Vec3 axis,
                             int separation);
 
+/**
+ * @brief Constructs a magnetic dipole (current-loop analogue).
+ */
 StampResult magnetic_dipole(RenderBridge& rb,
                             Coord center,
                             Vec3 moment,
                             int radius,
                             double amplitude);
 
+/**
+ * @brief Seeds an azimuthal flux vortex around a directional axis.
+ */
 StampResult vortex_line(RenderBridge& rb,
                         Coord center,
                         Vec3 axis,

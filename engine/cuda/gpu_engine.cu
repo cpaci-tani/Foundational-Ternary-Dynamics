@@ -1,7 +1,8 @@
 /**
- * GpuEngine — GPU-accelerated FTD tick engine.
+ * @file gpu_engine.cu
+ * @brief GPU-accelerated FTD tick engine.
  *
- * Phase 1: Shell implementation. tick() delegates to CPU via download/upload
+ * [EXTENDED] Phase 1: Shell implementation. tick() delegates to CPU via download/upload
  * until GPU kernels are implemented in Phases 2-4.
  */
 

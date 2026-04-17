@@ -9,6 +9,12 @@
 
 namespace ftd {
 
+/**
+ * @brief Sparse Voxel DAG implementation of the internal Engine.
+ * 
+ * [AXIOM] Evaluates the discrete space/time updates natively in an octree structure
+ * to support vast empty unmanifested regions efficiently. Operates at Scale 0.
+ */
 class DagEngine : public ScaleEngine {
 public:
     explicit DagEngine(int lattice_size);

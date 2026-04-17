@@ -95,10 +95,12 @@ struct ParticleForceDiag {
     }
 };
 
-// ============================================================================
-// Particle struct
-// ============================================================================
-
+/**
+ * @brief Continuous space entity representing a manifested particle.
+ * 
+ * [AXIOM] Evaluated natively in continuous floating-point space rather than
+ * on a discrete lattice, serving as the foundational element of Scale 1.
+ */
 struct Particle {
     int32_t id = -1;
     int8_t charge = 0;        // State: +1 or -1
@@ -159,10 +161,13 @@ OrbitalElements compute_orbital_elements(const Particle& orbiter,
                                           const Particle& center,
                                           double alpha_eff);
 
-// ============================================================================
-// ParticleEngine
-// ============================================================================
-
+/**
+ * @brief Continuous Space / Analytical Force Engine (Scale 1).
+ * 
+ * [EXTENDED] Solves interacting particles using O(N log N) Barnes-Hut or 
+ * exact O(N^2) pairwise force accumulation. Integrates state via Symplectic 
+ * Velocity-Verlet.
+ */
 class ParticleEngine : public ScaleEngine {
 public:
     ParticleEngine();

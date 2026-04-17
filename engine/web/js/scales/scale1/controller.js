@@ -365,14 +365,18 @@ export function resetScale1(ctx) {
 
 export function animatePE(ctx) {
     const {
-        bridge, viewport, running, ticksPerFrame, inspector,
+        bridge, viewport, running, scenarioRunning, ticksPerFrame, inspector,
         fluxEnergyChart, particleChart, peTelemetry,
         activeTab, frameCount, dom, now,
         updateOnticPanel, updateHierarchyPanel
     } = ctx;
 
-    // ── 1. Tick PE simulation if running ────────────────────────────
-    if (running) {
+    // ── 1. Tick PE simulation if scenario is unpaused ────────────────
+    // Two-tier pause: global pause kills everything; scenario pause specifically
+    // freezes particle dynamics (no flux mock at this scale, so scenario-paused
+    // means particles just stop moving — the render still updates). When global
+    // is off, ctx.scenarioRunning getter returns false anyway (sub-state of global).
+    if (scenarioRunning) {
         const wholeTicks = _tickAcc.accumulate(ticksPerFrame);
         for (let i = 0; i < wholeTicks; i++) {
             bridge.peTick();
