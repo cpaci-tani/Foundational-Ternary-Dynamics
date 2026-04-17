@@ -9,7 +9,10 @@
 .scrub-bar {
     position: absolute;
     left: 50%;
-    bottom: 14px;
+    /* Clear the status bar at the bottom of the viewport (~28px tall).
+       --status-bar-offset is defined elsewhere; fall back to 28px so the
+       scrub bar never overlaps the status strip. */
+    bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale, 1))) + 14px);
     transform: translateX(-50%);
     width: min(82vw, 1080px);
     min-height: 52px;
