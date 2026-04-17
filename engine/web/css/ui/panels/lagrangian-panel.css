@@ -59,3 +59,54 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ── Lagrangian panel redesign (2026-04, panels-redesign-v2) ─────── */
+
+.lag-layout {
+    display: grid;
+    grid-template-columns: minmax(420px, 2fr) minmax(280px, 1fr);
+    gap: var(--sp-xl);
+    align-items: start;
+}
+
+.lag-chart-col .chart-card-plot {
+    aspect-ratio: 16 / 9;
+    min-height: 240px;
+    max-height: 380px;
+}
+
+.lag-term-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    padding: 12px 4px 0;
+}
+
+.lag-term-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+}
+.lag-term-toggle input { accent-color: var(--accent); }
+.lag-term-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--legend-color, var(--accent));
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+}
+.lag-term-label { line-height: 1; }
+
+.lag-data-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-xl);
+}
+
+@media (max-width: 900px) {
+    .lag-layout { grid-template-columns: 1fr; }
+}
