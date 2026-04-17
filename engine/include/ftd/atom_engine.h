@@ -207,10 +207,12 @@ struct Bond {
     int order = 1;         // 1=single, 2=double, 3=triple
 };
 
-// ============================================================================
-// Atom structure — OnticEntity triple: {Z, mass, radius}
-// ============================================================================
-
+/**
+ * @brief Represents an atom in Scale 2 simulation.
+ * 
+ * [AXIOM] Maps to the OnticEntity triple {Z, mass, radius} bridging discrete
+ * lattice constants into the analytical atomic layer.
+ */
 struct Atom {
     int32_t id = -1;
     int Z = 0;                  // Atomic number (= OnticEntity.state)
@@ -259,10 +261,12 @@ struct AtomDiagnostics {
     double temperature = 0.0;     // T = 2*KE / (3*N*k_B) in FTD units
 };
 
-// ============================================================================
-// AtomEngine — Scale 2 simulation
-// ============================================================================
-
+/**
+ * @brief Scale 2 Engine designed for composite atomic interactions.
+ * 
+ * [EXTENDED] Models ionic, van der Waals, and covalent bonding driven by
+ * first-principles ontic constants natively. Integrates using Velocity Verlet.
+ */
 class AtomEngine {
 public:
     AtomEngine();

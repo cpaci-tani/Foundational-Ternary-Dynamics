@@ -1,7 +1,8 @@
 /**
- * Emscripten Embind bindings for the FTD engine.
+ * @file ftd_wasm.cpp
+ * @brief Emscripten Embind bindings for the FTD engine.
  *
- * Exposes RenderBridge to JavaScript with typed-array extraction
+ * [EXTENDED] Exposes RenderBridge to JavaScript with typed-array extraction
  * for zero-copy GPU upload of particle data, plus full diagnostic
  * access (energy audit, Lagrangian constraints, voxel inspection,
  * force decomposition, spin/color statistics).

@@ -1,7 +1,8 @@
 /**
- * WASM Bridge — abstraction layer between UI and simulation engine.
+ * @file wasm-bridge-dag.js
+ * @brief WASM Bridge — abstraction layer between UI and simulation engine.
  *
- * Provides a MockBridge for development (no WASM needed) and a WasmBridge
+ * [EXTENDED] Provides a MockBridge for development (no WASM needed) and a WasmBridge
  * for production (loads compiled ftd_core.wasm). The UI code only talks
  * to the Bridge interface, never directly to WASM or mock internals.
  */

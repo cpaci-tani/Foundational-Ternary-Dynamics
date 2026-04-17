@@ -45,15 +45,14 @@ struct ScaleBaseDiagnostics {
     Vec3 total_momentum;
 };
 
-// ============================================================================
-// Abstract base for all per-scale simulation engines.
-//
-// Enables:
-//   - Polymorphic WASM dispatch (bridge holds ScaleEngine* for current scale)
-//   - Unified toggle registry (get/set by string name across all scales)
-//   - Common diagnostics query without knowing which scale is active
-// ============================================================================
-
+/**
+ * @brief Abstract base for all per-scale simulation engines.
+ * 
+ * Enables:
+ *   - Polymorphic WASM dispatch (bridge holds ScaleEngine* for current scale)
+ *   - Unified toggle registry (get/set by string name across all scales)
+ *   - Common diagnostics query without knowing which scale is active
+ */
 class ScaleEngine {
 public:
     virtual ~ScaleEngine() = default;
