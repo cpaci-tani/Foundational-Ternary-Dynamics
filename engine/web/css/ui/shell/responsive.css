@@ -24,7 +24,8 @@
     max-width: calc(100vw - 24px);
 }
 
-#app[data-layout-mode^="compact"] #tab-bar {
+/* Gate compact mode tab-bar to bottom mount only */
+html[data-panel-mount="bottom"] #app[data-layout-mode^="compact"] #tab-bar {
     width: calc(100vw - 16px);
     left: 8px;
     transform: none;
@@ -33,11 +34,19 @@
     padding-right: 44px;
 }
 
-#app[data-layout-mode^="compact"] #panel-area {
+/* Gate compact mode panel-area to bottom mount only */
+html[data-panel-mount="bottom"] #app[data-layout-mode^="compact"] #panel-area {
     width: calc(100vw - 12px);
     left: 50%;
     transform: translateX(-50%);
     max-height: 54vh;
+}
+
+/* For side mounts in compact mode, clear the bottom-mount overrides */
+html[data-panel-mount="left"] #app[data-layout-mode^="compact"] #panel-area,
+html[data-panel-mount="right"] #app[data-layout-mode^="compact"] #panel-area {
+    left: auto;
+    transform: none !important;
 }
 
 #app[data-layout-mode^="compact"] #status-bar {

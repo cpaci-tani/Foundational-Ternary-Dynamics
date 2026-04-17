@@ -1,5 +1,6 @@
-/* ── Base panel-area styles ── */
-#panel-area {
+/* ── Base panel-area styles (bottom mount — default) ── */
+html[data-panel-mount="bottom"] #panel-area,
+html:not([data-panel-mount]) #panel-area {
     position: absolute;
     bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + 72px * var(--ui-scale));
     left: 50%;
@@ -22,12 +23,24 @@
     transition: all var(--dur-base) var(--ease-out);
 }
 
-html[data-panel-width="narrow"] #panel-area {
+/* Mount-agnostic shell: applied to every mount */
+#panel-area {
+    z-index: var(--z-panel);
+    background: var(--bg-surface);
+    backdrop-filter: blur(32px) saturate(1.4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--dock-shadow);
+    transition: background var(--dur-base) var(--ease-out),
+                border-color var(--dur-base) var(--ease-out);
+}
+
+html[data-panel-mount="bottom"][data-panel-width="narrow"] #panel-area {
     width: 84vw;
     max-width: 1120px;
 }
 
-html[data-panel-width="wide"] #panel-area {
+html[data-panel-mount="bottom"][data-panel-width="wide"] #panel-area {
     width: 96vw;
     max-width: 1680px;
 }
