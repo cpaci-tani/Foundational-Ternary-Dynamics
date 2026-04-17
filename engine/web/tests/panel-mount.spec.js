@@ -289,3 +289,66 @@ test('dragging the horizontal resizer updates --panel-width-left', async ({ page
         localStorage.removeItem('ftd.panel.width.right');
     });
 });
+
+test('bottom mount sets both safe-edge vars to 0px', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(800);
+
+    const edges = await page.evaluate(async () => {
+        const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
+        writePanelMount('bottom');
+        await new Promise((r) => requestAnimationFrame(r));
+        const cs = getComputedStyle(document.documentElement);
+        return {
+            left:  cs.getPropertyValue('--viewport-safe-left').trim(),
+            right: cs.getPropertyValue('--viewport-safe-right').trim(),
+        };
+    });
+
+    expect(edges.left).toBe('0px');
+    expect(edges.right).toBe('0px');
+
+    await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
+});
+
+test('left mount sets a positive viewport-safe-left and zero right', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(800);
+
+    const edges = await page.evaluate(async () => {
+        const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
+        writePanelMount('left');
+        await new Promise((r) => requestAnimationFrame(r));
+        const cs = getComputedStyle(document.documentElement);
+        return {
+            left:  cs.getPropertyValue('--viewport-safe-left').trim(),
+            right: cs.getPropertyValue('--viewport-safe-right').trim(),
+        };
+    });
+
+    expect(parseFloat(edges.left)).toBeGreaterThan(0);
+    expect(edges.right).toBe('0px');
+
+    await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
+});
+
+test('right mount sets a positive viewport-safe-right and zero left', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(800);
+
+    const edges = await page.evaluate(async () => {
+        const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
+        writePanelMount('right');
+        await new Promise((r) => requestAnimationFrame(r));
+        const cs = getComputedStyle(document.documentElement);
+        return {
+            left:  cs.getPropertyValue('--viewport-safe-left').trim(),
+            right: cs.getPropertyValue('--viewport-safe-right').trim(),
+        };
+    });
+
+    expect(edges.left).toBe('0px');
+    expect(parseFloat(edges.right)).toBeGreaterThan(0);
+
+    await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
+});
