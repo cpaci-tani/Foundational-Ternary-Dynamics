@@ -47,7 +47,7 @@ export class StackedAreaChart {
                 makeAxis(theme, { label: opts.yLabel, scale: 'y', side: 3 }),
             ],
             series: [
-                {},
+                { label: opts.xLabel || 'x' },
                 ...this.series.map((s) => ({
                     label:  s.label,
                     stroke: s.color,
