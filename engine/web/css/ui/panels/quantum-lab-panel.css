@@ -167,6 +167,12 @@
     .qlab-chart-grid { grid-template-columns: 1fr; }
 }
 
+/* ── Sidebar (left/right) mount overrides ────────────────────────── */
+html[data-panel-mount="left"] .qlab-chart-grid,
+html[data-panel-mount="right"] .qlab-chart-grid {
+    grid-template-columns: 1fr;
+}
+
 @media (max-width: 720px) {
     .qlab-select { max-width: none; }
     .qlab-row    { align-items: stretch; }
