@@ -5,7 +5,7 @@
 
 import { createPhysicsTogglesCard } from './physics-toggles.js';
 import { createSubstrateControlsCard } from './substrate-controls.js?v=2';
-import { createFluxVolumeCard } from './flux-volume.js';
+import { createFluxVolumeCard } from './flux-volume.js?v=2';
 
 export class Scale0ControlsComponent {
   constructor(panelControlsDiv) {

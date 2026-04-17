@@ -1484,6 +1484,26 @@ export class Viewport {
         this._applyScenarioScale();
     }
 
+    /**
+     * Visual-only spacing multiplier for the flux-volume point cloud.
+     * Does NOT affect physics (dx stays 1 voxel). Multiplies the mesh's
+     * local scale so the rendered lattice can be spread out or packed in
+     * for pedagogy, while sampling/thresholds still key off integer
+     * voxel positions.
+     */
+    setFluxLatticeSpacing(val) {
+        this._fluxLatticeSpacing = val;
+        if (this._fluxVolume) {
+            const s = val || 1.0;
+            const N = this.latticeSize || 32;
+            // Re-centre so the expanded/contracted cloud stays visually
+            // anchored on the original lattice origin.
+            const offset = (1 - s) * N / 2;
+            this._fluxVolume.scale.setScalar(s);
+            this._fluxVolume.position.set(offset, offset, offset);
+        }
+    }
+
     _applyScenarioScale() {
         if (this._engineMode === 'lattice' || !this._engineMode) {
             const scale = this._scenarioScale || 1.0;

@@ -27,8 +27,8 @@ import {
     stepScale0,
 } from './runtime/scenario-loader.js?v=q2';
 import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=2';
-import { Scale0ControlsComponent } from './ui/controls/component.js?v=3';
-import { wireScale0Controls } from './ui/controls/wire.js?v=2';
+import { Scale0ControlsComponent } from './ui/controls/component.js?v=4';
+import { wireScale0Controls } from './ui/controls/wire.js?v=3';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 import { MemoryRecorder } from './timeline/memory-recorder.js';
 import { RenderController } from './timeline/render-controller.js';
