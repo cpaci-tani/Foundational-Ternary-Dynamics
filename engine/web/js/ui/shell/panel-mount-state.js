@@ -39,3 +39,19 @@ export function getValidMounts() {
 export function getDefaultMount() {
     return DEFAULT_MOUNT;
 }
+
+/** Minimum viewport width (px) required to honour a side mount. */
+export function getSideMountMinWidth() {
+    return 900;
+}
+
+/**
+ * Returns the mount that should actually be applied given the current
+ * viewport width.  If the stored preference is left/right but the viewport
+ * is too narrow, returns 'bottom' without mutating localStorage.
+ */
+export function resolveEffectiveMount(storedMount, viewportWidth) {
+    const side = storedMount === 'left' || storedMount === 'right';
+    if (side && viewportWidth < getSideMountMinWidth()) return DEFAULT_MOUNT;
+    return isValidMount(storedMount) ? storedMount : DEFAULT_MOUNT;
+}
