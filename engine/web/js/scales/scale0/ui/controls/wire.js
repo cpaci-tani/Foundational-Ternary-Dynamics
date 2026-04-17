@@ -235,6 +235,16 @@ function wireFluxVolume(ctx, api) {
             ctx.viewport.setScenarioScale(v);
         });
     }
+
+    const latticeSpacingSlider = getEl('flux-lattice-spacing');
+    const latticeSpacingVal = getEl('flux-lattice-spacing-val');
+    if (latticeSpacingSlider && latticeSpacingVal) {
+        latticeSpacingSlider.addEventListener('input', () => {
+            const v = parseFloat(latticeSpacingSlider.value);
+            latticeSpacingVal.textContent = v.toFixed(2);
+            ctx.viewport.setFluxLatticeSpacing?.(v);
+        });
+    }
 }
 
 /**
