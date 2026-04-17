@@ -11,8 +11,6 @@ const MOUNTS = ['left', 'bottom', 'right'];
 test.afterEach(async ({ page }) => {
     await page.evaluate(() => {
         localStorage.removeItem('ftd.panel.mount');
-        localStorage.removeItem('ftd.panel.width.left');
-        localStorage.removeItem('ftd.panel.width.right');
     });
 });
 
