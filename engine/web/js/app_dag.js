@@ -178,7 +178,7 @@ function _makeCtx() {
         // Scenario pause is a sub-state of global pause. When global is off,
         // scenarioRunning effectively reads as false even if its raw value is true.
         get scenarioRunning() { return running && scenarioRunning; },
-        set scenarioRunning(v) { scenarioRunning = !!v; updateScenarioPlayButton(); },
+        set scenarioRunning(v) { scenarioRunning = !!v; updateLocalPlayButton(); },
         get globalTick() { return globalTick; },
         get ticksPerFrame() { return ticksPerFrame; },
         get engineMode() { return engineMode; },
@@ -650,7 +650,7 @@ function _buildScale2Ctx(now) {
         activeTab, frameCount, dom: _dom, now,
         updatePlayButton, updateOnticPanel, updateHierarchyPanel,
         resetAllVisualState: _resetAllVisualState,
-        setRunning: (v) => { running = v; updateScenarioPlayButton(); },
+        setRunning: (v) => { running = v; updateLocalPlayButton(); },
         engineMode,
     };
 }
@@ -707,11 +707,11 @@ function wireToolbar() {
     // Play/Pause
     document.getElementById('btn-play').addEventListener('click', togglePlay);
     // Scenario Play/Pause — independent of global pause (button is disabled
-    // when global is off; see updateScenarioPlayButton).
-    const scenBtn = document.getElementById('btn-scenario-play');
+    // when global is off; see updateLocalPlayButton).
+    const scenBtn = document.getElementById('btn-local-play');
     if (scenBtn) scenBtn.addEventListener('click', toggleScenarioPlay);
     // Initial sync (so disabled state shows on load before user clicks anything).
-    updateScenarioPlayButton();
+    updateLocalPlayButton();
 
     // Step
     document.getElementById('btn-step').addEventListener('click', () => {
@@ -1626,7 +1626,7 @@ function togglePlay() {
     updatePlayButton();
     // The scenario button's enabled-state depends on global pause; refresh it
     // so users immediately see whether they can toggle scenario independently.
-    updateScenarioPlayButton();
+    updateLocalPlayButton();
 }
 
 function toggleScenarioPlay() {
@@ -1634,7 +1634,7 @@ function toggleScenarioPlay() {
     // the click doesn't visually flicker the icon.
     if (!running) return;
     scenarioRunning = !scenarioRunning;
-    updateScenarioPlayButton();
+    updateLocalPlayButton();
 }
 
 function updatePlayButton() {
@@ -1644,8 +1644,8 @@ function updatePlayButton() {
     btn.innerHTML = running ? '&#9646;&#9646;' : '&#9654;';
 }
 
-function updateScenarioPlayButton() {
-    const btn = document.getElementById('btn-scenario-play');
+function updateLocalPlayButton() {
+    const btn = document.getElementById('btn-local-play');
     if (!btn) return;
     // Effective state: scenario only "plays" if BOTH globals running AND scenario
     // toggle is on. When global is off, force the visual to "paused" + disabled.
