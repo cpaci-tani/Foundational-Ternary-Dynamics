@@ -1,4 +1,4 @@
-import { getChartsPanelTemplate } from './template.js?v=2';
+import { getChartsPanelTemplate } from './template.js';
 import { ChartCard } from './chart-card.js';
 import { charts as scale0Charts } from './descriptors/scale0.js';
 import { telemetryHub } from '../../../telemetry-hub.js';

@@ -89,6 +89,22 @@
     }
 }
 
+/* ── Sidebar (left/right) mount overrides ────────────────────────── */
+html[data-panel-mount="left"] .verif-body,
+html[data-panel-mount="right"] .verif-body {
+    grid-template-columns: 1fr;
+}
+
+html[data-panel-mount="left"] .verif-stats-grid,
+html[data-panel-mount="right"] .verif-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+html[data-panel-mount="left"] .verif-detail,
+html[data-panel-mount="right"] .verif-detail {
+    min-height: 200px;
+}
+
 /* Experiment list */
 .verif-list {
     display: flex;

@@ -3,6 +3,9 @@
  *  Scale 0 Lagrangian density diagnostics
  * ============================================================ */
 
+/* uPlot's built-in legend is replaced by the custom TermRow checkboxes */
+#panel-lagrangian .u-legend { display: none !important; }
+
 .lag-layout {
     display: grid;
     grid-template-columns: 3fr 2fr;
@@ -109,4 +112,30 @@
 
 @media (max-width: 900px) {
     .lag-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Sidebar (left/right) mount overrides ────────────────────────── */
+/* minmax(420px, ...) and minmax(280px, ...) both exceed the ~350px
+   sidebar content width — force single-column stack. */
+html[data-panel-mount="left"] .lag-layout,
+html[data-panel-mount="right"] .lag-layout {
+    grid-template-columns: 1fr;
+    gap: var(--sp-md);
+}
+
+html[data-panel-mount="left"] .lag-chart-col .chart-card-plot,
+html[data-panel-mount="right"] .lag-chart-col .chart-card-plot {
+    aspect-ratio: 16 / 7;
+    min-height: 160px;
+    max-height: 240px;
+}
+
+html[data-panel-mount="left"] .lag-term-toggle,
+html[data-panel-mount="right"] .lag-term-toggle {
+    font-size: 11px;
+}
+
+html[data-panel-mount="left"] .lag-data-col,
+html[data-panel-mount="right"] .lag-data-col {
+    gap: var(--sp-md);
 }

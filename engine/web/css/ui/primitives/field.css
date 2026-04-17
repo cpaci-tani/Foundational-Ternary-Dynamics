@@ -123,19 +123,29 @@
 .ctrl-label-md { min-width: 70px; }
 
 /* ── Numeric coordinate input ─────────────────────────── */
-.ctrl-input-coord { width: 54px; }
+.ctrl-input-coord { width: 72px; }
 
 /* ── Coord stepper (custom increment/decrement buttons) ── */
 .coord-stepper {
     position: relative;
     display: inline-flex;
     align-items: stretch;
+    flex: 0 0 auto;
 }
 
-.coord-stepper .ctrl-input-coord {
-    width: 54px;
-    padding-right: 18px;
+/* 72px input footprint, 20px reserved on the right for the stepper
+   column (16px buttons + 4px safe margin) so two- and three-digit
+   values never collide with the ▲/▼ glyphs.
+   Specificity note: `input.coord-stepper` raises to (0,2,1) to beat the
+   global baseline rule `input[type="number"]:not(.u-no-baseline)` at (0,2,1),
+   with cascade order (this file loads after tokens.css) as tiebreaker. */
+.coord-stepper input.ctrl-input-coord {
+    width: 72px;
+    padding: 0 22px 0 8px;
+    min-height: 0;
+    height: 30px;
     text-align: right;
+    font-variant-numeric: tabular-nums;
 }
 
 /* Hide native spinners — replaced by the stepper buttons */
@@ -152,30 +162,42 @@
 
 .coord-stepper-btns {
     position: absolute;
-    right: 1px;
-    top: 1px;
-    bottom: 1px;
-    width: 16px;
+    right: 2px;
+    top: 0;
+    bottom: 0;
+    width: 14px;
     display: flex;
     flex-direction: column;
+    justify-content: center;  /* center the pair vertically on the input */
+    align-items: stretch;
+    gap: 3px;                  /* small breathing room between ▲ and ▼ */
+    pointer-events: auto;
 }
 
 .coord-step {
-    flex: 1;
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
     margin: 0;
     background: transparent;
     border: none;
     color: var(--text-muted);
-    font-size: 7px;
-    line-height: 1;
+    font-size: 10px;
+    line-height: 0.8;
+    letter-spacing: 0;
     cursor: pointer;
     border-radius: 2px;
     transition: background var(--dur-fast) var(--ease-out),
                 color var(--dur-fast) var(--ease-out);
+}
+
+/* Override global button baseline (specificity 0,1,1) which would impose
+   min-height:28px and padding:6px 10px on these micro-buttons. */
+.coord-stepper .coord-step {
+    min-height: 0;
+    height: 10px;
+    padding: 0;
 }
 
 .coord-step:hover {
@@ -186,10 +208,6 @@
 .coord-step:active {
     color: var(--accent);
     transform: scale(0.9);
-}
-
-.coord-step + .coord-step {
-    border-top: 1px solid var(--border);
 }
 
 /* ── Compact row spacing ─────────────────────────────── */

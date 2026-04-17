@@ -69,6 +69,7 @@ export class UPlotChart {
 
         this._ro = new ResizeObserver(() => this._onResize());
         this._ro.observe(container);
+        container._ftdResize = () => this._onResize();
     }
 
     _maxBufferSize() {
