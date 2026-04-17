@@ -4,16 +4,25 @@
  * Controlled by html[data-panel-mount]. Bottom mount lives in panel-dock.css
  * and is the default. Left/right are glass overlays anchored to the viewport
  * edge; the viewport itself is never resized.
+ *
+ * IMPORTANT: --toolbar-h is set on #app by TopbarComponent's ResizeObserver.
+ * All top-offset calculations must live on #app (or its descendants) so they
+ * inherit the correct --toolbar-h value. Defining these on :root would see
+ * --toolbar-h = 0px (its @property initial-value).
  * ──────────────────────────────────────────────────────────────────────── */
 
 :root {
     --panel-mount-gap: 12px;
-    --panel-mount-top-offset: calc(var(--toolbar-h, calc(48px * var(--ui-scale))) + var(--panel-mount-gap));
-    --panel-mount-bottom-offset: calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + var(--panel-mount-gap));
     --panel-width-left: 380px;
     --panel-width-right: 380px;
     --viewport-safe-left: 0px;
     --viewport-safe-right: 0px;
+}
+
+/* Computed on #app so var(--toolbar-h) resolves to the live measured value */
+#app {
+    --panel-mount-top-offset:    calc(var(--toolbar-h) + var(--panel-mount-gap));
+    --panel-mount-bottom-offset: calc(28px * var(--ui-scale) + var(--panel-mount-gap));
 }
 
 /* ── Left mount ───────────────────────────────────────────────────────── */
@@ -31,7 +40,6 @@ html[data-panel-mount="left"] #panel-area {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0 var(--sp-lg) var(--sp-lg);
-    border-top: 1px solid var(--border-light);
 }
 
 /* ── Right mount ──────────────────────────────────────────────────────── */
@@ -49,12 +57,12 @@ html[data-panel-mount="right"] #panel-area {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0 var(--sp-lg) var(--sp-lg);
-    border-top: 1px solid var(--border-light);
 }
 
-/* Neutralize panel-dock.css collapsed transform in side mounts */
-html[data-panel-mount="left"] #app.panels-collapsed #panel-area,
+/* Collapsed in side mount: hide the panel, keep the icon rail visible */
+html[data-panel-mount="left"]  #app.panels-collapsed #panel-area,
 html[data-panel-mount="right"] #app.panels-collapsed #panel-area {
+    display: none;
     transform: none;
 }
 
@@ -83,8 +91,9 @@ html[data-panel-mount="right"] #tab-bar {
     transform: none;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 6px 4px;
+    align-items: stretch;
+    gap: 0;
+    padding: 4px;
     background: var(--bg-surface);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border);
@@ -109,6 +118,22 @@ html[data-panel-mount="right"] #tab-bar {
     right: calc(var(--panel-mount-gap) + var(--panel-width-right) + 6px);
 }
 
+/* Make the inner strip vertical too */
+html[data-panel-mount="left"]  #tab-bar .workspace-tabs-strip,
+html[data-panel-mount="right"] #tab-bar .workspace-tabs-strip {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    overflow: visible;
+    flex: 1 1 auto;
+}
+
+/* Hide the mobile dropdown in side-mount */
+html[data-panel-mount="left"]  #tab-bar .workspace-tabs-mobile,
+html[data-panel-mount="right"] #tab-bar .workspace-tabs-mobile {
+    display: none !important;
+}
+
 html[data-panel-mount="left"] #tab-bar .tab,
 html[data-panel-mount="right"] #tab-bar .tab {
     width: 36px;
@@ -123,6 +148,7 @@ html[data-panel-mount="right"] #tab-bar .tab {
     color: var(--text-muted);
     transition: background var(--dur-fast) var(--ease-out),
                 color var(--dur-fast) var(--ease-out);
+    flex-shrink: 0;
 }
 
 html[data-panel-mount="left"] #tab-bar .tab .tab-label,
@@ -143,51 +169,19 @@ html[data-panel-mount="right"] #tab-bar .tab.active {
     border-color: var(--accent);
 }
 
+/* Collapse toggle at the bottom of the rail */
 html[data-panel-mount="left"] #tab-bar #btn-panel-toggle,
 html[data-panel-mount="right"] #tab-bar #btn-panel-toggle {
     margin-top: auto;
     margin-left: 0;
     border-left: none;
     border-top: 1px solid var(--border);
-    width: 100%;
-}
-
-/* ── Horizontal resizer (side-mount only) ───────────────────────────── */
-#panel-mount-resizer {
-    display: none;
-    position: fixed;
-    top: var(--panel-mount-top-offset);
-    bottom: var(--panel-mount-bottom-offset);
-    width: 10px;
-    cursor: ew-resize;
-    z-index: calc(var(--z-panel) + 1);
-    background: transparent;
-}
-
-html[data-panel-mount="left"] #panel-mount-resizer {
-    display: block;
-    left: calc(var(--panel-mount-gap) + var(--panel-width-left) - 2px);
-}
-
-html[data-panel-mount="right"] #panel-mount-resizer {
-    display: block;
-    right: calc(var(--panel-mount-gap) + var(--panel-width-right) - 2px);
-}
-
-#panel-mount-resizer::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 4px;
-    height: 56px;
-    border-radius: 999px;
-    background: var(--border);
-    transition: background var(--dur-fast) var(--ease-out);
-}
-
-#panel-mount-resizer:hover::after,
-#panel-mount-resizer.is-dragging::after {
-    background: var(--accent);
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
 }
