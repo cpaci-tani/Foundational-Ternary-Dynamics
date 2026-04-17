@@ -118,3 +118,18 @@
 @media (prefers-reduced-motion: reduce) {
     .scrub-bar-strip { transition: none; }
 }
+
+/* Render-scenario button (appended in Task 15) */
+.scrub-bar-render-btn {
+    width: auto;
+    padding: 0 10px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    gap: 4px;
+    color: var(--text-secondary);
+}
+.scrub-bar-render-btn[data-rendering="true"] {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+.scrub-bar-render-label { margin-left: 4px; }
