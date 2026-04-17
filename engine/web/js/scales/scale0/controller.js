@@ -15,7 +15,7 @@ import {
 } from './state/store.js?v=s1';
 import { advanceSimulation } from './runtime/tick.js';
 import { syncRenderableData } from './runtime/frame-sync.js';
-import { updateFieldOverlays } from './runtime/field-overlays.js?v=5';
+import { updateFieldOverlays } from './runtime/field-overlays.js?v=6';
 import { updateDiagnosticsAndPanels } from './runtime/diagnostics.js';
 import {
     exitScale0,
