@@ -1640,27 +1640,22 @@ function toggleScenarioPlay() {
 function updatePlayButton() {
     const btn = document.getElementById('btn-play');
     if (!btn) return;
-    btn.classList.toggle('active', running);
-    btn.innerHTML = running ? '&#9646;&#9646;' : '&#9654;';
+    btn.innerHTML = running ? '&#9208;' : '&#9654;'; // ⏸ / ▶
+    btn.dataset.paused = running ? 'false' : 'true';
 }
 
 function updateLocalPlayButton() {
     const btn = document.getElementById('btn-local-play');
     if (!btn) return;
-    // Effective state: scenario only "plays" if BOTH globals running AND scenario
-    // toggle is on. When global is off, force the visual to "paused" + disabled.
     const effective = running && scenarioRunning;
-    btn.classList.toggle('active', effective);
-    btn.disabled = !running;
-    btn.style.opacity = running ? '' : '0.45';
-    btn.style.cursor = running ? '' : 'not-allowed';
-    // Outline triangle (▷) when scenario-paused, double-bar (⏸) when running.
-    btn.innerHTML = effective ? '&#9646;&#9646;' : '&#9655;';
-    btn.title = !running
-        ? 'Scenario pause is disabled while global pause is on (Space to resume global)'
-        : (effective
-            ? 'Pause scenario dynamics (Shift+Space) — freezes particles/atoms; base wave/EM physics (electricity) continues'
-            : 'Resume scenario dynamics (Shift+Space)');
+    btn.innerHTML = effective ? '&#9209;' : '&#9655;'; // ⏹ / ▷
+    if (!running) {
+        btn.dataset.state = 'global-paused';
+    } else if (!scenarioRunning) {
+        btn.dataset.state = 'local-paused-global-running';
+    } else {
+        btn.dataset.state = 'running';
+    }
 }
 
 function clearCharts() {

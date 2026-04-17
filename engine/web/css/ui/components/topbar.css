@@ -247,3 +247,85 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
         padding: 2px 4px;
     }
 }
+
+/* ── Play-button hierarchy (global = pill + accent, local = square + outline) ── */
+
+.tb-btn-labeled {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.tb-btn-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: lowercase;
+    color: var(--text-muted);
+    pointer-events: none;
+    line-height: 1;
+}
+
+/* Global — primary pill */
+.tb-btn-global {
+    width: 44px;
+    height: 32px;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--accent) 28%, transparent);
+    border: 1px solid color-mix(in oklch, var(--accent) 60%, transparent);
+    color: var(--accent);
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--accent-glow) 35%, transparent),
+                0 0 10px color-mix(in oklch, var(--accent-glow) 25%, transparent);
+    font-size: 14px;
+    transition: background 120ms var(--ease-out), box-shadow 160ms var(--ease-out);
+}
+.tb-btn-global:hover {
+    background: color-mix(in oklch, var(--accent) 40%, transparent);
+    box-shadow: 0 0 0 1px var(--accent),
+                0 0 16px color-mix(in oklch, var(--accent-glow) 55%, transparent);
+}
+/* Breathing animation when simulation is paused */
+#btn-play[data-paused="true"] {
+    animation: tb-btn-breathe 1.4s ease-in-out infinite;
+}
+@keyframes tb-btn-breathe {
+    0%, 100% { box-shadow: 0 0 0 1px var(--accent),
+                           0 0 8px  color-mix(in oklch, var(--accent-glow) 25%, transparent); }
+    50%      { box-shadow: 0 0 0 1px var(--accent),
+                           0 0 18px color-mix(in oklch, var(--accent-glow) 60%, transparent); }
+}
+
+/* Local — outline square */
+.tb-btn-local {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius, 6px);
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    font-size: 13px;
+    transition: border-color 120ms var(--ease-out), color 120ms var(--ease-out);
+}
+.tb-btn-local:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+/* Pulse when local is paused but global is running (visualization still flowing) */
+.tb-btn-local[data-state="local-paused-global-running"] {
+    animation: tb-btn-pulse 2.0s ease-in-out infinite;
+}
+@keyframes tb-btn-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #btn-play[data-paused="true"],
+    .tb-btn-local[data-state="local-paused-global-running"] { animation: none; }
+}
+
+/* Hide labels on very small screens to preserve toolbar horizontal budget */
+@media (max-width: 480px) {
+    .tb-btn-label { display: none; }
+}
