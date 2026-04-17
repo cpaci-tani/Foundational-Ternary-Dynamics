@@ -1,0 +1,80 @@
+import {
+    readPanelMount,
+    writePanelMount,
+    getValidMounts,
+} from '../../shell/panel-mount-state.js';
+
+const GLYPHS = Object.freeze({
+    left:   '\u25EA',
+    bottom: '\u25A2',
+    right:  '\u25E9',
+});
+
+const LABELS = Object.freeze({
+    left:   'Dock to left (Ctrl+Shift+Left)',
+    bottom: 'Dock to bottom (Ctrl+Shift+Down)',
+    right:  'Dock to right (Ctrl+Shift+Right)',
+});
+
+const SHORTCUT_MAP = Object.freeze({
+    ArrowLeft:  'left',
+    ArrowDown:  'bottom',
+    ArrowRight: 'right',
+});
+
+export class MountToggleComponent {
+    constructor(root) {
+        this.root = root;
+        this._keydown = this._keydown.bind(this);
+        this._click = this._click.bind(this);
+    }
+
+    init() {
+        if (!this.root || this.root.dataset.panelMountToggle === 'true') return this;
+        this.root.dataset.panelMountToggle = 'true';
+        this.root.setAttribute('role', 'group');
+        this.root.setAttribute('aria-label', 'Panel dock position');
+        this.root.innerHTML = getValidMounts().map((mount) => (
+            `<button type="button" class="mount-toggle-btn" data-mount="${mount}" ` +
+            `title="${LABELS[mount]}" aria-label="${LABELS[mount]}" aria-pressed="false">` +
+            `<span aria-hidden="true">${GLYPHS[mount]}</span>` +
+            `</button>`
+        )).join('');
+
+        this.root.addEventListener('click', this._click);
+        window.addEventListener('keydown', this._keydown);
+        this._sync(readPanelMount());
+        return this;
+    }
+
+    _click(event) {
+        const btn = event.target.closest('button[data-mount]');
+        if (!btn) return;
+        this._apply(btn.dataset.mount);
+    }
+
+    _keydown(event) {
+        if (!event.ctrlKey || !event.shiftKey) return;
+        const mount = SHORTCUT_MAP[event.key];
+        if (!mount) return;
+        event.preventDefault();
+        this._apply(mount);
+    }
+
+    _apply(mount) {
+        const next = writePanelMount(mount);
+        this._sync(next);
+        this.root.dispatchEvent(new CustomEvent('mountchange', {
+            detail: { mount: next },
+            bubbles: true,
+        }));
+    }
+
+    _sync(active) {
+        this.root.querySelectorAll('button[data-mount]').forEach((btn) => {
+            const pressed = btn.dataset.mount === active;
+            btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+            btn.classList.toggle('is-active', pressed);
+        });
+    }
+}

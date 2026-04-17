@@ -181,3 +181,57 @@ test('viewport stays full-bleed in every mount state', async ({ page }) => {
     expect(Math.abs(rects.bottom.w - rects.right.w)).toBeLessThan(tol);
     expect(Math.abs(rects.bottom.h - rects.left.h)).toBeLessThan(tol);
 });
+
+test('mount toggle renders three buttons with aria-pressed reflecting current mount', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(800);
+
+    const snapshot = await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('[data-panel-mount-toggle] button'));
+        return buttons.map((b) => ({
+            value: b.dataset.mount,
+            pressed: b.getAttribute('aria-pressed'),
+        }));
+    });
+
+    expect(snapshot.map((b) => b.value)).toEqual(['left', 'bottom', 'right']);
+    expect(snapshot.find((b) => b.value === 'bottom').pressed).toBe('true');
+    expect(snapshot.find((b) => b.value === 'left').pressed).toBe('false');
+    expect(snapshot.find((b) => b.value === 'right').pressed).toBe('false');
+});
+
+test('clicking a toggle button switches the mount and persists it', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(800);
+
+    // Click via DOM (bypasses any overlay that may still be fading out)
+    await page.evaluate(() =>
+        document.querySelector('[data-panel-mount-toggle] button[data-mount="right"]').click()
+    );
+    const afterClick = await page.evaluate(() => ({
+        attr: document.documentElement.dataset.panelMount,
+        stored: localStorage.getItem('ftd.panel.mount'),
+    }));
+    expect(afterClick).toEqual({ attr: 'right', stored: 'right' });
+
+    await page.evaluate(() =>
+        document.querySelector('[data-panel-mount-toggle] button[data-mount="bottom"]').click()
+    );
+    await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
+});
+
+test('keyboard shortcuts change the mount', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(800);
+
+    await page.keyboard.press('Control+Shift+ArrowLeft');
+    expect(await page.evaluate(() => document.documentElement.dataset.panelMount)).toBe('left');
+
+    await page.keyboard.press('Control+Shift+ArrowRight');
+    expect(await page.evaluate(() => document.documentElement.dataset.panelMount)).toBe('right');
+
+    await page.keyboard.press('Control+Shift+ArrowDown');
+    expect(await page.evaluate(() => document.documentElement.dataset.panelMount)).toBe('bottom');
+
+    await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
+});

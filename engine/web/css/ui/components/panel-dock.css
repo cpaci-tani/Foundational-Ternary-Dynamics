@@ -231,3 +231,54 @@ html[data-density="compact"] #panel-area {
     padding-bottom: 6px;
     border-bottom: 1px solid var(--border);
 }
+
+/* ── Mount toggle (left/bottom/right segmented control) ─────────────── */
+.panel-dock-head-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mount-toggle {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-input);
+}
+
+.mount-toggle .mount-toggle-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+
+.mount-toggle .mount-toggle-btn:last-child {
+    border-right: none;
+}
+
+.mount-toggle .mount-toggle-btn:hover {
+    background: var(--state-hover-bg);
+    color: var(--text-primary);
+}
+
+.mount-toggle .mount-toggle-btn.is-active {
+    background: var(--accent);
+    color: var(--accent-contrast, #fff);
+}
+
+.mount-toggle .mount-toggle-btn[aria-disabled="true"] {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
