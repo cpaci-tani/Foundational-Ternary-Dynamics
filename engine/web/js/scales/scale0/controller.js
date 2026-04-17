@@ -31,6 +31,7 @@ import { Scale0ControlsComponent } from './ui/controls/component.js?v=3';
 import { wireScale0Controls } from './ui/controls/wire.js?v=2';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 import { MemoryRecorder } from './timeline/memory-recorder.js';
+import { ScrubBarComponent } from '../../ui/components/scrub-bar/component.js';
 
 const state = getScale0State();
 
@@ -57,6 +58,28 @@ export function resetScale0MemoryBudget(totalBytes) {
     _memoryBudgetBytes = Math.max(1 * 1024 * 1024, Math.floor(totalBytes * 0.6));
     _memoryRecorder = null; // lazy rebuild on next getMemoryRecorder call
 }
+
+let _scrubBar = null;
+
+/**
+ * Restore the engine state to the closest LOD-0 snapshot at or before `tick`,
+ * then fast-forward the remainder. Returns true if hydration succeeded.
+ */
+export function hydrateToTick(ctx, tick) {
+    const rec = _memoryRecorder;
+    if (!rec) return false;
+    const snap = rec.buffer.nearestBefore(tick);
+    if (!snap || snap.lod !== 0) return false; // only LOD 0 is engine-loadable
+    const ok = ctx.bridge.capabilities.scale0.loadScale0Snapshot?.(snap);
+    if (!ok) return false;
+    const delta = Math.max(0, tick - snap.tick);
+    for (let i = 0; i < delta; i++) ctx.bridge.capabilities.scale0.tickScale0();
+    return true;
+}
+
+export function resumeLive() { /* reserved for future use (e.g. resync UI) */ }
+
+export function getScale0ScrubBar() { return _scrubBar; }
 
 function viewportAdapter(ctx) {
     return createScale0ViewportAdapter(ctx.viewport);
@@ -97,6 +120,21 @@ export function bindUI(ctx) {
     // Pre-create the memory recorder so the first tick starts capturing.
     getMemoryRecorder(ctx.bridge.latticeSize || 32);
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;
+
+    // Mount the floating scrub bar inside the viewport.
+    if (!_scrubBar) {
+        const viewportEl = document.getElementById('viewport');
+        if (viewportEl) {
+            _scrubBar = new ScrubBarComponent(viewportEl, {
+                getMemoryBuffer: () => _memoryRecorder?.buffer ?? null,
+                getRenderBuffer: () => null, // Task 14 wires this
+                getNowTick:      () => ctx.bridge.capabilities.scale0.getScale0Diagnostics?.()?.tick ?? 0,
+                onScrub:         (tick) => hydrateToTick(ctx, tick),
+                onScrubEnd:      () => resumeLive(),
+                onRender:        (_seconds) => { /* Task 14 wires this */ },
+            }).mount();
+        }
+    }
 }
 
 export function enter(_ctx, _options = {}) {}
@@ -115,6 +153,7 @@ export function animate(ctx) {
     updateFieldOverlays(ctx, state, viewportAdapter(ctx));
     renderFrame(ctx);
     updateDiagnosticsAndPanels(ctx, state);
+    _scrubBar?.refresh();
 }
 
 export function step(ctx) {
