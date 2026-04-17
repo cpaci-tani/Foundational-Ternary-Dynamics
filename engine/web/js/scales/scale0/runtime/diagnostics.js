@@ -53,7 +53,8 @@ export function updateDiagnosticsAndPanels(ctx, state) {
         }
         case 'lagrangian':
             telemetryHub.collectScale0Lagrangian(ctx.bridge, state.fluxMock, state.useFluxMock);
-            ctx.lagrangianChart.draw();
+            telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
+            ctx.lagrangianPanel?.update();
             break;
         case 'inspector':
             ctx.inspector.update();
