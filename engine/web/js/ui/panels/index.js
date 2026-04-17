@@ -1,4 +1,4 @@
-export { DiagnosticsPanelComponent, initDiagnosticsPanel } from './diagnostics-panel/component.js?v=2';
+export { DiagnosticsPanelComponent, initDiagnosticsPanel } from './diagnostics-panel/component.js?v=3';
 export { ChartsPanelComponent, initChartsPanel } from './charts-panel/component.js';
 export { LagrangianPanelComponent, initLagrangianPanel } from './lagrangian-panel/component.js';
 export { ConsciousnessPanelComponent, initConsciousnessPanel } from './consciousness-panel/component.js';
