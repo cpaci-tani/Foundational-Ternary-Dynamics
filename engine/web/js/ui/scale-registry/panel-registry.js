@@ -6,19 +6,19 @@
  */
 
 export const PANEL_REGISTRY = Object.freeze([
-    { id: 'controls', label: 'Controls', scales: null },
-    { id: 'diagnostics', label: 'Diagnostics', scales: ['0', '1', '2', '3'] },
-    { id: 'charts', label: 'Charts', scales: ['0', '1', '2', '3'] },
-    { id: 'lagrangian', label: 'Lagrangian', scales: ['0'] },
-    { id: 'inspector', label: 'Inspector', scales: ['0', '1', '2', '3', '4', '5'] },
-    { id: 'planetary', label: 'System Explorer', scales: ['4'] },
-    { id: 'zoo', label: 'Particle Zoo', scales: ['1'] },
-    { id: 'physics', label: 'Physics', scales: ['1', '2', '3'] },
-    { id: 'hierarchy', label: 'Hierarchy', scales: ['0', '1', '2', '3'] },
-    { id: 'consciousness', label: 'Consciousness', scales: ['11'] },
-    { id: 'cosmic-info', label: 'Cosmic', scales: ['5'] },
-    { id: 'meta-info', label: 'Meta', scales: ['12'] },
-    { id: 'verification-lab', label: 'Verify', scales: ['0', '1', '2', '3'] },
+    { id: 'controls',         label: 'Controls',        icon: '\u2699\uFE0E',  scales: null },
+    { id: 'diagnostics',      label: 'Diagnostics',     icon: '\u25A4',        scales: ['0', '1', '2', '3'] },
+    { id: 'charts',           label: 'Charts',          icon: '\u2248',        scales: ['0', '1', '2', '3'] },
+    { id: 'lagrangian',       label: 'Lagrangian',      icon: '\u2112',        scales: ['0'] },
+    { id: 'inspector',        label: 'Inspector',       icon: '\u25CE',        scales: ['0', '1', '2', '3', '4', '5'] },
+    { id: 'planetary',        label: 'System Explorer', icon: '\u2641',        scales: ['4'] },
+    { id: 'zoo',              label: 'Particle Zoo',    icon: '\u229B',        scales: ['1'] },
+    { id: 'physics',          label: 'Physics',         icon: '\u03A8',        scales: ['1', '2', '3'] },
+    { id: 'hierarchy',        label: 'Hierarchy',       icon: '\u22EE',        scales: ['0', '1', '2', '3'] },
+    { id: 'consciousness',    label: 'Consciousness',   icon: '\u25C9',        scales: ['11'] },
+    { id: 'cosmic-info',      label: 'Cosmic',          icon: '\u2740',        scales: ['5'] },
+    { id: 'meta-info',        label: 'Meta',            icon: '\u29BF',        scales: ['12'] },
+    { id: 'verification-lab', label: 'Verify',          icon: '\u2713',        scales: ['0', '1', '2', '3'] },
 ]);
 
 export function getPanelRegistry() {

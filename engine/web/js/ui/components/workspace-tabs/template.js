@@ -6,9 +6,11 @@ export function getWorkspaceTabsTemplate(panelDefs) {
             `tabindex="${index === 0 ? '0' : '-1'}"`,
             `aria-selected="${index === 0 ? 'true' : 'false'}"`,
             `data-panel="${tab.id}"`,
+            `title="${tab.label}"`,
         ];
         if (tab.scales?.length) attrs.push(`data-scales="${tab.scales.join(',')}"`);
-        return `<div ${attrs.join(' ')}>${tab.label}</div>`;
+        const icon = tab.icon || '';
+        return `<div ${attrs.join(' ')}><span class="tab-icon" aria-hidden="true">${icon}</span><span class="tab-label">${tab.label}</span></div>`;
     }).join('');
 
     const options = panelDefs.map((tab) => `<option value="${tab.id}">${tab.label}</option>`).join('');
