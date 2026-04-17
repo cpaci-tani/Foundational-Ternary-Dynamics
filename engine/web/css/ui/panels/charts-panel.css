@@ -49,3 +49,86 @@
 .charts-row + .charts-row {
     margin-top: var(--sp-md);
 }
+
+/* ── Charts panel redesign (2026-04, panels-redesign-v2) ─────────── */
+
+.charts-chip-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 4px 0 14px;
+}
+
+.charts-chip {
+    flex: 0 0 auto;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background var(--dur-fast, 120ms) var(--ease-out, ease),
+                color var(--dur-fast, 120ms) var(--ease-out, ease),
+                border-color var(--dur-fast, 120ms) var(--ease-out, ease),
+                transform 80ms ease-out;
+}
+
+.charts-chip:hover {
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+
+.charts-chip[aria-pressed="true"] {
+    background: color-mix(in oklch, var(--accent) 18%, transparent);
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--accent-glow, var(--accent)) 30%, transparent);
+}
+
+.charts-chip:active { transform: scale(0.96); }
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: var(--sp-lg, 12px);
+}
+
+.chart-card {
+    background: var(--bg-surface);
+    backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius, 8px);
+    padding: 14px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+.chart-card.is-mounted { opacity: 1; transform: translateY(0); }
+.chart-card.is-leaving { opacity: 0; transform: translateY(-6px); }
+
+.chart-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.chart-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.chart-card-plot {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 200px;
+    max-height: 300px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chart-card { transition: none; }
+    .charts-chip { transition: none; }
+}
