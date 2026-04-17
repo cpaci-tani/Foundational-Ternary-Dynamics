@@ -66,6 +66,7 @@ let inspectorRuntime = null;
 let diagnostics = null;
 let diagnosticsPanel = null;
 let chartsPanel = null;
+let lagrangianPanel = null;
 let fluxEnergyChart = null;
 let particleChart = null;
 let lagrangianChart = null;
@@ -172,6 +173,7 @@ function _makeCtx() {
         get diagnostics() { return diagnostics; },
         get diagnosticsPanel() { return diagnosticsPanel; },
         get chartsPanel() { return chartsPanel; },
+        get lagrangianPanel() { return lagrangianPanel; },
         get fluxEnergyChart() { return fluxEnergyChart; },
         get particleChart() { return particleChart; },
         get lagrangianChart() { return lagrangianChart; },
@@ -503,7 +505,7 @@ async function init() {
     // Initialize panel component wrappers (Phase 4)
     diagnosticsPanel = initDiagnosticsPanel();
     chartsPanel = initChartsPanel();
-    initLagrangianPanel();
+    lagrangianPanel = initLagrangianPanel();
     initConsciousnessPanel();
     diagnostics = new DiagnosticsPanel();
     // Pass hub ring buffers so charts share the single-write-path from telemetryHub.
@@ -644,7 +646,10 @@ function animate(now) {
 // ── Scale 1/2/3 Context Builders ────────────────────────────────────
 function _buildScale1Ctx(now) {
     return {
-        bridge, viewport, running, ticksPerFrame, inspector,
+        bridge, viewport, running,
+        // Effective scenarioRunning: false whenever global is paused.
+        scenarioRunning: running && scenarioRunning,
+        ticksPerFrame, inspector,
         fluxEnergyChart, particleChart, peTelemetry,
         activeTab, frameCount, dom: _dom, now,
         updateOnticPanel, updateHierarchyPanel,
@@ -653,12 +658,14 @@ function _buildScale1Ctx(now) {
 
 function _buildScale2Ctx(now) {
     return {
-        bridge, viewport, running, ticksPerFrame, inspector,
+        bridge, viewport, running,
+        scenarioRunning: running && scenarioRunning,
+        ticksPerFrame, inspector,
         fluxEnergyChart, particleChart,
         activeTab, frameCount, dom: _dom, now,
         updatePlayButton, updateOnticPanel, updateHierarchyPanel,
         resetAllVisualState: _resetAllVisualState,
-        setRunning: (v) => { running = v; },
+        setRunning: (v) => { running = v; updateScenarioPlayButton(); },
         engineMode,
     };
 }
