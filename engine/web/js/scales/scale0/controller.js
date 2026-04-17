@@ -30,8 +30,33 @@ import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=2';
 import { Scale0ControlsComponent } from './ui/controls/component.js?v=3';
 import { wireScale0Controls } from './ui/controls/wire.js?v=2';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
+import { MemoryRecorder } from './timeline/memory-recorder.js';
 
 const state = getScale0State();
+
+// ── Playback timeline ─────────────────────────────────────────────────
+// Default budget split: 60% Memory / 40% Render of a 50 MB overall cap.
+// resetScale0MemoryBudget(totalBytes) lets a future Settings panel re-tune.
+const DEFAULT_MEMORY_BYTES = 30 * 1024 * 1024;
+let _memoryBudgetBytes = DEFAULT_MEMORY_BYTES;
+let _memoryRecorder = null;
+
+function getMemoryRecorder(latticeN) {
+    if (!_memoryRecorder || _memoryRecorder.latticeN !== latticeN) {
+        _memoryRecorder = new MemoryRecorder({
+            budgetBytes: _memoryBudgetBytes,
+            latticeN,
+        });
+    }
+    return _memoryRecorder;
+}
+
+export function getScale0MemoryRecorder() { return _memoryRecorder; }
+
+export function resetScale0MemoryBudget(totalBytes) {
+    _memoryBudgetBytes = Math.max(1 * 1024 * 1024, Math.floor(totalBytes * 0.6));
+    _memoryRecorder = null; // lazy rebuild on next getMemoryRecorder call
+}
 
 function viewportAdapter(ctx) {
     return createScale0ViewportAdapter(ctx.viewport);
@@ -68,6 +93,10 @@ export function bindUI(ctx) {
     wireScale0Controls(ctx, {
         setLatticeNeedsUpload,
     });
+
+    // Pre-create the memory recorder so the first tick starts capturing.
+    getMemoryRecorder(ctx.bridge.latticeSize || 32);
+    if (typeof window !== 'undefined') window.__ftdCtx = ctx;
 }
 
 export function enter(_ctx, _options = {}) {}
