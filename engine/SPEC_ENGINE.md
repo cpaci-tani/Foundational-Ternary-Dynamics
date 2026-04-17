@@ -1,9 +1,15 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-04-13
+**Last updated:** 2026-04-17
 **Engine version:** 2.14 (Logic-First + EFT Reconstruction + 20-Benchmark Bridge + Wilson/Gluon/Einstein/BH)
 **Test count:** 190+ test files (120 unit + 62 campaign + 7 benchmarks). GPU conditional on `FTD_ENABLE_CUDA`.
+
+### April 17, 2026: Dashboard UX refresh
+- **Panels redesign** (`docs/superpowers/specs/2026-04-16-panels-redesign-design.md`): diagnostics / charts / lagrangian tabs rebuilt on vendored uPlot 1.6.30 + a shared descriptor-driven table primitive. 27 diagnostic rows with physics-accurate units, 20 inline sparklines, chip-picker chart grid, stacked-area Lagrangian.
+- **Playback timeline** (`docs/superpowers/specs/2026-04-16-playback-timeline-design.md`): floating scrub bar absorbs the play / local / step / reset / speed controls. Reverse-scrub backed by an LOD-tiered `TimelineBuffer` (working-memory analogue — snapshots block-average as they age). `Render 30s` button pre-computes a scrubbable clip via main-thread slicing + cancellable progress chip.
+- **Weak force visualization**: shader swap → `PointsMaterial` + radial-gradient `CanvasTexture` sprite with additive blending; flow-style streamlines bumped to 320 seeds / full-length lines.
+- **Overlay panel collapsible**: Scale 0 visualization panel gets a header chevron; per-scale collapse state in localStorage.
 
 ### April 13, 2026: Engine-Theory Bridge, EFT, GR Unlocked, 3 Theorem Papers
 - **20-benchmark suite** (`benchmark_engine_theory.cpp`): first quantitative engine-to-theory comparison
@@ -814,26 +820,68 @@ ftd_core (C++ library)
     +-- CLI (src/main.cpp, native)
 ```
 
-### Dashboard Layout
+### Dashboard Layout (April 2026 refresh)
 
 ```
-+------------------------------------------------------+
-|  FTD Engine v2.11   [Scenario] [Size] [Speed] Play   |  Toolbar
-+------------------------------------------------------+
-|  [Field toggles: E B Energy div-J Flux Forces ...]   |  Overlay
-|                                                       |
-|              Three.js 3D Viewport                     |  ~60%
-|         (particles, wireframe, field overlays)        |
-|                                                       |
-|  [Env: Star Field] [Boundary: Cube]                   |
-+------+------+------+----------+----------------------+
-| Ctrl | Diag | Chart| Lagrangian| Inspector            |  Tabs
-+------+------+------+----------+----------------------+
-|                Active Tab Panel                       |  ~35%
-+------------------------------------------------------+
-| Running | Tick: 1,234 | Particles: 12 | 60 fps       |  Status
-+------------------------------------------------------+
++----------------------------------------------------------------+
+|  FTD Engine v2.14     [Engine ▼]                     [⚙]       |  Toolbar
++----------------------------------------------------------------+
+|                                    [Visualization ▾]           |  Overlay (collapsible)
+|                                     VOLUME  FIELDS  FORCES     |
+|                                     QUANTUM PHENOMENA          |
+|                                                                 |
+|              Three.js 3D Viewport                               |  ~60%
+|         (particles, wireframe, field overlays)                  |
+|                                                                 |
+|   ┌──────────────────── Scrub Bar ────────────────────┐         |
+|   │ [▶] [▷] [⏵] [↺] │ Speed─●─ │ ⟲ [──timeline──] t  │         |
+|   │  global  local            │       Render ⚙     │         |
+|   └─────────────────────────────────────────────────────┘      |
++----+----+-----+----+----+----+----+----+-----------------------+
+| Ctrl|Diag|Chart|Lag |Insp|Zoo |Hrk |QL  | Dock tabs            |
++----+----+-----+----+----+----+----+----+-----------------------+
+|                Active Tab Panel                                 |  ~35%
++----------------------------------------------------------------+
+| Running | Tick: 1,234 | Particles: 12 | 60 fps                  |  Status
++----------------------------------------------------------------+
 ```
+
+Key changes from v2.11:
+- **Toolbar** now hosts only branding, the Engine (scale) selector, and Settings. All playback controls moved to the floating scrub bar.
+- **Floating Scrub Bar** (`js/ui/components/scrub-bar/`) — a 44-px glass pill at the viewport bottom with four semantic sections:
+  1. *Controls*: global play (pill, accent fill) · local play (outline square, pulses when local-paused-global-running) · step · reset. Captions `global` / `local` beneath.
+  2. *Speed*: uppercase `SPEED` · 90-px range slider · mono tick-per-frame readout.
+  3. *Timeline*: reset-playhead button · LOD-shaded memory strip (sharp / blurry / static) · green render band on the right when a clip is present · time badge.
+  4. *Actions*: `● Render` button and a settings kebab.
+- **Overlay panel** (visualization toggles) has a chevron collapse affordance in its header that persists per-scale in localStorage (`ftd.overlay.scale0.collapsed`, etc.).
+- **Panel dock** (bottom tabs) supports `data-panel-mount="bottom|left|right"` and `data-panel-width="narrow|normal|wide"` via the pre-paint hydration script in `<body>`.
+
+### Playback Timeline (working-memory + render mode)
+
+The scrub bar is backed by two capture strategies that share a single `TimelineBuffer` primitive (`js/scales/scale0/timeline/`):
+
+- **MemoryRecorder** — live rolling window with LOD-tiered age decay. Snapshots enter at LOD 0 and are progressively block-averaged to LOD 1 (2× downsample) / LOD 2 (4×) / LOD 3 (audit-only) as they age across tier boundaries. Tier schedule auto-derives from a user-configurable byte budget (default 30 MB, ≈ 27 s of window at a 32³ lattice).
+- **RenderController** — offline fast-forward. User clicks the Render button; the controller slices `ticksPerSlice = 60` per `setTimeout(0)` so the live sim + UI stay responsive. Emits `start / progress / done / cancel / error` events which the floating render chip binds to. Cancellation restores the original engine state; partial clips are discarded.
+
+Hydration uses two new Scale 0 bridge capabilities:
+- `getScale0Snapshot()` → `{ tick, lod, lattice, flux, wave, particles, audit }` (copies of MockBridge's `_stateGrid`, `_fluxJ`, `_fluxWV`, `_particles`)
+- `loadScale0Snapshot(s)` — writes arrays back into the existing engine buffers (preserving array identity so cached indices stay valid) and resets the tick counter.
+
+Scrubbing interpolates by locating the nearest LOD-0 snapshot ≤ target tick, loading it, then fast-forwarding the remainder — bounded within a single tier (≤ ~180 ticks at default cadence, ≤ 100 ms).
+
+### Panels Redesign (April 2026)
+
+The three Scale 0 dashboard tabs were rebuilt on a shared chart/table primitive set:
+
+- **Charts primitives** (`js/ui/charts/`): vendored uPlot 1.6.30, a theme reader that maps CSS custom properties into uPlot config, and three primitive classes:
+  - `UPlotChart` — line/area with preallocated Float64Array buffers, DPR + ResizeObserver handling, localStorage-persisted series-hidden state.
+  - `Sparkline` — axis-free micro chart for table Trend cells.
+  - `StackedAreaChart` — custom `paths` renderer that cumulatively sums same-x points across series.
+- **Diagnostics panel** (`js/ui/panels/diagnostics-panel/`): descriptor-driven `<table>` sections with `Metric | Value | Unit | Trend` columns, tabular-nums typography, zebra striping, digit-change pulse animation, and inline sparklines per row. The single Scale 0 descriptor declares 5 sections × 27 rows with physics-accurate units (`ct`, `E*`, `|J|`, `nat`, `|S|`, `ℏ`, `E*²`, `|w|²`).
+- **Charts panel** (`js/ui/panels/charts-panel/`): horizontally-scrollable chip picker + auto-fit card grid. Chip toggles fully destroy / recreate chart cards — no leaked uPlot instances. Active-chart set persists in localStorage (`ftd.charts.active`).
+- **Lagrangian panel** (`js/ui/panels/lagrangian-panel/`): StackedAreaChart with 7 bands · term-row checkboxes that two-way sync with the uPlot legend · `Action & Constraints` + `Ontic Constants` sidecar tables reusing `DiagnosticsTable`.
+
+All three panels read live data from `TelemetryHub` (`js/telemetry-hub.js`), which now also exposes per-audit-field ring buffers under `hub.aud.*` (E-field, B-field, Poynting magnitude, particle KE, Coulomb PE, E_L, E_R, chirality, wave L/R, max-Gauss, self-field).
 
 ### Scenarios (23+)
 
@@ -843,9 +891,19 @@ ftd_core (C++ library)
 
 **Scale 2 (AtomEngine):** Individual elements (118), Periodic Table. Noble Gas Clusters: He/Ar/Mix. Ionic Formation: NaCl/MgF₂/Lattice. Covalent Formation: H₂/O₂/CH₄. H-Bonding: Water Dimer/Pentamer. VSEPR Geometry: CO₂/CH₄/H₂O. Thermal Dynamics: Gas/Collision. Metallic Clusters: Fe BCC/Cu FCC. Custom. Phase 3 forces (JS MockBridge): H-bonds, angle strain, dipole-dipole, thermostat, electronegativity. Scale 3 molecules: 25-molecule library + NaCl Crystal
 
-### Field Visualization Overlays (9 toggles, keys 1-9)
+### Field Visualization Overlays (5 categorical groups)
 
-E-field streamlines, B-field streamlines, Poynting vectors, Divergence heatmap, Flux streamlines, Force field arrows, Dual substrate volume, Chirality density, Light energy glow.
+The Scale 0 overlay panel is organised into five semantic columns; each column groups related toggles so the flat "9 keys" layout no longer scales. Hidden by default behind a collapse chevron; state persists per scale in `ftd.overlay.<scale>.collapsed`.
+
+| Column | Toggles |
+|--------|---------|
+| **Volume** | Flux Volume (points), Flux Slice (XZ plane), Flux Lines (streamlines), ∇·J (divergence source/sink heatmap) |
+| **Fields** | E Field, B Field, Poynting S, Light (photon bloom from \|S\|) |
+| **Forces** | Force style selector (Arrows / Heatmap / Flow / Glyphs) applied to: EM, Gravity, Strong, Weak |
+| **Quantum** | \|ψ\|², Phase φ, ℒ(x), Entropy s, Φ potential |
+| **Phenomena** | Dual J, Chirality, DM Halo, Genesis, Damping, Confinement |
+
+The Weak force shares the force-style selector but its "Arrows" mode renders additive-blended radial sprites (`PointsMaterial` + CanvasTexture gradient), not arrows — transmutation sites pulse along the intensity palette.
 
 ### Scale 2/3 Atom & Molecule Visualization (6 features)
 
