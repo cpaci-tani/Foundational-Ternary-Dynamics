@@ -29,6 +29,9 @@ export class DiagnosticsPanelComponent {
             this.el.dataset.panelRedesignMounted = '1';
         }
         this.el.dataset.component = 'diagnostics-panel';
+        // Populate cells immediately so rows never show init em-dash
+        // (formatters render 0 for missing/null/undefined).
+        this.update();
         return this;
     }
 
