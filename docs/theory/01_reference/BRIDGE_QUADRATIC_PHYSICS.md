@@ -173,7 +173,13 @@ with digit 13 (after the decimal) predicted to be **0**. Future precision measur
 
 ### 4.5 Status
 
-> **[CONJECTURE]** — The numerical match is striking (especially at sub-ppt precision). But no physical mechanism connects elliptic curve geometry to electromagnetic coupling strength. The identification remains a conjecture until either (a) a mechanism is found, or (b) the digit-13 prediction is confirmed.
+> **[SELECTION]**, with conditional-[THEOREM] upgrade path.
+>
+> **Baseline tag:** [SELECTION]. The numerical match is striking (1.26 ppm tree-level; sub-ppb with one-loop lattice correction conditional on $a = 2/D$), but at the level of the master quadratic alone no physical mechanism connects elliptic-curve geometry to electromagnetic coupling strength.
+>
+> **Upgrade path:** [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) argues that the FTD Lagrangian IS compact U(1) lattice gauge theory in temporal gauge, and that the Coulomb-phase continuum limit is QED by Wilson's two-phase theorem plus a UV-scale rigidity lemma. This promotes SP4 to **conditional [THEOREM] modulo standard lattice-QED continuum-limit recovery**. The conditional tag is honest: Wilson's theorem is genuine, but the identification of the continuum coupling with physical $\alpha$ imports standard lattice-QED results rather than deriving them from scratch.
+>
+> **Falsifier:** digit-13 prediction — if CODATA eventually rules out the digit-13 zero prediction of the 7-term series ([CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)), SP4 is weakened (though not refuted — the tree-level 1.26 ppm remains).
 
 ---
 

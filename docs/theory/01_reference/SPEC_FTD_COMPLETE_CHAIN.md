@@ -163,12 +163,15 @@ CODATA 2022: alpha^{-1} = 137.035999177(21).
 
 Tree-level agreement: 1.26 ppm with zero adjustable parameters.
 
-With loop corrections (7-term expansion in epsilon = e^pi - pi - 20):
-    1/alpha = 137.0359991770... (sub-ppb, matching CODATA to its full precision)
+With the one-loop lattice tadpole correction (conditional on the selection a = 2/D, see [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)):
+    1/alpha = 137.036000... (9.6 ppb residual)
 
-This identification is [SELECTION] because no physical mechanism connecting elliptic-curve geometry to gauge couplings has been established. The numerical agreement (1.26 ppm tree-level, sub-ppb with corrections, zero free parameters) motivates the identification but does not prove it.
+With the 7-term expansion in epsilon = e^pi - pi - 20 (conditional on the SP5 integer structure, see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)):
+    1/alpha = 137.0359991770... (sub-ppb, matching CODATA to its full precision; pending rigidity audit)
 
-**What would make it [THEOREM]:** A derivation showing that the partition function's self-consistent coupling IS the U(1) gauge coupling of the lattice field theory — i.e., that the coupling x in S_eff = -(1/(2x)) s^T G s is operationally identical to the electromagnetic coupling in the continuum limit.
+This identification is [SELECTION] because no physical mechanism connecting elliptic-curve geometry to gauge couplings has been established at the master-quadratic level. The precision claims below 1.26 ppm are further conditional on a = 2/D (one-loop) or on SP5 integer uniqueness (7-term); neither is unconditionally proven.
+
+**Upgrade path to conditional [THEOREM]:** [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) argues FTD = compact U(1) LGT in temporal gauge, invokes Wilson's two-phase theorem, and derives a UV scale rigidity lemma. The result is **conditional [THEOREM] modulo standard lattice-QED continuum-limit recovery** — the upgrade imports rather than derives standard lattice QED.
 
 ## 2.2 floor(x-) = N_c = 3 [SELECTION]
 
@@ -434,7 +437,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 
 ## 7.5 The Bottom Line
 
-The mathematical chain from i to the master quadratic roots is rigorous: 7/9 links [THEOREM], 2/9 [SELECTION] (x+ = 1/alpha identification and floor(x-) = N_c). The argument that x = 1/g_c^2 makes the identification "definitional" is disputed — whether g_c in the continuum limit IS the EM coupling requires proving the continuum limit recovers QED, which is established but involves standard physics adoption. The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
+The mathematical chain from i to the master quadratic roots is rigorous: 7/9 links [THEOREM], 2/9 [SELECTION] (x+ = 1/alpha identification and floor(x-) = N_c). The baseline tag for x+ = 1/alpha remains **[SELECTION]** across this document. The continuum-limit argument in [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) offers an upgrade path to **conditional [THEOREM] modulo standard lattice-QED continuum-limit recovery** — not an unconditional upgrade. The conditionality is honest: Wilson's two-phase theorem is genuine, but the identification of the continuum coupling with physical α imports standard lattice QED rather than deriving it. The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
 
 **The Bell violation (S = 2.83 vs lattice S <= 2) is now understood as EMERGENT** (April 11, 2026). S = 2 sqrt(2) follows from the QM that emerges from the lattice (Tsirelson's bound). The remaining target is the singlet-state lemma: void event -> maximally entangled pair in emergent Hilbert space. The Born rule (P ~ |J|^2) is [SELECTION] — Parseval gives E ~ |J|^2 but identifying energy fraction with detection probability is the Born rule itself.
 
@@ -446,8 +449,28 @@ Lattice corrections to GR are computed: O(l_P^2/r^2) with c_1 = 0.022. Conscious
 
 ---
 
+## 8. Sharper Arithmetic Footing (2026-04-17 Addendum)
+
+The master quadratic's coefficients admit a **Deligne L-value identification** that tightens the arithmetic half of this chain. See [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](../09_mathematical/DERIV_MASTER_QUADRATIC_CM_LVALUES.md) for the full theorem. Summary:
+
+| Coefficient | Identification | Status | Novelty |
+|---|---|---|---|
+| Sum of roots: 16G*² | 2⁹ · L(Sym² E, 1) | [THEOREM], 100-digit PARI verified | **Non-elementary** — Damerell–Shimura at Sym² |
+| Product of roots: 16G*³ | 2¹³ · L(E,1)³ · π^(-3/2) | [COROLLARY] | Elementary — cube of L(E,1) = ϖ/4 |
+
+The sum-of-roots identification is genuinely non-elementary arithmetic (a Sym² L-value at s=1). The product-of-roots identification is an elementary corollary of the rank-0 BSD relation L(E,1) = ϖ/4; the π^(3/2) arises mechanically from cubing a √π-bearing relation and should not be read as deep structure.
+
+**Selection principles (SP1–SP5)** structuring the chain are documented in [BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md).
+
+**Correction mechanism audit.** Direct L-value closure of the 1.26 ppm tree-level gap is ruled out for the simple Q-span of tested L-values at CM critical points; see [EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md](../09_mathematical/EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md). The actual closure comes from the one-loop lattice tadpole with selection a = 2/D ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)), closing 99.2% of the gap to 9.6 ppb.
+
+**Higher-precision claim.** A conjectural seven-term transcendental expansion reportedly matches CODATA 2022 to 24 digits; see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) for the coefficient table and explicit rigidity-audit falsifier. Preserved as [CONJECTURE] pending uniqueness audit.
+
+---
+
 ## Document History
 
 - **2026-04-10:** Created. Complete chain from i to alpha, three-layer ontology, GR recovery, observer structure, ratio/product distinction.
 - **2026-04-10 (v2):** Bell violation resolved (cosine = classical continuous correlation). Born rule closed (wave energy = amplitude^2). Alpha identification closed (x = 1/g_c^2 definitional). O-operation = Euler-Lagrange (mathematical identity). Fusion confirmed (opposite charges bind). Master quadratic audit result: 7/9 THEOREM, 2/9 SELECTION (per final audit correction).
 - **2026-04-10 (v3):** Final four items addressed. Consciousness formalized (autopoietic index). Lattice corrections computed (c_1 = 0.022, O(l_P^2/r^2)). Nuclear binding structure from Cornell potential (coefficients need QCD). Schrodinger uniqueness argument (each QM feature maps to lattice property). Framework ~97%.
+- **2026-04-17:** Section 8 added. Sym² L-value identification for sum-of-roots filed as [THEOREM]; product-of-roots clarified as elementary corollary (π^(3/2) from cubing, not deep). Negative-result L-value span search filed. Seven-term conjecture preserved with explicit falsifier.

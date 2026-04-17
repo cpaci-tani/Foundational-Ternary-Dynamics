@@ -326,6 +326,8 @@ Product of the first four: $1 \times 2 \times 3 \times 7 = 42$.
 
 ## §9. The Precision Series
 
+> **Epistemic note on §9.** The arithmetic identity in Theorem 9.1 is an identity between a specific transcendental combination and a specific real number; as pure mathematics it is [THEOREM] (numerical). Labeling the target real number as "CODATA $1/\alpha$" is the physical identification SP4 ([BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md) §4), which is [SELECTION] at this document's level of rigor, upgradable to conditional [THEOREM] only via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md). §9 is retained in this document for completeness; readers should treat the CODATA comparisons as SP4-conditional and §12.3's independence claim as applying to §§1–8 and §§10–12. See also [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) for the rigidity audit of the coefficients.
+
 ### 9.1 The Expansion Parameter
 
 Define:
@@ -499,8 +501,8 @@ x₊ = 137.036..., x₋ = 3.024...  [Algebraic roots — §6.3]
 | M-10 | $G^* = \sqrt{2\pi}\,\vartheta_3(e^{-\pi})^2$ | [THEOREM] |
 | M-11 | $F_7 = T_7 = 13$ (unique crossover) | [THEOREM] (classical) |
 | M-12 | $\tau(3) = 252 = 4 \times 9 \times 7$ | [THEOREM] (classical) |
-| M-13 | 4-term series matches CODATA to $< 0.001$ ppt | [THEOREM] (numerical) |
-| M-14 | All series coefficients from $\{3,4,7,13\}$ | [THEOREM] (algebraic) |
+| M-13 | 4-term series equals $137.035999177\ldots$ to $<0.001$ ppt | [THEOREM] (numerical); calling this value "CODATA $1/\alpha$" is SP4-conditional |
+| M-14 | Rational coefficients $\{9/47, 5/64, 4/141, 141/11\}$ are expressible in $\{3,4,7,13\}$ | [THEOREM] (trivially: a presentation exists). **Does not imply uniqueness.** See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3 for the rigidity falsifier; treat as [CIRCULARITY RISK] until that audit runs |
 | M-15 | ${\rm Gal}(K/\mathbb{Q}(G^*)) \cong \mathbb{Z}_2$ | [THEOREM] |
 
 ### 12.3 What This Document Does NOT Claim

@@ -149,6 +149,6 @@ Prove that ANY self-consistent coupling on a lattice with CM by ℤ[i] must have
 | BSD: L(E,1) = ϖ/4 | **[THEOREM]** | Connection to L-function |
 | θ₃² generates both π and G* | **[THEOREM]** | Dual convergence from r₂(n) |
 | F(x) = K(1−G*/x) | **[OPEN]** | The self-consistency form |
-| x₊ = 1/α | **[CONJECTURE]** | The physical identification |
+| x₊ = 1/α | **[SELECTION]** (SP4) | The physical identification. This doc's title "CONJ" predates the project-wide unified tag; baseline is [SELECTION], upgrade path via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) |
 
 **The conjecture rests on one open mathematical statement.** Everything else is proven.
