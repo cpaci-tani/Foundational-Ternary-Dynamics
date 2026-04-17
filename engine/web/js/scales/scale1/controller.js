@@ -59,6 +59,7 @@ import {
     M_TAU_PHYS, M_W_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS, M_DELTA_PHYS
 } from '../../constants.js';
 import { createTickAccumulator, formatSI } from '../scale-utils.js';
+import { Scale1ControlsComponent } from './ui/controls/component.js';
 
 
 // =====================================================================
@@ -539,9 +540,6 @@ export function animatePE(ctx) {
             case 'inspector':
                 inspector.update();
                 break;
-            case 'ontic':
-                updateOnticPanel();
-                break;
             case 'hierarchy':
                 updateHierarchyPanel();
                 break;
@@ -940,4 +938,16 @@ export function loadPEScenario(ctx, name) {
         default:
             break;
     }
+}
+
+
+// =====================================================================
+// Exported: bindScale1ControlsUI()
+// =====================================================================
+// Mount the Scale 1 control card into the controls panel.
+// Called once during app startup after the DOM is ready.
+
+export function bindScale1ControlsUI() {
+    const controlsPanel = document.getElementById('panel-controls');
+    if (controlsPanel) new Scale1ControlsComponent(controlsPanel).init();
 }

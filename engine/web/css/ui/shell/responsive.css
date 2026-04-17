@@ -1,0 +1,56 @@
+/* Intentional breakpoint behavior owned by the shell.
+   This is a first pass: keep the existing desktop layout, but make compact
+   and tablet states explicit so later component extraction has stable rules. */
+
+#app[data-layout-mode^="compact"] #toolbar {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: calc(48px * var(--ui-scale));
+    padding: calc(8px + var(--shell-safe-top)) 10px 8px 10px;
+    gap: 8px;
+    align-content: flex-start;
+}
+
+#app[data-layout-mode^="compact"] #toolbar .separator {
+    display: none;
+}
+
+#app[data-layout-mode^="compact"] #toolbar .tb-group {
+    flex-wrap: wrap;
+}
+
+#app[data-layout-mode^="compact"] #viewport-overlay,
+#app[data-layout-mode^="compact"] .ae-legend {
+    max-width: calc(100vw - 24px);
+}
+
+#app[data-layout-mode^="compact"] #tab-bar {
+    width: calc(100vw - 16px);
+    left: 8px;
+    transform: none;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-right: 44px;
+}
+
+#app[data-layout-mode^="compact"] #panel-area {
+    width: calc(100vw - 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    max-height: 54vh;
+}
+
+#app[data-layout-mode^="compact"] #status-bar {
+    padding-bottom: calc(6px + var(--shell-safe-bottom));
+    flex-wrap: wrap;
+    gap: 6px 10px;
+}
+
+#app[data-layout-mode="tablet"] #panel-area {
+    width: min(520px, calc(100vw - 24px));
+}
+
+#app[data-layout-mode="tablet"][data-orientation="portrait"] #panel-area {
+    width: calc(100vw - 24px);
+    max-height: 50vh;
+}

@@ -1,0 +1,233 @@
+/* Field / form group primitive styles */
+
+/* ── Control input (.ctrl-input) ─────────────────────── */
+.ctrl-input {
+    width: 100%;
+    height: 30px;
+    padding: 0 8px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.ctrl-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* ── Control row / label (.ctrl-row, .ctrl-label) ─────── */
+.ctrl-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.ctrl-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    min-width: 60px;
+}
+
+/* ── PE control row / label / value ──────────────────── */
+.pe-ctrl-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.pe-ctrl-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    min-width: 70px;
+}
+
+.pe-ctrl-value {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    min-width: 40px;
+    text-align: right;
+}
+
+/* ── Inspector position coordinate input ─────────────── */
+.insp-pos-input {
+    width: 36px;
+    background: var(--bg-input);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+/* ── Toggle row (field container with checkbox label) ─── */
+.toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.toggle-row label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+/* Scenario override indicator (gold left border) */
+.toggle-row.scenario-override {
+    border-left: 2px solid var(--warning);
+    padding-left: 6px;
+}
+
+/* Collapsible advanced toggle section */
+.toggle-advanced { margin-top: 4px; }
+.toggle-advanced summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    margin: 8px 0 2px 0;
+    opacity: 0.7;
+    user-select: none;
+}
+.toggle-advanced summary::-webkit-details-marker { display: none; }
+.toggle-advanced summary::after { content: ' \25B8'; font-size: 8px; }
+.toggle-advanced[open] summary::after { content: ' \25BE'; }
+
+/* ── Slider rows in control cards ────────────────────── */
+.ctrl-slider-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    margin-bottom: 6px;
+}
+.ctrl-slider-row input[type="range"] { flex: 1; }
+
+.ctrl-select-full {
+    width: 100%;
+    margin-bottom: var(--sp-sm);
+}
+
+/* ── Compact label widths ────────────────────────────── */
+.ctrl-label-xs { min-width: 28px; }
+.ctrl-label-sm { min-width: 50px; }
+.ctrl-label-md { min-width: 70px; }
+
+/* ── Numeric coordinate input ─────────────────────────── */
+.ctrl-input-coord { width: 54px; }
+
+/* ── Coord stepper (custom increment/decrement buttons) ── */
+.coord-stepper {
+    position: relative;
+    display: inline-flex;
+    align-items: stretch;
+}
+
+.coord-stepper .ctrl-input-coord {
+    width: 54px;
+    padding-right: 18px;
+    text-align: right;
+}
+
+/* Hide native spinners — replaced by the stepper buttons */
+.coord-stepper input[type="number"]::-webkit-inner-spin-button,
+.coord-stepper input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+.coord-stepper input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.coord-stepper-btns {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    width: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.coord-step {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 7px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+
+.coord-step:hover {
+    background: var(--state-hover-bg, rgba(255, 255, 255, 0.08));
+    color: var(--accent);
+}
+
+.coord-step:active {
+    color: var(--accent);
+    transform: scale(0.9);
+}
+
+.coord-step + .coord-step {
+    border-top: 1px solid var(--border);
+}
+
+/* ── Compact row spacing ─────────────────────────────── */
+.ctrl-row-compact { margin-bottom: 4px; }
+
+/* ── Compact / dense buttons ─────────────────────────── */
+.ctrl-btn-compact {
+    padding: 4px 6px;
+    font-size: 10px;
+    min-width: 0;
+}
+
+/* ── Flex helpers specific to control layouts ─────────── */
+.ctrl-btn-row-fill { flex: 1; gap: 2px; }
+.ctrl-btn-flex-1   { flex: 1; }
+
+/* Dim footnote inside control cards */
+.ctrl-footnote {
+    margin-top: var(--sp-sm);
+    font-size: 10px;
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+/* Summary of an advanced-details block inside a control card */
+.ctrl-details-summary {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    cursor: pointer;
+    margin: 4px 0;
+}
+
+/* Action row at the bottom of a card */
+.ctrl-action-row {
+    display: flex;
+    gap: var(--sp-sm);
+    margin-top: var(--sp-sm);
+}
+
+/* Disabled toggle row (e.g., not-yet-implemented feature) */
+.toggle-row-disabled { opacity: 0.4; }

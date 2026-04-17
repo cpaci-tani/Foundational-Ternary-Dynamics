@@ -1,26 +1,56 @@
-/* FTD Engine — Abyss theme (OLED-friendly deep black)
- * Extracted from index.html inline styles.
- * Part of the modular CSS architecture (Phase 0).
- */
+/* ============================================================
+ *  abyss.css — OLED-friendly deep black theme
+ *  Overrides the full canonical theme surface from tokens.css.
+ * ============================================================ */
 
-/* Abyss — even darker, OLED-friendly */
 html[data-theme="abyss"] {
-    --bg-deep: #000000;
-    --bg-surface: #0a0a0f;
-    --bg-card: #111118;
-    --bg-input: #1a1a24;
-    --border: #1a1a28;
-    --border-light: #2a2a3a;
-    --text-primary: #e8e8f0;
-    --text-secondary: #8888a0;
-    --text-muted: #606078;
-    --accent: #6366f1;
-    --accent-dim: #4f46e5;
-    --accent-glow: #6366f188;
-    --text-muted: #7878a0;
-}
+    /* Background ladder */
+    --bg-deep:     #000000;
+    --bg-surface:  #0a0a0f;
+    --bg-card:     #111118;
+    --bg-input:    #1a1a24;
+    --bg-elevated: #1f1f2a;
+    --bg-raised:   #25253a;
 
-/* Viewport background override */
-html[data-theme="abyss"] #viewport {
-    background: linear-gradient(180deg, #000005 0%, #050510 100%) !important;
+    /* Borders */
+    --border:       #1a1a28;
+    --border-light: #2a2a3a;
+    --border-glow:  rgba(99, 102, 241, 0.40);
+
+    /* Text hierarchy */
+    --text-primary:   #e8e8f0;
+    --text-secondary: #b8b8c8;
+    --text-muted:     #8888a0;
+    --text-accent:    #d0d0e0;
+    --text-dim:       #606078;
+
+    /* Interaction accent (indigo) */
+    --accent:      #6366f1;
+    --accent-dim:  #4f46e5;
+    --accent-glow: #6366f188;
+
+    /* Status — deeper vibrancy against black */
+    --positive: #34d399;
+    --negative: #fb7185;
+    --warning:  #fbbf24;
+
+    /* State tints (indigo-matched) */
+    --state-hover-bg:   rgba(99, 102, 241, 0.10);
+    --state-active-bg:  rgba(99, 102, 241, 0.22);
+    --state-focus-ring: 0 0 0 2px rgba(99, 102, 241, 0.45);
+
+    /* Viewport + card surfaces */
+    --viewport-bg:    linear-gradient(180deg, #000005 0%, #050510 100%);
+    --card-shadow:    none;
+    --card-hover-bg:  #1a1a2a;
+    --chrome-shadow:  0 4px 24px rgba(0, 0, 0, 0.60);
+    --dock-shadow:    0 24px 80px rgba(0, 0, 0, 0.85);
+    --tabs-shadow:    0 8px 32px rgba(0, 0, 0, 0.70);
+    --modal-backdrop: rgba(0, 0, 0, 0.75);
+    --tooltip-bg:     rgba(8, 8, 14, 0.96);
+    --tooltip-border: rgba(99, 102, 241, 0.28);
+    --tooltip-text:   #f0f1ff;
+    --tooltip-shadow: 0 18px 48px rgba(0, 0, 0, 0.70);
+    --tooltip-kicker: #8b8eff;
+    --tooltip-muted:  #9ea0c4;
 }

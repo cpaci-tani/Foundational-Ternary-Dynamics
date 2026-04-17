@@ -1,29 +1,60 @@
-/* FTD Engine — Parchment theme (warm tan/sepia tones)
- * Extracted from index.html inline styles.
- * Part of the modular CSS architecture (Phase 0).
- */
+/* ============================================================
+ *  parchment.css — Warm tan / sepia tones
+ *  Overrides the full canonical theme surface from tokens.css.
+ * ============================================================ */
 
-/* Parchment — warm tan/sepia tones */
 html[data-theme="parchment"] {
-    --bg-deep: #f5f0e8;
-    --bg-surface: #ece5d8;
-    --bg-card: #e2dace;
-    --bg-input: #d5cdc0;
-    --border: #c4baa8;
+    /* Background ladder */
+    --bg-deep:     #f5f0e8;
+    --bg-surface:  #ece5d8;
+    --bg-card:     #e2dace;
+    --bg-input:    #d5cdc0;
+    --bg-elevated: #ede5d4;
+    --bg-raised:   #f2ebdd;
+
+    /* Borders */
+    --border:       #c4baa8;
     --border-light: #b0a590;
-    --text-primary: #2c2416;
-    --text-secondary: #5c5040;
-    --text-muted: #7a6e5c;
-    --accent: #8b6914;
-    --accent-dim: #a07818;
+    --border-glow:  rgba(139, 105, 20, 0.40);
+
+    /* Text hierarchy — warm browns with AA contrast */
+    --text-primary:   #2c2416;
+    --text-secondary: #4c4030;
+    --text-muted:     #5c5040;
+    --text-accent:    #3a301f;
+    --text-dim:       #746a58;   /* disabled / inert (≥3:1 per WCAG 1.4.11) */
+
+    /* Interaction accent (sepia gold) */
+    --accent:      #8b6914;
+    --accent-dim:  #a07818;
     --accent-glow: #8b691444;
-    --text-muted: #685a42;
+
+    /* Status — muted to blend with parchment */
     --positive: #3d7a24;
     --negative: #a63020;
-    --warning: #b8860b;
+    --warning:  #b8860b;
+
+    /* State tints — gold, against warm bg */
+    --state-hover-bg:   rgba(139, 105, 20, 0.10);
+    --state-active-bg:  rgba(139, 105, 20, 0.20);
+    --state-focus-ring: 0 0 0 2px rgba(139, 105, 20, 0.40);
+
+    /* Viewport + card surfaces */
+    --viewport-bg:    linear-gradient(180deg, #e0d8c2 0%, #cfc4a8 100%);
+    --card-shadow:    0 1px 3px rgba(50, 40, 20, 0.10);
+    --card-hover-bg:  #e8dfc8;
+    --chrome-shadow:  0 4px 24px rgba(50, 40, 20, 0.15);
+    --dock-shadow:    0 12px 40px rgba(50, 40, 20, 0.22);
+    --tabs-shadow:    0 4px 16px rgba(50, 40, 20, 0.15);
+    --modal-backdrop: rgba(50, 40, 20, 0.50);
+    --tooltip-bg:     rgba(247, 241, 229, 0.98);
+    --tooltip-border: rgba(139, 105, 20, 0.24);
+    --tooltip-text:   #332918;
+    --tooltip-shadow: 0 14px 34px rgba(58, 44, 18, 0.20);
+    --tooltip-kicker: #8b6914;
+    --tooltip-muted:  #6b5c46;
 }
 
-/* Viewport background override (shared with light) */
-html[data-theme="parchment"] #viewport {
-    background: linear-gradient(180deg, #e0e4ea 0%, #c8cdd6 100%) !important;
+html[data-theme="parchment"] .card {
+    border-color: rgba(50, 40, 20, 0.12);
 }

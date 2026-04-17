@@ -78,6 +78,7 @@ import { formatEnergy, formatTemperature } from '../../units.js';
 import { generateGridXZ, sampleAEField } from '../../fields.js';
 import { SCALE2_TOGGLES } from '../../config/toggles.js';
 import { createTickAccumulator, formatSI } from '../scale-utils.js';
+import { Scale2ControlsComponent } from './ui/controls/component.js';
 
 
 // =====================================================================
@@ -543,12 +544,12 @@ export function animateAE(ctx) {
             }
             if (_showOrbitalClouds) {
                 html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">Substructure</div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:#ff4d33"></span><span class="ae-legend-name">Protons</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:#4d80e6"></span><span class="ae-legend-name">Neutrons</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:#66bfff"></span><span class="ae-legend-name">s orbitals</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:#4de673"></span><span class="ae-legend-name">p orbitals</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:#ffb333"></span><span class="ae-legend-name">d orbitals</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:#d94db3"></span><span class="ae-legend-name">f orbitals</span></div>';
+                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-proton"></span><span class="ae-legend-name">Protons</span></div>';
+                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-neutron"></span><span class="ae-legend-name">Neutrons</span></div>';
+                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-s"></span><span class="ae-legend-name">s orbitals</span></div>';
+                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-p"></span><span class="ae-legend-name">p orbitals</span></div>';
+                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-d"></span><span class="ae-legend-name">d orbitals</span></div>';
+                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-f"></span><span class="ae-legend-name">f orbitals</span></div>';
             }
             dom.aeLegend.innerHTML = html;
         }
@@ -651,9 +652,6 @@ export function animateAE(ctx) {
                 break;
             case 'inspector':
                 inspector.update();
-                break;
-            case 'ontic':
-                if (updateOnticPanel) updateOnticPanel();
                 break;
             case 'hierarchy':
                 if (updateHierarchyPanel) updateHierarchyPanel();
@@ -1119,4 +1117,16 @@ export function loadAEScenario(ctx, name) {
     // Capture initial energy reference for drift tracking (before first tick)
     const initDiag = bridge.aeGetDiagnostics();
     if (initDiag.totalEnergy !== 0) _aeInitialEnergy = initDiag.totalEnergy;
+}
+
+
+// =====================================================================
+// Exported: bindScale2ControlsUI()
+// =====================================================================
+// Mount the Scale 2 control card into the controls panel.
+// Called once during app startup after the DOM is ready.
+
+export function bindScale2ControlsUI() {
+    const controlsPanel = document.getElementById('panel-controls');
+    if (controlsPanel) new Scale2ControlsComponent(controlsPanel).init();
 }

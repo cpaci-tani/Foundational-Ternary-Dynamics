@@ -43,6 +43,7 @@
 import { getMolecule, loadMolecule } from '../../molecules.js';
 import { SCALE2_TOGGLES } from '../../config/toggles.js';
 import { animateAE, syncAEParams } from '../scale2/controller.js';
+import { Scale3ControlsComponent } from './ui/controls/component.js';
 
 
 // =====================================================================
@@ -215,3 +216,15 @@ export function loadMoleculeScenario(ctx, name) {
 // Scale 3 uses the exact same render loop as Scale 2 -- no separate
 // animation function is needed.
 export { animateAE } from '../scale2/controller.js';
+
+
+// =====================================================================
+// Exported: bindScale3ControlsUI()
+// =====================================================================
+// Mount Scale 3 control cards into the controls panel.
+// Called once during app startup after the DOM is ready.
+
+export function bindScale3ControlsUI() {
+    const controlsPanel = document.getElementById('panel-controls');
+    if (controlsPanel) new Scale3ControlsComponent(controlsPanel).init();
+}

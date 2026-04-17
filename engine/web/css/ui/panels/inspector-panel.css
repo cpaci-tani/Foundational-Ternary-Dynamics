@@ -1,0 +1,100 @@
+/* Inspector Panel — styles owned by inspector-panel/component.js */
+
+/* Inspector */
+.inspector-empty {
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    padding: 40px;
+}
+
+.inspector-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 16px;
+    font-size: 12px;
+}
+
+.inspector-grid dt {
+    color: var(--text-muted);
+}
+
+.inspector-grid dd {
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+}
+
+/* Inspector position coordinate inputs */
+.insp-pos-input {
+    width: 36px;
+    background: var(--bg-input);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+/* ============================================================
+ *  Inspector-specific helpers (moved from panel-resources.css in Phase D)
+ * ============================================================ */
+
+.panel-inspector-hero {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-md);
+    align-items: flex-start;
+    padding: var(--sp-md);
+}
+
+.panel-inspector-hero-copy {
+    min-width: 0;
+}
+
+.panel-inspector-mode {
+    margin-top: 4px;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.panel-inspector-summary {
+    margin-top: 6px;
+    max-width: 52ch;
+    font-size: var(--fs-xs);
+    line-height: var(--lh-base);
+    color: var(--text-muted);
+}
+
+.panel-inspector-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-sm);
+    justify-content: flex-end;
+}
+
+.panel-inspector-hit-card {
+    margin-bottom: var(--sp-md);
+}
+
+.panel-inspector-hit-help {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.panel-inspector-bonds {
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+@media (max-width: 1023px) {
+    .panel-inspector-hero {
+        flex-direction: column;
+    }
+    .panel-inspector-hero-actions {
+        justify-content: flex-start;
+    }
+}

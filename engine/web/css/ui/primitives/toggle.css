@@ -1,0 +1,82 @@
+/* Toggle primitive styles */
+
+/* ── View toggle button (.view-toggle) ───────────────── */
+/* Generic toggle used in viewport overlays and panel toolbars.
+   Fully themeable via canonical tokens — no hardcoded rgba overrides. */
+.view-toggle {
+    padding: var(--sp-sm) var(--sp-md);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all var(--dur-base) var(--ease-out);
+}
+
+.view-toggle:hover {
+    color: var(--text-primary);
+    border-color: var(--border-light);
+    background: var(--card-hover-bg);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.view-toggle.active {
+    background: var(--accent-dim);
+    color: var(--text-primary);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* Light/parchment theme: active state text should be white over accent bg
+   (accent is a strong hue, text-primary on those themes is dark). */
+html[data-theme="light"] .view-toggle.active,
+html[data-theme="parchment"] .view-toggle.active {
+    color: #fff;
+}
+
+/* Viewport overlays float over the 3D canvas. They inherit --bg-surface
+   from the active theme — no dark-glass !important lock anymore. */
+#viewport-overlay .view-toggle,
+#viewport-toggles-universal .view-toggle {
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border-color: var(--border);
+    backdrop-filter: blur(12px);
+}
+
+#viewport-overlay .view-toggle.active,
+#viewport-toggles-universal .view-toggle.active {
+    background: var(--accent-dim);
+    color: var(--text-primary);
+    border-color: var(--accent);
+}
+
+#viewport-overlay .view-toggle:hover,
+#viewport-toggles-universal .view-toggle:hover {
+    color: var(--text-primary);
+    border-color: var(--border-light);
+    background: var(--card-hover-bg);
+}
+
+/* Touch target — only on actual touch devices, not small-viewport desktops */
+@media (hover: none) and (pointer: coarse) {
+    .view-toggle { min-height: 44px; padding: 10px var(--sp-md); }
+}
+
+/* ── Dynamics toggle (.dynamics-toggle) ──────────────── */
+/* Dashed-border variant indicating a live/dangerous toggle.
+   Declared after .view-toggle so same-specificity rules naturally win. */
+.dynamics-toggle {
+    border-style: dashed;
+    color: var(--text-secondary);
+}
+
+.dynamics-toggle.active {
+    border-color: var(--warning);
+    color: var(--warning);
+    background: rgba(255, 167, 38, 0.1);
+}

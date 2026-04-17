@@ -1,0 +1,146 @@
+/* Diagnostics panel styles — migrated from components.css */
+
+/* Sparkline bar inside stat cards */
+.stat-sparkline {
+    margin-top: var(--sp-sm);
+    height: calc(24px * var(--ui-scale));
+}
+
+/* Stat display */
+.stat-value {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xl);
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-unit {
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    margin-left: var(--sp-sm);
+}
+
+/* Constants table */
+.const-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.const-table th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.const-table td {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.const-table td:first-child {
+    color: var(--text-secondary);
+}
+
+.const-table td:last-child {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    text-align: right;
+}
+
+.mode-unavailable {
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    padding: 40px;
+    font-size: 13px;
+}
+
+/* ── Scale 0 dense telemetry layout ───────────────────── */
+.diag-s0-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 32px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+}
+
+/* Section labels with controlled spacing between sections */
+.diag-s0-grid .combo-section-label {
+    margin-bottom: 4px;
+}
+.diag-s0-grid .inspector-grid + .combo-section-label {
+    margin-top: var(--sp-md);
+}
+
+/* Positive/negative semantic colouring for dd cells */
+.diag-dd-positive { color: var(--positive); }
+.diag-dd-negative { color: var(--negative); }
+
+/* Badge rows for spin/color chips */
+.diag-badge-row {
+    display: flex;
+    gap: var(--sp-sm);
+    align-items: center;
+}
+
+.diag-badge {
+    padding: 0 6px;
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+    background: var(--state-hover-bg);
+}
+
+.diag-badge-r { background: rgba(248, 113, 113, 0.15); color: var(--negative); }
+.diag-badge-g { background: rgba(74, 222, 128, 0.15); color: var(--positive); }
+.diag-badge-b { background: rgba(96, 165, 250, 0.15); color: var(--accent); }
+
+.diag-angular-mom { font-size: 10px; }
+
+/* Sparkline row spans full width of the 2-col grid */
+.diag-sparkline-row {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: var(--sp-md);
+    margin-top: var(--sp-md);
+}
+.diag-sparkline-row > div { flex: 1; }
+.diag-sparkline-row .combo-section-label { margin-bottom: 2px; }
+
+/* PE telemetry — inner row spacing */
+.pe-telemetry-row-gap { margin-top: var(--sp-sm); }
+.pe-telemetry-row-gap-tight { margin-top: 4px; }
+
+/* Time-series legend inline chips */
+.pe-ts-legend-ke    { color: #60a5fa; }
+.pe-ts-legend-pe    { color: #f87171; }
+.pe-ts-legend-total { color: #e5e7eb; }
+.pe-ts-legend-mom   { color: #4ade80; }
+.pe-ts-legend-angm  { color: #a78bfa; }
+.pe-ts-legend-vir   { color: #fb923c; }
+
+/* Phase-space canvas sizing inside orbital card */
+.pet-phase-canvas {
+    width: 100%;
+    height: 80px;
+}
+
+/* Scale-AE diagnostics rows */
+.ae-diag-row + .ae-diag-row {
+    margin-top: var(--sp-md);
+}
+
+/* CoM display needs a smaller font than other stat values */
+.pet-com-value,
+.pet-visviva-value {
+    font-size: var(--fs-sm);
+}
