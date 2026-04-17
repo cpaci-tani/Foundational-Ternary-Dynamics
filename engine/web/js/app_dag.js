@@ -21,7 +21,7 @@ import { formatEnergy } from './units.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js?v=4';
+import * as Scale0Controller from './scales/scale0/controller.js?v=5';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -532,6 +532,10 @@ async function init() {
     initOnticPhysicsHierarchy();
 
     _loadProgress(70, 'Wiring controls...');
+    // Scrub bar owns the playback buttons (play/local/step/reset/speed).
+    // Mount it before wireToolbar so those button IDs exist in the DOM
+    // when the toolbar wirer attaches its listeners.
+    Scale0Controller.mountScale0PlaybackUI();
     wireToolbar();
     wireTabs();
     // Scale controllers own their own UI wiring (controls panel cards, event

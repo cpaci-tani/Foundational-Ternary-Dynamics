@@ -146,19 +146,45 @@ export function bindUI(ctx) {
     getMemoryRecorder(ctx.bridge.latticeSize || 32);
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;
 
-    // Mount the floating scrub bar + render chip inside the viewport.
+    // Ensure the scrub bar + render chip are mounted (idempotent; may
+    // have been pre-mounted by mountScale0PlaybackUI() before wireToolbar).
+    mountScale0PlaybackUI();
+}
+
+/**
+ * Mount the scrub bar + render chip in the viewport. Idempotent. Safe to
+ * call before any Scale 0 context exists — the callbacks read the live
+ * `window.__ftdCtx` at interaction time, so the controls remain functional
+ * after a scale switch.
+ *
+ * Called from app_dag.js BEFORE wireToolbar() so that the playback
+ * button IDs (btn-play, btn-local-play, btn-step, btn-reset,
+ * ticks-per-frame, tpf-display) exist in the DOM when the toolbar
+ * wirer looks them up.
+ */
+export function mountScale0PlaybackUI() {
     const viewportEl = document.getElementById('viewport');
-    if (viewportEl && !_scrubBar) {
+    if (!viewportEl) return;
+    if (!_scrubBar) {
         _scrubBar = new ScrubBarComponent(viewportEl, {
             getMemoryBuffer: () => _memoryRecorder?.buffer ?? null,
             getRenderBuffer: () => _renderController?.buffer ?? null,
-            getNowTick:      () => ctx.bridge.capabilities.scale0.getScale0Diagnostics?.()?.tick ?? 0,
-            onScrub:         (tick) => hydrateToTick(ctx, tick),
-            onScrubEnd:      () => resumeLive(),
-            onRender:        (seconds) => startScale0Render(ctx, seconds),
+            getNowTick:      () => {
+                const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+                return ctx?.bridge?.capabilities?.scale0?.getScale0Diagnostics?.()?.tick ?? 0;
+            },
+            onScrub: (tick) => {
+                const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+                return ctx ? hydrateToTick(ctx, tick) : false;
+            },
+            onScrubEnd: () => resumeLive(),
+            onRender:   (seconds) => {
+                const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+                if (ctx) startScale0Render(ctx, seconds);
+            },
         }).mount();
     }
-    if (viewportEl && !_renderChip) {
+    if (!_renderChip) {
         _renderChip = new RenderChipComponent(viewportEl, {
             onCancel: () => cancelScale0Render(),
         }).mount();
