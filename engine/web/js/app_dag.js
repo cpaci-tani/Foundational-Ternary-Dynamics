@@ -9,9 +9,8 @@
 import { createBridge, MockBridge } from './wasm-bridge-dag.js';
 import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js?v=q4';
-import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { DiagnosticsPanel, Sparkline } from './diagnostics.js';
-import { LagrangianChart } from './lagrangian.js';
+import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
 import { createInspectorAppRuntime } from './inspector/app-runtime.js';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js';
@@ -67,13 +66,9 @@ let diagnostics = null;
 let diagnosticsPanel = null;
 let chartsPanel = null;
 let lagrangianPanel = null;
+// Legacy chart instances (scale1/scale2 still push into these ring buffers).
 let fluxEnergyChart = null;
 let particleChart = null;
-let lagrangianChart = null;
-let chartCharge = null;
-let chartEBEnergy = null;
-let chartGauss = null;
-let chartEntropy = null;
 let peTelemetry = null;
 
 // Two-tier pause system:
@@ -176,11 +171,6 @@ function _makeCtx() {
         get lagrangianPanel() { return lagrangianPanel; },
         get fluxEnergyChart() { return fluxEnergyChart; },
         get particleChart() { return particleChart; },
-        get lagrangianChart() { return lagrangianChart; },
-        get chartCharge() { return chartCharge; },
-        get chartEBEnergy() { return chartEBEnergy; },
-        get chartGauss() { return chartGauss; },
-        get chartEntropy() { return chartEntropy; },
         get peTelemetry() { return peTelemetry; },
         get telemetryHub() { return telemetryHub; },
         get running() { return running; },
@@ -508,26 +498,21 @@ async function init() {
     lagrangianPanel = initLagrangianPanel();
     initConsciousnessPanel();
     diagnostics = new DiagnosticsPanel();
-    // Pass hub ring buffers so charts share the single-write-path from telemetryHub.
-    fluxEnergyChart = new FluxEnergyChart(document.getElementById('chart-flux-energy'), {
+    // Scale 0 charts + Lagrangian now own their own uPlot instances via
+    // ChartsPanelComponent and LagrangianPanelComponent. Legacy
+    // FluxEnergyChart / ParticleChart are retained (with null canvases)
+    // because scale1 / scale2 controllers still push frame data into them;
+    // they render nothing but keep the ring buffers populated so any later
+    // re-consumer sees history. (panels redesign 2026-04)
+    fluxEnergyChart = new FluxEnergyChart(null, {
         fluxBuf:   telemetryHub.flux,
         energyBuf: telemetryHub.energy,
     });
-    particleChart = new ParticleChart(document.getElementById('chart-particles'), {
+    particleChart = new ParticleChart(null, {
         totalBuf: telemetryHub.manifested,
         posBuf:   telemetryHub.positive,
         negBuf:   telemetryHub.negative,
     });
-    lagrangianChart = new LagrangianChart(document.getElementById('chart-lagrangian'), telemetryHub.lag);
-    // Additional chart sparklines
-    const ccEl = document.getElementById('chart-charge');
-    if (ccEl) chartCharge = new Sparkline(ccEl);
-    const ebEl = document.getElementById('chart-eb-energy');
-    if (ebEl) chartEBEnergy = new Sparkline(ebEl);
-    const cgEl = document.getElementById('chart-gauss');
-    if (cgEl) chartGauss = new Sparkline(cgEl);
-    const ceEl = document.getElementById('chart-entropy');
-    if (ceEl) chartEntropy = new Sparkline(ceEl);
     inspectorRuntime = createInspectorAppRuntime({ viewport, bridge, setZooMode });
     inspector = inspectorRuntime.inspector;
     peTelemetry = new PETelemetryPanel();
@@ -953,11 +938,11 @@ function wireTabs() {
         appShell?.setActivePanelTitle(tabLabel);
 
         if (target === 'charts') {
-            fluxEnergyChart.draw();
-            particleChart.draw();
+            chartsPanel?.update();
         } else if (target === 'lagrangian') {
-            lagrangianChart.draw();
+            lagrangianPanel?.update();
         } else if (target === 'diagnostics') {
+            diagnosticsPanel?.update();
             diagnostics.drawSparklines();
             if (peTelemetry) peTelemetry.drawCharts();
         } else if (target === 'physics') {
@@ -1674,19 +1659,16 @@ function updateScenarioPlayButton() {
     btn.title = !running
         ? 'Scenario pause is disabled while global pause is on (Space to resume global)'
         : (effective
-            ? 'Pause scenario dynamics (Shift+Space) — flux/field will continue evolving'
+            ? 'Pause scenario dynamics (Shift+Space) — freezes particles/atoms; base wave/EM physics (electricity) continues'
             : 'Resume scenario dynamics (Shift+Space)');
 }
 
 function clearCharts() {
-    // Reset the hub's ring buffers for Scale 0 — charts share these buffers so
-    // calling .clear() on the chart objects would clear the same data twice.
+    // Reset the hub's ring buffers for Scale 0 — charts share these buffers, so
+    // clearing at the hub level is sufficient; uPlot instances redraw from the
+    // cleared buffers on the next update().
     telemetryHub.resetScale(0);
     if (diagnostics) diagnostics.clear();
-    if (chartCharge) chartCharge.clear();
-    if (chartEBEnergy) chartEBEnergy.clear();
-    if (chartGauss) chartGauss.clear();
-    if (chartEntropy) chartEntropy.clear();
 }
 
 function formatNumber(n) {
