@@ -19,6 +19,16 @@ export function createScale0OverlayTemplate() {
   container.id = 'viewport-overlay';
   container.className = 'scale0-only s0-overlay-panel';
   container.innerHTML = `
+    <header class="s0-overlay-header">
+      <span class="s0-overlay-title">Visualization</span>
+      <button class="s0-overlay-collapse" type="button"
+          aria-label="Collapse visualization overlay"
+          aria-expanded="true"
+          title="Collapse overlay">
+        <span class="s0-overlay-collapse-icon" aria-hidden="true">&#9652;</span>
+      </button>
+    </header>
+    <div class="s0-overlay-body">
     <div class="s0-overlay-col">
       <div class="s0-overlay-col-head">Volume</div>
       <button class="view-toggle active" id="toggle-flux-volume"
@@ -132,6 +142,7 @@ export function createScale0OverlayTemplate() {
           title="SU(3) confinement — flux strings connecting color-charged pairs">
         <span class="field-swatch field-swatch-confinement"></span>Confinement
       </button>
+    </div>
     </div>
   `;
   return container;

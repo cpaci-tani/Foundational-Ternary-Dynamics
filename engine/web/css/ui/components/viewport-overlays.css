@@ -63,13 +63,51 @@
     align-items: center;
 }
 
+/* Generic collapse button injected into non-Scale-0 overlays */
+.viewport-overlay-collapse {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    flex: 0 0 auto;
+    transition: background var(--dur-fast, 120ms) var(--ease-out, ease),
+                color var(--dur-fast, 120ms) var(--ease-out, ease),
+                border-color var(--dur-fast, 120ms) var(--ease-out, ease);
+}
+.viewport-overlay-collapse:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: color-mix(in oklch, var(--accent) 10%, transparent);
+}
+.viewport-overlay-collapse-icon {
+    display: inline-block;
+    font-size: 10px;
+    line-height: 1;
+    transition: transform var(--dur-base, 180ms) var(--ease-out, ease);
+}
+
+/* Collapsed state for non-s0 overlays — hide everything except the button */
+#viewport-overlay:not(.s0-overlay-panel).is-collapsed > :not(.viewport-overlay-collapse) {
+    display: none !important;
+}
+#viewport-overlay:not(.s0-overlay-panel).is-collapsed .viewport-overlay-collapse-icon {
+    transform: rotate(180deg);
+}
+
 /* ── Scale 0: categorized 5-column overlay panel ── */
 /* Grouped layout: VOLUME | FIELDS | FORCES | QUANTUM | PHENOMENA */
 .s0-overlay-panel {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(130px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 8px 12px 10px;
     background: var(--bg-surface);
     backdrop-filter: blur(24px) saturate(1.4); /* Premium glass blur */
     border: var(--glass-border, 1px solid rgba(255, 255, 255, 0.12));
@@ -78,6 +116,78 @@
     box-shadow: var(--glass-shadow), var(--shadow-xl);
     max-width: calc(100vw - 24px);
     width: max-content;
+}
+
+.s0-overlay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+}
+
+.s0-overlay-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.s0-overlay-collapse {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background var(--dur-fast, 120ms) var(--ease-out, ease),
+                color var(--dur-fast, 120ms) var(--ease-out, ease),
+                border-color var(--dur-fast, 120ms) var(--ease-out, ease);
+}
+.s0-overlay-collapse:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: color-mix(in oklch, var(--accent) 10%, transparent);
+}
+.s0-overlay-collapse-icon {
+    display: inline-block;
+    line-height: 1;
+    font-size: 10px;
+    transition: transform var(--dur-base, 180ms) var(--ease-out, ease);
+}
+
+.s0-overlay-body {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(130px, 1fr));
+    gap: 8px;
+}
+
+/* Collapsed state — hide the grid, rotate the chevron, shrink header padding */
+.s0-overlay-panel.is-collapsed {
+    padding-bottom: 8px;
+    gap: 0;
+}
+.s0-overlay-panel.is-collapsed .s0-overlay-header {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.s0-overlay-panel.is-collapsed .s0-overlay-body {
+    display: none;
+}
+.s0-overlay-panel.is-collapsed .s0-overlay-collapse-icon {
+    transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .s0-overlay-collapse,
+    .s0-overlay-collapse-icon { transition: none; }
 }
 
 .s0-overlay-col {
@@ -126,14 +236,16 @@
 /* Responsive: collapse to two columns on narrower screens, and a single
    vertical stack on mobile. */
 @media (max-width: 1199px) {
-    .s0-overlay-panel {
+    .s0-overlay-body {
         grid-template-columns: repeat(2, minmax(130px, 1fr));
     }
 }
 
 @media (max-width: 767px) {
-    .s0-overlay-panel {
+    .s0-overlay-body {
         grid-template-columns: minmax(0, 1fr);
+    }
+    .s0-overlay-panel {
         max-width: calc(100vw - 16px);
         padding: 8px;
     }
