@@ -341,7 +341,7 @@ $$\boxed{\gamma \;\xrightarrow{\text{Weierstrass}}\; \Gamma(1/4) \;\xrightarrow{
 
 γ is the **first constant that exists** once the integers exist and the concept of a limit is available. It encodes the irreducible gap between counting and measuring — between the discrete and the continuous. Every subsequent constant in the chain inherits this gap through the Gamma function's Weierstrass product, which carries γ as an exponential rate factor.
 
-The physical implication (if the master quadratic identification x₊ = 1/α is accepted [CONJECTURE]): **the fine structure constant α would inherit its specific numerical value from γ through a chain of exact algebraic relationships plus one conjectured identification.** The integers provide the skeleton (3, 4, 7, 13); γ provides the flesh (the continuous scaling); and the lemniscatic structure provides the self-referential closure. The chain is: γ → Γ(1/4) [STANDARD] → ϖ, G* [DEFINITION] → master quadratic → x₊ ≈ 1/α [CONJECTURE].
+The physical implication (if the master quadratic identification x₊ = 1/α is accepted [SELECTION, SP4]): **the fine structure constant α would inherit its specific numerical value from γ through a chain of exact algebraic relationships plus one conjectured identification.** The integers provide the skeleton (3, 4, 7, 13); γ provides the flesh (the continuous scaling); and the lemniscatic structure provides the self-referential closure. The chain is: γ → Γ(1/4) [STANDARD] → ϖ, G* [DEFINITION] → master quadratic → x₊ ≈ 1/α [SELECTION, SP4; upgrade path: conditional [THEOREM] via DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE].
 
 ### Epistemic Status
 
@@ -353,7 +353,7 @@ The physical implication (if the master quadratic identification x₊ = 1/α is 
 | Minimal generating set {γ, π} | **[THEOREM]** | Constructive: Weierstrass + definitions |
 | Digamma cross-constraint at z=1/3, 1/4 | **[STANDARD]** | Gauss (1813); meaningful that FTD integers have closed forms |
 | Ordering by ontological depth | **[SELECTION]** | Principled but not uniquely determined |
-| Master quadratic yields x₊ ≈ 1/α | **[CONJECTURE]** | Numerical match (1.26 ppm); no mechanism derived |
+| Master quadratic yields x₊ ≈ 1/α | **[SELECTION]** (SP4) | Numerical match 1.26 ppm tree-level; upgrade path via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) to conditional [THEOREM] modulo standard lattice-QED continuum-limit recovery |
 | Coefficient 16 from lattice DoF | **[SELECTION]** | Argued from k_cons = 1/2 and D = 3; product rule is imposed |
 | Substitution identities (ζ in ϖ form, etc.) | **[DEFINITION]** | Algebraic consequences; no independent content |
 

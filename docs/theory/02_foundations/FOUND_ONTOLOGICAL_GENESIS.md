@@ -568,8 +568,8 @@ print(f"x₋ = {x_minus:.6f} (cf. Nc = 3)")
 | k_cons = 1/2 | [SELECTION] | Alternative fixed points |
 | D = log₂(16) + log₂(1/2) = 3 | [THEOREM] | Algebraic fact |
 | k_phys = 16 derived | [THEOREM] | Follows from k_cons, D |
-| x₊ = 1/α | [CONJECTURE] | Precision measurement |
-| x₋ = Nc | [CONJECTURE] | 4th generation discovery |
+| x₊ = 1/α | [SELECTION] (SP4) | Upgrade path: conditional [THEOREM] via DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE; falsifier: digit-13 of CODATA |
+| x₋ = Nc | [SELECTION] | Topological quantization; N_c from topology in 03_derivations |
 | Spin-1/2 from lemniscate | [SELECTION] | Topological argument |
 | Consciousness = twist | [CONJECTURE] | Philosophical interpretation |
 
