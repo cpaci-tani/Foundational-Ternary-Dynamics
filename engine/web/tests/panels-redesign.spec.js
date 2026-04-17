@@ -184,11 +184,15 @@ test('all three panels mount without error and render expected structure', async
 
     // Charts: chip strip + at least one default-active chart card + uPlot.
     await openTab('charts');
+    await page.waitForSelector('.charts-chip', { timeout: 5000 });
     const chartsReport = await page.evaluate(() => {
+        // Scope to #panel-charts (the Lagrangian panel also uses .chart-card).
+        // Exclude cards mid-fade-out (.is-leaving has a 140ms destroy timer).
+        const liveCards = document.querySelectorAll('#panel-charts .chart-card:not(.is-leaving)');
         return {
             chipCount: document.querySelectorAll('.charts-chip').length,
             activeChips: document.querySelectorAll('.charts-chip[aria-pressed="true"]').length,
-            cardCount: document.querySelectorAll('.chart-card').length,
+            cardCount: liveCards.length,
             uplotCount: document.querySelectorAll('#panel-charts .uplot').length,
         };
     });
@@ -219,15 +223,14 @@ test('all three panels mount without error and render expected structure', async
 
 test('chip-picker state persists across reload', async ({ page }) => {
     await page.goto('/');
-    await page.waitForFunction(() => typeof window.uPlot === 'function');
-    // Set a known state.
+    await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
     await page.evaluate(() => {
         localStorage.setItem('ftd.charts.active', JSON.stringify(['particles']));
     });
     await page.reload();
     await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
     await page.evaluate(() => document.querySelector('.tab[data-panel="charts"]')?.click());
-    await page.waitForTimeout(400);
+    await page.waitForSelector('.charts-chip', { timeout: 5000, state: 'attached' });
 
     const state = await page.evaluate(() => {
         const chips = document.querySelectorAll('.charts-chip');
@@ -236,8 +239,12 @@ test('chip-picker state persists across reload', async ({ page }) => {
             pressed: c.getAttribute('aria-pressed'),
         }));
     });
+    expect(state.length).toBeGreaterThan(0);
     const particles = state.find((s) => s.id === 'particles');
     const flux = state.find((s) => s.id === 'flux-energy');
     expect(particles?.pressed).toBe('true');
     expect(flux?.pressed).toBe('false');
+
+    // Clean up so other tests get the default-active set back.
+    await page.evaluate(() => localStorage.removeItem('ftd.charts.active'));
 });
