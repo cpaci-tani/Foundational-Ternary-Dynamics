@@ -11,7 +11,7 @@
 
 ## Abstract
 
-The identification x₊ = 1/α has been classified as [CONJECTURE] due to the absence of a physical mechanism connecting lemniscate geometry to electromagnetic coupling strength. This document traces the logical chain from the FTD lattice to the fine structure constant, showing that each step has existing support in the theory documents. The chain is:
+The identification x₊ = 1/α is classified as [SELECTION] (SP4) due to the absence of an unconditionally-derived physical mechanism connecting lemniscate geometry to electromagnetic coupling strength. An upgrade path to conditional [THEOREM] exists via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md), but that upgrade imports standard lattice-QED continuum-limit results rather than deriving them. This document traces the logical chain from the FTD lattice to the fine structure constant, showing that each step has existing support in the theory documents. The chain is:
 
 $$\mathbb{Z}^3 \;\xrightarrow{\text{geometry}}\; \text{cuboctahedron} \;\xrightarrow{\text{CM curve}}\; E: y^2 = x^3 - x \;\xrightarrow{\text{period}}\; G^* \;\xrightarrow{\text{self-consistency}}\; \alpha$$
 

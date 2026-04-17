@@ -23,12 +23,12 @@
 | Brillouin zone | k_mu in [-pi, pi]^3 | Standard |
 | Lattice dispersion | k_hat^2 = sum_mu 4 sin^2(k_mu/2) | Standard |
 
-**Claim 1LA-2.** [SELECTION PRINCIPLE] The lattice spacing a = 2/D = 2/3 is selected by:
+**Claim 1LA-2.** [SELECTION PRINCIPLE] The lattice spacing a = 2/D = 2/3 is selected. Non-circular geometric justification:
 
-- Boundary-to-bulk ratio in D = 3: the surface area of a unit cube is 2D faces, while the volume is 1, giving ratio 2D. But the fraction of boundary directions per axis is (D-1)/D = 2/3.
-- Up quark electric charge: Q_u = 2/3.
-- Right-handed up quark hypercharge: Y_{u_R} = (D-1)/D = 2/3.
-- Derivable from D = 3 alone: no additional input required beyond the spatial dimension.
+- Boundary-to-bulk ratio in D = 3: the surface area of a unit cube is 2D faces, while the volume is 1, giving ratio 2D. The fraction of boundary directions per axis is (D-1)/D = 2/3.
+- Unique rational of the form (D-1)/D for D = 3.
+
+**Honesty note.** Earlier revisions of this document listed the up-quark charge $Q_u = 2/3$ and right-handed up-quark hypercharge $Y_{u_R} = 2/3$ as additional "independent derivations" of $a = 2/D$. Those citations have been removed: FTD claims to derive SM physics downstream of α, so invoking SM quantum numbers to justify the lattice spacing that closes the α gap is circular. Readers should treat $a = 2/D$ as a geometric [SELECTION PRINCIPLE] motivated by the (D-1)/D boundary/bulk ratio alone. Numerical coincidence with $Q_u$ and $Y_{u_R}$ is a post-hoc consistency observation, not a derivation.
 
 ---
 
@@ -98,14 +98,14 @@ This is approximately 23% of the one-loop value in magnitude. The two-loop corre
 
 ## 6. Physical Interpretation of a = 2/D
 
-**Claim 1LA-9.** [SELECTION] The spacing a = 2/D = 2/3 admits multiple independent derivations:
+**Claim 1LA-9.** [SELECTION] The spacing a = 2/D = 2/3 has two non-circular motivations:
 
-1. **Geometric:** In a D-dimensional hypercube, the fraction of boundary faces per axis pair is (D-1)/D.
-2. **Charge quantization:** The up quark charge Q_u = 2/3 in the Standard Model.
-3. **Hypercharge:** The right-handed up quark hypercharge Y_{u_R} = 2/3.
-4. **Dimensional:** The only rational number of the form (D-1)/D for D = 3.
+1. **Geometric:** In a D-dimensional hypercube, the fraction of boundary directions per axis is (D-1)/D.
+2. **Dimensional:** The only rational number of the form (D-1)/D for D = 3.
 
-All four routes yield the same value from D = 3 alone, requiring no additional parameters.
+Both follow from D = 3 alone, requiring no external input.
+
+**Removed from earlier revisions:** the citations of up-quark charge $Q_u = 2/3$ and hypercharge $Y_{u_R} = 2/3$ as "independent derivations." These are SM quantum numbers downstream of α and cannot justify a selection that closes the α gap (circular). See §1 Honesty Note.
 
 ---
 

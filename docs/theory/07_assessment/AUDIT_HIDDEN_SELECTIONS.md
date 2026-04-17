@@ -33,7 +33,7 @@ The FTD derivation of α = 1/137.036 from G* is remarkable — but it involves s
    ↓
 6. Solve: x₊ = 137.036..., x₋ = 3.024...     ← MATHEMATICAL
    ↓
-7. x₊ = 1/α, x₋ → N_c = 3                    ← CONJECTURE (SP4)
+7. x₊ = 1/α, x₋ → N_c = 3                    ← SELECTION (SP4); conditional-[THEOREM] upgrade via DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md
    See FOUND_FORCE_STRUCTURE.md §V (EM as most ontic)
    See EXPLR_GSTAR_FLUX_TIME.md (G* dimensional triad)
 ```

@@ -247,8 +247,8 @@ G* = Gamma(1/4) / Gamma(3/4) = 2.9587... [THEOREM]
   v
 Master Quadratic: x^2 - 16*G*^2*x + 16*G*^3 = 0 [THEOREM]
   |
-  +---> x_+ = 1/alpha = 137.036 [THEOREM]
-  +---> x_- -> N_c = 3 [THEOREM]
+  +---> x_+ = 1/alpha = 137.036 [SELECTION, SP4] (roots themselves [THEOREM])
+  +---> x_- -> N_c = 3 [SELECTION] (roots themselves [THEOREM])
   |
   v
 Framework Integers: {N_c=3, N_base=4, b_3=7, N_eff=13} [AXIOM/THEOREM]
