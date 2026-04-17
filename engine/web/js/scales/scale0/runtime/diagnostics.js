@@ -7,6 +7,15 @@ export function updateDiagnosticsAndPanels(ctx, state) {
 
     // ── Collect via TelemetryHub (single source of truth for all bridge calls) ──
     const diag = telemetryHub.collectScale0(ctx.bridge, state.fluxMock, state.useFluxMock);
+
+    // New panel renders from hub state directly; refresh it every frame even
+    // when no diag is available (formatters show 0 for missing fields so the
+    // UI stays "wired" while the bridge spins up).
+    if (ctx.activeTab === 'diagnostics') {
+        telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
+        ctx.diagnosticsPanel?.update();
+    }
+
     if (!diag) return;
 
     // ── Status bar ───────────────────────────────────────────────────────────
@@ -30,10 +39,8 @@ export function updateDiagnosticsAndPanels(ctx, state) {
     // ── Tab-specific rendering ───────────────────────────────────────────────
     switch (ctx.activeTab) {
         case 'diagnostics': {
-            // Always collect audit on this tab so the new panel's E-field /
-            // B-field / Gauss / dual-substrate rows have fresh data.
-            telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
-            ctx.diagnosticsPanel?.update();
+            // The new diagnostics panel was already refreshed above;
+            // only the legacy peTelemetry drawing is left here.
             if (ctx.peTelemetry) ctx.peTelemetry.drawCharts();
             break;
         }
