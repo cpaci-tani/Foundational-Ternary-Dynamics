@@ -17,7 +17,7 @@
  *      and re-append it — this destroys and recreates the compositor layer.
  */
 
-import { createScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js';
+import { createScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js?v=2';
 import { createScale1OverlayTemplate } from '../../../scales/scale1/ui/overlays/template.js';
 import { createScale2OverlayTemplate, createScale2LegendTemplate } from '../../../scales/scale2/ui/overlays/template.js';
 import { createScale3OverlayTemplate, createScale3LegendTemplate } from '../../../scales/scale3/ui/overlays/template.js';
@@ -72,8 +72,55 @@ export class ViewportOverlaysComponent {
     this.overlays.set('scale11', append(createScale11OverlayTemplate()));
 
     this._mountUniversalOverlays();
+    this._wireCollapsibles();
 
     return this;
+  }
+
+  /**
+   * Wire collapse behavior for every viewport overlay. Scale 0 uses its
+   * built-in .s0-overlay-collapse header button; other scales get a small
+   * button injected at the top of their panel. State persists per scale
+   * in localStorage (key: ftd.overlay.<scaleKey>.collapsed).
+   */
+  _wireCollapsibles() {
+    for (const [scaleKey, el] of this.overlays) {
+      if (!el) continue;
+      const lsKey = `ftd.overlay.${scaleKey}.collapsed`;
+      const isS0 = el.classList.contains('s0-overlay-panel');
+      let btn;
+
+      if (isS0) {
+        btn = el.querySelector('.s0-overlay-collapse');
+      } else {
+        // Inject a generic collapse button as the first child of the overlay.
+        btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'viewport-overlay-collapse';
+        btn.setAttribute('aria-label', 'Collapse overlay');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.title = 'Collapse overlay';
+        btn.innerHTML = '<span class="viewport-overlay-collapse-icon" aria-hidden="true">&#9652;</span>';
+        el.prepend(btn);
+      }
+      if (!btn) continue;
+
+      const apply = (collapsed) => {
+        el.classList.toggle('is-collapsed', !!collapsed);
+        btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        btn.title = collapsed ? 'Expand overlay' : 'Collapse overlay';
+      };
+
+      // Restore persisted state
+      try { apply(localStorage.getItem(lsKey) === '1'); } catch { /* ignore */ }
+
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const next = !el.classList.contains('is-collapsed');
+        apply(next);
+        try { localStorage.setItem(lsKey, next ? '1' : '0'); } catch { /* ignore */ }
+      });
+    }
   }
 
   /** Apply the correct top offset as a concrete px inline style. */

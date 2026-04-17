@@ -46,7 +46,7 @@ import { addInfoTooltips } from './consciousness-pedagogy.js';
 import { QUANTUM_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
 import { initVerificationLabPanel } from './ui/panels/verification-lab-panel/component.js';
-import { AppShell } from './ui/shell/app-shell.js?v=2';
+import { AppShell } from './ui/shell/app-shell.js?v=3';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initConsciousnessPanel } from './ui/panels/index.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
 

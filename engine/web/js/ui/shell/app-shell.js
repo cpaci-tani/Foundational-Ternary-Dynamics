@@ -6,7 +6,7 @@ import { TopbarComponent } from '../components/topbar/component.js';
 import { WorkspaceTabsComponent } from '../components/workspace-tabs/component.js';
 import { PanelDockComponent } from '../components/panel-dock/component.js?v=2';
 import { ViewportFrameComponent } from '../components/viewport-frame/component.js';
-import { ViewportOverlaysComponent } from '../components/viewport-overlays/component.js?v=4';
+import { ViewportOverlaysComponent } from '../components/viewport-overlays/component.js?v=5';
 import { TooltipComponent } from '../components/tooltips/component.js';
 import { KnowledgeBaseComponent } from '../components/knowledge-base/component.js';
 import { ensurePanelResources } from '../components/panel-resources/component.js';
