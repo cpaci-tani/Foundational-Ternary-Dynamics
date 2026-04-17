@@ -123,7 +123,10 @@ export class UPlotChart {
             return col;
         });
 
-        this.uplot.setData([xs, ...yColumns], false);
+        // `true` so uPlot recomputes scale min/max each frame — with ring
+        // buffers the range changes constantly and skipping this leaves the
+        // chart blank.
+        this.uplot.setData([xs, ...yColumns], true);
     }
 
     destroy() {
