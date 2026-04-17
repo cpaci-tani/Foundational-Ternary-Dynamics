@@ -1,0 +1,9 @@
+/* ============================================================
+ *  scale4/overlays.css — Scale 4 (Planetary sandbox) overlays
+ * ============================================================ */
+
+.scale4-overlay-status {
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    opacity: 0.8;
+}

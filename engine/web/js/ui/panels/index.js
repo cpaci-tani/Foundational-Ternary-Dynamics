@@ -1,0 +1,13 @@
+export { DiagnosticsPanelComponent, initDiagnosticsPanel } from './diagnostics-panel/component.js';
+export { ChartsPanelComponent, initChartsPanel } from './charts-panel/component.js';
+export { LagrangianPanelComponent, initLagrangianPanel } from './lagrangian-panel/component.js';
+export { ConsciousnessPanelComponent, initConsciousnessPanel } from './consciousness-panel/component.js';
+export { InspectorPanelComponent, initInspectorPanel } from './inspector-panel/component.js';
+export { ZooPanelComponent, initZooPanel } from './zoo-panel/component.js';
+export { OnticPanelComponent, initOnticPanel } from './ontic-panel/component.js';
+export { PhysicsPanelComponent, initPhysicsPanel } from './physics-panel/component.js';
+export { PlanetaryPanelComponent, initPlanetaryPanel } from './planetary-panel/component.js';
+export { HierarchyPanelComponent, initHierarchyPanel } from './hierarchy-panel/component.js';
+export { CosmicInfoPanelComponent, initCosmicInfoPanel } from './cosmic-info-panel/component.js';
+export { MetaInfoPanelComponent, initMetaInfoPanel } from './meta-info-panel/component.js';
+export { QuantumLabPanelComponent, initQuantumLabPanel } from './quantum-lab-panel/component.js';

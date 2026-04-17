@@ -1,0 +1,101 @@
+/* ── Base tab-bar styles ── */
+#tab-bar {
+    position: absolute;
+    bottom: calc(28px * var(--ui-scale) + var(--sp-xl));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: var(--z-tabs);
+    display: flex;
+    gap: 0;
+    background: var(--bg-surface);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--tabs-shadow);
+    overflow: hidden;
+}
+
+#btn-panel-toggle {
+    margin-left: auto;
+    padding: var(--sp-sm) var(--sp-md);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-left: 1px solid var(--border);
+    user-select: none;
+    transition: color 0.15s;
+}
+
+#btn-panel-toggle:hover {
+    color: var(--text-primary);
+}
+
+/* ── Enhanced shell overrides ── */
+#tab-bar[data-workspace-tabs="true"] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+}
+
+.workspace-tabs-mobile {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.workspace-tabs-mobile-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.workspace-tabs-select {
+    min-width: 180px;
+    max-width: 220px;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+}
+
+.workspace-tabs-strip {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.workspace-tabs-strip::-webkit-scrollbar { display: none; }
+
+@media (max-width: 767px) {
+    #tab-bar[data-workspace-tabs="true"] {
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .workspace-tabs-mobile {
+        display: inline-flex;
+        flex: 1 1 auto;
+    }
+
+    .workspace-tabs-strip .tab {
+        display: none;
+    }
+
+    .workspace-tabs-select {
+        min-width: 0;
+        width: 100%;
+        max-width: none;
+    }
+}

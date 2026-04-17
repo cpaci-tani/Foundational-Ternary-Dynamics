@@ -1,0 +1,106 @@
+/* Phase 0 shell scaffold: annotate existing regions and reserve future
+   component mounts without changing the current visual ownership yet. */
+
+/* ── Layout tokens updated by JS ────────────────────────────────────────── */
+/* --toolbar-h is set live by TopbarComponent's ResizeObserver so that all
+   viewport overlays stay below the actual toolbar regardless of row count.
+   Registered via @property so Chrome properly re-evaluates calc() expressions
+   that reference it when the value changes (unregistered custom properties
+   are lazily re-evaluated and can get stuck on the initial computed value). */
+@property --toolbar-h {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+}
+
+#app {
+    --toolbar-h: calc(48px * var(--ui-scale));
+}
+
+#app[data-shell-ready="true"] {
+    --shell-safe-top: env(safe-area-inset-top, 0px);
+    --shell-safe-right: env(safe-area-inset-right, 0px);
+    --shell-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --shell-safe-left: env(safe-area-inset-left, 0px);
+}
+
+#app-shell-mounts {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: var(--z-sidebar);
+}
+
+#app-shell-mounts > [data-shell-mount] {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* ── Skip Link (Accessibility) ─────────────────────────────────────────── */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: var(--z-error);
+    padding: 8px 16px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+}
+.skip-link:focus {
+    left: 0;
+}
+
+/* ── Fatal Error Overlay ─────────────────────────────────────────────────── */
+#error-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-error);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 8, 15, 0.85);
+    backdrop-filter: blur(16px);
+}
+
+#error-overlay .error-box {
+    background: rgba(25, 10, 15, 0.7);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--negative);
+    box-shadow: 0 16px 64px rgba(248, 113, 113, 0.15);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    max-width: 480px;
+    text-align: center;
+}
+
+#error-overlay h2 {
+    color: var(--negative);
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+#error-overlay p {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+#error-overlay code {
+    display: block;
+    margin-top: 12px;
+    padding: 10px;
+    background: var(--bg-deep);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--negative);
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 120px;
+    overflow-y: auto;
+}

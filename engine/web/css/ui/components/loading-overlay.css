@@ -1,0 +1,98 @@
+/* ── Loading Overlay ── */
+#loading-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg-deep);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: var(--z-loading);
+    transition: opacity 0.3s;
+}
+#loading-overlay.hidden { opacity: 0; pointer-events: none; }
+#loading-overlay.removed { display: none; }
+
+.load-lattice {
+    width: 256px; height: 256px;
+    margin-bottom: 28px;
+    opacity: 0; animation: letter-in 0.5s ease forwards 0s;
+}
+.load-lattice canvas {
+    width: 256px; height: 256px;
+}
+
+.load-logo {
+    display: flex; align-items: baseline; gap: 2px;
+    margin-bottom: 32px;
+}
+.load-logo .letter {
+    font-family: var(--font-mono);
+    font-weight: 300;
+    font-size: 48px;
+    color: var(--text-primary);
+    opacity: 0;
+    animation: letter-in 0.6s ease forwards;
+}
+.load-logo .letter:nth-child(1) { animation-delay: 0.1s; }
+.load-logo .letter:nth-child(2) { animation-delay: 0.3s; color: var(--accent); font-weight: 600; }
+.load-logo .letter:nth-child(3) { animation-delay: 0.5s; }
+.load-logo .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    opacity: 0; animation: letter-in 0.6s ease forwards 0.7s;
+    align-self: flex-end; margin-bottom: 10px; margin-left: 2px;
+}
+@keyframes letter-in {
+    0%   { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.load-subtitle {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 40px;
+    opacity: 0; animation: letter-in 0.8s ease forwards 0.9s;
+}
+
+.load-progress-wrap {
+    width: 280px;
+    opacity: 0; animation: letter-in 0.6s ease forwards 1.1s;
+}
+.load-bar-bg {
+    width: 100%; height: 2px;
+    background: var(--border); border-radius: 1px;
+    overflow: hidden;
+}
+.load-bar-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    border-radius: 1px;
+    transition: width 0.4s ease;
+}
+.load-status {
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 10px; color: var(--text-muted);
+    letter-spacing: 1px;
+    min-height: 14px;
+}
+.load-version {
+    position: absolute; bottom: 24px;
+    font-family: var(--font-mono);
+    font-size: 9px; color: var(--border-light);
+    letter-spacing: 2px;
+    opacity: 0; animation: letter-in 0.6s ease forwards 1.3s;
+}
+
+/* Enhanced shell variant */
+#loading-overlay {
+    display: grid;
+    place-items: center;
+    gap: 20px;
+}
+
+#loading-overlay .load-copy {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+}

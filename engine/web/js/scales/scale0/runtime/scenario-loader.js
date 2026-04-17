@@ -9,10 +9,13 @@ import {
     resetFieldFlags,
     resetFrameState,
     setCurrentScenarioId,
+    setFieldToggle,
     setFluxMock,
-} from '../state/store.js';
+    setForceStyle,
+} from '../state/store.js?v=s1';
 import {
     markScenarioOverrideRows,
+    readButtonActive,
     readCheckboxValue,
     readInputValue,
     setButtonActive,
@@ -40,7 +43,39 @@ const FIELD_BUTTON_IDS = [
     'toggle-damping-zones',
     'toggle-genesis-iso',
     'toggle-confinement',
+    // Tier 1 quantum overlays — treated as persistent user preferences
+    'toggle-psi-squared',
+    'toggle-phase',
+    'toggle-lagrangian-density',
+    'toggle-entropy-density',
+    'toggle-grav-potential',
 ];
+
+// Map every overlay button id → corresponding state flag so we can round-trip
+// the user's overlay preferences across scenario switches.
+const FIELD_BUTTON_TO_FLAG = {
+    'toggle-e-field':              'showEField',
+    'toggle-b-field':              'showBField',
+    'toggle-poynting':             'showPoynting',
+    'toggle-div-field':            'showDivField',
+    'toggle-flux-lines':           'showFluxLines',
+    'toggle-force-em':             'showForceEM',
+    'toggle-force-gravity':        'showForceGravity',
+    'toggle-force-strong':         'showForceStrong',
+    'toggle-force-weak':           'showForceWeak',
+    'toggle-dual-substrate':       'showDualSubstrate',
+    'toggle-chirality':            'showChirality',
+    'toggle-light':                'showLight',
+    'toggle-dark-halo':            'showDarkMatterHalo',
+    'toggle-damping-zones':        'showDampingZones',
+    'toggle-genesis-iso':          'showGenesisIsosurface',
+    'toggle-confinement':          'showConfinement',
+    'toggle-psi-squared':          'showPsiSquared',
+    'toggle-phase':                'showPhase',
+    'toggle-lagrangian-density':   'showLagrangianDensity',
+    'toggle-entropy-density':      'showEntropyDensity',
+    'toggle-grav-potential':       'showGravPotential',
+};
 
 export function shouldUseFluxMock(bridge, scenarioName) {
     if (scenarioName.startsWith('flux-')) return true;
@@ -108,6 +143,64 @@ function applyToggleDefaults(mainScale0, mockScale0, scenarioName) {
     }
 }
 
+/**
+ * Capture the user's current overlay-toggle preferences so they can be
+ * re-applied after a scenario load resets the visual state.
+ *
+ * Covers: flux-volume + flux-slice, every field overlay button in
+ * FIELD_BUTTON_IDS, and the force render-style.
+ */
+export function captureOverlayPreferences(state) {
+    const overlays = {};
+    for (const id of FIELD_BUTTON_IDS) {
+        overlays[id] = readButtonActive(id);
+    }
+    return {
+        fluxVolume: readButtonActive('toggle-flux-volume'),
+        fluxSlice:  readButtonActive('toggle-flux-slice'),
+        overlays,
+        forceStyle: state?.forceStyle || 'arrows',
+    };
+}
+
+/**
+ * Re-apply captured overlay preferences. Runs AFTER a scenario has finished
+ * loading and the default visual state has been reset. Updates:
+ *   1. the DOM button `.active` classes (so the UI reflects the preference)
+ *   2. the scale-0 state-store flags (so runtime samplers pick them up)
+ *   3. the viewport overlay visibility (so the 3D scene renders them)
+ */
+export function restoreOverlayPreferences(prefs, state, viewportAdapter, getForceStyleFn) {
+    if (!prefs) return;
+
+    // Flux volume / slice — these have their own adapter paths
+    setButtonActive('toggle-flux-volume', prefs.fluxVolume);
+    setButtonActive('toggle-flux-slice',  prefs.fluxSlice);
+    viewportAdapter.setFluxVolumeVisible(prefs.fluxVolume);
+    viewportAdapter.setFluxSliceVisible(prefs.fluxSlice);
+
+    // Every field overlay — button + store flag + viewport toggle
+    for (const id of FIELD_BUTTON_IDS) {
+        const wasOn = !!prefs.overlays?.[id];
+        const flagKey = FIELD_BUTTON_TO_FLAG[id];
+        setButtonActive(id, wasOn);
+        if (flagKey) setFieldToggle(flagKey, wasOn);
+        viewportAdapter.setOverlayVisible(flagKey, wasOn);
+    }
+
+    // Force render style (arrows / heatmap / flow / glyphs)
+    if (prefs.forceStyle) {
+        setForceStyle(prefs.forceStyle);
+        setForceStyleButtons(prefs.forceStyle);
+        const fieldSnapshot = { ...state.fieldFlags };
+        viewportAdapter.syncForceStyle(prefs.forceStyle, fieldSnapshot);
+    }
+
+    // Mark the lattice dirty so the next tick recomputes and repaints.
+    state.fieldNeedsUpdate = true;
+    recomputeAnyFieldActive();
+}
+
 export function resetScale0VisualState(ctx, state, viewportAdapter) {
     resetFieldFlags();
     state.forceStyle = 'arrows';
@@ -123,6 +216,13 @@ export function resetScale0VisualState(ctx, state, viewportAdapter) {
 
 export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, params = {}) {
     const scenario = getScale0Scenario(scenarioId);
+
+    // Preserve the user's current overlay-toggle preferences across the reset.
+    // ctx.resetAllVisualState() → resetScale0VisualState() wipes every field
+    // flag + button; without this snapshot the user has to re-enable their
+    // chosen overlays every time they pick a new scenario.
+    const overlayPrefs = captureOverlayPreferences(state);
+
     ctx.resetAllVisualState();
     applyAuxiliaryDefaults(ctx, viewportAdapter);
 
@@ -132,7 +232,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     const latticeSize = ctx.bridge.latticeSize || 32;
     const fluxMock = new MockBridge(latticeSize);
     fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
-    fluxMock.capabilities.scale0.setReflectiveBoundary(readCheckboxValue('reflective-boundary', true));
+    fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
     fluxMock.capabilities.scale0.setupScenario(scenario.id);
 
     applyToggleDefaults(mainScale0, fluxMock.capabilities.scale0, scenario.id);
@@ -146,6 +246,11 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     markScenarioOverrideRows(DEFAULT_TOGGLES);
     syncComboSliders(ctx.bridge);
     state.latticeNeedsUpload = true;
+
+    // Restore the captured overlay preferences. Runs last so it overrides any
+    // defaults applied by applyAuxiliaryDefaults or resetScale0VisualState.
+    restoreOverlayPreferences(overlayPrefs, state, viewportAdapter);
+
     state.fieldNeedsUpdate = true;
     recomputeAnyFieldActive();
 }
@@ -172,7 +277,7 @@ export function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
 
     const fluxMock = new MockBridge(newSize);
     fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
-    fluxMock.capabilities.scale0.setReflectiveBoundary(readCheckboxValue('reflective-boundary', true));
+    fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
     fluxMock.capabilities.scale0.setupScenario(scenarioId);
 
     for (const [key, , elId] of DEFAULT_TOGGLES) {

@@ -1,0 +1,112 @@
+/* Slider primitive styles */
+
+/* ── Toolbar slider (.tb-slider) ─────────────────────── */
+.tb-slider {
+    width: 80px;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--bg-input);
+    border: 1px inset var(--border);
+    border-radius: 3px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.tb-slider:hover {
+    border-color: var(--border-light);
+}
+
+.tb-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 6px var(--accent-glow);
+    transition: transform 0.1s;
+}
+
+.tb-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+.tb-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 6px var(--accent-glow);
+    transition: transform 0.1s;
+}
+
+.tb-slider::-moz-range-thumb:hover {
+    transform: scale(1.15);
+}
+
+/* ── PE (Particle Engine) slider (.pe-slider) ────────── */
+.pe-slider {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--bg-input);
+    border: 1px inset var(--border);
+    border-radius: 3px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.pe-slider:hover {
+    border-color: var(--border-light);
+}
+
+.pe-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 6px var(--accent-glow);
+    transition: transform 0.1s;
+}
+
+.pe-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+.pe-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 6px var(--accent-glow);
+    transition: transform 0.1s;
+}
+
+.pe-slider::-moz-range-thumb:hover {
+    transform: scale(1.15);
+}
+
+/* ── Consciousness slider row (.cs-slider-row) ───────── */
+.cs-slider-row {
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.cs-slider-row input[type=range] { flex: 1; }
+
+.cs-slider-row label {
+    font-family: var(--font-mono);
+    min-width: 70px;
+}

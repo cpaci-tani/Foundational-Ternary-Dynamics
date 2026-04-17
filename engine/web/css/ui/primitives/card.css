@@ -1,0 +1,76 @@
+/* Card primitive styles */
+
+/* ── Base card (.card) ───────────────────────────────── */
+/* Card shadow is themed via --card-shadow (none on dark themes,
+   subtle drop-shadow on light/parchment). Themes may additionally
+   tighten the border color — see themes/light.css and parchment.css. */
+.card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-lg);
+    min-width: 0;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: all var(--dur-base) var(--ease-out);
+}
+
+.card:hover {
+    background: var(--card-hover-bg);
+    border-color: var(--border-light);
+    box-shadow: 0 8px 32px var(--state-hover-bg);
+}
+
+/* ── Card title (.card-title) ────────────────────────── */
+.card-title {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: var(--sp-md);
+}
+
+/* Unit hint used inside card-title */
+.unit-hint {
+    font-weight: 400;
+    text-transform: none;
+    opacity: 0.6;
+    font-size: calc(var(--fs-xs) - 1px);
+}
+
+/* ── Chart container (card variant) ─────────────────── */
+.chart-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+}
+
+.chart-container canvas {
+    width: 100%;
+    height: 160px;
+}
+
+/* ── Consciousness theory card (.cs-theory-card) ─────── */
+.cs-theory-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 10px;
+    position: relative;
+}
+
+.cs-theory-card.cs-highlight {
+    border-color: var(--consciousness-primary);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.cs-theory-card canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+    background: var(--bg-deep);
+}

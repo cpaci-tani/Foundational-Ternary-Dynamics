@@ -1,0 +1,107 @@
+/* ============================================================
+ *  button.css — Generic button primitives
+ *  Panel-specific buttons (qlab-*, zoo-inject-btn, settings-preset)
+ *  live in their respective panel CSS files (Phase D).
+ * ============================================================ */
+
+/* ── Toolbar button (.tb-btn) ────────────────────────── */
+.tb-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(36px * var(--ui-scale));
+    height: calc(36px * var(--ui-scale));
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: var(--fs-lg);
+    transition: all var(--dur-base) var(--ease-out);
+}
+
+.tb-btn:hover {
+    background: var(--card-hover-bg);
+    color: var(--text-primary);
+    border-color: var(--border-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.tb-btn.active {
+    background: var(--accent-dim);
+    color: var(--text-primary);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* Settings button — larger icon */
+.tb-btn-settings {
+    font-size: var(--fs-xl);
+}
+
+/* Touch target minimum — only on actual touch devices, not small-viewport desktops */
+@media (hover: none) and (pointer: coarse) {
+    .tb-btn { min-width: 44px; min-height: 44px; }
+}
+
+/* ── Secondary control button (.ctrl-btn-secondary) ──── */
+.ctrl-btn-secondary {
+    padding: 6px var(--sp-lg);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+}
+
+.ctrl-btn-secondary:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/* Primary control button (.ctrl-btn) */
+.ctrl-btn {
+    padding: 6px var(--sp-lg);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    background: var(--accent-dim);
+    border: none;
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out);
+}
+
+.ctrl-btn:hover {
+    background: var(--accent);
+}
+
+/* ── Force-style segmented buttons (.style-btn) ──────── */
+/* Segmented group structure lives in segmented-control.css;
+   these are the per-button styles used within that group. */
+.style-btn {
+    font-size: var(--fs-xs);
+    padding: 3px var(--sp-md);
+    background: var(--bg-input);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+    backdrop-filter: blur(8px);
+}
+.style-btn:first-child       { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.style-btn:last-child        { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.style-btn:not(:first-child) { border-left: none; }
+.style-btn.active {
+    background: var(--state-active-bg);
+    color: var(--text-accent);
+    border-color: var(--border-glow);
+}
+.style-btn:hover {
+    background: var(--state-hover-bg);
+    color: var(--text-accent);
+}
