@@ -40,9 +40,9 @@ export function getDefaultMount() {
     return DEFAULT_MOUNT;
 }
 
-/** Minimum viewport width (px) required to honour a side mount. */
+/** Minimum viewport width (px) required to honour a side mount (≥ tablet). */
 export function getSideMountMinWidth() {
-    return 900;
+    return 1024;
 }
 
 /**

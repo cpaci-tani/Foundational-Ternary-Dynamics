@@ -1,12 +1,18 @@
-/* Intentional breakpoint behavior owned by the shell.
-   This is a first pass: keep the existing desktop layout, but make compact
-   and tablet states explicit so later component extraction has stable rules. */
+/* ── Responsive shell layout ─────────────────────────────────────────────────
+ * Breakpoints (from layout-state.js):
+ *   compact-sm  ≤ 479px   (small phone)
+ *   compact-lg  ≤ 767px   (large phone / small tablet)
+ *   tablet      ≤ 1023px
+ *   desktop     ≤ 1439px
+ *   wide        > 1439px
+ * ──────────────────────────────────────────────────────────────────────────── */
 
+/* ── Compact toolbar (≤767px) ─────────────────────────────────────────────── */
 #app[data-layout-mode^="compact"] #toolbar {
     flex-wrap: wrap;
     height: auto;
     min-height: calc(48px * var(--ui-scale));
-    padding: calc(8px + var(--shell-safe-top)) 10px 8px 10px;
+    padding: calc(8px + var(--shell-safe-top, 0px)) 10px 8px;
     gap: 8px;
     align-content: flex-start;
 }
@@ -24,42 +30,134 @@
     max-width: calc(100vw - 24px);
 }
 
-/* Gate compact mode tab-bar to bottom mount only */
-html[data-panel-mount="bottom"] #app[data-layout-mode^="compact"] #tab-bar {
-    width: calc(100vw - 16px);
-    left: 8px;
-    transform: none;
-    overflow-x: auto;
-    justify-content: flex-start;
-    padding-right: 44px;
-}
-
-/* Gate compact mode panel-area to bottom mount only */
-html[data-panel-mount="bottom"] #app[data-layout-mode^="compact"] #panel-area {
-    width: calc(100vw - 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    max-height: 54vh;
-}
-
-/* For side mounts in compact mode, clear the bottom-mount overrides */
-html[data-panel-mount="left"] #app[data-layout-mode^="compact"] #panel-area,
-html[data-panel-mount="right"] #app[data-layout-mode^="compact"] #panel-area {
-    left: auto;
-    transform: none !important;
-}
-
 #app[data-layout-mode^="compact"] #status-bar {
-    padding-bottom: calc(6px + var(--shell-safe-bottom));
+    padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
     flex-wrap: wrap;
     gap: 6px 10px;
 }
 
+/* ── Tablet (≤1023px) ─────────────────────────────────────────────────────── */
 #app[data-layout-mode="tablet"] #panel-area {
     width: min(520px, calc(100vw - 24px));
 }
 
 #app[data-layout-mode="tablet"][data-orientation="portrait"] #panel-area {
     width: calc(100vw - 24px);
-    max-height: 50vh;
+    max-height: 50dvh;
+}
+
+/* ── Mobile bottom sheet (≤767px) ─────────────────────────────────────────── */
+/*
+ * On ≤767px every mount becomes a bottom sheet.
+ * Side mounts are already snapped to "bottom" by resolveEffectiveMount()
+ * in MountToggleComponent at this width, so we only need rules for the
+ * "bottom" attribute value here.
+ *
+ * Key decisions:
+ *  - position:fixed so the sheet is viewport-anchored (not #app-relative)
+ *  - 80dvh (dynamic viewport height) so the sheet never extends behind
+ *    the browser chrome on iOS/Android
+ *  - border-radius only on top corners — classic bottom-sheet pattern
+ *  - transform-based collapse instead of max-height:0 — GPU-composited,
+ *    no layout reflow, natural iOS sheet feel
+ *  - env(safe-area-inset-bottom) for notched phones and Android gesture nav
+ *  - Body scroll lock is applied via .body-panel-open (set by mobile-panel.js)
+ */
+@media (max-width: 767px) {
+    /*
+     * Specificity note: panel-dock.css has a compound compact rule
+     * (html[attr] #app[attr] #panel-area = 2,2,1) that would beat a simple
+     * (html[attr] #panel-area = 1,1,1) rule. We match it by including all
+     * data-layout-mode variants so the mobile sheet always wins at equal or
+     * higher specificity — cascade order then decides (this file comes later).
+     */
+
+    /* ── Panel area — bottom sheet ── */
+    html[data-panel-mount="bottom"] #panel-area,
+    html[data-panel-mount="bottom"] #app[data-layout-mode^="compact"] #panel-area,
+    html[data-panel-mount="bottom"] #app[data-layout-mode="tablet"] #panel-area,
+    html:not([data-panel-mount]) #panel-area {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
+        transform: translateY(0) !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        border-radius: 16px 16px 0 0;
+        max-height: 80dvh !important;
+        min-height: 0;
+        padding-bottom: env(safe-area-inset-bottom, 12px);
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        backdrop-filter: blur(32px) saturate(1.4);
+    }
+
+    /* Collapsed: slide off the bottom */
+    html[data-panel-mount="bottom"] #app.panels-collapsed #panel-area,
+    html[data-panel-mount="bottom"] #app.panels-collapsed[data-layout-mode^="compact"] #panel-area,
+    html:not([data-panel-mount]) #app.panels-collapsed #panel-area {
+        transform: translateY(110%) !important;
+        max-height: 80dvh !important;
+        min-height: 0 !important;
+        padding-top: 0 !important;
+        opacity: 1 !important;
+        border-width: 1px !important;
+        pointer-events: none;
+    }
+
+    /* Show the grip-handle pill on mobile */
+    html[data-panel-mount="bottom"] #panel-resizer {
+        display: flex;
+    }
+
+    /* ── Tab bar — full-width strip ── */
+    html[data-panel-mount="bottom"] #tab-bar,
+    html:not([data-panel-mount]) #tab-bar {
+        width: calc(100% - 16px);
+        left: 8px;
+        right: 8px;
+        transform: none;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-right: 8px;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        scrollbar-width: none;
+    }
+
+    html[data-panel-mount="bottom"] #tab-bar::-webkit-scrollbar,
+    html:not([data-panel-mount]) #tab-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* ── Body scroll lock when sheet is open ── */
+    body.body-panel-open {
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
+
+    /* ── Status bar safe area ── */
+    #status-bar {
+        padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
+    }
+
+    /* ── Viewport overlays: keep within viewport width ── */
+    #viewport-overlay,
+    .viewport-overlay-panel {
+        max-width: calc(100vw - 16px);
+    }
+}
+
+/* ── Small phone extras (≤479px) ─────────────────────────────────────────── */
+@media (max-width: 479px) {
+    html[data-panel-mount="bottom"] #panel-area,
+    html:not([data-panel-mount]) #panel-area {
+        max-height: 90dvh;
+    }
+
+    /* Stack status bar items on very small screens */
+    #status-bar .status-item:not(:first-child):not(:last-child) {
+        display: none;
+    }
 }
