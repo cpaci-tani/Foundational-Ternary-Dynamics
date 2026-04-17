@@ -1,3 +1,5 @@
+import { getScale0MemoryRecorder } from '../controller.js';
+
 export function advanceSimulation(ctx, state) {
     const latticeSize = ctx.bridge.latticeSize || 32;
     // Global pause kills everything — no tick advance, no upload, no flux mock.
@@ -38,5 +40,13 @@ export function advanceSimulation(ctx, state) {
     // scenario is paused, the lattice contents haven't changed, so skipping the
     // upload saves the per-frame data round-trip.
     if (tickScenario) state.latticeNeedsUpload = true;
+
+    // Feed the playback timeline (no-op if the recorder hasn't been created
+    // yet or if the scenario didn't tick this frame).
+    if (tickScenario && ticksToRun > 0) {
+        const rec = getScale0MemoryRecorder();
+        rec?.onTick(ctx.bridge.capabilities.scale0);
+    }
+
     return latticeSize;
 }
