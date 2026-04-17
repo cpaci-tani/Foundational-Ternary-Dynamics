@@ -86,6 +86,24 @@ export class TelemetryHub {
         this.ebDiff    = new RingBuffer(500);  // E-field energy − B-field energy
         this.gauss     = new RingBuffer(500);  // gaussViolation
 
+        // Per-audit-field trend buffers (500-sample) — drive panel-row sparklines.
+        this.aud = {
+            fieldEnergy:         new RingBuffer(500),
+            waveEnergy:          new RingBuffer(500),
+            particleKE:          new RingBuffer(500),
+            coulombPE:           new RingBuffer(500),
+            eFieldEnergy:        new RingBuffer(500),
+            bFieldEnergy:        new RingBuffer(500),
+            poyntingMag:         new RingBuffer(500),
+            maxGaussError:       new RingBuffer(500),
+            selfFieldInjection:  new RingBuffer(500),
+            eLeftEnergy:         new RingBuffer(500),
+            eRightEnergy:        new RingBuffer(500),
+            chirality:           new RingBuffer(500),
+            waveLeft:            new RingBuffer(500),
+            waveRight:           new RingBuffer(500),
+        };
+
         // Sparkline-resolution (80-sample) — used by DiagnosticsPanel sparklines
         this.sp = {
             manifested: new RingBuffer(80),
@@ -190,8 +208,31 @@ export class TelemetryHub {
 
         this.s0.audit = audit;
         if (audit) {
-            this.ebDiff.push((audit.EFieldEnergy || 0) - (audit.BFieldEnergy || 0));
+            const eF  = audit.EFieldEnergy || audit.eFieldEnergy || 0;
+            const bF  = audit.BFieldEnergy || audit.bFieldEnergy || 0;
+            const px  = audit.totalPoynting?.x ?? audit.poyntingX ?? 0;
+            const py  = audit.totalPoynting?.y ?? audit.poyntingY ?? 0;
+            const pz  = audit.totalPoynting?.z ?? audit.poyntingZ ?? 0;
+            const pMag = Math.sqrt(px * px + py * py + pz * pz);
+
+            this.ebDiff.push(eF - bF);
             this.gauss.push(audit.gaussViolation || 0);
+
+            // Per-field trend buffers (drive diagnostics table sparklines)
+            this.aud.fieldEnergy.push(       audit.fieldEnergy        || 0);
+            this.aud.waveEnergy.push(        audit.waveEnergy         || 0);
+            this.aud.particleKE.push(        audit.particleKE         || 0);
+            this.aud.coulombPE.push(         audit.coulombPE          || 0);
+            this.aud.eFieldEnergy.push(      eF);
+            this.aud.bFieldEnergy.push(      bF);
+            this.aud.poyntingMag.push(       pMag);
+            this.aud.maxGaussError.push(     audit.maxGaussError      || 0);
+            this.aud.selfFieldInjection.push(audit.selfFieldInjection || 0);
+            this.aud.eLeftEnergy.push(       audit.ELTotal || audit.eLTotal || 0);
+            this.aud.eRightEnergy.push(      audit.ERTotal || audit.eRTotal || 0);
+            this.aud.chirality.push(         audit.chiralityTotal     || 0);
+            this.aud.waveLeft.push(          audit.wvLTotal           || 0);
+            this.aud.waveRight.push(         audit.wvRTotal           || 0);
         }
         return audit;
     }
@@ -369,6 +410,7 @@ export class TelemetryHub {
                     this.positive, this.negative, this.charges,
                     this.ebDiff, this.gauss,
                     ...Object.values(this.sp),
+                    ...Object.values(this.aud),
                     ...Object.values(this.lag),
                 ]) b.clear();
                 this.s0 = { diag: null, audit: null, lagrangian: null };
