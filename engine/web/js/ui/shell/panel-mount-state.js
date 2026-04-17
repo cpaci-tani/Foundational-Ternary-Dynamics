@@ -6,7 +6,7 @@
 
 const VALID_MOUNTS = Object.freeze(['left', 'bottom', 'right']);
 const STORAGE_KEY = 'ftd.panel.mount';
-const DEFAULT_MOUNT = 'bottom';
+const DEFAULT_MOUNT = 'right'; // 'bottom' reserved for mobile sheet only
 
 export function isValidMount(value) {
     return typeof value === 'string' && VALID_MOUNTS.includes(value);
@@ -52,6 +52,6 @@ export function getSideMountMinWidth() {
  */
 export function resolveEffectiveMount(storedMount, viewportWidth) {
     const side = storedMount === 'left' || storedMount === 'right';
-    if (side && viewportWidth < getSideMountMinWidth()) return DEFAULT_MOUNT;
+    if (side && viewportWidth < getSideMountMinWidth()) return 'bottom'; // mobile sheet
     return isValidMount(storedMount) ? storedMount : DEFAULT_MOUNT;
 }

@@ -13,8 +13,8 @@
 
 :root {
     --panel-mount-gap: 12px;
-    --panel-width-left: 380px;
-    --panel-width-right: 380px;
+    --panel-width-left: clamp(380px, 25vw, 520px);
+    --panel-width-right: clamp(380px, 25vw, 520px);
     --viewport-safe-left: 0px;
     --viewport-safe-right: 0px;
 }
@@ -26,11 +26,12 @@
 }
 
 /* ── Left mount ───────────────────────────────────────────────────────── */
+/* Icon rail sits at the far-left edge; panel opens to the right of the rail. */
 html[data-panel-mount="left"] #panel-area {
     position: fixed;
     top: var(--panel-mount-top-offset);
     bottom: var(--panel-mount-bottom-offset);
-    left: var(--panel-mount-gap);
+    left: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
     right: auto;
     transform: none;
     width: var(--panel-width-left);
@@ -43,11 +44,12 @@ html[data-panel-mount="left"] #panel-area {
 }
 
 /* ── Right mount ──────────────────────────────────────────────────────── */
+/* Icon rail sits at the far-right edge; panel opens to the left of the rail. */
 html[data-panel-mount="right"] #panel-area {
     position: fixed;
     top: var(--panel-mount-top-offset);
     bottom: var(--panel-mount-bottom-offset);
-    right: var(--panel-mount-gap);
+    right: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
     left: auto;
     transform: none;
     width: var(--panel-width-right);
@@ -110,12 +112,13 @@ html[data-panel-mount="right"] #tab-bar::-webkit-scrollbar {
     display: none;
 }
 
+/* Rail anchors to the outer viewport edge and stays visible even when collapsed */
 html[data-panel-mount="left"] #tab-bar {
-    left: calc(var(--panel-mount-gap) + var(--panel-width-left) + 6px);
+    left: var(--panel-mount-gap);
 }
 
 html[data-panel-mount="right"] #tab-bar {
-    right: calc(var(--panel-mount-gap) + var(--panel-width-right) + 6px);
+    right: var(--panel-mount-gap);
 }
 
 /* Make the inner strip vertical too */
@@ -169,13 +172,16 @@ html[data-panel-mount="right"] #tab-bar .tab.active {
     border-color: var(--accent);
 }
 
-/* Collapse toggle at the bottom of the rail */
+/* Collapse toggle pinned to the top of the rail */
 html[data-panel-mount="left"] #tab-bar #btn-panel-toggle,
 html[data-panel-mount="right"] #tab-bar #btn-panel-toggle {
-    margin-top: auto;
+    order: -1;             /* flex first regardless of DOM order */
+    margin-top: 0;
+    margin-bottom: 0;
     margin-left: 0;
     border-left: none;
-    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);   /* separator below collapse btn */
+    border-top: none;
     width: 36px;
     height: 36px;
     padding: 0;
