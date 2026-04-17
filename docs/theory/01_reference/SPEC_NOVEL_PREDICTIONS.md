@@ -22,11 +22,11 @@ These are the sharpest claims FTD makes---specific numerical values derived from
 
 | Property | Value |
 |----------|-------|
-| **FTD formula** | $x^2 - 16G^{*2}x + 16G^{*3} = 0$, where $G^* = \varpi/\sqrt{\pi/4}$; $x_+ = 1/\alpha$ |
+| **FTD formula** | $x^2 - 16G^{*2}x + 16G^{*3} = 0$, where $G^* = \varpi/\sqrt{\pi/4}$; $x_+ = 1/\alpha$ **[SELECTION, SP4]** |
 | **FTD value** | $1/\alpha = 137.0361714582\ldots$ |
 | **CODATA 2022** | $1/\alpha = 137.035999177(21)$ |
 | **Discrepancy** | 1.26 ppm |
-| **Epistemic status** | **[THEOREM]** (conditional on selection principles SP1-SP4) |
+| **Epistemic status** | **[SELECTION]** (SP4). Upgrade path to conditional [THEOREM] via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) (Wilson two-phase + UV rigidity), conditional on standard lattice-QED continuum-limit recovery. Math chain (SP1-SP3) is [THEOREM]; SP4 is the physical identification. |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $\alpha$ was measured in 1947. The derivation was constructed after the value was known. |
 
 The tree-level value $x_+ = 137.036\ldots$ emerges from the master quadratic with coefficient 16 (lattice degrees of freedom) and $G^{*2}, G^{*3}$ (lemniscatic constant squared and cubed). The 4-term precision formula using $\varepsilon = e^\pi - \pi - 20$ and rational coefficients from $\{3, 4, 7, 13\}$ matches CODATA to $< 0.001$ ppt, but that formula is classified **[SELECTION]** (the coefficient identifications are argued, not proven unique).
