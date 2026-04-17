@@ -498,6 +498,46 @@ export class MockBridge {
 
     run(n) { for (let i = 0; i < n; i++) this.tick(); }
 
+    // ── Snapshot / load hooks for the playback TimelineBuffer ───────
+    // Read methods return fresh copies (snapshots must survive past the next tick).
+    getScale0LatticeBuffer() {
+        return this._stateGrid ? new Int8Array(this._stateGrid) : null;
+    }
+    getScale0FluxBuffer() {
+        return this._fluxJ ? new Float32Array(this._fluxJ) : null;
+    }
+    getScale0WaveBuffer() {
+        return this._fluxWV ? new Float32Array(this._fluxWV) : null;
+    }
+    getScale0ParticleList() {
+        return Array.isArray(this._particles) ? this._particles.map((p) => ({ ...p })) : [];
+    }
+
+    // Write methods copy into existing buffers so array identity is preserved
+    // (cached indices elsewhere in the engine stay valid).
+    setScale0LatticeBuffer(buf) {
+        if (!this._stateGrid || !buf || buf.length !== this._stateGrid.length) return;
+        this._stateGrid.set(buf);
+        // Invalidate per-tick caches that depend on state.
+        this._energyCacheTick = -1;
+    }
+    setScale0FluxBuffer(buf) {
+        if (!this._fluxJ || !buf || buf.length !== this._fluxJ.length) return;
+        this._fluxJ.set(buf);
+        this._energyCacheTick = -1;
+    }
+    setScale0WaveBuffer(buf) {
+        if (!this._fluxWV || !buf || buf.length !== this._fluxWV.length) return;
+        this._fluxWV.set(buf);
+        this._energyCacheTick = -1;
+    }
+    setScale0Tick(t) {
+        if (typeof t === 'number' && isFinite(t)) this._tick = t | 0;
+    }
+    setScale0ParticleList(list) {
+        if (Array.isArray(list)) this._particles = list.map((p) => ({ ...p }));
+    }
+
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
         this._tick = 0;
@@ -4922,6 +4962,49 @@ function createScale0Capabilities(bridge) {
         setupScenario: (name) => bridge.setupScenario(name),
         setToggle: (key, value) => bridge.setToggle?.(key, value),
         get latticeSize() { return bridge.latticeSize || 32; },
+
+        /**
+         * Readback current lattice state + flux into plain typed arrays plus
+         * particle list and an audit scalar snapshot. Used by the TimelineBuffer.
+         * Returns null if the bridge lacks full readback.
+         */
+        getScale0Snapshot: () => {
+            const N = bridge.latticeSize || 32;
+            const lattice = bridge.getScale0LatticeBuffer?.();
+            const flux    = bridge.getScale0FluxBuffer?.();
+            const wave    = bridge.getScale0WaveBuffer?.();
+            const particles = bridge.getScale0ParticleList?.() || [];
+            if (!lattice || !flux) return null;
+            return {
+                tick: bridge.getDiagnostics?.().tick ?? 0,
+                ts: performance.now(),
+                lod: 0,
+                N,
+                lattice,
+                flux,
+                wave,
+                particles,
+                audit: bridge.getDiagnostics?.() ?? {},
+            };
+        },
+
+        /**
+         * Write a LOD-0 snapshot back into the engine. Snapshots at lower LOD
+         * cannot be loaded. Returns true on success, false if the bridge does
+         * not expose the corresponding write APIs.
+         */
+        loadScale0Snapshot: (snap) => {
+            if (!snap || snap.lod !== 0) return false;
+            const write     = bridge.setScale0LatticeBuffer?.bind(bridge);
+            const writeFlux = bridge.setScale0FluxBuffer?.bind(bridge);
+            if (!write || !writeFlux) return false;
+            write(snap.lattice);
+            writeFlux(snap.flux);
+            if (snap.wave && bridge.setScale0WaveBuffer) bridge.setScale0WaveBuffer(snap.wave);
+            if (bridge.setScale0Tick) bridge.setScale0Tick(snap.tick);
+            if (bridge.setScale0ParticleList) bridge.setScale0ParticleList(snap.particles);
+            return true;
+        },
     };
 }
 
