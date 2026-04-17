@@ -121,7 +121,10 @@ export class StackedAreaChart {
             yColumns.push(col.slice());
         }
 
-        this.uplot.setData([xs, ...yColumns], false);
+        // Pass `true` so uPlot recomputes scale min/max on each update; with
+        // a streaming ring buffer the range changes constantly and skipping
+        // the recompute leaves the chart blank.
+        this.uplot.setData([xs, ...yColumns], true);
     }
 
     destroy() {
