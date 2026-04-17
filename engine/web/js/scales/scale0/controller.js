@@ -31,7 +31,9 @@ import { Scale0ControlsComponent } from './ui/controls/component.js?v=3';
 import { wireScale0Controls } from './ui/controls/wire.js?v=2';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 import { MemoryRecorder } from './timeline/memory-recorder.js';
+import { RenderController } from './timeline/render-controller.js';
 import { ScrubBarComponent } from '../../ui/components/scrub-bar/component.js';
+import { RenderChipComponent } from '../../ui/components/render-chip/component.js';
 
 const state = getScale0State();
 
@@ -60,6 +62,29 @@ export function resetScale0MemoryBudget(totalBytes) {
 }
 
 let _scrubBar = null;
+
+// ── Render mode ──────────────────────────────────────────────────────
+const DEFAULT_RENDER_BYTES = 20 * 1024 * 1024; // ~40% of default 50 MB cap
+let _renderController = null;
+let _renderChip = null;
+
+export function startScale0Render(ctx, seconds = 30) {
+    if (_renderController?.running) return;
+    const latticeN = ctx.bridge.latticeSize || 32;
+    _renderController = new RenderController({
+        budgetBytes: DEFAULT_RENDER_BYTES,
+        latticeN,
+        scale0Caps: ctx.bridge.capabilities.scale0,
+    });
+    _renderChip?.bindController(_renderController);
+    _renderController.start(seconds);
+}
+
+export function cancelScale0Render() {
+    _renderController?.cancel();
+}
+
+export function getScale0RenderController() { return _renderController; }
 
 /**
  * Restore the engine state to the closest LOD-0 snapshot at or before `tick`,
@@ -121,20 +146,32 @@ export function bindUI(ctx) {
     getMemoryRecorder(ctx.bridge.latticeSize || 32);
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;
 
-    // Mount the floating scrub bar inside the viewport.
-    if (!_scrubBar) {
-        const viewportEl = document.getElementById('viewport');
-        if (viewportEl) {
-            _scrubBar = new ScrubBarComponent(viewportEl, {
-                getMemoryBuffer: () => _memoryRecorder?.buffer ?? null,
-                getRenderBuffer: () => null, // Task 14 wires this
-                getNowTick:      () => ctx.bridge.capabilities.scale0.getScale0Diagnostics?.()?.tick ?? 0,
-                onScrub:         (tick) => hydrateToTick(ctx, tick),
-                onScrubEnd:      () => resumeLive(),
-                onRender:        (_seconds) => { /* Task 14 wires this */ },
-            }).mount();
-        }
+    // Mount the floating scrub bar + render chip inside the viewport.
+    const viewportEl = document.getElementById('viewport');
+    if (viewportEl && !_scrubBar) {
+        _scrubBar = new ScrubBarComponent(viewportEl, {
+            getMemoryBuffer: () => _memoryRecorder?.buffer ?? null,
+            getRenderBuffer: () => _renderController?.buffer ?? null,
+            getNowTick:      () => ctx.bridge.capabilities.scale0.getScale0Diagnostics?.()?.tick ?? 0,
+            onScrub:         (tick) => hydrateToTick(ctx, tick),
+            onScrubEnd:      () => resumeLive(),
+            onRender:        (seconds) => startScale0Render(ctx, seconds),
+        }).mount();
     }
+    if (viewportEl && !_renderChip) {
+        _renderChip = new RenderChipComponent(viewportEl, {
+            onCancel: () => cancelScale0Render(),
+        }).mount();
+    }
+}
+
+// ── Test hooks (see design spec §Testing). Also convenient for console. ─
+if (typeof window !== 'undefined') {
+    window.__ftdStartRender = (seconds = 5) => {
+        const ctx = window.__ftdCtx;
+        if (ctx) startScale0Render(ctx, seconds);
+    };
+    window.__ftdCancelRender = () => cancelScale0Render();
 }
 
 export function enter(_ctx, _options = {}) {}
