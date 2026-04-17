@@ -8,7 +8,7 @@
 
 import { createBridge, MockBridge } from './wasm-bridge-dag.js';
 import { tryNativeBridge } from './ws-bridge.js';
-import { Viewport } from './viewport.js?v=q3';
+import { Viewport } from './viewport.js?v=q4';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { DiagnosticsPanel, Sparkline } from './diagnostics.js';
 import { LagrangianChart } from './lagrangian.js';
@@ -65,6 +65,7 @@ let inspector = null;
 let inspectorRuntime = null;
 let diagnostics = null;
 let diagnosticsPanel = null;
+let chartsPanel = null;
 let fluxEnergyChart = null;
 let particleChart = null;
 let lagrangianChart = null;
@@ -74,7 +75,22 @@ let chartGauss = null;
 let chartEntropy = null;
 let peTelemetry = null;
 
+// Two-tier pause system:
+//   `running`         — GLOBAL pause. When false, the entire RAF body is skipped:
+//                       no physics, no rendering work, no flux mock animation.
+//                       The single source of truth for "is anything moving?".
+//   `scenarioRunning` — SCENARIO pause. When false but `running` is true, the
+//                       scenario tick (mainScale0.tickScale0 / peTick / aeTick)
+//                       is skipped, but the flux mock continues animating and
+//                       overlays/render continue updating. Lets the user freeze
+//                       scenario-specific dynamics while watching residual field
+//                       motion. Cannot be ON when `running` is OFF.
+//   `globalTick`      — wall-clock frame counter that advances every animate()
+//                       call where `running` is true. Independent of scenario
+//                       ticks (which throttle, can advance multiple per frame).
 let running = false;
+let scenarioRunning = true;
+let globalTick = 0;
 let ticksPerFrame = 1;
 let _tickAccumulator = 0; // accumulates fractional ticks for sub-1 speed
 let activeTab = 'controls';
@@ -155,6 +171,7 @@ function _makeCtx() {
         get inspector() { return inspector; },
         get diagnostics() { return diagnostics; },
         get diagnosticsPanel() { return diagnosticsPanel; },
+        get chartsPanel() { return chartsPanel; },
         get fluxEnergyChart() { return fluxEnergyChart; },
         get particleChart() { return particleChart; },
         get lagrangianChart() { return lagrangianChart; },
@@ -166,6 +183,11 @@ function _makeCtx() {
         get telemetryHub() { return telemetryHub; },
         get running() { return running; },
         set running(v) { running = v; },
+        // Scenario pause is a sub-state of global pause. When global is off,
+        // scenarioRunning effectively reads as false even if its raw value is true.
+        get scenarioRunning() { return running && scenarioRunning; },
+        set scenarioRunning(v) { scenarioRunning = !!v; updateScenarioPlayButton(); },
+        get globalTick() { return globalTick; },
         get ticksPerFrame() { return ticksPerFrame; },
         get engineMode() { return engineMode; },
         get activeTab() { return activeTab; },
@@ -335,6 +357,7 @@ const _dom = {
 
 function _cacheDOM() {
     _dom.statusTick = document.getElementById('status-tick');
+    _dom.statusGlobalTick = document.getElementById('status-global-tick');
     _dom.statusPtime = document.getElementById('status-ptime');
     _dom.statusParticles = document.getElementById('status-particles');
     _dom.statusEnergy = document.getElementById('status-energy');
@@ -479,7 +502,7 @@ async function init() {
     _loadProgress(50, 'Creating panels...');
     // Initialize panel component wrappers (Phase 4)
     diagnosticsPanel = initDiagnosticsPanel();
-    initChartsPanel();
+    chartsPanel = initChartsPanel();
     initLagrangianPanel();
     initConsciousnessPanel();
     diagnostics = new DiagnosticsPanel();
@@ -577,6 +600,11 @@ async function init() {
 function animate(now) {
     requestAnimationFrame(animate);
 
+    // Global tick = wall-clock frames since global play resumed. Always advances
+    // when global is running, regardless of scenario pause or per-scale tick
+    // throttling. Updated to the status bar at the same cadence as FPS.
+    if (running) globalTick++;
+
     if (engineMode === 'meta') {
         Scale6Controller.updateMeta(_makeCtx(), 1 / 60);
     } else if (engineMode === 'cosmic') {
@@ -605,6 +633,8 @@ function animate(now) {
         frameCount = 0;
         lastFpsTime = now;
         if (_dom.statusFps) _dom.statusFps.textContent = fpsDisplay;
+        // Global tick refreshed at FPS cadence (no need to write to DOM 60×/s).
+        if (_dom.statusGlobalTick) _dom.statusGlobalTick.textContent = globalTick;
     }
 }
 
@@ -684,6 +714,12 @@ function populateConstants() {
 function wireToolbar() {
     // Play/Pause
     document.getElementById('btn-play').addEventListener('click', togglePlay);
+    // Scenario Play/Pause — independent of global pause (button is disabled
+    // when global is off; see updateScenarioPlayButton).
+    const scenBtn = document.getElementById('btn-scenario-play');
+    if (scenBtn) scenBtn.addEventListener('click', toggleScenarioPlay);
+    // Initial sync (so disabled state shows on load before user clicks anything).
+    updateScenarioPlayButton();
 
     // Step
     document.getElementById('btn-step').addEventListener('click', () => {
@@ -1176,7 +1212,9 @@ function wireKeyboard() {
         switch (e.key.toLowerCase()) {
             case ' ':
                 e.preventDefault();
-                togglePlay();
+                // Shift+Space toggles scenario pause; plain Space toggles global.
+                if (e.shiftKey) toggleScenarioPlay();
+                else togglePlay();
                 break;
             case 's':
                 running = false;
@@ -1594,12 +1632,43 @@ function buildScale3MoleculeDropdown() {
 function togglePlay() {
     running = !running;
     updatePlayButton();
+    // The scenario button's enabled-state depends on global pause; refresh it
+    // so users immediately see whether they can toggle scenario independently.
+    updateScenarioPlayButton();
+}
+
+function toggleScenarioPlay() {
+    // Scenario play is meaningless when global is paused — silently no-op so
+    // the click doesn't visually flicker the icon.
+    if (!running) return;
+    scenarioRunning = !scenarioRunning;
+    updateScenarioPlayButton();
 }
 
 function updatePlayButton() {
     const btn = document.getElementById('btn-play');
+    if (!btn) return;
     btn.classList.toggle('active', running);
     btn.innerHTML = running ? '&#9646;&#9646;' : '&#9654;';
+}
+
+function updateScenarioPlayButton() {
+    const btn = document.getElementById('btn-scenario-play');
+    if (!btn) return;
+    // Effective state: scenario only "plays" if BOTH globals running AND scenario
+    // toggle is on. When global is off, force the visual to "paused" + disabled.
+    const effective = running && scenarioRunning;
+    btn.classList.toggle('active', effective);
+    btn.disabled = !running;
+    btn.style.opacity = running ? '' : '0.45';
+    btn.style.cursor = running ? '' : 'not-allowed';
+    // Outline triangle (▷) when scenario-paused, double-bar (⏸) when running.
+    btn.innerHTML = effective ? '&#9646;&#9646;' : '&#9655;';
+    btn.title = !running
+        ? 'Scenario pause is disabled while global pause is on (Space to resume global)'
+        : (effective
+            ? 'Pause scenario dynamics (Shift+Space) — flux/field will continue evolving'
+            : 'Resume scenario dynamics (Shift+Space)');
 }
 
 function clearCharts() {
