@@ -88,8 +88,18 @@
         <nav id="toolbar" aria-label="Simulation controls">
             <h1 class="brand">FTD Engine <span>v2.14</span></h1>
             <div class="tb-group">
-                <button class="tb-btn" id="btn-play" title="Global Play / Pause (Space) — pauses ALL state including flux/field motion">&#9654;</button>
-                <button class="tb-btn" id="btn-scenario-play" title="Scenario Play / Pause (Shift+Space) — freezes scenario dynamics (particles, atoms, scenario-driven forcing); base wave/EM physics (electricity) keeps running">&#9655;</button>
+                <div class="tb-btn-labeled">
+                    <button class="tb-btn tb-btn-global" id="btn-play"
+                        title="Global Play / Pause (Space) — freezes the whole simulation, including visualization."
+                        aria-label="Global play/pause">&#9654;</button>
+                    <span class="tb-btn-label">global</span>
+                </div>
+                <div class="tb-btn-labeled">
+                    <button class="tb-btn tb-btn-local" id="btn-local-play"
+                        title="Local Play / Pause (Shift+Space) — freezes scenario physics only; overlays + render continue."
+                        aria-label="Local play/pause">&#9655;</button>
+                    <span class="tb-btn-label">local</span>
+                </div>
                 <button class="tb-btn" id="btn-step" title="Step (S)">&#9205;</button>
                 <button class="tb-btn" id="btn-reset" title="Reset (R)">&#8634;</button>
             </div>

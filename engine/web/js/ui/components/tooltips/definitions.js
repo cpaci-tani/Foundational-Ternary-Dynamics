@@ -22,7 +22,8 @@ function normalizeLabel(text) {
 }
 
 const SELECTOR_TOOLTIPS = [
-    ['#btn-play', 'Start or pause the active simulation loop. Keyboard shortcut: Space.'],
+    ['#btn-play',       'Global play/pause. Freezes the whole simulation. Keyboard: Space.'],
+    ['#btn-local-play', 'Local play/pause. Freezes scenario physics; visualization keeps animating. Keyboard: Shift+Space.'],
     ['#btn-step', 'Advance the simulation by exactly one step without entering continuous play mode. Keyboard shortcut: S.'],
     ['#btn-reset', 'Reset the active scale to its current scenario defaults. Keyboard shortcut: R.'],
     ['#engine-mode', 'Choose which simulation scale and renderer stack the dashboard is currently driving.'],
