@@ -158,35 +158,35 @@
 }
 
 .diag-section-title {
-    font-size: var(--fs-sm, 12px);
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin: 0 0 8px;
+    margin: 0 0 10px;
 }
 
 .diag-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: 14px;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
 }
 
 .diag-table thead th {
     text-align: left;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-muted);
-    padding: 4px 8px 6px;
+    padding: 6px 10px 8px;
     border-bottom: 1px solid var(--border);
 }
 
 .diag-table tbody td {
-    padding: 5px 8px;
+    padding: 8px 10px;
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
 }
@@ -208,20 +208,20 @@
 .diag-row-negative .diag-value { color: var(--danger,  #f87171); }
 
 .diag-unit {
-    font-size: 10px;
+    font-size: 12px;
     text-transform: lowercase;
     letter-spacing: 0.04em;
     color: var(--text-muted);
-    width: 40px;
+    width: 48px;
 }
 
 .diag-trend {
-    width: 96px;
+    width: 110px;
     padding-right: 4px;
 }
 .diag-spark-host {
     width: 100%;
-    height: 22px;
+    height: 26px;
     display: block;
 }
 
