@@ -149,8 +149,12 @@
 
 .diag-scale0-root {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--sp-xl);
+}
+
+@media (max-width: 720px) {
+    .diag-scale0-root { grid-template-columns: 1fr; }
 }
 
 .diag-section-title {
