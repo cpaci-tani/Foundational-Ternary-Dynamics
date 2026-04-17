@@ -151,3 +151,43 @@ html[data-panel-mount="right"] #tab-bar #btn-panel-toggle {
     border-top: 1px solid var(--border);
     width: 100%;
 }
+
+/* ── Horizontal resizer (side-mount only) ───────────────────────────── */
+#panel-mount-resizer {
+    display: none;
+    position: fixed;
+    top: var(--panel-mount-top-offset);
+    bottom: var(--panel-mount-bottom-offset);
+    width: 10px;
+    cursor: ew-resize;
+    z-index: calc(var(--z-panel) + 1);
+    background: transparent;
+}
+
+html[data-panel-mount="left"] #panel-mount-resizer {
+    display: block;
+    left: calc(var(--panel-mount-gap) + var(--panel-width-left) - 2px);
+}
+
+html[data-panel-mount="right"] #panel-mount-resizer {
+    display: block;
+    right: calc(var(--panel-mount-gap) + var(--panel-width-right) - 2px);
+}
+
+#panel-mount-resizer::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 56px;
+    border-radius: 999px;
+    background: var(--border);
+    transition: background var(--dur-fast) var(--ease-out);
+}
+
+#panel-mount-resizer:hover::after,
+#panel-mount-resizer.is-dragging::after {
+    background: var(--accent);
+}
