@@ -25,6 +25,10 @@ export function createScrubBarTemplate() {
             <div class="scrub-bar-playhead"></div>
         </div>
         <span class="scrub-bar-time" aria-live="polite">now</span>
+        <button class="scrub-bar-btn scrub-bar-render-btn"
+                type="button" title="Render next 30 seconds" aria-label="Render scenario">
+            &#9679;<span class="scrub-bar-render-label">Render</span>
+        </button>
         <button class="scrub-bar-btn scrub-bar-settings"
                 type="button" title="Timeline settings" aria-label="Timeline settings">
             &#9881;&#xFE0E;
