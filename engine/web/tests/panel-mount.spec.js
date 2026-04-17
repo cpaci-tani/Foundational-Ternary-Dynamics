@@ -236,58 +236,30 @@ test('keyboard shortcuts change the mount', async ({ page }) => {
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
 
-test('side-mount exposes a horizontal resizer on the inner edge', async ({ page }) => {
+test('side-mount collapse hides panel-area but keeps tab rail visible', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(800);
 
-    const info = await page.evaluate(async () => {
+    const result = await page.evaluate(async () => {
         const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
         writePanelMount('left');
         await new Promise((r) => requestAnimationFrame(r));
-        const resizer = document.getElementById('panel-mount-resizer');
-        const cs = resizer ? getComputedStyle(resizer) : null;
-        const snap = cs ? { cursor: cs.cursor, display: cs.display } : null;
+
+        // Collapse via the toggle button
+        document.getElementById('btn-panel-toggle')?.click();
+        await new Promise((r) => requestAnimationFrame(r));
+
+        const panelDisplay = getComputedStyle(document.getElementById('panel-area')).display;
+        const tabDisplay   = getComputedStyle(document.getElementById('tab-bar')).display;
+
         writePanelMount('bottom');
-        return resizer && snap
-            ? { exists: true, cursor: snap.cursor, display: snap.display }
-            : { exists: false };
+        return { panelDisplay, tabDisplay };
     });
 
-    expect(info.exists).toBe(true);
-    expect(info.cursor).toBe('ew-resize');
-    expect(info.display).not.toBe('none');
-});
+    expect(result.panelDisplay).toBe('none');
+    expect(result.tabDisplay).not.toBe('none');
 
-test('dragging the horizontal resizer updates --panel-width-left', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/');
-    await page.waitForTimeout(2000);
-
-    const width = await page.evaluate(async () => {
-        const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
-        writePanelMount('left');
-        await new Promise((r) => requestAnimationFrame(r));
-
-        const resizer = document.getElementById('panel-mount-resizer');
-        const rect = resizer.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-
-        resizer.dispatchEvent(new MouseEvent('mousedown', { clientX: cx, clientY: cy, bubbles: true }));
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: cx + 140, clientY: cy, bubbles: true }));
-        document.dispatchEvent(new MouseEvent('mouseup',  { clientX: cx + 140, clientY: cy, bubbles: true }));
-
-        await new Promise((r) => requestAnimationFrame(r));
-        return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--panel-width-left'));
-    });
-
-    expect(width).toBeGreaterThan(420);
-
-    await page.evaluate(() => {
-        localStorage.removeItem('ftd.panel.mount');
-        localStorage.removeItem('ftd.panel.width.left');
-        localStorage.removeItem('ftd.panel.width.right');
-    });
+    await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
 
 test('bottom mount sets both safe-edge vars to 0px', async ({ page }) => {
