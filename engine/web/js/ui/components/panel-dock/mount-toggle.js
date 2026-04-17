@@ -2,6 +2,8 @@ import {
     readPanelMount,
     writePanelMount,
     getValidMounts,
+    resolveEffectiveMount,
+    getSideMountMinWidth,
 } from '../../shell/panel-mount-state.js';
 
 const GLYPHS = Object.freeze({
@@ -53,6 +55,7 @@ export class MountToggleComponent {
         this.root = root;
         this._keydown = this._keydown.bind(this);
         this._click = this._click.bind(this);
+        this._onResize = this._onResize.bind(this);
     }
 
     init() {
@@ -69,15 +72,21 @@ export class MountToggleComponent {
 
         this.root.addEventListener('click', this._click);
         window.addEventListener('keydown', this._keydown);
+        window.addEventListener('resize', this._onResize);
         const current = readPanelMount();
-        updateSafeEdges(current);
-        this._sync(current);
+        const effective = resolveEffectiveMount(current, window.innerWidth);
+        if (effective !== current) {
+            document.documentElement.dataset.panelMount = effective;
+        }
+        updateSafeEdges(effective);
+        this._sync(effective);
+        this._updateDisabledState();
         return this;
     }
 
     _click(event) {
         const btn = event.target.closest('button[data-mount]');
-        if (!btn) return;
+        if (!btn || btn.getAttribute('aria-disabled') === 'true') return;
         this._apply(btn.dataset.mount);
     }
 
@@ -85,14 +94,25 @@ export class MountToggleComponent {
         if (!event.ctrlKey || !event.shiftKey) return;
         const mount = SHORTCUT_MAP[event.key];
         if (!mount) return;
+        const effective = resolveEffectiveMount(mount, window.innerWidth);
         event.preventDefault();
-        this._apply(mount);
+        this._apply(effective);
+    }
+
+    _onResize() {
+        const stored = readPanelMount();
+        const effective = resolveEffectiveMount(stored, window.innerWidth);
+        document.documentElement.dataset.panelMount = effective;
+        updateSafeEdges(effective);
+        this._sync(effective);
+        this._updateDisabledState();
     }
 
     _apply(mount) {
         const next = writePanelMount(mount);
         updateSafeEdges(next);
         this._sync(next);
+        this._updateDisabledState();
         this.root.dispatchEvent(new CustomEvent('mountchange', {
             detail: { mount: next },
             bubbles: true,
@@ -104,6 +124,20 @@ export class MountToggleComponent {
             const pressed = btn.dataset.mount === active;
             btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
             btn.classList.toggle('is-active', pressed);
+        });
+    }
+
+    _updateDisabledState() {
+        const tooNarrow = window.innerWidth < getSideMountMinWidth();
+        this.root.querySelectorAll('button[data-mount]').forEach((btn) => {
+            const isSide = btn.dataset.mount === 'left' || btn.dataset.mount === 'right';
+            if (isSide && tooNarrow) {
+                btn.setAttribute('aria-disabled', 'true');
+                btn.setAttribute('tabindex', '-1');
+            } else {
+                btn.removeAttribute('aria-disabled');
+                btn.setAttribute('tabindex', '0');
+            }
         });
     }
 }
