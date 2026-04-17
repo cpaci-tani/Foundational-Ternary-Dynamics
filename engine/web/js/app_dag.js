@@ -1,7 +1,8 @@
 /**
- * FTD Web Dashboard — Main Application Controller
+ * @file app_dag.js
+ * @brief FTD Web Dashboard — Main Application Controller
  *
- * Initializes all subsystems, manages the frame loop,
+ * [EXTENDED] Initializes all subsystems, manages the frame loop,
  * and wires up UI controls to the simulation bridge.
  */
 
@@ -63,6 +64,7 @@ let appShell = null;
 let inspector = null;
 let inspectorRuntime = null;
 let diagnostics = null;
+let diagnosticsPanel = null;
 let fluxEnergyChart = null;
 let particleChart = null;
 let lagrangianChart = null;
@@ -152,6 +154,7 @@ function _makeCtx() {
         get appShell() { return appShell; },
         get inspector() { return inspector; },
         get diagnostics() { return diagnostics; },
+        get diagnosticsPanel() { return diagnosticsPanel; },
         get fluxEnergyChart() { return fluxEnergyChart; },
         get particleChart() { return particleChart; },
         get lagrangianChart() { return lagrangianChart; },
@@ -475,7 +478,7 @@ async function init() {
 
     _loadProgress(50, 'Creating panels...');
     // Initialize panel component wrappers (Phase 4)
-    initDiagnosticsPanel();
+    diagnosticsPanel = initDiagnosticsPanel();
     initChartsPanel();
     initLagrangianPanel();
     initConsciousnessPanel();

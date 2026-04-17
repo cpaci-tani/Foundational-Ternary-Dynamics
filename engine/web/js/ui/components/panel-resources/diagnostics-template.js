@@ -1,9 +1,14 @@
 export function getDiagnosticsPanelTemplate() {
     return `
         <div class="panel" id="panel-diagnostics">
-            <!-- Scale 0: Complete Telemetry — compact 2-column list -->
-            <div class="scale0-only diag-s0-grid">
-                <!-- Left Column -->
+            <!-- Scale 0 tables are now rendered by DiagnosticsPanelComponent
+                 from descriptors/scale0.js. The old inline markup has been
+                 removed (panels redesign 2026-04). -->
+            <!-- Legacy Scale 0 block kept hidden for the status-bar-driving
+                 ctx.diagnostics object which reads these IDs; it silently
+                 no-ops on missing elements. Reintroduce only if you need
+                 the IDs. -->
+            <div class="scale0-only diag-s0-grid" style="display:none" hidden>
                 <div>
                     <div class="combo-section-label">Particle State</div>
                     <div class="inspector-grid">
