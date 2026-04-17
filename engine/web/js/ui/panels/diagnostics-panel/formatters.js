@@ -12,7 +12,9 @@
 const DASH = '\u2014';
 
 function formatScalar(v) {
-    if (v === null || v === undefined || Number.isNaN(v)) return DASH;
+    // Missing / not-yet-populated → render as 0 so the row is always "wired"
+    if (v === null || v === undefined) return '0';
+    if (typeof v !== 'number' || Number.isNaN(v)) return DASH;
     if (v === 0) return '0';
     if (Number.isInteger(v) && Math.abs(v) < 1e6) return String(v);
     const abs = Math.abs(v);
