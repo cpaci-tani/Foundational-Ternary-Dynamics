@@ -136,3 +136,14 @@
 .cs-metric-primary   .stat-value { color: var(--consciousness-primary); }
 .cs-metric-secondary .stat-value { color: var(--consciousness-secondary); }
 .cs-metric-domain    .stat-value { font-size: var(--fs-xs); }
+
+/* ── Sidebar (left/right) mount overrides ────────────────────────── */
+html[data-panel-mount="left"] .cs-metrics-row,
+html[data-panel-mount="right"] .cs-metrics-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+html[data-panel-mount="left"] .cs-theory-grid,
+html[data-panel-mount="right"] .cs-theory-grid {
+    grid-template-columns: 1fr;
+}

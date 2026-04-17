@@ -35,6 +35,26 @@
     --sp-lg:    calc(16px * var(--ui-scale));
     --sp-xl:    calc(20px * var(--ui-scale));
 
+    /* ── Global spacing policy ─────────────────────────────────
+       Every interactive control MUST meet these minimums. Panel
+       and component CSS may INCREASE these but must never go
+       below them. Stay on the --ctrl-* / --row-* / --sec-*
+       tokens — do not hardcode pixel values for padding/gap.
+
+       Hierarchy (small -> large):
+         --ctrl-*  : inside a single control (button, input)
+         --row-*   : between controls inside a row
+         --sec-*   : between rows/sections inside a card
+         --card-*  : between cards inside a panel
+       ────────────────────────────────────────────────────────── */
+    --ctrl-pad-y:       var(--sp-sm);   /* min vertical padding inside a control   */
+    --ctrl-pad-x:       var(--sp-md);   /* min horizontal padding inside a control */
+    --ctrl-height-min:  calc(28px * var(--ui-scale)); /* min hit-target height      */
+    --row-gap:          var(--sp-sm);   /* min gap between siblings in a flex row  */
+    --row-pad-y:        var(--sp-xs);   /* min vertical padding of a control row   */
+    --sec-gap:          var(--sp-md);   /* min gap between sections inside a card  */
+    --card-gap:         var(--sp-md);   /* min gap between cards inside a panel    */
+
     /* ╔══════════════════════════════════════════════════════╗
        ║  THEME OVERRIDE SURFACE                              ║
        ║  Themes under css/themes/ MUST redefine every token  ║
@@ -152,6 +172,71 @@
     --consciousness-gold: #ffd700;
 }
 
+/* ╔══════════════════════════════════════════════════════╗
+   ║  GLOBAL CONTROL BASELINE                             ║
+   ║  Enforces the spacing minimums declared in tokens.   ║
+   ║                                                       ║
+   ║  Every button / input / select / textarea picks up    ║
+   ║  these defaults automatically; component CSS can      ║
+   ║  *increase* them but should never reintroduce the     ║
+   ║  old zero-padding browser defaults.                   ║
+   ║                                                       ║
+   ║  Escape hatch: add the class .u-no-baseline to opt    ║
+   ║  out on a single element.                             ║
+   ╚══════════════════════════════════════════════════════╝ */
+button:not(.u-no-baseline),
+input[type="button"]:not(.u-no-baseline),
+input[type="submit"]:not(.u-no-baseline),
+input[type="reset"]:not(.u-no-baseline) {
+    min-height: var(--ctrl-height-min);
+    padding: var(--ctrl-pad-y) var(--ctrl-pad-x);
+}
+
+input[type="text"]:not(.u-no-baseline),
+input[type="number"]:not(.u-no-baseline),
+input[type="search"]:not(.u-no-baseline),
+input[type="email"]:not(.u-no-baseline),
+input[type="password"]:not(.u-no-baseline),
+select:not(.u-no-baseline),
+textarea:not(.u-no-baseline) {
+    min-height: var(--ctrl-height-min);
+    padding: var(--ctrl-pad-y) var(--ctrl-pad-x);
+}
+
+/* Range sliders are the one form control that doesn't get a box —
+   give them a minimum vertical breathing room instead. */
+input[type="range"]:not(.u-no-baseline) {
+    margin: var(--sp-xs) 0;
+}
+
+/* Flex rows of controls: enforce a minimum inter-control gap.
+   Any shared row class can opt in by listing itself here. */
+.ctrl-row,
+.ctrl-slider-row,
+.pe-ctrl-row,
+.combo-btn-row,
+.ctrl-action-row {
+    gap: max(var(--row-gap), var(--sp-sm));
+}
+
+/* Stacked rows inside a card: guarantee breathing room above
+   the next row. Components can still set a tighter margin with
+   .ctrl-row-compact (which deliberately halves the baseline). */
+.ctrl-row + .ctrl-row,
+.pe-ctrl-row + .pe-ctrl-row,
+.ctrl-slider-row + .ctrl-slider-row,
+.combo-btn-row + .combo-btn-row,
+.combo-btn-row + .ctrl-row,
+.ctrl-row + .combo-btn-row {
+    margin-top: var(--row-gap);
+}
+
+/* Section labels inside a card create a visual break; guarantee
+   space above (except when they're the first child of the card). */
+.combo-section-label:not(:first-child) {
+    margin-top: var(--sec-gap);
+}
+
 /* ── Base ──────────────────────────────────────────── */
 html, body {
     height: 100%;
@@ -179,42 +264,42 @@ html[data-theme="parchment"] textarea {
     color-scheme: light;
 }
 
+/* Hide native number spinners — coord-stepper uses custom ▲▼ buttons instead */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     appearance: none;
-    width: 16px;
-    background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%2300e5ff" stroke-width="2"><path d="M16 15l-4-4-4 4"/><path d="M16 9l-4 4-4-4"/></svg>') no-repeat center center;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.2s;
+    margin: 0;
+    width: 0;
 }
-
-input[type="number"]::-webkit-inner-spin-button:hover,
-input[type="number"]::-webkit-outer-spin-button:hover {
-    opacity: 1;
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 /* ── Global Custom Scrollbar ────── */
+/* Thumb and track derive from theme accent/bg tokens so every theme
+   gets a matching scrollbar without any per-theme overrides. */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 ::-webkit-scrollbar-track {
-    background: rgba(10, 15, 26, 0.45);
+    background: var(--bg-input);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 229, 255, 0.2);
+    background: color-mix(in oklch, var(--accent) 28%, transparent);
     border-radius: 4px;
-    border: 1px solid rgba(0, 229, 255, 0.4);
+    border: 1px solid color-mix(in oklch, var(--accent) 45%, transparent);
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 229, 255, 0.5);
+    background: color-mix(in oklch, var(--accent) 58%, transparent);
 }
-::-webkit-resizer {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%2300e5ff" stroke-width="2"><line x1="21" y1="14" x2="14" y2="21"/><line x1="21" y1="8" x2="8" y2="21"/><line x1="21" y1="2" x2="2" y2="21"/></svg>') bottom right no-repeat;
-    opacity: 0.7;
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--accent) 38%, transparent) var(--bg-input);
 }
 
 /* ── Accessibility ────────────────────────────────────── */

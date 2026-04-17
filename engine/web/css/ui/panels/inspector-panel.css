@@ -98,3 +98,19 @@
         justify-content: flex-start;
     }
 }
+
+/* ── Sidebar (left/right) mount overrides ────────────────────────── */
+html[data-panel-mount="left"] .panel-inspector-hero,
+html[data-panel-mount="right"] .panel-inspector-hero {
+    flex-direction: column;
+}
+
+html[data-panel-mount="left"] .panel-inspector-hero-actions,
+html[data-panel-mount="right"] .panel-inspector-hero-actions {
+    justify-content: flex-start;
+}
+
+html[data-panel-mount="left"] .panel-inspector-summary,
+html[data-panel-mount="right"] .panel-inspector-summary {
+    max-width: 100%;
+}

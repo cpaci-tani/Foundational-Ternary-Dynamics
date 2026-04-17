@@ -157,6 +157,28 @@
     .diag-scale0-root { grid-template-columns: 1fr; }
 }
 
+/* Sidebar mounts: 380px panel can't fit two columns of diagnostic tables */
+html[data-panel-mount="left"] .diag-scale0-root,
+html[data-panel-mount="right"] .diag-scale0-root {
+    grid-template-columns: 1fr;
+    gap: var(--sp-md);
+}
+
+html[data-panel-mount="left"] .diag-section-title,
+html[data-panel-mount="right"] .diag-section-title {
+    font-size: 12px;
+}
+
+html[data-panel-mount="left"] .diag-table,
+html[data-panel-mount="right"] .diag-table {
+    font-size: 12px;
+}
+
+html[data-panel-mount="left"] .diag-trend,
+html[data-panel-mount="right"] .diag-trend {
+    width: 80px;
+}
+
 .diag-section-title {
     font-size: 14px;
     font-weight: 600;

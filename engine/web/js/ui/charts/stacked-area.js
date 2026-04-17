@@ -56,7 +56,7 @@ export class StackedAreaChart {
                     show:   !hiddenKeys.has(s.key),
                 })),
             ],
-            legend: { live: true },
+            legend: { show: false },
             hooks: {
                 setSeries: [
                     (u, i) => { if (i >= 1) this._saveHiddenKeys(); },
@@ -74,6 +74,12 @@ export class StackedAreaChart {
             if (w > 0 && h > 0) this.uplot.setSize({ width: w, height: h });
         });
         this._ro.observe(container);
+        container._ftdResize = () => {
+            if (this._destroyed) return;
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            if (w > 0 && h > 0) this.uplot.setSize({ width: w, height: h });
+        };
     }
 
     _emptyData() {

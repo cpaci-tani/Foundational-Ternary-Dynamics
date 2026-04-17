@@ -1,10 +1,11 @@
-import { getLagrangianPanelTemplate } from './template.js?v=2';
+import { getLagrangianPanelTemplate } from './template.js';
 import { StackedAreaChart } from '../../charts/stacked-area.js';
-import { DiagnosticsTable } from '../diagnostics-panel/table.js?v=2';
+import { DiagnosticsTable } from '../diagnostics-panel/table.js';
 import { TermRow } from './term-row.js';
 import { terms, actionRows, constantRows } from './descriptors/scale0.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import * as consts from '../../../constants.js';
+import { attachFullscreen } from '../../charts/chart-fullscreen.js';
 
 const LS_HIDDEN = 'ftd.chart.lagrangian.hidden';
 
@@ -35,6 +36,10 @@ export class LagrangianPanelComponent {
         // can resolve `consts.<NAME>` source paths.
         const hubView = Object.create(telemetryHub);
         hubView.consts = consts;
+
+        // Wire fullscreen expand on the static chart card in the template
+        const lagCard = this.el.querySelector('.chart-card');
+        if (lagCard) attachFullscreen(lagCard);
 
         // Stacked-area chart
         this.chart = new StackedAreaChart(this.el.querySelector('#lag-plot-host'), {
