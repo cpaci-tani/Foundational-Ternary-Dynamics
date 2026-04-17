@@ -1,4 +1,5 @@
 import { readStoredBoolean, writeStoredBoolean } from './layout-state.js';
+import { readPanelMount } from './panel-mount-state.js';
 
 /**
  * Owns tab activation, panel collapse state, and the existing resize handle.
@@ -11,6 +12,7 @@ export class PanelDockController {
         panelArea,
         toggleButton,
         resizeHandle,
+        mountResizeHandle = null,
         compactSelect = null,
         storageKey = 'ftd-panels-collapsed',
         onTabActivated = null,
@@ -21,6 +23,7 @@ export class PanelDockController {
         this.panelArea = panelArea;
         this.toggleButton = toggleButton;
         this.resizeHandle = resizeHandle;
+        this.mountResizeHandle = mountResizeHandle;
         this.compactSelect = compactSelect;
         this.storageKey = storageKey;
         this.onTabActivated = typeof onTabActivated === 'function' ? onTabActivated : null;
@@ -29,8 +32,11 @@ export class PanelDockController {
         this._bound = false;
         this._compactMode = false;
         this._drag = { active: false, startY: 0, startHeight: 0 };
+        this._hdrag = { active: false, startX: 0, startWidth: 0, mount: 'left' };
         this._handleMouseMove = this._handleMouseMove.bind(this);
         this._handleMouseUp = this._handleMouseUp.bind(this);
+        this._handleHMouseMove = this._handleHMouseMove.bind(this);
+        this._handleHMouseUp = this._handleHMouseUp.bind(this);
     }
 
     bind({ initialActiveTab = 'controls' } = {}) {
@@ -41,6 +47,8 @@ export class PanelDockController {
         this._bindCompactSelect();
         this._bindCollapseToggle();
         this._bindResizeHandle();
+        this._bindMountResizeHandle();
+        this._restorePanelWidths();
         this._restoreCollapsedState();
         this.activate(initialActiveTab, { emit: false, autoExpand: false });
     }
@@ -162,6 +170,58 @@ export class PanelDockController {
         this._drag.active = false;
         document.body.style.cursor = '';
         this._notifyViewportResize();
+    }
+
+    _bindMountResizeHandle() {
+        if (!this.mountResizeHandle) return;
+        this.mountResizeHandle.addEventListener('mousedown', (event) => {
+            const mount = readPanelMount();
+            if (mount !== 'left' && mount !== 'right') return;
+            this._hdrag.active = true;
+            this._hdrag.startX = event.clientX;
+            this._hdrag.startWidth = parseFloat(
+                getComputedStyle(document.documentElement).getPropertyValue(`--panel-width-${mount}`)
+            ) || 380;
+            this._hdrag.mount = mount;
+            this.mountResizeHandle.classList.add('is-dragging');
+            document.body.style.cursor = 'ew-resize';
+            event.preventDefault();
+        });
+        document.addEventListener('mousemove', this._handleHMouseMove);
+        document.addEventListener('mouseup', this._handleHMouseUp);
+    }
+
+    _handleHMouseMove(event) {
+        if (!this._hdrag.active) return;
+        const dx = event.clientX - this._hdrag.startX;
+        const signed = this._hdrag.mount === 'left' ? dx : -dx;
+        const next = Math.min(window.innerWidth * 0.5, Math.max(320, this._hdrag.startWidth + signed));
+        document.documentElement.style.setProperty(`--panel-width-${this._hdrag.mount}`, `${Math.round(next)}px`);
+    }
+
+    _handleHMouseUp() {
+        if (!this._hdrag.active) return;
+        this._hdrag.active = false;
+        this.mountResizeHandle.classList.remove('is-dragging');
+        document.body.style.cursor = '';
+        try {
+            const mount = this._hdrag.mount;
+            const value = getComputedStyle(document.documentElement)
+                .getPropertyValue(`--panel-width-${mount}`).trim();
+            localStorage.setItem(`ftd.panel.width.${mount}`, value);
+        } catch (_err) { /* best-effort */ }
+        this._notifyViewportResize();
+    }
+
+    _restorePanelWidths() {
+        try {
+            for (const mount of ['left', 'right']) {
+                const stored = localStorage.getItem(`ftd.panel.width.${mount}`);
+                if (stored && /^\d+(\.\d+)?px$/.test(stored.trim())) {
+                    document.documentElement.style.setProperty(`--panel-width-${mount}`, stored.trim());
+                }
+            }
+        } catch (_err) { /* best-effort */ }
     }
 
     _restoreCollapsedState() {

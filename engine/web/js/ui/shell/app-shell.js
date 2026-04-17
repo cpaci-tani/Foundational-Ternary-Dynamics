@@ -100,6 +100,7 @@ export class AppShell {
                 panelArea: this.getRegion('panels'),
                 toggleButton: document.getElementById('btn-panel-toggle'),
                 resizeHandle: document.getElementById('panel-resizer'),
+                mountResizeHandle: document.getElementById('panel-mount-resizer'),
                 compactSelect: document.getElementById('tab-select-mobile'),
                 onTabActivated,
                 onViewportResize: this.onViewportResize,
