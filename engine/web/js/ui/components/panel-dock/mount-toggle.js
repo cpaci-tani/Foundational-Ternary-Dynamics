@@ -22,6 +22,32 @@ const SHORTCUT_MAP = Object.freeze({
     ArrowRight: 'right',
 });
 
+/**
+ * Updates --viewport-safe-left / --viewport-safe-right on <html> so that any
+ * overlay consumers can inset themselves past the sidebar without hardcoding
+ * the sidebar width.  Called on every mount change and on first init.
+ */
+export function updateSafeEdges(mount) {
+    const root = document.documentElement;
+    const leftW  = parseFloat(root.style.getPropertyValue('--panel-width-left'))  || 380;
+    const rightW = parseFloat(root.style.getPropertyValue('--panel-width-right')) || 380;
+    const gap    = 12;
+    const tabW   = 50; // icon-rail width + gap
+    switch (mount) {
+        case 'left':
+            root.style.setProperty('--viewport-safe-left',  `${leftW + tabW + gap}px`);
+            root.style.setProperty('--viewport-safe-right', '0px');
+            break;
+        case 'right':
+            root.style.setProperty('--viewport-safe-left',  '0px');
+            root.style.setProperty('--viewport-safe-right', `${rightW + tabW + gap}px`);
+            break;
+        default:
+            root.style.setProperty('--viewport-safe-left',  '0px');
+            root.style.setProperty('--viewport-safe-right', '0px');
+    }
+}
+
 export class MountToggleComponent {
     constructor(root) {
         this.root = root;
@@ -43,7 +69,9 @@ export class MountToggleComponent {
 
         this.root.addEventListener('click', this._click);
         window.addEventListener('keydown', this._keydown);
-        this._sync(readPanelMount());
+        const current = readPanelMount();
+        updateSafeEdges(current);
+        this._sync(current);
         return this;
     }
 
@@ -63,6 +91,7 @@ export class MountToggleComponent {
 
     _apply(mount) {
         const next = writePanelMount(mount);
+        updateSafeEdges(next);
         this._sync(next);
         this.root.dispatchEvent(new CustomEvent('mountchange', {
             detail: { mount: next },

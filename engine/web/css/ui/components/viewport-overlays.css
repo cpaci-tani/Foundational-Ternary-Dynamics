@@ -1,4 +1,9 @@
 /* ── Viewport Overlay Panels (shared positioning) ─────────────────────────── */
+/*
+ * Default: overlays anchor to the right side of the viewport.
+ * When the panel is right-mounted, overlays swap to the left so they are
+ * never obscured. Left-mount and bottom-mount leave overlays on the right.
+ */
 
 /* Reusable class for per-scale viewport toggle panels */
 .viewport-overlay-panel {
@@ -315,4 +320,22 @@
 
 .vcp-select-row select:hover {
     border-color: var(--border-light);
+}
+
+/* ── Side-mount overlay swap ──────────────────────────────────────────────── */
+/* Default: overlays anchor to the right side of the viewport.
+   When the panel is right-mounted, overlays swap to the left so they are
+   never obscured by the sidebar. Left-mount and bottom-mount leave overlays
+   on the right (default). */
+html[data-panel-mount="right"] .viewport-overlay-panel,
+html[data-panel-mount="right"] #viewport-overlay,
+html[data-panel-mount="right"] #viewport-controls-panel,
+html[data-panel-mount="right"] .viewport-overlay-bottom {
+    right: auto;
+    left: 12px;
+}
+
+html[data-panel-mount="right"] .viewport-overlay-panel,
+html[data-panel-mount="right"] #viewport-overlay:not(.s0-overlay-panel) {
+    justify-content: flex-start;
 }

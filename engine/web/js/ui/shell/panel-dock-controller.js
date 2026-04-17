@@ -1,5 +1,6 @@
 import { readStoredBoolean, writeStoredBoolean } from './layout-state.js';
 import { readPanelMount } from './panel-mount-state.js';
+import { updateSafeEdges } from '../components/panel-dock/mount-toggle.js';
 
 /**
  * Owns tab activation, panel collapse state, and the existing resize handle.
@@ -210,6 +211,7 @@ export class PanelDockController {
                 .getPropertyValue(`--panel-width-${mount}`).trim();
             localStorage.setItem(`ftd.panel.width.${mount}`, value);
         } catch (_err) { /* best-effort */ }
+        updateSafeEdges(readPanelMount());
         this._notifyViewportResize();
     }
 
