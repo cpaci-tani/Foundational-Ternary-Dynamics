@@ -2070,50 +2070,115 @@ export class Viewport {
 
     showStrongForce(on) { this.toggleStrongForce(on); }
 
-    // ── Weak Force Overlay (Purple points at chirality sites) ─────────
+    // ── Weak Force Overlay (Gaussian sprites at chirality sites) ──────
     _buildWeakField() {
         const maxPts = 4000;
         const positions = new Float32Array(maxPts * 3);
-        const colors = new Float32Array(maxPts * 3);
+        const colors    = new Float32Array(maxPts * 3);
+        const sizes     = new Float32Array(maxPts);
         const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setAttribute('position',      new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setAttribute('size',          new THREE.Float32BufferAttribute(sizes, 1));
         geo.setDrawRange(0, 0);
-        const mat = new THREE.PointsMaterial({
-            size: 3.0, vertexColors: true, transparent: true, opacity: 0.7,
-            depthWrite: false, sizeAttenuation: true
+
+        // Soft Gaussian sprite shader — matches the force heatmap style so
+        // the weak overlay reads as a coherent field instead of flat dots.
+        const vert = `
+            attribute float size;
+            attribute vec3 particleColor;
+            varying vec3 vColor;
+            void main() {
+                vColor = particleColor;
+                vec4 mv = modelViewMatrix * vec4(position, 1.0);
+                gl_PointSize = size * (160.0 / -mv.z);
+                gl_PointSize = clamp(gl_PointSize, 2.0, 256.0);
+                gl_Position = projectionMatrix * mv;
+            }
+        `;
+        const frag = `
+            precision mediump float;
+            varying vec3 vColor;
+            void main() {
+                vec2 uv = gl_PointCoord - 0.5;
+                float r2 = dot(uv, uv);
+                if (r2 > 0.25) discard;
+                float g = exp(-r2 * 14.0);
+                // Slight core brighten so high-intensity sites pulse white-hot
+                vec3 core = mix(vColor, vec3(1.0, 0.85, 1.0), smoothstep(0.0, 0.04, r2) * 0.0 +
+                               (1.0 - smoothstep(0.0, 0.015, r2)) * 0.6);
+                gl_FragColor = vec4(core, g * 0.85);
+            }
+        `;
+        const mat = new THREE.ShaderMaterial({
+            uniforms: {},
+            vertexShader: vert,
+            fragmentShader: frag,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
         });
+
         this._weakField = new THREE.Points(geo, mat);
         this._weakField.visible = false;
-        this._weakField.frustumCulled = false; // dynamic geo — see _eFieldLines
+        this._weakField.frustumCulled = false;
         this.scene.add(this._weakField);
     }
 
     updateWeakField(fieldData) {
         if (!this._weakField) this._buildWeakField();
         const posAttr = this._weakField.geometry.getAttribute('position');
-        const colAttr = this._weakField.geometry.getAttribute('color');
+        const colAttr = this._weakField.geometry.getAttribute('particleColor');
+        const sizeAttr = this._weakField.geometry.getAttribute('size');
         const { positions, values, count } = fieldData;
         const maxPts = posAttr.array.length / 3;
+
+        // Find the dynamic range so we can normalise intensity.
         let maxVal = 0;
         for (let i = 0; i < count; i++) {
             const v = Math.abs(values[i]);
             if (v > maxVal) maxVal = v;
         }
-        const threshold = maxVal * 0.1;
+        if (maxVal <= 0) {
+            this._weakField.geometry.setDrawRange(0, 0);
+            return;
+        }
+
+        const pal = Viewport.FORCE_PALETTES.weak;
+        const threshold = maxVal * 0.08;
         const halfN = this._halfN;
         let vi = 0;
+
         for (let i = 0; i < count && vi < maxPts; i++) {
-            if (Math.abs(values[i]) < threshold) continue;
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
-            posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
-            // Purple color
-            colAttr.array[vi * 3] = 0.67; colAttr.array[vi * 3 + 1] = 0.0; colAttr.array[vi * 3 + 2] = 1.0;
+            const abs = Math.abs(values[i]);
+            if (abs < threshold) continue;
+            const px = positions[i * 3];
+            const py = positions[i * 3 + 1];
+            const pz = positions[i * 3 + 2];
+            if (!this._insideBoundary((px - halfN) / halfN,
+                                      (py - halfN) / halfN,
+                                      (pz - halfN) / halfN)) continue;
+
+            const t = Math.min(1, abs / maxVal);
+            const rgb = Viewport._lerpPalette(pal, t);
+
+            posAttr.array[vi * 3]     = px;
+            posAttr.array[vi * 3 + 1] = py;
+            posAttr.array[vi * 3 + 2] = pz;
+
+            colAttr.array[vi * 3]     = rgb[0];
+            colAttr.array[vi * 3 + 1] = rgb[1];
+            colAttr.array[vi * 3 + 2] = rgb[2];
+
+            // Size scales with intensity^0.6 (softens the max, keeps dim
+            // transmutation sites visible).
+            sizeAttr.array[vi] = 0.8 + Math.pow(t, 0.6) * 3.5;
             vi++;
         }
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
+
+        posAttr.needsUpdate  = true;
+        colAttr.needsUpdate  = true;
+        sizeAttr.needsUpdate = true;
         this._weakField.geometry.setDrawRange(0, vi);
     }
 
