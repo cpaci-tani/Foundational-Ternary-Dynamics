@@ -70,3 +70,42 @@ test('writePanelMount persists to localStorage and updates attribute', async ({ 
 
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
+
+test('bottom-mount panel-area keeps absolute centering layout', async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => { document.documentElement.dataset.panelMount = 'bottom'; });
+
+    const styles = await page.evaluate(() => {
+        const el = document.getElementById('panel-area');
+        if (!el) return null;
+        const cs = window.getComputedStyle(el);
+        return { position: cs.position, transform: cs.transform };
+    });
+
+    expect(styles).not.toBeNull();
+    expect(styles.position).toBe('absolute');
+    // translateX(-50%) resolves to a matrix; confirm it is NOT the identity
+    expect(styles.transform).not.toBe('none');
+    expect(styles.transform).not.toBe('matrix(1, 0, 0, 1, 0, 0)');
+});
+
+test('left-mount panel-area loses the centering transform', async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => { document.documentElement.dataset.panelMount = 'left'; });
+    await page.waitForTimeout(50);
+
+    const styles = await page.evaluate(() => {
+        const el = document.getElementById('panel-area');
+        if (!el) return null;
+        const cs = window.getComputedStyle(el);
+        return { position: cs.position, transform: cs.transform };
+    });
+
+    expect(styles).not.toBeNull();
+    // Without the left-mount CSS the position falls through to the agnostic #panel-area block
+    // which has no centering transform — so transform must be identity or 'none'
+    const isIdentity = styles.transform === 'none' || styles.transform === 'matrix(1, 0, 0, 1, 0, 0)';
+    expect(isIdentity).toBe(true);
+
+    await page.evaluate(() => { document.documentElement.dataset.panelMount = 'bottom'; });
+});
