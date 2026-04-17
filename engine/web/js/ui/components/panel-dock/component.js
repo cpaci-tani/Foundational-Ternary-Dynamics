@@ -1,4 +1,5 @@
 import { getPanelDockShellTemplate } from './template.js';
+import { MountToggleComponent } from './mount-toggle.js';
 
 function htmlToFragment(markup) {
     const template = document.createElement('template');
@@ -31,6 +32,10 @@ export class PanelDockComponent {
         });
         this.activeTitle = this.root.querySelector('#panel-dock-active-title');
         this.root.dataset.panelDock = 'true';
+
+        const toggleEl = this.root.querySelector('#panel-mount-toggle');
+        if (toggleEl) new MountToggleComponent(toggleEl).init();
+
         return this;
     }
 
