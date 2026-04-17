@@ -109,3 +109,75 @@ test('left-mount panel-area loses the centering transform', async ({ page }) => 
 
     await page.evaluate(() => { document.documentElement.dataset.panelMount = 'bottom'; });
 });
+
+test('left mount docks the panel to the left edge with viewport-safe height', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(600);
+
+    const box = await page.evaluate(async () => {
+        const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
+        writePanelMount('left');
+        await new Promise((r) => requestAnimationFrame(r));
+        const el = document.getElementById('panel-area');
+        const rect = el.getBoundingClientRect();
+        writePanelMount('bottom');
+        return {
+            left: rect.left,
+            width: rect.width,
+            top: rect.top,
+            height: rect.height,
+            innerWidth: window.innerWidth,
+            innerHeight: window.innerHeight,
+        };
+    });
+
+    expect(box.left).toBeLessThan(40);
+    expect(box.width).toBeGreaterThanOrEqual(320);
+    expect(box.width).toBeLessThanOrEqual(box.innerWidth * 0.5);
+    expect(box.height).toBeGreaterThan(box.innerHeight * 0.5);
+});
+
+test('right mount docks the panel to the right edge', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(600);
+
+    const box = await page.evaluate(async () => {
+        const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
+        writePanelMount('right');
+        await new Promise((r) => requestAnimationFrame(r));
+        const el = document.getElementById('panel-area');
+        const rect = el.getBoundingClientRect();
+        writePanelMount('bottom');
+        return {
+            right: window.innerWidth - rect.right,
+            width: rect.width,
+            innerWidth: window.innerWidth,
+        };
+    });
+
+    expect(box.right).toBeLessThan(40);
+    expect(box.width).toBeGreaterThanOrEqual(320);
+});
+
+test('viewport stays full-bleed in every mount state', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(600);
+
+    const rects = await page.evaluate(async () => {
+        const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
+        const out = {};
+        for (const mount of ['bottom', 'left', 'right']) {
+            writePanelMount(mount);
+            await new Promise((r) => requestAnimationFrame(r));
+            const r = document.getElementById('viewport').getBoundingClientRect();
+            out[mount] = { w: r.width, h: r.height };
+        }
+        writePanelMount('bottom');
+        return out;
+    });
+
+    const tol = 4;
+    expect(Math.abs(rects.bottom.w - rects.left.w)).toBeLessThan(tol);
+    expect(Math.abs(rects.bottom.w - rects.right.w)).toBeLessThan(tol);
+    expect(Math.abs(rects.bottom.h - rects.left.h)).toBeLessThan(tol);
+});
