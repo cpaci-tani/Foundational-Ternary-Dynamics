@@ -8,7 +8,7 @@
 
 import { createBridge, MockBridge } from './wasm-bridge-dag.js';
 import { tryNativeBridge } from './ws-bridge.js';
-import { Viewport } from './viewport.js?v=q6';
+import { Viewport } from './viewport.js?v=q7';
 import { DiagnosticsPanel, Sparkline } from './diagnostics.js';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
