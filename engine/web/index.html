@@ -51,7 +51,7 @@
     <link rel="stylesheet" href="css/ui/primitives/toast.css?v=2">
     <!-- Panel CSS (Phase 4) -->
     <link rel="stylesheet" href="css/ui/panels/diagnostics-panel.css?v=5">
-    <link rel="stylesheet" href="css/ui/panels/charts-panel.css">
+    <link rel="stylesheet" href="css/ui/panels/charts-panel.css?v=2">
     <link rel="stylesheet" href="css/ui/panels/consciousness-panel.css?v=2">
     <link rel="stylesheet" href="css/ui/panels/inspector-panel.css">
     <link rel="stylesheet" href="css/ui/panels/lagrangian-panel.css">
@@ -88,7 +88,8 @@
         <nav id="toolbar" aria-label="Simulation controls">
             <h1 class="brand">FTD Engine <span>v2.14</span></h1>
             <div class="tb-group">
-                <button class="tb-btn" id="btn-play" title="Play / Pause (Space)">&#9654;</button>
+                <button class="tb-btn" id="btn-play" title="Global Play / Pause (Space) — pauses ALL state including flux/field motion">&#9654;</button>
+                <button class="tb-btn" id="btn-scenario-play" title="Scenario Play / Pause (Shift+Space) — pauses scenario dynamics; flux/field continue to evolve">&#9655;</button>
                 <button class="tb-btn" id="btn-step" title="Step (S)">&#9205;</button>
                 <button class="tb-btn" id="btn-reset" title="Reset (R)">&#8634;</button>
             </div>
@@ -176,7 +177,8 @@
                 <div class="status-dot idle" id="status-dot"></div>
                 <span id="status-state">Idle</span>
             </div>
-            <div class="status-item">Tick: <span class="status-value" id="status-tick">0</span></div>
+            <div class="status-item" title="Scenario tick — advances when scenario is unpaused">Sim Tick: <span class="status-value" id="status-tick">0</span></div>
+            <div class="status-item" title="Global tick — wall-clock frames since global play started; advances whenever global pause is OFF">Global Tick: <span class="status-value" id="status-global-tick">0</span></div>
             <div class="status-item" id="status-time-item">T: <span class="status-value" id="status-ptime">0</span>
             </div>
             <div class="status-item">Particles: <span class="status-value" id="status-particles">0</span></div>

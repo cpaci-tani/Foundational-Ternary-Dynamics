@@ -45,28 +45,10 @@ export function updateDiagnosticsAndPanels(ctx, state) {
             break;
         }
         case 'charts': {
-            // Collect lagrangian + audit (needed for chart-tab sparklines)
+            // Collect audit + lagrangian so chart buffers stay fresh.
+            telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
             telemetryHub.collectScale0Lagrangian(ctx.bridge, state.fluxMock, state.useFluxMock);
-            const audit = telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
-
-            ctx.fluxEnergyChart.draw();
-            ctx.particleChart.draw();
-
-            if (audit) {
-                if (ctx.chartEBEnergy) {
-                    ctx.chartEBEnergy.push(
-                        (audit.EFieldEnergy || audit.eFieldEnergy || 0) -
-                        (audit.BFieldEnergy || audit.bFieldEnergy || 0)
-                    );
-                    ctx.chartEBEnergy.draw('#a78bfa');
-                }
-                if (ctx.chartGauss) {
-                    ctx.chartGauss.push(audit.gaussViolation || 0);
-                    ctx.chartGauss.draw('#fbbf24');
-                }
-            }
-            if (ctx.chartCharge)  ctx.chartCharge.draw('#4ade80');
-            if (ctx.chartEntropy) ctx.chartEntropy.draw('#60a5fa');
+            ctx.chartsPanel?.update();
             break;
         }
         case 'lagrangian':
