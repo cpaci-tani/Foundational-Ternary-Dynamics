@@ -12,76 +12,100 @@
     bottom: 14px;
     transform: translateX(-50%);
     width: min(82vw, 1080px);
-    height: 44px;
+    min-height: 52px;
     z-index: calc(var(--z-overlay, 40) + 5);
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 0 10px;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 22px;
     background: var(--bg-surface);
     backdrop-filter: blur(24px) saturate(1.4);
     border: var(--glass-border, 1px solid rgba(255, 255, 255, 0.12));
     border-top: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 22px;
+    border-radius: 12px;
     box-shadow: var(--glass-shadow), var(--shadow-xl);
     pointer-events: auto;
     font-size: 11px;
     color: var(--text-secondary);
 }
 
-/* Shared semantic grouping */
+/* Shared semantic grouping — every section aligns its children on the
+   horizontal centerline of the bar. */
 .scrub-bar-section {
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 4px;
 }
 
 /* ── Divider between sections ───────────────────────────────────── */
 .scrub-bar-divider {
     width: 1px;
-    height: 22px;
+    height: 24px;
     background: color-mix(in oklch, var(--border) 70%, transparent);
-    margin: 0 2px;
+    margin: 0 4px;
     flex: 0 0 1px;
+    align-self: center;
 }
 
 /* ── Controls group (play / local / step / reset) ───────────────── */
-.scrub-bar-controls {
-    gap: 6px;
-}
+.scrub-bar-controls { gap: 8px; }
 
-/* The labeled play wrappers live inside the bar — trim the caption
-   footprint so the whole strip stays at 44px. */
+/* Labeled play wrapper: the button is the entire layout footprint;
+   the caption floats below as an absolute element so sibling buttons
+   share the button's vertical center without being pushed up by a
+   reserved caption area. The parent bar's 10px padding-bottom gives
+   the caption a visible slot. */
 .scrub-bar-controls .tb-btn-labeled {
-    gap: 1px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.scrub-bar-controls .tb-btn-label {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 2px);
+    transform: translateX(-50%);
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 .scrub-bar-controls .tb-btn-global {
-    width: 38px;
-    height: 26px;
-}
-.scrub-bar-controls .tb-btn-local {
-    width: 26px;
-    height: 26px;
-    font-size: 12px;
-}
-.scrub-bar-controls .tb-btn-label {
-    font-size: 8px;
-    letter-spacing: 0.1em;
-    line-height: 1;
-}
-
-/* .scrub-bar prefix bumps specificity above .tb-btn from button.css
-   (loaded later), which would otherwise set width/height to 36px. */
-.scrub-bar .scrub-bar-small-btn {
-    width: 26px;
-    height: 26px;
+    width: 40px;
+    height: 28px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    margin-top: 10px; /* baseline-align with the labeled play-button caps */
+}
+.scrub-bar-controls .tb-btn-local {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     font-size: 12px;
+}
+
+/* .scrub-bar prefix bumps specificity above .tb-btn from button.css
+   (loaded later), which would otherwise set width/height to 36px.
+   No vertical offset — parent .scrub-bar handles centering. */
+.scrub-bar .scrub-bar-small-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1;
     background: transparent;
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -163,8 +187,8 @@
 }
 
 .scrub-bar-icon-btn {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -174,7 +198,8 @@
     border-radius: 6px;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
+    line-height: 1;
     transition: background 120ms var(--ease-out),
                 color 120ms var(--ease-out),
                 border-color 120ms var(--ease-out);
@@ -252,12 +277,13 @@
 .scrub-bar-render { background: color-mix(in oklch, var(--success, #4ade80) 30%, transparent); }
 
 /* ── Actions group (Render + Settings) ──────────────────────────── */
-.scrub-bar-actions { gap: 4px; }
+.scrub-bar-actions { gap: 6px; }
 
 .scrub-bar-render-btn {
     width: auto;
-    padding: 0 8px;
-    gap: 4px;
+    height: 28px;
+    padding: 0 12px;
+    gap: 6px;
     color: var(--text-secondary);
     font-size: 10px;
     letter-spacing: 0.04em;
