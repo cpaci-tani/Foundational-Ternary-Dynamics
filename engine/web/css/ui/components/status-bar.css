@@ -1,0 +1,53 @@
+/* ── Status Bar ─────────────────────────────────────────────────────────── */
+
+#status-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: calc(28px * var(--ui-scale));
+    z-index: var(--z-status);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-xl);
+    padding: 0 var(--sp-xl);
+    background: var(--bg-surface);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+html[data-status-bar="hidden"] #status-bar {
+    display: none;
+}
+
+html[data-density="compact"] #status-bar {
+    gap: var(--sp-lg);
+    padding-inline: var(--sp-lg);
+}
+
+#status-bar .status-item {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    flex-shrink: 0;
+}
+
+#status-bar .status-value {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+}
+
+#status-bar .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--positive);
+}
+
+#status-bar .status-dot.idle {
+    background: var(--text-muted);
+}

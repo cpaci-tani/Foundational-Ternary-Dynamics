@@ -1,0 +1,99 @@
+/* Zoo Panel — styles owned by zoo-panel/component.js */
+
+/* Zoo Table */
+.zoo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.zoo-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1; /* local stacking context; not a global layer */
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--bg-surface);
+}
+
+.zoo-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.zoo-table tr:hover td {
+    background: var(--state-hover-bg);
+}
+
+.zoo-cat-header td {
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 8px 8px 4px;
+    border-bottom: 2px solid;
+}
+
+.zoo-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+.zoo-symbol {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.zoo-mass {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-size: 11px;
+}
+
+.zoo-formula {
+    font-size: 10px;
+    color: var(--text-muted);
+    max-width: 200px;
+}
+
+.zoo-accuracy {
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+/* ── Zoo inject button (moved from primitives/button.css in Phase D) ─── */
+.zoo-inject-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: var(--fs-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--dur-fast) var(--ease-out);
+}
+
+.zoo-inject-btn:hover {
+    background: var(--accent-dim);
+    color: var(--text-primary);
+    border-color: var(--accent);
+}
+
+.zoo-inject-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}

@@ -4,9 +4,14 @@
  * Two chart types:
  *   - FluxEnergyChart: total flux (orange) + total energy (blue)
  *   - ParticleChart: total (white), positive (green), negative (red)
+ *
+ * Ring buffers are owned by TelemetryHub and injected at construction time.
+ * Chart classes are pure renderers; they never push data themselves.
  */
 
 import { createCachedCanvasRect } from './dom-utils.js';
+// Re-export RingBuffer so legacy imports (e.g. pe-telemetry.js) keep working.
+export { RingBuffer } from './telemetry-hub.js';
 
 const BUFFER_SIZE = 500;
 
@@ -23,54 +28,9 @@ function _cachedRect(canvas) {
 }
 
 // ── Ring Buffer ──────────────────────────────────────────────────────
-class RingBuffer {
-    constructor(size = BUFFER_SIZE) {
-        this.data = new Float32Array(size);
-        this.size = size;
-        this.head = 0;
-        this.count = 0;
-    }
-
-    push(value) {
-        this.data[this.head] = value;
-        this.head = (this.head + 1) % this.size;
-        if (this.count < this.size) this.count++;
-    }
-
-    get(i) {
-        if (i >= this.count) return 0;
-        const idx = (this.head - this.count + i + this.size) % this.size;
-        return this.data[idx];
-    }
-
-    last() {
-        if (this.count === 0) return 0;
-        return this.data[(this.head - 1 + this.size) % this.size];
-    }
-
-    max() {
-        let m = -Infinity;
-        for (let i = 0; i < this.count; i++) {
-            const v = this.get(i);
-            if (v > m) m = v;
-        }
-        return m === -Infinity ? 1 : m;
-    }
-
-    min() {
-        let m = Infinity;
-        for (let i = 0; i < this.count; i++) {
-            const v = this.get(i);
-            if (v < m) m = v;
-        }
-        return m === Infinity ? 0 : m;
-    }
-
-    clear() {
-        this.head = 0;
-        this.count = 0;
-    }
-}
+// Canonical implementation lives in telemetry-hub.js (exported as RingBuffer).
+// This local alias keeps the drawChart() renderer and chart constructors unchanged.
+import { RingBuffer } from './telemetry-hub.js';
 
 // ── Chart Renderer ───────────────────────────────────────────────────
 function drawChart(canvas, series, options = {}) {
@@ -166,12 +126,19 @@ function formatValue(v) {
 // ── Exported Chart Classes ───────────────────────────────────────────
 
 export class FluxEnergyChart {
-    constructor(canvas) {
-        this.canvas = canvas;
-        this.fluxBuf = new RingBuffer();
-        this.energyBuf = new RingBuffer();
+    /**
+     * @param {HTMLCanvasElement} canvas
+     * @param {{ fluxBuf?: RingBuffer, energyBuf?: RingBuffer }} [buffers]
+     *   Pass hub buffers to share ownership; falls back to local buffers for
+     *   standalone use or tests.
+     */
+    constructor(canvas, buffers = {}) {
+        this.canvas    = canvas;
+        this.fluxBuf   = buffers.fluxBuf   || new RingBuffer();
+        this.energyBuf = buffers.energyBuf || new RingBuffer();
     }
 
+    /** @deprecated Push via telemetryHub.collectScale0() instead. */
     push(diag) {
         this.fluxBuf.push(diag.totalFlux);
         this.energyBuf.push(diag.totalEnergy);
@@ -179,7 +146,7 @@ export class FluxEnergyChart {
 
     draw() {
         drawChart(this.canvas, [
-            { buffer: this.fluxBuf, color: '#fb8c00' },
+            { buffer: this.fluxBuf,   color: '#fb8c00' },
             { buffer: this.energyBuf, color: '#42a5f5' },
         ]);
     }
@@ -191,13 +158,18 @@ export class FluxEnergyChart {
 }
 
 export class ParticleChart {
-    constructor(canvas) {
-        this.canvas = canvas;
-        this.totalBuf = new RingBuffer();
-        this.posBuf = new RingBuffer();
-        this.negBuf = new RingBuffer();
+    /**
+     * @param {HTMLCanvasElement} canvas
+     * @param {{ totalBuf?: RingBuffer, posBuf?: RingBuffer, negBuf?: RingBuffer }} [buffers]
+     */
+    constructor(canvas, buffers = {}) {
+        this.canvas   = canvas;
+        this.totalBuf = buffers.totalBuf || new RingBuffer();
+        this.posBuf   = buffers.posBuf   || new RingBuffer();
+        this.negBuf   = buffers.negBuf   || new RingBuffer();
     }
 
+    /** @deprecated Push via telemetryHub.collectScale0() instead. */
     push(diag) {
         this.totalBuf.push(diag.manifested);
         this.posBuf.push(diag.positive);
@@ -207,8 +179,8 @@ export class ParticleChart {
     draw() {
         drawChart(this.canvas, [
             { buffer: this.totalBuf, color: '#e8e8e8' },
-            { buffer: this.posBuf, color: '#4ade80' },
-            { buffer: this.negBuf, color: '#f87171' },
+            { buffer: this.posBuf,   color: '#4ade80' },
+            { buffer: this.negBuf,   color: '#f87171' },
         ]);
     }
 

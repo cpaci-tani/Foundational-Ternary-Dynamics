@@ -1,28 +1,56 @@
-/* FTD Engine — Nord theme (cool blue-gray palette)
- * Extracted from index.html inline styles.
- * Part of the modular CSS architecture (Phase 0).
- */
+/* ============================================================
+ *  nord.css — Cool blue-gray palette (Nord-inspired)
+ *  Overrides the full canonical theme surface from tokens.css.
+ * ============================================================ */
 
-/* Nord — cool blue-gray palette */
 html[data-theme="nord"] {
-    --bg-deep: #2e3440;
-    --bg-surface: #3b4252;
-    --bg-card: #434c5e;
-    --bg-input: #4c566a;
-    --border: #4c566a;
+    /* Background ladder */
+    --bg-deep:     #2e3440;
+    --bg-surface:  #3b4252;
+    --bg-card:     #434c5e;
+    --bg-input:    #4c566a;
+    --bg-elevated: #566175;
+    --bg-raised:   #637286;
+
+    /* Borders */
+    --border:       #4c566a;
     --border-light: #616e88;
-    --text-primary: #eceff4;
+    --border-glow:  rgba(136, 192, 208, 0.40);
+
+    /* Text hierarchy */
+    --text-primary:   #eceff4;
     --text-secondary: #d8dee9;
-    --text-muted: #a0aec0;
-    --accent: #88c0d0;
-    --accent-dim: #5e81ac;
+    --text-muted:     #b4becc;
+    --text-accent:    #e5e9f0;
+    --text-dim:       #95a2b8;   /* disabled / inert (≥3:1 per WCAG 1.4.11) */
+
+    /* Interaction accent (nord frost) */
+    --accent:      #88c0d0;
+    --accent-dim:  #5e81ac;
     --accent-glow: #88c0d088;
+
+    /* Status — Nord aurora */
     --positive: #a3be8c;
     --negative: #bf616a;
-    --warning: #ebcb8b;
-}
+    --warning:  #ebcb8b;
 
-/* Viewport background override */
-html[data-theme="nord"] #viewport {
-    background: linear-gradient(180deg, #242933 0%, #2e3440 100%) !important;
+    /* State tints (frost-matched) */
+    --state-hover-bg:   rgba(136, 192, 208, 0.10);
+    --state-active-bg:  rgba(136, 192, 208, 0.22);
+    --state-focus-ring: 0 0 0 2px rgba(136, 192, 208, 0.45);
+
+    /* Viewport + card surfaces */
+    --viewport-bg:    linear-gradient(180deg, #242933 0%, #2e3440 100%);
+    --card-shadow:    none;
+    --card-hover-bg:  #4c566a;
+    --chrome-shadow:  0 4px 24px rgba(0, 0, 0, 0.45);
+    --dock-shadow:    0 20px 60px rgba(0, 0, 0, 0.55);
+    --tabs-shadow:    0 6px 24px rgba(0, 0, 0, 0.45);
+    --modal-backdrop: rgba(0, 0, 0, 0.55);
+    --tooltip-bg:     rgba(59, 66, 82, 0.96);
+    --tooltip-border: rgba(136, 192, 208, 0.28);
+    --tooltip-text:   #edf2f7;
+    --tooltip-shadow: 0 16px 40px rgba(0, 0, 0, 0.42);
+    --tooltip-kicker: #88c0d0;
+    --tooltip-muted:  #c1cad8;
 }

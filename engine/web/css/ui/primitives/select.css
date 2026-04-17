@@ -1,0 +1,61 @@
+/* Select primitive styles */
+
+/* ── Toolbar select (.tb-select) ─────────────────────── */
+.tb-select {
+    height: calc(32px * var(--ui-scale));
+    padding: 0 var(--sp-md);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    cursor: pointer;
+}
+
+.tb-select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* ── Viewport select group (.viewport-select-group) ──── */
+.viewport-select-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.viewport-select-group label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.viewport-select-group select {
+    font-size: var(--fs-sm);
+    padding: 3px var(--sp-sm);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    outline: none;
+    transition: all var(--dur-fast) var(--ease-out);
+}
+
+.viewport-select-group select:hover,
+.viewport-select-group select:focus {
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+
+/* Dropdown option list — the browser uses system UA chrome; rely on
+   color-scheme (set in tokens.css per theme) for dark-vs-light rendering. */
+.viewport-select-group select option {
+    background: var(--bg-input);
+    color: var(--text-primary);
+}

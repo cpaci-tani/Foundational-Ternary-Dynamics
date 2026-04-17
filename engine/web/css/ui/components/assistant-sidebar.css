@@ -1,0 +1,157 @@
+/* ============================================================
+ *  assistant-sidebar.css — Floating AI-assistant sidebar
+ *  Fully token-driven: themes override via canonical surface.
+ * ============================================================ */
+
+#assistant-sidebar-backdrop {
+    position: absolute;
+    inset: 0;
+    background: var(--modal-backdrop);
+    backdrop-filter: blur(6px);
+    z-index: var(--z-sidebar-backdrop);
+}
+
+#assistant-sidebar {
+    position: absolute;
+    top: calc(16px + var(--shell-safe-top));
+    right: 16px;
+    bottom: calc(16px + var(--shell-safe-bottom));
+    width: min(420px, calc(100vw - 32px));
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: 20px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    backdrop-filter: blur(22px);
+    z-index: var(--z-sidebar);
+    transform: translateX(calc(100% + 24px));
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        transform var(--dur-base) var(--ease-out),
+        opacity var(--dur-base) var(--ease-out);
+}
+
+#app.assistant-open #assistant-sidebar {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.assistant-sidebar-header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: var(--sp-md);
+}
+
+.assistant-kicker {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.assistant-title {
+    margin: 4px 0 0;
+    font-size: var(--fs-2xl);
+    line-height: var(--lh-tight);
+    color: var(--text-primary);
+}
+
+.assistant-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--state-hover-bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 22px;
+}
+
+.assistant-status {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    padding: var(--sp-md);
+    border-radius: var(--radius-lg);
+    background: var(--state-hover-bg);
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+}
+
+.assistant-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--warning);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.assistant-copy {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: var(--lh-base);
+}
+
+.assistant-prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-sm);
+}
+
+.assistant-chip {
+    padding: var(--sp-sm) var(--sp-md);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--state-hover-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: var(--fs-sm);
+}
+
+.assistant-field {
+    display: grid;
+    gap: var(--sp-sm);
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+}
+
+.assistant-field textarea {
+    width: 100%;
+    min-height: 160px;
+    padding: var(--sp-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    resize: vertical;
+    font: inherit;
+}
+
+.assistant-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.assistant-primary {
+    padding: 10px 14px;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--accent-dim);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+@media (max-width: 767px) {
+    #assistant-sidebar {
+        inset: calc(8px + var(--shell-safe-top)) 8px calc(8px + var(--shell-safe-bottom)) 8px;
+        width: auto;
+        border-radius: 18px;
+    }
+}
