@@ -101,22 +101,8 @@
         <!-- Scale toolbar contributions are rendered by each scale's register-*-ui.js -->
         <nav id="toolbar" aria-label="Simulation controls">
             <h1 class="brand">FTD Engine <span>v2.14</span></h1>
-            <div class="tb-group">
-                <div class="tb-btn-labeled">
-                    <button class="tb-btn tb-btn-global" id="btn-play"
-                        title="Global Play / Pause (Space) — freezes the whole simulation, including visualization."
-                        aria-label="Global play/pause">&#9654;</button>
-                    <span class="tb-btn-label">global</span>
-                </div>
-                <div class="tb-btn-labeled">
-                    <button class="tb-btn tb-btn-local" id="btn-local-play"
-                        title="Local Play / Pause (Shift+Space) — freezes scenario physics only; overlays + render continue."
-                        aria-label="Local play/pause">&#9655;</button>
-                    <span class="tb-btn-label">local</span>
-                </div>
-                <button class="tb-btn" id="btn-step" title="Step (S)">&#9205;</button>
-                <button class="tb-btn" id="btn-reset" title="Reset (R)">&#8634;</button>
-            </div>
+            <!-- Playback controls (play / local / step / reset / speed) moved
+                 to the floating scrub bar. See js/ui/components/scrub-bar/. -->
             <div class="tb-group">
                 <label class="tb-label" for="engine-mode">Engine</label>
                 <select class="tb-select" id="engine-mode" title="Select simulation scale">
@@ -129,12 +115,6 @@
                     <option value="meta">Meta (Existential Unit)</option>
                     <option value="consciousness">Scale 11 (Consciousness)</option>
                 </select>
-            </div>
-            <div class="tb-group">
-                <label class="tb-label" for="ticks-per-frame">Speed</label>
-                <input type="range" class="tb-slider" id="ticks-per-frame" min="0" max="100" step="0.1" value="50"
-                    title="Simulation speed (ticks per animation frame)">
-                <span class="tb-value" id="tpf-display">1.0</span>
             </div>
             <button class="tb-btn tb-btn-settings" id="btn-settings" title="Settings (Ctrl+,)"
                 aria-label="Settings">&#9881;&#xFE0E;</button>
