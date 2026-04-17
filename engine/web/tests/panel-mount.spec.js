@@ -352,3 +352,73 @@ test('right mount sets a positive viewport-safe-right and zero left', async ({ p
 
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
+
+test('narrow viewport (<900px) snaps side mount to bottom without clearing localStorage', async ({ page }) => {
+    await page.setViewportSize({ width: 800, height: 700 });
+    await page.goto('/');
+    await page.waitForTimeout(800);
+
+    const result = await page.evaluate(async () => {
+        const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
+        writePanelMount('left');
+        await new Promise((r) => requestAnimationFrame(r));
+        window.dispatchEvent(new Event('resize'));
+        await new Promise((r) => requestAnimationFrame(r));
+        return {
+            attr:   document.documentElement.dataset.panelMount,
+            stored: localStorage.getItem('ftd.panel.mount'),
+        };
+    });
+
+    // Attribute must snap to bottom (too narrow for side mount)
+    expect(result.attr).toBe('bottom');
+    // localStorage preference is preserved so it restores when resized back
+    expect(result.stored).toBe('left');
+
+    await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
+});
+
+test('narrow viewport disables side-mount buttons with aria-disabled', async ({ page }) => {
+    await page.setViewportSize({ width: 800, height: 700 });
+    await page.goto('/');
+    await page.waitForTimeout(800);
+
+    const buttons = await page.evaluate(() => {
+        const btns = Array.from(document.querySelectorAll('[data-panel-mount-toggle] button'));
+        return btns.map((b) => ({
+            mount:    b.dataset.mount,
+            disabled: b.getAttribute('aria-disabled'),
+        }));
+    });
+
+    const left  = buttons.find((b) => b.mount === 'left');
+    const right = buttons.find((b) => b.mount === 'right');
+    const bottom = buttons.find((b) => b.mount === 'bottom');
+
+    expect(left.disabled).toBe('true');
+    expect(right.disabled).toBe('true');
+    expect(bottom.disabled).toBeNull();
+});
+
+test('wide viewport (>=900px) re-enables side-mount buttons', async ({ page }) => {
+    await page.setViewportSize({ width: 800, height: 700 });
+    await page.goto('/');
+    await page.waitForTimeout(800);
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    // trigger resize event so the component re-evaluates
+    await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+    await page.waitForTimeout(100);
+
+    const buttons = await page.evaluate(() => {
+        const btns = Array.from(document.querySelectorAll('[data-panel-mount-toggle] button'));
+        return btns.map((b) => ({
+            mount:    b.dataset.mount,
+            disabled: b.getAttribute('aria-disabled'),
+        }));
+    });
+
+    for (const btn of buttons) {
+        expect(btn.disabled, `${btn.mount} button should not be aria-disabled at 1280px`).toBeNull();
+    }
+});
