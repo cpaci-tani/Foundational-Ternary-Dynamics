@@ -24,15 +24,17 @@ export function updateDiagnosticsAndPanels(ctx, state) {
     }
 
     // ── Panel objects receive latest hub data ────────────────────────────────
+    // Legacy: drives status bar + any non-migrated DOM (no-ops on missing IDs).
     ctx.diagnostics.update(diag);
 
     // ── Tab-specific rendering ───────────────────────────────────────────────
     switch (ctx.activeTab) {
         case 'diagnostics': {
-            ctx.diagnostics.drawSparklines();
+            // Always collect audit on this tab so the new panel's E-field /
+            // B-field / Gauss / dual-substrate rows have fresh data.
+            telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
+            ctx.diagnosticsPanel?.update();
             if (ctx.peTelemetry) ctx.peTelemetry.drawCharts();
-            const audit = telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
-            ctx.diagnostics.updateEnergyAudit(audit);
             break;
         }
         case 'charts': {
