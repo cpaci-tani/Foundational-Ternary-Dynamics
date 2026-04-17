@@ -112,7 +112,8 @@ export function computeStreamlines(fieldData, seeds, opts = {}) {
         stepSize = 0.5,
         minMag = 1e-10,
         bidirectional = true,
-        bounds = 0  // if > 0, uses origin-centered sphere bounds instead of lattice [0,N)
+        bounds = 0,  // if > 0, uses origin-centered sphere bounds instead of lattice [0,N)
+        maxLines = 200  // Global cap (callers can raise for large lattices)
     } = opts;
 
     if (seeds.length === 0) return [];
@@ -131,7 +132,6 @@ export function computeStreamlines(fieldData, seeds, opts = {}) {
     const originCentered = bounds > 0;
 
     const lines = [];
-    const maxLines = 200; // Global cap
 
     for (let s = 0; s < seeds.length && lines.length < maxLines; s++) {
         const [sx, sy, sz] = seeds[s];
@@ -306,4 +306,133 @@ export function generateGridSeeds(N, spacing = 8, maxSeeds = 200) {
         }
     }
     return seeds;
+}
+
+// ── Importance sampling helpers (iron-filings visualization) ───────────
+// Field-line density should be proportional to |field| so the visualization
+// reflects field strength the way iron filings do. We sample seed locations
+// from the field-magnitude distribution: voxels with strong field are picked
+// more often, voxels with weak field are picked rarely.
+//
+// Implementation uses a two-pass weighted reservoir:
+//   pass 1 — compute |field|^exponent at every sample, sum them
+//   pass 2 — pick `count` indices via inverse-CDF on the cumulative weight
+// `exponent > 1` exaggerates clustering near sources/poles (filings clump);
+// `exponent < 1` evens it out. Default 1.5 matches the look of iron filings
+// in a real magnetic field — strong concentration at poles, sparse halo.
+
+function sampleByFieldMagnitude(fieldData, count, exponent = 1.5, jitter = 0.5) {
+    const { positions, vectors, count: nSamples } = fieldData;
+    if (!nSamples || count <= 0) return [];
+
+    // Pass 1: weight per sample
+    const weights = new Float32Array(nSamples);
+    let total = 0;
+    for (let i = 0; i < nSamples; i++) {
+        const x = vectors[i * 3];
+        const y = vectors[i * 3 + 1];
+        const z = vectors[i * 3 + 2];
+        const m = Math.sqrt(x * x + y * y + z * z);
+        const w = Math.pow(m, exponent);
+        weights[i] = w;
+        total += w;
+    }
+    if (total <= 0) return [];
+
+    // Pass 2: stratified inverse-CDF — divide [0, total] into `count` strata
+    // and pick one sample per stratum. Stratification spreads seeds evenly
+    // through the distribution, avoiding the clumping that pure random
+    // sampling would produce on top of the iron-filing clumping we WANT.
+    const seeds = [];
+    const stratum = total / count;
+    let cum = 0;
+    let target = stratum * Math.random(); // random offset in first stratum
+    let s = 0;
+    for (let i = 0; i < nSamples && seeds.length < count; i++) {
+        cum += weights[i];
+        while (cum >= target && seeds.length < count) {
+            // small jitter so multiple seeds at the same voxel don't overlap
+            const jx = (Math.random() - 0.5) * jitter;
+            const jy = (Math.random() - 0.5) * jitter;
+            const jz = (Math.random() - 0.5) * jitter;
+            seeds.push([
+                positions[i * 3]     + jx,
+                positions[i * 3 + 1] + jy,
+                positions[i * 3 + 2] + jz,
+            ]);
+            target += stratum;
+        }
+    }
+    return seeds;
+}
+
+/**
+ * Generate seeds for E-field / divergence-bearing lines using importance
+ * sampling: lines start where |E| is strongest. Combined with bidirectional
+ * integration this produces lines that visibly originate at sources and
+ * terminate at sinks, with density proportional to field strength.
+ */
+export function generateImportanceSeeds(fieldData, count, exponent = 1.5) {
+    return sampleByFieldMagnitude(fieldData, count, exponent, 0.5);
+}
+
+/**
+ * Generate B-field seeds via importance sampling, then offset each seed
+ * perpendicular to the local field direction. This places seeds on the
+ * circumference of B's natural loop structure (∇·B = 0 means lines close)
+ * rather than at the loop center where integration would just spin in place.
+ *
+ * `offset` is the perpendicular displacement in voxels — should be a few
+ * voxels at small lattices, growing with lattice size for large ones.
+ */
+export function generateBImportanceSeeds(fieldData, count, offset = 3, exponent = 1.5) {
+    const baseSeeds = sampleByFieldMagnitude(fieldData, count, exponent, 0.0);
+    if (baseSeeds.length === 0) return [];
+
+    // Build a quick spatial lookup for picking up the local field at each seed.
+    // We don't have N here, so use a small radius search through positions.
+    const { positions, vectors, count: nSamples } = fieldData;
+    const out = [];
+    for (const [sx, sy, sz] of baseSeeds) {
+        // Find nearest sample to read local field direction.
+        // (Linear scan is fine — `count` ≤ 250 and nSamples is bounded by the
+        // sampled-stride field, also ≤ a few thousand.)
+        let bestD = Infinity, bx = 0, by = 0, bz = 0;
+        for (let i = 0; i < nSamples; i++) {
+            const dx = positions[i * 3]     - sx;
+            const dy = positions[i * 3 + 1] - sy;
+            const dz = positions[i * 3 + 2] - sz;
+            const d = dx * dx + dy * dy + dz * dz;
+            if (d < bestD) {
+                bestD = d;
+                bx = vectors[i * 3];
+                by = vectors[i * 3 + 1];
+                bz = vectors[i * 3 + 2];
+            }
+        }
+        const m = Math.sqrt(bx * bx + by * by + bz * bz);
+        if (m < 1e-10) { out.push([sx, sy, sz]); continue; }
+        // Build a perpendicular axis via Gram-Schmidt against world-X (or Y if B≈X).
+        const fx = bx / m, fy = by / m, fz = bz / m;
+        let ax, ay, az;
+        if (Math.abs(fx) < 0.9) { ax = 1; ay = 0; az = 0; }
+        else { ax = 0; ay = 1; az = 0; }
+        const dot = ax * fx + ay * fy + az * fz;
+        let ux = ax - dot * fx, uy = ay - dot * fy, uz = az - dot * fz;
+        const umag = Math.sqrt(ux * ux + uy * uy + uz * uz) || 1;
+        ux /= umag; uy /= umag; uz /= umag;
+        // Random angle around the local B axis so seeds spread on the loop ring.
+        const theta = Math.random() * Math.PI * 2;
+        const c = Math.cos(theta), s = Math.sin(theta);
+        // v = f × u
+        const vx = fy * uz - fz * uy;
+        const vy = fz * ux - fx * uz;
+        const vz = fx * uy - fy * ux;
+        out.push([
+            sx + offset * (c * ux + s * vx),
+            sy + offset * (c * uy + s * vy),
+            sz + offset * (c * uz + s * vz),
+        ]);
+    }
+    return out;
 }

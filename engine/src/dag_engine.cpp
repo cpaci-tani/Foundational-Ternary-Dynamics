@@ -193,15 +193,15 @@ void DagEngine::phase_write() {
 }
 
 void DagEngine::gauss_project() {
-    // TODO: Recursive SOR solver skipping active manifested indices
+    // [OPEN] Implement recursive SOR solver skipping active manifested indices.
 }
 
 void DagEngine::phase_forces() {
-    // TODO: Recursive Poisson + Lorentz
+    // [OPEN] Implement recursive Poisson and Lorentz force summations.
 }
 
 void DagEngine::phase_movement() {
-    // TODO: Fractional remainder accumulation handling
+    // [OPEN] Integrate fractional remainder accumulation handling for precise tracking.
 }
 
 // -----------------------------------------------------------------------------

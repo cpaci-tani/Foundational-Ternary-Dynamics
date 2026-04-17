@@ -1,9 +1,10 @@
 /**
- * GPU kernels for Phase 1 (Read) and Phase 2 (Write) of the FTD tick cycle.
+ * @file kernels_stencil.cu
+ * @brief GPU kernels for Phase 1 (Read) and Phase 2 (Write) of the FTD tick cycle.
  *
- * Phase Read: Isotropic 18-point Laplacian stencil + state-flux coupling
- * Phase Write: Leapfrog integration, damping, near-particle mask,
- *              genesis (stochastic manifestation), evaporation
+ * [THEOREM] Phase Read: Isotropic 18-point Laplacian stencil + state-flux coupling.
+ * [EXTENDED] Phase Write: Leapfrog integration, damping, near-particle mask,
+ * genesis (stochastic manifestation), evaporation.
  */
 
 #include "ftd/gpu_buffers.h"

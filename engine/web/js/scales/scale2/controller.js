@@ -365,15 +365,17 @@ export function syncAEParams(ctx) {
 
 export function animateAE(ctx) {
     const {
-        bridge, viewport, running, ticksPerFrame, inspector,
+        bridge, viewport, running, scenarioRunning, ticksPerFrame, inspector,
         fluxEnergyChart, particleChart,
         activeTab, frameCount, dom, now,
         updatePlayButton, updateOnticPanel, updateHierarchyPanel,
         setRunning, engineMode
     } = ctx;
 
-    // ── 1. Tick AE simulation if running ───────────────────────────
-    if (running) {
+    // ── 1. Tick AE if scenario is unpaused ─────────────────────────
+    // Atom dynamics are scenario-controlled; freezing scenario freezes them.
+    // Render still proceeds below so the user can orbit / inspect a paused frame.
+    if (scenarioRunning) {
         const wholeTicks = _tickAcc.accumulate(ticksPerFrame);
         for (let i = 0; i < wholeTicks; i++) {
             try {

@@ -1,7 +1,8 @@
 /**
- * Three.js 3D Viewport — renders particles and fields from the simulation bridge.
+ * @file viewport.js
+ * @brief Three.js 3D Viewport — renders particles and fields from the simulation bridge.
  *
- * Uses THREE.Points with custom ShaderMaterial for antialiased circles.
+ * [EXTENDED] Uses THREE.Points with custom ShaderMaterial for antialiased circles.
  * Orbital camera with smooth controls.
  *
  * ## Categorization of concerns
@@ -703,6 +704,7 @@ export class Viewport {
             vertexColors: true, transparent: true, opacity: 0.8,
         });
         this.velocityVectors = new THREE.LineSegments(geo, mat);
+        this.velocityVectors.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.velocityVectors.visible = false;
         this.scene.add(this.velocityVectors);
     }
@@ -768,6 +770,7 @@ export class Viewport {
             vertexColors: true, transparent: true, opacity: 0.5,
         });
         this.trails = new THREE.LineSegments(geo, mat);
+        this.trails.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.trails.visible = false;
         this.scene.add(this.trails);
     }
@@ -855,6 +858,7 @@ export class Viewport {
             vertexColors: true, transparent: true, opacity: 0.8,
         });
         this.bondLines = new THREE.LineSegments(geo, mat);
+        this.bondLines.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.bondLines.visible = true;
         this.scene.add(this.bondLines);
     }
@@ -978,6 +982,7 @@ export class Viewport {
             vertexColors: true, transparent: true, opacity: 0.75,
         });
         this._fieldVectors = new THREE.LineSegments(geo, mat);
+        this._fieldVectors.frustumCulled = false; // dynamic geo — see _eFieldLines
         this._fieldVectors.visible = false;
         this.scene.add(this._fieldVectors);
     }
@@ -1040,6 +1045,7 @@ export class Viewport {
             blending: THREE.AdditiveBlending, depthWrite: false,
         });
         this._peStreamlines = new THREE.LineSegments(geo, mat);
+        this._peStreamlines.frustumCulled = false; // dynamic geo — see _eFieldLines
         this._peStreamlines.visible = false;
         this.scene.add(this._peStreamlines);
     }
@@ -1099,6 +1105,7 @@ export class Viewport {
             vertexColors: true, transparent: true, opacity: 0.65,
         });
         this._gravityVectors = new THREE.LineSegments(geo, mat);
+        this._gravityVectors.frustumCulled = false; // dynamic geo — see _eFieldLines
         this._gravityVectors.visible = false;
         this.scene.add(this._gravityVectors);
     }
@@ -1159,6 +1166,7 @@ export class Viewport {
             vertexColors: true, transparent: true, opacity: 0.85,
         });
         this._particleForces = new THREE.LineSegments(geo, mat);
+        this._particleForces.frustumCulled = false; // dynamic geo — see _eFieldLines
         this._particleForces.visible = false;
         this.scene.add(this._particleForces);
     }
@@ -1418,9 +1426,14 @@ export class Viewport {
             colAttr.array[count * 3 + 1] = g;
             colAttr.array[count * 3 + 2] = b2;
 
-            // Scale point size with lattice: at L=32 base=8, at L=128 base=2
-            const baseSize = Math.max(2.0, 8.0 * (32 / N));
-            sizeAttr.array[count] = baseSize + baseSize * (sliceData[i] / (maxFlux + 1e-20));
+            // Point size is in WORLD units (voxels). PARTICLE_VERT applies the
+            // 150/depth perspective term; combined with camera distance N·1.6,
+            // a `size = 1.0` always renders ≈1 voxel on screen at any lattice
+            // size. The earlier `8 × 32/N` formula did the opposite, blowing up
+            // points to fill the whole viewport at small N.
+            //   base 1.0 (one voxel) + up to 4× swell at peak |J|
+            const t = sliceData[i] / (maxFlux + 1e-20);
+            sizeAttr.array[count] = 1.0 + 4.0 * t;
             count++;
         }
 
@@ -1492,7 +1505,9 @@ export class Viewport {
 
     // ── E-Field Lines (Cyan) ─────────────────────────────────────────
     _buildEFieldLines() {
-        const maxVerts = 200 * 100 * 2; // 200 lines × 100 segments × 2 verts
+        // Sized for worst case (N=128 with continuous streamline scaling):
+        // 300 lines × ~144 segments × 2 verts = ~86K. Round up for safety.
+        const maxVerts = 300 * 160 * 2;
         const positions = new Float32Array(maxVerts * 3);
         const colors = new Float32Array(maxVerts * 3);
         const geo = new THREE.BufferGeometry();
@@ -1505,6 +1520,10 @@ export class Viewport {
         });
         this._eFieldLines = new THREE.LineSegments(geo, mat);
         this._eFieldLines.visible = false;
+        // Disable frustum culling — geometry is updated each frame without
+        // recomputing the bounding sphere, so Three.js's stale-bounds test
+        // would falsely cull when the camera zooms close to the lattice.
+        this._eFieldLines.frustumCulled = false;
         this.scene.add(this._eFieldLines);
     }
 
@@ -1552,7 +1571,9 @@ export class Viewport {
 
     // ── B-Field Lines (Green) ────────────────────────────────────────
     _buildBFieldLines() {
-        const maxVerts = 200 * 200 * 2; // B lines can be longer (closed loops)
+        // B lines integrate longer (closed loops, 1.5× E maxSteps).
+        // Worst case: 300 lines × ~216 segments × 2 = ~130K. Round up.
+        const maxVerts = 300 * 240 * 2;
         const positions = new Float32Array(maxVerts * 3);
         const colors = new Float32Array(maxVerts * 3);
         const geo = new THREE.BufferGeometry();
@@ -1565,6 +1586,7 @@ export class Viewport {
         });
         this._bFieldLines = new THREE.LineSegments(geo, mat);
         this._bFieldLines.visible = false;
+        this._bFieldLines.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.scene.add(this._bFieldLines);
     }
 
@@ -1625,6 +1647,7 @@ export class Viewport {
         });
         this._poyntingVectors = new THREE.LineSegments(geo, mat);
         this._poyntingVectors.visible = false;
+        this._poyntingVectors.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.scene.add(this._poyntingVectors);
     }
 
@@ -1645,8 +1668,11 @@ export class Viewport {
         }
         const threshold = maxMag * 0.05;
         const halfN = this._halfN;
-        // Scale arrow length with lattice size so arrows remain visible at large L
-        const arrowBase = 3 * (this.latticeSize / 32);
+        // Arrow length in world units (voxels). Constant ≈2-vox base + log
+        // magnitude scaling so a strong Poynting arrow is ~2 voxels long
+        // regardless of lattice size — keeps the field-direction read intact
+        // without arrows growing into the next neighborhood.
+        const arrowBase = 2.0;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxArrows; i++) {
@@ -1717,8 +1743,6 @@ export class Viewport {
         }
         const threshold = maxVal * 0.01;
         const halfN = this._halfN;
-        // Scale point size with lattice so dots remain visible at large L
-        const sizeScale = this.latticeSize / 32;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxPts; i++) {
@@ -1740,7 +1764,10 @@ export class Viewport {
                 // Blue (negative divergence = sink)
                 colAttr.array[vi * 3] = 0.15; colAttr.array[vi * 3 + 1] = 0.3; colAttr.array[vi * 3 + 2] = 0.9;
             }
-            sizeAttr.array[vi] = (4 + 12 * t) * sizeScale;
+            // Size in world-units (voxels). Sources/sinks render 1-3 voxels wide
+            // regardless of lattice size — divergence is a per-voxel scalar so
+            // each marker should sit on its voxel, not span half the box.
+            sizeAttr.array[vi] = 1.0 + 2.0 * t;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -1757,7 +1784,8 @@ export class Viewport {
 
     // ── Flux Streamlines (flux colormap) ─────────────────────────────
     _buildFluxStreamlines() {
-        const maxVerts = 200 * 100 * 2;
+        // Sized to match E-field cap (same maxSteps profile, see field-overlays.js).
+        const maxVerts = 300 * 160 * 2;
         const positions = new Float32Array(maxVerts * 3);
         const colors = new Float32Array(maxVerts * 3);
         const geo = new THREE.BufferGeometry();
@@ -1770,6 +1798,7 @@ export class Viewport {
         });
         this._fluxStreamlines = new THREE.LineSegments(geo, mat);
         this._fluxStreamlines.visible = false;
+        this._fluxStreamlines.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.scene.add(this._fluxStreamlines);
     }
 
@@ -1829,6 +1858,7 @@ export class Viewport {
         });
         this._forceVolume = new THREE.LineSegments(geo, mat);
         this._forceVolume.visible = false;
+        this._forceVolume.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.scene.add(this._forceVolume);
     }
 
@@ -1849,8 +1879,11 @@ export class Viewport {
         }
         const threshold = maxMag * 0.03;
         const halfN = this._halfN;
-        // Scale arrow length with lattice size so arrows remain visible at large L
-        const arrowBase = 2 * (this.latticeSize / 32);
+        // Arrow length in world units. ~1.5 vox base × log(magnitude) — keeps
+        // EM-force arrows local to the voxel they originate from, regardless
+        // of lattice size, so adjacent arrows don't overlap and the field
+        // direction reads correctly.
+        const arrowBase = 1.5;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxArrows; i++) {
@@ -1897,6 +1930,7 @@ export class Viewport {
         });
         this._gravityField = new THREE.LineSegments(geo, mat);
         this._gravityField.visible = false;
+        this._gravityField.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.scene.add(this._gravityField);
     }
 
@@ -1917,8 +1951,10 @@ export class Viewport {
         }
         const threshold = maxMag * 0.05;
         const halfN = this._halfN;
-        // Scale arrow length with lattice size so arrows remain visible at large L
-        const arrowBase = 2.5 * (this.latticeSize / 32);
+        // Gravity arrows ~2-vox base in world units — slightly longer than EM
+        // because gravity has gentler gradients, so the log(t) modulation is
+        // smaller; constant world size keeps adjacent voxels readable at any N.
+        const arrowBase = 2.0;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxArrows; i++) {
@@ -1978,6 +2014,7 @@ export class Viewport {
         });
         this._strongForce = new THREE.LineSegments(geo, mat);
         this._strongForce.visible = false;
+        this._strongForce.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.scene.add(this._strongForce);
     }
 
@@ -1998,7 +2035,9 @@ export class Viewport {
         }
         const threshold = maxMag * 0.03;
         const halfN = this._halfN;
-        const arrowBase = 2 * (this.latticeSize / 32);
+        // Strong-force arrows: 1.5-vox world-space base, identical convention
+        // to EM/gravity so the four force overlays render at the same scale.
+        const arrowBase = 1.5;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxArrows; i++) {
@@ -2046,6 +2085,7 @@ export class Viewport {
         });
         this._weakField = new THREE.Points(geo, mat);
         this._weakField.visible = false;
+        this._weakField.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.scene.add(this._weakField);
     }
 
@@ -2380,7 +2420,10 @@ export class Viewport {
         if (maxMag < 1e-15) maxMag = 1;
         const threshold = maxMag * 0.03;
         const halfN = this._halfN;
-        const scaleBase = 0.8 * (this.latticeSize / 32);
+        // Glyph world-size: ~0.8 voxel base × log(magnitude). Each glyph stays
+        // local to its voxel at any lattice size — same convention as arrow
+        // overlays, just visualized as instanced meshes instead of line segments.
+        const scaleBase = 0.8;
         let vi = 0;
 
         const mat4 = this._glyphMatrix;
@@ -2503,16 +2546,20 @@ export class Viewport {
                     // Sub-threshold: flux exists but below genesis
                     if (mag > 0.003 && mag < kGen) {
                         const t = mag / kGen; // 0..1 normalized
-                        // Use raw lattice coordinates (matches updateFluxVolume and updateParticles)
-                        posAttr.array[vi * 3] = x;
-                        posAttr.array[vi * 3 + 1] = y;
-                        posAttr.array[vi * 3 + 2] = z;
+                        // Cell-centered coordinates so this overlay aligns with
+                        // Flux Volume / Slice / E / B / Poynting / Divergence,
+                        // all of which place samples at voxel centers (x+0.5).
+                        posAttr.array[vi * 3]     = x + 0.5;
+                        posAttr.array[vi * 3 + 1] = y + 0.5;
+                        posAttr.array[vi * 3 + 2] = z + 0.5;
                         // Purple gradient: faint → bright purple as flux approaches threshold
                         colAttr.array[vi * 3] = 0.3 + t * 0.4;  // R
                         colAttr.array[vi * 3 + 1] = 0.1 + t * 0.15; // G
                         colAttr.array[vi * 3 + 2] = 0.5 + t * 0.4;  // B
-                        const stepScale = step > 1 ? step * 0.7 : 1.0;
-                        sizeAttr.array[vi] = (1.5 + t * 6.0) * stepScale;
+                        // Size in world units: 1 voxel base, swell up to 5× at threshold.
+                        // Multiply by `step` (not step·0.7) so a subsampled point covers
+                        // exactly its skipped neighbors — preserves visual density.
+                        sizeAttr.array[vi] = (1.0 + 4.0 * t) * step;
                         vi++;
                     }
                 }
@@ -2588,6 +2635,7 @@ export class Viewport {
         });
         this._dampingZones = new THREE.LineSegments(geo, mat);
         this._dampingZones.visible = false;
+        this._dampingZones.frustumCulled = false; // dynamic geo — see _eFieldLines
         this._dampingZones.renderOrder = 2;
         this.scene.add(this._dampingZones);
     }
@@ -2678,16 +2726,18 @@ export class Viewport {
                     const dist = Math.abs(mag - kGenesis);
                     if (dist < band && mag > 0.01) {
                         const t = 1.0 - dist / band; // 1=on threshold, 0=edge of band
-                        // Raw lattice coordinates (matches updateFluxVolume)
-                        posAttr.array[vi * 3] = x;
-                        posAttr.array[vi * 3 + 1] = y;
-                        posAttr.array[vi * 3 + 2] = z;
+                        // Cell-centered: aligns with Flux Volume + Dark Matter + DivJ.
+                        posAttr.array[vi * 3]     = x + 0.5;
+                        posAttr.array[vi * 3 + 1] = y + 0.5;
+                        posAttr.array[vi * 3 + 2] = z + 0.5;
                         // Green glow: bright at threshold, fading at band edges
                         colAttr.array[vi * 3] = 0.15 + t * 0.15;
                         colAttr.array[vi * 3 + 1] = 0.7 + t * 0.3;
                         colAttr.array[vi * 3 + 2] = 0.2 + t * 0.15;
-                        const stepScale = step > 1 ? step * 0.7 : 1.0;
-                        sizeAttr.array[vi] = (2.0 + t * 5.0) * stepScale;
+                        // World-space size: 1.5-vox base + 4× swell on threshold,
+                        // multiplied by subsampling step so a single rendered point
+                        // covers the voxels we skipped.
+                        sizeAttr.array[vi] = (1.5 + 4.0 * t) * step;
                         vi++;
                     }
                 }
@@ -2723,6 +2773,7 @@ export class Viewport {
         });
         this._confinementStrings = new THREE.LineSegments(geo, mat);
         this._confinementStrings.visible = false;
+        this._confinementStrings.frustumCulled = false; // dynamic geo — see _eFieldLines
         this.scene.add(this._confinementStrings);
     }
 
@@ -2843,14 +2894,14 @@ export class Viewport {
         }
         const maxVal = Math.max(maxL, maxR, 1e-20);
         const threshold = maxVal * 0.02;
-        // Scale point size with lattice so dots remain visible at large L
-        const sizeScale = this.latticeSize / 32;
         let vi = 0;
 
         // Boundary clipping for dual substrate
         const halfN = this._halfN;
 
-        // L substrate (warm: orange-red)
+        // L substrate (warm: orange-red). Size in world-units: 1 voxel base
+        // + 4× swell at peak |J_L|. Constant absolute size so the L/R dot
+        // pair sits on each voxel rather than smearing over neighbors.
         for (let i = 0; i < lCount && vi < maxPts; i++) {
             const mag = dualMags[i];
             if (mag < threshold) continue;
@@ -2859,7 +2910,7 @@ export class Viewport {
             posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
             colAttr.array[vi * 3] = 0.9 * t; colAttr.array[vi * 3 + 1] = 0.4 * t; colAttr.array[vi * 3 + 2] = 0.15 * t;
-            sizeAttr.array[vi] = (4 + 12 * t) * sizeScale;
+            sizeAttr.array[vi] = 1.0 + 4.0 * t;
             vi++;
         }
         // R substrate (cool: blue-purple)
@@ -2871,7 +2922,7 @@ export class Viewport {
             posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
             colAttr.array[vi * 3] = 0.3 * t; colAttr.array[vi * 3 + 1] = 0.2 * t; colAttr.array[vi * 3 + 2] = 0.9 * t;
-            sizeAttr.array[vi] = (4 + 12 * t) * sizeScale;
+            sizeAttr.array[vi] = 1.0 + 4.0 * t;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -2925,8 +2976,6 @@ export class Viewport {
         }
         const threshold = maxVal * 0.02;
         const halfN = this._halfN;
-        // Scale point size with lattice so dots remain visible at large L
-        const sizeScale = this.latticeSize / 32;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxPts; i++) {
@@ -2948,7 +2997,8 @@ export class Viewport {
                 // R-dominant: cool blue
                 colAttr.array[vi * 3] = 0.15 * t; colAttr.array[vi * 3 + 1] = 0.35 * t; colAttr.array[vi * 3 + 2] = 0.9 * t;
             }
-            sizeAttr.array[vi] = (4 + 12 * t) * sizeScale;
+            // World-space size: 1 voxel base + 4× swell at strong L/R dominance.
+            sizeAttr.array[vi] = 1.0 + 4.0 * t;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -3005,8 +3055,6 @@ export class Viewport {
         }
         const threshold = maxMag * 0.03;
         const halfN = this._halfN;
-        // Scale point size with lattice so glow dots remain visible at large L
-        const sizeScale = this.latticeSize / 32;
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxPts; i++) {
@@ -3026,7 +3074,9 @@ export class Viewport {
             colAttr.array[vi * 3] = 1.0 * t;         // R
             colAttr.array[vi * 3 + 1] = 0.92 * t;        // G
             colAttr.array[vi * 3 + 2] = 0.23 * t;        // B (warm yellow)
-            sizeAttr.array[vi] = (6 + 16 * t) * sizeScale;
+            // World-space size — light "intensity dots" are 1.5–6 voxels wide,
+            // scaled to the local energy flux not the lattice size.
+            sizeAttr.array[vi] = 1.5 + 4.5 * t;
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -3099,6 +3149,7 @@ export class Viewport {
         });
         this._quantumField = new THREE.Points(geo, mat);
         this._quantumField.visible = false;
+        this._quantumField.frustumCulled = false; // dynamic geo — see _eFieldLines
         this._quantumField.renderOrder = 4;
         this.scene.add(this._quantumField);
         this._quantumFieldKind = null;
@@ -3270,6 +3321,7 @@ export class Viewport {
         });
         this._phaseNeedles = new THREE.LineSegments(geo, mat);
         this._phaseNeedles.visible = false;
+        this._phaseNeedles.frustumCulled = false; // dynamic geo — see _eFieldLines
         this._phaseNeedles.renderOrder = 5;
         this.scene.add(this._phaseNeedles);
     }
@@ -3431,10 +3483,16 @@ export class Viewport {
         this._gravSurface.position.set(N / 2, N / 2, N / 2);
         this._gravSurface.visible = false;
         this._gravSurface.renderOrder = 3;
+        // Plane mesh has dynamic Y-displacement on its vertices; turn off
+        // frustum culling so the deformed surface doesn't disappear when the
+        // camera zooms inside it (well-shaped surface can extend below the
+        // original bounding box).
+        this._gravSurface.frustumCulled = false;
         this._gravSurfaceWire = new THREE.Mesh(geo, wireMat);
         this._gravSurfaceWire.position.set(N / 2, N / 2 + 0.02, N / 2);
         this._gravSurfaceWire.visible = false;
         this._gravSurfaceWire.renderOrder = 3;
+        this._gravSurfaceWire.frustumCulled = false;
         this.scene.add(this._gravSurface);
         this.scene.add(this._gravSurfaceWire);
     }

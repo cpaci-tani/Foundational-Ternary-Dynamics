@@ -92,10 +92,11 @@ inline bool is_luminous(CosmicBodyType t) {
            t == CosmicBodyType::NEBULA;
 }
 
-// ============================================================================
-// Cosmic body struct
-// ============================================================================
-
+/**
+ * @brief Continuous space entity representing a massive cosmic body.
+ * 
+ * [THEOREM] Scales up the ternary states to cosmic scales (Dark Matter, Luminous, Void-collapsing).
+ */
 struct CosmicBody {
     int32_t id = -1;
     CosmicBodyType type = CosmicBodyType::DARK_MATTER;
@@ -291,10 +292,11 @@ inline constexpr double JET_COLLIMATION = 0.1; // Opening half-angle (radians)
 
 } // namespace cosmic
 
-// ============================================================================
-// CosmicEngine
-// ============================================================================
-
+/**
+ * @brief Scale 5 N-body and SPH simulation engine.
+ * 
+ * [EXTENDED] Handles N-body gravity with Barnes-Hut octree and SPH cosmic gas dynamics.
+ */
 class CosmicEngine : public ScaleEngine {
 public:
     CosmicEngine();
