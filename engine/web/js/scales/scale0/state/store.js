@@ -17,6 +17,12 @@ export const FIELD_TOGGLE_KEYS = [
     'showDampingZones',
     'showGenesisIsosurface',
     'showConfinement',
+    // Tier 1 quantum overlays — see docs/SPEC_S0_QUANTUM_OVERLAYS.md
+    'showPsiSquared',
+    'showPhase',
+    'showLagrangianDensity',
+    'showEntropyDensity',
+    'showGravPotential',
 ];
 
 export const FORCE_FIELD_KEYS = new Set([
@@ -44,6 +50,12 @@ function createFieldFlags() {
         showDampingZones: false,
         showGenesisIsosurface: false,
         showConfinement: false,
+        // Tier 1 quantum overlays
+        showPsiSquared: false,
+        showPhase: false,
+        showLagrangianDensity: false,
+        showEntropyDensity: false,
+        showGravPotential: false,
     };
 }
 

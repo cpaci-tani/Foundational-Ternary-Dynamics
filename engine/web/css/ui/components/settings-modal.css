@@ -1,0 +1,322 @@
+/* ============================================================
+ *  settings-modal.css
+ *  All rules specific to the Settings dialog.
+ *  Extracted from primitives/modal.css in Phase D.
+ * ============================================================ */
+
+/* ── Settings modal backdrop (#settings-modal) ───────── */
+/* JS sets display:flex to show, display:none to hide */
+#settings-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: var(--z-modal);
+    background: var(--modal-backdrop);
+    backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Settings box (modal content shell) ──────────────── */
+.settings-box {
+    background: var(--bg-elevated);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    padding: 24px 28px;
+    min-width: 400px;
+    width: min(640px, calc(100vw - 32px));
+    max-width: 640px;
+    max-height: min(88vh, 860px);
+    overflow: auto;
+    box-shadow: var(--shadow-xl);
+}
+
+/* ── Settings internals ──────────────────────────────── */
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.settings-title {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+}
+
+.settings-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+}
+
+.settings-close-btn:hover,
+.settings-close-btn:focus-visible {
+    color: var(--text-primary);
+}
+
+.settings-section {
+    margin-bottom: 18px;
+}
+
+.settings-subsection + .settings-subsection {
+    margin-top: 16px;
+}
+
+.settings-label {
+    display: block;
+    font-size: var(--fs-md);
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--sp-sm);
+}
+
+.settings-label-row {
+    margin-bottom: 12px;
+}
+
+.settings-copy {
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    line-height: 1.45;
+}
+
+.settings-help {
+    margin-top: 8px;
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    line-height: 1.45;
+}
+
+/* UI Scale row */
+.settings-scale-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-md);
+}
+
+.settings-scale-val {
+    font-family: var(--font-mono);
+    font-size: var(--fs-lg);
+    font-weight: bold;
+    color: var(--accent);
+    min-width: 44px;
+    text-align: center;
+}
+
+.settings-presets {
+    display: flex;
+    gap: 6px;
+    margin-top: var(--sp-sm);
+}
+
+.settings-presets button { flex: 1; }
+
+.settings-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.settings-choice-grid-compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.settings-choice {
+    width: auto;
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    transition: all var(--dur-fast) var(--ease-out);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+}
+
+.settings-choice:hover,
+.settings-choice:focus-visible {
+    background: var(--state-hover-bg);
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+
+.settings-choice.active {
+    background: var(--state-active-bg);
+    color: var(--text-primary);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+/* Preset buttons (moved from primitives/button.css in Phase D) */
+.settings-preset {
+    width: auto;
+    height: auto;
+    padding: 6px 10px;
+    font-size: var(--fs-xs);
+    border-radius: var(--radius);
+    cursor: pointer;
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    transition: all var(--dur-fast) var(--ease-out);
+}
+
+.settings-preset:hover {
+    background: var(--state-hover-bg);
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+
+.settings-preset.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Theme grid */
+.settings-theme-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--sp-md);
+}
+
+.theme-swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: var(--sp-md) var(--sp-sm);
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+    background: var(--bg-input);
+}
+
+.theme-swatch:hover {
+    border-color: var(--border-light);
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+.theme-swatch.active {
+    border-color: var(--accent);
+    background: var(--state-active-bg);
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.theme-swatch-colors {
+    display: flex;
+    gap: 0;
+    height: 24px;
+    width: 100%;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.theme-swatch-colors div { flex: 1; }
+
+/* Per-theme preview columns (each strip inside .theme-swatch-colors).
+   These are intentionally hardcoded — they represent the theme's own
+   palette, not the currently-active theme. Using classes rather than
+   inline style keeps the markup clean and themeable. */
+.theme-swatch-colors[data-theme="default"]   div:nth-child(1) { background: #111827; }
+.theme-swatch-colors[data-theme="default"]   div:nth-child(2) { background: #1f2937; }
+.theme-swatch-colors[data-theme="default"]   div:nth-child(3) { background: #283548; }
+.theme-swatch-colors[data-theme="default"]   div:nth-child(4) { background: #60a5fa; }
+
+.theme-swatch-colors[data-theme="abyss"]     div:nth-child(1) { background: #000000; }
+.theme-swatch-colors[data-theme="abyss"]     div:nth-child(2) { background: #0a0a0f; }
+.theme-swatch-colors[data-theme="abyss"]     div:nth-child(3) { background: #111118; }
+.theme-swatch-colors[data-theme="abyss"]     div:nth-child(4) { background: #6366f1; }
+
+.theme-swatch-colors[data-theme="nord"]      div:nth-child(1) { background: #2e3440; }
+.theme-swatch-colors[data-theme="nord"]      div:nth-child(2) { background: #3b4252; }
+.theme-swatch-colors[data-theme="nord"]      div:nth-child(3) { background: #4c566a; }
+.theme-swatch-colors[data-theme="nord"]      div:nth-child(4) { background: #88c0d0; }
+
+.theme-swatch-colors[data-theme="light"]     div:nth-child(1) { background: #f8f9fb; }
+.theme-swatch-colors[data-theme="light"]     div:nth-child(2) { background: #ffffff; }
+.theme-swatch-colors[data-theme="light"]     div:nth-child(3) { background: #e5e7eb; }
+.theme-swatch-colors[data-theme="light"]     div:nth-child(4) { background: #2563eb; }
+
+.theme-swatch-colors[data-theme="parchment"] div:nth-child(1) { background: #f5f0e8; }
+.theme-swatch-colors[data-theme="parchment"] div:nth-child(2) { background: #ece5d8; }
+.theme-swatch-colors[data-theme="parchment"] div:nth-child(3) { background: #d5cdc0; }
+.theme-swatch-colors[data-theme="parchment"] div:nth-child(4) { background: #8b6914; }
+
+.theme-swatch-name {
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+/* Footer */
+.settings-footer {
+    border-top: 1px solid var(--border);
+    padding-top: var(--sp-md);
+    text-align: right;
+}
+
+.settings-footer button {
+    width: auto;
+    height: auto;
+    padding: var(--sp-sm) 20px;
+    font-size: var(--fs-base);
+    border-radius: var(--radius);
+    cursor: pointer;
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    transition: all var(--dur-fast) var(--ease-out);
+}
+
+.settings-footer button:hover {
+    background: var(--negative);
+    color: #fff;
+    border-color: var(--negative);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 767px) {
+    .settings-box {
+        min-width: 0;
+        padding: 20px 18px;
+    }
+
+    .settings-theme-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .settings-choice-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-choice-grid-compact {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .settings-presets {
+        flex-wrap: wrap;
+    }
+
+    .settings-presets button {
+        min-width: calc(50% - 3px);
+        flex: 1 1 calc(50% - 3px);
+    }
+}

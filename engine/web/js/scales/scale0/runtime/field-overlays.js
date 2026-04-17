@@ -4,16 +4,202 @@ const DUAL_DELTA = 0.9568;
 
 export function sampleFieldState(fieldCapability, flags, stride) {
     const sampled = {};
-    if (flags.showFluxLines || flags.showDualSubstrate || flags.showChirality || flags.showForceWeak) {
+    // Tier 1 quantum overlays all derive from fluxVector + optional poynting,
+    // so pull those samples whenever any quantum toggle is active.
+    const needFlux = flags.showFluxLines || flags.showDualSubstrate || flags.showChirality ||
+        flags.showForceWeak || flags.showPsiSquared || flags.showPhase ||
+        flags.showLagrangianDensity || flags.showEntropyDensity || flags.showGravPotential;
+    if (needFlux) {
         sampled.fluxVector = fieldCapability.getScale0FieldSamples({ kind: 'fluxVector', stride });
     }
-    if (flags.showPoynting || flags.showLight) {
+    if (flags.showPoynting || flags.showLight || flags.showLagrangianDensity) {
         sampled.poynting = fieldCapability.getScale0FieldSamples({ kind: 'poynting', stride });
     }
     if (flags.showEField) sampled.eField = fieldCapability.getScale0FieldSamples({ kind: 'e', stride });
     if (flags.showBField) sampled.bField = fieldCapability.getScale0FieldSamples({ kind: 'b', stride });
-    if (flags.showDivField) sampled.divergence = fieldCapability.getScale0FieldSamples({ kind: 'divJ', stride });
+    if (flags.showDivField || flags.showLagrangianDensity) {
+        sampled.divergence = fieldCapability.getScale0FieldSamples({ kind: 'divJ', stride });
+    }
     return sampled;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// Tier 1 quantum-overlay derivation helpers
+// See docs/SPEC_S0_QUANTUM_OVERLAYS.md §3.
+// ══════════════════════════════════════════════════════════════════════
+
+function ensureTier1Buffers(state, N) {
+    if (!state.t1 || state.t1.size !== N) {
+        state.t1 = {
+            size: N,
+            psi2:   new Float32Array(N),
+            phase:  new Float32Array(N),
+            lagr:   new Float32Array(N),
+            entropy: new Float32Array(N),
+            gravPot: new Float32Array(N),
+            normalizer: { psi2Max: 0, lagMax: 0, gravMax: 0 },
+        };
+    }
+    return state.t1;
+}
+
+function computePsiSquaredFrame(sampled, state, dualActive) {
+    if (!sampled.fluxVector?.count) return null;
+    const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
+    const { vectors, positions, count } = sampled.fluxVector;
+    // |ψ|² = |J_L|² + |J_R|² when dual substrate is active, else |J|².
+    // When dual is on the state store already tracks dualLVecs/dualRVecs, but
+    // for Tier 1 we use the (J_L + J_R) invariant = |J|², which equals
+    // |J_L|² + |J_R|² + 2·J_L·J_R. The cross term vanishes for orthogonal
+    // chiralities, so using |J|² is a faithful approximation at this tier.
+    let max = 0;
+    for (let i = 0; i < count; i++) {
+        const x = vectors[i * 3];
+        const y = vectors[i * 3 + 1];
+        const z = vectors[i * 3 + 2];
+        const v = x * x + y * y + z * z;
+        buf.psi2[i] = v;
+        if (v > max) max = v;
+    }
+    buf.normalizer.psi2Max = max;
+    return { positions, values: buf.psi2, count, normalizer: max, dualActive };
+}
+
+function computePhaseFrame(sampled, state, dualLVecs, dualRVecs) {
+    if (!sampled.fluxVector?.count) return null;
+    const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
+    const { positions, count } = sampled.fluxVector;
+    // When Dual Substrate is off, dualLVecs / dualRVecs may be null. Fall
+    // back to a trivial phase of 0 for every voxel so the renderer still
+    // gets a frame (just a uniform field, matching the physics — real J
+    // has zero imaginary component).
+    const hasDual = dualLVecs && dualRVecs && dualLVecs.length >= count * 3;
+    for (let i = 0; i < count; i++) {
+        if (hasDual) {
+            const lx = dualLVecs[i * 3], ly = dualLVecs[i * 3 + 1], lz = dualLVecs[i * 3 + 2];
+            const rx = dualRVecs[i * 3], ry = dualRVecs[i * 3 + 1], rz = dualRVecs[i * 3 + 2];
+            const lMag = Math.sqrt(lx * lx + ly * ly + lz * lz);
+            const rMag = Math.sqrt(rx * rx + ry * ry + rz * rz);
+            buf.phase[i] = Math.atan2(rMag, lMag);
+        } else {
+            buf.phase[i] = 0;
+        }
+    }
+    return { positions, values: buf.phase, count, dualAvailable: hasDual };
+}
+
+function computeLagrangianDensityFrame(sampled, state) {
+    // Per-voxel ℒ(x) ≈ ½|J|² − ½|∇J|²
+    //   kinetic term     potential-like term
+    // The full Lagrangian chart tracks more terms (coupling, Gauss, dissipation)
+    // but those are either scalars or require engine-side data we don't sample
+    // per-voxel yet. This captures the dominant (kinetic − gradient) split so
+    // users see "blue = potential-dominated, red = kinetic-dominated".
+    if (!sampled.fluxVector?.count) return null;
+    const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
+    const { vectors, positions, count } = sampled.fluxVector;
+    const divVals = sampled.divergence?.values;
+    const hasDiv = divVals && divVals.length >= count;
+    let maxAbs = 0;
+    for (let i = 0; i < count; i++) {
+        const x = vectors[i * 3];
+        const y = vectors[i * 3 + 1];
+        const z = vectors[i * 3 + 2];
+        const kinetic = 0.5 * (x * x + y * y + z * z);
+        // Use |divJ|² as a proxy for |∇J|² (not exactly equal, but a defensible
+        // stand-in when we only sample the divergence-scalar field).
+        const gradProxy = hasDiv ? 0.5 * divVals[i] * divVals[i] : 0;
+        const L = kinetic - gradProxy;
+        buf.lagr[i] = L;
+        const a = Math.abs(L);
+        if (a > maxAbs) maxAbs = a;
+    }
+    buf.normalizer.lagMax = maxAbs;
+    return { positions, values: buf.lagr, count, normalizer: maxAbs };
+}
+
+function computeEntropyDensityFrame(sampled, state) {
+    // Shannon entropy of the ternary state in a 3×3×3 Moore neighborhood.
+    // We don't have per-voxel access to the state field from the overlay
+    // runtime yet, so we proxy with a rank-based estimator: entropy is high
+    // where |J| is near the median (disordered) and low where |J| is either
+    // near zero (empty / crystallized) or near the maximum (saturated).
+    // This is a Tier 1 stand-in; a true neighborhood-sampling estimator
+    // will land when the state field is exposed through a capability call.
+    if (!sampled.fluxVector?.count) return null;
+    const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
+    const { vectors, positions, count } = sampled.fluxVector;
+    // Pass 1: find max |J|
+    let max = 0;
+    for (let i = 0; i < count; i++) {
+        const x = vectors[i * 3];
+        const y = vectors[i * 3 + 1];
+        const z = vectors[i * 3 + 2];
+        const m = Math.sqrt(x * x + y * y + z * z);
+        if (m > max) max = m;
+    }
+    const eps = 1e-9;
+    // Pass 2: mapped entropy — 4·p·(1-p) where p = |J|/max gives a smooth
+    // 0→1→0 bump (Gini-style impurity, equivalent to Shannon up to scale).
+    for (let i = 0; i < count; i++) {
+        const x = vectors[i * 3];
+        const y = vectors[i * 3 + 1];
+        const z = vectors[i * 3 + 2];
+        const m = Math.sqrt(x * x + y * y + z * z);
+        const p = max > eps ? m / max : 0;
+        buf.entropy[i] = 4 * p * (1 - p);
+    }
+    return { positions, values: buf.entropy, count };
+}
+
+function computeGravPotentialFrame(ctx, sampled, state) {
+    // If the bridge already exposes a gravitational potential field, prefer
+    // that. Otherwise we approximate Φ(x) by a smoothed |J|² mass density:
+    // true Φ satisfies ∇²Φ = 4πGρ, and a Gaussian smoothing of ρ is the
+    // lowest-pass-filter analogue at fixed resolution — good enough to show
+    // wells and peaks qualitatively.
+    if (!sampled.fluxVector?.count) return null;
+    if (typeof ctx.bridge?.getGravPotentialSamples === 'function') {
+        const data = ctx.bridge.getGravPotentialSamples();
+        if (data?.count > 0) return data;
+    }
+    const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
+    const { vectors, positions, count } = sampled.fluxVector;
+    // Build |J|² as a pseudo-mass, normalize, then invert (negative for wells).
+    let maxAbs = 0;
+    for (let i = 0; i < count; i++) {
+        const x = vectors[i * 3];
+        const y = vectors[i * 3 + 1];
+        const z = vectors[i * 3 + 2];
+        const m = x * x + y * y + z * z;
+        // Φ is negative where mass is concentrated → use -m as a monotone
+        // proxy. Real Φ would be a spatial integral; smoothing happens at
+        // render time.
+        buf.gravPot[i] = -m;
+        if (m > maxAbs) maxAbs = m;
+    }
+    buf.normalizer.gravMax = maxAbs;
+    return { positions, values: buf.gravPot, count, normalizer: maxAbs };
+}
+
+export function buildQuantumOverlayData(ctx, state, sampled) {
+    const frame = {};
+    if (state.fieldFlags.showPsiSquared) {
+        frame.psiSquared = computePsiSquaredFrame(sampled, state, state.fieldFlags.showDualSubstrate);
+    }
+    if (state.fieldFlags.showPhase) {
+        frame.phase = computePhaseFrame(sampled, state, state.dualLVecs, state.dualRVecs);
+    }
+    if (state.fieldFlags.showLagrangianDensity) {
+        frame.lagrangianDensity = computeLagrangianDensityFrame(sampled, state);
+    }
+    if (state.fieldFlags.showEntropyDensity) {
+        frame.entropyDensity = computeEntropyDensityFrame(sampled, state);
+    }
+    if (state.fieldFlags.showGravPotential) {
+        frame.gravPotential = computeGravPotentialFrame(ctx, sampled, state);
+    }
+    return frame;
 }
 
 function fillFieldParticleBuf(state, particleData) {
@@ -219,6 +405,13 @@ export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame) {
     if (overlayFrame.dualFlux) viewportAdapter.applyDualFlux(overlayFrame.dualFlux.left, overlayFrame.dualFlux.right);
     if (overlayFrame.chirality) viewportAdapter.applyChirality(overlayFrame.chirality);
     if (overlayFrame.light) viewportAdapter.applyLight(overlayFrame.light);
+
+    // Tier 1 quantum overlays
+    if (overlayFrame.psiSquared) viewportAdapter.applyPsiSquared(overlayFrame.psiSquared);
+    if (overlayFrame.phase) viewportAdapter.applyPhase(overlayFrame.phase);
+    if (overlayFrame.lagrangianDensity) viewportAdapter.applyLagrangianDensity(overlayFrame.lagrangianDensity);
+    if (overlayFrame.entropyDensity) viewportAdapter.applyEntropyDensity(overlayFrame.entropyDensity);
+    if (overlayFrame.gravPotential) viewportAdapter.applyGravPotential(overlayFrame.gravPotential);
 }
 
 export function updateFieldOverlays(ctx, state, viewportAdapter) {
@@ -238,5 +431,6 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
     const overlayFrame = buildElectromagneticOverlayData(ctx, state, sampled, latticeSize, stride, stepsScale, seedSpacing);
     const forceFrame = buildForceOverlayData(state, fieldCapability, sampled, latticeSize, stride, stepsScale, seedSpacing);
     Object.assign(overlayFrame, buildDerivedSubstrateData(state, sampled, mockCapability));
+    Object.assign(overlayFrame, buildQuantumOverlayData(ctx, state, sampled));
     applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame);
 }

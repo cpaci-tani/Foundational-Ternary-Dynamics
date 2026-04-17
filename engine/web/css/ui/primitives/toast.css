@@ -1,0 +1,90 @@
+/* Toast notification primitive styles */
+
+/* ── Toast container ─────────────────────────────────── */
+#toast-container {
+    position: fixed;
+    top: calc(48px * var(--ui-scale) + 16px); /* Binds mathematically to toolbar height */
+    right: 16px;
+    z-index: var(--z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+    max-width: 420px;
+}
+
+/* ── Individual toast ────────────────────────────────── */
+.toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radius-lg);
+    font-size: 11px;
+    line-height: 1.4;
+    background: var(--bg-elevated);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-light);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-lg);
+    animation: toast-in 0.25s ease-out;
+}
+
+.toast button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.toast button:hover {
+    color: var(--text-primary);
+}
+
+/* ── Toast variants ──────────────────────────────────── */
+.toast-warning {
+    border-color: var(--warning);
+}
+
+.toast-warning::before {
+    content: '\26A0';
+    margin-right: 2px;
+    color: var(--warning);
+}
+
+.toast-error {
+    border-color: var(--negative);
+}
+
+.toast-error::before {
+    content: '\2716';
+    margin-right: 2px;
+    color: var(--negative);
+}
+
+.toast-info {
+    border-color: var(--accent);
+}
+
+.toast-info::before {
+    content: '\2139';
+    margin-right: 2px;
+    color: var(--accent);
+}
+
+/* ── Entrance animation ──────────────────────────────── */
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

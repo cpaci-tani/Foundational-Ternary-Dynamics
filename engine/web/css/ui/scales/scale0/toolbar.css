@@ -1,0 +1,99 @@
+.tb-group-scale0 {
+    position: relative;
+    gap: 8px;
+}
+
+.scale0-scenario-select {
+    min-width: 220px;
+    max-width: 240px;
+}
+
+.scale0-scenario-meta {
+    max-width: 220px;
+}
+
+.scale0-scenario-meta summary {
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.scale0-scenario-meta[open] {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: var(--z-field-overlay);
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(8, 12, 20, 0.94);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+/* ── Floating Symmetry Panel ─────────────────────────────────────────────── */
+.sym-panel {
+    position: absolute;
+    display: none;
+    z-index: var(--z-sidebar);
+    background: var(--bg-surface);
+    border: 1px solid var(--positive);
+    padding: 12px;
+    border-radius: var(--radius-lg);
+    font-size: 12px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+.sym-panel-title {
+    color: var(--positive);
+    font-weight: bold;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+}
+.sym-panel-label {
+    display: block;
+    margin-bottom: 4px;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+/* ── Scale 0 Field Overlay Swatches ────────────────────── */
+/* These colors match the 3D renderer shader constants. */
+.field-swatch-e-field      { background: #4dd0e1; }
+.field-swatch-b-field      { background: #66bb6a; }
+.field-swatch-energy       { background: #ffa726; }
+.field-swatch-divj         { background: linear-gradient(90deg, #e53935, #1e88e5); }
+.field-swatch-flux-lines   { background: linear-gradient(90deg, #1565c0, #ffee58, #e53935); }
+.field-swatch-em           { background: #00e5ff; }
+.field-swatch-gravity      { background: #ffab00; }
+.field-swatch-strong       { background: #ff1744; }
+.field-swatch-weak         { background: #aa00ff; }
+.field-swatch-dualj        { background: linear-gradient(90deg, #ff7043, #42a5f5); }
+.field-swatch-chirality    { background: linear-gradient(90deg, #ef5350, #42a5f5); }
+.field-swatch-light        { background: #ffeb3b; }
+.field-swatch-dm-halo      { background: #7c3aed; }
+.field-swatch-damping      { background: #ef4444; }
+.field-swatch-genesis      { background: #22c55e; }
+.field-swatch-confinement  { background: #ec407a; }
+
+/* ── Tier 1 quantum overlay swatches ─────────────────── */
+/* Distinct colormap previews for each derived field. Not themed — these
+   are data-color legends that must match the future renderer output. */
+.field-swatch-psi-squared    { background: linear-gradient(90deg, #440154 0%, #21918c 50%, #fde725 100%); }
+.field-swatch-phase          { background: conic-gradient(from 0deg, #ff0055, #ffcc00, #00ff88, #00aaff, #9900ff, #ff0055); }
+.field-swatch-lagrangian     { background: linear-gradient(90deg, #2166ac 0%, #f7f7f7 50%, #b2182b 100%); }
+.field-swatch-entropy        { background: linear-gradient(90deg, #000 0%, #fff 100%); }
+.field-swatch-grav-potential { background: linear-gradient(90deg, #000033 0%, #0066cc 50%, #ffff00 100%); }
+
+/* Scenario epistemic status text */
+.lat-scenario-desc-text {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    margin: 4px 0 0 0;
+}

@@ -35,7 +35,7 @@
 #app.mode-meta #viewport { background: #080818; }
 #app.mode-consciousness #viewport { background: #050510; }
 
-/* .mode-unavailable: canonical definition in components.css */
+/* .mode-unavailable: defined in css/ui/panels/diagnostics-panel.css */
 
 /* Universal tools that don't apply at cosmic/meta scales */
 #app.mode-cosmic #viewport-toggles-universal { display: none !important; }

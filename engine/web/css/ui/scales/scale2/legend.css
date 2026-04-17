@@ -1,0 +1,66 @@
+/* Element Legend (Scale 2 — Atoms) — migrated from layout.css */
+
+.ae-legend {
+    position: absolute;
+    top: calc(48px * var(--ui-scale) + 12px);
+    left: 12px;
+    z-index: var(--z-status);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(8px);
+    padding: 8px 10px;
+    min-width: 90px;
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.ae-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 2px 0;
+}
+
+.ae-legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+}
+
+.ae-legend-sym {
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    min-width: 18px;
+}
+
+.ae-legend-name {
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.ae-legend-sep {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+}
+
+.ae-legend-header {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 0 1px;
+}
+
+/* Proton/neutron/orbital swatches for the nuclear legend mode */
+.ae-legend-swatch-proton   { background: #ff4d33; }
+.ae-legend-swatch-neutron  { background: #4d80e6; }
+.ae-legend-swatch-orb-s    { background: #66bfff; }
+.ae-legend-swatch-orb-p    { background: #4de673; }
+.ae-legend-swatch-orb-d    { background: #ffb333; }
+.ae-legend-swatch-orb-f    { background: #d94db3; }

@@ -1,0 +1,220 @@
+/* ── Base panel-area styles ── */
+#panel-area {
+    position: absolute;
+    bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + 72px * var(--ui-scale));
+    left: 50%;
+    transform: translateX(-50%);
+    width: 92vw;
+    max-width: 1400px;
+    z-index: var(--z-panel);
+    min-height: 260px;
+    max-height: calc(85vh - 120px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--bg-surface);
+    backdrop-filter: blur(32px) saturate(1.4);
+    border: 1px solid var(--border);
+    border-top: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    /* Zero top padding — the resizer occupies the top edge of the panel */
+    padding: 0 var(--sp-xl) var(--sp-xl);
+    box-shadow: var(--dock-shadow);
+    transition: all var(--dur-base) var(--ease-out);
+}
+
+html[data-panel-width="narrow"] #panel-area {
+    width: 84vw;
+    max-width: 1120px;
+}
+
+html[data-panel-width="wide"] #panel-area {
+    width: 96vw;
+    max-width: 1680px;
+}
+
+html[data-density="compact"] #panel-area {
+    min-height: 220px;
+    padding-right: var(--sp-lg);
+    padding-bottom: var(--sp-lg);
+    padding-left: var(--sp-lg);
+}
+
+#panel-area::-webkit-resizer { display: none; }
+
+#app.panels-collapsed #panel-area {
+    min-height: 0;
+    max-height: 0;
+    padding: 0 var(--sp-xl);
+    opacity: 0;
+    pointer-events: none;
+    border-width: 0;
+    transform: translate(-50%, 20px);
+}
+
+#panel-resizer {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Sits flush at the top edge of #panel-area (padding-top: 0) so the
+       grabber pill visually anchors to the container's top rim. */
+    height: 22px;
+    margin-bottom: 6px;
+    cursor: ns-resize;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: var(--z-panel-toggle);
+    background: transparent;
+}
+
+#panel-resizer span {
+    position: relative;
+    width: 56px;
+    height: 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: 999px;
+    backdrop-filter: blur(12px) saturate(1.2);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    transition: transform var(--dur-base) var(--ease-out),
+                border-color var(--dur-base) var(--ease-out),
+                box-shadow var(--dur-base) var(--ease-out),
+                background-color var(--dur-base) var(--ease-out);
+}
+
+/* Two parallel grip lines inside the pill */
+#panel-resizer span::before,
+#panel-resizer span::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    height: 1.5px;
+    border-radius: 999px;
+    background: var(--text-muted);
+    opacity: 0.7;
+    transition: background var(--dur-base) var(--ease-out),
+                opacity var(--dur-base) var(--ease-out);
+}
+#panel-resizer span::before { top: 3px; }
+#panel-resizer span::after  { bottom: 3px; }
+
+#panel-resizer:hover span {
+    transform: scale(1.08);
+    border-color: var(--accent);
+    box-shadow:
+        0 3px 14px var(--accent-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+#panel-resizer:hover span::before,
+#panel-resizer:hover span::after {
+    background: var(--accent);
+    opacity: 1;
+}
+
+#panel-resizer:active span {
+    transform: scale(0.96);
+}
+
+#app.panels-collapsed #tab-bar .tab {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+#app.panels-collapsed #tab-bar #btn-panel-toggle {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Enhanced shell overrides ── */
+#panel-area[data-panel-dock="true"] {
+    padding-top: 14px;
+}
+
+.panel-dock-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.panel-dock-kicker {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.panel-dock-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.panel-dock-hide-btn {
+    display: none;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--state-hover-bg);
+    color: var(--text-secondary);
+}
+
+.panel-dock-body {
+    display: grid;
+    gap: 8px;
+}
+
+@media (max-width: 767px) {
+    .panel-dock-hide-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* ── Panel show/hide ─────────────────────────────────────────────────────── */
+
+.panel {
+    display: none;
+}
+
+.panel.active {
+    display: block;
+}
+
+/* Panel layout helpers */
+.panel-grid {
+    display: grid;
+    gap: var(--sp-lg);
+}
+
+.panel-grid-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.panel-grid-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.panel-grid-4 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+/* Scale context header above controls grid */
+.panel-scale-header {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}

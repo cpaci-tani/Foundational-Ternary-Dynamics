@@ -1,0 +1,31 @@
+.ui-tooltip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    max-width: min(320px, calc(100vw - 24px));
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--tooltip-border);
+    background: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    box-shadow: var(--tooltip-shadow);
+    backdrop-filter: var(--tooltip-backdrop);
+    font-size: 12px;
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+    z-index: calc(var(--z-modal) + 1);
+    pointer-events: none;
+    white-space: normal;
+}
+
+.ui-tooltip[hidden] {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .ui-tooltip {
+        max-width: min(280px, calc(100vw - 20px));
+        font-size: 11px;
+        line-height: 1.4;
+    }
+}

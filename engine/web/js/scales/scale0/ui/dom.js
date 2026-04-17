@@ -15,6 +15,12 @@ export const FIELD_TOGGLE_BINDINGS = [
     ['toggle-damping-zones', 'showDampingZones'],
     ['toggle-genesis-iso', 'showGenesisIsosurface'],
     ['toggle-confinement', 'showConfinement'],
+    // Tier 1 quantum overlays — see docs/SPEC_S0_QUANTUM_OVERLAYS.md
+    ['toggle-psi-squared',        'showPsiSquared'],
+    ['toggle-phase',              'showPhase'],
+    ['toggle-lagrangian-density', 'showLagrangianDensity'],
+    ['toggle-entropy-density',    'showEntropyDensity'],
+    ['toggle-grav-potential',     'showGravPotential'],
 ];
 
 export const FORCE_STYLE_VALUES = ['arrows', 'heatmap', 'flow', 'glyphs'];

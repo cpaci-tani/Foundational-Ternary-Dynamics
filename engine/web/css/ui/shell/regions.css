@@ -1,0 +1,8 @@
+/* Shell region z-layer assignments — all values reference z-layers.css tokens. */
+[data-shell-region="toolbar"]  { z-index: var(--z-toolbar); }
+[data-shell-region="viewport"] { z-index: var(--z-viewport); }
+[data-shell-region="tabs"]     { z-index: var(--z-tabs); }
+[data-shell-region="panels"]   { z-index: var(--z-panel); }
+[data-shell-region="status"]   { z-index: var(--z-status); }
+[data-shell-region="toasts"]   { z-index: var(--z-toast); }
+[data-shell-region="settings"] { z-index: var(--z-modal); }

@@ -536,8 +536,11 @@ export class Viewport {
 
     setLatticeSize(size) {
         this.latticeSize = size;
+        this._latticeSize = size;  // mirrored so quantum overlays can read it too
         this._halfN = size / 2;
         this._buildBoundary(this._boundaryShape, this._boundaryMode);
+        // Gravity rubber-sheet needs to match the new lattice footprint.
+        this._rebuildGravSurfaceIfResized?.();
         
         // Rebuild void box for raycasting
         if (this._voidBox) {
@@ -3039,6 +3042,492 @@ export class Viewport {
     }
 
     // ══════════════════════════════════════════════════════════════════
+    // ── Tier 1 Quantum Overlays ───────────────────────────────────────
+    // See docs/SPEC_S0_QUANTUM_OVERLAYS.md for the full catalog.
+    //
+    // Shared point-cloud renderer. Each of the 5 quantum toggles feeds this
+    // same Points object with its own color ramp. Users typically enable
+    // one at a time; if multiple are enabled, the latest-updated wins.
+
+    _buildSoftDiscTexture() {
+        // Radial-gradient canvas texture. Points rendered with this map look
+        // like soft round discs instead of hard square cards — the physics
+        // convention for scalar-field density (probability cloud, entropy,
+        // potential well, etc.).
+        if (this._softDiscTex) return this._softDiscTex;
+        const size = 64;
+        const c = document.createElement('canvas');
+        c.width = size; c.height = size;
+        const ctx = c.getContext('2d');
+        const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+        grad.addColorStop(0.0,   'rgba(255,255,255,1.0)');
+        grad.addColorStop(0.45,  'rgba(255,255,255,0.6)');
+        grad.addColorStop(0.85,  'rgba(255,255,255,0.08)');
+        grad.addColorStop(1.0,   'rgba(255,255,255,0.0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, size, size);
+        const tex = new THREE.CanvasTexture(c);
+        tex.needsUpdate = true;
+        this._softDiscTex = tex;
+        return tex;
+    }
+
+    _buildQuantumField() {
+        const maxPts = 16384;  // ≥ 64³/stride² for a lattice of 64 with stride 2
+        const positions = new Float32Array(maxPts * 3);
+        const colors = new Float32Array(maxPts * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        // Soft circular sprite — the standard physics-visualization look for
+        // scalar fields (Born density, entropy, potential wells). A future
+        // enhancement could swap in a directional glyph for Phase φ, but the
+        // cyclic hue already conveys phase adequately and the shared round
+        // sprite keeps all 5 overlays visually consistent.
+        const tex = this._buildSoftDiscTexture();
+        const mat = new THREE.PointsMaterial({
+            map: tex,
+            alphaMap: tex,
+            size: 2.8,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.95,
+            depthWrite: false,
+            sizeAttenuation: true,
+            blending: THREE.AdditiveBlending,
+        });
+        this._quantumField = new THREE.Points(geo, mat);
+        this._quantumField.visible = false;
+        this._quantumField.renderOrder = 4;
+        this.scene.add(this._quantumField);
+        this._quantumFieldKind = null;
+    }
+
+    _quantumSetVisibility() {
+        if (!this._quantumField) return;
+        // Phase needles + Φ rubber-sheet have their own objects; the shared
+        // point cloud renders only the three truly-point-cloud overlays.
+        const pointCloudOn = !!(this._psi2Visible || this._lagrangianVisible || this._entropyVisible);
+        this._quantumField.visible = pointCloudOn;
+        if (!pointCloudOn) this._quantumField.geometry.setDrawRange(0, 0);
+    }
+
+    // ── Color ramps (CPU-side) ──
+    // Each ramp takes a normalized input and writes (r,g,b) into a 3-element dest.
+    _rampViridis(t, out, i) {
+        // Approximate viridis: purple → teal → yellow
+        t = Math.max(0, Math.min(1, t));
+        if (t < 0.5) {
+            const u = t * 2;
+            out[i]     = 0.267 * (1 - u) + 0.13  * u;
+            out[i + 1] = 0.004 * (1 - u) + 0.566 * u;
+            out[i + 2] = 0.329 * (1 - u) + 0.551 * u;
+        } else {
+            const u = (t - 0.5) * 2;
+            out[i]     = 0.13  * (1 - u) + 0.993 * u;
+            out[i + 1] = 0.566 * (1 - u) + 0.906 * u;
+            out[i + 2] = 0.551 * (1 - u) + 0.144 * u;
+        }
+    }
+
+    _rampCyclicHSL(phase, out, i) {
+        // Phase ∈ [0, π/2] for atan2(|J_R|,|J_L|) — map full hue cycle
+        const hue = (phase / (Math.PI / 2)) % 1;
+        // HSL → RGB (S=1, L=0.5)
+        const h6 = hue * 6;
+        const c = 1;  // saturation * (1 - |2L-1|) = 1 * 1 = 1
+        const x = c * (1 - Math.abs((h6 % 2) - 1));
+        let r, g, b;
+        if (h6 < 1)      { r = c; g = x; b = 0; }
+        else if (h6 < 2) { r = x; g = c; b = 0; }
+        else if (h6 < 3) { r = 0; g = c; b = x; }
+        else if (h6 < 4) { r = 0; g = x; b = c; }
+        else if (h6 < 5) { r = x; g = 0; b = c; }
+        else             { r = c; g = 0; b = x; }
+        // L=0.5 means we just output (r,g,b) directly
+        out[i] = r; out[i + 1] = g; out[i + 2] = b;
+    }
+
+    _rampDivergingRdBu(t, out, i) {
+        // t ∈ [-1, 1]; negative=blue, zero=white, positive=red
+        t = Math.max(-1, Math.min(1, t));
+        if (t >= 0) {
+            const u = t;
+            out[i]     = 0.969 * (1 - u) + 0.698 * u;
+            out[i + 1] = 0.969 * (1 - u) + 0.094 * u;
+            out[i + 2] = 0.969 * (1 - u) + 0.169 * u;
+        } else {
+            const u = -t;
+            out[i]     = 0.969 * (1 - u) + 0.129 * u;
+            out[i + 1] = 0.969 * (1 - u) + 0.400 * u;
+            out[i + 2] = 0.969 * (1 - u) + 0.675 * u;
+        }
+    }
+
+    _rampGrayscale(t, out, i) {
+        t = Math.max(0, Math.min(1, t));
+        out[i] = t; out[i + 1] = t; out[i + 2] = t;
+    }
+
+    _rampGravWell(t, out, i) {
+        // t ∈ [0, 1] — deeper well (higher t) = deep blue; peak = yellow
+        t = Math.max(0, Math.min(1, t));
+        if (t > 0.5) {
+            const u = (t - 0.5) * 2;
+            out[i]     = 0.0 + 0.0   * u;
+            out[i + 1] = 0.4 * (1 - u);
+            out[i + 2] = 0.8 * (1 - u) + 0.2 * u;
+        } else {
+            const u = t * 2;
+            out[i]     = 1.0 * (1 - u) + 0.0 * u;
+            out[i + 1] = 1.0 * (1 - u) + 0.4 * u;
+            out[i + 2] = 0.0 * (1 - u) + 0.8 * u;
+        }
+    }
+
+    _populateQuantumField(data, kind, options = {}) {
+        if (!this._quantumField) this._buildQuantumField();
+        if (!data || !data.positions || !data.values || !data.count) return;
+        const posAttr = this._quantumField.geometry.getAttribute('position');
+        const colAttr = this._quantumField.geometry.getAttribute('color');
+        const maxPts = posAttr.array.length / 3;
+        const halfN = this._halfN;
+        const { positions, values, count } = data;
+
+        // Normalization range
+        const signed = options.signed === true;
+        let maxAbs = options.normalizer;
+        if (!maxAbs) {
+            maxAbs = 0;
+            for (let i = 0; i < count; i++) {
+                const v = Math.abs(values[i]);
+                if (v > maxAbs) maxAbs = v;
+            }
+        }
+        const eps = 1e-9;
+        const denom = Math.max(maxAbs, eps);
+        const ramp = options.ramp;
+        const threshold = options.threshold !== undefined ? options.threshold : 0.02;
+        let vi = 0;
+        for (let i = 0; i < count && vi < maxPts; i++) {
+            const raw = values[i];
+            const v = signed ? raw / denom : Math.abs(raw) / denom;
+            if (!signed && v < threshold) continue;
+            if (signed && Math.abs(v) < threshold) continue;
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            posAttr.array[vi * 3]     = px;
+            posAttr.array[vi * 3 + 1] = py;
+            posAttr.array[vi * 3 + 2] = pz;
+            ramp(signed ? v : v, colAttr.array, vi * 3);
+            vi++;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._quantumField.geometry.setDrawRange(0, vi);
+        this._quantumFieldKind = kind;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ── |ψ|² Born density — viridis probability cloud with breathing ──
+    togglePsiSquaredField(on) {
+        this._psi2Visible = !!on;
+        if (!this._quantumField) this._buildQuantumField();
+        this._quantumSetVisibility();
+    }
+    updatePsiSquaredField(data) {
+        this._psi2Data = data;
+        if (!this._psi2Visible) return;
+        this._populateQuantumField(data, 'psi2', {
+            signed: false,
+            ramp: (t, out, i) => this._rampViridis(t, out, i),
+            normalizer: data?.normalizer,
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ── Phase φ — directional line-segments (needles) in XZ plane ─────
+    // A complex phase is a DIRECTION on the unit circle, not a scalar.
+    // Render each voxel as a short line segment pointing at angle φ so
+    // users SEE the rotation pattern, not just a colored dot.
+
+    _buildPhaseNeedles() {
+        const maxPts = 8192;  // 2 vertices per needle
+        const positions = new Float32Array(maxPts * 6);
+        const colors    = new Float32Array(maxPts * 6);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color',    new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.85,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            linewidth: 2,  // note: most WebGL ignores >1 on desktop; texture-free fallback is a line
+        });
+        this._phaseNeedles = new THREE.LineSegments(geo, mat);
+        this._phaseNeedles.visible = false;
+        this._phaseNeedles.renderOrder = 5;
+        this.scene.add(this._phaseNeedles);
+    }
+
+    togglePhaseField(on) {
+        this._phaseVisible = !!on;
+        if (!this._phaseNeedles) this._buildPhaseNeedles();
+        this._phaseNeedles.visible = !!on;
+        if (!on) this._phaseNeedles.geometry.setDrawRange(0, 0);
+        this._quantumSetVisibility();
+    }
+
+    updatePhaseField(data) {
+        this._phaseData = data;
+        if (!this._phaseVisible || !data?.count) return;
+        if (!this._phaseNeedles) this._buildPhaseNeedles();
+        const posAttr = this._phaseNeedles.geometry.getAttribute('position');
+        const colAttr = this._phaseNeedles.geometry.getAttribute('color');
+        const maxSegments = posAttr.array.length / 6;
+        const halfN = this._halfN;
+        const len = 1.2;  // needle half-length in lattice units
+        const { positions, values, count } = data;
+        const rgb = new Float32Array(3);
+        let si = 0;
+        for (let i = 0; i < count && si < maxSegments; i++) {
+            const px = positions[i * 3];
+            const py = positions[i * 3 + 1];
+            const pz = positions[i * 3 + 2];
+            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            const phase = values[i];
+            // Needle direction: rotate in XZ plane by phase angle. Skip trivial
+            // (phase ≈ 0) to avoid visual noise when Dual Substrate is off.
+            if (Math.abs(phase) < 0.02) continue;
+            const dx = Math.cos(phase) * len;
+            const dz = Math.sin(phase) * len;
+            // 2 vertices per segment: (origin − dir, origin + dir)
+            const base = si * 6;
+            posAttr.array[base]     = px - dx;
+            posAttr.array[base + 1] = py;
+            posAttr.array[base + 2] = pz - dz;
+            posAttr.array[base + 3] = px + dx;
+            posAttr.array[base + 4] = py;
+            posAttr.array[base + 5] = pz + dz;
+            this._rampCyclicHSL(phase, rgb, 0);
+            // Same color on both endpoints — creates a solid hue line.
+            colAttr.array[base]     = rgb[0]; colAttr.array[base + 1] = rgb[1]; colAttr.array[base + 2] = rgb[2];
+            colAttr.array[base + 3] = rgb[0]; colAttr.array[base + 4] = rgb[1]; colAttr.array[base + 5] = rgb[2];
+            si++;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._phaseNeedles.geometry.setDrawRange(0, si * 2);
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ── ℒ(x) Lagrangian density — size-attenuated signed cloud ────────
+    // Magnitude → point size, sign → color (red=kinetic, blue=potential).
+    toggleLagrangianDensityField(on) {
+        this._lagrangianVisible = !!on;
+        if (!this._quantumField) this._buildQuantumField();
+        this._quantumSetVisibility();
+    }
+    updateLagrangianDensityField(data) {
+        this._lagrangianData = data;
+        if (!this._lagrangianVisible) return;
+        // Concentrate points where |ℒ| is largest — visual cue that action is
+        // accumulating there. Lowering the threshold keeps near-zero regions
+        // invisible (which is also correct: ℒ ≈ 0 = field is quiescent).
+        this._populateQuantumField(data, 'lagrangian', {
+            signed: true,
+            ramp: (t, out, i) => this._rampDivergingRdBu(t, out, i),
+            normalizer: data?.normalizer,
+            threshold: 0.10,  // up from 0.04 — only show points with meaningful ℒ
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ── Entropy s(x) — jittering sparkles ─────────────────────────────
+    // Disorder IS randomness; high-entropy voxels visually jitter around
+    // their true position. Low-entropy voxels stay still (crystallised).
+    toggleEntropyDensityField(on) {
+        this._entropyVisible = !!on;
+        if (!this._quantumField) this._buildQuantumField();
+        this._entropyJitterSeed = Date.now();
+        this._quantumSetVisibility();
+    }
+    updateEntropyDensityField(data) {
+        this._entropyData = data;
+        if (!this._entropyVisible) return;
+        if (!this._quantumField) this._buildQuantumField();
+        const posAttr = this._quantumField.geometry.getAttribute('position');
+        const colAttr = this._quantumField.geometry.getAttribute('color');
+        const maxPts = posAttr.array.length / 3;
+        const halfN = this._halfN;
+        const { positions, values, count } = data;
+        const JITTER_SCALE = 0.8;  // lattice units of jitter at max entropy
+        let vi = 0;
+        for (let i = 0; i < count && vi < maxPts; i++) {
+            const s = Math.max(0, Math.min(1, values[i]));
+            if (s < 0.04) continue;
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            // Random displacement proportional to entropy. Use a deterministic
+            // per-voxel seed so the jitter is stable frame-to-frame (avoids
+            // epileptic flicker) — visual wobble comes from reseeding on toggle.
+            const seed = (i * 9301 + this._entropyJitterSeed) & 0x7fffffff;
+            const r1 = ((seed * 49297) % 233280) / 233280 - 0.5;
+            const r2 = ((seed * 2147) % 233280) / 233280 - 0.5;
+            const r3 = ((seed * 8191) % 233280) / 233280 - 0.5;
+            const offset = s * JITTER_SCALE;
+            posAttr.array[vi * 3]     = px + r1 * offset;
+            posAttr.array[vi * 3 + 1] = py + r2 * offset;
+            posAttr.array[vi * 3 + 2] = pz + r3 * offset;
+            this._rampGrayscale(s, colAttr.array, vi * 3);
+            vi++;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._quantumField.geometry.setDrawRange(0, vi);
+        this._quantumFieldKind = 'entropy';
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ── Φ(x) potential — rubber-sheet landscape on the XZ floor ───────
+    // A potential is a HEIGHT FIELD. Canonical QM/GR visualization is a
+    // deformable surface where wells dip down and peaks rise up. Rendered
+    // as a subdivided plane at y=0 with Y-displacement = −Φ.
+
+    _buildGravSurface() {
+        const N = this._latticeSize || 32;
+        this._gravSurfaceSize = N;
+        const segments = Math.max(16, Math.min(N, 48));  // cap subdivision for perf
+        // Plane spans the lattice footprint (slightly inset). PlaneGeometry
+        // is centered at (0,0) so we translate to (halfN, halfN-reference, halfN)
+        // to align with lattice coords which run [0, N].
+        const geo = new THREE.PlaneGeometry(N * 0.95, N * 0.95, segments, segments);
+        geo.rotateX(-Math.PI / 2);  // lie flat on XZ plane, normal = +Y
+        const colors = new Float32Array(geo.attributes.position.count * 3);
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        const mat = new THREE.MeshBasicMaterial({
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.55,
+            side: THREE.DoubleSide,
+            wireframe: false,
+            depthWrite: false,
+        });
+        const wireMat = new THREE.MeshBasicMaterial({
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.35,
+            wireframe: true,
+            depthWrite: false,
+        });
+        this._gravSurface = new THREE.Mesh(geo, mat);
+        // Center the plane on the lattice horizontally (X,Z) and anchor its
+        // reference height at the lattice midplane (y = halfN). Wells dip
+        // below midplane, peaks rise above — both stay within the lattice.
+        this._gravSurface.position.set(N / 2, N / 2, N / 2);
+        this._gravSurface.visible = false;
+        this._gravSurface.renderOrder = 3;
+        this._gravSurfaceWire = new THREE.Mesh(geo, wireMat);
+        this._gravSurfaceWire.position.set(N / 2, N / 2 + 0.02, N / 2);
+        this._gravSurfaceWire.visible = false;
+        this._gravSurfaceWire.renderOrder = 3;
+        this.scene.add(this._gravSurface);
+        this.scene.add(this._gravSurfaceWire);
+    }
+
+    _rebuildGravSurfaceIfResized() {
+        // Called from updateGravPotentialField when the lattice size has changed.
+        // Avoid leaking the old mesh by disposing geometry + removing from scene.
+        if (!this._gravSurface) return;
+        const N = this._latticeSize || 32;
+        if (this._gravSurfaceSize === N) return;
+        this._gravSurface.geometry?.dispose();
+        this._gravSurfaceWire.geometry?.dispose();
+        this.scene.remove(this._gravSurface);
+        this.scene.remove(this._gravSurfaceWire);
+        this._gravSurface = null;
+        this._gravSurfaceWire = null;
+        this._buildGravSurface();
+        this._gravSurface.visible = this._gravPotVisible;
+        this._gravSurfaceWire.visible = this._gravPotVisible;
+    }
+
+    toggleGravPotentialField(on) {
+        this._gravPotVisible = !!on;
+        if (!this._gravSurface) this._buildGravSurface();
+        this._gravSurface.visible = !!on;
+        this._gravSurfaceWire.visible = !!on;
+        this._quantumSetVisibility();
+    }
+
+    updateGravPotentialField(data) {
+        this._gravPotData = data;
+        if (!this._gravPotVisible || !data?.count) return;
+        if (!this._gravSurface) this._buildGravSurface();
+        this._rebuildGravSurfaceIfResized();
+        const geo = this._gravSurface.geometry;
+        const pos = geo.attributes.position;
+        const col = geo.attributes.color;
+        const verts = pos.count;
+        const N = this._latticeSize || 32;
+        const halfN = this._halfN;
+        // Vertex positions in geometry-local space are centered at (0,0,0)
+        // (PlaneGeometry default), so we convert sample positions to local
+        // by subtracting halfN on X and Z. The Y coordinate in local space
+        // IS the displacement — that's what we're solving for.
+        const { positions, values, count, normalizer } = data;
+        const denom = Math.max(normalizer, 1e-9);
+        const DEPTH = N * 0.25;  // max vertical displacement (quarter lattice)
+        const rgb = new Float32Array(3);
+        for (let v = 0; v < verts; v++) {
+            const vx = pos.array[v * 3];        // local X, centered on 0
+            const vz = pos.array[v * 3 + 2];    // local Z, centered on 0
+            // Find the sample closest to this vertex on the XZ plane, lightly
+            // weighted by y-distance so we prefer samples near the midplane.
+            let bestD = Infinity, bestVal = 0;
+            for (let i = 0; i < count; i++) {
+                const sxLocal = positions[i * 3]     - halfN;
+                const syLocal = positions[i * 3 + 1] - halfN;
+                const szLocal = positions[i * 3 + 2] - halfN;
+                const d = (sxLocal - vx) * (sxLocal - vx)
+                        + (szLocal - vz) * (szLocal - vz)
+                        + Math.abs(syLocal) * 2;
+                if (d < bestD) { bestD = d; bestVal = values[i]; }
+            }
+            // Φ is negative for wells (computed as −|J|² proxy). Scaling by
+            // DEPTH gives a proportional dip; negative t → vertex dips below
+            // the reference plane, which is at local-y = 0 (world y = halfN).
+            const t = bestVal / denom;
+            pos.array[v * 3 + 1] = t * DEPTH;
+            // Color by |t|: deeper well OR higher peak → warmer color.
+            this._rampGravWell(Math.min(1, Math.abs(t)), rgb, 0);
+            col.array[v * 3]     = rgb[0];
+            col.array[v * 3 + 1] = rgb[1];
+            col.array[v * 3 + 2] = rgb[2];
+        }
+        pos.needsUpdate = true;
+        col.needsUpdate = true;
+        geo.computeVertexNormals();
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ── |ψ|² breathing animation ──────────────────────────────────────
+    // Called from the main render loop so the probability cloud "breathes"
+    // at ~0.3Hz — conveys that this is a DYNAMIC quantum state, not a
+    // static heatmap. No-op when |ψ|² isn't the active field.
+    _animateQuantumField(now) {
+        if (!this._quantumField || !this._psi2Visible) return;
+        if (this._quantumFieldKind !== 'psi2') return;
+        const phase = (now / 1000) * Math.PI * 0.6;  // ~0.3Hz pulse
+        const pulse = 0.85 + 0.15 * Math.sin(phase);
+        this._quantumField.material.opacity = pulse;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
     // ── Nucleus Shells (strong force glow spheres) ─────────────────
 
     _buildNucleusShells() {
@@ -3850,6 +4339,7 @@ export class Viewport {
 
     render() {
         this.controls.update();
+        this._animateQuantumField(performance.now());
         if (this._usePostProcessing && this._composer) {
             this._composer.render();
         } else {

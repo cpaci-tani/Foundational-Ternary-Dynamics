@@ -1,4 +1,4 @@
-import { FORCE_FIELD_KEYS } from './state/store.js';
+import { FORCE_FIELD_KEYS } from './state/store.js?v=s1';
 
 const NON_FORCE_OVERLAYS = {
     showEField: 'toggleEFieldLines',
@@ -13,6 +13,12 @@ const NON_FORCE_OVERLAYS = {
     showDampingZones: 'toggleDampingZones',
     showGenesisIsosurface: 'toggleGenesisIsosurface',
     showConfinement: 'toggleConfinement',
+    // Tier 1 quantum overlays — see docs/SPEC_S0_QUANTUM_OVERLAYS.md
+    showPsiSquared:        'togglePsiSquaredField',
+    showPhase:             'togglePhaseField',
+    showLagrangianDensity: 'toggleLagrangianDensityField',
+    showEntropyDensity:    'toggleEntropyDensityField',
+    showGravPotential:     'toggleGravPotentialField',
 };
 
 const FORCE_ARROW_OVERLAYS = {
@@ -83,6 +89,13 @@ export function createScale0ViewportAdapter(viewport) {
             viewport.toggleDampingZones?.(false);
             viewport.toggleGenesisIsosurface?.(false);
             viewport.toggleConfinement?.(false);
+            // Tier 1 quantum overlays — includes dedicated render objects
+            // for Phase needles + Φ rubber-sheet landscape.
+            viewport.togglePsiSquaredField?.(false);
+            viewport.togglePhaseField?.(false);
+            viewport.toggleLagrangianDensityField?.(false);
+            viewport.toggleEntropyDensityField?.(false);
+            viewport.toggleGravPotentialField?.(false);
         },
         applyParticleFrame(frame) {
             viewport?.updateParticles?.(frame);
@@ -147,6 +160,22 @@ export function createScale0ViewportAdapter(viewport) {
         },
         applyLight(frame) {
             viewport?.updateLightField?.(frame);
+        },
+        // ── Tier 1 quantum overlay data handoffs ─────────
+        applyPsiSquared(data) {
+            viewport?.updatePsiSquaredField?.(data);
+        },
+        applyPhase(data) {
+            viewport?.updatePhaseField?.(data);
+        },
+        applyLagrangianDensity(data) {
+            viewport?.updateLagrangianDensityField?.(data);
+        },
+        applyEntropyDensity(data) {
+            viewport?.updateEntropyDensityField?.(data);
+        },
+        applyGravPotential(data) {
+            viewport?.updateGravPotentialField?.(data);
         },
         render() {
             viewport?.render?.();

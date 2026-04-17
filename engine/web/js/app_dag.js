@@ -7,11 +7,12 @@
 
 import { createBridge, MockBridge } from './wasm-bridge-dag.js';
 import { tryNativeBridge } from './ws-bridge.js';
-import { Viewport } from './viewport.js';
+import { Viewport } from './viewport.js?v=q3';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { DiagnosticsPanel, Sparkline } from './diagnostics.js';
 import { LagrangianChart } from './lagrangian.js';
-import { Inspector } from './inspector.js';
+import { telemetryHub } from './telemetry-hub.js';
+import { createInspectorAppRuntime } from './inspector/app-runtime.js';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js';
 import { getElement } from './elements.js';
 import { getCategories, getMoleculesByCategory, getMolecule, loadMolecule } from './molecules.js';
@@ -20,7 +21,7 @@ import { formatEnergy } from './units.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js';
+import * as Scale0Controller from './scales/scale0/controller.js?v=4';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -33,18 +34,21 @@ import { OnticObservatory, renderFcCard, renderObserverCard, renderHierarchyTowe
 import { renderEnergyLevels } from './spectroscopy.js';
 import { renderCrossSections } from './cross-sections.js';
 import { renderDecayRates } from './decay-rates.js';
-import { ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS, TICK_PHASES, ALPHA, K_B, K_GENESIS, G_N, DAMPING, G_STAR, VARPI, X_PLUS, X_MINUS, COS2_THETA_C, C_SPEED } from './constants.js';
+import { ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS, TICK_PHASES, ALPHA, K_B, K_GENESIS, G_N, G_STAR, VARPI, X_PLUS, X_MINUS, COS2_THETA_C, C_SPEED } from './constants.js';
 // K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT moved to Scale11Controller
 import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor, renderAggregationTower, renderScaleBridge, renderEmergenceMonitor } from './aggregation-bridge.js';
 import { BackgroundManager } from './backgrounds.js';
 import { PETelemetryPanel } from './pe-telemetry.js';
 // ConsciousnessEngine moved to Scale11Controller
 import { addInfoTooltips } from './consciousness-pedagogy.js';
-import { SCALE0_TOGGLES, SCALE2_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from './config/toggles.js';
+// SCALE0_TOGGLES/SCALE2_TOGGLES/SCALE0_SCENARIO_OVERRIDES/LIGHT_SCENARIO_OVERRIDES
+// are now imported by the owning scale controllers (scale0 via ui/controls/wire.js).
 import { QUANTUM_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
-import { MeasurementAccumulator, QUANTUM_EXPERIMENTS, computeHistogram,
-         exportCSV, exportJSON, copyToClipboard } from './quantum-lab.js';
+import { initVerificationLabPanel } from './ui/panels/verification-lab-panel/component.js';
+import { AppShell } from './ui/shell/app-shell.js?v=2';
+import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initConsciousnessPanel } from './ui/panels/index.js';
+import { initSettingsModal } from './ui/components/settings-modal/component.js';
 
 debugLog('[FTD] App version 20260318a loaded (cache-busted)');
 
@@ -55,7 +59,9 @@ let bridge = null;
 // DEBUG: expose bridge globally for console inspection
 Object.defineProperty(window, '_ftdBridge', { get() { return bridge; }, configurable: true });
 let viewport = null;
+let appShell = null;
 let inspector = null;
+let inspectorRuntime = null;
 let diagnostics = null;
 let fluxEnergyChart = null;
 let particleChart = null;
@@ -117,13 +123,8 @@ const _aeLegendZArr = [];        // reusable sorted array for AE legend key
 // used by the lattice-scenario wiring at ~line 2250 below.
 let _fluxMock = null;           // MockBridge for Scale 0 flux visualization fallback
 
-// Quantum Lab state
-let _quantumAccumulator = null;
-let _quantumResults = null;
-
-// Cached DOM / object refs for animate() hot path (avoid per-frame alloc)
-let _symPanel = null;           // floating-symmetry-panel DOM element
-let _symVec3 = null;            // reusable THREE.Vector3 for panel projection
+// Verification Lab (replaces the legacy Quantum Lab panel)
+let _verifLabComponent = null;
 
 // Black hole scenario state (Scale 1 only)
 // [SELECTION] All BH constants are pedagogical choices for visualization,
@@ -148,6 +149,7 @@ function _makeCtx() {
     return {
         get bridge() { return bridge; },
         get viewport() { return viewport; },
+        get appShell() { return appShell; },
         get inspector() { return inspector; },
         get diagnostics() { return diagnostics; },
         get fluxEnergyChart() { return fluxEnergyChart; },
@@ -158,6 +160,7 @@ function _makeCtx() {
         get chartGauss() { return chartGauss; },
         get chartEntropy() { return chartEntropy; },
         get peTelemetry() { return peTelemetry; },
+        get telemetryHub() { return telemetryHub; },
         get running() { return running; },
         set running(v) { running = v; },
         get ticksPerFrame() { return ticksPerFrame; },
@@ -175,6 +178,7 @@ function _makeCtx() {
         applyBoundaryShape,
         applyReflectiveBoundary,
         switchToQuantumLabTab: _switchToQuantumLabTab,
+        clearCharts,
     };
 }
 
@@ -215,8 +219,8 @@ function applyBoundaryShape(shape) {
 }
 
 function applyReflectiveBoundary(on) {
-    const reflectiveCheck = document.getElementById('reflective-boundary');
-    if (reflectiveCheck) reflectiveCheck.checked = !!on;
+    const reflectiveBtn = document.getElementById('toggle-reflective');
+    if (reflectiveBtn) reflectiveBtn.classList.toggle('active', !!on);
     if (bridge?.setReflectiveBoundary) bridge.setReflectiveBoundary(on);
     const fm = Scale0Controller.getFluxMock();
     if (fm?.setReflectiveBoundary) fm.setReflectiveBoundary(on);
@@ -304,10 +308,6 @@ function _resetAllVisualState() {
     // ── AE energy drift reference ──
     _aeInitialEnergy = null;
 }
-
-// Default toggle states for Scale 0 scenarios (name, default, DOM element id)
-// Toggle definitions imported from config/toggles.js
-const DEFAULT_TOGGLES = SCALE0_TOGGLES;
 
 // Phase 1-3 state
 let observatory = null;
@@ -406,6 +406,7 @@ setTimeout(() => {
     const lo = document.getElementById('loading-overlay');
     if (lo && !lo.classList.contains('hidden')) {
         lo.classList.add('hidden');
+        setTimeout(() => lo.classList.add('removed'), 350);
         debugLog('[loading] Safety timeout dismissed overlay');
     }
 }, 8000);
@@ -413,6 +414,11 @@ setTimeout(() => {
 async function init() {
     if (_initialized) return;
     _initialized = true;
+
+    appShell = new AppShell({
+        app: document.getElementById('app'),
+        onViewportResize: () => viewport?.resize?.(),
+    }).init();
 
     _loadProgress(5, 'Caching DOM...');
     _cacheDOM();
@@ -468,10 +474,23 @@ async function init() {
     viewport.setLatticeSize(latticeSize);
 
     _loadProgress(50, 'Creating panels...');
+    // Initialize panel component wrappers (Phase 4)
+    initDiagnosticsPanel();
+    initChartsPanel();
+    initLagrangianPanel();
+    initConsciousnessPanel();
     diagnostics = new DiagnosticsPanel();
-    fluxEnergyChart = new FluxEnergyChart(document.getElementById('chart-flux-energy'));
-    particleChart = new ParticleChart(document.getElementById('chart-particles'));
-    lagrangianChart = new LagrangianChart(document.getElementById('chart-lagrangian'));
+    // Pass hub ring buffers so charts share the single-write-path from telemetryHub.
+    fluxEnergyChart = new FluxEnergyChart(document.getElementById('chart-flux-energy'), {
+        fluxBuf:   telemetryHub.flux,
+        energyBuf: telemetryHub.energy,
+    });
+    particleChart = new ParticleChart(document.getElementById('chart-particles'), {
+        totalBuf: telemetryHub.manifested,
+        posBuf:   telemetryHub.positive,
+        negBuf:   telemetryHub.negative,
+    });
+    lagrangianChart = new LagrangianChart(document.getElementById('chart-lagrangian'), telemetryHub.lag);
     // Additional chart sparklines
     const ccEl = document.getElementById('chart-charge');
     if (ccEl) chartCharge = new Sparkline(ccEl);
@@ -481,7 +500,8 @@ async function init() {
     if (cgEl) chartGauss = new Sparkline(cgEl);
     const ceEl = document.getElementById('chart-entropy');
     if (ceEl) chartEntropy = new Sparkline(ceEl);
-    inspector = new Inspector(viewport, bridge);
+    inspectorRuntime = createInspectorAppRuntime({ viewport, bridge, setZooMode });
+    inspector = inspectorRuntime.inspector;
     peTelemetry = new PETelemetryPanel();
 
     // Populate constants table from WASM if available
@@ -501,11 +521,17 @@ async function init() {
     _loadProgress(70, 'Wiring controls...');
     wireToolbar();
     wireTabs();
+    // Scale controllers own their own UI wiring (controls panel cards, event
+    // handlers). wireControls() below only handles Scale 1/2/3 legacy wiring
+    // that hasn't yet migrated.
+    Scale0Controller.bindUI(_makeCtx());
+    Scale1Controller.bindScale1ControlsUI();
+    Scale2Controller.bindScale2ControlsUI();
+    Scale3Controller.bindScale3ControlsUI();
     wireControls();
     wireViewportToggles();
-    wireQuantumLab();
+    wireVerificationLab();
     wireKeyboard();
-    Scale0Controller.bindUI(_makeCtx());
 
     _loadProgress(80, 'Loading particle zoo...');
     initZoo(bridge);
@@ -528,7 +554,10 @@ async function init() {
     _loadProgress(100, 'Ready');
     setTimeout(() => {
         const lo = document.getElementById('loading-overlay');
-        if (lo) lo.classList.add('hidden');
+        if (lo) {
+            lo.classList.add('hidden');
+            setTimeout(() => lo.classList.add('removed'), 350);
+        }
     }, 400); // brief pause at 100% so user sees completion
 
     // Start frame loop
@@ -564,32 +593,7 @@ function animate(now) {
     // Animate environment background
     if (bgManager) bgManager.update(1 / 60);
 
-    // Update floating UI tracking (DOM ref + Vector3 cached to avoid per-frame alloc)
-    if (!_symPanel) _symPanel = document.getElementById('floating-symmetry-panel');
-    if (_symPanel && _symPanel.style.display === 'block' && typeof inspector !== 'undefined' && inspector._selectedPos && typeof viewport !== 'undefined' && viewport.camera) {
-        if (!_symVec3) {
-            const V3 = (typeof THREE !== 'undefined') ? THREE.Vector3 : (window.THREE ? window.THREE.Vector3 : null);
-            if (V3) _symVec3 = new V3();
-        }
-        if (_symVec3) {
-            const pos = inspector._selectedPos;
-            _symVec3.set(pos.x, pos.y, pos.z);
-            _symVec3.project(viewport.camera);
-
-            const halfW = window.innerWidth / 2;
-            const halfH = window.innerHeight / 2;
-
-            const xOffset = (_symVec3.x * halfW) + halfW;
-            const yOffset = -(_symVec3.y * halfH) + halfH;
-
-            if (_symVec3.z < 1) {
-                _symPanel.style.left = `${xOffset + 20}px`;
-                _symPanel.style.top = `${yOffset - 20}px`;
-            } else {
-                _symPanel.style.left = '-9999px'; // Behind camera
-            }
-        }
-    }
+    inspectorRuntime?.updateFloatingPanels();
 
     // FPS counter
     frameCount++;
@@ -897,115 +901,31 @@ function wireToolbar() {
 // data-scales attributes so only scale-relevant tabs appear.
 // Also wires the panel collapse toggle and the drag-to-resize handle.
 function wireTabs() {
-    const tabs = document.querySelectorAll('#tab-bar .tab');
-    const panels = document.querySelectorAll('#panel-area .panel');
+    const handlePanelActivated = (target) => {
+        activeTab = target;
+        const tabLabel = appShell?.getPanelLabel(target) || 'Controls';
+        appShell?.setActivePanelTitle(tabLabel);
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const target = tab.dataset.panel;
-            activeTab = target;
-
-            // Auto-expand if panels are collapsed
-            const app = document.getElementById('app');
-            if (app.classList.contains('panels-collapsed')) {
-                app.classList.remove('panels-collapsed');
-                const toggleBtn = document.getElementById('btn-panel-toggle');
-                if (toggleBtn) { toggleBtn.innerHTML = '&#9660;'; toggleBtn.title = 'Collapse panels'; }
-                if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 250);
-            }
-
-            tabs.forEach(t => {
-                t.classList.remove('active');
-                t.setAttribute('aria-selected', 'false');
-                t.setAttribute('tabindex', '-1');
-            });
-            tab.classList.add('active');
-            tab.setAttribute('aria-selected', 'true');
-            tab.setAttribute('tabindex', '0');
-
-            panels.forEach(p => {
-                p.classList.toggle('active', p.id === `panel-${target}`);
-            });
-
-            // Redraw charts when their tab becomes visible
-            if (target === 'charts') {
-                fluxEnergyChart.draw();
-                particleChart.draw();
-            } else if (target === 'lagrangian') {
-                lagrangianChart.draw();
-            } else if (target === 'diagnostics') {
-                diagnostics.drawSparklines();
-                if (peTelemetry) peTelemetry.drawCharts();
-            } else if (target === 'ontic') {
-                updateOnticPanel();
-            } else if (target === 'physics') {
-                // Re-render physics content (already static, but Z may have changed)
-                const energyEl = document.getElementById('physics-energy-levels');
-                if (energyEl) renderEnergyLevels(_physicsZ, energyEl);
-            } else if (target === 'hierarchy') {
-                updateHierarchyPanel();
-            }
-        });
-    });
-
-    // Panel collapse/expand toggle
-    const toggleBtn = document.getElementById('btn-panel-toggle');
-    if (toggleBtn) {
-        const app = document.getElementById('app');
-        // Load cached state, default to collapsed
-        const cached = localStorage.getItem('ftd-panels-collapsed');
-        const isCollapsed = cached !== null ? cached === 'true' : true;
-        
-        if (isCollapsed) {
-            app.classList.add('panels-collapsed');
-            toggleBtn.innerHTML = '&#9650;';
-            toggleBtn.title = 'Expand panels';
-        } else {
-            app.classList.remove('panels-collapsed');
-            toggleBtn.innerHTML = '&#9660;';
-            toggleBtn.title = 'Collapse panels';
+        if (target === 'charts') {
+            fluxEnergyChart.draw();
+            particleChart.draw();
+        } else if (target === 'lagrangian') {
+            lagrangianChart.draw();
+        } else if (target === 'diagnostics') {
+            diagnostics.drawSparklines();
+            if (peTelemetry) peTelemetry.drawCharts();
+        } else if (target === 'physics') {
+            const energyEl = document.getElementById('physics-energy-levels');
+            if (energyEl) renderEnergyLevels(_physicsZ, energyEl);
+        } else if (target === 'hierarchy') {
+            updateHierarchyPanel();
         }
+    };
 
-        toggleBtn.addEventListener('click', () => {
-            const collapsed = app.classList.toggle('panels-collapsed');
-            localStorage.setItem('ftd-panels-collapsed', collapsed);
-            toggleBtn.innerHTML = collapsed ? '&#9650;' : '&#9660;';
-            toggleBtn.title = collapsed ? 'Expand panels' : 'Collapse panels';
-            // Notify Three.js viewport of resize
-            if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 250);
-        });
-    }
-
-    // Custom Top-Center Panel Resizer
-    const panelResizer = document.getElementById('panel-resizer');
-    const panelAreaElement = document.getElementById('panel-area');
-    if (panelResizer && panelAreaElement) {
-        let isDraggingPanel = false;
-        let startY = 0;
-        let startHeight = 0;
-
-        panelResizer.addEventListener('mousedown', (e) => {
-            isDraggingPanel = true;
-            startY = e.clientY;
-            startHeight = panelAreaElement.getBoundingClientRect().height;
-            document.body.style.cursor = 'ns-resize';
-            e.preventDefault();
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDraggingPanel) return;
-            const dy = startY - e.clientY;
-            const newHeight = startHeight + dy;
-            panelAreaElement.style.height = `${newHeight}px`;
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (isDraggingPanel) {
-                isDraggingPanel = false;
-                document.body.style.cursor = '';
-            }
-        });
-    }
+    appShell?.bindPanelDock({
+        activeTab,
+        onTabActivated: handlePanelActivated,
+    });
 }
 
 // ── Consciousness Mode (Scale 11) — delegated to Scale11Controller ───
@@ -1015,277 +935,11 @@ function loadConsciousnessScenario(name) {
 }
 
 // ── Controls Panel Wiring ────────────────────────────────────────────
+// Scale 0 controls (physics toggles, injection, parameter sliders, flux
+// volume, field actions) are wired by Scale0Controller.bindUI via
+// js/scales/scale0/ui/controls/wire.js. This function now handles only
+// Scale 1 (PE) and Scale 2/3 (AE) controls.
 function wireControls() {
-    // Physics toggles
-    const toggleMap = {
-        't-wave': 'wave_propagation',
-        't-coupling': 'coupling',
-        't-damping': 'damping',
-        't-genesis': 'genesis',
-        't-gauss': 'gauss_projection',
-        't-forces': 'forces',
-        't-poisson': 'poisson_coulomb',
-        't-movement': 'movement',
-        't-lorentz': 'lorentz_force',
-        't-gravity': 'gravity',
-        't-selective': 'selective_damping',
-        't-larmor': 'larmor_radiation',
-        't-dual': 'dual_substrate',
-        't-confinement': 'confinement',
-    };
-
-    for (const [elId, toggleName] of Object.entries(toggleMap)) {
-        const el = document.getElementById(elId);
-        if (el) {
-            el.addEventListener('change', () => {
-                bridge.setToggle(toggleName, el.checked);
-                const row = el.closest('.toggle-row');
-                if (row) row.classList.remove('scenario-override');
-            });
-        }
-    }
-
-    // ── Combo Panel: Injection ──────────────────────────────────────
-    let _injState = 1;
-    const injPos = document.getElementById('inj-state-pos');
-    const injNeg = document.getElementById('inj-state-neg');
-    if (injPos && injNeg) {
-        injPos.addEventListener('click', () => {
-            _injState = 1;
-            injPos.classList.add('active');
-            injNeg.classList.remove('active');
-        });
-        injNeg.addEventListener('click', () => {
-            _injState = -1;
-            injNeg.classList.add('active');
-            injPos.classList.remove('active');
-        });
-    }
-
-    function _getInjPos() {
-        return {
-            x: parseInt(document.getElementById('inj-x').value) || 0,
-            y: parseInt(document.getElementById('inj-y').value) || 0,
-            z: parseInt(document.getElementById('inj-z').value) || 0,
-            state: _injState
-        };
-    }
-
-    document.getElementById('btn-center').addEventListener('click', () => {
-        const half = Math.floor(bridge.latticeSize / 2);
-        document.getElementById('inj-x').value = half;
-        document.getElementById('inj-y').value = half;
-        document.getElementById('inj-z').value = half;
-    });
-
-    document.getElementById('btn-random').addEventListener('click', () => {
-        const L = bridge.latticeSize || 32;
-        const rand = () => 2 + Math.floor(Math.random() * (L - 4));
-        document.getElementById('inj-x').value = rand();
-        document.getElementById('inj-y').value = rand();
-        document.getElementById('inj-z').value = rand();
-    });
-
-    document.getElementById('btn-inject').addEventListener('click', () => {
-        const { x, y, z, state } = _getInjPos();
-        // Use wavepacket injection: bare point particles have zero flux and
-        // are immediately evaporated by the neighborhood-energy check in
-        // phase_write (local_energy=0 < K_B²×EVAP_THRESHOLD).
-        // Wavepacket gives the particle a Gaussian flux envelope so it
-        // survives and the self-field can stabilise.
-        bridge.injectWavepacket(x, y, z, state);
-        Scale0Controller.setLatticeNeedsUpload();
-    });
-
-    document.getElementById('btn-inject-wave').addEventListener('click', () => {
-        const { x, y, z, state } = _getInjPos();
-        bridge.injectWavepacket(x, y, z, state);
-        Scale0Controller.setLatticeNeedsUpload();
-    });
-
-    document.getElementById('btn-inject-flux').addEventListener('click', () => {
-        const { x, y, z } = _getInjPos();
-        const kb = (bridge.getParam && bridge.getParam('kb')) || K_B;
-        bridge.injectFlux(x, y, z, kb * 0.8, 0, 0);
-        Scale0Controller.setLatticeNeedsUpload();
-    });
-
-    document.getElementById('btn-inject-pair').addEventListener('click', () => {
-        const { x, y, z } = _getInjPos();
-        const kb = (bridge.getParam && bridge.getParam('kb')) || K_B;
-        bridge.createEntangledPair(x, y, z, kb, 0, 0);
-        Scale0Controller.setLatticeNeedsUpload();
-    });
-
-    // ── Combo Panel: Parameter Sliders ──────────────────────────────
-    const comboSliders = [
-        { id: 'combo-kb', valId: 'combo-kb-val', param: 'kb', fmt: 3 },
-        { id: 'combo-gn', valId: 'combo-gn-val', param: 'gn', fmt: 3 },
-        { id: 'combo-damp', valId: 'combo-damp-val', param: 'damping', fmt: 3 },
-    ];
-    for (const s of comboSliders) {
-        const slider = document.getElementById(s.id);
-        const display = document.getElementById(s.valId);
-        if (!slider || !display) continue;
-        if (bridge.isWasm) {
-            slider.disabled = true;
-            slider.title = 'Read-only in WASM mode';
-            slider.style.opacity = '0.4';
-        }
-        slider.addEventListener('input', () => {
-            const val = parseFloat(slider.value);
-            display.textContent = val.toFixed(s.fmt);
-            if (!bridge.isWasm && bridge.setParam) {
-                bridge.setParam(s.param, val);
-            }
-        });
-    }
-
-    // ── Visuals Panel: Shape, Opacity, Size ─────────────────────────
-    const SHAPE_INDEX = { circle: 0, square: 1, diamond: 2, star: 3, triangle: 4, hexagon: 5, ring: 6, cross: 7 };
-
-    const shapeSelect = document.getElementById('particle-shape');
-    if (shapeSelect) shapeSelect.addEventListener('change', () => {
-        viewport.setPointShape(SHAPE_INDEX[shapeSelect.value] || 0);
-    });
-
-    // Opacity slider
-    const opacitySlider = document.getElementById('size-opacity');
-    const opacityDisplay = document.getElementById('size-opacity-val');
-    if (opacitySlider && opacityDisplay) {
-        opacitySlider.addEventListener('input', () => {
-            const val = parseFloat(opacitySlider.value);
-            opacityDisplay.textContent = Math.round(val * 100) + '%';
-            viewport.setOpacity(val);
-            if (bridge._visualSettings) bridge._visualSettings.opacity = val;
-        });
-    }
-
-    // Size sliders
-    const sizeSliders = [
-        { id: 'size-global', valId: 'size-global-val', key: 'globalScale', suffix: 'x', fmt: 1 },
-        { id: 'size-manifested', valId: 'size-manifested-val', key: 'manifestedSize', suffix: '', fmt: 0 },
-        { id: 'size-void', valId: 'size-void-val', key: 'voidSize', suffix: '', fmt: 0 },
-    ];
-    for (const s of sizeSliders) {
-        const slider = document.getElementById(s.id);
-        const display = document.getElementById(s.valId);
-        if (!slider || !display) continue;
-        slider.addEventListener('input', () => {
-            const val = parseFloat(slider.value);
-            display.textContent = val.toFixed(s.fmt) + s.suffix;
-            viewport.visualSettings[s.key] = val;
-            if (bridge._visualSettings) bridge._visualSettings[s.key] = val;
-        });
-    }
-
-    // Share visual settings with bridge
-    bridge._visualSettings = viewport.visualSettings;
-
-    // ── Combo Panel: Field Actions ──────────────────────────────────
-    document.getElementById('btn-clear-field').addEventListener('click', () => {
-        if (bridge.clearField) {
-            bridge.clearField();
-        } else {
-            bridge.reset(bridge.latticeSize);
-            viewport.setLatticeSize(bridge.latticeSize);
-            clearCharts();
-        }
-        Scale0Controller.setLatticeNeedsUpload();
-    });
-
-    document.getElementById('btn-random-flux').addEventListener('click', () => {
-        if (bridge.seedRandomFlux) {
-            bridge.seedRandomFlux();
-        }
-        Scale0Controller.setLatticeNeedsUpload();
-    });
-
-    // Quick actions
-    const btnEnableAll = document.getElementById('btn-enable-all');
-    if (btnEnableAll) btnEnableAll.addEventListener('click', () => {
-        for (const [elId] of Object.entries(toggleMap)) {
-            const el = document.getElementById(elId);
-            if (el) { el.checked = true; bridge.setToggle(toggleMap[elId], true); }
-        }
-    });
-
-    const btnDisableAll = document.getElementById('btn-disable-all');
-    if (btnDisableAll) btnDisableAll.addEventListener('click', () => {
-        for (const [elId] of Object.entries(toggleMap)) {
-            const el = document.getElementById(elId);
-            if (el) { el.checked = false; bridge.setToggle(toggleMap[elId], false); }
-        }
-    });
-
-    const btnClearParticles = document.getElementById('btn-clear-particles');
-    if (btnClearParticles) btnClearParticles.addEventListener('click', () => {
-        bridge.reset(bridge.latticeSize);
-        viewport.setLatticeSize(bridge.latticeSize);
-        clearCharts();
-    });
-
-    // ── Flux Volume Controls ──
-    const fluxShapeSelect = document.getElementById('flux-shape-select');
-    if (fluxShapeSelect) {
-        fluxShapeSelect.addEventListener('change', () => {
-            viewport.setFluxShape(parseInt(fluxShapeSelect.value));
-        });
-    }
-
-    const fluxOpacitySlider = document.getElementById('flux-opacity');
-    const fluxOpacityVal = document.getElementById('flux-opacity-val');
-    if (fluxOpacitySlider) {
-        fluxOpacitySlider.addEventListener('input', () => {
-            const v = parseFloat(fluxOpacitySlider.value);
-            fluxOpacityVal.textContent = v.toFixed(2);
-            viewport.setFluxOpacity(v);
-        });
-    }
-
-    const fluxScaleSlider = document.getElementById('flux-point-scale');
-    const fluxScaleVal = document.getElementById('flux-point-scale-val');
-    if (fluxScaleSlider) {
-        fluxScaleSlider.addEventListener('input', () => {
-            const v = parseFloat(fluxScaleSlider.value);
-            fluxScaleVal.textContent = v.toFixed(1);
-            viewport.setFluxPointScale(v);
-            Scale0Controller.setLatticeNeedsUpload(); // force re-render with new scale
-        });
-    }
-
-    const fluxThreshSlider = document.getElementById('flux-threshold');
-    const fluxThreshVal = document.getElementById('flux-threshold-val');
-    if (fluxThreshSlider) {
-        fluxThreshSlider.addEventListener('input', () => {
-            const v = parseFloat(fluxThreshSlider.value);
-            fluxThreshVal.textContent = v.toFixed(3);
-            viewport.setFluxThreshold(v);
-            Scale0Controller.setLatticeNeedsUpload(); // force re-render with new threshold
-        });
-    }
-
-    const fluxScenarioScaleSlider = document.getElementById('flux-scenario-scale');
-    const fluxScenarioScaleVal = document.getElementById('flux-scenario-scale-val');
-    if (fluxScenarioScaleSlider) {
-        fluxScenarioScaleSlider.addEventListener('input', () => {
-            const v = parseFloat(fluxScenarioScaleSlider.value);
-            fluxScenarioScaleVal.textContent = v.toFixed(1);
-            viewport.setScenarioScale(v);
-        });
-    }
-
-    // Scale 0 dt slider
-    const s0DtSlider = document.getElementById('s0-dt-slider');
-    const s0DtValue = document.getElementById('s0-dt-value');
-    if (s0DtSlider) {
-        s0DtSlider.addEventListener('input', () => {
-            const dt = parseFloat(s0DtSlider.value);
-            s0DtValue.textContent = dt.toFixed(1);
-            bridge.setDt(dt);
-        });
-    }
-
     // PE controls — force & dynamics toggles
     const peToggleMap = {
         'pe-coulomb': (v) => bridge.peSetCoulomb(v),
@@ -1477,317 +1131,38 @@ function wireViewportToggles() {
 
 }
 
-// ── Quantum Lab Wiring ──────────────────────────────────────────────
+// ── Verification Lab Wiring (replaces legacy Quantum Lab) ─────────
 
-/**
- * Programmatically switch to the Quantum Lab tab. Reuses the same logic
- * as wireTabs() so activeTab/panel state stays consistent.
- */
-function _switchToQuantumLabTab() {
-    const tab = document.querySelector('#tab-bar .tab[data-panel="quantum-lab"]');
-    if (tab) tab.click();
+/** Programmatically switch to the Verify tab. */
+function _switchToVerifyTab() {
+    if (appShell) appShell.activatePanel('verification-lab');
+    else {
+        const tab = document.querySelector('#tab-bar .tab[data-panel="verification-lab"]');
+        if (tab) tab.click();
+    }
 }
 
+/** Backward compatibility: Scale 0 bindings.js calls this on quantum scenario
+ *  selection. Route to the new panel so the behaviour is preserved. */
+function _switchToQuantumLabTab() { _switchToVerifyTab(); }
 /**
- * Wire all Quantum Lab panel controls: experiment selector, run/abort,
- * export buttons, and progress bar. Called once from init().
+ * Initialise the Verification Lab panel. Replaces the old wireQuantumLab
+ * function — see js/verification/ and js/ui/panels/verification-lab-panel/.
  */
-function wireQuantumLab() {
-    const experimentSel = document.getElementById('qlab-experiment');
-    const descriptionEl = document.getElementById('qlab-description');
-    const runBtn        = document.getElementById('qlab-run');
-    const abortBtn      = document.getElementById('qlab-abort');
-    const progressWrap  = document.getElementById('qlab-progress-wrap');
-    const progressBar   = document.getElementById('qlab-progress-bar');
-    const progressLabel = document.getElementById('qlab-progress-label');
-    const progressPct   = document.getElementById('qlab-progress-pct');
-    const csvBtn        = document.getElementById('qlab-export-csv');
-    const jsonBtn       = document.getElementById('qlab-export-json');
-    const copyBtn       = document.getElementById('qlab-copy');
-
-    if (!experimentSel || !runBtn) return; // guard: panel not in DOM
-
-    // A. Experiment selector → update description + sync main dropdown
-    experimentSel.addEventListener('change', () => {
-        const value = experimentSel.value;
-        if (descriptionEl && QUANTUM_SCENARIO_DESCRIPTIONS[value]) {
-            descriptionEl.textContent = QUANTUM_SCENARIO_DESCRIPTIONS[value];
-        }
-        // Sync main scenario dropdown and load the scenario
-        const mainSel = document.getElementById('scenario-select');
-        if (mainSel) {
-            mainSel.value = value;
-        }
-        Scale0Controller.loadScenario(_makeCtx(), value);
-        _switchToQuantumLabTab();
-    });
-
-    // Initialize description from whatever is selected on load
-    if (descriptionEl && QUANTUM_SCENARIO_DESCRIPTIONS[experimentSel.value]) {
-        descriptionEl.textContent = QUANTUM_SCENARIO_DESCRIPTIONS[experimentSel.value];
-    }
-
-    // C. Run button
-    runBtn.addEventListener('click', async () => {
-        const experimentName = experimentSel.value;
-        const experiment = QUANTUM_EXPERIMENTS[experimentName];
-        if (!experiment) return;
-
-        const totalTrials  = parseInt(document.getElementById('qlab-trials').value) || experiment.defaultTrials;
-        const ticksPerTrial = parseInt(document.getElementById('qlab-ticks').value) || experiment.defaultTicks;
-
-        // Pause simulation
-        running = false;
-        updatePlayButton();
-
-        // Show progress bar, hide Run, show Abort
-        progressWrap.style.display = '';
-        runBtn.style.display = 'none';
-        abortBtn.style.display = '';
-        csvBtn.disabled = true;
-        jsonBtn.disabled = true;
-        copyBtn.disabled = true;
-
-        // Reset progress
-        progressBar.style.width = '0%';
-        progressLabel.textContent = 'Trial 0 / ' + totalTrials;
-        progressPct.textContent = '0%';
-
-        // Create accumulator and configure
-        _quantumAccumulator = new MeasurementAccumulator();
-        _quantumAccumulator.configure({
-            scenarioName: experimentName,
-            totalTrials: totalTrials,
-            ticksPerTrial: ticksPerTrial,
-            measureFn: experiment.measureFn,
-            resetFn: experiment.resetFn,
-        });
-
-        try {
-            await _quantumAccumulator.runAll(bridge, {
-                onProgress(i, total) {
-                    const pct = Math.round((i / total) * 100);
-                    progressBar.style.width = pct + '%';
-                    progressLabel.textContent = 'Trial ' + i + ' / ' + total;
-                    progressPct.textContent = pct + '%';
-                },
-                onComplete(results) {
-                    _quantumResults = results;
-
-                    // Draw histogram
-                    drawQuantumHistogram(results, experimentName);
-
-                    // Update statistics
-                    const stats = _quantumAccumulator.getStatistics();
-                    if (stats) {
-                        document.getElementById('qlab-stat-n').textContent = stats.n;
-                        document.getElementById('qlab-stat-mean').textContent = isNaN(stats.mean) ? '--' : stats.mean.toFixed(4);
-                        document.getElementById('qlab-stat-std').textContent = isNaN(stats.std) ? '--' : stats.std.toFixed(4);
-                        document.getElementById('qlab-stat-min').textContent = isNaN(stats.min) ? '--' : stats.min.toFixed(4);
-                        document.getElementById('qlab-stat-max').textContent = isNaN(stats.max) ? '--' : stats.max.toFixed(4);
-                    } else {
-                        // Object-type results — use analyseFn summary
-                        document.getElementById('qlab-stat-n').textContent = results.length;
-                        document.getElementById('qlab-stat-mean').textContent = '--';
-                        document.getElementById('qlab-stat-std').textContent = '--';
-                        document.getElementById('qlab-stat-min').textContent = '--';
-                        document.getElementById('qlab-stat-max').textContent = '--';
-                    }
-                },
-            });
-        } catch (err) {
-            console.error('Quantum Lab experiment error:', err);
-        } finally {
-            // Restore UI regardless of success or error
-            progressWrap.style.display = 'none';
-            runBtn.style.display = '';
-            abortBtn.style.display = 'none';
-            csvBtn.disabled = !_quantumResults;
-            jsonBtn.disabled = !_quantumResults;
-            copyBtn.disabled = !_quantumResults;
-
-            // Refresh the 3D viewport to reflect final simulation state
-            Scale0Controller.setLatticeNeedsUpload();
-            const particleData = bridge.getParticleData();
-            if (particleData) viewport.updateParticles(particleData);
-        }
-    });
-
-    // D. Abort button
-    abortBtn.addEventListener('click', () => {
-        if (_quantumAccumulator) _quantumAccumulator.abort();
-        progressWrap.style.display = 'none';
-        runBtn.style.display = '';
-        abortBtn.style.display = 'none';
-    });
-
-    // E. Export buttons
-    csvBtn.addEventListener('click', () => {
-        if (!_quantumResults) return;
-        const experimentName = experimentSel.value;
-        const experiment = QUANTUM_EXPERIMENTS[experimentName];
-        if (!experiment) return;
-        exportCSV(experiment.columns, _quantumResults, 'ftd-' + experimentName + '.csv');
-    });
-
-    jsonBtn.addEventListener('click', () => {
-        if (!_quantumResults) return;
-        const experimentName = experimentSel.value;
-        const experiment = QUANTUM_EXPERIMENTS[experimentName];
-        if (!experiment) return;
-        exportJSON(
-            { scenario: experimentName, latticeSize: bridge.latticeSize, timestamp: Date.now() },
-            _quantumResults,
-            'ftd-' + experimentName + '.json'
-        );
-    });
-
-    copyBtn.addEventListener('click', () => {
-        if (!_quantumResults) return;
-        const experimentName = experimentSel.value;
-        const experiment = QUANTUM_EXPERIMENTS[experimentName];
-        if (!experiment) return;
-        copyToClipboard(experiment.columns, _quantumResults);
+function wireVerificationLab() {
+    const panelArea = document.getElementById('panel-area');
+    if (!panelArea) return;
+    if (_verifLabComponent) return;
+    _verifLabComponent = initVerificationLabPanel({
+        panelArea,
+        getCtx: () => ({ ..._makeCtx(), scale0Controller: Scale0Controller, setRunning: (v) => { running = v; updatePlayButton(); } }),
+        onActivateOverlay: (overlayId) => {
+            const btn = document.getElementById(overlayId);
+            if (btn && !btn.classList.contains('active')) btn.click();
+        },
     });
 }
 
-/**
- * Render a bar-chart histogram on the #qlab-histogram canvas.
- *
- * @param {Array} results        - Raw measurement results from the accumulator
- * @param {string} experimentName - Key into QUANTUM_EXPERIMENTS
- */
-function drawQuantumHistogram(results, experimentName) {
-    const canvas = document.getElementById('qlab-histogram');
-    if (!canvas) return;
-    const experiment = QUANTUM_EXPERIMENTS[experimentName];
-    if (!experiment) return;
-
-    // Extract numeric values for the histogram.
-    // If results are plain numbers, use them directly.
-    // If they are arrays/objects (e.g., Born rule returns arrays of {r, fluxDensity}),
-    // flatten to the first column's values.
-    let values;
-    if (results.length > 0 && typeof results[0] === 'number') {
-        values = results;
-    } else if (results.length > 0 && Array.isArray(results[0])) {
-        // Array-of-arrays: flatten and extract first numeric field
-        values = [];
-        for (const trial of results) {
-            if (!Array.isArray(trial)) continue;
-            for (const item of trial) {
-                if (typeof item === 'number') { values.push(item); }
-                else if (item && typeof item === 'object') {
-                    // Use the first column key
-                    const key = experiment.columns[0];
-                    if (key && typeof item[key] === 'number') values.push(item[key]);
-                    else {
-                        // Try common field names
-                        const v = item.r ?? item.y ?? item.x ?? item.value ?? item.intensity;
-                        if (typeof v === 'number') values.push(v);
-                    }
-                }
-            }
-        }
-    } else if (results.length > 0 && typeof results[0] === 'object') {
-        // Array of objects (one per trial)
-        values = [];
-        const key = experiment.columns[0];
-        for (const item of results) {
-            if (key && typeof item[key] === 'number') values.push(item[key]);
-            else {
-                const v = item.r ?? item.y ?? item.x ?? item.value ?? item.intensity;
-                if (typeof v === 'number') values.push(v);
-            }
-        }
-    } else {
-        values = [];
-    }
-
-    if (values.length === 0) return;
-
-    const hist = computeHistogram(values, 25);
-    const { edges, counts, binWidth } = hist;
-    const maxCount = Math.max(1, ...counts);
-
-    // DPR-aware canvas sizing
-    const dpr = window.devicePixelRatio || 1;
-    const cssW = canvas.clientWidth;
-    const cssH = canvas.clientHeight;
-    canvas.width = cssW * dpr;
-    canvas.height = cssH * dpr;
-    const ctx = canvas.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    // Layout
-    const padLeft = 40, padRight = 10, padTop = 10, padBottom = 28;
-    const plotW = cssW - padLeft - padRight;
-    const plotH = cssH - padTop - padBottom;
-
-    // Background
-    ctx.fillStyle = '#1a1f2e';
-    ctx.fillRect(0, 0, cssW, cssH);
-
-    // Bars
-    const barW = plotW / counts.length;
-    ctx.fillStyle = '#00e5ff';
-    for (let i = 0; i < counts.length; i++) {
-        const barH = (counts[i] / maxCount) * plotH;
-        ctx.fillRect(padLeft + i * barW + 1, padTop + plotH - barH, barW - 2, barH);
-    }
-
-    // Y-axis labels (5 ticks)
-    ctx.fillStyle = '#667';
-    ctx.font = '9px monospace';
-    ctx.textAlign = 'right';
-    for (let t = 0; t <= 4; t++) {
-        const val = Math.round((t / 4) * maxCount);
-        const y = padTop + plotH - (t / 4) * plotH;
-        ctx.fillText(val, padLeft - 4, y + 3);
-    }
-
-    // X-axis labels (5-6 evenly spaced bin edges)
-    ctx.textAlign = 'center';
-    const labelCount = Math.min(6, edges.length);
-    const step = Math.max(1, Math.floor(edges.length / labelCount));
-    for (let i = 0; i < edges.length; i += step) {
-        const x = padLeft + (i / (edges.length - 1)) * plotW;
-        ctx.fillText(edges[i].toFixed(1), x, cssH - 4);
-    }
-
-    // Expected curve overlay (if experiment provides one)
-    if (experiment.expectedCurve) {
-        ctx.beginPath();
-        ctx.strokeStyle = '#ffd700'; // gold
-        ctx.lineWidth = 2;
-        const xMin = edges[0];
-        const xMax = edges[edges.length - 1];
-        const steps = 100;
-        // Normalise the expected curve to match histogram peak
-        let curveMax = 0;
-        for (let s = 0; s <= steps; s++) {
-            const xv = xMin + (s / steps) * (xMax - xMin);
-            const yv = experiment.expectedCurve(xv);
-            if (yv > curveMax) curveMax = yv;
-        }
-        const curveScale = curveMax > 0 ? maxCount / curveMax : 1;
-        for (let s = 0; s <= steps; s++) {
-            const xv = xMin + (s / steps) * (xMax - xMin);
-            const yv = experiment.expectedCurve(xv) * curveScale;
-            const px = padLeft + (s / steps) * plotW;
-            const py = padTop + plotH - (yv / maxCount) * plotH;
-            if (s === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
-        }
-        ctx.stroke();
-    }
-
-    // Update chart title
-    const titleEl = document.getElementById('qlab-chart-title');
-    if (titleEl && experiment.label) {
-        titleEl.textContent = experiment.label + ' Distribution';
-    }
-}
 
 // ── Keyboard Shortcuts ───────────────────────────────────────────────
 function wireKeyboard() {
@@ -1841,50 +1216,139 @@ function wireKeyboard() {
 
 // ── Settings Modal ──────────────────────────────────────────────────
 {
+    initSettingsModal();
+    const root = document.documentElement;
     const modal = document.getElementById('settings-modal');
     const btnOpen = document.getElementById('btn-settings');
     const btnClose = document.getElementById('settings-close');
     const slider = document.getElementById('settings-ui-scale');
     const valDisplay = document.getElementById('settings-scale-val');
     const btnReset = document.getElementById('settings-reset');
+    const settingsButtons = Array.from(document.querySelectorAll('[data-setting][data-value]'));
+
+    const DEFAULT_SETTINGS = Object.freeze({
+        scale: 1.0,
+        theme: 'default',
+        motion: 'system',
+        density: 'comfortable',
+        panelWidth: 'standard',
+        tooltips: 'on',
+        statusBar: 'shown',
+    });
+
+    const STORAGE_KEYS = Object.freeze({
+        scale: 'ftd-ui-scale',
+        theme: 'ftd-theme',
+        motion: 'ftd-motion',
+        density: 'ftd-density',
+        panelWidth: 'ftd-panel-width',
+        tooltips: 'ftd-tooltips',
+        statusBar: 'ftd-status-bar',
+    });
+
+    function setChoiceGroup(settingName, value) {
+        settingsButtons.forEach((button) => {
+            button.classList.toggle(
+                'active',
+                button.dataset.setting === settingName && button.dataset.value === value,
+            );
+        });
+    }
+
+    function persist(key, value) {
+        try { localStorage.setItem(key, String(value)); } catch (e) { }
+    }
 
     // ── Scale ──
     function applyScale(s) {
-        document.documentElement.style.setProperty('--ui-scale', s);
+        root.style.setProperty('--ui-scale', s);
         if (slider) slider.value = s;
         if (valDisplay) valDisplay.textContent = Math.round(s * 100) + '%';
         document.querySelectorAll('.settings-preset').forEach(b => {
             b.classList.toggle('active', Math.abs(parseFloat(b.dataset.scale) - s) < 0.01);
         });
-        try { localStorage.setItem('ftd-ui-scale', String(s)); } catch (e) { }
+        if (root.dataset.statusBar === 'hidden') {
+            root.style.setProperty('--status-bar-offset', '0px');
+        } else {
+            root.style.setProperty('--status-bar-offset', 'calc(28px * var(--ui-scale))');
+        }
+        persist(STORAGE_KEYS.scale, s);
         if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 100);
     }
 
     // ── Theme ──
     function applyTheme(name) {
         if (name === 'default') {
-            document.documentElement.removeAttribute('data-theme');
+            root.removeAttribute('data-theme');
         } else {
-            document.documentElement.setAttribute('data-theme', name);
+            root.setAttribute('data-theme', name);
         }
         document.querySelectorAll('.theme-swatch').forEach(sw => {
             sw.classList.toggle('active', sw.dataset.theme === name);
         });
-        try { localStorage.setItem('ftd-theme', name); } catch (e) { }
+        persist(STORAGE_KEYS.theme, name);
+    }
+
+    function applyMotion(mode) {
+        if (mode === 'system') {
+            root.removeAttribute('data-motion');
+        } else {
+            root.dataset.motion = mode;
+        }
+        setChoiceGroup('motion', mode);
+        persist(STORAGE_KEYS.motion, mode);
+    }
+
+    function applyDensity(mode) {
+        root.dataset.density = mode;
+        setChoiceGroup('density', mode);
+        persist(STORAGE_KEYS.density, mode);
+    }
+
+    function applyPanelWidth(mode) {
+        root.dataset.panelWidth = mode;
+        setChoiceGroup('panel-width', mode);
+        if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 80);
+        persist(STORAGE_KEYS.panelWidth, mode);
+    }
+
+    function applyTooltipMode(mode) {
+        root.dataset.tooltips = mode;
+        if (mode === 'off') document.getElementById('ui-tooltip')?.setAttribute('hidden', '');
+        setChoiceGroup('tooltips', mode);
+        persist(STORAGE_KEYS.tooltips, mode);
+    }
+
+    function applyStatusBar(mode) {
+        root.dataset.statusBar = mode;
+        root.style.setProperty(
+            '--status-bar-offset',
+            mode === 'hidden' ? '0px' : 'calc(28px * var(--ui-scale))',
+        );
+        if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 80);
+        setChoiceGroup('status-bar', mode);
+        persist(STORAGE_KEYS.statusBar, mode);
     }
 
     // ── Load saved settings ──
     try {
-        const savedScale = localStorage.getItem('ftd-ui-scale');
-        if (savedScale) applyScale(parseFloat(savedScale));
-        const savedTheme = localStorage.getItem('ftd-theme');
-        if (savedTheme) applyTheme(savedTheme);
+        const savedScale = localStorage.getItem(STORAGE_KEYS.scale);
+        applyScale(savedScale ? parseFloat(savedScale) : DEFAULT_SETTINGS.scale);
+        applyTheme(localStorage.getItem(STORAGE_KEYS.theme) || DEFAULT_SETTINGS.theme);
+        applyMotion(localStorage.getItem(STORAGE_KEYS.motion) || DEFAULT_SETTINGS.motion);
+        applyDensity(localStorage.getItem(STORAGE_KEYS.density) || DEFAULT_SETTINGS.density);
+        applyPanelWidth(localStorage.getItem(STORAGE_KEYS.panelWidth) || DEFAULT_SETTINGS.panelWidth);
+        applyTooltipMode(localStorage.getItem(STORAGE_KEYS.tooltips) || DEFAULT_SETTINGS.tooltips);
+        applyStatusBar(localStorage.getItem(STORAGE_KEYS.statusBar) || DEFAULT_SETTINGS.statusBar);
     } catch (e) { }
 
     // ── Modal open/close ──
     if (btnOpen && modal) btnOpen.addEventListener('click', () => { modal.style.display = 'flex'; });
     if (btnClose && modal) btnClose.addEventListener('click', () => { modal.style.display = 'none'; });
     if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal?.style.display === 'flex') modal.style.display = 'none';
+    });
 
     // ── Scale controls ──
     if (slider) slider.addEventListener('input', () => applyScale(parseFloat(slider.value)));
@@ -1897,11 +1361,30 @@ function wireKeyboard() {
         sw.addEventListener('click', () => applyTheme(sw.dataset.theme));
     });
 
+    // ── Other preference controls ──
+    settingsButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const setting = button.dataset.setting;
+            const value = button.dataset.value;
+            if (!setting || !value) return;
+            if (setting === 'motion') applyMotion(value);
+            else if (setting === 'density') applyDensity(value);
+            else if (setting === 'panel-width') applyPanelWidth(value);
+            else if (setting === 'tooltips') applyTooltipMode(value);
+            else if (setting === 'status-bar') applyStatusBar(value);
+        });
+    });
+
     // ── Reset all ──
     if (btnReset) {
         btnReset.addEventListener('click', () => {
-            applyScale(1.1);
-            applyTheme('default');
+            applyScale(DEFAULT_SETTINGS.scale);
+            applyTheme(DEFAULT_SETTINGS.theme);
+            applyMotion(DEFAULT_SETTINGS.motion);
+            applyDensity(DEFAULT_SETTINGS.density);
+            applyPanelWidth(DEFAULT_SETTINGS.panelWidth);
+            applyTooltipMode(DEFAULT_SETTINGS.tooltips);
+            applyStatusBar(DEFAULT_SETTINGS.statusBar);
         });
     }
 }
@@ -1936,31 +1419,14 @@ function switchEngineMode(mode) {
 
     // If the active tab is hidden for this scale, fall back to Controls
     const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', planetary: '4', cosmic: '5', meta: '12', consciousness: '11' }[mode];
-    app.setAttribute('data-active-scale', scaleIndex);
-
-    // Dynamically filter tabs based strictly on data-scales
-    document.querySelectorAll('#tab-bar .tab').forEach(tab => {
-        if (tab.dataset.scales) {
-            if (tab.dataset.scales.split(',').includes(scaleIndex)) tab.style.display = '';
-            else tab.style.display = 'none';
-        } else {
-            tab.style.display = '';
-        }
-    });
-
-    const activeTabEl = document.querySelector('#tab-bar .tab.active');
-    if (activeTabEl && activeTabEl.style.display === 'none') {
-        const controlsTab = document.querySelector('#tab-bar .tab[data-panel="controls"]');
-        if (controlsTab) controlsTab.click();
-    }
+    if (appShell) appShell.setActiveScale(scaleIndex);
+    else app.setAttribute('data-active-scale', scaleIndex);
 
     // Free JS flux sim when leaving Scale 0 (before loadXxx resets visual state)
     if (mode !== 'lattice') Scale0Controller.exit(_makeCtx());
 
-    // Tell inspector, viewport, and zoo panel about mode change
-    if (inspector) inspector.setEngineMode(mode);
-    if (viewport) viewport.setEngineMode(mode);
-    setZooMode(mode);
+    // Keep mode-dependent inspector, viewport, and zoo state in sync.
+    inspectorRuntime?.syncMode(mode);
 
     const tpfSlider = document.getElementById('ticks-per-frame');
     if (tpfSlider) applyTicksPerFrameFromSlider(tpfSlider.value);
@@ -2133,109 +1599,10 @@ function updatePlayButton() {
     btn.innerHTML = running ? '&#9646;&#9646;' : '&#9654;';
 }
 
-// DEAD: loadScenario, _markScenarioOverrides, _syncComboSliders
-// Now delegated to Scale0Controller.loadScenario(ctx, name)
-// See engine/web/js/scales/scale0/controller.js
-function loadScenario(name) {
-    _resetAllVisualState();
-    bridge.setupScenario(name);
-
-    // Create/reset MockBridge for JS-side flux visualization (fallback when WASM
-    // doesn't have getFluxVolume, or for the parallel JS wave equation demo)
-    const L = bridge.latticeSize || 32;
-    _fluxMock = new MockBridge(L);
-    // Sync boundary shape and reflective setting to new mock bridge
-    const boundaryEl = document.getElementById('boundary-select');
-    if (boundaryEl) _fluxMock.setBoundaryShape(boundaryEl.value);
-    const reflEl = document.getElementById('reflective-boundary');
-    if (reflEl) _fluxMock.setReflectiveBoundary(reflEl.checked);
-    _fluxMock.setupScenario(name);
-
-    // Reset ALL toggles to defaults before applying scenario-specific overrides.
-    // This prevents state leakage between scenarios (e.g., gravity staying ON).
-    for (const [key, val, elId] of DEFAULT_TOGGLES) {
-        bridge.setToggle(key, val);
-        const el = document.getElementById(elId);
-        if (el) el.checked = val;
-    }
-
-    // Scenario-specific toggle overrides (data-driven from config/toggles.js)
-    const overrides = SCALE0_SCENARIO_OVERRIDES[name];
-    if (overrides) {
-        for (const [key, val, elId] of overrides) {
-            bridge.setToggle(key, val);
-            const el = document.getElementById(elId);
-            if (el) el.checked = val;
-        }
-    }
-
-    // Light scenarios: pure EM wave propagation (no matter coupling)
-    if (name.startsWith('light-')) {
-        for (const [key, val, elId] of LIGHT_SCENARIO_OVERRIDES) {
-            bridge.setToggle(key, val);
-            const el = document.getElementById(elId);
-            if (el) el.checked = val;
-        }
-    }
-
-    // Sync all toggle states to MockBridge from HTML (single source of truth)
-    if (_fluxMock) {
-        for (const [key, , elId] of DEFAULT_TOGGLES) {
-            const el = document.getElementById(elId);
-            if (el) _fluxMock.setToggle(key, el.checked);
-        }
-    }
-
-    // Mark toggles that differ from defaults after scenario overrides
-    _markScenarioOverrides();
-
-    // Resync combo panel sliders to bridge defaults after reset
-    _syncComboSliders();
-
-    Scale0Controller.setLatticeNeedsUpload();
-}
-
-function _markScenarioOverrides() {
-    const advDetails = document.querySelector('.toggle-advanced');
-    let advNeedsOpen = false;
-    for (const [, defaultVal, elId] of DEFAULT_TOGGLES) {
-        const el = document.getElementById(elId);
-        if (!el) continue;
-        const row = el.closest('.toggle-row');
-        if (!row) continue;
-        if (el.checked !== defaultVal) {
-            row.classList.add('scenario-override');
-            if (advDetails && advDetails.contains(el)) advNeedsOpen = true;
-        } else {
-            row.classList.remove('scenario-override');
-        }
-    }
-    if (advNeedsOpen && advDetails) advDetails.open = true;
-}
-
-function _syncComboSliders() {
-    const defaults = { kb: K_B, gn: G_N, damping: DAMPING };
-    const map = [
-        { id: 'combo-kb', valId: 'combo-kb-val', param: 'kb', fmt: 3 },
-        { id: 'combo-gn', valId: 'combo-gn-val', param: 'gn', fmt: 3 },
-        { id: 'combo-damp', valId: 'combo-damp-val', param: 'damping', fmt: 3 },
-    ];
-    for (const s of map) {
-        const slider = document.getElementById(s.id);
-        const display = document.getElementById(s.valId);
-        if (!slider || !display) continue;
-        const val = bridge?.getParam ? bridge.getParam(s.param) : defaults[s.param];
-        if (val != null) {
-            slider.value = val;
-            display.textContent = val.toFixed(s.fmt);
-        }
-    }
-}
-
 function clearCharts() {
-    if (fluxEnergyChart) fluxEnergyChart.clear();
-    if (particleChart) particleChart.clear();
-    if (lagrangianChart) lagrangianChart.clear();
+    // Reset the hub's ring buffers for Scale 0 — charts share these buffers so
+    // calling .clear() on the chart objects would clear the same data twice.
+    telemetryHub.resetScale(0);
     if (diagnostics) diagnostics.clear();
     if (chartCharge) chartCharge.clear();
     if (chartEBEnergy) chartEBEnergy.clear();
@@ -2308,23 +1675,20 @@ function renderOnticChainSummary(container) {
 
 function updateOnticPanel() {
     if (!observatory) return;
+    const fcCard = document.getElementById('ontic-fc-card');
+    const obsCard = document.getElementById('ontic-observer-card');
+    const hierCard = document.getElementById('ontic-hierarchy-card');
+    const infoCard = document.getElementById('ontic-info-card');
+    if (!fcCard && !obsCard && !hierCard && !infoCard) return;
 
     // Build diagnostics data from current engine state and update observatory
     const diagData = getOnticDiagnostics();
     const scaleIdx = diagData.scale || 0;
     const rawDiag = getRawDiagnostics();
     observatory.update(rawDiag, scaleIdx, diagData.tick);
-
-    const fcCard = document.getElementById('ontic-fc-card');
     if (fcCard) renderFcCard(observatory, fcCard);
-
-    const obsCard = document.getElementById('ontic-observer-card');
     if (obsCard) renderObserverCard(observatory, obsCard);
-
-    const hierCard = document.getElementById('ontic-hierarchy-card');
     if (hierCard) renderOnticHierarchy(observatory, hierCard);
-
-    const infoCard = document.getElementById('ontic-info-card');
     if (infoCard) renderInfoDynamics(observatory, infoCard);
 }
 

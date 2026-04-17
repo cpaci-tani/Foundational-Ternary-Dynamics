@@ -1,5 +1,5 @@
 import { QUANTUM_SCENARIO_DESCRIPTIONS, formatS0SeedMetadata } from '../../../config/scenarios.js';
-import { FORCE_FIELD_KEYS, getFieldStateSnapshot, setFieldToggle, setForceStyle } from '../state/store.js';
+import { FORCE_FIELD_KEYS, getFieldStateSnapshot, setFieldToggle, setForceStyle } from '../state/store.js?v=s1';
 import { getScale0Scenario, populateScale0ScenarioSelect } from '../scenario-registry.js';
 import {
     FIELD_TOGGLE_BINDINGS,
@@ -8,9 +8,10 @@ import {
     getSelectedScenarioId,
     readButtonActive,
     renderScenarioDescription,
+    /* v=2: Tier 1 quantum overlay bindings added — see SPEC_S0_QUANTUM_OVERLAYS.md */
     setButtonActive,
     setForceStyleButtons,
-} from './dom.js';
+} from './dom.js?v=2';
 
 let _bound = false;
 
@@ -43,10 +44,11 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
-    const reflectiveCheck = getEl('reflective-boundary');
-    if (reflectiveCheck) {
-        reflectiveCheck.addEventListener('change', () => {
-            ctx.applyReflectiveBoundary(reflectiveCheck.checked);
+    const reflectiveBtn = getEl('toggle-reflective');
+    if (reflectiveBtn) {
+        reflectiveBtn.addEventListener('click', () => {
+            reflectiveBtn.classList.toggle('active');
+            ctx.applyReflectiveBoundary(reflectiveBtn.classList.contains('active'));
         });
     }
 

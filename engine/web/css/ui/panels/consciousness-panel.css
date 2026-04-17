@@ -1,0 +1,138 @@
+/* Consciousness panel styles — migrated from components.css */
+
+/* ── Consciousness Pedagogy ──────────────────── */
+.cs-subtab-bar {
+    display: flex; gap: 0; margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+.cs-subtab {
+    padding: 6px 16px; font-size: 11px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all 0.15s;
+    user-select: none;
+}
+.cs-subtab:hover { color: var(--text-secondary); }
+.cs-subtab.active {
+    color: var(--consciousness-primary);
+    border-bottom-color: var(--consciousness-primary);
+}
+.cs-subpanel { display: none; }
+.cs-subpanel.active { display: block; }
+
+.cs-theory-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr;
+    gap: 10px;
+}
+.cs-theory-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 10px;
+    position: relative;
+}
+.cs-theory-card.cs-highlight {
+    border-color: var(--consciousness-primary);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+.cs-theory-title {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--consciousness-primary);
+    margin-bottom: 6px;
+}
+.cs-theory-card canvas {
+    width: 100%; height: auto;
+    display: block; border-radius: 4px;
+    background: var(--bg-deep);
+}
+.cs-slider-row {
+    margin-top: 6px; display: flex;
+    align-items: center; gap: 8px;
+    font-size: 11px; color: var(--text-secondary);
+}
+.cs-slider-row input[type=range] { flex: 1; }
+.cs-slider-row label {
+    font-family: var(--font-mono);
+    min-width: 70px;
+}
+
+.cs-walkthrough-container { max-width: 800px; margin: 0 auto; }
+.cs-walkthrough-step-title {
+    font-size: 14px; font-weight: 600;
+    color: var(--consciousness-primary);
+    margin-bottom: 8px;
+}
+.cs-walkthrough-text {
+    font-size: 12px; line-height: 1.65;
+    color: var(--text-secondary);
+    margin-bottom: 12px; min-height: 60px;
+}
+.cs-walkthrough-canvas-host {
+    margin-bottom: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 10px;
+}
+.cs-walkthrough-canvas-host canvas {
+    width: 100%; height: auto; display: block;
+    border-radius: 4px; background: var(--bg-deep);
+}
+.cs-walkthrough-nav {
+    display: flex; align-items: center;
+    justify-content: center; gap: 16px;
+}
+#cs-walk-indicator {
+    font-size: 12px; color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.cs-info-btn {
+    position: absolute; top: 6px; right: 6px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--bg-input); border: 1px solid var(--border);
+    color: var(--text-muted); font-size: 9px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1; z-index: var(--z-overlay);
+}
+.cs-info-btn:hover {
+    color: var(--consciousness-primary);
+    border-color: var(--consciousness-primary);
+}
+.cs-info-tooltip {
+    position: absolute; top: 26px; right: 4px; z-index: var(--z-panel-toggle);
+    background: var(--bg-deep); border: 1px solid var(--consciousness-primary);
+    border-radius: var(--radius-lg); padding: 8px 10px;
+    font-size: 11px; color: var(--text-secondary); line-height: 1.5;
+    max-width: 260px; display: none;
+    box-shadow: var(--shadow-lg);
+}
+.cs-info-tooltip.visible { display: block; }
+
+.cs-scenario-desc {
+    margin-top: 6px; padding: 6px 10px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); font-size: 11px;
+    color: var(--text-secondary); line-height: 1.5;
+}
+.cs-scenario-desc summary {
+    cursor: pointer; color: var(--consciousness-primary);
+    font-weight: 500; font-size: 11px;
+}
+
+/* ── Diagnostics cards row layout ───────────────────────── */
+.cs-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--sp-md);
+}
+.cs-metrics-row + .cs-metrics-row {
+    margin-top: var(--sp-md);
+}
+.cs-metrics-row .card .stat-value {
+    font-size: var(--fs-sm);
+}
+.cs-metric-primary   .stat-value { color: var(--consciousness-primary); }
+.cs-metric-secondary .stat-value { color: var(--consciousness-secondary); }
+.cs-metric-domain    .stat-value { font-size: var(--fs-xs); }
