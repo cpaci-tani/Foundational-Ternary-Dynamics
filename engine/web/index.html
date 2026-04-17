@@ -78,6 +78,18 @@
 </head>
 
 <body>
+    <script>
+        // Pre-paint hydration of html[data-panel-mount] to avoid FOUC.
+        (function () {
+            try {
+                var stored = localStorage.getItem('ftd.panel.mount');
+                var valid = stored === 'left' || stored === 'bottom' || stored === 'right';
+                document.documentElement.dataset.panelMount = valid ? stored : 'bottom';
+            } catch (_e) {
+                document.documentElement.dataset.panelMount = 'bottom';
+            }
+        })();
+    </script>
     <!-- Skip-link: styled via .skip-link in css/ui/shell/app-shell.css -->
     <a href="#viewport" class="skip-link">Skip to simulation</a>
     <!-- Loading overlay is rendered by js/ui/components/loading-overlay -->
