@@ -13,18 +13,20 @@
 
 /* ── Design Tokens ─────────────────────────────────── */
 :root {
-    /* UI Scale: 0.85 = compact, 1.0 = default, 1.15 = large, 1.3 = x-large */
-    --ui-scale: 1.1;
+    /* UI Scale multiplier for accessibility — keep 1.0 default.
+       Users can bump via Settings (Compact 0.85 / Normal 1.0 / Large 1.2 / X-Large 1.4). */
+    --ui-scale: 1.0;
 
-    /* Scaled font sizes (base * scale) */
-    --fs-xs:    calc(10.5px * var(--ui-scale));
-    --fs-sm:    calc(11.5px * var(--ui-scale));
-    --fs-base:  calc(13px * var(--ui-scale));
-    --fs-md:    calc(14px * var(--ui-scale));
-    --fs-lg:    calc(15px * var(--ui-scale));
-    --fs-xl:    calc(18px * var(--ui-scale));
-    --fs-2xl:   calc(22px * var(--ui-scale));
-    --fs-3xl:   calc(28px * var(--ui-scale));
+    /* Font size ramp — bases tuned for readability on 1440p+ monitors.
+       All sizes multiply through --ui-scale for accessibility zoom. */
+    --fs-xs:    calc(12px * var(--ui-scale));
+    --fs-sm:    calc(13px * var(--ui-scale));
+    --fs-base:  calc(15px * var(--ui-scale));
+    --fs-md:    calc(16px * var(--ui-scale));
+    --fs-lg:    calc(17px * var(--ui-scale));
+    --fs-xl:    calc(20px * var(--ui-scale));
+    --fs-2xl:   calc(24px * var(--ui-scale));
+    --fs-3xl:   calc(32px * var(--ui-scale));
 
     /* Scaled spacing */
     --sp-xs:    calc(2px * var(--ui-scale));
@@ -33,32 +35,66 @@
     --sp-lg:    calc(16px * var(--ui-scale));
     --sp-xl:    calc(20px * var(--ui-scale));
 
-    /* Color Palette - Vibrant Physics */
-    --bg-deep: #05080f; /* Pitch dark void */
-    
-    /* Glassmorphism Panels */
-    --bg-surface: rgba(10, 15, 26, 0.45);
-    --bg-card: rgba(18, 26, 47, 0.55);
-    --bg-input: rgba(25, 36, 60, 0.65);
-    
+    /* ╔══════════════════════════════════════════════════════╗
+       ║  THEME OVERRIDE SURFACE                              ║
+       ║  Themes under css/themes/ MUST redefine every token  ║
+       ║  in this block. Tokens below this block are fixed    ║
+       ║  system tokens themes inherit as-is.                 ║
+       ╚══════════════════════════════════════════════════════╝ */
+
+    /* Background ladder (z0 → z4) */
+    --bg-deep:     #05080f;                     /* viewport / body */
+    --bg-surface:  rgba(10, 15, 26, 0.45);      /* toolbar, tabs, primary glass */
+    --bg-card:     rgba(18, 26, 47, 0.55);      /* card, panel */
+    --bg-input:    rgba(25, 36, 60, 0.65);      /* input, select */
+    --bg-elevated: rgba(25, 36, 60, 0.75);      /* modal, dropdown */
+    --bg-raised:   rgba(35, 50, 80, 0.85);      /* tooltip, toast */
+
     /* Borders */
-    --border: rgba(255, 255, 255, 0.1);
+    --border:       rgba(255, 255, 255, 0.10);
     --border-light: rgba(255, 255, 255, 0.18);
-    --border-glow: rgba(0, 229, 255, 0.4);
-    
-    /* Text Hierarchy */
-    --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-muted: rgba(255, 255, 255, 0.6);
-    
-    /* Vibrant Interaction Accents */
-    --accent: #00e5ff;       /* Pure cyan */
-    --accent-dim: #0088aa;   /* Deep cyan */
-    --accent-glow: #00e5ff88;
-    
-    --positive: #34d399;     /* Vibrant emerald */
-    --negative: #fb7185;     /* Vibrant rose */
-    --warning: #fbbf24;      /* Luminous amber */
+    --border-glow:  rgba(0, 229, 255, 0.40);
+
+    /* Text hierarchy (contrast-tuned: AA on --bg-card) */
+    --text-primary:   #ffffff;                   /* headings, values */
+    --text-secondary: rgba(255, 255, 255, 0.82); /* body, labels */
+    --text-muted:     rgba(255, 255, 255, 0.75); /* captions, hints (WCAG 4.5:1) */
+    --text-accent:    #e2e8f0;                   /* body-lite on cards */
+    --text-dim:       #94a3b8;                   /* disabled, inert */
+
+    /* Interaction accents */
+    --accent:       #00e5ff;
+    --accent-dim:   #0088aa;
+    --accent-glow:  #00e5ff88;
+
+    /* Semantic status */
+    --positive: #34d399;
+    --negative: #fb7185;
+    --warning:  #fbbf24;
+
+    /* Themeable interaction state tints (NOT accent-locked) */
+    --state-hover-bg:   rgba(0, 229, 255, 0.08);
+    --state-active-bg:  rgba(0, 229, 255, 0.18);
+    --state-focus-ring: 0 0 0 2px rgba(0, 229, 255, 0.40);
+
+    /* Viewport + card surfaces (previously hardcoded with !important) */
+    --viewport-bg:     radial-gradient(circle at 50% 50%, var(--bg-deep) 0%, #030408 100%);
+    --card-shadow:     none;                     /* lifted per-theme */
+    --card-hover-bg:   rgba(25, 36, 60, 0.70);   /* lifted card on hover */
+    --chrome-shadow:   0 4px 24px rgba(0, 0, 0, 0.40);   /* toolbar/status drop shadow */
+    --dock-shadow:     0 24px 80px rgba(0, 0, 0, 0.70); /* panel-dock lift */
+    --tabs-shadow:     0 8px 32px rgba(0, 0, 0, 0.50);  /* workspace tabs lift */
+    --modal-backdrop:  rgba(0, 0, 0, 0.60);             /* modal blur screen */
+
+    /* Tooltip surfaces */
+    --tooltip-bg:            rgba(10, 16, 28, 0.94);
+    --tooltip-border:        rgba(126, 157, 196, 0.28);
+    --tooltip-text:          var(--text-primary);
+    --tooltip-shadow:        0 16px 40px rgba(0, 0, 0, 0.42);
+    --tooltip-backdrop:      blur(18px) saturate(1.2);
+    --tooltip-kicker:        var(--accent);
+    --tooltip-muted:         var(--text-muted);
+    --status-bar-offset:     calc(28px * var(--ui-scale));
     
     /* Typography */
     --font-heading: 'Outfit', 'Inter', system-ui, sans-serif;
@@ -66,9 +102,45 @@
     --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
     
     /* Radii */
-    --radius: 6px;
+    /* ╔══════════════════════════════════════════════════════╗
+       ║  FIXED SYSTEM TOKENS                                 ║
+       ║  Themes inherit these as-is; do not redefine.        ║
+       ╚══════════════════════════════════════════════════════╝ */
+
+    --radius-sm: 4px;
+    --radius:    6px;
+    --radius-md: 8px;
     --radius-lg: 12px;
     --radius-xl: 16px;
+
+    /* Fixed UI state constants */
+    --state-disabled-opacity: 0.5;
+
+    /* Line-height scale */
+    --lh-tight: 1.25;
+    --lh-base:  1.5;
+    --lh-loose: 1.7;
+
+    /* Shadow scale */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.18);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.28);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.38);
+    --shadow-xl: 0 20px 80px rgba(0, 0, 0, 0.45);
+
+    /* Motion */
+    --dur-fast: 150ms;
+    --dur-base: 240ms;
+    --dur-slow: 360ms;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Legend palette (lagrangian / consciousness term colors) */
+    --legend-field-kinetic:  #66bb6a;
+    --legend-field-gradient: #26a69a;
+    --legend-bi:             #ef5350;
+    --legend-coupling:       #fb8c00;
+    --legend-velocity:       #fdd835;
+    --legend-gauss:          #42a5f5;
+    --legend-dissipation:    #78909c;
 
     /* Consciousness mode overrides */
     --consciousness-primary: #00e5ff;
@@ -90,9 +162,18 @@ html, body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Form Element Primitives (Native Dark Theming) ── */
+/* ── Form Element Primitives (theme-aware native controls) ── */
 input, select, textarea {
     color-scheme: dark;
+}
+
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+html[data-theme="light"] textarea,
+html[data-theme="parchment"] input,
+html[data-theme="parchment"] select,
+html[data-theme="parchment"] textarea {
+    color-scheme: light;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -109,18 +190,6 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"]::-webkit-inner-spin-button:hover,
 input[type="number"]::-webkit-outer-spin-button:hover {
     opacity: 1;
-}
-
-/* ── Smooth Dynamics ──────────────────────────────── */
-body, #toolbar, #tab-bar, .tab, #panel-area, .panel, .card,
-#status-bar, .tb-btn, .tb-select, .view-toggle, .meta-card,
-.meta-btn, .settings-box {
-    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ── Global Custom Scrollbar ────── */
@@ -143,4 +212,124 @@ body, #toolbar, #tab-bar, .tab, #panel-area, .panel, .card,
 ::-webkit-resizer {
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%2300e5ff" stroke-width="2"><line x1="21" y1="14" x2="14" y2="21"/><line x1="21" y1="8" x2="8" y2="21"/><line x1="21" y1="2" x2="2" y2="21"/></svg>') bottom right no-repeat;
     opacity: 0.7;
+}
+
+/* ── Accessibility ────────────────────────────────────── */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html:not([data-motion="full"]) *:not(#loading-overlay *):not(#loading-overlay),
+    html:not([data-motion="full"]) *:not(#loading-overlay *)::before,
+    html:not([data-motion="full"]) *:not(#loading-overlay *)::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+html[data-motion="reduced"] *:not(#loading-overlay *):not(#loading-overlay),
+html[data-motion="reduced"] *:not(#loading-overlay *)::before,
+html[data-motion="reduced"] *:not(#loading-overlay *)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+}
+
+/* ── Smooth theme transitions ────────────────────────── */
+/* Single canonical transition for theme-sensitive surfaces. Uses design-token
+   duration/easing. Individual components may override with their own timing
+   for micro-interactions (hover lift, focus ring, etc.). */
+body, #toolbar, #tab-bar, .tab, #panel-area, .panel, .card,
+#status-bar, .tb-btn, .tb-select, .view-toggle, .meta-card,
+.meta-btn, .meta-shell-row, .meta-stat, .settings-box {
+    transition: background-color var(--dur-base) var(--ease-out),
+                color var(--dur-base) var(--ease-out),
+                border-color var(--dur-base) var(--ease-out);
+}
+
+.ui-tooltip {
+    transition: background-color var(--dur-base) var(--ease-out),
+                color var(--dur-base) var(--ease-out),
+                border-color var(--dur-base) var(--ease-out),
+                box-shadow var(--dur-base) var(--ease-out);
+}
+
+/* ── App shell root ──────────────────────────────────── */
+/* Base #app positioning; scale/responsive-specific overrides live in
+   css/ui/shell/app-shell.css, css/ui/shell/responsive.css, and
+   css/scale-visibility.css. */
+#app {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* ╔══════════════════════════════════════════════════════╗
+   ║  RESPONSIVE THEME TRIGGERS                           ║
+   ║  Auto-adapts the default theme to OS preferences.    ║
+   ║  User's explicit theme choice ([data-theme=...])     ║
+   ║  always wins — these blocks only apply when the      ║
+   ║  user hasn't set a theme.                            ║
+   ╚══════════════════════════════════════════════════════╝ */
+
+/* When the user hasn't picked a theme and the OS prefers light mode,
+   inherit the light theme's surface palette automatically. */
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+        --bg-deep:     #f8f9fb;
+        --bg-surface:  #ffffff;
+        --bg-card:     #f0f2f5;
+        --bg-input:    #e5e7eb;
+        --bg-elevated: #ffffff;
+        --bg-raised:   #f8fafc;
+
+        --border:       #d1d5db;
+        --border-light: #c0c4cc;
+        --border-glow:  rgba(37, 99, 235, 0.40);
+
+        --text-primary:   #111827;
+        --text-secondary: #374151;
+        --text-muted:     #4b5563;
+        --text-accent:    #1f2937;
+        --text-dim:       #9ca3af;
+
+        --accent:      #2563eb;
+        --accent-dim:  #1d4ed8;
+        --accent-glow: #2563eb44;
+
+        --positive: #16a34a;
+        --negative: #dc2626;
+        --warning:  #d97706;
+
+        --state-hover-bg:   rgba(37, 99, 235, 0.08);
+        --state-active-bg:  rgba(37, 99, 235, 0.18);
+        --state-focus-ring: 0 0 0 2px rgba(37, 99, 235, 0.40);
+
+        --viewport-bg: linear-gradient(180deg, #e0e4ea 0%, #c8cdd6 100%);
+        --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+        color-scheme: light;
+    }
+}
+
+/* High-contrast accessibility boost — stacks with any active theme. */
+@media (prefers-contrast: more) {
+    :root,
+    html[data-theme="abyss"],
+    html[data-theme="nord"],
+    html[data-theme="light"],
+    html[data-theme="parchment"] {
+        --border:       CanvasText;
+        --border-light: CanvasText;
+        --text-muted:   CanvasText;
+        --text-dim:     CanvasText;
+        --state-focus-ring: 0 0 0 3px Highlight;
+    }
+    :focus-visible {
+        outline-width: 3px;
+    }
 }

@@ -1,0 +1,173 @@
+/* ============================================================
+ *  quantum-lab-panel.css
+ *  Scale 0 Quantum Lab — experiment runner
+ * ============================================================ */
+
+/* Buttons (moved from primitives/button.css in Phase D) */
+.qlab-btn-primary {
+    background: var(--accent);
+    color: var(--bg-deep);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 4px 14px;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
+}
+.qlab-btn-primary:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+.qlab-btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: none;
+    box-shadow: none;
+}
+
+.qlab-btn-secondary {
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 3px 10px;
+    font-size: var(--fs-xs);
+    cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+.qlab-btn-secondary:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+.qlab-btn-secondary:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+ *  Quantum Lab internals (moved from panel-resources.css in Phase D)
+ * ============================================================ */
+
+.qlab-shell {
+    padding-top: 0;
+}
+
+.qlab-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-sm);
+    align-items: center;
+}
+
+.qlab-label {
+    margin: 0;
+}
+
+.qlab-select {
+    flex: 1 1 240px;
+    max-width: 280px;
+}
+
+.qlab-meta-label {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+}
+
+.qlab-trials-select {
+    width: 80px;
+}
+
+.qlab-ticks-input {
+    width: 72px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+    font-size: var(--fs-xs);
+    font-family: var(--font-mono);
+}
+
+.qlab-progress {
+    margin-bottom: 2px;
+}
+
+.qlab-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+}
+
+.qlab-progress-track {
+    height: 4px;
+    background: var(--bg-input);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.qlab-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width var(--dur-fast) var(--ease-out);
+}
+
+.qlab-chart-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+    gap: var(--sp-md);
+}
+
+.qlab-panel-label {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.qlab-panel-label-spaced {
+    margin-top: var(--sp-md);
+}
+
+.qlab-histogram {
+    width: 100%;
+    height: 200px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+}
+
+.qlab-stats-grid {
+    font-size: var(--fs-xs);
+}
+
+.qlab-description {
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 0;
+}
+
+.qlab-export-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: var(--sp-md);
+}
+
+.qlab-export-btn {
+    font-size: 10px;
+    padding: 3px var(--sp-sm);
+}
+
+@media (max-width: 1023px) {
+    .qlab-chart-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+    .qlab-select { max-width: none; }
+    .qlab-row    { align-items: stretch; }
+}

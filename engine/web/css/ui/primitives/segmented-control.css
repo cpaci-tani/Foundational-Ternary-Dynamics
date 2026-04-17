@@ -1,0 +1,37 @@
+/* Segmented control primitive styles */
+
+/* ── Combo button row (.combo-btn-row) ───────────────── */
+/* Used in the particle-engine combo panel as a compact segmented layout */
+.combo-btn-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+/* Compact variant of .ctrl-btn-secondary used inside combo rows */
+.combo-btn-row .ctrl-btn-secondary {
+    padding: 4px 8px;
+    font-size: 11px;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.combo-section-label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    margin: 6px 0 4px 0;
+    opacity: 0.7;
+}
+
+/* ── Force style row (.force-style-row) ──────────────── */
+/* Segmented control container for force visualization style selector.
+   Per-button styles (.style-btn) live in button.css. */
+.force-style-row {
+    display: flex;
+    gap: 0;
+    margin-top: 4px;
+}

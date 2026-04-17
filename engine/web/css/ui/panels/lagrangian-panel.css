@@ -1,0 +1,61 @@
+/* ============================================================
+ *  lagrangian-panel.css
+ *  Scale 0 Lagrangian density diagnostics
+ * ============================================================ */
+
+.lag-layout {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--sp-lg);
+}
+
+.lag-chart-canvas {
+    height: 200px;
+}
+
+.lag-term-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-sm) var(--sp-lg);
+    margin-top: var(--sp-md);
+}
+
+.lag-term-toggle {
+    font-size: var(--fs-xs);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.lag-term-toggle input[type="checkbox"] {
+    width: 13px;
+    height: 13px;
+}
+
+.lag-term-toggle[data-term="field-kinetic"]  { color: var(--legend-field-kinetic); }
+.lag-term-toggle[data-term="field-gradient"] { color: var(--legend-field-gradient); }
+.lag-term-toggle[data-term="bi"]             { color: var(--legend-bi); }
+.lag-term-toggle[data-term="coupling"]       { color: var(--legend-coupling); }
+.lag-term-toggle[data-term="velocity"]       { color: var(--legend-velocity); }
+.lag-term-toggle[data-term="gauss"]          { color: var(--legend-gauss); }
+.lag-term-toggle[data-term="dissipation"]    { color: var(--legend-dissipation); }
+
+.lag-data-column {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+}
+
+.lag-data-column .combo-section-label:first-child {
+    margin-bottom: 4px;
+}
+
+.lag-data-column .combo-section-label + .combo-section-label {
+    margin-top: var(--sp-md);
+    margin-bottom: 4px;
+}
+
+@media (max-width: 768px) {
+    .lag-layout {
+        grid-template-columns: 1fr;
+    }
+}

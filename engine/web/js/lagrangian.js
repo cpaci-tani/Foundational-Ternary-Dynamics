@@ -11,6 +11,7 @@
  */
 
 import { createCachedCanvasRect } from './dom-utils.js';
+import { RingBuffer } from './telemetry-hub.js';
 
 const BUFFER_SIZE = 400;
 const TERM_COLORS = {
@@ -23,55 +24,31 @@ const TERM_COLORS = {
     dissipation: '#78909c',
 };
 
-class TermBuffer {
-    constructor(size = BUFFER_SIZE) {
-        this.size = size;
-        this.fk          = new Float32Array(size);  // field kinetic
-        this.fg          = new Float32Array(size);  // field gradient
-        this.bi          = new Float32Array(size);
-        this.coup        = new Float32Array(size);
-        this.vel         = new Float32Array(size);
-        this.gauss       = new Float32Array(size);
-        this.diss        = new Float32Array(size);
-        this.total       = new Float32Array(size);
-        this.hamiltonian = new Float32Array(size);
-        this.action      = new Float32Array(size);
-        this._head = 0;
-        this._count = 0;
-    }
-
-    push(lag) {
-        const h = this._head;
-        this.fk[h]          = Math.abs(lag.fieldKinetic || 0);
-        this.fg[h]          = Math.abs(lag.fieldGradient || 0);
-        this.bi[h]          = Math.abs(lag.bornInfeld || 0);
-        this.coup[h]        = Math.abs(lag.coupling || 0);
-        this.vel[h]         = Math.abs(lag.velocity || 0);
-        this.gauss[h]       = Math.abs(lag.gauss || 0);
-        this.diss[h]        = Math.abs(lag.dissipation || 0);
-        this.total[h]       = lag.total || 0;
-        this.hamiltonian[h] = lag.hamiltonian || 0;
-        this.action[h]      = lag.totalAction || 0;
-        this._head = (h + 1) % this.size;
-        if (this._count < this.size) this._count++;
-    }
-
-    get(arr, i) {
-        return arr[(this._head - this._count + i + this.size) % this.size];
-    }
-
-    get length() { return this._count; }
-
-    clear() {
-        this._head = 0;
-        this._count = 0;
-    }
-}
-
 export class LagrangianChart {
-    constructor(canvas) {
+    /**
+     * @param {HTMLCanvasElement} canvas
+     * @param {object} [lagBufs]  hub.lag — keyed RingBuffer instances.
+     *   When supplied the chart reads from those buffers directly (single write path).
+     *   When omitted it allocates its own local RingBuffers (standalone / test use).
+     */
+    constructor(canvas, lagBufs = null) {
         this.canvas = canvas;
-        this.buffer = new TermBuffer();
+        // If hub buffers are provided, use them; otherwise allocate locally.
+        this.lag = lagBufs || {
+            fieldKinetic:  new RingBuffer(BUFFER_SIZE),
+            fieldGradient: new RingBuffer(BUFFER_SIZE),
+            bornInfeld:    new RingBuffer(BUFFER_SIZE),
+            coupling:      new RingBuffer(BUFFER_SIZE),
+            velocity:      new RingBuffer(BUFFER_SIZE),
+            gauss:         new RingBuffer(BUFFER_SIZE),
+            dissipation:   new RingBuffer(BUFFER_SIZE),
+            total:         new RingBuffer(BUFFER_SIZE),
+            hamiltonian:   new RingBuffer(BUFFER_SIZE),
+            action:        new RingBuffer(BUFFER_SIZE),
+        };
+        // Keep a legacy TermBuffer alias so existing push() callers still work
+        // when hub buffers are NOT injected (standalone use).
+        this._ownedBuffers = !lagBufs;
         // Phase C.3: cache rect, refreshed via ResizeObserver
         this._rectCache = canvas ? createCachedCanvasRect(canvas) : null;
         this.visible = {
@@ -103,9 +80,26 @@ export class LagrangianChart {
         }
     }
 
+    /**
+     * Push Lagrangian data.
+     * When hub buffers are injected this is a no-op (hub already wrote via
+     * telemetryHub.collectScale0Lagrangian). Called directly only in
+     * standalone/fallback mode.
+     */
     push(lag) {
-        this.buffer.push(lag);
-        // Update constraint display
+        if (this._ownedBuffers) {
+            this.lag.fieldKinetic.push( Math.abs(lag.fieldKinetic  || 0));
+            this.lag.fieldGradient.push(Math.abs(lag.fieldGradient || 0));
+            this.lag.bornInfeld.push(   Math.abs(lag.bornInfeld    || 0));
+            this.lag.coupling.push(     Math.abs(lag.coupling      || 0));
+            this.lag.velocity.push(     Math.abs(lag.velocity      || 0));
+            this.lag.gauss.push(        Math.abs(lag.gauss         || 0));
+            this.lag.dissipation.push(  Math.abs(lag.dissipation   || 0));
+            this.lag.total.push(         lag.total                  || 0);
+            this.lag.hamiltonian.push(   lag.hamiltonian            || 0);
+            this.lag.action.push(        lag.totalAction            || 0);
+        }
+        // Always update constraint DOM display regardless of buffer ownership
         this._updateConstraints(lag);
     }
 
@@ -143,35 +137,34 @@ export class LagrangianChart {
 
         ctx.clearRect(0, 0, w, h);
 
-        const buf = this.buffer;
-        const n = buf.length;
+        // n = number of samples available (from any term buffer)
+        const n = this.lag.fieldKinetic.count;
         if (n < 2) return;
 
         const margin = { top: 8, right: 8, bottom: 20, left: 50 };
         const plotW = w - margin.left - margin.right;
         const plotH = h - margin.top - margin.bottom;
 
-        // Compute stacked values
-        const stacks = [];
-        const termArrays = [];
+        // Select visible term RingBuffers
+        const termBufs = [];
         const termColors = [];
+        if (this.visible.fieldKinetic)  { termBufs.push(this.lag.fieldKinetic);  termColors.push(TERM_COLORS.fieldKinetic); }
+        if (this.visible.fieldGradient) { termBufs.push(this.lag.fieldGradient); termColors.push(TERM_COLORS.fieldGradient); }
+        if (this.visible.bornInfeld)    { termBufs.push(this.lag.bornInfeld);    termColors.push(TERM_COLORS.bornInfeld); }
+        if (this.visible.coupling)      { termBufs.push(this.lag.coupling);      termColors.push(TERM_COLORS.coupling); }
+        if (this.visible.velocity)      { termBufs.push(this.lag.velocity);      termColors.push(TERM_COLORS.velocity); }
+        if (this.visible.gauss)         { termBufs.push(this.lag.gauss);         termColors.push(TERM_COLORS.gauss); }
+        if (this.visible.dissipation)   { termBufs.push(this.lag.dissipation);   termColors.push(TERM_COLORS.dissipation); }
 
-        if (this.visible.fieldKinetic)  { termArrays.push(buf.fk);    termColors.push(TERM_COLORS.fieldKinetic); }
-        if (this.visible.fieldGradient) { termArrays.push(buf.fg);    termColors.push(TERM_COLORS.fieldGradient); }
-        if (this.visible.bornInfeld)  { termArrays.push(buf.bi);    termColors.push(TERM_COLORS.bornInfeld); }
-        if (this.visible.coupling)    { termArrays.push(buf.coup);  termColors.push(TERM_COLORS.coupling); }
-        if (this.visible.velocity)    { termArrays.push(buf.vel);   termColors.push(TERM_COLORS.velocity); }
-        if (this.visible.gauss)       { termArrays.push(buf.gauss); termColors.push(TERM_COLORS.gauss); }
-        if (this.visible.dissipation) { termArrays.push(buf.diss);  termColors.push(TERM_COLORS.dissipation); }
+        if (termBufs.length === 0) return;
 
-        if (termArrays.length === 0) return;
-
-        // Compute cumulative stacks
+        // Compute cumulative stacks using RingBuffer.get(i)
+        const stacks = [];
         for (let i = 0; i < n; i++) {
             let sum = 0;
             const row = [0];
-            for (const arr of termArrays) {
-                sum += buf.get(arr, i);
+            for (const rb of termBufs) {
+                sum += rb.get(i);
                 row.push(sum);
             }
             stacks.push(row);
@@ -204,7 +197,7 @@ export class LagrangianChart {
         }
 
         // Draw stacked areas (bottom to top)
-        for (let t = termArrays.length - 1; t >= 0; t--) {
+        for (let t = termBufs.length - 1; t >= 0; t--) {
             ctx.beginPath();
             ctx.moveTo(margin.left, margin.top + plotH); // bottom-left
 
@@ -238,7 +231,10 @@ export class LagrangianChart {
     }
 
     clear() {
-        this.buffer.clear();
+        if (this._ownedBuffers) {
+            for (const b of Object.values(this.lag)) b.clear();
+        }
+        // When hub-owned, hub.resetScale(0) clears the buffers instead.
     }
 }
 

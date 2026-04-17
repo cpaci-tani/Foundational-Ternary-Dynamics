@@ -1,0 +1,382 @@
+/* ============================================================
+ *  verification-lab-panel.css
+ *  Replaces quantum-lab-panel.css as the category-based physics-
+ *  verification dashboard (spec: docs/SPEC_VERIFICATION_LAB.md).
+ *
+ *  All colors flow through the canonical theme override surface
+ *  (docs/SPEC_THEME_DESIGN.md). No hardcoded palettes.
+ * ============================================================ */
+
+#panel-verification-lab .verif-shell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-md);
+    padding: 4px;
+}
+
+.verif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--sp-md);
+}
+
+.verif-kicker {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.verif-title {
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    line-height: var(--lh-base);
+    margin-top: 2px;
+}
+
+.verif-actions-global {
+    display: flex;
+    gap: 6px;
+}
+
+/* ── Category pills ───────────────────────────────────── */
+.verif-cat-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.verif-cat-pill {
+    padding: 6px 14px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+}
+
+.verif-cat-pill:hover {
+    color: var(--text-primary);
+    background: var(--state-hover-bg);
+}
+
+.verif-cat-pill.active {
+    color: var(--accent);
+    background: var(--state-active-bg);
+    border-color: var(--accent);
+}
+
+/* ── Two-pane body: list + detail ─────────────────────── */
+.verif-body {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: var(--sp-md);
+    align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+    .verif-body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Experiment list */
+.verif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.verif-row {
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    align-items: center;
+    gap: var(--sp-sm);
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+    text-align: left;
+    color: var(--text-secondary);
+    font: inherit;
+}
+
+.verif-row:hover {
+    border-color: var(--border-light);
+    background: var(--card-hover-bg);
+    color: var(--text-primary);
+}
+
+.verif-row.active {
+    border-color: var(--accent);
+    background: var(--state-active-bg);
+    color: var(--text-primary);
+}
+
+.verif-row[data-status="running"] {
+    border-color: var(--warning);
+}
+
+.verif-row-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-muted);
+}
+
+.verif-row[data-status="running"] .verif-row-dot {
+    background: var(--warning);
+    box-shadow: 0 0 6px var(--warning);
+    animation: verif-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes verif-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+}
+
+.verif-row-name {
+    font-size: var(--fs-sm);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.verif-row-badge {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 999px;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* ── Badge color tokens ───────────────────────────────── */
+.verif-badge-pass     { color: var(--positive);  background: color-mix(in srgb, var(--positive) 18%, transparent); }
+.verif-badge-close    { color: var(--warning);   background: color-mix(in srgb, var(--warning) 18%, transparent); }
+.verif-badge-fail     { color: var(--negative);  background: color-mix(in srgb, var(--negative) 18%, transparent); }
+.verif-badge-emergent { color: var(--accent);    background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.verif-badge-not-run  { color: var(--text-muted); background: transparent; }
+
+/* ── Detail pane ──────────────────────────────────────── */
+.verif-detail {
+    padding: var(--sp-md) var(--sp-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    min-height: 400px;
+}
+
+.verif-detail-empty {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: var(--fs-sm);
+    padding: var(--sp-lg);
+    text-align: center;
+}
+
+.verif-detail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--sp-md);
+    margin-bottom: var(--sp-sm);
+}
+
+.verif-detail-name {
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.verif-detail-meta {
+    display: flex;
+    gap: var(--sp-md);
+    align-items: center;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.verif-scenario code {
+    font-family: var(--font-mono);
+    color: var(--accent);
+}
+
+.verif-tag {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid currentColor;
+}
+
+.verif-tag-theorem    { color: var(--positive); }
+.verif-tag-selection  { color: var(--accent); }
+.verif-tag-emergent   { color: var(--warning); }
+.verif-tag-conjecture { color: var(--text-muted); }
+.verif-tag-imposed    { color: var(--negative); }
+
+.verif-badge-big {
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.verif-description {
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-base);
+    margin: var(--sp-sm) 0 var(--sp-md);
+}
+
+/* ── Controls row ─────────────────────────────────────── */
+.verif-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-md);
+    align-items: flex-end;
+    margin-bottom: var(--sp-md);
+}
+
+.verif-ctrl-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+}
+
+.verif-ctrl-field input {
+    width: 100px;
+    height: 30px;
+    padding: 4px 8px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+}
+
+.verif-btn-row {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+
+/* ── Progress ─────────────────────────────────────────── */
+.verif-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: var(--sp-md);
+}
+
+.verif-progress-track {
+    height: 6px;
+    background: var(--bg-input);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.verif-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width var(--dur-fast) linear;
+}
+
+.verif-progress-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+}
+
+/* ── Stat grid ────────────────────────────────────────── */
+.verif-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-md);
+}
+
+@media (max-width: 760px) {
+    .verif-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.verif-stat {
+    padding: 8px 10px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.verif-stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.verif-stat-value {
+    font-family: var(--font-mono);
+    font-size: var(--fs-md);
+    color: var(--text-primary);
+    margin-top: 2px;
+}
+
+.verif-stat-stddev {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    margin-left: 4px;
+}
+
+.verif-stat-units {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    margin-left: 2px;
+}
+
+/* ── Sparkline + export ───────────────────────────────── */
+.verif-sparkline-wrap {
+    margin-bottom: var(--sp-md);
+    padding: 6px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.verif-sparkline {
+    width: 100%;
+    height: 60px;
+    display: block;
+}
+
+.verif-export-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}

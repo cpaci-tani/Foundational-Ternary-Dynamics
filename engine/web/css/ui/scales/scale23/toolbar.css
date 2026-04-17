@@ -1,0 +1,9 @@
+/* ============================================================
+ *  scale23/toolbar.css — Scale 2/3 (Atoms/Molecules) toolbar
+ * ============================================================ */
+
+/* Force-type toggle buttons: color-coded by interaction */
+#ae-force-ionic { color: #ff4444; }
+#ae-force-vdw   { color: #44ff44; }
+#ae-force-bond  { color: #ff8844; }
+#ae-force-net   { color: #ffffff; }

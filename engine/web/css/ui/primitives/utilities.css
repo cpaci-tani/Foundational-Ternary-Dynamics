@@ -1,0 +1,37 @@
+/* ============================================================
+ *  utilities.css — Small composable helpers
+ *
+ *  Use these for one-off layout instead of inline style="...".
+ *  Rules:
+ *    - Spacing utilities use --sp-* tokens.
+ *    - No color literals; add a semantic class instead.
+ *    - No component-specific sizes; that belongs in the panel.
+ * ============================================================ */
+
+/* ── Spacing helpers ───────────────────────────────────────── */
+.u-mt-sm { margin-top: var(--sp-sm); }
+.u-mt-md { margin-top: var(--sp-md); }
+.u-mt-lg { margin-top: var(--sp-lg); }
+.u-mb-sm { margin-bottom: var(--sp-sm); }
+.u-mb-md { margin-bottom: var(--sp-md); }
+.u-gap-sm { gap: var(--sp-sm); }
+.u-gap-md { gap: var(--sp-md); }
+.u-gap-lg { gap: var(--sp-lg); }
+
+/* ── Flex helpers ──────────────────────────────────────────── */
+.u-flex        { display: flex; }
+.u-flex-wrap   { display: flex; flex-wrap: wrap; }
+.u-flex-center { display: flex; align-items: center; }
+.u-flex-col    { display: flex; flex-direction: column; }
+
+/* ── Typography size helpers ───────────────────────────────── */
+.u-fs-xs { font-size: var(--fs-xs); }
+.u-fs-sm { font-size: var(--fs-sm); }
+.u-fs-md { font-size: var(--fs-md); }
+.u-mono  { font-family: var(--font-mono); }
+
+/* ── Common sparkline sizing ───────────────────────────────── */
+.u-sparkline-canvas {
+    height: 80px;
+    width: 100%;
+}

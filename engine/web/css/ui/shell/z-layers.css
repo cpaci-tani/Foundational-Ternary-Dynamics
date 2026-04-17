@@ -1,0 +1,32 @@
+/* ============================================================
+ *  z-layers.css — Canonical stacking registry
+ *
+ *  Every z-index in css/ui/** must reference one of these tokens.
+ *  Peer layers share a value intentionally; the DOM order resolves ties.
+ * ============================================================ */
+
+:root {
+    /* Scene */
+    --z-viewport:         1;
+    --z-field-overlay:    5;   /* scale0 field visualisation stack */
+    --z-overlay:          10;  /* viewport overlays */
+
+    /* Shell chrome (peer layer) */
+    --z-panel:            90;
+    --z-toolbar:          100;
+    --z-tabs:             100;
+    --z-status:           100;
+    --z-panel-toggle:     101;
+
+    /* Floating secondaries */
+    --z-sidebar-backdrop: 149;
+    --z-sidebar:          150;
+
+    /* Notifications + dialogs */
+    --z-toast:            9000;
+    --z-modal:            9500;
+
+    /* Fatal / bootstrap */
+    --z-loading:          9999;
+    --z-error:            10000;
+}

@@ -1,0 +1,51 @@
+/* Charts panel styles — migrated from components.css */
+
+/* Chart containers */
+.chart-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+}
+
+.chart-container canvas {
+    width: 100%;
+    height: 160px;
+}
+
+.chart-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.chart-legend-item::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    margin-right: 4px;
+    vertical-align: middle;
+    background-color: var(--color);
+}
+
+/* ── Charts panel rows ───────────────────────────────────── */
+.charts-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-md);
+}
+
+.charts-row + .charts-row {
+    margin-top: var(--sp-md);
+}
