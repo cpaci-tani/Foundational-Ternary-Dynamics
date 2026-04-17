@@ -1,10 +1,10 @@
-/* ── Base tab-bar styles ── */
-#tab-bar {
+/* ── Base tab-bar styles (bottom mount — default) ── */
+html[data-panel-mount="bottom"] #tab-bar,
+html:not([data-panel-mount]) #tab-bar {
     position: absolute;
     bottom: calc(28px * var(--ui-scale) + var(--sp-xl));
     left: 50%;
     transform: translateX(-50%);
-    z-index: var(--z-tabs);
     display: flex;
     gap: 0;
     background: var(--bg-surface);
@@ -13,6 +13,11 @@
     border-radius: var(--radius-xl);
     box-shadow: var(--tabs-shadow);
     overflow: hidden;
+}
+
+/* Mount-agnostic shell: applied to every mount */
+#tab-bar {
+    z-index: var(--z-tabs);
 }
 
 #btn-panel-toggle {
