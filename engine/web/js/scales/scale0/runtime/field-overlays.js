@@ -347,12 +347,20 @@ export function buildForceOverlayData(state, fieldCapability, sampled, latticeSi
         // so the field-arrow visualization stays visually distinct from B/E lines.
         const flowMaxSteps = Math.max(20, Math.ceil(maxSteps * 0.4));
         for (const item of items) {
+            // Weak is the flux-vector field itself (chirality transmutation
+            // follows flux flow); give it denser coverage and longer lines so
+            // it reads as a coherent field instead of a sparse cluster.
+            const isWeak = item.type === 'weak';
+            const seedCount = isWeak ? Math.min(maxSeeds * 2, 320) : maxSeeds;
+            const stepCount = isWeak ? maxSteps : flowMaxSteps;
+            const lineCount = isWeak ? Math.min(maxLines * 2, 400) : maxLines;
             // Importance-sample by |force| so streamlines cluster where the
             // interaction is strongest (e.g., near charges for EM, near masses
             // for gravity), matching the iron-filing visualization metaphor.
-            const seeds = generateImportanceSeeds(item.data, maxSeeds);
+            const seeds = generateImportanceSeeds(item.data, seedCount);
             item.flowLines = computeStreamlines(item.data, seeds, {
-                N: latticeSize, stride, maxSteps: flowMaxSteps, stepSize, maxLines, bidirectional: true,
+                N: latticeSize, stride, maxSteps: stepCount, stepSize,
+                maxLines: lineCount, bidirectional: true,
             });
         }
     }
