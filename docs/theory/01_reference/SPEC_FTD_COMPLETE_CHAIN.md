@@ -163,7 +163,7 @@ CODATA 2022: alpha^{-1} = 137.035999177(21).
 
 Tree-level agreement: 1.26 ppm with zero adjustable parameters.
 
-With the one-loop lattice tadpole correction (conditional on the selection a = 2/D, see [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)):
+With the one-loop lattice tadpole correction (conditional on the selection a = 2/D — uniquely best base-integer rational at height <= 15, but NOT forced by a symmetry argument; see [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md) and [EXPLR_A_OVER_D_AUDIT.md](../04_coupling/EXPLR_A_OVER_D_AUDIT.md)):
     1/alpha = 137.036000... (9.6 ppb residual)
 
 With the 7-term expansion in epsilon = e^pi - pi - 20 (conditional on the SP5 integer structure, see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)):
