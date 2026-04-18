@@ -112,6 +112,23 @@ Four integers encode all physics:
 
 **Uniqueness Conjecture [CONJECTURE]:** These may be the only integers satisfying all constraints with N_c > 1. A rigorous uniqueness proof has not been established — see [AUDIT_SELF_CONSISTENCY.md](../07_assessment/AUDIT_SELF_CONSISTENCY.md) for analysis.
 
+### 5.1 What Uses These Integers (SP5 Circularity Table)
+
+The integers were originally identified by inspecting known physics values ($N_c = 3$ from QCD, $b_3$ from the QCD beta function, etc.), then shown to satisfy an interlocking set of sequence constraints. This means any result **derived from them** carries a circularity risk: the match to experiment may be evidence that the integers were well-chosen, not that the mechanism is derived. This table — reproduced from [BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md) §5.4 — makes the distinction explicit:
+
+| Result | Depends on SP5? | Circularity risk |
+|--------|-----------------|-------------------|
+| $x_+ = 137.036$ (tree level) | NO (only $G^*, k = 16$) | **Not circular** |
+| $x_- = 3.024$ (tree level) | NO (only $G^*, k = 16$) | **Not circular** |
+| Watson identity $W_3 = G^{*2}/(2\pi)$ | NO (pure lattice math) | **Not circular** |
+| CM L-value identity $16G^{*2} = 2^9 L(\mathrm{Sym}^2 E, 1)$ | NO (pure arithmetic) | **Not circular** |
+| 7-term precision formula coefficients | YES (base-integer set) | **Circular** |
+| $\sin^2\theta_W = N_c/N_{\mathrm{eff}} = 3/13$ | YES ($N_c, N_{\mathrm{eff}}$) | **Circular** |
+| Lepton mass ratios, proton/electron ratio | YES (integer arithmetic) | **Circular** |
+| $m_e = m_P\sqrt{2\pi}(16/3)\alpha^{11}$ | YES ($16/3$) | **Circular** |
+
+**Practical rule.** Before quoting any FTD match to experiment, classify it against this table. If SP5-dependent, the match is evidence for the *choice* of integers, not independent validation of a mechanism. A derivation of the base-integer set from lattice first principles — not from known physics — would remove the circularity risk across the entire right-hand column. See [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) Gap 5.5 and [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) §SP5.
+
 ---
 
 ## 6. The Lemniscatic Derivation
