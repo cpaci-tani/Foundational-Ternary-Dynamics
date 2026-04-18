@@ -141,7 +141,9 @@ At CODATA 2022 experimental precision, the 7 coefficients are collectively **obs
 
 $$\varepsilon \;=\; e^\pi - \pi - 20 \;\approx\; -9.000 \times 10^{-4}$$
 
-This is a transcendental small parameter with $|\varepsilon| \sim 10^{-3}$, not a CM L-value (see [EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md](EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md) on why the correction is lattice-side). With $|\varepsilon| \sim 10^{-3}$, a 7-term series can in principle reach 24 digits since each term is ~10³ smaller than the last — convergence is not the issue. The choice $\varepsilon = e^\pi - \pi - 20$ itself deserves a derivation: the integer 20 is not obviously lattice-structural. If the expansion is genuine, $\varepsilon$ should emerge as a natural small parameter from the lattice tadpole integrals, not be inserted.
+This is a transcendental small parameter with $|\varepsilon| \sim 10^{-3}$, not a CM L-value (see [EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md](EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md) on why the correction is lattice-side). With $|\varepsilon| \sim 10^{-3}$, a 7-term series can in principle reach 24 digits since each term is ~10³ smaller than the last — convergence is not the issue.
+
+**On the integer 20 in $\varepsilon = e^\pi - \pi - 20$.** The 2026-04-17 audit initially flagged the 20 as unmotivated. On review, manuscript v2 ch 11 ([11-precision-formula.qmd](../../../dissemination/manuscript_v2/vol1/src/chapters/11-precision-formula.qmd)) records the identity $20 = b_3 + N_{\mathrm{eff}} = 7 + 13$ — so the integer is expressible in the base-integer set after all. The residual concern is weaker: **why that particular combination** (rather than $N_{\mathrm{eff}} + N_c + N_{\mathrm{base}} = 20$, also valid) and why the $e^\pi - \pi$ form specifically. The "which base-integer expression for 20" question is genuinely open but lower-stakes than an inserted integer would be.
 
 ### 4.2 The base integers
 
@@ -193,7 +195,7 @@ Three reasons to file rather than discard:
 
 2. **The one-loop mechanism already works.** Even if the 7-term series is a post-hoc fit, the FTD story does not depend on it. The one-loop tadpole ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)) closes 99.2% of the gap with a principled lattice computation. The 7-term series is a strong bonus, not a load-bearing claim.
 
-3. **The 24-digit precision claim, if true, is consistent with $|\varepsilon| \sim 10^{-3}$ convergence.** Each term is roughly $10^{-3}$ smaller than the last, so 7 terms naturally reach ~21–24 digits of precision. This removes convergence as a red flag, but preserves the real concern: circularity of coefficients (§3) and the ad-hoc-looking integer 20 in $\varepsilon = e^\pi - \pi - 20$ (§4.1).
+3. **The 24-digit precision claim, if true, is consistent with $|\varepsilon| \sim 10^{-3}$ convergence.** Each term is roughly $10^{-3}$ smaller than the last, so 7 terms naturally reach ~21–24 digits of precision. This removes convergence as a red flag. The remaining concern is circularity of coefficients (§3); the integer 20 in $\varepsilon = e^\pi - \pi - 20$ is expressible as $b_3 + N_{\mathrm{eff}}$ in the base-integer set (§4.1), so it is not an insertion from outside the framework.
 
 ---
 
