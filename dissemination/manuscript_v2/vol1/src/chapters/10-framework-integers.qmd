@@ -92,3 +92,19 @@ Relation (10.1) is numerically exact but its interpretation is [CONJECTURE]: the
 The sequence $3, 4, 7$ is Fibonacci-like: $3 + 4 = 7$. The next term, $7 + 6 = 13$, is the actual Fibonacci number $F_7$. The sequence continues: $7 + 13 = 20$, $13 + 20 = 33$, where 33 = $11 N_c$ (the numerator of $b_3$).
 
 The Fibonacci connection is [CONJECTURE] --- it may reflect the recursive self-similar structure of the lattice dynamics or may be numerological coincidence. It is noted for completeness.
+
+## Circularity caveat for SP5-dependent derivations {#sec-integers-circularity}
+
+The derivations above present the integers as outputs of the master quadratic and the Moore geometry. This chapter's framing is the strongest available, but the historical fact is that the integers were first identified in FTD by inspecting known physics values ($N_c = 3$ from QCD, $b_3 = 7$ from the QCD $\beta$-function) and *then* shown to satisfy an interlocking set of relations. For readers who regard that history as compromising, the following table — adapted from the self-audit [BRIDGE_QUADRATIC_PHYSICS.md §5.4](../../../docs/theory/01_reference/BRIDGE_QUADRATIC_PHYSICS.md) — separates results that do and do not depend on SP5:
+
+| Result | Depends on $\{N_c, N_{\text{base}}, b_3, N_{\text{eff}}\}$? | Circularity risk |
+|--------|---------------|-------------------|
+| $x_+ = 137.036$ tree level | NO | **Not circular** |
+| $x_- = 3.024$ tree level | NO | **Not circular** |
+| Watson identity $W_3 = G^{*2}/(2\pi)$ | NO | **Not circular** |
+| Sym$^2$ L-value identity $16G^{*2} = 2^9 L(\text{Sym}^2 E, 1)$ | NO | **Not circular** |
+| 7-term precision-formula coefficients | YES | **Circular** |
+| $\sin^2\theta_W = N_c / N_{\text{eff}}$ | YES | **Circular** |
+| Lepton mass ratios, $m_p/m_e$ | YES | **Circular** |
+
+**Reader's rule.** Any claim derived from $\{N_c, N_{\text{base}}, b_3, N_{\text{eff}}\}$ should be read as *conditional on the base-integer set being the right one*. The match to experiment is evidence that the integers were well-chosen, not that the derivation is mechanism-forced. Closing this gap requires a derivation of the four integers from lattice first principles — not from known physics. The cuboctahedral-geometry arguments in this chapter and in @sec-moore are the most advanced partial attempts; they are not yet complete as uniqueness proofs.
