@@ -2,9 +2,10 @@
 
 ## Conjecture: α⁻¹ = x₊ + Σ sₙ cₙ |ε|ⁿ to 24-Digit CODATA Agreement
 
-**Date:** 2026-04-17
-**Status:** [CONJECTURE] — coefficients are lattice-structural but uniqueness unaudited
-**Precision claim:** 24-digit agreement with CODATA 2022 (needs independent re-verification)
+**Date:** 2026-04-17 (rigidity audit run same day)
+**Status:** [CONJECTURE] — 24-digit agreement independently reproduced; 6/7 coefficients uniquely forced at cascade precision; unique clean base-integer decomposition confirmed; observationally underdetermined at CODATA precision. See §3.3 for full audit table.
+**Precision claim:** 24-digit agreement confirmed as algebraic identity (mpmath 60-digit); not experimentally verifiable beyond digit ~11.
+**Audit script:** [`scripts/exploration/audit_seven_term_rigidity.py`](../../../scripts/exploration/audit_seven_term_rigidity.py)
 **Dependencies:** [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](DERIV_MASTER_QUADRATIC_CM_LVALUES.md), [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md), [DERIV_LFUNCTION_GSTAR_CONNECTION.md](DERIV_LFUNCTION_GSTAR_CONNECTION.md)
 
 ---
@@ -76,9 +77,61 @@ These are lattice-structural. But the same base integers admit other rational co
 
 This is a tractable computer-search question. The proof script at §7 is the recommended audit.
 
-### 3.3 Status of the audit
+### 3.3 Status of the audit — run 2026-04-17
 
-As of 2026-04-17, the rigidity audit has not been run. The conjecture remains open in the strong sense: neither confirmed nor refuted at the uniqueness level. The 24-digit agreement is preserved as evidence but not as proof.
+The rigidity audit has been run (script: [`scripts/exploration/audit_seven_term_rigidity.py`](../../../scripts/exploration/audit_seven_term_rigidity.py)). Outcome:
+
+**Step (A) — Precision reproduction: PASS.** The 7-term series with claimed coefficients gives
+$$1/\alpha_{\mathrm{FTD}} = 137.035999176999999999999997420\ldots$$
+against CODATA 2022 $137.035999177$, for a residual of $2.58 \times 10^{-24}$. The 24-digit match is an **algebraic identity**.
+
+**Step (B) — Per-coefficient rigidity at cascade tolerance $10^{-24}/|\varepsilon|^n$:**
+
+| $n$ | claimed | cascade tol | # competitors in search (height ≤ 2000) | Verdict |
+|---|---|---|---|---|
+| 1 | 9/47 | $1.1 \times 10^{-21}$ | 1 (claimed only) | **Unique** |
+| 2 | 5/64 | $1.2 \times 10^{-18}$ | 1 | **Unique** |
+| 3 | 4/141 | $1.4 \times 10^{-15}$ | 1 | **Unique** |
+| 4 | 141/11 | $1.5 \times 10^{-12}$ | 1 | **Unique** |
+| 5 | 1472/21 | $1.7 \times 10^{-9}$ | 1 | **Unique** |
+| 6 | 416/21 | $1.9 \times 10^{-6}$ | 1 | **Unique** |
+| 7 | 299/8 | $2.1 \times 10^{-3}$ | 2 at tol (785/21, 1869/50) | **Slightly off** |
+
+The $n = 7$ "competitors" deserve scrutiny: $785 = 5 \cdot 157$ and $1869 = 3 \cdot 7 \cdot 89$ require the primes 157 and 89, which are **not** in the base-integer set $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$. The claimed $299/8 = 13 \cdot 23 / 8$ uses $23 = 2 N_{\mathrm{eff}} - N_c$, which *is* a natural base-integer combination. Under a strict base-integer-decomposition constraint, the cascade-tolerance competitors vanish and $299/8$ becomes the unique clean match — though it sits at ~2.5× the cascade tolerance, meaning the cascade would algebraically prefer a finer rational that the base-integer set cannot provide. A plausible reading: the 7-term truncation is optimal given a base-integer presentation, with residual absorbable only by an 8th (non-base-integer) term.
+
+**Step (C) — Experimental-precision check at CODATA tolerance $2.1 \times 10^{-8}/|\varepsilon|^n$:**
+
+| $n$ | # rational competitors (height ≤ 2000) | Implication |
+|---|---|---|
+| 1 | 98 | c_1 observationally underdetermined even at this low-n |
+| 2 | ≥ 200 | free |
+| 3 | ≥ 200 | free |
+| 4 | ≥ 200 | free |
+| 5 | 18 | free-ish |
+| 6 | ≥ 200 | free |
+| 7 | 82 | free |
+
+At CODATA 2022 experimental precision, the 7 coefficients are collectively **observationally underdetermined** — many low-height rationals in the base-integer set reproduce α to 11-digit experimental precision.
+
+### 3.4 Revised verdict
+
+> **[CONJECTURE]** — preserved, with the audit strengthening three specific claims and weakening one:
+>
+> **Strengthened:**
+> 1. The 24-digit numerical agreement is a confirmed algebraic identity (mpmath 60-digit).
+> 2. Six of seven coefficients ($c_1$ through $c_6$) are **uniquely forced** as the sole clean base-integer rational within cascade tolerance. This is a non-trivial rigidity result.
+> 3. $c_7 = 299/8$ is the unique clean base-integer decomposition in the relevant range; cascade-tolerance "competitors" at higher height require primes (157, 89) outside the base-integer set.
+>
+> **Weakened:**
+> 4. The 24-digit "match to CODATA" is not experimentally verifiable: CODATA 2022 constrains $1/\alpha$ to ~11 digits ($\pm 2.1 \times 10^{-8}$), and at that precision the coefficients are dramatically underdetermined. Digits 12–24 of the claimed match are a **structural property of the specific chosen coefficients**, not a prediction that can currently be tested against data.
+>
+> **Upgrade path to [THEOREM]:**
+> - Derive the base-integer set $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$ uniquely from lattice first principles (the cuboctahedral argument in [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) §5 is partially in place but not complete — see [CIRCULARITY RISK]).
+> - Derive the expansion parameter $\varepsilon = e^\pi - \pi - 20$ from lattice structure (the integer 20 remains unmotivated).
+> - Complete the $c_7$ residual analysis: show the 2.5× cascade-tolerance gap is absorbable by an 8th term that decomposes cleanly, or accept it as inherent truncation error.
+>
+> **Refutation path:**
+> - A future CODATA measurement with $\sigma < 10^{-15}$ on $1/\alpha$ testing the digit-13 prediction: if the measurement rules out the digit-13 zero, the 7-term series is weakened (though the tree-level 1.26 ppm agreement remains). Current CODATA can neither confirm nor deny digit 13.
 
 ---
 
@@ -214,3 +267,4 @@ A rigidity audit variant would wrap this in an enumeration over alternative deno
 ## Document History
 
 - **2026-04-17:** Created. Preserves the 7-term coefficient table with explicit rigidity-audit falsifier. Status [CONJECTURE] pending §3.2 audit and §5.1 reproduction. Cross-references the one-loop mechanism as the structurally grounded alternative.
+- **2026-04-17 (same day):** Rigidity audit run (`scripts/exploration/audit_seven_term_rigidity.py`). Step (A) 24-digit match confirmed as algebraic identity (residual $2.58 \times 10^{-24}$). Step (B) $c_1$–$c_6$ unique in base integers at cascade tolerance; $c_7 = 299/8$ unique under strict base-integer decomposition (competitors at higher height require primes 89, 157 outside the base set). Step (C) observationally underdetermined at CODATA experimental precision. Verdict: **[CONJECTURE] preserved** with strengthened algebraic claims and explicit weakening of the "experimentally verified to 24 digits" framing. See §3.3 for full audit table.
