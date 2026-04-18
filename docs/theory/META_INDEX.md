@@ -173,6 +173,7 @@ The lemniscatic structure and α derivation.
 | 4.10 | [DERIV_WATSON_GSTAR_IDENTITY.md](04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md) | **W₃ = G\*²/(2π):** The Watson integral (3D cubic lattice self-energy) IS a G\*-derived quantity [THEOREM]; 1/α + N_c = 32πW₃; master quadratic coefficients built from lattice self-energy; the lattice and the lemniscate share the quartic integral I₄ |
 | 4.11 | [DERIV_PHI3_EXACT_EFT.md](04_coupling/DERIV_PHI3_EXACT_EFT.md) | **phi³ exact EFT:** Cubic potential V(x) = x³/3 − 8G\*²x² + 16G\*³x; expansion around x₊ terminates exactly; three Wilson coefficients (vacuum, mass m²=134, coupling λ₃=1/3=1/D); no higher operators; UV-complete in field space [THEOREM] |
 | 4.12 | [DERIV_ONE_LOOP_LATTICE_ALPHA.md](04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md) | **One-loop lattice α:** phi³ EFT on Z[i]³ with a=2/D=2/3; tadpole I₁=0.015274; x₊(1-loop)=137.036000 (9.6 ppb, 99.2% gap closure); g²I₁=0.061 perturbative; spacing is [SELECTION PRINCIPLE]; integral is [THEOREM] |
+| 4.13 | [EXPLR_A_OVER_D_AUDIT.md](04_coupling/EXPLR_A_OVER_D_AUDIT.md) | **a = 2/D audit (2026-04-17):** Numerical BZ integration shows a_opt = 0.66486 (not exactly 2/3; 0.27% gap). VERDICT: PARTIAL. 2/3 is **uniquely the best rational** in the base-integer set at height ≤ 15 (beats all competitors by ≥ 12×), but NO local extremum / symmetry-point selection at a = 2/D. Not upgraded to [THEOREM]; [SELECTION] grounds strengthened. Script: `scripts/exploration/audit_lattice_spacing_a.py` |
 
 ---
 
