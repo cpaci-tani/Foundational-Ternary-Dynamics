@@ -326,7 +326,7 @@ Product of the first four: $1 \times 2 \times 3 \times 7 = 42$.
 
 ## §9. The Precision Series
 
-> **Epistemic note on §9.** The arithmetic identity in Theorem 9.1 is an identity between a specific transcendental combination and a specific real number; as pure mathematics it is [THEOREM] (numerical). Labeling the target real number as "CODATA $1/\alpha$" is the physical identification SP4 ([BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md) §4), which is [SELECTION] at this document's level of rigor, upgradable to conditional [THEOREM] only via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md). §9 is retained in this document for completeness; readers should treat the CODATA comparisons as SP4-conditional and §12.3's independence claim as applying to §§1–8 and §§10–12. See also [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) for the rigidity audit of the coefficients.
+> **Epistemic note on §9 (updated 2026-04-17 post-audit).** The arithmetic identity in Theorem 9.1 is an identity between a specific transcendental combination and a specific real number; as pure mathematics it is [THEOREM] (numerical). Labeling the target real number as "CODATA $1/\alpha$" is the physical identification SP4 ([BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md) §4), which is [SELECTION] at this document's level of rigor, upgradable to conditional [THEOREM] only via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md). The rigidity audit ([CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3) confirms the 24-digit match as an algebraic identity (residual 2.58e-24 at mpmath 60-digit); however, it **cannot be verified beyond digit ~11** against CODATA 2022's experimental precision of $2.1 \times 10^{-8}$. Six of seven coefficients are uniquely forced in the base-integer set at cascade precision; one ($c_7$) is the unique clean base-integer decomposition. §9 is retained in this document for completeness; readers should treat the CODATA comparisons as SP4-conditional and the "24-digit" framing as structural algebra, not testable prediction.
 
 ### 9.1 The Expansion Parameter
 
@@ -501,7 +501,7 @@ x₊ = 137.036..., x₋ = 3.024...  [Algebraic roots — §6.3]
 | M-10 | $G^* = \sqrt{2\pi}\,\vartheta_3(e^{-\pi})^2$ | [THEOREM] |
 | M-11 | $F_7 = T_7 = 13$ (unique crossover) | [THEOREM] (classical) |
 | M-12 | $\tau(3) = 252 = 4 \times 9 \times 7$ | [THEOREM] (classical) |
-| M-13 | 4-term series equals $137.035999177\ldots$ to $<0.001$ ppt | [THEOREM] (numerical); calling this value "CODATA $1/\alpha$" is SP4-conditional |
+| M-13 | 7-term series equals $137.035999177\ldots$ to residual $\sim 10^{-24}$ | [THEOREM] (algebraic identity, mpmath 60-digit; verified 2026-04-17 via `scripts/exploration/audit_seven_term_rigidity.py`); calling this value "CODATA $1/\alpha$" is SP4-conditional, and the 24-digit "precision" is **not experimentally verifiable** (CODATA 2022 constrains $1/\alpha$ to ~11 digits only) |
 | M-14 | Rational coefficients $\{9/47, 5/64, 4/141, 141/11\}$ are expressible in $\{3,4,7,13\}$ | [THEOREM] (trivially: a presentation exists). **Does not imply uniqueness.** See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3 for the rigidity falsifier; treat as [CIRCULARITY RISK] until that audit runs |
 | M-15 | ${\rm Gal}(K/\mathbb{Q}(G^*)) \cong \mathbb{Z}_2$ | [THEOREM] |
 

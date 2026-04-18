@@ -6,6 +6,8 @@
 **Status:** Critical Self-Assessment (Comprehensive Update)
 **Purpose:** Honest accounting of FTD's derivation claims in response to rigorous scrutiny
 
+**Companion document:** [`TRACKER_OPEN_ITEMS.md`](TRACKER_OPEN_ITEMS.md) — every `[OPEN]` across engine code + theory docs, consolidated into a single ledger so contributors can pick work without grepping the whole repo.
+
 ---
 
 ## Executive Summary
@@ -26,7 +28,7 @@ This document provides a **brutally honest assessment** of what FTD actually der
 - Bell analysis updated with lemniscate loop experiment results (i-phase vs π-phase)
 - Born rule reframed: |ψ|² is epistemic (observer inference), ψ² is ontic (substrate operation)
 - i emergence from master quadratic k = 1/2 (derived from bridge equation; Δ < 0 forces complex roots)
-- 7-term precision formula confirmed at 24-digit precision (all coefficients from {3,4,7,13})
+- 7-term precision formula: 24-digit match confirmed as **algebraic identity**; rigidity audit run 2026-04-17 shows 6/7 coefficients uniquely forced in base integers at cascade precision, but observationally underdetermined at CODATA experimental precision (~11 digits). Status: [CONJECTURE] (see CONJ_SEVEN_TERM_PRECISION_SERIES.md §3.3)
 - Gap 1 (Bell) upgraded from "undemonstrated" to "structurally characterized"
 - New genuine derivations added (items 25-28)
 
@@ -85,7 +87,13 @@ All coefficients from {3, 4, 7, 13}:
 Result: 24-digit precision (extended from 4-term sub-ppt)
 ```
 
-**Status:** ✅ [CONDITIONAL THEOREM] — Given selection principles SP1-SP4 (see AUDIT_HIDDEN_SELECTIONS.md), this is rigorous algebra. The 7-term precision formula achieves 24-digit accuracy. See DERIV_ALPHA_PRECISION_FORMULA.md.
+**Status:** [CONJECTURE] — rigidity audit run 2026-04-17 (`scripts/exploration/audit_seven_term_rigidity.py`). Key findings:
+1. 24-digit match confirmed as **algebraic identity** (mpmath 60-digit residual 2.58e-24).
+2. At **cascade precision** (self-consistency tolerance of the 24-digit series), 6 of 7 coefficients are uniquely forced as the sole base-integer rational within tolerance; c_7 = 299/8 is the unique clean base-integer decomposition.
+3. At **CODATA experimental precision** (2.1e-8), the coefficients are observationally underdetermined — hundreds of low-height base-integer rationals match α to within experimental uncertainty.
+4. The "matches CODATA to 24 digits" claim is structural (property of the chosen coefficients), **not experimentally verifiable beyond digit ~11**.
+
+See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3 for the full audit table. Upgrade to [CONDITIONAL THEOREM] requires (a) deriving the base-integer set from lattice first principles, and (b) deriving ε = e^π − π − 20 from lattice structure (the integer 20 remains unmotivated).
 
 **What critics acknowledge:** This is remarkable. The connection between elliptic curve geometry and the fine structure constant, if not coincidental, represents a profound discovery.
 
@@ -190,7 +198,7 @@ The following are **exact mathematical results** added by the trit information t
 25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (consciousness), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see PHYS_QUADRATIC_APPLICATIONS.md §8; ARCHIVED: SPEC_THE_MASTER_QUADRATIC_UNIFIED.md → archive/ARCH_MASTER_QUADRATIC_UNIFIED_V1.md]
 26. **Born rule as epistemic inference** — |ψ|² is the epistemic inference pattern (always ≥ 0, smears phase); ψ² = (J_x² - J_y²) + 2iJ_xJ_y is the ontic substrate operation (complex, preserves phase). For real ψ: identical. For complex ψ: Re(ψ²) has sign changes at fringe boundaries that |ψ|² cannot see. [THEOREM — mathematical distinction; physical interpretation is [SELECTION]]
 27. **i-phase entanglement preserves anti-correlation** — Under lemniscate measurement ψ → ψ², i-phase entanglement (iψ)² = -ψ² preserves anti-correlation, while π-phase (-ψ)² = +ψ² destroys it. Computationally confirmed: i-phase S = 2.000, π-phase S ≈ 0. [THEOREM — algebraic identity with computational verification]
-28. **7-term precision formula coefficients** — All seven correction coefficients (including {9/47, 5/64, 4/141, 141/11} and 3 additional terms) are exact rational functions of {3, 4, 7, 13}. Extended from 4 to 7 terms achieving 24-digit precision. [THEOREM — verified in verify_precision_formula_v2.py]
+28. **7-term precision formula coefficients** — All seven correction coefficients {9/47, 5/64, 4/141, 141/11, 1472/21, 416/21, 299/8} are rational functions of the base-integer set {N_c=3, N_base=4, b_3=7, N_eff=13, D=47, BCC=8}. The 24-digit numerical match to CODATA 2022 is a confirmed algebraic identity (mpmath 60-digit, residual 2.58e-24). The rigidity audit (2026-04-17) shows 6/7 coefficients are uniquely forced as the only base-integer rationals within cascade tolerance; c_7 = 299/8 is the unique clean decomposition (competitors at higher height require primes outside the base set). However, at CODATA **experimental** precision (11 digits), the coefficients are observationally underdetermined. Status: **[CONJECTURE]** (upgrade requires deriving the base-integer set and ε = e^π − π − 20 from lattice first principles). See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3 and `scripts/exploration/audit_seven_term_rigidity.py`.
 
 ### I.9 Neutrino Mass + Modularity Additions (v5.27-neutrino)
 
@@ -508,7 +516,7 @@ Bell violations, in this view, arise because measurements are **contextual**: th
 
 ### What FTD Actually Achieves
 
-1. **α derivation to 1.26 ppm** (24-digit precision with 7-term correction) — Extraordinary if not coincidental
+1. **α derivation to 1.26 ppm tree-level** (24-digit agreement with CODATA *recommended value* via 7-term correction as an algebraic identity; not experimentally verifiable beyond digit ~11) — Extraordinary if not coincidental
 2. **Integer structure encoding physics** — {3, 4, 7, 13} appear throughout SM with exact arithmetic
 3. **Closure of some free parameters** — Mass ratios, coupling ratios from integers
 4. **Geometric unification framework** — Gauge groups from discrete structure
@@ -535,7 +543,7 @@ Bell violations, in this view, arise because measurements are **contextual**: th
 
 **Instead of:** "~126 predictions from 4 integers with zero free parameters"
 
-**Say:** "FTD derives ~30 fundamental quantities (20 physics + 4 information-theoretic theorems + 4 structural results + 2 neutrino/modularity) from a geometric structure involving the lemniscatic constant G* and four constrained integers {3, 4, 7, 13}. The precision formula achieves sub-ppt accuracy with all coefficients from framework integers. The trit framework proves G* = √(2π)·θ₃(e^{-π})², unifying geometric self-reference with Fourier self-duality and deriving the ontological necessity of i. The Born rule is understood as epistemic inference from the ontic substrate operation ψ². These derived values, when inserted into standard physics frameworks, reproduce ~100 additional observables. The framework requires ~3-5 external inputs including the Planck mass scale. The consciousness extension (sLoop axioms, Mandelbrot mapping, K_C = √(G*³/2) ≈ 3.60, phase angle 52.54°) is mathematically specific but [PROPOSED]—untested experimentally."
+**Say:** "FTD derives ~30 fundamental quantities (20 physics + 4 information-theoretic theorems + 4 structural results + 2 neutrino/modularity) from a geometric structure involving the lemniscatic constant G* and four constrained integers {3, 4, 7, 13}. The 7-term precision formula achieves 24-digit agreement with the CODATA 2022 recommended value as an algebraic identity, though the match below digit 11 is not experimentally testable at current precision. The trit framework proves G* = √(2π)·θ₃(e^{-π})², unifying geometric self-reference with Fourier self-duality and deriving the ontological necessity of i. The Born rule is understood as epistemic inference from the ontic substrate operation ψ². These derived values, when inserted into standard physics frameworks, reproduce ~100 additional observables. The framework requires ~3-5 external inputs including the Planck mass scale. The consciousness extension (sLoop axioms, Mandelbrot mapping, K_C = √(G*³/2) ≈ 3.60, phase angle 52.54°) is mathematically specific but [PROPOSED]—untested experimentally."
 
 **See also:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](AUDIT_WHAT_IS_GENUINELY_NEW.md) for a comprehensive synthesis.
 
@@ -599,7 +607,7 @@ Full Noether theorem requires continuous symmetry; we have approximate conservat
 FTD is a framework that identifies profound numerical and structural relationships between pure mathematics (lemniscatic constant, Fibonacci sequences, elliptic curves) and fundamental physics (fine structure constant, particle masses, mixing angles).
 
 **What has strengthened since v1.0:**
-- The precision formula now achieves sub-ppt accuracy with all integer-derived coefficients
+- The precision formula matches the CODATA recommended value to 24 digits as an algebraic identity; observationally underdetermined beyond digit 11 (rigidity audit 2026-04-17)
 - The Born rule is understood as epistemic inference from an ontic substrate operation
 - The Bell mechanism has been structurally characterized (lemniscate topology + i-phase)
 - The imaginary unit i emerges from the master quadratic at k = 1/2 (derived from bridge equation); i² = -1 = genesis provides ontological grounding
@@ -650,7 +658,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | i emerges at k = 1/2 | Master quadratic with k = 1/2 forces Δ < 0 → complex roots → i; i² = -1 = genesis (pair creation) | MATH_MASTER_QUADRATIC.md §5.2 + PHYS_QUADRATIC_APPLICATIONS.md §8 |
 | i-phase anti-correlation | (iψ)² = -ψ² preserves, (-ψ)² = +ψ² destroys anti-correlation | bell_lemniscate_loop.py |
 | Born rule epistemic distinction | \|ψ\|² ≠ ψ² for complex ψ; Re(ψ²) has sign changes | born_rule_convergence.py |
-| Precision formula coefficients | All 7 coefficients are exact rationals from {3,4,7,13} (24-digit precision) | DERIV_ALPHA_PRECISION_FORMULA.md |
+| Precision formula coefficients | All 7 coefficients are rationals in the base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$; 24-digit match to CODATA recommended value is a confirmed algebraic identity; rigidity audit 2026-04-17 shows 6/7 uniquely forced at cascade precision, observationally underdetermined at CODATA experimental precision | DERIV_ALPHA_PRECISION_FORMULA.md; CONJ_SEVEN_TERM_PRECISION_SERIES.md §3.3 |
 | G*-L(E,1) identity | G* = 4√(2/π) · L(E,1) for E: y²=x³−x (verified 15 digits) | EXPLR_MODULAR_QUADRATIC.md |
 
 **Note:** "Theorem" here means the mathematics is correct. It does NOT mean the physical interpretation is validated.
@@ -660,7 +668,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | Claim | Depends On | Honest Status | Source |
 |-------|-----------|---------------|--------|
 | α = 1/137.036 to 1.26 ppm | SP1-SP4 | [CONDITIONAL] — remarkable match, but 4 selections | AUDIT_HIDDEN_SELECTIONS.md |
-| α to 24-digit precision (7-term) | SP1-SP4 + ε correction | [CONDITIONAL] — all coefficients from integers | DERIV_ALPHA_PRECISION_FORMULA.md |
+| α to 24 digits (7-term, matching CODATA recommended value as algebraic identity) | SP1-SP4 + SP5 (base-integer set) + ε-expansion form | [CONJECTURE] — 6/7 coefficients uniquely forced at cascade precision; not experimentally verifiable beyond ~11 digits | DERIV_ALPHA_PRECISION_FORMULA.md; CONJ_SEVEN_TERM_PRECISION_SERIES.md |
 | sin²θ_W = 3/13 = 0.2308 | Integers {3, 13} selected from known physics | [CONDITIONAL] — clean ratio, but circular if integers are inputs | REF_CLAIMS_MATRIX.md |
 | m_μ/m_e = 3·7·(7+3) - 3 = 207 | Integers {3, 7} | [CONDITIONAL] — exact, but WHY this combination? | REF_CLAIMS_MATRIX.md |
 | m_τ/m_e = 3477 from integers | Integers {3, 4, 7, 13} | [CONDITIONAL] — same circularity concern | REF_CLAIMS_MATRIX.md |

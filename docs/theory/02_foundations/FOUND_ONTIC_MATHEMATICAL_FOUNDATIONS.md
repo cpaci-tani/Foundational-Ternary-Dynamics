@@ -196,9 +196,11 @@ x₋ = 3.024...    ≈  N_c
 │
 │  [1/α + N_c = 32π × (Watson integral of Z³)]
 │
-│  [4-term precision formula with ε = e^π - π - 20]
+│  [7-term precision formula with ε = e^π - π - 20]
 ▼
-1/α = 137.035999177...  (< 0.001 ppt)
+1/α = 137.035999177...  (24-digit algebraic identity with CODATA *recommended value*;
+                         experimentally verified only to ~11 digits;
+                         see CONJ_SEVEN_TERM_PRECISION_SERIES.md §3.3)
 ```
 
 ### 3.2 The Defining Relations [DEFINITION]

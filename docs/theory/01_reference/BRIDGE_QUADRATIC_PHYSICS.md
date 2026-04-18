@@ -146,7 +146,7 @@ Neither produces a root near any known coupling constant. Only $k = 16$ yields $
 
 **Numerical proximity.** $x_+ = 137.0361714\ldots$ compared to $1/\alpha_{\mathrm{em}} = 137.035999177(21)$ (CODATA 2022). The discrepancy is 1.26 ppm.
 
-**Precision formula.** The 4-term correction series (MATH_MASTER_QUADRATIC.md, Theorem M-13) achieves agreement with CODATA to $< 0.001$ ppt — matching every measured digit. This level of precision from rational coefficients with small denominators is either structurally profound or an extraordinarily unlikely coincidence.
+**Precision formula.** The 4-term (and extended 7-term) correction series (MATH_MASTER_QUADRATIC.md, Theorem M-13; [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)) achieves 24-digit **algebraic-identity** agreement with the CODATA 2022 *recommended value* $137.035999177$ (mpmath-verified residual $\sim 10^{-24}$; rigidity audit 2026-04-17). The rigidity audit shows 6/7 coefficients are uniquely forced in the base-integer set at cascade precision. **However**, CODATA 2022 constrains $1/\alpha$ to $\pm 2.1 \times 10^{-8}$ — only ~11 digits — so the 24-digit "match" is not currently experimentally verifiable beyond digit ~11. The precision claim below that point is a structural property of the chosen coefficients, not a tested prediction.
 
 **Uniqueness of $\alpha$ near 1/137.** Among the ~25 free parameters of the Standard Model, the fine-structure constant is the *only* one whose inverse lies in the interval $[100, 200]$. This reduces (but does not eliminate) the probability of a coincidental match.
 
