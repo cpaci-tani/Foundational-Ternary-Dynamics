@@ -23,12 +23,15 @@
 | Brillouin zone | k_mu in [-pi, pi]^3 | Standard |
 | Lattice dispersion | k_hat^2 = sum_mu 4 sin^2(k_mu/2) | Standard |
 
-**Claim 1LA-2.** [SELECTION PRINCIPLE] The lattice spacing a = 2/D = 2/3 is selected. Non-circular geometric justification:
+**Claim 1LA-2.** [SELECTION PRINCIPLE] The lattice spacing a = 2/D = 2/3 is selected. Non-circular justifications:
 
-- Boundary-to-bulk ratio in D = 3: the surface area of a unit cube is 2D faces, while the volume is 1, giving ratio 2D. The fraction of boundary directions per axis is (D-1)/D = 2/3.
-- Unique rational of the form (D-1)/D for D = 3.
+- **Geometric:** Boundary-to-bulk ratio in D = 3. The fraction of boundary directions per axis is (D-1)/D = 2/3.
+- **Rational approximation (quantitative, added 2026-04-17):** Among all rationals $p/q$ expressible in the base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ at height $\leq 15$, **2/3 is the uniquely best approximation to $a_\mathrm{opt} = 0.66486$ — by a factor of at least 12× against any competitor**. See [EXPLR_A_OVER_D_AUDIT.md](EXPLR_A_OVER_D_AUDIT.md) §2.2 for the full ranking. The next-best rational (9/14 at height 14) is off by $2.2 \times 10^{-2}$, vs 2/3's $1.8 \times 10^{-3}$.
+- **Dimensional:** The unique rational of the form (D-1)/D for D = 3.
 
-**Honesty note.** Earlier revisions of this document listed the up-quark charge $Q_u = 2/3$ and right-handed up-quark hypercharge $Y_{u_R} = 2/3$ as additional "independent derivations" of $a = 2/D$. Those citations have been removed: FTD claims to derive SM physics downstream of α, so invoking SM quantum numbers to justify the lattice spacing that closes the α gap is circular. Readers should treat $a = 2/D$ as a geometric [SELECTION PRINCIPLE] motivated by the (D-1)/D boundary/bulk ratio alone. Numerical coincidence with $Q_u$ and $Y_{u_R}$ is a post-hoc consistency observation, not a derivation.
+**What the audit did NOT find:** No local extremum, zero-crossing, or inflection of $\delta x(a)$ at $a = 2/D$ ([EXPLR_A_OVER_D_AUDIT.md](EXPLR_A_OVER_D_AUDIT.md) §2.3). The function is monotonically smooth through this point — so $a = 2/D$ is not forced by a symmetry / stability condition from the one-loop tadpole alone. The 0.27% gap between $a_\mathrm{opt}$ and $2/D$ remains real.
+
+**Honesty note.** Earlier revisions listed the up-quark charge $Q_u = 2/3$ and hypercharge $Y_{u_R} = 2/3$ as additional "independent derivations." Removed: invoking SM quantum numbers to justify the spacing that closes the α gap is circular.
 
 ---
 
@@ -98,12 +101,13 @@ This is approximately 23% of the one-loop value in magnitude. The two-loop corre
 
 ## 6. Physical Interpretation of a = 2/D
 
-**Claim 1LA-9.** [SELECTION] The spacing a = 2/D = 2/3 has two non-circular motivations:
+**Claim 1LA-9.** [SELECTION] The spacing a = 2/D = 2/3 has three non-circular motivations:
 
 1. **Geometric:** In a D-dimensional hypercube, the fraction of boundary directions per axis is (D-1)/D.
 2. **Dimensional:** The only rational number of the form (D-1)/D for D = 3.
+3. **Best rational in the base-integer set (2026-04-17 audit):** Among all rationals in $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ at height $\leq 15$, 2/3 is the uniquely best approximation to $a_\mathrm{opt} = 0.66486$ (see [EXPLR_A_OVER_D_AUDIT.md](EXPLR_A_OVER_D_AUDIT.md)).
 
-Both follow from D = 3 alone, requiring no external input.
+The audit explicitly tested for a symmetry / stability selection at $a = 2/D$ (Q3 of the audit): $\delta x(a)$ has no local extremum, zero derivative, or inflection at $a = 2/D$. So items (1)-(3) are the complete non-circular basis; **no mechanism-style derivation exists as of 2026-04-17**.
 
 **Removed from earlier revisions:** the citations of up-quark charge $Q_u = 2/3$ and hypercharge $Y_{u_R} = 2/3$ as "independent derivations." These are SM quantum numbers downstream of α and cannot justify a selection that closes the α gap (circular). See §1 Honesty Note.
 
