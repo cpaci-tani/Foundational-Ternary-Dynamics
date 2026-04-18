@@ -2,15 +2,17 @@
 
 ## Sub-Attometer Accuracy from Lemniscate Geometry and Framework Integers
 
-**Date:** January 31, 2026 (Updated v5.12.1)
+**Date:** January 31, 2026 (Updated v5.12.1; rigidity audit appended 2026-04-17)
 **Framework:** Foundational Ternary Dynamics v5.12.1
-**Status:** Matches CODATA 2022 central value (theoretical error < 0.001 ppt)
+**Status:** [CONJECTURE] — 24-digit agreement with CODATA 2022 *recommended value* confirmed as **algebraic identity** (mpmath 60-digit, residual 2.58e-24). Not experimentally verifiable beyond digit ~11. See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) for full audit.
 
 ---
 
 ## Executive Summary
 
-We present the **complete 4-term precision formula** for the fine structure constant achieving **sub-attometer accuracy** -- matching the CODATA 2022 central value to better than 0.001 parts per trillion.
+We present the **complete 7-term precision formula** for the fine structure constant. The numerical expression matches the CODATA 2022 *recommended value* $137.035999177$ to 24 decimal digits as a confirmed algebraic identity.
+
+**Epistemic caveat (added 2026-04-17).** CODATA 2022 constrains $1/\alpha$ experimentally to $\pm 2.1 \times 10^{-8}$ — roughly 11 significant digits. The 24-digit "match" is therefore **not experimentally testable** below digit ~11; it is a structural property of the specific chosen rational coefficients rather than a tested prediction against data. The rigidity audit (`scripts/exploration/audit_seven_term_rigidity.py`) shows that 6 of 7 coefficients are uniquely forced as the only base-integer rationals within self-consistency (cascade) tolerance, with $c_7 = 299/8$ being the unique clean base-integer decomposition — but at CODATA experimental precision, hundreds of low-height base-integer rationals match to within uncertainty for each coefficient. The formula's precision claim is thus **algebraically strong, experimentally weak**.
 
 **The Formula (7-term extended series):**
 
@@ -277,20 +279,23 @@ Error:     0.000263 ppt
 
 ### What IS Demonstrated
 
-1. **Numerical match**: The 4-term formula reproduces the CODATA 2022 central value to sub-ppt precision
-2. **Algebraic closure**: All coefficients are exact rational combinations of framework integers {3, 4, 7, 13}
-3. **Internal consistency**: The structure is mathematically well-defined and reproducible
-4. **No fitted parameters**: The formula is closed-form, not a numerical regression
+1. **Algebraic identity**: The 4-term formula reproduces the CODATA 2022 recommended value $137.035999177$ to sub-ppt precision. The 7-term extension matches to 24 digits (residual 2.58e-24 at mpmath 60-digit precision, rigidity audit 2026-04-17).
+2. **Algebraic closure**: All coefficients are exact rational combinations of the base-integer set $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\} = \{3, 4, 7, 13, 47, 8\}$.
+3. **Partial rigidity**: 6 of 7 coefficients are uniquely forced as the only base-integer rational within cascade tolerance (the self-consistency scale at which the 24-digit identity holds); $c_7 = 299/8$ is the unique clean base-integer decomposition.
+4. **Internal consistency**: Mathematically well-defined and reproducible via `scripts/exploration/audit_seven_term_rigidity.py`.
+5. **No fitted parameters once coefficients are chosen**: Closed-form rational expression, not numerical regression. But see below — the *choice* of coefficients is not uniquely forced at experimental precision.
 
 ### What IS NOT (Yet) Demonstrated
 
-1. **Why e^pi - pi - 20**: The connection of the lemniscate nome (e^pi) to QED radiative corrections is numerologically motivated but not derived from quantum field theory first principles. The combination with pi and the integer 20 is observed to work, not proven necessary.
+1. **Experimental verifiability beyond digit ~11**: CODATA 2022 constrains $1/\alpha$ to $\pm 2.1 \times 10^{-8}$, roughly 11 significant digits. The 24-digit "match" is an algebraic identity between the chosen coefficients and the CODATA *recommended value*; it is **not tested against experimental data** beyond digit 11. At CODATA experimental precision, hundreds of low-height base-integer rationals are observationally indistinguishable for each coefficient (audit §3.3 Step C).
 
-2. **Why 4 terms exactly**: Rapid convergence (|epsilon| ~ 0.0009) suggests truncation is appropriate, but no theorem exists proving that exactly 4 terms suffice or that additional terms would have zero coefficients.
+2. **Why e^pi - pi - 20**: The connection of the lemniscate nome (e^pi) to QED radiative corrections is numerologically motivated but not derived from quantum field theory first principles. The combination with pi and **the integer 20 is the least-motivated element** — no lattice derivation produces 20 naturally.
 
-3. **Why these specific ratios**: The coefficients 9/47, 5/64, 4/141, 141/11 are verified algebraically as framework integer combinations, but their physical interpretation (QCD corrections, loop topology, RG flow) remains speculative. A skeptic could reasonably ask: "Why N_c^2/D and not some other combination?"
+3. **Why 7 terms exactly**: Rapid convergence (|epsilon| ~ 0.0009) makes 7 terms sufficient to reach ~24 digits, but no theorem proves that additional terms have zero coefficients. $c_7 = 299/8$ sits slightly off the cascade-optimal value by a factor ~2.5×, suggesting a residual absorbable only by an 8th non-base-integer term.
 
-4. **Sign pattern origin**: The alternating-then-constant pattern (-, +, -, -) is observed but not derived from an underlying principle.
+4. **Why these specific ratios (uniqueness)**: The coefficients $\{9/47, 5/64, 4/141, 141/11, 1472/21, 416/21, 299/8\}$ are verified algebraically as base-integer combinations, and 6/7 are uniquely forced at cascade precision. But the **base-integer set itself** is not uniquely derived from first principles — an independent derivation of $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ from lattice structure is needed to close the upgrade path.
+
+5. **Sign pattern origin**: The pattern $(-, +, -, -, -, -, +)$ is observed but not derived from an underlying principle.
 
 ### The Central Question
 
@@ -332,8 +337,9 @@ $$\frac{1}{\alpha} = 137.035999177000(1)...$$
 
 | Claim ID | Statement | Status | Epistemic Note |
 |----------|-----------|--------|----------------|
-| **ALPHAP-1** | 4-term formula matches CODATA central value to < 0.001 ppt | **[THEOREM]** | Numerically verified |
-| **ALPHAP-2** | All 4 coefficients derived from {3,4,7,13} | **[THEOREM]** | Algebraically verified |
+| **ALPHAP-1** | 4-term formula matches CODATA 2022 recommended value to < 0.001 ppt | **[THEOREM]** (algebraic identity) | Numerically verified; NOT experimentally verifiable beyond digit ~11 (CODATA $\sigma$ = 2.1e-8) |
+| **ALPHAP-1b** | 7-term extension matches CODATA recommended value to 24 digits | **[THEOREM]** (algebraic identity, 2026-04-17 audit, residual 2.58e-24) | Same caveat as ALPHAP-1 |
+| **ALPHAP-2** | All 7 coefficients decompose cleanly in base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ | **[THEOREM]** (algebraic) + **partial rigidity**: 6/7 uniquely forced at cascade precision | Algebraically verified; base-integer set itself is [SELECTION] |
 | **ALPHAP-3** | 20 = 1/c_Dirac = b_3 + N_eff | **[THEOREM]** | Convention-dependent |
 | **ALPHAP-4** | D = 47 = N_c x N_base^2 - 1 | **[THEOREM]** | Algebraic identity |
 | **ALPHAP-5** | |epsilon| ~ 1/1111 where 1111 = 11x101 | **[THEOREM]** | Approximate, suggestive |

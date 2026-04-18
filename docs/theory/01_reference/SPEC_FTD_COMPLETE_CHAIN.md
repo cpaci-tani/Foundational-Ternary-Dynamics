@@ -167,7 +167,7 @@ With the one-loop lattice tadpole correction (conditional on the selection a = 2
     1/alpha = 137.036000... (9.6 ppb residual)
 
 With the 7-term expansion in epsilon = e^pi - pi - 20 (conditional on the SP5 integer structure, see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)):
-    1/alpha = 137.0359991770... (sub-ppb, matching CODATA to its full precision; pending rigidity audit)
+    1/alpha = 137.0359991770... (24-digit algebraic identity confirmed 2026-04-17; 6/7 coefficients uniquely forced in base integers at cascade precision; observationally underdetermined at CODATA's ~11-digit experimental precision)
 
 This identification is [SELECTION] because no physical mechanism connecting elliptic-curve geometry to gauge couplings has been established at the master-quadratic level. The precision claims below 1.26 ppm are further conditional on a = 2/D (one-loop) or on SP5 integer uniqueness (7-term); neither is unconditionally proven.
 
