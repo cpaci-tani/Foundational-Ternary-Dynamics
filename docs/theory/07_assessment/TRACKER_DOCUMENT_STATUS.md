@@ -485,10 +485,10 @@
 ### 4.2 DERIV_ALPHA_PRECISION_FORMULA.md
 - **Summary:** 4-term (now 7-term) precision formula for 1/alpha
 - **Scores:** R:5 / C:6 / Cl:7 / Co:7 / I:7 = **32**
-- **Grade: C**
-- **Strength:** Numerically impressive (< 0.001 ppt with 7 terms)
-- **Weakness:** The coefficients {9/47, 5/64, 4/141, 141/11, ...} from framework integers are post-hoc; this is curve-fitting dressed up as derivation
-- **Action:** Reclassify this as [SELECTION] or [CONJECTURE], not [ESTABLISHED]
+- **Grade: C+** (upgraded from C after 2026-04-17 audit reduced ambiguity)
+- **Strength:** 24-digit match confirmed as algebraic identity (mpmath 60-digit); rigidity audit shows 6/7 coefficients uniquely forced in base-integer set at cascade precision
+- **Weakness:** At CODATA experimental precision (~11 digits), coefficients are observationally underdetermined. Base-integer set itself is not uniquely forced from first principles. ε = e^π − π − 20 contains the unmotivated integer 20.
+- **Action (DONE 2026-04-17):** Reclassified to [CONJECTURE] in [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3, header of DERIV_ALPHA_PRECISION_FORMULA.md, and companion docs. Rigidity audit script: `scripts/exploration/audit_seven_term_rigidity.py`.
 
 ### 4.3 DERIV_LAMBDA_QCD_DERIVATION.md
 - **Summary:** Non-circular Lambda_QCD via dimensional transmutation
@@ -925,7 +925,7 @@
 
 1. **Finish tracker coverage for recent April 2026 additions** -- `FOUND_GSTAR_SCALE.md`, `THEOREM_MOORE_LAYER_DECOMPOSITION.md`, `FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md`, `FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md`, and several newer derivation documents are now cataloged, but this tracker still needs explicit scoring coverage for the newest active additions.
 
-2. **Reclassify DERIV_ALPHA_PRECISION_FORMULA.md** -- The 7-term precision series with coefficients from {3,4,7,13} is curve-fitting, not derivation. Either prove the coefficient selection rule or reclassify as [CONJECTURE]. This is the single biggest epistemic risk in the project.
+2. ~~**Reclassify DERIV_ALPHA_PRECISION_FORMULA.md**~~ **DONE 2026-04-17.** Rigidity audit run (`scripts/exploration/audit_seven_term_rigidity.py`). Status downgraded to [CONJECTURE] with explicit upgrade path and nuanced findings: 24-digit match is confirmed algebraic identity; 6/7 coefficients uniquely forced at cascade precision; observationally underdetermined at CODATA precision. See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3.
 
 3. ~~**Archive DERIV_MOORE_GAUGE_ORTHOGONAL.md (2.17)**~~ -- DONE. Archived; superseded by DERIV_MOORE_GAUGE_STRUCTURE.md (3.43).
 
@@ -986,6 +986,6 @@ The FTD theory corpus is a remarkably ambitious and largely well-organized body 
 
 The core derivation chain (i -> Z[i] -> E_i -> G* -> master quadratic -> alpha, N_c) is mathematically sound at the algebraic level, with the genuinely open questions clearly identified: the lattice spacing selection a=2/D, the self-consistency prescription, and the physical identification x+ = 1/alpha. The one-loop result (9.6 ppb) is the most impressive numerical achievement, but it hangs on the lattice spacing selection principle.
 
-The ontological foundations have improved significantly (First Distinction and Euler Identity both promoted from C to B after grounding in algebra rather than philosophy). The weakest areas are now the exploratory documents that risk numerology (Fourcier kinematic topology, half-Mobius lemniscate, vacuum drag derivation) and the consciousness sector where the critical Type III_1 conjecture remains unproven. The precision formula remains a significant epistemic concern because its coefficients appear to be fitted rather than derived, yet it is not always labeled accordingly.
+The ontological foundations have improved significantly (First Distinction and Euler Identity both promoted from C to B after grounding in algebra rather than philosophy). The weakest areas are now the exploratory documents that risk numerology (Fourcier kinematic topology, half-Mobius lemniscate, vacuum drag derivation) and the consciousness sector where the critical Type III_1 conjecture remains unproven. The precision formula has been reclassified to [CONJECTURE] (2026-04-17) after a rigidity audit showing 6/7 coefficients uniquely forced at cascade precision, but observationally underdetermined at CODATA's 11-digit experimental precision — addressing the prior epistemic concern.
 
-The priority path forward: (1) prove or disprove the a=2/D spacing selection, (2) reclassify the precision formula honestly, (3) update remaining documents still at v5.17 (AUDIT_WHAT_IS_GENUINELY_NEW, REF_CLAIMS_MATRIX, etc.), and (4) consolidate the Bell documents into a coherent reader's guide. Three documents have been archived (Golden Ratio, Moore Gauge Orthogonal, Master Cubic) and four key documents updated to v5.29.
+The priority path forward: (1) prove or disprove the a=2/D spacing selection, ~~(2) reclassify the precision formula honestly~~ **(DONE 2026-04-17 via rigidity audit — see CONJ_SEVEN_TERM_PRECISION_SERIES.md §3.3)**, (3) update remaining documents still at v5.17 (AUDIT_WHAT_IS_GENUINELY_NEW, REF_CLAIMS_MATRIX, etc.), and (4) consolidate the Bell documents into a coherent reader's guide. Three documents have been archived (Golden Ratio, Moore Gauge Orthogonal, Master Cubic) and four key documents updated to v5.29.
