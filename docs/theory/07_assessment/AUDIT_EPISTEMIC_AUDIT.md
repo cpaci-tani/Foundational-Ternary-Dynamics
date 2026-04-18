@@ -427,6 +427,28 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 
 **Status:** ⚠️ REQUIRES VERIFICATION — This would close the loop if validated.
 
+### Gap 5.5: SP5 Circularity Table (propagated from BRIDGE §5.4)
+
+The cleanest way to use the framework integers $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}\}$ honestly is to explicitly distinguish which derivations *depend* on SP5 (and therefore carry circularity risk, since the integers were originally identified from known physics) versus which do *not*. This table is the project's single sharpest piece of epistemic writing and is reproduced here verbatim from [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) §5.4 for visibility:
+
+| Result | Depends on SP5? | Circular? |
+|--------|----------------|-----------|
+| $x_+ = 137.036$ (tree level) | **NO** — only $G^*$ and $k = 16$ | **Not circular** |
+| $x_- = 3.024$ (tree level) | **NO** — only $G^*$ and $k = 16$ | **Not circular** |
+| 4-term / 7-term precision series | **YES** — coefficients from base-integer set | **Circular** |
+| $\sin^2\theta_W = 3/13$ | **YES** — requires $N_c, N_{\mathrm{eff}}$ | **Circular** |
+| Lepton mass ratios ($m_\mu/m_e = 207$, etc.) | **YES** — integer arithmetic | **Circular** |
+| $m_e = m_P \sqrt{2\pi}(16/3)\alpha^{11}$ | **YES** — requires $16/3$ | **Circular** |
+| Proton/electron ratio $m_p/m_e = N_{\mathrm{eff}}/\alpha + \ldots$ | **YES** — uses $N_{\mathrm{eff}}$ | **Circular** |
+| Watson identity $W_3 = G^{*2}/(2\pi)$ | **NO** — pure lattice mathematics | **Not circular** |
+| CM L-value identity $16G^{*2} = 2^9 L(\mathrm{Sym}^2 E, 1)$ | **NO** — pure arithmetic | **Not circular** |
+
+**Practical rule.** When evaluating any FTD claim: look it up in (or classify it against) this table. If it depends on SP5, treat its match to experiment as **conditional on the base-integer set being correct** — the experimental agreement is evidence that the integers are well-chosen, not evidence that the mechanism is derived.
+
+**Upgrade path.** Deriving $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}\}$ uniquely from lattice first principles (without reference to known physics) removes the circularity risk for every entry in the right-hand column. The cuboctahedral-geometry argument in [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) §5 is the most advanced partial attempt; completing it is the single highest-leverage remaining research target.
+
+---
+
 ### Gap 6: Consciousness Predictions Untested
 
 **Claim:** Consciousness quadratic produces y = 2.19 ± 2.86i with K_C = √(G*³/2) ≈ 3.60 and phase angle 52.54°.
