@@ -332,9 +332,9 @@ To make the framework honest and formalizable, we now state the selection princi
 ### Axiom SP4: Physical Identification
 *The larger root x₊ of the master quadratic is identified with the inverse fine structure constant: x₊ = 1/α.*
 
-**Motivation:** Numerical match to 1.26 ppm. The precision formula extends this to sub-ppt, predicting specific unmeasured digits.
+**Motivation:** Numerical match to 1.26 ppm. The 7-term precision formula extends this to a 24-digit algebraic identity against the CODATA 2022 *recommended value* (rigidity audit 2026-04-17 confirms), though CODATA's experimental precision is only ~11 digits so beyond that the "match" is a structural property of the chosen coefficients rather than a tested prediction. The digit-13 prediction (= 0) would become testable at $\sigma(1/\alpha) < 10^{-15}$.
 
-**Status:** [CONJECTURE] — no physical mechanism connects elliptic curve geometry to electromagnetic coupling strength.
+**Status:** [SELECTION] (SP4) — conditional-[THEOREM] upgrade path via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md), modulo standard lattice-QED continuum-limit recovery.
 
 ### Axiom SP5: Framework Integers
 *The integers {N_c = 3, N_base = 4, b₃ = 7, N_eff = 13} arise from the self-consistency of the lattice gauge structure and satisfy the interlocking constraints: b₃ = N_base + N_c, N_eff = F₇ = T₇ (Fibonacci-Tribonacci crossover), and j = (N_base × N_c)³.*
@@ -361,7 +361,7 @@ The algebra in each step is verifiable. The conditional nature is honest: **chan
 
 ## Conclusion
 
-FTD's derivation of α is **remarkable**. The base result matches to 1.26 ppm. The precision formula matches to < 0.001 ppt — every measured digit. The framework predicts digit 13 of 1/α is 0, falsifiable by future experiment.
+FTD's derivation of α is **noteworthy but conditional**. The tree-level result matches CODATA 2022 to 1.26 ppm with zero numerical parameters (conditional on SP1-SP3). The 7-term precision formula matches the CODATA 2022 *recommended value* to 24 digits **as an algebraic identity** (rigidity audit 2026-04-17; see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)). **Experimentally**, CODATA 2022 constrains $1/\alpha$ to $\pm 2.1 \times 10^{-8}$ (~11 digits); beyond that, the 7-term "match" is a structural property of the specific chosen coefficients and cannot currently be tested against data. The digit-13 prediction (= 0) is genuinely falsifiable by future experiment at $\sigma < 10^{-15}$.
 
 Honesty requires acknowledging that this is not a "derivation from zero choices." It involves:
 
@@ -372,7 +372,7 @@ Honesty requires acknowledging that this is not a "derivation from zero choices.
 
 **What has changed since v1.0:**
 - Selection 3 (coefficient 16) upgraded from [SELECTION] to [MOTIVATED] — it is |Aut(E)|² = |E(Q)_tors|², locked to the curve's arithmetic geometry
-- The precision formula provides two independent sub-ppt derivations, ruling out coincidence
+- The precision formula's 24-digit agreement with the CODATA recommended value is a confirmed algebraic identity (mpmath 60-digit; rigidity audit 2026-04-17), though not experimentally verifiable beyond digit ~11
 - The formula predicts specific unmeasured digits — a genuinely novel, falsifiable prediction
 - **(v3.0)** All selections now stated as explicit axioms SP1–SP5, enabling conditional theorem statements
 - **(v7.0)** Fermion sector upgraded from [IMPORTED] to [DERIVED]: the complex regime ($\Delta < 0$) of the master quadratic produces the Dirac equation. Complex roots $x = a \pm bi$ oscillate as $e^{ibt}$, which IS spinor wavefunction evolution. One quadratic, three regimes: bosons (real), fermions (complex), measurement (degenerate). The fermion sector is no longer external physics adopted into the framework — it emerges from the same self-consistency equation that produces $\alpha$ and $N_c$.
