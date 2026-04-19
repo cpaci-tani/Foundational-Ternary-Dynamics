@@ -470,9 +470,6 @@ target_link_libraries(test_eft_matched_poisson ftd_core)
 add_executable(benchmark_rutherford_alpha tests/benchmark_rutherford_alpha.cpp)
 target_link_libraries(benchmark_rutherford_alpha ftd_core)
 
-# (scratch debug probe; delete when matched_poisson is validated)
-add_executable(_debug_poisson_probe tests/_debug_poisson_probe.cpp)
-target_link_libraries(_debug_poisson_probe ftd_core)
 
 add_executable(test_spectral tests/test_spectral.cpp)
 target_link_libraries(test_spectral ftd_core)
