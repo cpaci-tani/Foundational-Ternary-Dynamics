@@ -319,19 +319,8 @@ void inject_particle_simple(ftd::RenderBridge& rb, int x, int y, int z, int stat
     rb.inject_particle(x, y, z, static_cast<int8_t>(state), ftd::Vec3(0, 0, 0));
 }
 
-void inject_particle_full(ftd::RenderBridge& rb, int x, int y, int z,
-                           int state, int spin, int color) {
-    rb.inject_particle(x, y, z, static_cast<int8_t>(state), ftd::Vec3(0, 0, 0),
-                       static_cast<int8_t>(spin), static_cast<int8_t>(color));
-}
-
 void inject_wavepacket_simple(ftd::RenderBridge& rb, int x, int y, int z, int state) {
     rb.inject_wavepacket(x, y, z, static_cast<int8_t>(state));
-}
-
-void inject_wavepacket_full(ftd::RenderBridge& rb, int x, int y, int z,
-                             int state, double sigma, double amplitude) {
-    rb.inject_wavepacket(x, y, z, static_cast<int8_t>(state), sigma, amplitude);
 }
 
 void inject_flux(ftd::RenderBridge& rb, int x, int y, int z,
@@ -1167,9 +1156,7 @@ EMSCRIPTEN_BINDINGS(ftd_module) {
 
     // Injection
     function("injectParticle",     &inject_particle_simple);
-    function("injectParticleFull", &inject_particle_full);
     function("injectWavepacket",   &inject_wavepacket_simple);
-    function("injectWavepacketFull", &inject_wavepacket_full);
     function("injectFlux",         &inject_flux);
     function("createEntangledPair", &create_entangled_pair);
 
