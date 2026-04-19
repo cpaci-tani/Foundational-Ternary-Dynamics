@@ -16,6 +16,8 @@ export function getTopbarActionButtons() {
     return `
         <button class="tb-btn tb-btn-knowledge" id="btn-knowledge-base" title="Open the FTD knowledge base"
             aria-label="Open the FTD knowledge base">KB</button>
+        <button class="tb-btn tb-btn-faq" id="btn-faq" title="Open the FTD FAQ — hard problems, framed"
+            aria-label="Open the FTD FAQ">FAQ</button>
         <button class="tb-btn tb-btn-assistant" id="btn-ftd-assistant" title="Open the FTD assistant sidebar"
             aria-label="Open the FTD assistant sidebar">FTD</button>
         <button class="tb-btn tb-btn-mobile" id="btn-toolbar-menu" title="Show mode controls"
