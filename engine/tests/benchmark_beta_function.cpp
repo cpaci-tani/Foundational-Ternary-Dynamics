@@ -82,11 +82,13 @@ int main(int argc, char** argv) {
     int n_ticks = 300;
     bool quick  = false;
     bool extended = false;       // Ticket 3: add L = 128
+    bool day2 = false;           // Day-2 Thread 1a: also add L = 256
     bool multi_seed = false;     // Ticket 2: 4 seeds per scale
     for (int i = 1; i < argc; ++i) {
         std::string s(argv[i]);
         if (s == "--quick") quick = true;
         else if (s == "--extended") extended = true;
+        else if (s == "--day2") day2 = true;
         else if (s == "--multi-seed") multi_seed = true;
         else if (s.rfind("--ticks=", 0) == 0) n_ticks = std::atoi(s.c_str() + 8);
     }
@@ -110,15 +112,20 @@ int main(int argc, char** argv) {
         ? std::vector<double>{0.030, 0.050, 0.070, 0.100}
         : std::vector<double>{0.050};
 
-    // Ticket 3: Include L = 128 when --extended
+    // Ticket 3: Include L = 128 when --extended; L = 256 when --day2
     std::vector<int> sizes = {16, 32, 64};
     if (quick) sizes = {16, 32};           // skip L=64+ in quick mode
     if (extended && !quick) sizes.push_back(128);
+    if (day2 && !quick) {
+        if (!extended) sizes.push_back(128);   // day2 implies extended
+        sizes.push_back(256);
+    }
 
     for (int L : sizes) {
-        // At L = 128 keep the r-step coarser to cap runtime — the extra
+        // At L >= 128 keep the r-step coarser to cap runtime — the extra
         // r-points mainly narrow the fit uncertainty, not change α_eff.
-        const int r_step = (L >= 128) ? 4 : 2;
+        // At L = 256 r_step=6 to stay within runtime budget (~8 min).
+        const int r_step = (L >= 256) ? 6 : (L >= 128 ? 4 : 2);
         for (size_t si = 0; si < seeds.size(); ++si) {
             const double seed_amp = seeds[si];
             std::cerr << "\n-- MCRG: L = " << L
