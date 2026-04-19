@@ -7,17 +7,26 @@ Five pillars — Ward identities, Lorentz covariance, RG flow, operator expansio
 continuum matching — measured on the lattice against expectations committed to
 the repository *before any code ran*. All outcomes reported without retrofit.
 
-### Headline
+### Headline (post-audit, narrowed)
 
-**FTD's V(r)-extracted coupling plateaus at α_∞ ≈ 3.6× α_ref**, not at 1/137.
-Phase F 4-point GPU scan at L ∈ {64, 128, 256, 384} with ticks=150 and
-r/L ≈ 0.31 gives α_r = 0.02959 → 0.02970 → 0.02717 → 0.02632 (ratios 4.05×,
-4.07×, 3.72×, 3.61×). Three candidate scaling laws (1/L, 1/L², free 1/L^p)
-all agree on α_∞ ∈ [3.35×, 3.74×] × α_ref. Rutherford-scattering
-cross-check (Day-2 Thread 4) gives α = 0.042 ± 0.005 at small impact
-parameter, independently confirming the 5× gap is engine physics, not a V(r)
-artefact. **This is a falsifiable FTD deviation from continuum QED, not
-approximate agreement.**
+**FTD's V(r)-extracted coupling plateaus at α_∞ ≈ 1.8–3.6 × α_ref** (range
+spans classical vs. engine-accumulator convention, see
+`docs/theory/10_eft_program/AUDIT_ALPHA_EXTRACTION.md`), not at 1/137 under
+any convention. Phase-F 4-point GPU scan at L ∈ {64, 128, 256, 384} with
+ticks=150 and r/L ≈ 0.31 gives α_r = 0.02959 → 0.02970 → 0.02717 → 0.02632
+(engine-convention ratios 4.05×, 4.07×, 3.72×, 3.61×). Three candidate
+scaling laws (1/L, 1/L², free 1/L^p) all agree on α_∞ ∈ [3.35×, 3.74×]
+× α_ref in engine convention. A post-audit of the three V(r) codepaths
+(`coupling_measurement.h`, `measure_v_of_r.h`, `benchmark_emergent_alpha.cpp`)
+confirms they are mutually consistent and isolates a factor-of-two
+energy-accumulator convention: `field_energy = Σ|J|²` lacks the classical
+½. Under the classical convention the plateau is ≈ 1.8× α_ref. Rutherford-
+scattering cross-check (Day-2 Thread 4) gives α = 0.042 ± 0.005 at small
+impact parameter, independently confirming a residual gap. **FTD's
+Coulomb-tail coupling is not α_ref under any convention**; whether the
+residual ~1.8× (after convention correction) is real physics, a
+kinetic-normalization choice, or a lattice-Green's-function artefact
+is flagged [OPEN].
 
 ### Retracted
 
@@ -78,14 +87,17 @@ Four new `[MEASURED]` rows added to `docs/theory/07_assessment/CATALOG_PARAMETRI
 4. Rutherford α: 0.042 ± 0.005 (5.8× α_ref)
 
 Plus the retraction of the interim "1.23× α_ref" row, replaced by the
-Phase-F plateau row at 3.6× α_ref.
+Phase-F plateau row: engine-convention 3.6× / classical-convention 1.8×,
+with the audit (`AUDIT_ALPHA_EXTRACTION.md`) cited for the convention
+chain and the residual [OPEN] factor.
 
 ### Honest non-claims
 
 FTD has not "derived the QED β-function." The measured β is negative-signed
 (QED asymptotic-freedom direction) but the pre-registered "match continuum
-QED to 1%" target in SPEC §7.3 was not met — the plateau sits 3.6× above
-CODATA. The Higgs VEV remains [IMPOSED]. Vertex Ward identities
+QED to 1%" target in SPEC §7.3 was not met under any convention — the
+plateau sits 1.8–3.6× above CODATA after the energy-convention audit. The
+Higgs VEV remains [IMPOSED]. Vertex Ward identities
 Γ_μ(p,p) = ∂Σ/∂p^μ require lattice fermions the engine does not yet carry
 and are flagged [OPEN] up-front. The campaign's contribution is an auditable
 stack of measurements plus one falsifiable new FTD prediction, not a
