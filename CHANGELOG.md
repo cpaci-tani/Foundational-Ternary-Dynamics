@@ -1,5 +1,65 @@
 # Foundational Ternary Dynamics Changelog
 
+## Phase I — Master Quadratic audit (April 19, 2026)
+
+With Phase G+H having resolved the engine-side V(r) measurement as
+geometric Coulomb (no α in that code path), the master quadratic
+`x² − 16G*²x + 16G*³ = 0` became the last standing α-derivation claim
+in FTD. Phase I is a full numerical + epistemic audit.
+
+### Headline
+
+The master quadratic is **mathematically real and uniquely precise** but
+**not fully derived**. Honest epistemic tier: **[STRONGLY MOTIVATED
+CONJECTURE]** (downgraded from the catalog's prior [THEOREM] tag).
+
+- Tree-level root `x_+ = 137.036171` matches `1/α_CODATA = 137.035999177`
+  to **1.26 ppm**. Pure algebra from `G* = Γ(1/4)/Γ(3/4)` and coefficient
+  16 (which has 3 genuinely independent arithmetic routes; 6 claimed
+  routes reduce to 3 after factoring out curve-symmetry redundancy).
+- **Dual prediction** is the strongest structural evidence: the same
+  polynomial gives `x_- = 3.024 ≈ N_c = 3` simultaneously. Rigidity
+  scan of 59,611 candidate polynomials `x² − a·G*^p·x + b·G*^q = 0`
+  (a, b ∈ [1, 64], p, q ∈ [1, 4]) finds only 4 with x_+ within 1000 ppm
+  of 1/α AND x_- within 1% of an integer 1-10; the master quadratic is
+  by far the most precise on x_+.
+- 7-term precision series matching CODATA to 24 digits is **demoted to
+  [CONJECTURE] / post-hoc fit**. CODATA 2022 only has ~11 digits; the
+  extra 13 digits of "agreement" have no experimental content. The
+  coefficients were found *after* knowing the target, then observed
+  to have a clean base-integer form — that is circular.
+- Physical identification `x_+ = 1/α`, `x_- = N_c`: still [SELECTION].
+  Not dynamically derived; conditional on the curve choice (y² = x³ − x),
+  the degree-2 polynomial form, and the root-to-physics mapping.
+
+### What changed in the catalog
+
+- `CATALOG_PARAMETRIC_INSERTIONS.md`: α row downgraded from [THEOREM] to
+  [STRONGLY MOTIVATED CONJECTURE]; 7-term claim struck. N_c row matched.
+- `META_INDEX.md`: new row 7.11 registering `AUDIT_MASTER_QUADRATIC.md`.
+- `CLAUDE.md`: headline rewritten — the "< 0.001 ppt with 7-term
+  expansion" line is replaced with honest framing of the dual prediction
+  and the 1.26 ppm tree-level precision.
+
+### Deliverables
+
+- New: `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md` (full audit)
+- New: `scripts/proofs/audit_master_quadratic_rigidity.py` (4 rigidity
+  tests: coefficient scan, G* sensitivity, alternative constants,
+  naive integer)
+
+### What would elevate [SELECTION] → [THEOREM]
+
+1. Prove the L → ∞ limit of the gap equation rigorously (current
+   argument is finite-lattice motivational).
+2. Run the structural search on alternative CM curves — if y² = x³ − x
+   is the unique curve whose master-quadratic-shaped polynomial hits
+   physical constants, the selection collapses to a theorem.
+3. Derive the bare U(1) coupling g_c = √(2π α) from the lattice action
+   alone, independent of the master quadratic. Phase H verified the
+   plumbing (`alpha_r ∝ g_c²` to 0.0000%); first-principles g_c would
+   make the master quadratic's prediction falsifiable.
+
 ## EFT Recovery Program — Phase 0 → F complete (April 19, 2026)
 
 Pre-registered seven-phase Wilsonian-EFT measurement campaign run to completion.

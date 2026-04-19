@@ -227,6 +227,7 @@ What is genuinely derived vs. claimed.
 | 7.8 | [AUDIT_WHAT_IS_GENUINELY_NEW.md](07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md) | Synthesis for outsiders: what FTD uniquely achieves |
 | 7.9 | [REPORT_DETECTOR_INFORMATION_LOSS.md](07_assessment/REPORT_DETECTOR_INFORMATION_LOSS.md) | Comprehensive detector analysis: 22 KB, information loss across phase structure |
 | 7.10 | [TRACKER_DOCUMENT_STATUS.md](07_assessment/TRACKER_DOCUMENT_STATUS.md) | **Document status tracker:** Every theory doc scored on 5 criteria (R/C/Cl/Co/I), grades A-F, priority actions |
+| 7.11 | [AUDIT_MASTER_QUADRATIC.md](07_assessment/AUDIT_MASTER_QUADRATIC.md) | ✅ **Phase I audit (2026-04-19)** — independent numerical + epistemic review of `x² − 16G*²x + 16G*³ = 0 ⟹ 1/α`. Scanned 59,611 candidate polynomials: master quadratic is uniquely sub-10-ppm on 1/α, and uniquely dual-matches both 1/α (1.26 ppm) and N_c = 3 (0.80%). Tree-level result is [STRONGLY MOTIVATED CONJECTURE] conditional on curve/degree/root selections. 7-term series demoted from [DERIVATION] to [CONJECTURE] — post-hoc fit to CODATA digits beyond experimental precision. Script: `scripts/proofs/audit_master_quadratic_rigidity.py`. |
 
 ---
 
