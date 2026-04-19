@@ -10,9 +10,11 @@ A discrete framework built on the CM elliptic curve Eᵢ: y² = x³ − x and it
 
 The quadratic x² − 16G\*²x + 16G\*³ = 0 has roots x₊ = 137.036 and x₋ = 3.024. The coefficient 16 = |Aut(Eᵢ)|². A one-loop lattice correction on ℤ[i]³ brings x₊ to within 9.6 ppb of the measured fine structure constant. The same algebraic structure yields the gauge groups U(1) × SU(2) × SU(3), the Higgs mass (125.69 GeV, 0.47%), confinement, and the Einstein field equations.
 
-**Author:** William J Steinmetz III | **Version:** 5.30 | **Date:** April 13, 2026
+**Author:** William J Steinmetz III | **Version:** 5.30 | **Engine:** v2.15.0 | **Date:** April 19, 2026
 
 **Navigation:** [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md)  
+**Card catalog (find any doc):** [META_DOCUMENTATION_MAP.md](META_DOCUMENTATION_MAP.md)  
+**Change-without-breaking guide:** [MAINTAINABILITY.md](MAINTAINABILITY.md) — hazards, step-by-step recipes, tech-debt ledger  
 **Documentation cleanup status:** [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md)
 
 ---
@@ -133,6 +135,27 @@ See [FOUND_BLIND_DERIVATION_CHAIN.md](docs/theory/02_foundations/FOUND_BLIND_DER
 | 3.1 | Quark masses | 16/16 | Honest: [OPEN] — scheme-dependent |
 | 3.2 | **Higgs mass** | **21/21** | **λ=3/23, mH=125.69 GeV (0.47%)** |
 | 4.1 | Von Neumann algebra | 31/31 | Type I₃ finite, Type III₁ thermodynamic |
+
+---
+
+## EFT Recovery Program (April 2026)
+
+A pre-registered measurement campaign asking whether the engine qualifies as a Wilsonian effective field theory. Five pillars — Ward identities, Lorentz covariance, RG flow, operator expansion, continuum matching — are measured on the lattice against expectations committed to the repository *before any code ran*. Full spec: [docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md](docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md). Paper: [PAPER_FTD_AS_WILSONIAN_EFT.tex](dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex).
+
+| Phase | Pillar | Outcome | Document |
+|---|---|---|---|
+| 1A | Rotational anisotropy | Infrastructure validated on 4 synthetic tests; realistic-dynamics campaign deferred | [DERIV_SYMMETRY_RECOVERY.md](docs/theory/10_eft_program/DERIV_SYMMETRY_RECOVERY.md) |
+| 1B | Lorentz recovery (c = 1/√3) | Residual 0.4% at r ≤ 4, rising to 5% at r = L/4 — cubic dispersion, not permille as pre-reg required | ↑ |
+| 1C | Ward identities | Gauss closure SOR-limited at ~1% of \|J\|_max; follow-up T1 found an **18-pt vs 6-pt stencil mismatch** that makes "more SOR iterations" non-convergent | ↑ |
+| 2  | Measured β(g) from real-space blocking | Scale-dependent α_eff with negative β (matches QED *sign*); quantitative ratio started at −160× QED one-loop, refined to ~−80× on L = 128 slope method | [DERIV_BETA_FUNCTION_MEASURED.md](docs/theory/10_eft_program/DERIV_BETA_FUNCTION_MEASURED.md) |
+| 3  | Operator spectrum (6 ops) | Fits valid (R² ≥ 0.92) but Δ clustered near 0.5 on pulse scenario; T5 on `flux-baryon` re-runs divJ² Δ = 1.69 (×3.7), confirming pulse-envelope artefact | [DERIV_OPERATOR_SPECTRUM.md](docs/theory/10_eft_program/DERIV_OPERATOR_SPECTRUM.md) |
+| 4A | Dynamical EWSB cold-start | Branch B at amp 0.15; follow-up T4 swept amplitudes and found **⟨\|J\|⟩ triples + 62 charges manifest at amp = 0.80** — genesis threshold ∈ [0.50, 0.80] | [DERIV_DYNAMICAL_SM_EMERGENCE.md](docs/theory/10_eft_program/DERIV_DYNAMICAL_SM_EMERGENCE.md) |
+| 4B | Three-generation cold-start | Null: 0 species manifested in 1 000 ticks on radial-flux seed | ↑ |
+| 4C | Continuum-limit α_eff(∞) | α_inf = 0.021 from L ∈ {32, 48, 64}; T3 L = 128 reveals λ_Yukawa ≈ L/5 is a **periodic-image finite-size artefact**, not physical screening | ↑, [DERIV_GAP_CLOSURE.md](docs/theory/10_eft_program/DERIV_GAP_CLOSURE.md) |
+
+**Honest bookkeeping.** [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates every quantity FTD reports for the Standard Model: of ~162 rows, **~23 are genuine derivations**, **~129 are parametric insertions** (standard-physics formulas — ChPT, Fermi theory, seesaw, Regge, QED multi-loop — with FTD-supplied inputs), and **~10 are imposed / selected**. The EFT program's goal is to move 5–15 items leftward by *measuring* them on the lattice rather than borrowing the continuum formula.
+
+**What the program does not claim.** FTD has not "derived the QED β-function" — the measured β is 80–160× one-loop at lattice scale, dominated by finite-size screening. The Higgs VEV remains [IMPOSED]. Vertex Ward identities Γ_μ(p,p) = ∂Σ/∂p^μ require lattice fermions the engine does not yet carry; flagged [OPEN] up-front. The program's contribution is an auditable stack of measurements and a published gap closure, not a completed EFT.
 
 ---
 
@@ -294,6 +317,16 @@ CUDA backend with cuFFT spectral Poisson solver. Build with `-DFTD_ENABLE_CUDA=O
 ### WebAssembly
 
 Compiles to WASM via Emscripten. Three.js dashboard with 211 scenarios across 4 scales (21 lattice, 23 particle, 140 atom, 27 molecule), real-time diagnostics, Lagrangian inspector, particle catalog, and Phase 3 atomic forces.
+
+**Dashboard surfaces:**
+
+- **Verify** — static evidence scoreboard (see `engine/web/docs/SPEC_VERIFICATION_LAB.md`) with three epistemic tiers: *hard predictions* with first-principles FTD values vs measurements, *parametric insertions* (SM formula + FTD inputs) reported as bookkeeping, *unpredicted* measurements where FTD makes no claim.
+- **FAQ** — 16-entry framing of canonical hard problems of physics and foundational science; every FTD-side bullet carries an inline epistemic tag. Not a solutions manual.
+- **Scene** — curated render-controls panel with 14 knobs across camera / lighting / post-processing / environment; `localStorage`-backed persistence.
+- **KB** — searchable concept/notation/UI library built on the same `SidebarLibraryComponent` base as FAQ.
+- **Diagnostics / Charts / Lagrangian** — telemetry panels. Scale 0 catalog: [engine/web/docs/TELEMETRY_CATALOG_SCALE0.md](engine/web/docs/TELEMETRY_CATALOG_SCALE0.md).
+
+Math across all surfaces renders via KaTeX; tests assert no raw `\(...\)` delimiters leak and no PASS/FAIL verdict badges appear on Verify rows.
 
 ---
 
