@@ -69,9 +69,17 @@ AtomEngine::AtomEngine() = default;
 // Out-of-line destructor: required so unique_ptr<GpuBackend> can see the
 // complete GpuBackend type when deleting. Without this, every translation
 // unit that includes atom_engine.h and indirectly calls ~AtomEngine would
-// need to see GpuBackend's definition. The GpuBackend struct itself is
-// defined in atom_forces.cpp (the only TU that uses it).
+// need to see GpuBackend's definition.
+//
+// On CPU builds (FTD_ENABLE_CUDA undefined) gpu_backend_ doesn't exist,
+// so a default destructor here works fine.
+//
+// On CUDA builds (FTD_ENABLE_CUDA defined) the destructor is defined in
+// src/atom/atom_forces.cpp instead, where GpuBackend is complete. This
+// TU's `= default;` would fail (incomplete-type delete) — keep it guarded.
+#ifndef FTD_ENABLE_CUDA
 AtomEngine::~AtomEngine() = default;
+#endif
 
 // ============================================================================
 // Add / remove atoms
