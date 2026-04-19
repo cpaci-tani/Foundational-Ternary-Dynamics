@@ -313,52 +313,99 @@ lattice grows. The Phase-2 and Day-2 claim that FTD converges toward
 continuum QED in the infinite-volume limit is directly supported by
 this measurement.
 
-### Continuum extrapolation (three-point fit)
+### Continuum extrapolation — RETRACTED Day-2 claim, REPLACED with 4-point GPU data
 
-Re-doing the Phase-4C continuum fit using the r_max-tail values as
-the α(L) observable:
+> **This section supersedes the earlier "1.23× α_ref" claim.** The
+> Day-2 fast-big CPU run used `ticks=100`, which was under-equilibrated
+> — the flux field around static charges had not reached its
+> steady-state Coulomb tail amplitude. The 3-point extrapolation built
+> on that data gave a spurious rapid convergence to α_ref. With the
+> WSL2 GPU build unblocked (see `STATUS_CUDA_BUILD.md`, Phase A), we
+> re-ran at `ticks=150` (still-reduced but ~50% better equilibrated)
+> across L=32, 64, 128, 256, 384 with uniform r_step and internally
+> consistent scenario, so all points are directly comparable.
 
-$$
-\alpha(L=64, r=20) = 0.030, \quad \alpha(L=128, r=40) = 0.028, \quad \alpha(L=256, r=84) = 0.010
-$$
+**Four-point r_max series, Phase F GPU run (ticks=150, r/L ≈ 0.31):**
 
-Three candidate scaling laws, fit by the companion script
-`scripts/benchmarks/continuum_extrapolate.py`:
+| L | r_max | α_r | ratio to α_ref |
+|---|---|---|---|
+| 64 | 20 | 0.02959 | **4.05×** |
+| 128 | 40 | 0.02970 | **4.07×** |
+| 256 | 82 | 0.02717 | **3.72×** |
+| 384 | 124 | 0.02632 | **3.61×** |
 
-| Fit | α_∞ | ratio to α_ref | R² | Predicted α(L=512) |
-|---|---|---|---|---|
-| **1/L** (Coulomb-in-periodic-box) | **0.0090** | **1.23×** | 0.66 | 0.0119 (1.64×) |
-| 1/L² (lattice-dispersion standard) | 0.0157 | 2.15× | 0.52 | 0.0159 (2.18×) |
-| Free 1/L^p (best p = 0.5) | −0.005 | nonphysical | 0.74 | 0.0082 (1.13×) |
+(L=32 is excluded because r_max = 10 ≈ L/3 is inside the periodic-image
+cancellation regime at that lattice size, not the Coulomb plateau.)
 
-**The 1/L fit is both physically motivated and delivers the best R²
-among physical fits.** For a Coulomb-like interaction in a periodic
-box of size L, the leading finite-size correction to V(r) at
-$r \sim L/2$ scales linearly as 1/L (image-charge cancellation across
-the boundary). This is not the 1/L² law that lattice-dispersion
-arguments usually give for gapped theories.
+**Three candidate scaling laws fit to the 4 points:**
 
-**Best estimate: α(L→∞) = 0.0090 = 1.23× α_ref.** FTD matches continuum
-QED to within 23% in the infinite-volume limit, based on three r_max
-data points spanning a 4× range in L.
+| Fit | α_∞ | ratio to α_ref | R² |
+|---|---|---|---|
+| 1/L (Coulomb-periodic-box) | 0.02640 | **3.62×** | 0.67 |
+| 1/L² (lattice-dispersion) | 0.02730 | 3.74× | 0.50 |
+| Free 1/L^p, best p = 0.5 | 0.02446 | 3.35× | 0.77 |
 
-### The L = 512 discriminating test
+**The extrapolation is insensitive to the choice of scaling law**:
+all three laws give α_∞ ∈ [3.35, 3.74] × α_ref. This is a
+*plateau*, not a convergence. The data simply settles near
+α ≈ 0.026-0.027 and stops moving.
 
-A measurement at L = 512 would unambiguously discriminate the two
-competing laws:
+### Honest conclusion
 
-- If α_r(r_max ~ 170) ≈ 0.012 → confirms 1/L, α_∞ = 0.0090 (1.23×
-  α_ref)
-- If α_r(r_max ~ 170) ≈ 0.016 → confirms 1/L², α_∞ = 0.016 (2.15×
-  α_ref)
+**FTD's V(r)-extracted coupling, measured in the Coulomb-tail regime
+at r ≈ L/3 across L ∈ {64, 128, 256, 384}, extrapolates to
+α_∞ ≈ 3.6 × α_ref ≈ 0.026.**
 
-The split between these predictions at L=512 is 33% — well within
-measurement precision.
+This is a **real prediction**, not a measurement artefact:
 
-Such a measurement is ~1 minute on the RTX 5090 once the CUDA build
-is unblocked (see `STATUS_CUDA_BUILD.md`), or ~2-4 hours on CPU in
-full-precision mode. **This is the single most decisive open
-experiment in the EFT program.**
+- The plateau is stable across factor-of-6 in L (64 to 384).
+- It's stable across three extrapolation forms (1/L, 1/L², 1/L^p).
+- The ticks=150 measurement is close enough to full convergence
+  (the ticks=300 L=256 run gave α_r(r=82) = 0.0271, agreeing with
+  the ticks=150 value 0.0272 to 0.4%).
+- Two independent extraction methods (static V(r) + Rutherford
+  scattering from Day-2 Thread 4) give the same ~4× ratio in the
+  Coulomb-dominated regime.
+
+FTD's engine, as built, exhibits a coupling strength **3.6× larger
+than continuum QED's 1/137**. This is a falsifiable FTD prediction,
+not "approximate agreement with QED."
+
+### L = 512 predicted values
+
+If L = 512 runs (queued behind the `--l512` flag, needs ~24 GB VRAM),
+the candidate laws predict:
+
+| Fit | α(L=512, r=166) prediction |
+|---|---|
+| 1/L | 0.02687 (3.68× α_ref) |
+| 1/L² | 0.02734 (3.75× α_ref) |
+| Free 1/L^p | 0.02648 (3.63× α_ref) |
+
+The 3 predictions agree to within 3% — **L=512 would NOT discriminate
+between the scaling laws**. The plateau is too flat for that. The
+discriminating test is not L=512 but rather: can we design a
+measurement that is NOT limited by periodic-image finite-size
+artefacts? Candidates:
+
+1. **Fixed-physical-r measurement** — hold r in absolute units, let L
+   scale around it. Requires variable-coupling simulation (complex).
+2. **Different boundary conditions** — Dirichlet or mixed instead of
+   periodic. Substantial engine change.
+3. **Matched-Poisson solver from Phase 2 Ticket A** — gives a
+   systematic offset correction via tighter Ward identity. Possibly
+   closes 10-20% of the gap, not a factor-of-3.
+
+### What changed in the manuscript
+
+The abstract and §8 of `PAPER_FTD_AS_WILSONIAN_EFT.tex` claim α_∞ =
+1.23× α_ref from a 1/L fit on three r_max points. **Both need
+correction.** The 4-point plateau at 3.6× α_ref is the honest number.
+This is the kind of correction the pre-registration discipline is
+designed to surface: the original fast-big data was an artefact; the
+correct full-precision measurement tells a different story. Catalog
+row "α_∞ from 1/L extrapolation" should be rewritten with 3.62×
+(or retracted in favor of the per-L r_max measurements).
 
 ### Caveat
 
