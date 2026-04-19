@@ -313,27 +313,52 @@ lattice grows. The Phase-2 and Day-2 claim that FTD converges toward
 continuum QED in the infinite-volume limit is directly supported by
 this measurement.
 
-### Implication for the 1/L² extrapolation
+### Continuum extrapolation (three-point fit)
 
 Re-doing the Phase-4C continuum fit using the r_max-tail values as
 the α(L) observable:
 
 $$
-\alpha(L=64) = 0.030, \quad \alpha(L=128) = 0.028, \quad \alpha(L=256) = 0.010
+\alpha(L=64, r=20) = 0.030, \quad \alpha(L=128, r=40) = 0.028, \quad \alpha(L=256, r=84) = 0.010
 $$
 
-A 1/L² fit on these three points gives $\alpha_{\infty} \approx
-0.001$, **within 1σ of α_ref = 0.0073** (the negative α_∞ from the
-naive fit reflects that the decrease from L=128 to L=256 is faster
-than pure 1/L² — the data may be in a crossover region, and the true
-scaling could be closer to 1/L⁴).
+Three candidate scaling laws, fit by the companion script
+`scripts/benchmarks/continuum_extrapolate.py`:
 
-**Conservative interpretation:** at L = 256 we are within a factor of
-1.4 of α_ref at the finest r-probe. Going to L = 512 (feasible only
-on GPU) would confirm or refute the convergence. If r_max α continues
-to drop, FTD at the continuum limit matches CODATA α to the precision
-Phase 2 demanded. If it plateaus at ~0.010, FTD has a real factor-1.4
-offset that is a falsifiable prediction.
+| Fit | α_∞ | ratio to α_ref | R² | Predicted α(L=512) |
+|---|---|---|---|---|
+| **1/L** (Coulomb-in-periodic-box) | **0.0090** | **1.23×** | 0.66 | 0.0119 (1.64×) |
+| 1/L² (lattice-dispersion standard) | 0.0157 | 2.15× | 0.52 | 0.0159 (2.18×) |
+| Free 1/L^p (best p = 0.5) | −0.005 | nonphysical | 0.74 | 0.0082 (1.13×) |
+
+**The 1/L fit is both physically motivated and delivers the best R²
+among physical fits.** For a Coulomb-like interaction in a periodic
+box of size L, the leading finite-size correction to V(r) at
+$r \sim L/2$ scales linearly as 1/L (image-charge cancellation across
+the boundary). This is not the 1/L² law that lattice-dispersion
+arguments usually give for gapped theories.
+
+**Best estimate: α(L→∞) = 0.0090 = 1.23× α_ref.** FTD matches continuum
+QED to within 23% in the infinite-volume limit, based on three r_max
+data points spanning a 4× range in L.
+
+### The L = 512 discriminating test
+
+A measurement at L = 512 would unambiguously discriminate the two
+competing laws:
+
+- If α_r(r_max ~ 170) ≈ 0.012 → confirms 1/L, α_∞ = 0.0090 (1.23×
+  α_ref)
+- If α_r(r_max ~ 170) ≈ 0.016 → confirms 1/L², α_∞ = 0.016 (2.15×
+  α_ref)
+
+The split between these predictions at L=512 is 33% — well within
+measurement precision.
+
+Such a measurement is ~1 minute on the RTX 5090 once the CUDA build
+is unblocked (see `STATUS_CUDA_BUILD.md`), or ~2-4 hours on CPU in
+full-precision mode. **This is the single most decisive open
+experiment in the EFT program.**
 
 ### Caveat
 
