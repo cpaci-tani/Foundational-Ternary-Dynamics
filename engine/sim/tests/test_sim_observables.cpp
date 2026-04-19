@@ -28,9 +28,14 @@
 
 #include "ftd/sim/pipeline.h"
 #include "ftd/sim/backend_cpu.h"
+#include "ftd/sim/fit_scaling_dimension.h"
+#include "ftd/sim/measure_v_of_r.h"
 #include "ftd/sim/observables/flux_correlator.h"
 #include "ftd/sim/observables/ewsb_condensate_count.h"
 #include "ftd/sim/observables/field_energy_audit.h"
+
+#include <vector>
+#include <utility>
 
 using namespace ftd::sim;
 
@@ -178,6 +183,64 @@ static void fea1_matches_direct() {
           std::abs(a.field_energy - sum) / std::max(std::abs(sum), 1e-30) < 1e-6, buf);
 }
 
+// ========== fit_scaling_dimension ==========
+
+// SD1 — synthetic C(r) = 1 · r^(-2·Δ) with Δ=1.5 must recover Δ=1.5
+static void sd1_recovery() {
+    std::puts("\n--- SD1: fit_scaling_dimension recovers synthetic Δ=1.5 ---");
+    const double delta_true = 1.5;
+    std::vector<double> C;
+    for (int r = 0; r < 20; ++r) {
+        C.push_back(r == 0 ? 1e30 : std::pow(static_cast<double>(r), -2.0 * delta_true));
+    }
+    auto f = fit_scaling_dimension(C, 2, 20);
+    char buf[160];
+    std::snprintf(buf, sizeof buf, "(Δ=%.4f R²=%.4f n=%d valid=%s)",
+                  f.delta, f.r2, f.n_points, f.valid ? "y" : "n");
+    check("SD1 fit_scaling_dimension valid", f.valid, buf);
+    check("SD1 Δ within 5% of 1.5", std::abs(f.delta - 1.5) / 1.5 < 0.05, buf);
+    check("SD1 R² > 0.999", f.r2 > 0.999, buf);
+}
+
+// SD2 — synthetic C(r) = exp(-r/λ) with λ=5 must recover ξ=5, mass=0.2
+static void sd2_exp_fit() {
+    std::puts("\n--- SD2: fit_exponential_decay recovers ξ=5, m=0.2 ---");
+    std::vector<double> C;
+    for (int r = 0; r < 25; ++r) C.push_back(std::exp(-r / 5.0));
+    auto f = fit_exponential_decay(C, 0, 25);
+    char buf[160];
+    std::snprintf(buf, sizeof buf, "(ξ=%.4f m=%.4f A=%.4f R²=%.5f valid=%s)",
+                  f.xi, f.mass, f.amplitude, f.r2, f.valid ? "y" : "n");
+    check("SD2 fit_exponential_decay valid", f.valid, buf);
+    check("SD2 ξ within 1% of 5.0", std::abs(f.xi - 5.0) / 5.0 < 0.01, buf);
+    check("SD2 mass within 1% of 0.2", std::abs(f.mass - 0.2) / 0.2 < 0.01, buf);
+    check("SD2 R² > 0.9999", f.r2 > 0.9999, buf);
+}
+
+// ========== measure_v_of_r ==========
+
+// VR1 — the V(r) pipeline just runs without crashing on small L
+//       (we don't validate the numerical α here because extracting
+//       an accurate α on L=8 with short ticks is not meaningful;
+//       for that we'd use Phase E benchmarks. Here we just verify
+//       the plumbing: N+2 pipelines, N V-samples, a valid fit
+//       struct.)
+static void vr1_plumbing() {
+    std::puts("\n--- VR1: measure_v_of_r plumbing on L=16 ---");
+    const std::vector<int> r_values{4, 6};
+    auto res = measure_v_of_r<BackendCpu>(16, r_values, /*n_ticks=*/20);
+    char buf[192];
+    std::snprintf(buf, sizeof buf,
+                  "(L=%d n_ticks=%d |data|=%zu e_self+=%.4f e_self-=%.4f α_fit=%.4f)",
+                  res.L, res.n_ticks, res.data.size(),
+                  res.e_self_pos, res.e_self_neg, res.alpha_fit);
+    check("VR1 returns data for each r", res.data.size() == r_values.size(), buf);
+    check("VR1 r-values preserved",
+          res.data.size() == 2 && res.data[0].r == 4 && res.data[1].r == 6);
+    // α_fit is only computed when |data| >= 3; with 2 r-points it stays default.
+    check("VR1 α_fit default (too few points for fit)", res.alpha_fit == 0.0);
+}
+
 int main() {
     std::puts("================================================================");
     std::puts("  Sim Pipeline — Phase D Observable Unit Tests");
@@ -187,6 +250,9 @@ int main() {
     fc2_plane_wave();
     ew1_known_injection();
     fea1_matches_direct();
+    sd1_recovery();
+    sd2_exp_fit();
+    vr1_plumbing();
 
     std::puts("\n----------------------------------------------------------------");
     if (g_failures == 0) {
