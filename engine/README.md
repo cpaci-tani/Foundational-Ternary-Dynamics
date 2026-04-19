@@ -189,7 +189,6 @@ engine/
     gpu_buffers.h             # SoA device memory layout (94L)
   src/
     render_bridge.cpp         # Core engine — 6-phase tick cycle (~989L)
-    lattice.cpp               # Index/coordinate conversion, wrapping, neighbors (65L)
     lagrangian.cpp            # Lagrangian diagnostics computation (56L)
     main.cpp                  # CLI entry point (scenarios A-K) (937L)
     particle_engine.cpp       # ParticleEngine: Velocity Verlet + analytical forces (234L)

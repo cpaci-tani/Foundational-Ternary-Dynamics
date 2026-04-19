@@ -83,7 +83,6 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Core library
 add_library(ftd_core
-    src/lattice.cpp
     src/render_bridge.cpp
     src/dag_engine.cpp
     src/lagrangian.cpp

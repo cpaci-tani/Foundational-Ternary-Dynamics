@@ -26,7 +26,8 @@ struct Coord {
 
 class Lattice {
 public:
-    explicit Lattice(int size);
+    explicit Lattice(int size)
+        : size_(size), total_(static_cast<int64_t>(size) * size * size) {}
 
     int size() const { return size_; }
     int64_t total_sites() const { return total_; }

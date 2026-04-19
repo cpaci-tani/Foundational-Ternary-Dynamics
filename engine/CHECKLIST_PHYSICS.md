@@ -97,7 +97,7 @@ C+ (March) -> B (morning) -> **B+** (session end)
 
 Finite lattice **L** ⊂ **Z**³ with periodic (toroidal) boundaries.
 
-- **Files**: `include/ftd/lattice.h`, `src/lattice.cpp`
+- **Files**: `include/ftd/lattice.h` (header-only)
 - **Tests**: `test_lattice`, `test_lattice_operators`
 - **Done means**: Index/coord/wrap correct; 6/12/26-neighbor lookups verified; periodic BCs work.
 
