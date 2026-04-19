@@ -4,6 +4,8 @@
  * own reader render function.
  */
 
+import { renderMathInHtml } from '../../math-format/render.js';
+
 function escapeHtml(value) {
     return String(value ?? '')
         .replaceAll('&', '&amp;')
@@ -40,16 +42,16 @@ export function renderKbReader(entry) {
         `;
     }
 
-    const body = (entry.body || []).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('');
+    const body = (entry.body || []).map((paragraph) => `<p>${renderMathInHtml(escapeHtml(paragraph))}</p>`).join('');
     const bullets = (entry.bullets || []).length
-        ? `<ul class="kb-bullet-list">${entry.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
+        ? `<ul class="kb-bullet-list">${entry.bullets.map((item) => `<li>${renderMathInHtml(escapeHtml(item))}</li>`).join('')}</ul>`
         : '';
     const notation = (entry.notation || []).length
         ? `
             <div class="kb-meta-block">
                 <span class="kb-meta-label">Notation</span>
                 <div class="kb-token-row">
-                    ${entry.notation.map((item) => `<span class="kb-token kb-token-formula">${escapeHtml(item)}</span>`).join('')}
+                    ${entry.notation.map((item) => `<span class="kb-token kb-token-formula">${renderMathInHtml(escapeHtml(item))}</span>`).join('')}
                 </div>
             </div>
         `
@@ -68,8 +70,8 @@ export function renderKbReader(entry) {
     return `
         <header class="kb-reader-header">
             <div class="kb-reader-section">${escapeHtml(entry.sectionTitle)}</div>
-            <h3 class="kb-reader-title">${escapeHtml(entry.title)}</h3>
-            <p class="kb-reader-summary">${escapeHtml(entry.summary)}</p>
+            <h3 class="kb-reader-title">${renderMathInHtml(escapeHtml(entry.title))}</h3>
+            <p class="kb-reader-summary">${renderMathInHtml(escapeHtml(entry.summary))}</p>
         </header>
         <div class="kb-reader-body">
             ${body}

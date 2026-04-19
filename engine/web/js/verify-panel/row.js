@@ -6,6 +6,7 @@
  * numbers. See docs/superpowers/specs/2026-04-18-verify-panel-redesign-design.md §4.
  */
 import { renderPullStrip } from './pull-strip.js';
+import { renderMathInHtml } from '../ui/math-format/render.js';
 
 function escapeHtml(s) {
     return String(s ?? '').replace(/[&<>"']/g, (c) => ({
@@ -39,7 +40,7 @@ function fmtPull(pull) {
 
 function fmtInputs(inputs) {
     if (!inputs || !inputs.length) return '';
-    const items = inputs.map(escapeHtml).join(', ');
+    const items = inputs.map((inp) => renderMathInHtml(escapeHtml(inp))).join(', ');
     return `<div class="verify-inputs">Inputs used: {${items}}</div>`;
 }
 
@@ -48,11 +49,11 @@ function renderHardRow(row) {
     const units = m.units ? ` ${escapeHtml(m.units)}` : '';
     return `
         <article class="verify-row verify-row--hard" data-row-id="${escapeHtml(row.id)}">
-            <h3 class="verify-question">${escapeHtml(row.question)}</h3>
+            <h3 class="verify-question">${renderMathInHtml(escapeHtml(row.question))}</h3>
             <div class="verify-lines">
                 <div class="verify-line verify-line--ftd">
                     <span class="verify-tag verify-tag--${escapeHtml(row.epistemic.toLowerCase())}">${escapeHtml(row.epistemic)}</span>
-                    <span class="verify-formula">${escapeHtml(row.formula)}</span>
+                    <span class="verify-formula">${renderMathInHtml(escapeHtml(row.formula))}</span>
                     <span class="verify-value">${fmtNumber(row.ftd_value)}${units}</span>
                 </div>
                 <div class="verify-line verify-line--meas">
@@ -77,11 +78,11 @@ function renderParametricRow(row) {
     const units = m.units ? ` ${escapeHtml(m.units)}` : '';
     return `
         <article class="verify-row verify-row--parametric" data-row-id="${escapeHtml(row.id)}">
-            <h3 class="verify-question">${escapeHtml(row.question)}</h3>
+            <h3 class="verify-question">${renderMathInHtml(escapeHtml(row.question))}</h3>
             <div class="verify-lines">
                 <div class="verify-line verify-line--ftd">
                     <span class="verify-tag verify-tag--parametric">PARAMETRIC · SM formula with FTD inputs</span>
-                    <span class="verify-formula">${escapeHtml(row.formula)}</span>
+                    <span class="verify-formula">${renderMathInHtml(escapeHtml(row.formula))}</span>
                     <span class="verify-value">${fmtNumber(row.ftd_value)}${units}</span>
                 </div>
                 <div class="verify-line verify-line--meas">
@@ -105,7 +106,7 @@ function renderUnpredictedRow(row) {
     const units = m.units ? ` ${escapeHtml(m.units)}` : '';
     return `
         <article class="verify-row verify-row--unpredicted" data-row-id="${escapeHtml(row.id)}">
-            <h3 class="verify-question">${escapeHtml(row.question)}</h3>
+            <h3 class="verify-question">${renderMathInHtml(escapeHtml(row.question))}</h3>
             <div class="verify-lines">
                 <div class="verify-line verify-line--ftd">
                     <span class="verify-tag verify-tag--open">OPEN</span>
