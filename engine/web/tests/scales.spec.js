@@ -260,6 +260,7 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
                 assistantButton: !!document.getElementById('btn-ftd-assistant'),
                 assistantSidebar: !!document.getElementById('assistant-sidebar'),
                 knowledgeBaseButton: !!document.getElementById('btn-knowledge-base'),
+                faqButton: !!document.getElementById('btn-faq'),
                 knowledgeBaseLibrary: !!document.getElementById('kb-sidebar'),
                 scale0ScenarioSelect: !!document.getElementById('scenario-select'),
                 scale0LatticeSize: !!document.getElementById('lattice-size'),
@@ -317,6 +318,7 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
     expect(shell.ui.assistantButton).toBe(true);
     expect(shell.ui.assistantSidebar).toBe(true);
     expect(shell.ui.knowledgeBaseButton).toBe(true);
+    expect(shell.ui.faqButton).toBe(true);
     expect(shell.ui.knowledgeBaseLibrary).toBe(true);
     expect(shell.ui.scale0ScenarioSelect).toBe(true);
     expect(shell.ui.scale0LatticeSize).toBe(true);
