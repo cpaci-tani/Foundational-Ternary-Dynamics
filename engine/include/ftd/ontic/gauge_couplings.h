@@ -9,7 +9,10 @@
  *   Layer 7:  Precision Formula (EPSILON, C1-C4)
  *   Simulation Parameters: C_SPEED, C_WAVE, DAMPING, DRAG_PER_AXIS
  *   QCD running coupling: alpha_s_running() (declared; defined in
- *                         src/ontic_running_coupling.cpp)
+ *                         src/eft/qcd_one_loop_perturbative.cpp)
+ *                         [IMPOSED] — perturbative-QCD formula, NOT
+ *                         lattice-measured; Phase-2 of the EFT Recovery
+ *                         Program will measure β(g) directly from blocking.
  *   ontic_audit(): declared; defined in src/ontic_audit.cpp
  *
  * Depends on: ontic/lemniscate.h (PI), ontic/master_quadratic.h (X_PLUS,
@@ -200,8 +203,9 @@ inline constexpr double DRAG_PER_AXIS = 1.0 / N_BASE;
 // Valid for 5 active flavors: m_b < Q < m_t
 // Returns 1.0 in the non-perturbative regime (Q ≤ Λ_QCD).
 //
-// Definition lives in src/ontic_running_coupling.cpp (ticket O2:
-// pure-constants header should contain no function bodies).
+// Definition lives in src/eft/qcd_one_loop_perturbative.cpp (renamed
+// 2026-04-19 from src/ontic_running_coupling.cpp — ticket O2 pure-header +
+// EFT Recovery Program Phase 0 honest-tagging rename). [IMPOSED].
 double alpha_s_running(double Q_GeV);
 
 // ============================================================================

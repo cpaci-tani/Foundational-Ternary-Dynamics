@@ -573,6 +573,315 @@ val get_force_field_sampled(ftd::RenderBridge& rb, int stride) {
     return result;
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// Force-field decomposition samplers (2026-04-19)
+// ══════════════════════════════════════════════════════════════════════
+// Each of the three samplers below returns a per-voxel force vector field
+// for ONE physical interaction. The viewport renders these as force-arrow
+// overlays so users can see the EM, gravity, and strong-force landscapes
+// separately.
+//
+// All three mirror the MockBridge JS implementations in
+// engine/web/js/bridge/mock-lattice-samplers.js so WASM and fallback paths
+// produce the same visuals. Positions are written at voxel CENTERS
+// (x + 0.5f) to match the particle-render convention — see the April-19
+// fix to get_particle_data() for the rationale.
+
+// Gravity-force-field sampler: gradient of flux-density magnitude, scaled
+// by G_N. F_grav ≈ G_N · ∇|J|  — pulls material toward high-density regions,
+// reproducing the lattice analogue of Newtonian gravity (see FTD paper
+// §Gravity). Periodic-wrap at the boundaries matches the engine's own
+// `lattice().index()` convention.
+val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride) {
+    static std::vector<float> pos_cache, vec_cache;
+    const int N = rb.lattice().size();
+    if (stride < 1) stride = 1;
+    const int S = (N + stride - 1) / stride;
+    const int maxPts = S * S * S;
+
+    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+        pos_cache.resize(maxPts * 3);
+        vec_cache.resize(maxPts * 3);
+    }
+
+    const auto& voxels = rb.voxels();
+    auto density = [&](int x, int y, int z) -> double {
+        const auto& v = voxels[rb.lattice().index(x, y, z)];
+        return std::sqrt(v.flux.x * v.flux.x + v.flux.y * v.flux.y + v.flux.z * v.flux.z);
+    };
+
+    int count = 0;
+    for (int z = 0; z < N; z += stride) {
+        for (int y = 0; y < N; y += stride) {
+            for (int x = 0; x < N; x += stride) {
+                // Central difference of |J| — periodic wrap via lattice().index().
+                const double gradX = (density(x + 1, y, z) - density(x - 1, y, z)) * 0.5;
+                const double gradY = (density(x, y + 1, z) - density(x, y - 1, z)) * 0.5;
+                const double gradZ = (density(x, y, z + 1) - density(x, y, z - 1)) * 0.5;
+                const double mag = std::sqrt(gradX * gradX + gradY * gradY + gradZ * gradZ);
+                if (mag < 1e-10) continue;
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
+                vec_cache[o3]     = static_cast<float>(ftd::G_N * gradX);
+                vec_cache[o3 + 1] = static_cast<float>(ftd::G_N * gradY);
+                vec_cache[o3 + 2] = static_cast<float>(ftd::G_N * gradZ);
+                count++;
+            }
+        }
+    }
+
+    val result = val::object();
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
+    result.set("count", count);
+    return result;
+}
+
+// EM force-field sampler: Coulomb force on a unit test charge at each
+// voxel, summed over all manifested particles (state != 0). Periodic
+// nearest-image to match the lattice's PBC convention.
+//
+//     F_EM(r) = -Σ_p [α/(4π)] · s_p · (r - r_p) / |r - r_p|³
+//
+// With softening (soft = 1.0 lattice units) to prevent singularities at
+// particle centers.
+val get_em_force_field(ftd::RenderBridge& rb, int stride) {
+    static std::vector<float> pos_cache, vec_cache;
+    const int N = rb.lattice().size();
+    if (stride < 1) stride = 1;
+    const int S = (N + stride - 1) / stride;
+    const int maxPts = S * S * S;
+
+    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+        pos_cache.resize(maxPts * 3);
+        vec_cache.resize(maxPts * 3);
+    }
+
+    // Collect manifested particles (voxels with state != 0). Empty result
+    // if no charges — no force field to sample.
+    struct ParticleRef { double x, y, z; int state; };
+    std::vector<ParticleRef> particles;
+    const auto& voxels = rb.voxels();
+    const int total = N * N * N;
+    for (int i = 0; i < total; i++) {
+        const auto& v = voxels[i];
+        if (v.state == 0) continue;
+        auto c = rb.lattice().coord(i);
+        particles.push_back({double(c.x), double(c.y), double(c.z), v.state});
+    }
+
+    val result = val::object();
+    if (particles.empty()) {
+        result.set("positions", val(typed_memory_view(0, pos_cache.data())));
+        result.set("vectors",   val(typed_memory_view(0, vec_cache.data())));
+        result.set("count", 0);
+        return result;
+    }
+
+    const double halfN = N / 2.0;
+    const double alpha4pi = ftd::ALPHA / (4.0 * 3.14159265358979323846);
+    const double soft = 1.0;  // softening² — matches MockBridge
+
+    int count = 0;
+    for (int z = 0; z < N; z += stride) {
+        for (int y = 0; y < N; y += stride) {
+            for (int x = 0; x < N; x += stride) {
+                double fx = 0.0, fy = 0.0, fz = 0.0;
+                for (const auto& p : particles) {
+                    double dx = p.x - x, dy = p.y - y, dz = p.z - z;
+                    // Periodic nearest-image
+                    if (dx >  halfN) dx -= N; else if (dx < -halfN) dx += N;
+                    if (dy >  halfN) dy -= N; else if (dy < -halfN) dy += N;
+                    if (dz >  halfN) dz -= N; else if (dz < -halfN) dz += N;
+                    const double r2 = dx * dx + dy * dy + dz * dz + soft;
+                    const double invR  = 1.0 / std::sqrt(r2);
+                    const double invR3 = invR / r2;
+                    // F = -(α/4π) · s · r̂ / r²  (signed by particle state)
+                    const double c = -alpha4pi * p.state * invR3;
+                    fx += c * dx;
+                    fy += c * dy;
+                    fz += c * dz;
+                }
+                const double mag = std::sqrt(fx * fx + fy * fy + fz * fz);
+                if (mag < 1e-12) continue;
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
+                vec_cache[o3]     = static_cast<float>(fx);
+                vec_cache[o3 + 1] = static_cast<float>(fy);
+                vec_cache[o3 + 2] = static_cast<float>(fz);
+                count++;
+            }
+        }
+    }
+
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
+    result.set("count", count);
+    return result;
+}
+
+// Strong-force field sampler: 3-regime color force (Coulomb → transition →
+// linear confinement) along flux tubes between all particle pairs, plus a
+// short-range nuclear attraction at each particle. Mirrors the mockBridge
+// implementation to keep WASM and JS visuals identical.
+//
+//   r < 3       → F = α_s(r) / r²     (Coulomb at short range)
+//   3 ≤ r < 8   → F = α_s(r) / (3r)   (transition)
+//   r ≥ 8       → F = α_s(r) · r / 64 (linear confinement)
+//
+// where α_s(r) = 1 / (1 + 0.1·ln(1 + r)) encodes running asymptotic freedom.
+// The tube envelope (Gaussian perpendicular to the pair axis) localizes the
+// force to the confinement string connecting each quark pair.
+val get_strong_force_field(ftd::RenderBridge& rb, int stride) {
+    static std::vector<float> pos_cache, vec_cache;
+    const int N = rb.lattice().size();
+    if (stride < 1) stride = 1;
+    const int S = (N + stride - 1) / stride;
+    const int maxPts = S * S * S;
+
+    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+        pos_cache.resize(maxPts * 3);
+        vec_cache.resize(maxPts * 3);
+    }
+
+    // Collect manifested particles
+    struct ParticleRef { double x, y, z; };
+    std::vector<ParticleRef> particles;
+    const auto& voxels = rb.voxels();
+    const int total = N * N * N;
+    for (int i = 0; i < total; i++) {
+        if (voxels[i].state == 0) continue;
+        auto c = rb.lattice().coord(i);
+        particles.push_back({double(c.x), double(c.y), double(c.z)});
+    }
+
+    val result = val::object();
+    if (particles.size() < 2) {
+        // Need ≥2 particles to form a flux tube
+        result.set("positions", val(typed_memory_view(0, pos_cache.data())));
+        result.set("vectors",   val(typed_memory_view(0, vec_cache.data())));
+        result.set("count", 0);
+        return result;
+    }
+
+    const double halfN = N / 2.0;
+    const double ALPHA_S = 1.0;
+    const double TUBE_W  = 1.5;        // flux tube Gaussian width (lattice units)
+
+    // Precompute pair geometries (unit tangents, separations)
+    struct PairRef { double ax, ay, az; double tx, ty, tz; double sep; };
+    std::vector<PairRef> pairs;
+    pairs.reserve(particles.size() * (particles.size() - 1) / 2);
+    for (size_t i = 0; i < particles.size(); i++) {
+        for (size_t j = i + 1; j < particles.size(); j++) {
+            double dx = particles[j].x - particles[i].x;
+            double dy = particles[j].y - particles[i].y;
+            double dz = particles[j].z - particles[i].z;
+            if (dx >  halfN) dx -= N; else if (dx < -halfN) dx += N;
+            if (dy >  halfN) dy -= N; else if (dy < -halfN) dy += N;
+            if (dz >  halfN) dz -= N; else if (dz < -halfN) dz += N;
+            const double sep = std::sqrt(dx * dx + dy * dy + dz * dz);
+            if (sep < 0.5) continue;
+            const double inv = 1.0 / sep;
+            pairs.push_back({particles[i].x, particles[i].y, particles[i].z,
+                             dx * inv, dy * inv, dz * inv, sep});
+        }
+    }
+    if (pairs.empty()) {
+        result.set("positions", val(typed_memory_view(0, pos_cache.data())));
+        result.set("vectors",   val(typed_memory_view(0, vec_cache.data())));
+        result.set("count", 0);
+        return result;
+    }
+
+    int count = 0;
+    for (int z = 0; z < N && count < maxPts; z += stride) {
+        for (int y = 0; y < N && count < maxPts; y += stride) {
+            for (int x = 0; x < N && count < maxPts; x += stride) {
+                double fx = 0.0, fy = 0.0, fz = 0.0;
+
+                // 1. Flux-tube contribution: force along each tube, pointing INWARD
+                //    toward the tube midpoint from both ends (confinement geometry).
+                for (const auto& pair : pairs) {
+                    double rx = x - pair.ax, ry = y - pair.ay, rz = z - pair.az;
+                    if (rx >  halfN) rx -= N; else if (rx < -halfN) rx += N;
+                    if (ry >  halfN) ry -= N; else if (ry < -halfN) ry += N;
+                    if (rz >  halfN) rz -= N; else if (rz < -halfN) rz += N;
+
+                    // Project onto tube axis
+                    const double t = rx * pair.tx + ry * pair.ty + rz * pair.tz;
+                    if (t < -1.0 || t > pair.sep + 1.0) continue;
+
+                    // Perpendicular distance² from tube axis (Gaussian envelope)
+                    const double projX = t * pair.tx, projY = t * pair.ty, projZ = t * pair.tz;
+                    const double perpX = rx - projX, perpY = ry - projY, perpZ = rz - projZ;
+                    const double perp2 = perpX * perpX + perpY * perpY + perpZ * perpZ;
+                    const double tubeEnv = std::exp(-perp2 / (2.0 * TUBE_W * TUBE_W));
+                    if (tubeEnv < 0.01) continue;
+
+                    // 3-regime magnitude
+                    double r = std::sqrt(rx * rx + ry * ry + rz * rz);
+                    if (r < 0.5) r = 0.5;
+                    const double alpha_s_r = ALPHA_S / (1.0 + 0.1 * std::log(1.0 + r));
+                    double fMag;
+                    if (r < 3.0) {
+                        fMag = alpha_s_r / (r * r);       // Coulomb
+                    } else if (r < 8.0) {
+                        fMag = alpha_s_r / (3.0 * r);     // Transition
+                    } else {
+                        fMag = alpha_s_r * r / 64.0;      // Linear confinement
+                    }
+                    fMag *= tubeEnv;
+
+                    // Point inward: near-A half (t < sep/2) pushes toward B (+tangent);
+                    // near-B half (t > sep/2) pushes toward A (−tangent).
+                    const double sign = (t < pair.sep * 0.5) ? 1.0 : -1.0;
+                    fx += fMag * pair.tx * sign;
+                    fy += fMag * pair.ty * sign;
+                    fz += fMag * pair.tz * sign;
+                }
+
+                // 2. Short-range nuclear attraction at each particle (r < 5)
+                for (const auto& p : particles) {
+                    double rx = x - p.x, ry = y - p.y, rz = z - p.z;
+                    if (rx >  halfN) rx -= N; else if (rx < -halfN) rx += N;
+                    if (ry >  halfN) ry -= N; else if (ry < -halfN) ry += N;
+                    if (rz >  halfN) rz -= N; else if (rz < -halfN) rz += N;
+                    const double r = std::sqrt(rx * rx + ry * ry + rz * rz + 0.5);
+                    if (r > 5.0) continue;
+                    const double alpha_s_r = ALPHA_S / (1.0 + 0.1 * std::log(1.0 + r));
+                    const double fNuc = alpha_s_r / (r * r);
+                    if (fNuc < 1e-4) continue;
+                    // Attractive: toward the quark (so subtract outward r̂)
+                    fx -= fNuc * rx / r;
+                    fy -= fNuc * ry / r;
+                    fz -= fNuc * rz / r;
+                }
+
+                const double mag = std::sqrt(fx * fx + fy * fy + fz * fz);
+                if (mag < 1e-4) continue;
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
+                vec_cache[o3]     = static_cast<float>(fx);
+                vec_cache[o3 + 1] = static_cast<float>(fy);
+                vec_cache[o3 + 2] = static_cast<float>(fz);
+                count++;
+            }
+        }
+    }
+
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
+    result.set("count", count);
+    return result;
+}
+
 // ── Lattice info ────────────────────────────────────────────────────
 int get_lattice_size(ftd::RenderBridge& rb) {
     return rb.lattice().size();

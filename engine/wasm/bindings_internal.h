@@ -46,6 +46,13 @@ emscripten::val get_poynting_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_divj_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_flux_vector_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_force_field_sampled(ftd::RenderBridge& rb, int stride);
+// Force-field decomposition samplers (2026-04-19) — each returns per-voxel
+// force vectors for a specific physical interaction. Used by the viewport
+// to render force-arrow overlays. All three produce voxel-center positions
+// (x + 0.5f) to match the particle-render convention.
+emscripten::val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_em_force_field(ftd::RenderBridge& rb, int stride);
+emscripten::val get_strong_force_field(ftd::RenderBridge& rb, int stride);
 
 // Lattice info
 int get_lattice_size(ftd::RenderBridge& rb);

@@ -33,6 +33,7 @@ Archived documents are in the `archive/` subdirectory.
 | `07_assessment/` | Audits, claims matrices, and trackers |
 | `08_structural/` | Geometry, topology, and structural arguments |
 | `09_mathematical/` | Number theory and pure-math connections |
+| `10_eft_program/` | **EFT Recovery Program** — moving FTD from phenomenological fragments to bona fide Wilsonian EFT (pre-registered measurements of β(g), Ward identities, Lorentz recovery, operator spectrum, dynamical SM emergence) |
 | `archive/` | Historical and superseded theory docs |
 
 ---
@@ -294,15 +295,33 @@ The Bell violation argument is distributed across four documents, read in this o
 
 ---
 
-## 10. Empirical Validation & Observations
+## 10. EFT Recovery Program
+
+Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase program to move FTD from "recovers phenomenological fragments" to "bona fide Wilsonian effective field theory." Phases 0–5 cover foundation, symmetry recovery, β(g) measurement, operator expansion, dynamical SM emergence, and manuscript.
+
+| Order | Document | Description |
+|-------|----------|-------------|
+| 10.1 | [SPEC_EFT_RECOVERY_PROGRAM.md](10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md) | **[REFERENCE]** Pre-registration spec: five-pillar EFT checklist (β, Ward, Lorentz, OPE, continuum), canonical reference regime (L=64, flux-pulse, seed 42), pass/fail criteria for every phase committed before any experiment runs |
+| 10.2 | [DERIV_SYMMETRY_RECOVERY.md](10_eft_program/DERIV_SYMMETRY_RECOVERY.md) | ✅ **Phase 1 complete (2026-04-19)** — rotational-anisotropy diagnostics, Lorentz correlator collapse (0.4-1.9% residual for r≤8 at L=64), Ward-identity closure (SOR-tolerance limited at ~1% of |J|); 3 CTests pass |
+| 10.3 | [DERIV_BETA_FUNCTION_MEASURED.md](10_eft_program/DERIV_BETA_FUNCTION_MEASURED.md) | ✅ **Phase 2 complete (2026-04-19)** — lattice-measured β(g) via 3-method extraction (slope/Yukawa/asymptotic) at L ∈ {16, 32, 64}; engine produces screened Coulomb with λ≈10.6 at L=64; β sign matches QED asymptotic freedom but magnitude 2-3 orders off; 4 CTests pass |
+| 10.4 | [SPEC_OPERATOR_BASIS.md](10_eft_program/SPEC_OPERATOR_BASIS.md) | ✅ **Phase 3 spec (2026-04-19)** — 6 gauge-invariant operators (JJ, divJ², curlJ², J·∇(∇·J), J⁴, s²) with naive-counting Δ and classification brackets pre-registered |
+| 10.5 | [DERIV_OPERATOR_SPECTRUM.md](10_eft_program/DERIV_OPERATOR_SPECTRUM.md) | ✅ **Phase 3 complete (2026-04-19)** — 5/6 operators give valid Δ fits (R² 0.92–0.997); measured Δ ~ 0.4–0.75 rather than naive 2–5; pulse-envelope artefact documented honestly |
+| 10.6 | [DERIV_DYNAMICAL_SM_EMERGENCE.md](10_eft_program/DERIV_DYNAMICAL_SM_EMERGENCE.md) | ✅ **Phase 4 complete (2026-04-19)** — EWSB cold-start Branch B at canonical amp 0.15 (no dynamical Higgs); three-gen null result; continuum-limit α_inf = 0.021 (2.94× α_ref), improvement over Phase 2C single-scale. **Post-campaign Branch A at amp=0.80 (62 charges manifest)** |
+| 10.7 | [DERIV_GAP_CLOSURE.md](10_eft_program/DERIV_GAP_CLOSURE.md) | ✅ **Post-campaign (2026-04-19)** — five follow-up tickets from manuscript §7 all executed: T1 stencil-mismatch floor identified, T2 measurement is seed-robust, T3 Yukawa screening is λ∝L finite-size artefact, T4 dynamical EWSB observed at amp=0.80, T5 operator basis confirmed via confinement-scenario divJ²=1.69 |
+
+Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).
+
+---
+
+## 11. Empirical Validation & Observations (archived)
 
 External data tests of FTD predictions. All files in this category have been archived.
 
 | Order | Document | Description |
 |-------|----------|-------------|
-| 10.1 | [ARCH_EMPIRICAL_CERN_CAVITATION.md](archive/ARCH_EMPIRICAL_CERN_CAVITATION.md) | **CMS Open Data test (v1.5):** Topological cavitation in Run2016G MET; 65.6sigma excess correlation but energy threshold rules out FTD cavitation at LHC |
-| 10.2 | [ARCH_DERIV_CAVITATION_THRESHOLD.md](archive/ARCH_DERIV_CAVITATION_THRESHOLD.md) | Critical energy flux: ALL natural scales incompatible with LHC cavitation by 10^13 to 10^44 |
-| 10.3 | [ARCH_DERIV_CAVITATION_HIERARCHY.md](archive/ARCH_DERIV_CAVITATION_HIERARCHY.md) | Multi-scale cavitation hierarchy; fm-to-cm gap unbridged |
+| 11.1 | [ARCH_EMPIRICAL_CERN_CAVITATION.md](archive/ARCH_EMPIRICAL_CERN_CAVITATION.md) | **CMS Open Data test (v1.5):** Topological cavitation in Run2016G MET; 65.6sigma excess correlation but energy threshold rules out FTD cavitation at LHC |
+| 11.2 | [ARCH_DERIV_CAVITATION_THRESHOLD.md](archive/ARCH_DERIV_CAVITATION_THRESHOLD.md) | Critical energy flux: ALL natural scales incompatible with LHC cavitation by 10^13 to 10^44 |
+| 11.3 | [ARCH_DERIV_CAVITATION_HIERARCHY.md](archive/ARCH_DERIV_CAVITATION_HIERARCHY.md) | Multi-scale cavitation hierarchy; fm-to-cm gap unbridged |
 
 ---
 
