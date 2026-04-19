@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <unordered_map>
 #include "ftd/render_bridge.h"
-#include "ftd/dag_engine.h"
 #include "ftd/lagrangian.h"
 #include "ftd/particle_engine.h"
 #include "ftd/atom_engine.h"
