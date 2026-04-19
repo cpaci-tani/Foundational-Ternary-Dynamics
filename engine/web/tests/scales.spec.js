@@ -260,7 +260,7 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
                 assistantButton: !!document.getElementById('btn-ftd-assistant'),
                 assistantSidebar: !!document.getElementById('assistant-sidebar'),
                 knowledgeBaseButton: !!document.getElementById('btn-knowledge-base'),
-                knowledgeBaseLibrary: !!document.getElementById('knowledge-base-sidebar'),
+                knowledgeBaseLibrary: !!document.getElementById('kb-sidebar'),
                 scale0ScenarioSelect: !!document.getElementById('scenario-select'),
                 scale0LatticeSize: !!document.getElementById('lattice-size'),
                 scale1ScenarioSelect: !!document.getElementById('pe-scenario-select'),
@@ -754,8 +754,8 @@ test('Knowledge base opens as a single responsive library with shared content', 
 
     const libraryState = await page.evaluate(() => ({
         libraryOpen: document.getElementById('app')?.classList.contains('knowledge-base-open') || false,
-        libraryVisible: document.getElementById('knowledge-base-sidebar')?.getAttribute('aria-hidden') === 'false',
-        listCount: document.querySelectorAll('#kb-sidebar-list [data-kb-entry]').length,
+        libraryVisible: document.getElementById('kb-sidebar')?.getAttribute('aria-hidden') === 'false',
+        listCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
         title: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
         hasFormulaTokens: !!document.querySelector('#kb-sidebar-reader .kb-token-formula'),
     }));
@@ -769,7 +769,7 @@ test('Knowledge base opens as a single responsive library with shared content', 
     await page.fill('#kb-sidebar-search', 'nabla');
 
     const searchState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-kb-entry]').length,
+        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
         readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
         readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
         resultsLabel: document.getElementById('kb-results-label')?.textContent?.trim() || '',
@@ -782,7 +782,7 @@ test('Knowledge base opens as a single responsive library with shared content', 
     await page.fill('#kb-sidebar-search', 'natural units');
 
     const unitsState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-kb-entry]').length,
+        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
         readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
         readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
     }));
@@ -794,7 +794,7 @@ test('Knowledge base opens as a single responsive library with shared content', 
     await page.fill('#kb-sidebar-search', 'born rule');
 
     const scenarioState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-kb-entry]').length,
+        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
         readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
         readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
     }));
@@ -806,7 +806,7 @@ test('Knowledge base opens as a single responsive library with shared content', 
     await page.fill('#kb-sidebar-search', 'TRAPPIST-1');
 
     const planetaryScenarioState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-kb-entry]').length,
+        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
         readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
         readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
     }));
@@ -818,7 +818,7 @@ test('Knowledge base opens as a single responsive library with shared content', 
     await page.fill('#kb-sidebar-search', 'K_C');
 
     const consciousnessScenarioState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-kb-entry]').length,
+        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
         readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
         readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
     }));
