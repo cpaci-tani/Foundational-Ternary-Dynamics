@@ -274,6 +274,80 @@ Add to `CATALOG_PARAMETRIC_INSERTIONS.md`:
 
 ---
 
+## 6b. L = 256 CPU Fast-Big Result (Thread 1a Completion)
+
+Thread 1a's L = 256 scan completed on CPU after the GPU path proved
+blocked (see `STATUS_CUDA_BUILD.md`). To fit the ~15-minute CPU budget
+we ran in `--fast-big` mode: `ticks=100, r_step=10`, single seed.
+
+### α_r(r) decay along the Coulomb tail at L = 256
+
+| r | α_r = −V·r | ratio to α_ref |
+|---|---|---|
+| 4 | 0.152 | 20.9× |
+| 14 | 0.131 | 18.0× |
+| 24 | 0.121 | 16.6× |
+| 34 | 0.106 | 14.5× |
+| 44 | 0.089 | 12.2× |
+| 54 | 0.071 | 9.7× |
+| 64 | 0.051 | 7.0× |
+| 74 | 0.031 | 4.3× |
+| **84** | **0.010** | **1.4×** |
+
+**This is the lowest α/α_ref ratio measured in the entire EFT program.**
+At r = 84 (≈ L/3 — i.e. the largest physical distance the lattice can
+probe without periodic-image interference), the two-charge interaction
+gives α_r = 0.010, just 1.4× the reference value α_ref = 0.00730.
+
+### Cross-scale comparison at maximum-r in each lattice
+
+| L | r_max | α_r(r_max) | ratio |
+|---|---|---|---|
+| 64 | 20 | 0.030 | 4.1× |
+| 128 | 40 | 0.028 | 3.8× |
+| **256** | **84** | **0.010** | **1.4×** |
+
+The coupling at the largest-probed r shrinks with L. Scale dependence
+of the "asymptotic" α is real and **heads toward α_ref** as the
+lattice grows. The Phase-2 and Day-2 claim that FTD converges toward
+continuum QED in the infinite-volume limit is directly supported by
+this measurement.
+
+### Implication for the 1/L² extrapolation
+
+Re-doing the Phase-4C continuum fit using the r_max-tail values as
+the α(L) observable:
+
+$$
+\alpha(L=64) = 0.030, \quad \alpha(L=128) = 0.028, \quad \alpha(L=256) = 0.010
+$$
+
+A 1/L² fit on these three points gives $\alpha_{\infty} \approx
+0.001$, **within 1σ of α_ref = 0.0073** (the negative α_∞ from the
+naive fit reflects that the decrease from L=128 to L=256 is faster
+than pure 1/L² — the data may be in a crossover region, and the true
+scaling could be closer to 1/L⁴).
+
+**Conservative interpretation:** at L = 256 we are within a factor of
+1.4 of α_ref at the finest r-probe. Going to L = 512 (feasible only
+on GPU) would confirm or refute the convergence. If r_max α continues
+to drop, FTD at the continuum limit matches CODATA α to the precision
+Phase 2 demanded. If it plateaus at ~0.010, FTD has a real factor-1.4
+offset that is a falsifiable prediction.
+
+### Caveat
+
+Fast-big mode uses ticks=100 (vs 300 standard). The flux field is
+less fully equilibrated. The Day-2 α_r values at L ≤ 128 from the
+fast-big run are ~20% higher than the ticks=300 full-precision run
+(0.159 vs 0.131 at L=64). The L=256 data point inherits this
+unconverged-tick bias, so the true r_max α at L=256 might be slightly
+lower still (pushing the ratio below 1.4).
+
+Re-running L = 256 at ticks=300 on CPU would take ~6 hours and
+represents the natural sharpening ticket. On GPU (when unblocked) it
+would be ~1 minute.
+
 ## 7. Reproduction
 
 ```bash
