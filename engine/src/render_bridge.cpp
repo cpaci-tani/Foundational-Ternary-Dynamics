@@ -530,7 +530,8 @@ void RenderBridge::phase_write() {
 
 // Thin wrappers delegating to poisson_solvers.cpp.
 void RenderBridge::gauss_project() {
-  gauss_project_cpu(voxels_, phi_, sor_source_, lattice_, toggles.dual_substrate);
+  gauss_project_cpu(voxels_, phi_, sor_source_, lattice_, toggles.dual_substrate,
+                    toggles.coulomb_charge_coupling);
 }
 
 void RenderBridge::solve_coulomb_poisson() {

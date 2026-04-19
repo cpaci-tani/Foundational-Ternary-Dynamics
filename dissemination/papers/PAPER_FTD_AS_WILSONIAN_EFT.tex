@@ -107,22 +107,22 @@ genuine engine physics rather than a methodology artefact.
 
 A Phase-F follow-up (\S\ref{sec:phasef}) unblocks the GPU build via
 WSL2 and runs a 4-point r-max sweep at L = 64, 128, 256, 384 under
-consistent conditions (ticks = 150, same r/L $\approx 0.31$ slice).
-The result retracts an earlier 3-point estimate ($\alpha_\infty = 1.23
-\alpha_{\text{ref}}$ was based on under-equilibrated CPU data) and
-a line-by-line audit of the V(r) extraction pipeline
-(\texttt{AUDIT\_ALPHA\_EXTRACTION.md}) establishes the honest range.
-The 4-point extrapolation is a \textbf{plateau, not convergence to
-CODATA}, at
-$\alpha_\infty \approx 1.8\text{--}3.6 \times \alpha_{\text{ref}}$,
-where the factor-of-two is an explicit energy-accumulator convention
-(engine uses $\sum|J|^2$ without the classical $\tfrac{1}{2}$) and the
-residual $\sim 1.8\times$ after convention correction is an open
-quantitative question (real physics vs.\ kinetic-normalization choice
-vs.\ lattice-Green's-function artefact). The engine's Coulomb-tail
-coupling is demonstrably \emph{not} $\alpha_{\text{ref}}$; whether the
-true classical-convention plateau is a genuine FTD prediction or a
-resolvable systematic is explicitly flagged [OPEN].
+consistent conditions (ticks = 150, same r/L $\approx 0.31$ slice), and
+a line-by-line audit of the extraction pipeline
+(\texttt{AUDIT\_ALPHA\_EXTRACTION.md}) followed by a Phase-G analytical
+resolution (\texttt{DERIV\_EMERGENT\_COULOMB\_GEOMETRIC.md}) establishes
+the honest interpretation. The measured $\alpha_r(r, L)$ is **not a
+coupling constant at all}: the engine's emergent-mode Gauss law is
+$\nabla \cdot J = s$ with no coupling constant, so
+$\alpha_r(r, L) = 2 r G_L(r)$ is a parameter-free lattice-Green's-function
+prediction whose zero-free-parameter match to measurement is $R^2 =
+1.0000$ (median 0.07\% relative error) across 16 points at L=384 in the
+Coulomb-tail regime. The ``plateau at $3.6\times \alpha_{\text{ref}}$'' is
+the value of the periodic lattice Poisson kernel at $r/L \approx 0.31$ on
+a cubic torus --- pure geometry, no fine-structure content. This code
+path carries no $\alpha$. A parametric coupling added to Gauss's law
+(Phase H, spec'd but not yet measured) would be the appropriate test of
+whether FTD's dynamics can emergently reproduce $\alpha_{\text{ref}}$.
 \end{abstract}
 
 % ============================================================================
@@ -826,30 +826,44 @@ convention the plateau is
 $\alpha_\infty^{\text{classical}} \approx 0.013 \approx 1.8
 \times \alpha_{\text{ref}}$.
 
-\paragraph{What remains open after the audit.}
-The engine does not reproduce $\alpha_{\text{ref}}$ at the Coulomb
-tail under any convention. After absorbing the $\times 2$ convention
-factor, the residual $\sim 1.8\times$ admits at least three
-interpretations, and the Phase-F data do not discriminate between
-them:
+\paragraph{Phase G resolution --- the residual is the Green's function.}
+The three interpretations left open by the audit (real physics,
+kinetic normalization, lattice Green's function) collapse to the
+third on explicit calculation. The engine's Gauss law
+$\nabla \cdot J = s$ has no coupling constant, so
+\begin{equation}
+V_{\text{engine}}(r, L) = -2 G_L(r),\qquad
+\alpha_r(r, L) = 2 r G_L(r),
+\end{equation}
+where $G_L(r)$ is the periodic lattice Poisson Green's function on
+the $L^3$ torus with the 7-point Laplacian. This is a
+zero-free-parameter prediction. Computing $G_L$ by FFT and comparing
+against the measured $\alpha_r$ at $L \in \{32, 64, 128, 256, 384\}$
+gives $R^2 = 1.0000$, median $0.07\%$ relative error, maximum
+$0.43\%$ error across 16 points at $L = 384$ in the Coulomb-tail
+regime. The ``plateau at $3.6\times \alpha_{\text{ref}}$'' is
+simply the value of the parameter-free lattice kernel
+$2 r G_L(r)|_{r/L \approx 0.31}$, and has no QED content to deviate
+from. Full proof and data fit in
+\texttt{DERIV\_EMERGENT\_COULOMB\_GEOMETRIC.md}.
+
+\paragraph{Where $\alpha$ actually lives (and does not) in FTD.}
+Two places carry fine-structure content:
 \begin{enumerate}
-\item \textbf{Real physics} --- bare lattice dynamics produce
-$\alpha \ne \alpha_{\text{ref}}$; the definitional identity
-$\alpha_{\text{EFT}} = G_C^2 = \alpha$ in \verb|constants.h| is
-a target, not a guaranteed outcome of the dynamics.
-\item \textbf{Kinetic normalization} --- the engine's Lagrangian
-uses $|\partial J|^2$ rather than the classical $\tfrac{1}{2}
-|\partial J|^2$; field redefinition $J \to J/\sqrt{2}$ absorbs
-the factor but changes the coupling's interpretation.
-\item \textbf{Lattice-Green's-function artefact} --- the 7-point
-Laplacian has a different discrete Green's function than the
-continuum $1/r$; staggered vs.\ cell-centered placement of $J$
-shifts the effective Coulomb coefficient.
+\item \textbf{Explicit coupling toggle} (\verb|coulomb|, off-path for
+Phase F): force $F = -\alpha \nabla\phi$ uses hardcoded
+$\alpha = 1/137$ [PARAMETRIC].
+\item \textbf{Master quadratic} $x^2 - 16 G^{*2} x + 16 G^{*3} = 0$
+has root $x_+$ with $1/x_+ \approx \alpha_{\text{ref}}$ to sub-ppm;
+a pure number-theoretic identity independent of simulation
+[THEOREM].
 \end{enumerate}
-Matched-stencil Poisson (Phase 2 Ticket A) closes some of the Ward
-floor but not by a factor of 2. Any of (1)--(3) would qualitatively
-close the residual; isolating them is an explicit [OPEN] ticket
-and the appropriate next-phase target.
+The Phase-F V(r) measurement --- the \verb|emergent_forces| code
+path --- carries \emph{neither}. Reproducing $\alpha$ as an emergent
+outcome of lattice dynamics requires Phase H: adding a single coupling
+$g_c = \sqrt{4\pi\alpha_{\text{ref}}}$ to the Gauss source and
+verifying that the measured $\alpha_r$ plateau now sits at
+$\alpha_{\text{ref}}$. That measurement is spec'd but not yet run.
 
 \paragraph{Modular pipeline.}
 Phase F also shipped the \verb|engine/sim/| subsystem: a
