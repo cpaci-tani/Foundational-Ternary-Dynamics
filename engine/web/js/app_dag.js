@@ -43,7 +43,6 @@ import { PETelemetryPanel } from './pe-telemetry.js';
 import { addInfoTooltips } from './consciousness-pedagogy.js';
 // SCALE0_TOGGLES/SCALE2_TOGGLES/SCALE0_SCENARIO_OVERRIDES/LIGHT_SCENARIO_OVERRIDES
 // are now imported by the owning scale controllers (scale0 via ui/controls/wire.js).
-import { QUANTUM_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
 import { initVerifyPanel } from './verify-panel/component.js';
 import { AppShell } from './ui/shell/app-shell.js';
@@ -194,7 +193,6 @@ function _makeCtx() {
         applyTicksPerFrameFromSlider,
         applyBoundaryShape,
         applyReflectiveBoundary,
-        switchToQuantumLabTab: _switchToQuantumLabTab,
         clearCharts,
     };
 }
@@ -1177,9 +1175,6 @@ function _switchToVerifyTab() {
     }
 }
 
-/** Backward compatibility: Scale 0 bindings.js calls this on quantum scenario
- *  selection. Route to the new panel so the behaviour is preserved. */
-function _switchToQuantumLabTab() { _switchToVerifyTab(); }
 /** Initialise the Verify evidence-scoreboard panel (see js/verify-panel/). */
 function wireVerificationLab() {
     const panelArea = document.getElementById('panel-area');
