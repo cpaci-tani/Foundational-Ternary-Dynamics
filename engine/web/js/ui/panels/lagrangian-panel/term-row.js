@@ -8,6 +8,8 @@
  *   row.setChecked(key, bool); // called from chart legend sync
  */
 
+import { renderMathInHtml } from '../../math-format/render.js';
+
 export class TermRow {
     constructor(terms, { onToggle }) {
         this.terms = terms;
@@ -25,7 +27,7 @@ export class TermRow {
             label.innerHTML = `
                 <input type="checkbox" ${term.includeByDefault ? 'checked' : ''}>
                 <span class="lag-term-swatch" aria-hidden="true"></span>
-                <span class="lag-term-label">${term.label}</span>
+                <span class="lag-term-label">${renderMathInHtml(term.label)}</span>
             `;
             const input = label.querySelector('input');
             input.addEventListener('change', () => this.onToggle(term.key, input.checked));

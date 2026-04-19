@@ -1,4 +1,14 @@
 import { applyUiTooltipDefinitions } from './definitions.js';
+import { renderMathInHtml } from '../../math-format/render.js';
+
+function escapeHtml(s) {
+    return String(s ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
 
 function promoteNativeTitles(root) {
     if (!(root instanceof Document) && !(root instanceof HTMLElement) && !(root instanceof DocumentFragment)) return;
@@ -127,7 +137,7 @@ export class TooltipComponent {
         if (!text || !this.tooltipEl) return;
         this.activeTarget = target;
         this.activeMode = mode;
-        this.tooltipEl.textContent = text;
+        this.tooltipEl.innerHTML = renderMathInHtml(escapeHtml(text));
         this.tooltipEl.hidden = false;
         this.tooltipEl.dataset.visible = 'true';
         target.setAttribute('aria-describedby', 'ui-tooltip');
