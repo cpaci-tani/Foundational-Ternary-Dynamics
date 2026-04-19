@@ -1,5 +1,11 @@
 if(EMSCRIPTEN)
-    add_executable(ftd_wasm ftd_wasm.cpp)
+    add_executable(ftd_wasm
+        ftd_wasm.cpp
+        # W1-W3: Embind binding blocks split from ftd_wasm.cpp (2026-04-19)
+        bindings_render_bridge.cpp    # RB toggles, injection wrappers, setup_scenario
+        bindings_particle.cpp         # ParticleEngine Embind class + toggle map + pe_* helpers
+        bindings_atom.cpp             # AtomEngine Embind class + toggle map + ae_* helpers
+    )
     target_link_libraries(ftd_wasm PRIVATE ftd_core)
     set_target_properties(ftd_wasm PROPERTIES
         OUTPUT_NAME "ftd_core"

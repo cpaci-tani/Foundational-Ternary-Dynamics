@@ -34,23 +34,20 @@ from mpmath import (mp, mpf, mpc, pi, sqrt, log, gamma, fabs, floor,
 # ==============================================================================
 # SECTION 0: UTILITIES AND CONSTANTS
 # ==============================================================================
+# PY-3 refactor (April 2026): banner/fmt helpers moved to scripts/common/report.
+# `fmt_short` in the common module defaults to 15 digits; this script's
+# original default was 20, so we re-wrap to preserve behavior.
 
-SEP = "=" * 80
-SUB = "-" * 60
+_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
 
-def header(title):
-    print(f"\n{SEP}")
-    print(f"  {title}")
-    print(SEP)
-
-def subheader(title):
-    print(f"\n--- {title} ---")
-
-def fmt(x, digits=40):
-    return mpmath.nstr(x, digits)
+from scripts.common.report import SEP, SUB, header, subheader, fmt
+from scripts.common.report import fmt_short as _fmt_short_common
 
 def fmt_short(x, digits=20):
-    return mpmath.nstr(x, digits)
+    # Preserve original default of 20 digits for this script.
+    return _fmt_short_common(x, digits=digits)
 
 def check(name, val1, val2, tol_exp=80):
     """Verify two values match to specified precision."""

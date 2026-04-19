@@ -75,19 +75,11 @@ CODATA = {
 # =============================================================================
 
 
-def percent_error(derived: float, experimental: float) -> float:
-    """Percent error."""
-    return abs(derived - experimental) / abs(experimental) * 100
-
-
-def ppm_error(derived: float, experimental: float) -> float:
-    """Parts per million error."""
-    return abs(derived - experimental) / abs(experimental) * 1e6
-
-
-def ppt_error(derived: float, experimental: float) -> float:
-    """Parts per trillion error."""
-    return abs(derived - experimental) / abs(experimental) * 1e12
+# PY-4 refactor (April 2026): percent_error / ppm_error / ppt_error
+# consolidated into scripts/constants. All CODATA experimentals are positive,
+# so the original `abs(experimental)` vs constants' bare `experimental`
+# is numerically identical for every call site in this file.
+from constants import percent_error, ppm_error, ppt_error  # noqa: E402
 
 
 def sigma_deviation(derived: float, exp: ExpValue) -> float:

@@ -2,7 +2,7 @@
  * Scale 11 Viewport Overlay — Consciousness observer
  */
 
-export function createScale11OverlayTemplate() {
+export function getScale11OverlayTemplate() {
   const container = document.createElement('div');
   container.id = 'consciousness-viewport-overlay';
   container.className = 'scale11-only viewport-overlay-panel';

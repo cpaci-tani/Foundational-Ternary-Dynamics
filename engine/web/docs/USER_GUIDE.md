@@ -480,6 +480,12 @@ For a new prefix group, also register in:
 - `engine/web/js/bridge/scenarios/index.js` (JS dispatcher)
 - `engine/include/ftd/scenarios.h` + `engine/src/scenarios.cpp::dispatch_scenario` (C++ dispatcher)
 
+> **Note:** The `scenario-parity.spec.js` test will fail CI if you add a scenario
+> to one side and forget the other. Add it to BOTH the JS group file AND
+> `engine/src/scenarios.cpp`'s corresponding `setup_<group>_scenario` function,
+> OR add the name to the `KNOWN_LEGACY_ONLY` allowlist in
+> `engine/web/tests/scenario-parity.spec.js` if it's intentionally backward-compat-only.
+
 ### Adding a new toggle
 
 1. Add to `engine/include/ftd/term_toggles.h` (C++ struct field).
@@ -510,6 +516,11 @@ cd engine/web/tests && npx playwright test --reporter=list
 cd engine/web/tests && npx playwright test wasm-scenario-coverage.spec.js
 cd engine/web/tests && npx playwright test animation-clock-freeze.spec.js
 cd engine/web/tests && npx playwright test perf-baseline.spec.js
+
+# JS↔C++ scenario parity guard (new 2026-04-19):
+# Fails CI if a scenario exists in the JS group files but not in
+# engine/src/scenarios.cpp (or vice versa). Fast — runs in <1s.
+cd engine/web/tests && npx playwright test scenario-parity.spec.js
 
 # C++ engine tests (slow):
 cd engine/build && ctest -C Release --timeout 60 -j4

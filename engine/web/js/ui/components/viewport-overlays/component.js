@@ -17,13 +17,13 @@
  *      and re-append it — this destroys and recreates the compositor layer.
  */
 
-import { createScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js';
-import { createScale1OverlayTemplate } from '../../../scales/scale1/ui/overlays/template.js';
-import { createScale2OverlayTemplate, createScale2LegendTemplate } from '../../../scales/scale2/ui/overlays/template.js';
-import { createScale3OverlayTemplate, createScale3LegendTemplate } from '../../../scales/scale3/ui/overlays/template.js';
-import { createScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js';
-import { createScale5OverlayTemplate } from '../../../scales/scale5/ui/overlays/template.js';
-import { createScale11OverlayTemplate } from '../../../scales/scale11/ui/overlays/template.js';
+import { getScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js';
+import { getScale1OverlayTemplate } from '../../../scales/scale1/ui/overlays/template.js';
+import { getScale2OverlayTemplate, getScale2LegendTemplate } from '../../../scales/scale2/ui/overlays/template.js';
+import { getScale3OverlayTemplate, getScale3LegendTemplate } from '../../../scales/scale3/ui/overlays/template.js';
+import { getScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js';
+import { getScale5OverlayTemplate } from '../../../scales/scale5/ui/overlays/template.js';
+import { getScale11OverlayTemplate } from '../../../scales/scale11/ui/overlays/template.js';
 
 export class ViewportOverlaysComponent {
   constructor(viewportEl) {
@@ -48,28 +48,28 @@ export class ViewportOverlaysComponent {
       return this.viewport.appendChild(el);
     };
 
-    this.overlays.set('scale0', append(createScale0OverlayTemplate()));
-    this.overlays.set('scale1', append(createScale1OverlayTemplate()));
+    this.overlays.set('scale0', append(getScale0OverlayTemplate()));
+    this.overlays.set('scale1', append(getScale1OverlayTemplate()));
 
-    const scale2 = createScale2OverlayTemplate();
+    const scale2 = getScale2OverlayTemplate();
     append(scale2);
     this.overlays.set('scale2', scale2);
-    const legend2 = createScale2LegendTemplate();
+    const legend2 = getScale2LegendTemplate();
     this._applyTop(legend2);
     this._legends.push(legend2);
     this.viewport.appendChild(legend2);
 
-    const scale3 = createScale3OverlayTemplate();
+    const scale3 = getScale3OverlayTemplate();
     append(scale3);
     this.overlays.set('scale3', scale3);
-    const legend3 = createScale3LegendTemplate();
+    const legend3 = getScale3LegendTemplate();
     this._applyTop(legend3);
     this._legends.push(legend3);
     this.viewport.appendChild(legend3);
 
-    this.overlays.set('scale4', append(createScale4OverlayTemplate()));
-    this.overlays.set('scale5', append(createScale5OverlayTemplate()));
-    this.overlays.set('scale11', append(createScale11OverlayTemplate()));
+    this.overlays.set('scale4', append(getScale4OverlayTemplate()));
+    this.overlays.set('scale5', append(getScale5OverlayTemplate()));
+    this.overlays.set('scale11', append(getScale11OverlayTemplate()));
 
     this._mountUniversalOverlays();
     this._wireCollapsibles();
