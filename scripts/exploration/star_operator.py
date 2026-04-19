@@ -33,40 +33,19 @@ from mpmath import mp, mpf, mpc, pi, sqrt, log, gamma, fabs, floor, power, exp
 # ==============================================================================
 # UTILITIES
 # ==============================================================================
+# PY-3 / PY-4 refactor (April 2026): banner + fmt + continued_fraction moved to
+# scripts/common/report; ppm_error / pct_error come from scripts/constants.
+# Behavior preserved exactly (pct_error in constants takes positive
+# experimentals; all call sites here satisfy that).
 
-SEP = "=" * 80
-SUB = "-" * 60
+_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
 
-def header(title):
-    print(f"\n{SEP}")
-    print(f"  {title}")
-    print(SEP)
-
-def subheader(title):
-    print(f"\n--- {title} ---")
-
-def fmt(x, digits=40):
-    return mpmath.nstr(x, digits)
-
-def fmt_short(x, digits=15):
-    return mpmath.nstr(x, digits)
-
-def ppm_error(derived, experimental):
-    return float(abs(derived - experimental) / abs(experimental) * mpf('1e6'))
-
-def pct_error(derived, experimental):
-    return float(abs(derived - experimental) / abs(experimental) * 100)
-
-def continued_fraction(x, n_terms=20):
-    cfs = []
-    for _ in range(n_terms):
-        a = floor(x)
-        cfs.append(int(a))
-        frac = x - a
-        if abs(frac) < mpf(10)**(-80):
-            break
-        x = 1 / frac
-    return cfs
+from scripts.common.report import (
+    SEP, SUB, header, subheader, fmt, fmt_short, continued_fraction,
+)
+from scripts.constants import ppm_error, pct_error
 
 
 # ==============================================================================

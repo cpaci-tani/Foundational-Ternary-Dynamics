@@ -2,7 +2,7 @@
  * Scale 4 Viewport Overlay — Planetary sandbox
  */
 
-export function createScale4OverlayTemplate() {
+export function getScale4OverlayTemplate() {
   const container = document.createElement('div');
   container.id = 'cs-viewport-overlay';
   container.className = 'scale4-only viewport-overlay-panel';

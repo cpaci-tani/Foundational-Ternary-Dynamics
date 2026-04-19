@@ -2,15 +2,12 @@
  * Scale 2 (Atoms) Controller
  * ────────────────────────────────────────────────────────────────────
  *
- * Owns the Atom Engine (AE) frame loop, scenario loading, force
- * decomposition rendering, element legend building, orbital cloud
- * merging, and all AE-specific visual state.  Extracted from app_dag.js
- * to keep each scale's logic isolated and independently testable.
+ * Owns the Atom Engine (AE) frame loop, force decomposition rendering,
+ * element legend building, orbital cloud merging, and AE visual state.
  *
- * WHY THIS EXISTS:
- *   app_dag.js grew to 4500+ lines with six scale-specific animation loops
- *   and scenario loaders tangled together.  This module encapsulates
- *   everything Scale 2 needs so the main app becomes a thin dispatcher.
+ * Delegates to sibling modules:
+ *   ./scenarios.js    — ae-* scenario setup (big switch, S2-1)
+ *   ./ui-bindings.js  — DOM-coupled toggle/slider sync helpers (S2-2)
  *
  * OWNED STATE (module-private):
  *   - Visual flags: nucleus shells, bond style, orbital shells/lobes,
@@ -21,64 +18,36 @@
  *   - Field grid cache for AE force overlay
  *   - Tick accumulator for sub-1 speed
  *
- * CONTEXT OBJECT (ctx):
- *   The caller passes a ctx bag containing shared application state.
- *   This avoids coupling to app_dag.js module-level variables.
- *
- *   Required ctx properties:
- *     bridge            - WASMBridge (with AE methods)
- *     viewport          - Viewport (Three.js) renderer
- *     running           - boolean, true when simulation is playing
- *     ticksPerFrame     - number, simulation ticks per render frame
- *     inspector         - Inspector panel instance
- *     fluxEnergyChart   - FluxEnergyChart instance
- *     particleChart     - ParticleChart instance
- *     activeTab         - string, currently selected right-panel tab
- *     frameCount        - number, global frame counter
- *     dom               - object with cached DOM references
- *     now               - DOMHighResTimeStamp (for animateAE)
- *     updatePlayButton  - function, syncs play/pause button state
- *     updateOnticPanel  - function, refreshes ontic panel
- *     updateHierarchyPanel - function, refreshes hierarchy panel
- *     resetAllVisualState  - function, master cross-scale visual reset
- *     setRunning        - function(bool), sets app-level running flag
- *     engineMode        - string, current engine mode ('atoms'/'molecules')
- *
  * EXPORTS:
  *   animateAE(ctx)                - per-frame update
  *   loadAEScenario(ctx, name)     - atom scenario setup
  *   resetScale2(ctx)              - clear AE-specific state for mode switch
  *   syncAEParams(ctx)             - sync AE physics params from UI sliders
- *   getAEVisualState()            - read visual toggle flags (for app_dag.js reset)
+ *   getAEVisualState()            - read visual toggle flags
  *   setAEVisualToggle(key, value) - set a visual toggle flag from outside
- *
- * ---------------------------------------------------------------
- * DELEGATION STUBS: after wiring into app_dag.js, the app_dag.js functions
- * become thin wrappers:
- *
- *   function animateAE(now) {
- *       return scale2.animateAE({ ...ctx, now });
- *   }
- *   function loadAEScenario(name) {
- *       return scale2.loadAEScenario(ctx, name);
- *   }
- * ---------------------------------------------------------------
+ *   bindScale2ControlsUI()        - mount controls card (re-export)
  */
 
-import { allElements, tablePosition, elementSymbol, getElement } from '../../elements.js';
+import { getElement } from '../../elements.js';
 import {
     expandAEToOrbitalCloud, generateBondingCloud,
-    electronConfig, slaterZeff, A0_DISPLAY, nuclearShellRadius
+    electronConfig, slaterZeff, A0_DISPLAY
 } from '../../orbitals.js';
 import {
-    atomicEnergy, periodicTableTotalEnergy,
+    atomicEnergy,
     formatEnergy as formatEnergyAE
 } from '../../atomic-energy.js';
 import { formatEnergy, formatTemperature } from '../../units.js';
 import { generateGridXZ, sampleAEField } from '../../fields.js';
-import { SCALE2_TOGGLES } from '../../config/toggles.js';
 import { createTickAccumulator, formatSI } from '../scale-utils.js';
-import { Scale2ControlsComponent } from './ui/controls/component.js';
+import {
+    syncAEParamsFromUI, resetAETogglesToDefaults, aeSetPhase3,
+    bindScale2ControlsUI
+} from './ui-bindings.js';
+import { setupAEScenario } from './scenarios.js';
+
+// Re-export for app_dag.js startup wiring
+export { bindScale2ControlsUI };
 
 
 // =====================================================================
@@ -128,22 +97,14 @@ const _tickAcc = createTickAccumulator();
 let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
 let _diagPushedWhilePaused = false;
 
-// -- AE toggle defaults (from config/toggles.js) ---------------------
-const AE_DEFAULT_TOGGLES = SCALE2_TOGGLES;
-
 
 // =====================================================================
 // Internal Helpers
 // =====================================================================
 
-// formatNumber / local formatSI helpers removed -- use the shared
-// formatSI from scale-utils.js (covers K/M/G/T with two decimals).
-
 /**
  * Update atomic energy display cards (nuclear binding, B/A, electron
  * binding, FTD mass) for single-element or multi-element views.
- *
- * Originally app_dag.js lines ~1492-1521.
  */
 function updateAtomicEnergyDisplay(dom, atomData) {
     if (!dom.aeDiagMass || !atomData || atomData.count === 0) return;
@@ -177,69 +138,11 @@ function updateAtomicEnergyDisplay(dom, atomData) {
     }
 }
 
-/**
- * Sync all AE toggle checkboxes to the bridge.
- * Called after initAE() and after _resetAETogglesToDefaults().
- */
-function _syncAEParamsFromUIInternal(bridge) {
-    const dtEl = document.getElementById('ae-dt-slider');
-    if (dtEl) bridge.aeSetDt(parseFloat(dtEl.value));
-    const softEl = document.getElementById('ae-soft-slider');
-    if (softEl) bridge.aeSetSoftening(parseFloat(softEl.value));
-    // Sync all AE toggles from checkboxes
-    for (const [elId, , setter] of AE_DEFAULT_TOGGLES) {
-        const el = document.getElementById(elId);
-        if (el && bridge[setter]) bridge[setter](el.checked);
-    }
-}
-
-/**
- * Reset all AE toggle checkboxes to their default values and push
- * defaults into the bridge.
- */
-function _resetAETogglesToDefaults(bridge) {
-    for (const [elId, defaultVal, setter] of AE_DEFAULT_TOGGLES) {
-        const el = document.getElementById(elId);
-        if (el) el.checked = defaultVal;
-        if (bridge[setter]) bridge[setter](defaultVal);
-    }
-}
-
-/**
- * Enable Phase 3 forces for specific scenarios and sync UI checkboxes.
- * flags: { hbonds, angle, dipole, thermostat, elec, temp }
- */
-function _aeSetPhase3(bridge, flags) {
-    const map = {
-        hbonds:     ['ae-hbonds',             'aeSetHBonds'],
-        angle:      ['ae-angle',              'aeSetAngleStrain'],
-        dipole:     ['ae-dipole',             'aeSetDipoleDipole'],
-        thermostat: ['ae-thermostat',         'aeSetThermostat'],
-        elec:       ['ae-electronegativity',  'aeSetElectronegativity'],
-    };
-    for (const [key, [elId, setter]] of Object.entries(map)) {
-        if (flags[key] !== undefined && bridge[setter]) {
-            bridge[setter](flags[key]);
-            const el = document.getElementById(elId);
-            if (el) el.checked = flags[key];
-        }
-    }
-    if (flags.temp !== undefined && bridge.aeSetThermostatTemp) {
-        bridge.aeSetThermostatTemp(flags.temp);
-    }
-}
-
 
 // =====================================================================
 // Exported: resetScale2(ctx)
 // =====================================================================
-/**
- * Clear all Scale 2 module state for a clean mode switch.
- *
- * NOTE: Cross-scale visual resets (shared viewport overlays, DOM button
- * deactivation) remain in app_dag.js _resetAllVisualState() because those
- * elements are shared across scales and managed by the central reset.
- */
+
 export function resetScale2(ctx) {
     const { viewport } = ctx;
 
@@ -266,11 +169,9 @@ export function resetScale2(ctx) {
     _fieldGrid         = null;
     _tickAcc.reset();
 
-    // Clear paused-state dedup caches
     _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
     _diagPushedWhilePaused = false;
 
-    // Clear viewport AE-specific overlays if available
     if (viewport) {
         viewport.toggleNucleusShells(true);
         viewport.toggleBondCylinders(true);
@@ -291,8 +192,6 @@ export function resetScale2(ctx) {
 // =====================================================================
 // Exported: getAEVisualState() / setAEVisualToggle()
 // =====================================================================
-// Allow app_dag.js to read/write visual toggle flags for cross-scale resets
-// and UI event handlers without directly accessing module state.
 
 export function getAEVisualState() {
     return {
@@ -332,36 +231,15 @@ export function setAEVisualToggle(key, value) {
 // =====================================================================
 // Exported: syncAEParams(ctx)
 // =====================================================================
-/**
- * Sync AE physics parameters from UI sliders/checkboxes into the bridge.
- * Called by app_dag.js after scenario load and when switching to Scale 2/3.
- */
+
 export function syncAEParams(ctx) {
-    _syncAEParamsFromUIInternal(ctx.bridge);
+    syncAEParamsFromUI(ctx.bridge);
 }
 
 
 // =====================================================================
 // Exported: animateAE(ctx)
 // =====================================================================
-// Per-frame update for Scale 2 (Atoms) and Scale 3 (Molecules).
-// Both scales share the same AtomEngine and render loop; Scale 3 just
-// loads molecule scenarios instead of individual atom scenarios.
-//
-// Originally app_dag.js lines ~1209-1485.
-//
-// Responsibilities:
-//   1. Tick the AE simulation (accumulator handles sub-1 speeds)
-//   2. Validate atom positions (auto-pause on NaN or flyaway)
-//   3. Expand atom positions into orbital electron clouds
-//   4. Merge bonding electron clouds into the point cloud
-//   5. Update bond rendering (cylinders or lines)
-//   6. Update nucleus shells, orbital shells, orbital lobes
-//   7. Compute per-atom force arrows (throttled every 2nd frame)
-//   8. Render element symbol labels and color legend
-//   9. Update AE force field overlay (heatmap + vectors)
-//  10. Render the viewport
-//  11. Update diagnostics, charts, and panels (throttled to every 3rd frame)
 
 export function animateAE(ctx) {
     const {
@@ -373,8 +251,6 @@ export function animateAE(ctx) {
     } = ctx;
 
     // ── 1. Tick AE if scenario is unpaused ─────────────────────────
-    // Atom dynamics are scenario-controlled; freezing scenario freezes them.
-    // Render still proceeds below so the user can orbit / inspect a paused frame.
     if (scenarioRunning) {
         const wholeTicks = _tickAcc.accumulate(ticksPerFrame);
         for (let i = 0; i < wholeTicks; i++) {
@@ -418,16 +294,14 @@ export function animateAE(ctx) {
     // ── 3. Render as orbital electron clouds or plain atom points ──
     let cloudData = null;
     if (_showOrbitalClouds && atomData.count > 0 && atomData.atomicNums) {
-        const t = now * 0.001; // seconds for breathing animation
+        const t = now * 0.001;
         cloudData = expandAEToOrbitalCloud(atomData, t);
 
         // ── 4. Merge bonding electron clouds into particle data ────
-        // Reuse merge buffers to avoid 3x Float32Array alloc per frame
         if (_bondStyle !== 'off' && atomData.bondCount > 0) {
             const bondCloud = generateBondingCloud(atomData);
             if (bondCloud.count > 0) {
                 const mergedCount = cloudData.count + bondCloud.count;
-                // Grow merge buffers only when needed (capacity doubling)
                 if (mergedCount > _aeMergeCap) {
                     _aeMergeCap = Math.max(mergedCount, _aeMergeCap * 2);
                     _aeMergePos = new Float32Array(_aeMergeCap * 3);
@@ -449,7 +323,6 @@ export function animateAE(ctx) {
         viewport.updateParticles(atomData);
     }
 
-    // Pass AE context to inspector for click-to-inspect
     if (inspector) {
         if (_showOrbitalClouds && cloudData?.atomMap) {
             inspector.setAEContext(atomData, cloudData.atomMap, true);
@@ -477,13 +350,11 @@ export function animateAE(ctx) {
         viewport.updateNucleusShells(atomData);
     }
 
-    // Update orbital shell boundaries
     if (_showShellBounds && atomData.count > 0) {
         viewport.updateOrbitalShells(atomData, electronConfig, slaterZeff, A0_DISPLAY);
         viewport.toggleOrbitalShells(true);
     }
 
-    // Update orbital lobes
     if (_showOrbitalLobes && atomData.count > 0) {
         viewport.updateOrbitalLobes(atomData, electronConfig, slaterZeff, A0_DISPLAY);
         viewport.toggleOrbitalLobes(true);
@@ -500,23 +371,20 @@ export function animateAE(ctx) {
     }
 
     // ── 8. Update element labels ───────────────────────────────────
-    // Reuse label objects to avoid per-atom alloc every frame
     if (atomData.count > 0 && atomData.atomicNums) {
         while (_aeLabelBuf.length < atomData.count) _aeLabelBuf.push({ x: 0, y: 0, z: 0, symbol: '', color: '#ffffff' });
         _aeLabelBuf.length = atomData.count;
         for (let i = 0; i < atomData.count; i++) {
             const Z = atomData.atomicNums[i];
-            // Convert CPK color to CSS hex for canvas rendering
             const r = Math.round(atomData.colors[i * 3] * 255);
             const g = Math.round(atomData.colors[i * 3 + 1] * 255);
             const b = Math.round(atomData.colors[i * 3 + 2] * 255);
-            // Use white text unless atom is very light-colored
             const lum = 0.299 * r + 0.587 * g + 0.114 * b;
             const lbl = _aeLabelBuf[i];
             lbl.x = atomData.positions[i * 3];
             lbl.y = atomData.positions[i * 3 + 1];
             lbl.z = atomData.positions[i * 3 + 2];
-            lbl.symbol = elementSymbol(Z);
+            lbl.symbol = getElement(Z).symbol;
             lbl.color = lum > 200 ? '#aaaaaa' : '#ffffff';
         }
         viewport.updateElementLabels(_aeLabelBuf);
@@ -525,11 +393,9 @@ export function animateAE(ctx) {
     }
 
     // Update element legend (only rebuild when set of elements changes)
-    // Throttled to every 10th frame -- element set rarely changes mid-run
     if (dom.aeLegend && atomData.count > 0 && atomData.atomicNums && frameCount % 10 === 0) {
         _aeLegendZSet.clear();
         for (let i = 0; i < atomData.count; i++) _aeLegendZSet.add(atomData.atomicNums[i]);
-        // Build key from sorted Z values + cloud flag
         _aeLegendZArr.length = 0;
         for (const z of _aeLegendZSet) _aeLegendZArr.push(z);
         _aeLegendZArr.sort((a, b) => a - b);
@@ -560,9 +426,7 @@ export function animateAE(ctx) {
     }
 
     // ── 9. Update force field overlay (heatmap + vectors) ──────────
-    // PERF: Skip when paused — atom positions haven't changed.
     if (_showAEField && running && atomData.count > 0) {
-        // Auto-compute grid extent from atom bounding box
         let maxR = 5;
         for (let i = 0; i < atomData.count; i++) {
             const ax = Math.abs(atomData.positions[i * 3]);
@@ -570,7 +434,7 @@ export function animateAE(ctx) {
             if (ax > maxR) maxR = ax;
             if (az > maxR) maxR = az;
         }
-        const extent = maxR + 5; // padding around atoms
+        const extent = maxR + 5;
         if (!_fieldGrid || Math.abs(_fieldGrid.extent - extent) > 1) {
             _fieldGrid = generateGridXZ(extent, 20);
         }
@@ -584,11 +448,9 @@ export function animateAE(ctx) {
     viewport.render();
 
     // ── 11. AE diagnostics (throttled to every 3rd frame) ──────────
-    // PERF: When paused, data is identical — push once then skip.
     if (frameCount % 3 === 0 && (running || !_diagPushedWhilePaused)) {
         const diag = bridge.aeGetDiagnostics();
 
-        // Update status bar with dedup
         const sTick = formatSI(diag.tick);
         const sParticles = String(diag.atomCount);
         const sEnergy = formatEnergy(diag.totalEnergy, 2).text;
@@ -604,7 +466,6 @@ export function animateAE(ctx) {
             else dom.statusDot.classList.add('idle');
         }
 
-        // Update AE diagnostic cards
         dom.aeDiagCount.textContent = diag.atomCount;
         dom.aeDiagBonds.textContent = diag.bondCount;
         dom.aeDiagKe.textContent = formatEnergy(diag.totalKE, 2).text;
@@ -617,7 +478,6 @@ export function animateAE(ctx) {
         dom.aeDiagMomentum.textContent = pMag.toFixed(6) + ' AMU\u00b7\u00c5/step';
         dom.aeDiagTick.textContent = sTick;
 
-        // Energy drift tracking (reference captured at load time; fallback here)
         if (_aeInitialEnergy === null && diag.totalEnergy !== 0) {
             _aeInitialEnergy = diag.totalEnergy;
         }
@@ -626,10 +486,8 @@ export function animateAE(ctx) {
             dom.aeDiagDrift.textContent = drift.toFixed(4) + '%';
         }
 
-        // Atomic energy physics display
         updateAtomicEnergyDisplay(dom, atomData);
 
-        // Feed charts with adapted data
         const diagAdapted = {
             tick: diag.tick,
             manifested: diag.atomCount,
@@ -642,11 +500,9 @@ export function animateAE(ctx) {
         fluxEnergyChart.push(diagAdapted);
         particleChart.push(diagAdapted);
 
-        // Track paused-state dedup
         if (!running) _diagPushedWhilePaused = true;
         else _diagPushedWhilePaused = false;
 
-        // Update active panel visuals
         switch (activeTab) {
             case 'charts':
                 fluxEnergyChart.draw();
@@ -666,23 +522,6 @@ export function animateAE(ctx) {
 // =====================================================================
 // Exported: loadAEScenario(ctx, name)
 // =====================================================================
-// Set up an atom scenario in the AE engine.
-// Originally app_dag.js lines ~3426-3827.
-//
-// Handles:
-//   - Full 118-element periodic table layout
-//   - Noble gas clusters (vdW only)
-//   - Ionic formation (Coulomb-driven)
-//   - Covalent bond formation (auto-bonding)
-//   - Hydrogen bonding (Phase 3)
-//   - VSEPR geometry relaxation
-//   - Thermal dynamics (thermostat + gas kinetics)
-//   - Metallic clusters (multi-atom bonding)
-//   - Individual element scenarios (ae-el-1 through ae-el-118)
-//
-// NOTE: ctx.resetAllVisualState() is called first to clear cross-scale
-// visual state. That function lives in app_dag.js because it touches DOM
-// elements and viewport toggles shared across all scales.
 
 export function loadAEScenario(ctx, name) {
     const { bridge, viewport, inspector } = ctx;
@@ -692,8 +531,8 @@ export function loadAEScenario(ctx, name) {
     bridge.initAE();
 
     // Reset all AE toggles to defaults, then sync sliders from UI
-    _resetAETogglesToDefaults(bridge);
-    _syncAEParamsFromUIInternal(bridge);
+    resetAETogglesToDefaults(bridge);
+    syncAEParamsFromUI(bridge);
     // Scale 2 override: no auto-bonding for individual atoms
     if (bridge.aeSetBonding) bridge.aeSetBonding(false);
     const bondEl = document.getElementById('ae-bonding');
@@ -702,433 +541,13 @@ export function loadAEScenario(ctx, name) {
     // Clear molecule info (molecules are Scale 3 only)
     if (inspector) inspector.setCurrentMolecule(null);
 
-    // ── Procedural scenarios (periodic table, elements, custom) ────
-    const S = 5;   // typical spacing (in Bohr radii)
-
-    switch (name) {
-        case 'ae-periodic': {
-            // Full 118-element periodic table in standard 18-column layout
-            const gap = S * 1.2;
-            const elements = allElements();
-            for (const el of elements) {
-                const pos = tablePosition(el.Z);
-                if (!pos) continue;
-                let rowY = pos.row;
-                if (pos.row >= 8) rowY = pos.row + 0.5; // extra gap before f-block
-                const x = (pos.col - 9.5) * gap;
-                const y = (1 - rowY) * gap;
-                bridge.aeAddLockedAtom(el.Z, x, y, 0);
-            }
-            if (inspector) inspector.setScenarioInfo({
-                title: 'Periodic Table',
-                desc: 'All 118 elements in standard layout \u2014 atoms locked, no dynamics',
-                fields: {
-                    'Elements': '118',
-                    'Layout': '18-column standard',
-                    'State': 'All locked (static display)',
-                }
-            });
-            if (viewport) {
-                const centerY = -gap * 4;
-                viewport.controls.target.set(0, centerY, 0);
-                viewport.camera.position.set(0, centerY, 100);
-                viewport.controls.update();
-            }
-            break;
-        }
-
-        // ══════════════════════════════════════════════════════════════
-        // SINGLE-ATOM PHYSICS -- hydrogen atom + scattering demos
-        // ══════════════════════════════════════════════════════════════
-        case 'ae-hydrogen-atom': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(true);    document.getElementById('ae-ionic').checked = true;
-            // Single locked hydrogen at origin — orbital cloud (from orbitals.js) shows 1s shape.
-            bridge.aeAddLockedAtom(1, 0, 0, 0);
-            if (inspector) inspector.setScenarioInfo({
-                title: 'Hydrogen Atom',
-                desc: 'Single H atom \u2014 proton nucleus plus 1s electron cloud. Enable orbitals to see the probability shell.',
-                fields: {
-                    'Atoms': '1 \u00d7 H (locked)',
-                    'Shell': 'n=1, \u2113=0 (1s)',
-                    'Force': 'Nucleus-electron Coulomb',
-                }
-            });
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 15); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-rutherford-scattering': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(true);    document.getElementById('ae-ionic').checked = true;
-            // Locked gold nucleus (Z=79) at origin + incoming alpha particle (He2+) with impact parameter.
-            bridge.aeAddLockedAtom(79, 0, 0, 0);
-            const b = 3.5;  // impact parameter (Bohr radii)
-            const startX = -25, vx = 0.8;
-            bridge.aeAddAtom(2, startX, b, 0, vx, 0, 0, 2);  // He\u00b2\u207a projectile
-            if (inspector) inspector.setScenarioInfo({
-                title: 'Rutherford Scattering',
-                desc: '\u03b1 particle (He\u00b2\u207a) deflected by locked Au nucleus \u2014 Coulomb scattering.',
-                fields: {
-                    'Target': 'Au (Z=79, locked)',
-                    'Projectile': '\u03b1 / He\u00b2\u207a',
-                    'Impact param b': b.toFixed(1) + ' a\u2080',
-                    'Force': 'Coulomb',
-                }
-            });
-            if (viewport) { viewport.controls.target.set(-5, 0, 0); viewport.camera.position.set(0, 0, 50); viewport.controls.update(); }
-            break;
-        }
-
-        // ══════════════════════════════════════════════════════════════
-        // NOBLE GAS CLUSTERS -- vdW only (no bonding, no ionic)
-        // ══════════════════════════════════════════════════════════════
-        case 'ae-he-cluster': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
-            const S = 5.5;
-            const hex = [[0,0,0],[S,0,0],[S*0.5,S*0.866,0],
-                         [0,0,S],[S,0,S],[S*0.5,S*0.866,S]];
-            for (const [x, y, z] of hex)
-                bridge.aeAddAtom(2, x - S*0.5, y - S*0.3, z - S*0.5,
-                    (Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'Helium Cluster',
-                desc: 'Six He atoms \u2014 van der Waals (LJ 12-6) only. Watch them settle.',
-                fields: { 'Atoms': '6 \u00d7 He', 'Force': 'vdW only', 'Bonding': 'None (noble gas)' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-ar-cluster': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
-            const S = 6.0;
-            for (let ix = 0; ix < 2; ix++) for (let iy = 0; iy < 2; iy++) for (let iz = 0; iz < 2; iz++)
-                bridge.aeAddAtom(18, (ix-0.5)*S, (iy-0.5)*S, (iz-0.5)*S,
-                    (Math.random()-0.5)*0.15, (Math.random()-0.5)*0.15, (Math.random()-0.5)*0.15, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'Argon Cluster',
-                desc: 'Eight Ar atoms in a cube \u2014 vdW condensation dynamics.',
-                fields: { 'Atoms': '8 \u00d7 Ar', 'Force': 'vdW only', 'Layout': '2\u00d72\u00d72 cube' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-noble-mix': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
-            bridge.aeAddAtom(2, -12, 0, 0, 0.1, 0, 0, 0);
-            bridge.aeAddAtom(2, -8, 0, 0, -0.1, 0, 0, 0);
-            bridge.aeAddAtom(10, -2, 0, 0, 0.1, 0, 0, 0);
-            bridge.aeAddAtom(10, 2, 0, 0, -0.1, 0, 0, 0);
-            bridge.aeAddAtom(18, 7, 0, 0, 0.1, 0, 0, 0);
-            bridge.aeAddAtom(18, 12, 0, 0, -0.1, 0, 0, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'Noble Gas Mix',
-                desc: 'He + Ne + Ar \u2014 different sizes interact via vdW only.',
-                fields: { 'Atoms': '2 He + 2 Ne + 2 Ar', 'Force': 'vdW only' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
-            break;
-        }
-
-        // ══════════════════════════════════════════════════════════════
-        // IONIC FORMATION -- Coulomb-driven, no covalent bonding
-        // ══════════════════════════════════════════════════════════════
-        case 'ae-nacl-form': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeAddAtom(11, -12, 0, 0, 0.15, 0, 0, 1);   // Na+
-            bridge.aeAddAtom(17, 12, 0, 0, -0.15, 0, 0, -1);  // Cl-
-            if (inspector) inspector.setScenarioInfo({ title: 'NaCl Formation',
-                desc: 'Na\u207a and Cl\u207b attract via Coulomb force \u2014 ionic bond formation.',
-                fields: { 'Atoms': 'Na\u207a + Cl\u207b', 'Force': 'Ionic (Coulomb)', 'Bonding': 'None (ionic)' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 40); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-nacl-lattice': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetBondsForce(false); document.getElementById('ae-bonds-force').checked = false;
-            const sp = 7.5;
-            for (let ix = 0; ix < 3; ix++) for (let iy = 0; iy < 3; iy++) {
-                const charge = ((ix + iy) % 2 === 0) ? 1 : -1;
-                const Z = charge === 1 ? 11 : 17;
-                bridge.aeAddAtom(Z, (ix-1)*sp, (iy-1)*sp, 0, 0, 0, 0, charge);
-            }
-            if (inspector) inspector.setScenarioInfo({ title: 'NaCl 3\u00d73 Lattice',
-                desc: 'Ionic crystal lattice \u2014 alternating Na\u207a/Cl\u207b held by Coulomb.',
-                fields: { 'Atoms': '9 (Na\u207a/Cl\u207b alternating)', 'Layout': '3\u00d73 grid', 'Force': 'Ionic + vdW' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-mgf2': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeAddAtom(12, 0, 0, 0, 0, 0, 0, 2);     // Mg2+
-            bridge.aeAddAtom(9, -15, 0, 0, 0.2, 0, 0, -1);  // F-
-            bridge.aeAddAtom(9, 15, 0, 0, -0.2, 0, 0, -1);  // F-
-            if (inspector) inspector.setScenarioInfo({ title: 'MgF\u2082 Formation',
-                desc: 'Mg\u00b2\u207a attracts two F\u207b ions \u2014 ionic bond formation.',
-                fields: { 'Atoms': 'Mg\u00b2\u207a + 2 F\u207b', 'Force': 'Ionic (Coulomb)' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 45); viewport.controls.update(); }
-            break;
-        }
-
-        // ══════════════════════════════════════════════════════════════
-        // COVALENT FORMATION -- watch bonds form via auto-bonding
-        // ══════════════════════════════════════════════════════════════
-        case 'ae-h2-form': {
-            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
-            bridge.aeAddAtom(1, -7, 0, 0, 0.08, 0, 0, 0);
-            bridge.aeAddAtom(1, 7, 0, 0, -0.08, 0, 0, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'H\u2082 Formation',
-                desc: 'Two hydrogen atoms approach \u2014 vdW attracts, bond forms at r < 4.8.',
-                fields: { 'Atoms': '2 \u00d7 H', 'Force': 'vdW + auto-bond', 'Threshold': '1.2 \u00d7 \u03c3_avg \u2248 4.8' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-o2-form': {
-            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
-            bridge.aeAddAtom(8, -5, 0, 0, 0.06, 0, 0, 0);
-            bridge.aeAddAtom(8, 5, 0, 0, -0.06, 0, 0, 0);
-            _aeSetPhase3(bridge, { angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'O\u2082 Formation',
-                desc: 'Two oxygen atoms approach and bond \u2014 double bond forms.',
-                fields: { 'Atoms': '2 \u00d7 O', 'Force': 'vdW + auto-bond + angle strain' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-ch4-form': {
-            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
-            _aeSetPhase3(bridge, { angle: true });
-            const d = 9, t = 1 / Math.sqrt(3);
-            bridge.aeAddAtom(6, 0, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, d*t, d*t, d*t, -0.05, -0.05, -0.05, 0);
-            bridge.aeAddAtom(1, d*t, -d*t, -d*t, -0.05, 0.05, 0.05, 0);
-            bridge.aeAddAtom(1, -d*t, d*t, -d*t, 0.05, -0.05, 0.05, 0);
-            bridge.aeAddAtom(1, -d*t, -d*t, d*t, 0.05, 0.05, -0.05, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'CH\u2084 Assembly',
-                desc: 'Carbon + 4 hydrogens approach \u2014 bonds form, angle strain drives tetrahedral.',
-                fields: { 'Atoms': 'C + 4H', 'Target': '109.47\u00b0 tetrahedral', 'Force': 'vdW + bond + angle' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 30); viewport.controls.update(); }
-            break;
-        }
-
-        // ══════════════════════════════════════════════════════════════
-        // H-BONDING -- pre-formed water molecules with hydrogen bonds
-        // ══════════════════════════════════════════════════════════════
-        case 'ae-water-dimer': {
-            const ang = 104.5 * Math.PI / 180;
-            const rOH = 3.4;
-            // Molecule 1 (left)
-            bridge.aeAddAtom(8, -7, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, -7 + rOH, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, -7 + rOH*Math.cos(ang), rOH*Math.sin(ang), 0, 0, 0, 0, 0);
-            // Molecule 2 (right, rotated so O faces mol1's H)
-            bridge.aeAddAtom(8, 7, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, 7 - rOH, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, 7 - rOH*Math.cos(ang), -rOH*Math.sin(ang), 0, 0, 0, 0, 0);
-            // Pre-bond to establish O-H covalent bonds
-            bridge.aeSetBonding(true); bridge.aePreBond();
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            _aeSetPhase3(bridge, { hbonds: true, angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'Water Dimer',
-                desc: 'Two H\u2082O molecules \u2014 H-bond attracts them. First Phase 3 demo!',
-                fields: { 'Atoms': '6 (2 \u00d7 H\u2082O)', 'Force': 'Bond + H-bond + angle strain', 'H-bond': 'LJ 10-12 + angular' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 35); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-water-cluster': {
-            const ang = 104.5 * Math.PI / 180;
-            const rOH = 3.4;
-            const N_mol = 5, R_ring = 16;
-            for (let m = 0; m < N_mol; m++) {
-                const theta = (2 * Math.PI * m) / N_mol;
-                const ox = R_ring * Math.cos(theta), oy = R_ring * Math.sin(theta);
-                bridge.aeAddAtom(8, ox, oy, 0, 0, 0, 0, 0);
-                const tn = (2 * Math.PI * (m + 1)) / N_mol;
-                const dnx = Math.cos(tn) - Math.cos(theta), dny = Math.sin(tn) - Math.sin(theta);
-                const dn = Math.sqrt(dnx*dnx + dny*dny);
-                bridge.aeAddAtom(1, ox + rOH*dnx/dn, oy + rOH*dny/dn, 0, 0, 0, 0, 0);
-                const px = -dny/dn, py = dnx/dn;
-                const h2x = Math.cos(ang)*dnx/dn + Math.sin(ang)*px;
-                const h2y = Math.cos(ang)*dny/dn + Math.sin(ang)*py;
-                bridge.aeAddAtom(1, ox + rOH*h2x, oy + rOH*h2y, 0, 0, 0, 0, 0);
-            }
-            bridge.aeSetBonding(true); bridge.aePreBond();
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            _aeSetPhase3(bridge, { hbonds: true, angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'Water Pentamer',
-                desc: 'Five H\u2082O molecules in a ring \u2014 H-bond network demonstration.',
-                fields: { 'Atoms': '15 (5 \u00d7 H\u2082O)', 'Force': 'Bond + H-bond + angle', 'Pattern': 'Cyclic H-bond ring' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
-            break;
-        }
-
-        // ══════════════════════════════════════════════════════════════
-        // VSEPR GEOMETRY -- start at wrong angle, watch relaxation
-        // ══════════════════════════════════════════════════════════════
-        case 'ae-vsepr-linear': {
-            // CO2: start bent at 90 deg, should relax to 180 deg (linear)
-            bridge.aeAddAtom(6, 0, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(8, 2.0, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(8, 0, 2.0, 0, 0, 0, 0, 0);
-            bridge.aeSetBonding(true); bridge.aePreBond();
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            _aeSetPhase3(bridge, { angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'CO\u2082 VSEPR',
-                desc: 'CO\u2082 starts bent (90\u00b0) \u2014 angle strain drives it to linear (180\u00b0).',
-                fields: { 'Atoms': 'C + 2O', 'Start': '90\u00b0', 'Target': '180\u00b0 (linear)', 'Steric #': '2' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-vsepr-tetrahedral': {
-            // CH4: start at 90 deg (cubic), should relax to 109.47 deg
-            const d = 3.5;
-            bridge.aeAddAtom(6, 0, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, d, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, -d, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, 0, d, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, 0, 0, d, 0, 0, 0, 0);
-            bridge.aeSetBonding(true); bridge.aePreBond();
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            _aeSetPhase3(bridge, { angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'CH\u2084 VSEPR',
-                desc: 'CH\u2084 starts at 90\u00b0 \u2014 angle strain relaxes to 109.47\u00b0 tetrahedral.',
-                fields: { 'Atoms': 'C + 4H', 'Start': '90\u00b0', 'Target': '109.47\u00b0', 'Steric #': '4' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-vsepr-bent': {
-            // H2O: start at 150 deg (too wide), should relax to 104.5 deg
-            const r = 3.4;
-            const theta0 = 150 * Math.PI / 180;
-            bridge.aeAddAtom(8, 0, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, r, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(1, r*Math.cos(theta0), r*Math.sin(theta0), 0, 0, 0, 0, 0);
-            bridge.aeSetBonding(true); bridge.aePreBond();
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            _aeSetPhase3(bridge, { angle: true });
-            if (inspector) inspector.setScenarioInfo({ title: 'H\u2082O VSEPR',
-                desc: 'H\u2082O starts at 150\u00b0 \u2014 lone pairs drive H-O-H toward 104.5\u00b0 bent.',
-                fields: { 'Atoms': 'O + 2H', 'Start': '150\u00b0', 'Target': '104.5\u00b0', 'Lone pairs': '2' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 20); viewport.controls.update(); }
-            break;
-        }
-
-        // ══════════════════════════════════════════════════════════════
-        // THERMAL DYNAMICS -- thermostat + gas kinetics
-        // ══════════════════════════════════════════════════════════════
-        case 'ae-thermal-gas': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeSetIonic(false);   document.getElementById('ae-ionic').checked = false;
-            _aeSetPhase3(bridge, { thermostat: true, temp: 1.0 });
-            const L = 15;
-            for (let n = 0; n < 12; n++) {
-                const x = (Math.random()-0.5)*2*L, y = (Math.random()-0.5)*2*L, z = (Math.random()-0.5)*2*L;
-                const speed = 0.3 + Math.random()*0.5;
-                const phi = Math.random()*2*Math.PI, th = Math.acos(2*Math.random()-1);
-                bridge.aeAddAtom(18, x, y, z,
-                    speed*Math.sin(th)*Math.cos(phi), speed*Math.sin(th)*Math.sin(phi), speed*Math.cos(th), 0);
-            }
-            if (inspector) inspector.setScenarioInfo({ title: 'Thermal Gas',
-                desc: '12 Ar atoms with Berendsen thermostat \u2014 temperature stabilizes at T=1.',
-                fields: { 'Atoms': '12 \u00d7 Ar', 'Force': 'vdW only', 'Thermostat': 'ON (T=1.0)' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-collision': {
-            bridge.aeSetBonding(false); document.getElementById('ae-bonding').checked = false;
-            bridge.aeAddAtom(18, -20, 0, 0, 0.4, 0, 0, 0);
-            bridge.aeAddAtom(18, 20, 0, 0, -0.4, 0, 0, 0);
-            if (inspector) inspector.setScenarioInfo({ title: 'Head-On Collision',
-                desc: 'Two Ar atoms approach at speed \u2014 LJ repulsion at short range.',
-                fields: { 'Atoms': '2 \u00d7 Ar', 'Force': 'vdW (LJ 12-6)', 'Speed': '0.4 each' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 50); viewport.controls.update(); }
-            break;
-        }
-
-        // ══════════════════════════════════════════════════════════════
-        // METALLIC CLUSTERS -- multi-atom bonding
-        // ══════════════════════════════════════════════════════════════
-        case 'ae-fe-bcc': {
-            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
-            const a = 0.9;
-            for (let ix = -1; ix <= 1; ix += 2)
-                for (let iy = -1; iy <= 1; iy += 2)
-                    for (let iz = -1; iz <= 1; iz += 2)
-                        bridge.aeAddAtom(26, ix*a, iy*a, iz*a, 0, 0, 0, 0);
-            bridge.aeAddAtom(26, 0, 0, 0, 0, 0, 0, 0);
-            bridge.aePreBond();
-            if (inspector) inspector.setScenarioInfo({ title: 'Fe BCC Cluster',
-                desc: 'Iron atoms in body-centered cubic arrangement \u2014 metallic bonding.',
-                fields: { 'Atoms': '9 \u00d7 Fe', 'Layout': 'BCC (8 corners + center)', 'Force': 'vdW + bond' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 15); viewport.controls.update(); }
-            break;
-        }
-        case 'ae-cu-fcc': {
-            bridge.aeSetBonding(true); document.getElementById('ae-bonding').checked = true;
-            const a = 1.5;
-            bridge.aeAddAtom(29, 0, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(29, a, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(29, -a, 0, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(29, 0, a, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(29, 0, -a, 0, 0, 0, 0, 0);
-            bridge.aeAddAtom(29, 0, 0, a, 0, 0, 0, 0);
-            bridge.aeAddAtom(29, 0, 0, -a, 0, 0, 0, 0);
-            bridge.aePreBond();
-            if (inspector) inspector.setScenarioInfo({ title: 'Cu FCC Seed',
-                desc: 'Copper atoms in face-centered cubic seed \u2014 nearest-neighbor bonding.',
-                fields: { 'Atoms': '7 \u00d7 Cu', 'Layout': 'FCC (center + 6 face)', 'Force': 'vdW + bond' }});
-            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 15); viewport.controls.update(); }
-            break;
-        }
-
-        case 'ae-custom':
-            if (inspector) inspector.setScenarioInfo(null);
-            break;
-
-        default: {
-            // Handle individual element scenarios: ae-el-1 through ae-el-118
-            const isElement = name.startsWith('ae-el-');
-            if (isElement) {
-                const Z = parseInt(name.slice(6));
-                bridge.aeAddLockedAtom(Z, 0, 0, 0);
-                const el = getElement(Z);
-                if (inspector && el) {
-                    const N = el.neutrons || 0;
-                    const mass = (Z + N * 1.001).toFixed(2);
-                    const period = el.row <= 7 ? el.row : (el.row === 8 ? '6 (Ln)' : '7 (An)');
-                    inspector.setScenarioInfo({
-                        title: el.name,
-                        desc: `Isolated ${el.name} atom (Z = ${Z})`,
-                        fields: {
-                            'Symbol': el.symbol,
-                            'Z': Z,
-                            'Period': period,
-                            'Group': el.col,
-                            'Mass': mass + ' AMU',
-                            'Max Bonds': el.maxBonds,
-                        }
-                    });
-                }
-                // Camera distance scaled to atom size
-                if (viewport) {
-                    const dist = Z > 54 ? 50 : Z > 36 ? 40 : Z > 18 ? 30 : 20;
-                    viewport.controls.target.set(0, 0, 0);
-                    viewport.camera.position.set(0, 0, dist);
-                    viewport.controls.update();
-                }
-            }
-            break;
-        }
-    }
+    // Run scenario-specific setup (big switch delegated to scenarios.js)
+    setupAEScenario(name, {
+        bridge, viewport, inspector,
+        helpers: { setPhase3: aeSetPhase3 },
+    });
 
     // Capture initial energy reference for drift tracking (before first tick)
     const initDiag = bridge.aeGetDiagnostics();
     if (initDiag.totalEnergy !== 0) _aeInitialEnergy = initDiag.totalEnergy;
-}
-
-
-// =====================================================================
-// Exported: bindScale2ControlsUI()
-// =====================================================================
-// Mount the Scale 2 control card into the controls panel.
-// Called once during app startup after the DOM is ready.
-
-export function bindScale2ControlsUI() {
-    const controlsPanel = document.getElementById('panel-controls');
-    if (controlsPanel) new Scale2ControlsComponent(controlsPanel).init();
 }

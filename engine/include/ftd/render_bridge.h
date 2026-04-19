@@ -14,10 +14,13 @@
 #include <vector>
 #include <random>
 #include <memory>
+#include <cmath>
 #include "lattice.h"
 #include "voxel.h"
 #include "hilbert.h"
 #include "term_toggles.h"
+#include "constants.h"
+#include "field_operators.h"
 
 #ifdef FTD_ENABLE_CUDA
 namespace ftd { namespace gpu { class GpuEngine; } }
@@ -118,6 +121,21 @@ struct EMFieldDiag {
 };
 
 class RenderBridge {
+    // Extracted physics modules (2026-04-18 refactor R1-R6) need access to
+    // internal state (rng_, uniform_, next_particle_id_, phi_, buffers).
+    friend void weak_transmutation_cpu(RenderBridge&);
+    friend void accumulate_proper_time(RenderBridge&);
+    friend void pair_production_cpu(RenderBridge&);
+    friend void triad_binding_cpu(RenderBridge&);
+    friend void update_energy_ledger_cpu(RenderBridge&);
+    friend void inject_flux_cpu(RenderBridge&, int, int, int, const Vec3&);
+    friend void inject_flux_add_cpu(RenderBridge&, int, int, int, const Vec3&);
+    friend void inject_wave_vel_add_cpu(RenderBridge&, int, int, int, const Vec3&);
+    friend void inject_particle_cpu(RenderBridge&, int, int, int, int8_t,
+                                    const Vec3&, int8_t, int8_t);
+    friend void inject_wavepacket_cpu(RenderBridge&, int, int, int, int8_t, double, double);
+    friend void create_entangled_pair_cpu(RenderBridge&, int, int, int, const Vec3&);
+
 public:
     RenderBridge(int lattice_size);
     ~RenderBridge();
@@ -248,24 +266,32 @@ public:
     void inject_wavepacket(int cx, int cy, int cz, int8_t state,
                            double sigma = 3.0, double amplitude = K_B);
 
-    // Discrete operators (public for Lagrangian diagnostics)
-    Vec3 laplacian_flux(int idx) const;
-    double divergence_flux(int idx) const;
-    Vec3 curl_flux(int idx) const;
-    Vec3 gradient_state(int idx) const;
-    Vec3 gradient_density(int idx) const;
-    Vec3 gradient_divergence(int idx) const;
-    Vec3 gradient_scalar(int idx, const std::vector<double>& field) const;
-    Vec3 curl_state_velocity(int idx) const;  // ∇×(s·v) — Biot-Savart analog
+    // Discrete operators (public for Lagrangian diagnostics).
+    // R6 (2026-04-18): inlined in the header — hot path, called per-voxel per-tick.
+    // Bodies live in field_operators.h as free helpers.
+    inline Vec3 laplacian_flux(int idx) const  { return ::ftd::laplacian_flux_op(voxels_, lattice_, idx); }
+    inline double divergence_flux(int idx) const { return ::ftd::divergence_flux_op(voxels_, lattice_, idx); }
+    inline Vec3 curl_flux(int idx) const       { return ::ftd::curl_flux_op(voxels_, lattice_, idx); }
+    inline Vec3 gradient_state(int idx) const  { return ::ftd::gradient_state_op(voxels_, lattice_, idx); }
+    inline Vec3 gradient_density(int idx) const { return ::ftd::gradient_density_op(voxels_, lattice_, idx); }
+    inline Vec3 gradient_divergence(int idx) const { return ::ftd::gradient_divergence_op(voxels_, lattice_, idx); }
+    inline Vec3 gradient_scalar(int idx, const std::vector<double>& field) const {
+      return ::ftd::gradient_scalar_op(lattice_, idx, field);
+    }
+    inline Vec3 curl_state_velocity(int idx) const { return ::ftd::curl_state_velocity_op(voxels_, lattice_, idx); }
 
     // Hilbert space construction from current flux field
     // H_FTD = L^2(Lattice, C) where psi(v) = J_x(v) + i*J_y(v)
     HilbertState hilbert_state() const { return HilbertState::from_flux(voxels_); }
 
-    // SM sector operators (Phase 2)
-    double compute_stress(int idx) const;
-    double compute_stress_left(int idx) const;  // Weak stress from J_L only (parity violation)
-    double born_probability(int idx) const;
+    // SM sector operators (Phase 2). R6: inlined for hot-path performance.
+    inline double compute_stress(int idx) const       { return ::ftd::stress_field<&Voxel::flux  >(voxels_, lattice_, idx); }
+    inline double compute_stress_left(int idx) const  { return ::ftd::stress_field<&Voxel::flux_L>(voxels_, lattice_, idx); }
+    inline double born_probability(int idx) const {
+      double rho = voxels_[idx].density();
+      if (rho < K_GENESIS) return 0.0;
+      return 1.0 - std::exp(-(rho - K_GENESIS) / K_B);
+    }
     void create_entangled_pair(int x, int y, int z, const Vec3& flux_val);
 
     double compute_entropy() const;
@@ -309,15 +335,10 @@ private:
     // Dual-substrate helpers
     void sync_observable();                 // Set flux = flux_L + flux_R for all voxels
 
-    // RF-09: pointer-to-member template for the 18-pt isotropic Laplacian.
-    // Instantiated explicitly for Voxel::flux, Voxel::flux_L, Voxel::flux_R.
-    template <Vec3 Voxel::*F>
-    Vec3 laplacian_impl(int idx) const;
-
-    // RF-16: pointer-to-member template for the (div+curl+grad_density) stress.
-    // Instantiated explicitly for Voxel::flux and Voxel::flux_L.
-    template <Vec3 Voxel::*F>
-    double stress_impl(int idx) const;
+    // R6 (2026-04-18): laplacian_impl and stress_impl templates moved to
+    // field_operators.h as inline free helpers (`laplacian_field<F>` /
+    // `stress_field<F>`). Bodies that used them elsewhere reference those
+    // directly. No explicit instantiation needed anymore.
 
     Lattice lattice_;
     std::vector<Voxel> voxels_;

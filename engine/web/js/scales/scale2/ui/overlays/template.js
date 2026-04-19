@@ -2,7 +2,7 @@
  * Scale 2 Viewport Overlay — Atom engine controls
  */
 
-export function createScale2OverlayTemplate() {
+export function getScale2OverlayTemplate() {
   const container = document.createElement('div');
   container.id = 'ae-viewport-overlay';
   container.className = 'scale2-only viewport-overlay-panel';
@@ -12,7 +12,7 @@ export function createScale2OverlayTemplate() {
   return container;
 }
 
-export function createScale2LegendTemplate() {
+export function getScale2LegendTemplate() {
   const container = document.createElement('div');
   container.id = 'ae-legend';
   container.className = 'scale2-only ae-legend';

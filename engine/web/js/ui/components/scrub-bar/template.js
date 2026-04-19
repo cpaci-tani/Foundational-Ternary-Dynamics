@@ -9,7 +9,7 @@
  * `btn-local-play`, `btn-step`, `btn-reset`, `ticks-per-frame`,
  * `tpf-display`) so app_dag.js listeners keep working unchanged.
  */
-export function createScrubBarTemplate() {
+export function getScrubBarTemplate() {
     const el = document.createElement('div');
     el.id = 'scrub-bar';
     el.className = 'scrub-bar';

@@ -443,6 +443,12 @@ def ppm_error(derived, experimental):
     """Calculate parts per million error."""
     return abs(derived - experimental) / experimental * 1e6
 
+# Alias so callers may write `from constants import pct_error`. The
+# canonical name is `percent_error`; this alias was added during the
+# April 2026 PY-4 refactor to unify duplicated 3-line definitions
+# across scripts/tests/* and scripts/exploration/star_operator.py.
+pct_error = percent_error
+
 def sigma_deviation(derived, experimental, uncertainty):
     """Calculate number of standard deviations from experimental value."""
     return abs(derived - experimental) / uncertainty

@@ -91,9 +91,36 @@ add_library(ftd_core
     src/cosmic_engine.cpp
     src/scale_bridge.cpp
     src/ontic_audit.cpp    # RF-03: ontic_audit() body moved from ontic.h
+    src/ontic_running_coupling.cpp
     src/csv_export.cpp     # RF-05: csv export bodies moved from csv_export.h
-    src/constructors.cpp   # Constructor library (ftd::ctor::*) — see spec 2026-04-15
-    src/scenarios.cpp      # Scale-0 scenario library (ported from JS MockBridge, Apr 2026)
+    src/constructors/constructors_core.cpp
+    src/constructors/constructors_atoms.cpp
+    src/constructors/constructors_bulk_matter.cpp
+    src/constructors/constructors_exotic.cpp
+    src/constructors/constructors_molecules.cpp
+    # Scale-0 scenario library (split from monolithic scenarios.cpp, 2026-04-19)
+    src/scenarios.cpp                # thin router + shared RNG
+    src/scenarios/flux.cpp           # 20 flux-* scenarios
+    src/scenarios/light.cpp          # 4 light-* scenarios
+    src/scenarios/quantum.cpp        # 8 quantum-* scenarios
+    src/scenarios/s0_seed.cpp        # 49 s0-seed-* scenarios (+ seed_lepton/dp/tri statics)
+    src/scenarios/s0_field.cpp       # 8 s0-field-* scenarios
+    # R1-R5 modular extraction from render_bridge.cpp (2026-04-18)
+    src/poisson_solvers.cpp          # R1: sor_sweep_18pt + gauss/coulomb/latency solvers
+    src/transmutation_phases.cpp     # R2: weak/pair-production/triad/proper-time
+    src/energy_ledger_compute.cpp    # R3: per-tick conservation ledger
+    src/diagnostics_compute.cpp      # R4: diagnostics / energy audit / EM fields / Poynting / entropy
+    src/injection.cpp                # R5: inject_flux/particle/wavepacket + aggregate profile
+    # Cosmic engine split (CE1-CE5, 2026-04-19)
+    src/cosmic/cosmic_scenarios.cpp           # setup_spiral_galaxy, galaxy_cluster, cosmic_web, etc.
+    src/cosmic/cosmic_barnes_hut.cpp          # octree + tree_force + compute_gravity
+    src/cosmic/cosmic_sph.cpp                 # SPH kernel, neighbors, density, forces
+    src/cosmic/cosmic_cosmology.cpp           # Friedmann/Hubble/dark energy
+    src/cosmic/cosmic_gravitational_waves.cpp # GW detection + propagation
+    # Atom engine split (AE1-AE3, 2026-04-19)
+    src/atom/atom_forces.cpp         # compute_all_forces + pairwise/tree force helpers
+    src/atom/atom_bonding.cpp        # check_bonding
+    src/atom/atom_thermostat.cpp     # speed limit, damping, thermostat, dipole moments
 )
 target_include_directories(ftd_core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 if(OpenMP_CXX_FOUND)
@@ -105,13 +132,19 @@ endif()
 
 # Main simulation executable (native builds only)
 if(NOT EMSCRIPTEN)
-add_executable(ftd_sim src/main.cpp)
+add_executable(ftd_sim
+    src/main.cpp
+    src/cli_demos/cli_demo_scenarios.cpp  # M1: 10 scenario_*() demos extracted from main.cpp
+)
 target_link_libraries(ftd_sim ftd_core)
 endif()
 
 # WebSocket server executable (native builds only — bridges engine to web dashboard)
 if(NOT EMSCRIPTEN)
-add_executable(ws_server src/ws_server.cpp)
+add_executable(ws_server
+    src/ws_server.cpp
+    src/ws_protocol.cpp   # WS2: framing + recv/send + JSON helpers split from ws_server.cpp
+)
 target_link_libraries(ws_server ftd_core)
 if(WIN32)
     target_link_libraries(ws_server ws2_32)
