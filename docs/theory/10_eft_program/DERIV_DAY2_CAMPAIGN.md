@@ -350,7 +350,18 @@ all three laws give α_∞ ∈ [3.35, 3.74] × α_ref. This is a
 *plateau*, not a convergence. The data simply settles near
 α ≈ 0.026-0.027 and stops moving.
 
-### Honest conclusion (post-audit, see `AUDIT_ALPHA_EXTRACTION.md`)
+### Honest conclusion (post-Phase-G resolution — `DERIV_EMERGENT_COULOMB_GEOMETRIC.md`)
+
+**The "3.6× α_ref plateau" was a category error.** Phase G shows the
+engine's emergent-mode V(r) measurement is unit-charge geometric
+Coulomb on a periodic cubic lattice — the Gauss law `∇·J = s` carries
+no coupling constant, so the measured `α_r(r, L) = 2 · r · G_L(r)` is
+pure lattice geometry, matching the zero-free-parameter analytical
+prediction to **R² = 1.0000 (median 0.07% relative error) at L=384**
+in the Coulomb-tail regime. There is no fine-structure content in this
+code path to compare to α_ref.
+
+### Historical claims (superseded)
 
 **FTD's V(r)-extracted coupling, measured in the Coulomb-tail regime
 at r ≈ L/3 across L ∈ {64, 128, 256, 384}, extrapolates (1/L fit) to
@@ -390,9 +401,13 @@ What is **not** established:
 The audit (`AUDIT_ALPHA_EXTRACTION.md`) verifies that all three V(r)
 codepaths (`coupling_measurement.h`, `measure_v_of_r.h`,
 `benchmark_emergent_alpha.cpp`) are mutually consistent and the
-arithmetic is right. The headline number is therefore reported as a
-range **1.8–3.6× α_ref** (classical vs. engine convention), with the
-convention caveat explicit.
+arithmetic is right. The earlier "1.8–3.6× α_ref range" framing is
+itself now superseded by the Phase-G resolution above — the engine's
+α_r is not a coupling comparable to α_ref at all; it is the Green's
+function `2 r G_L(r)` evaluated at the chosen r/L slice, and matches
+that analytical formula with no free parameters. The appropriate next
+test — explicit coupling in Gauss law — is Phase H, spec'd in
+`DERIV_EMERGENT_COULOMB_GEOMETRIC.md` §7.
 
 ### L = 512 predicted values
 

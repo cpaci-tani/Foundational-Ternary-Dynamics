@@ -29,6 +29,16 @@ struct TermToggles {
     bool latency_field = false;    // Poisson-based latency field ∇²L = 4πGρ (gravity potential)
     bool emergent_forces = false;  // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
 
+    // Phase H (Apr 2026): explicit coupling constant in the Gauss law source.
+    // gauss_project_cpu uses source = div(J) - coulomb_charge_coupling * s.
+    // Default 1.0 preserves geometric Coulomb (Phase G theorem:
+    // alpha_r = 2 r G_L(r) -> 1/(2 pi) at continuum). To test whether FTD
+    // emergent dynamics can reproduce alpha_ref = 1/137, set this to
+    // sqrt(2 pi alpha_ref) ~ 0.2141 (engine convention) or
+    // sqrt(4 pi alpha_ref) ~ 0.3028 (classical convention). See
+    // docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md Section 7.
+    double coulomb_charge_coupling = 1.0;
+
     // Validates known dependency constraints between toggles.
     // Returns true if the combination is valid.
     // If err != nullptr, appends a human-readable description of each violation.

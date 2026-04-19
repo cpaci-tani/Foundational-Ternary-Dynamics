@@ -7,26 +7,30 @@ Five pillars — Ward identities, Lorentz covariance, RG flow, operator expansio
 continuum matching — measured on the lattice against expectations committed to
 the repository *before any code ran*. All outcomes reported without retrofit.
 
-### Headline (post-audit, narrowed)
+### Headline (post-Phase-G resolution)
 
-**FTD's V(r)-extracted coupling plateaus at α_∞ ≈ 1.8–3.6 × α_ref** (range
-spans classical vs. engine-accumulator convention, see
-`docs/theory/10_eft_program/AUDIT_ALPHA_EXTRACTION.md`), not at 1/137 under
-any convention. Phase-F 4-point GPU scan at L ∈ {64, 128, 256, 384} with
-ticks=150 and r/L ≈ 0.31 gives α_r = 0.02959 → 0.02970 → 0.02717 → 0.02632
-(engine-convention ratios 4.05×, 4.07×, 3.72×, 3.61×). Three candidate
-scaling laws (1/L, 1/L², free 1/L^p) all agree on α_∞ ∈ [3.35×, 3.74×]
-× α_ref in engine convention. A post-audit of the three V(r) codepaths
-(`coupling_measurement.h`, `measure_v_of_r.h`, `benchmark_emergent_alpha.cpp`)
-confirms they are mutually consistent and isolates a factor-of-two
-energy-accumulator convention: `field_energy = Σ|J|²` lacks the classical
-½. Under the classical convention the plateau is ≈ 1.8× α_ref. Rutherford-
-scattering cross-check (Day-2 Thread 4) gives α = 0.042 ± 0.005 at small
-impact parameter, independently confirming a residual gap. **FTD's
-Coulomb-tail coupling is not α_ref under any convention**; whether the
-residual ~1.8× (after convention correction) is real physics, a
-kinetic-normalization choice, or a lattice-Green's-function artefact
-is flagged [OPEN].
+**The engine's emergent V(r) mode is unit-charge geometric Coulomb — no
+fine-structure content in that code path.** The Phase-F "α_∞ plateau at
+~3.6× α_ref" was a category error: the Gauss law is `∇·J = s` with no
+coupling constant, so the measurement computes `α_r(r, L) = 2·r·G_L(r)`
+where G_L is the periodic Poisson Green's function on a cubic L³ torus
+with the 7-point Laplacian. This is a **zero-free-parameter prediction**;
+comparing it against the Phase-F data (`scripts/benchmarks/fit_geometric_coulomb.py`)
+gives **R² = 1.0000, median 0.07% relative error, max 0.43%** at L=384
+across 16 points in the Coulomb tail. The "plateau at 3.6× α_ref" is
+simply the value of the lattice-Poisson kernel `2·r·G_L(r)` at
+r/L ≈ 0.31 on a cubic torus — pure geometry, no QED to deviate from.
+
+**Where α actually lives in FTD** (neither is the V(r) measurement):
+1. **Master quadratic** `x² − 16G*²x + 16G*³ = 0` gives 1/α to sub-ppm
+   [THEOREM] — pure number theory, unchanged.
+2. **Explicit `coulomb` toggle** uses hardcoded α = 1/137 [PARAMETRIC]
+   — off-path for Phase F.
+
+The bona-fide "FTD dynamics emergently reproduces α" test is Phase H:
+add an explicit coupling g_c = √(4π α_ref) to the Gauss source and
+verify the α_r plateau now sits at α_ref. Spec'd in
+`DERIV_EMERGENT_COULOMB_GEOMETRIC.md` §7, not yet measured.
 
 ### Retracted
 
