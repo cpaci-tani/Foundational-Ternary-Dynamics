@@ -159,3 +159,138 @@ code-review flag.
   specs use the real WASM bridge; pytest uses real `constants.py`.
   Mocks are a warning signal that the test is testing wiring, not
   physics.
+
+---
+
+## Part 2 — Hazards and Recipes
+
+### 2.1 Hazards
+
+Each hazard has three lines: **Symptom** (what you see when you've
+hit it), **Cause** (the project invariant being violated), **Fix**
+(the exact corrective action). Linked to a recent commit so you can
+read the pattern in context.
+
+#### H1 — Panel-registry ↔ DOM-stub contract
+
+- **Symptom.** Your new tab doesn't appear in the tab bar, or the
+  tab appears but clicking it shows an empty panel. Playwright gets
+  `document.getElementById('panel-X')` returning `null`.
+- **Cause.** Adding a panel requires THREE things to line up:
+  (1) an entry in `PANEL_REGISTRY` in
+  `engine/web/js/ui/scale-registry/panel-registry.js`;
+  (2) a pre-rendered stub `<div class="panel" id="panel-X"></div>`
+  inside `#panel-area` in `engine/web/index.html`;
+  (3) a wrapper component that populates the stub at init time.
+  Missing any one silently drops the panel.
+- **Fix.** All three in the same commit. Validation in
+  `AppShell.init` warns `[ui-shell] Panel registry validation
+  errors: panel-X in DOM but not registry` or the reverse — read
+  the browser console on first load. See commit `966e684` (Scene
+  panel) for a canonical example.
+
+#### H2 — renderMathInHtml(escapeHtml(x)) rule
+
+- **Symptom.** Math displays as literal `\(\alpha\)` in the rendered
+  UI, or HTML tags leak through as clickable text.
+- **Cause.** Every user-text body position must be wrapped
+  `renderMathInHtml(escapeHtml(x))`. Attribute values must stay
+  bare `escapeHtml(x)` — don't wrap attributes with the math
+  renderer because the delimiter regex runs on the entire string,
+  not just visible content.
+- **Fix.** In each renderer (`faq/reader.js`, `knowledge-base/reader.js`,
+  `verify-panel/row.js`, `tooltips/component.js`,
+  `lagrangian-panel/term-row.js`), every `${escapeHtml(x)}` in a
+  body position becomes `${renderMathInHtml(escapeHtml(x))}`. The
+  Playwright coverage spec
+  `engine/web/tests/math-formatting.spec.js` asserts no raw `\(` /
+  `\[` strings leak.
+
+#### H3 — Epistemic-tag discipline
+
+- **Symptom.** A claim in theory docs, manuscript, Verify rows, or
+  FAQ entries gets reviewer pushback for overclaim. The pattern:
+  "SM formula with FTD numbers" dressed up as a THEOREM.
+- **Cause.** The tag taxonomy (AXIOM / THEOREM / SELECTION /
+  PARAMETRIC / CONJECTURE / IMPOSED / EMERGENT / OPEN) maps to
+  review expectations. Mislabeling is the #1 overclaim pattern the
+  project audits against — see `AUDIT_EPISTEMIC_AUDIT.md` and
+  `CLAUDE.md` "Epistemic Discipline".
+- **Fix.** Run the tag check on every new claim: **if the formula
+  is standard-model and the inputs are FTD values, the tag is
+  PARAMETRIC, not THEOREM**. THEOREM requires a proof from
+  postulates (D=3, ternary states, varpi). SELECTION requires a
+  consistency argument. CONJECTURE is acceptable but must be
+  labeled as such. See commit `6ca091f` for a recent downgrade
+  example (Born rule and dark-matter 17/27).
+
+#### H4 — Constants single source of truth
+
+- **Symptom.** α value, `N_c`, or a mass derivation gives different
+  numbers in Python proofs vs. C++ engine vs. JS dashboard.
+- **Cause.** `scripts/constants.py` is canonical. It has two
+  mirrors: `engine/web/js/constants.js` and
+  `engine/include/ftd/ontic.h`. Drift between them is a
+  constants-sentinel-level bug.
+- **Fix.** Always edit `scripts/constants.py` first, then
+  regenerate the Verify manifest
+  (`python -m scripts.proofs.build_verify_manifest`), then
+  hand-mirror into `js/constants.js` and `ontic.h`. Finish with
+  the `constants-sentinel` agent to verify zero drift.
+
+#### H5 — Cross-renderer scope
+
+- **Symptom.** A new Scene / camera / overlay feature works on
+  Scale 0 but silently does nothing on Scale 5 (cosmic).
+- **Cause.** `Viewport` serves Scales 0-3. Scale 4 is
+  `PlanetaryRenderer`, Scale 5 is `CosmicRenderer`, Scale 11 uses
+  `Viewport` with forced post-processing overrides. Each has its
+  own camera, scene graph, and lifecycle.
+- **Fix.** Declare the scale bucket in the panel-registry entry
+  (`scales: ['0','1','2','3']`) and check against it before
+  shipping. If you need cross-scale reach, write a `SceneAdapter`-
+  style shim that dispatches on `engineMode`. Current Scene panel
+  is scoped to Viewport-only as a deliberate first-pass.
+
+#### H6 — System-clock / date fixtures
+
+- **Symptom.** A test that passed yesterday fails today with a
+  date-comparison assertion, or the Verify panel's build stamp
+  reads tomorrow.
+- **Cause.** Assertions on CODATA 2022 dates, spec-file timestamps,
+  or `build_stamp.timestamp` are clock-sensitive. The manifest
+  regenerates `datetime.now(timezone.utc).isoformat()` each build.
+- **Fix.** Use stable `last_checked` / `date` fields in data files,
+  not `datetime.now()`. In Playwright tests, assert that the
+  timestamp *exists and matches a format*, not that it equals a
+  specific value. In Python tests, freeze the clock or compare
+  against a date range.
+
+#### H7 — KaTeX CDN fallback
+
+- **Symptom.** `\(\alpha\)` renders as raw text after an offline
+  deploy or a CDN outage.
+- **Cause.** KaTeX is loaded via CDN (`cdn.jsdelivr.net`). If
+  `window.katex` is absent, `renderMathInHtml` leaves the LaTeX
+  source visible — a graceful degrade, but not what you see in the
+  usual dev loop.
+- **Fix.** Acceptable fallback behavior — no code change needed
+  most of the time. Tests should assert **presence of `.katex`
+  elements**, not absence of `\(...\)` delimiters (the coverage
+  spec already does this). If you need offline reliability, host
+  KaTeX locally in `js/ui/charts/vendor/` and update the `<link>`
+  / `<script>` in `index.html`.
+
+#### H8 — Scale-gated toggles
+
+- **Symptom.** A toggle shows on the wrong scale, or it shows on
+  every scale when it should be Scale-0-only.
+- **Cause.** Two overlapping mechanisms:
+  (1) `scales: [...]` on the `PANEL_REGISTRY` entry gates the tab.
+  (2) `.scaleN-only` CSS classes inside panels hide / show
+  elements based on the active `#app[data-active-scale="N"]`.
+  Using both on the same toggle leads to double-gating that breaks
+  in subtle ways.
+- **Fix.** Pick one. Scale-level gating goes on the registry.
+  Sub-scale gating (e.g. "this toggle only in Scale 0 with flux
+  scenarios") uses `.scale0-only` CSS. Never mix.
