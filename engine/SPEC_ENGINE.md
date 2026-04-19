@@ -1,9 +1,43 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-04-17
-**Engine version:** 2.14 (Logic-First + EFT Reconstruction + 20-Benchmark Bridge + Wilson/Gluon/Einstein/BH)
-**Test count:** 190+ test files (120 unit + 62 campaign + 7 benchmarks). GPU conditional on `FTD_ENABLE_CUDA`.
+**Last updated:** 2026-04-17 (engine cleanup sweep: 6 tracker items closed in one day)
+**Engine version:** 2.14.1 (Logic-First + EFT Reconstruction + 20-Benchmark Bridge + γ_FTD momentum + precision-α + EnergyLedger on CPU & GPU)
+**Test count:** 190+ test files + 3 new 2026-04-17 audit tests (leapfrog, isotropy, γ-momentum). GPU conditional on `FTD_ENABLE_CUDA`.
+
+### April 17, 2026 — Engine cleanup sweep (6 tracker items closed)
+
+Six TRACKER_OPEN_ITEMS §1 items resolved in one pass, in dependency-ordered sequence. Summary:
+
+| § | Title | Verdict | What changed |
+|---|---|---|---|
+| 1.4 | Symplectic leapfrog integrator | Already symplectic | Corrected comments + new audit test |
+| 1.8 | Moore-Laplacian isotropy | Already isotropic (Taylor proof) | Corrected comments + new isotropy test |
+| 1.5 | `ALPHA_PRECISION` rollout | Wiring needed | `ALPHA`, `G_C`, JS mirror all upgraded; `ALPHA_TREE` retained as reference |
+| 1.2 | γ_FTD momentum integration | Real physics change | Velocity clamp replaced with `p = γmv` in `phase_forces`; removed the over-strict secondary clamp in latency block |
+| 1.7 | GPU-path `EnergyLedger` | Hook needed | `tick()`'s GPU path now calls `gpu_sync_to_host()` + `update_energy_ledger()` |
+| 1.9 | Muon / tau spatial seeds | JS feature | Two new scale-0 scenarios (`s0-seed-muon`, `s0-seed-tau`) with full epistemic metadata |
+
+**All six viable engine opens are now ✅ CLOSED.** Three remaining §1 items are explicitly `[BLOCKED]` (DagEngine stubs, dynamical SU(3), δ_c closed form) on upstream work. See [`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md) for the full ledger.
+
+### April 17, 2026: Open items tracker + cleanup sweep
+- **`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`** — new canonical ledger of every `[OPEN]` across engine code, theory derivations, foundations, particles, consciousness, math connections, and bridges. 275 occurrences across 83 files, organised + auto-refreshable.
+- **Dead-code removal:** `vec3Str` / `fmtForce` in `engine/web/js/inspector.js` (unused, superseded by `units.js`).
+- See [CHANGELOG.md](../CHANGELOG.md) → "Open Items Tracker + Cleanup Sweep" for full list.
+
+### April 17, 2026: Consolidation sweep
+- **`DagEngine` marked EXPERIMENTAL.** Banner at the top of `dag_engine.h` and `dag_engine.cpp` makes clear that `gauss_project` / `phase_forces` / `phase_movement` are `[OPEN]` stubs — the production physics path is `RenderBridge`.
+- **DagEngine WASM binding removed.** The web engine never called it; the Emscripten export was dead weight inviting users into an unfinished code path.
+- **`engine/README.md`** got a new "Engine files — what's production, what's experimental" table.
+- **`EnergyLedger`** auto-populated via `RenderBridge::update_energy_ledger()` at the end of every CPU-path `tick()`. Tests can now assert on `|residual| < tol` and refuse energy-drift regressions. GPU-path caveat documented (host voxels stale between syncs).
+
+### April 17, 2026: Honesty sweep
+- **`X_PLUS_PRECISION = 137.035999177`** and **`ALPHA_PRECISION = 1/X_PLUS_PRECISION`** added to `ontic.h` and re-exported. α derivation now first-class in engine headers, not just in docs. Engine force paths still use tree-level `ALPHA` (3.8 ppm wider than CODATA — below every benchmark's resolution). Swap when a benchmark needs < 1 ppm.
+- **`ALPHA_EFT = G_C²` re-framed.** G_C was *defined* as √α, so `G_C² = α` is an identity by construction — a consistency check, not a derivation. The real α derivation is the master quadratic. (Engine behavior unchanged.)
+- **Colour force re-tagged** `[PHENOMENOLOGICAL FIT]` (was `[EMERGENT]`). Colour labelling is emergent; the three-regime force law is imposed. Genuine SU(3) derivation tracked in `TRACKER_OPEN_ITEMS.md` §1.3 + §2.4.
+- **Velocity clamp re-tagged** `[APPROXIMATION — NON-RELATIVISTIC CLAMP]`. Proper `γ_FTD` momentum integration is `[OPEN]`.
+- **Gravity regime banner** at `G_N` in `ontic.h`: explicit that engine runs at lattice-toy strength (~10³⁷× physical). Every gravity-benchmark claim must state the regime.
+- **Integration-scheme notes** added in `phase_read` header: the Moore Laplacian is consistent but not isotropic at O(h²); the advance pair is forward Euler, not symplectic leapfrog.
 
 ### April 17, 2026: Dashboard UX refresh
 - **Panels redesign** (`docs/superpowers/specs/2026-04-16-panels-redesign-design.md`): diagnostics / charts / lagrangian tabs rebuilt on vendored uPlot 1.6.30 + a shared descriptor-driven table primitive. 27 diagnostic rows with physics-accurate units, 20 inline sparklines, chip-picker chart grid, stacked-area Lagrangian.
@@ -27,7 +61,7 @@
   - `DERIV_SINGLET_FROM_VOID_EVENT.md` — Bell loop via void event
   - `DERIV_NC_FROM_TOPOLOGY.md` — N_c = 3 from 4 independent routes
 - **WASM rebuilt and deployed**: ftd_core.js + ftd_core.wasm now in engine/web/wasm/
-- **DagEngine fixed**: added 4 missing pure virtual overrides (current_tick, dt, set_dt, entity_count)
+- **DagEngine fixed**: added 4 missing pure virtual overrides (current_tick, dt, set_dt, entity_count). **Update 2026-04-17:** DagEngine is now explicitly EXPERIMENTAL — see top-of-file April 17 consolidation entry.
 - **6 SM visualization scenarios**: Particle Zoo, Higgs Field, Higgs Mechanism, Electroweak, Three Generations, QCD Vacuum
 - **Scientific status: C+ -> B+** (20 benchmarks + 4 physics domains + GR + 3 theorems)
 - Consolidated index.html (removed index_dag.html), fixed dag_engine.h missing include
@@ -282,7 +316,7 @@ tick() {
 | `phase_write` | `damping`, `genesis`, `selective_damping`, `larmor_radiation` | Leapfrog: wave_vel += delta_J, flux += wave_vel. Damping: uniform (default), selective (near-particle only), or Larmor-modulated (acceleration-dependent). Genesis: \|J\| > K_GENESIS -> manifest (polarity from div(J), spin from curl(J), color from dominant axis). Evaporation: 7-site neighborhood energy < K_B^2 * 1e-6 -> void. Dual-substrate: independent leapfrog for L/R, observable sync |
 | `gauss_project` | `gauss_projection` | SOR Poisson solver (omega=1.75, 30 iterations, warm-started): violation = div(J)-state, solve nabla^2 phi = violation, then J -= grad(phi) at **void sites only** (manifested sites skipped -- Phase 4 Approach B). Dual-substrate: Gauss sync propagates correction to J_L and J_R equally |
 | `phase_forces` | `forces`, `gravity`, `lorentz_force`, `poisson_coulomb` | **Field-mediated only**: F_EM = -alpha*s*grad(phi_C) (Poisson, default) or -alpha*s*grad(div(J)) (legacy). Poisson solver: SOR omega=1.75, 30 iterations, warm-started. F_Lorentz = alpha*s*(v x B) where B=curl(J). F_grav = G_N*grad(rho) (tier-2 stencil). Optional: color_forces, strong_force, exchange_force (toggle-gated, default OFF). Per-particle force breakdown stored in `ForceDiag` |
-| `phase_movement` | `movement` | Clears `moved_` flag buffer. Remainder accumulation, integer moves when remainder >= 1. Collisions: void->move, same-sign->bounce, opposite-sign->annihilate. Speed clamped to C_SPEED = 1/sqrt(3). Self-field and particle_id carried to new site |
+| `phase_movement` | `movement` | Clears `moved_` flag buffer. Remainder accumulation, integer moves when remainder >= 1. Collisions: void->move, same-sign->bounce, opposite-sign->annihilate. Speed bounded by the γ_FTD integrator upstream (in `phase_forces`), which guarantees `v² /C² + L² < 1` by construction — no clamp here. Self-field and particle_id carried to new site. |
 
 ---
 
@@ -316,10 +350,11 @@ The derivation chain lives in `ontic.h` (9+ layers). `constants.h` re-exports ev
 
 | Constant | Value | Used in |
 |----------|-------|---------|
-| `ALPHA` | 0.00729 | Coulomb force, damping, exchange force |
+| `ALPHA` | 0.00729 (1/X_PLUS, tree-level) | Coulomb force, damping, exchange force |
+| `ALPHA_EFT` | `G_C²` (≡ ALPHA by construction) | Same two-vertex force paths; consistency alias |
 | `K_B` | 0.511 | Evaporation threshold, wavepacket amplitude, Larmor scale |
-| `G_C` | sqrt(alpha) | State-flux coupling (phase_read) |
-| `G_N` | 0.01 | Gravitational force |
+| `G_C` | sqrt(ALPHA) | State-flux coupling (phase_read) |
+| `G_N` | 0.01 (lattice toy — see §5 gravity banner) | Gravitational force |
 | `C_WAVE` | 1/sqrt(3) | Wave propagation speed (Laplacian coefficient) |
 | `C_SPEED` | 1/sqrt(3) | Movement speed limit |
 | `K_GENESIS` | 3 * K_B | Genesis threshold |
@@ -333,11 +368,14 @@ The derivation chain lives in `ontic.h` (9+ layers). `constants.h` re-exports ev
 | `YUKAWA_RANGE` | varies | Strong force range |
 | `N_C` | 3 | Color charge count |
 
-**Reference-only (computed in ontic.h, not read by engine)**:
+**Reference-only (computed in ontic.h, not read by engine kernels yet)**:
 
 | Constant | Purpose |
 |----------|---------|
-| `MU_RATIO`, `TAU_RATIO`, etc. | Mass ratios (used by ParticleEngine/AtomEngine, not lattice) |
+| `X_PLUS_PRECISION` | 4-term corrected 1/α = 137.035999177 (matches CODATA). Opt in to swap from tree-level `X_PLUS`. |
+| `ALPHA_PRECISION` | 1 / X_PLUS_PRECISION — use when benchmark precision surpasses 1 ppm. |
+| `ALPHA_G_APPROX` | 5.9e-39 — *physical* gravitational coupling. Engine uses `G_N = 0.01` instead (see §5 gravity banner). |
+| `MU_RATIO`, `TAU_RATIO`, etc. | Mass ratios (used by ParticleEngine / AtomEngine, not lattice) |
 | `THETA_W`, `THETA_12`, `THETA_13`, `THETA_23` | Mixing angles (theoretical reference) |
 | `DELTA_CP` | CP violation phase (theoretical reference) |
 | `G_STAR`, `PF`, `X_PLUS`, `X_MINUS` | Master quadratic intermediates |
@@ -678,7 +716,7 @@ All tests registered as CTests (170 CPU+GPU + 5 Five Minds campaigns). GPU tests
 
 14. **Double damping is intentional (Rayleigh dissipation)**: Both `flux` and `wave_vel` are damped by `(1-ALPHA)` each tick in `phase_write`. This is deliberate Rayleigh dissipation -- it damps both the position-like degree of freedom (flux) and the velocity-like degree of freedom (wave_vel). Damping only one would leave undamped oscillatory modes. The dual damping ensures monotonic energy decay in the field, which is required for stable self-field buildup and physically correct radiation loss.
 
-15. **Speed limit enforced in phase_forces(), not phase_movement()**: The velocity clamp `|v| <= C_SPEED` is applied at the end of force accumulation rather than after movement. This prevents transient superluminal velocities from existing between force accumulation and movement -- even briefly. Post-movement clamping would allow one tick of superluminal propagation before correction, which could violate causality guarantees.
+15. **Speed limit enforced by γ_FTD momentum integration in phase_forces()**: As of 2026-04-17 (TRACKER §1.2), the velocity update in `phase_forces` uses `p = γmv` dynamics. Momentum reconstructs from `v + latency`, Newton's law updates `p`, and the new `v` extracts from `p` via `v = p · C · √((1−L²)/(C²+|p|²))`. This respects the FTD bandwidth `v²/C² + L² < 1` by construction — `|v|` asymptotes to `C·√(1−L²)`, never crosses. No clamp needed anywhere downstream; `phase_movement` receives an already-bounded velocity. Previous implementation used a non-relativistic clamp that discarded energy and was Lorentz-violating; the γ-integration replaces it cleanly.
 
 ---
 
@@ -690,7 +728,9 @@ All tests registered as CTests (170 CPU+GPU + 5 Five Minds campaigns). GPU tests
 |--------|-------------|
 | `tick()` | Advance one tick (all 5 phases) |
 | `diagnostics()` | Returns `Diagnostics` struct (counts, flux totals, charge) |
-| `energy_audit()` | Returns `EnergyAudit` (field/wave/KE/PE breakdown, Gauss violation) |
+| `energy_audit()` | Returns `EnergyAudit` (field/wave/KE/PE breakdown, Gauss violation) — one-shot snapshot |
+| `energy_ledger()` | Returns `const EnergyLedger&` — per-tick conservation drift (auto-populated on CPU path). Tests assert `abs(.residual) < tol` to refuse energy-drift regressions. GPU: call `update_energy_ledger()` manually after a device→host sync. |
+| `update_energy_ledger()` | Populate the ledger (called automatically by `tick()` on CPU path) |
 | `inject_particle(x,y,z, state)` | Inject single particle at lattice site |
 | `inject_wavepacket(x,y,z, state, sigma, amplitude)` | Inject Gaussian wavepacket |
 | `inject_flux(x,y,z, fx,fy,fz)` | Raw flux injection |
@@ -742,6 +782,14 @@ Replaces CPU's iterative SOR with spectral method via cuFFT:
 - **Exact**: Gauss violation = 0.0 (vs CPU SOR ~ 1.14)
 - **Single-pass**: No iteration count to tune
 - Precomputed Green's function reused every tick
+
+**Numerical parity note (F6 callstack audit 2026-04-17):** CPU and GPU
+solve the SAME Poisson equation but with different numerical methods
+(SOR iterative vs FFT spectral). CPU output carries a residual ≤ 10⁻⁴
+at the default `SOR_ITERATIONS = 6`; GPU output is exact to floating-
+point roundoff. Benchmarks comparing CPU vs GPU Poisson-dependent
+quantities (Coulomb force, gauss_project, latency field) should account
+for this ~10⁻⁴ systematic difference and not treat it as a regression.
 
 ### SoA Memory Layout
 
@@ -861,13 +909,13 @@ Key changes from v2.11:
 The scrub bar is backed by two capture strategies that share a single `TimelineBuffer` primitive (`js/scales/scale0/timeline/`):
 
 - **MemoryRecorder** — live rolling window with LOD-tiered age decay. Snapshots enter at LOD 0 and are progressively block-averaged to LOD 1 (2× downsample) / LOD 2 (4×) / LOD 3 (audit-only) as they age across tier boundaries. Tier schedule auto-derives from a user-configurable byte budget (default 30 MB, ≈ 27 s of window at a 32³ lattice).
-- **RenderController** — offline fast-forward. User clicks the Render button; the controller slices `ticksPerSlice = 60` per `setTimeout(0)` so the live sim + UI stay responsive. Emits `start / progress / done / cancel / error` events which the floating render chip binds to. Cancellation restores the original engine state; partial clips are discarded.
+- **RenderController** — offline dense capture. User clicks the Render button; the controller runs ticks in ≤ 12 ms idle slices (`setTimeout(0)`) while sampling every `sampleEveryTicks = 4` ticks (15 fps @ 60 TPS). A budget-aware LOD picker selects the coarsest LOD (0 / 1 / 2) whose byte-cost × sample-count fits the render budget, then the whole clip is captured at that LOD — guaranteeing a dense, uniformly-sampled buffer for smooth forward and backward scrubbing. Emits `start / progress / done / cancel / error`. Cancellation restores the original engine state; partial clips are discarded.
 
-Hydration uses two new Scale 0 bridge capabilities:
-- `getScale0Snapshot()` → `{ tick, lod, lattice, flux, wave, particles, audit }` (copies of MockBridge's `_stateGrid`, `_fluxJ`, `_fluxWV`, `_particles`)
-- `loadScale0Snapshot(s)` — writes arrays back into the existing engine buffers (preserving array identity so cached indices stay valid) and resets the tick counter.
+Hydration uses two Scale 0 bridge capabilities:
+- `getScale0Snapshot()` → `{ tick, lod, lattice, flux, wave, particles, audit }` (copies of MockBridge's `_stateGrid`, `_fluxJ`, `_fluxWV`, `_particles`).
+- `loadScale0Snapshot(s)` — writes arrays back into the engine buffers. Accepts **any LOD**; LOD 1/2 inputs are upsampled nearest-neighbor to N³ before write (the JS-side `timeline/lod.js#upsampleScalar / upsampleVec3` helpers are published on `window.__ftdTimelineLod`). LOD 3 is telemetry-only and rejected.
 
-Scrubbing interpolates by locating the nearest LOD-0 snapshot ≤ target tick, loading it, then fast-forwarding the remainder — bounded within a single tier (≤ ~180 ticks at default cadence, ≤ 100 ms).
+Scrubbing is a pure "load, don't re-simulate" operation: `hydrateToTick(tick)` picks the nearest snapshot by tick from the render buffer (if an active clip exists) else the memory buffer, and loads it directly. No fast-forward ticks run during a drag, so the cost per scrub frame is one upsample + one buffer write — latency is independent of scrub distance. Pointer moves are coalesced to one hydrate per animation frame via `requestAnimationFrame`, so 240 Hz trackpads cannot saturate the loader. Live simulation resumes on pointerup (`onScrubEnd`).
 
 ### Panels Redesign (April 2026)
 

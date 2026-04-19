@@ -58,3 +58,24 @@ html[data-theme="light"] {
 html[data-theme="light"] .card {
     border-color: rgba(0, 0, 0, 0.08);
 }
+
+html[data-theme="light"] {
+    /* Chart series — dark enough to read on white/light-gray backgrounds */
+    --chart-flux:     #c2600a;
+    --chart-energy:   #1565c0;
+    --chart-total:    #374151;
+    --chart-positive: #166534;
+    --chart-negative: #991b1b;
+    --chart-charge:   #166534;
+    --chart-eb:       #5b21b6;
+    --chart-gauss:    #92400e;
+    --chart-entropy:  #1e40af;
+
+    --legend-field-kinetic:  #166534;
+    --legend-field-gradient: #0f766e;
+    --legend-bi:             #991b1b;
+    --legend-coupling:       #c2600a;
+    --legend-velocity:       #854d0e;
+    --legend-gauss:          #1565c0;
+    --legend-dissipation:    #374151;
+}

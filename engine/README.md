@@ -85,6 +85,20 @@ Every lattice site carries two coupled layers:
 | 5 | `CosmicEngine` / `CosmicMockBridge` (JS) | N-body + SPH cosmic simulation, stellar lifecycle |
 | 6 | `MetaUnit` (JS) | Existential unit — Moore layer decomposition visualization |
 
+### Engine files — what's production, what's experimental
+
+| File | Role | Status |
+|---|---|---|
+| `include/ftd/render_bridge.h` + `src/render_bridge.cpp` | **Scale-0 physics** (flat voxel array, 6-phase tick, SOR Gauss solver, force pipeline, EnergyLedger) | **Production** — what WASM, tests, and benchmarks all run |
+| `include/ftd/gpu_engine.h` + CUDA sources | GPU-accelerated drop-in replacement for RenderBridge (FFT Poisson, all data on device) | Production when `FTD_ENABLE_CUDA=ON` |
+| `include/ftd/dag_engine.h` + `src/dag_engine.cpp` | Sparse-voxel-DAG prototype | **Experimental** — `phase_read` + `phase_write` work; `gauss_project`, `phase_forces`, `phase_movement` are `[OPEN]` stubs. Do not use for physics. The `SparseVoxelDAG` data structure itself is useful for future sparse work |
+| `include/ftd/dag_lattice.h` | `SparseVoxelDAG` data structure | Experimental infrastructure — kept for future sparse simulations |
+| `include/ftd/particle_engine.h` + `src/particle_engine.cpp` | Scale-1 continuous particles | Production |
+| `include/ftd/atom_engine.h` + `src/atom_engine.cpp` | Scale-2 / Scale-3 atoms + molecules | Production |
+| `include/ftd/cosmic_engine.h` + `src/cosmic_engine.cpp` | Scale-5 N-body + SPH | Production |
+
+**Rule of thumb:** if a class name starts with `Dag`, it's experimental. Everything else is production.
+
 ### GPU Acceleration
 
 `GpuEngine` is a drop-in alternative to `RenderBridge`. All field data lives on the GPU; the host transfers only diagnostics. FFT Poisson solver replaces iterative SOR.
@@ -95,14 +109,21 @@ Every lattice site carries two coupled layers:
 
 ```text
 tick() {
-  1.  phase_read()          Wave equation + state-flux coupling
-  2.  phase_write()         Leapfrog integration, damping, genesis/evaporation
+  1.  phase_read()          Wave equation + state-flux coupling (18-point Moore Laplacian)
+  2.  phase_write()         Forward-Euler-like advance + damping + genesis / evaporation
   3.  gauss_project()       SOR Poisson solver: enforce div(J) = s
   4.  phase_forces()        F_EM + F_Lorentz + F_grav (field-mediated)
   5.  phase_movement()      Velocity integration, collisions, annihilation
-  6.  ++tick_
+  6.  ++tick_ + update_energy_ledger()  (CPU path; GPU: call ledger manually post-sync)
 }
 ```
+
+Integration-scheme notes (2026-04 verified):
+- `phase_write`'s advance pair (`wave_vel += Δ; flux += wave_vel`) is **Störmer–Verlet leapfrog** under the stagger interpretation (`wave_vel = v(t+h/2)`, `flux = J(t)`). Verified symplectic: 0.1 % cumulative energy balance over 5000 ticks with damping off (`tests/test_leapfrog_integrator_audit.cpp`).
+- The 18-point Moore Laplacian (face = 1/3, edge = 1/6, self = −4) is **analytically isotropic through O(h⁴)** — the 2:1 face:edge ratio produces `(h²/12)(∇²)²f` corrections, no anisotropic term. Residual empirical asymmetry at finite h is lattice dispersion at `k·h ~ 1` (universal cubic-FD artefact). Verified in `tests/test_moore_laplacian_isotropy.cpp`.
+- Velocity clamp at `C_SPEED` is a **non-relativistic approximation**; proper `γ_FTD = 1/√(1−v²−L²)` momentum integration is `[OPEN]`.
+
+Full status of every open item: [`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md).
 
 Every phase is gated by a runtime toggle (`TermToggles` struct, 20 booleans — 10 core ON, 10 extensions).
 

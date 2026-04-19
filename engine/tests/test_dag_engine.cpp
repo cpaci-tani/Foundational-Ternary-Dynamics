@@ -1,3 +1,23 @@
+// test_dag_engine.cpp — SparseVoxelDAG structural-parity tests.
+//
+// This test exercises the SparseVoxelDAG data structure through the
+// experimental DagEngine wrapper. It verifies:
+//   1. The DAG initialises at the correct size / depth.
+//   2. COW writes update the target voxel and leave the canonical void
+//      voxel untouched.
+//   3. A single tick propagates the Laplacian wave via phase_read +
+//      phase_write (these two are implemented; the other three phases
+//      are stubs and are NOT exercised here).
+//
+// This is a data-structure correctness test, not a physics validation.
+// The production physics path is RenderBridge; see test_render_bridge*.cpp
+// for actual tick-cycle, gauss_project, and force-law tests.
+//
+// Why keep this test?
+//   The SparseVoxelDAG is still useful future infrastructure for sparse
+//   cosmological simulations. Keeping these three assertions green ensures
+//   the data structure stays callable when someone resumes that work.
+
 #include <iostream>
 #include <cmath>
 #include "ftd/dag_engine.h"

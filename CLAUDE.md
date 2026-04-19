@@ -154,6 +154,8 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Theory catalog**: `docs/theory/META_INDEX.md`
 - **Documentation map**: `META_DOCUMENTATION_MAP.md`
 - **Epistemic audit**: `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md`
+- **Engine callstack audit**: `docs/theory/07_assessment/AUDIT_ENGINE_CALLSTACK.md` (CPU/GPU parity, toggle gaps, 10 findings)
+- **Open items tracker**: `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md` (every `[OPEN]` across code + theory, one place)
 - **Changelog**: `CHANGELOG.md`
 - **Complete SM**: `scripts/proofs/proof_complete_sm.py`
 - **Motivic proof**: `scripts/proofs/proof_motivic_master_quadratic.py`

@@ -1,7 +1,9 @@
 # Physics Status — FTD Multi-Scale Engine
 
 > **Living document** — updated after each implementation phase.
-> Last updated: 2026-04-11 (Phase 4 complete — Molecular Physics Full Port)
+> Last updated: 2026-04-17 (Honesty + Consolidation sweeps — see Open Items Tracker)
+
+**Canonical unresolved-work ledger:** [`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md).
 
 ---
 
@@ -16,12 +18,14 @@
 
 **Total CTests registered: 145** (CPU + GPU-conditional)
 
+**DagEngine** (sparse-voxel-DAG prototype): `phase_read` + `phase_write` implemented against `SparseVoxelDAG`; `gauss_project`, `phase_forces`, `phase_movement` are `[OPEN]` stubs. **Experimental, not production.** See `include/ftd/dag_engine.h` banner.
+
 ---
 
 ## Scale 0 — Lattice Field Theory (RenderBridge)
 
 Discrete 3D cubic lattice. Voxel states {-1, 0, +1}. Flux field J in R^3.
-Velocity Verlet wave propagation + Gauss projection + Poisson Coulomb solver.
+**Forward-Euler-like wave propagation** (not symplectic leapfrog — DAMPING masks drift) + Gauss projection (SOR) + Poisson Coulomb solver + per-tick `EnergyLedger` for conservation drift.
 
 ### Forces
 
@@ -31,10 +35,10 @@ Velocity Verlet wave propagation + Gauss projection + Poisson Coulomb solver.
 | Coulomb (legacy) | F = -alpha * s * nabla(nabla . J) | `forces` (when poisson off) | Implemented | coulomb_isotropy |
 | Gravity | F = G_N * nabla(rho_smoothed) | `gravity` | Implemented | gravity_attraction |
 | Lorentz | F = alpha * s * (v x B), B = nabla x J | `lorentz_force` | Implemented | campaign_lorentz_measure, larmor |
-| Color (Yukawa + linear) | Yukawa short-range + linear confinement | `color_forces` | Implemented | GP-COLOR |
-| Exchange (Pauli) | Repulsive exponential, same-spin | `exchange_force` | Implemented | GP-EXCHANGE |
-| Weak | Chirality-based polarity flip at stress threshold | `weak_transmutation` | Implemented | GP-WEAK |
-| Strong (Yukawa) | Nuclear Yukawa potential | `strong_force` | Implemented | GP-STRONG |
+| Color (Yukawa + linear) | Three-regime: Coulomb → flux tube → linear | `color_forces` | **[PHENOMENOLOGICAL FIT]** — labelling is emergent, force law is imposed. See TRACKER §1.3. | GP-COLOR |
+| Exchange (Pauli) | Repulsive exponential, same-spin | `exchange_force` | Implemented (toggle-gated) | GP-EXCHANGE |
+| Weak | Chirality-based polarity flip at stress threshold | `weak_transmutation` | Implemented (toggle-gated) | GP-WEAK |
+| Strong (Yukawa) | Nuclear Yukawa potential | `strong_force` | Implemented (toggle-gated) | GP-STRONG |
 
 ### Toggles (TermToggles — 20 booleans)
 

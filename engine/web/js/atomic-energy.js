@@ -11,7 +11,10 @@
  */
 
 import { defaultNeutronCount } from './elements.js';
-import { M_P_PHYS, M_N_PHYS, M_E_PHYS } from './constants.js';
+import {
+    M_P_PHYS, M_N_PHYS, M_E_PHYS,
+    SEMF_A_VOL, SEMF_A_SURF, SEMF_A_COUL, SEMF_A_ASYM, SEMF_A_PAIR,
+} from './constants.js';
 
 // ── Physical Constants (MeV) ─────────────────────────────────────────
 // Aliased from constants.js to keep the SEMF code below unchanged.
@@ -24,13 +27,12 @@ const M_ELECTRON = M_E_PHYS;
 // name keeps the output format deterministic across refactors.
 const K_B        = M_ELECTRON;
 
-// ── Bethe-Weizsäcker Parameters (MeV) ────────────────────────────────
-// Standard Wapstra parameterization
-const A_VOL  = 15.67;   // volume term
-const A_SURF = 17.23;   // surface term
-const A_COUL = 0.7140;  // Coulomb term
-const A_ASYM = 23.29;   // asymmetry term
-const A_PAIR = 12.0;    // pairing term
+// ── Bethe-Weizsacker Parameters (MeV) — aliased from constants.js ───
+const A_VOL  = SEMF_A_VOL;
+const A_SURF = SEMF_A_SURF;
+const A_COUL = SEMF_A_COUL;
+const A_ASYM = SEMF_A_ASYM;
+const A_PAIR = SEMF_A_PAIR;
 
 /**
  * Nuclear binding energy via the semi-empirical mass formula.

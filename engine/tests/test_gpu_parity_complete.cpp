@@ -551,7 +551,8 @@ static void gpc_18_larmor() {
 static void gpc_19_constants() {
     std::printf("\n--- GPC-19: Ontic Constants Parity ---\n");
 
-    CHECK_CLOSE(ALPHA, 1.0/137.03617145815554, 1e-10, "GPC-19 ALPHA");
+    // 2026-04-17: ALPHA is now 1/X_PLUS_PRECISION (TRACKER §1.5 rollout).
+    CHECK_CLOSE(ALPHA, 1.0/137.035999177, 1e-10, "GPC-19 ALPHA");
     CHECK_CLOSE(G_STAR, 2.9586751191886385, 1e-10, "GPC-19 G_STAR");
     CHECK_CLOSE(K_B, 0.511, 1e-10, "GPC-19 K_B");
     CHECK_CLOSE(G_N, 0.01, 1e-10, "GPC-19 G_N");

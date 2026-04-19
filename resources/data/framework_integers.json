@@ -1,0 +1,84 @@
+{
+  "_meta": {
+    "purpose": "Provenance of the four framework integers {N_c, N_base, b_3, N_eff}. Every one of these is derived, not postulated — this file records the derivation source.",
+    "source_theorem": "docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md",
+    "verification": "scripts/proofs/proof_motivic_master_quadratic.py"
+  },
+
+  "integers": [
+    {
+      "symbol": "N_c",
+      "value": 3,
+      "tag": "[THEOREM]",
+      "origin": "master quadratic smaller root x_- = 8 G*^2 - 4 G* sqrt(4 G*^2 - G*) = 3.024",
+      "meaning": "number of colors; dimension of SU(3) triplet",
+      "polyhedral_shell": "8 BCC corners under gerade/ungerade parity",
+      "independent_routes": [
+        "master quadratic x-",
+        "RG flow termination: alpha_s beta function zero at N_c=3",
+        "topological quantization: pi_2(SU(3)/SU(2)) = Z",
+        "Moore BCC decomposition: 8 corners / 2 parities * quaternion grading",
+        "FLT: first forbidden exponent"
+      ]
+    },
+    {
+      "symbol": "N_base",
+      "value": 4,
+      "tag": "[THEOREM]",
+      "origin": "smallest exponent with no non-trivial integer solutions to a^n + b^n = c^n (Fermat's Last Theorem); structurally, the dimension of the smallest non-commutative division algebra (quaternions)",
+      "meaning": "base dimensionality; fermions per generation per shell",
+      "polyhedral_shell": "4 gerade + 4 ungerade fermions per generation",
+      "independent_routes": [
+        "FLT: second forbidden exponent after 3",
+        "quaternion dimension dim(H) = 4",
+        "Moore shell slots per generation"
+      ]
+    },
+    {
+      "symbol": "b_3",
+      "value": 7,
+      "tag": "[THEOREM]",
+      "origin": "QCD beta function coefficient at N_f = 6: (11 * N_c - 2 * N_f) / 3 = (11*3 - 12)/3 = 7",
+      "meaning": "asymptotic freedom rate",
+      "derivation_from": ["N_c", "N_f = 6 (standard model quark count)"],
+      "relation_to_N_eff": "N_eff = F(b_3) = F_7 = 13 (Fibonacci)"
+    },
+    {
+      "symbol": "N_eff",
+      "value": 13,
+      "tag": "[THEOREM]",
+      "origin": "Fibonacci F_7 = F_6 + F_5 = 8 + 5 = 13",
+      "meaning": "effective degrees of freedom",
+      "polyhedral_interpretation": "number of distinct nonzero hyperspin configurations in the Moore lattice after parity collapse",
+      "derivation_from": ["b_3 via Fibonacci indexing"],
+      "appears_in": [
+        "Weinberg angle: sin^2(theta_W) = N_c/N_eff = 3/13",
+        "Strong coupling at M_Z: alpha_s = b_3/(b_3 + 4*N_eff) = 7/59",
+        "4-term precision formula anomaly: eps = e^pi - pi - (b_3 + N_eff) = e^pi - pi - 20",
+        "Higgs mass: m_H = (N_eff / alpha^2) * m_e",
+        "Proton mass: m_p/m_e = N_eff/alpha + N_base * N_eff + N_c"
+      ]
+    }
+  ],
+
+  "derived_constants": [
+    {
+      "symbol": "D_constraint",
+      "value": 47,
+      "expression": "N_c * N_base^2 - 1",
+      "meaning": "common denominator in loop-correction coefficients"
+    },
+    {
+      "symbol": "N_gen",
+      "value": 3,
+      "expression": "floor(x_-)",
+      "meaning": "number of matter generations"
+    }
+  ],
+
+  "key_combinations": [
+    { "expression": "b_3 + N_c", "value": 10, "appears_in": "N_c^2 * N_base^2 ÷ (b_3 + N_c)^2 = gravitational coupling denominator" },
+    { "expression": "b_3 + N_eff", "value": 20, "appears_in": "e^pi - pi - (b_3 + N_eff) = epsilon CFT anomaly" },
+    { "expression": "N_c * N_base^2 - 1", "value": 47, "appears_in": "c1, c3 denominators in 4-term precision formula" }
+  ]
+}

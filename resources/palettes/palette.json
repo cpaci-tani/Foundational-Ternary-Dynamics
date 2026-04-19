@@ -1,0 +1,63 @@
+{
+  "_meta": {
+    "source": "engine/web/css/tokens.css",
+    "theme": "abyss (default dark)",
+    "note": "Regenerate by re-reading tokens.css when defaults change."
+  },
+
+  "backgrounds": {
+    "bg-deep":     "#05080f",
+    "bg-surface":  "rgba(10, 15, 26, 0.45)",
+    "bg-card":     "rgba(18, 26, 47, 0.55)",
+    "bg-input":    "rgba(25, 36, 60, 0.65)",
+    "bg-elevated": "rgba(25, 36, 60, 0.75)",
+    "bg-raised":   "rgba(35, 50, 80, 0.85)"
+  },
+
+  "text": {
+    "primary":   "#ffffff",
+    "secondary": "rgba(255, 255, 255, 0.82)",
+    "muted":     "rgba(255, 255, 255, 0.75)",
+    "accent":    "#e2e8f0",
+    "dim":       "#94a3b8"
+  },
+
+  "accent": {
+    "base": "#00e5ff",
+    "dim":  "#0088aa",
+    "glow": "#00e5ff88"
+  },
+
+  "status": {
+    "positive": "#34d399",
+    "negative": "#fb7185",
+    "warning":  "#fbbf24"
+  },
+
+  "legend": {
+    "field-kinetic":  "#66bb6a",
+    "field-gradient": "#26a69a",
+    "bi":             "#ef5350",
+    "coupling":       "#fb8c00",
+    "velocity":       "#fdd835",
+    "gauss":          "#42a5f5",
+    "dissipation":    "#78909c"
+  },
+
+  "consciousness": {
+    "primary":   "#00e5ff",
+    "secondary": "#7c4dff",
+    "glow":      "#00bcd4",
+    "gold":      "#ffd700"
+  },
+
+  "overlay_gradients": {
+    "grav_potential": ["#000033", "#0066cc", "#ffff00"],
+    "em_energy":      ["#0d8c8c", "#f9a133"],
+    "charge":         ["#2159d9", "#f2f2f2", "#e51a33"],
+    "vorticity":      ["#070114", "#7a0d87", "#ffd933"],
+    "psi_squared":    ["#440154", "#21918c", "#fde725"],
+    "lagrangian":     ["#2166ac", "#f7f7f7", "#b2182b"],
+    "entropy":        ["#000000", "#ffffff"]
+  }
+}

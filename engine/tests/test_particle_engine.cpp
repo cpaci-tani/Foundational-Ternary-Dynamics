@@ -246,8 +246,10 @@ int main() {
     // ---- PE12: Constants from ontic ----
     {
         std::cout << "\n--- PE12: Constants from ontic ---\n";
-        check("PE12a: ALPHA = 1/137.036...",
-              std::abs(ALPHA - 1.0 / 137.0361714582) < 1e-12);
+        // 2026-04-17: ALPHA upgraded from 1/X_PLUS (tree, 137.0361714582)
+        // to 1/X_PLUS_PRECISION (137.035999177, CODATA match).
+        check("PE12a: ALPHA = 1/137.035999... (precision)",
+              std::abs(ALPHA - 1.0 / 137.035999177) < 1e-12);
         check("PE12b: G_N = 0.01",
               std::abs(G_N - 0.01) < 1e-15);
         check("PE12c: K_B = 0.511",

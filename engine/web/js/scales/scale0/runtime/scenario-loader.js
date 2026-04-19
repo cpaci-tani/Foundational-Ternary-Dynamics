@@ -12,7 +12,7 @@ import {
     setFieldToggle,
     setFluxMock,
     setForceStyle,
-} from '../state/store.js?v=s1';
+} from '../state/store.js';
 import {
     markScenarioOverrideRows,
     readButtonActive,
@@ -24,6 +24,7 @@ import {
     setInputValue,
     setSelectedScenarioId,
 } from '../ui/dom.js';
+import { clearScale0Timeline } from '../controller.js';
 
 const DEFAULT_TOGGLES = SCALE0_TOGGLES;
 const FIELD_BUTTON_IDS = [
@@ -49,6 +50,18 @@ const FIELD_BUTTON_IDS = [
     'toggle-lagrangian-density',
     'toggle-entropy-density',
     'toggle-grav-potential',
+    'toggle-em-energy',
+    'toggle-charge-density',
+    'toggle-vorticity',
+    // Tier 1/2/3 (2026-04-18).
+    'toggle-helicity',
+    'toggle-kretschmann',
+    'toggle-horizon',
+    'toggle-e-pressure',
+    'toggle-b-pressure',
+    'toggle-kinetic-energy',
+    'toggle-fisher',
+    'toggle-coherence',
 ];
 
 // Map every overlay button id → corresponding state flag so we can round-trip
@@ -75,6 +88,17 @@ const FIELD_BUTTON_TO_FLAG = {
     'toggle-lagrangian-density':   'showLagrangianDensity',
     'toggle-entropy-density':      'showEntropyDensity',
     'toggle-grav-potential':       'showGravPotential',
+    'toggle-em-energy':             'showEmEnergy',
+    'toggle-charge-density':        'showChargeDensity',
+    'toggle-vorticity':             'showVorticity',
+    'toggle-helicity':              'showHelicity',
+    'toggle-kretschmann':           'showKretschmann',
+    'toggle-horizon':               'showHorizon',
+    'toggle-e-pressure':            'showEPressure',
+    'toggle-b-pressure':            'showBPressure',
+    'toggle-kinetic-energy':        'showKineticEnergy',
+    'toggle-fisher':                'showFisher',
+    'toggle-coherence':             'showCoherence',
 };
 
 export function shouldUseFluxMock(bridge, scenarioName) {
@@ -228,6 +252,11 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 
     const mainScale0 = ctx.bridge.capabilities.scale0;
     scenario.load({ bridge: ctx.bridge, capabilities: mainScale0, params }, params);
+
+    // Bridge.tick just reset to 0 — any snapshots still in the timeline are
+    // from the previous scenario and their tick numbers no longer match the
+    // new sim. Wipe them so the scrub bar re-anchors on the fresh scenario.
+    clearScale0Timeline();
 
     const latticeSize = ctx.bridge.latticeSize || 32;
     const fluxMock = new MockBridge(latticeSize);

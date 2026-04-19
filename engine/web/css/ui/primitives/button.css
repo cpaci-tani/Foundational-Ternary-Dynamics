@@ -11,6 +11,8 @@
     justify-content: center;
     width: calc(36px * var(--ui-scale));
     height: calc(36px * var(--ui-scale));
+    min-height: 0;  /* opt out of global min-height; width/height drive layout */
+    padding: 0;      /* icon-only — opt out of the global control padding */
     background: var(--bg-input);
     border: 1px solid var(--border);
     border-radius: var(--radius);

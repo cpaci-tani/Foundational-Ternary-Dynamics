@@ -10,6 +10,22 @@ function readVar(name, fallback) {
 }
 
 /**
+ * Resolve a CSS custom property reference to a concrete color string so it
+ * can be used in a canvas context (which doesn't understand var()).
+ *
+ * Input examples:
+ *   'var(--chart-flux, #fb8c00)'  →  value of --chart-flux, else '#fb8c00'
+ *   '#ff0000'                     →  '#ff0000'  (passed through unchanged)
+ */
+export function resolveChartColor(expr) {
+    if (!expr || !expr.startsWith('var(')) return expr;
+    const m = expr.match(/^var\(\s*(--[\w-]+)\s*(?:,\s*(.+?))?\s*\)$/);
+    if (!m) return expr;
+    const resolved = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+    return resolved || (m[2] && m[2].trim()) || expr;
+}
+
+/**
  * @returns {{
  *   axis: string, grid: string, bg: string,
  *   text: string, textMuted: string,

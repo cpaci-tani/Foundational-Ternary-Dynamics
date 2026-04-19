@@ -32,3 +32,36 @@ The visual schema cascades through a specific hierarchy defined inside `tokens.c
 3.  **Elevated/Raised Elements** (`--bg-card`, `--bg-elevated` for modals and interactive blocks)
 
 When writing new component files inside `css/ui/components/` or `css/ui/primitives/`, **you must never hardcode hex colors**. Always map to the semantic ladders defined under `:root`. This guarantees flawless light-mode flips and high-contrast accessibility swaps transparently.
+
+## 5. Spacing Policy (Global Baseline)
+
+`tokens.css` enforces a minimum spacing baseline on every interactive element. Panel CSS may **increase** these values but must never drop below them. Never hardcode pixel-level padding/gap on controls — use the tokens.
+
+### Size ladder (small → large)
+
+| Token                | Purpose                                      | Default (at `--ui-scale: 1.0`) |
+|----------------------|----------------------------------------------|---------------------------------|
+| `--ctrl-pad-y`       | Vertical padding inside a single control     | 6px                             |
+| `--ctrl-pad-x`       | Horizontal padding inside a single control   | 10px                            |
+| `--ctrl-height-min`  | Minimum interactive height (hit target)      | 28px                            |
+| `--row-gap`          | Gap between siblings in a flex control row   | 6px                             |
+| `--row-pad-y`        | Vertical padding of a control row            | 2px                             |
+| `--sec-gap`          | Gap between sections inside a card           | 10px                            |
+| `--card-gap`         | Gap between cards inside a panel             | 10px                            |
+
+### Enforced rules (in `tokens.css`, "Global Control Baseline" block)
+
+- Every `button`, `input[type=text|number|search|email|password]`, `select`, `textarea` gets `min-height: var(--ctrl-height-min)` and `padding: var(--ctrl-pad-y) var(--ctrl-pad-x)`.
+- Sliders (`input[type=range]`) get vertical `margin: var(--sp-xs) 0` so they don't kiss neighbouring rows.
+- `.ctrl-row`, `.ctrl-slider-row`, `.pe-ctrl-row`, `.combo-btn-row`, `.ctrl-action-row` receive `gap: var(--row-gap)` automatically.
+- Stacked rows of the same class get a `margin-top: var(--row-gap)` between them.
+- `.combo-section-label` (after the first in a card) gets `margin-top: var(--sec-gap)`.
+
+### Opt-out
+
+Add `.u-no-baseline` to an individual element that must not inherit the baseline padding (icon-only toolbar button, tiny coord-stepper arrows, etc.). Components that do this must explicitly set their own `padding`/`min-height`.
+
+### When to override upward
+
+Use `--sp-lg` / `--sp-xl` for hero controls (e.g. a "Play" pill), card-level padding, or anywhere the element is a primary action. Never step *down* to `0` or raw pixel values below the tokens; instead, adjust `--ui-scale` or request a new size token.
+
