@@ -1,5 +1,116 @@
 # Foundational Ternary Dynamics Changelog
 
+## EFT Recovery Program — Phase 0 → F complete (April 19, 2026)
+
+Pre-registered seven-phase Wilsonian-EFT measurement campaign run to completion.
+Five pillars — Ward identities, Lorentz covariance, RG flow, operator expansion,
+continuum matching — measured on the lattice against expectations committed to
+the repository *before any code ran*. All outcomes reported without retrofit.
+
+### Headline
+
+**FTD's V(r)-extracted coupling plateaus at α_∞ ≈ 3.6× α_ref**, not at 1/137.
+Phase F 4-point GPU scan at L ∈ {64, 128, 256, 384} with ticks=150 and
+r/L ≈ 0.31 gives α_r = 0.02959 → 0.02970 → 0.02717 → 0.02632 (ratios 4.05×,
+4.07×, 3.72×, 3.61×). Three candidate scaling laws (1/L, 1/L², free 1/L^p)
+all agree on α_∞ ∈ [3.35×, 3.74×] × α_ref. Rutherford-scattering
+cross-check (Day-2 Thread 4) gives α = 0.042 ± 0.005 at small impact
+parameter, independently confirming the 5× gap is engine physics, not a V(r)
+artefact. **This is a falsifiable FTD deviation from continuum QED, not
+approximate agreement.**
+
+### Retracted
+
+The interim Day-2 manuscript claim of α_∞ = 1.23× α_ref (three-point 1/L fit
+on {L=64, 128, 256}) is **retracted**. That fit used under-equilibrated
+ticks=100 fast-big CPU data — the flux field had not reached Coulomb-tail
+steady state. Full-precision GPU ticks=150 gives α_r(r=82) = 0.0271 at
+L=256, not 0.010. Retraction documented in `DERIV_DAY2_CAMPAIGN.md` §6b and
+paper §9; catalog row struck with replacement Phase-F row.
+
+### Day-2 measurements (commits 838c6bd, 3bd8246, ae5f601)
+
+- **Thread 2 — matched-stencil CG Poisson solver.** Yee-style staggered
+  differences (backward div, forward grad) compose to the standard 7-point
+  Laplacian. `engine/include/ftd/eft/matched_poisson.h`, 7 CTests. Deep-vacuum
+  Ward floor drops from ~1% of |J|_max to **≤ 10⁻⁸** — million-fold
+  improvement over the engine's 18-pt/6-pt SOR mismatch. Standalone EFT tool;
+  does not modify the engine hot path.
+- **Thread 1b — EWSB amplitude-threshold map.** Sharp first-order phase
+  transition between amp = 0.6 and amp = 0.7 on L=32 at 5000 ticks. Below
+  threshold: 0 charges. Above threshold: all 32768 voxels manifest state
+  (100% saturation); charge imbalance −1216 → +2188 → +7566 as amp
+  0.7 → 0.8 → 0.9.
+- **Thread 3 — condensate spectroscopy.** At amp=0.80: flux-flux C_J(r) and
+  charge-charge G(r) correlators give m_flux = 0.181 and m_charge = 0.186
+  (R² ≥ 0.96). Two independent channels agree to **3%**. Single-species
+  condensate; mass ratio ≠ SM W/Z but close to unity.
+- **Thread 4 — Rutherford α cross-validation.** Scatter +1 projectile off
+  locked +1 at impact parameters b ∈ {3..8}, v_0=0.3, L=32. α_mean =
+  0.042 ± 0.005 (5.79× α_ref). At b=3: α = 0.035 — **exactly matches**
+  V(r) asymptotic α=0.035 at same L. Two independent dynamical methods
+  converge on the same answer.
+
+### Pipeline and GPU infrastructure (commits d0e3146, 348c5c9, 1f857ee, 7cd1031, d1183be, ac4d69f)
+
+- **Phase A — WSL2 + CUDA 13 build path.** Sidesteps the Windows CMake 4 +
+  NVCC 13 escape bug by building from Ubuntu 22.04. RTX 5090 passthrough
+  works; `ftd_cuda` + `ftd_core` build in ~45s via Ninja + GCC 11 + nvcc 13.0.
+  `benchmark_beta_function --quick` drops from > 60 s CPU to **0.54 s GPU
+  (~30× speedup)**. Full-precision L=256 β scan: 4m40s on GPU vs > 2h (never
+  finished) on CPU. See `docs/theory/10_eft_program/STATUS_CUDA_BUILD.md`.
+- **Phase B–C — Pipeline\<Backend\> architecture.** Three reference observables
+  implemented against a CPU backend, then ported to GPU. CPU/GPU parity
+  tested at L=64 (0.123 vs 0.120) and L=128 (0.134 vs 0.131) — 2% agreement.
+- **Phase D–E — observable library.** `measure_v_of_r` + scaling-dimension
+  fits (17/17 pass); two pipeline-based benchmarks (β + EWSB).
+- **Phase F — continuum extrapolation.** Four GPU measurements at
+  L ∈ {64, 128, 256, 384}, ticks=150, r_step=6 for L≥256. Plateau confirmed
+  across factor-of-6 in lattice size.
+
+### Catalog updates
+
+Four new `[MEASURED]` rows added to `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md`:
+
+1. Ward floor (matched stencil): ≤ 10⁻⁸
+2. EWSB threshold: amp ∈ (0.6, 0.7), sharp first-order
+3. Condensate mass gap: m ≈ 0.18 (two channels agree 3%)
+4. Rutherford α: 0.042 ± 0.005 (5.8× α_ref)
+
+Plus the retraction of the interim "1.23× α_ref" row, replaced by the
+Phase-F plateau row at 3.6× α_ref.
+
+### Honest non-claims
+
+FTD has not "derived the QED β-function." The measured β is negative-signed
+(QED asymptotic-freedom direction) but the pre-registered "match continuum
+QED to 1%" target in SPEC §7.3 was not met — the plateau sits 3.6× above
+CODATA. The Higgs VEV remains [IMPOSED]. Vertex Ward identities
+Γ_μ(p,p) = ∂Σ/∂p^μ require lattice fermions the engine does not yet carry
+and are flagged [OPEN] up-front. The campaign's contribution is an auditable
+stack of measurements plus one falsifiable new FTD prediction, not a
+completed Wilsonian EFT.
+
+### Regression
+
+10/10 eft + sim CTests pass through the campaign; 0 regressions against the
+existing 267 Python + ~148 C++ baselines. ~5900 LOC shipped in Phases A–F
+(Pipeline + observables + benchmarks + docs + manuscript).
+
+### Key commits
+
+- `69dd4af` — EFT Recovery Program Phases 0–5 + gap-closure tickets T1–T5
+- `838c6bd` — Thread 2 matched-stencil CG Poisson solver
+- `3bd8246` — Day-2 Threads 1b, 3, 4 (EWSB threshold, spectroscopy, Rutherford)
+- `ae5f601` — Day-2 manuscript revision + regression pass
+- `48f47fb` — Day-2 pimpl + CUDA build improvements
+- `296de20` — Thread 1a L=256 result
+- `c20b31e` — interim continuum extrapolation (later retracted)
+- `d0e3146` / `348c5c9` / `1f857ee` / `7cd1031` / `d1183be` / `ac4d69f` — Phases A–E
+- `5f7f88b` — **Phase F**: 4-point continuum extrapolation + retraction
+
+---
+
 ## Web dashboard UX pass — Verify, FAQ, math formatting, Scene panel (April 19, 2026)
 
 Focused session on the browser dashboard: reshape the Verify tab as an
