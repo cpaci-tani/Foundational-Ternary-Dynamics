@@ -1,4 +1,4 @@
-import { QUANTUM_SCENARIO_DESCRIPTIONS, formatS0SeedMetadata } from '../../../config/scenarios.js';
+import { formatS0SeedMetadata } from '../../../config/scenarios.js';
 import { FORCE_FIELD_KEYS, getFieldStateSnapshot, setFieldToggle, setForceStyle } from '../state/store.js';
 import { getScale0Scenario, populateScale0ScenarioSelect } from '../scenario-registry.js';
 import {
@@ -17,17 +17,6 @@ let _bound = false;
 
 function updateScenarioMetadata(scenarioId) {
     renderScenarioDescription(scenarioId, formatS0SeedMetadata(scenarioId));
-}
-
-function syncQuantumLabUI(ctx, scenarioId) {
-    if (!scenarioId.startsWith('quantum-')) return;
-    const qlabSel = getEl('qlab-experiment');
-    if (qlabSel) qlabSel.value = scenarioId;
-    const descEl = getEl('qlab-description');
-    if (descEl && QUANTUM_SCENARIO_DESCRIPTIONS[scenarioId]) {
-        descEl.textContent = QUANTUM_SCENARIO_DESCRIPTIONS[scenarioId];
-    }
-    ctx.switchToQuantumLabTab?.();
 }
 
 export function bindScale0UI(ctx, api) {
@@ -59,7 +48,6 @@ export function bindScale0UI(ctx, api) {
             const scenarioId = getScale0Scenario(scenarioSelect.value).id;
             api.loadScenario(ctx, scenarioId);
             updateScenarioMetadata(scenarioId);
-            syncQuantumLabUI(ctx, scenarioId);
         });
     }
 
