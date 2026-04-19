@@ -9,7 +9,11 @@ import { getVerifyPanelTemplate } from './template.js';
 import { renderHeader } from './header.js';
 import { renderTier } from './tier.js';
 
-const MANIFEST_URL = '/data/verify-manifest.json';
+// Resolve the manifest relative to this module, so the URL works whether
+// the dev server roots at engine/web or at the project root. new URL(...)
+// returns a full href that fetch() accepts; avoids the "/data/..." absolute
+// path that only resolves when the docroot happens to be engine/web.
+const MANIFEST_URL = new URL('../../data/verify-manifest.json', import.meta.url).href;
 
 export class VerifyPanelComponent {
     constructor({ panelArea }) {
