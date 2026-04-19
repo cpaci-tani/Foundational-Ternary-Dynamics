@@ -466,6 +466,10 @@ target_link_libraries(benchmark_ewsb_threshold_map ftd_core)
 add_executable(test_eft_matched_poisson tests/test_eft_matched_poisson.cpp)
 target_link_libraries(test_eft_matched_poisson ftd_core)
 
+# EFT Day-2 Thread 4 — Rutherford scattering α extraction
+add_executable(benchmark_rutherford_alpha tests/benchmark_rutherford_alpha.cpp)
+target_link_libraries(benchmark_rutherford_alpha ftd_core)
+
 # (scratch debug probe; delete when matched_poisson is validated)
 add_executable(_debug_poisson_probe tests/_debug_poisson_probe.cpp)
 target_link_libraries(_debug_poisson_probe ftd_core)
