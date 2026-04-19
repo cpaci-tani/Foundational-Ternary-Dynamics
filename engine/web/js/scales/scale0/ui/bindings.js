@@ -1,5 +1,5 @@
 import { QUANTUM_SCENARIO_DESCRIPTIONS, formatS0SeedMetadata } from '../../../config/scenarios.js';
-import { FORCE_FIELD_KEYS, getFieldStateSnapshot, setFieldToggle, setForceStyle } from '../state/store.js?v=s1';
+import { FORCE_FIELD_KEYS, getFieldStateSnapshot, setFieldToggle, setForceStyle } from '../state/store.js';
 import { getScale0Scenario, populateScale0ScenarioSelect } from '../scenario-registry.js';
 import {
     FIELD_TOGGLE_BINDINGS,
@@ -11,7 +11,7 @@ import {
     /* v=2: Tier 1 quantum overlay bindings added — see SPEC_S0_QUANTUM_OVERLAYS.md */
     setButtonActive,
     setForceStyleButtons,
-} from './dom.js?v=2';
+} from './dom.js';
 
 let _bound = false;
 

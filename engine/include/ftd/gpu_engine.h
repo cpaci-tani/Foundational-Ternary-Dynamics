@@ -71,7 +71,7 @@ private:
     void gpu_wave_update();  // fused read+write (single-substrate only)
     void gpu_gauss_project();
     void gpu_solve_coulomb();
-    void gpu_solve_latency();   // Wave 5: GPU latency Poisson (voxel.latency = sqrt(|phi|))
+    void gpu_solve_latency_poisson();   // Wave 5: GPU latency Poisson. Renamed from gpu_solve_latency (F7 callstack audit 2026-04-17) for parity with CPU solve_latency_poisson.
     void gpu_phase_forces();
     void gpu_phase_movement();
 

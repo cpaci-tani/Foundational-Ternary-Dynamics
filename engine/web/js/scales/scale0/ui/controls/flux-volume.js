@@ -49,6 +49,12 @@ export function createFluxVolumeCard() {
       <input type="range" class="pe-slider" id="flux-lattice-spacing" min="0.25" max="3.0" step="0.05" value="1.0">
       <span class="pe-ctrl-value" id="flux-lattice-spacing-val">1.00</span>
     </div>
+
+    <div class="combo-section-label" title="Brightness of the bounding wireframe (opacity of the boundary lines)">Wireframe Brightness</div>
+    <div class="ctrl-slider-row">
+      <input type="range" class="pe-slider" id="wireframe-brightness" min="0.0" max="1.0" step="0.01" value="0.18">
+      <span class="pe-ctrl-value" id="wireframe-brightness-val">0.18</span>
+    </div>
   `;
   return card;
 }

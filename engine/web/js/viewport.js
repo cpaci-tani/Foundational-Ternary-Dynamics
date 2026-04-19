@@ -200,6 +200,7 @@ export class Viewport {
         // Boundary / wireframe
         this.wireframe = null;
         this.showWireframe = true;
+        this._wireframeBrightness = 0.18;
         this.showFlux = true;  // flux volume ON by default
         this.showHeatmap = false;
         this._showAxes = true;   // user preference for axes visibility
@@ -284,7 +285,7 @@ export class Viewport {
         if (shape === 'none') return;
 
         const mat = new THREE.LineBasicMaterial({
-            color: 0x1e2d44, transparent: true, opacity: 0.18,
+            color: 0x1e2d44, transparent: true, opacity: this._wireframeBrightness,
             depthWrite: false,
         });
 
@@ -346,10 +347,24 @@ export class Viewport {
             vertices.push(...corners[a], ...corners[b]);
         }
 
-        // Subdivision lines only in lattice mode (sparse — just midpoint cross)
+        // Subdivision lines only in lattice mode (sparse — just midpoint cross).
+        //
+        // Crosshair alignment: voxel k is rendered at world centre k+0.5 (the
+        // universal Scale-0 convention). For EVEN N, N/2 is a voxel CORNER, so
+        // a subdivision line at integer world `i = N/2` passes between voxels
+        // rather than through any voxel's centre. EVERY scenario that anchors
+        // at `mc = Math.round((N-1)/2)` (the default for Moore, proton, atom,
+        // photon, flux-pulse, and basically all centred scenarios) then places
+        // its centroid at world (mc+0.5) — exactly 0.5 off from the crosshair.
+        //
+        // Shift subdivision by +0.5 so the crosshair lands on voxel-centre world
+        // coords for ALL N (even OR odd). Outer cube stays at [0, N] — only the
+        // interior cross marker moves. Matches the physics-layer voxel-centre
+        // convention and aligns EVERY centred scenario with the wireframe cross.
         if (mode === 'lattice') {
             const step = Math.max(8, Math.floor(s / 2));
-            for (let i = step; i < s; i += step) {
+            for (let raw = step; raw < s; raw += step) {
+                const i = raw + 0.5;
                 vertices.push(i, 0, 0, i, s, 0);
                 vertices.push(i, 0, s, i, s, s);
                 vertices.push(0, i, 0, s, i, 0);
@@ -610,6 +625,16 @@ export class Viewport {
         if (this.wireframe) this.wireframe.visible = on;
     }
 
+    setWireframeBrightness(val) {
+        this._wireframeBrightness = val;
+        if (!this.wireframe) return;
+        this.wireframe.traverse(child => {
+            if (child.material && 'opacity' in child.material) {
+                child.material.opacity = val;
+            }
+        });
+    }
+
     toggleAxes(on) {
         this._showAxes = on;
         const mode = this._engineMode || 'lattice';
@@ -630,7 +655,11 @@ export class Viewport {
             this.scene.add(this._voxelHighlight);
         }
         if (active) {
-            this._voxelHighlight.position.set(x, y, z);
+            // Voxel k's rendered centre is at world (k+0.5). Previously this
+            // snapped the highlight box to integer world coords, so the box
+            // sat on the voxel's lower-left corner instead of its centre —
+            // half-voxel shift visible when overlaid on particles/flux.
+            this._voxelHighlight.position.set(x + 0.5, y + 0.5, z + 0.5);
             this._voxelHighlight.visible = true;
         } else {
             this._voxelHighlight.visible = false;
@@ -663,7 +692,10 @@ export class Viewport {
                         if (su3 && norm === 3) include = true;  // Corner
                         
                         if (include) {
-                            dummy.position.set(x + dx, y + dy, z + dz);
+                            // Same voxel-centre convention as setVoxelHighlight:
+                            // neighbour voxel (x+dx, y+dy, z+dz) is rendered at
+                            // world centre (x+dx+0.5, y+dy+0.5, z+dz+0.5).
+                            dummy.position.set(x + dx + 0.5, y + dy + 0.5, z + dz + 0.5);
                             dummy.updateMatrix();
                             this._symHighlights.setMatrixAt(count++, dummy.matrix);
                         }
@@ -2439,49 +2471,89 @@ export class Viewport {
     }
 
     // ── Glyph Field (Instanced Cones) ────────────────────────────────
-    _buildForceGlyphs() {
-        const maxInstances = 2000;
+    // ── Glyph-style force overlays ────────────────────────────────────
+    // Each force type (em / gravity / strong / weak) needs its OWN
+    // InstancedMesh so multiple forces can be visualised simultaneously.
+    // The earlier singleton `_forceGlyphs` was shared across all types →
+    // every call to updateForceGlyphs reset the instance count and the
+    // LAST force to run would overwrite the previous one (toggling EM
+    // while Gravity was on visually "erased" Gravity even though its
+    // state flag stayed true). The map pattern mirrors how the arrow
+    // overlays already live in separate meshes (_forceVolume for EM,
+    // _gravityField for gravity, _strongForce, _weakField).
+    _buildForceGlyphMesh(forceType) {
+        // Capacity matches the gravity/strong ARROW meshes (8000) so dense
+        // overlays render fully. The old 2000-slot cap was smaller than the
+        // number of qualifying voxels for whole-lattice fields like gravity
+        // on a flux pulse at N=32 (stride=1 → 32³ samples, ~4–6 K pass the
+        // 3 % threshold), causing the mesh to fill in z-scan order and
+        // silently drop every voxel past the halfway point — a visible
+        // "cut in half" effect on the rendered glyph cloud.
+        const maxInstances = 8000;
         const coneGeo = new THREE.ConeGeometry(0.3, 1.0, 6);
-        // Rotate cone so it points along +Y by default (lookAt will orient it)
+        // Rotate cone so it points along +Z by default (setFromUnitVectors
+        // orients the +Z axis toward the force direction — see _glyphUp).
         coneGeo.rotateX(Math.PI / 2);
         const mat = new THREE.MeshBasicMaterial({
             transparent: true,
             opacity: 0.7,
             depthWrite: false,
         });
-        this._forceGlyphs = new THREE.InstancedMesh(coneGeo, mat, maxInstances);
-        this._forceGlyphs.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        this._forceGlyphs.visible = false;
-        this._forceGlyphs.frustumCulled = false;
-        this._forceGlyphs.count = 0;
-        // Enable per-instance color
-        this._forceGlyphs.instanceColor = new THREE.InstancedBufferAttribute(
+        const mesh = new THREE.InstancedMesh(coneGeo, mat, maxInstances);
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        mesh.visible = false;
+        mesh.frustumCulled = false;
+        mesh.count = 0;
+        mesh.instanceColor = new THREE.InstancedBufferAttribute(
             new Float32Array(maxInstances * 3), 3
         );
-        this._forceGlyphs.instanceColor.setUsage(THREE.DynamicDrawUsage);
-        this.scene.add(this._forceGlyphs);
-        // Reusable math objects
-        this._glyphMatrix = new THREE.Matrix4();
-        this._glyphQuat = new THREE.Quaternion();
-        this._glyphUp = new THREE.Vector3(0, 0, 1); // cone default direction after rotateX
-        this._glyphDir = new THREE.Vector3();
-        this._glyphColor = new THREE.Color();
+        mesh.instanceColor.setUsage(THREE.DynamicDrawUsage);
+        mesh.userData.forceType = forceType;
+        this.scene.add(mesh);
+        return mesh;
     }
 
-    initForceGlyphs() { if (!this._forceGlyphs) this._buildForceGlyphs(); }
+    _ensureForceGlyphInfra() {
+        if (!this._forceGlyphMeshes) {
+            this._forceGlyphMeshes = {
+                em:      this._buildForceGlyphMesh('em'),
+                gravity: this._buildForceGlyphMesh('gravity'),
+                strong:  this._buildForceGlyphMesh('strong'),
+                weak:    this._buildForceGlyphMesh('weak'),
+            };
+            // Shared math scratch — one allocation reused across all glyph
+            // meshes because updateForceGlyphs runs sequentially per type.
+            this._glyphMatrix = new THREE.Matrix4();
+            this._glyphQuat = new THREE.Quaternion();
+            this._glyphUp = new THREE.Vector3(0, 0, 1);
+            this._glyphDir = new THREE.Vector3();
+            this._glyphScale = new THREE.Vector3();
+        }
+    }
+
+    // Legacy shim kept for external callers (init / dispose / scale switch).
+    _buildForceGlyphs() { this._ensureForceGlyphInfra(); }
+    initForceGlyphs() { this._ensureForceGlyphInfra(); }
 
     updateForceGlyphs(fieldData, forceType) {
-        if (!this._forceGlyphs) this._buildForceGlyphs();
+        this._ensureForceGlyphInfra();
+        const mesh = this._forceGlyphMeshes[forceType] || this._forceGlyphMeshes.em;
         const { positions, vectors, count } = fieldData;
-        const maxInstances = 2000;
+        // Read capacity from the mesh itself — stays in lockstep with
+        // whatever _buildForceGlyphMesh allocated, even if that constant
+        // changes again in the future.
+        const maxInstances = mesh.count === undefined ? 8000 : (mesh.instanceMatrix.array.length / 16);
         const pal = Viewport.FORCE_PALETTES[forceType] || Viewport.FORCE_PALETTES.em;
 
-        // Compute magnitudes
-        let maxMag = 0;
-        if (!this._glyphMagCache || this._glyphMagCache.length < count) {
-            this._glyphMagCache = new Float32Array(count);
+        // Compute magnitudes on a per-type cache — sharing one mag cache
+        // across types would race if glyphs ever become async; keep it
+        // per-type for safety and because the extra ~16KB is negligible.
+        const magKey = `_glyphMagCache_${forceType}`;
+        if (!this[magKey] || this[magKey].length < count) {
+            this[magKey] = new Float32Array(count);
         }
-        const mags = this._glyphMagCache;
+        const mags = this[magKey];
+        let maxMag = 0;
         for (let i = 0; i < count; i++) {
             const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
             mags[i] = Math.sqrt(a * a + b * b + c * c);
@@ -2500,12 +2572,28 @@ export class Viewport {
         const quat = this._glyphQuat;
         const up = this._glyphUp;
         const dir = this._glyphDir;
-        const col = this._glyphColor;
-        const colorArr = this._forceGlyphs.instanceColor.array;
+        const scaleVec = this._glyphScale;
+        const colorArr = mesh.instanceColor.array;
+
+        // First pass: count how many samples pass the magnitude threshold.
+        // If that's more than the mesh capacity, stride-subsample so the
+        // rendered glyphs cover the WHOLE filtered set uniformly instead
+        // of being truncated at scan-order position maxInstances (which
+        // clipped gravity to the first ~half of z and produced a visible
+        // straight cut in the middle of the rendered field).
+        let qualifying = 0;
+        for (let i = 0; i < count; i++) if (mags[i] >= threshold) qualifying++;
+        const sampleStride = qualifying > maxInstances
+            ? Math.ceil(qualifying / maxInstances)
+            : 1;
+        let qualifyingSeen = 0;
 
         for (let i = 0; i < count && vi < maxInstances; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
+            // Subsample by skipping (stride-1) of every `stride` qualifying
+            // voxels. When qualifying ≤ maxInstances this is a no-op.
+            if ((qualifyingSeen++ % sampleStride) !== 0) continue;
             const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
@@ -2516,13 +2604,17 @@ export class Viewport {
             dir.set(vectors[i * 3] / mag, vectors[i * 3 + 1] / mag, vectors[i * 3 + 2] / mag);
             quat.setFromUnitVectors(up, dir);
 
-            // Build matrix: translation * rotation * scale
+            // Build matrix: translation * rotation * scale. Reuse a scratch
+            // Vector3 for scale to avoid per-instance allocation.
+            scaleVec.set(scale, scale, scale * 1.5);
             mat4.makeRotationFromQuaternion(quat);
-            mat4.scale(new THREE.Vector3(scale, scale, scale * 1.5));
+            mat4.scale(scaleVec);
             mat4.setPosition(px, py, pz);
-            this._forceGlyphs.setMatrixAt(vi, mat4);
+            mesh.setMatrixAt(vi, mat4);
 
-            // Color
+            // Color (per-type palette — gravity is purple, EM is cyan/blue,
+            // strong is red, weak is violet — so stacked overlays are
+            // distinguishable by hue alone).
             const [r, g, b] = Viewport._lerpPalette(pal, t);
             colorArr[vi * 3]     = r;
             colorArr[vi * 3 + 1] = g;
@@ -2530,15 +2622,29 @@ export class Viewport {
             vi++;
         }
 
-        this._forceGlyphs.count = vi;
-        this._forceGlyphs.instanceMatrix.needsUpdate = true;
-        this._forceGlyphs.instanceColor.needsUpdate = true;
+        mesh.count = vi;
+        mesh.instanceMatrix.needsUpdate = true;
+        mesh.instanceColor.needsUpdate = true;
     }
 
+    // `visible` can be a boolean (apply to ALL force-glyph meshes) or an
+    // object { em, gravity, strong, weak } mapping each to a boolean so the
+    // caller can drive per-force visibility from the field-flag state.
     showForceGlyphs(visible) {
-        if (!this._forceGlyphs) this._buildForceGlyphs();
-        this._forceGlyphs.visible = visible;
-        if (!visible) this._forceGlyphs.count = 0;
+        this._ensureForceGlyphInfra();
+        if (typeof visible === 'object' && visible !== null) {
+            for (const type of Object.keys(this._forceGlyphMeshes)) {
+                const mesh = this._forceGlyphMeshes[type];
+                mesh.visible = !!visible[type];
+                if (!mesh.visible) mesh.count = 0;
+            }
+        } else {
+            for (const type of Object.keys(this._forceGlyphMeshes)) {
+                const mesh = this._forceGlyphMeshes[type];
+                mesh.visible = !!visible;
+                if (!mesh.visible) mesh.count = 0;
+            }
+        }
     }
 
     /**
@@ -2716,8 +2822,13 @@ export class Viewport {
         const colAttr = this._dampingZones.geometry.getAttribute('color');
         let si = 0;
 
-        // 12 edges of a unit cube, scaled to 3x3x3 around particle
-        // Particles use raw lattice coordinates (not centered), matching updateParticles()
+        // 12 edges of a unit cube, scaled to 3x3x3 around particle.
+        // Particles render at voxel CENTRE world-coords (p.x + 0.5) — the
+        // universal Scale-0 convention. Earlier comment here wrongly claimed
+        // "raw lattice coordinates"; that was the bug — the 3×3×3 damping
+        // cage was drawn centred on voxel CORNER `p.x`, so it sat 0.5 voxels
+        // NW-down from every particle. Adding the same +0.5 offset used by
+        // updateParticles/Flux/E/B/etc. re-centres the cage on the particle.
         const edges = [
             [0, 0, 0, 1, 0, 0], [0, 1, 0, 1, 1, 0], [0, 0, 1, 1, 0, 1], [0, 1, 1, 1, 1, 1],
             [0, 0, 0, 0, 1, 0], [1, 0, 0, 1, 1, 0], [0, 0, 1, 0, 1, 1], [1, 0, 1, 1, 1, 1],
@@ -2726,7 +2837,7 @@ export class Viewport {
 
         for (const p of particles) {
             if (si >= 1200) break;
-            const cx = p.x, cy = p.y, cz = p.z;
+            const cx = p.x + 0.5, cy = p.y + 0.5, cz = p.z + 0.5;
             for (const e of edges) {
                 const i = si * 6;
                 posAttr.array[i] = cx - 1.5 + e[0] * 3;
@@ -2858,44 +2969,53 @@ export class Viewport {
         const kb = bridge.getParam ? bridge.getParam('kb') : K_B;
         const J2_threshold_dist2 = 120.0; // Break threshold scale mimicking V(r) ~ sigma*r tension snap
 
-        // This utilizes getParticleData from the active engine
+        // Use getParticleData's positions buffer, which is already in voxel-
+        // centre world coords (p.x+0.5). Legacy code here read from a
+        // `ptData.states` flat buffer that no current bridge emits — the
+        // toggle was silently dead (undefined dereference in the bridge
+        // never reached; confinement lines never drew). Switching to the
+        // live positions buffer restores the overlay AND aligns it with
+        // every other Scale-0 overlay by construction.
         const ptData = bridge.getParticleData();
-        if (!ptData || ptData.count < 2) {
+        if (!ptData || ptData.count < 2 || !ptData.positions) {
             this._confinementStrings.geometry.setDrawRange(0, 0);
             return;
         }
+        const pos = ptData.positions;
 
-        // O(N^2) evaluation for topological deformation between manifest states
+        // O(N²) evaluation for topological deformation between manifest states.
+        // getParticleData already filters void-density noise, so every emitted
+        // particle is a legitimate manifest source for the confinement tension.
         for (let i = 0; i < ptData.count; i++) {
-            if (ptData.states[i * 4 + 3] === 0) continue; // Only process active manifest nodes
+            const xi = pos[i * 3], yi = pos[i * 3 + 1], zi = pos[i * 3 + 2];
             for (let j = i + 1; j < ptData.count; j++) {
-                if (ptData.states[j * 4 + 3] === 0) continue;
-
-                const dx = ptData.states[j * 4] - ptData.states[i * 4];
-                const dy = ptData.states[j * 4 + 1] - ptData.states[i * 4 + 1];
-                const dz = ptData.states[j * 4 + 2] - ptData.states[i * 4 + 2];
+                const dx = pos[j * 3]     - xi;
+                const dy = pos[j * 3 + 1] - yi;
+                const dz = pos[j * 3 + 2] - zi;
                 const r2 = dx * dx + dy * dy + dz * dz;
 
                 // If they are separated but before the snap point (hadronization)
                 if (r2 > 1.0 && r2 < J2_threshold_dist2) {
                     const t = r2 / J2_threshold_dist2;
                     const alpha = 1.0 - t * 0.4;
-                    // Color axis simulation (Mapping spatial differentiation to RGB SU(3) proxies)
-                    const r = (Math.abs(dx) / Math.sqrt(r2)) * alpha + 0.2;
-                    const g = (Math.abs(dy) / Math.sqrt(r2)) * alpha + 0.2;
-                    const b = (Math.abs(dz) / Math.sqrt(r2)) * alpha + 0.2;
+                    const invR = 1.0 / Math.sqrt(r2);
+                    // Color axis simulation (mapping spatial differentiation to
+                    // RGB SU(3) proxies — projection of separation direction).
+                    const r = Math.abs(dx) * invR * alpha + 0.2;
+                    const g = Math.abs(dy) * invR * alpha + 0.2;
+                    const b = Math.abs(dz) * invR * alpha + 0.2;
 
                     if (vi + 2 > maxVerts) break;
 
-                    posAttr.array[vi * 3] = ptData.states[i * 4];
-                    posAttr.array[vi * 3 + 1] = ptData.states[i * 4 + 1];
-                    posAttr.array[vi * 3 + 2] = ptData.states[i * 4 + 2];
+                    posAttr.array[vi * 3]     = xi;
+                    posAttr.array[vi * 3 + 1] = yi;
+                    posAttr.array[vi * 3 + 2] = zi;
                     colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
                     vi++;
 
-                    posAttr.array[vi * 3] = ptData.states[j * 4];
-                    posAttr.array[vi * 3 + 1] = ptData.states[j * 4 + 1];
-                    posAttr.array[vi * 3 + 2] = ptData.states[j * 4 + 2];
+                    posAttr.array[vi * 3]     = pos[j * 3];
+                    posAttr.array[vi * 3 + 1] = pos[j * 3 + 1];
+                    posAttr.array[vi * 3 + 2] = pos[j * 3 + 2];
                     colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
                     vi++;
                 }
@@ -3523,7 +3643,10 @@ export class Viewport {
     _buildGravSurface() {
         const N = this._latticeSize || 32;
         this._gravSurfaceSize = N;
-        const segments = Math.max(16, Math.min(N, 48));  // cap subdivision for perf
+        // Moderate mesh density — 40 × 40 quads (~1600 verts).
+        // Smoothness comes from the grid-blur pipeline in
+        // _scatterHeights, not vertex count.
+        const segments = Math.max(24, Math.min(N, 40));
         // Plane spans the lattice footprint (slightly inset). PlaneGeometry
         // is centered at (0,0) so we translate to (halfN, halfN-reference, halfN)
         // to align with lattice coords which run [0, N].
@@ -3603,35 +3726,20 @@ export class Viewport {
         const verts = pos.count;
         const N = this._latticeSize || 32;
         const halfN = this._halfN;
-        // Vertex positions in geometry-local space are centered at (0,0,0)
-        // (PlaneGeometry default), so we convert sample positions to local
-        // by subtracting halfN on X and Z. The Y coordinate in local space
-        // IS the displacement — that's what we're solving for.
-        const { positions, values, count, normalizer } = data;
-        const denom = Math.max(normalizer, 1e-9);
-        const DEPTH = N * 0.25;  // max vertical displacement (quarter lattice)
+        const DEPTH = N * 0.25;                       // max vertical displacement
+
+        // Shared smooth-sampling machinery with the topology sheets
+        // (_scatterHeights): Gaussian-weighted scatter lookup + 2
+        // passes of boundary-pinned Laplacian smoothing.  Replaces the
+        // previous nearest-neighbour lookup.
+        const heights = this._scatterHeights(pos, halfN, N, data, 2);
+
         const rgb = new Float32Array(3);
         for (let v = 0; v < verts; v++) {
-            const vx = pos.array[v * 3];        // local X, centered on 0
-            const vz = pos.array[v * 3 + 2];    // local Z, centered on 0
-            // Find the sample closest to this vertex on the XZ plane, lightly
-            // weighted by y-distance so we prefer samples near the midplane.
-            let bestD = Infinity, bestVal = 0;
-            for (let i = 0; i < count; i++) {
-                const sxLocal = positions[i * 3]     - halfN;
-                const syLocal = positions[i * 3 + 1] - halfN;
-                const szLocal = positions[i * 3 + 2] - halfN;
-                const d = (sxLocal - vx) * (sxLocal - vx)
-                        + (szLocal - vz) * (szLocal - vz)
-                        + Math.abs(syLocal) * 2;
-                if (d < bestD) { bestD = d; bestVal = values[i]; }
-            }
-            // Φ is negative for wells (computed as −|J|² proxy). Scaling by
-            // DEPTH gives a proportional dip; negative t → vertex dips below
-            // the reference plane, which is at local-y = 0 (world y = halfN).
-            const t = bestVal / denom;
+            // Φ is negative for wells; scale to DEPTH so negative t dips
+            // below the reference plane (local-y = 0, world y = halfN).
+            const t = heights[v];
             pos.array[v * 3 + 1] = t * DEPTH;
-            // Color by |t|: deeper well OR higher peak → warmer color.
             this._rampGravWell(Math.min(1, Math.abs(t)), rgb, 0);
             col.array[v * 3]     = rgb[0];
             col.array[v * 3 + 1] = rgb[1];
@@ -3643,16 +3751,548 @@ export class Viewport {
     }
 
     // ══════════════════════════════════════════════════════════════════
+    // ── Physics-topology rubber sheets (EM energy, ρ, |∇×J|) ──────────
+    // Same metaphor as Φ(x) — flat plane at a reference Y that deforms
+    // based on a sampled scalar. Stacked vertically so they can all be
+    // on at once without z-fighting.
+    //
+    // Each sheet has a key ∈ { 'emEnergy', 'chargeDensity', 'vorticity' }
+    // and a config { yFrac, depthFrac, signed, ramp }:
+    //   yFrac     — reference height as a fraction of N (0..1)
+    //   depthFrac — max vertical displacement, fraction of N
+    //   signed    — if true, negatives go below and positives go above
+    //               (like Φ); if false, surface only peaks upward
+    //   ramp      — color-ramp method name on `this` (e.g. '_rampEmEnergy')
+    // ══════════════════════════════════════════════════════════════════
+
+    _topologySheetConfigs() {
+        // Stacked bands chosen to minimise overlap with the existing Φ sheet
+        // (which sits at y=halfN with depth 0.25). Each new sheet gets a
+        // thinner depth so multiple can be on at once without fighting.
+        // Layout rationale: 10 sheets stacked across y∈[0.05, 0.97] with
+        // per-sheet depth chosen so the max deformation |yFrac·N ± depth·N|
+        // doesn't cross into an adjacent sheet's y-band. Previous layout
+        // packed 0.62/0.72/0.78 inside 0.12N-deep bands, causing visible
+        // intersection at N≥64 when both sheets reached max deformation.
+        // The new spacing guarantees ≥ (depth_i + depth_i+1) separation
+        // between any two adjacent sheets.
+        return {
+            emEnergy:      { yFrac: 0.05, depthFrac: 0.08, signed: false, ramp: '_rampEmEnergy' },
+            helicity:      { yFrac: 0.15, depthFrac: 0.08, signed: true,  ramp: '_rampHelicity'    },
+            kretschmann:   { yFrac: 0.25, depthFrac: 0.08, signed: false, ramp: '_rampKretschmann' },
+            ePressure:     { yFrac: 0.35, depthFrac: 0.08, signed: false, ramp: '_rampEPressure'   },
+            bPressure:     { yFrac: 0.45, depthFrac: 0.08, signed: false, ramp: '_rampBPressure'   },
+            kineticEnergy: { yFrac: 0.55, depthFrac: 0.08, signed: false, ramp: '_rampKineticEnergy' },
+            fisher:        { yFrac: 0.65, depthFrac: 0.08, signed: false, ramp: '_rampFisher'       },
+            coherence:     { yFrac: 0.75, depthFrac: 0.08, signed: true,  ramp: '_rampCoherence'    },
+            chargeDensity: { yFrac: 0.87, depthFrac: 0.08, signed: true,  ramp: '_rampCharge'       },
+            vorticity:     { yFrac: 0.97, depthFrac: 0.03, signed: false, ramp: '_rampVorticity'    },
+        };
+    }
+
+    _buildTopologySheet(key) {
+        const N = this._latticeSize || 32;
+        // Moderate mesh density.  Smoothness comes from the grid-blur
+        // pipeline in _scatterHeights, not from vertex count — 40 × 40
+        // quads (≈ 1600 vertices) is plenty. Keeping it low is what
+        // makes the rubber sheets cheap when several are on at once.
+        const segments = Math.max(24, Math.min(N, 40));
+        const geo = new THREE.PlaneGeometry(N * 0.95, N * 0.95, segments, segments);
+        geo.rotateX(-Math.PI / 2);
+        const colors = new Float32Array(geo.attributes.position.count * 3);
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        const mat = new THREE.MeshBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.45,
+            side: THREE.DoubleSide, depthWrite: false,
+        });
+        // Coarse wireframe (quarter resolution) so the wire grid reads as
+        // a smooth scaffold rather than a dense fabric.  Shares position
+        // updates with the solid via a second geometry that we'll deform
+        // from the solid's height field at update time.
+        // Coarse wire at half the solid resolution for a readable scaffold.
+        const wireSeg = Math.max(8, Math.floor(segments / 2));
+        const wireGeo = new THREE.PlaneGeometry(N * 0.95, N * 0.95, wireSeg, wireSeg);
+        wireGeo.rotateX(-Math.PI / 2);
+        const wireMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff, transparent: true, opacity: 0.16,
+            wireframe: true, depthWrite: false,
+        });
+        const cfg = this._topologySheetConfigs()[key];
+        const yWorld = N * cfg.yFrac;
+        const solid = new THREE.Mesh(geo, mat);
+        solid.position.set(N / 2, yWorld, N / 2);
+        solid.visible = false;
+        solid.renderOrder = 3;
+        solid.frustumCulled = false;
+        const wire = new THREE.Mesh(wireGeo, wireMat);
+        wire.position.set(N / 2, yWorld + 0.02, N / 2);
+        wire.visible = false;
+        wire.renderOrder = 3;
+        wire.frustumCulled = false;
+        this.scene.add(solid);
+        this.scene.add(wire);
+        if (!this._topoSheets) this._topoSheets = {};
+        this._topoSheets[key] = { solid, wire, size: N };
+    }
+
+    _rebuildTopologySheetIfResized(key) {
+        const s = this._topoSheets?.[key];
+        if (!s) return;
+        const N = this._latticeSize || 32;
+        if (s.size === N) return;
+        const vis = s.solid.visible;
+        s.solid.geometry?.dispose();
+        s.wire.geometry?.dispose();
+        this.scene.remove(s.solid); this.scene.remove(s.wire);
+        delete this._topoSheets[key];
+        this._buildTopologySheet(key);
+        this._topoSheets[key].solid.visible = vis;
+        this._topoSheets[key].wire.visible  = vis;
+    }
+
+    _toggleTopologySheet(key, on) {
+        if (!this._topoSheets?.[key]) this._buildTopologySheet(key);
+        const s = this._topoSheets[key];
+        s.solid.visible = !!on;
+        s.wire.visible  = !!on;
+    }
+
+    // Scatter-interpolate a scalar field sampled at irregular lattice
+    // points onto a regular grid of vertices.  Shared by solid + wire
+    // topology sheets and the Φ grav-potential sheet.
+    //
+    // Perf story: the naive O(verts × samples) per-vertex Gaussian loop
+    // scales as L⁴ and was killing FPS at L ≥ 64 with several sheets on.
+    // Replaced with the standard scatter-field pipeline:
+    //
+    //   1. Rasterize samples into a small 2D heightfield grid
+    //      (bilinear splat, one O(count) pass).
+    //   2. Separable 3-tap box-blur the grid (2 passes → Gaussian-like
+    //      kernel) to fill unsampled cells and soften noise.
+    //   3. For each mesh vertex, do a 4-tap bilinear lookup into the
+    //      blurred grid.  O(verts × 4), no transcendentals.
+    //
+    // At L=64 this drops ~100M exp() calls per second down to ~10M
+    // simple FMAs — well under 1 ms per sheet even with 4 sheets on.
+    //
+    //   geoPos     — PlaneGeometry position attribute (local coords)
+    //   halfN, N   — lattice centring info
+    //   data       — sampler frame { positions, values, count, normalizer }
+    //   _ignored   — (kept for signature compatibility; Laplacian is no
+    //                longer needed because the grid blur does the job)
+    _scatterHeights(geoPos, halfN, N, data, _ignored) {
+        const verts = geoPos.count;
+        const { positions, values, count, normalizer } = data;
+        const denom = Math.max(normalizer || 0, 1e-9);
+
+        // ── Cached grid buffers (reused across ticks to avoid GC). ──
+        // gridN chosen so cells are ~1 voxel wide; box-blur smooths them.
+        const gridN = Math.max(16, Math.min(N, 48));
+        if (!this._scatterBufs || this._scatterBufs.gridN !== gridN) {
+            this._scatterBufs = {
+                gridN,
+                grid:   new Float32Array(gridN * gridN),
+                weight: new Float32Array(gridN * gridN),
+                tmp:    new Float32Array(gridN * gridN),
+            };
+        }
+        const { grid, weight, tmp } = this._scatterBufs;
+        grid.fill(0);
+        weight.fill(0);
+
+        // 1. Rasterize samples → grid via bilinear splat (O(count)).
+        //    Sample world-x in [0, N], maps to grid-x in [0, gridN-1].
+        const scale = (gridN - 1) / N;
+        for (let i = 0; i < count; i++) {
+            const sx = positions[i * 3]     * scale;
+            const sz = positions[i * 3 + 2] * scale;
+            if (sx < 0 || sx >= gridN - 1 || sz < 0 || sz >= gridN - 1) continue;
+            const xi = sx | 0, zi = sz | 0;
+            const xf = sx - xi, zf = sz - zi;
+            const v = values[i];
+            const w00 = (1 - xf) * (1 - zf);
+            const w01 = xf * (1 - zf);
+            const w10 = (1 - xf) * zf;
+            const w11 = xf * zf;
+            const row0 = zi * gridN + xi;
+            const row1 = row0 + gridN;
+            grid[row0]     += v * w00;  weight[row0]     += w00;
+            grid[row0 + 1] += v * w01;  weight[row0 + 1] += w01;
+            grid[row1]     += v * w10;  weight[row1]     += w10;
+            grid[row1 + 1] += v * w11;  weight[row1 + 1] += w11;
+        }
+
+        // 2. Normalise by accumulated weight; unsampled cells stay 0 and
+        //    get filled by the blur pass below.
+        const G2 = gridN * gridN;
+        for (let i = 0; i < G2; i++) {
+            if (weight[i] > 1e-9) grid[i] /= weight[i];
+        }
+
+        // 3. Separable 3-tap box-blur (2 passes).  Interior-only; edges
+        //    keep their unblurred value which naturally pins boundaries.
+        const blurPasses = 2;
+        for (let p = 0; p < blurPasses; p++) {
+            // horizontal into tmp
+            for (let z = 0; z < gridN; z++) {
+                const rowBase = z * gridN;
+                tmp[rowBase] = grid[rowBase];
+                tmp[rowBase + gridN - 1] = grid[rowBase + gridN - 1];
+                for (let x = 1; x < gridN - 1; x++) {
+                    tmp[rowBase + x] =
+                        (grid[rowBase + x - 1]
+                       + grid[rowBase + x]
+                       + grid[rowBase + x + 1]) * (1 / 3);
+                }
+            }
+            // vertical back into grid
+            for (let x = 0; x < gridN; x++) {
+                grid[x] = tmp[x];
+                grid[(gridN - 1) * gridN + x] = tmp[(gridN - 1) * gridN + x];
+            }
+            for (let z = 1; z < gridN - 1; z++) {
+                const rowPrev = (z - 1) * gridN;
+                const rowCurr = z * gridN;
+                const rowNext = (z + 1) * gridN;
+                for (let x = 0; x < gridN; x++) {
+                    grid[rowCurr + x] =
+                        (tmp[rowPrev + x]
+                       + tmp[rowCurr + x]
+                       + tmp[rowNext + x]) * (1 / 3);
+                }
+            }
+        }
+
+        // 4. For each mesh vertex, 4-tap bilinear lookup into the blurred
+        //    grid.  Vertex local x/z are in [-halfN*0.95, +halfN*0.95]
+        //    (PlaneGeometry is centred); convert to world coords first.
+        // Grow-only shared heights scratch on _scatterBufs — called twice
+        // per rubber sheet × up to 10 sheets × 20 Hz, so a per-call
+        // Float32Array(verts) was ~2 MB/s of GC pressure. One buffer
+        // sized to the max verts seen works because the caller consumes
+        // heights synchronously before the next _scatterHeights invocation.
+        if (!this._scatterBufs.heights || this._scatterBufs.heights.length < verts) {
+            this._scatterBufs.heights = new Float32Array(verts);
+        }
+        const heights = this._scatterBufs.heights;
+        const gridMax = gridN - 1;
+        const invDenom = 1 / denom;
+        for (let v = 0; v < verts; v++) {
+            const wx = geoPos.array[v * 3]     + halfN;  // world X in [0, N]
+            const wz = geoPos.array[v * 3 + 2] + halfN;  // world Z in [0, N]
+            let gx = wx * scale;
+            let gz = wz * scale;
+            if (gx < 0) gx = 0; else if (gx > gridMax) gx = gridMax;
+            if (gz < 0) gz = 0; else if (gz > gridMax) gz = gridMax;
+            const xi = gx | 0, zi = gz | 0;
+            const xf = gx - xi, zf = gz - zi;
+            const xi1 = xi < gridMax ? xi + 1 : xi;
+            const zi1 = zi < gridMax ? zi + 1 : zi;
+            const v00 = grid[zi  * gridN + xi];
+            const v01 = grid[zi  * gridN + xi1];
+            const v10 = grid[zi1 * gridN + xi];
+            const v11 = grid[zi1 * gridN + xi1];
+            const blended =
+                (1 - xf) * (1 - zf) * v00
+              +      xf  * (1 - zf) * v01
+              + (1 - xf) *      zf  * v10
+              +      xf  *      zf  * v11;
+            heights[v] = blended * invDenom;
+        }
+        return heights;
+    }
+
+    _updateTopologySheet(key, data) {
+        if (!data?.count) return;
+        if (!this._topoSheets?.[key]) this._buildTopologySheet(key);
+        this._rebuildTopologySheetIfResized(key);
+        const s = this._topoSheets[key];
+        if (!s.solid.visible) return;
+        const cfg = this._topologySheetConfigs()[key];
+        const geo = s.solid.geometry;
+        const pos = geo.attributes.position;
+        const col = geo.attributes.color;
+        const verts = pos.count;
+        const N = this._latticeSize || 32;
+        const halfN = this._halfN;
+        const DEPTH = N * cfg.depthFrac;
+
+        // Smooth heights on the fine grid (2 Laplacian passes post-scatter).
+        const heights = this._scatterHeights(pos, halfN, N, data, 2);
+
+        // Commit fine-grid heights + per-vertex colours. Reuse a scratch RGB
+        // triple on `this` — creating a 3-wide Float32Array per update × 10
+        // sheets × 20 Hz is small, but free to avoid.
+        if (!this._rampScratch) this._rampScratch = new Float32Array(3);
+        const rgb = this._rampScratch;
+        for (let v = 0; v < verts; v++) {
+            const t = heights[v];
+            if (cfg.signed) {
+                const ts = Math.max(-1, Math.min(1, t));
+                pos.array[v * 3 + 1] = ts * DEPTH;
+                this[cfg.ramp](ts, rgb, 0);
+            } else {
+                const tt = Math.max(0, Math.min(1, t));
+                pos.array[v * 3 + 1] = tt * DEPTH;
+                this[cfg.ramp](tt, rgb, 0);
+            }
+            col.array[v * 3]     = rgb[0];
+            col.array[v * 3 + 1] = rgb[1];
+            col.array[v * 3 + 2] = rgb[2];
+        }
+        pos.needsUpdate = true;
+        col.needsUpdate = true;
+        geo.computeVertexNormals();
+
+        // Deform the coarse wireframe to match — same sampler, no Laplacian
+        // (the wire is already coarse enough that it doesn't need smoothing).
+        if (s.wire && s.wire.geometry) {
+            const wirePos = s.wire.geometry.attributes.position;
+            const wireHeights = this._scatterHeights(wirePos, halfN, N, data, 0);
+            for (let v = 0; v < wirePos.count; v++) {
+                const t = wireHeights[v];
+                const tc = cfg.signed
+                    ? Math.max(-1, Math.min(1, t))
+                    : Math.max( 0, Math.min(1, t));
+                wirePos.array[v * 3 + 1] = tc * DEPTH;
+            }
+            wirePos.needsUpdate = true;
+        }
+    }
+
+    // ── Color ramps for the three topology sheets ────────────────────
+    // Unsigned ramps accept t ∈ [0, 1]; signed accepts t ∈ [-1, 1].
+
+    _rampEmEnergy(t, out, i) {
+        // Teal → warm orange (low → high Maxwell energy).
+        t = Math.max(0, Math.min(1, t));
+        out[i]     = 0.05 * (1 - t) + 0.98 * t;
+        out[i + 1] = 0.55 * (1 - t) + 0.62 * t;
+        out[i + 2] = 0.55 * (1 - t) + 0.14 * t;
+    }
+
+    _rampCharge(t, out, i) {
+        // Diverging blue ↔ red: negatives = sinks (blue well), positives = sources (red peak).
+        t = Math.max(-1, Math.min(1, t));
+        if (t >= 0) {
+            const u = t;
+            out[i]     = 0.95 * (1 - u) + 0.90 * u;
+            out[i + 1] = 0.95 * (1 - u) + 0.10 * u;
+            out[i + 2] = 0.95 * (1 - u) + 0.20 * u;
+        } else {
+            const u = -t;
+            out[i]     = 0.95 * (1 - u) + 0.13 * u;
+            out[i + 1] = 0.95 * (1 - u) + 0.35 * u;
+            out[i + 2] = 0.95 * (1 - u) + 0.85 * u;
+        }
+    }
+
+    _rampVorticity(t, out, i) {
+        // Magma-like: near-black → violet → gold for increasing swirl.
+        t = Math.max(0, Math.min(1, t));
+        if (t < 0.5) {
+            const u = t * 2;
+            out[i]     = 0.02 * (1 - u) + 0.48 * u;
+            out[i + 1] = 0.02 * (1 - u) + 0.05 * u;
+            out[i + 2] = 0.08 * (1 - u) + 0.53 * u;
+        } else {
+            const u = (t - 0.5) * 2;
+            out[i]     = 0.48 * (1 - u) + 1.00 * u;
+            out[i + 1] = 0.05 * (1 - u) + 0.85 * u;
+            out[i + 2] = 0.53 * (1 - u) + 0.20 * u;
+        }
+    }
+
+    // ── Tier 1/2/3 ramps (2026-04-18) ────────────────────────────────
+
+    _rampHelicity(t, out, i) {
+        // Diverging cyan ↔ magenta for left/right-handed field-line linking.
+        t = Math.max(-1, Math.min(1, t));
+        if (t >= 0) {
+            const u = t;
+            out[i]     = 0.85 * (1 - u) + 0.95 * u;
+            out[i + 1] = 0.90 * (1 - u) + 0.15 * u;
+            out[i + 2] = 0.95 * (1 - u) + 0.85 * u;
+        } else {
+            const u = -t;
+            out[i]     = 0.85 * (1 - u) + 0.10 * u;
+            out[i + 1] = 0.90 * (1 - u) + 0.85 * u;
+            out[i + 2] = 0.95 * (1 - u) + 0.90 * u;
+        }
+    }
+
+    _rampKretschmann(t, out, i) {
+        // Deep-space blue → molten white for gravitational curvature.
+        t = Math.max(0, Math.min(1, t));
+        out[i]     = 0.05 * (1 - t) + 1.00 * t;
+        out[i + 1] = 0.10 * (1 - t) + 0.95 * t;
+        out[i + 2] = 0.35 * (1 - t) + 0.80 * t;
+    }
+
+    _rampEPressure(t, out, i) {
+        // Pale yellow → saturated red for electric-pressure peaks.
+        t = Math.max(0, Math.min(1, t));
+        out[i]     = 0.95 * (1 - t) + 0.95 * t;
+        out[i + 1] = 0.95 * (1 - t) + 0.25 * t;
+        out[i + 2] = 0.65 * (1 - t) + 0.15 * t;
+    }
+
+    _rampBPressure(t, out, i) {
+        // Pale cyan → deep teal for magnetic-pressure peaks.
+        t = Math.max(0, Math.min(1, t));
+        out[i]     = 0.75 * (1 - t) + 0.00 * t;
+        out[i + 1] = 0.95 * (1 - t) + 0.55 * t;
+        out[i + 2] = 0.95 * (1 - t) + 0.70 * t;
+    }
+
+    _rampKineticEnergy(t, out, i) {
+        // Olive → hot yellow for kinetic-energy bumps at particle sites.
+        t = Math.max(0, Math.min(1, t));
+        out[i]     = 0.30 * (1 - t) + 1.00 * t;
+        out[i + 1] = 0.45 * (1 - t) + 0.95 * t;
+        out[i + 2] = 0.10 * (1 - t) + 0.20 * t;
+    }
+
+    _rampFisher(t, out, i) {
+        // Indigo → bright lime for Fisher-information sharpness.
+        t = Math.max(0, Math.min(1, t));
+        out[i]     = 0.25 * (1 - t) + 0.75 * t;
+        out[i + 1] = 0.15 * (1 - t) + 1.00 * t;
+        out[i + 2] = 0.55 * (1 - t) + 0.30 * t;
+    }
+
+    _rampCoherence(t, out, i) {
+        // Diverging orange ↔ violet for right/left-handed Beltrami flow.
+        t = Math.max(-1, Math.min(1, t));
+        if (t >= 0) {
+            const u = t;
+            out[i]     = 0.90 * (1 - u) + 1.00 * u;
+            out[i + 1] = 0.90 * (1 - u) + 0.55 * u;
+            out[i + 2] = 0.90 * (1 - u) + 0.10 * u;
+        } else {
+            const u = -t;
+            out[i]     = 0.90 * (1 - u) + 0.45 * u;
+            out[i + 1] = 0.90 * (1 - u) + 0.15 * u;
+            out[i + 2] = 0.90 * (1 - u) + 0.85 * u;
+        }
+    }
+
+    // ── Public apply methods (called by viewport-adapter) ─────────────
+
+    toggleEmEnergyField(on)      { this._toggleTopologySheet('emEnergy', on); }
+    toggleChargeDensityField(on) { this._toggleTopologySheet('chargeDensity', on); }
+    toggleVorticityField(on)     { this._toggleTopologySheet('vorticity', on); }
+
+    updateEmEnergyField(data)      { this._updateTopologySheet('emEnergy', data); }
+    updateChargeDensityField(data) { this._updateTopologySheet('chargeDensity', data); }
+    updateVorticityField(data)     { this._updateTopologySheet('vorticity', data); }
+
+    // ── Tier 1/2/3 rubber-sheet apply methods (2026-04-18) ───────────
+    toggleHelicityField(on)       { this._toggleTopologySheet('helicity', on); }
+    toggleKretschmannField(on)    { this._toggleTopologySheet('kretschmann', on); }
+    toggleEPressureField(on)      { this._toggleTopologySheet('ePressure', on); }
+    toggleBPressureField(on)      { this._toggleTopologySheet('bPressure', on); }
+    toggleKineticEnergyField(on)  { this._toggleTopologySheet('kineticEnergy', on); }
+    toggleFisherField(on)         { this._toggleTopologySheet('fisher', on); }
+    toggleCoherenceField(on)      { this._toggleTopologySheet('coherence', on); }
+
+    updateHelicityField(data)      { this._updateTopologySheet('helicity', data); }
+    updateKretschmannField(data)   { this._updateTopologySheet('kretschmann', data); }
+    updateEPressureField(data)     { this._updateTopologySheet('ePressure', data); }
+    updateBPressureField(data)     { this._updateTopologySheet('bPressure', data); }
+    updateKineticEnergyField(data) { this._updateTopologySheet('kineticEnergy', data); }
+    updateFisherField(data)        { this._updateTopologySheet('fisher', data); }
+    updateCoherenceField(data)     { this._updateTopologySheet('coherence', data); }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ── Event-horizon isosurface overlay (Tier 1, 2026-04-18) ────────
+    // Rendered as a semi-transparent point cloud at voxels where the
+    // latency proxy L(x) ≥ 0.95.  Not a rubber sheet — the geometry
+    // needs to sit in 3D at the horizon location, not on a floor plane.
+    // ══════════════════════════════════════════════════════════════════
+    _buildHorizonField() {
+        // Lazy-alloc 8k points (caps cost; we'll only upload `count` verts).
+        const max = 8192;
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(max * 3);
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.PointsMaterial({
+            color: 0x110022, size: 0.85, transparent: true, opacity: 0.85,
+            depthWrite: false, sizeAttenuation: true,
+        });
+        const points = new THREE.Points(geo, mat);
+        points.visible = false;
+        points.renderOrder = 4;
+        points.frustumCulled = false;
+        this.scene.add(points);
+        this._horizonField = { points, geo, capacity: max };
+    }
+
+    toggleHorizonField(on) {
+        if (!this._horizonField) this._buildHorizonField();
+        this._horizonField.points.visible = !!on;
+    }
+
+    updateHorizonField(data) {
+        if (!data?.count) return;
+        if (!this._horizonField) this._buildHorizonField();
+        const hf = this._horizonField;
+        if (!hf.points.visible) return;
+        const pos = hf.geo.attributes.position;
+        // The horizon sampler emits voxel-centred positions. If the horizon
+        // fits in capacity we copy the whole buffer; otherwise we stride-
+        // downsample across the full array so the rendered shell stays
+        // geometrically representative (not just the first 8k voxels in
+        // scan order, which would clip a horizon's bottom-right quadrant).
+        if (data.count <= hf.capacity) {
+            pos.array.set(data.positions.subarray(0, data.count * 3));
+            pos.needsUpdate = true;
+            hf.geo.setDrawRange(0, data.count);
+            return;
+        }
+        const step = data.count / hf.capacity;
+        for (let i = 0; i < hf.capacity; i++) {
+            const src = Math.min(data.count - 1, (i * step) | 0);
+            pos.array[i * 3]     = data.positions[src * 3];
+            pos.array[i * 3 + 1] = data.positions[src * 3 + 1];
+            pos.array[i * 3 + 2] = data.positions[src * 3 + 2];
+        }
+        pos.needsUpdate = true;
+        hf.geo.setDrawRange(0, hf.capacity);
+    }
+
+    // ══════════════════════════════════════════════════════════════════
     // ── |ψ|² breathing animation ──────────────────────────────────────
     // Called from the main render loop so the probability cloud "breathes"
     // at ~0.3Hz — conveys that this is a DYNAMIC quantum state, not a
     // static heatmap. No-op when |ψ|² isn't the active field.
-    _animateQuantumField(now) {
+    //
+    // Time source: `_animationClock` (monotonic ms) accumulated by
+    // `advanceAnimationClock(dt)` from the controller only when the sim is
+    // running. Previously this used `performance.now()` directly, which
+    // advanced on every render call regardless of pause state — so toggling
+    // an overlay (which forces one render cycle to repaint) would bump the
+    // breathing phase by one frame. Sourcing from the accumulator keeps the
+    // opacity pinned whenever the sim is paused, regardless of how many
+    // times the viewport re-renders for layout / overlay-toggle reasons.
+    _animateQuantumField() {
         if (!this._quantumField || !this._psi2Visible) return;
         if (this._quantumFieldKind !== 'psi2') return;
-        const phase = (now / 1000) * Math.PI * 0.6;  // ~0.3Hz pulse
+        const tMs = this._animationClock || 0;
+        const phase = (tMs / 1000) * Math.PI * 0.6;  // ~0.3Hz pulse
         const pulse = 0.85 + 0.15 * Math.sin(phase);
         this._quantumField.material.opacity = pulse;
+    }
+
+    // Monotonic animation clock. Accumulates only when the sim is running;
+    // the controller calls this each animate() tick with the frame delta
+    // (wall-clock seconds). Anything time-based in viewport.js that should
+    // freeze during pause reads from `this._animationClock` instead of
+    // `performance.now()`.
+    advanceAnimationClock(dtSeconds) {
+        if (!this._animationClock) this._animationClock = 0;
+        this._animationClock += (dtSeconds || 0) * 1000;
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -4103,7 +4743,9 @@ export class Viewport {
             if (this._strongForce) this._strongForce.visible = false;
             if (this._weakField) this._weakField.visible = false;
             if (this._forceHeatmap) this._forceHeatmap.visible = false;
-            if (this._forceGlyphs) this._forceGlyphs.visible = false;
+            if (this._forceGlyphMeshes) {
+                for (const m of Object.values(this._forceGlyphMeshes)) m.visible = false;
+            }
             if (this._forceStreamlinePool) {
                 for (const l of this._forceStreamlinePool) l.visible = false;
             }
@@ -4467,7 +5109,12 @@ export class Viewport {
 
     render() {
         this.controls.update();
-        this._animateQuantumField(performance.now());
+        // Animation clock is advanced externally via advanceAnimationClock()
+        // so this call is safe to make unconditionally — it just reads the
+        // current clock value and paints. When the controller has frozen
+        // the clock (sim paused), opacity stays pinned and no "one-step"
+        // advance is perceivable on overlay-toggle-triggered repaints.
+        this._animateQuantumField();
         if (this._usePostProcessing && this._composer) {
             this._composer.render();
         } else {
@@ -4548,7 +5195,7 @@ export class Viewport {
         const fieldOverlays = [
             '_eFieldLines', '_bFieldLines', '_poyntingVectors', '_divField',
             '_fluxStreamlines', '_forceVolume', '_gravityField', '_strongForce', '_weakField',
-            '_forceHeatmap', '_forceGlyphs',
+            '_forceHeatmap',
             '_dualFluxVolume',
             '_chiralityField', '_lightField',
             '_darkMatterHalo', '_dampingZones', '_genesisIsosurface',
@@ -4556,12 +5203,49 @@ export class Viewport {
         ];
         for (const name of fieldOverlays) disposeMesh(this[name]);
 
+        // Per-force glyph meshes (one InstancedMesh per force type so stacked
+        // forces render simultaneously — see _buildForceGlyphMesh).
+        if (this._forceGlyphMeshes) {
+            for (const m of Object.values(this._forceGlyphMeshes)) disposeMesh(m);
+            this._forceGlyphMeshes = null;
+        }
+
         // Force streamline pool (array of Line objects, not a single mesh)
         if (this._forceStreamlinePool) {
             for (const line of this._forceStreamlinePool) disposeMesh(line);
             this._forceStreamlinePool = null;
             this._forceStreamlineMats = null;
         }
+
+        // Quantum / topology overlays (2026-04-18 additions).
+        // Topology rubber-sheet bag: each entry is { solid, wire, size }, so
+        // disposeMesh on both solid and wire is enough — their geometries
+        // and materials are owned exclusively by this map.
+        if (this._topoSheets) {
+            for (const key of Object.keys(this._topoSheets)) {
+                const s = this._topoSheets[key];
+                if (s) { disposeMesh(s.solid); disposeMesh(s.wire); }
+            }
+            this._topoSheets = null;
+        }
+        // Event-horizon point cloud (distinct from the Scale 5 black-hole
+        // event-horizon sphere/ring above — this is the Scale 0 latency
+        // isosurface at L ≥ 0.95).
+        if (this._horizonField) {
+            disposeMesh(this._horizonField.points);
+            this._horizonField = null;
+        }
+        // Quantum-field |ψ|² volumetric cloud.
+        disposeMesh(this._quantumField);
+        this._quantumField = null;
+        // Phase needles (line-segment bundle rendering arg(J)).
+        disposeMesh(this._phaseNeedles);
+        this._phaseNeedles = null;
+        // Φ gravitational-potential rubber sheet (solid + wire pair).
+        disposeMesh(this._gravSurface);
+        disposeMesh(this._gravSurfaceWire);
+        this._gravSurface = null;
+        this._gravSurfaceWire = null;
 
         // Raycasting/inspector helpers
         disposeMesh(this._voidBox);

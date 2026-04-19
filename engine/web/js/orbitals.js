@@ -14,6 +14,9 @@
  */
 
 import { defaultNeutronCount } from './elements.js';
+import {
+    SLATER_SAME_1S, SLATER_SAME_NL, SLATER_INNER_SP, SLATER_DEEP_CORE,
+} from './constants.js';
 
 // ── Aufbau Fill Order ───────────────────────────────────────────────
 // [n, l, maxElectrons] in standard energy-ascending order
@@ -97,23 +100,23 @@ function slaterZeff(Z, targetN, targetL) {
 
     for (const sub of config) {
         if (sub.n === targetN && sub.l === targetL) {
-            // Same subshell: each other electron shields by 0.35 (0.30 for 1s)
-            const s = (targetN === 1 && targetL === 0) ? 0.30 : 0.35;
+            // Same subshell: each other electron shields by SAME_NL (SAME_1S for 1s)
+            const s = (targetN === 1 && targetL === 0) ? SLATER_SAME_1S : SLATER_SAME_NL;
             sigma += (sub.count - 1) * s;
         } else if (isDF) {
-            // For d/f electrons: all inner groups shield by 1.00
+            // For d/f electrons: all inner groups shield completely
             if (sub.n < targetN || (sub.n === targetN && sub.l < targetL)) {
-                sigma += sub.count * 1.00;
+                sigma += sub.count * SLATER_DEEP_CORE;
             }
         } else {
             // For s/p electrons
             if (sub.n === targetN && sub.l <= 1 && targetL <= 1 && sub.l !== targetL) {
                 // Same n, s-p grouped together
-                sigma += sub.count * 0.35;
+                sigma += sub.count * SLATER_SAME_NL;
             } else if (sub.n === targetN - 1) {
-                sigma += sub.count * 0.85;
+                sigma += sub.count * SLATER_INNER_SP;
             } else if (sub.n < targetN - 1) {
-                sigma += sub.count * 1.00;
+                sigma += sub.count * SLATER_DEEP_CORE;
             }
         }
     }

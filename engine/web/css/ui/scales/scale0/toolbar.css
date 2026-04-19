@@ -88,6 +88,18 @@
 .field-swatch-lagrangian     { background: linear-gradient(90deg, #2166ac 0%, #f7f7f7 50%, #b2182b 100%); }
 .field-swatch-entropy        { background: linear-gradient(90deg, #000 0%, #fff 100%); }
 .field-swatch-grav-potential { background: linear-gradient(90deg, #000033 0%, #0066cc 50%, #ffff00 100%); }
+.field-swatch-em-energy      { background: linear-gradient(90deg, #0d8c8c 0%, #f9a133 100%); }
+.field-swatch-charge         { background: linear-gradient(90deg, #2159d9 0%, #f2f2f2 50%, #e51a33 100%); }
+.field-swatch-vorticity      { background: linear-gradient(90deg, #070114 0%, #7a0d87 50%, #ffd933 100%); }
+/* Tier 1/2/3 additions (2026-04-18) — ramps match viewport.js `_rampXxx` helpers. */
+.field-swatch-helicity       { background: linear-gradient(90deg, #1ae6e6 0%, #f2f2f2 50%, #f226d9 100%); }
+.field-swatch-kretschmann    { background: linear-gradient(90deg, #0d1959 0%, #3a78ff 50%, #ffffff 100%); }
+.field-swatch-e-pressure     { background: linear-gradient(90deg, #f2f29c 0%, #f23a26 100%); }
+.field-swatch-b-pressure     { background: linear-gradient(90deg, #bfefff 0%, #008f9c 100%); }
+.field-swatch-kinetic        { background: linear-gradient(90deg, #4d5920 0%, #fff233 100%); }
+.field-swatch-fisher         { background: linear-gradient(90deg, #40268c 0%, #bfff4d 100%); }
+.field-swatch-horizon        { background: linear-gradient(90deg, #000000 0%, #2b1833 60%, #6c1a66 100%); }
+.field-swatch-coherence      { background: linear-gradient(90deg, #7326d9 0%, #f2f2f2 50%, #ff9640 100%); }
 
 /* Scenario epistemic status text */
 .lat-scenario-desc-text {

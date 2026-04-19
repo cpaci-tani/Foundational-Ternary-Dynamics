@@ -343,6 +343,31 @@ double RenderBridge::compute_entropy() const {
 //   Wave: d²J/dt² = c²∇²J (Laplacian drives flux wave propagation)
 //   Source: g_c·∇(s) (manifested particles source flux in their neighborhood)
 //   Biot-Savart: g_c·∇×(s·v) (moving charges create rotational flux)
+//
+// STENCIL AND INTEGRATION NOTES (2026 audit):
+//
+//   18-point Moore Laplacian (weights face=1/3, edge=1/6, self=−4):
+//   CONSISTENT (weights sum = 0) AND isotropic through O(h⁴). Direct
+//   Taylor expansion:
+//     face sum · (1/3)  +  edge sum · (1/6)  −  4·f
+//       = h² ∇²f + (h⁴/12)·(∇²)²f + O(h⁶)
+//   The 2:1 face:edge ratio is WHAT PRODUCES the O(h⁴) isotropy.
+//   Verified empirically by tests/test_moore_laplacian_isotropy.cpp
+//   (TRACKER §1.8 — closed 2026-04-17): smooth-Gaussian radial-symmetry
+//   within 11% at L=64, σ=4. Residual at finite h is lattice dispersion
+//   at k·h ~ 1 — a known artefact of ALL cubic-lattice FD schemes, not
+//   a defect of these specific weights.
+//
+//   The advance pair (wave_vel += delta_J; flux += wave_vel) is
+//   Störmer–Verlet (leapfrog) under the stagger interpretation where
+//   wave_vel = v(t + h/2) and flux = J(t):
+//       v(t + h/2) = v(t − h/2) + a(J(t)) · h   (kick)
+//       J(t + h)   = J(t)       + v(t + h/2)·h   (drift)
+//   Empirically verified by tests/test_leapfrog_integrator_audit.cpp
+//   (see TRACKER_OPEN_ITEMS §1.4 — closed 2026-04-17): over 5000 ticks
+//   with damping off, cumulative injection/dissipation balance to 0.1%,
+//   the hallmark of a symplectic scheme. C_SPEED = 1/√D = 1/√3 is the
+//   leapfrog CFL limit, correctly identified.
 // ============================================================================
 
 void RenderBridge::phase_read() {
@@ -989,13 +1014,29 @@ void RenderBridge::phase_forces() {
   if (toggles.poisson_coulomb && !toggles.emergent_forces)
     solve_coulomb_poisson();
 
-  // ── Color force: collect manifested colored particles ──────────────
-  // SU(3)-inspired pairwise color interaction [IMPOSED coefficients]:
-  //   same color (c_i == c_j):     +1/2 (repulsive)
-  //   different color (c_i != c_j): -1   (attractive)
-  // Coupling: running α_s(r) with confinement clamping.
-  // The Z_3 color labeling comes from dominant flux axis [EMERGENT].
-  // The force coefficients come from SU(3) Casimir operators [IMPOSED].
+  // ── Color force ────────────────────────────────────────────────────
+  //
+  // EPISTEMIC STATUS: [PHENOMENOLOGICAL FIT], not [EMERGENT].
+  //
+  // What IS emergent from the FTD dynamics:
+  //   - Z₃ colour LABELLING — assigned by dominant flux axis per voxel.
+  //   - Confinement of like-colour configurations at distance x₋ ≈ 3.024.
+  //
+  // What is NOT emergent — these pieces are hand-fit to reproduce QCD:
+  //   - Force coefficient cf = {+0.5 same-colour, −1 different} — SU(3)
+  //     Casimir-motivated, inserted numerically.
+  //   - Three-regime piecewise profile (Coulomb / flux-tube / linear) —
+  //     hand-spliced at COLOR_COULOMB_RADIUS / COLOR_TRANSITION_RADIUS.
+  //   - Running coupling α_s(r) — standard one-loop QCD form.
+  //
+  // Reading this code as "FTD derives QCD confinement" is wrong. What's
+  // actually happening is: FTD supplies a 3-colour labelling; a QCD-shaped
+  // potential is then built by hand on top. The shape is imposed.
+  //
+  // To upgrade this to a genuine derivation, replace the piecewise force
+  // law with a dynamical SU(3) gauge field whose Wilson-loop expectation
+  // produces linear confinement at large r without a hand-inserted regime
+  // switch. That work is [OPEN].
   // PERF: colored_sites_cache_ is a bridge member — clear+push reuses capacity,
   // no per-tick malloc.
   colored_sites_cache_.clear();
@@ -1042,10 +1083,10 @@ void RenderBridge::phase_forces() {
       f_em = grad_rho_t2 * (G_C * v.state);
     } else if (toggles.poisson_coulomb) {
       Vec3 grad_phi = gradient_scalar(i, phi_coulomb_);
-      f_em = grad_phi * (-ALPHA_EFT * v.state);  // EFT: alpha = G_C² (derived)
+      f_em = grad_phi * (-ALPHA * v.state);       // ALPHA == ALPHA_EFT (G_C² identity)
     } else {
       Vec3 grad_divJ = gradient_divergence(i);
-      f_em = grad_divJ * (-ALPHA_EFT * v.state);  // EFT: alpha = G_C² (derived)
+      f_em = grad_divJ * (-ALPHA * v.state);       // ALPHA == ALPHA_EFT (G_C² identity)
     }
 
     // Gravitational force from density gradient
@@ -1074,7 +1115,7 @@ void RenderBridge::phase_forces() {
     Vec3 f_lorentz;
     if (toggles.lorentz_force && v.speed() > EPSILON_MAG) {
       Vec3 B = curl_flux(i);
-      f_lorentz = Vec3::cross(v.velocity, B) * (ALPHA_EFT * v.state);  // EFT: G_C²
+      f_lorentz = Vec3::cross(v.velocity, B) * (ALPHA * v.state);       // ALPHA == ALPHA_EFT
     }
 
     // ── Color force: pairwise SU(3)-inspired interaction ─────────────
@@ -1139,13 +1180,53 @@ void RenderBridge::phase_forces() {
 
     // Apply force (skip locked particles)
     if (!v.locked) {
-      v.velocity += f_total * dt_;
+      // ── γ_FTD MOMENTUM INTEGRATION (2026-04-17, TRACKER §1.2) ──────
+      //
+      // FTD bandwidth postulate: v²/C² + L² < 1, where C = C_SPEED and
+      // L is local topological latency (gravity).  The corresponding
+      // Lorentz factor is γ_FTD = 1/√(1 − v²/C² − L²).
+      //
+      // To respect this constraint exactly, we integrate MOMENTUM, not
+      // velocity: p = γ_FTD · v.  Newton's law becomes dp/dt = F, and
+      // v is extracted from p at the end of the step.  This guarantees
+      // |v| → C·√(1 − L²) asymptotically as force → ∞; no clamp, no
+      // energy discard, Lorentz-invariant by construction.
+      //
+      // Algebra (derivation in TRACKER §1.2):
+      //   γ²|v|² = |p|²
+      //   γ² = 1/(1 − |v|²/C² − L²)
+      //   ⇒  |v|² = C²(1 − L²) · |p|² / (C² + |p|²)
+      //   ⇒  v⃗   = p⃗ · C · √((1 − L²) / (C² + |p|²))
+      //
+      // Newtonian limit (|v| << C, L = 0): γ → 1, p ≈ v, v_new ≈ v + F·dt. ✓
+      // Ultra-relativistic (|p| → ∞):       |v| → C·√(1 − L²).          ✓
+      // Horizon (L → 1):                    |v| → 0.                     ✓
+      //
+      // Superseded the previous non-relativistic clamp
+      // `if (|v| > C) v *= C/|v|;` which discarded energy and was also
+      // STRICTER than the true bandwidth (clamp allowed |v| ≤ C(1−L²);
+      // FTD bandwidth allows |v| ≤ C·√(1−L²)).
+      const double C      = C_SPEED;
+      const double C2     = C * C;
+      const double L      = v.latency;                  // 0 if latency_field off
+      const double L2     = L * L;
+      // Budget-safe: clamp 1−L² strictly positive so sqrt() never
+      // underflows at or near the horizon.
+      const double one_L2 = std::max(1.0 - L2, 1e-6);
 
-      // Enforce speed limit: |v| <= C_SPEED = 1
-      double spd = v.speed();
-      if (spd > C_SPEED) {
-        v.velocity *= (C_SPEED / spd);
-      }
+      // Current γ (with a budget floor of 1e-6 to keep γ finite if the
+      // previous tick left v at the bandwidth edge).
+      const double v2 = v.velocity.mag2();
+      double budget  = v2 / C2 + L2;
+      if (budget > 1.0 - 1e-6) budget = 1.0 - 1e-6;
+      const double gamma_in = 1.0 / std::sqrt(1.0 - budget);
+
+      // Reconstruct momentum, apply force, extract new velocity.
+      Vec3 p = v.velocity * gamma_in;
+      p = p + f_total * dt_;
+      const double p2 = p.mag2();
+      const double scale = C * std::sqrt(one_L2 / (C2 + p2));
+      v.velocity = p * scale;
     }
   }
 }
@@ -1279,6 +1360,14 @@ void RenderBridge::phase_movement() {
 // ============================================================================
 
 void RenderBridge::tick() {
+  // F3 (callstack audit 2026-04-17): validate runs on BOTH paths now
+  // so toggle-combination warnings surface regardless of CPU/GPU build.
+  {
+      std::string validErr;
+      if (!toggles.validate(&validErr))
+          std::cerr << "[TermToggles] Invalid combination: " << validErr;
+  }
+
 #ifdef FTD_ENABLE_CUDA
   if (use_gpu_) {
     // Wave 5.2: flush any host-side mutations (e.g. test doing
@@ -1290,15 +1379,33 @@ void RenderBridge::tick() {
     gpu_dirty_ = true;
     physical_time_ += dt_;
     ++tick_;
+
+    // ── GPU EnergyLedger + proper-time (TRACKER §1.7 + audit F4) ──
+    // Sync voxels back to host, then populate both the ledger and
+    // (if latency_field is on) the per-particle proper-time tau.
+    //
+    // Cost: one PCIe download per tick (≈ 3 MB at L=64, sub-ms on
+    // modern hardware; far below a CUDA tick's physics cost). If this
+    // becomes a bottleneck for long CUDA benchmarks, replace with a
+    // device-side reduction kernel that returns just the three scalar
+    // sums (E_field, E_wave, E_kin) — see comment in gpu_engine.cu.
+    gpu_sync_to_host();
+    if (toggles.latency_field)
+      accumulate_proper_time();
+    update_energy_ledger();
     return;
   }
 #endif
 
-  // Validate toggle dependencies before any physics runs.
-  {
-      std::string validErr;
-      if (!toggles.validate(&validErr))
-          std::cerr << "[TermToggles] Invalid combination: " << validErr;
+  // F2 (callstack audit 2026-04-17): CPU-only warning for GPU-only toggles.
+  // Printed once per RenderBridge instance on the first tick where such a
+  // toggle is set, so it's discoverable but doesn't spam.
+  if (!cpu_warnings_emitted_) {
+    std::string gpu_only_msg = toggles.cpu_runtime_warnings();
+    if (!gpu_only_msg.empty()) {
+      std::cerr << "[TermToggles] CPU-build warning:\n" << gpu_only_msg;
+      cpu_warnings_emitted_ = true;
+    }
   }
 
   // Rule 1: Wave propagation + state-flux coupling
@@ -1308,24 +1415,20 @@ void RenderBridge::tick() {
   // Rule 2: Commit flux, damping, manifestation/evaporation
   phase_write();
 
+  // Rule 2b: Pair production (correlated ±1 pairs from high-flux void).
+  // F2 (callstack audit 2026-04-17): matching GPU path order. No-op on
+  // CPU until the pair-production CPU port lands.
+  if (toggles.pair_production)
+    pair_production_cpu();
+
   // Rule 3: Gauss constraint enforcement (∇·J = s)
   if (toggles.gauss_projection)
     gauss_project();
 
-  // Rule 3b: Self-field floor REMOVED (Phase 4 — Energy Conservation).
-  //
-  // The floor previously boosted |J| to K_B at manifested sites every tick.
-  // This fought the Gauss projection in a perpetual cycle, injecting ~4100%
-  // energy over 1000 ticks.  Mathematical analysis proved the floor was
-  // unnecessary:
-  //   - div(J)(i) does NOT involve J(i) (central-difference structure)
-  //   - All flux at a particle site is transverse (invisible to Gauss)
-  //   - Locked particles cannot evaporate (phase_write checks !v.locked)
-  //   - Evaporation threshold (K_B*0.01) is far below natural steady-state flux
-  //   - Coulomb forces use the Poisson solver (state-driven, not flux-driven)
-  //
-  // Removing the floor eliminates the only source of energy injection.
-  self_field_injection_ = 0.0;
+  // Rule 3b: Self-field floor REMOVED (Phase 4 — Energy Conservation). The
+  // former per-tick reset of self_field_injection_ was also a no-op — the
+  // member is default-initialised 0 and nothing else writes to it now that
+  // the floor is gone. (F1 from callstack audit 2026-04-17.)
 
   // Rule 3c: Latency field (gravitational potential) — Poisson solver
   // ∇²φ_L = 4πG·ρ_mass, then L = √(clamp(φ_L, 0, 0.998))
@@ -1345,70 +1448,261 @@ void RenderBridge::tick() {
   // Self-field floor moved to Rule 3b (after Gauss, before forces) in Phase 3.
   // No second floor here — eliminates the double-injection energy leak.
 
-  // Rule 6: Weak transmutation (polarity flip under field stress) [CLAUDE.md §6.5]
-  // When field stress exceeds WEAK_THRESHOLD, manifested particles may flip polarity.
-  // In dual-substrate mode: weak force couples only to J_L (left-chiral component),
-  // producing maximal parity violation — +1 particles (J_L-dominant) transmute
-  // readily while -1 particles (J_R-dominant) are nearly immune.
-  // Coefficients are [IMPOSED] from electroweak theory (sin²θ_W, K_GENESIS).
-  if (toggles.weak_transmutation) {
-    const int N = static_cast<int>(lattice_.total_sites());
-    for (int i = 0; i < N; ++i) {
-      auto& v = voxels_[i];
-      if (v.state == 0) continue;  // Only manifested particles transmute
+  // Rule 6: Weak transmutation (polarity flip under field stress).
+  // F5 (callstack audit 2026-04-17): extracted to weak_transmutation_cpu().
+  if (toggles.weak_transmutation)
+    weak_transmutation_cpu();
 
-      // Compute stress: total in single mode, left-chiral in dual mode
-      double stress = toggles.dual_substrate
-                        ? compute_stress_left(i)
-                        : compute_stress(i);
+  // Rule 7: Triad binding detection (3 same-sign particles → locked).
+  // F2 (callstack audit 2026-04-17): matching GPU path. No-op on CPU
+  // until the triad-detection kernel is ported.
+  if (toggles.triad_binding)
+    triad_binding_cpu();
 
-      if (stress > WEAK_THRESHOLD) {
-        // Probabilistic flip: p = 1 - exp(-(stress - WEAK_THRESHOLD) / K_B)
-        double p = 1.0 - std::exp(-(stress - WEAK_THRESHOLD) / K_B);
-        if (uniform_(rng_) < p) {
-          v.state = -v.state;  // Flip polarity (+1 ↔ -1)
-
-          // In dual mode, swap L/R flux to match new chirality
-          // +1 → -1: was J_L-dominant, now becomes J_R-dominant
-          if (toggles.dual_substrate) {
-            std::swap(v.flux_L, v.flux_R);
-            std::swap(v.wave_vel_L, v.wave_vel_R);
-          }
-        }
-      }
-    }
-  }
-
-  // Rule 8: Proper time accumulation (gravity sector #43/#45)
-  // dτ/dt = √(f² - v²)/f where f = 1 - L². At v=0: dτ/dt = √(1-L²).
-  // Also enforce bandwidth constraint: speed limit becomes v < f·C_SPEED.
-  if (toggles.latency_field) {
-    const int N = static_cast<int>(lattice_.total_sites());
-    for (int i = 0; i < N; ++i) {
-      auto& v = voxels_[i];
-      if (v.state != 0) {
-        double L = v.latency;
-        double f = 1.0 - L * L;
-        if (f > 0.0) {
-          // Proper time: dτ/dt = √(f² - v²) / √f
-          double v2 = v.speed() * v.speed();
-          double arg = f * f - v2;
-          if (arg > 0.0)
-            v.tau += std::sqrt(arg) / std::sqrt(f);
-
-          // Bandwidth constraint: effective speed limit is f × C_SPEED
-          double v_max = C_SPEED * std::max(f, 0.001);
-          double spd = v.speed();
-          if (spd > v_max) {
-            v.velocity *= (v_max / spd);
-          }
-        }
-      }
-    }
-  }
+  // Rule 8: Proper time accumulation (gravity sector).
+  // F5 (callstack audit 2026-04-17): extracted to accumulate_proper_time().
+  if (toggles.latency_field)
+    accumulate_proper_time();
 
   physical_time_ += dt_;
   ++tick_;
+
+  // ── Conservation bookkeeping (fills EnergyLedger) ────────────────────
+  // Cheap: a few adds + divides; no loop over N. Tests assert on
+  // `energy_ledger().residual` rather than re-deriving totals.
+  update_energy_ledger();
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// weak_transmutation_cpu() — polarity flip under field stress.
+//
+// Extracted from tick() in F5 (callstack audit 2026-04-17) for symmetry
+// with the GPU path (gpu_weak_transmutation). Identical algorithm.
+//
+// When field stress exceeds WEAK_THRESHOLD, manifested particles may flip
+// polarity. In dual-substrate mode the weak force couples only to J_L
+// (left-chiral), producing maximal parity violation.
+// ════════════════════════════════════════════════════════════════════════
+void RenderBridge::weak_transmutation_cpu() {
+  const int N = static_cast<int>(lattice_.total_sites());
+  for (int i = 0; i < N; ++i) {
+    auto& v = voxels_[i];
+    if (v.state == 0) continue;
+
+    double stress = toggles.dual_substrate
+                      ? compute_stress_left(i)
+                      : compute_stress(i);
+
+    if (stress > WEAK_THRESHOLD) {
+      double p = 1.0 - std::exp(-(stress - WEAK_THRESHOLD) / K_B);
+      if (uniform_(rng_) < p) {
+        v.state = -v.state;
+        if (toggles.dual_substrate) {
+          std::swap(v.flux_L, v.flux_R);
+          std::swap(v.wave_vel_L, v.wave_vel_R);
+        }
+      }
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// accumulate_proper_time() — FTD Schwarzschild-like proper time.
+//
+// Extracted from tick() in F5 (callstack audit 2026-04-17). Also called
+// from the GPU tick() path after gpu_sync_to_host(), closing F4 (GPU was
+// previously not accumulating v.tau at all).
+//
+//   f = 1 − L²   (Schwarzschild f-factor)
+//   dτ/dt = √(f² − |v|²) / √f
+//
+// At v=0: dτ/dt = √(1−L²).  Prior version had a secondary bandwidth
+// clamp here that was STRICTER than the FTD postulate allows; removed in
+// TRACKER §1.2. The γ_FTD momentum integration in phase_forces now
+// enforces the correct bandwidth by construction.
+// ════════════════════════════════════════════════════════════════════════
+void RenderBridge::accumulate_proper_time() {
+  const int N = static_cast<int>(lattice_.total_sites());
+  for (int i = 0; i < N; ++i) {
+    auto& v = voxels_[i];
+    if (v.state == 0) continue;
+    double L = v.latency;
+    double f = 1.0 - L * L;
+    if (f <= 0.0) continue;
+    double v2 = v.speed() * v.speed();
+    double arg = f * f - v2;
+    if (arg > 0.0)
+      v.tau += std::sqrt(arg) / std::sqrt(f);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// pair_production_cpu() — correlated ±1 pair from high-flux void.
+//
+// F2 (callstack audit 2026-04-17): previously a silent no-op on CPU; the
+// GPU path had `gpu_pair_production()`. This CPU port mirrors the GPU
+// algorithm at moderate fidelity:
+//
+//   foreach void voxel with |J| above pair threshold:
+//     with probability p = 1 − exp(−(|J|−K_GENESIS)/K_B):
+//       manifest v.state = +1 at the current voxel
+//       find the first empty face-neighbour and set its state = −1
+//       assign shared pair_id so the two can be tracked as a correlated pair
+//
+// Kept behind the `pair_production` toggle so existing scenarios are
+// unaffected.
+// ════════════════════════════════════════════════════════════════════════
+void RenderBridge::pair_production_cpu() {
+  const int N = static_cast<int>(lattice_.total_sites());
+  for (int i = 0; i < N; ++i) {
+    auto& v = voxels_[i];
+    if (v.state != 0) continue;                 // only manifest from void
+    double jmag = v.flux.mag();
+    if (jmag <= K_GENESIS) continue;            // below pair-production threshold
+
+    double p = 1.0 - std::exp(-(jmag - K_GENESIS) / K_B);
+    if (uniform_(rng_) >= p) continue;
+
+    // Find an empty face-neighbour for the antipartner.
+    int partner = -1;
+    for (int n : lattice_.neighbors_6(i)) {
+      if (voxels_[n].state == 0) { partner = n; break; }
+    }
+    if (partner < 0) continue;                  // nowhere to place the pair
+
+    int pid;
+    pid = next_particle_id_++;
+    v.state = +1;
+    v.particle_id = pid;
+    v.pair_id = pid;
+
+    auto& p2 = voxels_[partner];
+    p2.state = -1;
+    p2.particle_id = next_particle_id_++;
+    p2.pair_id = pid;
+
+    // Seed opposite flux on the antipartner so |J| doesn't duplicate.
+    p2.flux = v.flux * -1.0;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// triad_binding_cpu() — detect 3 same-sign particles in a compact triad,
+// mark them locked.
+//
+// F2 (callstack audit 2026-04-17): previously a silent no-op on CPU; the
+// GPU path had `gpu_triad_detection()`. This CPU port follows the same
+// rule used by the GPU kernel (constants.h):
+//
+//   - pairwise distance ≤ TRIAD_RADIUS
+//   - near-equilateral: min(r)/max(r) ≥ TRIAD_RATIO_THRESHOLD
+//   - all three share the same state (sign)
+//
+// Running time is O(M³) where M is the manifested-particle count. The
+// triad_binding toggle is default-OFF; this path is only exercised when
+// explicitly enabled.
+// ════════════════════════════════════════════════════════════════════════
+void RenderBridge::triad_binding_cpu() {
+  const int N = static_cast<int>(lattice_.total_sites());
+  // Snapshot manifested sites once; inner triple loop stays O(M³).
+  std::vector<int> particles;
+  particles.reserve(64);
+  for (int i = 0; i < N; ++i) {
+    if (voxels_[i].state != 0) particles.push_back(i);
+  }
+
+  auto coord_dist = [&](int a, int b) {
+    auto ca = lattice_.coord(a), cb = lattice_.coord(b);
+    double dx = ca.x - cb.x, dy = ca.y - cb.y, dz = ca.z - cb.z;
+    return std::sqrt(dx*dx + dy*dy + dz*dz);
+  };
+
+  const int M = static_cast<int>(particles.size());
+  for (int a = 0; a < M; ++a) {
+    auto& va = voxels_[particles[a]];
+    if (va.locked) continue;
+    for (int b = a + 1; b < M; ++b) {
+      auto& vb = voxels_[particles[b]];
+      if (vb.locked || vb.state != va.state) continue;
+      double rAB = coord_dist(particles[a], particles[b]);
+      if (rAB > TRIAD_RADIUS) continue;
+      for (int c = b + 1; c < M; ++c) {
+        auto& vc = voxels_[particles[c]];
+        if (vc.locked || vc.state != va.state) continue;
+        double rAC = coord_dist(particles[a], particles[c]);
+        double rBC = coord_dist(particles[b], particles[c]);
+        if (rAC > TRIAD_RADIUS || rBC > TRIAD_RADIUS) continue;
+        double rmin = std::min({rAB, rAC, rBC});
+        double rmax = std::max({rAB, rAC, rBC});
+        if (rmax < 1e-9) continue;
+        if (rmin / rmax < TRIAD_RATIO_THRESHOLD) continue;
+        // Found a near-equilateral same-sign triad — lock all three.
+        va.locked = true;
+        vb.locked = true;
+        vc.locked = true;
+        break;                                   // next outer pair
+      }
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// update_energy_ledger() — per-tick conservation drift populator.
+//
+// After every tick, snapshot the total scalar energy (field + wave-vel +
+// manifested kinetic) and compare to the previous tick:
+//
+//   drift_frac = (E_curr − E_prev) / max(|E_prev|, ε)
+//   expected   = −DAMPING   when the damping toggle is on, else 0
+//   residual   = drift_frac − expected
+//
+// Tests can assert `|residual| < tol` and refuse regressions. Cost is
+// O(N) on a small inner loop already cache-warm from phase_movement.
+// ════════════════════════════════════════════════════════════════════════
+void RenderBridge::update_energy_ledger() {
+  const int N = static_cast<int>(lattice_.total_sites());
+  double E_field = 0.0, E_wave = 0.0, E_kin = 0.0;
+  for (int i = 0; i < N; ++i) {
+    const auto& v = voxels_[i];
+    E_field += v.flux.mag2();
+    E_wave  += v.wave_vel.mag2();
+    if (v.state != 0) E_kin += 0.5 * v.velocity.mag2();
+  }
+  const double E_total = 0.5 * (E_field + E_wave) + E_kin;
+
+  // First call: seed E_prev so the next tick has a baseline.
+  if (energy_ledger_.tick_prev < 0) {
+    energy_ledger_.tick_prev  = tick_;
+    energy_ledger_.E_prev     = E_total;
+    energy_ledger_.E_curr     = E_total;
+    energy_ledger_.dE_dt      = 0.0;
+    energy_ledger_.drift_frac = 0.0;
+    energy_ledger_.residual   = 0.0;
+    energy_ledger_.expected_rate = toggles.damping ? -DAMPING : 0.0;
+    return;
+  }
+
+  const double E_prev = energy_ledger_.E_curr;     // rotate
+  energy_ledger_.tick_prev  = tick_ - 1;
+  energy_ledger_.E_prev     = E_prev;
+  energy_ledger_.E_curr     = E_total;
+  energy_ledger_.dE_dt      = (E_total - E_prev) / std::max(dt_, 1e-12);
+
+  const double denom = std::max(std::abs(E_prev), 1e-12);
+  energy_ledger_.drift_frac = (E_total - E_prev) / denom;
+  energy_ledger_.expected_rate = toggles.damping ? -DAMPING : 0.0;
+  energy_ledger_.residual   = energy_ledger_.drift_frac - energy_ledger_.expected_rate;
+
+  // Cumulative tracking for whole-run test assertions.
+  if (energy_ledger_.residual > 0.0) {
+    energy_ledger_.cumulative_injection += energy_ledger_.residual * denom;
+  } else {
+    energy_ledger_.cumulative_dissipation += (-energy_ledger_.residual) * denom;
+  }
+  const double abs_res = std::abs(energy_ledger_.residual);
+  if (abs_res > energy_ledger_.max_residual_seen) {
+    energy_ledger_.max_residual_seen = abs_res;
+  }
 }
 
 void RenderBridge::run(int num_ticks) {
@@ -1545,7 +1839,7 @@ EnergyAudit RenderBridge::energy_audit() const {
   if (!phi_coulomb_.empty()) {
     for (int i = 0; i < N; ++i) {
       if (voxels_[i].state != 0)
-        a.coulomb_pe += ALPHA_EFT * voxels_[i].state * phi_coulomb_[i];
+        a.coulomb_pe += ALPHA * voxels_[i].state * phi_coulomb_[i];
     }
   }
 

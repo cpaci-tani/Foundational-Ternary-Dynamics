@@ -21,6 +21,20 @@ export const FIELD_TOGGLE_BINDINGS = [
     ['toggle-lagrangian-density', 'showLagrangianDensity'],
     ['toggle-entropy-density',    'showEntropyDensity'],
     ['toggle-grav-potential',     'showGravPotential'],
+    // Physics-topology overlays — see docs/SPEC_S0_QUANTUM_OVERLAYS.md §Topology
+    ['toggle-em-energy',           'showEmEnergy'],
+    ['toggle-charge-density',      'showChargeDensity'],
+    ['toggle-vorticity',           'showVorticity'],
+    // Tier 1/2/3 (2026-04-18) — helicity, curvature, horizon,
+    // stress-energy split, Fisher information, coherence.
+    ['toggle-helicity',            'showHelicity'],
+    ['toggle-kretschmann',         'showKretschmann'],
+    ['toggle-horizon',             'showHorizon'],
+    ['toggle-e-pressure',          'showEPressure'],
+    ['toggle-b-pressure',          'showBPressure'],
+    ['toggle-kinetic-energy',      'showKineticEnergy'],
+    ['toggle-fisher',              'showFisher'],
+    ['toggle-coherence',           'showCoherence'],
 ];
 
 export const FORCE_STYLE_VALUES = ['arrows', 'heatmap', 'flow', 'glyphs'];

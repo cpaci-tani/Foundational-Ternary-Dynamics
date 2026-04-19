@@ -11,12 +11,16 @@ When `RenderBridge::tick()` is invoked by a client (either `main.cpp` using the 
 
 ```
 RenderBridge::tick()
-├─ phase_read()        -> Solves local isotropic vector calculus masks over the J array. Read-only on J.
-├─ phase_write()       -> Translates vector momentum into position mutations. Dissipation applied. Write-isolated.
-├─ gauss_project()     -> Gauss constraint normalization via SOR. Non-blocking threaded execution.
+├─ phase_read()        -> 18-point Moore Laplacian + coupling source. Reads voxel_[i].flux, writes delta_j_[i].
+├─ phase_write()       -> Advance (forward-Euler-like) + damping + genesis/evaporation. Writes voxel state.
+├─ gauss_project()     -> Gauss constraint normalization via SOR. 18-point stencil, red/black parallelism.
 ├─ phase_forces()      -> Solves discrete gradients across memory spaces to accumulate acceleration inputs.
-└─ phase_movement()    -> Updates particle index grids. Collision handling executed sequentially via guards.
+├─ phase_movement()    -> Updates particle index grids. Collision handling executed sequentially via guards.
+├─ [optional] weak_transmutation / latency_field / proper_time  -> gated by toggles, for GR + weak sector
+└─ tick_++ + update_energy_ledger()  -> per-tick conservation drift snapshot (CPU path auto-populates)
 ```
+
+The advance pair in `phase_write` is mathematically forward Euler, not symplectic leapfrog — `DAMPING = α` masks Euler drift for typical benchmarks. See [`SPEC_ENGINE.md`](SPEC_ENGINE.md) §4 and [`TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md) §1.4 for the leapfrog upgrade plan.
 
 ### Mutability Guardians
 During execution, the `Voxel` object space utilizes intermediate memory buffers (e.g., `wave_vel`) so that a "Read" phase evaluates an entirely isolated snapshot of the last tick, outputting purely to "Next State" accumulators. This double-buffering protects the spatial differentiation kernels from propagating immediate neighboring side-effects within the identical loop pass.
@@ -27,9 +31,11 @@ The simulation requires the ability to switch dynamically between localized diff
 
 ### Inheritance Tree
 *   **ScaleEngine**: The abstract base class. It enforces uniform interfaces across all computational scales, exposing virtual constraints for `tick()`, `dt()`, `set_dt()`, and `base_diagnostics()`.
+    *   **RenderBridge**: Inherits `ScaleEngine`. The production Scale-0 engine — flat voxel array, six-phase tick, SOR Gauss solver. All WASM / benchmark / test code exercises this class.
     *   **ParticleEngine**: Inherits `ScaleEngine`. Handles purely decoupled continuous-space tracking. Bypasses the 3D local-lattice structure and executes $O(N \log N)$ Barnes-Hut Octree aggregations for point-objects.
     *   **AtomEngine**: Inherits `ScaleEngine`. Governs dynamic linked-list structures modeling valences and bindings in discrete space without matrix operations.
     *   **CosmicEngine**: Inherits `ScaleEngine`. SPH density mechanics and octrees modeling stellar life cycles.
+    *   **DagEngine**: Inherits `ScaleEngine`. **EXPERIMENTAL** sparse-voxel-DAG prototype. `phase_read` + `phase_write` work against the `SparseVoxelDAG`; `gauss_project` / `phase_forces` / `phase_movement` are `[OPEN]` stubs. Do not use for physics — see `include/ftd/dag_engine.h` header banner.
 
 ### The Scale Bridge
 The structural unification of these layers happens via `scale_bridge.cpp`. The mechanism is not direct state transfer, but conversion procedures utilizing `coarsen()` and `refine()` operations.

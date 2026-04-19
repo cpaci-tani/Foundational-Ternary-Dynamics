@@ -7,9 +7,10 @@
  * Nine layers, each derived from the one above. The only inputs are D=3 
  * (spatial dimensions) and the lemniscate constant varpi.
  *
- * [EXTENDED] When WASM loads, the bridge can optionally overwrite these with the exact
- * C++ values via bridge.getConstants(). Until then, these JS values are
- * authoritative and match ontic.h to the precision shown.
+ * These JS values mirror ontic.h to the precision shown and are
+ * authoritative for the dashboard; consumers MUST import from here
+ * rather than duplicating literals. WASM's get_constants() is used
+ * for observatory/display only, not to mutate these exports.
  */
 
 // ── Layer -1: Self-Referential Seed ─────────────────────────────────
@@ -36,7 +37,8 @@ export const X_BORN = 2.0 * G_STAR;                  // degenerate root (Born ru
 
 // ── Layer 3: Master Quadratic Roots ─────────────────────────────────
 export const COEFFICIENT = 16;                         // N_BASE^2 = 2^(D+1)
-export const X_PLUS  = 137.0361714582;                // 1/α
+export const X_PLUS            = 137.0361714582;      // tree-level root
+export const X_PLUS_PRECISION  = 137.035999177;       // 4-term corrected (CODATA)
 export const X_MINUS = 3.0239639163;                  // ≈ N_c
 
 // ── Layer 4: Framework Integers ─────────────────────────────────────
@@ -49,8 +51,17 @@ export const B_3       = 7;
 export const N_EFF     = 13;
 
 // ── Layer 5: Coupling Constants ─────────────────────────────────────
-export const ALPHA = 1.0 / X_PLUS;                    // fine structure constant
-export const G_C   = 0.08542448940518;                // state-flux coupling = √α
+// G_C is the fundamental lattice coupling in the wave equation source
+// term (delta_J += G_C * grad(s)). Force computation involves TWO
+// vertices (source + probe), each contributing G_C, so alpha = G_C * G_C.
+// This mirrors engine/include/ftd/constants.h static_assert (ALPHA_EFT).
+// 2026-04-17: G_C upgraded from sqrt(1/X_PLUS tree) to sqrt(1/X_PLUS_PRECISION)
+// so ALPHA = G_C² matches CODATA 2022 (137.035999177) — see TRACKER §1.5.
+export const G_C       = 0.0854245431028543695;      // state-flux coupling = sqrt(1/X_PLUS_PRECISION)
+export const ALPHA_EFT = G_C * G_C;                   // EFT-derived fine structure
+export const ALPHA     = ALPHA_EFT;                   // alias: alpha = G_C^2 [DERIVED]
+export const ALPHA_TREE      = 1.0 / X_PLUS;          // tree-level (reference only)
+export const ALPHA_PRECISION = ALPHA;                  // alias; matches CODATA
 export const G_N   = 1.0 / ((B_3 + N_C) * (B_3 + N_C));  // = 0.01
 export const SIN2_WEINBERG = N_C / N_EFF;             // sin^2(theta_W) = 3/13
 export const ALPHA_WEAK = ALPHA / SIN2_WEINBERG;
@@ -87,6 +98,8 @@ export const PREC_C1 = 9.0 / 47.0;
 export const PREC_C2 = 5.0 / 64.0;
 export const PREC_C3 = 4.0 / 141.0;
 export const PREC_C4 = 141.0 / 11.0;
+// Same value as X_PLUS_PRECISION (the 4-term series converges to it by
+// construction). Retained for scripts that compute the formula explicitly.
 export const ALPHA_INV_CORRECTED = X_PLUS
     - PREC_C1 * EPSILON_ABS
     + PREC_C2 * EPSILON_ABS ** 2
@@ -109,6 +122,33 @@ export const C_MANDELBROT = 1.0 / G_STAR;              // Mandelbrot corresponde
 // ── Physical constants for conversions ──────────────────────────────
 export const HBAR_C_MEV_FM = 197.3269804;              // hbar*c in MeV*fm
 export const M_PLANCK_GEV = 1.22089e19;                // Planck mass in GeV
+
+// ── Dual-substrate chirality amplitude [DERIVED from G*] ────────────
+// delta² = (4·G* - 1) / (4·G*), mirrors ontic.h DELTA_SQUARED / DELTA_APPROX.
+// Scalar factor used by visualization overlays to split J into L/R
+// components for chirality + weak-force display.
+export const DELTA_SQUARED = (4.0 * G_STAR - 1.0) / (4.0 * G_STAR);
+export const DUAL_DELTA    = Math.sqrt(DELTA_SQUARED);  // = 0.9568... from ontic chain
+
+// ── Bethe-Weizsacker SEMF Coefficients (MeV) [IMPOSED, Wapstra] ─────
+// Standard Wapstra parameterization for nuclear binding-energy fits.
+// External parametric insertions — not derived from the ontic chain.
+export const SEMF_A_VOL  = 15.67;
+export const SEMF_A_SURF = 17.23;
+export const SEMF_A_COUL = 0.7140;
+export const SEMF_A_ASYM = 23.29;
+export const SEMF_A_PAIR = 12.0;
+
+// ── Slater's Rules Shielding Constants [IMPOSED] ────────────────────
+// Empirical shielding coefficients for effective nuclear charge Z_eff.
+// External parametric insertions.
+export const SLATER_SAME_1S    = 0.30;  // 1s same-shell self-shielding
+export const SLATER_SAME_NL    = 0.35;  // n-l same-subshell shielding
+export const SLATER_INNER_SP   = 0.85;  // inner-shell s/p shielding
+export const SLATER_DEEP_CORE  = 1.00;  // deep-core complete shielding
+
+// ── Neutron-Proton Mass Split (MeV) [DERIVED from PDG masses] ───────
+export const DELTA_NP = 1.29333184;                    // m_n - m_p (PDG, exact)
 
 // ── Experimental Reference Masses (PDG) ─────────────────────────────
 // These are the measured (Particle Data Group) values, NOT the

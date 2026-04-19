@@ -156,7 +156,18 @@
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    /* Legend palette (lagrangian / consciousness term colors) */
+    /* Chart series colors — dark-mode defaults; overridden per theme below */
+    --chart-flux:     #fb8c00;
+    --chart-energy:   #42a5f5;
+    --chart-total:    #e8e8e8;
+    --chart-positive: #4ade80;
+    --chart-negative: #f87171;
+    --chart-charge:   #4ade80;
+    --chart-eb:       #a78bfa;
+    --chart-gauss:    #fbbf24;
+    --chart-entropy:  #60a5fa;
+
+    /* Legend palette (lagrangian term colors) — dark defaults */
     --legend-field-kinetic:  #66bb6a;
     --legend-field-gradient: #26a69a;
     --legend-bi:             #ef5350;

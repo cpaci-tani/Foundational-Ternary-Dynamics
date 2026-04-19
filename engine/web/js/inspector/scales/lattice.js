@@ -24,18 +24,25 @@ export function handleLatticeClick(target, intersects) {
         }
         if (hit.object === target.viewport._voidBox) {
             target.selectedIndex = -1;
+            // Voxel k occupies world coords [k, k+1) and is rendered at centre
+            // k+0.5. A ray-hit anywhere in [k, k+1) should map to voxel k —
+            // Math.floor does that correctly. Math.round snaps half-points
+            // toward +∞ (Math.round(16.5) === 17 in JS), so clicking on the
+            // rendered centre of voxel 16 was selecting voxel 17.
             target._selectedPos = {
-                x: Math.round(hit.point.x),
-                y: Math.round(hit.point.y),
-                z: Math.round(hit.point.z),
+                x: Math.floor(hit.point.x),
+                y: Math.floor(hit.point.y),
+                z: Math.floor(hit.point.z),
             };
         } else {
             target.selectedIndex = hit.index;
             const posArr = hit.object.geometry.getAttribute('position').array;
+            // The geometry stores voxel-centre world coords (k+0.5), so we
+            // subtract the 0.5 offset via floor to recover the integer index.
             target._selectedPos = {
-                x: Math.round(posArr[target.selectedIndex * 3]),
-                y: Math.round(posArr[target.selectedIndex * 3 + 1]),
-                z: Math.round(posArr[target.selectedIndex * 3 + 2]),
+                x: Math.floor(posArr[target.selectedIndex * 3]),
+                y: Math.floor(posArr[target.selectedIndex * 3 + 1]),
+                z: Math.floor(posArr[target.selectedIndex * 3 + 2]),
             };
         }
         const L = target.bridge.latticeSize || 32;

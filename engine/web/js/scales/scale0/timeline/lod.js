@@ -84,6 +84,71 @@ export function blockAverageVec3(src, N, k) {
 }
 
 /**
+ * Nearest-neighbor upsample of a scalar cube from M³ back to N³
+ * where N = M * 2^k. Used when a lower-LOD snapshot needs to be
+ * written back into the engine (engine always wants full N³).
+ */
+export function upsampleScalar(src, N, k) {
+    const factor = LOD_FACTORS[k];
+    if (!factor || factor === 1) return src;
+    const M = Math.floor(N / factor);
+    const Ctor = src.constructor;      // preserve Int8/Float32 etc.
+    const out = new Ctor(N * N * N);
+    for (let z = 0; z < N; z++) {
+        const zs = Math.min(M - 1, Math.floor(z / factor));
+        for (let y = 0; y < N; y++) {
+            const ys = Math.min(M - 1, Math.floor(y / factor));
+            for (let x = 0; x < N; x++) {
+                const xs = Math.min(M - 1, Math.floor(x / factor));
+                out[x + y * N + z * N * N] = src[xs + ys * M + zs * M * M];
+            }
+        }
+    }
+    return out;
+}
+
+/**
+ * Nearest-neighbor upsample of a 3-vector cube from M³ back to N³.
+ */
+export function upsampleVec3(src, N, k) {
+    const factor = LOD_FACTORS[k];
+    if (!factor || factor === 1) return src;
+    const M = Math.floor(N / factor);
+    const out = new Float32Array(3 * N * N * N);
+    for (let z = 0; z < N; z++) {
+        const zs = Math.min(M - 1, Math.floor(z / factor));
+        for (let y = 0; y < N; y++) {
+            const ys = Math.min(M - 1, Math.floor(y / factor));
+            for (let x = 0; x < N; x++) {
+                const xs = Math.min(M - 1, Math.floor(x / factor));
+                const si = 3 * (xs + ys * M + zs * M * M);
+                const oi = 3 * (x + y * N + z * N * N);
+                out[oi]     = src[si];
+                out[oi + 1] = src[si + 1];
+                out[oi + 2] = src[si + 2];
+            }
+        }
+    }
+    return out;
+}
+
+/**
+ * Promote any snapshot to a LOD-0 shape by upsampling its arrays.
+ * Returns a new snapshot object; does not mutate the input.
+ * LOD 3 (telemetry-only) returns null — nothing to display.
+ */
+export function upsampleSnapshotToLod0(snap, N) {
+    if (!snap || snap.lod >= 3) return null;
+    if (snap.lod === 0) return snap;
+    return {
+        ...snap,
+        lod: 0,
+        lattice: snap.lattice ? upsampleScalar(snap.lattice, N, snap.lod) : null,
+        flux:    snap.flux    ? upsampleVec3(snap.flux, N, snap.lod)    : null,
+    };
+}
+
+/**
  * Conservative byte count of a snapshot. Mirrors the design-doc math:
  * ~20 B per voxel at LOD 0 (1 byte state + 12 byte flux + overhead).
  */

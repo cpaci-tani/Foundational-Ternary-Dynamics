@@ -58,3 +58,24 @@ html[data-theme="parchment"] {
 html[data-theme="parchment"] .card {
     border-color: rgba(50, 40, 20, 0.12);
 }
+
+html[data-theme="parchment"] {
+    /* Chart series — warm, saturated tones that contrast with sepia bg */
+    --chart-flux:     #b45309;
+    --chart-energy:   #1e40af;
+    --chart-total:    #2c2416;
+    --chart-positive: #166534;
+    --chart-negative: #9b1c1c;
+    --chart-charge:   #166534;
+    --chart-eb:       #6d28d9;
+    --chart-gauss:    #92400e;
+    --chart-entropy:  #1d4ed8;
+
+    --legend-field-kinetic:  #166534;
+    --legend-field-gradient: #115e59;
+    --legend-bi:             #9b1c1c;
+    --legend-coupling:       #92400e;
+    --legend-velocity:       #78350f;
+    --legend-gauss:          #1e3a8a;
+    --legend-dissipation:    #44403c;
+}

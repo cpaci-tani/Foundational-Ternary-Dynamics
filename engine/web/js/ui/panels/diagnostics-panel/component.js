@@ -5,8 +5,8 @@
  * are added for those scales.
  */
 
-import { DiagnosticsTable } from './table.js?v=2';
-import { sections as scale0Sections } from './descriptors/scale0.js?v=2';
+import { DiagnosticsTable } from './table.js';
+import { sections as scale0Sections } from './descriptors/scale0.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 
 export class DiagnosticsPanelComponent {

@@ -16,7 +16,7 @@
  *   chart.destroy();               // frees uPlot + ResizeObserver
  */
 
-import { getChartTheme, makeAxis } from './theme.js';
+import { getChartTheme, makeAxis, resolveChartColor } from './theme.js';
 
 const LS_PREFIX = 'ftd.chart.';
 
@@ -49,7 +49,7 @@ export class UPlotChart {
                 { label: opts.xLabel || 'x' },
                 ...this.series.map((s) => ({
                     label:  s.label,
-                    stroke: s.color,
+                    stroke: resolveChartColor(s.color),
                     width:  1.5,
                     show:   !hiddenKeys.has(s.key),
                 })),
