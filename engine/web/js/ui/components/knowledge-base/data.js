@@ -22,7 +22,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                     'Each lattice site can host ternary state information and flux-related derived values.',
                     'A single tick only propagates local effects through the allowed neighborhood rules.',
                 ],
-                notation: ['L', 'v ∈ L ⊂ Z^3'],
+                notation: ['L', '\\(v \\in L \\subset \\mathbb{Z}^3\\)'],
                 tags: ['space', 'scale0', 'ontology'],
             },
             {
@@ -226,11 +226,11 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 summary: 'A context-sensitive symbol that can mean density, charge density, or a density matrix.',
                 body: [
                     'Rho is one of the most overloaded symbols in physics and in FTD-adjacent writing. In the lattice glossary it appears as a scalar density ρ(v,t) = |J|, but in quantum contexts ρ often denotes a density matrix.',
-                    'The safe way to read rho is to ask what kind of object the surrounding equation expects: a scalar field, a matrix, or a physical density ratio.',
+                    'The safe way to read \\(\\rho\\) is to ask what kind of object the surrounding equation expects: a scalar field, a matrix, or a physical density ratio.',
                 ],
                 bullets: [
-                    'Scalar rho often means density or magnitude-like content.',
-                    'Matrix rho often means a statistical quantum state.',
+                    'Scalar \\(\\rho\\) often means density or magnitude-like content.',
+                    'Matrix \\(\\rho\\) often means a statistical quantum state.',
                     'The surrounding notation should disambiguate the meaning.',
                 ],
                 notation: ['ρ(v,t)', 'ρ = |J|', 'ρ = |ψ⟩⟨ψ|'],
@@ -284,7 +284,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 summary: 'The electromagnetic coupling constant used as a benchmark throughout the project.',
                 body: [
                     'Alpha is the fine structure constant. In the project references it is one of the most frequently cited values because many theoretical comparisons are organized around it.',
-                    'In the engine UI, alpha is more likely to appear in educational descriptions, derived constants, or explanatory material than as a live control.',
+                    'In the engine UI, \\(\\alpha\\) is more likely to appear in educational descriptions, derived constants, or explanatory material than as a live control.',
                 ],
                 bullets: [
                     'Electromagnetic coupling constant.',
@@ -296,11 +296,11 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
             },
             {
                 id: 'nc',
-                title: 'N_c (Color Charges)',
+                title: '\\(N_c\\) (Color Charges)',
                 shortTitle: 'N_c',
                 summary: 'Framework integer associated with color structure in project references.',
                 body: [
-                    'N_c is the project’s symbol for the color-charge count and is listed as 3 in the reference glossary.',
+                    '\\(N_c\\) is the project’s symbol for the color-charge count and is listed as 3 in the reference glossary.',
                     'For learners moving between the engine and the theory notes, this is one of the key framework integers that keeps recurring in coupling, particle, and structural discussions.',
                 ],
                 bullets: [
@@ -308,101 +308,101 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                     'Listed as 3 in the reference glossary.',
                     'Shows up in coupling and particle discussions.',
                 ],
-                notation: ['N_c'],
+                notation: ['\\(N_c\\)'],
                 tags: ['constants', 'particle-physics'],
             },
             {
                 id: 'n-base',
-                title: 'N_base (Base Dimension)',
+                title: '\\(N_\\mathrm{base}\\) (Base Dimension)',
                 shortTitle: 'N_base',
                 summary: 'A framework integer used in the project’s structural and coupling arguments.',
                 body: [
-                    'The symbol N_base is listed in the symbol glossary as the base dimension integer with value 4.',
+                    'The symbol \\(N_\\mathrm{base}\\) is listed in the symbol glossary as the base dimension integer with value 4.',
                     'You will usually see it in theory-facing expressions rather than in runtime telemetry, but it matters because it helps tie together several framework counts and derived integer combinations.',
                 ],
                 bullets: [
                     'Framework integer with value 4 in the glossary.',
-                    'Often appears alongside N_c and b₃.',
+                    'Often appears alongside \\(N_c\\) and b₃.',
                     'More structural than operational in the live UI.',
                 ],
-                notation: ['N_base = 4'],
+                notation: ['\\(N_\\mathrm{base} = 4\\)'],
                 tags: ['constants', 'framework-integers'],
             },
             {
                 id: 'b3',
                 title: 'b₃ (QCD Beta Coefficient)',
                 shortTitle: 'b₃',
-                summary: 'The framework beta coefficient used in strong-coupling discussions.',
+                summary: 'The framework \\(\\beta\\) coefficient used in strong-coupling discussions.',
                 body: [
-                    'The reference glossary lists b₃ as the QCD beta coefficient with value 7. In the broader theory writing it participates in coupling formulas and angle selections.',
+                    'The reference glossary lists b₃ as the QCD \\(\\beta\\) coefficient with value 7. In the broader theory writing it participates in coupling formulas and angle selections.',
                     'For learners, the practical point is that b₃ is one of the named integer ingredients that connects structural counting to effective coupling stories.',
                 ],
                 bullets: [
                     'Listed as 7 in the glossary.',
                     'Shows up in strong-coupling and CKM-style expressions.',
-                    'Often grouped with N_c, N_base, and n_eff.',
+                    'Often grouped with \\(N_c\\), \\(N_\\mathrm{base}\\), and \\(n_\\mathrm{eff}\\)',
                 ],
                 notation: ['b₃ = 7'],
                 tags: ['constants', 'qcd', 'framework-integers'],
             },
             {
                 id: 'n-eff',
-                title: 'n_eff (Effective Dimension)',
+                title: '\\(n_\\mathrm{eff}\\) (Effective Dimension)',
                 shortTitle: 'n_eff',
                 summary: 'The effective-dimension count used in several FTD coupling formulas.',
                 body: [
-                    'The glossary gives n_eff as 13. It is one of the recurring bookkeeping counts used in electroweak and strong-coupling expressions.',
+                    'The glossary gives \\(n_\\mathrm{eff}\\) as 13. It is one of the recurring bookkeeping counts used in electroweak and strong-coupling expressions.',
                     'When the project refers to an effective dimension in a formula, it is usually talking about a model-specific counting quantity rather than a literal spatial dimension you can navigate inside the viewport.',
                 ],
                 bullets: [
                     'Listed as 13 in the glossary.',
-                    'Appears in coupling formulas like sin²θ_W and α_s.',
+                    'Appears in coupling formulas like \\(\\sin^2\\theta_W\\) and \\(\\alpha_s\\)',
                     'A framework count, not a camera-space coordinate axis.',
                 ],
-                notation: ['n_eff = 13'],
+                notation: ['\\(n_\\mathrm{eff} = 13\\)'],
                 tags: ['constants', 'dimension', 'framework-integers'],
             },
             {
                 id: 'g-newton',
-                title: 'G_N (Newton’s Constant)',
+                title: '\\(G_N\\) (Newton’s Constant)',
                 shortTitle: 'G_N',
                 summary: 'The gravitational coupling constant in natural-unit notation.',
                 body: [
-                    'G_N is the usual symbol for Newton’s gravitational constant. In natural-unit conventions it is often written without SI dimensions, but conceptually it is still the coupling that sets gravitational strength.',
-                    'This is a good example of why context matters: uppercase G* and G_N are very different objects even though both start with the same letter.',
+                    '\\(G_N\\) is the usual symbol for Newton’s gravitational constant. In natural-unit conventions it is often written without SI dimensions, but conceptually it is still the coupling that sets gravitational strength.',
+                    'This is a good example of why context matters: uppercase G* and \\(G_N\\) are very different objects even though both start with the same letter.',
                 ],
                 bullets: [
                     'Gravitational coupling constant.',
                     'Distinct from G*.',
                     'Important for Planck-unit definitions.',
                 ],
-                notation: ['G_N'],
+                notation: ['\\(G_N\\)'],
                 tags: ['constants', 'gravity', 'disambiguation'],
             },
             {
                 id: 'manifestation-kb',
-                title: 'K_B (Manifestation Constant)',
+                title: '\\(K_B\\) (Manifestation Constant)',
                 shortTitle: 'K_B',
                 summary: 'Engine-side named constant currently exported as 0.511.',
                 body: [
-                    'In the web engine tests, K_B is verified as a named export with value 0.511. The project instructions describe this as the manifestation constant derived from the model’s mass story.',
-                    'This is not the same thing as the lowercase k_B used for the Boltzmann constant in natural-units notation. The near-identical names make this one worth learning explicitly.',
+                    'In the web engine tests, \\(K_B\\) is verified as a named export with value 0.511. The project instructions describe this as the manifestation constant derived from the model’s mass story.',
+                    'This is not the same thing as the lowercase \\(k_B\\) used for the Boltzmann constant in natural-units notation. The near-identical names make this one worth learning explicitly.',
                 ],
                 bullets: [
                     'Named export in the JS constants module.',
                     'Tested in the web suite as 0.511.',
-                    'Different from the lowercase k_B of thermodynamics.',
+                    'Different from the lowercase \\(k_B\\) of thermodynamics.',
                 ],
-                notation: ['K_B = 0.511', 'k_B = 1'],
+                notation: ['\\(K_B = 0.511\\)', '\\(k_B = 1\\)'],
                 tags: ['constants', 'engine', 'disambiguation'],
             },
             {
                 id: 'c-speed',
-                title: 'C_SPEED',
+                title: '\\(C_\\mathrm{SPEED}\\)',
                 shortTitle: 'C_SPEED',
                 summary: 'The engine’s named propagation-speed constant.',
                 body: [
-                    'The engine documentation lists C_SPEED as the propagation-speed constant used for cubic-lattice stability conventions.',
+                    'The engine documentation lists \\(C_\\mathrm{SPEED}\\) as the propagation-speed constant used for cubic-lattice stability conventions.',
                     'Even when it is not surfaced directly in controls, it helps explain why the engine talks about local propagation limits, CFL-like stability, and discrete-time update pacing.',
                 ],
                 bullets: [
@@ -410,7 +410,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                     'Used in discrete propagation and stability explanations.',
                     'Connects runtime behavior to the lattice update model.',
                 ],
-                notation: ['C_SPEED'],
+                notation: ['\\(C_\\mathrm{SPEED}\\)'],
                 tags: ['constants', 'runtime'],
             },
         ],
@@ -444,14 +444,14 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 summary: 'The project’s physical space is three-dimensional.',
                 body: [
                     'In the FTD engine, the substrate is a 3D cubic lattice. That means every voxel position lives in three spatial coordinates.',
-                    'This does not mean every other quantity in the project has three components. Some are scalars, some are vectors, some are matrices, and some are abstract counts like n_eff.',
+                    'This does not mean every other quantity in the project has three components. Some are scalars, some are vectors, some are matrices, and some are abstract counts like \\(n_\\mathrm{eff}\\).',
                 ],
                 bullets: [
                     'Three spatial dimensions for the lattice.',
                     'Matches the cubic-grid visualization used in the engine.',
-                    'Distinct from model-specific integer counts like N_base and n_eff.',
+                    'Distinct from model-specific integer counts like \\(N_\\mathrm{base}\\) and \\(n_\\mathrm{eff}\\)',
                 ],
-                notation: ['D = 3', 'L ⊂ Z^3'],
+                notation: ['D = 3', '\\(L \\subset \\mathbb{Z}^3\\)'],
                 tags: ['dimension', 'space', 'geometry'],
             },
             {
@@ -460,32 +460,32 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 shortTitle: 'Natural Units',
                 summary: 'A unit convention where key constants are set to 1 so equations focus on relationships instead of conversion factors.',
                 body: [
-                    'The project glossary states that FTD uses natural units with c = 1, ℏ = 1, and k_B = 1. This is a standard physics move that simplifies formulas by absorbing conversion factors into the unit definitions.',
+                    'The project glossary states that FTD uses natural units with c = 1, ℏ = 1, and \\(k_B\\) = 1. This is a standard physics move that simplifies formulas by absorbing conversion factors into the unit definitions.',
                     'When you see a formula in natural units, it does not mean those constants disappeared physically. It means the chosen unit system measures everything relative to them.',
                 ],
                 bullets: [
                     'Speed of light: c = 1.',
                     'Reduced Planck constant: ℏ = 1.',
-                    'Boltzmann constant: k_B = 1.',
+                    'Boltzmann constant: \\(k_B\\) = 1.',
                 ],
-                notation: ['c = 1', 'ℏ = 1', 'k_B = 1'],
+                notation: ['c = 1', 'ℏ = 1', '\\(k_B = 1\\)'],
                 tags: ['units', 'natural-units', 'conventions'],
             },
             {
                 id: 'planck-units',
                 title: 'Planck Units',
                 shortTitle: 'Planck Units',
-                summary: 'The natural-unit scale built from c, ℏ, and G_N.',
+                summary: 'The natural-unit scale built from c, ℏ, and \\(G_N\\)',
                 body: [
                     'Planck units are the characteristic scales built from the speed of light, reduced Planck constant, and Newton’s constant. They provide a compact unit language for quantum gravity and lattice-scale reasoning.',
                     'The project glossary explicitly maps Planck length, time, and mass into the FTD unit story, which makes them especially useful as bridge concepts between theory documents and the engine.',
                 ],
                 bullets: [
                     'Length, time, and mass can all be expressed in Planck units.',
-                    'Planck units are built from c, ℏ, and G_N.',
+                    'Planck units are built from c, ℏ, and \\(G_N\\)',
                     'Helpful when comparing discrete engine units to theory-facing notation.',
                 ],
-                notation: ['ℓ_P = √(ℏG/c^3)', 't_P = √(ℏG/c^5)', 'm_P = √(ℏc/G)'],
+                notation: ['\\(\\ell_P = \\sqrt{\\hbar G/c^3}\\)', '\\(t_P = \\sqrt{\\hbar G/c^5}\\)', '\\(m_P = \\sqrt{\\hbar c/G}\\)'],
                 tags: ['units', 'planck', 'gravity'],
             },
             {
@@ -536,7 +536,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                     'Mass stories in the docs often connect to energy scales in the UI.',
                     'A quantity can be conceptually different even if it shares a unit convention.',
                 ],
-                notation: ['E', 'm', 'E = mc^2', 'c = 1'],
+                notation: ['E', 'm', '\\(E = mc^2\\)', 'c = 1'],
                 tags: ['units', 'mass', 'energy'],
             },
             {
@@ -562,7 +562,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 shortTitle: 'Coupling',
                 summary: 'A parameter that tells you how strongly one field, force, or sector interacts with another.',
                 body: [
-                    'A coupling constant measures interaction strength. Fine structure alpha, strong coupling α_s, and state-flux couplings all belong to this family.',
+                    'A coupling constant measures interaction strength. Fine structure \\(\\alpha\\), strong coupling \\(\\alpha_s\\), and state-flux couplings all belong to this family.',
                     'For learners, the main intuition is simple: a larger coupling usually means a stronger interaction, though the exact physical meaning depends on the theory and scale.',
                 ],
                 bullets: [
@@ -570,7 +570,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                     'Can be dimensionless or unit-bearing depending on the theory.',
                     'Several project formulas are organized around specific coupling values.',
                 ],
-                notation: ['α', 'α_s', 'g_c'],
+                notation: ['\\(\\alpha\\)', '\\(\\alpha_s\\)', '\\(g_c\\)'],
                 tags: ['units', 'coupling', 'interactions'],
             },
             {
@@ -616,19 +616,19 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
             },
             {
                 id: 'hilbert-space',
-                title: 'H_FTD (Hilbert Space)',
+                title: '\\(H_\\mathrm{FTD}\\) (Hilbert Space)',
                 shortTitle: 'Hilbert Space',
                 summary: 'The vector-space setting where wave functions and inner products live.',
                 body: [
                     'A Hilbert space is a complete inner-product space. In physics it is the standard home for quantum states, amplitudes, and operators.',
-                    'The glossary names H_FTD as L² over the lattice with complex values. That is a formal way of saying the model’s quantum-style states are functions on the lattice with an inner-product structure.',
+                    'The glossary names \\(H_\\mathrm{FTD}\\) as L² over the lattice with complex values. That is a formal way of saying the model’s quantum-style states are functions on the lattice with an inner-product structure.',
                 ],
                 bullets: [
                     'State space for quantum vectors.',
                     'Supports inner products, norms, and operators.',
-                    'The glossary writes H_FTD as a lattice-based L² space.',
+                    'The glossary writes \\(H_\\mathrm{FTD}\\) as a lattice-based L² space.',
                 ],
-                notation: ['H_FTD', 'L²(Lattice, C)'],
+                notation: ['\\(H_\\mathrm{FTD}\\)', 'L²(Lattice, C)'],
                 tags: ['quantum', 'hilbert-space', 'linear-algebra'],
             },
             {
@@ -638,7 +638,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 summary: 'The matrix object used to represent pure states, mixed states, and statistical quantum ensembles.',
                 body: [
                     'A density matrix packages state information in an operator rather than a single ket. It is especially useful when a system is probabilistic, mixed, or part of a larger entangled whole.',
-                    'This is the matrix meaning of rho, not the scalar density meaning. That distinction is worth learning early because both uses appear in the project’s reference material.',
+                    'This is the matrix meaning of \\(\\rho\\), not the scalar density meaning. That distinction is worth learning early because both uses appear in the project’s reference material.',
                 ],
                 bullets: [
                     'Pure state example: |ψ⟩⟨ψ|.',
@@ -684,7 +684,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
             },
             {
                 id: 'von-neumann-entropy',
-                title: 'S_vN (von Neumann Entropy)',
+                title: '\\(S_\\mathrm{vN}\\) (von Neumann Entropy)',
                 shortTitle: 'S_vN',
                 summary: 'The quantum analogue of entropy built from the density matrix.',
                 body: [
@@ -696,7 +696,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                     'Built from the density matrix.',
                     'Useful for mixed states and entanglement discussions.',
                 ],
-                notation: ['S_vN = -Tr(ρ ln ρ)'],
+                notation: ['\\(S_\\mathrm{vN} = -\\mathrm{Tr}(\\rho \\ln \\rho)\\)'],
                 tags: ['information', 'entropy', 'quantum'],
             },
             {
@@ -730,7 +730,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                     'Appears in coupling formulas.',
                     'Not a viewport angle or scene transform.',
                 ],
-                notation: ['sin²θ_W = N_c / n_eff'],
+                notation: ['\\(\\sin^2\\theta_W = N_c/n_\\mathrm{eff}\\)'],
                 tags: ['particle-physics', 'coupling', 'electroweak'],
             },
             {
@@ -739,13 +739,13 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 shortTitle: 'α_s',
                 summary: 'The interaction-strength parameter associated with the strong sector.',
                 body: [
-                    'Alpha_s is the strong coupling constant. It plays for strong interactions a role somewhat analogous to what alpha plays in electromagnetism, though the physical behavior is different.',
+                    '\\(\\alpha_s\\) is the strong coupling constant. It plays for strong interactions a role somewhat analogous to what \\(\\alpha\\) plays in electromagnetism, though the physical behavior is different.',
                     'The project glossary includes a model-side expression for α_s, so it is a useful bridge term between theory files and educational UI copy.',
                 ],
                 bullets: [
                     'Strong-interaction coupling.',
                     'Appears in coupling and mixing discussions.',
-                    'Distinct from electromagnetic alpha.',
+                    'Distinct from electromagnetic \\(\\alpha\\)',
                 ],
                 notation: ['α_s = b₃ / (b₃ + 4n_eff)'],
                 tags: ['particle-physics', 'coupling', 'qcd'],
@@ -756,8 +756,8 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 shortTitle: 'Ω',
                 summary: 'The ratio of a density to a reference critical density in cosmology.',
                 body: [
-                    'In cosmology, Omega often denotes a density parameter: how much of some component exists relative to a critical benchmark density.',
-                    'This is another overloaded symbol. In other contexts Omega can mean a microstate count or a region of configuration space, so context matters.',
+                    'In cosmology, \\(\\Omega\\) often denotes a density parameter: how much of some component exists relative to a critical benchmark density.',
+                    'This is another overloaded symbol. In other contexts \\(\\Omega\\) can mean a microstate count or a region of configuration space, so context matters.',
                 ],
                 bullets: [
                     'Common in cosmology.',
@@ -781,7 +781,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                     'Normalized to a photon reference count.',
                     'Belongs to the cosmology vocabulary rather than the lattice runtime vocabulary.',
                 ],
-                notation: ['η = (n_B - n_B̄) / n_γ'],
+                notation: ['\\(\\eta = (n_B - n_\\bar{B})/n_\\gamma\\)'],
                 tags: ['cosmology', 'asymmetry', 'particle-physics'],
             },
         ],
@@ -1111,7 +1111,7 @@ const SCALE0_CATEGORY_GUIDES = Object.freeze({
             'Quantum-lab scenarios turn the lattice into a measurement playground: distributions, fringes, barrier penetration, topological phase, and constrained vacuum effects.',
             'They are the most explicitly formula-driven scenarios in Scale 0 and are best read alongside probability amplitudes, transmission laws, spectral quantization, and correlation observables.',
         ],
-        notation: ['|J|²', 'T ∝ exp(-2κW)', 'f_n ∝ n²', 'S = 2√2'],
+        notation: ['\\(|J|^2\\)', 'T ∝ exp(-2κW)', '\\(f_n \\propto n^2\\)', '\\(S = 2\\sqrt{2}\\)'],
         tags: ['quantum', 'measurement', 'lab'],
     },
     'SM Seeds (epistemic-tagged)': {
@@ -1225,7 +1225,7 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
     'flux-standing': { summary: 'A standing-wave configuration with fixed nodes and antinodes in the flux field.', notation: ['J(x,t) = A sin(kx) cos(ωt)', 'nodes', 'antinodes'] },
     'flux-nested-standing': { summary: 'Several standing modes layered together so node structure appears across more than one spatial scale.', notation: ['mode superposition', 'nested nodes', 'harmonics'] },
     'flux-soliton': { summary: 'A localized packet intended to retain shape better than an ordinary dispersive pulse.', notation: ['localized packet', 'dispersion vs nonlinearity'] },
-    'flux-interference': { summary: 'A many-source interference setup for reading fringe structure and phase cancellation.', notation: ['A_total = Σ A_i', 'I ∝ |A_total|²', 'fringes'] },
+    'flux-interference': { summary: 'A many-source interference setup for reading fringe structure and phase cancellation.', notation: ['\\(A_\\mathrm{total} = \\sum A_i\\)', '\\(I \\propto |A_\\mathrm{total}|^2\\)', 'fringes'] },
     'flux-vortex': { summary: 'A circulating flux pattern emphasizing angular structure and spin-like vorticity.', notation: ['∇×J', 'circulation', 'vorticity'] },
     'flux-dual-substrate': {
         summary: 'A dual-background field arrangement used to compare coupled substrate layers or handed sectors.',
@@ -1286,7 +1286,7 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
             'This scenario is the measurement-grade version of two-slit optics: not just “you can see fringes,” but “you can compare visibility and spacing to a wave model.”',
             'The math lens is phase difference, fringe visibility, and the detector intensity pattern built from coherent path superposition.',
         ],
-        notation: ['V = (I_max-I_min)/(I_max+I_min)', 'Δφ', 'fringe spacing'],
+        notation: ['\\(V = (I_\\mathrm{max}-I_\\mathrm{min})/(I_\\mathrm{max}+I_\\mathrm{min})\\)', 'Δφ', 'fringe spacing'],
     },
     'quantum-tunnel': {
         summary: 'Barrier penetration and transmission decay under a lattice analogue of a forbidden region.',
@@ -1302,7 +1302,7 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
             'Particle in a Box turns the lattice into a spectrum-reading exercise. You are not mainly looking for a pretty pattern; you are looking for discrete frequencies consistent with confinement.',
             'The relevant math is mode quantization: allowed standing modes, FFT peaks, and the n²-like scaling of confined energy levels.',
         ],
-        notation: ['f_n ∝ n²', 'standing modes', 'FFT spectrum'],
+        notation: ['\\(f_n \\propto n^2\\)', 'standing modes', 'FFT spectrum'],
     },
     'quantum-entangle': {
         summary: 'A correlation scenario for paired outcomes and distance-dependent joint statistics.',
@@ -1351,7 +1351,7 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
     's0-seed-flux-tube': { summary: 'A tube-like field bridge between separated endpoints.', notation: ['flux tube', 'σr'] },
     's0-seed-monopole': { summary: 'A monopole-style pedagogical seed for source-like field geometry.', notation: ['radial field', 'topological charge?'] },
     's0-seed-instanton': { summary: 'A localized topological event seed emphasizing global sector changes rather than static shape alone.', notation: ['topological event', 'instanton'] },
-    's0-seed-schwarzschild': { summary: 'A gravity-facing well configuration for central-potential and horizon intuition.', notation: ['Φ(r)', 'r_s'] },
+    's0-seed-schwarzschild': { summary: 'A gravity-facing well configuration for central-potential and horizon intuition.', notation: ['Φ(r)', '\\(r_s\\)'] },
     's0-seed-frw-patch': { summary: 'A cosmological patch seed that frames the lattice with scale-factor language.', notation: ['a(t)', 'expansion patch'] },
     's0-seed-gravitational-wave': { summary: 'A wave-like spacetime-analogue configuration for strain and propagation intuition.', notation: ['h_μν', 'wave strain'] },
     's0-seed-sloop': { summary: 'A self-referential ring seed connected to the project’s sLoop language.', notation: ['sLoop', 'fixed point', 'recursive closure'] },
@@ -1373,15 +1373,15 @@ const PARTICLE_SCENARIO_GUIDES = Object.freeze({
     'pe-muonium': 'Muonium keeps the hydrogenic charge pattern but changes the mass hierarchy, which means orbit size, timescale, and spectral scale all shift through μ.',
     'pe-true-muonium': 'True muonium is a heavy equal-mass lepton pair, so the main lesson is how binding tightens as the constituent mass scale rises.',
     'pe-tauonium': 'Tauonium is so heavy and short-lived that the main math question is not just binding but whether the dynamical timescale competes with decay and relativistic effects.',
-    'pe-tau-atom': 'Tauonic hydrogen shrinks the hydrogenic orbit dramatically because the orbiting lepton is much heavier than the electron.',
+    'pe-tau-atom': 'Tauonic hydrogen (\\(\\tau^-\\)) shrinks the hydrogenic orbit dramatically because the orbiting lepton is much heavier than the electron.',
     'pe-pionic-hydrogen': 'Pionic hydrogen is a Coulomb-plus-hadronic system, so you should think in terms of an electromagnetic baseline modified by a short-range correction.',
     'pe-kaonic-hydrogen': 'Kaonic hydrogen pushes farther into the regime where reduced mass and short-range structure both matter, making it a useful comparison to pionic hydrogen.',
-    'pe-sigma-plus-atom': 'This is a baryon-electron bound-state thought experiment where the core has a different charge/mass identity from a proton while the mathematics still starts from a central attractive potential.',
+    'pe-sigma-plus-atom': 'This is a \\(\\Sigma^+\\)-electron bound-state thought experiment where the core has a different charge/mass identity from a proton while the mathematics still starts from a central attractive potential.',
     'pe-antiprotonic-hydrogen': 'Protonium sits at the intersection of binding and annihilation. The interesting question is not only whether a bound orbit forms, but how long it survives before inelastic channels matter.',
     'pe-pion-orbit': 'Pionium is a mesonic analogue of positronium: a charged equal-sign-opposite pair where reduced mass and annihilation-style channels shape the dynamics.',
     'pe-kaon-pair': 'Kaonium is the heavier cousin of pionium, useful for comparing how bound-state scale changes with constituent mass.',
-    'pe-delta-system': 'Delta++ plus two electrons is a high-charge many-body balance problem where attraction to the center competes with strong electron-electron repulsion.',
-    'pe-omega-scattering': 'Omega scattering is primarily a kinematics lesson: impact parameter, momentum transfer, and deflection are more important than long-lived binding.',
+    'pe-delta-system': '\\(\\Delta^{++}\\) plus two electrons is a high-charge many-body balance problem where attraction to the center competes with strong electron-electron repulsion.',
+    'pe-omega-scattering': '\\(\\Omega^-\\) scattering is primarily a kinematics lesson: impact parameter, momentum transfer, and deflection are more important than long-lived binding.',
     'pe-deuteron': 'Deuteron is the first compact nuclear composite in the particle engine, so the educational focus shifts from atomic orbit language to few-body binding and effective nuclear cohesion.',
     'pe-tritium': 'Tritium adds one more neutral constituent, which changes inertia and binding balance without simply scaling hydrogen by a constant factor.',
     'pe-helion': 'Helion combines few-body nuclear structure with atomic electrons, so it is a bridge case between nuclear composition and atomic presentation.',
@@ -1519,9 +1519,9 @@ function makeParticleScenario(id, title, summary, notation = [], focus = '') {
 }
 
 const PARTICLE_SCENARIO_ENTRIES = Object.freeze([
-    makeParticleScenario('pe-hydrogen', 'Hydrogen Atom (p + e−)', 'a Coulomb-bound two-body atom.', ['V(r) = -α/r', 'μ', 'E_n = -μ α²/(2n²)', 'a₀ = 1/(μ α)']),
+    makeParticleScenario('pe-hydrogen', 'Hydrogen Atom (p + e−)', 'a Coulomb-bound two-body atom.', ['V(r) = -α/r', 'μ', '\\(E_n = -\\mu\\alpha^2/(2n^2)\\)', 'a₀ = 1/(μ α)']),
     makeParticleScenario('pe-helium', 'Helium Atom (He²⁺ + 2e−)', 'a three-body Coulomb problem with electron-electron repulsion.', ['ΣV_ij', 'screening', 'many-body bound state']),
-    makeParticleScenario('pe-positronium', 'Positronium (e⁺e−)', 'an equal-mass bound state of matter and antimatter.', ['μ = m_e/2', 'E_n ∝ -μ α²']),
+    makeParticleScenario('pe-positronium', 'Positronium (e⁺e−)', 'an equal-mass bound state of matter and antimatter.', ['μ = \\(m_e\\)/2', '\\(E_n \\propto -\\mu\\alpha^2\\)']),
     makeParticleScenario('pe-muonium', 'Muonium (μ⁺e−)', 'a hydrogen-like exotic atom with a different reduced mass.', ['μ', 'Rydberg scaling']),
     makeParticleScenario('pe-true-muonium', 'True Muonium (μ⁺μ−)', 'a heavier equal-mass leptonic bound state.', ['μ = m_μ/2', 'compact bound state']),
     makeParticleScenario('pe-tauonium', 'Tauonium (τ⁺τ−)', 'an ultra-heavy leptonic atom with short lifetime scales.', ['μ = m_τ/2', 'E² = p² + m²']),
@@ -1542,7 +1542,7 @@ const PARTICLE_SCENARIO_ENTRIES = Object.freeze([
     makeParticleScenario('pe-three-body', 'Three-Body (p⁺ p⁺ e−)', 'a nontrivial few-body balance between attraction and repulsion.', ['few-body instability', 'Coulomb balance']),
     makeParticleScenario('pe-meson-scattering', 'π⁺ off Proton', 'a hadron-proton scattering test.', ['impact parameter', 'scattering angle']),
     makeParticleScenario('pe-muon-scattering', 'μ− off Proton', 'a lepton-proton scattering comparison case.', ['momentum transfer', 'Rutherford-like scattering']),
-    makeParticleScenario('pe-micro-bh', 'Micro Black Hole (Accretion)', 'gravitational collapse and accretion behavior at the particle-engine scale.', ['r_s = 2GM/c²', 'accretion', 'escape velocity']),
+    makeParticleScenario('pe-micro-bh', 'Micro Black Hole (Accretion)', 'gravitational collapse and accretion behavior at the particle-engine scale.', ['\\(r_s = 2GM/c^2\\)', 'accretion', 'escape velocity']),
     makeParticleScenario('pe-custom', 'Custom (Manual)', 'user-prepared particle initial data and force settings.', ['user-defined initial conditions', 'force toggles']),
 ]);
 
@@ -1615,7 +1615,7 @@ const MOLECULE_SCENARIO_ENTRIES = Object.freeze(
                 `Molecule category: ${molecule.category}.`,
                 `Library description: ${molecule.description}`,
             ],
-            notation: molecule.category === 'diatomic' ? ['r_eq', 'vibrational mode'] : MOLECULE_CATEGORY_MATH[molecule.category] || ['bond geometry'],
+            notation: molecule.category === 'diatomic' ? ['\\(r_\\mathrm{eq}\\)', 'vibrational mode'] : MOLECULE_CATEGORY_MATH[molecule.category] || ['bond geometry'],
             tags: ['scale3', 'molecule', molecule.category],
         }),
     ).concat([
@@ -1728,7 +1728,7 @@ const COSMIC_SCENARIO_ENTRIES = Object.freeze([
     ['cosmic-web', 'Cosmic Web', 'filamentary large-scale matter structure.', ['filament network', 'large-scale density field']],
     ['cosmic-dark-matter-halo', 'Dark Matter Halo', 'mass distribution inferred from dynamics beyond luminous structure alone.', ['halo profile', 'rotation support']],
     ['cosmic-gravitational-wave', 'Gravitational Wave (Binary)', 'binary-driven wave emission and inspiral intuition.', ['h(t)', 'wave strain', 'inspiral']],
-    ['cosmic-baryogenesis', 'Baryogenesis', 'matter-antimatter imbalance at cosmological scale.', ['η = (n_B - n_B̄)/n_γ', 'asymmetry generation']],
+    ['cosmic-baryogenesis', 'Baryogenesis', 'matter-antimatter imbalance at cosmological scale.', ['\\(\\eta = (n_B - n_\\bar{B})/n_\\gamma\\)', 'asymmetry generation']],
 ].map(([id, title, summary, notation]) =>
     makeScenarioEntry({
         id,
@@ -1777,10 +1777,10 @@ const CONSCIOUSNESS_SCENARIO_ENTRIES = Object.freeze(
                 id === 'cs-custom' ? 'Custom scenario for user-defined pedagogical exploration.' : 'Best read together with the consciousness description panel and figure selector.',
             ],
             notation: dedupe(
-                id === 'cs-threshold' ? ['Δ_k', 'K_C ≈ 3.60', 'real → complex roots']
+                id === 'cs-threshold' ? ['\\(\\Delta_k\\)', '\\(K_C \\approx 3.60\\)', 'real → complex roots']
                     : id.includes('sloop') ? ['x² = K(x − G*)', 'fixed point', 'recursive closure']
                     : id === 'cs-boundary-orbit' ? ['z → z² + c', 'c = 1/G*']
-                    : id === 'cs-entangled' ? ['S = 2√2', 'correlation']
+                    : id === 'cs-entangled' ? ['\\(S = 2\\sqrt{2}\\)', 'correlation']
                     : id === 'cs-flow' || id === 'cs-meditation' ? ['θ', '52.54° threshold']
                     : ['J(v,t)', '|J|', 'complexification'],
             ),
