@@ -490,6 +490,16 @@ target_link_libraries(test_sim_parity ftd_core)
 add_executable(test_sim_observables sim/tests/test_sim_observables.cpp)
 target_link_libraries(test_sim_observables ftd_core)
 
+# Sim Pipeline Phase E — pipeline-based benchmarks
+# benchmark_beta_function_pipe: Phase-E port of benchmark_beta_function,
+# runs on either CPU or GPU via --gpu/--cpu flags
+add_executable(benchmark_beta_function_pipe tests/benchmark_beta_function_pipe.cpp)
+target_link_libraries(benchmark_beta_function_pipe ftd_core)
+
+# benchmark_ewsb_pipe: Phase-E port of benchmark_ewsb_threshold_map
+add_executable(benchmark_ewsb_pipe tests/benchmark_ewsb_pipe.cpp)
+target_link_libraries(benchmark_ewsb_pipe ftd_core)
+
 # EFT Day-2 Thread 4 — Rutherford scattering α extraction
 add_executable(benchmark_rutherford_alpha tests/benchmark_rutherford_alpha.cpp)
 target_link_libraries(benchmark_rutherford_alpha ftd_core)
