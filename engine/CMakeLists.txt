@@ -65,6 +65,14 @@ if(_ftd_cuda_active)
 
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)
+    # Workaround for CMake 4.x + NVCC 13 + MSVC 18: the CMake-generated
+    # `-Xcompiler=-Fd<path>,-FS` triggers `nvcc fatal: A single input
+    # file is required` because nvcc interprets the comma as an argument
+    # separator. Forcing MSVC debug info into the .obj (/Z7 instead of
+    # /Zi+/Fd) sidesteps the problematic -Fd entirely.
+    if(MSVC)
+        set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
+    endif()
     message(STATUS "CUDA enabled — architectures: ${CMAKE_CUDA_ARCHITECTURES}")
     add_compile_definitions(FTD_ENABLE_CUDA)
     # Make FTD_ENABLE_CUDA boolean-true for downstream if() checks.

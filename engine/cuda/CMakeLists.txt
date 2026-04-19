@@ -38,4 +38,20 @@ set_target_properties(ftd_cuda PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
     CUDA_RESOLVE_DEVICE_SYMBOLS ON
     POSITION_INDEPENDENT_CODE ON
+    # Workaround CMake 4.x + NVCC 13: empty-string PDB name suppresses the
+    # `-Xcompiler=-Fd<path>,-FS` flag that nvcc misinterprets as multiple
+    # input files (the comma between the .pdb path and -FS triggers
+    # `nvcc fatal: A single input file is required`). CUDA .obj files
+    # don't need a PDB; only the host CXX files do.
+    COMPILE_PDB_NAME ""
+    COMPILE_PDB_OUTPUT_DIRECTORY ""
 )
+
+# Belt-and-braces: explicitly strip the Windows /Fd flag from CUDA
+# compile commands. CMake may still try to inject it via generator
+# expressions on target properties; this undoes that for our target.
+if(MSVC)
+    target_compile_options(ftd_cuda PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/Z7>
+    )
+endif()

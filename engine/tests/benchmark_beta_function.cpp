@@ -84,14 +84,17 @@ int main(int argc, char** argv) {
     bool extended = false;       // Ticket 3: add L = 128
     bool day2 = false;           // Day-2 Thread 1a: also add L = 256
     bool multi_seed = false;     // Ticket 2: 4 seeds per scale
+    bool fast_big = false;       // Day-2 revisit: L=256 in reduced-budget mode
     for (int i = 1; i < argc; ++i) {
         std::string s(argv[i]);
         if (s == "--quick") quick = true;
         else if (s == "--extended") extended = true;
         else if (s == "--day2") day2 = true;
+        else if (s == "--fast-big") fast_big = true;
         else if (s == "--multi-seed") multi_seed = true;
         else if (s.rfind("--ticks=", 0) == 0) n_ticks = std::atoi(s.c_str() + 8);
     }
+    if (fast_big) { day2 = true; n_ticks = 100; }
     if (quick) n_ticks = 80;
 
     std::cerr << "================================================================\n";
@@ -124,8 +127,9 @@ int main(int argc, char** argv) {
     for (int L : sizes) {
         // At L >= 128 keep the r-step coarser to cap runtime — the extra
         // r-points mainly narrow the fit uncertainty, not change α_eff.
-        // At L = 256 r_step=6 to stay within runtime budget (~8 min).
-        const int r_step = (L >= 256) ? 6 : (L >= 128 ? 4 : 2);
+        // At L = 256 r_step=6 normally, 10 in --fast-big mode.
+        int r_step = (L >= 256) ? 6 : (L >= 128 ? 4 : 2);
+        if (fast_big && L >= 256) r_step = 10;
         for (size_t si = 0; si < seeds.size(); ++si) {
             const double seed_amp = seeds[si];
             std::cerr << "\n-- MCRG: L = " << L

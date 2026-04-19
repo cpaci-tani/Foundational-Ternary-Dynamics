@@ -25,8 +25,8 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-echo === Building ===
-cmake --build "%~dp0build_cuda" --config Release -- /m:16
+echo === Building (serial; NVCC 13 + CMake 4 + MSBuild don't parallelise cleanly) ===
+cmake --build "%~dp0build_cuda" --config Release
 if %ERRORLEVEL% NEQ 0 (
     echo Build failed
     exit /b 1
