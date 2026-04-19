@@ -29,8 +29,14 @@ struct BackendCpu {
     /// CPU-backend DeviceState is a thin wrapper over RenderBridge.
     /// Pipeline creates one of these per simulation, then calls its
     /// methods through the `state_` member.
+    ///
+    /// IMPORTANT: we call `force_cpu()` on the bridge in the constructor
+    /// so that on CUDA-enabled builds this backend actually runs on the
+    /// CPU code path. Without this, RenderBridge auto-selects the GPU
+    /// backend when CUDA is available, and Pipeline<BackendCpu> silently
+    /// becomes GPU — which would make GPU/CPU parity tests meaningless.
     struct DeviceState {
-        explicit DeviceState(int L) : bridge(L) {}
+        explicit DeviceState(int L) : bridge(L) { bridge.force_cpu(); }
 
         // Non-copyable, non-movable (RenderBridge manages a large heap
         // buffer and is expensive to relocate).
