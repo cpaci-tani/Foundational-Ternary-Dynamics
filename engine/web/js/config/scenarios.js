@@ -8,26 +8,26 @@
 
 // Scale 4 (Consciousness) scenario descriptions
 export const CS_SCENARIO_DESCRIPTIONS = {
-    'cs-threshold':      'Flux starts below the consciousness threshold K_C \u2248 3.60. As flux energy builds, the discriminant \u0394_k passes through zero, and roots transition from real (physics) through degenerate (measurement) to complex (consciousness). Watch the Domain indicator change.',
-    'cs-high-coupling':  'Four-source flux interference with coupling and forces enabled. High flux density pushes well above K_C, producing strong consciousness intensity. The holographic figure becomes vivid as the observer\u2019s self-model stabilizes.',
-    'cs-self-ref':       'Standing wave pattern: the observer meets itself. sLoop depth = 1 \u2014 a fixed point of the gap equation x\u00B2 = K(x \u2212 G*). The lattice determines its own coupling.',
+    'cs-threshold':      'Flux starts below the consciousness threshold \\(K_C \\approx 3.60\\). As flux energy builds, the discriminant \\(\\Delta_k\\) passes through zero, and roots transition from real (physics) through degenerate (measurement) to complex (consciousness). Watch the Domain indicator change.',
+    'cs-high-coupling':  'Four-source flux interference with coupling and forces enabled. High flux density pushes well above \\(K_C\\), producing strong consciousness intensity. The holographic figure becomes vivid as the observer\u2019s self-model stabilizes.',
+    'cs-self-ref':       'Standing wave pattern: the observer meets itself. sLoop depth = 1 \u2014 a fixed point of the gap equation \\(x^2 = K(x - G^*)\\). The lattice determines its own coupling.',
     'cs-nested-sloop':   'Two orthogonal standing waves: aware of self-awareness. sLoop depth = 2. This is the algebraic expression of recursive self-referential closure.',
     'cs-chirality':      'Dual substrate with left/right asymmetric injection demonstrating parity violation. The chirality split mirrors the 3:1 alternating handedness of the dyadic Fourier shells.',
-    'cs-boundary-orbit': 'Mandelbrot iteration at c = 1/G* \u2248 0.338, tracking the edge of chaos. The fixed points of z \u2192 z\u00B2 + c are exactly the consciousness roots y = 2.19 \u00B1 2.86i.',
-    'cs-entangled':      'Full coupling with Bell parameter S = 2\u221A2 \u2248 2.83. All forces, genesis, and movement enabled. Demonstrates observer-lattice entanglement via complexification + sLoop coupling.',
-    'cs-flow':           'Fast vortex pattern with effective \u03B8 < 52.54\u00B0 (object-dominant flow state). The holographic figure responds with rapid, outward-focused dynamics.',
-    'cs-meditation':     'Gentle centered pulse with effective \u03B8 > 52.54\u00B0 (subject-dominant contemplative state). The observer turns inward, producing slow, resonant breathing patterns.',
+    'cs-boundary-orbit': 'Mandelbrot iteration at \\(c = 1/G^* \\approx 0.338\\), tracking the edge of chaos. The fixed points of \\(z \\to z^2 + c\\) are exactly the consciousness roots \\(y = 2.19 \\pm 2.86i\\).',
+    'cs-entangled':      'Full coupling with Bell parameter \\(S = 2\\sqrt{2} \\approx 2.83\\). All forces, genesis, and movement enabled. Demonstrates observer-lattice entanglement via complexification + sLoop coupling.',
+    'cs-flow':           'Fast vortex pattern with effective \\(\\theta < 52.54^\\circ\\) (object-dominant flow state). The holographic figure responds with rapid, outward-focused dynamics.',
+    'cs-meditation':     'Gentle centered pulse with effective \\(\\theta > 52.54^\\circ\\) (subject-dominant contemplative state). The observer turns inward, producing slow, resonant breathing patterns.',
 };
 
 export const QUANTUM_SCENARIO_DESCRIPTIONS = {
-    'quantum-born-rule': 'Born Rule Convergence: Tests that manifestation probability converges to |J|^2. Runs N trials with random-phase Gaussian flux, accumulates positions, verifies Born rule emergence from deterministic lattice dynamics. [THEOREM]',
-    'quantum-double-slit': 'Quantitative Double-Slit: Two coherent sources create interference on a detector screen. Measures fringe visibility V = (Imax-Imin)/(Imax+Imin) and fringe spacing. Tests wave-particle duality from the two-layer ontology.',
-    'quantum-tunnel': 'Quantum Tunneling: Flux packet encounters a potential barrier (locked charge wall). Measures transmission T vs barrier width W. Expected: T proportional to exp(-2 kappa W), demonstrating evanescent wave penetration.',
-    'quantum-well': 'Particle in a Box: Broadband flux confined between reflective walls. FFT of time series reveals discrete frequency peaks at f_n proportional to n^2, demonstrating energy quantization from boundary conditions.',
+    'quantum-born-rule': 'Born Rule Convergence: Tests that manifestation probability converges to \\(|J|^2\\). Runs N trials with random-phase Gaussian flux, accumulates positions, verifies Born rule emergence from deterministic lattice dynamics. [THEOREM]',
+    'quantum-double-slit': 'Quantitative Double-Slit: Two coherent sources create interference on a detector screen. Measures fringe visibility \\(V = (I_{\\max}-I_{\\min})/(I_{\\max}+I_{\\min})\\) and fringe spacing. Tests wave-particle duality from the two-layer ontology.',
+    'quantum-tunnel': 'Quantum Tunneling: Flux packet encounters a potential barrier (locked charge wall). Measures transmission T vs barrier width W. Expected: \\(T \\propto \\exp(-2\\kappa W)\\), demonstrating evanescent wave penetration.',
+    'quantum-well': 'Particle in a Box: Broadband flux confined between reflective walls. FFT of time series reveals discrete frequency peaks at \\(f_n \\propto n^2\\), demonstrating energy quantization from boundary conditions.',
     'quantum-entangle': 'Entanglement Correlation: Pair production creates correlated +1/-1 particles. Measures spin-charge correlation C(d) vs separation distance. Tests decoherence length and correlation decay.',
     'quantum-aharonov-bohm': 'Aharonov-Bohm Effect: Two flux packets traverse paths around a confined solenoid. Phase shift at convergence point is proportional to enclosed flux, even though B=0 outside. Tests topological phase.',
-    'quantum-casimir': 'Casimir Effect: Two parallel reflective plates in a vacuum foam background. Energy density between plates differs from outside, creating boundary-modified vacuum pressure. Expected: F proportional to 1/d^4.',
-    'quantum-zeno': 'Quantum Zeno Effect: Near-threshold flux with periodic "measurement" (flux sampling). Frequent measurement suppresses decay (manifestation). Tests the measurement-inhibition prediction.',
+    'quantum-casimir': 'Casimir Effect: Two parallel reflective plates in a vacuum foam background. Energy density between plates differs from outside, creating boundary-modified vacuum pressure. Expected: \\(F \\propto 1/d^4\\).',
+    'quantum-zeno': 'Quantum Zeno Effect: Near-threshold flux with periodic \u201cmeasurement\u201d (flux sampling). Frequent measurement suppresses decay (manifestation). Tests the measurement-inhibition prediction.',
 };
 
 // ─────────────────────────────────────────────────────────────────────
@@ -56,40 +56,40 @@ export const QUANTUM_SCENARIO_DESCRIPTIONS = {
 export const S0_SEED_SCENARIO_METADATA = {
     's0-seed-electron': {
         title: 'Electron seed (unit negative charge + dressing)',
-        desc: 'Single s=\u22121 site at the lattice center with radial-inward flux envelope of scale K_B. This is the DERIV_DARK_SECTOR \u00a75.2 particle definition in the dispositional layer: { state, flux envelope, id }. No vortex, no topology \u2014 just a charged seed.',
+        desc: 'Single s=\u22121 site at the lattice center with radial-inward flux envelope of scale \\(K_B\\). This is the DERIV_DARK_SECTOR \u00a75.2 particle definition in the dispositional layer: { state, flux envelope, id }. No vortex, no topology \u2014 just a charged seed.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'DERIV_DARK_SECTOR \u00a75.2 seed+envelope picture. Structurally motivated, not uniquely proven.'],
-            ['Name "electron"', '[IMPOSED]', 'FTD derives m_e but has no structural test for "electron-ness". The label is engineered, not derived.'],
-            ['Mass m_e', '[THEOREM]', 'm_e = m_P\u00b7\u221a(2\u03c0)\u00b7(16/3)\u00b7\u03b1\u00b9\u00b9 (0.27% error). Derived, but mass does NOT encode spatial structure.'],
+            ['Name "electron"', '[IMPOSED]', 'FTD derives \\(m_e\\) but has no structural test for \u201celectron-ness\u201d. The label is engineered, not derived.'],
+            ['Mass \\(m_e\\)', '[THEOREM]', '\\(m_e = m_P \\sqrt{2\\pi} (16/3) \\alpha^{11}\\) (0.27% error). Derived, but mass does NOT encode spatial structure.'],
         ],
     },
     's0-seed-photon': {
-        title: 'Photon seed (transverse massless flux wave at c = 1/\u221a3)',
-        desc: 'State-0 everywhere (no matter) with a J_z-polarized Gaussian flux pulse launched at x \u2248 N/4, propagating in +x. The wave speed c = 1/\u221a3 emerges from CFL stability on the cubic lattice.',
+        title: 'Photon seed (transverse massless flux wave at \\(c = 1/\\sqrt{3}\\))',
+        desc: 'State-0 everywhere (no matter) with a \\(J_z\\)-polarized Gaussian flux pulse launched at \\(x \\approx N/4\\), propagating in +x. The wave speed \\(c = 1/\\sqrt{3}\\) emerges from CFL stability on the cubic lattice.',
         epistemic: [
-            ['Wave propagation', '[THEOREM]', 'Massless transverse flux wave at c = 1/\u221a3 follows from the cubic-lattice wave equation + CFL stability.'],
-            ['Polarization (2 modes)', '[THEOREM]', 'Two transverse modes enforced by the Gauss constraint \u2207\u00b7J = 0.'],
+            ['Wave propagation', '[THEOREM]', 'Massless transverse flux wave at \\(c = 1/\\sqrt{3}\\) follows from the cubic-lattice wave equation + CFL stability.'],
+            ['Polarization (2 modes)', '[THEOREM]', 'Two transverse modes enforced by the Gauss constraint \\(\\nabla \\cdot J = 0\\).'],
             ['Name "photon"', '[SELECTION]', 'Identifying the transverse flux wave with the SM photon is structurally consistent but not uniquely forced.'],
         ],
     },
     's0-seed-muon': {
-        title: 'Muon seed (2nd-generation lepton, m_\u03bc/m_e = 207)',
-        desc: 'Same topology as the electron seed \u2014 unit s=\u22121 core with radial-inward flux envelope at scale K_B \u2014 with a 20% amplitude boost to VISUALLY convey the heavier rest-mass. Note: the mass ratio 207 is derived from framework integers (3\u00b7b\u2083\u00b7(b\u2083+N_c) \u2212 N_c), but FTD has NO spatial form for lepton mass. The envelope scale you see here is a visualization choice, not a theory prescription.',
+        title: 'Muon seed (2nd-generation lepton, \\(m_\\mu/m_e = 207\\))',
+        desc: 'Same topology as the electron seed \u2014 unit s=\u22121 core with radial-inward flux envelope at scale \\(K_B\\) \u2014 with a 20% amplitude boost to VISUALLY convey the heavier rest-mass. Note: the mass ratio 207 is derived from framework integers \\(3 b_3 (b_3+N_c) - N_c\\), but FTD has NO spatial form for lepton mass. The envelope scale you see here is a visualization choice, not a theory prescription.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Same envelope shape as electron \u2014 visualization choice. FTD does not prescribe a spatial form for lepton mass.'],
-            ['Name "muon"', '[IMPOSED]', 'Structural test for "muon-ness" absent \u2014 label is engineered.'],
-            ['Mass ratio m_\u03bc/m_e = 207', '[THEOREM]', '3\u00b7b\u2083\u00b7(b\u2083+N_c) \u2212 N_c = 3\u00b77\u00b710 \u2212 3 = 207. Derived from framework integers, 0.11% from experimental 206.77.'],
-            ['Amplitude scaling', '[SELECTION]', 'Envelope amplitude slightly boosted over electron to suggest higher field concentration; chosen to stay below K_GENESIS so no spurious genesis fires.'],
+            ['Name "muon"', '[IMPOSED]', 'Structural test for \u201cmuon-ness\u201d absent \u2014 label is engineered.'],
+            ['Mass ratio \\(m_\\mu/m_e = 207\\)', '[THEOREM]', '\\(3 b_3 (b_3+N_c) - N_c = 3 \\cdot 7 \\cdot 10 - 3 = 207\\). Derived from framework integers, 0.11% from experimental 206.77.'],
+            ['Amplitude scaling', '[SELECTION]', 'Envelope amplitude slightly boosted over electron to suggest higher field concentration; chosen to stay below \\(K_\\mathrm{GENESIS}\\) so no spurious genesis fires.'],
         ],
     },
     's0-seed-tau': {
-        title: 'Tau seed (3rd-generation lepton, m_\u03c4/m_e = 3477)',
-        desc: 'Same topology as electron/muon \u2014 unit s=\u22121 core with radial-inward flux envelope at scale K_B \u2014 with a 50% amplitude boost to VISUALLY suggest heavier rest-mass. The ratio 3477 is derived from framework integers ((N_eff+N_base)\u00b7\u03bc_ratio \u2212 2\u00b7N_c\u00b7b\u2083), but FTD has NO spatial form for lepton mass. The envelope you see is a visualization choice.',
+        title: 'Tau seed (3rd-generation lepton, \\(m_\\tau/m_e = 3477\\))',
+        desc: 'Same topology as electron/muon \u2014 unit s=\u22121 core with radial-inward flux envelope at scale \\(K_B\\) \u2014 with a 50% amplitude boost to VISUALLY suggest heavier rest-mass. The ratio 3477 is derived from framework integers \\((N_\\mathrm{eff}+N_\\mathrm{base}) \\cdot \\mu_\\mathrm{ratio} - 2 N_c b_3\\), but FTD has NO spatial form for lepton mass. The envelope you see is a visualization choice.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Same envelope shape as electron \u2014 visualization choice. Spatial form not prescribed by theory.'],
             ['Name "tau"', '[IMPOSED]', 'Label only \u2014 no structural test.'],
-            ['Mass ratio m_\u03c4/m_e = 3477', '[THEOREM]', '(N_eff+N_base)\u00b7\u03bc_ratio \u2212 2\u00b7N_c\u00b7b\u2083 = 17\u00b7207 \u2212 42 = 3477. Matches experimental 3477.23 to 0.01%.'],
-            ['Amplitude scaling', '[SELECTION]', 'Envelope amplitude boosted to illustrate a more concentrated flux energy; chosen to stay below K_GENESIS (visual only, not a mass representation).'],
+            ['Mass ratio \\(m_\\tau/m_e = 3477\\)', '[THEOREM]', '\\((N_\\mathrm{eff}+N_\\mathrm{base}) \\cdot \\mu_\\mathrm{ratio} - 2 N_c b_3 = 17 \\cdot 207 - 42 = 3477\\). Matches experimental 3477.23 to 0.01%.'],
+            ['Amplitude scaling', '[SELECTION]', 'Envelope amplitude boosted to illustrate a more concentrated flux energy; chosen to stay below \\(K_\\mathrm{GENESIS}\\) (visual only, not a mass representation).'],
         ],
     },
     // ─────────────────────────────────────────────────────────────
@@ -104,59 +104,59 @@ export const S0_SEED_SCENARIO_METADATA = {
     // ─────────────────────────────────────────────────────────────
 
     's0-seed-higgs-boson': {
-        title: 'Higgs boson seed (m_H \u2248 125 GeV)',
-        desc: 'Scalar (spin-0, charge-0) concentrated lump at the lattice centre. Amplitude scaled to hint at the Higgs mass relative to m_e via the FTD formula m_H/m_e = N_eff/\u03b1\u00b2 (the m_H = 124.8 GeV derivation). Spatial form is [SELECTION] \u2014 FTD has no theory of boson spatial shape; the localised Gaussian here is a visualisation choice so the scalar can be seen distinctly from the leptons.',
+        title: 'Higgs boson seed (\\(m_H \\approx 125\\) GeV)',
+        desc: 'Scalar (spin-0, charge-0) concentrated lump at the lattice centre. Amplitude scaled to hint at the Higgs mass relative to \\(m_e\\) via the FTD formula \\(m_H/m_e = N_\\mathrm{eff}/\\alpha^2\\) (the \\(m_H = 124.8\\) GeV derivation). Spatial form is [SELECTION] \u2014 FTD has no theory of boson spatial shape; the localised Gaussian here is a visualisation choice so the scalar can be seen distinctly from the leptons.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Localised scalar envelope \u2014 visualisation choice. No theory prescription for Higgs spatial form.'],
-            ['Mass m_H = 124.8 GeV', '[SELECTION]', 'm_H = (N_eff/\u03b1\u00b2)\u00b7m_e = 124.8 GeV (0.36 % from 125.25 GeV observed). Argued from framework integers, not uniquely proven.'],
-            ['Self-coupling \u03bb_H', '[DERIVED]', '\u03bb_H = m_H\u00b2 / (2v\u00b2) \u2248 0.129 given the Higgs VEV.'],
+            ['Mass \\(m_H = 124.8\\) GeV', '[SELECTION]', '\\(m_H = (N_\\mathrm{eff}/\\alpha^2) m_e = 124.8\\) GeV (0.36% from 125.25 GeV observed). Argued from framework integers, not uniquely proven.'],
+            ['Self-coupling \\(\\lambda_H\\)', '[DERIVED]', '\\(\\lambda_H = m_H^2 / (2v^2) \\approx 0.129\\) given the Higgs VEV.'],
             ['Name "Higgs"', '[IMPOSED]', 'Label. No structural test for Higgs-ness in the seed configuration.'],
         ],
     },
     's0-seed-higgs-field': {
         title: 'Higgs field vacuum (uniform VEV with fluctuations)',
-        desc: 'Uniform low-amplitude flux background throughout the lattice with small random fluctuations \u2014 a visualisation of the Higgs field vacuum expectation value. In FTD the "Higgs VEV" is v = m_P\u00b7\u221a(2\u03c0)\u00b7\u03b1\u2078 = 246.09 GeV (0.05 % from experimental); on the lattice we scale it to K_B so it\'s visible. This scenario does not include the Mexican-hat potential dynamics \u2014 it just shows the vacuum you\'d perturb.',
+        desc: 'Uniform low-amplitude flux background throughout the lattice with small random fluctuations \u2014 a visualisation of the Higgs field vacuum expectation value. In FTD the \u201cHiggs VEV\u201d is \\(v = m_P \\sqrt{2\\pi} \\alpha^8 = 246.09\\) GeV (0.05% from experimental); on the lattice we scale it to \\(K_B\\) so it\'s visible. This scenario does not include the Mexican-hat potential dynamics \u2014 it just shows the vacuum you\'d perturb.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Uniform flux at a tunable amplitude represents the VEV background. Lattice-rescaled for visibility.'],
-            ['Higgs VEV v = 246.09 GeV', '[SELECTION]', 'v = m_P\u00b7\u221a(2\u03c0)\u00b7\u03b1\u2078. Framework-derived, 0.05 % from experimental.'],
+            ['Higgs VEV \\(v = 246.09\\) GeV', '[SELECTION]', '\\(v = m_P \\sqrt{2\\pi} \\alpha^8\\). Framework-derived, 0.05% from experimental.'],
             ['Symmetry breaking', '[NOT SHOWN]', 'Mexican-hat potential dynamics NOT implemented in the engine \u2014 this scenario is purely the vacuum state.'],
         ],
     },
     's0-seed-w-boson': {
-        title: 'W boson seed (charged weak mediator, m_W \u2248 80.4 GeV)',
-        desc: 'Charged (unit s=+1) lump with radial flux envelope at a scale chosen to visually mark the W+/W- weak gauge boson. Pairs with dual-substrate J_L dominance to reflect the W\'s left-chiral coupling. Mass m_W follows from FTD\'s Weinberg angle via m_W = m_Z\u00b7cos\u03b8_W = m_Z\u00b7\u221a(10/13) \u2014 ratio derived, absolute scale from m_Z input.',
+        title: 'W boson seed (charged weak mediator, \\(m_W \\approx 80.4\\) GeV)',
+        desc: 'Charged (unit s=+1) lump with radial flux envelope at a scale chosen to visually mark the W+/W\u2212 weak gauge boson. Pairs with dual-substrate \\(J_L\\) dominance to reflect the W\'s left-chiral coupling. Mass \\(m_W\\) follows from FTD\'s Weinberg angle via \\(m_W = m_Z \\cos\\theta_W = m_Z \\sqrt{10/13}\\) \u2014 ratio derived, absolute scale from \\(m_Z\\) input.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Localised charged envelope. Chirality hint is valid only with dual_substrate toggle on.'],
-            ['m_W/m_Z ratio', '[THEOREM]', 'cos\u03b8_W = \u221a(1 \u2212 3/13) = \u221a(10/13) \u2248 0.877 follows from sin\u00b2\u03b8_W = N_c/N_eff.'],
-            ['m_W absolute', '[IMPOSED]', 'Requires m_Z = 91.19 GeV input (external).'],
+            ['\\(m_W/m_Z\\) ratio', '[THEOREM]', '\\(\\cos\\theta_W = \\sqrt{1 - 3/13} = \\sqrt{10/13} \\approx 0.877\\) follows from \\(\\sin^2\\theta_W = N_c/N_\\mathrm{eff}\\).'],
+            ['\\(m_W\\) absolute', '[IMPOSED]', 'Requires \\(m_Z = 91.19\\) GeV input (external).'],
             ['W/Z distinction', '[SELECTION]', 'In FTD the W is an OPERATOR, not a configuration. The seed is a visualisation of the excitation.'],
         ],
     },
     's0-seed-z-boson': {
-        title: 'Z boson seed (neutral weak mediator, m_Z = 91.19 GeV)',
-        desc: 'Neutral (s=0 core surrounded by flux) localised envelope marking the Z^0 electroweak gauge boson. Paired with the W scenario for weak-sector visualisation. m_Z is used as an INPUT in the ontic chain (sin\u00b2\u03b8_W = N_c/N_eff ties m_W to m_Z).',
+        title: 'Z boson seed (neutral weak mediator, \\(m_Z = 91.19\\) GeV)',
+        desc: 'Neutral (s=0 core surrounded by flux) localised envelope marking the \\(Z^0\\) electroweak gauge boson. Paired with the W scenario for weak-sector visualisation. \\(m_Z\\) is used as an INPUT in the ontic chain (\\(\\sin^2\\theta_W = N_c/N_\\mathrm{eff}\\) ties \\(m_W\\) to \\(m_Z\\)).',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Neutral lump; field concentrated around an unfilled core.'],
-            ['m_Z = 91.1876 GeV', '[EXTERNAL INPUT]', 'Used as the electroweak mass scale in ontic.h:467. Not derived from G*.'],
+            ['\\(m_Z = 91.1876\\) GeV', '[EXTERNAL INPUT]', 'Used as the electroweak mass scale in ontic.h:467. Not derived from \\(G^*\\).'],
             ['Name', '[IMPOSED]', 'Structural test for Z-ness absent.'],
         ],
     },
     's0-seed-gluon': {
         title: 'Gluon seed (massless colored gauge wave)',
-        desc: 'Transverse flux wave similar to the photon seed, but amplitude is dominated by one Cartesian axis to suggest color charge (the lattice\'s dominant-flux-axis \u2194 color labelling). In FTD the BCC multiplicative structure unifies Watson\'s identity W\u2083 and SU(3); the "gluon" is an excitation of that sector. Propagation at c = 1/\u221a3, massless.',
+        desc: 'Transverse flux wave similar to the photon seed, but amplitude is dominated by one Cartesian axis to suggest color charge (the lattice\'s dominant-flux-axis \u2194 color labelling). In FTD the BCC multiplicative structure unifies Watson\'s identity \\(W_3\\) and SU(3); the "gluon" is an excitation of that sector. Propagation at \\(c = 1/\\sqrt{3}\\), massless.',
         epistemic: [
-            ['Propagation', '[THEOREM]', 'Massless transverse wave at c = 1/\u221a3 (CFL on cubic lattice).'],
-            ['Color', '[EMERGENT]', 'Z\u2083 color labelling from dominant flux axis; seed biases one axis to make the label visible.'],
+            ['Propagation', '[THEOREM]', 'Massless transverse wave at \\(c = 1/\\sqrt{3}\\) (CFL on cubic lattice).'],
+            ['Color', '[EMERGENT]', '\\(\\mathbb{Z}_3\\) color labelling from dominant flux axis; seed biases one axis to make the label visible.'],
             ['SU(3) gauge content', '[SELECTION]', 'Identification of this excitation with the SM gluon is structurally consistent, not uniquely forced.'],
         ],
     },
 
     's0-seed-up-quark': {
         title: 'Up quark seed (u, 1st gen, charge +2/3)',
-        desc: 'Colored s=+1 particle at the centre with narrow Gaussian flux envelope, color-labelled via dominant-axis assignment (R = color 1). Represents the up quark for visualisation only. Individual quark mass (~2.16 MeV MS-bar) is NOT derived in FTD \u2014 see TRACKER §4.1. Amplitude chosen small relative to K_B.',
+        desc: 'Colored s=+1 particle at the centre with narrow Gaussian flux envelope, color-labelled via dominant-axis assignment (R = color 1). Represents the up quark for visualisation only. Individual quark mass (~2.16 MeV MS-bar) is NOT derived in FTD \u2014 see TRACKER §4.1. Amplitude chosen small relative to \\(K_B\\).',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Small coloured envelope; color label R from dominant flux axis.'],
-            ['Mass m_u', '[OPEN]', 'Individual quark masses not derivable from framework integers; inserted externally.'],
+            ['Mass \\(m_u\\)', '[OPEN]', 'Individual quark masses not derivable from framework integers; inserted externally.'],
             ['Charge +2/3', '[IMPOSED]', 'Ternary state is \u00b11; fractional charge is a label, not a substrate property.'],
         ],
     },
@@ -165,7 +165,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         desc: 'Colored s=\u22121 particle (green color label) at the centre with narrow flux envelope. Visualisation partner for up-quark; individual mass not derived.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Small coloured envelope; color G from dominant flux axis.'],
-            ['Mass m_d', '[OPEN]', 'Not derivable from framework integers.'],
+            ['Mass \\(m_d\\)', '[OPEN]', 'Not derivable from framework integers.'],
             ['Charge \u22121/3', '[IMPOSED]', 'Fractional charge is a label.'],
         ],
     },
@@ -174,7 +174,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         desc: 'Heavier variant of the down quark \u2014 same color/charge, slightly larger envelope to hint at the higher mass (~93 MeV). Generation hierarchy and individual mass both not derived from FTD.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Amplitude boosted vs down to suggest heavier mass.'],
-            ['Mass m_s', '[OPEN]', 'Not derivable.'],
+            ['Mass \\(m_s\\)', '[OPEN]', 'Not derivable.'],
             ['Generation hierarchy', '[OPEN]', 'FTD derives 3 generations via Moore shells but not individual flavour masses.'],
         ],
     },
@@ -183,7 +183,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         desc: 'Heavier partner to up, same color pattern, larger envelope. Charmonium (J/\u03c8) is the cc\u0304 bound state \u2014 see the pair scenario.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Amplitude boost over up.'],
-            ['Mass m_c', '[OPEN]', 'Not derivable.'],
+            ['Mass \\(m_c\\)', '[OPEN]', 'Not derivable.'],
         ],
     },
     's0-seed-bottom-quark': {
@@ -191,15 +191,15 @@ export const S0_SEED_SCENARIO_METADATA = {
         desc: 'Heavier variant of the strange/down sector. Bottomonium (\u03a5) is the bb\u0304 bound state.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Larger envelope vs strange.'],
-            ['Mass m_b', '[OPEN]', 'Not derivable.'],
+            ['Mass \\(m_b\\)', '[OPEN]', 'Not derivable.'],
         ],
     },
     's0-seed-top-quark': {
-        title: 'Top quark seed (t, 3rd gen, m \u2248 172.8 GeV \u2248 v_Higgs)',
-        desc: 'Heaviest fermion; mass nearly matches the Higgs VEV. In FTD this supports a "Yukawa at unity" story: y_t \u2248 1 if m_t \u2248 v. The seed is a strongly-concentrated lump.',
+        title: 'Top quark seed (t, 3rd gen, \\(m \\approx 172.8\\) GeV \\(\\approx v_\\mathrm{Higgs}\\))',
+        desc: 'Heaviest fermion; mass nearly matches the Higgs VEV. In FTD this supports a "Yukawa at unity" story: \\(y_t \\approx 1\\) if \\(m_t \\approx v\\). The seed is a strongly-concentrated lump.',
         epistemic: [
             ['Configuration', '[SELECTION]', 'Heaviest envelope in the quark catalog.'],
-            ['m_t \u2248 v_Higgs', '[SELECTION]', 'Supports Yukawa-at-unity interpretation; not uniquely forced.'],
+            ['\\(m_t \\approx v_\\mathrm{Higgs}\\)', '[SELECTION]', 'Supports Yukawa-at-unity interpretation; not uniquely forced.'],
             ['Generation structure', '[PARTIAL]', 'FTD derives 3 generations; individual top mass remains [OPEN].'],
         ],
     },
@@ -229,7 +229,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         epistemic: [
             ['3-site cluster configuration', '[SELECTION]', 'Consistent with baryon number 3. Triangle geometry is one choice among many \u2014 not uniquely forced.'],
             ['Name "proton"', '[IMPOSED]', 'A label on the cluster. Do NOT read color, flavor, or quark identity from the triangle vertices.'],
-            ['Mass ratio m_p/m_e', '[THEOREM]', 'm_p/m_e = N_eff/\u03b1 + N_base\u00b7N_eff + N_c = 1836.47 (174 ppm). The ratio is derived, but has NO spatial expression.'],
+            ['Mass ratio \\(m_p/m_e\\)', '[THEOREM]', '\\(m_p/m_e = N_\\mathrm{eff}/\\alpha + N_\\mathrm{base} N_\\mathrm{eff} + N_c = 1836.47\\) (174 ppm). The ratio is derived, but has NO spatial expression.'],
             ['LANDMINE', '[WARNING]', 'Do NOT interpret J_x-dominant flux as "red quark" or map vertices to u/d. The BCC\u2192SU(3) link is about the gluon propagator, not per-quark orientation.'],
         ],
     },
