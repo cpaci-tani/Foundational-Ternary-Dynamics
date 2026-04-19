@@ -1180,10 +1180,7 @@ function _switchToVerifyTab() {
 /** Backward compatibility: Scale 0 bindings.js calls this on quantum scenario
  *  selection. Route to the new panel so the behaviour is preserved. */
 function _switchToQuantumLabTab() { _switchToVerifyTab(); }
-/**
- * Initialise the Verification Lab panel. Replaces the old wireQuantumLab
- * function — see js/verification/ and js/ui/panels/verification-lab-panel/.
- */
+/** Initialise the Verify evidence-scoreboard panel (see js/verify-panel/). */
 function wireVerificationLab() {
     const panelArea = document.getElementById('panel-area');
     if (!panelArea) return;
