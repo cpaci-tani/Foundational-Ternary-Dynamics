@@ -94,13 +94,20 @@ finite-size effect that shrinks with L — it may be a real offset.
 This finding directly affects the Day-2 manuscript claim of
 "α_∞ = 1.23× α_ref from 1/L extrapolation." The fast-big CPU measurement
 that supported that extrapolation was an artefact of insufficient tick
-count. The proper extrapolation — to be done in Phase F of the pipeline
-plan — must use the full-precision GPU data at L=256 (and L=512 when
-available) and may tell a different story about FTD's continuum limit.
+count. The Phase-F 4-point GPU extrapolation (L ∈ {64, 128, 256, 384}
+at consistent r/L ≈ 0.31 and ticks=150) replaced it with an honest
+plateau, and a subsequent audit (`AUDIT_ALPHA_EXTRACTION.md`) narrowed
+the honest claim to **α_∞ ∈ [1.8, 3.6] × α_ref** depending on energy
+convention — the engine's `field_energy = Σ|J|²` carries no classical
+½ prefactor, so the measured V(r) is 2× the classical interaction
+energy. The residual ~1.8× after convention correction remains
+[OPEN] (real physics vs. kinetic normalization vs. Green's-function
+artefact).
 
-**Action**: the manuscript and DERIV_DAY2_CAMPAIGN.md need correction
-in Phase F. Queued as "revisit continuum extrapolation with
-full-precision data" ticket.
+**Action**: manuscript + DERIV_DAY2_CAMPAIGN.md + CATALOG +
+META_INDEX have all been threaded with the audit-corrected claim
+(commit alongside this update). The resolution of the residual
+~1.8× factor is the appropriate next-phase target.
 
 ## Legacy Windows build (deferred, not planned)
 
