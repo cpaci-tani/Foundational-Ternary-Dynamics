@@ -57,8 +57,8 @@ These are the load-bearing claims. Every catalog entry below that is [PARAMETRIC
 | Quantity | Value | Formula from axioms | Tag | Source |
 |---|---|---|---|---|
 | G* (lemniscatic constant) | 2.95868… | G* = √2·Γ(1/4)²/(2π), Fourier self-duality of θ₃² | [THEOREM] | `DERIV_GSTAR_FROM_THETA.md` |
-| α (fine structure) | 1/137.036 | Master quadratic x_+ root; tree 1.26 ppm, 1-loop 9.6 ppb, 7-term < 0.001 ppt | [THEOREM] | `proof_alpha_tree.py`, `DERIV_ALPHA_FROM_PHASE_STRUCTURE.md` |
-| N_c (colors) | 3 | Master quadratic x_− root; 4 independent topological routes converge | [THEOREM] | `DERIV_NC_FROM_TOPOLOGY.md` |
+| α (fine structure) | 1/137.036 | Master quadratic x_+ root; tree 1.26 ppm | **[STRONGLY MOTIVATED CONJECTURE]** (downgraded 2026-04-19 per `AUDIT_MASTER_QUADRATIC.md`) | Polynomial layer is [THEOREM]; physical identification x_+ = 1/α conditional on curve + degree + root selections; 7-term expansion is a post-hoc fit to CODATA digits beyond experimental precision (NOT a "<0.001 ppt derivation"). Dual-prediction (x_- ≈ N_c) is strongest evidence — rigidity scan in `audit_master_quadratic_rigidity.py` shows no other polynomial in 60k scan matches both roots. |
+| N_c (colors) | 3 | Master quadratic x_− root (x_- = 3.024, 0.80% of 3); 4 independent topological routes converge on N_c = 3 | [THEOREM] for topology routes; [STRONGLY MOTIVATED CONJECTURE] for x_- = N_c identification (same epistemic tier as x_+ = 1/α, per `AUDIT_MASTER_QUADRATIC.md`) | `DERIV_NC_FROM_TOPOLOGY.md` |
 | {N_base, N_eff, b_3} | {4, 13, 7} | Moore-neighborhood integer invariants | [THEOREM] | `DERIV_INTEGER_UNIQUENESS.md` |
 | G_C (state-flux coupling) | √α | Lattice-QED bare coupling; g_c = √α at Thomson scale | [THEOREM] | `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` |
 | sin²θ_W | 3/13 | N_c / N_eff from SU(2)×U(1) Moore-layer decomposition | [THEOREM] | `proof_complete_sm.py` §electroweak |
