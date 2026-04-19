@@ -481,3 +481,102 @@ Deliberately terse — more detail in the linked examples.
 5. Never force-push to `main`. Ask before any destructive git operation.
 
 **Verify:** `git log --oneline -1` — subject line parses cleanly; `git show HEAD --stat` — scope matches intent.
+
+---
+
+## Part 3 — Technical-debt ledger
+
+Live inventory of known debt on the code/UX side. The theory side
+lives in `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`. Cross-
+references noted inline. Expect this section to update as things land
+and new debt accrues.
+
+### 3.1 Live debt
+
+- **`consciousness-pedagogy.js` walkthrough math wiring.** The
+  `step.text` injection now calls `renderMathInHtml`, but the wire
+  landed entangled with a ~1000-line refactor from the user's in-
+  progress tree. Follow-up: once the refactor lands, verify
+  walkthrough LaTeX renders via the math-formatting coverage spec
+  (currently doesn't exercise the consciousness panel).
+- **`panel-mount-*.spec.js` flaky tests.** Pre-existing localStorage
+  contamination between mount-mode test cases. Trace available in
+  `test-results/panel-mount-*/` on CI failures. Fix: add a
+  `localStorage.clear()` in `beforeEach`.
+- **Scene panel Scale 4/5/11 adapter shim.** Scene panel is
+  currently scoped to Scales 0-3 (shared Viewport). Extending to
+  `PlanetaryRenderer`, `CosmicRenderer`, and Scale-11 post-proc
+  requires a `SceneAdapter` variant that dispatches on
+  `engineMode`. Plan doc: the Scene panel plan lists this as a
+  follow-up.
+- **Cache-buster accretion.** `?v=N` query strings on CSS /
+  module imports have compounded without a sweep. No automated
+  tool flags unused / over-stale cache-busters.
+- **`getQuantumLabPanelTemplate` dead export.** Still exported
+  from `engine/web/js/ui/components/panel-resources/template.js`
+  but unused since the Verify-panel retirement. Safe to remove.
+- **`_switchToQuantumLabTab` shim.** Still routes to
+  `_switchToVerifyTab` in `app_dag.js`. Once all Scale 0 bindings
+  stop calling it, remove the shim.
+- **BackgroundManager unused reference in SceneAdapter.** The
+  adapter accepts `backgroundManager` but never calls any of its
+  methods. Either drop the parameter or wire it up for HDRI
+  reload on background change.
+- **Audit script false positives.** `scripts/audit/audit_math_strings.py`
+  fires on ASCII math inside already-wrapped `\(...\)` spans. A
+  pre-filter that skips lines with delimiters would cut noise
+  substantially.
+
+### 3.2 Deferred features
+
+Recorded decisions to not-do (yet). Revisit if the rationale
+changes.
+
+- **Exhaustive Scene panel.** Lighting shadows, ortho-camera
+  toggle, DPR / FXAA, per-directional-light positions,
+  shadow-map resolution, tonemapping-operator selector — all
+  deferred in favor of the curated 14-control pass. Upgrade if
+  the Scene panel ever becomes a professional-screenshot tool.
+- **Flavor / CKM and Cosmology Verify rows beyond `|V_us|`.**
+  Deferred; those sectors are marked as partial coverage in the
+  Verify-panel design spec. FTD makes no claim on most of them
+  (OPEN tier).
+- **Node-based JS unit tests.** Project uses Playwright for
+  browser-context verification; Node unit tests would duplicate
+  renderer-independent logic while missing the DOM paths that
+  matter.
+- **Blender-style visibility outliner.** Per-mesh visibility
+  state — rejected; out of scope for an engine dashboard.
+- **Scene panel screenshot / video capture.** Useful for
+  presentations but orthogonal to the render-controls theme.
+  Deferred pending a "Capture" sibling panel proposal.
+
+### 3.3 Cross-reference with TRACKER_OPEN_ITEMS.md
+
+This ledger is the code/UX debt side. The theory debt side lives in
+`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md` which catalogues
+every `[OPEN]` tag across the theory corpus. Items that span both:
+
+- Bell-singlet loop closure — theory-side `[OPEN]` in
+  `DERIV_SINGLET_FROM_VOID_EVENT.md`; code-side is the Bell
+  scenario in `engine/tests/benchmark_engine_theory.cpp` and the
+  Verify manifest `bell-nonlocality` row.
+- Proton mass derivation — theory `[PARAMETRIC]` in
+  `CATALOG_PARAMETRIC_INSERTIONS.md`; code-side is a Verify row
+  flagged PARAMETRIC in `measurements.json`. Any upgrade to
+  THEOREM would require new proof work AND a manifest tier-tag
+  change.
+- CKM matrix — theory `[OPEN]`; code-side reflected as
+  Tier-3 `unpredicted` rows in the Verify panel.
+
+When either side changes, cross-check the other.
+
+---
+
+## Document history
+
+- 2026-04-19 — initial authoring.
+
+<!-- When extending: update the TOC entries, keep hazards and
+recipes in their numbered slots, append new debt/deferred items to
+Part 3 in reverse chronological order within each section. -->
