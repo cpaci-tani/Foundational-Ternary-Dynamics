@@ -10,3 +10,4 @@ export { PlanetaryPanelComponent, initPlanetaryPanel } from './planetary-panel/c
 export { HierarchyPanelComponent, initHierarchyPanel } from './hierarchy-panel/component.js';
 export { CosmicInfoPanelComponent, initCosmicInfoPanel } from './cosmic-info-panel/component.js';
 export { MetaInfoPanelComponent, initMetaInfoPanel } from './meta-info-panel/component.js';
+export { ScenePanelComponent, initScenePanel } from './scene-panel/component.js';
