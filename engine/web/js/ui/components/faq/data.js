@@ -54,7 +54,7 @@ export const FAQ_SECTIONS = Object.freeze([
                 ],
                 ftdAngle: [
                     { tag: 'CONJECTURE', text: 'Measurement is not a separate physical process: it is the transition from flux-field dispositional structure to state-field actualization at a discrete tick. What looks like collapse is just the manifestation step of the two-layer ontology.' },
-                    { tag: 'THEOREM', text: 'The Born rule (P proportional to |J|^2) emerges as a statistical consequence of lattice dynamics; benchmarked in engine/tests/benchmark_engine_theory.cpp to within measurement-lattice bias.' },
+                    { tag: 'SELECTION', text: 'The Born rule (P proportional to |J|^2) emerges as a statistical consequence of lattice dynamics; benchmarked in engine/tests/benchmark_engine_theory.cpp with a 10x lattice bias that is currently unaccounted for.' },
                     { tag: 'OPEN', text: 'The precise dynamical trigger for manifestation — what determines the "when" of a tick for a given voxel — is an axiom, not a derivation.' },
                 ],
                 stillOpen: [
@@ -121,11 +121,12 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Mainstream cosmology adopts dark matter as a parametric addition — Lambda-CDM works phenomenologically but the underlying particle is unidentified. MOND and modified gravity theories capture some rotation curves but not cluster lensing. Nothing is satisfactory.',
                 ],
                 ftdAngle: [
-                    { tag: 'THEOREM', text: 'The Moore Layer decomposition of the 27-site neighborhood produces 17 "dark" states that interact gravitationally but not electromagnetically. The dark-matter fraction Omega_DM / Omega_m = 17/27 ~ 63% matches the observed ratio.' },
-                    { tag: 'SELECTION', text: 'Dark matter is not a separate substance but an unexcited subset of the same lattice structure that produces visible matter.' },
+                    { tag: 'THEOREM', text: 'The Moore Layer decomposition of the 27-site neighborhood produces 17 states that do not participate in the electromagnetic sector. The structural ratio 17/27 ~ 63% is a count, not a fit.' },
+                    { tag: 'SELECTION', text: 'Dark matter is proposed to be the unexcited subset of the same lattice structure that produces visible matter — not a separate substance.' },
                 ],
                 stillOpen: [
-                    'The 17/27 ratio is structural; FTD does not currently explain galactic rotation-curve shapes or halo profiles quantitatively.',
+                    'The structural count 17/27 ~ 63% does not match the Planck 2018 observed ratio Omega_DM/Omega_m ~ 84%. The discrepancy is unresolved; no argument currently bridges the structural count to the cosmological measurement.',
+                    'FTD does not currently explain galactic rotation-curve shapes or halo profiles quantitatively.',
                     'No direct-detection prediction distinguishes FTD dark matter from a sterile-neutrino or other weakly-interacting candidate.',
                 ],
                 theoryRefs: [
