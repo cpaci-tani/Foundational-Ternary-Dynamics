@@ -1630,16 +1630,25 @@ export class WasmBridge {
             (m, b) => m.getForceFieldSampled(b, stride));
     }
 
-    // These three are intentionally not exposed by the WASM engine — they
-    // are MockBridge-only pedagogical samplers (gravity / EM-force / strong-
-    // force per-voxel fields) with no UI consumer in the WASM path. If a
-    // future UI surface requires them on the WASM backend, the cleanest
-    // path is to add the samplers to ftd_wasm.cpp rather than introduce a
-    // shadow MockBridge — see refactoring-analyst RF-6 notes.
-    getGravityFieldSampled(_stride = 2) { return EMPTY_FIELD_SAMPLE; }
-    getEMForceField(_stride = 2)        { return EMPTY_FIELD_SAMPLE; }
-    getGravityForceField(stride = 2)    { return this.getGravityFieldSampled(stride); }
-    getStrongForceField(_stride = 2)    { return EMPTY_FIELD_SAMPLE; }
+    // Force-field decomposition samplers (2026-04-19). Delegated to native
+    // C++ implementations in ftd_wasm.cpp (see get_gravity_field_sampled,
+    // get_em_force_field, get_strong_force_field). These return per-voxel
+    // force vectors for each physical interaction, used by the viewport's
+    // force-arrow overlays. getGravityForceField is an alias kept for the
+    // overlay dispatcher that uses the "gravity" key name.
+    getGravityFieldSampled(stride = 2) {
+        return _wasmCallOr(this, 'getGravityFieldSampled', EMPTY_FIELD_SAMPLE,
+            (m, b) => m.getGravityFieldSampled(b, stride));
+    }
+    getEMForceField(stride = 2) {
+        return _wasmCallOr(this, 'getEMForceField', EMPTY_FIELD_SAMPLE,
+            (m, b) => m.getEMForceField(b, stride));
+    }
+    getGravityForceField(stride = 2) { return this.getGravityFieldSampled(stride); }
+    getStrongForceField(stride = 2) {
+        return _wasmCallOr(this, 'getStrongForceField', EMPTY_FIELD_SAMPLE,
+            (m, b) => m.getStrongForceField(b, stride));
+    }
 
     // ── ParticleEngine (Scale 1) WASM ─────────────────────────────────
     initPE() {

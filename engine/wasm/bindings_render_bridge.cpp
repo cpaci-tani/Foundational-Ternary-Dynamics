@@ -247,6 +247,12 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getFluxVectorSampled",  &get_flux_vector_sampled);
     function("getForceFieldSampled",  &get_force_field_sampled);
 
+    // Force-field decomposition samplers (2026-04-19) — per-voxel force vectors
+    // decomposed by physical interaction, for force-arrow overlay visualization.
+    function("getGravityFieldSampled", &get_gravity_field_sampled);
+    function("getEMForceField",        &get_em_force_field);
+    function("getStrongForceField",    &get_strong_force_field);
+
     // Controls
     function("setToggle",          &set_toggle);
     function("getToggle",          &get_toggle);

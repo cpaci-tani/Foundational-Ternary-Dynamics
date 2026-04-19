@@ -154,6 +154,8 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Theory catalog**: `docs/theory/META_INDEX.md`
 - **Documentation map**: `META_DOCUMENTATION_MAP.md`
 - **Epistemic audit**: `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md`
+- **Parametric insertions catalog** (April 19, 2026): `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md` (~162 rows enumerated: ~23 [DERIVED]/[THEOREM], ~129 [PARAMETRIC], ~10 [IMPOSED]/[SELECTION])
+- **EFT Recovery Program** (April 19, 2026, ACTIVE): `docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md` — pre-registered 6-phase research program (β(g) measurement, Ward identities, Lorentz recovery, operator expansion, dynamical SM emergence, manuscript); Phase 0 complete, Phase 1/2 next. Plan file: `C:\Users\cpaci\.claude\plans\vivid-marinating-pudding.md`
 - **Engine callstack audit**: `docs/theory/07_assessment/AUDIT_ENGINE_CALLSTACK.md` (CPU/GPU parity, toggle gaps, 10 findings)
 - **Open items tracker**: `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md` (every `[OPEN]` across code + theory, one place)
 - **Changelog**: `CHANGELOG.md`
