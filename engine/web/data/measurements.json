@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "last_checked": "2026-04-18",
+  "measurements": [
+    {
+      "id": "alpha_inv",
+      "quantity": "\u03b1\u207b\u00b9",
+      "sector": "qed",
+      "value": 137.035999084,
+      "sigma": 2.1e-8,
+      "units": "",
+      "source": "CODATA 2022",
+      "url": "https://physics.nist.gov/cgi-bin/cuu/Value?alphinv",
+      "date": "2022-12-20"
+    },
+    {
+      "id": "m_higgs",
+      "quantity": "m_H",
+      "sector": "ew",
+      "value": 125.25,
+      "sigma": 0.17,
+      "units": "GeV",
+      "source": "PDG 2024",
+      "url": "https://pdg.lbl.gov/2024/reviews/rpp2024-rev-higgs-boson.pdf",
+      "date": "2024-06-01"
+    },
+    {
+      "id": "v_us",
+      "quantity": "|V_us|",
+      "sector": "flavor",
+      "value": 0.2243,
+      "sigma": 0.0008,
+      "units": "",
+      "source": "PDG 2024",
+      "url": "https://pdg.lbl.gov/2024/reviews/rpp2024-rev-ckm-matrix.pdf",
+      "date": "2024-06-01"
+    }
+  ]
+}
