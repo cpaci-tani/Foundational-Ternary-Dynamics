@@ -118,8 +118,8 @@ ftd/
 │
 ├── engine/                          # C++ simulation engine (see engine/SPEC_ENGINE.md for current version details)
 │   ├── SPEC_ENGINE.md               # Engine reference document
-│   ├── include/ftd/                 # 28 headers (ontic.h is the constant chain)
-│   ├── src/                         # 7 source files
+│   ├── include/ftd/                 # 29 headers (ontic.h is the constant chain; scenarios.h for Scale-0 library)
+│   ├── src/                         # 14 source files
 │   ├── tests/                       # Large CTest surface (CPU, campaign, optional GPU)
 │   ├── cuda/                        # GPU acceleration
 │   ├── wasm/                        # Emscripten WASM bindings

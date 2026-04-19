@@ -50,8 +50,26 @@ engine/web/
 │   ├── ws-bridge.js
 │   ├── bridge/
 │   │   ├── bridge-factory-dag.js
+│   │   ├── boundary.js
+│   │   ├── mock-diagnostics.js
+│   │   ├── mock-lattice-samplers.js
+│   │   ├── mock-particle-engine.js
+│   │   ├── mock-atom-engine.js
 │   │   ├── mock-scale4.js
-│   │   └── mock-scale5.js
+│   │   ├── mock-scale5.js
+│   │   └── scenarios/
+│   │       ├── index.js
+│   │       ├── flux-scenarios.js
+│   │       ├── light-scenarios.js
+│   │       ├── quantum-scenarios.js
+│   │       ├── s0-seed-scenarios.js
+│   │       └── s0-field-scenarios.js
+│   ├── viewport/
+│   │   ├── color-ramps.js
+│   │   └── molecular-renderer.js
+│   ├── ui/
+│   │   ├── app-ontic.js          # (NEW Apr 2026) ontic-mode plumbing extracted from app_dag.js
+│   │   ├── charts/ components/ panels/ primitives/ scale-registry/ shell/
 │   └── scales/
 │       ├── scale0/
 │       │   ├── controller.js
@@ -905,8 +923,9 @@ These are not theoretical concerns. They are true of the current code.
 
 - `viewport.js` is large and central. Many rendering behaviors still
   converge there.
-- `wasm-bridge-dag.js` is also large because it combines real bridge
-  code, fallback code, and many scenario helpers.
+- `wasm-bridge-dag.js` is still sizeable because it combines real bridge
+  code and mock-fallback code. Scenario logic no longer lives here —
+  it was extracted to `bridge/scenarios/` (see "Recent refactor" below).
 - The native WebSocket bridge will keep trying to reconnect forever.
   Console reconnect logs are normal if no native server is running.
 - The web AE path is still JS fallback even though `AtomEngine` is bound
@@ -916,6 +935,28 @@ These are not theoretical concerns. They are true of the current code.
   while UI `data-active-scale` follows the broader ontological numbering.
 - Scale 0 has dual data ownership in some scenarios:
   real bridge plus `_fluxMock`. That is intentional.
+
+### Recent refactor (April 2026)
+
+A 14-ticket "large files" refactor pass reshaped the web tree. The
+three fattest modules all shrank in place, and the extracted concerns
+landed as siblings under `bridge/`, `viewport/`, and `ui/`:
+
+- `wasm-bridge-dag.js` 5736 → 2116 LOC (scenarios, diagnostics, lattice
+  samplers, and particle/atom mock engines pulled out)
+- `viewport.js` 5325 → 4611 LOC (color ramps and molecular rendering
+  moved to `viewport/`)
+- `app_dag.js` 1898 → 1731 LOC (ontic-mode plumbing moved to
+  `ui/app-ontic.js`)
+
+The JS scenario library (`bridge/scenarios/`) is the most visible piece
+— 83 scenarios split across 5 prefix groups (`flux-`, `light-`,
+`quantum-`, `s0-seed-`, `s0-field-`), dispatched through
+`scenarios/index.js`. Same scenarios are also now available natively
+via `ftd::dispatch_scenario` on the C++ side.
+
+See `engine/web/docs/SPEC_REFACTOR_LARGE_FILES.md` for the full ticket
+list, LOC deltas, and per-extraction rationale.
 
 ---
 

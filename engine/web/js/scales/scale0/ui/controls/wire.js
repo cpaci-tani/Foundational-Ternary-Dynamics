@@ -29,6 +29,30 @@ function wirePhysicsToggles(ctx) {
             if (row) row.classList.remove('scenario-override');
         });
     }
+
+    // "Reset to defaults" — restores every physics toggle in this card to
+    // its canonical SCALE0_TOGGLES default. Syncs both the bridge state
+    // and the DOM checkbox, and clears any scenario-override styling so
+    // users see the card return to a known baseline. Leaves the lattice
+    // contents, particles, and overlays alone — this only reverts the
+    // physics-term switches.
+    const resetBtn = getEl('btn-reset-physics-toggles');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            for (const [toggleKey, defaultValue, elId] of SCALE0_TOGGLES) {
+                ctx.bridge.setToggle(toggleKey, defaultValue);
+                const el = getEl(elId);
+                if (el) {
+                    el.checked = !!defaultValue;
+                    const row = el.closest('.toggle-row');
+                    if (row) row.classList.remove('scenario-override');
+                }
+            }
+            // Brief visual confirmation: flash the button.
+            resetBtn.classList.add('ctrl-reset-flash');
+            setTimeout(() => resetBtn.classList.remove('ctrl-reset-flash'), 320);
+        });
+    }
 }
 
 function wireInjection(ctx, api) {

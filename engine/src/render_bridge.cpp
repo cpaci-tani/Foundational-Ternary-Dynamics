@@ -1901,6 +1901,54 @@ void RenderBridge::inject_flux(int x, int y, int z, const Vec3 &flux_val) {
   }
 }
 
+// Additive: v.flux += flux_val. Required by the JS-ported scenarios in
+// ftd_wasm.cpp::setup_scenario that deliberately accumulate overlapping
+// Gaussian kernels. Falls back to CPU-path for the dual-substrate update
+// because the CUDA inject_flux primitive is assignment-only.
+void RenderBridge::inject_flux_add(int x, int y, int z, const Vec3 &flux_val) {
+#ifdef FTD_ENABLE_CUDA
+  if (use_gpu_) {
+    // Force sync so we can accumulate on the host copy, then mark dirty.
+    gpu_sync_to_host();
+  }
+#endif
+  auto &v = voxels_[lattice_.index(x, y, z)];
+  v.flux = v.flux + flux_val;
+  if (toggles.dual_substrate) {
+    const Vec3 half = flux_val * 0.5;
+    v.flux_L = v.flux_L + half;
+    v.flux_R = v.flux_R + half;
+  }
+#ifdef FTD_ENABLE_CUDA
+  if (use_gpu_) {
+    host_mutated_ = true;  // Host edit — sync back before next tick
+  }
+#endif
+}
+
+// Additive wave-velocity injection: v.wave_vel += wv_val. Required by the
+// JS-ported s0-field-* and light-* scenarios that seed traveling waves by
+// populating wave_vel directly.
+void RenderBridge::inject_wave_vel_add(int x, int y, int z, const Vec3 &wv_val) {
+#ifdef FTD_ENABLE_CUDA
+  if (use_gpu_) {
+    gpu_sync_to_host();
+  }
+#endif
+  auto &v = voxels_[lattice_.index(x, y, z)];
+  v.wave_vel = v.wave_vel + wv_val;
+  if (toggles.dual_substrate) {
+    const Vec3 half = wv_val * 0.5;
+    v.wave_vel_L = v.wave_vel_L + half;
+    v.wave_vel_R = v.wave_vel_R + half;
+  }
+#ifdef FTD_ENABLE_CUDA
+  if (use_gpu_) {
+    host_mutated_ = true;  // Host edit — sync back before next tick
+  }
+#endif
+}
+
 void RenderBridge::inject_particle(int x, int y, int z, int8_t state,
                                    const Vec3 &flux_val,
                                    int8_t spin, int8_t color) {

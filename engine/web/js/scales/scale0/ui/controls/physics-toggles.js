@@ -36,7 +36,11 @@ export function createPhysicsTogglesCard() {
     </details>
 
     <div class="ctrl-footnote">
-      Field visualization: viewport buttons (top-right) &#8593;
+      <button class="ctrl-reset-btn" id="btn-reset-physics-toggles" type="button"
+          title="Restore every physics toggle in this card to its canonical default from config/toggles.js — won't reload the scenario or clear the field.">
+        &#8634; Reset to defaults
+      </button>
+      <span class="ctrl-footnote-text">Field visualization: viewport buttons (top-right) &#8593;</span>
     </div>
   `;
   return card;
