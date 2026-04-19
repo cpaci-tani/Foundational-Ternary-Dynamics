@@ -211,12 +211,12 @@ test.describe('perf baseline', () => {
             }
         });
 
-        // Apply "Full physics" preset to turn on every overlay
+        // Turn on every Scale 0 overlay to stress the render pipeline.
+        // Replaces the former 'Full physics' preset (removed 2026-04-19).
         await page.evaluate(() => {
-            const preset = document.getElementById('s0-overlay-preset');
-            if (preset) {
-                preset.value = 'full';
-                preset.dispatchEvent(new Event('change', { bubbles: true }));
+            const toggles = document.querySelectorAll('.s0-overlay-panel .view-toggle');
+            for (const btn of toggles) {
+                if (!btn.classList.contains('active')) btn.click();
             }
         });
 
