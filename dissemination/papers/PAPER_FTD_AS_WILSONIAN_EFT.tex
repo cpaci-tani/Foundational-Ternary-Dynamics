@@ -103,14 +103,19 @@ on the condensate gives clean mass gaps ($m \approx 0.18$ at amp$=0.80$)
 with two independent channels agreeing to 3\%; and Rutherford scattering
 reproduces the static V(r) $\alpha$-extraction exactly at small impact
 parameter, confirming the 5$\times$ ratio to $\alpha_{\text{ref}}$ as
-genuine engine physics rather than a methodology artefact. The final
-Thread 1a ($L = 256$ Coulomb-tail measurement) pushes the deepest-r
-probe down to $\alpha_r(r{=}84) / \alpha_{\text{ref}} = \mathbf{1.4}$
---- the lowest ratio measured in the entire programme. Fitting the
-r-max series at L = 64, 128, 256 to a 1/L finite-size law (appropriate
-for Coulomb in a periodic box) extrapolates to $\alpha_\infty =
-\mathbf{1.23 \alpha_{\text{ref}}}$: \FTD\ matches continuum QED to
-within \textbf{23\%} in the infinite-volume limit.
+genuine engine physics rather than a methodology artefact.
+
+A Phase-F follow-up (\S\ref{sec:phasef}) unblocks the GPU build via
+WSL2 and runs a 4-point r-max sweep at L = 64, 128, 256, 384 under
+consistent conditions (ticks = 150, same r/L $\approx 0.31$ slice).
+The result retracts an earlier 3-point estimate: $\alpha_\infty = 1.23
+\alpha_{\text{ref}}$ was based on under-equilibrated CPU data; the
+correct 4-point extrapolation across three independent scaling laws
+(1/L, 1/L$^2$, free 1/L$^p$) gives $\alpha_\infty \in [3.35, 3.74]
+\times \alpha_{\text{ref}}$ --- a \textbf{plateau at $\sim 3.6\times
+\alpha_{\text{ref}}$, not convergence to CODATA}. This is a genuine,
+falsifiable FTD prediction: the engine's Coulomb-tail coupling is
+$\sim 3.6\times$ stronger than continuum QED.
 \end{abstract}
 
 % ============================================================================
@@ -739,6 +744,96 @@ EWSB threshold $\in (0.6, 0.7)$, condensate mass gap $\approx 0.18$,
 Rutherford $\alpha = 0.042 \pm 0.005$. Zero rows upgraded from
 \texttt{[IMPOSED]} to \texttt{[DERIVED]}. The honest-reporting
 discipline holds.
+
+% ============================================================================
+\section{Phase F: GPU unblock + 4-point continuum plateau}
+\label{sec:phasef}
+
+The Day-2 manuscript closed with a 3-point continuum extrapolation
+($L = 64, 128, 256$) giving $\alpha_\infty = 1.23 \alpha_{\text{ref}}$
+via a 1/L scaling law. Phase F tests that extrapolation by
+\textbf{(i)} moving the GPU build to WSL2 + Ubuntu 22.04 + CUDA 13.0
+(sidesteps the Windows CMake 4 escape bug entirely), and
+\textbf{(ii)} re-running the sweep under internally-consistent
+conditions at four lattice sizes.
+
+\paragraph{WSL2 unblocks CUDA at 30$\times$ speedup.}
+Windows CMake 4.2 + NVCC 13.0 + MSBuild interact pathologically on
+the \verb|-D"CMAKE_INTDIR=\"Release\""| flag. Linux builds clean. Four
+surgical include-hygiene fixes (\verb|<cstdint>|, \verb|<cstdio>|) and
+one pimpl guard made the engine compile on Ubuntu 22.04. Single-seed
+$L=256$ full-precision $\beta$ scan drops from \textbf{$> 2$h (CPU,
+never completed on Windows)} to \textbf{$4\text{m}\ 40\text{s}$} on
+the RTX 5090. Details in \verb|STATUS_CUDA_BUILD.md|.
+
+\paragraph{The retraction.}
+The Day-2 3-point series used a \verb|fast-big| CPU run with
+\verb|ticks=100| that was under-equilibrated --- the flux field had
+not reached steady-state Coulomb tail amplitude around the locked
+charges. The full-precision GPU re-run at $L=256$ with
+\verb|ticks=300| gave $\alpha_r(r=82) = 0.0271$, not the $0.010$ the
+fast-big measurement had reported. The 1.23$\times \alpha_{\text{ref}}$
+headline was built on that bad number.
+
+\paragraph{The corrected 4-point series.}
+At internally-consistent conditions (\verb|ticks=150|, GPU, same
+$r/L \approx 0.31$ slice in each lattice):
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+$L$ & $r_{\max}$ & $\alpha_r(r_{\max})$ & ratio to $\alpha_{\text{ref}}$ \\
+\midrule
+64 & 20 & 0.02959 & \textbf{4.05} \\
+128 & 40 & 0.02970 & \textbf{4.07} \\
+256 & 82 & 0.02717 & \textbf{3.72} \\
+384 & 124 & 0.02632 & \textbf{3.61} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Three candidate scaling laws:
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+fit form & $\alpha_\infty$ & $\alpha_\infty / \alpha_{\text{ref}}$ \\
+\midrule
+1/L & 0.02640 & 3.62 \\
+1/L$^2$ & 0.02730 & 3.74 \\
+free 1/L$^p$ (best $p = 0.5$) & 0.02446 & 3.35 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{The plateau is the result.}
+All three extrapolations agree on $\alpha_\infty \in [3.35, 3.74]
+\times \alpha_{\text{ref}}$. The 4-point series is flat enough that
+the extrapolation is insensitive to scaling-law choice. \textbf{FTD
+does not match continuum QED at the Coulomb tail}; it plateaus at
+$\sim 3.6\times$ the CODATA value. This is a falsifiable FTD
+prediction.
+
+\paragraph{Consequences.}
+The "5$\times$ gap as a finite-size effect" narrative is wrong. The
+gap is genuine engine physics. Either (a) the engine's coupling is
+truly $\sim 3.6\times$ CODATA, which is falsifiable experimental
+deviation from QED, or (b) an engine-wide systematic (e.g.,
+stencil-mismatch in the built-in Poisson, Ward-identity violation at
+the SOR floor) offsets every measurement by this factor. Matched-
+stencil Poisson (Phase 2 Ticket A) closes some of the Ward floor but
+not by a factor of 3; a systematic that bridges that gap would have
+to be found elsewhere.
+
+\paragraph{Modular pipeline.}
+Phase F also shipped the \verb|engine/sim/| subsystem: a
+\verb|Pipeline<Backend>| template (CPU + GPU specialisations), 3+
+pre-built \verb|Observable<T>| classes, and 2 pipeline-based
+benchmark rewrites. Every future EFT measurement can be a
+$\leq 50$-LOC declarative program. GPU/CPU parity verified at
+permille after 1 tick, 1\% after 500 ticks. Details in
+\verb|DERIV_DAY2_CAMPAIGN.md| and
+\verb|~/.claude/plans/vivid-marinating-pudding.md|.
 
 % ============================================================================
 \section{Conclusion}
