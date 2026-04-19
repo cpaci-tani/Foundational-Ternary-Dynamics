@@ -101,9 +101,9 @@ const SCALE0_DIAGNOSTIC_TOOLTIPS = {
     'Field |J|²': '\u222b \u00bd|J|\u00b2 dV \u2014 flux-field energy (analogue of A\u00b7A/2 in a gauge theory). This is the energy stored in the substrate itself, independent of any wave motion.',
     'Wave |w|²': '\u222b \u00bd|\u2202\u209cJ|\u00b2 dV \u2014 wave-substrate kinetic energy. Rises when the field is in motion (propagating pulses), drops in stationary configurations.',
     'Particle KE': '\u03a3 \u00bdm|v|\u00b2 over manifested particles. Only non-zero when the Movement toggle is on AND particles have accumulated velocity.',
-    'Coulomb PE': 'Pairwise electrostatic energy: \u03a3 \u03b1 Q_i Q_j / (4\u03c0 r_ij). Computed from the Poisson-solved potential when that toggle is on.',
+    'Coulomb PE': 'Pairwise electrostatic energy: \\(\\sum \\alpha Q_i Q_j / (4\\pi r_{ij})\\). Computed from the Poisson-solved potential when that toggle is on.',
     'Total Flux': '\u222b |J| dV \u2014 integrated flux magnitude across the whole lattice. Doesn\'t separate kinetic and potential \u2014 use this as a "something is happening" indicator.',
-    'Entropy':    'Shannon entropy of the ternary-state distribution across all voxels: \u2212 \u03a3 p_s log p_s. Rises with disorder, falls under condensation / symmetry-breaking.',
+    'Entropy':    'Shannon entropy of the ternary-state distribution across all voxels: \\(-\\sum p_s \\log p_s\\). Rises with disorder, falls under condensation / symmetry-breaking.',
 
     // ─── Electromagnetic ──────────────────────────────────────────────
     'E-Field |E|²/2': '\u222b \u00bd|E|\u00b2 dV with E = \u2212\u2202\u209cJ. Electric-field energy density. Non-zero wherever flux is changing in time.',
@@ -121,8 +121,8 @@ const SCALE0_DIAGNOSTIC_TOOLTIPS = {
     // Descriptor labels include underscore: "E_L (left)" \u2192 normalised "E_L left".
     'E_L left':  'Left-handed substrate energy channel. Populated only when the Dual Substrate toggle is on; otherwise this reads 0.',
     'E_R right': 'Right-handed substrate energy channel. Its balance vs E_L drives the Chirality diagnostic below.',
-    'Chirality': 'Dimensionless left/right asymmetry: (E_L \u2212 E_R) / (E_L + E_R). 0 = parity-symmetric, \u00b11 = fully polarised. The weak-force toggle biases this.',
-    'Wave L / R': 'Wave-substrate energy split by chirality. Reads a pair (|w_L|\u00b2, |w_R|\u00b2); lets you see whether asymmetry lives in the static field or in propagating modes.',
+    'Chirality': 'Dimensionless left/right asymmetry: \\((E_L - E_R) / (E_L + E_R)\\). 0 = parity-symmetric, \u00b11 = fully polarised. The weak-force toggle biases this.',
+    'Wave L / R': 'Wave-substrate energy split by chirality. Reads a pair \\((|w_L|^2, |w_R|^2)\\); lets you see whether asymmetry lives in the static field or in propagating modes.',
 };
 
 const SCALE0_SECTION_TOOLTIPS = {
@@ -152,15 +152,15 @@ const PE_ROW_TOOLTIPS = {
 const PE_CARD_TOOLTIPS = {
     'Particles':          'Active Scale 1 particles in the simulation (excludes locked particles that don\'t integrate).',
     'Virial 2K/|U|':      'Virial-theorem ratio 2\u27e8K\u27e9 / |\u27e8U\u27e9|. Equals 1 for a steady bound system, > 1 if the system is unbound, < 1 if the KE hasn\'t ramped up to equilibrium yet.',
-    'Temperature MeV':    'Effective temperature T = (2/3) \u27e8K\u27e9 / (k_B N). Meaningful only for statistical-ensemble-sized N; for N=2 this is just 2/3 of the mean KE.',
+    'Temperature MeV':    'Effective temperature \\(T = (2/3)\\langle K\\rangle / (k_B N)\\). Meaningful only for statistical-ensemble-sized N; for N=2 this is just 2/3 of the mean KE.',
     'RMS Velocity c':     'Root-mean-square particle speed \u221a\u27e8|v|\u00b2\u27e9 expressed in units of c (so 0.5 = half the speed of light on the lattice).',
-    'System Radius lu':   'Characteristic radius \u27e8|r \u2212 R_CoM|\u27e9 \u2014 average distance of particles from the centre of mass. Grows as the system expands, shrinks as it contracts.',
+    'System Radius lu':   'Characteristic radius \\(\\langle|r - R_\\mathrm{CoM}|\\rangle\\) \u2014 average distance of particles from the centre of mass. Grows as the system expands, shrinks as it contracts.',
     'Tick':               'Particle-engine tick counter. PE is integrated in its own loop; may run at a different rate than the Scale-0 lattice tick.',
     'KE MeV':             'Total kinetic energy \u03a3 \u00bd m\u1d62 v\u1d62\u00b2 in MeV.',
     'PE MeV':             'Total potential energy across all enabled force terms (Coulomb + gravity at minimum), in MeV.',
     'CoM':                'Centre-of-mass position vector \u03a3 m\u1d62 r\u1d62 / \u03a3 m\u1d62, in lattice units.',
-    'PE Coulomb MeV':     'Electrostatic \u03a3 \u03b1 q_i q_j / (4\u03c0 r_ij) summed over all pairs. Negative for unlike-sign bound systems, positive for like-sign.',
-    'PE Gravity MeV':     'Gravitational \u2212 \u03a3 G_N m_i m_j / r_ij summed over pairs. Always negative; grows more negative as bodies fall together.',
+    'PE Coulomb MeV':     'Electrostatic \\(\\sum \\alpha q_i q_j / (4\\pi r_{ij})\\) summed over all pairs. Negative for unlike-sign bound systems, positive for like-sign.',
+    'PE Gravity MeV':     'Gravitational \\(-\\sum G_N m_i m_j / r_{ij}\\) summed over pairs. Always negative; grows more negative as bodies fall together.',
     // Two-body specific cards ("Orbital Analytics" section).
     'Separation r lu':    'Instantaneous two-body separation |r\u2081 \u2212 r\u2082| in lattice units. Oscillates between perihelion and aphelion for bound orbits.',
     'Reduced Mass μ MeV': 'Reduced mass \u03bc = m\u2081 m\u2082 / (m\u2081 + m\u2082). The effective mass in the equivalent one-body Kepler problem.',
@@ -169,7 +169,7 @@ const PE_CARD_TOOLTIPS = {
     'Eccentricity e':     'Eccentricity e = \u221a(1 \u2212 b\u00b2/a\u00b2). 0 = perfect circle, 1 = parabolic escape, > 1 = hyperbolic flyby.',
     'Period T':           'Estimated orbital period T = 2\u03c0\u221a(a\u00b3/GM) via Kepler\'s third law. Compare against the tick-counted actual period.',
     'Vis-viva Check':     'Residual of the vis-viva equation v\u00b2 = GM(2/r \u2212 1/a). Should read \u2248 0 \u2014 non-zero means the integrator has drifted off the Kepler surface.',
-    'Phase Space r, v_r': 'Canvas plot of radial position r vs radial velocity v_r. Bound orbits trace closed loops here; escaping trajectories spiral outward.',
+    'Phase Space r, v_r': 'Canvas plot of radial position \\(r\\) vs radial velocity \\(v_r\\). Bound orbits trace closed loops here; escaping trajectories spiral outward.',
 };
 
 // Scale 1 PE particle table column headers. Keys match <th> textContent
@@ -196,14 +196,14 @@ const AE_CARD_TOOLTIPS = {
     'Bond Count':   'Number of covalent bonds tracked by the engine. A water molecule H\u2082O has 2; methane has 4; zero in Scale 2.',
 
     // ─── Energy terms (eV) ────────────────────────────────────────────
-    'Kinetic Energy eV': 'Total KE across all atoms \u03a3 \u00bdm|v|\u00b2, in eV. Related to temperature via T = 2KE / (3 k_B N).',
+    'Kinetic Energy eV': 'Total KE across all atoms \\(\\sum \\tfrac{1}{2}m|v|^2\\), in eV. Related to temperature via \\(T = 2KE/(3 k_B N)\\).',
     'Total Energy eV':   'KE + PE_ionic + PE_vdw + PE_bonds, in eV. Should be conserved when no thermostat is attached.',
-    'PE Ionic eV':       'Electrostatic energy from atom partial charges: \u03a3 k q_i q_j / r. Usually positive (repulsion) for salts; dominant term in ionic crystals.',
+    'PE Ionic eV':       'Electrostatic energy from atom partial charges: \\(\\sum k q_i q_j / r\\). Usually positive (repulsion) for salts; dominant term in ionic crystals.',
     'PE Van der Waals eV': 'Lennard-Jones 12-6 potential summed over non-bonded atom pairs: 4\u03b5[(\u03c3/r)\u00b9\u00b2 \u2212 (\u03c3/r)\u2076]. Captures hard-core repulsion + weak dispersion attraction.',
-    'PE Bonds eV':       'Harmonic bond potential \u03a3 \u00bd k_b (r \u2212 r\u2080)\u00b2 for every covalent bond. Zero at equilibrium length, grows quadratically with strain.',
+    'PE Bonds eV':       'Harmonic bond potential \\(\\sum \\tfrac{1}{2} k_b (r - r_0)^2\\) for every covalent bond. Zero at equilibrium length, grows quadratically with strain.',
 
     // ─── Thermo + momentum ────────────────────────────────────────────
-    'Temperature K': 'Instantaneous temperature from equipartition: T = 2\u27e8KE\u27e9 / (3 k_B N). Reported in kelvin for intuition against room temperature (\u2248 298 K).',
+    'Temperature K': 'Instantaneous temperature from equipartition: \\(T = 2\\langle KE\\rangle / (3 k_B N)\\). Reported in kelvin for intuition against room temperature (\u2248 298 K).',
     'Momentum |p|':  'Magnitude of the total linear momentum. Conserved in a closed system; non-conservation flags a bug.',
 
     // ─── Bookkeeping ──────────────────────────────────────────────────
@@ -216,7 +216,7 @@ const AE_CARD_TOOLTIPS = {
     'B/A MeV':      'Binding energy per nucleon B/A. Peaks at \u2248 8.8 MeV around iron \u2014 this curve is what drives fusion (low A) and fission (high A) energetics.',
     'Electron B.E.': 'Total electron binding energy summed over all shells, from Slater-shielded hydrogenic orbitals. Typical magnitude: tens to hundreds of eV for light atoms.',
     // Card title is "Mass (K_B)" with <sub>B</sub>; textContent renders as "Mass (KB)" \u2192 normalized "Mass KB".
-    'Mass KB':      'Composite atomic mass in lattice K_B units, including both nuclear and electron binding corrections. This is the value used by the Scale-0 particle genesis threshold.',
+    'Mass KB':      'Composite atomic mass in lattice \\(K_B\\) units, including both nuclear and electron binding corrections. This is the value used by the Scale-0 particle genesis threshold.',
 };
 
 function annotateScale0Diagnostics(root) {
