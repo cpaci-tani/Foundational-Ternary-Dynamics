@@ -66,9 +66,13 @@ engine/web/
 │   │       └── s0-field-scenarios.js
 │   ├── viewport/
 │   │   ├── color-ramps.js
-│   │   └── molecular-renderer.js
+│   │   ├── molecular-renderer.js
+│   │   ├── boundary-geometry.js     # (NEW Apr 2026 RF-4) pure wireframe builders + insideBoundary
+│   │   └── topology-sheet-renderer.js # (NEW Apr 2026 RF-1) 11 rubber-sheet visualizations
+│   ├── app-wire/
+│   │   └── keyboard.js              # (NEW Apr 2026 RF-9 partial) keyboard shortcuts
 │   ├── ui/
-│   │   ├── app-ontic.js          # (NEW Apr 2026) ontic-mode plumbing extracted from app_dag.js
+│   │   ├── app-ontic.js             # (NEW Apr 2026) ontic-mode plumbing extracted from app_dag.js
 │   │   ├── charts/ components/ panels/ primitives/ scale-registry/ shell/
 │   └── scales/
 │       ├── scale0/
@@ -938,22 +942,37 @@ These are not theoretical concerns. They are true of the current code.
 
 ### Recent refactor (April 2026)
 
-A 14-ticket "large files" refactor pass reshaped the web tree. The
-three fattest modules all shrank in place, and the extracted concerns
-landed as siblings under `bridge/`, `viewport/`, and `ui/`:
+A 14-ticket "large files" refactor pass followed by an audit-driven
+cleanup pass (RF-1/3/4/5/6/7/8/10) reshaped the web tree. The three
+fattest modules all shrank in place, and the extracted concerns landed
+as siblings under `bridge/`, `viewport/`, `ui/`, and `app-wire/`:
 
-- `wasm-bridge-dag.js` 5736 → 2116 LOC (scenarios, diagnostics, lattice
-  samplers, and particle/atom mock engines pulled out)
-- `viewport.js` 5325 → 4611 LOC (color ramps and molecular rendering
-  moved to `viewport/`)
-- `app_dag.js` 1898 → 1731 LOC (ontic-mode plumbing moved to
-  `ui/app-ontic.js`)
+- `wasm-bridge-dag.js` 5736 → 2132 LOC — scenarios, diagnostics, lattice
+  samplers, and particle/atom mock engines pulled out; `_wasmCallOr`
+  helper + 3 frozen empty-result singletons replaced ~80 LOC of
+  early-return boilerplate across 8 sampler methods (RF-6)
+- `viewport.js` 5325 → 3900 LOC — color ramps, molecular rendering,
+  boundary geometry (RF-4), and 11 rubber-sheet visualizations (RF-1)
+  moved to `viewport/`; shared streamline and arrow-field helpers
+  (`_buildStreamlineMesh`/`_writeStreamlinesIntoMesh` RF-3,
+  `_buildArrowFieldMesh`/`_writeArrowFieldIntoMesh` RF-2) dedupe 6
+  copy-paste build+update pairs
+- `app_dag.js` 1898 → 1723 LOC — ontic-mode plumbing moved to
+  `ui/app-ontic.js`; keyboard handler to `app-wire/keyboard.js` (RF-9
+  partial; wireToolbar/wireControls/wireViewportToggles deferred)
 
 The JS scenario library (`bridge/scenarios/`) is the most visible piece
 — 83 scenarios split across 5 prefix groups (`flux-`, `light-`,
 `quantum-`, `s0-seed-`, `s0-field-`), dispatched through
-`scenarios/index.js`. Same scenarios are also now available natively
-via `ftd::dispatch_scenario` on the C++ side.
+`scenarios/index.js`. Same scenarios are also available natively via
+`ftd::dispatch_scenario` on the C++ side.
+
+A CI guard (`tests/scenario-parity.spec.js`, RF-5) catches any future
+drift between JS and C++ scenario inventories before it reaches users.
+
+Template exports are now uniformly named `get*Template` (RF-7 codemod
+across 10 files), and Playwright specs share helpers from
+`tests/_helpers.js` (RF-8).
 
 See `engine/web/docs/SPEC_REFACTOR_LARGE_FILES.md` for the full ticket
 list, LOC deltas, and per-extraction rationale.

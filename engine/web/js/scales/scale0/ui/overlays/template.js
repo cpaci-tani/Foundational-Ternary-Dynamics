@@ -14,7 +14,7 @@
  * (e.g. Poynting S arrows vs. Light = |S| bloom). Labels come with tooltips.
  */
 
-export function createScale0OverlayTemplate() {
+export function getScale0OverlayTemplate() {
   const container = document.createElement('div');
   container.id = 'viewport-overlay';
   container.className = 'scale0-only s0-overlay-panel';

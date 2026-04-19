@@ -454,3 +454,91 @@ This means the WasmBridge path now handles the full scenario registry natively �
 **Coverage:** `engine/web/tests/scenarios-wasm.spec.js` — 44/44 Playwright cases exercising every scenario group through the WASM path, all green.
 
 Readers picking up future work on scenarios should treat `scenarios.h` / `scenarios.cpp` as the canonical C++ side and the `bridge/scenarios/*.js` modules as the canonical JS side; the two are expected to stay in lock-step.
+
+---
+
+## 14. Post-audit cleanup (April 19, 2026 — RF-1/3/4/5/6/7/8/10 landed, RF-9 partial)
+
+A follow-up audit pass produced a second round of extractions and dedup work targeting the residual LOC in `viewport.js`, `wasm-bridge-dag.js`, and `app_dag.js`. Unlike Waves 1–3 (which sliced along feature-module boundaries), this round went after duplicated patterns and leftover panels that survived the first pass.
+
+### New modules created
+
+- `engine/web/js/viewport/boundary-geometry.js` (255 LOC) — pure boundary wireframe builders + inside-boundary predicate (RF-4)
+- `engine/web/js/viewport/topology-sheet-renderer.js` (472 LOC) — `TopologySheetRenderer` class owning 11 rubber-sheet visualizations (RF-1)
+- `engine/web/js/app-wire/keyboard.js` (73 LOC) — keyboard shortcut handler (RF-9 partial)
+- `engine/web/tests/_helpers.js` (~110 LOC) — shared Playwright helpers (RF-8)
+- `engine/web/tests/scenario-parity.spec.js` (~175 LOC) — 5 CI assertions guarding JS↔C++ scenario parity (RF-5)
+
+### New helpers added inline to `viewport.js` / `wasm-bridge-dag.js`
+
+- `_buildStreamlineMesh`, `_writeStreamlinesIntoMesh` (RF-3) — dedupes 3 copies of the E/B/flux streamline pattern
+- `_buildArrowFieldMesh`, `_writeArrowFieldIntoMesh` (RF-2) — dedupes strong-force, EM-force-volume, and gravity arrow-write loops
+- `_wasmCallOr` helper + 3 empty-result singletons (RF-6) — dedupes ~80 LOC of early-return boilerplate
+
+### Final LOC state
+
+| File | Pre-refactor | After v2.14.6 | After v2.14.7 | Total Δ |
+|---|---|---|---|---|
+| `viewport.js` | 5325 | 4611 | 3900 | −1425 (−27%) |
+| `wasm-bridge-dag.js` | 5736 | 2116 | 2132 | −3604 (−63%) |
+| `app_dag.js` | 1898 | 1731 | 1723 | −175 (−9%) |
+
+### Tickets deferred
+
+- **RF-9 full** (`wireToolbar`/`wireControls`/`wireViewportToggles`) — too entangled with `app_dag` module state; the keyboard-shortcut slice shipped as a partial
+- **RF-2 remainder** (force-heatmap, weak-field, force-streamlines, force-glyphs) — each uses a distinct Three.js technique (ShaderMaterial / Points+sprite / dashed-line pool / InstancedMesh); consolidation would obscure real differences
+- **Ticket 14** (quantum renderer) — still deferred per Section 6; guard test (`animation-clock-freeze.spec.js`) remains in place
+
+
+---
+
+## Section 15 — Whole-project extraction pass (2026-04-19, v2.15.0)
+
+After the post-audit cleanup (Section 14), a 16-agent parallel extraction pass
+hit every remaining source file ≥500 LOC. Each agent owned one target file and
+carried out the per-file tickets identified in an earlier project-wide audit.
+
+### C++ engine (9 source files → ~35 discrete modules)
+
+| Source | Before | After | Extraction target |
+|---|---|---|---|
+| `src/render_bridge.cpp` | 2139 | 1097 | R1-R6: `poisson_solvers`, `transmutation_phases`, `energy_ledger_compute`, `diagnostics_compute`, `injection`, `field_operators` |
+| `src/constructors.cpp` | 1245 | 0 (deleted) | C1-C5: `constructors/{core,atoms,molecules,bulk_matter,exotic}.cpp` |
+| `src/scenarios.cpp` | 1241 | 79 (router) | S1: `scenarios/{flux,light,quantum,s0_seed,s0_field}.cpp` |
+| `wasm/ftd_wasm.cpp` | 1224 | 607 | W1-W3: `bindings_{render_bridge,particle,atom}.cpp` |
+| `src/cosmic_engine.cpp` | 1193 | 500 | CE1-CE5: `cosmic/{scenarios,barnes_hut,sph,cosmology,gravitational_waves}.cpp` |
+| `src/atom_engine.cpp` | 1029 | 325 | AE1-AE3: `atom/{forces,bonding,thermostat}.cpp` |
+| `src/main.cpp` | 938 | 74 | M1: `cli_demos/cli_demo_scenarios.cpp` |
+| `src/ws_server.cpp` | 831 | 496 | WS1-WS2: `ws_sha1.h`, `ws_protocol.{h,cpp}` |
+| `include/ftd/ontic.h` | 806 | 45 | O1-O2: `ontic/{lemniscate,master_quadratic,gauge_couplings,particle_masses,neutrino,consciousness}.h` |
+| **C++ total** | **10646** | **3223** | **−7423 LOC (−70%)** |
+
+### Web JS (9 primary files → ~41 discrete modules)
+
+`mock-scale5.js` 1903→313, `consciousness.js` 1117→487, `consciousness-pedagogy.js` 1348→362, `backgrounds.js` 846→178, `field-overlays.js` 976→455, scale1/2/11 controllers −1248 combined, plus small extractions from `orbitals.js`, `cosmic-renderer.js`, `meta-unit.js`. Total JS LOC redistributed: **−6246 LOC (−52%)**.
+
+### Python (3 shared helpers extracted)
+
+`scripts/common/{cern_harness,bell_chsh,report}.py` factored out of 10+ scripts. Net −129 LOC; `ppm_error`/`pct_error` consolidated to canonical `scripts/constants.py`.
+
+### Grand total
+
+**~13,800 LOC redistributed across ~97 new files.** Every new module nameable in ≤5 words.
+
+### Verification
+
+- `cmake --build engine/build --config Release` — clean, all 155 test targets compile
+- `emmake cmake --build engine/build_wasm --target ftd_wasm` — 357 KB deployed
+- `pytest scripts/tests/`: 85/85 pass
+- `wasm-scenario-coverage.spec.js`: 44/44 pass
+- `scenario-parity.spec.js`: 5/5 pass (guards against JS↔C++ scenario drift)
+- `animation-clock-freeze.spec.js`: 1/1 pass (guards Ticket 14 deferral)
+- 22 Playwright failures verified pre-existing via `git stash` A/B — none caused by this refactor
+
+### Integration fixes applied
+
+1. CMakeLists.txt — added 13 new C++ source entries across `ftd_core`, `ftd_sim`, `ws_server`, `ftd_wasm`
+2. `ws_server.cpp` — removed stale `using ftd::SOCKET` (SOCKET is global scope in `ws_protocol.h`)
+3. `render_bridge.cpp` — moved 2 mid-file `#include` directives to top of file (Clang/Emscripten reject nested-namespace includes that MSVC tolerates)
+4. `scenario-parity.spec.js` — updated both extractors to scan the post-split file layouts
+

@@ -2,7 +2,7 @@
  * Scale 1 Viewport Overlay — Particle engine controls
  */
 
-export function createScale1OverlayTemplate() {
+export function getScale1OverlayTemplate() {
   const container = document.createElement('div');
   container.id = 'pe-viewport-overlay';
   container.className = 'scale1-only viewport-overlay-panel';

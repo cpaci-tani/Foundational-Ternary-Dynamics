@@ -984,20 +984,12 @@ export class Viewport {
 
     // ── Gravity Field Vectors (XZ plane) ──────────────────────────────
 
+    // Gravity arrows — grey. Uses shared arrow-mesh helper (RF-2), though
+    // the writer stays inline because gravity takes (gridPositions, forces,
+    // count, maxForce) as separate args (caller-computed maxForce) rather
+    // than the {positions, vectors, count} bag of other arrow fields.
     _buildGravityVectors() {
-        const vertices = new Float32Array(MAX_FIELD_GRID * 2 * 3);
-        const colors = new Float32Array(MAX_FIELD_GRID * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.65,
-        });
-        this._gravityVectors = new THREE.LineSegments(geo, mat);
-        this._gravityVectors.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this._gravityVectors.visible = false;
-        this.scene.add(this._gravityVectors);
+        this._gravityVectors = this._buildArrowFieldMesh(MAX_FIELD_GRID, 0.65);
     }
 
     updateGravityVectors(gridPositions, forces, count, maxForce, arrowScale = 8.0) {
@@ -1437,6 +1429,82 @@ export class Viewport {
         return mesh;
     }
 
+    // Shared arrow-mesh builder (refactoring-analyst RF-2). Strong-force,
+    // EM-force-volume, and (pending) weak-field arrow overlays all use the
+    // same LineSegments scratch-buffer pattern — preallocate `maxArrows` × 2
+    // vertices, vertex-colored LineBasicMaterial, frustum-culling off for
+    // dynamic geometry. The 3 copies that used to be inline differed only in
+    // opacity and color palette; both are now parameterized.
+    _buildArrowFieldMesh(maxArrows, opacity = 0.7) {
+        const positions = new Float32Array(maxArrows * 2 * 3);
+        const colors    = new Float32Array(maxArrows * 2 * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color',    new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity,
+            depthWrite: false,
+        });
+        const mesh = new THREE.LineSegments(geo, mat);
+        mesh.visible = false;
+        mesh.frustumCulled = false; // dynamic geo — see _eFieldLines
+        this.scene.add(mesh);
+        return mesh;
+    }
+
+    // Shared arrow-mesh writer. Expects fieldData = { positions, vectors, count }
+    // and paints magnitude-filtered arrows with log-scaled length. The color
+    // is two RGB triples (base + tip) for a subtle brightness gradient. The
+    // magnitude cache is keyed by field name so two overlays don't race for
+    // the same scratch buffer.
+    //
+    // @param {THREE.LineSegments} mesh
+    // @param {{positions:Float32Array, vectors:Float32Array, count:number}} fieldData
+    // @param {{base: [number,number,number], tip: [number,number,number]}} colors
+    // @param {string} magCacheKey — `_magCache_<name>` lookup key on `this`
+    // @param {number} arrowBase — world-units base length before log-scaling
+    // @param {number} thresholdFrac — fraction of maxMag below which arrows are dropped
+    _writeArrowFieldIntoMesh(mesh, fieldData, colors, magCacheKey, arrowBase = 1.5, thresholdFrac = 0.03) {
+        const posAttr = mesh.geometry.getAttribute('position');
+        const colAttr = mesh.geometry.getAttribute('color');
+        const { positions, vectors, count } = fieldData;
+        const maxArrows = posAttr.array.length / 6;
+        let maxMag = 0;
+        if (!this[magCacheKey] || this[magCacheKey].length < count) {
+            this[magCacheKey] = new Float32Array(count);
+        }
+        const mags = this[magCacheKey];
+        for (let i = 0; i < count; i++) {
+            const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
+            const m = Math.sqrt(a * a + b * b + c * c);
+            mags[i] = m;
+            if (m > maxMag) maxMag = m;
+        }
+        const threshold = maxMag * thresholdFrac;
+        const halfN = this._halfN;
+        const [br, bg, bb] = colors.base;
+        const [tr, tg, tb] = colors.tip;
+        let vi = 0;
+        for (let i = 0; i < count && vi < maxArrows; i++) {
+            const mag = mags[i];
+            if (mag < threshold) continue;
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            const scale = Math.log(1 + mag / maxMag) * arrowBase;
+            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
+            const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
+            posAttr.array[vi * 6]     = px;      posAttr.array[vi * 6 + 1] = py;      posAttr.array[vi * 6 + 2] = pz;
+            colAttr.array[vi * 6]     = br;      colAttr.array[vi * 6 + 1] = bg;      colAttr.array[vi * 6 + 2] = bb;
+            posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
+            colAttr.array[vi * 6 + 3] = tr;      colAttr.array[vi * 6 + 4] = tg;      colAttr.array[vi * 6 + 5] = tb;
+            vi++;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        mesh.geometry.setDrawRange(0, vi * 2);
+    }
+
     // Shared streamline writer. Walks each polyline's segments, clips endpoints
     // against the current boundary shape, and writes interleaved (start, end)
     // vertex pairs to the mesh's position/color buffers via a per-segment
@@ -1688,69 +1756,18 @@ export class Viewport {
     }
 
     // ── EM Force Volume (Cyan arrows — repurposed from generic Forces) ──
+    // EM-force volume — cyan arrows. Uses shared arrow-mesh helpers (RF-2).
     _buildForceVolume() {
-        const maxArrows = 8000;
-        const positions = new Float32Array(maxArrows * 2 * 3);
-        const colors = new Float32Array(maxArrows * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.6,
-            depthWrite: false
-        });
-        this._forceVolume = new THREE.LineSegments(geo, mat);
-        this._forceVolume.visible = false;
-        this._forceVolume.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this.scene.add(this._forceVolume);
+        this._forceVolume = this._buildArrowFieldMesh(8000, 0.6);
     }
 
     updateForceVolume(fieldData) {
         if (!this._forceVolume) this._buildForceVolume();
-        const posAttr = this._forceVolume.geometry.getAttribute('position');
-        const colAttr = this._forceVolume.geometry.getAttribute('color');
-        const { positions, vectors, count } = fieldData;
-        const maxArrows = posAttr.array.length / 6;
-        let maxMag = 0;
-        if (!this._magCache || this._magCache.length < count) this._magCache = new Float32Array(count);
-        const mags = this._magCache;
-        for (let i = 0; i < count; i++) {
-            const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
-            const m = Math.sqrt(a * a + b * b + c * c);
-            mags[i] = m;
-            if (m > maxMag) maxMag = m;
-        }
-        const threshold = maxMag * 0.03;
-        const halfN = this._halfN;
-        // Arrow length in world units. ~1.5 vox base × log(magnitude) — keeps
-        // EM-force arrows local to the voxel they originate from, regardless
-        // of lattice size, so adjacent arrows don't overlap and the field
-        // direction reads correctly.
-        const arrowBase = 1.5;
-        let vi = 0;
-
-        for (let i = 0; i < count && vi < maxArrows; i++) {
-            const mag = mags[i];
-            if (mag < threshold) continue;
-            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
-
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
-            const scale = Math.log(1 + mag / maxMag) * arrowBase;
-            const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
-
-            // Base (cyan)
-            posAttr.array[vi * 6] = px; posAttr.array[vi * 6 + 1] = py; posAttr.array[vi * 6 + 2] = pz;
-            colAttr.array[vi * 6] = 0.0; colAttr.array[vi * 6 + 1] = 0.9; colAttr.array[vi * 6 + 2] = 1.0;
-            // Tip (bright cyan)
-            posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
-            colAttr.array[vi * 6 + 3] = 0.7; colAttr.array[vi * 6 + 4] = 1.0; colAttr.array[vi * 6 + 5] = 1.0;
-            vi++;
-        }
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this._forceVolume.geometry.setDrawRange(0, vi * 2);
+        // Arrow length ~1.5 vox base × log(magnitude) — keeps EM-force arrows
+        // local to their voxel at any lattice size.
+        this._writeArrowFieldIntoMesh(this._forceVolume, fieldData,
+            { base: [0.0, 0.9, 1.0], tip: [0.7, 1.0, 1.0] },
+            '_magCache', 1.5, 0.03);
     }
 
     toggleForceVolume(on) {
@@ -1844,66 +1861,18 @@ export class Viewport {
     showGravityForce(on) { this.toggleGravityField(on); }
 
     // ── Strong Force Volume (Red arrows) ──────────────────────────────
+    // Strong-force arrows — red. Uses shared arrow-mesh helpers (RF-2).
     _buildStrongForce() {
-        const maxArrows = 8000;
-        const positions = new Float32Array(maxArrows * 2 * 3);
-        const colors = new Float32Array(maxArrows * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.7,
-            depthWrite: false
-        });
-        this._strongForce = new THREE.LineSegments(geo, mat);
-        this._strongForce.visible = false;
-        this._strongForce.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this.scene.add(this._strongForce);
+        this._strongForce = this._buildArrowFieldMesh(8000, 0.7);
     }
 
     updateStrongForceField(fieldData) {
         if (!this._strongForce) this._buildStrongForce();
-        const posAttr = this._strongForce.geometry.getAttribute('position');
-        const colAttr = this._strongForce.geometry.getAttribute('color');
-        const { positions, vectors, count } = fieldData;
-        const maxArrows = posAttr.array.length / 6;
-        let maxMag = 0;
-        if (!this._strongMagCache || this._strongMagCache.length < count) this._strongMagCache = new Float32Array(count);
-        const mags = this._strongMagCache;
-        for (let i = 0; i < count; i++) {
-            const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
-            const m = Math.sqrt(a * a + b * b + c * c);
-            mags[i] = m;
-            if (m > maxMag) maxMag = m;
-        }
-        const threshold = maxMag * 0.03;
-        const halfN = this._halfN;
-        // Strong-force arrows: 1.5-vox world-space base, identical convention
-        // to EM/gravity so the four force overlays render at the same scale.
-        const arrowBase = 1.5;
-        let vi = 0;
-
-        for (let i = 0; i < count && vi < maxArrows; i++) {
-            const mag = mags[i];
-            if (mag < threshold) continue;
-            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
-            const scale = Math.log(1 + mag / maxMag) * arrowBase;
-            const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
-
-            // Base (red)
-            posAttr.array[vi * 6] = px; posAttr.array[vi * 6 + 1] = py; posAttr.array[vi * 6 + 2] = pz;
-            colAttr.array[vi * 6] = 1.0; colAttr.array[vi * 6 + 1] = 0.09; colAttr.array[vi * 6 + 2] = 0.27;
-            // Tip (bright red)
-            posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
-            colAttr.array[vi * 6 + 3] = 1.0; colAttr.array[vi * 6 + 4] = 0.5; colAttr.array[vi * 6 + 5] = 0.5;
-            vi++;
-        }
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this._strongForce.geometry.setDrawRange(0, vi * 2);
+        // 1.5-vox world-space base, identical convention to EM/gravity so the
+        // four force overlays render at the same scale.
+        this._writeArrowFieldIntoMesh(this._strongForce, fieldData,
+            { base: [1.0, 0.09, 0.27], tip: [1.0, 0.5, 0.5] },
+            '_strongMagCache', 1.5, 0.03);
     }
 
     toggleStrongForce(on) {

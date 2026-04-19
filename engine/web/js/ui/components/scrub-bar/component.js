@@ -14,13 +14,13 @@
  *   // Call bar.refresh() from the animate loop ~10 Hz to redraw zones.
  */
 
-import { createScrubBarTemplate } from './template.js';
+import { getScrubBarTemplate } from './template.js';
 
 export class ScrubBarComponent {
     constructor(viewportEl, opts) {
         this.viewportEl = viewportEl;
         this.opts = opts;
-        this.el = createScrubBarTemplate();
+        this.el = getScrubBarTemplate();
         this._dragging = false;
         this._refreshSkips = 0;
         this._lastScrubTick = null;

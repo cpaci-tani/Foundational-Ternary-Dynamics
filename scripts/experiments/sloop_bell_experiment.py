@@ -34,6 +34,26 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
+# PY-2 refactor (April 2026): CHSH helpers consolidated into
+# scripts/common/bell_chsh.py. Behavior preserved; angle_to_axis still
+# returns float32 at the call sites that need it.
+_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+from scripts.common.bell_chsh import (
+    CHSH_ANGLES,
+    compute_chsh,
+    compute_correlation,
+    random_unit_vectors,
+)
+from scripts.common.bell_chsh import angle_to_axis as _angle_to_axis
+
+
+def angle_to_axis(theta):
+    """Convert measurement angle to unit vector in x-z plane (float32)."""
+    return _angle_to_axis(theta, dtype=np.float32)
+
+
 import ternary_matrix.config as cfg
 from ternary_matrix.model.grid import Universe
 from ternary_matrix.physics import waves, forces
@@ -42,48 +62,7 @@ from ternary_matrix.physics import waves, forces
 # ============================================================================
 # SECTION 1: CHSH INFRASTRUCTURE
 # ============================================================================
-
-CHSH_ANGLES = {
-    'a1': 0.0,
-    'a2': np.pi / 2,
-    'b1': np.pi / 4,
-    'b2': 3 * np.pi / 4,
-}
-
-
-def compute_chsh(E11, E12, E21, E22):
-    """Compute CHSH S from four correlations."""
-    return abs(E11 - E12) + abs(E21 + E22)
-
-
-def compute_correlation(outcomes_A, outcomes_B):
-    """
-    Compute correlation E(a,b) = <A*B>.
-    Filters out null outcomes (state 0).
-    Returns (correlation, detection_efficiency).
-    """
-    valid = (outcomes_A != 0) & (outcomes_B != 0)
-    n_valid = np.sum(valid)
-    if n_valid == 0:
-        return 0.0, 0.0
-    efficiency = n_valid / len(outcomes_A)
-    correlation = np.mean(outcomes_A[valid] * outcomes_B[valid])
-    return float(correlation), float(efficiency)
-
-
-def random_unit_vectors(n):
-    """Generate n random unit vectors on the sphere (Marsaglia)."""
-    z = np.random.uniform(-1, 1, n)
-    phi = np.random.uniform(0, 2 * np.pi, n)
-    r = np.sqrt(1 - z**2)
-    x = r * np.cos(phi)
-    y = r * np.sin(phi)
-    return np.column_stack([x, y, z])
-
-
-def angle_to_axis(theta):
-    """Convert measurement angle to unit vector in x-z plane."""
-    return np.array([np.sin(theta), 0.0, np.cos(theta)], dtype=np.float32)
+# (helpers moved to scripts/common/bell_chsh; re-exported above for back-compat)
 
 
 # ============================================================================
