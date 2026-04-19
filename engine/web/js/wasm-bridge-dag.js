@@ -1354,6 +1354,37 @@ export class MockBridge {
 // ── WASM Bridge ────────────────────────────────────────────────────
 let _wasmLoadPromise = null; // singleton to prevent duplicate script injection
 
+// Empty-result singletons used by WasmBridge sampler fallbacks.
+// Before RF-6 the same inline `{ positions: new Float32Array(0), ... }` literal
+// was allocated ~18× per module; the empty arrays themselves are immutable so
+// a single shared instance is safe for every caller.
+const EMPTY_FIELD_SAMPLE = Object.freeze({
+    positions: new Float32Array(0),
+    vectors: new Float32Array(0),
+    count: 0,
+});
+const EMPTY_SCALAR_SAMPLE = Object.freeze({
+    positions: new Float32Array(0),
+    values: new Float32Array(0),
+    count: 0,
+});
+const EMPTY_PARTICLE_DATA = Object.freeze({
+    positions: new Float32Array(0),
+    colors: new Float32Array(0),
+    sizes: new Float32Array(0),
+    count: 0,
+});
+
+// Generic delegate: run `fn` if the WASM module exposes both the bridge AND
+// the specified method, else return `fallback`. Collapses the two-line guard
+// block (`if (!this._module || !this._bridge) return X; if (typeof ... !==
+// 'function') return X;`) that previously appeared ~20× inside WasmBridge.
+function _wasmCallOr(bridge, methodName, fallback, fn) {
+    if (!bridge._module || !bridge._bridge) return fallback;
+    if (typeof bridge._module[methodName] !== 'function') return fallback;
+    return fn(bridge._module, bridge._bridge);
+}
+
 export class WasmBridge {
     constructor() {
         this._module = null;
@@ -1441,19 +1472,9 @@ export class WasmBridge {
             this._module.injectParticle(this._bridge, x, y, z, state);
     }
 
-    injectParticleFull(x, y, z, state, spin, color) {
-        if (this._module && this._bridge)
-            this._module.injectParticleFull(this._bridge, x, y, z, state, spin, color);
-    }
-
     injectWavepacket(x, y, z, state) {
         if (this._module && this._bridge)
             this._module.injectWavepacket(this._bridge, x, y, z, state);
-    }
-
-    injectWavepacketFull(x, y, z, state, sigma, amplitude) {
-        if (this._module && this._bridge)
-            this._module.injectWavepacketFull(this._bridge, x, y, z, state, sigma, amplitude);
     }
 
     injectFlux(x, y, z, fx, fy, fz) {
@@ -1478,8 +1499,7 @@ export class WasmBridge {
     }
 
     getParticleData() {
-        if (!this._module || !this._bridge)
-            return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), count: 0 };
+        if (!this._module || !this._bridge) return EMPTY_PARTICLE_DATA;
         const raw = this._module.getParticleData(this._bridge);
         // Filter out low-density void particles to prevent white grid artifacts
         // when transparent points stack along camera axes with blending.
@@ -1567,73 +1587,59 @@ export class WasmBridge {
     }
 
     // ── Flux Data Extraction (Scale 0 substrate) ──────────────────────
+    // Shared empty-buffer fallback is cheap (new Float64Array(0)) but kept
+    // per-call instead of a module singleton because some callers mutate
+    // their result via an overlay buffer view.
     getFluxSlice(axis, index) {
-        if (!this._module || !this._bridge) return new Float64Array(0);
-        if (typeof this._module.getFluxSlice !== 'function') return new Float64Array(0);
-        return this._module.getFluxSlice(this._bridge, axis, index);
+        return _wasmCallOr(this, 'getFluxSlice', new Float64Array(0),
+            (m, b) => m.getFluxSlice(b, axis, index));
     }
-
     getFluxVolume() {
-        if (!this._module || !this._bridge) return new Float64Array(0);
-        if (typeof this._module.getFluxVolume !== 'function') return new Float64Array(0);
-        return this._module.getFluxVolume(this._bridge);
+        return _wasmCallOr(this, 'getFluxVolume', new Float64Array(0),
+            (m, b) => m.getFluxVolume(b));
     }
 
     // ── Bulk Vector Field Exports (Scale 0 field visualization) ──────
+    // RF-6: the two-line module-presence / method-presence guard is factored
+    // into _wasmCallOr. When the WASM module or a specific method is missing,
+    // these return the shared frozen EMPTY_FIELD_SAMPLE / EMPTY_SCALAR_SAMPLE
+    // singletons (safe because the typed arrays inside are zero-length and
+    // thus immutable). Saves ~80 LOC of copy-paste vs the pre-RF-6 shape.
     getEFieldSampled(stride = 2) {
-        if (!this._module || !this._bridge) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        if (typeof this._module.getEFieldSampled !== 'function') return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        return this._module.getEFieldSampled(this._bridge, stride);
+        return _wasmCallOr(this, 'getEFieldSampled', EMPTY_FIELD_SAMPLE,
+            (m, b) => m.getEFieldSampled(b, stride));
     }
-
     getBFieldSampled(stride = 2) {
-        if (!this._module || !this._bridge) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        if (typeof this._module.getBFieldSampled !== 'function') return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        return this._module.getBFieldSampled(this._bridge, stride);
+        return _wasmCallOr(this, 'getBFieldSampled', EMPTY_FIELD_SAMPLE,
+            (m, b) => m.getBFieldSampled(b, stride));
     }
-
     getPoyntingSampled(stride = 2) {
-        if (!this._module || !this._bridge) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        if (typeof this._module.getPoyntingSampled !== 'function') return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        return this._module.getPoyntingSampled(this._bridge, stride);
+        return _wasmCallOr(this, 'getPoyntingSampled', EMPTY_FIELD_SAMPLE,
+            (m, b) => m.getPoyntingSampled(b, stride));
     }
-
     getDivJSampled(stride = 2) {
-        if (!this._module || !this._bridge) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-        if (typeof this._module.getDivJSampled !== 'function') return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
-        return this._module.getDivJSampled(this._bridge, stride);
+        return _wasmCallOr(this, 'getDivJSampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getDivJSampled(b, stride));
     }
-
     getFluxVectorSampled(stride = 2) {
-        if (!this._module || !this._bridge) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        if (typeof this._module.getFluxVectorSampled !== 'function') return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        return this._module.getFluxVectorSampled(this._bridge, stride);
+        return _wasmCallOr(this, 'getFluxVectorSampled', EMPTY_FIELD_SAMPLE,
+            (m, b) => m.getFluxVectorSampled(b, stride));
     }
-
     getForceFieldSampled(stride = 2) {
-        if (!this._module || !this._bridge) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        if (typeof this._module.getForceFieldSampled !== 'function') return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-        return this._module.getForceFieldSampled(this._bridge, stride);
+        return _wasmCallOr(this, 'getForceFieldSampled', EMPTY_FIELD_SAMPLE,
+            (m, b) => m.getForceFieldSampled(b, stride));
     }
 
-    getGravityFieldSampled(stride = 2) {
-        // WASM doesn't have dedicated gravity field export — delegate to _fluxMock if available
-        return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-    }
-
-    getEMForceField(stride = 2) {
-        // WASM doesn't have dedicated EM force field export — delegate to MockBridge
-        return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-    }
-
-    getGravityForceField(stride = 2) {
-        return this.getGravityFieldSampled(stride);
-    }
-
-    getStrongForceField(stride = 2) {
-        // WASM doesn't have dedicated strong force field export — delegate to MockBridge
-        return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
-    }
+    // These three are intentionally not exposed by the WASM engine — they
+    // are MockBridge-only pedagogical samplers (gravity / EM-force / strong-
+    // force per-voxel fields) with no UI consumer in the WASM path. If a
+    // future UI surface requires them on the WASM backend, the cleanest
+    // path is to add the samplers to ftd_wasm.cpp rather than introduce a
+    // shadow MockBridge — see refactoring-analyst RF-6 notes.
+    getGravityFieldSampled(_stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    getEMForceField(_stride = 2)        { return EMPTY_FIELD_SAMPLE; }
+    getGravityForceField(stride = 2)    { return this.getGravityFieldSampled(stride); }
+    getStrongForceField(_stride = 2)    { return EMPTY_FIELD_SAMPLE; }
 
     // ── ParticleEngine (Scale 1) WASM ─────────────────────────────────
     initPE() {
