@@ -45,7 +45,7 @@ import { addInfoTooltips } from './consciousness-pedagogy.js';
 // are now imported by the owning scale controllers (scale0 via ui/controls/wire.js).
 import { QUANTUM_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
-import { initVerificationLabPanel } from './ui/panels/verification-lab-panel/component.js';
+import { initVerifyPanel } from './verify-panel/component.js';
 import { AppShell } from './ui/shell/app-shell.js';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initConsciousnessPanel } from './ui/panels/index.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
@@ -1188,14 +1188,7 @@ function wireVerificationLab() {
     const panelArea = document.getElementById('panel-area');
     if (!panelArea) return;
     if (_verifLabComponent) return;
-    _verifLabComponent = initVerificationLabPanel({
-        panelArea,
-        getCtx: () => ({ ..._makeCtx(), scale0Controller: Scale0Controller, setRunning: (v) => { running = v; updatePlayButton(); } }),
-        onActivateOverlay: (overlayId) => {
-            const btn = document.getElementById(overlayId);
-            if (btn && !btn.classList.contains('active')) btn.click();
-        },
-    });
+    _verifLabComponent = initVerifyPanel({ panelArea });
 }
 
 
