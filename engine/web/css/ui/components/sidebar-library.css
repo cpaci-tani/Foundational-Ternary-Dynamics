@@ -1,0 +1,159 @@
+/* sidebar-library.css — shared shell/layout for library-style sidebars.
+ * Per-consumer reader styles live in kb.css / faq.css. Modifier class
+ * .sidelib-sidebar--{idPrefix} lets a consumer override accents. */
+
+.sidelib-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 90;
+}
+
+.sidelib-sidebar {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: min(820px, 100%);
+    max-width: 100vw;
+    background: var(--bg, #111);
+    color: var(--text, #ddd);
+    border-left: 1px solid var(--border, #333);
+    transform: translateX(100%);
+    transition: transform 180ms ease;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+#app.knowledge-base-open .sidelib-sidebar--kb,
+#app.faq-open .sidelib-sidebar--faq {
+    transform: translateX(0);
+}
+
+.sidelib-shell-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border, #333);
+}
+.sidelib-kicker {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted, #888);
+}
+.sidelib-title { margin: 0.25rem 0; font-size: 1.15rem; }
+.sidelib-page-copy {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted, #888);
+    max-width: 60ch;
+}
+.sidelib-close {
+    background: transparent;
+    border: 1px solid var(--border, #333);
+    color: var(--text, #ddd);
+    width: 2rem; height: 2rem;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.sidelib-toolbar {
+    padding: 0.6rem 1.25rem;
+    border-bottom: 1px solid var(--border, #333);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+.sidelib-search-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+    font-size: 0.8rem;
+}
+.sidelib-search-field input {
+    background: var(--surface-2, rgba(255,255,255,0.04));
+    border: 1px solid var(--border, #333);
+    color: var(--text, #ddd);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+.sidelib-page-meta { font-size: 0.78rem; color: var(--text-muted, #888); }
+
+.sidelib-section-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.6rem 1.25rem;
+    border-bottom: 1px solid var(--border, #333);
+}
+.sidelib-section-pill {
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border, #333);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text, #ddd);
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+.sidelib-section-pill.active {
+    background: var(--accent, #3a7);
+    color: var(--bg, #111);
+    border-color: transparent;
+}
+
+.sidelib-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(200px, 260px) 1fr;
+    overflow: hidden;
+}
+.sidelib-entry-list {
+    border-right: 1px solid var(--border, #333);
+    overflow-y: auto;
+    padding: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+.sidelib-entry-chip {
+    text-align: left;
+    padding: 0.55rem 0.75rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: var(--text, #ddd);
+    font-size: 0.88rem;
+    line-height: 1.3;
+    cursor: pointer;
+}
+.sidelib-entry-chip:hover { background: var(--surface-2, rgba(255,255,255,0.04)); }
+.sidelib-entry-chip.active {
+    background: var(--surface-2, rgba(255,255,255,0.06));
+    border-color: var(--border, #333);
+}
+
+.sidelib-entry-reader {
+    overflow-y: auto;
+    padding: 1.25rem 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.sidelib-empty-list {
+    padding: 1rem;
+    color: var(--text-muted, #888);
+    font-size: 0.88rem;
+    font-style: italic;
+}
+
+@media (max-width: 720px) {
+    .sidelib-body { grid-template-columns: 1fr; }
+    .sidelib-entry-list { border-right: 0; border-bottom: 1px solid var(--border, #333); max-height: 32vh; }
+}
