@@ -165,7 +165,6 @@ engine/
     gpu_particle_engine.h     # GPU ParticleEngine bindings
   src/
     render_bridge.cpp         # Logic-first engine -- 6-phase tick cycle (1538L)
-    lattice.cpp               # Lattice implementation (index, coord, wrap, neighbors) (66L)
     lagrangian.cpp            # compute_lagrangian_diagnostics() -- 4 active terms (166L)
     main.cpp                  # CLI entry point (scenarios A-K) (937L)
     particle_engine.cpp       # ParticleEngine: Velocity Verlet + analytical forces (394L)
