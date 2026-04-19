@@ -1,0 +1,40 @@
+<h2>Push or Overlay?</h2>
+<p class="subtitle">When the panel is docked to the left or right, how should it relate to the 3D viewport?</p>
+
+<div class="options">
+  <div class="option" data-choice="push" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Push — viewport reflows</h3>
+      <p>The viewport shrinks to fit next to the sidebar. No content is ever hidden; panel and scene coexist. Camera aspect ratio changes when you toggle sides. Best when you're using panels + scene together for long stretches.</p>
+      <div class="mockup" style="margin-top:10px">
+        <div class="mockup-body" style="display:flex;gap:2px;height:110px;padding:4px">
+          <div class="mock-sidebar" style="width:34%;background:var(--accent-subtle,#2a3a4d);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-muted)">Sidebar</div>
+          <div class="mock-content" style="flex:1;background:linear-gradient(135deg,#1a1f2e,#222b3d);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-muted)">3D Viewport (narrower)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="overlay" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Overlay — floats above</h3>
+      <p>The viewport stays full-width behind the panel; sidebar is a translucent glass panel over the scene (like today's bottom dock). Scene camera never changes on toggle; panel can be collapsed to a thin edge. Best when the scene is the hero and panels are reference.</p>
+      <div class="mockup" style="margin-top:10px">
+        <div class="mockup-body" style="position:relative;height:110px;padding:4px;background:linear-gradient(135deg,#1a1f2e,#222b3d);border-radius:4px">
+          <div style="position:absolute;inset:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-muted)">3D Viewport (full bleed)</div>
+          <div style="position:absolute;top:8px;bottom:8px;left:8px;width:32%;background:rgba(40,55,80,0.65);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-muted)">Sidebar (glass)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="hybrid" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Hybrid — push on side, overlay on bottom</h3>
+      <p>Left/right mounts push (clean viewport edges, no occlusion). Bottom mount overlays (keeps today's behavior so status bar + viewport don't get crushed vertically). One policy per axis.</p>
+    </div>
+  </div>
+</div>

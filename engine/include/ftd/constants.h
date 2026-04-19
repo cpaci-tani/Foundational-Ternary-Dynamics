@@ -56,6 +56,7 @@ using ontic::X_BORN;
 using ontic::COEFFICIENT;
 using ontic::X_MINUS;
 using ontic::X_PLUS;
+using ontic::X_PLUS_PRECISION;
 
 // Layer 3c: Charge-space duality
 using ontic::E2_COLOR;
@@ -94,22 +95,41 @@ using ontic::SIN2_THETA13;
 using ontic::SIN2_THETA23;
 
 // Layer 5: Coupling constants
-using ontic::ALPHA;
+using ontic::ALPHA;             // = 1/X_PLUS_PRECISION (CODATA match; 2026-04-17)
 using ontic::ALPHA_G_APPROX;
+using ontic::ALPHA_PRECISION;   // alias to ALPHA (same value)
+using ontic::ALPHA_TREE;        // = 1/X_PLUS (tree-level, reference only)
 using ontic::ALPHA_WEAK;
 using ontic::G_C;
 using ontic::G_N;
 using ontic::SIN2_WEINBERG;
 
-// EFT-derived coupling: alpha = G_C² (wave equation coupling squared)
-// G_C is the fundamental lattice coupling in the wave equation source term:
-//   delta_J += G_C * grad(s)
-// The force involves TWO vertices (source + probe), each contributing G_C,
-// so the effective coupling is alpha = G_C * G_C.
-// This compile-time assert PROVES the ontic chain is self-consistent.
+// ──────────────────────────────────────────────────────────────────────
+// ALPHA_EFT: two-vertex coupling used at every force-computation site.
+//
+// HONEST FRAMING:
+//   G_C was DEFINED as √α in ontic.h Layer 5 (the state-flux coupling
+//   in the Born-Infeld Lagrangian). So ALPHA_EFT = G_C² = α is an
+//   algebraic identity by construction — this is a CONSISTENCY CHECK,
+//   not a derivation. The static_assert below catches drift between
+//   the two definitions, it does NOT prove new physics.
+//
+//   The actual derivation of α is the master quadratic x² − 16G*²x + 16G*³ = 0
+//   whose tree root is X_PLUS. The 4-term corrected root
+//   X_PLUS_PRECISION matches CODATA 2022 to < 0.001 ppt; the engine's
+//   ALPHA has used that precision value since 2026-04-17 (TRACKER §1.5).
+//
+// WHAT THIS MEANS FOR THE ENGINE:
+//   Force code may use either ALPHA or ALPHA_EFT — they are equal by
+//   construction. Prefer ALPHA_EFT in code paths where the two-vertex
+//   picture is pedagogically helpful (e.g., the EFT emergent force mode
+//   where flux field + state probe each contribute one vertex).
 inline constexpr double ALPHA_EFT = G_C * G_C;
 static_assert(ALPHA_EFT > 0.00729 && ALPHA_EFT < 0.00731,
-              "ALPHA_EFT = G_C^2 must match fine structure constant");
+              "Consistency: G_C^2 must equal alpha (G_C was defined as sqrt(alpha))");
+static_assert(ALPHA_EFT > 0.99999999 * ontic::ALPHA &&
+              ALPHA_EFT < 1.00000001 * ontic::ALPHA,
+              "Consistency: G_C hardcoded value must match sqrt(ALPHA) to 1e-8");
 
 // Layer 5b: QCD sector
 using ontic::ALPHA_S_MZ;

@@ -257,6 +257,7 @@ val get_constants() {
     val result = val::object();
     result.set("ALPHA",       ftd::ALPHA);
     result.set("ALPHA_INV",   1.0 / ftd::ALPHA);
+    result.set("ALPHA_EFT",   ftd::ALPHA_EFT);  // EFT-derived: = G_C * G_C (compile-time assert in constants.h)
     result.set("G_STAR",      ftd::G_STAR);
     result.set("K_B",         ftd::K_B);
     result.set("K_GENESIS",   ftd::K_GENESIS);
@@ -1446,11 +1447,16 @@ EMSCRIPTEN_BINDINGS(ftd_module) {
         .function("currentTick", &ftd::RenderBridge::current_tick)
         ;
 
-    class_<ftd::DagEngine>("DagEngine")
-        .constructor<int>()
-        .function("tick", &ftd::DagEngine::tick)
-        .function("clear", &ftd::DagEngine::clear)
-        ;
+    // DagEngine binding intentionally removed (2026 consolidation sweep).
+    // The web engine always uses RenderBridge — see the binding above and
+    // the comment in web/js/wasm-bridge-dag.js explaining why. DagEngine
+    // is now an experimental C++-only data-structure prototype; exposing
+    // it through WASM would invite callers into an unfinished code path
+    // whose gauss_project / phase_forces / phase_movement are stubs.
+    //
+    // If you're reading this because you hit a missing-binding error:
+    // use RenderBridge. The API surface is identical for tick/run/etc.
+
 
     // Data extraction
     function("getParticleData",    &get_particle_data);

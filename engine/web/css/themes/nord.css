@@ -53,4 +53,23 @@ html[data-theme="nord"] {
     --tooltip-shadow: 0 16px 40px rgba(0, 0, 0, 0.42);
     --tooltip-kicker: #88c0d0;
     --tooltip-muted:  #c1cad8;
+
+    /* Chart series — Nord Aurora + Frost palette */
+    --chart-flux:     #d08770;
+    --chart-energy:   #81a1c1;
+    --chart-total:    #eceff4;
+    --chart-positive: #a3be8c;
+    --chart-negative: #bf616a;
+    --chart-charge:   #a3be8c;
+    --chart-eb:       #b48ead;
+    --chart-gauss:    #ebcb8b;
+    --chart-entropy:  #88c0d0;
+
+    --legend-field-kinetic:  #a3be8c;
+    --legend-field-gradient: #8fbcbb;
+    --legend-bi:             #bf616a;
+    --legend-coupling:       #d08770;
+    --legend-velocity:       #ebcb8b;
+    --legend-gauss:          #88c0d0;
+    --legend-dissipation:    #7a8fa6;
 }

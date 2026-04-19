@@ -7,11 +7,13 @@
  *   spark.destroy();
  */
 
+import { resolveChartColor } from './theme.js';
+
 export class Sparkline {
     constructor(container, opts) {
         this.container = container;
         this.buffer    = opts.buffer;
-        this.color     = opts.color || 'currentColor';
+        this.color     = resolveChartColor(opts.color || 'var(--accent, #6366f1)');
         this.height    = opts.height || 24;
         this._destroyed = false;
 

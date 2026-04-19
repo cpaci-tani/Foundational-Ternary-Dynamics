@@ -16,7 +16,7 @@
  *   chart.destroy();
  */
 
-import { getChartTheme, makeAxis } from './theme.js';
+import { getChartTheme, makeAxis, resolveChartColor } from './theme.js';
 
 const LS_PREFIX = 'ftd.chart.';
 
@@ -50,8 +50,8 @@ export class StackedAreaChart {
                 { label: opts.xLabel || 'x' },
                 ...this.series.map((s) => ({
                     label:  s.label,
-                    stroke: s.color,
-                    fill:   s.color + '55',
+                    stroke: resolveChartColor(s.color),
+                    fill:   resolveChartColor(s.color) + '55',
                     width:  1,
                     show:   !hiddenKeys.has(s.key),
                 })),

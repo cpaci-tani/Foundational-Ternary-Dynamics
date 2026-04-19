@@ -5,13 +5,13 @@
  */
 
 export const terms = [
-    { key: 'fieldKinetic',  label: 'Field KE',     color: 'var(--legend-bi,          #fb8c00)', buffer: 'fieldKinetic',  includeByDefault: true },
-    { key: 'fieldGradient', label: 'Gradient',     color: 'var(--legend-coupling,    #42a5f5)', buffer: 'fieldGradient', includeByDefault: true },
-    { key: 'bornInfeld',    label: 'Born-Infeld',  color: 'var(--legend-velocity,    #a78bfa)', buffer: 'bornInfeld',    includeByDefault: true },
-    { key: 'coupling',      label: 'Coupling',     color: 'var(--legend-gauss,       #fbbf24)', buffer: 'coupling',      includeByDefault: true },
-    { key: 'velocity',      label: 'Velocity',     color: 'var(--legend-dissipation, #4ade80)', buffer: 'velocity',      includeByDefault: true },
-    { key: 'gauss',         label: 'Gauss',        color: 'var(--chart-gauss,        #f87171)', buffer: 'gauss',         includeByDefault: true },
-    { key: 'dissipation',   label: 'Dissipation',  color: 'var(--chart-entropy,      #60a5fa)', buffer: 'dissipation',   includeByDefault: true },
+    { key: 'fieldKinetic',  label: 'Field KE',    color: 'var(--legend-field-kinetic,  #66bb6a)', buffer: 'fieldKinetic',  includeByDefault: true },
+    { key: 'fieldGradient', label: 'Gradient',    color: 'var(--legend-field-gradient, #26a69a)', buffer: 'fieldGradient', includeByDefault: true },
+    { key: 'bornInfeld',    label: 'Born-Infeld', color: 'var(--legend-bi,             #ef5350)', buffer: 'bornInfeld',    includeByDefault: true },
+    { key: 'coupling',      label: 'Coupling',    color: 'var(--legend-coupling,       #fb8c00)', buffer: 'coupling',      includeByDefault: true },
+    { key: 'velocity',      label: 'Velocity',    color: 'var(--legend-velocity,       #fdd835)', buffer: 'velocity',      includeByDefault: true },
+    { key: 'gauss',         label: 'Gauss',       color: 'var(--legend-gauss,          #42a5f5)', buffer: 'gauss',         includeByDefault: true },
+    { key: 'dissipation',   label: 'Dissipation', color: 'var(--legend-dissipation,    #78909c)', buffer: 'dissipation',   includeByDefault: true },
 ];
 
 export const actionRows = [

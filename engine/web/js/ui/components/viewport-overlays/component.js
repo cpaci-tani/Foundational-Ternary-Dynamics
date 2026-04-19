@@ -17,7 +17,7 @@
  *      and re-append it — this destroys and recreates the compositor layer.
  */
 
-import { createScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js?v=2';
+import { createScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js';
 import { createScale1OverlayTemplate } from '../../../scales/scale1/ui/overlays/template.js';
 import { createScale2OverlayTemplate, createScale2LegendTemplate } from '../../../scales/scale2/ui/overlays/template.js';
 import { createScale3OverlayTemplate, createScale3LegendTemplate } from '../../../scales/scale3/ui/overlays/template.js';

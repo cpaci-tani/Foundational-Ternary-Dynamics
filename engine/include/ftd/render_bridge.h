@@ -76,6 +76,37 @@ struct EnergyAudit {
     double chirality_total = 0.0;  // sum chi (chirality density)
 };
 
+/**
+ * EnergyLedger — per-tick conservation bookkeeping.
+ *
+ * Tracks total energy tick-over-tick so tests can assert:
+ *   - With damping OFF:  |ΔE / E| < epsilon           (strict conservation)
+ *   - With damping ON:   |ΔE / E + γ| < epsilon       (expected dissipation rate)
+ *
+ * Populated by RenderBridge::update_energy_ledger() at the end of each
+ * tick. Read via RenderBridge::energy_ledger(). Kept separate from
+ * EnergyAudit (which is a one-shot snapshot) to avoid muddling the
+ * "current state" and "flow between ticks" concepts.
+ *
+ * Epistemic purpose: addresses the long-standing gap that long engine
+ * runs drift by an unknown amount with no assertion. Tests can now ratchet
+ * on drift_per_tick and refuse to land regressions.
+ */
+struct EnergyLedger {
+    int    tick_prev = -1;           // tick number of the previous snapshot
+    double E_prev    = 0.0;          // total energy at previous tick
+    double E_curr    = 0.0;          // total energy at current tick
+    double dE_dt     = 0.0;          // (E_curr − E_prev) / dt
+    double drift_frac = 0.0;         // (E_curr − E_prev) / max(|E_prev|, ε)
+    double expected_rate = 0.0;      // −DAMPING when damping on, 0 otherwise
+    double residual  = 0.0;          // drift_frac − expected_rate (conservation violation)
+
+    // Running accumulators over the whole sim (useful for test harnesses):
+    double cumulative_injection = 0.0;  // self-field + manifestation input
+    double cumulative_dissipation = 0.0; // damping loss
+    double max_residual_seen = 0.0;     // worst-case |residual| across run
+};
+
 // EM field decomposition at a single site
 // E = -∂J/∂t ≈ -wave_vel (leapfrog momentum variable)
 // B = ∇×J (curl of flux field)
@@ -172,6 +203,24 @@ public:
     // Rigorous energy breakdown + Gauss constraint audit
     EnergyAudit energy_audit() const;
 
+    // Per-tick conservation bookkeeping. `update_energy_ledger()` is
+    // called automatically at the end of tick() on BOTH paths:
+    //   - CPU: sums are computed directly from voxel state.
+    //   - GPU: gpu_sync_to_host() runs first (downloads the device
+    //          voxels), then the same host-side sum executes.
+    //
+    // Cost on GPU: one PCIe download per tick (~3 MB at L=64,
+    // sub-ms on modern hardware). If ever a bottleneck, a device-side
+    // reduction kernel returning (E_field, E_wave, E_kin) as three
+    // scalars would eliminate the download — stub comment is in
+    // cuda/gpu_engine.cu near energy_audit().
+    //
+    // Tests assert on `bridge.energy_ledger().residual` — expected
+    // = −DAMPING when damping ON, 0 otherwise — and refuse regressions.
+    // See EnergyLedger docstring above for the conservation formulae.
+    const EnergyLedger& energy_ledger() const { return energy_ledger_; }
+    void update_energy_ledger();
+
     // Inject a localized flux source (for testing)
     void inject_flux(int x, int y, int z, const Vec3& flux_val);
 
@@ -233,6 +282,17 @@ private:
     void solve_coulomb_poisson(); // SOR Poisson solver for Coulomb potential
     void solve_latency_poisson(); // SOR Poisson solver for gravitational latency field
 
+    // Tick sub-phases extracted in the 2026-04-17 callstack audit (F5)
+    // so they're callable from both the CPU path (inline in tick()) and
+    // the GPU path (post-sync fall-through, e.g. proper-time).
+    void weak_transmutation_cpu();              // Rule 6: stress-driven polarity flip
+    void accumulate_proper_time();              // Rule 8: dτ/dt = √(f²-v²)/√f with f = 1-L²
+
+    // CPU ports of GPU-only physics (F2, callstack audit 2026-04-17).
+    // Default-OFF toggles that previously ran silently on CPU.
+    void pair_production_cpu();                 // Rule 2b: correlated ±1 pairs from high-|J| void
+    void triad_binding_cpu();                   // Rule 7:  lock 3 same-sign compact triads
+
     // Dual-substrate helpers
     void sync_observable();                 // Set flux = flux_L + flux_R for all voxels
 
@@ -255,6 +315,8 @@ private:
     std::vector<double> phi_;    // Poisson potential for Gauss projection
     std::vector<double> phi_coulomb_;  // Coulomb potential (warm-started between ticks)
     std::vector<double> phi_latency_;  // Latency (gravitational) potential (warm-started)
+    EnergyLedger energy_ledger_;  // per-tick conservation drift, populated by update_energy_ledger()
+    mutable bool cpu_warnings_emitted_ = false;  // F2 callstack audit: GPU-only-toggle warning emitted flag
     std::vector<uint8_t> moved_; // Per-tick flag: prevent double-processing in phase_movement
     std::vector<uint8_t> near_particle_; // Phase D: selective damping mask (1 = near particle)
     std::vector<double> near_accel_;     // Phase D: max accel_mag of nearby particles (for Larmor)

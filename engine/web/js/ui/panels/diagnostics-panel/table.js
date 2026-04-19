@@ -11,7 +11,7 @@
  */
 
 import { Sparkline } from '../../charts/sparkline.js';
-import { formatValue } from './formatters.js?v=2';
+import { formatValue } from './formatters.js';
 
 const DASH = '\u2014';
 

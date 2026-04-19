@@ -245,6 +245,16 @@ function wireFluxVolume(ctx, api) {
             ctx.viewport.setFluxLatticeSpacing?.(v);
         });
     }
+
+    const wireframeBrightnessSlider = getEl('wireframe-brightness');
+    const wireframeBrightnessVal = getEl('wireframe-brightness-val');
+    if (wireframeBrightnessSlider && wireframeBrightnessVal) {
+        wireframeBrightnessSlider.addEventListener('input', () => {
+            const v = parseFloat(wireframeBrightnessSlider.value);
+            wireframeBrightnessVal.textContent = v.toFixed(2);
+            ctx.viewport.setWireframeBrightness?.(v);
+        });
+    }
 }
 
 /**

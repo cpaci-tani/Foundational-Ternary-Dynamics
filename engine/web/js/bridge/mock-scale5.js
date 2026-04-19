@@ -13,7 +13,13 @@
  * scaled so v_circular ~ O(1) for visual dynamics.
  */
 
-import { G_N, OMEGA_LAMBDA, OMEGA_MATTER } from '../constants.js';
+import { G_N, OMEGA_LAMBDA, OMEGA_MATTER, C_SPEED } from '../constants.js';
+
+// Lattice-unit cosmology and stellar-structure constants [IMPOSED].
+// Values are tuned for web-visible dynamics; not derived from the ontic chain.
+const H0_LATTICE = 0.001;            // Hubble parameter in lattice units
+const M_CHANDRA_LATTICE = 70;        // Chandrasekhar limit in lattice mass units (~1.4 Msun)
+const M_TOV_LATTICE = 150;           // Tolman-Oppenheimer-Volkoff limit (~3 Msun)
 
 // Fixed softening per body type (Gadget-2 convention: constant, energy-conserving)
 // BH/Quasar:       tiny — point-like, dominates core
@@ -49,7 +55,7 @@ export class CosmicMockBridge {
         this._dt = 0.01;
         this._a = 1.0;
         this._adot = 0.0;
-        this._H0 = 0.001;
+        this._H0 = H0_LATTICE;
         this._boxSize = 200;
         this._softening = 5.0; // base softening (used as fallback)
         this._gwEvents = [];
@@ -1527,8 +1533,8 @@ export class CosmicMockBridge {
         // Stars burn fuel over time. When fuel runs out, they die.
         // Fuel burn rate ~ luminosity (L ~ M^3.5), so massive stars die fast.
         if (this._stellarEvolution) {
-            const M_chandrasekhar = 70;  // ~1.4 solar masses in lattice units
-            const M_tov = 150;           // ~3 solar masses (Tolman-Oppenheimer-Volkoff)
+            const M_chandrasekhar = M_CHANDRA_LATTICE;  // ~1.4 solar masses in lattice units
+            const M_tov = M_TOV_LATTICE;                // ~3 solar masses (Tolman-Oppenheimer-Volkoff)
             const newEjecta = [];
 
             for (const b of this._bodies) {
@@ -1695,7 +1701,8 @@ export class CosmicMockBridge {
     }
 
     _enforceSpeedLimit() {
-        const c2 = 1.0 / 3.0;
+        // Lattice speed of light: c = 1/sqrt(3) from CFL stability.
+        const c2 = C_SPEED * C_SPEED;
         for (const b of this._bodies) {
             const v2 = b.vx*b.vx + b.vy*b.vy + b.vz*b.vz;
             if (v2 > c2) {

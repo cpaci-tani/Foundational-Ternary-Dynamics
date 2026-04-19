@@ -42,6 +42,14 @@ export class MemoryRecorder {
         const snap = scale0Caps?.getScale0Snapshot?.();
         if (!snap) return;
         const tick = snap.tick;
+        // Tick regression (scenario reset, Clear Field, engine reseed) — the
+        // previously-captured snapshots belong to a different run and their
+        // tick numbers will skew the scrub bar's fraction→tick mapping.
+        // Wipe the buffer so we re-anchor on the fresh scenario at tick 0.
+        if (tick < this._lastSampledTick) {
+            this.buffer.clear();
+            this._lastSampledTick = -1;
+        }
         if (tick - this._lastSampledTick < this.sampleEveryTicks) {
             this._decayPass(tick);
             return;

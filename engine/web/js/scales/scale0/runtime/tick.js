@@ -4,6 +4,13 @@ export function advanceSimulation(ctx, state) {
     const latticeSize = ctx.bridge.latticeSize || 32;
     // Global pause kills everything — no tick advance, no upload, no flux mock.
     if (!ctx.running) return latticeSize;
+    // User is scrubbing — freeze physics so the snapshot loaded by
+    // hydrateToTick stays put until scrubEnd / resumeLive.
+    if (state.scrubbing) return latticeSize;
+    // A render is fast-forwarding snapshots into the clip buffer — it owns
+    // bridge.tick() during that time. Letting the animate loop also tick
+    // would double-advance and corrupt both the clip and the live sim.
+    if (state.rendering) return latticeSize;
 
     const wholeTicks = state.tickAccumulator.accumulate(ctx.ticksPerFrame);
     const maxTicksPerFrame = latticeSize > 96 ? 1 : (latticeSize > 48 ? 1 : (latticeSize > 32 ? 2 : wholeTicks));
@@ -11,7 +18,11 @@ export function advanceSimulation(ctx, state) {
 
     const mainScale0 = ctx.bridge.capabilities.scale0;
     const mockScale0 = state.fluxMock?.capabilities?.scale0 || null;
-    const tickMock = !!(mockScale0 && (state.useFluxMock || state.fieldFlags.showDarkMatterHalo || state.fieldFlags.showGenesisIsosurface));
+    // Only tick the mock bridge when it IS the physics source. Merely
+    // enabling a derived-overlay (darkMatterHalo, genesisIsosurface) used to
+    // start the mock's tick loop as a side effect — that made the scene
+    // "tick on toggle". Overlays now sample whatever state the mock is in.
+    const tickMock = !!(mockScale0 && state.useFluxMock);
 
     // Three-level pause for Scale 0:
     //

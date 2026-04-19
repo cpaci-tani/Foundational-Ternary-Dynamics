@@ -52,7 +52,28 @@ export const SCALE0_SCENARIOS = [
     makeScenario('SM Seeds (epistemic-tagged)', 's0-seed-photon', 'Photon seed', ['seed'], '[CONJECTURE]'),
     makeScenario('SM Seeds (epistemic-tagged)', 's0-seed-proton-candidate', 'Proton candidate (3-cluster)', ['seed'], '[CONJECTURE]'),
     makeScenario('Elementary Particles', 's0-seed-electron-l3', 'Electron (flux-dressed)', ['seed'], '[CONJECTURE]'),
+    makeScenario('Elementary Particles', 's0-seed-muon', 'Muon (2nd-gen lepton, m_\u03bc/m_e=207)', ['seed'], '[CONJECTURE]'),
+    makeScenario('Elementary Particles', 's0-seed-tau', 'Tau (3rd-gen lepton, m_\u03c4/m_e=3477)', ['seed'], '[CONJECTURE]'),
     makeScenario('Elementary Particles', 's0-seed-positron', 'Positron', ['seed'], '[CONJECTURE]'),
+
+    // LHC Standard Model — quark flavours (2026-04-17)
+    makeScenario('SM Quarks', 's0-seed-up-quark', 'Up quark (u, 1st gen, +2/3)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Quarks', 's0-seed-down-quark', 'Down quark (d, 1st gen, \u22121/3)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Quarks', 's0-seed-strange-quark', 'Strange quark (s, 2nd gen)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Quarks', 's0-seed-charm-quark', 'Charm quark (c, 2nd gen, m\u22481.27 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Quarks', 's0-seed-bottom-quark', 'Bottom quark (b, 3rd gen, m\u22484.2 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Quarks', 's0-seed-top-quark', 'Top quark (t, 3rd gen, m\u2248v_Higgs)', ['seed', 'sm'], '[CONJECTURE]'),
+
+    // LHC Standard Model — gauge + Higgs (2026-04-17)
+    makeScenario('SM Bosons', 's0-seed-higgs-boson', 'Higgs boson (H, m\u2248125 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Bosons', 's0-seed-higgs-field', 'Higgs field vacuum (VEV background)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Bosons', 's0-seed-w-boson', 'W boson (W\u00b1, m\u224880.4 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Bosons', 's0-seed-z-boson', 'Z boson (Z\u2070, m=91.19 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Bosons', 's0-seed-gluon', 'Gluon (massless, colored)', ['seed', 'sm'], '[CONJECTURE]'),
+
+    // LHC Standard Model — processes (2026-04-17)
+    makeScenario('SM Processes', 's0-seed-beta-decay', 'Beta decay (n \u2192 p + e\u207b + \u03bd\u0304, dynamic)', ['seed', 'sm', 'process'], '[CONJECTURE]'),
+    makeScenario('SM Processes', 's0-seed-ee-annihilation', 'e\u207a e\u207b annihilation (collision \u2192 flux burst)', ['seed', 'sm', 'process'], '[CONJECTURE]'),
     makeScenario('Elementary Particles', 's0-seed-neutrino', 'Neutrino (chiral)', ['seed'], '[CONJECTURE]'),
     makeScenario('Elementary Particles', 's0-seed-quark', 'Quark (colored)', ['seed'], '[CONJECTURE]'),
     makeScenario('Elementary Particles', 's0-seed-antiquark', 'Antiquark', ['seed'], '[CONJECTURE]'),

@@ -7,8 +7,8 @@
  */
 
 import { ALPHA, G_N } from './constants.js';
+import { AE_K_COULOMB } from './atomic-props.js';
 
-const AE_K_COULOMB = 2.0;  // must match wasm-bridge-dag.js
 const FOUR_PI = 4.0 * Math.PI;
 
 // ── Grid Generation ──────────────────────────────────────────────────

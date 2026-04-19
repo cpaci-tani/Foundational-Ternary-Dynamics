@@ -8,32 +8,14 @@
  */
 
 import { getById as catalogGetById } from './particle-catalog.js';
-import { ALPHA, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON, R_BOHR, N_BASE, G_STAR, VARPI, N_C, B_3, N_EFF } from './constants.js';
+import { ALPHA, ALPHA_EFT, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON, R_BOHR, N_BASE, G_STAR, VARPI, N_C, B_3, N_EFF } from './constants.js';
+import {
+    AE_EPS_BASE, AE_K_COULOMB, AE_K_BOND, AE_SPEED_MAX,
+    AE_H_BOND_EPS, AE_K_ANGLE, AE_THERMOSTAT_TAU, AE_CHI_TABLE,
+} from './atomic-props.js';
 import { cpkColor, defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from './elements.js';
 import { debugLog } from './core/log.js';
 import { insideBoundary, reflectIntoBoundary } from './bridge/boundary.js';
-
-// ── Atom property helper (simulation units: Bohr-scaled) ──────────
-// C++ engine uses Planck units; JS MockBridge uses "simulation units"
-// where length = Bohr radius, mass = AMU, energy = tuned for visible
-// web dynamics. When WASM AtomEngine is available, a scale conversion
-// layer bridges the two unit systems.
-//
-// Key scales for hydrogen (Z=1):
-//   radius ≈ 1.0, sigma ≈ 4.0, epsilon ≈ 0.005, mass ≈ 1.0
-//   LJ equilibrium at r ≈ 4.49
-//   Bond formation threshold: 1.2 × sigma ≈ 4.8
-const AE_EPS_BASE = 0.005;  // LJ well depth for Z=1 (tuned for visible dynamics)
-const AE_K_COULOMB = 2.0;    // Ionic coupling (qualitatively correct Coulomb >> vdW)
-const AE_K_BOND = 50.0;   // Bond spring stiffness multiplier
-const AE_SPEED_MAX = 10.0;   // Speed limit in simulation units
-const AE_H_BOND_EPS    = 0.001;  // H-bond LJ 10-12 well depth (sim units; ~1/5 covalent)
-const AE_K_ANGLE        = 0.05;   // VSEPR angle strain spring constant (sim units)
-const AE_THERMOSTAT_TAU = 10.0;   // Berendsen coupling timescale (in dt units)
-
-// Pauling electronegativity table (Z=0..18), mirrors C++ atom_engine.h:136-148
-const AE_CHI_TABLE = [0, 2.20, 0, 0.98, 1.57, 2.04, 2.55, 3.04, 3.44, 3.98,
-                      0, 0.93, 1.31, 1.61, 1.90, 2.19, 2.58, 3.16, 0.0];
 
 /**
  * Valence electron count by Z (main-group elements).
@@ -119,6 +101,7 @@ export class MockBridge {
         this._pdPositions = null;
         this._pdColors = null;
         this._pdSizes = null;
+        this._pdVelocities = null;
 
         // Per-force decomposition arrays (accumulated in _computePairwiseForces)
         this._forceEM = [];       // per-particle EM force {x,y,z}
@@ -127,6 +110,11 @@ export class MockBridge {
 
         // Cached energy sums — avoids redundant O(L^3) loops across getDiagnostics/getEnergyAudit/getLagrangian
         this._energyCacheTick = -1;
+        // Cached latency-proxy lattice (|J|²-derived L(x) for Kretschmann +
+        // horizon samplers). Rebuilt lazily per tick; invalidated explicitly
+        // on reset(), scrub (setScale0Tick), and flux/wave buffer writes.
+        this._latencyProxy = null;
+        this._latencyProxyTick = -1;
         this._cachedFieldEnergy = 0;
         this._cachedWaveEnergy = 0;
         this._cachedFluxMag = 0;
@@ -279,7 +267,9 @@ export class MockBridge {
         const doGravity = this._toggles.gravity;
         const doForces = this._toggles.forces;
         const soft = 1.0; // softening length
-        const alpha4pi = ALPHA / (4 * Math.PI);
+        // Coulomb prefactor: ALPHA = G_C^2 (EFT-derived; see constants.js).
+        // Two vertices (source + probe) each contribute G_C, so alpha = G_C*G_C.
+        const alpha4pi = ALPHA_EFT / (4 * Math.PI);
         const gn = this._params.gn;
         const maxV = C_SPEED * 0.3;
 
@@ -525,14 +515,22 @@ export class MockBridge {
         if (!this._fluxJ || !buf || buf.length !== this._fluxJ.length) return;
         this._fluxJ.set(buf);
         this._energyCacheTick = -1;
+        // Flux changed → derived per-tick caches (latency proxy, magnitude
+        // cache) are now stale even though _tick is unchanged.
+        this._latencyProxyTick = -1;
     }
     setScale0WaveBuffer(buf) {
         if (!this._fluxWV || !buf || buf.length !== this._fluxWV.length) return;
         this._fluxWV.set(buf);
         this._energyCacheTick = -1;
+        this._latencyProxyTick = -1;
     }
     setScale0Tick(t) {
         if (typeof t === 'number' && isFinite(t)) this._tick = t | 0;
+        // Scrub hydration teleports _tick; every per-tick cache is now
+        // definitionally stale. Invalidate them so the next frame rebuilds.
+        this._energyCacheTick = -1;
+        this._latencyProxyTick = -1;
     }
     setScale0ParticleList(list) {
         if (Array.isArray(list)) this._particles = list.map((p) => ({ ...p }));
@@ -557,6 +555,11 @@ export class MockBridge {
         this._forceGravity = [];
         this._forceStrong = [];
         this._energyCacheTick = -1;
+        // Latency proxy is a derived per-tick cache; invalidate on reset so
+        // a post-reset scenario load can't accidentally serve the prior
+        // scenario's proxy when both happen to sit at _tick === 0.
+        this._latencyProxy = null;
+        this._latencyProxyTick = -1;
         this._params = { kb: K_B, gn: G_N, damping: DAMPING };
         // Reset toggles to defaults (must match constructor and config/toggles.js)
         this._toggles = {
@@ -649,10 +652,17 @@ export class MockBridge {
             this._pdPositions = new Float32Array(this._pdBufCap * 3);
             this._pdColors = new Float32Array(this._pdBufCap * 3);
             this._pdSizes = new Float32Array(this._pdBufCap);
+            this._pdVelocities = new Float32Array(this._pdBufCap * 3);
+        }
+        if (!this._pdVelocities || this._pdVelocities.length < this._pdBufCap * 3) {
+            // Back-fill for older mocks where the capacity grew before this
+            // field existed — keeps the buffer in lockstep with _pdBufCap.
+            this._pdVelocities = new Float32Array(this._pdBufCap * 3);
         }
         const positions = this._pdPositions;
         const colors = this._pdColors;
         const sizes = this._pdSizes;
+        const velocities = this._pdVelocities;
         // Only render manifested particles (+1, -1) and high-flux void sites.
         // Skip low-density void particles — they cause white grid artifacts
         // when stacked along camera axes with additive blending.
@@ -669,6 +679,13 @@ export class MockBridge {
             positions[outCount * 3] = p.x + 0.5;
             positions[outCount * 3 + 1] = p.y + 0.5;
             positions[outCount * 3 + 2] = p.z + 0.5;
+            // Expose velocities so the Kinetic-energy overlay and any other
+            // velocity-aware visualizer can read ½|v|² without poking the
+            // particle array directly. Fall back to 0 for legacy particles
+            // that predate vx/vy/vz (the `|| 0` handles undefined/null/NaN).
+            velocities[outCount * 3]     = Number.isFinite(p.vx) ? p.vx : 0;
+            velocities[outCount * 3 + 1] = Number.isFinite(p.vy) ? p.vy : 0;
+            velocities[outCount * 3 + 2] = Number.isFinite(p.vz) ? p.vz : 0;
             if (p.state === 1) {
                 colors[outCount * 3] = 0.4; colors[outCount * 3 + 1] = 0.87; colors[outCount * 3 + 2] = 0.5;
                 sizes[outCount] = mSize;
@@ -682,7 +699,7 @@ export class MockBridge {
             }
             outCount++;
         }
-        return { positions, colors, sizes, count: outCount };
+        return { positions, colors, sizes, velocities, count: outCount };
     }
 
     getDiagnostics() {
@@ -783,8 +800,8 @@ export class MockBridge {
 
     getConstants() {
         return {
-            ALPHA, ALPHA_INV: 1.0 / ALPHA, G_STAR, K_B, K_GENESIS,
-            G_C: Math.sqrt(ALPHA), G_N, DAMPING, C_SPEED,
+            ALPHA, ALPHA_INV: 1.0 / ALPHA, ALPHA_EFT, G_STAR, K_B, K_GENESIS,
+            G_C, G_N, DAMPING, C_SPEED,
             N_C, B3: B_3, N_BASE, N_EFF, VARPI
         };
     }
@@ -898,6 +915,15 @@ export class MockBridge {
     _tickFlux() {
         if (!this._fluxJ) return;
         const N = this.latticeSize;
+        // CFL stability: c * dt <= dx = 1. C_SPEED = 1/sqrt(3) so dt <= sqrt(3).
+        // Violating CFL causes silent exponential blow-up — assert early.
+        const dt = this._dt ?? this._params?.dt ?? 1.0;
+        if (dt * C_SPEED > 1.0 + 1e-9) {
+            if (!this._cflWarned) {
+                console.warn(`[FTD] CFL violation: dt*c=${(dt*C_SPEED).toFixed(4)} > 1. Reduce dt (max = sqrt(3) ~= 1.732).`);
+                this._cflWarned = true;
+            }
+        }
         const c2 = C_SPEED * C_SPEED;
         const damp = this._toggles.damping ? (1.0 - this._params.damping) : 1.0;
         const J = this._fluxJ;
@@ -1443,6 +1469,92 @@ export class MockBridge {
         return { positions, values, count };
     }
 
+    /**
+     * |∇×J|(x) sampled on the stride grid. Central differences on the
+     * full engine flux field; skips voxels whose curl is below numerical
+     * noise so the overlay stays sparse in flat regions.
+     *
+     * Returns { positions, values, count } — same shape as getDivJSampled.
+     */
+    getVorticitySampled(stride = 2) {
+        if (!this._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+        const N = this.latticeSize;
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = new Float32Array(maxPts * 3);
+        const values = new Float32Array(maxPts);
+        const J = this._fluxJ;
+        let count = 0;
+        for (let z = 0; z < N; z += stride) {
+            for (let y = 0; y < N; y += stride) {
+                for (let x = 0; x < N; x += stride) {
+                    const xp = this._fluxIdx(x + 1, y, z), xm = this._fluxIdx(x - 1, y, z);
+                    const yp = this._fluxIdx(x, y + 1, z), ym = this._fluxIdx(x, y - 1, z);
+                    const zp = this._fluxIdx(x, y, z + 1), zm = this._fluxIdx(x, y, z - 1);
+                    // (∂_y J_z − ∂_z J_y,   ∂_z J_x − ∂_x J_z,   ∂_x J_y − ∂_y J_x)
+                    const cx = (J[yp * 3 + 2] - J[ym * 3 + 2]) / 2
+                             - (J[zp * 3 + 1] - J[zm * 3 + 1]) / 2;
+                    const cy = (J[zp * 3]     - J[zm * 3])     / 2
+                             - (J[xp * 3 + 2] - J[xm * 3 + 2]) / 2;
+                    const cz = (J[xp * 3 + 1] - J[xm * 3 + 1]) / 2
+                             - (J[yp * 3]     - J[ym * 3])     / 2;
+                    const mag = Math.sqrt(cx * cx + cy * cy + cz * cz);
+                    if (mag < 1e-15) continue;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
+                    values[count] = mag;
+                    count++;
+                }
+            }
+        }
+        return { positions, values, count };
+    }
+
+    // Curl of the flux field: W(x) = ∇×J. Pseudovector (parity-odd),
+    // nonzero wherever J has rotational structure. Used as the physical
+    // basis for the WEAK FORCE overlay — the weak interaction is parity-
+    // violating, so its natural vector proxy is a pseudovector of the
+    // underlying field, not the field itself. The older weak visual used
+    // `J × DUAL_DELTA` (a scaled copy of J), which for any polarized
+    // scenario (e.g. Flux Pulse has J = (Gaussian, 0, 0)) pointed every
+    // arrow the same way — visually misleading and physically wrong.
+    // Returns the same { positions, vectors, count } shape as the other
+    // sampled vector fields, emitted at voxel-centre world coords. Skips
+    // boundary voxels (periodic-wrap stencil would manufacture fake curl).
+    getCurlJSampled(stride = 2) {
+        if (!this._fluxJ) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
+        const N = this.latticeSize;
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = new Float32Array(maxPts * 3);
+        const vectors = new Float32Array(maxPts * 3);
+        const J = this._fluxJ;
+        let count = 0;
+        for (let z = 1; z < N - 1; z += stride) {
+            for (let y = 1; y < N - 1; y += stride) {
+                for (let x = 1; x < N - 1; x += stride) {
+                    const xp = this._fluxIdx(x + 1, y, z), xm = this._fluxIdx(x - 1, y, z);
+                    const yp = this._fluxIdx(x, y + 1, z), ym = this._fluxIdx(x, y - 1, z);
+                    const zp = this._fluxIdx(x, y, z + 1), zm = this._fluxIdx(x, y, z - 1);
+                    // Central-difference curl: (∂_y J_z − ∂_z J_y, …).
+                    const cx = (J[yp * 3 + 2] - J[ym * 3 + 2]) * 0.5
+                             - (J[zp * 3 + 1] - J[zm * 3 + 1]) * 0.5;
+                    const cy = (J[zp * 3]     - J[zm * 3])     * 0.5
+                             - (J[xp * 3 + 2] - J[xm * 3 + 2]) * 0.5;
+                    const cz = (J[xp * 3 + 1] - J[xm * 3 + 1]) * 0.5
+                             - (J[yp * 3]     - J[ym * 3])     * 0.5;
+                    const mag2 = cx * cx + cy * cy + cz * cz;
+                    if (mag2 < 1e-30) continue;
+                    positions[count * 3]     = x + 0.5;
+                    positions[count * 3 + 1] = y + 0.5;
+                    positions[count * 3 + 2] = z + 0.5;
+                    vectors[count * 3]     = cx;
+                    vectors[count * 3 + 1] = cy;
+                    vectors[count * 3 + 2] = cz;
+                    count++;
+                }
+            }
+        }
+        return { positions, vectors, count };
+    }
+
     getFluxVectorSampled(stride = 2) {
         if (!this._fluxJ) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = this.latticeSize;
@@ -1465,6 +1577,253 @@ export class MockBridge {
             }
         }
         return { positions, vectors, count };
+    }
+
+    // Helicity density h(x) = J(x) · (∇×J)(x).  Scalar, signed. Measures
+    // field-line linking — nonzero iff flow has both rotational and axial
+    // components (Beltrami flows, vortex tubes, current helices).
+    // Returns { positions, values, count } — same shape as divJ / vorticity.
+    getHelicitySampled(stride = 2) {
+        if (!this._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+        const N = this.latticeSize;
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = new Float32Array(maxPts * 3);
+        const values = new Float32Array(maxPts);
+        const J = this._fluxJ;
+        let count = 0;
+        // Skip one-voxel border: `_fluxIdx` wraps periodically, so at x=0 or
+        // x=N-1 the curl stencil pulls in values from the opposite wall and
+        // manufactures spurious helicity at the lattice faces. Physics is
+        // still periodic inside — this just keeps the VISUAL honest.
+        for (let z = 1; z < N - 1; z += stride) {
+            for (let y = 1; y < N - 1; y += stride) {
+                for (let x = 1; x < N - 1; x += stride) {
+                    const xp = this._fluxIdx(x + 1, y, z), xm = this._fluxIdx(x - 1, y, z);
+                    const yp = this._fluxIdx(x, y + 1, z), ym = this._fluxIdx(x, y - 1, z);
+                    const zp = this._fluxIdx(x, y, z + 1), zm = this._fluxIdx(x, y, z - 1);
+                    // Central-difference curl components.
+                    const cx = (J[yp * 3 + 2] - J[ym * 3 + 2]) / 2
+                             - (J[zp * 3 + 1] - J[zm * 3 + 1]) / 2;
+                    const cy = (J[zp * 3]     - J[zm * 3])     / 2
+                             - (J[xp * 3 + 2] - J[xm * 3 + 2]) / 2;
+                    const cz = (J[xp * 3 + 1] - J[xm * 3 + 1]) / 2
+                             - (J[yp * 3]     - J[ym * 3])     / 2;
+                    const idx = this._fluxIdx(x, y, z);
+                    const jx = J[idx * 3], jy = J[idx * 3 + 1], jz = J[idx * 3 + 2];
+                    const h = jx * cx + jy * cy + jz * cz;
+                    if (Math.abs(h) < 1e-15) continue;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
+                    values[count] = h;
+                    count++;
+                }
+            }
+        }
+        return { positions, values, count };
+    }
+
+    // Helper: build a lattice-wide latency-proxy array from |J|². The
+    // C++ engine's solve_latency_poisson() uses a Poisson-solved φ and
+    // sets `L = sqrt(clamp(|φ|, 0, 0.998))`. On the JS MockBridge we
+    // don't run the Poisson solver, so we use `|J|²` as the mass-density
+    // proxy — matches the C++ behaviour in the strong-field limit and
+    // keeps the Kretschmann / horizon overlays live on the web engine.
+    // Cached per-tick via _fluxJTick check.
+    _buildLatencyProxy() {
+        if (!this._fluxJ) return null;
+        const N = this.latticeSize;
+        const M = N * N * N;
+        // Size-check first — a lattice-resize between ticks would otherwise
+        // cause silent OOB writes into an undersized buffer (TypedArray drops
+        // them) and read zeros for every out-of-range voxel.
+        if (!this._latencyProxy || this._latencyProxy.length !== M) {
+            this._latencyProxy = new Float32Array(M);
+            this._latencyProxyTick = -1;   // force rebuild after resize
+        }
+        if (this._latencyProxyTick === this._tick) {
+            return this._latencyProxy;
+        }
+        const L = this._latencyProxy;
+        const J = this._fluxJ;
+        // First pass: compute |J|² and track the max for normalisation.
+        let maxRho = 1e-30;
+        for (let i = 0; i < M; i++) {
+            const jx = J[i*3], jy = J[i*3+1], jz = J[i*3+2];
+            const rho = jx*jx + jy*jy + jz*jz;
+            L[i] = rho;
+            if (rho > maxRho) maxRho = rho;
+        }
+        // Second pass: normalise and take sqrt with horizon clamp.
+        const inv = 1.0 / maxRho;
+        for (let i = 0; i < M; i++) {
+            const rn = Math.min(L[i] * inv, 0.998);
+            L[i] = Math.sqrt(rn);
+        }
+        this._latencyProxy = L;
+        this._latencyProxyTick = this._tick;
+        return L;
+    }
+
+    // Kretschmann-like curvature proxy K(x) = (∇²L)².  Uses the same
+    // 18-point Moore Laplacian (consistent with the wave-equation
+    // stencil) applied to the per-voxel latency proxy.  For a
+    // Schwarzschild-like well with L² ~ r_s/r, the proxy diverges at
+    // the centre like 1/r⁶ — same scaling as the true Kretschmann
+    // invariant, which is why it's a faithful visualisation proxy.
+    // [PROXY]: tagged in metadata.
+    getKretschmannSampled(stride = 2) {
+        const Lvox = this._buildLatencyProxy();
+        if (!Lvox) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+        const N = this.latticeSize;
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = new Float32Array(maxPts * 3);
+        const values = new Float32Array(maxPts);
+        let count = 0;
+        const INV3 = 1 / 3, INV6 = 1 / 6;
+        // Skip lattice boundary — `_fluxIdx` wraps, and a curvature proxy
+        // that reads across the periodic seam manufactures spurious spikes
+        // along the walls.
+        for (let z = 1; z < N - 1; z += stride) {
+            for (let y = 1; y < N - 1; y += stride) {
+                for (let x = 1; x < N - 1; x += stride) {
+                    const self = Lvox[this._fluxIdx(x, y, z)];
+                    let faceSum = 0, edgeSum = 0;
+                    faceSum += Lvox[this._fluxIdx(x+1, y, z)];
+                    faceSum += Lvox[this._fluxIdx(x-1, y, z)];
+                    faceSum += Lvox[this._fluxIdx(x, y+1, z)];
+                    faceSum += Lvox[this._fluxIdx(x, y-1, z)];
+                    faceSum += Lvox[this._fluxIdx(x, y, z+1)];
+                    faceSum += Lvox[this._fluxIdx(x, y, z-1)];
+                    edgeSum += Lvox[this._fluxIdx(x+1, y+1, z)];
+                    edgeSum += Lvox[this._fluxIdx(x+1, y-1, z)];
+                    edgeSum += Lvox[this._fluxIdx(x-1, y+1, z)];
+                    edgeSum += Lvox[this._fluxIdx(x-1, y-1, z)];
+                    edgeSum += Lvox[this._fluxIdx(x+1, y, z+1)];
+                    edgeSum += Lvox[this._fluxIdx(x+1, y, z-1)];
+                    edgeSum += Lvox[this._fluxIdx(x-1, y, z+1)];
+                    edgeSum += Lvox[this._fluxIdx(x-1, y, z-1)];
+                    edgeSum += Lvox[this._fluxIdx(x, y+1, z+1)];
+                    edgeSum += Lvox[this._fluxIdx(x, y+1, z-1)];
+                    edgeSum += Lvox[this._fluxIdx(x, y-1, z+1)];
+                    edgeSum += Lvox[this._fluxIdx(x, y-1, z-1)];
+                    const lap = INV3 * faceSum + INV6 * edgeSum - 4 * self;
+                    const K = lap * lap;
+                    if (K < 1e-18) continue;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
+                    values[count] = K;
+                    count++;
+                }
+            }
+        }
+        return { positions, values, count };
+    }
+
+    // Per-voxel latency scalar L(x) — uses the |J|² proxy described
+    // above.  Needed for the event-horizon overlay (thresholds L ≥ ~0.95)
+    // and for any downstream tool wanting to inspect the gravitational
+    // field directly rather than through Kretschmann or the Φ potential.
+    getLatencySampled(stride = 2) {
+        const Lvox = this._buildLatencyProxy();
+        if (!Lvox) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+        const N = this.latticeSize;
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = new Float32Array(maxPts * 3);
+        const values = new Float32Array(maxPts);
+        let count = 0;
+        for (let z = 0; z < N; z += stride) {
+            for (let y = 0; y < N; y += stride) {
+                for (let x = 0; x < N; x += stride) {
+                    const L = Lvox[this._fluxIdx(x, y, z)];
+                    if (L < 1e-6) continue;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
+                    values[count] = L;
+                    count++;
+                }
+            }
+        }
+        return { positions, values, count };
+    }
+
+    // Fisher information density F(x) = |∇ρ|² / ρ with ρ = |J|².
+    // For a classical/quantum probability density ρ, the Fisher information
+    // measures the intrinsic sharpness of the distribution. Localized modes
+    // (soliton cores, wave packets) show up as bright peaks because |∇ρ|² /
+    // ρ → diverges at the edge of a compact support. Uniform fields give 0.
+    // Returns { positions, values, count }.
+    getFisherSampled(stride = 2) {
+        if (!this._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+        const N = this.latticeSize;
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = new Float32Array(maxPts * 3);
+        const values = new Float32Array(maxPts);
+        const J = this._fluxJ;
+        const rhoAt = (xi, yi, zi) => {
+            const i = this._fluxIdx(xi, yi, zi);
+            const jx = J[i*3], jy = J[i*3+1], jz = J[i*3+2];
+            return jx*jx + jy*jy + jz*jz;
+        };
+        const eps = 1e-8;
+        let count = 0;
+        // Boundary skip for the same periodic-wrap reason as helicity /
+        // Kretschmann / coherence: gradient stencil at the wall is
+        // contaminated by the opposite face.
+        for (let z = 1; z < N - 1; z += stride) {
+            for (let y = 1; y < N - 1; y += stride) {
+                for (let x = 1; x < N - 1; x += stride) {
+                    const rho = rhoAt(x, y, z);
+                    if (rho < eps) continue;
+                    const dxr = (rhoAt(x+1, y, z) - rhoAt(x-1, y, z)) * 0.5;
+                    const dyr = (rhoAt(x, y+1, z) - rhoAt(x, y-1, z)) * 0.5;
+                    const dzr = (rhoAt(x, y, z+1) - rhoAt(x, y, z-1)) * 0.5;
+                    const F = (dxr*dxr + dyr*dyr + dzr*dzr) / rho;
+                    if (F < 1e-12) continue;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
+                    values[count] = F;
+                    count++;
+                }
+            }
+        }
+        return { positions, values, count };
+    }
+
+    // Dual-substrate coherence C(x) = (J · ∇×J) / (|J| · |∇×J|).
+    // Ranges [-1, +1]. Equals the cosine of the angle between J and its curl
+    // — a scale-free, dimensionless measure of Beltrami alignment. Right-
+    // handed helical flow → +1; left-handed → -1; orthogonal (no helicity)
+    // → 0. A true L/R Helmholtz decomposition is expensive, but this
+    // coherence captures the same "chirality sign density" in one pass.
+    // [PROXY]: see metadata.
+    getCoherenceSampled(stride = 2) {
+        if (!this._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+        const N = this.latticeSize;
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = new Float32Array(maxPts * 3);
+        const values = new Float32Array(maxPts);
+        const J = this._fluxJ;
+        const eps = 1e-10;
+        let count = 0;
+        // Skip boundary voxels (see helicity sampler comment).
+        for (let z = 1; z < N - 1; z += stride) {
+            for (let y = 1; y < N - 1; y += stride) {
+                for (let x = 1; x < N - 1; x += stride) {
+                    const xp = this._fluxIdx(x + 1, y, z), xm = this._fluxIdx(x - 1, y, z);
+                    const yp = this._fluxIdx(x, y + 1, z), ym = this._fluxIdx(x, y - 1, z);
+                    const zp = this._fluxIdx(x, y, z + 1), zm = this._fluxIdx(x, y, z - 1);
+                    const cx = (J[yp*3+2] - J[ym*3+2]) * 0.5 - (J[zp*3+1] - J[zm*3+1]) * 0.5;
+                    const cy = (J[zp*3]   - J[zm*3])   * 0.5 - (J[xp*3+2] - J[xm*3+2]) * 0.5;
+                    const cz = (J[xp*3+1] - J[xm*3+1]) * 0.5 - (J[yp*3]   - J[ym*3])   * 0.5;
+                    const idx = this._fluxIdx(x, y, z);
+                    const jx = J[idx*3], jy = J[idx*3+1], jz = J[idx*3+2];
+                    const jmag = Math.sqrt(jx*jx + jy*jy + jz*jz);
+                    const cmag = Math.sqrt(cx*cx + cy*cy + cz*cz);
+                    if (jmag < eps || cmag < eps) continue;
+                    const C = (jx*cx + jy*cy + jz*cz) / (jmag * cmag);
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
+                    values[count] = C;
+                    count++;
+                }
+            }
+        }
+        return { positions, values, count };
     }
 
     getForceFieldSampled(stride = 2) {
@@ -3772,7 +4131,6 @@ export class MockBridge {
         // entry AND grounding the configuration in an FTD theory doc.
         //
         // What is NOT here and why:
-        //   - Muon/tau     : [OPEN] — no spatial prescription
         //   - Quarks       : [IMPOSED] if present at all (SPEC_FTD §10.1)
         //   - W/Z          : [SELECTION] as operators, NOT configurations
         //   - Higgs        : is a phase-transition process, not a lump
@@ -3807,6 +4165,55 @@ export class MockBridge {
                         const val = envAmp * Math.exp(-r2 / (2 * envSigma * envSigma));
                         if (val < 0.001) continue;
                         // Radial INWARD (negative charge convention: J · r̂ < 0)
+                        this._injectFlux(x, y, z,
+                            -val * dx / r, -val * dy / r, -val * dz / r);
+                    }
+                    break;
+                }
+
+                case 's0-seed-muon':
+                case 's0-seed-tau': {
+                    // Heavy-lepton seeds (TRACKER §1.9, closed 2026-04-17).
+                    //
+                    // Same topology as the electron seed — unit s=−1 charge
+                    // at centre + radial-inward flux envelope at scale K_B.
+                    // The only visual difference is a small amplitude boost
+                    // to convey a higher rest-mass energy:
+                    //
+                    //   electron : K_B · 1.5   (reference)
+                    //   muon     : K_B · 1.8   (+20 %)
+                    //   tau      : K_B · 2.25  (+50 %)
+                    //
+                    // Amplitudes are chosen to stay below K_GENESIS (= 3·K_B)
+                    // so no spurious mass-genesis fires in neighbouring voxels.
+                    //
+                    // IMPORTANT — epistemic reality check:
+                    //   FTD's mass ratios (μ/e = 207, τ/e = 3477) are
+                    //   derived from framework integers and are [THEOREM].
+                    //   The LAGRANGIAN mass term encodes the rest-mass
+                    //   energy; it has no spatial form. The envelope you
+                    //   see here is a visualization [SELECTION], not a
+                    //   theory prescription. See S0_SEED_SCENARIO_METADATA
+                    //   in engine/web/js/config/scenarios.js for the full
+                    //   epistemic breakdown.
+                    const boost = (name === 's0-seed-tau') ? 2.25 : 1.80;
+                    this.injectParticle(mc, mc, mc, -1);
+                    const envR = Math.max(3, Math.floor(N / 6));
+                    const envSigma = envR / 2;
+                    const envAmp = K_B * boost;
+                    const envR2 = envR * envR;
+                    const eLo = Math.floor(midF) - envR;
+                    const eHi = Math.ceil(midF) + envR;
+                    for (let z = eLo; z <= eHi; z++)
+                    for (let y = eLo; y <= eHi; y++)
+                    for (let x = eLo; x <= eHi; x++) {
+                        const dx = x - midF, dy = y - midF, dz = z - midF;
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        if (r2 < 0.25 || r2 > envR2) continue;
+                        const r = Math.sqrt(r2);
+                        const val = envAmp * Math.exp(-r2 / (2 * envSigma * envSigma));
+                        if (val < 0.001) continue;
+                        // Radial INWARD (negative charge convention: J·r̂ < 0).
                         this._injectFlux(x, y, z,
                             -val * dx / r, -val * dy / r, -val * dz / r);
                     }
@@ -4040,6 +4447,255 @@ export class MockBridge {
                     break;
                 }
 
+                // ─────────────────────────────────────────────────────
+                // LHC Standard Model scenarios (added 2026-04-17)
+                // ─────────────────────────────────────────────────────
+                // Individual quark flavours — colored particles with
+                // generation-hierarchy amplitude scaling. Epistemically:
+                // all quark masses are [OPEN] in FTD (see TRACKER §4.1),
+                // so amplitudes here are visualisation cues, not physics.
+                case 's0-seed-up-quark':
+                case 's0-seed-down-quark':
+                case 's0-seed-strange-quark':
+                case 's0-seed-charm-quark':
+                case 's0-seed-bottom-quark':
+                case 's0-seed-top-quark': {
+                    // Color assignment: R=1, G=2, B=3. Same-generation
+                    // doublet (u/d, c/s, t/b) alternates colors to keep
+                    // the catalog visually distinct.
+                    let charge, color, ampBoost;
+                    switch (name) {
+                        case 's0-seed-up-quark':      charge=+1; color=1; ampBoost=0.5;  break;
+                        case 's0-seed-down-quark':    charge=-1; color=2; ampBoost=0.5;  break;
+                        case 's0-seed-strange-quark': charge=-1; color=3; ampBoost=0.7;  break;
+                        case 's0-seed-charm-quark':   charge=+1; color=1; ampBoost=1.0;  break;
+                        case 's0-seed-bottom-quark':  charge=-1; color=2; ampBoost=1.4;  break;
+                        case 's0-seed-top-quark':     charge=+1; color=3; ampBoost=2.5;  break;
+                    }
+                    this.injectParticle(mc, mc, mc, charge);
+                    const lastQ = this._particles[this._particles.length - 1];
+                    lastQ.color = color;
+                    lastQ.spin = (charge > 0) ? +1 : -1;
+
+                    // Narrow Gaussian envelope — smaller than a lepton's
+                    // to suggest the "point-like" quark character. Amplitude
+                    // stays below K_GENESIS so no spurious genesis.
+                    const qSig = 1.5, qR = 4, qAmp = K_B * ampBoost;
+                    for (let dz=-qR; dz<=qR; dz++)
+                    for (let dy=-qR; dy<=qR; dy++)
+                    for (let dx=-qR; dx<=qR; dx++) {
+                        const r2 = dx*dx + dy*dy + dz*dz;
+                        if (r2 === 0 || r2 > qR*qR) continue;
+                        const r = Math.sqrt(r2);
+                        const g = qAmp * Math.exp(-r2 / (2 * qSig * qSig));
+                        if (g < 1e-3) continue;
+                        const sign = (charge > 0) ? 1 : -1;
+                        // Bias along the color axis so dominant-flux-axis
+                        // labelling recovers `color` consistently.
+                        const axisBias = [0, 0, 0];
+                        axisBias[color - 1] = 0.5;
+                        this._injectFlux(mc+dx, mc+dy, mc+dz,
+                            sign*g*(dx/r + axisBias[0]),
+                            sign*g*(dy/r + axisBias[1]),
+                            sign*g*(dz/r + axisBias[2]));
+                    }
+                    break;
+                }
+
+                // Electroweak gauge bosons + Higgs + gluon.
+                case 's0-seed-higgs-boson': {
+                    // Scalar (spin=0), neutral: void core + radially-
+                    // symmetric isotropic flux envelope. Amplitude set
+                    // by the FTD m_H/m_e = N_eff/α² ratio, scaled to K_B.
+                    const hSig = 2.0, hR = 6, hAmp = K_B * 1.2;
+                    // No injectParticle at centre — Higgs is the FIELD,
+                    // not a state-manifested particle. Represented by a
+                    // localised scalar flux lump.
+                    for (let dz=-hR; dz<=hR; dz++)
+                    for (let dy=-hR; dy<=hR; dy++)
+                    for (let dx=-hR; dx<=hR; dx++) {
+                        const r2 = dx*dx + dy*dy + dz*dz;
+                        if (r2 === 0 || r2 > hR*hR) continue;
+                        const g = hAmp * Math.exp(-r2 / (2 * hSig * hSig));
+                        if (g < 1e-3) continue;
+                        // Isotropic: equal Jx/Jy/Jz, no preferred axis.
+                        const iso = g / Math.sqrt(3);
+                        this._injectFlux(mc+dx, mc+dy, mc+dz, iso, iso, iso);
+                    }
+                    break;
+                }
+
+                case 's0-seed-higgs-field': {
+                    // Uniform low-amplitude flux background representing
+                    // the VEV, with small random perturbations (thermal-
+                    // like fluctuations around equilibrium). Tunable by
+                    // amplitude; here we use a conservative value so
+                    // genesis threshold is never accidentally crossed.
+                    const vevAmp = K_B * 0.3;        // VEV baseline
+                    const noise  = K_B * 0.05;        // fluctuation scale
+                    for (let z=0; z<N; z++)
+                    for (let y=0; y<N; y++)
+                    for (let x=0; x<N; x++) {
+                        // Small deterministic perturbation so every tick
+                        // looks identical (reproducible) yet non-uniform.
+                        const sx = Math.sin(0.19*x + 0.23*y + 0.29*z);
+                        const sy = Math.sin(0.37*x + 0.13*y + 0.17*z);
+                        const sz = Math.sin(0.11*x + 0.31*y + 0.41*z);
+                        this._injectFlux(x, y, z,
+                            vevAmp + noise*sx,
+                            vevAmp + noise*sy,
+                            vevAmp + noise*sz);
+                    }
+                    break;
+                }
+
+                case 's0-seed-w-boson': {
+                    // Charged (s=+1) localised lump. Flux envelope
+                    // chirality-biased via L-axis dominance (use Jx
+                    // ahead of Jy/Jz to suggest left-handed coupling).
+                    this.injectParticle(mc, mc, mc, +1);
+                    const wLast = this._particles[this._particles.length - 1];
+                    wLast.spin = +1;
+                    const wSig = 1.8, wR = 5, wAmp = K_B * 1.6;
+                    for (let dz=-wR; dz<=wR; dz++)
+                    for (let dy=-wR; dy<=wR; dy++)
+                    for (let dx=-wR; dx<=wR; dx++) {
+                        const r2 = dx*dx + dy*dy + dz*dz;
+                        if (r2 === 0 || r2 > wR*wR) continue;
+                        const r = Math.sqrt(r2);
+                        const g = wAmp * Math.exp(-r2 / (2 * wSig * wSig));
+                        if (g < 1e-3) continue;
+                        // Chirality bias: +30% weight on Jx relative to transverse
+                        this._injectFlux(mc+dx, mc+dy, mc+dz,
+                            g*(1.3*dx/r),
+                            g*(dy/r),
+                            g*(dz/r));
+                    }
+                    break;
+                }
+
+                case 's0-seed-z-boson': {
+                    // Neutral (no state-manifested core) localised lump.
+                    // Balanced flux envelope with no chirality bias.
+                    const zSig = 2.0, zR = 6, zAmp = K_B * 1.8;
+                    for (let dz=-zR; dz<=zR; dz++)
+                    for (let dy=-zR; dy<=zR; dy++)
+                    for (let dx=-zR; dx<=zR; dx++) {
+                        const r2 = dx*dx + dy*dy + dz*dz;
+                        if (r2 === 0 || r2 > zR*zR) continue;
+                        const r = Math.sqrt(r2);
+                        const g = zAmp * Math.exp(-r2 / (2 * zSig * zSig));
+                        if (g < 1e-3) continue;
+                        // Radial-inward (bound field configuration).
+                        this._injectFlux(mc+dx, mc+dy, mc+dz,
+                            -g*dx/r, -g*dy/r, -g*dz/r);
+                    }
+                    break;
+                }
+
+                case 's0-seed-gluon': {
+                    // Massless transverse wave like the photon, but with
+                    // color charge encoded via axis dominance. Launched
+                    // at x ≈ N/4, propagating +x, J_y polarized with
+                    // color=G (y-axis dominant).
+                    const sigma = 3;
+                    const gAmp = K_B * 2;
+                    const startX = Math.max(4, Math.floor(N / 4));
+                    const halfR = 8;
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let dx = -halfR; dx <= halfR; dx++) {
+                        const x = startX + dx;
+                        if (x < 0 || x >= N) continue;
+                        const dy = y - midF, dz = z - midF;
+                        const r2 = dx*dx + dy*dy + dz*dz;
+                        const gg = gAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                        if (gg < 1e-6) continue;
+                        this._injectFlux(x, y, z, 0, gg, 0);      // J_y polarised
+                        this._injectWaveVel(x, y, z, gg, 0, 0);    // propagate +x
+                    }
+                    break;
+                }
+
+                // Process demos.
+                case 's0-seed-beta-decay': {
+                    // Neutron triad (2 negative + 1 positive) on an
+                    // equilateral triangle, with a pre-seeded electron
+                    // and neutrino nearby as the leptonic output of a
+                    // future weak transmutation event. Enable
+                    // weak_transmutation + dual_substrate toggles to see
+                    // polarity flips under stress.
+                    const bdR = Math.max(2, Math.floor(N/10));
+                    // Three-vertex neutron-ish triangle.
+                    for (let k = 0; k < 3; k++) {
+                        const ang = (2 * Math.PI * k) / 3;
+                        const bx = Math.round(mc + bdR * Math.cos(ang));
+                        const by = Math.round(mc + bdR * Math.sin(ang));
+                        const charge = (k === 0) ? +1 : -1;
+                        this.injectParticle(bx, by, mc, charge);
+                    }
+                    // Leptonic output preseeded, offset along +z so they
+                    // can be visually associated with the decay direction.
+                    const leptonR = Math.max(4, Math.floor(N/5));
+                    this.injectParticle(mc, mc, mc + leptonR, -1);      // electron
+                    // Neutrino-like: no manifested state, soft L/R flux
+                    const nuSig = 2, nuR = 4;
+                    for (let dz2=-nuR; dz2<=nuR; dz2++)
+                    for (let dy2=-nuR; dy2<=nuR; dy2++)
+                    for (let dx2=-nuR; dx2<=nuR; dx2++) {
+                        const r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
+                        if (r22 > nuR*nuR) continue;
+                        const g = K_B * 0.3 * Math.exp(-r22/(2*nuSig*nuSig));
+                        if (g < 1e-3) continue;
+                        this._injectFlux(mc+dx2, mc-leptonR+dy2, mc+dz2, g*0.55, g*0.45, 0);
+                    }
+                    // Hint at needing the weak toggle:
+                    this._toggles.weak_transmutation = true;
+                    this._toggles.dual_substrate = true;
+                    break;
+                }
+
+                case 's0-seed-ee-annihilation': {
+                    // Electron and positron on opposing faces of a
+                    // central axis, moving toward each other. The
+                    // collision resolution in phase_movement will
+                    // recognise opposite-sign contact and annihilate
+                    // the pair into a radial flux burst (two-photon-
+                    // like final state).
+                    const aSep = Math.max(6, Math.floor(N/3));
+                    const half = Math.floor(aSep / 2);
+
+                    // Electron on left, moving right.
+                    this.injectParticle(mc - half, mc, mc, -1);
+                    const eP = this._particles[this._particles.length - 1];
+                    eP.velocity.x = +0.3 * C_SPEED;
+
+                    // Positron on right, moving left.
+                    this.injectParticle(mc + half, mc, mc, +1);
+                    const pP = this._particles[this._particles.length - 1];
+                    pP.velocity.x = -0.3 * C_SPEED;
+
+                    // Dress each with a small flux envelope so they are
+                    // visible as lepton-like lumps before collision.
+                    const aSig = 2, aR = 4;
+                    const dress = (cx, cy, cz, sign) => {
+                        for (let dz2=-aR; dz2<=aR; dz2++)
+                        for (let dy2=-aR; dy2<=aR; dy2++)
+                        for (let dx2=-aR; dx2<=aR; dx2++) {
+                            const r2 = dx2*dx2 + dy2*dy2 + dz2*dz2;
+                            if (r2 === 0 || r2 > aR*aR) continue;
+                            const r = Math.sqrt(r2);
+                            const g = K_B * Math.exp(-r2/(2*aSig*aSig));
+                            if (g < 1e-3) continue;
+                            this._injectFlux(cx+dx2, cy+dy2, cz+dz2,
+                                sign*g*dx2/r, sign*g*dy2/r, sign*g*dz2/r);
+                        }
+                    };
+                    dress(mc - half, mc, mc, -1);
+                    dress(mc + half, mc, mc, +1);
+                    break;
+                }
+
                 // ── Level 6: Gauge / Topological ─────────────────────
                 case 's0-seed-wilson-loop': {
                     const R = Math.max(3, Math.floor(N/8)), wAmp = K_B;
@@ -4244,9 +4900,9 @@ export class MockBridge {
                     const px   = mc + half, nx = mc - half;
                     this.injectParticle(px, mc, mc, +1);
                     this.injectParticle(nx, mc, mc, -1);
-                    // Coulomb dressing: superposed 1/r^2 from both charges
-                    const alpha = 1.0 / 137.036;
-                    const amp   = alpha / (4 * Math.PI);
+                    // Coulomb dressing: superposed 1/r^2 from both charges.
+                    // alpha comes from the ontic chain via constants.js (= G_C^2).
+                    const amp = ALPHA / (4 * Math.PI);
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {
@@ -4942,6 +5598,13 @@ function createScale0Capabilities(bridge) {
             if (kind === 'poynting') return bridge.getPoyntingSampled(stride);
             if (kind === 'divJ') return bridge.getDivJSampled(stride);
             if (kind === 'fluxVector') return bridge.getFluxVectorSampled(stride);
+            if (kind === 'vorticity')  return bridge.getVorticitySampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+            if (kind === 'helicity')   return bridge.getHelicitySampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+            if (kind === 'kretschmann') return bridge.getKretschmannSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+            if (kind === 'latency')    return bridge.getLatencySampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+            if (kind === 'fisher')     return bridge.getFisherSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+            if (kind === 'coherence')  return bridge.getCoherenceSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+            if (kind === 'curlJ')      return bridge.getCurlJSampled?.(stride) ?? { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
             return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         },
         getScale0ForceField: (type, stride = 2) => {
@@ -4989,18 +5652,41 @@ function createScale0Capabilities(bridge) {
         },
 
         /**
-         * Write a LOD-0 snapshot back into the engine. Snapshots at lower LOD
-         * cannot be loaded. Returns true on success, false if the bridge does
-         * not expose the corresponding write APIs.
+         * Write a snapshot back into the engine. LOD 0 snapshots go in as-is;
+         * LOD 1/2 are upsampled to N³ on the fly (nearest neighbor) so scrub
+         * playback works across the entire timeline — including coarse-grained
+         * zones. LOD 3 is telemetry-only and cannot be loaded. Returns true
+         * on success, false otherwise.
          */
         loadScale0Snapshot: (snap) => {
-            if (!snap || snap.lod !== 0) return false;
+            if (!snap) return false;
             const write     = bridge.setScale0LatticeBuffer?.bind(bridge);
             const writeFlux = bridge.setScale0FluxBuffer?.bind(bridge);
             if (!write || !writeFlux) return false;
-            write(snap.lattice);
-            writeFlux(snap.flux);
-            if (snap.wave && bridge.setScale0WaveBuffer) bridge.setScale0WaveBuffer(snap.wave);
+
+            let lattice = snap.lattice;
+            let flux    = snap.flux;
+            const wave  = snap.wave;
+            if (!lattice || !flux) return false;
+
+            if (snap.lod && snap.lod > 0 && snap.lod < 3) {
+                // Lazy-load the upsampler to avoid a static import cycle.
+                // eslint-disable-next-line no-undef
+                const N = bridge.latticeSize || snap.N || 32;
+                const mod = (typeof window !== 'undefined') ? window.__ftdTimelineLod : null;
+                if (!mod) {
+                    // Fallback: fail instead of corrupting state with mismatched sizes.
+                    return false;
+                }
+                lattice = mod.upsampleScalar(lattice, N, snap.lod);
+                flux    = mod.upsampleVec3(flux, N, snap.lod);
+            } else if (snap.lod >= 3) {
+                return false; // telemetry-only snapshot cannot reconstruct state
+            }
+
+            write(lattice);
+            writeFlux(flux);
+            if (wave && bridge.setScale0WaveBuffer) bridge.setScale0WaveBuffer(wave);
             if (bridge.setScale0Tick) bridge.setScale0Tick(snap.tick);
             if (bridge.setScale0ParticleList) bridge.setScale0ParticleList(snap.particles);
             return true;

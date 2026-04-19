@@ -8,7 +8,7 @@
 
 import { createBridge, MockBridge } from './wasm-bridge-dag.js';
 import { tryNativeBridge } from './ws-bridge.js';
-import { Viewport } from './viewport.js?v=q8';
+import { Viewport } from './viewport.js';
 import { DiagnosticsPanel, Sparkline } from './diagnostics.js';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
@@ -21,7 +21,7 @@ import { formatEnergy } from './units.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js?v=5';
+import * as Scale0Controller from './scales/scale0/controller.js';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -46,7 +46,7 @@ import { addInfoTooltips } from './consciousness-pedagogy.js';
 import { QUANTUM_SCENARIO_DESCRIPTIONS } from './config/scenarios.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
 import { initVerificationLabPanel } from './ui/panels/verification-lab-panel/component.js';
-import { AppShell } from './ui/shell/app-shell.js?v=3';
+import { AppShell } from './ui/shell/app-shell.js';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initConsciousnessPanel } from './ui/panels/index.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
 

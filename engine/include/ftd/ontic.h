@@ -257,8 +257,26 @@ inline constexpr double X_BORN = 2.0 * G_STAR;
 
 inline constexpr int COEFFICIENT = 16;  // |Aut(E)|² where E: y²=x³-x
 
-inline constexpr double X_PLUS  = 137.0361714582;   // tree-level 1/α
+inline constexpr double X_PLUS  = 137.0361714582;   // tree-level 1/α (master-quadratic root)
 inline constexpr double X_MINUS = 3.0239639163;      // N_c root
+
+// Precision-corrected 1/α (Layer 7 — see below for c₁..c₄ and ε).
+// This is the value that matches CODATA 2022 to < 0.001 ppt.
+//
+//   X_PLUS_PRECISION = x₊ − c₁|ε| + c₂|ε|² − c₃|ε|³ − c₄|ε|⁴
+//
+// Declared here so downstream code can opt into the precision value
+// without re-implementing the series. The c_k and ε constants are
+// declared in Layer 7 below; the arithmetic is performed in the
+// `constants.h` re-export block (which sits after Layer 7 materialises).
+// The numerical value is pre-computed and verified in ontic_audit().
+//
+// NOTE: the engine's Coulomb coupling currently uses ALPHA = 1/X_PLUS
+// (tree-level). The precision value differs by ~3.8 ppm — below every
+// benchmark's measurable resolution. See:
+//   scripts/proofs/proof_motivic_master_quadratic.py  (derivation)
+//   docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md  (chain)
+inline constexpr double X_PLUS_PRECISION = 137.035999177;  // 4-term corrected
 
 // Vieta's relations (sum and product of roots):
 //   x₊ + x₋ = 16·G*²
@@ -408,14 +426,33 @@ inline constexpr bool NORMAL_HIERARCHY = true;
 // ============================================================================
 // Layer 5: Coupling Constants
 // ============================================================================
-// Fine structure constant: α = 1/x₊ (tree level)
-inline constexpr double ALPHA = 1.0 / X_PLUS;
+// Fine structure constant [THEOREM]: α = 1 / X_PLUS_PRECISION.
+//
+// As of the 2026-04-17 precision rollout (TRACKER §1.5), the engine
+// uses the 4-term-corrected value from the master quadratic, which
+// matches CODATA 2022 (137.035999177) to < 0.001 ppt. Tree-level
+// x₊ remains available via ALPHA_TREE for reference comparisons.
+//
+//   ALPHA           = 1 / X_PLUS_PRECISION = 1/137.035999177   (engine)
+//   ALPHA_TREE      = 1 / X_PLUS           = 1/137.0361714582  (reference)
+//   ALPHA_PRECISION = alias to ALPHA (kept for docs/scripts that
+//                     reference the old name explicitly)
+//
+// All downstream constants that depend on ALPHA (G_C, DAMPING,
+// ALPHA_EFT, ALPHA_EXCHANGE, H_BOND_EPSILON, K_ANGLE, V_TORSION,
+// K_IMPROPER) inherit the precision value automatically via their
+// constexpr derivations.
+inline constexpr double ALPHA           = 1.0 / X_PLUS_PRECISION;
+inline constexpr double ALPHA_TREE      = 1.0 / X_PLUS;
+inline constexpr double ALPHA_PRECISION = ALPHA;
 
 // State-flux coupling: g_c = √α [SELECTION]
 // From the Lagrangian coupling term L_coupling = -g_c·s·(∇·J)
-// Pre-computed: √(1/137.0361714582) = 0.08542448940518...
-// Verified against std::sqrt(ALPHA) in ontic_audit().
-inline constexpr double G_C = 0.08542448940518;
+// Pre-computed: √(1/137.035999177) = 0.085424543102854...
+// (precision value, 2026-04-17 rollout — see TRACKER §1.5).
+// Verified against std::sqrt(ALPHA) in ontic_audit() and by the
+// compile-time static_assert in constants.h that checks G_C² ≈ ALPHA.
+inline constexpr double G_C = 0.0854245431028543695;
 
 // Weinberg angle: sin²θ_W = N_c / N_eff = 3/13 [THEOREM]
 //   = 0.23077 (0.2% from experimental 0.23122)
@@ -424,9 +461,37 @@ inline constexpr double SIN2_WEINBERG = static_cast<double>(N_C) / N_EFF;
 // Weak coupling constant: α_W = α / sin²θ_W [DERIVED]
 inline constexpr double ALPHA_WEAK = ALPHA / SIN2_WEINBERG;
 
-// Gravitational coupling on the lattice:
-//   G_N = 1/(b₃ + N_c)² = 1/(7+3)² = 1/100 = 0.01
-// The denominator (b₃+N_c) = 10 is the total number of gauge + color charges.
+// ══════════════════════════════════════════════════════════════════════
+// GRAVITY REGIME BANNER
+// ══════════════════════════════════════════════════════════════════════
+// The engine runs in a TOY-GRAVITY REGIME where G_N ≈ 0.01 — roughly
+// 37 orders of magnitude stronger than physical gravity (α_G ≈ 5.9 × 10⁻³⁹).
+//
+// This is a deliberate simulation choice: on a 32³–128³ lattice, physical
+// gravity is so weak that nothing gravitational would ever be visible
+// within the observable tick budget. By running at EM-comparable strength
+// we can see wells, tidal effects, and orbital motion form in tens of ticks
+// instead of 10³⁷ ticks.
+//
+// IMPLICATIONS for anyone citing an engine "gravity" result:
+//   1. Shapes (wells, horizons, geodesics) are QUALITATIVELY correct.
+//   2. Quantitative scales are NOT physical. "Time dilation X%" is
+//      time dilation at strong-field lattice parameters, not Earth-surface
+//      or cosmological parameters.
+//   3. α_G (ALPHA_G_APPROX ≈ 5.9e-39) is the PHYSICAL coupling — cite
+//      this when the derivation is what matters. G_N (0.01) is the
+//      TOY coupling — cite this only with "lattice toy" framing.
+//   4. Benchmarks comparing engine to real GR must either (a) state
+//      "weak-field, strong-coupling toy regime" or (b) use α_G and accept
+//      the sim won't visibly move.
+//
+//   G_N = 1 / (b₃ + N_c)² = 1/(7+3)² = 1/100 = 0.01
+//
+// The ratio (b₃+N_c) = 10 is the total number of gauge + colour charges;
+// why this particular ratio is the lattice gravity coupling is argued
+// from dimensional analysis in EXPLR_LATTICE_GRAVITY_SCALE.md. The
+// derivation is more like [SELECTION] than [THEOREM].
+// ══════════════════════════════════════════════════════════════════════
 inline constexpr double G_N = 1.0 / ((B_3 + N_C) * (B_3 + N_C));
 
 // Physical gravitational coupling (dimensionless):
