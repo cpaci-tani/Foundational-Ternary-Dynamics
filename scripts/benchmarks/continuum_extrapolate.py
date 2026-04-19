@@ -19,12 +19,21 @@ from __future__ import annotations
 import math
 from typing import List, Tuple
 
-# r_max alpha_r data, pairing each L with the alpha measured at its largest r-probe
+# r_max alpha_r data (all ticks=150, Phase F GPU run, same r/L ~ 0.31):
+# Source: scripts/benchmarks/results/eft_phaseF/beta_L384_gpu.csv
+#
+# Historical note: the Day-2 CPU fast-big run used ticks=100 and gave
+# alpha_r(r=84, L=256) = 0.010 -> 1.4x alpha_ref. That was wrong:
+# ticks=100 is under-equilibrated. Full-precision ticks=300 gives 0.027
+# (3.7x), and the ticks=150 Phase-F series below shows the plateau is
+# NOT at alpha_ref; it's at ~3.6-4x alpha_ref. The 1.23x headline from
+# Day-2 is retracted in favor of this honest 4-point measurement.
 DATA: List[Tuple[int, int, float]] = [
-    # (L, r_max, alpha_r)
-    (64, 20, 0.030),
-    (128, 40, 0.028),
-    (256, 84, 0.010),
+    # (L, r_max, alpha_r)  -- all at r/L approx 0.31 for fair comparison
+    (64, 20, 0.02959),
+    (128, 40, 0.02970),
+    (256, 82, 0.02717),
+    (384, 124, 0.02632),
 ]
 ALPHA_REF = 1.0 / 137.035999177
 
