@@ -179,6 +179,13 @@ html[data-panel-mount="right"] .diag-trend {
     width: 80px;
 }
 
+/* Side-mount squeeze: tighten the value column so the narrower panel
+ * keeps enough room for the metric label without truncation. */
+html[data-panel-mount="left"] .diag-value,
+html[data-panel-mount="right"] .diag-value {
+    width: 100px;
+}
+
 .diag-section-title {
     font-size: 14px;
     font-weight: 600;
@@ -190,6 +197,10 @@ html[data-panel-mount="right"] .diag-trend {
 
 .diag-table {
     width: 100%;
+    /* Fixed layout so a value changing from "0" to "4173.09" can't
+     * ripple widths across sibling columns — every column holds its
+     * declared width regardless of row-content length. */
+    table-layout: fixed;
     border-collapse: collapse;
     font-size: 14px;
     font-variant-numeric: tabular-nums;
@@ -220,9 +231,17 @@ html[data-panel-mount="right"] .diag-trend {
 .diag-metric { color: var(--text-secondary); }
 
 .diag-value {
+    /* Fixed width + left alignment keeps values flush-left so magnitude
+     * changes (e.g. 0 → 4173.09) don't shift neighbouring columns. Chosen
+     * to fit triple-format reads like "53 / 47 / 52" and "0, 0, 0" while
+     * staying compact. Side-mount override narrows this further below. */
+    width: 130px;
+    text-align: left;
     font-family: var(--font-mono);
     color: var(--text-primary);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     transition: color var(--dur-base, 180ms) var(--ease-out, ease);
 }
 
