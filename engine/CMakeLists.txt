@@ -486,6 +486,10 @@ target_link_libraries(test_sim_pipeline_cpu ftd_core)
 add_executable(test_sim_parity sim/tests/test_sim_parity.cpp)
 target_link_libraries(test_sim_parity ftd_core)
 
+# Sim Pipeline Phase D — observable library unit tests
+add_executable(test_sim_observables sim/tests/test_sim_observables.cpp)
+target_link_libraries(test_sim_observables ftd_core)
+
 # EFT Day-2 Thread 4 — Rutherford scattering α extraction
 add_executable(benchmark_rutherford_alpha tests/benchmark_rutherford_alpha.cpp)
 target_link_libraries(benchmark_rutherford_alpha ftd_core)
@@ -898,6 +902,9 @@ set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
 # Sim Pipeline Phase C (parity — SKIPs on non-CUDA)
 add_test(NAME sim_parity COMMAND test_sim_parity)
 set_tests_properties(sim_parity PROPERTIES LABELS "sim" TIMEOUT 120)
+# Sim Pipeline Phase D (observable library unit tests)
+add_test(NAME sim_observables COMMAND test_sim_observables)
+set_tests_properties(sim_observables PROPERTIES LABELS "sim" TIMEOUT 60)
 add_test(NAME spectral COMMAND test_spectral)
 add_test(NAME tracker COMMAND test_tracker)
 add_test(NAME benchmark COMMAND test_benchmark)
