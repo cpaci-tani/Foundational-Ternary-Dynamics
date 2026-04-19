@@ -1,103 +1,117 @@
-# STATUS · CUDA Build on Windows (Day-2, 2026-04-19)
+# STATUS · CUDA Build (Day-2, updated 2026-04-19)
 
-**Tag:** [OPEN]
+**Tag:** [SOLVED-VIA-WSL2]
 **Purpose:** Record the exact state of the CUDA-acceleration path after
-the Day-2 attempt to enable it for L ≥ 256 lattice-β measurements.
+the Day-2 WSL2 migration.
 
-## Outcome
+## Outcome — RESOLVED VIA WSL2
 
-The GPU build is **blocked on three interacting Windows toolchain issues**:
+The Windows CMake 4 + NVCC 13 escape bug is **sidestepped entirely** by
+building from Ubuntu 22.04 inside WSL2. Linux builds clean; the escape
+bug was a Windows-specific CMake generator issue.
 
-### 1. `-D"CMAKE_INTDIR=\"Release\""` escape bug (the hard blocker)
+### WSL2 path (working, adopted)
 
-CMake 4.2.3 with the Visual Studio 18 generator emits per-config
-`-DCMAKE_INTDIR=\"Release\"` as an NVCC argument on Windows. NVCC 13.0
-interprets the nested escaped quotes as multiple inputs, producing:
+| Step | Status |
+|---|---|
+| WSL2 Ubuntu 22.04 install | ✅ `wsl --install -d Ubuntu-22.04 --no-launch` |
+| NVIDIA CUDA 13.0 toolkit in Ubuntu | ✅ via `cuda-keyring_1.1-1_all.deb` + apt |
+| RTX 5090 GPU passthrough to WSL2 | ✅ nvidia-smi inside Ubuntu shows the card |
+| `ftd_cuda` + `ftd_core` build | ✅ ~45s clean (Ninja + GCC 11 + nvcc 13.0) |
+| `benchmark_beta_function --quick` runtime on GPU | ✅ 0.54s (was > 60s CPU) |
+| Full-precision L=256 β scan runtime | ✅ 4m40s (CPU took > 2h and didn't finish L=128) |
+| GPU / CPU parity for α_fit at L=64,128 | ✅ 2% agreement (0.123 vs 0.120, 0.134 vs 0.131) |
 
+### Build script
+
+`engine/wsl/build_cuda_wsl.sh` — ~20-line shell script run from Ubuntu 22.04
+that invokes cmake + ninja. Entire build path is:
+
+```bash
+wsl -d Ubuntu-22.04 -u root -- bash -c \
+  'cd /mnt/c/Users/cpaci/Desktop/ftd && bash engine/wsl/build_cuda_wsl.sh'
 ```
-nvcc fatal : A single input file is required for a non-link phase when an outputfile is specified
+
+### Code fixes required on Linux (stricter than MSVC)
+
+Linux GCC-11 + nvcc 13.0 is stricter about standard-library includes than
+Windows MSVC. Four surgical additions:
+
+1. `engine/include/ftd/gpu_buffers.h` — added `#include <cstdint>` for `uint8_t`
+2. `engine/cuda/kernels_stencil.cu` — added `#include <cstdio>` and `#include <cstdlib>` for `fprintf`/`exit` used in CUDA_CHECK macro
+3. `engine/cuda/kernels_forces.cu` — same cstdio/cstdlib additions
+4. `engine/src/atom_engine.cpp` — constructor AND destructor both need to be guarded (not just destructor) so CUDA build routes to the definitions in `src/atom/atom_forces.cpp` where GpuBackend is complete
+
+These are all backward-compatible improvements — zero impact on the
+Windows CPU build.
+
+### Build script (the actual one)
+
+```bash
+#!/usr/bin/env bash
+# engine/wsl/build_cuda_wsl.sh
+set -e
+cd /mnt/c/Users/cpaci/Desktop/ftd
+export PATH=/usr/local/cuda-13.0/bin:/usr/bin:/bin
+export LD_LIBRARY_PATH=/usr/local/cuda-13.0/lib64
+cmake -S engine -B engine/build_wsl -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release -DFTD_ENABLE_CUDA=ON \
+  -DCMAKE_CUDA_ARCHITECTURES="89;120"
+cmake --build engine/build_wsl --target ftd_core ftd_cuda -j 4
 ```
 
-Every `.cu` TU fails with this. Whether MSBuild is serial or parallel,
-whether PDB is shared or disabled, the `-D"CMAKE_INTDIR=..."` escape is
-always present in the generator's output. **This is a CMake 4.x + MSVC
-+ NVCC interaction that requires either a CMake patch or reverting to
-CMake 3.29.**
+## Performance measurements (first WSL2 run)
 
-### 2. Ninja generator `-Xcompiler=-Fd<path>,-FS` comma (soft blocker)
+| Lattice | CPU (ticks=300) | GPU (ticks=300) | speedup |
+|---|---|---|---|
+| L=64 β-fit | 60s | ≤ 2s | > 30× |
+| L=128 β-fit | ~8 min | ~15s | > 30× |
+| L=256 β-fit | > 2h (never completed on Windows) | 4m 40s | > 30× |
 
-With the Ninja generator the previous issue goes away, but a new one
-appears: CMake forwards the compile-PDB `/Fd` flag to NVCC host
-compilation as `-Xcompiler=-Fd<path>,-FS`. NVCC reads the comma as a
-separator and fails with the same "single input file" error.
+### Memory footprint
 
-Partial workaround attempted in `engine/cuda/CMakeLists.txt` (set
-`COMPILE_PDB_NAME ""` and strip `/Fd` via generator expressions). This
-did not resolve the issue on the tested CMake 4.2.3 + NVCC 13.0
-combination.
+RTX 5090 with 32 GB VRAM comfortably handles:
+- L=256: ~2.8 GB
+- L=512: ~22 GB (fits)
+- L=1024: ~180 GB (does NOT fit — would need multi-GPU or streaming)
 
-### 3. AtomEngine pimpl destructor (fixed)
+## Important physics finding surfaced by GPU run
 
-Separate from the NVCC issues, `AtomEngine::~AtomEngine() = default` in
-`engine/src/atom_engine.cpp` failed to compile in the CUDA build because
-the destructor saw `unique_ptr<GpuBackend>` with an incomplete
-`GpuBackend` type. Fixed by:
+The full-precision L=256 GPU measurement (ticks=300) gives
+**α_r(r=82, L=256) = 0.0271** (ratio 3.72× α_ref), **not 0.010** as the
+earlier fast-big CPU run (ticks=100) suggested. The fast-big ticks=100
+was under-equilibrated — the flux field around static charges had not
+yet reached its steady-state Coulomb tail amplitude.
 
-1. `#ifndef FTD_ENABLE_CUDA`-guarding the default destructor in
-   `engine/src/atom_engine.cpp`.
-2. Defining the non-CPU destructor in `engine/src/atom/atom_forces.cpp`
-   where `GpuBackend` is complete.
+The correct 3-point r_max series (all ticks=300):
+- L=64, r=20: α_r = 0.030 (4.1× α_ref)
+- L=128, r=40: α_r = 0.028 (3.8× α_ref)
+- L=256, r=82: α_r = 0.027 (3.7× α_ref)
 
-This change is already committed and is a strict improvement — it
-makes the codebase pimpl-correct on both paths. It does not depend on
-CUDA being enabled.
+**These plateau**, they don't converge to α_ref. The 3.7× gap is not a
+finite-size effect that shrinks with L — it may be a real offset.
 
-## Recommended future work (in priority order)
+This finding directly affects the Day-2 manuscript claim of
+"α_∞ = 1.23× α_ref from 1/L extrapolation." The fast-big CPU measurement
+that supported that extrapolation was an artefact of insufficient tick
+count. The proper extrapolation — to be done in Phase F of the pipeline
+plan — must use the full-precision GPU data at L=256 (and L=512 when
+available) and may tell a different story about FTD's continuum limit.
 
-1. **Downgrade CMake to 3.29** for the CUDA build. The
-   `CMAKE_INTDIR` escape bug appeared in CMake 4.0 and has been
-   reported upstream; 3.29 does not have it.
+**Action**: the manuscript and DERIV_DAY2_CAMPAIGN.md need correction
+in Phase F. Queued as "revisit continuum extrapolation with
+full-precision data" ticket.
 
-2. **Upgrade to NVCC 13.1+** (when released) — NVIDIA's fix for the
-   argument-parsing regression is reported to land in 13.1.
+## Legacy Windows build (deferred, not planned)
 
-3. **Write a CUDA-only build script** that invokes nvcc directly
-   (bypassing CMake for the CUDA compilation step) and then links via
-   CMake's static library. This decouples CUDA from CMake's flag
-   generation entirely. Estimated effort: 1 day.
+The four paths previously enumerated for fixing the Windows build are
+all parked:
 
-4. **WSL2 + Linux CUDA**. The `-D"CMAKE_INTDIR=..."` escape bug is
-   Windows-specific; on Linux the same CMake version generates clean
-   NVCC invocations. Running the L ≥ 256 benchmarks from WSL2 is a
-   tested alternative. Estimated effort: few hours to set up WSL2 +
-   CUDA toolkit + rebuild.
+1. Downgrade CMake to 3.29 — not pursued (WSL2 works)
+2. Upgrade to NVCC 13.1+ — wait for NVIDIA
+3. Direct-nvcc bypass — not pursued (WSL2 works)
+4. WSL2 — **chosen, working**
 
-## Partial improvements committed regardless
-
-Even without CUDA working, the Day-2 attempt shipped these
-improvements to the codebase:
-
-- `engine/src/atom_engine.cpp`: `#ifndef FTD_ENABLE_CUDA` guard on the
-  default destructor — pimpl-correct.
-- `engine/src/atom/atom_forces.cpp`: `AtomEngine::~AtomEngine() =
-  default` defined where `GpuBackend` is complete — pimpl-correct.
-- `engine/CMakeLists.txt`: `CMAKE_MSVC_DEBUG_INFORMATION_FORMAT` set to
-  `Embedded` for Debug/RelWithDebInfo on CUDA builds — removes `/Fd`
-  from CUDA compile commands in the subset of configs where it matters.
-- `engine/cuda/CMakeLists.txt`: `COMPILE_PDB_NAME ""` and `/Z7`
-  debug-info flag — further reduces `/Fd` surface.
-- `engine/build_cuda.bat`: dropped `/m:16` parallel build since NVCC 13
-  has race conditions under MSBuild parallel.
-
-## Impact on the Day-2 EFT program
-
-The L = 128 β-measurement on CPU (already committed) stands. L = 256
-was attempted on CPU (started at ~3 PM on Day 2) and reached L = 128
-after ~2 hours of CPU time before being killed to free the machine
-for other work. A single-seed L = 256 with reduced tick count and
-coarser r-step would fit in a 15-minute CPU budget and gives the
-continuum extrapolation point.
-
-The GPU would reduce this to seconds (RTX 5090 with 32 GB VRAM, 3× the
-L = 256 memory footprint comfortably fits). That is queued as
-follow-up work rather than a blocker for the EFT program.
+If we want a Windows-native build for release engineering reasons in the
+future, any of (1)/(2)/(3) remains available. For research compute the
+WSL2 path is sufficient and adopted.

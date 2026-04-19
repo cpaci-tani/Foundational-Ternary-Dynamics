@@ -11,6 +11,8 @@
 #include "ftd/constants.h"
 #include <cuda_runtime.h>
 #include <cmath>
+#include <cstdio>   // fprintf — Linux/clang stricter than MSVC
+#include <cstdlib>  // exit
 
 #define CUDA_CHECK(call) do { \
     cudaError_t err = (call); \

@@ -8,6 +8,7 @@
  */
 
 #include "voxel.h"
+#include <cstdint>   // uint8_t etc. — Linux/clang require explicit include
 #include <vector>
 #include <cufft.h>
 
