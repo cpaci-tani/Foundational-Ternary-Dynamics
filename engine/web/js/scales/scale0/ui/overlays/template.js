@@ -22,19 +22,6 @@ export function getScale0OverlayTemplate() {
     <header class="s0-overlay-header">
       <span class="s0-overlay-title">Visualization</span>
       <div class="s0-overlay-header-tools">
-        <label class="s0-overlay-preset-wrap" title="Apply a named bundle of overlay toggles. Choose 'Custom' to keep your current selection.">
-          <span class="s0-overlay-preset-label">Preset</span>
-          <select class="s0-overlay-preset-select" id="s0-overlay-preset">
-            <option value="custom">Custom</option>
-            <option value="clean">Clean (flux only)</option>
-            <option value="em">EM focus</option>
-            <option value="quantum">Quantum</option>
-            <option value="topology">Topology</option>
-            <option value="stress-energy">Stress-energy</option>
-            <option value="full">Full physics</option>
-            <option value="off">All off</option>
-          </select>
-        </label>
         <button class="s0-overlay-collapse" type="button"
             aria-label="Collapse visualization overlay"
             aria-expanded="true"
