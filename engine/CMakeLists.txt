@@ -91,7 +91,10 @@ add_library(ftd_core
     src/cosmic_engine.cpp
     src/scale_bridge.cpp
     src/ontic_audit.cpp    # RF-03: ontic_audit() body moved from ontic.h
-    src/ontic_running_coupling.cpp
+    src/eft/qcd_one_loop_perturbative.cpp  # [IMPOSED] renamed from ontic_running_coupling.cpp
+                                           # EFT Phase 0: reserves running_coupling.cpp
+                                           # for Phase-2 lattice-measured β(g)
+    src/eft/blocking.cpp                    # EFT Phase 2A: real-space block-spin transformation
     src/csv_export.cpp     # RF-05: csv export bodies moved from csv_export.h
     src/constructors/constructors_core.cpp
     src/constructors/constructors_atoms.cpp
@@ -417,6 +420,43 @@ target_link_libraries(test_ensemble ftd_core)
 
 add_executable(test_correlations tests/test_correlations.cpp)
 target_link_libraries(test_correlations ftd_core)
+
+# EFT Recovery Program — Phase 1A (rotational-anisotropy diagnostics)
+# See docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §4.1
+add_executable(test_eft_anisotropy tests/test_eft_anisotropy.cpp)
+target_link_libraries(test_eft_anisotropy ftd_core)
+
+# EFT Recovery Program — Phase 1B (Lorentz-recovery benchmark)
+# See docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §4.2
+add_executable(benchmark_lorentz_recovery tests/benchmark_lorentz_recovery.cpp)
+target_link_libraries(benchmark_lorentz_recovery ftd_core)
+
+# EFT Recovery Program — Phase 1C (Ward-identity suite)
+# See docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §4.3
+add_executable(test_eft_ward_identity tests/test_eft_ward_identity.cpp)
+target_link_libraries(test_eft_ward_identity ftd_core)
+
+# EFT Recovery Program — Phase 2A (block-spin validation gate)
+# See docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §5.1
+add_executable(test_eft_blocking tests/test_eft_blocking.cpp)
+target_link_libraries(test_eft_blocking ftd_core)
+
+# EFT Recovery Program — Phase 2C (multi-scale α_eff → β extraction)
+# Heavy: runs 9+ engine simulations at L ∈ {16, 32, 64}. Gated behind
+# the `--quick` flag (≈ 15 s) for CTest; full run (≈ 90 s) manual.
+# See docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §5
+add_executable(benchmark_beta_function tests/benchmark_beta_function.cpp)
+target_link_libraries(benchmark_beta_function ftd_core)
+
+# EFT Recovery Program — Phase 3 (operator-basis scaling dimensions)
+# See docs/theory/10_eft_program/SPEC_OPERATOR_BASIS.md
+add_executable(test_eft_operator_spectrum tests/test_eft_operator_spectrum.cpp)
+target_link_libraries(test_eft_operator_spectrum ftd_core)
+
+# EFT Recovery Program — Phase 4 (dynamical SM emergence; report-only)
+# See docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §7
+add_executable(benchmark_dynamical_sm tests/benchmark_dynamical_sm.cpp)
+target_link_libraries(benchmark_dynamical_sm ftd_core)
 
 add_executable(test_spectral tests/test_spectral.cpp)
 target_link_libraries(test_spectral ftd_core)
@@ -798,6 +838,24 @@ add_test(NAME thomson_scattering COMMAND test_thomson_scattering)
 add_test(NAME light COMMAND test_light)
 add_test(NAME ensemble COMMAND test_ensemble)
 add_test(NAME correlations COMMAND test_correlations)
+# EFT Recovery Program — Phase 1A
+add_test(NAME eft_anisotropy COMMAND test_eft_anisotropy)
+set_tests_properties(eft_anisotropy PROPERTIES LABELS "eft")
+# EFT Recovery Program — Phase 1B (heavier: runs engine dynamics)
+add_test(NAME eft_lorentz_recovery COMMAND benchmark_lorentz_recovery)
+set_tests_properties(eft_lorentz_recovery PROPERTIES LABELS "eft" TIMEOUT 120)
+# EFT Recovery Program — Phase 1C
+add_test(NAME eft_ward_identity COMMAND test_eft_ward_identity)
+set_tests_properties(eft_ward_identity PROPERTIES LABELS "eft" TIMEOUT 60)
+# EFT Recovery Program — Phase 2A
+add_test(NAME eft_blocking COMMAND test_eft_blocking)
+set_tests_properties(eft_blocking PROPERTIES LABELS "eft" TIMEOUT 60)
+# EFT Recovery Program — Phase 3
+add_test(NAME eft_operator_spectrum COMMAND test_eft_operator_spectrum)
+set_tests_properties(eft_operator_spectrum PROPERTIES LABELS "eft" TIMEOUT 120)
+# EFT Recovery Program — Phase 4 (quick mode for CTest)
+add_test(NAME eft_dynamical_sm COMMAND benchmark_dynamical_sm --quick)
+set_tests_properties(eft_dynamical_sm PROPERTIES LABELS "eft" TIMEOUT 180)
 add_test(NAME spectral COMMAND test_spectral)
 add_test(NAME tracker COMMAND test_tracker)
 add_test(NAME benchmark COMMAND test_benchmark)

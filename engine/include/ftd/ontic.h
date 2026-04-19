@@ -34,7 +34,10 @@
  * name that previously lived in the monolithic header.
  *
  * Extraction audit: O1 (theme split) + O2 (move alpha_s_running out of
- * the header). See engine/src/ontic_running_coupling.cpp.
+ * the header). See engine/src/eft/qcd_one_loop_perturbative.cpp (renamed
+ * from ontic_running_coupling.cpp on 2026-04-19 as part of the EFT
+ * Recovery Program Phase 0; the file is [IMPOSED] — imported perturbative
+ * QCD, not lattice-measured. See docs/theory/10_eft_program/).
  */
 
 #include "ftd/ontic/lemniscate.h"
