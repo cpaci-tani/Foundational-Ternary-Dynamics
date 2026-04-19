@@ -1,0 +1,146 @@
+/* ── Keyboard shortcuts help overlay ─────────────────────────────────
+   Modal overlay triggered by `?`. Full-screen backdrop + centered
+   glass card listing every shortcut. Blends with the rest of the
+   dashboard's glass aesthetic by reusing --glass-bg + --glass-shadow.
+   ─────────────────────────────────────────────────────────────── */
+
+.kbd-help-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: color-mix(in oklch, var(--surface-deep, #050812) 75%, transparent);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+}
+.kbd-help-overlay[hidden] { display: none; }
+
+.kbd-help-panel {
+    background: var(--glass-bg, rgba(16, 20, 36, 0.95));
+    border: 1px solid var(--border, rgba(120, 140, 200, 0.25));
+    border-radius: 12px;
+    box-shadow: var(--shadow-xl, 0 24px 48px rgba(0, 0, 0, 0.5));
+    width: min(720px, 100%);
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    outline: none;
+}
+
+.kbd-help-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+}
+.kbd-help-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-primary, #d0d8f0);
+}
+.kbd-help-close {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 13px;
+    transition: color 120ms, border-color 120ms, background 120ms;
+}
+.kbd-help-close:hover {
+    color: var(--text-primary, #d0d8f0);
+    border-color: rgba(255, 120, 120, 0.6);
+    background: color-mix(in oklch, rgba(255, 100, 100, 0.7) 10%, transparent);
+}
+
+.kbd-help-body {
+    padding: 16px 20px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+}
+@media (max-width: 700px) {
+    .kbd-help-body { grid-template-columns: 1fr; }
+}
+
+.kbd-help-section-title {
+    margin: 0 0 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px dotted color-mix(in oklch, var(--border) 50%, transparent);
+    padding-bottom: 4px;
+}
+
+.kbd-help-list {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 14px;
+    align-items: center;
+}
+.kbd-help-row {
+    display: contents;
+}
+.kbd-help-keys {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    justify-self: end;
+}
+.kbd-help-label {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-primary, #d0d8f0);
+}
+.kbd-help-sep {
+    opacity: 0.4;
+    font-size: 11px;
+    margin: 0 1px;
+}
+
+.kbd-help-overlay kbd {
+    display: inline-block;
+    min-width: 22px;
+    padding: 2px 6px;
+    font-family: var(--font-mono, ui-monospace, 'Roboto Mono', monospace);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--text-primary, #d0d8f0);
+    background: color-mix(in oklch, var(--surface, #10141f) 85%, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.kbd-help-footer {
+    padding: 10px 20px;
+    border-top: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Respect reduced-motion — no entry animation. */
+body[data-reduced-motion="1"] .kbd-help-overlay {
+    backdrop-filter: none;
+}

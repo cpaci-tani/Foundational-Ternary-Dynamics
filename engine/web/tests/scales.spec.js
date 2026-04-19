@@ -1,5 +1,6 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+import { switchMode, attachConsoleWatcher, attachNetworkWatcher, isNoise } from './_helpers.js';
 
 /**
  * Scale-switching smoke suite for the FTD web dashboard.
@@ -15,55 +16,10 @@ import { test, expect } from '@playwright/test';
  *   - Visual regression (GPU nondeterminism makes screenshot diffing unreliable)
  *   - Cross-browser (Chromium only; we use Three.js + importmaps)
  *   - Physics correctness (covered by C++ CTests and Python pytest)
+ *
+ * Shared helpers (switchMode, attachConsoleWatcher, attachNetworkWatcher,
+ * KNOWN_NOISE, isNoise) moved to ./_helpers.js as part of RF-8.
  */
-
-/** Helper: set the engine-mode select and fire its change handler. */
-async function switchMode(page, mode) {
-    await page.evaluate((m) => {
-        const sel = document.getElementById('engine-mode');
-        if (!sel) throw new Error('engine-mode select not found');
-        sel.value = m;
-        sel.dispatchEvent(new Event('change', { bubbles: true }));
-    }, mode);
-}
-
-/** Helper: collect console errors into an array for later assertion. */
-function attachConsoleWatcher(page) {
-    const errors = [];
-    page.on('console', (msg) => {
-        if (msg.type() === 'error') errors.push(msg.text());
-    });
-    page.on('pageerror', (err) => {
-        errors.push(`pageerror: ${err.message}`);
-    });
-    return errors;
-}
-
-/** Helper: collect failed network requests. */
-function attachNetworkWatcher(page) {
-    const failures = [];
-    page.on('requestfailed', (req) => {
-        failures.push(`${req.method()} ${req.url()} — ${req.failure()?.errorText}`);
-    });
-    page.on('response', (resp) => {
-        if (resp.status() >= 400) failures.push(`${resp.status()} ${resp.url()}`);
-    });
-    return failures;
-}
-
-const KNOWN_NOISE = [
-    // WebAssembly abort from ws-bridge exponential backoff on ws://localhost:9100;
-    // optional native GPU path, absence is expected in a browser-only test.
-    /^Aborted\(\)$/,
-    // ws-bridge reconnect logs — benign
-    /\[ws-bridge\]/,
-    // Chrome font preload warning
-    /was preloaded using link preload/,
-];
-
-function isNoise(msg) {
-    return KNOWN_NOISE.some((rx) => rx.test(msg));
-}
 
 test.beforeEach(async ({ page }) => {
     // Grant a bit of extra time for initial WASM compile + module graph load

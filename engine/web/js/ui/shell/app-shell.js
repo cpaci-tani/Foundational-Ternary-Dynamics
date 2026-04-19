@@ -11,6 +11,7 @@ import { ViewportOverlaysComponent } from '../components/viewport-overlays/compo
 import { TooltipComponent } from '../components/tooltips/component.js';
 import { KnowledgeBaseComponent } from '../components/knowledge-base/component.js';
 import { FaqComponent } from '../components/faq/component.js';
+import { KeyboardHelpComponent } from '../components/keyboard-help/component.js';
 import { ensurePanelResources } from '../components/panel-resources/component.js';
 import { annotatePanelElements, getPanelLabel, getPanelRegistry, validatePanelRegistry } from '../scale-registry/panel-registry.js';
 import { createScaleUiRegistry } from '../scale-registry/register-scale-ui.js';
@@ -50,6 +51,7 @@ export class AppShell {
         this.scaleUiRegistry = null;
         this.tooltips = null;
         this.knowledgeBase = null;
+        this.keyboardHelp = null;
     }
 
     init() {
@@ -93,6 +95,9 @@ export class AppShell {
         this.workspaceTabs = new WorkspaceTabsComponent(this.getRegion('tabs'), this.scaleUiRegistry.panels).init();
         this.panelDockView = new PanelDockComponent(this.getRegion('panels')).init();
         this.tooltips = new TooltipComponent({ app: this.app }).init();
+        // Keyboard shortcuts overlay — mount last because it listens for
+        // the `?` key globally and opens a modal over everything else.
+        this.keyboardHelp = new KeyboardHelpComponent().init();
         this.breakpoints = new BreakpointService({
             onChange: (snapshot) => this._applySnapshot(snapshot),
         });

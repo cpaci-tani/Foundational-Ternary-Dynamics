@@ -136,6 +136,7 @@ engine/
     scale_engine.h            # [v2.12] Abstract base class for all scale engines (111L)
     ontic.h                   # Ontic derivation chain (9+ layers), D=3 + varpi -> all constants (1221L)
     constants.h               # Re-exports ontic + engine-specific constants (279L)
+    constants_gpu.cuh         # GPU-side constants mirror (device __constant__ memory)
     voxel.h                   # Vec3, ForceDiag, Voxel struct (203L)
     lattice.h                 # Lattice class -- 3D cubic grid with periodic boundaries (59L)
     render_bridge.h           # RenderBridge -- main engine API, tick(), diagnostics() (239L)
@@ -146,13 +147,22 @@ engine/
     atom_engine.h             # AtomEngine -- Scale 2 composite atoms + bonds (327L)
     cosmic_engine.h           # [v2.12] CosmicEngine : ScaleEngine -- Scale 5 N-body+SPH (523L)
     scale.h                   # OnticEntity + scale bridge declarations (83L)
+    scenarios.h               # [NEW Apr 2026] Public dispatch_scenario() -- C++ port of JS scenario library
     correlations.h            # Correlation function analysis (205L)
     ensemble.h                # Statistical ensemble infrastructure (200L)
     spectral.h                # Spectral analysis utilities (195L)
     tracker.h                 # Particle trajectory tracking (173L)
     hilbert.h                 # Hilbert space utilities (209L)
+    barnes_hut.h              # Octree for long-range 1/r^2 forces (used by PE/AE/CE)
+    constructors.h            # Scenario/state constructors reused across engines
+    dag_engine.h              # DagEngine [EXPERIMENTAL] -- gauss_project/phase_forces/phase_movement stubs
+    dag_lattice.h             # Lattice variant used by DagEngine
+    engine_select.h           # Runtime switch between logic-first and DAG paths
+    test_telemetry.h          # Shared telemetry helpers used by CTests
     gpu_engine.h              # GpuEngine -- CUDA GPU drop-in for RenderBridge (115L)
     gpu_buffers.h             # SoA device memory layout (124L)
+    gpu_atom_engine.h         # GPU AtomEngine bindings
+    gpu_particle_engine.h     # GPU ParticleEngine bindings
   src/
     render_bridge.cpp         # Logic-first engine -- 6-phase tick cycle (1538L)
     lattice.cpp               # Lattice implementation (index, coord, wrap, neighbors) (66L)
@@ -162,6 +172,11 @@ engine/
     atom_engine.cpp           # AtomEngine: ionic + vdW + covalent forces (762L)
     cosmic_engine.cpp         # [v2.12] CosmicEngine: Barnes-Hut + SPH + Friedmann (900L)
     scale_bridge.cpp          # Scale 0<->1<->2<->5 coarsen/refine round-trip (283L)
+    scenarios.cpp             # [NEW Apr 2026] 83 scenarios from JS ported to C++ (flux-/light-/quantum-/s0-seed-/s0-field-)
+    constructors.cpp          # Shared scenario/state constructor helpers
+    dag_engine.cpp            # DagEngine [EXPERIMENTAL] -- see banner in header
+    ontic_audit.cpp           # Ontic-chain self-audit (prints derivations and consistency checks)
+    ws_server.cpp             # Optional native WebSocket bridge server (consumed by ws-bridge.js)
   cuda/
     gpu_buffers.cu            # SoA device allocation, upload, download (445L)
     gpu_engine.cu             # GpuEngine tick loop, host<->device sync (496L)
@@ -733,7 +748,9 @@ All tests registered as CTests (170 CPU+GPU + 5 Five Minds campaigns). GPU tests
 | `update_energy_ledger()` | Populate the ledger (called automatically by `tick()` on CPU path) |
 | `inject_particle(x,y,z, state)` | Inject single particle at lattice site |
 | `inject_wavepacket(x,y,z, state, sigma, amplitude)` | Inject Gaussian wavepacket |
-| `inject_flux(x,y,z, fx,fy,fz)` | Raw flux injection |
+| `inject_flux(x,y,z, fx,fy,fz)` | Raw flux injection (overwrites site) |
+| `inject_flux_add(x,y,z, flux_val)` | **[NEW Apr 2026]** Additive flux injection — accumulates instead of overwriting. Required by ported JS scenarios that sum overlapping Gaussians. |
+| `inject_wave_vel_add(x,y,z, wv_val)` | **[NEW Apr 2026]** Additive wave-velocity injection — same additive semantics, for wave-equation initial conditions. |
 | `create_entangled_pair(x,y,z, dx,dy,dz)` | Pair production with partner tracking |
 
 ### Diagnostics
@@ -753,6 +770,31 @@ All tests registered as CTests (170 CPU+GPU + 5 Five Minds campaigns). GPU tests
 | `dt()` / `set_dt(val)` | Get/set timestep |
 | `seed_rng(seed)` | Set RNG seed for reproducibility |
 | `toggles` | Public `TermToggles` struct (20 booleans) |
+
+### Scenario library
+
+**[NEW April 2026]** `ftd::dispatch_scenario(RenderBridge& rb, const std::string& name)`
+(declared in `include/ftd/scenarios.h`, implemented in `src/scenarios.cpp`,
+~1240 LOC) is the public C++ entry point for scenario setup. It is a
+straight port of the browser-side JS scenario library under
+`engine/web/js/bridge/scenarios/` — the two code paths stay in lockstep
+so that WASM, CLI, and native hosts all seed the lattice identically.
+
+Dispatch tries five prefix groups in order and returns `true` on the
+first match:
+
+1. `flux-*` — pure-flux field initial conditions
+2. `light-*` — photon-like wavepackets and coherent-state probes
+3. `quantum-*` — superposition, entanglement, and measurement setups
+4. `s0-seed-*` — Scale-0 manifested-particle seeds
+5. `s0-field-*` — Scale-0 background-field presets
+
+Returning `false` means no prefix matched; `wasm/ftd_wasm.cpp` falls
+through to its legacy scenario `switch` for backward-compatibility with
+older scenario names still referenced by UI code. The scenarios use the
+new additive injectors (`inject_flux_add`, `inject_wave_vel_add`)
+because many of them accumulate overlapping Gaussians and cannot use
+the overwriting `inject_flux`.
 
 ---
 
