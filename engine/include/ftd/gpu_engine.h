@@ -89,11 +89,12 @@ private:
 
     GpuBuffers bufs_;
 
-    // cuFFT plans (created once, reused every tick)
-    cufftHandle fft_plan_forward_  = 0;   // Z2Z double (legacy)
-    cufftHandle fft_plan_inverse_  = 0;   // Z2Z double (legacy)
-    cufftHandle fft_plan_forward_f_ = 0;  // C2C float (primary — 2× faster)
-    cufftHandle fft_plan_inverse_f_ = 0;  // C2C float (primary — 2× faster)
+    // cuFFT plans (created once, reused every tick).
+    // Both precisions are active; see gpu_buffers.h for usage notes.
+    cufftHandle fft_plan_forward_  = 0;   // Z2Z double (high-accuracy path)
+    cufftHandle fft_plan_inverse_  = 0;   // Z2Z double (high-accuracy path)
+    cufftHandle fft_plan_forward_f_ = 0;  // C2C float (default, 2× faster)
+    cufftHandle fft_plan_inverse_f_ = 0;  // C2C float (default, 2× faster)
 
     // cuRAND generator (for genesis probability)
     curandGenerator_t rng_ = nullptr;
