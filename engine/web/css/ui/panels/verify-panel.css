@@ -1,0 +1,219 @@
+/* Verify panel — evidence scoreboard.
+ * Three tiers, no verdict colors; monotone intensity for pull markers.
+ * Typography and spacing follow the project's existing panel conventions. */
+
+#panel-verification-lab .verify-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 1.25rem 2rem;
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+#panel-verification-lab .verify-kicker {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted, #888);
+}
+
+/* ── Header ────────────────────────────────────────────────────────── */
+
+.verify-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem;
+    border: 1px solid var(--border, #333);
+    border-radius: 6px;
+    background: var(--surface-1, rgba(255, 255, 255, 0.02));
+}
+.verify-header-stamp {
+    display: flex;
+    gap: 1rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8rem;
+    color: var(--text-muted, #888);
+}
+.verify-header-sub {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-muted, #888);
+}
+.verify-counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.9rem;
+}
+.verify-counts strong { font-size: 1.1rem; margin-right: 0.3rem; }
+
+.verify-tensions-label {
+    margin: 0.5rem 0 0.3rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted, #888);
+}
+.verify-tensions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0; padding: 0;
+    list-style: none;
+}
+.verify-tension a {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    color: inherit;
+    text-decoration: none;
+    background: var(--surface-2, rgba(255, 255, 255, 0.03));
+}
+.verify-tension a:hover { background: var(--surface-3, rgba(255, 255, 255, 0.06)); }
+.verify-tension-pull { font-family: var(--font-mono, monospace); opacity: 0.85; }
+.verify-tension-delta { font-family: var(--font-mono, monospace); opacity: 0.7; }
+
+/* ── Filters ───────────────────────────────────────────────────────── */
+
+.verify-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+}
+.verify-filter {
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--border, #333);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text, #ddd);
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+.verify-filter.active {
+    background: var(--accent, #3a7);
+    color: var(--bg, #111);
+    border-color: transparent;
+}
+.verify-export {
+    margin-left: auto;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--border, #333);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text, #ddd);
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+/* ── Tier sections ─────────────────────────────────────────────────── */
+
+.verify-tier { display: flex; flex-direction: column; gap: 0.6rem; }
+.verify-tier-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border, #333);
+}
+.verify-tier-label { margin: 0; font-size: 1rem; }
+.verify-tier-blurb { margin: 0; font-size: 0.82rem; color: var(--text-muted, #888); }
+.verify-tier-count { font-size: 0.75rem; color: var(--text-muted, #888); }
+
+.verify-tier--parametric { opacity: 0.92; }
+.verify-tier--unpredicted { opacity: 0.75; }
+
+/* ── Rows ──────────────────────────────────────────────────────────── */
+
+.verify-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border, #333);
+    border-radius: 6px;
+    background: var(--surface-1, rgba(255, 255, 255, 0.02));
+}
+.verify-row--parametric { border-style: dashed; }
+.verify-row--unpredicted { background: transparent; border-color: var(--border-muted, #222); }
+.verify-question { margin: 0; font-size: 0.95rem; font-weight: 600; }
+
+.verify-lines { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.85rem; }
+.verify-line {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.6rem;
+    align-items: baseline;
+    font-family: var(--font-mono, monospace);
+}
+.verify-line--delta { opacity: 0.8; }
+.verify-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    background: var(--surface-2, rgba(255, 255, 255, 0.04));
+}
+.verify-tag--parametric { background: var(--surface-3, rgba(255, 255, 255, 0.08)); font-style: italic; }
+.verify-tag--open { background: transparent; border: 1px dashed var(--border, #333); }
+
+.verify-inputs {
+    font-size: 0.78rem;
+    color: var(--text-muted, #888);
+    font-family: var(--font-mono, monospace);
+}
+.verify-caveat { margin: 0; font-size: 0.78rem; color: var(--text-muted, #888); font-style: italic; }
+.verify-theory-ref {
+    font-size: 0.78rem;
+    color: var(--text-muted, #888);
+    text-decoration: none;
+}
+.verify-theory-ref:hover { color: var(--accent, #3a7); }
+
+/* ── Pull strip ────────────────────────────────────────────────────── */
+
+.verify-strip-wrap { line-height: 0; }
+.verify-pull-strip .pull-axis {
+    stroke: var(--border, #333);
+    stroke-width: 1;
+}
+.verify-pull-strip .pull-zero {
+    stroke: var(--text-muted, #888);
+    stroke-width: 1;
+    stroke-dasharray: 2 2;
+}
+.verify-pull-strip .pull-tick {
+    stroke: var(--border, #333);
+    stroke-width: 1;
+}
+.verify-pull-strip .pull-marker {
+    fill: var(--text, #ddd);
+    stroke: var(--bg, #111);
+    stroke-width: 1;
+}
+
+/* ── Error + empty states ──────────────────────────────────────────── */
+
+.verify-error {
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border, #333);
+    border-radius: 4px;
+    color: var(--text-muted, #888);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.82rem;
+}
+.verify-tier-empty {
+    margin: 0;
+    padding: 0.8rem 1rem;
+    color: var(--text-muted, #888);
+    font-style: italic;
+    font-size: 0.85rem;
+}
