@@ -222,7 +222,7 @@ public:
     void update_energy_ledger();
 
     // Inject a localized flux source (assigns: v.flux = flux_val).
-    // Used by legacy C++ scenarios that write each voxel exactly once.
+    // Used by single-shot scenarios that write each voxel exactly once.
     void inject_flux(int x, int y, int z, const Vec3& flux_val);
 
     // Additive flux injection: v.flux += flux_val. Used by the ported JS
