@@ -29,7 +29,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Integrated Information Theory, Global Workspace, Higher-Order-Thought, and related frameworks characterize neural correlates of consciousness. They are models of when experience occurs, not explanations of why there is experience at all. The explanatory gap remains open.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'Consciousness enters as the phase angle theta_C of the master-quadratic consciousness extension. The observable fraction cos^2(theta_C) = G*/8 follows from the ternary-state algebra.' },
+                    { tag: 'SELECTION', text: 'Consciousness enters as the phase angle \\(\\theta_C\\) of the master-quadratic consciousness extension. The observable fraction \\(\\cos^2(\\theta_C) = G^{\\ast}/8\\) follows from the ternary-state algebra.' },
                     { tag: 'CONJECTURE', text: 'The sLoop self-reference ring is proposed as the structural locus where reference closes on itself — a candidate substrate for subjective experience, not an explanation of qualia.' },
                     { tag: 'OPEN', text: 'FTD offers a geometry for where consciousness could live in the formalism; it does not derive qualia from that geometry.' },
                 ],
@@ -54,7 +54,7 @@ export const FAQ_SECTIONS = Object.freeze([
                 ],
                 ftdAngle: [
                     { tag: 'CONJECTURE', text: 'Measurement is not a separate physical process: it is the transition from flux-field dispositional structure to state-field actualization at a discrete tick. What looks like collapse is just the manifestation step of the two-layer ontology.' },
-                    { tag: 'SELECTION', text: 'The Born rule (P proportional to |J|^2) emerges as a statistical consequence of lattice dynamics; benchmarked in engine/tests/benchmark_engine_theory.cpp with a 10x lattice bias that is currently unaccounted for.' },
+                    { tag: 'SELECTION', text: 'The Born rule (\\(P \\propto |J|^2\\)) emerges as a statistical consequence of lattice dynamics; benchmarked in engine/tests/benchmark_engine_theory.cpp with a 10x lattice bias that is currently unaccounted for.' },
                     { tag: 'OPEN', text: 'The precise dynamical trigger for manifestation — what determines the "when" of a tick for a given voxel — is an axiom, not a derivation.' },
                 ],
                 stillOpen: [
@@ -78,7 +78,7 @@ export const FAQ_SECTIONS = Object.freeze([
                 ],
                 ftdAngle: [
                     { tag: 'SELECTION', text: 'The lattice tick is intrinsically ordered: state at t+1 is computed from state at t via a non-invertible manifestation step. Time-asymmetry is built into the tick cycle, not derived from initial conditions.' },
-                    { tag: 'CONJECTURE', text: 'The distinction between the commutative Euler reflection product (yielding pi, time-symmetric) and the non-commutative ratio (yielding G*, time-asymmetric) is proposed as the formal root of the arrow.' },
+                    { tag: 'CONJECTURE', text: 'The distinction between the commutative Euler reflection product (yielding \\(\\pi\\), time-symmetric) and the non-commutative ratio (yielding \\(G^{\\ast}\\), time-asymmetric) is proposed as the formal root of the arrow.' },
                 ],
                 stillOpen: [
                     'FTD builds asymmetry into its update rule at the axiomatic level. It does not show that any strictly time-symmetric axiomatisation is impossible.',
@@ -118,14 +118,14 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Galactic rotation curves, gravitational lensing, and CMB observations all point to a gravitating component that interacts weakly if at all with light. Decades of direct-detection searches for WIMPs, axions, and other candidates have produced null results.',
                 ],
                 mainstreamStruggle: [
-                    'Mainstream cosmology adopts dark matter as a parametric addition — Lambda-CDM works phenomenologically but the underlying particle is unidentified. MOND and modified gravity theories capture some rotation curves but not cluster lensing. Nothing is satisfactory.',
+                    'Mainstream cosmology adopts dark matter as a parametric addition — \\(\\Lambda\\)-CDM works phenomenologically but the underlying particle is unidentified. MOND and modified gravity theories capture some rotation curves but not cluster lensing. Nothing is satisfactory.',
                 ],
                 ftdAngle: [
-                    { tag: 'THEOREM', text: 'The Moore Layer decomposition of the 27-site neighborhood produces 17 states that do not participate in the electromagnetic sector. The structural ratio 17/27 ~ 63% is a count, not a fit.' },
+                    { tag: 'THEOREM', text: 'The Moore Layer decomposition of the 27-site neighborhood produces 17 states that do not participate in the electromagnetic sector. The structural ratio \\(17/27 \\approx 63\\%\\) is a count, not a fit.' },
                     { tag: 'SELECTION', text: 'Dark matter is proposed to be the unexcited subset of the same lattice structure that produces visible matter — not a separate substance.' },
                 ],
                 stillOpen: [
-                    'The structural count 17/27 ~ 63% does not match the Planck 2018 observed ratio Omega_DM/Omega_m ~ 84%. The discrepancy is unresolved; no argument currently bridges the structural count to the cosmological measurement.',
+                    'The structural count \\(17/27 \\approx 63\\%\\) does not match the Planck 2018 observed ratio \\(\\Omega_\\mathrm{DM}/\\Omega_m \\approx 84\\%\\). The discrepancy is unresolved; no argument currently bridges the structural count to the cosmological measurement.',
                     'FTD does not currently explain galactic rotation-curve shapes or halo profiles quantitatively.',
                     'No direct-detection prediction distinguishes FTD dark matter from a sterile-neutrino or other weakly-interacting candidate.',
                 ],
@@ -138,17 +138,17 @@ export const FAQ_SECTIONS = Object.freeze([
                 question: 'What drives accelerating cosmic expansion?',
                 shortQuestion: 'Dark energy',
                 problem: [
-                    'Type Ia supernova observations show that the expansion of the universe is accelerating. The standard interpretation adds a cosmological constant Lambda whose observed value is 10^120 smaller than naive vacuum-energy estimates. This is the "worst prediction in physics".',
+                    'Type Ia supernova observations show that the expansion of the universe is accelerating. The standard interpretation adds a cosmological constant \\(\\Lambda\\) whose observed value is \\(10^{120}\\) smaller than naive vacuum-energy estimates. This is the "worst prediction in physics".',
                 ],
                 mainstreamStruggle: [
-                    'Quintessence, modified-gravity, and anthropic-landscape approaches each introduce additional parameters to accommodate the observed Lambda without explaining its size. The discrepancy between QFT vacuum energy and observation is essentially unresolved.',
+                    'Quintessence, modified-gravity, and anthropic-landscape approaches each introduce additional parameters to accommodate the observed \\(\\Lambda\\) without explaining its size. The discrepancy between QFT vacuum energy and observation is essentially unresolved.',
                 ],
                 ftdAngle: [
-                    { tag: 'PARAMETRIC', text: 'In FTD cosmology Omega_Lambda = 2/3 and Omega_m = 1/3 at the ontological level — consistent with observations to within a few percent.' },
+                    { tag: 'PARAMETRIC', text: 'In FTD cosmology \\(\\Omega_\\Lambda = 2/3\\) and \\(\\Omega_m = 1/3\\) at the ontological level — consistent with observations to within a few percent.' },
                     { tag: 'CONJECTURE', text: 'Dark energy is proposed to be the net effect of flux-field relaxation between manifestation events: a background dispositional stress, not a vacuum-energy density in the QFT sense.' },
                 ],
                 stillOpen: [
-                    'No prediction of the Lambda scale in natural units; the 2/3 ratio is ontological, not a prediction of magnitude.',
+                    'No prediction of the \\(\\Lambda\\) scale in natural units; the \\(2/3\\) ratio is ontological, not a prediction of magnitude.',
                     'No quantitative account of why the observed value is so small compared to any natural cutoff.',
                 ],
                 theoryRefs: [
@@ -166,9 +166,9 @@ export const FAQ_SECTIONS = Object.freeze([
                     'The two main responses are the multiverse/anthropic landscape (which makes no sharp predictions) and the search for a unique underlying theory (which has not been found). Neither is empirically decisive.',
                 ],
                 ftdAngle: [
-                    { tag: 'THEOREM', text: 'The fine-structure constant alpha = 1/137.036 follows from D=3 and the lemniscate constant G* alone, with no free parameters. Verified to CODATA 2022 precision in the Verify panel.' },
+                    { tag: 'THEOREM', text: 'The fine-structure constant \\(\\alpha = 1/137.036\\) follows from D=3 and the lemniscate constant G* alone, with no free parameters. Verified to CODATA 2022 precision in the Verify panel.' },
                     { tag: 'SELECTION', text: 'The Moore Layer Theorem constrains gauge groups, generation count, and dark-to-visible ratio from the neighborhood geometry alone.' },
-                    { tag: 'PARAMETRIC', text: 'Masses like m_e and m_H are computed by inserting FTD-derived alpha and integers into Standard-Model formulas; agreements are parametric, not first-principles predictions.' },
+                    { tag: 'PARAMETRIC', text: 'Masses like \\(m_e\\) and \\(m_H\\) are computed by inserting FTD-derived \\(\\alpha\\) and integers into Standard-Model formulas; agreements are parametric, not first-principles predictions.' },
                 ],
                 stillOpen: [
                     'Not every Standard-Model parameter is derived from FTD structure; the CKM matrix and neutrino masses are untouched.',
@@ -190,11 +190,11 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Supersymmetry was the leading proposed solution but has not been observed at the LHC at accessible scales. Extra-dimensional, compositeness, and anthropic approaches each introduce new structure without decisive empirical support.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'In FTD the gravitational coupling G_N = 1/(b_3 + N_c)^2 is set by the topology of the 27-site Moore cell, not by a dimensional fine-tuning.' },
+                    { tag: 'SELECTION', text: 'In FTD the gravitational coupling \\(G_N = 1/(b_3 + N_c)^2\\) is set by the topology of the 27-site Moore cell, not by a dimensional fine-tuning.' },
                     { tag: 'CONJECTURE', text: 'Gravity\'s weakness is reinterpreted as a long-range relaxation of the flux field across many manifestation events — weakness is structural dilution, not a hierarchy of mass scales.' },
                 ],
                 stillOpen: [
-                    'FTD produces a small G_N but does not yet reproduce a full quantitative Higgs-mass stabilization argument.',
+                    'FTD produces a small \\(G_N\\) but does not yet reproduce a full quantitative Higgs-mass stabilization argument.',
                     'The connection between the 17-digit hierarchy and the FTD cell topology is qualitative.',
                 ],
                 theoryRefs: [
@@ -257,7 +257,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Interpretations split sharply: Copenhagen drops counterfactual definiteness, Bohmian mechanics accepts nonlocal hidden variables at the cost of preferred frame, Many-Worlds retains locality at the cost of branching ontology. The physics is clear; the metaphysics is not.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'Bell violation S = 2*sqrt(2) arises in FTD as a property of singlet states produced by void events — entangled pairs share a common manifestation history on the lattice.' },
+                    { tag: 'SELECTION', text: 'Bell violation \\(S = 2\\sqrt{2}\\) arises in FTD as a property of singlet states produced by void events — entangled pairs share a common manifestation history on the lattice.' },
                     { tag: 'THEOREM', text: 'Tsirelson\'s bound emerges from the lattice emergence of quantum mechanics; five lemmas close the loop in DERIV_SINGLET_FROM_VOID_EVENT.md.' },
                 ],
                 stillOpen: [
@@ -376,7 +376,7 @@ export const FAQ_SECTIONS = Object.freeze([
                 ],
                 ftdAngle: [
                     { tag: 'SELECTION', text: 'Discreteness is primitive in FTD: the lattice and the ternary states are discrete by postulate. Integer-valued observables in the continuum limit are not a mystery — they are the original structure surviving coarse-graining.' },
-                    { tag: 'THEOREM', text: 'Specific integer ratios (3 generations, N_c = 3 colors, 17/27 dark fraction, 3 spatial dimensions) fall out of the Moore Layer decomposition with no free parameters.' },
+                    { tag: 'THEOREM', text: 'Specific integer ratios (3 generations, \\(N_c = 3\\) colors, \\(17/27\\) dark fraction, 3 spatial dimensions) fall out of the Moore Layer decomposition with no free parameters.' },
                 ],
                 stillOpen: [
                     'The postulate of discreteness is primitive; FTD does not argue that a strictly continuous ontology is impossible.',
