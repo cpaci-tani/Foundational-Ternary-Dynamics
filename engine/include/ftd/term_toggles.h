@@ -52,6 +52,25 @@ struct TermToggles {
         return msg.empty();
     }
 
+    // F2 (callstack audit 2026-04-17): warn about toggles whose
+    // implementation lives only on the GPU path. Called from
+    // RenderBridge::tick() when `use_gpu_` is false — returns a
+    // non-empty string when any GPU-only toggle is set, so the caller
+    // can std::cerr it.
+    //
+    // Post-fix: `pair_production` and `triad_binding` are now ported
+    // (pair_production_cpu / triad_binding_cpu). The two still
+    // GPU-only are `strong_force` and `exchange_force`. If either
+    // gets ported, drop it from this check.
+    std::string cpu_runtime_warnings() const {
+        std::string msg;
+        if (strong_force)
+            msg += "strong_force has no CPU implementation — toggle is a no-op on CPU builds\n";
+        if (exchange_force)
+            msg += "exchange_force has no CPU implementation — toggle is a no-op on CPU builds\n";
+        return msg;
+    }
+
     void enable_all() {
         wave_propagation = coupling = damping = genesis = true;
         gauss_projection = forces = gravity = poisson_coulomb = movement = true;

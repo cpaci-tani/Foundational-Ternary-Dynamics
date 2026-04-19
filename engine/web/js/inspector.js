@@ -408,14 +408,3 @@ export class Inspector {
     }
 }
 
-// Legacy formatting helpers -- superseded by units.js formatPosition/formatForce.
-// Retained for backward compatibility with any external callers.
-function vec3Str(x, y, z) {
-    return `(${x.toFixed(4)}, ${y.toFixed(4)}, ${z.toFixed(4)})`;
-}
-
-function fmtForce(mag) {
-    if (mag === 0) return '0';
-    if (mag < 0.0001) return mag.toExponential(2);
-    return mag.toFixed(6);
-}

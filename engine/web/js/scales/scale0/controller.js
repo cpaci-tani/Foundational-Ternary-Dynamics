@@ -5,17 +5,17 @@
  * a viewport adapter, scenario registry, and UI bindings owned by Scale 0.
  */
 
-import { createScale0ViewportAdapter } from './viewport-adapter.js?v=2';
+import { createScale0ViewportAdapter } from './viewport-adapter.js';
 import {
     getFieldStateSnapshot,
     getScale0State,
     setFieldToggle as setFieldToggleState,
     setForceStyle as setForceStyleState,
     setLatticeNeedsUpload as markLatticeUpload,
-} from './state/store.js?v=s1';
+} from './state/store.js';
 import { advanceSimulation } from './runtime/tick.js';
 import { syncRenderableData } from './runtime/frame-sync.js';
-import { updateFieldOverlays } from './runtime/field-overlays.js?v=6';
+import { updateFieldOverlays } from './runtime/field-overlays.js';
 import { updateDiagnosticsAndPanels } from './runtime/diagnostics.js';
 import {
     exitScale0,
@@ -25,17 +25,22 @@ import {
     resizeScale0Lattice,
     shouldUseFluxMock,
     stepScale0,
-} from './runtime/scenario-loader.js?v=q2';
-import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=2';
-import { Scale0ControlsComponent } from './ui/controls/component.js?v=4';
-import { wireScale0Controls } from './ui/controls/wire.js?v=3';
+} from './runtime/scenario-loader.js';
+import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js';
+import { Scale0ControlsComponent } from './ui/controls/component.js';
+import { wireScale0Controls } from './ui/controls/wire.js';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 import { MemoryRecorder } from './timeline/memory-recorder.js';
 import { RenderController } from './timeline/render-controller.js';
+import * as _lodMod from './timeline/lod.js';
 import { ScrubBarComponent } from '../../ui/components/scrub-bar/component.js';
 import { RenderChipComponent } from '../../ui/components/render-chip/component.js';
 
 const state = getScale0State();
+
+// Publish LOD helpers on window so the WASM bridge can upsample any-LOD
+// snapshots during scrub playback without creating a circular import.
+if (typeof window !== 'undefined') window.__ftdTimelineLod = _lodMod;
 
 // ── Playback timeline ─────────────────────────────────────────────────
 // Default budget split: 60% Memory / 40% Render of a 50 MB overall cap.
@@ -77,6 +82,26 @@ export function startScale0Render(ctx, seconds = 30) {
         scale0Caps: ctx.bridge.capabilities.scale0,
     });
     _renderChip?.bindController(_renderController);
+
+    // Freeze the live animate loop's tick path for the render's lifetime so
+    // render-controller ticks don't fight the main-loop ticks. Also push an
+    // upload flag after every slice so the canvas visibly fast-forwards
+    // through the clip while it builds, and once more on completion so the
+    // restored original snapshot is actually drawn.
+    state.rendering = true;
+    _renderController.addEventListener('progress', () => {
+        state.latticeNeedsUpload = true;
+        state.fieldNeedsUpdate   = true;
+    });
+    const clearRendering = () => {
+        state.rendering = false;
+        state.latticeNeedsUpload = true;
+        state.fieldNeedsUpdate   = true;
+    };
+    _renderController.addEventListener('done',   clearRendering);
+    _renderController.addEventListener('cancel', clearRendering);
+    _renderController.addEventListener('error',  clearRendering);
+
     _renderController.start(seconds);
 }
 
@@ -84,25 +109,81 @@ export function cancelScale0Render() {
     _renderController?.cancel();
 }
 
+/**
+ * Forget every recorded snapshot so the scrub bar tracks the fresh scenario
+ * from tick 0. Called whenever a scenario (re)loads or the lattice resizes —
+ * stale snapshots from the previous run carry tick numbers that don't match
+ * the new simulation, which would skew the scrub fraction-to-tick mapping
+ * and hydrate wrong-scenario state on drag.
+ *
+ * Also cancels any in-flight render, since the render buffer is only
+ * meaningful inside the scenario it was recorded against.
+ */
+export function clearScale0Timeline() {
+    _memoryRecorder?.clear?.();
+    if (_renderController?.running) _renderController.cancel();
+    if (_renderController) _renderController.buffer = null;
+    _scrubBar?._resetPlayhead?.();
+}
+
 export function getScale0RenderController() { return _renderController; }
 
 /**
- * Restore the engine state to the closest LOD-0 snapshot at or before `tick`,
- * then fast-forward the remainder. Returns true if hydration succeeded.
+ * Restore the engine state to the snapshot nearest `tick` for scrub display.
+ *
+ * Pure "load, don't re-simulate" — we always pick the nearest stored
+ * snapshot (from render buffer if active, else memory buffer) and load it
+ * directly. This makes drag-scrubbing instant regardless of LOD; the price
+ * is that time resolves to the sample grid (coarser with older LOD zones),
+ * which is the desired trade.
+ *
+ * Live sim resumes from the currently-loaded snapshot when the user
+ * releases the scrub thumb (see `resumeLive`).
  */
 export function hydrateToTick(ctx, tick) {
-    const rec = _memoryRecorder;
-    if (!rec) return false;
-    const snap = rec.buffer.nearestBefore(tick);
-    if (!snap || snap.lod !== 0) return false; // only LOD 0 is engine-loadable
-    const ok = ctx.bridge.capabilities.scale0.loadScale0Snapshot?.(snap);
+    const rb = _renderController?.buffer;
+    const mb = _memoryRecorder?.buffer;
+    const source = (rb && rb.size > 0) ? rb : mb;
+    if (!source || source.size === 0) return false;
+    const snap = _nearest(source, tick);
+    if (!snap) return false;
+    const ok = !!ctx.bridge.capabilities.scale0.loadScale0Snapshot?.(snap);
     if (!ok) return false;
-    const delta = Math.max(0, tick - snap.tick);
-    for (let i = 0; i < delta; i++) ctx.bridge.capabilities.scale0.tickScale0();
+
+    // Freeze live physics for the duration of the drag; the scrub end hook
+    // clears this. advanceSimulation() reads state.scrubbing and short-circuits.
+    state.scrubbing = true;
+
+    // Force the next animate pass to upload the fresh lattice to the GPU and
+    // recompute field overlays against it — otherwise the viewport keeps
+    // showing the pre-scrub state even though the engine buffers changed.
+    state.latticeNeedsUpload = true;
+    state.fieldNeedsUpdate   = true;
     return true;
 }
 
-export function resumeLive() { /* reserved for future use (e.g. resync UI) */ }
+/** Nearest-by-tick (not nearest-before) for the smoothest scrub feel. */
+function _nearest(buffer, tick) {
+    const before = buffer.nearestBefore(tick);
+    if (!before) return null;
+    const snaps = buffer.snapshots();
+    const idx = snaps.indexOf(before);
+    const after = snaps[idx + 1];
+    if (!after) return before;
+    return (tick - before.tick) <= (after.tick - tick) ? before : after;
+}
+
+/**
+ * Release the scrub-induced physics freeze. Called from the scrub-bar's
+ * `onScrubEnd` (pointerup / strip dblclick / reset). Leaves the engine
+ * state exactly as the last hydrated snapshot set it; sim resumes ticking
+ * from there on the next animate pass.
+ */
+export function resumeLive() {
+    state.scrubbing = false;
+    state.latticeNeedsUpload = true;
+    state.fieldNeedsUpdate   = true;
+}
 
 export function getScale0ScrubBar() { return _scrubBar; }
 
@@ -111,6 +192,15 @@ function viewportAdapter(ctx) {
 }
 
 function renderFrame(ctx) {
+    // Advance the viewport's animation clock ONLY when the sim is running.
+    // This is what makes wall-clock-driven visuals (|ψ|² breathing, etc.)
+    // stay static during pause even when overlay toggles force a repaint.
+    // The dt here is nominal — picks up frame cadence at ~60Hz. Animations
+    // that need hard-real-time accuracy should use their own clocks, but
+    // the slow-pulse visuals (<1Hz) are fine with a nominal 16ms step.
+    if (ctx.running && ctx.viewport?.advanceAnimationClock) {
+        ctx.viewport.advanceAnimationClock(0.016);
+    }
     viewportAdapter(ctx).render();
 }
 

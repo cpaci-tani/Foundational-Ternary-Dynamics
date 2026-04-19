@@ -1,6 +1,56 @@
 #include "ftd/dag_engine.h"
 #include <iostream>
 
+// ══════════════════════════════════════════════════════════════════════
+// STATUS BANNER — DAG Engine is a SKELETON, not the production physics path.
+// ══════════════════════════════════════════════════════════════════════
+//
+// The file name advertises a DAG-based six-phase engine. In reality:
+//
+//   phase_read    — implemented (Laplacian + coupling source)
+//   phase_write   — implemented (leapfrog-style update + damping)
+//   gauss_project — STUB — see [OPEN] below
+//   phase_forces  — STUB — see [OPEN] below
+//   phase_movement— STUB — see [OPEN] below
+//
+// The production Scale-0 physics runs through src/render_bridge.cpp on a
+// FLAT voxel array. The SparseVoxelDAG in this file is in-progress
+// infrastructure for a future migration, not the path the browser engine,
+// tests, or benchmarks currently exercise.
+//
+// Do NOT cite results produced by this class as representative of FTD
+// engine output. When this class is completed, delete this banner.
+//
+// ══════════════════════════════════════════════════════════════════════
+// INTEGRATION SCHEME NOTE
+// ══════════════════════════════════════════════════════════════════════
+// phase_read + phase_write below perform:
+//
+//     wave_vel += delta_J     (from Laplacian)
+//     flux += wave_vel        (position-like update)
+//
+// This IS Störmer–Verlet leapfrog under the stagger interpretation where
+// wave_vel = v(t + h/2) and flux = J(t). Verified empirically in
+// RenderBridge by tests/test_leapfrog_integrator_audit.cpp (TRACKER §1.4
+// closed 2026-04-17): 0.1% cumulative injection/dissipation balance over
+// 5000 ticks with damping off. C_SPEED = 1/√D = 1/√3 is the correct
+// leapfrog CFL limit.
+//
+// ══════════════════════════════════════════════════════════════════════
+// LAPLACIAN ISOTROPY NOTE (verified 2026-04-17, TRACKER §1.8 CLOSED)
+// ══════════════════════════════════════════════════════════════════════
+// The 18-point Moore Laplacian below (face=1/3, edge=1/6, self=−4) is
+// consistent (weights sum to 0) AND rotationally isotropic through
+// O(h⁴). Taylor expansion gives:
+//
+//     ∇²_Moore f = ∇²f + (h²/12)(∇²)²f + O(h⁶)
+//
+// The 2:1 face:edge ratio is chosen precisely to cancel the anisotropic
+// part of the O(h⁴) term. Residual anisotropy at finite h is lattice
+// dispersion at k·h ~ 1 — a universal artefact of cubic-lattice FD
+// schemes, quantified in tests/test_moore_laplacian_isotropy.cpp.
+// ══════════════════════════════════════════════════════════════════════
+
 namespace ftd {
 
 DagEngine::DagEngine(int lattice_size) {

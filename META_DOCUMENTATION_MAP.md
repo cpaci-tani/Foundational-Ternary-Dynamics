@@ -20,6 +20,7 @@ For current documentation drift, cleanup status, and deferred remediation items,
 | Check project health | [evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md](evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md) — weighted project health scorecard and priorities |
 | See the core mathematics | [docs/theory/01_reference/MATH_MASTER_QUADRATIC.md](docs/theory/01_reference/MATH_MASTER_QUADRATIC.md) |
 | Assess what's genuinely derived | [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) (~35 genuine) |
+| Find an unresolved item to work on | [docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md](docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` across code + theory in one ledger |
 | Run the verification suite | `python scripts/tests/run_all_tests.py` |
 | Read the manuscript (book) | `cd dissemination/manuscript && quarto render` |
 

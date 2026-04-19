@@ -87,7 +87,7 @@ export function createScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-strong"></span>Strong
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-weak"
-          title="Weak transmutation sites (chirality-dependent flavor change)">
+          title="[PROXY] Weak force ∝ (∇×J)·δ. The curl of J is a parity-odd pseudovector, non-zero wherever the flux has rotational structure — matches the weak interaction's chirality-dependent / parity-violating nature. Scaled by DUAL_DELTA so magnitude reads as 'weak' next to EM/strong.">
         <span class="field-swatch field-swatch-weak"></span>Weak
       </button>
     </div>
@@ -95,24 +95,68 @@ export function createScale0OverlayTemplate() {
     <div class="s0-overlay-col">
       <div class="s0-overlay-col-head">Quantum</div>
       <button class="view-toggle field-toggle" id="toggle-psi-squared"
-          title="Born probability density |ψ|² = |J_L|² + |J_R|² (or |J|² if dual substrate off). Where the particle is, probabilistically.">
+          title="[PROXY] Born probability density |ψ|² = |J_L|² + |J_R|² (or |J|² if dual substrate off). Where the particle is, probabilistically.">
         <span class="field-swatch field-swatch-psi-squared"></span>|&psi;|&sup2;
       </button>
       <button class="view-toggle field-toggle" id="toggle-phase"
-          title="Complex phase φ = arg(J_L + i·J_R). Interference fringes, Aharonov-Bohm loops. Best with Dual Substrate on.">
+          title="[PROXY] Complex phase φ = arg(J_L + i·J_R). Requires Dual Substrate toggle to be on (otherwise renders flat). Interference fringes, Aharonov-Bohm loops.">
         <span class="field-swatch field-swatch-phase"></span>Phase &phi;
       </button>
       <button class="view-toggle field-toggle" id="toggle-lagrangian-density"
-          title="Lagrangian density ℒ(x) = ½|∂ₜJ|² − ½|∇J|² − V(s,J). Blue = potential-dominated, red = kinetic-dominated.">
+          title="[PROXY] Lagrangian density ℒ(x) ≈ ½|∂ₜJ|² − ½(∇·J)² − V(s,J). Uses (∇·J)² as a stand-in for |∇J|² (Frobenius norm of full Jacobian not exposed).">
         <span class="field-swatch field-swatch-lagrangian"></span>&#8466;(x)
       </button>
       <button class="view-toggle field-toggle" id="toggle-entropy-density"
-          title="Local Shannon entropy of state distribution in a 3×3×3 Moore neighborhood. White = disordered, black = crystallized.">
+          title="[PROXY] Local entropy approximated as 4p(1−p) with p = |J|/|J|_max (Gini-style impurity). True neighborhood Shannon estimator lands when state-field access is exposed.">
         <span class="field-swatch field-swatch-entropy"></span>Entropy s
       </button>
+    </div>
+
+    <div class="s0-overlay-col">
+      <div class="s0-overlay-col-head" title="Rubber-sheet height fields that go flat in stillness and deform as physical structure develops.">Topology</div>
       <button class="view-toggle field-toggle" id="toggle-grav-potential"
-          title="Gravitational potential Φ(x) — the wells generating Gravity force vectors. Deep blue = mass well, yellow = saddle/peak.">
+          title="[PROXY] Gravitational potential Φ(x) — approximated as smoothed −|J|² mass density when the bridge doesn't expose a Poisson-solved Φ directly. Deep blue = mass well, yellow = saddle/peak.">
         <span class="field-swatch field-swatch-grav-potential"></span>&Phi; potential
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-em-energy"
+          title="EM energy density u(x) = ½(|E|² + |B|²). Maxwell energy density; peaks where EM fields concentrate, flat in vacuum.">
+        <span class="field-swatch field-swatch-em-energy"></span>EM energy u
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-charge-density"
+          title="Charge density ρ(x) = ∇·J. FTD-native charge via Gauss. Red hills = sources, blue wells = sinks, flat where divergence-free.">
+        <span class="field-swatch field-swatch-charge"></span>Charge &rho;
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-vorticity"
+          title="Vorticity |ω|(x) = |∇×J|. Flux-field swirl magnitude; lights up around vortex rings and rotational solitons, flat for curl-free flow.">
+        <span class="field-swatch field-swatch-vorticity"></span>Vorticity &omega;
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-helicity"
+          title="Helicity density h(x) = J·(∇×J). Signed scalar — field-line linking number density. Positive = right-handed, negative = left-handed.">
+        <span class="field-swatch field-swatch-helicity"></span>Helicity h
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-kretschmann"
+          title="[PROXY] Kretschmann-like curvature K(x) = (∇²L)² with L = √(|J|²/|J|²_max) as mass-density proxy (MockBridge doesn't run the Poisson solver). Log-compressed so the horizon spike doesn't flatten the background. Spikes at event horizons.">
+        <span class="field-swatch field-swatch-kretschmann"></span>Curvature K
+      </button>
+    </div>
+
+    <div class="s0-overlay-col">
+      <div class="s0-overlay-col-head" title="Stress-energy components and information-theoretic fields derived from J.">Stress-Energy</div>
+      <button class="view-toggle field-toggle" id="toggle-e-pressure"
+          title="Electric pressure P_E(x) = ½|E|². Half of EM energy; rises on charge concentrations.">
+        <span class="field-swatch field-swatch-e-pressure"></span>P&#8324; (electric)
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-b-pressure"
+          title="Magnetic pressure P_B(x) = ½|B|². Sister field to P_E; rises on current loops.">
+        <span class="field-swatch field-swatch-b-pressure"></span>P&#8331; (magnetic)
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-kinetic-energy"
+          title="Kinetic energy density K(x) = ½|v|² at particle sites. Highlights moving particles.">
+        <span class="field-swatch field-swatch-kinetic"></span>Kinetic K
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-fisher"
+          title="Fisher information F(x) = |∇ρ|²/ρ with ρ = |J|². Log-compressed so localized-mode edges remain readable. Brightens the sharp edges of soliton shells and wave-packet envelopes.">
+        <span class="field-swatch field-swatch-fisher"></span>Fisher F
       </button>
     </div>
 
@@ -141,6 +185,14 @@ export function createScale0OverlayTemplate() {
       <button class="view-toggle field-toggle" id="toggle-confinement"
           title="SU(3) confinement — flux strings connecting color-charged pairs">
         <span class="field-swatch field-swatch-confinement"></span>Confinement
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-horizon"
+          title="[PROXY] Event-horizon isosurface — voxels where the latency proxy L ≥ 0.95. Rendered as a voxel-centred point cloud (marching-cubes isosurface not yet implemented). The point of no escape for gravitationally trapped flux.">
+        <span class="field-swatch field-swatch-horizon"></span>Horizon
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-coherence"
+          title="[PROXY] Dual-substrate coherence C(x) = (J·∇×J)/(|J|·|∇×J|) in [-1,1]. Cosine of the angle between flow and curl — chirality sign density (a scale-free stand-in for a true Helmholtz L/R decomposition).">
+        <span class="field-swatch field-swatch-coherence"></span>Coherence C
       </button>
     </div>
     </div>

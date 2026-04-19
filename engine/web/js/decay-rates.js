@@ -10,7 +10,7 @@ import {
     ALPHA, K_B, PI_FTD, N_C, B_3, N_EFF, N_BASE,
     MU_RATIO, TAU_RATIO, M_PROTON,
     SIN2_WEINBERG, M_W, M_Z, G_FERMI, HBAR_C_MEV_FM,
-    M_P_PHYS, M_PI_CH_PHYS, M_PI_0_PHYS
+    M_P_PHYS, M_PI_CH_PHYS, M_PI_0_PHYS, DELTA_NP,
 } from './constants.js';
 
 // ── Masses from Ontic Chain ──────────────────────────────────────────
@@ -21,7 +21,7 @@ export const M_TAU      = K_B * TAU_RATIO;          // 1776.7 MeV (0.007%)
 // Re-export the PDG proton mass from constants.js as M_PROTON_PHYS so
 // existing consumers of this module keep working (Phase D.2).
 export const M_PROTON_PHYS = M_P_PHYS;              // Physical proton mass (PDG)
-export const M_NEUTRON  = M_PROTON_PHYS + 1.293;    // neutron = proton + 1.293 MeV
+export const M_NEUTRON  = M_PROTON_PHYS + DELTA_NP; // neutron = proton + Delta_NP
 export const M_PION_CHARGED = M_PI_CH_PHYS;         // charged pion (PDG)
 export const M_PION_NEUTRAL = M_PI_0_PHYS;          // neutral pion (PDG)
 
@@ -188,11 +188,11 @@ export function particleDecayInfo(name) {
         },
         'proton': {
             name: 'Proton (p)',
-            mass_MeV: 938.272,  // Physical mass (PDG); framework scale = K_B * PROTON_RATIO
+            mass_MeV: M_P_PHYS,  // Physical mass (PDG); framework scale = K_B * PROTON_RATIO
             lifetime_s: Infinity,
             primary_channel: 'Stable (τ > 10³⁴ yr)',
             branching: 'N/A',
-            origin: `Physical: 938.3 MeV; FTD scale: ${M_PROTON.toFixed(1)} MeV`
+            origin: `Physical: ${M_P_PHYS.toFixed(1)} MeV; FTD scale: ${M_PROTON.toFixed(1)} MeV`
         }
     };
     return catalog[name] || null;

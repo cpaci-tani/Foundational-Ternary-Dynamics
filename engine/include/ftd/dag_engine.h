@@ -10,10 +10,45 @@
 namespace ftd {
 
 /**
- * @brief Sparse Voxel DAG implementation of the internal Engine.
- * 
- * [AXIOM] Evaluates the discrete space/time updates natively in an octree structure
- * to support vast empty unmanifested regions efficiently. Operates at Scale 0.
+ * @brief DagEngine — EXPERIMENTAL sparse-voxel-DAG prototype.
+ *
+ * ════════════════════════════════════════════════════════════════════════
+ *                        ⚠  EXPERIMENTAL — DO NOT USE IN PRODUCTION  ⚠
+ * ════════════════════════════════════════════════════════════════════════
+ *
+ * Original ambition: a sparse-voxel DAG engine that efficiently skips over
+ * vast regions of void (unmanifested space) using a COW-backed octree.
+ *
+ * Current reality: `phase_read` and `phase_write` are implemented against
+ * the SparseVoxelDAG, but `gauss_project`, `phase_forces`, and
+ * `phase_movement` are empty `[OPEN]` stubs. Ticks run but nothing
+ * gauge-couples, nothing forces, nothing moves.
+ *
+ * THE PRODUCTION ENGINE is `RenderBridge` (include/ftd/render_bridge.h,
+ * src/render_bridge.cpp). It operates on a flat voxel array, has all
+ * six phases implemented and tested, and is what the WASM build, the
+ * benchmarks, and the browser dashboard actually use.
+ *
+ * This class is retained because:
+ *   1. `SparseVoxelDAG` (in dag_lattice.h) is a useful data structure
+ *      for future sparse-aware experiments (e.g., deep cosmological
+ *      simulations where most of space is vacuum).
+ *   2. `test_dag_engine` exercises the DAG's read/write semantics as
+ *      a structural-parity check on the data structure itself.
+ *   3. The phase_read / phase_write implementations document the
+ *      octree-recursive dispatch pattern.
+ *
+ * To upgrade this class to production:
+ *   - Implement the three stub phases on top of SparseVoxelDAG traversal
+ *     (mirror RenderBridge's algorithms, but make writes COW-aware).
+ *   - Add Gauss SOR that respects sparse topology (skip pure-void
+ *     subtrees, which is the whole point of the DAG).
+ *   - Add particle movement that uses the DAG's spatial index.
+ *   - Add a comprehensive test suite parallel to RenderBridge's.
+ *   - Remove this warning banner.
+ *
+ * Until then: use `RenderBridge`.
+ * ════════════════════════════════════════════════════════════════════════
  */
 class DagEngine : public ScaleEngine {
 public:

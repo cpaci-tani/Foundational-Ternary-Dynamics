@@ -270,6 +270,32 @@ ftd_add_test(ftd_coulomb_force_law tests/campaign_coulomb_force_law.cpp
 ftd_add_test(test_energy_conservation tests/test_energy_conservation.cpp
              CTEST_NAME energy_conservation TIMEOUT 600)
 
+# 2026-04-17 (consolidation sweep): empirical audit that the phase_write
+# advance pair (wave_vel += Δ; flux += wave_vel) is symplectic leapfrog.
+# Closes TRACKER_OPEN_ITEMS §1.4 on pass.
+ftd_add_test(test_leapfrog_integrator_audit
+             tests/test_leapfrog_integrator_audit.cpp
+             CTEST_NAME leapfrog_integrator_audit TIMEOUT 120)
+
+# 2026-04-17 (step 2): radial-symmetry benchmark on the 18-point
+# Moore Laplacian. Closes TRACKER §1.8 on pass.
+ftd_add_test(test_moore_laplacian_isotropy
+             tests/test_moore_laplacian_isotropy.cpp
+             CTEST_NAME moore_laplacian_isotropy TIMEOUT 120)
+
+# 2026-04-17 (step 4): γ_FTD momentum integration replaces the old
+# non-relativistic velocity clamp. Closes TRACKER §1.2.
+ftd_add_test(test_gamma_ftd_momentum
+             tests/test_gamma_ftd_momentum.cpp
+             CTEST_NAME gamma_ftd_momentum TIMEOUT 120)
+
+# 2026-04-17 (callstack audit): verifies the F1–F8 fixes — pair_production
+# and triad_binding now run on CPU, accumulate_proper_time updates tau,
+# ALPHA/ALPHA_EFT identity holds.
+ftd_add_test(test_callstack_audit_fixes
+             tests/test_callstack_audit_fixes.cpp
+             CTEST_NAME callstack_audit_fixes TIMEOUT 60)
+
 # Phase 6: Flux-aggregate particles
 add_executable(test_selffield_profile tests/test_selffield_profile.cpp)
 target_link_libraries(test_selffield_profile ftd_core)

@@ -8,6 +8,12 @@ export function createSubstrateControlsCard() {
   card.innerHTML = `
     <div class="card-title">Substrate Controls</div>
     <div class="combo-section-label">Inject</div>
+    <div class="combo-btn-row">
+      <button class="ctrl-btn-secondary" id="btn-inject" title="Inject point particle">Particle</button>
+      <button class="ctrl-btn-secondary" id="btn-inject-wave" title="Inject wavepacket">Wave</button>
+      <button class="ctrl-btn-secondary" id="btn-inject-flux" title="Inject flux at position">Flux</button>
+      <button class="ctrl-btn-secondary" id="btn-inject-pair" title="Create entangled pair">Pair</button>
+    </div>
     <div class="ctrl-row ctrl-row-compact">
       <span class="ctrl-label ctrl-label-xs">Pos</span>
       <div class="coord-stepper" data-axis="x">
@@ -31,8 +37,6 @@ export function createSubstrateControlsCard() {
           <button type="button" class="coord-step" data-step="-1" data-for="inj-z" aria-label="Decrement z">&#9660;</button>
         </div>
       </div>
-      <button class="ctrl-btn-secondary ctrl-btn-compact" id="btn-center" title="Center position">Center</button>
-      <button class="ctrl-btn-secondary ctrl-btn-compact" id="btn-random" title="Randomize position and inject a wavepacket">Rand</button>
     </div>
     <div class="ctrl-row ctrl-row-compact">
       <span class="ctrl-label ctrl-label-xs">State</span>
@@ -40,12 +44,8 @@ export function createSubstrateControlsCard() {
         <button class="ctrl-btn-secondary active ctrl-btn-flex-1" id="inj-state-pos" title="Positive manifestation">+1</button>
         <button class="ctrl-btn-secondary ctrl-btn-flex-1" id="inj-state-neg" title="Negative manifestation">&minus;1</button>
       </div>
-    </div>
-    <div class="combo-btn-row">
-      <button class="ctrl-btn-secondary" id="btn-inject" title="Inject point particle">Particle</button>
-      <button class="ctrl-btn-secondary" id="btn-inject-wave" title="Inject wavepacket">Wave</button>
-      <button class="ctrl-btn-secondary" id="btn-inject-flux" title="Inject flux at position">Flux</button>
-      <button class="ctrl-btn-secondary" id="btn-inject-pair" title="Create entangled pair">Pair</button>
+      <button class="ctrl-btn-secondary ctrl-btn-compact" id="btn-center" title="Center position">Center</button>
+      <button class="ctrl-btn-secondary ctrl-btn-compact" id="btn-random" title="Randomize position and inject a wavepacket">Rand</button>
     </div>
 
     <div class="combo-section-label">Parameters</div>

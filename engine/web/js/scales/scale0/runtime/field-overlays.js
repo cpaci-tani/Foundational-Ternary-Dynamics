@@ -5,9 +5,8 @@ import {
     generateGridSeeds,
     generateImportanceSeeds,
     generateBImportanceSeeds,
-} from '../../../fieldlines.js?v=2';
-
-const DUAL_DELTA = 0.9568;
+} from '../../../fieldlines.js';
+import { DUAL_DELTA } from '../../../constants.js';
 
 export function sampleFieldState(fieldCapability, flags, stride) {
     const sampled = {};
@@ -22,11 +21,32 @@ export function sampleFieldState(fieldCapability, flags, stride) {
     if (flags.showPoynting || flags.showLight || flags.showLagrangianDensity) {
         sampled.poynting = fieldCapability.getScale0FieldSamples({ kind: 'poynting', stride });
     }
-    if (flags.showEField) sampled.eField = fieldCapability.getScale0FieldSamples({ kind: 'e', stride });
-    if (flags.showBField) sampled.bField = fieldCapability.getScale0FieldSamples({ kind: 'b', stride });
-    if (flags.showDivField || flags.showLagrangianDensity) {
+    if (flags.showEField || flags.showEmEnergy || flags.showEPressure)
+        sampled.eField = fieldCapability.getScale0FieldSamples({ kind: 'e', stride });
+    if (flags.showBField || flags.showEmEnergy || flags.showBPressure)
+        sampled.bField = fieldCapability.getScale0FieldSamples({ kind: 'b', stride });
+    if (flags.showDivField || flags.showLagrangianDensity || flags.showChargeDensity) {
         sampled.divergence = fieldCapability.getScale0FieldSamples({ kind: 'divJ', stride });
     }
+    if (flags.showVorticity) {
+        sampled.vorticity = fieldCapability.getScale0FieldSamples({ kind: 'vorticity', stride });
+    }
+    // Tier 1/2/3 samplers (2026-04-18)
+    if (flags.showHelicity)
+        sampled.helicity = fieldCapability.getScale0FieldSamples({ kind: 'helicity', stride });
+    if (flags.showKretschmann)
+        sampled.kretschmann = fieldCapability.getScale0FieldSamples({ kind: 'kretschmann', stride });
+    if (flags.showHorizon)
+        sampled.latency = fieldCapability.getScale0FieldSamples({ kind: 'latency', stride });
+    if (flags.showFisher)
+        sampled.fisher = fieldCapability.getScale0FieldSamples({ kind: 'fisher', stride });
+    if (flags.showCoherence)
+        sampled.coherence = fieldCapability.getScale0FieldSamples({ kind: 'coherence', stride });
+    // Weak force is parity-violating; its natural vector proxy is the curl
+    // of J (pseudovector), not J itself. Pull the curl-J sample when the
+    // weak overlay is active.
+    if (flags.showForceWeak)
+        sampled.curlJ = fieldCapability.getScale0FieldSamples({ kind: 'curlJ', stride });
     return sampled;
 }
 
@@ -39,12 +59,15 @@ function ensureTier1Buffers(state, N) {
     if (!state.t1 || state.t1.size !== N) {
         state.t1 = {
             size: N,
-            psi2:   new Float32Array(N),
-            phase:  new Float32Array(N),
-            lagr:   new Float32Array(N),
-            entropy: new Float32Array(N),
-            gravPot: new Float32Array(N),
-            normalizer: { psi2Max: 0, lagMax: 0, gravMax: 0 },
+            psi2:     new Float32Array(N),
+            phase:    new Float32Array(N),
+            lagr:     new Float32Array(N),
+            entropy:  new Float32Array(N),
+            gravPot:  new Float32Array(N),
+            emEnergy: new Float32Array(N),
+            rho:      new Float32Array(N),
+            vort:     new Float32Array(N),
+            normalizer: { psi2Max: 0, lagMax: 0, gravMax: 0, emMax: 0, rhoMax: 0, vortMax: 0 },
         };
     }
     return state.t1;
@@ -76,18 +99,25 @@ function computePhaseFrame(sampled, state, dualLVecs, dualRVecs) {
     if (!sampled.fluxVector?.count) return null;
     const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
     const { positions, count } = sampled.fluxVector;
-    // When Dual Substrate is off, dualLVecs / dualRVecs may be null. Fall
-    // back to a trivial phase of 0 for every voxel so the renderer still
-    // gets a frame (just a uniform field, matching the physics — real J
-    // has zero imaginary component).
+    // FTD phase is arg(J_L + i*J_R) — a signed quantity spanning [-pi, pi].
+    // We project the chirality pair onto the flux direction and take the
+    // signed scalar components J_L.Jhat and J_R.Jhat. Using magnitudes
+    // would collapse the output to [0, pi/2] and discard chirality sign.
     const hasDual = dualLVecs && dualRVecs && dualLVecs.length >= count * 3;
+    const { vectors } = sampled.fluxVector;
     for (let i = 0; i < count; i++) {
         if (hasDual) {
+            const jx = vectors[i * 3], jy = vectors[i * 3 + 1], jz = vectors[i * 3 + 2];
+            const jmag = Math.sqrt(jx * jx + jy * jy + jz * jz);
+            if (jmag < 1e-12) { buf.phase[i] = 0; continue; }
+            const inv = 1 / jmag;
+            const hx = jx * inv, hy = jy * inv, hz = jz * inv;
             const lx = dualLVecs[i * 3], ly = dualLVecs[i * 3 + 1], lz = dualLVecs[i * 3 + 2];
             const rx = dualRVecs[i * 3], ry = dualRVecs[i * 3 + 1], rz = dualRVecs[i * 3 + 2];
-            const lMag = Math.sqrt(lx * lx + ly * ly + lz * lz);
-            const rMag = Math.sqrt(rx * rx + ry * ry + rz * rz);
-            buf.phase[i] = Math.atan2(rMag, lMag);
+            // Signed projections onto J-direction preserve sign information.
+            const lProj = lx * hx + ly * hy + lz * hz;
+            const rProj = rx * hx + ry * hy + rz * hz;
+            buf.phase[i] = Math.atan2(rProj, lProj);  // in [-pi, pi]
         } else {
             buf.phase[i] = 0;
         }
@@ -96,12 +126,13 @@ function computePhaseFrame(sampled, state, dualLVecs, dualRVecs) {
 }
 
 function computeLagrangianDensityFrame(sampled, state) {
-    // Per-voxel ℒ(x) ≈ ½|J|² − ½|∇J|²
-    //   kinetic term     potential-like term
-    // The full Lagrangian chart tracks more terms (coupling, Gauss, dissipation)
-    // but those are either scalars or require engine-side data we don't sample
-    // per-voxel yet. This captures the dominant (kinetic − gradient) split so
-    // users see "blue = potential-dominated, red = kinetic-dominated".
+    // [TIER-1 VISUAL] Per-voxel L(x) ~ (1/2)|J|^2 - (1/2)(div J)^2.
+    // NOTE: (div J)^2 != |grad J|^2 in general — the Frobenius norm of
+    // the 3x3 Jacobian captures shear flow, while (div J)^2 only captures
+    // compressive divergence. This overlay is a faithful approximation
+    // for kinetic-vs-gradient dominance, NOT a strict Lagrangian density.
+    // For a true |grad J|^2 overlay we'd need to expose the full Jacobian
+    // tensor through the capability interface.
     if (!sampled.fluxVector?.count) return null;
     const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
     const { vectors, positions, count } = sampled.fluxVector;
@@ -206,7 +237,374 @@ export function buildQuantumOverlayData(ctx, state, sampled) {
     if (state.fieldFlags.showGravPotential) {
         frame.gravPotential = computeGravPotentialFrame(ctx, sampled, state);
     }
+    if (state.fieldFlags.showEmEnergy) {
+        frame.emEnergy = computeEmEnergyFrame(sampled, state);
+    }
+    if (state.fieldFlags.showChargeDensity) {
+        frame.chargeDensity = computeChargeDensityFrame(sampled, state);
+    }
+    if (state.fieldFlags.showVorticity) {
+        frame.vorticity = computeVorticityFrame(sampled, state);
+    }
+    // Tier 1/2/3 (2026-04-18)
+    if (state.fieldFlags.showHelicity) {
+        frame.helicity = computeHelicityFrame(sampled, state);
+    }
+    if (state.fieldFlags.showKretschmann) {
+        frame.kretschmann = computeKretschmannFrame(sampled, state);
+    }
+    if (state.fieldFlags.showHorizon) {
+        frame.horizon = computeHorizonFrame(sampled, state);
+    }
+    if (state.fieldFlags.showEPressure) {
+        frame.ePressure = computeEPressureFrame(sampled, state);
+    }
+    if (state.fieldFlags.showBPressure) {
+        frame.bPressure = computeBPressureFrame(sampled, state);
+    }
+    if (state.fieldFlags.showKineticEnergy) {
+        frame.kineticEnergy = computeKineticEnergyFrame(ctx, state);
+    }
+    if (state.fieldFlags.showFisher) {
+        frame.fisher = computeFisherFrame(sampled, state);
+    }
+    if (state.fieldFlags.showCoherence) {
+        frame.coherence = computeCoherenceFrame(sampled, state);
+    }
     return frame;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// Physics-topology overlays — Maxwell energy, charge, vorticity.
+// All three are rubber-sheet scalars; they go flat in vacuum/stillness
+// and deform only where the underlying field has structure.
+// ══════════════════════════════════════════════════════════════════════
+
+/**
+ * EM energy density u(x) = ½(|E|² + |B|²).
+ * Classical Maxwell energy density in natural units (ε₀ = μ₀ = 1).
+ * When only one of E/B has samples we fall back to that one; both absent
+ * means there is no field to render and we return null.
+ */
+function computeEmEnergyFrame(sampled, state) {
+    const eF = sampled.eField;
+    const bF = sampled.bField;
+    // Prefer the buffer with more samples as the position reference so the
+    // rubber sheet follows whichever field is actually populated.
+    const ref = (eF && eF.count) ? eF : bF;
+    if (!ref || !ref.count) return null;
+    const buf = ensureTier1Buffers(state, ref.count);
+    const { positions, count } = ref;
+    const eVec = eF?.vectors, eCount = eF?.count || 0;
+    const bVec = bF?.vectors, bCount = bF?.count || 0;
+    let max = 0;
+    for (let i = 0; i < count; i++) {
+        let e2 = 0, b2 = 0;
+        if (i < eCount && eVec) {
+            const x = eVec[i * 3], y = eVec[i * 3 + 1], z = eVec[i * 3 + 2];
+            e2 = x * x + y * y + z * z;
+        }
+        if (i < bCount && bVec) {
+            const x = bVec[i * 3], y = bVec[i * 3 + 1], z = bVec[i * 3 + 2];
+            b2 = x * x + y * y + z * z;
+        }
+        const u = 0.5 * (e2 + b2);
+        buf.emEnergy[i] = u;
+        if (u > max) max = u;
+    }
+    buf.normalizer.emMax = max;
+    return { positions, values: buf.emEnergy, count, normalizer: max, signed: false };
+}
+
+/**
+ * Charge density ρ(x) = ∇·J.
+ * FTD-native: the flux-field divergence IS the source/sink density that
+ * drives Gauss. Already sampled as `divJ`; we just forward the buffer with
+ * a signed-surface hint so the viewport renders sources as hills and
+ * sinks as wells.
+ */
+function computeChargeDensityFrame(sampled, _state) {
+    const d = sampled.divergence;
+    if (!d || !d.count) return null;
+    let maxAbs = 0;
+    for (let i = 0; i < d.count; i++) {
+        const a = Math.abs(d.values[i]);
+        if (a > maxAbs) maxAbs = a;
+    }
+    return {
+        positions: d.positions,
+        values:    d.values,
+        count:     d.count,
+        normalizer: maxAbs,
+        signed:    true,
+    };
+}
+
+/**
+ * Vorticity |ω|(x) = |∇×J|.
+ * Engine-computed (see bridge getVorticitySampled). Curl-free fields
+ * (purely radial flux, uniform flow) stay flat — swirl structures,
+ * vortex rings, and rotational solitons rise as peaks.
+ */
+function computeVorticityFrame(sampled, _state) {
+    const v = sampled.vorticity;
+    if (!v || !v.count) return null;
+    let max = 0;
+    for (let i = 0; i < v.count; i++) if (v.values[i] > max) max = v.values[i];
+    return {
+        positions: v.positions,
+        values:    v.values,
+        count:     v.count,
+        normalizer: max,
+        signed:    false,
+    };
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// Tier 1/2/3 additions (2026-04-18) — helicity, curvature, horizon,
+// stress-energy split (P_E, P_B, kinetic), Fisher information, coherence.
+// All share the rubber-sheet / scatter-scalar convention so they plug
+// straight into _topologySheetConfigs in viewport.js (except horizon,
+// which is rendered as an isosurface).
+// ══════════════════════════════════════════════════════════════════════
+
+/**
+ * Helicity density h(x) = J · (∇×J).  Signed scalar (left/right-handed
+ * field-line linking).  Bridge-computed — we just pass through with a
+ * symmetric normalizer so positive and negative cancel around zero.
+ */
+function computeHelicityFrame(sampled, _state) {
+    const h = sampled.helicity;
+    if (!h || !h.count) return null;
+    let maxAbs = 0;
+    for (let i = 0; i < h.count; i++) {
+        const a = Math.abs(h.values[i]);
+        if (a > maxAbs) maxAbs = a;
+    }
+    return {
+        positions: h.positions,
+        values:    h.values,
+        count:     h.count,
+        normalizer: maxAbs,
+        signed:    true,
+    };
+}
+
+/**
+ * Kretschmann-like curvature proxy K(x) = (∇²L)² where L(x) is the
+ * latency proxy sqrt(|J|² / |J|²_max).  Always non-negative; we
+ * log-compress the normalizer to keep the black-hole singularity from
+ * dominating the colour ramp.  [PROXY]: see bridge metadata.
+ */
+function computeKretschmannFrame(sampled, state) {
+    const k = sampled.kretschmann;
+    if (!k || !k.count) return null;
+    // A Schwarzschild-like 1/r⁶ tail means one near-horizon voxel can be
+    // 10⁴× the background. If we just normalize by max, 99% of the rubber
+    // sheet collapses to ≈ 0 and the curvature structure vanishes into
+    // vacuum. Log-compress values and normalizer in lockstep — preserves
+    // the monotonic ordering and zero→zero, but compresses the tail so
+    // the background still reads above the baseline.
+    if (!state.kretschmannValues || state.kretschmannValues.length < k.count) {
+        state.kretschmannValues = new Float32Array(k.count);
+    }
+    const values = state.kretschmannValues;
+    let max = 0;
+    for (let i = 0; i < k.count; i++) {
+        const v = Math.log1p(k.values[i]);
+        values[i] = v;
+        if (v > max) max = v;
+    }
+    return {
+        positions: k.positions,
+        values,
+        count:     k.count,
+        normalizer: max,
+        signed:    false,
+    };
+}
+
+/**
+ * Event-horizon overlay — points where latency proxy L(x) ≥ 0.95.
+ * Below that, the well is sub-horizon (light still escapes).  We emit
+ * positions + values so the viewport can either render them as an
+ * isosurface (preferred) or fall back to a point cloud.
+ */
+function computeHorizonFrame(sampled, state) {
+    const L = sampled.latency;
+    if (!L || !L.count) return null;
+    const threshold = 0.95;
+    // Grow-only state-cached buffers — sized to the full sampler capacity
+    // (post-filter count is usually tiny, but the upper bound equals L.count
+    // at the moment of capture; pre-allocating avoids per-frame GC).
+    if (!state.horizonPositions || state.horizonPositions.length < L.count * 3) {
+        state.horizonPositions = new Float32Array(L.count * 3);
+        state.horizonValues    = new Float32Array(L.count);
+    }
+    const positions = state.horizonPositions;
+    const values    = state.horizonValues;
+    let count = 0;
+    for (let i = 0; i < L.count; i++) {
+        if (L.values[i] >= threshold) {
+            positions[count * 3]     = L.positions[i * 3];
+            positions[count * 3 + 1] = L.positions[i * 3 + 1];
+            positions[count * 3 + 2] = L.positions[i * 3 + 2];
+            values[count] = L.values[i];
+            count++;
+        }
+    }
+    if (count === 0) return null;
+    return { positions, values, count, threshold };
+}
+
+/**
+ * Electric pressure P_E(x) = ½|E|².  Half of the EM energy density;
+ * rises on charge concentrations (fields terminating on particles).
+ */
+function computeEPressureFrame(sampled, state) {
+    const eF = sampled.eField;
+    if (!eF || !eF.count) return null;
+    if (!state.ePressureValues || state.ePressureValues.length < eF.count) {
+        state.ePressureValues = new Float32Array(eF.count);
+    }
+    const values = state.ePressureValues;
+    let max = 0;
+    for (let i = 0; i < eF.count; i++) {
+        const x = eF.vectors[i * 3];
+        const y = eF.vectors[i * 3 + 1];
+        const z = eF.vectors[i * 3 + 2];
+        const p = 0.5 * (x * x + y * y + z * z);
+        values[i] = p;
+        if (p > max) max = p;
+    }
+    return {
+        positions: eF.positions,
+        values,
+        count:     eF.count,
+        normalizer: max,
+        signed:    false,
+    };
+}
+
+/**
+ * Magnetic pressure P_B(x) = ½|B|².  Sister field to P_E — rises on
+ * circulating currents and field-line loops rather than on charges.
+ */
+function computeBPressureFrame(sampled, state) {
+    const bF = sampled.bField;
+    if (!bF || !bF.count) return null;
+    if (!state.bPressureValues || state.bPressureValues.length < bF.count) {
+        state.bPressureValues = new Float32Array(bF.count);
+    }
+    const values = state.bPressureValues;
+    let max = 0;
+    for (let i = 0; i < bF.count; i++) {
+        const x = bF.vectors[i * 3];
+        const y = bF.vectors[i * 3 + 1];
+        const z = bF.vectors[i * 3 + 2];
+        const p = 0.5 * (x * x + y * y + z * z);
+        values[i] = p;
+        if (p > max) max = p;
+    }
+    return {
+        positions: bF.positions,
+        values,
+        count:     bF.count,
+        normalizer: max,
+        signed:    false,
+    };
+}
+
+/**
+ * Kinetic energy density K(x) = ½|v|² sampled at particle positions.
+ * This is a particle-anchored scalar (not a voxel-grid scalar), so we
+ * emit it as a point scatter — the viewport drops a small volumetric
+ * bump at each particle's location proportional to K.
+ */
+function computeKineticEnergyFrame(ctx, state) {
+    const particleCap = ctx.bridge?.capabilities?.scale0;
+    if (!particleCap || typeof particleCap.getScale0ParticleFrame !== 'function') return null;
+    const frame = particleCap.getScale0ParticleFrame();
+    if (!frame || !frame.count) return null;
+    // Velocities live on the particle frame under `velocities` when the
+    // bridge exposes them; some mocks only expose positions, in which case
+    // we fall back to 0 (no bumps). Reuse/resize buffers on the state.
+    const n = frame.count;
+    if (!state.kineticValues || state.kineticValues.length < n) {
+        state.kineticValues = new Float32Array(n);
+    }
+    if (!state.kineticPositions || state.kineticPositions.length < n * 3) {
+        state.kineticPositions = new Float32Array(n * 3);
+    }
+    const vels = frame.velocities;
+    let max = 0;
+    for (let i = 0; i < n; i++) {
+        state.kineticPositions[i * 3]     = frame.positions[i * 3];
+        state.kineticPositions[i * 3 + 1] = frame.positions[i * 3 + 1];
+        state.kineticPositions[i * 3 + 2] = frame.positions[i * 3 + 2];
+        let k = 0;
+        if (vels && vels.length >= (i + 1) * 3) {
+            const vx = vels[i * 3], vy = vels[i * 3 + 1], vz = vels[i * 3 + 2];
+            k = 0.5 * (vx * vx + vy * vy + vz * vz);
+        }
+        state.kineticValues[i] = k;
+        if (k > max) max = k;
+    }
+    return {
+        positions: state.kineticPositions,
+        values:    state.kineticValues,
+        count:     n,
+        normalizer: max,
+        signed:    false,
+    };
+}
+
+/**
+ * Fisher information F(x) = |∇ρ|² / ρ with ρ = |J|².
+ * Bridge-computed (needs neighbour lookup). Brightens sharp edges of
+ * localized field modes — soliton shells, wave-packet envelopes.
+ */
+function computeFisherFrame(sampled, state) {
+    const f = sampled.fisher;
+    if (!f || !f.count) return null;
+    // Same tail-compression rationale as Kretschmann: Fisher information
+    // diverges at the edge of a compact-support mode, so log1p keeps the
+    // sheet readable instead of dominated by a single spike.
+    if (!state.fisherValues || state.fisherValues.length < f.count) {
+        state.fisherValues = new Float32Array(f.count);
+    }
+    const values = state.fisherValues;
+    let max = 0;
+    for (let i = 0; i < f.count; i++) {
+        const v = Math.log1p(f.values[i]);
+        values[i] = v;
+        if (v > max) max = v;
+    }
+    return {
+        positions: f.positions,
+        values,
+        count:     f.count,
+        normalizer: max,
+        signed:    false,
+    };
+}
+
+/**
+ * Dual-substrate coherence C(x) = (J·∇×J) / (|J|·|∇×J|) in [-1, +1].
+ * Cosine of the angle between flow and curl. +1 = right-handed
+ * Beltrami, -1 = left-handed, 0 = orthogonal (purely rotational or
+ * purely translational, no helicity). Bridge-computed; pass-through.
+ */
+function computeCoherenceFrame(sampled, _state) {
+    const c = sampled.coherence;
+    if (!c || !c.count) return null;
+    return {
+        positions: c.positions,
+        values:    c.values,
+        count:     c.count,
+        normalizer: 1,  // already in [-1, 1]
+        signed:    true,
+    };
 }
 
 function fillFieldParticleBuf(state, particleData) {
@@ -303,41 +701,67 @@ export function buildForceOverlayData(state, fieldCapability, sampled, latticeSi
         state.fieldFlags.showForceStrong || state.fieldFlags.showForceWeak;
     if (!anyForceOn) return { anyForceOn: false, style: state.forceStyle, items: [] };
 
+    // Force samplers need a finer stride than field samplers because particle-
+    // anchored physics (Coulomb + flux tubes + nuclear) is sharply peaked at
+    // voxel centres. With stride=2, the sampler hits only EVEN voxels, so a
+    // Moore-cell scenario anchored at mc=16 (even) captures the centre but
+    // SKIPS the neighbour particles at voxels 15 and 17 (odd). The resulting
+    // arrow pattern looks off-centre because the tube envelopes between
+    // adjacent particles — the most intense region — have zero samples. Drop
+    // to stride=1 at small lattices so every voxel is caught regardless of
+    // the particle-parity pattern; keep the field stride where it is so E/B
+    // streamlines stay cheap.
+    const forceStride = latticeSize <= 32 ? 1 : Math.max(1, Math.min(4, Math.floor(stride / 2) || 1));
+
     const items = [];
     if (state.fieldFlags.showForceEM) {
-        const emData = fieldCapability.getScale0ForceField('em', stride);
+        const emData = fieldCapability.getScale0ForceField('em', forceStride);
         if (emData.count > 0) items.push({ type: 'em', data: emData });
     }
     if (state.fieldFlags.showForceGravity) {
-        const gravityData = fieldCapability.getScale0ForceField('gravity', stride);
+        const gravityData = fieldCapability.getScale0ForceField('gravity', forceStride);
         if (gravityData.count > 0) items.push({ type: 'gravity', data: gravityData });
     }
     if (state.fieldFlags.showForceStrong) {
-        const strongData = fieldCapability.getScale0ForceField('strong', stride);
+        const strongData = fieldCapability.getScale0ForceField('strong', forceStride);
         if (strongData.count > 0) items.push({ type: 'strong', data: strongData });
     }
-    if (state.fieldFlags.showForceWeak && sampled.fluxVector?.count > 0) {
+    if (state.fieldFlags.showForceWeak && sampled.curlJ?.count > 0) {
+        // Weak force direction = ∇×J (pseudovector). The weak interaction
+        // is parity-violating, so its natural vector proxy is parity-odd.
+        // Using the flux vector J directly (the old implementation) made
+        // every arrow point in the flux direction — for any polarised
+        // scenario that meant uniform unidirectional arrows (e.g. a flux
+        // pulse with J = (Gaussian, 0, 0) produced every weak arrow along
+        // +X), physically misleading.
+        //
+        // The curl is zero for irrotational (purely compressive) flow and
+        // non-zero wherever J has rotational structure — exactly where
+        // chirality asymmetry lives. Magnitude is still scaled by
+        // DUAL_DELTA so the overlay reads as "weak" (small relative to
+        // EM/strong) in comparison rendering.
+        const curl = sampled.curlJ;
         const scalarFactor = DUAL_DELTA;
-        if (!state.weakValues || state.weakValues.length < sampled.fluxVector.count) {
-            state.weakValues = new Float32Array(sampled.fluxVector.count);
+        if (!state.weakValues || state.weakValues.length < curl.count) {
+            state.weakValues = new Float32Array(curl.count);
         }
-        if (!state.weakVectors || state.weakVectors.length < sampled.fluxVector.count * 3) {
-            state.weakVectors = new Float32Array(sampled.fluxVector.count * 3);
+        if (!state.weakVectors || state.weakVectors.length < curl.count * 3) {
+            state.weakVectors = new Float32Array(curl.count * 3);
         }
-        for (let i = 0; i < sampled.fluxVector.count; i++) {
-            const x = sampled.fluxVector.vectors[i * 3];
-            const y = sampled.fluxVector.vectors[i * 3 + 1];
-            const z = sampled.fluxVector.vectors[i * 3 + 2];
+        for (let i = 0; i < curl.count; i++) {
+            const x = curl.vectors[i * 3];
+            const y = curl.vectors[i * 3 + 1];
+            const z = curl.vectors[i * 3 + 2];
             const mag = Math.sqrt(x * x + y * y + z * z);
             state.weakValues[i] = mag * scalarFactor;
-            state.weakVectors[i * 3] = x * scalarFactor;
+            state.weakVectors[i * 3]     = x * scalarFactor;
             state.weakVectors[i * 3 + 1] = y * scalarFactor;
             state.weakVectors[i * 3 + 2] = z * scalarFactor;
         }
         items.push({
             type: 'weak',
-            data: { positions: sampled.fluxVector.positions, vectors: state.weakVectors, count: sampled.fluxVector.count },
-            weakScalar: { positions: sampled.fluxVector.positions, values: state.weakValues, count: sampled.fluxVector.count },
+            data: { positions: curl.positions, vectors: state.weakVectors, count: curl.count },
+            weakScalar: { positions: curl.positions, values: state.weakValues, count: curl.count },
         });
     }
 
@@ -381,6 +805,11 @@ export function buildDerivedSubstrateData(state, sampled, mockCapability) {
     }
 
     if (state.fieldFlags.showDualSubstrate && sampled.fluxVector?.count > 0) {
+        // [TIER-1 VISUAL] Scalar (1+/-delta)/2 decomposition is an amplitude
+        // asymmetry demonstration, NOT a true chirality projection. A real
+        // L/R decomposition requires a pseudovector operation (Helmholtz-
+        // style split into curl-free and divergence-free parts). Surfaced
+        // as "dual substrate" for visualization only.
         const leftFactor = (1 + DUAL_DELTA) / 2;
         const rightFactor = (1 - DUAL_DELTA) / 2;
         const vecLen = sampled.fluxVector.vectors.length;
@@ -423,7 +852,7 @@ export function buildDerivedSubstrateData(state, sampled, mockCapability) {
     return frame;
 }
 
-export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame) {
+export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame, opts = {}) {
     if (overlayFrame.eFieldLines) viewportAdapter.applyEFieldLines(overlayFrame.eFieldLines);
     if (overlayFrame.bFieldLines) viewportAdapter.applyBFieldLines(overlayFrame.bFieldLines);
     if (overlayFrame.poynting) viewportAdapter.applyPoynting(overlayFrame.poynting);
@@ -441,7 +870,15 @@ export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame) {
             for (const item of forceFrame.items) viewportAdapter.applyForceHeatmap(item.data, item.type);
         } else if (forceFrame.style === 'flow') {
             for (const item of forceFrame.items) viewportAdapter.applyForceStreamlines(item.flowLines, item.type);
-            viewportAdapter.animateForceStreamlines(0.016);
+            // Advance the dash-offset animation ONLY when the sim is actually
+            // running. Previously this ticked on every overlay refresh — and
+            // since toggling any overlay dirties `fieldNeedsUpdate`, the
+            // forced refresh would bump the dash phase by 0.032 units even
+            // while the sim was paused. The user perceived that as "toggling
+            // an overlay plays one animation step", exactly the regression
+            // they reported. Gated by `opts.running` supplied from the
+            // controller's animate() loop (ctx.running).
+            if (opts.running) viewportAdapter.animateForceStreamlines(0.016);
         } else if (forceFrame.style === 'glyphs') {
             for (const item of forceFrame.items) viewportAdapter.applyForceGlyphs(item.data, item.type);
         }
@@ -460,6 +897,21 @@ export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame) {
     if (overlayFrame.lagrangianDensity) viewportAdapter.applyLagrangianDensity(overlayFrame.lagrangianDensity);
     if (overlayFrame.entropyDensity) viewportAdapter.applyEntropyDensity(overlayFrame.entropyDensity);
     if (overlayFrame.gravPotential) viewportAdapter.applyGravPotential(overlayFrame.gravPotential);
+
+    // Physics-topology overlays (rubber-sheet surfaces)
+    if (overlayFrame.emEnergy) viewportAdapter.applyEmEnergy(overlayFrame.emEnergy);
+    if (overlayFrame.chargeDensity) viewportAdapter.applyChargeDensity(overlayFrame.chargeDensity);
+    if (overlayFrame.vorticity) viewportAdapter.applyVorticity(overlayFrame.vorticity);
+
+    // Tier 1/2/3 additions (2026-04-18)
+    if (overlayFrame.helicity)      viewportAdapter.applyHelicity(overlayFrame.helicity);
+    if (overlayFrame.kretschmann)   viewportAdapter.applyKretschmann(overlayFrame.kretschmann);
+    if (overlayFrame.horizon)       viewportAdapter.applyHorizon(overlayFrame.horizon);
+    if (overlayFrame.ePressure)     viewportAdapter.applyEPressure(overlayFrame.ePressure);
+    if (overlayFrame.bPressure)     viewportAdapter.applyBPressure(overlayFrame.bPressure);
+    if (overlayFrame.kineticEnergy) viewportAdapter.applyKineticEnergy(overlayFrame.kineticEnergy);
+    if (overlayFrame.fisher)        viewportAdapter.applyFisher(overlayFrame.fisher);
+    if (overlayFrame.coherence)     viewportAdapter.applyCoherence(overlayFrame.coherence);
 }
 
 // ── Lattice-size-aware streamline parameters ────────────────────────────
@@ -517,5 +969,8 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
     const forceFrame = buildForceOverlayData(state, fieldCapability, sampled, latticeSize, stride, stepsScale, seedSpacing, params);
     Object.assign(overlayFrame, buildDerivedSubstrateData(state, sampled, mockCapability));
     Object.assign(overlayFrame, buildQuantumOverlayData(ctx, state, sampled));
-    applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame);
+    // Pass `running` through to applyOverlayFrame so time-based sub-animations
+    // (force-streamline dash advance) freeze when the sim is paused, even when
+    // this function itself runs for a one-shot refresh on toggle.
+    applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame, { running: !!ctx.running });
 }

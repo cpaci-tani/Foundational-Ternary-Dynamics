@@ -1,4 +1,4 @@
-import { FORCE_FIELD_KEYS } from './state/store.js?v=s1';
+import { FORCE_FIELD_KEYS, markFieldDirty } from './state/store.js';
 
 const NON_FORCE_OVERLAYS = {
     showEField: 'toggleEFieldLines',
@@ -19,6 +19,20 @@ const NON_FORCE_OVERLAYS = {
     showLagrangianDensity: 'toggleLagrangianDensityField',
     showEntropyDensity:    'toggleEntropyDensityField',
     showGravPotential:     'toggleGravPotentialField',
+    // Physics-topology overlays
+    showEmEnergy:          'toggleEmEnergyField',
+    showChargeDensity:     'toggleChargeDensityField',
+    showVorticity:         'toggleVorticityField',
+    // Tier 1/2/3 (2026-04-18) — helicity, curvature, horizon, stress-
+    // energy split, Fisher information, dual-substrate coherence.
+    showHelicity:          'toggleHelicityField',
+    showKretschmann:       'toggleKretschmannField',
+    showHorizon:           'toggleHorizonField',
+    showEPressure:         'toggleEPressureField',
+    showBPressure:         'toggleBPressureField',
+    showKineticEnergy:     'toggleKineticEnergyField',
+    showFisher:            'toggleFisherField',
+    showCoherence:         'toggleCoherenceField',
 };
 
 const FORCE_ARROW_OVERLAYS = {
@@ -66,7 +80,27 @@ export function createScale0ViewportAdapter(viewport) {
             if (!anyForceOn) return;
             if (style === 'arrows') viewport.showArrowForces?.(fieldState);
             else if (style === 'heatmap') viewport.showForceHeatmap?.(true);
-            else if (style === 'glyphs') viewport.showForceGlyphs?.(true);
+            else if (style === 'glyphs') {
+                // Per-type visibility so only the enabled force's glyph mesh
+                // renders. Previously this passed a global `true` and every
+                // force's InstancedMesh went visible — but the meshes share
+                // no buffer anymore, so a disabled force left stale glyphs
+                // on screen from its last update. Map flag→bool per force.
+                viewport.showForceGlyphs?.({
+                    em:      !!fieldState.showForceEM,
+                    gravity: !!fieldState.showForceGravity,
+                    strong:  !!fieldState.showForceStrong,
+                    weak:    !!fieldState.showForceWeak,
+                });
+            }
+            // hideAllForceStyles zeros every glyph-mesh instance count;
+            // the subsequent per-type show() only flips visibility, not
+            // count. Force a dirty flag so the next `updateFieldOverlays`
+            // tick refills the still-active meshes instead of leaving
+            // them visible-but-empty until an unrelated event nudges the
+            // dirty bit. Belt-and-braces alongside `setFieldToggle`'s
+            // always-dirty fix — guards direct scenario-loader calls too.
+            markFieldDirty();
         },
         clearScaleVisuals() {
             if (!viewport) return;
@@ -96,6 +130,18 @@ export function createScale0ViewportAdapter(viewport) {
             viewport.toggleLagrangianDensityField?.(false);
             viewport.toggleEntropyDensityField?.(false);
             viewport.toggleGravPotentialField?.(false);
+            viewport.toggleEmEnergyField?.(false);
+            viewport.toggleChargeDensityField?.(false);
+            viewport.toggleVorticityField?.(false);
+            // Tier 1/2/3 (2026-04-18).
+            viewport.toggleHelicityField?.(false);
+            viewport.toggleKretschmannField?.(false);
+            viewport.toggleHorizonField?.(false);
+            viewport.toggleEPressureField?.(false);
+            viewport.toggleBPressureField?.(false);
+            viewport.toggleKineticEnergyField?.(false);
+            viewport.toggleFisherField?.(false);
+            viewport.toggleCoherenceField?.(false);
         },
         applyParticleFrame(frame) {
             viewport?.updateParticles?.(frame);
@@ -177,6 +223,24 @@ export function createScale0ViewportAdapter(viewport) {
         applyGravPotential(data) {
             viewport?.updateGravPotentialField?.(data);
         },
+        applyEmEnergy(data) {
+            viewport?.updateEmEnergyField?.(data);
+        },
+        applyChargeDensity(data) {
+            viewport?.updateChargeDensityField?.(data);
+        },
+        applyVorticity(data) {
+            viewport?.updateVorticityField?.(data);
+        },
+        // ── Tier 1/2/3 (2026-04-18) ──────────────────────
+        applyHelicity(data)      { viewport?.updateHelicityField?.(data); },
+        applyKretschmann(data)   { viewport?.updateKretschmannField?.(data); },
+        applyHorizon(data)       { viewport?.updateHorizonField?.(data); },
+        applyEPressure(data)     { viewport?.updateEPressureField?.(data); },
+        applyBPressure(data)     { viewport?.updateBPressureField?.(data); },
+        applyKineticEnergy(data) { viewport?.updateKineticEnergyField?.(data); },
+        applyFisher(data)        { viewport?.updateFisherField?.(data); },
+        applyCoherence(data)     { viewport?.updateCoherenceField?.(data); },
         render() {
             viewport?.render?.();
         },

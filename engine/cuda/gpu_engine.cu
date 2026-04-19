@@ -156,7 +156,7 @@ void GpuEngine::tick() {
     // Wave 5 (2026-04-14): GPU now implements solve_latency_poisson().
     // Tests that enable toggles.latency_field no longer need force_cpu().
     if (toggles.latency_field) {
-        gpu_solve_latency();
+        gpu_solve_latency_poisson();
     }
 
     // Phase 4: Forces (Coulomb Poisson + EM/gravity/Lorentz)
@@ -279,7 +279,7 @@ void GpuEngine::gpu_solve_coulomb() {
 // Unblocks every test that previously had to call rb.force_cpu() because
 // CUDA lacked this feature. Matches CPU RenderBridge::solve_latency_poisson
 // exactly up to the FFT's automatic DC-mode cancellation (gauge freedom).
-void GpuEngine::gpu_solve_latency() {
+void GpuEngine::gpu_solve_latency_poisson() {
     kernels::launch_solve_latency(bufs_,
                                   fft_plan_forward_,
                                   fft_plan_inverse_,
@@ -382,6 +382,28 @@ Diagnostics GpuEngine::diagnostics() {
     }
     return d;
 }
+
+// ──────────────────────────────────────────────────────────────────
+// ENERGY-LEDGER PERFORMANCE NOTE (TRACKER §1.7 closed 2026-04-17)
+// ──────────────────────────────────────────────────────────────────
+// RenderBridge::tick() currently populates the per-tick EnergyLedger
+// on the GPU path by calling gpu_sync_to_host() + update_energy_ledger().
+// That's one full-voxel download per tick (~3 MB at L=64).
+//
+// If this ever shows up in a profile as a bottleneck, replace with a
+// device-side reduction kernel that returns just three scalars:
+//
+//     __global__ void reduce_energy_sums(
+//         int N, const double* fx, const double* fy, const double* fz,
+//                const double* wx, const double* wy, const double* wz,
+//                const double* vx, const double* vy, const double* vz,
+//                const int8_t* state,
+//                double* out_E_field, double* out_E_wave, double* out_E_kin);
+//
+// Use a classic block-shared-memory reduction (256-thread blocks,
+// warp-level intrinsics for the last 32 lanes). After the kernel, one
+// cudaMemcpy of 3 doubles (24 bytes) replaces the 3 MB download.
+// ──────────────────────────────────────────────────────────────────
 
 EnergyAudit GpuEngine::energy_audit() {
     ensure_host_synced();

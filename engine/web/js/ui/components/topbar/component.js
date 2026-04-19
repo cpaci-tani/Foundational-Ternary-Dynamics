@@ -1,4 +1,4 @@
-import { getTopbarInlineTemplate, getTopbarActionButtons, getAssistantSidebarTemplate } from './template.js?v=2';
+import { getTopbarInlineTemplate, getTopbarActionButtons, getAssistantSidebarTemplate } from './template.js';
 
 function htmlToFragment(markup) {
     const template = document.createElement('template');
