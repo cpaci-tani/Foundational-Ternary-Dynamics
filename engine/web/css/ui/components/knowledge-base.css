@@ -1,247 +1,24 @@
 /* ============================================================
- * knowledge-base.css — Centered responsive knowledge library
+ * knowledge-base.css — KB reader content and chip label styles.
+ * Shell/layout rules live in sidebar-library.css.
  * ============================================================ */
 
-#knowledge-base-backdrop {
-    position: absolute;
-    inset: 0;
-    background: var(--modal-backdrop);
-    backdrop-filter: blur(8px);
-    z-index: var(--z-sidebar-backdrop);
-}
-
-#knowledge-base-sidebar {
-    --kb-font-math: 'Cambria Math', 'STIX Two Math', 'STIX Two Text', 'Latin Modern Math', 'DejaVu Serif', serif;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: min(1180px, calc(100vw - 32px));
-    max-height: calc(100vh - (32px + var(--shell-safe-top) + var(--shell-safe-bottom)));
-    display: grid;
-    grid-template-rows: auto auto auto minmax(0, 1fr);
-    gap: 14px;
-    padding: 20px;
-    background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
-    backdrop-filter: blur(22px);
-    z-index: var(--z-sidebar);
-    transform: translate(-50%, calc(-50% + 24px));
-    opacity: 0;
-    pointer-events: none;
-    transition:
-        transform var(--dur-base) var(--ease-out),
-        opacity var(--dur-base) var(--ease-out);
-    color: var(--text-primary);
-}
-
-#app.knowledge-base-open #knowledge-base-sidebar {
-    transform: translate(-50%, -50%);
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.kb-shell-header {
-    display: flex;
-    align-items: start;
-    justify-content: space-between;
-    gap: 16px;
-    min-width: 0;
-}
-
-.kb-kicker {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-}
-
-.kb-title {
-    margin: 4px 0 0;
-    font-size: var(--fs-2xl);
-    line-height: var(--lh-tight);
-    font-family: var(--font-heading);
-}
-
-.kb-page-copy {
-    margin: 8px 0 0;
-    max-width: 72ch;
-    color: var(--text-secondary);
-    line-height: var(--lh-base);
-    overflow-wrap: anywhere;
-}
-
-.kb-close {
-    border: 1px solid var(--border);
-    background: var(--state-hover-bg);
-    color: var(--text-primary);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-}
-
-.kb-close {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-}
-
-.kb-toolbar {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 14px;
-    min-width: 0;
-}
-
-.kb-page-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.kb-search-field {
-    display: grid;
-    gap: 6px;
-    flex: 1 1 auto;
-    min-width: 0;
-    font-size: var(--fs-sm);
-    color: var(--text-secondary);
-}
-
-.kb-search-field input {
-    width: 100%;
-    min-height: 42px;
-    padding: 0 14px;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
-    background: var(--bg-input);
-    color: var(--text-primary);
-    font: inherit;
-}
-
-.kb-results-label {
-    color: var(--text-muted);
-    font-size: var(--fs-sm);
-}
-
-.kb-section-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    min-width: 0;
-}
-
-.kb-section-pill {
-    min-height: 34px;
-    padding: 0 12px;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: var(--fs-sm);
-    transition:
-        background-color var(--dur-fast) var(--ease-out),
-        border-color var(--dur-fast) var(--ease-out),
-        color var(--dur-fast) var(--ease-out);
-}
-
-.kb-section-pill.active {
-    background: var(--state-active-bg);
-    border-color: var(--border-light);
-    color: var(--text-primary);
-}
-
-.kb-sidebar-body {
-    min-height: 0;
-    display: grid;
-    gap: 14px;
-    min-width: 0;
-}
-
-.kb-sidebar-body {
-    grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
-}
-
-.kb-entry-list,
-.kb-entry-reader {
-    min-height: 0;
-    min-width: 0;
-}
-
-.kb-entry-list,
-.kb-entry-reader {
-    background: color-mix(in srgb, var(--bg-card) 88%, transparent);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
-}
-
-.kb-entry-list,
-.kb-entry-list-page {
-    display: grid;
-    align-content: start;
-    gap: 8px;
-    overflow: auto;
-    padding: 12px;
-}
-
-.kb-entry-chip {
-    display: grid;
-    align-content: center;
-    width: 100%;
-    min-height: 44px;
-    padding: 10px 12px;
-    text-align: left;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: transparent;
-    color: var(--text-primary);
-    cursor: pointer;
-    overflow: hidden;
-}
-
-.kb-entry-chip.active {
-    background: var(--state-active-bg);
-    border-color: var(--border-light);
-}
-
-html[data-density="compact"] .kb-shell-header {
-    gap: 12px;
-}
-
-html[data-density="compact"] .kb-toolbar,
-html[data-density="compact"] .kb-sidebar-body {
-    gap: 10px;
-}
-
-html[data-density="compact"] .kb-entry-chip {
-    min-height: 38px;
-    padding: 8px 10px;
-}
-
-.kb-entry-chip-title {
-    display: block;
-    font-weight: 600;
-    font-size: var(--fs-sm);
-    line-height: 1.15;
-    font-family: var(--font-body);
-    overflow-wrap: anywhere;
-}
+/* ---- KB-specific chip label (formula rendering) ---- */
 
 .kb-entry-chip-title-formula {
-    font-family: var(--kb-font-math);
-    font-size: calc(13px * var(--ui-scale));
+    font-family: var(--kb-font-math, 'Cambria Math', 'STIX Two Math', serif);
+    font-size: calc(13px * var(--ui-scale, 1));
     line-height: 1.05;
     letter-spacing: 0.01em;
     transform: translateY(-1px);
 }
 
-.kb-entry-reader {
-    overflow: auto;
-    padding: 18px;
+/* ---- Reader content ---- */
+
+.kb-empty-state {
+    display: grid;
+    gap: 8px;
+    color: var(--text-secondary, #aaa);
 }
 
 .kb-reader-header {
@@ -251,7 +28,7 @@ html[data-density="compact"] .kb-entry-chip {
 }
 
 .kb-reader-section {
-    color: var(--accent);
+    color: var(--accent, #3a7);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -259,15 +36,15 @@ html[data-density="compact"] .kb-entry-chip {
 }
 
 .kb-reader-title {
-    font-size: calc(22px * var(--ui-scale));
+    font-size: calc(22px * var(--ui-scale, 1));
     line-height: 1.15;
     overflow-wrap: anywhere;
-    font-family: var(--font-heading), var(--kb-font-math);
+    font-family: var(--font-heading, inherit), var(--kb-font-math, 'Cambria Math', serif);
 }
 
 .kb-reader-summary {
-    color: var(--text-secondary);
-    line-height: var(--lh-base);
+    color: var(--text-secondary, #aaa);
+    line-height: var(--lh-base, 1.6);
     overflow-wrap: anywhere;
 }
 
@@ -278,14 +55,14 @@ html[data-density="compact"] .kb-entry-chip {
 }
 
 .kb-reader-body p {
-    color: var(--text-secondary);
-    line-height: var(--lh-base);
+    color: var(--text-secondary, #aaa);
+    line-height: var(--lh-base, 1.6);
     overflow-wrap: anywhere;
 }
 
 .kb-bullet-list {
     padding-left: 20px;
-    color: var(--text-secondary);
+    color: var(--text-secondary, #aaa);
     display: grid;
     gap: 8px;
 }
@@ -296,7 +73,7 @@ html[data-density="compact"] .kb-entry-chip {
 }
 
 .kb-meta-label {
-    color: var(--text-muted);
+    color: var(--text-muted, #888);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -313,15 +90,15 @@ html[data-density="compact"] .kb-entry-chip {
 .kb-token {
     padding: 6px 10px;
     border-radius: 999px;
-    background: var(--state-hover-bg);
-    border: 1px solid var(--border);
+    background: var(--state-hover-bg, rgba(255,255,255,0.06));
+    border: 1px solid var(--border, #333);
     font-size: 12px;
     max-width: 100%;
     overflow-wrap: anywhere;
 }
 
 .kb-token-formula {
-    font-family: var(--kb-font-math);
+    font-family: var(--kb-font-math, 'Cambria Math', 'STIX Two Math', serif);
     font-size: 13px;
     line-height: 1.2;
     letter-spacing: 0.01em;
@@ -329,81 +106,6 @@ html[data-density="compact"] .kb-entry-chip {
 }
 
 .kb-token-muted {
-    font-family: var(--font-body);
-    color: var(--text-secondary);
-}
-
-.kb-empty-state,
-.kb-empty-list {
-    display: grid;
-    gap: 8px;
-    color: var(--text-secondary);
-}
-
-.kb-entry-list,
-.kb-entry-reader {
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent-dim) color-mix(in srgb, var(--bg-input) 88%, transparent);
-}
-
-.kb-entry-list::-webkit-scrollbar,
-.kb-entry-reader::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-.kb-entry-list::-webkit-scrollbar-track,
-.kb-entry-reader::-webkit-scrollbar-track {
-    background: color-mix(in srgb, var(--bg-input) 88%, transparent);
-    border-radius: 999px;
-}
-
-.kb-entry-list::-webkit-scrollbar-thumb,
-.kb-entry-reader::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dim) 100%);
-    border: 2px solid color-mix(in srgb, var(--bg-input) 88%, transparent);
-    border-radius: 999px;
-}
-
-.kb-entry-list::-webkit-scrollbar-thumb:hover,
-.kb-entry-reader::-webkit-scrollbar-thumb:hover {
-    filter: brightness(1.08);
-}
-
-@media (max-width: 1023px) {
-    #knowledge-base-sidebar {
-        width: min(960px, calc(100vw - 20px));
-        max-height: calc(100vh - (20px + var(--shell-safe-top) + var(--shell-safe-bottom)));
-    }
-
-    .kb-sidebar-body {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 767px) {
-    #knowledge-base-sidebar {
-        top: calc(8px + var(--shell-safe-top));
-        left: 8px;
-        right: 8px;
-        width: auto;
-        max-height: calc(100vh - (16px + var(--shell-safe-top) + var(--shell-safe-bottom)));
-        border-radius: 18px;
-        transform: translateY(20px);
-    }
-
-    #app.knowledge-base-open #knowledge-base-sidebar {
-        transform: translateY(0);
-    }
-
-    .kb-shell-header,
-    .kb-toolbar {
-        grid-template-columns: 1fr;
-        display: grid;
-    }
-
-    .kb-entry-list,
-    .kb-entry-reader {
-        padding: 14px;
-    }
+    font-family: var(--font-body, inherit);
+    color: var(--text-secondary, #aaa);
 }
