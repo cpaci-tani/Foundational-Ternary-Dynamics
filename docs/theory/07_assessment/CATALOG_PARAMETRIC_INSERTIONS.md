@@ -138,6 +138,10 @@ The CKM matrix is parametrized via standard Wolfenstein (λ, A, ρ, η) form. FT
 | Yukawa screening length λ ∝ L (2026-04-19 T3) | λ(L=32)=2.88, λ(L=64)=10.57, λ(L=128)=25.61 → λ ≈ L/5 | finite-size from periodic images | **[MEASURED]** | `DERIV_GAP_CLOSURE.md` T3; proves Phase-2 "Yukawa screening" is a periodic-image artefact, not a physical mass |
 | Dynamical EWSB threshold (2026-04-19 T4) | Branch A observed at initial_amp=0.80 on L=16 (⟨\|J\|⟩ triples, 62 charges manifest) | seed amplitude | **[MEASURED]** | `DERIV_GAP_CLOSURE.md` T4; amp-threshold in (0.50, 0.80); first dynamical manifestation in EFT programme |
 | Operator divJ² scaling dim (2026-04-19 T5) | Δ(pulse)=0.46, Δ(flux-baryon)=**1.69** | scenario dependence | **[MEASURED]** | `DERIV_GAP_CLOSURE.md` T5; 3.7× shift confirms pulse-envelope artefact of Phase 3 |
+| Ward floor (matched stencil, 2026-04-19 Day 2) | max \|∇·J − ρ\| ≤ 1e-8 on deep vacuum via CG Poisson on Yee-staggered differences | lattice + CG tol | **[MEASURED]** | `DERIV_DAY2_CAMPAIGN.md` §1; million-fold improvement over engine SOR |
+| EWSB condensation threshold (2026-04-19 Day 2) | First-order phase transition amp ∈ (0.6, 0.7) on L=32, 5000 ticks | amplitude parameter | **[MEASURED]** | `DERIV_DAY2_CAMPAIGN.md` §2; below threshold vacuum decays quietly, above saturates all 32768 voxels |
+| Condensate mass gap (2026-04-19 Day 2) | m_flux=0.181, m_charge=0.186 at amp=0.80 (R² ≥ 0.96); ratio 0.97 | amp=0.80 | **[MEASURED]** | `DERIV_DAY2_CAMPAIGN.md` §3; two independent channels agree within 3% |
+| Rutherford α cross-check (2026-04-19 Day 2) | α=0.035 at b=3 matches V(r) asymptotic=0.035 exactly; α_mean=0.042±0.005 over b∈[3,8] | v_0=0.3, L=32 | **[MEASURED]** | `DERIV_DAY2_CAMPAIGN.md` §4; independent dynamical method confirms the 5× α_ref gap is genuine engine physics |
 
 **Phase 2 goal.** Both entries above should be *measured* by real-space blocking (`scripts/benchmarks/measure_beta_function.py`), not imported. If the measured β(g) matches the one-loop form, these upgrade to [DERIVED]. If it deviates, the deviation is a Phase 2 discovery.
 
