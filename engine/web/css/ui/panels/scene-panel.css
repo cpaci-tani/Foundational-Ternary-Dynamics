@@ -1,0 +1,140 @@
+/* Scene panel — render-control sliders and pickers grouped into four
+ * sections (Camera, Lighting, Post-processing, Environment). Keeps a
+ * three-column grid per row: label / input / readout. */
+
+#panel-scene .scene-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 1.25rem 2rem;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+#panel-scene .scene-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border, #333);
+}
+#panel-scene .scene-kicker {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted, #888);
+}
+#panel-scene .scene-title {
+    margin: 0.15rem 0;
+    font-size: 1.1rem;
+}
+#panel-scene .scene-copy {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-muted, #888);
+    max-width: 60ch;
+    line-height: 1.45;
+}
+
+#panel-scene .scene-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.6rem 0 0.4rem;
+    border-top: 1px dashed var(--border, #333);
+}
+#panel-scene .scene-section:first-of-type {
+    border-top: none;
+    padding-top: 0.2rem;
+}
+#panel-scene .scene-section-title {
+    margin: 0 0 0.2rem;
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted, #888);
+    font-weight: 600;
+}
+
+#panel-scene .scene-control {
+    display: grid;
+    grid-template-columns: minmax(130px, 35%) 1fr auto;
+    align-items: center;
+    gap: 0.8rem;
+    min-height: 28px;
+    transition: opacity 120ms ease;
+}
+#panel-scene .scene-control--disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+#panel-scene .scene-control label {
+    font-size: 0.86rem;
+    color: var(--text, #ddd);
+}
+#panel-scene .scene-control input[type="range"] {
+    width: 100%;
+    min-width: 0;
+    accent-color: var(--accent, #3a7);
+}
+#panel-scene .scene-control input[type="color"] {
+    width: 42px;
+    height: 26px;
+    padding: 0;
+    border: 1px solid var(--border, #333);
+    border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+}
+#panel-scene .scene-control--toggle input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+    accent-color: var(--accent, #3a7);
+    justify-self: start;
+}
+#panel-scene .scene-readout {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.82rem;
+    color: var(--text-muted, #888);
+    min-width: 54px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+#panel-scene .scene-hint {
+    margin: 0.2rem 0 0;
+    font-size: 0.76rem;
+    color: var(--text-muted, #888);
+    font-style: italic;
+}
+#panel-scene .scene-hint em { font-style: normal; font-weight: 600; color: var(--text, #ddd); }
+
+#panel-scene .scene-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.4rem;
+    border-top: 1px dashed var(--border, #333);
+}
+#panel-scene .scene-reset {
+    padding: 0.4rem 0.85rem;
+    background: transparent;
+    color: var(--text, #ddd);
+    border: 1px solid var(--border, #333);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+#panel-scene .scene-reset:hover {
+    border-color: var(--accent, #3a7);
+    color: var(--accent, #3a7);
+}
+
+@media (max-width: 560px) {
+    #panel-scene .scene-control {
+        grid-template-columns: 1fr auto;
+    }
+    #panel-scene .scene-control label {
+        grid-column: 1 / -1;
+    }
+}

@@ -3759,6 +3759,25 @@ export class Viewport {
         this._usePostProcessing = false;
     }
 
+    /** Accessor for the bloom pass. Null when post-processing has never
+     *  been enabled (first call to enablePostProcessing constructs it).
+     *  The Scene panel's adapter uses this to read current values
+     *  without importing Three.js or touching the _composer directly. */
+    getBloomPass() {
+        return this._bloomPass;
+    }
+
+    /** Write bloom parameters without reaching into _bloomPass from
+     *  outside. Unknown keys are ignored. No-op when the pass has not
+     *  been created yet (toggle bloom on first to make it effective). */
+    setBloomParams({ strength, radius, threshold } = {}) {
+        const pass = this._bloomPass;
+        if (!pass) return;
+        if (typeof strength === 'number' && Number.isFinite(strength)) pass.strength = strength;
+        if (typeof radius === 'number' && Number.isFinite(radius)) pass.radius = radius;
+        if (typeof threshold === 'number' && Number.isFinite(threshold)) pass.threshold = threshold;
+    }
+
     render() {
         this.controls.update();
         // Animation clock is advanced externally via advanceAnimationClock()
