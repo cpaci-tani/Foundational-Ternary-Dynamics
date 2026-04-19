@@ -133,7 +133,10 @@ add_library(ftd_core
     src/atom/atom_bonding.cpp        # check_bonding
     src/atom/atom_thermostat.cpp     # speed limit, damping, thermostat, dipole moments
 )
-target_include_directories(ftd_core PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(ftd_core PUBLIC
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/sim/include   # Phase B: Pipeline<Backend> + observables
+)
 if(OpenMP_CXX_FOUND)
     target_link_libraries(ftd_core PUBLIC OpenMP::OpenMP_CXX)
 endif()
@@ -473,6 +476,11 @@ target_link_libraries(benchmark_ewsb_threshold_map ftd_core)
 # EFT Day-2 Ticket A — matched-stencil CG Poisson solver
 add_executable(test_eft_matched_poisson tests/test_eft_matched_poisson.cpp)
 target_link_libraries(test_eft_matched_poisson ftd_core)
+
+# Sim Pipeline Phase B — CPU-backend pipeline + 3 reference observables
+# Plan: ~/.claude/plans/vivid-marinating-pudding.md Phase B
+add_executable(test_sim_pipeline_cpu sim/tests/test_sim_pipeline_cpu.cpp)
+target_link_libraries(test_sim_pipeline_cpu ftd_core)
 
 # EFT Day-2 Thread 4 — Rutherford scattering α extraction
 add_executable(benchmark_rutherford_alpha tests/benchmark_rutherford_alpha.cpp)
@@ -880,6 +888,9 @@ set_tests_properties(eft_dynamical_sm PROPERTIES LABELS "eft" TIMEOUT 180)
 # EFT Day-2 Ticket A
 add_test(NAME eft_matched_poisson COMMAND test_eft_matched_poisson)
 set_tests_properties(eft_matched_poisson PROPERTIES LABELS "eft" TIMEOUT 60)
+# Sim Pipeline Phase B
+add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
+set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
 add_test(NAME spectral COMMAND test_spectral)
 add_test(NAME tracker COMMAND test_tracker)
 add_test(NAME benchmark COMMAND test_benchmark)
