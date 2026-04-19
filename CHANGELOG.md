@@ -1,5 +1,84 @@
 # Foundational Ternary Dynamics Changelog
 
+## Web dashboard UX pass — Verify, FAQ, math formatting, Scene panel (April 19, 2026)
+
+Focused session on the browser dashboard: reshape the Verify tab as an
+evidence scoreboard, add a FAQ sidebar that frames hard problems through
+the FTD lens, ship proper LaTeX math formatting across all user-facing
+text, and add a dedicated Scene render-controls panel. Plus a telemetry
+catalog for Scale 0 and the new `MAINTAINABILITY.md` field manual.
+
+### Added
+
+- **Verify panel redesign** — pivoted from Monte-Carlo test runner to a
+  static three-tier evidence scoreboard (hard predictions / parametric
+  insertions / unpredicted measurements). Python `build_verify_manifest.py`
+  joins `constants.py` + `measurements.json` into a committed
+  `verify-manifest.json` the browser reads. Tier contracts enforced as
+  hard assertions. Commit range `9599126` → `21ce759` (+ follow-up
+  `bc8e0d7` for CODATA 2022 fix).
+- **FAQ sidebar** — new `FAQ` topbar button opens a drawer with 16
+  canonical hard problems of physics and foundational science, framed
+  through the FTD lens. Four-section per-entry template: *The problem*
+  / *Why mainstream struggles* / *FTD's angle* (with inline epistemic
+  tag chips) / *What's still open*. Validator rejects entries missing
+  any required field. Shared `SidebarLibraryComponent` base extracted
+  from Knowledge Base; KB migrated onto it. Commit range `208efc5` →
+  `ba516bc` (+ follow-up `da761a8` / `6ca091f` for review fixes).
+- **Math formatting audit + KaTeX integration** — every user-facing
+  text surface now renders LaTeX math properly. KaTeX 0.16 via CDN,
+  `renderMathInHtml(escapeHtml(x))` helper wired into five content
+  renderers (FAQ, KB, Verify row, Lagrangian term-row, tooltips).
+  ASCII math promoted to `\(...\)` spans across FAQ (16 entries), KB
+  (~65 rewrites), tooltips (14), scenarios, pedagogy. Audit script
+  `scripts/audit/audit_math_strings.py` flags ASCII-math candidates.
+  Playwright coverage spec asserts no raw `\(` / `\[` delimiters leak.
+  Commit range `3472dca` → `49f3e8e`.
+- **Scene panel** — new top-level tab (Scales 0-3) with 14 curated
+  render controls: FOV / orbit sensitivity (camera), ambient + key
+  light (lighting), exposure + bloom on/strength/threshold (post),
+  fog + background color + HDRI intensity (environment). All
+  persisted via `localStorage`. `SceneAdapter` isolates the only
+  non-`viewport.js` Three.js import. 14-control Playwright spec plus
+  scale-gating check. Commit `966e684`.
+- **Scale 0 telemetry catalog** — `engine/web/docs/TELEMETRY_CATALOG_SCALE0.md`,
+  297 lines. Documents every ring buffer, every diagnostic row (25
+  across 5 sections), every chart (6 charts / 10 series), every
+  Lagrangian term / action row / constant. Sibling catalogs for
+  Scales 1/2/4/5/11 planned as follow-ups. Commit `679c112`.
+- **MAINTAINABILITY.md** — 582-line field manual at repo root: 8
+  project-level hazards (panel-registry contract, escape-then-render
+  rule, epistemic-tag discipline, constants single-source, cross-
+  renderer scope, date fixtures, KaTeX fallback, scale-gated toggles)
+  + 15 step-by-step recipes (each with a Verify: command) + tech-debt
+  ledger with live / deferred / theory-cross-reference sections.
+  Commits `4baef08` → `873db0e`.
+
+### Changed
+
+- **Diagnostics table layout** — `.diag-table` switched to
+  `table-layout: fixed` with a locked 130px (100px side-mount) value
+  column. Values that change magnitude (e.g. `0` → `4173.09`) no
+  longer ripple widths across sibling columns. Text-align left, so
+  short values and long values share the same left edge. Commit
+  `750a7eb`.
+
+### Removed
+
+- **Scale 0 "Visualization Preset" dropdown** — the preset bundle
+  selector (Clean / EM / Quantum / Topology / Stress-energy / Full /
+  All off) is deleted. Per-column count badges + clear buttons in the
+  overlay header are retained. `MANAGED_TOGGLES` and `OVERLAY_PRESETS`
+  removed from `overlays/presets.js`; `COL_TO_TOGGLES` stays. Commit
+  `f88d3b7`.
+- **Legacy Verify-panel code** — `engine/web/js/verification/`,
+  `engine/web/js/ui/panels/verification-lab-panel/`,
+  `engine/web/js/quantum-lab.js`, and the last `QuantumLabPanel`
+  exports — all retired as part of the Verify redesign. See commits
+  `c651046`, `1a60d7b`.
+
+---
+
 ## Engine v2.15.0 — Whole-project discrete-quantum extraction (April 19, 2026)
 
 Deep semantic refactor of the full codebase. 16 parallel extraction agents
