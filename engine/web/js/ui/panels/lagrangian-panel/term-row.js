@@ -10,6 +10,15 @@
 
 import { renderMathInHtml } from '../../math-format/render.js';
 
+function escapeHtml(s) {
+    return String(s ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
 export class TermRow {
     constructor(terms, { onToggle }) {
         this.terms = terms;
@@ -27,7 +36,7 @@ export class TermRow {
             label.innerHTML = `
                 <input type="checkbox" ${term.includeByDefault ? 'checked' : ''}>
                 <span class="lag-term-swatch" aria-hidden="true"></span>
-                <span class="lag-term-label">${renderMathInHtml(term.label)}</span>
+                <span class="lag-term-label">${renderMathInHtml(escapeHtml(term.label))}</span>
             `;
             const input = label.querySelector('input');
             input.addEventListener('change', () => this.onToggle(term.key, input.checked));
