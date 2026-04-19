@@ -15,6 +15,7 @@ export const PANEL_REGISTRY = Object.freeze([
     { id: 'zoo',              label: 'Particle Zoo',    icon: '\u229B',        scales: ['1'] },
     { id: 'physics',          label: 'Physics',         icon: '\u03A8',        scales: ['1', '2', '3'] },
     { id: 'hierarchy',        label: 'Hierarchy',       icon: '\u22EE',        scales: ['0', '1', '2', '3'] },
+    { id: 'scene',            label: 'Scene',           icon: '\u{1F3AC}',     scales: ['0', '1', '2', '3'] },
     { id: 'consciousness',    label: 'Consciousness',   icon: '\u25C9',        scales: ['11'] },
     { id: 'cosmic-info',      label: 'Cosmic',          icon: '\u2740',        scales: ['5'] },
     { id: 'meta-info',        label: 'Meta',            icon: '\u29BF',        scales: ['12'] },

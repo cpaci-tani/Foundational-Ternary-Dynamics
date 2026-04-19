@@ -49,7 +49,7 @@ import { addInfoTooltips } from './consciousness-pedagogy.js';
 // CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
 import { initVerifyPanel } from './verify-panel/component.js';
 import { AppShell } from './ui/shell/app-shell.js';
-import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initConsciousnessPanel } from './ui/panels/index.js';
+import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initConsciousnessPanel, initScenePanel } from './ui/panels/index.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
 // Keyboard shortcut handler extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
@@ -503,6 +503,14 @@ async function init() {
     chartsPanel = initChartsPanel();
     lagrangianPanel = initLagrangianPanel();
     initConsciousnessPanel();
+    // Scene panel — curated render controls (FOV / exposure / bloom / fog / ...).
+    // Scales 0–3 only (gated by panel-registry); unmounted cleanly when
+    // the user switches to a separate-renderer scale like 4/5/11.
+    initScenePanel({
+        panelArea: document.getElementById('panel-area'),
+        viewport,
+        backgroundManager: bgManager,
+    });
     diagnostics = new DiagnosticsPanel();
     // Scale 0 charts + Lagrangian now own their own uPlot instances via
     // ChartsPanelComponent and LagrangianPanelComponent. Legacy
