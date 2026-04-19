@@ -99,7 +99,8 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
                        std::vector<double>& phi,
                        std::vector<double>& sor_source,
                        const Lattice& lattice,
-                       bool dual_substrate) {
+                       bool dual_substrate,
+                       double charge_coupling) {
   const int N = static_cast<int>(lattice.total_sites());
   const int L = lattice.size();
   const int LL = L * L;
@@ -120,7 +121,7 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
     } else {
       div = divergence_flux_at(voxels, lattice, i);
     }
-    sor_source[i] = div - static_cast<double>(voxels[i].state);
+    sor_source[i] = div - charge_coupling * static_cast<double>(voxels[i].state);
   }
 
   for (int iter = 0; iter < SOR_ITERS; ++iter) {
