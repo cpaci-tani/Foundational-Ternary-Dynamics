@@ -319,6 +319,72 @@ export const FAQ_SECTIONS = Object.freeze([
                     'docs/theory/02_foundations/FOUND_ONTOLOGICAL_EMERGENCE.md',
                 ],
             },
+            {
+                id: 'what-is-time',
+                question: 'What is time — a parameter, an emergent property, or an illusion?',
+                shortQuestion: 'What is time',
+                problem: [
+                    'General relativity treats time as a coordinate woven into spacetime. Thermodynamics treats it as the axis along which entropy grows. Quantum mechanics treats it as an external evolution parameter. These three usages are not obviously compatible.',
+                ],
+                mainstreamStruggle: [
+                    'Attempts to quantize time (Page-Wootters, Wheeler-DeWitt) remove the external parameter at the cost of making evolution relational and hard to interpret. Block-universe and presentist views both have problems explaining the apparent flow of time.',
+                ],
+                ftdAngle: [
+                    { tag: 'SELECTION', text: 'Time in FTD is the discrete tick index of lattice updates. It is neither an external parameter nor a dimension of a pre-existing manifold — it is the order of manifestation events.' },
+                    { tag: 'CONJECTURE', text: 'The continuous time of classical and quantum physics is an emergent coarse-graining of tick counts over many manifestation events.' },
+                ],
+                stillOpen: [
+                    'The relationship between the lattice tick and the proper time of a relativistic observer is sketched but not formally derived in general.',
+                    'No operational discriminator between "time is fundamentally discrete" and "time is effectively discrete at some unobservably small scale".',
+                ],
+                theoryRefs: [
+                    'docs/theory/02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md',
+                ],
+            },
+            {
+                id: 'singularities',
+                question: 'What replaces singularities where GR and QM both break?',
+                shortQuestion: 'Singularities',
+                problem: [
+                    'General relativity predicts its own breakdown: curvature diverges at the center of black holes and at the Big Bang. At those points the theory ceases to describe anything. A physical theory that replaces singularities with well-defined structure has not been established.',
+                ],
+                mainstreamStruggle: [
+                    'Loop quantum cosmology, string-theoretic fuzzballs, and effective-field-theory regularisations each offer candidate replacements. None has experimental support or decisive theoretical consensus.',
+                ],
+                ftdAngle: [
+                    { tag: 'SELECTION', text: 'Because the lattice is discrete by axiom, curvature and density cannot diverge. A "singularity" in the continuum limit corresponds to a voxel whose flux gradient has reached the confinement scale — a finite, well-defined state.' },
+                    { tag: 'CONJECTURE', text: 'The Big Bang is proposed as a phase of maximal flux-field structure that gradually manifests outward; it is a boundary in the lattice\'s manifestation history, not a point of infinite density.' },
+                ],
+                stillOpen: [
+                    'FTD replaces "singularity" with "saturated voxel" but has not yet produced quantitative predictions for observable near-horizon or early-universe signatures.',
+                    'The claim that no lattice configuration corresponds to an ill-defined limit is structural; no theorem establishes this across all possible dynamics.',
+                ],
+                theoryRefs: [
+                    'docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md',
+                ],
+            },
+            {
+                id: 'discreteness',
+                question: 'Why does reality appear quantized — why discreteness rather than continuum?',
+                shortQuestion: 'Why quantization',
+                problem: [
+                    'Physics is full of discrete structures: quantized angular momentum, particle species, charges, spectra, energy levels. The underlying mathematical machinery (QFT) is built on a continuum yet repeatedly delivers integer-valued answers. Why?',
+                ],
+                mainstreamStruggle: [
+                    'In mainstream physics discreteness is a consequence of eigenvalue problems on continuous operators. That is a technique, not an explanation: it answers "where do these integers come from in this formalism" but not "why is reality integer-valued in the first place".',
+                ],
+                ftdAngle: [
+                    { tag: 'SELECTION', text: 'Discreteness is primitive in FTD: the lattice and the ternary states are discrete by postulate. Integer-valued observables in the continuum limit are not a mystery — they are the original structure surviving coarse-graining.' },
+                    { tag: 'THEOREM', text: 'Specific integer ratios (3 generations, N_c = 3 colors, 17/27 dark fraction, 3 spatial dimensions) fall out of the Moore Layer decomposition with no free parameters.' },
+                ],
+                stillOpen: [
+                    'The postulate of discreteness is primitive; FTD does not argue that a strictly continuous ontology is impossible.',
+                    'The experimental lower bound on any putative lattice spacing is well below the Planck scale, meaning discreteness is presently a philosophical rather than empirical commitment.',
+                ],
+                theoryRefs: [
+                    'docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md',
+                ],
+            },
         ],
     },
 ]);
