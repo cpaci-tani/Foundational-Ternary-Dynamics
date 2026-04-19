@@ -2,9 +2,9 @@
 
 **The Card Catalog** — Find any document in two clicks.
 
-**Last updated:** April 13, 2026
+**Last updated:** April 19, 2026
 **Framework version:** v5.30
-**Engine version:** v2.14
+**Engine version:** v2.15.0
 
 For current documentation drift, cleanup status, and deferred remediation items, see [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
 
@@ -17,6 +17,7 @@ For current documentation drift, cleanup status, and deferred remediation items,
 | Understand FTD from scratch | [docs/SPEC_FTD.md](docs/SPEC_FTD.md) — **the single source of truth** |
 | Get contributor onboarding | [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — balanced guide across theory, engine, verification, and critique |
 | Audit documentation drift | [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) — cleanup ledger, status model, and remediation queue |
+| Make a change without breaking sibling systems | [MAINTAINABILITY.md](MAINTAINABILITY.md) — 8 hazards + 15 step-by-step recipes + tech-debt ledger |
 | Check project health | [evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md](evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md) — weighted project health scorecard and priorities |
 | See the core mathematics | [docs/theory/01_reference/MATH_MASTER_QUADRATIC.md](docs/theory/01_reference/MATH_MASTER_QUADRATIC.md) |
 | Assess what's genuinely derived | [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) (~35 genuine) |
@@ -68,6 +69,7 @@ ftd/
 ├── CONTRIBUTING.md                  # How to contribute
 ├── CLAUDE.md                        # AI agent project instructions
 ├── AUDIT_DOCUMENT_CLEANUP_LEDGER.md # Repo-wide documentation cleanup ledger
+├── MAINTAINABILITY.md               # Field manual: hazards + recipes + tech-debt ledger
 ├── META_DOCUMENTATION_MAP.md        # THIS FILE — the card catalog
 ├── META_PROJECT_ATLAS.md            # AI agent navigation guide
 │
@@ -124,6 +126,9 @@ ftd/
 │   ├── cuda/                        # GPU acceleration
 │   ├── wasm/                        # Emscripten WASM bindings
 │   └── web/                         # Three.js browser dashboard
+│       └── docs/
+│           ├── SPEC_VERIFICATION_LAB.md        # Verify-panel spec (v2, evidence scoreboard)
+│           └── TELEMETRY_CATALOG_SCALE0.md     # Scale 0 telemetry catalog (ring buffers, panels, charts)
 │
 ├── scripts/                         # Python verification and proof stack
 │   ├── constants.py                 # Canonical shared constants
