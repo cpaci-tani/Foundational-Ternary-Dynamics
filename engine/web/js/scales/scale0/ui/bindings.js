@@ -12,7 +12,7 @@ import {
     setButtonActive,
     setForceStyleButtons,
 } from './dom.js';
-import { OVERLAY_PRESETS, MANAGED_TOGGLES, COL_TO_TOGGLES } from './overlays/presets.js';
+import { COL_TO_TOGGLES } from './overlays/presets.js';
 
 let _bound = false;
 
@@ -80,7 +80,7 @@ export function bindScale0UI(ctx, api) {
     }
 
     // Shared apply-toggle helper: works for both user clicks and
-    // programmatic preset/clear-column actions. `silent` means skip the
+    // programmatic clear-column actions. `silent` means skip the
     // latticeNeedsUpload push (useful for bulk updates where we push
     // once at the end). Always keeps DOM button state, state-store
     // flag, and viewport visibility in sync.
@@ -113,29 +113,10 @@ export function bindScale0UI(ctx, api) {
             badge.textContent = String(count);
             badge.classList.toggle('is-zero', count === 0);
         }
-        // "Custom" sentinel on the preset select — if no preset exactly
-        // matches the current active-button set, the dropdown should
-        // read as "Custom" rather than claiming some preset is applied.
-        const presetSel = getEl('s0-overlay-preset');
-        if (presetSel) {
-            const activeSet = new Set(
-                MANAGED_TOGGLES.filter((id) => readButtonActive(id))
-            );
-            let matched = 'custom';
-            for (const [name, onList] of Object.entries(OVERLAY_PRESETS)) {
-                const onSet = new Set(onList);
-                if (onSet.size === activeSet.size &&
-                    [...onSet].every((id) => activeSet.has(id))) {
-                    matched = name;
-                    break;
-                }
-            }
-            if (presetSel.value !== matched) presetSel.value = matched;
-        }
     };
 
-    // Map from buttonId → fieldKey so preset/clear-column can look up
-    // the state-store key for any managed toggle.
+    // Map from buttonId → fieldKey so clear-column can look up the
+    // state-store key for any managed toggle.
     const buttonIdToFieldKey = new Map(FIELD_TOGGLE_BINDINGS);
 
     for (const [buttonId, fieldKey] of FIELD_TOGGLE_BINDINGS) {
@@ -144,28 +125,6 @@ export function bindScale0UI(ctx, api) {
         btn.addEventListener('click', () => {
             const on = !readButtonActive(buttonId);
             setToggleState(buttonId, fieldKey, on);
-            updateOverlayBadges();
-        });
-    }
-
-    // Preset dropdown — 'Clean', 'EM focus', …, plus 'Custom' sentinel.
-    // Selecting a named preset applies it atomically: every MANAGED_TOGGLES
-    // toggle becomes EITHER active (if listed in the preset) OR inactive.
-    // One latticeNeedsUpload push at the end avoids N redundant uploads.
-    const presetSel = getEl('s0-overlay-preset');
-    if (presetSel) {
-        presetSel.addEventListener('change', () => {
-            const name = presetSel.value;
-            if (name === 'custom' || !OVERLAY_PRESETS[name]) return;
-            const onSet = new Set(OVERLAY_PRESETS[name]);
-            for (const buttonId of MANAGED_TOGGLES) {
-                const fieldKey = buttonIdToFieldKey.get(buttonId);
-                if (!fieldKey) continue;
-                const shouldBeOn = onSet.has(buttonId);
-                if (readButtonActive(buttonId) === shouldBeOn) continue;
-                setToggleState(buttonId, fieldKey, shouldBeOn, { silent: true });
-            }
-            api.setLatticeNeedsUpload();
             updateOverlayBadges();
         });
     }
