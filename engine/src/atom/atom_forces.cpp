@@ -35,6 +35,12 @@ namespace ftd {
 struct AtomEngine::GpuBackend {
     gpu::AtomEngineGpu engine;
 };
+
+// The AtomEngine destructor must be defined in a TU where GpuBackend is
+// complete, so std::unique_ptr<GpuBackend>'s default_delete can see its
+// destructor. atom_engine.cpp's `= default` destructor failed because
+// GpuBackend is incomplete there. Redefining here overrides that.
+AtomEngine::~AtomEngine() = default;
 #endif
 
 Vec3 AtomEngine::compute_pairwise_force(int i, int j) const {
