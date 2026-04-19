@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "build_stamp": {
-    "commit": "5a9dac2",
-    "timestamp": "2026-04-19T00:07:18+00:00",
+    "commit": "21ce759",
+    "timestamp": "2026-04-19T01:15:15+00:00",
     "ftd_version": "5.30"
   },
   "counts": {
@@ -25,17 +25,17 @@
         ],
         "theory_ref": "docs/theory/03_derivations/DERIV_ALPHA_FROM_GSTAR.md",
         "measurement": {
-          "value": 137.035999084,
+          "value": 137.035999177,
           "sigma": 2.1e-08,
           "units": "",
           "source": "CODATA 2022",
           "url": "https://physics.nist.gov/cgi-bin/cuu/Value?alphinv",
           "date": "2022-12-20"
         },
-        "delta": 9.299998282585875e-08,
-        "rel_error": 6.786536636176297e-10,
-        "pull": 4.4285706107551785,
-        "delta_ppb": 0.6786536636176297
+        "delta": -2.842170943040401e-14,
+        "rel_error": -2.0740323419464131e-16,
+        "pull": -1.3534147347811432e-06,
+        "delta_ppb": -2.074032341946413e-07
       }
     ],
     "parametric": [
@@ -88,8 +88,8 @@
     {
       "id": "alpha_inv",
       "question": "Does the fine structure constant follow from D=3 and varpi?",
-      "pull": 4.4285706107551785,
-      "delta_ppb": 0.6786536636176297
+      "pull": -1.3534147347811432e-06,
+      "delta_ppb": -2.074032341946413e-07
     }
   ]
 }

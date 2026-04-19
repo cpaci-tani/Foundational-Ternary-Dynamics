@@ -297,9 +297,9 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
                 metaInfoPanel: !!document.getElementById('meta-info-panel'),
                 metaInspectPanel: !!document.getElementById('meta-inspect-panel'),
                 verificationLabPanel: !!document.getElementById('panel-verification-lab'),
-                verificationLabList: !!document.getElementById('verif-experiment-list'),
-                verificationLabDetail: !!document.getElementById('verif-experiment-detail'),
-                verificationLabExportAll: !!document.getElementById('verif-export-all-json'),
+                verifyHeaderSlot: !!document.getElementById('verify-header-slot'),
+                verifyTiersSlot: !!document.getElementById('verify-tiers-slot'),
+                verifyExportBtn: !!document.getElementById('verify-export-btn'),
                 onticPanelRemoved: !document.getElementById('panel-ontic'),
             },
             mounts,
@@ -354,9 +354,9 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
     expect(shell.ui.metaInfoPanel).toBe(true);
     expect(shell.ui.metaInspectPanel).toBe(true);
     expect(shell.ui.verificationLabPanel).toBe(true);
-    expect(shell.ui.verificationLabList).toBe(true);
-    expect(shell.ui.verificationLabDetail).toBe(true);
-    expect(shell.ui.verificationLabExportAll).toBe(true);
+    expect(shell.ui.verifyHeaderSlot).toBe(true);
+    expect(shell.ui.verifyTiersSlot).toBe(true);
+    expect(shell.ui.verifyExportBtn).toBe(true);
     expect(shell.ui.onticPanelRemoved).toBe(true);
     expect(shell.mounts).toEqual([
         'shell-toolbar-mount',
