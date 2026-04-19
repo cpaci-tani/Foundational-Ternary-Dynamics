@@ -61,23 +61,22 @@ static int default_neutron_count(int Z) {
 }
 
 // ============================================================================
-// Constructor
+// Constructor / Destructor
 // ============================================================================
-
-AtomEngine::AtomEngine() = default;
-
-// Out-of-line destructor: required so unique_ptr<GpuBackend> can see the
-// complete GpuBackend type when deleting. Without this, every translation
-// unit that includes atom_engine.h and indirectly calls ~AtomEngine would
-// need to see GpuBackend's definition.
 //
-// On CPU builds (FTD_ENABLE_CUDA undefined) gpu_backend_ doesn't exist,
-// so a default destructor here works fine.
+// Both the default constructor AND the default destructor need to see a
+// complete GpuBackend type to instantiate unique_ptr<GpuBackend>'s
+// internals (constructor: needs deleter type; destructor: needs to call
+// delete).
 //
-// On CUDA builds (FTD_ENABLE_CUDA defined) the destructor is defined in
-// src/atom/atom_forces.cpp instead, where GpuBackend is complete. This
-// TU's `= default;` would fail (incomplete-type delete) — keep it guarded.
+// On CPU builds (FTD_ENABLE_CUDA undefined) there is no gpu_backend_
+// member, so defaults work fine here.
+//
+// On CUDA builds (FTD_ENABLE_CUDA defined) the constructor AND
+// destructor are defined in src/atom/atom_forces.cpp instead, where
+// GpuBackend is complete.
 #ifndef FTD_ENABLE_CUDA
+AtomEngine::AtomEngine() = default;
 AtomEngine::~AtomEngine() = default;
 #endif
 

@@ -36,10 +36,13 @@ struct AtomEngine::GpuBackend {
     gpu::AtomEngineGpu engine;
 };
 
-// The AtomEngine destructor must be defined in a TU where GpuBackend is
-// complete, so std::unique_ptr<GpuBackend>'s default_delete can see its
-// destructor. atom_engine.cpp's `= default` destructor failed because
-// GpuBackend is incomplete there. Redefining here overrides that.
+// The AtomEngine constructor AND destructor must both be defined in a
+// TU where GpuBackend is complete. unique_ptr<GpuBackend>'s default_delete
+// needs GpuBackend's destructor on delete; the default constructor needs
+// GpuBackend's dtor in the deleter's type instantiation. atom_engine.cpp's
+// `= default` versions would fail (incomplete-type delete). Defining
+// both here makes the code complete on the CUDA path.
+AtomEngine::AtomEngine() = default;
 AtomEngine::~AtomEngine() = default;
 #endif
 
