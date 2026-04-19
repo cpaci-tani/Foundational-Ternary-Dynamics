@@ -350,26 +350,49 @@ all three laws give α_∞ ∈ [3.35, 3.74] × α_ref. This is a
 *plateau*, not a convergence. The data simply settles near
 α ≈ 0.026-0.027 and stops moving.
 
-### Honest conclusion
+### Honest conclusion (post-audit, see `AUDIT_ALPHA_EXTRACTION.md`)
 
 **FTD's V(r)-extracted coupling, measured in the Coulomb-tail regime
-at r ≈ L/3 across L ∈ {64, 128, 256, 384}, extrapolates to
-α_∞ ≈ 3.6 × α_ref ≈ 0.026.**
+at r ≈ L/3 across L ∈ {64, 128, 256, 384}, extrapolates (1/L fit) to
+an engine-convention value α_∞ ≈ 0.026 = 3.6 × α_ref.**
 
-This is a **real prediction**, not a measurement artefact:
+**Caveat — convention factor of 2.** The engine's `field_energy`
+accumulator is `Σ|J|²` with no ½ prefactor, whereas the classical
+electromagnetic field energy is `(½)Σ|E|²`. Because V(r) is formed as
+`E_pair − E_self_+ − E_self_−`, the cross-term that survives carries
+the engine's no-½ weight, so the engine's measured V(r) is exactly 2×
+the classical-convention interaction energy. Under the classical
+convention the continuum-extrapolated plateau is
+**α_∞(classical) ≈ 0.013 ≈ 1.8 × α_ref**.
 
-- The plateau is stable across factor-of-6 in L (64 to 384).
-- It's stable across three extrapolation forms (1/L, 1/L², 1/L^p).
-- The ticks=150 measurement is close enough to full convergence
+What is unambiguous from the data:
+
+- The plateau is **stable** across factor-of-6 in L (64 → 384).
+- It is stable across three extrapolation forms (1/L, 1/L², 1/L^p).
+- The ticks=150 measurement is close to full convergence
   (the ticks=300 L=256 run gave α_r(r=82) = 0.0271, agreeing with
   the ticks=150 value 0.0272 to 0.4%).
 - Two independent extraction methods (static V(r) + Rutherford
-  scattering from Day-2 Thread 4) give the same ~4× ratio in the
-  Coulomb-dominated regime.
+  scattering from Day-2 Thread 4) give the same plateau ratio in
+  the Coulomb-dominated regime.
 
-FTD's engine, as built, exhibits a coupling strength **3.6× larger
-than continuum QED's 1/137**. This is a falsifiable FTD prediction,
-not "approximate agreement with QED."
+What is **not** established:
+
+- Whether the residual **1.8× factor (after convention correction)**
+  is a real FTD prediction, a kinetic-normalization choice (engine
+  Lagrangian uses `|∂J|²` rather than `(½)|∂J|²`), or a
+  lattice-Green's-function artefact from the 7-point Laplacian
+  vs. the continuum 1/r.
+- Whether the engine converges to α_ref in any continuum limit.
+  The 4-point extrapolation converges *within its own data*; it does
+  not demonstrate convergence to α_ref.
+
+The audit (`AUDIT_ALPHA_EXTRACTION.md`) verifies that all three V(r)
+codepaths (`coupling_measurement.h`, `measure_v_of_r.h`,
+`benchmark_emergent_alpha.cpp`) are mutually consistent and the
+arithmetic is right. The headline number is therefore reported as a
+range **1.8–3.6× α_ref** (classical vs. engine convention), with the
+convention caveat explicit.
 
 ### L = 512 predicted values
 
@@ -398,14 +421,16 @@ artefacts? Candidates:
 
 ### What changed in the manuscript
 
-The abstract and §8 of `PAPER_FTD_AS_WILSONIAN_EFT.tex` claim α_∞ =
-1.23× α_ref from a 1/L fit on three r_max points. **Both need
-correction.** The 4-point plateau at 3.6× α_ref is the honest number.
-This is the kind of correction the pre-registration discipline is
-designed to surface: the original fast-big data was an artefact; the
-correct full-precision measurement tells a different story. Catalog
-row "α_∞ from 1/L extrapolation" should be rewritten with 3.62×
-(or retracted in favor of the per-L r_max measurements).
+The original abstract/§8 of `PAPER_FTD_AS_WILSONIAN_EFT.tex` claimed
+α_∞ = 1.23× α_ref from a 1/L fit on three under-equilibrated
+r_max points. **That number is retracted.** The Phase-F 4-point
+plateau is **1.8–3.6× α_ref** depending on energy convention (see
+`AUDIT_ALPHA_EXTRACTION.md`), and the paper now cites this range with
+the audit reference. This is the kind of correction the
+pre-registration discipline is designed to surface: the original
+fast-big data was an artefact; the full-precision measurement
+followed by a line-by-line audit tells a different and narrower
+story.
 
 ### Caveat
 
