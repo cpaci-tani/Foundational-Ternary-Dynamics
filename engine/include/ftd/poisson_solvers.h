@@ -29,15 +29,19 @@ void sor_sweep_18pt(std::vector<double>& phi,
                     const Lattice& lattice,
                     double omega);
 
-// Gauss projection: solve ∇²φ = ∇·J − s, then J -= ∇φ at void sites only.
-// Manifested sites (state != 0) are skipped (transverse flux preserved).
-// When dual_substrate is true the correction is split half-and-half
-// between flux_L and flux_R.
+// Gauss projection: solve ∇²φ = ∇·J − charge_coupling · s, then J -= ∇φ at
+// void sites only. Manifested sites (state != 0) are skipped (transverse
+// flux preserved). When dual_substrate is true the correction is split
+// half-and-half between flux_L and flux_R. `charge_coupling` is the
+// Phase-H coupling constant in Gauss's law; default 1.0 preserves
+// geometric Coulomb (Phase G theorem). See
+// docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md Section 7.
 void gauss_project_cpu(std::vector<Voxel>& voxels,
                        std::vector<double>& phi,
                        std::vector<double>& sor_source,
                        const Lattice& lattice,
-                       bool dual_substrate);
+                       bool dual_substrate,
+                       double charge_coupling = 1.0);
 
 // Coulomb Poisson: ∇²φ_C = -s. Warm-started, mean-subtracted for periodic BC.
 void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,

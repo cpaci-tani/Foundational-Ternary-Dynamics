@@ -477,6 +477,11 @@ target_link_libraries(benchmark_ewsb_threshold_map ftd_core)
 add_executable(test_eft_matched_poisson tests/test_eft_matched_poisson.cpp)
 target_link_libraries(test_eft_matched_poisson ftd_core)
 
+# Phase H — explicit coupling g_c in Gauss law; tests alpha_r scaling.
+# See docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md §7.
+add_executable(test_phase_h_coupling tests/test_phase_h_coupling.cpp)
+target_link_libraries(test_phase_h_coupling ftd_core)
+
 # Sim Pipeline Phase B — CPU-backend pipeline + 3 reference observables
 # Plan: ~/.claude/plans/vivid-marinating-pudding.md Phase B
 add_executable(test_sim_pipeline_cpu sim/tests/test_sim_pipeline_cpu.cpp)
@@ -906,6 +911,9 @@ set_tests_properties(eft_dynamical_sm PROPERTIES LABELS "eft" TIMEOUT 180)
 # EFT Day-2 Ticket A
 add_test(NAME eft_matched_poisson COMMAND test_eft_matched_poisson)
 set_tests_properties(eft_matched_poisson PROPERTIES LABELS "eft" TIMEOUT 60)
+# Phase H — coupling scaling test
+add_test(NAME eft_phase_h_coupling COMMAND test_phase_h_coupling)
+set_tests_properties(eft_phase_h_coupling PROPERTIES LABELS "eft" TIMEOUT 180)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
