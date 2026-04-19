@@ -8,9 +8,9 @@ import {
     getScaleControlsBlocksTemplate,
     getZooPanelTemplate,
 } from './template.js';
-// Quantum Lab replaced by the Verification Lab (category-based validation
-// dashboard). See docs/SPEC_VERIFICATION_LAB.md.
-import { getVerificationLabPanelTemplate } from '../../panels/verification-lab-panel/template.js';
+// Quantum Lab replaced by the Verify evidence-scoreboard panel.
+// See docs/SPEC_VERIFICATION_LAB.md.
+import { getVerifyPanelTemplate as getVerificationLabPanelTemplate } from '../../../verify-panel/template.js';
 import { getDiagnosticsPanelTemplate } from './diagnostics-template.js';
 
 function htmlToElement(markup) {
