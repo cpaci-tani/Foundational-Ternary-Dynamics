@@ -140,22 +140,46 @@ See [FOUND_BLIND_DERIVATION_CHAIN.md](docs/theory/02_foundations/FOUND_BLIND_DER
 
 ## EFT Recovery Program (April 2026)
 
-A pre-registered measurement campaign asking whether the engine qualifies as a Wilsonian effective field theory. Five pillars — Ward identities, Lorentz covariance, RG flow, operator expansion, continuum matching — are measured on the lattice against expectations committed to the repository *before any code ran*. Full spec: [docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md](docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md). Paper: [PAPER_FTD_AS_WILSONIAN_EFT.tex](dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex).
+A pre-registered measurement campaign asking whether the engine qualifies as a Wilsonian effective field theory. Five pillars — Ward identities, Lorentz covariance, RG flow, operator expansion, continuum matching — were measured on the lattice against expectations committed to the repository *before any code ran*. Seven-phase campaign (Phase 0 pre-registration → Phase F 4-point continuum extrapolation) is complete.
+
+**Spec:** [SPEC_EFT_RECOVERY_PROGRAM.md](docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md) · **Paper:** [PAPER_FTD_AS_WILSONIAN_EFT.tex](dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex) · **Day-2 campaign:** [DERIV_DAY2_CAMPAIGN.md](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md) · **Parametric-insertions ledger:** [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md)
+
+### Headline: FTD's coupling plateaus at ~3.6× α_ref, not 1/137
+
+Phase F's 4-point GPU continuum scan at L ∈ {64, 128, 256, 384} (ticks = 150, r/L ≈ 0.31) settles on a **plateau**, not convergence:
+
+| L   | r_max | α_r     | ratio to α_ref |
+|-----|-------|---------|----------------|
+| 64  | 20    | 0.02959 | **4.05×**      |
+| 128 | 40    | 0.02970 | **4.07×**      |
+| 256 | 82    | 0.02717 | **3.72×**      |
+| 384 | 124   | 0.02632 | **3.61×**      |
+
+Three independent scaling laws (1/L, 1/L², free 1/L^p) agree on α_∞ ∈ [3.35×, 3.74×] α_ref. This is a **falsifiable FTD prediction**: the engine's V(r)-extracted coupling in the Coulomb-tail regime is 3.6× stronger than CODATA QED, not approximate agreement. The Day-2 interim "1.23× α_ref" claim from under-equilibrated CPU data is **retracted** — see [DERIV_DAY2_CAMPAIGN.md §6b](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md) and paper §9. Rutherford-scattering cross-check (Day-2 Thread 4) gives α = 0.042 ± 0.005 at small impact parameter, **independently confirming** the 5× gap is engine physics, not a V(r) measurement artefact.
+
+### Phase-by-phase outcomes
 
 | Phase | Pillar | Outcome | Document |
 |---|---|---|---|
 | 1A | Rotational anisotropy | Infrastructure validated on 4 synthetic tests; realistic-dynamics campaign deferred | [DERIV_SYMMETRY_RECOVERY.md](docs/theory/10_eft_program/DERIV_SYMMETRY_RECOVERY.md) |
 | 1B | Lorentz recovery (c = 1/√3) | Residual 0.4% at r ≤ 4, rising to 5% at r = L/4 — cubic dispersion, not permille as pre-reg required | ↑ |
-| 1C | Ward identities | Gauss closure SOR-limited at ~1% of \|J\|_max; follow-up T1 found an **18-pt vs 6-pt stencil mismatch** that makes "more SOR iterations" non-convergent | ↑ |
-| 2  | Measured β(g) from real-space blocking | Scale-dependent α_eff with negative β (matches QED *sign*); quantitative ratio started at −160× QED one-loop, refined to ~−80× on L = 128 slope method | [DERIV_BETA_FUNCTION_MEASURED.md](docs/theory/10_eft_program/DERIV_BETA_FUNCTION_MEASURED.md) |
-| 3  | Operator spectrum (6 ops) | Fits valid (R² ≥ 0.92) but Δ clustered near 0.5 on pulse scenario; T5 on `flux-baryon` re-runs divJ² Δ = 1.69 (×3.7), confirming pulse-envelope artefact | [DERIV_OPERATOR_SPECTRUM.md](docs/theory/10_eft_program/DERIV_OPERATOR_SPECTRUM.md) |
-| 4A | Dynamical EWSB cold-start | Branch B at amp 0.15; follow-up T4 swept amplitudes and found **⟨\|J\|⟩ triples + 62 charges manifest at amp = 0.80** — genesis threshold ∈ [0.50, 0.80] | [DERIV_DYNAMICAL_SM_EMERGENCE.md](docs/theory/10_eft_program/DERIV_DYNAMICAL_SM_EMERGENCE.md) |
+| 1C | Ward identities | SOR-limited at ~1% of \|J\|_max; follow-up T1 traced it to an 18-pt ∇² vs 6-pt ∇· **stencil mismatch**. Day-2 Thread 2 ships a matched-stencil CG Poisson solver that drops the deep-vacuum Ward floor to **≤ 10⁻⁸** (million-fold improvement) | ↑, [DERIV_DAY2_CAMPAIGN.md §1](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md) |
+| 2  | β(g) from real-space blocking | Scale-dependent α_eff with negative β (QED *sign*); interim 80–160× magnitude superseded by Phase F plateau finding | [DERIV_BETA_FUNCTION_MEASURED.md](docs/theory/10_eft_program/DERIV_BETA_FUNCTION_MEASURED.md) |
+| 3  | Operator spectrum (6 ops) | Pulse-scenario fits clustered near Δ ≈ 0.5; T5 `flux-baryon` run pushes divJ² to Δ = 1.69 (×3.7), confirming pulse-envelope artefact and physicality of the basis | [DERIV_OPERATOR_SPECTRUM.md](docs/theory/10_eft_program/DERIV_OPERATOR_SPECTRUM.md) |
+| 4A | Dynamical EWSB cold-start | Day-2 Thread 1b amplitude-threshold map: **sharp first-order transition at amp ∈ (0.6, 0.7)** on L = 32. Thread 3 spectroscopy on the condensate extracts m_flux = 0.181, m_charge = 0.186 (ratio 0.97 — two independent channels agree to 3%) | [DERIV_DYNAMICAL_SM_EMERGENCE.md](docs/theory/10_eft_program/DERIV_DYNAMICAL_SM_EMERGENCE.md), [DERIV_DAY2_CAMPAIGN.md §2–3](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md) |
 | 4B | Three-generation cold-start | Null: 0 species manifested in 1 000 ticks on radial-flux seed | ↑ |
-| 4C | Continuum-limit α_eff(∞) | α_inf = 0.021 from L ∈ {32, 48, 64}; T3 L = 128 reveals λ_Yukawa ≈ L/5 is a **periodic-image finite-size artefact**, not physical screening | ↑, [DERIV_GAP_CLOSURE.md](docs/theory/10_eft_program/DERIV_GAP_CLOSURE.md) |
+| 4C / F | Continuum-limit α_eff(∞) | Phase F 4-point GPU scan: α_∞ ∈ [3.35×, 3.74×] α_ref, plateau confirmed across factor-of-6 in L | [DERIV_DAY2_CAMPAIGN.md §6b](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md), [DERIV_GAP_CLOSURE.md](docs/theory/10_eft_program/DERIV_GAP_CLOSURE.md) |
 
-**Honest bookkeeping.** [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates every quantity FTD reports for the Standard Model: of ~162 rows, **~23 are genuine derivations**, **~129 are parametric insertions** (standard-physics formulas — ChPT, Fermi theory, seesaw, Regge, QED multi-loop — with FTD-supplied inputs), and **~10 are imposed / selected**. The EFT program's goal is to move 5–15 items leftward by *measuring* them on the lattice rather than borrowing the continuum formula.
+### Infrastructure shipped alongside the measurements
 
-**What the program does not claim.** FTD has not "derived the QED β-function" — the measured β is 80–160× one-loop at lattice scale, dominated by finite-size screening. The Higgs VEV remains [IMPOSED]. Vertex Ward identities Γ_μ(p,p) = ∂Σ/∂p^μ require lattice fermions the engine does not yet carry; flagged [OPEN] up-front. The program's contribution is an auditable stack of measurements and a published gap closure, not a completed EFT.
+- **WSL2 + CUDA 13 build path** (Phase A) — sidesteps the Windows CMake 4 + NVCC 13 escape bug; RTX 5090 passthrough works; `benchmark_beta_function --quick` drops from > 60 s CPU to 0.54 s GPU (≈ **30× speedup**). See [STATUS_CUDA_BUILD.md](docs/theory/10_eft_program/STATUS_CUDA_BUILD.md).
+- **`Pipeline<Backend>` architecture** (Phase B–C) — three reference observables with CPU/GPU parity tested (2% agreement at L ∈ {64, 128}).
+- **Matched-stencil CG Poisson solver** — `engine/include/ftd/eft/matched_poisson.h`, 7 CTests, standalone EFT tool (does not modify the engine hot path).
+- **Four new [MEASURED] rows** in the parametric-insertions catalog: Ward floor 10⁻⁸, EWSB threshold amp ∈ (0.6, 0.7), condensate mass gap m ≈ 0.18, Rutherford α = 0.042 ± 0.005.
+
+### Honest bookkeeping and non-claims
+
+The catalog enumerates ~162 SM quantities FTD reports: **~23 are genuine derivations**, **~129 are parametric insertions** (standard-physics formulas — ChPT, Fermi theory, seesaw, Regge, QED multi-loop — with FTD-supplied inputs), and **~10 are imposed / selected**. The EFT program's contribution is an auditable stack of measurements plus one falsifiable new FTD prediction (the 3.6× plateau), not a completed Wilsonian EFT. The Higgs VEV remains [IMPOSED]; vertex Ward identities Γ_μ(p,p) = ∂Σ/∂p^μ require lattice fermions the engine does not yet carry and are flagged [OPEN] up-front. The pre-registered "match continuum QED to 1%" target was not met — the plateau result is reported without retrofit.
 
 ---
 

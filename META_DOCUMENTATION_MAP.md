@@ -206,6 +206,23 @@ The current theory categories are:
 7. Critical Self-Assessment
 8. Structural Principles
 9. Mathematical Connections
+10. EFT Recovery Program (pre-registered 7-phase measurement campaign; Phase 0 → F complete April 19, 2026)
+
+### EFT Recovery Program documents (`docs/theory/10_eft_program/`)
+
+| Document | Purpose |
+|----------|---------|
+| [SPEC_EFT_RECOVERY_PROGRAM.md](docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md) | Pre-registration spec; five-pillar checklist; canonical regime; per-phase expectations |
+| [SPEC_OPERATOR_BASIS.md](docs/theory/10_eft_program/SPEC_OPERATOR_BASIS.md) | Six dim-2-through-dim-5 operators enumerated before Phase 3 runs |
+| [DERIV_SYMMETRY_RECOVERY.md](docs/theory/10_eft_program/DERIV_SYMMETRY_RECOVERY.md) | Phase 1 outputs: anisotropy, Lorentz (cubic dispersion), Ward identities (SOR-limited) |
+| [DERIV_BETA_FUNCTION_MEASURED.md](docs/theory/10_eft_program/DERIV_BETA_FUNCTION_MEASURED.md) | Phase 2 β-function measurement; three extraction methods |
+| [DERIV_OPERATOR_SPECTRUM.md](docs/theory/10_eft_program/DERIV_OPERATOR_SPECTRUM.md) | Phase 3 six-operator scaling-dimension measurement + pulse-envelope artefact |
+| [DERIV_DYNAMICAL_SM_EMERGENCE.md](docs/theory/10_eft_program/DERIV_DYNAMICAL_SM_EMERGENCE.md) | Phase 4 EWSB / 3-generation / continuum α scan |
+| [DERIV_GAP_CLOSURE.md](docs/theory/10_eft_program/DERIV_GAP_CLOSURE.md) | Post-campaign tickets T1-T5 (stencil mismatch, amp threshold, finite-size Yukawa, confinement operators) |
+| [DERIV_DAY2_CAMPAIGN.md](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md) | Day-2 + Phase F: matched-stencil CG, EWSB threshold map, spectroscopy, Rutherford cross-check, 4-point continuum plateau (α_∞ ≈ 3.6× α_ref) |
+| [STATUS_CUDA_BUILD.md](docs/theory/10_eft_program/STATUS_CUDA_BUILD.md) | WSL2 + CUDA 13 build path (30× GPU speedup on RTX 5090) |
+| [PAPER_FTD_AS_WILSONIAN_EFT.tex](dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex) | Wilsonian-EFT manuscript |
+| [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) | ~162 SM quantities audited: ~23 derivations, ~129 parametric, ~10 imposed/selected |
 
 ---
 
