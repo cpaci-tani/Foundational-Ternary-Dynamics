@@ -458,6 +458,18 @@ target_link_libraries(test_eft_operator_spectrum ftd_core)
 add_executable(benchmark_dynamical_sm tests/benchmark_dynamical_sm.cpp)
 target_link_libraries(benchmark_dynamical_sm ftd_core)
 
+# EFT Day-2 Ticket 4 — EWSB amplitude threshold map + spectroscopy dump
+add_executable(benchmark_ewsb_threshold_map tests/benchmark_ewsb_threshold_map.cpp)
+target_link_libraries(benchmark_ewsb_threshold_map ftd_core)
+
+# EFT Day-2 Ticket A — matched-stencil CG Poisson solver
+add_executable(test_eft_matched_poisson tests/test_eft_matched_poisson.cpp)
+target_link_libraries(test_eft_matched_poisson ftd_core)
+
+# (scratch debug probe; delete when matched_poisson is validated)
+add_executable(_debug_poisson_probe tests/_debug_poisson_probe.cpp)
+target_link_libraries(_debug_poisson_probe ftd_core)
+
 add_executable(test_spectral tests/test_spectral.cpp)
 target_link_libraries(test_spectral ftd_core)
 
@@ -856,6 +868,9 @@ set_tests_properties(eft_operator_spectrum PROPERTIES LABELS "eft" TIMEOUT 120)
 # EFT Recovery Program — Phase 4 (quick mode for CTest)
 add_test(NAME eft_dynamical_sm COMMAND benchmark_dynamical_sm --quick)
 set_tests_properties(eft_dynamical_sm PROPERTIES LABELS "eft" TIMEOUT 180)
+# EFT Day-2 Ticket A
+add_test(NAME eft_matched_poisson COMMAND test_eft_matched_poisson)
+set_tests_properties(eft_matched_poisson PROPERTIES LABELS "eft" TIMEOUT 60)
 add_test(NAME spectral COMMAND test_spectral)
 add_test(NAME tracker COMMAND test_tracker)
 add_test(NAME benchmark COMMAND test_benchmark)
