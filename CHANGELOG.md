@@ -1,5 +1,57 @@
 # Foundational Ternary Dynamics Changelog
 
+## Engine v2.14.6 — Large-file refactor + WASM scenario port (April 18, 2026)
+
+Two parallel cleanup tracks landed together: the web-engine large-file
+refactor (Waves 0-3 of the `SPEC_REFACTOR_LARGE_FILES.md` plan) and a
+full port of the Scale-0 scenario library from JS MockBridge into C++,
+closing a long-standing JS/WASM parity gap.
+
+### Large-file refactor (Waves 0-3 landed)
+
+Split three oversized web-engine files into cohesive modules:
+
+- `engine/web/js/viewport.js`: 5325 -> 4611 LOC (-714)
+- `engine/web/js/wasm-bridge-dag.js`: 5736 -> 2116 LOC (-3620, 63% reduction)
+- `engine/web/js/app_dag.js`: 1898 -> 1731 LOC (-167)
+
+14 new modules extracted across `viewport/`, `bridge/`,
+`bridge/scenarios/`, and `ui/` subdirectories.
+
+- Full spec: `engine/web/docs/SPEC_REFACTOR_LARGE_FILES.md`
+- Verification: 44-case Playwright WASM coverage test plus 8-step Node smoke
+
+Wave 3 Ticket 14 (quantum renderer) is **deferred**. A Playwright
+pause-toggle freeze guard (`tests/animation-clock-freeze.spec.js`) was
+written as a prerequisite for the future extraction so any regression
+in the tick-freeze invariant is caught before the renderer moves.
+
+### WASM scenario port (JS<->C++ parity closed)
+
+Added `engine/include/ftd/scenarios.h` + `engine/src/scenarios.cpp`
+(820 LOC) porting **all 83 Scale-0 scenarios** from the JS MockBridge
+to C++:
+
+- flux-* (20), light-* (4), quantum-* (8), s0-seed-* (43), s0-field-* (8)
+
+**Before:** only 15/84 UI scenarios worked on WASM; the other 69
+silently no-op'd — users clicking e.g. `s0-seed-hydrogen` got an empty
+lattice with no error.
+
+**After:** 84/84 UI scenarios execute correctly on WASM;
+44/44 Playwright coverage cases pass.
+
+Supporting infrastructure:
+
+- New `RenderBridge::inject_flux_add()` and
+  `RenderBridge::inject_wave_vel_add()` primitives with additive
+  semantics matching the JS `+=` pattern the scenarios rely on.
+- `ftd_wasm.cpp::setup_scenario` now calls `ftd::dispatch_scenario`
+  first; the legacy switch is kept only for backward-compat names not
+  present in the JS UI registry.
+- Deterministic RNG reset at each dispatch entry so stochastic
+  scenarios are reproducible across runs.
+
 ## Engine v2.14.5 — Topology overlay perf fix (April 17, 2026)
 
 The v2.14.4 smoothing kept the smooth look but dragged an

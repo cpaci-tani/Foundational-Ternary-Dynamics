@@ -21,16 +21,36 @@ export function createScale0OverlayTemplate() {
   container.innerHTML = `
     <header class="s0-overlay-header">
       <span class="s0-overlay-title">Visualization</span>
-      <button class="s0-overlay-collapse" type="button"
-          aria-label="Collapse visualization overlay"
-          aria-expanded="true"
-          title="Collapse overlay">
-        <span class="s0-overlay-collapse-icon" aria-hidden="true">&#9652;</span>
-      </button>
+      <div class="s0-overlay-header-tools">
+        <label class="s0-overlay-preset-wrap" title="Apply a named bundle of overlay toggles. Choose 'Custom' to keep your current selection.">
+          <span class="s0-overlay-preset-label">Preset</span>
+          <select class="s0-overlay-preset-select" id="s0-overlay-preset">
+            <option value="custom">Custom</option>
+            <option value="clean">Clean (flux only)</option>
+            <option value="em">EM focus</option>
+            <option value="quantum">Quantum</option>
+            <option value="topology">Topology</option>
+            <option value="stress-energy">Stress-energy</option>
+            <option value="full">Full physics</option>
+            <option value="off">All off</option>
+          </select>
+        </label>
+        <button class="s0-overlay-collapse" type="button"
+            aria-label="Collapse visualization overlay"
+            aria-expanded="true"
+            title="Collapse overlay">
+          <span class="s0-overlay-collapse-icon" aria-hidden="true">&#9652;</span>
+        </button>
+      </div>
     </header>
     <div class="s0-overlay-body">
-    <div class="s0-overlay-col">
-      <div class="s0-overlay-col-head">Volume</div>
+    <div class="s0-overlay-col" data-col="volume">
+      <div class="s0-overlay-col-head">
+        <span class="s0-overlay-col-label">Volume</span>
+        <span class="s0-overlay-col-count" data-count-for="volume" aria-hidden="true">0</span>
+        <button class="s0-overlay-col-clear" data-clear-col="volume" type="button"
+            title="Turn off every overlay in this column">&#10005;</button>
+      </div>
       <button class="view-toggle active" id="toggle-flux-volume"
           title="Volumetric point cloud of |J| across the whole lattice">Flux Volume</button>
       <button class="view-toggle" id="toggle-flux-slice"
@@ -45,8 +65,13 @@ export function createScale0OverlayTemplate() {
       </button>
     </div>
 
-    <div class="s0-overlay-col">
-      <div class="s0-overlay-col-head">Fields</div>
+    <div class="s0-overlay-col" data-col="fields">
+      <div class="s0-overlay-col-head">
+        <span class="s0-overlay-col-label">Fields</span>
+        <span class="s0-overlay-col-count" data-count-for="fields" aria-hidden="true">0</span>
+        <button class="s0-overlay-col-clear" data-clear-col="fields" type="button"
+            title="Turn off every overlay in this column">&#10005;</button>
+      </div>
       <button class="view-toggle field-toggle" id="toggle-e-field"
           title="Electric field streamlines (E = -∂J/∂t)">
         <span class="field-swatch field-swatch-e-field"></span>E Field
@@ -65,8 +90,13 @@ export function createScale0OverlayTemplate() {
       </button>
     </div>
 
-    <div class="s0-overlay-col">
-      <div class="s0-overlay-col-head">Forces</div>
+    <div class="s0-overlay-col" data-col="forces">
+      <div class="s0-overlay-col-head">
+        <span class="s0-overlay-col-label">Forces</span>
+        <span class="s0-overlay-col-count" data-count-for="forces" aria-hidden="true">0</span>
+        <button class="s0-overlay-col-clear" data-clear-col="forces" type="button"
+            title="Turn off every force overlay (preserves the current style selection)">&#10005;</button>
+      </div>
       <div class="force-style-row" id="force-style-row"
           title="Render style for force-field overlays">
         <button class="style-btn active" data-style="arrows" title="Vector arrows">Arrows</button>
@@ -92,8 +122,13 @@ export function createScale0OverlayTemplate() {
       </button>
     </div>
 
-    <div class="s0-overlay-col">
-      <div class="s0-overlay-col-head">Quantum</div>
+    <div class="s0-overlay-col" data-col="quantum">
+      <div class="s0-overlay-col-head">
+        <span class="s0-overlay-col-label">Quantum</span>
+        <span class="s0-overlay-col-count" data-count-for="quantum" aria-hidden="true">0</span>
+        <button class="s0-overlay-col-clear" data-clear-col="quantum" type="button"
+            title="Turn off every quantum overlay">&#10005;</button>
+      </div>
       <button class="view-toggle field-toggle" id="toggle-psi-squared"
           title="[PROXY] Born probability density |ψ|² = |J_L|² + |J_R|² (or |J|² if dual substrate off). Where the particle is, probabilistically.">
         <span class="field-swatch field-swatch-psi-squared"></span>|&psi;|&sup2;
@@ -112,8 +147,13 @@ export function createScale0OverlayTemplate() {
       </button>
     </div>
 
-    <div class="s0-overlay-col">
-      <div class="s0-overlay-col-head" title="Rubber-sheet height fields that go flat in stillness and deform as physical structure develops.">Topology</div>
+    <div class="s0-overlay-col" data-col="topology">
+      <div class="s0-overlay-col-head" title="Rubber-sheet height fields that go flat in stillness and deform as physical structure develops.">
+        <span class="s0-overlay-col-label">Topology</span>
+        <span class="s0-overlay-col-count" data-count-for="topology" aria-hidden="true">0</span>
+        <button class="s0-overlay-col-clear" data-clear-col="topology" type="button"
+            title="Turn off every topology overlay (rubber sheets have non-trivial perf cost — useful for a quick reset)">&#10005;</button>
+      </div>
       <button class="view-toggle field-toggle" id="toggle-grav-potential"
           title="[PROXY] Gravitational potential Φ(x) — approximated as smoothed −|J|² mass density when the bridge doesn't expose a Poisson-solved Φ directly. Deep blue = mass well, yellow = saddle/peak.">
         <span class="field-swatch field-swatch-grav-potential"></span>&Phi; potential
@@ -140,8 +180,13 @@ export function createScale0OverlayTemplate() {
       </button>
     </div>
 
-    <div class="s0-overlay-col">
-      <div class="s0-overlay-col-head" title="Stress-energy components and information-theoretic fields derived from J.">Stress-Energy</div>
+    <div class="s0-overlay-col" data-col="stress-energy">
+      <div class="s0-overlay-col-head" title="Stress-energy components and information-theoretic fields derived from J.">
+        <span class="s0-overlay-col-label">Stress-Energy</span>
+        <span class="s0-overlay-col-count" data-count-for="stress-energy" aria-hidden="true">0</span>
+        <button class="s0-overlay-col-clear" data-clear-col="stress-energy" type="button"
+            title="Turn off every stress-energy overlay">&#10005;</button>
+      </div>
       <button class="view-toggle field-toggle" id="toggle-e-pressure"
           title="Electric pressure P_E(x) = ½|E|². Half of EM energy; rises on charge concentrations.">
         <span class="field-swatch field-swatch-e-pressure"></span>P&#8324; (electric)
@@ -160,8 +205,13 @@ export function createScale0OverlayTemplate() {
       </button>
     </div>
 
-    <div class="s0-overlay-col">
-      <div class="s0-overlay-col-head">Phenomena</div>
+    <div class="s0-overlay-col" data-col="phenomena">
+      <div class="s0-overlay-col-head">
+        <span class="s0-overlay-col-label">Phenomena</span>
+        <span class="s0-overlay-col-count" data-count-for="phenomena" aria-hidden="true">0</span>
+        <button class="s0-overlay-col-clear" data-clear-col="phenomena" type="button"
+            title="Turn off every phenomena overlay">&#10005;</button>
+      </div>
       <button class="view-toggle field-toggle" id="toggle-dual-substrate"
           title="Dual substrate split: J_L (warm) and J_R (cool)">
         <span class="field-swatch field-swatch-dualj"></span>Dual J

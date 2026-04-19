@@ -156,6 +156,30 @@ export class ViewportOverlaysComponent {
         <button class="view-toggle active scale4-hide" id="toggle-grid" title="Reference grid (XZ plane)">Grid</button>
         <button class="view-toggle active" id="toggle-reflective" title="Reflective boundary conditions">Reflect</button>
       </div>
+      <!-- Camera preset buttons — snap the orbit camera to a named viewpoint.
+           All positions are computed from the current lattice size, so the
+           preset reads the same at every N. Only shows for Scale 0 (lattice
+           mode); other scales have their own camera logic. -->
+      <div class="vcp-label-row scale0-only"><span class="vcp-label">Camera</span></div>
+      <div class="vcp-preset-grid scale0-only">
+        <button class="view-toggle vcp-preset-btn" data-cam-preset="front" title="Face-on view (looking -Z)">Front</button>
+        <button class="view-toggle vcp-preset-btn" data-cam-preset="side"  title="Side view (looking -X)">Side</button>
+        <button class="view-toggle vcp-preset-btn" data-cam-preset="top"   title="Top-down (looking -Y)">Top</button>
+        <button class="view-toggle vcp-preset-btn" data-cam-preset="iso"   title="Isometric default">Iso</button>
+        <button class="view-toggle vcp-preset-btn" data-cam-preset="moore" title="Zoomed into the 3×3×3 Moore neighborhood around the lattice center — ideal for seed scenarios">Moore</button>
+        <button class="view-toggle vcp-preset-btn" data-cam-preset="fit"   title="Frame the active flux volume to fit the viewport">Fit</button>
+      </div>
+      <!-- Reduced motion toggle — freezes all continuous UI animations
+           (particle smooth-follow tweens, dash flow, quantum breathing).
+           Useful for screenshots and for users sensitive to motion. Sets
+           body[data-reduced-motion="1"] + broadcasts a custom event so
+           any listener can honour the preference.  -->
+      <div class="vcp-toggle-grid vcp-motion-row">
+        <button class="view-toggle" id="toggle-reduced-motion"
+            title="Freeze all continuous animation (breathing, dash flow). Overlay/physics simulation is unaffected.">
+          Reduced Motion
+        </button>
+      </div>
       <div class="vcp-select-row">
         <span class="vcp-label">Env</span>
         <select id="bg-select">

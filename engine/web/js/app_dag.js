@@ -30,13 +30,16 @@ import * as Scale4Controller from './scales/scale4/controller.js';
 import * as Scale5Controller from './scales/scale5/controller.js';
 import * as Scale6Controller from './scales/scale6/controller.js';
 import * as Scale11Controller from './scales/scale11/controller.js';
-import { OnticObservatory, renderFcCard, renderObserverCard, renderHierarchyTower as renderOnticHierarchy, renderInfoDynamics } from './ontic-observatory.js';
-import { renderEnergyLevels } from './spectroscopy.js';
-import { renderCrossSections } from './cross-sections.js';
-import { renderDecayRates } from './decay-rates.js';
-import { ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS, TICK_PHASES, ALPHA, K_B, K_GENESIS, G_N, G_STAR, VARPI, X_PLUS, X_MINUS, COS2_THETA_C, C_SPEED } from './constants.js';
+import { OnticObservatory } from './ontic-observatory.js';
+// renderEnergyLevels, renderCrossSections, renderDecayRates, renderFcCard,
+// renderObserverCard, renderOnticHierarchy, renderInfoDynamics moved to
+// ui/app-ontic.js (Wave 2 ticket 7).
+import { TICK_PHASES, K_B, K_GENESIS, COS2_THETA_C, C_SPEED } from './constants.js';
 // K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT moved to Scale11Controller
-import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor, renderAggregationTower, renderScaleBridge, renderEmergenceMonitor } from './aggregation-bridge.js';
+// ALPHA, G_STAR, VARPI, X_PLUS, X_MINUS, ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS
+// now imported directly by ui/app-ontic.js.
+import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor } from './aggregation-bridge.js';
+import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
 import { PETelemetryPanel } from './pe-telemetry.js';
 // ConsciousnessEngine moved to Scale11Controller
@@ -48,6 +51,8 @@ import { initVerifyPanel } from './verify-panel/component.js';
 import { AppShell } from './ui/shell/app-shell.js';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initConsciousnessPanel } from './ui/panels/index.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
+// Keyboard shortcut handler extracted per refactoring-analyst RF-9 (partial).
+import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
 
 debugLog('[FTD] App version 20260318a loaded (cache-busted)');
 
@@ -184,8 +189,8 @@ function _makeCtx() {
         get activeTab() { return activeTab; },
         get frameCount() { return frameCount; },
         get dom() { return _dom; },
-        updateOnticPanel,
-        updateHierarchyPanel,
+        updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
+        updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
         resetAllVisualState: _resetAllVisualState,
         _resetAllVisualState,
         updatePlayButton,
@@ -330,6 +335,9 @@ let aggregateDetector = null;
 let scaleBridgeViz = null;
 let emergenceMonitor = null;
 let _physicsZ = 1; // current Z for physics tab
+// Ontic panel provider (Wave 2 ticket 7) — bound to live-state getters so
+// it reads bridge/engineMode/observatory/etc. via deps at call time.
+let onticPanel = null;
 
 // ── Cached DOM Elements (populated in init()) ──────────────────────
 // Avoids repeated getElementById() calls in 60fps animation loops.
@@ -515,8 +523,21 @@ async function init() {
     inspector = inspectorRuntime.inspector;
     peTelemetry = new PETelemetryPanel();
 
+    // Build ontic-panel provider with live-state getters (Wave 2 ticket 7).
+    // observatory/aggregateDetector/emergenceMonitor are created below; the
+    // getters tolerate nulls so populateConstants() can run first.
+    onticPanel = createOnticPanel({
+        getBridge:            () => bridge,
+        getEngineMode:        () => engineMode,
+        getObservatory:       () => observatory,
+        getAggregateDetector: () => aggregateDetector,
+        getEmergenceMonitor:  () => emergenceMonitor,
+        getPhysicsZ:          () => _physicsZ,
+        setPhysicsZ:          (z) => { _physicsZ = z; },
+    });
+
     // Populate constants table from WASM if available
-    populateConstants();
+    onticPanel.populateConstants();
 
     // Build element scenario dropdown (molecules are Scale 3 only)
     buildElementScenarios();
@@ -527,7 +548,7 @@ async function init() {
     aggregateDetector = new AggregateDetector();
     scaleBridgeViz = new ScaleBridgeVisualizer();
     emergenceMonitor = new EmergenceMonitor(500);
-    initOnticPhysicsHierarchy();
+    onticPanel.initOnticPhysicsHierarchy();
 
     _loadProgress(70, 'Wiring controls...');
     // Scrub bar owns the playback buttons (play/local/step/reset/speed).
@@ -639,7 +660,8 @@ function _buildScale1Ctx(now) {
         ticksPerFrame, inspector,
         fluxEnergyChart, particleChart, peTelemetry,
         activeTab, frameCount, dom: _dom, now,
-        updateOnticPanel, updateHierarchyPanel,
+        updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
+        updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
     };
 }
 
@@ -650,7 +672,9 @@ function _buildScale2Ctx(now) {
         ticksPerFrame, inspector,
         fluxEnergyChart, particleChart,
         activeTab, frameCount, dom: _dom, now,
-        updatePlayButton, updateOnticPanel, updateHierarchyPanel,
+        updatePlayButton,
+        updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
+        updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
         resetAllVisualState: _resetAllVisualState,
         setRunning: (v) => { running = v; updateLocalPlayButton(); },
         engineMode,
@@ -684,25 +708,7 @@ function animateAE(now) {
 // (Inline animatePE, animateAE, updateAtomicEnergyDisplay, formatSI removed
 //  -- now in Scale1Controller and Scale2Controller)
 
-// ── Constants Table ─────────────────────────────────────────────────
-function populateConstants() {
-    const c = bridge.getConstants();
-    if (!c) return;
-
-    const set = (id, val, decimals = 7) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = typeof val === 'number' ? val.toFixed(decimals) : val;
-    };
-
-    set('const-gstar', c.G_STAR);
-    set('const-alpha-inv', c.ALPHA_INV);
-    set('const-alpha', c.ALPHA);
-    set('const-kb', c.K_B);
-    set('const-gn', c.G_N);
-    set('const-gc', c.G_C);
-    set('const-nc', c.N_C, 0);
-    set('const-neff', c.N_EFF, 0);
-}
+// populateConstants moved to ui/app-ontic.js (Wave 2 ticket 7).
 
 // ── Toolbar Wiring ───────────────────────────────────────────────────
 function wireToolbar() {
@@ -948,10 +954,9 @@ function wireTabs() {
             diagnostics.drawSparklines();
             if (peTelemetry) peTelemetry.drawCharts();
         } else if (target === 'physics') {
-            const energyEl = document.getElementById('physics-energy-levels');
-            if (energyEl) renderEnergyLevels(_physicsZ, energyEl);
+            onticPanel?.refreshPhysicsPanel();
         } else if (target === 'hierarchy') {
-            updateHierarchyPanel();
+            onticPanel?.updateHierarchyPanel();
         }
     };
 
@@ -1081,6 +1086,48 @@ function wireViewportToggles() {
         });
     }
 
+    // Camera preset buttons — Scale-0-specific camera viewpoints. Each
+    // button snaps the orbit camera to a named direction; "Fit" zooms to
+    // frame the active flux volume. Buttons hidden on non-lattice scales
+    // via the .scale0-only class on their container.
+    for (const btn of document.querySelectorAll('[data-cam-preset]')) {
+        const preset = btn.getAttribute('data-cam-preset');
+        btn.addEventListener('click', () => {
+            if (!viewport) return;
+            if (preset === 'fit') {
+                viewport.zoomToFit?.();
+            } else {
+                viewport.setCameraPreset?.(preset);
+            }
+            // Transient visual pulse so the user sees the preset was applied,
+            // without leaving any button stuck in an active state (these
+            // are momentary actions, not persistent toggles).
+            btn.classList.add('vcp-preset-flash');
+            setTimeout(() => btn.classList.remove('vcp-preset-flash'), 260);
+        });
+    }
+
+    // Reduced-motion toggle — persisted to localStorage and broadcast as
+    // a data-attribute on <body> so CSS + JS can both react. Paired with
+    // the user's system prefers-reduced-motion setting so either path
+    // disables continuous animation.
+    const rmBtn = document.getElementById('toggle-reduced-motion');
+    if (rmBtn) {
+        const applyRM = (on) => {
+            document.body.dataset.reducedMotion = on ? '1' : '0';
+            rmBtn.classList.toggle('active', !!on);
+            try { localStorage.setItem('ftd.reducedMotion', on ? '1' : '0'); } catch { /* ignore */ }
+            window.dispatchEvent(new CustomEvent('ftd:reduced-motion-change', { detail: { on } }));
+        };
+        let initial = false;
+        try { initial = localStorage.getItem('ftd.reducedMotion') === '1'; } catch { /* ignore */ }
+        if (!initial && window.matchMedia) {
+            try { initial = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { /* ignore */ }
+        }
+        applyRM(initial);
+        rmBtn.addEventListener('click', () => applyRM(!rmBtn.classList.contains('active')));
+    }
+
     // PE mode visual overlay toggles (delegated to Scale1Controller)
     const velBtn = document.getElementById('toggle-velocities');
     if (velBtn) velBtn.addEventListener('click', () => {
@@ -1185,54 +1232,44 @@ function wireVerificationLab() {
 
 
 // ── Keyboard Shortcuts ───────────────────────────────────────────────
+// Keyboard shortcut handler — body extracted to app-wire/keyboard.js. This
+// thin wrapper provides the live-state getters + mode-specific step/reload
+// callbacks the extracted module needs.
 function wireKeyboard() {
-    document.addEventListener('keydown', (e) => {
-        // Ignore if typing in an input
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-
-        switch (e.key.toLowerCase()) {
-            case ' ':
-                e.preventDefault();
-                // Shift+Space toggles scenario pause; plain Space toggles global.
-                if (e.shiftKey) toggleScenarioPlay();
-                else togglePlay();
-                break;
-            case 's':
-                running = false;
-                updatePlayButton();
-                if (engineMode === 'consciousness') {
-                    // Consciousness ticks both flux and CS engine
-                    bridge.tick();
-                    { const fm = Scale0Controller.getFluxMock(); if (fm) fm.tick(); }
-                } else if (engineMode === 'atoms' || engineMode === 'molecules') {
-                    bridge.aeTick();
-                } else if (engineMode === 'particles') {
-                    bridge.peTick();
-                } else {
-                    Scale0Controller.step(_makeCtx());
-                }
-                break;
-            case 'r':
-                running = false;
-                updatePlayButton();
-                if (engineMode === 'consciousness') {
-                    loadConsciousnessScenario(document.getElementById('cs-scenario-select').value);
-                } else if (engineMode === 'molecules') {
-                    loadMoleculeScenario(document.getElementById('mol-scenario-select').value);
-                } else if (engineMode === 'atoms') {
-                    loadAEScenario(document.getElementById('ae-scenario-select').value);
-                } else if (engineMode === 'particles') {
-                    loadPEScenario(document.getElementById('pe-scenario-select').value);
-                } else {
-                    Scale0Controller.reset(_makeCtx());
-                }
-                break;
-        }
-
-        // Field visualization shortcuts (1-8) — Scale 0 only
-        if (engineMode === 'lattice') {
-            if (Scale0Controller.handleShortcutKey(e.key)) e.preventDefault();
-        }
+    wireKeyboardExternal({
+        getEngineMode: () => engineMode,
+        getBridge: () => bridge,
+        setRunning: (v) => { running = v; },
+        updatePlayButton,
+        togglePlay,
+        toggleScenarioPlay,
+        stepScenario: () => {
+            if (engineMode === 'consciousness') {
+                bridge.tick();
+                const fm = Scale0Controller.getFluxMock();
+                if (fm) fm.tick();
+            } else if (engineMode === 'atoms' || engineMode === 'molecules') {
+                bridge.aeTick();
+            } else if (engineMode === 'particles') {
+                bridge.peTick();
+            } else {
+                Scale0Controller.step(_makeCtx());
+            }
+        },
+        reloadScenario: () => {
+            if (engineMode === 'consciousness') {
+                loadConsciousnessScenario(document.getElementById('cs-scenario-select').value);
+            } else if (engineMode === 'molecules') {
+                loadMoleculeScenario(document.getElementById('mol-scenario-select').value);
+            } else if (engineMode === 'atoms') {
+                loadAEScenario(document.getElementById('ae-scenario-select').value);
+            } else if (engineMode === 'particles') {
+                loadPEScenario(document.getElementById('pe-scenario-select').value);
+            } else {
+                Scale0Controller.reset(_makeCtx());
+            }
+        },
+        Scale0Controller,
     });
 }
 
@@ -1661,182 +1698,12 @@ function formatNumber(n) {
     return n.toString();
 }
 
-// ── Phase 1-3: Ontic / Physics / Hierarchy Initialization ────────
-function initOnticPhysicsHierarchy() {
-    // Phase 2: Render static physics content
-    const energyEl = document.getElementById('physics-energy-levels');
-    if (energyEl) renderEnergyLevels(_physicsZ, energyEl);
-
-    const csEl = document.getElementById('physics-cross-sections');
-    if (csEl) renderCrossSections(csEl);
-
-    const drEl = document.getElementById('physics-decay-rates');
-    if (drEl) renderDecayRates(drEl);
-
-    // Ontic chain constants summary card
-    const constEl = document.getElementById('physics-constants');
-    if (constEl) renderOnticChainSummary(constEl);
-
-    // Physics Z slider
-    const zSlider = document.getElementById('physics-z-slider');
-    const zValue = document.getElementById('physics-z-value');
-    if (zSlider) {
-        zSlider.addEventListener('input', () => {
-            _physicsZ = parseInt(zSlider.value);
-            zValue.textContent = `Z=${_physicsZ}`;
-            if (energyEl) renderEnergyLevels(_physicsZ, energyEl);
-        });
-    }
-
-    // Initial render of ontic + hierarchy panels
-    updateOnticPanel();
-    updateHierarchyPanel();
-}
-
-function renderOnticChainSummary(container) {
-    let rows = '';
-    const constants = [
-        ['G*', G_STAR.toFixed(10), 'Universal render bridge'],
-        ['ϖ', VARPI.toFixed(10), 'Lemniscate constant'],
-        ['1/α', X_PLUS.toFixed(7), 'Fine structure inverse'],
-        ['x₋', X_MINUS.toFixed(7), '≈ N_c (color charges)'],
-        ['α', ALPHA.toFixed(10), 'Fine structure constant'],
-        ['K_B', K_B + ' MeV', 'Electron mass / threshold'],
-    ];
-    for (const [sym, val, desc] of constants) {
-        rows += `<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--bg-card)">
-            <span style="color:var(--accent)">${sym}</span>
-            <span style="color:var(--text-primary);font-family:var(--font-mono);font-size:10px">${val}</span>
-        </div>`;
-    }
-    container.innerHTML = `
-        <div class="card-title">Ontic Chain Constants</div>
-        ${rows}
-        <div style="margin-top:4px;font-size:9px;color:var(--text-muted)">
-            ${ONTIC_TOTAL_CONSTANTS} constants across ${ONTIC_LAYERS.length} layers.
-            Inputs: D=3 + ϖ → all physics.
-        </div>`;
-}
-
-function updateOnticPanel() {
-    if (!observatory) return;
-    const fcCard = document.getElementById('ontic-fc-card');
-    const obsCard = document.getElementById('ontic-observer-card');
-    const hierCard = document.getElementById('ontic-hierarchy-card');
-    const infoCard = document.getElementById('ontic-info-card');
-    if (!fcCard && !obsCard && !hierCard && !infoCard) return;
-
-    // Build diagnostics data from current engine state and update observatory
-    const diagData = getOnticDiagnostics();
-    const scaleIdx = diagData.scale || 0;
-    const rawDiag = getRawDiagnostics();
-    observatory.update(rawDiag, scaleIdx, diagData.tick);
-    if (fcCard) renderFcCard(observatory, fcCard);
-    if (obsCard) renderObserverCard(observatory, obsCard);
-    if (hierCard) renderOnticHierarchy(observatory, hierCard);
-    if (infoCard) renderInfoDynamics(observatory, infoCard);
-}
-
-function updateHierarchyPanel() {
-    if (!aggregateDetector || !emergenceMonitor) return;
-
-    const diagData = getOnticDiagnostics();
-
-    // Record emergence data
-    emergenceMonitor.record(diagData);
-
-    // Aggregation tower
-    const { levels, details } = aggregateDetector.detect(diagData);
-    const towerEl = document.getElementById('hierarchy-tower');
-    if (towerEl) renderAggregationTower(levels, details, towerEl);
-
-    // Scale bridge
-    const scaleIdx = engineMode === 'atoms' ? 2 : engineMode === 'particles' ? 1 : 0;
-    const bridgeEl = document.getElementById('hierarchy-bridge');
-    if (bridgeEl) renderScaleBridge(scaleIdx, diagData, bridgeEl);
-
-    // Emergence monitor
-    const emergeEl = document.getElementById('hierarchy-emergence');
-    if (emergeEl) renderEmergenceMonitor(emergenceMonitor.getTrajectory(), emergeEl);
-}
-
-/**
- * Get raw bridge diagnostics for the current engine mode.
- * Used by OnticObservatory.update(diag, scale, tick).
- */
-function getRawDiagnostics() {
-    try {
-        if (engineMode === 'atoms' || engineMode === 'molecules') {
-            const d = bridge.aeGetDiagnostics();
-            return { count: d.atomCount, totalEnergy: d.totalEnergy, bondCount: d.bondCount, maxSep: 0 };
-        } else if (engineMode === 'particles') {
-            const d = bridge.peGetDiagnostics();
-            return { count: d.particleCount, totalEnergy: d.totalEnergy, maxSep: 0 };
-        } else {
-            return bridge.getDiagnostics();
-        }
-    } catch {
-        return { manifested: 0, totalFlux: 0, totalEnergy: 0, locked: 0 };
-    }
-}
-
-/**
- * Extract unified diagnostics data from the current engine mode.
- * Used by OnticObservatory and AggregateDetector.
- */
-function getOnticDiagnostics() {
-    try {
-        if (engineMode === 'atoms' || engineMode === 'molecules') {
-            const diag = bridge.aeGetDiagnostics();
-            const scaleNum = engineMode === 'molecules' ? 3 : 2;
-            const selectId = engineMode === 'molecules' ? 'mol-scenario-select' : 'ae-scenario-select';
-            const defaultName = engineMode === 'molecules' ? 'mol-h2' : 'ae-custom';
-            return {
-                tick: diag.tick,
-                particleCount: diag.atomCount,
-                boundCount: diag.bondCount,
-                latticeSize: 64,
-                spatialExtent: diag.atomCount > 1 ? 0.3 : 0.0,
-                totalEnergy: diag.totalEnergy,
-                relaxTime: 100,
-                scale: scaleNum,
-                scenarioName: document.getElementById(selectId)?.value || defaultName,
-            };
-        } else if (engineMode === 'particles') {
-            const diag = bridge.peGetDiagnostics();
-            return {
-                tick: diag.tick,
-                particleCount: diag.particleCount,
-                boundCount: 0,
-                latticeSize: 64,
-                spatialExtent: diag.particleCount > 1 ? 0.2 : 0.0,
-                totalEnergy: diag.totalEnergy,
-                relaxTime: 200,
-                scale: 1,
-                scenarioName: document.getElementById('pe-scenario-select')?.value || 'pe-custom',
-            };
-        } else {
-            const diag = bridge.getDiagnostics();
-            return {
-                tick: diag.tick,
-                particleCount: diag.manifested,
-                boundCount: diag.locked || 0,
-                latticeSize: bridge.latticeSize || 32,
-                spatialExtent: diag.manifested > 0 ? 0.15 : 0.0,
-                totalEnergy: diag.totalEnergy,
-                relaxTime: 500,
-                scale: 0,
-                scenarioName: document.getElementById('scenario-select')?.value || 'pair',
-            };
-        }
-    } catch {
-        return {
-            tick: 0, particleCount: 0, boundCount: 0, latticeSize: 32,
-            spatialExtent: 0, totalEnergy: 0, relaxTime: 100, scale: 0,
-            scenarioName: 'Empty',
-        };
-    }
-}
+// ── Phase 1-3: Ontic / Physics / Hierarchy ────────
+// Moved to ui/app-ontic.js as Wave 2 ticket 7 of the large-file refactor.
+// Call via onticPanel.initOnticPhysicsHierarchy / updateOnticPanel /
+// updateHierarchyPanel / refreshPhysicsPanel / getOnticDiagnostics /
+// getRawDiagnostics / renderOnticChainSummary. See
+// docs/SPEC_REFACTOR_LARGE_FILES.md §4.
 
 // ── Launch ───────────────────────────────────────────────────────────
 init().catch(err => {

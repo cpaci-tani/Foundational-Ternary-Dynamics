@@ -87,6 +87,58 @@ export class ScrubBarComponent {
                 });
             }
 
+            // Speed preset chips — snap the existing ticks-per-frame slider
+            // to a multiplier of 1× (value 50 on the 0..100 range mapped to
+            // 0.1..10×). The slider's existing wiring picks up the change,
+            // so we don't need a separate speed callback — just dispatch
+            // an `input` event after setting `.value`.
+            for (const chip of this.popoverEl.querySelectorAll('[data-speed-preset]')) {
+                chip.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const mult = parseFloat(chip.dataset.speedPreset);
+                    if (!Number.isFinite(mult) || mult <= 0) return;
+                    const slider = document.getElementById('ticks-per-frame');
+                    if (slider) {
+                        // ticks-per-frame: min=0, max=100, step=0.1, value=50 ≡ 1×.
+                        // Log-ish mapping: slider 50 = 1×, 70 ≈ 2×, 90 ≈ 5×, 10 ≈ 0.1×.
+                        // Use `value = 50 + 20·log10(mult)` so the chips line up
+                        // with common multipliers on the slider.
+                        const raw = 50 + 20 * Math.log10(mult);
+                        slider.value = Math.max(0, Math.min(100, raw));
+                        slider.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                    for (const c of this.popoverEl.querySelectorAll('[data-speed-preset]')) {
+                        const active = c === chip;
+                        c.classList.toggle('is-active', active);
+                        c.setAttribute('aria-checked', active ? 'true' : 'false');
+                    }
+                });
+            }
+
+            // Step-by-N chips — advance the simulation by N ticks without
+            // starting continuous playback. Reuses the existing step action
+            // (btn-step) which ticks exactly once, invoking it N times.
+            for (const chip of this.popoverEl.querySelectorAll('[data-step-by]')) {
+                chip.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const n = parseInt(chip.dataset.stepBy, 10) || 1;
+                    const stepBtn = document.getElementById('btn-step');
+                    if (!stepBtn) return;
+                    // Slightly defer each click so downstream effects (field-
+                    // overlay refresh, lattice upload) don't fight for the
+                    // same animation frame. 0ms setTimeout scheduling is
+                    // enough because each step's side-effects complete
+                    // within a single microtask tick.
+                    let i = 0;
+                    const tickOne = () => {
+                        stepBtn.click();
+                        i++;
+                        if (i < n) setTimeout(tickOne, 0);
+                    };
+                    tickOne();
+                });
+            }
+
             // Click-outside + Escape close the popover.
             this._onDocClick = (e) => {
                 if (!this.popoverEl || this.popoverEl.hasAttribute('hidden')) return;

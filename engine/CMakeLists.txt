@@ -94,6 +94,7 @@ add_library(ftd_core
     src/ontic_audit.cpp    # RF-03: ontic_audit() body moved from ontic.h
     src/csv_export.cpp     # RF-05: csv export bodies moved from csv_export.h
     src/constructors.cpp   # Constructor library (ftd::ctor::*) — see spec 2026-04-15
+    src/scenarios.cpp      # Scale-0 scenario library (ported from JS MockBridge, Apr 2026)
 )
 target_include_directories(ftd_core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 if(OpenMP_CXX_FOUND)
@@ -152,6 +153,9 @@ ftd_add_test(test_gauss tests/test_gauss.cpp CTEST_NAME gauss TIMEOUT 600)
 
 add_executable(test_intervoxel_coupling tests/test_intervoxel_coupling.cpp)
 target_link_libraries(test_intervoxel_coupling ftd_core)
+
+add_executable(test_scenario_velocity_wiring tests/test_scenario_velocity_wiring.cpp)
+target_link_libraries(test_scenario_velocity_wiring ftd_core)
 
 add_executable(test_stress_energy tests/test_stress_energy.cpp)
 target_link_libraries(test_stress_energy ftd_core)
@@ -702,6 +706,7 @@ add_test(NAME born_infeld COMMAND test_born_infeld)
 # (test_energy merged into energy_conservation)
 # (gauss registered via ftd_add_test above)
 add_test(NAME intervoxel_coupling COMMAND test_intervoxel_coupling)
+add_test(NAME scenario_velocity_wiring COMMAND test_scenario_velocity_wiring)
 add_test(NAME stress_energy COMMAND test_stress_energy)
 add_test(NAME thermodynamics COMMAND test_thermodynamics)
 add_test(NAME lagrangian COMMAND test_lagrangian)

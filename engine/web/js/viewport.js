@@ -55,6 +55,40 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { getById } from './particle-catalog.js';
 import { potentialToColor, magnitudeToColor, fluxToColor, fluxToColorInto } from './fields.js';
 import { K_B } from './constants.js';
+import {
+    rampViridis,
+    rampCyclicHSL,
+    rampDivergingRdBu,
+    rampGrayscale,
+    rampGravWell,
+    rampEmEnergy,
+    rampCharge,
+    rampVorticity,
+    rampHelicity,
+    rampKretschmann,
+    rampEPressure,
+    rampBPressure,
+    rampKineticEnergy,
+    rampFisher,
+    rampCoherence,
+    FORCE_PALETTES,
+    lerpPalette,
+    RAMP_BY_NAME,
+} from './viewport/color-ramps.js';
+// Molecular rendering (bonds, orbital shells/lobes, AE force arrows,
+// element labels, nucleus glow) extracted to its own module as Wave 2
+// ticket 4 of the large-file refactor. Viewport composes a
+// MolecularRenderer and delegates every public method through a thin
+// wrapper. See docs/SPEC_REFACTOR_LARGE_FILES.md §5.
+import { MolecularRenderer } from './viewport/molecular-renderer.js';
+// Boundary wireframe builders + containment predicate — extracted to keep
+// viewport.js under the refactor-plan LOC target (refactoring-analyst RF-4).
+// Pure geometry; no state beyond the returned Three.js Group.
+import { buildBoundary, insideBoundary } from './viewport/boundary-geometry.js';
+// Rubber-sheet visualizations (gravitational potential + 10 topology fields).
+// Extracted per refactoring-analyst RF-1. Viewport holds the instance as
+// this._topoRenderer and forwards via thin delegators.
+import { TopologySheetRenderer } from './viewport/topology-sheet-renderer.js';
 
 // Pre-allocated buffer sizes. Particle buffer is fixed at init to avoid
 // dynamic GPU reallocation; draw range controls visible count each frame.
@@ -218,6 +252,22 @@ export class Viewport {
         const ambient = new THREE.AmbientLight(0x404060, 0.5);
         this.scene.add(ambient);
 
+        // Molecular renderer (bonds, orbital shells, AE force arrows,
+        // element labels). Takes the scene by reference; owns its own
+        // meshes and tears them down from its own dispose().
+        this._molRenderer = new MolecularRenderer(this.scene);
+
+        // Rubber-sheet visualizations — gravitational potential + 10 topology
+        // fields. Uses live-state getters so lattice-size changes propagate.
+        this._topoRenderer = new TopologySheetRenderer({
+            scene: this.scene,
+            getLatticeSize: () => this._latticeSize || 32,
+            getHalfN: () => this._halfN,
+            // Topology toggles trigger quantum-renderer visibility coordination
+            // (matches the pre-refactor call to this._quantumSetVisibility()).
+            onVisibilityChange: () => this._quantumSetVisibility(),
+        });
+
         // Axis helper (subtle)
         this._buildAxes();
 
@@ -289,17 +339,7 @@ export class Viewport {
             depthWrite: false,
         });
 
-        let group;
-        switch (shape) {
-            case 'cube': group = this._buildCubeBoundary(mat, mode); break;
-            case 'sphere': group = this._buildSphereBoundary(mat); break;
-            case 'dodecahedron': group = this._buildPlatonicBoundary('dodecahedron', mat); break;
-            case 'icosahedron': group = this._buildPlatonicBoundary('icosahedron', mat); break;
-            case 'octahedron': group = this._buildPlatonicBoundary('octahedron', mat); break;
-            case 'cylinder': group = this._buildCylinderBoundary(mat); break;
-            case 'torus': group = this._buildTorusBoundary(mat); break;
-            default: group = this._buildCubeBoundary(mat, mode); break;
-        }
+        const group = buildBoundary(shape, mode, { latticeSize: this.latticeSize }, mat);
 
         // Scale and position based on mode
         // Non-cube shapes are inscribed within the lattice cube (radius = s/2)
@@ -329,141 +369,10 @@ export class Viewport {
         this.scene.add(this.wireframe);
     }
 
-    _buildCubeBoundary(mat, mode) {
-        const vertices = [];
-        const s = (mode === 'lattice') ? this.latticeSize : 1;
 
-        // 12 edges of bounding cube
-        const h = s / 2;
-        const corners = (mode === 'lattice')
-            ? [[0, 0, 0], [s, 0, 0], [s, s, 0], [0, s, 0], [0, 0, s], [s, 0, s], [s, s, s], [0, s, s]]
-            : [[-h, -h, -h], [h, -h, -h], [h, h, -h], [-h, h, -h], [-h, -h, h], [h, -h, h], [h, h, h], [-h, h, h]];
-        const edges = [
-            [0, 1], [1, 2], [2, 3], [3, 0],
-            [4, 5], [5, 6], [6, 7], [7, 4],
-            [0, 4], [1, 5], [2, 6], [3, 7]
-        ];
-        for (const [a, b] of edges) {
-            vertices.push(...corners[a], ...corners[b]);
-        }
 
-        // Subdivision lines only in lattice mode (sparse — just midpoint cross).
-        //
-        // Crosshair alignment: voxel k is rendered at world centre k+0.5 (the
-        // universal Scale-0 convention). For EVEN N, N/2 is a voxel CORNER, so
-        // a subdivision line at integer world `i = N/2` passes between voxels
-        // rather than through any voxel's centre. EVERY scenario that anchors
-        // at `mc = Math.round((N-1)/2)` (the default for Moore, proton, atom,
-        // photon, flux-pulse, and basically all centred scenarios) then places
-        // its centroid at world (mc+0.5) — exactly 0.5 off from the crosshair.
-        //
-        // Shift subdivision by +0.5 so the crosshair lands on voxel-centre world
-        // coords for ALL N (even OR odd). Outer cube stays at [0, N] — only the
-        // interior cross marker moves. Matches the physics-layer voxel-centre
-        // convention and aligns EVERY centred scenario with the wireframe cross.
-        if (mode === 'lattice') {
-            const step = Math.max(8, Math.floor(s / 2));
-            for (let raw = step; raw < s; raw += step) {
-                const i = raw + 0.5;
-                vertices.push(i, 0, 0, i, s, 0);
-                vertices.push(i, 0, s, i, s, s);
-                vertices.push(0, i, 0, s, i, 0);
-                vertices.push(0, i, s, s, i, s);
-                vertices.push(0, 0, i, s, 0, i);
-                vertices.push(0, s, i, s, s, i);
-            }
-        }
 
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        const group = new THREE.Group();
-        group.add(new THREE.LineSegments(geo, mat));
-        return group;
-    }
 
-    _buildSphereBoundary(mat) {
-        const group = new THREE.Group();
-
-        // Wireframe sphere
-        const sphereGeo = new THREE.SphereGeometry(1, 24, 16);
-        const edgesGeo = new THREE.EdgesGeometry(sphereGeo);
-        group.add(new THREE.LineSegments(edgesGeo, mat));
-        sphereGeo.dispose();
-
-        // 3 great-circle rings for structure
-        const ringMat = mat.clone();
-        ringMat.opacity = 0.5;
-        const segments = 64;
-        for (let axis = 0; axis < 3; axis++) {
-            const pts = [];
-            for (let i = 0; i <= segments; i++) {
-                const t = (i / segments) * Math.PI * 2;
-                const c = Math.cos(t), sn = Math.sin(t);
-                if (axis === 0) pts.push(new THREE.Vector3(0, c, sn));
-                else if (axis === 1) pts.push(new THREE.Vector3(c, 0, sn));
-                else pts.push(new THREE.Vector3(c, sn, 0));
-            }
-            const ringGeo = new THREE.BufferGeometry().setFromPoints(pts);
-            group.add(new THREE.Line(ringGeo, ringMat));
-        }
-
-        return group;
-    }
-
-    _buildPlatonicBoundary(shape, mat) {
-        const group = new THREE.Group();
-        let solidGeo;
-        const detail = 0;
-        switch (shape) {
-            case 'dodecahedron': solidGeo = new THREE.DodecahedronGeometry(1, detail); break;
-            case 'icosahedron': solidGeo = new THREE.IcosahedronGeometry(1, detail); break;
-            case 'octahedron': solidGeo = new THREE.OctahedronGeometry(1, detail); break;
-        }
-        const edgesGeo = new THREE.EdgesGeometry(solidGeo);
-        group.add(new THREE.LineSegments(edgesGeo, mat));
-        solidGeo.dispose();
-        return group;
-    }
-
-    _buildCylinderBoundary(mat) {
-        const group = new THREE.Group();
-
-        // Cylinder wireframe
-        const cylGeo = new THREE.CylinderGeometry(1, 1, 2, 24, 1, true);
-        const edgesGeo = new THREE.EdgesGeometry(cylGeo);
-        group.add(new THREE.LineSegments(edgesGeo, mat));
-        cylGeo.dispose();
-
-        // Top and bottom cap circles
-        const capMat = mat.clone();
-        capMat.opacity = 0.4;
-        const segments = 48;
-        for (const y of [-1, 1]) {
-            const pts = [];
-            for (let i = 0; i <= segments; i++) {
-                const t = (i / segments) * Math.PI * 2;
-                pts.push(new THREE.Vector3(Math.cos(t), y, Math.sin(t)));
-            }
-            const capGeo = new THREE.BufferGeometry().setFromPoints(pts);
-            group.add(new THREE.Line(capGeo, capMat));
-        }
-
-        return group;
-    }
-
-    _buildTorusBoundary(mat) {
-        const group = new THREE.Group();
-        const torusGeo = new THREE.TorusGeometry(0.7, 0.3, 12, 36);
-        const edgesGeo = new THREE.EdgesGeometry(torusGeo);
-        const mesh = new THREE.LineSegments(edgesGeo, mat);
-        // Three.js TorusGeometry lies in XY plane (hole along Z) by default.
-        // Rotate so major circle lies in XZ plane (hole along Y) to match
-        // _insideBoundary clipping and the PE grid orientation.
-        mesh.rotation.x = -Math.PI / 2;
-        group.add(mesh);
-        torusGeo.dispose();
-        return group;
-    }
 
     setBoundaryShape(shape) {
         this._buildBoundary(shape, this._boundaryMode);
@@ -473,63 +382,11 @@ export class Viewport {
      * Test whether a point (in normalized coords -1..1 from center) is inside
      * the current boundary shape. Used to clip flux volume rendering.
      */
-    _insideBoundary(nx, ny, nz) {
-        switch (this._boundaryShape) {
-            case 'none':
-            case 'cube':
-                return true; // cube = full lattice, no clipping
-            case 'sphere':
-                return (nx * nx + ny * ny + nz * nz) <= 1.0;
-            case 'octahedron':
-                return (Math.abs(nx) + Math.abs(ny) + Math.abs(nz)) <= 1.0;
-            case 'dodecahedron': {
-                // Dodecahedron defined by 6 pairs of face normals
-                // Inradius of unit dodecahedron ≈ 0.7946
-                const phi = 1.618033988749895;
-                const ir = 0.7946; // inradius / circumradius
-                const normals = [
-                    [0, 1, phi], [0, -1, phi], [0, 1, -phi], [0, -1, -phi],
-                    [1, phi, 0], [-1, phi, 0], [1, -phi, 0], [-1, -phi, 0],
-                    [phi, 0, 1], [-phi, 0, 1], [phi, 0, -1], [-phi, 0, -1],
-                ];
-                for (const n of normals) {
-                    const len = Math.sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-                    const d = (nx * n[0] + ny * n[1] + nz * n[2]) / len;
-                    if (d > ir) return false;
-                }
-                return true;
-            }
-            case 'icosahedron': {
-                // Icosahedron defined by 10 pairs of face normals
-                // Inradius of unit icosahedron ≈ 0.7558
-                const phi = 1.618033988749895;
-                const ir = 0.7558;
-                const normals = [
-                    [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
-                    [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1],
-                    [0, phi, 1 / phi], [0, phi, -1 / phi], [0, -phi, 1 / phi], [0, -phi, -1 / phi],
-                    [1 / phi, 0, phi], [-1 / phi, 0, phi], [1 / phi, 0, -phi], [-1 / phi, 0, -phi],
-                    [phi, 1 / phi, 0], [phi, -1 / phi, 0], [-phi, 1 / phi, 0], [-phi, -1 / phi, 0],
-                ];
-                for (const n of normals) {
-                    const len = Math.sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-                    const d = (nx * n[0] + ny * n[1] + nz * n[2]) / len;
-                    if (d > ir) return false;
-                }
-                return true;
-            }
-            case 'cylinder':
-                return (nx * nx + nz * nz) <= 1.0 && Math.abs(ny) <= 1.0;
-            case 'torus': {
-                // Torus: major R=0.7, minor r=0.3 (matches _buildTorusBoundary)
-                const dist_xz = Math.sqrt(nx * nx + nz * nz);
-                const dx = dist_xz - 0.7;
-                return (dx * dx + ny * ny) <= (0.3 * 0.3);
-            }
-            default:
-                return true;
-        }
-    }
+    /**
+     * Test whether a point (normalized -1..1 from center) is inside the
+     * current boundary. Delegated to viewport/boundary-geometry.js.
+     */
+    _insideBoundary(nx, ny, nz) { return insideBoundary(this._boundaryShape, nx, ny, nz); }
 
     _buildAxes() {
         // Axis indicator at origin — length scales with lattice size
@@ -555,8 +412,8 @@ export class Viewport {
         this._latticeSize = size;  // mirrored so quantum overlays can read it too
         this._halfN = size / 2;
         this._buildBoundary(this._boundaryShape, this._boundaryMode);
-        // Gravity rubber-sheet needs to match the new lattice footprint.
-        this._rebuildGravSurfaceIfResized?.();
+        // TopologySheetRenderer re-queries latticeSize via its getter on next
+        // update; grav-surface rebuild now happens inside that module.
         
         // Rebuild void box for raycasting
         if (this._voidBox) {
@@ -623,6 +480,65 @@ export class Viewport {
     toggleWireframe(on) {
         this.showWireframe = on;
         if (this.wireframe) this.wireframe.visible = on;
+    }
+
+    // ── Camera presets ────────────────────────────────────────────────
+    // Snap the orbit camera to a named viewpoint. All positions are
+    // computed from the current lattice size so the preset reads the
+    // same at N=32 and N=128. The target is always the voxel-center
+    // midpoint (N/2) — matches where every physics overlay centers.
+    //
+    // `which` values:
+    //   'front' — looking along -Z (standard "face-on" view)
+    //   'side'  — looking along -X
+    //   'top'   — looking along -Y (birds-eye)
+    //   'iso'   — default isometric (matches boot / resize position)
+    //   'moore' — zoomed-in iso that frames a 3×3×3 Moore neighbourhood
+    //             around the lattice centre (useful for seed scenarios)
+    setCameraPreset(which) {
+        if (this._boundaryMode !== 'lattice') return false;
+        const N = this.latticeSize || 32;
+        const c = N / 2;
+        let dist, pos;
+        switch (which) {
+            case 'front': dist = N * 1.6; pos = [c, c, c + dist]; break;
+            case 'side':  dist = N * 1.6; pos = [c + dist, c, c]; break;
+            case 'top':   dist = N * 1.6; pos = [c, c + dist, c + 0.001]; break;  // tiny Z offset so OrbitControls can roll freely
+            case 'iso':   dist = N * 1.6; pos = [c + dist * 0.25, c + dist * 0.15, c + dist]; break;
+            case 'moore': dist = Math.max(6, N * 0.35); pos = [c + dist * 0.6, c + dist * 0.4, c + dist]; break;
+            default: return false;
+        }
+        this.controls.target.set(c, c, c);
+        this.camera.position.set(pos[0], pos[1], pos[2]);
+        this.controls.update();
+        return true;
+    }
+
+    // Frame the camera so the lattice / active boundary fills the view.
+    // Uses the bounding sphere of the flux-volume geometry when possible
+    // so the zoom reflects what's actually non-empty; falls back to the
+    // full lattice extent otherwise.
+    zoomToFit() {
+        if (this._boundaryMode !== 'lattice') return false;
+        const N = this.latticeSize || 32;
+        const c = N / 2;
+        // Use flux-volume geometry's bounding sphere when populated;
+        // otherwise frame the whole lattice cube.
+        let radius = N * 0.6;
+        if (this._fluxVolume && this._fluxVolume.geometry) {
+            const bs = this._fluxVolume.geometry.boundingSphere;
+            if (bs && isFinite(bs.radius) && bs.radius > 0.5) radius = bs.radius * 1.3;
+        }
+        const fov = (this.camera.fov || 60) * Math.PI / 180;
+        const dist = radius / Math.tan(fov / 2);
+        // Preserve current view direction; just scale the camera's distance.
+        const dir = this.camera.position.clone().sub(this.controls.target);
+        const curDist = Math.max(1e-6, dir.length());
+        dir.multiplyScalar(dist / curDist);
+        this.controls.target.set(c, c, c);
+        this.camera.position.copy(this.controls.target).add(dir);
+        this.controls.update();
+        return true;
     }
 
     setWireframeBrightness(val) {
@@ -878,69 +794,11 @@ export class Viewport {
     }
 
     // ── Bond Lines (Scale 2 — Atom mode) ──────────────────────────────
-    _buildBondLines() {
-        const MAX_BONDS = 500;
-        const vertices = new Float32Array(MAX_BONDS * 2 * 3);
-        const colors = new Float32Array(MAX_BONDS * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.8,
-        });
-        this.bondLines = new THREE.LineSegments(geo, mat);
-        this.bondLines.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this.bondLines.visible = true;
-        this.scene.add(this.bondLines);
-    }
-
-    updateBondLines(atomData) {
-        if (!this.bondLines) this._buildBondLines();
-        if (!atomData || !atomData.bonds || atomData.bondCount === 0) {
-            this.bondLines.geometry.setDrawRange(0, 0);
-            return;
-        }
-
-        const posAttr = this.bondLines.geometry.getAttribute('position');
-        const colAttr = this.bondLines.geometry.getAttribute('color');
-        const maxBonds = posAttr.array.length / 6;
-        const n = Math.min(atomData.bondCount, maxBonds);
-
-        for (let b = 0; b < n; b++) {
-            const idxA = atomData.bonds[b * 2];
-            const idxB = atomData.bonds[b * 2 + 1];
-
-            // Start vertex (atom A position)
-            posAttr.array[b * 6] = atomData.positions[idxA * 3];
-            posAttr.array[b * 6 + 1] = atomData.positions[idxA * 3 + 1];
-            posAttr.array[b * 6 + 2] = atomData.positions[idxA * 3 + 2];
-            // End vertex (atom B position)
-            posAttr.array[b * 6 + 3] = atomData.positions[idxB * 3];
-            posAttr.array[b * 6 + 4] = atomData.positions[idxB * 3 + 1];
-            posAttr.array[b * 6 + 5] = atomData.positions[idxB * 3 + 2];
-
-            // Bond color: blend the two atom colors
-            const rA = atomData.colors[idxA * 3], gA = atomData.colors[idxA * 3 + 1], bA = atomData.colors[idxA * 3 + 2];
-            const rB = atomData.colors[idxB * 3], gB = atomData.colors[idxB * 3 + 1], bB = atomData.colors[idxB * 3 + 2];
-            colAttr.array[b * 6] = rA;
-            colAttr.array[b * 6 + 1] = gA;
-            colAttr.array[b * 6 + 2] = bA;
-            colAttr.array[b * 6 + 3] = rB;
-            colAttr.array[b * 6 + 4] = gB;
-            colAttr.array[b * 6 + 5] = bB;
-        }
-
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this.bondLines.geometry.setDrawRange(0, n * 2);
-    }
-
-    toggleBondLines(on) {
-        if (!this.bondLines) this._buildBondLines();
-        this.bondLines.visible = on;
-        if (!on) this.bondLines.geometry.setDrawRange(0, 0);
-    }
+    // Moved to viewport/molecular-renderer.js (Wave 2 ticket 4).
+    // `this.bondLines` is preserved as a getter for external callers.
+    get bondLines() { return this._molRenderer?.bondLines ?? null; }
+    updateBondLines(atomData) { this._molRenderer.updateBondLines(atomData); }
+    toggleBondLines(on)       { this._molRenderer.toggleBondLines(on); }
 
     // ── Field Heatmap (potential colored grid dots on XZ plane) ───────
 
@@ -1555,11 +1413,10 @@ export class Viewport {
     // Dual substrate, Chirality
     // ══════════════════════════════════════════════════════════════════
 
-    // ── E-Field Lines (Cyan) ─────────────────────────────────────────
-    _buildEFieldLines() {
-        // Sized for worst case (N=128 with continuous streamline scaling):
-        // 300 lines × ~144 segments × 2 verts = ~86K. Round up for safety.
-        const maxVerts = 300 * 160 * 2;
+    // Shared streamline-mesh builder (refactoring-analyst RF-3). Preallocates
+    // the LineSegments buffer sized for N=128 worst-case and returns the mesh.
+    // Three copies of this boilerplate were living inline before consolidation.
+    _buildStreamlineMesh(maxVerts, opacity = 0.7) {
         const positions = new Float32Array(maxVerts * 3);
         const colors = new Float32Array(maxVerts * 3);
         const geo = new THREE.BufferGeometry();
@@ -1567,52 +1424,69 @@ export class Viewport {
         geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
         geo.setDrawRange(0, 0);
         const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.7,
-            blending: THREE.AdditiveBlending, depthWrite: false
+            vertexColors: true, transparent: true, opacity,
+            blending: THREE.AdditiveBlending, depthWrite: false,
         });
-        this._eFieldLines = new THREE.LineSegments(geo, mat);
-        this._eFieldLines.visible = false;
+        const mesh = new THREE.LineSegments(geo, mat);
+        mesh.visible = false;
         // Disable frustum culling — geometry is updated each frame without
         // recomputing the bounding sphere, so Three.js's stale-bounds test
         // would falsely cull when the camera zooms close to the lattice.
-        this._eFieldLines.frustumCulled = false;
-        this.scene.add(this._eFieldLines);
+        mesh.frustumCulled = false;
+        this.scene.add(mesh);
+        return mesh;
     }
 
-    updateEFieldLines(streamlines) {
-        if (!this._eFieldLines) this._buildEFieldLines();
-        const posAttr = this._eFieldLines.geometry.getAttribute('position');
-        const colAttr = this._eFieldLines.geometry.getAttribute('color');
+    // Shared streamline writer. Walks each polyline's segments, clips endpoints
+    // against the current boundary shape, and writes interleaved (start, end)
+    // vertex pairs to the mesh's position/color buffers via a per-segment
+    // color callback `colorFn(i, nPts, [out])`. Returns nothing — mutates mesh.
+    _writeStreamlinesIntoMesh(mesh, streamlines, colorFn) {
+        const posAttr = mesh.geometry.getAttribute('position');
+        const colAttr = mesh.geometry.getAttribute('color');
         const maxVerts = posAttr.array.length / 3;
         const halfN = this._halfN;
-        let vi = 0; // vertex index for LineSegments (pairs)
-
+        const rgb = [0, 0, 0];
+        let vi = 0;
         for (const line of streamlines) {
             const nPts = line.length / 3;
             for (let i = 0; i < nPts - 1 && vi + 2 <= maxVerts; i++) {
                 const sx = line[i * 3], sy = line[i * 3 + 1], sz = line[i * 3 + 2];
                 if (!this._insideBoundary((sx - halfN) / halfN, (sy - halfN) / halfN, (sz - halfN) / halfN)) continue;
-                const t = i / (nPts - 1); // fade along length
-                const alpha = 1.0 - t * 0.7;
-                // Cyan: (0.3, 0.82, 0.88) fading to dim
-                const r = 0.3 * alpha, g = 0.82 * alpha, b = 0.88 * alpha;
-
-                posAttr.array[vi * 3] = sx;
+                colorFn(i, nPts, rgb);
+                posAttr.array[vi * 3]     = sx;
                 posAttr.array[vi * 3 + 1] = sy;
                 posAttr.array[vi * 3 + 2] = sz;
-                colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
+                colAttr.array[vi * 3]     = rgb[0];
+                colAttr.array[vi * 3 + 1] = rgb[1];
+                colAttr.array[vi * 3 + 2] = rgb[2];
                 vi++;
-
-                posAttr.array[vi * 3] = line[(i + 1) * 3];
+                posAttr.array[vi * 3]     = line[(i + 1) * 3];
                 posAttr.array[vi * 3 + 1] = line[(i + 1) * 3 + 1];
                 posAttr.array[vi * 3 + 2] = line[(i + 1) * 3 + 2];
-                colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
+                colAttr.array[vi * 3]     = rgb[0];
+                colAttr.array[vi * 3 + 1] = rgb[1];
+                colAttr.array[vi * 3 + 2] = rgb[2];
                 vi++;
             }
         }
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
-        this._eFieldLines.geometry.setDrawRange(0, vi);
+        mesh.geometry.setDrawRange(0, vi);
+    }
+
+    // ── E-Field Lines (Cyan) ─────────────────────────────────────────
+    _buildEFieldLines() {
+        // N=128 worst case: 300 lines × ~144 segments × 2 verts ≈ 86K. Round up.
+        this._eFieldLines = this._buildStreamlineMesh(300 * 160 * 2, 0.7);
+    }
+
+    updateEFieldLines(streamlines) {
+        if (!this._eFieldLines) this._buildEFieldLines();
+        this._writeStreamlinesIntoMesh(this._eFieldLines, streamlines, (i, nPts, rgb) => {
+            const alpha = 1.0 - (i / (nPts - 1)) * 0.7;
+            rgb[0] = 0.3 * alpha; rgb[1] = 0.82 * alpha; rgb[2] = 0.88 * alpha;
+        });
     }
 
     toggleEFieldLines(on) {
@@ -1624,58 +1498,15 @@ export class Viewport {
     // ── B-Field Lines (Green) ────────────────────────────────────────
     _buildBFieldLines() {
         // B lines integrate longer (closed loops, 1.5× E maxSteps).
-        // Worst case: 300 lines × ~216 segments × 2 = ~130K. Round up.
-        const maxVerts = 300 * 240 * 2;
-        const positions = new Float32Array(maxVerts * 3);
-        const colors = new Float32Array(maxVerts * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.7,
-            blending: THREE.AdditiveBlending, depthWrite: false
-        });
-        this._bFieldLines = new THREE.LineSegments(geo, mat);
-        this._bFieldLines.visible = false;
-        this._bFieldLines.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this.scene.add(this._bFieldLines);
+        this._bFieldLines = this._buildStreamlineMesh(300 * 240 * 2, 0.7);
     }
 
     updateBFieldLines(streamlines) {
         if (!this._bFieldLines) this._buildBFieldLines();
-        const posAttr = this._bFieldLines.geometry.getAttribute('position');
-        const colAttr = this._bFieldLines.geometry.getAttribute('color');
-        const maxVerts = posAttr.array.length / 3;
-        const halfN = this._halfN;
-        let vi = 0;
-
-        for (const line of streamlines) {
-            const nPts = line.length / 3;
-            for (let i = 0; i < nPts - 1 && vi + 2 <= maxVerts; i++) {
-                const sx = line[i * 3], sy = line[i * 3 + 1], sz = line[i * 3 + 2];
-                if (!this._insideBoundary((sx - halfN) / halfN, (sy - halfN) / halfN, (sz - halfN) / halfN)) continue;
-                const t = i / (nPts - 1);
-                const alpha = 1.0 - t * 0.5;
-                // Green: (0.4, 0.73, 0.42)
-                const r = 0.4 * alpha, g = 0.73 * alpha, b = 0.42 * alpha;
-
-                posAttr.array[vi * 3] = sx;
-                posAttr.array[vi * 3 + 1] = sy;
-                posAttr.array[vi * 3 + 2] = sz;
-                colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
-                vi++;
-
-                posAttr.array[vi * 3] = line[(i + 1) * 3];
-                posAttr.array[vi * 3 + 1] = line[(i + 1) * 3 + 1];
-                posAttr.array[vi * 3 + 2] = line[(i + 1) * 3 + 2];
-                colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
-                vi++;
-            }
-        }
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this._bFieldLines.geometry.setDrawRange(0, vi);
+        this._writeStreamlinesIntoMesh(this._bFieldLines, streamlines, (i, nPts, rgb) => {
+            const alpha = 1.0 - (i / (nPts - 1)) * 0.5;
+            rgb[0] = 0.4 * alpha; rgb[1] = 0.73 * alpha; rgb[2] = 0.42 * alpha;
+        });
     }
 
     toggleBFieldLines(on) {
@@ -1836,57 +1667,18 @@ export class Viewport {
 
     // ── Flux Streamlines (flux colormap) ─────────────────────────────
     _buildFluxStreamlines() {
-        // Sized to match E-field cap (same maxSteps profile, see field-overlays.js).
-        const maxVerts = 300 * 160 * 2;
-        const positions = new Float32Array(maxVerts * 3);
-        const colors = new Float32Array(maxVerts * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.7,
-            blending: THREE.AdditiveBlending, depthWrite: false
-        });
-        this._fluxStreamlines = new THREE.LineSegments(geo, mat);
-        this._fluxStreamlines.visible = false;
-        this._fluxStreamlines.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this.scene.add(this._fluxStreamlines);
+        // Same cap as E-field (matching maxSteps profile — see field-overlays.js).
+        this._fluxStreamlines = this._buildStreamlineMesh(300 * 160 * 2, 0.7);
     }
 
     updateFluxStreamlines(streamlines, maxFluxMag) {
         if (!this._fluxStreamlines) this._buildFluxStreamlines();
-        const posAttr = this._fluxStreamlines.geometry.getAttribute('position');
-        const colAttr = this._fluxStreamlines.geometry.getAttribute('color');
-        const maxVerts = posAttr.array.length / 3;
-        const halfN = this._halfN;
-        let vi = 0;
-
-        for (const line of streamlines) {
-            const nPts = line.length / 3;
-            for (let i = 0; i < nPts - 1 && vi + 2 <= maxVerts; i++) {
-                const sx = line[i * 3], sy = line[i * 3 + 1], sz = line[i * 3 + 2];
-                if (!this._insideBoundary((sx - halfN) / halfN, (sy - halfN) / halfN, (sz - halfN) / halfN)) continue;
-                // Use flux colormap
-                const t = i / (nPts - 1);
-                const [r, g, b] = fluxToColor(t * (maxFluxMag || 1), maxFluxMag || 1);
-
-                posAttr.array[vi * 3] = sx;
-                posAttr.array[vi * 3 + 1] = sy;
-                posAttr.array[vi * 3 + 2] = sz;
-                colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
-                vi++;
-
-                posAttr.array[vi * 3] = line[(i + 1) * 3];
-                posAttr.array[vi * 3 + 1] = line[(i + 1) * 3 + 1];
-                posAttr.array[vi * 3 + 2] = line[(i + 1) * 3 + 2];
-                colAttr.array[vi * 3] = r; colAttr.array[vi * 3 + 1] = g; colAttr.array[vi * 3 + 2] = b;
-                vi++;
-            }
-        }
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this._fluxStreamlines.geometry.setDrawRange(0, vi);
+        const maxMag = maxFluxMag || 1;
+        this._writeStreamlinesIntoMesh(this._fluxStreamlines, streamlines, (i, nPts, rgb) => {
+            const t = i / (nPts - 1);
+            const [r, g, b] = fluxToColor(t * maxMag, maxMag);
+            rgb[0] = r; rgb[1] = g; rgb[2] = b;
+        });
     }
 
     toggleFluxStreamlines(on) {
@@ -2187,7 +1979,7 @@ export class Viewport {
             return;
         }
 
-        const pal = Viewport.FORCE_PALETTES.weak;
+        const pal = FORCE_PALETTES.weak;
         const threshold = maxVal * 0.08;
         const halfN = this._halfN;
         let vi = 0;
@@ -2203,7 +1995,7 @@ export class Viewport {
                                       (pz - halfN) / halfN)) continue;
 
             const t   = Math.min(1, abs / maxVal);
-            const rgb = Viewport._lerpPalette(pal, t);
+            const rgb = lerpPalette(pal, t);
 
             posAttr.array[vi * 3]     = px;
             posAttr.array[vi * 3 + 1] = py;
@@ -2231,37 +2023,8 @@ export class Viewport {
     //  FORCE VISUALIZATION STYLES (Heatmap / Streamlines / Glyphs)
     // ══════════════════════════════════════════════════════════════════
 
-    // Color palettes for each force type (low → mid → high)
-    static FORCE_PALETTES = {
-        em:      { low: [0.0, 0.2, 0.4], mid: [0.0, 0.9, 1.0], high: [0.7, 1.0, 1.0] },
-        gravity: { low: [0.4, 0.2, 0.0], mid: [1.0, 0.67, 0.0], high: [1.0, 1.0, 0.6] },
-        strong:  { low: [0.4, 0.0, 0.05], mid: [1.0, 0.09, 0.27], high: [1.0, 0.7, 0.7] },
-        weak:    { low: [0.2, 0.0, 0.4], mid: [0.67, 0.0, 1.0], high: [0.9, 0.6, 1.0] },
-    };
-
-    /**
-     * Interpolate a 3-stop color palette at parameter t in [0,1].
-     * @param {object} pal - { low: [r,g,b], mid: [r,g,b], high: [r,g,b] }
-     * @param {number} t   - 0..1
-     * @returns {[number,number,number]}
-     */
-    static _lerpPalette(pal, t) {
-        const tt = Math.max(0, Math.min(1, t));
-        if (tt < 0.5) {
-            const u = tt * 2;
-            return [
-                pal.low[0] + (pal.mid[0] - pal.low[0]) * u,
-                pal.low[1] + (pal.mid[1] - pal.low[1]) * u,
-                pal.low[2] + (pal.mid[2] - pal.low[2]) * u,
-            ];
-        }
-        const u = (tt - 0.5) * 2;
-        return [
-            pal.mid[0] + (pal.high[0] - pal.mid[0]) * u,
-            pal.mid[1] + (pal.high[1] - pal.mid[1]) * u,
-            pal.mid[2] + (pal.high[2] - pal.mid[2]) * u,
-        ];
-    }
+    // FORCE_PALETTES + lerpPalette moved to viewport/color-ramps.js
+    // (Wave 1 ticket 1 — docs/SPEC_REFACTOR_LARGE_FILES.md).
 
     // ── Gaussian Heatmap ─────────────────────────────────────────────
     _buildForceHeatmap() {
@@ -2325,7 +2088,7 @@ export class Viewport {
         const sizeAttr = this._forceHeatmap.geometry.getAttribute('size');
         const { positions, vectors, count } = fieldData;
         const maxPts = posAttr.array.length / 3;
-        const pal = Viewport.FORCE_PALETTES[forceType] || Viewport.FORCE_PALETTES.em;
+        const pal = FORCE_PALETTES[forceType] || FORCE_PALETTES.em;
 
         // Compute magnitudes and max
         let maxMag = 0;
@@ -2351,7 +2114,7 @@ export class Viewport {
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
             const t = mag / maxMag;
-            const [r, g, b] = Viewport._lerpPalette(pal, t);
+            const [r, g, b] = lerpPalette(pal, t);
             posAttr.array[vi * 3]     = px;
             posAttr.array[vi * 3 + 1] = py;
             posAttr.array[vi * 3 + 2] = pz;
@@ -2416,7 +2179,7 @@ export class Viewport {
         if (!this._forceStreamlinePool) this._buildForceStreamlines();
         const pool = this._forceStreamlinePool;
         const mats = this._forceStreamlineMats;
-        const pal = Viewport.FORCE_PALETTES[forceType] || Viewport.FORCE_PALETTES.em;
+        const pal = FORCE_PALETTES[forceType] || FORCE_PALETTES.em;
         const baseColor = pal.mid;
         const colorHex = new THREE.Color(baseColor[0], baseColor[1], baseColor[2]);
 
@@ -2543,7 +2306,7 @@ export class Viewport {
         // whatever _buildForceGlyphMesh allocated, even if that constant
         // changes again in the future.
         const maxInstances = mesh.count === undefined ? 8000 : (mesh.instanceMatrix.array.length / 16);
-        const pal = Viewport.FORCE_PALETTES[forceType] || Viewport.FORCE_PALETTES.em;
+        const pal = FORCE_PALETTES[forceType] || FORCE_PALETTES.em;
 
         // Compute magnitudes on a per-type cache — sharing one mag cache
         // across types would race if glyphs ever become async; keep it
@@ -2615,7 +2378,7 @@ export class Viewport {
             // Color (per-type palette — gravity is purple, EM is cyan/blue,
             // strong is red, weak is violet — so stacked overlays are
             // distinguishable by hue alone).
-            const [r, g, b] = Viewport._lerpPalette(pal, t);
+            const [r, g, b] = lerpPalette(pal, t);
             colorArr[vi * 3]     = r;
             colorArr[vi * 3 + 1] = g;
             colorArr[vi * 3 + 2] = b;
@@ -3354,78 +3117,9 @@ export class Viewport {
         if (!pointCloudOn) this._quantumField.geometry.setDrawRange(0, 0);
     }
 
-    // ── Color ramps (CPU-side) ──
-    // Each ramp takes a normalized input and writes (r,g,b) into a 3-element dest.
-    _rampViridis(t, out, i) {
-        // Approximate viridis: purple → teal → yellow
-        t = Math.max(0, Math.min(1, t));
-        if (t < 0.5) {
-            const u = t * 2;
-            out[i]     = 0.267 * (1 - u) + 0.13  * u;
-            out[i + 1] = 0.004 * (1 - u) + 0.566 * u;
-            out[i + 2] = 0.329 * (1 - u) + 0.551 * u;
-        } else {
-            const u = (t - 0.5) * 2;
-            out[i]     = 0.13  * (1 - u) + 0.993 * u;
-            out[i + 1] = 0.566 * (1 - u) + 0.906 * u;
-            out[i + 2] = 0.551 * (1 - u) + 0.144 * u;
-        }
-    }
-
-    _rampCyclicHSL(phase, out, i) {
-        // Phase ∈ [0, π/2] for atan2(|J_R|,|J_L|) — map full hue cycle
-        const hue = (phase / (Math.PI / 2)) % 1;
-        // HSL → RGB (S=1, L=0.5)
-        const h6 = hue * 6;
-        const c = 1;  // saturation * (1 - |2L-1|) = 1 * 1 = 1
-        const x = c * (1 - Math.abs((h6 % 2) - 1));
-        let r, g, b;
-        if (h6 < 1)      { r = c; g = x; b = 0; }
-        else if (h6 < 2) { r = x; g = c; b = 0; }
-        else if (h6 < 3) { r = 0; g = c; b = x; }
-        else if (h6 < 4) { r = 0; g = x; b = c; }
-        else if (h6 < 5) { r = x; g = 0; b = c; }
-        else             { r = c; g = 0; b = x; }
-        // L=0.5 means we just output (r,g,b) directly
-        out[i] = r; out[i + 1] = g; out[i + 2] = b;
-    }
-
-    _rampDivergingRdBu(t, out, i) {
-        // t ∈ [-1, 1]; negative=blue, zero=white, positive=red
-        t = Math.max(-1, Math.min(1, t));
-        if (t >= 0) {
-            const u = t;
-            out[i]     = 0.969 * (1 - u) + 0.698 * u;
-            out[i + 1] = 0.969 * (1 - u) + 0.094 * u;
-            out[i + 2] = 0.969 * (1 - u) + 0.169 * u;
-        } else {
-            const u = -t;
-            out[i]     = 0.969 * (1 - u) + 0.129 * u;
-            out[i + 1] = 0.969 * (1 - u) + 0.400 * u;
-            out[i + 2] = 0.969 * (1 - u) + 0.675 * u;
-        }
-    }
-
-    _rampGrayscale(t, out, i) {
-        t = Math.max(0, Math.min(1, t));
-        out[i] = t; out[i + 1] = t; out[i + 2] = t;
-    }
-
-    _rampGravWell(t, out, i) {
-        // t ∈ [0, 1] — deeper well (higher t) = deep blue; peak = yellow
-        t = Math.max(0, Math.min(1, t));
-        if (t > 0.5) {
-            const u = (t - 0.5) * 2;
-            out[i]     = 0.0 + 0.0   * u;
-            out[i + 1] = 0.4 * (1 - u);
-            out[i + 2] = 0.8 * (1 - u) + 0.2 * u;
-        } else {
-            const u = t * 2;
-            out[i]     = 1.0 * (1 - u) + 0.0 * u;
-            out[i + 1] = 1.0 * (1 - u) + 0.4 * u;
-            out[i + 2] = 0.0 * (1 - u) + 0.8 * u;
-        }
-    }
+    // Color ramps (rampViridis, rampCyclicHSL, rampDivergingRdBu,
+    // rampGrayscale, rampGravWell) moved to viewport/color-ramps.js
+    // (Wave 1 ticket 1 — docs/SPEC_REFACTOR_LARGE_FILES.md).
 
     _populateQuantumField(data, kind, options = {}) {
         if (!this._quantumField) this._buildQuantumField();
@@ -3482,7 +3176,7 @@ export class Viewport {
         if (!this._psi2Visible) return;
         this._populateQuantumField(data, 'psi2', {
             signed: false,
-            ramp: (t, out, i) => this._rampViridis(t, out, i),
+            ramp: (t, out, i) => rampViridis(t, out, i),
             normalizer: data?.normalizer,
         });
     }
@@ -3555,7 +3249,7 @@ export class Viewport {
             posAttr.array[base + 3] = px + dx;
             posAttr.array[base + 4] = py;
             posAttr.array[base + 5] = pz + dz;
-            this._rampCyclicHSL(phase, rgb, 0);
+            rampCyclicHSL(phase, rgb, 0);
             // Same color on both endpoints — creates a solid hue line.
             colAttr.array[base]     = rgb[0]; colAttr.array[base + 1] = rgb[1]; colAttr.array[base + 2] = rgb[2];
             colAttr.array[base + 3] = rgb[0]; colAttr.array[base + 4] = rgb[1]; colAttr.array[base + 5] = rgb[2];
@@ -3582,7 +3276,7 @@ export class Viewport {
         // invisible (which is also correct: ℒ ≈ 0 = field is quiescent).
         this._populateQuantumField(data, 'lagrangian', {
             signed: true,
-            ramp: (t, out, i) => this._rampDivergingRdBu(t, out, i),
+            ramp: (t, out, i) => rampDivergingRdBu(t, out, i),
             normalizer: data?.normalizer,
             threshold: 0.10,  // up from 0.04 — only show points with meaningful ℒ
         });
@@ -3625,7 +3319,7 @@ export class Viewport {
             posAttr.array[vi * 3]     = px + r1 * offset;
             posAttr.array[vi * 3 + 1] = py + r2 * offset;
             posAttr.array[vi * 3 + 2] = pz + r3 * offset;
-            this._rampGrayscale(s, colAttr.array, vi * 3);
+            rampGrayscale(s, colAttr.array, vi * 3);
             vi++;
         }
         posAttr.needsUpdate = true;
@@ -3635,574 +3329,39 @@ export class Viewport {
     }
 
     // ══════════════════════════════════════════════════════════════════
-    // ── Φ(x) potential — rubber-sheet landscape on the XZ floor ───────
-    // A potential is a HEIGHT FIELD. Canonical QM/GR visualization is a
-    // deformable surface where wells dip down and peaks rise up. Rendered
-    // as a subdivided plane at y=0 with Y-displacement = −Φ.
-
-    _buildGravSurface() {
-        const N = this._latticeSize || 32;
-        this._gravSurfaceSize = N;
-        // Moderate mesh density — 40 × 40 quads (~1600 verts).
-        // Smoothness comes from the grid-blur pipeline in
-        // _scatterHeights, not vertex count.
-        const segments = Math.max(24, Math.min(N, 40));
-        // Plane spans the lattice footprint (slightly inset). PlaneGeometry
-        // is centered at (0,0) so we translate to (halfN, halfN-reference, halfN)
-        // to align with lattice coords which run [0, N].
-        const geo = new THREE.PlaneGeometry(N * 0.95, N * 0.95, segments, segments);
-        geo.rotateX(-Math.PI / 2);  // lie flat on XZ plane, normal = +Y
-        const colors = new Float32Array(geo.attributes.position.count * 3);
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        const mat = new THREE.MeshBasicMaterial({
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.55,
-            side: THREE.DoubleSide,
-            wireframe: false,
-            depthWrite: false,
-        });
-        const wireMat = new THREE.MeshBasicMaterial({
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.35,
-            wireframe: true,
-            depthWrite: false,
-        });
-        this._gravSurface = new THREE.Mesh(geo, mat);
-        // Center the plane on the lattice horizontally (X,Z) and anchor its
-        // reference height at the lattice midplane (y = halfN). Wells dip
-        // below midplane, peaks rise above — both stay within the lattice.
-        this._gravSurface.position.set(N / 2, N / 2, N / 2);
-        this._gravSurface.visible = false;
-        this._gravSurface.renderOrder = 3;
-        // Plane mesh has dynamic Y-displacement on its vertices; turn off
-        // frustum culling so the deformed surface doesn't disappear when the
-        // camera zooms inside it (well-shaped surface can extend below the
-        // original bounding box).
-        this._gravSurface.frustumCulled = false;
-        this._gravSurfaceWire = new THREE.Mesh(geo, wireMat);
-        this._gravSurfaceWire.position.set(N / 2, N / 2 + 0.02, N / 2);
-        this._gravSurfaceWire.visible = false;
-        this._gravSurfaceWire.renderOrder = 3;
-        this._gravSurfaceWire.frustumCulled = false;
-        this.scene.add(this._gravSurface);
-        this.scene.add(this._gravSurfaceWire);
-    }
-
-    _rebuildGravSurfaceIfResized() {
-        // Called from updateGravPotentialField when the lattice size has changed.
-        // Avoid leaking the old mesh by disposing geometry + removing from scene.
-        if (!this._gravSurface) return;
-        const N = this._latticeSize || 32;
-        if (this._gravSurfaceSize === N) return;
-        this._gravSurface.geometry?.dispose();
-        this._gravSurfaceWire.geometry?.dispose();
-        this.scene.remove(this._gravSurface);
-        this.scene.remove(this._gravSurfaceWire);
-        this._gravSurface = null;
-        this._gravSurfaceWire = null;
-        this._buildGravSurface();
-        this._gravSurface.visible = this._gravPotVisible;
-        this._gravSurfaceWire.visible = this._gravPotVisible;
-    }
-
-    toggleGravPotentialField(on) {
-        this._gravPotVisible = !!on;
-        if (!this._gravSurface) this._buildGravSurface();
-        this._gravSurface.visible = !!on;
-        this._gravSurfaceWire.visible = !!on;
-        this._quantumSetVisibility();
-    }
-
-    updateGravPotentialField(data) {
-        this._gravPotData = data;
-        if (!this._gravPotVisible || !data?.count) return;
-        if (!this._gravSurface) this._buildGravSurface();
-        this._rebuildGravSurfaceIfResized();
-        const geo = this._gravSurface.geometry;
-        const pos = geo.attributes.position;
-        const col = geo.attributes.color;
-        const verts = pos.count;
-        const N = this._latticeSize || 32;
-        const halfN = this._halfN;
-        const DEPTH = N * 0.25;                       // max vertical displacement
-
-        // Shared smooth-sampling machinery with the topology sheets
-        // (_scatterHeights): Gaussian-weighted scatter lookup + 2
-        // passes of boundary-pinned Laplacian smoothing.  Replaces the
-        // previous nearest-neighbour lookup.
-        const heights = this._scatterHeights(pos, halfN, N, data, 2);
-
-        const rgb = new Float32Array(3);
-        for (let v = 0; v < verts; v++) {
-            // Φ is negative for wells; scale to DEPTH so negative t dips
-            // below the reference plane (local-y = 0, world y = halfN).
-            const t = heights[v];
-            pos.array[v * 3 + 1] = t * DEPTH;
-            this._rampGravWell(Math.min(1, Math.abs(t)), rgb, 0);
-            col.array[v * 3]     = rgb[0];
-            col.array[v * 3 + 1] = rgb[1];
-            col.array[v * 3 + 2] = rgb[2];
-        }
-        pos.needsUpdate = true;
-        col.needsUpdate = true;
-        geo.computeVertexNormals();
-    }
-
-    // ══════════════════════════════════════════════════════════════════
-    // ── Physics-topology rubber sheets (EM energy, ρ, |∇×J|) ──────────
-    // Same metaphor as Φ(x) — flat plane at a reference Y that deforms
-    // based on a sampled scalar. Stacked vertically so they can all be
-    // on at once without z-fighting.
+    // ── Rubber-sheet visualizations ─ moved to topology-sheet-renderer ──
     //
-    // Each sheet has a key ∈ { 'emEnergy', 'chargeDensity', 'vorticity' }
-    // and a config { yFrac, depthFrac, signed, ramp }:
-    //   yFrac     — reference height as a fraction of N (0..1)
-    //   depthFrac — max vertical displacement, fraction of N
-    //   signed    — if true, negatives go below and positives go above
-    //               (like Φ); if false, surface only peaks upward
-    //   ramp      — color-ramp method name on `this` (e.g. '_rampEmEnergy')
+    // Owned by this._topoRenderer (viewport/topology-sheet-renderer.js).
+    // Φ gravitational potential + 10 topology sheets (emEnergy, helicity,
+    // kretschmann, ePressure, bPressure, kineticEnergy, fisher, coherence,
+    // chargeDensity, vorticity). Viewport keeps thin delegators so the
+    // external toggleXxxField / updateXxxField API is unchanged.
     // ══════════════════════════════════════════════════════════════════
 
-    _topologySheetConfigs() {
-        // Stacked bands chosen to minimise overlap with the existing Φ sheet
-        // (which sits at y=halfN with depth 0.25). Each new sheet gets a
-        // thinner depth so multiple can be on at once without fighting.
-        // Layout rationale: 10 sheets stacked across y∈[0.05, 0.97] with
-        // per-sheet depth chosen so the max deformation |yFrac·N ± depth·N|
-        // doesn't cross into an adjacent sheet's y-band. Previous layout
-        // packed 0.62/0.72/0.78 inside 0.12N-deep bands, causing visible
-        // intersection at N≥64 when both sheets reached max deformation.
-        // The new spacing guarantees ≥ (depth_i + depth_i+1) separation
-        // between any two adjacent sheets.
-        return {
-            emEnergy:      { yFrac: 0.05, depthFrac: 0.08, signed: false, ramp: '_rampEmEnergy' },
-            helicity:      { yFrac: 0.15, depthFrac: 0.08, signed: true,  ramp: '_rampHelicity'    },
-            kretschmann:   { yFrac: 0.25, depthFrac: 0.08, signed: false, ramp: '_rampKretschmann' },
-            ePressure:     { yFrac: 0.35, depthFrac: 0.08, signed: false, ramp: '_rampEPressure'   },
-            bPressure:     { yFrac: 0.45, depthFrac: 0.08, signed: false, ramp: '_rampBPressure'   },
-            kineticEnergy: { yFrac: 0.55, depthFrac: 0.08, signed: false, ramp: '_rampKineticEnergy' },
-            fisher:        { yFrac: 0.65, depthFrac: 0.08, signed: false, ramp: '_rampFisher'       },
-            coherence:     { yFrac: 0.75, depthFrac: 0.08, signed: true,  ramp: '_rampCoherence'    },
-            chargeDensity: { yFrac: 0.87, depthFrac: 0.08, signed: true,  ramp: '_rampCharge'       },
-            vorticity:     { yFrac: 0.97, depthFrac: 0.03, signed: false, ramp: '_rampVorticity'    },
-        };
-    }
+    toggleGravPotentialField(on) { this._topoRenderer.toggleGravPotential(on); }
+    updateGravPotentialField(data) { this._topoRenderer.updateGravPotential(data); }
 
-    _buildTopologySheet(key) {
-        const N = this._latticeSize || 32;
-        // Moderate mesh density.  Smoothness comes from the grid-blur
-        // pipeline in _scatterHeights, not from vertex count — 40 × 40
-        // quads (≈ 1600 vertices) is plenty. Keeping it low is what
-        // makes the rubber sheets cheap when several are on at once.
-        const segments = Math.max(24, Math.min(N, 40));
-        const geo = new THREE.PlaneGeometry(N * 0.95, N * 0.95, segments, segments);
-        geo.rotateX(-Math.PI / 2);
-        const colors = new Float32Array(geo.attributes.position.count * 3);
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        const mat = new THREE.MeshBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.45,
-            side: THREE.DoubleSide, depthWrite: false,
-        });
-        // Coarse wireframe (quarter resolution) so the wire grid reads as
-        // a smooth scaffold rather than a dense fabric.  Shares position
-        // updates with the solid via a second geometry that we'll deform
-        // from the solid's height field at update time.
-        // Coarse wire at half the solid resolution for a readable scaffold.
-        const wireSeg = Math.max(8, Math.floor(segments / 2));
-        const wireGeo = new THREE.PlaneGeometry(N * 0.95, N * 0.95, wireSeg, wireSeg);
-        wireGeo.rotateX(-Math.PI / 2);
-        const wireMat = new THREE.MeshBasicMaterial({
-            color: 0xffffff, transparent: true, opacity: 0.16,
-            wireframe: true, depthWrite: false,
-        });
-        const cfg = this._topologySheetConfigs()[key];
-        const yWorld = N * cfg.yFrac;
-        const solid = new THREE.Mesh(geo, mat);
-        solid.position.set(N / 2, yWorld, N / 2);
-        solid.visible = false;
-        solid.renderOrder = 3;
-        solid.frustumCulled = false;
-        const wire = new THREE.Mesh(wireGeo, wireMat);
-        wire.position.set(N / 2, yWorld + 0.02, N / 2);
-        wire.visible = false;
-        wire.renderOrder = 3;
-        wire.frustumCulled = false;
-        this.scene.add(solid);
-        this.scene.add(wire);
-        if (!this._topoSheets) this._topoSheets = {};
-        this._topoSheets[key] = { solid, wire, size: N };
-    }
+    toggleEmEnergyField(on)      { this._topoRenderer.toggle('emEnergy', on); }
+    toggleChargeDensityField(on) { this._topoRenderer.toggle('chargeDensity', on); }
+    toggleVorticityField(on)     { this._topoRenderer.toggle('vorticity', on); }
+    toggleHelicityField(on)      { this._topoRenderer.toggle('helicity', on); }
+    toggleKretschmannField(on)   { this._topoRenderer.toggle('kretschmann', on); }
+    toggleEPressureField(on)     { this._topoRenderer.toggle('ePressure', on); }
+    toggleBPressureField(on)     { this._topoRenderer.toggle('bPressure', on); }
+    toggleKineticEnergyField(on) { this._topoRenderer.toggle('kineticEnergy', on); }
+    toggleFisherField(on)        { this._topoRenderer.toggle('fisher', on); }
+    toggleCoherenceField(on)     { this._topoRenderer.toggle('coherence', on); }
 
-    _rebuildTopologySheetIfResized(key) {
-        const s = this._topoSheets?.[key];
-        if (!s) return;
-        const N = this._latticeSize || 32;
-        if (s.size === N) return;
-        const vis = s.solid.visible;
-        s.solid.geometry?.dispose();
-        s.wire.geometry?.dispose();
-        this.scene.remove(s.solid); this.scene.remove(s.wire);
-        delete this._topoSheets[key];
-        this._buildTopologySheet(key);
-        this._topoSheets[key].solid.visible = vis;
-        this._topoSheets[key].wire.visible  = vis;
-    }
-
-    _toggleTopologySheet(key, on) {
-        if (!this._topoSheets?.[key]) this._buildTopologySheet(key);
-        const s = this._topoSheets[key];
-        s.solid.visible = !!on;
-        s.wire.visible  = !!on;
-    }
-
-    // Scatter-interpolate a scalar field sampled at irregular lattice
-    // points onto a regular grid of vertices.  Shared by solid + wire
-    // topology sheets and the Φ grav-potential sheet.
-    //
-    // Perf story: the naive O(verts × samples) per-vertex Gaussian loop
-    // scales as L⁴ and was killing FPS at L ≥ 64 with several sheets on.
-    // Replaced with the standard scatter-field pipeline:
-    //
-    //   1. Rasterize samples into a small 2D heightfield grid
-    //      (bilinear splat, one O(count) pass).
-    //   2. Separable 3-tap box-blur the grid (2 passes → Gaussian-like
-    //      kernel) to fill unsampled cells and soften noise.
-    //   3. For each mesh vertex, do a 4-tap bilinear lookup into the
-    //      blurred grid.  O(verts × 4), no transcendentals.
-    //
-    // At L=64 this drops ~100M exp() calls per second down to ~10M
-    // simple FMAs — well under 1 ms per sheet even with 4 sheets on.
-    //
-    //   geoPos     — PlaneGeometry position attribute (local coords)
-    //   halfN, N   — lattice centring info
-    //   data       — sampler frame { positions, values, count, normalizer }
-    //   _ignored   — (kept for signature compatibility; Laplacian is no
-    //                longer needed because the grid blur does the job)
-    _scatterHeights(geoPos, halfN, N, data, _ignored) {
-        const verts = geoPos.count;
-        const { positions, values, count, normalizer } = data;
-        const denom = Math.max(normalizer || 0, 1e-9);
-
-        // ── Cached grid buffers (reused across ticks to avoid GC). ──
-        // gridN chosen so cells are ~1 voxel wide; box-blur smooths them.
-        const gridN = Math.max(16, Math.min(N, 48));
-        if (!this._scatterBufs || this._scatterBufs.gridN !== gridN) {
-            this._scatterBufs = {
-                gridN,
-                grid:   new Float32Array(gridN * gridN),
-                weight: new Float32Array(gridN * gridN),
-                tmp:    new Float32Array(gridN * gridN),
-            };
-        }
-        const { grid, weight, tmp } = this._scatterBufs;
-        grid.fill(0);
-        weight.fill(0);
-
-        // 1. Rasterize samples → grid via bilinear splat (O(count)).
-        //    Sample world-x in [0, N], maps to grid-x in [0, gridN-1].
-        const scale = (gridN - 1) / N;
-        for (let i = 0; i < count; i++) {
-            const sx = positions[i * 3]     * scale;
-            const sz = positions[i * 3 + 2] * scale;
-            if (sx < 0 || sx >= gridN - 1 || sz < 0 || sz >= gridN - 1) continue;
-            const xi = sx | 0, zi = sz | 0;
-            const xf = sx - xi, zf = sz - zi;
-            const v = values[i];
-            const w00 = (1 - xf) * (1 - zf);
-            const w01 = xf * (1 - zf);
-            const w10 = (1 - xf) * zf;
-            const w11 = xf * zf;
-            const row0 = zi * gridN + xi;
-            const row1 = row0 + gridN;
-            grid[row0]     += v * w00;  weight[row0]     += w00;
-            grid[row0 + 1] += v * w01;  weight[row0 + 1] += w01;
-            grid[row1]     += v * w10;  weight[row1]     += w10;
-            grid[row1 + 1] += v * w11;  weight[row1 + 1] += w11;
-        }
-
-        // 2. Normalise by accumulated weight; unsampled cells stay 0 and
-        //    get filled by the blur pass below.
-        const G2 = gridN * gridN;
-        for (let i = 0; i < G2; i++) {
-            if (weight[i] > 1e-9) grid[i] /= weight[i];
-        }
-
-        // 3. Separable 3-tap box-blur (2 passes).  Interior-only; edges
-        //    keep their unblurred value which naturally pins boundaries.
-        const blurPasses = 2;
-        for (let p = 0; p < blurPasses; p++) {
-            // horizontal into tmp
-            for (let z = 0; z < gridN; z++) {
-                const rowBase = z * gridN;
-                tmp[rowBase] = grid[rowBase];
-                tmp[rowBase + gridN - 1] = grid[rowBase + gridN - 1];
-                for (let x = 1; x < gridN - 1; x++) {
-                    tmp[rowBase + x] =
-                        (grid[rowBase + x - 1]
-                       + grid[rowBase + x]
-                       + grid[rowBase + x + 1]) * (1 / 3);
-                }
-            }
-            // vertical back into grid
-            for (let x = 0; x < gridN; x++) {
-                grid[x] = tmp[x];
-                grid[(gridN - 1) * gridN + x] = tmp[(gridN - 1) * gridN + x];
-            }
-            for (let z = 1; z < gridN - 1; z++) {
-                const rowPrev = (z - 1) * gridN;
-                const rowCurr = z * gridN;
-                const rowNext = (z + 1) * gridN;
-                for (let x = 0; x < gridN; x++) {
-                    grid[rowCurr + x] =
-                        (tmp[rowPrev + x]
-                       + tmp[rowCurr + x]
-                       + tmp[rowNext + x]) * (1 / 3);
-                }
-            }
-        }
-
-        // 4. For each mesh vertex, 4-tap bilinear lookup into the blurred
-        //    grid.  Vertex local x/z are in [-halfN*0.95, +halfN*0.95]
-        //    (PlaneGeometry is centred); convert to world coords first.
-        // Grow-only shared heights scratch on _scatterBufs — called twice
-        // per rubber sheet × up to 10 sheets × 20 Hz, so a per-call
-        // Float32Array(verts) was ~2 MB/s of GC pressure. One buffer
-        // sized to the max verts seen works because the caller consumes
-        // heights synchronously before the next _scatterHeights invocation.
-        if (!this._scatterBufs.heights || this._scatterBufs.heights.length < verts) {
-            this._scatterBufs.heights = new Float32Array(verts);
-        }
-        const heights = this._scatterBufs.heights;
-        const gridMax = gridN - 1;
-        const invDenom = 1 / denom;
-        for (let v = 0; v < verts; v++) {
-            const wx = geoPos.array[v * 3]     + halfN;  // world X in [0, N]
-            const wz = geoPos.array[v * 3 + 2] + halfN;  // world Z in [0, N]
-            let gx = wx * scale;
-            let gz = wz * scale;
-            if (gx < 0) gx = 0; else if (gx > gridMax) gx = gridMax;
-            if (gz < 0) gz = 0; else if (gz > gridMax) gz = gridMax;
-            const xi = gx | 0, zi = gz | 0;
-            const xf = gx - xi, zf = gz - zi;
-            const xi1 = xi < gridMax ? xi + 1 : xi;
-            const zi1 = zi < gridMax ? zi + 1 : zi;
-            const v00 = grid[zi  * gridN + xi];
-            const v01 = grid[zi  * gridN + xi1];
-            const v10 = grid[zi1 * gridN + xi];
-            const v11 = grid[zi1 * gridN + xi1];
-            const blended =
-                (1 - xf) * (1 - zf) * v00
-              +      xf  * (1 - zf) * v01
-              + (1 - xf) *      zf  * v10
-              +      xf  *      zf  * v11;
-            heights[v] = blended * invDenom;
-        }
-        return heights;
-    }
-
-    _updateTopologySheet(key, data) {
-        if (!data?.count) return;
-        if (!this._topoSheets?.[key]) this._buildTopologySheet(key);
-        this._rebuildTopologySheetIfResized(key);
-        const s = this._topoSheets[key];
-        if (!s.solid.visible) return;
-        const cfg = this._topologySheetConfigs()[key];
-        const geo = s.solid.geometry;
-        const pos = geo.attributes.position;
-        const col = geo.attributes.color;
-        const verts = pos.count;
-        const N = this._latticeSize || 32;
-        const halfN = this._halfN;
-        const DEPTH = N * cfg.depthFrac;
-
-        // Smooth heights on the fine grid (2 Laplacian passes post-scatter).
-        const heights = this._scatterHeights(pos, halfN, N, data, 2);
-
-        // Commit fine-grid heights + per-vertex colours. Reuse a scratch RGB
-        // triple on `this` — creating a 3-wide Float32Array per update × 10
-        // sheets × 20 Hz is small, but free to avoid.
-        if (!this._rampScratch) this._rampScratch = new Float32Array(3);
-        const rgb = this._rampScratch;
-        for (let v = 0; v < verts; v++) {
-            const t = heights[v];
-            if (cfg.signed) {
-                const ts = Math.max(-1, Math.min(1, t));
-                pos.array[v * 3 + 1] = ts * DEPTH;
-                this[cfg.ramp](ts, rgb, 0);
-            } else {
-                const tt = Math.max(0, Math.min(1, t));
-                pos.array[v * 3 + 1] = tt * DEPTH;
-                this[cfg.ramp](tt, rgb, 0);
-            }
-            col.array[v * 3]     = rgb[0];
-            col.array[v * 3 + 1] = rgb[1];
-            col.array[v * 3 + 2] = rgb[2];
-        }
-        pos.needsUpdate = true;
-        col.needsUpdate = true;
-        geo.computeVertexNormals();
-
-        // Deform the coarse wireframe to match — same sampler, no Laplacian
-        // (the wire is already coarse enough that it doesn't need smoothing).
-        if (s.wire && s.wire.geometry) {
-            const wirePos = s.wire.geometry.attributes.position;
-            const wireHeights = this._scatterHeights(wirePos, halfN, N, data, 0);
-            for (let v = 0; v < wirePos.count; v++) {
-                const t = wireHeights[v];
-                const tc = cfg.signed
-                    ? Math.max(-1, Math.min(1, t))
-                    : Math.max( 0, Math.min(1, t));
-                wirePos.array[v * 3 + 1] = tc * DEPTH;
-            }
-            wirePos.needsUpdate = true;
-        }
-    }
-
-    // ── Color ramps for the three topology sheets ────────────────────
-    // Unsigned ramps accept t ∈ [0, 1]; signed accepts t ∈ [-1, 1].
-
-    _rampEmEnergy(t, out, i) {
-        // Teal → warm orange (low → high Maxwell energy).
-        t = Math.max(0, Math.min(1, t));
-        out[i]     = 0.05 * (1 - t) + 0.98 * t;
-        out[i + 1] = 0.55 * (1 - t) + 0.62 * t;
-        out[i + 2] = 0.55 * (1 - t) + 0.14 * t;
-    }
-
-    _rampCharge(t, out, i) {
-        // Diverging blue ↔ red: negatives = sinks (blue well), positives = sources (red peak).
-        t = Math.max(-1, Math.min(1, t));
-        if (t >= 0) {
-            const u = t;
-            out[i]     = 0.95 * (1 - u) + 0.90 * u;
-            out[i + 1] = 0.95 * (1 - u) + 0.10 * u;
-            out[i + 2] = 0.95 * (1 - u) + 0.20 * u;
-        } else {
-            const u = -t;
-            out[i]     = 0.95 * (1 - u) + 0.13 * u;
-            out[i + 1] = 0.95 * (1 - u) + 0.35 * u;
-            out[i + 2] = 0.95 * (1 - u) + 0.85 * u;
-        }
-    }
-
-    _rampVorticity(t, out, i) {
-        // Magma-like: near-black → violet → gold for increasing swirl.
-        t = Math.max(0, Math.min(1, t));
-        if (t < 0.5) {
-            const u = t * 2;
-            out[i]     = 0.02 * (1 - u) + 0.48 * u;
-            out[i + 1] = 0.02 * (1 - u) + 0.05 * u;
-            out[i + 2] = 0.08 * (1 - u) + 0.53 * u;
-        } else {
-            const u = (t - 0.5) * 2;
-            out[i]     = 0.48 * (1 - u) + 1.00 * u;
-            out[i + 1] = 0.05 * (1 - u) + 0.85 * u;
-            out[i + 2] = 0.53 * (1 - u) + 0.20 * u;
-        }
-    }
-
-    // ── Tier 1/2/3 ramps (2026-04-18) ────────────────────────────────
-
-    _rampHelicity(t, out, i) {
-        // Diverging cyan ↔ magenta for left/right-handed field-line linking.
-        t = Math.max(-1, Math.min(1, t));
-        if (t >= 0) {
-            const u = t;
-            out[i]     = 0.85 * (1 - u) + 0.95 * u;
-            out[i + 1] = 0.90 * (1 - u) + 0.15 * u;
-            out[i + 2] = 0.95 * (1 - u) + 0.85 * u;
-        } else {
-            const u = -t;
-            out[i]     = 0.85 * (1 - u) + 0.10 * u;
-            out[i + 1] = 0.90 * (1 - u) + 0.85 * u;
-            out[i + 2] = 0.95 * (1 - u) + 0.90 * u;
-        }
-    }
-
-    _rampKretschmann(t, out, i) {
-        // Deep-space blue → molten white for gravitational curvature.
-        t = Math.max(0, Math.min(1, t));
-        out[i]     = 0.05 * (1 - t) + 1.00 * t;
-        out[i + 1] = 0.10 * (1 - t) + 0.95 * t;
-        out[i + 2] = 0.35 * (1 - t) + 0.80 * t;
-    }
-
-    _rampEPressure(t, out, i) {
-        // Pale yellow → saturated red for electric-pressure peaks.
-        t = Math.max(0, Math.min(1, t));
-        out[i]     = 0.95 * (1 - t) + 0.95 * t;
-        out[i + 1] = 0.95 * (1 - t) + 0.25 * t;
-        out[i + 2] = 0.65 * (1 - t) + 0.15 * t;
-    }
-
-    _rampBPressure(t, out, i) {
-        // Pale cyan → deep teal for magnetic-pressure peaks.
-        t = Math.max(0, Math.min(1, t));
-        out[i]     = 0.75 * (1 - t) + 0.00 * t;
-        out[i + 1] = 0.95 * (1 - t) + 0.55 * t;
-        out[i + 2] = 0.95 * (1 - t) + 0.70 * t;
-    }
-
-    _rampKineticEnergy(t, out, i) {
-        // Olive → hot yellow for kinetic-energy bumps at particle sites.
-        t = Math.max(0, Math.min(1, t));
-        out[i]     = 0.30 * (1 - t) + 1.00 * t;
-        out[i + 1] = 0.45 * (1 - t) + 0.95 * t;
-        out[i + 2] = 0.10 * (1 - t) + 0.20 * t;
-    }
-
-    _rampFisher(t, out, i) {
-        // Indigo → bright lime for Fisher-information sharpness.
-        t = Math.max(0, Math.min(1, t));
-        out[i]     = 0.25 * (1 - t) + 0.75 * t;
-        out[i + 1] = 0.15 * (1 - t) + 1.00 * t;
-        out[i + 2] = 0.55 * (1 - t) + 0.30 * t;
-    }
-
-    _rampCoherence(t, out, i) {
-        // Diverging orange ↔ violet for right/left-handed Beltrami flow.
-        t = Math.max(-1, Math.min(1, t));
-        if (t >= 0) {
-            const u = t;
-            out[i]     = 0.90 * (1 - u) + 1.00 * u;
-            out[i + 1] = 0.90 * (1 - u) + 0.55 * u;
-            out[i + 2] = 0.90 * (1 - u) + 0.10 * u;
-        } else {
-            const u = -t;
-            out[i]     = 0.90 * (1 - u) + 0.45 * u;
-            out[i + 1] = 0.90 * (1 - u) + 0.15 * u;
-            out[i + 2] = 0.90 * (1 - u) + 0.85 * u;
-        }
-    }
-
-    // ── Public apply methods (called by viewport-adapter) ─────────────
-
-    toggleEmEnergyField(on)      { this._toggleTopologySheet('emEnergy', on); }
-    toggleChargeDensityField(on) { this._toggleTopologySheet('chargeDensity', on); }
-    toggleVorticityField(on)     { this._toggleTopologySheet('vorticity', on); }
-
-    updateEmEnergyField(data)      { this._updateTopologySheet('emEnergy', data); }
-    updateChargeDensityField(data) { this._updateTopologySheet('chargeDensity', data); }
-    updateVorticityField(data)     { this._updateTopologySheet('vorticity', data); }
-
-    // ── Tier 1/2/3 rubber-sheet apply methods (2026-04-18) ───────────
-    toggleHelicityField(on)       { this._toggleTopologySheet('helicity', on); }
-    toggleKretschmannField(on)    { this._toggleTopologySheet('kretschmann', on); }
-    toggleEPressureField(on)      { this._toggleTopologySheet('ePressure', on); }
-    toggleBPressureField(on)      { this._toggleTopologySheet('bPressure', on); }
-    toggleKineticEnergyField(on)  { this._toggleTopologySheet('kineticEnergy', on); }
-    toggleFisherField(on)         { this._toggleTopologySheet('fisher', on); }
-    toggleCoherenceField(on)      { this._toggleTopologySheet('coherence', on); }
-
-    updateHelicityField(data)      { this._updateTopologySheet('helicity', data); }
-    updateKretschmannField(data)   { this._updateTopologySheet('kretschmann', data); }
-    updateEPressureField(data)     { this._updateTopologySheet('ePressure', data); }
-    updateBPressureField(data)     { this._updateTopologySheet('bPressure', data); }
-    updateKineticEnergyField(data) { this._updateTopologySheet('kineticEnergy', data); }
-    updateFisherField(data)        { this._updateTopologySheet('fisher', data); }
-    updateCoherenceField(data)     { this._updateTopologySheet('coherence', data); }
+    updateEmEnergyField(data)      { this._topoRenderer.update('emEnergy', data); }
+    updateChargeDensityField(data) { this._topoRenderer.update('chargeDensity', data); }
+    updateVorticityField(data)     { this._topoRenderer.update('vorticity', data); }
+    updateHelicityField(data)      { this._topoRenderer.update('helicity', data); }
+    updateKretschmannField(data)   { this._topoRenderer.update('kretschmann', data); }
+    updateEPressureField(data)     { this._topoRenderer.update('ePressure', data); }
+    updateBPressureField(data)     { this._topoRenderer.update('bPressure', data); }
+    updateKineticEnergyField(data) { this._topoRenderer.update('kineticEnergy', data); }
+    updateFisherField(data)        { this._topoRenderer.update('fisher', data); }
+    updateCoherenceField(data)     { this._topoRenderer.update('coherence', data); }
 
     // ══════════════════════════════════════════════════════════════════
     // ── Event-horizon isosurface overlay (Tier 1, 2026-04-18) ────────
@@ -4296,411 +3455,40 @@ export class Viewport {
     }
 
     // ══════════════════════════════════════════════════════════════════
-    // ── Nucleus Shells (strong force glow spheres) ─────────────────
+    // ── Molecular visuals ─ moved to viewport/molecular-renderer.js ──
+    //
+    // The MolecularRenderer class owns: nucleus shells, bond cylinders,
+    // bond lines (above), orbital shells, orbital lobes, AE force
+    // arrows, and element-label sprites. Viewport keeps thin delegators
+    // for every method so external callers see no API change.
+    //
+    // `_defaultNeutronCount` is read once inside MolecularRenderer
+    // .updateNucleusShells; a getter/setter pair on Viewport forwards
+    // reads and writes so legacy external callers that set
+    // `viewport._defaultNeutronCount = fn` continue to work.
+    get _defaultNeutronCount() { return this._molRenderer?._defaultNeutronCount ?? null; }
+    set _defaultNeutronCount(fn) { if (this._molRenderer) this._molRenderer._defaultNeutronCount = fn; }
 
-    _buildNucleusShells() {
-        const maxShells = 100;
-        const geo = new THREE.SphereGeometry(1, 16, 12);
-        const mat = new THREE.MeshBasicMaterial({
-            color: 0xff6633, transparent: true, opacity: 0.12,
-            blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
-        });
-        this._nucleusShells = new THREE.InstancedMesh(geo, mat, maxShells);
-        this._nucleusShells.count = 0;
-        this._nucleusShells.visible = true;
-        this._nucleusShells.renderOrder = -2;
-        this.scene.add(this._nucleusShells);
-    }
+    updateNucleusShells(atomData) { this._molRenderer.updateNucleusShells(atomData); }
+    toggleNucleusShells(on)       { this._molRenderer.toggleNucleusShells(on); }
 
-    updateNucleusShells(atomData) {
-        if (!this._nucleusShells) this._buildNucleusShells();
-        if (!atomData || atomData.count === 0) { this._nucleusShells.count = 0; return; }
-        const n = Math.min(atomData.count, 100);
-        const mat4 = new THREE.Matrix4();
-        for (let i = 0; i < n; i++) {
-            const Z = atomData.atomicNums[i];
-            const N_neutrons = this._defaultNeutronCount ? this._defaultNeutronCount(Z) : Math.round(Z * 1.2);
-            const A = Z + N_neutrons;
-            const radius = 0.5 * Math.cbrt(Math.max(A, 1)) * 1.8;
-            mat4.makeScale(radius, radius, radius);
-            mat4.setPosition(atomData.positions[i * 3], atomData.positions[i * 3 + 1], atomData.positions[i * 3 + 2]);
-            this._nucleusShells.setMatrixAt(i, mat4);
-        }
-        this._nucleusShells.count = n;
-        this._nucleusShells.instanceMatrix.needsUpdate = true;
-    }
-
-    toggleNucleusShells(on) {
-        if (!this._nucleusShells) this._buildNucleusShells();
-        this._nucleusShells.visible = on;
-    }
-
-    // ── Bond Cylinders (thick styled bonds) ─────────────────────────
-
-    _buildBondCylinders() {
-        const maxInstances = 1500;
-        const geo = new THREE.CylinderGeometry(1, 1, 1, 8);
-        geo.translate(0, 0.5, 0); // pivot at base so scaling works from one end
-        const mat = new THREE.MeshLambertMaterial({
-            color: 0xffffff, transparent: true, opacity: 0.85,
-        });
-        this._bondCylinders = new THREE.InstancedMesh(geo, mat, maxInstances);
-        this._bondCylinders.count = 0;
-        this._bondCylinders.visible = true;
-        this.scene.add(this._bondCylinders);
-
-        // Add directional light for bond shading (only active in atoms/molecules)
-        this._bondLight = new THREE.DirectionalLight(0xffffff, 0.4);
-        this._bondLight.position.set(10, 20, 10);
-        this._bondLight.visible = true;
-        this.scene.add(this._bondLight);
-    }
-
-    // Renders covalent bonds as oriented cylinders. Single/double/triple bonds
-    // use 1/2/3 parallel cylinders respectively. Each bond creates new Vector3
-    // temporaries -- acceptable because atom counts are typically <200.
-    updateBondCylinders(atomData) {
-        if (!this._bondCylinders) this._buildBondCylinders();
-        if (!atomData || atomData.bondCount === 0) { this._bondCylinders.count = 0; return; }
-
-        // Build id→index lookup
-        const idToIdx = new Map();
-        for (let i = 0; i < atomData.count; i++) idToIdx.set(atomData.ids[i], i);
-
-        const mat4 = new THREE.Matrix4();
-        const up = new THREE.Vector3(0, 1, 0);
-        const dir = new THREE.Vector3();
-        const quat = new THREE.Quaternion();
-        const color = new THREE.Color();
-        let instIdx = 0;
-
-        for (let b = 0; b < atomData.bondCount && instIdx < 1500; b++) {
-            const idA = atomData.bonds[b * 2];
-            const idB = atomData.bonds[b * 2 + 1];
-            const iA = idToIdx.get(idA), iB = idToIdx.get(idB);
-            if (iA === undefined || iB === undefined) continue;
-
-            const ax = atomData.positions[iA * 3], ay = atomData.positions[iA * 3 + 1], az = atomData.positions[iA * 3 + 2];
-            const bx = atomData.positions[iB * 3], by = atomData.positions[iB * 3 + 1], bz = atomData.positions[iB * 3 + 2];
-            const dx = bx - ax, dy = by - ay, dz = bz - az;
-            const bondLen = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (bondLen < 1e-10) continue;
-
-            dir.set(dx, dy, dz).normalize();
-            quat.setFromUnitVectors(up, dir);
-
-            // Color: blend CPK colors of bonded atoms
-            const cA = new THREE.Color(atomData.colors[iA * 3], atomData.colors[iA * 3 + 1], atomData.colors[iA * 3 + 2]);
-            const cB = new THREE.Color(atomData.colors[iB * 3], atomData.colors[iB * 3 + 1], atomData.colors[iB * 3 + 2]);
-            color.copy(cA).lerp(cB, 0.5);
-
-            const order = atomData.bondOrders ? atomData.bondOrders[b] : 1;
-
-            if (order === 1) {
-                // Single bond: 1 cylinder, radius 0.15
-                mat4.compose(new THREE.Vector3(ax, ay, az), quat, new THREE.Vector3(0.15, bondLen, 0.15));
-                this._bondCylinders.setMatrixAt(instIdx, mat4);
-                this._bondCylinders.setColorAt(instIdx, color);
-                instIdx++;
-            } else if (order === 2) {
-                // Double bond: 2 parallel cylinders offset ±0.18
-                const perp = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 0, 1));
-                if (perp.lengthSq() < 0.001) perp.crossVectors(dir, new THREE.Vector3(1, 0, 0));
-                perp.normalize().multiplyScalar(0.18);
-                for (let s = -1; s <= 1; s += 2) {
-                    const ox = ax + perp.x * s, oy = ay + perp.y * s, oz = az + perp.z * s;
-                    mat4.compose(new THREE.Vector3(ox, oy, oz), quat, new THREE.Vector3(0.12, bondLen, 0.12));
-                    if (instIdx < 1500) {
-                        this._bondCylinders.setMatrixAt(instIdx, mat4);
-                        this._bondCylinders.setColorAt(instIdx, color);
-                        instIdx++;
-                    }
-                }
-            } else if (order >= 3) {
-                // Triple bond: 3 cylinders in triangle arrangement
-                const perp = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 0, 1));
-                if (perp.lengthSq() < 0.001) perp.crossVectors(dir, new THREE.Vector3(1, 0, 0));
-                perp.normalize();
-                const perp2 = new THREE.Vector3().crossVectors(dir, perp).normalize();
-                const offsets = [
-                    [0, 0], // center
-                    [perp.x * 0.2 + perp2.x * 0.12, perp.y * 0.2 + perp2.y * 0.12],
-                    [-perp.x * 0.2 + perp2.x * 0.12, -perp.y * 0.2 + perp2.y * 0.12],
-                ];
-                const angles = [0, 2 * Math.PI / 3, 4 * Math.PI / 3];
-                for (const angle of angles) {
-                    const offX = Math.cos(angle) * 0.2, offY = Math.sin(angle) * 0.2;
-                    const ox = ax + perp.x * offX + perp2.x * offY;
-                    const oy = ay + perp.y * offX + perp2.y * offY;
-                    const oz = az + perp.z * offX + perp2.z * offY;
-                    mat4.compose(new THREE.Vector3(ox, oy, oz), quat, new THREE.Vector3(0.10, bondLen, 0.10));
-                    if (instIdx < 1500) {
-                        this._bondCylinders.setMatrixAt(instIdx, mat4);
-                        this._bondCylinders.setColorAt(instIdx, color);
-                        instIdx++;
-                    }
-                }
-            }
-        }
-
-        this._bondCylinders.count = instIdx;
-        this._bondCylinders.instanceMatrix.needsUpdate = true;
-        if (this._bondCylinders.instanceColor) this._bondCylinders.instanceColor.needsUpdate = true;
-    }
-
-    toggleBondCylinders(on) {
-        if (!this._bondCylinders) this._buildBondCylinders();
-        this._bondCylinders.visible = on;
-        if (this._bondLight) this._bondLight.visible = on;
-    }
-
-    // ── Orbital Shell Boundaries (translucent spheres per n) ────────
-
-    _buildOrbitalShells() {
-        const maxShells = 200;
-        const geo = new THREE.SphereGeometry(1, 24, 16);
-        const mat = new THREE.MeshBasicMaterial({
-            color: 0x66bfff, transparent: true, opacity: 0.05,
-            depthWrite: false, side: THREE.DoubleSide,
-        });
-        this._orbitalShells = new THREE.InstancedMesh(geo, mat, maxShells);
-        this._orbitalShells.count = 0;
-        this._orbitalShells.visible = false; // default OFF
-        this._orbitalShells.renderOrder = -3;
-        this.scene.add(this._orbitalShells);
-    }
-
+    updateBondCylinders(atomData)  { this._molRenderer.updateBondCylinders(atomData); }
+    toggleBondCylinders(on)        { this._molRenderer.toggleBondCylinders(on); }
     updateOrbitalShells(atomData, electronConfigFn, slaterZeffFn, a0Display) {
-        if (!this._orbitalShells) this._buildOrbitalShells();
-        if (!atomData || atomData.count === 0 || !electronConfigFn) {
-            this._orbitalShells.count = 0;
-            return;
-        }
-
-        const mat4 = new THREE.Matrix4();
-        const shellColors = {
-            1: new THREE.Color(0x66bfff),  // blue
-            2: new THREE.Color(0x4de673),  // green
-            3: new THREE.Color(0xffb333),  // orange
-            4: new THREE.Color(0xd94db3),  // pink
-        };
-        const shellOpacities = { 1: 0.06, 2: 0.04, 3: 0.03, 4: 0.02 };
-        let instIdx = 0;
-
-        for (let i = 0; i < atomData.count && instIdx < 200; i++) {
-            const Z = atomData.atomicNums[i];
-            const config = electronConfigFn(Z);
-            const seenN = new Set();
-            for (const sub of config) {
-                if (seenN.has(sub.n)) continue;
-                seenN.add(sub.n);
-                const zEff = slaterZeffFn(Z, sub.n, sub.l);
-                const radius = (sub.n * sub.n / zEff) * a0Display;
-                const cx = atomData.positions[i * 3];
-                const cy = atomData.positions[i * 3 + 1];
-                const cz = atomData.positions[i * 3 + 2];
-
-                mat4.makeScale(radius, radius, radius);
-                mat4.setPosition(cx, cy, cz);
-                this._orbitalShells.setMatrixAt(instIdx, mat4);
-
-                const col = shellColors[Math.min(sub.n, 4)] || shellColors[4];
-                this._orbitalShells.setColorAt(instIdx, col);
-                instIdx++;
-                if (instIdx >= 200) break;
-            }
-        }
-
-        this._orbitalShells.count = instIdx;
-        this._orbitalShells.instanceMatrix.needsUpdate = true;
-        if (this._orbitalShells.instanceColor) this._orbitalShells.instanceColor.needsUpdate = true;
+        this._molRenderer.updateOrbitalShells(atomData, electronConfigFn, slaterZeffFn, a0Display);
     }
-
-    toggleOrbitalShells(on) {
-        if (!this._orbitalShells) this._buildOrbitalShells();
-        this._orbitalShells.visible = on;
-    }
-
-    // ── Orbital Lobes (p/d/f shaped meshes) ─────────────────────────
-
-    _buildOrbitalLobes() {
-        const maxLobes = 2000;
-        // Elongated ellipsoid for p-orbital lobe shape
-        const baseSphere = new THREE.SphereGeometry(1, 12, 8);
-        const pos = baseSphere.attributes.position;
-        for (let i = 0; i < pos.count; i++) {
-            const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-            pos.setXYZ(i, x * 0.5, y * 1.6, z * 0.5); // elongated along Y
-        }
-        pos.needsUpdate = true;
-        baseSphere.computeVertexNormals();
-
-        const mat = new THREE.MeshBasicMaterial({
-            color: 0xffffff, transparent: true, opacity: 0.08,
-            depthWrite: false, side: THREE.DoubleSide,
-            blending: THREE.AdditiveBlending,
-        });
-        this._orbitalLobes = new THREE.InstancedMesh(baseSphere, mat, maxLobes);
-        this._orbitalLobes.count = 0;
-        this._orbitalLobes.visible = false; // default OFF
-        this._orbitalLobes.renderOrder = -4;
-        this.scene.add(this._orbitalLobes);
-    }
-
+    toggleOrbitalShells(on)        { this._molRenderer.toggleOrbitalShells(on); }
     updateOrbitalLobes(atomData, electronConfigFn, slaterZeffFn, a0Display) {
-        if (!this._orbitalLobes) this._buildOrbitalLobes();
-        if (!atomData || atomData.count === 0 || !electronConfigFn) {
-            this._orbitalLobes.count = 0;
-            return;
-        }
-
-        const mat4 = new THREE.Matrix4();
-        const lobeColors = {
-            1: new THREE.Color(0x30ee55), // p — green
-            2: new THREE.Color(0xffaa22), // d — gold
-            3: new THREE.Color(0xdd44bb), // f — magenta
-        };
-        let instIdx = 0;
-
-        for (let i = 0; i < atomData.count && instIdx < 2000; i++) {
-            const Z = atomData.atomicNums[i];
-            const config = electronConfigFn(Z);
-            const maxN = Math.max(...config.map(s => s.n));
-            const cx = atomData.positions[i * 3];
-            const cy = atomData.positions[i * 3 + 1];
-            const cz = atomData.positions[i * 3 + 2];
-
-            // Only show lobes for valence shell (outermost occupied orbitals)
-            for (const sub of config) {
-                if (sub.l === 0) continue; // s-orbitals are spherical (no lobes)
-                const isValence = (sub.n === maxN) || (sub.n === maxN - 1 && sub.l >= 2);
-                if (!isValence) continue;
-
-                const zEff = slaterZeffFn(Z, sub.n, sub.l);
-                const radius = (sub.n * sub.n / zEff) * a0Display * 0.6;
-                const col = lobeColors[sub.l] || lobeColors[3];
-
-                // Generate lobe orientations based on l
-                const axes = this._getLobeAxes(sub.l);
-                for (const axis of axes) {
-                    if (instIdx >= 2000) break;
-                    // Place lobe: scale by radius, rotate to axis orientation, translate to atom
-                    const quat = new THREE.Quaternion();
-                    const up = new THREE.Vector3(0, 1, 0);
-                    const target = new THREE.Vector3(axis[0], axis[1], axis[2]);
-                    quat.setFromUnitVectors(up, target.normalize());
-
-                    mat4.compose(
-                        new THREE.Vector3(cx, cy, cz),
-                        quat,
-                        new THREE.Vector3(radius * 0.5, radius, radius * 0.5)
-                    );
-                    this._orbitalLobes.setMatrixAt(instIdx, mat4);
-                    this._orbitalLobes.setColorAt(instIdx, col);
-                    instIdx++;
-
-                    // Mirror lobe (opposite direction)
-                    if (instIdx >= 2000) break;
-                    target.negate();
-                    quat.setFromUnitVectors(up, target.normalize());
-                    mat4.compose(
-                        new THREE.Vector3(cx, cy, cz),
-                        quat,
-                        new THREE.Vector3(radius * 0.5, radius, radius * 0.5)
-                    );
-                    this._orbitalLobes.setMatrixAt(instIdx, mat4);
-                    this._orbitalLobes.setColorAt(instIdx, col);
-                    instIdx++;
-                }
-            }
-        }
-
-        this._orbitalLobes.count = instIdx;
-        this._orbitalLobes.instanceMatrix.needsUpdate = true;
-        if (this._orbitalLobes.instanceColor) this._orbitalLobes.instanceColor.needsUpdate = true;
+        this._molRenderer.updateOrbitalLobes(atomData, electronConfigFn, slaterZeffFn, a0Display);
     }
-
-    _getLobeAxes(l) {
-        if (l === 1) {
-            // p-orbitals: px, py, pz
-            return [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
-        } else if (l === 2) {
-            // d-orbitals: dz², dxz, dyz, dx²-y², dxy (simplified to 4 main axes)
-            return [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0.707, 0.707, 0]];
-        } else {
-            // f-orbitals: 6 axes for symmetry
-            return [[1, 0, 0], [0, 1, 0], [0, 0, 1], [0.707, 0.707, 0], [0.707, 0, 0.707], [0, 0.707, 0.707]];
-        }
-    }
-
-    toggleOrbitalLobes(on) {
-        if (!this._orbitalLobes) this._buildOrbitalLobes();
-        this._orbitalLobes.visible = on;
-    }
-
-    // ── Per-Atom Force Arrows ───────────────────────────────────────
-
-    _buildAEForceArrows() {
-        const maxAtoms = 200;
-        const createArrowSet = (color) => {
-            const vertices = new Float32Array(maxAtoms * 6); // 2 verts per atom
-            const geo = new THREE.BufferGeometry();
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            geo.setDrawRange(0, 0);
-            const mat = new THREE.LineBasicMaterial({ color, linewidth: 2, transparent: true, opacity: 0.8 });
-            const lines = new THREE.LineSegments(geo, mat);
-            lines.visible = false;
-            this.scene.add(lines);
-            return lines;
-        };
-
-        this._aeForceIonic = createArrowSet(0xff4444); // red for Coulomb
-        this._aeForceVdw = createArrowSet(0x44ff44); // green for vdW
-        this._aeForceBond = createArrowSet(0xff8844); // orange for bond
-        this._aeForceNet = createArrowSet(0xffffff); // white for net
-    }
-
+    toggleOrbitalLobes(on)         { this._molRenderer.toggleOrbitalLobes(on); }
     updateAEForces(positions, forceData, count) {
-        if (!this._aeForceIonic) this._buildAEForceArrows();
-        if (!forceData || count === 0) {
-            [this._aeForceIonic, this._aeForceVdw, this._aeForceBond, this._aeForceNet].forEach(l => l.geometry.setDrawRange(0, 0));
-            return;
-        }
-
-        const scale = 8.0; // visual scale factor for force arrows
-        const n = Math.min(count, 200);
-
-        const updateArrows = (lines, forceArr) => {
-            const posAttr = lines.geometry.getAttribute('position');
-            for (let i = 0; i < n; i++) {
-                const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
-                const fx = forceArr[i * 3], fy = forceArr[i * 3 + 1], fz = forceArr[i * 3 + 2];
-
-                // Log-compress force magnitude for visibility
-                const fmag = Math.sqrt(fx * fx + fy * fy + fz * fz);
-                const logScale = fmag > 1e-10 ? scale * Math.log1p(fmag) / fmag : 0;
-
-                posAttr.array[i * 6] = px;
-                posAttr.array[i * 6 + 1] = py;
-                posAttr.array[i * 6 + 2] = pz;
-                posAttr.array[i * 6 + 3] = px + fx * logScale;
-                posAttr.array[i * 6 + 4] = py + fy * logScale;
-                posAttr.array[i * 6 + 5] = pz + fz * logScale;
-            }
-            posAttr.needsUpdate = true;
-            lines.geometry.setDrawRange(0, n * 2);
-        };
-
-        updateArrows(this._aeForceIonic, forceData.ionic);
-        updateArrows(this._aeForceVdw, forceData.vdw);
-        updateArrows(this._aeForceBond, forceData.bond);
-        updateArrows(this._aeForceNet, forceData.net);
+        this._molRenderer.updateAEForces(positions, forceData, count);
     }
-
-    toggleAEForceIonic(on) { if (!this._aeForceIonic) this._buildAEForceArrows(); this._aeForceIonic.visible = on; }
-    toggleAEForceVdw(on) { if (!this._aeForceVdw) this._buildAEForceArrows(); this._aeForceVdw.visible = on; }
-    toggleAEForceBond(on) { if (!this._aeForceBond) this._buildAEForceArrows(); this._aeForceBond.visible = on; }
-    toggleAEForceNet(on) { if (!this._aeForceNet) this._buildAEForceArrows(); this._aeForceNet.visible = on; }
+    toggleAEForceIonic(on)         { this._molRenderer.toggleAEForceIonic(on); }
+    toggleAEForceVdw(on)           { this._molRenderer.toggleAEForceVdw(on); }
+    toggleAEForceBond(on)          { this._molRenderer.toggleAEForceBond(on); }
+    toggleAEForceNet(on)           { this._molRenderer.toggleAEForceNet(on); }
 
     // ══════════════════════════════════════════════════════════════════
 
@@ -4717,17 +3505,9 @@ export class Viewport {
             if (this.particles) this.particles.visible = false;
             if (this.velocityVectors) this.velocityVectors.visible = false;
             if (this.trails) this.trails.visible = false;
-            if (this.bondLines) this.bondLines.visible = false;
-            if (this._bondCylinders) this._bondCylinders.visible = false;
-            if (this._bondLight) this._bondLight.visible = false;
-            if (this._nucleusShells) this._nucleusShells.visible = false;
-            if (this._orbitalShells) this._orbitalShells.visible = false;
-            if (this._orbitalLobes) this._orbitalLobes.visible = false;
-            if (this._elementLabels) this._elementLabels.visible = false;
-            if (this._aeForceIonic) this._aeForceIonic.visible = false;
-            if (this._aeForceVdw) this._aeForceVdw.visible = false;
-            if (this._aeForceBond) this._aeForceBond.visible = false;
-            if (this._aeForceNet) this._aeForceNet.visible = false;
+            // Molecular renderer owns bondLines, bondCylinders, nucleusShells,
+            // orbitalShells, orbitalLobes, element labels, and AE force arrows.
+            this._molRenderer?.setAllVisible(false);
             if (this._fieldHeatmap) this._fieldHeatmap.visible = false;
             if (this._fieldVectors) this._fieldVectors.visible = false;
             // Scale 0 specific visuals
@@ -4827,11 +3607,8 @@ export class Viewport {
             this.controls.update();
 
             const isAtomMol = (mode === 'atoms' || mode === 'molecules');
-            if (this._bondCylinders) this._bondCylinders.visible = isAtomMol;
-            if (this._bondLight) this._bondLight.visible = isAtomMol;
-            if (this._nucleusShells) this._nucleusShells.visible = isAtomMol;
-            // Element Labels (e.g. H H) only valid in Atoms/Molecules scale
-            if (this._elementLabels) this._elementLabels.visible = isAtomMol;
+            // bondCylinders / bondLight / nucleusShells / element labels are atom-scale visuals
+            this._molRenderer?.setAtomMolVisible(isAtomMol);
         } else {
             hideAllOverlays();
             // Rebuild boundary at lattice center for Scale 0
@@ -4954,105 +3731,11 @@ export class Viewport {
         this.visualSettings.opacity = val;
     }
 
-    // ── Element Labels (Scale 2 — Atom mode) ──────────────────────────
-    // Sprite-based text labels that always face the camera.
-    // Each label is a canvas-textured sprite positioned at the atom center.
-    _makeTextSprite(text, color = '#ffffff', fontSize = 48) {
-        const canvas = document.createElement('canvas');
-        canvas.width = 128;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d');
-        ctx.font = `bold ${fontSize}px 'Inter', 'Segoe UI', sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        // Outline for readability
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 4;
-        ctx.strokeText(text, 64, 32);
-        ctx.fillStyle = color;
-        ctx.fillText(text, 64, 32);
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.minFilter = THREE.LinearFilter;
-        const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
-        const sprite = new THREE.Sprite(mat);
-        sprite.scale.set(4, 2, 1);
-        return sprite;
-    }
-
-    /**
-     * Update element labels — creates/recycles sprites to match atom data.
-     * @param {Array<{x,y,z,symbol,color}>} labels — array of label descriptors
-     */
-    updateElementLabels(labels) {
-        if (!this._elementLabels) {
-            this._elementLabels = new THREE.Group();
-            this._elementLabels.visible = true;
-            this.scene.add(this._elementLabels);
-            this._labelPool = [];
-        }
-
-        const group = this._elementLabels;
-        const pool = this._labelPool;
-        const needed = labels ? labels.length : 0;
-
-        // Hide excess sprites
-        for (let i = needed; i < pool.length; i++) {
-            pool[i].visible = false;
-        }
-
-        if (!labels) return;
-
-        for (let i = 0; i < needed; i++) {
-            const lb = labels[i];
-            let sprite;
-            if (i < pool.length) {
-                sprite = pool[i];
-                // Update texture if symbol changed
-                if (sprite._symbol !== lb.symbol) {
-                    sprite.material.map.dispose();
-                    sprite.material.dispose();
-                    const newSprite = this._makeTextSprite(lb.symbol, lb.color || '#ffffff');
-                    newSprite._symbol = lb.symbol;
-                    // Replace in pool and group
-                    group.remove(sprite);
-                    pool[i] = newSprite;
-                    group.add(newSprite);
-                    sprite = newSprite;
-                }
-            } else {
-                sprite = this._makeTextSprite(lb.symbol, lb.color || '#ffffff');
-                sprite._symbol = lb.symbol;
-                pool.push(sprite);
-                group.add(sprite);
-            }
-            sprite.position.set(lb.x, lb.y + 2.5, lb.z); // offset above atom center
-            sprite.visible = true;
-        }
-    }
-
-    toggleElementLabels(on) {
-        if (this._elementLabels) this._elementLabels.visible = on;
-    }
-
-    clearElementLabels() {
-        if (!this._elementLabels) return;
-        for (const sprite of this._labelPool) {
-            sprite.material.map.dispose();
-            sprite.material.dispose();
-        }
-        this.scene.remove(this._elementLabels);
-        this._elementLabels = null;
-        this._labelPool = [];
-    }
-
-    clearMolecularMeshes() {
-        if (this._bondCylinders) this._bondCylinders.count = 0;
-        if (this.bondLines) this.bondLines.geometry.setDrawRange(0, 0);
-        if (this._nucleusShells) this._nucleusShells.count = 0;
-        if (this._orbitalShells) this._orbitalShells.count = 0;
-        if (this._orbitalLobes) this._orbitalLobes.count = 0;
-        if (this._aeForceIonic) [this._aeForceIonic, this._aeForceVdw, this._aeForceBond, this._aeForceNet].forEach(l => l.geometry.setDrawRange(0, 0));
-    }
+    // ── Element labels + clearMolecularMeshes — delegated to viewport/molecular-renderer.js
+    updateElementLabels(labels) { this._molRenderer.updateElementLabels(labels); }
+    toggleElementLabels(on)     { this._molRenderer.toggleElementLabels(on); }
+    clearElementLabels()        { this._molRenderer.clearElementLabels(); }
+    clearMolecularMeshes()      { this._molRenderer.clearMolecularMeshes(); }
 
     // Override colors from catalog type map (PE mode)
     applyParticleColors(data, typeMap) {
@@ -5177,19 +3860,16 @@ export class Viewport {
 
         // Core overlays (geometry+material pairs)
         const simpleOverlays = [
-            'velocityVectors', 'trails', 'bondLines',
+            'velocityVectors', 'trails',
             '_fieldHeatmap', '_fieldVectors', '_fluxVolume',
             '_peStreamlines', '_gravityVectors', '_particleForces',
         ];
         for (const name of simpleOverlays) disposeMesh(this[name]);
 
-        // Atom/molecule visual enhancements (InstancedMesh or LineSegments)
-        const atomOverlays = [
-            '_nucleusShells', '_bondCylinders', '_orbitalShells', '_orbitalLobes',
-            '_aeForceIonic', '_aeForceVdw', '_aeForceBond', '_aeForceNet'
-        ];
-        for (const name of atomOverlays) disposeMesh(this[name]);
-        if (this._bondLight) this.scene.remove(this._bondLight);
+        // Molecular renderer owns: bondLines, _bondCylinders, _bondLight,
+        // _nucleusShells, _orbitalShells, _orbitalLobes,
+        // _aeForceIonic/Vdw/Bond/Net, and element labels.
+        this._molRenderer?.dispose();
 
         // Field visualization overlays (Scale 0 streamlines, volumes, etc.)
         const fieldOverlays = [
@@ -5217,17 +3897,9 @@ export class Viewport {
             this._forceStreamlineMats = null;
         }
 
-        // Quantum / topology overlays (2026-04-18 additions).
-        // Topology rubber-sheet bag: each entry is { solid, wire, size }, so
-        // disposeMesh on both solid and wire is enough — their geometries
-        // and materials are owned exclusively by this map.
-        if (this._topoSheets) {
-            for (const key of Object.keys(this._topoSheets)) {
-                const s = this._topoSheets[key];
-                if (s) { disposeMesh(s.solid); disposeMesh(s.wire); }
-            }
-            this._topoSheets = null;
-        }
+        // Rubber-sheet visualizations (10 topology sheets + Φ gravitational
+        // potential) are owned by TopologySheetRenderer — it tears them down.
+        this._topoRenderer?.dispose();
         // Event-horizon point cloud (distinct from the Scale 5 black-hole
         // event-horizon sphere/ring above — this is the Scale 0 latency
         // isosurface at L ≥ 0.95).
@@ -5241,11 +3913,6 @@ export class Viewport {
         // Phase needles (line-segment bundle rendering arg(J)).
         disposeMesh(this._phaseNeedles);
         this._phaseNeedles = null;
-        // Φ gravitational-potential rubber sheet (solid + wire pair).
-        disposeMesh(this._gravSurface);
-        disposeMesh(this._gravSurfaceWire);
-        this._gravSurface = null;
-        this._gravSurfaceWire = null;
 
         // Raycasting/inspector helpers
         disposeMesh(this._voidBox);
@@ -5260,7 +3927,5 @@ export class Viewport {
         disposeMesh(this.axes);
         disposeMesh(this.peAxes);
         disposeMesh(this.peGrid);
-
-        this.clearElementLabels();
     }
 }
