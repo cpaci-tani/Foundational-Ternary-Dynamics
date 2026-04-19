@@ -10,6 +10,7 @@ import { ViewportFrameComponent } from '../components/viewport-frame/component.j
 import { ViewportOverlaysComponent } from '../components/viewport-overlays/component.js';
 import { TooltipComponent } from '../components/tooltips/component.js';
 import { KnowledgeBaseComponent } from '../components/knowledge-base/component.js';
+import { FaqComponent } from '../components/faq/component.js';
 import { ensurePanelResources } from '../components/panel-resources/component.js';
 import { annotatePanelElements, getPanelLabel, getPanelRegistry, validatePanelRegistry } from '../scale-registry/panel-registry.js';
 import { createScaleUiRegistry } from '../scale-registry/register-scale-ui.js';
@@ -77,7 +78,14 @@ export class AppShell {
             toolbar: this.getRegion('toolbar'),
             toolbarRegistry: this.scaleUiRegistry.toolbar,
         }).init();
-        this.knowledgeBase = new KnowledgeBaseComponent({ app: this.app }).init();
+        this.knowledgeBase = new KnowledgeBaseComponent({
+            app: this.app,
+            getMutexPartners: () => [this.faq],
+        }).init();
+        this.faq = new FaqComponent({
+            app: this.app,
+            getMutexPartners: () => [this.knowledgeBase],
+        }).init();
         const viewportOverlays = new ViewportOverlaysComponent(this.getRegion('viewport')).init();
         // Wire resize: when the toolbar height changes, re-insert overlays so Chrome's
         // compositor layers are recreated at the new position.
