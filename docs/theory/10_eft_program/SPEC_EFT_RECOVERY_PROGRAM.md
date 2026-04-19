@@ -3,7 +3,7 @@
 **Tag:** [REFERENCE]
 **Version:** 1.0 (Pre-registration)
 **Date:** 2026-04-19
-**Status:** Phase 0 — foundation documents being written; no experiments started
+**Status:** **Complete (Phase 0 → F)** — all pre-registered measurements run. Pre-registration text below is preserved verbatim; measurement outcomes are reported in the per-phase DERIV docs without retrofitting any expectation. Headline result: α_∞ plateau at ~3.6× α_ref across L ∈ {64, 128, 256, 384}; the pre-registered "1% of CODATA" target in §7.3 was not met. See `DERIV_DAY2_CAMPAIGN.md` §6b for the Phase-F 4-point continuum scan and the retraction of the interim "1.23×" claim.
 
 > **Pre-registration.** This document is committed to the repository *before any of the measurements described in it are run.* The expectations, pass/fail criteria, and canonical reference regime are all specified up-front. No result downstream of this spec is permitted to retrofit its expected value after the fact. If a measurement produces a surprising number, the spec is *not* edited to match — the measurement is reported honestly and the theory must explain the surprise.
 
