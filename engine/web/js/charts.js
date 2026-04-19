@@ -10,8 +10,7 @@
  */
 
 import { createCachedCanvasRect } from './dom-utils.js';
-// Re-export RingBuffer so legacy imports (e.g. pe-telemetry.js) keep working.
-export { RingBuffer } from './telemetry-hub.js';
+import { RingBuffer } from './telemetry-hub.js';
 
 const BUFFER_SIZE = 500;
 
@@ -26,11 +25,6 @@ function _cachedRect(canvas) {
     }
     return c.get();
 }
-
-// ── Ring Buffer ──────────────────────────────────────────────────────
-// Canonical implementation lives in telemetry-hub.js (exported as RingBuffer).
-// This local alias keeps the drawChart() renderer and chart constructors unchanged.
-import { RingBuffer } from './telemetry-hub.js';
 
 // ── Chart Renderer ───────────────────────────────────────────────────
 function drawChart(canvas, series, options = {}) {
