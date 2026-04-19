@@ -626,7 +626,7 @@ void RenderBridge::phase_write() {
         }
       }
     } else {
-      // ---- Single-substrate leapfrog integration (legacy) ----
+      // ---- Single-substrate leapfrog integration (non-dual path) ----
       v.wave_vel += delta_j_[i];
       v.flux += v.wave_vel;
 

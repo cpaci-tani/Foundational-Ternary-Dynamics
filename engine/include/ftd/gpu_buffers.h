@@ -85,8 +85,10 @@ struct GpuBuffers {
     double*   d_near_accel    = nullptr;  // max accel_mag of nearby particles (for Larmor)
 
     // --- FFT workspace ---
-    cufftDoubleComplex* d_fft_buf   = nullptr;  // N complex doubles (legacy, kept for reference)
-    cufftComplex*       d_fft_buf_f = nullptr;  // N complex floats (primary — 2× faster C2C)
+    // Both precisions are active: float (C2C) is the default 2× faster path;
+    // double (Z2Z) is used by high-accuracy callsites in kernels_poisson.cu.
+    cufftDoubleComplex* d_fft_buf   = nullptr;  // N complex doubles (high-accuracy path)
+    cufftComplex*       d_fft_buf_f = nullptr;  // N complex floats (default, 2× faster C2C)
     double*             d_green     = nullptr;   // precomputed 1/G(k) (double precision, computed once)
 
     // --- cuRAND workspace ---
