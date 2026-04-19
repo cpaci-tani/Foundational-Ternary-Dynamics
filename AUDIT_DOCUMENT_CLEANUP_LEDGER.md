@@ -194,3 +194,61 @@ After this pass, the public documentation spine is more trustworthy:
 - there is now a durable ledger for future cleanup rounds
 
 This ledger should be updated whenever the project performs another significant documentation synchronization pass.
+
+---
+
+## 2026-04-19 Addendum — Web-dashboard UX pass
+
+Second synchronization pass, narrower scope than the initial April 11
+sweep. The preceding sections (Inventory Summary, Drift Findings,
+deferred P0-P3 queues) are preserved unchanged; this addendum records
+only what moved.
+
+### Updated counts
+
+The April 11 figures have drifted. Live counts as of 2026-04-19:
+
+| Surface | April 11 | April 19 | Delta |
+|---------|----------|----------|-------|
+| Root Markdown docs | 10 | 11 | +1 (`MAINTAINABILITY.md`) |
+| `docs/theory/` total `.md` | 212 | 230 | +18 (April 13 EFT-program additions + recent derivations) |
+| `docs/theory/` archive `.md` | 76 | 76 | — |
+| `docs/theory/` active categories | 136 | 154 | +18 |
+| `engine/web/docs/` SPEC_*.md | 10 | 10 | — (one audited for archive candidacy this pass) |
+
+### Docs added this pass
+
+- `MAINTAINABILITY.md` (repo root) — 582-line field manual: 8
+  project-level hazards, 15 step-by-step recipes, tech-debt ledger.
+  Complements this cleanup ledger on the code/UX side.
+- `engine/web/docs/TELEMETRY_CATALOG_SCALE0.md` — 297 lines
+  documenting every Scale 0 telemetry surface (ring buffers,
+  diagnostics rows, charts, Lagrangian panel). Sibling catalogs for
+  other scales planned as follow-ups.
+
+### Docs rewritten this pass
+
+- `engine/web/docs/SPEC_VERIFICATION_LAB.md` — rewrote to match the
+  new three-tier evidence-scoreboard design (replaces the
+  21-experiment Monte-Carlo v1 spec).
+
+### P0-P3 status
+
+None of the April 11 deferred items (theory indexing normalization,
+`README.md` numeric-badge review, `docs/papers/` naming audit) were
+addressed in this pass. Still open, same priority.
+
+### New items flagged for later
+
+- **`engine/web/docs/SPEC_*.md` audit** — several specs describe
+  work that has since shipped (`SPEC_REFACTOR_LARGE_FILES.md`
+  tracked the v2.15.0 discrete-quantum extraction;
+  `SPEC_S0_OVERLAY_COMPLEXITY.md` pre-dated the overlay preset
+  removal). Audit for "shipped → move to archive" vs "still
+  guiding → keep live" is scheduled in this cleanup pass
+  (see companion task in the cleanup todo list).
+- **Cross-reference `MAINTAINABILITY.md` from navigation spine** —
+  the field manual is new, should be added to
+  `META_DOCUMENTATION_MAP.md` and `META_PROJECT_ATLAS.md` as a
+  first-class reference so future contributors find it. Scheduled
+  in this cleanup pass.
