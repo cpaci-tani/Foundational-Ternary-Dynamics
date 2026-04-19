@@ -53,9 +53,16 @@ val get_particle_data(ftd::RenderBridge& rb) {
 
         auto c = rb.lattice().coord(i);
         const int o3 = idx * 3;
-        pos_cache[o3]     = static_cast<float>(c.x);
-        pos_cache[o3 + 1] = static_cast<float>(c.y);
-        pos_cache[o3 + 2] = static_cast<float>(c.z);
+        // Voxel-center convention: particles render at world (x+0.5, y+0.5, z+0.5)
+        // so they align with the wireframe crosshair (which draws at raw+0.5 —
+        // see viewport/boundary-geometry.js buildCubeBoundary). Without this
+        // offset, single-particle seeds like `s0-seed-quark` appeared half a
+        // voxel low-and-right of the cube crosshair at even N (matches the
+        // MockBridge JS path at wasm-bridge-dag.js:656-658 which already
+        // applies the same +0.5f offset).
+        pos_cache[o3]     = static_cast<float>(c.x) + 0.5f;
+        pos_cache[o3 + 1] = static_cast<float>(c.y) + 0.5f;
+        pos_cache[o3 + 2] = static_cast<float>(c.z) + 0.5f;
 
         if (v.state == 1) {
             col_cache[o3]     = 0.29f;
