@@ -142,6 +142,7 @@ The CKM matrix is parametrized via standard Wolfenstein (λ, A, ρ, η) form. FT
 | EWSB condensation threshold (2026-04-19 Day 2) | First-order phase transition amp ∈ (0.6, 0.7) on L=32, 5000 ticks | amplitude parameter | **[MEASURED]** | `DERIV_DAY2_CAMPAIGN.md` §2; below threshold vacuum decays quietly, above saturates all 32768 voxels |
 | Condensate mass gap (2026-04-19 Day 2) | m_flux=0.181, m_charge=0.186 at amp=0.80 (R² ≥ 0.96); ratio 0.97 | amp=0.80 | **[MEASURED]** | `DERIV_DAY2_CAMPAIGN.md` §3; two independent channels agree within 3% |
 | Rutherford α cross-check (2026-04-19 Day 2) | α=0.035 at b=3 matches V(r) asymptotic=0.035 exactly; α_mean=0.042±0.005 over b∈[3,8] | v_0=0.3, L=32 | **[MEASURED]** | `DERIV_DAY2_CAMPAIGN.md` §4; independent dynamical method confirms the 5× α_ref gap is genuine engine physics |
+| Continuum α_r at r_max (2026-04-19 Day 2 Thread 1a) | α_r(r=84, L=256) = 0.010 → **1.4× α_ref** (lowest measured ratio) | fast-big CPU scan | **[MEASURED]** | `DERIV_DAY2_CAMPAIGN.md` §6b; 3-scale r_max series 0.030 → 0.028 → 0.010 shows convergence toward α_ref with L |
 
 **Phase 2 goal.** Both entries above should be *measured* by real-space blocking (`scripts/benchmarks/measure_beta_function.py`), not imported. If the measured β(g) matches the one-loop form, these upgrade to [DERIVED]. If it deviates, the deviation is a Phase 2 discovery.
 
