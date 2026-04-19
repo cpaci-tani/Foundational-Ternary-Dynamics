@@ -39,46 +39,19 @@ if project_root not in sys.path:
 # ============================================================================
 # SECTION 1: CHSH INFRASTRUCTURE (shared by all tiers)
 # ============================================================================
+# PY-2 refactor (April 2026): CHSH_ANGLES / compute_chsh /
+# compute_correlation moved to scripts/common/bell_chsh for reuse with
+# sloop_bell_experiment.py. Behavior preserved bit-for-bit; the
+# `compute_chsh_from_correlations` name is re-exported as an alias.
 
-# Standard CHSH optimal angles
-CHSH_ANGLES = {
-    'a1': 0.0,
-    'a2': np.pi / 2,
-    'b1': np.pi / 4,
-    'b2': 3 * np.pi / 4,
-}
-
-
-def compute_chsh_from_correlations(E11, E12, E21, E22):
-    """
-    Compute CHSH S-parameter from four correlation values.
-
-    S = |E(a1,b1) - E(a1,b2)| + |E(a2,b1) + E(a2,b2)|
-
-    Classical bound: S <= 2
-    Tsirelson bound: S <= 2*sqrt(2) ~ 2.828
-    """
-    S = abs(E11 - E12) + abs(E21 + E22)
-    return S
-
-
-def compute_correlation(outcomes_A, outcomes_B):
-    """
-    Compute correlation E(a,b) = <A*B> from arrays of outcomes.
-    outcomes are in {-1, 0, +1}. Trials with 0 outcome are excluded.
-    Returns (correlation, detection_efficiency).
-    """
-    # Filter out null outcomes (state 0)
-    valid = (outcomes_A != 0) & (outcomes_B != 0)
-    n_valid = np.sum(valid)
-    n_total = len(outcomes_A)
-
-    if n_valid == 0:
-        return 0.0, 0.0
-
-    efficiency = n_valid / n_total
-    correlation = np.mean(outcomes_A[valid] * outcomes_B[valid])
-    return float(correlation), float(efficiency)
+_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+from scripts.common.bell_chsh import (
+    CHSH_ANGLES,
+    compute_chsh_from_correlations,
+    compute_correlation,
+)
 
 
 def run_chsh_test(measurement_fn, n_trials=10000, label=""):
@@ -216,20 +189,9 @@ def tier0_quantum():
 # SECTION 3: TIER 1 — VECTOR HIDDEN VARIABLE
 # ============================================================================
 
-def random_unit_vectors(n):
-    """Generate n random unit vectors uniformly distributed on the sphere."""
-    # Marsaglia method
-    z = np.random.uniform(-1, 1, n)
-    phi = np.random.uniform(0, 2 * np.pi, n)
-    r = np.sqrt(1 - z**2)
-    x = r * np.cos(phi)
-    y = r * np.sin(phi)
-    return np.column_stack([x, y, z])
-
-
-def angle_to_axis(theta):
-    """Convert measurement angle to unit vector in x-z plane."""
-    return np.array([np.sin(theta), 0.0, np.cos(theta)])
+# PY-2 refactor: random_unit_vectors / angle_to_axis moved to
+# scripts/common/bell_chsh (default dtype=float64 matches the original).
+from scripts.common.bell_chsh import random_unit_vectors, angle_to_axis
 
 
 def tier1_vector(n_trials=10000):

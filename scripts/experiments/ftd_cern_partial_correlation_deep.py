@@ -34,50 +34,31 @@ rng = np.random.default_rng(42)
 # ============================================================================
 
 sim_dir = os.path.dirname(os.path.abspath(__file__))
-results_lines = []
 
+# PY-1 refactor (April 2026): data loading + ResultsLog consolidated into
+# scripts/common/cern_harness.py. Behavior is preserved bit-for-bit.
+_PROJECT_ROOT = os.path.abspath(os.path.join(sim_dir, '..', '..'))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+from scripts.common.cern_harness import load_cms_data_with_mc, ResultsLog
+
+_log_obj = ResultsLog()
 def log(msg):
-    print(msg)
-    results_lines.append(msg)
+    _log_obj(msg)
+results_lines = _log_obj.lines
 
 log("=" * 70)
 log("FTD PARTIAL CORRELATION DEEP INVESTIGATION: 10 TESTS")
 log("=" * 70)
 
 log("\nLoading cached data...")
-data = np.load(os.path.join(sim_dir, 'ftd_full_enhanced.npz'))
-met     = data['met']
-rcav    = data['rcav']
-dlsig   = data['sv_dlsig_max']
-svmass  = data['sv_mass_max']
-bjet    = data['has_bjet']
-ntracks = data['sv_ntracks_max']
-
-mc_raw = np.load(os.path.join(sim_dir, 'ftd_mc_cache.npz'))
-mc_samples = ['WJetsToLNu', 'ZJetsToNuNu_200toInf', 'ZJetsToNuNu_100to200',
-              'QCD_HT1000to1500', 'QCD_HT700to1000']
-
-met_mc_all, rcav_mc_all, dlsig_mc_all, svmass_mc_all, bjet_mc_all, w_mc_all = \
-    [], [], [], [], [], []
-for s in mc_samples:
-    m  = mc_raw[f'{s}__met']
-    r  = mc_raw[f'{s}__rcav']
-    dl = mc_raw[f'{s}__sv_dlsig_max']
-    sv = mc_raw[f'{s}__sv_mass_max']
-    bj = mc_raw[f'{s}__has_bjet']
-    xsec    = float(mc_raw[f'{s}__xsec'])
-    n_total = float(mc_raw[f'{s}__n_total'])
-    w = np.full(len(m), xsec / n_total)
-    met_mc_all.append(m); rcav_mc_all.append(r)
-    dlsig_mc_all.append(dl); svmass_mc_all.append(sv)
-    bjet_mc_all.append(bj); w_mc_all.append(w)
-
-met_mc   = np.concatenate(met_mc_all)
-rcav_mc  = np.concatenate(rcav_mc_all)
-dlsig_mc = np.concatenate(dlsig_mc_all)
-svmass_mc= np.concatenate(svmass_mc_all)
-bjet_mc  = np.concatenate(bjet_mc_all)
-w_mc     = np.concatenate(w_mc_all)
+_b = load_cms_data_with_mc(data_dir=sim_dir)
+met, rcav, dlsig, svmass, bjet, ntracks = (
+    _b.met, _b.rcav, _b.dlsig, _b.svmass, _b.bjet, _b.ntracks,
+)
+met_mc, rcav_mc, dlsig_mc, svmass_mc, bjet_mc, w_mc = (
+    _b.met_mc, _b.rcav_mc, _b.dlsig_mc, _b.svmass_mc, _b.bjet_mc, _b.w_mc,
+)
 
 # Signal region
 sig    = dlsig > 30

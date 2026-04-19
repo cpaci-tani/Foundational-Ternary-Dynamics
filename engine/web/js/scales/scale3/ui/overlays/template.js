@@ -2,7 +2,7 @@
  * Scale 3 Viewport Overlay — Molecular engine controls
  */
 
-export function createScale3OverlayTemplate() {
+export function getScale3OverlayTemplate() {
   const container = document.createElement('div');
   container.id = 'mol-viewport-overlay';
   container.className = 'scale3-only viewport-overlay-panel';
@@ -13,7 +13,7 @@ export function createScale3OverlayTemplate() {
   return container;
 }
 
-export function createScale3LegendTemplate() {
+export function getScale3LegendTemplate() {
   const container = document.createElement('div');
   container.id = 'mol-legend';
   container.className = 'scale3-only ae-legend';

@@ -33,12 +33,9 @@ class Experimental:
     alpha_G_approx = 5.91e-39  # Gravitational fine structure constant
 
 
-def percent_error(derived, experimental):
-    return abs(derived - experimental) / experimental * 100
-
-
-def ppm_error(derived, experimental):
-    return abs(derived - experimental) / experimental * 1e6
+# PY-4 refactor (April 2026): percent_error / ppm_error consolidated into
+# scripts/constants. Behavior preserved bit-for-bit.
+from constants import percent_error, ppm_error  # noqa: E402
 
 
 class TestFineStructureConstant(unittest.TestCase):

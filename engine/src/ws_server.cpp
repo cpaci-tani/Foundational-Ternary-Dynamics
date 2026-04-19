@@ -8,29 +8,14 @@
  * Build: link against ftd_core (and ftd_cuda when available).
  * Usage: ws_server.exe [lattice_size] [port]
  *        Defaults: lattice_size=32, port=9100
+ *
+ * Framing + handshake live in ws_protocol.{h,cpp}.  SHA-1 lives in ws_sha1.h.
+ * This file is the command-dispatch loop and main().
  */
 
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
-
-#ifdef _WIN32
-#  ifndef WIN32_LEAN_AND_MEAN
-#    define WIN32_LEAN_AND_MEAN
-#  endif
-#  include <winsock2.h>
-#  include <ws2tcpip.h>
-#  pragma comment(lib, "ws2_32.lib")
-   using socklen_t = int;
-#else
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#  include <unistd.h>
-   using SOCKET = int;
-   static constexpr int INVALID_SOCKET = -1;
-   static constexpr int SOCKET_ERROR   = -1;
-   static inline int closesocket(int fd) { return ::close(fd); }
-#endif
+#include "ftd/ws_protocol.h"   // Pulls in SOCKET type + framing API
 
 #include <iostream>
 #include <iomanip>
@@ -41,342 +26,17 @@
 #include <cstdlib>
 #include <sstream>
 #include <algorithm>
-#include <array>
 #include <memory>
-
-// ============================================================================
-//  Minimal SHA-1 (RFC 3174) -- only used once per WebSocket handshake
-// ============================================================================
 
 namespace {
 
-struct SHA1 {
-    uint32_t state[5];
-    uint64_t count;
-    uint8_t  buffer[64];
-
-    SHA1() { reset(); }
-
-    void reset() {
-        state[0] = 0x67452301;
-        state[1] = 0xEFCDAB89;
-        state[2] = 0x98BADCFE;
-        state[3] = 0x10325476;
-        state[4] = 0xC3D2E1F0;
-        count = 0;
-        std::memset(buffer, 0, 64);
-    }
-
-    static uint32_t rol(uint32_t v, int bits) {
-        return (v << bits) | (v >> (32 - bits));
-    }
-
-    void transform(const uint8_t block[64]) {
-        uint32_t w[80];
-        for (int i = 0; i < 16; i++) {
-            w[i] = (uint32_t(block[i*4]) << 24)
-                  | (uint32_t(block[i*4+1]) << 16)
-                  | (uint32_t(block[i*4+2]) << 8)
-                  |  uint32_t(block[i*4+3]);
-        }
-        for (int i = 16; i < 80; i++)
-            w[i] = rol(w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16], 1);
-
-        uint32_t a = state[0], b = state[1], c = state[2],
-                 d = state[3], e = state[4];
-
-        for (int i = 0; i < 80; i++) {
-            uint32_t f, k;
-            if (i < 20)      { f = (b & c) | ((~b) & d);       k = 0x5A827999; }
-            else if (i < 40) { f = b ^ c ^ d;                   k = 0x6ED9EBA1; }
-            else if (i < 60) { f = (b & c) | (b & d) | (c & d); k = 0x8F1BBCDC; }
-            else              { f = b ^ c ^ d;                   k = 0xCA62C1D6; }
-            uint32_t t = rol(a, 5) + f + e + k + w[i];
-            e = d; d = c; c = rol(b, 30); b = a; a = t;
-        }
-        state[0] += a; state[1] += b; state[2] += c;
-        state[3] += d; state[4] += e;
-    }
-
-    void update(const void* data, size_t len) {
-        auto p = static_cast<const uint8_t*>(data);
-        size_t index = count % 64;
-        count += len;
-        // Fill partial block
-        size_t i = 0;
-        if (index) {
-            size_t part = 64 - index;
-            if (len >= part) {
-                std::memcpy(buffer + index, p, part);
-                transform(buffer);
-                i = part;
-            } else {
-                std::memcpy(buffer + index, p, len);
-                return;
-            }
-        }
-        // Full blocks
-        for (; i + 64 <= len; i += 64)
-            transform(p + i);
-        // Remainder
-        if (i < len)
-            std::memcpy(buffer, p + i, len - i);
-    }
-
-    std::array<uint8_t, 20> final_hash() {
-        uint64_t bits = count * 8;
-        uint8_t pad = 0x80;
-        update(&pad, 1);
-        pad = 0;
-        while (count % 64 != 56)
-            update(&pad, 1);
-        uint8_t len_be[8];
-        for (int i = 7; i >= 0; i--) {
-            len_be[i] = uint8_t(bits & 0xFF);
-            bits >>= 8;
-        }
-        update(len_be, 8);
-
-        std::array<uint8_t, 20> hash;
-        for (int i = 0; i < 5; i++) {
-            hash[i*4]   = uint8_t(state[i] >> 24);
-            hash[i*4+1] = uint8_t(state[i] >> 16);
-            hash[i*4+2] = uint8_t(state[i] >> 8);
-            hash[i*4+3] = uint8_t(state[i]);
-        }
-        return hash;
-    }
-};
-
-// ============================================================================
-//  Base64 encode
-// ============================================================================
-
-std::string base64_encode(const uint8_t* data, size_t len) {
-    static const char table[] =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    std::string out;
-    out.reserve(((len + 2) / 3) * 4);
-    for (size_t i = 0; i < len; i += 3) {
-        uint32_t n = uint32_t(data[i]) << 16;
-        if (i + 1 < len) n |= uint32_t(data[i+1]) << 8;
-        if (i + 2 < len) n |= uint32_t(data[i+2]);
-        out.push_back(table[(n >> 18) & 0x3F]);
-        out.push_back(table[(n >> 12) & 0x3F]);
-        out.push_back((i + 1 < len) ? table[(n >> 6) & 0x3F] : '=');
-        out.push_back((i + 2 < len) ? table[n & 0x3F] : '=');
-    }
-    return out;
-}
-
-// ============================================================================
-//  Socket helpers
-// ============================================================================
-
-// Read exactly n bytes. Returns false on disconnect/error.
-bool recv_exact(SOCKET sock, void* buf, size_t n) {
-    auto p = static_cast<char*>(buf);
-    size_t got = 0;
-    while (got < n) {
-        int r = ::recv(sock, p + got, static_cast<int>(n - got), 0);
-        if (r <= 0) return false;
-        got += r;
-    }
-    return true;
-}
-
-// Send all bytes.
-bool send_all(SOCKET sock, const void* buf, size_t n) {
-    auto p = static_cast<const char*>(buf);
-    size_t sent = 0;
-    while (sent < n) {
-        int r = ::send(sock, p + sent, static_cast<int>(n - sent), 0);
-        if (r <= 0) return false;
-        sent += r;
-    }
-    return true;
-}
-
-// ============================================================================
-//  Minimal JSON helpers (string-search based, no library)
-// ============================================================================
-
-// Find a string value for a key in a JSON string.
-// Returns empty string if not found.
-std::string json_string(const std::string& json, const std::string& key) {
-    std::string search = "\"" + key + "\"";
-    auto pos = json.find(search);
-    if (pos == std::string::npos) return "";
-    pos = json.find(':', pos + search.size());
-    if (pos == std::string::npos) return "";
-    pos = json.find('"', pos + 1);
-    if (pos == std::string::npos) return "";
-    auto end = json.find('"', pos + 1);
-    if (end == std::string::npos) return "";
-    return json.substr(pos + 1, end - pos - 1);
-}
-
-// Find a numeric value (int or float) for a key. Returns 0 on failure.
-double json_number(const std::string& json, const std::string& key) {
-    std::string search = "\"" + key + "\"";
-    auto pos = json.find(search);
-    if (pos == std::string::npos) return 0.0;
-    pos = json.find(':', pos + search.size());
-    if (pos == std::string::npos) return 0.0;
-    pos++;
-    while (pos < json.size() && (json[pos] == ' ' || json[pos] == '\t'))
-        pos++;
-    return std::atof(json.c_str() + pos);
-}
-
-// Find a boolean value for a key. Returns false on failure.
-bool json_bool(const std::string& json, const std::string& key) {
-    std::string search = "\"" + key + "\"";
-    auto pos = json.find(search);
-    if (pos == std::string::npos) return false;
-    pos = json.find(':', pos + search.size());
-    if (pos == std::string::npos) return false;
-    return json.find("true", pos) < json.find("false", pos);
-}
-
-// ============================================================================
-//  WebSocket handshake
-// ============================================================================
-
-static const char* WS_GUID = "258EAFA5-E914-47DA-95CA-5AB9DC799073";
-
-bool ws_handshake(SOCKET client) {
-    // Read the HTTP upgrade request (up to 4KB is plenty)
-    char buf[4096];
-    int total = 0;
-    while (total < (int)sizeof(buf) - 1) {
-        int r = ::recv(client, buf + total, 1, 0);
-        if (r <= 0) return false;
-        total += r;
-        buf[total] = '\0';
-        // End of HTTP headers
-        if (total >= 4 && std::strstr(buf, "\r\n\r\n"))
-            break;
-    }
-
-    std::string request(buf, total);
-
-    // Extract Sec-WebSocket-Key
-    std::string key_header = "Sec-WebSocket-Key: ";
-    auto pos = request.find(key_header);
-    if (pos == std::string::npos) {
-        std::cerr << "[ws_server] No Sec-WebSocket-Key in handshake\n";
-        return false;
-    }
-    pos += key_header.size();
-    auto end = request.find("\r\n", pos);
-    std::string ws_key = request.substr(pos, end - pos);
-    // Trim whitespace
-    while (!ws_key.empty() && ws_key.back() == ' ') ws_key.pop_back();
-
-    // Compute accept: SHA1(key + GUID), base64
-    std::string concat = ws_key + WS_GUID;
-    SHA1 sha;
-    sha.update(concat.data(), concat.size());
-    auto hash = sha.final_hash();
-    std::string accept = base64_encode(hash.data(), hash.size());
-
-    // Send HTTP 101 Switching Protocols
-    std::string response =
-        "HTTP/1.1 101 Switching Protocols\r\n"
-        "Upgrade: websocket\r\n"
-        "Connection: Upgrade\r\n"
-        "Sec-WebSocket-Accept: " + accept + "\r\n"
-        "\r\n";
-
-    return send_all(client, response.data(), response.size());
-}
-
-// ============================================================================
-//  WebSocket frame reading / writing
-// ============================================================================
-
-enum WsOpcode : uint8_t {
-    WS_TEXT   = 0x01,
-    WS_BINARY = 0x02,
-    WS_CLOSE  = 0x08,
-    WS_PING   = 0x09,
-    WS_PONG   = 0x0A
-};
-
-// Read one WebSocket frame.  Returns opcode, fills payload.
-// Returns 0xFF on error/disconnect.
-uint8_t ws_read_frame(SOCKET sock, std::vector<uint8_t>& payload) {
-    payload.clear();
-
-    uint8_t hdr[2];
-    if (!recv_exact(sock, hdr, 2)) return 0xFF;
-
-    // bool fin  = (hdr[0] & 0x80) != 0;
-    uint8_t opcode = hdr[0] & 0x0F;
-    bool masked = (hdr[1] & 0x80) != 0;
-    uint64_t len = hdr[1] & 0x7F;
-
-    if (len == 126) {
-        uint8_t ext[2];
-        if (!recv_exact(sock, ext, 2)) return 0xFF;
-        len = (uint64_t(ext[0]) << 8) | ext[1];
-    } else if (len == 127) {
-        uint8_t ext[8];
-        if (!recv_exact(sock, ext, 8)) return 0xFF;
-        len = 0;
-        for (int i = 0; i < 8; i++)
-            len = (len << 8) | ext[i];
-    }
-
-    uint8_t mask_key[4] = {0, 0, 0, 0};
-    if (masked) {
-        if (!recv_exact(sock, mask_key, 4)) return 0xFF;
-    }
-
-    payload.resize(static_cast<size_t>(len));
-    if (len > 0) {
-        if (!recv_exact(sock, payload.data(), static_cast<size_t>(len)))
-            return 0xFF;
-        // Unmask
-        if (masked) {
-            for (size_t i = 0; i < payload.size(); i++)
-                payload[i] ^= mask_key[i % 4];
-        }
-    }
-
-    return opcode;
-}
-
-// Send a WebSocket frame (server frames are NOT masked).
-bool ws_send_frame(SOCKET sock, uint8_t opcode, const void* data, size_t len) {
-    std::vector<uint8_t> frame;
-    frame.push_back(0x80 | opcode);  // FIN + opcode
-
-    if (len < 126) {
-        frame.push_back(static_cast<uint8_t>(len));
-    } else if (len <= 0xFFFF) {
-        frame.push_back(126);
-        frame.push_back(static_cast<uint8_t>((len >> 8) & 0xFF));
-        frame.push_back(static_cast<uint8_t>(len & 0xFF));
-    } else {
-        frame.push_back(127);
-        for (int i = 7; i >= 0; i--)
-            frame.push_back(static_cast<uint8_t>((len >> (i * 8)) & 0xFF));
-    }
-
-    if (!send_all(sock, frame.data(), frame.size())) return false;
-    if (len > 0 && !send_all(sock, data, len)) return false;
-    return true;
-}
-
-bool ws_send_text(SOCKET sock, const std::string& msg) {
-    return ws_send_frame(sock, WS_TEXT, msg.data(), msg.size());
-}
-
-bool ws_send_binary(SOCKET sock, const std::vector<uint8_t>& data) {
-    return ws_send_frame(sock, WS_BINARY, data.data(), data.size());
-}
+// SOCKET is declared at global scope in ws_protocol.h (platform-aligned)
+// so no `using` is needed — just the WS opcode enum values.
+using ftd::WS_TEXT;
+using ftd::WS_BINARY;
+using ftd::WS_CLOSE;
+using ftd::WS_PING;
+using ftd::WS_PONG;
 
 // ============================================================================
 //  Particle data extraction (matches WASM get_particle_data)
@@ -583,32 +243,32 @@ bool handle_command(const std::string& json, SOCKET client,
                     std::unique_ptr<ftd::RenderBridge>& rb,
                     int& lattice_size, bool gpu_active)
 {
-    std::string cmd = json_string(json, "cmd");
+    std::string cmd = ftd::json_string(json, "cmd");
 
     if (cmd == "tick") {
         rb->tick();
-        return true;  // No response — fire-and-forget for speed
+        return true;  // No response -- fire-and-forget for speed
     }
     else if (cmd == "run") {
-        int n = static_cast<int>(json_number(json, "n"));
+        int n = static_cast<int>(ftd::json_number(json, "n"));
         if (n < 1) n = 1;
         if (n > 100000) n = 100000;
         rb->run(n);
-        return true;  // No response — fire-and-forget for speed
+        return true;  // No response -- fire-and-forget for speed
     }
     else if (cmd == "get_particles") {
         auto data = pack_particle_data(*rb);
-        return ws_send_binary(client, data);
+        return ftd::ws_send_binary(client, data);
     }
     else if (cmd == "get_diagnostics") {
-        return ws_send_text(client, json_diagnostics(*rb));
+        return ftd::ws_send_text(client, json_diagnostics(*rb));
     }
     else if (cmd == "get_energy_audit") {
-        return ws_send_text(client, json_energy_audit(*rb));
+        return ftd::ws_send_text(client, json_energy_audit(*rb));
     }
     else if (cmd == "set_toggle") {
-        std::string name = json_string(json, "name");
-        bool value = json_bool(json, "value");
+        std::string name = ftd::json_string(json, "name");
+        bool value = ftd::json_bool(json, "value");
         bool* ptr = find_toggle(rb->toggles, name);
         if (ptr) {
             *ptr = value;
@@ -619,69 +279,69 @@ bool handle_command(const std::string& json, SOCKET client,
         return true;  // Fire-and-forget
     }
     else if (cmd == "set_param") {
-        std::string name = json_string(json, "name");
-        double value = json_number(json, "value");
+        std::string name = ftd::json_string(json, "name");
+        double value = ftd::json_number(json, "value");
         if (name == "dt") rb->set_dt(value);
         return true;  // Fire-and-forget
     }
     else if (cmd == "inject_flux") {
-        int x = static_cast<int>(json_number(json, "x"));
-        int y = static_cast<int>(json_number(json, "y"));
-        int z = static_cast<int>(json_number(json, "z"));
-        double fx = json_number(json, "fx");
-        double fy = json_number(json, "fy");
-        double fz = json_number(json, "fz");
+        int x = static_cast<int>(ftd::json_number(json, "x"));
+        int y = static_cast<int>(ftd::json_number(json, "y"));
+        int z = static_cast<int>(ftd::json_number(json, "z"));
+        double fx = ftd::json_number(json, "fx");
+        double fy = ftd::json_number(json, "fy");
+        double fz = ftd::json_number(json, "fz");
         rb->inject_flux(x, y, z, {fx, fy, fz});
         return true;
     }
     else if (cmd == "inject_particle") {
-        int x = static_cast<int>(json_number(json, "x"));
-        int y = static_cast<int>(json_number(json, "y"));
-        int z = static_cast<int>(json_number(json, "z"));
-        int8_t state = static_cast<int8_t>(json_number(json, "state"));
-        double fx = json_number(json, "fx");
-        double fy = json_number(json, "fy");
-        double fz = json_number(json, "fz");
+        int x = static_cast<int>(ftd::json_number(json, "x"));
+        int y = static_cast<int>(ftd::json_number(json, "y"));
+        int z = static_cast<int>(ftd::json_number(json, "z"));
+        int8_t state = static_cast<int8_t>(ftd::json_number(json, "state"));
+        double fx = ftd::json_number(json, "fx");
+        double fy = ftd::json_number(json, "fy");
+        double fz = ftd::json_number(json, "fz");
         rb->inject_particle(x, y, z, state, {fx, fy, fz});
         return true;
     }
     else if (cmd == "inject_wavepacket") {
-        int x = static_cast<int>(json_number(json, "x"));
-        int y = static_cast<int>(json_number(json, "y"));
-        int z = static_cast<int>(json_number(json, "z"));
-        int8_t state = static_cast<int8_t>(json_number(json, "state"));
+        int x = static_cast<int>(ftd::json_number(json, "x"));
+        int y = static_cast<int>(ftd::json_number(json, "y"));
+        int z = static_cast<int>(ftd::json_number(json, "z"));
+        int8_t state = static_cast<int8_t>(ftd::json_number(json, "state"));
         rb->inject_wavepacket(x, y, z, state);
         return true;
     }
     else if (cmd == "create_pair") {
-        int x = static_cast<int>(json_number(json, "x"));
-        int y = static_cast<int>(json_number(json, "y"));
-        int z = static_cast<int>(json_number(json, "z"));
-        double fx = json_number(json, "fx");
-        double fy = json_number(json, "fy");
-        double fz = json_number(json, "fz");
+        int x = static_cast<int>(ftd::json_number(json, "x"));
+        int y = static_cast<int>(ftd::json_number(json, "y"));
+        int z = static_cast<int>(ftd::json_number(json, "z"));
+        double fx = ftd::json_number(json, "fx");
+        double fy = ftd::json_number(json, "fy");
+        double fz = ftd::json_number(json, "fz");
         rb->create_entangled_pair(x, y, z, {fx, fy, fz});
         return true;
     }
     else if (cmd == "resize") {
-        int new_size = static_cast<int>(json_number(json, "size"));
+        int new_size = static_cast<int>(ftd::json_number(json, "size"));
         if (new_size < 4) new_size = 4;
         if (new_size > 256) new_size = 256;
         lattice_size = new_size;
         rb = std::make_unique<ftd::RenderBridge>(lattice_size);
         std::cout << "[ws_server] Resized lattice to " << lattice_size << "^3\n";
-        return ws_send_text(client, json_ok(rb->current_tick()));
+        return ftd::ws_send_text(client, json_ok(rb->current_tick()));
     }
     else if (cmd == "reset") {
         rb = std::make_unique<ftd::RenderBridge>(lattice_size);
         std::cout << "[ws_server] Reset engine (" << lattice_size << "^3)\n";
-        return ws_send_text(client, json_ok(rb->current_tick()));
+        return ftd::ws_send_text(client, json_ok(rb->current_tick()));
     }
     else if (cmd == "info") {
-        return ws_send_text(client, json_info(*rb, gpu_active));
+        return ftd::ws_send_text(client, json_info(*rb, gpu_active));
     }
     else {
-        return ws_send_text(client, json_error("unknown command: " + cmd));
+        return ftd::ws_send_text(client, json_error("unknown command: " + cmd));
     }
 }
 
@@ -728,6 +388,12 @@ int main(int argc, char* argv[]) {
         std::cerr << "[ws_server] WSAStartup failed\n";
         return 1;
     }
+#endif
+
+    // socklen_t must match the system ABI; on Windows the socket headers
+    // define it as `int`, so mirror that here for the accept() call.
+#ifdef _WIN32
+    using socklen_t = int;
 #endif
 
     // Create server socket
@@ -778,7 +444,7 @@ int main(int argc, char* argv[]) {
         std::cout << "[ws_server] Client connected\n";
 
         // WebSocket handshake
-        if (!ws_handshake(client)) {
+        if (!ftd::ws_handshake(client)) {
             std::cerr << "[ws_server] Handshake failed\n";
             closesocket(client);
             continue;
@@ -790,7 +456,7 @@ int main(int argc, char* argv[]) {
         bool connected = true;
         while (connected) {
             std::vector<uint8_t> payload;
-            uint8_t opcode = ws_read_frame(client, payload);
+            uint8_t opcode = ftd::ws_read_frame(client, payload);
 
             switch (opcode) {
             case WS_TEXT: {
@@ -804,12 +470,12 @@ int main(int argc, char* argv[]) {
                 break;
             case WS_PING: {
                 // Respond with pong (same payload)
-                ws_send_frame(client, WS_PONG, payload.data(), payload.size());
+                ftd::ws_send_frame(client, WS_PONG, payload.data(), payload.size());
                 break;
             }
             case WS_CLOSE:
                 // Send close frame back
-                ws_send_frame(client, WS_CLOSE, nullptr, 0);
+                ftd::ws_send_frame(client, WS_CLOSE, nullptr, 0);
                 connected = false;
                 break;
             default:

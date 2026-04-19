@@ -124,12 +124,9 @@ class Exp:
     lambda_ckm = 0.2243
 
 
-def ppm_error(derived, exp):
-    return abs(derived - exp) / exp * 1e6
-
-
-def percent_error(derived, exp):
-    return abs(derived - exp) / exp * 100
+# PY-4 refactor (April 2026): percent_error / ppm_error consolidated into
+# scripts/constants. Behavior preserved bit-for-bit.
+from constants import percent_error, ppm_error  # noqa: E402
 
 
 # =============================================================================
