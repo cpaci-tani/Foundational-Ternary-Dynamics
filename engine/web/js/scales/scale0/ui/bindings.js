@@ -12,6 +12,7 @@ import {
     setButtonActive,
     setForceStyleButtons,
 } from './dom.js';
+import { OVERLAY_PRESETS, MANAGED_TOGGLES, COL_TO_TOGGLES } from './overlays/presets.js';
 
 let _bound = false;
 
@@ -78,27 +79,111 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
+    // Shared apply-toggle helper: works for both user clicks and
+    // programmatic preset/clear-column actions. `silent` means skip the
+    // latticeNeedsUpload push (useful for bulk updates where we push
+    // once at the end). Always keeps DOM button state, state-store
+    // flag, and viewport visibility in sync.
+    const setToggleState = (buttonId, fieldKey, on, { silent = false } = {}) => {
+        setButtonActive(buttonId, on);
+        setFieldToggle(fieldKey, on);
+        const adapter = api.viewportAdapter(ctx);
+        if (FORCE_FIELD_KEYS.has(fieldKey)) {
+            const style = api.getForceStyle();
+            if (style === 'arrows') {
+                adapter.setOverlayVisible(fieldKey, on);
+            } else {
+                adapter.setOverlayVisible(fieldKey, false);
+                adapter.syncForceStyle(style, getFieldStateSnapshot());
+            }
+        } else {
+            adapter.setOverlayVisible(fieldKey, on);
+        }
+        if (!silent) api.setLatticeNeedsUpload();
+    };
+
+    const updateOverlayBadges = () => {
+        for (const [colName, toggles] of Object.entries(COL_TO_TOGGLES)) {
+            const badge = document.querySelector(`[data-count-for="${colName}"]`);
+            if (!badge) continue;
+            let count = 0;
+            for (const buttonId of toggles) {
+                if (readButtonActive(buttonId)) count++;
+            }
+            badge.textContent = String(count);
+            badge.classList.toggle('is-zero', count === 0);
+        }
+        // "Custom" sentinel on the preset select — if no preset exactly
+        // matches the current active-button set, the dropdown should
+        // read as "Custom" rather than claiming some preset is applied.
+        const presetSel = getEl('s0-overlay-preset');
+        if (presetSel) {
+            const activeSet = new Set(
+                MANAGED_TOGGLES.filter((id) => readButtonActive(id))
+            );
+            let matched = 'custom';
+            for (const [name, onList] of Object.entries(OVERLAY_PRESETS)) {
+                const onSet = new Set(onList);
+                if (onSet.size === activeSet.size &&
+                    [...onSet].every((id) => activeSet.has(id))) {
+                    matched = name;
+                    break;
+                }
+            }
+            if (presetSel.value !== matched) presetSel.value = matched;
+        }
+    };
+
+    // Map from buttonId → fieldKey so preset/clear-column can look up
+    // the state-store key for any managed toggle.
+    const buttonIdToFieldKey = new Map(FIELD_TOGGLE_BINDINGS);
+
     for (const [buttonId, fieldKey] of FIELD_TOGGLE_BINDINGS) {
         const btn = getEl(buttonId);
         if (!btn) continue;
         btn.addEventListener('click', () => {
             const on = !readButtonActive(buttonId);
-            setButtonActive(buttonId, on);
-            setFieldToggle(fieldKey, on);
+            setToggleState(buttonId, fieldKey, on);
+            updateOverlayBadges();
+        });
+    }
 
-            const adapter = api.viewportAdapter(ctx);
-            if (FORCE_FIELD_KEYS.has(fieldKey)) {
-                const style = api.getForceStyle();
-                if (style === 'arrows') {
-                    adapter.setOverlayVisible(fieldKey, on);
-                } else {
-                    adapter.setOverlayVisible(fieldKey, false);
-                    adapter.syncForceStyle(style, getFieldStateSnapshot());
-                }
-            } else {
-                adapter.setOverlayVisible(fieldKey, on);
+    // Preset dropdown — 'Clean', 'EM focus', …, plus 'Custom' sentinel.
+    // Selecting a named preset applies it atomically: every MANAGED_TOGGLES
+    // toggle becomes EITHER active (if listed in the preset) OR inactive.
+    // One latticeNeedsUpload push at the end avoids N redundant uploads.
+    const presetSel = getEl('s0-overlay-preset');
+    if (presetSel) {
+        presetSel.addEventListener('change', () => {
+            const name = presetSel.value;
+            if (name === 'custom' || !OVERLAY_PRESETS[name]) return;
+            const onSet = new Set(OVERLAY_PRESETS[name]);
+            for (const buttonId of MANAGED_TOGGLES) {
+                const fieldKey = buttonIdToFieldKey.get(buttonId);
+                if (!fieldKey) continue;
+                const shouldBeOn = onSet.has(buttonId);
+                if (readButtonActive(buttonId) === shouldBeOn) continue;
+                setToggleState(buttonId, fieldKey, shouldBeOn, { silent: true });
             }
             api.setLatticeNeedsUpload();
+            updateOverlayBadges();
+        });
+    }
+
+    // Per-column × clear buttons — turn off every toggle in one column.
+    for (const clearBtn of document.querySelectorAll('.s0-overlay-col-clear')) {
+        const colName = clearBtn.getAttribute('data-clear-col');
+        const toggles = COL_TO_TOGGLES[colName];
+        if (!toggles) continue;
+        clearBtn.addEventListener('click', () => {
+            for (const buttonId of toggles) {
+                if (!readButtonActive(buttonId)) continue;
+                const fieldKey = buttonIdToFieldKey.get(buttonId);
+                if (!fieldKey) continue;
+                setToggleState(buttonId, fieldKey, false, { silent: true });
+            }
+            api.setLatticeNeedsUpload();
+            updateOverlayBadges();
         });
     }
 
@@ -115,6 +200,10 @@ export function bindScale0UI(ctx, api) {
             });
         }
     }
+
+    // Initial badge sync on first bind so counts reflect whatever toggles
+    // the scenario loader set up during boot.
+    updateOverlayBadges();
 }
 
 export function handleScale0ShortcutKey(key) {

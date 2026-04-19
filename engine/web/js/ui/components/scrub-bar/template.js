@@ -74,6 +74,32 @@ export function createScrubBarTemplate() {
             </button>
             <div class="scrub-bar-settings-popover" id="scrub-bar-settings-popover"
                  role="dialog" aria-label="Timeline settings" hidden>
+                <!-- Speed presets — click a chip to snap ticks-per-frame to that
+                     multiplier. The existing slider still works for continuous
+                     tuning; chips are one-tap common values. -->
+                <div class="scrub-bar-settings-row">
+                    <span class="scrub-bar-settings-label">Speed</span>
+                    <div class="scrub-bar-settings-options" role="radiogroup" aria-label="Speed preset">
+                        <button type="button" class="scrub-bar-settings-chip" data-speed-preset="0.1"  role="radio">0.1&#215;</button>
+                        <button type="button" class="scrub-bar-settings-chip" data-speed-preset="0.5"  role="radio">0.5&#215;</button>
+                        <button type="button" class="scrub-bar-settings-chip is-active" data-speed-preset="1"  role="radio" aria-checked="true">1&#215;</button>
+                        <button type="button" class="scrub-bar-settings-chip" data-speed-preset="2"    role="radio">2&#215;</button>
+                        <button type="button" class="scrub-bar-settings-chip" data-speed-preset="5"    role="radio">5&#215;</button>
+                        <button type="button" class="scrub-bar-settings-chip" data-speed-preset="10"   role="radio">10&#215;</button>
+                    </div>
+                </div>
+                <!-- Step-by-N buttons — step the simulation forward by a
+                     specific tick count without starting playback. Useful for
+                     careful frame-by-frame exploration. Each button fires
+                     bridge.tick() the requested number of times synchronously. -->
+                <div class="scrub-bar-settings-row">
+                    <span class="scrub-bar-settings-label">Step</span>
+                    <div class="scrub-bar-settings-options">
+                        <button type="button" class="scrub-bar-settings-chip" data-step-by="1"   title="Advance 1 tick">+1</button>
+                        <button type="button" class="scrub-bar-settings-chip" data-step-by="10"  title="Advance 10 ticks">+10</button>
+                        <button type="button" class="scrub-bar-settings-chip" data-step-by="100" title="Advance 100 ticks">+100</button>
+                    </div>
+                </div>
                 <div class="scrub-bar-settings-row">
                     <span class="scrub-bar-settings-label">Render duration</span>
                     <div class="scrub-bar-settings-options" role="radiogroup" aria-label="Render duration">

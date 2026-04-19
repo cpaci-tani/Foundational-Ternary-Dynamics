@@ -85,12 +85,12 @@ ftd/                                     # Project root
 │   └── internal/                 # Session summaries, exploration scripts
 ├── engine/                       # C++ simulation engine (v2.14)
 │   ├── SPEC_ENGINE.md            # Engine reference document
-│   ├── include/ftd/              # 28 headers (ontic.h, voxel.h, lattice.h, etc.)
-│   ├── src/                      # 7 source files
+│   ├── include/ftd/              # 29 headers (ontic.h, voxel.h, lattice.h, scenarios.h, etc.)
+│   ├── src/                      # 14 source files
 │   ├── tests/                    # 169+ test files (120 unit + 49 campaign + 4 GPU)
 │   ├── cuda/                     # GPU acceleration
 │   ├── wasm/                     # Emscripten bindings
-│   └── web/                      # Browser dashboard (Three.js, 28 JS modules)
+│   └── web/                      # Browser dashboard (Three.js, modular JS)
 ├── scripts/                      # ALL Python scripts (~149 scripts)
 │   ├── constants.py              # Canonical shared constants (single source of truth)
 │   ├── verification/             # Formal derivation verification (40 scripts)
@@ -186,6 +186,8 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Continuum Limit -> QED** (April 13, 2026): `docs/theory/03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` (x+ = 1/alpha conditional [THEOREM])
 - **Singlet from Void** (April 13, 2026): `docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md` (Bell loop closed via 5 lemmas)
 - **N_c from Topology** (April 13, 2026): `docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md` (N_c = 3 from 4 independent routes)
+- **Web refactor spec** (April 18, 2026): `engine/web/docs/SPEC_REFACTOR_LARGE_FILES.md` (Waves 0-3 split of viewport/wasm-bridge-dag/app_dag; Ticket 14 deferred)
+- **Scenario library (C++)** (April 18, 2026): `engine/include/ftd/scenarios.h` + `engine/src/scenarios.cpp` (all 83 Scale-0 scenarios ported from JS MockBridge; 84/84 Playwright coverage)
 
 ---
 

@@ -18,6 +18,7 @@
 #include "ftd/particle_engine.h"
 #include "ftd/atom_engine.h"
 #include "ftd/constants.h"
+#include "ftd/scenarios.h"  // ftd::dispatch_scenario — ported JS scenario library
 
 using namespace emscripten;
 
@@ -339,6 +340,21 @@ void inject_flux(ftd::RenderBridge& rb, int x, int y, int z,
     rb.inject_flux(x, y, z, ftd::Vec3(fx, fy, fz));
 }
 
+// Additive variant (+=) — used by the JS-ported scenarios that accumulate
+// overlapping Gaussian kernels. Not exported to JS binding (only called
+// internally from setup_scenario below via dispatch_scenario).
+void inject_flux_add(ftd::RenderBridge& rb, int x, int y, int z,
+                      double fx, double fy, double fz) {
+    rb.inject_flux_add(x, y, z, ftd::Vec3(fx, fy, fz));
+}
+
+// Additive wave-velocity injection — used by s0-field-* and light-* ports
+// that seed traveling waves via wave_vel directly. Not exported to JS.
+void inject_wave_vel_add(ftd::RenderBridge& rb, int x, int y, int z,
+                          double wx, double wy, double wz) {
+    rb.inject_wave_vel_add(x, y, z, ftd::Vec3(wx, wy, wz));
+}
+
 void create_entangled_pair(ftd::RenderBridge& rb, int x, int y, int z,
                             double fx, double fy, double fz) {
     rb.create_entangled_pair(x, y, z, ftd::Vec3(fx, fy, fz));
@@ -632,16 +648,40 @@ val get_force_field_sampled(ftd::RenderBridge& rb, int stride) {
 }
 
 // ── Scenario setup ───────────────────────────────────────────────────
-// NOTE: This function drives C++ setup. The JS MockBridge duplicates this logic.
-// After any change here, rebuild WASM: emcmake cmake && emmake cmake --build ... --target ftd_wasm
+// NOTE: Primary scenario dispatch path is now ftd::dispatch_scenario(rb, name)
+// (src/scenarios.cpp + include/ftd/scenarios.h) which covers all 83 UI scenarios.
+// The legacy switch below is kept ONLY for backward-compat names that do not
+// match the dispatcher's prefix rules: 'pair', 'cluster', 'wave', 'hydrogen',
+// 'scattering', 'annihilation', 'dipole', 'entangled', 'force', 'interference',
+// 'vacuum', 'triad', 'production', 'light-prism', 'flux-collision',
+// 'flux-damping', 'flux-dispersion', 'flux-gravity-cluster', 'flux-hydrogen',
+// 'flux-ring'. These names are NOT in the JS UI registry — they are engine-only
+// test fixtures preserved so older tests and saved dashboards keep working.
+//
+// The following legacy names in the switch below are DEAD CODE because they
+// duplicate names the dispatcher now owns (dispatcher wins due to early-return
+// above): 'flux-pulse', 'flux-dipole', 'flux-standing', 'flux-soliton',
+// 'flux-cascade', 'flux-interference', 'flux-vortex', 'flux-pair-production',
+// 'flux-random-genesis', 'flux-dual-substrate', 'light-rainbow', 'light-dipole',
+// 'light-two-slit', 'light-photon-race'. Left in place to minimise diff noise;
+// an incremental follow-up can delete them once regression-testing is complete.
+//
+// JS↔WASM parity: after this change, any scenario name in the UI (engine/web/
+// js/scales/scale0/scenario-registry.js) produces identical physics on both
+// backends. The single-source authority is now src/scenarios.cpp (C++) +
+// engine/web/js/bridge/scenarios/*.js (JS); both are hand-maintained mirrors.
 void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
+    // Primary path: ported JS scenario library (83 scenarios, flux-/light-/
+    // quantum-/s0-seed-/s0-field-). Dispatcher returns true on prefix match.
+    if (ftd::dispatch_scenario(rb, name)) return;
+
     const int N = rb.lattice().size();
     const double midF = (N - 1) * 0.5;
     const int    mid  = static_cast<int>(std::round(midF));
     const double sigma_base = N / 10.0;
     const int halfWidth = std::max(4, N / 4);
 
-    // ── Scale 0: Flux-only scenarios (pure substrate, no particles) ──
+    // ── Legacy backward-compat scenarios (pre-port; not in JS UI registry) ──
 
     if (name == "empty") {
         // Nothing to inject

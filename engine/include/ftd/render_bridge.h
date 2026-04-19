@@ -221,8 +221,21 @@ public:
     const EnergyLedger& energy_ledger() const { return energy_ledger_; }
     void update_energy_ledger();
 
-    // Inject a localized flux source (for testing)
+    // Inject a localized flux source (assigns: v.flux = flux_val).
+    // Used by legacy C++ scenarios that write each voxel exactly once.
     void inject_flux(int x, int y, int z, const Vec3& flux_val);
+
+    // Additive flux injection: v.flux += flux_val. Used by the ported JS
+    // scenarios where the injection loops deliberately hit the same voxel
+    // from overlapping Gaussian kernels and rely on accumulation. Wraps
+    // coordinates around the lattice (matches JS _fluxIdx semantics).
+    void inject_flux_add(int x, int y, int z, const Vec3& flux_val);
+
+    // Additive wave-velocity injection: v.wave_vel += wv_val. Equivalent to
+    // JS _injectWaveVel; required to port the s0-field-* and light-* scenarios
+    // that seed traveling waves by populating wave_vel directly.
+    // Wraps coordinates around the lattice (matches JS).
+    void inject_wave_vel_add(int x, int y, int z, const Vec3& wv_val);
 
     // Inject a manifested particle (spin/color default to 0 for backward compatibility)
     void inject_particle(int x, int y, int z, int8_t state, const Vec3& flux_val,
