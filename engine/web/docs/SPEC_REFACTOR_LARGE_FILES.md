@@ -1,6 +1,6 @@
 # Refactor Spec: Split the Three Large FTD Web-Engine Files
 
-**Status:** `[REFERENCE]` — active refactoring specification
+**Status:** `[SHIPPED]` — work landed in v2.15.0 whole-project discrete-quantum extraction (commit `f896fc1`, 2026-04-19). Archived for historical context.
 **Version:** 1.0 (2026-04-18)
 **Scope:** `engine/web/js/viewport.js`, `engine/web/js/wasm-bridge-dag.js`, `engine/web/js/app_dag.js`
 **Audience:** Contributors executing or reviewing the extraction work; agents resuming this project across sessions.
