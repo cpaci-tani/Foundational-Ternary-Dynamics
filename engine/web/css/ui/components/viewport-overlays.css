@@ -272,36 +272,6 @@
     align-items: center;
     gap: 10px;
 }
-.s0-overlay-preset-wrap {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 10px;
-    color: var(--text-muted);
-}
-.s0-overlay-preset-label {
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-weight: 600;
-    opacity: 0.8;
-}
-.s0-overlay-preset-select {
-    background: color-mix(in oklch, var(--surface, #10141f) 80%, transparent);
-    color: var(--text-primary, #d0d8f0);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 11px;
-    font-family: inherit;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 120ms;
-}
-.s0-overlay-preset-select:hover,
-.s0-overlay-preset-select:focus {
-    border-color: var(--accent);
-}
-
 /* Buttons within an overlay column take the full column width so the
    panel looks tidy even when labels vary in length. */
 .s0-overlay-col .view-toggle {
