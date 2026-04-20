@@ -1,5 +1,82 @@
 # Foundational Ternary Dynamics Changelog
 
+## Phase J — Explicit partition function on L=2 (April 19, 2026)
+
+User requested a derivation from lattice first principles, consulting
+theory docs first. Completed the first-ever explicit partition-function
+computation in FTD — noted in project memory files as "Priority #1" for
+the 2×2×2 torus, previously unattempted.
+
+### Method
+
+- Consulted `SPEC_FTD_LAGRANGIAN.md` §3.3 for the action:
+  `L_matter = -K_B √((f²-v²)/f) - g_c s (∇·J) - λ_G (∇·J - ρ)²`
+- Restricted to static sector (v=0, f=1), enforced Gauss constraint
+  (λ_G → ∞, ρ = s)
+- Enumerated all 3⁸ = 6561 state configurations on L=2; filtered to
+  1107 charge-neutral
+- Computed `S_E[J_min, s]` via FFT Poisson solve for each config
+- Compared two dipoles at different separations (1 and √3)
+
+### Critical finding
+
+**The FTD analytical action is ULTRALOCAL in the state field s.** Under
+the Gauss constraint, `S_E` reduces to
+
+    S_E = (c²/2) Σ|∇J|² + g_c Σ s(∇·J)
+        = (c²/2 + g_c) · N_manifested
+
+(using Parseval identity ∫|∇J|² = ∫s² for J = -∇φ solving ∇²φ = -s).
+
+Two dipole configurations differing only in charge separation (r=1 vs
+r=√3) give **identical S_E = 2.333**. The engine's Σ|J|² diagnostic
+does distinguish them (0.292 vs 0.417), but that diagnostic is NOT part
+of the analytical action — it's the classical EM field energy, a
+parallel bookkeeping.
+
+### Consequences
+
+1. **The FTD action as written contains no Coulomb interaction between
+   static charges.** What appears as Coulomb in the engine comes from:
+   - `Σ|J|²` energy diagnostic (classical field energy × 2, Phase G)
+   - `solve_coulomb_poisson()` with hardcoded α (parametric insertion)
+   - `emergent_forces` toggle (Phase G geometric Coulomb)
+   None of these are in `S_E`.
+
+2. **Mechanism C ruled out at classical level.** Phase I Option 3's
+   `OPEN_GC_FROM_FIRST_PRINCIPLES.md` identified three candidate routes
+   to first-principles g_c: Dirac quantisation (A), lattice matching
+   (B), self-consistent fixed point (C). Phase I Item 3 Mechanism A was
+   ruled out via Wilson-loop topology. Phase J now rules out
+   Mechanism C at the classical level: no variational fixed point
+   exists because the action is ultralocal. Mechanism B (lattice-to-
+   continuum matching via quantum path integral) is the only remaining
+   route — and it's substantial.
+
+3. **The master quadratic's predictive content lives in the
+   motivic/algebraic structure**, NOT in any dynamical extremum of
+   S_E. Watson identity G*²/(2π), CM curve uniqueness, Moore-
+   neighbourhood integers — these are properties of the lattice's
+   number-theoretic scaffolding, visible independently of the action.
+
+### Deliverables
+
+- NEW: `docs/theory/10_eft_program/DERIV_PARTITION_FUNCTION_L2.md`
+- NEW: `scripts/proofs/partition_function_L2.py` (600 lines)
+- UPDATED: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` §2.3 (Mechanism C flagged RULED OUT)
+- UPDATED: `META_INDEX.md` (rows 10.12 and 10.13)
+
+### Honest takeaway
+
+Phase J closed a real gap in the project's self-understanding: the
+partition function calculation was cited as "Priority #1" for years
+and never done. Having done it, the result is negative-but-important:
+the analytical action doesn't contain Coulomb, so the "first-principles
+derivation of α from the lattice action" cannot work through the
+classical route the SPEC implies. The master quadratic's evidence for
+α = 1/137.036 is entirely algebraic/motivic, not dynamical. This is
+the tighter, more honest picture.
+
 ## Option 4 — Rational-integer fit-claim audit (April 19, 2026)
 
 Applied the same numerical rigidity method used on the master quadratic

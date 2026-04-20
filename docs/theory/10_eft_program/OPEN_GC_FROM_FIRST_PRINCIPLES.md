@@ -124,7 +124,7 @@ the ontic.h derivation chain has a candidate action. But the step
 from "classical equations of motion" to "partition function with
 measurable β" has not been rigorously taken.
 
-### 2.3 · Mechanism C — self-consistency / gap-equation fixed point
+### 2.3 · Mechanism C — self-consistency / gap-equation fixed point  **(RULED OUT at classical level, 2026-04-19)**
 
 If the bare coupling `g_c` flows under some RG transformation to a
 fixed point `g_c*`, and if the master quadratic is the self-consistency
@@ -144,12 +144,23 @@ numerically established. The identity `x_+ = 1/α` remains exact
 algebra, but its interpretation as a flow-to-fixed-point is
 [CONJECTURE].
 
-**Status:** [OPEN]. Would require either:
-- A rigorous proof that SOME sequence of finite-L gap equations
-  converges to the master quadratic as L → ∞ (not yet found), OR
-- Abandoning the "self-consistency" narrative and reading the master
-  quadratic as an algebraic coincidence supported by the dual-match
-  (x_+ ↔ 1/α, x_- ↔ N_c) of Phase I §2.5.
+**Further evidence (Phase J, 2026-04-19):** Explicit computation of the
+partition function on the L=2 torus
+(`DERIV_PARTITION_FUNCTION_L2.md`) shows the FTD analytical action is
+**ultralocal in the state field s**: under the Gauss constraint
+∇·J = s, the action `S_E = (c²/2)|∇J|² + g_c·s·(∇·J)` reduces to
+`S_E = (c²/2 + g_c)·N_manifested`, depending only on the COUNT of
+manifested voxels, not their placement. Two dipoles with different
+separations give identical S_E. Therefore **no classical variational
+principle on S_E can fix g_c** — any value gives the same extremum
+with the same charge count. Mechanism C requires a quantum path
+integral with fluctuation determinants to have any chance of
+producing a fixed point; the classical action alone cannot do it.
+
+**Status:** **RULED OUT at classical level.** Remains [OPEN] only if
+one constructs a full quantum lattice-gauge partition function
+(Z = ∫ DJ exp(−S_E) with fluctuation determinants, not classical
+extremisation). That's Mechanism B in disguise.
 
 ## 3 · What this means for the overall α claim
 
