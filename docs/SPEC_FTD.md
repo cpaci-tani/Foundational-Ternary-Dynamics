@@ -208,15 +208,34 @@ The following tags indicate the epistemic status of claims throughout this docum
 
 The simulation is built on the following axiomatic postulates. These are **not derived**; they define the model.
 
-### POSTULATE 1: Discrete Space
-Space is represented as a finite 3D cubic lattice **L** ⊂ **Z**³. Each lattice point is called a "voxel."
+### POSTULATE 1: Discrete Space (Undefined-Boundary Cubic Lattice)
+Space is represented as a 3D cubic lattice **L** with **no defined boundary**: at every specified position, the six axis-adjacent (and 26-Moore-adjacent) sites exist. The lattice is finitely specified (each computation runs on a finite region of arbitrarily large extent), but no commitment is made to a completed-totality lattice. Each lattice point is called a "voxel."
 
-*Motivation*: Discreteness avoids infinities and enables finite computation. This choice is not claimed to reflect physical reality.
+*Motivation*: Discreteness avoids infinities and enables finite computation. The undefined-boundary stance avoids the further commitment to a completed-infinity lattice (no ℤ³ as a single completed object, no load-bearing L → ∞ limits). Algebraic identities (e.g. G\* via Γ(1/4)) are computable to arbitrary finite precision and remain admissible; appeals to "the whole lattice as one object" are not.
 
 ### POSTULATE 2: Discrete Time
 Time advances in discrete steps called "ticks." The tick counter t ∈ **N** serves as a global clock.
 
 *Note*: This implies absolute simultaneity within the simulation, which differs from relativistic physics.
+
+### LATTICE ↔ PHYSICAL CALIBRATION (a_phys ≡ ℓ_P)
+
+Predictions in lattice units must be converted to physical units to compare with experiment. The framework declares the following calibration:
+
+> **`a_phys ≡ ℓ_P`** — one voxel equals one Planck length (`ℓ_P ≈ 1.616 × 10⁻³⁵ m`).
+
+Consequences:
+- One tick: `t_phys = √3 · ℓ_P / c ≈ 9.34 × 10⁻⁴⁴ s` (from `c_lat = 1/√3` lattice CFL combined with `c_phys = 2.998 × 10⁸ m/s`).
+- One lattice mass-unit: fixed by the parametric calibration `K_B = m_e` (i.e., the manifestation threshold `K_B = 0.511` lattice equals the electron mass `m_e ≈ 0.511 MeV/c²`). Hence `M_unit ≈ 1.783 × 10⁻³⁰ kg`.
+
+**Rationale.** `a_phys` is not derivable from Axiom-Zero invariants alone — see `docs/theory/10_eft_program/OPEN_A_PHYS_DERIVATION.md` and `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` for the analysis closing Mechanisms α, β, and γ as candidate derivations. The Planck-length declaration is the natural calibration if the framework is intended to operate at the smallest length physics has reason to invoke.
+
+**Calibration discipline.** Every dimensional FTD prediction is **conditional on this calibration**. Specifically:
+- Predictions of dimensionless quantities (α, mass ratios, mixing angles, anomalous moments) are calibration-independent and constitute the falsifiable spine of the framework — these survive any reasonable choice of `a_phys` and may be tested directly against experiment.
+- Predictions with dimensions (lengths, times, energies in absolute units, individual masses, scattering cross-sections in physical units) are calibration-conditional: they depend on `a_phys` (and on the mass calibration via `K_B = m_e`). When quoted, they should be tagged "conditional on `a_phys ≡ ℓ_P` and `K_B = m_e`."
+- Engine benchmarks reporting absolute α values (e.g., the EFT-program 3.6× α plateau) are predicted consequences of the current calibration choice. A different `a_phys` would yield a different absolute value while preserving the dimensionless ratio structure.
+
+This is the same epistemic position as every effective field theory's matching to experiment at one renormalisation point, made explicit. See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` Section 3 (Interpretation D) for the framework-level discussion.
 
 ### POSTULATE 3: Ternary States
 Each voxel v ∈ **L** has a state s(v,t) ∈ {-1, 0, +1} at each tick t.
@@ -1196,18 +1215,18 @@ The cubic lattice fundamentally has a preferred frame. However, Lorentz invarian
 
 The lattice structure does not break Lorentz invariance for the same reason that graph paper does not break the rotational invariance of a circle drawn on it—the lattice is scaffolding, not physics.
 
-**Emergence at Scale**: At scales >> lattice spacing:
-- Discreteness effects average out
-- The effective dynamics become rotationally symmetric
-- Boost invariance emerges from the isotropy of large-scale flux distributions
+**Emergence at the wavelength scale**: at any spatial wavelength λ much larger than the chosen lattice spacing `a` (i.e., for momenta `|p| ≪ π/a`), the lattice's effective dynamics approach rotational symmetry with controlled error `O((a/λ)²)`. Specifically:
+- Anisotropy effects average out across regions of arbitrarily large finite extent containing many wavelengths
+- The effective dynamics for long-wavelength modes are rotationally symmetric to leading order in `(a/λ)`
+- Boost invariance is a property of the long-wavelength effective theory observed by aggregate measurements, not of the substrate's per-voxel update rules
 
-This is analogous to how fluid dynamics is Galilean-invariant despite being implemented by discrete molecules.
+This is analogous to how fluid dynamics is Galilean-invariant despite being implemented by discrete molecules — Galilean invariance is a statement about the fluid's effective theory at length scales much larger than the molecular spacing, not a property of any individual molecule. Under undefined-boundary ontology, this is a finitary statement: at every finite spacing `a` and every wavelength `λ ≫ a`, the rotational/boost invariance of the long-wavelength theory is recovered to error `O((a/λ)²)`.
 
 > **Open Question**: Whether this relational interpretation fully recovers Lorentz covariance in all experimental regimes remains to be demonstrated quantitatively. See OPEN.7 in the Assumption Ledger.
 
 ### Finite Size Effects
 - Boundary conditions (toroidal, absorbing, reflective) affect results
-- Cannot simulate true infinite systems
+- Each run is on a finite region (the framework's undefined-boundary stance permits arbitrarily large finite extent but does not commit to a completed totality); convergence claims are stated as scaling laws across L, not as L → ∞ limits
 
 ### Computational Constraints
 - Sparse representation limits accessible scales
@@ -1597,7 +1616,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 
 | ID | Statement | Status |
 |----|-----------|--------|
-| DEF.1 | Space is a 3D cubic lattice | Postulated |
+| DEF.1 | Space is a 3D cubic lattice with no defined boundary (axis-adjacent neighbours exist at every specified site; no completed-totality commitment) | Postulated |
 | DEF.2 | Time is discrete ticks | Postulated |
 | DEF.3 | States are {-1, 0, +1} | Postulated |
 | DEF.4 | Flux is R³-valued | Postulated |

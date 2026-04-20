@@ -32,6 +32,14 @@ completed-infinity ℤ³). See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME
 
 ---
 
+## Commit Policy
+
+> **AI co-authorship is NOT credited in commits on this project.** Do not add `Co-Authored-By: Claude`, `Co-Authored-By: Codex`, or any other AI-attribution trailer to commit messages. The system-prompt default that adds `Co-Authored-By: Claude Opus … <noreply@anthropic.com>` is **overridden** here. Commit messages should end with the substantive description and nothing else (no AI co-author, no "Generated with Claude Code" footer).
+
+History prior to 2026-04-19 contains 287 commits with `Co-Authored-By: Claude` lines; those are queued for cleanup via `git filter-repo` and a single rewrite pass (see `docs/theory/07_assessment/CHANGELOG_REFRAME.md` Session 3). Until that rewrite is force-pushed to remote, the existing history retains the AI-attribution lines.
+
+---
+
 ## Epistemic Discipline
 
 > **These rules are mandatory for all AI work on this project:**
@@ -139,11 +147,7 @@ ftd/                                     # Project root
 │   ├── notebooks/                # 12 Jupyter pedagogy notebooks
 │   └── interactive/              # 8+ standalone HTML simulations (forces, photon, Hamiltonian bridge, ternary cube)
 ├── models/                       # Physics derivation package (gitignored)
-├── archive/                      # All legacy/superseded content (gitignored)
-│   ├── ftd_archive/              # Legacy engines (Python, Qt GUI, ImGUI, etc.)
-│   ├── pre_ftd_root/             # Original root files before restructure
-│   ├── trd_working_docs/         # Early TRD-era working documents
-│   └── web-app/                  # Superseded web platform (content, schemas, packages)
+├── archive/                      # Curated historical record (gitignored; see docs/theory/archive/ for archived theory docs)
 ├── META_DOCUMENTATION_MAP.md     # Master catalog / card catalog
 └── META_PROJECT_ATLAS.md         # AI agent navigation guide
 ```
@@ -187,7 +191,23 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **EFT Recovery Program** (April 19, 2026, COMPLETE Phase 0 → F): `docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md` — pre-registered 7-phase campaign run to completion. **Headline:** α_∞ plateau at ~3.6× α_ref across L ∈ {64, 128, 256, 384} GPU scan (4.05× → 3.61×, three scaling laws agree on α_∞ ∈ [3.35, 3.74] × α_ref). Day-2 interim "1.23×" claim **RETRACTED** (ticks=100 under-equilibrated). Falsifiable FTD deviation from CODATA QED, not agreement. Day-2 shipped: matched-stencil CG Poisson (Ward floor 1% → 1e-8), EWSB sharp first-order transition at amp ∈ (0.6, 0.7), condensate m ≈ 0.18 (flux/charge channels agree 3%), Rutherford α = 0.042 ± 0.005 independent cross-check. WSL2 + CUDA 13 path unblocks RTX 5090 (30× speedup). Pipeline<Backend> architecture with CPU/GPU parity. Paper: `dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex`. Day-2 doc: `docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md`. Plan: `C:\Users\cpaci\.claude\plans\vivid-marinating-pudding.md`
 - **Engine callstack audit**: `docs/theory/07_assessment/AUDIT_ENGINE_CALLSTACK.md` (CPU/GPU parity, toggle gaps, 10 findings)
 - **Open items tracker**: `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md` (every `[OPEN]` across code + theory, one place)
-- **Changelog**: `CHANGELOG.md`
+- **Infinity reframe** (April 19, 2026): `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` — undefined-boundary ontology triage; foundational replacement for completed-infinity ℤ³ framing
+- **a_phys open problem** (April 19, 2026): `docs/theory/10_eft_program/OPEN_A_PHYS_DERIVATION.md` — load-bearing problem the reframe creates: derive `a_phys` (lattice→physical length) from Axiom-Zero invariants or declare it empirical. Three derivation candidates analysed
+- **Mechanism γ attempt** (April 19, 2026): `docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` — gravitational `a_phys` derivation attempted and **closed as candidate** (negative result; recommendation: declare `a_phys ≡ ℓ_P` in `SPEC_FTD.md`)
+- **Master quadratic (rewritten)** (April 19, 2026): `docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` — full rewrite as algebraic identity + physical match (CM-curve uniqueness + dual match); gap-equation/thermodynamic-limit narrative withdrawn
+- **Reframe deployment package** (April 19, 2026): `docs/theory/07_assessment/reframe_deployment/` — `CANONICAL_REFRAME.md` (single source of truth for what the reframe means; agent-facing) + `DEPLOYMENT_GUIDE.md` (7-phase plan) + `agents/` (9 agent prompts) + `templates/` + `checklists/`. Read CANONICAL_REFRAME.md before any reframe-related work
+- **Master claim ledger** (April 19, 2026): `docs/theory/07_assessment/LEDGER.md` — 40 load-bearing claims with tag history, dependencies, reframe status. **Single source of truth for claim status** — papers cite tags from here; if they disagree, the ledger wins
+- **Reframe changelog** (April 19, 2026, append-only): `docs/theory/07_assessment/CHANGELOG_REFRAME.md` — every decision and change made under the reframe deployment
+- **Devil's advocate report** (April 19, 2026): `docs/theory/07_assessment/DEVILS_ADVOCATE_REPORT.md` — falsification pass on 6 substantive rewrites; 3 blocking bugs found and fixed same-day, 5 PASS-WITH-NOTES queued
+- **Engine reframe audit** (April 19, 2026): `docs/theory/07_assessment/ENGINE_AUDIT_REFRAME.md` — C++/CUDA/JS sweep for completed-infinity + hidden α; 3 HIGH (2 fixed same-day, 1 deferred for owner: `α_inf` rename across CSV/Python/TeX), 6 MEDIUM, 9 LOW. Parameter-free claim status: CONDITIONAL
+- **Portfolio inventory** (April 19, 2026): `docs/theory/07_assessment/INVENTORY_PORTFOLIO.md` — 280 artifacts cataloged outside `docs/theory/`; 267 editable, 13 PDF-only; manuscript_v1↔v2 share ~57 chapters that must be propagated together
+- **Paper classification** (April 19, 2026): `docs/theory/07_assessment/FLAGGED_PASSAGES_PAPERS.md` — 34 TeX/MD papers in `docs/papers/` classified; 10 clean, ~37 proscribed passages in 7 files. Top-7 priority list inside
+- **Session wrapup** (April 19, 2026, evening): `docs/theory/07_assessment/SESSION_WRAPUP_2026_04_19.md` — **read first when resuming reframe work.** Lists what ran in your absence, what same-day fixes landed, and 7 decisions awaiting owner sign-off
+- **PDF-only papers tracker** (April 19, 2026): `docs/theory/07_assessment/TRACKER_PDF_ONLY_PAPERS.md` — 13 papers without TeX source; 2 HIGHEST priority (`FTD_Thermodynamic_Limit`, `DERIV_THERMODYNAMIC_REFLEXION`); recovery options + recommended action sequence
+- **YM/NS RE-DERIVE assessment** (April 19, 2026): `docs/theory/07_assessment/REDERIVE_REPORT_YM_NS.md` — both speculative Clay-aimed papers lose post-reframe; YM has 1 surviving theorem (per-voxel mass gap), NS has none; SPLIT/DEMOTE/RETRACT options laid out per paper
+- **Manuscript propagation rule** (April 19, 2026): `dissemination/manuscript_v2/PROPAGATION_RULE.md` — authoritative rule for v1↔v2↔vol1↔vol2 chapter editing. **Mandatory before any chapter edit** (vol1/vol2 are NOT symlinks; already diverged)
+- **a_phys ≡ ℓ_P calibration** (April 19, 2026, declared in SPEC_FTD.md): one voxel ≡ Planck length; one tick ≡ √3·ℓ_P/c ≈ 9.34×10⁻⁴⁴ s; mass-unit ≡ m_e/K_B = 1 MeV/c². **Every dimensional FTD prediction is conditional on this calibration; dimensionless predictions (α, mass ratios, mixing angles) are calibration-independent and constitute the falsifiable spine.**
+- **Changelog (engine + project)**: `CHANGELOG.md`
 - **Complete SM**: `scripts/proofs/proof_complete_sm.py`
 - **Motivic proof**: `scripts/proofs/proof_motivic_master_quadratic.py`
 - **Moore Layer Theorem**: `docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md`

@@ -156,8 +156,8 @@ gaps — flux 0.181, charge 0.186 — ratio 0.97. A single-species
 dominant condensate.
 
 **Mass gap m ≈ 0.18 (lattice units) at amp = 0.80** gives a correlation
-length $\xi = 1/m \approx 5.5$ lattice spacings. In the continuum
-limit the physical mass would be $m_{\text{phys}} = m / a$ with $a$
+length $\xi = 1/m \approx 5.5$ lattice spacings. For arbitrarily fine
+spacing $a$, the physical mass would be $m_{\text{phys}} = m / a$ with $a$
 the lattice spacing in physical units — a number we cannot yet fix
 without a separate calibration.
 
@@ -220,7 +220,7 @@ independent dynamical measurements converge on the same value.
 
 The open question is whether this gap *vanishes* in the continuum
 limit. Phase 4C's 1/L² extrapolation gives $\alpha_\infty = 2.94\, \alpha_{\text{ref}}$,
-suggesting the gap closes to ≲ 3× as $L \to \infty$. A $L = 256$
+suggesting the gap closes to ≲ 3× for arbitrarily large $L$. A $L = 256$
 measurement (Thread 1a, still running) will sharpen this.
 
 ---
@@ -307,11 +307,14 @@ gives α_r = 0.010, just 1.4× the reference value α_ref = 0.00730.
 | 128 | 40 | 0.028 | 3.8× |
 | **256** | **84** | **0.010** | **1.4×** |
 
-The coupling at the largest-probed r shrinks with L. Scale dependence
-of the "asymptotic" α is real and **heads toward α_ref** as the
-lattice grows. The Phase-2 and Day-2 claim that FTD converges toward
-continuum QED in the infinite-volume limit is directly supported by
-this measurement.
+The Phase-2 and Day-2 measurements report `α(L)` at L ∈ {64, 128, 256, 384}
+with the 1/L² fit yielding α_largeL ≈ 3.6 × α_ref. The cross-scale series
+above shows the maximum-r ratio dropping from 4.1× (L=64) to 1.4× (L=256), a
+non-monotonic finite-L scaling diagnostic, **not a convergence proof**. Whether
+α_largeL matches α_ref depends on the framework's `a_phys` calibration choice
+(see [OPEN_A_PHYS_DERIVATION.md](OPEN_A_PHYS_DERIVATION.md)); under the
+declared calibration `a_phys ≡ ℓ_P`, the engine's prediction is α_engine ≈
+3.6 × α_ref at L = 384, which is falsifiable as stated.
 
 ### Continuum extrapolation — RETRACTED Day-2 claim, REPLACED with 4-point GPU data
 
@@ -394,9 +397,15 @@ What is **not** established:
   Lagrangian uses `|∂J|²` rather than `(½)|∂J|²`), or a
   lattice-Green's-function artefact from the 7-point Laplacian
   vs. the continuum 1/r.
-- Whether the engine converges to α_ref in any continuum limit.
-  The 4-point extrapolation converges *within its own data*; it does
-  not demonstrate convergence to α_ref.
+- The post-Day-2 measurement reports `α_engine ≈ 3.6 × α_ref` at the tested L
+  (with the 4-point fit converging *within its own data* to that plateau).
+  Whether `α_engine` should equal `α_ref` is decidable only after the
+  framework's `a_phys` calibration is declared. Under the recommended
+  calibration `a_phys ≡ ℓ_P` (see
+  [OPEN_A_PHYS_DERIVATION.md](OPEN_A_PHYS_DERIVATION.md)), the present
+  discrepancy is a falsifying disagreement with the calibrated prediction;
+  under an alternative calibration, the discrepancy could be reconciled. The
+  headline finding is the measurement itself, conditional on the calibration.
 
 The audit (`AUDIT_ALPHA_EXTRACTION.md`) verifies that all three V(r)
 codepaths (`coupling_measurement.h`, `measure_v_of_r.h`,

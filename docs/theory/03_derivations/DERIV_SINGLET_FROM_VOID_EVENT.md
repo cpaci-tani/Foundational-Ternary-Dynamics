@@ -65,7 +65,7 @@ $$h_A + h_B = 0.$$
 
 $$\mathbf{L}_A + \mathbf{L}_B = 0.$$
 
-**Proof.** The FTD action is built from rotational scalars (|J|², ∇·J, |∇×J|²); by Noether's theorem applied to the continuum limit, total angular momentum is conserved. The vacuum has J ≡ 0, so L_tot(t_0) = 0; hence L_tot(t_0 + 1) = 0. Since only A and B are affected, L_A + L_B = 0. For the spin-1/2 sector selected by Lemma 2, this forces opposite spin projections along *every* axis. ∎
+**Proof.** The FTD action is built from rotational scalars (|J|², ∇·J, |∇×J|²); by Noether's theorem applied to the long-wavelength effective theory (arbitrarily fine spacing a, with rotational invariance recovered to O(a^2)), total angular momentum is conserved. The vacuum has J ≡ 0, so L_tot(t_0) = 0; hence L_tot(t_0 + 1) = 0. Since only A and B are affected, L_A + L_B = 0. For the spin-1/2 sector selected by Lemma 2, this forces opposite spin projections along *every* axis. ∎
 
 **Caveat.** The "intrinsic spin from local curl ∇ × J at the manifestation site" picture is a [SELECTION] interpretation. What is rigorously [THEOREM] is the *additive* conservation of total angular momentum. The two together give the lemma as stated.
 

@@ -2,28 +2,8 @@
 
 ## Everything from State and Position
 
-**Date:** March 16, 2026
-**Last reframed:** April 19, 2026 (undefined-boundary ontology pass)
-**Status:** Foundational axiom -- proposed replacement for the five postulates
-**Dependencies:** SPEC_FTD.md, FOUND_SELF_REFERENTIAL_CLOSURE.md, FOUND_EMERGENT_TIME_GRAVITY.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md, DERIV_WATSON_GSTAR_IDENTITY.md, **AUDIT_INFINITY_REFRAME.md**
-
----
-
-## Reframe Notice (2026-04-19)
-
-This document was originally written under a **completed-infinity** reading of the position property: "x ∈ ℤ³, the infinite cubic lattice as a single completed totality." Under that reading, several arguments below appealed to "the thermodynamic limit" or "the L → ∞ limit" of finite computations — most prominently the master-quadratic discussion in §3.2 and §4.2.
-
-The framework now adopts an **undefined-boundary** ontology (see [AUDIT_INFINITY_REFRAME.md](../07_assessment/AUDIT_INFINITY_REFRAME.md)):
-
-> The lattice is a cubic graph with **no defined boundary**. At every specified position, the six axis-adjacent (and 26 Moore-adjacent) sites exist. No claim is made that the lattice is a completed infinite totality, and no derivation may invoke a global "L → ∞ limit" as a load-bearing step.
-
-What this preserves vs. changes:
-
-- **Preserved:** the algebraic identities (G\* = √2·Γ(1/4)²/(2π); G\*²/(2π) = Watson I_1 via Chowla-Selberg; the master quadratic polynomial and its roots; D = 3 from \|Aut(E)\|² = 2^D·(D−1)!; Moore-neighborhood combinatorics; charge conservation per tick; and every claim that holds at every finite L). These are computable to arbitrary precision without invoking completion.
-- **Changed:** appeals to "the master quadratic is the thermodynamic limit of FTD's gap equation" (§4.2) are **retracted**. Phase I (the gap-equation convergence claim failed empirically) and Phase J (the L=2 partition function carries no master-quadratic signature, hence the action is ultralocal at finite L) jointly close the limit-route permanently. The master quadratic is now an **algebraic object** whose roots match α and N_c via structural uniqueness; the physical identification is [STRONGLY MOTIVATED CONJECTURE], not [THEOREM].
-- **Editorial:** "x ∈ ℤ³" is read throughout as a shorthand for "x is an integer-coordinate site of the undefined-boundary cubic graph"; it is not an ontological commitment to ℤ³ as a completed totality.
-
-Inline reframe pointers appear at §3.2, §4.2, §4.3 below.
+**Status:** Foundational axiom — proposed replacement for the five postulates.
+**Dependencies:** SPEC_FTD.md, FOUND_SELF_REFERENTIAL_CLOSURE.md, FOUND_EMERGENT_TIME_GRAVITY.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md, DERIV_WATSON_GSTAR_IDENTITY.md, AUDIT_INFINITY_REFRAME.md.
 
 ---
 
@@ -34,7 +14,7 @@ FTD currently rests on five postulates: discrete space, discrete time, ternary s
 > **Axiom Zero.** Reality consists of voxels. Each voxel has exactly two irreducible properties:
 >
 > 1. **State:** s in {-1, 0, +1}
-> 2. **Position:** x in Z^3
+> 2. **Position:** x is an integer-coordinate site of the cubic lattice with no defined boundary; at every specified x, the six axis-adjacent (and 26-Moore-adjacent) sites exist. No claim is made that the lattice is a completed totality.
 
 Everything else -- G\*, the fine structure constant, time, gravity, the Standard Model -- is a consequence of arranging ternary integers on a cubic lattice. There are no hidden parameters, no additional structure, no external inputs. The two properties exhaust the ontology.
 
@@ -50,10 +30,10 @@ A voxel is an entity with two properties and no others:
 
 | Property | Domain | What it specifies |
 |----------|--------|-------------------|
-| **State** | s in {-1, 0, +1} | What the voxel IS (its ternary identity) |
-| **Position** | x is an integer-coordinate site of the undefined-boundary cubic graph (informally: x in Z^3, with no claim that Z^3 is a completed totality) | Where the voxel IS, relative to its neighbors and to other specified voxels |
+| **State** | s ∈ {−1, 0, +1} | What the voxel IS (its ternary identity) |
+| **Position** | x is an integer-coordinate site of the cubic lattice; at every specified x the six axis-adjacent sites x ± e_i exist | Where the voxel IS, relative to its neighbors and to other specified voxels |
 
-**Position, finitarily stated:** at every specified position x, the six axis-adjacent sites (x ± e_i, i = 1, 2, 3) exist. By induction, every site reachable from x by a finite chain of axis-adjacency steps exists. No claim is made that the set of all such sites is a completed totality; the lattice has no defined boundary, and computations are performed on arbitrarily large finite regions. (See Reframe Notice above and AUDIT_INFINITY_REFRAME.md.)
+The position clause defines an **undefined-boundary cubic graph**: at every specified position, axis-adjacent (and by composition, 26-Moore-adjacent) sites exist. The lattice has no defined edge and no completed-totality. Arbitrarily large finite regions are admissible; "the whole lattice" as a single object is not. Algebraic objects defined in closed form (e.g., G\*, the Watson integrals) are admissible; load-bearing appeals to an L → ∞ limit are not.
 
 The word "irreducible" means: neither property can be derived from the other or from anything more fundamental. State is not a function of position. Position is not a function of state. Both are primitive.
 
@@ -65,7 +45,7 @@ The five postulates of SPEC_FTD.md reduce to Axiom Zero as follows:
 
 | Old Postulate | Content | Status under Axiom Zero |
 |---------------|---------|------------------------|
-| P1: Discrete space (cubic lattice, undefined boundary) | Space is a cubic lattice with no defined edge; axis-adjacent neighbors exist at every specified site | **The position property.** Integer-coordinate sites of the cubic graph are the domain of position; no completed-totality commitment to Z^3 (see Reframe Notice). |
+| P1: Discrete space (cubic lattice, undefined boundary) | Space is a cubic lattice with no defined edge; axis-adjacent neighbors exist at every specified site | **The position property.** Integer-coordinate sites of the cubic graph are the domain of position. |
 | P2: Discrete time (ticks) | A global clock advances in integer steps | **Emergent.** See Section 3.1. |
 | P3: Ternary states | s in {-1, 0, +1} | **The state property.** |
 | P4: 26-neighbor Moore | Updates depend on 26 nearest neighbors | **Consequence of Z^3 geometry.** See Section 2.3. |
@@ -127,11 +107,11 @@ This makes {-1, 0, +1} the unique "balanced ternary digit." [THEOREM]
 
 ### 2.2 From Position Alone: The Geometry of the Cubic Lattice
 
-The position structure — the cubic graph of integer-coordinate sites with axis-adjacency, taken with no claim of global completion — has geometric content that does not depend on state. (Where the legacy phrase "the position space Z^3" appears below, read it as shorthand for this undefined-boundary cubic graph; see Reframe Notice.)
+The position structure — the cubic graph of integer-coordinate sites with axis-adjacency — has geometric content that does not depend on state.
 
 **(a) The point group is O_h** [THEOREM]
 
-The point group at any site (symmetries fixing that site and permuting its axis-adjacent neighbors) is the octahedral group O_h, which has |O_h| = 48 elements. This is a finite, local statement about a single vertex's stabilizer in the cubic graph; it does not require a completed lattice. O_h = S_4 x Z_2, the symmetric group on 4 elements (permutations of body diagonals) times the inversion.
+The point group at any site (symmetries fixing that site and permuting its axis-adjacent neighbors) is the octahedral group O_h, |O_h| = 48. This is a local statement about a single vertex's stabilizer in the cubic graph. O_h = S_4 × Z_2, the symmetric group on 4 elements (permutations of body diagonals) times the inversion.
 
 **(b) The Z_4 symmetry and the lemniscatic modulus** [THEOREM]
 
@@ -255,11 +235,9 @@ where x_+ and x_- are the roots of the master quadratic (the self-consistent cou
 
 **Honest assessment:** This is one of FTD's more speculative claims. Standard physics does not derive time from energy processing; it treats time as a parameter. FTD's claim that time IS processing is an interpretive choice, not a derivation.
 
-### 3.2 The master quadratic and its three regimes [THEOREM given Steps 6-7 of the chain]
+### 3.2 The master quadratic and its three regimes [THEOREM for the algebra; SELECTION for the physical identification]
 
-**Reframe note (2026-04-19):** the polynomial below is now treated as a **pure algebraic object** — its coefficients are computable to arbitrary finite precision from G\* = √2·Γ(1/4)²/(2π), and its roots follow from the quadratic formula. The original framing of this polynomial as "the gap equation of FTD's lattice in the thermodynamic limit" is **retracted** (see §4.2 below and AUDIT_INFINITY_REFRAME.md): Phase I showed the gap-equation convergence claim failed, and Phase J showed the L=2 partition function carries no master-quadratic signature. The dual match (x₊ ↔ 1/α, x₋ ↔ N_c) plus CM-curve uniqueness (d = −4 is unique among class-number-1 fields) are the evidence for the physical identification, which is [STRONGLY MOTIVATED CONJECTURE], not [THEOREM]. The algebra of the polynomial and its roots is unchanged.
-
-The self-consistency (gap) equation of the lattice is:
+The master quadratic is a **pure algebraic object**. Its coefficients are computable to arbitrary finite precision from G\* = √2·Γ(1/4)²/(2π); its roots follow from the quadratic formula. No limit and no dynamics are invoked. The form of the equation is:
 
 $$x^2 = 16G^{*2}(x - G^*) \quad \Leftrightarrow \quad x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
@@ -280,7 +258,7 @@ The roots are:
 
 | Step | Content | Status |
 |------|---------|--------|
-| 0 | Cubic lattice with no defined boundary (Axiom Zero, position property; legacy "Z^3" framing reframed 2026-04-19) | [AXIOM] |
+| 0 | Cubic lattice with no defined boundary (Axiom Zero, position property) | [AXIOM] |
 | 1 | O_h point group, Z_4 planar symmetry | [THEOREM] |
 | 2 | Watson's BCC integral I_1 = Gamma(1/4)^4/(4pi^3) | [THEOREM] |
 | 3 | Lemniscatic modulus k = 1/sqrt(2) forced by Z_4 | [THEOREM] |
@@ -335,11 +313,11 @@ This objection is correct and important. Self-consistency alone does not validat
 
 However, the objection misidentifies the claim. FTD does not say "our theory is self-consistent, therefore it is correct." FTD says:
 
-1. The Z^3 lattice with ternary states has a **unique** self-consistent coupling, given by the fixed point of the gap equation.
-2. This unique coupling numerically agrees with alpha to 1.26 ppm.
+1. The cubic graph with ternary states produces an **algebraically unique** polynomial — the master quadratic of §3.2 — whose larger root is x₊ = 137.036.
+2. This root numerically agrees with 1/α to 1.26 ppm.
 3. No free parameters were adjusted to achieve this agreement.
 
-The strength of the claim is not self-consistency per se, but the **combination** of uniqueness and numerical agreement with zero free parameters. Newtonian gravity is self-consistent but has G as a free parameter. Ptolemaic astronomy is self-consistent but has adjustable epicycle radii. FTD's self-consistent fixed point is unique (for given D and |S|) and happens to match experiment.
+The strength of the claim is not "fixed point of a dynamical gap equation" — that framing has been retracted (see §4.2 and `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`). The strength is the **combination** of: a polynomial algebraically determined by the cubic-graph invariants {G\*, 16}, with zero adjustable coefficients (both `G*` and `16` are finite-combinatorial); the dual numerical match to two unrelated physical constants (1/α and N_c); and structural uniqueness across class-number-1 CM curves. Newtonian gravity is self-consistent but has G as a free parameter; FTD's polynomial has none, and uniquely matches both targets among comparable algebraic objects.
 
 **Epistemic status of this response:** [SELECTION]. The argument is sound but not conclusive. The numerical agreement could be coincidental. The decisive test is the partition function computation (see Section 4.2). Until that computation is complete, the agreement between x_+ and 1/alpha is a striking observation, not a proof.
 
@@ -363,20 +341,16 @@ The honest status:
 
 **What would resolve this:** The partition function computation has been attempted on the 2x2x2 torus (proof_partition_function_decisive.py) and yields no self-consistency condition matching the master quadratic. The Gauss-constraint approach gives a trivial Green's function (G_charge = 1/c^2 = 3), and the free energy F(g^2) is monotonically decreasing with no extremum.
 
-**Retraction (2026-04-19): the "thermodynamic limit property" framing is withdrawn.**
+**The master quadratic is an algebraic identity, not a dynamical limit.**
 
-The original version of this section argued that the master quadratic was the "thermodynamic limit property" of FTD's lattice — that finite-torus gap equations would converge to it as L grew. Three subsequent results jointly close that route:
+The polynomial `x² − 16 G*² x + 16 G*³ = 0` is built from a single quantity, G\* = √2·Γ(1/4)²/(2π), computable to arbitrary precision. The coefficient 16 has two algebraic origins — `|Aut(E)|² = 4² = 16` for the CM curve E: y² = x³ − x, and `z_BCC × 2 = 8 × 2 = 16` (BCC coordination times non-void ternary states; FOUND_DIMENSIONAL_COUNTING.md §5.4) — both finite-combinatorial. The roots x₊ = 137.036 and x₋ = 3.024 follow by the quadratic formula.
 
-- **Phase I** (`AUDIT_MASTER_QUADRATIC.md`, Item 1): the claimed numerical convergence of the finite-torus gap equation to the master quadratic does **not** hold. The earlier `proof_gap_equation_scaling.py` was found to be misreading its own output; the corrected scan shows no convergence to (137.036, 3.024).
-- **Phase J** (`DERIV_PARTITION_FUNCTION_L2.md`): an explicit calculation of the L=2 partition function (8 voxels, 1107 neutral configurations) shows the action is **ultralocal at finite L** and carries no master-quadratic signature. The "self-consistency condition" the polynomial was supposed to be the limit of does not exist as a finite-L object that grows toward the polynomial.
-- **AUDIT_INFINITY_REFRAME.md** (foundational): "L → ∞" is no longer a well-posed step in any FTD derivation. The framework is **undefined-boundary**, not completed-infinity. A "thermodynamic limit property" cannot be load-bearing because the limit it appeals to is not part of the ontology.
+The polynomial is **not** the L → ∞ limit of any finite-L self-consistency equation:
+- An explicit finite-L gap-equation scan (`AUDIT_MASTER_QUADRATIC.md`, Item 1) does not converge to (137.036, 3.024).
+- An explicit L=2 partition-function calculation (`DERIV_PARTITION_FUNCTION_L2.md`) shows the action is ultralocal at finite L and carries no master-quadratic signature.
+- The undefined-boundary ontology (`AUDIT_INFINITY_REFRAME.md`) does not admit "L → ∞" as a load-bearing step.
 
-**Replacement reading.** The master quadratic `x² − 16 G*² x + 16 G*³ = 0` is a **pure algebraic object**:
-- Its coefficients are computable from G\* to arbitrary finite precision (G\* = √2·Γ(1/4)²/(2π); Chowla-Selberg gives G\*²/(2π) = Watson I₁ exactly).
-- The coefficient 16 has two algebraic readings — `|Aut(E)|² = 4² = 16` for the CM curve E: y² = x³ − x, and `z_BCC × 2 = 8 × 2 = 16` (BCC coordination times non-void ternary states; FOUND_DIMENSIONAL_COUNTING.md §5.4). Both are finite-combinatorial.
-- The roots x₊ = 137.036 and x₋ = 3.024 are then determined by the quadratic formula.
-
-The empirical content — that x₊ matches 1/α to 1.26 ppm and x₋ matches N_c to 0.8% — remains striking, and is reinforced by **CM-curve structural uniqueness** (the discriminant d = −4 is unique among class-number-1 imaginary quadratic fields in giving this match; see Option 3 results). The physical identification x₊ ↔ 1/α, x₋ ↔ N_c is therefore [STRONGLY MOTIVATED CONJECTURE], anchored on the dual match plus structural uniqueness, **not** on a thermodynamic-limit derivation. This is a clean reframe, not a weakening: pre-reframe the limit-language was dressing what was already, in fact, an algebraic identification.
+What the polynomial is: an algebraic object that the lattice produces from local invariants. What it predicts: x₊ matches 1/α to 1.26 ppm and x₋ matches N_c to 0.8%. The physical identification x₊ ↔ 1/α, x₋ ↔ N_c rests on (i) the dual match across two unrelated physical constants from one polynomial, and (ii) the structural uniqueness of E among class-number-1 CM curves in giving this match (Option 3 scan). Both are evidential. Neither is a dynamical derivation. The identification is [STRONGLY MOTIVATED CONJECTURE].
 
 **Update (April 2026):** The coefficient 16 is now [THEOREM] via FOUND_DIMENSIONAL_COUNTING.md Section 5.4: n_DOF = z_BCC x 2 = 8 x 2 = 16 (BCC coordination number times non-void ternary states). This derivation is complementary to the |Aut(E)|^2 = 16 route from the CM curve's automorphism group. The finite-torus DOF discrepancy (14 vs 16 in Coulomb gauge) remains a separate technical issue documented in DERIV_WATSON_GSTAR_IDENTITY.md Section 4.2.
 
@@ -393,13 +367,13 @@ What can be said:
 2. The Watson integral I_1 characterizes the BCC sublattice's self-energy, which enters through the Green's function, not through the dynamical stencil. The propagator (inverse of the lattice Laplacian) "sees" all lattice sites, not just those in the stencil.
 3. The Z_4 symmetry that selects the lemniscatic modulus is a property of the lattice planes, not of any particular stencil.
 
-The deeper resolution (reframed 2026-04-19): G\* is **not** a "thermodynamic limit quantity." It is an **algebraic identity**:
+The deeper resolution: G\* is an **algebraic identity** of the cubic graph,
 
-$$G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi}, \qquad \frac{G^{*2}}{2\pi} = I_1 = \frac{\Gamma(1/4)^4}{4\pi^3}$$
+$$G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi}, \qquad \frac{G^{*2}}{2\pi} = I_1 = \frac{\Gamma(1/4)^4}{4\pi^3},$$
 
-— computable to arbitrary finite precision. The Chowla–Selberg connection between gamma values and lattice periods (which makes I₁ a closed-form expression in Γ(1/4)) does not require the BCC sublattice to be "completed to infinity"; it is a relation between mathematical objects that exist algebraically. The Z_4 planar symmetry, the lemniscatic modulus, and the CM curve E: y² = x³ − x are all finite-combinatorial / algebraic facts about the local cubic geometry.
+with both sides expressible in closed form via Γ(1/4) (Chowla–Selberg). The Z_4 planar symmetry, the lemniscatic modulus, and the CM curve E: y² = x³ − x are all finite-combinatorial / algebraic facts about the local cubic geometry; none requires the lattice to be a completed totality.
 
-So G\* characterizes the lattice's **algebraic-geometric structure**, not its "infinite-limit behavior." The 18-point dynamical stencil determines HOW information propagates; the Z_4 symmetry and Watson I₁ are properties of the cubic graph that hold regardless of how large a finite region one considers and regardless of which stencil is used for dynamics.
+G\* characterizes the lattice's **algebraic-geometric structure**. The 18-point dynamical stencil determines HOW information propagates; the Z_4 symmetry and Watson I_1 are properties of the cubic graph that hold regardless of which stencil is used for dynamics and at every finite extent at which the dynamics are run.
 
 The BCC corners do not need to participate in the wave equation for G\* to govern the physics, just as π does not need to appear in the equation of motion for it to set the geometry. G\* is the lattice's structural constant; the stencil is its dynamical implementation. [SELECTION — the structural/dynamical distinction is argued, not proven]
 
@@ -522,7 +496,7 @@ This claim is:
 
 ### The one sentence summary
 
-A voxel has a state and a position; from these, and nothing else, the geometry of Z^3 forces the lemniscatic constant G\*, which through a self-consistent gap equation yields x_+ = 137.036, which FTD identifies with 1/alpha -- but the complete derivation awaits the resolution of the coefficient-16 problem and the physical identification mechanism.
+A voxel has a state and a position; from these, and nothing else, the local geometry of the cubic graph (with no defined boundary) determines the lemniscatic constant G\* and the integer 16, hence the master quadratic algebraically; its larger root x₊ = 137.036 matches 1/α to 1.26 ppm and is identified with 1/α as a [STRONGLY MOTIVATED CONJECTURE] — anchored on the dual root match (x₋ ≈ N_c) and on CM-curve structural uniqueness — not on a thermodynamic-limit derivation, which has been retracted.
 
 ---
 

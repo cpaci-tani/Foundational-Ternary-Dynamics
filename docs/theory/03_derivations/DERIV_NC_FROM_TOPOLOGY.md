@@ -71,7 +71,7 @@ This is the lattice realization of π_1(SU(3)/Z_3) = Z_3: three axes, three clas
 
 > N_c (Wilson loop) = 3.
 
-The construction is honest only insofar as compact lattice gauge theory of the BCC sublattice recovers SU(3) gauge theory in its continuum limit. That the BCC sublattice is the *correct* lattice realization of SU(3) is the content of DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md (BMS-4) and is [THEOREM] for the counting, [SELECTION] for the named gauge group.
+The construction is honest only insofar as compact lattice gauge theory of the BCC sublattice recovers SU(3) gauge-theory observables for arbitrarily fine spacing a, with the standard error rate O(a^2). That the BCC sublattice is the *correct* lattice realization of SU(3) is the content of DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md (BMS-4) and is [THEOREM] for the counting, [SELECTION] for the named gauge group.
 
 ### Route 4: Master Quadratic + Integer Quantization (Arithmetic) [THEOREM + STRUCTURAL ARGUMENT]
 
@@ -162,7 +162,7 @@ This is a strict improvement over the previous status. We have moved the [SELECT
 | NCT-7 | floor(x_-) = 3 is forced by integer quantization of color | [THEOREM] (structural) |
 | NCT-8 | Four independent routes return the same integer 3 (over-determination) | [THEOREM] |
 | NCT-9 | **N_c = 3 as a lattice topological invariant** | **[THEOREM]** |
-| NCT-10 | This integer is identically QCD's color number | [SELECTION] (Wilson continuum limit) |
+| NCT-10 | This integer is identically QCD's color number | [SELECTION] (Wilson, fine-spacing recovery) |
 
 ---
 

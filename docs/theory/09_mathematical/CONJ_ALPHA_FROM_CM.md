@@ -92,12 +92,12 @@ The quadratic's specific structure — with constant term = (linear coefficient)
 $$x = |E(\mathbb{Q})_{\text{tors}}|^2 \cdot G^{*2} \left(1 - \frac{G^*}{x}\right)$$
 
 **This functional form has not been derived from either:**
-1. The partition function of a lattice field theory on ℤ³ (attempted and failed — self-energy is constant and x-independent on finite tori), or
+1. The partition function of a lattice field theory on a cubic graph with no defined boundary (attempted and failed — self-energy is constant and x-independent on finite tori), or
 2. The algebraic geometry of the CM curve E alone (no known theorem produces this form from CM invariants).
 
 **The gap reduces to proving ONE statement:**
 
-> **Conjecture (Self-Consistency).** The lattice ℤ³ with ternary states and continuous flux, coupled through the Gauss constraint, produces an effective coupling that satisfies x = K(1 − G*/x) where K = 16G*² and G* = √(2πW₃) with W₃ the Watson integral.
+> **Conjecture (Self-Consistency).** The cubic graph with no defined boundary, equipped with ternary states and continuous flux coupled through the Gauss constraint, produces (for arbitrarily large finite extent L, with finite-L error O(1/L)) an effective coupling that satisfies x = K(1 − G*/x) where K = 16G*² and G* = √(2πW₃) with W₃ the Watson integral.
 
 If this single statement is proven, the rest follows by algebra (T4).
 
@@ -124,8 +124,8 @@ BCC(8)/Moore(26) = 0.3077 vs Planck Ω_m = 0.315 ± 0.007. Within 1σ but not de
 
 ## Attack Vectors
 
-### Path A: Lattice RG flow
-Compute the renormalization group flow of the ℤ³ lattice gauge coupling across scales. If the beta function β(g) has a fixed point at g² = 1/x₊, the conjecture follows. This requires going beyond the L=2 torus to the thermodynamic limit, which our computation showed is necessary (the finite torus has no self-consistency structure).
+### Path A: Retracted
+**Path A retracted (load-bearing premise was completed-infinity self-consistency).** Under undefined-boundary ontology, the conjecture's Path A — proposing that 1/α emerges as the L → ∞ self-consistent fixed point of a finite-L sequence — is no longer well-posed. The other paths in this document (algebraic uniqueness via CM curve, dual match via the master quadratic) are independent of Path A and survive unchanged. The preferred attack vector is now algebraic + structural, anchored in [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) and CM-curve uniqueness across class-number-1 fields.
 
 ### Path B: CM period relation
 Prove that the CM curve E: y² = x³ − x satisfies an intrinsic algebraic relation of the form x² − |Aut(E)|²G*²x + |Aut(E)|²G*³ = 0 where x is a natural "coupling" associated to the curve's period lattice. This would be a new theorem in arithmetic geometry.

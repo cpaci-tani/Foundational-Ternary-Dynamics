@@ -302,10 +302,13 @@ static void test_one_over_r_profile() {
 // ================================================================
 // EIN-3: Extract G_N from potential amplitude
 //
-// Theory: for a point mass M at origin on an infinite lattice,
+// Theory: for a point mass M at origin on a cubic lattice (no defined
+// boundary; arbitrarily large finite extent is admissible), the Poisson
+// equation is
 //   nabla^2 phi = 4*pi*G_N * rho
-// The Green's function gives:
-//   phi(r) = G_N * M_total / r   (for r >> lattice spacing)
+// The lattice Green's function approaches the continuum form for r much
+// larger than the lattice spacing and much smaller than the chosen extent:
+//   phi(r) = G_N * M_total / r   (for lattice_spacing << r << region_extent)
 //
 // where M_total = mass_count * K_B (each particle has mass K_B).
 //

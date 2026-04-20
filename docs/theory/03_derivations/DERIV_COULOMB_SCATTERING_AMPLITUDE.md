@@ -10,7 +10,7 @@
 
 ## Abstract
 
-We compute the tree-level Coulomb scattering amplitude for two ternary charges on the Z³ lattice, using the Feynman rules derived from the FTD Lagrangian. The result recovers Rutherford scattering in the continuum limit and predicts cubic-anisotropic corrections at the Planck scale.
+We compute the tree-level Coulomb scattering amplitude for two ternary charges on the cubic lattice with no defined boundary, using the Feynman rules derived from the FTD Lagrangian. The result recovers Rutherford scattering in the long-wavelength regime ($|\mathbf{q}| \ll \pi$) and predicts cubic-anisotropic corrections at the Planck scale.
 
 ---
 
@@ -50,7 +50,7 @@ where $\lambda(\mathbf{q}) = 2(3 - \cos q_x - \cos q_y - \cos q_z)$ and $|\mathb
 
 ---
 
-## 4. Continuum Limit: Rutherford Recovery [THEOREM]
+## 4. Long-Wavelength Regime: Rutherford Recovery [THEOREM]
 
 For $|\mathbf{q}| \ll \pi$ (energies far below the Planck scale):
 
@@ -60,7 +60,7 @@ $$\mathcal{M}(\mathbf{q}) \to \frac{-\alpha}{q^2}$$
 
 $$\frac{d\sigma}{d\Omega} \to \frac{\alpha^2}{16E^2 \sin^4(\theta/2)}$$
 
-This is the **Rutherford scattering formula**, exactly as derived in standard QED. The FTD lattice reproduces classical electrodynamics in the long-wavelength limit.
+This is the **Rutherford scattering formula**, exactly as derived in standard QED. The FTD lattice reproduces classical electrodynamics in the long-wavelength regime ($|\mathbf{q}| \ll \pi$).
 
 ---
 
@@ -107,10 +107,10 @@ This is a **genuine scattering amplitude computed from the FTD Lagrangian:**
 - The coupling $\alpha$ comes from the master quadratic (not from experiment)
 - The propagator comes from the lattice Laplacian (not from continuum field theory)
 - The Ward identity holds exactly (not as an approximation)
-- The Rutherford formula is recovered in the continuum limit (not assumed)
+- The Rutherford formula is recovered in the long-wavelength regime $|\mathbf{q}| \ll \pi$ (not assumed)
 - The UV finiteness is automatic (not imposed by a regulator)
 
-Every ingredient traces back to Axiom Zero: state $s \in \{-1,0,+1\}$ and position $x \in \mathbb{Z}^3$.
+Every ingredient traces back to Axiom Zero: state $s \in \{-1,0,+1\}$ and integer-coordinate lattice site $x$ on the cubic lattice with no defined boundary.
 
 ---
 

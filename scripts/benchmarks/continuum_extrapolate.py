@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 """
-continuum_extrapolate.py ? Fit alpha(r_max, L) -> alpha(L->inf) for multiple scaling laws.
+continuum_extrapolate.py ? Fit alpha(r_max, L) at the largest tested L for multiple scaling laws.
 
 Uses the r_max-per-L data points from Phases 2-4 + Day-2 Thread 1a:
   L=64, r=20,  alpha_r = 0.030
   L=128, r=40, alpha_r = 0.028
   L=256, r=84, alpha_r = 0.010
 
-Fits alpha(L) = alpha_inf + coeff ? f(L)  for three candidate f's:
+Fits alpha(L) = alpha_largeL + coeff ? f(L)  for three candidate f's:
   - 1/L   (linear finite-size, appropriate for Coulomb in periodic box)
   - 1/L^2  (standard lattice-dispersion finite-size)
   - 1/L^p (free exponent, 3-point best fit)
 
-Outputs all three extrapolations with residuals. Let the data choose.
+The intercept alpha_largeL is the 1/L^p fit value, NOT a claim about
+any L -> infinity continuum limit. Three scaling laws are reported and
+the spread across them is the empirical residual band.
+
+Outputs all three fit values with residuals. Let the data choose.
 """
 
 from __future__ import annotations
@@ -54,8 +58,8 @@ def fit_linear(xs, ys):
     return a, b, r2
 
 def fit_power_law(Ls, ys):
-    """Fit y = alpha_inf + c ? L^(-p) via log-linear on (y - min(y)) vs 1/L.
-    Returns (alpha_inf, c, p, r2) for a 2-parameter free-p fit.
+    """Fit y = alpha_largeL + c ? L^(-p) via log-linear on (y - min(y)) vs 1/L.
+    Returns (alpha_largeL, c, p, r2) for a 2-parameter free-p fit.
     Simple grid-search over p ? [0.5, 4.0]."""
     best_p = None
     best_a = None
@@ -74,7 +78,7 @@ def main():
     ys = [d[2] for d in DATA]
 
     print("=" * 60)
-    print("  Continuum Extrapolation: alpha(r_max, L) -> alpha(L->inf)")
+    print("  Large-L Extrapolation: alpha(r_max, L) -> alpha_largeL")
     print("  Reference alpha = 1/137.036 =", ALPHA_REF)
     print("=" * 60)
     print()
@@ -88,7 +92,7 @@ def main():
     xs_1 = [1.0/L for L in Ls]
     a1, b1, r2_1 = fit_linear(xs_1, ys)
     print("1/L fit (appropriate for Coulomb-in-periodic-box finite-size):")
-    print(f"  alpha(L->inf) = {a1:.6f}  (ratio {a1/ALPHA_REF:.3f}? alpha_ref)")
+    print(f"  alpha_largeL = {a1:.6f}  (ratio {a1/ALPHA_REF:.3f}? alpha_ref)")
     print(f"  1/L coeff = {b1:.4f}")
     print(f"  R^2 = {r2_1:.5f}")
     print()
@@ -97,7 +101,7 @@ def main():
     xs_2 = [1.0/L/L for L in Ls]
     a2, b2, r2_2 = fit_linear(xs_2, ys)
     print("1/L^2 fit (standard lattice-artefact finite-size):")
-    print(f"  alpha(L->inf) = {a2:.6f}  (ratio {a2/ALPHA_REF:.3f}? alpha_ref)")
+    print(f"  alpha_largeL = {a2:.6f}  (ratio {a2/ALPHA_REF:.3f}? alpha_ref)")
     print(f"  1/L^2 coeff = {b2:.2f}")
     print(f"  R^2 = {r2_2:.5f}")
     print()
@@ -106,7 +110,7 @@ def main():
     a_p, b_p, p, r2_p = fit_power_law(Ls, ys)
     print(f"Free 1/L^p fit (best p over [0.5, 4.0]):")
     print(f"  best p = {p}")
-    print(f"  alpha(L->inf) = {a_p:.6f}  (ratio {a_p/ALPHA_REF:.3f}? alpha_ref)")
+    print(f"  alpha_largeL = {a_p:.6f}  (ratio {a_p/ALPHA_REF:.3f}? alpha_ref)")
     print(f"  coeff = {b_p:.4f}")
     print(f"  R^2 = {r2_p:.5f}")
     print()
@@ -126,9 +130,9 @@ def main():
     print("Interpretation:")
     best_ratio = min(a1/ALPHA_REF, a2/ALPHA_REF, a_p/ALPHA_REF if a_p > 0 else 1e10)
     worst_ratio = max(a1/ALPHA_REF, a2/ALPHA_REF, a_p/ALPHA_REF if a_p > 0 else 0)
-    print(f"  Continuum alpha_inf is between {best_ratio:.2f}? and {worst_ratio:.2f}? alpha_ref,")
-    print(f"  depending on scaling-law assumption. Three data points cannot")
-    print(f"  discriminate; L=512 measurement would pin it down.")
+    print(f"  alpha_largeL fit value is between {best_ratio:.2f}? and {worst_ratio:.2f}? alpha_ref,")
+    print(f"  with empirical residual band given by the spread across scaling laws.")
+    print(f"  Three data points cannot discriminate; L=512 measurement would tighten it.")
 
 
 if __name__ == "__main__":

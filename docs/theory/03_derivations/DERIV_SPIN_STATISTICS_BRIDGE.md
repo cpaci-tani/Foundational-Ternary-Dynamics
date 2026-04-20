@@ -61,7 +61,7 @@ One full lobe (half the total curve) has arc length equal to the lemniscate cons
 
 $$\varpi = 2I_4 = \frac{\Gamma(1/4)^2}{2\sqrt{2\pi}} \approx 2.6221.$$
 
-**Remark.** The exponent n = 4 in the integrand √(1 − t⁴) is not arbitrary. Among all integrals of the form ∫₀¹ dt/√(1 − tⁿ), only n = 4 produces an elliptic curve with Complex Multiplication by the Gaussian integers ℤ[i] and j-invariant j = 1728 = (N_base × N_c)³ = (4 × 3)³. This is the unique curve with 4-fold symmetry compatible with the cubic lattice ℤ³.
+**Remark.** The exponent n = 4 in the integrand √(1 − t⁴) is not arbitrary. Among all integrals of the form ∫₀¹ dt/√(1 − tⁿ), only n = 4 produces an elliptic curve with Complex Multiplication by the Gaussian integers ℤ[i] and j-invariant j = 1728 = (N_base × N_c)³ = (4 × 3)³. This is the unique curve with 4-fold symmetry compatible with the cubic-lattice point group $O_h$.
 
 ## §1.2 The Bernoulli Double-Loop: ℤ₂ from Self-Intersection [THEOREM]
 
@@ -235,7 +235,7 @@ produces x₊ = 137.036 (≈ 1/α) and x₋ = 3.024 (≈ N_c). In PF notation (s
 
 $$x^2 - \frac{16\varpi^2}{\text{PF}} \, x + \frac{16\varpi^3}{\text{PF}^{3/2}} = 0.$$
 
-The linear coefficient 16ϖ²/PF contains ϖ² (continuous) divided by PF (discrete). The constant term 16ϖ³/PF^{3/2} contains ϖ³ (continuous) divided by PF^{3/2} (discrete). Setting either ϖ = 0 or PF = 0 destroys the equation — no roots exist. Setting PF → ∞ or ϖ → ∞ sends the roots to degenerate limits incompatible with physical constants.
+The linear coefficient 16ϖ²/PF contains ϖ² (continuous) divided by PF (discrete). The constant term 16ϖ³/PF^{3/2} contains ϖ³ (continuous) divided by PF^{3/2} (discrete). Setting either ϖ = 0 or PF = 0 destroys the equation — no roots exist. Sending PF or ϖ to arbitrarily large values pushes the roots into degenerate regimes incompatible with physical constants.
 
 **Corollary.** Bosons and fermions cannot exist independently. Any universe with electromagnetic coupling (α from x₊) necessarily contains color confinement (N_c from x₋), and vice versa. ∎
 
@@ -317,7 +317,7 @@ The coefficient 16 in the master quadratic is derived from the physical degrees 
 
 $$16 = 24 - 7 - 1 = \text{(total link components)} - \text{(Gauss constraints)} - \text{(normalization)}.$$
 
-These 16 degrees of freedom are the **gauge degrees of freedom** — the bosonic content of the lattice field theory. They parameterize the transverse modes of the flux field J, which are the propagating modes that become photons and gluons in the continuum limit.
+These 16 degrees of freedom are the **gauge degrees of freedom** — the bosonic content of the lattice field theory. They parameterize the transverse modes of the flux field J, which are the propagating modes that become photons and gluons at long wavelengths (arbitrarily fine spacing relative to the wavelength).
 
 ## §4.2 Sixteen as Fermionic Content [THEOREM]
 
@@ -333,7 +333,7 @@ These 16 bilinears determine all possible fermionic interactions — scalar, vec
 
 ## §4.3 The Coincidence That Is Not a Coincidence [SELECTION]
 
-Both computations yield 16 from the **same underlying structure**: the 3D cubic lattice ℤ³.
+Both computations yield 16 from the **same underlying structure**: the 3D cubic graph (no defined boundary).
 
 - The lattice's **link structure** gives 24 − 7 − 1 = 16 gauge DoF (bosonic content).
 - The lattice's **frame bundle** SO(3) has double cover SU(2), giving 2²  = 4-component spinors, with 4² = 16 bilinears (fermionic content).

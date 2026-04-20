@@ -13,7 +13,7 @@
 
 The FTD engine reproduces phenomenological fragments of the Standard Model (Coulomb 1/r², hydrogen 1/n², QCD-like confinement, time dilation) and derives one genuine coupling relation (α = G_C²). It does not yet constitute a Wilsonian EFT. The five pillars of an EFT — Ward identities, Lorentz covariance, RG flow, operator expansion, matching to continuum — have not been measured on the lattice.
 
-This program closes that gap. Success means: FTD can stand as a Wilsonian effective field theory whose β-function, operator content, Ward-identity closure, and continuum limit are *measured* quantities with error bars, publishable as a standalone paper and testable against — and distinguishable from — the Standard Model.
+This program closes that gap. Success means: FTD can stand as a Wilsonian effective field theory whose β-function, operator content, Ward-identity closure, and large-L continuum-matching behaviour are *measured* quantities with error bars, publishable as a standalone paper and testable against — and distinguishable from — the Standard Model.
 
 The program has six phases (Phase 0–5) over ~13 weeks. Phase 0 pre-registers the expectations. Phases 1–4 run the experiments. Phase 5 writes the manuscript.
 
@@ -41,7 +41,7 @@ An effective field theory in the Wilsonian sense requires:
 | **Ward identities** | Is ⟨∂_μ J^μ⟩ = ⟨ρ⟩ satisfied for composite operators, not just Gauss's law by construction? | 1 | 12 Ward-identity CTest entries at permille |
 | **Lorentz covariance** | After rescaling by c = 1/√3, do temporal and spatial correlators collapse? At what scale? | 1 | Anisotropy exponent p > 0 with error |
 | **Operator expansion** | Do lattice operators classify as relevant / marginal / irrelevant under blocking? | 3 | 12 operators × 3 blocking stages, Wilson coefficients measured |
-| **Continuum matching** | Do α, σ, m_p/m_e converge to a finite limit as L → ∞? | 4 | a → 0 extrapolation + residual error bar |
+| **Continuum matching** | Do α, σ, m_p/m_e approach a finite value as L grows, with controlled error O(1/L^p)? | 4 | a → 0 extrapolation + residual error bar |
 
 All five must produce honest answers — including null answers — for the program to succeed. A null answer on any pillar is a finding, not a failure.
 
@@ -76,7 +76,7 @@ toggles_on:         [wave_propagation, coupling, gauss_projection, forces]
 **Sweep regimes.** When a phase varies a parameter, it varies *only that parameter* away from the canonical regime:
 - Phase 1A (anisotropy): L ∈ {32, 48, 64, 96}
 - Phase 2C (β-function): L ∈ {16, 32, 64} via blocking; three coupling strengths G_C ∈ {0.06, 0.0854, 0.12}
-- Phase 4C (continuum limit): L ∈ {32, 48, 64, 96, 128}
+- Phase 4C (continuum-matching scan, arbitrarily fine spacing): L ∈ {32, 48, 64, 96, 128}
 
 ---
 

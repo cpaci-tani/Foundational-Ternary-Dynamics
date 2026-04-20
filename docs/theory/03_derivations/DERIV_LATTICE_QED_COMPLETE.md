@@ -19,7 +19,7 @@
 
 ## Abstract
 
-This document consolidates the complete lattice QED renormalization program for the FTD framework. Part A derives the one-loop vacuum polarization and QED beta function from the compact Brillouin zone. Part B computes the one-loop vertex correction, deriving the Schwinger result $g-2 = \alpha/(2\pi)$. Part C establishes the one-loop electron self-energy with mass and wave function renormalization. Part D extends to two-loop order, showing UV finiteness on $\text{BZ} \times \text{BZ}$ and analyzing the 1.26 ppm gap between the tree-level $1/\alpha$ and the CODATA experimental value. All one-loop integrals are UV-finite by construction (compact Brillouin zone), the Ward identity $Z_1 = Z_2$ holds exactly on the lattice, and the continuum limit recovers standard QED. Combined claims: 23 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 1 [OPEN].
+This document consolidates the complete lattice QED renormalization program for the FTD framework. Part A derives the one-loop vacuum polarization and QED beta function from the compact Brillouin zone. Part B computes the one-loop vertex correction, deriving the Schwinger result $g-2 = \alpha/(2\pi)$. Part C establishes the one-loop electron self-energy with mass and wave function renormalization. Part D extends to two-loop order, showing UV finiteness on $\text{BZ} \times \text{BZ}$ and analyzing the 1.26 ppm gap between the tree-level $1/\alpha$ and the CODATA experimental value. All one-loop integrals are UV-finite by construction (compact Brillouin zone), the Ward identity $Z_1 = Z_2$ holds exactly on the lattice, and the long-wavelength regime $|p|, |k| \ll \pi$ recovers standard QED. Combined claims: 23 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 1 [OPEN].
 
 ---
 
@@ -137,7 +137,7 @@ The naive fermion propagator $S(p)$ has zeros of the denominator $\mathring{p}^2
 
 $$p_\mu \in \{0, \pi\} \quad \text{for each } \mu = 0, 1, 2, 3$$
 
-Each zero corresponds to a distinct fermion species in the continuum limit. These are the **fermion doublers** -- a well-known feature of naive lattice fermions first identified by Nielsen and Ninomiya (1981).
+Each zero corresponds to a distinct fermion species in the long-wavelength regime $|p| \ll \pi$. These are the **fermion doublers** -- a well-known feature of naive lattice fermions first identified by Nielsen and Ninomiya (1981).
 
 **Consequence.** The vacuum polarization integral receives contributions from all 16 species. The effective number of fermion flavors in the loop is:
 
@@ -276,7 +276,7 @@ $$\Pi_{\mu\nu} = B(k)\left(\hat{k}_\mu \hat{k}_\nu - \hat{k}^2\,\delta_{\mu\nu}\
 
 Identifying $\Pi(k) \equiv B(k)$ gives the stated form. $\square$
 
-**Remark.** On a hypercubic lattice, additional tensor structures proportional to $\sum_\mu \hat{k}_\mu^4$ etc. are in principle allowed. These break the continuum O(4) symmetry down to the lattice hypercubic group and vanish in the continuum limit. We neglect them here, as they contribute lattice artifacts of order $O(k^4)$ that are addressed in Section A.4.
+**Remark.** On a hypercubic lattice, additional tensor structures proportional to $\sum_\mu \hat{k}_\mu^4$ etc. are in principle allowed. These break the continuum O(4) symmetry down to the lattice hypercubic group and are bounded by $O(k^4)$ at fixed external momentum, becoming arbitrarily small for sufficiently fine lattice spacing. We neglect them here, as they contribute lattice artifacts of order $O(k^4)$ that are addressed in Section A.4.
 
 #### A.2.3 Dirac Trace Evaluation [THEOREM]
 
@@ -334,13 +334,13 @@ Using $\mathring{q}_\mu = \sin(p_\mu + k_\mu)$, the product $\mathring{p} \cdot 
 
 $$\mathring{p} \cdot \mathring{q} = \sum_\mu \sin p_\mu \sin(p_\mu + k_\mu) = \sum_\mu \left[\sin^2 p_\mu \cos k_\mu + \sin p_\mu \cos p_\mu \sin k_\mu\right]$$
 
-This is the exact lattice expression. The full evaluation for arbitrary lattice momenta reduces to standard lattice integrals. In the continuum limit, the standard Feynman-parameter representation is recovered (see Section A.3).
+This is the exact lattice expression. The full evaluation for arbitrary lattice momenta reduces to standard lattice integrals. In the long-wavelength regime $|k| \ll \pi$, the standard Feynman-parameter representation is recovered (see Section A.3).
 
-### A.3 Continuum Limit and the Beta Function
+### A.3 Long-Wavelength Regime and the Beta Function
 
 #### A.3.1 The Long-Wavelength Expansion [THEOREM]
 
-**Theorem A.4.** *In the continuum limit $|k_\mu| \ll \pi$ and $m \ll \pi$, the lattice vacuum polarization reduces to the standard QED result.*
+**Theorem A.4.** *In the long-wavelength regime $|k_\mu| \ll \pi$ and $m \ll \pi$, the lattice vacuum polarization reduces to the standard QED result.*
 
 **Proof.** For small momenta, the lattice functions reduce to their continuum counterparts:
 
@@ -385,7 +385,7 @@ $$\Pi^{\text{phys}}(k^2) = \frac{\alpha}{3\pi} \ln\!\left(\frac{k^2}{m^2}\right)
 
 $$\alpha(\mu) = \frac{\alpha(m_e)}{1 - \frac{\alpha(m_e)}{3\pi} \ln\!\left(\frac{\mu^2}{m_e^2}\right)}$$
 
-*for a single fermion flavor in the continuum limit.*
+*for a single fermion flavor in the long-wavelength regime $|k| \ll \pi$.*
 
 **Proof.** The full (dressed) photon propagator is obtained by summing the geometric series of vacuum polarization insertions:
 
@@ -573,7 +573,7 @@ Even with $N_f = 6$ active flavors, $\alpha(\pi) \approx 1/72$ -- the coupling g
 
 ## Part B: Vertex Correction
 
-One-loop vertex correction computed on the FTD lattice, deriving $g-2 = \alpha/(2\pi)$ -- the Schwinger result -- from discrete spacetime. UV finiteness is [THEOREM]. Form factor decomposition is [THEOREM] in the continuum limit. Ward identity $Z_1 = Z_2$ is [THEOREM].
+One-loop vertex correction computed on the FTD lattice, deriving $g-2 = \alpha/(2\pi)$ -- the Schwinger result -- from discrete spacetime. UV finiteness is [THEOREM]. Form factor decomposition is [THEOREM] in the long-wavelength regime $|p|, |q| \ll \pi$. Ward identity $Z_1 = Z_2$ is [THEOREM].
 
 > The anomalous magnetic moment of the electron, $a_e = \alpha/(2\pi)$, is the most precisely tested prediction in all of physics. This part derives it from the FTD lattice Feynman rules -- the same rules that produced the beta function (Part A) and that produce mass renormalization (Part C). The vertex factor $g_c = \sqrt{\alpha}$ is derived from the master quadratic, not imported from QED. The UV convergence is guaranteed by the compact Brillouin zone, not by dimensional regularization. The Ward identity is exact on the lattice, not assumed from gauge invariance.
 
@@ -723,7 +723,7 @@ Any other structures (such as $q_\mu$, $(p+p')_\mu$) can be reduced to these two
 
 $$\bar{u}(p')\,\Lambda_\mu(p', p)\,u(p) = F_1(q^2)\,\bar{u}(p')\gamma_\mu u(p) + F_2(q^2)\,\bar{u}(p')\frac{i\sigma_{\mu\nu}q^\nu}{2m}u(p) \qquad \square$$
 
-**Lattice caveat.** On the lattice, continuous Lorentz symmetry is broken to the discrete hypercubic group $H(4)$. The decomposition into exactly two form factors is therefore approximate at lattice momenta. Additional tensor structures proportional to higher powers of lattice momenta (e.g., $\sum_\mu \hat{k}_\mu^4$ terms) can in principle appear, breaking the O(4) symmetry. These lattice artifacts vanish as $O(k^4/\pi^4)$ in the continuum limit and do not affect the extraction of $F_1(0)$ and $F_2(0)$ at zero momentum transfer. In the limit $|p|, |p'|, |q| \ll \pi$, the decomposition is exact.
+**Lattice caveat.** On the lattice, continuous Lorentz symmetry is broken to the discrete hypercubic group $H(4)$. The decomposition into exactly two form factors is therefore approximate at lattice momenta. Additional tensor structures proportional to higher powers of lattice momenta (e.g., $\sum_\mu \hat{k}_\mu^4$ terms) can in principle appear, breaking the O(4) symmetry. These lattice artifacts are bounded by $O(k^4/\pi^4)$ at low external momenta and do not affect the extraction of $F_1(0)$ and $F_2(0)$ at zero momentum transfer. In the regime $|p|, |p'|, |q| \ll \pi$, the decomposition is exact.
 
 #### B.2.2 Physical Meaning of the Form Factors [THEOREM]
 
@@ -783,11 +783,11 @@ The vertex correction integral (Section B.1.2) is a $4 \times 4$ matrix function
 4. Apply the Gordon identity to separate $F_1$ and $F_2$
 5. Perform the loop momentum integration
 
-**Epistemic note.** The evaluation technique (Feynman parameterization, Dirac trace algebra, momentum integration) is standard QFT technology, adopted [SELECTION] from the established literature. What is NOT imported is the starting point: the lattice propagator (Theorem 1.1), the vertex factor $g_c = \sqrt{\alpha}$ (Theorem 1.3), and the UV finiteness guarantee (Theorem B.1). The calculation below demonstrates that the FTD lattice Feynman rules, in their continuum limit, reproduce the most precisely tested prediction in physics.
+**Epistemic note.** The evaluation technique (Feynman parameterization, Dirac trace algebra, momentum integration) is standard QFT technology, adopted [SELECTION] from the established literature. What is NOT imported is the starting point: the lattice propagator (Theorem 1.1), the vertex factor $g_c = \sqrt{\alpha}$ (Theorem 1.3), and the UV finiteness guarantee (Theorem B.1). The calculation below demonstrates that the FTD lattice Feynman rules, in their long-wavelength regime ($|p| \ll \pi$), reproduce the most precisely tested prediction in physics.
 
-#### B.3.2 Continuum-Limit Vertex Integral [THEOREM]
+#### B.3.2 Long-Wavelength Vertex Integral [THEOREM]
 
-In the continuum limit, the lattice Feynman rules reduce to the standard forms:
+In the long-wavelength regime $|p|, |q| \ll \pi$, the lattice Feynman rules reduce to the standard forms:
 - $\hat{k}^2 \to k^2$
 - $\mathring{p}_\mu \to p_\mu$
 - $S_F(p) \to (-i\slashed{p} + m)/(p^2 + m^2)$
@@ -879,7 +879,7 @@ The precise derivation follows the standard textbook calculation (Peskin & Schro
 
 #### B.3.4 The Schwinger Calculation [THEOREM]
 
-**Theorem B.3 (The Crown Jewel).** *The anomalous magnetic moment of the electron, computed from the FTD lattice Feynman rules in the continuum limit, is:*
+**Theorem B.3 (The Crown Jewel).** *The anomalous magnetic moment of the electron, computed from the FTD lattice Feynman rules in the long-wavelength regime $|p|, |q| \ll \pi$, is:*
 
 $$\boxed{F_2(0) = \frac{\alpha}{2\pi}}$$
 
@@ -955,7 +955,7 @@ The one-loop result $\alpha/(2\pi)$ captures the dominant contribution, agreeing
 | UV convergence | Enforced: dimensional regularization ($d = 4-\epsilon$) | Built-in: compact Brillouin zone (Theorem B.1) |
 | Ward identity | Assumed: from gauge invariance of QED Lagrangian | Exact: $\nabla \cdot (\nabla \times J) = 0$ on the lattice |
 
-The final numerical result is the same -- $\alpha/(2\pi)$ -- because the mathematical structure is the same once the continuum limit is taken. But the starting point is fundamentally different: FTD derives the Feynman rules from a discrete substrate, while standard QED postulates them.
+The final numerical result is the same -- $\alpha/(2\pi)$ -- because the mathematical structure is the same once the long-wavelength expansion ($|p|, |q| \ll \pi$) is performed. But the starting point is fundamentally different: FTD derives the Feynman rules from a discrete substrate, while standard QED postulates them.
 
 ### B.4 Ward Identity and Renormalization Constants
 
@@ -1103,7 +1103,7 @@ With this part, all three one-loop QED corrections have been computed from the F
 Each diagram is:
 1. **Written down** using the lattice Feynman rules (propagators from Theorem 1.1 and 4.1-4.2 of DERIV_QFT_GRT_BRIDGE.md, vertex from Theorem 1.3)
 2. **UV-finite** on the compact Brillouin zone (no regularization needed)
-3. **Evaluated** in the continuum limit using standard mathematical techniques (Feynman parameterization, Dirac traces)
+3. **Evaluated** in the long-wavelength regime $|k| \ll \pi$ using standard mathematical techniques (Feynman parameterization, Dirac traces)
 4. **Consistent** with the exact lattice Ward-Takahashi identity
 
 #### B.5.2 One-Loop QED Renormalization Group [THEOREM]
@@ -1188,7 +1188,7 @@ These are mathematical tools and standard physics infrastructure. Their adoption
 |----|-------|-----|----------|---------------|
 | **VC-1** | Vertex correction integral $\Lambda_\mu(p',p)$ is UV-finite on the FTD lattice | **[THEOREM]** | Compact BZ, bounded integrand (Theorem B.1) | Construction of divergent integral on compact BZ with bounded integrand |
 | **VC-2** | $F_1(0) = 1$ from the lattice Ward-Takahashi identity | **[THEOREM]** | Exact lattice WT identity + residue at mass pole (Theorem B.5) | Violation of lattice WT identity |
-| **VC-3** | $F_2(0) = \alpha/(2\pi)$ (Schwinger result) in the continuum limit | **[THEOREM]** | Feynman parameter evaluation with lattice Feynman rules (Theorem B.3) | Numerical mismatch in the continuum-limit evaluation |
+| **VC-3** | $F_2(0) = \alpha/(2\pi)$ (Schwinger result) in the long-wavelength regime $|p|, |q| \ll \pi$ | **[THEOREM]** | Feynman parameter evaluation with lattice Feynman rules (Theorem B.3) | Numerical mismatch in the long-wavelength evaluation |
 | **VC-4** | $Z_1 = Z_2$ on the FTD lattice | **[THEOREM]** | Lattice WT identity at $q \to 0$ (Theorem B.6) | Discrepancy between vertex and wavefunction renormalization |
 | **VC-5** | Physical charge renormalized only by $Z_3$ (vacuum polarization) | **[THEOREM]** | $Z_1 = Z_2$ cancellation + $e_{\text{phys}} = e_0/\sqrt{Z_3}$ (Theorem B.7) | Charge renormalization depending on vertex or self-energy |
 | **VC-6** | Complete one-loop QED derived from FTD lattice ($\Pi + \Sigma + \Lambda$) | **[THEOREM]** | Three parts: A (loop corrections), C (self-energy), B (this part) (Theorem B.8) | Any one-loop QED result not reproducible from lattice rules |
@@ -1451,11 +1451,11 @@ $$Z_2 \approx \frac{1}{1 - A(m^2)} \approx 1 + A(m^2) + O(\alpha^2)$$
 
 These expressions are standard results of one-loop renormalization theory applied to the FTD lattice self-energy. The fact that $A$ and $B$ are finite (Theorem C.1) means that $\delta m$ and $Z_2$ are finite -- no infinite subtractions are needed.
 
-### C.3 Continuum Limit
+### C.3 Long-Wavelength Regime
 
 #### C.3.1 Long-Wavelength Expansion [THEOREM]
 
-**Theorem C.5.** *In the continuum limit $|p_\mu| \ll \pi$ and $m \ll \pi$, the lattice self-energy reduces to the standard QED one-loop result.*
+**Theorem C.5.** *In the long-wavelength regime $|p_\mu| \ll \pi$ and $m \ll \pi$, the lattice self-energy reduces to the standard QED one-loop result.*
 
 **Proof.** For small momenta, the lattice functions reduce to their continuum counterparts:
 
@@ -1505,7 +1505,7 @@ $$\Sigma_{\text{cont}}(p) = -\frac{\alpha}{16\pi^2} \int_0^1 dx \; [2i(1-x)\slas
 
 **Theorem C.6.** *The mass shift is logarithmic in the UV cutoff: $\delta m / m = O(\alpha \ln(\Lambda^2/m^2))$. There is no quadratic divergence -- the lattice eliminates the fine-tuning problem.*
 
-**Proof.** The mass shift is extracted from the $B(p^2)$ function evaluated at $p^2 = m^2$. From the continuum-limit expression:
+**Proof.** The mass shift is extracted from the $B(p^2)$ function evaluated at $p^2 = m^2$. From the long-wavelength expression:
 
 $$B_{\text{cont}} = -\frac{4\alpha}{16\pi^2} \int_0^1 dx \; \ln\frac{\pi^2}{\Delta}$$
 
@@ -1535,11 +1535,11 @@ There is **no fine-tuning problem** on the FTD lattice. The mass is protected by
 
 #### C.3.3 Wave Function Renormalization [THEOREM]
 
-**Theorem C.7.** *The wave function renormalization constant in the continuum limit is:*
+**Theorem C.7.** *The wave function renormalization constant in the long-wavelength regime $|p| \ll \pi$ is:*
 
 $$Z_2 = 1 - \frac{\alpha}{4\pi}\ln\frac{\pi^2}{m^2} + O(\alpha^2)$$
 
-**Proof.** From the continuum-limit $A$ function:
+**Proof.** From the long-wavelength $A$ function:
 
 $$A_{\text{cont}}(p^2) = \frac{-2\alpha}{p^2} \int_0^1 dx \; (1-x) \cdot p_\mu \cdot \frac{\partial}{\partial p_\mu}\left[\frac{1}{16\pi^2}\ln\frac{\pi^2}{\Delta}\right] + \ldots$$
 
@@ -1563,7 +1563,7 @@ This is a moderate correction, consistent with perturbation theory remaining val
 
 #### C.3.4 Full One-Loop Corrected Propagator [THEOREM]
 
-**Theorem C.8.** *The full one-loop electron propagator on the FTD lattice, in the continuum limit, is:*
+**Theorem C.8.** *The full one-loop electron propagator on the FTD lattice, in the long-wavelength regime $|p| \ll \pi$, is:*
 
 $$S_F^{\text{full}}(p) = \frac{Z_2}{i\slashed{p} + m_{\text{phys}}} + O(\alpha^2)$$
 
@@ -1581,7 +1581,7 @@ $$\hat{k}_\mu \Lambda^\mu(p + k, p) = S_F^{-1}(p + k) - S_F^{-1}(p)$$
 
 *holds for the full (all-orders) vertex function $\Lambda^\mu(p+k, p)$ on the FTD lattice with naive fermions.*
 
-This was established as Theorem 1.5 in DERIV_QFT_GRT_BRIDGE.md and used in the proof of transversality (Theorem A.2 of Part A). The identity is a consequence of the exact U(1) gauge invariance of the naive fermion action under $\psi(n) \to e^{i\theta(n)}\psi(n)$. It holds **exactly** on the lattice -- it is not an approximation that improves in the continuum limit. The discrete identity $\nabla \cdot (\nabla \times J) = 0$ (the antisymmetry of $\varepsilon_{ijk}$ contracted with the symmetric second-derivative operator) is the underlying algebraic reason.
+This was established as Theorem 1.5 in DERIV_QFT_GRT_BRIDGE.md and used in the proof of transversality (Theorem A.2 of Part A). The identity is a consequence of the exact U(1) gauge invariance of the naive fermion action under $\psi(n) \to e^{i\theta(n)}\psi(n)$. It holds **exactly** on the lattice -- it is not an approximation that only improves at low momenta. The discrete identity $\nabla \cdot (\nabla \times J) = 0$ (the antisymmetry of $\varepsilon_{ijk}$ contracted with the symmetric second-derivative operator) is the underlying algebraic reason.
 
 **Remark.** The Ward-Takahashi identity relates the vertex function to the inverse propagator. Since the propagator is modified by the self-energy $\Sigma(p)$, the identity constrains the relationship between vertex corrections and self-energy corrections. This is the content of the $Z_1 = Z_2$ theorem below.
 
@@ -1615,7 +1615,7 @@ Differentiating with respect to $p_\mu$ (using $\partial \mathring{p}_\nu / \par
 
 $$\frac{\partial S_F^{-1}}{\partial p_\mu} = i\gamma_\mu \cos p_\mu \cdot (1 - A) + i\slashed{\mathring{p}} \cdot (-A') \cdot 2\mathring{p}_\mu \cos p_\mu + m(-B') \cdot 2\mathring{p}_\mu \cos p_\mu$$
 
-At the on-shell point in the continuum limit ($\cos p_\mu \to 1$, primes denoting derivatives with respect to $p^2$):
+At the on-shell point in the long-wavelength regime ($\cos p_\mu \to 1$, primes denoting derivatives with respect to $p^2$):
 
 $$\Lambda^\mu(p, p)\big|_{\text{on-shell}} \approx i\gamma_\mu(1 - A(m^2)) + \text{terms proportional to } p_\mu$$
 
@@ -1875,7 +1875,7 @@ where $\Pi^{(n)}$ denotes the $n$-loop contribution to the vacuum polarization.
 
 #### D.2.2 One-Loop Vacuum Polarization at $q^2 = 0$ [THEOREM]
 
-From Part A (Theorem A.4), the one-loop vacuum polarization in the continuum limit is:
+From Part A (Theorem A.4), the one-loop vacuum polarization in the long-wavelength regime $|q| \ll \pi$ is:
 
 $$\Pi^{(1)}(q^2) = \frac{\alpha}{3\pi} \ln\!\left(\frac{q^2}{m_e^2}\right) + \text{const}$$
 
@@ -1907,7 +1907,7 @@ This coefficient has been computed analytically in standard QED (Kallas and Sabr
 
 $$\beta_1 = \lim_{|q| \ll \pi} \frac{\pi^2}{\alpha^2 \ln(q^2/m^2)} \cdot \Pi^{(2)}_{\text{lattice}}(q^2) = -\frac{1}{4}$$
 
-The proof that the lattice double integral reproduces this coefficient follows the same logic as the one-loop case (Theorem A.4 of Part A): in the continuum limit $|k_1|, |k_2| \ll \pi$, the lattice propagators reduce to their continuum forms, the BZ effectively extends to $\mathbb{R}^4 \times \mathbb{R}^4$, and the standard Feynman-parameter evaluation applies.
+The proof that the lattice double integral reproduces this coefficient follows the same logic as the one-loop case (Theorem A.4 of Part A): in the long-wavelength regime $|k_1|, |k_2| \ll \pi$, the lattice propagators reduce to their continuum forms, the BZ effectively extends to $\mathbb{R}^4 \times \mathbb{R}^4$, and the standard Feynman-parameter evaluation applies.
 
 #### D.2.4 The Two-Loop Running Coupling [THEOREM]
 
@@ -1924,7 +1924,7 @@ where the first term is the one-loop coefficient (Theorem A.5 of Part A) and the
 - One-loop: derived from $\int_{\text{BZ}} d^4k/(2\pi)^4$ (Part A)
 - Two-loop: derived from $\int_{\text{BZ}^2} d^4k_1\,d^4k_2/(2\pi)^8$ (this Part)
 
-The continuum limit of both integrals matches the standard QED result, with lattice corrections suppressed by powers of $m/\pi$.
+The long-wavelength expansion of both integrals matches the standard QED result, with lattice corrections suppressed by powers of $m/\pi$.
 
 ### D.3 Connection to the Precision Formula
 
@@ -2176,7 +2176,7 @@ $$\Lambda^{(2)}_\mu(p', p)\bigg|_{q \to 0} \supset F_2^{(2)}(0) \cdot \frac{i\si
 
 with $F_2^{(2)}(0) = (\alpha/\pi)^2 \times A_1^{(4)}$.
 
-**The FTD prediction.** The lattice two-loop vertex integral, evaluated over BZ$^2$, should reproduce $A_1^{(4)} = -0.32848...$ in the continuum limit. Any discrepancy would indicate either:
+**The FTD prediction.** The lattice two-loop vertex integral, evaluated over BZ$^2$, should reproduce $A_1^{(4)} = -0.32848...$ in the long-wavelength regime $|p|, |q| \ll \pi$. Any discrepancy would indicate either:
 
 (a) A lattice artifact from the non-linear dispersion (expected to be $\sim (m/\pi)^2 \sim 10^{-44}$ -- negligible), or
 

@@ -1,0 +1,129 @@
+# OPEN — Deriving `a_phys` from Lattice Invariants (or Declaring It Empirical)
+
+**Tag:** [OPEN] — load-bearing structural problem.
+**Status:** scoping doc — lays out the problem and the two honest exits (derivation or declaration). Does not solve it.
+
+---
+
+## 1 · The problem stated precisely
+
+Every FTD measurement is reported in **lattice units** — distances are integer voxel counts, times are integer ticks. Every comparison to experiment is made in **physical units** — metres, seconds, Planck lengths. The two are connected by a single conversion:
+
+```
+  a_phys  =  one lattice unit, expressed in a physical length unit (e.g., metres or l_P)
+```
+
+A matching tick-to-time conversion `t_phys` is fixed by `c_lattice = 1/√3` (lattice units per tick) combined with the physical speed of light: one length conversion fixes the time conversion.
+
+`a_phys` is **the** parameter that decides whether a lattice region of size L corresponds to a Planck-scale region (L · a_phys ~ ℓ_P), an atomic region (L · a_phys ~ a_0), or anything else. It is the dial that aims the framework at a specific physical regime.
+
+Because the framework is undefined-boundary (Axiom Zero, position property), every prediction is a **finite-L** prediction. To compare a finite-L prediction to a finite physical observable, `a_phys` must be specified — either as a derived consequence of the lattice, or as a declared empirical input.
+
+---
+
+## 2 · What "derivable `a_phys`" would mean
+
+If the five Axiom-Zero ingredients — D = 3, ternary {−1, 0, +1}, 26-Moore locality, determinism, discrete time — combinatorially force a specific value of `a_phys` (in units of a recognised physical length such as ℓ_P), then `a_phys` is a **derived quantity** and the framework has zero free dial settings.
+
+If they do not — if the same axioms are compatible with `a_phys = 10⁻³⁵ m` and `a_phys = 10⁻¹⁰ m` and any value in between — then `a_phys` is an **empirical input** and the framework has exactly one calibrated parameter (the unit choice). That is still a small parameter count (zero theoretical → one calibrated), but the honesty is non-negotiable: the parameter must be named.
+
+The two exits are equally acceptable epistemically. The unacceptable position is the third — leaving `a_phys` unspecified while reporting "L → ∞ predictions" as if no calibration were needed. The undefined-boundary position property does not admit it.
+
+---
+
+## 3 · Candidate mechanisms for derivation
+
+### 3.1 · Mechanism α — algebraic invariants of the cubic graph
+
+The lattice produces a number of **dimensionless** algebraic invariants without any unit choice: G\* = √2·Γ(1/4)²/(2π) ≈ 2.9587, the Watson integrals I₁/I₂/I₃, the polyhedral counts {3, 4, 7, 13}, the master-quadratic roots (137.036, 3.024). None of these has the dimension of a length. To produce `a_phys`, one would need to combine them with a separately-given physical length — which would beg the question.
+
+**Verdict (preliminary):** Mechanism α cannot derive `a_phys` from lattice algebra alone. A length scale must come from somewhere outside the dimensionless lattice invariants.
+
+### 3.2 · Mechanism β — EFT matching to a known physical observable
+
+If FTD's continuum-effective-theory limit (the EFT recovery program, [SPEC_EFT_RECOVERY_PROGRAM.md](SPEC_EFT_RECOVERY_PROGRAM.md)) reproduces a known physical quantity that itself has a length dimension — e.g., the proton Compton wavelength, the hydrogen Bohr radius, the electroweak scale — then `a_phys` could be **matched** so that the corresponding lattice-units prediction agrees with the physical observable. This is conventional EFT matching at one renormalisation point.
+
+This is *not a derivation*; it is the standard way EFTs fix their cutoff to data. It would render `a_phys` a calibrated parameter, not a derived one. But it is the **honest version** of what the EFT program is in practice doing already (the 3.6× α-plateau is precisely a statement at one fixed matching choice).
+
+**Verdict:** Mechanism β reduces "derive `a_phys`" to "calibrate `a_phys`." Acceptable as the second exit (declared empirical), not as derivation.
+
+### 3.3 · Mechanism γ — gravitational fixed point
+
+If the engine produces a finite, dimensional gravitational coupling G_N (not the rescaled lattice value G_N = 0.01 currently in `ontic.h`, but a numerical value that, when combined with the lattice tick time, equals the physical Newton constant), then setting
+
+```
+  G_N(measured in lattice units) · (a_phys)^?  =  G_N(physical, in SI)
+```
+
+with `?` the appropriate power dictated by dimensional analysis on a discrete lattice, would fix `a_phys`. This is the most theoretically attractive route: it would tie `a_phys` to gravitation rather than electromagnetism, which is closer in spirit to Planck-scale arguments.
+
+**Status:** the engine's gravity sector currently uses `G_N = 1/(b_3 + N_c)² = 1/100 = 0.01` as a lattice value. The April 13 GR benchmarks (time dilation 0.004% match, BH gravitational wells L_peak = 0.62) showed the gravitational dynamics is correctly reproduced **at fixed unit choice**. Whether the lattice imposes a unique calibration when matched to physical G_N has not been worked out. This is the most productive open candidate.
+
+**Verdict:** Mechanism γ is the only candidate of the three that could in principle deliver a derivation rather than a calibration. It requires (i) confirming the engine's gravity is dimensionally consistent under a single `a_phys` choice and (ii) checking whether the resulting `a_phys` is forced by lattice invariants or remains a free dial.
+
+---
+
+## 4 · The honest fallback: declare and name
+
+If Mechanism γ fails to force a unique value, the framework should explicitly **name** `a_phys` as a calibrated empirical parameter, in `SPEC_FTD.md` and in every paper, with the following discipline:
+
+- State the calibration choice (e.g., "we set `a_phys = ℓ_P`" or "we set `a_phys` such that the 1S-2S hydrogen interval matches CODATA at L = 256").
+- State the matching observable used to fix it.
+- Quote all subsequent predictions as conditional on that calibration.
+- Flag every prediction whose value is *insensitive* to `a_phys` (those are the genuinely parameter-free predictions — the dimensionless ones: α, N_c, mass ratios, anomalous magnetic moments). These are the falsifiable spine of the framework regardless of the calibration debate.
+
+This fallback **does not weaken FTD's claims about dimensionless quantities**. It only acknowledges that any dimensional comparison requires one calibration, as in every EFT.
+
+---
+
+## 5 · Connection to the 3.6× α plateau
+
+The EFT recovery program reports α_∞ ≈ 3.6 × α_ref across L ∈ {64, 128, 256, 384}. Two interpretations remain on the table once "engine wrong at finite L, fixed by L → ∞" is excluded by the position-property axiom:
+
+- **A:** Engine right, dictionary wrong (`a_phys` miscalibration)
+- **C:** α_ref isn't the right target; the engine is predicting some other dimensional quantity
+
+Interpretation A is the calibration question of this document. If the dictionary uses an `a_phys` that is wrong by a factor √3.6 ≈ 1.9 in length, the predicted α at the present matching scheme is wrong by 3.6×.
+
+> **The 3.6× plateau is a predicted consequence under any specific `a_phys` choice. Whether it represents a falsifying disagreement with QED or merely an `a_phys` miscalibration is not decidable until `a_phys` is specified — derived (Mechanism γ) or declared (the fallback).**
+
+---
+
+## 6 · Falsifiability tests
+
+Each mechanism implies different consequences:
+
+| Mechanism | Predicts `a_phys` value | Test |
+|---|---|---|
+| α (algebraic) | Cannot — no dimensional invariant | Look for hidden length scale in lattice algebra (none expected) |
+| β (EFT matching) | One value per matching observable | Match at proton Compton, then re-check at electron Compton; do they agree? If yes, β is internally consistent |
+| γ (gravitational) | Forced by G_N matching | Compute lattice G_N to high precision, fit `a_phys` from physical G_N, check whether the resulting `a_phys` makes other dimensional observables agree |
+| Fallback (declared) | Whatever is calibrated | All dimensionless predictions become independent falsifiability tests |
+
+If β-matching at proton Compton and electron Compton give different `a_phys` values, the framework is inconsistent under β. If γ-matching gives a `a_phys` that makes other dimensional observables disagree wildly, γ is refuted. The cleanest outcome would be γ-matching producing an `a_phys` that subsequently makes proton and electron Compton wavelengths come out right — that would be a genuine derivation.
+
+---
+
+## 7 · Recommended next actions
+
+1. **[Priority A]** Inventory every dimensional FTD prediction currently in the literature (engine benchmarks, manuscript chapters, papers). For each, identify whether it is dimensionless (parameter-free) or dimensional (needs `a_phys`). This becomes the calibration audit.
+2. **[Priority B]** Attempt Mechanism γ explicitly: write the dimensional-analysis chain that converts the engine's lattice G_N to a physical G_N as a function of `a_phys`, solve for `a_phys`, and report.
+3. **[Priority C]** If γ fails or gives no unique value, write a one-paragraph addendum to `SPEC_FTD.md` declaring `a_phys` as a calibrated parameter, naming the matching observable, and stating that all dimensional predictions are conditional on it.
+4. **[Priority D]** Update [SPEC_EFT_RECOVERY_PROGRAM.md](SPEC_EFT_RECOVERY_PROGRAM.md) to note that the 3.6× plateau is conditional on the current `a_phys` choice, and re-quote the result accordingly.
+
+---
+
+## 8 · One-paragraph summary
+
+Every finite-L FTD prediction with a dimension requires `a_phys` — the lattice-to-physical length conversion — to be specified. Three derivation candidates exist: algebraic-invariants (cannot deliver — no dimensional invariant in the lattice algebra), EFT-matching (delivers calibration, not derivation), and gravitational fixed point (the only candidate that could in principle force a unique value). If none of these forces a value, the framework must declare `a_phys` as a calibrated parameter, name it in the spec, and quote all dimensional predictions as conditional on it. The 3.6× α plateau in the EFT program is then a predicted consequence of the current `a_phys` choice rather than an unexplained anomaly. This is the load-bearing [OPEN] item.
+
+---
+
+## 9 · Reproducibility / pointers
+
+```
+docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md       # undefined-boundary ontology triage
+docs/theory/02_foundations/FOUND_AXIOM_ZERO.md            # Axiom Zero, position property
+docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md   # 3.6× plateau context
+docs/theory/10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md  # the sibling open problem
+```
