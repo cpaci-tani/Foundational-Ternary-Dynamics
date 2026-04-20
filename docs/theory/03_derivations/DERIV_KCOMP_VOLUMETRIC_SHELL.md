@@ -221,7 +221,7 @@ Starting from the FTD action S[s,J]:
 1. **Quantitative S(d):** The CHSH parameter S as a function of separation d has not been computed from the engine. This requires measuring correlation functions from ensemble statistics over many simulation runs.
 2. **N_meas precision:** The threshold N_meas ~ 18 is an order-of-magnitude estimate from the ratio K_B/J_peak. A more precise computation would require simulating multi-particle detectors.
 3. **Uniqueness:** The K_comp mechanism may not be the only way to produce non-factorizable joint probabilities from the FTD dynamics. Alternative mechanisms have not been excluded.
-4. **Lattice size dependence:** r_eff = 11.61 at 128^3. Does this value converge in the continuum limit (L -> infinity)?
+4. **Lattice size dependence:** r_eff = 11.61 at 128^3. Does this value approach a stable limit as L is increased through arbitrarily large finite values, and at what rate?
 
 ---
 

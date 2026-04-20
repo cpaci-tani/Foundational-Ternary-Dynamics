@@ -44,7 +44,7 @@ where S\_eff[s, x] = -(1/(2x)) s^T G s, with G = M^{-1} the lattice Green's func
 
 The self-energy Sigma(x) is extracted from the connected two-point correlator. For the ternary model with Boltzmann weight exp(s^T G s / (2x)):
 
-- Free-field limit (x -> infinity): \<s\_0^2\> = 2/3 (ternary variance)
+- Free-field regime (large x, with corrections O(1/x)): \<s\_0^2\> = 2/3 (ternary variance)
 - Leading correction: delta\<s\_0^2\> = G(0)/(9x) + O(1/x^2)
 
 The 1/x scaling of the correction is the self-energy contribution from one gauge-mode loop. Because S\_E is quadratic in J, there are **no higher-loop corrections**. The 1/x^2 sub-leading terms come from the discrete ternary cumulant structure (kappa\_4 = -2/3), not from missing loops.
@@ -61,7 +61,7 @@ The total self-energy coefficient comes from three independently derived factors
 
 2. **Haar measure factor 2pi** per U(1) integration over the compact gauge group.
 
-3. **Watson normalization W\_3 = G\*^2/(2pi)**, the exact lattice Green's function at the origin in the thermodynamic limit. This is the fundamental Watson-G\* identity.
+3. **Watson normalization W\_3 = G\*^2/(2pi)**, the closed-form lattice Green's function at the origin (a classical algebraic identity for the cubic-lattice Green's function evaluated as the Watson integral over R^3). This is the fundamental Watson-G\* identity.
 
 Combined:
 

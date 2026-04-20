@@ -29,10 +29,10 @@ cubic torus with the 7-point Laplacian:
   k_i    = 2π n_i / L,  n_i ∈ {0, 1, ..., L−1}
 ```
 
-In the continuum limit r ≪ L, L → ∞:
+For r ≪ L with arbitrarily large L (closed-form algebraic identity for $G_L(r)$ on a cubic torus, evaluated in the regime where $r/L$ is small and $1/r$ corrections are negligible):
 
 ```
-  G_∞(r) = 1 / (4π r)   ⟹   α_r(r) → 1/(2π) ≈ 0.1592.
+  G_L(r) ≈ 1 / (4π r)   ⟹   α_r(r) ≈ 1/(2π) ≈ 0.1592.
 ```
 
 **There is no α_ref anywhere in this derivation.** The emergent V(r) code
@@ -200,8 +200,8 @@ constant `g_c` is introduced into the Gauss source
   α_r(r, L; g_c) = g_c² · 2 r G_L(r).
 ```
 
-For the engine's measurement to recover α_ref in the continuum
-small-r limit (`G_L(r) → 1/(4π r)`, so `2 r G_L(r) → 1/(2π)`):
+For the engine's measurement to recover α_ref in the small-r regime
+where `G_L(r) ≈ 1/(4π r)`, so `2 r G_L(r) ≈ 1/(2π)`:
 
 ```
   g_c² · 1/(2π) = α_ref   ⟹   g_c = √(2π · α_ref) ≈ 0.21413.

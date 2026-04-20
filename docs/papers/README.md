@@ -43,28 +43,32 @@ Root `*.tex` and `*.md` files are companion sources or indexes for papers that a
 | PAPER_GAUGE_COUPLINGS_FROM_LATTICE_GEOMETRY | Gauge coupling constants from lattice coordination geometry (.md + .tex + .pdf) |
 | PAPER_LIFECYCLE_SOFTPLUS | Lifecycle of the softplus function |
 
-### PDF-Only (no TeX source available)
+### PDF-Only Papers (Session 3, 2026-04-19: all archived or retracted)
 
-| Paper | Description |
-|-------|-------------|
-| DERIV_ALPHA_INVERSE_LATTICE_GAUGE | Alpha inverse from lattice gauge theory |
-| DERIV_EMERGENT_GRAVITY | Emergent gravity from lattice dynamics |
-| DERIV_FUNDAMENTAL_CONSTANTS | Fundamental constants derivation |
-| DERIV_GAUGE_COUPLINGS_DISCRETE_SPACETIME | Gauge couplings in discrete spacetime |
-| DERIV_QUANTUM_INFERENCE | Quantum inference framework |
-| DERIV_SELF_REFERENCE_FOUR_INTEGERS | Self-referential four integers {3, 4, 7, 13} |
-| DERIV_THERMODYNAMIC_REFLEXION | Thermodynamic reflexion |
-| SPEC_MASTER_QUADRATIC_DISCRETE_SPACETIME | Master quadratic in discrete spacetime |
-| SPEC_MASTER_QUADRATIC_PAPER | Master quadratic paper |
+The following PDFs lacked recoverable TeX source (verified via `git log --all --diff-filter=AD` archaeology — only figure files were ever committed). All were processed in Session 3:
 
-### Active Exported Figure PDFs
+**Archived to `archive/pdf_only_no_source/`** (status pending owner re-authoring or accept-as-historical; `pdftotext` extractions provided):
 
-| File | Used By |
-|------|---------|
-| FTD_KMS_Thermal_Time.pdf | Active exported figure |
-| FTD_Modular_Structure.pdf | Active exported figure |
-| FTD_Spatial_Correlations.pdf | Active exported figure |
-| FTD_Thermodynamic_Limit.pdf | Active exported figure |
+- `DERIV_ALPHA_INVERSE_LATTICE_GAUGE`
+- `DERIV_EMERGENT_GRAVITY`
+- `DERIV_FUNDAMENTAL_CONSTANTS`
+- `DERIV_GAUGE_COUPLINGS_DISCRETE_SPACETIME` (likely-superseded by `PAPER_GAUGE_COUPLINGS_FROM_LATTICE_GEOMETRY.tex`)
+- `DERIV_QUANTUM_INFERENCE`
+- `DERIV_SELF_REFERENCE_FOUR_INTEGERS`
+- `FTD_KMS_Thermal_Time` (Type-III₁/KMS — would need scaffold-framing if re-authored)
+- `FTD_Modular_Structure` (same as above)
+- `FTD_Spatial_Correlations`
+- `SPEC_MASTER_QUADRATIC_DISCRETE_SPACETIME` (likely-superseded)
+- `SPEC_MASTER_QUADRATIC_PAPER` (likely-superseded)
+
+See `docs/papers/archive/pdf_only_no_source/README.md` for per-paper triage details.
+
+**Retracted to `archive/retracted_under_reframe/`** (reframe-incompatible; pdftotext extractions provided):
+
+- `FTD_Thermodynamic_Limit` — title is the proscribed concept
+- `DERIV_THERMODYNAMIC_REFLEXION` — title-level evidence
+
+See `docs/papers/archive/retracted_under_reframe/RETRACTION_NOTES.md`.
 
 ## speculative/
 
@@ -79,11 +83,13 @@ Speculative extensions and applications of FTD to open mathematical problems.
 | DERIV_GEOMETRIC_BIOPHYSICS | Geometric biophysics applications |
 | DERIV_GRAND_UNIFIED_MASS | Grand unified mass formula |
 | DERIV_SONOLUMINESCENCE | Sonoluminescence from lattice dynamics |
-| FTD_Finitude_Theorem | Why infinity cannot be physical |
-| FTD_Navier_Stokes | Navier-Stokes regularity via FTD |
-| FTD_Riemann_Hypothesis | Riemann Hypothesis connection |
-| FTD_Yang_Mills_Mass_Gap | Yang-Mills mass gap via lattice confinement |
+| FTD_Finitude_Theorem | Why infinity cannot be physical (post-reframe: now canonical, see preamble) |
+| FTD_Riemann_Hypothesis | Riemann Hypothesis connection — **PARKED for owner deeper read (`docs/theory/07_assessment/PARKING_LOT.md`)** |
 | LETTER_HERMITIAN_COPE | Open letter on the Hermitian inner product |
+
+**Retracted under the undefined-boundary reframe (2026-04-19):**
+- `FTD_Yang_Mills_Mass_Gap` — moved to `docs/papers/archive/retracted_under_reframe/`. Per-voxel mass gap (Theorem 5.1) preserved in archived `.tex` (LEDGER FTD-0044). See `RETRACTION_NOTES.md`.
+- `FTD_Navier_Stokes` — moved to `docs/papers/archive/retracted_under_reframe/`. No surviving Clay-eligible content. See `RETRACTION_NOTES.md`.
 
 ## src/
 

@@ -238,8 +238,8 @@ The L = 128 scan (added after the manuscript's first draft — see
 | 128 | 0.163 | **25.61** | **0.200** |
 
 $\lambda$ grows linearly with $L$. **The "screening" is a periodic-image
-finite-size effect**, not a physical Yukawa mass. In the $L \to \infty$
-limit, $\lambda \to \infty$ and pure Coulomb is recovered. This
+finite-size effect**, not a physical Yukawa mass. For arbitrarily large
+finite $L$, $\lambda$ grows without bound and pure Coulomb is recovered. This
 recontextualises the §4.3 negative-$\beta$ finding: the measured running
 is *partly* physical RG flow and *partly* finite-size contamination,
 and cleanly separating the two requires either the continuum-matching
@@ -307,9 +307,16 @@ One entry in `CATALOG_PARAMETRIC_INSERTIONS.md` can be tightened:
   Cross-reference to this document and to `beta_report.md`.
 
 A manuscript-level upgrade (`[MEASURED]` → `[DERIVED]`) is **not**
-warranted by Phase 2 alone. It requires Phase 4C continuum extrapolation
-to demonstrate that the measured β converges to the QED one-loop value
-as L → ∞.
+warranted by Phase 2 alone. β(L) was measured at L ∈ {16, 32, 64} via 3-method
+extraction (slope/Yukawa/asymptotic). The β-function sign matches QED (asymptotic
+freedom), but its magnitude is 2–3 orders of magnitude smaller than the QED
+β-function across all three methods. The rate at which β(L) approaches the QED
+β-function as L grows is **not characterized in this work**; pre-registering a
+scaling exponent p such that |β(L) − β_QED| ∝ L⁻ᵖ would convert the observation
+into a falsifiable convergence claim and is queued as future work. Until that
+prediction is in place, the present claim is restricted to: (i) sign agreement
+with QED at the tested L values, and (ii) magnitude discrepancy of 2–3 orders.
+Further-large-L extrapolation is not asserted.
 
 ---
 

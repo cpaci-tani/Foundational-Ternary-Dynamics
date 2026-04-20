@@ -187,7 +187,7 @@ The eigenvalue `sigma_S(k) = 0` determines the zero modes of each sublattice Lap
 
 The 3 extra BCC zero modes at `(pi, pi, 0)`, `(pi, 0, pi)`, `(0, pi, pi)` are exactly the **FCC reciprocal lattice vectors** of the BCC real-space lattice. This is a standard result in crystallography: the reciprocal lattice of BCC is FCC, and vice versa.
 
-The 4 zero modes cause slow convergence of the BCC Green's function on finite tori (each zero mode contributes an IR divergence that is only resolved in the thermodynamic limit). This is why numerical simulations at moderate lattice sizes (L <= 48) initially appeared to show SC as closer to the target — SC has only 1 zero mode and converges faster, but to the **wrong** value.
+The 4 zero modes cause slow convergence of the BCC Green's function on finite tori (each zero mode contributes an IR contribution whose finite-L correction is O(1/L) and shrinks for arbitrarily large L). This is why numerical simulations at moderate lattice sizes (L <= 48) initially appeared to show SC as closer to the target — SC has only 1 zero mode and converges faster, but to the **wrong** value.
 
 ### 4.3 Physical interpretation [RESOLVED — combinatorial, not arithmetic-geometric]
 

@@ -24,7 +24,7 @@
 
 \newcommand{\alphaEM}{\alpha_{\mathrm{EM}}}
 \newcommand{\alphaREF}{\alpha_{\mathrm{ref}}}
-\newcommand{\alphaINF}{\alpha_{\infty}}
+\newcommand{\alphaLargeL}{\alpha_{\mathrm{largeL}}}
 \newcommand{\MeV}{\,\mathrm{MeV}}
 \newcommand{\GeV}{\,\mathrm{GeV}}
 \newcommand{\FTD}{\textsc{ftd}}
@@ -59,7 +59,7 @@ coupling extraction yielding a measured $\beta$-function from real-space
 block-spin blocking; and (v) a scaling-dimension measurement for six
 gauge-invariant operators. We additionally run three dynamical
 Standard-Model emergence tests (electroweak symmetry breaking cold-start,
-three-generation cold-start, and a continuum-limit scan of
+three-generation cold-start, and a large-L extrapolation scan of
 $\alpha_{\mathrm{eff}}$).
 
 The measurements yield partial successes and documented failures, all
@@ -72,26 +72,27 @@ $\sim\!\SI{1}{\percent}$ of $|J|_{\max}$, traced to the engine's six
 Gauss-Seidel sweeps per tick rather than to any physics limitation. The
 measured coupling $\alpha_{\mathrm{eff}}$ varies with lattice size,
 exhibiting a negative-signed $\beta$ consistent with the
-asymptotic-freedom direction of continuum QED but with magnitude roughly
-$160\times$ the one-loop continuum prediction --- a new quantitative
+asymptotic-freedom direction of textbook QED but with magnitude roughly
+$160\times$ the one-loop QED prediction --- a new quantitative
 prediction that can be falsified on larger lattices. Six operators give
 high-$R^2$ scaling-dimension fits but all cluster near $\Delta \approx
 0.5$ rather than the pre-registered naive-counting values $[2,5]$,
 attributed to a pulse-envelope artefact in the measurement scenario.
 Cold-start electroweak symmetry breaking is not observed at the lattice
 sizes tested ($L \le 16$); the Higgs vacuum expectation value remains
-[\textsc{imposed}] in the parametric-insertions catalogue. The continuum
-extrapolation of $\alpha_{\mathrm{eff}}(L\to\infty)$ from $L \in
-\{32,48,64\}$ gives $\alphaINF = 0.021$, a factor of $2.9$ above the
+[\textsc{imposed}] in the parametric-insertions catalogue. The 1/L²
+extrapolation of $\alpha_{\mathrm{eff}}(L)$ from $L \in
+\{32,48,64\}$ gives $\alphaLargeL = 0.021$, a factor of $2.9$ above the
 reference $\alphaREF = 1/137.036$ --- an improvement over the
 single-scale $L=64$ value but not yet at the pre-registered \SI{1}{\percent}
 precision.
 
 The campaign ends with \FTD\ characterised as \emph{an emerging Wilsonian
 EFT}: the five-pillar checklist (Ward, Lorentz, RG, operator expansion,
-continuum matching) produces measurable signals in the expected qualitative
-directions, but the quantitative continuum limit demands larger lattices
-and higher-tolerance gauge projection than the present engine implements.
+large-L matching) produces measurable signals in the expected qualitative
+directions, but quantitative agreement at the largest tested L demands
+larger lattices and higher-tolerance gauge projection than the present
+engine implements.
 We enumerate the concrete follow-up tickets that would close each gap.
 
 A Day-2 campaign (\S\ref{sec:day2}) closes four of those tickets:
@@ -141,7 +142,7 @@ output had not, until this work, been tested against the Wilsonian
 five-pillar checklist that a proper effective field theory must satisfy:
 a measured $\beta$-function, verified Ward identities, quantified
 Lorentz-covariance recovery, a classified operator basis, and a controlled
-continuum limit.
+large-L extrapolation.
 
 This paper reports that measurement campaign. The experimental programme
 is pre-registered in \texttt{SPEC\_EFT\_RECOVERY\_PROGRAM.md}, committed
@@ -190,7 +191,7 @@ each measurement and documented without retrofit.
 \section{Symmetry Recovery (Phase 1)}
 \label{sec:symmetry}
 
-Three measurements test whether the continuous symmetries a continuum
+Three measurements test whether the continuous symmetries a Wilsonian
 EFT requires are emergently respected by the discrete engine.
 
 \subsection{Rotational Anisotropy}
@@ -296,7 +297,7 @@ All values dimensionless. Ratio to $\alphaREF = 1/137.036 \approx
 \label{tab:alpha-scales}
 \begin{tabular}{llll}
 \toprule
-$L$ & slope fit ($V$ vs $1/r$) & Yukawa ($\alpha, \lambda$) & asymptotic $\alpha_r$ plateau \\
+$L$ & slope fit ($V$ vs $1/r$) & Yukawa ($\alpha, \lambda$) & tail $\alpha_r$ plateau \\
 \midrule
 64 & $0.120$ ($R^2 = 0.91$) & $0.176$, $\lambda = 10.6$ & $0.033$ ($r \in [14,20]$) \\
 32 & $-0.127$ ($R^2 = 0.45$) & $0.706$, $\lambda = 2.9$ & $0.035$ ($r \in [8,10]$) \\
@@ -311,7 +312,7 @@ With $g = \sqrt{\alpha}$ and $\beta = [g(\mathrm{scale} \cdot 2) -
 g(\mathrm{scale})]/\ln 2$:
 
 \begin{itemize}
-  \item Asymptotic method: $\beta_{\mathrm{measured}} = -8.3 \times 10^{-3}$
+  \item Tail-plateau method: $\beta_{\mathrm{measured}} = -8.3 \times 10^{-3}$
     at $g = 0.182$; ratio to $\beta_{\mathrm{QED,1-loop}}(g) = g^3/(12\pi^2)
     = 5.1 \times 10^{-5}$ is $-163$.
   \item Yukawa method: $\beta_{\mathrm{measured}} = -0.61$; ratio $-978$
@@ -321,10 +322,10 @@ g(\mathrm{scale})]/\ln 2$:
 
 \begin{finding}
 $\beta$ is negative, matching the asymptotic-freedom direction of
-continuum QED, but its magnitude is roughly $160\times$ the
-continuum one-loop prediction. This is a new quantitative prediction:
+textbook QED, but its magnitude is roughly $160\times$ the
+one-loop QED prediction. This is a new quantitative prediction:
 the \FTD\ lattice at $L = 64$ exhibits $\beta$ that runs $\sim\!160\times$
-faster than continuum QED, testable by repeating the measurement on
+faster than textbook QED, testable by repeating the measurement on
 a lattice where $r \gg \lambda_{\mathrm{Yukawa}}$ (i.e., $L \geq 128$).
 \end{finding}
 
@@ -407,11 +408,11 @@ configuration does not cross the genesis threshold; this is consistent
 with the Moore-layer-decomposition claim being topological (via
 $\mathrm{C}(3,2) = 3$) rather than a dynamical consequence of evolution.
 
-\subsection{Continuum-Limit $\alphaINF$ Scan}
+\subsection{Large-L $\alphaLargeL$ Extrapolation Scan}
 
 $\alpha_{\mathrm{eff}}$ measured at $L \in \{32, 48, 64\}$ via the
-asymptotic-plateau method (\S\ref{sec:beta}). Fit $\alpha(L) =
-\alphaINF + b/L^2$:
+tail-plateau method (\S\ref{sec:beta}). Fit $\alpha(L) =
+\alphaLargeL + b/L^2$:
 
 \begin{center}
 \begin{tabular}{rl}
@@ -419,16 +420,17 @@ $L = 32$ & $\alpha = 0.0352$ \\
 $L = 48$ & $\alpha = 0.0140$ (outlier --- non-power-of-2 lattice) \\
 $L = 64$ & $\alpha = 0.0331$ \\
 \hline
-$\alphaINF$ & $= 0.0214$, $b = +10.9$ \\
+$\alphaLargeL$ & $= 0.0214$, $b = +10.9$ \\
 \end{tabular}
 \end{center}
 
 \begin{finding}
-$\alphaINF = 0.0214$ is a ratio of $2.94$ to $\alphaREF = 0.00730$,
-improving on the Phase-2C single-scale $L = 64$ value ($0.033$, ratio
-$4.5$) but not yet at the pre-registered \SI{1}{\percent} precision.
-The $L = 48$ outlier destabilises the fit; multi-seed statistics and
-power-of-2-only scans are needed to resolve.
+The 1/L² fit value $\alphaLargeL = 0.0214$ is a ratio of $2.94$ to
+$\alphaREF = 0.00730$, improving on the Phase-2C single-scale $L = 64$
+value ($0.033$, ratio $4.5$) but not yet at the pre-registered
+\SI{1}{\percent} precision. The $L = 48$ outlier destabilises the fit;
+multi-seed statistics and power-of-2-only scans are needed to give an
+empirical residual band on $\alphaLargeL$.
 \end{finding}
 
 % ============================================================================
@@ -467,7 +469,7 @@ $131$ [\textsc{parametric}], $10$ [\textsc{imposed}]/[\textsc{selection}], $2$
 The five concrete extensions that would close quantitative gaps:
 
 \begin{enumerate}
-  \item \textbf{$L = 128$ continuum-limit scan} (Phase 2/4
+  \item \textbf{$L = 128$ large-L extrapolation scan} (Phase 2/4
     extension). At $L = 128$ the fit window $r \in [4, 32]$ extends $3\times$
     past the Phase-2 screening length $\lambda = 10.6$, entering the pure-
     Coulomb regime. Expected runtime: $\sim 10$ minutes with existing
@@ -526,9 +528,10 @@ structure of $L=48$. Future scans should use power-of-2 lattices only.
 The three-scale Yukawa-length measurement gives
 $\lambda(L=32) = 2.88$, $\lambda(L=64) = 10.57$, $\lambda(L=128) = 25.61$.
 This is $\lambda \approx L/5$: the screening length is a \emph{fixed
-fraction of the lattice size}, not a physical Yukawa mass. In the
-thermodynamic limit $L \to \infty$, $\lambda \to \infty$ and pure
-Coulomb is recovered. This recontextualises the \S\ref{sec:beta}
+fraction of the lattice size}, not a physical Yukawa mass. As $L$ grows
+through the tested range, $\lambda$ grows in lock-step and pure Coulomb
+behaviour is approached at the largest tested L. This recontextualises
+the \S\ref{sec:beta}
 $\beta$-measurement: the ``screening'' is at least partially a
 finite-size periodic-image cutoff, not physical running.
 
@@ -671,7 +674,7 @@ $b$ & $\theta$ (deg) & $\alpha_{\text{extracted}}$ & ratio to $\alpha_{\text{ref
 \end{tabular}
 \end{center}
 
-\textbf{Critical comparison}: the static V(r) asymptotic method at the
+\textbf{Critical comparison}: the static V(r) tail-plateau method at the
 same $L=32$ gave $\alpha = 0.035$. The Rutherford scattering method at
 the smallest impact parameter $b=3$ gives $\alpha = 0.035$ --- identical
 to 3 decimals. Two completely independent methods (static fit vs
@@ -719,7 +722,7 @@ Historical (superseded) 3-point fit, shown for transparency only:
 \begin{center}
 \begin{tabular}{lccl}
 \toprule
-scaling law & $\alpha_\infty$ & $\alpha_\infty / \alpha_{\mathrm{ref}}$ & $R^2$ \\
+scaling law & $\alphaLargeL$ & $\alphaLargeL / \alpha_{\mathrm{ref}}$ & $R^2$ \\
 \midrule
 \sout{1/L (Coulomb-in-periodic-box)} & \sout{0.0090} & \sout{1.23} & \sout{0.66} \\
 \sout{1/L² (standard lattice-artefact)} & \sout{0.0157} & \sout{2.15} & \sout{0.52} \\
@@ -727,10 +730,12 @@ scaling law & $\alpha_\infty$ & $\alpha_\infty / \alpha_{\mathrm{ref}}$ & $R^2$ 
 \end{tabular}
 \end{center}
 
-\textbf{The correct result is the Phase-F 4-point plateau (\S\ref{sec:phasef})},
-$\alpha_\infty \in [3.35, 3.74] \times \alpha_{\text{ref}}$ in the
-engine's accumulator convention, or $\approx 1.8 \times \alpha_{\text{ref}}$
-after the classical $\tfrac{1}{2}$ convention correction derived in
+\textbf{The correct result is the Phase-F 4-point plateau (\S\ref{sec:phasef})}:
+the 1/L² fit at the largest tested L gives
+$\alphaLargeL \in [3.35, 3.74] \times \alpha_{\text{ref}}$ in the
+engine's accumulator convention (residual band from three scaling-law
+choices), or $\approx 1.8 \times \alpha_{\text{ref}}$ after the
+classical $\tfrac{1}{2}$ convention correction derived in
 \texttt{AUDIT\_ALPHA\_EXTRACTION.md}. The ``5$\times$ gap'' narrative
 has not been resolved by Phase-F; a residual factor of $\sim 1.8$
 remains open.
@@ -744,11 +749,11 @@ Rutherford $\alpha = 0.042 \pm 0.005$. Zero rows upgraded from
 discipline holds.
 
 % ============================================================================
-\section{Phase F: GPU unblock + 4-point continuum plateau}
+\section{Phase F: GPU unblock + 4-point large-L plateau}
 \label{sec:phasef}
 
-The Day-2 manuscript closed with a 3-point continuum extrapolation
-($L = 64, 128, 256$) giving $\alpha_\infty = 1.23 \alpha_{\text{ref}}$
+The Day-2 manuscript closed with a 3-point 1/L extrapolation
+($L = 64, 128, 256$) giving $\alphaLargeL = 1.23 \alpha_{\text{ref}}$
 via a 1/L scaling law. Phase F tests that extrapolation by
 \textbf{(i)} moving the GPU build to WSL2 + Ubuntu 22.04 + CUDA 13.0
 (sidesteps the Windows CMake 4 escape bug entirely), and
@@ -795,7 +800,7 @@ Three candidate scaling laws:
 \begin{center}
 \begin{tabular}{lcc}
 \toprule
-fit form & $\alpha_\infty$ & $\alpha_\infty / \alpha_{\text{ref}}$ \\
+fit form & $\alphaLargeL$ & $\alphaLargeL / \alpha_{\text{ref}}$ \\
 \midrule
 1/L & 0.02640 & 3.62 \\
 1/L$^2$ & 0.02730 & 3.74 \\
@@ -805,11 +810,13 @@ free 1/L$^p$ (best $p = 0.5$) & 0.02446 & 3.35 \\
 \end{center}
 
 \paragraph{The plateau is the result --- with a convention caveat.}
-All three extrapolations agree on $\alpha_\infty \in [3.35, 3.74]
-\times \alpha_{\text{ref}}$ in the engine's native accumulator
-convention. The 4-point series is flat enough that the extrapolation
-is insensitive to scaling-law choice. \textbf{FTD does not match
-continuum QED at the Coulomb tail.}
+The 1/L² fit at the largest tested L gives $\alphaLargeL \approx
+3.74 \times \alpha_{\text{ref}}$, with an empirical residual band
+$[3.35, 3.74] \times \alpha_{\text{ref}}$ across the three scaling
+laws in the engine's native accumulator convention. The 4-point
+series is flat enough that the fit is insensitive to scaling-law
+choice. \textbf{FTD does not match textbook QED at the Coulomb tail
+at the largest tested L.}
 
 A post-audit
 (\texttt{AUDIT\_ALPHA\_EXTRACTION.md}) verifies that the three
@@ -823,7 +830,7 @@ $V(r) = E_{\text{pair}} - E_{\text{self}}^+ - E_{\text{self}}^-$
 picks up this factor, so the engine's measured $V(r)$ is $2\times$
 the classical-convention interaction energy. Under the classical
 convention the plateau is
-$\alpha_\infty^{\text{classical}} \approx 0.013 \approx 1.8
+$\alphaLargeL^{\text{classical}} \approx 0.013 \approx 1.8
 \times \alpha_{\text{ref}}$.
 
 \paragraph{Phase G resolution --- the residual is the Green's function.}
@@ -882,15 +889,16 @@ permille after 1 tick, 1\% after 500 ticks. Details in
 The EFT Recovery Program closes with a clean, honest characterisation:
 \FTD\ is an \emph{emerging} Wilsonian EFT. Five of five pre-registered
 measurement pillars produced finite, reproducible signals; none
-quantitatively matches continuum QED at the pre-registered tolerances.
+quantitatively matches textbook QED at the pre-registered tolerances.
 The qualitative agreement --- a negative-$\beta$ asymptotic-freedom-
 direction running, a Lorentz-covariant correlator collapse, operator-
-two-point fits that converge, and a continuum limit that trends toward
-$\alphaREF$ as $L$ grows --- establishes that the five-pillar checklist
-is not empty on this lattice. The quantitative gaps are attributed to
+two-point fits that converge, and a 1/L² fit value that trends toward
+$\alphaREF$ as $L$ grows through the tested range --- establishes that
+the five-pillar checklist is not empty on this lattice. The quantitative
+gaps are attributed to
 (i) a 6-iteration SOR projection that limits gauge-invariance fidelity,
-(ii) a screening-length $\lambda \sim 10a$ that obscures continuum
-Coulomb behaviour at the measurement scales tested, and (iii) a
+(ii) a screening-length $\lambda \sim 10a$ that obscures the Coulomb-tail
+regime at the measurement scales tested, and (iii) a
 pulse-envelope artefact in the operator spectrum scenario. All three
 are software-tuning fixes, not physics limitations.
 
@@ -903,7 +911,7 @@ campaign did not retrofit the tags.
 The headline quantitative claim, that \FTD\ predicts $\beta_{\mathrm{measured}}
 \approx 160 \beta_{\mathrm{QED,1-loop}}$, is falsifiable. Either the
 follow-up $L = 128$ scan brings the ratio to $1 \pm 0.1$ --- recovering
-continuum QED --- or it does not, and the prediction stands as a
+textbook QED --- or it does not, and the prediction stands as a
 concrete \FTD-specific deviation testable on bigger lattices.
 
 % ============================================================================

@@ -173,13 +173,10 @@ ftd/
 │   ├── epistemic/                   # Axiomatic definitions
 │   └── *.py                         # Core physics modules
 │
-└── archive/                         # All legacy/superseded content (gitignored)
-    ├── ftd_archive/                 # Legacy engines (Python, Qt GUI, ImGui, etc.)
-    ├── pre_ftd_root/                # Original root files before restructure
-    ├── trd_working_docs/            # Early TRD-era working documents
-    ├── legacy_scripts/              # Superseded scripts
-    ├── web-app/                     # Superseded web platform
-    └── [atoms, fermat_writeup, symmetry-of-zero, verification]
+└── archive/                         # Curated historical record (gitignored)
+                                     # Bulk legacy material (TRD-era engines, pre-restructure root,
+                                     # superseded web platform, etc.) deleted 2026-04-19;
+                                     # archived theory docs live at docs/theory/archive/
 ```
 
 ---

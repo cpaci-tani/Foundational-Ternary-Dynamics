@@ -106,11 +106,7 @@ ftd/                                     # Project root
 │   ├── notebooks/                # 12 Jupyter pedagogy notebooks
 │   └── interactive/              # 8+ standalone HTML simulations (forces, photon, Hamiltonian bridge, ternary cube)
 ├── models/                       # Physics derivation package (gitignored)
-├── archive/                      # All legacy/superseded content (gitignored)
-│   ├── ftd_archive/              # Legacy engines (Python, Qt GUI, ImGUI, etc.)
-│   ├── pre_ftd_root/             # Original root files before restructure
-│   ├── trd_working_docs/         # Early TRD-era working documents
-│   └── web-app/                  # Superseded web platform (content, schemas, packages)
+├── archive/                      # Curated historical record (gitignored; see docs/theory/archive/ for archived theory docs)
 ├── META_DOCUMENTATION_MAP.md     # Master catalog / card catalog
 └── META_PROJECT_ATLAS.md         # AI agent navigation guide
 ```

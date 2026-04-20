@@ -6,7 +6,7 @@
 **Date:** February 25, 2026
 **Status:** [THEOREM] + [SELECTION] (mixed -- see Claims Table Section 7)
 **Framework:** Foundational Ternary Dynamics v5.26
-**Epistemic Tag:** Triangle diagram (VVA) computed on the FTD lattice. UV finiteness is [THEOREM] (compact Brillouin zone). Vanishing anomaly for naive fermions is [THEOREM] (Nielsen-Ninomiya). Wilson fermion resolution recovering the correct anomaly coefficient is [THEOREM] in the continuum limit. Choice of Wilson term is [SELECTION]. The pi-zero decay rate Gamma = 7.73 eV (1.2% vs PDG) is [THEOREM] with f_pi adopted as [IMPOSED]. Baryogenesis connection via lattice topological charge is [SELECTION].
+**Epistemic Tag:** Triangle diagram (VVA) computed on the FTD lattice. UV finiteness is [THEOREM] (compact Brillouin zone). Vanishing anomaly for naive fermions is [THEOREM] (Nielsen-Ninomiya). Wilson fermion resolution recovering the correct anomaly coefficient is [THEOREM] for arbitrarily fine lattice spacing $a$, with violations bounded by $O(a)$. Choice of Wilson term is [SELECTION]. The pi-zero decay rate Gamma = 7.73 eV (1.2% vs PDG) is [THEOREM] with f_pi adopted as [IMPOSED]. Baryogenesis connection via lattice topological charge is [SELECTION].
 
 > The chiral anomaly -- the quantum mechanical breaking of classical axial symmetry -- is one of the most profound results in quantum field theory. It governs neutral pion decay, constrains the number of light quark flavors, and provides the microscopic mechanism for baryon number violation. This document derives the anomaly from the FTD lattice Feynman rules. The triangle diagram is computed on the compact Brillouin zone BZ = [-pi, pi]^4, yielding a UV-finite integral that requires no regularization. The anomaly coefficient is topological: it counts the winding number of the fermion determinant over BZ. Naive fermions give zero anomaly (Nielsen-Ninomiya theorem); Wilson fermions recover the correct coefficient Q^2 alpha/(2pi) per physical fermion. With N_c = 3 derived from the master quadratic, the pi-zero decay rate follows with only f_pi as input.
 
@@ -121,7 +121,7 @@ $$q_{\mu}\, T^{\mu\nu\rho} = 2m\, T_5^{\nu\rho} + \mathcal{A}^{\nu\rho}$$
 
 The anomalous piece $\mathcal{A}^{\nu\rho}$ arises because the shift $p \to p + k$ is not a symmetry of the lattice integral -- the Brillouin zone boundary breaks translational invariance in momentum space. In the continuum, this corresponds to the ambiguity in routing momentum through the linearly divergent diagram.
 
-The explicit form of the anomaly (evaluated in the continuum limit) is:
+The explicit form of the anomaly (evaluated in the long-wavelength regime $|k_i| \ll \pi$) is:
 
 $$\mathcal{A}^{\nu\rho}(k_1, k_2) = \frac{Q^2 \alpha}{2\pi}\, \varepsilon^{\nu\rho\sigma\tau}\, k_{1\sigma}\, k_{2\tau}$$
 
@@ -199,7 +199,7 @@ The Wilson mass term $M_W(p) = r\sum_{\mu}(1 - \cos p_{\mu})$ vanishes at $p = 0
 
 $$\mathcal{C}_{\text{Wilson}} = \frac{Q^2\alpha}{2\pi} \quad \text{per physical fermion}$$
 
-**Proof.** The Wilson mass breaks the chiral symmetry that protects the doublers. In the continuum limit $a \to 0$, the 15 heavy doublers decouple (their masses $\sim 1/a \to \infty$), and only the physical fermion at $p = 0$ contributes to the anomaly. The anomaly coefficient for a single Dirac fermion is $Q^2\alpha/(2\pi)$, which is the standard ABJ result. The lattice calculation converges to this value as the momenta probed are much smaller than the doubler masses. $\square$
+**Proof.** The Wilson mass breaks the chiral symmetry that protects the doublers. For arbitrarily fine lattice spacing $a$, the 15 heavy doublers decouple (their masses $\sim 1/a$ grow without bound as $a$ is taken smaller), and only the physical fermion at $p = 0$ contributes to the anomaly. The anomaly coefficient for a single Dirac fermion is $Q^2\alpha/(2\pi)$, which is the standard ABJ result. The lattice calculation approaches this value with error $O(a)$ provided the momenta probed are much smaller than the doubler masses. $\square$
 
 ## 3.4 Anomaly for the Full SM Fermion Content [THEOREM]
 
@@ -237,11 +237,11 @@ FTD adopts the Wilson fermion resolution, which retains properties (1), (2), and
 
 This choice is tagged [SELECTION] -- it is the standard and most widely used resolution in lattice gauge theory, adopted for the FTD program.
 
-## 4.3 Chiral Symmetry Recovery in the Continuum Limit [THEOREM]
+## 4.3 Chiral Symmetry Recovery at Sub-Planckian Scales [THEOREM]
 
-**Theorem 4.2.** *Chiral symmetry is recovered in the continuum limit $a \to 0$ (equivalently, at scales $E \ll \pi/a = E_{\text{Planck}}$).*
+**Theorem 4.2.** *Chiral symmetry is recovered for arbitrarily fine lattice spacing $a$ (equivalently, at scales $E \ll \pi/a = E_{\text{Planck}}$), with violations bounded by $O(a)$.*
 
-**Proof.** The Wilson mass contributes $M_W = r\sum_{\mu}(1 - \cos p_{\mu}) = O(p^2 a)$ for the physical fermion at $p \to 0$. This vanishes as $a \to 0$, restoring $\{D, \gamma_5\} = 0$ in the continuum limit. The anomaly itself is finite and survives: it is the irreducible quantum violation of classical axial symmetry, independent of the regulator. $\square$
+**Proof.** The Wilson mass contributes $M_W = r\sum_{\mu}(1 - \cos p_{\mu}) = O(p^2 a)$ for the physical fermion at $p \to 0$. This is bounded by $O(a)$ at fixed external momentum, so $\{D, \gamma_5\}$ approaches zero with error $O(a)$ as $a$ is taken arbitrarily small. The anomaly itself is finite and survives: it is the irreducible quantum violation of classical axial symmetry, independent of the regulator. $\square$
 
 ## 4.4 Physical Interpretation in FTD [SELECTION]
 

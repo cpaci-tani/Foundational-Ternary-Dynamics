@@ -189,7 +189,7 @@ The floor operation (integer rounding) is motivated by topological quantization:
 
 ## 3.1 Layer 1: What Exists (Ontology)
 
-The Z^3 cubic lattice. At each site v and time t:
+A cubic graph with no defined boundary, with 26-Moore adjacency at every specified position. At each site v and time t:
 - A state field s(v,t) in {-1, 0, +1} (ternary)
 - A flux field J(v,t) in R^3 (continuous vector)
 - An update rule: the tick cycle, deterministic and local (26-neighbor Moore neighborhood)
@@ -402,11 +402,11 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 | G* encodes prime distribution via L-function | [THEOREM] | Euler product |
 | Cosine SHAPE from continuous flux projections | [THEOREM] | <(v.a)(-v.b)> = -(1/3)cos(theta); shape is cosine, amplitude is 1/3 |
 | Born rule P ~ |J|^2 | [SELECTION] | Parseval shows E ~ |J|^2; identification of energy fraction with detection probability is the Born rule itself, not a derivation of it |
-| x+ = 1/alpha | [SELECTION] | 1.26 ppm match; g_c = sqrt(alpha) in continuum limit but identification requires QED recovery |
+| x+ = 1/alpha | [SELECTION] | 1.26 ppm match; g_c = sqrt(alpha) for arbitrarily fine spacing but identification requires QED recovery |
 | Bell S = 2.83 in experiments | [SELECTION] | EMERGENT from QM (Tsirelson's bound). Substrate S <= 2, emergent S = 2 sqrt(2). Remaining: singlet-state lemma (void event -> entangled pair in emergent Hilbert space). |
 | O-operation = Euler-Lagrange equation | [THEOREM] | Action extremization IS center integrating shell |
 | Nuclear binding (5 Weizsacker coefficients) | [INSERTION] | a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV (exp: 15.56); FTD values in standard SEMF structure |
-| Schrodinger = continuum limit of lattice wave eq | [THEOREM] | Each QM feature = unique limit of lattice feature |
+| Schrodinger = limit of lattice wave eq for arbitrarily fine spacing | [THEOREM] | Each QM feature = unique limit of lattice feature |
 | 360/16 = CHSH angle = Z[i] automorphism angle | [THEOREM] | Arithmetic |
 
 ## 7.2 What Is Selected
@@ -441,9 +441,9 @@ The mathematical chain from i to the master quadratic roots is rigorous: 7/9 lin
 
 **The Bell violation (S = 2.83 vs lattice S <= 2) is now understood as EMERGENT** (April 11, 2026). S = 2 sqrt(2) follows from the QM that emerges from the lattice (Tsirelson's bound). The remaining target is the singlet-state lemma: void event -> maximally entangled pair in emergent Hilbert space. The Born rule (P ~ |J|^2) is [SELECTION] — Parseval gives E ~ |J|^2 but identifying energy fraction with detection probability is the Born rule itself.
 
-Nuclear binding energies are recovered from FTD constants to ~1%: a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV (exp: 15.56), all five Weizsacker coefficients within 1-7% of experiment, iron-56 binding at 99% of observed value (see archive/atoms/nuclear-explorer.html).
+Nuclear binding energies are recovered from FTD constants to ~1%: a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV (exp: 15.56), all five Weizsacker coefficients within 1-7% of experiment, iron-56 binding at 99% of observed value.
 
-The Schrodinger equation is the unique continuum limit of the lattice wave equation — not by a uniqueness proof, but because each QM feature IS the continuum limit of a specific lattice feature: complex amplitudes from Gauss constraint, superposition from linearity, Born rule from Parseval, evolution from the wave equation. No alternative is possible because each mapping is one-to-one.
+The Schrodinger equation is the unique limit of the lattice wave equation as the lattice spacing is taken arbitrarily fine — not by a uniqueness proof, but because each QM feature IS the corresponding limit of a specific lattice feature: complex amplitudes from Gauss constraint, superposition from linearity, Born rule from Parseval, evolution from the wave equation. No alternative is possible because each mapping is one-to-one.
 
 Lattice corrections to GR are computed: O(l_P^2/r^2) with c_1 = 0.022. Consciousness formalized via autopoietic index.
 

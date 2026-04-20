@@ -205,7 +205,7 @@ The metric is GR's mathematical language for encoding the saturation pattern. Th
 
 Full GR (nonlinear Einstein equations, diffeomorphism invariance, background independence) may be **structurally unachievable** on a fixed cubic lattice. The lattice defines a preferred frame — it is background-*dependent* by construction.
 
-This is not necessarily a defect. FTD proposes that the lattice is more fundamental than the geometry it produces. Diffeomorphism invariance would be an emergent symmetry of the continuum limit, not a property of the substrate. Whether this emergence actually occurs is **[OPEN]**.
+This is not necessarily a defect. FTD proposes that the lattice is more fundamental than the geometry it produces. Diffeomorphism invariance would be an emergent symmetry at arbitrarily fine spacing, not a property of the substrate. Whether this emergence actually occurs is **[OPEN]**.
 
 ---
 
@@ -372,14 +372,14 @@ FTD has complete results through **Level 5**. Levels 6-7 represent genuine open 
 | ID | Claim | Epistemic Tag | Depends On |
 |----|-------|---------------|------------|
 | RGD-C1 | Full nonlinear GR may be structurally unachievable on a fixed cubic lattice | [CONJECTURE] | Background dependence of lattice |
-| RGD-C2 | Diffeomorphism invariance, if it emerges, is a property of the continuum limit, not the substrate | [CONJECTURE] | Substrate vs aggregate distinction |
+| RGD-C2 | Diffeomorphism invariance, if it emerges, is a property at arbitrarily fine spacing, not the substrate | [CONJECTURE] | Substrate vs aggregate distinction |
 
 ### 9.4 Open Questions
 
 | ID | Question | Status |
 |----|----------|--------|
 | RGD-O1 | Can full nonlinear Einstein equations be recovered from lattice dynamics? | [GAP-G2] |
-| RGD-O2 | Does diffeomorphism invariance emerge in the continuum limit? | [GAP-G4] |
+| RGD-O2 | Does diffeomorphism invariance emerge at arbitrarily fine spacing? | [GAP-G4] |
 | RGD-O3 | Is background independence achievable in any formulation of FTD? | [GAP-G5] |
 | RGD-O4 | Can the equivalence principle be tested for deviations in the strong-field regime? | [OPEN] |
 

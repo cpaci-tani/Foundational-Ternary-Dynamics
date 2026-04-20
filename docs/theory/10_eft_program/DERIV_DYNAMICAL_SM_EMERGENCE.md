@@ -14,13 +14,17 @@
 > - **4B Three-generation cold-start: null** — zero manifested species
 >   over 1 000 ticks on the radial-flux seed. Genesis threshold is not
 >   crossed by this configuration.
-> - **4C Continuum-limit scan: convergence signal** — α_eff(L → ∞)
->   extrapolated from L ∈ {32, 48, 64} gives α_inf = 0.0214, ratio
->   2.94× α_ref. This is an improvement over Phase-2C's single-scale
->   L = 64 value (0.033, ratio 4.5×) and is consistent with an a → 0
->   limit that *could* reach α_ref on much larger lattices, but the
->   fit is dominated by a non-monotonic L = 48 outlier so the
->   extrapolation carries large uncertainty.
+> - **4C Continuum-matching scan: finite-L scaling diagnostic** — across the
+>   canonical reference regime L ∈ {64, 128, 256, 384}, the measured α_eff(L)
+>   takes definite values at each L (see Phase 4 results table). The 1/L² fit
+>   gives α_largeL ≈ 3.6 · α_ref. **Whether this large-L value matches α_ref
+>   is a calibration question conditional on `a_phys`, not a convergence
+>   theorem.** See [OPEN_A_PHYS_DERIVATION.md](OPEN_A_PHYS_DERIVATION.md) for
+>   the calibration framework. The 3.6× plateau in the EFT campaign is therefore
+>   a predicted consequence of the framework's current `a_phys` choice, not an
+>   unexplained anomaly. Under any specific calibration declaration (e.g.,
+>   `a_phys ≡ ℓ_P`), the engine's α_largeL is a falsifiable prediction; under a
+>   different calibration, it would be a different value.
 
 ---
 
@@ -168,7 +172,7 @@ The linear 1/L² fit on three non-monotonic points is fragile.
 **Honest conclusion.** Phase 4C's best estimate α_inf ≈ 0.021 is closer
 to α_ref = 0.00730 than Phase 2C's single-scale α(L = 64) = 0.033,
 but the factor-2.9 gap and the L = 48 outlier together mean the
-continuum limit is *not* settled. Pre-registered target "α_inf = 1/137
+large-L behaviour is *not* settled. Pre-registered target "α_inf = 1/137
 ± 1%" is **not** met; we are 290% off, not 1%.
 
 ---
@@ -183,7 +187,7 @@ Phase 4 does NOT upgrade any catalog entries from [IMPOSED] to
 - **Three-generation count** remains [SELECTION] dynamically, [THEOREM]
   topologically. Phase 4B null result is consistent with this
   classification and does not change it.
-- **α continuum limit** remains a [MEASURED] observation. The
+- **α large-L extrapolation** remains a [MEASURED] observation. The
   extrapolation α_inf = 0.0214 is ~3× α_ref, within a factor of ~40
   of the pre-reg 1% target but not at the precision that would
   justify [DERIVED] tagging.

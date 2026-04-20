@@ -554,7 +554,7 @@ Net: S_substrate * sqrt(2) = S_observer. Verified 4/4 Monte Carlo checks."
 **Accept the result with research direction toward emergent Hilbert space.** The honest assessment is that FTD's lattice dynamics are locally causal and produce classical correlations. The Hilbert space construction (v4.0) is a theoretical overlay, not an emergent feature. Future work should focus on:
 
 1. Whether nonlinear corrections to the wave equation (higher-order terms in the action) can introduce effective noncommutativity
-2. Whether the continuum limit of the lattice theory has additional structure not visible at finite lattice spacing
+2. Whether the lattice theory at arbitrarily fine spacing has additional structure not visible at coarse lattice spacing
 3. Whether topological features (solitons, vortices) carry quantum-like correlations
 
 Until one of these is demonstrated, characterizing the substrate-to-aggregate transition -- how local deterministic dynamics yield aggregate quantum statistics -- remains the central open problem in FTD. Note (v5.24): S <= 2 from the substrate is *expected*, not a failure. QM correlations are understood as aggregate ensemble behavior, not substrate-level requirements.

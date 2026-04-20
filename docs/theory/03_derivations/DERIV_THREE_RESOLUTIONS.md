@@ -66,7 +66,7 @@ FTD has no continuum. The lattice IS the physics — not a regularization of a c
 
 **What about the observed running of $\alpha$?**
 
-The QED beta function $\beta(\alpha) = 2\alpha^2/(3\pi)$ IS derived from the FTD lattice (DERIV_LATTICE_QED_COMPLETE.md, Theorem A.6). So $\alpha$ does run with energy in the continuum limit. But the running is an EFFECTIVE description of the lattice physics at scales much larger than the lattice spacing. At the lattice scale itself, the coupling is determined by the gap equation, not by the RG.
+The QED beta function $\beta(\alpha) = 2\alpha^2/(3\pi)$ IS derived from the FTD lattice (DERIV_LATTICE_QED_COMPLETE.md, Theorem A.6). So $\alpha$ does run with energy in the long-wavelength effective description (arbitrarily fine spacing $a$ relative to scales of interest). But the running is an EFFECTIVE description of the lattice physics at scales much larger than the lattice spacing. At the lattice scale itself, the coupling is determined by the gap equation, not by the RG.
 
 The precision formula corrections account for the difference between the tree-level lattice value ($x_+ = 137.036171$) and the physical value ($1/\alpha_{\text{CODATA}} = 137.035999177$):
 
@@ -113,7 +113,7 @@ Physics uses $\mathbb{C}$ as the amplitude algebra (one Cayley-Dickson doubling 
 
 In BCS, the gap equation operates in a continuum with a continuous energy spectrum. Higher-loop corrections involve virtual excitations at all intermediate energies. The mean-field approximation neglects these fluctuations, introducing ~30% error.
 
-In FTD, there IS no continuous spectrum. The lattice has discrete momentum modes (points in the Brillouin zone). The gap equation sums over a FINITE number of modes (16 in temporal gauge on the minimal torus, approaching the Watson integral in the thermodynamic limit). There are no "intermediate energies" between lattice modes — the sum is exact, not an approximation to a continuum integral.
+In FTD, there IS no continuous spectrum. The lattice has discrete momentum modes (points in the Brillouin zone). The gap equation sums over a FINITE number of modes (16 in temporal gauge on the minimal torus, approaching the Watson integral as the finite torus is enlarged). There are no "intermediate energies" between lattice modes — the sum is exact, not an approximation to a continuum integral.
 
 The one-loop result is exact because:
 1. The sum over modes is finite and exact (compact BZ)

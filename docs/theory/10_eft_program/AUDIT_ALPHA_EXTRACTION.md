@@ -114,7 +114,7 @@ therefore:
 
 If the engine's flux-field coupling is the one declared in `constants.h`
 (`G_C = √α`, `ALPHA_EFT = G_C² = α`), then the **predicted** measurement under
-the engine's own convention is `α_r → 2 · α_ref` at the continuum limit, not
+the engine's own convention is `α_r → 2 · α_ref` for arbitrarily fine spacing $a$, not
 `α_ref`.
 
 ---

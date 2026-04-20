@@ -366,7 +366,7 @@ These axioms formalize the minimal requirements for self-referential observation
 
 ### 5.6 Von Neumann Factor Type Assignment [CONJECTURE]
 
-**Conjecture CGB-1** (The Central Conjecture): *An agent satisfying axioms SL1-SL4, in the thermodynamic limit, has an internal algebra that is a Type III$_1$ von Neumann factor.*
+**Conjecture CGB-1** (The Central Conjecture): *An agent satisfying axioms SL1-SL4, on regions of arbitrarily large extent, has an internal algebra that is a Type III$_1$ von Neumann factor.*
 
 The argument (not yet a proof):
 
@@ -628,7 +628,7 @@ Total gap: $1+1+1+4+3+3+6 = 19 = 20 - 1$. The structural gaps $\{N_{\text{base}}
 
 ### 10.4 The Finite-Size Limitation
 
-At any finite lattice size, the algebra of observables is $B(\mathcal{H})$ for a finite-dimensional $\mathcal{H}$, which is Type I. Type III$_1$ can only appear in the thermodynamic/continuum limit. This means the bridge can never be *verified* at finite size — only *indicated* by scaling trends (Section 7.3).
+At any finite lattice size, the algebra of observables is $B(\mathcal{H})$ for a finite-dimensional $\mathcal{H}$, which is Type I. Type III$_1$ can only appear as scaling behavior under arbitrarily large finite extent (or arbitrarily fine spacing). This means the bridge can never be *verified* at finite size — only *indicated* by scaling trends (Section 7.3).
 
 ---
 
