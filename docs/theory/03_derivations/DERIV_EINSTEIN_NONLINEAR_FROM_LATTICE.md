@@ -174,8 +174,8 @@ On the FTD lattice:
 ### 5.2 Limitations
 
 The lattice UV cutoff ensures the **classical** iterative bootstrap is well-defined. It does **not** automatically solve quantum gravity:
-- Quantum gravitational corrections (graviton loops) require the full lattice path integral
-- The lattice breaks continuous diffeomorphism invariance (restored only in the continuum limit)
+- Quantum gravitational corrections (graviton loops) require the lattice path integral over arbitrarily large finite regions
+- The lattice breaks continuous diffeomorphism invariance (recovered only at the level of long-wavelength observables, i.e. for arbitrarily fine spacing $a$ relative to physical scales of interest)
 - The coarse-graining from lattice to continuum metric involves [SELECTION] choices
 
 ---

@@ -30,7 +30,7 @@ $$G_L(\mathbf{k}) = \frac{1}{\lambda(\mathbf{k})} = \frac{1}{2(3 - \cos k_x - \c
 
 This is precisely the **Euclidean propagator** of a massless scalar/vector field on the cubic lattice. In standard lattice field theory, this object is obtained by path-integral quantization of the free field action. In FTD, it arises natively as the solution to the static wave equation.
 
-**Continuum limit.** For |k| << π (long wavelengths):
+**Long-wavelength behavior.** For |k| << π (long wavelengths, equivalently arbitrarily fine spacing relative to the wavelength):
 
 $$\lambda(\mathbf{k}) = 2\left(3 - \cos k_x - \cos k_y - \cos k_z\right) = k_x^2 + k_y^2 + k_z^2 + O(k^4) = k^2 + O(k^4)$$
 
@@ -40,7 +40,7 @@ $$G_L(\mathbf{k}) \to \frac{1}{k^2}$$
 
 This is the standard massless Euclidean propagator.
 
-**Key distinction:** This propagator is NOT a discretization of continuum QFT. It IS the native lattice object, derived from FTD's wave equation (DERIV_FORCE_EMERGENCE.md). The continuum QFT propagator is the long-wavelength *limit* of the lattice propagator, not the other way around.
+**Key distinction:** This propagator is NOT a discretization of continuum QFT. It IS the native lattice object, derived from FTD's wave equation (DERIV_FORCE_EMERGENCE.md). The continuum QFT propagator is the long-wavelength *approximation* of the lattice propagator at arbitrarily fine spacing, not the other way around.
 
 ### 1.2 Wick Rotation and the Minkowski Propagator [THEOREM]
 
@@ -66,7 +66,7 @@ where k_E = (k_τ, k_x, k_y, k_z) is the 4D Euclidean momentum.
 
 $$\cos(k_\tau) = \cos(i\omega) = \cosh(\omega)$$
 
-For small ω (continuum limit): cosh(ω) ≈ 1 + ω²/2. The denominator becomes:
+For small ω (long-wavelength regime): cosh(ω) ≈ 1 + ω²/2. The denominator becomes:
 
 $$2(4 - \cosh(\omega) - \cos k_x - \cos k_y - \cos k_z) \approx -\omega^2 + k^2$$
 
@@ -76,7 +76,7 @@ $$G_M(\omega, \mathbf{k}) = \frac{1}{-\omega^2 + \omega_k^2 + i\epsilon}$$
 
 where ω_k² = 4C²[sin²(k_x/2) + sin²(k_y/2) + sin²(k_z/2)] is the lattice dispersion relation (DERIV_FORCE_EMERGENCE.md, Theorem 8.1).
 
-**Continuum limit:** For |k|, |ω| << π:
+**Long-wavelength behavior:** For |k|, |ω| << π:
 
 $$G_M(\omega, \mathbf{k}) \to \frac{1}{\omega^2 - C^2 k^2 + i\epsilon}$$
 
@@ -102,7 +102,7 @@ where g_c = √α ≈ 0.0854 (derived in DERIV_STATE_FLUX_COUPLING_DERIVATION.md
 
 $$\mathcal{M} = q_1 q_2 \cdot g_c^2 \cdot G_L(\mathbf{k}) = q_1 q_2 \cdot \alpha \cdot G_L(\mathbf{k})$$
 
-In the continuum limit:
+In the long-wavelength regime (|k| << π):
 
 $$\mathcal{M} = \frac{q_1 q_2 \alpha}{k^2}$$
 
@@ -112,7 +112,7 @@ This is the standard QED tree-level amplitude for Coulomb scattering.
 
 **Theorem 1.4.** *The Born approximation applied to the lattice Coulomb potential reproduces the Rutherford scattering formula.*
 
-The Coulomb potential on the lattice is V(r) = α · G_L(r) → α/(4πr) in the continuum limit.
+The Coulomb potential on the lattice is V(r) = α · G_L(r) → α/(4πr) at long wavelengths (r >> 1 lattice unit).
 
 **Born approximation.** The scattering amplitude in the first Born approximation:
 
@@ -120,7 +120,7 @@ $$f(\theta) = -\frac{m}{2\pi} \int V(\mathbf{r}) \, e^{i\mathbf{q} \cdot \mathbf
 
 where q = k_f - k_i is the momentum transfer with |q| = 2k sin(θ/2).
 
-In the continuum limit, G_L(q) → 1/q², so:
+In the long-wavelength regime (|q| << π), G_L(q) → 1/q², so:
 
 $$f(\theta) = -\frac{m \alpha}{2\pi q^2} = -\frac{\alpha}{4E \sin^2(\theta/2)}$$
 
@@ -324,13 +324,13 @@ The factor of ~10^{36} between electromagnetic and gravitational coupling is not
 | QFT | E << E_Planck, r >> l_Planck | Perturbative field theory; lattice corrections O(k⁴) |
 | GRT | r >> r_S, weak field | Linearized Einstein equations |
 | Both | E << E_Planck AND r >> r_S | Standard physics (QFT + linearized GRT) |
-| Neither | E ~ E_Planck OR r ~ l_Planck | Full lattice dynamics; no continuum approximation |
+| Neither | E ~ E_Planck OR r ~ l_Planck | Full lattice dynamics; long-wavelength approximation breaks down |
 
 In the overlap region, both QFT and GRT are valid and consistent because:
 
-1. The QFT propagator 1/k² is the continuum limit of G_L(k), valid for |k| << π
-2. The GRT potential 1/(4πr) is the real-space continuum limit of G_L(r), valid for r >> 1
-3. Both limits agree because they are limiting cases of the same lattice object
+1. The QFT propagator 1/k² is the long-wavelength approximation of G_L(k), valid for |k| << π (with error O(k²) at fine spacing)
+2. The GRT potential 1/(4πr) is the real-space long-wavelength approximation of G_L(r), valid for r >> 1 (with error O(a²/r³))
+3. Both approximations agree because they are arbitrarily-fine-spacing approximations to the same lattice object
 
 At the lattice scale (r ~ 1, |k| ~ π), neither description holds — only the full lattice dynamics is valid.
 
@@ -369,7 +369,7 @@ Parts I-III established the scalar lattice propagator and its non-relativistic a
 
 ### 4.1 Relativistic Lattice Photon Propagator [THEOREM]
 
-**Theorem 4.1.** *The gauge-fixed lattice photon propagator in Lorenz gauge has the standard covariant form with lattice momenta, and reduces to the continuum QED photon propagator for |k| << π.*
+**Theorem 4.1.** *The gauge-fixed lattice photon propagator in Lorenz gauge has the standard covariant form with lattice momenta, and reduces to the standard QED photon propagator for |k| << π (with error O(k²) at fine spacing).*
 
 **Proof.** Begin with the free-field lattice action for the flux field, promoted to a 4-vector $J_\mu$ on the (3+1)-dimensional lattice after Wick rotation (Theorem 1.2). The gauge-invariant kinetic term is constructed from the lattice field-strength tensor:
 
@@ -404,13 +404,13 @@ $$\boxed{D_{\mu\nu}^L(k) = \frac{1}{\hat{k}^2}\left[-\eta_{\mu\nu} + (1 - \xi)\f
 
 **Gauge invariance of physical amplitudes.** The Ward identity (Theorem 1.5) guarantees that the $\xi$-dependent longitudinal piece does not contribute to physical S-matrix elements.
 
-**Continuum limit.** For $|k_\mu| \ll \pi$: $\hat{k}_\mu = 2\sin(k_\mu/2) \to k_\mu + O(k^3)$ and $\hat{k}^2 \to k^2 + O(k^4)$. Therefore $D_{\mu\nu}^L(k) \to D_{\mu\nu}^{\text{QED}}(k)$ -- the standard QED photon propagator in covariant gauge.
+**Long-wavelength behavior.** For $|k_\mu| \ll \pi$: $\hat{k}_\mu = 2\sin(k_\mu/2) \to k_\mu + O(k^3)$ and $\hat{k}^2 \to k^2 + O(k^4)$. Therefore $D_{\mu\nu}^L(k) \to D_{\mu\nu}^{\text{QED}}(k)$ -- the standard QED photon propagator in covariant gauge -- with error O(k²) at fine spacing.
 
 **Connection to Theorem 1.1.** In Feynman gauge, setting $k_0 = 0$ (static limit) and restricting to spatial indices recovers $G_L(\mathbf{k}) = 1/\hat{k}^2 = 1/\lambda(\mathbf{k})$ of Theorem 1.1.
 
 ### 4.2 Lattice Electron Propagator [SELECTION]
 
-**Theorem 4.2.** *FTD provides the physical ingredients for fermion propagation (spinor structure, mass, Fermi statistics) but the specific lattice Dirac operator is adopted from standard lattice QFT. The Wilson fermion propagator has the correct continuum limit.*
+**Theorem 4.2.** *FTD provides the physical ingredients for fermion propagation (spinor structure, mass, Fermi statistics) but the specific lattice Dirac operator is adopted from standard lattice QFT. The Wilson fermion propagator converges to the standard Dirac propagator at fine spacing with the standard error rate.*
 
 FTD provides three key ingredients for the fermion sector:
 
@@ -428,7 +428,7 @@ $$\boxed{S_F^L(p) = \frac{-i\sum_\mu \gamma_\mu \sin p_\mu + M(p)}{\sum_\mu \sin
 
 where $M(p) = m + \frac{r}{2}\sum_\mu(1 - \cos p_\mu)$ is the momentum-dependent effective mass.
 
-**Continuum limit.** For $|p_\mu| \ll \pi$: $\sin p_\mu \to p_\mu$, $M(p) \to m$, recovering the standard Dirac-Feynman propagator.
+**Long-wavelength behavior.** For $|p_\mu| \ll \pi$: $\sin p_\mu \to p_\mu$, $M(p) \to m$, recovering the standard Dirac-Feynman propagator (with error O(a) from the Wilson term, O(a²) elsewhere).
 
 | Component | Tag | Source |
 |-----------|-----|--------|
@@ -440,7 +440,7 @@ where $M(p) = m + \frac{r}{2}\sum_\mu(1 - \cos p_\mu)$ is the momentum-dependent
 
 ### 4.3 Moller Scattering Amplitude [THEOREM]
 
-**Theorem 4.3.** *The tree-level Moller scattering amplitude ($e^- e^- \to e^- e^-$) on the FTD lattice correctly combines t-channel and u-channel diagrams with the relative minus sign required by Fermi statistics. In the continuum limit, it reproduces the standard QED result.*
+**Theorem 4.3.** *The tree-level Moller scattering amplitude ($e^- e^- \to e^- e^-$) on the FTD lattice correctly combines t-channel and u-channel diagrams with the relative minus sign required by Fermi statistics. At fine spacing (|p| << π), it reproduces the standard QED result.*
 
 **Setup.** Two electrons with initial 4-momenta $p_1, p_2$ scatter to final momenta $p_3, p_4$. Define the Mandelstam variables:
 
@@ -496,7 +496,7 @@ The three terms correspond to direct (t-channel²), interference (t-u cross, neg
 
 ### 4.5 FTD vs Standard QED: Component Comparison [THEOREM]
 
-**Theorem 4.5.** *At tree level, the FTD lattice QED framework reproduces all components of standard QED in the continuum limit.*
+**Theorem 4.5.** *At tree level, the FTD lattice QED framework reproduces all components of standard QED at fine spacing (|p| << π) with the standard error rate.*
 
 | Component | Standard QED | FTD Lattice | Match? | Tag |
 |-----------|-------------|-------------|--------|-----|
@@ -525,7 +525,7 @@ The three terms correspond to direct (t-channel²), interference (t-u cross, neg
 |----|-----------|--------|--------------|---------------|
 | QB-1 | Lattice Green's function = Euclidean propagator | [THEOREM] | DERIV_FORCE_EMERGENCE FE-1 | Lattice G_L ≠ standard propagator |
 | QB-2 | Wick rotation gives Minkowski propagator | [THEOREM] | QB-1, wave equation | Wrong pole structure |
-| QB-3 | Continuum limit → standard Feynman propagator 1/(ω²-k²) | [THEOREM] | QB-2 | Propagator diverges from 1/k² |
+| QB-3 | Long-wavelength limit → standard Feynman propagator 1/(ω²-k²), error O(k²) at fine spacing | [THEOREM] | QB-2 | Propagator diverges from 1/k² |
 | QB-4 | Vertex factor g_c = √α → amplitude ∝ α | [THEOREM] | DERIV_STATE_FLUX_COUPLING g_c | Wrong vertex factor |
 | QB-5 | Born approximation → Rutherford cross-section | [THEOREM] | QB-3, QB-4 | Cross-section deviates from Rutherford |
 | QB-6 | Ward identity ∇·(∇×J) = 0 exact on lattice | [THEOREM] | Discrete operators | Ward identity violated |
@@ -538,7 +538,7 @@ The three terms correspond to direct (t-channel²), interference (t-u cross, neg
 | QB-13 | Running coupling α(Q) with lattice UV cutoff | [SELECTION] | QB-4, standard QED | Running α wrong |
 | QB-14 | UV regularization intrinsic to lattice | [SELECTION] | Lattice structure | Lattice doesn't regularize |
 | QB-15 | Lattice photon propagator has correct gauge structure | [THEOREM] | Lorenz gauge + Ward identity (Thm 1.5) | Gauge-dependent physical observables |
-| QB-16 | Wilson fermion propagator gives correct continuum limit | [SELECTION] | Standard lattice QFT (Wilson 1974) | Alternative discretization giving different physics |
+| QB-16 | Wilson fermion propagator converges to standard Dirac propagator at fine spacing | [SELECTION] | Standard lattice QFT (Wilson 1974) | Alternative discretization giving different physics |
 | QB-17 | Moller amplitude correctly combines t and u channels | [THEOREM] | Fermi sign from Z₂, vertex from g_c | Inconsistency with Rutherford limit |
 | QB-18 | Spin-averaged |M|² matches standard QED | [THEOREM] | Direct algebraic computation | Any discrepancy in trace evaluation |
 | QB-19 | NR limit of Moller recovers Rutherford (Thm 1.4) | [THEOREM] | Kinematic limit s → 4m² | Discrepancy would indicate internal inconsistency |

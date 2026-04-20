@@ -10,7 +10,7 @@
 
 ## §1. Axioms
 
-> **Axiom 1 (The Lattice).** The kinematic arena is the cubic lattice $\Lambda = \mathbb{Z}^3$ equipped with Moore neighborhood adjacency ($N(\mathbf{v}) = \{\mathbf{u} \in \mathbb{Z}^3 : \|\mathbf{u}-\mathbf{v}\|_\infty = 1\}$, $|N| = 26$). At each vertex $\mathbf{v} \in \Lambda$ and discrete time $t \in \mathbb{N}$, there exist:
+> **Axiom 1 (The Lattice).** The kinematic arena is the cubic graph $\Lambda$ with no defined boundary, equipped with Moore neighborhood adjacency ($N(\mathbf{v}) = \{\mathbf{u} : \|\mathbf{u}-\mathbf{v}\|_\infty = 1\}$, $|N| = 26$); at every specified position the 26 Moore-adjacent sites exist. At each vertex $\mathbf{v} \in \Lambda$ and discrete time $t \in \mathbb{N}$, there exist:
 > - A **flux field** $\mathbf{J}(\mathbf{v}, t) \in \mathbb{R}^3$ (vector-valued),
 > - A **state field** $s(\mathbf{v}, t) \in \{-1, 0, +1\}$ (ternary-valued),
 > - A **latency field** $\mathcal{L}(\mathbf{v}) \in [0, 1)$ (scalar, quasi-static).
@@ -23,7 +23,7 @@
 
 | Axiom | Content | What it provides |
 |-------|---------|-----------------|
-| Axiom 1 | Lattice + fields + locality | UV finiteness, Lorentz invariance (continuum limit), gauge structure |
+| Axiom 1 | Lattice + fields + locality | UV finiteness, Lorentz invariance (arbitrarily fine spacing), gauge structure |
 | Axiom 2 | $a = \ell_P$ | All dimensionful quantities (masses, lengths, energies) |
 
 ---
@@ -76,7 +76,7 @@ This identification is labeled [SELECTION] because no physical mechanism connect
 
 ### 3.1 Lattice Derivatives
 
-On the lattice $\Lambda = \mathbb{Z}^3$ with spacing $a = 1$ (lattice units), define the forward difference operators:
+On the lattice $\Lambda$ with spacing $a = 1$ (lattice units), define the forward difference operators:
 
 $$(\Delta_\mu \mathbf{J})(\mathbf{v}, t) = \mathbf{J}(\mathbf{v} + \hat{\mu}, t) - \mathbf{J}(\mathbf{v}, t), \qquad \mu \in \{1,2,3\}$$
 
@@ -149,7 +149,7 @@ where $\mathbf{v}_\text{wave} = \Delta_t\mathbf{J}$ is the wave velocity (canoni
 **Relationship to the analytical action:**
 
 - Terms 5 and 6 (field sector) emerge from the weak-field ($v \ll 1$) expansion of the Born-Infeld core (§5.4, Klein-Gordon limit). In the engine, these are tracked as independent diagnostic quantities but are not double-counted with Term 1.
-- Term 3 (velocity coupling) is the magnetic counterpart of Term 2. Its Euler-Lagrange equation produces the lattice Lorentz force $\mathbf{F} = g_c\,q\,(\mathbf{v} \times \nabla_L \times \mathbf{J})$, which maps to $\mathbf{F} = q(\mathbf{v} \times \mathbf{B})$ in the continuum limit. Term 3 vanishes for stationary particles ($\mathbf{v} = 0$).
+- Term 3 (velocity coupling) is the magnetic counterpart of Term 2. Its Euler-Lagrange equation produces the lattice Lorentz force $\mathbf{F} = g_c\,q\,(\mathbf{v} \times \nabla_L \times \mathbf{J})$, which maps to $\mathbf{F} = q(\mathbf{v} \times \mathbf{B})$ for arbitrarily fine lattice spacing. Term 3 vanishes for stationary particles ($\mathbf{v} = 0$).
 - The Rayleigh dissipation $R$ is not part of the action $S$ but enters through the dissipative Euler-Lagrange equations: $\frac{d}{dt}\frac{\partial L}{\partial \dot{q}} - \frac{\partial L}{\partial q} = -\frac{\partial R}{\partial \dot{q}}$.
 
 **Euler-Lagrange verification:** The engine provides `compute_el_residual()` which independently recomputes the field equation of motion from the Lagrangian and compares against the stored `delta_j_` buffer after `phase_read()`. The residual is typically $\sim 10^{-15}$ (machine epsilon), confirming exact correspondence between the action and the tick cycle.
@@ -224,7 +224,7 @@ $$\frac{\delta}{\delta\mathcal{L}(\mathbf{v})}\left[-\frac{1}{8\pi G}\sum_\mathb
 
 $$\nabla_L^2\,\mathcal{L} = 4\pi G\,\rho_\text{mass}$$
 
-**This is Poisson's equation**, derived from the action — not postulated. In the continuum limit, it is the time-time component of the linearized Einstein equations. $\square$
+**This is Poisson's equation**, derived from the action — not postulated. For arbitrarily fine lattice spacing, it is the time-time component of the linearized Einstein equations. $\square$
 
 ### 4.3 Proper Time [THEOREM]
 
@@ -306,7 +306,7 @@ is the **Euclidean QFT propagator** on the compact Brillouin zone BZ³ = $[-\pi,
 | Wick rotation yields Feynman propagator | Lattice → continuum | DERIV_QFT_GRT_BRIDGE §1 |
 | Vertex factor $g_c = \sqrt{\alpha}$ | State-flux coupling term | DERIV_STATE_FLUX_COUPLING |
 | Ward identity (exact on lattice) | Gauss constraint | DERIV_QFT_GRT_BRIDGE §1.5 |
-| UV finiteness (all loop integrals) | Compact BZ: $\int_\text{BZ} < \infty$ | Mathematical fact |
+| UV finiteness (loop integrals on a finite region of arbitrarily large extent) | Compact BZ: $\int_\text{BZ} < \infty$ | Mathematical fact |
 | One-loop QED beta function | Vacuum polarization on BZ | DERIV_LATTICE_LOOP_CORRECTIONS |
 
 ### 6.2 General Relativity
@@ -319,6 +319,7 @@ $$T^{\mu\nu} = (\partial^\mu J_a)(\partial^\nu J_a) - \eta^{\mu\nu}\mathcal{L}_\
 |----------|--------|-----------|
 | $\partial_\mu T^{\mu\nu} = 0$ | Wave equation $\Box J_a = 0$ | DERIV_QFT_GRT_BRIDGE §2.2 |
 | Linearized Einstein eqs | Flux wave eq + metric identification | DERIV_EINSTEIN_FIELD_EQUATIONS §3 |
+
 | Poisson eq $\nabla^2\mathcal{L} = 4\pi G\rho$ | Variation of $S$ w.r.t. $\mathcal{L}$ (§4.2) | This document |
 | Nonlinear completion: $G_{\mu\nu} = 8\pi G\,T_{\mu\nu}/c^4$ | Lovelock's theorem [1] | DERIV_EINSTEIN_FIELD_EQUATIONS §5 |
 | Exact Schwarzschild | Born-Infeld core (§4.3) | DERIV_LATTICE_SCHWARZSCHILD |
@@ -332,15 +333,15 @@ $$T^{\mu\nu} = (\partial^\mu J_a)(\partial^\nu J_a) - \eta^{\mu\nu}\mathcal{L}_\
 | Field | Propagator $G_L(\mathbf{k})$ | Potential $\Phi(\mathbf{r})$ | Flux $\mathbf{J}$ on $\Lambda$ |
 | Source | Vertex: $g_c\,s\,(\nabla\cdot J)$ | Stress-energy: $T_{\mu\nu}$ | $\mathcal{L}_\text{matter}$ |
 | Coupling | $\alpha \approx 1/137$ | $\alpha_G \approx 10^{-39}$ | Master quadratic |
-| Regularization | Compact BZ (UV finite) | Lattice spacing (no singularities) | $\Lambda = \mathbb{Z}^3$ |
+| Regularization | Compact BZ (UV finite) | Lattice spacing (no singularities) | Cubic graph $\Lambda$ |
 
-**They are not two theories. They are two limits of the same lattice action at different coupling scales.**
+**They are not two theories. They are two regimes of the same lattice action at different coupling scales.**
 
 ---
 
 ## §7. Derived Constants
 
-All physical constants trace to Axiom 1 ($\Lambda = \mathbb{Z}^3$), Axiom 2 ($a = \ell_P$), and the mathematical constant $\varpi$:
+All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined boundary), Axiom 2 ($a = \ell_P$), and the mathematical constant $\varpi$:
 
 | Constant | Formula | Value | vs. Experiment | Tag |
 |----------|---------|-------|----------------|-----|
@@ -359,6 +360,7 @@ All physical constants trace to Axiom 1 ($\Lambda = \mathbb{Z}^3$), Axiom 2 ($a 
 | L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM]** |
 | L-2 | Reduces to Klein-Gordon on the lattice in the weak-field limit | **[THEOREM]** |
 | L-3 | $\gamma_\text{FTD}$ unifies SR and GR Lorentz factors | **[THEOREM]** |
+
 | L-4 | Gauss constraint ($\lambda_G \to \infty$) generates U(1) gauge symmetry | **[THEOREM]** |
 | L-5 | Lattice Green's function $G_L = 1/\hat{k}^2$ is the Euclidean QFT propagator | **[THEOREM]** |
 | L-6 | Same $T_{\mu\nu}$ sources both QFT amplitudes and Einstein equations | **[THEOREM]** |

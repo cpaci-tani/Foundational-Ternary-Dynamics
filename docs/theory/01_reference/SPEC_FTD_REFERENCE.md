@@ -47,7 +47,7 @@ OUTPUT: ~126 numerical results covering PDG particle physics format
 
 | Axiom | Statement |
 |-------|-----------|
-| **Discrete Space** | Space is a finite 3D cubic lattice L ⊂ Z³ |
+| **Discrete Space** | Space is a 3D cubic graph with no defined boundary (axis-adjacent and 26-Moore-adjacent sites exist at every specified position) |
 | **Discrete Time** | Time advances in discrete ticks t ∈ N |
 | **Ternary States** | Each voxel has state s ∈ {-1, 0, +1} |
 | **Local Causality** | Updates depend only on 26-neighbor Moore neighborhood |
@@ -415,7 +415,7 @@ Experimental: η = 6.1 × 10⁻¹⁰. Ratio: **1.10** (correct order of magnitud
 
 ## 10. General Relativity (NEW - Previously partial)
 
-**Theorem:** Einstein equations emerge in continuum limit with correct coefficient:
+**Theorem:** Einstein equations emerge for arbitrarily fine lattice spacing with correct coefficient:
 
 ```
 R_μν - ½g_μν R = 8πG T_μν
@@ -525,6 +525,7 @@ m_p/m_e = n_eff/α + T(b_3+N_c) = 1836.47
 | ID | Conjecture | Previous | Current | Resolution | Depends On |
 |----|------------|----------|---------|------------|------------|
 | C1 | x₊ = 1/α | Conjecture | **[SELECTION]** | CM selection + quadratic form | SP1, SP2, SP3 |
+
 | C2 | x₋ → N_c = 3 | Conjecture | **[SELECTION]** | RG flow + confinement | SP3, empirical n_f = 6 |
 | A1 | Why D = 3 | Axiom | **[SELECTION]** | Atomic stability + gauge + Fibonacci | Multiple sufficiency arguments |
 

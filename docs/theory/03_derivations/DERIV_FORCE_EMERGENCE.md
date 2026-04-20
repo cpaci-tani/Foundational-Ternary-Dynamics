@@ -81,9 +81,9 @@ $$\nabla^2_L e^{ik \cdot r} = \left(\sum_i [e^{ik_i} + e^{-ik_i}] - 6\right) e^{
 
 Define lambda(k) = 2(3 - cos k_x - cos k_y - cos k_z). Then nabla^2 G = -delta becomes -lambda(k) G_hat(k) = -1, so G_hat(k) = 1/lambda(k).
 
-### 2.3 Continuum Limit [THEOREM]
+### 2.3 Long-Wavelength Behavior [THEOREM]
 
-**Theorem 2.2.** *In the long-wavelength limit (|k| << pi, equivalently r >> 1 lattice unit):*
+**Theorem 2.2.** *In the long-wavelength regime (|k| << pi, equivalently r >> 1 lattice unit):*
 
 $$\hat{G}_L(k) \to \frac{1}{k^2}$$
 
@@ -97,7 +97,7 @@ $$G_L(r) \to \frac{1}{4\pi r}$$
 
 $$\lambda(k) = 2(3 - \cos k_x - \cos k_y - \cos k_z) \to k_x^2 + k_y^2 + k_z^2 = k^2$$
 
-The continuum inverse Fourier transform of 1/k^2 in 3D is the well-known result 1/(4 pi r).
+The Fourier transform of 1/k^2 in 3D evaluated as a closed-form integral over R^3 is the well-known classical result 1/(4 pi r).
 
 ### 2.4 Lattice Corrections [THEOREM]
 
@@ -123,13 +123,13 @@ $$\lambda(k) = k^2 + \frac{k_x^4 + k_y^4 + k_z^4}{12} + O(k^6)$$
 
 $$F(v) = -q \, \nabla_v \left[ Q \cdot G_L(v) \right] = -qQ \, \nabla_v G_L(v)$$
 
-*In the continuum limit:*
+*In the long-wavelength regime (r >> 1 lattice unit):*
 
 $$F(r) = -qQ \, \nabla \frac{1}{4\pi r} = \frac{qQ}{4\pi r^2} \hat{r}$$
 
 *This is Coulomb's law.*
 
-**Proof.** The potential at v due to source Q at origin is Phi(v) = Q * G_L(v). The force is F = -q nabla Phi. In the continuum, nabla(1/r) = -r_hat/r^2, giving the standard inverse-square law.
+**Proof.** The potential at v due to source Q at origin is Phi(v) = Q * G_L(v). The force is F = -q nabla Phi. As a closed-form identity, nabla(1/r) = -r_hat/r^2, giving the standard inverse-square law.
 
 ### 3.2 Recovery of the Imposed Formula [THEOREM]
 
@@ -176,7 +176,7 @@ $$\Phi_{\text{grav}}(v) = G_N \sum_{v'} \rho(v') \, G_L(v - v')$$
 | Source | Charge q = s (ternary state) | Density rho = \|J\| (flux magnitude) |
 | Coupling | alpha = 1/137.036 | alpha_G = 5.91 x 10^{-39} |
 | Sign | Repulsive (like charges) | Attractive (all density positive) |
-| Range | Infinite (1/r^2) | Infinite (1/r^2) |
+| Range | Long-range (1/r^2, no exponential cutoff) | Long-range (1/r^2, no exponential cutoff) |
 
 ### 4.2 The Coupling Hierarchy [SELECTION]
 
@@ -200,15 +200,15 @@ $$\hat{G}_m(k) = \frac{1}{2(3 - \cos k_x - \cos k_y - \cos k_z) + m^2}$$
 
 **Proof.** Same as Theorem 2.1, with lambda(k) replaced by lambda(k) + m^2.
 
-### 5.2 Continuum Limit: Yukawa Potential [THEOREM]
+### 5.2 Long-Wavelength Behavior: Yukawa Potential [THEOREM]
 
-**Theorem 5.2.** *In the continuum limit:*
+**Theorem 5.2.** *In the long-wavelength regime (r >> 1 lattice unit):*
 
 $$G_m(r) \to \frac{e^{-mr}}{4\pi r}$$
 
 *This is the Yukawa potential.*
 
-**Proof.** For small k, G_hat_m(k) -> 1/(k^2 + m^2). The 3D Fourier transform of 1/(k^2 + m^2) is the standard result e^{-mr}/(4 pi r).
+**Proof.** For small k, G_hat_m(k) -> 1/(k^2 + m^2). The 3D Fourier transform of 1/(k^2 + m^2), as a closed-form integral over R^3, is the classical result e^{-mr}/(4 pi r).
 
 ### 5.3 Yukawa Force Profile [THEOREM]
 
@@ -249,12 +249,12 @@ $$\lim_{m \to 0} \frac{e^{-mr}}{4\pi r} = \frac{1}{4\pi r}$$
 
 ### 6.1 Flux as Vector Potential [THEOREM]
 
-**Theorem 6.1.** *The FTD flux field J maps to the electromagnetic vector potential A in the continuum limit. The field strengths are:*
+**Theorem 6.1.** *The FTD flux field J maps to the electromagnetic vector potential A in the long-wavelength regime (arbitrarily fine spacing a relative to the scales of interest). The field strengths are:*
 
 $$B = \nabla \times J \quad (\text{magnetic field})$$
 $$E = -\frac{\partial J}{\partial t} - \nabla\phi \quad (\text{electric field, where } \phi = -(\nabla^2)^{-1} \nabla \cdot J)$$
 
-*These satisfy Maxwell's equations in the continuum limit (see DERIV_RELATIVITY_DERIVATION.md).*
+*These satisfy Maxwell's equations for arbitrarily fine spacing with error O(a^2) (see DERIV_RELATIVITY_DERIVATION.md).*
 
 **Proof.** The identification J <-> A is consistent with:
 1. J is a vector field on each lattice site (like A)
@@ -331,7 +331,7 @@ $$\text{EM: } m = 0 \quad \text{Strong: } m = m_\pi \quad \text{Weak: } m = M_W$
 
 $$\omega^2 = 4C^2 \left[\sin^2\frac{k_x}{2} + \sin^2\frac{k_y}{2} + \sin^2\frac{k_z}{2}\right]$$
 
-*In the continuum limit (small k):*
+*For small ka (arbitrarily fine spacing relative to the wavelength):*
 
 $$\omega^2 = C^2 k^2 \left[1 - \frac{k^2 a^2}{12} + O(k^4 a^4)\right]$$
 
@@ -353,8 +353,8 @@ All four fundamental forces emerge from a single flux field with a single Green'
 
 | Force | Green's function | Source type | Coupling | Range | Mass |
 |-------|-----------------|-------------|----------|-------|------|
-| **EM** | 1/(4 pi r) | charge q = s | alpha = 1/137 | infinite | 0 |
-| **Gravity** | 1/(4 pi r) | density rho = \|J\| | alpha_G ~ 10^{-39} | infinite | 0 |
+| **EM** | 1/(4 pi r) | charge q = s | alpha = 1/137 | long-range | 0 |
+| **Gravity** | 1/(4 pi r) | density rho = \|J\| | alpha_G ~ 10^{-39} | long-range | 0 |
 | **Strong** | e^{-m r}/(4 pi r) | color charge | alpha_s ~ 0.12 | ~1/m_pi | m_pi |
 | **Weak** | e^{-M r}/(4 pi r) | stress sigma | G_F ~ 10^{-5} | ~1/M_W | M_W |
 
@@ -385,7 +385,7 @@ Honest accounting of what is NOT derived in this document:
 | ID | Statement | Status | Dependencies | Falsification |
 |----|-----------|--------|-------------|---------------|
 | FE-1 | Lattice Green's function G_L(k) = 1/lambda(k) | [THEOREM] | Lattice axiom | Computational verification |
-| FE-2 | Continuum limit: G_L(r) -> 1/(4 pi r) | [THEOREM] | FE-1 | G_L deviates from 1/r at large r |
+| FE-2 | Long-wavelength limit: G_L(r) -> 1/(4 pi r) for r >> 1 lattice unit | [THEOREM] | FE-1 | G_L deviates from 1/r at large r |
 | FE-3 | Coulomb force = -nabla G_L | [THEOREM] | FE-2, coupling | Force profile != 1/r^2 |
 | FE-4 | Gravity uses same G_L as Coulomb | [THEOREM] | FE-2 | Different Green's functions needed |
 | FE-5 | Massive G_m(r) -> e^{-mr}/(4 pi r) | [THEOREM] | FE-1 | Massive propagator wrong form |
@@ -418,7 +418,7 @@ The force laws in FTD's simulation code (forces.py) were originally imposed — 
 This document shows they need not be imposed. They are **necessary consequences** of the lattice wave equation and its Green's function:
 
 1. **Static wave equation** -> Poisson equation on lattice
-2. **Lattice Green's function** -> 1/(4 pi r) in continuum limit
+2. **Lattice Green's function** -> 1/(4 pi r) at long wavelengths (r >> 1 lattice unit)
 3. **Force = -gradient of potential** -> 1/r^2 (Coulomb, gravity)
 4. **Massive propagator** -> e^{-mr}/(4 pi r) (Yukawa/strong)
 5. **Curl of flux field** -> magnetic field B -> Lorentz force

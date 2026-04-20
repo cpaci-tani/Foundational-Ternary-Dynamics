@@ -244,7 +244,7 @@ This means the simulation is not a collection of ad hoc rules; it is a single ac
 
 - That the Lagrangian is unique (other actions could produce the same dynamics)
 - That the Lagrangian describes physical reality (that requires experimental tests)
-- That the continuum limit recovers known physics (that is a separate claim, addressed in DERIV_QFT_GRT_BRIDGE.md)
+- That fine-spacing convergence recovers known physics (that is a separate claim, addressed in DERIV_QFT_GRT_BRIDGE.md)
 - That the constants are correctly derived (that is the content of FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md)
 
 ### Proof levels remaining
@@ -252,7 +252,7 @@ This means the simulation is not a collection of ad hoc rules; it is a single ac
 | Level | Statement | Status |
 |-------|-----------|--------|
 | 1 | δS = 0 → all update rules | **PROVEN** (this document) |
-| 2 | Continuum limit → Maxwell + Schrodinger | [THEOREM] (see DERIV_QFT_GRT_BRIDGE.md) |
+| 2 | Long-wavelength behavior → Maxwell + Schrodinger (error O(a^p) at fine spacing) | [THEOREM] (see DERIV_QFT_GRT_BRIDGE.md) |
 | 3 | Constants from G* → α, masses, mixing | [THEOREM] (see FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) |
 | 4 | Substrate → aggregate QM statistics | [OPEN] |
 | 5 | Novel experimental prediction | [OPEN] |

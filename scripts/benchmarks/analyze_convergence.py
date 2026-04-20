@@ -113,7 +113,7 @@ def generate_report():
     lines.append("    [x] Larmor radiation: accelerated charges radiate more (P ~ a^2)")
     lines.append("    [x] Parity violation: weak transmutation creates +/- asymmetry")
     lines.append("    [x] Spin-orbit splitting: detectable energy shift with SO coupling")
-    lines.append("    [x] Coulomb convergence: exponent -> -2.0 as L grows (continuum limit)")
+    lines.append("    [x] Coulomb convergence: exponent -> -2.0 as L grows (large-L extrapolation)")
     lines.append("")
 
     # Remaining gaps

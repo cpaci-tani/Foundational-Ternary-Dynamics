@@ -48,7 +48,10 @@ inline double velocity_coupling_term(const Voxel& v) {
 }
 
 // Term 4: Gauss constraint  -lambda_G * (div J - rho_charge)^2
-// Enforces charge conservation. lambda_G -> infinity is exact constraint.
+// Enforces charge conservation. For arbitrarily large lambda_G the constraint
+// is enforced to arbitrary precision; LAMBDA_G = 100.0 is the chosen finite
+// value at which the residual constraint violation per voxel is below the
+// engine's working tolerance (verified in tests).
 inline constexpr double LAMBDA_G = 100.0;
 
 inline double gauss_term(double divJ, double rho_charge) {

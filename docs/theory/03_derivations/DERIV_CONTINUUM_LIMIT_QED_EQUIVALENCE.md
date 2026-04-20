@@ -4,14 +4,14 @@
 
 **Date:** 2026-04-14
 **Status:** Conditional [THEOREM] (conditions made explicit in Part V)
-**Closes (modulo stated conditions):** the residual continuum-limit gap left open by [DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](DERIV_ALPHA_FROM_PHASE_STRUCTURE.md)
+**Closes (modulo stated conditions):** the residual fine-spacing-recovery gap left open by [DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](DERIV_ALPHA_FROM_PHASE_STRUCTURE.md)
 **Companion:** [DERIV_LATTICE_QED_COMPLETE.md](DERIV_LATTICE_QED_COMPLETE.md)
 
 ---
 
 ## Abstract
 
-The structural identification "FTD = compact U(1) lattice gauge theory in temporal gauge" already establishes ([DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](DERIV_ALPHA_FROM_PHASE_STRUCTURE.md)) that the larger root $x_+$ of the master quadratic must lie in the Coulomb (deconfined) phase, in which the inverse coupling $1/g^2$ flows into a free Maxwell theory under the renormalization group. The remaining gap is **operational**: granting that the FTD continuum limit IS QED, one must argue that the FTD bare coupling $g_c = \sqrt{\alpha_{\text{FTD}}}$, evaluated at the FTD lattice spacing $a_{\text{FTD}}$, equals the physical $\alpha$ measured in the Thomson limit. This document closes that gap by (i) recapping the structural identification, (ii) invoking Wilson's two-phase theorem, (iii) invoking the standard Coulomb-phase continuum-limit theorem, (iv) proving a UV-scale lemma stating that the FTD lattice spacing is fixed by $G^*$ (not free), and (v) showing that the operational identification $g_c \equiv e$ (Heaviside-Lorentz, $g_c^2 = 4\pi\alpha$) follows once the UV scale is fixed. The result $x_+ = 1/\alpha$ is promoted from [SELECTION] to **conditional [THEOREM]**, with the remaining hypotheses listed explicitly in Part V.
+The structural identification "FTD = compact U(1) lattice gauge theory in temporal gauge" already establishes ([DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](DERIV_ALPHA_FROM_PHASE_STRUCTURE.md)) that the larger root $x_+$ of the master quadratic must lie in the Coulomb (deconfined) phase, in which the inverse coupling $1/g^2$ flows into a free Maxwell theory under the renormalization group. The remaining gap is **operational**: granting that, for arbitrarily fine lattice spacing $a$, FTD lattice observables converge to QED observables with error $O(a^p)$, one must argue that the FTD bare coupling $g_c = \sqrt{\alpha_{\text{FTD}}}$, evaluated at the FTD lattice spacing $a_{\text{FTD}}$, equals the physical $\alpha$ measured in the Thomson regime. This document closes that gap by (i) recapping the structural identification, (ii) invoking Wilson's two-phase theorem, (iii) invoking the standard Coulomb-phase fine-spacing convergence theorem, (iv) proving a UV-scale lemma stating that the FTD lattice spacing is fixed by $G^*$ (not free), and (v) showing that the operational identification $g_c \equiv e$ (Heaviside-Lorentz, $g_c^2 = 4\pi\alpha$) follows once the UV scale is fixed. The result $x_+ = 1/\alpha$ is promoted from [SELECTION] to **conditional [THEOREM]**, with the remaining hypotheses listed explicitly in Part V.
 
 ---
 
@@ -19,7 +19,7 @@ The structural identification "FTD = compact U(1) lattice gauge theory in tempor
 
 Established in [DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](DERIV_ALPHA_FROM_PHASE_STRUCTURE.md):
 
-**Proposition I.1.** [THEOREM, modulo Axiom Zero's "minimal continuous extension" of $\mathbf{J}$ as a vector field on $\mathbb{Z}^3$.]
+**Proposition I.1.** [THEOREM, modulo Axiom Zero's "minimal continuous extension" of $\mathbf{J}$ as a vector field on the cubic graph with no defined boundary.]
 The FTD Lagrangian is a compact U(1) lattice gauge theory in temporal gauge, with the dictionary
 
 | FTD object | U(1) LGT object |
@@ -49,23 +49,23 @@ The two roots $x_\pm$ of the master quadratic, viewed as inverse couplings $\bet
 - $x_+$ lies deep in the Coulomb phase (weakly coupled, $g^2 \approx 0.0073$).
 - $x_-$ lies in (or marginally above) the strong-coupling regime.
 
-In particular, the *only* root of the master quadratic that is structurally compatible with a continuum limit identifiable with electromagnetism is $x_+$. The other root cannot reach the Gaussian fixed point of free Maxwell theory because it lies on the wrong side of the cross-over. (The detailed identification of $x_-$ with QCD-like physics is treated separately and is not needed here.)
+In particular, the *only* root of the master quadratic that is structurally compatible with fine-spacing convergence to electromagnetism is $x_+$. The other root cannot reach the Gaussian fixed point of free Maxwell theory because it lies on the wrong side of the cross-over. (The detailed identification of $x_-$ with QCD-like physics is treated separately and is not needed here.)
 
 ---
 
-## Part III: The Coulomb-Phase Continuum Limit
+## Part III: Coulomb-Phase Convergence at Fine Spacing
 
-**Theorem III.1 (Coulomb-phase continuum limit).** [THEOREM — standard lattice gauge theory; Rothe, *Lattice Gauge Theories*, §9, §17; Creutz, Ch. 8; Polyakov, *Nucl. Phys. B* **120** (1977) 429.]
-In the Coulomb phase, compact U(1) LGT renormalizes to **free Maxwell theory** in the continuum limit. The lattice $\beta$-function is *trivial* (the theory is non-asymptotically-free; the gauge sector is infrared-free), so the Gaussian fixed point sits at $g_*^2 = 0$ as $a\to 0$, but along the renormalization-group trajectory the running is **logarithmic** and **slow**:
+**Theorem III.1 (Coulomb-phase fine-spacing convergence).** [THEOREM — standard lattice gauge theory; Rothe, *Lattice Gauge Theories*, §9, §17; Creutz, Ch. 8; Polyakov, *Nucl. Phys. B* **120** (1977) 429.]
+In the Coulomb phase, compact U(1) LGT observables on arbitrarily fine spacing $a$ converge to those of **free Maxwell theory** with discretization error $O(a^p)$. The lattice $\beta$-function is *trivial* (the theory is non-asymptotically-free; the gauge sector is infrared-free), so the Gaussian fixed point sits at $g_*^2 = 0$ for arbitrarily small $a$, and along the renormalization-group trajectory the running is **logarithmic** and **slow**:
 $$
 \frac{1}{g^2(\mu)} = \frac{1}{g^2(\mu_0)} + \frac{b_0}{(4\pi)^2}\,\ln\frac{\mu^2}{\mu_0^2}.
 $$
-Coupled to charged matter, the running is QED's familiar one-loop running with $b_0 = -4/3$ per Dirac fermion. The point of Theorem III.1 is that the Coulomb-phase RG flow is regular: small $g^2$ at one scale yields small $g^2$ at all nearby scales. There is no obstruction to the continuum limit, and the continuum limit IS the U(1) gauge theory of QED. ($\square$ for the gauge sector. Charged matter is added in [DERIV_LATTICE_QED_COMPLETE.md](DERIV_LATTICE_QED_COMPLETE.md), where lattice fermion doublers are handled and the full QED Feynman rules are recovered.)
+Coupled to charged matter, the running is QED's familiar one-loop running with $b_0 = -4/3$ per Dirac fermion. The point of Theorem III.1 is that the Coulomb-phase RG flow is regular: small $g^2$ at one scale yields small $g^2$ at all nearby scales. There is no obstruction to refinement to arbitrarily fine spacing, and the fine-spacing observables ARE those of the U(1) gauge theory of QED. ($\square$ for the gauge sector. Charged matter is added in [DERIV_LATTICE_QED_COMPLETE.md](DERIV_LATTICE_QED_COMPLETE.md), where lattice fermion doublers are handled and the full QED Feynman rules are recovered.)
 
 **Corollary III.2.** [THEOREM, from II.1 + III.1.]
-Given Proposition I.1, the FTD continuum limit at $x = x_+$ is QED. The FTD bare coupling $g_c^2 = \alpha_{\text{FTD}} = 1/x_+$ is the lattice coupling of this QED at the lattice scale $a_{\text{FTD}}$.
+Given Proposition I.1, the FTD lattice observables at $x = x_+$ converge to QED observables for arbitrarily fine spacing, with error $O(a^p)$. The FTD bare coupling $g_c^2 = \alpha_{\text{FTD}} = 1/x_+$ is the lattice coupling of this QED at the lattice scale $a_{\text{FTD}}$.
 
-**What Corollary III.2 does not yet say.** It does not say that the *number* $\alpha_{\text{FTD}}$ equals the *number* measured in Thomson scattering. The lattice coupling at scale $a_{\text{FTD}}$ and the physical $\alpha$ at scale $\mu = 0$ are connected by the QED $\beta$-function (logarithmic running over $\sim 137$ orders of magnitude from any plausible lattice cutoff to the Thomson scale). The two are **equal as numbers** only if the FTD lattice spacing happens to coincide with the scale at which $\alpha = 1/137.036$ in standard QED. That coincidence is what Part IV addresses.
+**What Corollary III.2 does not yet say.** It does not say that the *number* $\alpha_{\text{FTD}}$ equals the *number* measured in Thomson scattering. The lattice coupling at scale $a_{\text{FTD}}$ and the physical $\alpha$ at scale $\mu = 0$ are connected by the QED $\beta$-function (logarithmic running over $\sim 137$ orders of magnitude from any plausible lattice cutoff to the Thomson scale). The two are **equal as numbers** only if the FTD lattice spacing happens to coincide with the scale at which $\alpha = 1/137.036$ in standard QED. That match is what Part IV addresses.
 
 ---
 
@@ -100,19 +100,19 @@ The *operational* content of Lemma IV.2 is option 2: the FTD lattice IS specifyi
 
 **Theorem V.1 (Continuum-limit equivalence).** [Conditional THEOREM.]
 Assume:
-- **(C1)** The "minimal continuous extension" of FTD identifies $\mathbf{J}$ as a U(1) gauge potential on $\mathbb{Z}^3$ in temporal gauge. (This is the [SELECTION] residue of [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md), §2.3b.)
+- **(C1)** The "minimal continuous extension" of FTD identifies $\mathbf{J}$ as a U(1) gauge potential on the cubic graph (no defined boundary) in temporal gauge. (This is the [SELECTION] residue of [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md), §2.3b.)
 - **(C2)** Wilson's two-phase theorem (Theorem II.1) holds for compact U(1) LGT.
-- **(C3)** The Coulomb-phase continuum limit (Theorem III.1) holds.
+- **(C3)** The Coulomb-phase fine-spacing convergence (Theorem III.1) holds.
 - **(C4)** Charged matter is added consistently in the FTD lattice, recovering QED Feynman rules ([DERIV_LATTICE_QED_COMPLETE.md](DERIV_LATTICE_QED_COMPLETE.md)).
 - **(C5)** UV-scale rigidity (Lemma IV.1) holds, i.e. $\alpha_{\text{FTD}} = 1/x_+$ is fixed (no free parameter to slide along the RG trajectory).
 
 Then:
-1. The FTD continuum limit at $x_+$ IS QED.
+1. FTD lattice observables at $x_+$ converge to those of QED for arbitrarily fine spacing $a$, with error $O(a^p)$.
 2. The FTD bare coupling $g_c$ is operationally identical to the elementary electric charge $e$ (Heaviside-Lorentz: $g_c^2 = 4\pi\alpha = e^2$).
 3. **$x_+ = 1/\alpha$ is a [THEOREM]**, conditional on (C1)–(C5).
 
 **Proof sketch.**
-By (C1) + (C2) + (C3) + (C4), the FTD continuum limit at $x_+$ is QED with bare coupling $\alpha_{\text{FTD}} = 1/x_+$ at lattice scale $a_{\text{FTD}}$. By (C5) (Lemma IV.1), $\alpha_{\text{FTD}}$ is a fixed number. By Lemma IV.2, the unique scale at which the Coulomb-phase QED coupling equals $1/x_+ = 1/137.036$ is the Thomson scale (up to $\sim 10^{-5}$ logarithmic running below the electron threshold). Therefore the operational identification of $g_c$ with $e$ is forced by the structure of the RG flow, not chosen by hand. $\square$
+By (C1) + (C2) + (C3) + (C4), FTD lattice observables at $x_+$ converge to those of QED with bare coupling $\alpha_{\text{FTD}} = 1/x_+$ at lattice scale $a_{\text{FTD}}$, with error $O(a^p)$ in spacing. By (C5) (Lemma IV.1), $\alpha_{\text{FTD}}$ is a fixed number. By Lemma IV.2, the unique scale at which the Coulomb-phase QED coupling equals $1/x_+ = 1/137.036$ is the Thomson scale (up to $\sim 10^{-5}$ logarithmic running below the electron threshold). Therefore the operational identification of $g_c$ with $e$ is forced by the structure of the RG flow, not chosen by hand. $\square$
 
 ---
 
@@ -123,8 +123,8 @@ By (C1) + (C2) + (C3) + (C4), the FTD continuum limit at $x_+$ is QED with bare 
 | FTD = compact U(1) LGT in temporal gauge | [SELECTION] (rested on Axiom Zero §2.3b) | [SELECTION] residue contained in (C1) |
 | Wilson two-phase structure | [THEOREM] (Wilson 1974) | unchanged |
 | $x_+$ = Coulomb-phase root | [THEOREM] (gap equation) | unchanged |
-| Coulomb-phase continuum limit = free Maxwell | [THEOREM] (standard LGT) | unchanged |
-| FTD continuum limit = QED | [SELECTION] (gap in the chain) | **conditional [THEOREM]** (V.1) |
+| Coulomb-phase fine-spacing convergence to free Maxwell | [THEOREM] (standard LGT) | unchanged |
+| FTD lattice observables converge to QED for arbitrarily fine spacing | [SELECTION] (gap in the chain) | **conditional [THEOREM]** (V.1) |
 | **$x_+ = 1/\alpha$** | **[SELECTION]** | **conditional [THEOREM]** (V.1) |
 | $g_c = e$ operationally | [SELECTION] | **conditional [THEOREM]** (V.1) |
 | $\alpha_{\text{FTD}} = \alpha_{\text{Thomson}}$ as a *number* | empirical observation | forced by UV-scale rigidity + master quadratic |
@@ -135,7 +135,7 @@ The five conditions (C1)–(C5) collectively form the residual hypothesis. Of th
 - (C1) is the only genuine FTD-specific [SELECTION] still in play, and it traces to a single sentence in [FOUND_AXIOM_ZERO.md](../02_foundations/FOUND_AXIOM_ZERO.md).
 - (C5) is the new content of this document and is itself a [THEOREM] given the master quadratic.
 
-**Net epistemic effect.** Before this document, $x_+ = 1/\alpha$ was [SELECTION] (a numerical match awaiting a mechanism). After this document, it is [THEOREM] *conditional on a single, explicit, structurally minimal selection in Axiom Zero*. The continuum-limit gap is closed; the only remaining philosophical assumption is whether one accepts the minimal continuous extension of FTD's ternary-on-$\mathbb{Z}^3$ data as a U(1) gauge potential — and that selection is independently motivated by $O_h$ symmetry and the requirement of local gauge invariance under $s\to s + \nabla\chi$.
+**Net epistemic effect.** Before this document, $x_+ = 1/\alpha$ was [SELECTION] (a numerical match awaiting a mechanism). After this document, it is [THEOREM] *conditional on a single, explicit, structurally minimal selection in Axiom Zero*. The fine-spacing-recovery gap is closed; the only remaining philosophical assumption is whether one accepts the minimal continuous extension of FTD's ternary-on-cubic-graph data as a U(1) gauge potential — and that selection is independently motivated by $O_h$ symmetry and the requirement of local gauge invariance under $s\to s + \nabla\chi$.
 
 ---
 

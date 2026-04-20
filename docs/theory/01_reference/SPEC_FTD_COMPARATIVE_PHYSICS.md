@@ -354,7 +354,7 @@ The same $2N_{\text{base}}^2 \cdot \text{PF}$ that appears in the Hawking temper
 
 ### 11.4 Physical Interpretation [SELECTION]
 
-PF = π/4 encodes the **geometric cost of discretization** — the mismatch between circular physics and square lattice. Observable physics (dimensionless ratios) is independent of this cost, just as lattice QCD results become lattice-spacing-independent in the continuum limit. The lattice is scaffolding; the physics is the circle, not the square.
+PF = π/4 encodes the **geometric cost of discretization** — the mismatch between circular physics and square lattice. Observable physics (dimensionless ratios) is independent of this cost, just as lattice QCD results become lattice-spacing-independent for arbitrarily fine spacing. The lattice is scaffolding; the physics is the circle, not the square.
 
 ---
 

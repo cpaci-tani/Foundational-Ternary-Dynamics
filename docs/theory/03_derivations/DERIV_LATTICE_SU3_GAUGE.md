@@ -277,7 +277,7 @@ where:
 - The factor 1/2 is the Dynkin index of the fundamental representation: Tr(T^a T^b) = δ^{ab}/2
 - S_F(p) is the Wilson fermion propagator (DERIV_QFT_GRT_BRIDGE.md, Theorem 4.2)
 
-In the continuum limit (k ≪ π/a), this reduces to the standard result:
+In the long-wavelength regime (k ≪ π/a), this reduces to the standard result:
 
 $$\Pi^{ab}_{\mu\nu}\big|_{\text{quark}} \to \delta^{ab}(k^2 g_{\mu\nu} - k_\mu k_\nu) \cdot \frac{g_s^2}{12\pi^2} N_f \ln\!\left(\frac{\pi/a}{\mu}\right)$$
 

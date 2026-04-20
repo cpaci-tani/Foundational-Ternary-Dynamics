@@ -252,7 +252,7 @@ Under parity P: **x** → −**x**, the divergence transforms as ∇ → −∇,
 - Before: s = +1, ∇·J(v) > 0 (correlated by manifestation rule)
 - After: s = −1, requiring ∇·J(v) < 0 for stability
 
-The flux field must reverse divergence at v, requiring flux to flow inward — a spatially converging pattern corresponding to left-handed helicity in the continuum limit.
+The flux field must reverse divergence at v, requiring flux to flow inward — a spatially converging pattern corresponding to left-handed helicity in the long-wavelength regime ($|p| \ll \pi$).
 
 The conjugate process (W⁺ flipping |−⟩ → |+⟩) requires divergence to become positive, meaning flux flows outward — right-handed helicity for antiparticles.
 

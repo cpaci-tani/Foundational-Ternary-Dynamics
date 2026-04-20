@@ -56,7 +56,7 @@ The dissipation term $\mathcal{R}$ does not contribute to the Euclidean action b
 
 ## 1.2 Configuration Space [THEOREM]
 
-The FTD lattice $\Lambda \subset \mathbb{Z}^3$ with $|\Lambda| = N$ sites has two types of degrees of freedom at each site $v$:
+The FTD lattice region $\Lambda$ — a finite subgraph of arbitrarily large extent in the undefined-boundary cubic graph (Axiom Zero, position property) — has $|\Lambda| = N$ sites, each with two types of degrees of freedom at site $v$:
 
 1. **Discrete state:** $s(v) \in \{-1, 0, +1\}$ -- a ternary variable
 2. **Continuous flux:** $\mathbf{J}(v) \in \mathbb{R}^3$ -- a real 3-vector
@@ -104,11 +104,11 @@ This is finite for each of the $3^N$ state configurations. Therefore $Z$ is a fi
 
 **Proof.** In momentum space, the lattice restricts all momenta to the first Brillouin zone $\text{BZ} = [-\pi, \pi]^D$. This is a compact domain. All integrands are rational functions of $\sin k_\mu$ and $\cos k_\mu$, which are bounded on BZ. Therefore every momentum integral is an integral of a bounded function over a compact domain, hence finite. $\square$
 
-**Theorem 1.3 (IR Finiteness).** *For a finite lattice $|\Lambda| = N < \infty$, all correlation functions are IR-finite.*
+**Theorem 1.3 (IR Finiteness).** *On any finite region $|\Lambda| = N$, all correlation functions are IR-finite.*
 
-**Proof.** The finite lattice volume provides an IR cutoff. Momenta are quantized: $k_\mu = 2\pi n_\mu / L_\mu$ for integer $n_\mu$, so there are no infrared divergences. In the thermodynamic limit $N \to \infty$, potential IR divergences must be handled by standard methods (mass gap, or careful treatment of zero modes). For the FTD lattice with manifestation threshold $K_B > 0$, the coupling to manifested states provides a natural mass gap that regulates the IR. $\square$
+**Proof.** The finite region volume provides an IR cutoff. Momenta are quantized: $k_\mu = 2\pi n_\mu / L_\mu$ for integer $n_\mu$, so there are no infrared divergences at any finite $L_\mu$. As $L_\mu$ is taken arbitrarily large, the FTD manifestation threshold $K_B > 0$ provides a natural mass gap that controls would-be IR contributions; potential IR sensitivities are handled by mass-gap arguments or careful treatment of zero modes at each finite extent. $\square$
 
-**Corollary.** The FTD path integral is UV-finite and IR-finite on any finite lattice. The lattice is not a regularization of a continuum theory -- it IS the fundamental theory. The continuum limit, if it exists, is a derived approximation.
+**Corollary.** The FTD path integral is UV-finite and IR-finite on any finite region. The lattice is not a regularization of a continuum theory — it is the fundamental object, and "continuum" expressions arise as algebraic identities or as approximations valid for arbitrarily fine spacing.
 
 ---
 
@@ -278,11 +278,11 @@ $$D_{\mu\nu}(\mathbf{k}) = \frac{\delta_{\mu\nu}}{2(3 - \cos k_x - \cos k_y - \c
 
 which is exactly the lattice Green's function $G_L(\mathbf{k})$.
 
-In the continuum limit $|\mathbf{k}| \ll \pi$:
+In the long-wavelength regime $|\mathbf{k}| \ll \pi$, the Brillouin-zone propagator approaches the continuum form algebraically:
 
-$$D_{\mu\nu}(\mathbf{k}) \to \frac{\delta_{\mu\nu}}{k^2}$$
+$$D_{\mu\nu}(\mathbf{k}) = \frac{\delta_{\mu\nu}}{k^2}\left(1 + O(k^2)\right)$$
 
-This is the standard massless photon propagator.
+with leading-order error $O(k^2)$ from the next-to-leading term in the Taylor expansion of $2(3 - \cos k_x - \cos k_y - \cos k_z) = k^2 - k^4/12 + O(k^6)$. The $k \to 0$ form is the standard massless photon propagator; it is recovered as a closed-form algebraic identity in the long-wavelength regime, not as a limit of a completed-infinity construction.
 
 ## 4.2 Vertex Factor from Z [THEOREM]
 
@@ -334,7 +334,7 @@ for arbitrary $\chi$. Since $\chi$ is arbitrary, this implies $\nabla \cdot \mat
 
 $$\sum_\mu \hat{k}_\mu \Gamma^{(n+1)}_{\mu, \mu_1 \cdots \mu_n}(k; p_1, \ldots, p_n) = 0$$
 
-where $\hat{k}_\mu = 2\sin(k_\mu/2)$ is the lattice momentum. This matches Theorem 1.5 of DERIV_QFT_GRT_BRIDGE.md: the Ward identity holds exactly on the lattice, not just in the continuum limit. $\square$
+where $\hat{k}_\mu = 2\sin(k_\mu/2)$ is the lattice momentum. This matches Theorem 1.5 of DERIV_QFT_GRT_BRIDGE.md: the Ward identity holds exactly on the lattice at every finite extent, not only in the long-wavelength regime where the lattice momentum reduces to the continuum momentum. $\square$
 
 ## 4.5 Key Point: No New Physics [THEOREM]
 
@@ -399,23 +399,27 @@ $$C = -\beta^2 \frac{\partial^2 \ln Z(\beta)}{\partial \beta^2} = \beta^2 \left(
 
 The specific heat is the variance of the energy in the thermal ensemble, always non-negative.
 
-## 5.3 Limiting Behavior [THEOREM]
+## 5.3 Behaviour at Extreme Inverse-Temperature Values [THEOREM]
 
-**High-temperature limit** ($\beta \to 0$, $T \to \infty$):
+The inverse-temperature parameter $\beta$ is a continuous parameter in the partition function, not a structural extent of the lattice. Its small-$\beta$ and large-$\beta$ behaviour are well-defined for arbitrarily small / large finite values.
 
-In this limit, the Boltzmann weight $\exp(-\beta H)$ becomes approximately uniform over all states. The ternary state sum dominates:
+**Small-$\beta$ behaviour (high-temperature regime $T = 1/\beta$ large):**
 
-$$Z(\beta) \xrightarrow{\beta \to 0} 3^N \cdot \int \mathcal{D}\mathbf{J}\; e^{-\frac{1}{2}\mathbf{J}^T M_0 \mathbf{J}}$$
+For arbitrarily small $\beta > 0$, the Boltzmann weight $\exp(-\beta H)$ approaches uniformity across states with rate $O(\beta)$. The leading-order partition function is:
 
-where $M_0$ is the single-time-slice spatial Laplacian. All state configurations are equally weighted. The entropy approaches $S_{\text{therm}} \to N \ln 3$, the maximum entropy of the ternary system.
+$$Z(\beta) \;=\; 3^N \cdot \int \mathcal{D}\mathbf{J}\; e^{-\frac{1}{2}\mathbf{J}^T M_0 \mathbf{J}}\,\bigl(1 + O(\beta)\bigr)$$
 
-**Low-temperature limit** ($\beta \to \infty$, $T \to 0$):
+where $M_0$ is the single-time-slice spatial Laplacian. The entropy approaches $S_{\text{therm}} \to N \ln 3$ (the ternary configuration count) with rate $O(\beta)$.
 
-The ground state dominates:
+**Large-$\beta$ behaviour (low-temperature regime $T$ small):**
 
-$$Z(\beta) \xrightarrow{\beta \to \infty} g_0 \cdot \exp(-\beta E_0)$$
+For arbitrarily large finite $\beta$, the ground state dominates with exponentially-small subleading contributions:
 
-where $E_0$ is the ground state energy and $g_0$ is its degeneracy. The free energy approaches $F \to E_0$ and the entropy $S_{\text{therm}} \to \ln g_0$.
+$$Z(\beta) \;=\; g_0 \cdot e^{-\beta E_0}\,\bigl(1 + O(e^{-\beta\Delta})\bigr)$$
+
+where $E_0$ is the ground-state energy, $g_0$ its degeneracy, and $\Delta$ the gap to the first excited state. The free energy approaches $F \to E_0$ and the entropy $S_{\text{therm}} \to \ln g_0$ at rate $O(e^{-\beta\Delta})$.
+
+These are statements about behaviour at arbitrarily extreme finite values of $\beta$, with explicit error rates. They do not invoke completed-infinity values of $\beta$; the limit-arrow language $\xrightarrow{\beta \to 0/\infty}$ is shorthand for the rate-of-approach statements above.
 
 ## 5.4 Phase Transition at K_B [SELECTION]
 
@@ -438,13 +442,13 @@ The free energy $F(\beta)$ is non-analytic at the critical point, with the natur
 
 **Connection to DERIV_HIGGS_FROM_MANIFESTATION.md:** The Higgs vacuum expectation value $v = 246$ GeV is identified with the order parameter in the broken phase. The manifestation threshold $K_B = m_e = 0.511$ MeV is the critical point. The Mexican-hat potential of the Standard Model Higgs sector is the effective potential $V_{\text{eff}}(\boldsymbol{\phi}_{\text{cl}})$ obtained from $\Gamma[\boldsymbol{\phi}_{\text{cl}}]$ evaluated at the phase transition.
 
-## 5.5 Thermodynamic Limit [THEOREM]
+## 5.5 Free-Energy-Density Stability under Increasing Region Size [THEOREM]
 
-**Theorem 5.2 (Thermodynamic limit).** *In the limit $N \to \infty$ (infinite lattice), the free energy density $f = F/N$ exists and is independent of boundary conditions, provided the interactions are short-ranged.*
+**Theorem 5.2 (Stability of $f = F/N$).** *For arbitrarily large finite regions $\Lambda$ with $|\Lambda| = N$, the free-energy density $f_N = F_N/N$ approaches a value independent of boundary conditions, provided the interactions are short-ranged. The error in $f_N$ relative to the asymptotic value is controlled (e.g. $O(1/N^{1/D})$ for short-range interactions in $D$ dimensions, by van Hove-type arguments).*
 
-**Proof sketch.** The FTD interactions are local (26-neighbor Moore neighborhood, POSTULATE 4). For short-range interactions on a lattice, the existence of the thermodynamic limit follows from standard results in statistical mechanics (the van Hove theorem). The free energy density $f = \lim_{N \to \infty} F/N$ is well-defined, convex in $\beta$, and independent of boundary conditions in the bulk. $\square$
+**Proof sketch.** The FTD interactions are local (26-neighbour Moore neighbourhood, Postulate 4). For short-range interactions on a cubic lattice, standard van Hove-type arguments (Bratteli–Robinson Vol. I) bound the boundary contribution to $F_N$ as a fraction $O(N^{-1/D})$ of the bulk contribution. Hence $f_N$ converges as $N$ is taken arbitrarily large, with controlled rate. $\square$
 
-The thermodynamic limit is where phase transitions become sharp (non-analyticities in $f$). On any finite lattice, the partition function $Z$ is a finite sum of analytic functions, so $F = -T\ln Z$ is always analytic. True phase transitions require $N \to \infty$.
+**On phase transitions at finite $N$.** At every finite $N$ the partition function $Z$ is a finite sum of analytic functions, so $F_N = -T \ln Z$ is analytic — no exact non-analyticity occurs at any finite $N$. As $N$ grows through arbitrarily large finite values, the family $\{F_N\}$ exhibits **increasingly sharp crossovers**: the width of the crossover region in $\beta$ (or in any control parameter) shrinks, and the curvature at the crossover sharpens, but no singularity appears at any finite $N$. The "phase transition" of statistical mechanics is therefore best read here as a **scaling property of the family $\{F_N\}$ across arbitrarily large $N$** — characterised by the rate at which the crossover sharpens — rather than as a singularity at a totalised "$N = \infty$" object. The family is defined per-$N$; no claim is made that the family has a completed-totality membership. Under the framework's undefined-boundary ontology, the per-$N$ scaling rate (typically a fitted exponent) is the load-bearing observable, not the limit value.
 
 ---
 

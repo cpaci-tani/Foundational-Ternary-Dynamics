@@ -64,12 +64,7 @@ FTD is organized into four primary layers:
     *   Root: `ISSUE_TRACKER.md` (116 issues), `AUDIT_WEAKNESSES_MASTER.md`, `AUDIT_UNRESOLVED_ISSUES.md`.
 
 ### Archive & Historical
-*   **archive/** - Deprecated and historical content (gitignored).
-    *   `ftd_archive/` - Legacy engines (Python simulation, Qt GUI, ImGui GUI).
-    *   `pre_ftd_root/` - Original root files before March 2026 restructure.
-    *   `trd_working_docs/` - Early TRD-era working documents.
-    *   `legacy_scripts/` - Superseded Python scripts.
-    *   `web-app/` - Superseded web platform.
+*   **archive/** - Curated historical record (gitignored). Bulk legacy material (TRD-era engines, pre-restructure root, superseded web platform, etc.) deleted 2026-04-19. Archived theory docs live at `docs/theory/archive/`.
 
 ---
 
