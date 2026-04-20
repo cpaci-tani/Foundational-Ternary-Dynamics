@@ -137,7 +137,7 @@
 
 ### FTD-0013: x₊ ↔ 1/α physical identification (1.26 ppm)
 
-- **statement:** The larger root x₊ = 137.036 is identified with 1/α (CODATA 137.035999084), agreement to 1.26 ppm.
+- **statement:** The larger root x₊ = 137.036 is identified with 1/α (CODATA 2022: 137.035999177), agreement to 1.26 ppm.
 - **tag:** STRONGLY MOTIVATED CONJECTURE
 - **tag_history:** Pre-2026-04-19 framed as THEOREM ("derived"); 2026-04-19 demoted given the discovery that the gap-equation L → ∞ argument was the load-bearing derivation step and that argument is closed.
 - **evidence:** (i) numerical match 1.26 ppm (better than experimental precision on most QED loop tests); (ii) dual match with x₋ ↔ N_c (one polynomial, two unrelated physical numbers); (iii) CM-curve structural uniqueness across class-number-1 fields (FTD-0003).
@@ -222,7 +222,7 @@
 
 - **statement:** A per-voxel mass gap exists from the manifestation threshold K_B; this holds at every site, in every region the framework actually exhibits.
 - **tag:** THEOREM
-- **proof_location:** `docs/papers/speculative/FTD_Yang_Mills_Mass_Gap.tex` Theorem 5.1.
+- **proof_location:** `docs/papers/archive/retracted_under_reframe/FTD_Yang_Mills_Mass_Gap.tex` Theorem 5.1 (paper retracted Session 3; per-voxel mass gap content preserved in archived `.tex`).
 - **reframe_status:** UNAFFECTED — local statement, holds at every L.
 - **note:** this is the only YM-paper claim that survives the reframe cleanly. Could anchor a smaller, honest paper without the Clay-eligibility framing.
 

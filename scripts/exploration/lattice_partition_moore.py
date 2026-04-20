@@ -298,7 +298,7 @@ On the L=2 torus:
   FCC G(0) = {G_FCC[0,0]:.6f}
   BCC G(0) = {G_BCC[0,0]:.6f}
 
-  Target (infinite lattice): G*^2/(2pi) = {W3_BCC_inf:.6f}
+  Target (cubic lattice, large-L regime): G*^2/(2pi) = {W3_BCC_inf:.6f}
 
 The self-energy Sigma(x) is approximately CONSTANT across all x for ALL
 lattice types. There is no self-consistency structure in Z(x) on the

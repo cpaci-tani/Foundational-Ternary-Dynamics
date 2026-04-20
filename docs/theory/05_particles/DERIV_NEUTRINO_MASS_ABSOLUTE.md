@@ -50,16 +50,16 @@ The following results are used as inputs:
 
 | Quantity | Formula | Value | Status |
 |----------|---------|-------|--------|
-| alpha | From master quadratic x_+ | 1/137.036 | [THEOREM] |
-| v_Higgs | m_P * sqrt(2pi) * alpha^8 | 246.09 GeV | [THEOREM] |
-| N_c | Floor of x_- | 3 | [THEOREM] |
+| alpha | From master quadratic x_+ | 1/137.036 | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
+| v_Higgs | m_P * sqrt(2pi) * alpha^8 | 246.09 GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] |
+| N_c | Floor of x_- | 3 | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) |
 | N_base | 4 | 4 | [AXIOM] |
 | b_3 | 7 | 7 | [AXIOM] |
-| Dm^2_31/Dm^2_21 | (b_3+N_c)^2/N_c | 100/3 | [THEOREM] |
-| Normal hierarchy | Dm^2_31 > 0 | True | [THEOREM] |
-| sin^2(theta_12) | N_c/(N_c+b_3) | 3/10 | [THEOREM] |
-| sin^2(theta_23) | (N_eff+N_c)/(2*N_eff+N_c) | 16/29 | [THEOREM] |
-| sin^2(theta_13) | 1/(N_base*N_eff) | 1/52 | [THEOREM] |
+| Dm^2_31/Dm^2_21 | (b_3+N_c)^2/N_c | 100/3 | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) |
+| Normal hierarchy | Dm^2_31 > 0 | True | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) |
+| sin^2(theta_12) | N_c/(N_c+b_3) | 3/10 | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) |
+| sin^2(theta_23) | (N_eff+N_c)/(2*N_eff+N_c) | 16/29 | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) |
+| sin^2(theta_13) | 1/(N_base*N_eff) | 1/52 | [PARAMETRIC] (FTD-0019) |
 
 ---
 
@@ -137,7 +137,7 @@ This is remarkable:
 
 ### 3.1 Computing All Three Masses
 
-Given m_3 and the mass-squared ratio R = (b_3+N_c)^2/N_c = 100/3 [THEOREM]:
+Given m_3 and the mass-squared ratio R = (b_3+N_c)^2/N_c = 100/3 [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021):
 
 **Step 1: m_3 = 49.55 meV** (from the seesaw formula above)
 
@@ -206,7 +206,7 @@ Well below the Planck+BAO bound of 120 meV. Consistent with normal ordering pref
 
 The FTD neutrino mass predictions would be **falsified** by:
 
-1. **Inverted hierarchy discovery**: JUNO or DUNE establishing m_2 > m_3 (FTD requires normal ordering [THEOREM])
+1. **Inverted hierarchy discovery**: JUNO or DUNE establishing m_2 > m_3 (FTD requires normal ordering [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021))
 2. **Sum m_nu > 120 meV**: Would require m_1 >> 0, contradicting hierarchical prediction
 3. **m_beta > 50 meV**: Would require m_1 >> 0, contradicting m_1 ~ 0
 4. **Dm^2_21 outside 7.36 +/- 0.55 e-5 eV^2**: Would break the seesaw identification at >10%
@@ -247,14 +247,14 @@ G* = Gamma(1/4) / Gamma(3/4) = 2.9587... [THEOREM]
   v
 Master Quadratic: x^2 - 16*G*^2*x + 16*G*^3 = 0 [THEOREM]
   |
-  +---> x_+ = 1/alpha = 137.036 [SELECTION, SP4] (roots themselves [THEOREM])
-  +---> x_- -> N_c = 3 [SELECTION] (roots themselves [THEOREM])
+  +---> x_+ = 1/alpha = 137.036 [STRONGLY MOTIVATED CONJECTURE] (FTD-0013; roots themselves [THEOREM])
+  +---> x_- -> N_c = 3 [STRONGLY MOTIVATED CONJECTURE] (FTD-0014; roots themselves [THEOREM])
   |
   v
 Framework Integers: {N_c=3, N_base=4, b_3=7, N_eff=13} [AXIOM/THEOREM]
   |
-  +---> alpha = 1/x_+ [THEOREM]
-  +---> v_Higgs = m_P * sqrt(2pi) * alpha^8 [THEOREM]
+  +---> alpha = 1/x_+ [STRONGLY MOTIVATED CONJECTURE] (FTD-0013)
+  +---> v_Higgs = m_P * sqrt(2pi) * alpha^8 [STRUCTURALLY MOTIVATED PARAMETRIC]
   |
   v
 Seesaw Parameters:
@@ -282,8 +282,8 @@ Observables:
 | D=3, varpi | [AXIOM/MATHEMATICAL] | Foundational inputs |
 | G*, quadratic, alpha | [THEOREM] | Rigorously derived |
 | Framework integers | [AXIOM] + [THEOREM] | Some axiomatic, some proven |
-| Mass ratio 100/3 | [THEOREM] | Proven from integers |
-| Normal hierarchy | [THEOREM] | Follows from framework |
+| Mass ratio 100/3 | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) | Constructed from integers |
+| Normal hierarchy | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) | Follows from framework |
 | Seesaw mechanism | [SELECTION] | Adopted from SM extension |
 | m_D = v*alpha | [SELECTION] | Argued, not proven |
 | M_R = (3/4)*v/alpha^4 | [SELECTION] | Constructed from integers |

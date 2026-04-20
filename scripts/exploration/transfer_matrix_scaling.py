@@ -18,7 +18,7 @@ import time
 
 print("=" * 78)
 print("  TRANSFER MATRIX SCALING: L=2 and L=3 Torus")
-print("  Target: does lambda_1/lambda_2 -> 47 as L -> infinity?")
+print("  Target: does lambda_1/lambda_2 -> 47 for arbitrarily large L?")
 print("=" * 78)
 
 def build_18pt_laplacian(L):

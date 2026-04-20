@@ -359,7 +359,7 @@ Rather than deriving renormalization from scratch, we can position FTD as:
    - No UV divergences by construction
 
 2. THE EFFECTIVE THEORY (at low energies)
-   - Standard Model emerges in continuum limit
+   - Standard Model emerges in long-wavelength regime |p| << pi
    - Renormalization describes matching between scales
    - Lattice provides natural regularization
 

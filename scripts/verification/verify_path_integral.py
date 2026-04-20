@@ -18,7 +18,7 @@ Covers:
 - Modular Hamiltonian (PI-11)
 - Hawking temperature (PI-12)
 
-Plus: continuum limit, configuration space, Matsubara frequencies.
+Plus: long-wavelength regime |p| << pi, configuration space, Matsubara frequencies.
 
 Run: python scripts/verification/verify_path_integral.py
 """
@@ -131,7 +131,7 @@ print("=" * 70)
 print("\nPI-3: G_c^(2)(k) = 1/lambda_hat(k)")
 
 # lambda_hat(k) = 2 * sum_mu (1 - cos(k_mu))
-# In continuum limit: lambda_hat(k) -> k^2
+# In long-wavelength regime |k| << pi: lambda_hat(k) -> k^2
 
 # Test at several k values (3D)
 test_ks = [
@@ -155,7 +155,7 @@ for k in test_ks:
     print(f"  {k}  {lam_hat:12.6f}  {k_sq:10.6f}  {rel_err:10.4f}")
 
 record(
-    "lambda_hat(k) -> k^2 in continuum limit (small k, < 1%)",
+    "lambda_hat(k) -> k^2 in long-wavelength regime |k| << pi (small k, < 1%)",
     all_continuum_ok,
     "Verified at multiple k values"
 )

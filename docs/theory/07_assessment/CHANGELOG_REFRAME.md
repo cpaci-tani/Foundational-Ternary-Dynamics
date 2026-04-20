@@ -68,7 +68,7 @@ Shifted the framework's foundational ontology from completed-infinity ℤ³ to u
 |---|---|---|
 | `10_eft_program/OPEN_A_PHYS_DERIVATION.md` | Frames the calibration question created by the reframe; analyses 3 derivation candidates. | FTD-0030 |
 | `10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` | Explicit dimensional-chain attempt at γ; concludes Mechanism γ does not deliver derivation; recommends `a_phys ≡ ℓ_P` declaration. | FTD-0035 |
-| `07_assessment/TRACKER_REFRAME_FLAGS.md` | Catalog of the 5 inline FLAGs with restatement guidance (Restatement A: scaling; Restatement B: calibration). | FTD-0034 |
+| `07_assessment/archive_session_outputs/TRACKER_REFRAME_FLAGS.md` | Catalog of the 5 inline FLAGs with restatement guidance (Restatement A: scaling; Restatement B: calibration). | FTD-0034 |
 | `07_assessment/LEDGER.md` | Single source of truth for claim status (40 initial rows). | n/a (this file is the source) |
 | `07_assessment/CHANGELOG_REFRAME.md` | This file. | n/a |
 
@@ -318,8 +318,8 @@ The YM/NS report flagged a portfolio-level concern that top-level documents may 
 | File | Purpose |
 |---|---|
 | `dissemination/manuscript_v2/PROPAGATION_RULE.md` | Manuscript propagation rule (v1 ↔ v2 ↔ vol1 ↔ vol2) |
-| `docs/theory/07_assessment/TRACKER_PDF_ONLY_PAPERS.md` | 13 PDF-only papers triage + recovery options |
-| `docs/theory/07_assessment/REDERIVE_REPORT_YM_NS.md` | YM + NS paper RE-DERIVE assessments |
+| `docs/theory/07_assessment/archive_session_outputs/TRACKER_PDF_ONLY_PAPERS.md` | 13 PDF-only papers triage + recovery options |
+| `docs/theory/07_assessment/archive_session_outputs/REDERIVE_REPORT_YM_NS.md` | YM + NS paper RE-DERIVE assessments |
 
 ### Open work queue (Session 3)
 
@@ -420,6 +420,111 @@ Both papers moved to `docs/papers/archive/retracted_under_reframe/` (`.tex` git-
 3. Items in `PARKING_LOT.md`: Riemann paper, manuscript sweep, whitepaper, notebooks, divergence audit, α_largeL residual band.
 4. **Re-author retracted PDFs** if any worth resurrecting (per Session 2/3 triage tables).
 5. **Delete `pre-coauthor-cleanup-2026-04-19` backup tag** once force-push happens and rewrite is canonical.
+
+---
+
+## 2026-04-19 — Session 4 (final reframe sweep + consolidation + cleanup + polish)
+
+### Summary
+
+Owner directed: "do one last thorough sweep and maintenance cleanup. Deploy all agents possible." Session 4 deployed **13 agents in three waves** (10 parallel sweep + 1 follow-up parametric back-prop + 2 verification: test + docs-build). Net result: ~120 additional surgical edits across the portfolio; 3 physicist-found bugs fixed; 7 historical session-output files archived; LEDGER ↔ doc tag back-propagation gap closed (~80 tag corrections across 17 files); META_INDEX brought up to date with 6 new audit rows; 6 new audit deliverables generated.
+
+### Wave 1 — 10 parallel agents
+
+| Agent | Domain | Output | Headline |
+|---|---|---|---|
+| manuscript-auditor | manuscript v1+v2 (175 chapters) | `AUDIT_MANUSCRIPT_REFRAME.md` | 5+5 CRITICAL LEDGER mismatches; 0 retracted-paper citations; 9 reframe-language chapters |
+| epistemic-auditor | docs/theory/ tag coverage | (inline; absorbed into back-prop dispatch) | Critical incomplete back-propagation: ~10 docs carry stale [THEOREM] tags |
+| constants-sentinel | drift after α_inf rename + a_phys | `AUDIT_CONSTANTS_FINAL_2026_04_19.md` | 1 HIGH (README, fixed); 6 MEDIUM (all fixed); engine/scripts/dissemination CLEAN |
+| engine-expert | residual CUDA/JS/test docstrings | `ENGINE_AUDIT_FINAL_2026_04_19.md` | CUDA clean; 3 minor JS items; calibration-acknowledgment missing in engine docs |
+| general-purpose | dissemination/whitepaper/ | (10 surgical edits) | Tag/overclaim defects (not infinity-language); 10 fixes including abstract + executive summary |
+| general-purpose | dissemination/notebooks/ + interactive/ | (2 edits + 2 FLAGs) | electromagnetic_simulation badge + 06_constants_derivation pedagogy = owner judgment |
+| general-purpose | scripts/ (149 Python) | (~80 docstring edits across ~30 files) | 3 FLAGs for owner (filename, audit rephrasing, von Neumann scaffold) |
+| general-purpose | speculative + Riemann + book | `AUDIT_SPECULATIVE_BOOK_2026_04_19.md` (+1 each in book/Finitude) | Riemann does NOT claim to prove RH; DEMOTE-IN-PLACE recommended |
+| ftd-lead-physicist | physics review of Sessions 1-3 rewrites | `PHYSICIST_REVIEW_2026_04_19.md` | PASS-WITH-NOTES; 3 concrete bugs found (all fixed Session 4) |
+| refactoring-analyst | post-deployment consolidation | `REFACTORING_RECOMMENDATIONS_2026_04_19.md` | 10 tickets; P1 done Session 4 (~426 LOC removed) |
+
+### Wave 1+ — Critical follow-up (parametric back-propagation)
+
+Epistemic auditor found that LEDGER demotions of sin²θ_W, α_s, sin²θ_13, m_e formula, m_p/m_e, x_+ = 1/α from `[THEOREM]/[DERIVED]` to lower tags were NOT propagated into ~10 reference docs. **One additional general-purpose agent dispatched to back-propagate.** Result: ~80 surgical tag corrections across 17 files, all swaps mapping to LEDGER row IDs (FTD-0013 through FTD-0022, FTD-0032).
+
+**Files updated by back-prop:** `SPEC_FTD_COMPARATIVE_PHYSICS`, `SPEC_SM_REPLACEMENT_COMPLETE`, `SPEC_NOVEL_PREDICTIONS`, `PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE`, `DERIV_MASTER_QUADRATIC_FROM_Z`, `DERIV_LATTICE_CHIRAL_ANOMALY`, `DERIV_LATTICE_SU2_WEAK`, `DERIV_LATTICE_SU3_GAUGE`, `DERIV_HIGGS_FROM_MANIFESTATION`, `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE`, `DERIV_FERMI_COUPLING_CONSTANT`, `DERIV_PLANCK_MASS_AND_LAMBDA_QCD`, `DERIV_LAMBDA_QCD_DERIVATION`, `PRED_ELECTROWEAK_MASSES`, `DERIV_NEUTRINO_MASS_ABSOLUTE`, `DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS`, `AUDIT_WHAT_IS_GENUINELY_NEW`.
+
+**3 FLAGs for owner broader-rewrite:**
+1. `DERIV_MASTER_QUADRATIC_FROM_Z.md` — entire chain describes the now-RETRACTED gap-equation route (FTD-0032). Banner added; full rewrite recommended (parallel to DERIV_MASTER_QUADRATIC_GAP_EQUATION rewrite).
+2. `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — document's purpose (promote x_+ = 1/α via L → ∞ continuum-limit route) is now obsolete under reframe. Inline header revised; needs full restatement.
+3. `AUDIT_WHAT_IS_GENUINELY_NEW.md` table rows 13-20 retain [DERIVED]; out of scope for back-prop pass; broader audit-table rebuild may be needed.
+
+### Wave 2 — Verification (test-orch + docs-build)
+
+Status pending at this writing (in flight). Reports will land at `TEST_REPORT_SESSION4.md` and `DOCS_BUILD_REPORT_SESSION4.md`.
+
+### Phase B — Sequential consolidation + polish
+
+Done while agents ran:
+
+| Action | Files |
+|---|---|
+| Fix README α_∞ → α_largeL + calibration-conditional framing | `README.md` |
+| Fix LEDGER stale path to YM paper | `LEDGER.md` line 225 |
+| Fix LEDGER CODATA value drift (2018 → 2022) | `LEDGER.md` line 140 |
+| Fix META_INDEX duplicate row numbers (3.40, 3.41, 3.42 collisions) | renumbered to 3.43, 3.44, 3.45 |
+| Fix META_INDEX header version (v5.29 → v5.31) | `META_INDEX.md` lines 3-4 |
+| Fix META_INDEX row 6.6 Type III₁ tag ([SELECTION] → [HYPOTHESIS]) | `META_INDEX.md` line 209 |
+| Fix engine residue (`USER_GUIDE.md`, `beyond.js`) | 2 prose hits cleared |
+| Fix Mechanism γ α_G route arithmetic (10⁻⁷ → 10⁻¹⁹ m) + mass-scale conflation note | `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` |
+| Fix WHERE_WE_LEFT_OFF a_phys status (OPEN → RESOLVED) | `WHERE_WE_LEFT_OFF.md` |
+| Sweep 5 EFT docs for α_∞ prose residue (13 occurrences) | DERIV_DAY2_CAMPAIGN, AUDIT_ALPHA_EXTRACTION, OPEN_A_PHYS_DERIVATION, DERIV_EMERGENT_COULOMB_GEOMETRIC, STATUS_CUDA_BUILD |
+| Add `archive_session_outputs/` directory + README | new |
+| Move 7 historical session-output files to archive_session_outputs/ | TRACKER_REFRAME_FLAGS, TRACKER_PDF_ONLY_PAPERS, INVENTORY_PORTFOLIO, FLAGGED_PASSAGES_PAPERS, REDERIVE_REPORT_YM_NS, DEVILS_ADVOCATE_REPORT, ENGINE_AUDIT_REFRAME |
+| Update cross-refs after archival moves | 8 files (CLAUDE.md, META_INDEX, RETRACTION_NOTES, etc.) |
+| Add META_INDEX rows 7.40-7.45 for Session 4 audits + archive directory | new rows |
+
+### New deliverables (Session 4)
+
+| File | Purpose |
+|---|---|
+| `AUDIT_CONSTANTS_FINAL_2026_04_19.md` | constants-sentinel agent output |
+| `AUDIT_MANUSCRIPT_REFRAME.md` | manuscript-auditor output |
+| `AUDIT_SPECULATIVE_BOOK_2026_04_19.md` | speculative + Riemann + book audit |
+| `ENGINE_AUDIT_FINAL_2026_04_19.md` | engine-expert residual sweep |
+| `PHYSICIST_REVIEW_2026_04_19.md` | ftd-lead-physicist review |
+| `REFACTORING_RECOMMENDATIONS_2026_04_19.md` | refactoring-analyst output |
+| `archive_session_outputs/README.md` | archive directory index |
+| `SESSION_WRAPUP_2026_04_19_session4.md` | this session's wrapup |
+| `TEST_REPORT_SESSION4.md` (pending) | test-orchestrator output |
+| `DOCS_BUILD_REPORT_SESSION4.md` (pending) | documentation-builder output |
+
+### Pending owner judgment items (queued for Session 5+)
+
+From manuscript audit (top priority):
+- ch 13, 14.5, 20, 11 in v2 + ch 14.5, 1.10b in v1 — LEDGER tag mismatches need editorial fix
+- 9 chapters with reframe-language issues need restatement
+
+From physicist review:
+- SPEC_FTD §14.2 vs line 1419 inconsistency in Lorentz-recovery framing
+
+From notebooks/HTML:
+- electromagnetic_simulation.html "DERIVED" badge per LEDGER FTD-0013
+- 06_constants_derivation.ipynb pedagogy-vs-tag alignment
+
+From speculative+Riemann audit:
+- Riemann paper DEMOTE-IN-PLACE preamble (parallel to Finitude Theorem)
+- 4 DERIV_* speculative papers (CASIMIR_RATCHET, GEOMETRIC_BIOPHYSICS, GRAND_UNIFIED_MASS, SONOLUMINESCENCE) — substitution-identity hazards
+
+From scripts sweep:
+- `verify_thermodynamic_limit.py` filename + section identifiers
+- `proof_von_neumann_type.py` Section 7 scaffold dependence
+
+From parametric back-prop:
+- `DERIV_MASTER_QUADRATIC_FROM_Z.md` full rewrite
+- `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` full restatement
+- `AUDIT_WHAT_IS_GENUINELY_NEW.md` rows 13-20 broader rebuild
+
+From refactoring (P2/P3):
+- CANONICAL_REFRAME ↔ AUDIT_INFINITY_REFRAME consolidation
+- LEDGER citation standardisation
+- Add `INDEX.md` to `07_assessment/` segregating Live / Reference / Archive
 
 ---
 

@@ -96,11 +96,11 @@ Everything else is supporting detail.
 
 | Item | What it is | Status |
 |---|---|---|
-| **a_phys** | Lattice-to-physical-length conversion (1 lattice unit = ? meters). Either derivable from {D=3, ternary, 26-Moore, determinism, discrete time} or empirical. | Scoping doc pending (Priority #3 in §3 below) |
+| **a_phys** | Lattice-to-physical-length conversion (1 lattice unit = ? meters). Either derivable from {D=3, ternary, 26-Moore, determinism, discrete time} or empirical. | **RESOLVED 2026-04-19** — Mechanisms α/β/γ all closed as derivation candidates; calibration `a_phys ≡ ℓ_P` declared in `docs/SPEC_FTD.md` (LEDGER FTD-0030, FTD-0041). Every dimensional prediction is now explicitly conditional on this calibration. |
 | **Mechanism B for g_c** | Lattice-to-continuum matching via quantum path integral + Wilson coefficients. Months of physics work. | The only remaining route after A and C were ruled out |
 | **Chowla-Selberg extension** | Does CM uniqueness extend rigorously to class-number ≥ 2? Pattern strongly suggests yes; proof needed. | Small / tractable (~2 days) |
 | **Master quadratic paper** | Minimum-claim publication draft targeting arXiv + Comm. Number Theory and Physics. | Pending — see §3 Option 1 |
-| **a_phys derivation attempt** | Can lattice invariants force a specific value? | Phase K, not started |
+| **a_phys derivation attempt** | Can lattice invariants force a specific value? | **CLOSED 2026-04-19** — Mechanism γ attempt run (`docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`); negative result; recommendation accepted to declare `a_phys ≡ ℓ_P`. |
 
 ---
 

@@ -209,12 +209,12 @@ The 1.3% error arises from the compounding of errors in $G_F$ (0.13%) and $m_\mu
 | ID | Claim | Status | Key Equation |
 |----|-------|--------|-------------|
 | GF-1 | $G_F = 1/(\sqrt{2}\,v^2)$ is an exact SM identity | **[THEOREM]** | Standard textbook result |
-| GF-2 | $v = M_P\sqrt{2\pi}\,\alpha^8 = 246.09$ GeV | **[THEOREM]** | From DERIV_HIGGS_FROM_MANIFESTATION.md |
-| GF-3 | $G_F = 1/(2\sqrt{\pi}\,M_P^2\,\alpha^{16}) = 1.168 \times 10^{-5}$ GeV⁻² | **[THEOREM]** | 0.13% vs experiment |
-| GF-4 | $G_F$ is no longer an external input | **[THEOREM]** | Reclassification |
+| GF-2 | $v = M_P\sqrt{2\pi}\,\alpha^8 = 246.09$ GeV | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | From DERIV_HIGGS_FROM_MANIFESTATION.md |
+| GF-3 | $G_F = 1/(2\sqrt{\pi}\,M_P^2\,\alpha^{16}) = 1.168 \times 10^{-5}$ GeV⁻² | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | 0.13% vs experiment |
+| GF-4 | $G_F$ is no longer an external input | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | Reclassification |
 | GF-5 | ~50 parametric insertions using $G_F$ are now closer to derived | **[SELECTION]** | Many still require form factors |
 | GF-6 | $\alpha^{16}$ = $N_\text{base}^4$ links Fermi constant to vacuum energy | **[SELECTION]** | Both $\propto \alpha^{16}$ |
-| GF-7 | Muon lifetime $\tau_\mu = 2.17$ μs from FTD | **[THEOREM]** | 1.3% vs experiment |
+| GF-7 | Muon lifetime $\tau_\mu = 2.17$ μs from FTD | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | 1.3% vs experiment |
 
 ---
 

@@ -63,15 +63,15 @@ Once $M_P$ is given, every mass in the Standard Model is determined by the frame
 
 | Mass | FTD Formula | Status |
 |------|------------|--------|
-| $m_e$ | $M_P\sqrt{2\pi}\cdot\frac{16}{3}\cdot\alpha^{11}$ | [THEOREM] |
-| $m_\mu$ | $207 \cdot m_e$ | [THEOREM] |
-| $m_\tau$ | $3477 \cdot m_e$ | [THEOREM] |
-| $m_p$ | $(N_\text{eff}/\alpha + T_{10}) \cdot m_e$ | [THEOREM] |
-| $v$ | $M_P\sqrt{2\pi}\cdot\alpha^8$ | [THEOREM] |
-| $M_W$ | $gv/2$ | [THEOREM] |
-| $M_Z$ | $M_W/\cos\theta_W$ | [THEOREM] |
-| $m_H$ | $(N_\text{eff}/\alpha^2)\cdot m_e$ | [SELECTION] |
-| $G_F$ | $1/(\sqrt{2}\,v^2)$ | [THEOREM] |
+| $m_e$ | $M_P\sqrt{2\pi}\cdot\frac{16}{3}\cdot\alpha^{11}$ | [STRONGLY MOTIVATED CONJECTURE] (FTD-0015) |
+| $m_\mu$ | $207 \cdot m_e$ | [STRONGLY MOTIVATED CONJECTURE] |
+| $m_\tau$ | $3477 \cdot m_e$ | [STRONGLY MOTIVATED CONJECTURE] |
+| $m_p$ | $(N_\text{eff}/\alpha + T_{10}) \cdot m_e$ | [STRONGLY MOTIVATED CONJECTURE] (FTD-0016) |
+| $v$ | $M_P\sqrt{2\pi}\cdot\alpha^8$ | [STRUCTURALLY MOTIVATED PARAMETRIC] |
+| $M_W$ | $gv/2$ | [STRUCTURALLY MOTIVATED PARAMETRIC] |
+| $M_Z$ | $M_W/\cos\theta_W$ | [STRUCTURALLY MOTIVATED PARAMETRIC] |
+| $m_H$ | $(N_\text{eff}/\alpha^2)\cdot m_e$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0017) |
+| $G_F$ | $1/(\sqrt{2}\,v^2)$ | [STRUCTURALLY MOTIVATED PARAMETRIC] |
 
 **The key point:** FTD needs exactly one dimensionful input (M_P) to set the unit system. After that, all ~126 masses, couplings, and widths in the PDG are determined by the integers $\{3, 4, 7, 13\}$ and $G^*$.
 
@@ -112,10 +112,10 @@ FTD reduces the Standard Model's 20 free parameters to **1 dimensionful axiom** 
 The complete chain, from DERIV_LAMBDA_QCD_DERIVATION.md v2.0:
 
 ```
-G* → master quadratic → α = 1/137.036                     [THEOREM]
-{b₃, N_eff} → α_s(M_Z) = 7/59 = 0.11864                   [THEOREM]
-α, M_P → v = M_P √(2π) α⁸ = 246.09 GeV                    [THEOREM]
-v, sin²θ_W = 3/13 → M_Z = 91.19 GeV                       [SELECTION]
+G* → master quadratic → α = 1/137.036                     [STRONGLY MOTIVATED CONJECTURE] (FTD-0013)
+{b₃, N_eff} → α_s(M_Z) = 7/59 = 0.11864                   [PARAMETRIC] (FTD-0020)
+α, M_P → v = M_P √(2π) α⁸ = 246.09 GeV                    [STRUCTURALLY MOTIVATED PARAMETRIC]
+v, sin²θ_W = 3/13 → M_Z = 91.19 GeV                       [PARAMETRIC] (FTD-0018 chain)
 α_s(M_Z), M_Z, b₀(n_f=5) → Λ⁽⁵⁾ via dim. transmutation    [SELECTION]
 ```
 
@@ -168,7 +168,7 @@ $$\boxed{\Lambda^{(5)}_{\overline{MS}} = 218 \pm 5\;\text{MeV} \quad\text{(FTD, 
 
 | Component | FTD-Derived? | Status |
 |-----------|-------------|--------|
-| $\alpha_s(M_Z) = 7/59$ | ✅ Yes | [THEOREM] |
+| $\alpha_s(M_Z) = 7/59$ | ✅ Yes | [PARAMETRIC] (FTD-0020) |
 | $M_Z = 91.19$ GeV | ✅ Yes | [SELECTION] (uses v and sin²θ_W) |
 | $b_0 = 23/3$ | ⚠️ Partially | [THEOREM] for N_c=3, [EXTERNAL] for the Feynman diagram calculation |
 | $b_1 = 116/3$ | ❌ No | [EXTERNAL] (two-loop perturbative QCD) |
@@ -225,9 +225,9 @@ The entire meson spectrum (42 states in DERIV_COMPLETE_PARTICLE_PHYSICS.md) trac
 |----|-------|--------|-------------|
 | MP-1 | No pure-math framework can derive M_P | **[THEOREM]** | Dimensional analysis |
 | MP-2 | M_P is the single dimensionful axiom of FTD | **[AXIOM]** | Lattice spacing a = ℓ_P |
-| MP-3 | Given m_e, M_P is uniquely determined | **[THEOREM]** | M_P = m_e/(√(2π)(16/3)α¹¹) |
+| MP-3 | Given m_e, M_P is uniquely determined | **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0015 chain) | M_P = m_e/(√(2π)(16/3)α¹¹) |
 | MP-4 | FTD has 1 external input (M_P), 0 free parameters | **[THEOREM]** | All ratios from integers |
-| LQ-1 | α_s(M_Z) = 7/59 non-circularly from integers | **[THEOREM]** | b₃/(b₃+4N_eff) |
+| LQ-1 | α_s(M_Z) = 7/59 non-circularly from integers | **[PARAMETRIC]** (FTD-0020) | b₃/(b₃+4N_eff) |
 | LQ-2 | Chain G* → α → v → M_Z has no Λ_QCD dependence | **[THEOREM]** | Verified step-by-step |
 | LQ-3 | Λ⁽⁵⁾ = 91.5 MeV (one-loop) | **[SELECTION]** | Dimensional transmutation |
 | LQ-4 | Λ⁽⁵⁾ = 218 MeV (two-loop), vs PDG 213±8 | **[SELECTION]** | 2.3% accuracy (0.6σ) |

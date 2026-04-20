@@ -59,9 +59,9 @@ This result has three possible readings:
 
 1. **`G_N(lattice) = 0.01` is the wrong number to plug in.** The engine's own header explicitly flags this: "the engine runs in a TOY-GRAVITY REGIME where `G_N ≈ 0.01` — roughly 37 orders of magnitude stronger than physical gravity." If `G_N(lattice)` were the framework's actual prediction for the dimensionless gravitational coupling at electron-mass scale, it would be `α_G ≈ 5.91 × 10⁻³⁹` (the value that replaces `0.01` in the formula above). Re-running with `G_N(lattice) = α_G`:
 
-$$a_\text{phys}^{\text{(α_G route)}} \;=\; \frac{3 \cdot (1.783\!\times\!10^{-30}) \cdot (6.674\!\times\!10^{-11})}{(5.91\!\times\!10^{-39}) \cdot (8.988\!\times\!10^{16})} \;\approx\; 6.7\times 10^{-7}\;\text{m},$$
+$$a_\text{phys}^{\text{(α_G route)}} \;=\; \frac{3 \cdot (1.783\!\times\!10^{-30}) \cdot (6.674\!\times\!10^{-11})}{(5.91\!\times\!10^{-39}) \cdot (8.988\!\times\!10^{16})} \;\approx\; 6.7\times 10^{-19}\;\text{m},$$
 
-   which is a sub-micron length, not a Planck length and not an atomic length. **Equally implausible** as a fundamental lattice spacing.
+   which is roughly attometre-scale — sixteen orders of magnitude smaller than the Planck length, and not an atomic length either. **Equally implausible** as a fundamental lattice spacing. (Caveat: this calculation conflates mass scales — α_G ≈ 5.91 × 10⁻³⁹ in the framework's derivation is keyed to the proton-mass scale via the cross-domain α²⁰ factor, while `M_unit = m_e` here is electron-scale; the mixing further flags the chain as a calibration shuffle rather than a derivation.)
 
 2. **The `K_B = m_e` calibration is doing too much work.** `M_unit` is set by demanding `K_B = m_e`, which is a parametric calibration to the electron mass. If we instead anchored mass by setting `K_B` to something else (e.g. the QCD scale Λ_QCD, or the Planck mass), `M_unit` and hence `a_phys` would shift by orders of magnitude. The result is therefore not a derivation of `a_phys` — it is an output that depends on which mass observable was used to calibrate `K_B`.
 
@@ -98,7 +98,7 @@ Three reasonable choices for the matching observable:
 | Calibration choice | Result | Property |
 |---|---|---|
 | `K_B = m_e` and `G_N(lattice) = 0.01` self-consistent | `a_phys ≈ 4 × 10⁻⁵⁵ m` | unphysically small; signals `G_N(lattice) = 0.01` is toy-regime, not physical |
-| `K_B = m_e` and `G_N(lattice) = α_G` | `a_phys ≈ 7 × 10⁻⁷ m` | sub-micron; signals `α_G` derivation needs revisiting |
+| `K_B = m_e` and `G_N(lattice) = α_G` | `a_phys ≈ 6.7 × 10⁻¹⁹ m` | attometre-scale; signals `α_G` derivation + cross-mass-scale conflation needs revisiting |
 | `K_B = m_e` and `a_phys ≡ ℓ_P` (declared) | `G_N(lattice)` forced to ≈ `1.6 × 10⁻²⁵` | preserves Planck-scale ontology; `G_N(lattice) = 0.01` becomes a separate engine-toy parameter |
 
 **Recommended position:** declare `a_phys ≡ ℓ_P` (Planck-length anchor) in `SPEC_FTD.md` as the framework's working calibration, treat `G_N(lattice) = 0.01` as the engine's deliberate toy-coupling for visibility, and quote all engine results in lattice units with the conversion `ℓ_P = a_phys` available for any reader who wants physical units. This matches the engine's existing TOY-regime banner and makes the calibration choice explicit instead of implicit.

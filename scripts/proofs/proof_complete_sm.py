@@ -308,7 +308,7 @@ print(f"\n--- SECTION 8: Scattering Amplitudes [THEOREM] ---")
 # Coulomb scattering on the lattice:
 # M(q) = -alpha / (2 * lambda(q))
 # where lambda(q) = 2(3 - cos(q_x) - cos(q_y) - cos(q_z))
-# In the continuum limit (q -> 0): lambda(q) -> q^2, so M -> -alpha/(2q^2) = Rutherford
+# In the long-wavelength regime |q| << pi (q -> 0): lambda(q) -> q^2, so M -> -alpha/(2q^2) = Rutherford
 
 # For q = pi/4 (typical momentum transfer):
 import math

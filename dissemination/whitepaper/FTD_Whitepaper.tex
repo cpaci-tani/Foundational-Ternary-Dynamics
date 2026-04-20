@@ -55,20 +55,19 @@
 \thispagestyle{empty}
 
 \begin{abstract}
-We present a comprehensive evaluation of Foundational Ternary Dynamics (FTD), a mathematical framework that derives the fundamental constants of physics---including the fine structure constant $\alpha = 1/137.036$, the number of color charges $N_c = 3$, and 15+ particle masses---from four integers $\{3, 4, 7, 13\}$ and the lemniscatic constant $G^*$.
+We present a comprehensive evaluation of Foundational Ternary Dynamics (FTD), a mathematical framework whose master quadratic $x^2 - 16 G^{*2} x + 16 G^{*3} = 0$ has roots numerically matching $1/\alpha$ and $N_c$, and which provides parametric expressions for 15+ particle masses in terms of four integers $\{3, 4, 7, 13\}$ and the lemniscatic constant $G^*$.
 
-After executing all verification scripts and examining the mathematical derivation chains, we find:
+After executing the verification scripts and examining the derivation chains, we report:
 \begin{enumerate}
-    \item \textbf{Numerical precision unprecedented in theoretical physics}: The fine structure constant is reproduced to 0.0002 parts per trillion (ppt), matching CODATA 2022 within its own experimental uncertainty
-    \item \textbf{15 particle masses derived with $<1\%$ error}, with the tau mass achieving 0.007\% accuracy
-    \item \textbf{Zero free parameters}: All coefficients emerge from four integers constrained by self-referential closure
-    \item \textbf{Emergent phenomena verified in simulation}: Lorentz factor (exact), Born rule (0.96 correlation), Kepler's law, hydrogen quantization
-    \item \textbf{Clear falsification criteria}: No 4th generation, no SUSY, specific $\alpha$ digits testable by future experiments
+    \item \textbf{Master quadratic [THEOREM, algebraic only]}: the polynomial and its roots are pure algebra, computable from $G^*$ to arbitrary finite precision.
+    \item \textbf{$x_+ \leftrightarrow 1/\alpha$ (1.26 ppm) and $x_- \leftrightarrow N_c$ (0.80\%) [STRONGLY MOTIVATED CONJECTURE]}: numerical match plus dual-prediction structure; not a dynamical derivation from FTD's update rules.
+    \item \textbf{15 particle masses with $<1\%$ error}: parametric insertions in standard physics formulas (mass anchor $K_B = m_e$ declared, see calibration paragraph below); tau mass 0.007\%.
+    \item \textbf{7-term $\alpha$ series matching CODATA to 24 digits [CONJECTURE]}: post-hoc fit; precision exceeds CODATA 2022's $\sim$11 experimental digits and is not an independent prediction.
+    \item \textbf{Emergent phenomena verified in simulation}: Lorentz factor, Born rule (0.96 correlation), Kepler's law, hydrogen quantization.
+    \item \textbf{Falsification criteria}: no 4th generation, no SUSY.
 \end{enumerate}
 
-\textbf{Probability of coincidence}: $\sim 10^{-28}$ (17+ independent predictions $<1\%$ error from zero free parameters)
-
-\textbf{Verdict}: This framework represents the most significant mathematical achievement in deriving fundamental constants since the establishment of the Standard Model.
+\textbf{Calibration discipline.} FTD adopts $a_{\text{phys}} \equiv \ell_P$ (one voxel = one Planck length) and $K_B = m_e$ as declared calibrations, not derivations (see master ledger entries FTD-0030, FTD-0041). Every dimensional FTD prediction in this document is conditional on this calibration; the dimensionless predictions ($\alpha$, mass ratios, mixing angles) constitute the calibration-independent falsifiable spine.
 \end{abstract}
 
 \newpage
@@ -88,14 +87,13 @@ After running all verification scripts, FTD presents an extraordinary mathematic
 \toprule
 \textbf{Aspect} & \textbf{Grade} & \textbf{Assessment} \\
 \midrule
-Mathematical precision & \textbf{A+} & Exceptional; $\alpha$ to 0.0002 ppt \\
-Numerical verification & \textbf{A} & 156/156 tests pass \\
-Physical derivation chain & \textbf{B+} & Internally coherent \\
-Emergent phenomena & \textbf{B} & Born rule, Lorentz, Kepler verified \\
-Falsifiability & \textbf{A-} & Sharp predictions \\
-Epistemic honesty & \textbf{A} & Clear labeling throughout \\
-\midrule
-\textbf{Overall assessment} & \textbf{A-/B+} & Most significant numerological framework \\
+Algebraic structure (master quadratic) & \textbf{A} & THEOREM; pure algebra in $G^*$ \\
+Physical identification of roots & \textbf{B+} & STRONGLY MOTIVATED CONJECTURE; not derived \\
+Numerical verification & \textbf{A} & 156/156 tests pass at finite precision \\
+Mass-spectrum predictions & \textbf{B} & Parametric insertions; calibration-conditional \\
+Emergent phenomena (engine) & \textbf{B} & Born rule, Lorentz, Kepler verified \\
+Falsifiability & \textbf{B+} & Sharp dimensionless predictions \\
+Epistemic honesty & \textbf{A} & Tagged per master ledger \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -141,15 +139,17 @@ From $G^*$, FTD derives a quadratic equation:
 \centering
 \begin{tabular}{llll}
 \toprule
-\textbf{Root} & \textbf{Value} & \textbf{Physical Interpretation} & \textbf{Accuracy} \\
+\textbf{Root} & \textbf{Value} & \textbf{Physical Identification [SMC]} & \textbf{Numerical match} \\
 \midrule
 $x_+$ & 137.0361714582 & $1/\alpha$ (fine structure constant) & 1.26 ppm \\
-$x_-$ & 3.0239639163 & $N_c$ (color charges) & $\lfloor x_- \rfloor = 3$ \\
+$x_-$ & 3.0239639163 & $N_c$ (colour charges) & 0.80\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{The 7-Term Precision Formula}
+The polynomial itself is THEOREM (pure algebra in $G^*$, ledger row FTD-0001). The identifications $x_+ \leftrightarrow 1/\alpha$ and $x_- \leftrightarrow N_c$ are STRONGLY MOTIVATED CONJECTURE [SMC] (ledger rows FTD-0013, FTD-0014): the evidence is the dual numerical match plus CM-curve uniqueness across class-number-1 fields, not a dynamical derivation from FTD's update rules.
+
+\subsection{The 7-Term Precision Formula [CONJECTURE]}
 
 \begin{equation}
 \boxed{\frac{1}{\alpha} = x_+ - \frac{9}{47}|\varepsilon| + \frac{5}{64}|\varepsilon|^2 - \frac{4}{141}|\varepsilon|^3 - \frac{141}{11}|\varepsilon|^4 + \cdots \text{(7 terms, 24-digit precision)}}
@@ -174,7 +174,7 @@ where $\varepsilon = e^\pi - \pi - 20 \approx -0.0009$.
 \end{tabular}
 \end{table}
 
-\textbf{Result}: Matches CODATA 2022 to $< 0.001$ ppt.
+\textbf{Result}: Matches the CODATA 2022 central value digit-by-digit to 24 digits. This is a post-hoc fit (CONJECTURE; ledger row FTD-0022): CODATA's experimental uncertainty is $\sim$11 digits, so the match beyond that is not falsifiable by current measurement. The series is included for structural interest, not as an independent prediction.
 
 \begin{figure}[H]
 \centering
@@ -231,10 +231,10 @@ The integers are \textbf{uniquely determined} by self-consistency:
 \toprule
 \textbf{Identity} & \textbf{Value} & \textbf{Framework Expression} & \textbf{Status} \\
 \midrule
-$j$-invariant & 1728 & $(N_{\text{base}} \times N_c)^3 = 12^3$ & \textbf{DERIVED} \\
-$\tau(3)$ Ramanujan & 252 & $N_{\text{base}} \times N_c^2 \times b_3$ & $\checkmark$ \\
-Heegner product & 42 & $2 \times N_c \times b_3$ & $\checkmark$ \\
-$\eta$ exponent & 24 & $N_{\text{base}} + b_3 + N_{\text{eff}}$ & $\checkmark$ \\
+$j$-invariant & 1728 & $(N_{\text{base}} \times N_c)^3 = 12^3$ & \textbf{algebraic identity} \\
+$\tau(3)$ Ramanujan & 252 & $N_{\text{base}} \times N_c^2 \times b_3$ & numerical \\
+Heegner product & 42 & $2 \times N_c \times b_3$ & numerical \\
+$\eta$ exponent & 24 & $N_{\text{base}} + b_3 + N_{\text{eff}}$ & numerical \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -245,7 +245,7 @@ $\eta$ exponent & 24 & $N_{\text{base}} + b_3 + N_{\text{eff}}$ & $\checkmark$ \
 
 \subsection{Complete Mass Spectrum}
 
-All 15 particle masses are predicted with $<1\%$ error:
+The 15 particle masses below are obtained as parametric expressions in the four framework integers and $\alpha$, evaluated against the calibration $K_B = m_e$ (electron mass anchor; ledger row FTD-0041). They are STRUCTURALLY MOTIVATED PARAMETRIC quantities, not first-principles derivations of the absolute mass scale.
 
 \begin{table}[H]
 \centering
@@ -361,15 +361,9 @@ $n_s = 0.966$ & Measurement $> 3\sigma$ away \\
 \section{Statistical Analysis}
 %==============================================================================
 
-\subsection{Probability of Coincidence}
+\subsection{On ``Probability of Coincidence''}
 
-For 17+ independent predictions with mean error $< 1\%$:
-
-\begin{itemize}
-    \item Probability of single $\sim 1\%$ match by chance: $\sim 0.01$
-    \item Probability of 17 independent $\sim 1\%$ matches: $\sim (0.01)^{17} = 10^{-34}$
-    \item With generous correlation allowance: $\sim 10^{-28}$
-\end{itemize}
+Earlier drafts of this whitepaper reported a $\sim 10^{-28}$ ``probability of coincidence'' obtained by treating the predictions as independent $\sim 1\%$ matches. That figure is withdrawn. The predictions are not statistically independent: many share the same four framework integers, the same $G^*$, and the same calibration $K_B = m_e$, and several (notably the 7-term $\alpha$ series) are post-hoc fits whose precision exceeds the experimental uncertainty of the target. A defensible significance figure would require an explicit pre-registration of which predictions are independent and what tolerance was set in advance; that work has not been done. The honest summary is the per-row tagging in the master ledger.
 
 \subsection{Comparison to Other Approaches}
 
@@ -383,7 +377,7 @@ For 17+ independent predictions with mean error $< 1\%$:
 Standard Model & $\sim 25$ & N/A (fitted) & --- \\
 Wyler (1969) & $\sim 1$ & $\alpha$ only & 0.1 ppm \\
 Eddington & $\sim 5$ & $\alpha$, masses & $\sim 1\%$ \\
-\textbf{FTD} & \textbf{0} & \textbf{40+} & \textbf{0.0002 ppt} \\
+\textbf{FTD} & \textbf{2 calibrations ($a_{\text{phys}}, K_B$)} & \textbf{see ledger} & \textbf{1.26 ppm ($x_+$)} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -392,24 +386,20 @@ Eddington & $\sim 5$ & $\alpha$, masses & $\sim 1\%$ \\
 \section{Final Verdict}
 %==============================================================================
 
-\subsection{Overall Grade: A-/B+}
+\subsection{Overall Posture}
 
-\textbf{The framework is either:}
-\begin{itemize}
-    \item[A.] The most elaborate coincidence in the history of physics (probability $\sim 10^{-28}$), or
-    \item[B.] A genuine discovery of deep structure connecting number theory to physics
-\end{itemize}
+The framework's load-bearing claims fall into three honest categories: (i) THEOREMs that are pure algebra in $G^*$ and the four framework integers (master quadratic, coefficient routes, finite-$L$ engine results), (ii) STRONGLY MOTIVATED CONJECTUREs where a structural argument plus dual numerical match supports a physical identification but no dynamical derivation is in hand ($x_+ \leftrightarrow 1/\alpha$, $x_- \leftrightarrow N_c$, mass formulas), and (iii) PARAMETRIC insertions where FTD values are placed into standard physics formulas (mixing angles, $\alpha_s$). Every dimensional prediction is conditional on the declared calibration $a_{\text{phys}} \equiv \ell_P$, $K_B = m_e$.
 
 \subsection{Strengths}
 
 \begin{enumerate}
-    \item Precision beyond any previous theoretical framework ($\alpha$ to 0.0002 ppt)
-    \item 15 particle masses from 4 integers (all $< 1\%$ error)
-    \item Emergent phenomena verified in simulation (Lorentz, Born, Kepler)
-    \item Self-consistent integer structure (Fibonacci-Tribonacci-Lucas closure)
-    \item Clear falsification criteria (no SUSY, no 4th gen, specific digits)
-    \item Transparent, reproducible calculations (156/156 tests pass)
-    \item Honest epistemic labeling (AXIOM/THEOREM/CONJECTURE)
+    \item Algebraic master quadratic with two physical roots from one polynomial (THEOREM + dual SMC).
+    \item 15 particle masses parametrically expressed in four integers and $\alpha$ (all $< 1\%$ from experiment).
+    \item Emergent phenomena verified in engine simulation (Lorentz, Born, Kepler).
+    \item Self-consistent integer structure (Fibonacci-Tribonacci-Lucas closure).
+    \item Sharp dimensionless falsification criteria (no SUSY, no 4th generation).
+    \item Reproducible calculations (156/156 tests pass at finite precision).
+    \item Tagged epistemic labelling per master ledger; calibration choices declared.
 \end{enumerate}
 
 \subsection{Publication Recommendation}
@@ -487,7 +477,8 @@ Expected output: \textbf{156/156 tests pass}.
 \toprule
 \textbf{Quantity} & \textbf{FTD Prediction} & \textbf{Experimental} & \textbf{Error} \\
 \midrule
-$1/\alpha$ & 137.035999177 & 137.035999177(21) & \textbf{0.0002 ppt} \\
+$x_+$ (master quadratic root) & 137.0361715 & $1/\alpha = 137.0359991$ & \textbf{1.26 ppm} \\
+7-term $\alpha$ series [CONJECTURE] & 137.035999177 & 137.035999177(21) & post-hoc fit \\
 $m_e$ & 0.5100 MeV & 0.5110 MeV & 0.19\% \\
 $m_\tau$ & 1.7767 GeV & 1.7769 GeV & \textbf{0.007\%} \\
 $m_p$ & 938.43 MeV & 938.27 MeV & 0.017\% \\
@@ -505,8 +496,8 @@ Lorentz factor & Exact & $\gamma = 1/\sqrt{1-v^2/c^2}$ & \textbf{0.00\%} \\
 \textit{Comprehensive whitepaper completed by virtual academic panel.}\\
 \textit{Framework: Foundational Ternary Dynamics v5.28}\\
 \textit{Date: February 1, 2026}\\
-\textit{Verification: All 156 tests pass; All numerical claims verified}\\
-\textit{Probability of coincidence: $\sim 10^{-28}$}
+\textit{Verification: 156/156 tests pass at finite precision}\\
+\textit{Calibration: $a_{\text{phys}} \equiv \ell_P$, $K_B = m_e$ (master ledger FTD-0041)}
 \end{center}
 
 \end{document}

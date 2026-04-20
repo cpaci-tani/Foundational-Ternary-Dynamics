@@ -128,7 +128,7 @@ A scenario is a **preset initial condition**. Picking one from the dropdown:
 - **`s0-seed-hydrogen`** — Proton triad + electron orbital seed.
 - **`s0-seed-moore-decomposition`** — All 3 Moore shells (octahedron + cuboctahedron + stella octangula) with alternating parity. The geometric heart of the theory.
 - **`s0-seed-sloop`** — 12-vertex self-reference ring for consciousness pedagogy.
-- **`s0-field-vortex-line`** — Infinite vortex line → watch (1/r) azimuthal flux circulation.
+- **`s0-field-vortex-line`** — Long vortex line (length much greater than the visible region) → watch (1/r) azimuthal flux circulation.
 
 ### Stochastic scenarios
 

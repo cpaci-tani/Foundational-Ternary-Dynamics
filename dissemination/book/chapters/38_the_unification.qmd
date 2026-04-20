@@ -69,7 +69,7 @@ Where ρ = |J| is the flux magnitude (density).
 
 This produces attraction toward high-density regions—gravity-like behavior. But it is not the curved spacetime of general relativity; it is a force in a flat lattice.
 
-The framework claims that in the continuum limit, at scales much larger than the lattice spacing, the flux density gradients reproduce the equations of general relativity. Specifically:
+The framework claims that at arbitrarily large scales relative to the lattice spacing—not as a completed continuum limit, but as a sequence of finer finite specifications—the flux density gradients reproduce the equations of general relativity. Specifically:
 
 R_μν - ½g_μν R = 8πG T_μν
 

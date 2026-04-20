@@ -403,7 +403,7 @@ is isomorphic to quantum mechanics (Schrodinger equation + Born rule).
 THE ARGUMENT:
 
 1. The lattice flux field J satisfies a wave equation. [AXIOM]
-   In the continuum limit: d^2J/dt^2 = c^2 * laplacian(J).
+   In the long-wavelength regime |p| << pi: d^2J/dt^2 = c^2 * laplacian(J).
 
 2. The Gauss constraint div(J) = rho reduces 3 DOF to 2 transverse. [THEOREM]
    The transverse sector is naturally described by complex amplitudes. [SELECTION]
@@ -445,7 +445,7 @@ the specific structure it has:
   - Complex: from the Gauss constraint
   - Linear: from the wave equation
   - Born rule: from wave energy = amplitude^2
-  - Schrodinger: from the wave equation in the continuum limit
+  - Schrodinger: from the wave equation in the long-wavelength regime |p| << pi
 
 Each feature of QM maps to a specific lattice property.
 No feature is arbitrary. No feature could be different.
@@ -482,7 +482,7 @@ Item 3 (Schrodinger uniqueness):
     Complex amplitudes <- Gauss constraint (3D -> 2D)
     Superposition <- linearity of wave equation
     Born rule <- wave energy = |J|^2 (Parseval)
-    Schrodinger evolution <- continuum limit of wave equation
+    Schrodinger evolution <- long-wavelength regime |p| << pi of wave equation
   No feature is arbitrary. Argument is compelling but not formally proven.
   STATUS: [SELECTION]
 
