@@ -61,7 +61,7 @@ for k in range(N):
 G_origin = G_pinv[0, 0]
 print(f"  Lattice: {L}x{L}x{L} = {N} sites")
 print(f"  G(0) = {G_origin:.10f}")
-print(f"  G*^2/(2*pi) = {G_STAR**2/(2*np.pi):.10f} (thermodynamic limit)")
+print(f"  G*^2/(2*pi) = {G_STAR**2/(2*np.pi):.10f} (large-L regime)")
 
 # All ternary configurations
 configs = np.array(list(itertools.product([-1, 0, 1], repeat=N)), dtype=float)
@@ -144,7 +144,7 @@ for x_val in x_test:
 
     # The coefficient c in F(x) = K(1 - c*G*/x):
     # From the gap equation: x*Sigma = c * G(0) (on finite lattice)
-    # or x*Sigma = c * G*^2/(2pi) (in thermodynamic limit)
+    # or x*Sigma = c * G*^2/(2pi) (in the large-L regime)
     # So c = x*Sigma / G(0)
     c = x_sigma / G_origin if abs(G_origin) > 1e-15 else 0
 
@@ -202,7 +202,7 @@ print()
 print("\n--- Step 5: From Self-Energy to Gap Equation ---\n")
 
 # The measured self-energy is Sigma(x) = G(0)/(9x) on the finite lattice.
-# In the thermodynamic limit, G(0) -> W_3 = G*^2/(2pi).
+# For arbitrarily large L, G(0) -> W_3 = G*^2/(2pi).
 # So Sigma(x) -> W_3 / (9x) = G*^2 / (18*pi*x)
 #
 # Now: the gap equation comes from requiring that the PHYSICAL
@@ -322,7 +322,7 @@ print("  2. The self-energy at one loop (EXACT because S_E quadratic in J):")
 print("     delta<s_0^2> = G(0) / (9*x)")
 print("     on the L=2 lattice, G(0) = G_origin")
 print()
-print("  3. In the thermodynamic limit, G(0) -> W_3 = G*^2/(2*pi)")
+print("  3. For arbitrarily large L, G(0) -> W_3 = G*^2/(2*pi)")
 print()
 print("  4. The dressed coupling x_dressed receives a correction from")
 print("     each of the n_DOF = 16 gauge-fixed modes:")
@@ -467,7 +467,7 @@ print()
 
 # Actually, the cleanest approach: the gap equation IS the statement
 # that the coupling is at a FIXED POINT of the renormalization group.
-# On a finite lattice, this is approximate; in the thermodynamic limit, exact.
+# On a finite lattice, this is approximate; for arbitrarily large L, exact.
 
 # For the FTD master quadratic, the fixed-point condition is:
 # x = K - K*G*/x

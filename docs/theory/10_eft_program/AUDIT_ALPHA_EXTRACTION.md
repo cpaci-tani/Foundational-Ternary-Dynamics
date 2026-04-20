@@ -1,7 +1,7 @@
 # AUDIT — α Extraction Pipeline (Phase F "3.6× α_ref" claim)
 
 **Status:** [AUDIT] — line-by-line review of every code path feeding the Phase F
-`α_∞ ≈ 3.6 × α_ref` continuum extrapolation.
+`α_largeL ≈ 3.6 × α_ref` continuum extrapolation.
 **Trigger:** user pushed back on the headline number as "a bold claim" and
 asked for a full math/logic audit before publication.
 **Date:** 2026-04-19
@@ -131,10 +131,10 @@ Raw Phase F data (`scripts/benchmarks/continuum_extrapolate.py`), all at r/L ≈
 | 384 | 124 | 0.02632 | 3.61× | 0.01316 | 1.80× |
 
 1/L continuum extrapolation (engine convention):
-  α_∞ = 0.02566, ratio **3.52× α_ref**.
+  α_largeL = 0.02566, ratio **3.52× α_ref**.
 
 1/L continuum extrapolation (classical convention, data ÷ 2):
-  α_∞ = 0.01283, ratio **1.76× α_ref**.
+  α_largeL = 0.01283, ratio **1.76× α_ref**.
 
 The factor-of-2 is the **convention correction**. After removing it, the
 engine still measures a plateau of roughly **1.76× α_ref** — which is neither
@@ -165,7 +165,7 @@ plausible and any two could cancel.
    source.
 3. Because V(r) uses `field_energy`, the extracted α is **2× the classical
    Coulomb-tail α** under the same Lagrangian normalization as textbook EM.
-4. The Phase F headline "α_∞ ≈ 3.6× α_ref" is correct for the engine's
+4. The Phase F headline "α_largeL ≈ 3.6× α_ref" is correct for the engine's
    convention but over-states the physical discrepancy by a factor of 2.
    Corrected, the classical-convention plateau is **~1.8× α_ref**.
 

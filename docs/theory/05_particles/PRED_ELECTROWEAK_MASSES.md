@@ -95,9 +95,9 @@ The overcorrection indicates that the full one-loop electroweak calculation (box
 
 | ID | Claim | Tag |
 |----|-------|-----|
-| EW-1 | $\alpha(M_Z) = 1/128.85$ from FTD running | [THEOREM] + [PARAMETRIC] |
-| EW-2 | $M_Z = 91.20$ GeV (0.02%) | [THEOREM] |
-| EW-3 | $M_W = 80.0$ GeV tree-level (0.5%) | [THEOREM] |
+| EW-1 | $\alpha(M_Z) = 1/128.85$ from FTD running | [STRONGLY MOTIVATED CONJECTURE] + [PARAMETRIC] |
+| EW-2 | $M_Z = 91.20$ GeV (0.02%) | [STRUCTURALLY MOTIVATED PARAMETRIC] |
+| EW-3 | $M_W = 80.0$ GeV tree-level (0.5%) | [STRUCTURALLY MOTIVATED PARAMETRIC] |
 | EW-4 | FTD favors ATLAS/LHC over CDF II | [SELECTION] |
 
 ---

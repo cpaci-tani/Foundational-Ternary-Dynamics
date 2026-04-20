@@ -375,7 +375,7 @@ For completeness: the Born-Infeld expansion gives a tree-level quartic λ_BI = �
 | Gauge weight identification w_SU(2) = 2, w_U(1) = 1 | **[SELECTION]** (structural, not fitted) |
 | λ = sin²θ_W/(2 − sin²θ_W) = 3/23 | **[THEOREM]** (algebra from weights) |
 | N_C³ − N_BASE = 2N_EFF − N_C = 23 | **[THEOREM]** (verified identity) |
-| m_H = v√(6/23) = 125.69 GeV | **[THEOREM]** (0.47% vs experiment) |
+| m_H = v√(6/23) = 125.69 GeV | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (FTD-0017; 0.47% vs experiment) |
 | Unique to N_C = 3 | **[THEOREM]** (exhaustive search) |
 
 ---
@@ -501,7 +501,7 @@ The absence of BSM physics at the LHC is **consistent** with FTD: the hierarchy 
 |-------|-----------|------------|
 | V(φ) = λ(|φ|² − v²/2)² | [IMPOSED] | [THEOREM] (from BI + feedback) |
 | v = 246 GeV | [IMPOSED] | [THEOREM] (M_P√(2π)α⁸) |
-| m_H = 125 GeV | [IMPOSED] | [THEOREM] (v√(6/23) = 125.69 GeV) |
+| m_H = 125 GeV | [IMPOSED] | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0017; v√(6/23) = 125.69 GeV) |
 | λ = 0.129 | [IMPOSED] | [THEOREM] (3/23 from ternary decomposition) |
 | Hierarchy resolution | [OPEN] | [SELECTION] (lattice cutoff) |
 | Goldstone mechanism | [THEOREM] | [THEOREM] (lattice mode counting) |

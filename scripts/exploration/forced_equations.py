@@ -239,7 +239,7 @@ print("""
       Each internal eigenstate becomes a cosine band.
       Bandwidth = 2*t_n. Group velocity = 2*t_n*sin(k).
 
-  (t) The gap scales as ~1/N for large N (gapless in thermodynamic limit).
+  (t) The gap scales as ~1/N for large N (gapless in the large-N regime).
       This is forced by the tight-binding band structure.
       It means: the vacuum sector has MASSLESS excitations.
 

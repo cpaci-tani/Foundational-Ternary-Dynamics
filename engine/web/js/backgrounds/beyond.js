@@ -1,6 +1,7 @@
 /**
  * "The Beyond" theme — fading grid extending outward, suggesting
- * an infinite lattice, with sparse flickering void points between lines.
+ * a lattice with no defined boundary, with sparse flickering void
+ * points between lines.
  */
 import * as THREE from 'three';
 import { BG_RADIUS, GRID_EXTENT, GRID_STEP, randSphere, hsl } from './_shared.js';

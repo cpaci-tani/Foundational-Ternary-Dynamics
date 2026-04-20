@@ -1,17 +1,17 @@
 """
 Scaling Analysis: Gap Equation Self-Consistency Across Lattice Sizes
 
-On the infinite lattice, the gap equation x^2 = n_DOF * 2pi * W3 * (x - G*)
+On the cubic lattice (large-L regime), the gap equation x^2 = n_DOF * 2pi * W3 * (x - G*)
 reproduces the master quadratic with n_DOF = 16 EXACTLY.
 
 On finite lattices, G_self(L) differs from W3. This script tracks:
 - G_self(L) as a function of lattice size L
 - n_DOF(L) = 16*G*^2 / (2pi * G_self(L)) needed to match the master quadratic
-- The convergence rate to the infinite-lattice limit
+- The convergence rate for arbitrarily large L
 - Multiple definitions of the "charge-charge" Green's function
 
 We also test whether the gap equation produces sensible roots at EACH lattice size,
-not just in the L -> infinity limit.
+not just for arbitrarily large L.
 
 Status: [EXPLORATORY]
 """
@@ -267,7 +267,7 @@ print("is determined by the CFL speed, not by the lemniscate constant.")
 print()
 print("The Watson integral W3 = G*^2/(2pi) comes from the SCALAR Green's function")
 print("G_scalar(0) = (1/N) sum_{k!=0} 1/(c^2 * k_hat^2), which DOES retain the")
-print("k-dependence and converges to 3*W3 = 3*G*^2/(2pi) as L -> infinity.")
+print("k-dependence and converges to 3*W3 = 3*G*^2/(2pi) for arbitrarily large L.")
 print()
 
 # Verify
@@ -445,4 +445,4 @@ for L in [2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64]:
 print(f"{'inf':>4} {'0':>20} {'0':>20} {'0':>14} {'0':>14}")
 print()
 print("The gap equation roots converge to the master quadratic roots")
-print("as L -> infinity, with errors scaling as O(1/L).")
+print("for arbitrarily large L, with errors scaling as O(1/L).")

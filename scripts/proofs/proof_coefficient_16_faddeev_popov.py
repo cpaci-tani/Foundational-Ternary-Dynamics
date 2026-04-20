@@ -20,7 +20,7 @@ This script verifies:
 2. The scalar nature of the divergence coupling under reflections
 3. The mode counting in temporal vs Coulomb gauge
 4. The convergence of the self-energy to W₃ on larger lattices
-5. The exact coefficient in the thermodynamic limit
+5. The exact coefficient for arbitrarily large L
 
 Status: [THEOREM for group theory, SELECTION for the gap equation ansatz]
 """
@@ -200,7 +200,7 @@ print(f"  TEMPORAL GAUGE = ORBIT-STABILIZER = 16  ✓")
 print()
 
 # =========================================================================
-# PART 5: The self-energy per mode in the thermodynamic limit
+# PART 5: The self-energy per mode for arbitrarily large L
 # =========================================================================
 
 print("PART 5: Self-energy convergence")
@@ -209,7 +209,7 @@ print("-" * 80)
 # The self-energy per transverse mode at k≠0:
 # E(k) = 1/λ(k)  (contribution to the Green's function)
 #
-# In the thermodynamic limit, the AVERAGE self-energy per mode approaches
+# For arbitrarily large L, the AVERAGE self-energy per mode approaches
 # a quantity related to the Watson integral.
 #
 # The normalized transverse self-energy:
@@ -242,7 +242,7 @@ for L in [2, 4, 8, 16, 32]:
     print(f"  {L:4d} {n_trans:8d} {sigma_trans:14.8f} {avg_per_mode:16.8f} {n_trans/N * avg_per_mode:14.8f}")
 
 print()
-print(f"  In the thermodynamic limit:")
+print(f"  For arbitrarily large L:")
 print(f"    Σ_trans → 2 × G_scalar(∞)")
 print(f"    G_scalar(∞) = (1/(2π)³)∫ dk/λ(k)")
 print()

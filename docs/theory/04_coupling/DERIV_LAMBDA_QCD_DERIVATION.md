@@ -40,14 +40,14 @@ Standard QCD: Lambda^(5) = M_Z * exp(-2*pi / (b_0^(5) * alpha_s(M_Z)))
 
 ## 2. The Non-Circular Derivation Chain
 
-### Step 1: Fine Structure Constant [THEOREM]
+### Step 1: Fine Structure Constant [STRONGLY MOTIVATED CONJECTURE] (FTD-0013)
 
 From the master quadratic x^2 - 16*G*^2*x + 16*G*^3 = 0:
 - x_+ = 137.036 --> alpha = 1/x_+ = 1/137.036
 - Source: G* from elliptic curve geometry + CM selection
 - **No QCD input required.**
 
-### Step 2: Strong Coupling at M_Z [THEOREM]
+### Step 2: Strong Coupling at M_Z [PARAMETRIC] (FTD-0020)
 
 From FTD integers {3, 4, 7, 13}:
 
@@ -61,7 +61,7 @@ alpha_s(M_Z) = b_3 / (b_3 + 4*N_eff) = 7 / (7 + 52) = 7/59 = 0.11864...
 - Error: 0.6% (within 1 sigma)
 - **No Lambda_QCD, f_pi, or meson mass input.**
 
-### Step 3: Higgs VEV [THEOREM]
+### Step 3: Higgs VEV [STRUCTURALLY MOTIVATED PARAMETRIC]
 
 ```
 v = M_P * sqrt(2*pi) * alpha^8 = 246 GeV (0.05% accuracy)
@@ -70,7 +70,7 @@ v = M_P * sqrt(2*pi) * alpha^8 = 246 GeV (0.05% accuracy)
 - Uses only M_P (lattice spacing axiom) and alpha (Step 1)
 - **No QCD input.**
 
-### Step 4: Weinberg Angle [THEOREM]
+### Step 4: Weinberg Angle [PARAMETRIC] (FTD-0018)
 
 ```
 sin^2(theta_W) = N_c / N_eff = 3/13 = 0.2308 (0.19% accuracy)
@@ -171,7 +171,7 @@ The matching conditions are standard QCD. FTD provides the quark mass thresholds
 
 | Component | Source | Epistemic Status |
 |-----------|--------|------------------|
-| alpha_s(M_Z) = 7/59 | FTD integers {3,4,7,13} | [THEOREM] |
+| alpha_s(M_Z) = 7/59 | FTD integers {3,4,7,13} | [PARAMETRIC] (FTD-0020) |
 | b_0 = (11*N_c - 2*n_f)/3 | Standard QCD | [EXTERNAL] |
 | Dimensional transmutation | Standard QCD | [EXTERNAL] |
 | Two-loop beta coefficients | Standard QCD | [EXTERNAL] |
@@ -232,8 +232,8 @@ Version 1.0 included multiple ad hoc formulas (m_e * integers, m_p * alpha^n, et
 
 | ID | Statement | Status |
 |----|-----------|--------|
-| LQ-1 | alpha_s(M_Z) = 7/59 derived non-circularly from FTD integers | [THEOREM] |
-| LQ-2 | Derivation chain G* --> alpha --> v --> M_Z, {b_3,N_eff} --> alpha_s has no Lambda_QCD dependence | [THEOREM] |
+| LQ-1 | alpha_s(M_Z) = 7/59 derived non-circularly from FTD integers | [PARAMETRIC] (FTD-0020) |
+| LQ-2 | Derivation chain G* --> alpha --> v --> M_Z, {b_3,N_eff} --> alpha_s has no Lambda_QCD dependence | [STRUCTURALLY MOTIVATED PARAMETRIC] |
 | LQ-3 | One-loop Lambda^(5) = 91 MeV from dimensional transmutation with FTD inputs | [SELECTION] |
 | LQ-4 | Two-loop Lambda^(5) ~ 220 MeV, consistent with PDG 213 +/- 8 MeV | [SELECTION] |
 | LQ-5 | Flavor threshold matching (n_f = 6,5,4,3) gives consistent alpha_s running | [SELECTION] |
