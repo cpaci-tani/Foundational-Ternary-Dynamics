@@ -61,7 +61,7 @@ These are the load-bearing claims. Every catalog entry below that is [PARAMETRIC
 | N_c (colors) | 3 | Master quadratic x_− root (x_- = 3.024, 0.80% of 3); 4 independent topological routes converge on N_c = 3 | [THEOREM] for topology routes; [STRONGLY MOTIVATED CONJECTURE] for x_- = N_c identification (same epistemic tier as x_+ = 1/α, per `AUDIT_MASTER_QUADRATIC.md`) | `DERIV_NC_FROM_TOPOLOGY.md` |
 | {N_base, N_eff, b_3} | {4, 13, 7} | Moore-neighborhood integer invariants | [THEOREM] | `DERIV_INTEGER_UNIQUENESS.md` |
 | G_C (state-flux coupling) | √α | Lattice-QED bare coupling; g_c = √α at Thomson scale | [THEOREM] | `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` |
-| sin²θ_W | 3/13 | N_c / N_eff from SU(2)×U(1) Moore-layer decomposition | [THEOREM] | `proof_complete_sm.py` §electroweak |
+| sin²θ_W | 3/13 | N_c / N_eff from SU(2)×U(1) Moore-layer decomposition | **[PARAMETRIC]** (downgraded 2026-04-19 per `AUDIT_RATIONAL_FIT_CLAIMS.md`) | 3.53% error vs experimental 0.2229; experimental precision is 20 ppm (1700× tighter than FTD claim). Competitor 2/9 = 0.2222 fits better (0.31% vs 3.5%) with no Moore-neighborhood meaning. `proof_complete_sm.py` §electroweak |
 | C_SPEED | 1/√D = 1/√3 | CFL stability on cubic lattice | [THEOREM] | `SPEC_FTD.md` §dynamics |
 
 ---
@@ -70,10 +70,10 @@ These are the load-bearing claims. Every catalog entry below that is [PARAMETRIC
 
 | Quantity | Value | Formula | FTD inputs | Tag | Source |
 |---|---|---|---|---|---|
-| m_e | 0.511 MeV | m_e = m_P · √(2π) · (16/3) · α¹¹ | α, m_P | [DERIVED] | `proof_electron_mass.py` (0.27% error) |
+| m_e | 0.511 MeV | m_e = m_P · √(2π) · (16/3) · α¹¹ | α, m_P | **[STRONGLY MOTIVATED CONJECTURE]** (downgraded 2026-04-19 per `AUDIT_RATIONAL_FIT_CLAIMS.md`) | 0.19% error; among 6489 (p/q, n) combinations with p,q ≤ 50, n ∈ [8, 14], FTD's (16/3, n=11) is the tightest within 1% but only 1 of 2 within that band. Prefactor 16/3 and exponent 11 motivated but not dynamically derived. `proof_electron_mass.py` |
 | m_μ / m_e | 206.77 | N_c² · N_eff · b_3 + offsets | {N_c, N_eff, b_3} | [DERIVED] | `proof_mass_ratios.py` |
 | m_τ / m_e | 3477 | Triangular number formula | {N_c, N_eff} | [DERIVED] | `proof_mass_ratios.py` |
-| m_p / m_e | 1836.47 | N_eff/α + N_base·N_eff + N_c | {N_c, N_base, N_eff, α} | [DERIVED] (174 ppm) | `proof_proton_electron_ratio.py` |
+| m_p / m_e | 1836.47 | N_eff/α + N_base·N_eff + N_c | {N_c, N_base, N_eff, α} | **[STRONGLY MOTIVATED CONJECTURE]** (downgraded 2026-04-19 per `AUDIT_RATIONAL_FIT_CLAIMS.md`) | 173 ppm error; 5.8× experimental precision (30 ppm). Uses three Moore integers + α as inputs so harder to dismiss as rational fit, but "derivation" status is overstated — a 1-loop refinement is warranted. `proof_proton_electron_ratio.py` |
 
 These are genuine: each produces both the formula *and* the numerical value from lattice structure.
 
@@ -117,10 +117,10 @@ Status: [PARAMETRIC]. See `AUDIT_EPISTEMIC_AUDIT.md` §II.4.
 ### 7.1 PMNS (neutrino mixing) — [DERIVED]
 | Angle | FTD formula | Value | Tag | Source |
 |---|---|---|---|---|
-| sin²θ₁₂ | N_c / (N_c + b_3) = 3/10 | 0.300 (exp 0.307) | [DERIVED] | `proof_complete_sm.py:229` |
-| sin²θ₂₃ | (N_eff + N_c)/(2N_eff + N_c) = 16/29 | 0.552 (exp 0.546) | [DERIVED] | `proof_complete_sm.py:230` |
-| sin²θ₁₃ | 1/(N_base·N_eff) = 1/52 | 0.0192 (exp 0.0220) | [DERIVED] | `proof_complete_sm.py:231` |
-| Δm²₃₁/Δm²₂₁ | (b_3+N_c)²/N_c = 100/3 | 33.3 (exp 32.8) | [DERIVED] | `proof_complete_sm.py:232` |
+| sin²θ₁₂ | N_c / (N_c + b_3) = 3/10 | 0.300 (exp 0.307) | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (downgraded 2026-04-19) | 2.28% error; 4 rational competitors within same tolerance (4/13, 7/23, etc.). `proof_complete_sm.py:229` |
+| sin²θ₂₃ | (N_eff + N_c)/(2N_eff + N_c) = 16/29 | 0.552 (exp 0.546) | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (downgraded 2026-04-19) | 1.05% error; 3 competitors within same tolerance (6/11, 11/20, 13/24) including closer fits. `proof_complete_sm.py:230` |
+| sin²θ₁₃ | 1/(N_base·N_eff) = 1/52 | 0.0192 (exp 0.0220) | **[PARAMETRIC]** (downgraded 2026-04-19) | **12.6% error, 37× experimental precision**; experimental 0.0220 is closer to 1/45 or 1/46 (neither structurally motivated). Essentially a mis-prediction. `proof_complete_sm.py:231` |
+| Δm²₃₁/Δm²₂₁ | (b_3+N_c)²/N_c = 100/3 | 33.3 (exp 32.8) | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (downgraded 2026-04-19) | 1.63% error; simpler 33/1 also fits within 1%. `proof_complete_sm.py:232` |
 
 ### 7.2 CKM (quark mixing) — [PARAMETRIC]
 The CKM matrix is parametrized via standard Wolfenstein (λ, A, ρ, η) form. FTD supplies λ = sin θ_C ≈ 1/√N_eff + corrections, A, δ = arctan(7/3), but the *parametrization* is imported. Four Wolfenstein elements are [PARAMETRIC]. See `proof_complete_sm.py:270-277`.
@@ -131,7 +131,7 @@ The CKM matrix is parametrized via standard Wolfenstein (λ, A, ρ, η) form. FT
 
 | Quantity | Formula | FTD inputs | Tag | Note |
 |---|---|---|---|---|
-| α_s(M_Z) | 7/59 | {b_3 = 7} | [DERIVED] to 0.6% of experiment | `proof_complete_sm.py:262` |
+| α_s(M_Z) | 7/59 | {b_3 = 7} | **[PARAMETRIC]** (downgraded 2026-04-19 per `AUDIT_RATIONAL_FIT_CLAIMS.md`) | 0.63% error, but competitor 2/17 = 0.1176 fits BETTER (0.29% vs 0.63%) with no Moore interpretation. The "59" denominator is not structural. `proof_complete_sm.py:262` |
 | α_s(Q²) running | QCD one-loop form α_s(M_Z)/[1 + (b₀α_s/2π)·ln(Q²/M_Z²)] | b₀ = b_3 = 7 | **[PARAMETRIC]** | `src/ontic_running_coupling.cpp` |
 | α(Q²) running | Imported QED form | α | **[PARAMETRIC]** | Not currently measured as pure continuum form |
 | α_EM running under blocking (2026-04-19) | Measured on L ∈ {32, 64, 128}, three extraction methods | asymptotic α_r on lattice | **[MEASURED]** | `DERIV_BETA_FUNCTION_MEASURED.md`; β_measured / β_QED ≈ −160 (first measurement); refined to ≈ −80 after T3 L=128 slope method |

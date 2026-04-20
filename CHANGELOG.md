@@ -1,5 +1,69 @@
 # Foundational Ternary Dynamics Changelog
 
+## Option 4 — Rational-integer fit-claim audit (April 19, 2026)
+
+Applied the same numerical rigidity method used on the master quadratic
+to the other 7 [THEOREM]/[DERIVED] rational-integer claims in
+`CATALOG_PARAMETRIC_INSERTIONS.md`. For each claim, tested whether the
+FTD rational p/q is uniquely precise among small-rational competitors
+(p ≤ 200, q ≤ 60).
+
+### Findings
+
+7 claims downgraded:
+
+| Claim | FTD formula | Error | Recommended tag |
+|---|---|---|---|
+| **sin²θ_W = 3/13** | N_c/N_eff | **3.5%** (1700× exp precision) | [THEOREM] → **[PARAMETRIC]** — 2/9 fits better at 0.31% |
+| **sin²θ_13 = 1/52** | 1/(N_base·N_eff) | **12.6%** (37× exp precision) | [DERIVED] → **[PARAMETRIC]** |
+| **α_s = 7/59** | — | 0.6% | [DERIVED] → **[PARAMETRIC]** — 2/17 fits better |
+| sin²θ_12 = 3/10 | — | 2.3% | [DERIVED] → **[STRUCTURALLY MOTIVATED PARAMETRIC]** |
+| sin²θ_23 = 16/29 | — | 1.0% | [DERIVED] → **[STRUCTURALLY MOTIVATED PARAMETRIC]** |
+| Δm²₃₁/Δm²₂₁ = 100/3 | — | 1.6% | [DERIVED] → **[STRUCTURALLY MOTIVATED PARAMETRIC]** |
+| m_e = m_P·√(2π)·(16/3)·α¹¹ | — | 0.19% | [DERIVED] → **[STRONGLY MOTIVATED CONJECTURE]** |
+| m_p/m_e | — | 173 ppm | [DERIVED] → **[STRONGLY MOTIVATED CONJECTURE]** |
+
+### Impact
+
+Firm [THEOREM] count across the catalog drops from ~23 to ~5:
+- G* (Chowla-Selberg identity)
+- N_c topology routes (4 independent paths converge)
+- Moore integers {N_base, N_eff, b_3} (uniqueness proven)
+- Emergent Coulomb = 2·r·G_L(r) (Phase G, R² = 1.0000)
+- Structural null predictions (τ_proton = ∞, N_monopole = 0, etc.)
+
+Everything else is [STRUCTURALLY MOTIVATED PARAMETRIC] or [STRONGLY
+MOTIVATED CONJECTURE] — the formulas have Moore-neighborhood-flavoured
+structure but are not unique within small-rational families.
+
+### Meta-observation
+
+Before today's audit cycle, the catalog presented FTD as "1/α derived
+to 0.001 ppt plus ~23 other [DERIVED] / [THEOREM] results from
+first principles." After today's four audit commits (Phase I core,
+Phase I follow-through, Option 2, Option 4), the honest description is:
+
+  - A core mathematical structure (master quadratic + CM curve uniqueness
+    + Moore integers + emergent Coulomb) with ~5 firm theorems
+  - Several ~0.2% structurally-motivated conjectures (m_e, m_p/m_e,
+    etc.) that are the tightest within their rational-combination family
+  - A larger ring of 1-3% "structurally motivated parametric" rational
+    fits (PMNS angles, α_s, Δm²) where multiple small rationals work
+  - Two outright overstatements that were tagged [THEOREM]/[DERIVED]
+    (sin²θ_W at 3.5% and sin²θ_13 at 12.6%) now corrected
+
+This is not a collapse — the genuinely novel content is real and
+narrower than before. It is a project in a more honest, more
+publishable state.
+
+### Deliverables
+
+- NEW: `docs/theory/07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md`
+- NEW: `scripts/proofs/audit_electron_mass_formula.py`
+- NEW: `scripts/proofs/audit_ratio_formulas.py`
+- UPDATED: CATALOG_PARAMETRIC_INSERTIONS.md (7 rows downgraded)
+- UPDATED: META_INDEX.md (row 7.12 registering Option 4 audit)
+
 ## Phase I follow-through — three sub-audits (April 19, 2026)
 
 Continued Phase I by attempting the three recommendations from
