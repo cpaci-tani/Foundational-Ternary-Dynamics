@@ -3,9 +3,22 @@
 ## A Principled Framework for Universe Simulation
 
 **Document Classification:** Authoritative Theoretical Specification (Single Source of Truth)
-**Version:** 5.30 (April 11, 2026)
-**Status:** ~35 Genuine Derivations + ~50 Parametric Insertions + Standard Physics (see [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md))
+**Version:** 5.30 (April 11, 2026) — **STALE TAGS NOTICE** (April 19, 2026)
+**Status (post-audit, 2026-04-19):** ~5 firm [THEOREM]s + ~8 [STRONGLY MOTIVATED CONJECTURE]s + ~10 [STRUCTURALLY MOTIVATED PARAMETRIC] + remainder [PARAMETRIC] / [OPEN]
 **Supersedes:** CLAUDE.md (v5.17), docs/internal/SPEC_CLAUDE.md (v5.24), SPEC_FTD_FORMAL.md, SPEC_THE_COMPLETE_PROOF_RIGOROUS.md
+
+> **🔑 CRITICAL NOTICE (2026-04-19):** This document's body predates the April 19 audit cycle. The mathematical CONTENT remains mostly accurate, but epistemic tags throughout are now **STALE**. Several "PROVEN" / [THEOREM] markers were downgraded after rigorous re-examination. Specifically:
+>
+> - **"C1 PROVEN: x₊ = 1/α via Complex Multiplication uniqueness"** → read as [STRONGLY MOTIVATED CONJECTURE]. The polynomial identity is proven; the physical identification is selection-level (1.26 ppm match, structurally unique but not dynamically derived).
+> - **"C2 PROVEN: x₋ → N_c = 3"** → read as [STRONGLY MOTIVATED CONJECTURE] (0.80% match, same epistemic tier).
+> - **sin²θ_W, sin²θ_13, α_s, PMNS angles** → downgraded to [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
+> - **"< 0.001 ppt with 7-term expansion"** framing → explicitly retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
+> - **"Thermodynamic limit"** language throughout → the framework now commits to undefined-boundary ontology, not completed-infinity ℤ³.
+>
+> **For current state, read first:** [`docs/WHERE_WE_LEFT_OFF.md`](WHERE_WE_LEFT_OFF.md).
+> **Full audit trail:** [`docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`](theory/07_assessment/AUDIT_MASTER_QUADRATIC.md), [`AUDIT_RATIONAL_FIT_CLAIMS.md`](theory/07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md), [`AUDIT_INFINITY_REFRAME.md`](theory/07_assessment/AUDIT_INFINITY_REFRAME.md).
+>
+> An editorial pass to rewrite this document in line with the April 19 audits is queued as Option 4 in WHERE_WE_LEFT_OFF.md §3.
 
 > **This is the single authoritative specification for FTD.** All other documents derive from or reference this one. For the C++ engine implementation, see [engine/SPEC_ENGINE.md](../engine/SPEC_ENGINE.md). For the theory document library, see [theory/META_INDEX.md](theory/META_INDEX.md).
 
