@@ -259,39 +259,114 @@ proof of an identity, but it is much stronger than either single-root
 match alone, and it is the piece of the argument most worth taking
 seriously.
 
-## 7 · Recommendations — what would elevate [SELECTION] to [THEOREM]
+## 7 · Recommendations — status as of 2026-04-19
 
-1. **Prove the L → ∞ limit rigorously.** The gap-equation derivation
-   works in the thermodynamic limit but hasn't been proven to converge
-   from finite tori. An analytical proof would close a real gap.
-2. **Run the same structural search on alternative CM curves.** If the
-   argument "y² = x³ − x is forced because of ℤ[i] = BCC CM" is right,
-   then no other CM curve (e.g., y² = x³ − 15x + 22 over ℚ(i)) should
-   produce a master-quadratic-shaped polynomial with roots matching
-   physical constants. If some other curve also works, the uniqueness
-   claim collapses.
-3. **Isolate the dynamical derivation of α.** Phase H verified that an
-   engine with explicit coupling g_c reproduces Coulomb. But the
-   engine still needs g_c as input — it doesn't produce it. A
-   first-principles derivation of g_c from lattice action alone (no
-   master quadratic) would make the master quadratic's prediction
-   falsifiable.
-4. **Retire the "< 0.001 ppt" headline** in CLAUDE.md and summary docs.
-   Replace with honest framing: "1.26 ppm tree-level agreement from a
-   uniquely-coefficient polynomial; 24-digit expansion is a post-hoc
-   algebraic fit to CODATA digits that exceed experimental precision."
+Three follow-ups were identified as routes to elevate [SELECTION] to
+[THEOREM]. All three have been **attempted in the same audit session**;
+results below.
+
+### 7.1 · Alternative CM curves — **RESOLVED in favour of the master quadratic**
+
+Running `scripts/proofs/scan_cm_curves.py` over the class-number-1 CM
+discriminants d ∈ {−3, −4, −7, −8, −11, −19, −43}, using the
+normalisation G = 2Ω/√π that is canonical for d = −4:
+
+| d | Curve | Ω | G_analog | x_+ | rel err vs 1/α | x_- | rel err vs N_c |
+|--:|---|--:|--:|--:|--:|--:|--:|
+| −3 | y² = x³ − 1 | 2.4287 | 2.7404 | 267.59 | 95% | 2.77 | 7.7% |
+| **−4** | **y² = x³ − x** | **2.6221** | **2.9587** | **137.036** | **1.26e-06** | **3.024** | **0.80%** |
+| −7 | y² = x³ − 35x + 98 | 2.5575 | 2.8859 | 30.12 | 78% | 3.19 | 6.4% |
+| −8 | y² = x³ − 30x + 56 | 1.4543 | 1.6410 | 8.75 | 94% | 2.02 | 33% |
+| −11 | y² = x³ − 1056x + 13552 | 1.3863 | 1.5643 | 7.83 | 94% | 1.95 | 35% |
+| −19 | y² = x³ − 152x + 722 | 1.2581 | 1.4196 | 6.22 | 95% | 1.84 | 39% |
+| −43 | y² = x³ − 3440x + 77658 | 1.0100 | 1.1397 | 3.51 | 97% | 1.69 | 44% |
+
+**Result:** d = −4 (y² = x³ − x) is the UNIQUE CM curve in the class-
+number-1 family whose master-quadratic-shape polynomial hits 1/α. Every
+other CM curve misses x+ by factors of 2-95×. **The "y² = x³ − x is
+forced" argument is numerically verified.** This closes what was
+previously a [SELECTION] gap: the curve choice is NOT arbitrary —
+given the master-quadratic form and the physical target 1/α, y² = x³ − x
+is the unique CM curve that works.
+
+Status upgrade: curve selection [SELECTION] → [SELECTION FROM UNIQUENESS]
+(still not [THEOREM] because the master-quadratic form itself is a
+selection, but the curve picking inside that form is now forced).
+
+### 7.2 · L → ∞ limit of the gap equation — **DID NOT CONVERGE**
+
+Running `scripts/proofs/audit_gap_equation_convergence.py` at L ∈
+{4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128} with the standard lattice
+Watson sum substitution:
+
+- The lattice sum `(1/L³) Σ 1/(2(3 − Σ cos k_i))` asymptotes to
+  ≈ 0.2515 at L = 128, NOT to G*²/(2π) = 1.3932.
+- Using this in the gap equation gives x+(L → 128) ≈ 21.8, nowhere
+  near 137.036.
+- `proof_gap_equation_scaling.py`'s own data (reproduced above) shows
+  error MINIMUM at L = 12 (1.05 absolute) then divergence to 10.26 at
+  L = 64. The script's summary line "errors scaling as O(1/L)" is
+  contradicted by its own table.
+
+**Conclusion:** `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` §VI's claim
+*"verified numerically by proof_gap_equation_scaling.py"* is
+**incorrect as stated**. No sequence of finite-lattice gap equations
+that we have been able to construct produces the master quadratic in
+the L → ∞ limit; the identity `G*²/(2π) = "W_3"` is a name collision
+with the classical Watson integral (which equals ≈ 0.5054, not 1.3932)
+and cannot be recovered from naïve lattice sums.
+
+Status: the master quadratic's ALGEBRAIC identity is [THEOREM]
+(pure polynomial manipulation); its "L → ∞ limit of a gap equation"
+interpretation is [CONJECTURE / OPEN] until a finite-L derivation is
+actually constructed. The gap-equation narrative should be flagged
+[OPEN] in `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`.
+
+### 7.3 · First-principles g_c — **STATED, NOT SOLVED**
+
+A structural scoping document has been written:
+[`OPEN_GC_FROM_FIRST_PRINCIPLES.md`](../10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md).
+Three candidate mechanisms (Dirac quantisation, lattice-to-continuum
+matching, self-consistent fixed point) are identified. None is
+currently closed; the most tractable is Mechanism A (Wilson-loop
+topology on the Moore neighborhood), which would require a new
+engine benchmark and perhaps weeks of physics work.
+
+Status: **g_c remains a parametric insertion** in the engine.
+Phase H verified the engine scales correctly when g_c is inserted,
+but the engine cannot produce g_c = √(2π α_ref) from first principles.
+Until this is closed, the master quadratic's `x+ = 1/α` identification
+is a numerical match, not a derivation — and the `< 0.001 ppt` framing
+in CLAUDE.md remains misleading even after the 7-term retraction.
+
+### 7.4 · Retire the "< 0.001 ppt" headline (done)
+
+`CLAUDE.md` line 40 has been rewritten to replace the "< 0.001 ppt
+with 7-term expansion" framing with:
+- "1.26 ppm tree-level" on 1/α
+- Dual-prediction via x_- ≈ N_c (0.80%)
+- [STRONGLY MOTIVATED CONJECTURE] tag on the physical identification
+- 7-term expansion explicitly flagged as [CONJECTURE] post-hoc fit
+  beyond experimental precision
 
 ## 8 · Reproducibility
 
 ```
 scripts/proofs/proof_motivic_master_quadratic.py      # 50-digit algebra, [THEOREM] layer
-scripts/proofs/audit_master_quadratic_rigidity.py     # NEW: 60k polynomial scan + sensitivity
+scripts/proofs/audit_master_quadratic_rigidity.py     # Phase I: 60k polynomial scan + sensitivity
+scripts/proofs/scan_cm_curves.py                      # Phase I Item 2: alternative CM curves
+scripts/proofs/audit_gap_equation_convergence.py      # Phase I Item 1: L → ∞ audit
+docs/theory/10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md  # Phase I Item 3: g_c scoping
 docs/theory/09_mathematical/MATH_MASTER_QUADRATIC.md  # the 250-page math layer
 docs/theory/09_mathematical/DERIV_QUADRATIC_NECESSITY.md  # why degree 2 (honest [SELECTION])
 docs/theory/08_structural/DERIV_WATSON_GSTAR_IDENTITY.md  # BCC ↔ period bridge
 docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md  # BCC / Watson
-docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md   # existing catalog of selections
+docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md  # existing catalog of selections
 ```
 
-Run `python scripts/proofs/audit_master_quadratic_rigidity.py` to
-reproduce the numerical rigidity table.
+Run these in sequence to reproduce the full Phase I audit:
+```bash
+python scripts/proofs/audit_master_quadratic_rigidity.py
+python scripts/proofs/scan_cm_curves.py
+PYTHONIOENCODING=utf-8 python scripts/proofs/audit_gap_equation_convergence.py
+```

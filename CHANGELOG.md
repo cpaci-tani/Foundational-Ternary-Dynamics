@@ -1,5 +1,63 @@
 # Foundational Ternary Dynamics Changelog
 
+## Phase I follow-through — three sub-audits (April 19, 2026)
+
+Continued Phase I by attempting the three recommendations from
+`AUDIT_MASTER_QUADRATIC.md` §7:
+
+### Item 2 — Alternative CM curve scan (`scan_cm_curves.py`)
+
+Tested whether any other class-number-1 CM elliptic curve produces a
+master-quadratic-shape polynomial with roots matching physical
+constants. **d = −4 (y² = x³ − x) is the unique CM curve in the 7
+tested that hits both 1/α and N_c.** All other discriminants
+(d = −3, −7, −8, −11, −19, −43) give x+ off by factors of 2–95× from
+137.036. This numerically verifies the "y² = x³ − x is forced" part of
+the argument, turning what was a naked [SELECTION] into [SELECTION
+FROM UNIQUENESS].
+
+### Item 1 — Gap-equation L → ∞ convergence (`audit_gap_equation_convergence.py`)
+
+Tested whether the existing `proof_gap_equation_scaling.py` actually
+shows convergence to the master quadratic as claimed. **It does not.**
+The script's own data shows error MINIMUM at L=12 (1.05), then
+divergence to 10.26 at L=64; the "errors scaling as O(1/L)" summary
+line is contradicted by the table. An independent audit with the
+standard Watson lattice sum gives x+(L → 128) ≈ 21.8, nowhere near
+137. The `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` §VI claim "verified
+numerically" is incorrect as stated. The master quadratic's algebraic
+identity remains [THEOREM]; its "L → ∞ limit of a specific gap
+equation" interpretation is now tagged [OPEN].
+
+### Item 3 — First-principles g_c (`OPEN_GC_FROM_FIRST_PRINCIPLES.md`)
+
+Scoping document: identifies three candidate mechanisms (Dirac
+quantisation, lattice-to-continuum matching, self-consistent fixed
+point) to derive g_c = √(2π α_ref) ≈ 0.2141 from the lattice action
+without inserting α by hand. None closed. Phase H confirmed engine
+scales correctly once g_c is inserted; producing g_c from first
+principles is the [OPEN] gating problem for upgrading the master
+quadratic to a true derivation.
+
+### Net status change
+
+| Question | Before Phase I | After Phase I follow-through |
+|---|---|---|
+| Is the polynomial algebraically exact? | [THEOREM] | [THEOREM] (unchanged) |
+| Is coefficient 16 forced by the curve? | 6 claimed routes | ~3 independent routes verified |
+| Is y² = x³ − x the right CM curve? | [SELECTION] | [SELECTION FROM UNIQUENESS] — numerically verified |
+| Is the master quadratic the L → ∞ limit of a gap equation? | "verified numerically" | [OPEN] — claim contradicted by data |
+| Is x_+ = 1/α a derivation? | [STRONGLY MOTIVATED CONJECTURE] | [STRONGLY MOTIVATED CONJECTURE] |
+| Can g_c be derived from first principles? | Implicit in master quadratic | [OPEN] — explicit scoping doc |
+
+**Net honest claim after Phase I:** FTD's master quadratic is an
+exact algebraic identity uniquely associated with the CM curve
+y² = x³ − x among class-number-1 CM curves; its roots match 1/α to
+1.26 ppm and N_c to 0.80%; the "gap equation / dynamical derivation"
+narrative is not currently substantiated; first-principles g_c is
+[OPEN]. The result is a remarkable algebraic coincidence with
+structural uniqueness, **not** a dynamical derivation of α.
+
 ## Phase I — Master Quadratic audit (April 19, 2026)
 
 With Phase G+H having resolved the engine-side V(r) measurement as
