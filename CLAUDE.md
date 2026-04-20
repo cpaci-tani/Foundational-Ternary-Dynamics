@@ -34,7 +34,9 @@ A discrete computational framework for simulating physical systems from explicit
 - **Flux field** J ∈ ℝ³ — continuous vector field encoding potential energy density (dispositional)
 - **State field** s ∈ {−1, 0, +1} — discrete ternary states representing manifestation (actual)
 
-**Five postulates:** Discrete space (3D cubic lattice), discrete time (ticks), ternary states, local causality (26-neighbor Moore), determinism.
+**Five postulates:** Discrete space (3D cubic lattice, no defined boundary — at every specified position, axis-adjacent sites exist; **not** a completed-infinity ℤ³ totality, per `AUDIT_INFINITY_REFRAME.md`), discrete time (ticks), ternary states, local causality (26-neighbor Moore), determinism.
+
+**Foundational commitment (2026-04-19):** FTD uses **undefined-boundary** lattice ontology, not completed-infinity. Arbitrarily large finite computations are permitted; claims of the form "in the L → ∞ limit" are not well-posed without explicit ε-L restatement. See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` for the full triage of which claims survive, which need restatement, and which need re-derivation.
 
 **Key results** (within framework assumptions):
 - Fine structure constant: master quadratic `x² − 16G*²x + 16G*³ = 0` has x₊ = 137.036 matching 1/α to **1.26 ppm** at tree level (pure algebra [THEOREM]; physical identification [STRONGLY MOTIVATED CONJECTURE] per `AUDIT_MASTER_QUADRATIC.md`). Same polynomial gives x₋ = 3.024 ≈ N_c = 3 — the dual-prediction property is the strongest structural evidence. The 7-term series matching CODATA to 24 digits is a post-hoc fit [CONJECTURE] beyond experimental precision (CODATA 2022 has ~11 digits), not a "< 0.001 ppt derivation"
