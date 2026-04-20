@@ -46,31 +46,48 @@ derivations.
 
 Three logically-distinct possibilities:
 
-### 2.1 · Mechanism A — Dirac-quantisation / topological
+### 2.1 · Mechanism A — Dirac-quantisation / topological  **(RULED OUT, 2026-04-19)**
 
 In continuum QED, Dirac showed that if magnetic monopoles exist, then
 the electric charge is quantised: `eg = 2πn` for integer n. This is a
 *topological* quantisation — the product eg is fixed by the topology
 of the gauge bundle, independent of any dynamical input.
 
-**Analog in FTD:** the state field is already quantised (`s ∈ {−1, 0, +1}`).
-Is there a topological invariant of the lattice that fixes g_c
-similarly? Candidates:
+**Naïve analog in FTD:** the state field is already quantised
+(`s ∈ {−1, 0, +1}`). Ask whether the circulation
+`Γ(C) = ∮_C J · dl` around closed lattice loops takes quantised values;
+if it did, g_c would be forced by topology.
 
-- Wilson-loop winding around the Moore neighborhood → may fix
-  `exp(i g_c · A) · exp(−i g_c · A) = 1` modulo full cycles, giving
-  `g_c = 2π / L_cycle` for some integer cycle length.
-- BCC/FCC sublattice linking numbers → topological phase around a
-  closed lattice loop could quantise a charge-flux product.
+**Tested 2026-04-19 via `engine/tests/test_wilson_topology.cpp`:**
 
-**Test:** compute the Wilson-loop expectation around a small closed
-path on the Moore neighborhood (or BCC sublattice). If it's quantised
-in units of 2π and one can identify `g_c` with the quantisation unit,
-this forces g_c from topology alone.
+Equilibrated two-opposite-charge configuration at L = 32, measured
+plaquette circulations on 5000+ loops at plaquette sizes 1×1, 2×2, 4×4.
+Result: **all circulations numerically zero** (mean ~10⁻⁸, max |Γ| ~10⁻³,
+standard deviation ~10⁻⁴). The distribution is continuous — rms
+deviation from integer multiples of any candidate quantum (including
+2π, 2π·α, √(2π·α), 1.0) is dominated by the same ~10⁻⁴ SOR residual
+that gives the sd. No discrete structure.
 
-**Status:** not attempted. Would require new engine code to measure
-Wilson loops on closed Moore-neighborhood paths and extract the
-quantisation unit.
+**Why this was predictable from the type signature alone:**
+
+- FTD's flux J ∈ ℝ³ is a real-valued, non-compact vector field.
+- The engine's dynamics enforce ∇·J = s (Gauss's law) but do NOT
+  enforce any compactification of J.
+- For a point-charge source, the steady-state J is ∇(1/r) which is
+  curl-free by construction, so ∮ J · dl = 0 around any loop that
+  doesn't enclose a monopole.
+- FTD does not support magnetic monopoles: the "B-field"
+  `B = ∇ × J` has no source term in the Lagrangian.
+
+**To make Mechanism A viable would require either:**
+
+1. Compactifying J (J → J mod 2π/g_c) — a lattice-gauge-theory-style
+   reformulation. This is a major engine redesign; not a benchmark.
+2. Adding magnetic-monopole sources. Not currently in the theory.
+
+Neither is a small change. For the current FTD engine design,
+Mechanism A is **ruled out** and the path forward must go through
+Mechanisms B or C.
 
 ### 2.2 · Mechanism B — Lattice-to-continuum matching
 
@@ -171,11 +188,10 @@ the equations of motion. If the resulting S has a natural bare g_c,
 that's the answer; if it has a free parameter that must be tuned to
 match QED, that parameter is the insertion point.
 
-**(3) Test Mechanism A on the engine directly.** Compute Wilson loops
-around small closed paths on Moore-neighborhood BCC sublattices; look
-for topological quantisation. Can be done with an engine-level
-benchmark (test_wilson_topology.cpp). This is the cleanest way to
-discover whether g_c has a topological grounding.
+**(3) ~~Test Mechanism A on the engine directly.~~** DONE 2026-04-19
+(`test_wilson_topology.cpp`). Circulation is numerically zero for the
+equilibrated Coulomb configuration — no topological quantisation.
+Mechanism A is ruled out without engine reformulation (see §2.1).
 
 **(4) If (1)–(3) all fail:** accept the honest conclusion that FTD's
 α claim is a mathematically-remarkable algebraic coincidence (with CM
