@@ -3,7 +3,7 @@
 ## The Gap Equation Derived from Z(x)
 
 **Date:** March 17, 2026
-**Status:** [THEOREM given self-consistency prescription]
+**Status (per LEDGER 2026-04-19):** The "L → ∞ gap-equation derivation" route described here is **RETRACTED (FTD-0032)**: Phase I numerical convergence does not hold; Phase J shows the L=2 partition function is ultralocal with no master-quadratic signature; under undefined-boundary ontology "L → ∞" is not a well-posed load-bearing step. The polynomial itself is preserved as **[THEOREM] (FTD-0001)** — pure algebra; the physical identifications $x_+ \leftrightarrow 1/\alpha$ and $x_- \leftrightarrow N_c$ are now **[STRONGLY MOTIVATED CONJECTURE] (FTD-0013, FTD-0014)** resting on dual match + CM-curve uniqueness, not on the chain below.
 **Depends on:** DERIV_GAP_EQUATION_FORM.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md
 **Proof script:** `scripts/proofs/proof_gap_equation_from_partition_function.py`
 
@@ -165,8 +165,8 @@ All 18 tests pass in `proof_gap_equation_from_partition_function.py`:
 | Watson identity | PASS | [THEOREM] |
 | Finite-size convergence | PASS | [THEOREM] |
 | K = 16G\*^2 coefficient | PASS | [THEOREM] |
-| Root x\_+ = 1/alpha | PASS | [THEOREM] |
-| Root x\_- = N\_c | PASS | [THEOREM] |
+| Root x\_+ = 1/alpha | PASS | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
+| Root x\_- = N\_c | PASS | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) |
 | Vieta sum | PASS | [THEOREM] |
 | Vieta product | PASS | [THEOREM] |
 | Finite-lattice two positive roots | PASS | [THEOREM] |

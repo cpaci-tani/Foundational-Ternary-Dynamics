@@ -494,8 +494,8 @@ def run_section_4(H, N=32):
     else:
         print(f"  PARTIAL MATCH: The Verlet integrator and matrix exponential")
         print(f"  differ at finite step size. This is a discretization artifact,")
-        print(f"  not a failure of the identification. In the continuum limit")
-        print(f"  (dt -> 0, N -> inf), both should converge.")
+        print(f"  not a failure of the identification. For arbitrarily fine spacing")
+        print(f"  (dt -> 0, large N), both should converge.")
 
     return {
         't_best': t_best,

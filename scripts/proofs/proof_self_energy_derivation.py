@@ -10,7 +10,7 @@ What this proves [THEOREM]:
   1. The J-integral is exact (Gaussian integral of quadratic action)
   2. S_eff[s] is exactly quadratic in s (from b(s) linear in s)
   3. The Hessian d^2 S_E/dJ^2 = M is J-independent (no higher-order corrections)
-  4. G(0) = [M^{-1}]_00 -> W_3 = G*^2/(2*pi) in thermodynamic limit
+  4. G(0) = [M^{-1}]_00 -> W_3 = G*^2/(2*pi) for arbitrarily large L
   5. Quadratic S_eff constrains the gap equation to be at-most-quadratic
 
 What remains [SELECTION]:
@@ -458,7 +458,7 @@ print("=" * 78)
 print()
 
 # The lattice Green's function at the origin converges to the Watson integral
-# in the thermodynamic limit. This was established in proof_partition_function_gstar.py.
+# for arbitrarily large L. This was established in proof_partition_function_gstar.py.
 # We cross-reference that result here.
 
 def watson_bcc_origin_fast(L):
@@ -611,7 +611,7 @@ print("    * The J-integral is EXACT (Gaussian, not perturbative)")
 print("    * S_eff[s] is exactly quadratic in s")
 print("    * The Hessian is J- and s-independent")
 print("    * No higher-loop corrections exist")
-print("    * G(0) -> W_3 = G*^2/(2*pi) in thermodynamic limit")
+print("    * G(0) -> W_3 = G*^2/(2*pi) for arbitrarily large L")
 print("    * The gap equation is constrained to be at-most-quadratic")
 print("    * The roots x+ = 137.036, x- = 3.024 (algebra, given K and G*)")
 print()

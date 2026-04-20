@@ -13,7 +13,8 @@ Fits alpha(L) = alpha_largeL + coeff ? f(L)  for three candidate f's:
   - 1/L^p (free exponent, 3-point best fit)
 
 The intercept alpha_largeL is the 1/L^p fit value, NOT a claim about
-any L -> infinity continuum limit. Three scaling laws are reported and
+any completed L -> infinity continuum limit; it characterizes behavior
+for arbitrarily large L. Three scaling laws are reported and
 the spread across them is the empirical residual band.
 
 Outputs all three fit values with residuals. Let the data choose.

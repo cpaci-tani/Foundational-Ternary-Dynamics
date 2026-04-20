@@ -171,7 +171,7 @@ The following earlier claims are retracted by this analysis:
 - "FTD's V(r)-extracted coupling plateaus at 3.6× α_ref, a falsifiable
   deviation from QED." — This is a statement about `2 · r · G_L(r)` at
   r/L = 0.31 on a cubic torus; it has no QED content to deviate from.
-- "α_∞ ∈ [1.8, 3.6] × α_ref after convention correction, residual
+- "α_largeL ∈ [1.8, 3.6] × α_ref after convention correction, residual
   [OPEN]." — The ×2 convention factor is real (see
   `AUDIT_ALPHA_EXTRACTION.md` §1.3), but the remaining residual is not a
   residual physical coupling — it is the zero-parameter lattice Coulomb

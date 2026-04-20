@@ -20,7 +20,7 @@ This script performs three computations:
 
 3. GAP EQUATION TEST: Substitute G^BCC_L(0) into the master quadratic gap
    equation and check whether roots converge to x+ = 137.036 and x- = 3.024
-   as L -> infinity.
+   for arbitrarily large L.
 
 Epistemic status: [EXPLORATORY] -- documenting what the lattice produces.
 """
@@ -68,7 +68,7 @@ def watson_sc_origin(L: int) -> float:
 
     where lambda_SC(k) = 3 - cos(k1) - cos(k2) - cos(k3)
 
-    Converges to Watson's I_SC ~ 0.505462 as L -> infinity.
+    Converges to Watson's I_SC ~ 0.505462 for arbitrarily large L.
 
     Note: Watson uses the random-walk normalization (no factor of 2).
     The standard Laplacian eigenvalue is 2*lambda_SC.
@@ -614,7 +614,7 @@ print("  SECTION 3b: Self-Referential ReLU Closure")
 print("=" * 78)
 print()
 
-sigma_inf = math.sqrt(W3_BCC)  # flux standard deviation in thermodynamic limit
+sigma_inf = math.sqrt(W3_BCC)  # flux standard deviation for arbitrarily large L
 K_B_lattice = math.sqrt(2*PI) * (16.0/3.0) * ALPHA**11  # m_e / m_P
 
 print(f"  Flux scale:  sigma = sqrt(I_1) = {sigma_inf:.6f}")
@@ -827,7 +827,7 @@ print("=" * 78)
 print("  SECTION 3: Gap Equation Test")
 print("=" * 78)
 print()
-print("The master quadratic on the infinite lattice:")
+print("The master quadratic on the cubic lattice (large-L regime):")
 print(f"  x^2 - {COEFFICIENT}*G*^2*x + {COEFFICIENT}*G*^3 = 0")
 print(f"  x^2 - {COEFFICIENT * G_STAR**2:.6f}*x + {COEFFICIENT * G_STAR**3:.6f} = 0")
 print(f"  Roots: x+ = {X_PLUS:.6f}, x- = {X_MINUS:.6f}")
@@ -858,7 +858,7 @@ for i, L in enumerate(lattice_sizes):
         if L == lattice_sizes[-1]:
             # Note: these are NOT expected to pass at finite L.
             # The gap equation only reproduces the master quadratic
-            # in the thermodynamic limit (L -> infinity).
+            # for arbitrarily large L.
             # We record them as [EXPLORATORY] to document the trend.
             suite.add(
                 f"Gap eq x+ at L={L} (trend toward {X_PLUS:.1f})",
@@ -936,7 +936,7 @@ print(f"  16*G*^2       = {id6_lhs:.15f}")
 print(f"  16*2*pi*I_1   = {id6_rhs:.15f}")
 suite.assert_equal("16*G*^2 = 16*2*pi*I_1", id6_lhs, id6_rhs, tag="[THEOREM]")
 print(f"  => The gap equation x^2 = 16*2*pi*G^BCC(0)*(x-G*) reproduces the master")
-print(f"     quadratic EXACTLY when G^BCC(0) -> I_1 (thermodynamic limit)")
+print(f"     quadratic EXACTLY when G^BCC(0) -> I_1 (large-L regime)")
 
 # ============================================================================
 # SECTION 6: Convergence Analysis
@@ -995,18 +995,18 @@ print("  1. G*^2/(2*pi) = Gamma(1/4)^4/(4*pi^3) = I_1 (Watson's BCC integral)")
 print("     This is an exact algebraic identity.")
 print()
 print("  2. The finite-lattice BCC Green's function G^BCC_L(0) converges to I_1")
-print("     as L -> infinity, with leading correction O(1/L).")
+print("     for arbitrarily large L, with leading correction O(1/L).")
 print()
 print("  3. The coefficient n_DOF = 16 is DERIVED from BCC DOF counting:")
 print("     n_DOF = z_BCC * (non-void ternary states) = 8 * 2 = 16")
 print("     = N_base^2 = |Aut(E)|^2 = 2^(D+1). All equivalent via D=3.")
 print()
 print("  4. The gap equation x^2 = 16*2*pi*G^BCC_L(0)*(x - G*) reproduces the")
-print("     master quadratic EXACTLY in the thermodynamic limit, because")
+print("     master quadratic EXACTLY for arbitrarily large L, because")
 print("     16*2*pi*I_1 = 16*G*^2 (the Vieta sum coefficient).")
 print()
 print("  5. The master quadratic roots x+ = 137.036, x- = 3.024 emerge from")
-print("     the gap equation as L -> infinity.")
+print("     the gap equation for arbitrarily large L.")
 print()
 print("  6. Self-referential ReLU closure: alpha -> K_B ~ alpha^11 -> p ~ 1")
 print("     -> n_DOF = 16 -> master quadratic -> alpha. The ternary threshold")

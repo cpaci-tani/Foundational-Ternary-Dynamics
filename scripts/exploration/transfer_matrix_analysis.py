@@ -41,7 +41,7 @@ print(f"""
     gap_inf ≈ {3*gap_L3 - 2*gap_L2:.4f} → ratio ≈ {np.exp(3*gap_L3 - 2*gap_L2):.1f}
 
   INTERPRETATION: The near-47 at L=2 is a FINITE-SIZE effect,
-  not a thermodynamic limit. The spectral gap likely converges to
+  not a large-L value. The spectral gap likely converges to
   ~ln(27) = {np.log(27):.4f} or ~ln(N_c^3), consistent with the
   3-state Potts model on a torus.
 

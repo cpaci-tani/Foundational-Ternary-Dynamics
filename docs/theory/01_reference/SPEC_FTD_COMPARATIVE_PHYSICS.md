@@ -114,13 +114,13 @@ In Heaviside-Lorentz units, the electromagnetic charge is $e = \sqrt{4\pi\alpha}
 
 The factor $4\pi = N_{\text{base}}^2 \times \text{PF} = 16 \times \pi/4$. **[SELECTION]**: The 16 counts the physical degrees of freedom on the minimal 2×2×2 lattice cell (24 flux components − 7 Gauss constraints − 1 gauge freedom = 16).
 
-### 3.2 Strong Coupling [THEOREM]
+### 3.2 Strong Coupling [PARAMETRIC]
 
 $$\alpha_s(M_Z) = \frac{b_3}{b_3 + 4N_{\text{eff}}} = \frac{7}{7 + 52} = \frac{7}{59} \approx 0.1186$$
 
 **Experimental:** $\alpha_s(M_Z) = 0.1179 \pm 0.0009$ → agreement within 0.6%.
 
-### 3.3 Weinberg Angle [THEOREM]
+### 3.3 Weinberg Angle [PARAMETRIC]
 
 $$\sin^2\theta_W = \frac{N_c}{N_{\text{eff}}} = \frac{3}{13} \approx 0.23077$$
 
@@ -180,7 +180,7 @@ $$\frac{\alpha}{2\pi}$$
 
 ## §5. Particle Masses
 
-### 5.1 Electron Mass [THEOREM]
+### 5.1 Electron Mass [STRONGLY MOTIVATED CONJECTURE]
 
 $$m_e = M_P \cdot \sqrt{2\pi} \cdot \frac{N_{\text{base}}^2}{N_c} \cdot \alpha^{11}$$
 
@@ -196,7 +196,7 @@ The power 11 = b₃ + N_base = 7 + 4 is the "topological cost of embedding" a po
 
 **Result:** 0.5096 MeV vs experimental 0.5110 MeV (0.27% error).
 
-### 5.2 Mass Ratios [THEOREM]
+### 5.2 Mass Ratios [STRONGLY MOTIVATED CONJECTURE]
 
 Mass ratios are PF-free (the Golden Rule at work):
 
@@ -425,7 +425,7 @@ The following identify integer factors with physical meanings:
 | Integer | Identification | Status |
 |---------|---------------|--------|
 | 16 = N_base² | Physical DOF on minimal lattice cell | [SELECTION] — argued from Gauss constraint counting |
-| 3 = N_c | Color charges | [THEOREM] — from master quadratic $x_-$ |
+| 3 = N_c | Color charges | [STRONGLY MOTIVATED CONJECTURE] — from master quadratic $x_-$ |
 | 15 = D_Σ | Division algebra tower sum | [SELECTION] — Hurwitz theorem gives 15, but its role in vacuum energy is argued |
 | 8 = 2^D | Lattice octants | [SELECTION] — geometric interpretation |
 | 7 = b₃ | QCD beta coefficient | [THEOREM] — standard QCD with N_f = 6 |
@@ -449,7 +449,7 @@ The following identify integer factors with physical meanings:
 | **CP-2** | $4\pi = N_{\text{base}}^2 \cdot \text{PF}$ | [THEOREM] | Arithmetic | Identity |
 | **CP-3** | $3\pi = N_{\text{base}} \cdot N_c \cdot \text{PF}$ (QED beta) | [THEOREM] + [SELECTION] | Arithmetic + integer meaning | β-function has different form |
 | **CP-4** | $12\pi = N_{\text{base}}^2 \cdot N_c \cdot \text{PF}$ (QCD) | [THEOREM] + [SELECTION] | Arithmetic + integer meaning | QCD running denominator changes |
-| **CP-5** | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [THEOREM] | Master quadratic + D=3 | Precision measurement outside 0.2% |
+| **CP-5** | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [PARAMETRIC] | Master quadratic + D=3 | Precision measurement outside 0.2% |
 | **CP-6** | $S_{BH} \times T_H = M/2$ (PF cancels) | [THEOREM] | BH thermodynamics | S×T ≠ M/2 for any BH |
 | **CP-7** | $\gamma_I = \ln 2/(N_{\text{base}} \cdot \text{PF} \cdot \sqrt{N_c})$ | [SELECTION] | DL/Meissner value | Different Immirzi value |
 | **CP-8** | $A_{\min} = N_{\text{base}} \cdot \ln 2 \cdot \ell_P^2$ | [THEOREM] + [SELECTION] | CP-7 + LQG area spectrum | LQG gives different A_min |

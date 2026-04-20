@@ -15,7 +15,7 @@ The J-integral is Gaussian (exact). After integrating out J:
 where G_L is the lattice Green's function.
 
 The self-energy per manifested voxel is g_c² · G_L(0).
-On the infinite lattice: G_L(0) = W₃ = G*²/(2π) [THEOREM — Watson 1939].
+On the cubic lattice (large-L regime): G_L(0) = W₃ = G*²/(2π) [THEOREM — Watson 1939].
 
 The self-consistency question: does the effective coupling, computed from
 the partition function, reproduce the input coupling?
@@ -158,7 +158,7 @@ print()
 # The self-energy of a single charge is G_charge[0,0]
 G_self = G_charge[0, 0]
 print(f"  Self-energy G_self = G_charge[0,0] = {G_self:.10f}")
-print(f"  Watson integral W3 (infinite lattice) = {W3:.10f}")
+print(f"  Watson integral W3 (cubic lattice, large-L) = {W3:.10f}")
 print(f"  Ratio G_self/W3 = {G_self/W3:.6f}")
 print()
 
@@ -194,12 +194,12 @@ print(f"  Ratio alpha_eff/alpha = {alpha_eff/ALPHA:.10f} = G_self")
 print()
 
 # The naive self-consistency alpha = alpha * G_self requires G_self = 1.
-# But G_self != 1 on any finite lattice (and W3 != 1 on the infinite lattice).
+# But G_self != 1 on any finite lattice (and W3 != 1 on the cubic lattice in the large-L regime).
 # So naive self-consistency FAILS.
 
 print("  NAIVE self-consistency alpha = alpha * G_self requires G_self = 1")
 print(f"  But G_self = {G_self:.6f} != 1")
-print(f"  And W3 = {W3:.6f} != 1 (on infinite lattice)")
+print(f"  And W3 = {W3:.6f} != 1 (on cubic lattice, large-L)")
 print()
 print("  The naive approach fails because it doesn't account for:")
 print("  - The number of contributing DOF (16 in temporal gauge)")
@@ -242,11 +242,11 @@ print(f"  Each mode contributes: 2*pi*G_self = {2*np.pi*G_self:.6f}")
 print(f"  Number of DOF needed: {required_coeff:.6f} / {2*np.pi*G_self:.6f} = {n_DOF_needed:.6f}")
 print()
 
-# On the infinite lattice, G_self -> W3 = G*^2/(2pi)
+# For arbitrarily large L, G_self -> W3 = G*^2/(2pi)
 # Then: n_DOF * 2pi * W3 = n_DOF * 2pi * G*^2/(2pi) = n_DOF * G*^2
 # For the coefficient to be 16*G*^2, we need n_DOF = 16.
 n_DOF_infinite = required_coeff / (2 * np.pi * W3)
-print(f"  ON THE INFINITE LATTICE (G_self -> W3 = G*^2/(2pi)):")
+print(f"  FOR ARBITRARILY LARGE L (G_self -> W3 = G*^2/(2pi)):")
 print(f"  n_DOF * 2pi * W3 = n_DOF * G*^2")
 print(f"  For coefficient 16*G*^2: n_DOF = {n_DOF_infinite:.6f}")
 print(f"  THIS IS EXACTLY 16.")
@@ -299,7 +299,7 @@ print("""
       |
       | [THEOREM: self-energy of the lattice propagator]
       v
-  Each DOF contributes self-energy G_self -> W3 (infinite lattice)
+  Each DOF contributes self-energy G_self -> W3 (cubic lattice, large-L)
       |
       | [THEOREM: temporal gauge DOF counting]
       v

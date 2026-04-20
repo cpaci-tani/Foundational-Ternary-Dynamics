@@ -8,11 +8,11 @@ Fix: W_3 is defined as the INTEGRAL:
 On a FINITE lattice with periodic BC, the discrete sum approximation is:
   W_3(L) = (1/L^3) sum_{k != 0} 1/hat_k^2
 
-This converges to W_3 as L -> infinity, but slowly because of the 1/k^2
+This converges to W_3 for arbitrarily large L, but slowly because of the 1/k^2
 singularity at k=0.
 
 Actually wait -- the Watson integral is the propagator at the ORIGIN on the
-INFINITE lattice. On a finite lattice of size L, the sum IS the Green's function
+cubic lattice (large-L regime). On a finite lattice of size L, the sum IS the Green's function
 at the origin, but it differs from W_3 by finite-size corrections.
 
 Let me use numerical integration of the BZ integral instead.
@@ -158,7 +158,7 @@ print(f"  <hat_k2_18/hat_k2_6> = {inv_ratio_avg:.10f}")
 print()
 
 # ============================================================================
-# The KEY question: what is the ratio R_avg in the thermodynamic limit?
+# The KEY question: what is the ratio R_avg for arbitrarily large L?
 # ============================================================================
 print("="*80)
 print("KEY RESULTS")

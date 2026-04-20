@@ -5,7 +5,7 @@ This is the FIRST script that connects the FTD C++ engine output
 to FTD's own theoretical predictions with quantitative error bars.
 
 Purpose: Run the engine at multiple lattice sizes, extract observables,
-compare to theory, and demonstrate continuum limit convergence.
+compare to theory, and demonstrate convergence at arbitrarily fine spacing a.
 
 Usage:
     python scripts/benchmarks/benchmark_engine_vs_theory.py
@@ -160,7 +160,7 @@ def generate_report(analysis: dict, output_dir: Path) -> str:
         last_err = sorted_ce[-1]['error_pct']
         if last_err < first_err:
             lines.append(f"\n  CONVERGENCE: Error improved from {first_err:.2f}% (L={sorted_ce[0]['L']}) to {last_err:.2f}% (L={sorted_ce[-1]['L']})")
-            lines.append(f"  This demonstrates continuum limit behavior: larger lattice -> better 1/r^2")
+            lines.append(f"  This demonstrates fine-spacing behavior: larger lattice -> better 1/r^2")
         else:
             lines.append(f"\n  WARNING: No clear convergence trend (small->{first_err:.2f}%, large->{last_err:.2f}%)")
 

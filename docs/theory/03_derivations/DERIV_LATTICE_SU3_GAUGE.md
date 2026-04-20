@@ -66,7 +66,7 @@ where f^{abc} are the totally antisymmetric SU(3) structure constants. In the fl
 
 The normalization is Tr(λ^a λ^b) = 2δ^{ab}, and the fundamental representation matrices are T^a = λ^a/2.
 
-## 1.4 Connection to N_c from the Master Quadratic [THEOREM]
+## 1.4 Connection to N_c from the Master Quadratic [STRONGLY MOTIVATED CONJECTURE] (FTD-0014)
 
 The master quadratic (SPEC_FTD_LAGRANGIAN.md, from G*):
 
@@ -177,7 +177,7 @@ This follows from the SU(3) algebra. Explicitly:
 
 The total color charge at any vertex is conserved, just as electric charge is conserved at QED vertices.
 
-## 3.3 Strong Coupling Value [THEOREM]
+## 3.3 Strong Coupling Value [PARAMETRIC] (FTD-0020)
 
 The strong coupling constant at the Z boson mass scale is:
 
@@ -451,7 +451,7 @@ Combined with the lattice UV finiteness, this ensures that the QCD beta function
 | ID | Claim | Status | Key Evidence | Depends On |
 |----|-------|--------|-------------|------------|
 | SU3-1 | Color = flux axis alignment (J_x,J_y,J_z ↔ r,g,b) | **[SELECTION]** | Geometric interpretation; 3 axes ↔ 3 colors | D=3 lattice axiom |
-| SU3-2 | N_c = 3 from lattice dimensionality | **[THEOREM]** | D=3 → SU(D) = SU(3); confirmed by x₋ = 3.024 | Postulate 1, master quadratic |
+| SU3-2 | N_c = 3 from lattice dimensionality | **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0014) | D=3 → SU(D) = SU(3); confirmed by x₋ = 3.024 | Postulate 1, master quadratic |
 | SU3-3 | Gell-Mann matrices as flux rotation generators | **[THEOREM]** | Standard SU(3) algebra on complexified ℝ³ | SU3-2 |
 | SU3-4 | Gluon propagator G^{ab}_μν(k) | **[THEOREM]** | Extension of Thm 1.1 to color-octet sector | DERIV_QFT_GRT_BRIDGE.md |
 | SU3-5 | UV finiteness (compact BZ) | **[THEOREM]** | Same argument as U(1): finite sum | DERIV_LATTICE_LOOP_CORRECTIONS.md |
@@ -460,7 +460,7 @@ Combined with the lattice UV finiteness, this ensures that the QCD beta function
 | SU3-8 | Four-gluon vertex from BI nonlinearity | **[SELECTION]** | Argued from BI expansion; tensor structure adopted | BI action + SU(3) gauge invariance |
 | SU3-9 | β₀ = (11N_c − 2N_f)/3 = 7 | **[THEOREM]** | One-loop lattice calculation, same technique as QED | SU3-4, SU3-6, SU3-7 |
 | SU3-10 | Asymptotic freedom (α_s decreases at high E) | **[THEOREM]** | β₀ > 0 for N_f < 16.5 | SU3-9 |
-| SU3-11 | α_s(M_Z) = 7/59 = 0.1186 | **[THEOREM]** | Framework integer encoding (0.5% vs PDG) | Framework integers {3,4,7,13} |
+| SU3-11 | α_s(M_Z) = 7/59 = 0.1186 | **[PARAMETRIC]** (FTD-0020) | Framework integer encoding (0.5% vs PDG) | Framework integers {3,4,7,13} |
 | SU3-12 | Wilson loop area law → confinement | **[SELECTION]** | Standard lattice QCD argument applied to FTD | SU3-7, SU3-8, Gauss constraint |
 | SU3-13 | String tension σ ≈ Λ²_QCD | **[SELECTION]** | Dimensional analysis + cross-check | DERIV_LAMBDA_QCD_DERIVATION.md |
 | SU3-14 | Slavnov-Taylor identity (transversality) | **[THEOREM]** | Lattice Bianchi identity → D_ν J^a_ν = 0 | Gauss constraint, SU(3) algebra |

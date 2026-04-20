@@ -116,7 +116,7 @@ The larger root is x+ = 137.036.
 
 NOW: what IS g_c physically?
 
-In the continuum limit, the FTD Lagrangian becomes:
+In the long-wavelength regime |p| << pi, the FTD Lagrangian becomes:
   L = (1/2)|dJ/dt|^2 - (1/2)c^2|grad(J)|^2 - g_c * rho * phi
 
 where rho is the charge density (from manifested states) and
@@ -128,7 +128,7 @@ or simply sqrt(alpha) in natural units.
 
 g_c = sqrt(alpha). This is not an identification — it's a DEFINITION.
 g_c IS the coupling between charged matter (s) and the EM field (J).
-In the continuum limit, this coupling IS alpha.
+In the long-wavelength regime |p| << pi, this coupling IS alpha.
 
 Therefore: x = 1/g_c^2 = 1/alpha.
 The gap equation's root x+ = 137.036 IS 1/alpha because

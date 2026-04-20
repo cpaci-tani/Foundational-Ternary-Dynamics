@@ -9,7 +9,7 @@ Strategy:
   1. Build the exact partition function on L=2 torus (8 sites, 3⁸ = 6561 configs)
   2. Compute the exact self-energy from the connected two-point correlator
   3. Show the self-energy is Σ(x) = K_L/x with K_L from the finite lattice
-  4. Prove K_L → K = 16G*² in the thermodynamic limit
+  4. Prove K_L → K = 16G*² for arbitrarily large L (with stated error bound)
   5. Derive the master quadratic from self-consistency
 
 What this proves:
@@ -126,7 +126,7 @@ print()
 # Green's function at the origin on L=2
 G_origin_L2 = M_pinv[0, 0]
 print(f"  G(0) on L=2 (SC Laplacian): {G_origin_L2:.10f}")
-print(f"  G(0) thermodynamic limit (BCC Watson): {W3_EXACT:.10f}")
+print(f"  G(0) for arbitrarily large L (BCC Watson): {W3_EXACT:.10f}")
 
 # BCC Watson on L=2
 W3_L2 = watson_bcc_origin(L)
@@ -400,17 +400,17 @@ else:
 
 
 # ============================================================================
-# SECTION 5: Watson Integral and Thermodynamic Limit
+# SECTION 5: Watson Integral and Large-L Behavior
 # ============================================================================
 
 print()
 print()
 print("=" * 78)
-print("  SECTION 5: Watson Integral and Thermodynamic Limit [THEOREM]")
+print("  SECTION 5: Watson Integral and Large-L Behavior [THEOREM]")
 print("=" * 78)
 print()
 
-# The BCC Watson integral W₃ = G*²/(2π) appears as G(0) in the thermodynamic limit.
+# The BCC Watson integral W₃ = G*²/(2π) appears as G(0) for arbitrarily large L.
 # On finite lattice, G(0) differs from W₃ by finite-size corrections.
 # We show convergence.
 
@@ -630,18 +630,18 @@ if disc_L2 > 0:
     x_plus_L2 = (K_L2 + math.sqrt(disc_L2)) / 2.0
     x_minus_L2 = (K_L2 - math.sqrt(disc_L2)) / 2.0
     print(f"  Finite-lattice gap equation roots:")
-    print(f"    x₊(L=2) = {x_plus_L2:.6f}  (thermodynamic: {x_plus:.6f})")
-    print(f"    x₋(L=2) = {x_minus_L2:.6f}  (thermodynamic: {x_minus:.6f})")
+    print(f"    x₊(L=2) = {x_plus_L2:.6f}  (large-L: {x_plus:.6f})")
+    print(f"    x₋(L=2) = {x_minus_L2:.6f}  (large-L: {x_minus:.6f})")
     print()
 
-    # Check that L=2 roots are reasonably close to thermodynamic values
+    # Check that L=2 roots are reasonably close to large-L values
     err_xp = abs(x_plus_L2 - x_plus) / x_plus
     err_xm = abs(x_minus_L2 - x_minus) / x_minus
     print(f"    x₊ error: {err_xp*100:.2f}%")
     print(f"    x₋ error: {err_xm*100:.2f}%")
     print()
 
-    # L=2 BCC Watson (0.25) is very far from the thermodynamic limit (1.393),
+    # L=2 BCC Watson (0.25) is very far from the large-L value (1.393),
     # so finite-lattice roots can differ significantly. The structural test
     # is that the finite-lattice equation HAS two positive roots.
     suite.assert_true(
@@ -709,7 +709,7 @@ print()
 
 # Could B be different from KG*?
 # No: B = K × (lattice scale in denominator) = K × G(0)
-# And G(0) = W₃ = G*²/(2π) in the thermodynamic limit
+# And G(0) = W₃ = G*²/(2π) for arbitrarily large L
 # So B = K × G*²/(2π) ... wait, that gives B = 16G*² × G*²/(2π) = 16G*⁴/(2π)
 # But we claim B = KG* = 16G*³. Where does the 2π go?
 

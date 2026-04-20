@@ -155,8 +155,8 @@ for L in lattice_sizes:
     print(f"    G_div / W3    = {r['G00'] / W3_BCC:.10f}")
     print(f"    G_sc / W3     = {r['scalar_self_energy'] / W3_BCC:.10f}")
 
-# Extrapolate to L -> infinity
-print("\n  Thermodynamic limit extrapolation:")
+# Extrapolate for arbitrarily large L
+print("\n  Large-L extrapolation:")
 Ls = np.array(lattice_sizes)
 G00s = np.array([results[L]['G00'] for L in lattice_sizes])
 Gsc_00s = np.array([results[L]['scalar_self_energy'] for L in lattice_sizes])
@@ -185,7 +185,7 @@ print("-" * 72)
 #
 # So the coefficient K is determined by: K = n_DOF * 2*pi * G_div(0,0) / G*^2
 
-# Use L=128 result (closest to thermodynamic limit)
+# Use L=128 result (largest tested L)
 Sigma_div = results[128]['G00']
 Sigma_scalar = results[128]['scalar_self_energy']
 
@@ -244,7 +244,7 @@ print("\n" + "-" * 72)
 print("  Watson Integral Verification")
 print("-" * 72)
 
-# The Watson BCC integral on an infinite lattice is:
+# The Watson BCC integral on the cubic lattice (large-L regime) is:
 #   W3 = (1/(2*pi)^3) * integral_BZ d^3k / lambda_BCC(k)
 # where lambda_BCC(k) = 1 - cos(k1)*cos(k2)*cos(k3)
 #

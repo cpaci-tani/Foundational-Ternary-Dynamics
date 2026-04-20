@@ -22,11 +22,11 @@ These are the sharpest claims FTD makes---specific numerical values derived from
 
 | Property | Value |
 |----------|-------|
-| **FTD formula** | $x^2 - 16G^{*2}x + 16G^{*3} = 0$, where $G^* = \varpi/\sqrt{\pi/4}$; $x_+ = 1/\alpha$ **[SELECTION, SP4]** |
+| **FTD formula** | $x^2 - 16G^{*2}x + 16G^{*3} = 0$, where $G^* = \varpi/\sqrt{\pi/4}$; $x_+ = 1/\alpha$ **[STRONGLY MOTIVATED CONJECTURE]** |
 | **FTD value** | $1/\alpha = 137.0361714582\ldots$ |
 | **CODATA 2022** | $1/\alpha = 137.035999177(21)$ |
 | **Discrepancy** | 1.26 ppm |
-| **Epistemic status** | **[SELECTION]** (SP4). Upgrade path to conditional [THEOREM] via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) (Wilson two-phase + UV rigidity), conditional on standard lattice-QED continuum-limit recovery. Math chain (SP1-SP3) is [THEOREM]; SP4 is the physical identification. |
+| **Epistemic status** | **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0013). The polynomial itself (master quadratic) is [THEOREM] (FTD-0001); the physical identification $x_+ = 1/\alpha$ rests on the algebraic match (1.26 ppm) plus dual-prediction structure ($x_- \to N_c$) plus CM-curve uniqueness — not on a dynamical derivation. Per LEDGER 2026-04-19, the prior "L → ∞ gap-equation" derivation route is RETRACTED (FTD-0032). |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $\alpha$ was measured in 1947. The derivation was constructed after the value was known. |
 
 The tree-level value $x_+ = 137.036\ldots$ emerges from the master quadratic with coefficient 16 (lattice degrees of freedom) and $G^{*2}, G^{*3}$ (lemniscatic constant squared and cubed). The extended 7-term precision formula using $\varepsilon = e^\pi - \pi - 20$ and rational coefficients from $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$ agrees with the CODATA 2022 recommended value to 24 digits **as an algebraic identity** (confirmed 2026-04-17; see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)). Status: **[CONJECTURE]**. The rigidity audit (2026-04-17) shows 6/7 coefficients uniquely forced in the base-integer set at cascade precision, but experimentally the coefficients are underdetermined — CODATA 2022 measures only ~11 digits.
@@ -39,7 +39,7 @@ The tree-level value $x_+ = 137.036\ldots$ emerges from the master quadratic wit
 | **FTD value** | $0.11864$ |
 | **PDG 2024** | $0.1179 \pm 0.0009$ |
 | **Discrepancy** | 0.6% |
-| **Epistemic status** | **[THEOREM]** (ratio from framework integers; RG running formula is imported from QCD) |
+| **Epistemic status** | **[PARAMETRIC]** (ratio from framework integers; RG running formula is imported from QCD) |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $\alpha_s(M_Z)$ was measured in the 1990s. |
 
 The numerator $b_3 = (11N_c - 2N_f)/3 = 7$ is the one-loop QCD beta function coefficient, a framework integer. The denominator structure $b_3 + 4N_{\text{eff}} = 7 + 52 = 59$ combines framework integers. The functional form of the running coupling is imported from standard QCD.
@@ -52,7 +52,7 @@ The numerator $b_3 = (11N_c - 2N_f)/3 = 7$ is the one-loop QCD beta function coe
 | **FTD value** | $0.23077$ |
 | **PDG 2024** | $0.23122 \pm 0.00003$ |
 | **Discrepancy** | 0.2% |
-| **Epistemic status** | **[THEOREM]** (ratio from framework integers; definition of $\theta_W$ is imported from electroweak theory) |
+| **Epistemic status** | **[PARAMETRIC]** (ratio from framework integers; definition of $\theta_W$ is imported from electroweak theory) |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $\sin^2\theta_W$ was measured in 1983. |
 
 ### 1.4 Electron Mass (Absolute Scale)
@@ -63,7 +63,7 @@ The numerator $b_3 = (11N_c - 2N_f)/3 = 7$ is the one-loop QCD beta function coe
 | **FTD value** | $0.5096$ MeV |
 | **PDG** | $0.51100$ MeV |
 | **Discrepancy** | 0.27% |
-| **Epistemic status** | **[THEOREM]** (given $\alpha$ from master quadratic and $M_P$ as scale identification) |
+| **Epistemic status** | **[STRONGLY MOTIVATED CONJECTURE]** (given $\alpha$ from master quadratic and $M_P$ as scale identification) |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $m_e$ was measured in 1897. The $M_P$ identification is **[IMPOSED]**. |
 
 The derivation requires identifying 1 voxel = 1 Planck length, which sets $M_P$. This is a scale calibration, not a derivation from pure integers. The power $\alpha^{11}$ encodes 11 layers of continuous-to-discrete projection: $\alpha^8$ (hierarchy suppression from Planck to electroweak) times $\alpha^3$ (Yukawa structure).
@@ -76,7 +76,7 @@ The derivation requires identifying 1 voxel = 1 Planck length, which sets $M_P$.
 | **FTD value** | $m_\tau = 3477 \times 0.51100 = 1776.7$ MeV |
 | **PDG** | $1776.86 \pm 0.12$ MeV |
 | **Discrepancy** | 0.007% |
-| **Epistemic status** | **[THEOREM]** (integer arithmetic from framework constants) |
+| **Epistemic status** | **[STRONGLY MOTIVATED CONJECTURE]** (integer arithmetic from framework constants) |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $m_\tau$ was measured in 1975. This is FTD's most accurate mass prediction. |
 
 ### 1.6 Higgs Mass
@@ -98,7 +98,7 @@ The derivation requires identifying 1 voxel = 1 Planck length, which sets $M_P$.
 | **FTD value** | $246.09$ GeV |
 | **PDG** | $246.22$ GeV |
 | **Discrepancy** | 0.05% |
-| **Epistemic status** | **[THEOREM]** (from $\alpha$-power hierarchy) |
+| **Epistemic status** | **[STRONGLY MOTIVATED CONJECTURE]** (from $\alpha$-power hierarchy) |
 | **Pre-diction or post-diction?** | **POST-DICTION.** The Higgs VEV was established in the 1980s via $G_F$ measurements. |
 
 ### 1.8 Gravitational Hierarchy
@@ -472,7 +472,7 @@ The one-loop vacuum polarization on the FTD lattice shifts the coupling by order
 
 ### Current Assessment
 
-The two-loop correction has the right magnitude. Whether it has the right sign and precise value to close the gap is **[OPEN]**. The 4-term precision formula (see DERIV_ALPHA_PRECISION_FORMULA.md) achieves $< 0.001$ ppt agreement with CODATA, but the formula's coefficient identifications are **[SELECTION]**, not uniquely derived.
+The two-loop correction has the right magnitude. Whether it has the right sign and precise value to close the gap is **[OPEN]**. The 4-term precision formula (see DERIV_ALPHA_PRECISION_FORMULA.md) achieves agreement at digit-counts beyond CODATA's experimental precision (~11 digits), but the formula's coefficient identifications are **[CONJECTURE]** (FTD-0022, post-hoc fit), not uniquely derived.
 
 **Epistemic status:** **[CONJECTURE]** that sub-ppm $\alpha$ prediction is achievable. The framework has the structural ingredients; the explicit calculation remains incomplete.
 
@@ -530,19 +530,19 @@ Almost all of these are **post-dictions**. The values were known before FTD was 
 
 | ID | Statement | Tag | Testability | Pre/Post |
 |----|-----------|-----|-------------|----------|
-| NP-1 | $1/\alpha = 137.0361714582\ldots$ from master quadratic | [THEOREM] | Now (1.26 ppm off CODATA) | Post |
-| NP-2 | $\alpha_s(M_Z) = 7/59 = 0.11864$ | [THEOREM] | Now (0.6% off PDG) | Post |
-| NP-3 | $\sin^2\theta_W = 3/13 = 0.23077$ | [THEOREM] | Now (0.2% off PDG) | Post |
-| NP-4 | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [THEOREM] | Now (0.27% off PDG) | Post |
-| NP-5 | $m_\tau/m_e = 3477$ | [THEOREM] | Now (0.007% off PDG) | Post |
-| NP-6 | $m_H = (N_{\text{eff}}/\alpha^2) m_e \approx 124.8$ GeV | [SELECTION] | Now (0.36% off PDG) | Post |
-| NP-7 | $v = M_P\sqrt{2\pi}\alpha^8 = 246.09$ GeV | [THEOREM] | Now (0.05% off PDG) | Post |
+| NP-1 | $1/\alpha = 137.0361714582\ldots$ from master quadratic | [STRONGLY MOTIVATED CONJECTURE] | Now (1.26 ppm off CODATA) | Post |
+| NP-2 | $\alpha_s(M_Z) = 7/59 = 0.11864$ | [PARAMETRIC] | Now (0.6% off PDG) | Post |
+| NP-3 | $\sin^2\theta_W = 3/13 = 0.23077$ | [PARAMETRIC] | Now (0.2% off PDG) | Post |
+| NP-4 | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [STRONGLY MOTIVATED CONJECTURE] | Now (0.27% off PDG) | Post |
+| NP-5 | $m_\tau/m_e = 3477$ | [STRONGLY MOTIVATED CONJECTURE] | Now (0.007% off PDG) | Post |
+| NP-6 | $m_H = (N_{\text{eff}}/\alpha^2) m_e \approx 124.8$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] | Now (0.36% off PDG) | Post |
+| NP-7 | $v = M_P\sqrt{2\pi}\alpha^8 = 246.09$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] | Now (0.05% off PDG) | Post |
 | NP-8 | $\alpha_G = 2\pi(16/3)^2(N_{\text{eff}}+3/b_3)^2\alpha^{20}$ | [THEOREM] | Now (0.06% off experimental) | Post |
 | NP-9 | $a_e = \alpha/(2\pi)$ from lattice vertex correction | [THEOREM] | Now (Schwinger re-derivation) | Post |
 | NP-10 | $\Gamma(\pi^0 \to \gamma\gamma) = 7.73$ eV from lattice anomaly | [THEOREM] | Now (1.2% off PDG) | Post |
 | NP-11 | $\beta_0 = 7$ (QCD one-loop) | [THEOREM] | Now (exact match) | Check |
 | NP-12 | $N_{\text{gen}} = 3$ exactly | [THEOREM] | Now (consistent) | Post |
-| NP-13 | $N_c = 3$ exactly | [THEOREM] | Now (consistent) | Post |
+| NP-13 | $N_c = 3$ exactly | [STRONGLY MOTIVATED CONJECTURE] | Now (consistent) | Post |
 | NP-14 | Gauge group = $\text{U}(1) \times \text{SU}(2) \times \text{SU}(3)$ | [THEOREM] + [SELECTION] | Now (consistent) | Post |
 | NP-15 | No magnetic monopoles | [THEOREM] | Now (null searches consistent) | Weak pre |
 | NP-16 | No proton decay ($\tau_p = \infty$) | [THEOREM] | Now/near-term (null consistent) | Weak pre |

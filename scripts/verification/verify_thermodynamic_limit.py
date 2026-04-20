@@ -1,13 +1,13 @@
 """
-Step 4: Thermodynamic Limit Study — N-Sweep for Type III Emergence
+Step 4: Large-L Behavior Study — N-Sweep for Type III Emergence
 ==================================================================
 
 Companion script for SPEC_QFT_GRT_BRIDGE_ROADMAP.md (Step 4 of Critical Path).
 
 Sweeps lattice size N from 16 to 1024 to study how the modular spectrum
-evolves in the thermodynamic limit. The central question:
+evolves for arbitrarily large N. The central question:
 
-    Does the finite-size Type I algebra approach Type III_1 as N -> infinity?
+    Does the finite-size Type I algebra approach Type III_1 for arbitrarily large N?
 
 Key diagnostics:
 1. Spectral gap closure:  Delta ~ N^{-alpha}, alpha > 0 -> gap closes
@@ -204,7 +204,7 @@ def run_section_2(results):
     gap_closes = alpha > 0.5
     print(f"\n  CONCLUSION: Gap {'CLOSES' if gap_closes else 'does NOT close'} as N -> infinity")
     if gap_closes:
-        print(f"  -> The modular spectrum becomes CONTINUOUS in the thermodynamic limit")
+        print(f"  -> The modular spectrum becomes CONTINUOUS for arbitrarily large N")
         print(f"  -> This is a NECESSARY condition for Type III (not sufficient)")
         print(f"  -> [PASS] Gap closure verified with exponent alpha = {alpha:.3f}")
     else:
@@ -240,7 +240,7 @@ def run_section_3(results):
     # p_k = exp(-beta*E_k)/Z where E_k = c^2*(1-cos(2*pi*k/N))
     # At large N, the occupation becomes smoother, P/N -> P_inf/N
     # where P_inf = [sum exp(-beta*E_k)]^2 / [sum exp(-2*beta*E_k)]
-    # In the continuum limit: integrals of Bessel functions
+    # In the long-wavelength regime: integrals of Bessel functions
 
     print(f"  {'N':>6} | {'P/N':>10} | {'1 - P/N':>12} | {'Status':>10}")
     print("  " + "-" * 44)
@@ -584,7 +584,7 @@ def run_section_6(N=256):
 # ============================================================================
 
 def run_section_7(gap_result, part_result, rmt_results, corr_result):
-    """Section 7: Synthesis of thermodynamic limit findings."""
+    """Section 7: Synthesis of large-L findings."""
     print("\n" + "=" * 70)
     print("SECTION 7: SYNTHESIS — IMPLICATIONS FOR THE BRIDGE")
     print("=" * 70)
@@ -617,12 +617,12 @@ def run_section_7(gap_result, part_result, rmt_results, corr_result):
     print(f"       - High participation:  YES  (>90% at beta=pi)")
     print()
     print(f"     This is the behavior of a Type I algebra approaching Type II_1")
-    print(f"     in the thermodynamic limit. It does NOT yet reach Type III.")
+    print(f"     for arbitrarily large N. It does NOT yet reach Type III.")
     print()
     print(f"     To reach Type III_1, the system needs:")
     print(f"       a) INTERACTIONS that break integrability -> level repulsion")
     print(f"       b) NONCOMMUTATIVITY that prevents simultaneous diagonalization")
-    print(f"       c) INFINITE degrees of freedom (continuum limit)")
+    print(f"       c) Arbitrarily many degrees of freedom (arbitrarily fine spacing)")
     print()
     print(f"     These correspond to gaps GAP-S2 and GAP-Q1 in the roadmap.")
     print(f"     The free wave equation is necessary but not sufficient.")
@@ -639,7 +639,7 @@ def run_section_7(gap_result, part_result, rmt_results, corr_result):
 # ============================================================================
 
 def generate_figure(results, gap_result, corr_result, beta_sweep):
-    """Generate 4-panel figure summarizing thermodynamic limit results."""
+    """Generate 4-panel figure summarizing large-L results."""
     try:
         import matplotlib
         matplotlib.use('Agg')

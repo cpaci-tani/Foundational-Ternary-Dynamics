@@ -101,7 +101,7 @@ print("=" * 78)
 # Reference values
 GSTAR = 2.9586788845685364  # Gamma(1/4)/Gamma(3/4)
 WATSON_BCC = 1.3932039296856768  # = G*^2 / (2*pi) = Gamma(1/4)^4 / (4*pi^3)
-G_SC_INF = 0.2527  # SC lattice Green's function at origin (infinite lattice)
+G_SC_INF = 0.2527  # SC lattice Green's function at origin (cubic lattice, large-L regime)
 
 print(f"\n  Reference values:")
 print(f"    G* = Gamma(1/4)/Gamma(3/4) = {GSTAR:.10f}")

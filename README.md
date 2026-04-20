@@ -155,7 +155,7 @@ Phase F's 4-point GPU continuum scan at L ∈ {64, 128, 256, 384} (ticks = 150, 
 | 256 | 82    | 0.02717 | **3.72×**      |
 | 384 | 124   | 0.02632 | **3.61×**      |
 
-Three independent scaling laws (1/L, 1/L², free 1/L^p) agree on α_∞ ∈ [3.35×, 3.74×] α_ref. This is a **falsifiable FTD prediction**: the engine's V(r)-extracted coupling in the Coulomb-tail regime is 3.6× stronger than CODATA QED, not approximate agreement. The Day-2 interim "1.23× α_ref" claim from under-equilibrated CPU data is **retracted** — see [DERIV_DAY2_CAMPAIGN.md §6b](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md) and paper §9. Rutherford-scattering cross-check (Day-2 Thread 4) gives α = 0.042 ± 0.005 at small impact parameter, **independently confirming** the 5× gap is engine physics, not a V(r) measurement artefact.
+Three independent scaling laws (1/L, 1/L², free 1/L^p) agree on α_largeL ∈ [3.35×, 3.74×] α_ref at the largest tested L (L = 384). **Conditional on `a_phys ≡ ℓ_P` calibration** (see SPEC_FTD.md "LATTICE ↔ PHYSICAL CALIBRATION" + LEDGER FTD-0030/0041), this is a **falsifiable FTD prediction**: the engine's V(r)-extracted coupling in the Coulomb-tail regime is 3.6× stronger than CODATA QED at the calibrated point, not approximate agreement. The Day-2 interim "1.23× α_ref" claim from under-equilibrated CPU data is **retracted** — see [DERIV_DAY2_CAMPAIGN.md §6b](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md) and paper §9. Rutherford-scattering cross-check (Day-2 Thread 4) gives α = 0.042 ± 0.005 at small impact parameter, **independently confirming** the 5× gap is engine physics, not a V(r) measurement artefact.
 
 ### Phase-by-phase outcomes
 
@@ -168,7 +168,7 @@ Three independent scaling laws (1/L, 1/L², free 1/L^p) agree on α_∞ ∈ [3.3
 | 3  | Operator spectrum (6 ops) | Pulse-scenario fits clustered near Δ ≈ 0.5; T5 `flux-baryon` run pushes divJ² to Δ = 1.69 (×3.7), confirming pulse-envelope artefact and physicality of the basis | [DERIV_OPERATOR_SPECTRUM.md](docs/theory/10_eft_program/DERIV_OPERATOR_SPECTRUM.md) |
 | 4A | Dynamical EWSB cold-start | Day-2 Thread 1b amplitude-threshold map: **sharp first-order transition at amp ∈ (0.6, 0.7)** on L = 32. Thread 3 spectroscopy on the condensate extracts m_flux = 0.181, m_charge = 0.186 (ratio 0.97 — two independent channels agree to 3%) | [DERIV_DYNAMICAL_SM_EMERGENCE.md](docs/theory/10_eft_program/DERIV_DYNAMICAL_SM_EMERGENCE.md), [DERIV_DAY2_CAMPAIGN.md §2–3](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md) |
 | 4B | Three-generation cold-start | Null: 0 species manifested in 1 000 ticks on radial-flux seed | ↑ |
-| 4C / F | Continuum-limit α_eff(∞) | Phase F 4-point GPU scan: α_∞ ∈ [3.35×, 3.74×] α_ref, plateau confirmed across factor-of-6 in L | [DERIV_DAY2_CAMPAIGN.md §6b](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md), [DERIV_GAP_CLOSURE.md](docs/theory/10_eft_program/DERIV_GAP_CLOSURE.md) |
+| 4C / F | Large-L α_eff scan | Phase F 4-point GPU scan: α_largeL ∈ [3.35×, 3.74×] α_ref, plateau confirmed across factor-of-6 in L (conditional on `a_phys ≡ ℓ_P`) | [DERIV_DAY2_CAMPAIGN.md §6b](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md), [DERIV_GAP_CLOSURE.md](docs/theory/10_eft_program/DERIV_GAP_CLOSURE.md) |
 
 ### Infrastructure shipped alongside the measurements
 

@@ -51,7 +51,7 @@ print(f"  vs Watson form:   ratio = {FTD_W3/W_watson:.6f}")
 print()
 
 # So FTD_W3 ~ W_sigma but not exactly. Let me check if convergence fixes this.
-# The issue is that W_sigma converges to FTD_W3 only in the L->infinity limit.
+# The issue is that W_sigma converges to FTD_W3 only for arbitrarily large L.
 # My Richardson extrapolation gives 1.5164, but FTD_W3 = 1.3932.
 # These are STILL different by ~8%.
 
@@ -283,7 +283,7 @@ print()
 
 # The STANDARD definition in lattice field theory is:
 # G(0,0) = sum_{n != 0} 1/(E_n) where E_n are the eigenvalues of -Laplacian
-# On the infinite lattice: G(0,0) = (1/(2pi)^d) int dk / hat_k^2
+# On the cubic lattice (large-L regime): G(0,0) = (1/(2pi)^d) int dk / hat_k^2
 
 # For d=3: G(0,0) = 0.2527 (my Richardson value)
 

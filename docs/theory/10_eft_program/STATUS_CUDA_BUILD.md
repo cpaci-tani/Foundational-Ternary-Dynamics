@@ -92,12 +92,12 @@ The correct 3-point r_max series (all ticks=300):
 finite-size effect that shrinks with L — it may be a real offset.
 
 This finding directly affects the Day-2 manuscript claim of
-"α_∞ = 1.23× α_ref from 1/L extrapolation." The fast-big CPU measurement
+"α_largeL = 1.23× α_ref from 1/L extrapolation." The fast-big CPU measurement
 that supported that extrapolation was an artefact of insufficient tick
 count. The Phase-F 4-point GPU extrapolation (L ∈ {64, 128, 256, 384}
 at consistent r/L ≈ 0.31 and ticks=150) replaced it with an honest
 plateau, and a subsequent audit (`AUDIT_ALPHA_EXTRACTION.md`) narrowed
-the honest claim to **α_∞ ∈ [1.8, 3.6] × α_ref** depending on energy
+the honest claim to **α_largeL ∈ [1.8, 3.6] × α_ref** depending on energy
 convention — the engine's `field_energy = Σ|J|²` carries no classical
 ½ prefactor, so the measured V(r) is 2× the classical interaction
 energy. The residual ~1.8× after convention correction remains

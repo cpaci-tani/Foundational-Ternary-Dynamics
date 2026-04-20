@@ -89,7 +89,7 @@ where:
 
 | Symbol | Definition | Value | Status |
 |--------|------------|-------|--------|
-| $K_B$ | Manifestation threshold | $M_P\sqrt{2\pi}(16/3)\alpha^{11} = 0.511$ MeV | [THEOREM] |
+| $K_B$ | Manifestation threshold | $M_P\sqrt{2\pi}(16/3)\alpha^{11} = 0.511$ MeV | [STRONGLY MOTIVATED CONJECTURE] |
 | $v$ | Lattice velocity $\|\Delta\mathbf{N}/\Delta G^*\|$ | $\in [0, f)$ | [DEFINITION] |
 | $f$ | Lattice availability $1 - \mathcal{L}^2$ | $\in (0, 1]$ | [DEFINITION] |
 | $\mathcal{L}$ | Topological latency (gravitational field) | $\in [0, 1)$ | [DEFINITION] |
@@ -155,8 +155,8 @@ $$D = 3 + \varpi \;\longrightarrow\; \text{PF},\; N_{\text{base}} \;\longrightar
 |-----------|-----------|--------|-------------|------------------|
 | U(1) gauge | Gauss constraint $\nabla \cdot \mathbf{J} = \rho$ | [THEOREM] | Complete 1-loop QED | DERIV_QFT_GRT_BRIDGE, DERIV_LATTICE_LOOP_CORRECTIONS, DERIV_LATTICE_VERTEX_CORRECTION, DERIV_LATTICE_SELF_ENERGY |
 | SU(3) gauge | Flux triplet $\mathbf{J} = (J_x, J_y, J_z)$ | [THEOREM] + [SELECTION] | $\beta_0 = 7$, confinement | DERIV_LATTICE_SU3_GAUGE |
-| SU(2) weak | Ternary doublet $\{+1, -1\}$ | [THEOREM] + [SELECTION] | $\sin^2\theta_W = 3/13$, $G_F$ derived | DERIV_LATTICE_SU2_WEAK |
-| Higgs | Manifestation phase transition | [THEOREM] + [SELECTION] | $v = 246.09$ GeV, $m_H = 124.8$ GeV | DERIV_HIGGS_FROM_MANIFESTATION |
+| SU(2) weak | Ternary doublet $\{+1, -1\}$ | [PARAMETRIC] | $\sin^2\theta_W = 3/13$, $G_F$ derived | DERIV_LATTICE_SU2_WEAK |
+| Higgs | Manifestation phase transition | [STRUCTURALLY MOTIVATED PARAMETRIC] | $v = 246.09$ GeV, $m_H = 124.8$ GeV | DERIV_HIGGS_FROM_MANIFESTATION |
 | Yukawa/masses | Alpha-power formulas from $\{3,4,7,13\}$ | [THEOREM] + [PARAMETRIC] | 20 genuine mass derivations | DERIV_COMPLETE_PARTICLE_PHYSICS, AUDIT_EPISTEMIC_AUDIT |
 | $\theta$-term | Chiral anomaly on lattice | [THEOREM] + [SELECTION] | $\pi^0 \to \gamma\gamma = 7.73$ eV | DERIV_LATTICE_CHIRAL_ANOMALY |
 | Gravity | Born-Infeld $f = 1 - \mathcal{L}^2$ | [THEOREM] + [SELECTION] | Schwarzschild/Kerr/RN exact | DERIV_LATTICE_SCHWARZSCHILD, DERIV_LATTICE_KERR, DERIV_LATTICE_REISSNER_NORDSTROM |
