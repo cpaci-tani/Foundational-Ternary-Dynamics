@@ -1,7 +1,34 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.30
+**Version:** 5.31 (post-audit, 2026-04-19)
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
+**🔑 Start here if resuming:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — single-doc context recovery from the April 19 audit cycle.
+
+---
+
+## Current epistemic state (2026-04-19 evening)
+
+After a 10-commit audit cycle on April 19, the project is in a
+narrowed but defensible state. Do **not** claim results stronger than
+what's listed in `docs/WHERE_WE_LEFT_OFF.md` §4 without re-auditing.
+
+**Firm theorems (5):** G* algebraic identity, master quadratic
+polynomial + roots, CM curve uniqueness among class-number-1 fields,
+Phase G emergent Coulomb = lattice Poisson Green's function at every
+finite L, Phase J partition-function ultralocality.
+
+**[STRONGLY MOTIVATED CONJECTURE]:** x+ = 1/α (1.26 ppm); x− = N_c
+(0.80%); m_e formula (0.19%); m_p/m_e formula (173 ppm).
+
+**[OPEN] (the real research program):** lattice-to-physical-length
+conversion a_phys; first-principles g_c via Mechanism B (lattice-to-
+continuum matching).
+
+**Demoted today:** sin²θ_W (3.5%), sin²θ_13 (12.6%), α_s = 7/59, PMNS
+angles — all now [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
+
+**Foundational commitment:** undefined-boundary lattice ontology (not
+completed-infinity ℤ³). See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`.
 
 ---
 
