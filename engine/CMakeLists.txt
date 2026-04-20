@@ -482,6 +482,12 @@ target_link_libraries(test_eft_matched_poisson ftd_core)
 add_executable(test_phase_h_coupling tests/test_phase_h_coupling.cpp)
 target_link_libraries(test_phase_h_coupling ftd_core)
 
+# Phase I Item 3 Mechanism A — Wilson-loop topology diagnostic.
+# Tests whether the flux field's circulation is quantised (i.e., can
+# topology force g_c?). Expected: no (J is R^3-valued, not U(1)).
+add_executable(test_wilson_topology tests/test_wilson_topology.cpp)
+target_link_libraries(test_wilson_topology ftd_core)
+
 # Sim Pipeline Phase B — CPU-backend pipeline + 3 reference observables
 # Plan: ~/.claude/plans/vivid-marinating-pudding.md Phase B
 add_executable(test_sim_pipeline_cpu sim/tests/test_sim_pipeline_cpu.cpp)
