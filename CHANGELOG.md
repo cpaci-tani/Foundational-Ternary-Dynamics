@@ -1,5 +1,100 @@
 # Foundational Ternary Dynamics Changelog
 
+## Foundational reframe — from completed-infinity to undefined-boundary (April 19, 2026)
+
+**Largest single commitment of the day.** FTD is shifting from "the
+lattice is ℤ³ as a completed-infinity totality" to "the lattice has
+no defined boundary; at every specified position, adjacent sites
+exist, and no claim is made about the lattice's global extent."
+
+### Why this matters
+
+Completed infinity and undefined-boundary are not semantic variants.
+Completed infinity permits operations (global integrals, convergent
+limits, path integrals over ALL configurations, thermodynamic limits,
+RG flow to asymptotic values) that undefined-boundary does not. Under
+the reframe, FTD cannot invoke any of these without explicit finitary
+restatement.
+
+### Portfolio triage (`AUDIT_INFINITY_REFRAME.md`)
+
+Portfolio-wide grep located the load-bearing completed-infinity uses:
+
+**SURVIVES (no change needed):**
+- Master quadratic polynomial + roots (pure algebra)
+- CM curve uniqueness (d=-4 is unique, class-number-1 verified)
+- Moore integers {4, 13, 7}
+- Phase G emergent Coulomb α_r = 2·r·G_L(r) (holds at every finite L)
+- Phase H coupling scaling α_r ∝ g_c² (holds at every L to 0.0000%)
+- Phase J partition function on L=2 (explicit finite computation)
+- Structural null predictions (charge conservation, ∇·B=0, etc.)
+
+**RESTATE (mechanical language edits):**
+- ~dozen `/docs/theory/03_derivations/` files using "in the continuum
+  limit" or "in the L → ∞ limit" stylistically
+- `FOUND_AXIOM_ZERO.md` (remove "ℤ³" as ontological commitment)
+- `DERIV_LATTICE_QED_COMPLETE.md` and similar (restate as finite-L
+  approximation statements)
+
+**RE-DERIVE (technical content changes):**
+- `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` §VI (remove "thermodynamic
+  limit property" framing; master quadratic is algebra, not a limit)
+- `DERIV_PATH_INTEGRAL_CONSTRUCTION.md` §5.2 (restate "N → ∞ for true
+  phase transitions" as finite-N sharp crossovers)
+- `DERIV_VON_NEUMANN_CONSTRUCTION.md` §5 (Type III₁ was already
+  [SELECTION]; reframe makes the tag binding — FTD is Type I at every
+  finite L; Type III₁ is hypothesis, not theorem)
+
+**REFRAME (ontological):**
+- `FOUND_AXIOM_ZERO.md`: restate lattice ontology from "ℤ³ totality"
+  to "pointwise with undefined boundary"
+
+### Consequence for the 3.6× EFT gap
+
+The "L → ∞ convergence" interpretation (Phase F Interpretation B) was
+**never well-posed** under the reframe — it presupposes L → ∞ as a
+meaningful limit object, which the reframe denies. Phase G already
+showed α_r = 2·r·G_L(r) at every finite L with R² = 1.0000, so no
+limit is needed anyway. Interpretation B is now permanently refuted
+at the foundational level, not just empirically.
+
+**Interpretation D (new, replaces B):** Engine is correct at every
+finite L. The framework's axioms should specify at which specific
+finite L the engine's α_r should be compared to α_ref. Equivalently:
+the framework must derive (or declare empirical) the **lattice-to-
+physical-length conversion a_phys** — the ratio between one lattice
+unit and, say, a Planck length. Under the parameter-free commitment,
+a_phys should be derivable from {D=3, ternary, 26-Moore, determinism,
+discrete time}.
+
+### What this costs / what it buys
+
+**Costs:**
+- Standard physics tools (path integrals, thermodynamic limits,
+  continuum QFT) require finitary reformulation
+- Some existing proofs that route through "take the limit" need
+  alternatives or honest [OPEN] flags
+- Review friction with physicists expecting completed-infinity reasoning
+- The Type III₁ consciousness claim drops to hypothesis
+
+**Buys:**
+- Ontological consistency (no controversial completed-infinity
+  commitment)
+- Sharper falsification (a specific L with specific prediction is
+  falsifiable; "convergence in the limit" is not)
+- Cleaner writing (the paper claims what it proves, nothing more)
+
+### Per-document disposition
+
+See `AUDIT_INFINITY_REFRAME.md` §8 for the complete file-level table
+and §7 for prioritized next actions.
+
+### Deliverables
+
+- NEW: `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`
+- UPDATED: `CLAUDE.md` (ontology statement in "What FTD Is")
+- UPDATED: `META_INDEX.md` (row 7.13 registering reframe audit)
+
 ## Phase J — Explicit partition function on L=2 (April 19, 2026)
 
 User requested a derivation from lattice first principles, consulting
