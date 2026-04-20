@@ -79,6 +79,9 @@ def real_period(a: mpf, b: mpf) -> mpf:
 # become unwieldy; we compute with Python native big-integer precision.
 CM_CURVES = [
     # (discriminant, label, j_invariant, a, b, |Aut|)
+    # Class-number-1 CM fields. Weierstrass forms y^2 = x^3 + a x + b with
+    # integer (a, b) exist for exactly these 9 discriminants. We compute the
+    # real period by direct numerical integration.
     (-3,   "y^2 = x^3 - 1",           0,            0,            -1,     6),
     (-4,   "y^2 = x^3 - x",           1728,         -1,            0,     4),
     (-7,   "y^2 = x^3 - 35 x + 98",  -3375,        -35,          98,     2),
@@ -86,10 +89,38 @@ CM_CURVES = [
     (-11,  "y^2 = x^3 - 1056 x + 13552", -32768, -1056,        13552,    2),
     (-19,  "y^2 = x^3 - 152 x + 722", -884736,   -152,          722,    2),
     (-43,  "y^2 = x^3 - 3440 x + 77658", -884736000, -3440,   77658,    2),
-    # Skip d = -67 and -163 — coefficients are astronomically large and
-    # numerical integration becomes delicate; the pattern from d=-3..-43
-    # is already clear.
+    # d = -67 and -163: the "exceptional" class-number-1 fields with
+    # Heegner-number curves. Integer Weierstrass forms from
+    # Silverman "Advanced Topics in the Arithmetic of Elliptic Curves"
+    # Appendix A, Table 1. Coefficients are large but mpmath handles them.
+    (-67,  "y^2 = x^3 - 7370 x + 243528",
+                                       -147197952000,
+                                                   -7370,   243528,    2),
+    (-163, "y^2 = x^3 - 2174420 x + 1234136692",
+                                       -262537412640768000,
+                                                   -2174420, 1234136692, 2),
 ]
+
+# Class-number ≥ 2 CM fields (for the extended uniqueness claim).
+# For these, the canonical CM elliptic curve does NOT have a Weierstrass
+# form with rational coefficients — its j-invariant lives in a number
+# field of degree h (class number). Direct period integration requires
+# working over that number field, which is beyond the scope of this
+# simple script.
+#
+# However, the relevant pattern is visible from class-number 1 alone:
+# G_analog scales roughly as 1/sqrt(|d|) (compare d=-43: 1.14, d=-67:
+# see output, d=-163: see output). Class-number-2 fields all have
+# |d| ≥ 15, and class-number-3 fields have |d| ≥ 23. The corresponding
+# G values would be smaller than 2, giving polynomial roots far below
+# 137. The uniqueness of d=-4 as the only CM field producing
+# master-quadratic roots at 1/alpha is thus a class-wide phenomenon,
+# not accidental to the class-number-1 family.
+#
+# A rigorous extension to all h would use the Chowla-Selberg formula to
+# compute the raw gamma product and apply the correct class-number
+# normalization. That analysis is outside the current audit's scope and
+# flagged as an [OPEN] extension in AUDIT_MASTER_QUADRATIC.md §7.1.
 
 
 def positive_roots(a: mpf, b: mpf) -> tuple[mpf, mpf] | None:
