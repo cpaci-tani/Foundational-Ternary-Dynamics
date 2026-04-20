@@ -787,8 +787,8 @@ WHAT WOULD MAKE THIS WORK:
    (E.g., the 12-neighbor Laplacian mixes components in a way
    that the 6-neighbor Laplacian does not.)
 
-2. Show that the continuum limit of the FCC lattice theory has
-   su(2) x su(2) observable algebra with the correct normalization.
+2. Show that, in the long-wavelength regime |p| << pi, the FCC lattice
+   theory has su(2) x su(2) observable algebra with the correct normalization.
 
 3. Demonstrate S > 2 in an FCC lattice simulation with a
    measurement protocol that exploits the cuboctahedral geometry.

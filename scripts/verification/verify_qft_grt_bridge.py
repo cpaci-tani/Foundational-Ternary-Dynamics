@@ -91,7 +91,7 @@ KX, KY, KZ = np.meshgrid(kx, ky, kz, indexing='ij')
 lam_3d = 2.0 * (3.0 - np.cos(KX) - np.cos(KY) - np.cos(KZ))
 
 # The Euclidean propagator is defined as G_E(k) = 1/lambda(k)
-# The continuum limit should give 1/k^2
+# The long-wavelength regime |k| << pi should give 1/k^2
 # Test at several small-k points
 test_indices = [(1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (1, 1, 1)]
 max_rel_error = 0.0
@@ -107,9 +107,9 @@ record("QB-T1: Euclidean propagator = lattice Green's function",
        max_rel_error < 0.02,
        f"lambda(k) vs k^2: max relative error = {max_rel_error:.4f} at small k")
 
-# QB-T2: 4D Euclidean propagator continuum limit
+# QB-T2: 4D Euclidean propagator long-wavelength regime
 # G_E^(4)(k) = 1/[2(4 - cos k_tau - cos k_x - cos k_y - cos k_z)]
-# Continuum limit: 1/k_E^2 where k_E^2 = k_tau^2 + k_x^2 + k_y^2 + k_z^2
+# Long-wavelength regime |k| << pi: 1/k_E^2 where k_E^2 = k_tau^2 + k_x^2 + k_y^2 + k_z^2
 N4 = 32  # smaller lattice for 4D (memory)
 k4 = 2 * np.pi * np.fft.fftfreq(N4, d=1.0)
 KT, KX4, KY4, KZ4 = np.meshgrid(k4, k4, k4, k4, indexing='ij')
@@ -126,7 +126,7 @@ for idx in test_4d:
         rel_err = abs(lam_val - k_sq_val) / k_sq_val
         max_4d_err = max(max_4d_err, rel_err)
 
-record("QB-T2: 4D Euclidean propagator continuum limit -> 1/k_E^2",
+record("QB-T2: 4D Euclidean propagator long-wavelength regime -> 1/k_E^2",
        max_4d_err < 0.02,
        f"4D lambda(k) vs k_E^2: max relative error = {max_4d_err:.4f}")
 
@@ -153,7 +153,7 @@ record("QB-T3: Wick rotation pole at w^2 = omega_k^2",
        pole_err < 0.01,
        f"Pole w^2 = {w_pole_sq:.6f}, dispersion w_k^2 = {omega_k_sq:.6f}, error = {pole_err:.4e}")
 
-# QB-T4: Feynman propagator in continuum limit
+# QB-T4: Feynman propagator in long-wavelength regime
 # For small w, k: G_M -> 1/(w^2 - C^2 k^2)
 # Test at an OFF-SHELL point where the propagator is finite
 # Compare lattice and continuum propagator values
@@ -170,7 +170,7 @@ denom_continuum = k_small**2 - omega_off**2
 
 feynman_err = abs(denom_lattice - denom_continuum) / abs(denom_continuum)
 
-record("QB-T4: Feynman propagator 1/(w^2-k^2) in continuum limit",
+record("QB-T4: Feynman propagator 1/(w^2-k^2) in long-wavelength regime",
        feynman_err < 0.01,
        f"Lattice denom = {denom_lattice:.6e}, continuum = {denom_continuum:.6e}, "
        f"rel error = {feynman_err:.4e}")
@@ -227,7 +227,7 @@ theta_vals = np.linspace(0.4, np.pi - 0.2, 8)
 f_vals = []
 for theta in theta_vals:
     q = 2 * k_inc * np.sin(theta / 2)
-    # Lattice: q^2 is the continuum limit of lambda(q) for small q
+    # Lattice: q^2 is the long-wavelength limit of lambda(q) for small q
     f_theta = -2 * m_test * ALPHA / q**2
     f_vals.append(abs(f_theta)**2)
 

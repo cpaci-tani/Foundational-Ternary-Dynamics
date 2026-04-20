@@ -1,9 +1,9 @@
 # Continuum Limit Equivalence: FTD U(1) → QED with $g_c = e$
 
-## Promoting $x_+ = 1/\alpha$ from [SELECTION] to Conditional [THEOREM]
+## $x_+ = 1/\alpha$ — argument structure under reframe
 
-**Date:** 2026-04-14
-**Status:** Conditional [THEOREM] (conditions made explicit in Part V)
+**Date:** 2026-04-14 (status revised 2026-04-19)
+**Status (per LEDGER 2026-04-19):** $x_+ = 1/\alpha$ is **[STRONGLY MOTIVATED CONJECTURE] (FTD-0013)**. The "promotion to conditional [THEOREM]" framing below relies on an L → ∞ continuum limit which, under the undefined-boundary reframe, is not a well-posed load-bearing step (cf. FTD-0032 retraction). The structural identification (Wilson two-phase + UV rigidity) survives as supporting evidence; the *physical identification* itself is not promoted to theorem-status by this argument.
 **Closes (modulo stated conditions):** the residual fine-spacing-recovery gap left open by [DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](DERIV_ALPHA_FROM_PHASE_STRUCTURE.md)
 **Companion:** [DERIV_LATTICE_QED_COMPLETE.md](DERIV_LATTICE_QED_COMPLETE.md)
 
@@ -109,7 +109,7 @@ Assume:
 Then:
 1. FTD lattice observables at $x_+$ converge to those of QED for arbitrarily fine spacing $a$, with error $O(a^p)$.
 2. The FTD bare coupling $g_c$ is operationally identical to the elementary electric charge $e$ (Heaviside-Lorentz: $g_c^2 = 4\pi\alpha = e^2$).
-3. **$x_+ = 1/\alpha$ is a [THEOREM]**, conditional on (C1)–(C5).
+3. **$x_+ = 1/\alpha$** — per LEDGER 2026-04-19, this remains **[STRONGLY MOTIVATED CONJECTURE] (FTD-0013)** even granting (C1)–(C5), because the L → ∞ step is not a well-posed load-bearing operation under undefined-boundary ontology. The structural argument here strengthens the conjecture but does not promote it to theorem.
 
 **Proof sketch.**
 By (C1) + (C2) + (C3) + (C4), FTD lattice observables at $x_+$ converge to those of QED with bare coupling $\alpha_{\text{FTD}} = 1/x_+$ at lattice scale $a_{\text{FTD}}$, with error $O(a^p)$ in spacing. By (C5) (Lemma IV.1), $\alpha_{\text{FTD}}$ is a fixed number. By Lemma IV.2, the unique scale at which the Coulomb-phase QED coupling equals $1/x_+ = 1/137.036$ is the Thomson scale (up to $\sim 10^{-5}$ logarithmic running below the electron threshold). Therefore the operational identification of $g_c$ with $e$ is forced by the structure of the RG flow, not chosen by hand. $\square$
@@ -124,9 +124,9 @@ By (C1) + (C2) + (C3) + (C4), FTD lattice observables at $x_+$ converge to those
 | Wilson two-phase structure | [THEOREM] (Wilson 1974) | unchanged |
 | $x_+$ = Coulomb-phase root | [THEOREM] (gap equation) | unchanged |
 | Coulomb-phase fine-spacing convergence to free Maxwell | [THEOREM] (standard LGT) | unchanged |
-| FTD lattice observables converge to QED for arbitrarily fine spacing | [SELECTION] (gap in the chain) | **conditional [THEOREM]** (V.1) |
-| **$x_+ = 1/\alpha$** | **[SELECTION]** | **conditional [THEOREM]** (V.1) |
-| $g_c = e$ operationally | [SELECTION] | **conditional [THEOREM]** (V.1) |
+| FTD lattice observables converge to QED for arbitrarily fine spacing | [SELECTION] (gap in the chain) | **[STRONGLY MOTIVATED CONJECTURE]** (L → ∞ not well-posed under reframe) |
+| **$x_+ = 1/\alpha$** | **[SELECTION]** | **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0013) |
+| $g_c = e$ operationally | [SELECTION] | **[STRONGLY MOTIVATED CONJECTURE]** |
 | $\alpha_{\text{FTD}} = \alpha_{\text{Thomson}}$ as a *number* | empirical observation | forced by UV-scale rigidity + master quadratic |
 | $G^{*2} = 2\pi W_3^{\text{FTD}}$ as the *lattice self-energy* | [CONJECTURE]/[SELECTION] | **remains [CONJECTURE]** (interpretive); the *algebraic* identity is [THEOREM] but $W_3^{\text{FTD}}$ is not the standard cubic-lattice Watson integral |
 

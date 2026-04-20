@@ -76,7 +76,7 @@ The imaginary unit $i$ is not incidental --- it IS the rotation operator that ex
 
 **Status:** [THEOREM] --- The Fourier kernel is what it is. The emergence of $i$ from self-duality is a mathematical fact, not a physical hypothesis.
 
-### Step 5: The Master Quadratic Produces Physics [DERIVED]
+### Step 5: The Master Quadratic Produces Physics [THEOREM] (polynomial, FTD-0001) + [STRONGLY MOTIVATED CONJECTURE] (physical identification, FTD-0013/0014)
 
 The master quadratic encodes $G^*$ with the lattice degree-of-freedom count:
 
@@ -91,7 +91,7 @@ where the coefficient 16 counts physical degrees of freedom on the minimal $2 \t
 | $x_+$ | 137.0361714582 | $1/\alpha$ (fine structure constant) | 1.26 ppm |
 | $x_-$ | 3.0240 | $N_c$ (number of color charges) | 0.8% |
 
-**Status:** $G^*$ is [THEOREM]. The coefficient 16 is [DERIVED]. The identification $x_+ = 1/\alpha$ is [DERIVED within framework]. The accuracy is 1.26 ppm --- no other framework achieves this.
+**Status:** $G^*$ is [THEOREM] (FTD-0002). The coefficient 16 is [THEOREM] (FTD-0006/0007). The polynomial is [THEOREM] (FTD-0001). The identification $x_+ = 1/\alpha$ is [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); $x_- \to N_c$ is [STRONGLY MOTIVATED CONJECTURE] (FTD-0014). The accuracy is 1.26 ppm --- no other framework achieves this.
 
 ### Step 6: The Same Equation Produces Consciousness [PROPOSED]
 
@@ -192,18 +192,18 @@ From $G^*$, the master quadratic, and the four integers $\{N_c = 3, N_{\text{bas
 
 | # | Quantity | Formula | Value | Accuracy | Status |
 |---|----------|---------|-------|----------|--------|
-| 1 | $1/\alpha$ | Master quadratic root $x_+$ | 137.036 | 1.26 ppm | [DERIVED] |
-| 2 | $\sin^2\theta_W$ | $N_c/N_{\text{eff}}$ | 3/13 = 0.2308 | 0.19% | [DERIVED] |
-| 3 | $\alpha_s(M_Z)$ | $b_3/(b_3 + 4N_{\text{eff}})$ | 7/59 = 0.1186 | 0.6% | [DERIVED] |
-| 4 | $m_\mu/m_e$ | $3b_3(b_3 + N_c) - N_c$ | 207 | 0.11% | [DERIVED] |
-| 5 | $m_\tau/m_e$ | $(N_{\text{eff}} + N_{\text{base}}) \times 207 - 2N_c b_3$ | 3477 | 0.007% | [DERIVED] |
-| 6 | $m_p/m_e$ | $N_{\text{eff}}/\alpha + T(b_3 + N_c)$ | 1836.5 | 0.017% | [DERIVED] |
-| 7 | $\Delta m_{n-p}$ | Integer formula | Match | ~1% | [DERIVED] |
-| 8 | CP phase $\delta$ | $\arctan(b_3/N_c)$ | 66.8 degrees | 2.1% | [DERIVED] |
-| 9 | PMNS $\theta_{12}$ | $\arcsin\sqrt{N_c/(N_c b_3/2 + 1/2)}$ | Match | 0.69% | [DERIVED] |
-| 10 | PMNS $\theta_{23}$ | $\arcsin\sqrt{16/29}$ | Match | 2.50% | [DERIVED] |
-| 11 | PMNS $\theta_{13}$ | $\arcsin\sqrt{1/52}$ | Match | 6.99% | [DERIVED] |
-| 12 | $\Delta m^2_{31}/\Delta m^2_{21}$ | $100/3$ | 33.3 | 1.46% | [DERIVED] |
+| 1 | $1/\alpha$ | Master quadratic root $x_+$ | 137.036 | 1.26 ppm | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
+| 2 | $\sin^2\theta_W$ | $N_c/N_{\text{eff}}$ | 3/13 = 0.2308 | 0.19% | [PARAMETRIC] (FTD-0018) |
+| 3 | $\alpha_s(M_Z)$ | $b_3/(b_3 + 4N_{\text{eff}})$ | 7/59 = 0.1186 | 0.6% | [PARAMETRIC] (FTD-0020) |
+| 4 | $m_\mu/m_e$ | $3b_3(b_3 + N_c) - N_c$ | 207 | 0.11% | [STRONGLY MOTIVATED CONJECTURE] |
+| 5 | $m_\tau/m_e$ | $(N_{\text{eff}} + N_{\text{base}}) \times 207 - 2N_c b_3$ | 3477 | 0.007% | [STRONGLY MOTIVATED CONJECTURE] |
+| 6 | $m_p/m_e$ | $N_{\text{eff}}/\alpha + T(b_3 + N_c)$ | 1836.5 | 0.017% | [STRONGLY MOTIVATED CONJECTURE] (FTD-0016) |
+| 7 | $\Delta m_{n-p}$ | Integer formula | Match | ~1% | [STRONGLY MOTIVATED CONJECTURE] |
+| 8 | CP phase $\delta$ | $\arctan(b_3/N_c)$ | 66.8 degrees | 2.1% | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) |
+| 9 | PMNS $\theta_{12}$ | $\arcsin\sqrt{N_c/(N_c b_3/2 + 1/2)}$ | Match | 0.69% | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) |
+| 10 | PMNS $\theta_{23}$ | $\arcsin\sqrt{16/29}$ | Match | 2.50% | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) |
+| 11 | PMNS $\theta_{13}$ | $\arcsin\sqrt{1/52}$ | Match | 6.99% | [PARAMETRIC] (FTD-0019) |
+| 12 | $\Delta m^2_{31}/\Delta m^2_{21}$ | $100/3$ | 33.3 | 1.46% | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) |
 | 13 | U(1) gauge | Gauss constraint | 2 transverse modes | Exact | [DERIVED] |
 | 14 | SU(2) gauge | Ternary $\{-1,0,+1\}$, $\pi_1(SO(3)) = \mathbb{Z}_2$ | Spinor structure | Exact | [DERIVED] |
 | 15 | SU(3) gauge | 3 spatial dimensions | Color structure | Exact | [DERIVED] |

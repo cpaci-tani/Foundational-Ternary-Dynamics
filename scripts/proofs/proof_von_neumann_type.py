@@ -592,30 +592,30 @@ def test_entropy_coarse_graining(suite):
 
 
 # =========================================================================
-# Section 7: Araki-Woods and the thermodynamic limit
+# Section 7: Araki-Woods for arbitrarily large volume
 # =========================================================================
 
 def test_araki_woods(suite):
     """
-    [SELECTION] In the infinite-volume limit (Lambda -> Z^3), the
-    quasi-local algebra A = otimes_{x in Z^3} M_3(C) with a faithful
+    [SELECTION] For arbitrarily large volume (Lambda growing without bound), the
+    quasi-local algebra A = otimes_{x in Lambda} M_3(C) with a faithful
     normal state (not a trace state) gives a Type III_1 factor via the
     Araki-Woods theorem.
 
-    This cannot be verified numerically (infinite-dimensional), but we
-    can verify the preconditions on finite systems and check consistency.
+    This cannot be verified numerically (requires arbitrarily many tensor factors),
+    but we can verify the preconditions on finite systems and check consistency.
 
     Preconditions for Araki-Woods:
     1. Single-site algebra is M_n with n >= 2 (we have n=3)
     2. State is a product state with non-maximally-mixed density
-    3. Infinite tensor product
+    3. Arbitrarily large tensor product
 
     We verify (1) and (2) on finite lattices, and note that (3)
-    is the thermodynamic limit.
+    is the large-volume regime.
     """
-    print("\n--- Section 7: Araki-Woods Theorem (Thermodynamic Limit) ---")
-    print("  [SELECTION] The infinite-volume classification requires")
-    print("  the thermodynamic limit, which cannot be verified numerically.")
+    print("\n--- Section 7: Araki-Woods Theorem (Large-Volume Regime) ---")
+    print("  [SELECTION] The large-volume classification requires")
+    print("  arbitrarily large lattices, which cannot be verified numerically.")
     print("  We verify the preconditions hold on finite lattices.")
 
     # Precondition 1: single-site algebra is M_3, n=3 >= 2
@@ -690,8 +690,8 @@ def test_araki_woods(suite):
 def test_type_transition(suite):
     """
     [SELECTION] The FTD manifestation rule s = sign(J . n_hat) effects
-    a transition from the continuous flux algebra (Type III_1 in the
-    thermodynamic limit) to the discrete state algebra (Type I on finite
+    a transition from the continuous flux algebra (Type III_1 for arbitrarily
+    large volume) to the discrete state algebra (Type I on finite
     lattices).
 
     We verify the structural features:
@@ -817,7 +817,7 @@ def main():
     # Section 6: Entropy under coarse-graining
     test_entropy_coarse_graining(suite)
 
-    # Section 7: Araki-Woods (thermodynamic limit)
+    # Section 7: Araki-Woods (large-volume regime)
     test_araki_woods(suite)
 
     # Section 8: Type III_1 -> Type I transition
@@ -838,7 +838,7 @@ def main():
         print("    - Partial trace is a valid conditional expectation")
         print("    - Sign function projects R -> {-1, 0, +1} (ternary coarse-graining)")
         print("    - Entropy increases under coarse-graining")
-        print("\n  In the thermodynamic limit (Lambda -> Z^3):")
+        print("\n  For arbitrarily large volume (Lambda growing without bound):")
         print("    [SELECTION] Araki-Woods gives Type III_1 for the flux algebra")
         print("    [SELECTION] The sign/ReLU manifestation rule effects")
         print("    the Type III_1 -> Type I transition (algebraic collapse)")

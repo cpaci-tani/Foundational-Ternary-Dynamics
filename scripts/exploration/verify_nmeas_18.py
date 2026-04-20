@@ -86,7 +86,7 @@ print()
 # - n_DOF depends on the cluster
 # - W(N) depends on the cluster's Green's function
 
-# For the full infinite lattice: n_DOF = 16, W = W3, K = 16*G*^2
+# For the full cubic lattice (large-L regime): n_DOF = 16, W = W3, K = 16*G*^2
 # For a cluster of N voxels: both n_DOF(N) and W(N) change
 
 # On a cluster of N voxels:

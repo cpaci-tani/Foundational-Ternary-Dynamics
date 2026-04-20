@@ -59,11 +59,11 @@ for i in range(N_sites):
 
 G_at_origin = G[0, 0]
 print(f"\nGreen's function at origin G(0) = {G_at_origin:.6f}")
-print(f"  (Compare: infinite lattice G(0) = 0.2527...)")
+print(f"  (Compare: cubic lattice G(0) = 0.2527... in large-L regime)")
 
-# Watson integral I_3 (SC) for infinite lattice
-W3_SC_inf = 0.505462  # 2 * G(0)_infinite = 2 * 0.2527
-print(f"  Watson I_3 (SC, infinite) = {W3_SC_inf:.6f}")
+# Watson integral I_3 (SC) for cubic lattice (large-L regime)
+W3_SC_inf = 0.505462  # 2 * G(0)_largeL = 2 * 0.2527
+print(f"  Watson I_3 (SC, large-L) = {W3_SC_inf:.6f}")
 print(f"  G* = 2.9587, G*^2/(2*pi) = {2.9587**2/(2*np.pi):.6f}")
 
 # =====================================================
@@ -304,7 +304,7 @@ print(f"G(0) on L=2 torus: {G_at_origin:.6f}")
 print(f"G(0) * N_phys(16) = {G_at_origin * 16:.6f}")
 print(f"G(0) * N_phys(14) = {G_at_origin * 14:.6f}")
 
-# If K = 16 * (2π * W₃) on infinite lattice:
+# If K = 16 * (2π * W₃) on the cubic lattice (large-L regime):
 # On L=2 torus, what's the equivalent?
 K_L2_16 = 16 * G_at_origin  # using torus G(0)
 K_L2_14 = 14 * G_at_origin

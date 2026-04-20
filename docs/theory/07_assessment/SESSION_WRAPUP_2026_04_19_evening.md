@@ -28,8 +28,8 @@
 | File | Role |
 |---|---|
 | `dissemination/manuscript_v2/PROPAGATION_RULE.md` | Authoritative manuscript propagation rule |
-| `docs/theory/07_assessment/TRACKER_PDF_ONLY_PAPERS.md` | 13 PDF-only papers triage |
-| `docs/theory/07_assessment/REDERIVE_REPORT_YM_NS.md` | Yang-Mills + Navier-Stokes assessment |
+| `docs/theory/07_assessment/archive_session_outputs/TRACKER_PDF_ONLY_PAPERS.md` | 13 PDF-only papers triage |
+| `docs/theory/07_assessment/archive_session_outputs/REDERIVE_REPORT_YM_NS.md` | Yang-Mills + Navier-Stokes assessment |
 | `docs/theory/07_assessment/SESSION_WRAPUP_2026_04_19_evening.md` | This file |
 
 ### Files modified (Session 2)
@@ -52,7 +52,7 @@
 | `docs/papers/src/FTD_Discrete_Continuous_Bridge.tex` | Lattice-spacing-to-zero rewritten finitarily |
 | `docs/papers/speculative/FTD_Finitude_Theorem.tex` | Canonical-status preamble added |
 | `docs/papers/README.md` | YM/NS/Riemann/Finitude entries updated with post-reframe status |
-| `docs/theory/07_assessment/TRACKER_REFRAME_FLAGS.md` | All 5 rows marked RESOLVED |
+| `docs/theory/07_assessment/archive_session_outputs/TRACKER_REFRAME_FLAGS.md` | All 5 rows marked RESOLVED |
 | `docs/theory/07_assessment/LEDGER.md` | FTD-0030 + FTD-0034 RESOLVED; new rows FTD-0041 → FTD-0045 |
 | `docs/theory/07_assessment/CHANGELOG_REFRAME.md` | Session 2 entry appended |
 | `docs/theory/META_INDEX.md` | 4 new rows (7.27 → 7.30) |

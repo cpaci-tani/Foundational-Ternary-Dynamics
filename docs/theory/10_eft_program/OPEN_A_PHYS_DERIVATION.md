@@ -78,7 +78,7 @@ This fallback **does not weaken FTD's claims about dimensionless quantities**. I
 
 ## 5 · Connection to the 3.6× α plateau
 
-The EFT recovery program reports α_∞ ≈ 3.6 × α_ref across L ∈ {64, 128, 256, 384}. Two interpretations remain on the table once "engine wrong at finite L, fixed by L → ∞" is excluded by the position-property axiom:
+The EFT recovery program reports α_largeL ≈ 3.6 × α_ref across L ∈ {64, 128, 256, 384}. Two interpretations remain on the table once "engine wrong at finite L, fixed by L → ∞" is excluded by the position-property axiom:
 
 - **A:** Engine right, dictionary wrong (`a_phys` miscalibration)
 - **C:** α_ref isn't the right target; the engine is predicting some other dimensional quantity

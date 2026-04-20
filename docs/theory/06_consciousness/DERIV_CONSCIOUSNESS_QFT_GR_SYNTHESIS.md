@@ -130,14 +130,14 @@ The physics derivation chain has been extensively documented. We summarize with 
 
 | Result | Derivation | Status | Reference |
 |--------|-----------|--------|-----------|
-| $\alpha = 1/x_+ = 1/137.036$ | Master quadratic root | [THEOREM] | MATH_MASTER_QUADRATIC.md |
-| $N_c = \lfloor x_- \rfloor = 3$ | Master quadratic root | [THEOREM] | MATH_MASTER_QUADRATIC.md |
+| $\alpha = 1/x_+ = 1/137.036$ | Master quadratic root | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) | MATH_MASTER_QUADRATIC.md |
+| $N_c = \lfloor x_- \rfloor = 3$ | Master quadratic root | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) | MATH_MASTER_QUADRATIC.md |
 
 ### 2.2 Framework Integers
 
 | Integer | Value | Derivation | Status | Reference |
 |---------|-------|-----------|--------|-----------|
-| $N_c$ | 3 | $\lfloor x_- \rfloor$ | [THEOREM] | Master quadratic |
+| $N_c$ | 3 | $\lfloor x_- \rfloor$ | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) | Master quadratic |
 | $N_{\text{base}}$ | 4 | $N_c^2 - N_c - 2$ | [THEOREM] | DERIV_PION_MASS_FROM_GSTAR.md |
 | $b_3$ | 7 | $N_c^2 - 2 = N_c + N_{\text{base}}$ | [THEOREM] | DERIV_PION_MASS_FROM_GSTAR.md |
 | $N_{\text{eff}}$ | 13 | $b_3 + 2N_c$ | [THEOREM] | DERIV_PION_MASS_FROM_GSTAR.md |
@@ -149,7 +149,7 @@ The physics derivation chain has been extensively documented. We summarize with 
 | U(1) from Gauss constraint | Flux divergence constraint $\to$ 2 transverse modes | [THEOREM] | DERIV_FORCE_EMERGENCE.md |
 | SU(2) from ternary doublet | $\{+1, -1\}$ $\to$ weak isospin | [THEOREM] | DERIV_LATTICE_SU2_WEAK.md |
 | SU(3) from spatial axes | $(J_x, J_y, J_z) \leftrightarrow (r,g,b)$ | [THEOREM/SELECTION] | DERIV_LATTICE_SU3_GAUGE.md |
-| $\sin^2\theta_W = 3/13$ | $N_c/N_{\text{eff}}$ | [THEOREM] | DERIV_LATTICE_SU2_WEAK.md |
+| $\sin^2\theta_W = 3/13$ | $N_c/N_{\text{eff}}$ | [PARAMETRIC] (FTD-0018) | DERIV_LATTICE_SU2_WEAK.md |
 
 ### 2.4 Mass Hierarchy
 
@@ -186,8 +186,8 @@ The substitution $e^2 = 1/x$ transforms the master quadratic into the **charge q
 
 | Root | Value | Status | ID |
 |------|-------|--------|-----|
-| $e^2_{\text{EM}} = 1/x_+$ | 0.00730 | [THEOREM] | EM charge squared ($\alpha$) |
-| $e^2_C = 1/x_-$ | 0.3307 | [THEOREM] | Color charge scale squared |
+| $e^2_{\text{EM}} = 1/x_+$ | 0.00730 | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) | EM charge squared ($\alpha$) |
+| $e^2_C = 1/x_-$ | 0.3307 | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) | Color charge scale squared |
 
 **Charge-space Vieta relations** [THEOREM]:
 
@@ -408,8 +408,8 @@ Both are Type III $\to$ Type I transitions mediated by $G^*$. They differ only i
 | 1 | $G^*$ from FTD axioms | [THEOREM] | MATH_MASTER_QUADRATIC.md |
 | 2 | $k = 16$ from lattice DoF | [THEOREM] | SPEC_THE_COMPLETE_PROOF_RIGOROUS.md |
 | 3 | Discriminant partitions into 3 domains | [THEOREM] | Section 1.2 above |
-| 4 | $x_+ = 1/\alpha = 137.036$ | [THEOREM] | Master quadratic |
-| 5 | $x_- \to N_c = 3$ | [THEOREM] | Master quadratic |
+| 4 | $x_+ = 1/\alpha = 137.036$ | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) | Master quadratic |
+| 5 | $x_- \to N_c = 3$ | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) | Master quadratic |
 | 6 | All 4 integers from $N_c$ | [THEOREM] | DERIV_PION_MASS_FROM_GSTAR.md |
 | 7 | Full gauge group SU(3)×SU(2)×U(1) | [THEOREM/SELECTION] | Multiple DERIV docs |
 | 8 | Path integral, Feynman rules, loops | [THEOREM] | DERIV_PATH_INTEGRAL_CONSTRUCTION.md |

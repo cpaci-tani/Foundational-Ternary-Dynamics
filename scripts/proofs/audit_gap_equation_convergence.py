@@ -3,8 +3,8 @@
 audit_gap_equation_convergence.py  —  Phase I Item 1.
 
 Audits the claim (DERIV_MASTER_QUADRATIC_GAP_EQUATION.md §VI) that:
-  "The gap equation roots converge to the master quadratic roots as
-   L → ∞ (verified numerically, proof_gap_equation_scaling.py)."
+  "The gap equation roots converge to the master quadratic roots
+   for arbitrarily large L (verified numerically, proof_gap_equation_scaling.py)."
 
 The existing script `proof_gap_equation_scaling.py` claims convergence but
 its own output shows the error reaches a MINIMUM at L=12 (1.05) and then
@@ -13,11 +13,11 @@ auto-generated "O(1/L)" summary line.
 
 This audit does three things:
 
-  (A) Verify the master quadratic's L=∞ status independently. The identity
-      W_3 = G*²/(2π) (Borwein-Bailey 2003) is a theorem about the infinite-
+  (A) Verify the master quadratic's large-L status independently. The identity
+      W_3 = G*²/(2π) (Borwein-Bailey 2003) is a theorem about the cubic-
       lattice Watson integral. That identity, combined with |Aut(E_i)|² = 16
       and the gap-equation form x = K(1 − G*/x), gives the master quadratic
-      AS AN EXACT STATEMENT IN THE INFINITE-LATTICE LIMIT. This is a real
+      AS AN EXACT STATEMENT FOR ARBITRARILY LARGE L. This is a real
       [THEOREM], independent of any finite-L numerical check.
 
   (B) Compute the lattice Watson integral W_3(L) = (1/L³) Σ_{k≠0} 1/k̂²
@@ -85,7 +85,7 @@ def gap_equation_root(W3_eff: float) -> tuple[float, float]:
 
 def main() -> None:
     print("=" * 78)
-    print("  PHASE I ITEM 1  —  Audit of gap-equation L → ∞ convergence")
+    print("  PHASE I ITEM 1  —  Audit of gap-equation convergence for arbitrarily large L")
     print("=" * 78)
     print(f"\n  Theoretical W_3 = G*²/(2π) = {float(W_3_THEORY):.10f}   (Borwein-Bailey 2003)")
     print(f"  Master quadratic root x+    = {float(X_PLUS_ANALYTIC):.10f}   (exact algebra)")
@@ -118,16 +118,16 @@ def main() -> None:
     print("  INTERPRETATION")
     print("=" * 78)
     print("""
-  (A) The master quadratic's L=∞ status:
+  (A) The master quadratic's large-L status:
       W_3 = G*²/(2π) is a proven identity (Borwein-Bailey 2003). Combined
       with |Aut(E)|² = 16 and the self-consistency form
       x² = K(1 − G*/x) · x, the master quadratic x² − 16G*²x + 16G*³ = 0
-      is EXACT in the infinite-lattice limit. This is a [THEOREM] and does
+      is EXACT for arbitrarily large L. This is a [THEOREM] and does
       not depend on any finite-L numerical check.
 
   (B) Does the finite-L lattice sum converge to W_3_theory = G*²/(2π)?
       NO, not with the naïve convention used here. The lattice sum
-      (1/L³) Σ 1/(2(3 − Σ cos k_i)) converges as L → ∞, but to a limit
+      (1/L³) Σ 1/(2(3 − Σ cos k_i)) converges for arbitrarily large L, but to a limit
       (~0.2515 by L = 128) that is NOT equal to G*²/(2π) = 1.3932.
       The ratio settles at about 0.180 — a factor of ~5.5 off from the
       claimed identity. The standard 3D Watson integral itself is
@@ -136,7 +136,7 @@ def main() -> None:
 
   (C) Does a finite-L gap-equation root converge to 137.036?
       NO, not with this substitution. Using W_3(L) in the self-
-      consistency equation gives x+(L) asymptoting to ~21.8 as L → 128,
+      consistency equation gives x+(L) asymptoting to ~21.8 by L = 128,
       nowhere near 137. The identity G*²/(2π) ≈ 1.3932 that FTD calls
       "W_3" is NOT the same object as the classical Watson integral.
 
@@ -144,11 +144,11 @@ def main() -> None:
   - The master quadratic as ALGEBRA is a theorem: x² − 16G*²x + 16G*³ = 0
     has roots 137.036 and 3.024, with G* = Γ(1/4)/Γ(3/4). No lattice
     computation is needed to establish this.
-  - The claim that this polynomial is the L → ∞ limit of a specific
-    finite-lattice gap equation on ℤ³ is NOT verified by any numerical
+  - The claim that this polynomial characterizes the large-L behavior of a specific
+    finite-lattice gap equation on the cubic lattice is NOT verified by any numerical
     scan we have been able to run. Two independent scripts with
     different conventions both fail to produce the master quadratic
-    root in the L → ∞ limit:
+    root for arbitrarily large L:
       * proof_gap_equation_scaling.py   → error MINIMUM at L=12, then
         divergence to ~10 absolute units at L=64 (the script's own
         data contradicts its "converges as O(1/L)" summary line)
@@ -164,7 +164,7 @@ def main() -> None:
 
   None of this collapses the master quadratic's ALGEBRAIC identity (the
   polynomial and its roots are mathematically exact). But the PHYSICAL
-  narrative that the master quadratic arises as the L → ∞ limit of a
+  narrative that the master quadratic characterizes the large-L behavior of a
   specific lattice gap equation is UNSUBSTANTIATED by current
   numerical work.
 """)

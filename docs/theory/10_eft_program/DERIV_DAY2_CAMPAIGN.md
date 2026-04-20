@@ -342,14 +342,14 @@ cancellation regime at that lattice size, not the Coulomb plateau.)
 
 **Three candidate scaling laws fit to the 4 points:**
 
-| Fit | α_∞ | ratio to α_ref | R² |
+| Fit | α_largeL | ratio to α_ref | R² |
 |---|---|---|---|
 | 1/L (Coulomb-periodic-box) | 0.02640 | **3.62×** | 0.67 |
 | 1/L² (lattice-dispersion) | 0.02730 | 3.74× | 0.50 |
 | Free 1/L^p, best p = 0.5 | 0.02446 | 3.35× | 0.77 |
 
 **The extrapolation is insensitive to the choice of scaling law**:
-all three laws give α_∞ ∈ [3.35, 3.74] × α_ref. This is a
+all three laws give α_largeL ∈ [3.35, 3.74] × α_ref. This is a
 *plateau*, not a convergence. The data simply settles near
 α ≈ 0.026-0.027 and stops moving.
 
@@ -368,7 +368,7 @@ code path to compare to α_ref.
 
 **FTD's V(r)-extracted coupling, measured in the Coulomb-tail regime
 at r ≈ L/3 across L ∈ {64, 128, 256, 384}, extrapolates (1/L fit) to
-an engine-convention value α_∞ ≈ 0.026 = 3.6 × α_ref.**
+an engine-convention value α_largeL ≈ 0.026 = 3.6 × α_ref.**
 
 **Caveat — convention factor of 2.** The engine's `field_energy`
 accumulator is `Σ|J|²` with no ½ prefactor, whereas the classical
@@ -377,7 +377,7 @@ electromagnetic field energy is `(½)Σ|E|²`. Because V(r) is formed as
 the engine's no-½ weight, so the engine's measured V(r) is exactly 2×
 the classical-convention interaction energy. Under the classical
 convention the continuum-extrapolated plateau is
-**α_∞(classical) ≈ 0.013 ≈ 1.8 × α_ref**.
+**α_largeL(classical) ≈ 0.013 ≈ 1.8 × α_ref**.
 
 What is unambiguous from the data:
 
@@ -446,7 +446,7 @@ artefacts? Candidates:
 ### What changed in the manuscript
 
 The original abstract/§8 of `PAPER_FTD_AS_WILSONIAN_EFT.tex` claimed
-α_∞ = 1.23× α_ref from a 1/L fit on three under-equilibrated
+α_largeL = 1.23× α_ref from a 1/L fit on three under-equilibrated
 r_max points. **That number is retracted.** The Phase-F 4-point
 plateau is **1.8–3.6× α_ref** depending on energy convention (see
 `AUDIT_ALPHA_EXTRACTION.md`), and the paper now cites this range with

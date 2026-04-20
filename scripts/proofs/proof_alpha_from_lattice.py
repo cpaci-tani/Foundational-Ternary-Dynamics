@@ -241,11 +241,11 @@ print(f"  G_L diagonal (self-energy): {np.diag(G_charge)}")
 print(f"  G_L[0,0] = {G_charge[0,0]:.10f}")
 print()
 
-# The Green's function at the origin on the infinite 3D cubic lattice
+# The Green's function at the origin on the 3D cubic lattice (large-L regime)
 # is the Watson integral W₃ = Γ(1/4)⁴/(4π³)
 # On the finite 2×2×2 lattice, this is approximated by G_L[0,0]
 print(f"  G_L[0,0] (finite lattice)  = {G_charge[0,0]:.10f}")
-print(f"  W₃ (infinite lattice)      = {WATSON_3D:.10f}")
+print(f"  W₃ (cubic lattice)         = {WATSON_3D:.10f}")
 print(f"  Ratio G_L[0,0]/W₃          = {G_charge[0,0]/WATSON_3D:.6f}")
 print()
 

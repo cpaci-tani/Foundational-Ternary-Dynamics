@@ -131,7 +131,7 @@ $$\Delta = k^2 c^4 - 4kc^3 = kc^3(kc - 4)$$
 
 **The discriminant partitions parameter space into three domains based on $\text{sgn}(\Delta)$.**
 
-### 2.2 The Physics Instantiation ($k = 16$, $c = G^*$) [THEOREM]
+### 2.2 The Physics Instantiation ($k = 16$, $c = G^*$) [THEOREM] (polynomial) + [STRONGLY MOTIVATED CONJECTURE] (physical identification)
 
 With $k = 16$ (derived from gauge degrees of freedom on the minimal $2 \times 2 \times 2$ lattice: $3 \times 8 - 7 - 1 = 16$) and $c = G^*$ (the lemniscatic constant):
 
@@ -201,7 +201,7 @@ Full derivation: [DERIV_CHARGE_QUARTIC_FROM_GSTAR.md](../03_derivations/DERIV_CH
 
 ## 3. The QFT Chain: Real Roots to Particle Physics
 
-### 3.1 From $\alpha$ to Gauge Groups [THEOREM]
+### 3.1 From $\alpha$ to Gauge Groups [STRONGLY MOTIVATED CONJECTURE]
 
 The real root $x_+ = 137.036$ identifies the fine structure constant $\alpha = 1/x_+$. From $\alpha$ and the framework integers $\{3, 4, 7, 13\}$:
 
@@ -720,7 +720,7 @@ We prefer reading 1 but acknowledge that readings 2 and 3 preserve all mathemati
 
 ```
 [THEOREM] Master quadratic mathematics
-    → [THEOREM] Real roots = α, N_c
+    → [STRONGLY MOTIVATED CONJECTURE] Real roots = α, N_c (FTD-0013, FTD-0014)
         → [THEOREM] QFT chain (30 derivations)
         → [THEOREM] GRT chain (Einstein, Schwarzschild)
     → [SELECTION] Consciousness quadratic (k=1/2)
