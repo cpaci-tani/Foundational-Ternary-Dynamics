@@ -163,22 +163,26 @@ static SpeciesCount run_three_generation_coldstart(int L, int ticks) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-//  4C · Continuum-limit scan
+//  4C · Large-L extrapolation scan
 // ─────────────────────────────────────────────────────────────────────────
 //
 // Reuses Phase-2B measure_alpha_eff at three lattice sizes, fitting
-// a_inf + b/L² + c/L⁴ to the results.
+// a_largeL + b/L² + c/L⁴ to the results. The fit value is reported as
+// the 1/L² extrapolation at the largest tested L; it is not a claim about
+// any L → ∞ limit (see undefined-boundary ontology).
+// TODO: emit empirical residual band [low, high] alongside the fit value
+// once a multi-seed ensemble is wired through.
 
-struct ContinuumFit {
+struct LargeLFit {
     std::vector<int> L_vals;
-    std::vector<double> alpha_asymptotic;
-    double alpha_inf = 0.0;
+    std::vector<double> alpha_tail;
+    double alpha_largeL = 0.0;
     double b_coeff = 0.0;
     bool valid = false;
 };
 
 static double tail_average(const ftd::eft::CouplingMeasurement& m) {
-    // Average α_r = -V·r over the upper half of the r range (Phase 2C asymptotic).
+    // Average α_r = -V·r over the upper half of the r range (Phase 2C tail).
     const auto& pts = m.data;
     if (pts.size() < 3) return 0.0;
     const std::size_t n_tail = std::max<std::size_t>(2, pts.size() / 2);
@@ -188,28 +192,29 @@ static double tail_average(const ftd::eft::CouplingMeasurement& m) {
     return sum / static_cast<double>(n_tail);
 }
 
-static ContinuumFit run_continuum_scan(const std::vector<int>& sizes, int ticks_per_config) {
-    ContinuumFit cf;
+static LargeLFit run_largeL_scan(const std::vector<int>& sizes, int ticks_per_config) {
+    LargeLFit cf;
     for (int L : sizes) {
         auto m = ftd::eft::measure_alpha_eff(L, ticks_per_config);
         const double a = tail_average(m);
         cf.L_vals.push_back(L);
-        cf.alpha_asymptotic.push_back(a);
-        std::cerr << "  L=" << L << "  α_asymptotic=" << a << "  n_points=" << m.data.size() << "\n";
+        cf.alpha_tail.push_back(a);
+        std::cerr << "  L=" << L << "  α_tail=" << a << "  n_points=" << m.data.size() << "\n";
     }
-    // Fit a(L) = a_inf + b / L² by linear regression on 1/L²
+    // Fit a(L) = a_largeL + b / L² by linear regression on 1/L².
+    // The fitted intercept is the 1/L² extrapolation, NOT an L → ∞ claim.
     if (cf.L_vals.size() >= 2) {
         double sx = 0, sy = 0, sxx = 0, sxy = 0;
         const int n = static_cast<int>(cf.L_vals.size());
         for (int i = 0; i < n; ++i) {
             const double x = 1.0 / (cf.L_vals[i] * static_cast<double>(cf.L_vals[i]));
-            const double y = cf.alpha_asymptotic[i];
+            const double y = cf.alpha_tail[i];
             sx += x; sy += y; sxx += x*x; sxy += x*y;
         }
         const double denom = n * sxx - sx * sx;
         if (std::abs(denom) > 1e-30) {
             cf.b_coeff = (n * sxy - sx * sy) / denom;
-            cf.alpha_inf = (sy - cf.b_coeff * sx) / n;
+            cf.alpha_largeL = (sy - cf.b_coeff * sx) / n;
             cf.valid = true;
         }
     }
@@ -286,26 +291,26 @@ int main(int argc, char** argv) {
     std::cout << "threegen,n_minus," << sp.n_minus << "\n";
     std::cout << "threegen,n_neutral_jmag_gt_0p1," << sp.n_neutral << "\n";
 
-    // 4C — continuum-limit scan
-    std::cerr << "\n-- 4C: continuum-limit α_eff scan --\n";
+    // 4C — large-L extrapolation scan
+    std::cerr << "\n-- 4C: large-L α_eff extrapolation scan --\n";
     const std::vector<int> sizes = quick ? std::vector<int>{16, 32} : std::vector<int>{32, 48, 64};
     const int ticks_per = quick ? 60 : 300;
-    auto cf = run_continuum_scan(sizes, ticks_per);
+    auto cf = run_largeL_scan(sizes, ticks_per);
     if (cf.valid) {
-        std::cerr << "  α_eff(L→∞) extrapolation: α_inf = " << cf.alpha_inf
+        std::cerr << "  α_eff 1/L² fit: α_largeL = " << cf.alpha_largeL
                   << "  (b/L² coefficient = " << cf.b_coeff << ")\n";
-        std::cerr << "  reference α = " << ftd::ALPHA << "  → ratio α_inf/α = "
-                  << (cf.alpha_inf / ftd::ALPHA) << "\n";
+        std::cerr << "  reference α = " << ftd::ALPHA << "  → ratio α_largeL/α = "
+                  << (cf.alpha_largeL / ftd::ALPHA) << "\n";
     }
     for (std::size_t i = 0; i < cf.L_vals.size(); ++i) {
-        std::cout << "continuum,L=" << cf.L_vals[i] << ","
-                  << std::setprecision(10) << cf.alpha_asymptotic[i] << "\n";
+        std::cout << "largeL_extrap,L=" << cf.L_vals[i] << ","
+                  << std::setprecision(10) << cf.alpha_tail[i] << "\n";
     }
     if (cf.valid) {
-        std::cout << "continuum,alpha_inf," << std::setprecision(10) << cf.alpha_inf << "\n";
-        std::cout << "continuum,b_over_L2_coeff," << std::setprecision(10) << cf.b_coeff << "\n";
-        std::cout << "continuum,ratio_to_alpha_ref," << std::setprecision(6)
-                  << (cf.alpha_inf / ftd::ALPHA) << "\n";
+        std::cout << "largeL_extrap,alpha_largeL," << std::setprecision(10) << cf.alpha_largeL << "\n";
+        std::cout << "largeL_extrap,b_over_L2_coeff," << std::setprecision(10) << cf.b_coeff << "\n";
+        std::cout << "largeL_extrap,ratio_to_alpha_ref," << std::setprecision(6)
+                  << (cf.alpha_largeL / ftd::ALPHA) << "\n";
     }
 
     std::puts("\n----------------------------------------------------------------");

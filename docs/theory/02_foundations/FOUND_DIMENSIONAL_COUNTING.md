@@ -113,7 +113,7 @@ The argument is not that time IS a spatial dimension, but that the **number of s
 
 2. **Watson's integral:** $I_1 = \Gamma(1/4)^4/(4\pi^3) = G^{*2}/(2\pi)$ uses the BCC dispersion $\lambda = 1 - \cos k_1 \cos k_2 \cos k_3$, which is the **product** of all three cosines. This multiplicative structure requires exactly 3 factors.
 
-3. **The gap equation:** The master quadratic emerges from the gap equation $x^2 = 16 \cdot 2\pi \cdot G^{\text{BCC}}_L(0) \cdot (x - G^*)$ in the thermodynamic limit. The coefficient $16 \cdot 2\pi \cdot I_1 = 16 G^{*2}$ is the Vieta sum for the master quadratic. This only works with a 3D BCC lattice.
+3. **The gap equation:** The master quadratic emerges from the gap equation $x^2 = 16 \cdot 2\pi \cdot G^{\text{BCC}}_L(0) \cdot (x - G^*)$ for arbitrarily large L, with $G^{\text{BCC}}_L(0)$ approaching $I_1 = G^{*2}/(2\pi)$ at rate $O(1/L)$. The coefficient $16 \cdot 2\pi \cdot I_1 = 16 G^{*2}$ is the Vieta sum for the master quadratic. This only works with a 3D BCC lattice.
 
 ### 4.5 Honest Assessment
 
@@ -156,7 +156,7 @@ where $I_1$ is Watson's BCC lattice Green's function at the origin. This is veri
 | 128 | 1.3791 | 1.0% |
 | 256 | 1.3861 | 0.5% |
 
-Convergence is O(1/L) due to integrable singularities at the Brillouin zone corners. Richardson extrapolation from L=128,256 gives $I_1 = 1.3932$ to 0.0001% accuracy.
+Convergence is O(1/L) due to integrable singularities at the Brillouin zone corners. Richardson extrapolation from L=128,256 gives $I_1 = 1.3932$ to 0.0001% accuracy. Computations on arbitrarily large finite tori give the algebraic value to any desired precision; no completed-infinity totality is invoked.
 
 ### 5.3 The Gap Equation Reproduces the Master Quadratic
 
@@ -164,7 +164,7 @@ The gap equation with finite-lattice BCC self-energy:
 
 $$x^2 = 16 \cdot 2\pi \cdot G^{\text{BCC}}_L(0) \cdot (x - G^*)$$
 
-In the thermodynamic limit $L \to \infty$, $G^{\text{BCC}}_L(0) \to I_1 = G^{*2}/(2\pi)$, giving:
+For arbitrarily large L, $G^{\text{BCC}}_L(0)$ approaches $I_1 = G^{*2}/(2\pi)$ with error $O(1/L)$, giving (as a closed-form algebraic identity):
 
 $$x^2 = 16 G^{*2} \cdot x - 16 G^{*3}$$
 
@@ -225,7 +225,7 @@ This **pure G\* form** contains only:
 | **Dimensionless** ($y = x/G^*$) | $y^2 = 16G^*(y - 1)$ | G* only |
 | **Ontic lattice** | $x^2 = 16\,G_{\text{ontic}}(0)\,(x - G^*)$ | $G_{\text{ontic}} \to G^{*2}$ |
 
-The **ontic Green's function** is defined as $G_{\text{ontic}}(0) = 2\pi \cdot G_{\text{Watson}}(0)$, which converges to $G^{*2}$ in the thermodynamic limit, making the lattice form identical to the pure G* form.
+The **ontic Green's function** is defined as $G_{\text{ontic}}(0) = 2\pi \cdot G_{\text{Watson}}(0)$, which approaches $G^{*2}$ for arbitrarily large L, making the lattice form identical to the pure G* form as a closed-form algebraic identity.
 
 ### 7.3 The Vieta Sum = Product Identity
 

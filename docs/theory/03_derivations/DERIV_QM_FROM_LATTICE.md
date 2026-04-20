@@ -7,7 +7,7 @@
 
 ## The Lattice
 
-A cubic lattice Z^3. Each site: state s in {-1, 0, +1}, flux J in R^3. Update rule: deterministic, local (26 neighbors), every tick. Each site is in exactly one state at all times.
+A cubic graph with no defined boundary: at every specified position, the six axis-adjacent (and 26 Moore-adjacent) sites exist. Each site: state s in {-1, 0, +1}, flux J in R^3. Update rule: deterministic, local (26 neighbors), every tick. Each site is in exactly one state at all times.
 
 No superposition. No probability. States and ticks.
 
@@ -17,7 +17,7 @@ No superposition. No probability. States and ticks.
 
 An observer is a finite region of the lattice observing itself. Center reads shell, integrates, writes. This is the tick. The observer is made of voxels, governed by the same rule. The observer's "choices" are lattice states.
 
-The observer has partial access. It cannot know the full lattice. It can measure one site at a time: the result is -1, 0, or +1. Always one result. Always definite.
+The observer has partial access. It cannot know arbitrarily large finite regions of the lattice. It can measure one site at a time: the result is -1, 0, or +1. Always one result. Always definite.
 
 ---
 
@@ -195,7 +195,7 @@ It misidentifies the statistics as ontology. The distribution is not the electro
 
 **What is selected:** The epistemic interpretation. The Hilbert space as imagination. Superdeterminism.
 
-**What is established:** The Schrodinger equation IS the continuum limit of the lattice wave equation. Each QM feature maps one-to-one to a lattice property: complex amplitudes from Gauss constraint (3D -> 2D), superposition from wave equation linearity, Born rule from Parseval (wave energy = amplitude^2), evolution from the wave equation itself. No uniqueness proof is needed — there is no alternative continuum limit, just as there is no alternative to the heat equation as the continuum limit of random walks.
+**What is established:** The Schrodinger equation IS the long-wavelength behavior of the lattice wave equation (recovered for arbitrarily fine spacing a relative to the wavelength, with error O(a^p)). Each QM feature maps one-to-one to a lattice property: complex amplitudes from Gauss constraint (3D -> 2D), superposition from wave equation linearity, Born rule from Parseval (wave energy = amplitude^2), evolution from the wave equation itself. No uniqueness proof is needed — there is no alternative long-wavelength behavior, just as there is no alternative to the heat equation as the long-wavelength behavior of random walks.
 
 ---
 

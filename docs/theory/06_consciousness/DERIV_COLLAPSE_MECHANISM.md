@@ -23,12 +23,14 @@
 
 ## Abstract
 
-We derive the quantum collapse mechanism within FTD as a consequence of the algebraic structure, not as a postulate. The argument proceeds in four steps:
+We propose a quantum collapse mechanism within FTD as a consequence of the algebraic structure, **conditional on the Araki–Woods scaffold hypothesis** (see `DERIV_VON_NEUMANN_CONSTRUCTION.md`: under the framework's undefined-boundary ontology, every region the framework actually exhibits is Type I; Type III₁ is a property of the Araki–Woods inductive-limit scaffold one applies to FTD, not of FTD-as-defined). The argument proceeds in four steps:
 
-1. The pre-measurement lattice flux field $\mathbf{J}$ lives in a Type III$_1$ von Neumann algebra (no pure states, no definite outcomes).
+1. **[HYPOTHESIS — under Araki–Woods scaffold]** The pre-measurement lattice flux field $\mathbf{J}$ would correspond to a Type III$_1$ von Neumann algebra (no pure states, no definite outcomes) under the inductive-limit construction.
 2. The Softplus operator $\mathcal{M}_\beta(x) = \frac{1}{\beta}\ln(1 + e^{\beta x})$ implements a continuous decoherence process parameterized by inverse temperature $\beta$.
 3. In the finite-$\beta$ regime, this process is described by the Lindblad master equation, with Lindblad operators identified as the Existence Filter applied to sector projections.
-4. The $\beta \to \infty$ limit yields the ReLU crystallization $\text{ReLU}(x) = \max(0, x)$, which completes the algebraic phase transition to Type I — producing definite ternary outcomes $s \in \{-1, 0, +1\}$.
+4. For arbitrarily large $\beta$, the Softplus approaches ReLU $\text{ReLU}(x) = \max(0, x)$, which under the Araki–Woods scaffold would complete the algebraic phase transition to Type I — producing definite ternary outcomes $s \in \{-1, 0, +1\}$.
+
+**Epistemic note:** the entire mechanism rests on the scaffold hypothesis. Under the framework's actual ontology (every region Type I), the Softplus → ReLU transition is a finite-dimensional limit on a Type I algebra — phenomenologically valid as a model of decoherence + collapse, but not requiring the Type III₁ → Type I transition story. The scaffold framing is retained because it is informative about the kind of measurement structure the framework reproduces, not because it is derived from Axiom Zero.
 
 The Born rule $P(s) = |\langle s | J \rangle|^2$ is not assumed but emerges from the Gaussian structure of the Euclidean action $S_E$. The decoherence timescale is set by $N_\text{meas} \approx 18$ lattice ticks, corresponding to the minimal measurement cluster.
 
@@ -317,9 +319,9 @@ As $\beta$ increases, the Connes spectrum *collapses* from the full positive rea
 
 The full collapse mechanism in FTD is a four-stage pipeline, proceeding from the continuous dispositional layer to the discrete actual layer:
 
-### Stage 1: Lattice Flux (Type III$_1$, continuous)
+### Stage 1: Lattice Flux (Type III$_1$ under scaffold hypothesis, continuous)
 
-The flux field $\mathbf{J}(v) \in \mathbb{R}^3$ at each voxel encodes the full dispositional content. In the operator-algebraic description, the algebra of flux observables is (argued to be) Type III$_1$:
+The flux field $\mathbf{J}(v) \in \mathbb{R}^3$ at each voxel encodes the full dispositional content. **Under the Araki–Woods inductive-limit scaffold hypothesis** (see `DERIV_VON_NEUMANN_CONSTRUCTION.md`), the would-be limit algebra of flux observables would be Type III$_1$:
 - No pure states: the flux has irreducible thermal fluctuations (zero-point field at $\beta = \pi$)
 - No minimal projections: flux values are continuous, not discrete
 - KMS condition holds: the equilibrium state satisfies $\langle A \sigma_{i\beta}(B) \rangle = \langle BA \rangle$
@@ -424,7 +426,7 @@ A measurement event requires sufficient local connectivity to establish a defini
 
 $$\gamma = \frac{1}{\tau_\text{meas}} = \frac{1}{N_\text{meas} \cdot \tau_\text{tick}}$$
 
-where $\tau_\text{tick}$ is the duration of one lattice tick (one Planck time in the continuum limit).
+where $\tau_\text{tick}$ is the duration of one lattice tick (one Planck time for arbitrarily fine spacing $a$).
 
 The decoherence time for a single particle is therefore:
 
@@ -508,7 +510,7 @@ The Softplus $\to$ ReLU transition maps onto this trichotomy:
 
 ### The Critical Gap
 
-The entire derivation chain rests on one unproven step: **that the flux field algebra is Type III$_1$**. If this is established, the rest follows from classical operator algebra theory (Connes classification, Tomita-Takesaki, Lindblad). If this fails, the algebraic phase transition interpretation collapses (though the ReLU manifestation rule and its Lindblad description remain valid as phenomenological models).
+The entire derivation chain rests on one unestablished step: **that the Araki–Woods inductive-limit scaffold is the correct idealisation of FTD beyond the regions the framework actually exhibits** (`DERIV_VON_NEUMANN_CONSTRUCTION.md` documents this as [HYPOTHESIS], not [THEOREM], under undefined-boundary ontology). If the scaffold hypothesis holds, the would-be limit algebra is Type III$_1$ by Araki–Woods, and the rest of the chain follows from classical operator algebra theory (Connes classification, Tomita-Takesaki, Lindblad). If the scaffold hypothesis fails, the Type-transition interpretation of measurement collapses (though the ReLU manifestation rule and its Lindblad description remain valid as phenomenological models on the framework's actual Type I regions).
 
 ---
 

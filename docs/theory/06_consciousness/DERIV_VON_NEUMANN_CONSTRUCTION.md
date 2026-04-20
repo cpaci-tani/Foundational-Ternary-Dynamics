@@ -2,10 +2,7 @@
 
 ## Type Classification of the Ternary Lattice Observable Algebra
 
-**Date:** March 17, 2026
-**Framework:** Foundational Ternary Dynamics v5.28
-**Status:** [THEOREM] on finite lattices; [SELECTION] for the thermodynamic limit
-**Authors:** cpaci & Claude (Opus 4.6)
+**Status:** [THEOREM] on finite lattices (Type I at every L); [HYPOTHESIS] for any Type-III interpretation. The lattice is **undefined-boundary** (Axiom Zero), so the "infinite-volume Type III₁" classification is not a theorem about FTD-as-defined; it is a hypothesis about what an Araki–Woods inductive-limit scaffold *would* yield *if* assembled on a system of this kind.
 **Proof script:** `scripts/proofs/proof_von_neumann_type.py`
 
 ---
@@ -20,11 +17,13 @@
 
 ## Abstract
 
-We construct the von Neumann algebra of lattice observables for the FTD ternary lattice and classify its Murray--von Neumann type. On a finite lattice $\Lambda$ with $|\Lambda| = N$ sites, each site carries a ternary state $s \in \{-1, 0, +1\}$, giving a Hilbert space $\mathcal{H} = \mathbb{C}^{3^N}$. The full observable algebra is $B(\mathcal{H}) = M_{3^N}(\mathbb{C})$, a Type $\mathrm{I}_{3^N}$ factor. Local algebras satisfy isotony and locality (commutativity on spacelike-separated regions), and the partial trace provides a conditional expectation from composite systems to subsystems.
+We construct the von Neumann algebra of lattice observables for the FTD ternary lattice and classify its Murray–von Neumann type. On a region $\Lambda$ of arbitrarily large but finite extent, with $|\Lambda| = N$ sites, each site carries a ternary state $s \in \{-1, 0, +1\}$, giving a Hilbert space $\mathcal{H} = \mathbb{C}^{3^N}$. The full observable algebra is $B(\mathcal{H}) = M_{3^N}(\mathbb{C})$, a Type $\mathrm{I}_{3^N}$ factor. Local algebras satisfy isotony and locality (commutativity on spacelike-separated regions), and the partial trace provides a conditional expectation from composite systems to subsystems. **Every region the framework actually exhibits is Type I.**
 
-In the thermodynamic limit $\Lambda \to \mathbb{Z}^3$, the quasi-local algebra $\mathfrak{A} = \overline{\bigcup_\Lambda M_{3^{|\Lambda|}}(\mathbb{C})}$ equipped with a faithful thermal state gives a Type $\mathrm{III}_1$ factor by the Araki--Woods theorem. The FTD manifestation rule $s = \mathrm{sign}(\mathbf{J} \cdot \hat{n})$ then acts as a conditional expectation that projects from the continuous flux algebra to the discrete state algebra --- an algebraic analogue of the Type $\mathrm{III}_1 \to$ Type $\mathrm{I}$ transition identified with quantum measurement.
+We separately consider the **Araki–Woods inductive-limit scaffold**: the question of what type a system of this kind would have *if* its observables were assembled into an infinite tensor product $\mathfrak{A} = \overline{\bigcup_\Lambda M_{3^{|\Lambda|}}(\mathbb{C})}$ equipped with a faithful thermal state. Standard operator algebra (Powers 1967; Araki–Woods 1968) gives a Type $\mathrm{III}_1$ factor in that scaffold. The FTD manifestation rule $s = \mathrm{sign}(\mathbf{J} \cdot \hat{n})$ would then play the role of a conditional expectation from the would-be Type III₁ algebra back to a Type I sub-algebra — the algebraic shape of a measurement.
 
-**Epistemic discipline:** The finite-lattice results (Sections 1--4) are [THEOREM]. The infinite-volume classification (Section 5) is [SELECTION] --- it invokes the Araki--Woods theorem, which is proven mathematics, but the identification of FTD's flux field with the relevant operator algebra is a structural argument, not a derivation from the five postulates. The measurement interpretation (Section 6) is [SELECTION].
+This Type III₁ classification is **not** a theorem about FTD-as-defined. The framework's position-property axiom is undefined-boundary: the lattice has no defined edge, no completed-totality, and no prescribed inductive limit. The Araki–Woods construction is a separate scaffold that asks "if one *did* take such a limit, what would result?" — useful as a structural analogy and as a hypothesis worth testing, but not a property of the framework itself.
+
+**Epistemic discipline:** The finite-region results (Sections 1–4) are [THEOREM]. The Araki–Woods Type III₁ classification (Section 5) is [HYPOTHESIS]: it invokes proven mathematics but applies it to an inductive-limit scaffold the framework's ontology does not commit to. The measurement-as-type-transition reading (Section 6) is [HYPOTHESIS] of the same kind.
 
 ---
 
@@ -32,7 +31,7 @@ In the thermodynamic limit $\Lambda \to \mathbb{Z}^3$, the quasi-local algebra $
 
 ### 1.1 Single-Site Hilbert Space
 
-**[AXIOM]** (Postulate 3: Ternary States). Each lattice site $x \in \mathbb{Z}^3$ occupies one of three states:
+**[AXIOM]** (Postulate 3: Ternary States). Each lattice site $x$ in the cubic graph (Axiom Zero, position property) occupies one of three states:
 
 $$s(x) \in \{-1, 0, +1\}$$
 
@@ -40,7 +39,7 @@ The single-site Hilbert space is $\mathcal{H}_x = \mathbb{C}^3$, spanned by the 
 
 ### 1.2 N-Site Hilbert Space
 
-For a finite sublattice $\Lambda \subset \mathbb{Z}^3$ with $|\Lambda| = N$ sites, the total Hilbert space is the tensor product:
+For a finite sublattice $\Lambda$ of the cubic graph with $|\Lambda| = N$ sites, the total Hilbert space is the tensor product:
 
 $$\mathcal{H}_\Lambda = \bigotimes_{x \in \Lambda} \mathcal{H}_x = \bigotimes_{x \in \Lambda} \mathbb{C}^3 = \mathbb{C}^{3^N}$$
 
@@ -168,19 +167,21 @@ This entropy increase under the sign projection is the algebraic content of irre
 
 ---
 
-## 5. The Thermodynamic Limit: Type III$_1$
+## 5. The Araki–Woods Inductive-Limit Scaffold and Type III₁ as Hypothesis
 
-### 5.1 The Quasi-Local Algebra
+This section asks a separate question from Sections 1–4: not "what is the algebra of the FTD lattice?" (Type I at every region the framework actually exhibits) but "what *would* an Araki–Woods construction produce *if* one assembled an infinite tensor product on a system of this kind?" The construction is a standard scaffold from operator algebra; its application to FTD is a hypothesis, not a derivation from Axiom Zero.
 
-**[CLASSICAL]** (Bratteli--Robinson, Vol. II). For an increasing sequence of finite regions $\Lambda_1 \subset \Lambda_2 \subset \cdots$ with $\bigcup_n \Lambda_n = \mathbb{Z}^3$, the *quasi-local algebra* is the C*-algebraic inductive limit:
+### 5.1 The Quasi-Local Algebra (as a scaffold)
+
+**[CLASSICAL]** (Bratteli–Robinson, Vol. II). For an increasing sequence of finite regions $\Lambda_1 \subset \Lambda_2 \subset \cdots$ , the *quasi-local algebra* is the C*-algebraic inductive limit:
 
 $$\mathfrak{A} = \overline{\bigcup_n \mathfrak{A}(\Lambda_n)}^{\|\cdot\|}$$
 
-This is the norm closure of the union of all local algebras. For FTD, each local factor is $M_3(\mathbb{C})$, so:
+This is the norm closure of the union of all local algebras. For a system whose local factor is $M_3(\mathbb{C})$, the construction yields the infinite tensor product:
 
-$$\mathfrak{A} = \overline{\bigotimes_{x \in \mathbb{Z}^3}} M_3(\mathbb{C})$$
+$$\mathfrak{A} = \overline{\bigotimes_{x} M_3(\mathbb{C})}.$$
 
-(the infinite tensor product of $3 \times 3$ matrix algebras).
+**Note on FTD's ontology:** the framework's position-property axiom is undefined-boundary — at every specified site the axis-adjacent (and 26-Moore-adjacent) sites exist, but the lattice has no defined edge and no commitment to a completed totality. The inductive limit above is therefore **a separate construction that the framework neither builds nor disposes of**; it is a scaffold one can ask hypothetical questions about.
 
 ### 5.2 Araki--Woods Classification
 
@@ -190,41 +191,41 @@ $$\mathfrak{A} = \overline{\bigotimes_{x \in \mathbb{Z}^3}} M_3(\mathbb{C})$$
 2. *If $\rho_n$ is not maximally mixed and the eigenvalue ratios satisfy a certain divergence condition, the GNS representation gives a Type $\mathrm{III}_\lambda$ factor, where $\lambda \in [0, 1]$ is determined by the asymptotic ratio of eigenvalues.*
 3. *For a thermal (KMS) state at finite inverse temperature $\beta$, the modular automorphism group has full Connes spectrum $S(\mathcal{M}) = \mathbb{R}_+$, yielding Type $\mathrm{III}_1$.*
 
-### 5.3 Application to FTD
+### 5.3 What Araki–Woods Would Yield, Applied to FTD as Hypothesis
 
-**[SELECTION]** We identify the FTD flux field algebra in the thermodynamic limit with the quasi-local algebra described above. The argument proceeds as follows:
+**[HYPOTHESIS]** *If* one treats FTD as the kind of system to which an inductive-limit Araki–Woods construction is applied, then the following identification would be made:
 
-1. **Single-site algebra:** $M_3(\mathbb{C})$ (the ternary state algebra). This is established by Theorem 1.
+1. **Single-site algebra:** $M_3(\mathbb{C})$ (the ternary state algebra). This is established by Theorem 1 and is a local fact about FTD, not a hypothesis.
 
-2. **State:** The FTD lattice at thermal equilibrium (or in a generic non-ground state) is described by a product state $\omega$ with single-site density matrix:
+2. **State:** A product state $\omega$ on the inductive-limit scaffold, with single-site density matrix:
 
 $$\rho_\beta = \frac{1}{Z(\beta)} \mathrm{diag}(e^{\beta}, 1, e^{-\beta})$$
 
-where $\beta$ is the inverse temperature and the energies of the three ternary states are $\{-1, 0, +1\}$ in lattice units. For any finite $\beta > 0$, this is not the maximally mixed state.
+where $\beta$ is an inverse-temperature parameter and the energies of the three ternary states are $\{-1, 0, +1\}$ in lattice units. For any finite $\beta > 0$, this is not the maximally mixed state.
 
-3. **Araki--Woods applies:** The eigenvalue ratios are $\lambda_1/\lambda_3 = e^{2\beta}$. For the FTD KMS temperature $\beta = \pi$, the ratio is $e^{2\pi} \approx 535$. The Connes invariant is:
+3. **Araki–Woods would then yield Type III₁:** the eigenvalue ratios are $\lambda_1/\lambda_3 = e^{2\beta}$. For $\beta = \pi$, the ratio is $e^{2\pi} \approx 535$. The Connes invariant of the would-be limit factor is:
 
 $$S(\mathcal{M}) = \overline{\{e^{-2n\beta} : n \in \mathbb{Z}\}} = \mathbb{R}_+$$
 
-(the closure in $\mathbb{R}_+$ of the cyclic group generated by $e^{-2\beta}$). This gives **Type $\mathrm{III}_1$**.
+(the closure in $\mathbb{R}_+$ of the cyclic group generated by $e^{-2\beta}$). This would give **Type $\mathrm{III}_1$** in the scaffold.
 
-4. **At zero temperature** ($\beta \to \infty$): the state becomes a pure product state, and the GNS representation gives a Type $\mathrm{I}$ factor (irreducible representation on $\mathcal{H}$).
+4. **Zero-temperature scaffold limit** ($\beta \to \infty$): the would-be state becomes a pure product state, and the GNS representation in the scaffold gives a Type $\mathrm{I}$ factor.
 
-**Why this is [SELECTION], not [THEOREM]:** The identification of FTD's flux field with the operator-algebraic infinite tensor product is a structural argument. The five FTD postulates define a discrete lattice with ternary states and local update rules --- they do not directly invoke C*-algebraic completions or GNS constructions. The Araki--Woods theorem is proven mathematics; the claim that it applies to FTD is a modeling choice.
+**Why this is [HYPOTHESIS], not [THEOREM]:** Axiom Zero (position property) does not commit to an inductive-limit construction. FTD-as-defined exhibits arbitrarily large finite regions, each Type I. The Type III₁ classification is a property of the *scaffold one applies to FTD*, not of FTD itself. It is a hypothesis worth testing — finite-L numerical precursors (Section 7) provide evidence that *if* such a scaffold is the right idealisation, then Type III₁ is the right type — but the identification of the scaffold with the framework is a modelling choice, not a theorem.
 
 ---
 
-## 6. The Measurement Transition: Type III$_1$ to Type I
+## 6. Measurement as Hypothesised Type Transition
 
-### 6.1 Before Measurement: Dispositional Algebra
+### 6.1 Before Measurement: Dispositional Algebra (in the scaffold)
 
-**[SELECTION]** Prior to manifestation, the FTD flux field $\mathbf{J}(x) \in \mathbb{R}^3$ at each site encodes continuous information. In the thermodynamic limit, the algebra of flux-field observables is (by the argument of Section 5) a Type $\mathrm{III}_1$ factor. The key features of Type $\mathrm{III}_1$:
+**[HYPOTHESIS]** Under the Araki–Woods scaffold of Section 5, prior to manifestation the FTD flux field $\mathbf{J}(x) \in \mathbb{R}^3$ at each site would correspond to a Type $\mathrm{III}_1$ factor. The features such a scaffold provides — and which the dispositional layer would inherit if the hypothesis holds — are:
 
 - **No minimal projections.** One cannot decompose the identity into atomic (rank-1) pieces. There is no "smallest observable."
 - **No normal semifinite trace.** The usual notion of "probability" (via a trace-class density matrix) does not apply in the standard way.
 - **Ergodic modular flow.** The modular automorphism group $\sigma_t$ acts ergodically: no non-trivial fixed points. The system is in perpetual "flux."
 
-These are precisely the properties one would expect for the dispositional layer: continuous, undetermined, with no definite discrete outcomes.
+These are precisely the properties one would expect for the dispositional layer: continuous, undetermined, with no definite discrete outcomes — *if* the scaffold is the right idealisation. They are not [THEOREM] consequences of FTD's axioms.
 
 ### 6.2 After Measurement: Actualized Algebra
 
@@ -234,25 +235,25 @@ These are precisely the properties one would expect for the dispositional layer:
 - **Trace is well-defined:** $\mathrm{Tr}(I) = 3^N$.
 - **Discrete spectrum:** Every observable has finitely many eigenvalues.
 
-### 6.3 The Sign Function as Algebraic Phase Transition
+### 6.3 The Sign Function as Hypothesised Algebraic Phase Transition
 
-**[SELECTION]** The FTD manifestation rule implements the following algebraic transition:
+**[HYPOTHESIS]** Under the Araki–Woods scaffold, the FTD manifestation rule would implement the following algebraic transition:
 
-$$\underbrace{\text{Type III}_1}_{\text{flux field } \mathbf{J}} \;\xrightarrow{\;\mathrm{sign}(\mathbf{J} \cdot \hat{n})\;}\; \underbrace{\text{Type I}}_{\text{state field } s}$$
+$$\underbrace{\text{Type III}_1}_{\text{flux field } \mathbf{J} \text{ in scaffold}} \;\xrightarrow{\;\mathrm{sign}(\mathbf{J} \cdot \hat{n})\;}\; \underbrace{\text{Type I}}_{\text{state field } s}$$
 
-The sign function acts as a conditional expectation (coarse-graining map) from the continuous algebra to the discrete algebra. By Theorem 6, this map is information-destroying: the continuous flux information is irreversibly lost when the discrete state is formed.
+The sign function would act as a conditional expectation (coarse-graining map) from the continuous algebra to the discrete algebra. By Theorem 6, this map is information-destroying: the continuous flux information is irreversibly lost when the discrete state is formed.
 
-This transition is the algebraic content of quantum measurement in FTD. It does not require an external observer, a consciousness postulate, or an ad hoc projection rule. The lattice's own dynamics (the manifestation rule, derived from the five postulates) provide the "cut" that von Neumann sought.
+If the scaffold-as-idealisation is appropriate, this transition is the algebraic content of quantum measurement in FTD. It does not require an external observer, a consciousness postulate, or an ad hoc projection rule. The lattice's own manifestation rule provides the "cut" that von Neumann sought. Whether the scaffold *is* the appropriate idealisation is the open question that elevates this from [THEOREM] to [HYPOTHESIS].
 
 ### 6.4 Connection to the Von Neumann Chain
 
 The von Neumann measurement chain asks: who observes the observer? In the algebraic language:
 
-- Each link in the chain attempts to create a Type I factor (definite outcome) from a Type III$_1$ factor (indefinite substrate).
-- On a finite lattice, the chain terminates because the full algebra is already Type I (Theorem 1). There is no Type III$_1$ to begin with --- only finitely many degrees of freedom exist.
-- In the thermodynamic limit, the chain terminates because the sign function provides an intrinsic mechanism for the Type III$_1 \to$ Type I transition. No external observer is needed.
+- Each link in the chain attempts to create a Type I factor (definite outcome) from a Type III₁ factor (indefinite substrate).
+- On any region the framework actually exhibits, the chain terminates immediately because the full algebra is already Type I (Theorem 1). Only finitely many degrees of freedom exist; there is no Type III₁ to begin with.
+- Under the hypothesised Araki–Woods scaffold, the chain would terminate because the sign function provides an intrinsic mechanism for the Type III₁ → Type I transition. No external observer would be needed.
 
-See [FOUND_VON_NEUMANN_CHAIN.md](FOUND_VON_NEUMANN_CHAIN.md) for the full resolution.
+The scaffold's appeal is precisely that it offers a measurement story without an external observer. Its cost is that it is a hypothesis about an idealisation, not a derivation from Axiom Zero. See [FOUND_VON_NEUMANN_CHAIN.md](FOUND_VON_NEUMANN_CHAIN.md) for the chain-resolution discussion.
 
 ---
 
@@ -277,8 +278,8 @@ The proof script `scripts/proofs/proof_von_neumann_type.py` verifies:
 | Sign is idempotent on discrete states | [THEOREM] | Verified |
 | Entropy increases under coarse-graining | [THEOREM] | Verified |
 | Araki--Woods preconditions hold | [THEOREM] | Verified |
-| Araki--Woods gives Type III$_1$ in infinite volume | [SELECTION] | Structural |
-| Sign/ReLU as Type III$_1 \to$ Type I transition | [SELECTION] | Structural |
+| Araki--Woods scaffold would yield Type III₁ in inductive-limit construction | [HYPOTHESIS] | Scaffold |
+| Sign/ReLU as Type III₁ → Type I transition (under scaffold) | [HYPOTHESIS] | Scaffold |
 
 ---
 
@@ -296,22 +297,24 @@ The following results hold rigorously on finite lattices, verified both analytic
 
 These are standard results in finite-dimensional operator algebra and linear algebra. They do not depend on any FTD-specific assumptions beyond the ternary state structure.
 
-### 8.2 What Is Structural [SELECTION]
+### 8.2 What Is Hypothesised [HYPOTHESIS]
 
-- The identification of the thermodynamic limit with a Type $\mathrm{III}_1$ factor via Araki--Woods. The theorem itself is proven mathematics (Powers 1967, Araki--Woods 1968). The application to FTD requires identifying the lattice's thermal state with a product state on the quasi-local algebra.
-- The interpretation of the sign/ReLU manifestation rule as the algebraic mechanism of the Type $\mathrm{III}_1 \to$ Type $\mathrm{I}$ transition. This is a structural correspondence, not a derivation from the five postulates.
+- That the Araki–Woods inductive-limit scaffold is the right idealisation of FTD beyond the regions the framework actually exhibits. If accepted, the scaffold yields Type III₁ via Powers 1967 / Araki–Woods 1968 — proven mathematics — but the identification of the scaffold with FTD is a modelling choice, not a consequence of Axiom Zero.
+- That the sign/ReLU manifestation rule plays the role of a conditional expectation realising a Type III₁ → Type I transition in the scaffold. This reading is structural and depends on the scaffold hypothesis.
 
-### 8.3 What Cannot Be Verified Numerically
+### 8.3 What Cannot Be Verified by Computation Within the Framework
 
-- The infinite tensor product and its GNS representation (requires infinite-dimensional Hilbert space).
-- The Connes spectrum and modular automorphism group of the limiting factor.
-- The precise mechanism by which the sign function "destroys" the Type $\mathrm{III}_1$ structure (this would require constructing the infinite-dimensional factor explicitly).
+- The infinite tensor product and its GNS representation (the framework's undefined-boundary ontology does not produce one; the scaffold is a separate construction).
+- The Connes spectrum and modular automorphism group of the would-be limit factor.
+- The precise mechanism by which the sign function would "destroy" the Type III₁ structure if such a structure existed (this would require constructing the scaffold's factor explicitly).
+
+What *can* be verified numerically — and is, in Section 7 — is the finite-region precursor: as $N$ grows, the number of distinct modular eigenvalue ratios grows, and the ratio range widens with $\beta$, as the scaffold hypothesis would predict. This is evidence for the hypothesis, not a derivation.
 
 ### 8.4 What This Document Does NOT Claim
 
-- We do **not** claim to have proven that FTD's flux field IS a Type $\mathrm{III}_1$ factor. We claim it has the structural features that, under the Araki--Woods theorem, would yield Type $\mathrm{III}_1$ in the thermodynamic limit.
-- We do **not** claim the Type $\mathrm{III}_1 \to$ Type $\mathrm{I}$ transition is a theorem of operator algebra for the sign function. The sign function operates on $\mathbb{R}$, not on a von Neumann algebra. The transition is an analogy grounded in structural correspondence.
-- We do **not** claim this construction explains consciousness. It explains the algebraic structure of observables on the FTD lattice and identifies a measurement mechanism.
+- We do **not** claim FTD's flux field IS a Type III₁ factor. The framework's regions are Type I; Type III₁ is the type the Araki–Woods scaffold would assign IF applied.
+- We do **not** claim the Type III₁ → Type I transition is a theorem of operator algebra for the sign function. The sign function operates on $\mathbb{R}$, not on a von Neumann algebra. The transition is an analogy grounded in structural correspondence within the scaffold.
+- We do **not** claim this construction explains consciousness. It examines the algebraic structure of observables on the FTD lattice and offers a measurement-mechanism hypothesis.
 
 ---
 
@@ -330,14 +333,14 @@ These are standard results in finite-dimensional operator algebra and linear alg
 
 Key findings:
 
-1. **Finite lattice is always Type I** (discrete spectrum). This is expected — Type III_1 requires the thermodynamic limit.
-2. **The number of distinct modular eigenvalue ratios grows with system size** (5 -> 13 -> 43), consistent with the Connes spectrum approaching R_+ in the thermodynamic limit.
+1. **Every finite region is Type I** (discrete spectrum). This is expected: Type III₁ is a property of the Araki–Woods inductive-limit scaffold, not of any region the framework actually exhibits.
+2. **The number of distinct modular eigenvalue ratios grows with system size** (5 → 13 → 43), consistent with the scaffold-hypothesis prediction that the Connes spectrum would approach ℝ₊ as the inductive-limit construction grows.
 3. **The ratio range widens dramatically with beta**: at beta=1000, the 8-site case shows ratios spanning [0, 10^76], consistent with Type III_1 (full positive reals).
 4. **Entropy evolution**: high-T regime (beta << 1) shows maximal entropy S -> log(3^N); low-T regime (beta >> 1) shows S -> log(3) (ground-state degeneracy); intermediate beta shows the Type III-like behavior.
 
 **What this advances:** Explicit numerical construction of the modular operator on the FTD lattice, demonstrating the expected finite-size precursor of Type III_1 with growing spectrum diversity.
 
-**What remains:** Thermodynamic limit extrapolation (tensor network / RG methods needed), non-diagonal Hamiltonian (full FTD Lagrangian with flux-flux coupling), and verification that the continuous Connes spectrum S = R_+ is achieved at N -> infinity.
+**What remains:** large-region extrapolation under the scaffold hypothesis (tensor network / RG methods needed); non-diagonal Hamiltonian (full FTD Lagrangian with flux-flux coupling); verification that the scaffold-predicted continuous Connes spectrum S = ℝ₊ would be achieved as the inductive-limit construction grows. None of these would constitute a derivation of Type III₁ from FTD's axioms; they would constitute evidence for or against the scaffold hypothesis.
 
 ---
 

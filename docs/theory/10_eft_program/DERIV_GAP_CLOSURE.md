@@ -20,7 +20,7 @@
 |---|---|---|---|
 | **T1** `gauss_project_converged()` | Manuscript §3.3 said 6-iter SOR limits Ward closure to $\sim 1\%$ of $\|J\|_{\max}$; ticket would fix it | 500 extra SOR cycles actually *worsens* residual (3.4e-2 → 6.7e-2) | **Deeper finding:** 18-pt Laplacian in SOR vs 6-pt divergence is a stencil mismatch; repeated SOR is not a contraction at this $\omega$. Fix requires matched-stencil or multigrid solver, not just more iterations. |
 | **T2** multi-seed $\beta$ ensemble | Manuscript §6 flagged L=48 outlier (0.014 vs 0.033 at L=32,64) as possibly statistical | 4 seeds × 3 scales: $\alpha_{\mathrm{fit}}$ varies by ≤ 1.5% across seeds | **L = 48 outlier is a real systematic, not noise.** Candidate cause: non-power-of-2 periodic-image pattern. |
-| **T3** L = 128 continuum scan | Manuscript §5.1 reported $\lambda_{\mathrm{Yukawa}} = 10.6$ at L = 64, interpreted as physical screening | $\lambda$(L=32) = 2.88, $\lambda$(L=64) = 10.57, $\lambda$(L=128) = **25.61** → $\lambda \approx L/5$ | **Major reinterpretation:** the "Yukawa screening" of Phase 2 is **not physical**. It is a **periodic-image finite-size effect**: the effective cutoff on the Coulomb tail is $\sim L/5$ for any L. $\lambda_\infty = \infty$: pure Coulomb is recovered in the thermodynamic limit. |
+| **T3** L = 128 continuum-matching scan | Manuscript §5.1 reported $\lambda_{\mathrm{Yukawa}} = 10.6$ at L = 64, interpreted as physical screening | $\lambda$(L=32) = 2.88, $\lambda$(L=64) = 10.57, $\lambda$(L=128) = **25.61** → $\lambda \approx L/5$ | **Major reinterpretation:** the "Yukawa screening" of Phase 2 is **not physical**. It is a **periodic-image finite-size effect**: the effective cutoff on the Coulomb tail is $\sim L/5$ for any L. $\lambda(L)$ grows without bound as L grows; pure Coulomb is approached for arbitrarily large finite L. |
 | **T4** high-amplitude EWSB cold-start | Phase 4A Branch B (amp 0.15, no condensation) | Amplitudes 0.15, 0.30, 0.50 → all decay; **amp 0.80 → $\langle\|J\|\rangle$ triples (0.97 → 2.99) + 62 charges manifest** | **Branch A signal observed!** Dynamical EWSB-like condensation at threshold $\sim 0.6$; first cold-start manifestation event in the EFT programme. |
 | **T5** confinement-era operator scan | Phase 3 reported all Δ clustering near 0.5 on pulse scenario; attributed to envelope artefact | `flux-baryon` scenario at L=32: divJ² Δ = **1.69** (vs 0.46 in pulse); curlJ² = 0.68 (vs 0.39); J⁴ = 0.84 (vs 0.75) | **Pulse-envelope artefact confirmed.** Operators *do* stratify by dimension when measured on a scenario with genuine long-range structure; divJ² jumps 3.7× toward its naive-4 bracket. Operator basis is physical, not pathological. |
 
@@ -135,10 +135,9 @@ caused by periodic-image cancellation at $r \sim L/2$.
 
 The Phase 2C ratio "$\beta_{\mathrm{measured}} / \beta_{\mathrm{QED}} \approx
 -160$" is inflated because the Yukawa-fit $\alpha$ captures the
-finite-size screening rather than a physical running. In the thermodynamic
-limit $L \to \infty$:
+finite-size screening rather than a physical running. For arbitrarily large finite $L$:
 
-- $\lambda \to \infty$ (no finite-size cutoff → pure Coulomb is restored)
+- $\lambda$ grows without bound (no finite-size cutoff → pure Coulomb is restored)
 - The "Yukawa method" would degenerate to the "slope method"
 - The slope-method α at L = 128 (0.131) differs from L = 64 (0.120) by
   only $\sim 9\%$ — far less running than the naive Yukawa comparison

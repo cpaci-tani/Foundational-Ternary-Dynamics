@@ -72,7 +72,7 @@ The blocking chain (each item requires the previous):
 1. **No FTD von Neumann algebras constructed** --- can't verify Type III_1 assignment
 2. **No modular operator Delta computed** --- can't verify Connes-Rovelli
 3. **No background independence** --- can't close the GRT side
-4. **Finite lattice algebras are Type I** --- Type III_1 only emerges in continuum/thermodynamic limit
+4. **Finite lattice algebras are Type I** --- Type III_1 only emerges as scaling behavior under arbitrarily large finite lattice extent or arbitrarily fine spacing
 
 ### 1.4 The Pragmatic Approach
 
@@ -118,8 +118,8 @@ Prerequisites for the GRT side of the bridge. These concern establishing that FT
 | **GAP-G1** | **Full Schwarzschild metric.** Complete line element derived from lattice computational budget. g_rr = -1/f from velocity cost amplification in gravitationally saturated nodes. Angular components from spherical symmetry. Two-observer ratio formula verified. | **[RESOLVED]** | [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) |
 | **GAP-G2** | **Nonlinear Einstein equations from flux dynamics.** The linearized correspondence (flux wave equation <-> linearized Einstein) is established. The full nonlinear R_mu_nu - (1/2)g_mu_nu R = 8piG T_mu_nu requires showing that nonlinear flux interactions produce the correct geometric content. | **[OPEN]** | [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) |
 | **GAP-G3** | **T_mu_nu construction from flux field.** Canonical stress-energy tensor derived from flux Lagrangian via Noether's theorem. T^00 = energy density, T^0i = Poynting vector, conservation d_mu T^{mu nu} = 0 proven from wave equation. Linearized Einstein equations now fully [THEOREM]. | **[RESOLVED]** | [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) |
-| **GAP-G4** | **Diffeomorphism invariance as theorem.** GRT requires Diff(M) gauge symmetry. FTD has a fixed cubic lattice. Diffeomorphism invariance must emerge at scales >> lattice spacing, but this has not been proven. | **[OPEN]** | OPEN.7 in CLAUDE.md |
-| **GAP-G5** | **Background independence at algebra level.** The Connes-Rovelli thermal time hypothesis requires background-free QFT. FTD has a background lattice with absolute time t in N. At the algebra level, this means H_FTD has a preferred time direction. Background independence must emerge as an algebraic property, not a substrate property. | **[OPEN]** | Central to bridge |
+| **GAP-G4** | **Diffeomorphism invariance as theorem.** GRT requires Diff(M) gauge symmetry. FTD has a fixed cubic graph. Diffeomorphism invariance must emerge at scales >> lattice spacing, but this has not been proven. | **[OPEN]** | OPEN.7 in CLAUDE.md |
+| **GAP-G5** | **Background independence at algebra level.** The Connes-Rovelli thermal time hypothesis requires background-free QFT. FTD has a background cubic graph with absolute time t in N. At the algebra level, this means H_FTD has a preferred time direction. Background independence must emerge as an algebraic property, not a substrate property. | **[OPEN]** | Central to bridge |
 
 **Assessment:** GAP-G5 is the deepest obstacle on the GRT side. Even if modular flow is computed, identifying it with physical time requires showing that the lattice time t is not fundamental --- that tick dynamics is itself a consequence of the modular flow, not vice versa. This is a conceptual reversal that may require extending FTD's axioms.
 
@@ -239,7 +239,7 @@ The minimum sequence of computations needed to close the bridge, ordered by depe
 | beta = pi | Intermediate regime (89.4% participation) | Not a special extremum, but high occupation |
 
 **Critical finding:** The free FTD wave equation gives:
-- **Type I -> approaching Type II_1** in the thermodynamic limit
+- **Type I -> approaching Type II_1** for arbitrarily large N
 - P/N saturates at 0.892, NOT approaching 1.0 (Type II_1 would require P/N -> 1)
 - Poisson level statistics confirm integrability --- no level repulsion
 - **Type III_1 requires INTERACTIONS** that break integrability (manifestation dynamics, sLoop coupling, nonlinear terms)
@@ -347,13 +347,13 @@ The minimum sequence of computations needed to close the bridge, ordered by depe
 
 **GAP-S1 (Bell transition):** This may require extending FTD's axioms. The local deterministic substrate provably gives S <= 2. Getting S > 2 from ensemble averaging requires either (a) a mathematical demonstration that aggregate statistics over sLoop-coupled measurements produce quantum correlations, or (b) acceptance that the substrate description and the aggregate description operate at different ontological levels with different rules. Option (a) would be a major theorem; option (b) is the current working interpretation but is now specified via the three-level observer mechanism (DERIV_OBSERVER_BELL_MECHANISM.md, updated April 2026).
 
-**GAP-G5 (Background independence):** FTD has a fixed cubic lattice with absolute time. Achieving true background independence may require reformulating FTD in terms of algebras rather than lattice sites --- making the lattice itself emergent. This is a deep conceptual shift that goes beyond gap-filling.
+**GAP-G5 (Background independence):** FTD has a fixed cubic graph with absolute time. Achieving true background independence may require reformulating FTD in terms of algebras rather than lattice sites --- making the lattice itself emergent. This is a deep conceptual shift that goes beyond gap-filling.
 
 ### 5.3 Honest Assessment of the Program
 
 The bridge program rests on **one classical pillar** (Connes-Rovelli thermal time hypothesis) and **one major conjecture** (consciousness algebras are Type III_1). Even if all computational gaps are closed, the program faces two irreducible challenges:
 
-1. **Finite lattice algebras are Type I.** At any finite lattice size, the algebra of observables is B(H) for a finite-dimensional H, which is Type I. Type III_1 can only appear as an emergent property in the thermodynamic/continuum limit. This means the bridge can never be *verified* at finite size --- only *indicated* by scaling trends.
+1. **Finite lattice algebras are Type I.** At any finite lattice size, the algebra of observables is B(H) for a finite-dimensional H, which is Type I. Type III_1 can only appear as an emergent property in scaling behavior under arbitrarily large finite extent (or arbitrarily fine spacing). This means the bridge can never be *verified* at finite size --- only *indicated* by scaling trends.
 
 2. **The consciousness conjecture is not falsifiable within FTD.** Assigning Type III_1 to consciousness requires identifying an agent's internal algebra, which requires solving the binding problem (what constitutes a unified conscious system). FTD does not currently solve this.
 
@@ -411,7 +411,7 @@ The five critical-path computations establish a clear picture of where the FTD b
 
 1. **KMS condition holds exactly** at beta = pi for the Gibbs state of the FTD Hamiltonian H = -(c^2/2) nabla^2. This is a mathematical identity for thermal states, confirming the Hamiltonian construction is correct. (Step 2)
 
-2. **Spectral gap closes** as Delta ~ N^{-2.0} in the thermodynamic limit. This is necessary (though not sufficient) for Type III emergence. (Step 4)
+2. **Spectral gap closes** as Delta ~ N^{-2.0} for arbitrarily large N. This is necessary (though not sufficient) for Type III emergence. (Step 4)
 
 3. **Genuine quantum coherence exists** in the thermal state: relative entropy of coherence C_RE = 0.060 nats, with off-diagonal elements dominating at short range (ratio 58.66 at d=1). (Step 5)
 
