@@ -669,6 +669,10 @@ ftd_add_test(test_native_moore_temporal_layers tests/test_native_moore_temporal_
 ftd_add_test(test_fractional_heat_flow tests/test_fractional_heat_flow.cpp
              CTEST_NAME fractional_heat_flow TIMEOUT 600 LABELS native eft)
 
+# Manifestation background unit tests (Plan B scale-flow campaign).
+ftd_add_test(test_manifestation_background tests/test_manifestation_background.cpp
+             CTEST_NAME manifestation_background TIMEOUT 120 LABELS native eft)
+
 # Langevin thermostat equipartition (FTD-0051 acceptance test).
 # Verifies <|wave_vel|^2> = 3T on bare lattice single-substrate path.
 ftd_add_test(test_langevin_equipartition tests/test_langevin_equipartition.cpp
