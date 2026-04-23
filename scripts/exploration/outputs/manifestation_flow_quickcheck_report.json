@@ -1,0 +1,59 @@
+{
+  "input": "scripts/exploration/outputs/manifestation_flow_quickcheck.json",
+  "sigma_threshold": 2.0,
+  "groups": {
+    "L=32_n=0.001_level=0": {
+      "count": 16,
+      "mean_ratio": 0.85090721583125,
+      "se_ratio": 0.0077962629035912626,
+      "mean_energy_fine": 0.40060481256875,
+      "se_energy_fine": 0.025962216802983495
+    },
+    "L=32_n=0.01_level=0": {
+      "count": 16,
+      "mean_ratio": 0.92763321721875,
+      "se_ratio": 0.009744750336082655,
+      "mean_energy_fine": 10.915026542625,
+      "se_energy_fine": 1.380821406997854
+    },
+    "L=32_n=0.1_level=0": {
+      "count": 16,
+      "mean_ratio": 0.93491487425,
+      "se_ratio": 0.018161562876599032,
+      "mean_energy_fine": 342.907254065,
+      "se_energy_fine": 64.85994990663413
+    }
+  },
+  "sc3": {
+    "triggered": [
+      {
+        "L": 32,
+        "n": 0.001,
+        "level": 0,
+        "delta_ratio": 0.14909278416875005,
+        "se": 0.0077962629035912626,
+        "sigma_units": 19.123621921481394
+      },
+      {
+        "L": 32,
+        "n": 0.01,
+        "level": 0,
+        "delta_ratio": 0.07236678278124997,
+        "se": 0.009744750336082655,
+        "sigma_units": 7.426232616067319
+      },
+      {
+        "L": 32,
+        "n": 0.1,
+        "level": 0,
+        "delta_ratio": 0.06508512575000003,
+        "se": 0.018161562876599032,
+        "sigma_units": 3.5836742791481604
+      }
+    ],
+    "slopes": {
+      "L=32_level=0": 0.018242031244438198
+    },
+    "verdict": "SC3.a triggers"
+  }
+}
