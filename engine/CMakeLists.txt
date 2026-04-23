@@ -103,6 +103,9 @@ add_library(ftd_core
                                            # EFT Phase 0: reserves running_coupling.cpp
                                            # for Phase-2 lattice-measured β(g)
     src/eft/blocking.cpp                    # EFT Phase 2A: real-space block-spin transformation
+    src/eft/dual_cell_blocking.cpp          # Native EFT: finite-volume source/flux blocking
+    src/eft/dual_cell_continuity.cpp        # Native EFT: finite-volume current/reaction blocking
+    src/eft/dual_cell_flow.cpp              # Native EFT: bare b=2 flow measurements
     src/csv_export.cpp     # RF-05: csv export bodies moved from csv_export.h
     src/constructors/constructors_core.cpp
     src/constructors/constructors_atoms.cpp
@@ -664,6 +667,18 @@ ftd_add_test(test_native_moore_layer_coupling tests/test_native_moore_layer_coup
              CTEST_NAME native_moore_layer_coupling TIMEOUT 600 LABELS native eft)
 ftd_add_test(test_native_moore_temporal_layers tests/test_native_moore_temporal_layers.cpp
              CTEST_NAME native_moore_temporal_layers TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_blocking_map tests/test_native_blocking_map.cpp
+             CTEST_NAME native_blocking_map TIMEOUT 120 LABELS native eft)
+ftd_add_test(test_native_flow tests/test_native_flow.cpp
+             CTEST_NAME native_flow TIMEOUT 120 LABELS native eft)
+ftd_add_test(test_native_current_flow tests/test_native_current_flow.cpp
+             CTEST_NAME native_current_flow TIMEOUT 120 LABELS native eft)
+ftd_add_test(test_native_response_flow tests/test_native_response_flow.cpp
+             CTEST_NAME native_response_flow TIMEOUT 120 LABELS native eft)
+ftd_add_test(test_native_engine_history_flow tests/test_native_engine_history_flow.cpp
+             CTEST_NAME native_engine_history_flow TIMEOUT 120 LABELS native eft)
+ftd_add_test(test_native_engine_transport_flow tests/test_native_engine_transport_flow.cpp
+             CTEST_NAME native_engine_transport_flow TIMEOUT 120 LABELS native eft)
 
 # Fractional heat flow test (Euler ratio continuum limit verification)
 ftd_add_test(test_fractional_heat_flow tests/test_fractional_heat_flow.cpp
@@ -672,6 +687,10 @@ ftd_add_test(test_fractional_heat_flow tests/test_fractional_heat_flow.cpp
 # Manifestation background unit tests (Plan B scale-flow campaign).
 ftd_add_test(test_manifestation_background tests/test_manifestation_background.cpp
              CTEST_NAME manifestation_background TIMEOUT 120 LABELS native eft)
+
+# Local repro (do not commit) for GPU empty-bridge crash triage.
+ftd_add_test(_repro_gpu_empty_bridge tests/_repro_gpu_empty_bridge.cpp
+             CTEST_NAME _repro_gpu_empty_bridge TIMEOUT 120 LABELS native eft)
 
 # Langevin thermostat equipartition (FTD-0051 acceptance test).
 # Verifies <|wave_vel|^2> = 3T on bare lattice single-substrate path.
@@ -692,6 +711,12 @@ ftd_add_test(test_mechanism_b tests/test_mechanism_b.cpp
 # physical constants.
 ftd_add_test(benchmark_nucleon_mass tests/benchmark_nucleon_mass.cpp
              CTEST_NAME benchmark_nucleon_mass TIMEOUT 1800 LABELS benchmark eft)
+# Manifestation scale-flow Tier-1 CPU harness (single-seed measurement).
+# Called by scripts/exploration/measure_manifestation_flow_quickcheck.py.
+ftd_add_test(benchmark_manifestation_flow_cpu
+             tests/benchmark_manifestation_flow_cpu.cpp
+             CTEST_NAME benchmark_manifestation_flow_cpu TIMEOUT 600
+             LABELS benchmark eft)
 ftd_add_test(benchmark_alpha_convergence tests/benchmark_alpha_convergence.cpp
              CTEST_NAME benchmark_alpha_convergence TIMEOUT 7200 LABELS benchmark eft)
 if(FTD_ENABLE_CUDA)

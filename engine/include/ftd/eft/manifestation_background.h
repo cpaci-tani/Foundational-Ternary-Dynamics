@@ -135,6 +135,33 @@ struct KtMeasurement {
     bool   valid   = false;
 };
 
+/// Copy the flux + wave_vel fields (including L/R dual-substrate components)
+/// from a settled background bridge `src` into a freshly-constructed bridge
+/// `dst`. Used by measure_kt_on_bg and measure_potential_vp to probe a
+/// prepared background without disturbing it — the probe runs on its own
+/// bridge that inherits the field state but is free to evolve independently.
+///
+/// Notes:
+///  - `dst` must be constructed with the same lattice size as `src`.
+///  - `dst.voxels()` is called first, so under GPU backend this triggers a
+///    pull from device -> host on `src` (sync_to_host) and marks `dst` as
+///    host-mutated (the next tick/run on dst pushes the new field back).
+///  - State, velocity, particle_id, locked, etc. are NOT copied — `dst`
+///    keeps its own (empty) states. Only the field is transferred.
+inline void copy_flux_and_wave_vel(const RenderBridge& src, RenderBridge& dst) {
+    const auto& sv = src.voxels();
+    auto& dv = dst.voxels();
+    const size_t N = sv.size();
+    for (size_t i = 0; i < N; ++i) {
+        dv[i].flux      = sv[i].flux;
+        dv[i].wave_vel  = sv[i].wave_vel;
+        dv[i].flux_L    = sv[i].flux_L;
+        dv[i].flux_R    = sv[i].flux_R;
+        dv[i].wave_vel_L = sv[i].wave_vel_L;
+        dv[i].wave_vel_R = sv[i].wave_vel_R;
+    }
+}
+
 inline double sigma_18_axial(double kx) {
     // sigma_18(kx, 0, 0) with cos(ky) = cos(kz) = 1.
     //   = 4 - (2/3)(cos kx + 2) - (2/3)(2 cos kx + 1)
