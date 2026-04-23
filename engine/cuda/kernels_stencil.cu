@@ -226,6 +226,11 @@ __global__ void phase_write_kernel(
     bool selective_damping,
     bool do_larmor,
     double damp,
+    // Langevin thermostat (FTD-0051).
+    bool do_langevin,
+    double langevin_gamma,
+    double langevin_T,
+    const double* __restrict__ langevin_noise,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -244,12 +249,18 @@ __global__ void phase_write_kernel(
     flux_y[i] += wv_y[i];
     flux_z[i] += wv_z[i];
 
-    // Conditional damping
-    if (do_damping) {
+    if (do_langevin) {
+        // Ornstein-Uhlenbeck on wave_vel; replaces deterministic damping.
+        const int N = L * L * L;
+        const double one_minus_gamma = 1.0 - langevin_gamma;
+        const double sigma = sqrt(2.0 * langevin_gamma * langevin_T);
+        wv_x[i] = one_minus_gamma * wv_x[i] + sigma * langevin_noise[0*N + i];
+        wv_y[i] = one_minus_gamma * wv_y[i] + sigma * langevin_noise[1*N + i];
+        wv_z[i] = one_minus_gamma * wv_z[i] + sigma * langevin_noise[2*N + i];
+    } else if (do_damping) {
         bool should_damp = !selective_damping || (near_particle[i] != 0);
         if (should_damp) {
             double eff_damp = damp;
-            // Larmor radiation: modulate damping at near-particle sites
             if (do_larmor && selective_damping && near_particle[i]) {
                 double a2 = near_accel[i] * near_accel[i];
                 double larmor_mod = fmin(1.0, LARMOR_FLOOR + K_LARMOR * a2);
@@ -289,6 +300,15 @@ __global__ void wave_update_kernel(
     bool selective_damping,
     bool do_larmor,
     double damp,
+    // Langevin thermostat (FTD-0051). When do_langevin is true the OU step
+    // replaces the deterministic damping block:
+    //    v <- (1 - gamma) v + sqrt(2 gamma T) * eta,   eta ~ N(0,1) per comp.
+    // Noise buffer layout: [3*N] doubles, flattened as (comp, i) with
+    // comp ∈ {0=x, 1=y, 2=z}; stride N per component.
+    bool do_langevin,
+    double langevin_gamma,
+    double langevin_T,
+    const double* __restrict__ langevin_noise,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -369,7 +389,7 @@ __global__ void wave_update_kernel(
         djz += G_C * curl_z;
     }
 
-    // --- Phase Write: leapfrog integration + damping ---
+    // --- Phase Write: leapfrog integration + damping or Langevin OU ---
     wv_x[i] += djx;
     wv_y[i] += djy;
     wv_z[i] += djz;
@@ -378,7 +398,17 @@ __global__ void wave_update_kernel(
     flux_y[i] += wv_y[i];
     flux_z[i] += wv_z[i];
 
-    if (do_damping) {
+    if (do_langevin) {
+        // Ornstein-Uhlenbeck on wave_vel per-component. Replaces deterministic
+        // damping. Field rescaling of J is NOT applied here (Langevin acts on
+        // the "momentum" DoF; position J thermalizes via coupled dynamics).
+        const int N = L * L * L;
+        const double one_minus_gamma = 1.0 - langevin_gamma;
+        const double sigma = sqrt(2.0 * langevin_gamma * langevin_T);
+        wv_x[i] = one_minus_gamma * wv_x[i] + sigma * langevin_noise[0*N + i];
+        wv_y[i] = one_minus_gamma * wv_y[i] + sigma * langevin_noise[1*N + i];
+        wv_z[i] = one_minus_gamma * wv_z[i] + sigma * langevin_noise[2*N + i];
+    } else if (do_damping) {
         bool should_damp = !selective_damping || (near_particle[i] != 0);
         if (should_damp) {
             double eff_damp = damp;
@@ -609,6 +639,133 @@ __global__ void phase_read_dual_kernel(
     djR_x[i] = dRx;  djR_y[i] = dRy;  djR_z[i] = dRz;
 }
 
+// ---------- Strong Field (Stella Octangula) Kernel ----------
+// Propagates strong flux along the 8 vertex neighbors
+__global__ void strong_field_stencil_kernel(
+    double* __restrict__ fs_x, double* __restrict__ fs_y, double* __restrict__ fs_z,
+    double* __restrict__ wvs_x, double* __restrict__ wvs_y, double* __restrict__ wvs_z,
+    const int8_t* __restrict__ state, const int8_t* __restrict__ color,
+    double damp, int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+    int i = x * L * L + y * L + z;
+
+    // 8 vertex neighbors
+    int v1 = idx3d(x+1, y+1, z+1, L);
+    int v2 = idx3d(x+1, y+1, z-1, L);
+    int v3 = idx3d(x+1, y-1, z+1, L);
+    int v4 = idx3d(x+1, y-1, z-1, L);
+    int v5 = idx3d(x-1, y+1, z+1, L);
+    int v6 = idx3d(x-1, y+1, z-1, L);
+    int v7 = idx3d(x-1, y-1, z+1, L);
+    int v8 = idx3d(x-1, y-1, z-1, L);
+
+    // Laplacian for vertex neighbors: (1/8) * sum_vertices - center
+    constexpr double WV = 1.0 / 8.0;
+    constexpr double cw2 = C_WAVE * C_WAVE;
+
+    double lap_x = WV * (fs_x[v1] + fs_x[v2] + fs_x[v3] + fs_x[v4] + fs_x[v5] + fs_x[v6] + fs_x[v7] + fs_x[v8]) - fs_x[i];
+    double lap_y = WV * (fs_y[v1] + fs_y[v2] + fs_y[v3] + fs_y[v4] + fs_y[v5] + fs_y[v6] + fs_y[v7] + fs_y[v8]) - fs_y[i];
+    double lap_z = WV * (fs_z[v1] + fs_z[v2] + fs_z[v3] + fs_z[v4] + fs_z[v5] + fs_z[v6] + fs_z[v7] + fs_z[v8]) - fs_z[i];
+
+    double djx = cw2 * lap_x;
+    double djy = cw2 * lap_y;
+    double djz = cw2 * lap_z;
+
+    // Source term: color charge acts as gradient source along its respective axis
+    // color: 1=red(x), 2=green(y), 3=blue(z)
+    int8_t c = color[i];
+    if (state[i] != 0 && c > 0) {
+        // VERTEX_GAUGE = (11/6) / sqrt(8) — Watson c3 loop gauge, stella-octangula
+        // Single source of truth: include/ftd/constants_gpu.cuh
+        double src = G_C * state[i] * VERTEX_GAUGE;
+        if (c == 1) djx += src;
+        else if (c == 2) djy += src;
+        else if (c == 3) djz += src;
+    }
+
+    wvs_x[i] += djx;
+    wvs_y[i] += djy;
+    wvs_z[i] += djz;
+
+    // Implicit leapfrog write
+    fs_x[i] += wvs_x[i];
+    fs_y[i] += wvs_y[i];
+    fs_z[i] += wvs_z[i];
+
+    // Damping
+    fs_x[i] *= damp;
+    fs_y[i] *= damp;
+    fs_z[i] *= damp;
+    wvs_x[i] *= damp;
+    wvs_y[i] *= damp;
+    wvs_z[i] *= damp;
+}
+
+// ---------- Weak Field (Cuboctahedron) Kernel ----------
+// Propagates weak flux along the 12 edge neighbors
+__global__ void weak_field_stencil_kernel(
+    double* __restrict__ fw_x, double* __restrict__ fw_y, double* __restrict__ fw_z,
+    double* __restrict__ wvw_x, double* __restrict__ wvw_y, double* __restrict__ wvw_z,
+    const int8_t* __restrict__ state, const int8_t* __restrict__ flavor,
+    double damp, int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+    int i = x * L * L + y * L + z;
+
+    // 12 edge neighbors
+    int e1 = idx3d(x+1, y+1, z, L);  int e2 = idx3d(x+1, y-1, z, L);
+    int e3 = idx3d(x-1, y+1, z, L);  int e4 = idx3d(x-1, y-1, z, L);
+    int e5 = idx3d(x+1, y, z+1, L);  int e6 = idx3d(x+1, y, z-1, L);
+    int e7 = idx3d(x-1, y, z+1, L);  int e8 = idx3d(x-1, y, z-1, L);
+    int e9 = idx3d(x, y+1, z+1, L);  int e10= idx3d(x, y+1, z-1, L);
+    int e11= idx3d(x, y-1, z+1, L);  int e12= idx3d(x, y-1, z-1, L);
+
+    constexpr double WV = 1.0 / 12.0;
+    constexpr double cw2 = C_WAVE * C_WAVE;
+
+    double lap_x = WV * (fw_x[e1]+fw_x[e2]+fw_x[e3]+fw_x[e4]+fw_x[e5]+fw_x[e6]+fw_x[e7]+fw_x[e8]+fw_x[e9]+fw_x[e10]+fw_x[e11]+fw_x[e12]) - fw_x[i];
+    double lap_y = WV * (fw_y[e1]+fw_y[e2]+fw_y[e3]+fw_y[e4]+fw_y[e5]+fw_y[e6]+fw_y[e7]+fw_y[e8]+fw_y[e9]+fw_y[e10]+fw_y[e11]+fw_y[e12]) - fw_y[i];
+    double lap_z = WV * (fw_z[e1]+fw_z[e2]+fw_z[e3]+fw_z[e4]+fw_z[e5]+fw_z[e6]+fw_z[e7]+fw_z[e8]+fw_z[e9]+fw_z[e10]+fw_z[e11]+fw_z[e12]) - fw_z[i];
+
+    double djx = cw2 * lap_x;
+    double djy = cw2 * lap_y;
+    double djz = cw2 * lap_z;
+
+    // Source term: flavor (chirality) acts as isotropic source
+    if (state[i] != 0 && flavor[i] != 0) {
+        // EDGE_GAUGE = (13/9) / sqrt(12) — Watson c2 loop gauge, cuboctahedron
+        // Single source of truth: include/ftd/constants_gpu.cuh
+        double src = G_C * state[i] * flavor[i] * EDGE_GAUGE;
+        djx += src;
+        djy += src;
+        djz += src;
+    }
+
+    wvw_x[i] += djx;
+    wvw_y[i] += djy;
+    wvw_z[i] += djz;
+
+    // Implicit leapfrog write
+    fw_x[i] += wvw_x[i];
+    fw_y[i] += wvw_y[i];
+    fw_z[i] += wvw_z[i];
+
+    // Damping
+    fw_x[i] *= damp;
+    fw_y[i] *= damp;
+    fw_z[i] *= damp;
+    wvw_x[i] *= damp;
+    wvw_y[i] *= damp;
+    wvw_z[i] *= damp;
+}
+
 // ---------- Dual Phase Write Kernel ----------
 // Independent leapfrog on L/R, sync observable (flux = L + R)
 
@@ -748,7 +905,8 @@ void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling) {
 
 void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                         bool larmor_radiation, double damping_factor,
-                        bool do_genesis, double dt) {
+                        bool do_genesis, double dt,
+                        bool do_langevin, double langevin_gamma, double langevin_T) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
@@ -770,7 +928,9 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
         bufs.d_near_particle, bufs.d_near_accel,
         do_damping, selective_damping, larmor_radiation,
-        damping_factor, L
+        damping_factor,
+        do_langevin, langevin_gamma, langevin_T, bufs.d_langevin_noise,
+        L
     );
     CUDA_CHECK(cudaGetLastError());
 
@@ -806,7 +966,8 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
 void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
                         bool do_damping, bool selective_damping,
                         bool larmor_radiation, double damping_factor,
-                        bool do_genesis, double dt) {
+                        bool do_genesis, double dt,
+                        bool do_langevin, double langevin_gamma, double langevin_T) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
@@ -821,7 +982,7 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
         CUDA_CHECK(cudaGetLastError());
     }
 
-    // Fused Laplacian + coupling + leapfrog + damping
+    // Fused Laplacian + coupling + leapfrog + damping (or Langevin OU)
     wave_update_kernel<<<grid, block>>>(
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
@@ -830,7 +991,9 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
         bufs.d_near_particle, bufs.d_near_accel,
         do_wave, do_coupling,
         do_damping, selective_damping, larmor_radiation,
-        damping_factor, L
+        damping_factor,
+        do_langevin, langevin_gamma, langevin_T, bufs.d_langevin_noise,
+        L
     );
     CUDA_CHECK(cudaGetLastError());
 
@@ -1140,7 +1303,7 @@ __global__ void pair_production_kernel(
 
     // Pick neighbor with highest flux (most energetic)
     int best_j = -1;
-    double best_rho = 0.0;
+    double best_rho = -1.0;
     for (int n = 0; n < 6; ++n) {
         int j = nbrs[n];
         if (state[j] != 0) continue;  // Must be void
@@ -1199,6 +1362,34 @@ void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate) {
         bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
         bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
         L
+    );
+    CUDA_CHECK(cudaGetLastError());
+}
+
+void launch_strong_field_stencil(GpuBuffers& bufs, double damp) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads
+    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+
+    strong_field_stencil_kernel<<<grid, block>>>(
+        bufs.d_flux_strong_x, bufs.d_flux_strong_y, bufs.d_flux_strong_z,
+        bufs.d_wave_vel_strong_x, bufs.d_wave_vel_strong_y, bufs.d_wave_vel_strong_z,
+        bufs.d_state, bufs.d_color,
+        damp, L
+    );
+    CUDA_CHECK(cudaGetLastError());
+}
+
+void launch_weak_field_stencil(GpuBuffers& bufs, double damp) {
+    int L = bufs.L;
+    dim3 block(4, 8, 8);  // 256 threads
+    dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
+
+    weak_field_stencil_kernel<<<grid, block>>>(
+        bufs.d_flux_weak_x, bufs.d_flux_weak_y, bufs.d_flux_weak_z,
+        bufs.d_wave_vel_weak_x, bufs.d_wave_vel_weak_y, bufs.d_wave_vel_weak_z,
+        bufs.d_state, bufs.d_flavor,
+        damp, L
     );
     CUDA_CHECK(cudaGetLastError());
 }

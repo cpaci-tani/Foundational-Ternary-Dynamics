@@ -47,6 +47,7 @@ struct GpuBuffers {
     int32_t*  d_particle_id = nullptr;
     int8_t*   d_spin        = nullptr;
     int8_t*   d_color       = nullptr;
+    int8_t*   d_flavor      = nullptr;
     double*   d_accel_mag   = nullptr;
 
     // --- Solver fields ---
@@ -81,6 +82,25 @@ struct GpuBuffers {
     double*   d_delta_j_R_y  = nullptr;
     double*   d_delta_j_R_z  = nullptr;
 
+    // --- Strong Substrate Field (Stella Octangula) ---
+    // Note: strong_field_stencil_kernel writes wvs_* / fs_* in-place (leapfrog
+    // fuses the delta_j accumulator into the velocity update), so no separate
+    // d_delta_j_strong_* buffers are needed. Same for weak below.
+    double*   d_flux_strong_x     = nullptr;
+    double*   d_flux_strong_y     = nullptr;
+    double*   d_flux_strong_z     = nullptr;
+    double*   d_wave_vel_strong_x = nullptr;
+    double*   d_wave_vel_strong_y = nullptr;
+    double*   d_wave_vel_strong_z = nullptr;
+
+    // --- Weak Substrate Field (Cuboctahedron) ---
+    double*   d_flux_weak_x     = nullptr;
+    double*   d_flux_weak_y     = nullptr;
+    double*   d_flux_weak_z     = nullptr;
+    double*   d_wave_vel_weak_x = nullptr;
+    double*   d_wave_vel_weak_y = nullptr;
+    double*   d_wave_vel_weak_z = nullptr;
+
     // --- Selective damping mask ---
     uint8_t*  d_near_particle = nullptr;
     double*   d_near_accel    = nullptr;  // max accel_mag of nearby particles (for Larmor)
@@ -94,6 +114,11 @@ struct GpuBuffers {
 
     // --- cuRAND workspace ---
     double*   d_random      = nullptr;  // N uniform random doubles
+    // Langevin thermostat noise: 3·N standard normal doubles per tick
+    // (three components of wave_vel per voxel). Only allocated when the
+    // langevin toggle is active; otherwise stays nullptr and no noise is
+    // generated. See FTD-0051.
+    double*   d_langevin_noise = nullptr;  // 3N standard normal doubles
 
     // --- Particle list (compact indices of manifested particles) ---
     // Scales with lattice: enough for ~1.5% occupation at any size
