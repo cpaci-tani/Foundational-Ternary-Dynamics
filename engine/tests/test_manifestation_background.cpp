@@ -84,6 +84,22 @@ int main() {
         CHECK(placed <= 256, "T6 high-density placed <= L^3");
     }
 
+    // T7: K_T on a bare (n=0) background must be close to 1 (bare Gaussian
+    // fixed point). Forced to CPU to bypass the GPU stencil bug exposed by
+    // empty-density settle (see header note).
+    {
+        ftd::RenderBridge rb(32);
+        rb.force_cpu();
+        ftd::eft::configure_bare_lattice_for_coupling(rb);
+        rb.run(100);
+        auto kt = ftd::eft::measure_kt_on_bg(rb, /*n_ticks=*/200);
+        char msg[128];
+        std::snprintf(msg, sizeof(msg),
+                      "T7 K_T(bare,CPU)=%.4f (expected ~1, R2=%.3f, n_samples=%zu)",
+                      kt.K_T_fit, kt.r2, kt.k_omega.size());
+        CHECK(kt.valid && kt.K_T_fit > 0.85 && kt.K_T_fit < 1.15, msg);
+    }
+
     std::printf("\n%s: %d failures\n", (g_failures == 0 ? "OK" : "FAIL"), g_failures);
     return g_failures;
 }
