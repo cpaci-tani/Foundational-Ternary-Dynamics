@@ -110,5 +110,112 @@ inline int count_manifested_sites(const RenderBridge& rb) {
     return c;
 }
 
+/// One K_T extraction from a plane-wave dispersion probe on a prepared
+/// background. Injects a small-amplitude plane wave along x at wavenumber
+/// k = 2*pi*m/L for m in {1, 2, 3}, measures angular frequency omega(k) via
+/// zero-crossings of a probe-site's flux.z, then fits K_T from
+///     omega^2(k) = K_T * (sigma_18_axial(k) / 3)
+/// where sigma_18_axial(kx) = sigma_18(kx, 0, 0) with ky = kz = 0.
+///
+/// The probe copies bg's flux/wave_vel into a FRESH RenderBridge, so the
+/// background is not disturbed and the probe can be repeated.
+///
+/// Plane-wave dispersion probe for the transverse stiffness K_T on a
+/// prepared background. See docstring of measure_kt_on_bg below.
+///
+/// Backend note: defaults to CPU (force_cpu=true) because a pre-existing
+/// GPU stencil bug (kernels_stencil.cu:903 misaligned address) crashes on
+/// settle+run with a fresh bridge that inherits empty or near-empty flux.
+/// K_T measurement is cheap (few k values, short probes), so CPU cost is
+/// minor. Pass force_cpu=false once the GPU bug is root-caused.
+struct KtMeasurement {
+    std::vector<std::pair<double, double>> k_omega;  // (k, omega) samples
+    double K_T_fit = 0.0;
+    double r2      = 0.0;
+    bool   valid   = false;
+};
+
+inline double sigma_18_axial(double kx) {
+    // sigma_18(kx, 0, 0) with cos(ky) = cos(kz) = 1.
+    //   = 4 - (2/3)(cos kx + 2) - (2/3)(2 cos kx + 1)
+    return 4.0 - (2.0 / 3.0) * (std::cos(kx) + 2.0)
+               - (2.0 / 3.0) * (2.0 * std::cos(kx) + 1.0);
+}
+
+inline KtMeasurement measure_kt_on_bg(const RenderBridge& bg,
+                                      int n_ticks = 200,
+                                      double amplitude = 1e-3,
+                                      const std::vector<int>& m_values = {1, 2, 3},
+                                      bool force_cpu = true) {
+    KtMeasurement out;
+    const int L = bg.lattice().size();
+    if (L < 8) return out;
+    constexpr double kPi = 3.14159265358979323846;
+
+    for (int m : m_values) {
+        const double k = 2.0 * kPi * static_cast<double>(m) / static_cast<double>(L);
+        RenderBridge rb(L);
+        if (force_cpu) rb.force_cpu();
+        configure_bare_lattice_for_coupling(rb);
+        rb.toggles.langevin = false;
+        copy_flux_and_wave_vel(bg, rb);
+        // Add a plane-wave perturbation to flux.z along x: J_z += A cos(k x).
+        auto& vs = rb.voxels();
+        for (int x = 0; x < L; ++x) {
+            const double dJ = amplitude * std::cos(k * static_cast<double>(x));
+            for (int y = 0; y < L; ++y)
+                for (int z = 0; z < L; ++z)
+                    vs[rb.lattice().index(x, y, z)].flux.z += dJ;
+        }
+        // Sample flux.z at a fixed probe site (x=0, y=mid, z=mid) every tick.
+        const int mid = L / 2;
+        const int probe = rb.lattice().index(0, mid, mid);
+        std::vector<double> trace;
+        trace.reserve(n_ticks + 1);
+        trace.push_back(rb.voxels()[probe].flux.z);
+        for (int t = 0; t < n_ticks; ++t) {
+            rb.run(1);
+            trace.push_back(rb.voxels()[probe].flux.z);
+        }
+        // Count sign changes. For a pure cos(omega t), period = 2 pi/omega;
+        // 2 crossings per period, so crossings = t_total * omega / pi.
+        int crossings = 0;
+        for (size_t i = 1; i < trace.size(); ++i) {
+            if ((trace[i - 1] > 0.0 && trace[i] <= 0.0) ||
+                (trace[i - 1] < 0.0 && trace[i] >= 0.0)) ++crossings;
+        }
+        if (crossings < 2) continue;  // not enough oscillation; skip this k
+        const double omega = static_cast<double>(crossings) * kPi
+                             / static_cast<double>(n_ticks);
+        out.k_omega.emplace_back(k, omega);
+    }
+
+    // Fit: omega^2 = K_T * (sigma_18_axial(k) / 3). Least squares in one variable.
+    double num = 0.0, den = 0.0, sum_y = 0.0;
+    for (const auto& [k, w] : out.k_omega) {
+        const double x = sigma_18_axial(k) / 3.0;
+        const double y = w * w;
+        num += x * y;
+        den += x * x;
+        sum_y += y;
+    }
+    if (out.k_omega.size() >= 2 && den > 0.0) {
+        out.K_T_fit = num / den;
+        const int n = static_cast<int>(out.k_omega.size());
+        const double ybar = sum_y / n;
+        double ss_tot = 0.0, ss_res = 0.0;
+        for (const auto& [k, w] : out.k_omega) {
+            const double x = sigma_18_axial(k) / 3.0;
+            const double y = w * w;
+            const double yhat = out.K_T_fit * x;
+            ss_tot += (y - ybar) * (y - ybar);
+            ss_res += (y - yhat) * (y - yhat);
+        }
+        out.r2 = (ss_tot > 0.0) ? 1.0 - ss_res / ss_tot : 0.0;
+        out.valid = std::isfinite(out.K_T_fit);
+    }
+    return out;
+}
+
 }  // namespace eft
 }  // namespace ftd
