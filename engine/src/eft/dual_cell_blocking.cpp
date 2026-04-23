@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "ftd/render_bridge.h"
+
 namespace ftd {
 namespace eft {
 
@@ -103,6 +105,33 @@ DualCellFields block_dual_cell_b2(const DualCellFields& fine) {
             }
 
     return coarse;
+}
+
+DualCellFields render_bridge_to_dual_cell_fields(const RenderBridge& rb) {
+    const int L = rb.lattice().size();
+    DualCellFields out(L);
+
+    const auto& voxels = rb.voxels();  // triggers gpu->host sync if needed
+    for (int i = 0; i < L * L * L; ++i) {
+        out.rho_cell[i] = static_cast<int>(voxels[i].state);
+    }
+
+    // Face-averaged flux. phi_x[i] = flux through the +x face of cell i,
+    // defined as 0.5 * (flux.x[i] + flux.x[i + e_x]) with periodic wrap.
+    for (int x = 0; x < L; ++x) {
+        for (int y = 0; y < L; ++y) {
+            for (int z = 0; z < L; ++z) {
+                const int i    = out.index(x, y, z);
+                const int ipx  = out.index(x + 1, y, z);
+                const int ipy  = out.index(x, y + 1, z);
+                const int ipz  = out.index(x, y, z + 1);
+                out.phi_x[i] = 0.5 * (voxels[i].flux.x + voxels[ipx].flux.x);
+                out.phi_y[i] = 0.5 * (voxels[i].flux.y + voxels[ipy].flux.y);
+                out.phi_z[i] = 0.5 * (voxels[i].flux.z + voxels[ipz].flux.z);
+            }
+        }
+    }
+    return out;
 }
 
 }  // namespace eft

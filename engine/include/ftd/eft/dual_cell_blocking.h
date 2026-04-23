@@ -24,6 +24,8 @@
 
 #include <vector>
 
+namespace ftd { class RenderBridge; }  // forward decl for adapter below
+
 namespace ftd {
 namespace eft {
 
@@ -51,6 +53,25 @@ double max_gauss_residual(const DualCellFields& fields);
 /// Native b=2 finite-volume blocking. Returns an empty field if fine.L is not
 /// even or is smaller than 2.
 DualCellFields block_dual_cell_b2(const DualCellFields& fine);
+
+/// Translate a RenderBridge state into a DualCellFields snapshot.
+///
+/// - rho_cell[i] := rb.voxels()[i].state
+/// - phi_x[i]    := 0.5 * (flux.x[i] + flux.x[i + e_x])  (face-averaged flux
+///                  through the +x face of cell i, periodic wrap)
+/// - phi_y[i], phi_z[i] analogously
+///
+/// Under this face-averaging convention, the finite-volume div_face(phi)(i)
+/// is half the engine's central-difference divergence of flux at cell i:
+///   div_face(phi)(i) = 0.5 * (flux.x[i+e_x] - flux.x[i-e_x] + ... y, z terms)
+/// (the factor of 1/2 comes from the face average canceling adjacent terms).
+/// This is internally consistent with the DualCellFields divergence
+/// convention, but it does NOT equal the engine's energy_audit().gauss_violation;
+/// bridge-comparison tests must account for the 1/2 scaling.
+///
+/// The adapter is a pure snapshot: it does NOT modify the bridge. Under GPU
+/// backend it triggers a sync-to-host via voxels().
+DualCellFields render_bridge_to_dual_cell_fields(const RenderBridge& rb);
 
 }  // namespace eft
 }  // namespace ftd
