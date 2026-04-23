@@ -25,12 +25,14 @@ DEFAULT_M = 16
 DEFAULT_SETTLE = 200
 
 
-def run_one(exe, L, density, seed, settle):
+def run_one(exe, L, density, seed, settle, use_gpu=False):
     cmd = [str(exe),
            f"--L={L}",
            f"--density={density}",
            f"--seed={seed}",
            f"--settle={settle}"]
+    if use_gpu:
+        cmd.append("--gpu")
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
     if proc.returncode != 0:
         return [{"L": L, "n": density, "level": 0, "seed": seed,
@@ -54,6 +56,8 @@ def main():
     p.add_argument("--settle", type=int, default=DEFAULT_SETTLE)
     p.add_argument("--densities", type=float, nargs="+",
                    default=DEFAULT_DENSITIES)
+    p.add_argument("--gpu", action="store_true",
+                   help="pass --gpu to harness (skip force_cpu)")
     args = p.parse_args()
 
     if not args.exe.exists():
@@ -72,7 +76,19 @@ def main():
             seed = args.L * 1_000_000 + int(density * 1_000_000) * 1_000 + seed_idx
             print(f"[{i}/{total}] L={args.L} n={density:.3g} seed_idx={seed_idx} ...",
                   flush=True)
-            rows = run_one(args.exe, args.L, density, seed, args.settle)
+            rows = run_one(args.exe, args.L, density, seed, args.settle,
+                           use_gpu=args.gpu)
+            # Summarise the key observable on each completed seed so progress
+            # is not silent.
+            if rows and rows[0].get("status") == "ok":
+                r = rows[0]
+                print(f"    -> flux_energy_ratio={r.get('flux_energy_ratio', 'n/a')}, "
+                      f"n_placed={r.get('n_placed', 'n/a')}, "
+                      f"wall={r.get('wall_seconds', 'n/a')}s",
+                      flush=True)
+            else:
+                print(f"    -> FAILED: {rows[0] if rows else 'empty'}",
+                      flush=True)
             all_rows.extend(rows)
 
     with open(args.out, "w") as f:
