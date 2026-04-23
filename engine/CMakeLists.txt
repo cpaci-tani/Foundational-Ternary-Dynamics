@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Tell MSVC to interpret source files as UTF-8 so that hex-escaped multi-byte
 # sequences in string literals (e.g. ontic_audit.cpp) are accepted correctly.
 if(MSVC)
-    add_compile_options(/utf-8)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/utf-8>)
 endif()
 
 # OpenMP for multi-threaded tick phases (not available under Emscripten)
@@ -637,6 +637,113 @@ ftd_add_test(ftd_bh_thermo tests/benchmark_black_hole_thermo.cpp
              CTEST_NAME benchmark_bh_thermo TIMEOUT 1800)
 ftd_add_test(ftd_wilson_loops tests/benchmark_wilson_loops.cpp GPU_HEAVY
              CTEST_NAME benchmark_wilson_loops TIMEOUT 1800)
+
+# Native EFT/response tests (Apr 2026). These are fixed audits, not target
+# searches, and form the baseline for the FTD-native electrodynamics program.
+ftd_add_test(test_native_continuity tests/test_native_continuity.cpp
+             CTEST_NAME native_continuity TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_reaction_ledger tests/test_native_reaction_ledger.cpp
+             CTEST_NAME native_reaction_ledger TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_conserved_parent tests/test_native_conserved_parent.cpp
+             CTEST_NAME native_conserved_parent TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_manifestation_ledger tests/test_native_manifestation_ledger.cpp
+             CTEST_NAME native_manifestation_ledger TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_source_response tests/test_native_source_response.cpp
+             CTEST_NAME native_source_response TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_projection_convergence tests/test_native_projection_convergence.cpp
+             CTEST_NAME native_projection_convergence TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_source_core_fork tests/test_native_source_core_fork.cpp
+             CTEST_NAME native_source_core_fork TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_dual_cell_gauss tests/test_native_dual_cell_gauss.cpp
+             CTEST_NAME native_dual_cell_gauss TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_dual_half_shell tests/test_native_dual_half_shell.cpp
+             CTEST_NAME native_dual_half_shell TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_moore_shell_gauss tests/test_native_moore_shell_gauss.cpp
+             CTEST_NAME native_moore_shell_gauss TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_moore_layer_coupling tests/test_native_moore_layer_coupling.cpp
+             CTEST_NAME native_moore_layer_coupling TIMEOUT 600 LABELS native eft)
+ftd_add_test(test_native_moore_temporal_layers tests/test_native_moore_temporal_layers.cpp
+             CTEST_NAME native_moore_temporal_layers TIMEOUT 600 LABELS native eft)
+
+# Fractional heat flow test (Euler ratio continuum limit verification)
+ftd_add_test(test_fractional_heat_flow tests/test_fractional_heat_flow.cpp
+             CTEST_NAME fractional_heat_flow TIMEOUT 600 LABELS native eft)
+
+# Langevin thermostat equipartition (FTD-0051 acceptance test).
+# Verifies <|wave_vel|^2> = 3T on bare lattice single-substrate path.
+ftd_add_test(test_langevin_equipartition tests/test_langevin_equipartition.cpp
+             CTEST_NAME langevin_equipartition TIMEOUT 600 LABELS native eft)
+
+# Emergent measurement probes (alpha, Larmor, wave group velocity, Gauss).
+# EM2 reframed 2026-04-23 as Coulomb-solver consistency check, not alpha derivation.
+ftd_add_test(test_emergent_measurements tests/test_emergent_measurements.cpp
+             CTEST_NAME emergent_measurements TIMEOUT 600 LABELS native eft)
+
+# Mechanism B: Vacuum Polarization
+ftd_add_test(test_mechanism_b tests/test_mechanism_b.cpp
+             CTEST_NAME test_mechanism_b TIMEOUT 600 LABELS native eft)
+
+# Baseline EFT/GPU benchmarks. Registered with CTest so the benchmark inventory
+# is visible, but still treated as diagnostics rather than acceptance tests for
+# physical constants.
+ftd_add_test(benchmark_nucleon_mass tests/benchmark_nucleon_mass.cpp
+             CTEST_NAME benchmark_nucleon_mass TIMEOUT 1800 LABELS benchmark eft)
+ftd_add_test(benchmark_alpha_convergence tests/benchmark_alpha_convergence.cpp
+             CTEST_NAME benchmark_alpha_convergence TIMEOUT 7200 LABELS benchmark eft)
+if(FTD_ENABLE_CUDA)
+    add_executable(benchmark_alpha_window_lean_gpu
+                   tests/benchmark_alpha_window_lean_gpu.cu)
+    target_link_libraries(benchmark_alpha_window_lean_gpu PRIVATE CUDA::cudart)
+    target_compile_options(benchmark_alpha_window_lean_gpu PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
+        $<$<COMPILE_LANGUAGE:CUDA>:--allow-unsupported-compiler>
+    )
+    set_target_properties(benchmark_alpha_window_lean_gpu PROPERTIES
+        CUDA_SEPARABLE_COMPILATION ON
+        CUDA_RESOLVE_DEVICE_SYMBOLS ON
+        COMPILE_PDB_NAME ""
+        COMPILE_PDB_OUTPUT_DIRECTORY ""
+    )
+    add_test(NAME benchmark_alpha_window_lean_gpu
+             COMMAND benchmark_alpha_window_lean_gpu)
+    set_tests_properties(benchmark_alpha_window_lean_gpu PROPERTIES
+        TIMEOUT 1800
+        LABELS "benchmark;eft;gpu")
+
+    add_executable(benchmark_alpha_relaxation_lean_gpu
+                   tests/benchmark_alpha_relaxation_lean_gpu.cu)
+    target_link_libraries(benchmark_alpha_relaxation_lean_gpu PRIVATE CUDA::cudart)
+    target_compile_options(benchmark_alpha_relaxation_lean_gpu PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
+        $<$<COMPILE_LANGUAGE:CUDA>:--allow-unsupported-compiler>
+    )
+    set_target_properties(benchmark_alpha_relaxation_lean_gpu PROPERTIES
+        CUDA_SEPARABLE_COMPILATION ON
+        CUDA_RESOLVE_DEVICE_SYMBOLS ON
+        COMPILE_PDB_NAME ""
+        COMPILE_PDB_OUTPUT_DIRECTORY ""
+    )
+    add_test(NAME benchmark_alpha_relaxation_lean_gpu
+             COMMAND benchmark_alpha_relaxation_lean_gpu --iters 800 64)
+    set_tests_properties(benchmark_alpha_relaxation_lean_gpu PROPERTIES
+        TIMEOUT 1800
+        LABELS "benchmark;eft;gpu")
+
+    ftd_add_test(benchmark_nucleon_mass_gpu tests/benchmark_nucleon_mass_gpu.cpp
+                 CTEST_NAME benchmark_nucleon_mass_gpu GPU_HEAVY TIMEOUT 1800
+                 LABELS benchmark eft)
+    ftd_add_test(benchmark_sm_masses_gpu tests/benchmark_sm_masses_gpu.cpp
+                 CTEST_NAME benchmark_sm_masses_gpu GPU_HEAVY TIMEOUT 1800
+                 LABELS benchmark eft)
+
+    # GPU Langevin port (FTD-0051): thermal-ensemble alpha scan + wall-time bench.
+    ftd_add_test(benchmark_alpha_scaling tests/benchmark_alpha_scaling.cpp
+                 CTEST_NAME benchmark_alpha_scaling GPU_HEAVY TIMEOUT 7200
+                 LABELS benchmark eft)
+    ftd_add_test(benchmark_langevin_gpu tests/benchmark_langevin_gpu.cpp
+                 CTEST_NAME benchmark_langevin_gpu GPU_HEAVY TIMEOUT 1800
+                 LABELS benchmark eft)
+endif()
 
 add_executable(ftd_sm_observables tests/campaign_sm_observables.cpp)
 target_link_libraries(ftd_sm_observables ftd_core)

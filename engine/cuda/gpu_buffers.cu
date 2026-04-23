@@ -61,6 +61,7 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_particle_id, N * sizeof(int32_t)));
     CUDA_CHECK(cudaMalloc(&d_spin, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMalloc(&d_color, N * sizeof(int8_t)));
+    CUDA_CHECK(cudaMalloc(&d_flavor, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMalloc(&d_accel_mag, N * sizeof(double)));
 
     // Solver potentials
@@ -99,6 +100,22 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_delta_j_R_y, N * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_delta_j_R_z, N * sizeof(double)));
 
+    // Strong field (Stella Octangula)
+    CUDA_CHECK(cudaMalloc(&d_flux_strong_x, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_flux_strong_y, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_flux_strong_z, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_wave_vel_strong_x, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_wave_vel_strong_y, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_wave_vel_strong_z, N * sizeof(double)));
+
+    // Weak field (Cuboctahedron)
+    CUDA_CHECK(cudaMalloc(&d_flux_weak_x, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_flux_weak_y, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_flux_weak_z, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_wave_vel_weak_x, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_wave_vel_weak_y, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_wave_vel_weak_z, N * sizeof(double)));
+
     // Selective damping mask + Larmor acceleration
     CUDA_CHECK(cudaMalloc(&d_near_particle, N * sizeof(uint8_t)));
     CUDA_CHECK(cudaMalloc(&d_near_accel, N * sizeof(double)));
@@ -110,6 +127,11 @@ void GpuBuffers::allocate(int lattice_size) {
 
     // cuRAND workspace
     CUDA_CHECK(cudaMalloc(&d_random, N * sizeof(double)));
+
+    // Langevin thermostat noise (3N normals per tick when toggle active).
+    // Allocate eagerly so the buffer is always available; wasted bytes are
+    // 24·N = 24 MB at L=128, negligible. Zeroed at init and at free.
+    CUDA_CHECK(cudaMalloc(&d_langevin_noise, 3 * N * sizeof(double)));
 
     // Particle list
     CUDA_CHECK(cudaMalloc(&d_plist_idx, MAX_PARTICLES * sizeof(int)));
@@ -136,6 +158,7 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_particle_id, 0xFF, N * sizeof(int32_t))); // -1
     CUDA_CHECK(cudaMemset(d_spin, 0, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMemset(d_color, 0, N * sizeof(int8_t)));
+    CUDA_CHECK(cudaMemset(d_flavor, 0, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMemset(d_accel_mag, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_phi, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_phi_coulomb, 0, N * sizeof(double)));
@@ -160,9 +183,23 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_delta_j_R_x, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_delta_j_R_y, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_delta_j_R_z, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_flux_strong_x, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_flux_strong_y, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_flux_strong_z, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_wave_vel_strong_x, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_wave_vel_strong_y, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_wave_vel_strong_z, 0, N * sizeof(double)));
+
+    CUDA_CHECK(cudaMemset(d_flux_weak_x, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_flux_weak_y, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_flux_weak_z, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_wave_vel_weak_x, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_wave_vel_weak_y, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_wave_vel_weak_z, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_near_particle, 0, N * sizeof(uint8_t)));
     CUDA_CHECK(cudaMemset(d_near_accel, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_random, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_langevin_noise, 0, 3 * N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_plist_idx, 0, MAX_PARTICLES * sizeof(int)));
     CUDA_CHECK(cudaMemset(d_num_particles, 0, sizeof(int)));
     CUDA_CHECK(cudaMemset(d_pair_id, 0xFF, N * sizeof(int32_t))); // -1
@@ -186,6 +223,7 @@ void GpuBuffers::free() {
     if (d_particle_id)   { cudaFree(d_particle_id); d_particle_id = nullptr; }
     if (d_spin)          { cudaFree(d_spin); d_spin = nullptr; }
     if (d_color)         { cudaFree(d_color); d_color = nullptr; }
+    if (d_flavor)        { cudaFree(d_flavor); d_flavor = nullptr; }
     if (d_accel_mag)     { cudaFree(d_accel_mag); d_accel_mag = nullptr; }
     if (d_phi)           { cudaFree(d_phi); d_phi = nullptr; }
     if (d_phi_coulomb)   { cudaFree(d_phi_coulomb); d_phi_coulomb = nullptr; }
@@ -213,12 +251,26 @@ void GpuBuffers::free() {
     if (d_delta_j_R_x)   { cudaFree(d_delta_j_R_x); d_delta_j_R_x = nullptr; }
     if (d_delta_j_R_y)   { cudaFree(d_delta_j_R_y); d_delta_j_R_y = nullptr; }
     if (d_delta_j_R_z)   { cudaFree(d_delta_j_R_z); d_delta_j_R_z = nullptr; }
+    if (d_flux_strong_x)     { cudaFree(d_flux_strong_x); d_flux_strong_x = nullptr; }
+    if (d_flux_strong_y)     { cudaFree(d_flux_strong_y); d_flux_strong_y = nullptr; }
+    if (d_flux_strong_z)     { cudaFree(d_flux_strong_z); d_flux_strong_z = nullptr; }
+    if (d_wave_vel_strong_x) { cudaFree(d_wave_vel_strong_x); d_wave_vel_strong_x = nullptr; }
+    if (d_wave_vel_strong_y) { cudaFree(d_wave_vel_strong_y); d_wave_vel_strong_y = nullptr; }
+    if (d_wave_vel_strong_z) { cudaFree(d_wave_vel_strong_z); d_wave_vel_strong_z = nullptr; }
+
+    if (d_flux_weak_x)     { cudaFree(d_flux_weak_x); d_flux_weak_x = nullptr; }
+    if (d_flux_weak_y)     { cudaFree(d_flux_weak_y); d_flux_weak_y = nullptr; }
+    if (d_flux_weak_z)     { cudaFree(d_flux_weak_z); d_flux_weak_z = nullptr; }
+    if (d_wave_vel_weak_x) { cudaFree(d_wave_vel_weak_x); d_wave_vel_weak_x = nullptr; }
+    if (d_wave_vel_weak_y) { cudaFree(d_wave_vel_weak_y); d_wave_vel_weak_y = nullptr; }
+    if (d_wave_vel_weak_z) { cudaFree(d_wave_vel_weak_z); d_wave_vel_weak_z = nullptr; }
     if (d_near_particle) { cudaFree(d_near_particle); d_near_particle = nullptr; }
     if (d_near_accel)    { cudaFree(d_near_accel); d_near_accel = nullptr; }
     if (d_fft_buf)       { cudaFree(d_fft_buf); d_fft_buf = nullptr; }
     if (d_fft_buf_f)     { cudaFree(d_fft_buf_f); d_fft_buf_f = nullptr; }
     if (d_green)         { cudaFree(d_green); d_green = nullptr; }
     if (d_random)        { cudaFree(d_random); d_random = nullptr; }
+    if (d_langevin_noise) { cudaFree(d_langevin_noise); d_langevin_noise = nullptr; }
     if (d_plist_idx)     { cudaFree(d_plist_idx); d_plist_idx = nullptr; }
     if (d_num_particles) { cudaFree(d_num_particles); d_num_particles = nullptr; }
     if (d_pair_id)       { cudaFree(d_pair_id); d_pair_id = nullptr; }
@@ -245,7 +297,7 @@ void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
     std::vector<double>  h_rx(N), h_ry(N), h_rz(N);
     std::vector<bool>    h_locked(N);
     std::vector<int32_t> h_pid(N);
-    std::vector<int8_t>  h_spin(N), h_color(N);
+    std::vector<int8_t>  h_spin(N), h_color(N), h_flavor(N);
     std::vector<double>  h_accel(N);
     std::vector<int32_t> h_pair_id(N);
     std::vector<double>  h_latency(N);
@@ -256,9 +308,19 @@ void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
     std::vector<double>  h_wvLx(N), h_wvLy(N), h_wvLz(N);
     std::vector<double>  h_wvRx(N), h_wvRy(N), h_wvRz(N);
 
+    // Strong field staging
+    std::vector<double>  h_fsx(N), h_fsy(N), h_fsz(N);
+    std::vector<double>  h_wvsx(N), h_wvsy(N), h_wvsz(N);
+
+    // Weak field staging
+    std::vector<double>  h_fwx(N), h_fwy(N), h_fwz(N);
+    std::vector<double>  h_wvwx(N), h_wvwy(N), h_wvwz(N);
+
     for (int i = 0; i < N; ++i) {
         const auto& v = host_voxels[i];
         h_state[i]  = v.state;
+        h_color[i]  = v.color;
+        h_flavor[i] = v.flavor;
         h_fx[i]     = v.flux.x;
         h_fy[i]     = v.flux.y;
         h_fz[i]     = v.flux.z;
@@ -280,10 +342,32 @@ void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
         h_latency[i] = v.latency;
         h_tau[i]     = v.tau;
         // Dual-substrate
-        h_fLx[i]    = v.flux_L.x;  h_fLy[i] = v.flux_L.y;  h_fLz[i] = v.flux_L.z;
-        h_fRx[i]    = v.flux_R.x;  h_fRy[i] = v.flux_R.y;  h_fRz[i] = v.flux_R.z;
-        h_wvLx[i]   = v.wave_vel_L.x; h_wvLy[i] = v.wave_vel_L.y; h_wvLz[i] = v.wave_vel_L.z;
-        h_wvRx[i]   = v.wave_vel_R.x; h_wvRy[i] = v.wave_vel_R.y; h_wvRz[i] = v.wave_vel_R.z;
+        h_fLx[i]  = v.flux_L.x;
+        h_fLy[i]  = v.flux_L.y;
+        h_fLz[i]  = v.flux_L.z;
+        h_fRx[i]  = v.flux_R.x;
+        h_fRy[i]  = v.flux_R.y;
+        h_fRz[i]  = v.flux_R.z;
+        h_wvLx[i] = v.wave_vel_L.x;
+        h_wvLy[i] = v.wave_vel_L.y;
+        h_wvLz[i] = v.wave_vel_L.z;
+        h_wvRx[i] = v.wave_vel_R.x;
+        h_wvRy[i] = v.wave_vel_R.y;
+        h_wvRz[i] = v.wave_vel_R.z;
+        // Strong field
+        h_fsx[i]  = v.flux_strong.x;
+        h_fsy[i]  = v.flux_strong.y;
+        h_fsz[i]  = v.flux_strong.z;
+        h_wvsx[i] = v.wave_vel_strong.x;
+        h_wvsy[i] = v.wave_vel_strong.y;
+        h_wvsz[i] = v.wave_vel_strong.z;
+        // Weak field
+        h_fwx[i]  = v.flux_weak.x;
+        h_fwy[i]  = v.flux_weak.y;
+        h_fwz[i]  = v.flux_weak.z;
+        h_wvwx[i] = v.wave_vel_weak.x;
+        h_wvwy[i] = v.wave_vel_weak.y;
+        h_wvwz[i] = v.wave_vel_weak.z;
     }
 
     CUDA_CHECK(cudaMemcpy(d_state, h_state.data(), N * sizeof(int8_t), cudaMemcpyHostToDevice));
@@ -309,6 +393,7 @@ void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
     CUDA_CHECK(cudaMemcpy(d_particle_id, h_pid.data(), N * sizeof(int32_t), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_spin, h_spin.data(), N * sizeof(int8_t), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_color, h_color.data(), N * sizeof(int8_t), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_flavor, h_flavor.data(), N * sizeof(int8_t), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_accel_mag, h_accel.data(), N * sizeof(double), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_pair_id, h_pair_id.data(), N * sizeof(int32_t), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_latency, h_latency.data(), N * sizeof(double), cudaMemcpyHostToDevice));
@@ -326,6 +411,22 @@ void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
     CUDA_CHECK(cudaMemcpy(d_wave_vel_R_x, h_wvRx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_wave_vel_R_y, h_wvRy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_wave_vel_R_z, h_wvRz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+
+    // Strong field
+    CUDA_CHECK(cudaMemcpy(d_flux_strong_x, h_fsx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_flux_strong_y, h_fsy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_flux_strong_z, h_fsz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_wave_vel_strong_x, h_wvsx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_wave_vel_strong_y, h_wvsy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_wave_vel_strong_z, h_wvsz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+
+    // Weak field
+    CUDA_CHECK(cudaMemcpy(d_flux_weak_x, h_fwx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_flux_weak_y, h_fwy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_flux_weak_z, h_fwz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_wave_vel_weak_x, h_wvwx.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_wave_vel_weak_y, h_wvwy.data(), N * sizeof(double), cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_wave_vel_weak_z, h_wvwz.data(), N * sizeof(double), cudaMemcpyHostToDevice));
 }
 
 // ---------- SoA → AoS Download ----------
@@ -357,7 +458,7 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
     std::vector<double>  h_rx(N), h_ry(N), h_rz(N);
     std::vector<uint8_t> h_locked(N);
     std::vector<int32_t> h_pid(N);
-    std::vector<int8_t>  h_spin(N), h_color(N);
+    std::vector<int8_t>  h_spin(N), h_color(N), h_flavor(N);
     std::vector<double>  h_accel(N);
     std::vector<int32_t> h_pair_id_dl(N);
     std::vector<double>  h_latency(N);
@@ -382,6 +483,7 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
     CUDA_CHECK(cudaMemcpy(h_pid.data(), d_particle_id, N * sizeof(int32_t), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_spin.data(), d_spin, N * sizeof(int8_t), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_color.data(), d_color, N * sizeof(int8_t), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_flavor.data(), d_flavor, N * sizeof(int8_t), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_accel.data(), d_accel_mag, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_pair_id_dl.data(), d_pair_id, N * sizeof(int32_t), cudaMemcpyDeviceToHost));
 
@@ -390,6 +492,13 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
     std::vector<double> h_fRx(N), h_fRy(N), h_fRz(N);
     std::vector<double> h_wvLx(N), h_wvLy(N), h_wvLz(N);
     std::vector<double> h_wvRx(N), h_wvRy(N), h_wvRz(N);
+
+    // Strong field
+    std::vector<double> h_fsx(N), h_fsy(N), h_fsz(N);
+    std::vector<double> h_wvsx(N), h_wvsy(N), h_wvsz(N);
+    // Weak field
+    std::vector<double> h_fwx(N), h_fwy(N), h_fwz(N);
+    std::vector<double> h_wvwx(N), h_wvwy(N), h_wvwz(N);
 
     CUDA_CHECK(cudaMemcpy(h_fLx.data(), d_flux_L_x, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_fLy.data(), d_flux_L_y, N * sizeof(double), cudaMemcpyDeviceToHost));
@@ -404,6 +513,22 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
     CUDA_CHECK(cudaMemcpy(h_wvRy.data(), d_wave_vel_R_y, N * sizeof(double), cudaMemcpyDeviceToHost));
     CUDA_CHECK(cudaMemcpy(h_wvRz.data(), d_wave_vel_R_z, N * sizeof(double), cudaMemcpyDeviceToHost));
 
+    // Strong field
+    CUDA_CHECK(cudaMemcpy(h_fsx.data(), d_flux_strong_x, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_fsy.data(), d_flux_strong_y, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_fsz.data(), d_flux_strong_z, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_wvsx.data(), d_wave_vel_strong_x, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_wvsy.data(), d_wave_vel_strong_y, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_wvsz.data(), d_wave_vel_strong_z, N * sizeof(double), cudaMemcpyDeviceToHost));
+
+    // Weak field
+    CUDA_CHECK(cudaMemcpy(h_fwx.data(), d_flux_weak_x, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_fwy.data(), d_flux_weak_y, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_fwz.data(), d_flux_weak_z, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_wvwx.data(), d_wave_vel_weak_x, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_wvwy.data(), d_wave_vel_weak_y, N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(h_wvwz.data(), d_wave_vel_weak_z, N * sizeof(double), cudaMemcpyDeviceToHost));
+
     // Gather into AoS
     for (int i = 0; i < N; ++i) {
         auto& v = host_voxels[i];
@@ -416,12 +541,19 @@ void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
         v.particle_id = h_pid[i];
         v.spin        = h_spin[i];
         v.color       = h_color[i];
+        v.flavor      = h_flavor[i];
         v.accel_mag   = h_accel[i];
         // Dual-substrate fields
         v.flux_L      = {h_fLx[i], h_fLy[i], h_fLz[i]};
         v.flux_R      = {h_fRx[i], h_fRy[i], h_fRz[i]};
         v.wave_vel_L  = {h_wvLx[i], h_wvLy[i], h_wvLz[i]};
         v.wave_vel_R  = {h_wvRx[i], h_wvRy[i], h_wvRz[i]};
+        // Strong field
+        v.flux_strong      = {h_fsx[i], h_fsy[i], h_fsz[i]};
+        v.wave_vel_strong  = {h_wvsx[i], h_wvsy[i], h_wvsz[i]};
+        // Weak field
+        v.flux_weak        = {h_fwx[i], h_fwy[i], h_fwz[i]};
+        v.wave_vel_weak    = {h_wvwx[i], h_wvwy[i], h_wvwz[i]};
         // Pair ID from device
         v.pair_id     = h_pair_id_dl[i];
         // Latency field + proper time from GPU (when latency_field toggle is on)
