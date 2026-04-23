@@ -2,13 +2,16 @@
 
 Input JSON schema (list of rows):
     {"L": int, "n": float, "level": int, "seed": int,
-     "C_L": float, "C_L_R2": float, "K_T": float, "K_T_R2": float,
-     "gauss_violation_pre": float, "gauss_violation_post": float,
-     "wall_seconds": float, "status": "ok" | "invalid_fit" | "settle_crash"}
+     "flux_energy_ratio": float, "flux_energy_fine": float,
+     "source_conserved": bool, "gauss_preserved": bool,
+     "status": "ok" | "invalid_fit" | "settle_crash" | "harness_crash" | "parse_error"}
 
 Output:
     <basename>_report.json  -- rollup + SC3 verdict
-    <basename>_plot.pdf     -- C_L(n, level) and K_T(n, level) with error bars
+    <basename>_plot.pdf     -- flux_energy_ratio(n, level) and flux_energy_fine(n, level) with error bars
+
+SC3.a baseline is the analytical Gaussian value of 1.0 for flux_energy_ratio
+(not an empirical n=0 baseline, which is trivially zero with no sources).
 """
 import argparse
 import json
@@ -17,19 +20,25 @@ import os
 from collections import defaultdict
 
 
-def rollup(rows, min_r2=0.95):
-    """Group by (L, n, level); return mean, stderr, count."""
+def rollup(rows):
+    """Group by (L, n, level); return mean, stderr, count.
+
+    Skips rows where status != 'ok'. Also skips rows where flux_energy_fine
+    is non-positive (n=0 rows with trivially zero flux: the baseline for SC3
+    is instead the theoretical value 1 at n > 0, not these empty-bridge rows).
+    """
     groups = defaultdict(list)
     for r in rows:
         if r.get("status", "ok") != "ok":
             continue
-        if r.get("C_L_R2", 0.0) < min_r2:
+        fe = r.get("flux_energy_fine", 0.0)
+        if fe is None or fe <= 0.0:
             continue
         groups[(r["L"], r["n"], r["level"])].append(r)
     out = {}
     for key, gs in groups.items():
-        cls = [g["C_L"] for g in gs]
-        kts = [g["K_T"] for g in gs]
+        cls = [g["flux_energy_ratio"] for g in gs]
+        kts = [g["flux_energy_fine"] for g in gs]
         n = len(cls)
         mean_cl = sum(cls) / n
         mean_kt = sum(kts) / n
@@ -40,16 +49,17 @@ def rollup(rows, min_r2=0.95):
             se_kt = math.sqrt(var_kt / n)
         else:
             se_cl = se_kt = float("nan")
-        out[key] = {"count": n, "mean_C_L": mean_cl, "se_C_L": se_cl,
-                    "mean_K_T": mean_kt, "se_K_T": se_kt}
+        out[key] = {"count": n, "mean_ratio": mean_cl, "se_ratio": se_cl,
+                    "mean_energy_fine": mean_kt, "se_energy_fine": se_kt}
     return out
 
 
 def sc3_test(groups, sigma_threshold):
     """Apply SC3. Returns dict with verdict and details.
 
-    SC3.a: |mean(n) - mean(0)| > sigma_threshold * se at any (L, n, level)
-    SC3.b: linear regression dC_L/dlog(n) at each (L, level). Reports slope.
+    SC3.a: |mean_ratio(n) - 1.0| > sigma_threshold * se_ratio at any (L, n, level).
+           The analytical Gaussian value (1.0) is the theoretical baseline.
+    SC3.b: linear regression d(mean_ratio)/d(log n) at each (L, level). Reports slope.
     """
     by_L_level = defaultdict(list)
     for (L, n, level), stats in groups.items():
@@ -59,21 +69,20 @@ def sc3_test(groups, sigma_threshold):
     slopes = {}
     for (L, level), rows in by_L_level.items():
         rows.sort(key=lambda r: r[0])
-        baseline = next((s for n, s in rows if n == 0.0), None)
-        if baseline is None:
-            continue
         for n, s in rows:
-            if n == 0.0:
+            if n <= 0.0:
                 continue
-            delta_cl = abs(s["mean_C_L"] - baseline["mean_C_L"])
-            se_val = s["se_C_L"]
-            se = 0.0 if math.isnan(se_val) else se_val
-            if se > 0 and delta_cl > sigma_threshold * se:
+            se_val = s["se_ratio"]
+            if se_val is None or (isinstance(se_val, float) and math.isnan(se_val)):
+                continue
+            se = se_val
+            delta = abs(s["mean_ratio"] - 1.0)
+            if se > 0 and delta > sigma_threshold * se:
                 triggered.append({"L": L, "n": n, "level": level,
-                                  "delta_C_L": delta_cl, "se": se,
-                                  "sigma_units": delta_cl / se})
-        # SC3.b slope: regress mean_C_L on log(n) for n > 0
-        pts = [(math.log(n), s["mean_C_L"]) for n, s in rows if n > 0 and s["count"] > 0]
+                                  "delta_ratio": delta, "se": se,
+                                  "sigma_units": delta / se})
+        # SC3.b slope: regress mean_ratio on log(n) for n > 0
+        pts = [(math.log(n), s["mean_ratio"]) for n, s in rows if n > 0 and s["count"] > 0]
         if len(pts) >= 3:
             xs = [p[0] for p in pts]
             ys = [p[1] for p in pts]
@@ -102,15 +111,16 @@ def write_plot(groups, out_pdf):
     for (L, level), rows in sorted(by_L_level.items()):
         rows.sort(key=lambda r: r[0])
         ns = [r[0] for r in rows]
-        cls = [r[1]["mean_C_L"] for r in rows]
-        cls_se = [r[1]["se_C_L"] for r in rows]
-        kts = [r[1]["mean_K_T"] for r in rows]
-        kts_se = [r[1]["se_K_T"] for r in rows]
+        cls = [r[1]["mean_ratio"] for r in rows]
+        cls_se = [r[1]["se_ratio"] for r in rows]
+        kts = [r[1]["mean_energy_fine"] for r in rows]
+        kts_se = [r[1]["se_energy_fine"] for r in rows]
         ax1.errorbar(ns, cls, yerr=cls_se, marker="o",
                      label=f"L={L} level={level}")
         ax2.errorbar(ns, kts, yerr=kts_se, marker="o",
                      label=f"L={L} level={level}")
-    for ax, name in ((ax1, "C_L^FTD"), (ax2, "K_T^FTD")):
+    ax1.axhline(1.0, color="k", ls="--", lw=0.7, alpha=0.5, label="Gaussian")
+    for ax, name in ((ax1, "flux_energy_ratio"), (ax2, "flux_energy_fine")):
         ax.set_xscale("symlog", linthresh=1e-5)
         ax.set_xlabel("manifestation density n = N/V")
         ax.set_ylabel(name)
