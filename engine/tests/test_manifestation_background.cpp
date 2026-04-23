@@ -89,10 +89,11 @@ int main() {
     // empty-density settle (see header note).
     {
         ftd::RenderBridge rb(32);
-        rb.force_cpu();
+        // Triage 2026-04-23: force_cpu REMOVED to stress-test GPU path.
         ftd::eft::configure_bare_lattice_for_coupling(rb);
         rb.run(100);
-        auto kt = ftd::eft::measure_kt_on_bg(rb, /*n_ticks=*/200);
+        auto kt = ftd::eft::measure_kt_on_bg(rb, /*n_ticks=*/200, /*amp=*/1e-3,
+                                             {1, 2, 3}, /*force_cpu=*/false);
         char msg[128];
         std::snprintf(msg, sizeof(msg),
                       "T7 K_T(bare,CPU)=%.4f (expected ~1, R2=%.3f, n_samples=%zu)",
