@@ -659,6 +659,9 @@ ftd_add_test(test_native_source_core_fork tests/test_native_source_core_fork.cpp
              CTEST_NAME native_source_core_fork TIMEOUT 600 LABELS native eft)
 ftd_add_test(test_native_dual_cell_gauss tests/test_native_dual_cell_gauss.cpp
              CTEST_NAME native_dual_cell_gauss TIMEOUT 600 LABELS native eft)
+# Adapter from RenderBridge to DualCellFields (Plan B reroute, 2026-04-23).
+ftd_add_test(test_dual_cell_adapter tests/test_dual_cell_adapter.cpp
+             CTEST_NAME dual_cell_adapter TIMEOUT 120 LABELS native eft)
 ftd_add_test(test_native_dual_half_shell tests/test_native_dual_half_shell.cpp
              CTEST_NAME native_dual_half_shell TIMEOUT 600 LABELS native eft)
 ftd_add_test(test_native_moore_shell_gauss tests/test_native_moore_shell_gauss.cpp
