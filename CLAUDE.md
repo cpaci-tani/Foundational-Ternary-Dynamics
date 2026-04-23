@@ -1,16 +1,16 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.31 (post-audit, 2026-04-19)
+**Version:** 5.32 (post-Link-8-closure, 2026-04-20)
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
 **🔑 Start here if resuming:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — single-doc context recovery from the April 19 audit cycle.
 
 ---
 
-## Current epistemic state (2026-04-19 evening)
+## Current epistemic state (2026-04-20)
 
-After a 10-commit audit cycle on April 19, the project is in a
-narrowed but defensible state. Do **not** claim results stronger than
-what's listed in `docs/WHERE_WE_LEFT_OFF.md` §4 without re-auditing.
+After the April 19 reframe cycle + April 20 Link 8 closure, the project
+is in a narrowed but defensible state. Do **not** claim results stronger
+than what's listed in `docs/WHERE_WE_LEFT_OFF.md` §4 without re-auditing.
 
 **Firm theorems (5):** G* algebraic identity, master quadratic
 polynomial + roots, CM curve uniqueness among class-number-1 fields,
@@ -20,12 +20,29 @@ finite L, Phase J partition-function ultralocality.
 **[STRONGLY MOTIVATED CONJECTURE]:** x+ = 1/α (1.26 ppm); x− = N_c
 (0.80%); m_e formula (0.19%); m_p/m_e formula (173 ppm).
 
+**[CLOSED NEGATIVE 2026-04-20]:** Master quadratic as characteristic
+polynomial of an RG step on the FTD engine (FTD-0050). The engine's
+18-point coupling stencil is ½(σ_SC + σ_FCC), structurally orthogonal
+to the BCC sub-stencil where 16G*² = 2π·16·W_BCC lives. Does NOT demote
+FTD-0001/0013/0014 — the master quadratic remains a THEOREM at the
+number-theoretic layer (Γ(1/4)⁴ + CM-curve uniqueness); only the
+*additional* RG-flow reading is removed. See
+`docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md`.
+
+**[NEW INFRASTRUCTURE 2026-04-20]:** Langevin thermostat on wave_vel
+(`TermToggles::langevin`, `langevin_T`, `langevin_gamma`,
+`langevin_seed`; CPU single-substrate path only). Equipartition
+verified to 4%. Unblocks matched-stencil β-function at non-zero T,
+condensate ensemble measurements, fluctuation-dissipation tests. See
+FTD-0051 in `docs/theory/07_assessment/LEDGER.md`.
+
 **[OPEN] (the real research program):** lattice-to-physical-length
 conversion a_phys; first-principles g_c via Mechanism B (lattice-to-
-continuum matching).
+continuum matching); s-field Metropolis for thermal ternary ensembles
+(FTD-0052, deferred — expected negative, confirmatory only).
 
-**Demoted today:** sin²θ_W (3.5%), sin²θ_13 (12.6%), α_s = 7/59, PMNS
-angles — all now [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
+**Demoted 2026-04-19:** sin²θ_W (3.5%), sin²θ_13 (12.6%), α_s = 7/59,
+PMNS angles — all now [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
 
 **Foundational commitment:** undefined-boundary lattice ontology (not
 completed-infinity ℤ³). See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`.
@@ -196,7 +213,9 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Mechanism γ attempt** (April 19, 2026): `docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` — gravitational `a_phys` derivation attempted and **closed as candidate** (negative result; recommendation: declare `a_phys ≡ ℓ_P` in `SPEC_FTD.md`)
 - **Master quadratic (rewritten)** (April 19, 2026): `docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` — full rewrite as algebraic identity + physical match (CM-curve uniqueness + dual match); gap-equation/thermodynamic-limit narrative withdrawn
 - **Reframe deployment package** (April 19, 2026): `docs/theory/07_assessment/reframe_deployment/` — `CANONICAL_REFRAME.md` (single source of truth for what the reframe means; agent-facing) + `DEPLOYMENT_GUIDE.md` (7-phase plan) + `agents/` (9 agent prompts) + `templates/` + `checklists/`. Read CANONICAL_REFRAME.md before any reframe-related work
-- **Master claim ledger** (April 19, 2026): `docs/theory/07_assessment/LEDGER.md` — 40 load-bearing claims with tag history, dependencies, reframe status. **Single source of truth for claim status** — papers cite tags from here; if they disagree, the ledger wins
+- **Master claim ledger** (April 19, 2026; extended April 20): `docs/theory/07_assessment/LEDGER.md` — 52 load-bearing claims with tag history, dependencies, reframe status. **Single source of truth for claim status** — papers cite tags from here; if they disagree, the ledger wins. Rows FTD-0050/0051/0052 (Link 8 closure + Langevin infrastructure + deferred s-Metropolis) added 2026-04-20.
+- **Link 8 closure audit** (April 20, 2026): `docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md` — full closure report on "master quadratic as RG-step characteristic polynomial" hypothesis. Three independent tests (Kadanoff blocking, Watson-integral analytical, thermalized |J|² correlator) all NEGATIVE for structurally consistent reasons (engine stencil is (SC+FCC)/2, BCC-orthogonal; master quadratic lives on BCC Watson integral). FTD-0001/0013/0014 UNAFFECTED.
+- **Langevin thermostat** (April 20, 2026): `engine/src/render_bridge.cpp` + `engine/include/ftd/term_toggles.h` — CPU single-substrate OU update on wave_vel, toggle-gated. Validated by `engine/tests/test_langevin_equipartition.cpp` (equipartition to 4%). Unblocks non-zero-T matched-stencil β, condensate ensemble measurements, fluctuation-dissipation tests.
 - **Reframe changelog** (April 19, 2026, append-only): `docs/theory/07_assessment/CHANGELOG_REFRAME.md` — every decision and change made under the reframe deployment
 - **Devil's advocate report** (April 19, 2026): `docs/theory/07_assessment/archive_session_outputs/DEVILS_ADVOCATE_REPORT.md` — falsification pass on 6 substantive rewrites; 3 blocking bugs found and fixed same-day, 5 PASS-WITH-NOTES queued
 - **Engine reframe audit** (April 19, 2026): `docs/theory/07_assessment/archive_session_outputs/ENGINE_AUDIT_REFRAME.md` — C++/CUDA/JS sweep for completed-infinity + hidden α; 3 HIGH (2 fixed same-day, 1 deferred for owner: `α_inf` rename across CSV/Python/TeX), 6 MEDIUM, 9 LOW. Parameter-free claim status: CONDITIONAL
@@ -268,6 +287,12 @@ Alpha is now a DERIVED quantity in the engine:
 ## Environment Notes
 
 - Platform: Windows 11. No `rsync` — use `cp -r` for directory copies
+- **GPU execution MUST go through WSL2 Ubuntu-22.04, not Windows-native CUDA.** RTX 5090 speedup (~30×) is only available via the WSL2 build at `engine/build_wsl`. Windows-native CUDA builds from `engine/build/` technically run but are pathologically slow (observed 19 minutes wall for a single L=64 density=0.1 seed). Invocation pattern:
+  ```
+  wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && \
+      engine/build_wsl/benchmark_foo --args"
+  ```
+  Windows-native CUDA is acceptable for compile-time checks and single-tick correctness tests only. Any measurement campaign, sweep, or multi-seed run goes through WSL2.
 - Python tests: `scripts/tests/` (pytest). C++ tests: `engine/tests/` (CTest). No overlap between them
 - `scripts/constants.py` is the canonical shared constants module imported by 20+ scripts
 - Build `.bat` files live in `engine/` — use `vswhere.exe` for portable VS detection
