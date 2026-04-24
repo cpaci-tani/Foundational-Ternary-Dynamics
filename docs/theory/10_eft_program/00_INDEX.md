@@ -126,14 +126,16 @@ physics.
 
 | File | One-line | Status |
 |---|---|---|
-| `OPEN_A_PHYS_DERIVATION.md` | Original open-problem statement | [CLOSED] (resolved 2026-04-19) |
-| `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` | Failed first attempt; category error (injected alpha_G, m_e) | [SUPERSEDED] |
-| `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` | a_phys ~ 4.39 l_P from Axiom-Zero combinatorics | [THEOREM] |
+| `OPEN_A_PHYS_DERIVATION.md` | Open-problem scoping doc; three mechanisms (α, β, γ) run | [CLOSED NEGATIVE / RESOLVED-BY-CALIBRATION] (2026-04-19) |
+| `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` | Dimensional chain; shows the chain converts one calibration into another rather than deriving `a_phys` | [CLOSED NEGATIVE] |
+| `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` | Originally claimed [THEOREM] `a_phys ≈ 4.39 ℓ_P`; chain silently replaces `K_B = m_e` with `ℏ_lat = 1` | [RETRACTED 2026-04-23] |
 
-Note: CLAUDE.md and SPEC_FTD.md declare `a_phys = l_P` as the calibration for
-dimensional predictions. The 4.39 l_P figure and the l_P identification are
-distinct choices; status of that tension is [STATUS UNKNOWN] from this
-directory's docs alone and should be reconciled against `SPEC_FTD.md`.
+Resolution: the prior "[STATUS UNKNOWN]" tension between the SUCCESS doc and the
+`a_phys ≡ ℓ_P` declaration in `SPEC_FTD.md` / CLAUDE.md is resolved. The
+SUCCESS doc's `4.39 ℓ_P` is not Axiom-Zero-forced; it is the ratio one obtains
+under an undeclared mass recalibration. The authoritative disposition is
+**`a_phys ≡ ℓ_P` as a CALIBRATION** (LEDGER rows FTD-0030, FTD-0041). See the
+retraction preamble inside `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`.
 
 ## Cluster 6 — g_c first principles / Mechanism B
 
@@ -155,7 +157,7 @@ directory's docs alone and should be reconciled against `SPEC_FTD.md`.
 1. **Keep separate: `DERIV_FTD_NATIVE_RESPONSE_TUPLE.md` vs `DERIV_FTD_NATIVE_RESPONSE_FLOW.md`.** The Tuple doc is the bare probe (fixed-L measurements, engine audits, half-shell, Moore-layer closure). The Flow doc is the b=2 blocking result for static/vertex. Different questions, both referenced from the bridge-status table. Leave separate but add a cross-link header to each.
 2. **Merge candidates: the four `DERIV_FTD_NATIVE_*_FLOW.md` docs (BARE / CURRENT / RESPONSE / SCALE) plus the two `..._ENGINE_*_FLOW.md` adapters.** Six docs at b=2 each proving one small gate. Candidate: a single `DERIV_FTD_NATIVE_B2_FLOW.md` with one section per gate. Against merger: the current split matches git-history of discrete same-day closures. Weak recommendation: merge after the nonlinear flow is closed (so the consolidated doc has a stable scope).
 3. **Demote to `archive/closed_negative/`: the four R1-R4 projected-EFT xplus attempts** (`DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md`, `DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md`, `DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md`, `DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md`) plus `OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` and `OPEN_FTD_TO_EFT_MATCHING.md`. All explicitly marked CLOSED NEGATIVE / superseded. The bridge-status doc links to them by path, so the move must be executed with link updates. Keep the files (do not delete): they are the historical record of what was tried and why the pivot was justified.
-4. **Keep both: `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` + `_SUCCESS.md`.** Attempt doc is explicitly retained "for historical epistemic transparency"; success doc closes the problem. Consolidation would erase the epistemic record. Leave as-is.
+4. **Keep both: `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` + `_SUCCESS.md`.** Both documents are retained for epistemic transparency. The ATTEMPT doc is the substantive closure (calibration shuffle identified). The SUCCESS doc was retracted 2026-04-23 (same flaw at one remove) and now carries a retraction preamble; it is preserved in place as the canonical cautionary example. Consolidation would erase the epistemic record. Leave as-is. (Open escalation: user may wish to rename `_SUCCESS.md` → `_ATTEMPT_2.md` or move to an explicit `closed_negative/` archive; not executed pending review.)
 5. **Keep separate: `OPEN_FTD_TO_EFT_MATCHING.md` vs `OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`.** Matching doc is the pivot memo (why the old matching program stopped). Bridge-status doc is the live inventory. Different purposes; the Matching doc should move to archive once its pivot role is no longer referenced.
 6. **Weak merge candidate: `AUDIT_ALPHA_EXTRACTION.md` + `AUDIT_ALPHA_SCALING_L256.md` + `AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md`** as three parallel forensic audits of the same Phase-F pipeline at different sizes/accelerators. They could share a header but the content is independent. Recommend leaving separate and adding a `## Related audits` cross-link block to each.
 
@@ -178,6 +180,6 @@ directory's docs alone and should be reconciled against `SPEC_FTD.md`.
 1. **`EXPLR_SELF_DUAL_HALF_SHELL.md`** — [STATUS UNKNOWN] whether its G* bridge hypothesis is still live. Bridge-status doc lists it as [MEASURED]/[CONJECTURE]. No clear referrer outside the tuple doc. Flag for user review: retire or graduate to a DERIV_ doc.
 2. **`DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md`** and **`DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md`** — both are [PARTIAL] bridge results produced same-day 2026-04-22 during the pivot. Content is substantive and referenced from the bridge-status doc; no action needed but flag for possible merger into a single `DERIV_FTD_NATIVE_DICTIONARY.md` once the projected branch is fully archived.
 3. **`DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md`** — closes a single line item (`g_sJ = 1`). Short. Candidate for merger into the Tuple doc if the tuple doc is updated; otherwise keep separate.
-4. **`OPEN_A_PHYS_DERIVATION.md`** — explicitly marked [CLOSED]. Should move to archive once the 4.39 l_P vs l_P tension is reconciled.
+4. **`OPEN_A_PHYS_DERIVATION.md`** — [CLOSED NEGATIVE / RESOLVED-BY-CALIBRATION]. The 4.39 ℓ_P vs ℓ_P tension was reconciled 2026-04-23: the 4.39 figure was retracted; `a_phys ≡ ℓ_P` is the authoritative calibration. File can now be archived, or kept in place as the scoping doc for future readers.
 5. **`STATUS_CUDA_BUILD.md`** — not an EFT doc at all; belongs elsewhere (see move proposal 4).
 6. **Orphan check:** no file in this directory appears to lack incoming references from at least one of {`OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`, the LEDGER, the reframe changelog, or a sibling doc in-cluster}. No true orphans found.
