@@ -166,6 +166,9 @@ docs/theory/DERIV_OBSERVER_BELL_MECHANISM.md
 
 # Scratch workspace (never committed)
 scratch/
+scratch_*.py
+scratch_*.sh
+scratch_*.txt
 
 # Local-only reproducer / triage scripts in engine/tests
 engine/tests/_repro_*.cpp
