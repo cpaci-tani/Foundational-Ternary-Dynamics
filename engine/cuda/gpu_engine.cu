@@ -47,7 +47,8 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling);
     void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
-                            bool do_genesis, double dt);
+                            bool do_genesis, double dt,
+                            bool do_langevin, double langevin_gamma, double langevin_T);
     void launch_gauss_project(GpuBuffers& bufs,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
@@ -71,7 +72,8 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
                             bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
-                            bool do_genesis, double dt);
+                            bool do_genesis, double dt,
+                            bool do_langevin, double langevin_gamma, double langevin_T);
 
     // Extended physics launchers
     void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate);
@@ -81,6 +83,8 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt);
     void launch_exchange_force(GpuBuffers& bufs, int num_particles, double dt);
     void launch_triad_detection(GpuBuffers& bufs, int num_particles);
+    void launch_strong_field_stencil(GpuBuffers& bufs, double damp);
+    void launch_weak_field_stencil(GpuBuffers& bufs, double damp);
 }}}
 
 namespace ftd {
@@ -107,7 +111,7 @@ GpuEngine::GpuEngine(int lattice_size)
 
     // Create cuRAND generator
     CURAND_CHECK(curandCreateGenerator(&rng_, CURAND_RNG_PSEUDO_DEFAULT));
-    CURAND_CHECK(curandSetPseudoRandomGeneratorSeed(rng_, 42ULL));
+    set_rng_seed(toggles.langevin_seed);
 
     // Initialize host shadow
     host_voxels_.resize(N_);
@@ -124,6 +128,18 @@ GpuEngine::~GpuEngine() {
     if (fft_plan_inverse_f_) cufftDestroy(fft_plan_inverse_f_);
     if (rng_) curandDestroyGenerator(rng_);
     bufs_.free();
+}
+
+void GpuEngine::set_dt(double dt) {
+    dt_ = (dt >= 1.0) ? dt : 1.0;
+}
+
+void GpuEngine::set_rng_seed(unsigned int seed) {
+    if (rng_seed_initialized_ && rng_seed_ == seed) return;
+    rng_seed_ = seed;
+    rng_seed_initialized_ = true;
+    CURAND_CHECK(curandSetPseudoRandomGeneratorSeed(
+        rng_, static_cast<unsigned long long>(rng_seed_)));
 }
 
 // ---------- Core Simulation ----------
@@ -217,8 +233,21 @@ void GpuEngine::gpu_phase_write() {
         CURAND_CHECK(curandGenerateUniformDouble(rng_, bufs_.d_random, N_));
     }
 
+    // Langevin thermostat (FTD-0051). Generate 3N standard normals before the
+    // phase_write kernel consumes them. cuRAND requires even count for
+    // curandGenerateNormalDouble — 3N is even whenever N is even, which holds
+    // for any L >= 2. Uses the existing rng_ generator.
+    if (toggles.langevin && !toggles.dual_substrate) {
+        set_rng_seed(toggles.langevin_seed);
+        CURAND_CHECK(curandGenerateNormalDouble(
+            rng_, bufs_.d_langevin_noise, static_cast<size_t>(3) * N_,
+            /*mean=*/0.0, /*stddev=*/1.0));
+    }
+
     double damping = 1.0 - ALPHA;
     if (toggles.dual_substrate) {
+        // Dual-substrate Langevin is not wired in this pass — user-facing
+        // scope for FTD-0051 v1 is single-substrate only.
         kernels::launch_phase_write_dual(bufs_,
                                          toggles.damping,
                                          toggles.selective_damping,
@@ -233,7 +262,22 @@ void GpuEngine::gpu_phase_write() {
                                     toggles.larmor_radiation,
                                     damping,
                                     toggles.genesis,
-                                    dt_);
+                                    dt_,
+                                    toggles.langevin,
+                                    toggles.langevin_gamma,
+                                    toggles.langevin_T);
+    }
+
+    // Step strong field stencil (Stella Octangula propagation)
+    if (toggles.color_forces || toggles.strong_force) {
+        kernels::launch_strong_field_stencil(bufs_, damping);
+    }
+
+    // Step weak field stencil only when flavor or weak-field state exists.
+    // The previous unconditional launch was a full-grid kernel every tick even
+    // for ordinary EM/QCD runs where flavor==0 and weak fields are zero.
+    if (weak_field_active_) {
+        kernels::launch_weak_field_stencil(bufs_, damping);
     }
 }
 
@@ -256,7 +300,10 @@ void GpuEngine::gpu_wave_update() {
                                 toggles.larmor_radiation,
                                 damping,
                                 toggles.genesis,
-                                dt_);
+                                dt_,
+                                toggles.langevin,
+                                toggles.langevin_gamma,
+                                toggles.langevin_T);
 }
 
 void GpuEngine::gpu_gauss_project() {
@@ -426,6 +473,15 @@ EnergyAudit GpuEngine::energy_audit() {
             ea.wv_R_total += v.wave_vel_R.mag2();
             ea.chirality_total += v.chirality_density();
         }
+
+        // Strong field diagnostic
+        if (toggles.color_forces || toggles.strong_force) {
+            ea.strong_energy += v.flux_strong.mag2();
+        }
+
+        // Weak field diagnostic
+        // Add to ledger
+        ea.weak_energy += v.flux_weak.mag2();
     }
     ea.total_energy = ea.field_energy + ea.wave_energy + ea.particle_ke;
     return ea;
@@ -448,7 +504,7 @@ void GpuEngine::inject_flux(int x, int y, int z, const Vec3& flux_val) {
 
 void GpuEngine::inject_particle(int x, int y, int z, int8_t state,
                                 const Vec3& flux_val,
-                                int8_t spin, int8_t color) {
+                                int8_t spin, int8_t color, int8_t flavor) {
     ensure_host_synced();
 
     int idx = ((x % size_ + size_) % size_) * size_ * size_
@@ -460,7 +516,9 @@ void GpuEngine::inject_particle(int x, int y, int z, int8_t state,
     v.flux = flux_val;
     v.spin = spin;
     v.color = color;
+    v.flavor = flavor;
     v.particle_id = next_particle_id_++;
+    if (flavor != 0) weak_field_active_ = true;
 
     // Dual-substrate: split flux between L and R per chirality
     if (toggles.dual_substrate) {
@@ -554,7 +612,20 @@ void GpuEngine::sync_to_host(std::vector<Voxel>& out) {
 
 void GpuEngine::upload_from_host(const std::vector<Voxel>& voxels) {
     host_voxels_ = voxels;
+    refresh_weak_field_active_from_host();
     push_to_device();
+}
+
+void GpuEngine::refresh_weak_field_active_from_host() {
+    weak_field_active_ = false;
+    for (const auto& v : host_voxels_) {
+        if (v.flavor != 0 ||
+            v.flux_weak.mag2() > 0.0 ||
+            v.wave_vel_weak.mag2() > 0.0) {
+            weak_field_active_ = true;
+            return;
+        }
+    }
 }
 
 }  // namespace gpu

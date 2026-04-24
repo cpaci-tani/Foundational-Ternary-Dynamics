@@ -4,19 +4,30 @@
 
 **Date:** February 1, 2026
 **Framework:** Foundational Ternary Dynamics v5.16
-**Status:** First-principles derivation (previously phenomenological)
+**Status:** Historical/conditional derivation; physical identification remains a matching selection
 
 ---
 
+## Audit update (2026-04-22)
+
+This document should no longer be read as an unconditional first-principles derivation of the electromagnetic coupling. The algebraic relation `g_c^2 = 1/x_+` is useful inside the selected state-flux dictionary, but the physical identification `x_+ = 1/alpha` is now classified as a matching selection/conjecture rather than a theorem.
+
+See:
+
+- `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_MATCHING.md`
+- `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`
+- `docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md`
+- `docs/theory/10_eft_program/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md`
+
 ## Abstract
 
-This document derives the state-flux coupling constant g_c = √α ≈ 0.0854 from FTD axioms. Previously, g_c = √α was imposed phenomenologically (ASSUMP.6). We now show it follows necessarily from:
+This document records the conditional state-flux coupling chain `g_c = sqrt(alpha) ≈ 0.0854` within the selected FTD state-flux dictionary. Earlier versions claimed that `g_c = sqrt(alpha)` followed necessarily from FTD axioms. That framing was too strong. The current status is:
 
 1. **Dimensional analysis** in FTD natural units
 2. **Self-consistency** of the manifestation threshold
 3. **The consciousness-physics bridge** via G*
 
-The derivation closes the last "phenomenological" gap in the FTD framework.
+The derivation does not close the FTD-to-EFT matching gap. It gives a useful internal coupling assignment once the alpha identification is accepted.
 
 ---
 
@@ -359,7 +370,7 @@ The state-flux coupling g_c = √α tells us:
 - Transition probability is α = 1/137
 - This matches the electromagnetic vertex coupling
 
-**FTD reproduces QED from first principles.**
+**Conditional reading:** the selected state-flux dictionary reproduces the QED vertex normalization after imposing `g_c^2 = alpha = 1/x_+`. This is not yet a first-principles derivation of physical QED from FTD.
 
 ---
 
@@ -369,7 +380,7 @@ The state-flux coupling g_c = √α tells us:
 
 Does FTD reproduce α → α(1 + α/π + ...) at higher loops?
 
-**Status:** [OPEN] — requires renormalization group analysis
+**Status:** superseded as a standalone open item. Higher-loop reproduction is now part of the broader FTD-to-EFT matching problem. Once the matching rule fixes fields, matter content, regulator, counterterms, and observable, higher-loop RG checks become fixed verification computations rather than an independent route to deriving alpha.
 
 ### 10.2 Running to Weak Scale
 

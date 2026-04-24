@@ -1,0 +1,318 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{microtype}
+
+\title{The BCC Watson Reflection Bridge and the Master Quadratic}
+\author{Foundational Ternary Dynamics Project}
+\date{\today}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We isolate an exact arithmetic bridge between the body-centered cubic (BCC)
+Watson integral and the lemniscatic reflection ratio
+\[
+G^*=\frac{\Gamma(1/4)}{\Gamma(3/4)}.
+\]
+For the normalized BCC Watson integral,
+\[
+W_{\rm BCC}=\frac{1}{(2\pi)^3}\int_{[-\pi,\pi]^3}
+\frac{d^3k}{1-\cos k_x\cos k_y\cos k_z},
+\]
+Watson's evaluation and Euler's reflection formula give
+\[
+W_{\rm BCC}=\frac{\Gamma(1/4)^4}{4\pi^3}
+           =\frac{G^{*2}}{2\pi}.
+\]
+After selecting the normalization
+$K:=|\operatorname{Aut}_{\mathbb C}(E,0)|^2(2\pi)W_{\rm BCC}=16G^{*2}$
+for $E:y^2=x^3-x$, and after imposing the filtered product rule
+$P:=G^*K$, the Vieta data are
+\[
+x_++x_-=16G^{*2},\qquad x_+x_-=16G^{*3},
+\]
+and hence the master quadratic
+\[
+x^2-16G^{*2}x+16G^{*3}=0.
+\]
+Its larger root is $x_+=137.036171458\ldots$, within $1.26$ ppm of the
+measured inverse fine-structure constant. The equality with physical
+$\alpha^{-1}$ is not assumed as a theorem here; it is recorded as a
+phenomenological selection requiring independent physical matching.
+\end{abstract}
+
+\section{The BCC Watson Integral}
+
+We consider the body-diagonal nearest-neighbor walk with steps
+$(\pm1,\pm1,\pm1)$ on $\mathbb Z^3$, restricted to a parity class. Geometrically
+this is the eight-corner shell of the 26-connected Moore neighborhood, or the
+Stella Octangula corner shell; after the usual coordinate scaling it is the BCC
+nearest-neighbor pathing structure. The corresponding dimensionless Green
+denominator is
+\[
+1-\cos k_x\cos k_y\cos k_z.
+\]
+
+\begin{definition}[Normalized BCC Watson integral]
+Define
+\[
+W_{\rm BCC}=
+\frac{1}{(2\pi)^3}\int_{-\pi}^{\pi}\int_{-\pi}^{\pi}\int_{-\pi}^{\pi}
+\frac{dk_x\,dk_y\,dk_z}{1-\cos k_x\cos k_y\cos k_z}.
+\]
+By evenness and periodicity, this equals Watson's first triple integral
+\[
+\frac{1}{\pi^3}\int_0^\pi\int_0^\pi\int_0^\pi
+\frac{du\,dv\,dw}{1-\cos u\cos v\cos w}.
+\]
+\end{definition}
+
+\begin{theorem}[Watson reflection bridge]
+Let
+\[
+G^*=\frac{\Gamma(1/4)}{\Gamma(3/4)}.
+\]
+Then
+\[
+W_{\rm BCC}=\frac{\Gamma(1/4)^4}{4\pi^3}
+           =\frac{G^{*2}}{2\pi}.
+\]
+\end{theorem}
+
+\begin{proof}
+The evaluation
+\[
+W_{\rm BCC}=\frac{\Gamma(1/4)^4}{4\pi^3}
+\]
+is Watson's first triple integral \cite{Watson1939,MathWorldWatson}; see also
+the extended Watson-integral literature \cite{GlasserZucker1977,JoyceZucker2005}.
+Euler's reflection formula gives
+\[
+\Gamma(1/4)\Gamma(3/4)=\pi\sqrt{2}.
+\]
+This is the $z=1/4$ case of
+$\Gamma(z)\Gamma(1-z)=\pi/\sin(\pi z)$ \cite{DLMFReflection}.
+Therefore
+\[
+G^*=\frac{\Gamma(1/4)}{\Gamma(3/4)}
+   =\frac{\Gamma(1/4)^2}{\pi\sqrt{2}},
+\]
+and so
+\[
+\frac{G^{*2}}{2\pi}
+=\frac{\Gamma(1/4)^4}{4\pi^3}
+=W_{\rm BCC}.
+\]
+\end{proof}
+
+\noindent Theorem 1 is classical special-function and lattice-integral
+mathematics. Its interpretation as an FTD substrate identity is a model
+selection, not a consequence of the formula alone.
+
+\section{Capacity Normalization}
+
+The master quadratic uses the total normalized capacity of a selected BCC/CM
+sector. The arithmetic normalization is supplied by the CM elliptic curve
+\[
+E:y^2=x^3-x,
+\]
+which has $j(E)=1728$ and complex automorphism group fixing the origin of order
+$4$ \cite{Silverman2009}. Thus
+\[
+|\operatorname{Aut}_{\mathbb C}(E,0)|^2=16.
+\]
+
+\begin{definition}[FTD capacity normalization]
+For the selected BCC/CM sector, define the total capacity
+\[
+K=16\cdot(2\pi)\cdot W_{\rm BCC}.
+\]
+\end{definition}
+
+\noindent This is a normalization rule in the FTD construction. It is not
+derived from the Watson integral alone. Substituting Theorem 1 gives
+\[
+K=16\cdot(2\pi)\cdot\frac{G^{*2}}{2\pi}=16G^{*2}.
+\]
+Numerically,
+\[
+K=140.060135374\ldots .
+\]
+
+\section{The Master Quadratic}
+
+\begin{definition}[Filtered master polynomial]
+Given the capacity $K$ above, define the filtered master polynomial as the
+monic quadratic whose elementary symmetric polynomials are
+\[
+e_1=K,\qquad e_2=G^*K.
+\]
+Equivalently, if $x_+$ and $x_-$ are its roots, then
+\[
+x_+ + x_- = K,\qquad x_+x_-=G^*K.
+\]
+\end{definition}
+
+This definition encodes the self-reference rule of the FTD construction: the
+product term is one reflection-ratio step deeper than the trace term.
+
+\begin{corollary}[Master quadratic]
+Under Definitions 2 and 3, the filtered master polynomial is
+\[
+x^2-16G^{*2}x+16G^{*3}=0.
+\]
+\end{corollary}
+
+\begin{proof}
+By Vieta's formulas, the monic quadratic with elementary symmetric data
+$e_1=K$ and $e_2=G^*K$ is
+\[
+x^2-Kx+G^*K=0.
+\]
+Using Definition 2 and Theorem 1,
+\[
+K=16G^{*2},\qquad G^*K=16G^{*3}.
+\]
+Substitution gives the stated polynomial.
+\end{proof}
+
+\noindent The Watson/reflection identity is theorem-level. The capacity
+normalization and filtered product rule are definitions of the FTD
+master-quadratic construction. This separation is essential: the paper proves
+the algebraic consequences of the definitions; it does not prove that nature
+must choose them.
+
+\section{Roots and Phenomenological Remarks}
+
+The exact roots of the master quadratic are
+\[
+x_{\pm}=
+\frac{16G^{*2}\pm\sqrt{(16G^{*2})^2-64G^{*3}}}{2}.
+\]
+Equivalently,
+\[
+x_{\pm}=8G^{*2}\pm4G^{*3/2}\sqrt{4G^*-1}.
+\]
+Evaluating with
+$G^*=2.958675119188638\ldots$ gives
+\[
+x_+=137.036171458155\ldots,\qquad
+x_-=3.023963916339\ldots .
+\]
+
+The CODATA 2022 low-energy inverse fine-structure constant is
+\[
+\alpha(0)^{-1}=137.035999177(21) \quad \cite{NISTAlpha}.
+\]
+Thus $x_+$ differs from $\alpha(0)^{-1}$ by
+\[
+1.72281\times 10^{-4},
+\]
+approximately $1.257$ ppm. This is far outside the CODATA experimental
+uncertainty; any physical identification therefore requires additional FTD
+matching or correction terms. The mathematical result is exact; the physical
+identification
+\[
+x_+\stackrel{?}{=}\alpha(0)^{-1}
+\]
+is a phenomenological selection requiring a separate matching from FTD lattice
+variables to physical electromagnetic normalization.
+
+The smaller root lies near the integer $3$. In the FTD interpretation, this
+motivates the conjectural association with a threefold confined sector,
+suggestive of the color rank $N_c=3$. As with the electromagnetic
+identification, this is not a theorem of the quadratic alone: the rigorous
+statement is the exact value of $x_-$ and its proximity to $3$.
+
+\section{Epistemic Status}
+
+The results above separate into four layers:
+\begin{enumerate}
+    \item The BCC Watson/reflection identity
+    $W_{\rm BCC}=G^{*2}/(2\pi)$ is an exact theorem.
+    \item The normalization $K=16\cdot2\pi W_{\rm BCC}$ and filtered product
+    $G^*K$ are explicit FTD definitions.
+    \item Given these definitions, the master quadratic follows by Vieta's
+    formulas.
+    \item The identifications $x_+\approx\alpha(0)^{-1}$ and
+    $x_-\approx N_c$ are phenomenological selections, not established physical
+    derivations in this paper.
+\end{enumerate}
+
+\section{Conclusion}
+
+We have isolated the exact arithmetic chain
+\[
+W_{\rm BCC}=\frac{G^{*2}}{2\pi}
+\quad\Longrightarrow\quad
+K=16\cdot2\pi W_{\rm BCC}=16G^{*2}
+\quad\Longrightarrow\quad
+x^2-16G^{*2}x+16G^{*3}=0,
+\]
+under the stated CM/BCC normalization and filtered self-reference rule. The
+larger root is
+\[
+x_+=137.036171458\ldots,
+\]
+which is strikingly close to the low-energy physical inverse fine-structure
+constant, but not within experimental uncertainty. The paper therefore
+establishes a rigorous mathematical source for the master quadratic and records
+the physical interpretation as a sharply defined open matching problem rather
+than as an unconditional derivation of Standard Model parameters.
+
+\begin{thebibliography}{9}
+
+\bibitem{Watson1939}
+G. N. Watson,
+``Three triple integrals,''
+\emph{Quarterly Journal of Mathematics, Oxford Series} \textbf{10} (1939),
+266--276.
+
+\bibitem{GlasserZucker1977}
+M. L. Glasser and I. J. Zucker,
+``Extended Watson integrals for the cubic lattices,''
+\emph{Proceedings of the National Academy of Sciences USA} \textbf{74} (1977),
+1800--1801.
+
+\bibitem{JoyceZucker2005}
+G. S. Joyce and I. J. Zucker,
+``On the evaluation of generalized Watson integrals,''
+\emph{Proceedings of the American Mathematical Society} \textbf{133} (2005),
+71--81.
+
+\bibitem{DLMFReflection}
+NIST Digital Library of Mathematical Functions,
+``Gamma Function: Functional Relations,''
+\url{https://dlmf.nist.gov/5.5.5}.
+
+\bibitem{Silverman2009}
+J. H. Silverman,
+\emph{The Arithmetic of Elliptic Curves},
+2nd ed., Graduate Texts in Mathematics 106, Springer, 2009.
+
+\bibitem{NISTAlpha}
+NIST/CODATA,
+``CODATA Value: inverse fine-structure constant,''
+\url{https://physics.nist.gov/cgi-bin/cuu/Value?eqalphinv=}.
+
+\bibitem{MathWorldWatson}
+E. W. Weisstein,
+``Watson's Triple Integrals,''
+\emph{MathWorld--A Wolfram Web Resource},
+\url{https://mathworld.wolfram.com/WatsonsTripleIntegrals.html}.
+
+\end{thebibliography}
+
+\end{document}

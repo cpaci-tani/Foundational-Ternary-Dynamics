@@ -28,6 +28,20 @@
 #include "ftd/render_bridge.h"
 #include "ftd/test_telemetry.h"
 
+static ftd::Vec3 extract_coulomb_force(const ftd::RenderBridge& rb, int cx, int cy, int cz) {
+    int idx = rb.lattice().index(cx, cy, cz);
+    int8_t state = rb.voxels()[idx].state;
+    if (rb.toggles.poisson_coulomb && !rb.toggles.emergent_forces) {
+        ftd::Vec3 gd = rb.gradient_scalar(idx, rb.phi_coulomb());
+        return gd * (-ftd::ALPHA * state);
+    } else if (!rb.toggles.poisson_coulomb && !rb.toggles.emergent_forces) {
+        ftd::Vec3 gdj = rb.gradient_divergence(idx);
+        return gdj * (-ftd::ALPHA * state);
+    }
+    return {};
+}
+
+
 // ============================================================================
 // Section: poisson_coulomb  (from test_poisson_coulomb.cpp)
 // ============================================================================
@@ -43,6 +57,8 @@ static void section_poisson_coulomb() {
     std::cout << "\n--- PC1: Force monotonically decreases ---\n";
     {
         ftd::RenderBridge rb(48);
+        rb.toggles.movement = false;
+        rb.toggles.genesis = false;
         int mid = 24;
         // Locked +1 source at center
         rb.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
@@ -56,8 +72,8 @@ static void section_poisson_coulomb() {
 
         rb.run(200);
 
-        double f4 = rb.force_diag_at(mid + 4, mid, mid).f_coulomb.mag();
-        double f8 = rb.force_diag_at(mid + 8, mid, mid).f_coulomb.mag();
+        double f4 = extract_coulomb_force(rb, mid + 4, mid, mid).mag();
+        double f8 = extract_coulomb_force(rb, mid + 8, mid, mid).mag();
         std::cout << "    F(r=4) = " << f4 << ", F(r=8) = " << f8 << "\n";
         ftd::test::check("PC1: F(r=4) > F(r=8)", f4 > f8);
     }
@@ -74,13 +90,15 @@ static void section_poisson_coulomb() {
 
         for (int r : radii) {
             ftd::RenderBridge rb(48);
+        rb.toggles.movement = false;
+        rb.toggles.genesis = false;
             int mid = 24;
             rb.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
             rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
             rb.inject_particle(mid + r, mid, mid, -1, {0, 0, -ftd::K_B});
             rb.voxels()[rb.lattice().index(mid + r, mid, mid)].locked = true;
             rb.run(200);
-            double f = rb.force_diag_at(mid + r, mid, mid).f_coulomb.mag();
+            double f = extract_coulomb_force(rb, mid + r, mid, mid).mag();
             if (f > 1e-20) {
                 log_r.push_back(std::log(static_cast<double>(r)));
                 log_f.push_back(std::log(f));
@@ -118,6 +136,8 @@ static void section_poisson_coulomb() {
     std::cout << "\n--- PC3: Long-range force ---\n";
     {
         ftd::RenderBridge rb(48);
+        rb.toggles.movement = false;
+        rb.toggles.genesis = false;
         int mid = 24;
         rb.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
         rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
@@ -129,8 +149,8 @@ static void section_poisson_coulomb() {
 
         rb.run(300);
 
-        double f2 = rb.force_diag_at(mid + 2, mid, mid).f_coulomb.mag();
-        double f12 = rb.force_diag_at(mid + 12, mid, mid).f_coulomb.mag();
+        double f2 = extract_coulomb_force(rb, mid + 2, mid, mid).mag();
+        double f12 = extract_coulomb_force(rb, mid + 12, mid, mid).mag();
         double ratio = (f2 > 1e-30) ? f12 / f2 : 0.0;
         std::cout << "    F(r=2) = " << f2 << ", F(r=12) = " << f12
                   << ", ratio = " << ratio << "\n";
@@ -143,6 +163,8 @@ static void section_poisson_coulomb() {
     std::cout << "\n--- PC4: Unlike charges attract ---\n";
     {
         ftd::RenderBridge rb(32);
+        rb.toggles.movement = false;
+        rb.toggles.genesis = false;
         int mid = 16;
         // +1 at left, -1 at right
         rb.inject_particle(mid - 4, mid, mid, +1, {0, 0, ftd::K_B});
@@ -153,9 +175,9 @@ static void section_poisson_coulomb() {
         rb.run(100);
 
         // Force on +1 should point rightward (+x), toward the -1
-        ftd::Vec3 f_pos = rb.force_diag_at(mid - 4, mid, mid).f_coulomb;
+        ftd::Vec3 f_pos = extract_coulomb_force(rb, mid - 4, mid, mid);
         // Force on -1 should point leftward (-x), toward the +1
-        ftd::Vec3 f_neg = rb.force_diag_at(mid + 4, mid, mid).f_coulomb;
+        ftd::Vec3 f_neg = extract_coulomb_force(rb, mid + 4, mid, mid);
         std::cout << "    F(+1).x = " << f_pos.x << ", F(-1).x = " << f_neg.x << "\n";
         ftd::test::check("PC4: +1 attracted toward -1 (F.x > 0)", f_pos.x > 0);
     }
@@ -166,6 +188,8 @@ static void section_poisson_coulomb() {
     std::cout << "\n--- PC5: Like charges repel ---\n";
     {
         ftd::RenderBridge rb(32);
+        rb.toggles.movement = false;
+        rb.toggles.genesis = false;
         int mid = 16;
         rb.inject_particle(mid - 4, mid, mid, +1, {0, 0, ftd::K_B});
         rb.inject_particle(mid + 4, mid, mid, +1, {0, 0, ftd::K_B});
@@ -174,7 +198,7 @@ static void section_poisson_coulomb() {
 
         rb.run(100);
 
-        ftd::Vec3 f_left = rb.force_diag_at(mid - 4, mid, mid).f_coulomb;
+        ftd::Vec3 f_left = extract_coulomb_force(rb, mid - 4, mid, mid);
         std::cout << "    F(left +1).x = " << f_left.x << "\n";
         ftd::test::check("PC5: Like charges repel (F.x < 0, away from right)", f_left.x < 0);
     }
@@ -185,6 +209,8 @@ static void section_poisson_coulomb() {
     std::cout << "\n--- PC6: Isotropy ---\n";
     {
         ftd::RenderBridge rb(32);
+        rb.toggles.movement = false;
+        rb.toggles.genesis = false;
         int mid = 16;
         // Source at center with isotropic flux
         double kb3 = ftd::K_B / std::sqrt(3.0);
@@ -201,9 +227,9 @@ static void section_poisson_coulomb() {
 
         rb.run(200);
 
-        double fx = rb.force_diag_at(mid + 5, mid, mid).f_coulomb.mag();
-        double fy = rb.force_diag_at(mid, mid + 5, mid).f_coulomb.mag();
-        double fz = rb.force_diag_at(mid, mid, mid + 5).f_coulomb.mag();
+        double fx = extract_coulomb_force(rb, mid + 5, mid, mid).mag();
+        double fy = extract_coulomb_force(rb, mid, mid + 5, mid).mag();
+        double fz = extract_coulomb_force(rb, mid, mid, mid + 5).mag();
         double fmax = std::max({fx, fy, fz});
         double fmin = std::min({fx, fy, fz});
         double isotropy = (fmax > 1e-30) ? fmin / fmax : 0.0;
@@ -218,6 +244,8 @@ static void section_poisson_coulomb() {
     std::cout << "\n--- PC7: Warm-start ---\n";
     {
         ftd::RenderBridge rb(32);
+        rb.toggles.movement = false;
+        rb.toggles.genesis = false;
         int mid = 16;
         rb.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
         rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
@@ -247,23 +275,27 @@ static void section_poisson_coulomb() {
     {
         // Run with Poisson
         ftd::RenderBridge rb_poisson(32);
+        rb_poisson.toggles.movement = false;
+        rb_poisson.toggles.genesis = false;
         int mid = 16;
         rb_poisson.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
         rb_poisson.voxels()[rb_poisson.lattice().index(mid, mid, mid)].locked = true;
         rb_poisson.inject_particle(mid + 5, mid, mid, -1, {0, 0, -ftd::K_B});
         rb_poisson.voxels()[rb_poisson.lattice().index(mid + 5, mid, mid)].locked = true;
         rb_poisson.run(100);
-        double f_poisson = rb_poisson.force_diag_at(mid + 5, mid, mid).f_coulomb.mag();
+        double f_poisson = extract_coulomb_force(rb_poisson, mid + 5, mid, mid).mag();
 
         // Run with legacy
         ftd::RenderBridge rb_legacy(32);
+        rb_legacy.toggles.movement = false;
+        rb_legacy.toggles.genesis = false;
         rb_legacy.toggles.poisson_coulomb = false;
         rb_legacy.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
         rb_legacy.voxels()[rb_legacy.lattice().index(mid, mid, mid)].locked = true;
         rb_legacy.inject_particle(mid + 5, mid, mid, -1, {0, 0, -ftd::K_B});
         rb_legacy.voxels()[rb_legacy.lattice().index(mid + 5, mid, mid)].locked = true;
         rb_legacy.run(100);
-        double f_legacy = rb_legacy.force_diag_at(mid + 5, mid, mid).f_coulomb.mag();
+        double f_legacy = extract_coulomb_force(rb_legacy, mid + 5, mid, mid).mag();
 
         std::cout << "    Poisson force at r=5: " << f_poisson << "\n";
         std::cout << "    Legacy  force at r=5: " << f_legacy << "\n";
@@ -287,9 +319,10 @@ static void section_coulomb_convergence() {
     std::cout << "================================================================\n";
     std::cout << std::fixed << std::setprecision(6);
 
-    const int L = 32;
+    constexpr int L = 48;
     const int mid = L / 2;
-    const int SETUP_TICKS = 200;  // Let self-field establish
+    constexpr int SETUP_TICKS = 200;       // Let Poisson potential warm-start
+    constexpr int SOR_AUDIT_ITERS = 30;    // Scientific audit setting
 
     // Measure force at several distances
     std::vector<double> radii = {4, 6, 8, 10, 12};
@@ -304,6 +337,8 @@ static void section_coulomb_convergence() {
 
         // Fresh lattice each measurement
         ftd::RenderBridge rb(L);
+        rb.set_sor_iterations(SOR_AUDIT_ITERS);
+        rb.toggles.movement = false;
         rb.toggles.genesis = false;
         rb.toggles.gravity = false;  // Isolate EM: G_N=0.01 >> α/(4π) contaminates
 
@@ -314,17 +349,16 @@ static void section_coulomb_convergence() {
         // Let self-field establish
         rb.run(SETUP_TICKS);
 
-        // Place probe charge, measure force via 1-tick velocity change
+        // Place probe charge, then read the Poisson force directly. This
+        // matches the rest of this campaign and avoids mixing movement/
+        // collision side effects into a force-law audit.
         int probe_x = mid + rx;
         rb.inject_particle(probe_x, mid, mid, +1, {0, 0, ftd::K_B * 0.1});
-
-        auto& probe = rb.voxels()[rb.lattice().index(probe_x, mid, mid)];
-        double vx_before = probe.velocity.x;
+        rb.voxels()[rb.lattice().index(probe_x, mid, mid)].locked = true;
 
         rb.tick();
 
-        double vx_after = rb.voxels()[rb.lattice().index(probe_x, mid, mid)].velocity.x;
-        double f = vx_after - vx_before;  // Force ≈ Δv (mass=1 in natural units)
+        double f = extract_coulomb_force(rb, probe_x, mid, mid).x;
 
         forces.push_back(f);
 
@@ -552,13 +586,15 @@ static void section_force_law() {
 // Measure force magnitude at separation r using isolated two-particle simulation
 static double measure_force_pfl(int r) {
     ftd::RenderBridge rb(48);
+        rb.toggles.movement = false;
+        rb.toggles.genesis = false;
     int mid = 24;
     rb.inject_particle(mid, mid, mid, +1, {0, 0, ftd::K_B});
     rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
     rb.inject_particle(mid + r, mid, mid, -1, {0, 0, -ftd::K_B});
     rb.voxels()[rb.lattice().index(mid + r, mid, mid)].locked = true;
     rb.run(200);
-    return rb.force_diag_at(mid + r, mid, mid).f_coulomb.mag();
+    return extract_coulomb_force(rb, mid + r, mid, mid).mag();
 }
 
 static void section_poisson_force_law() {
@@ -671,6 +707,8 @@ static void section_poisson_force_law() {
     // ================================================================
     {
         ftd::RenderBridge rb(32);
+        rb.toggles.movement = false;
+        rb.toggles.genesis = false;
         int mid = 16;
         double kb3 = ftd::K_B / std::sqrt(3.0);
         rb.inject_particle(mid, mid, mid, +1, {kb3, kb3, kb3});
@@ -686,9 +724,9 @@ static void section_poisson_force_law() {
 
         rb.run(200);
 
-        double fx = rb.force_diag_at(mid + 5, mid, mid).f_coulomb.mag();
-        double fy = rb.force_diag_at(mid, mid + 5, mid).f_coulomb.mag();
-        double fz = rb.force_diag_at(mid, mid, mid + 5).f_coulomb.mag();
+        double fx = extract_coulomb_force(rb, mid + 5, mid, mid).mag();
+        double fy = extract_coulomb_force(rb, mid, mid + 5, mid).mag();
+        double fz = extract_coulomb_force(rb, mid, mid, mid + 5).mag();
         double fmax = std::max({fx, fy, fz});
         double fmin = std::min({fx, fy, fz});
         double isotropy = (fmax > 1e-30) ? fmin / fmax : 0.0;
@@ -729,7 +767,7 @@ static double measure_radial_force_pb(int lattice_size, int separation, int8_t s
     rb.voxels()[rb.lattice().index(mid, mid, mid)].locked = true;
     rb.voxels()[rb.lattice().index(mid + separation, mid, mid)].locked = true;
     rb.run(settle_ticks);
-    return rb.force_diag_at(mid + separation, mid, mid).f_coulomb.x;
+    return extract_coulomb_force(rb, mid + separation, mid, mid).x;
 }
 
 static void section_poisson_binding() {

@@ -39,7 +39,7 @@ OUTPUT: ~126 numerical results covering PDG particle physics format
 ```
 
 **Key Claim (v5.29):** 100% PDG format coverage with ~35 genuine derivations.
-**Precision:** α = 1/137.036 to **1.26 ppm** tree-level; **9.6 ppb** one-loop from G* quadratic.
+**Precision:** α = 1/137.036 to **1.26 ppm** tree-level. The **9.6 ppb** one-loop result is retained as a Structure-1, scheme-conditional scalar-EFT correction, not a universal prediction.
 
 ---
 
@@ -1107,7 +1107,7 @@ lambda_3 = 1/3 = 1/D
 
 This is not a parametric insertion: the cubic coupling is fixed by the lattice dimension, giving a phi^3 EFT that is the natural low-energy description of the ternary state field.
 
-### 29.2 One-Loop Lattice Alpha (9.6 ppb)
+### 29.2 One-Loop Lattice Alpha (9.6 ppb, Scheme-Conditional)
 
 The tree-level result alpha = 1/137.036 (1.26 ppm) is improved by a one-loop lattice correction:
 
@@ -1118,7 +1118,9 @@ Experimental:  1 / 137.035999177(21)
 Error:         9.6 ppb (99.2% gap closure from tree-level)
 ```
 
-This closes 99.2% of the gap between the tree-level G* quadratic and the experimental value, using only the lattice self-energy contribution without free parameters.
+This closes 99.2% of the gap between the tree-level G* quadratic and the experimental value inside the Structure-1 SC scalar-EFT scheme.
+
+**Audit update 2026-04-22:** This is not currently a scheme-independent physical prediction. The BCC tadpole and continuum scans show regulator dependence, and the Ward-valid Structure-2 two-U(1) scalar gauge completion does not reproduce the ppb closure. See `docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md` and ledger row FTD-0058.
 
 ### 29.3 The 13-Step Blind Derivation Chain (i to alpha)
 

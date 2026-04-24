@@ -3,20 +3,39 @@
 ## The Coulomb Phase Coupling IS the Fine Structure Constant
 
 **Date:** March 17, 2026
-**Status:** [THEOREM given the gauge field identification]
-**Closes:** The x₊ = 1/α [SELECTION] in AUDIT_HIDDEN_SELECTIONS.md (SP4)
+**Status:** Historical argument; [SELECTION] pending FTD-to-EFT matching
+**Does not close:** The `x_+ = 1/alpha` physical identification. As of the 2026-04-22 bridge audit, this document is supporting evidence only.
 
 ---
 
+## Audit update (2026-04-22)
+
+This document's phase-structure argument remains useful, but its original theorem-level framing was too strong. The bridge-span audits in `docs/theory/10_eft_program/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` and `docs/theory/10_eft_program/DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` show:
+
+```text
+FTD state/flux variables -> source-coupled vector EFT              supported
+FTD state/flux variables -> primitive compact U(1) gauge theory    not derived
+transverse projection -> auxiliary U(1)-like redundancy            supported
+```
+
+In particular, the current `s div J` coupling is not invariant under `J -> J + grad chi` without an added constraint, transformation law, or projection. Therefore the statement "FTD is a compact U(1) lattice gauge theory" remains an EFT-level projection/matching claim, not a theorem from Axiom Zero alone.
+
+Read the claims below as conditional:
+
+```text
+If transverse projected flux is represented by an auxiliary U(1) gauge potential,
+then the standard U(1) phase-structure argument applies.
+```
+
 ## Abstract
 
-The identification $x_+ = 1/\alpha$ has been classified as [SELECTION] — a numerical coincidence awaiting a physical mechanism. This document provides the mechanism: the FTD Lagrangian defines a U(1) lattice gauge theory in temporal gauge, and U(1) lattice gauge theories have a well-known two-phase structure (Wilson 1974, Polyakov 1977). The larger root $x_+$ corresponds to the Coulomb (deconfined) phase, and the Coulomb-phase U(1) coupling IS $\alpha$ by definition.
+The identification $x_+ = 1/\alpha$ has been classified as [SELECTION] because the physical matching from FTD state/flux dynamics to electromagnetic QED is not uniquely derived. This document records the conditional phase-structure argument: if the FTD flux field `J` is selected or projected as a U(1) gauge potential in temporal gauge, then U(1) lattice gauge theory has a well-known two-phase structure (Wilson 1974, Polyakov 1977), the larger root $x_+$ lies in the Coulomb branch, and the corresponding U(1) coupling is the electromagnetic coupling within that selected EFT.
 
 ---
 
 ## Part I: FTD IS a U(1) Lattice Gauge Theory
 
-### 1.1 The Structural Identification [THEOREM]
+### 1.1 The Structural Identification [SELECTION]
 
 The FTD Lagrangian contains:
 
@@ -35,9 +54,9 @@ This is precisely the definition of a **compact U(1) lattice gauge theory in tem
 | No temporal $J_0$ | Temporal gauge $A_0 = 0$ |
 | $s \in \{-1, 0, +1\}$ | Charge $q \in \{-1, 0, +1\}$ |
 
-The identification is structural, not analogical. Every axiom of a U(1) lattice gauge theory is satisfied by the FTD Lagrangian.
+The identification is structural once the gauge-potential dictionary is selected, but that dictionary is not derived by this document. The minimal state/flux dictionary gives a physical vector flux coupled to a signed source. Promoting that vector to a U(1) gauge potential requires the extra matching step isolated in `DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md`.
 
-### 1.2 The Coupling [THEOREM]
+### 1.2 The Coupling [SELECTION]
 
 In the FTD Lagrangian, the coupling constant is $g_c = \sqrt{\alpha}$ where $\alpha = 1/x_+$ from the master quadratic. The inverse coupling squared is:
 
@@ -70,13 +89,13 @@ The gap equation $x^2 = 16G^{*2}(x - G^*)$ has two roots:
 
 The critical coupling for the phase transition lies between the two roots: $G^* = 2.959$ satisfies $x_- < G^* < x_+$, placing the transition point at the harmonic center (the point the gap equation forbids).
 
-### 2.3 The Identification [THEOREM given 1.1 and 2.1]
+### 2.3 The Identification [CONDITIONAL]
 
-1. The FTD Lagrangian IS a U(1) lattice gauge theory [THEOREM — structural identification]
+1. The FTD Lagrangian is selected/projected as a U(1) lattice gauge theory [SELECTION]
 2. U(1) lattice gauge theories have Coulomb and confined phases [THEOREM — Wilson 1974]
 3. The Coulomb-phase coupling of a U(1) gauge theory IS the electromagnetic coupling $\alpha$ [DEFINITION]
 4. The Coulomb phase corresponds to $x_+$ (weak coupling, $g^2 = 0.0073$) [THEOREM — from the gap equation]
-5. Therefore $\alpha = 1/x_+ = 1/137.036$ [THEOREM given 1-4]
+5. Therefore $\alpha = 1/x_+ = 1/137.036$ within that selected EFT dictionary [CONDITIONAL]
 
 The identification is not a separate postulate — it follows from recognizing what the FTD Lagrangian IS.
 
@@ -128,15 +147,15 @@ This interpretation adds conceptual depth but is not independent of the gauge th
 
 ### Established [THEOREM]
 
-1. The FTD Lagrangian satisfies all axioms of a U(1) lattice gauge theory in temporal gauge
+1. Conditional on the gauge-potential dictionary, the FTD Lagrangian satisfies the structural form of a U(1) lattice gauge theory in temporal gauge
 2. U(1) lattice gauge theories have Coulomb and confined phases (Wilson 1974)
 3. The Coulomb-phase root is $x_+$ (weak coupling)
 4. The Coulomb-phase U(1) coupling IS $\alpha$ by definition
-5. Therefore $x_+ = 1/\alpha$
+5. Therefore $x_+ = 1/\alpha$ inside the selected U(1) EFT dictionary
 
 ### The remaining assumption
 
-The identification of $\mathbf{J}$ as a gauge field is a consequence of the "minimal continuous extension" choice in Axiom Zero (FOUND_AXIOM_ZERO.md, Section 2.3b). This is [SELECTION] — $\mathbf{J} \in \mathbb{R}^3$ is argued to be the simplest continuous vector field compatible with O_h symmetry, but other choices exist in principle. Given this choice, the gauge theory identification and the phase structure follow as [THEOREM].
+The identification of microscopic $\mathbf{J}$ as a gauge field is not a consequence of the "minimal continuous extension" choice alone. Axiom Zero supports `J in R^3` as a minimal continuous vector field, but a vector field is not automatically a gauge potential. The better bridge is to treat U(1) as an emergent redundancy of auxiliary variables representing transverse projected flux. Given that EFT-level projection and a matter-coupling prescription, the standard U(1) phase-structure argument follows.
 
 ---
 
