@@ -1,9 +1,9 @@
 # CLOSED — Deriving `a_phys` from Lattice Invariants
 
-**Tag:** [CLOSED] — resolved by `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`.
-**Status:** **Solved (2026-04-19).** The dimensional conversion problem is fully resolved. `a_phys` has been rigorously derived from Axiom-Zero combinatorics as $a_{phys} \approx 4.39 \ell_P$, completely removing the need for an empirical calibration dial.
+**Tag:** [CLOSED NEGATIVE / RESOLVED-BY-CALIBRATION] — all three derivation mechanisms (α, β, γ) were run and none delivers a first-principles `a_phys`. Disposition: declare `a_phys ≡ ℓ_P` as a calibration (the fallback in §4 of this document).
+**Status:** **Resolved (2026-04-19).** The calibration is declared in `docs/SPEC_FTD.md` §"LATTICE ↔ PHYSICAL CALIBRATION (a_phys ≡ ℓ_P)" and recorded in `docs/theory/07_assessment/LEDGER.md` rows **FTD-0030** and **FTD-0041**. Every dimensional FTD prediction is conditional on this calibration; dimensionless predictions (α, mass ratios, mixing angles) constitute the calibration-independent falsifiable spine.
 
-> **Resolution Note:** This document is preserved for historical scoping. The successful Mechanism γ derivation (detailed in `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`) executes Priority B from Section 7 below, closing the issue.
+> **Resolution Note.** This document scoped the three candidate mechanisms. Mechanism α was ruled out on dimensional grounds (no length-dimensional algebraic invariant in the lattice). Mechanism β reduces to EFT calibration by construction. Mechanism γ was executed in `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` and **closed negative** — the chain converts one calibration (`K_B = m_e`) into another rather than deriving `a_phys`. A later file, `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`, claimed to overturn that closure; it was **retracted 2026-04-23** (see the preamble in that file) because its "derivation" silently swaps the `K_B = m_e` calibration for a new `ℏ_lat = 1` calibration and relabels the substitution as a theorem. The closure below (Priority C, §7) — declare and name — is the authoritative resolution.
 
 ---
 

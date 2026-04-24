@@ -1,9 +1,11 @@
 # Mechanism γ — Attempt to Fix `a_phys` from the Gravitational Coupling
 
-> **[SUPERSEDED]**: This document represents a failed first attempt to execute Mechanism γ by inappropriately injecting the proton-scale $\alpha_G$ coupling and the electron mass $m_e$ into the base lattice invariants. It has been successfully superseded by the rigorous, parameter-free derivation in **`DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`**, which correctly proves that $a_{phys} \approx 4.39 \ell_P$ at the Planck scale. This document is retained purely for historical epistemic transparency.
+> **[CLOSED NEGATIVE 2026-04-19]** — Mechanism γ does not deliver a first-principles `a_phys`. The framework's disposition is the fallback in §4: declare `a_phys ≡ ℓ_P` as a calibration. This declaration is now authoritative in `docs/SPEC_FTD.md` ("LATTICE ↔ PHYSICAL CALIBRATION") and recorded in `docs/theory/07_assessment/LEDGER.md` as rows **FTD-0030 (RESOLVED-BY-CALIBRATION)** and **FTD-0041 (CALIBRATION)**. See also `docs/WHERE_WE_LEFT_OFF.md` §4.
+>
+> **Note on a later document.** A file named `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` in this same directory claims to supersede this one with a `[THEOREM]` tag and `a_phys ≈ 4.39 ℓ_P`. That claim was **retracted on 2026-04-23** (see preamble in that file): its "derivation" silently swaps the `K_B = m_e` mass calibration for `ℏ_lat = 1`, which is the same class of calibration-shuffle this ATTEMPT document already identified (§2.3). The authoritative closure is the one in this document and in FTD-0030/0041, not the retracted SUCCESS claim.
 
-**Tag:** [ATTEMPT] — superseded.
-**Status:** **Closed.** Replaced by `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` (2026-04-19).
+**Tag:** [CLOSED NEGATIVE] — no first-principles `a_phys`; reverts to calibration.
+**Status:** **Closed.** Fallback declared in `docs/SPEC_FTD.md` (2026-04-19).
 
 ---
 
