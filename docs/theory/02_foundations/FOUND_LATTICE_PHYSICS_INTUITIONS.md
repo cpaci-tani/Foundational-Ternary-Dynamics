@@ -71,7 +71,7 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | Three generations | 3 families of quarks and leptons | 3 = floor(x_-) from master quadratic | Recovered |
 | Three colors | SU(3) color charge, N_c = 3 | Master quadratic root x_- via RG flow + topological quantization | Recovered |
 | SM gauge group | U(1) x SU(2) x SU(3) | Moore neighborhood polyhedral decomposition (octahedron + cuboctahedron + stella octangula) | Recovered |
-| Electron mass | m_e = 0.511 MeV | m_e = M_P * sqrt(2pi) * (16/3) * alpha^11 (0.27%) | Recovered |
+| Electron mass | m_e = 0.511 MeV | m_e = M_P * sqrt(2pi) * (16/3) * alpha^11 (0.19%) | Recovered |
 | Proton mass | m_p = 938.3 MeV | m_p/m_e = N_eff/alpha + N_base*N_eff + N_c = 1836.47 (174 ppm) | Recovered |
 | Higgs mass | m_H = 125.1 GeV | m_H = (N_eff/alpha^2) * m_e = 124.8 GeV (0.24%) | Recovered |
 | Confinement | Quarks never free | Area-law Wilson loops at x_- ; sigma = 0.209 | Recovered |

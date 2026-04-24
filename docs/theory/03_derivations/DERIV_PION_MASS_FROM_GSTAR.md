@@ -123,7 +123,7 @@ m_pi = sqrt((m_u + m_d) * B_0) = 139.50 MeV
 | 5 | Goldstone counting | b_3 = N_c^2 - 2 (condensed pseudo-Goldstones) | 7 | 7 | exact | [THEOREM] |
 | 6 | Integer reduction | N_base = N_c^2 - N_c - 2 (from steps 4 + 5) | 4 | 4 | exact | [THEOREM] |
 | 7 | Effective modes | N_eff = b_3 + 2 * N_c | 13 | 13 | exact | [SELECTION] |
-| 8 | Electron mass | m_e = m_P * sqrt(2*pi) * (N_base^2/N_c) * alpha^11 | 0.510 MeV | 0.511 MeV | 0.27% | [CONJECTURE] |
+| 8 | Electron mass | m_e = m_P * sqrt(2*pi) * (N_base^2/N_c) * alpha^11 | 0.510 MeV | 0.511 MeV | 0.19% | [CONJECTURE] |
 | 9 | Higgs VEV | v = m_P * sqrt(2*pi) * alpha^8 | 246.08 GeV | 246.22 GeV | 0.05% | [CONJECTURE] |
 | 10 | Weinberg angle | sin^2(theta_W) = N_c / N_eff | 0.2308 | 0.2312 | 0.19% | [SELECTION] |
 | 11 | Z mass | m_Z = g * v / (2 * cos(theta_W)) | 88.4 GeV | 91.2 GeV | 3.0% | [CONJECTURE] |
@@ -275,7 +275,7 @@ All ratios are exact integer multiples — no irrational or transcendental numbe
 
 ### 6.5 Honest Assessment
 
-The chain has **6 exact theorems**, **2 selection principles**, **5 conjectures**, and **1 algebraic step**. The five conjectures carry accumulated errors: m_e (0.27%), v (0.05%), m_Z (3.0%), F_pi (0.87%), m_u + m_d (2.7%). Despite these errors, the final m_pi achieves 0.048% accuracy due to cancellation of errors in the GMOR ratio.
+The chain has **6 exact theorems**, **2 selection principles**, **5 conjectures**, and **1 algebraic step**. The five conjectures carry accumulated errors: m_e (0.19%), v (0.05%), m_Z (3.0%), F_pi (0.87%), m_u + m_d (2.7%). Despite these errors, the final m_pi achieves 0.048% accuracy due to cancellation of errors in the GMOR ratio.
 
 The most vulnerable step is **Step 12** (F_pi): the coherent condensate argument relies on FTD's Postulate 5 (determinism of sub-threshold modes) and the specific mode count 2 * b_3 * N_eff = 182. If either is wrong, the entire hadronic sector fails.
 

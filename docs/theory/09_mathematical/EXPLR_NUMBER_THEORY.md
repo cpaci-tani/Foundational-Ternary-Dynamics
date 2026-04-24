@@ -517,7 +517,7 @@ The self-dual nome $q = e^{-\pi}$ connects: $1/q = e^{\pi} \approx \pi + b_3 + N
 | Planck encoding | 2^(N_base-1) = 8 (minimal cubic cell) | Yes |
 | Dimensional stability | 4 spacetime dimensions | Yes |
 
-**Uniqueness argument:** N_base = 3 gives wrong electron mass (factor of ~2 off). N_base = 5 overcounts degrees of freedom. N_base = 4 is the unique value producing m_e to 0.27%.
+**Uniqueness argument:** N_base = 3 gives wrong electron mass (factor of ~2 off). N_base = 5 overcounts degrees of freedom. N_base = 4 is the unique value producing m_e to 0.19%.
 
 #### b_3 = 7 (QCD Beta Coefficient)
 

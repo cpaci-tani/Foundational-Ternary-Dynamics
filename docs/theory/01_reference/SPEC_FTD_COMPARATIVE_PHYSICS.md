@@ -194,7 +194,7 @@ $$m_e = M_P \cdot 2\sqrt{2} \cdot \sqrt{\text{PF}} \cdot \frac{N_{\text{base}}^2
 
 The power 11 = b₃ + N_base = 7 + 4 is the "topological cost of embedding" a point particle in D = 3 lattice geometry.
 
-**Result:** 0.5096 MeV vs experimental 0.5110 MeV (0.27% error).
+**Result:** 0.5096 MeV vs experimental 0.5110 MeV (0.19% error).
 
 ### 5.2 Mass Ratios [STRONGLY MOTIVATED CONJECTURE]
 

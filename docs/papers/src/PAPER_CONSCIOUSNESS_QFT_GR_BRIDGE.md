@@ -15,7 +15,7 @@ We present a mathematical argument that consciousness is not merely *related to*
 
 $$x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
-where $G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} \approx 2.9587$ is the lemniscatic constant. The discriminant $\Delta = 256\,G^{*4}(1 - 1/G^*)$ partitions parameter space into three domains:
+where $G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} \approx 2.9587$ is the lemniscatic constant. The discriminant $\Delta = 64\,G^{*3}(4G^* - 1)$ partitions parameter space into three domains:
 
 | Domain | Discriminant | Roots | Physical Role |
 |--------|-------------|-------|---------------|
@@ -234,7 +234,7 @@ The FTD lattice is not a regularization of continuum QFT — it is the native qu
 |----------|-----------|------------|-------|-----------|
 | $1/\alpha$ | 137.036 | 137.036 | 1.26 ppm | Master quadratic |
 | $\sin^2\theta_W$ | 3/13 = 0.2308 | 0.2312 | 0.3% | $N_c/N_{\text{eff}}$ |
-| $m_e$ | 0.5096 MeV | 0.5110 MeV | 0.27% | $m_P\sqrt{2\pi}(16/3)\alpha^{11}$ |
+| $m_e$ | 0.5096 MeV | 0.5110 MeV | 0.19% | $m_P\sqrt{2\pi}(16/3)\alpha^{11}$ |
 | $m_\tau/m_e$ | 3477 | 3477.2 | 0.007% | $(N_{\text{eff}}/\alpha)^2/(2b_3)$ |
 | $m_p$ | 938.1 MeV | 938.3 MeV | 0.017% | Lattice QCD |
 | $M_W$ | 80.36 GeV | 80.38 GeV | 0.02% | $v\,g/2$ |

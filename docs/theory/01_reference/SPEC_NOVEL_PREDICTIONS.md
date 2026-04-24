@@ -62,7 +62,7 @@ The numerator $b_3 = (11N_c - 2N_f)/3 = 7$ is the one-loop QCD beta function coe
 | **FTD formula** | $m_e = M_P \sqrt{2\pi} \cdot (N_{\text{base}}^2 / N_c) \cdot \alpha^{11} = M_P \sqrt{2\pi} \cdot (16/3) \cdot \alpha^{11}$ |
 | **FTD value** | $0.5096$ MeV |
 | **PDG** | $0.51100$ MeV |
-| **Discrepancy** | 0.27% |
+| **Discrepancy** | 0.19% |
 | **Epistemic status** | **[STRONGLY MOTIVATED CONJECTURE]** (given $\alpha$ from master quadratic and $M_P$ as scale identification) |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $m_e$ was measured in 1897. The $M_P$ identification is **[IMPOSED]**. |
 
@@ -155,7 +155,7 @@ This is not a novel prediction---it is a verification that the FTD lattice Feynm
 | P-1 | $1/\alpha$ | 137.036 | 137.036 | 1.26 ppm | Post |
 | P-2 | $\alpha_s(M_Z)$ | 0.1186 | 0.1179 | 0.6% | Post |
 | P-3 | $\sin^2\theta_W$ | 0.2308 | 0.2312 | 0.2% | Post |
-| P-4 | $m_e$ | 0.5096 MeV | 0.5110 MeV | 0.27% | Post |
+| P-4 | $m_e$ | 0.5096 MeV | 0.5110 MeV | 0.19% | Post |
 | P-5 | $m_\tau$ | 1776.7 MeV | 1776.9 MeV | 0.007% | Post |
 | P-6 | $m_H$ | 124.8 GeV | 125.25 GeV | 0.36% | Post |
 | P-7 | $v$ (Higgs VEV) | 246.09 GeV | 246.22 GeV | 0.05% | Post |
@@ -533,7 +533,7 @@ Almost all of these are **post-dictions**. The values were known before FTD was 
 | NP-1 | $1/\alpha = 137.0361714582\ldots$ from master quadratic | [STRONGLY MOTIVATED CONJECTURE] | Now (1.26 ppm off CODATA) | Post |
 | NP-2 | $\alpha_s(M_Z) = 7/59 = 0.11864$ | [PARAMETRIC] | Now (0.6% off PDG) | Post |
 | NP-3 | $\sin^2\theta_W = 3/13 = 0.23077$ | [PARAMETRIC] | Now (0.2% off PDG) | Post |
-| NP-4 | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [STRONGLY MOTIVATED CONJECTURE] | Now (0.27% off PDG) | Post |
+| NP-4 | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [STRONGLY MOTIVATED CONJECTURE] | Now (0.19% off PDG) | Post |
 | NP-5 | $m_\tau/m_e = 3477$ | [STRONGLY MOTIVATED CONJECTURE] | Now (0.007% off PDG) | Post |
 | NP-6 | $m_H = (N_{\text{eff}}/\alpha^2) m_e \approx 124.8$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] | Now (0.36% off PDG) | Post |
 | NP-7 | $v = M_P\sqrt{2\pi}\alpha^8 = 246.09$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] | Now (0.05% off PDG) | Post |
