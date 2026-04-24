@@ -39,7 +39,7 @@ Engine source tree (`engine/`) and dissemination tree (`dissemination/`) are CLE
 | 1.M3 | `docs/theory/10_eft_program/AUDIT_ALPHA_EXTRACTION.md` | 4, 134, 137, 168 | MEDIUM | Live audit document uses "Phase F headline α_∞ ≈ 3.6× α_ref" and `α_∞ = 0.02566`. | Rename to `α_largeL`. The audit's verdict text on line 168 ("Phase F headline 'α_∞ ≈ 3.6× α_ref' is correct for the engine's…") may quote the original claim in scare-quotes, but should also restate in the new notation. |
 | 1.M4 | `docs/theory/10_eft_program/OPEN_A_PHYS_DERIVATION.md` | 81 | MEDIUM | One occurrence in active prose: "The EFT recovery program reports α_∞ ≈ 3.6 × α_ref across L ∈ {64, 128, 256, 384}." | Rename to `α_largeL` (matches the surrounding calibration discourse, which is the new framing). |
 | 1.M5 | `docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | 174 | MEDIUM | Active prose: `"α_∞ ∈ [1.8, 3.6] × α_ref after convention correction, residual"`. | Rename to `α_largeL`. |
-| 1.M6 | `docs/theory/10_eft_program/STATUS_CUDA_BUILD.md` | 95, 100 | MEDIUM | Active build/status doc carries "α_∞ = 1.23× α_ref from 1/L extrapolation" and "α_∞ ∈ [1.8, 3.6] × α_ref". | Lines 95 (which describes the retracted CPU measurement) may stay if framed as a historical retraction; line 100 is a live conclusion and should rename. |
+| 1.M6 | `docs/internal/STATUS_CUDA_BUILD.md` | 95, 100 | MEDIUM | Active build/status doc carries "α_∞ = 1.23× α_ref from 1/L extrapolation" and "α_∞ ∈ [1.8, 3.6] × α_ref". | Lines 95 (which describes the retracted CPU measurement) may stay if framed as a historical retraction; line 100 is a live conclusion and should rename. |
 
 ### LOW (legitimate historical / changelog / audit-trail references — keep as-is)
 

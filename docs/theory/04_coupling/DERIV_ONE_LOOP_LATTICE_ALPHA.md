@@ -176,4 +176,4 @@ The proposed duality with the epsilon-expansion remains conjectural and should n
 2. The 9.6 ppb result is only as good as the selected scalar-EFT scheme, regulator, and spacing a = 2/D. The BCC and Structure-2 audits show that changing the gauge completion or regularization changes the result.
 3. The two-loop estimate is preliminary (32^3 lattice). A 128^3 evaluation would be more reliable for the selected scheme, but it is not the current bottleneck.
 4. This is a **parametric insertion** of FTD values (G*, D=3) into standard lattice field theory formulas. The lattice QFT machinery is external physics, not derived from FTD axioms.
-5. As of 2026-04-22, the live blocker is the FTD-to-EFT matching principle documented in `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_MATCHING.md` and `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`.
+5. As of 2026-04-22, the live blocker is the FTD-to-EFT matching principle documented in `docs/theory/10_eft_program/archive/closed_negative/OPEN_FTD_TO_EFT_MATCHING.md` and `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`.
