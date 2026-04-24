@@ -71,17 +71,9 @@ RenderBridge::RenderBridge(int lattice_size)
     thread_rngs_.resize(num_threads);
     colored_sites_cache_.reserve(256);
 #ifdef FTD_ENABLE_CUDA
-    try {
-        gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
-        use_gpu_ = true;
-        std::cerr << "[RenderBridge] GPU backend active (CUDA, L=" << lattice_size << ")\n";
-    } catch (const std::exception& e) {
-        use_gpu_ = false;
-        std::cerr << "[RenderBridge] GPU init failed: " << e.what() << " — using CPU\n";
-    } catch (...) {
-        use_gpu_ = false;
-        std::cerr << "[RenderBridge] GPU init failed (unknown error) — using CPU\n";
-    }
+    gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
+    use_gpu_ = true;
+    std::cerr << "[RenderBridge] GPU backend active (CUDA, L=" << lattice_size << ")\n";
 #endif
 }
 
