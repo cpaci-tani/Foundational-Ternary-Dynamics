@@ -528,6 +528,134 @@ From refactoring (P2/P3):
 
 ---
 
+## 2026-04-20 — Link 8 closure (master quadratic as RG-flow interpretation)
+
+### Summary
+
+User-invoked session to test an implicit additional conjecture on top of the master quadratic: that the polynomial `x² − 16G*² x + 16G*³ = 0` arises as the characteristic polynomial of a renormalization-group step on the FTD engine's bare-lattice dynamics. Three independent tests run (Candidate 1 direct; analytical Option β; thermalized Run 3 on new Langevin infrastructure); all three close negative; all three agree structurally on *why* (the engine's 18-point coupling stencil is ½(σ_SC + σ_FCC) and has zero BCC component, while the master quadratic's 16G*² coefficient is exactly the BCC Watson integral times 2π·16).
+
+**Net effect on the framework:** FTD-0001, FTD-0013, FTD-0014 are unchanged. One speculative additional interpretation ("RG-flow reading") is removed from scope. New engine infrastructure (Langevin thermostat) landed and is reusable for the EFT campaign's thermal-ensemble needs.
+
+### Phase A — Candidate 1 direct (real-space Kadanoff blocking)
+
+- **Created:** `engine/tests/test_link8_kadanoff.cpp` (CPU harness, three variants).
+- **Method:** bare-lattice charge-pair simulation at L_fine ∈ {8, 16, 64}, 300 ticks, `eft::block_full` flux-average + charge-conserving state blocking, V(r) slope fit for α at each level.
+- **Result:** all three variants show y_n growing by exactly ×16 per blocking level — deconstructed as V ~ 1/8 (volume) × r/2 → α/16 per level, a geometric artefact of the blocking+extraction pair. Target recurrence eigenvalues are {137.036, 3.024}; 16 is neither. 2-eq fit (Run 1 extended, L_fine=64): A dev 9.99%, B dev **+434%**.
+- **LEDGER row:** FTD-0050 (created, CLOSED NEGATIVE).
+
+### Phase B — Option β (analytical Watson-integral diagnostic)
+
+- **Created:** `scripts/exploration/link8_option_beta_watson_diagnostic.py`.
+- **Method:** numerical integration (scipy.integrate.tplquad) of Watson-type integrals over the Brillouin zone for SC, FCC, BCC, and engine 18-pt stencils; algebraic verification of the identity σ_18 = ½(σ_SC + σ_FCC); moment analysis of engine Green's function values at Moore offsets {(0,0,0), (1,0,0), (1,1,0), (1,1,1), (2,0,0)}.
+- **Result:** 16·2π·W_BCC = 16·G*² verified exactly (W_BCC = Γ(1/4)⁴/(4π³) = 1.3932). Engine stencil has **zero corner weight** — BCC sub-stencil not engaged. Engine Laplacian spectrum is [−5.333, 0]; master-quadratic roots {137, 3} not eigenvalues of this operator. No small-integer algebraic combination of engine Green's function values at Moore offsets matches A_TARGET = 140 or B_TARGET = 414 within 50%.
+- **Status:** This is a [THEOREM — analytical] result. The failure is structural, not numerical. Variants 1B (momentum transfer matrix) and 1C (Euclidean slab transfer matrix) reduce at long wavelength to the same operator and inherit the same constraint; not pursued.
+
+### Phase C — Langevin thermostat + Candidate 1 Run 3 redo
+
+- **Engine infrastructure added** (`engine/include/ftd/term_toggles.h`, `engine/src/render_bridge.cpp`):
+  - New toggle `TermToggles::langevin` (bool, default false).
+  - New parameters `langevin_T`, `langevin_gamma`, `langevin_seed`.
+  - OU update in `phase_write` single-substrate path: `v ← (1 − γ) v + √(2γT) · η`.
+  - Runs in parallel with existing `gauss_project`; thermal ensemble lives on Gauss-physical subspace automatically.
+- **Verification test created:** `engine/tests/test_langevin_equipartition.cpp`.
+  - L=16, T=0.01, γ=0.01, 1000-tick burn + 2000-tick measure.
+  - `<|wave_vel|²>_voxel = 0.0312` vs target `3T = 0.0300` → **+4.0% dev**, PASS.
+  - Isotropy check: `<v²>/3 = 0.0104` vs T. Mean `<v> ≈ 0`.
+- **LEDGER row:** FTD-0051 (NEW, operational infrastructure).
+- **Candidate 1 Run 3 redo test created:** `engine/tests/test_link8_run3_thermal.cpp`.
+  - L_fine=16, 4 levels, 4 seeds, 5000-tick burn-in per seed.
+  - |J|² arithmetic-mean 2×2×2 blocking, connected correlator C(r) at r_max, ensemble-averaged.
+  - Result: y_n = {1.008e-3, 2.117e-4, 1.984e-3, 1.556e-3}. No structure. 2-eq fit: A dev −99.6%, B dev −100.4%, det M = −2×10⁻⁶ singular.
+- **Interpretation:** consistent with Option β — thermalization does not inject BCC structure; it equilibrates the (SC+FCC)/2 operator and inherits its orthogonality to the master quadratic.
+- **LEDGER row:** folds into FTD-0050 (evidence bullet 3).
+
+### Deferred
+
+- **FTD-0052 (NEW):** s-field ternary Metropolis for Candidate 1 Run 5 (⟨s·s⟩ correlator mass). Expected outcome: negative (same structural argument). Not prioritized.
+- **Candidate 1 Runs 2, 4:** Gaussian smoothing / momentum cutoff. Both linear filters on J followed by Coulomb-tail extraction; geometric-scaling argument from Run 1 applies verbatim. Expected outcome: identical ×16 ratio flow. Not implemented.
+
+### Documents landed
+
+| File | Change |
+|---|---|
+| `docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md` | NEW — 200-line closure report. |
+| `docs/theory/07_assessment/LEDGER.md` | Added rows FTD-0050, 0051, 0052 + detail blocks. Updated maintenance log. |
+| `docs/theory/07_assessment/CHANGELOG_REFRAME.md` | This session entry. |
+| `engine/tests/test_link8_kadanoff.cpp` | NEW. |
+| `engine/tests/test_langevin_equipartition.cpp` | NEW. |
+| `engine/tests/test_link8_run3_thermal.cpp` | NEW. |
+| `scripts/exploration/link8_option_beta_watson_diagnostic.py` | NEW. |
+| `engine/include/ftd/term_toggles.h` | Added `langevin`, `langevin_T`, `langevin_gamma`, `langevin_seed`. |
+| `engine/src/render_bridge.cpp` | Added OU update in single-substrate `phase_write` path. |
+| `engine/CMakeLists.txt` | Registered 3 new test executables. |
+
+### Epistemic status after this session
+
+- **Firm theorems unchanged:** FTD-0001 (master quadratic algebraic identity), FTD-0002, FTD-0003, FTD-0004, FTD-0005, FTD-0006, FTD-0007, FTD-0008, FTD-0010, FTD-0011, FTD-0044.
+- **STRONGLY MOTIVATED CONJECTURE unchanged:** FTD-0013 (x₊ ↔ 1/α), FTD-0014 (x₋ ↔ N_c), FTD-0015 (m_e formula), FTD-0016 (m_p/m_e formula).
+- **NEW CLOSED NEGATIVE:** FTD-0050 — master quadratic is NOT the characteristic polynomial of an RG step on the current engine.
+- **NEW INFRASTRUCTURE:** FTD-0051 — Langevin thermostat operational.
+- **NEW OPEN:** FTD-0052 — s-field Metropolis (deferred).
+
+### Phase 1 — Analytical 2-coupling flow matrix (late same day)
+
+Owner proposed a principled refinement: if the engine's stencil lacks a BCC component, add one explicitly (second coupling g_BCC alongside existing g_SCFCC), then rerun Candidate 1 tracking 2-dim flow. Master-quadratic interpretation becomes "trace(M)=16G*², det(M)=16G*³ for the 2×2 RG-step flow matrix M".
+
+**Analytical gate run before any engine extension.**
+
+- **Created:** `scripts/exploration/link8_phase1_flow_matrix.py`. Computes M at linearized level via standard Wilsonian formula σ_eff(K) = 1/Σ_m |F(k+πm)|²/σ(k+πm) with σ(k) = g_SCFCC·σ_SCFCC(k) + g_BCC·σ_BCC(k), projected onto {σ_SCFCC, σ_BCC} basis on coarse BZ. 64³ k-grid.
+- **Result:** `M = [[+0.987, −0.515], [+0.127, +1.454]]`. trace(M) = 2.44 vs target 140.06 (dev −98.3%); det(M) = 1.50 vs target 414.39 (dev −99.6%); eigenvalues 1.22 ± 0.10 i **complex** vs target roots {137.036, 3.024} **real**. Discriminant of M negative; discriminant of master quadratic positive.
+- **Structural conclusion:** even granting the engine a BCC coupling sector, the linearized RG-step flow matrix cannot produce the master quadratic as its characteristic polynomial. Matrix elements are O(1) dimensionless scaling-dimension quantities; master-quadratic roots are O(100) physical couplings. Two orders of magnitude gap; no convention-dependent prefactor bridges it. Qualitatively wrong on eigenvalue type (complex vs. real) even independent of magnitude.
+- **Consequence:** Phase 2 (engine extension with coupling_bcc toggle + Candidate 1 rerun) **ruled out without writing code**. Saves ~1 session.
+- **LEDGER:** FTD-0050 evidence bullet 4 added (4 confirmations); FTD-0052 demoted OPEN → NOT PURSUED (F9-avoidance).
+- **AUDIT doc updated:** `AUDIT_LINK8_CLOSURE.md` §Detail 4 added with full Phase 1 results.
+
+### FTD-0052 disposition (F9-avoidance)
+
+Following a direct decision from the project owner, FTD-0052 (s-field Metropolis for Run 5) is demoted from OPEN (DEFERRED) to NOT PURSUED (F9-avoidance). Rationale: running Run 5 and getting the expected negative result would not add information beyond the four existing structural confirmations of FTD-0050. A fourth/fifth confirmation via different machinery is ceremony, not evidence. This is exactly the pattern GTCA F9 flags. Re-open condition: only if the structural argument changes.
+
+### FTD-0051 GPU port (same day)
+
+Owner selected "GPU port of Langevin" as the downstream work. Ported the OU update to CUDA; verified against the CPU-only result.
+
+- **Engine changes:**
+  - `engine/include/ftd/gpu_buffers.h` + `engine/cuda/gpu_buffers.cu`: added `d_langevin_noise` buffer (3N doubles, always-allocated — 24·N bytes ≤ 24 MB even at L=128, negligible).
+  - `engine/cuda/kernels_stencil.cu`: both `wave_update_kernel` and `phase_write_kernel` got an OU branch that replaces the damping block when `do_langevin` is true: `v ← (1−γ)v + √(2γT)·η` per component, reading from `d_langevin_noise[comp·N + i]`.
+  - `engine/cuda/kernels_stencil.cu`: `launch_phase_write` and `launch_wave_update` signatures extended with `(bool do_langevin, double langevin_gamma, double langevin_T)`.
+  - `engine/cuda/gpu_engine.cu`: `gpu_phase_write` generates 3N standard normals via `curandGenerateNormalDouble` on each tick when `toggles.langevin` is true, reuses the existing `rng_` cuRAND generator.
+- **Build path:** WSL2 + CUDA 13 per `STATUS_CUDA_BUILD.md` (Windows CMake 4 + NVCC 13 escape bug sidestepped). `cmake -G Ninja` + `ninja` from `engine/build_wsl`.
+- **Verification (`engine/tests/test_langevin_equipartition.cpp` on GPU backend):**
+  - L=16, T=0.01, γ=0.01, 1000 burn + 2000 measure.
+  - `[RenderBridge] GPU backend active (CUDA, L=16)` confirmed.
+  - `<|wave_vel|²>_voxel = 0.0313` vs target `3T = 0.0300`, dev **+4.44%** (within 5% threshold; matches CPU's +4.0% within statistical noise).
+  - Single-voxel variance C(0) = 0.997·T vs target T (dev −0.29%).
+- **Benchmark (`engine/tests/benchmark_langevin_gpu.cpp`) — extended to L=256:**
+  - L=16, 1000 ticks: CPU 0.37 s vs GPU 0.12 s → **2.98× speedup** (launch overhead regime).
+  - L=64, 200 ticks: CPU 2.70 s vs GPU 0.046 s → **58× speedup**.
+  - L=128, 100 ticks: CPU 9.31 s vs GPU 0.083 s → **112× speedup**.
+  - L=256, 100 ticks: GPU 0.68 s (**6.81 ms/tick** at 16.8M voxels). CPU skipped (would be ~15 min).
+  - CPU/GPU value parity tightens with L: 2% at L=16, 0.03% at L=64, **0.02% at L=128**. Port bit-comparable modulo RNG-sequence differences.
+  - Equipartition deviation from 3T grows with L (−9% at L=64, −33% at L=128/256) because 100 ticks is <0.5 periods of the longest wavelength at L=128; CPU and GPU match to 0.02% → burn-in effect, not port bug. Production burn ~ 10·L ticks is tractable: at L=256 × 5000 burn-in = 34 s on GPU.
+- **LEDGER:** FTD-0051 detail block rewritten to reflect CPU + GPU status, both verification runs, and the 63× speedup number. Quick-index row updated.
+- **Not yet wired:** dual-substrate Langevin (path falls through to deterministic damping if `toggles.dual_substrate && toggles.langevin`). `langevin_seed` field is present on `TermToggles` but the GPU path uses the constructor's fixed cuRAND seed (42); wiring `langevin_seed` through to `curandSetPseudoRandomGeneratorSeed` is a one-line follow-up.
+- **What this unblocks:** thermal measurements at L ≥ 128 on GPU. Previously impractical on CPU (projected >1 hour per long run); now seconds per measurement.
+
+### EFT campaign BCC-orthogonality audit (same day)
+
+Owner raised a specific concern after Link 8 closure: if the engine's coupling stencil is structurally BCC-orthogonal, do any existing EFT-campaign claims silently inherit that structural gap? Could publications be overclaiming that engine-measured couplings converge to QED observables when the structural argument rules it out?
+
+- **Created:** `docs/theory/10_eft_program/AUDIT_EFT_BCC_ORTHOGONALITY.md`. Read of 6 EFT-campaign docs (Wilsonian paper, β-function derivation, Day-2 campaign, Phase G, Phase F audit, dynamical SM), checked each for claims that engine observables are physical couplings converging to QED.
+- **Result:** **No existing EFT document needs retraction or caveating.** All checked docs already frame their results honestly:
+  - `PAPER_FTD_AS_WILSONIAN_EFT.tex` explicitly labels the 3.6× plateau as "pure lattice geometry, no fine-structure content"; α_r is "not a coupling constant at all".
+  - `DERIV_BETA_FUNCTION_MEASURED.md` explicitly flags the β-function measurement as "qualitative match, 2-3 orders of magnitude quantitative gap" — not a successful QED reproduction.
+  - `DERIV_DAY2_CAMPAIGN.md` frames Rutherford α = 5× α_ref as "genuine engine physics, not methodology artefact" — again, no convergence claim.
+  - Phase H is currently spec'd but not measured; its current framing (FTD-0011: "g_c² scales α_r") is only a scaling theorem, not a derivation claim.
+- **Where the caveat DOES belong:** future claims. If anyone publishes a statement of the form "engine dynamics derive α_QED / α_s / Standard-Model β-function from first principles", that would collide with Link 8 closure + Phase 1 analytical gate. The audit enumerates the specific gates.
+- **LEDGER cross-references added:** `reviewer_note` fields on FTD-0011 (Phase H coupling scaling theorem) and FTD-0045 (α_largeL ≈ 3.6×) pointing to `AUDIT_LINK8_CLOSURE.md` and `AUDIT_EFT_BCC_ORTHOGONALITY.md`. Any future editor working on those rows will read the BCC-orthogonality finding before touching the framing.
+- **No code changes.** Documentation audit only.
+
+---
+
 ## Maintenance footer
 
 Append-only. Next session header: `## YYYY-MM-DD — <session description>`.

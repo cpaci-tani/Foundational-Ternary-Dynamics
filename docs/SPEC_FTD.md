@@ -78,7 +78,7 @@ Key achievements within the framework (with several items representing proposed 
 - **Cosmological inflation**: n_s = 0.966, r = 0.022 from sub-threshold flux dynamics
 - **Baryogenesis**: η ~ 10⁻¹⁰ from CP violation + Sakharov conditions
 - **phi³ exact EFT**: Cubic potential expansion terminates exactly; λ₃ = 1/3 = 1/D universal; UV-complete in field space
-- **One-loop lattice α**: Tadpole on Z[i]³ with a = 2/D gives x₊ = 137.036000 (9.6 ppb from NIST, 99.2% gap closure)
+- **One-loop lattice α**: Structure-1 SC scalar-EFT tadpole with a = 2/D gives x₊ = 137.036000 (9.6 ppb from NIST, 99.2% gap closure) within that scheme. GPU audits now mark this as scheme-conditional; a Ward-valid Structure-2 two-U(1) scalar gauge completion does not reproduce the ppb closure.
 - **Blind derivation**: 13 steps from "i exists" to α⁻¹ with only two selection principles
 - **Honest accounting**: ~35 genuine derivations, ~50 parametric insertions, ~50+ external physics adopted — see [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 - **Full SM gauge group**: U(1) × SU(2) × SU(3) derived from FTD axioms
@@ -655,9 +655,9 @@ The following are now **derived**, not input parameters:
 
 ### Derivation Status Summary
 
-> **Research Program**: ✅ **COMPLETED (within assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from the proposed relations within the framework. See [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](docs/theory/archive/ARCH_LEMNISCATE_ALPHA_PAPER.md).
+> **Research Program**: ✅ **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/LEDGER.md](docs/theory/07_assessment/LEDGER.md).
 
-> **Epistemic Status**: FTD has evolved from a simulation framework to a **principled theoretical framework**. Key coupling constants AND the absolute mass scale are now derived (within the model's assumptions), not fitted. Only G_N remains parametric. This does not constitute independent physical confirmation.
+> **Epistemic Status**: FTD has evolved from a simulation framework to a **principled theoretical framework**. The CM/master-quadratic arithmetic is theorem-level, but the identification of x₊ with 1/α remains a strongly motivated conjecture and the ppb one-loop correction is scheme-conditional after the 2026-04-22 Structure-2 audit. This does not constitute independent physical confirmation.
 
 ---
 
@@ -714,8 +714,8 @@ These define the model's fundamental scales:
 
 | Parameter | Value | Dimensions | Role | Status |
 |-----------|-------|------------|------|--------|
-| α (ALPHA) | 0.00729 | dimensionless | Fine structure constant | ✅ **DERIVED** from G* (§7.4) |
-| g_c | ~α^(1/2) | dimensionless | State-flux coupling | ✅ Derived from α |
+| α (ALPHA) | 0.00729 | dimensionless | Fine structure constant | **STRONGLY MOTIVATED CONJECTURE** from x₊ (§7.4); ppb corrections scheme-conditional |
+| g_c | ~α^(1/2) | dimensionless | State-flux coupling | Conditional on α identification |
 | G_N (GRAVITY_BIAS) | 0.01 | dimensionless | Gravitational coupling | ✅ Derived (1/(b₃+N_c)²) |
 | α_G | 5.91×10⁻³⁹ | dimensionless | Gravitational hierarchy | ✅ Derived (2π(16/3)²(N_eff+3/7)²α²⁰, 0.06%) |
 | γ (DECAY_RATE) | 0.00729 = α | [T]⁻¹ | Dissipation rate | ⚠️ **[IMPOSED]** (see §4.3, ASSUMP.6) |
@@ -759,7 +759,7 @@ produces two roots:
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
 | x₋ | 3.024 | N_c (color charges) | 0.8% |
 
-**Status**: ✅ **DERIVED** — Full derivation chain from FTD axioms. See [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](docs/theory/archive/ARCH_LEMNISCATE_ALPHA_PAPER.md) and [simulations/README.md](simulations/README.md).
+**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identifications x₊ ↔ 1/α and x₋ ↔ N_c are **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger. The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/LEDGER.md](docs/theory/07_assessment/LEDGER.md) and [docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md](docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
 
 ### 7.4.1 Lemniscate Selection: Four Algebraic Criteria
 
@@ -1344,13 +1344,13 @@ These are the sharpest claims where FTD makes contact with measurement.
 | **Depends on** | [S1] CM preference, [S2] $j=1728$ selection, [S3] quadratic form |
 | **What experiment measures** | QED calculations + precision measurements (Cs atom, electron g-2) |
 
-> **Epistemic Status**: This is the framework's most constrained output. The quadratic $x^2 - 16c^2x + 16c^3 = 0$ with $c = \varpi$ yields $x_+ = 137.0360...$. The identification $x_+ = 1/\alpha$ is [CONJECTURE]. The 1.26 ppm gap is fully accounted for by the 4-term precision formula below.
+> **Epistemic Status**: This is the framework's most constrained arithmetic match. The quadratic $x^2 - 16c^2x + 16c^3 = 0$ with $c = \varpi$ yields $x_+ = 137.0360...$. The identification $x_+ = 1/\alpha$ is [CONJECTURE]. The sub-ppm formulas below are retained as conjectural/post-hoc refinements, not as theorem-level physical predictions.
 
-#### 16.2.1 The 4-Term Precision Formula
+#### 16.2.1 The 4-Term Precision Formula [CONJECTURE]
 
-> *Merged from SPEC_THE_COMPLETE_PROOF_RIGOROUS.md — flagship precision result*
+> *Merged from SPEC_THE_COMPLETE_PROOF_RIGOROUS.md; retained as a conjectural precision fit after ledger downgrade FTD-0022.*
 
-The fine structure constant satisfies a 4-term expansion:
+The proposed precision fit is:
 
 $$1/\alpha = x_+ - \frac{9}{47}|\varepsilon| + \frac{5}{64}|\varepsilon|^2 - \frac{4}{141}|\varepsilon|^3 - \frac{141}{11}|\varepsilon|^4$$
 
@@ -1359,7 +1359,7 @@ where ε = e^π − π − 20 ≈ −0.0009 connects three structures:
 - **Geometry**: π from circular symmetry
 - **Framework integers**: 20 = b₃ + N_eff = 7 + 13
 
-All coefficients derive from {3, 4, 7, 13}: 9/47 = N_c²/(3·16−1), 5/64 = (N_eff−2N_base)/N_base³, 4/141 = 4/(3·47), 141/11 = (3·47)/11.
+All coefficients are expressible in the base integers {3, 4, 7, 13}: 9/47 = N_c²/(3·16−1), 5/64 = (N_eff−2N_base)/N_base³, 4/141 = 4/(3·47), 141/11 = (3·47)/11. Expressibility is not, by itself, a derivation.
 
 | Terms | Value | Error vs CODATA | Precision |
 |-------|-------|-----------------|-----------|
@@ -1369,9 +1369,9 @@ All coefficients derive from {3, 4, 7, 13}: 9/47 = N_c²/(3·16−1), 5/64 = (N_
 | 4-term | 137.035999177000036 | < 0.001 ppt | 15 digits |
 | CODATA 2022 | 137.035999177(21) | — | 10 digits |
 
-The 4-term formula is **750,000× more precise** than the current experimental uncertainty. **Falsifiability**: if future measurements determine 1/α deviates from the FTD prediction in the 10th+ decimal place, the framework requires revision. Currently experimental precision (~153 ppb) is insufficient to test the sub-ppt prediction.
+**Status after Path B audit:** This formula is not used to rescue the Structure-2 result. It remains a conjectural integer-structured fit whose physical derivation is open. The robust claim remains the master-quadratic tree-level match at 1.26 ppm; sub-ppm improvements require an independently derived correction mechanism.
 
-**Probability of chance match**: Among framework-integer ratios, ~10⁸ possible 4-term forms exist. Precision target 10⁻¹² relative error. Expected random matches: 10⁸ × 10⁻¹² = 10⁻⁴. Probability of accidental match: ~0.01%.
+**Do not over-read:** coefficient rigidity inside a chosen ansatz is evidence about that ansatz, not proof that the ansatz is the physical alpha correction.
 
 ### Prediction 2: No Fourth Generation [CONJECTURE]
 

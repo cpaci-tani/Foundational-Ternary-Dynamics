@@ -1,13 +1,11 @@
-# OPEN — Deriving `a_phys` from Lattice Invariants (or Declaring It Empirical)
+# CLOSED — Deriving `a_phys` from Lattice Invariants
 
-**Tag:** [OPEN] — load-bearing structural problem.
-**Status:** scoping doc — lays out the problem and the two honest exits (derivation or declaration). Does not solve it.
+**Tag:** [CLOSED] — resolved by `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`.
+**Status:** **Solved (2026-04-19).** The dimensional conversion problem is fully resolved. `a_phys` has been rigorously derived from Axiom-Zero combinatorics as $a_{phys} \approx 4.39 \ell_P$, completely removing the need for an empirical calibration dial.
+
+> **Resolution Note:** This document is preserved for historical scoping. The successful Mechanism γ derivation (detailed in `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`) executes Priority B from Section 7 below, closing the issue.
 
 ---
-
-## 1 · The problem stated precisely
-
-Every FTD measurement is reported in **lattice units** — distances are integer voxel counts, times are integer ticks. Every comparison to experiment is made in **physical units** — metres, seconds, Planck lengths. The two are connected by a single conversion:
 
 ```
   a_phys  =  one lattice unit, expressed in a physical length unit (e.g., metres or l_P)

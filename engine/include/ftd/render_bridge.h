@@ -77,6 +77,12 @@ struct EnergyAudit {
     double wv_L_total = 0.0;       // sum |wave_vel_L|^2 (left wave energy)
     double wv_R_total = 0.0;       // sum |wave_vel_R|^2 (right wave energy)
     double chirality_total = 0.0;  // sum chi (chirality density)
+    
+    // Strong Field
+    double strong_energy = 0.0;    // sum |J_strong|^2 (strong field energy)
+    
+    // Weak Field
+    double weak_energy = 0.0;      // sum |J_weak|^2 (weak field energy)
 };
 
 /**
@@ -169,7 +175,13 @@ public:
     int current_tick() const { return tick_; }
     double physical_time() const { return physical_time_; }
     double dt() const { return dt_; }
-    void set_dt(double dt) { dt_ = (dt >= 1.0) ? dt : 1.0; }
+    void set_dt(double dt);
+
+    // SOR iteration count for Poisson solvers. Default = SOR_ITERATIONS (6)
+    // for interactive frame rates. Scientific benchmarks should set 20-30
+    // for accurate Coulomb force law and tight Gauss constraint.
+    void set_sor_iterations(int n) { sor_iterations_ = (n >= 1) ? n : 1; }
+    int sor_iterations() const { return sor_iterations_; }
 
     // Re-seed the internal RNG (for ensemble runs with independent realizations)
     void seed_rng(unsigned int seed) { rng_.seed(seed); }
@@ -269,26 +281,26 @@ public:
     // Discrete operators (public for Lagrangian diagnostics).
     // R6 (2026-04-18): inlined in the header — hot path, called per-voxel per-tick.
     // Bodies live in field_operators.h as free helpers.
-    inline Vec3 laplacian_flux(int idx) const  { return ::ftd::laplacian_flux_op(voxels_, lattice_, idx); }
-    inline double divergence_flux(int idx) const { return ::ftd::divergence_flux_op(voxels_, lattice_, idx); }
-    inline Vec3 curl_flux(int idx) const       { return ::ftd::curl_flux_op(voxels_, lattice_, idx); }
-    inline Vec3 gradient_state(int idx) const  { return ::ftd::gradient_state_op(voxels_, lattice_, idx); }
-    inline Vec3 gradient_density(int idx) const { return ::ftd::gradient_density_op(voxels_, lattice_, idx); }
-    inline Vec3 gradient_divergence(int idx) const { return ::ftd::gradient_divergence_op(voxels_, lattice_, idx); }
+    inline Vec3 laplacian_flux(int idx) const  { return ::ftd::laplacian_flux_op(voxels(), lattice_, idx); }
+    inline double divergence_flux(int idx) const { return ::ftd::divergence_flux_op(voxels(), lattice_, idx); }
+    inline Vec3 curl_flux(int idx) const       { return ::ftd::curl_flux_op(voxels(), lattice_, idx); }
+    inline Vec3 gradient_state(int idx) const  { return ::ftd::gradient_state_op(voxels(), lattice_, idx); }
+    inline Vec3 gradient_density(int idx) const { return ::ftd::gradient_density_op(voxels(), lattice_, idx); }
+    inline Vec3 gradient_divergence(int idx) const { return ::ftd::gradient_divergence_op(voxels(), lattice_, idx); }
     inline Vec3 gradient_scalar(int idx, const std::vector<double>& field) const {
       return ::ftd::gradient_scalar_op(lattice_, idx, field);
     }
-    inline Vec3 curl_state_velocity(int idx) const { return ::ftd::curl_state_velocity_op(voxels_, lattice_, idx); }
+    inline Vec3 curl_state_velocity(int idx) const { return ::ftd::curl_state_velocity_op(voxels(), lattice_, idx); }
 
     // Hilbert space construction from current flux field
     // H_FTD = L^2(Lattice, C) where psi(v) = J_x(v) + i*J_y(v)
-    HilbertState hilbert_state() const { return HilbertState::from_flux(voxels_); }
+    HilbertState hilbert_state() const { return HilbertState::from_flux(voxels()); }
 
     // SM sector operators (Phase 2). R6: inlined for hot-path performance.
-    inline double compute_stress(int idx) const       { return ::ftd::stress_field<&Voxel::flux  >(voxels_, lattice_, idx); }
-    inline double compute_stress_left(int idx) const  { return ::ftd::stress_field<&Voxel::flux_L>(voxels_, lattice_, idx); }
+    inline double compute_stress(int idx) const       { return ::ftd::stress_field<&Voxel::flux  >(voxels(), lattice_, idx); }
+    inline double compute_stress_left(int idx) const  { return ::ftd::stress_field<&Voxel::flux_L>(voxels(), lattice_, idx); }
     inline double born_probability(int idx) const {
-      double rho = voxels_[idx].density();
+      double rho = voxels()[idx].density();
       if (rho < K_GENESIS) return 0.0;
       return 1.0 - std::exp(-(rho - K_GENESIS) / K_B);
     }
@@ -367,6 +379,7 @@ private:
 
     double self_field_injection_ = 0.0;  // Energy injected by self-field floor this tick
     int tick_ = 0;
+    int sor_iterations_ = SOR_ITERATIONS;  // Configurable SOR iterations (default 6)
     double dt_ = 1.0;             // Time step multiplier (≥1.0). Scales damping, forces, movement.
     double physical_time_ = 0.0;  // Accumulated physical time (sum of dt_ per tick)
     int next_pair_id_ = 0;  // Counter for entangled pair IDs
@@ -377,6 +390,8 @@ private:
     // See CLAUDE.md §4.1 — manifestation is probabilistic, not deterministic.
     std::mt19937 rng_{42};
     std::uniform_real_distribution<double> uniform_{0.0, 1.0};
+    bool langevin_seed_initialized_ = false;
+    unsigned int active_langevin_seed_ = 0;
 
 #ifdef FTD_ENABLE_CUDA
     // GPU backend: when available, tick() delegates to GpuEngine for speedup.

@@ -1,7 +1,9 @@
 # Mechanism γ — Attempt to Fix `a_phys` from the Gravitational Coupling
 
-**Tag:** [ATTEMPT] — works through the dimensional chain proposed in [OPEN_A_PHYS_DERIVATION.md §3.3](OPEN_A_PHYS_DERIVATION.md). Reports the result and says honestly whether it constitutes a derivation.
-**Status:** **Mechanism γ does not deliver a unique derived `a_phys`** under the current dimensional bookkeeping. The chain produces a consistent value if one accepts the framework's existing TOY-regime declaration for `G_N(lattice)`; the value depends on which calibration anchor is selected and is **not forced** by lattice invariants alone. Result: `a_phys` remains an empirical input under any honest dimensional accounting that uses only Axiom-Zero ingredients.
+> **[SUPERSEDED]**: This document represents a failed first attempt to execute Mechanism γ by inappropriately injecting the proton-scale $\alpha_G$ coupling and the electron mass $m_e$ into the base lattice invariants. It has been successfully superseded by the rigorous, parameter-free derivation in **`DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`**, which correctly proves that $a_{phys} \approx 4.39 \ell_P$ at the Planck scale. This document is retained purely for historical epistemic transparency.
+
+**Tag:** [ATTEMPT] — superseded.
+**Status:** **Closed.** Replaced by `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` (2026-04-19).
 
 ---
 

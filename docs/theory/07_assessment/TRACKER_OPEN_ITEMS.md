@@ -210,6 +210,22 @@ All kept safely below `K_GENESIS = 3·K_B` so no spurious genesis fires.
 - `engine/web/js/wasm-bridge-dag.js` — shared `case 's0-seed-muon': case 's0-seed-tau':`
   block using a conditional `boost` factor.
 
+### 1.11 s-field Metropolis for thermal ternary ensembles — LEDGER FTD-0052 — **[OPEN, DEFERRED]**
+
+**What's needed:** ternary Metropolis update on the state field `s ∈ {−1, 0, +1}` producing thermal ensembles that satisfy detailed balance, given an explicit action functional `S[s, J]`. Required for Candidate 1 Run 5 of Link 8 (⟨s·s⟩ correlator mass from exponential decay); also useful for broader ternary-state Monte Carlo.
+
+**Prerequisites:**
+1. Explicit action functional definition. The engine currently has an update rule, not an action — defining a consistent lattice action that reproduces the existing deterministic dynamics at T=0 is a nontrivial scoping task.
+2. Detailed-balance verification for the proposal + accept/reject scheme (single-site vs cluster updates; handling of the Gauss constraint under s-changes).
+
+**Why deferred:** expected outcome is NEGATIVE by the same structural argument that closed FTD-0050: the engine's coupling operator is (SC+FCC)/2, BCC-orthogonal. Thermalizing s does not inject BCC structure. Session C already confirmed this on the J-side analogue (Run 3 on thermalized J ensemble: A dev −99.6%, B dev −100.4%). Expected information value: low (confirmatory of already-closed finding). Not prioritized without a prior-updating reason to re-open.
+
+**Related artifacts:**
+- Langevin-on-J infrastructure already exists (FTD-0051, `TermToggles::langevin*`). Would compose naturally with an s-Metropolis toggle.
+- `docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md` documents the structural argument.
+
+**Location:** any attempt would be a new toggle `TermToggles::s_metropolis` + update code in `phase_write` or a new phase.
+
 ---
 
 ## §2 Theory — derivations (`docs/theory/03_derivations/`)
@@ -220,9 +236,9 @@ High-count files carry clustered work; low-count files have isolated gaps.
 **File:** `DERIV_LATTICE_BLACK_HOLES.md`.
 Horizon thermodynamics, Hawking radiation lattice derivation, information paradox at discrete scale, Kerr-Newman generalisation. Every `[OPEN]` is its own sub-task.
 
-### 2.2 Lattice QED — **7 `[OPEN]`**
+### 2.2 Lattice QED — ✅ closed/reclassified 2026-04-22
 **File:** `DERIV_LATTICE_QED_COMPLETE.md`.
-Gauge fixing, Ward identities on the discrete lattice, renormalisation-group equations in lattice form.
+The former BZ² sub-ppm alpha computation item is superseded by the FTD-native electrodynamics pivot. The file now has zero live `[OPEN]` items. Future QED numerics are external comparison checks, not a route to fitting alpha.
 
 ### 2.3 Moore gauge structure — **6 `[OPEN]`**
 **File:** `DERIV_MOORE_GAUGE_STRUCTURE.md`.
@@ -257,7 +273,6 @@ How the Moore-layer decomposition produces each gauge group's representations (v
 - `DERIV_QUADRATIC_NECESSITY.md`.
 - `DERIV_OBSERVER_BELL_MECHANISM.md`.
 - `DERIV_SINGLET_FROM_VOID_EVENT.md`.
-- `DERIV_STATE_FLUX_COUPLING_DERIVATION.md`.
 
 ---
 
@@ -285,8 +300,32 @@ How the Moore-layer decomposition produces each gauge group's representations (v
 ### 4.1 Quark masses from lattice — **5 `[OPEN]`**
 **File:** `docs/theory/05_particles/DERIV_QUARK_MASSES_FROM_LATTICE.md`. Light-quark masses + CKM remain open. Top ≈ v_Higgs supports a Yukawa-at-unity story; the rest is sketched only.
 
-### 4.2 One-loop lattice α — **3 `[OPEN]`**
-**File:** `docs/theory/04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md`. Tadpole closure's uniqueness (would other discretisations fit equally well?) is open.
+### 4.2 One-loop lattice α / native electrodynamics pivot — **QED-alpha bridge closed negative; native program `[OPEN]`**
+**File:** `docs/theory/04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md`.
+
+Resolved by audit:
+- BCC tadpole and continuum checks show the 9.6 ppb residual is not regulator-universal; it is specific to the chosen scalar-EFT/SC tadpole scheme at fixed `a = 2/3`. See `docs/theory/10_eft_program/AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md` and ledger row FTD-0056.
+- Ward-valid Structure-2 two-U(1) scalar gauge completion does not reproduce Structure-1 closure for the tested natural scalar matter cases. See `docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md` and ledger row FTD-0058.
+- Higher-loop / BZ² numerical alpha-closure tasks in `DERIV_ONE_LOOP_LATTICE_ALPHA.md` and `DERIV_LATTICE_QED_COMPLETE.md` are no longer live open items. They are superseded by the native-electrodynamics pivot: more loop numerics can verify a selected QED-facing scheme, but cannot establish an FTD prediction.
+
+Still open:
+- Native replacement program: `docs/theory/10_eft_program/SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` defines FTD-native electrodynamics. First-pass fixed audits now support the bare canonical tuple `C_L^FTD = 1`, `K_T^FTD = 1`, `Z_j^FTD = 1`, `g_sJ^FTD = 1`, and `c_FTD = 1/sqrt(3)` for the current native engine conventions. The remaining open task is native scale flow, plus any future nontrivial source-history action/measure if the model needs a running or non-unit coupling.
+- Native source-flux coupling closure: `docs/theory/10_eft_program/DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md` classifies canonical `g_sJ^FTD = 1` as a native normalization and production `G_C = sqrt(alpha)` as a historical QED-facing imposed correspondence value, not a derived FTD coupling.
+- Native dual-cell source closure: `docs/theory/10_eft_program/DERIV_FTD_NATIVE_RESPONSE_TUPLE.md` and `docs/theory/10_eft_program/SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` now record that exact finite-volume Gauss lives naturally on dual-cell face flux, while the current cell-centered `J` projection is a face-averaged approximation. Open production question: migrate to face-centered/equivalent dual-cell storage only if exact full-site Gauss becomes required.
+- ✅ Moore/BCC closure: (2026-04-22) Phase 3 established no native FTD mathematical principle (spectral or action) uniquely isolates $c \neq 0$. The G26 family is rejected by Occam's razor. G18 ($c=0$) is canonized as the unique axiomatic projection operator.
+- ✅ Self-dual half-shell bridge: (2026-04-22) Phase 4 constructed exact primal/dual projection operators and measured the action response on the `r^2 = 1/2` dual-edge shell. The measured ratio does not analytically match the lemniscatic constant `G*`. The conjecture that `G*` natively emerges from the structural primal/dual balance is formally rejected.
+- Historical QED-alpha matching record: `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_MATCHING.md`.
+- Current bridge inventory: `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`.
+- First bridge-span result: `docs/theory/10_eft_program/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` supports a source-coupled vector EFT but leaves U(1) gauge redundancy unproved.
+- Emergent-U(1) refinement: `docs/theory/10_eft_program/DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` treats U(1) as an auxiliary-potential redundancy of transverse projected flux, not as microscopic ontology. Still open: matter representation, local coupling, regulator/counterterms, and alpha observable.
+- Projected-matter refinement: `docs/theory/10_eft_program/DERIV_PROJECTED_EFT_MATTER_COUPLING.md` identifies native matter as signed source/worldline matter and the projected radiative coupling as `j_T · A_T`. Dirac matter is the preferred QED-facing completion but remains selected; charge normalization and Dirac dynamics remain open.
+- Projected-Dirac/charge refinement: `docs/theory/10_eft_program/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` fixes a symbolic central-difference/Wilson-Dirac candidate and shows that ternary charge gives integer `q`, not the magnitude `e0`. The equality `e0^2 = 1/x_+` still requires a matching rule.
+- Renormalization/observable gate: `docs/theory/10_eft_program/OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` states the remaining pre-computation decision. After the stiffness, response-eigenvalue, and source-current normalization attempts, the current-action endpoint is arithmetic-only unless a new normalization theorem is supplied.
+- Stiffness attempt: `docs/theory/10_eft_program/DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md` closes the `K_T,0 = x_+` route negative under the current action. The native projected transverse sector is canonically normalized.
+- Response-eigenvalue attempt: `docs/theory/10_eft_program/DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md` closes the current-action R3 route negative. The master quadratic can be written as a `2 x 2` characteristic polynomial, but the projected FTD action does not derive the physical two-sector response matrix.
+- Source-current normalization attempt: `docs/theory/10_eft_program/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md` closes the current-action R2 route negative. Ternary source transport fixes signed integer charge and current conservation, but not `e0^2 = 1/x_+`. Under the current projected action, the endpoint is arithmetic-only unless a new normalization theorem is supplied.
+- Native electrodynamics spec: `docs/theory/10_eft_program/SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` replaces QED alpha as the primary target with native source/flux response observables.
+- Do not run open-ended charge, mass, regulator, or discretization scans for a near-miss. New Structure-2 work should start from a theoretical matching rule, not from the alpha target.
 
 ### 4.3 Watson-G* identity — **1 `[OPEN]`**
 **File:** `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md` — "Remains [OPEN]" section.
@@ -406,7 +445,6 @@ Snapshot (2026-04-17, excluding `docs/theory/archive/` — see §10):
 |---|---:|
 | `docs/theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md` | 18 |
 | `docs/theory/03_derivations/DERIV_LATTICE_BLACK_HOLES.md` | 11 |
-| `docs/theory/03_derivations/DERIV_LATTICE_QED_COMPLETE.md` | 7 |
 | `engine/src/dag_engine.cpp` | 6 |
 | `docs/theory/03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md` | 6 |
 | `docs/theory/02_foundations/FOUND_AXIOM_ZERO.md` | 6 |
@@ -422,7 +460,6 @@ Snapshot (2026-04-17, excluding `docs/theory/archive/` — see §10):
 | `docs/theory/09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md` | 3 |
 | `docs/theory/06_consciousness/FOUND_WIGNERS_FRIEND_RESOLUTION.md` | 3 |
 | `docs/theory/06_consciousness/FOUND_VON_NEUMANN_CHAIN.md` | 3 |
-| `docs/theory/04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md` | 3 |
 | `docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md` | 3 |
 | `docs/theory/03_derivations/DERIV_LATTICE_CHIRAL_ANOMALY.md` | 3 |
 | `docs/theory/03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md` | 3 |
@@ -457,7 +494,6 @@ Snapshot (2026-04-17, excluding `docs/theory/archive/` — see §10):
 | `docs/theory/06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md` | 1 |
 | `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md` | 1 |
 | `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md` | 1 |
-| `docs/theory/03_derivations/DERIV_STATE_FLUX_COUPLING_DERIVATION.md` | 1 |
 | `docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md` | 1 |
 | `docs/theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md` | 1 |
 | `docs/theory/03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md` | 1 |
@@ -509,6 +545,12 @@ If an archived `[OPEN]` turns out to be non-historical (i.e., someone wants to r
 ## Recently closed
 
 Move items here with the closing commit / PR when an `[OPEN]` becomes ✅.
+
+### Theory docs — alpha/QED numerical closure reclassification 2026-04-22
+
+- ✅ `docs/theory/04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md` — closed the live `[OPEN]` higher-loop convergence item as superseded/deferred by the FTD-to-EFT matching problem. Higher-loop computation remains possible inside the selected Structure-1 scheme, but is no longer an acceptance path for a scheme-independent alpha prediction.
+- ✅ `docs/theory/03_derivations/DERIV_LATTICE_QED_COMPLETE.md` — closed the live `[OPEN]` BZ² sub-ppm alpha computation item as superseded. BZ² evaluation becomes useful only after a matching principle uniquely selects the lattice-QED scheme and alpha observable.
+- ✅ `docs/theory/03_derivations/DERIV_STATE_FLUX_COUPLING_DERIVATION.md` — closed the live `[OPEN]` higher-order-corrections item as part of the same matching reclassification. The document now treats `g_c^2 = alpha = 1/x_+` as conditional on the selected state-flux-to-QED dictionary, not as a standalone first-principles derivation of physical QED.
 
 ### Engine code — 6 items resolved 2026-04-17 (dependency-ordered sweep)
 

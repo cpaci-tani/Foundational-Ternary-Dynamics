@@ -240,15 +240,5 @@ addressed in this pass. Still open, same priority.
 
 ### New items flagged for later
 
-- **`engine/web/docs/SPEC_*.md` audit** — several specs describe
-  work that has since shipped (`SPEC_REFACTOR_LARGE_FILES.md`
-  tracked the v2.15.0 discrete-quantum extraction;
-  `SPEC_S0_OVERLAY_COMPLEXITY.md` pre-dated the overlay preset
-  removal). Audit for "shipped → move to archive" vs "still
-  guiding → keep live" is scheduled in this cleanup pass
-  (see companion task in the cleanup todo list).
-- **Cross-reference `MAINTAINABILITY.md` from navigation spine** —
-  the field manual is new, should be added to
-  `META_DOCUMENTATION_MAP.md` and `META_PROJECT_ATLAS.md` as a
-  first-class reference so future contributors find it. Scheduled
-  in this cleanup pass.
+- **`engine/web/docs/SPEC_*.md` audit** — `[COMPLETED]` `SPEC_REFACTOR_LARGE_FILES.md` and `SPEC_S0_OVERLAY_COMPLEXITY.md` archived to `docs/theory/archive/` (April 23, 2026).
+- **Cross-reference `MAINTAINABILITY.md` from navigation spine** — `[COMPLETED]` Added to `META_PROJECT_ATLAS.md` (April 23, 2026).
