@@ -11,7 +11,7 @@
 
 ## Abstract
 
-The identification x₊ = 1/α is classified as [SELECTION] (SP4) due to the absence of an unconditionally-derived physical mechanism connecting lemniscate geometry to electromagnetic coupling strength. An upgrade path to conditional [THEOREM] exists via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md), but that upgrade imports standard lattice-QED continuum-limit results rather than deriving them. This document traces the logical chain from the FTD lattice to the fine structure constant, showing that each step has existing support in the theory documents. The chain is:
+The identification x₊ = 1/α is classified as [SELECTION] (SP4) due to the absence of an unconditionally-derived physical mechanism connecting lemniscate geometry to electromagnetic coupling strength. Earlier drafts treated [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) as an upgrade path to conditional [THEOREM], but later audits showed that this imports standard lattice-QED machinery and does not uniquely select the FTD-to-EFT matching. The present status is more conservative: the arithmetic chain is strong, while the physical matching principle remains [OPEN]. This document traces the logical chain from the FTD lattice to the fine structure constant, showing that each step has existing support in the theory documents. The chain is:
 
 $$\mathbb{Z}^3 \;\xrightarrow{\text{geometry}}\; \text{cuboctahedron} \;\xrightarrow{\text{CM curve}}\; E: y^2 = x^3 - x \;\xrightarrow{\text{period}}\; G^* \;\xrightarrow{\text{self-consistency}}\; \alpha$$
 
@@ -162,13 +162,13 @@ This is analogous to how α_s(M_Z) = 0.118 is not the integer 3 but encodes N_c 
 
 The chain shows WHY the lemniscate is connected to the lattice (through the Z₄ symmetry match) and WHY EM is the most direct output of the quadratic. But the step "the U(1) gauge coupling of the lattice field theory equals 1/x₊" has not been derived from the lattice action via perturbative QFT on Z³. This would require computing the one-loop effective coupling from the FTD partition function — a tractable but substantial lattice field theory calculation.
 
-**Priority for future work:** Derive α from the lattice action S[s, J] by:
+**Priority for future work:** Derive a unique FTD-to-EFT matching rule before making any further ppb-level alpha claim. Such a rule must specify:
 1. Writing the partition function Z = Σ exp(−S)
 2. Integrating out J to get an effective action for s
 3. Identifying the U(1) sector
-4. Computing the bare coupling and showing it equals 1/137.036
+4. The matter content, regulator/counterterm prescription, and physical electromagnetic kinetic operator
 
-This would upgrade SP4 from [SELECTION] to [THEOREM].
+The 2026-04-22 Structure-2 audit (`docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md`) shows why this matching rule is required: a natural Ward-valid two-U(1) scalar gauge completion does not reproduce the Structure-1 ppb correction. Do not treat recovery of the 9.6 ppb number as a search target; only a first-principles matching derivation can change the claim status.
 
 ---
 

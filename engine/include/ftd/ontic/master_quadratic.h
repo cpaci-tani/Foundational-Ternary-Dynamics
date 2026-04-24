@@ -68,6 +68,14 @@ inline constexpr double X_MINUS = 3.0239639163;      // N_c root
 //   docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md  (chain)
 inline constexpr double X_PLUS_PRECISION = 137.035999177;  // 4-term corrected
 
+// Vieta-consistent precision root for x₋ [DERIVED from Vieta + precision x₊]:
+//   x₊ · x₋ = 16·G*³  →  x₋ = 16·G*³ / x₊_precision
+//
+// Using the tree-level X_MINUS with the precision X_PLUS_PRECISION breaks
+// the Vieta identities at the 6th digit. Computing x₋ FROM Vieta ensures
+// the charge-quartic identities (Layer 3c) hold to machine precision.
+inline constexpr double X_MINUS_PRECISION = COEFFICIENT * G_STAR * G_STAR * G_STAR / X_PLUS_PRECISION;
+
 // Vieta's relations (sum and product of roots):
 //   x₊ + x₋ = 16·G*²
 //   x₊ · x₋ = 16·G*³
@@ -126,10 +134,12 @@ inline constexpr double OMEGA_LAMBDA_CONJ = 2.0 / 3.0;
 // Vieta sum:    α + e²_C = 1/G*              (inverse coupling sum)
 // Vieta product: α · e²_C = 1/(16·G*³)      (action-scale product)
 
-inline constexpr double E2_COLOR = 1.0 / X_MINUS;   // e²_C ≈ 0.3307
-// Note: e²_EM = ALPHA (defined in Layer 5)
-// Vieta sum:    ALPHA + E2_COLOR = 1/G_STAR
-// Vieta product: ALPHA * E2_COLOR = 1/(16·G*³)
+inline constexpr double E2_COLOR = 1.0 / X_MINUS_PRECISION;   // e²_C ≈ 0.3307 (Vieta-consistent)
+// Note: e²_EM = ALPHA (defined in Layer 5, uses X_PLUS_PRECISION)
+// Vieta sum:    ALPHA + E2_COLOR = 1/G_STAR    (exact by construction)
+// Vieta product: ALPHA * E2_COLOR = 1/(16·G*³) (exact by construction)
+//
+// Legacy tree-level value available as 1.0/X_MINUS for reference.
 
 // ============================================================================
 // Layer 4: Framework Integers

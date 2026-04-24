@@ -27,7 +27,21 @@ struct TermToggles {
     bool pair_production = false;  // genesis: correlated +1/-1 pairs from high-flux void [CLAUDE.md §4.1]
     bool exchange_force = false;   // phase_forces: Pauli exclusion repulsion (same-spin) [CLAUDE.md §11]
     bool latency_field = false;    // Poisson-based latency field ∇²L = 4πGρ (gravity potential)
+    bool exact_dual_gauss = false; // gauss_project: exact dual-cell face-flux projection (Phase 1 Electrodynamics)
     bool emergent_forces = false;  // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
+    bool langevin = false;         // Stochastic thermalization: OU process on wave_vel with (gamma, T)
+
+    // Langevin thermalization parameters (used only when langevin == true).
+    // Continuous form:  dv = -gamma v dt + sqrt(2 gamma T) dW, per component per voxel.
+    // Discrete form (per tick, dt=1):
+    //     v <- (1 - gamma) v  +  sqrt(2 gamma T) * eta,   eta ~ N(0, I)
+    // Equilibrium:  <|v|^2>_voxel = 3 T  (three components of wave_vel).
+    // Autocorrelation time: tau ~ 1/gamma ticks.
+    // Keep gamma in [0, 0.5] for discrete stability; T sets the energy scale.
+    // See docs/theory/10_eft_program/DERIV_LANGEVIN_THERMALIZATION.md (future).
+    double langevin_T     = 0.0;
+    double langevin_gamma = 0.01;
+    unsigned int langevin_seed = 1;  // RNG seed for reproducibility
 
     // Phase H (Apr 2026): explicit coupling constant in the Gauss law source.
     // gauss_project_cpu uses source = div(J) - coulomb_charge_coupling * s.

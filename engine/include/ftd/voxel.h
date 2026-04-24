@@ -132,8 +132,22 @@ struct Voxel {
   // Assigned at genesis from dominant flux axis (3 spatial dims → 3 colors).
   int8_t color = 0;
 
+  // Flavor state for weak field interactions
+  // 0 = none, 1 = e, 2 = mu, 3 = tau
+  int8_t flavor = 0;
+
   // Larmor radiation: acceleration magnitude from previous tick
   double accel_mag = 0.0;
+
+  // ---- Strong Substrate Field ----
+  // Stella Octangula vertex-propagated gluonic field
+  Vec3 flux_strong;
+  Vec3 wave_vel_strong;
+
+  // ---- Weak Substrate Field ----
+  // Cuboctahedron edge-propagated weak field
+  Vec3 flux_weak;
+  Vec3 wave_vel_weak;
 
   // ---- Derived quantities ----
 

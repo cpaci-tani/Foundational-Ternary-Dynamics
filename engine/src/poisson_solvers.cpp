@@ -100,12 +100,13 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
                        std::vector<double>& sor_source,
                        const Lattice& lattice,
                        bool dual_substrate,
-                       double charge_coupling) {
+                       bool exact_dual_gauss,
+                       double charge_coupling,
+                       int sor_iters) {
   const int N = static_cast<int>(lattice.total_sites());
   const int L = lattice.size();
   const int LL = L * L;
   const int Nm1 = L - 1;
-  constexpr int SOR_ITERS = SOR_ITERATIONS;
   constexpr double OMEGA = SOR_OMEGA;
 
 #pragma omp parallel for schedule(static)
@@ -124,13 +125,13 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
     sor_source[i] = div - charge_coupling * static_cast<double>(voxels[i].state);
   }
 
-  for (int iter = 0; iter < SOR_ITERS; ++iter) {
+  for (int iter = 0; iter < sor_iters; ++iter) {
     sor_sweep_18pt(phi, sor_source, lattice, OMEGA);
   }
 
 #pragma omp parallel for schedule(static)
   for (int i = 0; i < N; ++i) {
-    if (voxels[i].state != 0) continue;
+    if (!exact_dual_gauss && voxels[i].state != 0) continue;
     Vec3 grad_phi;
     const int iz = i % L;
     const int iy = (i / L) % L;
@@ -158,9 +159,9 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
 void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,
                                std::vector<double>& phi_coulomb,
                                std::vector<double>& sor_source,
-                               const Lattice& lattice) {
+                               const Lattice& lattice,
+                               int sor_iters) {
   const int N = static_cast<int>(lattice.total_sites());
-  constexpr int SOR_ITERS = SOR_ITERATIONS;
   constexpr double OMEGA = SOR_OMEGA;
 
   double charge_sum = 0.0;
@@ -173,7 +174,7 @@ void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,
     sor_source[i] = -(static_cast<double>(voxels[i].state) - mean_charge);
   }
 
-  for (int iter = 0; iter < SOR_ITERS; ++iter) {
+  for (int iter = 0; iter < sor_iters; ++iter) {
     sor_sweep_18pt(phi_coulomb, sor_source, lattice, OMEGA);
   }
 
@@ -189,9 +190,9 @@ void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,
 void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
                                std::vector<double>& phi_latency,
                                std::vector<double>& sor_source,
-                               const Lattice& lattice) {
+                               const Lattice& lattice,
+                               int sor_iters) {
   const int N = static_cast<int>(lattice.total_sites());
-  constexpr int SOR_ITERS = SOR_ITERATIONS;
   constexpr double OMEGA = SOR_OMEGA;
   constexpr double FOUR_PI_G = 4.0 * PI * G_N;
 
@@ -206,7 +207,7 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
     sor_source[i] = FOUR_PI_G * (rho_mass - mean_mass);
   }
 
-  for (int iter = 0; iter < SOR_ITERS; ++iter) {
+  for (int iter = 0; iter < sor_iters; ++iter) {
     sor_sweep_18pt(phi_latency, sor_source, lattice, OMEGA);
   }
 

@@ -2,9 +2,9 @@
 
 **Version:** 1.0
 **Date:** March 6, 2026
-**Status:** [THEOREM] + [SELECTION] + [CONJECTURE] + [OPEN]
+**Status:** [THEOREM] + [SELECTION] + [CONJECTURE]; numerical alpha-closure item superseded by FTD-to-EFT matching
 **Framework:** Foundational Ternary Dynamics v5.27
-**Epistemic Tag:** Consolidation of four lattice QED derivation documents. One-loop vacuum polarization, vertex correction, and self-energy computed on the FTD lattice. UV finiteness is [THEOREM] (compact Brillouin zone). Schwinger result g-2 = alpha/(2pi) is [THEOREM]. Ward identity Z_1 = Z_2 is [THEOREM]. Beta function derived from lattice integral is [THEOREM]. Two-loop UV finiteness is [THEOREM]. Two-loop closure of 1.26 ppm gap is [CONJECTURE]. Naive lattice fermions are [SELECTION].
+**Epistemic Tag:** Consolidation of four lattice QED derivation documents. One-loop vacuum polarization, vertex correction, and self-energy computed on the selected FTD lattice-QED dictionary. UV finiteness is [THEOREM] for the compact Brillouin-zone regulator. Schwinger result g-2 = alpha/(2pi) is [THEOREM] within the standard lattice-QED long-wavelength limit. Ward identity Z_1 = Z_2 is [THEOREM] within that gauge construction. Beta function derived from lattice integral is [THEOREM] for the selected lattice-QED model. Two-loop UV finiteness is [THEOREM]. Two-loop closure of the 1.26 ppm alpha gap is [CONJECTURE] and is not a live FTD prediction until the FTD-to-EFT matching principle is derived. Naive lattice fermions are [SELECTION].
 
 **Depends on:**
 
@@ -19,7 +19,7 @@
 
 ## Abstract
 
-This document consolidates the complete lattice QED renormalization program for the FTD framework. Part A derives the one-loop vacuum polarization and QED beta function from the compact Brillouin zone. Part B computes the one-loop vertex correction, deriving the Schwinger result $g-2 = \alpha/(2\pi)$. Part C establishes the one-loop electron self-energy with mass and wave function renormalization. Part D extends to two-loop order, showing UV finiteness on $\text{BZ} \times \text{BZ}$ and analyzing the 1.26 ppm gap between the tree-level $1/\alpha$ and the CODATA experimental value. All one-loop integrals are UV-finite by construction (compact Brillouin zone), the Ward identity $Z_1 = Z_2$ holds exactly on the lattice, and the long-wavelength regime $|p|, |k| \ll \pi$ recovers standard QED. Combined claims: 23 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 1 [OPEN].
+This document consolidates the complete lattice QED renormalization program for the FTD framework. Part A derives the one-loop vacuum polarization and QED beta function from the compact Brillouin zone. Part B computes the one-loop vertex correction, deriving the Schwinger result $g-2 = \alpha/(2\pi)$. Part C establishes the one-loop electron self-energy with mass and wave function renormalization. Part D extends to two-loop order, showing UV finiteness on $\text{BZ} \times \text{BZ}$ and analyzing the 1.26 ppm gap between the tree-level $1/\alpha$ and the CODATA experimental value. All one-loop integrals are UV-finite by construction (compact Brillouin zone), the Ward identity $Z_1 = Z_2$ holds exactly on the selected lattice gauge construction, and the long-wavelength regime $|p|, |k| \ll \pi$ recovers standard QED. Combined claims after the 2026-04-22 bridge audit: 23 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], zero live open items, and 1 superseded numerical alpha-closure task.
 
 ---
 
@@ -2099,9 +2099,9 @@ In the standard approach, $\alpha$ is determined from experiment (electron $g-2$
 
 The FTD approach is, in principle, a **prediction** of $\alpha$ rather than a measurement. The tree value $x_+$ is fixed by the lemniscate constant, and the loop corrections are calculable. The only uncertainty is the precision of the lattice computation.
 
-#### D.5.4 Road to Sub-ppm [OPEN]
+#### D.5.4 Road to Sub-ppm, Superseded as a Live Task
 
-To achieve a sub-ppm determination of $\alpha$ from FTD, the following computation is required:
+Earlier versions treated the following computation as the remaining road to a sub-ppm determination of $\alpha$ from FTD:
 
 1. **Numerical evaluation of the BZ$^2$ double integral** for the two-loop vacuum polarization, using the exact lattice propagators (not continuum approximations).
 
@@ -2111,7 +2111,7 @@ To achieve a sub-ppm determination of $\alpha$ from FTD, the following computati
 
 4. **Threshold corrections**: include the effects of heavy fermion thresholds (muon, tau, quarks) on the running between $\mu_0$ and $m_e$.
 
-If the resulting $1/\alpha_{\text{phys}}$ matches CODATA to sub-ppm, this would be the framework's single most testable and impressive output -- a prediction of a fundamental constant from pure mathematics and lattice geometry.
+After the 2026-04-22 bridge audit, this is no longer the live blocker. A BZ$^2$ computation could still test the selected lattice-QED scheme, but it cannot by itself establish a framework prediction of alpha. The FTD-to-EFT matching rule must first determine the continuum fields, matter content, regulator/counterterm prescription, and alpha observable without reference to the CODATA residual.
 
 ### D.6 Lattice-Specific Predictions
 
@@ -2212,12 +2212,12 @@ A shift of $\delta(1/\alpha) \sim 10^{-4}$ (the 1.26 ppm gap) translates to $\de
 | **2L-4** | Leading precision formula coefficient $c_1 = 9/47$ has a two-loop origin | **[SELECTION]** | Dimensional analysis + numerological match with QED two-loop structure | Derivation showing $c_1$ is unrelated to perturbative corrections |
 | **2L-5** | Physical $\alpha$ combines tree-level (master quadratic) + loop corrections | **[THEOREM]** | Standard QFT: $\alpha_{\text{phys}} = \alpha_{\text{tree}}/(1 - \Pi(0))$ with lattice Ward identity | Physical coupling independent of vacuum polarization |
 | **2L-6** | Lattice-specific corrections to running at Planck scale $\sim (\mu/E_P)^2$ | **[CONJECTURE]** | Dimensional estimate from lattice dispersion $\hat{k}^2 \neq k^2$ at $|k| \sim \pi$ | Lattice corrections vanishing identically by symmetry |
-| **2L-7** | Sub-ppm $\alpha$ prediction requires explicit BZ$^2$ numerical computation | **[OPEN]** | Computation not yet performed; all ingredients (Feynman rules, propagators) are in place | N/A (open problem) |
+| **2L-7** | Sub-ppm $\alpha$ prediction requires explicit BZ$^2$ numerical computation | Superseded | Numerical BZ$^2$ evaluation is no longer the live blocker; FTD-to-EFT matching must be derived first | A matching rule derives the selected lattice-QED scheme, after which BZ$^2$ becomes a fixed verification check |
 | **2L-8** | Two-loop $g-2$ coefficient $A_1^{(4)} = -0.32848...$ reproducible from lattice | **[CONJECTURE]** | Continuum limit guarantees agreement; explicit BZ$^2$ vertex computation not done | BZ$^2$ vertex integral giving different coefficient |
 | **2L-9** | FTD tree-level $\alpha$ within 1.26 ppm of CODATA | **[THEOREM]** | $x_+ = 137.036171$ vs $137.035999$; difference $= 1.72 \times 10^{-4}$ | Arithmetic error in master quadratic root |
 | **2L-10** | Precision formula closes gap to $< 0.001$ ppt | **[SELECTION]** | Numerical verification (DERIV_ALPHA_PRECISION_FORMULA.md); coefficients from $\{3,4,7,13\}$ | CODATA refinement inconsistent with precision formula prediction |
 
-**Epistemic breakdown (Part D):** 4 [THEOREM], 2 [SELECTION], 3 [CONJECTURE], 1 [OPEN]
+**Epistemic breakdown (Part D):** 4 [THEOREM], 2 [SELECTION], 3 [CONJECTURE], zero live open items, 1 superseded numerical task
 
 ---
 
@@ -2250,9 +2250,9 @@ A shift of $\delta(1/\alpha) \sim 10^{-4}$ (the 1.26 ppm gap) translates to $\de
 | **[THEOREM]** | 7 | 7 | 5 | 4 | **23** |
 | **[SELECTION]** | 1 | 3 | 2 | 2 | **8** |
 | **[CONJECTURE]** | 0 | 0 | 1 | 3 | **4** |
-| **[OPEN]** | 0 | 0 | 0 | 1 | **1** |
+| Superseded numerical task | 0 | 0 | 0 | 1 | **1** |
 
-**Grand total: 23 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 1 [OPEN].**
+**Grand total: 23 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], zero live open items, 1 superseded numerical task.**
 
 ---
 

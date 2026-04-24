@@ -164,4 +164,22 @@ docs/theory/FOUND_DEEP_HIERARCHY.md
 docs/theory/DERIV_CAVITATION_CONSCIOUSNESS_BRIDGE.md
 docs/theory/DERIV_OBSERVER_BELL_MECHANISM.md
 
+# Scratch workspace (never committed)
+scratch/
+
+# Local-only reproducer / triage scripts in engine/tests
+engine/tests/_repro_*.cpp
+engine/tests/_repro_*.cu
+
+# HMC / Monte Carlo sample dumps (regenerable from scripts)
+scripts/exploration/hmc_*.csv
+scripts/exploration/hmc_*.npz
+
+# Raw exploration outputs (regenerable from scripts; specific keepers whitelisted below)
+scripts/exploration/outputs/*
+!scripts/exploration/outputs/.gitkeep
+!scripts/exploration/outputs/manifestation_flow_*.json
+!scripts/exploration/outputs/manifestation_flow_*.pdf
+!scripts/exploration/outputs/ftd_native_electrodynamics*.json
+
 
