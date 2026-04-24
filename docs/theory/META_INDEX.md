@@ -1,7 +1,7 @@
 # FTD Theory Documentation Index
 
 **Framework:** Foundational Ternary Dynamics v5.31 (post-reframe, Sessions 1-4 of 2026-04-19)
-**Date:** April 19, 2026
+**Date:** April 23, 2026
 **Status:** Curated catalog. **Single source of truth for claim status: [`07_assessment/LEDGER.md`](07_assessment/LEDGER.md)** (49 rows; if LEDGER and individual docs disagree, LEDGER wins).
 **Single Source of Truth (spec):** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 **Foundational commitment (2026-04-19):** undefined-boundary lattice ontology — see [`07_assessment/AUDIT_INFINITY_REFRAME.md`](07_assessment/AUDIT_INFINITY_REFRAME.md) and [`07_assessment/reframe_deployment/CANONICAL_REFRAME.md`](07_assessment/reframe_deployment/CANONICAL_REFRAME.md).
@@ -60,7 +60,7 @@ Start here for comprehensive overviews.
 | 1.10 | **[SPEC_SM_REPLACEMENT_COMPLETE.md](01_reference/SPEC_SM_REPLACEMENT_COMPLETE.md)** | **CAPSTONE:** Complete SM replacement — sector-by-sector derivation map, all ~20 SM parameters from D=3+ϖ, dynamics table (amplitudes, decay rates, metrics), honest accounting (31 [THEOREM], 6 [SELECTION], 2 [CONJECTURE]), falsification criteria |
 | 1.11 | [SPEC_NOVEL_PREDICTIONS.md](01_reference/SPEC_NOVEL_PREDICTIONS.md) | **Predictions catalog:** All falsifiable FTD predictions organized by testability — precision numerical (~20 values), structural (N_gen=3, N_c=3), lattice-specific (Planck dispersion, no Landau pole), cosmological (n_s, r, η), negative (no WIMPs, no SUSY), sub-ppm α challenge |
 | 1.12 | ~~SPEC_FTD_FORMAL.md~~ | **ARCHIVED** → `archive/ARCH_SPEC_FTD_FORMAL.md` (merged into docs/SPEC_FTD.md) |
-| 1.13 | [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md) | Research paper: consciousness as mathematical bridge between QFT and GR via modular flow |
+| 1.13 | [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md) | Research paper: consciousness as mathematical bridge between QFT and GR via modular flow |
 | 1.14 | **[SPEC_FTD_COMPLETE_CHAIN.md](01_reference/SPEC_FTD_COMPLETE_CHAIN.md)** | **The Complete Chain:** from i to alpha in one document. 7/9 THEOREM. GR recovery, Bell, Born rule, nuclear binding, consciousness, lattice corrections. (April 2026) |
 | 1.15 | [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) | **G\* monograph:** Seven derivations of G\* = Γ(¼)/Γ(¾), master quadratic, α conjecture, BSD connection |
 
@@ -154,6 +154,7 @@ Physics from first principles.
 | 3.44 | **[DERIV_QM_FROM_LATTICE.md](03_derivations/DERIV_QM_FROM_LATTICE.md)** | **QM as Statistics:** QM is the aggregate statistics of definite ternary events observed with partial access. Born rule from Parseval [SELECTION]. Bell violation as aggregate detection statistic [SELECTION]. Cosine shape classical (1/3 factor). v4.0. (April 2026) |
 | 3.45 | **[DERIV_STELLAR_LIFECYCLE_LATTICE.md](03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md)** | **Stellar Lifecycle:** 9-stage narrative from mass to BH evaporation in lattice terms. Spatial picture + energy budget at each stage. Fusion, degeneracy pressure, horizons, Hawking radiation. (April 2026) |
 | 3.46 | [DERIV_DARK_SECTOR_DYNAMICS.md](03_derivations/DERIV_DARK_SECTOR_DYNAMICS.md) | **Dark sector dynamics:** Dark energy + dark matter from lattice mechanics [SELECTION]; coupling source and selective damping; depends on cosmological constant derivation |
+| 3.47 | [DERIV_HEAT_EQUATION_FROM_RATIO.md](03_derivations/DERIV_HEAT_EQUATION_FROM_RATIO.md) | **Heat Equation from Euler Ratio:** Asymmetric Euler Ratio evaluates to fractional integro-differential operator D^(-1/2) governing Brownian motion [THEOREM] |
 
 ---
 
@@ -266,6 +267,9 @@ What is genuinely derived vs. claimed.
 | 7.43 | [REFACTORING_RECOMMENDATIONS_2026_04_19.md](07_assessment/REFACTORING_RECOMMENDATIONS_2026_04_19.md) | 🆕 **Refactoring opportunities (Session 4)** — 10 tickets across 5 categories. P1 (~1 hour): consolidate SESSION_WRAPUPs + archive RESOLVED trackers (DONE Session 4). P2: archive session-output audits (DONE), CANONICAL/AUDIT consolidation, LEDGER citation standardisation. RF-9 negative finding: no engine/script duplication worth refactoring. |
 | 7.44 | [PHYSICIST_REVIEW_2026_04_19.md](07_assessment/PHYSICIST_REVIEW_2026_04_19.md) | 🆕 **Physicist spot-check (Session 4)** — adversarial physics review. **Verdict: PASS-WITH-NOTES.** Master quadratic numerics verified to 30 digits; Type III₁ → HYPOTHESIS demotion operator-algebraically justified; β-rates physics-correct; calibration arithmetically consistent. **3 concrete bugs found and fixed Session 4:** Mechanism γ α_G route (10⁻⁷ → 10⁻¹⁹ m), SPEC_FTD §14.2 inconsistency, mass-scale conflation noted. |
 | 7.45 | [archive_session_outputs/](07_assessment/archive_session_outputs/) | 🗄️ **Archived session outputs (2026-04-19)** — 7 historical files: TRACKER_REFRAME_FLAGS (5/5 RESOLVED), TRACKER_PDF_ONLY_PAPERS (13/13 archived), INVENTORY_PORTFOLIO, FLAGGED_PASSAGES_PAPERS, REDERIVE_REPORT_YM_NS, DEVILS_ADVOCATE_REPORT, ENGINE_AUDIT_REFRAME. Read-only; current state in parent-directory canonical docs. |
+| 7.46 | [TEST_REPORT_SESSION4.md](07_assessment/TEST_REPORT_SESSION4.md) | **Session 4 Test Report** |
+| 7.47 | [DOCS_BUILD_REPORT_SESSION4.md](07_assessment/DOCS_BUILD_REPORT_SESSION4.md) | **Session 4 Docs Build Report** |
+| 7.48 | [SESSION_WRAPUP_2026_04_19_session4.md](07_assessment/SESSION_WRAPUP_2026_04_19_session4.md) | **Session 4 Wrap-up** |
 
 ---
 
@@ -320,6 +324,8 @@ Number theory and special functions.
 | 9.22 | [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](09_mathematical/DERIV_MASTER_QUADRATIC_CM_LVALUES.md) | **Sum-of-roots = 2⁹·L(Sym² E, 1)** [THEOREM] via Damerell–Shimura at j=1728; product-of-roots = 2¹³·L(E,1)³/π^(3/2) [COROLLARY] (elementary, cube of BSD relation); 100-digit PARI verified; physics identification (SP4) deferred |
 | 9.23 | [EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md](09_mathematical/EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md) | **Negative result:** ε_X (1.26 ppm gap) not in simple Q-span of tested CM L-value basis; PARI `lindep` returned 10⁷-magnitude coefficients (no-relation regime); redirects correction search toward lattice-structural sources |
 | 9.24 | [CONJ_SEVEN_TERM_PRECISION_SERIES.md](09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) | **7-term precision conjecture + rigidity audit (2026-04-17):** α⁻¹ = x₊ + Σsₙcₙ\|ε\|ⁿ; coefficients $\{9/47, 5/64, 4/141, 141/11, 1472/21, 416/21, 299/8\}$ in base integers $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$. Audit: 24-digit match confirmed as algebraic identity (mpmath 60-digit); 6/7 coefficients uniquely forced at cascade precision; c₇ unique under strict base-integer decomposition; observationally underdetermined at CODATA's 11-digit experimental precision. Status stays [CONJECTURE]. Script: `scripts/exploration/audit_seven_term_rigidity.py`. |
+| 9.25 | [EXPLR_EULER_RATIO_RICCI_FLOW.md](09_mathematical/EXPLR_EULER_RATIO_RICCI_FLOW.md) | **Euler Ratio and Ricci Flow:** Connections between Euler Reflection Ratio and geometric flows |
+| 9.26 | [THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md](09_mathematical/THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md) | **BCC Watson Reflection Bridge:** Rigorous structural correspondence [THEOREM] |
 
 ---
 
@@ -348,9 +354,39 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.6 | [DERIV_DYNAMICAL_SM_EMERGENCE.md](10_eft_program/DERIV_DYNAMICAL_SM_EMERGENCE.md) | ✅ **Phase 4 complete (2026-04-19)** — EWSB cold-start Branch B at canonical amp 0.15 (no dynamical Higgs); three-gen null result; continuum-limit α_inf = 0.021 (2.94× α_ref), improvement over Phase 2C single-scale. **Post-campaign Branch A at amp=0.80 (62 charges manifest)** |
 | 10.7 | [DERIV_GAP_CLOSURE.md](10_eft_program/DERIV_GAP_CLOSURE.md) | ✅ **Post-campaign (2026-04-19)** — five follow-up tickets from manuscript §7 all executed: T1 stencil-mismatch floor identified, T2 measurement is seed-robust, T3 Yukawa screening is λ∝L finite-size artefact, T4 dynamical EWSB observed at amp=0.80, T5 operator basis confirmed via confinement-scenario divJ²=1.69 |
 | 10.8 | [DERIV_DAY2_CAMPAIGN.md](10_eft_program/DERIV_DAY2_CAMPAIGN.md) | ✅ **Day-2 Campaign (2026-04-19)** — matched-stencil CG Poisson drops Ward floor below 1e-8 (million-fold improvement); EWSB first-order phase transition in amp ∈ (0.6, 0.7) on L=32; condensate spectroscopy m≈0.18 (two-channel agreement); Rutherford scattering α=0.042±0.005 cross-validates V(r) at small b |
-| 10.9 | [STATUS_CUDA_BUILD.md](10_eft_program/STATUS_CUDA_BUILD.md) | ✅ **Phase A (2026-04-19)** — WSL2 + Ubuntu 22.04 + CUDA 13.0 + RTX 5090 unblocks GPU build, bypassing Windows CMake 4 + NVCC 13 `-D"CMAKE_INTDIR=\"Release\""` escape bug; L=256 single-seed β scan drops from 2h+ (CPU) to 4m40s (GPU) |
+| 10.9 | [STATUS_CUDA_BUILD.md](../internal/STATUS_CUDA_BUILD.md) | ✅ **Phase A (2026-04-19)** — WSL2 + Ubuntu 22.04 + CUDA 13.0 + RTX 5090 unblocks GPU build, bypassing Windows CMake 4 + NVCC 13 `-D"CMAKE_INTDIR=\"Release\""` escape bug; L=256 single-seed β scan drops from 2h+ (CPU) to 4m40s (GPU) |
 | 10.10 | [AUDIT_ALPHA_EXTRACTION.md](10_eft_program/AUDIT_ALPHA_EXTRACTION.md) | ✅ **Audit (2026-04-19)** — line-by-line review of every code path feeding the Phase-F "3.6× α_ref" claim. Verifies three V(r) codepaths are mutually consistent, isolates a **factor-of-2 energy convention** (engine `field_energy = Σ\|J\|²` lacks classical ½), and (initially) narrows the honest claim to α_∞ ∈ [1.8, 3.6]× α_ref depending on convention. Verdict superseded by Phase G (next row). |
 | 10.11 | [DERIV_EMERGENT_COULOMB_GEOMETRIC.md](10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md) | ✅ **Phase G — THEOREM (2026-04-19)** — closes the audit. Engine's emergent-mode Gauss law `∇·J = s` has no coupling constant; measured α_r(r, L) = 2·r·G_L(r) is a zero-free-parameter lattice-Poisson-Green's-function prediction matching Phase-F data to **R² = 1.0000, median 0.07% rel err at L=384** in the Coulomb tail. "Plateau at 3.6× α_ref" was a category error. Spec's Phase H: explicit coupling g_c = √(4π α_ref) in Gauss law to test whether FTD dynamics can emergently reproduce α. |
+| 10.12 | [SPEC_FTD_NATIVE_ELECTRODYNAMICS.md](10_eft_program/SPEC_FTD_NATIVE_ELECTRODYNAMICS.md) | **FTD Native Electrodynamics:** Core native mechanisms specification |
+| 10.13 | [SPEC_FTD_NATIVE_BLOCKING_MAP.md](10_eft_program/SPEC_FTD_NATIVE_BLOCKING_MAP.md) | **Native Blocking Map** |
+| 10.14 | [SPEC_FTD_EFT_BRIDGE_CONTRACT.md](10_eft_program/SPEC_FTD_EFT_BRIDGE_CONTRACT.md) | **EFT Bridge Contract:** Mapping native components to EFT limits |
+| 10.15 | [DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md](10_eft_program/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md) | **State/Flux to EFT Dictionary** |
+| 10.16 | [DERIV_FTD_NATIVE_SCALE_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_SCALE_FLOW.md) | **Native Scale Flow Derivation** |
+| 10.17 | [DERIV_FTD_NATIVE_RESPONSE_TUPLE.md](10_eft_program/DERIV_FTD_NATIVE_RESPONSE_TUPLE.md) | **Native Response Tuple Derivation** |
+| 10.18 | [DERIV_FTD_NATIVE_RESPONSE_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_RESPONSE_FLOW.md) | **Native Response Flow Derivation** |
+| 10.19 | [DERIV_FTD_NATIVE_LINEAR_GENERATOR.md](10_eft_program/DERIV_FTD_NATIVE_LINEAR_GENERATOR.md) | **Native Linear Generator** |
+| 10.20 | [DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md) | **Native Engine Transport Flow** |
+| 10.21 | [DERIV_FTD_NATIVE_ENGINE_HISTORY_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_ENGINE_HISTORY_FLOW.md) | **Native Engine History Flow** |
+| 10.22 | [DERIV_FTD_NATIVE_CURRENT_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_CURRENT_FLOW.md) | **Native Current Flow** |
+| 10.23 | [DERIV_FTD_NATIVE_BARE_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_BARE_FLOW.md) | **Native Bare Flow** |
+| 10.24 | [DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md](10_eft_program/DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md) | **Native Source Flux Coupling Closure** |
+| 10.25 | [DERIV_PROJECTED_EFT_MATTER_COUPLING.md](10_eft_program/DERIV_PROJECTED_EFT_MATTER_COUPLING.md) | **Projected EFT Matter Coupling** |
+| 10.26 | [DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md](10_eft_program/archive/closed_negative/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md) | **Projected Dirac Operator & Charge Normalization** |
+| 10.27 | [DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md](10_eft_program/DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md) | **Emergent U(1) from Flux Projection** |
+| 10.28 | [DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md](10_eft_program/archive/closed_negative/DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md) | **Projected Response Eigenvalue Attempt** |
+| 10.29 | [DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md](10_eft_program/archive/closed_negative/DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md) | **Projected Stiffness Attempt** |
+| 10.30 | [DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md](10_eft_program/archive/closed_negative/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md) | **Source Current Normalization Attempt** |
+| 10.31 | [OPEN_FTD_TO_EFT_BRIDGE_STATUS.md](10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md) | **EFT Bridge Status:** Open issues |
+| 10.32 | [OPEN_FTD_TO_EFT_MATCHING.md](10_eft_program/archive/closed_negative/OPEN_FTD_TO_EFT_MATCHING.md) | **EFT Matching:** Open questions |
+| 10.33 | [OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md](10_eft_program/archive/closed_negative/OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md) | **Projected EFT Renormalization:** Open status |
+| 10.34 | [OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md](10_eft_program/OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md) | **Native Action or Measure:** Open questions |
+| 10.35 | [OPEN_FTD_TO_EFT_MATCHING.md](10_eft_program/archive/closed_negative/OPEN_FTD_TO_EFT_MATCHING.md) | **EFT Matching:** Open questions |
+| 10.35 | [EXPLR_SELF_DUAL_HALF_SHELL.md](10_eft_program/EXPLR_SELF_DUAL_HALF_SHELL.md) | **Self-Dual Half-Shell Exploration** |
+| 10.36 | [AUDIT_ALPHA_SCALING_L256.md](10_eft_program/AUDIT_ALPHA_SCALING_L256.md) | **Alpha Scaling L=256 Audit** |
+| 10.37 | [AUDIT_EFT_BCC_ORTHOGONALITY.md](10_eft_program/AUDIT_EFT_BCC_ORTHOGONALITY.md) | **EFT BCC Orthogonality Audit** |
+| 10.38 | [AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md](10_eft_program/AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md) | **GPU Plan Priorities Audit** |
+| 10.39 | [AUDIT_LINK8_CLOSURE.md](10_eft_program/AUDIT_LINK8_CLOSURE.md) | **Link-8 Closure Audit** |
+| 10.40 | [AUDIT_STRUCTURE2_WARD_VALIDATION.md](10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md) | **Structure-2 Ward Validation** |
 
 Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).
 
@@ -406,6 +442,6 @@ Access via `archive/[filename].md` if needed for historical reference.
 
 ---
 
-*Index updated: April 11, 2026*
-*Framework: Foundational Ternary Dynamics v5.29*
-*Structure: Curated catalog of 129 indexed core entries + 76 archived; raw active-directory counts are currently higher during cleanup*
+*Index updated: April 23, 2026*
+*Framework: Foundational Ternary Dynamics v5.31*
+*Structure: Curated catalog of core entries + archived; raw active-directory counts are currently higher during cleanup*

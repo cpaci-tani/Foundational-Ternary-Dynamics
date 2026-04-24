@@ -2,7 +2,7 @@
 
 **The Card Catalog** — Find any document in two clicks.
 
-**Last updated:** April 19, 2026
+**Last updated:** April 23, 2026
 **Framework version:** v5.30
 **Engine version:** v2.15.0
 
