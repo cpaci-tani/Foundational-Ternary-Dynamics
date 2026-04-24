@@ -1,6 +1,6 @@
 # 10_eft_program — Index
 
-**Date:** 2026-04-23
+**Date:** 2026-04-23 (revised; `a_phys` no-go theorem added)
 **Maintainer note:** This index is agent-readable. Read it first to orient in
 this directory. Status tags reflect the LEDGER (`../07_assessment/LEDGER.md`)
 where applicable; if this index disagrees with the LEDGER, the LEDGER wins.
@@ -122,20 +122,17 @@ physics.
 | `AUDIT_STRUCTURE2_WARD_VALIDATION.md` | Ward-valid S2 gauge completion; does not reproduce Structure-1 ppb | [CLOSED NEGATIVE] (FTD-0058) |
 | `DERIV_PARTITION_FUNCTION_L2.md` | First explicit FTD Z on L=2 | [THEOREM] / [OPEN FINDING] |
 
-## Cluster 5 — a_phys calibration
+## Cluster 5 — a_phys calibration [CLOSED by theorem 2026-04-23]
 
 | File | One-line | Status |
 |---|---|---|
-| `OPEN_A_PHYS_DERIVATION.md` | Open-problem scoping doc; three mechanisms (α, β, γ) run | [CLOSED NEGATIVE / RESOLVED-BY-CALIBRATION] (2026-04-19) |
+| `THEOREM_A_PHYS_NO_GO.md` | No length derivable from Axiom Zero; `a_phys` must be calibrated | [THEOREM] (FTD-0059, 2026-04-23) |
+| `OPEN_A_PHYS_DERIVATION.md` | Open-problem scoping doc; four mechanisms (α, β, γ, δ) closed | [CLOSED — RESOLVED BY THEOREM] (2026-04-23) |
+| `DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md` | Information/CFL/ontic-chain/two-anchor routes all fail unit-trace check | [CLOSED NEGATIVE] (2026-04-23) |
 | `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` | Dimensional chain; shows the chain converts one calibration into another rather than deriving `a_phys` | [CLOSED NEGATIVE] |
 | `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` | Originally claimed [THEOREM] `a_phys ≈ 4.39 ℓ_P`; chain silently replaces `K_B = m_e` with `ℏ_lat = 1` | [RETRACTED 2026-04-23] |
 
-Resolution: the prior "[STATUS UNKNOWN]" tension between the SUCCESS doc and the
-`a_phys ≡ ℓ_P` declaration in `SPEC_FTD.md` / CLAUDE.md is resolved. The
-SUCCESS doc's `4.39 ℓ_P` is not Axiom-Zero-forced; it is the ratio one obtains
-under an undeclared mass recalibration. The authoritative disposition is
-**`a_phys ≡ ℓ_P` as a CALIBRATION** (LEDGER rows FTD-0030, FTD-0041). See the
-retraction preamble inside `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`.
+Resolution: the four mechanism closures share a single structural cause — the ring of Axiom-Zero invariants is entirely SI-dimensionless. `THEOREM_A_PHYS_NO_GO.md` (FTD-0059) formalizes this, promoting the `a_phys ≡ ℓ_P` calibration from pragmatic fallback to theorem-enforced calibration interface. The earlier "[STATUS UNKNOWN]" tension between the SUCCESS doc and the `a_phys ≡ ℓ_P` declaration in `SPEC_FTD.md` / CLAUDE.md is subsumed: the authoritative disposition is **`a_phys ≡ ℓ_P` as a CALIBRATION, theorem-enforced** (LEDGER rows FTD-0030, FTD-0041, FTD-0059).
 
 ## Cluster 6 — g_c first principles / Mechanism B
 
@@ -180,6 +177,6 @@ retraction preamble inside `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md`.
 1. **`EXPLR_SELF_DUAL_HALF_SHELL.md`** — [STATUS UNKNOWN] whether its G* bridge hypothesis is still live. Bridge-status doc lists it as [MEASURED]/[CONJECTURE]. No clear referrer outside the tuple doc. Flag for user review: retire or graduate to a DERIV_ doc.
 2. **`DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md`** and **`DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md`** — both are [PARTIAL] bridge results produced same-day 2026-04-22 during the pivot. Content is substantive and referenced from the bridge-status doc; no action needed but flag for possible merger into a single `DERIV_FTD_NATIVE_DICTIONARY.md` once the projected branch is fully archived.
 3. **`DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md`** — closes a single line item (`g_sJ = 1`). Short. Candidate for merger into the Tuple doc if the tuple doc is updated; otherwise keep separate.
-4. **`OPEN_A_PHYS_DERIVATION.md`** — [CLOSED NEGATIVE / RESOLVED-BY-CALIBRATION]. The 4.39 ℓ_P vs ℓ_P tension was reconciled 2026-04-23: the 4.39 figure was retracted; `a_phys ≡ ℓ_P` is the authoritative calibration. File can now be archived, or kept in place as the scoping doc for future readers.
+4. **`OPEN_A_PHYS_DERIVATION.md`** — [CLOSED — RESOLVED BY THEOREM] (2026-04-23). The four mechanism attempts (α, β, γ, δ) are subsumed by `THEOREM_A_PHYS_NO_GO.md` (FTD-0059). `a_phys ≡ ℓ_P` is theorem-enforced as the calibration interface. File is now a closed-open-problem scoping doc; flag for archive migration in a future housekeeping pass.
 5. **`STATUS_CUDA_BUILD.md`** — not an EFT doc at all; belongs elsewhere (see move proposal 4).
 6. **Orphan check:** no file in this directory appears to lack incoming references from at least one of {`OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`, the LEDGER, the reframe changelog, or a sibling doc in-cluster}. No true orphans found.
