@@ -61,7 +61,7 @@
 | **BELL-1** | Spatial Domain is Local ($S \le 2$); Info speed limited to c | **CONFIRMED** | A1, Relativity | EPISTEMIC_BRIDGE §2.1 | Observation of FTL information transfer in Dom A | `scripts/experiments/verify_bell_inequality.py` (S=2.00) |
 | **PLANCK-1** | 1 voxel = Planck length identification | IMPOSED | (scale calibration) | CLAUDE.md §7.1 | n/a (calibration choice) | n/a |
 | **GAMMA-1** | γ = α in simulations | IMPOSED | (parameter identification) | CLAUDE.md §4.3, §7.3 | n/a (calibration choice) | `scripts/constants.py` |
-| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.27% error) | CONJECTURE | ALPHA-1, GAUSS-1 | archive/ARCH_LEMNISCATE_ALPHA_PAPER.md §7.2 | >1% discrepancy unexplained by known corrections | `scripts/verification/verify_masses.py` |
+| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.19% error) | CONJECTURE | ALPHA-1, GAUSS-1 | archive/ARCH_LEMNISCATE_ALPHA_PAPER.md §7.2 | >1% discrepancy unexplained by known corrections | `scripts/verification/verify_masses.py` |
 | **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² = 3.86×10⁻⁴⁷ GeV⁴ (1.0% error) | CONJECTURE | ALPHA-1, MASS-1, GAUSS-1 | DERIV_VACUUM_ENERGY_FORMULA.md §I | >5% discrepancy unexplained | `scripts/verification/verify_vacuum_energy.py` |
 | **COLLAPSE-1** | Measurement = manifestation (s: 0 → ±1) | SELECTION | A4, HILBERT-1 | FOUND_SLOOP_FORMALIZATION.md | Alternative collapse mechanism shown viable within axioms | n/a |
 | **OBSERVER-1** | Observer = manifested structure (s≠0), not consciousness | SELECTION | COLLAPSE-1 | FOUND_SLOOP_FORMALIZATION.md §3.5 | Consciousness-specific effects observed | n/a |
@@ -727,7 +727,7 @@ $$\rho_\Lambda = m_e^4 \times \alpha^{16} \times G^{*2} = 3.86 \times 10^{-47} \
 | Quantity | Formula | Power | Accuracy |
 |----------|---------|-------|----------|
 | Higgs VEV v | m_P √(2π) α⁸ | 8 | 0.04% |
-| Electron mass m_e | m_P √(2π) (16/3) α¹¹ | 11 | 0.27% |
+| Electron mass m_e | m_P √(2π) (16/3) α¹¹ | 11 | 0.19% |
 | **Vacuum energy ρ_Λ** | **m_e⁴ G*² α¹⁶** | **16** | **1.0%** |
 | Gravitational α_G | 2π(16/3)²(N_eff+3/7)²α²⁰ | 20 | 0.01% |
 

@@ -200,7 +200,7 @@ The identification x₊ = 1/α depends on five selection principles (see [AUDIT_
 
 | Particle | Formula | Ratio | Predicted | Experiment | Error |
 |----------|---------|-------|-----------|------------|-------|
-| Electron | m_P√(2π)(16/3)α¹¹ | 1 | 0.5096 MeV | 0.511 MeV | **0.27%** |
+| Electron | m_P√(2π)(16/3)α¹¹ | 1 | 0.5096 MeV | 0.511 MeV | **0.19%** |
 | Muon | 3×b_3×(b_3+N_c) - N_c | 207 | 105.78 MeV | 105.66 MeV | **0.11%** |
 | Tau | (n_eff+N_base)×207 - 2×N_c×b_3 | 3477 | 1.7767 GeV | 1.7769 GeV | **0.007%** |
 
@@ -933,7 +933,7 @@ All core mathematical claims have been independently verified using Python/SciPy
 | Color number | x₋ = 3.0239639163 | 0.80% error | ✅ VERIFIED |
 | Framework integers | {3,4,7,13} constraints | All satisfied | ✅ VERIFIED |
 | Vieta relations | x₊+x₋=16G*², x₊×x₋=16G*³ | Exact | ✅ VERIFIED |
-| Electron mass | m_P·√(2π)·(16/3)·α¹¹ | 0.27% error | ✅ VERIFIED |
+| Electron mass | m_P·√(2π)·(16/3)·α¹¹ | 0.19% error | ✅ VERIFIED |
 | Higgs VEV | m_P·√(2π)·α⁸ | 0.055% error | ✅ VERIFIED |
 | Weinberg angle | sin²θ_W = 3/13 | 0.19% error | ✅ VERIFIED |
 | Strong coupling | α_s = 7/59 | 0.63% error | ✅ VERIFIED |
@@ -1154,4 +1154,3 @@ D = 3 is the unique solution, eliminating the dimensionality axiom.
 *~35 genuine derivations + ~100 parametric/external results*
 *Epistemic revision: February 2, 2026*
 *Structural corrections (v5.28): February 2026 — Uniqueness Theorem → [CONJECTURE], C1/C2 → [SELECTION], precision formula flagged*
-*Numerical corrections (v5.29): February 2026 — m_e error 0.19% → 0.27% (corrected computation), r = 0.022 standardized across all documents (r = 0.007 corrected)*

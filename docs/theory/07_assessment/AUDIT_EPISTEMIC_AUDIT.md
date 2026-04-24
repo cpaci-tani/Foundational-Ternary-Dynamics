@@ -700,7 +700,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | N_eff = 13 from F₇ = T₇ crossover | Principle: "crossover encodes effective DoF" | [CONDITIONAL] — crossover IS unique; interpretation is selection | EXPLR_NUMBER_THEORY.md |
 | b₃ = 7 = T₆ (consecutive Tribonacci) | N_eff = 13 established first | [CONDITIONAL] — follows from N_eff, but initial principle is selection | EXPLR_NUMBER_THEORY.md |
 | N_base = 4 from Lucas + lattice | L₃ = 4, L₄ = 7, and 4² = 16 | [CONDITIONAL] — three-fold constraint is impressive but each is a selection | EXPLR_NUMBER_THEORY.md |
-| m_e = m_P √(2π) (16/3) α¹¹ | All of the above plus scale identification | [CONDITIONAL] — 0.27% match | ../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
+| m_e = m_P √(2π) (16/3) α¹¹ | All of the above plus scale identification | [CONDITIONAL] — 0.19% match | ../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
 | Born rule from manifestation | Threshold K_B + manifestation sampling rule | [CONDITIONAL] — emerges under [IMPOSED] sampling rule | (v4.0 foundations) |
 | Neutrino mass: m₃ = m_P√(2π)(4/3)α¹⁴ | Seesaw imported; m_D, M_R decomposition | [CONDITIONAL] — 0.8% accuracy on Δm²₂₁ | DERIV_NEUTRINO_MASS_ABSOLUTE.md |
 

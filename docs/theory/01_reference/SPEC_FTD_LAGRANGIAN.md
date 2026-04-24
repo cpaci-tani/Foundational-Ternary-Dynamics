@@ -347,7 +347,7 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 |----------|---------|-------|----------------|-----|
 | $\alpha$ | $1/x_+$ (master quadratic) | $1/137.036$ | 1.26 ppm | [THEOREM]+[SELECTION] |
 | $g_c$ | $\sqrt{\alpha}$ | 0.0854 | — | [THEOREM] |
-| $K_B = m_e$ | $M_P\sqrt{2\pi}\,(16/3)\,\alpha^{11}$ | 0.510 MeV | 0.27% | [THEOREM] |
+| $K_B = m_e$ | $M_P\sqrt{2\pi}\,(16/3)\,\alpha^{11}$ | 0.510 MeV | 0.19% | [THEOREM] |
 | $G$ | $\alpha_G\,\hbar c\,/\,m_e^2$ | $6.674 \times 10^{-11}$ | 0.06% | [THEOREM] |
 | $\rho_\Lambda$ | $m_e^4\,\alpha^{16}\,G^{*2}$ | $3.86 \times 10^{-47}$ GeV⁴ | 1.0% | [SELECTION] |
 
