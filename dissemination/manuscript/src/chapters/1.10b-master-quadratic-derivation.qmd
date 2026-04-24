@@ -663,10 +663,20 @@ where $81 = 3^4$ is the correction term (also related to Fibonacci: $81 \approx 
 | Neutron | $M_p^{\text{geo}} + (\varphi^2 - 12\alpha)m_e - K_{\text{comp}}$ | 939.5654 MeV | 939.5654 MeV | < 1 eV |
 | Delta | $(17/\alpha + 81)m_e - K_{\text{comp}}$ | 1231.7 MeV | 1232 MeV | 0.03% |
 
-::: {.callout-warning}
-## Epistemic Status
+::: {.callout-important}
+## Epistemic Status — [CLOSED NEGATIVE 2026-04-23]
 
-The composition constant $K_{\text{comp}} = m_e/\pi$ and the baryon mass formulas are **[C] Conjectures**. While they produce remarkable numerical agreement, the derivation of $K_{\text{comp}}$ from the lattice action has not been established. The appearance of Fibonacci numbers in baryon masses requires theoretical justification.
+The composition constant $K_{\text{comp}} = m_e/\pi$ does **not** reach the precision claimed in the table above. Direct numerical audit (see `docs/theory/03_derivations/DERIV_KCOMP_CIRCLE_TO_SPHERE.md` and LEDGER row FTD-0060):
+
+- The offset needed to match the proton to experiment is $0.31532\, m_e$, not $0.31831\, m_e = m_e/\pi$. Gap: 0.95% (= **1.53 keV** residual in $M_p$, not 0.4 keV).
+- Neutron: needed offset $0.31479\, m_e$. Residual using $K = m_e/\pi$ is **1.80 keV**, not <1 eV.
+- Delta: the needed correction has **opposite sign** ($-0.35187\, m_e$). A single universal "$-K_{\text{comp}}$" cannot apply to all three.
+
+No FTD-primitive mechanism (Moore-shell integration, three-quark worldline closure, Watson-integral projection, polyhedral angular average, one-loop correction, solid-angle reduction) naturally produces either the approximate or the true offset value. The "$1/\pi$" identification is a post-hoc labelling of a ~1% numerical coincidence, not a tight identity.
+
+The underlying 174-ppm gap in $m_p/m_e = N_{\text{eff}}/\alpha + N_{\text{base}}\,N_{\text{eff}} + N_c$ remains genuinely [OPEN]. The Fibonacci-number appearances noted in the derivation are unexplained.
+
+The baryon formulas in this chapter should therefore be read as *fitting forms* with good approximate structure, not derivations; the precision figures in the Summary table are incorrect by ~3 orders of magnitude for the proton and neutron. See `DERIV_KCOMP_CIRCLE_TO_SPHERE.md` §2 for the full audit and §5 for recommended corrections.
 :::
 
 ### Numerical Verification of $K_{\text{comp}}$
