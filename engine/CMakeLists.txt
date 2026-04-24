@@ -15,16 +15,18 @@ if(NOT EMSCRIPTEN)
     find_package(OpenMP)
 endif()
 
-# CUDA GPU acceleration — DEFAULT ON via AUTO probe (Phase 0: FTD Test Bench).
+# CUDA GPU acceleration — DEFAULT REQUIRED for native builds.
 #
-# Tests are 10–100x faster on GPU. CUDA is now opt-OUT rather than opt-in.
-# If CUDAToolkit is not found on the system (e.g. CI runners without a GPU),
-# we gracefully downgrade to a CPU-only build with a status message.
+# Tests are 10–100x faster on GPU. CUDA is now the normal engine backend, and
+# missing CUDA should fail native configuration instead of silently producing a
+# CPU run.
 #
 # Override behaviors:
 #   -DFTD_ENABLE_CUDA=OFF     → force CPU build even if CUDA is available
 #   -DFTD_ENABLE_CUDA=ON      → require CUDA (error if not found)
-#   (unset / AUTO)            → use CUDA if found, else CPU (default)
+#   -DFTD_ENABLE_CUDA=AUTO    → use CUDA if found, else CPU (explicit fallback)
+#   unset native default      → ON
+#   unset Emscripten default  → OFF
 #
 # Probe strategy: find_package(CUDAToolkit) succeeds as long as nvcc exists
 # in PATH, and does NOT require a working host compiler (unlike
@@ -32,7 +34,11 @@ endif()
 # the probe robust across both Developer Command Prompt and plain shells.
 #
 if(NOT DEFINED FTD_ENABLE_CUDA)
-    set(FTD_ENABLE_CUDA "AUTO" CACHE STRING "Enable CUDA (ON/OFF/AUTO)")
+    if(EMSCRIPTEN)
+        set(FTD_ENABLE_CUDA "OFF" CACHE STRING "Enable CUDA (ON/OFF/AUTO)")
+    else()
+        set(FTD_ENABLE_CUDA "ON" CACHE STRING "Enable CUDA (ON/OFF/AUTO)")
+    endif()
 endif()
 
 set(_ftd_cuda_active OFF)

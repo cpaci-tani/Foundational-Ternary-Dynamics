@@ -394,7 +394,8 @@ private:
     unsigned int active_langevin_seed_ = 0;
 
 #ifdef FTD_ENABLE_CUDA
-    // GPU backend: when available, tick() delegates to GpuEngine for speedup.
+    // GPU backend: native CUDA builds require this path by default. Explicit
+    // CPU-only builds and parity tests are the only intended CPU escapes.
     // All injection/access methods sync between host voxels_ and device memory.
     std::unique_ptr<gpu::GpuEngine> gpu_;
     bool use_gpu_ = false;
