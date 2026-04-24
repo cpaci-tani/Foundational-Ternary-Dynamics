@@ -14,10 +14,10 @@ This document should no longer be read as an unconditional first-principles deri
 
 See:
 
-- `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_MATCHING.md`
+- `docs/theory/10_eft_program/archive/closed_negative/OPEN_FTD_TO_EFT_MATCHING.md`
 - `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`
 - `docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md`
-- `docs/theory/10_eft_program/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md`
+- `docs/theory/10_eft_program/archive/closed_negative/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md`
 
 ## Abstract
 
