@@ -86,6 +86,7 @@
 | FTD-0056 | Unrenormalized one-loop BCC tadpole residual has no continuum limit | THEOREM (numerical, Priority 5 of external GPU plan) | NEW 2026-04-21 — T_latt(a, L=100) diverges as a→0: 0.023 at a=2/3, 4.96 at a=2/48. The "9.68 ppb residual" is a specific-a, specific-regularization outcome. Does NOT invalidate DERIV_ONE_LOOP_LATTICE_ALPHA.md's [DERIVED given a=2/D] tag, but strengthens the honesty of that conditional. |
 | FTD-0057 | Non-perturbative HMC measurement of ⟨η⟩ on BCC lattice (Priority 2) | MEASURED 2026-04-21 — spec success criterion MET | MC ⟨η⟩ = −1.695×10⁻⁴ vs one-loop prediction −1.710×10⁻⁴; \|Δ\|/σ = **0.19** (σ_τ-corrected = 7.8×10⁻⁶). 99.1% acceptance, max\|η\| = 0.91 (no tunneling), 15 min wall on RTX 5090 at N=64. Perturbation theory confirmed non-perturbatively within 1σ. |
 | FTD-0058 | Structure-2 Ward-valid two-U(1) scalar gauge completion | CLOSED NEGATIVE 2026-04-22 | Natural scalar cases S2-A..S2-E fail to reproduce the Structure-1 ppb closure under bubble+seagull Ward-valid periodic BZ calculation. Best natural case S2-A: x_S2 = 137.036171847817, residual +1259.797 ppb, Ward max 1.053e-18. Structure-1 ppb correction is scheme-specific unless a unique FTD-to-EFT matching principle is derived. |
+| FTD-0059 | No-go theorem for `a_phys` derivation from Axiom Zero | THEOREM (2026-04-23) | NEW — formalizes the structural reason Mechanisms α/β/γ/δ all failed: Axiom-Zero invariants form a ring of SI-dimensionless reals, so no length is expressible without an external dimensional generator. `a_phys ≡ ℓ_P` calibration (FTD-0030, FTD-0041) is theorem-enforced, not convenience. See `docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md` and the supporting Mechanism-δ closure `DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`. |
 
 ---
 
@@ -326,6 +327,22 @@
 - **claim impact:** FTD-0001 and FTD-0013 remain as currently tagged. What is closed negative is the stronger claim that the Structure-1 ppb correction is reproduced by a natural Ward-valid Structure-2 scalar gauge theory. The Structure-1 ppb correction should be treated as scheme-specific until a unique FTD-to-EFT matching principle is derived.
 - **artifacts:** `docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md`; `scripts/exploration/outputs/priority4_periodic_strict_cases_N1024.jsonl`; `scripts/exploration/outputs/priority4_periodic_strict_cases_N1024_strict_rows.csv`.
 
+### FTD-0059: No-go theorem for `a_phys` derivation from Axiom Zero [THEOREM 2026-04-23]
+
+- **statement:** No quantity with SI dimension of length is expressible as a function of Axiom-Zero invariants alone. The lattice-to-physical length conversion `a_phys` must be supplied as an external calibration input. Corollary: no mass, time, energy, temperature, or charge is derivable from Axiom Zero either — every dimensional FTD prediction is conditional on exactly two calibrations (length and mass), with the remaining SI dimensions fixed through `c_phys` and `c²=E/M`.
+- **tag:** THEOREM
+- **tag_history:** Created 2026-04-23 after Mechanism δ closure (`DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`) revealed the structural pattern common to all four failed derivation attempts (α, β, γ, δ).
+- **proof_status:** COMPLETE
+- **proof_location:** `docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md` §3.
+- **proof_sketch:** The ring `R` of Axiom-Zero invariants (integers, `G*`, `π`, `ϖ`, `x_±`, Watson integrals, `c_lat = 1/√3`, …) is closed under the operations available to Axiom Zero and consists entirely of SI-dimensionless reals. A length has SI dimension `L¹ ≠ 1`. Hence no function with domain in `R` has image with SI dimension `L¹`. Therefore `a_phys` cannot be derived from `R` alone.
+- **dependencies:** FTD-0036 (Postulate 1), FTD-0037 (Postulate 2), FTD-0038 (Postulate 3), FTD-0039 (Postulate 4), FTD-0040 (Postulate 5) — together define Axiom Zero.
+- **dependents:** FTD-0030 (a_phys resolved-by-calibration — now theorem-enforced), FTD-0041 (a_phys ≡ ℓ_P calibration — now theorem-enforced), FTD-0035 (Mechanism γ attempt — instance of the theorem).
+- **supersedes_status_of:** `OPEN_A_PHYS_DERIVATION.md` from [CLOSED NEGATIVE / RESOLVED-BY-CALIBRATION] to [CLOSED — RESOLVED BY THEOREM].
+- **claim impact:** Promotes the `a_phys ≡ ℓ_P` calibration from a pragmatic fallback to a structurally necessary calibration interface. Identifies FTD's dimensionless predictions (α, mass ratios, mixing angles, anomalous moments) as the calibration-independent falsifiable spine of the framework. Does not demote or affect any existing dimensionless prediction.
+- **last_reviewed:** 2026-04-23
+- **reframe_status:** NEW
+- **artifacts:** `docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md` (theorem), `docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md` (δ closure), `docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` (γ closure), `docs/SPEC_FTD.md` (calibration declaration), `docs/theory/10_eft_program/OPEN_A_PHYS_DERIVATION.md` (resolution preamble).
+
 ---
 
 ## Maintenance log
@@ -344,6 +361,7 @@
 | 2026-04-21 (late) | **Priority 2 executed and PASSED.** HMC on BCC lattice, N=64, 3000 measurement trajectories at ε=0.002, 400 steps each. Wall: 15 min on RTX 5090. ⟨η⟩_MC = −1.695e-4 vs one-loop prediction −1.710e-4; \|Δ\|/σ_τ = 0.19 (σ_τ = 7.8e-6). Spec's success criterion \|MC−1-loop\| < 3σ with σ < 1e-5 MET. Acceptance 99.1%, max\|η\| = 0.91, τ_int = 0.96. Non-perturbative confirmation of one-loop perturbation theory for Structure-1. FTD-0057 NEW (MEASURED). Plan's ε=0.02 setting failed (0% acceptance, spec under-estimated ΔH volume scaling); ε=0.002 was the empirical tuning. | Priority 2 HMC. |
 | 2026-04-22 | Path B Structure-2 audit: implemented Ward-valid two-U(1) BCC scalar-loop test with bubble plus seagull terms. Natural scalar matter cases S2-A..S2-E all fail the Structure-1 closure threshold; best natural case S2-A residual +1259.797 ppb with Ward max 1.053e-18. FTD-0058 NEW (CLOSED NEGATIVE). Full report: `10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md`. | Structure-2 audit. |
 | 2026-04-23 | FTD-0030/0041 amendment: `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` (claimed [THEOREM] `a_phys ≈ 4.39 ℓ_P`) **RETRACTED**. Its "derivation" silently swaps the `K_B = m_e` mass calibration for `ℏ_lat = 1` and relabels the substitution as a theorem — the same calibration-shuffle flaw the ATTEMPT doc identified against itself. `a_phys ≡ ℓ_P` calibration (FTD-0041) unchanged. Retraction preamble added in-place to the SUCCESS doc; cross-references in ATTEMPT and OPEN updated. No new ledger row needed — resolution remains FTD-0030 RESOLVED-BY-CALIBRATION / FTD-0041 CALIBRATION. | Tension audit. |
+| 2026-04-23 | **FTD-0059 NEW — no-go theorem for `a_phys`.** Mechanism δ attempt (`DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`) executed under strict Calibration Hygiene Rules; closed negative across four routes (information velocity, CFL + lattice invariants, `ontic.h` chain scan, two-anchor elimination). All four failures share a single structural cause: the ring of Axiom-Zero invariants is entirely SI-dimensionless, so no length is derivable without an external dimensional generator. Elevated to theorem: `THEOREM_A_PHYS_NO_GO.md`. `OPEN_A_PHYS_DERIVATION.md` moved from [CLOSED NEGATIVE / RESOLVED-BY-CALIBRATION] to [CLOSED — RESOLVED BY THEOREM]. `docs/SPEC_FTD.md` updated with a one-line note tying the calibration to the theorem. Cluster 5 status updated in `10_eft_program/00_INDEX.md`. | a_phys no-go. |
 
 ---
 
