@@ -90,7 +90,7 @@ When matter and antimatter are adjacent, both return to void.
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Manifestation threshold | K_B | 0.511 MeV | m_e = M_P √(2π)(16/3)α¹¹ | ✅ DERIVED (0.27%) |
+| Manifestation threshold | K_B | 0.511 MeV | m_e = M_P √(2π)(16/3)α¹¹ | ✅ DERIVED (0.19%) |
 | Planck mass | M_P | 1.22 × 10¹⁹ GeV | Lattice spacing identification | ❌ INPUT |
 | Fine structure constant | α | 1/137.036 | Master quadratic from G* | ✅ DERIVED (1.26 ppm) |
 | Genesis probability form | 1 − e^(−x) | Exponential | Chosen for smoothness | ⚠️ SELECTION |
@@ -527,7 +527,7 @@ Every number in the entire framework:
 |-----------|---------|-------|----------|
 | sin²θ_W | N_c/N_eff = 3/13 | 0.2308 | 0.19% |
 | α_s(M_Z) | b₃/(b₃+4N_eff) = 7/59 | 0.1186 | 0.6% |
-| m_e | M_P√(2π)(16/3)α¹¹ | 0.5096 MeV | 0.27% |
+| m_e | M_P√(2π)(16/3)α¹¹ | 0.5096 MeV | 0.19% |
 | m_μ/m_e | 3b₃(b₃+N_c) − N_c = 207 | 206.768 | 0.11% |
 | m_τ/m_e | 17×207 − 42 = 3477 | 3477.3 | 0.007% |
 | m_p/m_e | N_eff/α + T(b₃+N_c) | 1836.47 | 0.017% |

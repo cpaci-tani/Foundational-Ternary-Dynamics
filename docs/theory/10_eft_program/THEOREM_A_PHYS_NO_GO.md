@@ -37,7 +37,9 @@ The theorem extends (Corollary 3.1) to every non-trivial SI dimension: mass, tim
 
 **Claim C.** No function of Axiom-Zero invariants alone has SI dimension `L¹`.
 
-*Argument.* Suppose for contradiction that `a_phys = f(r_1, …, r_n)` with each `r_i ∈ R`. By Claim A, every `r_i` has SI dimension `1`. SI dimensions multiply under ordinary algebraic operations, so for any rational expression in dimensionless quantities the output also has dimension `1`. For transcendental `f` (exp, log, Γ, θ, Watson), the argument must itself be dimensionless (no transcendental of a dimensional quantity is defined), and the output is dimensionless. Hence `dim(a_phys) = 1`, contradicting Claim B. Therefore no such `f` exists.
+*Argument.* Suppose for contradiction that `a_phys = f(r_1, …, r_n)` with each `r_i ∈ R`. By Claim A, every `r_i` has SI dimension `1`. SI dimensions multiply under ordinary algebraic operations, so for any rational expression in dimensionless quantities the output also has dimension `1`. For transcendental `f` (exp, log, Γ, θ, Watson), under the standard dimensional-analysis axioms of physics the argument must itself be dimensionless (a transcendental of a quantity carrying non-trivial SI dimensions has no dimensionally-consistent reading), and the output is dimensionless. Hence `dim(a_phys) = 1`, contradicting Claim B. Therefore no such `f` exists.
+
+> **Convention note.** Claim C is a theorem under the dimensional-analysis axioms of physics, not a pure-mathematics theorem. A mathematician may object that `log(a_phys/a_phys) = 0` is defined regardless; the physics convention is that transcendental arguments must be dimensionless ratios, and this convention is what the claim relies on. Under that convention the argument is rigorous.
 
 **Conclusion.** `a_phys` cannot be written as a function of Axiom-Zero invariants alone. Any expression producing `a_phys` in meters must contain at least one dimensional generator outside `R`. That generator is, by definition, a calibration. `∎`
 

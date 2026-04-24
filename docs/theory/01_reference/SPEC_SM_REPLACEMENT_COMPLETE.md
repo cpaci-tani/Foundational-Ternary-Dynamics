@@ -414,7 +414,7 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 
 | Parameter | SM Status | FTD Formula | FTD Value | PDG | Error | Tag |
 |-----------|-----------|-------------|-----------|-----|-------|-----|
-| $m_e$ | Free | $M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | 0.5096 MeV | 0.5110 MeV | 0.27% | [THEOREM] |
+| $m_e$ | Free | $M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | 0.5096 MeV | 0.5110 MeV | 0.19% | [THEOREM] |
 | $m_\mu/m_e$ | Free | $3 \times 7 \times 10 - 3 = 207$ | 207 | 206.77 | 0.11% | [THEOREM] |
 | $m_\tau/m_e$ | Free | $(N_{\text{eff}} + N_{\text{base}}) \times 207 - 2N_c b_3 = 3477$ | 3477 | 3477.2 | 0.007% | [THEOREM] |
 | $m_\mu$ | Derived | $207 \times m_e$ | 105.5 MeV | 105.66 MeV | 0.15% | [THEOREM] |

@@ -134,7 +134,7 @@ $$m_e = m_P \cdot \sqrt{2\pi} \cdot \frac{N_{\mathrm{base}}^2}{N_c} \cdot \alpha
 | $16/3$ | 5.333 | $N_{\mathrm{base}}^2/N_c = |\mathrm{Aut}(E)|^2/N_c$ |
 | $\alpha^{11}$ | $4.2 \times 10^{-24}$ | Hierarchy suppression |
 
-**Predicted:** 0.5096 MeV | **Experimental:** 0.5110 MeV | **Error:** 0.27%
+**Predicted:** 0.5096 MeV | **Experimental:** 0.5110 MeV | **Error:** 0.19%
 
 ### 4.2 The Higgs VEV
 
@@ -148,7 +148,7 @@ The Planck mass $m_P$ enters as an **explicit input** (scale identification: 1 l
 
 ### 4.4 Status
 
-> **[CONDITIONAL THEOREM + IMPOSED]** — The mass formulas are algebraic identities given SP1-SP5 plus the Planck scale identification. The 0.27% accuracy of $m_e$ is notable but depends on the specific power $\alpha^{11}$, which is motivated by the hierarchy argument (8 powers for electroweak + 3 for Yukawa) but not uniquely derived.
+> **[CONDITIONAL THEOREM + IMPOSED]** — The mass formulas are algebraic identities given SP1-SP5 plus the Planck scale identification. The 0.19% accuracy of $m_e$ is notable but depends on the specific power $\alpha^{11}$, which is motivated by the hierarchy argument (8 powers for electroweak + 3 for Yukawa) but not uniquely derived.
 
 ---
 
@@ -362,7 +362,7 @@ Once $x_+$ is fixed (by the quadratic and $G^*$), $x_-$ is determined. The floor
 
 | Result | Value | Experimental | Error |
 |--------|-------|-------------|-------|
-| $m_e$ | 0.510 MeV | 0.511 MeV | 0.27% |
+| $m_e$ | 0.510 MeV | 0.511 MeV | 0.19% |
 | $v$ (Higgs VEV) | 245.9 GeV | 246.2 GeV | 0.05% |
 | $\rho_\Lambda$ | $3.86 \times 10^{-47}$ | $3.90 \times 10^{-47}$ | 1.0% |
 
