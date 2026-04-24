@@ -161,7 +161,7 @@ G* = HM(x+, x-) / 2 = (x+ * x-) / (x+ + x-) = (1/alpha * N_c) / (1/alpha + N_c)
 
 | Constant | Value | Formula | Error |
 |----------|-------|---------|-------|
-| K_B (m_e) | 0.511 MeV | m_P * sqrt(2pi) * (16/3) * alpha^11 | 0.27% |
+| K_B (m_e) | 0.511 MeV | m_P * sqrt(2pi) * (16/3) * alpha^11 | 0.19% |
 | K_GENESIS | 1.533 MeV | N_c * K_B | exact |
 | mu/e | 207 | 3*b_3*(b_3+N_c) - N_c | 0.11% |
 | tau/e | 3477 | (N_eff+N_base)*mu - 2*N_c*b_3 | 0.01% |

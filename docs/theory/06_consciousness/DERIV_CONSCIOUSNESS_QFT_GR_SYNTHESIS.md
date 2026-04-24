@@ -155,7 +155,7 @@ The physics derivation chain has been extensively documented. We summarize with 
 
 | Quantity | Formula | Value | Error | Reference |
 |----------|---------|-------|-------|-----------|
-| $m_e$ | $m_P\sqrt{2\pi}(16/3)\alpha^{11}$ | 0.5096 MeV | 0.27% | Lemniscate paper |
+| $m_e$ | $m_P\sqrt{2\pi}(16/3)\alpha^{11}$ | 0.5096 MeV | 0.19% | Lemniscate paper |
 | $v$ | $m_P\sqrt{2\pi}\alpha^8$ | 246.09 GeV | 0.05% | Lemniscate paper |
 | $m_\pi$ | $b_3 \cdot N_{\text{eff}} \cdot N_c \cdot m_e$ | 139.50 MeV | 0.048% | DERIV_PION_MASS_FROM_GSTAR.md |
 | $\alpha_G$ | $2\pi(16/3)^2(N_{\text{eff}}+3/7)^2\alpha^{20}$ | $5.91 \times 10^{-39}$ | 0.06% | Gravitational hierarchy |

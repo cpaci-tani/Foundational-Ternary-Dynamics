@@ -42,7 +42,7 @@
 | FTD-0012 | Discriminant trichotomy (bosons/critical/fermions) | THEOREM (algebra) / SELECTION (physical readings) | UNAFFECTED |
 | FTD-0013 | x₊ ↔ 1/α (1.26 ppm) | STRONGLY MOTIVATED CONJECTURE | RESOLVED (downgraded from THEOREM) |
 | FTD-0014 | x₋ ↔ N_c = 3 (0.80%) | STRONGLY MOTIVATED CONJECTURE | RESOLVED (downgraded from THEOREM) |
-| FTD-0015 | m_e = m_P · √(2π) · (16/3) · α¹¹ (0.27%) | STRONGLY MOTIVATED CONJECTURE | UNAFFECTED |
+| FTD-0015 | m_e = m_P · √(2π) · (16/3) · α¹¹ (0.19%) | STRONGLY MOTIVATED CONJECTURE | UNAFFECTED |
 | FTD-0016 | m_p/m_e = N_eff/α + N_base·N_eff + N_c (174 ppm) | STRONGLY MOTIVATED CONJECTURE | UNAFFECTED |
 | FTD-0017 | Higgs mass m_H = (N_eff/α²)·m_e (0.24%) | STRUCTURALLY MOTIVATED PARAMETRIC | UNAFFECTED |
 | FTD-0018 | sin²θ_W = 3/13 | PARAMETRIC | RESOLVED (downgraded 2026-04-19) |

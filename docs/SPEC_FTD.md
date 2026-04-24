@@ -640,7 +640,7 @@ The following are now **derived**, not input parameters:
 | Feature | Value | Status | Derivation |
 |---------|-------|--------|------------|
 | Fine structure α | 1/137.036 | ✅ **[THEOREM]** | Master quadratic from G* (1.26 ppm) |
-| Electron mass m_e | 0.511 MeV | ✅ **[THEOREM]** | m_e = m_P √(2π) (16/3) α¹¹ (0.27%) |
+| Electron mass m_e | 0.511 MeV | ✅ **[THEOREM]** | m_e = m_P √(2π) (16/3) α¹¹ (0.19%) |
 | Higgs VEV v | 246 GeV | ✅ **[THEOREM]** | v = m_P √(2π) α⁸ (0.05%) |
 
 ### Still Imposed (Structural) **[IMPOSED]**
@@ -734,7 +734,7 @@ $$m_e = m_P \cdot \sqrt{2\pi} \cdot \frac{N_{\text{base}}^2}{N_c} \cdot \alpha^{
 | 16/3 | 5.333 | N_base²/N_c = 4²/3 |
 | α¹¹ | 4.2 × 10⁻²⁴ | α⁸ (hierarchy) × α³ (Yukawa) |
 
-**Result**: Predicted 0.5096 MeV vs experimental 0.5110 MeV (**0.27% error**)
+**Result**: Predicted 0.5096 MeV vs experimental 0.5110 MeV (**0.19% error**)
 
 ## 7.4 The Lemniscatic Derivation
 
@@ -1406,7 +1406,7 @@ These are rigorous mathematical consequences of the axioms. They do not predict 
 | Gauss constraint → 16 DoF | $16 = 2^4$ | [A3] Gauss law | Proven |
 | CM curve $j$-invariant | $j = 1728$ | [S1], [S2] | Selection, not proof |
 | Quadratic roots | $x_\pm = 8c^2 \pm 8c^2\sqrt{1 - 1/c}$ | [S3] | Algebraic identity |
-| Electron mass (dimensionless) | 0.5096 MeV (0.27% error) | §9.1 computation | Numerical simulation |
+| Electron mass (dimensionless) | 0.5096 MeV (0.19% error) | §9.1 computation | Numerical simulation |
 
 ---
 
@@ -1671,7 +1671,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.5 | Can coupling constants be derived within FTD assumptions? | ✅ **DERIVED** | G* = Γ(1/4)²/(√2·Γ(1/2)²) follows from FTD axioms (pi-free form); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md, simulations/ |
 | OPEN.6 | What is the testable difference between sLoop and superdeterminism? | ⬜ **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
 | OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? | ⬜ **OPEN** | Theoretically consistent; Planck-scale departures proposed as test |
-| OPEN.8 | Can particle masses be derived from FTD? | ✅ **DERIVED** | m_e = m_P √(2π) (16/3) α¹¹ (0.27% accuracy); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
+| OPEN.8 | Can particle masses be derived from FTD? | ✅ **DERIVED** | m_e = m_P √(2π) (16/3) α¹¹ (0.19% accuracy); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
 | OPEN.9 | What determines the complexity functional C(g)? | ⬜ **OPEN** | Candidates: MDL, departure from unification, parameter counting |
 | OPEN.10 | Can spinor behavior emerge from framed flux? | ✅ **VERIFIED** | 720° symmetry, exchange antisymmetry, Pauli exclusion all confirmed |
 | OPEN.11 | Can CKM matrix be derived from FTD? | ✅ **DERIVED** | All elements to 3-6% accuracy; see FLAVOR_PHYSICS_DERIVATION.md |
@@ -1732,7 +1732,7 @@ A computational simulation based on:
 ### Derived Constants (v5.0 - Complete)
 - ✅ **Fine structure constant α = 1/137.036** (PROVEN from CM selection; 1.26 ppm)
 - ✅ **Color charge number N_c = 3** (PROVEN via RG flow + topological quantization)
-- ✅ **Electron mass m_e = 0.511 MeV** (derived: m_e = m_P √(2π) (16/3) α¹¹; 0.27% accuracy)
+- ✅ **Electron mass m_e = 0.511 MeV** (derived: m_e = m_P √(2π) (16/3) α¹¹; 0.19% accuracy)
 - ✅ **Tau mass m_τ = 1.777 GeV** (derived; 0.007% accuracy - best mass prediction)
 - ✅ **Proton mass m_p = 938.3 MeV** (derived; 0.017% accuracy)
 - ✅ **Higgs VEV v = 246 GeV** (derived: v = m_P √(2π) α⁸; 0.05% accuracy)

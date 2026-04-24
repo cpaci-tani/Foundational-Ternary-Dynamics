@@ -68,7 +68,7 @@ $$K_\Delta^{\text{needed}} = M_\Delta^{\text{geo}} - M_\Delta^{\text{exp}} = -0.
 |----------|--------------|---------|-----------|---------------------------|--------------|
 | $p$ | $+0.315316$ | $0.318310$ | $-0.95\%$ | 0.4 keV | $-1.53$ keV |
 | $n$ | $+0.314793$ | $0.318310$ | $-1.11\%$ | <1 eV | $-1.80$ keV |
-| $\Delta$ | $\mathbf{-0.351872}$ | $0.318310$ | wrong sign | 0.03% | 0.27% |
+| $\Delta$ | $\mathbf{-0.351872}$ | $0.318310$ | wrong sign | 0.03% | 0.19% |
 
 **Conclusion of §2:** The premise "$K_{\text{comp}} = m_e/\pi$ fits with the precision claimed" is false. The baryon mass formulas reported in the manuscript chapter do not reach the precision the chapter claims, and the universal constant $K_{\text{comp}}$ required is not $m_e/\pi$ for any of the three particles.
 

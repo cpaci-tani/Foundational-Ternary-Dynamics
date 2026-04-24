@@ -1,28 +1,36 @@
 #!/usr/bin/env python3
 """
-MASTER QUADRATIC UNIQUENESS PROOF
-=================================
+MASTER QUADRATIC — CONDITIONAL UNIQUENESS (given a fixed constraint set)
+========================================================================
 
-TIER 1 Task 2: Prove that the master quadratic is UNIQUE, breaking circularity.
+Shows that among candidate polarization forms Pi(x), only the lemniscatic
+form Pi(x) = 16(G*)^3/x satisfies all six listed constraints simultaneously.
 
-The Circularity Objection:
-  The derivation selects a polarization form Pi(x) = 16(G*)^3/x that
-  happens to give the observed alpha. Is this just fitting?
+SCOPE: this is a **conditional uniqueness** statement, not an absolute
+theorem. Two of the six constraints (C4 modular covariance under CM group,
+C6 self-consistency with positive real roots matching physical observables)
+are target-shaped: they select for the arithmetic structure the derivation
+is trying to produce. The result therefore reads:
 
-The Uniqueness Proof Strategy:
-  Show that among ALL possible polarization forms satisfying the
-  physical constraints, ONLY the lemniscatic form works.
+  "Given the constraint set C1-C6, G* is the unique polarization constant."
 
-Constraints that must be satisfied:
+Not:
+
+  "G* is uniquely derived with no input from the target."
+
+C4 and C6 are legitimate constraints (modular covariance is a physical
+requirement from the CM-curve ansatz; self-consistency with positive real
+roots is a well-posedness requirement) — they are not arbitrary. But a
+reader should know that the script rules out ALTERNATIVE polarization forms
+under fixed physical constraints rather than forcing G* from axioms alone.
+
+Constraints:
   C1. Dimensional consistency (polarization has same dimension as x)
   C2. Positive definiteness (Pi(x) > 0 for x > 0)
   C3. UV-IR duality (Pi(x) * x = constant at self-consistency)
   C4. Modular covariance (transforms correctly under CM group)
   C5. Lattice regularization (16 modes from 2x2x2 cell)
   C6. Self-consistency (x = 16c^2 - Pi(x) has positive real roots)
-
-If we can show that ONLY c = G* satisfies all six constraints,
-then the quadratic is unique and the circularity is broken.
 """
 
 import sys
