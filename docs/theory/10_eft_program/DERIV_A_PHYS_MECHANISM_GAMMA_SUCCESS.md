@@ -1,5 +1,21 @@
 # DERIVATION — `a_phys` from Lattice Invariants (Mechanism γ)
 
+> **[RETRACTED 2026-04-23] — this document does not supersede the ATTEMPT/OPEN closure.**
+>
+> **Tag (corrected):** [CLOSED NEGATIVE] — not a first-principles derivation. The `[THEOREM]` tag below is withdrawn.
+>
+> **Reason for retraction.** The chain in §2 reaches `a_phys ≈ 4.39 ℓ_P` only by silently replacing the framework's existing mass calibration `K_B = m_e` (which sets `M_unit ≈ 1 MeV/c²`; see `docs/SPEC_FTD.md` §"LATTICE ↔ PHYSICAL CALIBRATION" and LEDGER FTD-0041) with a new, undeclared calibration `ℏ_lat = 1` (Eq. 2 here). Under Eq. 2 at the derived `a_phys`, the implied `M_unit` is ≈ `m_P / (√3 · 4.39) ≈ m_P / 7.6`, i.e. Planck-scale — not `1 MeV/c²`. The "derivation" therefore does not eliminate a calibration; it substitutes one (`K_B = m_e`) for another (`ℏ_lat = 1`) and relabels the substitution as a theorem. This is precisely the category-3 critique that the predecessor `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` §2.3 already raised against itself ("the chain converts one calibration into another"). The additional §3 claim that the engine's electron "spans ~10²² voxels" contradicts the declared `K_B = 0.511` semantics in `engine/include/ftd/constants.h` and in `SPEC_FTD.md`.
+>
+> **Authoritative sources (binding).** `docs/SPEC_FTD.md` §"LATTICE ↔ PHYSICAL CALIBRATION (a_phys ≡ ℓ_P)", LEDGER rows `FTD-0030` (RESOLVED-BY-CALIBRATION) and `FTD-0041` (CALIBRATION), and `docs/WHERE_WE_LEFT_OFF.md` §4 all declare `a_phys ≡ ℓ_P` as a **calibration**, not a derived quantity. `CLAUDE.md` restates the same. These supersede anything in the body below.
+>
+> **What (if anything) is worth preserving here.** The algebraic rearrangement in §2 is a legitimate dimensional-consistency exercise: *given* `c_lat = 1/√3`, `G_N(lat) = 0.01`, and **some** mass calibration, the three conversion factors are linked by one scalar equation. The number `√(100/(3√3)) ≈ 4.387` is the consistency ratio one gets *if* the mass calibration is fixed by `ℏ_lat = 1` instead of `K_B = m_e`. It is not Axiom-Zero-forced and should not be quoted as a prediction of the framework.
+>
+> **Disposition.** This file is retained in place for epistemic transparency (mirroring the ATTEMPT doc's own "retained for transparency" note). Do not cite §4 "Verdict" as current. If citing this file at all, cite this preamble and the closure in `OPEN_A_PHYS_DERIVATION.md` + LEDGER FTD-0030/0041.
+
+---
+
+<!-- ORIGINAL (RETRACTED) CONTENT BELOW — do not cite as current -->
+
 **Tag:** [THEOREM] — closes the load-bearing problem identified in `OPEN_A_PHYS_DERIVATION.md`.
 **Status:** **Complete**. Derives the physical length scale of one voxel ($a_{phys}$) strictly from Axiom-Zero combinatorics, without empirical parameter matching. Replaces the failed attempt documented in `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`.
 
