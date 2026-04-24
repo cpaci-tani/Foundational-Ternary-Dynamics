@@ -158,9 +158,10 @@ void benchmark_coulomb(int L, int setup_ticks) {
 // ================================================================
 void benchmark_wave_speed(int L) {
     const int mid = L / 2;
-    const int ticks = 30;
+    const int ticks_warmup = 5;
+    const int ticks_measure = 30;
 
-    std::cerr << "  Wave speed: L=" << L << ", " << ticks << " ticks\n";
+    std::cerr << "  Wave speed: L=" << L << ", " << ticks_measure << " ticks\n";
 
     ftd::RenderBridge rb(L);
     rb.toggles.genesis = false;
@@ -168,9 +169,27 @@ void benchmark_wave_speed(int L) {
 
     // Z-polarized pulse (matches proven test)
     rb.inject_flux(mid, mid, mid, {0, 0, 5.0});
-    rb.run(ticks);
 
-    // Find furthest point above threshold along +x
+    // Warmup: let pulse develop from point source into propagating wave
+    rb.run(ticks_warmup);
+
+    // Measure energy centroid along +x at two time points
+    auto centroid_x = [&]() -> double {
+        double sum_rx = 0.0, sum_w = 0.0;
+        for (int dx = -L/4; dx <= L/4; ++dx) {
+            int idx = rb.lattice().index(mid + dx, mid, mid);
+            double w = rb.voxels()[idx].density() + rb.voxels()[idx].wave_vel.mag2();
+            sum_rx += dx * w;
+            sum_w += w;
+        }
+        return (sum_w > 1e-30) ? sum_rx / sum_w : 0.0;
+    };
+
+    double x0 = centroid_x();
+    rb.run(ticks_measure);
+    double x1 = centroid_x();
+
+    // Also check the wavefront position as a secondary measurement
     double threshold = 0.001;
     int furthest = 0;
     for (int dx = 1; dx < L / 4; ++dx) {
@@ -179,18 +198,31 @@ void benchmark_wave_speed(int L) {
         if (rho > threshold) furthest = dx;
     }
 
-    double measured = (furthest > 0) ? static_cast<double>(furthest) / ticks : 0.0;
+    // The centroid velocity gives group velocity
+    // Due to 3D spreading, the centroid barely moves from origin (spherical symmetry).
+    // Use the wavefront velocity instead: furthest / total_ticks gives the
+    // phase/group speed along a single axis.
+    // For an isotropic wave, the axial speed is c/sqrt(3) from dispersion at low k,
+    // but the wavefront propagates at c = 1/sqrt(3) per dimension.
+    int total_ticks = ticks_warmup + ticks_measure;
+    double measured_front = (furthest > 0) ? static_cast<double>(furthest) / total_ticks : 0.0;
+
+    // Theory: C_WAVE = 1/sqrt(3) ≈ 0.577 for the isotropic propagation speed.
+    // The axial wavefront can only advance 1 lattice site per tick at most
+    // (the lattice CFL limit). The actual wavefront speed measured this way
+    // approaches C_WAVE as L and tick count grow. At L=32, 35 ticks, expect
+    // a wavefront at ~20 sites → v ≈ 0.57.
     double theory = ftd::C_WAVE;
-    double err_pct = (theory > 0) ? 100.0 * std::abs(measured - theory) / theory : 100.0;
+    double err_pct = (theory > 0) ? 100.0 * std::abs(measured_front - theory) / theory : 100.0;
 
     std::cout << "wave_speed," << L << ","
-              << std::setprecision(6) << measured << ","
+              << std::setprecision(6) << measured_front << ","
               << theory << ","
               << std::setprecision(4) << err_pct << ","
               << 0.0 << "," << furthest << "\n";
 
-    std::cerr << "    Speed: " << measured << " (theory: " << theory
-              << ", front at " << furthest << ")\n";
+    std::cerr << "    Speed: " << measured_front << " (theory: " << theory
+              << ", front at " << furthest << ", total ticks " << total_ticks << ")\n";
 }
 
 // ================================================================

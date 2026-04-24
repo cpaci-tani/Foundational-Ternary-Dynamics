@@ -81,15 +81,13 @@ $$\frac{1}{\alpha} = x_+ = 137.0360$$
 
 ### Status
 
-**Consistent within theoretical uncertainty.** The 1.26 ppm discrepancy may be explained by:
-1. Higher-order QED corrections (O(α²) ~ 5 × 10⁻⁵)
-2. Lattice discretization effects at Planck scale
-3. Framework refinements
+**Tree-level arithmetic match.** The 1.26 ppm discrepancy is the robust master-quadratic comparison. A Structure-1 scalar-EFT one-loop correction improves the residual to ppb scale within that chosen scheme, but the 2026-04-22 Ward-valid Structure-2 audit does not reproduce that correction. The ppb correction should therefore be treated as scheme-conditional unless a unique FTD-to-EFT matching principle is derived.
 
 ### Future Tests
 
 - Precision measurements of α via electron g-2, Cs atom recoil, and muonium spectroscopy continue to improve
 - Any measurement inconsistent with x+ = 137.036... at >10 ppm level would falsify the master quadratic structure
+- Any claim below the 1.26 ppm tree-level match must cite its matching scheme and the relevant audit status.
 
 ---
 

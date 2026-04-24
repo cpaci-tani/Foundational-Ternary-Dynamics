@@ -41,19 +41,23 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
                        std::vector<double>& sor_source,
                        const Lattice& lattice,
                        bool dual_substrate,
-                       double charge_coupling = 1.0);
+                       bool exact_dual_gauss,
+                       double charge_coupling = 1.0,
+                       int sor_iters = SOR_ITERATIONS);
 
 // Coulomb Poisson: ∇²φ_C = -s. Warm-started, mean-subtracted for periodic BC.
 void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,
                                std::vector<double>& phi_coulomb,
                                std::vector<double>& sor_source,
-                               const Lattice& lattice);
+                               const Lattice& lattice,
+                               int sor_iters = SOR_ITERATIONS);
 
 // Latency Poisson: ∇²φ_L = 4πGρ_mass with ρ_mass = K_B|state|. Writes
 // voxel.latency = sqrt(clamp(|phi_latency|, 0, LATENCY_HORIZON_CLAMP)).
 void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
                                std::vector<double>& phi_latency,
                                std::vector<double>& sor_source,
-                               const Lattice& lattice);
+                               const Lattice& lattice,
+                               int sor_iters = SOR_ITERATIONS);
 
 }  // namespace ftd

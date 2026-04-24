@@ -47,6 +47,7 @@ FTD is organized into four primary layers:
     *   `papers/` - Published paper surface: active PDFs at the root, source trees in `speculative/` and `src/`, archive in `archive/`.
     *   `articles/` - Popular writing.
     *   `internal/` - Local working documents and editorial guidance (gitignored, not public-first).
+*   **MAINTAINABILITY.md** - Field manual containing project-level hazards, step-by-step recipes, and tech-debt ledger.
 
 ### Dissemination
 *   **dissemination/** - Publication-ready outputs.
@@ -71,6 +72,7 @@ FTD is organized into four primary layers:
 ## Technical Guides for AI Agents
 *   **Project Instructions**: See [CLAUDE.md](CLAUDE.md) — mandatory rules for AI work on this project.
 *   **Contributor Onboarding**: See [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — balanced public guide across theory, engine, verification, and critique.
+*   **Maintainability Field Manual**: See [MAINTAINABILITY.md](MAINTAINABILITY.md) — hazards, recipes, and tech-debt ledger.
 *   **Documentation Cleanup Ledger**: See [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) — repo-wide drift findings, status model, and remediation queue.
 *   **Project Health Scorecard**: See [evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md](evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md) and [evaluation/REF_PROJECT_HEALTH_SCORING.md](evaluation/REF_PROJECT_HEALTH_SCORING.md).
 *   **Documentation Map**: See [META_DOCUMENTATION_MAP.md](META_DOCUMENTATION_MAP.md) — the definitive navigation guide.
@@ -101,6 +103,6 @@ FTD is organized into four primary layers:
 
 ---
 
-*Last updated: April 11, 2026*
+*Last updated: April 23, 2026*
 *Project version: FTD v5.29*
 *Engine version: v2.13*

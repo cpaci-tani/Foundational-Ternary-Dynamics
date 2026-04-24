@@ -41,7 +41,7 @@ public:
     void inject_flux(int x, int y, int z, const Vec3& flux_val);
     void inject_particle(int x, int y, int z, int8_t state,
                          const Vec3& flux_val,
-                         int8_t spin = 0, int8_t color = 0);
+                         int8_t spin = 0, int8_t color = 0, int8_t flavor = 0);
     void inject_wavepacket(int cx, int cy, int cz, int8_t state,
                            double sigma = 3.0, double amplitude = K_B);
 
@@ -55,8 +55,12 @@ public:
     int lattice_size() const { return size_; }
     int current_tick() const { return tick_; }
     int total_sites() const { return N_; }
+    double dt() const { return dt_; }
+    void set_dt(double dt);
+    void set_rng_seed(unsigned int seed);
 
     // Access Coulomb potential (downloads from GPU if stale)
+    const std::vector<double>& phi() { ensure_host_synced(); return host_phi_; }
     const std::vector<double>& phi_coulomb() { ensure_host_synced(); return host_phi_coulomb_; }
     // Access latency potential (downloads from GPU on demand)
     const std::vector<double>& phi_latency() { ensure_host_synced(); return host_phi_latency_; }
@@ -98,6 +102,8 @@ private:
 
     // cuRAND generator (for genesis probability)
     curandGenerator_t rng_ = nullptr;
+    unsigned int rng_seed_ = 0;
+    bool rng_seed_initialized_ = false;
 
     // Host-side shadow for injection and diagnostics
     // Lazily allocated on first use
@@ -110,11 +116,14 @@ private:
     int next_particle_id_ = 0;
     int next_pair_id_ = 0;
     int host_num_particles_ = 0;  // cached particle count from device
+    bool weak_field_active_ = false;  // true when flavor/weak-field state needs stepping
 
     // Helper: ensure host shadow is up-to-date
     void ensure_host_synced();
     // Helper: push host changes to device
     void push_to_device();
+    // Helper: refresh weak_field_active_ after host-side setup changes
+    void refresh_weak_field_active_from_host();
 };
 
 }  // namespace gpu

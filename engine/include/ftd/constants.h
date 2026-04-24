@@ -155,6 +155,12 @@ using ontic::LAMBDA_HIGGS;
 using ontic::M_HIGGS;
 using ontic::V_HIGGS;
 
+// Lattice Representation of VEV and W/Z Mass
+// V_HIGGS is 246.09 GeV. K_B is 0.511 MeV.
+// Therefore V_HIGGS_LATTICE = V_HIGGS * 1000.0 / K_B (scaled by the electron mass amplitude)
+inline constexpr double HIGGS_VEV_LATTICE = V_HIGGS * 1000.0 / K_B;
+inline constexpr double WZ_MIXING_ANGLE_COS = 0.881; // cos(theta_W) ~ 80.4/91.2
+
 // Layer 7: Precision formula
 using ontic::C1;
 using ontic::C2;
@@ -253,7 +259,12 @@ inline constexpr double ALPHA_EXCHANGE = ALPHA * ALPHA; // ≈ 5.3e-5
 // Larmor radiation: flux damping proportional to acceleration²
 // From classical Larmor formula P = (2α/3)·a², normalized by K_B.
 // K_LARMOR * a² gives the fraction of max damping to apply.
-inline constexpr double K_LARMOR = 4.0 / (3.0 * K_B); // ≈ 2.61
+//
+// The coefficient must exceed the coupling injection rate g_c ≈ 0.085
+// per site visited, otherwise accelerating particles GAIN net field
+// energy (coupling pumps faster than Larmor damps). Scaling by N_EFF
+// (the effective DoF count) ensures Larmor dominates at moderate a.
+inline constexpr double K_LARMOR = 4.0 * N_EFF / (3.0 * K_B); // ≈ 33.9
 
 // Minimum damping floor: 1% of full damping even at a=0.
 // Ensures thermodynamic dissipation is never completely off.

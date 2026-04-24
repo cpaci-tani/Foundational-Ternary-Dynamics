@@ -163,15 +163,15 @@ CODATA 2022: alpha^{-1} = 137.035999177(21).
 
 Tree-level agreement: 1.26 ppm with zero adjustable parameters.
 
-With the one-loop lattice tadpole correction (conditional on the selection a = 2/D — uniquely best base-integer rational at height <= 15, but NOT forced by a symmetry argument; see [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md) and [EXPLR_A_OVER_D_AUDIT.md](../04_coupling/EXPLR_A_OVER_D_AUDIT.md)):
+With the Structure-1 one-loop lattice tadpole correction (conditional on the selected SC scalar-EFT scheme and a = 2/D; see [DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md), [EXPLR_A_OVER_D_AUDIT.md](../04_coupling/EXPLR_A_OVER_D_AUDIT.md), and [AUDIT_STRUCTURE2_WARD_VALIDATION.md](../10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md)):
     1/alpha = 137.036000... (9.6 ppb residual)
 
 With the 7-term expansion in epsilon = e^pi - pi - 20 (conditional on the SP5 integer structure, see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md)):
     1/alpha = 137.0359991770... (24-digit algebraic identity confirmed 2026-04-17; 6/7 coefficients uniquely forced in base integers at cascade precision; observationally underdetermined at CODATA's ~11-digit experimental precision)
 
-This identification is [SELECTION] because no physical mechanism connecting elliptic-curve geometry to gauge couplings has been established at the master-quadratic level. The precision claims below 1.26 ppm are further conditional on a = 2/D (one-loop) or on SP5 integer uniqueness (7-term); neither is unconditionally proven.
+This identification is [SELECTION] because no physical mechanism connecting elliptic-curve geometry to gauge couplings has been established at the master-quadratic level. The precision claims below 1.26 ppm are further conditional on the selected Structure-1 scalar-EFT scheme (one-loop) or on SP5 integer uniqueness (7-term); neither is unconditionally proven.
 
-**Upgrade path to conditional [THEOREM]:** [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) argues FTD = compact U(1) LGT in temporal gauge, invokes Wilson's two-phase theorem, and derives a UV scale rigidity lemma. The result is **conditional [THEOREM] modulo standard lattice-QED continuum-limit recovery** — the upgrade imports rather than derives standard lattice QED.
+**Open matching problem:** [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) argues FTD = compact U(1) LGT in temporal gauge, invokes Wilson's two-phase theorem, and derives a UV scale rigidity lemma. The 2026-04-22 Structure-2 audit shows this is not enough to upgrade the ppb correction: a unique FTD-to-EFT matching rule must still specify matter content, regulator/counterterm prescription, and the physical electromagnetic kinetic operator.
 
 ## 2.2 floor(x-) = N_c = 3 [SELECTION]
 
@@ -413,7 +413,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 
 | Claim | Status | What would close it |
 |---|---|---|
-| x+ = 1/alpha | [SELECTION] (1.26 ppm, sub-ppb with corrections) | Derive that partition function coupling = EM coupling |
+| x+ = 1/alpha | [SELECTION] (1.26 ppm; ppb corrections conditional) | Derive a unique FTD-to-EFT matching rule, not a fit to alpha |
 | floor(x-) = N_c = 3 | [SELECTION] | Derive topological quantization mechanism |
 | Frame dragging factor of 2 from dual BI contribution | [CONJECTURE] | Qualitative argument only; needs explicit derivation from BI Lagrangian in rotating background |
 | QM = epistemology, not ontology | [SELECTION] | Prove that QM statistics follow necessarily from lattice + partial observation |
@@ -437,7 +437,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 
 ## 7.5 The Bottom Line
 
-The mathematical chain from i to the master quadratic roots is rigorous: 7/9 links [THEOREM], 2/9 [SELECTION] (x+ = 1/alpha identification and floor(x-) = N_c). The baseline tag for x+ = 1/alpha remains **[SELECTION]** across this document. The continuum-limit argument in [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) offers an upgrade path to **conditional [THEOREM] modulo standard lattice-QED continuum-limit recovery** — not an unconditional upgrade. The conditionality is honest: Wilson's two-phase theorem is genuine, but the identification of the continuum coupling with physical α imports standard lattice QED rather than deriving it. The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
+The mathematical chain from i to the master quadratic roots is rigorous: 7/9 links [THEOREM], 2/9 [SELECTION] (x+ = 1/alpha identification and floor(x-) = N_c). The baseline tag for x+ = 1/alpha remains **[SELECTION]** across this document. The continuum-limit argument in [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) is supporting context, but it does not by itself upgrade the alpha claim: the 2026-04-22 Structure-2 audit shows that a unique FTD-to-EFT matching rule is still required. The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
 
 **The Bell violation (S = 2.83 vs lattice S <= 2) is now understood as EMERGENT** (April 11, 2026). S = 2 sqrt(2) follows from the QM that emerges from the lattice (Tsirelson's bound). The remaining target is the singlet-state lemma: void event -> maximally entangled pair in emergent Hilbert space. The Born rule (P ~ |J|^2) is [SELECTION] — Parseval gives E ~ |J|^2 but identifying energy fraction with detection probability is the Born rule itself.
 
@@ -462,7 +462,7 @@ The sum-of-roots identification is genuinely non-elementary arithmetic (a Sym² 
 
 **Selection principles (SP1–SP5)** structuring the chain are documented in [BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md).
 
-**Correction mechanism audit.** Direct L-value closure of the 1.26 ppm tree-level gap is ruled out for the simple Q-span of tested L-values at CM critical points; see [EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md](../09_mathematical/EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md). The actual closure comes from the one-loop lattice tadpole with selection a = 2/D ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)), closing 99.2% of the gap to 9.6 ppb.
+**Correction mechanism audit.** Direct L-value closure of the 1.26 ppm tree-level gap is ruled out for the simple Q-span of tested L-values at CM critical points; see [EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md](../09_mathematical/EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md). The Structure-1 one-loop lattice tadpole with selected a = 2/D ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)) closes 99.2% of the gap to 9.6 ppb inside that scheme. GPU audits now mark this correction as scheme-specific: the BCC/continuum tests show regulator dependence, and the Ward-valid Structure-2 scalar gauge completion does not reproduce the closure.
 
 **Higher-precision claim.** A conjectural seven-term transcendental expansion reportedly matches CODATA 2022 to 24 digits; see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) for the coefficient table and explicit rigidity-audit falsifier. Preserved as [CONJECTURE] pending uniqueness audit.
 

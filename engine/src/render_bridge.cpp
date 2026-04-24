@@ -32,8 +32,10 @@
 #include "ftd/transmutation_phases.h"      // moved from mid-file to avoid nested-namespace include
 #include "ftd/energy_ledger_compute.h"     // moved from mid-file to avoid nested-namespace include
 #include <algorithm>
+#include <atomic>
 #include <cassert>
 #include <cmath>
+#include <cstdio>
 #include <iostream>
 
 #ifdef _OPENMP
@@ -86,10 +88,22 @@ RenderBridge::RenderBridge(int lattice_size)
 // Destructor must be in .cpp where GpuEngine is fully defined (unique_ptr needs it)
 RenderBridge::~RenderBridge() = default;
 
+void RenderBridge::set_dt(double dt) {
+    dt_ = (dt >= 1.0) ? dt : 1.0;
+#ifdef FTD_ENABLE_CUDA
+    if (use_gpu_ && gpu_) {
+        gpu_->set_dt(dt_);
+    }
+#endif
+}
+
 #ifdef FTD_ENABLE_CUDA
 void RenderBridge::gpu_sync_to_host() {
     if (use_gpu_ && gpu_dirty_) {
         gpu_->sync_to_host(voxels_);
+        phi_ = gpu_->phi();
+        phi_coulomb_ = gpu_->phi_coulomb();
+        phi_latency_ = gpu_->phi_latency();
         gpu_dirty_ = false;
     }
 }
@@ -105,6 +119,9 @@ void RenderBridge::gpu_flush_host_mutations() {
     // Wave 5.2 (2026-04-14): tick() calls this at the start so that any
     // direct host writes done via voxels()[idx].field = ... since the
     // previous tick get pushed back to the GPU before physics runs.
+    // BUG FIX 2026-04-21: also called from RenderBridge::run() GPU
+    // fast-path (which bypasses tick()); without that, host mutations
+    // before a `run(N)` call silently never reached the GPU.
     if (use_gpu_ && host_mutated_) {
         gpu_->upload_from_host(voxels_);
         gpu_dirty_ = false;
@@ -361,6 +378,13 @@ void RenderBridge::phase_write() {
   num_threads = omp_get_max_threads();
 #endif
   for (int t = 0; t < num_threads; ++t) {
+    if (toggles.langevin
+        && (!langevin_seed_initialized_
+            || active_langevin_seed_ != toggles.langevin_seed)) {
+      rng_.seed(toggles.langevin_seed);
+      active_langevin_seed_ = toggles.langevin_seed;
+      langevin_seed_initialized_ = true;
+    }
     thread_seeds_[t] = rng_();
     thread_rngs_[t].seed(thread_seeds_[t]);
   }
@@ -445,7 +469,22 @@ void RenderBridge::phase_write() {
       v.wave_vel += delta_j_[i];
       v.flux += v.wave_vel;
 
-      if (do_damping && should_damp) {
+      // Langevin thermostat (Ornstein–Uhlenbeck on wave_vel, per-component).
+      // Discrete form:  v <- (1 - gamma) v + sqrt(2 gamma T) eta,  eta ~ N(0,I).
+      // Replaces the deterministic damping block when langevin is on.
+      // Gauss projection runs after phase_write and removes the longitudinal
+      // component of J, so the thermal ensemble lives on the Gauss-physical
+      // subspace automatically.
+      if (toggles.langevin) {
+        const double gamma = toggles.langevin_gamma;
+        const double T = toggles.langevin_T;
+        const double sigma = std::sqrt(2.0 * gamma * T);
+        std::normal_distribution<double> gauss(0.0, 1.0);
+        const double one_minus_gamma = 1.0 - gamma;
+        v.wave_vel.x = one_minus_gamma * v.wave_vel.x + sigma * gauss(local_rng);
+        v.wave_vel.y = one_minus_gamma * v.wave_vel.y + sigma * gauss(local_rng);
+        v.wave_vel.z = one_minus_gamma * v.wave_vel.z + sigma * gauss(local_rng);
+      } else if (do_damping && should_damp) {
         double eff_damping = damping_factor;
         // Larmor radiation: modulate damping at ALL near-particle sites
         if (do_larmor && selective && near_particle_[i]) {
@@ -462,6 +501,11 @@ void RenderBridge::phase_write() {
         double excess = v.density() - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_B);
         if (local_uniform(local_rng) < p) {
+          // Latent Heat of Manifestation: consume wave energy
+          v.wave_vel *= 0.5; // Drain local kinetic energy to pay for mass gap
+          double jmag = v.flux.mag();
+          if (jmag > 1e-9) v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag); // Consume potential energy
+
           double div = divergence_flux(i);
           v.state = (div > 0) ? 1 : -1;
           int pid;
@@ -498,12 +542,17 @@ void RenderBridge::phase_write() {
         local_energy += voxels_[n].flux.mag2() + voxels_[n].wave_vel.mag2();
     }
     if (do_genesis && v.state != 0
-        && local_energy < EVAP_ENERGY
         && !v.locked) {
-      v.state = 0;
-      v.particle_id = -1;
-      v.spin = 0;
-      v.color = 0;
+      // Thermodynamic Evaporation: Probability of evaporation increases if energy is low,
+      // but even in a thermal bath, virtual pairs have a finite lifetime.
+      double evap_prob = std::exp(-local_energy / (K_B * K_B));
+      // Increase evaporation rate significantly to stabilize the thermal vacuum
+      if (local_uniform(local_rng) < evap_prob * 0.1) {
+        v.state = 0;
+        v.particle_id = -1;
+        v.spin = 0;
+        v.color = 0;
+      }
     }
   }
 }
@@ -531,15 +580,15 @@ void RenderBridge::phase_write() {
 // Thin wrappers delegating to poisson_solvers.cpp.
 void RenderBridge::gauss_project() {
   gauss_project_cpu(voxels_, phi_, sor_source_, lattice_, toggles.dual_substrate,
-                    toggles.coulomb_charge_coupling);
+                    toggles.exact_dual_gauss, toggles.coulomb_charge_coupling, sor_iterations_);
 }
 
 void RenderBridge::solve_coulomb_poisson() {
-  solve_coulomb_poisson_cpu(voxels_, phi_coulomb_, sor_source_, lattice_);
+  solve_coulomb_poisson_cpu(voxels_, phi_coulomb_, sor_source_, lattice_, sor_iterations_);
 }
 
 void RenderBridge::solve_latency_poisson() {
-  solve_latency_poisson_cpu(voxels_, phi_latency_, sor_source_, lattice_);
+  solve_latency_poisson_cpu(voxels_, phi_latency_, sor_source_, lattice_, sor_iterations_);
 }
 
 // ============================================================================
@@ -1044,9 +1093,23 @@ void RenderBridge::update_energy_ledger() { ::ftd::update_energy_ledger_cpu(*thi
 void RenderBridge::run(int num_ticks) {
 #ifdef FTD_ENABLE_CUDA
   if (use_gpu_) {
+    // BUG FIX 2026-04-21: flush any host-side mutations before the GPU
+    // fast-path. Without this, direct writes like `voxels()[i].flux = ...`
+    // or `voxels()[i].state = ...` made between the previous tick and this
+    // run() call never reach the device — the GPU sees its stale state.
+    // (RenderBridge::tick() does this correctly; the run() fast-path did not.)
+    gpu_flush_host_mutations();
     gpu_->toggles = toggles;
+    gpu_->set_dt(dt_);
+    if (toggles.langevin) {
+      gpu_->set_rng_seed(toggles.langevin_seed);
+    }
     gpu_->run(num_ticks);
     gpu_dirty_ = true;
+    gpu_sync_to_host();
+    if (toggles.latency_field)
+      accumulate_proper_time();
+    update_energy_ledger();
     physical_time_ += dt_ * num_ticks;
     tick_ += num_ticks;
     return;

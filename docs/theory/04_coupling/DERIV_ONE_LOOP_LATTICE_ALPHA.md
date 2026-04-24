@@ -4,10 +4,21 @@
 
 **Date:** April 3, 2026
 **Framework:** Foundational Ternary Dynamics v5.28
-**Status:** [DERIVED] (given lattice spacing a = 2/D)
+**Status:** [SELECTION] / scheme-conditional calculation (derived after choosing the SC scalar-EFT tadpole scheme and lattice spacing a = 2/D)
 **Proof script:** `scripts/verification/verify_one_loop_alpha.py`
 
 ---
+
+## 0. Audit update (2026-04-22)
+
+This document's arithmetic remains reproducible inside its stated scalar-EFT scheme, but the ppb interpretation is now conditional rather than universal.
+
+Subsequent GPU audits found:
+
+1. The BCC tadpole value differs from the SC tadpole value used here, and the unrenormalized one-loop residual has no continuum limit without counterterms. See `docs/theory/10_eft_program/AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md`.
+2. A Ward-valid Structure-2 two-U(1) BCC scalar gauge completion with bubble plus seagull terms does not reproduce the Structure-1 ppb closure. See `docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md`.
+
+Therefore the "9.6 ppb" result should be read as a Structure-1, fixed-regularization outcome. It is not currently a scheme-independent physical prediction.
 
 ## 1. Setup: phi^3 EFT on the Cubic Lattice
 
@@ -59,7 +70,7 @@ $$\delta x = \delta\phi \cdot a_{\mathrm{lat}} = -2.564 \times 10^{-4} \times \f
 
 ## 3. Result: Tree + One-Loop
 
-**Claim 1LA-5.** [DERIVED] The corrected fine structure constant:
+**Claim 1LA-5.** [SELECTION] Within the chosen SC scalar-EFT tadpole scheme, the corrected fine structure constant:
 
 | Level | Value of x+ | Source |
 |-------|-------------|--------|
@@ -70,6 +81,8 @@ $$\delta x = \delta\phi \cdot a_{\mathrm{lat}} = -2.564 \times 10^{-4} \times \f
 Residual after one-loop correction: **9.6 ppb** (parts per billion).
 
 Gap closed by the one-loop lattice correction: **99.2%** of the original 1.26 ppm tree-level discrepancy.
+
+**Audit caveat (2026-04-22):** this closure is scheme-specific. It is not reproduced by the Ward-valid Structure-2 scalar gauge completion tested in `AUDIT_STRUCTURE2_WARD_VALIDATION.md`.
 
 ---
 
@@ -115,7 +128,7 @@ The audit explicitly tested for a symmetry / stability selection at $a = 2/D$ (Q
 
 ## 7. Higher-Loop Convergence
 
-**Claim 1LA-10.** [OPEN] The convergence pattern:
+**Claim 1LA-10.** Superseded as a live alpha-closure task. The scheme-internal convergence pattern is:
 
 | Loop order | Contribution | Cumulative residual |
 |------------|-------------|-------------------|
@@ -124,7 +137,15 @@ The audit explicitly tested for a symmetry / stability selection at $a = 2/D$ (Q
 | 2-loop | ~+3e-6 (estimated) | ~few ppb |
 | 3-loop+ | unknown | < 1 ppb (expected) |
 
-Whether the lattice loop expansion converges to the exact CODATA value (or to the 4-term precision formula value from `DERIV_ALPHA_PRECISION_FORMULA.md`) remains open. The two approaches -- epsilon-expansion and lattice loops -- may be dual descriptions of the same correction series.
+After the BCC regulator audit and the Ward-valid Structure-2 audit, this is no longer a valid route to a scheme-independent alpha prediction by itself. Higher-loop terms may still be computed inside the selected Structure-1 scalar-EFT scheme, but even perfect convergence to the CODATA value would not establish an FTD prediction unless the FTD-to-EFT matching principle is derived first.
+
+The live problem has therefore moved from "compute more loops until the residual closes" to:
+
+```text
+derive the matching rule -> then run fixed loop checks
+```
+
+The proposed duality with the epsilon-expansion remains conjectural and should not be used as an acceptance criterion.
 
 ---
 
@@ -135,10 +156,10 @@ Whether the lattice loop expansion converges to the exact CODATA value (or to th
 | EFT construction | [THEOREM] | Algebraic, from `DERIV_PHI3_EXACT_EFT.md` |
 | Lattice tadpole integral | [THEOREM] | Numerical, verified on 128^3 and 150^3 |
 | Spacing a = 2/D | [SELECTION PRINCIPLE] | Multiple derivations from D = 3 |
-| One-loop result 9.6 ppb | [DERIVED] | Given a = 2/D |
+| One-loop result 9.6 ppb | [SELECTION] | Derived within the SC scalar-EFT scheme at a = 2/D; not scheme-independent |
 | Two-loop sunset | [DERIVED] | FFT convolution, 32^3 |
-| Higher-loop convergence | [OPEN] | Not yet computed beyond 2-loop |
-| Duality with epsilon-expansion | [OPEN] | Conjectured, not proven |
+| Higher-loop convergence | Deferred | Not a live alpha-closure item until FTD-to-EFT matching is derived |
+| Duality with epsilon-expansion | [CONJECTURE] | Conjectured, not proven |
 
 ---
 
@@ -152,6 +173,7 @@ Whether the lattice loop expansion converges to the exact CODATA value (or to th
 ## Honesty Notes
 
 1. The lattice spacing a = 2/D is a **selection principle**, not derived from dynamics. It is the single free choice in this calculation.
-2. The 9.6 ppb result is only as good as the selection a = 2/D. If a different spacing were chosen, the residual would differ.
-3. The two-loop estimate is preliminary (32^3 lattice). A 128^3 evaluation would be more reliable.
+2. The 9.6 ppb result is only as good as the selected scalar-EFT scheme, regulator, and spacing a = 2/D. The BCC and Structure-2 audits show that changing the gauge completion or regularization changes the result.
+3. The two-loop estimate is preliminary (32^3 lattice). A 128^3 evaluation would be more reliable for the selected scheme, but it is not the current bottleneck.
 4. This is a **parametric insertion** of FTD values (G*, D=3) into standard lattice field theory formulas. The lattice QFT machinery is external physics, not derived from FTD axioms.
+5. As of 2026-04-22, the live blocker is the FTD-to-EFT matching principle documented in `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_MATCHING.md` and `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`.

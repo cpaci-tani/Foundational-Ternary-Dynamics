@@ -67,20 +67,43 @@ void pair_production_cpu(RenderBridge& rb) {
     double p = 1.0 - std::exp(-(jmag - K_GENESIS) / K_B);
     if (rb.uniform_(rb.rng_) >= p) continue;
 
-    int partner = -1;
-    for (int n : lattice.neighbors_6(i)) {
-      if (voxels[n].state == 0) { partner = n; break; }
-    }
-    if (partner < 0) continue;
+    // Geometric Pair Production: find the major axis of the flux vector
+    int dx = 0, dy = 0, dz = 0;
+    double fx = std::abs(v.flux.x), fy = std::abs(v.flux.y), fz = std::abs(v.flux.z);
+    if (fx >= fy && fx >= fz) dx = (v.flux.x > 0) ? 1 : -1;
+    else if (fy >= fx && fy >= fz) dy = (v.flux.y > 0) ? 1 : -1;
+    else dz = (v.flux.z > 0) ? 1 : -1;
 
-    int pid;
-    pid = rb.next_particle_id_++;
-    v.state = +1;
+    auto coord = lattice.coord(i);
+    int nx = coord.x + dx;
+    int ny = coord.y + dy;
+    int nz = coord.z + dz;
+    // Periodic boundary
+    int L = lattice.size();
+    if (nx < 0) nx += L; else if (nx >= L) nx -= L;
+    if (ny < 0) ny += L; else if (ny >= L) ny -= L;
+    if (nz < 0) nz += L; else if (nz >= L) nz -= L;
+
+    int partner = lattice.index(nx, ny, nz);
+    if (voxels[partner].state != 0) continue; // Partner space must be empty
+
+    // Latent Heat of Manifestation: consume wave energy
+    v.wave_vel *= 0.5;
+    voxels[partner].wave_vel *= 0.5;
+    v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag); // Consume potential energy
+
+    int pid = rb.next_particle_id_++;
+    // The +1 charge should be pushed downstream by the external field, and the -1 upstream.
+    // The vector `d` points downstream. Therefore, the partner is downstream.
+    // To oppose the external field (Vacuum Polarization), the dipole must point UPSTREAM.
+    // So the downstream particle must be +1, and the upstream particle -1.
+    // `v` is upstream, `partner` is downstream.
+    v.state = -1;
     v.particle_id = pid;
     v.pair_id = pid;
 
     auto& p2 = voxels[partner];
-    p2.state = -1;
+    p2.state = +1;
     p2.particle_id = rb.next_particle_id_++;
     p2.pair_id = pid;
 
