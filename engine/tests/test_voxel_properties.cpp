@@ -13,28 +13,10 @@
 #include <iomanip>
 #include <cmath>
 #include "ftd/voxel.h"
+#include "test_helpers.h"
 
-int failures = 0;
-
-void check(const char* name, bool condition) {
-    if (condition) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << "\n";
-        ++failures;
-    }
-}
-
-void check_close(const char* name, double a, double b, double tol) {
-    bool ok = std::abs(a - b) < tol;
-    if (ok) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << " (got " << std::setprecision(15)
-                  << a << ", expected " << b << ")\n";
-        ++failures;
-    }
-}
+using ftd::test::check;
+using ftd::test::check_close;
 
 int main() {
     std::cout << "================================================================\n";
@@ -169,13 +151,6 @@ int main() {
         check_close("Vec3 mag", a.mag(), std::sqrt(14.0), 1e-12);
     }
 
-    std::cout << "\n================================================================\n";
-    if (failures == 0) {
-        std::cout << "  All voxel property tests PASSED.\n";
-    } else {
-        std::cout << "  " << failures << " test(s) FAILED.\n";
-    }
-    std::cout << "================================================================\n";
-
-    return failures;
+    return ftd::test::report_and_exit_code(ftd::test::global_counter(),
+                                            "Voxel Properties");
 }

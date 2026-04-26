@@ -14,6 +14,7 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace {
 
@@ -89,6 +90,71 @@ void test_invalid_size_returns_empty() {
   check("empty continuity block has no storage", coarse.rho_before.empty());
 }
 
+void test_snapshot_extractor_mixed_history() {
+  std::cout << "\n-- Snapshot extractor handles mixed transport plus reaction --\n";
+  constexpr int L = 4;
+  std::vector<int> before(static_cast<size_t>(L * L * L), 0);
+  std::vector<int> after(static_cast<size_t>(L * L * L), 0);
+  auto index = [=](int x, int y, int z) { return x * L * L + y * L + z; };
+
+  before[static_cast<size_t>(index(0, 0, 0))] = +1;
+  after[static_cast<size_t>(index(1, 1, 0))] = +1;
+  after[static_cast<size_t>(index(2, 2, 0))] = -1;
+
+  ftd::eft::DualCellContinuity fine;
+  const auto report =
+      ftd::eft::extract_moore_history_from_snapshots(L, before, after, fine);
+  const auto coarse = ftd::eft::block_dual_cell_continuity_b2(fine);
+  const auto fine_moments = ftd::eft::measure_operator_moments(fine);
+  const auto coarse_moments = ftd::eft::measure_operator_moments(coarse);
+
+  check("snapshot extraction is valid", report.valid);
+  check("one diagonal transport detected", report.transported_events == 1);
+  check("one reaction site detected", report.reaction_sites == 1);
+  check("no annihilation inferred", report.annihilation_pairs == 0);
+  check("fine mixed continuity closes",
+        ftd::eft::max_continuity_residual(fine) < 1e-12);
+  check("coarse mixed continuity closes",
+        ftd::eft::max_continuity_residual(coarse) < 1e-12);
+  check("reaction total is carried",
+        ftd::eft::total_reaction(fine) == -1 &&
+            ftd::eft::total_reaction(coarse) == -1);
+  check("fine moments see transport and reaction",
+        fine_moments.current_l1 > 0.0 && fine_moments.reaction_l1 > 0);
+  check("coarse moments stay closed",
+        coarse_moments.residual_linf < 1e-12);
+}
+
+void test_interval_accumulator_telescopes() {
+  std::cout << "\n-- Interval accumulator telescopes multi-step histories --\n";
+  ftd::eft::DualCellContinuity first(4);
+  move_x(first, 0, 0, 0, +1);
+
+  ftd::eft::DualCellContinuity second(4);
+  move_x(second, 1, 0, 0, +1);
+
+  ftd::eft::DualCellContinuity interval;
+  check("first interval step accumulates",
+        ftd::eft::accumulate_continuity_step(interval, first));
+  check("second interval step accumulates",
+        ftd::eft::accumulate_continuity_step(interval, second));
+
+  const auto coarse = ftd::eft::block_dual_cell_continuity_b2(interval);
+  const auto moments = ftd::eft::measure_operator_moments(interval);
+  check("interval starts at first state",
+        interval.rho_before[static_cast<size_t>(interval.index(0, 0, 0))] == 1);
+  check("interval ends at final state",
+        interval.rho_after[static_cast<size_t>(interval.index(2, 0, 0))] == 1);
+  check("interval current l1 counts both hops",
+        std::abs(ftd::eft::total_current_l1(interval) - 2.0) < 1e-12);
+  check("interval moments match current l1",
+        std::abs(moments.current_l1 - 2.0) < 1e-12);
+  check("interval continuity closes",
+        ftd::eft::max_continuity_residual(interval) < 1e-12);
+  check("blocked interval continuity closes",
+        ftd::eft::max_continuity_residual(coarse) < 1e-12);
+}
+
 }  // namespace
 
 int main() {
@@ -98,6 +164,8 @@ int main() {
 
   test_transport_and_reaction_blocking();
   test_invalid_size_returns_empty();
+  test_snapshot_extractor_mixed_history();
+  test_interval_accumulator_telescopes();
 
   std::cout << "\n================================================================\n";
   if (g_failures == 0) {
