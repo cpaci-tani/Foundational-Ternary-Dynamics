@@ -271,7 +271,7 @@ fig, axes = plt.subplots(1, 2, figsize=(20, 8))
 fig.suptitle('EINSTEIN: Does the Lattice Resonate at G*-Related Spacing?',
              color=ACCENT_COLOR, fontsize=16)
 
-GSTAR = 2.9586788  # Gamma(1/4)/Gamma(3/4)
+GSTAR = 2.958675119188639  # Gamma(1/4)/Gamma(3/4) — canonical
 
 # Sweep R from 20 to 100 for N=3
 Rs = np.arange(15, 101, 2)

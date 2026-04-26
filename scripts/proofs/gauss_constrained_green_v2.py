@@ -312,9 +312,14 @@ print("This is a SELF-CONSISTENCY equation for alpha in terms of the")
 print("lattice self-energy W_3 and the coupling G*.")
 print()
 
-# Let's verify
-alpha = 1/137.0361714582
-x_plus = 1/alpha
+# Let's verify. NOTE: tree-level alpha = 1/X_PLUS (master quadratic root, not
+# CODATA). The script tests algebraic self-consistency, so the tree value is
+# the right one — but pull it from the canonical module to avoid drift.
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from constants import X_PLUS
+alpha = 1.0 / X_PLUS  # tree-level
+x_plus = 1.0 / alpha
 print(f"  x_+ = 1/alpha = {x_plus:.10f}")
 print(f"  32*pi*W_3 = {32*np.pi*W3_exact:.10f}")
 print(f"  G* = {G_STAR:.10f}")
