@@ -26,7 +26,7 @@ void weak_transmutation_cpu(RenderBridge& rb) {
 
     if (stress > WEAK_THRESHOLD) {
       double p = 1.0 - std::exp(-(stress - WEAK_THRESHOLD) / K_B);
-      if (rb.uniform_(rb.rng_) < p) {
+      if (rb.rng_state_->sample_uniform() < p) {
         v.state = -v.state;
         if (rb.toggles.dual_substrate) {
           std::swap(v.flux_L, v.flux_R);
@@ -65,7 +65,7 @@ void pair_production_cpu(RenderBridge& rb) {
     if (jmag <= K_GENESIS) continue;
 
     double p = 1.0 - std::exp(-(jmag - K_GENESIS) / K_B);
-    if (rb.uniform_(rb.rng_) >= p) continue;
+    if (rb.rng_state_->sample_uniform() >= p) continue;
 
     // Geometric Pair Production: find the major axis of the flux vector
     int dx = 0, dy = 0, dz = 0;
@@ -92,7 +92,7 @@ void pair_production_cpu(RenderBridge& rb) {
     voxels[partner].wave_vel *= 0.5;
     v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag); // Consume potential energy
 
-    int pid = rb.next_particle_id_++;
+    int pid = rb.injector_.next_particle_id();
     // The +1 charge should be pushed downstream by the external field, and the -1 upstream.
     // The vector `d` points downstream. Therefore, the partner is downstream.
     // To oppose the external field (Vacuum Polarization), the dipole must point UPSTREAM.
@@ -104,7 +104,7 @@ void pair_production_cpu(RenderBridge& rb) {
 
     auto& p2 = voxels[partner];
     p2.state = +1;
-    p2.particle_id = rb.next_particle_id_++;
+    p2.particle_id = rb.injector_.next_particle_id();
     p2.pair_id = pid;
 
     p2.flux = v.flux * -1.0;

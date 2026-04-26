@@ -40,6 +40,40 @@ int idx3d(int x, int y, int z, int L) {
     return wrap(x, L) * L * L + wrap(y, L) * L + wrap(z, L);
 }
 
+// Compute effective damping coefficient at site i. Centralised so the
+// single-substrate phase_write, dual-substrate phase_write, and any future
+// stencil that needs damping share one source of truth for the Larmor
+// modulation formula.
+//
+//   eff_damp = (1 - DAMPING * larmor_mod)  if larmor active at i
+//            = damp                        otherwise
+//
+// where larmor_mod = clamp(LARMOR_FLOOR + K_LARMOR * a², 0, 1) and a is
+// the magnitude of the local acceleration (provided in `near_accel`).
+__device__ __forceinline__
+double effective_damping(int i, double damp,
+                         bool do_larmor, bool selective_damping,
+                         const uint8_t* __restrict__ near_particle,
+                         const double*  __restrict__ near_accel) {
+    if (do_larmor && selective_damping && near_particle[i]) {
+        const double a2 = near_accel[i] * near_accel[i];
+        const double larmor_mod = fmin(1.0, LARMOR_FLOOR + K_LARMOR * a2);
+        return 1.0 - DAMPING * larmor_mod;
+    }
+    return damp;
+}
+
+// Apply damping factor to a (flux, wave_vel) pair of 3-vectors. The single
+// and dual substrate kernels both perform this multiplicatively across all
+// 6 components; centralising it removes a 6-line block from each kernel.
+__device__ __forceinline__
+void scale_field_pair(double& fx, double& fy, double& fz,
+                      double& wx, double& wy, double& wz,
+                      double k) {
+    fx *= k; fy *= k; fz *= k;
+    wx *= k; wy *= k; wz *= k;
+}
+
 // ---------- Phase Read Kernel ----------
 // Computes delta_j = C_WAVE^2 * Laplacian(flux) + G_C * gradient(state)
 //                   + G_C * curl(state * velocity)
@@ -258,20 +292,14 @@ __global__ void phase_write_kernel(
         wv_y[i] = one_minus_gamma * wv_y[i] + sigma * langevin_noise[1*N + i];
         wv_z[i] = one_minus_gamma * wv_z[i] + sigma * langevin_noise[2*N + i];
     } else if (do_damping) {
-        bool should_damp = !selective_damping || (near_particle[i] != 0);
+        const bool should_damp = !selective_damping || (near_particle[i] != 0);
         if (should_damp) {
-            double eff_damp = damp;
-            if (do_larmor && selective_damping && near_particle[i]) {
-                double a2 = near_accel[i] * near_accel[i];
-                double larmor_mod = fmin(1.0, LARMOR_FLOOR + K_LARMOR * a2);
-                eff_damp = 1.0 - DAMPING * larmor_mod;
-            }
-            flux_x[i] *= eff_damp;
-            flux_y[i] *= eff_damp;
-            flux_z[i] *= eff_damp;
-            wv_x[i] *= eff_damp;
-            wv_y[i] *= eff_damp;
-            wv_z[i] *= eff_damp;
+            const double eff_damp = effective_damping(i, damp, do_larmor,
+                                                       selective_damping,
+                                                       near_particle, near_accel);
+            scale_field_pair(flux_x[i], flux_y[i], flux_z[i],
+                              wv_x[i], wv_y[i], wv_z[i],
+                              eff_damp);
         }
     }
 }
@@ -439,6 +467,7 @@ __global__ void genesis_kernel(
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
+    int* __restrict__ ledger_reaction,
     int next_pid,  // starting particle ID for this batch
     int L
 ) {
@@ -471,7 +500,11 @@ __global__ void genesis_kernel(
                        + (flux_y[yp] - flux_y[ym])
                        + (flux_z[zp] - flux_z[zm]));
 
-    state[i] = (div > 0) ? 1 : -1;  // Matches CPU: strictly > 0 (not >=)
+    const int8_t new_state = (div > 0) ? 1 : -1;  // Matches CPU: strictly > 0 (not >=)
+    state[i] = new_state;
+    if (ledger_reaction) {
+        atomicAdd(&ledger_reaction[i], static_cast<int>(new_state));
+    }
 
     // Assign spin from dominant curl component (z-first priority, matches CPU)
     double curl_x = 0.5 * ((flux_z[yp] - flux_z[ym]) - (flux_y[zp] - flux_y[zm]));
@@ -514,6 +547,7 @@ __global__ void evaporation_kernel(
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
+    int* __restrict__ ledger_reaction,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -541,7 +575,11 @@ __global__ void evaporation_kernel(
 
     constexpr double EVAP_THRESHOLD = K_B * K_B * 1e-6;
     if (local_energy < EVAP_THRESHOLD) {
+        const int8_t old_state = state[i];
         state[i] = 0;
+        if (ledger_reaction) {
+            atomicAdd(&ledger_reaction[i], -static_cast<int>(old_state));
+        }
         spin[i] = 0;
         color[i] = 0;
         particle_id[i] = -1;
@@ -799,19 +837,17 @@ __global__ void phase_write_dual_kernel(
 
     // Conditional damping on L and R independently
     if (do_damping) {
-        bool should = !selective_damping || (near_particle[i] != 0);
+        const bool should = !selective_damping || (near_particle[i] != 0);
         if (should) {
-            double eff_damp = damp;
-            // Larmor radiation: modulate damping at near-particle sites
-            if (do_larmor && selective_damping && near_particle[i]) {
-                double a2 = near_accel[i] * near_accel[i];
-                double larmor_mod = fmin(1.0, LARMOR_FLOOR + K_LARMOR * a2);
-                eff_damp = 1.0 - DAMPING * larmor_mod;
-            }
-            fL_x[i] *= eff_damp; fL_y[i] *= eff_damp; fL_z[i] *= eff_damp;
-            fR_x[i] *= eff_damp; fR_y[i] *= eff_damp; fR_z[i] *= eff_damp;
-            wvL_x[i] *= eff_damp; wvL_y[i] *= eff_damp; wvL_z[i] *= eff_damp;
-            wvR_x[i] *= eff_damp; wvR_y[i] *= eff_damp; wvR_z[i] *= eff_damp;
+            const double eff_damp = effective_damping(i, damp, do_larmor,
+                                                       selective_damping,
+                                                       near_particle, near_accel);
+            scale_field_pair(fL_x[i], fL_y[i], fL_z[i],
+                              wvL_x[i], wvL_y[i], wvL_z[i],
+                              eff_damp);
+            scale_field_pair(fR_x[i], fR_y[i], fR_z[i],
+                              wvR_x[i], wvR_y[i], wvR_z[i],
+                              eff_damp);
         }
     }
 
@@ -834,6 +870,7 @@ __global__ void genesis_dual_kernel(
     const double* __restrict__ random,
     int8_t* __restrict__ spin, int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
+    int* __restrict__ ledger_reaction,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -859,7 +896,11 @@ __global__ void genesis_dual_kernel(
     double psiL2 = fL_x[i]*fL_x[i] + fL_y[i]*fL_y[i];
     double psiR2 = fR_x[i]*fR_x[i] + fR_y[i]*fR_y[i];
     double chi = psiL2 - psiR2;
-    state[i] = (chi >= 0) ? 1 : -1;
+    const int8_t new_state = (chi >= 0) ? 1 : -1;
+    state[i] = new_state;
+    if (ledger_reaction) {
+        atomicAdd(&ledger_reaction[i], static_cast<int>(new_state));
+    }
 
     // Spin from curl of observable
     int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
@@ -942,6 +983,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_random,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+            bufs.d_ledger_reaction,
             0, L
         );
         CUDA_CHECK(cudaGetLastError());
@@ -954,6 +996,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
         bufs.d_locked,
         bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+        bufs.d_ledger_reaction,
         L
     );
     CUDA_CHECK(cudaGetLastError());
@@ -1004,6 +1047,7 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_random,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+            bufs.d_ledger_reaction,
             0, L
         );
         CUDA_CHECK(cudaGetLastError());
@@ -1016,6 +1060,7 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
         bufs.d_locked,
         bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+        bufs.d_ledger_reaction,
         L
     );
     CUDA_CHECK(cudaGetLastError());
@@ -1081,7 +1126,8 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
             bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_random,
-            bufs.d_spin, bufs.d_color, bufs.d_particle_id, L
+            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+            bufs.d_ledger_reaction, L
         );
         CUDA_CHECK(cudaGetLastError());
     }
@@ -1092,7 +1138,8 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
         bufs.d_locked,
-        bufs.d_spin, bufs.d_color, bufs.d_particle_id, L
+        bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+        bufs.d_ledger_reaction, L
     );
     CUDA_CHECK(cudaGetLastError());
 }
@@ -1174,6 +1221,7 @@ __global__ void weak_transmutation_kernel(
     double* __restrict__ wvR_x_mut,
     double* __restrict__ wvR_y_mut,
     double* __restrict__ wvR_z_mut,
+    int* __restrict__ ledger_reaction,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -1223,7 +1271,13 @@ __global__ void weak_transmutation_kernel(
     if (random[i] >= p) return;
 
     // Flip polarity
-    state[i] = -state[i];
+    const int8_t old_state = state[i];
+    const int8_t new_state = -old_state;
+    state[i] = new_state;
+    if (ledger_reaction) {
+        atomicAdd(&ledger_reaction[i],
+                  static_cast<int>(new_state) - static_cast<int>(old_state));
+    }
 
     // In dual mode, swap L/R flux to match new chirality
     if (dual_substrate) {
@@ -1274,6 +1328,7 @@ __global__ void pair_production_kernel(
     const double* __restrict__ flux_z,
     const double* __restrict__ random,
     int32_t* __restrict__ pair_id,
+    int* __restrict__ ledger_reaction,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -1329,6 +1384,10 @@ __global__ void pair_production_kernel(
     // Both claimed — assign matching pair_id (use lattice index as unique ID)
     pair_id[i] = i;
     pair_id[best_j] = i;
+    if (ledger_reaction) {
+        atomicAdd(&ledger_reaction[i], 1);
+        atomicAdd(&ledger_reaction[best_j], -1);
+    }
 }
 
 void launch_pair_production(GpuBuffers& bufs) {
@@ -1341,6 +1400,7 @@ void launch_pair_production(GpuBuffers& bufs) {
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_random,
         bufs.d_pair_id,
+        bufs.d_ledger_reaction,
         L
     );
     CUDA_CHECK(cudaGetLastError());
@@ -1361,6 +1421,7 @@ void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate) {
         bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
         bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
         bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
+        bufs.d_ledger_reaction,
         L
     );
     CUDA_CHECK(cudaGetLastError());

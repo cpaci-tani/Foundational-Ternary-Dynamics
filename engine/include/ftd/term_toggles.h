@@ -53,6 +53,12 @@ struct TermToggles {
     // docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md Section 7.
     double coulomb_charge_coupling = 1.0;
 
+    // ARCH-3 (2026-04-25): when true, RenderBridge::tick() THROWS on the
+    // first validate() failure instead of printing to stderr and continuing.
+    // Off by default to preserve legacy behaviour; tests/campaigns that need
+    // hard guarantees can enable it. The throw type is std::logic_error.
+    bool strict_validation = false;
+
     // Validates known dependency constraints between toggles.
     // Returns true if the combination is valid.
     // If err != nullptr, appends a human-readable description of each violation.

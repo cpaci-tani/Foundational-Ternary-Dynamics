@@ -41,6 +41,28 @@ int idx3d_d(int x, int y, int z, int L) {
     return wrap_d(x, L) * L * L + wrap_d(y, L) * L + wrap_d(z, L);
 }
 
+// X-major flat-index decomposition: i = ix*L*L + iy*L + iz.
+__device__ __forceinline__
+void decode_xyz_d(int idx, int L, int& ix, int& iy, int& iz) {
+    ix = idx / (L * L);
+    iy = (idx / L) % L;
+    iz = idx % L;
+}
+
+// Shortest-path delta on a periodic L^3 lattice. Outputs dx/dy/dz in
+// (-L/2, L/2]. Replaces the 3-line wrap pattern that previously appeared
+// 4× in this file (color, yukawa, exchange, triad) — single point of
+// correctness for periodic geometry.
+__device__ __forceinline__
+void periodic_delta_d(int ix, int iy, int iz,
+                      int jx, int jy, int jz,
+                      int L,
+                      int& dx, int& dy, int& dz) {
+    dx = jx - ix; if (dx >  L/2) dx -= L; if (dx < -L/2) dx += L;
+    dy = jy - iy; if (dy >  L/2) dy -= L; if (dy < -L/2) dy += L;
+    dz = jz - iz; if (dz >  L/2) dz -= L; if (dz < -L/2) dz += L;
+}
+
 // Byte-level atomicCAS: CUDA only supports 32-bit+ atomicCAS,
 // so we operate on the containing 32-bit word.
 __device__ __forceinline__
@@ -82,6 +104,53 @@ void atomicStore_byte(int8_t* addr, int8_t val) {
                               | (static_cast<unsigned int>(static_cast<unsigned char>(val)) << byte_offset);
         old_word = atomicCAS(word_addr, assumed, new_word);
     } while (old_word != assumed);
+}
+
+__device__ __forceinline__
+void ledger_add_face_current(double* current_x,
+                             double* current_y,
+                             double* current_z,
+                             int L,
+                             int x, int y, int z,
+                             int axis, int dir, int charge) {
+    if (dir == 0) return;
+    if (axis == 0) {
+        if (dir > 0) {
+            atomicAdd(&current_x[idx3d_d(x, y, z, L)], static_cast<double>(charge));
+        } else {
+            atomicAdd(&current_x[idx3d_d(x - 1, y, z, L)], -static_cast<double>(charge));
+        }
+    } else if (axis == 1) {
+        if (dir > 0) {
+            atomicAdd(&current_y[idx3d_d(x, y, z, L)], static_cast<double>(charge));
+        } else {
+            atomicAdd(&current_y[idx3d_d(x, y - 1, z, L)], -static_cast<double>(charge));
+        }
+    } else {
+        if (dir > 0) {
+            atomicAdd(&current_z[idx3d_d(x, y, z, L)], static_cast<double>(charge));
+        } else {
+            atomicAdd(&current_z[idx3d_d(x, y, z - 1, L)], -static_cast<double>(charge));
+        }
+    }
+}
+
+__device__ __forceinline__
+void ledger_route_moore_current(double* current_x,
+                                double* current_y,
+                                double* current_z,
+                                int L,
+                                int x, int y, int z,
+                                int dx, int dy, int dz,
+                                int charge) {
+    ledger_add_face_current(current_x, current_y, current_z, L,
+                            x, y, z, 0, dx, charge);
+    x = wrap_d(x + dx, L);
+    ledger_add_face_current(current_x, current_y, current_z, L,
+                            x, y, z, 1, dy, charge);
+    y = wrap_d(y + dy, L);
+    ledger_add_face_current(current_x, current_y, current_z, L,
+                            x, y, z, 2, dz, charge);
 }
 
 // ---------- Force Kernel ----------
@@ -237,6 +306,10 @@ __global__ void phase_movement_kernel(
     int8_t* __restrict__ color,
     int32_t* __restrict__ pair_id,
     double* __restrict__ accel_mag,
+    int* __restrict__ ledger_reaction,
+    double* __restrict__ ledger_current_x,
+    double* __restrict__ ledger_current_y,
+    double* __restrict__ ledger_current_z,
     double dt,
     int L
 ) {
@@ -247,6 +320,7 @@ __global__ void phase_movement_kernel(
 
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
     if (state[i] == 0 || locked[i]) return;
+    const int q = static_cast<int>(state[i]);
 
     // Accumulate remainder
     rem_x[i] += vel_x[i] * dt;
@@ -274,6 +348,10 @@ __global__ void phase_movement_kernel(
     int8_t old = atomicCAS_byte(&state[target], 0, state[i]);
 
     if (old == 0) {
+        ledger_route_moore_current(ledger_current_x, ledger_current_y,
+                                   ledger_current_z, L,
+                                   x, y, z, dx, dy, dz, q);
+
         // Successfully claimed target — transfer particle data
         vel_x[target] = vel_x[i];
         vel_y[target] = vel_y[i];
@@ -315,6 +393,9 @@ __global__ void phase_movement_kernel(
         pair_id[i] = -1;
         accel_mag[i] = 0.0;
     } else if (old == -state[i]) {
+        atomicAdd(&ledger_reaction[i], -q);
+        atomicAdd(&ledger_reaction[target], q);
+
         // Opposite charge at target: annihilation
         // Both particles return to void (use atomic store for thread safety)
         atomicStore_byte(&state[i], 0);
@@ -328,19 +409,32 @@ __global__ void phase_movement_kernel(
         spin[i] = 0; spin[target] = 0;
         color[i] = 0; color[target] = 0;
 
+        // Snapshot source/target flux into registers BEFORE scatter to avoid
+        // torn reads from concurrent threads that may also be writing to these
+        // sites. Without this, a second annihilating thread (e.g. the partner
+        // particle running its own movement step) can interleave atomicAdd
+        // operations on flux[i]/flux[target] with the read here, producing
+        // double-scatter and energy non-conservation.
+        const double src_fx = flux_x[i],     src_fy = flux_y[i],     src_fz = flux_z[i];
+        const double tgt_fx = flux_x[target], tgt_fy = flux_y[target], tgt_fz = flux_z[target];
+
+        // Zero source and target flux up-front so any concurrent reader sees a
+        // consistent post-annihilation state.
+        flux_x[i] = 0; flux_y[i] = 0; flux_z[i] = 0;
+        flux_x[target] = 0; flux_y[target] = 0; flux_z[target] = 0;
+
         // Scatter source flux to its 6 face neighbors
-        double sixth = 1.0 / 6.0;
+        const double sixth = 1.0 / 6.0;
         int nbrs_src[6] = {
             idx3d_d(x+1,y,z,L), idx3d_d(x-1,y,z,L),
             idx3d_d(x,y+1,z,L), idx3d_d(x,y-1,z,L),
             idx3d_d(x,y,z+1,L), idx3d_d(x,y,z-1,L)
         };
         for (int n = 0; n < 6; ++n) {
-            atomicAdd(&flux_x[nbrs_src[n]], flux_x[i] * sixth);
-            atomicAdd(&flux_y[nbrs_src[n]], flux_y[i] * sixth);
-            atomicAdd(&flux_z[nbrs_src[n]], flux_z[i] * sixth);
+            atomicAdd(&flux_x[nbrs_src[n]], src_fx * sixth);
+            atomicAdd(&flux_y[nbrs_src[n]], src_fy * sixth);
+            atomicAdd(&flux_z[nbrs_src[n]], src_fz * sixth);
         }
-        flux_x[i] = 0; flux_y[i] = 0; flux_z[i] = 0;
 
         // Scatter target flux to its 6 face neighbors
         int nbrs_tgt[6] = {
@@ -349,11 +443,10 @@ __global__ void phase_movement_kernel(
             idx3d_d(tx,ty,tz+1,L), idx3d_d(tx,ty,tz-1,L)
         };
         for (int n = 0; n < 6; ++n) {
-            atomicAdd(&flux_x[nbrs_tgt[n]], flux_x[target] * sixth);
-            atomicAdd(&flux_y[nbrs_tgt[n]], flux_y[target] * sixth);
-            atomicAdd(&flux_z[nbrs_tgt[n]], flux_z[target] * sixth);
+            atomicAdd(&flux_x[nbrs_tgt[n]], tgt_fx * sixth);
+            atomicAdd(&flux_y[nbrs_tgt[n]], tgt_fy * sixth);
+            atomicAdd(&flux_z[nbrs_tgt[n]], tgt_fz * sixth);
         }
-        flux_x[target] = 0; flux_y[target] = 0; flux_z[target] = 0;
     } else {
         // Same-sign collision → elastic bounce: reverse velocity along movement axis
         if (dx != 0) vel_x[i] = -vel_x[i];
@@ -431,7 +524,8 @@ __global__ void color_force_kernel(
     if (pi >= num_particles) return;
 
     int i = plist_idx[pi];
-    int ix = i / (L * L), iy = (i / L) % L, iz = i % L;  // X-major decomposition
+    int ix, iy, iz;
+    decode_xyz_d(i, L, ix, iy, iz);
     int8_t ci = color_arr[i];
 
     double fx = 0.0, fy = 0.0, fz = 0.0;
@@ -439,12 +533,11 @@ __global__ void color_force_kernel(
     for (int pj = 0; pj < num_particles; ++pj) {
         if (pj == pi) continue;
         int j = plist_idx[pj];
-        int jx = j / (L * L), jy = (j / L) % L, jz = j % L;  // X-major decomposition
+        int jx, jy, jz;
+        decode_xyz_d(j, L, jx, jy, jz);
 
-        // Shortest distance with periodic wrapping
-        int dx = jx - ix; if (dx > L/2) dx -= L; if (dx < -L/2) dx += L;
-        int dy = jy - iy; if (dy > L/2) dy -= L; if (dy < -L/2) dy += L;
-        int dz = jz - iz; if (dz > L/2) dz -= L; if (dz < -L/2) dz += L;
+        int dx, dy, dz;
+        periodic_delta_d(ix, iy, iz, jx, jy, jz, L, dx, dy, dz);
         double r2 = (double)(dx*dx + dy*dy + dz*dz);
         double r = sqrt(r2);
         if (r < 1.0) r = 1.0;
@@ -499,7 +592,8 @@ __global__ void yukawa_force_kernel(
     if (pi >= num_particles) return;
 
     int i = plist_idx[pi];
-    int ix = i / (L * L), iy = (i / L) % L, iz = i % L;  // X-major decomposition
+    int ix, iy, iz;
+    decode_xyz_d(i, L, ix, iy, iz);
 
     double fx = 0.0, fy = 0.0, fz = 0.0;
 
@@ -510,11 +604,11 @@ __global__ void yukawa_force_kernel(
     for (int pj = 0; pj < num_particles; ++pj) {
         if (pj == pi) continue;
         int j = plist_idx[pj];
-        int jx = j / (L * L), jy = (j / L) % L, jz = j % L;  // X-major decomposition
+        int jx, jy, jz;
+        decode_xyz_d(j, L, jx, jy, jz);
 
-        int dx = jx - ix; if (dx > L/2) dx -= L; if (dx < -L/2) dx += L;
-        int dy = jy - iy; if (dy > L/2) dy -= L; if (dy < -L/2) dy += L;
-        int dz = jz - iz; if (dz > L/2) dz -= L; if (dz < -L/2) dz += L;
+        int dx, dy, dz;
+        periodic_delta_d(ix, iy, iz, jx, jy, jz, L, dx, dy, dz);
         double r2 = (double)(dx*dx + dy*dy + dz*dz);
         double r = sqrt(r2);
         if (r < 1.0) r = 1.0;
@@ -555,7 +649,8 @@ __global__ void exchange_force_kernel(
     if (pi >= num_particles) return;
 
     int i = plist_idx[pi];
-    int ix = i / (L * L), iy = (i / L) % L, iz = i % L;  // X-major decomposition
+    int ix, iy, iz;
+    decode_xyz_d(i, L, ix, iy, iz);
     int8_t si = spin_arr[i];
     if (si == 0) return;  // No spin → no exchange
 
@@ -570,11 +665,10 @@ __global__ void exchange_force_kernel(
         int j = plist_idx[pj];
         if (spin_arr[j] != si) continue;  // Only same-spin
 
-        int jx = j / (L * L), jy = (j / L) % L, jz = j % L;  // X-major decomposition
-
-        int dx = jx - ix; if (dx > L/2) dx -= L; if (dx < -L/2) dx += L;
-        int dy = jy - iy; if (dy > L/2) dy -= L; if (dy < -L/2) dy += L;
-        int dz = jz - iz; if (dz > L/2) dz -= L; if (dz < -L/2) dz += L;
+        int jx, jy, jz;
+        decode_xyz_d(j, L, jx, jy, jz);
+        int dx, dy, dz;
+        periodic_delta_d(ix, iy, iz, jx, jy, jz, L, dx, dy, dz);
         double r2 = (double)(dx*dx + dy*dy + dz*dz);
         double r = sqrt(r2);
         if (r < 1.0) r = 1.0;
@@ -611,7 +705,8 @@ __global__ void triad_detection_kernel(
 
     int i = plist_idx[pi];
     int8_t si = state[i];
-    int ix = i / (L * L), iy = (i / L) % L, iz = i % L;  // X-major decomposition
+    int ix, iy, iz;
+    decode_xyz_d(i, L, ix, iy, iz);
 
     const double TRIAD_RADIUS = ftd::TRIAD_RADIUS;
 
@@ -626,10 +721,10 @@ __global__ void triad_detection_kernel(
         int j = plist_idx[pj];
         if (state[j] != si) continue;
 
-        int jx = j / (L * L), jy = (j / L) % L, jz = j % L;  // X-major decomposition
-        int dx = jx - ix; if (dx > L/2) dx -= L; if (dx < -L/2) dx += L;
-        int dy = jy - iy; if (dy > L/2) dy -= L; if (dy < -L/2) dy += L;
-        int dz = jz - iz; if (dz > L/2) dz -= L; if (dz < -L/2) dz += L;
+        int jx, jy, jz;
+        decode_xyz_d(j, L, jx, jy, jz);
+        int dx, dy, dz;
+        periodic_delta_d(ix, iy, iz, jx, jy, jz, L, dx, dy, dz);
         double r2 = (double)(dx*dx + dy*dy + dz*dz);
 
         if (r2 < best1_r2) {
@@ -702,6 +797,8 @@ void launch_phase_movement(GpuBuffers& bufs, double dt) {
         bufs.d_locked,
         bufs.d_particle_id, bufs.d_spin, bufs.d_color,
         bufs.d_pair_id, bufs.d_accel_mag,
+        bufs.d_ledger_reaction,
+        bufs.d_ledger_current_x, bufs.d_ledger_current_y, bufs.d_ledger_current_z,
         dt, L
     );
     CUDA_CHECK(cudaGetLastError());

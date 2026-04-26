@@ -129,6 +129,15 @@ struct GpuBuffers {
     // --- Pair production tracking ---
     int32_t*  d_pair_id       = nullptr;  // pair ID (-1 = unpaired) [N]
 
+    // --- Native EFT continuity event ledger ---
+    // Reset immediately before GPU movement. Kernels write integrated
+    // one-tick currents/reactions directly, avoiding host snapshot inference.
+    int*      d_ledger_rho_before = nullptr;
+    int*      d_ledger_reaction   = nullptr;
+    double*   d_ledger_current_x  = nullptr;
+    double*   d_ledger_current_y  = nullptr;
+    double*   d_ledger_current_z  = nullptr;
+
     // Lifecycle
     void allocate(int lattice_size);
     void free();
@@ -150,6 +159,15 @@ struct GpuBuffers {
 
     // Download phi_latency from device (Wave 5: GPU latency Poisson)
     void download_phi_latency(std::vector<double>& out) const;
+
+    // Native EFT continuity event ledger helpers
+    void reset_continuity_ledger();
+    void download_continuity_ledger(std::vector<int>& rho_before,
+                                    std::vector<int>& rho_after,
+                                    std::vector<int>& reaction,
+                                    std::vector<double>& current_x,
+                                    std::vector<double>& current_y,
+                                    std::vector<double>& current_z) const;
 
     // Precompute Green's function for FFT Poisson solver
     void precompute_green_function();
