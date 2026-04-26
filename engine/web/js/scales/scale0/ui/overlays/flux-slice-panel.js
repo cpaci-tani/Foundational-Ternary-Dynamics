@@ -55,6 +55,11 @@ export class FluxSlicePanel {
         this._slots = null; // { xy: {canvas, ctx, imgData, label, max}, xz: ..., yz: ... }
         this._rgbaBufs = null; // per-plane Uint8ClampedArray reused across frames
 
+        // Per-axis visibility: each plane (xy, xz, yz) can be independently
+        // toggled inside the panel via the header chips. When OFF the tile
+        // is hidden AND its sampling is skipped entirely (so no bridge cost).
+        this._axisVisible = { xy: true, xz: true, yz: true };
+
         // Track a global rolling max for stable autoscale — stops the heatmap
         // from re-normalizing every frame (which would make a propagating
         // wavefront look static). Bleeds back to the per-frame max with a
@@ -62,6 +67,8 @@ export class FluxSlicePanel {
         this._globalMax = 0;
         this._maxDecay = 0.985;
     }
+
+    static get AXES() { return ['xy', 'xz', 'yz']; }
 
     // ── Mounting ──────────────────────────────────────────────────────
 
@@ -80,6 +87,17 @@ export class FluxSlicePanel {
         panel.innerHTML = `
             <div class="flux-slice-header">
                 <span class="flux-slice-title">Flux Slices · |J|</span>
+                <div class="flux-slice-axis-toggles" role="group" aria-label="Axis toggles">
+                    <button type="button" class="flux-slice-axis-btn active"
+                            data-axis="xy" aria-pressed="true"
+                            title="Toggle xy plane (z=L/2)">xy</button>
+                    <button type="button" class="flux-slice-axis-btn active"
+                            data-axis="xz" aria-pressed="true"
+                            title="Toggle xz plane (y=L/2)">xz</button>
+                    <button type="button" class="flux-slice-axis-btn active"
+                            data-axis="yz" aria-pressed="true"
+                            title="Toggle yz plane (x=L/2)">yz</button>
+                </div>
                 <button type="button" class="flux-slice-close" aria-label="Hide flux slices">×</button>
             </div>
             <div class="flux-slice-grid">
@@ -118,7 +136,35 @@ export class FluxSlicePanel {
         panel.querySelector('.flux-slice-close')
             ?.addEventListener('click', () => this.setVisible(false));
 
+        // Axis toggles — independent xy/xz/yz visibility.
+        panel.querySelectorAll('.flux-slice-axis-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const axis = btn.dataset.axis;
+                if (!axis || !FluxSlicePanel.AXES.includes(axis)) return;
+                this.setAxisVisible(axis, !this._axisVisible[axis]);
+            });
+        });
+
         return panel;
+    }
+
+    setAxisVisible(axis, on) {
+        if (!FluxSlicePanel.AXES.includes(axis)) return;
+        this._axisVisible[axis] = !!on;
+        if (this._panel) {
+            const tile = this._panel.querySelector(
+                `.flux-slice-tile[data-plane="${axis}"]`);
+            if (tile) tile.classList.toggle('axis-hidden', !this._axisVisible[axis]);
+            const btn = this._panel.querySelector(
+                `.flux-slice-axis-btn[data-axis="${axis}"]`);
+            if (btn) {
+                btn.classList.toggle('active', this._axisVisible[axis]);
+                btn.setAttribute('aria-pressed', this._axisVisible[axis] ? 'true' : 'false');
+            }
+        }
+        // Force a fresh paint so a just-revealed tile picks up the current
+        // frame instead of waiting for the next `updateEvery` boundary.
+        if (this._axisVisible[axis]) this.frameCount = 0;
     }
 
     _tileHTML(key, label) {
@@ -200,19 +246,20 @@ export class FluxSlicePanel {
         const diag = bridge.getDiagnostics?.() ?? {};
         const tick = (diag.tick ?? 0) | 0;
 
-        // Three slices. Bridge axis convention from getFluxSlice:
+        // Three slices, sampled only for axes the user has visible.
+        // Bridge axis convention from getFluxSlice:
         //   axis=0 → x = index, plane spans (y, z)   → "yz"
         //   axis=1 → y = index, plane spans (x, z)   → "xz"
         //   axis=2 → z = index, plane spans (x, y)   → "xy"
         const slices = {
-            yz: bridge.getFluxSlice?.(0, mid),
-            xz: bridge.getFluxSlice?.(1, mid),
-            xy: bridge.getFluxSlice?.(2, mid),
+            yz: this._axisVisible.yz ? bridge.getFluxSlice?.(0, mid) : null,
+            xz: this._axisVisible.xz ? bridge.getFluxSlice?.(1, mid) : null,
+            xy: this._axisVisible.xy ? bridge.getFluxSlice?.(2, mid) : null,
         };
 
-        // Pass 1: per-frame max, fold into rolling global max.
+        // Pass 1: per-frame max over visible axes, fold into rolling global max.
         let frameMax = 0;
-        for (const key of ['xy', 'xz', 'yz']) {
+        for (const key of FluxSlicePanel.AXES) {
             const s = slices[key];
             if (!s || s.length === 0) continue;
             for (let i = 0; i < s.length; i++) {
@@ -225,8 +272,9 @@ export class FluxSlicePanel {
         this._globalMax = Math.max(this._globalMax * this._maxDecay, frameMax);
         const norm = this._globalMax > FLOOR_FRAC ? 1 / this._globalMax : 0;
 
-        // Pass 2: paint each tile.
-        for (const key of ['xy', 'xz', 'yz']) {
+        // Pass 2: paint each visible tile.
+        for (const key of FluxSlicePanel.AXES) {
+            if (!this._axisVisible[key]) continue;
             this._paintSlice(key, slices[key], N, norm, frameMax, tick);
         }
 
