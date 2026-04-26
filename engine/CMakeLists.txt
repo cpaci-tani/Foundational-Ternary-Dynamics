@@ -711,6 +711,56 @@ ftd_add_test(_repro_gpu_empty_bridge tests/_repro_gpu_empty_bridge.cpp
 ftd_add_test(test_langevin_equipartition tests/test_langevin_equipartition.cpp
              CTEST_NAME langevin_equipartition TIMEOUT 600 LABELS native eft)
 
+# Cluster A — sublattice helpers (FTD-0093). Parity classification +
+# neighbors_8_corner; load-bearing for Mechanism C / BCC sub-stencil
+# experiment. See engine/include/ftd/sublattice.h.
+ftd_add_test(test_sublattice_helpers tests/test_sublattice_helpers.cpp
+             CTEST_NAME sublattice_helpers TIMEOUT 60 LABELS native eft)
+
+# Cluster A — sublattice-projected Laplacians (FTD-0093). Verifies
+# Taylor consistency, plane-wave eigenvalues, and dispatch agreement
+# for SC / FCC / BCC / FULL stencil modes.
+ftd_add_test(test_sublattice_laplacian tests/test_sublattice_laplacian.cpp
+             CTEST_NAME sublattice_laplacian TIMEOUT 60 LABELS native eft)
+
+# Cluster A — Langevin sublattice filter (FTD-0093). Verifies that with
+# langevin_site_filter = BCC_SITES, only BCC voxels equilibrate to <|v|^2>=3T
+# while SC/FCC voxels remain unfilled. Confound-check infrastructure for
+# PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md.
+ftd_add_test(test_langevin_sublattice_equipartition tests/test_langevin_sublattice_equipartition.cpp
+             CTEST_NAME langevin_sublattice_equipartition TIMEOUT 600 LABELS native eft)
+
+# Cluster A — sublattice + diagonal correlators (FTD-0093). Validates
+# spatial_flux_correlation_sublattice and sum_flux_energy_sublattice for
+# axis vs body-diagonal displacements and parity-class filters. Required
+# infrastructure for the BCC band-spectrum campaign.
+ftd_add_test(test_correlations_diagonal tests/test_correlations_diagonal.cpp
+             CTEST_NAME correlations_diagonal TIMEOUT 60 LABELS native eft)
+
+# Cluster A — two-state spectrum extractors (FTD-0093). Verifies Prony
+# and GEVP extractors recover input eigenvalues to 1% on synthetic data,
+# and that a wrong-ratio synthesis is rejected. Required for the
+# campaign's master-quadratic falsifier (target ratio 45.31).
+ftd_add_test(test_two_state_extraction tests/test_two_state_extraction.cpp
+             CTEST_NAME two_state_extraction TIMEOUT 30 LABELS native eft)
+
+# Cluster A — BCC band-spectrum campaign (FTD-0093). Smoke-test harness
+# implementing PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md. Thermalizes σ_BCC
+# (and SC/FCC/FULL controls), extracts two-state Prony spectrum, emits
+# CSV. Smoke parameters L=16, n_seeds=2 fit within 1800 s; publication
+# run needs L>=24, n_seeds>=8 and a separately-tagged invocation.
+ftd_add_test(campaign_bcc_band_spectrum tests/campaign_bcc_band_spectrum.cpp
+             CTEST_NAME bcc_band_spectrum TIMEOUT 1800 LABELS native eft)
+
+# β-function measurement protocol smoke test (Phase 2 of EFT Recovery
+# Program). Implements PROTOCOL_BETA_MEASUREMENT.md: Langevin thermal
+# ensemble → measure_alpha_eff_on_bg at two lattice sizes → extract β
+# = (g(L/b) − g(L)) / log(b). Smoke-test parameters (L=32, 4 seeds,
+# 5000-tick burn, 200-tick probe) keep CPU wall time within 1800 s;
+# publishable measurement requires WSL2 + larger ensemble.
+ftd_add_test(campaign_beta_measurement tests/campaign_beta_measurement.cpp
+             CTEST_NAME beta_measurement TIMEOUT 1800 LABELS native eft)
+
 # Walsh–Hadamard / Clifford anticommutator measurement (FTD-0061 falsifier).
 # Excites the three weight-1 WH modes on a 2^3 block, applies in two orders,
 # measures whether the engine-induced product satisfies {e_i,e_j} = 2δ_{ij}·1.
@@ -1148,6 +1198,9 @@ add_executable(test_action_stationarity tests/test_action_stationarity.cpp)
 target_link_libraries(test_action_stationarity PRIVATE ftd_core)
 add_executable(test_asymptotic_freedom tests/test_asymptotic_freedom.cpp)
 target_link_libraries(test_asymptotic_freedom PRIVATE ftd_core)
+add_executable(test_force_diag_parity tests/test_force_diag_parity.cpp)
+target_link_libraries(test_force_diag_parity PRIVATE ftd_core)
+add_test(NAME force_diag_parity COMMAND test_force_diag_parity)
 add_executable(test_atom_toggles tests/test_atom_toggles.cpp)
 target_link_libraries(test_atom_toggles PRIVATE ftd_core)
 add_executable(test_atomic_energy tests/test_atomic_energy.cpp)

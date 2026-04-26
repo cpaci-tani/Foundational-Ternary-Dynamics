@@ -120,6 +120,23 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_near_particle, N * sizeof(uint8_t)));
     CUDA_CHECK(cudaMalloc(&d_near_accel, N * sizeof(double)));
 
+    // Force-diagnostic mirrors (see gpu_buffers.h header note)
+    CUDA_CHECK(cudaMalloc(&d_fd_coulomb_x,  N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_coulomb_y,  N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_coulomb_z,  N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_strong_x,   N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_strong_y,   N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_strong_z,   N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_magnetic_x, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_magnetic_y, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_magnetic_z, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_gravity_x,  N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_gravity_y,  N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_gravity_z,  N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_exchange_x, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_exchange_y, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_fd_exchange_z, N * sizeof(double)));
+
     // FFT workspace
     CUDA_CHECK(cudaMalloc(&d_fft_buf, N * sizeof(cufftDoubleComplex)));
     CUDA_CHECK(cudaMalloc(&d_fft_buf_f, N * sizeof(cufftComplex)));
@@ -205,6 +222,22 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_wave_vel_weak_z, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_near_particle, 0, N * sizeof(uint8_t)));
     CUDA_CHECK(cudaMemset(d_near_accel, 0, N * sizeof(double)));
+    // Force-diagnostic mirrors
+    CUDA_CHECK(cudaMemset(d_fd_coulomb_x,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_coulomb_y,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_coulomb_z,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_strong_x,   0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_strong_y,   0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_strong_z,   0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_magnetic_x, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_magnetic_y, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_magnetic_z, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_gravity_x,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_gravity_y,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_gravity_z,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_exchange_x, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_exchange_y, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_exchange_z, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_random, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_langevin_noise, 0, 3 * N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_plist_idx, 0, MAX_PARTICLES * sizeof(int)));
@@ -278,6 +311,21 @@ void GpuBuffers::free() {
     if (d_wave_vel_weak_z) { cudaFree(d_wave_vel_weak_z); d_wave_vel_weak_z = nullptr; }
     if (d_near_particle) { cudaFree(d_near_particle); d_near_particle = nullptr; }
     if (d_near_accel)    { cudaFree(d_near_accel); d_near_accel = nullptr; }
+    if (d_fd_coulomb_x)  { cudaFree(d_fd_coulomb_x);  d_fd_coulomb_x  = nullptr; }
+    if (d_fd_coulomb_y)  { cudaFree(d_fd_coulomb_y);  d_fd_coulomb_y  = nullptr; }
+    if (d_fd_coulomb_z)  { cudaFree(d_fd_coulomb_z);  d_fd_coulomb_z  = nullptr; }
+    if (d_fd_strong_x)   { cudaFree(d_fd_strong_x);   d_fd_strong_x   = nullptr; }
+    if (d_fd_strong_y)   { cudaFree(d_fd_strong_y);   d_fd_strong_y   = nullptr; }
+    if (d_fd_strong_z)   { cudaFree(d_fd_strong_z);   d_fd_strong_z   = nullptr; }
+    if (d_fd_magnetic_x) { cudaFree(d_fd_magnetic_x); d_fd_magnetic_x = nullptr; }
+    if (d_fd_magnetic_y) { cudaFree(d_fd_magnetic_y); d_fd_magnetic_y = nullptr; }
+    if (d_fd_magnetic_z) { cudaFree(d_fd_magnetic_z); d_fd_magnetic_z = nullptr; }
+    if (d_fd_gravity_x)  { cudaFree(d_fd_gravity_x);  d_fd_gravity_x  = nullptr; }
+    if (d_fd_gravity_y)  { cudaFree(d_fd_gravity_y);  d_fd_gravity_y  = nullptr; }
+    if (d_fd_gravity_z)  { cudaFree(d_fd_gravity_z);  d_fd_gravity_z  = nullptr; }
+    if (d_fd_exchange_x) { cudaFree(d_fd_exchange_x); d_fd_exchange_x = nullptr; }
+    if (d_fd_exchange_y) { cudaFree(d_fd_exchange_y); d_fd_exchange_y = nullptr; }
+    if (d_fd_exchange_z) { cudaFree(d_fd_exchange_z); d_fd_exchange_z = nullptr; }
     if (d_fft_buf)       { cudaFree(d_fft_buf); d_fft_buf = nullptr; }
     if (d_fft_buf_f)     { cudaFree(d_fft_buf_f); d_fft_buf_f = nullptr; }
     if (d_green)         { cudaFree(d_green); d_green = nullptr; }
@@ -663,6 +711,59 @@ __global__ void kernel_precompute_green(double* green, int L) {
 
     // Store 1/G for spectral division. DC component (k=0,0,0) → 0 (gauge freedom)
     green[idx] = (kx == 0 && ky == 0 && kz == 0) ? 0.0 : 1.0 / G;
+}
+
+// ---------- Force-Diag Reset / Download ----------
+
+void GpuBuffers::reset_force_diag() {
+    // Zero all 15 component arrays so the next tick's force kernels see a
+    // clean slate — matches the per-tick semantics callers expect when they
+    // read force_diag_at(...) after tick(). State==0 voxels stay zero, which
+    // is the natural default.
+    CUDA_CHECK(cudaMemset(d_fd_coulomb_x,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_coulomb_y,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_coulomb_z,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_strong_x,   0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_strong_y,   0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_strong_z,   0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_magnetic_x, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_magnetic_y, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_magnetic_z, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_gravity_x,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_gravity_y,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_gravity_z,  0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_exchange_x, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_exchange_y, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_fd_exchange_z, 0, N * sizeof(double)));
+}
+
+void GpuBuffers::download_force_diag(
+    std::vector<double>& fc_x, std::vector<double>& fc_y, std::vector<double>& fc_z,
+    std::vector<double>& fs_x, std::vector<double>& fs_y, std::vector<double>& fs_z,
+    std::vector<double>& fm_x, std::vector<double>& fm_y, std::vector<double>& fm_z,
+    std::vector<double>& fg_x, std::vector<double>& fg_y, std::vector<double>& fg_z,
+    std::vector<double>& fe_x, std::vector<double>& fe_y, std::vector<double>& fe_z) const {
+    fc_x.resize(N); fc_y.resize(N); fc_z.resize(N);
+    fs_x.resize(N); fs_y.resize(N); fs_z.resize(N);
+    fm_x.resize(N); fm_y.resize(N); fm_z.resize(N);
+    fg_x.resize(N); fg_y.resize(N); fg_z.resize(N);
+    fe_x.resize(N); fe_y.resize(N); fe_z.resize(N);
+    const size_t bytes = N * sizeof(double);
+    CUDA_CHECK(cudaMemcpy(fc_x.data(), d_fd_coulomb_x,  bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fc_y.data(), d_fd_coulomb_y,  bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fc_z.data(), d_fd_coulomb_z,  bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fs_x.data(), d_fd_strong_x,   bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fs_y.data(), d_fd_strong_y,   bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fs_z.data(), d_fd_strong_z,   bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fm_x.data(), d_fd_magnetic_x, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fm_y.data(), d_fd_magnetic_y, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fm_z.data(), d_fd_magnetic_z, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fg_x.data(), d_fd_gravity_x,  bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fg_y.data(), d_fd_gravity_y,  bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fg_z.data(), d_fd_gravity_z,  bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fe_x.data(), d_fd_exchange_x, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fe_y.data(), d_fd_exchange_y, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(fe_z.data(), d_fd_exchange_z, bytes, cudaMemcpyDeviceToHost));
 }
 
 void GpuBuffers::precompute_green_function() {

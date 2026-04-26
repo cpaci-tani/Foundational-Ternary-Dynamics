@@ -230,7 +230,7 @@ __global__ void compute_latency_rhs(
     rhs[i] = four_pi_G_kB * abs_s;
 }
 
-// ---------- Convert phi_latency to voxel.latency = sqrt(clamp(|phi|, 0, 0.998)) ----------
+// ---------- Convert phi_latency to voxel.latency = sqrt(clamp(|phi|, 0, LATENCY_HORIZON_CLAMP)) ----------
 
 __global__ void latency_to_voxel_kernel(
     double* __restrict__ voxel_latency,
@@ -241,7 +241,7 @@ __global__ void latency_to_voxel_kernel(
     if (i >= N) return;
     double phi_val = phi_latency[i];
     double abs_phi = phi_val < 0.0 ? -phi_val : phi_val;
-    double clamped = abs_phi > 0.998 ? 0.998 : abs_phi;
+    double clamped = abs_phi > LATENCY_HORIZON_CLAMP ? LATENCY_HORIZON_CLAMP : abs_phi;
     voxel_latency[i] = sqrt(clamped);
 }
 
@@ -427,7 +427,7 @@ void launch_solve_coulomb(GpuBuffers& bufs,
 // ---------- Launcher: Latency Poisson ----------
 //
 // Solves laplacian(phi) = 4*pi*G * K_B * |state| for the gravitational
-// potential phi_latency, then writes voxel.latency = sqrt(clamp(|phi|, 0, 0.998)).
+// potential phi_latency, then writes voxel.latency = sqrt(clamp(|phi|, 0, LATENCY_HORIZON_CLAMP)).
 //
 // This is the GPU counterpart of RenderBridge::solve_latency_poisson()
 // (engine/src/render_bridge.cpp:696-747). It unblocks every test that
@@ -456,7 +456,7 @@ void launch_solve_latency(GpuBuffers& bufs,
                         bufs.d_fft_buf_f, bufs.d_green,
                         plan_fwd_f, plan_inv_f, N);
 
-    // Step 3: Convert phi_latency → voxel.latency via sqrt(clamp(|phi|, 0, 0.998))
+    // Step 3: Convert phi_latency → voxel.latency via sqrt(clamp(|phi|, 0, LATENCY_HORIZON_CLAMP))
     latency_to_voxel_kernel<<<blocks, threads>>>(
         bufs.d_latency, bufs.d_phi_latency, N
     );
