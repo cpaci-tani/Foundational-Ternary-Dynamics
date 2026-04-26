@@ -1,7 +1,7 @@
 # FTD Native EFT Checklist
 
-**Date:** 2026-04-24
-**Status:** [PARTIAL] Native Gaussian bridge and GPU full-tick ledgers are in place; full nonlinear EFT remains open.
+**Date:** 2026-04-26 (last: 2026-04-24)
+**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4 fully checked 2026-04-26); GPU full-tick ledgers are in place; full nonlinear EFT remains open.
 
 This checklist tracks what is required for FTD to count as a real, native EFT
 rather than a collection of projected continuum comparisons. It follows the
@@ -65,8 +65,8 @@ finite-volume/blocking EFT of FTD histories.
 - [x] Linear generator derived for Gaussian response flow.
 - [x] b=2 Gaussian response flow closes for the canonical couplings.
 - [x] Response flow tests pass in engine.
-- [ ] Re-run and archive a fresh full campaign table after the GPU-ledger changes.
-- [ ] Decide whether Gaussian fixed-point data is a theorem-level result or a measured engine result.
+- [x] Re-run and archive a fresh full campaign table after the GPU-ledger changes. **2026-04-26 — 21/21 Gaussian-flow ctests PASS on GPU (RTX 5090, commit 347a38f). Headline `nonlinear_flow_multiscale` reproduces FTD-0070 verdict: β consistent with 0 within 1σ at b ∈ {1,2,4,8}, K(b+1)/K(b) ratios stable. Note: 70-75 % uniform level shift in E_b vs. FTD-0070 baseline (commit 347a38f stencil-weights derivation moved an internal normalization); fixed-point classification unchanged. Per-test logs + meta.json archived in `engine/results/gaussian_expansion_2026-04-26/`. Inventory: `docs/theory/10_eft_program/GAUSSIAN_EXPANSION_DATA_INVENTORY.md`.**
+- [x] Decide whether Gaussian fixed-point data is a theorem-level result or a measured engine result. **2026-04-26 — both. The bare-tuple statement `(C_L, K_T, Z_j, g_sJ)(b) = (1,1,1,1)` for the bare linear generator under the dual-cell b=2 blocking map is a [THEOREM] of the finite-volume Wilsonian map (`SPEC_FTD_NATIVE_BLOCKING_MAP.md` lemmas; `native_response_flow` + `native_blocking_map` tests verify floating-point closure). The Gaussian-fixed-point *behavior on a full nonlinear Langevin ensemble* is [MEASURED] (FTD-0070 + 2026-04-26 GPU rerun). See `GAUSSIAN_EXPANSION_DATA_INVENTORY.md` §6 for the per-component classification.**
 
 ## 5. Operator Basis
 
