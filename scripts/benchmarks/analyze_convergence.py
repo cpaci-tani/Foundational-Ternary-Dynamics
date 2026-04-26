@@ -10,10 +10,9 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
-try:
-    from constants import ALPHA, G_STAR, X_PLUS
-except ImportError:
-    ALPHA = 1.0 / 137.035999084; G_STAR = 2.9586830685; X_PLUS = 137.036
+# Hard import: same rationale as benchmark_engine_vs_theory.py. The fallback
+# was carrying stale 2026-04-17 values; require canonical constants.py.
+from constants import ALPHA, G_STAR, X_PLUS  # noqa: E402
 
 RESULTS_DIR = Path(__file__).parent / "results"
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)

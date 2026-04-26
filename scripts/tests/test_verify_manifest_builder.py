@@ -25,12 +25,12 @@ def test_hard_row_must_list_inputs_used():
     rows = [{
         "id": "alpha_inv", "tier": "hard", "epistemic": "THEOREM",
         "question": "Does alpha follow from D=3 and varpi?",
-        "ftd_value": 137.035999084,
+        "ftd_value": 137.035999177,
         "formula": "7-term expansion",
         # inputs_used missing -> should fail
         "theory_ref": "docs/theory/03_derivations/DERIV_ALPHA_FROM_GSTAR.md",
     }]
-    meas = _measurements(_meas("alpha_inv", 137.035999084, 2.1e-8))
+    meas = _measurements(_meas("alpha_inv", 137.035999177, 2.1e-8))
     with pytest.raises(TierAssertionError, match="inputs_used"):
         build_manifest(ftd_rows=rows, measurements=meas, build_stamp={})
 
@@ -66,7 +66,7 @@ def test_valid_minimal_manifest_builds():
         {
             "id": "alpha_inv", "tier": "hard", "epistemic": "THEOREM",
             "question": "Does alpha follow from D=3 and varpi?",
-            "ftd_value": 137.035999084,
+            "ftd_value": 137.035999177,
             "formula": "7-term expansion",
             "inputs_used": ["D=3", "varpi"],
             "theory_ref": "docs/theory/03_derivations/DERIV_ALPHA_FROM_GSTAR.md",
@@ -86,7 +86,7 @@ def test_valid_minimal_manifest_builds():
         },
     ]
     meas = _measurements(
-        _meas("alpha_inv", 137.035999084, 2.1e-8),
+        _meas("alpha_inv", 137.035999177, 2.1e-8),
         _meas("m_higgs", 125.25, 0.17, sector="ew"),
         _meas("v_us", 0.2243, 0.0008, sector="flavor"),
     )
