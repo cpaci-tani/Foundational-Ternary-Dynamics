@@ -268,31 +268,51 @@ export class FluxSlicePanel {
         //   axis=0 → x = index, plane spans (y, z)   → "yz"
         //   axis=1 → y = index, plane spans (x, z)   → "xz"
         //   axis=2 → z = index, plane spans (x, y)   → "xy"
+        //
+        // CRITICAL: WasmBridge.getFluxSlice reuses a single internal
+        // _sliceBuf across calls (allocates once, overwrites in place).
+        // Without an immediate copy, all three references would alias the
+        // last-called axis's data, and the xy/xz/yz tiles would render
+        // identically. We .slice() each one to snapshot before the next
+        // bridge call clobbers it. ~12k doubles per axis at L=32 → ~96 KB
+        // total per frame, negligible vs the 0.3 ms paint cost.
+        const sample = (axis) => {
+            const s = bridge.getFluxSlice?.(axis, mid);
+            return s ? s.slice() : null;
+        };
         const slices = {
-            yz: this._axisVisible.yz ? bridge.getFluxSlice?.(0, mid) : null,
-            xz: this._axisVisible.xz ? bridge.getFluxSlice?.(1, mid) : null,
-            xy: this._axisVisible.xy ? bridge.getFluxSlice?.(2, mid) : null,
+            yz: this._axisVisible.yz ? sample(0) : null,
+            xz: this._axisVisible.xz ? sample(1) : null,
+            xy: this._axisVisible.xy ? sample(2) : null,
         };
 
-        // Pass 1: per-frame max over visible axes, fold into rolling global max.
+        // Pass 1: per-axis max + union max. The per-axis max lets each tile
+        // report its own peak (so an asymmetric scenario like a plane wave
+        // shows xy/xz ≈ 0.78 while yz ≈ 0.11). The union max drives the
+        // SHARED color normalization so the three tiles are visually
+        // comparable on the same scale.
+        const axisMax = { xy: 0, xz: 0, yz: 0 };
         let frameMax = 0;
         for (const key of FluxSlicePanel.AXES) {
             const s = slices[key];
             if (!s || s.length === 0) continue;
+            let m = 0;
             for (let i = 0; i < s.length; i++) {
                 const v = s[i];
-                if (v > frameMax) frameMax = v;
+                if (v > m) m = v;
             }
+            axisMax[key] = m;
+            if (m > frameMax) frameMax = m;
         }
         // Decay then lift toward current frame, so the scale tracks growth
         // promptly but doesn't collapse during a quiet tick.
         this._globalMax = Math.max(this._globalMax * this._maxDecay, frameMax);
         const norm = this._globalMax > FLOOR_FRAC ? 1 / this._globalMax : 0;
 
-        // Pass 2: paint each visible tile.
+        // Pass 2: paint each visible tile with its own per-axis max readout.
         for (const key of FluxSlicePanel.AXES) {
             if (!this._axisVisible[key]) continue;
-            this._paintSlice(key, slices[key], N, norm, frameMax,
+            this._paintSlice(key, slices[key], N, norm, axisMax[key],
                               simTick, globalTick, isRunning);
         }
 
