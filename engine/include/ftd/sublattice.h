@@ -57,6 +57,7 @@
 #include <vector>
 #include "lattice.h"
 #include "voxel.h"
+#include "ontic/master_quadratic.h"   // D_SPATIAL — single source of truth
 
 namespace ftd {
 
@@ -106,11 +107,26 @@ inline bool site_matches_filter(const Lattice& lat, int idx, SiteClass filter) {
     return classify_voxel(lat, idx) == filter;
 }
 
-// Sub-stencil weights. Single source of truth — also used by
-// correlation extractors and tests for analytic eigenvalue checks.
-inline constexpr double W_SC_FACE   = 1.0 / 6.0;
-inline constexpr double W_FCC_EDGE  = 1.0 / 12.0;
-inline constexpr double W_BCC_CORNER = 1.0 / 8.0;
+// === Neighbor counts on the D-dimensional cubic lattice ===
+// Derived from cubic-lattice geometry (D = ftd::ontic::D_SPATIAL = 3).
+//   N_FACE   = 2D                  — axial neighbors (±1 along one axis)
+//   N_EDGE   = 4·C(D,2) = 2D(D-1)  — face-diagonal neighbors (two axes ±1)
+//   N_CORNER = 2^D                 — body-diagonal neighbors (all axes ±1)
+// These are the sizes of Lattice::neighbors_6/12/8_corner respectively.
+// At D=3: (N_FACE, N_EDGE, N_CORNER) = (6, 12, 8). The ratio sum to the
+// 26-neighbor Moore shell: N_FACE + N_EDGE + N_CORNER = 26 = 3^D − 1 [THEOREM].
+inline constexpr int N_FACE   = 2 * ftd::ontic::D_SPATIAL;                            // 6
+inline constexpr int N_EDGE   = 2 * ftd::ontic::D_SPATIAL * (ftd::ontic::D_SPATIAL - 1); // 12
+inline constexpr int N_CORNER = 1 << ftd::ontic::D_SPATIAL;                           // 8
+static_assert(N_FACE + N_EDGE + N_CORNER == 26,
+              "Moore-26 shell decomposition broken: N_FACE+N_EDGE+N_CORNER must equal 3^D−1 at D=3");
+
+// Sub-stencil weights derived from neighbor counts. Single source of truth
+// for correlation extractors and tests for analytic eigenvalue checks.
+// Each is a *consistent* discrete Laplacian (sum of weights minus center = 0).
+inline constexpr double W_SC_FACE   = 1.0 / static_cast<double>(N_FACE);    // 1/6
+inline constexpr double W_FCC_EDGE  = 1.0 / static_cast<double>(N_EDGE);    // 1/12
+inline constexpr double W_BCC_CORNER = 1.0 / static_cast<double>(N_CORNER); // 1/8
 
 // === Sublattice-projected Laplacians ===
 // Templated on Voxel field pointer, mirroring laplacian_field<F> in

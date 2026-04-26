@@ -9,6 +9,7 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
+#include "ftd/sublattice.h"   // N_FACE, N_EDGE, N_CORNER, W_SC_FACE, W_FCC_EDGE, W_BCC_CORNER
 #include <cuda_runtime.h>
 #include <cmath>
 #include <cstdio>   // fprintf — Linux/clang stricter than MSVC
@@ -144,23 +145,23 @@ __global__ void phase_read_kernel(
             lap_y = WF*face_y + WE*edge_y - 4.0*flux_y[i];
             lap_z = WF*face_z + WE*edge_z - 4.0*flux_z[i];
         } else if (bcc_stencil_mode == 1u) {
-            // SC: 6 face nbrs, weight 1/6, center -1
+            // SC: N_FACE face nbrs, weight 1/N_FACE, center -1
             int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
             int yp = idx3d(x,y+1,z,L), ym = idx3d(x,y-1,z,L);
             int zp = idx3d(x,y,z+1,L), zm = idx3d(x,y,z-1,L);
-            constexpr double W = 1.0/6.0;
+            constexpr double W = ftd::W_SC_FACE;     // 1.0 / N_FACE = 1/(2D)
             lap_x = W*(flux_x[xp]+flux_x[xm]+flux_x[yp]+flux_x[ym]+flux_x[zp]+flux_x[zm]) - flux_x[i];
             lap_y = W*(flux_y[xp]+flux_y[xm]+flux_y[yp]+flux_y[ym]+flux_y[zp]+flux_y[zm]) - flux_y[i];
             lap_z = W*(flux_z[xp]+flux_z[xm]+flux_z[yp]+flux_z[ym]+flux_z[zp]+flux_z[zm]) - flux_z[i];
         } else if (bcc_stencil_mode == 2u) {
-            // FCC: 12 edge nbrs, weight 1/12, center -1
+            // FCC: N_EDGE edge nbrs, weight 1/N_EDGE, center -1
             int xy_pp = idx3d(x+1,y+1,z,L), xy_pm = idx3d(x+1,y-1,z,L);
             int xy_mp = idx3d(x-1,y+1,z,L), xy_mm = idx3d(x-1,y-1,z,L);
             int xz_pp = idx3d(x+1,y,z+1,L), xz_pm = idx3d(x+1,y,z-1,L);
             int xz_mp = idx3d(x-1,y,z+1,L), xz_mm = idx3d(x-1,y,z-1,L);
             int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
             int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
-            constexpr double W = 1.0/12.0;
+            constexpr double W = ftd::W_FCC_EDGE;    // 1.0 / N_EDGE = 1/(2D(D-1))
             lap_x = W*(flux_x[xy_pp]+flux_x[xy_pm]+flux_x[xy_mp]+flux_x[xy_mm]
                      + flux_x[xz_pp]+flux_x[xz_pm]+flux_x[xz_mp]+flux_x[xz_mm]
                      + flux_x[yz_pp]+flux_x[yz_pm]+flux_x[yz_mp]+flux_x[yz_mm]) - flux_x[i];
@@ -171,12 +172,12 @@ __global__ void phase_read_kernel(
                      + flux_z[xz_pp]+flux_z[xz_pm]+flux_z[xz_mp]+flux_z[xz_mm]
                      + flux_z[yz_pp]+flux_z[yz_pm]+flux_z[yz_mp]+flux_z[yz_mm]) - flux_z[i];
         } else {
-            // BCC: 8 corner nbrs (±1,±1,±1), weight 1/8, center -1
+            // BCC: N_CORNER corner nbrs (±1,±1,±1), weight 1/N_CORNER, center -1
             int c_ppp = idx3d(x+1,y+1,z+1,L), c_ppm = idx3d(x+1,y+1,z-1,L);
             int c_pmp = idx3d(x+1,y-1,z+1,L), c_pmm = idx3d(x+1,y-1,z-1,L);
             int c_mpp = idx3d(x-1,y+1,z+1,L), c_mpm = idx3d(x-1,y+1,z-1,L);
             int c_mmp = idx3d(x-1,y-1,z+1,L), c_mmm = idx3d(x-1,y-1,z-1,L);
-            constexpr double W = 1.0/8.0;
+            constexpr double W = ftd::W_BCC_CORNER;  // 1.0 / N_CORNER = 1/2^D
             lap_x = W*(flux_x[c_ppp]+flux_x[c_ppm]+flux_x[c_pmp]+flux_x[c_pmm]
                      + flux_x[c_mpp]+flux_x[c_mpm]+flux_x[c_mmp]+flux_x[c_mmm]) - flux_x[i];
             lap_y = W*(flux_y[c_ppp]+flux_y[c_ppm]+flux_y[c_pmp]+flux_y[c_pmm]
