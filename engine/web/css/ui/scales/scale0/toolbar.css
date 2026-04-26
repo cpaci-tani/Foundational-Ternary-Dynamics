@@ -135,10 +135,43 @@
 }
 .flux-slice-close:hover { color: var(--text-primary); }
 
+/* Per-axis toggles (xy / xz / yz) inside the panel header. */
+.flux-slice-axis-toggles {
+    display: inline-flex;
+    gap: 4px;
+    margin: 0 8px;
+}
+.flux-slice-axis-btn {
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-mono, monospace);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.flux-slice-axis-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+}
+.flux-slice-axis-btn.active {
+    color: var(--positive);
+    border-color: var(--positive);
+    background: rgba(80, 220, 160, 0.10);
+}
+
 .flux-slice-grid {
     display: grid;
     grid-template-columns: repeat(3, auto);
     gap: 8px;
+}
+/* Axis-hidden tile: collapses out of the grid; CSS keeps the panel
+   compact when one or two planes are toggled off. */
+.flux-slice-tile.axis-hidden {
+    display: none;
 }
 .flux-slice-tile {
     margin: 0;
