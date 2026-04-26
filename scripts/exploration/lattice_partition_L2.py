@@ -64,7 +64,10 @@ print(f"  (Compare: cubic lattice G(0) = 0.2527... in large-L regime)")
 # Watson integral I_3 (SC) for cubic lattice (large-L regime)
 W3_SC_inf = 0.505462  # 2 * G(0)_largeL = 2 * 0.2527
 print(f"  Watson I_3 (SC, large-L) = {W3_SC_inf:.6f}")
-print(f"  G* = 2.9587, G*^2/(2*pi) = {2.9587**2/(2*np.pi):.6f}")
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+from constants import G_STAR as _GSTAR
+print(f"  G* = {_GSTAR:.7f}, G*^2/(2*pi) = {_GSTAR**2/(2*np.pi):.6f}")
 
 # =====================================================
 # STEP 2: Enumerate all 6561 ternary configurations

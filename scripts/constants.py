@@ -330,9 +330,16 @@ ONE_LOOP_RESIDUAL_PPB = abs(X_PLUS_ONE_LOOP - ALPHA_INV_NIST) / ALPHA_INV_NIST *
 # =============================================================================
 
 # Fine structure constant
-# Fine structure constant
 ALPHA_INV = X_PLUS_PRECISION  # High-precision value ~ 137.035999
 ALPHA = 1.0 / ALPHA_INV
+
+# EFT lattice coupling. The C++ engine (engine/include/ftd/constants.h) and the
+# JS dashboard (engine/web/js/constants.js) both maintain the static identity
+# ALPHA_EFT == G_C**2 (FTD-0064 EFT recovery). Python verification scripts had
+# been re-deriving G_C ad hoc as np.sqrt(ALPHA); export the canonical value
+# here so all three languages agree.
+G_C = np.sqrt(ALPHA)
+ALPHA_EFT = G_C * G_C  # Identical to ALPHA by construction; named for clarity.
 
 # Strong coupling at Z mass
 # FTD formula: alpha_s(M_Z) = b_3 / (b_3 + 4*N_eff) = 7/59
