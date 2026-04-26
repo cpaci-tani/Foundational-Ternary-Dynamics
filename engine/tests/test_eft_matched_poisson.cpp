@@ -30,6 +30,7 @@
 
 #include "ftd/eft/matched_poisson.h"
 #include "ftd/render_bridge.h"
+#include "ftd/test_telemetry.h"
 
 static int g_failures = 0;
 static void check(const char* name, bool ok, const char* detail = nullptr) {
@@ -172,6 +173,17 @@ static void m5_improvement_ratio() {
 }
 
 int main() {
+    ftd::test::contract({
+        "constraint/gauge",
+        "[MEASUREMENT]",
+        "state field, flux field, matched Poisson solver",
+        "matched-stencil CG projection",
+        "gauss_violation",
+        "periodic L=16 lattice with deep-vacuum accounting region",
+        "backend-default; host matched solver",
+        "matched projection drives deep-vacuum Gauss residual to tolerance",
+        "failure means matched-stencil constraint solver or observable broke"});
+
     std::puts("================================================================");
     std::puts("  EFT Day-2 Ticket A — Matched-Stencil Poisson Solver Validation");
     std::puts("================================================================");

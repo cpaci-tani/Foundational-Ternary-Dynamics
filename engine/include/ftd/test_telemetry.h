@@ -45,6 +45,7 @@
 //     {"event":"start",    "test": "...", "pid": N, "ts": <unix>}
 //     {"event":"section",  "name": "..."}
 //     {"event":"check",    "name": "...", "pass": bool, "detail": "..."}
+//     {"event":"contract", "domain": "...", "epistemic_tag": "...", ...}
 //     {"event":"metric",   "name": "...", "value": <num>, "tick": N}
 //     {"event":"tick",     "tick": N, "dt": <num>, "energy": <num>, ...}
 //     {"event":"snapshot", "tick": N, "L": N, "stride": N, "format": "b64-int8", "data": "..."}
@@ -67,6 +68,7 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #ifdef _WIN32
@@ -112,6 +114,11 @@ struct State {
 // Cheap runtime check; memoized after init().
 inline bool telemetry_on() {
     return State::instance().ndjson;
+}
+
+inline bool telemetry_requested() {
+    const char* env = std::getenv("FTD_TEST_TELEMETRY");
+    return env != nullptr && env[0] != '0' && env[0] != '\0';
 }
 
 // Escape a string literal for safe embedding in a JSON value. Handles the
@@ -169,8 +176,7 @@ inline double elapsed_seconds() {
 
 inline void init(const char* test_name) {
     auto& s = detail::State::instance();
-    const char* env = std::getenv("FTD_TEST_TELEMETRY");
-    s.ndjson = (env != nullptr && env[0] != '0' && env[0] != '\0');
+    s.ndjson = detail::telemetry_requested();
     s.failures = 0;
     s.test_name = test_name ? test_name : "";
     s.start = std::chrono::steady_clock::now();
@@ -192,6 +198,59 @@ inline void section(const char* name) {
         std::cout << "{\"event\":\"section\",\"name\":\"" << detail::json_escape(name) << "\"}\n";
     } else {
         std::cout << "\n--- " << name << " ---\n";
+    }
+    std::cout.flush();
+}
+
+struct ConstructorContract {
+    const char* domain = "";
+    const char* epistemic_tag = "";
+    const char* required_inputs = "";
+    const char* optional_inputs = "";
+    const char* observable_map = "";
+    const char* closure_domain = "";
+    const char* backend_policy = "";
+    const char* expected_invariant = "";
+    const char* failure_meaning = "";
+};
+
+inline bool valid_contract(const ConstructorContract& c) {
+    return c.domain && *c.domain &&
+           c.epistemic_tag && *c.epistemic_tag &&
+           c.required_inputs && *c.required_inputs &&
+           c.observable_map && *c.observable_map &&
+           c.closure_domain && *c.closure_domain &&
+           c.backend_policy && *c.backend_policy &&
+           c.expected_invariant && *c.expected_invariant &&
+           c.failure_meaning && *c.failure_meaning;
+}
+
+inline void contract(const ConstructorContract& c) {
+    const bool ndjson = detail::telemetry_on() || detail::telemetry_requested();
+    if (ndjson) {
+        std::cout << "{\"event\":\"contract\""
+                  << ",\"domain\":\"" << detail::json_escape(c.domain ? c.domain : "") << "\""
+                  << ",\"epistemic_tag\":\"" << detail::json_escape(c.epistemic_tag ? c.epistemic_tag : "") << "\""
+                  << ",\"required_inputs\":\"" << detail::json_escape(c.required_inputs ? c.required_inputs : "") << "\""
+                  << ",\"optional_inputs\":\"" << detail::json_escape(c.optional_inputs ? c.optional_inputs : "") << "\""
+                  << ",\"observable_map\":\"" << detail::json_escape(c.observable_map ? c.observable_map : "") << "\""
+                  << ",\"closure_domain\":\"" << detail::json_escape(c.closure_domain ? c.closure_domain : "") << "\""
+                  << ",\"backend_policy\":\"" << detail::json_escape(c.backend_policy ? c.backend_policy : "") << "\""
+                  << ",\"expected_invariant\":\"" << detail::json_escape(c.expected_invariant ? c.expected_invariant : "") << "\""
+                  << ",\"failure_meaning\":\"" << detail::json_escape(c.failure_meaning ? c.failure_meaning : "") << "\""
+                  << "}\n";
+    } else {
+        std::cout << "\n--- CONTRACT: " << (c.domain ? c.domain : "") << " ---\n"
+                  << "  epistemic_tag: " << (c.epistemic_tag ? c.epistemic_tag : "") << "\n"
+                  << "  required_inputs: " << (c.required_inputs ? c.required_inputs : "") << "\n";
+        if (c.optional_inputs && *c.optional_inputs) {
+            std::cout << "  optional_inputs: " << c.optional_inputs << "\n";
+        }
+        std::cout << "  observable_map: " << (c.observable_map ? c.observable_map : "") << "\n"
+                  << "  closure_domain: " << (c.closure_domain ? c.closure_domain : "") << "\n"
+                  << "  backend_policy: " << (c.backend_policy ? c.backend_policy : "") << "\n"
+                  << "  expected_invariant: " << (c.expected_invariant ? c.expected_invariant : "") << "\n"
+                  << "  failure_meaning: " << (c.failure_meaning ? c.failure_meaning : "") << "\n";
     }
     std::cout.flush();
 }

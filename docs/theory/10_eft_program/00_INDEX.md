@@ -24,8 +24,9 @@ one replaced by the other:
    tuple `(C_L^FTD, K_T^FTD, Z_j^FTD, c_FTD, W_18, g_sJ^FTD)` and its Wilsonian
    flow under a declared blocking map, with QED matching demoted to diagnostic.
    Current status: Gaussian b=2 flow closed for all four couplings at the
-   canonical value 1; non-linear/reaction-sector flow and a full native
-   action/measure remain OPEN.
+   canonical value 1; the native microscopic action has been selected as a
+   constrained source-coupled history measure; non-linear/reaction-sector flow
+   and the explicit blocked effective action remain OPEN.
 
 The master quadratic itself is unaffected. FTD-0001 stays [THEOREM] at the
 algebraic / number-theoretic layer (Gamma(1/4)^4 + CM-curve uniqueness).
@@ -64,6 +65,7 @@ docs, then `SPEC_EFT_RECOVERY_PROGRAM.md` and `DERIV_DAY2_CAMPAIGN.md`.
 | `SPEC_FTD_NATIVE_BLOCKING_MAP.md` | Finite-volume dual-cell b=2 blocking contract | [SELECTION] |
 | `DERIV_FTD_NATIVE_RESPONSE_TUPLE.md` | First bare probe; C_L=K_T=Z_j=g_sJ=1, c=1/sqrt(3), W_18~1.2679 | [PARTIAL] / mixed tags per-row |
 | `DERIV_FTD_NATIVE_LINEAR_GENERATOR.md` | Minimal linear source-coupled generator reproducing the bare tuple | [PARTIAL] |
+| `DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md` | Complete microscopic native action as constrained source-coupled history measure | [SELECTION]/[PARTIAL] |
 | `DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md` | g_sJ^FTD = 1 under current action; non-unit not derived | [CLOSED NEGATIVE]/[DEFINITION] |
 | `DERIV_FTD_NATIVE_BARE_FLOW.md` | Bare Gaussian dual-cell flow at b=2 | [PARTIAL] |
 | `DERIV_FTD_NATIVE_CURRENT_FLOW.md` | Transport-current b=2 flow; Z_j'=1 | [PARTIAL] |
@@ -71,7 +73,7 @@ docs, then `SPEC_EFT_RECOVERY_PROGRAM.md` and `DERIV_DAY2_CAMPAIGN.md`.
 | `DERIV_FTD_NATIVE_ENGINE_HISTORY_FLOW.md` | Real-engine reaction-history flow adapter | [PARTIAL] |
 | `DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md` | Real-engine face-transport flow adapter | [PARTIAL] |
 | `DERIV_FTD_NATIVE_SCALE_FLOW.md` | Kadanoff block-spin on bare Green; C_L' running under canonical scaling | [THEOREM] (bare Gaussian FP) |
-| `OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md` | Remaining native-bridge problem: full state-history action/measure | [PARTIAL]/[OPEN] |
+| `OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md` | Native action/measure gate; now resolved at microscopic history-measure level, nonlinear S_eff open | [PARTIAL]/[OPEN] |
 
 ## Cluster 2 — Projected-EFT xplus attempts (historical, all negative)
 
