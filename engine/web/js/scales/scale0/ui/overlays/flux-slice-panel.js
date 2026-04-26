@@ -49,6 +49,7 @@ export class FluxSlicePanel {
         this.visible = false;
         this.frameCount = 0;
         this._lastN = 0;
+        this._lastSimTick = 0;
 
         this._panel = null;
         this._chip = null;
@@ -174,7 +175,7 @@ export class FluxSlicePanel {
                         width="${this.canvasPx}" height="${this.canvasPx}"></canvas>
                 <figcaption class="flux-slice-caption">
                     <span class="flux-slice-plane-label">${label}</span>
-                    <span class="flux-slice-readout" data-readout="${key}">tick — · max —</span>
+                    <span class="flux-slice-readout" data-readout="${key}">t=— · max —</span>
                 </figcaption>
             </figure>
         `;
@@ -243,8 +244,24 @@ export class FluxSlicePanel {
 
         const mid = N >> 1;
         // Pull diagnostics for the tick stamp; tolerate missing fields.
+        // We surface BOTH counters because they tell different stories:
+        //   simTick    = bridge.getDiagnostics().tick — engine steps since last
+        //                 reset/scenario-load. Resets to 0 on scenario change.
+        //   globalTick = ctx.globalTick — cumulative wall-clock frames since
+        //                 global play resumed. Independent of bridge stepping.
+        // Showing only one was confusing: a freshly-loaded scenario could
+        // sit with simTick=0 while globalTick=251, making the slice "look"
+        // stuck even though it correctly reflected the live (initial) state.
         const diag = bridge.getDiagnostics?.() ?? {};
-        const tick = (diag.tick ?? 0) | 0;
+        const simTick = (diag.tick ?? 0) | 0;
+        // Look up ctx.globalTick if reachable; getBridge accessor doesn't
+        // give us ctx directly, but the bridge's window-level singleton does.
+        const globalTick = (typeof window !== 'undefined' && window.__ftdCtx)
+            ? (window.__ftdCtx.globalTick | 0)
+            : simTick;
+        const isRunning = (typeof window !== 'undefined' && window.__ftdCtx)
+            ? !!window.__ftdCtx.running
+            : true;
 
         // Three slices, sampled only for axes the user has visible.
         // Bridge axis convention from getFluxSlice:
@@ -275,15 +292,25 @@ export class FluxSlicePanel {
         // Pass 2: paint each visible tile.
         for (const key of FluxSlicePanel.AXES) {
             if (!this._axisVisible[key]) continue;
-            this._paintSlice(key, slices[key], N, norm, frameMax, tick);
+            this._paintSlice(key, slices[key], N, norm, frameMax,
+                              simTick, globalTick, isRunning);
         }
+
+        // Reset bridge identity tracking when the bridge resets the scenario:
+        // simTick going backwards or to 0 after we last saw it >0 means a
+        // scenario was loaded — re-baseline the rolling max so the new seed's
+        // dynamic range isn't dwarfed by the previous run's history.
+        if (this._lastSimTick > 0 && simTick < this._lastSimTick) {
+            this._globalMax = frameMax; // hard reset to current frame
+        }
+        this._lastSimTick = simTick;
 
         // Legend max readout
         const legendMax = this._panel.querySelector('.flux-slice-max');
         if (legendMax) legendMax.innerHTML = `|J|<sub>max</sub>=${this._fmt(this._globalMax)}`;
     }
 
-    _paintSlice(key, data, N, norm, frameMax, tick) {
+    _paintSlice(key, data, N, norm, frameMax, simTick, globalTick, isRunning) {
         const slot = this._slots[key];
         if (!slot) return;
         const buf = this._rgbaBufs[key];
@@ -293,7 +320,7 @@ export class FluxSlicePanel {
             const c = slot.ctx;
             c.fillStyle = '#0a0d14';
             c.fillRect(0, 0, slot.canvas.width, slot.canvas.height);
-            slot.readout.textContent = `tick ${tick} · max —`;
+            slot.readout.textContent = `t=${simTick} (g=${globalTick}) · max —`;
             return;
         }
 
@@ -340,8 +367,12 @@ export class FluxSlicePanel {
         c.imageSmoothingEnabled = false;
         c.drawImage(slot._tmpCanvas, 0, 0, N, N, 0, 0, W, H);
 
+        // Readout: show sim-tick (engine steps), global-tick in parens
+        // (wall-clock frames), pause indicator, and per-frame max.
+        // Format: "t=50 (g=251) ⏸ · max 0.083"
+        const pausedTag = isRunning ? '' : ' ⏸';
         slot.readout.textContent =
-            `tick ${tick} · max ${this._fmt(frameMax)}`;
+            `t=${simTick} (g=${globalTick})${pausedTag} · max ${this._fmt(frameMax)}`;
     }
 
     _fmt(v) {
