@@ -287,7 +287,12 @@ for L in Ls_plot:
     G00_exact.append(G[0, 0])
     print(f"  L={L}: G(0,0) = {G[0,0]:.8f}")
 
-watson = 2.95868**2 / (2 * np.pi)
+# Use canonical G_STAR rather than truncated 5-digit literal (was 2.95868,
+# off by ~3e-6 from canonical). Watson identity W_3 = G*^2 / (2 pi).
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+from constants import G_STAR as _G_STAR
+watson = _G_STAR**2 / (2 * np.pi)
 ax5.plot(Ls_plot, G00_exact, 'o-', color=CYAN, markersize=8, linewidth=2,
          markeredgecolor=WHITE, markeredgewidth=1.5, label='G(0,0) computed')
 ax5.axhline(y=watson, color=GOLD, linestyle='--', linewidth=2, alpha=0.8,
