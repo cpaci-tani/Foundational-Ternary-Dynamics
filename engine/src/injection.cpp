@@ -1,11 +1,16 @@
 /**
  * Injection — implementation.
  * Extracted from render_bridge.cpp, 2026-04-18 refactor ticket R5.
- * CUDA branches preserved verbatim (the gpu_ pointer and flags live on rb).
+ *
+ * ARCH-2-I (2026-04-25): migrated to use only RenderBridge's public API
+ * (`backend()`, `voxels()`, `lattice()`, `injector()`, `gpu_engine_ptr()`).
+ * No private-member access; the 6 friend declarations on inject_*_cpu can
+ * now be dropped from RenderBridge.
  */
 
 #include "ftd/injection.h"
 #include "ftd/render_bridge.h"
+#include "ftd/backend.h"
 #include "ftd/constants.h"
 #include <cmath>
 
@@ -17,13 +22,21 @@ namespace ftd {
 
 void inject_flux_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& flux_val) {
 #ifdef FTD_ENABLE_CUDA
-  if (rb.use_gpu_) {
-    rb.gpu_->inject_flux(x, y, z, flux_val);
-    rb.gpu_dirty_ = true;
+  if (auto* gpu = rb.gpu_engine_ptr()) {
+    // OPEN-5 fix (2026-04-25): GpuEngine has its own toggles (default
+    // dual_substrate=true), and GpuEngine::inject_flux branches on it.
+    // Sync just that one bit so callers who set rb.toggles.dual_substrate
+    // BEFORE the first tick get the right behaviour. Wholesale toggle
+    // copy is avoided here — it triggered an unrelated runtime issue,
+    // tracked separately if it recurs.
+    gpu->toggles.dual_substrate = rb.toggles.dual_substrate;
+    gpu->inject_flux(x, y, z, flux_val);
+    rb.backend().mark_gpu_dirty();
     return;
   }
 #endif
-  auto& v = rb.voxels_[rb.lattice_.index(x, y, z)];
+  // CPU path: voxels() handles any GPU sync + dirty-marking automatically.
+  auto& v = rb.voxels()[rb.lattice().index(x, y, z)];
   v.flux = flux_val;
   if (rb.toggles.dual_substrate) {
     v.flux_L = flux_val * 0.5;
@@ -32,60 +45,43 @@ void inject_flux_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& flux_val
 }
 
 void inject_flux_add_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& flux_val) {
-#ifdef FTD_ENABLE_CUDA
-  if (rb.use_gpu_) {
-    rb.gpu_sync_to_host();
-  }
-#endif
-  auto& v = rb.voxels_[rb.lattice_.index(x, y, z)];
+  // Mixed CPU/GPU pattern: read-modify-write on the host shadow with
+  // automatic sync-down + dirty-up via voxels() accessor.
+  auto& v = rb.voxels()[rb.lattice().index(x, y, z)];
   v.flux = v.flux + flux_val;
   if (rb.toggles.dual_substrate) {
     const Vec3 half = flux_val * 0.5;
     v.flux_L = v.flux_L + half;
     v.flux_R = v.flux_R + half;
   }
-#ifdef FTD_ENABLE_CUDA
-  if (rb.use_gpu_) {
-    rb.host_mutated_ = true;
-  }
-#endif
 }
 
 void inject_wave_vel_add_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& wv_val) {
-#ifdef FTD_ENABLE_CUDA
-  if (rb.use_gpu_) {
-    rb.gpu_sync_to_host();
-  }
-#endif
-  auto& v = rb.voxels_[rb.lattice_.index(x, y, z)];
+  auto& v = rb.voxels()[rb.lattice().index(x, y, z)];
   v.wave_vel = v.wave_vel + wv_val;
   if (rb.toggles.dual_substrate) {
     const Vec3 half = wv_val * 0.5;
     v.wave_vel_L = v.wave_vel_L + half;
     v.wave_vel_R = v.wave_vel_R + half;
   }
-#ifdef FTD_ENABLE_CUDA
-  if (rb.use_gpu_) {
-    rb.host_mutated_ = true;
-  }
-#endif
 }
 
 void inject_particle_cpu(RenderBridge& rb, int x, int y, int z, int8_t state,
                          const Vec3& flux_val, int8_t spin, int8_t color) {
 #ifdef FTD_ENABLE_CUDA
-  if (rb.use_gpu_) {
-    rb.gpu_->inject_particle(x, y, z, state, flux_val, spin, color);
-    rb.gpu_dirty_ = true;
+  if (auto* gpu = rb.gpu_engine_ptr()) {
+    gpu->toggles.dual_substrate = rb.toggles.dual_substrate;  // OPEN-5
+    gpu->inject_particle(x, y, z, state, flux_val, spin, color);
+    rb.backend().mark_gpu_dirty();
     return;
   }
 #endif
-  auto& v = rb.voxels_[rb.lattice_.index(x, y, z)];
+  auto& v = rb.voxels()[rb.lattice().index(x, y, z)];
   v.state = state;
   v.flux = flux_val;
   v.spin = spin;
   v.color = color;
-  v.particle_id = rb.next_particle_id_++;
+  v.particle_id = rb.injector().next_particle_id();
 
   if (rb.toggles.dual_substrate) {
     double frac_major = (1.0 + DELTA_APPROX) * 0.5;
@@ -103,19 +99,23 @@ void inject_particle_cpu(RenderBridge& rb, int x, int y, int z, int8_t state,
 void inject_wavepacket_cpu(RenderBridge& rb, int cx, int cy, int cz, int8_t state,
                            double sigma, double amplitude) {
 #ifdef FTD_ENABLE_CUDA
-  if (rb.use_gpu_) {
-    rb.gpu_->inject_wavepacket(cx, cy, cz, state, sigma, amplitude);
-    rb.gpu_dirty_ = true;
+  if (auto* gpu = rb.gpu_engine_ptr()) {
+    gpu->toggles.dual_substrate = rb.toggles.dual_substrate;  // OPEN-5
+    gpu->inject_wavepacket(cx, cy, cz, state, sigma, amplitude);
+    rb.backend().mark_gpu_dirty();
     return;
   }
 #endif
-  const auto& lattice = rb.lattice_;
-  auto& voxels = rb.voxels_;
+  // Grab references ONCE — voxels()/lattice() trigger backend dispatch each
+  // call. The wavepacket loop touches O(radius^3) voxels; doing it through
+  // a single reference is the common idiom.
+  const auto& lattice = rb.lattice();
+  auto& voxels = rb.voxels();
 
   int center = lattice.index(cx, cy, cz);
   auto& vc = voxels[center];
   vc.state = state;
-  vc.particle_id = rb.next_particle_id_++;
+  vc.particle_id = rb.injector().next_particle_id();
 
   int radius = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
   double norm_sum = 0.0;
@@ -171,16 +171,16 @@ void inject_wavepacket_cpu(RenderBridge& rb, int cx, int cy, int cz, int8_t stat
 }
 
 void create_entangled_pair_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& flux_val) {
-  const auto& lattice = rb.lattice_;
-  auto& voxels = rb.voxels_;
+  const auto& lattice = rb.lattice();
+  auto& voxels = rb.voxels();
 
-  int id = rb.next_pair_id_++;
+  int id = rb.injector().next_pair_id();
   int idx = lattice.index(x, y, z);
   auto& v = voxels[idx];
   v.state = 1;
   v.flux = flux_val;
   v.pair_id = id;
-  v.particle_id = rb.next_particle_id_++;
+  v.particle_id = rb.injector().next_particle_id();
 
   auto nbrs = lattice.neighbors_6(idx);
   int partner_idx = -1;
@@ -193,7 +193,7 @@ void create_entangled_pair_cpu(RenderBridge& rb, int x, int y, int z, const Vec3
   partner.state = -1;
   partner.flux = flux_val * -1.0;
   partner.pair_id = id;
-  partner.particle_id = rb.next_particle_id_++;
+  partner.particle_id = rb.injector().next_particle_id();
 }
 
 AggregateProfile compute_aggregate_profile(const RenderBridge& rb, int center_idx, double threshold) {
@@ -207,54 +207,59 @@ AggregateProfile compute_aggregate_profile(const RenderBridge& rb, int center_id
   double sum_j2 = 0.0;
   double sum_r2_j2 = 0.0;
   Vec3 sum_rj2;
-  int radial_count[20] = {};
-  double radial_sum[20] = {};
+  double max_j = 0.0;
+  int site_count = 0;
+
+  std::vector<double> radial_sum(20, 0.0);
+  std::vector<int> radial_count(20, 0);
 
   for (int dx = -scan; dx <= scan; ++dx) {
     for (int dy = -scan; dy <= scan; ++dy) {
       for (int dz = -scan; dz <= scan; ++dz) {
-        double r2 = dx*dx + dy*dy + dz*dz;
-        double r = std::sqrt(r2);
-        int ri = static_cast<int>(std::round(r));
-        if (ri < 1 || ri > 20) continue;
-
         int x = ((cc.x + dx) % N + N) % N;
         int y = ((cc.y + dy) % N + N) % N;
         int z = ((cc.z + dz) % N + N) % N;
         int idx = lattice.index(x, y, z);
-        double j2 = voxels[idx].flux.mag2();
-        double jmag = std::sqrt(j2);
 
-        if (jmag > threshold) prof.site_count++;
-        if (jmag > prof.peak_density) prof.peak_density = jmag;
+        double j_mag = voxels[idx].flux.mag();
+        if (j_mag < threshold) continue;
 
+        double j2 = j_mag * j_mag;
         sum_j2 += j2;
-        sum_r2_j2 += r2 * j2;
-        sum_rj2.x += (cc.x + dx) * j2;
-        sum_rj2.y += (cc.y + dy) * j2;
-        sum_rj2.z += (cc.z + dz) * j2;
+        sum_r2_j2 += (dx*dx + dy*dy + dz*dz) * j2;
+        sum_rj2.x += dx * j2;
+        sum_rj2.y += dy * j2;
+        sum_rj2.z += dz * j2;
+        max_j = std::max(max_j, j_mag);
+        site_count++;
 
-        radial_sum[ri - 1] += jmag;
-        radial_count[ri - 1]++;
+        int r_int = static_cast<int>(std::sqrt(static_cast<double>(dx*dx + dy*dy + dz*dz)));
+        if (r_int >= 0 && r_int < 20) {
+          radial_sum[r_int] += j_mag;
+          radial_count[r_int]++;
+        }
       }
     }
   }
 
-  double j2_center = voxels[center_idx].flux.mag2();
-  sum_j2 += j2_center;
-
-  prof.total_energy = sum_j2;
-  prof.effective_radius = (sum_j2 > EPSILON_FLUX_SQ) ? std::sqrt(sum_r2_j2 / sum_j2) : 0.0;
-
   if (sum_j2 > EPSILON_FLUX_SQ) {
-    prof.center_of_mass = Vec3(sum_rj2.x / sum_j2, sum_rj2.y / sum_j2, sum_rj2.z / sum_j2);
+    prof.center_of_mass = Vec3(
+      cc.x + sum_rj2.x / sum_j2,
+      cc.y + sum_rj2.y / sum_j2,
+      cc.z + sum_rj2.z / sum_j2
+    );
+    prof.effective_radius = std::sqrt(sum_r2_j2 / sum_j2);
   } else {
-    auto c = lattice.coord(center_idx);
-    prof.center_of_mass = Vec3(c.x, c.y, c.z);
+    prof.center_of_mass = Vec3(cc.x, cc.y, cc.z);
+    prof.effective_radius = 0.0;
   }
 
-  for (int i = 0; i < 20; ++i) {
-    prof.radial_profile[i] = (radial_count[i] > 0) ? radial_sum[i] / radial_count[i] : 0.0;
+  prof.total_energy = sum_j2;
+  prof.peak_density = max_j;
+  prof.site_count = site_count;
+
+  for (int r = 0; r < 20; ++r) {
+    prof.radial_profile[r] = (radial_count[r] > 0) ? radial_sum[r] / radial_count[r] : 0.0;
   }
 
   return prof;
