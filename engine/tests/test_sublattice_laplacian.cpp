@@ -26,6 +26,7 @@
 #include "ftd/lattice.h"
 #include "ftd/sublattice.h"
 #include "ftd/voxel.h"
+#include "ftd/ontic/master_quadratic.h"   // D_SPATIAL
 
 using namespace ftd;
 
@@ -82,21 +83,23 @@ int main() {
     Vec3 lap_bcc = laplacian_bcc<&Voxel::flux>(voxels, lat, idx);
     Vec3 lap_full = laplacian_sublattice<&Voxel::flux>(BccStencilMode::FULL, voxels, lat, idx);
 
-    // SC: 6 face nbrs at distance 1; each contributes ((dx±1)²+dy²+dz²) − (dx²+dy²+dz²).
-    // At center (0,0,0) it's just (1+0+0) for each of 6, weighted 1/6: total = 1.
-    CHECK_NEAR(lap_sc.x,  1.0, TOL, "SC Laplacian on f=x²+y²+z² → 1 (= ∇²f / 6)");
+    // For f(r) = |r|² = x²+y²+z², continuum ∇²f = 2D = 2·D_SPATIAL.
+    // The discrete Laplacians equal the squared-distance to a representative
+    // neighbor (averaging cancels parity, so each per-stencil contribution
+    // equals one nbr's squared distance):
+    //   SC face nbr at (±1,0,0)            → |Δr|² = 1
+    //   FCC edge nbr at (±1,±1,0)          → |Δr|² = 2 = D_SPATIAL − 1
+    //   BCC corner nbr at (±1,±1,±1)       → |Δr|² = 3 = D_SPATIAL
+    constexpr int D = ftd::ontic::D_SPATIAL;
+    constexpr double EXPECT_SC  = 1.0;            // by construction (one axis squared)
+    constexpr double EXPECT_FCC = static_cast<double>(D - 1);   // 2
+    constexpr double EXPECT_BCC = static_cast<double>(D);       // 3
+    constexpr double EXPECT_FULL = 2.0 * static_cast<double>(D); // 6 = continuum ∇²f
 
-    // FCC: 12 edge nbrs at √2; each contributes 2 (e.g., (1+1+0) or (1+0+1)).
-    // 12 × 2 / 12 = 2.
-    CHECK_NEAR(lap_fcc.x, 2.0, TOL, "FCC Laplacian on f=x²+y²+z² → 2 (= ∇²f / 3)");
-
-    // BCC: 8 corner nbrs at √3; each contributes 3 (1+1+1).
-    // 8 × 3 / 8 = 3.
-    CHECK_NEAR(lap_bcc.x, 3.0, TOL, "BCC Laplacian on f=x²+y²+z² → 3 (= ∇²f / 2)");
-
-    // FULL (legacy): (1/3)·(SC face sum 6×1=6) + (1/6)·(FCC edge sum 12×2=24) − 4·0
-    //              = 2 + 4 = 6.    (matches continuum directly via the magic 2:1 ratio)
-    CHECK_NEAR(lap_full.x, 6.0, TOL, "FULL legacy Laplacian on f=x²+y²+z² → 6 (= ∇²f exactly)");
+    CHECK_NEAR(lap_sc.x,   EXPECT_SC,   TOL, "SC Laplacian on f=|r|² → 1 (= 1)");
+    CHECK_NEAR(lap_fcc.x,  EXPECT_FCC,  TOL, "FCC Laplacian on f=|r|² → 2 (= D−1)");
+    CHECK_NEAR(lap_bcc.x,  EXPECT_BCC,  TOL, "BCC Laplacian on f=|r|² → 3 (= D)");
+    CHECK_NEAR(lap_full.x, EXPECT_FULL, TOL, "FULL Laplacian on f=|r|² → 6 (= 2D = continuum ∇²f)");
 
     // ===== T2: Plane-wave eigenvalue on cos(k·x) =====
     // For each stencil, eigenvalue formula:
@@ -166,9 +169,9 @@ int main() {
     Vec3 disp_sc  = laplacian_sublattice<&Voxel::flux>(BccStencilMode::SC,  voxels, lat, idx);
     Vec3 disp_fcc = laplacian_sublattice<&Voxel::flux>(BccStencilMode::FCC, voxels, lat, idx);
     Vec3 disp_bcc = laplacian_sublattice<&Voxel::flux>(BccStencilMode::BCC, voxels, lat, idx);
-    CHECK_NEAR(disp_sc.x,  1.0, TOL, "dispatch wrapper: SC mode");
-    CHECK_NEAR(disp_fcc.x, 2.0, TOL, "dispatch wrapper: FCC mode");
-    CHECK_NEAR(disp_bcc.x, 3.0, TOL, "dispatch wrapper: BCC mode");
+    CHECK_NEAR(disp_sc.x,  EXPECT_SC,  TOL, "dispatch wrapper: SC mode");
+    CHECK_NEAR(disp_fcc.x, EXPECT_FCC, TOL, "dispatch wrapper: FCC mode");
+    CHECK_NEAR(disp_bcc.x, EXPECT_BCC, TOL, "dispatch wrapper: BCC mode");
 
     std::printf("================================================================\n");
     std::printf("  Result: %s (%d failure(s))\n",
