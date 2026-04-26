@@ -529,6 +529,11 @@ export class FluxSlicePanel {
 
     update() {
         if (!this.visible || !this._panel) return;
+        // Defensive: if the self-drive loop isn't running but we're visible,
+        // start it. Covers cases where the panel was set visible by a path
+        // that bypassed setVisible (e.g. external code flipping `.visible`
+        // directly, hot-reload remount of an externally-driven instance).
+        if (this._rafId === null) this._startSelfDrive();
         this.frameCount = (this.frameCount + 1) | 0;
         if ((this.frameCount % this.updateEvery) !== 0) return;
 
