@@ -79,6 +79,20 @@ public:
         };
     }
 
+    // 8 body-diagonal (corner) neighbors at (±1, ±1, ±1).
+    // This is the BCC sub-stencil where the master quadratic lives
+    // (Watson's I_1 integral, see ontic/lemniscate.h:147).
+    // See sublattice.h for the BCC-projected Laplacian using these.
+    std::array<int, 8> neighbors_8_corner(int idx) const {
+        auto [x, y, z] = coord(idx);
+        return {
+            index(x+1, y+1, z+1), index(x+1, y+1, z-1),
+            index(x+1, y-1, z+1), index(x+1, y-1, z-1),
+            index(x-1, y+1, z+1), index(x-1, y+1, z-1),
+            index(x-1, y-1, z+1), index(x-1, y-1, z-1)
+        };
+    }
+
     // 26 Moore neighborhood neighbors
     std::array<int, 26> neighbors_26(int idx) const {
         auto [x, y, z] = coord(idx);

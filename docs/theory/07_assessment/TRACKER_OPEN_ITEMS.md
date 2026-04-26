@@ -274,6 +274,9 @@ How the Moore-layer decomposition produces each gauge group's representations (v
 - `DERIV_OBSERVER_BELL_MECHANISM.md`.
 - `DERIV_SINGLET_FROM_VOID_EVENT.md`.
 
+### 2.13 Mechanism C — `g_c` from BCC bridge operator — **1 `[OPEN]`**
+**File:** `docs/theory/10_eft_program/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`. Successor to FTD-0031 / Mechanism-B closure (CLOSED NEGATIVE 2026-04-25). LEDGER row FTD-0093. Pre-registered prediction in `DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` §5; falsifier in `PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` §3. Engine infrastructure (Cluster A build) wired and smoke-tested (campaign_bcc_band_spectrum). Awaiting publication-grade run + D6 audit. Closure conditional: [SELECTION] on PASS + circularity self-test (D1 §7) clean; otherwise [CLOSED NEGATIVE] mirroring Mechanism B closure.
+
 ---
 
 ## §3 Theory — foundations (`docs/theory/02_foundations/`)
@@ -292,6 +295,9 @@ How the Moore-layer decomposition produces each gauge group's representations (v
 - `FOUND_DIMENSIONAL_COUNTING.md`.
 - `FOUND_GSTAR_SCALE.md`.
 - `DERIV_D3_FROM_AUTOMORPHISM.md`.
+
+### 3.5 Bridge Functional ontology — **1 `[OPEN]`** (arithmetic-mean derivation target)
+**File:** `docs/theory/02_foundations/FOUND_BRIDGE_FUNCTIONAL.md`. LEDGER row FTD-0095. Mass-as-functional commitment. The arithmetic-mean rule `M(x₊, x₋) = α·(x₊+x₋)/2` is asserted (matching L2's selection); explicit derivation from the lattice action is open. Closure routes: variational principle on σ_BCC, 't Hooft beable equivalence, Beilinson regulator slot. Slogan upgrade ("mass is the stationary expectation of the master beable, computed by Vieta") conditional on FTD-0093 PASS + this [OPEN] closure.
 
 ---
 
@@ -332,6 +338,15 @@ Still open:
 
 ### 4.4 α lattice mechanism — **1 `[OPEN]`**
 **File:** `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md`. Step 3 (Z₄ symmetry selects this specific CM curve) and Step 8 (larger root = 1/α specifically) remain [SELECTION], not [THEOREM].
+
+### 4.5 L2 candidate identity 2·m_e/α = 16G*² — TRACKER-only `[CONJECTURE]` (LEDGER FTD-0094)
+Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-theoretic: `∀μ:MassUnit. (2·m_e/α)[μ]=16G*² ↔ μ=μ_FTD`. NOT promoted to LEDGER detail-row beyond the FTD-0094 quick-index entry until two conditions met: (a) Mechanism C closes positive (FTD-0093), (b) `PROTOCOL_BCC_SUBLATTICE_SPECTRUM` recovers the calibration-invariant ratio. Per the 2026-04-25 roundtable verdict: **TRACKER-only initially**. On NEGATIVE: terminal demotion to [PARAMETRIC]. See:
+- `docs/theory/10_eft_program/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` §5 (calibration-invariant statement)
+- `docs/theory/02_foundations/FOUND_BRIDGE_FUNCTIONAL.md` (mass-as-functional reading)
+- `docs/theory/10_eft_program/OPEN_MU_FROM_LP_MISSING_ARROW.md` (type-theoretic version)
+
+### 4.6 μ-from-ℓ_P missing arrow — **1 `[OPEN]`**
+**File:** `docs/theory/10_eft_program/OPEN_MU_FROM_LP_MISSING_ARROW.md`. LEDGER row FTD-0096. The formal-semantic broken arrow in L2's coherence diagram: derivation of mass unit μ from `ℓ_P` (FTD-0030/0041 calibration) without passing through m_e itself. FTD-0059 closes the LENGTH analogue; this row tracks the MASS-UNIT version. Highest-leverage moves: (1) extend FTD-0059's ring-algebra technique to mass; (2) construct counter-model varying K_GENESIS / bridge operator B / ternary-state weighting.
 
 ---
 

@@ -29,6 +29,7 @@
 #include "ftd/poisson_solvers.h"
 #include "ftd/diagnostics_compute.h"
 #include "ftd/injection.h"
+#include "ftd/sublattice.h"
 #include "ftd/transmutation_phases.h"      // moved from mid-file to avoid nested-namespace include
 #include "ftd/energy_ledger_compute.h"     // moved from mid-file to avoid nested-namespace include
 #include <algorithm>
@@ -256,32 +257,45 @@ void RenderBridge::phase_read() {
       }
     }
   } else {
-    // Single-substrate: inline Laplacian with the same interior/boundary split
+    // Single-substrate: inline Laplacian with the same interior/boundary split.
+    // Cluster A (FTD-0093): when toggles.bcc_stencil != FULL, dispatch to the
+    // selected sub-stencil via laplacian_sublattice<>. The interior fast path
+    // is retained ONLY for FULL mode; the SC/FCC/BCC paths use the slow path
+    // unconditionally — the experimental campaign trades raw throughput for
+    // an obviously-correct sub-stencil projection. Toggle validation guarantees
+    // dual_substrate==false in this branch when bcc_stencil != FULL.
+    const BccStencilMode stencil_mode = toggles.bcc_stencil;
 #pragma omp parallel for schedule(static)
     for (int i = 0; i < N; ++i) {
       delta_j_[i] = {};
 
       if (do_wave) {
-        const int iz = i % L;
-        const int iy = (i / L) % L;
-        const int ix = i / LL;
-
         Vec3 lap;
-        if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
-          // Interior fast path
-          const Vec3 f = (voxels_[i+1].flux  + voxels_[i-1].flux
-                        + voxels_[i+L].flux  + voxels_[i-L].flux
-                        + voxels_[i+LL].flux + voxels_[i-LL].flux) * INV3;
-          const Vec3 e = (voxels_[i+1+L].flux  + voxels_[i+1-L].flux
-                        + voxels_[i-1+L].flux  + voxels_[i-1-L].flux
-                        + voxels_[i+1+LL].flux + voxels_[i+1-LL].flux
-                        + voxels_[i-1+LL].flux + voxels_[i-1-LL].flux
-                        + voxels_[i+L+LL].flux + voxels_[i+L-LL].flux
-                        + voxels_[i-L+LL].flux + voxels_[i-L-LL].flux) * INV6;
-          lap = f + e - voxels_[i].flux * 4.0;
+        if (stencil_mode == BccStencilMode::FULL) {
+          const int iz = i % L;
+          const int iy = (i / L) % L;
+          const int ix = i / LL;
+
+          if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+            // Interior fast path (FULL stencil only)
+            const Vec3 f = (voxels_[i+1].flux  + voxels_[i-1].flux
+                          + voxels_[i+L].flux  + voxels_[i-L].flux
+                          + voxels_[i+LL].flux + voxels_[i-LL].flux) * INV3;
+            const Vec3 e = (voxels_[i+1+L].flux  + voxels_[i+1-L].flux
+                          + voxels_[i-1+L].flux  + voxels_[i-1-L].flux
+                          + voxels_[i+1+LL].flux + voxels_[i+1-LL].flux
+                          + voxels_[i-1+LL].flux + voxels_[i-1-LL].flux
+                          + voxels_[i+L+LL].flux + voxels_[i+L-LL].flux
+                          + voxels_[i-L+LL].flux + voxels_[i-L-LL].flux) * INV6;
+            lap = f + e - voxels_[i].flux * 4.0;
+          } else {
+            // Boundary slow path (FULL stencil)
+            lap = laplacian_flux(i);
+          }
         } else {
-          // Boundary slow path
-          lap = laplacian_flux(i);
+          // Sublattice projection (SC, FCC, or BCC). Slow path for all sites.
+          lap = ::ftd::laplacian_sublattice<&Voxel::flux>(stencil_mode,
+                                                          voxels_, lattice_, i);
         }
         delta_j_[i] = lap * cw2;
       }
@@ -466,7 +480,15 @@ void RenderBridge::phase_write() {
       // Gauss projection runs after phase_write and removes the longitudinal
       // component of J, so the thermal ensemble lives on the Gauss-physical
       // subspace automatically.
-      if (toggles.langevin) {
+      //
+      // Cluster A (FTD-0093): when toggles.langevin_site_filter != ALL_SITES,
+      // restrict the OU update to voxels matching the parity class. Non-matching
+      // voxels fall through to the deterministic damping branch — preserves
+      // the Gauss subspace separation while letting a sublattice equilibrate
+      // independently. See PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md §6 confound checks.
+      const bool langevin_active = toggles.langevin &&
+          ::ftd::site_matches_filter(lattice_, i, toggles.langevin_site_filter);
+      if (langevin_active) {
         const double gamma = toggles.langevin_gamma;
         const double T = toggles.langevin_T;
         const double sigma = std::sqrt(2.0 * gamma * T);
