@@ -147,8 +147,8 @@ static void test_lorentz_contraction() {
                     J_rest_x, J_rest_y);
     }
 
-    // BOOSTED configuration: particle with velocity creates anisotropic self-field
-    // Use force_cpu() — GPU path doesn't populate voxel flux for direct reads
+    // BOOSTED configuration: particle with velocity creates anisotropic self-field.
+    // Runs on GPU when CUDA enabled — sync_from_gpu() pulls flux for direct reads.
     double J_boost_x, J_boost_y;
     int px = 8, py = mid, pz = mid;
     {

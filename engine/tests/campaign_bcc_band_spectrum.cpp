@@ -104,7 +104,12 @@ StencilResult run_one(ftd::BccStencilMode mode, unsigned int seed,
     r.N_burn = N_burn; r.N_measure = N_measure;
 
     ftd::RenderBridge rb(L);
-    rb.force_cpu();   // Langevin GPU/dual-substrate is OPEN-7; CPU is the safe path.
+    // GPU port complete 2026-04-26:
+    //   - Single-substrate Langevin verified working (test_langevin_equipartition).
+    //   - Sublattice site filter ported (kernels_stencil.cu::langevin_site_match).
+    //   - BCC sub-stencil ported (kernels_stencil.cu::phase_read_kernel branches on
+    //     bcc_stencil_mode parameter).
+    // No force_cpu() — campaign runs on GPU when CUDA is enabled.
 
     rb.toggles.disable_all();
     rb.toggles.wave_propagation = true;     // Laplacian IS the dynamical operator
