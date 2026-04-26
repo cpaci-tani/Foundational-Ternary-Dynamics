@@ -752,6 +752,13 @@ ftd_add_test(test_two_state_extraction tests/test_two_state_extraction.cpp
 ftd_add_test(campaign_bcc_band_spectrum tests/campaign_bcc_band_spectrum.cpp
              CTEST_NAME bcc_band_spectrum TIMEOUT 1800 LABELS native eft)
 
+# Flux-slice propagation diagnostic (FTD-0092 companion). Real-space
+# 2D slice (xy / xz / yz) capture of a centred Gaussian flux pulse
+# under wave-only dynamics. Complements the spectral Lorentz-isotropy
+# measurement with a visual wavefront-symmetry check. Runs on GPU.
+ftd_add_test(campaign_flux_slice_propagation tests/campaign_flux_slice_propagation.cpp
+             CTEST_NAME flux_slice_propagation TIMEOUT 600 LABELS native)
+
 # β-function measurement protocol smoke test (Phase 2 of EFT Recovery
 # Program). Implements PROTOCOL_BETA_MEASUREMENT.md: Langevin thermal
 # ensemble → measure_alpha_eff_on_bg at two lattice sizes → extract β

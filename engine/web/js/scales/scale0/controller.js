@@ -30,6 +30,7 @@ import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js';
 import { Scale0ControlsComponent } from './ui/controls/component.js';
 import { wireScale0Controls } from './ui/controls/wire.js';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
+import { mountFluxSlicePanel } from './ui/overlays/flux-slice-panel.js';
 import { MemoryRecorder } from './timeline/memory-recorder.js';
 import { RenderController } from './timeline/render-controller.js';
 import * as _lodMod from './timeline/lod.js';
@@ -214,6 +215,15 @@ export function bindUI(ctx) {
     // Mount floating symmetry panel
     mountSymmetryPanel(document.getElementById('app'));
 
+    // Mount floating live flux-slice diagnostic (xy/xz/yz heatmaps).
+    // Hidden by default; toggled by the `Flux slices` chip in the same
+    // top-right cluster as the symmetry panel. Reads bridge live via
+    // ctx.bridge so a scale-switch round-trip keeps the data flowing.
+    mountFluxSlicePanel(
+        document.getElementById('app'),
+        () => ctx.bridge,
+    );
+
     bindScale0UI(ctx, {
         loadScenario,
         resize,
@@ -307,6 +317,9 @@ export function animate(ctx) {
     renderFrame(ctx);
     updateDiagnosticsAndPanels(ctx, state);
     _scrubBar?.refresh();
+    // Live flux-slice panel: cheap no-op when hidden; internally
+    // gated to every Nth render frame when visible.
+    if (typeof window !== 'undefined') window.__ftdFluxSlicePanel?.update?.();
 }
 
 export function step(ctx) {
