@@ -53,25 +53,15 @@
 
 namespace {
 
-// Local CPU-only versions of the prepare_thermal_background +
-// measure_alpha_eff_on_bg helpers from coupling_measurement.h.
-//
-// Why: FTD-0051 ships the Langevin thermostat on the CPU single-substrate
-// path only; on GPU-enabled builds RenderBridge auto-selects the GPU
-// backend, on which `langevin = true` is a silent no-op (the thermal
-// background ends up at <|v|²> = 0). force_cpu() switches to the CPU
-// backend, which honours the Langevin update via phase_write.
-//
-// These wrappers exist because ftd::eft::prepare_thermal_background and
-// the *_on_bg helpers do not expose a force_cpu() hook. Once GPU
-// Langevin lands, these wrappers can be deleted in favour of the upstream
-// helpers.
+// Local versions of the prepare_thermal_background + measure_alpha_eff_on_bg
+// helpers from coupling_measurement.h. As of 2026-04-26 the GPU Langevin path
+// is verified working (test_langevin_equipartition GPU PASS), so force_cpu()
+// is no longer needed; the wrappers remain as the campaign's local API.
 
 std::unique_ptr<ftd::RenderBridge> prepare_thermal_bg_cpu(
     int L, double T, double gamma, int burn_in_ticks, unsigned int seed)
 {
     auto rb = std::make_unique<ftd::RenderBridge>(L);
-    rb->force_cpu();
     ftd::eft::configure_bare_lattice_for_coupling(*rb);
     ftd::eft::LangevinOptions opts;
     opts.enabled = true;
@@ -88,7 +78,6 @@ double self_energy_on_bg_cpu(const ftd::RenderBridge& bg, int8_t sign,
     const int L = bg.lattice().size();
     const int mid = L / 2;
     ftd::RenderBridge rb(L);
-    rb.force_cpu();
     ftd::eft::configure_bare_lattice_for_coupling(rb);
     ftd::eft::copy_flux_and_wave_vel_for_coupling(bg, rb);
     ftd::eft::place_test_charge_on_bg(rb, mid, mid, mid, sign, initial_flux_z);
@@ -101,7 +90,6 @@ double pair_energy_on_bg_cpu(const ftd::RenderBridge& bg, int r,
     const int L = bg.lattice().size();
     const int mid = L / 2;
     ftd::RenderBridge rb(L);
-    rb.force_cpu();
     ftd::eft::configure_bare_lattice_for_coupling(rb);
     ftd::eft::copy_flux_and_wave_vel_for_coupling(bg, rb);
     ftd::eft::place_test_charge_on_bg(rb, mid, mid, mid, +1, initial_flux_z);
