@@ -105,6 +105,28 @@ struct GpuBuffers {
     uint8_t*  d_near_particle = nullptr;
     double*   d_near_accel    = nullptr;  // max accel_mag of nearby particles (for Larmor)
 
+    // --- Per-site force diagnostics (mirror of CPU RenderBridge::force_diag_) ---
+    // Five components × 3 axes, indexed by lattice site. Populated by the
+    // force kernels (phase_forces, color_force) so GpuBackend::sync_to_host()
+    // can scatter them back into RenderBridge::force_diag_. Allocated
+    // unconditionally — modest cost (15 doubles × N ≈ 1.9 MB at L=64,
+    // 122 MB at L=256) — keeps the kernel signature simple.
+    double*   d_fd_coulomb_x  = nullptr;
+    double*   d_fd_coulomb_y  = nullptr;
+    double*   d_fd_coulomb_z  = nullptr;
+    double*   d_fd_strong_x   = nullptr;
+    double*   d_fd_strong_y   = nullptr;
+    double*   d_fd_strong_z   = nullptr;
+    double*   d_fd_magnetic_x = nullptr;
+    double*   d_fd_magnetic_y = nullptr;
+    double*   d_fd_magnetic_z = nullptr;
+    double*   d_fd_gravity_x  = nullptr;
+    double*   d_fd_gravity_y  = nullptr;
+    double*   d_fd_gravity_z  = nullptr;
+    double*   d_fd_exchange_x = nullptr;
+    double*   d_fd_exchange_y = nullptr;
+    double*   d_fd_exchange_z = nullptr;
+
     // --- FFT workspace ---
     // Both precisions are active: float (C2C) is the default 2× faster path;
     // double (Z2Z) is used by high-accuracy callsites in kernels_poisson.cu.
@@ -159,6 +181,18 @@ struct GpuBuffers {
 
     // Download phi_latency from device (Wave 5: GPU latency Poisson)
     void download_phi_latency(std::vector<double>& out) const;
+
+    // Download per-site force diagnostics. Each output vector is resized to N
+    // and filled in voxel-major order so callers can scatter into
+    // RenderBridge::force_diag_[i] directly (one ForceDiag per site).
+    void download_force_diag(std::vector<double>& fc_x, std::vector<double>& fc_y, std::vector<double>& fc_z,
+                             std::vector<double>& fs_x, std::vector<double>& fs_y, std::vector<double>& fs_z,
+                             std::vector<double>& fm_x, std::vector<double>& fm_y, std::vector<double>& fm_z,
+                             std::vector<double>& fg_x, std::vector<double>& fg_y, std::vector<double>& fg_z,
+                             std::vector<double>& fe_x, std::vector<double>& fe_y, std::vector<double>& fe_z) const;
+
+    // Zero all force-diag arrays (called once per tick before force kernels).
+    void reset_force_diag();
 
     // Native EFT continuity event ledger helpers
     void reset_continuity_ledger();

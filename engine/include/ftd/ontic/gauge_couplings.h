@@ -48,12 +48,36 @@ inline constexpr double ALPHA           = 1.0 / X_PLUS_PRECISION;
 inline constexpr double ALPHA_TREE      = 1.0 / X_PLUS;
 inline constexpr double ALPHA_PRECISION = ALPHA;
 
-// State-flux coupling: g_c = √α [SELECTION]
-// From the Lagrangian coupling term L_coupling = -g_c·s·(∇·J)
-// Pre-computed: √(1/137.035999177) = 0.085424543102854...
-// (precision value, 2026-04-17 rollout — see TRACKER §1.5).
-// Verified against std::sqrt(ALPHA) in ontic_audit() and by the
-// compile-time static_assert in constants.h that checks G_C² ≈ ALPHA.
+// State-flux coupling g_c — derivation chain (honestly traced):
+//
+//   STEP 1 [THEOREM, algebraic]:
+//     The master quadratic x² − 16G*²x + 16G*³ = 0 has root
+//     x_+ = X_PLUS_PRECISION (4-term-corrected).
+//     This is pure algebra over the lemniscatic ring.
+//
+//   STEP 2 [STRONGLY MOTIVATED CONJECTURE, physical match]:
+//     Identify x_+ with the inverse fine-structure constant: α ≡ 1/x_+.
+//     Evidence: the SAME polynomial gives x_- ≈ 3 = N_c (dual match),
+//     and CM-curve uniqueness at class number 1 selects this λ-modular
+//     fixed point. See LEDGER FTD-0013/0014.
+//
+//   STEP 3 [SELECTION, Lagrangian ansatz]:
+//     Adopt the coupling term L_coupling = −g_c · s · (∇·J).
+//     The Wilsonian matching condition for this ansatz at the
+//     classical / tree level forces g_c² = α.
+//     Therefore G_C ≡ √α = √(1/X_PLUS_PRECISION).
+//
+//   STEP 4 [OPEN, Mechanism B]:
+//     A first-principles derivation of g_c from lattice→continuum
+//     matching of the static charge–charge potential (without
+//     assuming step 3's ansatz) is the load-bearing open problem
+//     for upgrading FTD from "Wilsonian-shaped" to "Wilsonian EFT".
+//     See SPEC_EFT_RECOVERY_PROGRAM.md Phase 2 and FTD-0031.
+//
+// Numerical value: √(1/137.035999177) = 0.085424543102854...
+// Hardcoded as a literal because C++17 forbids constexpr std::sqrt.
+// Runtime equality with std::sqrt(ALPHA) is asserted in ontic_audit();
+// the compile-time static_assert in constants.h verifies G_C² ≈ ALPHA.
 inline constexpr double G_C = 0.0854245431028543695;
 
 // Weinberg angle: sin²θ_W = N_c / N_eff = 3/13 [THEOREM]

@@ -10,6 +10,9 @@
 
 #include "ftd/backend.h"
 #include "ftd/render_bridge.h"
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
 
 #ifdef FTD_ENABLE_CUDA
 #include "ftd/gpu_engine.h"
@@ -70,6 +73,21 @@ void GpuBackend::sync_to_host() {
         bridge_.phi_          = engine_->phi();
         bridge_.phi_coulomb_  = engine_->phi_coulomb();
         bridge_.phi_latency_  = engine_->phi_latency();
+        // Per-site force diagnostics — without this, GPU runs returned zero
+        // from RenderBridge::force_diag_at() because the array was never
+        // populated. The four tests test_emergent_measurements,
+        // test_asymptotic_freedom, test_confinement, and test_triad_confinement
+        // depend on this scatter to read f_coulomb / f_strong after tick().
+        const auto& fd = engine_->force_diag();
+        const int n = static_cast<int>(bridge_.force_diag_.size());
+        for (int i = 0; i < n; ++i) {
+            auto& d = bridge_.force_diag_[i];
+            d.f_coulomb  = { fd.coulomb_x[i],  fd.coulomb_y[i],  fd.coulomb_z[i]  };
+            d.f_strong   = { fd.strong_x[i],   fd.strong_y[i],   fd.strong_z[i]   };
+            d.f_magnetic = { fd.magnetic_x[i], fd.magnetic_y[i], fd.magnetic_z[i] };
+            d.f_gravity  = { fd.gravity_x[i],  fd.gravity_y[i],  fd.gravity_z[i]  };
+            d.f_exchange = { fd.exchange_x[i], fd.exchange_y[i], fd.exchange_z[i] };
+        }
         bridge_.gpu_dirty_    = false;
     }
 }

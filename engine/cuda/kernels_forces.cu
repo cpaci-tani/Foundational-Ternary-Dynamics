@@ -166,6 +166,18 @@ __global__ void phase_forces_kernel(
     double* __restrict__ vel_y,
     double* __restrict__ vel_z,
     double* __restrict__ accel_mag,
+    // Force-diag SoA mirrors (each may be nullptr when diagnostics disabled).
+    // Each thread writes its own site once, so plain stores suffice — no
+    // atomics needed.
+    double* __restrict__ fd_coulomb_x,
+    double* __restrict__ fd_coulomb_y,
+    double* __restrict__ fd_coulomb_z,
+    double* __restrict__ fd_gravity_x,
+    double* __restrict__ fd_gravity_y,
+    double* __restrict__ fd_gravity_z,
+    double* __restrict__ fd_magnetic_x,
+    double* __restrict__ fd_magnetic_y,
+    double* __restrict__ fd_magnetic_z,
     bool poisson_coulomb,
     bool gravity,
     bool lorentz_force,
@@ -182,6 +194,12 @@ __global__ void phase_forces_kernel(
 
     double s = static_cast<double>(state[i]);
     double fx = 0.0, fy = 0.0, fz = 0.0;
+    // Per-component accumulators for force_diag mirror (parity with CPU
+    // RenderBridge::phase_forces, which records f_coulomb / f_gravity /
+    // f_magnetic separately even though only the sum drives velocity).
+    double f_em_x = 0.0,    f_em_y = 0.0,    f_em_z = 0.0;
+    double f_grav_x = 0.0,  f_grav_y = 0.0,  f_grav_z = 0.0;
+    double f_mag_x = 0.0,   f_mag_y = 0.0,   f_mag_z = 0.0;
 
     // Neighbor indices
     int xp = idx3d_d(x+1,y,z,L), xm = idx3d_d(x-1,y,z,L);
@@ -195,9 +213,10 @@ __global__ void phase_forces_kernel(
         double grad_phi_y = 0.5 * (phi_coulomb[yp] - phi_coulomb[ym]);
         double grad_phi_z = 0.5 * (phi_coulomb[zp] - phi_coulomb[zm]);
 
-        fx -= ALPHA * s * grad_phi_x;
-        fy -= ALPHA * s * grad_phi_y;
-        fz -= ALPHA * s * grad_phi_z;
+        f_em_x = -ALPHA * s * grad_phi_x;
+        f_em_y = -ALPHA * s * grad_phi_y;
+        f_em_z = -ALPHA * s * grad_phi_z;
+        fx += f_em_x; fy += f_em_y; fz += f_em_z;
     } else {
         // Legacy mode: F = -alpha * s * gradient(div(J))
         // Compute divergence at each face neighbor, then take gradient
@@ -214,9 +233,10 @@ __global__ void phase_forces_kernel(
         double grad_div_y = 0.5 * (div_J(yp) - div_J(ym));
         double grad_div_z = 0.5 * (div_J(zp) - div_J(zm));
 
-        fx -= ALPHA * s * grad_div_x;
-        fy -= ALPHA * s * grad_div_y;
-        fz -= ALPHA * s * grad_div_z;
+        f_em_x = -ALPHA * s * grad_div_x;
+        f_em_y = -ALPHA * s * grad_div_y;
+        f_em_z = -ALPHA * s * grad_div_z;
+        fx += f_em_x; fy += f_em_y; fz += f_em_z;
     }
 
     // --- Gravity: F = G_N * gradient(density) using tier-2 stencil ---
@@ -234,9 +254,10 @@ __global__ void phase_forces_kernel(
         double gy = 0.25 * (density(y2p) - density(y2m));
         double gz = 0.25 * (density(z2p) - density(z2m));
 
-        fx += G_N * gx;
-        fy += G_N * gy;
-        fz += G_N * gz;
+        f_grav_x = G_N * gx;
+        f_grav_y = G_N * gy;
+        f_grav_z = G_N * gz;
+        fx += f_grav_x; fy += f_grav_y; fz += f_grav_z;
     }
 
     // --- Lorentz force: F = alpha * s * (v × B) where B = curl(J) ---
@@ -255,10 +276,32 @@ __global__ void phase_forces_kernel(
             double cross_y = vz * Bx - vx * Bz;
             double cross_z = vx * By - vy * Bx;
 
-            fx += ALPHA * s * cross_x;
-            fy += ALPHA * s * cross_y;
-            fz += ALPHA * s * cross_z;
+            f_mag_x = ALPHA * s * cross_x;
+            f_mag_y = ALPHA * s * cross_y;
+            f_mag_z = ALPHA * s * cross_z;
+            fx += f_mag_x; fy += f_mag_y; fz += f_mag_z;
         }
+    }
+
+    // --- Mirror per-component forces into force_diag SoA (matches CPU
+    // RenderBridge::phase_forces, which writes force_diag_[i].f_* before
+    // applying the velocity update). f_strong is populated by
+    // color_force_kernel; f_exchange stays at the reset_force_diag()
+    // zero baseline (CPU explicitly assigns f_exchange = {}).
+    if (fd_coulomb_x) {
+        fd_coulomb_x[i] = f_em_x;
+        fd_coulomb_y[i] = f_em_y;
+        fd_coulomb_z[i] = f_em_z;
+    }
+    if (fd_gravity_x) {
+        fd_gravity_x[i] = f_grav_x;
+        fd_gravity_y[i] = f_grav_y;
+        fd_gravity_z[i] = f_grav_z;
+    }
+    if (fd_magnetic_x) {
+        fd_magnetic_x[i] = f_mag_x;
+        fd_magnetic_y[i] = f_mag_y;
+        fd_magnetic_z[i] = f_mag_z;
     }
 
     // --- Update velocity ---
@@ -517,6 +560,10 @@ __global__ void color_force_kernel(
     double* __restrict__ vel_x,
     double* __restrict__ vel_y,
     double* __restrict__ vel_z,
+    // Force-diag mirror (one site per particle, plain stores).
+    double* __restrict__ fd_strong_x,
+    double* __restrict__ fd_strong_y,
+    double* __restrict__ fd_strong_z,
     double dt,
     int L
 ) {
@@ -571,6 +618,15 @@ __global__ void color_force_kernel(
     atomicAdd(&vel_x[i], fx * dt);
     atomicAdd(&vel_y[i], fy * dt);
     atomicAdd(&vel_z[i], fz * dt);
+
+    // Mirror per-particle color force into force_diag (parity with CPU
+    // RenderBridge::phase_forces: force_diag_[i].f_strong = f_color).
+    // Each thread owns a unique particle index, so plain stores are safe.
+    if (fd_strong_x) {
+        fd_strong_x[i] = fx;
+        fd_strong_y[i] = fy;
+        fd_strong_z[i] = fz;
+    }
 }
 
 // ============================================================================
@@ -778,6 +834,9 @@ void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_accel_mag,
+        bufs.d_fd_coulomb_x,  bufs.d_fd_coulomb_y,  bufs.d_fd_coulomb_z,
+        bufs.d_fd_gravity_x,  bufs.d_fd_gravity_y,  bufs.d_fd_gravity_z,
+        bufs.d_fd_magnetic_x, bufs.d_fd_magnetic_y, bufs.d_fd_magnetic_z,
         poisson_coulomb, gravity, lorentz_force, dt, L
     );
     CUDA_CHECK(cudaGetLastError());
@@ -826,6 +885,7 @@ void launch_color_force(GpuBuffers& bufs, int num_particles, double dt) {
         bufs.d_state, bufs.d_color,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
         dt, bufs.L
     );
     CUDA_CHECK(cudaGetLastError());
