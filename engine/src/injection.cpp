@@ -71,6 +71,12 @@ void inject_particle_cpu(RenderBridge& rb, int x, int y, int z, int8_t state,
 #ifdef FTD_ENABLE_CUDA
   if (auto* gpu = rb.gpu_engine_ptr()) {
     gpu->toggles.dual_substrate = rb.toggles.dual_substrate;  // OPEN-5
+    // Flush any pending host writes (e.g. a bg flux just copied via
+    // voxels()[]= or copy_flux_and_wave_vel_for_coupling) BEFORE the
+    // GPU-side inject. Without this, the next sync_to_host downloads
+    // (zeros + injected charge) and clobbers the unflushed bg, leaving
+    // the bg permanently lost. β-measurement seed-mute bug, 2026-04-26.
+    rb.backend().flush_host_mutations();
     gpu->inject_particle(x, y, z, state, flux_val, spin, color);
     rb.backend().mark_gpu_dirty();
     return;
@@ -101,6 +107,7 @@ void inject_wavepacket_cpu(RenderBridge& rb, int cx, int cy, int cz, int8_t stat
 #ifdef FTD_ENABLE_CUDA
   if (auto* gpu = rb.gpu_engine_ptr()) {
     gpu->toggles.dual_substrate = rb.toggles.dual_substrate;  // OPEN-5
+    rb.backend().flush_host_mutations();   // see inject_particle_cpu rationale
     gpu->inject_wavepacket(cx, cy, cz, state, sigma, amplitude);
     rb.backend().mark_gpu_dirty();
     return;
