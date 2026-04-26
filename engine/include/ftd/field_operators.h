@@ -49,6 +49,18 @@ inline double divergence_flux_op(const std::vector<Voxel>& voxels, const Lattice
   return div;
 }
 
+// ARCH-7b: divergence variant that reads from an explicit Vec3 array
+// rather than voxels[].flux. Race-free pair to curl_from_flux_array.
+inline double divergence_from_flux_array(const std::vector<Vec3>& flux,
+                                          const Lattice& lattice, int idx) {
+  const auto& nbrs = lattice.neighbors_6(idx);
+  double div = 0.0;
+  div += (flux[nbrs[0]].x - flux[nbrs[1]].x) * 0.5;
+  div += (flux[nbrs[2]].y - flux[nbrs[3]].y) * 0.5;
+  div += (flux[nbrs[4]].z - flux[nbrs[5]].z) * 0.5;
+  return div;
+}
+
 inline Vec3 curl_flux_op(const std::vector<Voxel>& voxels, const Lattice& lattice, int idx) {
   const auto& n = lattice.neighbors_6(idx);
   Vec3 curl;
@@ -59,6 +71,23 @@ inline Vec3 curl_flux_op(const std::vector<Voxel>& voxels, const Lattice& lattic
   curl.z = (voxels[n[0]].flux.y - voxels[n[1]].flux.y) * 0.5 -
            (voxels[n[2]].flux.x - voxels[n[3]].flux.x) * 0.5;
   assert(!std::isnan(curl.x) && !std::isnan(curl.y) && !std::isnan(curl.z));
+  return curl;
+}
+
+// ARCH-7b (2026-04-25): variant reading flux from an explicit Vec3 array.
+// Used by phase_write genesis on a pre-write snapshot, so the curl read
+// doesn't race against concurrent threads updating voxel flux in the same
+// parallel pass. See engine/src/render_bridge.cpp::phase_write.
+inline Vec3 curl_from_flux_array(const std::vector<Vec3>& flux,
+                                  const Lattice& lattice, int idx) {
+  const auto& n = lattice.neighbors_6(idx);
+  Vec3 curl;
+  curl.x = (flux[n[2]].z - flux[n[3]].z) * 0.5 -
+           (flux[n[4]].y - flux[n[5]].y) * 0.5;
+  curl.y = (flux[n[4]].x - flux[n[5]].x) * 0.5 -
+           (flux[n[0]].z - flux[n[1]].z) * 0.5;
+  curl.z = (flux[n[0]].y - flux[n[1]].y) * 0.5 -
+           (flux[n[2]].x - flux[n[3]].x) * 0.5;
   return curl;
 }
 

@@ -311,6 +311,12 @@ inline constexpr double EVAP_THRESHOLD = 1e-6;
 inline constexpr double EPSILON_FLUX_SQ = 1e-30; // guard for |J|² divisions
 inline constexpr double EPSILON_MAG = 1e-15; // guard for magnitude divisions
 
+// RF-8 (2026-04-25): bandwidth budget floor used by accumulate_proper_time()
+// to keep the effective speed-of-light denominator finite when L² approaches
+// 1 (near-horizon limit) and to clamp the kinetic budget below 1.0. Was
+// previously a bare `1e-6` literal at three call sites in render_bridge.cpp.
+inline constexpr double BANDWIDTH_FLOOR = 1e-6;
+
 // Wavepacket injection: Gaussian truncated at this many sigma
 inline constexpr double GAUSSIAN_CUTOFF_SIGMA = 3.0;
 

@@ -37,6 +37,7 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
+#include <stdexcept>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -68,74 +69,59 @@ RenderBridge::RenderBridge(int lattice_size)
     num_threads = omp_get_max_threads();
 #endif
     thread_seeds_.resize(num_threads, 0u);
-    thread_rngs_.resize(num_threads);
+    rng_state_ = std::make_unique<BridgeRng>(42u);
+    rng_state_->resize_thread_pool(static_cast<std::size_t>(num_threads));
     colored_sites_cache_.reserve(256);
 #ifdef FTD_ENABLE_CUDA
     gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
-    use_gpu_ = true;
+    // ARCH-2-M: backend_ is now the single source of truth for backend
+    // selection (the legacy `use_gpu_` flag was deleted).
+    backend_ = std::make_unique<GpuBackend>(*this, gpu_.get());
     std::cerr << "[RenderBridge] GPU backend active (CUDA, L=" << lattice_size << ")\n";
+#else
+    backend_ = std::make_unique<CpuBackend>(*this);
 #endif
 }
 
 // Destructor must be in .cpp where GpuEngine is fully defined (unique_ptr needs it)
 RenderBridge::~RenderBridge() = default;
 
+// ARCH-4 (2026-04-25): propagates the seed to all RNG sources at once.
+// Body lives here because GpuEngine is forward-declared in render_bridge.h.
+void RenderBridge::seed_rng(unsigned int seed) {
+    rng_state_->seed(seed);
+    langevin_seed_initialized_ = false;   // force thread_seeds_ rederive
+    toggles.langevin_seed       = seed;   // GPU cuRAND picks this up next tick
+#ifdef FTD_ENABLE_CUDA
+    if (gpu_) gpu_->set_rng_seed(seed);
+#endif
+}
+
 void RenderBridge::set_dt(double dt) {
     dt_ = (dt >= 1.0) ? dt : 1.0;
-#ifdef FTD_ENABLE_CUDA
-    if (use_gpu_ && gpu_) {
-        gpu_->set_dt(dt_);
-    }
-#endif
+    // ARCH-2: backend dispatch replaces the explicit ifdef. CpuBackend is a
+    // no-op (RenderBridge::dt_ is the source of truth); GpuBackend forwards
+    // to GpuEngine.
+    if (backend_) backend_->set_dt(dt_);
 }
 
-#ifdef FTD_ENABLE_CUDA
-void RenderBridge::gpu_sync_to_host() {
-    if (use_gpu_ && gpu_dirty_) {
-        gpu_->sync_to_host(voxels_);
-        phi_ = gpu_->phi();
-        phi_coulomb_ = gpu_->phi_coulomb();
-        phi_latency_ = gpu_->phi_latency();
-        gpu_dirty_ = false;
-    }
-}
-
-void RenderBridge::gpu_push_to_device() {
-    if (use_gpu_) {
-        gpu_->upload_from_host(voxels_);
-        gpu_dirty_ = false;
-    }
-}
-
-void RenderBridge::gpu_flush_host_mutations() {
-    // Wave 5.2 (2026-04-14): tick() calls this at the start so that any
-    // direct host writes done via voxels()[idx].field = ... since the
-    // previous tick get pushed back to the GPU before physics runs.
-    // BUG FIX 2026-04-21: also called from RenderBridge::run() GPU
-    // fast-path (which bypasses tick()); without that, host mutations
-    // before a `run(N)` call silently never reached the GPU.
-    if (use_gpu_ && host_mutated_) {
-        gpu_->upload_from_host(voxels_);
-        gpu_dirty_ = false;
-        host_mutated_ = false;
-    }
-}
-#endif
+// ARCH-2-J (2026-04-25): the private GPU sync delegators
+// (gpu_sync_to_host, gpu_push_to_device, gpu_flush_host_mutations) were
+// DELETED. All callers route through backend_->sync_to_host() /
+// push_to_device() / flush_host_mutations() directly. Implementations live
+// in src/backend.cpp::GpuBackend (friend access for state).
 
 // Wave 5 (2026-04-14): GPU-aware phi_latency accessor.
 // When use_gpu_ is true, lazily fetches the latency Poisson potential
 // from the GPU buffer (d_phi_latency). When use_gpu_ is false, returns
 // the CPU SOR solver's cached vector directly.
 const std::vector<double>& RenderBridge::phi_latency() const {
-#ifdef FTD_ENABLE_CUDA
-    if (use_gpu_ && gpu_) {
-        // Mirror the GPU's phi_latency into our host vector so external
-        // callers get a stable reference.
-        const auto& gpu_phi = gpu_->phi_latency();
-        auto& dst = const_cast<std::vector<double>&>(phi_latency_);
-        dst = gpu_phi;
+    // ARCH-2-F: lazy fetch via Backend dispatch. CpuBackend is a no-op
+    // (the SOR solver already writes phi_latency_ directly); GpuBackend
+    // mirrors the device buffer into the host vector.
+    if (backend_) {
+        const_cast<Backend*>(backend_.get())->mirror_phi_latency();
     }
-#endif
     return phi_latency_;
 }
 
@@ -335,6 +321,17 @@ void RenderBridge::phase_write() {
   const bool do_larmor = toggles.larmor_radiation;
   const bool dual = toggles.dual_substrate;
 
+  // ARCH-7b (2026-04-25): pre-write flux snapshot for genesis curl reads.
+  // The parallel-for body below writes voxel.flux while genesis at other
+  // voxels reads neighbors via curl_flux. Without this snapshot, those
+  // reads race against concurrent writes — making multi-thread runs
+  // non-deterministic. Cost: one O(N) sequential copy of N*Vec3 (~24 bytes
+  // per voxel = 1.5 MB at L=64); cheap relative to the parallel-for itself.
+  if (do_genesis) {
+    flux_pre_write_.resize(N);
+    for (int i = 0; i < N; ++i) flux_pre_write_[i] = voxels_[i].flux;
+  }
+
   // Phase D: Precompute near-particle mask (O(N), race-free)
   if (selective) {
     near_particle_.resize(N, 0);
@@ -369,17 +366,17 @@ void RenderBridge::phase_write() {
 #ifdef _OPENMP
   num_threads = omp_get_max_threads();
 #endif
-  for (int t = 0; t < num_threads; ++t) {
-    if (toggles.langevin
-        && (!langevin_seed_initialized_
-            || active_langevin_seed_ != toggles.langevin_seed)) {
-      rng_.seed(toggles.langevin_seed);
-      active_langevin_seed_ = toggles.langevin_seed;
-      langevin_seed_initialized_ = true;
-    }
-    thread_seeds_[t] = rng_();
-    thread_rngs_[t].seed(thread_seeds_[t]);
+  if (toggles.langevin
+      && (!langevin_seed_initialized_
+          || active_langevin_seed_ != toggles.langevin_seed)) {
+    rng_state_->seed(toggles.langevin_seed);
+    active_langevin_seed_ = toggles.langevin_seed;
+    langevin_seed_initialized_ = true;
   }
+  if (static_cast<int>(thread_seeds_.size()) < num_threads)
+    thread_seeds_.resize(num_threads, 0u);
+  rng_state_->reseed_thread_pool(thread_seeds_.data(),
+                                 static_cast<std::size_t>(num_threads));
 
 #pragma omp parallel for
   for (int i = 0; i < N; ++i) {
@@ -389,8 +386,8 @@ void RenderBridge::phase_write() {
 #ifdef _OPENMP
     tid = omp_get_thread_num();
 #endif
-    auto& local_rng = thread_rngs_[tid];
-    std::uniform_real_distribution<double> local_uniform(0.0, 1.0);
+    BridgeRng& rng = *rng_state_;
+    const std::size_t tids = static_cast<std::size_t>(tid);
 
     const bool should_damp = !selective || near_particle_[i];
 
@@ -429,16 +426,18 @@ void RenderBridge::phase_write() {
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_B);
-        if (local_uniform(local_rng) < p) {
+        if (rng.thread_uniform(tids) < p) {
           double chi = v.chirality_density();
           v.state = (chi >= 0) ? 1 : -1;
-          int pid;
-#pragma omp critical(genesis_id)
-          { pid = next_particle_id_++; }
-          v.particle_id = pid;
+          // ARCH-7 (2026-04-25): defer particle_id assignment until the
+          // sequential post-pass below (after the parallel-for completes)
+          // so the IDs are assigned in voxel-index order regardless of OMP
+          // thread scheduling. -2 is the "pending" sentinel.
+          v.particle_id = -2;
 
-          // Spin from curl of observable J
-          Vec3 curl = curl_flux(i);
+          // ARCH-7b: spin from curl of pre-write flux snapshot (avoids
+          // racing concurrent voxel.flux writes from sibling threads).
+          Vec3 curl = ::ftd::curl_from_flux_array(flux_pre_write_, lattice_, i);
           double ax = std::abs(curl.x), ay = std::abs(curl.y), az = std::abs(curl.z);
           double mx = std::max({ax, ay, az});
           if (mx > EPSILON_MAG) {
@@ -446,7 +445,7 @@ void RenderBridge::phase_write() {
             else if (ay >= ax) v.spin = (curl.y > 0) ? 1 : -1;
             else v.spin = (curl.x > 0) ? 1 : -1;
           } else {
-            v.spin = (local_uniform(local_rng) < 0.5) ? 1 : -1;
+            v.spin = (rng.thread_uniform(tids) < 0.5) ? 1 : -1;
           }
 
           // Color from dominant flux axis
@@ -471,11 +470,10 @@ void RenderBridge::phase_write() {
         const double gamma = toggles.langevin_gamma;
         const double T = toggles.langevin_T;
         const double sigma = std::sqrt(2.0 * gamma * T);
-        std::normal_distribution<double> gauss(0.0, 1.0);
         const double one_minus_gamma = 1.0 - gamma;
-        v.wave_vel.x = one_minus_gamma * v.wave_vel.x + sigma * gauss(local_rng);
-        v.wave_vel.y = one_minus_gamma * v.wave_vel.y + sigma * gauss(local_rng);
-        v.wave_vel.z = one_minus_gamma * v.wave_vel.z + sigma * gauss(local_rng);
+        v.wave_vel.x = one_minus_gamma * v.wave_vel.x + sigma * rng.thread_normal(tids);
+        v.wave_vel.y = one_minus_gamma * v.wave_vel.y + sigma * rng.thread_normal(tids);
+        v.wave_vel.z = one_minus_gamma * v.wave_vel.z + sigma * rng.thread_normal(tids);
       } else if (do_damping && should_damp) {
         double eff_damping = damping_factor;
         // Larmor radiation: modulate damping at ALL near-particle sites
@@ -492,20 +490,22 @@ void RenderBridge::phase_write() {
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_B);
-        if (local_uniform(local_rng) < p) {
+        if (rng.thread_uniform(tids) < p) {
           // Latent Heat of Manifestation: consume wave energy
           v.wave_vel *= 0.5; // Drain local kinetic energy to pay for mass gap
           double jmag = v.flux.mag();
           if (jmag > 1e-9) v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag); // Consume potential energy
 
-          double div = divergence_flux(i);
+          // ARCH-7b: divergence from pre-write snapshot (race-free).
+          double div = ::ftd::divergence_from_flux_array(flux_pre_write_, lattice_, i);
           v.state = (div > 0) ? 1 : -1;
-          int pid;
-#pragma omp critical(genesis_id)
-          { pid = next_particle_id_++; }
-          v.particle_id = pid;
+          // ARCH-7 (2026-04-25): defer particle_id assignment to the
+          // sequential post-pass for OMP determinism (see dual-substrate
+          // branch above for rationale).
+          v.particle_id = -2;
 
-          Vec3 curl = curl_flux(i);
+          // ARCH-7b: spin from curl of pre-write flux snapshot (race-free).
+          Vec3 curl = ::ftd::curl_from_flux_array(flux_pre_write_, lattice_, i);
           double ax = std::abs(curl.x), ay = std::abs(curl.y), az = std::abs(curl.z);
           double mx = std::max({ax, ay, az});
           if (mx > EPSILON_MAG) {
@@ -513,7 +513,7 @@ void RenderBridge::phase_write() {
             else if (ay >= ax) v.spin = (curl.y > 0) ? 1 : -1;
             else v.spin = (curl.x > 0) ? 1 : -1;
           } else {
-            v.spin = (local_uniform(local_rng) < 0.5) ? 1 : -1;
+            v.spin = (rng.thread_uniform(tids) < 0.5) ? 1 : -1;
           }
 
           double fx = std::abs(v.flux.x), fy = std::abs(v.flux.y), fz = std::abs(v.flux.z);
@@ -539,12 +539,25 @@ void RenderBridge::phase_write() {
       // but even in a thermal bath, virtual pairs have a finite lifetime.
       double evap_prob = std::exp(-local_energy / (K_B * K_B));
       // Increase evaporation rate significantly to stabilize the thermal vacuum
-      if (local_uniform(local_rng) < evap_prob * 0.1) {
+      if (rng.thread_uniform(tids) < evap_prob * 0.1) {
         v.state = 0;
         v.particle_id = -1;
         v.spin = 0;
         v.color = 0;
       }
+    }
+  }
+
+  // ARCH-7 (2026-04-25): sequential post-pass to assign deterministic
+  // particle IDs in voxel-index order. The parallel-for above marks
+  // newly-manifested voxels with particle_id == -2 ("pending") so that the
+  // injector counter increment doesn't depend on OMP thread scheduling.
+  // After this pass, replaying the same seed with any thread count produces
+  // identical particle_id values, closing TEST-004.
+  const int N_total = static_cast<int>(lattice_.total_sites());
+  for (int i = 0; i < N_total; ++i) {
+    if (voxels_[i].particle_id == -2) {
+      voxels_[i].particle_id = injector_.next_particle_id();
     }
   }
 }
@@ -805,14 +818,15 @@ void RenderBridge::phase_forces() {
       const double L      = v.latency;                  // 0 if latency_field off
       const double L2     = L * L;
       // Budget-safe: clamp 1−L² strictly positive so sqrt() never
-      // underflows at or near the horizon.
-      const double one_L2 = std::max(1.0 - L2, 1e-6);
+      // underflows at or near the horizon. RF-8 (2026-04-25): use the
+      // shared BANDWIDTH_FLOOR constant from constants.h instead of bare 1e-6.
+      const double one_L2 = std::max(1.0 - L2, BANDWIDTH_FLOOR);
 
-      // Current γ (with a budget floor of 1e-6 to keep γ finite if the
-      // previous tick left v at the bandwidth edge).
+      // Current γ — BANDWIDTH_FLOOR keeps γ finite when the previous tick
+      // left v at the bandwidth edge.
       const double v2 = v.velocity.mag2();
       double budget  = v2 / C2 + L2;
-      if (budget > 1.0 - 1e-6) budget = 1.0 - 1e-6;
+      if (budget > 1.0 - BANDWIDTH_FLOOR) budget = 1.0 - BANDWIDTH_FLOOR;
       const double gamma_in = 1.0 / std::sqrt(1.0 - budget);
 
       // Reconstruct momentum, apply force, extract new velocity.
@@ -956,40 +970,36 @@ void RenderBridge::phase_movement() {
 void RenderBridge::tick() {
   // F3 (callstack audit 2026-04-17): validate runs on BOTH paths now
   // so toggle-combination warnings surface regardless of CPU/GPU build.
+  //
+  // ARCH-3 (2026-04-25): throw under strict_validation; otherwise emit ONE
+  // warning per unique error string per bridge instance (last_validation_warn_)
+  // so tests don't spam stderr every tick with the same message.
   {
       std::string validErr;
-      if (!toggles.validate(&validErr))
-          std::cerr << "[TermToggles] Invalid combination: " << validErr;
+      if (!toggles.validate(&validErr)) {
+          if (toggles.strict_validation) {
+              throw std::logic_error("[TermToggles] Invalid combination: " + validErr);
+          }
+          if (validErr != last_validation_warn_) {
+              std::cerr << "[TermToggles] Invalid combination: " << validErr;
+              last_validation_warn_ = validErr;
+          }
+      } else if (!last_validation_warn_.empty()) {
+          // Reset memo when toggles get fixed mid-run.
+          last_validation_warn_.clear();
+      }
   }
 
-#ifdef FTD_ENABLE_CUDA
-  if (use_gpu_) {
-    // Wave 5.2: flush any host-side mutations (e.g. test doing
-    // voxels()[idx].locked = true) back to the GPU before physics runs.
-    gpu_flush_host_mutations();
-    // Sync toggles to GPU engine
-    gpu_->toggles = toggles;
-    gpu_->tick();
-    gpu_dirty_ = true;
-    physical_time_ += dt_;
-    ++tick_;
-
-    // ── GPU EnergyLedger + proper-time (TRACKER §1.7 + audit F4) ──
-    // Sync voxels back to host, then populate both the ledger and
-    // (if latency_field is on) the per-particle proper-time tau.
-    //
-    // Cost: one PCIe download per tick (≈ 3 MB at L=64, sub-ms on
-    // modern hardware; far below a CUDA tick's physics cost). If this
-    // becomes a bottleneck for long CUDA benchmarks, replace with a
-    // device-side reduction kernel that returns just the three scalar
-    // sums (E_field, E_wave, E_kin) — see comment in gpu_engine.cu.
-    gpu_sync_to_host();
+  // ARCH-2-D: GPU dispatch via Backend. CpuBackend::tick() falls through to
+  // the CPU phase ladder below; GpuBackend::tick() owns the full flush →
+  // engine->tick → sync_to_host sequence.
+  if (backend_ && backend_->kind() == Backend::Kind::Gpu) {
+    backend_->tick();
     if (toggles.latency_field)
       accumulate_proper_time();
     update_energy_ledger();
     return;
   }
-#endif
 
   // F2 (callstack audit 2026-04-17): CPU-only warning for GPU-only toggles.
   // Printed once per RenderBridge instance on the first tick where such a
@@ -1082,31 +1092,30 @@ void RenderBridge::triad_binding_cpu()      { ::ftd::triad_binding_cpu(*this);  
 // Energy-ledger body extracted to energy_ledger_compute.cpp (R3, 2026-04-18).
 void RenderBridge::update_energy_ledger() { ::ftd::update_energy_ledger_cpu(*this); }
 
-void RenderBridge::run(int num_ticks) {
+eft::DualCellContinuity RenderBridge::continuity_step() const {
+  // ARCH-2-K (2026-04-25): const-method GPU branch routed through the
+  // public gpu_engine_ptr() accessor (returns nullptr when no GPU).
 #ifdef FTD_ENABLE_CUDA
-  if (use_gpu_) {
-    // BUG FIX 2026-04-21: flush any host-side mutations before the GPU
-    // fast-path. Without this, direct writes like `voxels()[i].flux = ...`
-    // or `voxels()[i].state = ...` made between the previous tick and this
-    // run() call never reach the device — the GPU sees its stale state.
-    // (RenderBridge::tick() does this correctly; the run() fast-path did not.)
-    gpu_flush_host_mutations();
-    gpu_->toggles = toggles;
-    gpu_->set_dt(dt_);
-    if (toggles.langevin) {
-      gpu_->set_rng_seed(toggles.langevin_seed);
-    }
-    gpu_->run(num_ticks);
-    gpu_dirty_ = true;
-    gpu_sync_to_host();
-    if (toggles.latency_field)
-      accumulate_proper_time();
-    update_energy_ledger();
-    physical_time_ += dt_ * num_ticks;
-    tick_ += num_ticks;
-    return;
+  if (auto* gpu = const_cast<RenderBridge*>(this)->gpu_engine_ptr()) {
+    return gpu->continuity_step();
   }
 #endif
+  return eft::DualCellContinuity(lattice_.size());
+}
+
+void RenderBridge::run(int num_ticks) {
+  // 2026-04-25 (engine-expert T4): the previous CUDA fast-path delegated to
+  // gpu_->run(num_ticks) and called accumulate_proper_time/update_energy_ledger
+  // exactly once at the end of the batch. This silently differed from the CPU
+  // path (which loops tick() and computes the ledger every tick), so any test
+  // asserting on energy_ledger().residual after run(N) only saw the final
+  // tick on GPU, masking intermediate violations.
+  //
+  // Fix: always loop tick() so the ledger and proper-time accumulator are
+  // identical on CPU and GPU, tick by tick. The cost is one gpu_sync_to_host()
+  // per tick (~3 MB at L=64; sub-ms on modern hardware). If a campaign needs
+  // the old batched fast-path, call gpu_->run(N) directly via the public
+  // engine accessor and skip the per-tick ledger.
   for (int i = 0; i < num_ticks; ++i) {
     tick();
   }

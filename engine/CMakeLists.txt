@@ -131,6 +131,8 @@ add_library(ftd_core
     src/energy_ledger_compute.cpp    # R3: per-tick conservation ledger
     src/diagnostics_compute.cpp      # R4: diagnostics / energy audit / EM fields / Poynting / entropy
     src/injection.cpp                # R5: inject_flux/particle/wavepacket + aggregate profile
+    src/backend.cpp                  # ARCH-2: CpuBackend / GpuBackend abstraction over use_gpu_ ifdef
+    src/bridge_rng.cpp               # RF-9: PIMPL'd <random> state to keep render_bridge.h slim
     # Cosmic engine split (CE1-CE5, 2026-04-19)
     src/cosmic/cosmic_scenarios.cpp           # setup_spiral_galaxy, galaxy_cluster, cosmic_web, etc.
     src/cosmic/cosmic_barnes_hut.cpp          # octree + tree_force + compute_gravity
@@ -543,6 +545,9 @@ if(FTD_ENABLE_CUDA)
     add_executable(test_gpu_benchmark tests/test_gpu_benchmark.cpp)
     target_link_libraries(test_gpu_benchmark ftd_core ftd_cuda)
 
+    add_executable(test_gpu_continuity_ledger tests/test_gpu_continuity_ledger.cpp)
+    target_link_libraries(test_gpu_continuity_ledger ftd_core ftd_cuda)
+
     add_executable(test_gpu_physics tests/test_gpu_physics.cpp)
     target_link_libraries(test_gpu_physics ftd_core ftd_cuda)
 
@@ -705,6 +710,227 @@ ftd_add_test(_repro_gpu_empty_bridge tests/_repro_gpu_empty_bridge.cpp
 # Verifies <|wave_vel|^2> = 3T on bare lattice single-substrate path.
 ftd_add_test(test_langevin_equipartition tests/test_langevin_equipartition.cpp
              CTEST_NAME langevin_equipartition TIMEOUT 600 LABELS native eft)
+
+# Walsh–Hadamard / Clifford anticommutator measurement (FTD-0061 falsifier).
+# Excites the three weight-1 WH modes on a 2^3 block, applies in two orders,
+# measures whether the engine-induced product satisfies {e_i,e_j} = 2δ_{ij}·1.
+# See docs/theory/09_mathematical/DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md §7.
+ftd_add_test(test_wh_clifford_anticommutator tests/test_wh_clifford_anticommutator.cpp
+             CTEST_NAME wh_clifford_anticommutator TIMEOUT 120 LABELS gpu native eft)
+
+# Mixed-toggle multi-tick Ward identity (P1.3 + P1.4 closure, Gates 4 + 5).
+# Runs 10 ticks with genesis + pair_production + movement + forces
+# simultaneously, verifies Δ_t ρ + div j = S_R to 1e-12 per tick and over
+# the accumulated interval, including after b=2 blocking. First non-Gaussian
+# flow data on the Moore-26 stencil under mixed non-linearities.
+ftd_add_test(test_mixed_history_flow tests/test_mixed_history_flow.cpp
+             CTEST_NAME mixed_history_flow TIMEOUT 120 LABELS gpu native eft)
+
+# Phase-2 multi-scale nonlinear flow measurement (Gates 4 + 7 closure).
+# Langevin ensemble + genesis at L=16, measures native tuple at b ∈ {1,2,4,8}
+# with ensemble uncertainties. First multi-scale RG flow measurement on the
+# FTD engine under genuine non-linearities.
+ftd_add_test(test_nonlinear_flow_multiscale tests/test_nonlinear_flow_multiscale.cpp
+             CTEST_NAME nonlinear_flow_multiscale TIMEOUT 300 LABELS gpu native eft)
+
+# Phase-4 fermion-emergence alternative routes (FTD-0061 extension).
+# Runs WH/Clifford anticommutator measurement under three alternative
+# non-linearities: pair_production (4a), weak_transmutation (4b),
+# velocity-driven movement + forces (4d). Tests whether ANY non-genesis
+# route produces Clifford structure on the 2³ block.
+ftd_add_test(test_wh_clifford_alt_routes tests/test_wh_clifford_alt_routes.cpp
+             CTEST_NAME wh_clifford_alt_routes TIMEOUT 120 LABELS gpu native eft)
+
+# Phase-4c: Moore-26 / 3³ block Clifford falsifier.
+# Uses axial dipole modes (sawtooth) on a 3³ = 27-site block containing the
+# full Moore-26 neighborhood + center. Tests whether the richer 27-dim
+# grade structure supports Clifford where the 8-dim 2³ block doesn't.
+ftd_add_test(test_moore26_clifford_test tests/test_moore26_clifford_test.cpp
+             CTEST_NAME moore26_clifford_test TIMEOUT 120 LABELS gpu native eft)
+
+# Phase-4e: spin-field WH/Clifford anticommutator test.
+# Reads the spin field (curl-assigned) rather than state field (divergence-
+# assigned). Off-axis injections induce non-trivial curl and hence non-trivial
+# spin. Tests whether spin-field readout preserves mode information that
+# state-field readout loses.
+ftd_add_test(test_spin_field_clifford tests/test_spin_field_clifford.cpp
+             CTEST_NAME spin_field_clifford TIMEOUT 120 LABELS gpu native eft)
+
+# Phase-4f: flux 1-form (link) WH/Clifford anticommutator test.
+# Reads the flux field's three components separately as 1-form degrees of
+# freedom, WH-decomposes each, tests for Clifford structure on axial
+# link operators L_i = WH[flux_i, χ_{axis_i}].
+ftd_add_test(test_flux_link_clifford tests/test_flux_link_clifford.cpp
+             CTEST_NAME flux_link_clifford TIMEOUT 120 LABELS gpu native eft)
+
+# Phase-4g: flux propagator classification on Langevin ensemble.
+# Measures the 2-point flux correlator G_ij(r) along the x-axis on
+# thermalized Langevin ensemble; fits power-law decay; classifies as
+# bosonic-vector (α≈1), fermionic (α≈2), or anomalous.
+ftd_add_test(test_flux_propagator tests/test_flux_propagator.cpp
+             CTEST_NAME flux_propagator TIMEOUT 600 LABELS gpu native eft)
+
+# Watson integrals for phenomenal/noumenal bridge test (FTD-0078).
+# Numerical quadrature of SC, BCC, FCC, Moore-18 lattice Green's functions
+# at origin; tests whether W_M18/W_BCC ratio matches 27/8 = 3.375 block-
+# volume hypothesis or is close to unity (Watson-integral bulk insensitivity).
+ftd_add_test(test_watson_integrals tests/test_watson_integrals.cpp
+             CTEST_NAME watson_integrals TIMEOUT 120 LABELS unit eft)
+
+# Master quadratic bare algebraic identities (Vieta, means, normalized form).
+# Verifies α + 1/N_c = 1/G* to machine precision and the three-means
+# geometric progression.
+ftd_add_test(test_master_quadratic_identities
+             tests/test_master_quadratic_identities.cpp
+             CTEST_NAME master_quadratic_identities TIMEOUT 60 LABELS unit eft)
+
+# Program E: uniqueness-of-minimal-polynomial proof. Enumerates all monic
+# quadratics with coefficients in the bounded G*-integer class
+# {i * G*^k : |i| <= 16, k in [0,4]} and verifies only (16 G*^2, 16 G*^3)
+# satisfies the dual root match (x_+ = 1/alpha, x_- = N_c). Closes SP2
+# as [THEOREM] modulo the L-value bound |Aut(E_i)|^2 = 16.
+ftd_add_test(test_master_quadratic_uniqueness
+             tests/test_master_quadratic_uniqueness.cpp
+             CTEST_NAME master_quadratic_uniqueness TIMEOUT 120 LABELS unit eft)
+
+# Program A (partial closure): ladder-walk step sizes from O_h structure.
+# Verifies the O_h irrep decomposition of the Moore-26 shells and enumerates
+# 4-part partitions of 16 from {3, 4, 6} under the "all features present"
+# constraint — showing {3, 3, 4, 6} is unique. Step-size multiset becomes
+# [THEOREM]; step ORDER remains [SELECTION].
+ftd_add_test(test_ladder_walk_from_oh
+             tests/test_ladder_walk_from_oh.cpp
+             CTEST_NAME ladder_walk_from_oh TIMEOUT 60 LABELS unit eft)
+
+# Program F: link-bilinear fermion probe. Runs full non-local dynamics
+# (forces + triad + strong + exchange + pair_production + weak_transmutation)
+# with both linear WH readout and bilinear link readout (J_i(x)*J_i(x+hat_i)).
+# Tests whether non-local dynamics + bilinear readout produces Clifford
+# anticommutation, or whether the no-go (FTD-0073) extends here too.
+ftd_add_test(test_link_bilinear_clifford
+             tests/test_link_bilinear_clifford.cpp
+             CTEST_NAME link_bilinear_clifford TIMEOUT 120
+             LABELS gpu native eft)
+
+# Program F-prime: plaquette bivector probe. Tests the natural Cl(3,0)
+# bivector basis: P_{ij}(x) = J_i(x)*J_j(x+hat_i) - J_i(x+hat_j)*J_j(x).
+# If commutator [E_i, E_j] concentrates on P_{ij} and SU(2) signature
+# emerges, fermions shift from Branch-B selection to Branch-A derivation.
+ftd_add_test(test_plaquette_bivector_clifford
+             tests/test_plaquette_bivector_clifford.cpp
+             CTEST_NAME plaquette_bivector_clifford TIMEOUT 120
+             LABELS gpu native eft)
+
+# Program F-double-prime: bivector algebra closure tests.
+# Three tests on the F-prime plaquette-bivector algebra:
+#   A) multi-seed robustness (8 seeds x 3 pairs)
+#   B) Casimir uniformity (e_i^2 scalar grade axis-isotropy)
+#   D) bivector commutator closure ([B_a, B_b] on B_c via 8-sequence
+#      4-injection linear combinations).
+# If 3/3 closure tests pass, su(2) bivector subalgebra is confirmed.
+ftd_add_test(test_bivector_closure
+             tests/test_bivector_closure.cpp
+             CTEST_NAME bivector_closure TIMEOUT 300
+             LABELS gpu native eft)
+
+# Path 1: Cl(3,0) multi-grade decomposition. Tests whether F-prime's
+# bivector signature is part of a coherent grade structure: scalar (S),
+# vector (V_i), bivector (P_ij), pseudoscalar (T). For 2-axis injection
+# (f, g), Cl(3,0) predicts pseudoscalar near zero (third axis absent),
+# vector on active axes, bivector concentrated on P_fg.
+ftd_add_test(test_clifford_multigrade
+             tests/test_clifford_multigrade.cpp
+             CTEST_NAME clifford_multigrade TIMEOUT 120
+             LABELS gpu native eft)
+
+# Determinism regression: same seed + same protocol -> bit-identical voxel
+# arrays. Closes a structural test-coverage hole flagged by the 2026-04-25
+# audit (no existing test asserts byte-identical reproducibility, despite
+# multi-seed campaigns assuming it).
+ftd_add_test(test_determinism
+             tests/test_determinism.cpp
+             CTEST_NAME determinism TIMEOUT 60 LABELS unit fast)
+
+# Closed-negative regression guards. Pins FTD-0061/0073 (mode-erasure) and
+# FTD-0074 (flux 1-form separable). If the engine drifts to break either
+# no-go signature, the test fails — preventing silent re-opening of closed
+# claims.
+ftd_add_test(test_closed_negatives
+             tests/test_closed_negatives.cpp
+             CTEST_NAME closed_negatives TIMEOUT 60 LABELS unit fast)
+
+# CPU-only warning contract. Verifies that GPU-only toggles (strong_force,
+# exchange_force) emit stderr warnings on CPU builds AND are genuine no-ops
+# (voxel state byte-identical to baseline).
+ftd_add_test(test_cpu_warnings
+             tests/test_cpu_warnings.cpp
+             CTEST_NAME cpu_warnings TIMEOUT 60 LABELS unit fast)
+
+# ARCH-3: strict-validation contract for TermToggles. Verifies that:
+#   (a) permissive mode (default) dedups warnings to one per unique string;
+#   (b) strict_validation=true causes tick() to throw std::logic_error;
+#   (c) the dedup memo resets when toggles transition from invalid to valid.
+ftd_add_test(test_strict_validation
+             tests/test_strict_validation.cpp
+             CTEST_NAME strict_validation TIMEOUT 30 LABELS unit fast)
+
+# OPEN-5 micro-regression: legacy single-substrate inject_flux must NOT
+# populate flux_L. Pinned separately from test_dual_substrate (which has
+# unrelated DS-CHIRALITY failures still under triage).
+ftd_add_test(test_open5_legacy_flux_l
+             tests/test_open5_legacy_flux_l.cpp
+             CTEST_NAME open5_legacy_flux_l TIMEOUT 30 LABELS unit fast)
+
+# TEST-007: tight floating-point energy conservation. Pure-wave + symplectic
+# leapfrog should preserve energy at machine precision; asserts |dE/E| per
+# tick < 1e-12 over 5000 ticks. Catches per-tick leaks invisible at the 1e-10
+# tolerance most other audits use.
+ftd_add_test(test_energy_conservation_tight
+             tests/test_energy_conservation_tight.cpp
+             CTEST_NAME energy_conservation_tight TIMEOUT 60
+             LABELS unit fast)
+
+# TEST-005: pairwise toggle-combination smoke test. 78 (i, j) pairs of OFF-
+# default toggles, each runs 5 ticks; asserts no crash, no NaN, validator
+# rejects cleanly. Catches "toggle X + toggle Y silently misbehave when
+# combined" — the most common failure mode for new engine extensions.
+ftd_add_test(test_toggle_matrix
+             tests/test_toggle_matrix.cpp
+             CTEST_NAME toggle_matrix TIMEOUT 120
+             LABELS unit fast)
+
+# TEST-008: Langevin equipartition + GPU/CPU statistical parity. Scans
+# (gamma, T) pairs on both backends; asserts <|wave_vel|^2> = 3T within 10%
+# AND CPU/GPU mean energies agree within 10% (stochastic — strict bit-parity
+# not possible).
+ftd_add_test(test_langevin_gpu_cpu_parity
+             tests/test_langevin_gpu_cpu_parity.cpp
+             CTEST_NAME langevin_gpu_cpu_parity TIMEOUT 300
+             LABELS unit native gpu eft)
+
+# TEST-009: Phase-H coulomb_charge_coupling regression. Pins the three
+# documented values (1.0, 0.2141, 0.3028) by asserting they produce
+# distinct field energies and never NaN out.
+ftd_add_test(test_phase_h_regression
+             tests/test_phase_h_regression.cpp
+             CTEST_NAME phase_h_regression TIMEOUT 60
+             LABELS unit fast)
+
+# Phase-4h: Material emergence — catalogs the quantum numbers of the
+# smallest particle that manifests from a single genesis event, compares
+# to SM quark / electron.
+ftd_add_test(test_smallest_particle_emergence
+             tests/test_smallest_particle_emergence.cpp
+             CTEST_NAME smallest_particle_emergence TIMEOUT 60
+             LABELS gpu native eft)
+
+# Phase-4i: 3-quark binding + color transformation structure test.
+# Stamps RGB vs RRR vs RGG quark triads, measures binding. Also tests
+# O_h permutation symmetry of color by comparing (R,G,B) to (G,B,R).
+ftd_add_test(test_color_binding_and_structure
+             tests/test_color_binding_and_structure.cpp
+             CTEST_NAME color_binding_and_structure TIMEOUT 60
+             LABELS gpu native eft)
 
 # Emergent measurement probes (alpha, Larmor, wave group velocity, Gauss).
 # EM2 reframed 2026-04-23 as Coulomb-solver consistency check, not alpha derivation.
@@ -1124,9 +1350,11 @@ if(FTD_ENABLE_CUDA)
     add_test(NAME gpu_parity COMMAND test_gpu_parity)
     add_test(NAME gpu_parity_complete COMMAND test_gpu_parity_complete)
     add_test(NAME gpu_benchmark COMMAND test_gpu_benchmark)
+    add_test(NAME gpu_continuity_ledger COMMAND test_gpu_continuity_ledger)
     add_test(NAME gpu_physics COMMAND test_gpu_physics)
     add_test(NAME gpu_experiments COMMAND test_gpu_experiments)
-    set_tests_properties(gpu_parity gpu_parity_complete gpu_benchmark gpu_physics PROPERTIES TIMEOUT 600)
+    set_tests_properties(gpu_parity gpu_parity_complete gpu_benchmark
+                         gpu_continuity_ledger gpu_physics PROPERTIES TIMEOUT 600)
     set_tests_properties(gpu_experiments PROPERTIES TIMEOUT 1800)
 endif()
 
@@ -1355,6 +1583,7 @@ if(FTD_ENABLE_CUDA)
         # Explicit GPU parity/benchmark/physics tests
         gpu_parity
         gpu_benchmark
+        gpu_continuity_ledger
         gpu_physics
         gpu_experiments
         # Wave 2 (Apr 14, 2026): GPU-heavy tests previously false-timing out

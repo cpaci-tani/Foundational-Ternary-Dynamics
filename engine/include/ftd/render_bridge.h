@@ -12,15 +12,22 @@
  */
 
 #include <vector>
-#include <random>
 #include <memory>
 #include <cmath>
+#include <cstdlib>
+#include <atomic>
+#include <string>
+#include <cstdint>
+#include "ftd/injector.h"
+#include "ftd/backend.h"
+#include "ftd/bridge_rng.h"
 #include "lattice.h"
 #include "voxel.h"
 #include "hilbert.h"
 #include "term_toggles.h"
 #include "constants.h"
 #include "field_operators.h"
+#include "ftd/eft/dual_cell_continuity.h"
 
 #ifdef FTD_ENABLE_CUDA
 namespace ftd { namespace gpu { class GpuEngine; } }
@@ -127,6 +134,15 @@ struct EMFieldDiag {
 };
 
 class RenderBridge {
+    // ARCH-2: Backend implementations need access to GPU sync state and
+    // private buffers during the migration. Friendship is the simplest path
+    // while the state still lives on RenderBridge; a future cleanup will
+    // move host/device sync state into GpuBackend itself.
+    friend class CpuBackend;
+#ifdef FTD_ENABLE_CUDA
+    friend class GpuBackend;
+#endif
+
     // Extracted physics modules (2026-04-18 refactor R1-R6) need access to
     // internal state (rng_, uniform_, next_particle_id_, phi_, buffers).
     friend void weak_transmutation_cpu(RenderBridge&);
@@ -134,42 +150,37 @@ class RenderBridge {
     friend void pair_production_cpu(RenderBridge&);
     friend void triad_binding_cpu(RenderBridge&);
     friend void update_energy_ledger_cpu(RenderBridge&);
-    friend void inject_flux_cpu(RenderBridge&, int, int, int, const Vec3&);
-    friend void inject_flux_add_cpu(RenderBridge&, int, int, int, const Vec3&);
-    friend void inject_wave_vel_add_cpu(RenderBridge&, int, int, int, const Vec3&);
-    friend void inject_particle_cpu(RenderBridge&, int, int, int, int8_t,
-                                    const Vec3&, int8_t, int8_t);
-    friend void inject_wavepacket_cpu(RenderBridge&, int, int, int, int8_t, double, double);
-    friend void create_entangled_pair_cpu(RenderBridge&, int, int, int, const Vec3&);
+    // ARCH-2-I (2026-04-25): the 6 inject_*_cpu friends were dropped — the
+    // injection helpers now use the public API (backend(), voxels(),
+    // lattice(), injector(), gpu_engine_ptr()) only.
 
 public:
     RenderBridge(int lattice_size);
     ~RenderBridge();
 
-    // Access (GPU-aware: syncs device→host when needed)
+    // Access (GPU-aware: syncs device→host when needed via Backend dispatch).
+    // ARCH-2-G/H: replaced #ifdef ladder with backend_->sync_to_host() +
+    // backend_->mark_host_dirty(). CpuBackend methods are no-ops; GpuBackend
+    // performs the sync. Calls are unconditional — the no-op cost on CPU is
+    // a virtual-call indirection (negligible).
     Lattice& lattice() { return lattice_; }
     const Lattice& lattice() const { return lattice_; }
     std::vector<Voxel>& voxels() {
-#ifdef FTD_ENABLE_CUDA
-        gpu_sync_to_host();
-        // Wave 5.2: callers of the non-const overload may mutate the vector
-        // (e.g. tests doing `voxels()[idx].locked = true` between ticks).
-        // Flag it so the next tick() pushes the host state back to the GPU.
-        host_mutated_ = true;
-#endif
+        if (backend_) {
+            backend_->sync_to_host();
+            backend_->mark_host_dirty();  // non-const overload — caller may mutate
+        }
         return voxels_;
     }
     const std::vector<Voxel>& voxels() const {
-#ifdef FTD_ENABLE_CUDA
-        const_cast<RenderBridge*>(this)->gpu_sync_to_host();
-#endif
+        if (backend_) backend_->sync_to_host();
         return voxels_;
     }
     Voxel& voxel_at(int x, int y, int z) {
-#ifdef FTD_ENABLE_CUDA
-        gpu_sync_to_host();
-        host_mutated_ = true;  // Wave 5.2: same reason as voxels() non-const
-#endif
+        if (backend_) {
+            backend_->sync_to_host();
+            backend_->mark_host_dirty();
+        }
         return voxels_[lattice_.index(x, y, z)];
     }
     int current_tick() const { return tick_; }
@@ -183,22 +194,76 @@ public:
     void set_sor_iterations(int n) { sor_iterations_ = (n >= 1) ? n : 1; }
     int sor_iterations() const { return sor_iterations_; }
 
-    // Re-seed the internal RNG (for ensemble runs with independent realizations)
-    void seed_rng(unsigned int seed) { rng_.seed(seed); }
+    // Re-seed the internal RNG (for ensemble runs with independent realizations).
+    //
+    // ARCH-4 (2026-04-25): now propagates to:
+    //   1. The bridge's mt19937 (rng_)
+    //   2. The thread_rngs_ via langevin_seed_initialized_=false reset
+    //   3. The GPU cuRAND generator (when GPU backend is active)
+    //   4. toggles.langevin_seed (so the next phase_write Langevin step
+    //      uses the same seed)
+    // Previously seed_rng() only touched (1), so the per-thread RNGs
+    // and GPU cuRAND would silently keep the OLD seed — making seed-based
+    // determinism unreliable across paths.
+    //
+    // Body in src/render_bridge.cpp (GpuEngine is forward-declared here).
+    void seed_rng(unsigned int seed);
+
+    // Injector accessor (ARCH-1 Phase C): owns next_particle_id_ / next_pair_id_.
+    // Available to inject_*_cpu free functions (and tests) so they don't need
+    // friend declarations to assign IDs.
+    Injector& injector() { return injector_; }
+    const Injector& injector() const { return injector_; }
+
+    // Backend accessor (ARCH-2 Phase A): which execution backend is active.
+    // Currently parallel to use_gpu_ — once all 14 #ifdef blocks migrate,
+    // use_gpu_ will be removed and this becomes the single source of truth.
+    Backend& backend() { return *backend_; }
+    const Backend& backend() const { return *backend_; }
+    Backend::Kind backend_kind() const { return backend_ ? backend_->kind() : Backend::Kind::Cpu; }
+
+    // ARCH-2-I: raw access to the GPU engine pointer for code paths that
+    // must call GPU-specific methods (inject_*_cpu free functions forward
+    // to gpu_->inject_*). Returns nullptr when no GPU is active. Prefer
+    // the Backend interface for new code; this accessor is the controlled
+    // escape hatch that lets injection helpers drop their friend
+    // declarations without exposing the rest of RenderBridge's internals.
+    //
+    // ARCH-2-M: the active-backend check now goes through the Backend kind,
+    // not the deleted use_gpu_ flag. force_cpu() swaps backend_ to a
+    // CpuBackend, and this accessor immediately returns nullptr.
+#ifdef FTD_ENABLE_CUDA
+    gpu::GpuEngine* gpu_engine_ptr() {
+        return (backend_ && backend_->kind() == Backend::Kind::Gpu && gpu_)
+                   ? gpu_.get() : nullptr;
+    }
+#else
+    void*           gpu_engine_ptr() { return nullptr; }
+#endif
 
     // Force CPU-only execution (disables GPU backend even if CUDA is available).
     // Used by parity tests that need a true CPU reference.
+    //
+    // Env override (2026-04-23): set FTD_FORCE_GPU=1 to make this a no-op so
+    // test runs stay on the GPU backend even when the test source forces CPU.
+    // Parity tests become GPU-vs-GPU tautologies in that mode; that is the
+    // expected trade-off when a full-GPU pass is specifically requested.
     void force_cpu() {
 #ifdef FTD_ENABLE_CUDA
-        use_gpu_ = false;
+        if (const char* p = std::getenv("FTD_FORCE_GPU"); p && *p && *p != '0') {
+            return;
+        }
+        // ARCH-2-M: backend_ is now the single source of truth for backend
+        // selection. Previous code also set `use_gpu_ = false`; the flag
+        // has been deleted.
+        backend_ = std::make_unique<CpuBackend>(*this);
 #endif
     }
 
     // Ensure host voxels_ is up-to-date with GPU device memory.
+    // ARCH-2-J: now a backend dispatch; CpuBackend is a no-op.
     void sync_from_gpu() {
-#ifdef FTD_ENABLE_CUDA
-        gpu_sync_to_host();
-#endif
+        if (backend_) backend_->sync_to_host();
     }
 
     // Physics term toggles (pedagogy system)
@@ -251,6 +316,11 @@ public:
     const EnergyLedger& energy_ledger() const { return energy_ledger_; }
     void update_energy_ledger();
 
+    // Native EFT continuity ledger for the most recent GPU tick.
+    // Contains rho_before, rho_after, oriented face currents, and local
+    // reaction source terms satisfying Delta rho + div I = S_reaction.
+    eft::DualCellContinuity continuity_step() const;
+
     // Inject a localized flux source (assigns: v.flux = flux_val).
     // Used by single-shot scenarios that write each voxel exactly once.
     void inject_flux(int x, int y, int z, const Vec3& flux_val);
@@ -281,6 +351,13 @@ public:
     // Discrete operators (public for Lagrangian diagnostics).
     // R6 (2026-04-18): inlined in the header — hot path, called per-voxel per-tick.
     // Bodies live in field_operators.h as free helpers.
+    //
+    // ARCH-1 Phase D NOTE (2026-04-25): these 8 inline methods are thin
+    // delegators over the free functions in field_operators.h. New code
+    // should prefer the free-function form directly:
+    //     ::ftd::laplacian_flux_op(bridge.voxels(), bridge.lattice(), idx)
+    // The delegators are retained for the 29 existing call sites; a future
+    // mass-migration ticket (CHECKLIST_ENGINE.md) will retire them.
     inline Vec3 laplacian_flux(int idx) const  { return ::ftd::laplacian_flux_op(voxels(), lattice_, idx); }
     inline double divergence_flux(int idx) const { return ::ftd::divergence_flux_op(voxels(), lattice_, idx); }
     inline Vec3 curl_flux(int idx) const       { return ::ftd::curl_flux_op(voxels(), lattice_, idx); }
@@ -363,15 +440,20 @@ private:
     std::vector<double> phi_latency_;  // Latency (gravitational) potential (warm-started)
     EnergyLedger energy_ledger_;  // per-tick conservation drift, populated by update_energy_ledger()
     mutable bool cpu_warnings_emitted_ = false;  // F2 callstack audit: GPU-only-toggle warning emitted flag
+    std::string last_validation_warn_;  // ARCH-3: dedup repeated validate() warnings to one per unique string
     std::vector<uint8_t> moved_; // Per-tick flag: prevent double-processing in phase_movement
+    // ARCH-7b: pre-write flux snapshot. Populated at the start of phase_write
+    // when genesis is on so that curl reads (used for spin assignment) see a
+    // consistent neighbor field across all threads, eliminating the race
+    // between thread-T1's curl_flux(i) read and thread-T2's voxel.flux write.
+    std::vector<Vec3> flux_pre_write_;
     std::vector<uint8_t> near_particle_; // Phase D: selective damping mask (1 = near particle)
     std::vector<double> near_accel_;     // Phase D: max accel_mag of nearby particles (for Larmor)
 
     // PERF: per-tick scratch buffers, promoted from local-vars in tick phases
     // to bridge members so they don't malloc/free every tick. Capacity is
     // fixed once in the ctor (or grows once on first use); cleared in place.
-    std::vector<unsigned int> thread_seeds_;        // phase_write: per-thread RNG seeds
-    std::vector<std::mt19937> thread_rngs_;         // phase_write: per-thread RNGs (replaces per-voxel construction)
+    std::vector<unsigned int> thread_seeds_;        // phase_write: per-thread RNG seeds (PIMPL'd; see BridgeRng)
     std::vector<double>       sor_source_;          // shared scratch for all 3 SOR Poisson solvers (sized N)
     // Phase forces: ColoredSite list reused tick-to-tick (only filled when color_forces ON)
     struct ColoredSiteCache { int cx, cy, cz; int8_t state, color; };
@@ -382,14 +464,23 @@ private:
     int sor_iterations_ = SOR_ITERATIONS;  // Configurable SOR iterations (default 6)
     double dt_ = 1.0;             // Time step multiplier (≥1.0). Scales damping, forces, movement.
     double physical_time_ = 0.0;  // Accumulated physical time (sum of dt_ per tick)
-    int next_pair_id_ = 0;  // Counter for entangled pair IDs
-    int next_particle_id_ = 0;  // Monotonic counter for particle IDs (thread-safe via local atomic in phase_write)
+    // Particle/pair IDs are owned by Injector (ARCH-1 Phase C). The
+    // backwards-compatible references below remain for legacy access patterns
+    // but should be migrated to bridge.injector().next_particle_id() etc.
+    Injector injector_;
+
+    // ARCH-2 Phase A: execution backend. Constructed alongside (and parallel
+    // to) the legacy use_gpu_ flag during the migration. force_cpu() swaps
+    // backend_ to a CpuBackend; the GpuBackend (if CUDA enabled) is the
+    // default.
+    std::unique_ptr<Backend> backend_;
 
     // RNG for stochastic genesis (Born rule manifestation)
     // Genesis probability: p = 1 - exp(-(|J| - K_GENESIS) / K_B)
     // See CLAUDE.md §4.1 — manifestation is probabilistic, not deterministic.
-    std::mt19937 rng_{42};
-    std::uniform_real_distribution<double> uniform_{0.0, 1.0};
+    // RF-9: PIMPL'd to keep <random> out of the public render_bridge.h
+    // include surface. All sampling routes through BridgeRng accessors.
+    std::unique_ptr<BridgeRng> rng_state_;
     bool langevin_seed_initialized_ = false;
     unsigned int active_langevin_seed_ = 0;
 
@@ -398,15 +489,17 @@ private:
     // CPU-only builds and parity tests are the only intended CPU escapes.
     // All injection/access methods sync between host voxels_ and device memory.
     std::unique_ptr<gpu::GpuEngine> gpu_;
-    bool use_gpu_ = false;
+    // ARCH-2-M (2026-04-25): the legacy `bool use_gpu_` flag was deleted.
+    // Backend selection is owned by `backend_` (declared above the buffers
+    // section); query via `backend_->kind() == Backend::Kind::Gpu`.
     bool gpu_dirty_ = false;   // true = GPU has newer data than host voxels_
     mutable bool host_mutated_ = false;  // Wave 5.2: tracks non-const voxels() handouts
 
-    void gpu_sync_to_host();   // Download GPU state to voxels_
-    void gpu_push_to_device(); // Upload voxels_ to GPU
-    // Wave 5.2: invoked at the start of tick() to push out-of-band host writes
-    // (e.g. voxels()[idx].locked = true) back to the device before the next tick.
-    void gpu_flush_host_mutations();
+    // ARCH-2-J (2026-04-25): private delegators (gpu_sync_to_host,
+    // gpu_push_to_device, gpu_flush_host_mutations) DELETED. Their callers
+    // route through backend_->sync_to_host() / push_to_device() /
+    // flush_host_mutations() directly. Implementation lives in
+    // src/backend.cpp::GpuBackend.
 #endif
 };
 

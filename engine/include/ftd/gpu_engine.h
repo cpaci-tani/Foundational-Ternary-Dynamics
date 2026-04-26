@@ -13,6 +13,7 @@
 #include "voxel.h"
 #include "render_bridge.h"  // for Diagnostics, EnergyAudit, TermToggles
 #include "gpu_buffers.h"
+#include "ftd/eft/dual_cell_continuity.h"
 #include <vector>
 #include <cufft.h>
 #include <curand.h>
@@ -47,6 +48,7 @@ public:
 
     // --- Sync to host for inspection ---
     void sync_to_host(std::vector<Voxel>& out);
+    eft::DualCellContinuity continuity_step() const;
 
     // --- Bulk upload from host (for test setup with custom initial conditions) ---
     void upload_from_host(const std::vector<Voxel>& voxels);
@@ -117,6 +119,7 @@ private:
     int next_pair_id_ = 0;
     int host_num_particles_ = 0;  // cached particle count from device
     bool weak_field_active_ = false;  // true when flavor/weak-field state needs stepping
+    bool continuity_ledger_valid_ = false;
 
     // Helper: ensure host shadow is up-to-date
     void ensure_host_synced();

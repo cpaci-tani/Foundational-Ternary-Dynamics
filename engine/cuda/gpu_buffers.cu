@@ -140,6 +140,13 @@ void GpuBuffers::allocate(int lattice_size) {
     // Pair production tracking
     CUDA_CHECK(cudaMalloc(&d_pair_id, N * sizeof(int32_t)));
 
+    // Native EFT continuity event ledger
+    CUDA_CHECK(cudaMalloc(&d_ledger_rho_before, N * sizeof(int)));
+    CUDA_CHECK(cudaMalloc(&d_ledger_reaction, N * sizeof(int)));
+    CUDA_CHECK(cudaMalloc(&d_ledger_current_x, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_ledger_current_y, N * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_ledger_current_z, N * sizeof(double)));
+
     // Zero-initialize all buffers
     CUDA_CHECK(cudaMemset(d_state, 0, N * sizeof(int8_t)));
     CUDA_CHECK(cudaMemset(d_flux_x, 0, N * sizeof(double)));
@@ -203,6 +210,11 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_plist_idx, 0, MAX_PARTICLES * sizeof(int)));
     CUDA_CHECK(cudaMemset(d_num_particles, 0, sizeof(int)));
     CUDA_CHECK(cudaMemset(d_pair_id, 0xFF, N * sizeof(int32_t))); // -1
+    CUDA_CHECK(cudaMemset(d_ledger_rho_before, 0, N * sizeof(int)));
+    CUDA_CHECK(cudaMemset(d_ledger_reaction, 0, N * sizeof(int)));
+    CUDA_CHECK(cudaMemset(d_ledger_current_x, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_ledger_current_y, 0, N * sizeof(double)));
+    CUDA_CHECK(cudaMemset(d_ledger_current_z, 0, N * sizeof(double)));
 }
 
 void GpuBuffers::free() {
@@ -274,6 +286,11 @@ void GpuBuffers::free() {
     if (d_plist_idx)     { cudaFree(d_plist_idx); d_plist_idx = nullptr; }
     if (d_num_particles) { cudaFree(d_num_particles); d_num_particles = nullptr; }
     if (d_pair_id)       { cudaFree(d_pair_id); d_pair_id = nullptr; }
+    if (d_ledger_rho_before) { cudaFree(d_ledger_rho_before); d_ledger_rho_before = nullptr; }
+    if (d_ledger_reaction)   { cudaFree(d_ledger_reaction); d_ledger_reaction = nullptr; }
+    if (d_ledger_current_x)  { cudaFree(d_ledger_current_x); d_ledger_current_x = nullptr; }
+    if (d_ledger_current_y)  { cudaFree(d_ledger_current_y); d_ledger_current_y = nullptr; }
+    if (d_ledger_current_z)  { cudaFree(d_ledger_current_z); d_ledger_current_z = nullptr; }
     N = 0;
     L = 0;
 }
@@ -445,6 +462,67 @@ void GpuBuffers::download_phi_latency(std::vector<double>& out) const {
     out.resize(N);
     CUDA_CHECK(cudaMemcpy(out.data(), d_phi_latency, N * sizeof(double),
                           cudaMemcpyDeviceToHost));
+}
+
+__global__ void reset_continuity_ledger_kernel(
+    const int8_t* __restrict__ state,
+    int* __restrict__ rho_before,
+    int* __restrict__ reaction,
+    double* __restrict__ current_x,
+    double* __restrict__ current_y,
+    double* __restrict__ current_z,
+    int N) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
+    rho_before[i] = static_cast<int>(state[i]);
+    reaction[i] = 0;
+    current_x[i] = 0.0;
+    current_y[i] = 0.0;
+    current_z[i] = 0.0;
+}
+
+void GpuBuffers::reset_continuity_ledger() {
+    constexpr int block = 256;
+    const int grid = (N + block - 1) / block;
+    reset_continuity_ledger_kernel<<<grid, block>>>(
+        d_state, d_ledger_rho_before, d_ledger_reaction,
+        d_ledger_current_x, d_ledger_current_y, d_ledger_current_z, N);
+    CUDA_CHECK(cudaGetLastError());
+    CUDA_CHECK(cudaDeviceSynchronize());
+}
+
+void GpuBuffers::download_continuity_ledger(
+    std::vector<int>& rho_before,
+    std::vector<int>& rho_after,
+    std::vector<int>& reaction,
+    std::vector<double>& current_x,
+    std::vector<double>& current_y,
+    std::vector<double>& current_z) const {
+    rho_before.resize(N);
+    rho_after.resize(N);
+    reaction.resize(N);
+    current_x.resize(N);
+    current_y.resize(N);
+    current_z.resize(N);
+
+    std::vector<int8_t> state_after(static_cast<size_t>(N));
+    CUDA_CHECK(cudaMemcpy(rho_before.data(), d_ledger_rho_before,
+                          N * sizeof(int), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(state_after.data(), d_state,
+                          N * sizeof(int8_t), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(reaction.data(), d_ledger_reaction,
+                          N * sizeof(int), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(current_x.data(), d_ledger_current_x,
+                          N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(current_y.data(), d_ledger_current_y,
+                          N * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(current_z.data(), d_ledger_current_z,
+                          N * sizeof(double), cudaMemcpyDeviceToHost));
+
+    for (int i = 0; i < N; ++i) {
+        rho_after[static_cast<size_t>(i)] =
+            static_cast<int>(state_after[static_cast<size_t>(i)]);
+    }
 }
 
 void GpuBuffers::download_voxels(std::vector<Voxel>& host_voxels) const {
