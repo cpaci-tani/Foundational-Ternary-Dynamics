@@ -91,7 +91,8 @@ __global__ void phase_read_kernel(
     double* __restrict__ djz,
     int L,
     bool do_wave,
-    bool do_coupling
+    bool do_coupling,
+    uint8_t bcc_stencil_mode    // Cluster A FTD-0093: 0=FULL, 1=SC, 2=FCC, 3=BCC
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -103,46 +104,86 @@ __global__ void phase_read_kernel(
     double dx = 0.0, dy = 0.0, dz = 0.0;
 
     if (do_wave) {
-        // Isotropic 18-point Laplacian: (1/3)*sum_face + (1/6)*sum_edge - 4*center
-        // Cancels O(k^4) anisotropy of the 6-point stencil.
-        // 6 face neighbors
-        int xp = idx3d(x+1, y, z, L);
-        int xm = idx3d(x-1, y, z, L);
-        int yp = idx3d(x, y+1, z, L);
-        int ym = idx3d(x, y-1, z, L);
-        int zp = idx3d(x, y, z+1, L);
-        int zm = idx3d(x, y, z-1, L);
-        // 12 edge neighbors (exactly 2 coords differ by ±1)
-        int xy_pp = idx3d(x+1,y+1,z,L), xy_pm = idx3d(x+1,y-1,z,L);
-        int xy_mp = idx3d(x-1,y+1,z,L), xy_mm = idx3d(x-1,y-1,z,L);
-        int xz_pp = idx3d(x+1,y,z+1,L), xz_pm = idx3d(x+1,y,z-1,L);
-        int xz_mp = idx3d(x-1,y,z+1,L), xz_mm = idx3d(x-1,y,z-1,L);
-        int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
-        int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
-
-        constexpr double WF = 1.0/3.0;   // face weight
-        constexpr double WE = 1.0/6.0;   // edge weight
-
-        double face_x = flux_x[xp] + flux_x[xm] + flux_x[yp] + flux_x[ym]
-                       + flux_x[zp] + flux_x[zm];
-        double edge_x = flux_x[xy_pp] + flux_x[xy_pm] + flux_x[xy_mp] + flux_x[xy_mm]
-                      + flux_x[xz_pp] + flux_x[xz_pm] + flux_x[xz_mp] + flux_x[xz_mm]
-                      + flux_x[yz_pp] + flux_x[yz_pm] + flux_x[yz_mp] + flux_x[yz_mm];
-        double lap_x = WF * face_x + WE * edge_x - 4.0 * flux_x[i];
-
-        double face_y = flux_y[xp] + flux_y[xm] + flux_y[yp] + flux_y[ym]
-                       + flux_y[zp] + flux_y[zm];
-        double edge_y = flux_y[xy_pp] + flux_y[xy_pm] + flux_y[xy_mp] + flux_y[xy_mm]
-                      + flux_y[xz_pp] + flux_y[xz_pm] + flux_y[xz_mp] + flux_y[xz_mm]
-                      + flux_y[yz_pp] + flux_y[yz_pm] + flux_y[yz_mp] + flux_y[yz_mm];
-        double lap_y = WF * face_y + WE * edge_y - 4.0 * flux_y[i];
-
-        double face_z = flux_z[xp] + flux_z[xm] + flux_z[yp] + flux_z[ym]
-                       + flux_z[zp] + flux_z[zm];
-        double edge_z = flux_z[xy_pp] + flux_z[xy_pm] + flux_z[xy_mp] + flux_z[xy_mm]
-                      + flux_z[xz_pp] + flux_z[xz_pm] + flux_z[xz_mp] + flux_z[xz_mm]
-                      + flux_z[yz_pp] + flux_z[yz_pm] + flux_z[yz_mp] + flux_z[yz_mm];
-        double lap_z = WF * face_z + WE * edge_z - 4.0 * flux_z[i];
+        // Cluster A: Laplacian dispatched by bcc_stencil_mode.
+        //   0 (FULL) — legacy 18-pt: (1/3)·face + (1/6)·edge − 4·center
+        //   1 (SC)   — 6 face nbrs only,    weight 1/6,  center −1
+        //   2 (FCC)  — 12 edge nbrs only,   weight 1/12, center −1
+        //   3 (BCC)  — 8 corner nbrs only,  weight 1/8,  center −1
+        // See engine/include/ftd/sublattice.h for the closed-form weights and
+        // Watson-integral pedigree (I_1_BCC = G*²/(2π)).
+        double lap_x = 0.0, lap_y = 0.0, lap_z = 0.0;
+        if (bcc_stencil_mode == 0u) {
+            // FULL (legacy fast path)
+            int xp = idx3d(x+1, y, z, L);
+            int xm = idx3d(x-1, y, z, L);
+            int yp = idx3d(x, y+1, z, L);
+            int ym = idx3d(x, y-1, z, L);
+            int zp = idx3d(x, y, z+1, L);
+            int zm = idx3d(x, y, z-1, L);
+            int xy_pp = idx3d(x+1,y+1,z,L), xy_pm = idx3d(x+1,y-1,z,L);
+            int xy_mp = idx3d(x-1,y+1,z,L), xy_mm = idx3d(x-1,y-1,z,L);
+            int xz_pp = idx3d(x+1,y,z+1,L), xz_pm = idx3d(x+1,y,z-1,L);
+            int xz_mp = idx3d(x-1,y,z+1,L), xz_mm = idx3d(x-1,y,z-1,L);
+            int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
+            int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
+            constexpr double WF = 1.0/3.0;
+            constexpr double WE = 1.0/6.0;
+            double face_x = flux_x[xp]+flux_x[xm]+flux_x[yp]+flux_x[ym]+flux_x[zp]+flux_x[zm];
+            double edge_x = flux_x[xy_pp]+flux_x[xy_pm]+flux_x[xy_mp]+flux_x[xy_mm]
+                          + flux_x[xz_pp]+flux_x[xz_pm]+flux_x[xz_mp]+flux_x[xz_mm]
+                          + flux_x[yz_pp]+flux_x[yz_pm]+flux_x[yz_mp]+flux_x[yz_mm];
+            double face_y = flux_y[xp]+flux_y[xm]+flux_y[yp]+flux_y[ym]+flux_y[zp]+flux_y[zm];
+            double edge_y = flux_y[xy_pp]+flux_y[xy_pm]+flux_y[xy_mp]+flux_y[xy_mm]
+                          + flux_y[xz_pp]+flux_y[xz_pm]+flux_y[xz_mp]+flux_y[xz_mm]
+                          + flux_y[yz_pp]+flux_y[yz_pm]+flux_y[yz_mp]+flux_y[yz_mm];
+            double face_z = flux_z[xp]+flux_z[xm]+flux_z[yp]+flux_z[ym]+flux_z[zp]+flux_z[zm];
+            double edge_z = flux_z[xy_pp]+flux_z[xy_pm]+flux_z[xy_mp]+flux_z[xy_mm]
+                          + flux_z[xz_pp]+flux_z[xz_pm]+flux_z[xz_mp]+flux_z[xz_mm]
+                          + flux_z[yz_pp]+flux_z[yz_pm]+flux_z[yz_mp]+flux_z[yz_mm];
+            lap_x = WF*face_x + WE*edge_x - 4.0*flux_x[i];
+            lap_y = WF*face_y + WE*edge_y - 4.0*flux_y[i];
+            lap_z = WF*face_z + WE*edge_z - 4.0*flux_z[i];
+        } else if (bcc_stencil_mode == 1u) {
+            // SC: 6 face nbrs, weight 1/6, center -1
+            int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
+            int yp = idx3d(x,y+1,z,L), ym = idx3d(x,y-1,z,L);
+            int zp = idx3d(x,y,z+1,L), zm = idx3d(x,y,z-1,L);
+            constexpr double W = 1.0/6.0;
+            lap_x = W*(flux_x[xp]+flux_x[xm]+flux_x[yp]+flux_x[ym]+flux_x[zp]+flux_x[zm]) - flux_x[i];
+            lap_y = W*(flux_y[xp]+flux_y[xm]+flux_y[yp]+flux_y[ym]+flux_y[zp]+flux_y[zm]) - flux_y[i];
+            lap_z = W*(flux_z[xp]+flux_z[xm]+flux_z[yp]+flux_z[ym]+flux_z[zp]+flux_z[zm]) - flux_z[i];
+        } else if (bcc_stencil_mode == 2u) {
+            // FCC: 12 edge nbrs, weight 1/12, center -1
+            int xy_pp = idx3d(x+1,y+1,z,L), xy_pm = idx3d(x+1,y-1,z,L);
+            int xy_mp = idx3d(x-1,y+1,z,L), xy_mm = idx3d(x-1,y-1,z,L);
+            int xz_pp = idx3d(x+1,y,z+1,L), xz_pm = idx3d(x+1,y,z-1,L);
+            int xz_mp = idx3d(x-1,y,z+1,L), xz_mm = idx3d(x-1,y,z-1,L);
+            int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
+            int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
+            constexpr double W = 1.0/12.0;
+            lap_x = W*(flux_x[xy_pp]+flux_x[xy_pm]+flux_x[xy_mp]+flux_x[xy_mm]
+                     + flux_x[xz_pp]+flux_x[xz_pm]+flux_x[xz_mp]+flux_x[xz_mm]
+                     + flux_x[yz_pp]+flux_x[yz_pm]+flux_x[yz_mp]+flux_x[yz_mm]) - flux_x[i];
+            lap_y = W*(flux_y[xy_pp]+flux_y[xy_pm]+flux_y[xy_mp]+flux_y[xy_mm]
+                     + flux_y[xz_pp]+flux_y[xz_pm]+flux_y[xz_mp]+flux_y[xz_mm]
+                     + flux_y[yz_pp]+flux_y[yz_pm]+flux_y[yz_mp]+flux_y[yz_mm]) - flux_y[i];
+            lap_z = W*(flux_z[xy_pp]+flux_z[xy_pm]+flux_z[xy_mp]+flux_z[xy_mm]
+                     + flux_z[xz_pp]+flux_z[xz_pm]+flux_z[xz_mp]+flux_z[xz_mm]
+                     + flux_z[yz_pp]+flux_z[yz_pm]+flux_z[yz_mp]+flux_z[yz_mm]) - flux_z[i];
+        } else {
+            // BCC: 8 corner nbrs (±1,±1,±1), weight 1/8, center -1
+            int c_ppp = idx3d(x+1,y+1,z+1,L), c_ppm = idx3d(x+1,y+1,z-1,L);
+            int c_pmp = idx3d(x+1,y-1,z+1,L), c_pmm = idx3d(x+1,y-1,z-1,L);
+            int c_mpp = idx3d(x-1,y+1,z+1,L), c_mpm = idx3d(x-1,y+1,z-1,L);
+            int c_mmp = idx3d(x-1,y-1,z+1,L), c_mmm = idx3d(x-1,y-1,z-1,L);
+            constexpr double W = 1.0/8.0;
+            lap_x = W*(flux_x[c_ppp]+flux_x[c_ppm]+flux_x[c_pmp]+flux_x[c_pmm]
+                     + flux_x[c_mpp]+flux_x[c_mpm]+flux_x[c_mmp]+flux_x[c_mmm]) - flux_x[i];
+            lap_y = W*(flux_y[c_ppp]+flux_y[c_ppm]+flux_y[c_pmp]+flux_y[c_pmm]
+                     + flux_y[c_mpp]+flux_y[c_mpm]+flux_y[c_mmp]+flux_y[c_mmm]) - flux_y[i];
+            lap_z = W*(flux_z[c_ppp]+flux_z[c_ppm]+flux_z[c_pmp]+flux_z[c_pmm]
+                     + flux_z[c_mpp]+flux_z[c_mpm]+flux_z[c_mmp]+flux_z[c_mmm]) - flux_z[i];
+        }
 
         constexpr double cw2 = C_WAVE * C_WAVE;
         dx += cw2 * lap_x;
@@ -244,6 +285,21 @@ __global__ void compute_near_particle_kernel(
 // ---------- Phase Write Kernel ----------
 // Leapfrog integration + conditional damping (with optional Larmor modulation)
 
+// Cluster A site filter:  0=ALL_SITES, 1=BCC_SITES (odd,odd,odd),
+// 2=FCC_SITES (mixed parity), 3=SC_SITES (even,even,even).
+// Matches ftd::SiteClass at the value level: SC_SITES=0, BCC_SITES=1,
+// FCC_SITES=2, ALL_SITES=3 — see sublattice.h. We dispatch by passing
+// the SiteClass uint8_t value directly.
+__device__ inline bool langevin_site_match(int x, int y, int z, uint8_t filter) {
+    if (filter == 3) return true;                              // ALL_SITES
+    const int px = x & 1, py = y & 1, pz = z & 1;
+    const bool is_sc  = (px == 0 && py == 0 && pz == 0);
+    const bool is_bcc = (px == 1 && py == 1 && pz == 1);
+    if (filter == 0) return is_sc;                              // SC_SITES
+    if (filter == 1) return is_bcc;                             // BCC_SITES
+    return !is_sc && !is_bcc;                                   // FCC_SITES = remainder
+}
+
 __global__ void phase_write_kernel(
     double* __restrict__ flux_x,
     double* __restrict__ flux_y,
@@ -265,6 +321,7 @@ __global__ void phase_write_kernel(
     double langevin_gamma,
     double langevin_T,
     const double* __restrict__ langevin_noise,
+    uint8_t langevin_site_filter,    // Cluster A FTD-0093: 0=SC, 1=BCC, 2=FCC, 3=ALL
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -283,7 +340,11 @@ __global__ void phase_write_kernel(
     flux_y[i] += wv_y[i];
     flux_z[i] += wv_z[i];
 
-    if (do_langevin) {
+    // Cluster A: Langevin OU update gated on site-class filter.
+    const bool langevin_active =
+        do_langevin && langevin_site_match(x, y, z, langevin_site_filter);
+
+    if (langevin_active) {
         // Ornstein-Uhlenbeck on wave_vel; replaces deterministic damping.
         const int N = L * L * L;
         const double one_minus_gamma = 1.0 - langevin_gamma;
@@ -929,7 +990,8 @@ __global__ void genesis_dual_kernel(
 
 // ---------- Launcher Functions ----------
 
-void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling) {
+void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
+                        uint8_t bcc_stencil_mode) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
@@ -939,7 +1001,7 @@ void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling) {
         bufs.d_state,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
-        L, do_wave, do_coupling
+        L, do_wave, do_coupling, bcc_stencil_mode
     );
     CUDA_CHECK(cudaGetLastError());
 }
@@ -947,7 +1009,8 @@ void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling) {
 void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                         bool larmor_radiation, double damping_factor,
                         bool do_genesis, double dt,
-                        bool do_langevin, double langevin_gamma, double langevin_T) {
+                        bool do_langevin, double langevin_gamma, double langevin_T,
+                        uint8_t langevin_site_filter) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
@@ -971,6 +1034,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         do_damping, selective_damping, larmor_radiation,
         damping_factor,
         do_langevin, langevin_gamma, langevin_T, bufs.d_langevin_noise,
+        langevin_site_filter,
         L
     );
     CUDA_CHECK(cudaGetLastError());

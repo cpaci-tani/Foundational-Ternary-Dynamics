@@ -44,11 +44,13 @@
 
 // Forward declarations of GPU kernel launchers (implemented in kernel files)
 namespace ftd { namespace gpu { namespace kernels {
-    void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling);
+    void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
+                            uint8_t bcc_stencil_mode);
     void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
                             bool do_genesis, double dt,
-                            bool do_langevin, double langevin_gamma, double langevin_T);
+                            bool do_langevin, double langevin_gamma, double langevin_T,
+                            uint8_t langevin_site_filter);
     void launch_gauss_project(GpuBuffers& bufs,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
@@ -243,7 +245,8 @@ void GpuEngine::gpu_phase_read() {
     } else {
         kernels::launch_phase_read(bufs_,
                                    toggles.wave_propagation,
-                                   toggles.coupling);
+                                   toggles.coupling,
+                                   static_cast<uint8_t>(toggles.bcc_stencil));
     }
 }
 
@@ -285,7 +288,8 @@ void GpuEngine::gpu_phase_write() {
                                     dt_,
                                     toggles.langevin,
                                     toggles.langevin_gamma,
-                                    toggles.langevin_T);
+                                    toggles.langevin_T,
+                                    static_cast<uint8_t>(toggles.langevin_site_filter));
     }
 
     // Step strong field stencil (Stella Octangula propagation)
