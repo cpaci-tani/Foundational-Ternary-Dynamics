@@ -83,10 +83,18 @@ int main() {
     const int mid_idx = rb.lattice().index(mid, mid, mid);
     std::vector<double> vx_series(N_MEASURE);
 
+    // OPEN-8 fix (mirrors test_langevin_gpu_cpu_parity rationale): cast to
+    // const RenderBridge so `voxels()` selects the read-only overload, which
+    // calls sync_to_host() WITHOUT marking host_mutated_=true. The non-const
+    // overload would set the dirty flag and the next tick's push_to_device
+    // would upload host wave_vel back to the device, clobbering whatever
+    // cuRAND injected. Exact root mechanism is ARCH-6.
+    const ftd::RenderBridge& crb = rb;
+
     // Sample at every tick during measurement window.
     for (int step = 0; step < N_MEASURE; ++step) {
         rb.run(1);
-        const auto& vox = rb.voxels();
+        const auto& vox = crb.voxels();
         double tick_sum_v2 = 0, tick_sum_vx = 0, tick_sum_vy = 0, tick_sum_vz = 0;
         double tick_sum_J2 = 0;
         for (int i = 0; i < N; ++i) {
