@@ -10,6 +10,7 @@
  */
 
 #include "ftd/eft/dual_cell_blocking.h"
+#include "ftd/test_telemetry.h"
 
 #include <cmath>
 #include <iostream>
@@ -89,6 +90,17 @@ void test_invalid_size_returns_empty() {
 }  // namespace
 
 int main() {
+  ftd::test::contract({
+      "blocking/EFT/constraint",
+      "[THEOREM] / [MEASUREMENT]",
+      "dual-cell source/flux fields, b=2 finite-volume blocking",
+      "area rescaling for face flux density",
+      "gauss_violation, blocked_operator_moments",
+      "periodic dual-cell L=4 -> L=2 block domain",
+      "backend-independent finite-volume helper",
+      "blocked source and face flux preserve integrated Gauss relation",
+      "failure means the native b=2 blocking map violates finite-volume accounting"});
+
   std::cout << "================================================================\n";
   std::cout << "  TEST: Native Finite-Volume Blocking Map\n";
   std::cout << "================================================================\n";

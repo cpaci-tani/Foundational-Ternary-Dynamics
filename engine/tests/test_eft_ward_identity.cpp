@@ -23,6 +23,7 @@
 #include "ftd/eft/gauss_projection_ext.h"
 #include "ftd/eft/ward_identities.h"
 #include "ftd/render_bridge.h"
+#include "ftd/test_telemetry.h"
 
 static int g_failures = 0;
 
@@ -199,6 +200,17 @@ static void w5_vertex_open() {
 }
 
 int main() {
+    ftd::test::contract({
+        "constraint/gauge",
+        "[MEASUREMENT]",
+        "state field, flux field, Gauss/continuity identity helpers",
+        "SOR-limited engine projection and composite Ward probe",
+        "gauss_violation, continuity_residual",
+        "periodic L=16 lattice",
+        "backend-default; host identity helpers",
+        "Ward/Gauss residuals stay within documented engine thresholds",
+        "failure means projected constraint observable or tolerance contract broke"});
+
     std::puts("================================================================");
     std::puts("  EFT Phase 1C — Ward-Identity Test Suite");
     std::puts("================================================================");

@@ -33,6 +33,7 @@
 
 #include "ftd/eft/blocking.h"
 #include "ftd/render_bridge.h"
+#include "ftd/test_telemetry.h"
 
 static int g_failures = 0;
 
@@ -205,6 +206,17 @@ static void b7_overflow() {
 }
 
 int main() {
+    ftd::test::contract({
+        "blocking/EFT",
+        "[MEASUREMENT]",
+        "fine lattice state/flux, b=2 block map, closure domain",
+        "charge-conserving overflow convention",
+        "blocked_operator_moments, field_energy, state_histogram",
+        "periodic fine lattice and coarse b=2 lattice",
+        "backend-default; blocking reads host-visible state",
+        "charge and uniform/expected flux statistics survive blocking",
+        "failure means the EFT blocking map is not a valid observable map"});
+
     std::puts("================================================================");
     std::puts("  EFT Phase 2A — Block-Spin Transformation Validation Gate");
     std::puts("  (SPEC_EFT_RECOVERY_PROGRAM.md §5.1 — must pass before β)");
