@@ -145,6 +145,8 @@ void GpuEngine::set_rng_seed(unsigned int seed) {
 // ---------- Core Simulation ----------
 
 void GpuEngine::tick() {
+    bufs_.reset_continuity_ledger();
+    continuity_ledger_valid_ = true;
     // Phase 1+2: Wave update (Laplacian + coupling + leapfrog + damping + genesis/evaporation)
     // NOTE: Fusion of phase_read + phase_write into a single kernel (wave_update_kernel)
     // was attempted but has a race condition: thread i reads flux[neighbor_j] while thread j
@@ -610,10 +612,24 @@ void GpuEngine::sync_to_host(std::vector<Voxel>& out) {
     out = host_voxels_;
 }
 
+eft::DualCellContinuity GpuEngine::continuity_step() const {
+    if (!continuity_ledger_valid_) return eft::DualCellContinuity{};
+
+    eft::DualCellContinuity out(size_);
+    bufs_.download_continuity_ledger(out.rho_before,
+                                     out.rho_after,
+                                     out.reaction,
+                                     out.current_x,
+                                     out.current_y,
+                                     out.current_z);
+    return out;
+}
+
 void GpuEngine::upload_from_host(const std::vector<Voxel>& voxels) {
     host_voxels_ = voxels;
     refresh_weak_field_active_from_host();
     push_to_device();
+    continuity_ledger_valid_ = false;
 }
 
 void GpuEngine::refresh_weak_field_active_from_host() {
