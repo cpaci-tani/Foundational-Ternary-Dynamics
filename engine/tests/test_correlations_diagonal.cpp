@@ -20,6 +20,7 @@
 #include "ftd/render_bridge.h"
 #include "ftd/correlations.h"
 #include "ftd/sublattice.h"
+#include "ftd/ontic/master_quadratic.h"   // D_SPATIAL
 
 using namespace ftd;
 
@@ -62,30 +63,32 @@ int main() {
                     vox_mut[i].flux = Vec3(std::cos(k * x), 0.0, 0.0);
                 }
 
+        // For f(x) = cos(kx), the analytical correlator values:
+        //   AXIS C(r): averaged over D axes; only one axis carries k-dependence.
+        //     One axis: <cos(kx) · cos(k(x+r))> = ½ cos(kr) (over full period)
+        //     Other (D−1) axes: <cos²(kx)> = ½ (no displacement dependence)
+        //     Sum / D: (½ cos(kr) + (D−1)·½) / D = (cos(kr) + D−1) / (2D)
+        //   BODY_DIAG C(r): all directions have x → x ± r, so each contributes
+        //     ½ cos(kr). Average: ½ cos(kr).  (D-independent)
+        //   r=0 special: C(0) = <f²> = <cos²(kx)> = ½.  (cos²-averaging)
+        constexpr int D = ftd::ontic::D_SPATIAL;
+        const double expect_axis_r1 = (std::cos(k) + (D - 1)) / (2.0 * D);
+        const double expect_body_r1 = 0.5 * std::cos(k);
+        const double expect_C0      = 0.5;
+
         // Axis correlator
         auto C_axis = spatial_flux_correlation_sublattice(rb, SiteClass::ALL_SITES,
                                                             DisplacementMode::AXIS, 4);
-        // <cos(k x) cos(k(x+1))>_x averaged over a full period = ½ cos(k).
-        // The averaging here is over all 3 axes. For y or z direction with f only
-        // depending on x: <cos(k x) cos(k x)> = ½ for all r. Mixed sum:
-        //   x-direction: ½ cos(k r)
-        //   y-direction: ½
-        //   z-direction: ½
-        // Average of 3: (½ cos(k r) + ½ + ½)/3 = (cos(k r) + 2)/6.
-        double expect_axis_r1 = (std::cos(k) + 2.0) / 6.0;
-        CHECK_NEAR(C_axis[1], expect_axis_r1, 1e-6, "AXIS C(1) on cos(kx) seed");
+        CHECK_NEAR(C_axis[1], expect_axis_r1, 1e-6, "AXIS C(1) = (cos(k)+D-1)/(2D)");
 
-        // Body-diagonal correlator. For displacement (±1,±1,±1) at r=1,
-        // f at (x±1, y±1, z±1) = cos(k(x±1)) — independent of y,z.
-        // <cos(k x) cos(k(x±1))> = ½ cos(k). Same for all 4 representative dirs.
+        // Body-diagonal correlator
         auto C_body = spatial_flux_correlation_sublattice(rb, SiteClass::ALL_SITES,
                                                             DisplacementMode::BODY_DIAG, 4);
-        double expect_body_r1 = 0.5 * std::cos(k);
-        CHECK_NEAR(C_body[1], expect_body_r1, 1e-6, "BODY_DIAG C(1) on cos(kx) seed");
+        CHECK_NEAR(C_body[1], expect_body_r1, 1e-6, "BODY_DIAG C(1) = ½cos(k)");
 
         // r=0 must equal <|f|²> = ½ for both modes (cos²-averaged).
-        CHECK_NEAR(C_axis[0], 0.5, 1e-6, "AXIS C(0) = <|f|²> = ½");
-        CHECK_NEAR(C_body[0], 0.5, 1e-6, "BODY_DIAG C(0) = ½");
+        CHECK_NEAR(C_axis[0], expect_C0, 1e-6, "AXIS C(0) = <|f|²> = ½");
+        CHECK_NEAR(C_body[0], expect_C0, 1e-6, "BODY_DIAG C(0) = ½");
     }
 
     // === T2: Sublattice filter + uniform field ===

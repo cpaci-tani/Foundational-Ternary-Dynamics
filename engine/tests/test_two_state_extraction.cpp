@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "ftd/spectrum_extraction.h"
+#include "ftd/ontic/master_quadratic.h"   // X_PLUS, X_MINUS — single source of truth
 
 using namespace ftd;
 
@@ -40,10 +41,13 @@ int main() {
     std::printf("  Two-state spectrum extraction tests (Prony + GEVP)\n");
     std::printf("================================================================\n");
 
-    // Use lambda-values small enough that exp(-lambda*N) is non-trivial across the lag window.
-    // Target master-quadratic ratio 45.31 preserved via lambda1 = 0.5, lambda2 = 0.5/45.31 = 0.01103.
+    // Target ratio derived from master quadratic roots (single source of truth):
+    //   master-quadratic ratio = X_PLUS / X_MINUS ≈ 45.31
+    // Choose lambda values small enough that exp(-lambda*N) is non-trivial across
+    // the lag window; preserve the ratio.
+    const double MQ_RATIO = ftd::ontic::X_PLUS / ftd::ontic::X_MINUS;  // ≈ 45.31
     const double lam1_in = 0.5;
-    const double lam2_in = lam1_in / 45.31;
+    const double lam2_in = lam1_in / MQ_RATIO;
     const double A1 = 1.0, A2 = 0.5;
     const int N_LAG = 30;
 
@@ -65,7 +69,7 @@ int main() {
     } else {
         CHECK_REL(pres.x_plus,  lam1_in, 1.0, "Prony x_plus");
         CHECK_REL(pres.x_minus, lam2_in, 1.0, "Prony x_minus");
-        CHECK_REL(pres.x_plus / pres.x_minus, 45.31, 1.0, "Prony ratio = 45.31");
+        CHECK_REL(pres.x_plus / pres.x_minus, MQ_RATIO, 1.0, "Prony ratio = X_PLUS/X_MINUS");
     }
 
     // ===== T2: GEVP =====
@@ -90,12 +94,17 @@ int main() {
     } else {
         CHECK_REL(gres.x_plus,  lam1_in, 1.0, "GEVP x_plus");
         CHECK_REL(gres.x_minus, lam2_in, 1.0, "GEVP x_minus");
-        CHECK_REL(gres.x_plus / gres.x_minus, 45.31, 1.0, "GEVP ratio = 45.31");
+        CHECK_REL(gres.x_plus / gres.x_minus, MQ_RATIO, 1.0, "GEVP ratio = X_PLUS/X_MINUS");
     }
 
     // ===== T3: Falsification — wrong input must produce wrong ratio =====
-    std::printf("\n  T3 — Falsification: synth with ratio=44.0 must NOT recover 45.31\n");
-    const double lam2_wrong = lam1_in / 44.0;
+    // Wrong ratio = MQ_RATIO − 1.31 (i.e. 44.0 when MQ_RATIO ≈ 45.31).
+    // Chosen 2.89% below the master-quadratic ratio so the extractor must
+    // distinguish a mistake bigger than the 1% campaign tolerance.
+    const double WRONG_RATIO = MQ_RATIO - 1.31;
+    std::printf("\n  T3 — Falsification: synth with wrong ratio (%.2f) must NOT recover %.2f\n",
+                WRONG_RATIO, MQ_RATIO);
+    const double lam2_wrong = lam1_in / WRONG_RATIO;
     auto C_wrong = synth(lam1_in, lam2_wrong);
     auto pres_wrong = extract_two_state_prony(C_wrong, 2);
     if (!pres_wrong.valid) {
@@ -103,17 +112,17 @@ int main() {
         ++failures;
     } else {
         const double r = pres_wrong.x_plus / pres_wrong.x_minus;
-        const double rel_to_target = std::abs(r - 45.31) / 45.31;
+        const double rel_to_target = std::abs(r - MQ_RATIO) / MQ_RATIO;
         // Threshold is 1% — same as the campaign's pre-registered prediction
         // tolerance. If the extractor returned the target ratio when the
         // input had a different ratio, the extractor is ill-conditioned.
         if (rel_to_target < 0.01) {
-            std::printf("[FAIL] wrong-input ratio = %.4f, only %.3f%% from 45.31 (should be >1%%)\n",
-                        r, 100.0 * rel_to_target);
+            std::printf("[FAIL] wrong-input ratio = %.4f, only %.3f%% from %.2f (should be >1%%)\n",
+                        r, 100.0 * rel_to_target, MQ_RATIO);
             ++failures;
         } else {
-            std::printf("[ ok ] wrong-input ratio = %.4f differs from 45.31 by %.2f%%\n",
-                        r, 100.0 * rel_to_target);
+            std::printf("[ ok ] wrong-input ratio = %.4f differs from %.2f by %.2f%%\n",
+                        r, MQ_RATIO, 100.0 * rel_to_target);
         }
     }
 
