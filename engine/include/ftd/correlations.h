@@ -18,8 +18,21 @@
 #include <cmath>
 #include <algorithm>
 #include "render_bridge.h"
+#include "sublattice.h"
 
 namespace ftd {
+
+// Displacement geometry for sublattice-aware correlators.
+//   AXIS:      ±x̂, ±ŷ, ±ẑ at distance r            (legacy axis-aligned)
+//   FACE_DIAG: 12 face-diagonal unit vectors (FCC neighbor directions) at r·√2
+//   BODY_DIAG: 8 body-diagonal unit vectors (BCC neighbor directions) at r·√3
+// Body-diagonal correlators are required by PROTOCOL_BCC_SUBLATTICE_SPECTRUM
+// to pick out the master-quadratic spectrum on σ_BCC.
+enum class DisplacementMode : uint8_t {
+    AXIS      = 0,
+    FACE_DIAG = 1,
+    BODY_DIAG = 2
+};
 
 // Spatial flux-flux correlator: C(r) = <J(x) · J(x+r)> averaged over all x
 // Returns C[r] for r = 0, 1, ..., max_r-1
@@ -200,6 +213,101 @@ inline std::vector<double> temporal_autocorrelation(
         C[tau] = sum / count;
     }
     return C;
+}
+
+// === Cluster A (FTD-0093): sublattice + diagonal correlators ===
+
+// Spatial flux-flux correlator restricted to a parity sub-lattice and
+// (optionally) along a non-axial displacement direction. Required for
+// the BCC band-edge spectrum measurement (PROTOCOL_BCC_SUBLATTICE_SPECTRUM
+// §2). Mode AXIS reproduces axis-aligned displacements; FACE_DIAG averages
+// over 12 face-diagonal unit displacements; BODY_DIAG averages over the 8
+// body-diagonal unit displacements (the BCC neighbor set).
+//
+// `r` runs over INTEGER step counts; physical distance is r·1, r·√2, r·√3
+// for AXIS, FACE_DIAG, BODY_DIAG respectively. The caller is responsible
+// for that conversion if needed.
+inline std::vector<double> spatial_flux_correlation_sublattice(
+    const RenderBridge& rb,
+    SiteClass site_filter,
+    DisplacementMode mode = DisplacementMode::AXIS,
+    int max_r = -1)
+{
+    const auto& lat = rb.lattice();
+    const auto& vox = rb.voxels();
+    int L = lat.size();
+    if (max_r < 0 || max_r > L / 2) max_r = L / 2;
+
+    // Displacement unit vectors per mode.
+    struct Disp { int dx, dy, dz; };
+    std::vector<Disp> dirs;
+    switch (mode) {
+        case DisplacementMode::AXIS:
+            dirs = { {1,0,0}, {0,1,0}, {0,0,1} };
+            break;
+        case DisplacementMode::FACE_DIAG:
+            // 12 unit vectors of the form (±1,±1,0) etc. Averaging over the
+            // POSITIVE half (6 directions) suffices since the flux-flux
+            // correlator is symmetric under r → -r.
+            dirs = { {1,1,0},{1,-1,0},{1,0,1},{1,0,-1},{0,1,1},{0,1,-1} };
+            break;
+        case DisplacementMode::BODY_DIAG:
+            // 8 corner directions; same parity argument → 4 representative dirs.
+            dirs = { {1,1,1},{1,1,-1},{1,-1,1},{1,-1,-1} };
+            break;
+    }
+
+    std::vector<double> C(max_r, 0.0);
+    std::vector<long long> counts(max_r, 0);
+
+    for (int x = 0; x < L; ++x) {
+        for (int y = 0; y < L; ++y) {
+            for (int z = 0; z < L; ++z) {
+                if (!site_matches_filter(classify_voxel(x, y, z), site_filter)) continue;
+                int idx0 = lat.index(x, y, z);
+                const Vec3& J0 = vox[idx0].flux;
+
+                for (int r = 0; r < max_r; ++r) {
+                    for (const auto& d : dirs) {
+                        int xr = lat.wrap(x + r * d.dx);
+                        int yr = lat.wrap(y + r * d.dy);
+                        int zr = lat.wrap(z + r * d.dz);
+                        // Optional second-leg filter: if user passed a non-ALL filter,
+                        // also require the receiver voxel match. This isolates same-class
+                        // BCC↔BCC correlations from BCC↔neighbor leakage.
+                        if (!site_matches_filter(classify_voxel(xr, yr, zr), site_filter)) continue;
+                        int idx_r = lat.index(xr, yr, zr);
+                        C[r] += J0.dot(vox[idx_r].flux);
+                        ++counts[r];
+                    }
+                }
+            }
+        }
+    }
+
+    for (int r = 0; r < max_r; ++r) {
+        if (counts[r] > 0) C[r] /= static_cast<double>(counts[r]);
+    }
+    return C;
+}
+
+// Sum of flux-energy on selected sublattice. Building block for the
+// spectrum-extraction time series ψ(t) = Σ_{i ∈ class} |J(i,t)|².
+// (Cheaper than calling spatial_flux_correlation_sublattice when only the
+// total is needed.)
+inline double sum_flux_energy_sublattice(const RenderBridge& rb, SiteClass site_filter) {
+    const auto& lat = rb.lattice();
+    const auto& vox = rb.voxels();
+    const int L = lat.size();
+    double total = 0.0;
+    for (int x = 0; x < L; ++x)
+        for (int y = 0; y < L; ++y)
+            for (int z = 0; z < L; ++z) {
+                if (!site_matches_filter(classify_voxel(x, y, z), site_filter)) continue;
+                int idx = lat.index(x, y, z);
+                total += vox[idx].flux.mag2();
+            }
+    return total;
 }
 
 }  // namespace ftd

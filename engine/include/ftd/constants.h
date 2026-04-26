@@ -159,7 +159,15 @@ using ontic::V_HIGGS;
 // V_HIGGS is 246.09 GeV. K_B is 0.511 MeV.
 // Therefore V_HIGGS_LATTICE = V_HIGGS * 1000.0 / K_B (scaled by the electron mass amplitude)
 inline constexpr double HIGGS_VEV_LATTICE = V_HIGGS * 1000.0 / K_B;
-inline constexpr double WZ_MIXING_ANGLE_COS = 0.881; // cos(theta_W) ~ 80.4/91.2
+
+// cos(theta_W) at tree level. Derived from SIN2_WEINBERG = N_C/N_EFF = 3/13:
+//   cos²(theta_W) = 1 - SIN2_WEINBERG = 10/13
+//   cos(theta_W)  = sqrt(10/13) ≈ 0.8770580193
+// Previously hardcoded as 0.881 (the experimental M_W/M_Z ≈ 80.4/91.2 ratio),
+// which drifted ~0.45% from the FTD-derived value. JS counterpart already
+// expresses this as Math.sqrt(1 - SIN2_WEINBERG) (engine/web/js/constants.js:90).
+// Not constexpr because std::sqrt is non-constexpr until C++26.
+inline const double WZ_MIXING_ANGLE_COS = std::sqrt(1.0 - SIN2_WEINBERG);
 
 // Layer 7: Precision formula
 using ontic::C1;

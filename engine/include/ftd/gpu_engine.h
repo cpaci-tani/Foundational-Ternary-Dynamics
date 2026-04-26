@@ -67,6 +67,19 @@ public:
     // Access latency potential (downloads from GPU on demand)
     const std::vector<double>& phi_latency() { ensure_host_synced(); return host_phi_latency_; }
 
+    // Download per-site force diagnostics (component breakdown of phase_forces
+    // + color_force kernels). Sized to N. Vectors stay valid until the next
+    // call. Used by GpuBackend::sync_to_host() to repopulate
+    // RenderBridge::force_diag_ in lockstep with the voxel mirror.
+    struct ForceDiagHost {
+        std::vector<double> coulomb_x, coulomb_y, coulomb_z;
+        std::vector<double> strong_x,  strong_y,  strong_z;
+        std::vector<double> magnetic_x, magnetic_y, magnetic_z;
+        std::vector<double> gravity_x,  gravity_y,  gravity_z;
+        std::vector<double> exchange_x, exchange_y, exchange_z;
+    };
+    const ForceDiagHost& force_diag() { ensure_host_synced(); return host_force_diag_; }
+
     // Physics toggles (same as CPU engine)
     TermToggles toggles;
 
@@ -113,6 +126,7 @@ private:
     std::vector<double> host_phi_;
     std::vector<double> host_phi_coulomb_;
     std::vector<double> host_phi_latency_;  // Wave 5: GPU latency Poisson shadow
+    ForceDiagHost host_force_diag_;          // Per-site force component mirror
     bool host_dirty_ = true;  // true = device has newer data than host
 
     int next_particle_id_ = 0;

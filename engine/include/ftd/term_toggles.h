@@ -3,6 +3,7 @@
 // 20 toggles: 10 core (logic-derived, default ON) + 10 extensions (default OFF).
 
 #include <string>
+#include "sublattice.h"   // BccStencilMode, SiteClass
 
 namespace ftd {
 
@@ -30,6 +31,19 @@ struct TermToggles {
     bool exact_dual_gauss = false; // gauss_project: exact dual-cell face-flux projection (Phase 1 Electrodynamics)
     bool emergent_forces = false;  // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
     bool langevin = false;         // Stochastic thermalization: OU process on wave_vel with (gamma, T)
+
+    // Cluster A (FTD-0093 / Mechanism C): sublattice stencil mode for phase_read.
+    // FULL preserves the legacy 18-pt (σ_SC + σ_FCC)/2 path. SC, FCC, BCC select
+    // a single sub-stencil — required for the BCC-projected spectrum measurement
+    // (PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md). See ftd/sublattice.h.
+    BccStencilMode bcc_stencil = BccStencilMode::FULL;
+
+    // Cluster A: voxel-parity filter for the Langevin thermostat. ALL_SITES
+    // applies the OU update everywhere (legacy behaviour). SC_SITES / FCC_SITES /
+    // BCC_SITES restrict to that parity class; non-selected voxels fall through
+    // to the existing else-branch (deterministic damping). See render_bridge.cpp
+    // phase_write Langevin block.
+    SiteClass langevin_site_filter = SiteClass::ALL_SITES;
 
     // Langevin thermalization parameters (used only when langevin == true).
     // Continuous form:  dv = -gamma v dt + sqrt(2 gamma T) dW, per component per voxel.
@@ -78,6 +92,13 @@ struct TermToggles {
             msg += "larmor_radiation requires damping\n";
         if (latency_field && !gravity)
             msg += "latency_field requires gravity\n";
+        // Cluster A: BCC sub-stencil currently uses single-substrate path only.
+        // Dual-substrate BCC + Langevin is OPEN-7 (deferred per planning doc).
+        if (bcc_stencil != BccStencilMode::FULL && dual_substrate)
+            msg += "bcc_stencil != FULL requires dual_substrate=false (single-substrate path; dual-substrate BCC is OPEN-7)\n";
+        // Cluster A: a non-default Langevin site filter requires Langevin to be on.
+        if (langevin_site_filter != SiteClass::ALL_SITES && !langevin)
+            msg += "langevin_site_filter != ALL_SITES requires langevin=true\n";
         if (err) *err = msg;
         return msg.empty();
     }
@@ -115,6 +136,8 @@ struct TermToggles {
         pair_production = false;   // Keep pair production off by default
         exchange_force = false;    // Keep exchange force off by default
         latency_field = false;     // Keep latency field off by default
+        bcc_stencil = BccStencilMode::FULL;          // legacy 18-pt
+        langevin_site_filter = SiteClass::ALL_SITES; // unfiltered
     }
 
     void disable_all() {
@@ -131,6 +154,8 @@ struct TermToggles {
         pair_production = false;
         exchange_force = false;
         latency_field = false;
+        bcc_stencil = BccStencilMode::FULL;          // logic-only stencil default
+        langevin_site_filter = SiteClass::ALL_SITES;
     }
 };
 

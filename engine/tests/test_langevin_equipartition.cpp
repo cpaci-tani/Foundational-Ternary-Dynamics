@@ -44,6 +44,8 @@ int main() {
                 1.0/gamma);
 
     ftd::RenderBridge rb(L);
+    rb.force_cpu();   // Langevin GPU path is unreliable on this build (auditor 2026-04-25);
+                      // matches campaign_beta_measurement.cpp pattern.
 
     // Minimal bare lattice: wave propagation + gauss projection + langevin.
     // Disable everything else to isolate the thermostat.

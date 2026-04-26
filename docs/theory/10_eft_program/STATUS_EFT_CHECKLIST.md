@@ -76,7 +76,7 @@ finite-volume/blocking EFT of FTD histories.
 - [x] Ward-identity and matched-Poisson tests exist.
 - [ ] Extend basis with all nonlinear/reaction operators observed in full-tick GPU histories.
 - [ ] Define operator mixing matrix from blocked full-history ensembles.
-- [ ] Classify relevant, marginal, and irrelevant directions from measured native flow.
+- [~] Classify relevant, marginal, and irrelevant directions from measured native flow. **[PARTIAL] 2026-04-25** — `AUDIT_OPERATOR_SPECTRUM.md` (FTD-0091): all 5 measurable operators classify as "relevant" (Δ < D = 4) at L=32 in both the pulse and flux-baryon scenarios; the marginal/irrelevant bands of the pre-reg bracket are not recovered. Operator stratification IS present (divJ² Δ jumps ×3.4 between scenarios), so the basis is non-degenerate; the pulse-regime "all Δ ≈ 0.5" collapse is a scenario envelope artefact, not strong-coupling. Full classification requires L ≥ 64 + multi-scenario ensemble.
 - [ ] Separate engine-rule operators from emergent coarse operators.
 
 ## 6. Nonlinear Flow
@@ -84,7 +84,7 @@ finite-volume/blocking EFT of FTD histories.
 - [x] Real engine histories can now be converted into native continuity ledgers.
 - [x] Full-tick GPU histories expose all currently known state-changing channels.
 - [ ] Build systematic nonlinear b=2 flow campaigns from engine histories.
-- [ ] Add BCC/corner-channel observables motivated by `PAPER_MASTER_QUADRATIC_FORMAL.pdf`.
+- [~] Add BCC/corner-channel observables motivated by `PAPER_MASTER_QUADRATIC_FORMAL.pdf`. **2026-04-26 — Cluster A engine build complete (`engine/include/ftd/sublattice.h`, `correlations.h`, `spectrum_extraction.h`, `term_toggles.h::bcc_stencil`, `campaign_bcc_band_spectrum.cpp`, all tests PASS); D2 protocol drafted (`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`); D1 derivation drafted (`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`, FTD-0093). Awaiting publication-grade run + D6 audit.**
 - [ ] Measure operator mixing under blocking.
 - [ ] Measure reaction-sector scaling.
 - [ ] Measure transport-sector scaling.
@@ -110,8 +110,8 @@ finite-volume/blocking EFT of FTD histories.
 - [x] `K_B` status remains calibration/manifestation scale.
 - [x] Old physical RG reading of `x_+` closed negative.
 - [x] Alpha extraction tooling builds again.
-- [ ] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open.
-- [ ] Evaluate "G18 direct sector vs BCC/CM capacity matching" as a possible `g_c` mechanism, tagged [CONJECTURE] until derived.
+- [~] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open. **2026-04-26 — Mechanism A ruled out; Mechanism B closed negative 2026-04-25 (`DERIV_MECHANISM_B_GC_DERIVATION.md`, circularity); Mechanism C drafted as [CONJECTURE] (FTD-0093, `DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`). Awaiting D6 audit on `PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`. Companion: μ-from-ℓ_P missing arrow (FTD-0096) tracked in `OPEN_MU_FROM_LP_MISSING_ARROW.md`.**
+- [~] Evaluate "G18 direct sector vs BCC/CM capacity matching" as a possible `g_c` mechanism, tagged [CONJECTURE] until derived. **2026-04-26 — predecessor reading of Mechanism C bridge-operator hypothesis (FTD-0093 §3 cites the BCC sub-stencil structural argument).**
 - [ ] Decide whether `coulomb_charge_coupling` is a measurement knob, calibration, or derived engine convention.
 - [ ] Separate dimensionless native couplings from physical-unit calibrations in all docs and APIs.
 

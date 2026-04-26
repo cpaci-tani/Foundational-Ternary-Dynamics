@@ -118,6 +118,24 @@ GpuEngine::GpuEngine(int lattice_size)
     host_phi_.resize(N_, 0.0);
     host_phi_coulomb_.resize(N_, 0.0);
     host_phi_latency_.resize(N_, 0.0);
+    // Pre-size force-diag mirror so GpuBackend::sync_to_host can scatter even
+    // before the first tick has populated the device buffers (e.g. when a
+    // test mutates voxels()[] right after construction and triggers a sync).
+    host_force_diag_.coulomb_x.assign(N_, 0.0);
+    host_force_diag_.coulomb_y.assign(N_, 0.0);
+    host_force_diag_.coulomb_z.assign(N_, 0.0);
+    host_force_diag_.strong_x.assign(N_, 0.0);
+    host_force_diag_.strong_y.assign(N_, 0.0);
+    host_force_diag_.strong_z.assign(N_, 0.0);
+    host_force_diag_.magnetic_x.assign(N_, 0.0);
+    host_force_diag_.magnetic_y.assign(N_, 0.0);
+    host_force_diag_.magnetic_z.assign(N_, 0.0);
+    host_force_diag_.gravity_x.assign(N_, 0.0);
+    host_force_diag_.gravity_y.assign(N_, 0.0);
+    host_force_diag_.gravity_z.assign(N_, 0.0);
+    host_force_diag_.exchange_x.assign(N_, 0.0);
+    host_force_diag_.exchange_y.assign(N_, 0.0);
+    host_force_diag_.exchange_z.assign(N_, 0.0);
     host_dirty_ = false;
 }
 
@@ -337,6 +355,12 @@ void GpuEngine::gpu_solve_latency_poisson() {
 }
 
 void GpuEngine::gpu_phase_forces() {
+    // Reset force-diag mirror once per tick — matches the per-tick semantics
+    // of CPU RenderBridge::phase_forces, which overwrites force_diag_[i] for
+    // every state≠0 voxel. Voxels with state==0 stay zero, which is the
+    // sensible default (CPU reads of those would return whatever the last
+    // tick wrote — typically also zero).
+    bufs_.reset_force_diag();
     // Solve Coulomb potential first (if Poisson mode)
     if (toggles.poisson_coulomb) {
         gpu_solve_coulomb();
@@ -401,6 +425,14 @@ void GpuEngine::ensure_host_synced() {
         bufs_.download(host_voxels_, host_phi_, host_phi_coulomb_);
         // Wave 5: also download phi_latency for tests that read it directly
         bufs_.download_phi_latency(host_phi_latency_);
+        // Force-diag mirror — populated each tick by the force kernels so
+        // GpuBackend::sync_to_host can scatter it into RenderBridge::force_diag_.
+        bufs_.download_force_diag(
+            host_force_diag_.coulomb_x,  host_force_diag_.coulomb_y,  host_force_diag_.coulomb_z,
+            host_force_diag_.strong_x,   host_force_diag_.strong_y,   host_force_diag_.strong_z,
+            host_force_diag_.magnetic_x, host_force_diag_.magnetic_y, host_force_diag_.magnetic_z,
+            host_force_diag_.gravity_x,  host_force_diag_.gravity_y,  host_force_diag_.gravity_z,
+            host_force_diag_.exchange_x, host_force_diag_.exchange_y, host_force_diag_.exchange_z);
         host_dirty_ = false;
     }
 }
