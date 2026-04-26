@@ -12,9 +12,11 @@
 #include "ftd/constants.h"
 #include <chrono>
 #include <cstdio>
+#include <random>
 #include <vector>
 #include <algorithm>
 #include <numeric>
+#include <random>  // RF-9: render_bridge.h no longer transitively pulls this in
 
 #ifdef _OPENMP
 #include <omp.h>

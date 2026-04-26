@@ -38,7 +38,7 @@ inline std::vector<double> measure_potential_vp(const RenderBridge& bg, int8_t s
     rb.force_cpu();
     configure_vacuum_polarization(rb);
     rb.toggles.langevin = false;
-    copy_flux_and_wave_vel(bg, rb);
+    copy_flux_and_wave_vel_for_coupling(bg, rb);
     const int mid = L / 2;
     place_test_charge_on_bg(rb, mid, mid, mid, sign);
     rb.run(n_ticks);
