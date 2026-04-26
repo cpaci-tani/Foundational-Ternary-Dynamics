@@ -112,7 +112,8 @@ static void test_parity() {
 
     // --- Config L: inject flux_L only ---
     auto rb_L = std::make_unique<ftd::RenderBridge>(L);
-    rb_L->force_cpu();  // Chirality/dual substrate diagnostics need CPU
+    // GPU dual-substrate kernels (phase_read_dual_kernel, phase_write_dual_kernel)
+    // propagate flux_L / flux_R independently; sync_to_host downloads both halves.
     rb_L->toggles.disable_all();
     rb_L->toggles.wave_propagation = true;
     rb_L->toggles.damping = true;
@@ -141,7 +142,6 @@ static void test_parity() {
 
     // --- Config R: inject flux_R only ---
     auto rb_R = std::make_unique<ftd::RenderBridge>(L);
-    rb_R->force_cpu();
     rb_R->toggles.disable_all();
     rb_R->toggles.wave_propagation = true;
     rb_R->toggles.damping = true;

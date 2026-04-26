@@ -39,7 +39,9 @@ int main() {
     std::printf("  Target: <|v|^2>_BCC = 3T = %.4f, <|v|^2>_other ~ 0\n\n", 3.0*T);
 
     ftd::RenderBridge rb(L);
-    rb.force_cpu();
+    // GPU sublattice Langevin filter wired 2026-04-26 in
+    // kernels_stencil.cu::phase_write_kernel via langevin_site_match().
+    // No force_cpu — test runs on GPU when CUDA is enabled.
 
     // Bare lattice + langevin only on BCC sites.
     // wave_propagation is OFF so the Laplacian doesn't redistribute the BCC
