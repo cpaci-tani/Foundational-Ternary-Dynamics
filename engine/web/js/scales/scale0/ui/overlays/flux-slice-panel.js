@@ -216,6 +216,14 @@ export class FluxSlicePanel {
         this.frameCount = 0;
         this._lastN = 0;
         this._lastSimTick = 0;
+        // Self-driven rAF loop: kept running while the panel is visible so
+        // the heatmaps refresh whether or not the Scale 0 controller's animate
+        // tail call fires. The controller-driven update() is still wired up
+        // (controller.js:322) and remains the primary path; this loop is the
+        // safety net for stale-cache / mount-order races where the external
+        // hook isn't reliably calling us.
+        this._rafId = null;
+        this._lastSelfTickMs = 0;
 
         this._panel = null;
         this._chip = null;
@@ -402,7 +410,35 @@ export class FluxSlicePanel {
             // Force a fresh paint + reconcile mirror state right away —
             // the panel may have been hidden across a scenario change.
             this.frameCount = 0;
+            this._startSelfDrive();
+        } else {
+            this._stopSelfDrive();
         }
+    }
+
+    _startSelfDrive() {
+        if (this._rafId !== null) return;
+        if (typeof requestAnimationFrame !== 'function') return;
+        const loop = (now) => {
+            // Stop loop if the panel was hidden out from under us.
+            if (!this.visible) { this._rafId = null; return; }
+            // Run our update — internal updateEvery throttle still applies,
+            // and a no-op fast-out fires when the panel is hidden anyway.
+            try { this.update(); }
+            catch (e) {
+                console.warn('[flux-slice-panel] self-drive update failed:', e);
+            }
+            this._lastSelfTickMs = now || performance.now();
+            this._rafId = requestAnimationFrame(loop);
+        };
+        this._rafId = requestAnimationFrame(loop);
+    }
+
+    _stopSelfDrive() {
+        if (this._rafId !== null && typeof cancelAnimationFrame === 'function') {
+            cancelAnimationFrame(this._rafId);
+        }
+        this._rafId = null;
     }
 
     toggle() { this.setVisible(!this.visible); }
@@ -707,6 +743,7 @@ export class FluxSlicePanel {
     // ── Teardown ──────────────────────────────────────────────────────
 
     dispose() {
+        this._stopSelfDrive();
         this._panel?.remove();
         this._chip?.remove();
         this._panel = null;
