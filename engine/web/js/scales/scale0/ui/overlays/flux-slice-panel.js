@@ -1,49 +1,215 @@
 /**
- * Scale 0 — Live 3-Plane Flux Slice Panel
+ * Scale 0 — Live Multi-Field Flux Slice Panel
  *
- * A floating diagnostic that mirrors the offline analysis at
- * `engine/results/flux_slices_2026-04-26/` and the C++ harness
- * `engine/tests/campaign_flux_slice_propagation.cpp`. Renders three
- * 2D heatmaps of |J(x,y,z)| sampled at the lattice mid-planes:
+ * Mirrors the visualization panel's enabled fields (FIELDS column +
+ * |J|), rendering each enabled field as a row of three 2D heatmaps at
+ * the lattice mid-planes (xy @ z=L/2, xz @ y=L/2, yz @ x=L/2). The
+ * panel's per-row mirror chip lets the user manually override the
+ * visualization-panel state per-field — handy for inspecting a field
+ * without lighting up the 3D viewport's volumetric overlay.
  *
- *   xy plane @ z = L/2   (axial — wavefront propagation along z)
- *   xz plane @ y = L/2   (axial — should be bit-equivalent to xy under
- *                          4-fold rotational symmetry around the seed
- *                          axis; the 2026-04-26 verdict is ISOTROPIC)
- *   yz plane @ x = L/2   (transverse — ~1.76% anisotropy expected)
+ * Supported fields (FIELD_DRIVERS):
+ *   |J|     bridge.getFluxSlice(axis, mid)        scalar density
+ *   |E|     bridge.getEFieldSampled(1)            vector → magnitude
+ *   |B|     bridge.getBFieldSampled(1)            vector → magnitude
+ *   |S|     bridge.getPoyntingSampled(1)          vector → magnitude
+ *   ∇·J    bridge.getDivJSampled(1)              signed scalar
  *
- * The bridge already exposes `getFluxSlice(axis, index)` which returns
- * a Float64Array of length N*N with |J| at the requested plane. We do
- * NOT compute fluxes ourselves; we just sample, autoscale, and paint.
+ * Mirror semantics:
+ *   - Each row's visibility = (override === 'on') ? true
+ *                           : (override === 'off') ? false
+ *                           : !!mirroredFlags[vizFlagKey]
+ *   - "Reset mirror" header link clears all overrides.
+ *   - Scenario change (simTick decreasing) auto-clears all overrides
+ *     and resets per-field rolling autoscale.
  *
- * Mounting: floating panel docked top-right under the field-toggle
- * column, hidden by default, toggled by a small chip button. Idempotent
- * mount — safe to call from `bindUI` of the Scale 0 controller. Same
- * `scale0-only` class the symmetry panel uses, so it auto-hides on a
- * scale switch.
- *
- * Performance: at L=64 each frame samples 3 * N*N = 12,288 doubles,
- * builds 3 * 4*N*N = 49,152 RGBA bytes, and calls putImageData three
- * times. Wall cost on a 2024 laptop is ~0.3 ms/frame; we throttle to
- * every 2nd render frame anyway via `updateEvery`.
+ * Performance: 5 fields × 3 axes = 15 tiles. At L=32 each frame samples
+ * up to 4 stride=1 sparse fields plus the |J| volume scan, then paints
+ * 15 × 1024 cells × 4 RGBA bytes. Throttled to every Nth render frame
+ * via `updateEvery` (default 2). Hidden rows skip sampling AND paint.
  */
 
-import { rampViridis } from '../../../../viewport/color-ramps.js';
+import {
+    rampViridis,
+    rampEmEnergy,
+    rampVorticity,
+    rampCharge,
+} from '../../../../viewport/color-ramps.js';
+import { getFieldStateSnapshot } from '../../state/store.js';
 
 const DEFAULT_CANVAS_PX = 220;
-const FLOOR_FRAC = 1e-6; // protects log axis-style scaling from 0/0
+const DENSE_CANVAS_PX = 160; // shrink when >2 active rows are visible
+const FLOOR_FRAC = 1e-6;
+const DENSE_THRESHOLD = 2;
+
+// ── Per-field driver registry ───────────────────────────────────────
+//
+// One entry per supported field. The slice panel iterates this list,
+// renders one row per active driver, and dispatches to the driver's
+// sample/ramp pair to paint each tile.
+//
+// `vizFlagKey` matches the keys in store.js::fieldFlags
+// (FIELD_TOGGLE_KEYS, lines 3–42 of state/store.js).
+//
+// `sample(bridge, axis, mid, N)` MUST return a Float64Array(N*N)
+// scoped to a single plane. Implementations live below.
+//
+// `signed` controls the autoscale + ramp input: false → t = v / vmax in
+// [0, 1]; true → t = clamp(v / vmax, -1, +1) for diverging ramps.
+//
+// `ramp` is one of the named ramps from viewport/color-ramps.js.
+const FIELD_DRIVERS = [
+    {
+        key: 'fluxJ',
+        label: '|J|',
+        vizFlagKey: 'showFluxLines',
+        signed: false,
+        ramp: rampViridis,
+        // Per-frame source: returns whatever the driver needs to slice;
+        // for fluxJ the source is unused because getFluxSlice slices directly.
+        source: (/* bridge */) => null,
+        sample: (bridge, axis, mid /*, N, source */) => {
+            // getFluxSlice reuses an internal _sliceBuf. .slice() snapshots
+            // before the next call clobbers it.
+            const s = bridge.getFluxSlice?.(axis, mid);
+            return s ? s.slice() : null;
+        },
+    },
+    {
+        key: 'eField',
+        label: '|E|',
+        vizFlagKey: 'showEField',
+        signed: false,
+        ramp: rampEmEnergy,
+        // Pull the sparse sample ONCE per frame (cached in `source`); the
+        // sample() callback then filters it per-axis at zero extra bridge
+        // cost. Saves ~2× per (field, axis) pair vs calling per-axis.
+        source: (bridge) => bridge.getEFieldSampled?.(1),
+        sample: (bridge, axis, mid, N, source) =>
+            sliceVectorMag(source, axis, mid, N),
+    },
+    {
+        key: 'bField',
+        label: '|B|',
+        vizFlagKey: 'showBField',
+        signed: false,
+        ramp: rampVorticity,
+        source: (bridge) => bridge.getBFieldSampled?.(1),
+        sample: (bridge, axis, mid, N, source) =>
+            sliceVectorMag(source, axis, mid, N),
+    },
+    {
+        key: 'poynting',
+        label: '|S|',
+        vizFlagKey: 'showPoynting',
+        signed: false,
+        ramp: rampEmEnergy,
+        source: (bridge) => bridge.getPoyntingSampled?.(1),
+        sample: (bridge, axis, mid, N, source) =>
+            sliceVectorMag(source, axis, mid, N),
+    },
+    {
+        key: 'divJ',
+        label: '∇·J',
+        vizFlagKey: 'showDivField',
+        signed: true,
+        ramp: rampCharge,
+        source: (bridge) => bridge.getDivJSampled?.(1),
+        sample: (bridge, axis, mid, N, source) =>
+            sliceScalarSigned(source, axis, mid, N),
+    },
+];
+
+const DRIVER_BY_KEY = Object.fromEntries(FIELD_DRIVERS.map(d => [d.key, d]));
+
+// ── File-local helpers ───────────────────────────────────────────────
+
+/**
+ * Rasterize a sparse sampled vector field (positions = voxel centers,
+ * vectors = 3-tuples per sample) onto an N×N grid covering the chosen
+ * mid-plane. Cells without a matching sample stay zero.
+ *
+ * @param {{positions:Float32Array, vectors:Float32Array, count:number}|null|undefined} sample
+ * @param {0|1|2} axis  0 → x=mid (yz plane); 1 → y=mid (xz); 2 → z=mid (xy)
+ * @param {number} mid  integer voxel index of the slice plane
+ * @param {number} N    lattice size
+ * @returns {Float64Array}  N*N scalar magnitudes
+ */
+function sliceVectorMag(sample, axis, mid, N) {
+    const out = new Float64Array(N * N);
+    if (!sample || !sample.count) return out;
+    const pos = sample.positions;
+    const vec = sample.vectors;
+    if (!pos || !vec) return out;
+    for (let s = 0, p = 0, v = 0; s < sample.count; s++, p += 3, v += 3) {
+        // Voxel centers come in as (x + 0.5, y + 0.5, z + 0.5).
+        // Floor the center to recover the integer voxel index.
+        const ix = (pos[p]     - 0.5) | 0;
+        const iy = (pos[p + 1] - 0.5) | 0;
+        const iz = (pos[p + 2] - 0.5) | 0;
+        let a, b;
+        if (axis === 0) {
+            if (ix !== mid) continue;
+            a = iy; b = iz;
+        } else if (axis === 1) {
+            if (iy !== mid) continue;
+            a = ix; b = iz;
+        } else {
+            if (iz !== mid) continue;
+            a = ix; b = iy;
+        }
+        if (a < 0 || a >= N || b < 0 || b >= N) continue;
+        const m = Math.hypot(vec[v], vec[v + 1], vec[v + 2]);
+        out[a * N + b] = m;
+    }
+    return out;
+}
+
+/**
+ * Same as sliceVectorMag but for sparse scalar samples. Preserves sign
+ * (no abs/hypot) so signed fields like ∇·J light up with diverging ramps.
+ *
+ * @param {{positions:Float32Array, values:Float32Array, count:number}|null|undefined} sample
+ */
+function sliceScalarSigned(sample, axis, mid, N) {
+    const out = new Float64Array(N * N);
+    if (!sample || !sample.count) return out;
+    const pos = sample.positions;
+    const val = sample.values;
+    if (!pos || !val) return out;
+    for (let s = 0, p = 0; s < sample.count; s++, p += 3) {
+        const ix = (pos[p]     - 0.5) | 0;
+        const iy = (pos[p + 1] - 0.5) | 0;
+        const iz = (pos[p + 2] - 0.5) | 0;
+        let a, b;
+        if (axis === 0) {
+            if (ix !== mid) continue;
+            a = iy; b = iz;
+        } else if (axis === 1) {
+            if (iy !== mid) continue;
+            a = ix; b = iz;
+        } else {
+            if (iz !== mid) continue;
+            a = ix; b = iy;
+        }
+        if (a < 0 || a >= N || b < 0 || b >= N) continue;
+        out[a * N + b] = val[s];
+    }
+    return out;
+}
+
+// ── FluxSlicePanel class ────────────────────────────────────────────
 
 export class FluxSlicePanel {
     /**
      * @param {object} opts
-     * @param {() => any} opts.getBridge   - returns the live bridge (so a
-     *     scale-switch reassigning ctx.bridge keeps us hooked).
-     * @param {number} [opts.canvasPx]     - per-canvas size in CSS pixels.
-     * @param {number} [opts.updateEvery]  - sample/render every Nth frame.
+     * @param {() => any} opts.getBridge   - returns the live bridge
+     * @param {number} [opts.canvasPx]     - per-canvas size in CSS pixels (default 220)
+     * @param {number} [opts.updateEvery]  - sample/render every Nth frame (default 2)
      */
     constructor({ getBridge, canvasPx = DEFAULT_CANVAS_PX, updateEvery = 2 } = {}) {
         this.getBridge = getBridge;
-        this.canvasPx = canvasPx;
+        this.canvasPx = canvasPx | 0;
         this.updateEvery = Math.max(1, updateEvery | 0);
 
         this.visible = false;
@@ -53,41 +219,58 @@ export class FluxSlicePanel {
 
         this._panel = null;
         this._chip = null;
-        this._slots = null; // { xy: {canvas, ctx, imgData, label, max}, xz: ..., yz: ... }
-        this._rgbaBufs = null; // per-plane Uint8ClampedArray reused across frames
+        this._rowsContainer = null;
+        this._resetMirrorBtn = null;
 
-        // Per-axis visibility: each plane (xy, xz, yz) can be independently
-        // toggled inside the panel via the header chips. When OFF the tile
-        // is hidden AND its sampling is skipped entirely (so no bridge cost).
+        // Per-axis (xy/xz/yz) visibility — applies globally across all rows.
         this._axisVisible = { xy: true, xz: true, yz: true };
 
-        // Track a global rolling max for stable autoscale — stops the heatmap
-        // from re-normalizing every frame (which would make a propagating
-        // wavefront look static). Bleeds back to the per-frame max with a
-        // small decay so the dynamic range adapts as energy injects/decays.
-        this._globalMax = 0;
+        // Per-field override map. null = follow viz panel; 'on' / 'off' force.
+        // |J| defaults to 'on' so opening the panel always shows |J| even
+        // when no viz toggles are enabled (preserves prior UX).
+        this._fieldOverride = {
+            fluxJ: 'on', eField: null, bField: null, poynting: null, divJ: null,
+        };
+
+        // Snapshot of viz panel flags, refreshed once per frame.
+        this._mirroredFlags = {};
+
+        // Per-field rolling autoscale max — each field gets its own decay
+        // because magnitudes differ by orders.
+        this._fieldGlobalMax = {
+            fluxJ: 0, eField: 0, bField: 0, poynting: 0, divJ: 0,
+        };
         this._maxDecay = 0.985;
+
+        // Per-field × per-axis slot bookkeeping. Filled in init().
+        // Shape: { [fieldKey]: { row, label, chip, slots: { xy, xz, yz } } }
+        this._fields = {};
     }
 
     static get AXES() { return ['xy', 'xz', 'yz']; }
 
     // ── Mounting ──────────────────────────────────────────────────────
 
-    /**
-     * Mount the panel + chip into `parentEl` (typically `#app`).
-     * Idempotent — second call is a no-op. Returns the panel root.
-     */
     init(parentEl) {
         if (!parentEl || this._panel) return this._panel;
 
-        // Panel root
         const panel = document.createElement('div');
         panel.id = 'flux-slice-panel';
         panel.className = 'scale0-only flux-slice-panel';
-        panel.style.display = 'none'; // hidden by default
+        panel.style.display = 'none';
+
+        // Validate ramp registry — fall back to viridis with a warning if
+        // anything went wrong with imports.
+        for (const drv of FIELD_DRIVERS) {
+            if (typeof drv.ramp !== 'function') {
+                console.warn(`[flux-slice-panel] ramp missing for ${drv.key}; falling back to viridis`);
+                drv.ramp = rampViridis;
+            }
+        }
+
         panel.innerHTML = `
             <div class="flux-slice-header">
-                <span class="flux-slice-title">Flux Slices · |J|</span>
+                <span class="flux-slice-title">Flux Slices</span>
                 <div class="flux-slice-axis-toggles" role="group" aria-label="Axis toggles">
                     <button type="button" class="flux-slice-axis-btn active"
                             data-axis="xy" aria-pressed="true"
@@ -99,36 +282,40 @@ export class FluxSlicePanel {
                             data-axis="yz" aria-pressed="true"
                             title="Toggle yz plane (x=L/2)">yz</button>
                 </div>
-                <button type="button" class="flux-slice-close" aria-label="Hide flux slices">×</button>
+                <button type="button" class="flux-slice-reset-mirror"
+                        title="Clear all per-field overrides; revert to mirroring the visualization panel"
+                        disabled>Reset mirror</button>
+                <button type="button" class="flux-slice-close"
+                        aria-label="Hide flux slices">×</button>
             </div>
-            <div class="flux-slice-grid">
-                ${this._tileHTML('xy', 'xy @ z=L/2')}
-                ${this._tileHTML('xz', 'xz @ y=L/2')}
-                ${this._tileHTML('yz', 'yz @ x=L/2')}
-            </div>
-            <div class="flux-slice-legend">
-                <span class="flux-slice-min">0</span>
-                <span class="flux-slice-ramp" aria-hidden="true"></span>
-                <span class="flux-slice-max">|J|<sub>max</sub></span>
+            <div class="flux-slice-rows">
+                ${FIELD_DRIVERS.map(d => this._rowHTML(d)).join('')}
             </div>
         `;
         parentEl.appendChild(panel);
         this._panel = panel;
+        this._rowsContainer = panel.querySelector('.flux-slice-rows');
+        this._resetMirrorBtn = panel.querySelector('.flux-slice-reset-mirror');
 
-        // Cache slot handles
-        this._slots = {
-            xy: this._wireSlot(panel, 'xy'),
-            xz: this._wireSlot(panel, 'xz'),
-            yz: this._wireSlot(panel, 'yz'),
-        };
+        // Wire per-field rows
+        for (const drv of FIELD_DRIVERS) {
+            const row = panel.querySelector(`.flux-slice-row[data-field="${drv.key}"]`);
+            const chip = row.querySelector('.flux-slice-mirror-chip');
+            const slots = {};
+            for (const axis of FluxSlicePanel.AXES) {
+                slots[axis] = this._wireSlot(row, drv.key, axis);
+            }
+            this._fields[drv.key] = { row, label: row.querySelector('.flux-slice-field-label'), chip, slots };
 
-        // Toggle chip (always visible while in Scale 0 — small floating
-        // pill that opens/closes the panel).
+            chip.addEventListener('click', () => this._cycleOverride(drv.key));
+        }
+
+        // Toggle chip (panel show/hide)
         const chip = document.createElement('button');
         chip.type = 'button';
         chip.id = 'flux-slice-toggle';
         chip.className = 'scale0-only flux-slice-chip';
-        chip.title = 'Toggle live flux slice diagnostics (xy/xz/yz)';
+        chip.title = 'Toggle live flux slice diagnostics (xy/xz/yz across enabled fields)';
         chip.textContent = 'Flux slices';
         chip.addEventListener('click', () => this.toggle());
         parentEl.appendChild(chip);
@@ -137,7 +324,8 @@ export class FluxSlicePanel {
         panel.querySelector('.flux-slice-close')
             ?.addEventListener('click', () => this.setVisible(false));
 
-        // Axis toggles — independent xy/xz/yz visibility.
+        // Header axis toggles — independent xy/xz/yz visibility, applies
+        // to every visible row simultaneously.
         panel.querySelectorAll('.flux-slice-axis-btn').forEach((btn) => {
             btn.addEventListener('click', () => {
                 const axis = btn.dataset.axis;
@@ -146,16 +334,87 @@ export class FluxSlicePanel {
             });
         });
 
+        // Reset mirror clears every per-field override at once.
+        this._resetMirrorBtn.addEventListener('click', () => this.resetMirror());
+
+        // Initial chip-label refresh + reconcile.
+        for (const drv of FIELD_DRIVERS) this._refreshChip(drv.key);
+        this._refreshResetButton();
+
         return panel;
     }
+
+    _rowHTML(drv) {
+        const tilesHTML = FluxSlicePanel.AXES.map(axis => `
+            <figure class="flux-slice-tile" data-plane="${axis}" data-field="${drv.key}">
+                <canvas class="flux-slice-canvas"
+                        width="${this.canvasPx}" height="${this.canvasPx}"></canvas>
+                <figcaption class="flux-slice-caption">
+                    <span class="flux-slice-plane-label">${this._planeLabel(axis)}</span>
+                    <span class="flux-slice-readout"
+                          data-readout="${drv.key}-${axis}">t=— · max —</span>
+                </figcaption>
+            </figure>
+        `).join('');
+        return `
+            <div class="flux-slice-row" data-field="${drv.key}">
+                <div class="flux-slice-row-label">
+                    <span class="flux-slice-field-label" title="${drv.label} field">${drv.label}</span>
+                    <button type="button" class="flux-slice-mirror-chip"
+                            data-field="${drv.key}"
+                            title="Cycle: mirror → force-on → force-off → mirror">mirror</button>
+                </div>
+                <div class="flux-slice-row-tiles">${tilesHTML}</div>
+            </div>
+        `;
+    }
+
+    _planeLabel(axis) {
+        if (axis === 'xy') return 'xy @ z=L/2';
+        if (axis === 'xz') return 'xz @ y=L/2';
+        return 'yz @ x=L/2';
+    }
+
+    _wireSlot(row, fieldKey, axis) {
+        const tile = row.querySelector(
+            `.flux-slice-tile[data-plane="${axis}"][data-field="${fieldKey}"]`);
+        const canvas = tile.querySelector('canvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        ctx.imageSmoothingEnabled = false;
+        return {
+            tile, canvas, ctx,
+            readout: row.querySelector(`[data-readout="${fieldKey}-${axis}"]`),
+            imgData: null,
+            currentN: 0,
+            rgbaBuf: null,
+            tmpCanvas: null,
+            tmpCtx: null,
+        };
+    }
+
+    // ── Visibility (panel-level) ──────────────────────────────────────
+
+    setVisible(on) {
+        this.visible = !!on;
+        if (this._panel) this._panel.style.display = this.visible ? '' : 'none';
+        if (this._chip) this._chip.classList.toggle('active', this.visible);
+        if (this.visible) {
+            // Force a fresh paint + reconcile mirror state right away —
+            // the panel may have been hidden across a scenario change.
+            this.frameCount = 0;
+        }
+    }
+
+    toggle() { this.setVisible(!this.visible); }
 
     setAxisVisible(axis, on) {
         if (!FluxSlicePanel.AXES.includes(axis)) return;
         this._axisVisible[axis] = !!on;
         if (this._panel) {
-            const tile = this._panel.querySelector(
-                `.flux-slice-tile[data-plane="${axis}"]`);
-            if (tile) tile.classList.toggle('axis-hidden', !this._axisVisible[axis]);
+            // Toggle the matching tile column across every row.
+            this._panel
+                .querySelectorAll(`.flux-slice-tile[data-plane="${axis}"]`)
+                .forEach(t => t.classList.toggle('axis-hidden', !this._axisVisible[axis]));
             const btn = this._panel.querySelector(
                 `.flux-slice-axis-btn[data-axis="${axis}"]`);
             if (btn) {
@@ -163,58 +422,75 @@ export class FluxSlicePanel {
                 btn.setAttribute('aria-pressed', this._axisVisible[axis] ? 'true' : 'false');
             }
         }
-        // Force a fresh paint so a just-revealed tile picks up the current
-        // frame instead of waiting for the next `updateEvery` boundary.
         if (this._axisVisible[axis]) this.frameCount = 0;
     }
 
-    _tileHTML(key, label) {
-        return `
-            <figure class="flux-slice-tile" data-plane="${key}">
-                <canvas class="flux-slice-canvas"
-                        width="${this.canvasPx}" height="${this.canvasPx}"></canvas>
-                <figcaption class="flux-slice-caption">
-                    <span class="flux-slice-plane-label">${label}</span>
-                    <span class="flux-slice-readout" data-readout="${key}">t=— · max —</span>
-                </figcaption>
-            </figure>
-        `;
+    // ── Per-field override + mirror logic ─────────────────────────────
+
+    _isFieldRowVisible(fieldKey) {
+        const ov = this._fieldOverride[fieldKey];
+        if (ov === 'on') return true;
+        if (ov === 'off') return false;
+        const drv = DRIVER_BY_KEY[fieldKey];
+        return !!this._mirroredFlags?.[drv?.vizFlagKey];
     }
 
-    _wireSlot(panel, key) {
-        const tile = panel.querySelector(`.flux-slice-tile[data-plane="${key}"]`);
-        const canvas = tile.querySelector('canvas');
-        const ctx = canvas.getContext('2d', { alpha: false });
-        ctx.imageSmoothingEnabled = false;
-        return {
-            tile,
-            canvas,
-            ctx,
-            readout: panel.querySelector(`[data-readout="${key}"]`),
-            imgData: null,
-            currentN: 0,
-        };
+    setFieldOverride(fieldKey, value) {
+        if (!(fieldKey in this._fieldOverride)) return;
+        if (value !== null && value !== 'on' && value !== 'off') value = null;
+        this._fieldOverride[fieldKey] = value;
+        this._refreshChip(fieldKey);
+        this._refreshResetButton();
+        // Force a fresh paint so a just-revealed row gets data immediately.
+        this.frameCount = 0;
     }
 
-    // ── Visibility ────────────────────────────────────────────────────
-
-    setVisible(on) {
-        this.visible = !!on;
-        if (this._panel) this._panel.style.display = this.visible ? '' : 'none';
-        if (this._chip) this._chip.classList.toggle('active', this.visible);
-        // On show, force a fresh paint next frame even if `updateEvery` would
-        // normally skip it.
-        if (this.visible) this.frameCount = 0;
+    _cycleOverride(fieldKey) {
+        const cur = this._fieldOverride[fieldKey];
+        const next = cur === null ? 'on' : (cur === 'on' ? 'off' : null);
+        this.setFieldOverride(fieldKey, next);
     }
 
-    toggle() { this.setVisible(!this.visible); }
+    resetMirror() {
+        for (const k of Object.keys(this._fieldOverride)) {
+            this._fieldOverride[k] = null;
+            this._refreshChip(k);
+        }
+        this._refreshResetButton();
+        this.frameCount = 0;
+    }
+
+    _refreshChip(fieldKey) {
+        const slot = this._fields?.[fieldKey];
+        if (!slot) return;
+        const ov = this._fieldOverride[fieldKey];
+        const drv = DRIVER_BY_KEY[fieldKey];
+        const mirrorOn = !!this._mirroredFlags?.[drv?.vizFlagKey];
+        slot.chip.classList.remove('override-on', 'override-off');
+        if (ov === 'on') {
+            slot.chip.textContent = 'force on';
+            slot.chip.classList.add('override-on');
+            slot.chip.title = `Forced visible. Click to force-off.`;
+        } else if (ov === 'off') {
+            slot.chip.textContent = 'force off';
+            slot.chip.classList.add('override-off');
+            slot.chip.title = `Forced hidden. Click to return to mirror.`;
+        } else {
+            slot.chip.textContent = 'mirror';
+            slot.chip.title =
+                `Following viz toggle (currently ${mirrorOn ? 'on' : 'off'}). ` +
+                `Click to force-on.`;
+        }
+    }
+
+    _refreshResetButton() {
+        if (!this._resetMirrorBtn) return;
+        const anyOverride = Object.values(this._fieldOverride).some(v => v !== null);
+        this._resetMirrorBtn.disabled = !anyOverride;
+    }
 
     // ── Per-frame update ──────────────────────────────────────────────
 
-    /**
-     * Sample the bridge and repaint. Cheap to call every animate() pass —
-     * gated internally by visibility and `updateEvery`.
-     */
     update() {
         if (!this.visible || !this._panel) return;
         this.frameCount = (this.frameCount + 1) | 0;
@@ -226,36 +502,34 @@ export class FluxSlicePanel {
         const N = bridge.latticeSize | 0;
         if (!Number.isFinite(N) || N < 2) return;
 
-        // (Re)allocate the per-plane RGBA buffers if the lattice resized.
+        // Refresh viz-panel flags + chip labels (mirror display may have
+        // changed even if no override flips happened).
+        try {
+            this._mirroredFlags = getFieldStateSnapshot() ?? {};
+        } catch (_e) {
+            this._mirroredFlags = {};
+        }
+        for (const drv of FIELD_DRIVERS) this._refreshChip(drv.key);
+
+        // (Re)allocate per-(field,axis) RGBA buffers if the lattice resized.
         if (N !== this._lastN) {
             const px = N * N * 4;
-            this._rgbaBufs = {
-                xy: new Uint8ClampedArray(px),
-                xz: new Uint8ClampedArray(px),
-                yz: new Uint8ClampedArray(px),
-            };
-            this._lastN = N;
-            // Force ImageData re-create on first paint at new N.
-            for (const key of ['xy', 'xz', 'yz']) {
-                this._slots[key].imgData = null;
-                this._slots[key].currentN = 0;
+            for (const drv of FIELD_DRIVERS) {
+                for (const axis of FluxSlicePanel.AXES) {
+                    const slot = this._fields[drv.key].slots[axis];
+                    slot.rgbaBuf = new Uint8ClampedArray(px);
+                    slot.imgData = null;
+                    slot.currentN = 0;
+                    slot.tmpCanvas = null;
+                    slot.tmpCtx = null;
+                }
             }
+            this._lastN = N;
         }
 
         const mid = N >> 1;
-        // Pull diagnostics for the tick stamp; tolerate missing fields.
-        // We surface BOTH counters because they tell different stories:
-        //   simTick    = bridge.getDiagnostics().tick — engine steps since last
-        //                 reset/scenario-load. Resets to 0 on scenario change.
-        //   globalTick = ctx.globalTick — cumulative wall-clock frames since
-        //                 global play resumed. Independent of bridge stepping.
-        // Showing only one was confusing: a freshly-loaded scenario could
-        // sit with simTick=0 while globalTick=251, making the slice "look"
-        // stuck even though it correctly reflected the live (initial) state.
         const diag = bridge.getDiagnostics?.() ?? {};
         const simTick = (diag.tick ?? 0) | 0;
-        // Look up ctx.globalTick if reachable; getBridge accessor doesn't
-        // give us ctx directly, but the bridge's window-level singleton does.
         const globalTick = (typeof window !== 'undefined' && window.__ftdCtx)
             ? (window.__ftdCtx.globalTick | 0)
             : simTick;
@@ -263,80 +537,97 @@ export class FluxSlicePanel {
             ? !!window.__ftdCtx.running
             : true;
 
-        // Three slices, sampled only for axes the user has visible.
-        // Bridge axis convention from getFluxSlice:
-        //   axis=0 → x = index, plane spans (y, z)   → "yz"
-        //   axis=1 → y = index, plane spans (x, z)   → "xz"
-        //   axis=2 → z = index, plane spans (x, y)   → "xy"
-        //
-        // CRITICAL: WasmBridge.getFluxSlice reuses a single internal
-        // _sliceBuf across calls (allocates once, overwrites in place).
-        // Without an immediate copy, all three references would alias the
-        // last-called axis's data, and the xy/xz/yz tiles would render
-        // identically. We .slice() each one to snapshot before the next
-        // bridge call clobbers it. ~12k doubles per axis at L=32 → ~96 KB
-        // total per frame, negligible vs the 0.3 ms paint cost.
-        const sample = (axis) => {
-            const s = bridge.getFluxSlice?.(axis, mid);
-            return s ? s.slice() : null;
-        };
-        const slices = {
-            yz: this._axisVisible.yz ? sample(0) : null,
-            xz: this._axisVisible.xz ? sample(1) : null,
-            xy: this._axisVisible.xy ? sample(2) : null,
-        };
-
-        // Pass 1: per-axis max + union max. The per-axis max lets each tile
-        // report its own peak (so an asymmetric scenario like a plane wave
-        // shows xy/xz ≈ 0.78 while yz ≈ 0.11). The union max drives the
-        // SHARED color normalization so the three tiles are visually
-        // comparable on the same scale.
-        const axisMax = { xy: 0, xz: 0, yz: 0 };
-        let frameMax = 0;
-        for (const key of FluxSlicePanel.AXES) {
-            const s = slices[key];
-            if (!s || s.length === 0) continue;
-            let m = 0;
-            for (let i = 0; i < s.length; i++) {
-                const v = s[i];
-                if (v > m) m = v;
-            }
-            axisMax[key] = m;
-            if (m > frameMax) frameMax = m;
-        }
-        // Decay then lift toward current frame, so the scale tracks growth
-        // promptly but doesn't collapse during a quiet tick.
-        this._globalMax = Math.max(this._globalMax * this._maxDecay, frameMax);
-        const norm = this._globalMax > FLOOR_FRAC ? 1 / this._globalMax : 0;
-
-        // Pass 2: paint each visible tile with its own per-axis max readout.
-        for (const key of FluxSlicePanel.AXES) {
-            if (!this._axisVisible[key]) continue;
-            this._paintSlice(key, slices[key], N, norm, axisMax[key],
-                              simTick, globalTick, isRunning);
-        }
-
-        // Reset bridge identity tracking when the bridge resets the scenario:
-        // simTick going backwards or to 0 after we last saw it >0 means a
-        // scenario was loaded — re-baseline the rolling max so the new seed's
-        // dynamic range isn't dwarfed by the previous run's history.
+        // Scenario change → simTick reset to 0 from a positive value.
+        // Clear all per-field overrides and rolling autoscale so the new
+        // scenario starts clean.
         if (this._lastSimTick > 0 && simTick < this._lastSimTick) {
-            this._globalMax = frameMax; // hard reset to current frame
+            for (const k of Object.keys(this._fieldOverride)) {
+                if (k === 'fluxJ') continue; // |J| keeps default 'on'
+                this._fieldOverride[k] = null;
+            }
+            for (const k of Object.keys(this._fieldGlobalMax)) {
+                this._fieldGlobalMax[k] = 0;
+            }
+            // Default |J| stays 'on'; everything else mirrors the new scenario's flags.
+            this._fieldOverride.fluxJ = 'on';
+            for (const drv of FIELD_DRIVERS) this._refreshChip(drv.key);
+            this._refreshResetButton();
         }
         this._lastSimTick = simTick;
 
-        // Legend max readout
-        const legendMax = this._panel.querySelector('.flux-slice-max');
-        if (legendMax) legendMax.innerHTML = `|J|<sub>max</sub>=${this._fmt(this._globalMax)}`;
+        // Reconcile row visibility + dense layout.
+        let activeCount = 0;
+        for (const drv of FIELD_DRIVERS) {
+            const visible = this._isFieldRowVisible(drv.key);
+            const row = this._fields[drv.key].row;
+            const wasHidden = row.classList.contains('row-hidden');
+            if (visible && wasHidden) row.classList.remove('row-hidden');
+            else if (!visible && !wasHidden) row.classList.add('row-hidden');
+            if (visible) activeCount++;
+        }
+        // Dense mode shrinks tile size when many rows are open.
+        this._panel.classList.toggle('dense', activeCount > DENSE_THRESHOLD);
+
+        // Per-field sample → max → paint.
+        for (const drv of FIELD_DRIVERS) {
+            if (!this._isFieldRowVisible(drv.key)) continue;
+
+            // Pull the per-frame source ONCE (a single bridge call), then
+            // filter it per-axis below. Saves ~2× bridge cost vs the naive
+            // sample-per-axis pattern when 3 axes are visible.
+            const source = drv.source?.(bridge);
+
+            // Sample only the visible axes for this field.
+            const slices = {};
+            for (const axis of FluxSlicePanel.AXES) {
+                slices[axis] = this._axisVisible[axis]
+                    ? drv.sample(bridge, axisIndex(axis), mid, N, source)
+                    : null;
+            }
+
+            // Per-axis max (for the readout) + per-field union max (for color).
+            const axisMax = { xy: 0, xz: 0, yz: 0 };
+            let fieldFrameMax = 0;
+            for (const axis of FluxSlicePanel.AXES) {
+                const s = slices[axis];
+                if (!s || s.length === 0) continue;
+                let m = 0;
+                if (drv.signed) {
+                    for (let i = 0; i < s.length; i++) {
+                        const av = Math.abs(s[i]);
+                        if (av > m) m = av;
+                    }
+                } else {
+                    for (let i = 0; i < s.length; i++) {
+                        const v = s[i];
+                        if (v > m) m = v;
+                    }
+                }
+                axisMax[axis] = m;
+                if (m > fieldFrameMax) fieldFrameMax = m;
+            }
+
+            // Decay-then-lift rolling max, per field.
+            const prevMax = this._fieldGlobalMax[drv.key] ?? 0;
+            const newMax = Math.max(prevMax * this._maxDecay, fieldFrameMax);
+            this._fieldGlobalMax[drv.key] = newMax;
+            const norm = newMax > FLOOR_FRAC ? 1 / newMax : 0;
+
+            // Paint each visible axis.
+            for (const axis of FluxSlicePanel.AXES) {
+                if (!this._axisVisible[axis]) continue;
+                this._paintSlice(drv, axis, slices[axis], N, norm,
+                                 axisMax[axis], simTick, globalTick, isRunning);
+            }
+        }
     }
 
-    _paintSlice(key, data, N, norm, frameMax, simTick, globalTick, isRunning) {
-        const slot = this._slots[key];
+    _paintSlice(drv, axis, data, N, norm, axisFrameMax, simTick, globalTick, isRunning) {
+        const slot = this._fields[drv.key]?.slots[axis];
         if (!slot) return;
-        const buf = this._rgbaBufs[key];
+        const buf = slot.rgbaBuf;
+        if (!buf) return;
         if (!data || data.length === 0) {
-            // No data yet (bridge not initialized). Clear the canvas to
-            // background and bail.
             const c = slot.ctx;
             c.fillStyle = '#0a0d14';
             c.fillRect(0, 0, slot.canvas.width, slot.canvas.height);
@@ -344,55 +635,65 @@ export class FluxSlicePanel {
             return;
         }
 
-        // Fill RGBA from |J| via viridis ramp.
+        const ramp = drv.ramp;
         const rgb = [0, 0, 0];
-        for (let i = 0, p = 0; i < data.length; i++, p += 4) {
-            const t = data[i] * norm; // already in [0, 1] by construction
-            rampViridis(t, rgb, 0);
-            buf[p]     = (rgb[0] * 255) | 0;
-            buf[p + 1] = (rgb[1] * 255) | 0;
-            buf[p + 2] = (rgb[2] * 255) | 0;
-            buf[p + 3] = 255;
+        if (drv.signed) {
+            // Map t ∈ [-1, +1] through the diverging ramp (rampCharge etc.).
+            for (let i = 0, p = 0; i < data.length; i++, p += 4) {
+                let t = data[i] * norm;
+                if (t > 1) t = 1; else if (t < -1) t = -1;
+                ramp(t, rgb, 0);
+                buf[p]     = (rgb[0] * 255) | 0;
+                buf[p + 1] = (rgb[1] * 255) | 0;
+                buf[p + 2] = (rgb[2] * 255) | 0;
+                buf[p + 3] = 255;
+            }
+        } else {
+            for (let i = 0, p = 0; i < data.length; i++, p += 4) {
+                let t = data[i] * norm;
+                if (t > 1) t = 1; else if (t < 0) t = 0;
+                ramp(t, rgb, 0);
+                buf[p]     = (rgb[0] * 255) | 0;
+                buf[p + 1] = (rgb[1] * 255) | 0;
+                buf[p + 2] = (rgb[2] * 255) | 0;
+                buf[p + 3] = 255;
+            }
         }
 
-        // Build / reuse the ImageData object at native lattice resolution,
-        // then upscale with drawImage for the visible canvas.
         if (!slot.imgData || slot.currentN !== N) {
             slot.imgData = new ImageData(buf, N, N);
             slot.currentN = N;
-        } else {
-            // ImageData wraps `buf` by reference at construction; we wrote
-            // directly into `buf` so no copy is needed. (Some older browsers
-            // require re-wrapping; we keep the construct path above.)
         }
 
-        // Two-step paint: putImageData onto an offscreen-sized region,
-        // then scale up. We use the canvas itself as the offscreen surface
-        // by saving/restoring the transform around a putImageData.
+        // Refresh the visible canvas size if the panel just toggled to/from
+        // dense mode (rare; only when the active row count crosses the
+        // threshold).
+        const desiredPx = this._panel?.classList.contains('dense')
+            ? DENSE_CANVAS_PX : this.canvasPx;
+        if (slot.canvas.width !== desiredPx || slot.canvas.height !== desiredPx) {
+            slot.canvas.width = desiredPx;
+            slot.canvas.height = desiredPx;
+            slot.ctx.imageSmoothingEnabled = false;
+        }
+
         const c = slot.ctx;
         const W = slot.canvas.width;
         const H = slot.canvas.height;
 
-        // Direct path: putImageData ignores transforms, so we need a
-        // tiny temporary. Cache it on the slot.
-        if (!slot._tmpCanvas || slot._tmpCanvas.width !== N) {
-            slot._tmpCanvas = document.createElement('canvas');
-            slot._tmpCanvas.width = N;
-            slot._tmpCanvas.height = N;
-            slot._tmpCtx = slot._tmpCanvas.getContext('2d', { alpha: false });
-            slot._tmpCtx.imageSmoothingEnabled = false;
+        if (!slot.tmpCanvas || slot.tmpCanvas.width !== N) {
+            slot.tmpCanvas = document.createElement('canvas');
+            slot.tmpCanvas.width = N;
+            slot.tmpCanvas.height = N;
+            slot.tmpCtx = slot.tmpCanvas.getContext('2d', { alpha: false });
+            slot.tmpCtx.imageSmoothingEnabled = false;
         }
-        slot._tmpCtx.putImageData(slot.imgData, 0, 0);
-
+        slot.tmpCtx.putImageData(slot.imgData, 0, 0);
         c.imageSmoothingEnabled = false;
-        c.drawImage(slot._tmpCanvas, 0, 0, N, N, 0, 0, W, H);
+        c.drawImage(slot.tmpCanvas, 0, 0, N, N, 0, 0, W, H);
 
-        // Readout: show sim-tick (engine steps), global-tick in parens
-        // (wall-clock frames), pause indicator, and per-frame max.
-        // Format: "t=50 (g=251) ⏸ · max 0.083"
         const pausedTag = isRunning ? '' : ' ⏸';
         slot.readout.textContent =
-            `t=${simTick} (g=${globalTick})${pausedTag} · max ${this._fmt(frameMax)}`;
+            `t=${simTick} (g=${globalTick})${pausedTag} · max ${this._fmt(axisFrameMax)}`;
     }
 
     _fmt(v) {
@@ -410,15 +711,22 @@ export class FluxSlicePanel {
         this._chip?.remove();
         this._panel = null;
         this._chip = null;
-        this._slots = null;
-        this._rgbaBufs = null;
+        this._fields = {};
+        this._rowsContainer = null;
+        this._resetMirrorBtn = null;
     }
 }
 
+function axisIndex(axis) {
+    if (axis === 'yz') return 0;
+    if (axis === 'xz') return 1;
+    return 2; // xy
+}
+
 /**
- * Convenience mount used from the Scale 0 controller. Idempotent —
- * stashes the singleton on `window.__ftdFluxSlicePanel` so a re-entry
- * (scale-switch round-trip) reuses the same DOM node.
+ * Idempotent mount used from the Scale 0 controller. Stashes the
+ * singleton on `window.__ftdFluxSlicePanel` so a re-entry (scale-switch
+ * round-trip) reuses the same DOM node.
  */
 export function mountFluxSlicePanel(parentEl, getBridge) {
     if (typeof window !== 'undefined' && window.__ftdFluxSlicePanel) {
