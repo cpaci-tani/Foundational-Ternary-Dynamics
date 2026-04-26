@@ -1,7 +1,7 @@
 # FTD Native EFT Checklist
 
 **Date:** 2026-04-26 (last: 2026-04-24)
-**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4 fully checked 2026-04-26); GPU full-tick ledgers are in place; full nonlinear EFT remains open.
+**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4 fully checked 2026-04-26); GPU full-tick ledgers are in place; microscopic native action selected as a constrained history measure; full nonlinear effective EFT remains open.
 
 This checklist tracks what is required for FTD to count as a real, native EFT
 rather than a collection of projected continuum comparisons. It follows the
@@ -118,12 +118,12 @@ finite-volume/blocking EFT of FTD histories.
 ## 9. Statistical Measure / Action
 
 - [x] L=2 partition function exists as a first explicit finite example.
-- [ ] Define the full native path measure over state/flux histories.
-- [ ] Decide whether the EFT object is an action, transfer matrix, Markov/deterministic pushforward measure, or constrained history measure.
+- [x] Define the full native path measure over state/flux histories. **2026-04-26 — selected in `DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md` as a constrained source-coupled history measure over `(q_t, ledger_t)` with deterministic tick constraints plus stochastic log-likelihood terms.**
+- [x] Decide whether the EFT object is an action, transfer matrix, Markov/deterministic pushforward measure, or constrained history measure. **2026-04-26 — microscopic object is a transfer-kernel/history action; smooth continuum Lagrangian is deferred to blocked `S_eff`.**
 - [ ] Decide whether the BCC Watson denominator `1 - cos(kx) cos(ky) cos(kz)` enters the native transfer/action kernel.
-- [ ] Include deterministic update Jacobian or prove it cancels/does not enter.
-- [ ] Include stochastic genesis/Langevin sectors in the measure when toggled on.
-- [ ] Derive the native effective action after b=2 blocking.
+- [~] Include deterministic update Jacobian or prove it cancels/does not enter. **2026-04-26 — exact microscopic object uses a delta/indicator transfer kernel, so no smooth change-of-variables Jacobian is needed at that level; a Jacobian question reappears only if rewritten as a continuum field integral.**
+- [~] Include stochastic genesis/Langevin sectors in the measure when toggled on. **2026-04-26 — Langevin OU cost specified; discrete channel log-likelihood form specified; channel-by-channel probability catalogue remains open.**
+- [ ] Derive the native effective action after b=2 blocking. **Definition now fixed as `exp(-S_eff[H']) = sum_{H:B_b H=H'} exp(-S_H[H])`; explicit measured/fitted `S_eff` remains open.**
 - [ ] Connect the action/measure to the observed operator-flow matrix.
 
 ## 10. GPU-First Engine Infrastructure
@@ -144,10 +144,56 @@ finite-volume/blocking EFT of FTD histories.
 - [x] Closed-negative projected attempts are documented.
 - [x] Transport-flow doc updated for GPU full-tick ledgers.
 - [x] Master-quadratic formal paper correlated with EFT open items in `ANALYSIS_MASTER_QUADRATIC_EFT_OPEN_ITEMS.md`.
+- [x] Engine constructor-domain contract drafted in `engine/SPEC_ENGINE_CONSTRUCTOR_CONTRACT.md`.
 - [ ] Update `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` to reflect GPU full-tick ledger closure for genesis/evaporation.
 - [ ] Move closed-negative projected-EFT attempts into an archive folder after link updates.
 - [ ] Add a native EFT capstone summary replacing the old alpha-recovery narrative.
 - [ ] Keep this checklist updated after every bridge milestone.
+
+---
+
+## 12. Constructor-Domain Engine Audit
+
+This section maps the minimal-universe constructor domains onto the engine. The
+goal is not to claim that every domain is proven; the goal is to make every
+domain explicit enough that proof, measurement, or demotion is possible.
+
+| Domain | Engine status | Next formalization step |
+|---|---|---|
+| Instantiation | [PARTIAL] `RenderBridge` scenarios instantiate lattice, fields, and carriers; context metadata is not centralized. | Add scenario/test metadata for context, closure, observable map, and epistemic tag. |
+| Identity / persistence | [PARTIAL] particle IDs, transport histories, and ledgers exist. | Define when identity is particle ID, transport path, blocked history, or no-op. |
+| Relation / primitive space | [PRESENT] lattice/Moore relation and flat indexing are tested. | Add one canonical relation-space declaration used by EFT docs and telemetry. |
+| Frame / symmetry redundancy | [PARTIAL] parity, anisotropy, and backend parity tests exist. | Add a frame/gauge-relabeling contract: what changes are descriptive vs intrinsic. |
+| Dynamics / time | [PRESENT] tick/run/dt are implemented, GPU `run(N)` now uses per-tick ledger sync. | Add test metadata declaring deterministic vs stochastic tick semantics. |
+| Transport / continuity | [PRESENT] full-tick GPU continuity ledgers cover known state-changing channels. | Add device-side reductions and long-run moment streams. |
+| Constraint / Gauss | [PARTIAL] collocated, matched-Poisson, and dual-cell prototypes exist. | Select the production Gauss representation. |
+| Locality / causality | [PARTIAL] Moore support and CFL limits exist. | Add formal propagation-bound tests for each state-changing toggle. |
+| Conservation / closure | [PARTIAL] continuity, reaction, and energy ledgers exist. | Define closure domains for periodic lattice, blocked cells, and open-boundary campaigns. |
+| Observables | [PARTIAL] diagnostics/operator moments exist. | Add a native observable registry keyed by domain and epistemic tag. |
+| Probability / statistics | [PARTIAL] ensembles and Langevin seed plumbing exist; GPU Langevin has open failures. | Fix GPU Langevin and define the native stochastic measure when toggles are enabled. |
+| Thermodynamics / arrow | [PARTIAL] entropy and thermodynamic tests exist. | Tie entropy to blocking/history records and define arrow observables. |
+| Metric / geometry | [PARTIAL] lattice metric, anisotropy, and Lorentz recovery tests exist. | Add continuum-limit scaling protocol before smooth-geometry claims. |
+| Topology / defects | [PARTIAL] Wilson/topology tests and BCC/stella sector work exist. | Port topology diagnostics to GPU and preregister sector observables. |
+| Many-body / correlation | [PARTIAL] correlation tests and many-body campaigns exist. | Define native correlation observables from GPU full-history ledgers. |
+| Mixing / sectors | [OPEN] genuine nonlinear operator mixing matrix is not measured yet. | Build blocked full-history operator mixing matrix. |
+| Blocking / EFT | [PARTIAL] native b=2 Gaussian bridge works. | Extend from Gaussian response flow to nonlinear flow campaigns. |
+| Continuum limit | [OPEN] supporting tests/docs exist, but no full engine-native proof. | Establish scaling tests across L and b with predeclared observables. |
+| Action / generator | [PARTIAL] Gaussian linear generator exists; microscopic constrained-history action selected. | Derive/measure the blocked nonlinear effective action and connect it to the operator-flow matrix. |
+| Phenomenology | [PARTIAL] campaigns exist but physical matching remains bridge-dependent. | Require observable-map + calibration declaration before any phenomenology claim. |
+
+Constructor-critical engine gaps:
+
+```text
+production Gauss representation
+native observable registry seed implemented; needs expansion as new claims land
+constructor-domain metadata helper implemented for first retrofitted tests
+GPU stochastic/Langevin correctness
+long-run device-side ledger reductions
+nonlinear operator mixing matrix
+blocked nonlinear effective action from the selected native history measure
+continuum-limit scaling protocol
+EFT quick-suite CTest label seeded; needs expansion as FORM tickets close
+```
 
 ---
 
@@ -165,11 +211,12 @@ emit full-tick GPU continuity histories for the state-changing sectors.
 FTD does **not** yet have a complete EFT. The missing core is:
 
 ```text
-native history measure/action
+blocked nonlinear effective action from the selected native history measure
 operator mixing matrix from nonlinear full histories
 fixed-point / scaling classification from those measured flows
 final Gauss/source-core representation
 first-principles status of g_c
+constructor-domain metadata and observable registry
 ```
 
 The next milestone should be the nonlinear operator-flow campaign: consume
