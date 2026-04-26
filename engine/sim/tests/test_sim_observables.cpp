@@ -33,6 +33,7 @@
 #include "ftd/sim/observables/flux_correlator.h"
 #include "ftd/sim/observables/ewsb_condensate_count.h"
 #include "ftd/sim/observables/field_energy_audit.h"
+#include "ftd/test_telemetry.h"
 
 #include <vector>
 #include <utility>
@@ -242,6 +243,17 @@ static void vr1_plumbing() {
 }
 
 int main() {
+    ftd::test::contract({
+        "observable/measurement-map",
+        "[MEASUREMENT]",
+        "pipeline device state, observable descriptor, analytical fixture",
+        "CPU pipeline backend for analytical observable tests",
+        "field_energy, state_histogram, flux_correlator",
+        "finite pipeline lattice fixture",
+        "CPU unit test; GPU parity covered separately",
+        "observables reproduce known analytical configurations",
+        "failure means observable map implementation is wrong"});
+
     std::puts("================================================================");
     std::puts("  Sim Pipeline — Phase D Observable Unit Tests");
     std::puts("================================================================");

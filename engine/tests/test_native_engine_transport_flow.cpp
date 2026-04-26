@@ -14,6 +14,7 @@
 #include "ftd/constants.h"
 #include "ftd/eft/dual_cell_continuity.h"
 #include "ftd/render_bridge.h"
+#include "ftd/test_telemetry.h"
 
 #include <cmath>
 #include <iostream>
@@ -167,6 +168,17 @@ void check_interval_history(const std::string& name,
 }  // namespace
 
 int main() {
+  ftd::test::contract({
+      "identity/transport/blocking",
+      "[MEASUREMENT]",
+      "before/after state snapshots, individuation by transport path, b=2 blocking",
+      "movement-only RenderBridge ticks",
+      "continuity_residual, current_l1, reaction_l1, blocked_operator_moments",
+      "periodic L=8 lattice and b=2 blocked cells",
+      "backend-default; CPU snapshot extractor is the observable adapter",
+      "fine and blocked continuity ledgers close across one tick and intervals",
+      "failure means transport identity, blocking, or continuity accounting is inconsistent"});
+
   std::cout << "================================================================\n";
   std::cout << "  TEST: Native Engine Transport b=2 Flow\n";
   std::cout << "================================================================\n";

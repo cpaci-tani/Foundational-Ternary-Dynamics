@@ -1,9 +1,13 @@
 # FTD Engine Quality Checklist (Living Document)
 
-**Version:** 1.0 (2026-04-25)
-**Scope:** Engineering health — bugs, refactoring, test coverage, architecture.
-**NOT in scope:** Physics coverage (see [CHECKLIST_PHYSICS.md](CHECKLIST_PHYSICS.md)),
-theorem promotions (see [docs/theory/07_assessment/LEDGER.md](../docs/theory/07_assessment/LEDGER.md)).
+**Version:** 1.1 (2026-04-26)
+**Scope:** Engineering health, constructor-domain formalization, bugs,
+refactoring, test coverage, architecture.
+**NOT in scope:** theorem promotions (see
+[docs/theory/07_assessment/LEDGER.md](../docs/theory/07_assessment/LEDGER.md)).
+Physics coverage is tracked in [CHECKLIST_PHYSICS.md](CHECKLIST_PHYSICS.md)
+and the native EFT checklist; this file may track the engine infrastructure
+needed to make those claims auditable.
 
 ---
 
@@ -324,6 +328,48 @@ These three were already failing before today's work; they need separate triage.
 - `render_bridge.h`: −0 net (3 ifdef blocks removed, comments added)
 - `render_bridge.cpp`: −20 net (multiple ifdef blocks shrank to delegators)
 - Net: +173 LOC, but 8 of 14 #ifdef blocks gone from render_bridge.cpp.
+
+---
+
+## ROUND 5 — Constructor-domain formalization (OPEN 2026-04-26)
+
+Reference contract: [SPEC_ENGINE_CONSTRUCTOR_CONTRACT.md](SPEC_ENGINE_CONSTRUCTOR_CONTRACT.md).
+
+The goal of this round is to make every physics-facing engine test/campaign
+declare what constructor domain it exercises, what observable it measures, and
+what failure means. This is how the engine becomes a formal proof harness rather
+than a pile of successful demos.
+
+| ID | Status | Title | Notes |
+|---|---|---|---|
+| FORM-001 | ✅ | Draft engine constructor contract | `SPEC_ENGINE_CONSTRUCTOR_CONTRACT.md` maps constructor domains to engine obligations. |
+| FORM-002 | ✅ | Add constructor-domain metadata helper | Done 2026-04-26: `ftd::test::ConstructorContract`, `valid_contract`, and `contract()` emit human output or NDJSON `event=contract`. |
+| FORM-003 | ✅ | Add native observable registry | Done 2026-04-26: seed descriptor registry for ledgers, blocked operators, field energy, state histogram, flux correlator, and Gauss violation. |
+| FORM-004 | ✅ | Add CTest labels for constructor domains | Done 2026-04-26: first constructor-critical tests labeled with `constructor`, `ledger`, `observable`, `blocking`, and GPU/EFT labels where applicable. |
+| FORM-005 | ✅ | Define an "EFT quick suite" label | Done 2026-04-26: `eft_quick` first slice covers constructor metadata, observable registry, GPU continuity ledger, transport flow, blocking, Ward, matched-Poisson, and sim observables. |
+| FORM-006 | ☐ | Production Gauss representation decision record | Choose collocated, source-core, or dual-cell face flux; update tests and docs. |
+| FORM-007 | ☐ | Formal propagation-bound tests | For each state-changing toggle, assert finite support and no nonlocal writes outside declared neighborhood/phase. |
+| FORM-008 | ☐ | Closure-domain declarations | Make periodic lattice, blocked cell, and open-boundary campaigns declare their accounting surface. |
+| FORM-009 | ☐ | GPU Langevin/stochastic contract | Fix GPU Langevin zero-wave-velocity issue, then declare seed/measure semantics and parity tolerances. |
+| FORM-010 | ☐ | Device-side ledger reductions | Long-run continuity/reaction/energy/operator moments without per-tick host downloads. |
+| FORM-011 | ☐ | Nonlinear operator mixing matrix | Consume full-tick GPU histories, block them, compute before/after operator vector, assemble measured mixing matrix. |
+| FORM-012 | ☐ | Native history measure/action decision | Decide action vs transfer matrix vs deterministic pushforward vs constrained history measure. |
+| FORM-013 | ☐ | Continuum-limit scaling protocol | Predeclare L/b scaling observables and acceptance criteria before smooth-field claims. |
+| FORM-014 | ☐ | GPU ports for constructor-critical CPU-only diagnostics | Phase-H coupling, Mechanism B/Langevin background, Wilson topology, dual-cell adapter, Wigner chirality. |
+| FORM-015 | ☐ | Test/campaign failure taxonomy | Each formalized test should state whether failure means bug, calibration miss, selection falsified, conjecture falsified, or expected open gap. |
+
+Initial audit verdict:
+
+```text
+The engine is constructor-serious but not constructor-complete.
+
+Strongest domains:
+relation, tick dynamics, GPU continuity ledger, b=2 Gaussian blocking.
+
+Weakest domains:
+observable registry, stochastic GPU correctness, production Gauss choice,
+nonlinear mixing, native action/measure, continuum scaling protocol.
+```
 
 ---
 

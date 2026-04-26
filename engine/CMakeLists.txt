@@ -184,6 +184,10 @@ if(NOT EMSCRIPTEN)
 # ---- Test Telemetry self-test (uses ftd_add_test macro for first time) ----
 # This test exercises the ftd::test NDJSON API. It doesn't need ftd_core.
 ftd_add_test(test_telemetry_selftest tests/test_telemetry_selftest.cpp NO_CORE)
+ftd_add_test(test_constructor_contract tests/test_constructor_contract.cpp
+             NO_CORE LABELS constructor observable eft_quick)
+ftd_add_test(test_native_observable_registry tests/test_native_observable_registry.cpp
+             NO_CORE LABELS constructor observable eft_quick)
 
 # Foundational
 add_executable(test_constants tests/test_constants.cpp)
@@ -682,7 +686,8 @@ ftd_add_test(test_native_moore_layer_coupling tests/test_native_moore_layer_coup
 ftd_add_test(test_native_moore_temporal_layers tests/test_native_moore_temporal_layers.cpp
              CTEST_NAME native_moore_temporal_layers TIMEOUT 600 LABELS native eft)
 ftd_add_test(test_native_blocking_map tests/test_native_blocking_map.cpp
-             CTEST_NAME native_blocking_map TIMEOUT 120 LABELS native eft)
+             CTEST_NAME native_blocking_map TIMEOUT 120
+             LABELS native eft constructor blocking observable eft_quick)
 ftd_add_test(test_native_flow tests/test_native_flow.cpp
              CTEST_NAME native_flow TIMEOUT 120 LABELS native eft)
 ftd_add_test(test_native_current_flow tests/test_native_current_flow.cpp
@@ -692,7 +697,8 @@ ftd_add_test(test_native_response_flow tests/test_native_response_flow.cpp
 ftd_add_test(test_native_engine_history_flow tests/test_native_engine_history_flow.cpp
              CTEST_NAME native_engine_history_flow TIMEOUT 120 LABELS native eft)
 ftd_add_test(test_native_engine_transport_flow tests/test_native_engine_transport_flow.cpp
-             CTEST_NAME native_engine_transport_flow TIMEOUT 120 LABELS native eft)
+             CTEST_NAME native_engine_transport_flow TIMEOUT 120
+             LABELS native eft constructor ledger blocking eft_quick)
 
 # Fractional heat flow test (Euler ratio continuum limit verification)
 ftd_add_test(test_fractional_heat_flow tests/test_fractional_heat_flow.cpp
@@ -1335,10 +1341,12 @@ add_test(NAME eft_lorentz_recovery COMMAND benchmark_lorentz_recovery)
 set_tests_properties(eft_lorentz_recovery PROPERTIES LABELS "eft" TIMEOUT 120)
 # EFT Recovery Program — Phase 1C
 add_test(NAME eft_ward_identity COMMAND test_eft_ward_identity)
-set_tests_properties(eft_ward_identity PROPERTIES LABELS "eft" TIMEOUT 60)
+set_tests_properties(eft_ward_identity PROPERTIES
+    LABELS "eft;constructor;observable;eft_quick" TIMEOUT 60)
 # EFT Recovery Program — Phase 2A
 add_test(NAME eft_blocking COMMAND test_eft_blocking)
-set_tests_properties(eft_blocking PROPERTIES LABELS "eft" TIMEOUT 60)
+set_tests_properties(eft_blocking PROPERTIES
+    LABELS "eft;constructor;blocking;observable;eft_quick" TIMEOUT 60)
 # EFT Recovery Program — Phase 3
 add_test(NAME eft_operator_spectrum COMMAND test_eft_operator_spectrum)
 set_tests_properties(eft_operator_spectrum PROPERTIES LABELS "eft" TIMEOUT 120)
@@ -1347,7 +1355,8 @@ add_test(NAME eft_dynamical_sm COMMAND benchmark_dynamical_sm --quick)
 set_tests_properties(eft_dynamical_sm PROPERTIES LABELS "eft" TIMEOUT 180)
 # EFT Day-2 Ticket A
 add_test(NAME eft_matched_poisson COMMAND test_eft_matched_poisson)
-set_tests_properties(eft_matched_poisson PROPERTIES LABELS "eft" TIMEOUT 60)
+set_tests_properties(eft_matched_poisson PROPERTIES
+    LABELS "eft;constructor;observable;eft_quick" TIMEOUT 60)
 # Phase H — coupling scaling test
 add_test(NAME eft_phase_h_coupling COMMAND test_phase_h_coupling)
 set_tests_properties(eft_phase_h_coupling PROPERTIES LABELS "eft" TIMEOUT 180)
@@ -1359,7 +1368,8 @@ add_test(NAME sim_parity COMMAND test_sim_parity)
 set_tests_properties(sim_parity PROPERTIES LABELS "sim" TIMEOUT 120)
 # Sim Pipeline Phase D (observable library unit tests)
 add_test(NAME sim_observables COMMAND test_sim_observables)
-set_tests_properties(sim_observables PROPERTIES LABELS "sim" TIMEOUT 60)
+set_tests_properties(sim_observables PROPERTIES
+    LABELS "sim;constructor;observable;eft_quick" TIMEOUT 60)
 add_test(NAME spectral COMMAND test_spectral)
 add_test(NAME tracker COMMAND test_tracker)
 add_test(NAME benchmark COMMAND test_benchmark)
@@ -1415,6 +1425,8 @@ if(FTD_ENABLE_CUDA)
     add_test(NAME gpu_experiments COMMAND test_gpu_experiments)
     set_tests_properties(gpu_parity gpu_parity_complete gpu_benchmark
                          gpu_continuity_ledger gpu_physics PROPERTIES TIMEOUT 600)
+    set_tests_properties(gpu_continuity_ledger PROPERTIES
+                         LABELS "gpu;constructor;ledger;observable;eft_quick")
     set_tests_properties(gpu_experiments PROPERTIES TIMEOUT 1800)
 endif()
 

@@ -9,6 +9,7 @@
 #include "ftd/eft/dual_cell_continuity.h"
 #include "ftd/gpu_engine.h"
 #include "ftd/render_bridge.h"
+#include "ftd/test_telemetry.h"
 #include "ftd/voxel.h"
 
 #include <cmath>
@@ -161,6 +162,17 @@ ftd::TermToggles toggles_with_weak_transmutation_only() {
 }  // namespace
 
 int main() {
+  ftd::test::contract({
+      "transport/continuity/conservation",
+      "[MEASUREMENT]",
+      "state snapshots, GPU full-tick ledger, closure domain",
+      "movement, genesis, evaporation, pair production, weak transmutation",
+      "continuity_residual, current_l1, reaction_l1",
+      "periodic L=8 lattice",
+      "GPU-first; direct GpuEngine path",
+      "device continuity ledger matches host snapshot inference",
+      "failure means GPU state-changing channel is not ledgered or parity broke"});
+
   std::cout << "================================================================\n";
   std::cout << "  TEST: GPU Native Continuity Ledger\n";
   std::cout << "================================================================\n";
