@@ -1,7 +1,7 @@
 # State/Flux to EFT Dictionary
 
-**Date:** 2026-04-22
-**Status:** [PARTIAL] bridge result; gauge redundancy not yet derived
+**Date:** 2026-04-22 (initial) / 2026-04-24 (P1.1 scaling closure)
+**Status:** [PARTIAL] bridge result; gauge redundancy not yet derived. **Scaling dimensions frozen 2026-04-24 under FTD-0059 `a_phys ≡ ℓ_P` calibration — see § "Frozen scaling contract" below (Gate 1 closure).**
 **Purpose:** Extract the minimal EFT dictionary from FTD state/flux variables without using the alpha target as input.
 
 ---
@@ -307,6 +307,186 @@ Those remain projected-matching problems.
 
 ---
 
+## Frozen scaling contract (P1.1 closure, 2026-04-24)
+
+This section upgrades the qualitative "Continuum scaling contract" above to a
+**frozen** engineering-dimension contract, suitable as Gate 1 of the bridge
+program. It is the reference for every downstream EFT derivation, RG flow
+measurement, and observable normalization.
+
+### Calibration anchor
+
+Under the no-go theorem FTD-0059, FTD cannot derive a physical length from
+Axiom-Zero invariants alone. The project therefore fixes once and for all:
+
+```text
+a_phys        ≡ ℓ_P                         (one voxel = one Planck length)
+τ_phys        ≡ √3 · ℓ_P / c  = a_phys / c_FTD
+c_FTD         = 1/√3  (lattice units) = c (SI)
+```
+
+All dimensional claims below are conditional on this calibration. Dimensionless
+ratios (α-like, mass ratios, mixing angles) are calibration-independent and
+constitute the falsifiable spine.
+
+### Engineering dimensions (SI + natural, with `a_phys = ℓ_P`)
+
+| Lattice object | Continuum field | SI dimensions | Natural (ℏ=c=1) mass dimension |
+|---|---|---|---|
+| `s(x,t) ∈ {-1,0,+1}` | `ρ(x,t)` (signed source density) | `[L⁻³]` | 3 |
+| `J_lattice(x,t) ∈ ℝ³` (per-site Vec3) | `J(x,t)` (signed flux density, 2-form) | `[L⁻²]` | 2 |
+| `j_lattice(x,t) ∈ ℝ³` (per-link-tick) | `j(x,t)` (signed transport current density) | `[L⁻² T⁻¹]` | 3 |
+| `A(x,t)` (auxiliary transverse potential, `J_T = P_T A`) | `A(x,t)` | `[L⁻¹]` | 1 |
+| lattice ∇ | continuum ∇ | `[L⁻¹]` | 1 |
+| lattice Δ_t | continuum ∂_t | `[T⁻¹]` | 1 |
+
+All lattice quantities are **dimensionless integers or dimensionless reals**
+in the engine; the continuum field acquires its dimension through the
+Z-factor convention below.
+
+### Z-factor scaling laws
+
+Each lattice → continuum map is
+
+```text
+X_phys(x_phys, t_phys) = Z_X(a) · X_lattice(x, t),        x_phys = a x,  t_phys = τ t.
+```
+
+Under `a = ℓ_P` and `τ = √3 ℓ_P / c`:
+
+```text
+Z_ρ(a) = 1 / a³                                [L⁻³]
+Z_J(a) = 1 / a²                                [L⁻²]
+Z_j(a) = 1 / (a² τ)    =  c / (√3 a³)          [L⁻² T⁻¹]
+Z_A(a) = 1 / a                                 [L⁻¹]
+```
+
+These are the **native** Z-factors — equivalent to the `Z_Q = 1` native-unit
+convention of § "Density and current" above. They preserve finite-volume
+Gauss:
+
+```text
+div_phys J_phys(x)  =  (1/a) div_lattice · (J_lattice / a²)  =  J_lattice / a³ · (div_lattice / 1)
+                   =  s_lattice / a³            (by Gauss on the lattice)
+                   =  ρ_phys(x)                 ✓
+```
+
+and reaction-transport continuity:
+
+```text
+∂_t ρ_phys + div j_phys
+  = (1/τ) Δ_t (s / a³) + (1/a) div_lattice · (j_lattice / (a² τ))
+  = (Δ_t s + div_lattice j_lattice) / (a³ τ)
+  = S_reaction_lattice / (a³ τ)
+  = S_R_phys(x)                                 ✓
+```
+
+### QED-facing normalization (Branch B only)
+
+The native contract above is complete in the Z_Q = 1 convention. For the
+QED-facing comparison branch, introduce a single **source-normalization
+constant**:
+
+```text
+Z_Q = e_phys        (Coulombs per unit signed source)
+```
+
+Every continuum field rescales as:
+
+```text
+ρ_phys^QED = Z_Q · ρ_phys^native
+J_phys^QED = Z_Q · J_phys^native
+j_phys^QED = Z_Q · j_phys^native
+A_phys^QED = Z_A^QED · A_phys^native           (canonical-field rescaling)
+```
+
+`Z_A^QED` is fixed by canonical field normalization in the chosen projected
+action — **not** by matching to the α target. Under the current ledger,
+`e_phys` and `Z_A^QED` are both [OPEN] matching parameters (Gate 6 + Gate 7),
+and the identification `e_phys² = 1 / x_+` is [STRONGLY MOTIVATED CONJECTURE]
+tagged at FTD-0001–FTD-0014.
+
+### Zero-mode conventions
+
+On a finite periodic lattice of extent `L`:
+
+| Field | k = 0 mode | Convention |
+|---|---|---|
+| ρ (source) | `Q_total = ∑_x s(x)` | Physical configurations fix `Q_total` explicitly. Neutral systems have `Q_total = 0`; charged probes have `Q_total ∈ ℤ ≠ 0` (a conserved selection sector). |
+| J (flux) | uniform flux mode (constant J across the torus) | **Zero at k=0** under dual-cell Gauss projection when `Q_total = 0`. When `Q_total ≠ 0`, the k=0 mode carries a net boundary flux; for periodic topology this mode is unobservable (no boundary) and is projected out — the physical projector is `J_k for k ≠ 0`. |
+| j (current) | net loop current around the torus | Conserved integer (flux quantum); fixed by initial conditions. Zero for systems with no net current. |
+| A (auxiliary) | `A(k=0)` | Pure gauge degree of freedom in the transverse representation `J_T = P_T A`. **Fixed by gauge choice: A(k=0) = 0** (equivalent to Coulomb-gauge zero-mode fix). |
+| S_R (reaction) | `∑_x S_R(x,t)` | Must vanish instantaneously when integrated against global charge conservation; non-zero values signal a charge-violating toggle (pair production is the canonical example and increments/decrements `Q_total` in pairs). |
+
+### Boundary and continuum-limit protocol
+
+All EFT statements are made at **fixed `a = ℓ_P`** with finite `L` unless
+explicitly noted.
+
+**Standard protocol for an EFT observable `O`:**
+
+1. Compute `O(L, a = ℓ_P)` on the engine at `L ∈ {32, 64, 128, 256, ...}`.
+2. Extract the `L → ∞` limit by finite-size scaling at fixed `a`.
+3. Report the resulting `O_∞(a = ℓ_P)` as the physical prediction.
+4. **Do not** take `a → 0` at fixed physical volume — that limit is not
+   well-posed under FTD-0059. The calibration sets `a = ℓ_P` once and for all.
+
+**Equivalence class.** Two continuum fields `X, X'` are equivalent iff they
+agree on all dimensionless ratios and differ only by a constant `Z` factor
+consistent with the calibration. Different choices of finite-volume scheme
+(PBC, anti-PBC, twisted BCs) define different equivalence classes for
+`L < ∞`; the physical prediction is the common `L → ∞` limit across schemes.
+
+### Symmetry action on the frozen variables
+
+For completeness, the symmetry generators act on the frozen continuum fields
+as:
+
+| Symmetry | ρ | J | j | A |
+|---|---|---|---|---|
+| Cubic translation `T_a` | `ρ(x - a)` | `J(x - a)` | `j(x - a)` | `A(x - a)` |
+| Cubic rotation `R ∈ O_h` | `ρ(R⁻¹ x)` (scalar) | `R J(R⁻¹ x)` (vector) | `R j(R⁻¹ x)` (vector) | `R A(R⁻¹ x)` (vector) |
+| Charge conjugation `C` | `-ρ` | `-J` | `-j` | `-A` |
+| Parity `P` (= -I ∈ O_h) | `ρ(-x)` | `-J(-x)` | `-j(-x)` | `-A(-x)` |
+| Time reversal `T` (arrow selection) | `ρ(x, -t)` | `J(x, -t)` | `-j(x, -t)` | `A(x, -t)` or `-A` depending on gauge |
+
+These are the structural constraints for Gate 3 (operator basis enumeration).
+
+### Epistemic tag
+
+| Piece | Tag | Justification |
+|---|---|---|
+| `a_phys ≡ ℓ_P`, `τ_phys ≡ √3 ℓ_P / c` | [THEOREM] (calibration-enforced) | FTD-0059 no-go + FTD-0030/0041 calibration |
+| Engineering dimensions of ρ, J, j, A per table | [THEOREM] (under calibration) | Gauss + continuity consistency, § above |
+| Z-factor formulas `Z_ρ = 1/a³`, `Z_J = 1/a²`, `Z_j = 1/(a²τ)`, `Z_A = 1/a` | [THEOREM] (under calibration + native convention) | Dimensional closure + finite-volume Gauss preservation |
+| k = 0 gauge-fix `A(k=0) = 0` | [SELECTION] | Coulomb-gauge equivalent; a convention, not forced |
+| `Q_total` as selection-sector label | [THEOREM] | Conserved by construction on periodic lattice |
+| `a → 0` continuum limit well-posed | [CLOSED NEGATIVE] | FTD-0059 |
+| `L → ∞` at fixed `a = ℓ_P` well-posed | [THEOREM] | Standard finite-size-scaling argument |
+| `e_phys² = 1 / x_+` (QED-facing matching) | [STRONGLY MOTIVATED CONJECTURE] | Unchanged — not a consequence of this contract |
+
+### What Gate 1 now provides downstream
+
+Every subsequent bridge deliverable can now cite this frozen contract rather
+than redefining dimensions. Specifically:
+
+- **Gate 2** (native action/measure) can write `Z[J_source] = ∫ Ds exp(-S[s,J])`
+  with dimensions tracked explicitly.
+- **Gate 3** (operator basis) can enumerate operators by their canonical
+  dimension under this contract (e.g. `ρ²` is `[L⁻⁶]`, dimension 6 — marginal
+  in 3+0 Euclidean; `s div J` is `[L⁻⁵]`, relevant).
+- **Gate 4** (blocking + RG) can write β-functions for
+  `(C_L, K_T, Z_j, g_sJ)` as dimensionless couplings with explicit
+  lattice-spacing dependence absorbed into the Z-factors.
+- **Gate 5** (Ward identities) can test `∂_t ρ + div j = S_R` as a literal
+  equation among frozen-dimension fields.
+- **Gate 6** (matter sector) can assign canonical dimensions to any matter
+  field under the same calibration.
+- **Gate 7** (observables) can report every response coefficient in
+  calibration-fixed physical units with explicit finite-size scaling.
+
+---
+
 ## Gauge redundancy test
 
 The decisive question is whether the action is invariant under:
@@ -438,17 +618,26 @@ The stronger chain remains the FTD-to-EFT matching problem.
 This document resolves the first bridge target from `OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`:
 
 ```text
-State-to-field dictionary: PARTIAL
+State-to-field dictionary: PARTIAL  →  CLOSED for Gate 1 (scaling dimensions)
+                                        (2026-04-24, P1.1 of the EFT roadmap)
 ```
 
 The derived part is:
 
 ```text
-s -> signed scalar source
-J -> selected spatial vector field
+s -> signed scalar source                               [ρ] = L⁻³ (frozen)
+J -> selected spatial vector field                      [J] = L⁻² (frozen)
+j -> signed transport current                           [j] = L⁻² T⁻¹ (frozen)
+A -> auxiliary transverse potential (J_T = P_T A)       [A] = L⁻¹ (frozen)
 div J -> scalar source operator
-s div J -> lowest-derivative source-vector coupling
+s div J -> lowest-derivative source-vector coupling     [s ∂ J] = L⁻⁵ (relevant)
 ```
+
+**P1.1 (Gate 1) closure adds:** explicit Z-factor scaling laws
+`Z_ρ = 1/a³`, `Z_J = 1/a²`, `Z_j = 1/(a²τ)`, `Z_A = 1/a` under the calibration
+`a ≡ ℓ_P`, `τ ≡ √3 ℓ_P / c`; k=0-mode conventions for ρ, J, j, A, S_R;
+and the finite-L protocol (all claims at `a = ℓ_P`, `L → ∞` for physical
+limits; `a → 0` limit [CLOSED NEGATIVE] by FTD-0059).
 
 The revised unresolved part is:
 
@@ -463,4 +652,10 @@ derive the projected EFT variables, matter representation,
 local coupling, regulator, counterterms, and alpha observable.
 ```
 
-See `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md`.
+**Roadmap forward** (see `PLAN_EFT_COMPLETION_ROADMAP.md` when created): Gate 1
+is now closed; the next sequenced deliverable is P1.2 (diagonal/Moore routing
+in the engine-history transport ledger), followed by P1.3 (multi-tick
+accumulated history + first non-Gaussian flow data).
+
+See `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` for the parallel gauge-class
+derivation.
