@@ -110,7 +110,14 @@
     color: var(--text-secondary);
     font-size: 11px;
     pointer-events: auto;
-    max-width: calc(3 * 220px + 2 * 8px + 24px);
+    max-width: calc(96px + 3 * 220px + 2 * 8px + 24px);
+    /* Multiple rows can stack tall; cap at 80vh and scroll inside the panel
+       so very small viewports stay usable. */
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.flux-slice-panel.dense {
+    max-width: calc(96px + 3 * 160px + 2 * 8px + 24px);
 }
 .flux-slice-header {
     display: flex;
@@ -161,6 +168,112 @@
     color: var(--positive);
     border-color: var(--positive);
     background: rgba(80, 220, 160, 0.10);
+}
+
+/* "Reset mirror" header link: clears every per-field override at once.
+   Disabled (grayed out, no pointer) when no overrides are active. */
+.flux-slice-reset-mirror {
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-mono, monospace);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: color 120ms ease, border-color 120ms ease, opacity 120ms ease;
+    margin-right: 4px;
+}
+.flux-slice-reset-mirror:hover:not([disabled]) {
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+}
+.flux-slice-reset-mirror[disabled] {
+    opacity: 0.35;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Multi-field rows container: vertical stack, each row = label + 3 tiles. */
+.flux-slice-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.flux-slice-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 6px;
+    align-items: start;
+    padding: 6px 0;
+    border-top: 1px solid rgba(80, 100, 130, 0.18);
+}
+.flux-slice-rows > .flux-slice-row:first-child {
+    border-top: none;
+    padding-top: 2px;
+}
+/* Hidden row collapses out of the layout entirely so the panel resizes
+   naturally as fields toggle on/off. */
+.flux-slice-row.row-hidden {
+    display: none;
+}
+
+/* Per-row left column: field label (monospace) + mirror chip stacked. */
+.flux-slice-row-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 4px;
+}
+.flux-slice-field-label {
+    color: var(--text-secondary);
+    font-family: var(--font-mono, monospace);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+
+/* Mirror chip cycles mirror → force-on → force-off → mirror. */
+.flux-slice-mirror-chip {
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-mono, monospace);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+    text-align: center;
+}
+.flux-slice-mirror-chip:hover {
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+}
+.flux-slice-mirror-chip.override-on {
+    color: #cfe8cf;
+    border-color: rgba(80, 220, 160, 0.55);
+    background: rgba(80, 220, 160, 0.18);
+}
+.flux-slice-mirror-chip.override-off {
+    color: #e8cfcf;
+    border-color: rgba(220, 110, 110, 0.55);
+    background: rgba(220, 110, 110, 0.18);
+}
+
+/* Per-row tile grid (xy / xz / yz columns). */
+.flux-slice-row-tiles {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 8px;
+}
+
+/* Dense mode: shrink tile canvases when the panel has many rows open. */
+.flux-slice-panel.dense .flux-slice-canvas {
+    width: 160px;
+    height: 160px;
 }
 
 .flux-slice-grid {
