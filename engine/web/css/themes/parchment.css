@@ -33,6 +33,7 @@ html[data-theme="parchment"] {
     --positive: #3d7a24;
     --negative: #a63020;
     --warning:  #b8860b;
+    --caution:  #cc5e1f;
 
     /* State tints — gold, against warm bg */
     --state-hover-bg:   rgba(139, 105, 20, 0.10);

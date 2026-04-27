@@ -45,6 +45,16 @@ class RenderBridge;
 // group-specific functions below and returns true iff name was handled.
 // The caller is responsible for rb.reset() BEFORE calling this (matches
 // the JS runSetupScenario contract).
+//
+// Toggle contract: scenarios MAY mutate the whitelisted toggles
+// {genesis, coupling, damping, weak_transmutation, dual_substrate} —
+// these mirror engine/web/js/config/toggles.js SCALE0_TOGGLES, which
+// the JS scenario-loader resets between dispatches. Toggles outside
+// that whitelist (pair_production, langevin, latency_field,
+// emergent_forces, …) are owned by the user and persist across
+// scenario loads; do NOT mutate them from a scenario body. See
+// engine/web/js/scales/scale0/runtime/scenario-loader.js for the
+// matching JS-side documentation.
 bool dispatch_scenario(RenderBridge& rb, const std::string& name);
 
 // ── Group functions ────────────────────────────────────────────────────

@@ -106,6 +106,26 @@ export const V_HIGGS = 246.09;                         // Higgs VEV (GeV)
 export const M_HIGGS = 124.8;                          // Higgs mass (GeV) = (N_eff/α²)·m_e
 export const G_FERMI = Math.PI * ALPHA * Math.sqrt(2) / (2 * SIN2_WEINBERG * M_W * M_W); // Fermi coupling (GeV^-2), tree-level
 
+// ── QED / CHSH Reference Constants [PARAMETRIC CODATA / theorem] ────
+// Reference values used by P1 observables panel + spectrum panel.
+// Centralized here so dashboard literals stay consistent with the
+// authoritative CODATA / theoretical values.
+//
+// SCHWINGER_C2: universal QED 2-loop coefficient in a = α/(2π) +
+//   C2·(α/π)² + ··· — value is exact in QED (no FTD dependence);
+//   reference: Sommerfield 1957, Petermann 1957.
+// TSIRELSON_BOUND: 2√2, Tsirelson's upper bound on CHSH correlator
+//   for any quantum system — [THEOREM] of QM, not parametric.
+// RYDBERG_EV_CODATA: hydrogen ionization energy 13.605693 eV (CODATA
+//   2018 value; the 6-digit truncation matches what the panel displays).
+// A_E_CODATA / A_MU_CODATA: measured anomalous magnetic moments
+//   (CODATA 2022 / Fermilab Run-1 respectively).
+export const SCHWINGER_C2     = -0.328478965579;
+export const TSIRELSON_BOUND  = 2.0 * Math.sqrt(2.0);
+export const RYDBERG_EV_CODATA = 13.605693;
+export const A_E_CODATA       = 1.15965218128e-3;
+export const A_MU_CODATA      = 1.16592089e-3;
+
 // ── Layer 7: Precision Formula ──────────────────────────────────────
 export const EPSILON_ABS = 0.0009000208;
 export const PREC_C1 = 9.0 / 47.0;

@@ -1000,7 +1000,15 @@ void RenderBridge::tick() {
       std::string validErr;
       if (!toggles.validate(&validErr)) {
           if (toggles.strict_validation) {
+#ifdef __EMSCRIPTEN__
+              // WASM build compiles with -fno-exceptions; downgrade to
+              // stderr + abort so strict_validation still surfaces
+              // configuration bugs instead of silently passing.
+              std::cerr << "[TermToggles] FATAL invalid combination: " << validErr << std::endl;
+              std::abort();
+#else
               throw std::logic_error("[TermToggles] Invalid combination: " + validErr);
+#endif
           }
           if (validErr != last_validation_warn_) {
               std::cerr << "[TermToggles] Invalid combination: " << validErr;

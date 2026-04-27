@@ -23,16 +23,15 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
     const int    N    = rb.lattice().size();
     const double midF = (N - 1) * 0.5;
     const int    mc   = RND(midF);
-    const double cSpeed = 1.0 / std::sqrt(3.0);
 
     if (name == "s0-field-plane-wave") {
         const double wl  = N / 4.0;
         const double amp = K_B * 2.0;
-        const double k   = 2.0 * SCN_PI / wl;
+        const double k   = 2.0 * PI / wl;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double phase = k * x;
             double jz = amp * std::sin(phase);
-            double wz = amp * std::cos(phase) * cSpeed;
+            double wz = amp * std::cos(phase) * C_SPEED;
             if (std::fabs(jz) > 1e-12 || std::fabs(wz) > 1e-12) {
                 IF(rb, x, y, z, 0, 0, jz);
                 IW(rb, x, y, z, wz, 0, 0);
@@ -42,7 +41,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
     else if (name == "s0-field-standing-wave") {
         const double wl  = N / 4.0;
         const double amp = K_B * 2.0;
-        const double k   = 2.0 * SCN_PI / wl;
+        const double k   = 2.0 * PI / wl;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double jz = amp * std::sin(k * x);
             if (std::fabs(jz) > 1e-12) IF(rb, x, y, z, 0, 0, jz);
@@ -67,7 +66,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         const int sigma = std::max(3, N / 8);
         const double amp = K_B * 2.0;
         const double lambdaEff = 4.0 * sigma;
-        const double k = 2.0 * SCN_PI / lambdaEff;
+        const double k = 2.0 * PI / lambdaEff;
         const double cutR = 3.0 * sigma;
         const double cutR2 = cutR * cutR;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -78,7 +77,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             if (g < 1e-6) continue;
             double phase = k * dx;
             double jz = amp * g * std::sin(phase);
-            double wz = amp * g * std::cos(phase) * cSpeed;
+            double wz = amp * g * std::cos(phase) * C_SPEED;
             IF(rb, x, y, z, 0, 0, jz);
             IW(rb, x, y, z, wz, 0, 0);
         }
@@ -89,7 +88,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         const int px = mc + half, nx = mc - half;
         IP(rb, px, mc, mc, +1);
         IP(rb, nx, mc, mc, -1);
-        const double alpha_amp = ALPHA / (4.0 * SCN_PI);
+        const double alpha_amp = ALPHA / (4.0 * PI);
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double jx = 0, jy = 0, jz = 0;
             double dx1 = x - px, dy1 = y - mc, dz1 = z - mc;
@@ -109,7 +108,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         const double amp = K_B;
         const int nAngles = std::max(36, loopR * 8);
         for (int i = 0; i < nAngles; i++) {
-            double theta = 2.0 * SCN_PI * i / nAngles;
+            double theta = 2.0 * PI * i / nAngles;
             int lx = RND(mc + loopR * std::cos(theta));
             int ly = RND(mc + loopR * std::sin(theta));
             double tx = -std::sin(theta) * amp;
@@ -124,7 +123,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             double rx = x - half, ry = y - half;
             double r = std::sqrt(rx * rx + ry * ry);
             if (r < 1.0) r = 1.0;
-            double mag = gamma / (2.0 * SCN_PI * r);
+            double mag = gamma / (2.0 * PI * r);
             if (mag < 1e-6) continue;
             IF(rb, x, y, z, -mag * ry / r, mag * rx / r, 0);
         }

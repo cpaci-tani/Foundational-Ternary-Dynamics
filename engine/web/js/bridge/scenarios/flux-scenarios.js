@@ -13,7 +13,8 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { ALPHA, K_B, K_GENESIS, N_BASE, G_STAR, VARPI, G_C, C_SPEED } from '../../constants.js';
+import { K_B, K_GENESIS } from '../../constants.js';
+import { TRIAD_ANGLES } from './_helpers.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -271,7 +272,7 @@ export function setupFluxScenario(name, ctx) {
                     const bR = Math.floor(N / 6);
                     const mc = Math.round(midF);
                     for (let k = 0; k < 3; k++) {
-                        const angle = (2 * Math.PI * k) / 3;
+                        const angle = TRIAD_ANGLES[k];
                         const bx = Math.round(midF + bR * Math.cos(angle));
                         const bz = Math.round(midF + bR * Math.sin(angle));
                         this.injectParticle(bx, mc, bz, 1);
@@ -377,8 +378,7 @@ export function setupFluxScenario(name, ctx) {
                     // Triad formation: 3 same-sign particles in equilateral triangle
                     // (from campaign_triad_binding / campaign_baryon_formation)
                     const tR = Math.floor(N / 6);
-                    const triAngles = [0, 2 * Math.PI / 3, 4 * Math.PI / 3];
-                    for (const angle of triAngles) {
+                    for (const angle of TRIAD_ANGLES) {
                         const px = mid + Math.round(tR * Math.cos(angle));
                         const pz = mid + Math.round(tR * Math.sin(angle));
                         this.injectParticle(px, mid, pz, 1);

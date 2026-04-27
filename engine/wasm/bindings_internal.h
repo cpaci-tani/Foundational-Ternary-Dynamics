@@ -54,6 +54,17 @@ emscripten::val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_em_force_field(ftd::RenderBridge& rb, int stride);
 emscripten::val get_strong_force_field(ftd::RenderBridge& rb, int stride);
 
+// Sample the engine's Coulomb potential field along a ray from p1 to p2.
+// Returns { positions:Float32Array(3N), V:Float32Array(N), count:N } via
+// trilinear interpolation of phi_coulomb_. count=0 when phi_coulomb_ is
+// empty (e.g. poisson_coulomb toggle off). Replaces JS-side trilinear
+// interp with engine-direct sampling. (Phase 2 tech debt #4 — 2026-04-27)
+emscripten::val sample_v_at_ray(
+    ftd::RenderBridge& rb,
+    double x1, double y1, double z1,
+    double x2, double y2, double z2,
+    int n);
+
 // Lattice info
 int get_lattice_size(ftd::RenderBridge& rb);
 
