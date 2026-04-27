@@ -69,6 +69,20 @@ export const ALPHA_S_MZ = B_3 / (B_3 + 4.0 * N_EFF); // QCD coupling at M_Z
 export const ALPHA_G_APPROX = 5.91e-39;               // gravitational hierarchy
 
 // ── Layer 6: Mass / Energy Scales ───────────────────────────────────
+/**
+ * K_B is the FTD framework electron-mass anchor (≡ M_E ≡ 0.511 MeV).
+ *
+ * IT IS NOT BOLTZMANN'S CONSTANT. The name predates the convention
+ * collision and is preserved across 35+ importers as the FTD-internal
+ * "manifestation threshold" / electron-mass scale used as the unit
+ * anchor throughout scenario seeding and force normalization.
+ *
+ * Use M_E_PHYS = 0.51099895 (PDG 2022) when you need experimental
+ * precision (e.g. SEMF Wapstra fits in atomic-energy.js, decay-rate
+ * comparisons against measured lifetimes). Use K_B for everything
+ * that is FTD-internal — the framework's own anchor, not the
+ * empirical electron mass.
+ */
 export const K_B       = 0.511;                       // electron mass in MeV
 export const K_GENESIS = N_C * K_B;                   // genesis threshold = 1.533
 export const C_SPEED   = 0.57735026918962576451;      // 1/sqrt(3) [DERIVED from CFL]
@@ -170,6 +184,134 @@ export const M_SIGMA_PHYS  = 1189.37;                  // Sigma+ (MeV)
 export const M_OMEGA_PHYS  = 1672.45;                  // Omega- (MeV)
 export const M_DELTA_PHYS  = 1232.0;                   // Delta++ (MeV)
 export const M_W_PHYS      = 80377.0;                  // W boson (MeV, PDG 2022)
+export const M_Z_PHYS      = 91187.6;                  // Z boson (MeV, PDG 2022) [PARAMETRIC PDG]
+export const M_HIGGS_PHYS  = 125100.0;                 // Higgs boson (MeV, PDG 2022) [PARAMETRIC PDG]
+
+// ── Quark Masses (MeV) [PARAMETRIC PDG 2022] ────────────────────────
+// Constituent quark masses from PDG 2022. Used by particle-catalog.js.
+// Not derived from FTD chain — the framework currently only predicts
+// the master quadratic root structure (X_PLUS, X_MINUS); quark masses
+// remain empirical inputs pending a full Yukawa derivation.
+export const M_U_PHYS = 2.16;       // up quark
+export const M_D_PHYS = 4.67;       // down quark
+export const M_S_PHYS = 93.4;       // strange quark
+export const M_C_PHYS = 1270.0;     // charm quark
+export const M_B_PHYS = 4180.0;     // bottom quark
+export const M_T_PHYS = 172760.0;   // top quark
+
+// ── Neutrino Mass Upper Bounds (MeV) [PARAMETRIC PDG] ───────────────
+// Cosmological + oscillation upper bounds; not derivable from current
+// FTD chain. Values reflect literals already in particle-catalog.js
+// for backward compatibility with existing UI readouts.
+export const M_NU_E_PHYS   = 4.1e-9;     // m(ν_e)   bound (MeV)
+export const M_NU_MU_PHYS  = 8.58e-3;    // m(ν_mu)  bound (MeV)
+export const M_NU_TAU_PHYS = 4.955e-2;   // m(ν_tau) bound (MeV)
+
+// ── Additional Hadron Masses (MeV) [PARAMETRIC PDG] ─────────────────
+// Reference values for particle-catalog.js entries that previously
+// hardcoded literals at lines 338, 358, 388, 432-552.
+export const M_LAMBDA_PHYS    = 1115.683;   // Λ⁰
+export const M_XI_0_PHYS      = 1314.86;    // Ξ⁰
+export const M_XI_M_PHYS      = 1321.71;    // Ξ⁻
+export const M_DELTA_0_PHYS   = 1232.0;     // Δ⁰ (≈ Δ⁺⁺ in M_DELTA_PHYS)
+export const M_ETA_PHYS       = 547.862;    // η meson
+export const M_RHO_PHYS       = 770.0;      // ρ meson
+export const M_J_PSI_PHYS     = 3096.9;     // J/ψ
+export const M_UPSILON_PHYS   = 9460.3;     // Υ(1S)
+
+// ── Weak / CKM Constants [PARAMETRIC PDG / lattice] ─────────────────
+// Beta-decay and pion-decay constants used by decay-rates.js. These
+// were inline literals at decay-rates.js:91, 95, 98, 113.
+export const V_UD = 0.974;        // CKM matrix element |V_ud|
+export const G_A  = 1.2756;       // axial coupling g_A (neutron β-decay)
+export const F_N  = 1.6887;       // neutron decay form factor
+export const F_PI = 130.2;        // pion decay constant (MeV)
+
+// ── Conversion Factors [PDG] ─────────────────────────────────────────
+// SI / atomic-physics conversions. Previously duplicated across
+// units.js and decay-rates.js; this is now the single source.
+export const AMU_MEV     = 931.494;             // 1 amu in MeV
+export const HBAR_MEV_S  = 6.582119569e-22;     // ℏ in MeV·s
+export const K_PER_EV    = 11604.518;           // K per eV (Boltzmann conversion)
+export const K_PER_MEV   = K_PER_EV * 1e6;      // K per MeV
+
+// ── Geometric / Planck Constants [PDG] ───────────────────────────────
+// PDG empirical values. These complement (do not replace) the
+// FTD-derived R_BOHR (line 86) and M_PLANCK_GEV (line 124). Use
+// FTD-derived values inside framework calculations; use these PDG
+// values for SI-unit display formatting (units.js).
+export const BOHR_RADIUS_M       = 5.29177210903e-11;   // m
+export const BOHR_RADIUS_ANGSTROM = 0.529177210903;     // Å
+export const PLANCK_LENGTH_M     = 1.616255e-35;        // m
+export const PLANCK_TIME_S       = 5.391247e-44;        // s
+export const PLANCK_TEMP_K       = 1.416784e32;         // K
+
+// ── Cosmic-Lattice Anchors [IMPOSED] ────────────────────────────────
+// Lattice-unit anchors used by the cosmic mock bridge. Calibration
+// to physical SI units is undocumented; these are tuning anchors,
+// not derived predictions. M_CHANDRA_LATTICE / M_TOV_LATTICE imply
+// a ~50× lattice-mass-to-solar-mass conversion (70 / 1.4 = 50;
+// 150 / 3.0 = 50), but this conversion factor itself is undeclared.
+export const H0_LATTICE        = 0.001;     // Hubble constant (lattice units)
+export const M_CHANDRA_LATTICE = 70.0;      // Chandrasekhar limit (lattice mass, ~1.4 M☉)
+export const M_TOV_LATTICE     = 150.0;     // TOV limit (lattice mass, ~3 M☉)
+
+// ── Atom-Engine MD-Tuning Constants [IMPOSED] ───────────────────────
+// Tuning parameters for the atom-engine LJ + bond molecular dynamics.
+// Calibrated empirically against small-molecule equilibrium geometries
+// (H₂, H₂O, NH₃, CH₄). Not derived from the FTD chain.
+export const AE_EPS_BASE       = 0.005;
+export const AE_K_COULOMB      = 2.0;
+export const AE_K_BOND         = 50.0;
+export const AE_SPEED_MAX      = 10.0;
+export const AE_H_BOND_EPS     = 0.001;
+export const AE_K_ANGLE        = 0.05;
+export const AE_THERMOSTAT_TAU = 10.0;
+
+// ── Atomic Reference Data [PDG / Pauling] ───────────────────────────
+// Pauling electronegativity (χ) and atomic radii (pm), Z-indexed.
+// Index 0 is sentinel; Z=1..86 covered with empirical values; Z>86
+// fall back to a formula in atomic-props.js. Zeros denote noble gases
+// (no Pauling χ defined) or unmeasured radii — consumers must guard.
+//
+// Sources: Pauling 1960 + CRC Handbook of Chemistry & Physics 97th ed.
+export const PAULING_CHI = [
+    0,                                                                          // 0
+    2.20, 0,                                                                    // 1-2  (H, He)
+    0.98, 1.57, 2.04, 2.55, 3.04, 3.44, 3.98, 0,                                // 3-10
+    0.93, 1.31, 1.61, 1.90, 2.19, 2.58, 3.16, 0,                                // 11-18
+    0.82, 1.00, 1.36, 1.54, 1.63, 1.66, 1.55, 1.83, 1.88, 1.91, 1.90, 1.65,     // 19-30
+    1.81, 2.01, 2.18, 2.55, 2.96, 0,                                            // 31-36
+    0.82, 0.95, 1.22, 1.33, 1.60, 2.16, 1.90, 2.20, 2.28, 2.20, 1.93, 1.69,     // 37-48
+    1.78, 1.96, 2.05, 2.10, 2.66, 0,                                            // 49-54
+    0.79, 0.89,                                                                  // 55-56
+    1.10, 1.12, 1.13, 1.14, 1.13, 1.17, 1.20, 1.20, 1.10, 1.22, 1.23, 1.24,     // 57-68 (lanthanides)
+    1.25, 1.10,                                                                  // 69-70
+    1.27, 1.30, 1.50, 2.36, 1.90, 2.20, 2.20, 2.28, 2.54, 2.00,                 // 71-80
+    1.62, 2.33, 2.02, 2.00, 2.20, 0,                                            // 81-86
+];
+export const ATOMIC_RADII_PM = [
+    0,                                                                          // 0
+    53,   31,                                                                   // 1-2
+    167,  112,  87,   67,   56,   48,   42,   38,                               // 3-10
+    190,  145,  118,  111,  98,   88,   79,   71,                               // 11-18
+    243,  194,  184,  176,  171,  166,  161,  156,  152,  149,  145,  142,     // 19-30
+    136,  125,  114,  103,  94,   88,                                           // 31-36
+    265,  219,  212,  206,  198,  190,  183,  178,  173,  169,  165,  161,     // 37-48
+    156,  145,  133,  123,  108,  98,                                           // 49-54
+    298,  253,                                                                  // 55-56
+    240,  235,  239,  229,  236,  229,  222,  225,  222,  222,  219,  217,     // 57-68
+    216,  214,                                                                  // 69-70
+    211,  208,  200,  193,  188,  185,  180,  177,  174,  171,                 // 71-80
+    156,  154,  143,  135,  127,  120,                                          // 81-86
+];
+
+// ── Thomas-Fermi Atom-Binding Prefactor [DERIVED] ───────────────────
+// E_atom ≈ −0.7687 · Z^(7/3) Hartree = −20.93 · Z^(7/3) eV.
+// Standard derivation: integrate the Thomas-Fermi electron density
+// against a Coulomb potential. Replaces a long-standing 15.73 literal
+// in atomic-energy.js (Theme D bug, fixed 2026-04-26).
+export const THOMAS_FERMI_PREFACTOR_EV = 20.93;
 
 // ── Ontic chain metadata (for observatory) ──────────────────────────
 export const ONTIC_LAYERS = [

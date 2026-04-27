@@ -14,18 +14,20 @@ import { defaultNeutronCount } from './elements.js';
 import {
     M_P_PHYS, M_N_PHYS, M_E_PHYS,
     SEMF_A_VOL, SEMF_A_SURF, SEMF_A_COUL, SEMF_A_ASYM, SEMF_A_PAIR,
+    THOMAS_FERMI_PREFACTOR_EV,
 } from './constants.js';
 
 // ── Physical Constants (MeV) ─────────────────────────────────────────
 // Aliased from constants.js to keep the SEMF code below unchanged.
+// 2026-04-26 (Wave 2D): dropped the local `K_B = M_E_PHYS` shadow that
+// previously confused which K_B was in use here. SEMF outputs are
+// PDG-calibrated, so divisions use M_E_PHYS = 0.51099895 explicitly.
+// Output keys `*InKB` retained for backward compatibility with
+// scale2/controller.js, but they semantically mean "in units of the
+// PDG electron mass" — not the framework K_B = 0.511 anchor.
 const M_PROTON   = M_P_PHYS;
 const M_NEUTRON  = M_N_PHYS;
 const M_ELECTRON = M_E_PHYS;
-// K_B here is the precise PDG electron mass (used as the natural-unit
-// scale for the SEMF outputs), NOT the rounded 0.511 from constants.js.
-// The two differ by ~2e-4 MeV, well below SEMF accuracy, but the local
-// name keeps the output format deterministic across refactors.
-const K_B        = M_ELECTRON;
 
 // ── Bethe-Weizsacker Parameters (MeV) — aliased from constants.js ───
 const A_VOL  = SEMF_A_VOL;
@@ -114,25 +116,33 @@ export function atomicEnergy(Z) {
         massNumber: A,
         protons: Z,
         neutrons: N,
-        // FTD natural units (in units of K_B = m_e)
-        massInKB: massEnergy / K_B,
-        bindingInKB: B / K_B,
+        // FTD natural units (in units of the PDG electron mass).
+        // Key name retained from pre-2026-04-26 API; numerical value
+        // computed against M_E_PHYS = 0.51099895 (precise PDG).
+        massInKB: massEnergy / M_E_PHYS,
+        bindingInKB: B / M_E_PHYS,
     };
 }
 
 /**
  * Approximate total electron binding energy using a simplified
- * Thomas-Fermi model: E_total ≈ -15.73 × Z^(7/3) eV.
+ * Thomas-Fermi model: E_total ≈ -20.93 × Z^(7/3) eV.
  * Returns a negative number (bound state).
+ *
+ * Theme D1 fix (2026-04-26): the prefactor was previously hardcoded
+ * at -15.73 eV·Z^(7/3) — that's a ~33% drift below the standard
+ * derivation. The Thomas-Fermi result for total atomic binding is
+ * E = -0.7687·Z^(7/3) Hartree = -20.93·Z^(7/3) eV (Hartree·27.2114
+ * eV/Hartree). Now sourced from constants.js as
+ * THOMAS_FERMI_PREFACTOR_EV. Magnitude shifts in the periodic-table
+ * panel `electronBinding` column are expected and physically correct.
  *
  * @param {number} Z — atomic number
  * @returns {number} total electron binding energy in eV (negative)
  */
 function approxElectronBinding(Z) {
     if (Z <= 0) return 0;
-    // Thomas-Fermi approximation for total electronic binding energy
-    // E ≈ -15.73 × Z^(7/3) eV (within ~10% for most elements)
-    return -15.73 * Math.pow(Z, 7 / 3);
+    return -THOMAS_FERMI_PREFACTOR_EV * Math.pow(Z, 7 / 3);
 }
 
 /**
@@ -170,8 +180,10 @@ export function periodicTableTotalEnergy() {
         totalBinding,                                 // MeV
         avgBindingPerNucleon: totalBinding / totalNucleons, // MeV
         totalElectronBinding,                         // eV
-        totalMassInKB: totalMass / K_B,               // FTD units
-        totalBindingInKB: totalBinding / K_B,         // FTD units
+        // PDG electron-mass natural units (key name retained for API
+        // compatibility; see atomicEnergy() docstring re: shadow drop).
+        totalMassInKB: totalMass / M_E_PHYS,
+        totalBindingInKB: totalBinding / M_E_PHYS,
     };
 }
 

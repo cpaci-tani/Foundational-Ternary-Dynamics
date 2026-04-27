@@ -15,40 +15,58 @@
  *   unit  = "MeV"         (the unit string alone)
  */
 
-import { C_SPEED, K_B } from './constants.js';
+// Wave 2F (2026-04-26): every constant in this module is now sourced
+// from constants.js (single source of truth). The exports below keep
+// their previous names so the 6 importers of units.js (app_dag.js,
+// scale1/2 controllers, scale0/runtime/diagnostics, pe-telemetry,
+// diagnostics) need no edits — they continue to import from units.js
+// for the formatter helpers below, and any constant they need.
+import {
+    C_SPEED,
+    K_B,
+    M_PLANCK_GEV,
+    BOHR_RADIUS_M as _BOHR_RADIUS_M,
+    BOHR_RADIUS_ANGSTROM as _BOHR_RADIUS_ANGSTROM,
+    PLANCK_LENGTH_M as _PLANCK_LENGTH_M,
+    PLANCK_TIME_S as _PLANCK_TIME_S,
+    PLANCK_TEMP_K as _PLANCK_TEMP_K,
+    AMU_MEV as _AMU_MEV,
+    K_PER_EV as _K_PER_EV,
+    K_PER_MEV as _K_PER_MEV,
+} from './constants.js';
 
-// ── Conversion Constants ────────────────────────────────────────────
+// ── Conversion Constants (re-exports from constants.js) ─────────────
 
 // Planck units -> SI
-export const PLANCK_LENGTH_M   = 1.616255e-35;        // meters
-export const PLANCK_TIME_S     = 5.391247e-44;        // seconds
-export const PLANCK_ENERGY_GEV = 1.22089e19;          // GeV
-export const PLANCK_ENERGY_MEV = 1.22089e22;          // MeV
-export const PLANCK_MASS_KG    = 2.176434e-8;         // kg
-export const PLANCK_TEMP_K     = 1.416784e32;         // Kelvin
-export const PLANCK_FORCE_N    = 1.21027e44;          // Newtons
+export const PLANCK_LENGTH_M   = _PLANCK_LENGTH_M;
+export const PLANCK_TIME_S     = _PLANCK_TIME_S;
+export const PLANCK_ENERGY_GEV = M_PLANCK_GEV;        // single source vs old 1.22089e19 dup
+export const PLANCK_ENERGY_MEV = M_PLANCK_GEV * 1e3;  // GeV → MeV
+export const PLANCK_MASS_KG    = 2.176434e-8;         // kg (no constants.js entry yet)
+export const PLANCK_TEMP_K     = _PLANCK_TEMP_K;
+export const PLANCK_FORCE_N    = 1.21027e44;          // Newtons (no constants.js entry yet)
 
 // Length conversions
-export const FM_PER_PLANCK       = PLANCK_LENGTH_M * 1e15;   // ~1.616e-20 fm
-export const ANGSTROM_PER_PLANCK = PLANCK_LENGTH_M * 1e10;   // ~1.616e-25 A
-export const BOHR_RADIUS_M       = 5.29177e-11;              // meters
-export const BOHR_RADIUS_ANGSTROM = 0.529177;                // A
+export const FM_PER_PLANCK       = PLANCK_LENGTH_M * 1e15;
+export const ANGSTROM_PER_PLANCK = PLANCK_LENGTH_M * 1e10;
+export const BOHR_RADIUS_M       = _BOHR_RADIUS_M;
+export const BOHR_RADIUS_ANGSTROM = _BOHR_RADIUS_ANGSTROM;
 
 // Energy conversions
 export const EV_PER_MEV = 1e6;
 export const J_PER_EV   = 1.602176634e-19;
-export const KB_MEV     = K_B;                               // 0.511 MeV
+export const KB_MEV     = K_B;                               // 0.511 MeV (FTD anchor)
 
 // Mass
-export const AMU_MEV = 931.494;                              // 1 AMU = 931.494 MeV/c^2
+export const AMU_MEV = _AMU_MEV;
 
 // Speed
-export const C_MS      = 2.99792458e8;                       // m/s
-export const C_LATTICE = C_SPEED;                            // 1/sqrt(3) voxels/tick
+export const C_MS      = 2.99792458e8;
+export const C_LATTICE = C_SPEED;
 
 // Temperature
-export const K_PER_EV  = 11604.518;                          // 1 eV = 11604.5 K
-export const K_PER_MEV = 1.1604518e10;                       // 1 MeV = 1.16e10 K
+export const K_PER_EV  = _K_PER_EV;
+export const K_PER_MEV = _K_PER_MEV;
 
 
 // ── Internal Helpers ────────────────────────────────────────────────
