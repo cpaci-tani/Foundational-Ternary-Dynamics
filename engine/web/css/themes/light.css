@@ -33,6 +33,7 @@ html[data-theme="light"] {
     --positive: #16a34a;
     --negative: #dc2626;
     --warning:  #d97706;
+    --caution:  #ea580c;
 
     /* State tints — blue, darker against light bg */
     --state-hover-bg:   rgba(37, 99, 235, 0.08);

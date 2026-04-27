@@ -382,6 +382,86 @@ val get_e_field_sampled(ftd::RenderBridge& rb, int stride) {
     return result;
 }
 
+// ── sample_v_at_ray ────────────────────────────────────────────────
+// Trilinear interpolation of phi_coulomb_ along a 3D ray. Returns
+// `{ positions:Float32Array(3N), V:Float32Array(N), count:N }` via
+// zero-copy typed_memory_view, mirroring get_e_field_sampled. count=0
+// when phi_coulomb_ is empty (Poisson toggle off, fresh sim before
+// first solve). Replaces the JS-side getEFieldSampled + interp path
+// in p1-observables-panel.js (~200μs marshalling) with a direct read
+// (~3μs).
+val sample_v_at_ray(
+    ftd::RenderBridge& rb,
+    double x1, double y1, double z1,
+    double x2, double y2, double z2,
+    int n)
+{
+    static std::vector<float> pos_cache, v_cache;
+    if (n < 2) n = 2;
+    if (n > 4096) n = 4096;
+    const auto& phi = rb.phi_coulomb();
+    val result = val::object();
+    if (phi.empty()) {
+        result.set("count", 0);
+        return result;
+    }
+    if (static_cast<int>(pos_cache.size()) < n * 3) {
+        pos_cache.resize(n * 3);
+        v_cache.resize(n);
+    }
+    const int N = rb.lattice().size();
+    auto wrap = [N](int v) {
+        // Periodic wrap matching the lattice's index() convention
+        return ((v % N) + N) % N;
+    };
+    auto sample_phi = [&](double x, double y, double z) -> double {
+        // Trilinear interpolation with periodic wrap (matches engine's
+        // periodic boundary conventions).
+        const int x0 = static_cast<int>(std::floor(x));
+        const int y0 = static_cast<int>(std::floor(y));
+        const int z0 = static_cast<int>(std::floor(z));
+        const double fx = x - x0;
+        const double fy = y - y0;
+        const double fz = z - z0;
+        const int wx0 = wrap(x0), wx1 = wrap(x0 + 1);
+        const int wy0 = wrap(y0), wy1 = wrap(y0 + 1);
+        const int wz0 = wrap(z0), wz1 = wrap(z0 + 1);
+        const auto idx = [&](int x, int y, int z) {
+            return rb.lattice().index(x, y, z);
+        };
+        const double c000 = phi[idx(wx0, wy0, wz0)];
+        const double c100 = phi[idx(wx1, wy0, wz0)];
+        const double c010 = phi[idx(wx0, wy1, wz0)];
+        const double c110 = phi[idx(wx1, wy1, wz0)];
+        const double c001 = phi[idx(wx0, wy0, wz1)];
+        const double c101 = phi[idx(wx1, wy0, wz1)];
+        const double c011 = phi[idx(wx0, wy1, wz1)];
+        const double c111 = phi[idx(wx1, wy1, wz1)];
+        const double c00 = c000 * (1 - fx) + c100 * fx;
+        const double c10 = c010 * (1 - fx) + c110 * fx;
+        const double c01 = c001 * (1 - fx) + c101 * fx;
+        const double c11 = c011 * (1 - fx) + c111 * fx;
+        const double c0 = c00 * (1 - fy) + c10 * fy;
+        const double c1 = c01 * (1 - fy) + c11 * fy;
+        return c0 * (1 - fz) + c1 * fz;
+    };
+    for (int i = 0; i < n; ++i) {
+        const double t = (n == 1) ? 0.0 : static_cast<double>(i) / (n - 1);
+        const double x = x1 + (x2 - x1) * t;
+        const double y = y1 + (y2 - y1) * t;
+        const double z = z1 + (z2 - z1) * t;
+        const int o3 = i * 3;
+        pos_cache[o3]     = static_cast<float>(x);
+        pos_cache[o3 + 1] = static_cast<float>(y);
+        pos_cache[o3 + 2] = static_cast<float>(z);
+        v_cache[i]        = static_cast<float>(sample_phi(x, y, z));
+    }
+    result.set("positions", val(typed_memory_view(n * 3, pos_cache.data())));
+    result.set("V",         val(typed_memory_view(n,     v_cache.data())));
+    result.set("count", n);
+    return result;
+}
+
 val get_b_field_sampled(ftd::RenderBridge& rb, int stride) {
     static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();

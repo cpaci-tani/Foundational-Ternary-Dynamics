@@ -22,14 +22,13 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
     if (name.rfind("light-", 0) != 0) return false;
     const int    N     = rb.lattice().size();
     const int    mid   = N / 2;
-    const double C_WAVE = 1.0 / std::sqrt(3.0);
     const double amp   = 0.15;
 
     if (name == "light-rainbow") {
         struct W { int n; int pol; };
         const W waves[3] = { {1,1}, {3,2}, {6,0} };
         for (int w = 0; w < 3; w++) {
-            double k = 2.0 * SCN_PI * waves[w].n / N;
+            double k = 2.0 * PI * waves[w].n / N;
             int pol = waves[w].pol;
             for (int x = 0; x < N; x++) for (int y = 0; y < N; y++) for (int z = 0; z < N; z++) {
                 double J_val  = amp * std::sin(k * x);

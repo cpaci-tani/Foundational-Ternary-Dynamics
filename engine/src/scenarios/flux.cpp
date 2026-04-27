@@ -6,7 +6,7 @@
 //
 //  Split out of engine/src/scenarios.cpp (ticket S1). Every scenario body
 //  is byte-identical to the pre-split source — see _helpers.h for the
-//  shared IF/IW/IP/IPF/SET_VEL/LOCK/SET_SPIN/FLR/CEL/RND/SCN_PI primitives
+//  shared IF/IW/IP/IPF/SET_VEL/LOCK/SET_SPIN/FLR/CEL/RND primitives
 //  and docs/scenarios.h for the group-function contract.
 // ==========================================================================
 
@@ -135,7 +135,7 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         const int nV = 24;
         const int mc = RND(midF);
         for (int i = 0; i < nV; i++) {
-            double angle = (2.0 * SCN_PI * i) / nV;
+            double angle = (2.0 * PI * i) / nV;
             int rx = RND(midF + vRadius * std::cos(angle));
             int rz = RND(midF + vRadius * std::sin(angle));
             double tX = -std::sin(angle) * amp * 2.0;
@@ -221,7 +221,7 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         const int bR = N / 6;
         const int mc = RND(midF);
         for (int k = 0; k < 3; k++) {
-            double angle = (2.0 * SCN_PI * k) / 3.0;
+            double angle = (2.0 * PI * k) / 3.0;
             int bx = RND(midF + bR * std::cos(angle));
             int bz = RND(midF + bR * std::sin(angle));
             IP(rb, bx, mc, bz, 1);
@@ -290,7 +290,7 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "flux-triad") {
         const int tR = N / 6;
-        const double triAng[3] = { 0, 2 * SCN_PI / 3, 4 * SCN_PI / 3 };
+        const double triAng[3] = { 0, 2 * PI / 3, 4 * PI / 3 };
         for (int t = 0; t < 3; t++) {
             double angle = triAng[t];
             int px = mid + RND(tR * std::cos(angle));

@@ -37,7 +37,7 @@ export class CosmicRenderer extends BaseRenderer {
         this._starCloud = null;
         this._gasCloud = null;
         this._dmCloud = null;
-        this._bhMeshes = [];
+        this._nebulaCloud = null;   // populated lazily by _ensureCloud('nebula', …)
         this._bgStars = null;
 
         // Subclass-specific geometry teardown. Called by BaseRenderer.dispose()
@@ -54,8 +54,13 @@ export class CosmicRenderer extends BaseRenderer {
             this._starCloud = disposeCloud(this._starCloud);
             this._gasCloud = disposeCloud(this._gasCloud);
             this._dmCloud = disposeCloud(this._dmCloud);
+            this._nebulaCloud = disposeCloud(this._nebulaCloud);  // CR-H2 fix
             this._bgStars = disposeCloud(this._bgStars);
 
+            // Black-hole meshes are created via `_group.add(sphere, ...)` and
+            // tracked in `_bhMeshCache` keyed by body id. The cache.forEach
+            // walk reaches every mesh in every bundle (sphere, corona, disk,
+            // disk2, einstein, glow, jetUp, jetDown).
             const disposeBundle = (bundle) => {
                 if (!bundle) return;
                 Object.values(bundle).forEach(mesh => {
@@ -63,10 +68,6 @@ export class CosmicRenderer extends BaseRenderer {
                     if (mesh && mesh.material) mesh.material.dispose();
                 });
             };
-            if (this._bhMeshes && this._bhMeshes.length > 0) {
-                this._bhMeshes.forEach(disposeBundle);
-            }
-            this._bhMeshes = [];
             if (this._bhMeshCache) {
                 this._bhMeshCache.forEach(disposeBundle);
                 this._bhMeshCache.clear();

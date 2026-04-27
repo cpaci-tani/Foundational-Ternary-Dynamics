@@ -28,7 +28,7 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
     if (name == "quantum-born-rule") {
         const double sigma = N / 8.0;
         const double amp = K_B * 2.0;
-        const double theta = urand() * 2.0 * SCN_PI;
+        const double theta = urand() * 2.0 * PI;
         const int pulseR = std::min(CEL(sigma * 3), mid - 1);
         for (int dz = -pulseR; dz <= pulseR; dz++) for (int dy = -pulseR; dy <= pulseR; dy++) for (int dx = -pulseR; dx <= pulseR; dx++) {
             double val = amp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2 * sigma * sigma));
@@ -88,7 +88,7 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         for (int n = 1; n <= 8; n++) {
             double amp_n = K_B * 0.5 / n;
             for (int x = wallA + 1; x < wallB; x++) for (int y = 0; y < N; y++) for (int z = 0; z < N; z++) {
-                double val = amp_n * std::sin(n * SCN_PI * (x - wallA) / double(boxLength));
+                double val = amp_n * std::sin(n * PI * (x - wallA) / double(boxLength));
                 if (std::fabs(val) > 1e-6) IF(rb, x, y, z, 0, val, 0);
             }
         }

@@ -51,6 +51,7 @@ import { runSetupScenario } from './bridge/scenarios/index.js';
 // which now lives in that module. See docs/SPEC_REFACTOR_LARGE_FILES.md §4.
 
 // ── Mock Bridge ────────────────────────────────────────────────────
+/** @implements {import('./bridge/bridge-contract.js').ScaleBridge} */
 export class MockBridge {
     constructor(latticeSize = 32) {
         this.latticeSize = latticeSize;
@@ -711,10 +712,22 @@ export class MockBridge {
         this._pdVelocities = null;
         this._pdBufCap = 0;
         this._particles = [];
-        // Diagnostic helpers and samplers may hold caches that reach back
-        // into the bridge state; null the helper refs to break the cycle.
+        // Lattice-side typed arrays missed by the prior null-sweep
+        // (Bridge-M3 audit, 2026-04-27).
+        this._stateGrid = null;
+        this._selectiveDampMask = null;
+        this._boundaryMask = null;
+        this._latencyProxy = null;
+        this._latencyProxyTick = -1;
+        // Diagnostic + sampler factories close over `this` (Bridge-M4
+        // audit). Null them to break the cycle so V8 can collect.
         this._diagnostics = null;
         this._samplers = null;
+        this._peEngine = null;
+        this._aeEngine = null;
+        // Drop any harness instance the panels lazy-attached to us.
+        // Key string mirrors physics/index.js HARNESS_KEY.
+        delete this.__ftdPhysicsHarness__;
     }
 
     getConstants() {
@@ -1429,6 +1442,7 @@ function _wasmCallOr(bridge, methodName, fallback, fn) {
     return fn(bridge._module, bridge._bridge);
 }
 
+/** @implements {import('./bridge/bridge-contract.js').ScaleBridge} */
 export class WasmBridge {
     constructor() {
         this._module = null;
@@ -1493,6 +1507,21 @@ export class WasmBridge {
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
         if (this._module) {
+            // Bridge-H2 (audit 2026-04-27): the C++ ParticleEngine and
+            // AtomEngine handles cached on `this._pe`/`this._ae` are
+            // bound to the OLD RenderBridge; once we destroy the old
+            // bridge they're invalid. Drop them so the next access
+            // path re-acquires fresh handles via the new RenderBridge.
+            // Same logic for the JS-side _aeFallback (a MockBridge)
+            // and the lazy-attached physics harness.
+            if (this._pe) { try { this._pe.delete?.(); } catch {} this._pe = null; }
+            if (this._ae) { try { this._ae.delete?.(); } catch {} this._ae = null; }
+            if (this._aeFallback?.dispose) {
+                try { this._aeFallback.dispose(); } catch {}
+                this._aeFallback = null;
+            }
+            delete this.__ftdPhysicsHarness__;
+
             // Delete the old bridge BEFORE allocating the new one so peak
             // memory stays at one bridge worth (not two). At L=96 a single
             // RenderBridge allocates ~325 MB; build-then-swap would peak
@@ -1509,6 +1538,27 @@ export class WasmBridge {
             }
             this._bridge = new this._module.RenderBridge(this.latticeSize);
         }
+    }
+
+    /**
+     * Tear down the WasmBridge: delete the C++ RenderBridge + sub-
+     * engine handles, drop the JS-side AE-fallback MockBridge, drop
+     * the lazy-attached harness. Idempotent. Symmetric with
+     * MockBridge.dispose() (Bridge-H1 audit fix, 2026-04-27).
+     */
+    dispose() {
+        if (this._pe) { try { this._pe.delete?.(); } catch {} this._pe = null; }
+        if (this._ae) { try { this._ae.delete?.(); } catch {} this._ae = null; }
+        if (this._aeFallback?.dispose) {
+            try { this._aeFallback.dispose(); } catch {}
+            this._aeFallback = null;
+        }
+        if (this._bridge) {
+            try { this._bridge.delete(); } catch {}
+            this._bridge = null;
+        }
+        delete this.__ftdPhysicsHarness__;
+        this.ready = false;
     }
 
     injectParticle(x, y, z, state) {
@@ -1652,6 +1702,17 @@ export class WasmBridge {
     getEFieldSampled(stride = 2) {
         return _wasmCallOr(this, 'getEFieldSampled', EMPTY_FIELD_SAMPLE,
             (m, b) => m.getEFieldSampled(b, stride));
+    }
+    /**
+     * Sample the engine's Coulomb potential field along a ray.
+     * Returns { positions, V, count } via zero-copy typed_memory_view.
+     * Falls back to {count: 0} when WASM doesn't support it (older
+     * builds) — caller should detect and use JS-side getEFieldSampled
+     * + interpolation as a fallback.
+     */
+    sampleVAtRay(x1, y1, z1, x2, y2, z2, n) {
+        return _wasmCallOr(this, 'sampleVAtRay', { positions: new Float32Array(0), V: new Float32Array(0), count: 0 },
+            (m, b) => m.sampleVAtRay(b, x1, y1, z1, x2, y2, z2, n));
     }
     getBFieldSampled(stride = 2) {
         return _wasmCallOr(this, 'getBFieldSampled', EMPTY_FIELD_SAMPLE,

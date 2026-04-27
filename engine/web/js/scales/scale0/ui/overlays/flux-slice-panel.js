@@ -35,7 +35,7 @@ import {
     rampVorticity,
     rampCharge,
 } from '../../../../viewport/color-ramps.js';
-import { getFieldStateSnapshot } from '../../state/store.js';
+import { getFieldStateSnapshot, getScale0State } from '../../state/store.js';
 
 const DEFAULT_CANVAS_PX = 220;
 const DENSE_CANVAS_PX = 160; // shrink when >2 active rows are visible
@@ -268,11 +268,22 @@ export class FluxSlicePanel {
      * @param {() => any} opts.getBridge   - returns the live bridge
      * @param {number} [opts.canvasPx]     - per-canvas size in CSS pixels (default 220)
      * @param {number} [opts.updateEvery]  - sample/render every Nth frame (default 2)
+     * @param {boolean} [opts.dockMode]    - when true, render in side-panel dock
+     *                                        layout: no toggle chip, no close X,
+     *                                        no display:none gate, ResizeObserver
+     *                                        drives canvas size; expand button
+     *                                        toggles a full-size modal overlay.
      */
-    constructor({ getBridge, canvasPx = DEFAULT_CANVAS_PX, updateEvery = 2 } = {}) {
+    constructor({ getBridge, canvasPx = DEFAULT_CANVAS_PX, updateEvery = 2, dockMode = false } = {}) {
         this.getBridge = getBridge;
         this.canvasPx = canvasPx | 0;
         this.updateEvery = Math.max(1, updateEvery | 0);
+        this._dockMode = !!dockMode;
+        this._canvasPx = this.canvasPx;       // per-frame target; updated by ResizeObserver in dock mode
+        this._expanded = false;
+        this._dockHost = null;                // dock container element
+        this._expandModal = null;             // active expand-modal element when expanded
+        this._resizeObs = null;
 
         this.visible = false;
         this.frameCount = 0;
@@ -327,7 +338,19 @@ export class FluxSlicePanel {
         const panel = document.createElement('div');
         panel.id = 'flux-slice-panel';
         panel.className = 'scale0-only flux-slice-panel';
-        panel.style.display = 'none';
+        if (this._dockMode) {
+            // Dock mode: panel fills its host (the side-panel slot) and is always
+            // visible while its tab is active. No display:none toggle, no chip.
+            panel.classList.add('dock-mode');
+            panel.style.position = 'relative';
+            panel.style.width = '100%';
+            panel.style.background = 'transparent';
+            panel.style.border = 'none';
+            panel.style.boxShadow = 'none';
+            this.visible = true;
+        } else {
+            panel.style.display = 'none';
+        }
 
         // Validate ramp registry — fall back to viridis with a warning if
         // anything went wrong with imports.
@@ -337,6 +360,13 @@ export class FluxSlicePanel {
                 drv.ramp = rampViridis;
             }
         }
+
+        const trailingButton = this._dockMode
+            ? `<button type="button" class="flux-slice-expand chart-card-expand"
+                       title="Expand flux slices to full-size modal"
+                       aria-label="Expand flux slices">⛶</button>`
+            : `<button type="button" class="flux-slice-close"
+                       aria-label="Hide flux slices">×</button>`;
 
         panel.innerHTML = `
             <div class="flux-slice-header">
@@ -355,8 +385,7 @@ export class FluxSlicePanel {
                 <button type="button" class="flux-slice-reset-mirror"
                         title="Clear all per-field overrides; revert to mirroring the visualization panel"
                         disabled>Reset mirror</button>
-                <button type="button" class="flux-slice-close"
-                        aria-label="Hide flux slices">×</button>
+                ${trailingButton}
             </div>
             <div class="flux-slice-rows">
                 ${FIELD_DRIVERS.map(d => this._rowHTML(d)).join('')}
@@ -364,6 +393,7 @@ export class FluxSlicePanel {
         `;
         parentEl.appendChild(panel);
         this._panel = panel;
+        this._dockHost = this._dockMode ? parentEl : null;
         this._rowsContainer = panel.querySelector('.flux-slice-rows');
         this._resetMirrorBtn = panel.querySelector('.flux-slice-reset-mirror');
 
@@ -380,19 +410,30 @@ export class FluxSlicePanel {
             chip.addEventListener('click', () => this._cycleOverride(drv.key));
         }
 
-        // Toggle chip (panel show/hide)
-        const chip = document.createElement('button');
-        chip.type = 'button';
-        chip.id = 'flux-slice-toggle';
-        chip.className = 'scale0-only flux-slice-chip';
-        chip.title = 'Toggle live flux slice diagnostics (xy/xz/yz across enabled fields)';
-        chip.textContent = 'Flux slices';
-        chip.addEventListener('click', () => this.toggle());
-        parentEl.appendChild(chip);
-        this._chip = chip;
+        // Toggle chip — only mounted in overlay (legacy floating) mode. Dock
+        // mode uses the side-panel tab as the show/hide control.
+        if (!this._dockMode) {
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.id = 'flux-slice-toggle';
+            chip.className = 'scale0-only flux-slice-chip';
+            chip.title = 'Toggle live flux slice diagnostics (xy/xz/yz across enabled fields)';
+            chip.textContent = 'Flux slices';
+            chip.addEventListener('click', () => this.toggle());
+            parentEl.appendChild(chip);
+            this._chip = chip;
 
-        panel.querySelector('.flux-slice-close')
-            ?.addEventListener('click', () => this.setVisible(false));
+            panel.querySelector('.flux-slice-close')
+                ?.addEventListener('click', () => this.setVisible(false));
+        } else {
+            // Dock mode: wire expand button + start ResizeObserver-driven
+            // canvas sizing. The panel always self-drives; visibility is
+            // managed by the dock's tab system, not the panel.
+            panel.querySelector('.flux-slice-expand')
+                ?.addEventListener('click', () => this.toggleExpanded());
+            this._setupResizeObserver();
+            this._startSelfDrive();
+        }
 
         // Header axis toggles — independent xy/xz/yz visibility, applies
         // to every visible row simultaneously.
@@ -768,11 +809,17 @@ export class FluxSlicePanel {
             slot.currentN = N;
         }
 
-        // Refresh the visible canvas size if the panel just toggled to/from
-        // dense mode (rare; only when the active row count crosses the
-        // threshold).
-        const desiredPx = this._panel?.classList.contains('dense')
-            ? DENSE_CANVAS_PX : this.canvasPx;
+        // Refresh the visible canvas size. In dock mode, _canvasPx is updated
+        // by the ResizeObserver as the side panel resizes; in overlay mode, it
+        // toggles between DEFAULT_CANVAS_PX and DENSE_CANVAS_PX based on the
+        // active-row count.
+        let desiredPx;
+        if (this._dockMode && !this._expanded) {
+            desiredPx = this._canvasPx | 0;
+        } else {
+            desiredPx = this._panel?.classList.contains('dense')
+                ? DENSE_CANVAS_PX : this.canvasPx;
+        }
         if (slot.canvas.width !== desiredPx || slot.canvas.height !== desiredPx) {
             slot.canvas.width = desiredPx;
             slot.canvas.height = desiredPx;
@@ -807,10 +854,183 @@ export class FluxSlicePanel {
         return v.toFixed(3);
     }
 
+    // ── Dock-mode helpers ─────────────────────────────────────────────
+
+    /**
+     * Computes per-tile canvas size from the available container width so
+     * the configured visible axes fit horizontally without overflow.
+     *
+     * Budget breakdown (matched to dock-mode CSS in toolbar.css):
+     *   label column        56 px
+     *   label-to-tiles gap   8 px
+     *   panel inner padding 24 px (12+12)
+     *   inter-tile gap       6 × (visibleAxes - 1)
+     *   scrollbar safety    10 px
+     *
+     * Lower clamp 64px keeps tiles legible on the smallest dock width
+     * (320px → ~64px tiles for all 3 axes); upper clamp 220px matches
+     * the overlay-mode default so dock and overlay agree at large widths.
+     */
+    _computeDockTileSize(containerWidth) {
+        const visibleAxes = Math.max(
+            1,
+            Object.values(this._axisVisible).filter(Boolean).length,
+        );
+        const tileGaps = 6 * (visibleAxes - 1);
+        const overhead = 56 + 8 + 24 + tileGaps + 10;
+        const usable = Math.max(60, containerWidth - overhead);
+        const px = Math.floor(usable / visibleAxes);
+        return Math.max(64, Math.min(220, px));
+    }
+
+    _setupResizeObserver() {
+        if (!this._dockMode || typeof ResizeObserver === 'undefined') return;
+        const host = this._dockHost;
+        if (!host) return;
+        // Observe #panel-area (the side-panel slot) and NOT the host: the
+        // host inherits its own overflow once tiles render too wide, so it
+        // would feed the formula an inflated width and lock in 220px tiles.
+        // panel-area's contentRect is the true sizing budget.
+        const budgetEl = document.getElementById('panel-area') || host;
+        let lastPx = -1;
+        const measure = (rect) => {
+            const cs = getComputedStyle(budgetEl);
+            const padX = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+            const w = (rect?.width ?? budgetEl.getBoundingClientRect().width) - padX;
+            if (w <= 0) return;
+            const target = this._computeDockTileSize(w);
+            if (target === lastPx) return;
+            lastPx = target;
+            this._canvasPx = target;
+        };
+        this._resizeObs = new ResizeObserver((entries) => {
+            for (const entry of entries) measure(entry.contentRect);
+        });
+        this._resizeObs.observe(budgetEl);
+        // Seed once synchronously so the first paint uses a sensible size.
+        measure();
+    }
+
+    /**
+     * Toggle a full-size modal-style overlay containing the same panel
+     * DOM. The panel root is reparented (not cloned) so all per-row
+     * state (overrides, slots, autoscale) carries over with zero
+     * coupling. Click the X (or backdrop) to return to the dock.
+     */
+    toggleExpanded() {
+        if (!this._dockMode || !this._panel) return;
+        if (this._expanded) {
+            this._collapse();
+        } else {
+            this._expand();
+        }
+    }
+
+    _expand() {
+        if (this._expanded) return;
+        const panel = this._panel;
+        const host = this._dockHost;
+        if (!panel || !host) return;
+
+        // Backdrop scrim
+        const scrim = document.createElement('div');
+        scrim.className = 'flux-slice-expand-scrim';
+        scrim.setAttribute('role', 'presentation');
+        Object.assign(scrim.style, {
+            position: 'fixed', inset: '0',
+            background: 'rgba(0, 0, 0, 0.55)',
+            zIndex: '199',
+            backdropFilter: 'blur(2px)',
+        });
+
+        // Modal frame
+        const modal = document.createElement('div');
+        modal.className = 'flux-slice-expand-modal';
+        Object.assign(modal.style, {
+            position: 'fixed',
+            inset: '4vh 4vw',
+            // Cap on ultrawide / very tall: keeps the 5×3 tile grid from
+            // ballooning awkwardly on 21:9 / 32:9 displays.
+            maxWidth: '1600px',
+            maxHeight: '1100px',
+            margin: 'auto',
+            zIndex: '200',
+            overflow: 'auto',
+            background: 'rgba(8, 12, 20, 0.96)',
+            border: '1px solid rgba(120, 200, 255, 0.35)',
+            borderRadius: '8px',
+            padding: '10px 12px',
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
+        });
+
+        // Move the panel root into the modal (no clone — preserve state).
+        const dockSlot = document.createComment('flux-slice-panel-dock-slot');
+        host.replaceChild(dockSlot, panel);
+        modal.appendChild(panel);
+
+        // Tweak panel styling for expand-mode.
+        panel.dataset.modeOriginal = 'dock';
+        panel.classList.add('expand-mode');
+        // In expand-mode we want the original full-size canvases.
+        // Using a large target signals the painter to allocate full size.
+        this._canvasPx = DEFAULT_CANVAS_PX;
+
+        const close = () => this._collapse();
+        scrim.addEventListener('click', close);
+        // Add an X close button to the modal
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.textContent = '×';
+        Object.assign(closeBtn.style, {
+            position: 'absolute', top: '8px', right: '12px',
+            background: 'none', border: 'none', color: 'var(--text-secondary, #aaa)',
+            fontSize: '24px', cursor: 'pointer', zIndex: '210',
+        });
+        closeBtn.setAttribute('aria-label', 'Close expanded flux slices');
+        closeBtn.addEventListener('click', close);
+        modal.appendChild(closeBtn);
+
+        document.body.appendChild(scrim);
+        document.body.appendChild(modal);
+
+        this._expandModal = modal;
+        this._expandScrim = scrim;
+        this._dockSlotMarker = dockSlot;
+        this._expanded = true;
+    }
+
+    _collapse() {
+        if (!this._expanded) return;
+        const panel = this._panel;
+        const host = this._dockHost;
+        const marker = this._dockSlotMarker;
+        if (panel && host && marker && marker.parentNode === host) {
+            host.replaceChild(panel, marker);
+        } else if (panel && host) {
+            // Fallback: append back to host.
+            host.appendChild(panel);
+        }
+        this._expandModal?.remove();
+        this._expandScrim?.remove();
+        this._expandModal = null;
+        this._expandScrim = null;
+        this._dockSlotMarker = null;
+        panel?.classList.remove('expand-mode');
+        this._expanded = false;
+        // Resume dock-sized canvases.
+        if (host) {
+            this._canvasPx = this._computeDockTileSize(host.getBoundingClientRect().width || 380);
+        }
+    }
+
     // ── Teardown ──────────────────────────────────────────────────────
 
     dispose() {
+        this._disposed = true;     // self-drive guard (Audit pass 2 FLUX-2)
         this._stopSelfDrive();
+        if (this._expanded) this._collapse();
+        this._resizeObs?.disconnect();
+        this._resizeObs = null;
         this._panel?.remove();
         this._chip?.remove();
         this._panel = null;
@@ -818,6 +1038,13 @@ export class FluxSlicePanel {
         this._fields = {};
         this._rowsContainer = null;
         this._resetMirrorBtn = null;
+        this._dockHost = null;
+        // Clear the window-singleton ref so the detached panel subtree
+        // is GC-eligible. (Audit pass 2: cross-cutting __ftd*Panel
+        // retention fix.)
+        if (typeof window !== 'undefined' && window.__ftdFluxSlicePanel === this) {
+            window.__ftdFluxSlicePanel = null;
+        }
     }
 }
 
@@ -846,6 +1073,45 @@ export function mountFluxSlicePanel(parentEl, getBridge) {
     }
     const panel = new FluxSlicePanel({ getBridge });
     panel.init(parentEl);
+    if (typeof window !== 'undefined') window.__ftdFluxSlicePanel = panel;
+    return panel;
+}
+
+/**
+ * Side-panel-tab init function. Mounts the flux-slice panel inside the
+ * #panel-flux-slice slot in dock mode, with auto-shrinking tile sizing
+ * driven by ResizeObserver and an expand button for full-size modal
+ * inspection.
+ *
+ * Idempotent: calling twice reuses the singleton at window.__ftdFluxSlicePanel.
+ *
+ * Bridge resolution: at the time this function runs from app_dag.js,
+ * window.__ftdCtx may not yet exist. The getBridge callback is evaluated
+ * per frame inside the panel's update loop, so it gracefully handles a
+ * null context until the Scale 0 controller initializes. When the active
+ * scenario uses MockBridge for flux dynamics (state.useFluxMock), reads
+ * are routed through the mock to avoid stale-data heatmaps.
+ */
+export function initFluxSlicePanel() {
+    if (typeof document === 'undefined') return null;
+    const host = document.getElementById('panel-flux-slice');
+    if (!host) return null;
+    const getBridge = () => {
+        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+        if (!ctx) return null;
+        const state = getScale0State?.();
+        if (state?.useFluxMock && state?.fluxMock) return state.fluxMock;
+        return ctx.bridge;
+    };
+    if (typeof window !== 'undefined' && window.__ftdFluxSlicePanel) {
+        const existing = window.__ftdFluxSlicePanel;
+        existing.getBridge = getBridge;
+        // If a prior overlay-mode panel exists, leave it alone — the dock
+        // slot is empty in that case (user has the legacy chip).
+        return existing;
+    }
+    const panel = new FluxSlicePanel({ getBridge, dockMode: true });
+    panel.init(host);
     if (typeof window !== 'undefined') window.__ftdFluxSlicePanel = panel;
     return panel;
 }

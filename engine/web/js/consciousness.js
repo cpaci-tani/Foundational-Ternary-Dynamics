@@ -227,8 +227,19 @@ export class ConsciousnessEngine {
 
     disableAudio() {
         teardownAudioGraph(this);
-        if (this._audioCtx) this._audioCtx.suspend();
+        // CS-H1 audit pass 2: fully close the AudioContext rather than
+        // just suspending. Suspended contexts are cheap but they keep
+        // the audio device pinned and the WebAudio thread alive; on
+        // long sessions or repeated enable/disable cycles, a fresh
+        // close-then-recreate is cleaner. enableAudio() is responsible
+        // for re-allocating the context if it's null.
+        const ctx = this._audioCtx;
+        this._audioCtx = null;
         this._audioEnabled = false;
+        if (ctx && ctx.state !== 'closed') {
+            // Promise; ignore — close() returns void-async, we don't need to await
+            ctx.close().catch(() => { /* defensive: ignore close errors */ });
+        }
     }
 
     // ── Per-Frame Particle Animation ──
