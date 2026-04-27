@@ -156,10 +156,18 @@ Per the user's 2026-04-26 reorientation. Four-campaign portfolio executed in a s
 | File | One-line | Status |
 |---|---|---|
 | `PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md` | Pre-registered IC × seed grid + outcome interpretations | [PROTOCOL] |
-| `ANALYSIS_EMERGENT_SPECTRUM.md` | Three-regime phase structure (vacuum / bound states / runaway crystallization) | [PARTIAL] (FTD-0102) |
+| `ANALYSIS_EMERGENT_SPECTRUM.md` | Three-regime phase structure (vacuum / bound states / runaway crystallization) at L=32 | [PARTIAL] (FTD-0102) |
+| `PROTOCOL_EMERGENT_SPECTRUM_G1.md` | G1 follow-up: pre-registered L=64 rerun with 4-outcome verdict matrix | [PROTOCOL] (tag `preregister-emergent-spectrum-g1`) |
+| `ANALYSIS_EMERGENT_SPECTRUM_G1.md` | **L=64 confirms deterministic cluster counts L-INVARIANT** (1 from point, 2 from collision; 5/5 seeds at L ∈ {32, 64}) | **[PARTIAL] (FTD-0107) — Outcome A.2 confirmed; strongest positive structural finding** |
 | `AUDIT_CONTINUUM_LIMIT.md` | M_ab(b=2) at L ∈ {16, 32, 64}; cond(S) monotone; Wilson eigenvalues non-monotone; semigroup fails | [PARTIAL] (FTD-0103) |
 | `PROTOCOL_TOPOLOGICAL_OBSERVABLES.md` | Pre-registered Wilson loop / flux tube / monopole / vacuum instanton sub-experiments | [PROTOCOL] |
 | `ANALYSIS_TOPOLOGICAL_OBSERVABLES.md` | Topology atlas at L=32 — see analysis | [PARTIAL] (FTD-0104) |
+| `AUDIT_LEMNISCATIC_SPHERE_REPLACEMENT.md` | Pre-registered horizon-area test, 4 candidates {4π, 4ϖ, 4G\*, G\*²·π/2} | [PARTIAL] (FTD-0105) |
+| `PROTOCOL_LEMNISCATIC_REPLACEMENT.md` | Pre-registration with falsifier matrix | [PROTOCOL] (tag `preregister-lemniscatic-v1`) |
+| `ANALYSIS_LEMNISCATIC_REPLACEMENT.md` | A_actual/r_h² = 18.51 (PASS-NONE strict; secondary closed-negative — lattice horizon sphere-symmetric) | [PARTIAL] (FTD-0105) |
+| `AUDIT_FTD0105_MATH_CHECK.md` | Math audit: holds with two corrigenda; verdict unchanged | [AUDIT] |
+| `AUDIT_GSTAR_ASYMMETRY_SCAN.md` | G\*/π asymmetry scan across 3 Tier-1 domains; theory-only catalog of 15 formulas + look-elsewhere expected-hits | [HYPOTHESIS] (FTD-0106) |
+| `PROTOCOL_GSTAR_ASYMMETRY_SCAN.md` | Pre-registered candidate matrix and falsifier criteria | [PROTOCOL] (tag `preregister-gstar-asymmetry-v1`) |
 
 ## Cluster 7 — Other
 
