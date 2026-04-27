@@ -166,6 +166,56 @@ Result directory: `engine/results/operator_mixing_2026-04-26/`
 
 ---
 
+## 7b · FTD-0099 extensions (pre-registered 2026-04-26, ahead of measurement)
+
+After FTD-0098 closed [PARTIAL] with the 5×5 reduced subspace and small-L all-relevant-tier compression, three direct follow-ups are pre-registered before re-running:
+
+### F1 — Multilatitude run (L = 32)
+
+Same campaign with `--L=32` CLI flag. Identical ensemble parameters except L. Pre-registered acceptance:
+- L=32 should still satisfy Q-conservation (zero violations) and the loose Gauss-residual gate (<1.0).
+- s² zero-variance is expected to persist (state saturation is L-independent at this Langevin/genesis tuning); 5×5 reduced subspace expected.
+- Hypothesis: at least one of the 5 measurable diagonal eigenvalues should shift such that its measured Δ_a crosses the relevant/marginal boundary (Δ = 3.5). If it does, declare basis-stratification as L-dependent. If all 5 still classify "relevant" at L=32, this confirms the audit's hypothesis that L≥64 is needed for clean tier separation.
+
+### F5 — RG semigroup test M(b=4) ≈ M(b=2) · M(b=2)
+
+`--b4` CLI flag enables blocking the fine snapshot twice (b=2 → b=4) per snapshot, computing both M(b=2) and M(b=4), and testing the multiplicative property predicted by the Wilsonian RG flow (composition of two b=2 steps must equal the single b=4 step on the same operator basis).
+
+Pre-registered acceptance:
+- Compute `max_relerr = max_{i,j ∈ active} |M_b4[i,j] − M_b2_squared[i,j]| / max(|M_b4[i,j]|, |M_b2_squared[i,j]|, 1e−12)` over the active subspace.
+- **PASS** if `max_relerr < 0.5` (50% — generous threshold reflecting bootstrap noise at this ensemble size).
+- **FAIL** if `max_relerr ≥ 0.5` — would indicate the regression-derived M is not strictly multiplicative; would constitute structural finding (basis is not closed under nonlinear blocking, or finite-sample noise dominates the test, or both).
+
+Threshold is loose because the M(b=4) regression operates on a coarser b=4 grid (which at L=16 is just 4³ = 64 voxels vs 16³ = 4096 fine; the moment estimate is noisier by sqrt(64) ≈ 8×).
+
+### F3 — Wilson-coefficient eigendecomposition
+
+Diagonalize the symmetric part `(M + M^T)/2` of the headline mixing matrix on the active subspace via Jacobi rotation. Output:
+- `wilson_eigenvalues[k]` for k = 0..K−1 (where K is the active-subspace dimension)
+- `Δ_eig[k] = D − log₂(λ_k)` per-eigendirection scaling dimension
+- `tier_eig[k]` (relevant / marginal / irrelevant)
+- `wilson_eigenvectors[a,k]` 6×6 column-eigenvector matrix (NaN-padded for dropped operators)
+
+Pre-registered acceptance:
+- All eigenvalues must be finite. If complex eigenvalues appear (impossible for a symmetric input by construction; would indicate a bug), abort with diagnostic.
+- This is a diagnostic-only output — no PASS/FAIL gate. The eigenvector basis IS the result. Eigenvalues that cross the relevant/marginal boundary on the eigendirection basis (when they don't in the original-operator basis) would be a stratification finding worth highlighting.
+
+### Output additions
+
+Same `engine/results/operator_mixing_2026-04-26/` directory; meta.json gains:
+- `wilson_eigenvalues`, `wilson_delta`, `wilson_tiers` (arrays of length kNumOps)
+- `include_b4`, `semigroup_test_ran`, `semigroup_max_relerr`, `semigroup_verdict`
+
+New CSV files:
+- `wilson_eigenvalues.csv`, `wilson_eigenvectors.csv`
+- `mixing_matrix_b4.csv`, `mixing_matrix_b2_squared.csv` (only if `--b4` given)
+
+### Ledger row
+
+Single new row **FTD-0099** for the F1+F5+F3 bundle. Tag determined by the empirical outcome: [MEASUREMENT] if all three extensions cleanly land; [PARTIAL] if any of them returns ill-conditioned data.
+
+---
+
 ## 8 · Cross-references
 
 - Template PROTOCOL doc: [`PROTOCOL_BETA_MEASUREMENT.md`](PROTOCOL_BETA_MEASUREMENT.md)
