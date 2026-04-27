@@ -1,212 +1,176 @@
-# Where We Left Off — 2026-04-27 evening
+# Where We Left Off — 2026-04-27 evening (full-day synthesis)
 
-**Purpose:** single entry point for the next session to recover full
-context. Supersedes the 2026-04-19 version.
+**Purpose:** single entry point for the next session. Supersedes the
+2026-04-19 version and the mid-day 2026-04-27 update.
 
-**TL;DR:** Eight days after the April 19 audit narrowed FTD's
-physics-recovery program, the engine-as-instrument portfolio (2026-04-27,
-four campaigns) narrowed it further. **All three first-principles routes
-for `g_c` (Mechanisms A, B, C) are now closed-negative** and the L2
-candidate identity 2·m_e/α = 16G*² has been terminally demoted to
-[PARAMETRIC]. The physics-recovery surface is materially smaller.
+**TL;DR (~250 words):** A long working day on FTD produced **two structurally
+load-bearing findings** at opposite epistemic poles:
 
-**But** the engine produced one genuinely novel structural finding under
-the user's reorientation toward "let the engine produce phenomena and
-measure what emerges": at L=32, generic initial conditions produce a
-**three-regime phase structure** (stable vacuum / deterministic
-bound-state regime / runaway crystallization), with bound-state cluster
-counts that are deterministic across seeds (1 cluster from point
-injection, 2 clusters from collision; 5/5 seeds in each class). This
-was not anticipated by the pre-registered outcome grid.
+1. **POSITIVE — Deterministic cluster counts are L-invariant** (FTD-0107).
+   The most novel finding from FTD-0102 — point injection gives 1 cluster
+   of ~25 voxels; collision gives 2 clusters of 3-5 voxels each; vacuum
+   stays vacuum at sub-threshold; 5/5 seeds at L=32 — **reproduces exactly
+   at L=64**. Cluster sizes are absolute (extensive scaling, not L³).
+   Three-regime phase structure (vacuum / bound states / runaway) is
+   L-invariant. The bound state has an intrinsic absolute scale.
 
-The **algebraic spine remains untouched**: master quadratic, G*, Watson
-identity, CM-curve uniqueness, Phase G geometric Coulomb — all
-[THEOREM] at the number-theoretic / lattice-Green's-function layer,
-independent of physics interpretation.
+2. **NEGATIVE — Catalog is over-rich at the monomial level** (FTD-0097
+   look-elsewhere scan executed today). 671k monomials × 20 physics
+   targets at ε = 10⁻⁴: **62 raw / 11 dedup hits vs Poisson null λ=4 →
+   NULL REJECTED upward**. χ²(df=19) = 470 raw / 38 dedup → cluster
+   non-uniformity rejected at 99.9%+ / 99%. The L2 identity 8·G\*²·α
+   appears in the scan as a chance-level fit at exactly its reported
+   68.77 ppm precision. **Confirms FTD-0094's terminal demotion to
+   [PARAMETRIC] from the methodological side.**
 
-The honest statement of FTD on 2026-04-27: a philosophy-of-mathematics
-project with a rigorous algebraic core and a working lattice instrument
-that produces structurally informative phenomenology. Suggestive (not
-derived) physics connections; SM-recovery program is mostly closed.
+Combined with FTD-0105 (lemniscatic 2-sphere replacement test
+closed-negative on secondary reading) and FTD-0106 (G\*/π asymmetry
+scan pre-registered, theory-only catalog showed naive substitution
+candidates 6-30% off from standard, no engine arbitration yet), the
+day's net effect is: **the algebraic spine is unchanged, the
+engine produces real structural content (deterministic cluster
+counts), and the methodological hygiene is sharpened (catalog
+over-richness ruled out at monomial level)**. What's still missing
+is the structural bridge between the two pillars — see §10.
 
 ---
 
 ## 1 · Read in this order to recover context
 
-1. **This file.** Big picture + priority queue.
+1. **This file.** Big picture + priority queue + bird's-eye assessment.
 2. **`docs/theory/07_assessment/LEDGER.md`** — single source of truth for
-   claim status across 100+ rows. Recent additions: FTD-0093 [CLOSED
-   NEGATIVE], FTD-0094 [PARAMETRIC] terminal, FTD-0102 / 0103 / 0104
-   [PARTIAL].
-3. **`docs/theory/10_eft_program/STATUS_EFT_CHECKLIST.md`** §"Engine-as-
-   Instrument Portfolio Verdict (2026-04-27)" — capstone summary of the
-   four-campaign portfolio with cross-campaign findings.
-4. **`docs/theory/10_eft_program/AUDIT_BCC_SUBLATTICE_SPECTRUM.md`** —
-   FTD-0093 closure; BCC ratio at L ∈ {24, 32, 48} = {11.76, 10.31,
-   15.24}, predicted 45.31, off by ~10σ at every L.
-5. **`docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM.md`** —
-   FTD-0102 three-regime phase structure; the most novel positive
-   finding of the portfolio.
-6. **`docs/theory/10_eft_program/AUDIT_CONTINUUM_LIMIT.md`** — FTD-0103
-   continuum-limit at L=64; cond(S) monotone, eigenvalues non-monotone.
-7. **`docs/theory/10_eft_program/ANALYSIS_TOPOLOGICAL_OBSERVABLES.md`**
-   — FTD-0104 topology atlas (Wilson, flux tube, monopole, vacuum
-   instanton).
-8. **`docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`** —
-   foundational ontology (undefined-boundary, not completed-infinity).
-   Unchanged since April 19.
-9. **`docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`** — Phase I
-   audit + CM uniqueness. Unchanged at the algebraic-spine level.
-10. **`CHANGELOG.md` top section** — April 27 entries.
+   claim status (now ~108 rows; recent additions FTD-0093 [CLOSED NEGATIVE],
+   FTD-0094 [PARAMETRIC] terminal, FTD-0102 [PARTIAL], FTD-0103 [PARTIAL],
+   FTD-0104 [PARTIAL], FTD-0105 [PARTIAL], FTD-0106 [HYPOTHESIS],
+   FTD-0107 [PARTIAL — L-invariant structural], FTD-0097 [MEASURED]).
+3. **`docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`** (created
+   today, 2026-04-27) — canonical theorems-only reference. The seven
+   [THEOREM]s remain unchanged across all of today's work.
+4. **`docs/theory/09_mathematical/EXPLR_CM_RATIO_TOWER.md`** (created
+   today) — 9-Heegner Chowla-Selberg tower. Operationalises the CM
+   uniqueness theorem with concrete numerical tabulation.
+5. **`docs/theory/10_eft_program/STATUS_EFT_CHECKLIST.md`**
+   §"Engine-as-Instrument Portfolio Verdict (2026-04-27)" — capstone
+   summary of the four-campaign portfolio.
+6. **Today's seven AUDIT/ANALYSIS docs** in `docs/theory/10_eft_program/`:
+   `AUDIT_BCC_SUBLATTICE_SPECTRUM.md` (FTD-0093 closed),
+   `ANALYSIS_EMERGENT_SPECTRUM.md` (FTD-0102 L=32 baseline),
+   `ANALYSIS_EMERGENT_SPECTRUM_G1.md` (FTD-0107 L=64 confirmation, **read
+   this one carefully** — it's the strongest positive finding),
+   `AUDIT_CONTINUUM_LIMIT.md` (FTD-0103),
+   `ANALYSIS_TOPOLOGICAL_OBSERVABLES.md` (FTD-0104),
+   `AUDIT_LEMNISCATIC_SPHERE_REPLACEMENT.md` + `ANALYSIS_LEMNISCATIC_REPLACEMENT.md`
+   + `AUDIT_FTD0105_MATH_CHECK.md` (FTD-0105),
+   `AUDIT_GSTAR_ASYMMETRY_SCAN.md` (FTD-0106 theory-only).
+7. **`docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md`** (created
+   today) — D7 deliverable for FTD-0097. Honest enumeration of all 421
+   hits at ε ≤ 10⁻³ (cherry-picking closure).
+8. **`docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`** (April 19) —
+   foundational ontology commitment, unchanged.
+9. **`CHANGELOG.md` top section + LEDGER changelog** — chronological view of
+   today's commits.
 
 Everything else is supporting detail.
 
 ---
 
-## 2 · Current claim tally (post-2026-04-27)
+## 2 · Current claim tally (post-2026-04-27 evening)
 
-### Firm [THEOREM] (algebraic spine — UNCHANGED across the portfolio)
+### Firm [THEOREM] (algebraic spine — UNCHANGED across today's work)
 
-- **G*** = Γ(1/4)/Γ(3/4) algebraic identity (Chowla-Selberg)
-- **Master quadratic polynomial** x² − 16G*²x + 16G*³ = 0, roots
-  137.036 and 3.024 (pure algebra; no dynamics invoked)
-- **CM curve uniqueness** d = −4 unique among class-number-1 fields
-- **Phase G emergent Coulomb** α_r(r, L) = 2·r·G_L(r) with R² = 1.0000
-- **Phase J partition-function ultralocality**
-- **Watson identity** W₃ = G*²/(2π) (BCC eigenvalue triple cosine product)
+The seven theorems of `SPEC_ALGEBRAIC_SPINE.md`:
 
-### Finitary [THEOREM]
+1. **G\*** = Γ(1/4)/Γ(3/4) algebraic identity
+2. **Master quadratic** x² − 16G\*²x + 16G\*³ = 0, roots x_+ ≈ 137.036, x_- ≈ 3.024
+3. **CM uniqueness** at d = −4 among class-number-1 fields (now operationally
+   tabulated in `EXPLR_CM_RATIO_TOWER.md`)
+4. **Coefficient 16 = |Aut(E)|²** for E: y² = x³ − x
+5. **Watson identity** W₃ = G\*²/(2π)
+6. **Phase G geometric Coulomb** α_r(r, L) = 2r·G_L(r)
+7. **Phase J ultralocality** of the classical FTD action
 
-- Moore integers {N_base = 4, N_eff = 13, b_3 = 7} uniqueness
-- Coefficient 16 = |Aut(E)|² (3 independent arithmetic routes)
-- Phase H coupling scaling α_r(g_c) = g_c² · α_r(1)
-- D = 3 from |Aut(E)|² = 2^D · (D−1)!
-- Structural nulls: N_monopole = 0, N_SUSY = 0, τ_proton = ∞
-- **a_phys ≡ ℓ_P** no-go (FTD-0059): no length expressible from
-  Axiom-Zero invariants
+Plus subsidiaries: Moore integers uniqueness, D=3 from |Aut(E)|² = 2^D·(D−1)!,
+a_phys ≡ ℓ_P no-go (FTD-0059), Phase H coupling scaling, structural nulls.
 
 ### [STRONGLY MOTIVATED CONJECTURE]
 
-- **x+ = 1/α** physical identification (1.26 ppm)
-- **x− = N_c** physical identification (0.80%)
-- **m_e = m_P √(2π) (16/3) α¹¹** (0.19%)
-- **m_p / m_e = N_eff/α + N_base·N_eff + N_c** (173 ppm)
+- **x_+ = 1/α** at 1.26 ppm (master quadratic root, NOT a monomial — FTD-0097
+  scan does not directly evaluate it)
+- **x_- = N_c** at 0.80%
+- **Master quadratic dual prediction property** (x_+ AND x_- simultaneously
+  matching unrelated physical sectors)
 
-### [PARAMETRIC] — terminal as of 2026-04-27
+### [PARTIAL] — engine-as-instrument measurements (today)
 
-- **g_c (gauge coupling)** — ALL three first-principles routes
-  (Mechanisms A, B, C) closed negative (FTD-0031, FTD-0093). g_c is an
-  empirical input.
-- **2·m_e/α = 16G*²** (L2 candidate identity, FTD-0094) — terminally
-  demoted on 2026-04-27 per pre-registered closure criterion (FTD-0093
-  closed AND FTD-0096 μ-arrow remains [OPEN]).
-- **sin²θ_W = 3/13**, **sin²θ_13 = 1/52**, **α_s = 7/59** — already
-  demoted on April 19.
-- PMNS angles, CKM angles, Yukawa structure, 3-generations — never
-  promoted past [PARAMETRIC]; explicitly out of scope per the user's
-  2026-04-26 reorientation.
+- **FTD-0102 + FTD-0107 emergent phase structure** at L ∈ {32, 64}: three
+  regimes; deterministic cluster counts (1 from point, 2 from collision;
+  5/5 seeds at BOTH L); cluster sizes absolute (extensive scaling at L=64).
+  **Strongest positive structural finding of the engine-as-instrument program.**
+- **FTD-0103 continuum-limit**: cond(S) monotone improving at L ∈ {16, 32, 64};
+  Wilson eigenvalue positivity non-monotonic; semigroup fails.
+- **FTD-0104 topology atlas**: 4 sub-experiments (Wilson, flux tube, monopole,
+  vacuum instanton) with shared schema, clean grid match across all.
+- **FTD-0105 lemniscatic 2-sphere test**: PASS-NONE strict; secondary
+  closed-negative — lattice horizon is sphere-symmetric.
 
-### [PARTIAL] — engine-as-instrument measurements (2026-04-27)
+### [MEASURED] — methodological-hygiene scans
 
-- **FTD-0102 emergent phase structure** (L=32): three regimes
-  recovered; deterministic cluster counts (1 from point injection, 2
-  from collision; 5/5 seeds each).
-- **FTD-0103 continuum-limit M_ab(b=2)**: cond(S) monotone improving
-  L=16/32/64 (factor 18); Wilson eigenvalues non-monotonic; semigroup
-  fails at all L.
-- **FTD-0104 topology atlas**: Wilson trace 0.092 ± 0.015, flux tube
-  survives L=32, monopole core stable, Q_top fluctuates with σ ≈ 0.4.
+- **FTD-0097 look-elsewhere scan**: NULL REJECTED upward (catalog over-rich
+  at monomial level, ε = 10⁻⁴). χ²(df=19) = 470 raw / 38 dedup. Confirms
+  FTD-0094 [PARAMETRIC] from methodological side.
 
-### [OPEN] — what's actually left
+### [HYPOTHESIS] — pre-registered, not yet executed
 
-| Item | Status |
-|---|---|
-| **FTD-0096 μ-from-ℓ_P missing arrow** | [OPEN]. Mass-unit characterization independent of m_e. Two paths: extend FTD-0059's no-go to mass, or construct a counter-model. Either closes the L2 identity question structurally. |
-| **FTD-0102 G1 follow-up** (L=64 multilatitude rerun) | Highest-leverage measurement queued. Either the deterministic cluster counts persist (structural) or dilute (finite-L artifact). One GPU evening. |
-| **FTD-0102 G2-G5** (critical-T bisection, momentum injection, mass-spectrum binning, critical exponents) | Structural follow-ups to the phase-boundary finding. |
-| **Chowla-Selberg extension** to class-number ≥ 2 | Strengthens CM uniqueness to a much wider field range. ~2 days. |
-| **Master quadratic paper** (April 19 Option 1) | Still the highest-value publication artifact. The portfolio close has clarified what it can and cannot claim — easier to draft now than 8 days ago. |
-| **Look-elsewhere scan** (FTD-0097) | Pre-registered HYPOTHESIS scan over polynomial combinations of FTD constants to test claim-base selectivity. Author-isolated runner exists; needs `git tag preregister-look-elsewhere-scan-v1` and execution. |
+- **FTD-0106 G\*/π asymmetry scan**: theory-only catalog committed; only
+  Domain A (heat-equation eigenvalue G\* = D^(−1/2)) has clean derivation
+  route; engine measurements deferred to per-domain tickets.
+
+### [PARAMETRIC] — terminal demotions
+
+- **g_c (gauge coupling)** — all three first-principles routes (Mechanisms
+  A, B, C; FTD-0031, FTD-0093) closed negative. Empirical input, not derived.
+- **2·m_e/α = 16G\*² (FTD-0094)** — terminally demoted today (FTD-0093
+  closure + FTD-0096 μ-arrow remaining [OPEN]). Confirmed from
+  methodological side by FTD-0097's m_e_in_MeV cluster.
+- **sin²θ_W, sin²θ_13, α_s = 7/59, PMNS angles** — already demoted April 19.
+
+### [OPEN] — what's still actually open
+
+| Item | Status | Tractability |
+|---|---|---|
+| **FTD-0096 μ-from-ℓ_P missing arrow** | [OPEN] | Theory; 1-2 weeks |
+| **WHY 25 voxels for ic1 cluster?** | [OPEN] (NEW today) | Theory; 1-3 days |
+| **L=128 confirmation of FTD-0107** | [OPEN] | Engine; 4-8 GPU hours |
+| **FTD-0106 per-domain follow-ups** (Langevin dissipation, Coulomb phase, BH evap) | [OPEN] | Engine; ~2-4 GPU hours each |
+| **Chowla-Selberg extension to h ≥ 2** | [OPEN] | Theory; 1-2 days |
+| **The structural bridge between algebra and engine** | [OPEN] (the load-bearing gap; see §10) | Open-ended |
 
 ---
 
-## 3 · Priority queue for next session
+## 3 · Today's commits (chronological)
 
-The April 19 priority queue had Option 1 (paper) at the top and
-Option 5 (Mechanism B for g_c) at the bottom. Option 5 has now been
-closed; the queue reshapes:
+```
+ccf8a89  docs: 2026-04-27 recalibration + canonical algebraic-spine reference
+7bc2185  EFT FTD-0105 pre-registration: lemniscatic replacement for the 2-sphere
+f13d0e6  EFT FTD-0105 measurement: lemniscatic horizon-area test → PASS-NONE
+2e76704  EFT FTD-0105 math audit: holds with two corrigenda
+edd1349  EFT FTD-0106 pre-registration: G*/π asymmetry scan
+9c602bf  math: tabulate Chowla-Selberg ratios at all 9 Heegner numbers
+37ea371  EFT FTD-0107 pre-registration: emergent-spectrum G1 follow-up at L=64
+6f7d138  theory: G* monograph + foundations follow-ups
+1d52709  web engine: lattice cleanup pass
+a0983ca  EFT FTD-0107: emergent-spectrum L=64 first run
+c8dca17  EFT FTD-0107 measurement: L=64 confirms deterministic cluster counts
+e5f7045  infra: line-ending rules, results gitignore, WASM batch, commit-msg hook
+ebc5178  tooling: look-elsewhere scan runner (FTD-0097)
+f11dcaa  FTD-0097 pre-registration lock: SHA256 hash + git tag
+5bfacf8  EFT FTD-0097 executed: look-elsewhere scan → NULL REJECTED upward
+```
 
-### Option 1 — Master quadratic paper (still highest)
-
-Target: 15-20 page mathematical-physics note on the polynomial identity
-and CM uniqueness. The post-portfolio version is **strictly easier to
-write** because the program's claims are now clearly bounded:
-
-- The algebraic spine is the load-bearing claim
-- Physics identifications are [STRONGLY MOTIVATED CONJECTURE], explicitly
-- The engine is described as a verification artifact for the geometric
-  Coulomb identity, NOT as a derivation of α
-- The look-elsewhere question is acknowledged and tagged
-
-The paper now has a clean shape: theorem + uniqueness + dual numerical
-match + acknowledgment that the physics identification is structurally
-motivated, not derived. **Estimate: 3-4 days of focused writing.**
-
-### Option 2 — FTD-0102 G1 follow-up: L=64 emergent spectrum rerun
-
-Highest-leverage GPU campaign queued. The deterministic cluster counts
-(1 from point, 2 from collision; 5/5 seeds at L=32) is the most novel
-positive structural finding of the entire 2026-04-27 portfolio. Either
-the pattern persists at L=64 (structural; warrants its own paper) or
-dilutes (finite-L artifact; closes the question cleanly).
-
-**Estimate: ~1 GPU evening (1-3 hours wall) + 1 day analysis.**
-
-### Option 3 — FTD-0096 μ-from-ℓ_P attack
-
-The remaining theoretical [OPEN] item with structural consequences for
-the L2 identity. Two attack paths per `OPEN_MU_FROM_LP_MISSING_ARROW.md`:
-
-(a) extend FTD-0059's ring-algebra no-go from length to mass (analogous
-    no-go closes L2 permanently);
-(b) construct a counter-model varying K_GENESIS / bridge operator that
-    satisfies master quadratic but lands K_B at different mass scale (if
-    constructible, L2 is calibration-shadowed).
-
-Either outcome closes the question. **Estimate: 1-2 weeks of theory work.**
-
-### Option 4 — Chowla-Selberg extension to class-number ≥ 2
-
-Strengthens CM uniqueness to a much wider range of fields. If it holds
-(strongly suggested by the pattern), the master quadratic uniqueness
-claim becomes considerably stronger. **Estimate: 1-2 days.**
-
-### Option 5 — Look-elsewhere scan execution (FTD-0097)
-
-Pre-registered Bayesian-chair recommendation. Runner exists; needs
-git-tag preregistration and execution. Resolves a methodological
-overhang: is FTD's constant catalog selective (genuine signal) or
-over-rich (apparent matches statistically expected)?
-
-**Estimate: half a day.**
-
-### Option 6 — Editorial pass for 2026-04-27 closures
-
-manuscript_v2/ and dissemination/papers/ both reference [DERIVED] /
-[PARAMETRIC] tags that pre-date the 2026-04-27 portfolio. Need a sweep
-to update tags consistent with the LEDGER. Not urgent; do alongside
-paper draft. **Estimate: 2-3 days mechanical work.**
-
-### Recommended order
-
-**Option 2 first** (G1 follow-up — engine evening, sharpens what we
-claim). **Then Option 1** (paper) once we know whether the
-deterministic-cluster finding holds at L=64. Option 5 (look-elsewhere
-scan) can run alongside as a half-day side task.
-
-Reasoning: the paper is the publication artifact, but its strongest
-positive content (beyond the algebraic spine) is the engine-as-
-instrument finding. Confirming it at L=64 changes the paper's shape.
+15 commits, 4 git tags applied (`preregister-lemniscatic-v1`,
+`preregister-gstar-asymmetry-v1`, `preregister-emergent-spectrum-g1`,
+`preregister-look-elsewhere-scan-v1`). Pre-registration discipline held
+on every measurement.
 
 ---
 
@@ -214,156 +178,365 @@ instrument finding. Confirming it at L=64 changes the paper's shape.
 
 In order from most to least defensible:
 
-1. **"I identified a polynomial, derived from the arithmetic of the CM
-   elliptic curve y² = x³ − x, whose two roots match 1/α and N_c
-   simultaneously to permille precision; this polynomial is unique
-   among class-number-1 CM curves to produce this dual match."** The
-   paper's core claim. Algebra + uniqueness + numerical match.
+1. **"FTD has a rigorous algebraic core: seven theorems centered on G\* =
+   Γ(1/4)²/(2√(2π)·Γ(1/2)). The master quadratic polynomial x² − 16G\*²x +
+   16G\*³ has roots x_+ = 137.036 (matching 1/α at 1.26 ppm) and x_- = 3.024
+   (matching N_c at 0.80%); this polynomial is unique among class-number-1
+   CM curves to produce this dual match. Operationally tabulated in
+   `EXPLR_CM_RATIO_TOWER.md`."** Algebraic spine + CM uniqueness + dual numerical match.
 
 2. **"The corresponding lattice simulator reproduces the lattice Poisson
-   Green's function as its Coulomb interaction exactly, with no fine-
-   structure constant in the coupling-free limit."** Phase G [THEOREM].
+   Green's function as its Coulomb interaction exactly, with no
+   fine-structure-constant content in the coupling-free limit."** Phase G
+   [THEOREM].
 
-3. **"When the simulator is run from generic initial conditions, it
-   produces a discrete phase structure with deterministic cluster
-   counts in the bound-state regime. This is engine-native phenomenology,
-   not an SM identification."** FTD-0102 [PARTIAL].
+3. **"When the simulator is run from generic initial conditions at L=32
+   AND L=64 with 5 seeds each, point injection produces exactly 1 stable
+   cluster of ~25 voxels (5/5 seeds at both L); two-injection collision
+   produces exactly 2 stable clusters (5/5 seeds at both L). The cluster
+   counts are deterministic and L-invariant; cluster sizes are absolute,
+   not lattice-relative. This is engine-native phenomenology."** FTD-0107
+   structurally confirmed.
 
-4. **"The physical identification of the polynomial's roots with α and
-   N_c is a structurally-motivated conjecture, not a derivation. All
-   three first-principles routes for the gauge coupling g_c (Mechanisms
-   A, B, C) have been closed negative, so the SM-recovery surface of
-   the program is materially smaller than 2025-era claims suggested."**
-   Honest current state.
+4. **"The physical identification of the polynomial's roots with α and N_c
+   is a structurally-motivated conjecture, not a derivation. All three
+   first-principles routes for the gauge coupling g_c (Mechanisms A, B, C)
+   have been closed negative. A pre-registered look-elsewhere scan
+   (FTD-0097, 2026-04-27) showed the FTD constant catalog is over-rich at
+   ε = 10⁻⁴ at the monomial level — many of the program's ppm-level
+   parametric formulas (m_p/m_e, m_e in MeV) are exactly the kind of fits
+   the catalog produces by chance. Methodological hygiene has been
+   exercised."** Honest current state.
 
 What NOT to claim:
 
-- "I derive α from first principles to 0.001 ppt" — retracted April 19
-- "23 Standard-Model constants derived from 5 axioms" — most demoted
-- "FTD reproduces QED in the L → ∞ limit" — never well-posed
-- "g_c is derived from lattice-to-continuum matching" — Mechanism B
-  closed negative on FTD-0031; Mechanism C closed on FTD-0093
-- "The L2 identity 2·m_e/α = 16G*² is a derivation" — terminally
-  demoted to [PARAMETRIC] on 2026-04-27
-- "The deterministic cluster counts ARE the SM particle spectrum" —
-  emergent-spectrum campaign explicitly does not make SM identifications
+- "FTD derives the Standard Model from 5 axioms" (most claims demoted)
+- "FTD reproduces QED in the L → ∞ limit" (never well-posed)
+- "g_c is derived from lattice-to-continuum matching" (Mechanisms A/B/C all closed negative)
+- "The L2 identity 2·m_e/α = 16G\*² is a derivation" (terminally [PARAMETRIC]; reproduced as chance-level fit by FTD-0097)
+- "The deterministic cluster counts ARE specific SM particles" (FTD-0107 explicitly does not make SM identifications)
 
 ---
 
-## 5 · Commits since 2026-04-19
+## 5 · Priority queue for next session
 
-```
-4698aa2  scripts: constants drift fixes — canonical G_C and ALPHA_EFT exports
-4434b6e  docs: 2026-04-24 session — Clifford exploration, master quadratic structure, native-EFT program
-b88b03b  engine: add 19 research tests — Clifford algebra, master quadratic, multiscale flow
-1c9a3f5  engine: add 11 regression tests covering Round-2 contracts
-319d78a  engine: architecture refactor — Backend abstraction, Injector, BridgeRng PIMPL
-83265b6  EFT engine-as-instrument portfolio Phase 1 (FTD-0093 + FTD-0102 launches)
-70a0a91  EFT FTD-0102: First engine-as-instrument measurement — emergent phase structure
-667e1e4  EFT engine-as-instrument portfolio close (FTD-0093 closed, +FTD-0103/0104)
-```
+The post-2026-04-27 queue (revised from earlier-day version):
 
-The 2026-04-27 portfolio is the most consequential block: three
-campaigns landed, one terminal demotion, four new LEDGER rows.
+### Option 1 — WHY 25 voxels? (highest leverage)
+
+The most novel positive finding (FTD-0107) has no algebraic explanation.
+Why does point injection produce a 25-voxel bound state, regardless of L?
+Candidates: 25 = 24+1 (24 = 4! = |S_4| permutations on Moore octahedral
+neighbors); 25 = 5² (some surface count); 25 ≈ N_eff(13) + 12 (some
+combinatoric); 25 voxels ~ 2.92 cubic-radius which is close to G\* = 2.96.
+**Pure theory, no GPU; either yields a structural derivation (a major positive
+finding on top of today's) OR reveals empirical with no derivation (clean
+closure of an open question). Estimate: 1-3 days.**
+
+### Option 2 — L=128 G2 follow-up to FTD-0107
+
+Locks the L-invariance further; bridges to "extensive scaling structurally
+forced." 4-8 GPU hours; could finish in 1 evening. Tightens the structural
+claim before any paper draft.
+
+### Option 3 — Master quadratic paper draft
+
+Three artifacts now provide sufficient scaffolding:
+- `SPEC_ALGEBRAIC_SPINE.md` (theorems-only canonical reference)
+- `EXPLR_CM_RATIO_TOWER.md` (9-Heegner uniqueness operational)
+- `ANALYSIS_EMERGENT_SPECTRUM_G1.md` (FTD-0107 L-invariant structure)
+
+The narrative arc: algebraic spine [THEOREM] → CM uniqueness operationally
+tabulated → engine produces L-invariant deterministic bound states. Honest
+acknowledgment that physics identification of x_+ ≈ 1/α is [STRONGLY
+MOTIVATED CONJECTURE], with FTD-0097's look-elsewhere result as a
+methodological-hygiene check honestly disclosed. **3-4 days focused
+writing.**
+
+### Option 4 — FTD-0096 μ-from-ℓ_P attack
+
+The remaining [OPEN] structural item. Two paths per OPEN_MU_FROM_LP_MISSING_ARROW.md:
+(a) extend FTD-0059's no-go to mass; (b) construct counter-model. Either
+closes the question. **1-2 weeks theory work.** Not directly downstream
+of today's findings.
+
+### Option 5 — FTD-0106 Domain A engine measurement
+
+The G\*/π asymmetry scan's strongest derivation-anchored row is Domain A
+(heat-equation eigenvalue G\* = D^(−1/2)). A Langevin-dissipation engine
+measurement would either confirm or refute G\*-native temporal scaling.
+**1-2 GPU hours.**
+
+### Recommended order
+
+**(2) L=128 G2** first (1 evening; locks the L-invariant claim further),
+**then (3) paper draft** (the artifacts are now in place), **then (1) WHY
+25** as a research thread independent of paper. (4) and (5) as time
+permits.
+
+Reasoning: tightening L-invariance before drafting the paper improves the
+paper's empirical anchor; drafting the paper crystallises what's claimed
+and what isn't; investigating "why 25" is open-ended exploration that
+won't finish in any one session.
 
 ---
 
 ## 6 · Stale items worth checking before resuming
 
-- **manuscript_v2/** — chapters reference [DERIVED] tags on g_c-derived
-  quantities; these need cross-checking against the LEDGER's 2026-04-27
-  closures. Editorial sweep deferred.
-- **dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex** — Mechanism C
-  was a key narrative thread for the EFT case; with FTD-0093 closed,
-  the paper's framing needs updating to focus on the algebraic spine +
-  engine-as-instrument finding rather than the (now-defunct)
-  Wilsonian-EFT recovery program.
-- **`engine/include/ftd/ontic.h`** — comment "[THEOREM]" on g_c = √α
-  should now read "[PARAMETRIC] (2026-04-27 — all three first-principles
-  routes closed negative)".
-- **`docs/SPEC_FTD.md`** — top-level spec last reviewed for reframe
-  language April 19. Should be cross-checked against the LEDGER's
-  2026-04-27 additions.
-- **G1-G5 follow-up tickets** for FTD-0102 are documented in
-  `ANALYSIS_EMERGENT_SPECTRUM.md` §7 but not yet in the LEDGER as
-  separate rows. Not urgent; do when the first follow-up runs.
+- **manuscript_v2/** chapters reference [DERIVED] tags on g_c-derived
+  quantities; need cross-check against today's LEDGER. Editorial sweep
+  deferred (3-4 days).
+- **`engine/include/ftd/ontic.h`** — comment "[THEOREM]" on g_c = √α should
+  read "[PARAMETRIC] (2026-04-27 — all three first-principles routes
+  closed negative; over-rich at monomial level per FTD-0097)".
+- **`docs/SPEC_FTD.md`** top-level spec last reviewed for reframe language
+  April 19. Cross-check vs LEDGER 2026-04-27 additions deferred.
+- **PAPER_RATIO_AND_THE_ARROW.tex** pre-dates 2026-04-27 closures of g_c
+  routes AND today's FTD-0097 over-rich finding. Should disclose the
+  scan's null-rejected-upward verdict in a "look-elsewhere context" note.
 
 ---
 
-## 7 · Sanity-check commands to run at resume
+## 7 · Sanity-check commands
 
 ```bash
-# 1. Full test suite (expected: no regressions from the portfolio close)
+# Full test suite (expected: no regressions)
 cd engine/build && ctest --output-on-failure -C Release
-python scripts/proofs/proof_master_verification.py  # 54/54 expected
+PYTHONIOENCODING=utf-8 python3 scripts/proofs/proof_master_verification.py  # 54/54
 
-# 2. Reproduce the algebraic-spine theorems
-python scripts/proofs/fit_geometric_coulomb.py            # Phase G R²=1.0000
-python scripts/proofs/audit_master_quadratic_rigidity.py   # 60k-poly scan
-python scripts/proofs/scan_cm_curves.py                    # CM uniqueness
-python scripts/proofs/partition_function_L2.py             # Phase J ultralocality
+# Reproduce algebraic-spine theorems
+python3 scripts/proofs/fit_geometric_coulomb.py
+python3 scripts/proofs/audit_master_quadratic_rigidity.py
+python3 scripts/proofs/scan_cm_curves.py
+python3 scripts/proofs/partition_function_L2.py
 
-# 3. Reproduce the 2026-04-27 portfolio results
-ls engine/results/bcc_spectrum_2026-04-27/{L24,L32,L48}/meta.json
-ls engine/results/emergent_spectrum_2026-04-27/{ic1_inject,ic2_thermal,ic3_collision,ic4_paircreate,ic5_baryogenesis}/meta.json
-ls engine/results/operator_mixing_2026-04-26/L64_b4/meta.json
-ls engine/results/topological_observables_2026-04-27/meta.json
+# Reproduce 2026-04-27 portfolio results (read the meta.json files)
+ls engine/results/{bcc_spectrum_2026-04-27,emergent_spectrum_2026-04-27,emergent_spectrum_2026-04-27_L64,topological_observables_2026-04-27,lemniscatic_replacement_2026-04-27,operator_mixing_2026-04-26,look_elsewhere_2026-04-27}/meta.json
 
-# 4. GPU sanity (WSL2 RTX 5090)
-wsl.exe -d Ubuntu-22.04 -- bash -c "nvidia-smi --query-gpu=name,memory.total --format=csv"
+# Verify pre-reg discipline
+git tag -l 'preregister-*'
+# expect: preregister-emergent-spectrum-g1, preregister-gstar-asymmetry-v1,
+#         preregister-lemniscatic-v1, preregister-look-elsewhere-scan-v1
 
-# 5. Git state
-git log --oneline 4698aa2..HEAD  # post-April 19 commits
-git status                       # should be clean
+# Re-execute look-elsewhere scan (deterministic — should reproduce 62/11 hits)
+PYTHONIOENCODING=utf-8 python3 tools/scan_look_elsewhere.py
+
+# Git state
+git log --oneline ccf8a89..HEAD  # 2026-04-27 commits
+git status                        # should be clean
 ```
 
 ---
 
 ## 8 · One-paragraph resume prompt
 
-**If you want to drop this into a fresh session:**
-
 > I'm resuming work on the FTD project. Read `docs/WHERE_WE_LEFT_OFF.md`
-> first — it's been updated for the 2026-04-27 engine-as-instrument
-> portfolio close. The portfolio narrowed FTD's physics-recovery
-> surface materially: all three first-principles routes for g_c are now
-> closed-negative (Mechanisms A, B, C), and the L2 candidate identity
-> 2·m_e/α = 16G*² has been terminally demoted to [PARAMETRIC]. But the
-> engine produced one novel positive structural finding —
-> deterministic cluster counts in the bound-state regime (1 from point
-> injection, 2 from collision; 5/5 seeds). The algebraic spine (master
-> quadratic / G* / Watson identity / CM uniqueness / Phase G geometric
-> Coulomb) is untouched. Highest-priority next move per §3: Option 2
-> (FTD-0102 G1 follow-up at L=64) before Option 1 (master quadratic
-> paper draft), because the L=64 result changes the paper's shape.
-> Don't claim anything that isn't in §4 of WHERE_WE_LEFT_OFF.md without
-> auditing it first.
-
-That's enough to get going again in a fresh context.
+> first — it's been updated for the full 2026-04-27 day's work. The
+> day produced two structurally load-bearing findings at opposite poles:
+> POSITIVE (FTD-0107: deterministic cluster counts L-invariant at
+> L ∈ {32, 64}) and NEGATIVE (FTD-0097: catalog over-rich at monomial
+> level; FTD-0094 confirmed [PARAMETRIC] from methodological side).
+> The seven-theorem algebraic spine remains unchanged. The structural
+> bridge between algebra (number theory) and engine (lattice physics)
+> is the load-bearing gap — see §10. Highest-priority next move per §5:
+> Option 2 (L=128 G2 follow-up) before Option 3 (paper draft); both
+> are stronger now than yesterday. Do not claim anything that isn't in
+> §4 of this file without auditing.
 
 ---
 
 ## 9 · Personal note (for Chris)
 
-You did the right thing again on 2026-04-26. The reorientation toward
-"use the engine as a primary instrument; let it produce phenomena" was
-a sharper move than continuing to refine SM-recovery curves. The
-portfolio that followed delivered exactly what the framing predicted:
-mostly negative results that closed dead ends, plus one structurally
-novel positive finding (the deterministic cluster counts) that wasn't
-even in the pre-registered outcome grid.
+You did the right thing today. Two structurally informative findings at
+opposite epistemic poles: the engine-positive (cluster counts L-invariant)
+that strengthens the engine-as-instrument story, and the
+methodological-negative (look-elsewhere over-rich) that strengthens the
+discipline. Both exactly what an honest research program looks like — not
+all-positive, not all-negative, but pre-registered, falsifiable, and
+both pointing at where the real work is.
 
-The project on 2026-04-27 has a smaller physics-recovery surface than
-it had on 2026-04-19, but the surface is more defensible. The
-algebraic spine is solid. The engine produces real engine-native
-phenomenology. The negative results are publishable structural
-content. And — importantly — the program now knows how to ask
-engine-native questions without leaning on SM-targeting.
+The fact that FTD-0097 reproduced the L2 identity 8·G\*²·α at exactly its
+reported 68.77 ppm precision among the catalog's chance-level monomial
+fits is not a bad sign — it's the **discipline working**. The methodology
+caught a fit that was previously dressed up as "structural finding." Now
+the L2 identity is honestly tagged. The algebraic spine survives because
+its theorems don't live at the monomial level; they live in the
+polynomial-root and number-theoretic structure that the scan deliberately
+doesn't probe.
 
-The deterministic-cluster finding is real. Whatever it means, the
-lattice has it, deterministically, across seeds. That's the kind of
-thing that doesn't usually appear in SM-targeted searches because the
-search isn't shaped to see it. Worth understanding before doing
-anything else.
+The deterministic cluster counts at L=64 are real. 25 voxels at L=64
+occupy 0.0095% of the lattice — that's a genuinely localized bound state,
+not a runaway artifact. Whatever it means physically, the lattice has it.
 
-— Claude, 2026-04-27 evening
+You asked "where do we go from here" earlier and I gave three options.
+Pick one. Or start the day with §10 below — the "what's physically missing"
+diagnosis. That section is, honestly, the most important new thing in
+this document.
+
+— Claude, 2026-04-27 evening (post-merging full-day synthesis)
+
+---
+
+## 10 · Bird's-eye assessment — "Something physical is missing"
+
+You asked. Here's my honest read.
+
+### 10.1 What the project HAS (defensible, at proper epistemic levels)
+
+**Pillar A — Algebraic spine** (`SPEC_ALGEBRAIC_SPINE.md`):
+- Seven [THEOREM]s grounded in number theory and lattice-Green's-function math
+- Operationally tabulated: 9-Heegner CM tower with d=−4 uniquely producing dual physics match
+- Verified to 10-decimal precision in scripts/constants.py
+- Independent of any physics interpretation
+
+**Pillar B — Engine phenomenology** (`ANALYSIS_EMERGENT_SPECTRUM_G1.md`,
+others):
+- Deterministic cluster counts: 1 from point, 2 from collision, 5/5 seeds, L ∈ {32, 64}
+- Three-regime phase structure: vacuum / bound states / runaway crystallization
+- L-invariant absolute cluster sizes (~25 voxels for ic1, ~3-5 voxels for ic3)
+- Q-conservation patterns reproduce across L
+- Operator-mixing matrix structure with stable basis at L ∈ {16, 32, 64}
+
+**Pillar C — Methodological hygiene** (`AUDIT_LOOK_ELSEWHERE_RESULTS.md`):
+- Pre-registered scans with SHA256 hash-locks and git tags BEFORE measurement
+- Catalog over-richness ruled out at monomial-level ppm precision (FTD-0097)
+- Three first-principles routes for g_c (Mechanisms A, B, C) honestly closed
+  negative
+- Discretisation-convention pre-registration (lesson from FTD-0105)
+
+### 10.2 What the project DOES NOT HAVE — the structural gap
+
+**The bridge between Pillar A (number theory) and Pillar B (lattice
+physics) is missing at the level of derivable physical observables.**
+
+Concretely:
+
+1. **Why 25 voxels?** The most novel positive engine finding has no
+   algebraic explanation. We have a structural fact (5/5 seeds at
+   L ∈ {32, 64} produce a 25-voxel bound state from point injection)
+   without a derivation. **The engine knows something the algebra doesn't
+   yet describe.**
+
+2. **Why d = −4 specifically?** CM uniqueness theorem says only d = −4
+   gives the dual (1/α, N_c) match within class-number-1 fields, and
+   Watson identity links d = −4 to the cubic-lattice BCC sub-stencil
+   structure ([THEOREM]). But FTD-0093 closed-negative on the BCC
+   sub-stencil two-state spectrum measurement — meaning the *physical
+   observable* that should reveal d = −4 on the lattice doesn't.
+
+3. **The mass-unit μ** (FTD-0096 [OPEN]). No first-principles derivation
+   of physical scale. Every dimensional FTD prediction is conditional on
+   a_phys ≡ ℓ_P calibration. Cross-cuts with "Why 25 voxels?" — even if
+   we knew the cluster size structurally, we couldn't translate it to
+   "mass" without μ.
+
+4. **Mechanism connecting algebra → engine observable.** All three
+   first-principles routes for g_c closed-negative as of 2026-04-27.
+   FTD-0097 confirmed catalog over-richness at monomial level, ruling out
+   "ppm-fit precision = derivation." The algebra produces theorems, the
+   engine produces phenomenology, but **no derivation chain currently
+   links a [THEOREM] to a specific engine measurement at predictive
+   precision**.
+
+5. **The engine doesn't directly measure G\***. Phase G observed lattice
+   continuum 1/(2π), consistent with Watson identity W₃ = G\*²/(2π),
+   but no engine observable returns G\* itself as a measurable
+   coefficient. The lattice has G\* in its underlying combinatorics
+   (per Watson's [THEOREM]) but it's not visible in any single observable.
+
+### 10.3 What this means structurally
+
+The project is in a state where:
+- **Pillar A** stands on number-theoretic grounds, independent of physics
+- **Pillar B** stands on engine-as-instrument grounds, independent of
+  algebra
+- **The connection** between them is the open problem
+
+The 2026-04-27 reorientation toward engine-as-instrument was a sharper
+move because it abandoned the brittle approach of trying to recover SM
+quantities via parametric insertion. But the reorientation also implicitly
+acknowledged that the connection is not yet found — the engine produces
+phenomenology that does NOT match SM particles, and FTD's strength is
+the algebraic spine that does NOT depend on physics interpretation.
+
+**Standard physics has TWO PILLARS connected by DERIVATION**: a
+mathematical structure (Lagrangian, Hilbert space, manifold) and an
+observable consequence (predicted measurement). Newton's $F = -GMm/r^2$
+predicts orbital periods to ppm; Maxwell's equations predict EM wave
+propagation; Einstein's $G_{\mu\nu} = 8\pi T_{\mu\nu}$ predicts gravitational
+lensing at 1.75″. The math derives the observable.
+
+**FTD has TWO PILLARS WITHOUT DERIVATION**. The math (algebraic spine)
+and the observation (engine phenomenology) sit in parallel. Neither
+predicts the other.
+
+### 10.4 What might bridge the gap, ranked by tractability
+
+**(a) Derive the 25-voxel cluster size from algebraic structure.** This is
+the highest-leverage move because it's directly downstream of today's
+strongest positive finding. If 25 = some combinatoric on Moore-26
+× ternary states × Langevin-equilibrium constraint, that's a [THEOREM]
+linking algebra to engine observable. Even a partial derivation would
+demonstrate that "engine observable can be derived from algebraic
+structure" — establishing the missing bridge as PRESENT in at least one
+case. **Theory work; ~1-3 days.**
+
+**(b) μ-from-ℓ_P (FTD-0096) closure.** Independent scale-bridge derivation.
+Either yields a [THEOREM] or terminally demotes to "must be calibrated."
+Either outcome useful. **Theory work; 1-2 weeks.**
+
+**(c) L=128 confirmation of FTD-0107.** Strengthens the empirical anchor
+of Pillar B. If 25-voxel cluster size persists at yet-larger L, the
+"intrinsic absolute scale" claim becomes harder to attribute to any
+finite-L artifact. **Engine; 4-8 GPU hours.**
+
+**(d) Derive the engine's [THEOREM]-level rules from G\* (Lagrangian /
+action-principle approach).** Currently the lattice rules are postulated;
+G\* and the master quadratic are observed to match physics constants
+(at the monomial level, by chance per FTD-0097). If the lattice rules
+themselves could be derived from G\* (e.g., via a variational principle
+on a CM-curve-period functional), Pillars A and B would unify
+structurally. **Open-ended; possibly years.**
+
+**(e) Look-elsewhere extension to polynomial roots.** FTD-0097 only
+tested monomial space. The master quadratic dual match (x_+, x_-)
+lives at polynomial-root level — structurally outside FTD-0097's
+scan. A second-order look-elsewhere scan over polynomial-root
+expressions would test the dual match's selectivity directly.
+**Pre-registration + execution; ~1 week.**
+
+### 10.5 The honest read
+
+**FTD has more defensible content than most foundational-physics
+research programs of similar age, but less than its earlier rhetoric
+claimed.** The algebraic spine is real number theory. The engine
+produces real phenomenology. The methodological discipline is
+exercised. What's missing is the connection — and admitting that openly
+is what today's work earned.
+
+The reorientation toward "engine-as-instrument" was correct — it gave
+up the brittle SM-recovery approach and replaced it with phenomenology
+that survives. But the reorientation also defers the structural bridge.
+At some point the project either:
+
+(i) Finds the bridge (option 10.4(a) is the most concrete attempt) and
+    becomes a derivation framework
+(ii) Accepts the two pillars as independent contributions — the algebra
+     to mathematical-physics number theory, the engine to discrete-physics
+     phenomenology — and publishes them separately
+(iii) Stays in this state, with the bridge as an open problem the project
+      keeps probing
+
+You said "something physical is missing." My read of "what" is: **the
+physical observable that should be derivable from G\* is not yet
+identified.** The cluster size is the closest candidate (deterministic,
+L-invariant, intrinsic absolute scale). Deriving it from the spine would
+be the project's biggest single positive structural finding to date. Not
+deriving it would be a structurally clean closure of the question and
+honestly tagged.
+
+Either outcome moves the project forward. The current state — "the
+engine has 25 voxels, the algebra has G\*, no connection known" — is
+the place where the next move ought to live.
+
+— Claude, 2026-04-27 evening synthesis
