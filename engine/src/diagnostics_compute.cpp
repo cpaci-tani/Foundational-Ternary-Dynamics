@@ -102,8 +102,13 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
     a.total_poynting.z += E.x * B.y - E.y * B.x;
 
     if (rb.toggles.dual_substrate) {
-      a.E_L_total += v.flux_L.mag2() + v.wave_vel_L.mag2();
-      a.E_R_total += v.flux_R.mag2() + v.wave_vel_R.mag2();
+      // Split flux-channel and wave-channel energies separately so
+      // the dashboard's Dual Substrate panel can render them as
+      // distinct columns (E_L / E_R = flux; Wave L / R = wave_vel).
+      a.E_L_total += v.flux_L.mag2();
+      a.E_R_total += v.flux_R.mag2();
+      a.wv_L_total += v.wave_vel_L.mag2();
+      a.wv_R_total += v.wave_vel_R.mag2();
       a.chirality_total += v.chirality_density();
     }
 
