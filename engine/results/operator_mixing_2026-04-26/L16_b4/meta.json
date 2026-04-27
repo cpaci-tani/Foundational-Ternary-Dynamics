@@ -22,5 +22,12 @@
   "measurement_tag": "PARTIAL",
   "diagonal_eigenvalues": [15.9908,2.79751,9.14071,2.65666,256.339,null],
   "delta_a_measured": [0.000830773,2.51586,0.807694,2.59039,-4.00191,null],
-  "tiers": ["relevant","relevant","relevant","relevant","relevant","n/a"]
+  "tiers": ["relevant","relevant","relevant","relevant","relevant","n/a"],
+  "wilson_eigenvalues": [264.771,20.2138,17.5203,-2.9839,-12.5968,null],
+  "wilson_delta": [-4.0486,-0.337266,-0.130953,null,null,null],
+  "wilson_tiers": ["relevant","relevant","relevant","n/a","n/a","n/a"],
+  "include_b4": true,
+  "semigroup_test_ran": true,
+  "semigroup_max_relerr": 1.79585,
+  "semigroup_verdict": "FAIL"
 }
