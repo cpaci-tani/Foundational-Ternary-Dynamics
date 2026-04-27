@@ -1,0 +1,48 @@
+{
+  "campaign": "bcc_spectrum_2026-04-27",
+  "ledger_row": "FTD-0093",
+  "protocol": "docs/theory/10_eft_program/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md",
+  "L": 24,
+  "T": 0.005,
+  "gamma": 0.05,
+  "N_BURN": 500,
+  "N_MEASURE": 2000,
+  "n_seeds": 8,
+  "total_runs": 32,
+  "valid_runs": 23,
+  "predicted_bcc_ratio": 45.31,
+  "predicted_bcc_sum": 140.06,
+  "SC": {
+    "valid_n": 2,
+    "ratio_mean": 18.8754,
+    "ratio_stderr": 13.5108,
+    "sum_mean": 0.0279655,
+    "sum_stderr": 0.00875503
+  },
+  "FCC": {
+    "valid_n": 4,
+    "ratio_mean": 13.886,
+    "ratio_stderr": 8.58514,
+    "sum_mean": 0.0328395,
+    "sum_stderr": 0.00656391
+  },
+  "BCC": {
+    "valid_n": 7,
+    "ratio_mean": 11.7586,
+    "ratio_stderr": 2.27579,
+    "sum_mean": 0.035305,
+    "sum_stderr": 0.00787928
+  },
+  "FULL": {
+    "valid_n": 7,
+    "ratio_mean": 19.9062,
+    "ratio_stderr": 3.46935,
+    "sum_mean": 0.0517847,
+    "sum_stderr": 0.00667804
+  },
+  "falsifier_bcc_matches_45.31": false,
+  "falsifier_sc_control_distinct": false,
+  "falsifier_fcc_control_distinct": true,
+  "falsifier_full_control_distinct": true,
+  "falsifier_overall": "FAIL"
+}
