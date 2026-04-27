@@ -1,0 +1,1 @@
+{"test":"eft_operator_spectrum","commit":"347a38f","wall_seconds":221,"return_code":0,"hardware":{"cpu":"AMD Ryzen 9 9950X3D","gpu":"NVIDIA RTX 5090","os":"Windows 11 Pro"},"build_config":"Release","timeout_seconds":280,"executable":"test_eft_operator_spectrum.exe"}

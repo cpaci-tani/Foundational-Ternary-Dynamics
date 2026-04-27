@@ -1,0 +1,7 @@
+op,eigenvalue,delta_a,naive_delta,tier
+JJ,15.5093,0.0449405,2,relevant
+divJ2,nan,nan,4,n/a
+curlJ2,17.3526,-0.117082,4,relevant
+JdotDivJ,nan,nan,5,n/a
+J4,257.622,-4.00911,4,relevant
+stateSq,nan,nan,2,n/a
