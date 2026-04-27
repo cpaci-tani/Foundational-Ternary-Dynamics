@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# ==========================================================================
+#  Project commit-msg hook — enforces FTD's commit policy.
+#
+#  Rule: NO `Co-Authored-By:` trailers (project policy per CLAUDE.md
+#  "Commit Policy"). Default Claude Code / Codex / similar agents add
+#  this trailer; this hook rejects the commit so the agent gets a clear
+#  signal to drop it.
+#
+#  Activation (run once per clone):
+#      git config core.hooksPath .githooks
+#
+#  This is intentionally not auto-applied — git config is a local
+#  setting and the project doesn't run setup scripts on clone.
+# ==========================================================================
+set -e
+
+msg_file="$1"
+if [ -z "$msg_file" ] || [ ! -f "$msg_file" ]; then
+    exit 0
+fi
+
+if grep -qiE '^Co-Authored-By:' "$msg_file"; then
+    cat <<'ERR' >&2
+[commit-msg] FTD project policy violation: Co-Authored-By trailer detected.
+
+CLAUDE.md "Commit Policy" forbids any AI co-author trailer
+(Co-Authored-By: Claude, Claude Opus, Codex, etc.) on this project.
+
+Drop the trailer and re-commit. If you intentionally want a trailer
+here (e.g. a real human co-author), bypass this hook explicitly with:
+
+    git commit --no-verify -m "..."
+ERR
+    exit 1
+fi
+
+# Reject the boilerplate "Generated with [Claude Code]" footer too;
+# same policy.
+if grep -qE '🤖 Generated with \[Claude Code\]|Generated with Claude Code' "$msg_file"; then
+    cat <<'ERR' >&2
+[commit-msg] FTD project policy violation: Claude-Code generation footer detected.
+
+CLAUDE.md "Commit Policy" forbids the auto-generated AI footer.
+Drop it and re-commit.
+ERR
+    exit 1
+fi
+
+exit 0

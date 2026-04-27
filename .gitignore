@@ -140,6 +140,14 @@ engine/output/
 # Benchmark results (regenerated from engine runs)
 scripts/benchmarks/results/
 
+# Engine campaign results — by default, new result subdirs are local-only
+# (regenerable from engine/tests/campaign_*.cpp + tools/run_*.sh). To
+# track a specific campaign permanently, force-add it:
+#     git add -f engine/results/<campaign_dir>/
+# Already-tracked subtrees are preserved (gitignore only blocks NEW
+# additions; existing index entries keep their state).
+engine/results/
+
 # Temporary batch files and agent runner scripts
 _tmp_*.bat
 proof_run_*.txt
