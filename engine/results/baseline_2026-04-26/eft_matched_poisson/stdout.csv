@@ -1,0 +1,22 @@
+================================================================
+  EFT Day-2 Ticket A — Matched-Stencil Poisson Solver Validation
+================================================================
+
+--- M1: CG on synthetic source ---
+  PASS  M1 CG converges below 1e-10 on synthetic delta-minus-mean source
+
+--- M2: matched_gauss_project on +1/-1 pair (no SOR pre-run) ---
+  PASS  M2 deep-vacuum max|∇·J − ρ| ≤ 1e-8 after matched projection
+  PASS  M2 deep-vacuum RMS|∇·J − ρ| ≤ 1e-10 after matched projection
+
+--- M3: idempotency — second matched projection is a no-op ---
+  PASS  M3 deep-vacuum residual stays at CG tolerance across two calls
+
+--- M4: total state conserved through matched projection ---
+  PASS  M4 total state preserved (matched projection doesn't touch s)
+
+--- M5: matched projection improves residual by ≥ 1e4 ---
+  PASS  M5 deep-vacuum improvement ratio ≥ 1e4
+
+----------------------------------------------------------------
+  All matched-Poisson checks PASS

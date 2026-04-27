@@ -1,0 +1,38 @@
+================================================================
+  CAMPAIGN: Einstein — Relativistic & Gravitational Tests
+             (3 tests, 11 checks)
+================================================================
+
+--- E1: Energy Conservation (3-particle system) ---
+  Tick   0: total_energy = 7.83363000e-01 (field=7.8336e-01, wave=0.0000e+00, KE=0.0000e+00)
+  Tick 500: total_energy = 9.34868539e-04 (field=3.8211e-04, wave=5.5276e-04, KE=0.0000e+00)
+  Energy ratio E_final/E_initial: 0.001193
+  PASS  E1a: Initial energy > 0
+  PASS  E1b: Final energy > 0 (some energy remains after damping)
+  PASS  E1c: Energy decreases with damping (E_final < E_initial)
+  PASS  E1d: Charge conserved (+1 -1 +1 = +1)
+
+--- E2: Lorentz Contraction ---
+  REST:    |J(+8,0,0)| = 1.75772409e-03,  |J(0,+8,0)| = 1.75772200e-03
+  BOOSTED: |J(+8,0,0)| = 1.75759574e-03,  |J(0,+8,0)| = 1.67760323e-03
+  Ratio |J_x|/|J_y| — REST: 1.0000, BOOSTED: 1.0477
+  PASS  E2a: Rest frame fields exist (|J| > 0 at r=8)
+  PASS  E2b: Boosted frame fields exist (|J| > 0 at r=8)
+  |ratio_boost - ratio_rest| = 0.047681
+  PASS  E2c: Boosted field anisotropy differs from rest (ratio_diff > 0.001)
+
+--- E3: Gravitational Redshift (Latency Field) ---
+  Cluster: 8 locked +1 particles at (16-17, 16-17, 16-17)
+  phi_latency at r=3:   -1.20784063e-02
+  phi_latency at r=10:  -9.35313117e-04
+  voxel.latency at r=3: 1.09901803e-01
+  voxel.latency at r=10:3.05828893e-02
+  |phi_r3| = 1.20784063e-02, |phi_r10| = 9.35313117e-04
+  PASS  E3a: |phi_latency| at r=3 > |phi_latency| at r=10 (potential gradient)
+  PASS  E3b: voxel.latency at r=3 >= 0
+  PASS  E3c: voxel.latency at r=10 >= 0
+  PASS  E3d: phi_latency near mass is nonzero (|phi_r3| > 1e-15)
+
+================================================================
+  RESULT: ALL PASSED (0 failures)
+================================================================

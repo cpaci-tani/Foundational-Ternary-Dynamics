@@ -1,0 +1,23 @@
+================================================================
+  EFT Phase 1A — Rotational Anisotropy Diagnostics
+================================================================
+
+--- A1: Uniform flux (expect isotropic correlator) ---
+  PASS  A1 pointwise residual ≤ 1e-9
+  PASS  A1 diagnostic pointwise residual small
+
+--- A2: Plane wave along x (expect strong anisotropy) ---
+  PASS  A2 face and diagonal correlators differ
+  PASS  A2 pointwise residual > 0.1
+
+--- A3: Gaussian isotropic noise (expect |δ| small) ---
+  PASS  A3 residual / C(0) < 0.02 at r=1
+
+--- A4: fit_exponential sanity on synthetic C(r) = exp(-r/5) ---
+  PASS  A4 fit is valid
+  PASS  A4 ξ within 5% of 5.0
+  PASS  A4 R² > 0.999
+  PASS  A4 amplitude within 5% of 1.0
+
+----------------------------------------------------------------
+  All EFT-Phase-1A checks PASS

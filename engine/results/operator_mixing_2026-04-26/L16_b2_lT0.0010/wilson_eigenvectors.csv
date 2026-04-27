@@ -1,0 +1,8 @@
+#,Wilson eigenvectors (cols), sym-part of M, sorted by λ desc
+row\col,JJ,divJ2,curlJ2,JdotDivJ,J4,stateSq
+JJ,-0.00247904,0.0839306,-0.982622,0.0338305,-0.162047,nan
+divJ2,-0.0447918,0.396276,-0.0430988,0.68342,0.60995,nan
+curlJ2,-0.00859043,0.717907,0.174675,0.174935,-0.650709,nan
+JdotDivJ,-0.057289,-0.566093,0.0456666,0.704202,-0.422222,nan
+J4,0.997312,-0.0083282,-0.000250371,0.0727368,-0.00286722,nan
+stateSq,nan,nan,nan,nan,nan,nan

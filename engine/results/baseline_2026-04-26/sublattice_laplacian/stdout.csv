@@ -1,0 +1,20 @@
+================================================================
+  Sublattice Laplacian tests (SC / FCC / BCC)
+================================================================
+[ ok ] SC Laplacian on f=|r|² → 1 (= 1)  (= 1)
+[ ok ] FCC Laplacian on f=|r|² → 2 (= D−1)  (= 2)
+[ ok ] BCC Laplacian on f=|r|² → 3 (= D)  (= 3)
+[ ok ] FULL Laplacian on f=|r|² → 6 (= 2D = continuum ∇²f)  (= 6)
+[ ok ] SC Laplacian plane-wave eigenvalue  (= -0.0976311)
+[ ok ] FCC Laplacian plane-wave eigenvalue  (= -0.195262)
+[ ok ] BCC Laplacian plane-wave eigenvalue  (= -0.292893)
+[ ok ] SC  Lap on constant field = 0  (= 0)
+[ ok ] FCC Lap on constant field = 0  (= 8.88178e-16)
+[ ok ] BCC Lap on constant field = 0  (= -4.44089e-16)
+[ ok ] FULL Lap on constant field = 0  (= 5.32907e-15)
+[ ok ] dispatch wrapper: SC mode  (= 1)
+[ ok ] dispatch wrapper: FCC mode  (= 2)
+[ ok ] dispatch wrapper: BCC mode  (= 3)
+================================================================
+  Result: PASS (0 failure(s))
+================================================================
