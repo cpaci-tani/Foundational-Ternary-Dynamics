@@ -796,6 +796,14 @@ ftd_add_test(test_mixed_history_flow tests/test_mixed_history_flow.cpp
 ftd_add_test(test_nonlinear_flow_multiscale tests/test_nonlinear_flow_multiscale.cpp
              CTEST_NAME nonlinear_flow_multiscale TIMEOUT 300 LABELS gpu native eft)
 
+# FTD-0102 (2026-04-27): engine-as-instrument flagship — emergent particle
+# spectrum from generic initial conditions. 5 IC classes × 5 seeds at L=32.
+# Pre-registered in PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md. Output: per-IC
+# clustering history + stable-cluster mass histogram + volumetric snapshots.
+ftd_add_test(campaign_emergent_spectrum tests/campaign_emergent_spectrum_2026-04-27.cpp
+             CTEST_NAME campaign_emergent_spectrum TIMEOUT 7200
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0098 (2026-04-26): first measured native operator-mixing matrix M_ab(b=2).
 # Pre-registered in docs/theory/10_eft_program/PROTOCOL_OPERATOR_MIXING_MATRIX.md.
 # Reuses the test_nonlinear_flow_multiscale ensemble (Langevin + gauss + genesis,
