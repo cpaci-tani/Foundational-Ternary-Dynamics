@@ -1,7 +1,8 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.29
+**Version:** 5.33 (sync to CLAUDE.md, post-2026-04-27 engine-as-instrument cycle + look-elsewhere scan)
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
+**Authoritative project instructions:** [`CLAUDE.md`](CLAUDE.md) — this file (AGENTS.md) is a sibling reference; if the two disagree, CLAUDE.md wins.
 
 ---
 
