@@ -804,6 +804,14 @@ ftd_add_test(campaign_emergent_spectrum tests/campaign_emergent_spectrum_2026-04
              CTEST_NAME campaign_emergent_spectrum TIMEOUT 7200
              LABELS native eft observable engine_as_instrument)
 
+# FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
+# engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
+# flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
+# Pre-registered in PROTOCOL_TOPOLOGICAL_OBSERVABLES.md.
+ftd_add_test(campaign_topological_observables tests/campaign_topological_observables_2026-04-27.cpp
+             CTEST_NAME campaign_topological_observables TIMEOUT 7200
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0098 (2026-04-26): first measured native operator-mixing matrix M_ab(b=2).
 # Pre-registered in docs/theory/10_eft_program/PROTOCOL_OPERATOR_MIXING_MATRIX.md.
 # Reuses the test_nonlinear_flow_multiscale ensemble (Langevin + gauss + genesis,
