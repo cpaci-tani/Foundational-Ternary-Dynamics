@@ -74,6 +74,10 @@ docs, then `SPEC_EFT_RECOVERY_PROGRAM.md` and `DERIV_DAY2_CAMPAIGN.md`.
 | `DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md` | Real-engine face-transport flow adapter | [PARTIAL] |
 | `DERIV_FTD_NATIVE_SCALE_FLOW.md` | Kadanoff block-spin on bare Green; C_L' running under canonical scaling | [THEOREM] (bare Gaussian FP) |
 | `OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md` | Native action/measure gate; now resolved at microscopic history-measure level, nonlinear S_eff open | [PARTIAL]/[OPEN] |
+| `PROTOCOL_OPERATOR_MIXING_MATRIX.md` | Pre-registered protocol for first M_ab(b=2) measurement (FTD-0098); 6-operator basis on Langevin+genesis ensemble | [PROTOCOL · pre-reg] |
+| `AUDIT_OPERATOR_SPECTRUM.md` | Phase-3 closure read on relevant/marginal/irrelevant classification (FTD-0091); all-relevant compression at L=32 documented as scenario artefact | [PARTIAL] |
+| `SPEC_OPERATOR_BASIS.md` | Pre-registered 6-operator basis (J², (∇·J)², (∇×J)², J·∇(∇·J), (J·J)², s²) | [SELECTION] |
+| `→ engine/results/operator_mixing_2026-04-26/ANALYSIS.md` | First measured M_ab(b=2) (FTD-0098, 5×5 reduced after s² state-saturation drop, [PARTIAL]) | [MEASURED, PARTIAL] |
 
 ## Cluster 2 — Projected-EFT xplus attempts (historical, all negative)
 
