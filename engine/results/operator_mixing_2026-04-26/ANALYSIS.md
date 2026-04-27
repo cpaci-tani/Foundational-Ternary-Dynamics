@@ -263,3 +263,98 @@ Three of six follow-ups closed in this session (F1, F3, F5). F1 is closed positi
 ---
 
 **End of FTD-0099 appendix.**
+
+---
+
+# Appendix C · FTD-0100: First full 6×6 measurement (F2 closure)
+
+## C.1 — How the s² zero-variance was broken
+
+FTD-0098 + FTD-0099 hit the same wall: M_stateSq,stateSq was unmeasurable because every snapshot in the canonical Langevin+genesis ensemble at L=16 (with the FTD-0098 default `inj_mult = 3.0 × K_GENESIS` injection) reached identical state-density-squared. The 6th operator s² had Var(M_fine) = 0 across 197 snapshots — pre-registered degradation ladder dropped it cleanly.
+
+**F2 sweep** (`engine/tools/op_mixing_sweep.sh`) tried 16 parameter variations: burn-in lengths {0, 2, 5, 10, 20, 50}, injection multipliers {0.1, 0.5, 1.0, 2.0, 5.0, 10.0}, Langevin temperatures {0.001, 0.05, 0.5, 2.0}. Two configs broke the degeneracy:
+
+- `--inj-mult=1.0`: **Var(s²) = 1.5e-8**, 20/40 snapshots with non-zero state (system on the genesis boundary; voxels fluctuate between crystallized and uncrystallized)
+- `--lT=0.05`: Var(s²) = 3.8e-8, but 26/40 snapshots dropped on Gauss residual (high T breaks Gauss closure)
+
+The `inj-mult=1.0` config is the load-bearing winner: full snapshot retention, robust ensemble, genuine s² fluctuation. **Physical interpretation**: injecting at exactly K_GENESIS rather than 3× above puts the system on the genesis boundary. Voxels crystallize then evaporate stochastically as Langevin fluctuations push the local flux density above and below the K_GENESIS threshold.
+
+This is itself a finding: **the canonical FTD-0098 ensemble at 3×K_GENESIS over-saturates state and silences the s² mixing channel**. Future Phase-3 measurements that want to characterize the state-flux mixing structure must use injection on the genesis boundary, not deep inside the crystallized regime.
+
+## C.2 — Production result at inj-mult=1.0 (`L16_b4_inj1.00/`)
+
+| Metric | FTD-0098 (inj=3.0, 5×5) | FTD-0100 (inj=1.0, 6×6) |
+|---|---|---|
+| Snapshots collected | 197/200 | 197/200 |
+| With non-zero state | 197 | 77 |
+| `Var(s²)` | 0 (degenerate) | 1.43×10⁻⁸ |
+| `cond(S)` | 5.80×10⁷ | 3.51×10⁷ (1.65× better) |
+| Active subspace | 5×5 (s² dropped) | **6×6 (full)** |
+| Diagonal-dominant ops | 3/5 | **4/6** |
+| Bootstrap-converged entries | 6/25 | 10/36 |
+| Wilson positive eigenvalues | 3 | **4** |
+| Wall time (RTX 5090) | 6.3 s | 6.2 s |
+
+**The headline 6×6 mixing matrix** (rows = coarse-blocked, cols = fine):
+
+```
+            JJ       divJ²    curlJ²   J·∇(∇·J)   J⁴      s²
+JJ        +15.99   +0.37    -7.17    +16.43    +0.023   +0.94
+divJ²     -3.2e-5  +3.57    +0.017   +1.14     -5.3e-4  +0.55
+curlJ²    -0.017   -6.63    +9.26    +32.85    +0.143   +1.62
+J·∇(∇·J)  +8.0e-4  +2.02    +0.052   +2.76     -3.6e-3  -0.33
+J⁴        -3.70    +95.73   -23.26   +96.06    +256.3   +6.47
+s²        +2.4e-17 -3.6e-15 +0.0     -2.8e-14  +8.5e-16 +8.00
+```
+
+## C.3 — Diagonal eigenvalue M_stateSq,stateSq = exactly 8.0
+
+The s² diagonal entry comes out to **integer 8.0 = 2³ = b³**, with bootstrap stderr 4.3e-15 (machine precision). This isn't a coincidence:
+
+- s² is a **per-cell scalar** taking values in {0, 1} (since s ∈ {−1, 0, +1} so s² ∈ {0, 1}).
+- Under b=2 blocking, the coarse cell sums 8 fine cells. The mean s² over a coarse cell = (sum of 8 fine s² values) / 8 ∝ same as fine-mean s².
+- BUT — the regression `M_coarse_a = Σ_b M_ab · M_fine_b` is on per-snapshot moments. The blocked moment is `<s²>_coarse = (1/N_coarse) Σ_coarse_cells s²_coarse`. Each coarse cell's s² value is the integer count of crystallized voxels in the 2³ block (between 0 and 8). So `<s²>_coarse = 8 × <s²>_fine` exactly (mass-conservation of integer state under blocking).
+
+The factor of 8 IS the b³ cell-volume scaling — `M_stateSq,stateSq = b³ = 8`. Per-step Δ = D − log₂(8) = 4 − 3 = 1. **This is the trivial scaling of an integrated, volume-weighted operator.** The non-trivial s² physics enters through the OFF-DIAGONAL entries of column 6 (how flux operators feed into s² under blocking).
+
+## C.4 — Asymmetric flux↔state mixing (physical finding)
+
+The 6×6 matrix has an extreme asymmetry between row 6 (s² → flux) and column 6 (flux → s²):
+
+- **Column 6** (entries M_aₐ,stateSq for a ∈ flux ops): non-trivial — `+0.94, +0.55, +1.62, -0.33, +6.47`. The strongest is `M_J⁴,stateSq = +6.47` (state-density flows strongly into J⁴ under blocking).
+- **Row 6** (entries M_stateSq,b for b ∈ flux ops): all at machine precision, |entry| < 1e-13. State doesn't mix back into flux moments at this leading order.
+
+**Physical interpretation**: under coarse-graining, the relationship is `coarse-flux ← fine-flux + fine-state` (flux blocks pick up information from local state crystallization patterns), but `coarse-state ← fine-state alone` (the coarse cell's integer state count depends only on the fine integer states it contains, not on flux). This is an exact statement of the model's structure, recovered automatically by the regression: state crystallization is a sink for flux information under blocking, not a source.
+
+This asymmetry is the cleanest *structural* finding from FTD-0100 and the most direct evidence the regression-derived M is genuinely capturing model physics, not bootstrap artifact.
+
+## C.5 — F2 closure assessment
+
+| Question | Answer |
+|---|---|
+| Does the canonical FTD-0098 ensemble (3×K_GENESIS) saturate s²? | YES (every snapshot reaches identical <s²>) |
+| Does any (burn, inj-mult, lT) parameter combination unlock s²? | YES (`inj-mult=1.0`; also `lT=0.05` partially) |
+| Does the 6×6 measurement land at [MEASUREMENT]? | NO — still [PARTIAL] (10/36 entries < 30% rel-err vs 30/36 threshold) |
+| Does the 6×6 reveal new physics not visible in 5×5? | YES — asymmetric flux↔state mixing, M_stateSq,stateSq = b³ trivial scaling, 4 positive Wilson eigenvalues |
+| Should the canonical mixing-matrix campaign use inj-mult=1.0 going forward? | RECOMMENDED — captures full 6×6 structure; FTD-0098 over-saturated |
+
+**F2 closes [POSITIVE]**: the s² zero-variance degeneracy is not a fundamental feature of FTD; it's a parameter-regime artifact of the FTD-0098 baseline (3×K_GENESIS over-injection). Injecting at the genesis threshold (1×K_GENESIS) puts the system on the boundary where s² fluctuates and the full 6×6 mixing matrix becomes measurable.
+
+## C.6 — Updated follow-up assessment (post-FTD-0100)
+
+| # | Ticket | Status |
+|---|---|---|
+| F1 | Multilatitude (L=32) | DONE (FTD-0099, positive) |
+| F2 | K_GENESIS / parameter sweep to break s² degeneracy | **DONE (FTD-0100, positive)** — `inj-mult=1.0` is the canonical regime for 6×6 |
+| F3 | Wilson eigendecomp | DONE (FTD-0099, informational) |
+| F4 | Multi-scenario ensemble | Open |
+| F5 | M(b=4) RG semigroup | DONE (FTD-0099, negative-with-diagnosis) |
+| F6 | Master-quadratic Vieta trace/det | Open (separate pre-registration) |
+
+**Four of six FTD-0098 follow-ups closed in this session.** F4 (multi-scenario) and F6 (Vieta trace/det) remain open.
+
+**Next milestone (post-FTD-0100)**: re-run FTD-0099 multilatitude (L=32, L=64) with the FTD-0100 inj-mult=1.0 calibration to land a clean 6×6 mixing matrix at multiple scales, possibly recovering marginal/irrelevant tier separation. If L=32 inj=1.0 retains 4+ positive Wilson eigenvalues AND 6×6 active subspace, that would be the upgrade path from [PARTIAL] toward [MEASUREMENT].
+
+---
+
+**End of FTD-0100 appendix.**
