@@ -13,11 +13,15 @@
  * spawns new bodies via `this.addBody(...)`.
  */
 
-import { G_N, C_SPEED } from '../constants.js';
+import {
+    G_N, C_SPEED,
+    M_CHANDRA_LATTICE, M_TOV_LATTICE,
+} from '../constants.js';
 
-// Lattice-unit stellar-structure constants [IMPOSED].
-const M_CHANDRA_LATTICE = 70;   // Chandrasekhar limit (~1.4 Msun in lattice mass units)
-const M_TOV_LATTICE    = 150;   // TOV limit (~3 Msun in lattice mass units)
+// Wave 2G (2026-04-26): M_CHANDRA_LATTICE / M_TOV_LATTICE migrated to
+// constants.js (single source of truth). Conversion to solar mass
+// (~50× — i.e. 70 lattice units ≈ 1.4 M☉) is undocumented; tracked as
+// follow-up to declare the lattice-mass-to-solar-mass scale factor.
 
 export function postCosmicUpdates(TYPE) {
     const T = TYPE;

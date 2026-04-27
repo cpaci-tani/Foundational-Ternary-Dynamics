@@ -18,14 +18,16 @@
  * owns state, the tick schedule, telemetry, and the public API.
  */
 
-import { OMEGA_LAMBDA, OMEGA_MATTER } from '../constants.js';
+import { OMEGA_LAMBDA, OMEGA_MATTER, H0_LATTICE } from '../constants.js';
 
 import { runCosmicScenario } from './cosmic-scenarios/index.js';
 import { computeCosmicForces } from './cosmic-physics.js';
 import { postCosmicUpdates } from './cosmic-postupdates.js';
 
-// Lattice-unit cosmology constant [IMPOSED].
-const H0_LATTICE = 0.001;            // Hubble parameter in lattice units
+// H0_LATTICE migrated to constants.js (Wave 2G, 2026-04-26).
+// Note: this is still a static parameter; no Friedmann solver wires
+// it into a(t) evolution — see Theme D Scale-5 follow-up for the
+// integrator implementation.
 
 export class CosmicMockBridge {
     constructor() {

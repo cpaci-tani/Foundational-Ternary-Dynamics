@@ -96,6 +96,12 @@ export function pairProductionThreshold() {
  * Bethe-Heitler pair production cross-section (high-energy approximation).
  * sigma_pair ~ (7/9) * alpha * r_e^2 * Z^2 * (28/3 * ln(2*E/m_e) - 218/27)
  *
+ * The numerical coefficients 7/9, 28/3, 218/27 are [PARAMETRIC QED-asymptotic]
+ * — exact rationals from the leading-log expansion of the Bethe-Heitler
+ * integral, kept inline rather than promoted to constants.js because
+ * they only appear in this single formula. See PDG Reviews of Particle
+ * Physics §34 (Passage of Particles Through Matter).
+ *
  * @param {number} E_photon - photon energy in MeV
  * @param {number} Z - target nuclear charge
  * @returns {number} cross-section in fm^2 (0 if below threshold)

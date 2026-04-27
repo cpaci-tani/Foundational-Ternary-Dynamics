@@ -16,7 +16,11 @@
 import { G_N } from '../constants.js';
 
 // Fixed softening per body type (Gadget-2 convention: constant, energy-conserving).
-// Mirrored from mock-scale5.js — keep values in lock-step if ever edited.
+// 2026-04-26 (Wave 2H): the prior "mirrored from mock-scale5.js" note
+// was stale — mock-scale5.js does not declare its own copy; it calls
+// computeCosmicForces.call(this) on this module's tables. This is now
+// the single source of truth. If a constants.js entry is added later,
+// migrate from here.
 const SOFTENING = {
     [-3]: 6.0,  // DARK_ENERGY
     [-2]: 3.0,  // QUASAR
