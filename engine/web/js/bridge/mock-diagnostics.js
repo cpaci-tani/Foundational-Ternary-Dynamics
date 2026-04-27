@@ -93,6 +93,132 @@ export function createDiagnosticsProvider(state) {
         state._cachedFluxMag = fluxMag;
     }
 
+    /**
+     * Lattice-derived field diagnostics: B-field energy via curl(J),
+     * Poynting vector via -wave_vel × B, Gauss violation via div(J)−s,
+     * and particle kinetic energy + angular momentum.
+     *
+     * Single triple-nested O(L³) pass with periodic boundary conditions
+     * matching the C++ engine's `compute_energy_audit` (engine/src/
+     * diagnostics_compute.cpp:83). At L=32 this is ~33 K voxels, trivially
+     * cheap to compute on the diagnostics tab's 4 Hz cadence.
+     *
+     * Cached on the bridge by tick number so repeated audits within one
+     * tick (diagnostics + charts + lagrangian tabs) reuse one computation.
+     */
+    function ensureFieldDerivedCache() {
+        if (state._fieldDerivedCacheTick === state._tick) return;
+        state._fieldDerivedCacheTick = state._tick;
+
+        let bEnergy = 0, sx = 0, sy = 0, sz = 0;
+        let gaussSumSq = 0, maxGaussErr = 0;
+
+        if (state._fluxJ) {
+            const N = state.latticeSize;
+            const J = state._fluxJ;
+            const WV = state._fluxWV;
+            // Build a per-voxel state map so divergence's source term s(x)
+            // can be looked up. Single allocation per call (~Int8Array of
+            // size N³); GC-friendly.
+            // Sparse: only manifested particles contribute. Skip the
+            // allocation if there are none.
+            let stateMap = null;
+            if (state._particles.length > 0) {
+                stateMap = new Int8Array(N * N * N);
+                for (let i = 0; i < state._particles.length; i++) {
+                    const p = state._particles[i];
+                    if (p.state === 0) continue;
+                    const px = ((p.x | 0) % N + N) % N;
+                    const py = ((p.y | 0) % N + N) % N;
+                    const pz = ((p.z | 0) % N + N) % N;
+                    stateMap[pz * N * N + py * N + px] = p.state;
+                }
+            }
+
+            // Periodic-wrap helper macros (inlined for hot loop perf).
+            const idx = (x, y, z) => z * N * N + y * N + x;
+            const wrap = (i) => ((i % N) + N) % N;
+
+            for (let z = 0; z < N; z++) {
+                const zp = wrap(z + 1), zm = wrap(z - 1);
+                for (let y = 0; y < N; y++) {
+                    const yp = wrap(y + 1), ym = wrap(y - 1);
+                    for (let x = 0; x < N; x++) {
+                        const xp = wrap(x + 1), xm = wrap(x - 1);
+                        // Central-difference partials of J for curl + divergence.
+                        const ixp = idx(xp, y, z) * 3, ixm = idx(xm, y, z) * 3;
+                        const iyp = idx(x, yp, z) * 3, iym = idx(x, ym, z) * 3;
+                        const izp = idx(x, y, zp) * 3, izm = idx(x, y, zm) * 3;
+                        // curl(J)_x = ∂Jz/∂y − ∂Jy/∂z
+                        // curl(J)_y = ∂Jx/∂z − ∂Jz/∂x
+                        // curl(J)_z = ∂Jy/∂x − ∂Jx/∂y
+                        const Bx = 0.5 * ((J[iyp + 2] - J[iym + 2]) - (J[izp + 1] - J[izm + 1]));
+                        const By = 0.5 * ((J[izp]     - J[izm])     - (J[ixp + 2] - J[ixm + 2]));
+                        const Bz = 0.5 * ((J[ixp + 1] - J[ixm + 1]) - (J[iyp]     - J[iym]));
+                        bEnergy += 0.5 * (Bx * Bx + By * By + Bz * Bz);
+
+                        // E = -wave_vel; Poynting = E × B summed.
+                        const ic = idx(x, y, z) * 3;
+                        const Ex = -WV[ic], Ey = -WV[ic + 1], Ez = -WV[ic + 2];
+                        sx += Ey * Bz - Ez * By;
+                        sy += Ez * Bx - Ex * Bz;
+                        sz += Ex * By - Ey * Bx;
+
+                        // div(J) = ∂Jx/∂x + ∂Jy/∂y + ∂Jz/∂z
+                        const divJ = 0.5 * (
+                            (J[ixp]     - J[ixm])     +
+                            (J[iyp + 1] - J[iym + 1]) +
+                            (J[izp + 2] - J[izm + 2])
+                        );
+                        const s = stateMap ? stateMap[idx(x, y, z)] : 0;
+                        const err = divJ - s;
+                        gaussSumSq += err * err;
+                        const absErr = err < 0 ? -err : err;
+                        if (absErr > maxGaussErr) maxGaussErr = absErr;
+                    }
+                }
+            }
+        }
+
+        state._cachedBFieldEnergy = bEnergy;
+        state._cachedPoynting = { x: sx, y: sy, z: sz };
+        state._cachedGaussViolation = gaussSumSq;
+        state._cachedMaxGaussError = maxGaussErr;
+    }
+
+    /**
+     * Particle kinetic energy + angular momentum (origin = lattice center).
+     * Cheap O(N_particles); cache on tick.
+     */
+    function ensureParticleDerivedCache() {
+        if (state._particleDerivedCacheTick === state._tick) return;
+        state._particleDerivedCacheTick = state._tick;
+
+        let pKE = 0, lx = 0, ly = 0, lz = 0;
+        const N = state.latticeSize;
+        const cx = (N - 1) * 0.5, cy = (N - 1) * 0.5, cz = (N - 1) * 0.5;
+        for (let i = 0; i < state._particles.length; i++) {
+            const p = state._particles[i];
+            if (p.state === 0) continue;
+            const vx = p.vx | 0 ? p.vx : (p.vx ?? 0);
+            const vy = p.vy | 0 ? p.vy : (p.vy ?? 0);
+            const vz = p.vz | 0 ? p.vz : (p.vz ?? 0);
+            // Mass = density (MockBridge convention, matches K_B*2 default
+            // from injectParticle). 0.5 * m * v² is the kinetic energy.
+            const m = (typeof p.density === 'number' && p.density > 0) ? p.density : 1.0;
+            pKE += 0.5 * m * (vx * vx + vy * vy + vz * vz);
+            // Angular momentum L = r × (m·v), origin at lattice center.
+            const rx = (p.x ?? 0) - cx;
+            const ry = (p.y ?? 0) - cy;
+            const rz = (p.z ?? 0) - cz;
+            lx += m * (ry * vz - rz * vy);
+            ly += m * (rz * vx - rx * vz);
+            lz += m * (rx * vy - ry * vx);
+        }
+        state._cachedParticleKE = pKE;
+        state._cachedAngMom = { x: lx, y: ly, z: lz };
+    }
+
     function getDiagnostics() {
         // Single-pass counting (replaces 8x .filter() per frame)
         let manifestedCount = 0, positive = 0, negative = 0;
@@ -122,6 +248,11 @@ export function createDiagnosticsProvider(state) {
             totalFlux = Math.sqrt(fieldEnergy * 2);  // RMS flux magnitude
         }
 
+        // Angular momentum (per-tick cache; cheap to keep wired even when
+        // the dashboard's diagnostics tab is idle).
+        ensureParticleDerivedCache();
+        const L = state._cachedAngMom;
+
         const totalEnergy = fieldEnergy + waveEnergy;
         return {
             tick: state._tick, physicalTime: state._physicalTime, dt: state._dt,
@@ -132,29 +263,51 @@ export function createDiagnosticsProvider(state) {
             entropy: totalEnergy > 0 ? Math.log(totalEnergy + 1) : 0,
             chargeBalance: positive - negative,
             spinUp, spinDown, colorless, colorRed, colorGreen, colorBlue,
-            angMomX: 0, angMomY: 0, angMomZ: 0
+            angMomX: L.x, angMomY: L.y, angMomZ: L.z
         };
     }
 
     function getEnergyAudit() {
         // Use cached energy sums (computed once per tick via ensureEnergyCache)
         ensureEnergyCache();
+        ensureFieldDerivedCache();
+        ensureParticleDerivedCache();
         const fieldEnergy = state._cachedFieldEnergy;
         const waveEnergy = state._cachedWaveEnergy;
-        // E = -wave_vel, B = curl(J) — compute EM field energies
-        const EFieldEnergy = waveEnergy; // |E|^2/2 = |wave_vel|^2/2
-        const BFieldEnergy = 0;
-        const poyntingX = 0, poyntingY = 0, poyntingZ = 0;
-        // Dual substrate energies
+        // E = -wave_vel; |E|²/2 = ½|wave_vel|² = waveEnergy.
+        // B = curl(J); |B|²/2 cached via ensureFieldDerivedCache().
+        const EFieldEnergy = waveEnergy;
+        const BFieldEnergy = state._cachedBFieldEnergy;
+        const poynting = state._cachedPoynting;
+        const particleKE = state._cachedParticleKE;
+        const gaussViolation = state._cachedGaussViolation;
+        const maxGaussError = state._cachedMaxGaussError;
+
+        // Dual-substrate metrics: MockBridge has no separate flux_L/flux_R/
+        // wave_vel_L/wave_vel_R arrays (those are WasmBridge-only — see
+        // engine/src/render_bridge.cpp). Report 0 with a known-flat marker
+        // so the dashboard descriptor's compute path resolves rather than
+        // falling through to undefined. Switch to the WASM bridge to
+        // populate these.
         const ELTotal = 0, ERTotal = 0, wvLTotal = 0, wvRTotal = 0, chiralityTotal = 0;
 
+        // Charge total + manifested count (re-walked here so the audit is
+        // self-contained when called outside the diag path).
+        let chargeTotal = 0, manifested = 0;
+        for (let i = 0; i < state._particles.length; i++) {
+            const p = state._particles[i];
+            if (p.state === 0) continue;
+            chargeTotal += p.state;
+            manifested++;
+        }
+
         return {
-            fieldEnergy, waveEnergy, particleKE: 0,
-            totalEnergy: fieldEnergy + waveEnergy,
+            fieldEnergy, waveEnergy, particleKE,
+            totalEnergy: fieldEnergy + waveEnergy + particleKE,
             EFieldEnergy, BFieldEnergy,
-            totalPoynting: { x: poyntingX, y: poyntingY, z: poyntingZ },
-            gaussViolation: 0, maxGaussError: 0, selfFieldInjection: 0,
-            coulombPE: 0, chargeTotal: 0, manifested: 0,
+            totalPoynting: poynting,
+            gaussViolation, maxGaussError, selfFieldInjection: 0,
+            coulombPE: 0, chargeTotal, manifested,
             ELTotal, ERTotal, chiralityTotal, wvLTotal, wvRTotal,
         };
     }
