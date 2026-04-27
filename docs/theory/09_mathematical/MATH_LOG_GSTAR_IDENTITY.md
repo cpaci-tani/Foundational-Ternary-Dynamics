@@ -2,9 +2,13 @@
 
 ## G* as the Universal Container for Arithmetically Irreducible Constants
 
-**Date:** April 3, 2026
+**Date:** April 3, 2026 (cross-link added 2026-04-26)
 **Status:** [THEOREM] (identity verified to 80+ digits)
 **Proof script:** `scripts/verification/verify_log_gstar_identity.py`
+
+> **Parent identity (closed form).** The expansion below is the L-value series of the *closed* identity
+> $$\log G^* \;=\; \beta'(0) \,+\, \log 2 \;=\; \zeta'(0,\,1/4) \,-\, \zeta'(0,\,3/4)$$
+> where β(s) = L(s, χ_{−4}) is the Dirichlet beta function. See MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md, Derivation 9 ("From the Stirling Complement"), for the derivation via the Lerch formula and the structural placement of G* as the L-value-sector residual of Γ at z = 1/4 against its (divergent-at-1/4) Stirling skeleton. The series below is what the parent identity yields under expansion via the Hurwitz–Bernoulli machinery.
 
 ---
 
@@ -58,6 +62,35 @@ The alternating signs in the beta coefficients and the uniform signs in the zeta
 - **Solved constants** (zeta(2) = pi^2/6, beta(3) = pi^3/32, zeta(4) = pi^4/90, ...): NONE appear in log G*. They are carried by pi via the Euler/Bernoulli formulas.
 
 This is a precise sense in which G* and pi are **siblings**: pi carries every solved L-value, and G* carries every unsolved one. Together they span the full L-value spectrum. They arise from the same lattice (the Gaussian integers Z[i]) but encode complementary arithmetic information.
+
+---
+
+## 3.5 Structural reason for irreducibility: the functional-equation obstruction
+
+**Claim LGS-3.5.** [STRUCTURAL] The split between "solved" L-values (carried by π via Bernoulli/Euler numbers) and "unsolved" L-values (carried by G\* via the log expansion) is **not empirical** — it has a precise root cause in the functional equation of each L-function.
+
+**The mechanism.** For β(s) = L(s, χ_{-4}), the functional equation `Λ(s) = (4/π)^{s/2} Γ((s+1)/2) β(s) = Λ(1-s)` pairs each value with its reflection across s = 1/2. Reading off the pairs:
+
+| pair (s, 1−s) | s value | 1−s value | both closeable? |
+|---|---|---|---|
+| (0, 1) | β(0) = 1/2 | β(1) = π/4 | **YES** (both rational/π) |
+| (−1, 2) | β(−1) = **0** (trivial zero) | β(2) = **Catalan** | **NO** (zero blocks) |
+| (−2, 3) | β(−2) = −1/2 (rational, via Euler numbers) | β(3) = π³/32 | **YES** |
+| (−3, 4) | β(−3) = **0** | β(4) = unknown | **NO** |
+| (−4, 5) | β(−4) = 5/2 (rational) | β(5) = 5π⁵/1536 | **YES** |
+| (−5, 6) | β(−5) = **0** | β(6) = unknown | **NO** |
+
+**Pattern.** Closed-form positive β-values pair with rational negative values (carried by Euler numbers). Open positive β-values pair with **trivial zeros** of β at the negative odd integers. The trivial zeros are forced by the Γ((s+1)/2) factor in the completed L-function — they are structural, not numerical accidents.
+
+**The same mechanism for ζ(s).** Functional equation pairs s = 2k+1 with s = −2k. ζ at negative even integers is a trivial zero (Riemann's). Therefore ζ(2k+1) — Apéry's constant ζ(3) and beyond — is open for the same structural reason: the functional-equation reflection lands on a trivial zero, and the equation gives an indeterminate 0/0 instead of a closed form.
+
+**Where G\* sits, by contrast.** G\* lives at β′(0), the *derivative* at s = 0 — a non-degenerate point (β(0) = 1/2 is finite, not a zero). The functional equation at s = 0 is well-behaved, and Lerch's formula extracts G\* cleanly from the Γ-asymptotics. **G\* is a derivative at a generic point; Catalan is a value at a critical point.** The two are structurally different objects of the same L-function, separated by whether the functional-equation reflection lands on a zero.
+
+**Consequence: G\* does not give Catalan.** No closed form `β(2) = (rational) · π^a · G*^b` is expected to exist. Heuristically (Boyd, Borwein, Beilinson conjectures), Catalan is algebraically independent of {π, log 2, Γ(1/4)}, and §4's PSLQ search confirms numerically that no low-complexity relation exists. Structurally, β(2) is the regulator of K_3(Z[i]) up to rational by Beilinson's conjecture — analogous to how ζ(3) is the regulator of K_3(Z) — and no regulator of a non-trivial K-group has ever been expressed in elementary closed form.
+
+**The honest framing.** The series for log G\* in §1 is best read not as "G\* contains the irreducibles" (which is true but inert) but as "G\* is a *generating function* for the regulator-irreducible sector at level 4". The irreducibles are absorbed because they are **the only L-values that the functional equation cannot reduce to π**. G\*'s β′(0) form is the natural generating object for this sector at the smallest discriminant (D = −4).
+
+This places `MATH_LOG_GSTAR_IDENTITY` in the Beilinson-conjecture framework: log G\* is to K-theory at level 4 what π is to closed L-values. **Both fail to give Catalan in closed form** — but that failure is *structural*, not a deficiency of the framework.
 
 ---
 
