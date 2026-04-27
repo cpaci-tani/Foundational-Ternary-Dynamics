@@ -136,6 +136,16 @@ export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize
         bRadius = 4,
     } = params;
 
+    // Source the particle frame from whichever bridge is currently being
+    // ticked. Reading ctx.bridge unconditionally would miss particles
+    // created by the mock when state.useFluxMock=true and silently fall
+    // back to importance-sampling — which renders, but anchors seeds to
+    // the |E|/|B| field instead of the actual sources. Lift the lookup
+    // once for both E and B so the two overlays stay coherent.
+    const activeScale0 = (state.useFluxMock && state.fluxMock)
+        ? state.fluxMock.capabilities.scale0
+        : ctx.bridge.capabilities.scale0;
+
     if (state.fieldFlags.showEField && sampled.eField?.count > 0) {
         // E-field: lines start on positive charges and terminate on negative ones.
         // When particles exist we anchor seeds to them (real sources); otherwise
@@ -143,7 +153,7 @@ export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize
         // (iron-filings effect). Bidirectional integration draws from each seed
         // both toward the source and toward the sink, so the visible line spans
         // the natural field-line path.
-        const particleData = ctx.bridge.capabilities.scale0.getScale0ParticleFrame();
+        const particleData = activeScale0.getScale0ParticleFrame();
         fillFieldParticleBuf(state, particleData);
         const seeds = particleData.count > 0
             ? generateEFieldSeeds(state.fieldParticleBuf, eOffset, maxSeeds)
@@ -159,7 +169,7 @@ export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize
         // perpendicular offset so seeds land on the loop circumference rather
         // than at the center (where they'd integrate in place). Bidirectional
         // integration is mandatory — half the loop runs each direction.
-        const particleData = ctx.bridge.capabilities.scale0.getScale0ParticleFrame();
+        const particleData = activeScale0.getScale0ParticleFrame();
         fillFieldParticleBuf(state, particleData);
         const seeds = particleData.count > 0
             ? generateBFieldSeeds(state.fieldParticleBuf, bRadius, maxSeeds)

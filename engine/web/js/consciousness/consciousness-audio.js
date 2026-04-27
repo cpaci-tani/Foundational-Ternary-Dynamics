@@ -357,15 +357,40 @@ export function buildAudioGraph(engine, profileName) {
 
 /**
  * Tear down and null out all audio nodes on the engine.
+ *
+ * The Web Audio graph remains connected to ctx.destination until each
+ * non-source node is explicitly `.disconnect()`-ed; nulling references
+ * alone does NOT trigger GC because the AudioContext still holds the
+ * graph live for routing. Pre-2026-04-26 this only stopped oscillators
+ * and nulled the JS handles — every scenario change leaked the prior
+ * filter/convolver/shaper/gain chain. Disconnecting now severs the
+ * routing so GC can reclaim the nodes.
  */
 export function teardownAudioGraph(engine) {
-    // Stop all oscillators
+    // Stop all oscillators (disconnect each gain node so the chain frees).
     for (const o of engine._oscBank) {
         try { o.osc.stop(); } catch(e) {}
+        try { o.osc.disconnect(); } catch(e) {}
+        if (o.gain) { try { o.gain.disconnect(); } catch(e) {} }
     }
     engine._oscBank = [];
-    if (engine._lfo) { try { engine._lfo.stop(); } catch(e) {} engine._lfo = null; }
-    // Nodes will be GC'd once disconnected
+    if (engine._lfo) {
+        try { engine._lfo.stop(); } catch(e) {}
+        try { engine._lfo.disconnect(); } catch(e) {}
+        engine._lfo = null;
+    }
+    // Disconnect the rest of the routing graph — without these the
+    // nodes stay live behind ctx.destination and never GC.
+    const safeDisconnect = (node) => {
+        if (node) { try { node.disconnect(); } catch(e) {} }
+    };
+    safeDisconnect(engine._lfoGain);
+    safeDisconnect(engine._dryGain);
+    safeDisconnect(engine._wetGain);
+    safeDisconnect(engine._convolver);
+    safeDisconnect(engine._shaper);
+    safeDisconnect(engine._filter);
+    safeDisconnect(engine._masterGain);
     engine._masterGain = null;
     engine._filter = null;
     engine._shaper = null;
