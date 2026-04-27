@@ -1,51 +1,111 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.32 (post-Link-8-closure, 2026-04-20)
+**Version:** 5.33 (post-2026-04-27 engine-as-instrument cycle + look-elsewhere scan)
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
-**🔑 Start here if resuming:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — single-doc context recovery from the April 19 audit cycle.
+**🔑 Start here if resuming:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — single-doc context recovery, updated 2026-04-27 evening with full-day synthesis (Bird's-eye assessment in §10).
 
 ---
 
-## Current epistemic state (2026-04-20)
+## Current epistemic state (2026-04-27 evening)
 
-After the April 19 reframe cycle + April 20 Link 8 closure, the project
-is in a narrowed but defensible state. Do **not** claim results stronger
-than what's listed in `docs/WHERE_WE_LEFT_OFF.md` §4 without re-auditing.
+After the 2026-04-27 engine-as-instrument portfolio + look-elsewhere scan,
+the project is in a structurally narrowed but defensible state. Do **not**
+claim results stronger than what's listed in `docs/WHERE_WE_LEFT_OFF.md`
+§4 without re-auditing. The bird's-eye assessment lives in
+`WHERE_WE_LEFT_OFF.md` §10 — read that for "what's missing" diagnosis.
 
-**Firm theorems (5):** G* algebraic identity, master quadratic
-polynomial + roots, CM curve uniqueness among class-number-1 fields,
-Phase G emergent Coulomb = lattice Poisson Green's function at every
-finite L, Phase J partition-function ultralocality.
+**Firm theorems (7, canonical reference: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` created 2026-04-27):**
+G* algebraic identity, master quadratic polynomial + roots, CM curve
+uniqueness among class-number-1 fields (operationally tabulated in
+`EXPLR_CM_RATIO_TOWER.md`, also 2026-04-27), coefficient 16 = |Aut(E)|²
+for E: y² = x³ − x, Watson identity W₃ = G\*²/(2π), Phase G geometric
+Coulomb = lattice Poisson Green's function at every finite L, Phase J
+partition-function ultralocality. **All seven UNCHANGED across 2026-04-27.**
 
 **[STRONGLY MOTIVATED CONJECTURE]:** x+ = 1/α (1.26 ppm); x− = N_c
-(0.80%); m_e formula (0.19%); m_p/m_e formula (173 ppm).
+(0.80%); the master quadratic dual-prediction property (both roots
+simultaneously matching unrelated physical sectors) is the strongest
+structural evidence — explicitly distinguished from monomial-level fits
+that the FTD-0097 scan ruled as chance-level on 2026-04-27.
 
-**[CLOSED NEGATIVE 2026-04-20]:** Master quadratic as characteristic
-polynomial of an RG step on the FTD engine (FTD-0050). The engine's
-18-point coupling stencil is ½(σ_SC + σ_FCC), structurally orthogonal
-to the BCC sub-stencil where 16G*² = 2π·16·W_BCC lives. Does NOT demote
-FTD-0001/0013/0014 — the master quadratic remains a THEOREM at the
-number-theoretic layer (Γ(1/4)⁴ + CM-curve uniqueness); only the
-*additional* RG-flow reading is removed. See
-`docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md`.
+**[PARTIAL] — engine-as-instrument findings (2026-04-27):**
+- **FTD-0107: deterministic cluster counts L-invariant at L ∈ {32, 64}**
+  (1 from point injection, 2 from collision; 5/5 seeds at both L; cluster
+  sizes absolute, ~25 voxels for ic1, ~3-5 voxels for ic3). The most
+  novel positive structural finding of the engine-as-instrument program.
+  See `ANALYSIS_EMERGENT_SPECTRUM_G1.md`.
+- **FTD-0103 continuum-limit**: cond(S) monotone improving across L;
+  Wilson eigenvalue positivity non-monotonic.
+- **FTD-0104 topology atlas**: clean grid match across Wilson loop, flux
+  tube, monopole, vacuum instanton at L=32.
+- **FTD-0105 lemniscatic 2-sphere test**: PASS-NONE strict, secondary
+  closed-negative — lattice horizon is sphere-symmetric.
 
-**[NEW INFRASTRUCTURE 2026-04-20]:** Langevin thermostat on wave_vel
-(`TermToggles::langevin`, `langevin_T`, `langevin_gamma`,
-`langevin_seed`; CPU single-substrate path only). Equipartition
-verified to 4%. Unblocks matched-stencil β-function at non-zero T,
-condensate ensemble measurements, fluctuation-dissipation tests. See
-FTD-0051 in `docs/theory/07_assessment/LEDGER.md`.
+**[MEASURED] — methodological-hygiene scans (2026-04-27):**
+- **FTD-0097 look-elsewhere scan**: NULL REJECTED upward at ε = 10⁻⁴
+  (62 raw / 11 dedup hits vs Poisson null λ=4); χ²(df=19) = 470 raw / 38
+  dedup; per-target uniformity rejected at 99.9%+ raw / 99% dedup. Catalog
+  is over-rich at the monomial level. The L2 identity 8·G\*²·α appears
+  in the scan as a chance-level fit at exactly its reported 68.77 ppm
+  precision. **Confirms FTD-0094 [PARAMETRIC] from methodological side.**
+  See `AUDIT_LOOK_ELSEWHERE_RESULTS.md`.
 
-**[OPEN] (the real research program):** lattice-to-physical-length
-conversion a_phys; first-principles g_c via Mechanism B (lattice-to-
-continuum matching); s-field Metropolis for thermal ternary ensembles
-(FTD-0052, deferred — expected negative, confirmatory only).
+**[CLOSED NEGATIVE]:**
+- **FTD-0050** (master quadratic as characteristic polynomial of RG step;
+  2026-04-20). Engine stencil orthogonal to BCC. Does NOT demote
+  FTD-0001/0013/0014 — algebraic spine unchanged.
+- **FTD-0093 Mechanism C** (g_c as bridge-operator eigenvalue on σ_BCC;
+  closed 2026-04-27 at L ∈ {24, 32, 48} with non-monotonic ratio trend
+  rejecting predicted 45.31). Combined with prior closures of Mechanisms
+  A and B, **all three first-principles routes for g_c are now closed
+  negative; g_c remains [PARAMETRIC]**.
+
+**[PARAMETRIC] (terminal demotion 2026-04-27):**
+- **FTD-0094** (L2 candidate identity 2·m_e/α = 16G\*²; demoted per
+  pre-registered criterion: FTD-0093 closed AND FTD-0096 [OPEN]). Confirmed
+  from methodological side by FTD-0097's m_e-cluster of chance-level fits.
+- sin²θ_W (3.5%), sin²θ_13 (12.6%), α_s = 7/59, PMNS angles — already
+  demoted April 19.
+
+**[OPEN] (the real research program):**
+- **WHY 25 voxels for ic1 cluster?** (NEW 2026-04-27) — load-bearing
+  question. Highest-leverage theory path; could yield a structural
+  derivation linking algebra to engine observable.
+- **FTD-0096 μ-from-ℓ_P missing arrow** — mass-unit calibration; either
+  closes or terminally demotes L2.
+- **FTD-0106 G\*/π asymmetry** per-domain engine measurements
+  (Domain A Langevin dissipation; Domain B Coulomb phase; Domain C BH evap)
+  — pre-registered, theory-only catalog committed, engine measurements
+  deferred.
+- **L=128 G2 follow-up to FTD-0107** — locks L-invariance further.
+- **The structural bridge between algebraic spine and engine
+  phenomenology** — see WHERE_WE_LEFT_OFF.md §10 for the diagnosis.
+
+**[NEW INFRASTRUCTURE 2026-04-27]:**
+- Pre-registration discipline operationalized via SHA256 hash + git tags
+  applied BEFORE measurement. Today's tags: `preregister-lemniscatic-v1`,
+  `preregister-gstar-asymmetry-v1`, `preregister-emergent-spectrum-g1`,
+  `preregister-look-elsewhere-scan-v1`. All measurements held the gate.
+- `tools/scan_look_elsewhere.py` — deterministic look-elsewhere runner
+  (FTD-0097, hash-locked).
+- Engine extension: `--lemniscatic-mode` in `benchmark_black_hole_thermo.cpp`
+  (FTD-0105); `--output-dir` in `campaign_emergent_spectrum_2026-04-27.cpp`
+  (FTD-0107).
 
 **Demoted 2026-04-19:** sin²θ_W (3.5%), sin²θ_13 (12.6%), α_s = 7/59,
 PMNS angles — all now [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
 
 **Foundational commitment:** undefined-boundary lattice ontology (not
 completed-infinity ℤ³). See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`.
+
+**The structural gap (2026-04-27 diagnosis, see WHERE_WE_LEFT_OFF.md §10):**
+the algebraic spine and engine phenomenology stand as **two defensible
+pillars without a derivation chain connecting them**. Standard physics
+has math-derives-observable; FTD has math AND engine, but no derivation
+linking specific algebraic content (G\*, master quadratic) to specific
+engine measurements (25-voxel cluster size, deterministic counts). Closing
+this bridge is the load-bearing remaining work. The "WHY 25 voxels?"
+question is the most concrete entry point.
 
 ---
 
