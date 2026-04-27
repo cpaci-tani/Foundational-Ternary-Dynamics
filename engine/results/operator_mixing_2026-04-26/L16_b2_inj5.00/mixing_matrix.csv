@@ -1,0 +1,8 @@
+#,M_ab(b=2)
+row\col,JJ,divJ2,curlJ2,JdotDivJ,J4,stateSq
+JJ,16.0126,54.0682,-5.57485,nan,-0.105888,nan
+divJ2,0.0152206,3.11237,-0.0418922,nan,-0.0713431,nan
+curlJ2,0.0199813,106.096,11.6013,nan,-0.100514,nan
+JdotDivJ,nan,nan,nan,nan,nan,nan
+J4,-3.35232,-24.4687,-17.5532,nan,253.819,nan
+stateSq,nan,nan,nan,nan,nan,nan

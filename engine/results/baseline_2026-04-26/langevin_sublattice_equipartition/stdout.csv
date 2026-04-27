@@ -1,0 +1,19 @@
+================================================================
+  Sublattice Langevin equipartition (BCC_SITES filter)
+================================================================
+  L=16, T=0.0100, gamma=0.0500
+  Target: <|v|^2>_BCC = 3T = 0.0300, <|v|^2>_other ~ 0
+
+  Burn-in (1000 ticks)...
+  Parity classes: SC=512, BCC=512, FCC=3072
+
+  Results:
+    <|v|^2>_BCC = 3.0696e-02  (target 3.0000e-02, dev +2.32%)
+    <|v|^2>_SC  = 0.0000e+00  (target ~ 0; ratio to BCC: 0.0000)
+    <|v|^2>_FCC = 0.0000e+00  (target ~ 0; ratio to BCC: 0.0000)
+[ ok ] BCC equipartition within 15%
+[ ok ] SC voxels isolated (<|v|^2>_SC < 0.2 * BCC)
+[ ok ] FCC voxels isolated (<|v|^2>_FCC < 0.2 * BCC)
+================================================================
+  Result: PASS (0 failure(s))
+================================================================
