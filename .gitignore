@@ -145,8 +145,10 @@ scripts/benchmarks/results/
 # track a specific campaign permanently, force-add it:
 #     git add -f engine/results/<campaign_dir>/
 # Already-tracked subtrees are preserved (gitignore only blocks NEW
-# additions; existing index entries keep their state).
-engine/results/
+# additions; existing index entries keep their state). The policy
+# itself is documented in engine/results/README.md (whitelisted below).
+engine/results/*
+!engine/results/README.md
 
 # Temporary batch files and agent runner scripts
 _tmp_*.bat

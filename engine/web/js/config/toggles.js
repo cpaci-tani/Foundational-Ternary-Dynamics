@@ -32,6 +32,34 @@ export const SCALE0_TOGGLES = [
     ['weak_transmutation', false, 't-weak'],
 ];
 
+// ── Engine toggles deliberately NOT in SCALE0_TOGGLES ───────────────
+//
+// The C++ `TermToggles` struct (engine/include/ftd/term_toggles.h) has
+// additional boolean fields that are intentionally OMITTED from the
+// dashboard whitelist above:
+//
+//   - `triad_binding`         — research toggle, no UI checkbox.
+//   - `pair_production`       — research toggle, no UI checkbox.
+//   - `latency_field`         — Poisson-based gravity potential mode;
+//                                tied to specific campaigns.
+//   - `exact_dual_gauss`      — Phase 1 electrodynamics variant; campaign-only.
+//   - `emergent_forces`       — EFT-mode toggle (alpha = G_C²); mutually
+//                                exclusive with `poisson_coulomb` per
+//                                TermToggles::validate.
+//   - `langevin`              — stochastic thermostat; paired with the
+//                                non-bool params `langevin_T`,
+//                                `langevin_gamma`, `langevin_seed`.
+//   - `langevin_site_filter`  — enum, not bool.
+//   - `bcc_stencil`           — enum (FULL / SC / FCC / BCC), not bool.
+//   - `strict_validation`     — process-level guard, not physics.
+//
+// These are LONG-TERM RESEARCH CONTROLS owned by the user across
+// scenario loads. Putting them in SCALE0_TOGGLES would cause the
+// scenario-loader's whitelist-reset to clobber them on every scenario
+// load, breaking research workflow. See the toggle-reset contract
+// documented in `engine/web/js/scales/scale0/runtime/scenario-loader.js`
+// and mirrored in `engine/include/ftd/scenarios.h`.
+
 // Scale 2/3 (Atoms/Molecules) — matching AtomToggles in atom_engine.h
 export const SCALE2_TOGGLES = [
     ['ae-ionic', true, 'aeSetIonic'],

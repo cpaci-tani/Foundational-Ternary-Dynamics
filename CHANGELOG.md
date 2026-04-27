@@ -140,6 +140,27 @@ Tooling:
   ignore, build wrapper, commit-msg hook, doc updates).
 - WASM rebuilt twice today, both clean.
 
+### Measurement output → pre-registration tag mapping
+
+For posterity (the `engine/results/` gitignore default makes new
+campaign output local-only by default; the analysis docs cite paths
+that may not exist in a fresh clone). Authoritative mapping table
+lives in
+[`docs/theory/10_eft_program/REF_PREREGISTER_MANIFEST.md`](docs/theory/10_eft_program/REF_PREREGISTER_MANIFEST.md).
+
+| FTD ID | Pre-reg git tag | Script | Output dir | Analysis doc |
+|---|---|---|---|---|
+| FTD-0097 | `preregister-look-elsewhere-scan-v1` | `tools/scan_look_elsewhere.py` | `engine/results/look_elsewhere_2026-04-27/` | [`10_eft_program/AUDIT_LOOK_ELSEWHERE_RESULTS.md`](docs/theory/10_eft_program/AUDIT_LOOK_ELSEWHERE_RESULTS.md) |
+| FTD-0103 | (continuum-limit campaign, no fresh tag) | `engine/tests/campaign_continuum_limit_*` | `engine/results/continuum_limit_*` | linked from LEDGER row FTD-0103 |
+| FTD-0104 | (topology atlas campaign, no fresh tag) | `engine/tests/campaign_topology_atlas_*` | `engine/results/topology_atlas_*` | linked from LEDGER row FTD-0104 |
+| FTD-0105 | `preregister-lemniscatic-v1` | `engine/tests/benchmark_black_hole_thermo --lemniscatic-mode` | `engine/results/lemniscatic_*` | LEDGER row FTD-0105 |
+| FTD-0106 | `preregister-gstar-asymmetry-v1` | (theory-only, engine measurements deferred) | n/a yet | LEDGER row FTD-0106 |
+| FTD-0107 | `preregister-emergent-spectrum-g1` | `engine/tests/campaign_emergent_spectrum_2026-04-27 --output-dir=…` | `engine/results/emergent_spectrum_2026-04-27_L64/` | [`10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md) |
+
+Pre-registration discipline: each tag was applied BEFORE measurement
+and locks the script's SHA + commit. Verify with
+`git tag -l 'preregister-*'`.
+
 ---
 
 ## Foundational reframe — from completed-infinity to undefined-boundary (April 19, 2026)

@@ -1,7 +1,7 @@
 # FTD Theory Documentation Index
 
-**Framework:** Foundational Ternary Dynamics v5.31 (post-reframe, Sessions 1-4 of 2026-04-19)
-**Date:** April 23, 2026
+**Framework:** Foundational Ternary Dynamics v5.33 (post-2026-04-27 engine-as-instrument cycle + look-elsewhere scan)
+**Date:** April 27, 2026
 **Status:** Curated catalog. **Single source of truth for claim status: [`07_assessment/LEDGER.md`](07_assessment/LEDGER.md)** (49 rows; if LEDGER and individual docs disagree, LEDGER wins).
 **Single Source of Truth (spec):** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 **Foundational commitment (2026-04-19):** undefined-boundary lattice ontology — see [`07_assessment/AUDIT_INFINITY_REFRAME.md`](07_assessment/AUDIT_INFINITY_REFRAME.md) and [`07_assessment/reframe_deployment/CANONICAL_REFRAME.md`](07_assessment/reframe_deployment/CANONICAL_REFRAME.md).
@@ -63,6 +63,7 @@ Start here for comprehensive overviews.
 | 1.13 | [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md) | Research paper: consciousness as mathematical bridge between QFT and GR via modular flow |
 | 1.14 | **[SPEC_FTD_COMPLETE_CHAIN.md](01_reference/SPEC_FTD_COMPLETE_CHAIN.md)** | **The Complete Chain:** from i to alpha in one document. 7/9 THEOREM. GR recovery, Bell, Born rule, nuclear binding, consciousness, lattice corrections. (April 2026) |
 | 1.15 | [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) | **G\* monograph:** Seven derivations of G\* = Γ(¼)/Γ(¾), master quadratic, α conjecture, BSD connection |
+| 1.16 | **[SPEC_ALGEBRAIC_SPINE.md](01_reference/SPEC_ALGEBRAIC_SPINE.md)** | **Canonical 7-theorem reference (2026-04-27):** G\* algebraic identity, master quadratic + roots, CM-curve uniqueness, coefficient 16 = \|Aut(E)\|², Watson identity, Phase G geometric Coulomb, Phase J ultralocality. Citation target for paper drafts; states the firm algebraic content independent of any physics interpretation |
 
 ---
 
@@ -326,6 +327,7 @@ Number theory and special functions.
 | 9.24 | [CONJ_SEVEN_TERM_PRECISION_SERIES.md](09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) | **7-term precision conjecture + rigidity audit (2026-04-17):** α⁻¹ = x₊ + Σsₙcₙ\|ε\|ⁿ; coefficients $\{9/47, 5/64, 4/141, 141/11, 1472/21, 416/21, 299/8\}$ in base integers $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$. Audit: 24-digit match confirmed as algebraic identity (mpmath 60-digit); 6/7 coefficients uniquely forced at cascade precision; c₇ unique under strict base-integer decomposition; observationally underdetermined at CODATA's 11-digit experimental precision. Status stays [CONJECTURE]. Script: `scripts/exploration/audit_seven_term_rigidity.py`. |
 | 9.25 | [EXPLR_EULER_RATIO_RICCI_FLOW.md](09_mathematical/EXPLR_EULER_RATIO_RICCI_FLOW.md) | **Euler Ratio and Ricci Flow:** Connections between Euler Reflection Ratio and geometric flows |
 | 9.26 | [THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md](09_mathematical/THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md) | **BCC Watson Reflection Bridge:** Rigorous structural correspondence [THEOREM] |
+| 9.27 | [EXPLR_CM_RATIO_TOWER.md](09_mathematical/EXPLR_CM_RATIO_TOWER.md) | **(2026-04-27)** Operational tabulation of Chowla-Selberg ratios at all 9 Heegner numbers — tower of class-number-1 reflection ratios. Companion to the CM-uniqueness theorem in SPEC_ALGEBRAIC_SPINE |
 
 ---
 
@@ -387,6 +389,8 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.38 | [AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md](10_eft_program/AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md) | **GPU Plan Priorities Audit** |
 | 10.39 | [AUDIT_LINK8_CLOSURE.md](10_eft_program/AUDIT_LINK8_CLOSURE.md) | **Link-8 Closure Audit** |
 | 10.40 | [AUDIT_STRUCTURE2_WARD_VALIDATION.md](10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md) | **Structure-2 Ward Validation** |
+| 10.41 | [ANALYSIS_EMERGENT_SPECTRUM_G1.md](10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md) | **(2026-04-27) FTD-0107 G1 follow-up analysis:** L=64 emergent-spectrum measurement; deterministic cluster counts L-invariant at L ∈ {32, 64} (1 from point injection, ~25-voxel cluster; 2 from collision, ~3–5 voxels); 5/5 seeds at both L. The most novel positive structural finding of the 2026-04-27 engine-as-instrument cycle. [PARTIAL] — opens "WHY 25 voxels?" structural question |
+| 10.42 | [AUDIT_LOOK_ELSEWHERE_RESULTS.md](10_eft_program/AUDIT_LOOK_ELSEWHERE_RESULTS.md) | **(2026-04-27) FTD-0097 look-elsewhere scan:** NULL REJECTED upward at ε=10⁻⁴ (62 raw / 11 dedup hits vs Poisson null λ=4); χ²(df=19) = 470 raw / 38 dedup; per-target uniformity rejected at 99.9%+ raw / 99% dedup. Catalog is over-rich at the monomial level; the L2 identity 8·G\*²·α appears as chance-level fit at exactly its reported 68.77 ppm precision. [MEASURED] — confirms FTD-0094 [PARAMETRIC] from methodological side |
 
 Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).
 
