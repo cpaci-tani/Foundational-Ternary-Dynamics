@@ -1,21 +1,53 @@
 import { defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from './elements.js';
-import { N_BASE } from './constants.js';
+import {
+    N_BASE,
+    // Wave 2E (2026-04-26): all AE_* tuning constants now live in
+    // constants.js as the single [IMPOSED] source of truth. Re-exported
+    // from this module so existing consumers (mock-atom-engine.js,
+    // scale2 controller, etc.) keep their imports unchanged.
+    AE_EPS_BASE,
+    AE_K_COULOMB,
+    AE_K_BOND,
+    AE_SPEED_MAX,
+    AE_H_BOND_EPS,
+    AE_K_ANGLE,
+    AE_THERMOSTAT_TAU,
+    PAULING_CHI,
+    ATOMIC_RADII_PM,
+} from './constants.js';
+
+// ── Re-exports for back-compat ──────────────────────────────────────
+// Pre-existing import names retained verbatim so mock-atom-engine.js
+// (and any other consumers) need no edits. AE_CHI_TABLE is the alias
+// for PAULING_CHI; the canonical name is PAULING_CHI in constants.js.
+export {
+    AE_EPS_BASE,
+    AE_K_COULOMB,
+    AE_K_BOND,
+    AE_SPEED_MAX,
+    AE_H_BOND_EPS,
+    AE_K_ANGLE,
+    AE_THERMOSTAT_TAU,
+};
+export const AE_CHI_TABLE = PAULING_CHI;
+
+// ── Pauling atomic radius (physical, picometers) ────────────────────
+// Theme D2 (2026-04-26): exposed for consumers that want experimentally
+// grounded atomic radii. NOT yet wired into computeAtomicProps below —
+// the simulation `radius` is a TUNED LJ parameter scale, not a physical
+// lookup, and replacing it shifts every LJ sigma in the atom-engine
+// (~4.5× for Li, ~5× for Cs vs the prior monotone 1/∛Z form). MD tuning
+// recalibration should accompany the swap; tracked as Theme D2 follow-up.
+//
+// Returns picometers (PDG empirical) or 0 for Z without a table entry.
+export function paulingRadiusPm(Z) {
+    if (Z >= 0 && Z < ATOMIC_RADII_PM.length) {
+        return ATOMIC_RADII_PM[Z] || 0;
+    }
+    return 0;
+}
 
 // ── Atom property helper (simulation units: Bohr-scaled) ──────────
-export const AE_EPS_BASE = 0.005;  // LJ well depth for Z=1 (tuned for visible dynamics)
-export const AE_K_COULOMB = 2.0;    // Ionic coupling (qualitatively correct Coulomb >> vdW)
-export const AE_K_BOND = 50.0;   // Bond spring stiffness multiplier
-export const AE_SPEED_MAX = 10.0;   // Speed limit in simulation units
-export const AE_H_BOND_EPS = 0.001;  // H-bond LJ 10-12 well depth (sim units; ~1/5 covalent)
-export const AE_K_ANGLE = 0.05;   // VSEPR angle strain spring constant (sim units)
-export const AE_THERMOSTAT_TAU = 10.0;   // Berendsen coupling timescale (in dt units)
-
-// Pauling electronegativity table (Z=0..18)
-export const AE_CHI_TABLE = [
-    0, 2.20, 0, 0.98, 1.57, 2.04, 2.55, 3.04, 3.44, 3.98,
-    0, 0.93, 1.31, 1.61, 1.90, 2.19, 2.58, 3.16, 0.0
-];
-
 export function valenceElectrons(Z) {
     const mainGroup = [
         0,                                    // Z=0 placeholder
@@ -39,12 +71,33 @@ export function valenceElectrons(Z) {
 
 export function computeAtomicProps(Z, N = 0) {
     const mass = Z + N * 1.001;
+    // Simulation-tuned radius (LJ scale, NOT physical). Theme D2
+    // follow-up: swap to ATOMIC_RADII_PM-derived sim units once the MD
+    // tuning is recalibrated; for now this monotone form preserves
+    // existing molecular-dynamics behaviour.
     const z_cbrt = Math.cbrt(Z);
     const radius = z_cbrt > 0 ? 1.0 / z_cbrt : 1.0;
     const vdw_epsilon = AE_EPS_BASE * Math.pow(Z, 2.0 / 3.0);
     const vdw_sigma = radius * N_BASE;
     const max_bonds = elemMaxBonds(Z);
-    const electronegativity = (Z >= 1 && Z <= 18) ? AE_CHI_TABLE[Z]
-                            : (Z > 18 ? 1.5 + 0.3 * Math.log(Z) : 0);
+    // Theme D3 (2026-04-26): electronegativity fallback now reads the
+    // full Pauling table from constants.js (Z=1..86) instead of the
+    // drift-prone `1.5 + 0.3*log(Z)` formula that used to kick in for
+    // Z>18 (it predicted χ(Cs)≈2.7 vs the empirical 0.79). Falls back
+    // to the formula only for Z without a table entry, or when the
+    // table value is 0 (noble gases — no Pauling χ defined).
+    let electronegativity = 0;
+    if (Z >= 1 && Z < PAULING_CHI.length) {
+        const chi = PAULING_CHI[Z];
+        if (chi > 0) {
+            electronegativity = chi;
+        }
+    }
+    if (electronegativity === 0 && Z > 86) {
+        // Pauling values not tabulated for Z > 86; fall back to the
+        // logarithmic guess. Keep the formula explicit so future audits
+        // can spot it.
+        electronegativity = 1.5 + 0.3 * Math.log(Z);
+    }
     return { mass, radius, vdw_epsilon, vdw_sigma, max_bonds, electronegativity };
 }

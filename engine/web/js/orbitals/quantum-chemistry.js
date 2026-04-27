@@ -170,6 +170,27 @@ export function sampleOrbital(n, l, m, a0Eff, numPoints) {
     let attempts = 0;
     const maxAttempts = numPoints * 100;
 
+    // Theme D4 (2026-04-26): full hydrogenic radial probability now
+    // includes the associated Laguerre polynomial L_{n-l-1}^{2l+1}(x).
+    // Pre-fix the radial shape was just `x^(2l+2) * exp(-x)`, the
+    // asymptotic envelope — which has NO nodes regardless of n. With
+    // the Laguerre factor the radial part has the correct (n−l−1)
+    // nodes: 2s gets 1 node, 3s gets 2, 3p gets 1, 4s gets 3, etc.
+    // Sampling envelope is bounded by an empirical scale; we use
+    // peak^(2l+2)·exp(-peak) × max-Laguerre-squared as a soft upper
+    // bound and accept overshoot via Math.min in the reject test.
+    const lagDegree = Math.max(0, n - l - 1);
+    const lagAlpha = 2 * l + 1;
+    // Scale radius for the "peak" envelope of x^(2l+2)·exp(-x): peak
+    // is at x = 2l+2 in pure-asymptotic form, but with the Laguerre
+    // factor the peak shifts outward roughly as x ≈ 2(n-l) for the
+    // outermost lobe. Use 2n as a conservative envelope to bound the
+    // |L|^2 magnitude inside the sampling region.
+    const envScaleX = 2 * n;
+    const envBaseAtPeak = Math.pow(envScaleX, 2 + 2 * l) * Math.exp(-envScaleX);
+    const lagAtPeak = laguerreL(lagDegree, lagAlpha, envScaleX);
+    const radialNorm = Math.max(envBaseAtPeak * lagAtPeak * lagAtPeak, 1e-30);
+
     while (count < numPoints && attempts < maxAttempts) {
         attempts++;
 
@@ -178,19 +199,18 @@ export function sampleOrbital(n, l, m, a0Eff, numPoints) {
         const sinTheta = Math.sqrt(1 - cosTheta * cosTheta);
         const phi = TWO_PI * Math.random();
 
-        // Radial: r^(2+2l) * exp(-2r/(n*a0)) — simplified hydrogen-like
+        // Full hydrogenic radial probability density (up to overall norm):
+        //   |R_{n,l}|² r² ∝ x^(2l+2) · exp(-x) · [L_{n-l-1}^{2l+1}(x)]²
+        // where x = 2r/(n·a₀). The L²(x) factor is what supplies radial
+        // nodes; without it 2s/3s/3p have spuriously no nodes.
         const rScaled = 2 * r / (n * a0Eff);
-        const radial = Math.pow(rScaled, 2 + 2 * l) * Math.exp(-rScaled);
-
-        // Normalize radial by its peak value: peak at rScaled = 2+2l,
-        // peak value = (2+2l)^(2+2l) * exp(-(2+2l))
-        const peakR = 2 + 2 * l;
-        const radialNorm = peakR > 0 ? Math.pow(peakR, peakR) * Math.exp(-peakR) : 1;
+        const lagVal = laguerreL(lagDegree, lagAlpha, rScaled);
+        const radial = Math.pow(rScaled, 2 + 2 * l) * Math.exp(-rScaled) * lagVal * lagVal;
 
         // Angular
         const angular = angularProb(l, m, cosTheta, sinTheta, phi);
 
-        const prob = (radial / radialNorm) * angular;
+        const prob = Math.min(1, (radial / radialNorm) * angular);
         if (Math.random() < prob) {
             offsets[count * 3]     = r * sinTheta * Math.cos(phi);
             offsets[count * 3 + 1] = r * sinTheta * Math.sin(phi);
@@ -200,4 +220,28 @@ export function sampleOrbital(n, l, m, a0Eff, numPoints) {
     }
 
     return offsets;
+}
+
+/**
+ * Associated Laguerre polynomial L_q^p(x) via the standard recurrence.
+ *
+ *   (k+1) L_{k+1}^p(x) = (2k + p + 1 - x) L_k^p(x) - (k + p) L_{k-1}^p(x)
+ *   L_0^p(x) = 1
+ *   L_1^p(x) = 1 + p - x
+ *
+ * Used by the hydrogenic radial sampler above. Fast for the small q
+ * values that appear in the visible orbitals (max q = n−l−1 ≤ n−1,
+ * and rendering only goes up to ~n=7).
+ */
+function laguerreL(q, p, x) {
+    if (q <= 0) return 1;
+    let lkm1 = 1;
+    let lk   = 1 + p - x;
+    if (q === 1) return lk;
+    for (let k = 1; k < q; k++) {
+        const lkp1 = ((2 * k + p + 1 - x) * lk - (k + p) * lkm1) / (k + 1);
+        lkm1 = lk;
+        lk = lkp1;
+    }
+    return lk;
 }

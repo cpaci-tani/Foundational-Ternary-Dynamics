@@ -11,6 +11,8 @@ import {
     MU_RATIO, TAU_RATIO, M_PROTON,
     SIN2_WEINBERG, M_W, M_Z, G_FERMI, HBAR_C_MEV_FM,
     M_P_PHYS, M_PI_CH_PHYS, M_PI_0_PHYS, DELTA_NP,
+    HBAR_MEV_S, AMU_MEV,
+    V_UD, G_A, F_N, F_PI,
 } from './constants.js';
 
 // ── Masses from Ontic Chain ──────────────────────────────────────────
@@ -25,20 +27,20 @@ export const M_NEUTRON  = M_PROTON_PHYS + DELTA_NP; // neutron = proton + Delta_
 export const M_PION_CHARGED = M_PI_CH_PHYS;         // charged pion (PDG)
 export const M_PION_NEUTRAL = M_PI_0_PHYS;          // neutral pion (PDG)
 
-// Conversion: hbar in MeV*s
-const HBAR_MEV_S = 6.582119569e-22; // MeV·s
-
 // ── Fermi Coupling ───────────────────────────────────────────────────
 
 /**
- * Fermi coupling constant G_F in MeV^-2.
- * G_F / (hbar*c)^3 = 1.166e-5 GeV^-2 = 1.166e-11 MeV^-2
- * From ontic chain: G_F = pi*alpha / (sqrt(2) * M_W^2)
- * M_W in MeV for consistent units.
+ * Fermi coupling constant G_F expressed in MeV⁻².
+ *
+ * Single source of truth: G_FERMI in constants.js is exported in GeV⁻²
+ * (tree-level form `π·α·√2 / (2·sin²θ_W·M_W²)` with M_W in GeV).
+ * Converting to MeV⁻² is one multiplication by 1e-6 (since 1 GeV² =
+ * 1e6 MeV²). Algebraic equivalence guarantees muonLifetime() returns
+ * the same value as the prior inline derivation; if it does not, the
+ * sign or factor structure has drifted in constants.js — see the
+ * "Muon lifetime gate" verification step in the surgical attack plan.
  */
-const M_W_MEV = M_W * 1000; // GeV -> MeV
-// Tree-level relation: G_F = pi*alpha*sqrt(2) / (2*sin^2(theta_W)*M_W^2)
-const G_F_MEV = PI_FTD * ALPHA * Math.sqrt(2) / (2 * SIN2_WEINBERG * M_W_MEV * M_W_MEV);
+const G_F_MEV = G_FERMI * 1e-6;
 
 // ── Muon Lifetime ────────────────────────────────────────────────────
 
@@ -88,15 +90,14 @@ export function tauLifetime() {
  */
 export function neutronLifetime() {
     const dM = M_NEUTRON - M_PROTON; // mass difference ~1.293 MeV
-    const V_ud = 0.974;  // CKM matrix element (from flavor physics)
     // Phase space factor for neutron beta decay
     const x = dM / M_ELECTRON;
     // f(x) ≈ x*sqrt(x^2-1)*(x^2 - 9/4*x + 4/3) — Wilkinson approximation
-    const f_n = 1.6887; // standard phase space integral value
+    // V_UD, F_N, G_A imported from constants.js (PDG / lattice values)
 
     const numerator = 2.0 * PI_FTD * PI_FTD * PI_FTD;
-    const denominator = G_F_MEV * G_F_MEV * Math.pow(M_ELECTRON, 5) * V_ud * V_ud * f_n * (1 + 3 * 1.2756 * 1.2756);
-    // Factor (1 + 3*g_A^2) where g_A = 1.2756 is the axial coupling
+    const denominator = G_F_MEV * G_F_MEV * Math.pow(M_ELECTRON, 5) * V_UD * V_UD * F_N * (1 + 3 * G_A * G_A);
+    // Factor (1 + 3*g_A^2) where g_A is the axial coupling
     return numerator * HBAR_MEV_S / denominator;
 }
 
@@ -110,9 +111,9 @@ export function neutronLifetime() {
  * Experimental: 2.6033e-8 s
  */
 export function pionLifetime() {
-    const f_pi = 130.2; // MeV (pion decay constant)
+    // F_PI imported from constants.js (130.2 MeV, lattice QCD)
     const ratio = M_MUON * M_MUON / (M_PION_CHARGED * M_PION_CHARGED);
-    const width = G_F_MEV * G_F_MEV * f_pi * f_pi * M_MUON * M_MUON *
+    const width = G_F_MEV * G_F_MEV * F_PI * F_PI * M_MUON * M_MUON *
                   M_PION_CHARGED * (1 - ratio) * (1 - ratio) / (8.0 * PI_FTD);
     return HBAR_MEV_S / width;
 }
@@ -129,9 +130,9 @@ export function pionLifetime() {
  */
 export function gamowFactor(Z, Q) {
     if (Q <= 0) return 0;
-    // Alpha particle: Z_alpha = 2, A_alpha = 4
-    const m_alpha_MeV = 4 * 931.494; // 4 AMU in MeV
-    const m_daughter_MeV = Z * 931.494; // approximate
+    // Alpha particle: Z_alpha = 2, A_alpha = 4. AMU_MEV = 931.494 imported.
+    const m_alpha_MeV = 4 * AMU_MEV;
+    const m_daughter_MeV = Z * AMU_MEV; // approximate
     const m_red = m_alpha_MeV * m_daughter_MeV / (m_alpha_MeV + m_daughter_MeV);
     const eta = Z * 2 * ALPHA * Math.sqrt(m_red / (2.0 * Q));
     return Math.exp(-2.0 * PI_FTD * eta);

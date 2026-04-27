@@ -427,16 +427,57 @@ class Experimental:
     m_neutron = 939.56542052  # +/- 0.00000054
     m_pion_charged = 139.57039 # +/- 0.00018
     m_pion_neutral = 134.9768  # +/- 0.0005
+    m_kaon_charged = 493.677  # K^+
+    m_kaon_neutral = 497.611  # K^0
+    m_Lambda = 1115.683       # Lambda^0
+    m_Sigma_plus = 1189.37    # Sigma^+
+    m_Xi_0 = 1314.86          # Xi^0
+    m_Xi_minus = 1321.71      # Xi^-
+    m_Omega_minus = 1672.45   # Omega^-
+    m_Delta = 1232.0          # Delta^++ / Delta^0
+    m_eta = 547.862           # eta meson
+    m_rho = 770.0             # rho meson
+    m_J_psi = 3096.9          # J/psi
+    m_Upsilon = 9460.3        # Upsilon(1S)
 
-    # Boson masses (GeV)
+    # Boson masses (GeV) - kept here for back-compat. Use *_phys_mev for
+    # MeV-units consistent with the rest of the catalog.
     m_W = 80.3692             # +/- 0.0133
     m_Z = 91.1876             # +/- 0.0021
     m_Higgs = 125.25          # +/- 0.17
+    # Boson masses in MeV (mirror engine/web/js/constants.js *_PHYS suffix)
+    m_W_phys_mev      = 80377.0    # MeV (PDG 2022)
+    m_Z_phys_mev      = 91187.6    # MeV
+    m_Higgs_phys_mev  = 125100.0   # MeV
+
+    # Neutrino mass upper bounds (MeV)
+    m_nu_e   = 4.1e-9         # beta-decay bound
+    m_nu_mu  = 8.58e-3        # cosmological bound
+    m_nu_tau = 4.955e-2       # cosmological bound
+
+    # Weak / CKM constants (PDG / lattice)
+    V_ud = 0.974              # CKM matrix element |V_ud|
+    g_A  = 1.2756             # axial coupling (neutron beta-decay)
+    f_n  = 1.6887             # neutron decay form factor
+    f_pi = 130.2              # pion decay constant (MeV)
+
+    # SI / atomic conversions (PDG 2022)
+    amu_mev   = 931.494
+    hbar_mev_s = 6.582119569e-22
+    k_per_ev  = 11604.518     # K per eV (Boltzmann conversion)
+
+    # Thomas-Fermi atom-binding prefactor: -0.7687 Hartree * 27.2114 eV/Hartree
+    thomas_fermi_prefactor_ev = 20.93
 
     # Cosmological
     n_s = 0.9649              # +/- 0.0042 (Planck 2018)
     r_upper = 0.036           # 95% CL upper bound
     eta_B = 6.1e-10           # baryon asymmetry
+
+    # Cosmic-lattice anchors (mirror engine/web/js/constants.js [IMPOSED])
+    H0_lattice       = 0.001
+    M_chandra_lattice = 70.0
+    M_tov_lattice     = 150.0
 
 # =============================================================================
 # UTILITY FUNCTIONS

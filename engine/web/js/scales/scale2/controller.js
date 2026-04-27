@@ -38,6 +38,7 @@ import {
     formatEnergy as formatEnergyAE
 } from '../../atomic-energy.js';
 import { formatEnergy, formatTemperature } from '../../units.js';
+import { M_E_PHYS } from '../../constants.js';
 import { generateGridXZ, sampleAEField } from '../../fields.js';
 import { createTickAccumulator, formatSI } from '../scale-utils.js';
 import {
@@ -134,7 +135,7 @@ function updateAtomicEnergyDisplay(dom, atomData) {
         dom.aeDiagNbe.textContent = formatEnergyAE(totalBE);
         dom.aeDiagBa.textContent = avgBA.toFixed(4) + ' MeV';
         dom.aeDiagEbe.textContent = (totalEBE / 1e6).toFixed(2) + ' MeV';
-        dom.aeDiagMassKb.textContent = formatSI(totalMass / 0.51099895);
+        dom.aeDiagMassKb.textContent = formatSI(totalMass / M_E_PHYS);
     }
 }
 
