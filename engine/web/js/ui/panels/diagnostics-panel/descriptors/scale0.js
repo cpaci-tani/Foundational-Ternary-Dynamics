@@ -21,6 +21,35 @@
  *   nat   — natural-log entropy
  *   ct    — pure count
  *   ''    — dimensionless ratio (em-dash rendered)
+ *
+ * Scenario-conditional activation (when each metric reads non-zero):
+ *
+ *   ┌──────────────────────┬─────────────────────────────────────────┐
+ *   │ Metric               │ Activates when                          │
+ *   ├──────────────────────┼─────────────────────────────────────────┤
+ *   │ Particle KE          │ ≥1 manifested particle with v ≠ 0       │
+ *   │ Coulomb PE           │ ≥1 manifested charge AND `poisson_      │
+ *   │                      │ coulomb` toggle on (computes phi_C)     │
+ *   │ E-Field |E|²/2       │ Always (E = -wave_vel)                  │
+ *   │ B-Field |B|²/2       │ Spatially-varying flux (B = curl J)     │
+ *   │ Poynting |S|         │ Both E and B non-zero, non-aligned      │
+ *   │ Angular Mom          │ ≥1 manifested particle off-center       │
+ *   │ Gauss violation      │ Always; near-zero = constraint OK       │
+ *   │ Max Gauss err        │ Always; spike = local violation         │
+ *   │ Self-field inj       │ `self_field_floor` injection events     │
+ *   │ E_L / E_R / wv L/R   │ `dual_substrate` toggle on              │
+ *   │ Chirality            │ `dual_substrate` on AND L/R asymmetric  │
+ *   └──────────────────────┴─────────────────────────────────────────┘
+ *
+ * On the WasmBridge path, all metrics flow from
+ * `compute_energy_audit` in `engine/src/diagnostics_compute.cpp` → the
+ * `get_energy_audit` binding in `engine/wasm/ftd_wasm.cpp`. On the
+ * MockBridge path (when `useFluxMock` is true for flux-* / s0-seed-* /
+ * s0-field-* scenarios), `getEnergyAudit` in
+ * `engine/web/js/bridge/mock-diagnostics.js` returns a partial-audit
+ * fallback (field/wave energies populated; particle, EM, Gauss, and
+ * dual-substrate metrics hardcoded to 0). For the MockBridge path,
+ * a flat metric is expected behavior, not drift.
  */
 
 export const sections = [
