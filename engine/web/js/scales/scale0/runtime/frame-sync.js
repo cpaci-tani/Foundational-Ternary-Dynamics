@@ -5,39 +5,39 @@ export function syncRenderableData(ctx, state, viewportAdapter) {
 
     const mainScale0 = ctx.bridge.capabilities.scale0;
     const mockScale0 = state.fluxMock?.capabilities?.scale0 || null;
+    // Active physics owner — when state.useFluxMock is true the mock is
+    // the source being ticked (see runtime/tick.js::advanceSimulation), so
+    // every read here must prefer the mock. Sampling ctx.bridge in mock
+    // mode silently shows stale/frozen data — same bug class as the
+    // flux-slice panel had before its 2026-04-26 fix.
+    const activeBridge = (state.useFluxMock && state.fluxMock) ? state.fluxMock : ctx.bridge;
+    const activeScale0 = (state.useFluxMock && mockScale0) ? mockScale0 : mainScale0;
+    const fallbackScale0 = (activeScale0 === mockScale0) ? mainScale0 : mockScale0;
 
-    let particleData = mainScale0.getScale0ParticleFrame();
-    if (state.useFluxMock && (!particleData || particleData.count === 0) && mockScale0) {
-        const mockData = mockScale0.getScale0ParticleFrame();
-        if (mockData && mockData.count > 0) particleData = mockData;
+    let particleData = activeScale0.getScale0ParticleFrame();
+    if ((!particleData || particleData.count === 0) && fallbackScale0) {
+        const fb = fallbackScale0.getScale0ParticleFrame();
+        if (fb && fb.count > 0) particleData = fb;
     }
     viewportAdapter.applyParticleFrame(particleData);
 
     if (state.fieldFlags.showConfinement) {
-        viewportAdapter.applyConfinementStrings(ctx.bridge);
+        viewportAdapter.applyConfinementStrings(activeBridge);
     }
 
     if (viewportAdapter.isFluxVolumeVisible()) {
-        let volume;
-        if (state.useFluxMock && mockScale0) {
-            volume = mockScale0.getScale0FluxVolume();
-            if (!volume || volume.length === 0) volume = mainScale0.getScale0FluxVolume();
-        } else {
-            volume = mainScale0.getScale0FluxVolume();
-            if ((!volume || volume.length === 0) && mockScale0) volume = mockScale0.getScale0FluxVolume();
+        let volume = activeScale0.getScale0FluxVolume();
+        if ((!volume || volume.length === 0) && fallbackScale0) {
+            volume = fallbackScale0.getScale0FluxVolume();
         }
         if (volume && volume.length > 0) viewportAdapter.applyFluxVolume(volume, latticeSize);
     }
 
     if (viewportAdapter.isFluxSliceVisible()) {
         const sliceIdx = Math.floor(latticeSize / 2);
-        let slice;
-        if (state.useFluxMock && mockScale0) {
-            slice = mockScale0.getScale0FluxSlice(1, sliceIdx);
-            if (!slice || slice.length === 0) slice = mainScale0.getScale0FluxSlice(1, sliceIdx);
-        } else {
-            slice = mainScale0.getScale0FluxSlice(1, sliceIdx);
-            if ((!slice || slice.length === 0) && mockScale0) slice = mockScale0.getScale0FluxSlice(1, sliceIdx);
+        let slice = activeScale0.getScale0FluxSlice(1, sliceIdx);
+        if ((!slice || slice.length === 0) && fallbackScale0) {
+            slice = fallbackScale0.getScale0FluxSlice(1, sliceIdx);
         }
         if (slice && slice.length > 0) viewportAdapter.applyFluxSlice(slice, latticeSize, 1, sliceIdx);
     }

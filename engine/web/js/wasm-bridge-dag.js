@@ -686,6 +686,37 @@ export class MockBridge {
     getEnergyAudit() { return this._diagnostics.getEnergyAudit(); }
     getLagrangian()  { return this._diagnostics.getLagrangian(); }
 
+    /**
+     * Release the heavy internal buffers and break references that
+     * prevent GC. Call from `setFluxMock` (state/store.js) when a
+     * previous mock is being replaced — without this, scenario churn
+     * leaks the prior MockBridge for the page lifetime (~21 MB at
+     * L=96 for `_fluxJ` + `_fluxWV` + `_fluxMag`, plus particle
+     * arrays and per-frame _pd* buffers). Idempotent: safe to call
+     * twice or on a partially-constructed instance.
+     */
+    dispose() {
+        this._fluxJ = null;
+        this._fluxWV = null;
+        this._fluxMag = null;
+        this._sliceBuf = null;
+        this._fluxJ_L = null;
+        this._fluxJ_R = null;
+        this._fluxWV_L = null;
+        this._fluxWV_R = null;
+        this._fluxJ_prev = null;
+        this._pdPositions = null;
+        this._pdColors = null;
+        this._pdSizes = null;
+        this._pdVelocities = null;
+        this._pdBufCap = 0;
+        this._particles = [];
+        // Diagnostic helpers and samplers may hold caches that reach back
+        // into the bridge state; null the helper refs to break the cycle.
+        this._diagnostics = null;
+        this._samplers = null;
+    }
+
     getConstants() {
         return {
             ALPHA, ALPHA_INV: 1.0 / ALPHA, ALPHA_EFT, G_STAR, K_B, K_GENESIS,
@@ -1209,18 +1240,22 @@ export class MockBridge {
         this._fluxDirty = false;
     }
 
+    /**
+     * Returns a per-call snapshot of the requested mid-plane (Float64Array
+     * of length N²). Pre-2026-04-26 this returned a SHARED `_sliceBuf` to
+     * skip allocation; callers (e.g. the flux-slice panel sampling 3
+     * planes back-to-back) had to `.slice()` defensively. Audit Theme B
+     * found multiple consumers retaining the reference across calls and
+     * silently reading the next-call's data, so the contract was changed
+     * to always return a fresh buffer. Cost at L=128 is one ~128 KB
+     * allocation per call — negligible vs. the GC churn the prior
+     * sharing scheme was intended to avoid.
+     */
     getFluxSlice(axis, index) {
         if (!this._fluxJ) this._initFluxGrid();
         this._updateFluxMag();
         const N = this.latticeSize;
-        const needed = N * N;
-        // Reuse slice buffer to avoid per-frame Float64Array allocation.
-        // Reallocate on size mismatch (not just undersized) to avoid stale
-        // data when the lattice shrinks (e.g. L=128 → L=32).
-        if (!this._sliceBuf || this._sliceBuf.length !== needed) {
-            this._sliceBuf = new Float64Array(needed);
-        }
-        const data = this._sliceBuf;
+        const data = new Float64Array(N * N);
         for (let a = 0; a < N; a++) {
             for (let b = 0; b < N; b++) {
                 let idx;
@@ -1233,6 +1268,15 @@ export class MockBridge {
         return data;
     }
 
+    /**
+     * Returns the live `_fluxMag` Float64Array (length N³). The buffer
+     * is mutated in place every tick by `_updateFluxMag`, so callers
+     * MUST treat the return as read-only-this-frame. Common usage is to
+     * upload directly into a 3D texture without retention. If you need
+     * a stable copy (e.g. cross-frame diff, replay buffer), call
+     * `.slice()` at the call site — the volume can be large (16 MB at
+     * L=128), so we don't pay that cost on every reader's behalf.
+     */
     getFluxVolume() {
         if (!this._fluxJ) this._initFluxGrid();
         this._updateFluxMag();
@@ -1629,6 +1673,26 @@ export class WasmBridge {
         return _wasmCallOr(this, 'getForceFieldSampled', EMPTY_FIELD_SAMPLE,
             (m, b) => m.getForceFieldSampled(b, stride));
     }
+    // Vorticity / helicity / curlJ proxies. The MockBridge exposes these
+    // via mock-lattice-samplers; the overlay dispatcher (~line 1996)
+    // optional-chains them, so before this proxy existed every WASM-mode
+    // session silently returned empty samples for these three overlays.
+    // _wasmCallOr returns the EMPTY_*_SAMPLE singleton when the native
+    // method is absent, which matches the dispatcher's optional-chain
+    // fallback shape — so adding the proxy now is strictly an upgrade:
+    // if WASM exposes the method later, overlays light up automatically.
+    getVorticitySampled(stride = 2) {
+        return _wasmCallOr(this, 'getVorticitySampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getVorticitySampled(b, stride));
+    }
+    getHelicitySampled(stride = 2) {
+        return _wasmCallOr(this, 'getHelicitySampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getHelicitySampled(b, stride));
+    }
+    getCurlJSampled(stride = 2) {
+        return _wasmCallOr(this, 'getCurlJSampled', EMPTY_FIELD_SAMPLE,
+            (m, b) => m.getCurlJSampled(b, stride));
+    }
 
     // Force-field decomposition samplers (2026-04-19). Delegated to native
     // C++ implementations in ftd_wasm.cpp (see get_gravity_field_sampled,
@@ -1964,6 +2028,15 @@ export class WasmBridge {
     aeClear() { this.resetAE(); }
 }
 
+/**
+ * Returns derived-overlay data shaped per `kind`. Most return objects
+ * include a live reference to `_fluxMag` (and/or `_particles`) — these
+ * are mutated each tick. Callers must treat the buffers as read-only
+ * within the current frame; if you need a stable snapshot, `.slice()`
+ * the magnitude at the call site. Same retention-foot-gun applies to
+ * `_particles`: the array identity is stable but per-particle fields
+ * mutate in place.
+ */
 MockBridge.prototype.getScale0DerivedOverlayData = function (kind) {
     if (kind === 'darkMatterHalo') {
         if (!this._fluxJ) return null;

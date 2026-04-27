@@ -307,8 +307,22 @@ export class ScrubBarComponent {
     }
 
     unmount() {
-        if (this._onDocClick) document.removeEventListener('click', this._onDocClick);
-        if (this._onDocKey)   document.removeEventListener('keydown', this._onDocKey);
-        this.el.remove();
+        // Idempotent: each handler removed once, then nulled. Important
+        // because the ScrubBar is a page-lifetime singleton today (see
+        // scales/scale0/controller.js:274) but future SPA-style scale
+        // remounts would otherwise re-register the popover handlers
+        // each call without freeing the prior ones.
+        if (this._onDocClick) {
+            document.removeEventListener('click', this._onDocClick);
+            this._onDocClick = null;
+        }
+        if (this._onDocKey) {
+            document.removeEventListener('keydown', this._onDocKey);
+            this._onDocKey = null;
+        }
+        if (this.el && this.el.parentElement) this.el.remove();
     }
+
+    // Convention alias used elsewhere in the codebase.
+    dispose() { this.unmount(); }
 }
