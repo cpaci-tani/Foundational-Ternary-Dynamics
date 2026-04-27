@@ -88,11 +88,11 @@ The original framework stated integers as "selection principles" without clear d
 *Mathematical Result:* Since N_eff = T_7 = 13, we have b_3 = T_6 = 7.
 
 *Additional Confirmations:*
-- b_3 = 7 is the 4th Heegner number
+- b_3 = 7 is the 4th Heegner number `[POSITIONAL — null hypergeometric P=1.5% for "≥2 of 4 framework integers Heegner under uniform draws from {1,...,163}"; suggestive but not statistically significant; no derivation linking b_3 to the Heegner list. See MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md "Selection note" in Derivation 8 for the structural reason FTD selects d=1 over d=7 or larger Heegner d.]`
 - B_6 = 1/42 where 42 = 2 × 3 × 7 requires b_3 = 7
 - τ(3) = 252 = 4 × 9 × 7 requires b_3 = 7
 
-**Conclusion:** b_3 = 7 is DERIVED.
+**Conclusion:** b_3 = 7 is DERIVED *from the Tribonacci/Lucas constraints above*. The Heegner-position observation is a separate fact and does not enter the derivation.
 
 ---
 
