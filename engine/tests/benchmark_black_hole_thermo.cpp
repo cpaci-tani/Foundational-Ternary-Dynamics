@@ -36,8 +36,25 @@
 #include <chrono>
 #include <algorithm>
 #include <numeric>
+#include <fstream>
+#include <filesystem>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+
+// ================================================================
+// FTD-0105 lemniscatic-replacement constants (pre-registered in
+// docs/theory/10_eft_program/PROTOCOL_LEMNISCATIC_REPLACEMENT.md
+// and tagged preregister-lemniscatic-v1).
+// ================================================================
+namespace lem {
+constexpr double VARPI       = 2.6220575542921198;  // lemniscate half-period ϖ = Γ(1/4)²/(2√(2π))
+constexpr double G_STAR      = 2.9586751485490317;  // G* = ϖ/√PF = 2ϖ/√π
+constexpr double PI_         = 3.14159265358979324;
+constexpr double FOUR_PI     = 4.0 * PI_;          // 12.566 — standard sphere
+constexpr double FOUR_VARPI  = 4.0 * VARPI;        // 10.488 — Candidate A
+constexpr double FOUR_GSTAR  = 4.0 * G_STAR;       // 11.835 — Candidate B
+constexpr double GSTAR2_PI_2 = G_STAR * G_STAR * PI_ / 2.0;  // 13.749 — Candidate C
+}  // namespace lem
 
 // ================================================================
 // Utility: linear regression on log-log data
@@ -756,11 +773,333 @@ void benchmark_proper_time(int L, int ticks) {
 }
 
 // ================================================================
+// FTD-0105 D1+D2: Lemniscatic horizon-area measurement
+//
+// Pre-registered in PROTOCOL_LEMNISCATIC_REPLACEMENT.md (tag
+// preregister-lemniscatic-v1). Measures the lattice horizon area
+// DIRECTLY (voxel-counting at isosurface) rather than assuming
+// A = 4π·r_h². Tests four pre-registered candidates:
+//   Standard (4π = 12.566), 4ϖ = 10.488, 4G* = 11.835, G*²·π/2 = 13.749.
+//
+// Also measures r_h along face/edge/corner lattice directions
+// independently (D1 anisotropy probe) and the surface-gravity
+// coefficient κ at the horizon (D2 internal-consistency check).
+// ================================================================
+
+// Count Moore-boundary voxels of the half-max-latency isosurface.
+// A voxel is on the boundary if its latency >= threshold·peak AND at
+// least one Moore neighbor has latency < threshold·peak. This is the
+// digital-geometry convention for isosurface area on a cubic lattice;
+// for a sphere it reproduces 4π·r_h² as L → ∞.
+int count_isosurface_voxels(const ftd::RenderBridge& rb,
+                            double threshold_lat) {
+    const int L = rb.lattice().size();
+    const int N = static_cast<int>(rb.lattice().total_sites());
+    int count = 0;
+    auto idx = [&](int x, int y, int z) {
+        x = ((x % L) + L) % L;
+        y = ((y % L) + L) % L;
+        z = ((z % L) + L) % L;
+        return rb.lattice().index(x, y, z);
+    };
+    for (int i = 0; i < N; ++i) {
+        if (rb.voxels()[i].latency < threshold_lat) continue;
+        ftd::Coord c = rb.lattice().coord(i);
+        bool boundary = false;
+        for (int dz = -1; dz <= 1 && !boundary; ++dz)
+        for (int dy = -1; dy <= 1 && !boundary; ++dy)
+        for (int dx = -1; dx <= 1 && !boundary; ++dx) {
+            if (dx == 0 && dy == 0 && dz == 0) continue;
+            int j = idx(c.x + dx, c.y + dy, c.z + dz);
+            if (rb.voxels()[j].latency < threshold_lat) boundary = true;
+        }
+        if (boundary) count++;
+    }
+    return count;
+}
+
+// Measure r_h along a single lattice direction by scanning outward
+// and finding the radius where latency drops below threshold.
+double measure_horizon_along_direction(const ftd::RenderBridge& rb,
+                                       int cx, int cy, int cz,
+                                       double dx_norm, double dy_norm, double dz_norm,
+                                       double threshold_lat,
+                                       double peak_latency) {
+    const int L = rb.lattice().size();
+    const int r_max = L / 3;
+    double r_h = 0.0;
+    for (int r = 1; r <= r_max; ++r) {
+        int x = ((cx + (int)std::round(dx_norm * r)) % L + L) % L;
+        int y = ((cy + (int)std::round(dy_norm * r)) % L + L) % L;
+        int z = ((cz + (int)std::round(dz_norm * r)) % L + L) % L;
+        int i = rb.lattice().index(x, y, z);
+        double lat = rb.voxels()[i].latency;
+        if (lat >= threshold_lat) {
+            r_h = static_cast<double>(r);
+        } else if (r_h > 0.0) {
+            break;
+        }
+    }
+    return r_h;
+}
+
+// Estimate surface gravity κ = |dL/dr| at horizon via finite difference
+// on the spherically-averaged radial profile.
+double measure_surface_gravity(const HorizonResult& hr) {
+    if (hr.radii.size() < 2 || hr.horizon_radius < 1.5) return 0.0;
+    // Find indices bracketing horizon_radius
+    int i_h = -1;
+    for (size_t i = 0; i < hr.radii.size(); ++i) {
+        if (hr.radii[i] >= hr.horizon_radius) { i_h = static_cast<int>(i); break; }
+    }
+    if (i_h < 1 || i_h >= (int)hr.radii.size()) return 0.0;
+    double dL = hr.latencies[i_h] - hr.latencies[i_h - 1];
+    double dr = hr.radii[i_h] - hr.radii[i_h - 1];
+    return std::abs(dL / (dr + 1e-30));
+}
+
+void benchmark_lemniscatic(int L, int ticks, int n_seeds,
+                            const std::string& output_dir) {
+    std::cerr << "  FTD-0105 D1+D2: Lemniscatic horizon-area measurement\n";
+    std::cerr << "    L=" << L << " ticks=" << ticks
+              << " seeds=" << n_seeds << " output=" << output_dir << "\n";
+    std::cerr << "    Candidates: 4π=" << lem::FOUR_PI
+              << " 4ϖ=" << lem::FOUR_VARPI
+              << " 4G*=" << lem::FOUR_GSTAR
+              << " G*²π/2=" << lem::GSTAR2_PI_2 << "\n";
+
+    namespace fs = std::filesystem;
+    if (!output_dir.empty()) {
+        std::error_code ec;
+        fs::create_directories(output_dir, ec);
+    }
+    std::ofstream per_csv;
+    if (!output_dir.empty()) {
+        per_csv.open(output_dir + "/per_cluster.csv");
+        per_csv << "cluster_radius,seed,N_particles,mass,r_h,peak_latency,"
+                << "A_assumed_4pi,A_actual_iso,A_ratio_iso,"
+                << "r_h_face,r_h_edge,r_h_corner,anisotropy,"
+                << "kappa_horizon,T_M_product\n";
+    }
+
+    const int mid = L / 2;
+    const std::vector<int> cluster_radii = {2, 3, 4, 5};
+
+    // Aggregate per cluster_radius
+    struct Aggregate {
+        int cr;
+        std::vector<double> ratios;
+        std::vector<double> r_hs;
+        std::vector<double> kappas;
+    };
+    std::vector<Aggregate> agg;
+
+    for (int cr : cluster_radii) {
+        if (cr + L / 3 > mid) continue;
+        Aggregate a;
+        a.cr = cr;
+
+        for (int seed = 0; seed < n_seeds; ++seed) {
+            ftd::RenderBridge rb(L);
+            rb.toggles.genesis = false;
+            rb.toggles.gravity = true;
+            rb.toggles.latency_field = true;
+            rb.toggles.forces = false;
+            rb.toggles.movement = false;
+            rb.seed_rng(0xE0105000u + static_cast<unsigned>(cr) * 100u
+                                     + static_cast<unsigned>(seed));
+
+            // Shift cluster center by (seed-2,...) to break lattice-aligned
+            // symmetry across seeds. Range -2..+2 keeps cluster centered.
+            int sx = (seed % 5) - 2;
+            int sy = ((seed / 5) % 5) - 2;
+            int sz = ((seed / 25) % 5) - 2;
+            int ccx = mid + sx, ccy = mid + sy, ccz = mid + sz;
+
+            int N_p = create_mass_cluster(rb, ccx, ccy, ccz, cr);
+            double mass = N_p * ftd::K_B;
+
+            rb.run(ticks);
+
+            // Existing 6-direction shell-averaged r_h at threshold 0.3
+            HorizonResult hr = measure_horizon(rb, ccx, ccy, ccz, 0.3);
+            if (hr.horizon_radius < 1.0) continue;
+
+            const double thr_lat = 0.3 * hr.peak_latency;
+
+            // D1: direct isosurface area count
+            int n_iso = count_isosurface_voxels(rb, thr_lat);
+            double A_actual = static_cast<double>(n_iso);
+            double A_assumed = lem::FOUR_PI * hr.horizon_radius * hr.horizon_radius;
+            double A_ratio = A_actual / (hr.horizon_radius * hr.horizon_radius + 1e-30);
+
+            // D1 anisotropy probe: r_h along face/edge/corner
+            double rf = measure_horizon_along_direction(
+                rb, ccx, ccy, ccz, 1.0, 0.0, 0.0, thr_lat, hr.peak_latency);
+            double s2inv = 1.0 / std::sqrt(2.0);
+            double re = measure_horizon_along_direction(
+                rb, ccx, ccy, ccz, s2inv, s2inv, 0.0, thr_lat, hr.peak_latency);
+            double s3inv = 1.0 / std::sqrt(3.0);
+            double rc = measure_horizon_along_direction(
+                rb, ccx, ccy, ccz, s3inv, s3inv, s3inv, thr_lat, hr.peak_latency);
+            double anisotropy = (rf > 0 && rc > 0)
+                ? std::abs(rf - rc) / (0.5 * (rf + rc)) : 0.0;
+
+            // D2: surface gravity at horizon
+            double kappa = measure_surface_gravity(hr);
+            double T_M = (kappa > 0 && mass > 0) ? (kappa * mass) : 0.0;
+
+            a.ratios.push_back(A_ratio);
+            a.r_hs.push_back(hr.horizon_radius);
+            a.kappas.push_back(kappa);
+
+            if (per_csv) {
+                per_csv << cr << "," << seed << "," << N_p << ","
+                        << std::setprecision(6) << mass << ","
+                        << hr.horizon_radius << ","
+                        << hr.peak_latency << ","
+                        << A_assumed << ","
+                        << A_actual << ","
+                        << A_ratio << ","
+                        << rf << "," << re << "," << rc << ","
+                        << anisotropy << ","
+                        << kappa << ","
+                        << T_M << "\n";
+            }
+
+            std::cout << "lem_d1," << cr << "," << seed << ","
+                      << std::setprecision(6) << hr.horizon_radius << ","
+                      << A_actual << "," << A_ratio << ","
+                      << kappa << "\n";
+
+            std::cerr << "    cr=" << cr << " seed=" << seed
+                      << " r_h=" << std::setprecision(3) << hr.horizon_radius
+                      << " N_iso=" << n_iso
+                      << " A/r²=" << std::setprecision(4) << A_ratio
+                      << " (vs 4π=" << lem::FOUR_PI << ")"
+                      << " aniso=" << std::setprecision(3) << anisotropy
+                      << "\n";
+        }
+        if (!a.ratios.empty()) agg.push_back(std::move(a));
+    }
+
+    // Aggregate verdict
+    auto mean_stderr = [](const std::vector<double>& v) {
+        double m = 0.0;
+        for (double x : v) m += x;
+        m /= std::max<size_t>(1, v.size());
+        double var = 0.0;
+        for (double x : v) var += (x - m) * (x - m);
+        var /= std::max<size_t>(1, v.size() - 1);
+        return std::pair<double, double>(m, std::sqrt(var / std::max<size_t>(1, v.size())));
+    };
+
+    std::cerr << "\n  --- D1 verdict (per cluster_radius) ---\n";
+    std::ofstream verdict;
+    if (!output_dir.empty()) {
+        verdict.open(output_dir + "/verdict.csv");
+        verdict << "cluster_radius,n_seeds,A_ratio_mean,A_ratio_stderr,"
+                << "dist_4pi,dist_4varpi,dist_4Gstar,dist_Gstar2_pi_2,closest_candidate\n";
+    }
+
+    // Pool across all cluster_radii for headline verdict
+    std::vector<double> all_ratios;
+    for (const auto& a : agg) {
+        for (double r : a.ratios) all_ratios.push_back(r);
+        auto [m, se] = mean_stderr(a.ratios);
+        double d_4pi = std::abs(m - lem::FOUR_PI) / lem::FOUR_PI * 100.0;
+        double d_4v  = std::abs(m - lem::FOUR_VARPI) / lem::FOUR_VARPI * 100.0;
+        double d_4g  = std::abs(m - lem::FOUR_GSTAR) / lem::FOUR_GSTAR * 100.0;
+        double d_g2  = std::abs(m - lem::GSTAR2_PI_2) / lem::GSTAR2_PI_2 * 100.0;
+        double dmin = std::min({d_4pi, d_4v, d_4g, d_g2});
+        std::string closest;
+        if (dmin == d_4pi) closest = "4pi";
+        else if (dmin == d_4v) closest = "4varpi";
+        else if (dmin == d_4g) closest = "4Gstar";
+        else closest = "Gstar2_pi_2";
+        std::cerr << "    cr=" << a.cr << " A/r²=" << std::setprecision(4) << m
+                  << "±" << se << " closest=" << closest
+                  << " (Δ4π=" << std::setprecision(2) << d_4pi << "%)\n";
+        if (verdict) {
+            verdict << a.cr << "," << a.ratios.size() << ","
+                    << std::setprecision(6) << m << "," << se << ","
+                    << d_4pi << "," << d_4v << "," << d_4g << "," << d_g2 << ","
+                    << closest << "\n";
+        }
+    }
+
+    if (!all_ratios.empty()) {
+        auto [m_all, se_all] = mean_stderr(all_ratios);
+        std::cerr << "\n  --- HEADLINE: pooled A/r² = " << std::setprecision(4) << m_all
+                  << " ± " << se_all << " (n=" << all_ratios.size() << ")\n";
+        std::cerr << "    Standard 4π = " << lem::FOUR_PI
+                  << " (deviation " << std::abs(m_all - lem::FOUR_PI) / lem::FOUR_PI * 100.0
+                  << "%)\n";
+        std::cerr << "    Cand A 4ϖ   = " << lem::FOUR_VARPI
+                  << " (deviation " << std::abs(m_all - lem::FOUR_VARPI) / lem::FOUR_VARPI * 100.0
+                  << "%)\n";
+        std::cerr << "    Cand B 4G*  = " << lem::FOUR_GSTAR
+                  << " (deviation " << std::abs(m_all - lem::FOUR_GSTAR) / lem::FOUR_GSTAR * 100.0
+                  << "%)\n";
+        std::cerr << "    Cand C G*²π/2 = " << lem::GSTAR2_PI_2
+                  << " (deviation " << std::abs(m_all - lem::GSTAR2_PI_2) / lem::GSTAR2_PI_2 * 100.0
+                  << "%)\n";
+
+        if (!output_dir.empty()) {
+            std::ofstream meta(output_dir + "/meta.json");
+            meta << "{\n";
+            meta << "  \"campaign\": \"lemniscatic_replacement_2026-04-27\",\n";
+            meta << "  \"ledger_row\": \"FTD-0105\",\n";
+            meta << "  \"protocol\": \"docs/theory/10_eft_program/PROTOCOL_LEMNISCATIC_REPLACEMENT.md\",\n";
+            meta << "  \"pre_reg_tag\": \"preregister-lemniscatic-v1\",\n";
+            meta << "  \"L\": " << L << ",\n";
+            meta << "  \"ticks\": " << ticks << ",\n";
+            meta << "  \"n_seeds_per_cr\": " << n_seeds << ",\n";
+            meta << "  \"cluster_radii\": [2, 3, 4, 5],\n";
+            meta << "  \"n_cluster_groups_with_data\": " << agg.size() << ",\n";
+            meta << "  \"pooled_A_ratio_mean\": " << m_all << ",\n";
+            meta << "  \"pooled_A_ratio_stderr\": " << se_all << ",\n";
+            meta << "  \"candidates\": {\n";
+            meta << "    \"4pi\": " << lem::FOUR_PI << ",\n";
+            meta << "    \"4varpi\": " << lem::FOUR_VARPI << ",\n";
+            meta << "    \"4Gstar\": " << lem::FOUR_GSTAR << ",\n";
+            meta << "    \"Gstar2_pi_2\": " << lem::GSTAR2_PI_2 << "\n";
+            meta << "  },\n";
+            meta << "  \"deviations_pct\": {\n";
+            meta << "    \"4pi\": " << std::abs(m_all - lem::FOUR_PI) / lem::FOUR_PI * 100.0 << ",\n";
+            meta << "    \"4varpi\": " << std::abs(m_all - lem::FOUR_VARPI) / lem::FOUR_VARPI * 100.0 << ",\n";
+            meta << "    \"4Gstar\": " << std::abs(m_all - lem::FOUR_GSTAR) / lem::FOUR_GSTAR * 100.0 << ",\n";
+            meta << "    \"Gstar2_pi_2\": " << std::abs(m_all - lem::GSTAR2_PI_2) / lem::GSTAR2_PI_2 * 100.0 << "\n";
+            meta << "  }\n";
+            meta << "}\n";
+        }
+    }
+}
+
+// ================================================================
 // main
 // ================================================================
 int main(int argc, char* argv[]) {
-    int L = (argc > 1) ? std::atoi(argv[1]) : 48;
-    int ticks = (argc > 2) ? std::atoi(argv[2]) : 200;
+    int L = 48;
+    int ticks = 200;
+    bool lemniscatic_mode = false;
+    int n_seeds = 5;
+    std::string output_dir;
+    // Backward-compat positional args (L, ticks); also accept --L=, --ticks=, etc.
+    int positional = 0;
+    for (int i = 1; i < argc; ++i) {
+        std::string a = argv[i];
+        if (a == "--lemniscatic-mode") { lemniscatic_mode = true; }
+        else if (a.rfind("--L=", 0) == 0) L = std::atoi(a.c_str() + 4);
+        else if (a.rfind("--ticks=", 0) == 0) ticks = std::atoi(a.c_str() + 8);
+        else if (a.rfind("--seeds=", 0) == 0) n_seeds = std::atoi(a.c_str() + 8);
+        else if (a.rfind("--output-dir=", 0) == 0) output_dir = a.substr(13);
+        else if (a[0] != '-') {
+            if (positional == 0) L = std::atoi(a.c_str());
+            else if (positional == 1) ticks = std::atoi(a.c_str());
+            ++positional;
+        }
+    }
 
     // The latency Poisson solver warm-starts between ticks (30 SOR
     // iterations each).  Convergence on a L^3 lattice needs ~80-100
@@ -773,11 +1112,17 @@ int main(int argc, char* argv[]) {
               << ", ticks=" << ticks << " (latency phases use "
               << latency_ticks << ")\n";
 
-    benchmark_latency_profile(L, latency_ticks);
-    benchmark_horizon_area(L, latency_ticks);
-    benchmark_entropy_area_law(L, latency_ticks);
-    benchmark_hawking_evaporation(L, ticks);  // Uses its own phasing
-    benchmark_proper_time(L, latency_ticks);
+    if (lemniscatic_mode) {
+        // FTD-0105: only run the lemniscatic-replacement benchmark.
+        // Pre-registered in PROTOCOL_LEMNISCATIC_REPLACEMENT.md.
+        benchmark_lemniscatic(L, latency_ticks, n_seeds, output_dir);
+    } else {
+        benchmark_latency_profile(L, latency_ticks);
+        benchmark_horizon_area(L, latency_ticks);
+        benchmark_entropy_area_law(L, latency_ticks);
+        benchmark_hawking_evaporation(L, ticks);  // Uses its own phasing
+        benchmark_proper_time(L, latency_ticks);
+    }
 
     auto t1 = std::chrono::high_resolution_clock::now();
     double elapsed = std::chrono::duration<double>(t1 - t0).count();
