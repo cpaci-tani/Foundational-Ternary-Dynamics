@@ -30,7 +30,8 @@ import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js';
 import { Scale0ControlsComponent } from './ui/controls/component.js';
 import { wireScale0Controls } from './ui/controls/wire.js';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
-import { mountFluxSlicePanel } from './ui/overlays/flux-slice-panel.js';
+// flux-slice-panel and p1-observables-panel are mounted by app_dag.js into
+// the side-panel tab system; their init functions are imported there.
 import { MemoryRecorder } from './timeline/memory-recorder.js';
 import { RenderController } from './timeline/render-controller.js';
 import * as _lodMod from './timeline/lod.js';
@@ -215,20 +216,14 @@ export function bindUI(ctx) {
     // Mount floating symmetry panel
     mountSymmetryPanel(document.getElementById('app'));
 
-    // Mount floating live flux-slice diagnostic (xy/xz/yz heatmaps).
-    // Hidden by default; toggled by the `Flux slices` chip in the same
-    // top-right cluster as the symmetry panel.
-    //
-    // Source resolution: always sample from whichever flux source the
-    // current scenario is actively ticking. When state.useFluxMock=true
-    // the mock advances and the WASM bridge stays frozen — sampling
-    // ctx.bridge in that mode would show stale heatmaps that never
-    // change. The callback returns the active source per frame so
-    // scenario flips and scale round-trips are picked up automatically.
-    mountFluxSlicePanel(
-        document.getElementById('app'),
-        () => (state.useFluxMock && state.fluxMock) ? state.fluxMock : ctx.bridge,
-    );
+    // Flux-slice diagnostic and P1-observables panels are mounted by
+    // app_dag.js into the side-panel tab system (#panel-flux-slice and
+    // #panel-p1-observables slots) via initFluxSlicePanel() and
+    // initP1ObservablesPanel(). They read live ctx.bridge / state.fluxMock
+    // through window.__ftdCtx + getScale0State() per frame, so the
+    // closure-mount no longer needs to live here. See:
+    //   engine/web/js/scales/scale0/ui/overlays/flux-slice-panel.js
+    //   engine/web/js/scales/scale0/ui/overlays/p1-observables-panel.js
 
     bindScale0UI(ctx, {
         loadScenario,
@@ -383,3 +378,13 @@ export function handleShortcutKey(key) {
 export const animateLattice = animate;
 export const resizeLattice = resize;
 export { shouldUseFluxMock };
+
+// Page-shutdown hook (Bridge-M1 audit, 2026-04-27): release the lazy
+// fluxMock so its typed-array buffers (~21 MB at L=96) don't survive
+// into a backgrounded tab. `pagehide` fires for both close and bfcache
+// freeze; idempotent because `clearFluxMock` no-ops on a null mock.
+if (typeof window !== 'undefined') {
+    window.addEventListener('pagehide', () => {
+        try { exitScale0(); } catch { /* defensive: never block teardown */ }
+    });
+}

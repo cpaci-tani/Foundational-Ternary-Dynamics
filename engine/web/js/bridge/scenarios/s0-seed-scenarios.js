@@ -13,7 +13,14 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { ALPHA, K_B, K_GENESIS, N_BASE, G_STAR, VARPI, G_C, C_SPEED } from '../../constants.js';
+import { K_B, K_GENESIS, C_SPEED } from '../../constants.js';
+import {
+    TRIAD_ANGLES,
+    injectRadialEnvelope,
+    injectParticleFull,
+    injectDressedParticle,
+    injectTriad,
+} from './_helpers.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -37,24 +44,8 @@ export function setupS0SeedScenario(name, ctx) {
                     //                              but has NO spatial form)
                     this.injectParticle(mc, mc, mc, -1);
                     const envR = Math.max(3, Math.floor(N / 6));
-                    const envSigma = envR / 2;
-                    const envAmp = K_B * 1.5;
-                    const envR2 = envR * envR;
-                    const eLo = Math.floor(midF) - envR;
-                    const eHi = Math.ceil(midF) + envR;
-                    for (let z = eLo; z <= eHi; z++)
-                    for (let y = eLo; y <= eHi; y++)
-                    for (let x = eLo; x <= eHi; x++) {
-                        const dx = x - midF, dy = y - midF, dz = z - midF;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 < 0.25 || r2 > envR2) continue;
-                        const r = Math.sqrt(r2);
-                        const val = envAmp * Math.exp(-r2 / (2 * envSigma * envSigma));
-                        if (val < 0.001) continue;
-                        // Radial INWARD (negative charge convention: J · r̂ < 0)
-                        this._injectFlux(x, y, z,
-                            -val * dx / r, -val * dy / r, -val * dz / r);
-                    }
+                    injectRadialEnvelope(this, midF, midF, midF, -1, envR / 2, K_B * 1.5,
+                        { radius: envR, minR2: 0.25 });
                     break;
                 }
 
@@ -86,24 +77,8 @@ export function setupS0SeedScenario(name, ctx) {
                     const boost = (name === 's0-seed-tau') ? 2.25 : 1.80;
                     this.injectParticle(mc, mc, mc, -1);
                     const envR = Math.max(3, Math.floor(N / 6));
-                    const envSigma = envR / 2;
-                    const envAmp = K_B * boost;
-                    const envR2 = envR * envR;
-                    const eLo = Math.floor(midF) - envR;
-                    const eHi = Math.ceil(midF) + envR;
-                    for (let z = eLo; z <= eHi; z++)
-                    for (let y = eLo; y <= eHi; y++)
-                    for (let x = eLo; x <= eHi; x++) {
-                        const dx = x - midF, dy = y - midF, dz = z - midF;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 < 0.25 || r2 > envR2) continue;
-                        const r = Math.sqrt(r2);
-                        const val = envAmp * Math.exp(-r2 / (2 * envSigma * envSigma));
-                        if (val < 0.001) continue;
-                        // Radial INWARD (negative charge convention: J·r̂ < 0).
-                        this._injectFlux(x, y, z,
-                            -val * dx / r, -val * dy / r, -val * dz / r);
-                    }
+                    injectRadialEnvelope(this, midF, midF, midF, -1, envR / 2, K_B * boost,
+                        { radius: envR, minR2: 0.25 });
                     break;
                 }
 
@@ -151,30 +126,14 @@ export function setupS0SeedScenario(name, ctx) {
                     // post-hoc pattern matching.
                     const bR = Math.max(2, Math.floor(N / 8));
                     for (let k = 0; k < 3; k++) {
-                        const angle = (2 * Math.PI * k) / 3;
-                        const bx = Math.round(midF + bR * Math.cos(angle));
-                        const bz = Math.round(midF + bR * Math.sin(angle));
+                        const ang = TRIAD_ANGLES[k];
+                        const bx = Math.round(midF + bR * Math.cos(ang));
+                        const bz = Math.round(midF + bR * Math.sin(ang));
                         this.injectParticle(bx, mc, bz, 1);
                     }
                     const envR = Math.max(3, Math.floor(N / 5));
-                    const envSigma = envR / 2;
-                    const envAmp = K_B * 1.0;
-                    const envR2 = envR * envR;
-                    const eLo = Math.max(0, Math.floor(midF) - envR);
-                    const eHi = Math.min(N - 1, Math.ceil(midF) + envR);
-                    for (let z = eLo; z <= eHi; z++)
-                    for (let y = eLo; y <= eHi; y++)
-                    for (let x = eLo; x <= eHi; x++) {
-                        const dx = x - midF, dy = y - midF, dz = z - midF;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        if (r2 < 0.25 || r2 > envR2) continue;
-                        const r = Math.sqrt(r2);
-                        const val = envAmp * Math.exp(-r2 / (2 * envSigma * envSigma));
-                        if (val < 0.001) continue;
-                        // Radial OUTWARD (positive cluster)
-                        this._injectFlux(x, y, z,
-                            val * dx / r, val * dy / r, val * dz / r);
-                    }
+                    injectRadialEnvelope(this, midF, midF, midF, +1, envR / 2, K_B,
+                        { radius: envR, minR2: 0.25 });
                     break;
                 }
 
@@ -271,38 +230,14 @@ export function setupS0SeedScenario(name, ctx) {
                 case 's0-seed-hydrogen':
                 case 's0-seed-helium':
                 case 's0-seed-h2-molecule': {
-                    const _dp = (cx, cy, cz, st, sp, co, sig, amp, lock = false) => {
-                        this.injectParticle(cx, cy, cz, st);
-                        // Set color, spin, and locked on the just-injected particle
-                        const lastP = this._particles[this._particles.length - 1];
-                        if (co !== undefined && co >= 0) lastP.color = co;
-                        if (sp !== undefined) lastP.spin = sp;
-                        if (lock) lastP.locked = true;
-                        const sn = st > 0 ? 1 : -1;
-                        const eR = Math.ceil(3 * sig);
-                        for (let dz2 = -eR; dz2 <= eR; dz2++)
-                        for (let dy2 = -eR; dy2 <= eR; dy2++)
-                        for (let dx2 = -eR; dx2 <= eR; dx2++) {
-                            if (dx2 === 0 && dy2 === 0 && dz2 === 0) continue;
-                            const r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
-                            const rr = Math.sqrt(r22);
-                            if (rr > 3 * sig) continue;
-                            const gg = amp * Math.exp(-r22 / (2 * sig * sig));
-                            if (gg < 0.001) continue;
-                            this._injectFlux(cx+dx2, cy+dy2, cz+dz2, sn*gg*dx2/rr, sn*gg*dy2/rr, sn*gg*dz2/rr);
-                        }
-                    };
-                    const _tri = (cx, cy, cz, charges, colors, rad, lock = true) => {
-                        for (let k = 0; k < 3; k++) {
-                            const ang = (2 * Math.PI * k) / 3;
-                            const qx = Math.round(cx + rad * Math.cos(ang));
-                            const qy = Math.round(cy + rad * Math.sin(ang));
-                            _dp(qx, qy, cz, charges[k], (k%2===0)?1:-1, colors[k], 2, K_B*0.5, lock);
-                        }
-                    };
-                    if (name === 's0-seed-electron-l3') _dp(mc, mc, mc, -1, -1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
-                    else if (name === 's0-seed-positron') _dp(mc, mc, mc, +1, +1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
+                    const dp  = (cx, cy, cz, st, sp, co, sig, amp, lock = false) =>
+                        injectDressedParticle(this, cx, cy, cz, st, sp, co, sig, amp, lock);
+                    const tri = (cx, cy, cz, charges, colors, rad, lock = true) =>
+                        injectTriad(this, cx, cy, cz, charges, colors, rad, lock);
+                    if (name === 's0-seed-electron-l3') dp(mc, mc, mc, -1, -1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
+                    else if (name === 's0-seed-positron') dp(mc, mc, mc, +1, +1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
                     else if (name === 's0-seed-neutrino') {
+                        // Soft chirality-biased flux blob (no manifested core).
                         const sig = 2, eR = 6;
                         for (let dz2=-eR; dz2<=eR; dz2++) for (let dy2=-eR; dy2<=eR; dy2++) for (let dx2=-eR; dx2<=eR; dx2++) {
                             const r22=dx2*dx2+dy2*dy2+dz2*dz2; if(r22>eR*eR)continue;
@@ -310,26 +245,26 @@ export function setupS0SeedScenario(name, ctx) {
                             this._injectFlux(mc+dx2,mc+dy2,mc+dz2, gg*0.55, gg*0.45, 0);
                         }
                     }
-                    else if (name === 's0-seed-quark') _dp(mc, mc, mc, +1, +1, 1, 2, K_B*0.5);
-                    else if (name === 's0-seed-antiquark') _dp(mc, mc, mc, -1, -1, 1, 2, K_B*0.5);
+                    else if (name === 's0-seed-quark') dp(mc, mc, mc, +1, +1, 1, 2, K_B*0.5);
+                    else if (name === 's0-seed-antiquark') dp(mc, mc, mc, -1, -1, 1, 2, K_B*0.5);
                     else if (name === 's0-seed-pion') {
                         const sp=Math.max(3,Math.floor(N/8)), hf=Math.floor(sp/2);
-                        _dp(mc+hf,mc,mc, +1,+1,1, 2,K_B*0.5, true); _dp(mc-hf,mc,mc, -1,-1,1, 2,K_B*0.5, true);
+                        dp(mc+hf,mc,mc, +1,+1,1, 2,K_B*0.5, true); dp(mc-hf,mc,mc, -1,-1,1, 2,K_B*0.5, true);
                     }
-                    else if (name === 's0-seed-proton-l4') { const bR=Math.max(2,Math.floor(N/8)); _tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); }
-                    else if (name === 's0-seed-neutron') { const bR=Math.max(2,Math.floor(N/8)); _tri(mc,mc,mc,[+1,-1,-1],[1,2,3],bR); }
+                    else if (name === 's0-seed-proton-l4') { const bR=Math.max(2,Math.floor(N/8)); tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); }
+                    else if (name === 's0-seed-neutron') { const bR=Math.max(2,Math.floor(N/8)); tri(mc,mc,mc,[+1,-1,-1],[1,2,3],bR); }
                     else if (name === 's0-seed-hydrogen') {
                         const oR=Math.max(4,Math.floor(N/6)), bR=Math.max(2,Math.floor(N/12));
-                        _tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); _dp(mc,mc,mc+oR, -1,-1,0, 2,K_B);
+                        tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc,mc,mc+oR, -1,-1,0, 2,K_B);
                     }
                     else if (name === 's0-seed-helium') {
                         const oR=Math.max(3,Math.floor(N/8));
-                        _dp(mc,mc,mc, +1,0,0, 2,K_B*3, true); _dp(mc,mc,mc+oR, -1,+1,0, 2,K_B*0.8); _dp(mc,mc,mc-oR, -1,-1,0, 2,K_B*0.8);
+                        dp(mc,mc,mc, +1,0,0, 2,K_B*3, true); dp(mc,mc,mc+oR, -1,+1,0, 2,K_B*0.8); dp(mc,mc,mc-oR, -1,-1,0, 2,K_B*0.8);
                     }
                     else if (name === 's0-seed-h2-molecule') {
                         const bd=Math.max(4,Math.floor(N/6)), hf=Math.floor(bd/2), oR=Math.max(3,Math.floor(N/8)), bR=Math.max(1,Math.floor(N/16));
-                        _tri(mc-hf,mc,mc,[+1,+1,-1],[1,2,3],bR); _dp(mc-hf,mc,mc+oR, -1,-1,0, 2,K_B*0.8);
-                        _tri(mc+hf,mc,mc,[+1,+1,-1],[1,2,3],bR); _dp(mc+hf,mc,mc+oR, -1,+1,0, 2,K_B*0.8);
+                        tri(mc-hf,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc-hf,mc,mc+oR, -1,-1,0, 2,K_B*0.8);
+                        tri(mc+hf,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc+hf,mc,mc+oR, -1,+1,0, 2,K_B*0.8);
                     }
                     break;
                 }
@@ -440,43 +375,17 @@ export function setupS0SeedScenario(name, ctx) {
                     // Charged (s=+1) localised lump. Flux envelope
                     // chirality-biased via L-axis dominance (use Jx
                     // ahead of Jy/Jz to suggest left-handed coupling).
-                    this.injectParticle(mc, mc, mc, +1);
-                    const wLast = this._particles[this._particles.length - 1];
-                    wLast.spin = +1;
-                    const wSig = 1.8, wR = 5, wAmp = K_B * 1.6;
-                    for (let dz=-wR; dz<=wR; dz++)
-                    for (let dy=-wR; dy<=wR; dy++)
-                    for (let dx=-wR; dx<=wR; dx++) {
-                        const r2 = dx*dx + dy*dy + dz*dz;
-                        if (r2 === 0 || r2 > wR*wR) continue;
-                        const r = Math.sqrt(r2);
-                        const g = wAmp * Math.exp(-r2 / (2 * wSig * wSig));
-                        if (g < 1e-3) continue;
-                        // Chirality bias: +30% weight on Jx relative to transverse
-                        this._injectFlux(mc+dx, mc+dy, mc+dz,
-                            g*(1.3*dx/r),
-                            g*(dy/r),
-                            g*(dz/r));
-                    }
+                    injectParticleFull(this, mc, mc, mc, +1, { spin: +1 });
+                    // Chirality bias: +30% weight on Jx relative to transverse.
+                    injectRadialEnvelope(this, mc, mc, mc, +1, 1.8, K_B * 1.6,
+                        { radius: 5, axisBias: [1.3, 1, 1] });
                     break;
                 }
 
                 case 's0-seed-z-boson': {
                     // Neutral (no state-manifested core) localised lump.
-                    // Balanced flux envelope with no chirality bias.
-                    const zSig = 2.0, zR = 6, zAmp = K_B * 1.8;
-                    for (let dz=-zR; dz<=zR; dz++)
-                    for (let dy=-zR; dy<=zR; dy++)
-                    for (let dx=-zR; dx<=zR; dx++) {
-                        const r2 = dx*dx + dy*dy + dz*dz;
-                        if (r2 === 0 || r2 > zR*zR) continue;
-                        const r = Math.sqrt(r2);
-                        const g = zAmp * Math.exp(-r2 / (2 * zSig * zSig));
-                        if (g < 1e-3) continue;
-                        // Radial-inward (bound field configuration).
-                        this._injectFlux(mc+dx, mc+dy, mc+dz,
-                            -g*dx/r, -g*dy/r, -g*dz/r);
-                    }
+                    // Balanced radial-inward envelope, no chirality bias.
+                    injectRadialEnvelope(this, mc, mc, mc, -1, 2.0, K_B * 1.8, { radius: 6 });
                     break;
                 }
 
@@ -515,7 +424,7 @@ export function setupS0SeedScenario(name, ctx) {
                     const bdR = Math.max(2, Math.floor(N/10));
                     // Three-vertex neutron-ish triangle.
                     for (let k = 0; k < 3; k++) {
-                        const ang = (2 * Math.PI * k) / 3;
+                        const ang = TRIAD_ANGLES[k];
                         const bx = Math.round(mc + bdR * Math.cos(ang));
                         const by = Math.round(mc + bdR * Math.sin(ang));
                         const charge = (k === 0) ? +1 : -1;
@@ -555,31 +464,17 @@ export function setupS0SeedScenario(name, ctx) {
                     // Electron on left, moving right.
                     this.injectParticle(mc - half, mc, mc, -1);
                     const eP = this._particles[this._particles.length - 1];
-                    eP.velocity.x = +0.3 * C_SPEED;
+                    eP.vx = +0.3 * C_SPEED;
 
                     // Positron on right, moving left.
                     this.injectParticle(mc + half, mc, mc, +1);
                     const pP = this._particles[this._particles.length - 1];
-                    pP.velocity.x = -0.3 * C_SPEED;
+                    pP.vx = -0.3 * C_SPEED;
 
                     // Dress each with a small flux envelope so they are
                     // visible as lepton-like lumps before collision.
-                    const aSig = 2, aR = 4;
-                    const dress = (cx, cy, cz, sign) => {
-                        for (let dz2=-aR; dz2<=aR; dz2++)
-                        for (let dy2=-aR; dy2<=aR; dy2++)
-                        for (let dx2=-aR; dx2<=aR; dx2++) {
-                            const r2 = dx2*dx2 + dy2*dy2 + dz2*dz2;
-                            if (r2 === 0 || r2 > aR*aR) continue;
-                            const r = Math.sqrt(r2);
-                            const g = K_B * Math.exp(-r2/(2*aSig*aSig));
-                            if (g < 1e-3) continue;
-                            this._injectFlux(cx+dx2, cy+dy2, cz+dz2,
-                                sign*g*dx2/r, sign*g*dy2/r, sign*g*dz2/r);
-                        }
-                    };
-                    dress(mc - half, mc, mc, -1);
-                    dress(mc + half, mc, mc, +1);
+                    injectRadialEnvelope(this, mc - half, mc, mc, -1, 2, K_B, { radius: 4 });
+                    injectRadialEnvelope(this, mc + half, mc, mc, +1, 2, K_B, { radius: 4 });
                     break;
                 }
 

@@ -26,6 +26,21 @@ import {
 } from '../ui/dom.js';
 import { clearScale0Timeline } from '../controller.js';
 
+// Toggle-reset whitelist used by `applyToggleDefaults`.
+//
+// Contract: every scenario in `bridge/scenarios/*.js` and
+// `engine/src/scenarios/*.cpp` MUST only mutate toggle keys that
+// appear in `SCALE0_TOGGLES`. Keys outside the whitelist (e.g.
+// `pair_production`, `langevin`, `latency_field`, `emergent_forces`)
+// are intentionally NOT reset between scenarios — they are long-term
+// research controls owned by the user, not scenario state.
+//
+// As of 2026-04-27 the actual mutated set is {genesis, coupling,
+// damping, weak_transmutation, dual_substrate}, all whitelisted. If
+// you add a scenario that needs to flip a non-whitelisted toggle,
+// either (a) add the key to SCALE0_TOGGLES with its default value, or
+// (b) restore the previous value at scenario-end. Don't leave the
+// mutation hanging — that's the toggle-leak vector ARC-1 audited.
 const DEFAULT_TOGGLES = SCALE0_TOGGLES;
 const FIELD_BUTTON_IDS = [
     'toggle-e-field',
@@ -258,18 +273,30 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // new sim. Wipe them so the scrub bar re-anchors on the fresh scenario.
     clearScale0Timeline();
 
+    // Allocate a parallel JS MockBridge ("fluxMock") ONLY when
+    // `shouldUseFluxMock` says it will own the physics for this
+    // scenario. For WASM-canonical scenarios (quantum-*, light-*) the
+    // mock is unused — skipping it saves an L³ buffer + a redundant
+    // scenario-seeding pass and removes the divergence-masking risk
+    // the architecture audit flagged (ARC-2).
+    const useFluxMock = shouldUseFluxMock(ctx.bridge, scenario.id);
     const latticeSize = ctx.bridge.latticeSize || 32;
-    const fluxMock = new MockBridge(latticeSize);
-    fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
-    fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
-    fluxMock.capabilities.scale0.setupScenario(scenario.id);
-
-    applyToggleDefaults(mainScale0, fluxMock.capabilities.scale0, scenario.id);
-    for (const [key, , elId] of DEFAULT_TOGGLES) {
-        fluxMock.capabilities.scale0.setToggle(key, readCheckboxValue(elId));
+    let fluxMock = null;
+    if (useFluxMock) {
+        fluxMock = new MockBridge(latticeSize);
+        fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
+        fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
+        fluxMock.capabilities.scale0.setupScenario(scenario.id);
     }
 
-    setFluxMock(fluxMock, shouldUseFluxMock(ctx.bridge, scenario.id));
+    applyToggleDefaults(mainScale0, fluxMock?.capabilities?.scale0 ?? null, scenario.id);
+    if (fluxMock) {
+        for (const [key, , elId] of DEFAULT_TOGGLES) {
+            fluxMock.capabilities.scale0.setToggle(key, readCheckboxValue(elId));
+        }
+    }
+
+    setFluxMock(fluxMock, useFluxMock);
     setCurrentScenarioId(scenario.id);
     setSelectedScenarioId(scenario.id);
     markScenarioOverrideRows(DEFAULT_TOGGLES);
@@ -304,18 +331,23 @@ export function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
     ctx.viewport.setLatticeSize(newSize);
     viewportAdapter.setFluxVolumeVisible(ctx.viewport.showFlux);
 
-    const fluxMock = new MockBridge(newSize);
-    fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
-    fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
-    fluxMock.capabilities.scale0.setupScenario(scenarioId);
+    // Same lazy-allocation rule as loadScale0Scenario (ARC-2).
+    const useFluxMock = shouldUseFluxMock(bridge, scenarioId);
+    let fluxMock = null;
+    if (useFluxMock) {
+        fluxMock = new MockBridge(newSize);
+        fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
+        fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
+        fluxMock.capabilities.scale0.setupScenario(scenarioId);
+    }
 
     for (const [key, , elId] of DEFAULT_TOGGLES) {
         const checked = readCheckboxValue(elId);
         bridge.capabilities.scale0.setToggle(key, checked);
-        fluxMock.capabilities.scale0.setToggle(key, checked);
+        fluxMock?.capabilities.scale0.setToggle(key, checked);
     }
 
-    setFluxMock(fluxMock, shouldUseFluxMock(bridge, scenarioId));
+    setFluxMock(fluxMock, useFluxMock);
     state.latticeNeedsUpload = true;
     markFieldDirty();
     state.tickAccumulator.reset();

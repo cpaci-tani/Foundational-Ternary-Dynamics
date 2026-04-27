@@ -13,7 +13,7 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { ALPHA, K_B, K_GENESIS, N_BASE, G_STAR, VARPI, G_C, C_SPEED } from '../../constants.js';
+import { K_B, C_SPEED } from '../../constants.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -25,7 +25,6 @@ export function setupLightScenario(name, ctx) {
     const { N, mid, midF } = ctx;
             this._initFluxGrid();
             const pi = Math.PI;
-            const C_WAVE = 1 / Math.sqrt(3);
             const amp = 0.15;
             switch (name) {
                 case 'light-rainbow': {
@@ -37,7 +36,7 @@ export function setupLightScenario(name, ctx) {
                     ];
                     for (const w of waves) {
                         const k = 2 * pi * w.n / N;
-                        const omega = 2 * C_WAVE * Math.sin(k / 2);
+                        const omega = 2 * C_SPEED * Math.sin(k / 2);
                         for (let x = 0; x < N; x++)
                         for (let y = 0; y < N; y++)
                         for (let z = 0; z < N; z++) {

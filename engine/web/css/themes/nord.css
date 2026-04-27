@@ -33,6 +33,7 @@ html[data-theme="nord"] {
     --positive: #a3be8c;
     --negative: #bf616a;
     --warning:  #ebcb8b;
+    --caution:  #d08770;
 
     /* State tints (frost-matched) */
     --state-hover-bg:   rgba(136, 192, 208, 0.10);
