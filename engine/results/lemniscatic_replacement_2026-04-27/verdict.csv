@@ -1,0 +1,5 @@
+cluster_radius,n_seeds,A_ratio_mean,A_ratio_stderr,dist_4pi,dist_4varpi,dist_4Gstar,dist_Gstar2_pi_2,closest_candidate
+2,5,18.9877,0,51.099,81.0377,60.4405,38.0883,Gstar2_pi_2
+3,5,17.5139,0,39.3711,66.9861,47.9876,27.3703,Gstar2_pi_2
+4,5,19.1834,0,52.6569,82.9044,62.0948,39.5121,Gstar2_pi_2
+5,5,18.3556,0,46.0689,75.011,55.0995,33.4913,Gstar2_pi_2
