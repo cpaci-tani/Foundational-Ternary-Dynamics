@@ -1,0 +1,70 @@
+{
+  "campaign": "look_elsewhere_2026-04-27",
+  "ledger_row": "FTD-0097",
+  "protocol": "docs/theory/07_assessment/PROTOCOL_LOOK_ELSEWHERE_SCAN.md",
+  "pre_reg_tag": "preregister-look-elsewhere-scan-v1",
+  "n_atoms": 38,
+  "n_targets": 20,
+  "degrees": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "coefficient_integers": [
+    -3,
+    -2,
+    -1,
+    1,
+    2,
+    3
+  ],
+  "tolerances": [
+    0.001,
+    0.0001,
+    1e-05,
+    1e-06
+  ],
+  "headline_epsilon": 0.0001,
+  "n_polynomials_total": 671574,
+  "atom_set_hash_sha256": "2ce0304ace9f26e3dea67b4ca95f1d596a91fc038924ac1a81eb5f58019eece9",
+  "total_hits": {
+    "1e-3": 421,
+    "1e-4": 62,
+    "1e-5": 0,
+    "1e-6": 0
+  },
+  "null_lambda_total_1e-4": 4.0,
+  "null_rejection_thresholds": {
+    "selective_at_or_below": 1,
+    "over_rich_at_or_above": 11
+  },
+  "headline_verdict": "NULL REJECTED upward (over-rich)",
+  "per_target_hits_at_1e-4": {
+    "alpha_inv": 0,
+    "m_e_in_MeV": 13,
+    "m_p_over_m_e": 38,
+    "m_n_over_m_e": 2,
+    "m_mu_over_m_e": 0,
+    "m_tau_over_m_e": 0,
+    "m_p_over_m_n": 0,
+    "g_e_minus_2": 0,
+    "a_mu": 0,
+    "alpha_s_MZ": 0,
+    "sin2_theta_W": 4,
+    "Vud_squared": 4,
+    "m_W_over_m_Z": 0,
+    "m_b_over_m_c": 0,
+    "m_t_over_v_higgs": 0,
+    "Omega_b": 0,
+    "Omega_dm": 0,
+    "h_Hubble": 1,
+    "Theta_13": 0,
+    "delta_CP": 0
+  },
+  "diagnostic_targets": [
+    "alpha_inv",
+    "sin2_theta_W",
+    "m_tau_over_m_e"
+  ]
+}
