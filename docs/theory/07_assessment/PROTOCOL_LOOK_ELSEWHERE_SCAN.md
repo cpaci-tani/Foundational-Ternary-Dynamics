@@ -125,7 +125,8 @@ sha256sum tools/scan_look_elsewhere.py    # paste output below
 git tag preregister-look-elsewhere-scan-v1
 ```
 
-SHA256 of approved runner: `<TO BE FILLED IN COMMIT THAT TAGS THE PRE-REGISTRATION>`
+SHA256 of approved runner: `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f`
+(committed at git rev `ebc5178`, tagged `preregister-look-elsewhere-scan-v1` 2026-04-27.)
 
 The scan is run only AFTER the tag is in place. Any modification to the
 runner after tagging requires re-tagging and re-running from scratch — no
