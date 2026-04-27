@@ -418,6 +418,25 @@ After FTD-0098 → FTD-0099 → FTD-0100 → FTD-0101 (this row), the original 6
 
 The new F7 ticket emerges from this finding: a clean multilatitude 6×6 measurement requires L-scaled injection. Conjecture for L=32: `inj_mult ≈ 8.0`. To verify, one snapshot at L=32 with inj=8.0 should show ≥30% snapshots with non-zero state.
 
+## D.4b — F7 grid search at L=32 (post-FTD-0101)
+
+The F7 conjecture predicted `inj_mult ≈ 8.0` at L=32 to reproduce L=16 inj=1.0's boundary regime. Grid search via [`engine/tools/op_mixing_L32_sweep.sh`](../../tools/op_mixing_L32_sweep.sh) at inj ∈ {2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0} reveals:
+
+| inj-mult at L=32 | snapshots retained | non-zero state | Var(s²) |
+|---|---|---|---|
+| 1.0 (this row §D.1) | 200/200 | 0 | 0 |
+| 2.0 | 19/20 | 19 (saturated) | 0 |
+| 3.0 | 19/20 | 19 (saturated) | 0 |
+| 4.0 | 19/20 | 19 (saturated) | 0 |
+| 5.0 | 3/20 | 3 | (Gauss-residual gate drops 17/20) |
+| 6.0–8.0 | 0/20 | 0 | (Gauss residual fails on all) |
+
+**No "boundary regime" exists at L=32 under naive inj-mult scaling.** The transition from "zero genesis" (inj ≤ 1.0) to "fully saturated" (inj ≥ 2.0) is discontinuous: there is no intermediate inj where SOME snapshots crystallize and SOME don't, the way inj=1.0 at L=16 produced 77/197.
+
+**Why**: at L=32 the gauss projection equilibrates the injection across the larger volume to a smoother density profile. Single-voxel threshold crossings driven by Langevin fluctuations on top of the equilibrium profile are RARE if the equilibrium is well below threshold (inj ≤ 1.0) and COMMON-everywhere if it's well above (inj ≥ 2.0). The boundary regime needs sufficient Langevin coupling per voxel to dominate over the deterministic gauss-projection equilibrium — at L=16 this is satisfied because the lattice is small enough for the equilibrium gradient to be steep; at L=32 the diffusion smooths it out to the point where the equilibrium itself either is or isn't above threshold globally.
+
+**Updated F7 status**: the L³ injection scaling conjecture is **rejected**. To reproduce the boundary regime at L=32+ requires either (a) higher Langevin temperature to broaden the per-voxel density distribution, or (b) distributed injection (multiple sites instead of single center) to create more boundary-regime voxels per snapshot. Neither tested this session. **F7 reformulated**: future multilatitude 6×6 measurement requires combined inj+temperature scaling, not just inj scaling.
+
 ## D.5 — Single-line summary of FTD-0101
 
 **Combining F1 (multilatitude L=32) + F2 (inj-mult=1.0 boundary injection) does NOT yield the predicted clean 6×6 multilatitude result, because the "boundary injection" calibration is L-dependent: at L=32 the per-voxel density at the injected center falls below K_GENESIS and zero voxels crystallize. Decoupling finding — the flux-only 5×5 mixing matrix is insensitive to inj amplitude across the FTD-0099/FTD-0101 comparison. New ticket F7: scale inj_mult ∝ L³ to maintain per-voxel density at the genesis boundary across multiple L.**
