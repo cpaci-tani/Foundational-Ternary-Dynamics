@@ -156,6 +156,30 @@ val get_energy_audit(ftd::RenderBridge& rb) {
     result.set("BFieldEnergy",      ea.B_field_energy);
     result.set("chargeTotal",       ea.charge_total);
     result.set("manifested",        ea.manifested_count);
+
+    // Poynting vector Σ S(v) = Σ E(v) × B(v) — exposed as
+    // { x, y, z } so the JS `totalPoynting?.x` accessor in
+    // telemetry-hub.js + the diagnostics-panel descriptor light up.
+    val poynt = val::object();
+    poynt.set("x", ea.total_poynting.x);
+    poynt.set("y", ea.total_poynting.y);
+    poynt.set("z", ea.total_poynting.z);
+    result.set("totalPoynting",     poynt);
+
+    // Dual-substrate diagnostics — only meaningful when the
+    // `dual_substrate` toggle is on (C++ `compute_energy_audit`
+    // gates the per-voxel accumulation on `rb.toggles.dual_substrate`,
+    // so all four are 0 with the toggle off; emit the keys
+    // unconditionally so the dashboard's descriptor lookup succeeds).
+    result.set("ELTotal",           ea.E_L_total);
+    result.set("ERTotal",           ea.E_R_total);
+    result.set("wvLTotal",          ea.wv_L_total);
+    result.set("wvRTotal",          ea.wv_R_total);
+    result.set("chiralityTotal",    ea.chirality_total);
+
+    // Strong / weak field energies (sub-channel sums).
+    result.set("strongEnergy",      ea.strong_energy);
+    result.set("weakEnergy",        ea.weak_energy);
     return result;
 }
 
