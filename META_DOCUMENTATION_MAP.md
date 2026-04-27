@@ -2,9 +2,11 @@
 
 **The Card Catalog** — Find any document in two clicks.
 
-**Last updated:** April 23, 2026
-**Framework version:** v5.30
+**Last updated:** April 27, 2026 (post engine-as-instrument cycle + look-elsewhere scan)
+**Framework version:** v5.33
 **Engine version:** v2.15.0
+
+> **2026-04-27 priority reading:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — full-day synthesis with §10 bird's-eye assessment ("what's physically missing"). Then per topic: [`docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) for the seven [THEOREM]s; [`docs/theory/09_mathematical/EXPLR_CM_RATIO_TOWER.md`](docs/theory/09_mathematical/EXPLR_CM_RATIO_TOWER.md) for the 9-Heegner tower; [`docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md) for FTD-0107 (deterministic cluster counts L-invariant — strongest positive structural finding); [`docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md`](docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) for FTD-0097 (catalog over-rich at monomial level — methodological hygiene confirms FTD-0094 [PARAMETRIC]).
 
 For current documentation drift, cleanup status, and deferred remediation items, see [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
 
