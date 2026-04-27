@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Live repo count:** ~202 real `[OPEN]` items across ~75 files, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed today** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities. **Live repo count:** ~202 real `[OPEN]` items across ~75 files plus the three new §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed today** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -414,6 +414,42 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 - `docs/theory/META_INDEX.md` — 1.
 - `docs/reference/REF_EPISTEMIC_LABELS.md` — 2 (conventions, not physics).
 - `docs/internal/SPEC_CLAUDE.md` — 2 (internal).
+
+### 7.7 2026-04-27 priorities (post engine-as-instrument cycle) — **3 `[OPEN]`**
+
+Three new high-leverage research items surfaced by the 2026-04-27
+engine-as-instrument campaign. All three are tracked in CLAUDE.md
+v5.33 §[OPEN] and the bird's-eye assessment in
+[`../../WHERE_WE_LEFT_OFF.md`](../../WHERE_WE_LEFT_OFF.md) §10.
+
+- [OPEN] **WHY 25 voxels for ic1 cluster?** — FTD-0107 follow-up.
+  L-invariant deterministic cluster size of ~25 voxels emerging from
+  point injection (5/5 seeds, L ∈ {32, 64}) is the most novel
+  positive structural finding of the engine-as-instrument program.
+  No theoretical derivation links the 25-voxel size to the algebraic
+  spine yet. Highest-leverage theory path; closing this would
+  produce a structural derivation linking algebra to engine
+  observable. **Source:** [`../10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](../10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md).
+
+- [OPEN] **L=128 G2 follow-up to FTD-0107** — engine-side. Extending
+  the L-invariance test from {32, 64} to {32, 64, 128} locks the
+  invariance further (and may surface a finite-L correction if one
+  exists). Pre-registration template ready; engine measurement
+  deferred. **Source:** CLAUDE.md v5.33 §[OPEN].
+
+- [OPEN] **Structural bridge between algebraic spine and engine
+  phenomenology** — meta-gap. Per WHERE_WE_LEFT_OFF.md §10: the
+  algebraic spine and engine phenomenology stand as two defensible
+  pillars without a derivation chain connecting them. Standard
+  physics has math-derives-observable; FTD has math AND engine, but
+  no derivation linking specific algebraic content (G\*, master
+  quadratic) to specific engine measurements (25-voxel cluster size,
+  deterministic counts). Closing this bridge is the load-bearing
+  remaining work. The "WHY 25 voxels?" question above is the most
+  concrete entry point.
+
+**Last audit refresh:** 2026-04-27 evening (post engine-as-instrument
+cycle + look-elsewhere scan).
 
 ---
 
