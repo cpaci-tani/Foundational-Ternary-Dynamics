@@ -217,11 +217,17 @@ export function bindUI(ctx) {
 
     // Mount floating live flux-slice diagnostic (xy/xz/yz heatmaps).
     // Hidden by default; toggled by the `Flux slices` chip in the same
-    // top-right cluster as the symmetry panel. Reads bridge live via
-    // ctx.bridge so a scale-switch round-trip keeps the data flowing.
+    // top-right cluster as the symmetry panel.
+    //
+    // Source resolution: always sample from whichever flux source the
+    // current scenario is actively ticking. When state.useFluxMock=true
+    // the mock advances and the WASM bridge stays frozen — sampling
+    // ctx.bridge in that mode would show stale heatmaps that never
+    // change. The callback returns the active source per frame so
+    // scenario flips and scale round-trips are picked up automatically.
     mountFluxSlicePanel(
         document.getElementById('app'),
-        () => ctx.bridge,
+        () => (state.useFluxMock && state.fluxMock) ? state.fluxMock : ctx.bridge,
     );
 
     bindScale0UI(ctx, {

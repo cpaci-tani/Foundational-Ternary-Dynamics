@@ -233,8 +233,14 @@ export class TopologySheetRenderer {
         const N = this._getLatticeSize();
         if (s.size === N) return;
         const vis = s.solid.visible;
+        // Pre-2026-04-26 this disposed only geometries — `_buildSheet` allocates
+        // both new geometries AND new materials, so the old materials leaked
+        // 2 per sheet × 10 sheets every lattice resize. Dispose materials too
+        // before dropping the sheet entry from the registry.
         s.solid.geometry?.dispose();
+        s.solid.material?.dispose();
         s.wire.geometry?.dispose();
+        s.wire.material?.dispose();
         this.scene.remove(s.solid);
         this.scene.remove(s.wire);
         delete this._topoSheets[key];

@@ -68,11 +68,15 @@ const FIELD_DRIVERS = [
         // Per-frame source: returns whatever the driver needs to slice;
         // for fluxJ the source is unused because getFluxSlice slices directly.
         source: (/* bridge */) => null,
-        sample: (bridge, axis, mid /*, N, source */) => {
-            // getFluxSlice reuses an internal _sliceBuf. .slice() snapshots
-            // before the next call clobbers it.
+        sample: (bridge, axis, mid, N /*, source */) => {
+            // getFluxSlice reuses an internal _sliceBuf. The
+            // transpose+Y-flip combo rewrites the bridge's layout into
+            // the panel's (col=first-named-axis, +second-named-axis up)
+            // convention in a single pass, snapshotting in the process
+            // so the next bridge call can clobber _sliceBuf safely.
             const s = bridge.getFluxSlice?.(axis, mid);
-            return s ? s.slice() : null;
+            if (!s || s.length !== N * N) return s ? s.slice() : null;
+            return transposeAndFlipNN(s, N);
         },
     },
     {
@@ -129,6 +133,24 @@ const DRIVER_BY_KEY = Object.fromEntries(FIELD_DRIVERS.map(d => [d.key, d]));
  * vectors = 3-tuples per sample) onto an N×N grid covering the chosen
  * mid-plane. Cells without a matching sample stay zero.
  *
+ * Output layout (consumed by ImageData(buf,N,N) where pixel (px,py) reads
+ * buf[(py*N + px)*4..]):
+ *
+ *   - "xy" panel (axis=2, z=mid):  panel X = lattice x →,  panel Y = lattice y ↑
+ *   - "xz" panel (axis=1, y=mid):  panel X = lattice x →,  panel Y = lattice z ↑
+ *   - "yz" panel (axis=0, x=mid):  panel X = lattice y →,  panel Y = lattice z ↑
+ *
+ * The Y axis is FLIPPED on the canvas (row = N-1-axis_value) so each
+ * panel matches the Three.js viewport's right-handed Y-up orientation:
+ * "+y goes up" in the xy tile mirrors "+y goes up" in the 3D scene.
+ * Without the flip, ImageData's natural y-down convention would make
+ * the panels appear as their mirror image of the on-screen lattice.
+ *
+ * Concretely we store `out[row*N + col]` where:
+ *   - `col` (canvas X) is the FIRST-named axis value (rightward).
+ *   - `row` (canvas Y) is `N - 1 - second_named_axis_value` (upward
+ *     in screen space, since canvas Y is technically downward).
+ *
  * @param {{positions:Float32Array, vectors:Float32Array, count:number}|null|undefined} sample
  * @param {0|1|2} axis  0 → x=mid (yz plane); 1 → y=mid (xz); 2 → z=mid (xy)
  * @param {number} mid  integer voxel index of the slice plane
@@ -141,26 +163,30 @@ function sliceVectorMag(sample, axis, mid, N) {
     const pos = sample.positions;
     const vec = sample.vectors;
     if (!pos || !vec) return out;
+    const M = N - 1;
     for (let s = 0, p = 0, v = 0; s < sample.count; s++, p += 3, v += 3) {
         // Voxel centers come in as (x + 0.5, y + 0.5, z + 0.5).
         // Floor the center to recover the integer voxel index.
         const ix = (pos[p]     - 0.5) | 0;
         const iy = (pos[p + 1] - 0.5) | 0;
         const iz = (pos[p + 2] - 0.5) | 0;
-        let a, b;
+        let row, col;
         if (axis === 0) {
+            // yz plane: panel X = y (col), panel Y = z, flipped so +z goes UP.
             if (ix !== mid) continue;
-            a = iy; b = iz;
+            col = iy; row = M - iz;
         } else if (axis === 1) {
+            // xz plane: panel X = x (col), panel Y = z, flipped so +z goes UP.
             if (iy !== mid) continue;
-            a = ix; b = iz;
+            col = ix; row = M - iz;
         } else {
+            // xy plane: panel X = x (col), panel Y = y, flipped so +y goes UP.
             if (iz !== mid) continue;
-            a = ix; b = iy;
+            col = ix; row = M - iy;
         }
-        if (a < 0 || a >= N || b < 0 || b >= N) continue;
+        if (col < 0 || col >= N || row < 0 || row >= N) continue;
         const m = Math.hypot(vec[v], vec[v + 1], vec[v + 2]);
-        out[a * N + b] = m;
+        out[row * N + col] = m;
     }
     return out;
 }
@@ -168,6 +194,9 @@ function sliceVectorMag(sample, axis, mid, N) {
 /**
  * Same as sliceVectorMag but for sparse scalar samples. Preserves sign
  * (no abs/hypot) so signed fields like ∇·J light up with diverging ramps.
+ *
+ * Layout matches sliceVectorMag — see that docstring for the panel-axis
+ * + Y-up convention.
  *
  * @param {{positions:Float32Array, values:Float32Array, count:number}|null|undefined} sample
  */
@@ -177,23 +206,56 @@ function sliceScalarSigned(sample, axis, mid, N) {
     const pos = sample.positions;
     const val = sample.values;
     if (!pos || !val) return out;
+    const M = N - 1;
     for (let s = 0, p = 0; s < sample.count; s++, p += 3) {
         const ix = (pos[p]     - 0.5) | 0;
         const iy = (pos[p + 1] - 0.5) | 0;
         const iz = (pos[p + 2] - 0.5) | 0;
-        let a, b;
+        let row, col;
         if (axis === 0) {
             if (ix !== mid) continue;
-            a = iy; b = iz;
+            col = iy; row = M - iz;
         } else if (axis === 1) {
             if (iy !== mid) continue;
-            a = ix; b = iz;
+            col = ix; row = M - iz;
         } else {
             if (iz !== mid) continue;
-            a = ix; b = iy;
+            col = ix; row = M - iy;
         }
-        if (a < 0 || a >= N || b < 0 || b >= N) continue;
-        out[a * N + b] = val[s];
+        if (col < 0 || col >= N || row < 0 || row >= N) continue;
+        out[row * N + col] = val[s];
+    }
+    return out;
+}
+
+/**
+ * Transpose + Y-flip an N×N Float64Array (row-major) coming from
+ * bridge.getFluxSlice.
+ *
+ * The bridge's layout is `data[a*N + b]` with (a, b) = (lattice-fast-axis,
+ * lattice-slow-axis), the OPPOSITE of the sparse-sample helpers' layout.
+ * In addition the panels apply Y-up (canvas row = N-1-axis_value) so the
+ * heatmap matches the Three.js viewport. Both rewrites happen here in
+ * a single pass so the paint code is source-agnostic.
+ *
+ * Mapping (using the bridge's getFluxSlice convention):
+ *   - axis 0 (yz, x fixed): bridge → buf[y*N + z];
+ *     panel target col=y, row=N-1-z  ⇒ out[(N-1-c)*N + r] = buf[r*N + c]
+ *   - axis 1 (xz, y fixed): bridge → buf[x*N + z];
+ *     panel target col=x, row=N-1-z  ⇒ out[(N-1-c)*N + r] = buf[r*N + c]
+ *   - axis 2 (xy, z fixed): bridge → buf[x*N + y];
+ *     panel target col=x, row=N-1-y  ⇒ out[(N-1-c)*N + r] = buf[r*N + c]
+ *
+ * All three axes share the same rewrite: out[(N-1-c)*N + r] = buf[r*N + c].
+ */
+function transposeAndFlipNN(buf, N) {
+    if (!buf || buf.length !== N * N) return buf;
+    const out = new Float64Array(N * N);
+    const M = N - 1;
+    for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+            out[(M - c) * N + r] = buf[r * N + c];
+        }
     }
     return out;
 }
@@ -769,10 +831,18 @@ function axisIndex(axis) {
  * Idempotent mount used from the Scale 0 controller. Stashes the
  * singleton on `window.__ftdFluxSlicePanel` so a re-entry (scale-switch
  * round-trip) reuses the same DOM node.
+ *
+ * Re-mount must REFRESH the `getBridge` callback. Each re-entry of
+ * Scale 0 builds a fresh `ctx`, and the active flux source can swap
+ * between WASM bridge and mock as scenarios load. A stale closure
+ * captured by the first mount would silently keep reading the original
+ * ctx, leaving the panel pointed at a torn-down bridge.
  */
 export function mountFluxSlicePanel(parentEl, getBridge) {
     if (typeof window !== 'undefined' && window.__ftdFluxSlicePanel) {
-        return window.__ftdFluxSlicePanel;
+        const existing = window.__ftdFluxSlicePanel;
+        if (typeof getBridge === 'function') existing.getBridge = getBridge;
+        return existing;
     }
     const panel = new FluxSlicePanel({ getBridge });
     panel.init(parentEl);

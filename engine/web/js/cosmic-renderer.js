@@ -40,31 +40,37 @@ export class CosmicRenderer extends BaseRenderer {
         this._bhMeshes = [];
         this._bgStars = null;
 
+        // Subclass-specific geometry teardown. Called by BaseRenderer.dispose()
+        // (core/BaseRenderer.js:37). Idempotent: nulls each reference after
+        // disposing so a re-entry can rebuild from a clean slate and a
+        // second dispose() call no-ops instead of double-freeing.
         this._cleanGeometries = () => {
-            if (this._starCloud) { this._starCloud.geometry.dispose(); this._starCloud.material.dispose(); }
-            if (this._gasCloud) { this._gasCloud.geometry.dispose(); this._gasCloud.material.dispose(); }
-            if (this._dmCloud) { this._dmCloud.geometry.dispose(); this._dmCloud.material.dispose(); }
+            const disposeCloud = (cloud) => {
+                if (!cloud) return null;
+                if (cloud.geometry) cloud.geometry.dispose();
+                if (cloud.material) cloud.material.dispose();
+                return null;
+            };
+            this._starCloud = disposeCloud(this._starCloud);
+            this._gasCloud = disposeCloud(this._gasCloud);
+            this._dmCloud = disposeCloud(this._dmCloud);
+            this._bgStars = disposeCloud(this._bgStars);
+
+            const disposeBundle = (bundle) => {
+                if (!bundle) return;
+                Object.values(bundle).forEach(mesh => {
+                    if (mesh && mesh.geometry) mesh.geometry.dispose();
+                    if (mesh && mesh.material) mesh.material.dispose();
+                });
+            };
             if (this._bhMeshes && this._bhMeshes.length > 0) {
-                this._bhMeshes.forEach(bundle => {
-                    if (!bundle) return;
-                    Object.values(bundle).forEach(mesh => {
-                        if (mesh && mesh.geometry) mesh.geometry.dispose();
-                        if (mesh && mesh.material) mesh.material.dispose();
-                    });
-                });
-                this._bhMeshes = [];
+                this._bhMeshes.forEach(disposeBundle);
             }
+            this._bhMeshes = [];
             if (this._bhMeshCache) {
-                this._bhMeshCache.forEach(bundle => {
-                    if (!bundle) return;
-                    Object.values(bundle).forEach(mesh => {
-                        if (mesh && mesh.geometry) mesh.geometry.dispose();
-                        if (mesh && mesh.material) mesh.material.dispose();
-                    });
-                });
+                this._bhMeshCache.forEach(disposeBundle);
                 this._bhMeshCache.clear();
             }
-            if (this._bgStars) { this._bgStars.geometry.dispose(); this._bgStars.material.dispose(); }
         }
 
         this._showDM = true;

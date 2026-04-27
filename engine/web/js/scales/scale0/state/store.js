@@ -136,11 +136,23 @@ export function setForceStyle(style) {
 }
 
 export function setFluxMock(mock, useMock = false) {
+    // Dispose the prior mock before overwriting. Prior to this, scenario
+    // churn leaked every previous MockBridge for the page lifetime —
+    // ~21 MB of typed arrays each at L=96. dispose() is idempotent and
+    // a no-op for non-MockBridge values.
+    const prev = state.fluxMock;
+    if (prev && prev !== mock && typeof prev.dispose === 'function') {
+        try { prev.dispose(); } catch { /* defensive: never block scenario load on cleanup */ }
+    }
     state.fluxMock = mock;
     state.useFluxMock = !!useMock;
 }
 
 export function clearFluxMock() {
+    const prev = state.fluxMock;
+    if (prev && typeof prev.dispose === 'function') {
+        try { prev.dispose(); } catch { /* defensive */ }
+    }
     state.fluxMock = null;
     state.useFluxMock = false;
 }
