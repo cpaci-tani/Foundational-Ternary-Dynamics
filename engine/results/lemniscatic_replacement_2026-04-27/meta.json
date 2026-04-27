@@ -1,0 +1,25 @@
+{
+  "campaign": "lemniscatic_replacement_2026-04-27",
+  "ledger_row": "FTD-0105",
+  "protocol": "docs/theory/10_eft_program/PROTOCOL_LEMNISCATIC_REPLACEMENT.md",
+  "pre_reg_tag": "preregister-lemniscatic-v1",
+  "L": 64,
+  "ticks": 200,
+  "n_seeds_per_cr": 5,
+  "cluster_radii": [2, 3, 4, 5],
+  "n_cluster_groups_with_data": 4,
+  "pooled_A_ratio_mean": 18.5101,
+  "pooled_A_ratio_stderr": 0.149462,
+  "candidates": {
+    "4pi": 12.5664,
+    "4varpi": 10.4882,
+    "4Gstar": 11.8347,
+    "Gstar2_pi_2": 13.7504
+  },
+  "deviations_pct": {
+    "4pi": 47.299,
+    "4varpi": 76.4848,
+    "4Gstar": 56.4056,
+    "Gstar2_pi_2": 34.6155
+  }
+}
