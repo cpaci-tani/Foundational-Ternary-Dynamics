@@ -327,6 +327,7 @@ int main(int argc, char** argv) {
     int N_SEEDS = 5;
     int stable_threshold = 100;
     std::string ic_filter;   // run only this IC class if specified
+    std::string output_dir_override;  // FTD-0107: --output-dir flag for G1 follow-up
     bool smoke = false;
     for (int i = 1; i < argc; ++i) {
         const std::string a = argv[i];
@@ -338,6 +339,7 @@ int main(int argc, char** argv) {
         else if (a.rfind("--stride=", 0) == 0) SAMPLE_STRIDE = std::atoi(a.c_str() + 9);
         else if (a.rfind("--stable=", 0) == 0) stable_threshold = std::atoi(a.c_str() + 9);
         else if (a.rfind("--ic=", 0) == 0) ic_filter = a.substr(5);
+        else if (a.rfind("--output-dir=", 0) == 0) output_dir_override = a.substr(13);
     }
     if (smoke) {
         L = 16; N_SAMPLES = 10; N_SEEDS = 1; N_BURN = 50;
@@ -356,7 +358,9 @@ int main(int argc, char** argv) {
               << "  N_SEEDS=" << N_SEEDS
               << "  stable_threshold=" << stable_threshold << " ticks\n";
 
-    fs::path out_root = fs::path("engine/results/emergent_spectrum_2026-04-27");
+    fs::path out_root = output_dir_override.empty()
+        ? fs::path("engine/results/emergent_spectrum_2026-04-27")
+        : fs::path(output_dir_override);
     std::error_code ec;
     fs::create_directories(out_root, ec);
 

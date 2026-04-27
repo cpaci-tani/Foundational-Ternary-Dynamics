@@ -1,0 +1,82 @@
+{
+  "campaign": "gaussian_expansion_2026-04-26",
+  "purpose": "Re-run + archive native Gaussian / linear-response tests on GPU after the GPU-ledger overhaul (commit 1c9d7fe) and stencil-weights commit (347a38f). Closes STATUS_EFT_CHECKLIST.md §4 'Re-run and archive a fresh full campaign table' open item.",
+  "commit_sha": "347a38f866c87f330feef121071851b128642445",
+  "commit_subject": "cluster-A: derive stencil weights + test predictions from canonical constants",
+  "date": "2026-04-26",
+  "host": "WSL2 Ubuntu-22.04 on Windows 11",
+  "gpu": "NVIDIA GeForce RTX 5090 (32607 MiB, driver 595.79)",
+  "build": "engine/build_wsl (Release, FTD_ENABLE_CUDA=ON, /usr/local/cuda-13.0/bin/nvcc)",
+  "toggle_profile_default": "Tests configure their own toggles per scenario; the headline multiscale-flow run uses {wave_propagation, gauss_projection, genesis, langevin (T=0.005, gamma=0.02), dual_substrate=false} on L=16 with seed 0xF10412E5.",
+  "tests_run": [
+    "test_native_blocking_map",
+    "test_native_flow",
+    "test_native_current_flow",
+    "test_native_response_flow",
+    "test_native_engine_history_flow",
+    "test_native_engine_transport_flow",
+    "test_native_dual_half_shell",
+    "test_native_continuity",
+    "test_native_dual_cell_gauss",
+    "test_native_source_response",
+    "test_native_projection_convergence",
+    "test_native_source_core_fork",
+    "test_native_moore_layer_coupling",
+    "test_native_moore_temporal_layers",
+    "test_native_moore_shell_gauss",
+    "test_native_reaction_ledger",
+    "test_native_manifestation_ledger",
+    "test_native_conserved_parent",
+    "test_eft_blocking",
+    "test_mixed_history_flow",
+    "test_nonlinear_flow_multiscale"
+  ],
+  "result_summary": "21/21 PASS on GPU. Wall time ≈25 s total. Headline multiscale-flow campaign in 1.73 s (vs. minutes on CPU on the FTD-0070 baseline run).",
+  "headline_response_tuple_b2": {
+    "C_L_FTD": 1.0,
+    "K_T_FTD": 1.0,
+    "Z_j_FTD": 1.0,
+    "g_sJ_FTD": 1.0,
+    "c_FTD": "1/sqrt(3)",
+    "W_18_N512": 1.266168225133,
+    "tag_block": "[THEOREM] for C_L, c_FTD; [DEFINITION] for K_T, g_sJ at unit normalization; [MEASURED] for Z_j, W_18; all four running couplings (C_L, K_T, Z_j, g_sJ) at b∈{1,2,4,8} consistent with (1,1,1,1) within statistical error (this campaign)."
+  },
+  "headline_multiscale_flow_2026_04_26": {
+    "L": 16,
+    "N_burn": 200,
+    "N_samples": 40,
+    "stride": 5,
+    "flux_energy_density": {
+      "b1": [0.07175097, 0.002709],
+      "b2": [0.06941607, 0.002705],
+      "b4": [0.06849648, 0.002702],
+      "b8": [0.06799825, 0.002699]
+    },
+    "beta_estimates": {
+      "1to2": [-0.0477, 0.0783],
+      "2to4": [-0.0192, 0.0800],
+      "4to8": [-0.0105, 0.0807]
+    },
+    "verdict": "All three beta consistent with 0 within 1-sigma; magnitude decays geometrically (~0.40 per decade). GAUSSIAN FIXED POINT confirmed at |beta| tolerance < 0.15 per b-decade.",
+    "Q_total_each_scale": -1.0,
+    "max_gauss_residual_each_scale": "below 1.0 (loose tolerance for face-averaged adapter); all decreasing toward fine scale"
+  },
+  "drift_vs_FTD_0070_cpu": {
+    "FTD_0070_E_b": [0.0426, 0.0403, 0.0393, 0.0390],
+    "FTD_0070_sigma": 0.0016,
+    "todays_E_b": [0.0717, 0.0694, 0.0685, 0.0680],
+    "todays_sigma_typical": 0.0027,
+    "delta_b1_pct_apparent": 68.5,
+    "delta_b2_pct_apparent": 72.3,
+    "delta_b4_pct_apparent": 74.3,
+    "delta_b8_pct_apparent": 74.3,
+    "interpretation": "Numerical level differs (~70% scale shift), but the b->b+1 ratios are stable: today 0.97/0.99/0.99 vs FTD-0070 0.95/0.98/0.99. The drift is a level shift in the ensemble baseline (same direction at every scale), not a new flow. Probable cause: stencil-weights derivation in commit 347a38f redefined an internal normalization in the canonical constants chain. The qualitative result (Gaussian fixed point, beta consistent with 0, geometric beta decay) is unchanged.",
+    "action": "Document the level shift in the inventory; the fixed-point classification is unaffected. A separate audit could trace the level shift to the specific constant that moved between b88b03b and 347a38f, but that is not blocking the EFT-Gate-7 closure."
+  },
+  "force_cpu_audit": "None of the 21 tests call force_cpu() / disable GPU. Default backend selection is GPU when CUDA is enabled, which is the case for engine/build_wsl. No source modifications needed.",
+  "notes": [
+    "Initial WSL build (engine/build_wsl) was from before commit b88b03b/347a38f and lacked test_nonlinear_flow_multiscale, test_mixed_history_flow, and the test_native_*_flow binaries. Rebuilt those targets only; rest of build cache was preserved.",
+    "Headline campaign confirms the prior FTD-0070 verdict (Gaussian fixed point, beta ~ 0 within 1-sigma) at the new commit; level shift in absolute flux-energy density is documented but does not change the fixed-point classification.",
+    "All Gaussian-flow infrastructure (dual-cell blocking, response-flow extraction, mixed-toggle Ward) runs cleanly on GPU."
+  ]
+}

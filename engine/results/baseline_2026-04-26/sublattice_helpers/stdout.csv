@@ -1,0 +1,27 @@
+================================================================
+  Sublattice helpers test
+================================================================
+  4^3 block: SC=8, BCC=8, FCC=48 (total=64)
+[ ok ] SC site count = 8 in 4^3
+[ ok ] BCC site count = 8 in 4^3
+[ ok ] FCC site count = 48 in 4^3
+[ ok ] total = 64 in 4^3
+[ ok ] (0,0,0) is SC
+[ ok ] (1,1,1) is BCC
+[ ok ] (2,2,2) is SC
+[ ok ] (3,3,3) is BCC
+[ ok ] (0,1,0) is FCC
+[ ok ] (1,0,1) is FCC
+[ ok ] (2,1,0) is FCC
+[ ok ] neighbors_8_corner: 8 distinct indices
+[ ok ] all 8 corners at (±1,±1,±1) offset
+[ ok ] periodic wrap: 8 distinct indices at (0,0,0)
+[ ok ] (0,0,0)'s (-1,-1,-1) corner wraps to (7,7,7)
+[ ok ] ALL_SITES matches anything
+[ ok ] BCC matches BCC filter
+[ ok ] FCC does NOT match BCC filter
+[ ok ] lattice-aware filter on (1,1,1) BCC
+[ ok ] lattice-aware filter rejects (0,1,0) for SC
+================================================================
+  Result: PASS (0 failure(s))
+================================================================
