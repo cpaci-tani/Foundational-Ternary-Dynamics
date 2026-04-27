@@ -796,6 +796,16 @@ ftd_add_test(test_mixed_history_flow tests/test_mixed_history_flow.cpp
 ftd_add_test(test_nonlinear_flow_multiscale tests/test_nonlinear_flow_multiscale.cpp
              CTEST_NAME nonlinear_flow_multiscale TIMEOUT 300 LABELS gpu native eft)
 
+# FTD-0098 (2026-04-26): first measured native operator-mixing matrix M_ab(b=2).
+# Pre-registered in docs/theory/10_eft_program/PROTOCOL_OPERATOR_MIXING_MATRIX.md.
+# Reuses the test_nonlinear_flow_multiscale ensemble (Langevin + gauss + genesis,
+# L=16, 40 samples × 5-tick stride, 5 seeds) and extracts the 6-operator basis
+# moments before/after b=2 blocking, solving for M_ab via the Wilsonian normal
+# equations with bootstrap stderr.
+ftd_add_test(campaign_operator_mixing tests/campaign_operator_mixing_2026-04-26.cpp
+             CTEST_NAME campaign_operator_mixing TIMEOUT 1800
+             LABELS native eft blocking observable eft_quick)
+
 # Phase-4 fermion-emergence alternative routes (FTD-0061 extension).
 # Runs WH/Clifford anticommutator measurement under three alternative
 # non-linearities: pair_production (4a), weak_transmutation (4b),

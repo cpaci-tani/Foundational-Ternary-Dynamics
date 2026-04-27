@@ -1,7 +1,7 @@
 # FTD Native EFT Checklist
 
-**Date:** 2026-04-26 (last: 2026-04-24)
-**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4 fully checked 2026-04-26); GPU full-tick ledgers are in place; microscopic native action selected as a constrained history measure; full nonlinear effective EFT remains open.
+**Date:** 2026-04-26 (last: 2026-04-26 — FTD-0098 first operator-mixing measurement)
+**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4 fully checked 2026-04-26); GPU full-tick ledgers are in place; microscopic native action selected as a constrained history measure; **first nonlinear operator-mixing matrix M_ab(b=2) measured 2026-04-26 (FTD-0098, [PARTIAL])**; full nonlinear effective EFT remains open.
 
 This checklist tracks what is required for FTD to count as a real, native EFT
 rather than a collection of projected continuum comparisons. It follows the
@@ -75,17 +75,17 @@ finite-volume/blocking EFT of FTD histories.
 - [x] Native operator spectrum test exists.
 - [x] Ward-identity and matched-Poisson tests exist.
 - [ ] Extend basis with all nonlinear/reaction operators observed in full-tick GPU histories.
-- [ ] Define operator mixing matrix from blocked full-history ensembles.
-- [~] Classify relevant, marginal, and irrelevant directions from measured native flow. **[PARTIAL] 2026-04-25** — `AUDIT_OPERATOR_SPECTRUM.md` (FTD-0091): all 5 measurable operators classify as "relevant" (Δ < D = 4) at L=32 in both the pulse and flux-baryon scenarios; the marginal/irrelevant bands of the pre-reg bracket are not recovered. Operator stratification IS present (divJ² Δ jumps ×3.4 between scenarios), so the basis is non-degenerate; the pulse-regime "all Δ ≈ 0.5" collapse is a scenario envelope artefact, not strong-coupling. Full classification requires L ≥ 64 + multi-scenario ensemble.
+- [~] Define operator mixing matrix from blocked full-history ensembles. **[PARTIAL] 2026-04-26 (FTD-0098)** — first measured M_ab(b=2) on a Langevin+genesis ensemble at L=16 in `engine/results/operator_mixing_2026-04-26/`. 5×5 reduced subspace after pre-registered degradation ladder dropped O6 = s² (ensemble-level state saturation → zero variance); cond(S) = 5.8×10⁷, 100/100 bootstrap resamples succeeded, diagonal eigenvalues span factor 96 (basis non-degenerate); 6/25 entries below 30% rel-error. See `PROTOCOL_OPERATOR_MIXING_MATRIX.md` and `engine/results/operator_mixing_2026-04-26/ANALYSIS.md`.
+- [~] Classify relevant, marginal, and irrelevant directions from measured native flow. **[PARTIAL] 2026-04-25** — `AUDIT_OPERATOR_SPECTRUM.md` (FTD-0091): all 5 measurable operators classify as "relevant" (Δ < D = 4) at L=32 in both the pulse and flux-baryon scenarios; the marginal/irrelevant bands of the pre-reg bracket are not recovered. Operator stratification IS present (divJ² Δ jumps ×3.4 between scenarios), so the basis is non-degenerate; the pulse-regime "all Δ ≈ 0.5" collapse is a scenario envelope artefact, not strong-coupling. Full classification requires L ≥ 64 + multi-scenario ensemble. **2026-04-26 (FTD-0098):** mixing-matrix eigenvalue diagnostic on the L=16 Langevin+genesis ensemble independently confirms the all-relevant compression — same finding via complementary mechanism.
 - [ ] Separate engine-rule operators from emergent coarse operators.
 
 ## 6. Nonlinear Flow
 
 - [x] Real engine histories can now be converted into native continuity ledgers.
 - [x] Full-tick GPU histories expose all currently known state-changing channels.
-- [ ] Build systematic nonlinear b=2 flow campaigns from engine histories.
+- [~] Build systematic nonlinear b=2 flow campaigns from engine histories. **[PARTIAL] 2026-04-26 (FTD-0098)** — first nonlinear-flow campaign of this kind landed: `engine/tests/campaign_operator_mixing_2026-04-26.cpp` consumes the same Langevin+genesis ensemble as `test_nonlinear_flow_multiscale.cpp` and assembles M_ab(b=2). Pre-reg + analysis cited above.
 - [~] Add BCC/corner-channel observables motivated by `PAPER_MASTER_QUADRATIC_FORMAL.pdf`. **2026-04-26 — Cluster A engine build complete (`engine/include/ftd/sublattice.h`, `correlations.h`, `spectrum_extraction.h`, `term_toggles.h::bcc_stencil`, `campaign_bcc_band_spectrum.cpp`, all tests PASS); D2 protocol drafted (`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`); D1 derivation drafted (`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`, FTD-0093). Awaiting publication-grade run + D6 audit.**
-- [ ] Measure operator mixing under blocking.
+- [~] Measure operator mixing under blocking. **[PARTIAL] 2026-04-26 (FTD-0098)** — first measurement landed (5×5 reduced subspace after pre-registered s² degradation ladder; bootstrap-stderr-limited at this ensemble size; tag = [PARTIAL]). See FTD-0098.
 - [ ] Measure reaction-sector scaling.
 - [ ] Measure transport-sector scaling.
 - [ ] Measure mixed transport/reaction couplings.
@@ -124,7 +124,7 @@ finite-volume/blocking EFT of FTD histories.
 - [~] Include deterministic update Jacobian or prove it cancels/does not enter. **2026-04-26 — exact microscopic object uses a delta/indicator transfer kernel, so no smooth change-of-variables Jacobian is needed at that level; a Jacobian question reappears only if rewritten as a continuum field integral.**
 - [~] Include stochastic genesis/Langevin sectors in the measure when toggled on. **2026-04-26 — Langevin OU cost specified; discrete channel log-likelihood form specified; channel-by-channel probability catalogue remains open.**
 - [ ] Derive the native effective action after b=2 blocking. **Definition now fixed as `exp(-S_eff[H']) = sum_{H:B_b H=H'} exp(-S_H[H])`; explicit measured/fitted `S_eff` remains open.**
-- [ ] Connect the action/measure to the observed operator-flow matrix.
+- [~] Connect the action/measure to the observed operator-flow matrix. **[PARTIAL] 2026-04-26 (FTD-0098)** — operator-flow matrix M_ab(b=2) measured for the first time; explicit S_eff connection still [OPEN].
 
 ## 10. GPU-First Engine Infrastructure
 
@@ -199,27 +199,33 @@ EFT quick-suite CTest label seeded; needs expansion as FORM tickets close
 
 ## Current Verdict
 
-FTD now has a serious native EFT skeleton:
+FTD now has a serious native EFT skeleton with a first measured operator-mixing matrix:
 
 ```text
 fields -> constraints -> per-tick histories -> finite-volume ledger -> b=2 blocking
+        -> operator basis (6 ops) -> M_ab(b=2) measured (FTD-0098, [PARTIAL])
 ```
 
-The Gaussian/native bridge is closed enough to build on, and the engine can now
-emit full-tick GPU continuity histories for the state-changing sectors.
+The Gaussian/native bridge is closed enough to build on, the engine emits
+full-tick GPU continuity histories for the state-changing sectors, and the
+first non-trivial operator-mixing matrix has been measured (5×5 reduced
+subspace, factor-96 eigenvalue stratification — basis non-degenerate).
 
 FTD does **not** yet have a complete EFT. The missing core is:
 
 ```text
 blocked nonlinear effective action from the selected native history measure
-operator mixing matrix from nonlinear full histories
+multilatitude (L≥64) operator-mixing matrix to recover marginal/irrelevant tiers
+Wilson-coefficient extraction for clean fixed-point eigendirection identification
 fixed-point / scaling classification from those measured flows
 final Gauss/source-core representation
 first-principles status of g_c
 constructor-domain metadata and observable registry
 ```
 
-The next milestone should be the nonlinear operator-flow campaign: consume
-`RenderBridge::continuity_step()` histories, block them, compute the operator
-moment vector before/after blocking, and assemble the first measured native
-mixing matrix.
+The next milestone is **multilatitude follow-up**: re-run FTD-0098's mixing
+matrix at L=32 and L=64 to test L-dependence of the all-relevant compression
+the audit (FTD-0091) and the mixing measurement both observed at small L.
+Companion: a K_GENESIS sweep to break the s² zero-variance degeneracy and
+unlock the 6×6 measurement (follow-ups F1 + F2 in
+`engine/results/operator_mixing_2026-04-26/ANALYSIS.md`).
