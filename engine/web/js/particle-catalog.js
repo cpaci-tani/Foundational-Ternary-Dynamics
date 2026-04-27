@@ -19,7 +19,21 @@
 import {
     ALPHA, G_STAR, K_B, N_C, N_BASE, B_3, N_EFF,
     PI_FTD as PI, M_E, MU_RATIO, TAU_RATIO, PROTON_RATIO,
-    M_P_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS, M_PI_CH_PHYS, M_K_CH_PHYS,
+    M_P_PHYS, M_N_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS,
+    M_PI_CH_PHYS, M_PI_0_PHYS, M_K_CH_PHYS, M_K_0_PHYS,
+    M_DELTA_PHYS,
+    // Wave 2B additions (2026-04-26): replace inline literals with
+    // canonical constants. These all live in constants.js as
+    // [PARAMETRIC PDG] reference values — used only for catalog
+    // display, not for derivations.
+    M_U_PHYS, M_D_PHYS, M_S_PHYS, M_C_PHYS, M_B_PHYS, M_T_PHYS,
+    // Note: neutrino *_PHYS values exist in constants.js but are NOT
+    // imported here — the catalog's nu_e/nu_mu/nu_tau literals carry a
+    // ×1e-3 unit-mismatch with the canonical *_PHYS values (see TODO
+    // Theme H comments at each neutrino entry).
+    M_W_PHYS, M_Z_PHYS, M_HIGGS_PHYS,
+    M_LAMBDA_PHYS, M_XI_0_PHYS, M_XI_M_PHYS, M_DELTA_0_PHYS,
+    M_ETA_PHYS, M_RHO_PHYS, M_J_PSI_PHYS, M_UPSILON_PHYS,
 } from './constants.js';
 
 const PARTICLES = [
@@ -83,6 +97,11 @@ const PARTICLES = [
     {
         id: 'nu_e', name: 'Electron Neutrino', symbol: 'νₑ',
         category: 'leptons', generation: 1,
+        // [TODO Theme H — neutrino mass literal value mismatches both
+        // its own "4.1 neV" comment AND the M_NU_E_PHYS=4.1e-9 MeV in
+        // constants.js (this evaluates to 4.1e-12 MeV = 4.1 µeV).
+        // Preserved verbatim to avoid silent UI value shift; revisit
+        // when neutrino-mass display is audited as a unit.]
         mass_mev: 4.1e-9 * 1e-3, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_e',
         ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 neV',
@@ -92,6 +111,7 @@ const PARTICLES = [
     {
         id: 'antinu_e', name: 'Electron Antineutrino', symbol: 'ν̄ₑ',
         category: 'leptons', generation: 1,
+        // [TODO Theme H — see nu_e for unit/value mismatch note]
         mass_mev: 4.1e-9 * 1e-3, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_e',
         ftd_formula: 'm_ν₁ (same mass)',
@@ -141,7 +161,7 @@ const PARTICLES = [
     {
         id: 'up', name: 'Up Quark', symbol: 'u',
         category: 'quarks', generation: 1,
-        mass_mev: 2.16, charge: 2/3, spin: 0.5,
+        mass_mev: M_U_PHYS, charge: 2/3, spin: 0.5,
         color_charge: 'r/g/b', antiparticle: 'anti_up',
         ftd_formula: 'm_e·N_base·sin²θ_W ≈ 2.16 MeV',
         ftd_accuracy: 5.0, ftd_status: 'selection',
@@ -150,7 +170,7 @@ const PARTICLES = [
     {
         id: 'anti_up', name: 'Anti-Up', symbol: 'ū',
         category: 'quarks', generation: 1,
-        mass_mev: 2.16, charge: -2/3, spin: 0.5,
+        mass_mev: M_U_PHYS, charge: -2/3, spin: 0.5,
         color_charge: 'r̄/ḡ/b̄', antiparticle: 'up',
         ftd_formula: 'm_u (same mass)',
         ftd_accuracy: 5.0, ftd_status: 'selection',
@@ -159,7 +179,7 @@ const PARTICLES = [
     {
         id: 'down', name: 'Down Quark', symbol: 'd',
         category: 'quarks', generation: 1,
-        mass_mev: 4.67, charge: -1/3, spin: 0.5,
+        mass_mev: M_D_PHYS, charge: -1/3, spin: 0.5,
         color_charge: 'r/g/b', antiparticle: 'anti_down',
         ftd_formula: 'm_e·(b₃+N_c−1)·sin²θ_W ≈ 4.67 MeV',
         ftd_accuracy: 3.0, ftd_status: 'selection',
@@ -168,7 +188,7 @@ const PARTICLES = [
     {
         id: 'anti_down', name: 'Anti-Down', symbol: 'd̄',
         category: 'quarks', generation: 1,
-        mass_mev: 4.67, charge: 1/3, spin: 0.5,
+        mass_mev: M_D_PHYS, charge: 1/3, spin: 0.5,
         color_charge: 'r̄/ḡ/b̄', antiparticle: 'down',
         ftd_formula: 'm_d (same mass)',
         ftd_accuracy: 3.0, ftd_status: 'selection',
@@ -177,7 +197,7 @@ const PARTICLES = [
     {
         id: 'strange', name: 'Strange Quark', symbol: 's',
         category: 'quarks', generation: 2,
-        mass_mev: 93.4, charge: -1/3, spin: 0.5,
+        mass_mev: M_S_PHYS, charge: -1/3, spin: 0.5,
         color_charge: 'r/g/b', antiparticle: 'anti_strange',
         ftd_formula: 'm_e·MU_RATIO·sin²θ_W·N_c/N_base',
         ftd_accuracy: 2.0, ftd_status: 'selection',
@@ -186,7 +206,7 @@ const PARTICLES = [
     {
         id: 'anti_strange', name: 'Anti-Strange', symbol: 's̄',
         category: 'quarks', generation: 2,
-        mass_mev: 93.4, charge: 1/3, spin: 0.5,
+        mass_mev: M_S_PHYS, charge: 1/3, spin: 0.5,
         color_charge: 'r̄/ḡ/b̄', antiparticle: 'strange',
         ftd_formula: 'm_s (same mass)',
         ftd_accuracy: 2.0, ftd_status: 'selection',
@@ -195,7 +215,7 @@ const PARTICLES = [
     {
         id: 'charm', name: 'Charm Quark', symbol: 'c',
         category: 'quarks', generation: 2,
-        mass_mev: 1270, charge: 2/3, spin: 0.5,
+        mass_mev: M_C_PHYS, charge: 2/3, spin: 0.5,
         color_charge: 'r/g/b', antiparticle: 'anti_charm',
         ftd_formula: 'm_e·MU_RATIO·b₃·sin²θ_W/α',
         ftd_accuracy: 1.5, ftd_status: 'selection',
@@ -204,7 +224,7 @@ const PARTICLES = [
     {
         id: 'anti_charm', name: 'Anti-Charm', symbol: 'c̄',
         category: 'quarks', generation: 2,
-        mass_mev: 1270, charge: -2/3, spin: 0.5,
+        mass_mev: M_C_PHYS, charge: -2/3, spin: 0.5,
         color_charge: 'r̄/ḡ/b̄', antiparticle: 'charm',
         ftd_formula: 'm_c (same mass)',
         ftd_accuracy: 1.5, ftd_status: 'selection',
@@ -213,7 +233,7 @@ const PARTICLES = [
     {
         id: 'bottom', name: 'Bottom Quark', symbol: 'b',
         category: 'quarks', generation: 3,
-        mass_mev: 4180, charge: -1/3, spin: 0.5,
+        mass_mev: M_B_PHYS, charge: -1/3, spin: 0.5,
         color_charge: 'r/g/b', antiparticle: 'anti_bottom',
         ftd_formula: 'm_τ·N_c·sin²θ_W/α',
         ftd_accuracy: 1.0, ftd_status: 'selection',
@@ -222,7 +242,7 @@ const PARTICLES = [
     {
         id: 'anti_bottom', name: 'Anti-Bottom', symbol: 'b̄',
         category: 'quarks', generation: 3,
-        mass_mev: 4180, charge: 1/3, spin: 0.5,
+        mass_mev: M_B_PHYS, charge: 1/3, spin: 0.5,
         color_charge: 'r̄/ḡ/b̄', antiparticle: 'bottom',
         ftd_formula: 'm_b (same mass)',
         ftd_accuracy: 1.0, ftd_status: 'selection',
@@ -231,7 +251,7 @@ const PARTICLES = [
     {
         id: 'top', name: 'Top Quark', symbol: 't',
         category: 'quarks', generation: 3,
-        mass_mev: 172760, charge: 2/3, spin: 0.5,
+        mass_mev: M_T_PHYS, charge: 2/3, spin: 0.5,
         color_charge: 'r/g/b', antiparticle: 'anti_top',
         ftd_formula: 'v_Higgs/√2 ≈ 173 GeV',
         ftd_accuracy: 0.3, ftd_status: 'selection',
@@ -240,7 +260,7 @@ const PARTICLES = [
     {
         id: 'anti_top', name: 'Anti-Top', symbol: 't̄',
         category: 'quarks', generation: 3,
-        mass_mev: 172760, charge: -2/3, spin: 0.5,
+        mass_mev: M_T_PHYS, charge: -2/3, spin: 0.5,
         color_charge: 'r̄/ḡ/b̄', antiparticle: 'top',
         ftd_formula: 'm_t (same mass)',
         ftd_accuracy: 0.3, ftd_status: 'selection',
@@ -271,7 +291,7 @@ const PARTICLES = [
     {
         id: 'w_plus', name: 'W⁺ Boson', symbol: 'W⁺',
         category: 'gauge_bosons', generation: null,
-        mass_mev: 80377, charge: 1, spin: 1,
+        mass_mev: M_W_PHYS, charge: 1, spin: 1,
         color_charge: 'none', antiparticle: 'w_minus',
         ftd_formula: 'm_e·67/(8α²) ≈ 80.4 GeV',
         ftd_accuracy: 0.02, ftd_status: 'derived',
@@ -280,7 +300,7 @@ const PARTICLES = [
     {
         id: 'w_minus', name: 'W⁻ Boson', symbol: 'W⁻',
         category: 'gauge_bosons', generation: null,
-        mass_mev: 80377, charge: -1, spin: 1,
+        mass_mev: M_W_PHYS, charge: -1, spin: 1,
         color_charge: 'none', antiparticle: 'w_plus',
         ftd_formula: 'm_W (same mass)',
         ftd_accuracy: 0.02, ftd_status: 'derived',
@@ -289,7 +309,7 @@ const PARTICLES = [
     {
         id: 'z_boson', name: 'Z Boson', symbol: 'Z⁰',
         category: 'gauge_bosons', generation: null,
-        mass_mev: 91187.6, charge: 0, spin: 1,
+        mass_mev: M_Z_PHYS, charge: 0, spin: 1,
         color_charge: 'none', antiparticle: 'z_boson',
         ftd_formula: 'm_W/cos(θ_W) ≈ 91.2 GeV',
         ftd_accuracy: 0.01, ftd_status: 'derived',
@@ -302,7 +322,7 @@ const PARTICLES = [
     {
         id: 'higgs', name: 'Higgs Boson', symbol: 'H⁰',
         category: 'scalar', generation: null,
-        mass_mev: 125100, charge: 0, spin: 0,
+        mass_mev: M_HIGGS_PHYS, charge: 0, spin: 0,
         color_charge: 'none', antiparticle: 'higgs',
         ftd_formula: 'm_e·N_eff/α² ≈ 124.8 GeV',
         ftd_accuracy: 0.24, ftd_status: 'selection',
@@ -335,7 +355,7 @@ const PARTICLES = [
     {
         id: 'neutron', name: 'Neutron', symbol: 'n',
         category: 'baryons', generation: null,
-        mass_mev: 939.565, charge: 0, spin: 0.5,
+        mass_mev: M_N_PHYS, charge: 0, spin: 0.5,
         color_charge: 'singlet', antiparticle: 'antineutron',
         composition: 'udd',
         ftd_formula: 'm_p + (m_d−m_u)·(1+α/π)',
@@ -345,7 +365,7 @@ const PARTICLES = [
     {
         id: 'antineutron', name: 'Antineutron', symbol: 'n̄',
         category: 'baryons', generation: null,
-        mass_mev: 939.565, charge: 0, spin: 0.5,
+        mass_mev: M_N_PHYS, charge: 0, spin: 0.5,
         color_charge: 'singlet', antiparticle: 'neutron',
         composition: 'ūd̄d̄',
         ftd_formula: 'm_n (same mass)',
@@ -355,7 +375,7 @@ const PARTICLES = [
     {
         id: 'lambda', name: 'Lambda', symbol: 'Λ⁰',
         category: 'baryons', generation: null,
-        mass_mev: 1115.7, charge: 0, spin: 0.5,
+        mass_mev: M_LAMBDA_PHYS, charge: 0, spin: 0.5,
         color_charge: 'singlet', antiparticle: 'antilambda',
         composition: 'uds',
         ftd_formula: 'm_p + m_s (constituent)',
@@ -365,7 +385,7 @@ const PARTICLES = [
     {
         id: 'antilambda', name: 'Anti-Lambda', symbol: 'Λ̄⁰',
         category: 'baryons', generation: null,
-        mass_mev: 1115.7, charge: 0, spin: 0.5,
+        mass_mev: M_LAMBDA_PHYS, charge: 0, spin: 0.5,
         color_charge: 'singlet', antiparticle: 'lambda',
         composition: 'ūd̄s̄',
         ftd_formula: 'm_Λ (same mass)',
@@ -385,6 +405,8 @@ const PARTICLES = [
     {
         id: 'sigma_zero', name: 'Sigma0', symbol: 'Σ⁰',
         category: 'baryons', generation: null,
+        // [PARAMETRIC PDG] — Σ⁰ isospin partner of Σ⁺; canonical
+        // constant not added (M_SIGMA_PHYS covers only Σ⁺).
         mass_mev: 1192.6, charge: 0, spin: 0.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'uds',
@@ -395,6 +417,8 @@ const PARTICLES = [
     {
         id: 'sigma_minus', name: 'Sigma-', symbol: 'Σ⁻',
         category: 'baryons', generation: null,
+        // [PARAMETRIC PDG] — Σ⁻ isospin partner of Σ⁺; canonical
+        // constant not added (M_SIGMA_PHYS covers only Σ⁺).
         mass_mev: 1197.4, charge: -1, spin: 0.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'dds',
@@ -405,7 +429,7 @@ const PARTICLES = [
     {
         id: 'xi_zero', name: 'Xi0', symbol: 'Ξ⁰',
         category: 'baryons', generation: null,
-        mass_mev: 1314.9, charge: 0, spin: 0.5,
+        mass_mev: M_XI_0_PHYS, charge: 0, spin: 0.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'uss',
         ftd_formula: 'quark model + FTD masses',
@@ -415,7 +439,7 @@ const PARTICLES = [
     {
         id: 'xi_minus', name: 'Xi-', symbol: 'Ξ⁻',
         category: 'baryons', generation: null,
-        mass_mev: 1321.7, charge: -1, spin: 0.5,
+        mass_mev: M_XI_M_PHYS, charge: -1, spin: 0.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'dss',
         ftd_formula: 'quark model + FTD masses',
@@ -435,7 +459,7 @@ const PARTICLES = [
     {
         id: 'delta_pp', name: 'Delta++', symbol: 'Δ⁺⁺',
         category: 'baryons', generation: null,
-        mass_mev: 1232, charge: 2, spin: 1.5,
+        mass_mev: M_DELTA_PHYS, charge: 2, spin: 1.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'uuu',
         ftd_formula: 'quark model + FTD masses',
@@ -469,7 +493,7 @@ const PARTICLES = [
     {
         id: 'pion_zero', name: 'Pion0', symbol: 'π⁰',
         category: 'mesons', generation: null,
-        mass_mev: 134.98, charge: 0, spin: 0,
+        mass_mev: M_PI_0_PHYS, charge: 0, spin: 0,
         color_charge: 'singlet', antiparticle: 'pion_zero',
         composition: '(uū−dd̄)/√2',
         ftd_formula: 'm_π± − EM correction',
@@ -499,7 +523,7 @@ const PARTICLES = [
     {
         id: 'kaon_zero', name: 'Kaon0', symbol: 'K⁰',
         category: 'mesons', generation: null,
-        mass_mev: 497.61, charge: 0, spin: 0,
+        mass_mev: M_K_0_PHYS, charge: 0, spin: 0,
         color_charge: 'singlet', antiparticle: 'antikaon_zero',
         composition: 'ds̄',
         ftd_formula: 'ChPT with FTD quark masses',
@@ -509,7 +533,7 @@ const PARTICLES = [
     {
         id: 'antikaon_zero', name: 'Anti-Kaon0', symbol: 'K̄⁰',
         category: 'mesons', generation: null,
-        mass_mev: 497.61, charge: 0, spin: 0,
+        mass_mev: M_K_0_PHYS, charge: 0, spin: 0,
         color_charge: 'singlet', antiparticle: 'kaon_zero',
         composition: 'sd̄',
         ftd_formula: 'm_K⁰ (same mass)',
@@ -519,7 +543,7 @@ const PARTICLES = [
     {
         id: 'eta', name: 'Eta', symbol: 'η',
         category: 'mesons', generation: null,
-        mass_mev: 547.86, charge: 0, spin: 0,
+        mass_mev: M_ETA_PHYS, charge: 0, spin: 0,
         color_charge: 'singlet', antiparticle: 'eta',
         composition: '(uū+dd̄−2ss̄)/√6',
         ftd_formula: 'ChPT with FTD quark masses',
@@ -529,7 +553,7 @@ const PARTICLES = [
     {
         id: 'rho', name: 'Rho', symbol: 'ρ',
         category: 'mesons', generation: null,
-        mass_mev: 775.3, charge: 0, spin: 1,
+        mass_mev: M_RHO_PHYS, charge: 0, spin: 1,
         color_charge: 'singlet', antiparticle: 'rho',
         composition: '(uū−dd̄)/√2',
         ftd_formula: 'vector meson mass formula',
@@ -539,7 +563,7 @@ const PARTICLES = [
     {
         id: 'jpsi', name: 'J/ψ', symbol: 'J/ψ',
         category: 'mesons', generation: null,
-        mass_mev: 3096.9, charge: 0, spin: 1,
+        mass_mev: M_J_PSI_PHYS, charge: 0, spin: 1,
         color_charge: 'singlet', antiparticle: 'jpsi',
         composition: 'cc̄',
         ftd_formula: '2·m_c (charmonium ground state)',
@@ -549,7 +573,7 @@ const PARTICLES = [
     {
         id: 'upsilon', name: 'Upsilon', symbol: 'Υ',
         category: 'mesons', generation: null,
-        mass_mev: 9460.3, charge: 0, spin: 1,
+        mass_mev: M_UPSILON_PHYS, charge: 0, spin: 1,
         color_charge: 'singlet', antiparticle: 'upsilon',
         composition: 'bb̄',
         ftd_formula: '2·m_b (bottomonium ground state)',
