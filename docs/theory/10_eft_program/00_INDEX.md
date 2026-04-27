@@ -140,11 +140,26 @@ physics.
 
 Resolution: the four mechanism closures share a single structural cause — the ring of Axiom-Zero invariants is entirely SI-dimensionless. `THEOREM_A_PHYS_NO_GO.md` (FTD-0059) formalizes this, promoting the `a_phys ≡ ℓ_P` calibration from pragmatic fallback to theorem-enforced calibration interface. The earlier "[STATUS UNKNOWN]" tension between the SUCCESS doc and the `a_phys ≡ ℓ_P` declaration in `SPEC_FTD.md` / CLAUDE.md is subsumed: the authoritative disposition is **`a_phys ≡ ℓ_P` as a CALIBRATION, theorem-enforced** (LEDGER rows FTD-0030, FTD-0041, FTD-0059).
 
-## Cluster 6 — g_c first principles / Mechanism B
+## Cluster 6 — g_c first principles / Mechanism B / C
 
 | File | One-line | Status |
 |---|---|---|
 | `OPEN_GC_FROM_FIRST_PRINCIPLES.md` | Scoping doc for deriving g_c; three candidate mechanisms | [OPEN] |
+| `DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` | Mechanism C: `g_c` as BCC bridge-operator eigenvalue ratio | [CLOSED NEGATIVE] (FTD-0093, 2026-04-27) |
+| `PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` | Pre-registered falsifier for Mechanism C | [PROTOCOL] |
+| `AUDIT_BCC_SUBLATTICE_SPECTRUM.md` | D6 audit closure: BCC ratio 11.76/10.31/15.24 vs predicted 45.31; non-monotonic | [CLOSED NEGATIVE] (FTD-0093) |
+
+## Cluster 8 — Engine-as-instrument portfolio (2026-04-27)
+
+Per the user's 2026-04-26 reorientation. Four-campaign portfolio executed in a single GPU session on RTX 5090 / WSL2.
+
+| File | One-line | Status |
+|---|---|---|
+| `PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md` | Pre-registered IC × seed grid + outcome interpretations | [PROTOCOL] |
+| `ANALYSIS_EMERGENT_SPECTRUM.md` | Three-regime phase structure (vacuum / bound states / runaway crystallization) | [PARTIAL] (FTD-0102) |
+| `AUDIT_CONTINUUM_LIMIT.md` | M_ab(b=2) at L ∈ {16, 32, 64}; cond(S) monotone; Wilson eigenvalues non-monotone; semigroup fails | [PARTIAL] (FTD-0103) |
+| `PROTOCOL_TOPOLOGICAL_OBSERVABLES.md` | Pre-registered Wilson loop / flux tube / monopole / vacuum instanton sub-experiments | [PROTOCOL] |
+| `ANALYSIS_TOPOLOGICAL_OBSERVABLES.md` | Topology atlas at L=32 — see analysis | [PARTIAL] (FTD-0104) |
 
 ## Cluster 7 — Other
 

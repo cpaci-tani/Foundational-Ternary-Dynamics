@@ -228,3 +228,34 @@ constructor-domain metadata and observable registry
 **FTD-0100 update (2026-04-26):** F2 (s² zero-variance break via parameter sweep) closed positive — `inj-mult=1.0` (injecting AT the genesis threshold rather than 3× above) restores Var(s²) > 0 and unlocks the first **full 6×6** mixing-matrix measurement. M_stateSq,stateSq = exactly +8.0 = b³ (trivial volume-weight scaling for an integer per-cell scalar); non-trivial flux→s² off-diagonal entries (M_J⁴,stateSq = +6.47); s²→flux row at machine precision — asymmetric mixing structure recovered (state crystallization is a sink for flux information under blocking, not a source). 4 of 6 FTD-0098 follow-ups closed. The over-saturation in the original FTD-0098 baseline is a parameter-regime artifact, not a fundamental property; future canonical mixing-matrix campaigns should use boundary injection (`inj-mult=1.0`).
 
 The next milestone is **L=32/L=64 multilatitude continuation at `inj-mult=1.0`** to land a clean 6×6 at multiple scales (combines FTD-0099's L-trend + FTD-0100's 6×6 unlock). If cond(S) and bootstrap stderr both improve as predicted, this would be the upgrade path from [PARTIAL] toward [MEASUREMENT]. F4 (multi-scenario) and F6 (Vieta trace/det) remain open.
+
+---
+
+## Engine-as-Instrument Portfolio Verdict (2026-04-27)
+
+Per the user's 2026-04-26 reorientation toward "use the engine as a primary instrument; let it produce phenomena and measure what emerges." Four-campaign portfolio executed in a single session on RTX 5090 / WSL2.
+
+| # | Campaign | LEDGER | Outcome | Tag |
+|---|---|---|---|---|
+| A | BCC sub-stencil spectrum (Mechanism C closure) | FTD-0093 | Falsifier FAIL at L ∈ {24, 32, 48}; non-monotonic in L; FCC overlaps BCC at L=48 — basis-specificity removed | [CLOSED NEGATIVE] |
+| B | Emergent particle spectrum from generic IC | FTD-0102 | Three-regime phase structure (vacuum / deterministic bound states / runaway crystallization); pre-registered Outcome A (discrete IC-invariant spectrum) NOT recovered | [PARTIAL] |
+| C | Continuum-limit at L ∈ {16, 32, 64} for M_ab(b=2) | FTD-0103 | cond(S) monotonically improving (factor 18 over L=16→L=64); Wilson eigenvalue positivity non-monotonic; RG semigroup fails at all L | [PARTIAL] |
+| D | Topological observable mapping (Wilson, flux tube, monopole, vacuum instanton) | FTD-0104 | See ANALYSIS_TOPOLOGICAL_OBSERVABLES.md | [PARTIAL] |
+
+**Cross-campaign findings:**
+
+- **All three first-principles routes for `g_c` (Mechanisms A, B, C) are now closed-negative.** The coupling remains [PARAMETRIC]. Master quadratic / G* / Watson identity unaffected (independent number-theoretic [THEOREMs]).
+- **Engine has structural phase content not anticipated by SM-targeted measurements.** Campaign B's three-regime finding (vacuum / bound states / runaway crystallization) and the deterministic cluster counts (1 for point injection, 2 for collision; 5/5 seeds) are engine-native observations that SM-comparison framings would have masked or tuned away.
+- **Continuum-limit measurement shows monotone cond(S) improvement but non-monotone eigenvalue positivity** at fixed N_SAMPLES — finite-sample noise is the dominant constraint, not basis closure or genuine L-dependence (consistent across FTD-0099/0103).
+- **Negative results outnumber positive results in this portfolio**, by design. The user's reorientation explicitly framed negative results as informative; this portfolio confirms that framing produces structurally informative content even when prior conjectures fail.
+
+**FTD-0094 (L2 candidate identity 2·m_e/α = 16G*²)** terminally demoted to [PARAMETRIC] per pre-registered FTD-0093 closure criterion. FTD-0096 (μ-from-ℓ_P missing arrow) remains [OPEN]; the demotion is conditional on FTD-0096 staying open.
+
+**Status of the algebraic spine (UNCHANGED):**
+- FTD-0001 G* algebraic identity — [THEOREM]
+- FTD-0013 master quadratic dual prediction (x₊ ≈ 1/α, x₋ ≈ N_c) — [STRONGLY MOTIVATED CONJECTURE]
+- FTD-0014 master quadratic algebraic identity x² − 16G*²x + 16G*³ = 0 — [THEOREM]
+- Phase G geometric Coulomb α_r(r,L) = 2r·G_L(r) — [THEOREM]
+- Watson identity W₃ = G*²/(2π) — [THEOREM]
+
+These are independent of the engine-as-instrument campaigns and stand on number-theoretic + lattice-Green's-function grounds.
