@@ -117,7 +117,7 @@ For each cataloged formula, generate candidate replacements where standard 4π o
 | 8G* | 23.669 |
 | G*² | 8.7538 |
 | G*²·π/2 | 13.749 |
-| 16·G*²/π | 35.014 |
+| 16·G*²/π | 44.583 *(was misprinted "35.014" in v1; the intended value 35.015 is 4·G*² = 8π·W₃ on the row above. Corrected per math audit AUDIT_FTD0105_MATH_CHECK.md §3.1.)* |
 | 8π·W₃ = 8π·G*²/(2π) = 4·G*² | 35.015 |
 
 ### 2.1 Master prediction matrix (Einstein + thermodynamics)

@@ -121,6 +121,27 @@ The combination of (a) digital-geometry overhead ~1.5× explaining the 18.51 mea
 
 ---
 
-## 8 · Single-line summary
+## 8 · Corrigendum — methodological note (added 2026-04-27 post math audit)
+
+Per `AUDIT_FTD0105_MATH_CHECK.md` §3.2, the reported pooled stderr `0.149` underestimates the true measurement uncertainty by a factor of 2.5×. The multi-seed strategy in the engine code shifted cluster centers only along the x-axis with integer offsets; lattice translational symmetry maps these shifts to identical outputs, so all 5 seeds at each cluster_radius produce the same A/r² value (verified in `verdict.csv`: per-cluster stderr is exactly 0). The effective independent-sample count is **n = 4** (one per cluster_radius), not 20.
+
+**Corrected stderr:** σ_true = √(s²/4) = **0.376** where s² = 0.5673 is the sample variance across the 4 cluster_radii means {18.99, 17.51, 19.18, 18.36}.
+
+**Corrected per-candidate σ-distance:**
+
+| Candidate | Δ% | σ (true, n=4) |
+|---|---|---|
+| 4π | +47.3% | 15.8 |
+| 4ϖ | +76.5% | 21.3 |
+| 4G* | +56.4% | 17.7 |
+| G*²·π/2 | +34.6% | 12.7 |
+
+**Verdict UNCHANGED.** All four candidates remain rejected at >12σ true distance from the measured value 18.51. The pre-registered ±5% falsifier was met by zero candidates under either accounting; the headline PASS-NONE / secondary-closed-negative conclusion does not flip with the corrected stderr.
+
+**Lesson for future campaigns:** the "5 seeds × 4 cluster_radii = 20 samples" claim was nominally true but methodologically misleading because the seed shifts didn't actually break the deterministic lattice configuration. For genuine multi-seed bootstrap, future campaigns should either (a) enable Langevin during the latency-field relaxation, OR (b) use 3D random rotations of the cluster, OR (c) report n equal to the true number of independent ensembles.
+
+---
+
+## 9 · Single-line summary
 
 **Pre-registered horizon-area measurement at L=64 × 4 cluster_radii × 5 seeds. Pooled $A_{\text{actual}}/r_h^2 = 18.51 \pm 0.15$, outside ±5% of all four pre-registered candidates {4π=12.57, 4ϖ=10.49, 4G*=11.83, G*²π/2=13.75}. Strict pre-reg verdict: PASS-NONE / INCONCLUSIVE. Diagnosis: Moore-boundary isosurface count has digital-geometry overhead ~1.5×, so 18.51 ≈ 1.5 · 4π (within 1.8%). Independent anisotropy probe (face/edge/corner $r_h$) measures ≤8% deviation, decreasing with cluster size — consistent with spherical horizon. Secondary structural reading: lemniscatic-replacement hypothesis for horizon-area observable closes NEGATIVE; PF Atlas parallel reading at [SELECTION] unaffected. D2 surface-gravity inconclusive (lattice κ in different units than GR κ; κ·M scales as M^0.28 not constant). Investigation as a whole [PARTIAL] — does not close ϖ-replacement question for other observables; cleanest engine-arbitrated test of "is the lattice horizon round or lemniscatic" lands ROUND.**
