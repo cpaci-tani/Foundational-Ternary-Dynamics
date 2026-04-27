@@ -1,7 +1,7 @@
 # FTD Native EFT Checklist
 
-**Date:** 2026-04-26 (last: 2026-04-26 — FTD-0098 first operator-mixing measurement)
-**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4 fully checked 2026-04-26); GPU full-tick ledgers are in place; microscopic native action selected as a constrained history measure; **first nonlinear operator-mixing matrix M_ab(b=2) measured 2026-04-26 (FTD-0098, [PARTIAL])**; full nonlinear effective EFT remains open.
+**Date:** 2026-04-26 (last: 2026-04-26 — FTD-0098 + FTD-0099 mixing-matrix measurements)
+**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4 fully checked 2026-04-26); GPU full-tick ledgers are in place; microscopic native action selected as a constrained history measure; **first nonlinear operator-mixing matrix M_ab(b=2) measured 2026-04-26 (FTD-0098 at L=16, FTD-0099 extension at L=32 + b=4 + Wilson eigendecomp; both [PARTIAL])**; full nonlinear effective EFT remains open.
 
 This checklist tracks what is required for FTD to count as a real, native EFT
 rather than a collection of projected continuum comparisons. It follows the
@@ -75,7 +75,7 @@ finite-volume/blocking EFT of FTD histories.
 - [x] Native operator spectrum test exists.
 - [x] Ward-identity and matched-Poisson tests exist.
 - [ ] Extend basis with all nonlinear/reaction operators observed in full-tick GPU histories.
-- [~] Define operator mixing matrix from blocked full-history ensembles. **[PARTIAL] 2026-04-26 (FTD-0098)** — first measured M_ab(b=2) on a Langevin+genesis ensemble at L=16 in `engine/results/operator_mixing_2026-04-26/`. 5×5 reduced subspace after pre-registered degradation ladder dropped O6 = s² (ensemble-level state saturation → zero variance); cond(S) = 5.8×10⁷, 100/100 bootstrap resamples succeeded, diagonal eigenvalues span factor 96 (basis non-degenerate); 6/25 entries below 30% rel-error. See `PROTOCOL_OPERATOR_MIXING_MATRIX.md` and `engine/results/operator_mixing_2026-04-26/ANALYSIS.md`.
+- [~] Define operator mixing matrix from blocked full-history ensembles. **[PARTIAL] 2026-04-26 (FTD-0098 + FTD-0099)** — first measured M_ab(b=2) on a Langevin+genesis ensemble at L=16 (FTD-0098) and at L=32 (FTD-0099 follow-up). Per-config artifacts in `engine/results/operator_mixing_2026-04-26/{L16_b2, L16_b4, L32_b4}/`. 5×5 reduced subspace after pre-registered degradation ladder dropped O6 = s² (ensemble-level state saturation → zero variance); cond(S) = 5.8×10⁷ at L=16, improves 7× to 8.74×10⁶ at L=32 (finite-sample noise hypothesis confirmed); 100/100 bootstrap resamples succeeded; 6→7/25 entries below 30% rel-error. Wilson eigendecomposition of (M+M^T)/2: 3⁺/2⁻ eigenvalues at L=16 → **4⁺/1⁻ at L=32** — direct evidence basis approaches positive-definite eigenstructure with L. See `PROTOCOL_OPERATOR_MIXING_MATRIX.md` §7b and `engine/results/operator_mixing_2026-04-26/ANALYSIS.md` Appendix B.
 - [~] Classify relevant, marginal, and irrelevant directions from measured native flow. **[PARTIAL] 2026-04-25** — `AUDIT_OPERATOR_SPECTRUM.md` (FTD-0091): all 5 measurable operators classify as "relevant" (Δ < D = 4) at L=32 in both the pulse and flux-baryon scenarios; the marginal/irrelevant bands of the pre-reg bracket are not recovered. Operator stratification IS present (divJ² Δ jumps ×3.4 between scenarios), so the basis is non-degenerate; the pulse-regime "all Δ ≈ 0.5" collapse is a scenario envelope artefact, not strong-coupling. Full classification requires L ≥ 64 + multi-scenario ensemble. **2026-04-26 (FTD-0098):** mixing-matrix eigenvalue diagnostic on the L=16 Langevin+genesis ensemble independently confirms the all-relevant compression — same finding via complementary mechanism.
 - [ ] Separate engine-rule operators from emergent coarse operators.
 
@@ -223,9 +223,7 @@ first-principles status of g_c
 constructor-domain metadata and observable registry
 ```
 
-The next milestone is **multilatitude follow-up**: re-run FTD-0098's mixing
-matrix at L=32 and L=64 to test L-dependence of the all-relevant compression
-the audit (FTD-0091) and the mixing measurement both observed at small L.
-Companion: a K_GENESIS sweep to break the s² zero-variance degeneracy and
-unlock the 6×6 measurement (follow-ups F1 + F2 in
+**FTD-0099 update (2026-04-26):** F1 (multilatitude at L=32) closed positive — at L=32 the Wilson eigendecomposition recovers a fourth positive eigenvalue (3⁺/2⁻ at L=16 → 4⁺/1⁻ at L=32), and cond(S) improves 7×, confirming finite-sample noise as the leading-order constraint at L=16. F3 (Wilson eigendecomp) emitted for all configs. F5 (RG semigroup test M(b=4) ≈ M(b=2)·M(b=2)) closed negative — fails at the 50% threshold for both L (relerr 1.61–1.80×); bootstrap noise on the 4³–8³ b=4 grid is the leading-order explanation.
+
+The next milestone is **L=64 multilatitude continuation** (extrapolation of cond(S) trend predicts ≈1×10⁶ — comfortably below the 1×10⁸ threshold and below the b=4 noise floor) **plus a K_GENESIS sweep** to break the s² zero-variance degeneracy and unlock the full 6×6 mixing matrix (follow-up F2 in
 `engine/results/operator_mixing_2026-04-26/ANALYSIS.md`).
