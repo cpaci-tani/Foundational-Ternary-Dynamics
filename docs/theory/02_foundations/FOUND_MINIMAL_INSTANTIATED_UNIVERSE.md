@@ -868,7 +868,454 @@ candidate physics
 
 ---
 
-## 23. Minimal Instantiated Universe: Compact Ingredient List
+## 23. Ultimate Constructor Function
+
+**Tag:** [SPECIFICATION] / [SELECTION]
+
+The ingredient stack can be expressed as a constructor. The constructor is not
+a software API yet; it is the logical signature for what must be declared before
+a universe, subsystem, or EFT bridge is well-formed.
+
+### Constructor Signature
+
+```text
+construct_universe(
+    required: RequiredInstantiation,
+    optional: OptionalPhysics = {}
+) -> InstantiatedUniverse
+```
+
+### Required Parameters
+
+These are required for an instantiated universe in the strict sense.
+
+```text
+RequiredInstantiation {
+    context_contrast: ContextContrast,
+    ontic_units: NonEmptySet[OnticUnit],
+    individuation: IndividuationRule,
+    closure: ClosureCondition,
+    admissibility: LawAdmissibilityCriteria
+}
+```
+
+Meaning:
+
+```text
+context_contrast
+    paired declaration that contrast is registered in a context
+
+ontic_units
+    at least one distinguishable manifestation/capacity carrier
+
+individuation
+    criterion for when a unit, record, or flow is counted as persistent
+
+closure
+    declaration of what is inside, outside, boundary, or self-contextual
+
+admissibility
+    filters separating candidate physics from arbitrary computation
+```
+
+Minimal validation:
+
+```text
+context_contrast.context is defined
+context_contrast.contrast is defined
+ontic_units.count >= 1
+individuation is compatible with ontic_units
+closure defines the accounting domain
+admissibility is declared before update rules are accepted as physics
+```
+
+### Optional Parameters
+
+These parameters are optional for bare instantiation, but required for richer
+physical regimes.
+
+```text
+OptionalPhysics {
+    observer_context?: ObserverContext,
+    relation_space?: RelationSpace,
+    time_order?: TickOrder,
+    mobility?: MobilityRule,
+    state_alphabet?: StateAlphabet,
+    dispositional_field?: FieldLayer,
+    locality?: LocalityRule,
+    update_rule?: UpdateRule,
+    symmetry_redundancy?: SymmetryRedundancy,
+    observable_map?: ObservableMap,
+    constraint?: ConstraintRelation,
+    ledger?: ConservationLedger,
+    metric_geometry?: MetricGeometry,
+    probability_measure?: ProbabilityMeasure,
+    thermodynamic_accounting?: ThermodynamicAccounting,
+    topology_defects?: TopologyDefectStructure,
+    blocking?: ScaleBlockingMap,
+    continuum_limit?: ContinuumLimit,
+    many_body?: ManyBodyStructure,
+    sector_decomposition?: SectorDecomposition,
+    measurement_record?: MeasurementRecord,
+    coupling_map?: CouplingMap,
+    action_principle?: ActionPrinciple,
+    stochastic_extension?: StochasticExtension
+}
+```
+
+Interpretation:
+
+```text
+observer_context
+    frame/subsystem that compares, records, or reorients descriptions
+
+relation_space
+    graph, ordinal, metric, lattice, or other representation of relation
+
+time_order
+    ordered observations/ticks required when change is tracked
+
+mobility
+    rule for position-relation change and transport
+
+state_alphabet
+    allowed manifestation states; FTD selects {-1, 0, +1}
+
+dispositional_field
+    non-manifest field layer; FTD selects flux J
+
+locality
+    finite support rule for what can affect what
+
+update_rule
+    transformation rule over state/field/history
+
+symmetry_redundancy
+    distinction between intrinsic change and representational relabeling
+
+observable_map
+    map from internal state/history to measurable quantities
+
+constraint
+    relation such as div J = rho
+
+ledger
+    conservation/reaction/history accounting
+
+metric_geometry
+    distance, angle, curvature, volume, or causal geometry if selected/emergent
+
+probability_measure
+    ensemble, ignorance, branching, or stochastic accounting
+
+thermodynamic_accounting
+    entropy, irreversibility, coarse-grained information, and arrow records
+
+topology_defects
+    connectedness, winding, defects, charges, and sector obstructions
+
+blocking
+    map from ontic histories to coarse EFT observables
+
+continuum_limit
+    limiting procedure from discrete histories to smooth field equations
+
+many_body
+    multiplicity needed for genuine interaction and mixing
+
+sector_decomposition
+    e.g. Moore shell, stella octangula, T+/T- sectors
+
+measurement_record
+    persistent memory/correlation structure
+
+coupling_map
+    measured or derived effective couplings between blocked observables
+
+action_principle
+    variational or generator form summarizing admissible dynamics
+
+stochastic_extension
+    explicitly declared noise/thermal/Langevin layer
+```
+
+### Tiered Constructors
+
+Different levels require different parameter subsets.
+
+```text
+construct_instantiation(
+    context_contrast,
+    ontic_units >= 1,
+    individuation,
+    closure,
+    admissibility
+)
+```
+
+Creates:
+
+```text
+distinguishable existence in context
+```
+
+```text
+construct_relational_universe(
+    required,
+    relation_space,
+    ontic_units >= 2
+)
+```
+
+Creates:
+
+```text
+same/different
+separation
+adjacency/non-adjacency
+relative ordering
+```
+
+```text
+construct_dynamical_universe(
+    required,
+    relation_space,
+    time_order,
+    update_rule,
+    locality,
+    ledger
+)
+```
+
+Creates:
+
+```text
+ordered change
+bounded propagation
+intrinsic dynamics distinguished from frame relabeling
+```
+
+```text
+construct_ftd_universe(
+    required,
+    relation_space = cubic_3d_moore_26,
+    state_alphabet = {-1, 0, +1},
+    dispositional_field = J in R^3,
+    time_order = discrete_ticks,
+    locality = one_moore_neighborhood_per_tick,
+    update_rule = ftd_tick_cycle,
+    constraint = gauss_relation,
+    ledger = continuity_reaction_history,
+    blocking = declared_scale_map,
+    sector_decomposition = moore_shell_decomposition
+)
+```
+
+Creates:
+
+```text
+FTD candidate physics universe
+```
+
+### Constructor Invariants
+
+The constructor must reject malformed universes:
+
+```text
+if context is missing:
+    reject("contrast is not instantiated")
+
+if contrast is missing:
+    reject("context has no content")
+
+if ontic_units.count == 0:
+    reject("no distinguishable carrier")
+
+if relation_space is declared and ontic_units.count < 2:
+    warn("relation space is descriptive capacity, not instantiated relation")
+
+if time_order is declared without change/update/record:
+    warn("time is external parameter, not internally instantiated")
+
+if mobility is declared without ledger:
+    reject("transport requires continuity accounting")
+
+if update_rule violates admissibility:
+    reject("computation is not candidate physics")
+
+if observables are claimed and observable_map is absent:
+    reject("no map from ontology/history to measurement")
+
+if probability is claimed and probability_measure/stochastic_extension is absent:
+    reject("no measure over alternatives, ensembles, or noise")
+
+if thermodynamic arrow is claimed and coarse records/blocking are absent:
+    reject("no entropy or irreversibility domain")
+
+if mixing is claimed and many_body/sector multiplicity is absent:
+    reject("mixing requires multiplicity")
+
+if EFT coupling is claimed and blocking is absent:
+    reject("no scale map from ontology to effective observable")
+
+if continuum physics is claimed and continuum_limit is absent:
+    reject("no limit from discrete rule to smooth equation")
+```
+
+### FTD Engine Mapping
+
+```text
+RequiredInstantiation.context_contrast     docs/theory foundation layer
+RequiredInstantiation.ontic_units          s != 0 manifestations
+RequiredInstantiation.individuation        transport/history ledger identity
+RequiredInstantiation.closure              lattice/cell/Gauss boundary
+RequiredInstantiation.admissibility        locality + constraint + ledger tests
+
+OptionalPhysics.relation_space             lattice / Moore neighborhood
+OptionalPhysics.state_alphabet             {-1, 0, +1}
+OptionalPhysics.dispositional_field        J flux field
+OptionalPhysics.time_order                 tick counter
+OptionalPhysics.update_rule                phase_read/write/gauss/forces/move
+OptionalPhysics.symmetry_redundancy        frame/gauge distinction
+OptionalPhysics.observable_map             ledger/block/operator measurements
+OptionalPhysics.constraint                 div J = rho variants
+OptionalPhysics.ledger                     continuity + reaction + energy ledger
+OptionalPhysics.metric_geometry            lattice metric / emergent continuum
+OptionalPhysics.probability_measure        ensemble/statistical interpretation
+OptionalPhysics.thermodynamic_accounting   coarse records + entropy/arrow
+OptionalPhysics.topology_defects           Moore sectors / defects / charges
+OptionalPhysics.blocking                   native EFT blocked cells/histories
+OptionalPhysics.continuum_limit            EFT/long-wavelength limit
+OptionalPhysics.sector_decomposition       Moore/stella/corner sectors
+OptionalPhysics.action_principle           linear generator / effective action
+```
+
+---
+
+## 24. Domain Completeness Audit
+
+**Tag:** [AUDIT] / [OPEN PROGRAM]
+
+The short recovery ladder is necessary but not yet comprehensive:
+
+```text
+Given contrast + context,
+you can instantiate units.
+
+Given >=2 units,
+you can instantiate relation / primitive space.
+
+Given ordered relational change,
+you can instantiate time as update order.
+
+Given mobility,
+you need current and continuity.
+
+Given locality + closure,
+you get finite propagation and conservation domains.
+
+Given blocking,
+you can build an EFT bridge.
+
+Given many-body sectors,
+you can define real mixing.
+```
+
+The comprehensive domain ladder is:
+
+```text
+0. instantiation domain
+   contrast + context -> distinguishable existence
+
+1. identity domain
+   instantiated unit + individuation -> persistence / carrier tracking
+
+2. relational domain
+   >=2 distinguishables -> adjacency, separation, ordering, primitive space
+
+3. frame/symmetry domain
+   multiple descriptions -> gauge/frame redundancy vs intrinsic change
+
+4. dynamical domain
+   ordered relational difference -> tick/order/time
+
+5. transport domain
+   mobility -> current, continuity, source/reaction residue
+
+6. constraint domain
+   state + field -> Gauss-like accounting / admissible source-response
+
+7. locality/causality domain
+   bounded update support -> finite propagation / causal neighborhoods
+
+8. conservation domain
+   closure + ledger -> accounting surface, conserved quantities, residues
+
+9. observable domain
+   records + observable map -> measurable quantities
+
+10. statistical/probability domain
+    ensembles/noise/ignorance -> probability measure and expectation values
+
+11. thermodynamic/arrow domain
+    coarse records + irreversible bookkeeping -> entropy and arrow
+
+12. metric/geometric domain
+    relation space + measurement standard -> distance, angle, volume, curvature
+
+13. topological/defect domain
+    global relational structure -> sectors, winding, defects, charge classes
+
+14. many-body/correlation domain
+    multiplicity -> interaction, correlation, collective modes
+
+15. mixing/sector domain
+    many-body or multi-sector structure -> genuine mixing matrices/operators
+
+16. blocking/EFT domain
+    coarse-graining -> effective operators and running couplings
+
+17. continuum/symmetry-restoration domain
+    scaling limit -> continuum fields, Lorentz/gauge behavior if emergent
+
+18. action/generator domain
+    admissible update family -> linear generator, effective action, variational form
+
+19. phenomenology domain
+    calibrated/derived observables -> alpha, masses, couplings, spectra
+```
+
+Completeness status:
+
+```text
+instantiation             present in constructor
+identity                  present as required individuation
+relation                  present when >=2 units
+frame/symmetry            present as redundancy distinction; full gauge theory open
+dynamics/time             present when ordered change is declared
+transport/continuity      present through mobility + ledger
+constraint                present as optional physics; FTD selects Gauss variants
+locality/causality        present as admissibility/locality filter
+conservation              present through closure + ledger
+observables               now explicit; needs concrete observable maps per test
+probability/statistics    explicit optional domain; interpretation still open
+thermodynamics/arrow      explicit optional domain; engine entropy program open
+metric/geometry           explicit optional domain; 3D/continuum selection separate
+topology/defects          explicit optional domain; Moore sectors partly developed
+many-body/correlation     present and required for real mixing
+mixing/sectors            present; cannot be claimed for a lone ontic unit
+blocking/EFT              present; native engine bridge underway
+continuum limit           explicit optional domain; full proof open
+action/generator          explicit optional domain; linear generator program open
+phenomenology             outside constructor; requires separate derivations/tests
+```
+
+Therefore the constructor is comprehensive over domains required to ask for
+physics, but it does not automatically prove every domain's realized law.
+
+---
+
+## 25. Minimal Instantiated Universe: Compact Ingredient List
 
 The full minimal stack:
 
@@ -890,13 +1337,21 @@ The full minimal stack:
 14. locality rule
 15. update rule
 16. admissible law-space filters
-17. constraint between state and flux
-18. conservation/reaction ledger
-19. boundary / closure condition
-20. scale / blocking map
-21. many-body multiplicity for mixing
-22. stella/corner sector for deep Moore structure
-23. measurement/record for internal awareness
+17. frame/symmetry redundancy map
+18. observable map
+19. constraint between state and flux
+20. conservation/reaction ledger
+21. boundary / closure condition
+22. probability/statistical measure if alternatives are compared
+23. thermodynamic/arrow accounting if coarse records are tracked
+24. metric/geometric structure if distances/angles/curvature are claimed
+25. topology/defect structure if global sectors are claimed
+26. scale / blocking map
+27. continuum limit if smooth field physics is claimed
+28. many-body multiplicity for mixing
+29. stella/corner sector for deep Moore structure
+30. action/generator form if law is summarized variationally
+31. measurement/record for internal awareness
 ```
 
 FTD's minimal instantiated universe is therefore not "one voxel on a grid."
@@ -913,13 +1368,17 @@ signed manifestation
 flux disposition
 finite-volume conservation
 boundary closure
+observable maps
+statistical/thermal accounting
+topological sectors
 blocked-scale observables
+continuum-limit tests
 many-body histories
 ```
 
 ---
 
-## 24. What This Does And Does Not Prove
+## 26. What This Does And Does Not Prove
 
 This ingredient list supports:
 
@@ -932,7 +1391,12 @@ frame relabeling is not intrinsic motion
 change instantiates tick-order
 movement instantiates current
 closure defines the conservation domain
+observables require an observable map
+probability requires a measure over alternatives
+thermodynamics requires coarse records and entropy accounting
+topology requires global relational structure
 blocking defines the EFT bridge
+continuum physics requires a limiting procedure
 many-body histories instantiate mixing/flow
 ```
 
