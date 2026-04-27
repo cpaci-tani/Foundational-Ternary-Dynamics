@@ -1,2 +1,67 @@
-# Auto detect text files and perform LF normalization
+# Default: auto-detect text and normalize to LF in the index. With
+# core.autocrlf=true on Windows, files are checked out with CRLF;
+# without it, they stay LF. The explicit rules below override `auto`
+# for the file types we care about.
 * text=auto
+
+# ── Source code: always normalize to LF in the working tree too.
+# Eliminates the LF→CRLF warning storm on every `git add` and keeps
+# line endings consistent with the Linux/WSL build paths the project
+# also supports. Editors should be configured to write LF for these.
+*.js          text eol=lf
+*.mjs         text eol=lf
+*.cjs         text eol=lf
+*.ts          text eol=lf
+*.tsx         text eol=lf
+*.jsx         text eol=lf
+*.json        text eol=lf
+*.html        text eol=lf
+*.htm         text eol=lf
+*.css         text eol=lf
+*.scss        text eol=lf
+*.svg         text eol=lf
+*.py          text eol=lf
+*.cpp         text eol=lf
+*.cc          text eol=lf
+*.cxx         text eol=lf
+*.c           text eol=lf
+*.h           text eol=lf
+*.hpp         text eol=lf
+*.cu          text eol=lf
+*.cuh         text eol=lf
+*.cmake       text eol=lf
+CMakeLists.txt text eol=lf
+*.md          text eol=lf
+*.qmd         text eol=lf
+*.tex         text eol=lf
+*.yml         text eol=lf
+*.yaml        text eol=lf
+*.toml        text eol=lf
+*.sh          text eol=lf
+*.csv         text eol=lf
+
+# ── Windows-only batch / PowerShell scripts: keep CRLF.
+*.bat         text eol=crlf
+*.cmd         text eol=crlf
+*.ps1         text eol=crlf
+
+# ── Binary content: never touch line endings.
+*.wasm        binary
+*.png         binary
+*.jpg         binary
+*.jpeg        binary
+*.gif         binary
+*.ico         binary
+*.pdf         binary
+*.zip         binary
+*.gz          binary
+*.tar         binary
+*.exe         binary
+*.dll         binary
+*.so          binary
+*.dylib       binary
+*.lib         binary
+*.a           binary
+*.o           binary
+*.obj         binary
+*.ipynb       binary
