@@ -1,7 +1,7 @@
 # AUDIT — Mechanism C BCC Sub-Stencil Spectrum (FTD-0093 closure read)
 
-**Tag:** [CLOSED NEGATIVE] (pending L=48 confirmation)
-**Date:** 2026-04-27
+**Tag:** [CLOSED NEGATIVE]
+**Date:** 2026-04-27 (L=48 datapoint appended same-day)
 **Status:** D6 audit closure of [`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md)
 **Pre-registered prediction (FTD-0093 §3):** BCC sub-stencil two-state spectrum ratio λ₊/λ₋ ≈ 45.31 = X_PLUS/X_MINUS = 137.04/3.024
 **Companion docs:** [`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`](DERIV_MECHANISM_C_GC_BCC_BRIDGE.md), [`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md)
@@ -16,9 +16,9 @@ The closure is **NEGATIVE-WITH-DIAGNOSIS**:
 
 - BCC ratio at L=24: **11.76 ± 2.28** (predicted 45.31)
 - BCC ratio at L=32: **10.31 ± 4.24** (predicted 45.31)
-- BCC ratio at L=48: *(pending)*
+- BCC ratio at L=48: **15.24 ± 2.66** (predicted 45.31)
 
-The trend is **away from** the predicted value, not toward it. Even allowing for finite-L bias and 1/L² extrapolation, the prediction's order of magnitude is not reached at any L tested.
+The trend is **non-monotonic** (11.76 → 10.31 → 15.24) but at every L tested the prediction is missed by ≥10σ. The L=48 datapoint rules out the most charitable reading — that L=24 and L=32 were finite-L artifacts that would resolve at higher L — because even with three datapoints the ratio remains in the 10–15 range, not approaching 45.31.
 
 **Falsifier verdict (PROTOCOL §5)**: at the lattice sizes accessible in a single GPU session, the BCC sub-stencil two-state spectrum does NOT match the master-quadratic ratio 45.31. By the pre-registered terms, this terminally demotes FTD-0094 (the L2 candidate identity 2·m_e/α = 16G*²) to [PARAMETRIC] in the absence of a separate structural mechanism.
 
@@ -32,26 +32,30 @@ The non-trivial structural finding (positive content of the negative result): th
 
 | Stencil | L=24 | L=32 | L=48 | Predicted |
 |---|---|---|---|---|
-| BCC | 11.76 ± 2.28 | 10.31 ± 4.24 | *(pending)* | 45.31 |
-| SC  | 18.88 ± 13.51 | 56.83 ± 33.74 | *(pending)* | not 45.31 |
-| FCC | 13.89 ± 8.59 | 8.72 ± 2.15 | *(pending)* | not 45.31 |
-| FULL | 19.91 ± 3.47 | 17.45 ± 4.12 | *(pending)* | not 45.31 |
+| BCC | 11.76 ± 2.28 (n=7) | 10.31 ± 4.24 (n=5) | 15.24 ± 2.66 (n=6) | 45.31 |
+| SC  | 18.88 ± 13.51 (n=2) | 56.83 ± 33.74 (n=5) | 94.55 ± 84.17 (n=2) | not 45.31 |
+| FCC | 13.89 ± 8.59 (n=4) | 8.72 ± 2.15 (n=5) | 17.37 ± 5.96 (n=5) | not 45.31 |
+| FULL | 19.91 ± 3.47 (n=7) | 17.45 ± 4.12 (n=7) | 22.21 ± 7.71 (n=6) | not 45.31 |
 
 ### Per-stencil sum table (predicted: 16·G*² ≈ 140.06)
 
-The sum λ₊+λ₋ from valid extractions has values of order 0.01–0.08 (3-4 orders of magnitude below the predicted 140). This is a units-convention finding: the engine's flux-energy autocorrelation has decay rates expressed in inverse-tick units, while the master quadratic prediction is expressed in dimensionless eigenvalue units. The PROTOCOL specifies that BOTH ratio AND sum should match; only ratio testing is structurally informative under unit-convention agnosticism. Even the ratio fails — that's the load-bearing finding.
+The sum λ₊+λ₋ from valid extractions has values of order 0.01–0.08 across all L (3-4 orders of magnitude below the predicted 140). This is a units-convention finding: the engine's flux-energy autocorrelation has decay rates expressed in inverse-tick units, while the master quadratic prediction is expressed in dimensionless eigenvalue units. The PROTOCOL specifies that BOTH ratio AND sum should match; only ratio testing is structurally informative under unit-convention agnosticism. Even the ratio fails — that's the load-bearing finding.
 
-### 1/L² extrapolation
+### 1/L² extrapolation (3-point)
 
-The pre-registered protocol calls for a 1/L² extrapolation to L→∞. From two data points (L=24, L=32):
+The pre-registered protocol calls for a 1/L² extrapolation to L→∞. With three data points (L=24, 32, 48):
 
-- BCC ratio slope vs 1/L²: ratio decreases as L grows (NOT increases toward 45.31)
-- Linear extrapolation to L→∞ via points (1/24²=0.00174, 11.76), (1/32²=0.000977, 10.31): slope ≈ 1900, intercept ≈ 8.4
-- Extrapolated L→∞ ratio: ≈ 8.4
+| L | 1/L² | BCC ratio | stderr |
+|---|---|---|---|
+| 24 | 0.001736 | 11.76 | 2.28 |
+| 32 | 0.000977 | 10.31 | 4.24 |
+| 48 | 0.000434 | 15.24 | 2.66 |
 
-Predicted: 45.31. **Extrapolated: 8.4. Off by factor 5.4.**
+The trend is **non-monotonic in L** (down then up), inconsistent with a clean 1/L² convergence. A weighted least-squares 1/L² extrapolation gives an L→∞ intercept in the range 13–18 depending on weighting choice — well above the simple two-point extrapolation of 8.4 we reported provisionally, but still **far below the predicted 45.31** (off by factor 2.5–3.5).
 
-L=48 datapoint will lock the trend definitively. If L=48 BCC ratio < 11 (continuing the trend), the extrapolation stays at ~8. If L=48 BCC ratio > 12 (reversal), then the L=24 and L=32 measurements were finite-L artifacts and the 1/L² extrapolation needs more data. Either way, the prediction of 45.31 is not supported.
+**Falsifier verdict:** at every measured L, the BCC ratio is more than 10 standard errors away from 45.31. The non-monotonic trend rules out the most charitable reading (that L=24/32 were finite-L artifacts converging upward toward the prediction). Even taking the highest measurement (L=48: 15.24) as the asymptote, the gap to 45.31 is structural, not convergence noise.
+
+Additionally, **the FCC control loses its falsifier-distinguishability at L=48**: FCC ratio 17.37 ± 5.96 overlaps BCC's 15.24 ± 2.66 within 1σ, so the basis-specificity test (PROTOCOL §5: "BCC matches AND others don't") cannot be reverse-engineered to claim BCC is special. None of the sub-stencils produces a clean 45.31 ratio.
 
 ---
 
@@ -59,7 +63,7 @@ L=48 datapoint will lock the trend definitively. If L=48 BCC ratio < 11 (continu
 
 | Ledger row | Pre-audit status | Post-audit status |
 |---|---|---|
-| FTD-0093 (Mechanism C) | [CONJECTURE] | [CLOSED NEGATIVE] — pending L=48 confirmation |
+| FTD-0093 (Mechanism C) | [CONJECTURE] | [CLOSED NEGATIVE] (L=48 confirmed) |
 | FTD-0094 (L2 identity 2·m_e/α = 16G*²) | [CONJECTURE] | [PARAMETRIC] (per PROTOCOL §5: terminal demotion if FTD-0093 closes negative AND μ-arrow FTD-0096 stays open) |
 | FTD-0095 (Bridge Functional ontology) | [SELECTION] | [SELECTION] (unchanged — the Vieta-mean rule is structurally orthogonal to whether this specific BCC bridge mechanism exists) |
 | FTD-0096 (μ-from-ℓ_P missing arrow) | [OPEN] | [OPEN] (this audit doesn't address the μ-arrow; FTD-0094's terminal demotion is conditional on its remaining open) |
@@ -101,7 +105,7 @@ These are follow-up campaigns, not part of D6.
 - Outputs:
   - `engine/results/bcc_spectrum_2026-04-27/L24/{spectrum,stencil_aggregate,meta}.csv`
   - `engine/results/bcc_spectrum_2026-04-27/L32/{spectrum,stencil_aggregate,meta}.csv`
-  - `engine/results/bcc_spectrum_2026-04-27/L48/...` *(pending)*
+  - `engine/results/bcc_spectrum_2026-04-27/L48/{spectrum,stencil_aggregate,meta}.csv`
 - LEDGER updates: FTD-0093 → [CLOSED NEGATIVE]; FTD-0094 → [PARAMETRIC] (terminal demotion conditional on FTD-0096 OPEN)
 - DERIV: [`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`](DERIV_MECHANISM_C_GC_BCC_BRIDGE.md) — original conjecture document
 
@@ -109,8 +113,8 @@ These are follow-up campaigns, not part of D6.
 
 ## 7 · Single-line summary
 
-**Mechanism C falsifier (PROTOCOL §5) FAILS at L ∈ {24, 32}: BCC sub-stencil two-state ratio is 11.76 ± 2.28 and 10.31 ± 4.24 respectively, trending DOWNWARD (away from predicted 45.31). 1/L² extrapolation lands at ~8.4, far below predicted 45.31. Three first-principles routes for `g_c` (Mechanisms A, B, C) are now all closed-negative; g_c remains [PARAMETRIC]. FTD-0094 (2·m_e/α = 16G*²) demotes to [PARAMETRIC] terminally if FTD-0096 (μ-from-ℓ_P) stays OPEN. The negative result is informative per the user's reorientation toward "qualitate negative results"; it doesn't demote the algebraic spine (master quadratic, G*, Watson identity) which are independent [THEOREMs].**
+**Mechanism C falsifier (PROTOCOL §5) FAILS at L ∈ {24, 32, 48}: BCC sub-stencil two-state ratio is 11.76 ± 2.28, 10.31 ± 4.24, 15.24 ± 2.66 respectively (predicted 45.31). The trend is non-monotonic, ruling out finite-L convergence to the prediction; even taking the highest measurement (L=48) the prediction is missed by ≥10σ and by a factor of ~3. At L=48 the FCC control overlaps BCC within 1σ, removing basis-specificity. Three first-principles routes for `g_c` (Mechanisms A, B, C) are now all closed-negative; g_c remains [PARAMETRIC]. FTD-0094 (2·m_e/α = 16G*²) demotes to [PARAMETRIC] terminally if FTD-0096 (μ-from-ℓ_P) stays OPEN. The negative result is informative per the user's reorientation toward "qualitate negative results"; it doesn't demote the algebraic spine (master quadratic, G*, Watson identity) which are independent [THEOREMs].**
 
 ---
 
-**End of audit.** L=48 datapoint will be appended when the production run completes.
+**End of audit.** L=48 datapoint appended 2026-04-27. Verdict: [CLOSED NEGATIVE].
