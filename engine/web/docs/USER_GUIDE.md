@@ -28,8 +28,13 @@
 ## 1. Quick start (60 seconds)
 
 ```bash
-# From the project root:
-python -m http.server 8080 -d engine/web
+# From the project root (no-cache dev server — picks up JS edits without
+# a browser hard-refresh). Cache-Control: no-store on every response.
+python engine/web/serve.py 8080
+
+# Plain fallback (caches aggressively; bounce + hard-refresh after edits):
+# python -m http.server 8080 -d engine/web
+
 # Open http://localhost:8080 in Chrome/Edge/Firefox (Chrome recommended for perf)
 ```
 

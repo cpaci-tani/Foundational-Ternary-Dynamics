@@ -1,5 +1,147 @@
 # Foundational Ternary Dynamics Changelog
 
+## Web engine — lattice cleanup pass + plumbing leak plugs (April 27, 2026)
+
+End-to-end cleanup of the Scale-0 lattice subsystem, the dashboard
+panels that read it, and adjacent shared infrastructure. Three
+sprints landed in one session.
+
+### Architecture (commit `1d52709`)
+
+- New **`PhysicsHarness`** wrapper (`engine/web/js/physics/`) — single
+  canonical read/write surface across `MockBridge` and `WasmBridge`.
+  Lazy-attached per bridge; exposes `getParticleCharge`,
+  `findOppositeChargePairFromList`, `sampleEFieldAlongRay`, particle
+  injection, scenario dispatch.
+- Retired the JS migrated-scenario registry (`physics/migrated-scenarios.js`,
+  ~200 LOC) and the mirror-bridge plumbing — both bridges now own
+  their scenario libraries directly. The historical drift fixes were
+  absorbed into `engine/web/js/bridge/scenarios/*.js` (MockBridge native
+  JS) and `engine/src/scenarios/*.cpp` (C++ canonical).
+- C-3 inversion: `harness.setupScenario` defers to
+  `bridge.setupScenario` (C++ canonical when `isWasm=true`, MockBridge
+  native JS otherwise).
+- New **`ScaleBridge` typedef** (`bridge/bridge-contract.js`) documents
+  the 16-method symmetric surface; both bridge classes carry
+  `@implements` annotations.
+- Lazy `fluxMock` allocation: scenario-loader only allocates the
+  parallel JS MockBridge when `shouldUseFluxMock` returns true.
+  Saves ~21 MB / quantum-* / light-* scenario load on WASM-canonical
+  scenarios.
+
+### Scenario library DRY (JS + C++)
+
+- New shared `engine/web/js/bridge/scenarios/_helpers.js` exporting
+  `injectRadialEnvelope`, `injectParticleFull`, `injectDressedParticle`,
+  `injectTriad`, `TRIAD_ANGLES`. Six bespoke radial-Gaussian loops in
+  `s0-seed-scenarios.js` collapsed into helper calls; W-boson chirality
+  bias modeled via `axisBias` option.
+- `1/sqrt(3)` literals removed from JS (light, s0-field) and C++
+  (light, s0_field) scenarios in favor of imported `C_SPEED`.
+- `SCN_PI` shadow dropped from C++ `engine/src/scenarios/_helpers.h`;
+  ~30 callsites use `ftd::PI` directly.
+- Per-file imports trimmed to actually-used symbols across all 5 JS
+  scenario group files.
+- Toggle-whitelist contract documented in `scenario-loader.js` and
+  `engine/include/ftd/scenarios.h`.
+
+### Constants centralization
+
+Added `SCHWINGER_C2`, `TSIRELSON_BOUND`, `RYDBERG_EV_CODATA`,
+`A_E_CODATA`, `A_MU_CODATA` to `engine/web/js/constants.js`. Replaced
+inline literals in `p1-observables-panel.js` and `spectrum-panel.js`.
+
+### Plumbing + memory leak plugs (two audit passes, 21 tickets closed)
+
+Bridge dispose symmetry:
+- New `WasmBridge.dispose()` mirrors `MockBridge.dispose()`.
+- `WasmBridge.reset()` now cleans `_pe` / `_ae` / `_aeFallback` /
+  harness key before destroying the C++ `RenderBridge`.
+- `MockBridge.dispose()` extended to null `_stateGrid`,
+  `_selectiveDampMask`, `_boundaryMask`, `_latencyProxy`, `_peEngine`,
+  `_aeEngine`.
+
+Cache + accessor cleanup:
+- `physics-harness.sampleEFieldAlongRay`: position-index Map cache
+  moved off the bridge-emitted `efs` object onto `harness._efsIndex`,
+  keyed by `(latticeSize, count)`.
+- Two leaked `BoxGeometry`s in `viewport.js` (voxelHighlight /
+  symHighlights) now disposed after `EdgesGeometry` construction.
+- `_buildPEAxes` guards prior `peAxes`/`peGrid` teardown before
+  rebuild.
+- `cosmic-renderer._cleanGeometries` now disposes `_nebulaCloud`
+  (was leaking on every Scale-5 re-entry); dead `_bhMeshes` array
+  removed.
+
+Panel + UI plumbing:
+- `chart-fullscreen`: module-private `_activeCard` stack handles
+  concurrent fullscreen requests; `_enterFullscreen` exits prior card
+  before swapping.
+- `scrub-bar.mount()` now idempotent (removes prior doc-level
+  listeners before re-attaching); step-by-N chain generation-tagged
+  so prior chains abort on remount or unmount.
+- `rafCoordinator`: per-subscriber error-streak counter
+  auto-unsubscribes callbacks that throw 10 frames in a row; new
+  `clear()` API drains all subscribers + stops the loop for HMR /
+  test teardown.
+- Cross-cutting `window.__ftd*Panel` singleton retention fixed: every
+  panel's `dispose()` now nulls its window-global ref so detached
+  panel subtrees become GC-eligible (conservation, spectrum,
+  flux-slice, p1).
+- P1 observables panel migrated from raw recursive
+  `requestAnimationFrame` to `rafCoordinator.subscribe`; per-frame
+  `addEventListener` pattern on track/untrack buttons replaced with
+  single panel-level click delegation; modal close path notifies
+  caller via `onClose` so `activeModal` ref is cleared on every close
+  path; full `dispose()` returned from api.
+
+Audio + lifecycle:
+- Scale 11 `disableAudio()` now closes the `AudioContext` (instead of
+  just suspending) so the WebAudio thread + audio device release on
+  long sessions. `enableAudio()` re-creates as needed.
+- `pagehide` hook in `scale0/controller.js` releases the lazy
+  `fluxMock` on bfcache freeze / tab close.
+
+C++ engine:
+- `RenderBridge::tick` strict_validation `throw` guarded with
+  `#ifdef __EMSCRIPTEN__` → `std::cerr` + `std::abort` fallback so the
+  WASM build (`-fno-exceptions`) doesn't abort the module silently on
+  configuration bugs.
+- WASM rebuilt; `engine/web/wasm/ftd_core.{js,wasm}` deployed.
+
+Tooling:
+- New no-cache dev server (`engine/web/serve.py`) emits
+  `Cache-Control: no-store` on every response so JS edits hit the
+  browser without manual hard-refresh.
+- New WASM build wrapper (`engine/build_wasm.bat`).
+- New `.githooks/commit-msg` hook enforcing the no-`Co-Authored-By`
+  trailer policy from CLAUDE.md (activate per clone via
+  `git config core.hooksPath .githooks`).
+- `.gitattributes` overhauled with explicit line-ending rules per file
+  type — eliminates the LF→CRLF warning storm on every commit.
+- `.gitignore` now ignores new `engine/results/` subdirs by default
+  (already-tracked subtrees preserved; force-add to track new ones).
+
+### Theory + EFT artifacts (commits `6f7d138`, `a0983ca`)
+
+- G* monograph + foundations follow-ups: Ramanujan-Sato d=1, Stirling
+  complement / β'(0), Galois clarification, Eisenstein-Watson identity,
+  Wallis-Stirling theorem, Catalan obstruction §3.5.
+- FTD-0107 first run: emergent-spectrum L=64 across 3 IC classes × 5
+  seeds + operator-mixing parameter-sweep reruns + companion baseline
+  / flux-slice / gaussian-expansion campaigns.
+
+### Net delta
+
+- ~−380 LOC across harness + scenario libraries.
+- ~+250 LOC of new shared primitives + typedef + helpers.
+- 21 plumbing/memory leak tickets closed across two audit passes.
+- 9 infrastructure-audit tickets closed (line endings, results
+  ignore, build wrapper, commit-msg hook, doc updates).
+- WASM rebuilt twice today, both clean.
+
+---
+
 ## Foundational reframe — from completed-infinity to undefined-boundary (April 19, 2026)
 
 **Largest single commitment of the day.** FTD is shifting from "the
