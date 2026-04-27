@@ -419,6 +419,9 @@ int main(int argc, char** argv) {
     int L_override = 0;
     int N_SAMPLES_override = 0;
     int N_SEEDS_override = 0;
+    int N_BURN_override = -1;
+    double inj_mult = 3.0;        // FTD-0100 (F2): K_GENESIS injection multiplier
+    double lT_override = -1.0;    // FTD-0100 (F2): Langevin temperature override
     for (int i = 1; i < argc; ++i) {
         const std::string a = argv[i];
         if (a == "--smoke") smoke_mode = true;
@@ -426,6 +429,9 @@ int main(int argc, char** argv) {
         else if (a.rfind("--L=", 0) == 0) L_override = std::atoi(a.c_str() + 4);
         else if (a.rfind("--samples=", 0) == 0) N_SAMPLES_override = std::atoi(a.c_str() + 10);
         else if (a.rfind("--seeds=", 0) == 0) N_SEEDS_override = std::atoi(a.c_str() + 8);
+        else if (a.rfind("--burn=", 0) == 0) N_BURN_override = std::atoi(a.c_str() + 7);
+        else if (a.rfind("--inj-mult=", 0) == 0) inj_mult = std::atof(a.c_str() + 11);
+        else if (a.rfind("--lT=", 0) == 0) lT_override = std::atof(a.c_str() + 5);
     }
 
     // ── Pre-registered ensemble parameters (PROTOCOL §3 + FTD-0099 extension) ─────
@@ -443,9 +449,10 @@ int main(int argc, char** argv) {
     int N_BURN     = smoke_mode ? 50  : 200;
     int N_SAMPLES  = smoke_mode ? 8   : 40;
     int N_SEEDS    = smoke_mode ? 2   : 5;
-    if (L_override > 0)        L         = L_override;
+    if (L_override > 0)         L         = L_override;
     if (N_SAMPLES_override > 0) N_SAMPLES = N_SAMPLES_override;
-    if (N_SEEDS_override > 0)  N_SEEDS   = N_SEEDS_override;
+    if (N_SEEDS_override > 0)   N_SEEDS   = N_SEEDS_override;
+    if (N_BURN_override >= 0)   N_BURN    = N_BURN_override;
 
     if (include_b4 && L < 8) {
         std::cerr << "  --b4 requires L >= 8 (need two b=2 iterations); got L=" << L << "\n";
@@ -493,12 +500,12 @@ int main(int argc, char** argv) {
         rb.toggles.gauss_projection = true;
         rb.toggles.genesis          = true;
         rb.toggles.langevin         = true;
-        rb.toggles.langevin_T       = 0.005;
+        rb.toggles.langevin_T       = (lT_override > 0.0) ? lT_override : 0.005;
         rb.toggles.langevin_gamma   = 0.02;
         rb.toggles.dual_substrate   = false;
         rb.seed_rng(seed);
         rb.inject_flux(L / 2, L / 2, L / 2,
-                       {3.0 * ftd::K_GENESIS, 0, 0});
+                       {inj_mult * ftd::K_GENESIS, 0, 0});
         rb.run(N_BURN);
 
         for (int k = 0; k < N_SAMPLES; ++k) {
@@ -974,8 +981,24 @@ int main(int argc, char** argv) {
     // FTD-0099 (2026-04-26): per-config subdirectory to preserve
     // multiple runs (FTD-0098 baseline at L=16 b=2, plus FTD-0099
     // extensions at L=16 b=4 and L=32 b=4) under one umbrella dir.
-    const std::string config_tag = "L" + std::to_string(L) +
-                                   (include_b4 ? "_b4" : "_b2");
+    // Config tag: include the F2 knobs (burn / inj-mult / lT) only when
+    // they differ from the canonical baseline so the tag stays compact
+    // for FTD-0098/-0099 reruns.
+    std::string config_tag = "L" + std::to_string(L) +
+                             (include_b4 ? "_b4" : "_b2");
+    const int   default_burn = smoke_mode ? 50 : 200;
+    const double default_lT  = 0.005;
+    if (N_BURN != default_burn) config_tag += "_burn" + std::to_string(N_BURN);
+    if (std::abs(inj_mult - 3.0) > 1e-9) {
+        char buf[32];
+        std::snprintf(buf, sizeof(buf), "_inj%.2f", inj_mult);
+        config_tag += buf;
+    }
+    if (lT_override > 0.0 && std::abs(lT_override - default_lT) > 1e-9) {
+        char buf[32];
+        std::snprintf(buf, sizeof(buf), "_lT%.4f", lT_override);
+        config_tag += buf;
+    }
     fs::path out_dir = fs::path("engine/results/operator_mixing_2026-04-26") / config_tag;
     std::error_code ec;
     fs::create_directories(out_dir, ec);
@@ -1046,6 +1069,14 @@ int main(int argc, char** argv) {
             f << "  \"N_SAMPLES_per_seed\": " << N_SAMPLES << ",\n";
             f << "  \"SAMPLE_STRIDE\": " << SAMPLE_STRIDE << ",\n";
             f << "  \"N_SEEDS\": " << N_SEEDS << ",\n";
+            // F2 knobs (FTD-0100): non-canonical Langevin / injection params
+            f << "  \"injection_multiplier_K_GENESIS\": " << inj_mult << ",\n";
+            f << "  \"langevin_T\": " << ((lT_override > 0.0) ? lT_override : 0.005) << ",\n";
+            // s² variance — the load-bearing quantity for F2. Zero variance
+            // means the ensemble is in deterministic state-saturation; non-
+            // zero means s² couples to the mixing matrix (6×6 unlocked).
+            f << "  \"s2_variance\": " << cov.S[5][5] << ",\n";
+            f << "  \"s2_dropped_by_degradation\": " << (std::find(dropped_ops.begin(), dropped_ops.end(), 5) != dropped_ops.end() ? "true" : "false") << ",\n";
             f << "  \"N_total_collected\": " << N_total << ",\n";
             f << "  \"snapshots_dropped\": " << snapshots_dropped << ",\n";
             f << "  \"snapshots_with_nonzero_state\": " << snapshots_with_state << ",\n";
