@@ -253,6 +253,10 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getEMForceField",        &get_em_force_field);
     function("getStrongForceField",    &get_strong_force_field);
 
+    // Direct Coulomb-potential ray sampling (2026-04-27) — engine-side
+    // trilinear interpolation of phi_coulomb_ for the P1 Coulomb panel.
+    function("sampleVAtRay",           &sample_v_at_ray);
+
     // Controls
     function("setToggle",          &set_toggle);
     function("getToggle",          &get_toggle);

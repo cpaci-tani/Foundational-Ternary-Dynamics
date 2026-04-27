@@ -7,6 +7,9 @@
  */
 
 import { createBridge, MockBridge } from './wasm-bridge-dag.js';
+// PhysicsHarness factory — lazily attached per-bridge by panels and
+// overlays that need the canonical read/write surface.
+import { getPhysicsHarness } from './physics/index.js';
 import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js';
 import { DiagnosticsPanel, Sparkline } from './diagnostics.js';
@@ -50,6 +53,10 @@ import { addInfoTooltips } from './consciousness-pedagogy.js';
 import { initVerifyPanel } from './verify-panel/component.js';
 import { AppShell } from './ui/shell/app-shell.js';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initConsciousnessPanel, initScenePanel } from './ui/panels/index.js';
+import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
+import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js';
+import { initConservationMicropanel } from './scales/scale0/ui/overlays/conservation-micropanel.js';
+import { initSpectrumPanel } from './scales/scale0/ui/overlays/spectrum-panel.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
 // Keyboard shortcut handler extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
@@ -136,10 +143,10 @@ const _aeLegendZArr = [];        // reusable sorted array for AE legend key
 // Scale 0 field viz state (_dualLVecs, _dualRVecs, _chiralValues,
 // _show*Field flags, _fieldFrame, _fieldNeedsUpdate, _anyFieldActive)
 // lives in Scale0Controller. Read/write via the controller's exported
-// getFieldState() / setFieldToggle() API. The _fluxMock instance below
-// is the ONLY piece of Scale 0 state that app_dag.js still owns; it is
-// used by the lattice-scenario wiring at ~line 2250 below.
-let _fluxMock = null;           // MockBridge for Scale 0 flux visualization fallback
+// getFieldState() / setFieldToggle() API. The fluxMock now lives entirely
+// inside `state.fluxMock` (see scales/scale0/state/store.js); the legacy
+// app_dag-level `_fluxMock` global was retired with the harness migration
+// cleanup and intercept removal.
 
 // Verification Lab (replaces the legacy Quantum Lab panel)
 let _verifLabComponent = null;
@@ -502,6 +509,10 @@ async function init() {
     diagnosticsPanel = initDiagnosticsPanel();
     chartsPanel = initChartsPanel();
     lagrangianPanel = initLagrangianPanel();
+    initFluxSlicePanel();
+    initP1ObservablesPanel();
+    initConservationMicropanel();
+    initSpectrumPanel();
     initConsciousnessPanel();
     // Scene panel — curated render controls (FOV / exposure / bloom / fog / ...).
     // Scales 0–3 only (gated by panel-registry); unmounted cleanly when

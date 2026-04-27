@@ -81,6 +81,7 @@ import {
 // MolecularRenderer and delegates every public method through a thin
 // wrapper. See docs/SPEC_REFACTOR_LARGE_FILES.md §5.
 import { MolecularRenderer } from './viewport/molecular-renderer.js';
+import { SpinArrowManager } from './viewport/spin-arrow-manager.js';
 // Boundary wireframe builders + containment predicate — extracted to keep
 // viewport.js under the refactor-plan LOC target (refactoring-analyst RF-4).
 // Pure geometry; no state beyond the returned Three.js Group.
@@ -256,6 +257,12 @@ export class Viewport {
         // element labels). Takes the scene by reference; owns its own
         // meshes and tears them down from its own dispose().
         this._molRenderer = new MolecularRenderer(this.scene);
+        // Spin-arrow primitive — Three.js arrow that follows tracked
+        // particles. Used by the P1 g-2 panel's "Track this particle"
+        // affordance. Each tracked particle gets a Group (arrow + reference
+        // axis + phase tick) updated per render frame.
+        this.spinArrowManager = new SpinArrowManager(this.scene);
+        this._lastSpinArrowUpdateMs = performance.now();
 
         // Rubber-sheet visualizations — gravitational potential + 10 topology
         // fields. Uses live-state getters so lattice-size changes propagate.
@@ -412,6 +419,9 @@ export class Viewport {
         this._latticeSize = size;  // mirrored so quantum overlays can read it too
         this._halfN = size / 2;
         this._buildBoundary(this._boundaryShape, this._boundaryMode);
+        // Tracked particles may have stale ids after a scenario / lattice resize;
+        // dispose all spin arrows so the next track() request gets a clean Group.
+        if (this.spinArrowManager) this.spinArrowManager.dispose();
         // TopologySheetRenderer re-queries latticeSize via its getter on next
         // update; grav-surface rebuild now happens inside that module.
         
@@ -566,6 +576,7 @@ export class Viewport {
         if (!this._voxelHighlight) {
             const geo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
             const edges = new THREE.EdgesGeometry(geo);
+            geo.dispose();   // EdgesGeometry copied what it needs; source is orphan
             const mat = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 2 });
             this._voxelHighlight = new THREE.LineSegments(edges, mat);
             this.scene.add(this._voxelHighlight);
@@ -586,6 +597,7 @@ export class Viewport {
         if (!this._symHighlights) {
             const geo = new THREE.BoxGeometry(1.0, 1.0, 1.0);
             const edges = new THREE.EdgesGeometry(geo);
+            geo.dispose();   // EdgesGeometry copied what it needs; source is orphan
             const mat = new THREE.LineBasicMaterial({ color: 0x4ade80, linewidth: 1, transparent: true, opacity: 0.6 });
             this._symHighlights = new THREE.InstancedMesh(edges, mat, 26);
             this._symHighlights.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -3603,6 +3615,19 @@ export class Viewport {
     }
 
     _buildPEAxes() {
+        // Idempotent rebuild guard (Three-M1 audit, 2026-04-27): if a
+        // prior build exists, dispose its geometry+material before
+        // overwriting the field reference. Prevents the rare leak path
+        // where _buildPEAxes is called twice across a lattice resize.
+        const tearDown = (obj) => {
+            if (!obj) return;
+            this.scene.remove(obj);
+            if (obj.geometry) obj.geometry.dispose();
+            if (obj.material) obj.material.dispose();
+        };
+        tearDown(this.peAxes); this.peAxes = null;
+        tearDown(this.peGrid); this.peGrid = null;
+
         const len = 30;
 
         // ── Axes (RGB lines through origin) ──
@@ -3786,6 +3811,15 @@ export class Viewport {
         // the clock (sim paused), opacity stays pinned and no "one-step"
         // advance is perceivable on overlay-toggle-triggered repaints.
         this._animateQuantumField();
+        // Spin-arrow primitive update — slerps orientations + advances
+        // axial-spin angle for any tracked particles. dtMs gates per-arrow
+        // ω·dt accumulation; passed in so all arrows share the same clock.
+        if (this.spinArrowManager) {
+            const now = performance.now();
+            const dtMs = now - (this._lastSpinArrowUpdateMs || now);
+            this.spinArrowManager.update(dtMs);
+            this._lastSpinArrowUpdateMs = now;
+        }
         if (this._usePostProcessing && this._composer) {
             this._composer.render();
         } else {

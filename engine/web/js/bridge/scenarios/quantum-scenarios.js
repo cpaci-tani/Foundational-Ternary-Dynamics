@@ -13,7 +13,7 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { ALPHA, K_B, K_GENESIS, N_BASE, G_STAR, VARPI, G_C, C_SPEED } from '../../constants.js';
+import { K_B, K_GENESIS } from '../../constants.js';
 
 /**
  * @param {string} name - scenario identifier

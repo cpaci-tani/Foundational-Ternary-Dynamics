@@ -118,19 +118,25 @@ export class ScrubBarComponent {
             // Step-by-N chips — advance the simulation by N ticks without
             // starting continuous playback. Reuses the existing step action
             // (btn-step) which ticks exactly once, invoking it N times.
+            //
+            // SCRUB-2 audit pass 2: chain is generation-tagged. If the user
+            // unmounts the scrub-bar, fires a new step-N, or reloads the
+            // scenario mid-chain, the prior chain detects the generation
+            // bump and aborts cleanly instead of clicking into the new sim.
+            this._stepGen = this._stepGen | 0;
             for (const chip of this.popoverEl.querySelectorAll('[data-step-by]')) {
                 chip.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const n = parseInt(chip.dataset.stepBy, 10) || 1;
                     const stepBtn = document.getElementById('btn-step');
                     if (!stepBtn) return;
-                    // Slightly defer each click so downstream effects (field-
-                    // overlay refresh, lattice upload) don't fight for the
-                    // same animation frame. 0ms setTimeout scheduling is
-                    // enough because each step's side-effects complete
-                    // within a single microtask tick.
+                    // Bump the generation so any prior in-flight chain sees
+                    // its captured `gen` no longer match and bails.
+                    this._stepGen += 1;
+                    const gen = this._stepGen;
                     let i = 0;
                     const tickOne = () => {
+                        if (gen !== this._stepGen) return;   // aborted
                         stepBtn.click();
                         i++;
                         if (i < n) setTimeout(tickOne, 0);
@@ -140,6 +146,16 @@ export class ScrubBarComponent {
             }
 
             // Click-outside + Escape close the popover.
+            // Idempotency guard (SCRUB-1 audit pass 2): if mount() runs
+            // a second time (HMR / re-init) the prior listeners are
+            // already attached. Detach them here before re-attaching so
+            // we don't double-register.
+            if (this._onDocClick) {
+                document.removeEventListener('click', this._onDocClick);
+            }
+            if (this._onDocKey) {
+                document.removeEventListener('keydown', this._onDocKey);
+            }
             this._onDocClick = (e) => {
                 if (!this.popoverEl || this.popoverEl.hasAttribute('hidden')) return;
                 if (this.popoverEl.contains(e.target) || this.settingsBtn.contains(e.target)) return;
@@ -312,6 +328,9 @@ export class ScrubBarComponent {
         // scales/scale0/controller.js:274) but future SPA-style scale
         // remounts would otherwise re-register the popover handlers
         // each call without freeing the prior ones.
+        // Cancel any in-flight step-by-N chain by bumping the generation
+        // (SCRUB-2 audit pass 2 fix).
+        this._stepGen = (this._stepGen | 0) + 1;
         if (this._onDocClick) {
             document.removeEventListener('click', this._onDocClick);
             this._onDocClick = null;

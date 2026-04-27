@@ -270,10 +270,76 @@
     gap: 8px;
 }
 
-/* Dense mode: shrink tile canvases when the panel has many rows open. */
-.flux-slice-panel.dense .flux-slice-canvas {
+/* Tile canvas sizing.
+   In overlay mode the panel uses fixed 220px (default) / 160px (dense)
+   tiles set via CSS — the JS painter respects these via the `dense` class.
+   In dock mode the JS painter writes the canvas attribute directly each
+   frame from a ResizeObserver-driven `_canvasPx`, so we let CSS scale to
+   the canvas's natural size and clamp to the available column. */
+.flux-slice-panel:not(.dock-mode) .flux-slice-canvas {
+    width: 220px;
+    height: 220px;
+}
+.flux-slice-panel:not(.dock-mode).dense .flux-slice-canvas {
     width: 160px;
     height: 160px;
+}
+.flux-slice-panel.dock-mode .flux-slice-canvas {
+    /* JS sets the canvas's width/height attributes; let those drive the
+       rendered size. max-width prevents any single bug from blowing the
+       row's grid cell back open. */
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+    display: block;
+}
+/* Dock mode: tighten internal layout so the side-panel slot fits 3 axes
+   at modest widths (~320px host) while preserving breathing room around
+   labels and tile rows. Padding values are coordinated with the
+   _computeDockTileSize formula in flux-slice-panel.js so the budget
+   constants stay accurate. */
+.flux-slice-panel.dock-mode {
+    padding: 12px 12px;
+    max-width: 100%;
+    overflow: hidden;
+}
+.flux-slice-panel.dock-mode .flux-slice-header {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-light, rgba(255, 255, 255, 0.08));
+}
+.flux-slice-panel.dock-mode .flux-slice-title {
+    font-size: 14px;
+    letter-spacing: 0.02em;
+}
+.flux-slice-panel.dock-mode .flux-slice-row {
+    grid-template-columns: 56px 1fr;
+    gap: 8px;
+    padding: 10px 0;
+    align-items: center;        /* vertically center label vs tiles for visual stability */
+}
+.flux-slice-panel.dock-mode .flux-slice-row-label {
+    gap: 6px;
+    padding-top: 0;
+}
+.flux-slice-panel.dock-mode .flux-slice-field-label {
+    font-size: 13px;
+}
+.flux-slice-panel.dock-mode .flux-slice-mirror-chip {
+    font-size: 10px;
+    padding: 3px 6px;
+}
+.flux-slice-panel.dock-mode .flux-slice-row-tiles {
+    gap: 6px;
+}
+.flux-slice-panel.dock-mode .flux-slice-tile {
+    min-width: 0;          /* allow grid cell to shrink below 220px */
+    gap: 4px;
+}
+.flux-slice-panel.dock-mode .flux-slice-caption {
+    font-size: 11px;
+    line-height: 1.2;
 }
 
 .flux-slice-grid {

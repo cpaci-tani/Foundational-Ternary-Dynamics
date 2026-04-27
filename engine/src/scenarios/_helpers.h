@@ -66,7 +66,9 @@ inline void SET_SPIN(RenderBridge& rb, int x, int y, int z, int spin) {
 inline int    FLR(double d) { return static_cast<int>(std::floor(d)); }
 inline int    CEL(double d) { return static_cast<int>(std::ceil(d)); }
 inline int    RND(double d) { return static_cast<int>(std::round(d)); }
-constexpr double SCN_PI = 3.14159265358979323846;
+// π lives in ftd:: via `using ontic::PI;` in ftd/constants.h — every
+// scenario .cpp already includes constants.h, so call sites use `PI`
+// directly without re-defining a SCN_PI alias here.
 
 }  // namespace
 }  // namespace ftd

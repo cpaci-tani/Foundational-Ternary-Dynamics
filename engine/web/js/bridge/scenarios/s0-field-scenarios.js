@@ -13,7 +13,7 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { ALPHA, K_B, K_GENESIS, N_BASE, G_STAR, VARPI, G_C, C_SPEED } from '../../constants.js';
+import { ALPHA, K_B, C_SPEED } from '../../constants.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -25,7 +25,6 @@ export function setupS0FieldScenario(name, ctx) {
     const { N, mid, midF } = ctx;
             this._initFluxGrid();
             const mc  = Math.round(midF);
-            const cSpeed = 1.0 / Math.sqrt(3.0);
 
             switch (name) {
                 case 's0-field-plane-wave': {
@@ -38,7 +37,7 @@ export function setupS0FieldScenario(name, ctx) {
                     for (let x = 0; x < N; x++) {
                         const phase = k * x;
                         const jz    = amp * Math.sin(phase);
-                        const wz    = amp * Math.cos(phase) * cSpeed;
+                        const wz    = amp * Math.cos(phase) * C_SPEED;
                         if (Math.abs(jz) > 1e-12 || Math.abs(wz) > 1e-12) {
                             this._injectFlux(x, y, z, 0, 0, jz);
                             this._injectWaveVel(x, y, z, wz, 0, 0);
@@ -112,7 +111,7 @@ export function setupS0FieldScenario(name, ctx) {
                         if (g < 1e-6) continue;
                         const phase = k * dx;
                         const jz    = amp * g * Math.sin(phase);
-                        const wz    = amp * g * Math.cos(phase) * cSpeed;
+                        const wz    = amp * g * Math.cos(phase) * C_SPEED;
                         this._injectFlux(x, y, z, 0, 0, jz);
                         this._injectWaveVel(x, y, z, wz, 0, 0);
                     }

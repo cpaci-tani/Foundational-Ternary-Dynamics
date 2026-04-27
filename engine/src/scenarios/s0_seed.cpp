@@ -61,7 +61,7 @@ static void dp(RenderBridge& rb, int cx, int cy, int cz,
 static void tri(RenderBridge& rb, int cx, int cy, int cz,
                 const int charges[3], const int colors[3], int rad, bool lock) {
     for (int k = 0; k < 3; k++) {
-        double ang = (2.0 * SCN_PI * k) / 3.0;
+        double ang = (2.0 * PI * k) / 3.0;
         int qx = RND(cx + rad * std::cos(ang));
         int qy = RND(cy + rad * std::sin(ang));
         dp(rb, qx, qy, cz, charges[k], (k % 2 == 0) ? 1 : -1, colors[k], 2, K_B * 0.5, lock);
@@ -99,7 +99,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     else if (name == "s0-seed-proton-candidate") {
         const int bR = std::max(2, N / 8);
         for (int k = 0; k < 3; k++) {
-            double angle = (2.0 * SCN_PI * k) / 3.0;
+            double angle = (2.0 * PI * k) / 3.0;
             int bx = RND(midF + bR * std::cos(angle));
             int bz = RND(midF + bR * std::sin(angle));
             IP(rb, bx, mc, bz, 1);
@@ -329,7 +329,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     else if (name == "s0-seed-beta-decay") {
         const int bdR = std::max(2, N / 10);
         for (int k = 0; k < 3; k++) {
-            double ang = (2.0 * SCN_PI * k) / 3.0;
+            double ang = (2.0 * PI * k) / 3.0;
             int bx = RND(mc + bdR * std::cos(ang));
             int by = RND(mc + bdR * std::sin(ang));
             int charge = (k == 0) ? +1 : -1;
@@ -398,7 +398,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             double rx = x - mHalf, ry = y - mHalf, rz = z - mHalf;
             double r = std::sqrt(rx*rx + ry*ry + rz*rz);
             if (r < 1.0) r = 1.0;
-            double mg = 1.0 / (4.0 * SCN_PI * r * r);
+            double mg = 1.0 / (4.0 * PI * r * r);
             if (mg < 1e-6) continue;
             double rxy = std::sqrt(rx*rx + ry*ry);
             if (rxy < 0.5) { IF(rb, x, y, z, 0, 0, mg); continue; }
@@ -439,7 +439,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "s0-seed-gravitational-wave") {
         const int gwWl = std::max(4, N / 4);
-        const double gwK = 2.0 * SCN_PI / gwWl, gwAmp = 0.1;
+        const double gwK = 2.0 * PI / gwWl, gwAmp = 0.1;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double v = gwAmp * std::sin(gwK * x);
             if (std::fabs(v) > 1e-6) IF(rb, x, y, z, 0, v, 0);
@@ -451,7 +451,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         const int slN = 12;
         const double slA = K_B;
         for (int i = 0; i < slN; i++) {
-            double a = 2.0 * SCN_PI * i / slN;
+            double a = 2.0 * PI * i / slN;
             int px = RND(mc + slR * std::cos(a));
             int py = RND(mc + slR * std::sin(a));
             IP(rb, px, py, mc, +1);

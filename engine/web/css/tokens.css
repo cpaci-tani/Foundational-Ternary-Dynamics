@@ -93,6 +93,7 @@
     --positive: #34d399;
     --negative: #fb7185;
     --warning:  #fbbf24;
+    --caution:  #fb923c;        /* intermediate state between warning and negative; orange */
 
     /* Themeable interaction state tints (NOT accent-locked) */
     --state-hover-bg:   rgba(0, 229, 255, 0.08);
