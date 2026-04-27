@@ -1,9 +1,85 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-04-17 (engine cleanup sweep: 6 tracker items closed in one day)
-**Engine version:** 2.14.1 (Logic-First + EFT Reconstruction + 20-Benchmark Bridge + γ_FTD momentum + precision-α + EnergyLedger on CPU & GPU)
-**Test count:** 190+ test files + 3 new 2026-04-17 audit tests (leapfrog, isotropy, γ-momentum). GPU conditional on `FTD_ENABLE_CUDA`.
+**Last updated:** 2026-04-27 (lattice cleanup pass + plumbing/leak audit)
+**Engine version:** 2.16.0 (post 2026-04-27: PhysicsHarness + bridge contract + scenario library DRY + plumbing leak plugs)
+**Test count:** 190+ C++ tests + 16 Playwright specs (incl. scenario-parity guard) + 23 Python test files. GPU conditional on `FTD_ENABLE_CUDA`.
+
+### April 27, 2026 — Lattice cleanup pass + plumbing leak plugs
+
+**Web engine architecture additions:**
+- **PhysicsHarness layer** (`engine/web/js/physics/`) — single canonical
+  read/write surface across MockBridge and WasmBridge. Lazy-attached
+  per bridge; exposes `getParticleCharge`,
+  `findOppositeChargePairFromList`, `sampleEFieldAlongRay`, particle
+  injection, scenario dispatch. Retired the JS migrated-scenario
+  registry and mirror-bridge plumbing — both bridges own their
+  scenario libraries directly.
+- **Bridge contract typedef** (`engine/web/js/bridge/bridge-contract.js`)
+  — `@typedef ScaleBridge` documents the 16-method symmetric surface;
+  both `MockBridge` and `WasmBridge` carry `@implements` annotations.
+- **C-3 inversion**: `harness.setupScenario` defers to
+  `bridge.setupScenario` (C++ canonical when `isWasm=true`,
+  MockBridge native JS otherwise).
+- **Lazy fluxMock allocation**: scenario-loader only allocates the
+  parallel JS MockBridge when `shouldUseFluxMock` returns true. Saves
+  ~21 MB / quantum-* / light-* scenario load.
+
+**Scenario library DRY (JS + C++):**
+- New shared `engine/web/js/bridge/scenarios/_helpers.js` exporting
+  `injectRadialEnvelope`, `injectParticleFull`, `injectDressedParticle`,
+  `injectTriad`, `TRIAD_ANGLES`. Six bespoke radial-Gaussian loops in
+  `s0-seed-scenarios.js` collapsed to helper calls.
+- `1/sqrt(3)` literals removed from JS (light, s0-field) and C++
+  (light, s0_field) scenarios in favor of imported `C_SPEED`.
+- `SCN_PI` shadow dropped from C++ `engine/src/scenarios/_helpers.h`;
+  callsites use `ftd::PI` directly.
+- Toggle-whitelist contract documented in `scenario-loader.js` and
+  `engine/include/ftd/scenarios.h`.
+
+**Plumbing + memory leak plugs (21 tickets across two audit passes):**
+- WasmBridge gained `dispose()` symmetric with `MockBridge.dispose()`;
+  `reset()` now cleans `_pe` / `_ae` / `_aeFallback` / harness key
+  before destroying the C++ RenderBridge.
+- `MockBridge.dispose()` extended to null `_stateGrid`,
+  `_selectiveDampMask`, `_boundaryMask`, `_latencyProxy`, `_peEngine`,
+  `_aeEngine`.
+- `physics-harness.sampleEFieldAlongRay` position-index Map cache
+  moved off the bridge-emitted `efs` object onto `harness._efsIndex`.
+- Two leaked `BoxGeometry`s in `viewport.js` (voxelHighlight,
+  symHighlights) now disposed after `EdgesGeometry` construction.
+- `cosmic-renderer._cleanGeometries` now disposes `_nebulaCloud`.
+- `chart-fullscreen` active-card stack handles concurrent
+  fullscreen requests.
+- `scrub-bar.mount()` idempotent; step-by-N chain generation-tagged.
+- `rafCoordinator` auto-unsubscribes callbacks that throw 10 frames
+  in a row; new `clear()` API for HMR / test teardown.
+- Cross-cutting `window.__ftd*Panel` singleton retention fixed.
+- P1 observables panel migrated from raw recursive
+  `requestAnimationFrame` to `rafCoordinator.subscribe`; per-frame
+  listener pattern replaced with single panel-level click delegation;
+  full `dispose()` returned from api.
+- Scale 11 `disableAudio()` now closes the AudioContext.
+- `pagehide` hook releases the lazy fluxMock on bfcache freeze.
+
+**C++ engine:**
+- `RenderBridge::tick` strict_validation `throw` guarded with
+  `#ifdef __EMSCRIPTEN__` → `std::cerr` + `std::abort` fallback so
+  the WASM build (`-fno-exceptions`) doesn't abort the module
+  silently on configuration bugs.
+
+**Tooling:**
+- `engine/web/serve.py` — no-cache dev server (Cache-Control:
+  no-store) so JS edits hit the browser without manual hard-refresh.
+- `engine/build_wasm.bat` — Windows wrapper around emcmake/emmake.
+- `.githooks/commit-msg` — enforces no-`Co-Authored-By` policy.
+- New `engine/web/docs/REF_DEBUG_GLOBALS.md` catalogues the 10
+  `window.__ftd*` debug globals.
+
+**Cumulative LOC delta:** ~−380 LOC across harness + scenario libraries;
+~+250 LOC of new shared primitives + typedef + helpers; 21 plumbing
+tickets closed; 9 infrastructure tickets closed. WASM rebuilt twice;
+both clean.
 
 ### April 17, 2026 — Engine cleanup sweep (6 tracker items closed)
 
