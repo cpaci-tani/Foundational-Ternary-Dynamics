@@ -358,3 +358,70 @@ This asymmetry is the cleanest *structural* finding from FTD-0100 and the most d
 ---
 
 **End of FTD-0100 appendix.**
+
+---
+
+# Appendix D · FTD-0101: L-dependence of the inj-mult=1.0 calibration (stretch finding)
+
+The natural next step after FTD-0099 (multilatitude L=32) and FTD-0100 (boundary-injection at L=16 unlocks 6×6) is to combine both: rerun at L=32 with `inj-mult=1.0` to get a clean 6×6 multilatitude measurement. This stretch run lands in `L32_b4_inj1.00/`.
+
+## D.1 — Result: zero crystallized voxels
+
+| Metric | L=16 inj=1.0 (FTD-0100) | L=32 inj=1.0 (FTD-0101) |
+|---|---|---|
+| Snapshots collected | 197/200 | 200/200 |
+| With non-zero state | 77 | **0** |
+| Var(s²) | 1.43×10⁻⁸ | **0** (degenerate, again) |
+| s² dropped by degradation | NO | **YES** |
+| Active subspace | 6×6 | 5×5 |
+
+**The boundary-injection calibration that broke s² zero-variance at L=16 fails at L=32**: zero out of 200 snapshots have any crystallized voxels.
+
+## D.2 — Why: per-voxel density falls with volume
+
+Genesis triggers when local flux density exceeds K_GENESIS at a single voxel (`render_bridge.cpp:440`: `if (do_genesis && v.state == 0 && v.density() > K_GENESIS)`). Injecting `inj_mult × K_GENESIS` flux at a single point at the lattice center gives that voxel exactly `inj_mult × K_GENESIS` density — at the threshold for `inj_mult = 1.0`. Whether the threshold-crossing happens depends on Langevin perturbation pushing the density above K_GENESIS.
+
+At L=16, the gauss projection equilibrates the injected flux across roughly N=L³=4096 voxels with some falloff. The center voxel retains a substantial fraction of the injected density and Langevin pushes it across threshold ~50% of the time (77 of 197 snapshots, ~39%).
+
+At L=32, N=L³=32768 voxels. The same injection redistributes across 8× more volume; the center voxel's per-voxel density drops by O(8) (or by a more complex factor governed by the Poisson Green's function on the larger lattice). The center is now solidly BELOW threshold even before Langevin; no voxel ever crosses K_GENESIS in 200 snapshots.
+
+**Calibration finding**: the canonical regime for breaking s² zero-variance is L-dependent. To get genuine s² fluctuation at L=32 the injection must scale with L³ to maintain per-voxel density at the genesis boundary — i.e. `inj_mult ≈ 1.0 × (L/16)³ = 8.0` at L=32. (Conjecture; not measured this session.)
+
+## D.3 — What the L=32 inj=1.0 5×5 result tells us anyway
+
+Even though s² is degenerate, the 5×5 mixing matrix at L=32 with inj=1.0 IS measured and consistent with FTD-0099's L=32 inj=3.0 result:
+
+| Metric | L=32 inj=3.0 (FTD-0099) | L=32 inj=1.0 (FTD-0101) |
+|---|---|---|
+| cond(S) | 8.74×10⁶ | 8.80×10⁶ |
+| Diagonal-dominant ops | 3/5 | 3/5 |
+| Wilson positive eigenvalues | 4 | 4 |
+| Bootstrap-converged entries | 7/25 | 7/25 |
+| Wilson eigenvalues (top 4) | {255.9, 27.4, 16.4, +2.36} | {256.0, 26.2, 16.6, +2.09} |
+| Diagonal eigenvalues | {15.93, 3.62, 5.42, 2.70, 255.6} | {15.93, 3.45, 5.49, 2.68, 255.7} |
+
+The flux-only (5×5) subspace mixing matrix is **insensitive to the injection amplitude** — both inj=3.0 (saturated state) and inj=1.0 (no state at L=32) produce essentially identical 5×5 matrices. This is itself a finding: **the s² operator's mixing structure is decoupled from the rest of the basis** as far as the flux-only sector is concerned. Combined with FTD-0100's asymmetric flux→s² mixing (column non-trivial, row zero), this is consistent: the flux subspace is a closed-under-blocking submanifold of the full operator space; s² lives off to the side as a sink-only operator.
+
+## D.4 — Closure of FTD-0098 follow-up program
+
+After FTD-0098 → FTD-0099 → FTD-0100 → FTD-0101 (this row), the original 6 follow-up tickets stand:
+
+| # | Ticket | Status |
+|---|---|---|
+| F1 | Multilatitude (L=32) | DONE (FTD-0099) |
+| F2 | K_GENESIS / parameter sweep | DONE (FTD-0100) — boundary regime found, L-dependent |
+| F3 | Wilson eigendecomp | DONE (FTD-0099) |
+| F4 | Multi-scenario ensemble | OPEN |
+| F5 | M(b=4) RG semigroup | DONE (FTD-0099, negative-with-diagnosis) |
+| F6 | Master-quadratic Vieta trace/det | OPEN (separate pre-reg) |
+| **F7 (NEW)** | **L-scaled injection** for L=32+/L=64 6×6 measurement: scale inj_mult ∝ L³ to maintain per-voxel density at genesis boundary | OPEN |
+
+The new F7 ticket emerges from this finding: a clean multilatitude 6×6 measurement requires L-scaled injection. Conjecture for L=32: `inj_mult ≈ 8.0`. To verify, one snapshot at L=32 with inj=8.0 should show ≥30% snapshots with non-zero state.
+
+## D.5 — Single-line summary of FTD-0101
+
+**Combining F1 (multilatitude L=32) + F2 (inj-mult=1.0 boundary injection) does NOT yield the predicted clean 6×6 multilatitude result, because the "boundary injection" calibration is L-dependent: at L=32 the per-voxel density at the injected center falls below K_GENESIS and zero voxels crystallize. Decoupling finding — the flux-only 5×5 mixing matrix is insensitive to inj amplitude across the FTD-0099/FTD-0101 comparison. New ticket F7: scale inj_mult ∝ L³ to maintain per-voxel density at the genesis boundary across multiple L.**
+
+---
+
+**End of FTD-0101 appendix.**
