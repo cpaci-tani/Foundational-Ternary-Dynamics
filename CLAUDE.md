@@ -200,6 +200,7 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 ## Key Navigation Documents
 
 - **Full FTD spec**: `docs/SPEC_FTD.md`
+- **Algebraic spine (canonical theorems-only reference, 2026-04-27)**: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` — citation target for paper drafts; states the seven [THEOREM] claims (G* identity, master quadratic, CM uniqueness, coefficient 16, Watson identity, Phase G geometric Coulomb, Phase J ultralocality) independent of any physics interpretation. Read this before claiming anything load-bearing about FTD's algebraic content.
 - **Engine spec**: `engine/SPEC_ENGINE.md`
 - **Theory catalog**: `docs/theory/META_INDEX.md`
 - **Documentation map**: `META_DOCUMENTATION_MAP.md`
