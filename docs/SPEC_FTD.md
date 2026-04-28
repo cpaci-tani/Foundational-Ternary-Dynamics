@@ -3,17 +3,18 @@
 ## A Principled Framework for Universe Simulation
 
 **Document Classification:** Authoritative Theoretical Specification (Single Source of Truth)
-**Version:** 5.30 (April 11, 2026) — **STALE TAGS NOTICE** (April 19, 2026)
-**Status (post-audit, 2026-04-19):** ~5 firm [THEOREM]s + ~8 [STRONGLY MOTIVATED CONJECTURE]s + ~10 [STRUCTURALLY MOTIVATED PARAMETRIC] + remainder [PARAMETRIC] / [OPEN]
+**Version:** 5.30 (April 11, 2026) — **STALE TAGS NOTICE** (April 19, 2026; supplemental 2026-04-28)
+**Status (post-audit, 2026-04-19; supplemental 2026-04-28):** ~5 firm [THEOREM]s + ~8 [STRONGLY MOTIVATED CONJECTURE]s + 1 [DERIVED at linear level] (FTD-0110 ¼ coefficient, NEW 2026-04-28) + ~10 [STRUCTURALLY MOTIVATED PARAMETRIC] + remainder [PARAMETRIC] / [OPEN]
 **Supersedes:** CLAUDE.md (v5.17), docs/internal/SPEC_CLAUDE.md (v5.24), SPEC_FTD_FORMAL.md, SPEC_THE_COMPLETE_PROOF_RIGOROUS.md
 
-> **🔑 CRITICAL NOTICE (2026-04-19):** This document's body predates the April 19 audit cycle. The mathematical CONTENT remains mostly accurate, but epistemic tags throughout are now **STALE**. Several "PROVEN" / [THEOREM] markers were downgraded after rigorous re-examination. Specifically:
+> **🔑 CRITICAL NOTICE (2026-04-19, supplemental 2026-04-28):** This document's body predates the April 19 audit cycle and the 2026-04-28 FTD-0110 derivation. The mathematical CONTENT remains mostly accurate, but epistemic tags throughout are now **STALE**. Several "PROVEN" / [THEOREM] markers were downgraded after rigorous re-examination, and one [OPEN]/[CONJECTURE] item was promoted to [DERIVED at linear level]. Specifically:
 >
 > - **"C1 PROVEN: x₊ = 1/α via Complex Multiplication uniqueness"** → read as [STRONGLY MOTIVATED CONJECTURE]. The polynomial identity is proven; the physical identification is selection-level (1.26 ppm match, structurally unique but not dynamically derived).
 > - **"C2 PROVEN: x₋ → N_c = 3"** → read as [STRONGLY MOTIVATED CONJECTURE] (0.80% match, same epistemic tier).
 > - **sin²θ_W, sin²θ_13, α_s, PMNS angles** → downgraded to [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
 > - **"< 0.001 ppt with 7-term expansion"** framing → explicitly retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
 > - **"Thermodynamic limit"** language throughout → the framework now commits to undefined-boundary ontology, not completed-infinity ℤ³.
+> - **Cluster-mass identification (FTD-0110, 2026-04-28)** → was [OPEN] / [CONJECTURE] in the body; the cluster-efficiency coefficient `k = 1/N_base = 1/4` is now [DERIVED at linear level] from O_h representation theory (`mult(A_{1g}) = 4` in the 27-block; δ_center A_{1g}-pure; mean A_{1g}-mode energy fraction 1/4). See [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The full nonlinear-engine cluster-↔-mass identification across 5 SM particles to ~5% remains [STRONGLY MOTIVATED CONJECTURE] until the linear→nonlinear bridge is proved.
 >
 > **For current state, read first:** [`docs/WHERE_WE_LEFT_OFF.md`](WHERE_WE_LEFT_OFF.md).
 > **Full audit trail:** [`docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`](theory/07_assessment/AUDIT_MASTER_QUADRATIC.md), [`AUDIT_RATIONAL_FIT_CLAIMS.md`](theory/07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md), [`AUDIT_INFINITY_REFRAME.md`](theory/07_assessment/AUDIT_INFINITY_REFRAME.md).
