@@ -131,6 +131,8 @@ add_library(ftd_core
     src/energy_ledger_compute.cpp    # R3: per-tick conservation ledger
     src/diagnostics_compute.cpp      # R4: diagnostics / energy audit / EM fields / Poynting / entropy
     src/injection.cpp                # R5: inject_flux/particle/wavepacket + aggregate profile
+    # Phase 4a — phase_write decomposition (2026-04-27, ADR-0008)
+    src/render_bridge_phases/phase_write.cpp  # leapfrog + damping + genesis + evaporation
     src/backend.cpp                  # ARCH-2: CpuBackend / GpuBackend abstraction over use_gpu_ ifdef
     src/bridge_rng.cpp               # RF-9: PIMPL'd <random> state to keep render_bridge.h slim
     # Cosmic engine split (CE1-CE5, 2026-04-19)
