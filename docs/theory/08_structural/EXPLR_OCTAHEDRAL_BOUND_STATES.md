@@ -1,8 +1,8 @@
 # Exploration — Volumetric Properties + Structural Pontification on Octahedral Bound States
 
-**Tag:** [EXPLORATORY] / [STRUCTURAL HYPOTHESIS] (companion to `EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md`; expands the volumetric picture and develops engine-testable predictions)
-**Date:** 2026-04-27
-**Builds on:** [`EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md`](EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md), [`THEOREM_MOORE_LAYER_DECOMPOSITION.md`](THEOREM_MOORE_LAYER_DECOMPOSITION.md), [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md)
+**Tag:** [EXPLORATORY] / **[POLYTOPE-DUALITY HYPOTHESIS REFUTED 2026-04-27]** — the cluster-on-SC+FCC vs algebra-on-BCC duality reading was directly tested by `engine/tests/test_emergent_ic1_topology.cpp` and the engine produced a topology that INCLUDES the BCC corners. See §10 (Corrigendum, end of file). The volumetric properties (§1) and the centered-octahedral-number facts (§4) remain valid as math; only the polytope-duality interpretation (§2-§3) is refuted.
+**Date:** 2026-04-27 (with corrigendum same day)
+**Builds on:** [`EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md`](EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md) (also has §11 corrigendum), [`THEOREM_MOORE_LAYER_DECOMPOSITION.md`](THEOREM_MOORE_LAYER_DECOMPOSITION.md), [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md)
 **Discipline reminder:** every numerical claim tagged per CLAUDE.md epistemic ladder; no pattern-matching promotion; the existing FTD-0097 look-elsewhere result rules out promotion based on monomial-level numerical fits at ε ≤ 10⁻⁴.
 
 ---
@@ -237,3 +237,52 @@ In order of leverage:
 ## 9 · Single-line summary
 
 **The 25-voxel ic1 cluster is the L¹-ball-radius-2 = centered octahedral number O(2) integer-point fillout of a regular octahedron in ℤ³. Volumetrically it has 7 fully-interior voxels (= O(1) inner core), 18 surface voxels with per-orbit binding asymmetry (face2 voxels held by only 1/6 face-neighbors — barely-attached "antlers"), and lattice anisotropy ≈ 1.89× equivalent-sphere surface area. The cluster occupies the SC + FCC + face2 sub-stencils — exactly the OCTAHEDRON + CUBOCTAHEDRON content of the Moore Layer Theorem decomposition — and is structurally DUAL to the BCC stella-octangula content where FTD's algebraic spine (G\*, Watson identity, master quadratic) lives. This is the closest structural connection FTD has found between number-theoretic content and engine phenomenology: the bound state and the algebra occupy dual parts of the Moore polyhedral decomposition. Engine-testable prediction: cluster size at higher injection should jump discretely through the centered octahedral sequence {1, 7, 25, 63, 129, 231, ...} = O(r) at thresholds N_r*; verifying this would establish FTD's lattice has a discrete bound-state spectrum tabulated exactly by OEIS A001845. Per-orbit binding asymmetry predicts decay sequence under thermal stress: face2 → FCC edges → SC core. The polytope-duality hypothesis is [STRUCTURAL HYPOTHESIS] pending these engine measurements; if confirmed, it's the structural unification FTD's two pillars have been missing.**
+
+---
+
+## 10 · Corrigendum — polytope-duality hypothesis REFUTED by engine measurement (2026-04-27, same day)
+
+**See `EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md` §11 for the primary corrigendum.** This document built on that document's §3 hypothesis; both are refuted by the same measurement.
+
+**Engine measurement** (`engine/tests/test_emergent_ic1_topology.cpp`, L=32, seed 0xE0102000) produced this per-orbit decomposition:
+
+| Orbit | This document predicted | Engine measured | Status |
+|---|---:|---:|---|
+| center (L¹=0) | 1 | 1 | ✓ |
+| SC face1 (L¹=1) | 6 | 6 | ✓ |
+| FCC edge (L¹=2, L∞=1) | 12 | **7** | ✗ |
+| face2 axis (L¹=2, L∞=2) | 6 | **3** | ✗ |
+| **BCC corner (L¹=3, L∞=1)** | **0** | **8** | **✗ — REFUTES the duality** |
+| **Total** | **25** | **25** | ✓ |
+
+**The cluster INCLUDES all 8 BCC corners** — directly contradicting the §2-§3 reading that the bound state lives on the SC+FCC+face2 sub-stencils EXCLUDING BCC, and is therefore "structurally DUAL" to the BCC stella-octangula content where FTD's algebraic spine lives.
+
+**What this refutes specifically:**
+
+- §2's "cluster IS the dual polytope of the lattice cell" — REFUTED. Not the L¹-ball-radius-2 octahedron.
+- §2's "cluster occupies octahedron + cuboctahedron content; algebra occupies stella octangula" — REFUTED. The cluster occupies SC + FCC + BCC + partial face2. There is **no clean SC+FCC vs BCC split**.
+- §3's "polytope-duality bridge candidate" between algebra and engine — REFUTED. The two pillars do NOT live on dual parts of Moore-26; the engine cluster overlaps the BCC corners where the algebra lives.
+- §1's per-orbit binding asymmetry analysis (face2 only 1/6, FCC 2/6, SC 6/6) — predictions about which voxels are most fragile under thermal stress are based on a wrong cluster shape; the actual stability gradient is unknown and would need re-derivation from the actual topology.
+- §4 Hypothesis A (cluster size jumps through O(r) at higher injection) — STILL UNTESTED, but the underlying assumption that the cluster IS an L¹-ball is now refuted, so the discrete-O(r) prediction is also probably wrong. The actual cluster-size scaling rule is unknown.
+
+**What survives:**
+
+- §1's volumetric properties of the L¹-ball family (centered octahedral numbers, surface counts, anisotropy → 2.0) — **survives as pure cubic-lattice geometry**, but is **not what the FTD bound state realizes**. The math is unaffected; the *physical interpretation* (claiming the cluster IS the L¹-ball) is refuted.
+- The recursive interior identity O(r) interior = O(r-1) — pure math, survives.
+- The lattice-anisotropy → 2.0× sphere-surface scaling — pure math, survives.
+- §4's CONCEPTUAL framing of "cluster size scaling with injection" as an engine-testable question — survives; but Hypothesis A's specific prediction (discrete O(r) plateau) needs replacement.
+
+**What this opens:**
+
+- The actual cluster topology (Moore-1 + center MINUS 5 FCC + 3 face2 = 25 voxels for this seed/L) is itself a NEW [HYPOTHESIS] needing characterisation.
+- The cluster-size-vs-injection question is still open (a future pre-registered campaign could test it), but the PREDICTIONS need rebuilding from the actual cluster shape, not the L¹-ball-2 shape.
+- The "structural bridge between algebra and engine" question (per `WHERE_WE_LEFT_OFF.md` §10) is unchanged: the polytope-duality candidate is now closed-negative, and the bridge remains an open structural problem.
+
+### Methodological note
+
+The polytope-duality reading was elegant and seemed to map cleanly onto the existing Moore Layer Theorem. The engine measurement directly refuted it within hours of being proposed — exactly the discipline working as intended. The morning's pontification is now a documented dead end, and the actual cluster topology is the new starting point.
+
+The strongest positive structural finding (FTD-0107: 25-voxel cluster, deterministic, L-invariant) survives and is now **harder to interpret structurally** than this document claimed. The cluster shape involves all four Moore sub-stencils (center, SC, FCC, BCC), not the SC+FCC+face2 subset. The "WHY 25 voxels?" question persists; the morning's polytope-duality answer is wrong.
+
+The structural gap (algebra ↔ engine) remains the load-bearing problem.
+

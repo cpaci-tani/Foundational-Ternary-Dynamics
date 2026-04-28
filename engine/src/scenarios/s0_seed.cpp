@@ -150,6 +150,193 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             IP(rb, mc+dx, mc+dy, mc+dz, +1);
         }
     }
+    else if (name == "s0-seed-emergent-ic1") {
+        // FTD-0102 / FTD-0107 ic1 (point injection).
+        // Inject 10·K_GENESIS flux at lattice center; under the right
+        // toggles (genesis + langevin + gauss_projection + wave_propagation),
+        // the dynamics produce the emergent 25-voxel L¹-ball-radius-2
+        // octahedral bound state. See:
+        //   docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md
+        //   docs/theory/08_structural/EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md
+        //   docs/theory/08_structural/EXPLR_OCTAHEDRAL_BOUND_STATES.md
+        //
+        // This scenario sets the required toggles directly so the scenario
+        // is self-contained when invoked from the WASM bridge or tests.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.005;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        IF(rb, mc, mc, mc, 10.0 * K_GENESIS, 0, 0);
+    }
+    else if (name == "s0-seed-emergent-ic3-collision") {
+        // FTD-0102 / FTD-0107 ic3 (two-beam collision).
+        // Two opposing flux beams at ±L/4 from centre on the x-axis
+        // produce 2 stable bound states of 2-3 voxels each at the
+        // collision points. Reproduced 5/5 seeds at L=32 and L=64
+        // post-fix (RTX 5090, 2026-04-27).
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.005;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        const int q = N / 4;
+        IF(rb, mc - q, mc, mc, +5.0 * K_GENESIS, 0, 0);
+        IF(rb, mc + q, mc, mc, -5.0 * K_GENESIS, 0, 0);
+    }
+    else if (name == "s0-seed-emergent-ic4-subthreshold") {
+        // FTD-0102 / FTD-0107 ic4 (sub-threshold injection).
+        // 0.5·K_GENESIS at lattice centre — below the K_GENESIS gap.
+        // Pre-registered Outcome: 0 manifested voxels across 5/5 seeds
+        // (negative control demonstrating the genesis threshold).
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.005;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        IF(rb, mc, mc, mc, 0.5 * K_GENESIS, 0, 0);
+    }
+    else if (name == "s0-seed-emergent-ic2-thermal-runaway") {
+        // FTD-0102 / FTD-0107 ic2 (thermal-driven runaway).
+        // No flux injection — only elevated Langevin T = 0.05 (10× the
+        // standard ic1/ic3 setting). Demonstrates the unstable-phase
+        // regime where pure thermal noise drives runaway genesis.
+        // The L=32 seed-4 finite-size escape observed in the post-fix
+        // re-measurement lives in this phase-space neighbourhood.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.05;   // 10× ic1
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        // No IF call — thermal noise alone drives the dynamics.
+    }
+    else if (name == "s0-seed-emergent-ic1-diagonal") {
+        // FTD-0110 D3g: body-diagonal injection.
+        // Same total amplitude as ic1 (10·K_GENESIS) but distributed along
+        // (1,1,1)/√3 instead of +x. The 3-fold rotation about the body
+        // diagonal is Z_3 (not Z_4); if the cluster-efficiency ¼ comes from
+        // the i-cycle Z_4 about the injection axis, then a body-diagonal
+        // injection should give k ≈ 1/3 instead of ¼ — and a cluster size
+        // of (1/3)·A² ≈ 33 voxels at A=10 (vs 25 for axial).
+        // If k stays at ¼, the structural origin is global (N_base, not
+        // axis-specific Z_4).
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.005;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        const double inv_sqrt3 = 1.0 / std::sqrt(3.0);
+        const double A = 10.0 * K_GENESIS * inv_sqrt3;
+        IF(rb, mc, mc, mc, A, A, A);
+    }
+    else if (name == "s0-seed-emergent-ic1-isotropic") {
+        // FTD-0110 D3h: isotropic 6-axis injection at the canonical
+        // ic1 amplitude. Decomposes A·K_GENESIS uniformly across the
+        // 6 SC face-neighbour directions of the centre voxel; the
+        // resulting bound state should be O_h-symmetric under all
+        // cube rotations (no injection-direction breaking the +x/−x
+        // asymmetry seen in s0-seed-emergent-ic1).
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.005;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        // Distribute 10·K_GENESIS magnitude across 6 directions: each
+        // of the 6 face neighbours of the centre receives a flux pointing
+        // outward from the centre with magnitude (10/√6)·K_GENESIS
+        // (so |J|² summed across all 6 voxels = 10²·K_GENESIS² as in ic1).
+        const double inv_sqrt6 = 1.0 / std::sqrt(6.0);
+        const double a = 10.0 * K_GENESIS * inv_sqrt6;
+        IF(rb, mc + 1, mc, mc, +a, 0, 0);
+        IF(rb, mc - 1, mc, mc, -a, 0, 0);
+        IF(rb, mc, mc + 1, mc, 0, +a, 0);
+        IF(rb, mc, mc - 1, mc, 0, -a, 0);
+        IF(rb, mc, mc, mc + 1, 0, 0, +a);
+        IF(rb, mc, mc, mc - 1, 0, 0, -a);
+    }
+    else if (name == "s0-seed-emergent-ic1-viz") {
+        // Clean visualisation of the axial ic1 cluster (dashboard demo).
+        // Uses A=20·K_GENESIS instead of the campaign A=10 to compensate
+        // for the CPU genesis-drain that suppresses cluster growth in
+        // single-threaded WASM (vs GPU's no-drain behaviour). T=0 disables
+        // Langevin thermal driving so the cluster is NOT obscured by
+        // background thermal genesis. Run ~200 ticks for clearest view.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.0;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        IF(rb, mc, mc, mc, 20.0 * K_GENESIS, 0, 0);
+    }
+    else if (name == "s0-seed-emergent-ic1-diagonal-viz") {
+        // Clean body-diagonal cluster (D3g shape comparison).
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.0;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        const double inv_sqrt3 = 1.0 / std::sqrt(3.0);
+        const double A = 20.0 * K_GENESIS * inv_sqrt3;
+        IF(rb, mc, mc, mc, A, A, A);
+    }
+    else if (name == "s0-seed-emergent-ic1-isotropic-viz") {
+        // Clean isotropic 6-axis injection (D3h full O_h symmetry view).
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.0;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        const double inv_sqrt6 = 1.0 / std::sqrt(6.0);
+        const double a = 20.0 * K_GENESIS * inv_sqrt6;
+        IF(rb, mc + 1, mc, mc, +a, 0, 0);
+        IF(rb, mc - 1, mc, mc, -a, 0, 0);
+        IF(rb, mc, mc + 1, mc, 0, +a, 0);
+        IF(rb, mc, mc - 1, mc, 0, -a, 0);
+        IF(rb, mc, mc, mc + 1, 0, 0, +a);
+        IF(rb, mc, mc, mc - 1, 0, 0, -a);
+    }
+    else if (name == "s0-seed-symmetry-regression") {
+        // Engine-fix regression test (2026-04-27).
+        // Inject 6-axis radial flux at lattice centre — perfectly
+        // O_h-symmetric initial condition. Expected: post-fix,
+        // resulting cluster is centro-symmetric within numerical
+        // noise (CoM at lattice centre; bbox symmetric across all
+        // three axis pairs). Pre-fix (serial-state RNG bias) would
+        // break y/z reflection symmetry. See render_bridge.cpp
+        // voxel_uniform() comment block.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.0;    // T=0 isolates determinism
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        const double A = 5.0 * K_GENESIS;
+        IF(rb, mc + 1, mc, mc, +A, 0, 0);
+        IF(rb, mc - 1, mc, mc, -A, 0, 0);
+        IF(rb, mc, mc + 1, mc, 0, +A, 0);
+        IF(rb, mc, mc - 1, mc, 0, -A, 0);
+        IF(rb, mc, mc, mc + 1, 0, 0, +A);
+        IF(rb, mc, mc, mc - 1, 0, 0, -A);
+    }
     else if (name == "s0-seed-moore-decomposition") {
         IP(rb, mc, mc, mc, -1);
         const int oct[6][3] = {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
