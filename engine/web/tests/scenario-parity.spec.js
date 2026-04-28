@@ -68,7 +68,8 @@ function extractCppScenarios() {
     // April 2026 post-audit cleanup (ticket S1): scenarios.cpp was split into
     // 5 group files under engine/src/scenarios/. The router still lives in
     // scenarios.cpp but the `name == "..."` branches are spread across:
-    //   scenarios/flux.cpp, light.cpp, quantum.cpp, s0_seed.cpp, s0_field.cpp
+    //   scenarios/flux.cpp, light.cpp, quantum.cpp, s0_seed.cpp, s0_field.cpp,
+    //   scenarios/vacuum.cpp (s0-vacuum-* group, added 2026-04-28)
     const sources = [
         join(ENGINE_ROOT, 'src', 'scenarios.cpp'),
         join(ENGINE_ROOT, 'src', 'scenarios', 'flux.cpp'),
@@ -76,6 +77,7 @@ function extractCppScenarios() {
         join(ENGINE_ROOT, 'src', 'scenarios', 'quantum.cpp'),
         join(ENGINE_ROOT, 'src', 'scenarios', 's0_seed.cpp'),
         join(ENGINE_ROOT, 'src', 'scenarios', 's0_field.cpp'),
+        join(ENGINE_ROOT, 'src', 'scenarios', 'vacuum.cpp'),
     ];
     const names = new Set();
     const re = /name\s*==\s*"([^"]+)"/g;
