@@ -1542,4 +1542,37 @@ export class MockBridge {
     // the large-file refactor. The extracted module is a pure move — `this`
     // binding preserved via .call() so all scenario helpers still resolve.
     setupScenario(name) { return runSetupScenario.call(this, name); }
+
+    /**
+     * Returns derived-overlay data shaped per `kind`. Most return objects
+     * include a live reference to `_fluxMag` (and/or `_particles`) — these
+     * are mutated each tick. Callers must treat the buffers as read-only
+     * within the current frame; if you need a stable snapshot, `.slice()`
+     * the magnitude at the call site. Same retention foot-gun applies to
+     * `_particles`: the array identity is stable but per-particle fields
+     * mutate in place.
+     *
+     * Was a prototype patch in wasm-bridge-dag.js; moved here in Phase 2c
+     * to keep the MockBridge class definition self-contained. The
+     * capability factory in capabilities/scale0.js calls this method
+     * if present; WasmBridge has no equivalent so the factory's
+     * `if (typeof bridge.getScale0DerivedOverlayData === 'function')`
+     * guard handles the asymmetry.
+     */
+    getScale0DerivedOverlayData(kind) {
+        if (kind === 'darkMatterHalo') {
+            if (!this._fluxJ) return null;
+            this._ensureEnergyCache();
+            return { particles: this._particles, magnitude: this._fluxMag, latticeSize: this.latticeSize };
+        }
+        if (kind === 'dampingZones') {
+            return { particles: this._particles, latticeSize: this.latticeSize };
+        }
+        if (kind === 'genesisIsosurface') {
+            if (!this._fluxJ) return null;
+            this._ensureEnergyCache();
+            return { magnitude: this._fluxMag, latticeSize: this.latticeSize, threshold: K_GENESIS };
+        }
+        return null;
+    }
 }
