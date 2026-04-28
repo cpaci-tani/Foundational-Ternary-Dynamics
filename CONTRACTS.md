@@ -2,7 +2,7 @@
 
 **Audience: LLM agents and humans extending or refactoring shared interfaces.**
 **Update trigger: any change to a documented interface; new contract; pattern emergence.**
-**Last refreshed: 2026-04-27 (Phase 0 of refactor sweep).**
+**Last refreshed: 2026-04-27 (post-refactor: 8-phase sweep complete, 17 commits).**
 
 This file is the canonical reference for **cross-module interfaces** in the
 FTD codebase. When adding a new public-API consumer, refactoring a module
@@ -81,6 +81,10 @@ A factory function `createXxxProvider(state)`:
 
 [`engine/web/js/bridge/mock-diagnostics.js`](engine/web/js/bridge/mock-diagnostics.js)
 lines 26–50 carry the canonical block. New extractions MUST mirror this style.
+The Phase 2 bridge split (`bridge/mock-bridge.js`, `bridge/wasm-bridge.js`,
+`bridge/capabilities/*.js`) and Phase 3 viewport split (`viewport/scene-core.js`,
+`viewport/flux-renderer.js`, `viewport/particle-renderer.js`,
+`viewport/field-renderer.js`) are working examples of this pattern at scale.
 
 ### Anti-pattern (do not do this)
 
@@ -303,9 +307,12 @@ which physics terms are active in the C++ tick. Mirrored in JS via
 
 ### The contract
 
-1. **Adding a new toggle** currently requires 4 edits (struct field, `validate()`
-   case, `enable_all()`, `disable_all()` plus optionally `cpu_runtime_warnings()`).
-   Phase 6 will collapse this to a single-line table edit (`TOGGLE_SPECS[]`).
+1. **Adding a new toggle** is a 2-place edit since Phase 6 (commit 2aa2df9):
+   - The boolean field declaration on the `TermToggles` struct (unavoidable — actual storage)
+   - One row in `static constexpr ToggleSpec TOGGLE_SPECS[]`
+   `validate()`, `enable_all()`, `disable_all()`, `cpu_runtime_warnings()`,
+   AND the WASM `rb_toggle_map` all auto-derive from the table row.
+   See [ADR-0013](docs/adr/0013-toggle-table-driven.md).
 2. **Toggle dependencies are enforced by `validate()`**. Currently checks 13
    relationships (e.g., `weak_transmutation` requires `dual_substrate`). When
    adding a toggle with a dependency, extend `validate()`.
@@ -412,11 +419,22 @@ provides the test-side assertion API: `section(name)`, `check(name, condition, d
 4. Tests MUST be runnable standalone (no shared state across tests).
 5. New test files MUST be registered in
    [`engine/CMakeLists.txt`](engine/CMakeLists.txt) via the `ftd_add_test`
-   macro (template: `engine/tests/test_audit_regression.cpp`).
-6. Phase 7 will add `bridge_fixtures.h` shared helpers
-   (`make_bridge(L, ToggleProfile)`, `run_for(rb, n)`,
-   `assert_energy_conserved(rb, n_ticks, eps_rel)`,
-   `inject_particle_at_center(rb, state, v={})`).
+   macro (template: `engine/tests/test_audit_regression.cpp`). The macro
+   auto-links `ftd_test_support` (Phase 7).
+6. Shared test helpers landed in Phase 7 (commit 87158ae) at
+   [`engine/tests/support/bridge_fixtures.h`](engine/tests/support/bridge_fixtures.h):
+   - `make_bridge(L, ToggleProfile, seed=42, force_cpu=true)` — returns
+     `std::unique_ptr<RenderBridge>` (RenderBridge has user-declared dtor
+     so the implicit move ctor is suppressed)
+   - `run_for(rb, n)`
+   - `inject_particle_at_center(rb, state, v={})`
+   - `assert_energy_conserved(rb, n_ticks, eps_rel=1e-6)`
+   - `enum class ToggleProfile { Logic6, LogicOnly, FullEM, FullSM, Custom }`
+7. CTest LABELS (Phase 7): every registered test carries one or more of
+   `unit` / `physics` / `golden` / `slow` / `gpu`. Run a focused subset
+   via `ctest -L <label>` — e.g., `ctest -L golden` runs only
+   `test_render_bridge_golden`, the bit-exact regression gate established
+   in Phase 4 pre-flight (hash `0xcd957b601d47868a`).
 
 ---
 
@@ -446,6 +464,152 @@ AND ADR(s) for any new pattern AND audit archived.
 
 ---
 
+## §10 — Cascade Callback Contract (Phase 3 viewport pattern)
+
+### Purpose
+
+Sub-renderers extracted from a parent class need to react to lifecycle
+events the parent owns (lattice resize, boundary shape change, dispose).
+Phase 3 of the refactor sweep established the pattern across 4 viewport
+sub-renderers (SceneCore, FluxRenderer, ParticleRenderer, FieldRenderer).
+
+### The contract
+
+Each sub-renderer exposes lifecycle methods the orchestrator calls
+**unconditionally** when an event fires. Sub-renderers implement no-op
+bodies if the event doesn't apply to them.
+
+```js
+class ViewportXxxRenderer {
+    onLatticeSizeChanged(size, halfN) { /* rebuild meshes */ }
+    setBoundaryShape(shape)          { /* update cached shape */ }
+    setEngineMode(mode)              { /* engine-mode-specific behavior */ }
+    setAnimationClock(ms)            { /* animation-driven uniforms */ }
+    dispose()                        { /* remove from scene + dispose geom/mat */ }
+}
+```
+
+Orchestrator-side cascade dispatcher (e.g., Viewport.setLatticeSize):
+
+```js
+setLatticeSize(size) {
+    this.latticeSize = size;
+    this._halfN = size * 0.5;
+    this._sceneCore?.onLatticeSizeChanged(size, this._halfN);
+    this._fluxRenderer?.onLatticeSizeChanged(size, this._halfN);
+    this._particleRenderer?.onLatticeSizeChanged(size, this._halfN);
+    this._fieldRenderer?.onLatticeSizeChanged(size, this._halfN);
+    // ... already-extracted modules ...
+    this._molRenderer?.onLatticeSizeChanged?.(size);
+    this._topoRenderer?.onLatticeSizeChanged?.(size);
+    this.spinArrowManager?.dispose();
+    this._applyScenarioScale();
+}
+```
+
+### Rules
+
+1. **Orchestrator dispatches unconditionally** — the orchestrator MUST
+   call every sub-renderer's lifecycle method, even if the event doesn't
+   appear to apply. Missing the call = silent stale geometry.
+2. **Sub-renderer bodies may be no-op** — if the sub-renderer doesn't
+   care about the event, the method body can be empty (with a comment
+   explaining why) or simply update internal cached state.
+3. **Constructor ordering matters** for callbacks captured at ctor time.
+   Phase 3 established: SceneCore is constructed FIRST, FieldRenderer
+   SECOND (it owns mesh-factory helpers), FluxRenderer + ParticleRenderer
+   THIRD (their ctors capture callbacks bound to `this._fieldRenderer.<method>`).
+4. **Disposal ordering**: dispose sub-renderers BEFORE the parent's
+   shared resources (renderer, scene). Phase 3a's invariant: SceneCore
+   disposes after its child sub-renderers but before
+   `this.renderer.dispose()` (the composer is in SceneCore and depends
+   on the WebGLRenderer).
+
+### Reference exemplars
+
+- `engine/web/js/viewport.js` `setLatticeSize` and `dispose` (orchestrator)
+- `engine/web/js/viewport/scene-core.js`, `flux-renderer.js`,
+  `particle-renderer.js`, `field-renderer.js`
+
+See also: ADR-0010 (Cascade callback pattern).
+
+---
+
+## §11 — Mesh-Factory Callback Contract
+
+### Purpose
+
+Cross-cutting mesh factories (e.g., 18-pt streamline mesh, arrow-field
+mesh, write-data-into-mesh helpers) often span multiple sub-renderers.
+Phase 3c put the canonical helpers on `FieldRenderer`; FluxRenderer and
+ParticleRenderer receive bound callbacks at ctor time.
+
+### The contract
+
+```js
+this._fluxRenderer = new ViewportFluxRenderer({
+    // ... primary args ...
+    buildStreamlineMesh:      (m, o) => this._fieldRenderer.buildStreamlineMesh(m, o),
+    writeStreamlinesIntoMesh: (m, s, c) => this._fieldRenderer.writeStreamlinesIntoMesh(m, s, c),
+});
+```
+
+### Rules
+
+1. **Single canonical home.** Each factory lives in exactly ONE
+   sub-renderer (the one most semantically aligned). Other sub-renderers
+   call it via injected callback.
+2. **Public method names** (no underscore prefix) for callback-bound
+   methods, since they cross sub-renderer boundaries.
+3. **Constructor capture** — callbacks are captured at ctor time.
+   Constructor ordering must place the canonical-home sub-renderer
+   BEFORE its callback consumers.
+4. **No state ownership transfer** through the callback. The callback
+   is a function call, not a reference to mutable state.
+
+See also: ADR-0011 (Mesh-factory callback pattern).
+
+---
+
+## §12 — Golden-Tick Regression Gate
+
+### Purpose
+
+Physics-touching extractions (Phase 4 phase_write/forces/read/movement
+decomposition) carry high silent-drift risk. The golden-tick gate is a
+deterministic byte-hash of a 100-tick scenario; any extraction that
+changes the hash has changed physics and must be reverted.
+
+### The contract
+
+The test [`engine/tests/test_render_bridge_golden.cpp`](engine/tests/test_render_bridge_golden.cpp)
+(commit 8afc8be):
+
+1. Constructs `RenderBridge(L=16)`, forces CPU backend, seeds RNG with 42
+2. Applies a fixed toggle profile (Logic6-like)
+3. Injects deterministic initial state (3 manifested particles + 1 flux pulse)
+4. Runs exactly 100 ticks
+5. Computes a 64-bit FNV-1a hash over voxels (state, flux, wave_vel,
+   velocity), every EnergyAudit field, and per-manifested-site state
+6. Asserts hash equals frozen baseline `0xcd957b601d47868aULL`
+
+### Rules
+
+1. **Hash is bit-exact.** Tolerance is zero. Any change means physics
+   has drifted.
+2. **CPU backend forced** so cuRAND non-determinism doesn't leak in.
+3. **All Phase 4 + 5 + 6 + 7 commits MUST preserve the hash.** Phase 4a/4b/4c
+   each verified bit-exact against this gate; Phase 5/6/7 also held it.
+4. **Adding new physics** (intentional behavior change) means: write
+   the new feature, run the test, capture the new hash, freeze it as
+   the new baseline in a separate commit BEFORE any extraction work.
+5. **CTest label `golden`** — `ctest -L golden -C Release` runs only
+   this test (0.20 sec).
+
+See also: ADR-0012 (Golden-tick regression gate).
+
+---
+
 ## Cross-references
 
 - [META_PROJECT_ATLAS.md](META_PROJECT_ATLAS.md) — entry-point navigation
@@ -461,4 +625,4 @@ AND ADR(s) for any new pattern AND audit archived.
 
 ---
 
-*Last refreshed: 2026-04-27 | Phase 0 of refactor sweep*
+*Last refreshed: 2026-04-27 | post-refactor sweep complete (17 commits)*

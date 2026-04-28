@@ -34,7 +34,7 @@ telemetry API contract.
 | `test_*.cpp` | Standalone unit tests (1 per concern) | `test_constants.cpp`, `test_lorentz.cpp`, `test_audit_regression.cpp` |
 | `benchmark_*.cpp` | Engine-theory bridge tests (numerical comparison) | `benchmark_engine_theory.cpp`, `benchmark_emergent_alpha.cpp`, `benchmark_black_hole_thermo.cpp` |
 | `campaign_*.cpp` | Long-running measurement campaigns | `campaign_emergent_spectrum_2026-04-27.cpp`, `campaign_gluon_dynamics.cpp`, `campaign_wigner.cpp` |
-| `support/` | (Phase 7 will add) Shared fixtures: `make_bridge`, `run_for`, `assert_energy_conserved` | TBD |
+| `support/` | Shared fixtures and telemetry impl (post-Phase 7, commits 2db67ca…87158ae) — see "Shared infrastructure" below |
 
 ## How to run
 
@@ -51,50 +51,69 @@ engine/build/Release/test_audit_regression.exe
 # Subset by name pattern
 ctest -R "lorentz" --output-on-failure
 
-# (Phase 7 target) Subset by label
-ctest -L unit
-ctest -L physics
-ctest -L golden
+# Subset by label (Phase 7 — live)
+ctest -L unit       # 147 fast tests
+ctest -L physics    # energy/Coulomb/locked-particle/absorbing-BC suite
+ctest -L golden     # bit-exact regression gate (test_render_bridge_golden)
+ctest -L slow       # multi-tick scenarios / perf
+ctest -L gpu        # CUDA — route via WSL2
 ```
 
-## CTest labels (Phase 7 target)
+## CTest labels (Phase 7, live)
 
-After Phase 7 lands, every test will carry at least one label:
+Every test now carries at least one label:
 
 | Label | Coverage | Wall time |
 |---|---|---|
-| `unit` | Pure unit tests; no GPU; <1s each | ~30s total |
+| `unit` | Pure unit tests; no GPU; <1s each (147 tests) | ~30s total |
 | `physics` | Energy conservation, Coulomb, locked particle, absorbing BC | ~2 min |
-| `golden` | Bit-exact regression vs frozen byte-hash output | <10s |
+| `golden` | Bit-exact regression vs frozen byte-hash (`test_render_bridge_golden`, hash `0xcd957b601d47868a`) | <10s |
 | `slow` | Multi-tick scenarios, perf-sensitive | 1-5 min each |
 | `gpu` | Requires CUDA; route via WSL2 | varies |
 
+The golden-tick gate is the bit-exact regression for any
+physics-touching extraction (Phase 4 phase decomposition, Phase 5 CUDA
+stencil split, etc.). See ADR-0012.
+
 ## Shared infrastructure
 
-`engine/include/ftd/test_telemetry.h` — declarations + (currently) inline
-impl. Phase 7 will split impl to `engine/tests/support/test_telemetry.cpp`
-to stop recompiling 412 LOC across 155 TUs.
+Phase 7 split (commits 2db67ca…87158ae): the test telemetry header is
+now declarations-only; the implementation lives in a static support
+library auto-linked to every test.
+
+| File | LOC | Role |
+|---|---:|---|
+| `engine/include/ftd/test_telemetry.h` | 154 | Declarations only (was 412 LOC header-only) |
+| `engine/tests/support/test_telemetry.cpp` | 312 | Implementation (compiled once, not per-TU) |
+| `engine/tests/support/bridge_fixtures.h` / `.cpp` | — | Shared bridge fixtures: `ToggleProfile { Logic6, LogicOnly, FullEM, FullSM, Custom }`, `make_bridge(L, profile, seed=42, force_cpu=true)`, `run_for(rb, n)`, `inject_particle_at_center(rb, state, v)`, `assert_energy_conserved(rb, n_ticks, eps_rel)` |
+
+The CMake target `ftd_test_support` is auto-linked into every test
+registered through `ftd_add_test`; tests no longer duplicate
+boilerplate setup.
 
 `engine/include/ftd/test_telemetry_snapshot.h` — RenderBridge-aware
-snapshot encoder (separate header to avoid circular include).
+snapshot encoder (separate header to avoid circular include); used by
+`test_render_bridge_golden` for the bit-exact regression hash.
 
 ## How to extend
 
 ### Adding a new test
 1. Create `test_<name>.cpp` in this directory.
-2. Use the standard skeleton (see Public API above).
-3. Register in `engine/CMakeLists.txt`:
-   ```cmake
-   add_executable(test_<name> tests/test_<name>.cpp)
-   target_link_libraries(test_<name> ftd_core)
-   add_test(NAME <name> COMMAND test_<name>)
-   ```
-   (Phase 7 will introduce `ftd_add_test(<name> SOURCES ... LABELS ...)` macro.)
+2. Use the standard skeleton (see Public API above). Prefer
+   `support/bridge_fixtures.h` helpers over re-rolling setup.
+3. Register in `engine/CMakeLists.txt` via the `ftd_add_test` macro,
+   passing one or more LABELS (`unit` / `physics` / `golden` / `slow` /
+   `gpu`). The `ftd_test_support` library is auto-linked.
 
 ### Adding a benchmark or campaign
 - Same as above, but use `benchmark_` or `campaign_` prefix.
-- Campaigns that take >5 min should set `set_tests_properties(... PROPERTIES TIMEOUT 600)`.
-- GPU campaigns: tag with the `gpu` label (Phase 7); document WSL2-only execution.
+- Campaigns that take >5 min should set `set_tests_properties(... PROPERTIES TIMEOUT 600)` and carry the `slow` label.
+- GPU campaigns: tag with the `gpu` label; document WSL2-only execution.
+
+### Touching physics code
+Any extraction or refactor that could perturb tick output MUST keep
+`test_render_bridge_golden` green (hash `0xcd957b601d47868a`). Run
+`ctest -L golden` before claiming Phase-X-complete. See ADR-0012.
 
 ## Invariants
 
@@ -114,5 +133,7 @@ snapshot encoder (separate header to avoid circular include).
 - [CONTRACTS.md §8](../../CONTRACTS.md#8--test-telemetry-contract)
 - [engine/SPEC_ENGINE.md](../SPEC_ENGINE.md)
 - [docs/adr/0008-r1-r5-phase-extraction.md](../../docs/adr/0008-r1-r5-phase-extraction.md)
+- [docs/adr/0012-golden-tick-regression-gate.md](../../docs/adr/0012-golden-tick-regression-gate.md) — bit-exact regression gate
 - [META_PROJECT_ATLAS.md](../../META_PROJECT_ATLAS.md) §10 (run-all commands)
-- Test-time API: `engine/include/ftd/test_telemetry.h`
+- Test-time API: `engine/include/ftd/test_telemetry.h` (declarations) + `support/test_telemetry.cpp` (impl)
+- Shared fixtures: `engine/tests/support/bridge_fixtures.{h,cpp}`

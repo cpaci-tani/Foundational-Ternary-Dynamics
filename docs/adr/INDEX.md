@@ -23,6 +23,10 @@ header but the original record stays.
 | 0007 | [CUDA helper consolidation](0007-cuda-helper-consolidation.md) | Accepted | 2026-04 | Shared headers (cuda_index.cuh) over per-kernel local helpers |
 | 0008 | [R1-R5 phase extraction](0008-r1-r5-phase-extraction.md) | Accepted | 2026-04 | render_bridge.cpp phases extracted to focused TUs |
 | 0009 | [Epistemic tag system](0009-epistemic-tag-system.md) | Accepted | 2026-04 | 7-tag vocabulary ([THEOREM]/[CONJECTURE]/...) for claims |
+| 0010 | [Cascade callback pattern](0010-cascade-callback-pattern.md) | Accepted | 2026-04-27 | Sub-renderer lifecycle (onLatticeSizeChanged etc.) — Phase 3 viewport split |
+| 0011 | [Mesh-factory callback](0011-mesh-factory-callback.md) | Accepted | 2026-04-27 | Single canonical home + ctor-time bound callbacks for cross-sub-renderer helpers |
+| 0012 | [Golden-tick regression gate](0012-golden-tick-regression-gate.md) | Accepted | 2026-04-27 | 100-tick byte-hash gate for physics-touching extractions (Phase 4) |
+| 0013 | [Toggle table-driven](0013-toggle-table-driven.md) | Accepted | 2026-04-27 | TOGGLE_SPECS[] replaces 5-place edit with 2-place (Phase 6) |
 
 ---
 

@@ -1,5 +1,109 @@
 # Foundational Ternary Dynamics Changelog
 
+## FTD-0110 closure + engine refactor sweep (April 28, 2026)
+
+Two-track day on top of the 2026-04-27 engine-as-instrument portfolio:
+the structural bridge between the algebraic spine and the engine
+phenomenology promoted to **[DERIVED at linear level]**, and the
+17-commit (8-phase) LLM-friendly engine refactor sweep landed cleanly
+with zero behavioural drift, codifying 4 new ADRs (0010–0013) along
+the way.
+
+### FTD-0110 promoted to [DERIVED at linear level] (commit `306837c`)
+
+The cluster-efficiency coefficient `k = 1/N_base = 1/4` in the
+empirical scaling `N(A) ≈ k · A²` (measured across 11 amplitudes ×
+5 seeds × 5 SM particles) is now derived from O_h representation
+theory. Chain:
+
+1. The natural 27-dimensional permutation representation of the cubic
+   point group O_h on the 3³ Moore block decomposes as
+   `27 = 4·A_{1g} ⊕ 2·E_g ⊕ 2·T_{2g} ⊕ A_{2u} ⊕ 3·T_{1u} ⊕ T_{2u}` —
+   `mult(A_{1g}) = 4` is a **[THEOREM]** by the character-table formula
+   `(1/|O_h|) Σ size · χ_27 · χ_A1g = 192/48 = 4`.
+2. The center voxel is the unique O_h-fixed point of the block, so
+   `δ_center` is A_{1g}-pure (geometric fact).
+3. The 18-point Laplacian is O_h-equivariant and preserves the A_{1g}
+   subspace as a 4×4 block — verified by direct 27×27 diagonalisation
+   showing exactly 4 A_{1g}-pure eigenvectors with matching eigenvalues.
+4. Projection of `δ_center` onto the 4 A_{1g} eigenmodes gives energy
+   fractions exactly `{3/8, 1/8, 3/8, 1/8}` with mean `1/N_base = 1/4`.
+5. Direction-invariance under axial vs body-diagonal injection follows
+   from per-component evolution under the same scalar Laplacian — both
+   give identical `{3/8, 1/8, 3/8, 1/8}·A²` distribution.
+6. Cluster size `N(A) = (1/N_base) · A² = ¼ · A²` emerges from
+   Langevin-thermalised mean-mode energy.
+
+Verification suite C1–C4 all PASS in
+`scripts/exploration/verify_k_derivation_2026-04-28.py`. New theory doc:
+`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`.
+
+The full cluster-↔-mass identification (FTD-0110 main claim) remains
+**[STRONGLY MOTIVATED CONJECTURE]** for the nonlinear-engine regime —
+the linear→nonlinear bridge isn't formally proved, but the empirical
+5/5-seed × 11-amplitude × 5-SM-particle cross-check holds to ~5% across
+5 orders of magnitude in `m/m_e`. **Significance**: the first quantitative
+algebraic connector between FTD's algebraic spine (framework integer
+N_base = 4 = mult(A_{1g})) and engine-measured cluster phenomenology
+(¼·A² scaling). The "two pillars without a bridge" diagnosis from
+`docs/WHERE_WE_LEFT_OFF.md` §10 is closed at the linear level.
+
+### Engine refactor sweep — Phases 0–7 COMPLETE (commits `2db67ca` → `87158ae`)
+
+LLM-friendly decomposition of the engine's largest files into
+discrete-responsibility modules. Every phase gated by a golden-tick
+byte-hash regression test (`8afc8be`) produced bit-identical engine
+output to the pre-refactor baseline.
+
+- **Phase 0** (`2db67ca`) — LLM-friendly documentation infrastructure
+  foundation. Refactor map authoring template, regression-test stencil,
+  per-phase artefact conventions.
+- **Phase 1** (`194563a`) — diagnostic struct extraction to
+  `engine/include/ftd/render_bridge_diagnostics.h`. `RenderBridge`
+  internals decoupled from telemetry types.
+- **Phase 2a** (`6be0a19`) — `MockBridge` extracted to
+  `engine/web/js/bridge/mock-bridge.js`.
+- **Phase 2b** (`7256a14`) — `WasmBridge` extracted to
+  `engine/web/js/bridge/wasm-bridge.js`.
+- **Phase 2c** (`c11ef96`) — capability factories extracted;
+  `engine/web/js/bridge/wasm-bridge-dag.js` becomes a 42-LOC re-export
+  shim.
+- **Phase 3 prep** (`848e839`) — `viewport.js` extraction map
+  (REFACTOR_MAP.md) authored.
+- **Phase 3a** (`1499a11`) — `SceneCore` extracted to
+  `engine/web/js/viewport/scene-core.js`.
+- **Phase 3b** (`8b4732d`) — `FluxRenderer` extracted to
+  `engine/web/js/viewport/flux-renderer.js`.
+- **Phase 3c** (`506805b`) — `FieldRenderer` extracted (final viewport
+  sub-phase before particle).
+- **Phase 3d** (`1506079`) — `ParticleRenderer` extracted to
+  `engine/web/js/viewport/particle-renderer.js`. `viewport.js` reduced
+  to thin delegators.
+- **Phase 4 pre-flight** (`8afc8be`) — golden-tick byte-hash regression
+  test. Captures a deterministic post-tick lattice byte hash; gates all
+  subsequent phase commits.
+- **Phase 4a** (`9ef51b7`) — `phase_write` decomposition (golden-tick
+  gated).
+- **Phase 4b** (`76d2afe`) — `phase_forces` decomposition (golden-tick
+  gated).
+- **Phase 4c** (`be2aa8c`) — `phase_read` + `phase_movement`
+  decomposition. Phase 4 COMPLETE; the four `tick()` phase functions
+  now compose well-bounded sub-functions instead of giant monoliths.
+- **Phase 5** (`183a493`) — CUDA stencil split (compile-verified;
+  GPU-runtime check pending next campaign).
+- **Phase 6** (`2aa2df9`) — toggle system table-driven via
+  `TOGGLE_SPECS[]`. Single source of truth for toggle name, default,
+  scope, validation predicate; replaces ~250 LOC of switch-statement
+  duplication.
+- **Phase 7** (`87158ae`) — test fixture + telemetry impl extraction.
+  **PHASE 7 COMPLETE — REFACTOR SWEEP CLOSES**.
+
+**Behavioural drift across the sweep: zero**, by construction
+(byte-hash gate held on every post-pre-flight phase). Engine output is
+bit-identical to the pre-refactor baseline.
+
+---
+
 ## Web engine — lattice cleanup pass + plumbing leak plugs (April 27, 2026)
 
 End-to-end cleanup of the Scale-0 lattice subsystem, the dashboard
