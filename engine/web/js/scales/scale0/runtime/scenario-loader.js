@@ -166,7 +166,31 @@ function applyToggleDefaults(mainScale0, mockScale0, scenarioName) {
 
     const overrides = SCALE0_SCENARIO_OVERRIDES[scenarioName];
     if (overrides) {
-        for (const [key, val, elId] of overrides) {
+        // Apply prerequisite toggles before dependents (C-arch-6).
+        //
+        // The C++ TermToggles::validate() inspects pairwise dependencies
+        // every tick:
+        //   weak_transmutation   requires dual_substrate
+        //   triad_binding        requires dual_substrate
+        //   pair_production      requires genesis
+        //   strong_force / color_forces  amplify forces
+        //   selective_damping    is a damping mode
+        //
+        // If a dependent toggle is enabled while its prerequisite is
+        // still off, the validator fires a warning for one tick and the
+        // engine briefly runs in an inconsistent regime. Sorting the
+        // override list so prerequisites land first eliminates that
+        // window without requiring a two-pass apply at every callsite.
+        const prerequisites = ['dual_substrate', 'genesis', 'forces', 'damping'];
+        const sorted = [...overrides].sort((a, b) => {
+            const ia = prerequisites.indexOf(a[0]);
+            const ib = prerequisites.indexOf(b[0]);
+            if (ia !== -1 && ib === -1) return -1;
+            if (ib !== -1 && ia === -1) return 1;
+            if (ia !== -1 && ib !== -1) return ia - ib;
+            return 0;
+        });
+        for (const [key, val, elId] of sorted) {
             mainScale0.setToggle(key, val);
             setCheckboxValue(elId, val);
             mockScale0?.setToggle(key, val);

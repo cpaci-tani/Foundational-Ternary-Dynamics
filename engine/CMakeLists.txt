@@ -193,6 +193,16 @@ ftd_add_test(test_native_observable_registry tests/test_native_observable_regist
 add_executable(test_constants tests/test_constants.cpp)
 target_link_libraries(test_constants ftd_core)
 
+# Audit regression tests (Wave-3 Agent G, 2026-04-27)
+# Guards recent fixes that previously had no C++ coverage:
+#   - ½ factor on field_energy / wave_energy / E_L / E_R / coulomb_pe
+#   - locked-particle pair force does NOT skip unlocked partner
+#   - E_L vs wv_L split (post-d0329f6 conflation fix)
+#   - 18-pt Laplacian sum-rule
+#   - coulomb_pe = ½·Σ α·q·φ pair-PE convention
+add_executable(test_audit_regression tests/test_audit_regression.cpp)
+target_link_libraries(test_audit_regression ftd_core)
+
 # Wave 4b.6: test_lorentz_force + test_lorentz_invariance + test_magnetic +
 # test_magnetic_lagrangian merged into test_lorentz (self-ref target)
 ftd_add_test(test_lorentz tests/test_lorentz.cpp CTEST_NAME lorentz TIMEOUT 600)
@@ -804,6 +814,14 @@ ftd_add_test(campaign_emergent_spectrum tests/campaign_emergent_spectrum_2026-04
              CTEST_NAME campaign_emergent_spectrum TIMEOUT 7200
              LABELS native eft observable engine_as_instrument)
 
+# FTD-0107 regression + L¹-ball-radius-2 topology verification.
+# Confirms the deterministic 25-voxel cluster (FTD-0102/0107) and tests the
+# EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md topology hypothesis directly via
+# per-voxel positional dump.
+ftd_add_test(test_emergent_ic1_topology tests/test_emergent_ic1_topology.cpp
+             CTEST_NAME emergent_ic1_topology TIMEOUT 600
+             LABELS native eft observable engine_as_instrument regression)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
@@ -1293,6 +1311,7 @@ enable_testing()
 
 # Unit tests
 add_test(NAME constants COMMAND test_constants)
+add_test(NAME audit_regression COMMAND test_audit_regression)
 # (lorentz registered via ftd_add_test above)
 add_test(NAME lattice COMMAND test_lattice)
 add_test(NAME born_infeld COMMAND test_born_infeld)

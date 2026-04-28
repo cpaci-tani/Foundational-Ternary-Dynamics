@@ -521,9 +521,14 @@ export function setupS0SeedScenario(name, ctx) {
                         if (g < 1e-3) continue;
                         this._injectFlux(mc+dx2, mc-leptonR+dy2, mc+dz2, g*0.55, g*0.45, 0);
                     }
-                    // Hint at needing the weak toggle:
-                    this._toggles.weak_transmutation = true;
-                    this._toggles.dual_substrate = true;
+                    // Toggle activation (weak_transmutation + dual_substrate)
+                    // is handled via SCALE0_SCENARIO_OVERRIDES in
+                    // engine/web/js/config/toggles.js. Do NOT mutate
+                    // this._toggles directly here — applyToggleDefaults
+                    // runs AFTER scenario setup and would clobber a
+                    // direct mutation, and the validator would briefly
+                    // see weak_transmutation=true with dual_substrate=
+                    // false on the very next tick (C-arch-8).
                     break;
                 }
 
