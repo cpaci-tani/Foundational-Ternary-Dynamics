@@ -358,16 +358,25 @@ Windows-native CUDA build (`engine/build/`) is acceptable for compile-time
 checks and single-tick correctness only. Any measurement campaign, sweep,
 or multi-seed run goes through WSL2.
 
-**Outstanding WSL2 deferral (post-refactor):** Phase 5 split `kernels_stencil.cu`
-into 3 TUs and is host-compile-verified + CPU-deterministic-verified
-(`test_render_bridge_golden` hash `0xcd957b601d47868a` bit-exact match)
-but bit-exact GPU-stencil parity has NOT yet been verified at L=64.
-Recommended next-session command:
+**WSL2 GPU parity verification — CLOSED 2026-04-28.** Phase 5
+(`kernels_stencil.cu` split into 3 TUs) was host-compile-verified +
+CPU-deterministic-verified at refactor close. Runtime GPU parity has
+now been verified end-to-end on WSL2 + RTX 5090:
+
+| Test | L | Result |
+|---|---:|---|
+| `test_render_bridge_golden` | 16 | hash `0xcd957b601d47868a` bit-exact on CUDA backend |
+| `test_gpu_parity_complete` | 32 | 70/0 PASS across 20 physics domains |
+| `test_force_diag_parity` | — | 7/7 PASS (`|a−b| = 0.000e+00` on strong force) |
+| `test_sim_parity` | 16 | TotalFieldEnergy parity ≤ 1e-2 at 100 + 500 ticks |
+
+Re-verification command (drop-in for any future stencil work):
 
 ```bash
 wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && \
-    cmake --build engine/build_wsl --target test_cpu_gpu_parity ftd_cuda && \
-    engine/build_wsl/test_cpu_gpu_parity --L 64 --ticks 100 --seed 42"
+    cmake --build engine/build_wsl --target test_render_bridge_golden test_gpu_parity_complete -j 8 && \
+    engine/build_wsl/test_render_bridge_golden && \
+    engine/build_wsl/test_gpu_parity_complete"
 ```
 
 ---
