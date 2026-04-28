@@ -190,131 +190,15 @@ double RenderBridge::compute_entropy() const { return ::ftd::compute_entropy_cpu
 //   leapfrog CFL limit, correctly identified.
 // ============================================================================
 
+// Phase 4c (2026-04-27): phase_read decomposed into a single free function
+// living in src/render_bridge_phases/phase_read.cpp. This method is now a
+// thin orchestrator. The original parallel-for body (dual + single-substrate
+// 18-pt isotropic Laplacian with interior fast path + boundary slow path,
+// plus state-flux coupling) is preserved BYTE-IDENTICAL inside
+// phase_read_main_loop. The bit-exact gate is test_render_bridge_golden
+// (hash 0xcd957b601d47868a).
 void RenderBridge::phase_read() {
-  const int N = static_cast<int>(lattice_.total_sites());
-  const int L = lattice_.size();
-  const int LL = L * L;
-  const int Nm1 = L - 1;
-  const bool do_wave = toggles.wave_propagation;
-  const bool do_coupling = toggles.coupling;
-  const bool dual = toggles.dual_substrate;
-  const double cw2 = C_WAVE * C_WAVE;
-
-  // Isotropic 18-point Laplacian weights.
-  // For interior voxels we skip all modulo ops (same technique as sor_sweep_18pt):
-  //   coord decomposition:  iz = i % L  (stride 1), iy = (i/L) % L (stride L), ix = i/LL (stride LL)
-  //   interior iff all three coords ∈ [1, L-2].
-  // For the ~(L-2)³/L³ ≈ 97.7% interior fraction (L=64), this eliminates every modulo.
-  // Dual-substrate computes L and R Laplacians from the SAME 18 loaded neighbors — one
-  // pass, no redundant neighbor lookups compared to calling laplacian_flux_L + laplacian_flux_R
-  // separately.
-  constexpr double INV3 = 1.0 / 3.0;
-  constexpr double INV6 = 1.0 / 6.0;
-
-  if (dual) {
-    // Dual-substrate: compute delta for J_L and J_R in a single neighbor sweep
-#pragma omp parallel for schedule(static)
-    for (int i = 0; i < N; ++i) {
-      delta_j_L_[i] = {};
-      delta_j_R_[i] = {};
-
-      if (do_wave) {
-        // Decompose flat index into lattice coordinates
-        const int iz = i % L;
-        const int iy = (i / L) % L;
-        const int ix = i / LL;
-
-        Vec3 lap_L, lap_R;
-        if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
-          // Interior fast path: precomputed offsets, zero modulo operations.
-          // Neighbor offsets: ±1=±z, ±L=±y, ±LL=±x (matches lattice coord convention).
-          const Vec3 fL = (voxels_[i+1].flux_L  + voxels_[i-1].flux_L
-                         + voxels_[i+L].flux_L  + voxels_[i-L].flux_L
-                         + voxels_[i+LL].flux_L + voxels_[i-LL].flux_L) * INV3;
-          const Vec3 fR = (voxels_[i+1].flux_R  + voxels_[i-1].flux_R
-                         + voxels_[i+L].flux_R  + voxels_[i-L].flux_R
-                         + voxels_[i+LL].flux_R + voxels_[i-LL].flux_R) * INV3;
-          const Vec3 eL = (voxels_[i+1+L].flux_L  + voxels_[i+1-L].flux_L
-                         + voxels_[i-1+L].flux_L  + voxels_[i-1-L].flux_L
-                         + voxels_[i+1+LL].flux_L + voxels_[i+1-LL].flux_L
-                         + voxels_[i-1+LL].flux_L + voxels_[i-1-LL].flux_L
-                         + voxels_[i+L+LL].flux_L + voxels_[i+L-LL].flux_L
-                         + voxels_[i-L+LL].flux_L + voxels_[i-L-LL].flux_L) * INV6;
-          const Vec3 eR = (voxels_[i+1+L].flux_R  + voxels_[i+1-L].flux_R
-                         + voxels_[i-1+L].flux_R  + voxels_[i-1-L].flux_R
-                         + voxels_[i+1+LL].flux_R + voxels_[i+1-LL].flux_R
-                         + voxels_[i-1+LL].flux_R + voxels_[i-1-LL].flux_R
-                         + voxels_[i+L+LL].flux_R + voxels_[i+L-LL].flux_R
-                         + voxels_[i-L+LL].flux_R + voxels_[i-L-LL].flux_R) * INV6;
-          lap_L = fL + eL - voxels_[i].flux_L * 4.0;
-          lap_R = fR + eR - voxels_[i].flux_R * 4.0;
-        } else {
-          // Boundary slow path: modular wrapping via lattice neighbor tables.
-          lap_L = ::ftd::laplacian_field<&Voxel::flux_L>(voxels_, lattice_, i);
-          lap_R = ::ftd::laplacian_field<&Voxel::flux_R>(voxels_, lattice_, i);
-        }
-        delta_j_L_[i] = lap_L * cw2;
-        delta_j_R_[i] = lap_R * cw2;
-      }
-
-      // Coupling source: split equally between L and R substrates
-      if (do_coupling) {
-        Vec3 grad_s = gradient_state(i) * (G_C * 0.5);
-        Vec3 curl_sv = curl_state_velocity(i) * (G_C * 0.5);
-        delta_j_L_[i] += grad_s + curl_sv;
-        delta_j_R_[i] += grad_s + curl_sv;
-      }
-    }
-  } else {
-    // Single-substrate: inline Laplacian with the same interior/boundary split.
-    // Cluster A (FTD-0093): when toggles.bcc_stencil != FULL, dispatch to the
-    // selected sub-stencil via laplacian_sublattice<>. The interior fast path
-    // is retained ONLY for FULL mode; the SC/FCC/BCC paths use the slow path
-    // unconditionally — the experimental campaign trades raw throughput for
-    // an obviously-correct sub-stencil projection. Toggle validation guarantees
-    // dual_substrate==false in this branch when bcc_stencil != FULL.
-    const BccStencilMode stencil_mode = toggles.bcc_stencil;
-#pragma omp parallel for schedule(static)
-    for (int i = 0; i < N; ++i) {
-      delta_j_[i] = {};
-
-      if (do_wave) {
-        Vec3 lap;
-        if (stencil_mode == BccStencilMode::FULL) {
-          const int iz = i % L;
-          const int iy = (i / L) % L;
-          const int ix = i / LL;
-
-          if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
-            // Interior fast path (FULL stencil only)
-            const Vec3 f = (voxels_[i+1].flux  + voxels_[i-1].flux
-                          + voxels_[i+L].flux  + voxels_[i-L].flux
-                          + voxels_[i+LL].flux + voxels_[i-LL].flux) * INV3;
-            const Vec3 e = (voxels_[i+1+L].flux  + voxels_[i+1-L].flux
-                          + voxels_[i-1+L].flux  + voxels_[i-1-L].flux
-                          + voxels_[i+1+LL].flux + voxels_[i+1-LL].flux
-                          + voxels_[i-1+LL].flux + voxels_[i-1-LL].flux
-                          + voxels_[i+L+LL].flux + voxels_[i+L-LL].flux
-                          + voxels_[i-L+LL].flux + voxels_[i-L-LL].flux) * INV6;
-            lap = f + e - voxels_[i].flux * 4.0;
-          } else {
-            // Boundary slow path (FULL stencil)
-            lap = laplacian_flux(i);
-          }
-        } else {
-          // Sublattice projection (SC, FCC, or BCC). Slow path for all sites.
-          lap = ::ftd::laplacian_sublattice<&Voxel::flux>(stencil_mode,
-                                                          voxels_, lattice_, i);
-        }
-        delta_j_[i] = lap * cw2;
-      }
-
-      if (do_coupling) {
-        delta_j_[i] += gradient_state(i) * G_C;
-        delta_j_[i] += curl_state_velocity(i) * G_C;
-      }
-    }
-  }
+  ::ftd::phase_read_main_loop(*this);
 }
 
 // ============================================================================
@@ -440,115 +324,17 @@ void RenderBridge::phase_forces() {
 //   - Target opposite sign: annihilation (cancel to void, flux burst)
 // ============================================================================
 
+// Phase 4c (2026-04-27): phase_movement decomposed into a single free
+// function living in src/render_bridge_phases/phase_movement.cpp. This method
+// is now a thin orchestrator. The original sequential per-voxel loop body
+// (drift + integer-jump dispatch + void-target move with self-field carry +
+// same-sign elastic bounce + opposite-sign annihilation with 6-neighbor flux
+// burst, dual-substrate-aware) is preserved BYTE-IDENTICAL inside
+// phase_movement_main_loop. The bit-exact gate is test_render_bridge_golden
+// (hash 0xcd957b601d47868a). Splitting the per-voxel body further would break
+// the golden gate — see the header comment for why.
 void RenderBridge::phase_movement() {
-  const int N = static_cast<int>(lattice_.total_sites());
-  std::fill(moved_.begin(), moved_.end(), 0);
-
-  for (int i = 0; i < N; ++i) {
-    auto &v = voxels_[i];
-    if (v.state == 0 || v.locked || moved_[i]) continue;
-
-    v.remainder += v.velocity * dt_;
-
-    auto c = lattice_.coord(i);
-    int dx = 0, dy = 0, dz = 0;
-
-    if (v.remainder.x >= 1.0) { dx = 1; v.remainder.x -= 1.0; }
-    else if (v.remainder.x <= -1.0) { dx = -1; v.remainder.x += 1.0; }
-    if (v.remainder.y >= 1.0) { dy = 1; v.remainder.y -= 1.0; }
-    else if (v.remainder.y <= -1.0) { dy = -1; v.remainder.y += 1.0; }
-    if (v.remainder.z >= 1.0) { dz = 1; v.remainder.z -= 1.0; }
-    else if (v.remainder.z <= -1.0) { dz = -1; v.remainder.z += 1.0; }
-
-    if (dx == 0 && dy == 0 && dz == 0) continue;
-
-    int target = lattice_.index(c.x + dx, c.y + dy, c.z + dz);
-    auto &t = voxels_[target];
-
-    if (t.state == 0) {
-      // Move: transfer particle to target
-      t.state = v.state;
-      t.velocity = v.velocity;
-      t.remainder = v.remainder;
-      t.pair_id = v.pair_id;
-      t.accel_mag = v.accel_mag;
-      t.spin = v.spin;
-      t.color = v.color;
-      t.particle_id = v.particle_id;
-
-      // Portable self-field: particle carries flux with it (up to K_B)
-      double old_rho = v.density();
-      if (old_rho > EPSILON_MAG) {
-        double transfer = std::min(old_rho, K_B);
-        double frac = transfer / old_rho;
-        Vec3 self_field = v.flux * frac;
-        v.flux = v.flux - self_field;
-        t.flux = t.flux + self_field;
-
-        // Dual-substrate: carry proportional L/R flux too
-        if (toggles.dual_substrate) {
-          Vec3 sf_L = v.flux_L * frac;
-          Vec3 sf_R = v.flux_R * frac;
-          v.flux_L = v.flux_L - sf_L;
-          v.flux_R = v.flux_R - sf_R;
-          t.flux_L = t.flux_L + sf_L;
-          t.flux_R = t.flux_R + sf_R;
-        }
-      }
-
-      v.state = 0;
-      v.velocity = {};
-      v.remainder = {};
-      v.pair_id = -1;
-      v.particle_id = -1;
-      v.spin = 0;
-      v.color = 0;
-      moved_[target] = 1;  // Prevent re-processing this tick
-    } else if (t.state == v.state) {
-      // Same sign: elastic bounce
-      if (dx != 0) v.velocity.x *= -1.0;
-      if (dy != 0) v.velocity.y *= -1.0;
-      if (dz != 0) v.velocity.z *= -1.0;
-      v.remainder = {};
-    } else {
-      // Opposite sign: annihilation — both particles return to void.
-      Vec3 flux_v = v.flux;
-      Vec3 flux_t = t.flux;
-      Vec3 flux_v_L, flux_v_R, flux_t_L, flux_t_R;
-      if (toggles.dual_substrate) {
-        flux_v_L = v.flux_L; flux_v_R = v.flux_R;
-        flux_t_L = t.flux_L; flux_t_R = t.flux_R;
-      }
-      v.state = 0; t.state = 0;
-      v.velocity = {}; t.velocity = {};
-      v.remainder = {}; t.remainder = {};
-      v.pair_id = -1; t.pair_id = -1;
-      v.particle_id = -1; t.particle_id = -1;
-      v.accel_mag = 0.0; t.accel_mag = 0.0;
-      v.spin = 0; v.color = 0;
-      t.spin = 0; t.color = 0;
-      v.flux = {}; t.flux = {};
-      if (toggles.dual_substrate) {
-        v.flux_L = {}; v.flux_R = {};
-        t.flux_L = {}; t.flux_R = {};
-      }
-      // Distribute each particle's flux to its own neighbors
-      auto nbrs_v = lattice_.neighbors_6(i);
-      auto nbrs_t = lattice_.neighbors_6(target);
-      for (int n : nbrs_v) voxels_[n].flux += flux_v * (1.0 / 6.0);
-      for (int n : nbrs_t) voxels_[n].flux += flux_t * (1.0 / 6.0);
-      if (toggles.dual_substrate) {
-        for (int n : nbrs_v) {
-          voxels_[n].flux_L += flux_v_L * (1.0 / 6.0);
-          voxels_[n].flux_R += flux_v_R * (1.0 / 6.0);
-        }
-        for (int n : nbrs_t) {
-          voxels_[n].flux_L += flux_t_L * (1.0 / 6.0);
-          voxels_[n].flux_R += flux_t_R * (1.0 / 6.0);
-        }
-      }
-    }
-  }
+  ::ftd::phase_movement_main_loop(*this);
 }
 
 // ============================================================================

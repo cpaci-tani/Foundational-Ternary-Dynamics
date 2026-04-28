@@ -135,6 +135,9 @@ add_library(ftd_core
     src/render_bridge_phases/phase_write.cpp  # leapfrog + damping + genesis + evaporation
     # Phase 4b — phase_forces decomposition (2026-04-27, ADR-0008)
     src/render_bridge_phases/phase_forces.cpp # EM/gravity/Lorentz/color + γ_FTD integration
+    # Phase 4c — phase_read + phase_movement decomposition (2026-04-27, ADR-0008)
+    src/render_bridge_phases/phase_read.cpp     # 18-pt isotropic Laplacian + state-flux coupling
+    src/render_bridge_phases/phase_movement.cpp # drift + collision + annihilation
     src/backend.cpp                  # ARCH-2: CpuBackend / GpuBackend abstraction over use_gpu_ ifdef
     src/bridge_rng.cpp               # RF-9: PIMPL'd <random> state to keep render_bridge.h slim
     # Cosmic engine split (CE1-CE5, 2026-04-19)
