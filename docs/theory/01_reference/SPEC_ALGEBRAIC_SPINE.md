@@ -1,7 +1,7 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Date:** 2026-04-27 (post engine-as-instrument portfolio close)
+**Date:** 2026-04-27 (last theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. **It does NOT add an 8th theorem to this spine** — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]; the spine's seven theorems remain the canonical citation target for paper drafts.
 **Purpose:** state the load-bearing algebraic content of FTD in
 [THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
