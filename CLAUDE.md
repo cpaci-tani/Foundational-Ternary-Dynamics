@@ -68,9 +68,19 @@ that the FTD-0097 scan ruled as chance-level on 2026-04-27.
   demoted April 19.
 
 **[OPEN] (the real research program):**
-- **WHY 25 voxels for ic1 cluster?** (NEW 2026-04-27) — load-bearing
-  question. Highest-leverage theory path; could yield a structural
-  derivation linking algebra to engine observable.
+- ~~**WHY 25 voxels for ic1 cluster?**~~ — **ANSWERED 2026-04-28 (FTD-0110 [DERIVED at linear level])**:
+  cluster size scales as `N(A) ≈ ¼·(A/K_GENESIS)²` with `k = 1/N_base = ¼`.
+  ¼ coefficient now **DERIVED** from O_h representation theory: mult(A_{1g}) = 4
+  in the 27-block by character-table formula [THEOREM]; δ_center is A_{1g}-pure
+  (O_h-fixed point); the 18-point Laplacian preserves the 4-dim A_{1g} subspace;
+  δ_center projects onto 4 A_{1g} eigenmodes with energies {3/8, 1/8, 3/8, 1/8},
+  mean = 1/N_base = ¼; cluster harvests the mean. Direction-invariance follows
+  automatically (per-component scalar evolution). See `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`.
+  25 voxels at A=10 is the canonical-amplitude steady state. SM-particle masses
+  identified with cluster size N at amplitude A=2√(m/m_e): e/μ/π/K/p/τ match within
+  0/1.1/2.0/10/15/18% naively, ~5% with empirical k(A) drift correction.
+  Open sub-question: rigorously prove the linear→nonlinear bridge (engine
+  reproduces linear-mode equipartition under genesis + Langevin + projection).
 - **FTD-0096 μ-from-ℓ_P missing arrow** — mass-unit calibration; either
   closes or terminally demotes L2.
 - **FTD-0106 G\*/π asymmetry** per-domain engine measurements
@@ -78,8 +88,13 @@ that the FTD-0097 scan ruled as chance-level on 2026-04-27.
   — pre-registered, theory-only catalog committed, engine measurements
   deferred.
 - **L=128 G2 follow-up to FTD-0107** — locks L-invariance further.
-- **The structural bridge between algebraic spine and engine
-  phenomenology** — see WHERE_WE_LEFT_OFF.md §10 for the diagnosis.
+- ~~**The structural bridge between algebraic spine and engine
+  phenomenology**~~ — **CANDIDATE BRIDGE IDENTIFIED 2026-04-27 late evening**:
+  the framework integer N_base = 4 connects O_h-cubic-point-group structure
+  (algebraic) to cluster-efficiency coefficient ¼ (engine). Verified via two
+  code paths: GPU campaign (T5b/T6/T7/T8, 5/5 amplitudes + 5 SM particles)
+  and WASM dashboard (Poynting-vector asymmetry visual cross-check). See
+  `FOUND_MINIMUM_DIMENSIONS.md` and `WHERE_WE_LEFT_OFF.md §10.6`.
 
 **[NEW INFRASTRUCTURE 2026-04-27]:**
 - Pre-registration discipline operationalized via SHA256 hash + git tags
@@ -98,14 +113,23 @@ PMNS angles — all now [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
 **Foundational commitment:** undefined-boundary lattice ontology (not
 completed-infinity ℤ³). See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md`.
 
-**The structural gap (2026-04-27 diagnosis, see WHERE_WE_LEFT_OFF.md §10):**
-the algebraic spine and engine phenomenology stand as **two defensible
-pillars without a derivation chain connecting them**. Standard physics
-has math-derives-observable; FTD has math AND engine, but no derivation
-linking specific algebraic content (G\*, master quadratic) to specific
-engine measurements (25-voxel cluster size, deterministic counts). Closing
-this bridge is the load-bearing remaining work. The "WHY 25 voxels?"
-question is the most concrete entry point.
+**The structural gap (2026-04-27 diagnosis + 2026-04-28 closure, see
+WHERE_WE_LEFT_OFF.md §10 and §10.6):** at the start of 2026-04-27 evening,
+the algebraic spine and engine phenomenology stood as two defensible
+pillars without a derivation chain. **The bridge is now CLOSED at the
+linear level**: `k = 1/N_base = 1/4` is **[DERIVED]** from the O_h
+representation theory of the 27-block (character-table formula gives
+mult(A_{1g}) = 4; δ_center is A_{1g}-pure; the 4×4 Laplacian projection
+gives mean energy 1/4 across A_{1g} eigenmodes). The derivation is direction-
+invariant (axial vs body-diagonal), matching the GPU campaign D3g result.
+See `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. **The cluster-↔-mass
+identification (FTD-0110 main claim) remains [STRONGLY MOTIVATED CONJECTURE]
+for the full nonlinear engine regime** — the linear-mode prediction matches
+the engine empirically within ~5% across 5 SM particles (e to τ) and 11
+amplitudes, but the formal proof that nonlinear genesis + Langevin + projection
+preserves the linear-mode equipartition is [OPEN]. This is the cleanest
+remaining derivation gap; closing it via perturbation theory in the irrep
+mixing would convert FTD-0110 to [THEOREM]-grade.
 
 ---
 
