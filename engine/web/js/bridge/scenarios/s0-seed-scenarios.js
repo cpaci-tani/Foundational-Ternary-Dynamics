@@ -115,33 +115,10 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
 
-                case 's0-seed-proton-candidate': {
-                    // Proton candidate = 3 s=+1 particles on an equilateral
-                    // triangle + weak radial-outward flux dressing.
-                    //
-                    // Configuration : [SELECTION]  (consistent with baryon
-                    //                               number 3; geometry not
-                    //                               uniquely forced)
-                    // Name          : [IMPOSED]    (no color/flavor encoded)
-                    // m_p/m_e       : [THEOREM]    (1836.47, no spatial form)
-                    //
-                    // LANDMINE: do NOT label the three vertices u/u/d or
-                    // map J-axes to color charges. The BCC→SU(3) link is a
-                    // statement about the gluon propagator, not per-quark
-                    // orientation. Any u/d/color assignment here would be
-                    // post-hoc pattern matching.
-                    const bR = Math.max(2, Math.floor(N / 8));
-                    for (let k = 0; k < 3; k++) {
-                        const ang = TRIAD_ANGLES[k];
-                        const bx = Math.round(midF + bR * Math.cos(ang));
-                        const bz = Math.round(midF + bR * Math.sin(ang));
-                        this.injectParticle(bx, mc, bz, 1);
-                    }
-                    const envR = Math.max(3, Math.floor(N / 5));
-                    injectRadialEnvelope(this, midF, midF, midF, +1, envR / 2, K_B,
-                        { radius: envR, minR2: 0.25 });
-                    break;
-                }
+                // s0-seed-proton-candidate removed 2026-04-28: superseded by
+                // s0-seed-proton-l4 (full triad with charge+color structure)
+                // and s0-vacuum-proton (curated wrapper). Tests previously
+                // referencing it now use s0-vacuum-proton.
 
                 // ── Moore Seeds (geometric) ──────────────────────────
                 // Mirror the C++ ftd::ctor:: constructors (constructors.h)
@@ -313,24 +290,11 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
 
-                case 's0-seed-symmetry-regression': {
-                    // Engine-fix regression test (2026-04-27).
-                    // Inject 6-axis radial flux at centre. Post-fix the
-                    // resulting cluster must be centro-symmetric within
-                    // numerical noise (T=0 disables Langevin to isolate
-                    // determinism). Pre-fix the serial-state RNG broke
-                    // y/z reflection symmetry — see render_bridge.cpp
-                    // voxel_uniform() docstring.
-                    // Toggles set by scenario-registry.js at load.
-                    const A = 5.0 * K_GENESIS;
-                    this._injectFlux(mc + 1, mc, mc, +A, 0, 0);
-                    this._injectFlux(mc - 1, mc, mc, -A, 0, 0);
-                    this._injectFlux(mc, mc + 1, mc, 0, +A, 0);
-                    this._injectFlux(mc, mc - 1, mc, 0, -A, 0);
-                    this._injectFlux(mc, mc, mc + 1, 0, 0, +A);
-                    this._injectFlux(mc, mc, mc - 1, 0, 0, -A);
-                    break;
-                }
+                // s0-seed-symmetry-regression removed 2026-04-28: this was an
+                // engine CI regression test (2026-04-27 voxel_uniform() RNG
+                // determinism check), not a user-facing physics scenario.
+                // If the regression check is still needed, fold it into a
+                // ctest under engine/tests/.
 
                 case 's0-seed-moore-decomposition': {
                     // All 3 shells with alternating states so they are
@@ -356,35 +320,22 @@ export function setupS0SeedScenario(name, ctx) {
                 }
 
                 // ── Level 3-5: Particles, Composites, Atoms ──────────
-                // Helper: inject a particle + radial flux dressing
-                case 's0-seed-electron-l3':
+                // Helper: inject a particle + radial flux dressing.
+                // Audit 2026-04-28: 4 names removed — electron-l3 (dup of
+                // s0-vacuum-electron), neutrino (superseded by 3 vacuum-flavor
+                // scenarios), quark/antiquark (superseded by 6 named flavors).
                 case 's0-seed-positron':
-                case 's0-seed-neutrino':
-                case 's0-seed-quark':
-                case 's0-seed-antiquark':
                 case 's0-seed-pion':
                 case 's0-seed-proton-l4':
                 case 's0-seed-neutron':
                 case 's0-seed-hydrogen':
                 case 's0-seed-helium':
-                case 's0-seed-h2-molecule': {
+                case 's0-seed-2-hydrogen-atoms': {
                     const dp  = (cx, cy, cz, st, sp, co, sig, amp, lock = false) =>
                         injectDressedParticle(this, cx, cy, cz, st, sp, co, sig, amp, lock);
                     const tri = (cx, cy, cz, charges, colors, rad, lock = true) =>
                         injectTriad(this, cx, cy, cz, charges, colors, rad, lock);
-                    if (name === 's0-seed-electron-l3') dp(mc, mc, mc, -1, -1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
-                    else if (name === 's0-seed-positron') dp(mc, mc, mc, +1, +1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
-                    else if (name === 's0-seed-neutrino') {
-                        // Soft chirality-biased flux blob (no manifested core).
-                        const sig = 2, eR = 6;
-                        for (let dz2=-eR; dz2<=eR; dz2++) for (let dy2=-eR; dy2<=eR; dy2++) for (let dx2=-eR; dx2<=eR; dx2++) {
-                            const r22=dx2*dx2+dy2*dy2+dz2*dz2; if(r22>eR*eR)continue;
-                            const gg=K_B*0.3*Math.exp(-r22/(2*sig*sig)); if(gg<0.001)continue;
-                            this._injectFlux(mc+dx2,mc+dy2,mc+dz2, gg*0.55, gg*0.45, 0);
-                        }
-                    }
-                    else if (name === 's0-seed-quark') dp(mc, mc, mc, +1, +1, 1, 2, K_B*0.5);
-                    else if (name === 's0-seed-antiquark') dp(mc, mc, mc, -1, -1, 1, 2, K_B*0.5);
+                    if (name === 's0-seed-positron') dp(mc, mc, mc, +1, +1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
                     else if (name === 's0-seed-pion') {
                         const sp=Math.max(3,Math.floor(N/8)), hf=Math.floor(sp/2);
                         dp(mc+hf,mc,mc, +1,+1,1, 2,K_B*0.5, true); dp(mc-hf,mc,mc, -1,-1,1, 2,K_B*0.5, true);
@@ -427,7 +378,7 @@ export function setupS0SeedScenario(name, ctx) {
                         dp(mc, mc, mc + oR, -1, +1, 0, 2, K_B * 0.8);
                         dp(mc, mc, mc - oR, -1, -1, 0, 2, K_B * 0.8);
                     }
-                    else if (name === 's0-seed-h2-molecule') {
+                    else if (name === 's0-seed-2-hydrogen-atoms') {
                         const bd=Math.max(4,Math.floor(N/6)), hf=Math.floor(bd/2), oR=Math.max(3,Math.floor(N/8)), bR=Math.max(1,Math.floor(N/16));
                         tri(mc-hf,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc-hf,mc,mc+oR, -1,-1,0, 2,K_B*0.8);
                         tri(mc+hf,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc+hf,mc,mc+oR, -1,+1,0, 2,K_B*0.8);

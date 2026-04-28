@@ -98,30 +98,9 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             IW(rb, x, y, z, g, 0, 0);
         }
     }
-    else if (name == "s0-seed-proton-candidate") {
-        const int bR = std::max(2, N / 8);
-        for (int k = 0; k < 3; k++) {
-            double angle = (2.0 * PI * k) / 3.0;
-            int bx = RND(midF + bR * std::cos(angle));
-            int bz = RND(midF + bR * std::sin(angle));
-            IP(rb, bx, mc, bz, 1);
-        }
-        const int envR = std::max(3, N / 5);
-        const double envSigma = envR / 2.0;
-        const double envAmp = K_B * 1.0;
-        const double envR2 = envR * envR;
-        const int eLo = std::max(0, FLR(midF) - envR);
-        const int eHi = std::min(N - 1, CEL(midF) + envR);
-        for (int z = eLo; z <= eHi; z++) for (int y = eLo; y <= eHi; y++) for (int x = eLo; x <= eHi; x++) {
-            double dx = x - midF, dy = y - midF, dz = z - midF;
-            double r2 = dx*dx + dy*dy + dz*dz;
-            if (r2 < 0.25 || r2 > envR2) continue;
-            double r = std::sqrt(r2);
-            double val = envAmp * std::exp(-r2 / (2.0 * envSigma * envSigma));
-            if (val < 0.001) continue;
-            IF(rb, x, y, z, val*dx/r, val*dy/r, val*dz/r);
-        }
-    }
+    // s0-seed-proton-candidate removed 2026-04-28 (audit removal): superseded
+    // by s0-seed-proton-l4 / s0-vacuum-proton.
+
     // ── Moore Seeds ──
     else if (name == "s0-seed-octahedron") {
         IP(rb, mc, mc, mc, -1);
@@ -318,30 +297,10 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc + 1, 0, 0, +a);
         IF(rb, mc, mc, mc - 1, 0, 0, -a);
     }
-    else if (name == "s0-seed-symmetry-regression") {
-        // Engine-fix regression test (2026-04-27).
-        // Inject 6-axis radial flux at lattice centre — perfectly
-        // O_h-symmetric initial condition. Expected: post-fix,
-        // resulting cluster is centro-symmetric within numerical
-        // noise (CoM at lattice centre; bbox symmetric across all
-        // three axis pairs). Pre-fix (serial-state RNG bias) would
-        // break y/z reflection symmetry. See render_bridge.cpp
-        // voxel_uniform() comment block.
-        rb.toggles.wave_propagation = true;
-        rb.toggles.gauss_projection = true;
-        rb.toggles.genesis          = true;
-        rb.toggles.langevin         = true;
-        rb.toggles.langevin_T       = 0.0;    // T=0 isolates determinism
-        rb.toggles.langevin_gamma   = 0.02;
-        rb.toggles.dual_substrate   = false;
-        const double A = 5.0 * K_GENESIS;
-        IF(rb, mc + 1, mc, mc, +A, 0, 0);
-        IF(rb, mc - 1, mc, mc, -A, 0, 0);
-        IF(rb, mc, mc + 1, mc, 0, +A, 0);
-        IF(rb, mc, mc - 1, mc, 0, -A, 0);
-        IF(rb, mc, mc, mc + 1, 0, 0, +A);
-        IF(rb, mc, mc, mc - 1, 0, 0, -A);
-    }
+    // s0-seed-symmetry-regression removed 2026-04-28 (audit removal): engine
+    // CI artefact (voxel_uniform() RNG determinism check), not a user-facing
+    // physics scenario. Fold into a ctest under engine/tests/ if still needed.
+
     else if (name == "s0-seed-moore-decomposition") {
         IP(rb, mc, mc, mc, -1);
         const int oct[6][3] = {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
@@ -359,27 +318,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         for (int i = 0; i < 8; i++) IP(rb, mc+stel[i][0], mc+stel[i][1], mc+stel[i][2], +1);
     }
     // ── Level 3-5: composite seeds via dp/tri helpers ──
-    else if (name == "s0-seed-electron-l3") {
-        dp(rb, mc, mc, mc, -1, -1, 0, std::max(3, N / 10), K_B * 1.5, false);
-    }
+    // Audit 2026-04-28: removed 4 names — electron-l3 (dup of s0-vacuum-electron),
+    // neutrino (superseded by 3 vacuum-flavor scenarios),
+    // quark/antiquark (superseded by 6 named flavors via dp(... color)).
     else if (name == "s0-seed-positron") {
         dp(rb, mc, mc, mc, +1, +1, 0, std::max(3, N / 10), K_B * 1.5, false);
-    }
-    else if (name == "s0-seed-neutrino") {
-        const int sig = 2, eR = 6;
-        for (int dz2 = -eR; dz2 <= eR; dz2++) for (int dy2 = -eR; dy2 <= eR; dy2++) for (int dx2 = -eR; dx2 <= eR; dx2++) {
-            double r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
-            if (r22 > eR * eR) continue;
-            double gg = K_B * 0.3 * std::exp(-r22 / (2.0 * sig * sig));
-            if (gg < 0.001) continue;
-            IF(rb, mc+dx2, mc+dy2, mc+dz2, gg * 0.55, gg * 0.45, 0);
-        }
-    }
-    else if (name == "s0-seed-quark") {
-        dp(rb, mc, mc, mc, +1, +1, 1, 2, K_B * 0.5, false);
-    }
-    else if (name == "s0-seed-antiquark") {
-        dp(rb, mc, mc, mc, -1, -1, 1, 2, K_B * 0.5, false);
     }
     else if (name == "s0-seed-pion") {
         int sp = std::max(3, N / 8), hf = sp / 2;
@@ -430,7 +373,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         dp(rb, mc, mc, mc + oR, -1, +1, 0, 2, K_B * 0.8, false);
         dp(rb, mc, mc, mc - oR, -1, -1, 0, 2, K_B * 0.8, false);
     }
-    else if (name == "s0-seed-h2-molecule") {
+    else if (name == "s0-seed-2-hydrogen-atoms") {
         const int bd = std::max(4, N / 6), hf = bd / 2;
         const int oR = std::max(3, N / 8), bR = std::max(1, N / 16);
         const int charges[3] = {+1, +1, -1};

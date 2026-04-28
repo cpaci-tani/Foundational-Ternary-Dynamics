@@ -67,7 +67,7 @@ val get_particle_data(ftd::RenderBridge& rb) {
         // Voxel-center convention: particles render at world (x+0.5, y+0.5, z+0.5)
         // so they align with the wireframe crosshair (which draws at raw+0.5 —
         // see viewport/boundary-geometry.js buildCubeBoundary). Without this
-        // offset, single-particle seeds like `s0-seed-quark` appeared half a
+        // offset, single-particle seeds like `s0-vacuum-electron` appeared half a
         // voxel low-and-right of the cube crosshair at even N (matches the
         // MockBridge JS path at wasm-bridge-dag.js:656-658 which already
         // applies the same +0.5f offset).
