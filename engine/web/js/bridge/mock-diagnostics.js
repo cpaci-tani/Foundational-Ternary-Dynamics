@@ -49,6 +49,8 @@
  * protected by Risk 3 in the refactor spec — do NOT destructure `state`.
  */
 
+import { ALPHA } from '../constants.js';
+
 /**
  * Build the diagnostics object bound to the given bridge-like state.
  *
@@ -197,8 +199,9 @@ export function createDiagnosticsProvider(state) {
         let pKE = 0, lx = 0, ly = 0, lz = 0;
         const N = state.latticeSize;
         const cx = (N - 1) * 0.5, cy = (N - 1) * 0.5, cz = (N - 1) * 0.5;
-        for (let i = 0; i < state._particles.length; i++) {
-            const p = state._particles[i];
+        const ps = state._particles;
+        for (let i = 0; i < ps.length; i++) {
+            const p = ps[i];
             if (p.state === 0) continue;
             const vx = p.vx | 0 ? p.vx : (p.vx ?? 0);
             const vy = p.vy | 0 ? p.vy : (p.vy ?? 0);
@@ -215,8 +218,30 @@ export function createDiagnosticsProvider(state) {
             ly += m * (rz * vx - rx * vz);
             lz += m * (rx * vy - ry * vx);
         }
+        // Pairwise Coulomb PE: U = Σ_{i<j} α · q_i · q_j / r_ij.
+        // Mirrors the WASM-side Σ ½α·q·φ_C convention (the ½ avoids
+        // double-counting per-pair contributions in the i<j sum).
+        // No Poisson solve in MockBridge — the particle list is small
+        // enough that direct pairwise summation is the canonical path.
+        let coulombPE = 0;
+        for (let i = 0; i < ps.length; i++) {
+            const pi = ps[i];
+            if (pi.state === 0) continue;
+            const xi = pi.x ?? 0, yi = pi.y ?? 0, zi = pi.z ?? 0;
+            for (let j = i + 1; j < ps.length; j++) {
+                const pj = ps[j];
+                if (pj.state === 0) continue;
+                const dx = xi - (pj.x ?? 0);
+                const dy = yi - (pj.y ?? 0);
+                const dz = zi - (pj.z ?? 0);
+                const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                if (r < 1e-6) continue;
+                coulombPE += ALPHA * pi.state * pj.state / r;
+            }
+        }
         state._cachedParticleKE = pKE;
         state._cachedAngMom = { x: lx, y: ly, z: lz };
+        state._cachedCoulombPE = coulombPE;
     }
 
     function getDiagnostics() {
@@ -307,7 +332,7 @@ export function createDiagnosticsProvider(state) {
             EFieldEnergy, BFieldEnergy,
             totalPoynting: poynting,
             gaussViolation, maxGaussError, selfFieldInjection: 0,
-            coulombPE: 0, chargeTotal, manifested,
+            coulombPE: state._cachedCoulombPE ?? 0, chargeTotal, manifested,
             ELTotal, ERTotal, chiralityTotal, wvLTotal, wvRTotal,
         };
     }
