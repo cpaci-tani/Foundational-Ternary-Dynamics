@@ -58,4 +58,33 @@ void phase_write_main_loop(RenderBridge& rb);
 /// regardless of OMP thread scheduling (ARCH-7).
 void phase_write_assign_pending_ids(RenderBridge& rb);
 
+// =============================================================================
+// Phase 4b — phase_forces decomposition (2026-04-27)
+//
+// phase_forces is a single sequential per-voxel loop that computes EM,
+// gravity, Lorentz, and color forces and integrates relativistic momentum
+// (γ_FTD bandwidth-respecting). Splitting the per-voxel body into separate
+// passes is NOT bit-exact — each force contributes to f_total in the same
+// iteration and the integration step consumes f_total before the next voxel.
+// So Phase 4b mirrors the Phase 4a structure: extract the orchestration
+// steps (solve potentials, build color cache, run main loop) and keep the
+// loop body intact. Splitting the loop further is rejected on the same
+// grounds as the Phase 4a parallel-for body.
+// =============================================================================
+
+/// If toggles.poisson_coulomb is on (and emergent_forces is off), invoke
+/// the SOR Coulomb solver to populate rb.phi_coulomb_. No-op otherwise.
+void phase_forces_solve_potentials(RenderBridge& rb);
+
+/// Repopulate rb.colored_sites_cache_ with every manifested coloured voxel.
+/// Cleared+pushed (capacity reused). Skipped when toggles.color_forces is off.
+void phase_forces_build_color_cache(RenderBridge& rb);
+
+/// Per-voxel loop: EM force (3 modes), gravity (tier-2 gradient), Lorentz
+/// (curl-of-flux as B), color (3-regime SU(3)-flavoured profile), then
+/// γ_FTD relativistic momentum integration with bandwidth clamp. Reads
+/// rb.toggles, rb.phi_coulomb_, rb.colored_sites_cache_, rb.dt_; writes
+/// voxel velocity/accel_mag and rb.force_diag_.
+void phase_forces_main_loop(RenderBridge& rb);
+
 }  // namespace ftd
