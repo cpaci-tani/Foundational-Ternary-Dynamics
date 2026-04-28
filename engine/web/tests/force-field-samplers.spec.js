@@ -8,7 +8,7 @@
  * returned EMPTY_FIELD_SAMPLE unconditionally, so the gravity / EM / strong
  * force-arrow overlays on Scale 0 were silently blank for WASM backends.
  *
- * Physics expectations after 10 ticks of s0-seed-proton-candidate:
+ * Physics expectations after 10 ticks of s0-vacuum-proton:
  *   - getEMForceField     → count > 0 (three manifested quarks carry charge)
  *   - getStrongForceField → count > 0 (three quarks form flux tubes / nuclear
  *                                       attraction regions)
@@ -26,7 +26,7 @@ import { test, expect } from '@playwright/test';
 import { gotoAndReady } from './_helpers.js';
 
 test.describe('Force-field decomposition samplers (WASM)', () => {
-    test('all three samplers return non-empty, finite data on s0-seed-proton-candidate', async ({ page }) => {
+    test('all three samplers return non-empty, finite data on s0-vacuum-proton', async ({ page }) => {
         page.on('pageerror', (e) => console.error('PAGEERROR:', e.message));
         await gotoAndReady(page);
 
@@ -35,7 +35,7 @@ test.describe('Force-field decomposition samplers (WASM)', () => {
             if (!b) return { error: 'no bridge' };
             if (typeof b.setupScenario !== 'function') return { error: 'no setupScenario' };
 
-            b.setupScenario('s0-seed-proton-candidate');
+            b.setupScenario('s0-vacuum-proton');
             for (let i = 0; i < 5; i++) b.tick();
 
             // Also probe how many particles the bridge sees via getParticleData,

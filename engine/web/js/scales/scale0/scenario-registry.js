@@ -50,8 +50,8 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Quantum Lab', 'quantum-zeno', 'Quantum Zeno Effect', ['quantum']),
     makeScenario('SM Seeds (epistemic-tagged)', 's0-seed-electron', 'Electron seed', ['seed'], '[CONJECTURE]'),
     makeScenario('SM Seeds (epistemic-tagged)', 's0-seed-photon', 'Photon seed', ['seed'], '[CONJECTURE]'),
-    makeScenario('SM Seeds (epistemic-tagged)', 's0-seed-proton-candidate', 'Proton candidate (3-cluster)', ['seed'], '[CONJECTURE]'),
-    makeScenario('Elementary Particles', 's0-seed-electron-l3', 'Electron (flux-dressed)', ['seed'], '[CONJECTURE]'),
+    // s0-seed-proton-candidate removed 2026-04-28 (audit): use s0-seed-proton-l4 / s0-vacuum-proton.
+    // s0-seed-electron-l3 removed 2026-04-28 (audit): duplicate of s0-vacuum-electron.
     makeScenario('Elementary Particles', 's0-seed-muon', 'Muon (2nd-gen lepton, m_\u03bc/m_e=207)', ['seed'], '[CONJECTURE]'),
     makeScenario('Elementary Particles', 's0-seed-tau', 'Tau (3rd-gen lepton, m_\u03c4/m_e=3477)', ['seed'], '[CONJECTURE]'),
     makeScenario('Elementary Particles', 's0-seed-positron', 'Positron', ['seed'], '[CONJECTURE]'),
@@ -74,15 +74,18 @@ export const SCALE0_SCENARIOS = [
     // LHC Standard Model — processes (2026-04-17)
     makeScenario('SM Processes', 's0-seed-beta-decay', 'Beta decay (n \u2192 p + e\u207b + \u03bd\u0304, dynamic)', ['seed', 'sm', 'process'], '[CONJECTURE]'),
     makeScenario('SM Processes', 's0-seed-ee-annihilation', 'e\u207a e\u207b annihilation (collision \u2192 flux burst)', ['seed', 'sm', 'process'], '[CONJECTURE]'),
-    makeScenario('Elementary Particles', 's0-seed-neutrino', 'Neutrino (chiral)', ['seed'], '[CONJECTURE]'),
-    makeScenario('Elementary Particles', 's0-seed-quark', 'Quark (colored)', ['seed'], '[CONJECTURE]'),
-    makeScenario('Elementary Particles', 's0-seed-antiquark', 'Antiquark', ['seed'], '[CONJECTURE]'),
+    // Audit 2026-04-28 removals: s0-seed-{neutrino, quark, antiquark}.
+    //   neutrino  → superseded by s0-vacuum-{electron,muon,tau}-neutrino
+    //   quark/antiquark → superseded by s0-seed-{up,down,strange,charm,bottom,top}-quark
     makeScenario('Composite Particles', 's0-seed-pion', 'Pion (quark-antiquark)', ['seed'], '[CONJECTURE]'),
     makeScenario('Composite Particles', 's0-seed-proton-l4', 'Proton (3-quark triad)', ['seed'], '[CONJECTURE]'),
     makeScenario('Composite Particles', 's0-seed-neutron', 'Neutron (3-quark triad)', ['seed'], '[CONJECTURE]'),
     makeScenario('Atoms & Molecules', 's0-seed-hydrogen', 'Hydrogen atom', ['seed'], '[CONJECTURE]'),
-    makeScenario('Atoms & Molecules', 's0-seed-helium', 'Helium atom', ['seed'], '[CONJECTURE]'),
-    makeScenario('Atoms & Molecules', 's0-seed-h2-molecule', 'H₂ molecule', ['seed'], '[CONJECTURE]'),
+    makeScenario('Atoms & Molecules', 's0-seed-helium', 'Helium atom (⁴He, 2p+2n + 1s²)', ['seed'], '[CONJECTURE]'),
+    // s0-seed-h2-molecule renamed 2026-04-28 → s0-seed-2-hydrogen-atoms (the body
+    // places two independent H atoms side-by-side with no shared bonding orbital,
+    // so the new name reflects the actual topology).
+    makeScenario('Atoms & Molecules', 's0-seed-2-hydrogen-atoms', 'Two hydrogen atoms (no bond)', ['seed'], '[CONJECTURE]'),
     makeScenario('Gauge / Topological', 's0-seed-wilson-loop', 'Wilson loop', ['seed'], '[CONJECTURE]'),
     makeScenario('Gauge / Topological', 's0-seed-flux-tube', 'Flux tube (q-qbar)', ['seed'], '[CONJECTURE]'),
     makeScenario('Gauge / Topological', 's0-seed-monopole', 'Magnetic monopole', ['seed'], '[CONJECTURE]'),
@@ -342,43 +345,9 @@ export const SCALE0_SCENARIOS = [
             bridge.setupScenario(params.id || 's0-seed-emergent-ic1-isotropic-viz');
         },
     },
-    {
-        id: 's0-seed-symmetry-regression',
-        scale: 'lattice',
-        title: 'Radial 6-axis seed (engine determinism check, T=0)',
-        category: 'Emergent Bound States (FTD-0107)',
-        tags: ['seed', 'regression', 'determinism', 'engine-fix'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[REGRESSION TEST]',
-        load({ bridge }, params = {}) {
-            // 6-axis radial flux at centre with T=0 (no thermal noise).
-            // Demonstrates the post-fix engine's iteration-order-independent
-            // genesis: every voxel's gate decision depends only on
-            // (seed, voxel_idx, tick) via voxel_uniform(); reruns with the
-            // same seed produce byte-identical cluster patterns.
-            //
-            // NOTE this is NOT a spatial-symmetry test — per-voxel hashes
-            // differ across spatially-equivalent voxels, so the spawn
-            // pattern is NOT centro-symmetric (the underlying flux
-            // dynamics are symmetric; the genesis probability gate is
-            // per-voxel-index by design). Spatial-symmetry would require
-            // ensemble averaging over many seeds.
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.0, 0.02);  // T=0
-                }
-            } catch (e) {
-                console.warn('[s0-seed-symmetry-regression] toggle setup partial:', e);
-            }
-            bridge.setupScenario(params.id || 's0-seed-symmetry-regression');
-        },
-    },
+    // s0-seed-symmetry-regression removed 2026-04-28 (audit removal): engine CI
+    // regression artefact (voxel_uniform() determinism check), not user-facing
+    // physics. Fold into engine/tests/ as a ctest if still needed.
 
     // ── Vacuum Particles (s0-vacuum-* group, 2026-04-28) ───────────────
     // 15 single-particle-in-vacuum scenarios. See

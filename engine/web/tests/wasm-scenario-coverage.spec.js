@@ -54,7 +54,7 @@ const NEWLY_PORTED_SCENARIOS = [
     ['s0-seed-electron',      'newly ported',  's0-seed lepton'],
     ['s0-seed-muon',          'newly ported',  's0-seed lepton'],
     ['s0-seed-photon',        'newly ported',  's0-seed boson'],
-    ['s0-seed-proton-candidate', 'newly ported', 's0-seed baryon'],
+    ['s0-seed-proton-l4',     'newly ported',  's0-seed baryon'],
     ['s0-seed-octahedron',    'newly ported',  's0-seed Moore shell'],
     ['s0-seed-cuboctahedron', 'newly ported',  's0-seed Moore shell'],
     ['s0-seed-stella-octangula', 'newly ported', 's0-seed Moore shell'],

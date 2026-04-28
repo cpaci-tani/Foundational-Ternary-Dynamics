@@ -223,6 +223,9 @@ export const S0_SEED_SCENARIO_METADATA = {
         ],
     },
 
+    // s0-seed-proton-candidate metadata removed 2026-04-28 (audit removal):
+    // superseded by s0-seed-proton-l4 / s0-vacuum-proton.
+    /* removed entry preserved below in a comment for reference only:
     's0-seed-proton-candidate': {
         title: 'Proton candidate (3-site positive cluster) \u2014 NOT "uud"',
         desc: 'Three s=+1 particles on an equilateral triangle at the lattice center with weak radial-outward flux dressing. The "u-u-d" story is NOT encoded: FTD has no color axis, no flavor label, no orientation-dependent quark identity. This scenario tests only whether a 3-body positive cluster persists under substrate dynamics.',
@@ -233,6 +236,7 @@ export const S0_SEED_SCENARIO_METADATA = {
             ['LANDMINE', '[WARNING]', 'Do NOT interpret J_x-dominant flux as "red quark" or map vertices to u/d. The BCC\u2192SU(3) link is about the gluon propagator, not per-quark orientation.'],
         ],
     },
+    */
 
     // ── Moore Seeds (geometric) ──────────────────────────────────────
     // Theory: THEOREM_MOORE_LAYER_DECOMPOSITION.md

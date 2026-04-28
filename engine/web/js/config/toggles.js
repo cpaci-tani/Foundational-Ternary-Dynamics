@@ -157,21 +157,17 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-seed-sloop':               [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement']],
     's0-seed-observer-cell':       [['genesis', false, 't-genesis']],
 
-    // Particles — genesis off, gravity on for structure
-    's0-seed-electron-l3':    [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
+    // Particles — genesis off, gravity on for structure.
+    // Audit 2026-04-28: removed s0-seed-{electron-l3, neutrino, quark, antiquark}.
     's0-seed-positron':       [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
-    's0-seed-neutrino':       [['genesis', false, 't-genesis']],
-    // Quarks — need strong force (confinement) to stay bound
-    's0-seed-quark':          [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces']],
-    's0-seed-antiquark':      [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces']],
-    // Composites — strong force essential for binding
+    // Composites — strong force essential for binding.
     's0-seed-pion':           [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force']],
     's0-seed-proton-l4':      [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force']],
     's0-seed-neutron':        [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force']],
-    // Atoms — strong force for nucleus binding + gravity for electron orbit
+    // Atoms — strong force for nucleus binding + gravity for electron orbit.
     's0-seed-hydrogen':       [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],
     's0-seed-helium':         [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],
-    's0-seed-h2-molecule':    [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],
+    's0-seed-2-hydrogen-atoms': [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],
 
     // Field Configurations — genesis off so the field pattern stays clean
     's0-field-plane-wave':       [['genesis', false, 't-genesis']],

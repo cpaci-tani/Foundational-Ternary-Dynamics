@@ -27,9 +27,9 @@ scenarios act as a comparable set rather than a research grab-bag.
 | 1 | `s0-vacuum-electron` | electron e⁻ | wrap existing | s0-seed-electron |
 | 2 | `s0-vacuum-muon` | muon μ⁻ | wrap existing | s0-seed-muon |
 | 3 | `s0-vacuum-tau` | tau τ⁻ | wrap existing | s0-seed-tau |
-| 4 | `s0-vacuum-electron-neutrino` | ν_e | **new** | extend s0-seed-neutrino with flavor=e |
-| 5 | `s0-vacuum-muon-neutrino` | ν_μ | **new** | extend s0-seed-neutrino with flavor=μ |
-| 6 | `s0-vacuum-tau-neutrino` | ν_τ | **new** | extend s0-seed-neutrino with flavor=τ |
+| 4 | `s0-vacuum-electron-neutrino` | ν_e | **new** | flavor=e (1.0× baseline amplitude) |
+| 5 | `s0-vacuum-muon-neutrino` | ν_μ | **new** | flavor=μ (1.3× amplitude) |
+| 6 | `s0-vacuum-tau-neutrino` | ν_τ | **new** | flavor=τ (1.6× amplitude) |
 | 7 | `s0-vacuum-photon` | γ | wrap existing | s0-seed-photon |
 | 8 | `s0-vacuum-w-boson` | W± | wrap existing | s0-seed-w-boson |
 | 9 | `s0-vacuum-z-boson` | Z⁰ | wrap existing | s0-seed-z-boson |
