@@ -201,40 +201,48 @@ export class MockBridge {
             const Ng = this.latticeSize;
             const J = this._fluxJ;
             const maxNewPerTick = 4; // cap to prevent explosion
-            // PERF: compare squared magnitudes first so the sqrt + exp only
-            // run for the (rare) above-threshold voxels. Pre-fix this loop
-            // ran a full sqrt per voxel (~260K calls/tick at L=64) even
-            // though the early-out is hit on >99% of them.
             const K_GENESIS_SQ = K_GENESIS * K_GENESIS;
-            let created = 0;
-            for (let z = 1; z < Ng - 1 && created < maxNewPerTick; z++) {
-                for (let y = 1; y < Ng - 1 && created < maxNewPerTick; y++) {
-                    for (let x = 1; x < Ng - 1 && created < maxNewPerTick; x++) {
+
+            // Two-pass to match the C++ render_bridge.cpp parallel-for genesis
+            // (no positional bias). The legacy single-pass loop hit
+            // maxNewPerTick on the lowest-coord octant first because iteration
+            // order is z<y<x ascending — a symmetric flux shell around centre
+            // therefore spawned voxels biased toward the (0,0,0) corner.
+            //
+            // Pass 1: collect all probability-gated candidates.
+            const candidates = [];
+            for (let z = 1; z < Ng - 1; z++) {
+                for (let y = 1; y < Ng - 1; y++) {
+                    for (let x = 1; x < Ng - 1; x++) {
                         const idx = z * Ng * Ng + y * Ng + x;
                         const jx = J[idx * 3], jy = J[idx * 3 + 1], jz = J[idx * 3 + 2];
                         const mag2 = jx * jx + jy * jy + jz * jz;
                         if (mag2 < K_GENESIS_SQ) continue;
                         const mag = Math.sqrt(mag2);
-
-                        // Probability: p = 1 - exp(-(mag - K_GENESIS) / K_B)
                         const p = 1 - Math.exp(-(mag - K_GENESIS) / K_B);
                         if (Math.random() > p) continue;
-
-                        // Polarity from divergence sign
-                        const divJ = this._divergenceAt(x, y, z);
-                        const state = divJ >= 0 ? 1 : -1;
-
-                        // Create particle
-                        this.injectParticle(x, y, z, state);
-
-                        // Drain flux (energy conservation)
-                        const drain = K_B / (mag + 1e-20);
-                        J[idx * 3]     *= (1 - drain);
-                        J[idx * 3 + 1] *= (1 - drain);
-                        J[idx * 3 + 2] *= (1 - drain);
-                        created++;
+                        candidates.push({ x, y, z, idx, mag });
                     }
                 }
+            }
+
+            // Pass 2: partial Fisher-Yates to pick maxNewPerTick uniformly.
+            const nPick = Math.min(candidates.length, maxNewPerTick);
+            for (let i = 0; i < nPick; i++) {
+                const j = i + Math.floor(Math.random() * (candidates.length - i));
+                const tmp = candidates[i]; candidates[i] = candidates[j]; candidates[j] = tmp;
+            }
+
+            // Pass 3: spawn + drain on the picked candidates.
+            for (let i = 0; i < nPick; i++) {
+                const c = candidates[i];
+                const divJ = this._divergenceAt(c.x, c.y, c.z);
+                const state = divJ >= 0 ? 1 : -1;
+                this.injectParticle(c.x, c.y, c.z, state);
+                const drain = K_B / (c.mag + 1e-20);
+                J[c.idx * 3]     *= (1 - drain);
+                J[c.idx * 3 + 1] *= (1 - drain);
+                J[c.idx * 3 + 2] *= (1 - drain);
             }
         }
 
@@ -386,9 +394,18 @@ export class MockBridge {
             this._forceGravity[k].x = 0; this._forceGravity[k].y = 0; this._forceGravity[k].z = 0;
             this._forceStrong[k].x = 0; this._forceStrong[k].y = 0; this._forceStrong[k].z = 0;
         }
+        // NB: do NOT skip locked pi here. The half-kick / drift loops already
+        // guard `p.locked` so a locked particle won't move; what we must NOT
+        // do is skip the (locked, unlocked) pair entirely, because then the
+        // unlocked partner never sees the force from the locked one. Atomic
+        // scenarios (s0-seed-hydrogen / -helium / -h2-molecule) lock their
+        // proton triads + He nucleus — the orbiting electron must still feel
+        // their Coulomb pull. Pre-2026-04-27 this branch read
+        // `if (pi.state === 0 || pi.locked) continue;` and silently dropped
+        // every locked↔unlocked pair, leaving electrons inert.
         for (let i = 0; i < ps.length; i++) {
             const pi = ps[i];
-            if (pi.state === 0 || pi.locked) continue;
+            if (pi.state === 0) continue;
             for (let j = i + 1; j < ps.length; j++) {
                 const pj = ps[j];
                 if (pj.state === 0) continue;
