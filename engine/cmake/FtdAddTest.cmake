@@ -83,6 +83,18 @@ function(ftd_add_test target source)
         endif()
     endif()
 
+    # Phase 7 (2026-04-27): every test target links ftd_test_support so the
+    # test_telemetry impl (extracted from the header) is available. NO_CORE
+    # targets still need this — the test_telemetry symbols live here, not
+    # in ftd_core. The directory-scope link_libraries(ftd_test_support) call
+    # in CMakeLists.txt covers tests defined via add_executable, but the
+    # ftd_add_test macro must link it explicitly because the call to this
+    # function may precede the link_libraries() statement (e.g. from a
+    # subdirectory) — defensive belt-and-suspenders.
+    if(TARGET ftd_test_support)
+        target_link_libraries(${target} PRIVATE ftd_test_support)
+    endif()
+
     # Register with CTest.
     add_test(NAME ${FAT_CTEST_NAME} COMMAND ${target})
 
