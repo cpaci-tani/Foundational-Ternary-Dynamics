@@ -90,6 +90,11 @@ import { buildBoundary, insideBoundary } from './viewport/boundary-geometry.js';
 // Extracted per refactoring-analyst RF-1. Viewport holds the instance as
 // this._topoRenderer and forwards via thin delegators.
 import { TopologySheetRenderer } from './viewport/topology-sheet-renderer.js';
+// Flux volume + flux streamlines extracted as Phase 3b of the viewport
+// decomposition. Viewport composes a ViewportFluxRenderer and forwards
+// every flux-volume/streamline method through a thin wrapper. See
+// viewport/REFACTOR_MAP.md.
+import { ViewportFluxRenderer } from './viewport/flux-renderer.js';
 
 // Pre-allocated buffer sizes. Particle buffer is fixed at init to avoid
 // dynamic GPU reallocation; draw range controls visible count each frame.
@@ -236,7 +241,8 @@ export class Viewport {
         this.wireframe = null;
         this.showWireframe = true;
         this._wireframeBrightness = 0.18;
-        this.showFlux = true;  // flux volume ON by default
+        // showFlux is owned by FluxRenderer (Phase 3b); see backward-compat
+        // getter/setter near end of class so external code can still read it.
         this.showHeatmap = false;
         this._showAxes = true;   // user preference for axes visibility
         this._showGrid = true;   // user preference for grid visibility
@@ -273,6 +279,22 @@ export class Viewport {
             // Topology toggles trigger quantum-renderer visibility coordination
             // (matches the pre-refactor call to this._quantumSetVisibility()).
             onVisibilityChange: () => this._quantumSetVisibility(),
+        });
+
+        // Flux volume + flux streamlines — extracted Phase 3b. Viewport owns
+        // the orchestrator; FluxRenderer owns its meshes + scenario-scale
+        // helpers. The two streamline-mesh helpers (`_buildStreamlineMesh`
+        // / `_writeStreamlinesIntoMesh`) live on Viewport because Phase 3c
+        // FieldRenderer also uses them — we pass them in as callbacks.
+        this._fluxRenderer = new ViewportFluxRenderer({
+            scene: this.scene,
+            latticeSize: this.latticeSize,
+            halfN: this._halfN,
+            boundaryShape: this._boundaryShape,
+            insideBoundary: (nx, ny, nz) => this._insideBoundary(nx, ny, nz),
+            applyScenarioScale: () => this._applyScenarioScale(),
+            buildStreamlineMesh: (m, o) => this._buildStreamlineMesh(m, o),
+            writeStreamlinesIntoMesh: (m, s, c) => this._writeStreamlinesIntoMesh(m, s, c),
         });
 
         // Axis helper (subtle)
@@ -383,6 +405,7 @@ export class Viewport {
 
     setBoundaryShape(shape) {
         this._buildBoundary(shape, this._boundaryMode);
+        this._fluxRenderer?.setBoundaryShape(shape);
     }
 
     /**
@@ -438,14 +461,9 @@ export class Viewport {
         this._voidBox.position.set(c, c, c);
         this.scene.add(this._voidBox);
 
-        // Rebuild flux volume for new size
-        if (this._fluxVolume) {
-            this.scene.remove(this._fluxVolume);
-            this._fluxVolume.geometry.dispose();
-            this._fluxVolume.material.dispose();
-            this._fluxVolume = null;
-            this._fluxVolumeSize = 0;
-        }
+        // Rebuild flux volume + clear flux-streamlines draw range — owned by
+        // FluxRenderer (Phase 3b extraction).
+        this._fluxRenderer?.onLatticeSizeChanged(size, this._halfN);
         // Rebuild field heatmap for new lattice capacity
         if (this._fieldHeatmap) {
             this.scene.remove(this._fieldHeatmap);
@@ -1108,168 +1126,12 @@ export class Viewport {
     }
 
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
-    // Renders the continuous flux field J as sparse point cloud.
-    // Each voxel above threshold emits a colored dot sized by magnitude.
-    // Subsampling tiers: step=1 for L<=48, step=2 for L<=96, step=4 for L>96.
-    // Boundary clipping uses _insideBoundary() for non-cube shapes.
+    // Phase 3b extracted into ViewportFluxRenderer (./viewport/flux-renderer.js).
+    // This class keeps thin delegators for backward compatibility.
+    _buildFluxVolume(latticeSize) { this._fluxRenderer._buildFluxVolume(latticeSize); }
 
-    _buildFluxVolume(latticeSize) {
-        // Compute the subsampled grid dimension to determine buffer capacity.
-        // Subsampling mirrors updateFluxVolume: step=4 for L>96, step=2 for L>48, else 1.
-        const step = latticeSize > 96 ? 4 : (latticeSize > 48 ? 2 : 1);
-        const sampledN = Math.ceil(latticeSize / step);
-        const maxPts = sampledN * sampledN * sampledN;
-        const positions = new Float32Array(maxPts * 3);
-        const colors = new Float32Array(maxPts * 3);
-        const sizes = new Float32Array(maxPts);
-
-        const geo = new THREE.BufferGeometry();
-        const posAttr = new THREE.Float32BufferAttribute(positions, 3);
-        const colAttr = new THREE.Float32BufferAttribute(colors, 3);
-        const sizeAttr = new THREE.Float32BufferAttribute(sizes, 1);
-        posAttr.setUsage(THREE.DynamicDrawUsage);
-        colAttr.setUsage(THREE.DynamicDrawUsage);
-        sizeAttr.setUsage(THREE.DynamicDrawUsage);
-        geo.setAttribute('position', posAttr);
-        geo.setAttribute('particleColor', colAttr);
-        geo.setAttribute('size', sizeAttr);
-        geo.setDrawRange(0, 0);
-
-        const mat = new THREE.ShaderMaterial({
-            vertexShader: FLUX_VOL_VERT,
-            fragmentShader: PARTICLE_FRAG,
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
-            transparent: true,
-            depthWrite: false,
-            depthTest: true,
-            blending: THREE.NormalBlending,
-        });
-
-        this._fluxVolume = new THREE.Points(geo, mat);
-        this._fluxVolume.visible = false;
-        this._fluxVolume.frustumCulled = false; // skip bounding sphere recompute for dynamic geometry
-        this._fluxVolume.renderOrder = 10; // render after background stars (order 0)
-        this._fluxVolumeSize = latticeSize;
-        this.scene.add(this._fluxVolume);
-    }
-
-    /**
-     * Update flux volume rendering from a flat Float64Array of flux magnitudes.
-     * ALL voxels are rendered: inactive ones as tiny dark dots, active ones with
-     * flux-driven color and size (blue→cyan→white→yellow→red).
-     * @param {Float64Array} volumeData — N^3 flux magnitudes in x-fastest order
-     * @param {number} latticeSize — side length N
-     */
     updateFluxVolume(volumeData, latticeSize) {
-        // Rebuild if missing or if lattice size changed (buffer capacity depends on L)
-        if (!this._fluxVolume || this._fluxVolumeSize !== latticeSize) {
-            if (this._fluxVolume) {
-                this.scene.remove(this._fluxVolume);
-                this._fluxVolume.geometry.dispose();
-                this._fluxVolume.material.dispose();
-                this._fluxVolume = null;
-            }
-            this._buildFluxVolume(latticeSize);
-            // _buildFluxVolume initialises visible=false; restore the user's current
-            // showFlux state so the volume doesn't disappear after a size change.
-            this._fluxVolume.visible = this.showFlux;
-        }
-
-        const posAttr = this._fluxVolume.geometry.getAttribute('position');
-        const colAttr = this._fluxVolume.geometry.getAttribute('particleColor');
-        const sizeAttr = this._fluxVolume.geometry.getAttribute('size');
-        const N = latticeSize;
-
-        // Early exit if no data
-        if (!volumeData || volumeData.length === 0) {
-            this._fluxVolume.geometry.setDrawRange(0, 0);
-            return;
-        }
-
-        // Find max for normalization
-        let maxFlux = 0;
-        const total = N * N * N;
-        for (let i = 0; i < total; i++) {
-            if (volumeData[i] > maxFlux) maxFlux = volumeData[i];
-        }
-
-        // Skip full scan if field is essentially zero
-        if (maxFlux < 1e-20) {
-            this._fluxVolume.geometry.setDrawRange(0, 0);
-            return;
-        }
-
-        // Render every voxel — base dots + flux-driven glow
-        // Clip to boundary shape (normalized coords -1..1 from lattice center)
-        let count = 0;
-        const maxPts = posAttr.array.length / 3;
-        const MAX_SIZE = (this._fluxPointScale || 1.0) * 10.0;
-        const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
-        const halfN = N / 2;
-
-        // Subsample for large lattices to maintain interactive frame rates:
-        //   L<=48:  step=1  → up to 48^3 = 110K points
-        //   L<=96:  step=2  → up to 48^3 = 110K points (from 96^3)
-        //   L>96:   step=4  → up to 32^3 =  32K points (from 128^3)
-        const step = N > 96 ? 4 : (N > 48 ? 2 : 1);
-
-        // PERF: hoist boundary-shape check OUT of the per-voxel loop. For the
-        // default 'cube'/'none' boundary _insideBoundary() always returns
-        // true, but the function-call overhead alone costs ~100K calls per
-        // upload at L=64. Skip the call (and the nx/ny/nz division) entirely
-        // when no clipping is needed.
-        const _bs = this._boundaryShape;
-        const needsClip = !(_bs === 'cube' || _bs === 'none' || _bs === undefined);
-
-        // PERF: cache geometry attribute backing arrays as locals so the JIT
-        // can keep them in registers. posArr/colArr/sizeArr writes dominate
-        // the hot loop.
-        const posArr = posAttr.array;
-        const colArr = colAttr.array;
-        const sizeArr = sizeAttr.array;
-
-        for (let z = 0; z < N && count < maxPts; z += step) {
-            const zNN = z * N * N;
-            for (let y = 0; y < N && count < maxPts; y += step) {
-                const zNNyN = zNN + y * N;
-                for (let x = 0; x < N && count < maxPts; x += step) {
-                    if (needsClip) {
-                        const nx = (x - halfN + 0.5) / halfN;
-                        const ny = (y - halfN + 0.5) / halfN;
-                        const nz = (z - halfN + 0.5) / halfN;
-                        if (!this._insideBoundary(nx, ny, nz)) continue;
-                    }
-
-                    const mag = volumeData[zNNyN + x];
-
-                    // Skip inactive voxels before writing any attributes,
-                    // otherwise stale color/size from a prior frame leak through
-                    if (mag < FLUX_THRESHOLD) continue;
-
-                    const c3 = count * 3;
-                    // +0.5: render at unit-cell centre so voxel 0 sits at 0.5
-                    // and voxel N-1 at N-0.5 — perfectly filling the [0,N] wireframe.
-                    posArr[c3]     = x + 0.5;
-                    posArr[c3 + 1] = y + 0.5;
-                    posArr[c3 + 2] = z + 0.5;
-
-                    // PERF: in-place colormap write. Pre-fix this allocated a
-                    // fresh [r,g,b] array per voxel -- ~1.8M allocs/sec at L=32.
-                    fluxToColorInto(colArr, c3, mag, maxFlux);
-
-                    const t = mag / (maxFlux + 1e-20);
-                    const sizeScale = step > 1 ? step * 0.8 : 1.0; // compensate for subsampling
-                    sizeArr[count] = (1.0 + (MAX_SIZE - 1.0) * t) * sizeScale;
-
-                    count++;
-                }
-            }
-        }
-
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        sizeAttr.needsUpdate = true;
-        this._fluxVolume.geometry.setDrawRange(0, count);
+        this._fluxRenderer.updateFluxVolume(volumeData, latticeSize);
     }
 
     /**
@@ -1337,12 +1199,7 @@ export class Viewport {
         this._fieldHeatmap.geometry.setDrawRange(0, count);
     }
 
-    toggleFluxVolume(on) {
-        if (!this._fluxVolume) this._buildFluxVolume(this.latticeSize);
-        this._fluxVolume.visible = on;
-        this.showFlux = on;
-        if (!on) this._fluxVolume.geometry.setDrawRange(0, 0);
-    }
+    toggleFluxVolume(on) { this._fluxRenderer.toggleFluxVolume(on); }
 
     toggleFluxSlice(on) {
         if (!this._fieldHeatmap) this._buildFieldHeatmap();
@@ -1352,51 +1209,14 @@ export class Viewport {
     }
 
     // ── Flux Volume Controls ──────────────────────────────────────────
+    // Phase 3b — delegated to ViewportFluxRenderer.
 
-    setFluxOpacity(val) {
-        if (!this._fluxVolume) return;
-        this._fluxVolume.material.uniforms.uOpacity.value = val;
-    }
-
-    setFluxShape(shapeIndex) {
-        if (!this._fluxVolume) return;
-        this._fluxVolume.material.uniforms.shapeType.value = shapeIndex;
-    }
-
-    setFluxPointScale(scale) {
-        // Store scale factor; applied in updateFluxVolume via _fluxPointScale
-        this._fluxPointScale = scale;
-    }
-
-    setFluxThreshold(val) {
-        // Store threshold; applied in updateFluxVolume
-        this._fluxThreshold = val;
-    }
-
-    setScenarioScale(scale) {
-        this._scenarioScale = scale;
-        this._applyScenarioScale();
-    }
-
-    /**
-     * Visual-only spacing multiplier for the flux-volume point cloud.
-     * Does NOT affect physics (dx stays 1 voxel). Multiplies the mesh's
-     * local scale so the rendered lattice can be spread out or packed in
-     * for pedagogy, while sampling/thresholds still key off integer
-     * voxel positions.
-     */
-    setFluxLatticeSpacing(val) {
-        this._fluxLatticeSpacing = val;
-        if (this._fluxVolume) {
-            const s = val || 1.0;
-            const N = this.latticeSize || 32;
-            // Re-centre so the expanded/contracted cloud stays visually
-            // anchored on the original lattice origin.
-            const offset = (1 - s) * N / 2;
-            this._fluxVolume.scale.setScalar(s);
-            this._fluxVolume.position.set(offset, offset, offset);
-        }
-    }
+    setFluxOpacity(val) { this._fluxRenderer.setFluxOpacity(val); }
+    setFluxShape(shapeIndex) { this._fluxRenderer.setFluxShape(shapeIndex); }
+    setFluxPointScale(scale) { this._fluxRenderer.setFluxPointScale(scale); }
+    setFluxThreshold(val) { this._fluxRenderer.setFluxThreshold(val); }
+    setScenarioScale(scale) { this._fluxRenderer.setScenarioScale(scale); }
+    setFluxLatticeSpacing(val) { this._fluxRenderer.setFluxLatticeSpacing(val); }
 
     _applyScenarioScale() {
         if (this._engineMode === 'lattice' || !this._engineMode) {
@@ -1746,26 +1566,12 @@ export class Viewport {
     }
 
     // ── Flux Streamlines (flux colormap) ─────────────────────────────
-    _buildFluxStreamlines() {
-        // Same cap as E-field (matching maxSteps profile — see field-overlays.js).
-        this._fluxStreamlines = this._buildStreamlineMesh(300 * 160 * 2, 0.7);
-    }
-
+    // Phase 3b — delegated to ViewportFluxRenderer.
+    _buildFluxStreamlines() { this._fluxRenderer._buildFluxStreamlines(); }
     updateFluxStreamlines(streamlines, maxFluxMag) {
-        if (!this._fluxStreamlines) this._buildFluxStreamlines();
-        const maxMag = maxFluxMag || 1;
-        this._writeStreamlinesIntoMesh(this._fluxStreamlines, streamlines, (i, nPts, rgb) => {
-            const t = i / (nPts - 1);
-            const [r, g, b] = fluxToColor(t * maxMag, maxMag);
-            rgb[0] = r; rgb[1] = g; rgb[2] = b;
-        });
+        this._fluxRenderer.updateFluxStreamlines(streamlines, maxFluxMag);
     }
-
-    toggleFluxStreamlines(on) {
-        if (!this._fluxStreamlines) this._buildFluxStreamlines();
-        this._fluxStreamlines.visible = on;
-        if (!on) this._fluxStreamlines.geometry.setDrawRange(0, 0);
-    }
+    toggleFluxStreamlines(on) { this._fluxRenderer.toggleFluxStreamlines(on); }
 
     // ── EM Force Volume (Cyan arrows — repurposed from generic Forces) ──
     // EM-force volume — cyan arrows. Uses shared arrow-mesh helpers (RF-2).
@@ -3880,10 +3686,13 @@ export class Viewport {
             this._composer = null;
         }
 
+        // Phase 3b: FluxRenderer owns _fluxVolume + _fluxStreamlines.
+        this._fluxRenderer?.dispose();
+
         // Core overlays (geometry+material pairs)
         const simpleOverlays = [
             'velocityVectors', 'trails',
-            '_fieldHeatmap', '_fieldVectors', '_fluxVolume',
+            '_fieldHeatmap', '_fieldVectors',
             '_peStreamlines', '_gravityVectors', '_particleForces',
         ];
         for (const name of simpleOverlays) disposeMesh(this[name]);
@@ -3896,7 +3705,7 @@ export class Viewport {
         // Field visualization overlays (Scale 0 streamlines, volumes, etc.)
         const fieldOverlays = [
             '_eFieldLines', '_bFieldLines', '_poyntingVectors', '_divField',
-            '_fluxStreamlines', '_forceVolume', '_gravityField', '_strongForce', '_weakField',
+            '_forceVolume', '_gravityField', '_strongForce', '_weakField',
             '_forceHeatmap',
             '_dualFluxVolume',
             '_chiralityField', '_lightField',
@@ -3950,4 +3759,27 @@ export class Viewport {
         disposeMesh(this.peAxes);
         disposeMesh(this.peGrid);
     }
+
+    // ── Backward-compat getters/setters for Phase 3b extracted state ──
+    // External code (zoomToFit, hideAllOverlays, _engineMode handlers,
+    // setLatticeSize field-overlay sweep, etc.) reads these directly.
+    // They forward to the FluxRenderer so the existing call sites keep
+    // working without renaming. Remove these once all readers move to
+    // `viewport._fluxRenderer.X`.
+    get _fluxVolume() { return this._fluxRenderer?._fluxVolume; }
+    set _fluxVolume(v) { if (this._fluxRenderer) this._fluxRenderer._fluxVolume = v; }
+    get _fluxVolumeSize() { return this._fluxRenderer?._fluxVolumeSize ?? 0; }
+    set _fluxVolumeSize(v) { if (this._fluxRenderer) this._fluxRenderer._fluxVolumeSize = v; }
+    get _fluxStreamlines() { return this._fluxRenderer?._fluxStreamlines; }
+    set _fluxStreamlines(v) { if (this._fluxRenderer) this._fluxRenderer._fluxStreamlines = v; }
+    get _fluxPointScale() { return this._fluxRenderer?._fluxPointScale ?? 1.0; }
+    set _fluxPointScale(v) { if (this._fluxRenderer) this._fluxRenderer._fluxPointScale = v; }
+    get _fluxThreshold() { return this._fluxRenderer?._fluxThreshold ?? 0.005; }
+    set _fluxThreshold(v) { if (this._fluxRenderer) this._fluxRenderer._fluxThreshold = v; }
+    get _scenarioScale() { return this._fluxRenderer?._scenarioScale ?? 1.0; }
+    set _scenarioScale(v) { if (this._fluxRenderer) this._fluxRenderer._scenarioScale = v; }
+    get _fluxLatticeSpacing() { return this._fluxRenderer?._fluxLatticeSpacing ?? 1.0; }
+    set _fluxLatticeSpacing(v) { if (this._fluxRenderer) this._fluxRenderer._fluxLatticeSpacing = v; }
+    get showFlux() { return this._fluxRenderer?.showFlux ?? true; }
+    set showFlux(v) { if (this._fluxRenderer) this._fluxRenderer.showFlux = v; }
 }
