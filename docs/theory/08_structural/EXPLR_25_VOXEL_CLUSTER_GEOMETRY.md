@@ -1,9 +1,9 @@
 # Exploration — Mathematical Interpretation of the 25-Voxel ic1 Cluster
 
-**Tag:** [EXPLORATORY] / [STRUCTURAL HYPOTHESIS] (mathematical interpretation of an engine measurement; bridges algebra and engine via Moore-26 decomposition)
-**Date:** 2026-04-27
+**Tag:** [EXPLORATORY] / **[STRUCTURAL HYPOTHESIS REFUTED 2026-04-27]** — the L¹-ball-radius-2 topology prediction (§3) was directly tested by `engine/tests/test_emergent_ic1_topology.cpp` and the engine produced a different per-orbit decomposition. See §11 (Corrigendum, end of file) for the refutation details. The remaining content of this document — that 25 = O(2) is the second centered octahedral number, the integer-counting fact — is unaffected.
+**Date:** 2026-04-27 (with corrigendum same day)
 **Builds on:** [`ANALYSIS_EMERGENT_SPECTRUM_G1.md`](../10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md) (FTD-0107: deterministic 25-voxel cluster L-invariant), [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md), [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md), [`THEOREM_MOORE_LAYER_DECOMPOSITION.md`](THEOREM_MOORE_LAYER_DECOMPOSITION.md)
-**Open question (per `WHERE_WE_LEFT_OFF.md` §10):** WHY exactly 25 voxels for the point-injection bound state?
+**Open question (per `WHERE_WE_LEFT_OFF.md` §10):** WHY exactly 25 voxels for the point-injection bound state? (still open; the topology that produces 25 is NOT the L¹-ball-radius-2 — see §11.)
 
 ---
 
@@ -194,3 +194,63 @@ Per `WHERE_WE_LEFT_OFF.md` §10, the load-bearing gap in FTD is the absence of a
 ## 8 · Single-line summary
 
 **The 25-voxel ic1 bound-state cluster (FTD-0107) has a clean structural interpretation: 25 = O(2) is the second centered octahedral number, equal to the count of integer points in the L¹ ball of radius 2 in ℤ³. Decomposed by O_h orbit: 1 (center) + 6 (face1, SC sub-stencil) + 12 (edge, FCC sub-stencil) + 6 (face2 at axis-distance 2). The cluster EXCLUDES the 8 BCC corner voxels at L¹=3 — meaning it lives on the SC + FCC parts of the Moore-26 decomposition, exactly COMPLEMENTARY to the BCC sub-stencil where FTD's algebraic spine (G\*, Watson identity W₃ = G\*²/(2π), master quadratic) lives. The lattice Poisson Green's function on ℤ³ has G(2,0,0) ≈ 0.181 just BARELY above G(1,1,1) ≈ 0.181 (0.07% margin), so a threshold in this gap selects exactly the 25-voxel L¹-ball arrangement (face2 included, BCC corners excluded) — consistent with a Langevin-pumped equilibrium picking this level set self-consistently. Three open questions remain: positional verification (engine instrumentation), derivation of radius=2 from axioms, and quantitative test of the complementarity between cluster (SC+FCC) and spine (BCC) on engine sub-stencil observables. This is the most concrete bridge candidate FTD has found between number-theoretic structure and engine-as-instrument phenomenology — a [STRUCTURAL HYPOTHESIS], not yet [THEOREM].**
+
+---
+
+## 11 · Corrigendum — engine measurement REFUTES the L¹-ball-radius-2 hypothesis (2026-04-27, same day)
+
+The §3 hypothesis ("the cluster is the L¹-ball of radius 2; lives on SC+FCC+face2; EXCLUDES BCC") was tested directly by `engine/tests/test_emergent_ic1_topology.cpp` immediately after this document was written. The test instruments the campaign to dump per-voxel coordinates, computes (L¹, L∞) per voxel, and bins into the Moore-orbit classes.
+
+**Measured topology at L=32, seed 0xE0102000:**
+
+| Orbit | Predicted (§3) | Measured | Status |
+|---|---:|---:|---|
+| center (L¹=0) | 1 | **1** | ✓ |
+| SC face1 (L¹=1, L∞=1) | 6 | **6** | ✓ |
+| FCC edge (L¹=2, L∞=1) | 12 | **7** | ✗ (5 short of prediction) |
+| face2 axis (L¹=2, L∞=2) | 6 | **3** | ✗ (3 short of prediction) |
+| **BCC corner (L¹=3, L∞=1)** | **0** | **8** | **✗ (REFUTES hypothesis)** |
+| edge2 (L¹=3, L∞=2) | 0 | 0 | ✓ |
+| other (L¹ ≥ 4) | 0 | 0 | ✓ |
+| **Total** | **25** | **25** | ✓ |
+
+**The voxel COUNT (25) is correct. The SHAPE is NOT the L¹-ball-radius-2.** Specifically:
+
+- **All 8 BCC corners ARE in the cluster**, contradicting §3's exclusion claim
+- **Only 7 of the 12 FCC edges are present** (5 short)
+- **Only 3 of the 6 face2 voxels are present** (3 short)
+- **No voxels at L¹ ≥ 4** (the cluster is still localised within Moore-1 + Moore-2)
+
+The actual cluster is closer to **Moore-1 + center (= 27 voxels) MINUS 5 FCC edges + 3 face2 from Moore-2** — a 25-voxel arrangement that includes BCC corners and only partially fills the L¹=2 shell.
+
+### What this refutes
+
+**§3 polytope-duality reading: REFUTED.** The cluster does NOT live exclusively on SC + FCC + face2 — it INCLUDES the BCC corners. The "complementary to algebraic spine on BCC" interpretation in `EXPLR_OCTAHEDRAL_BOUND_STATES.md` is therefore also refuted from the engine side. See that document's corrigendum for the parallel update.
+
+**§4 Green's-function level-set reading: PARTIALLY REFUTED.** The 0.07% gap between G(2,0,0) and G(1,1,1) does NOT define the cluster boundary as claimed — the cluster contains BCC corners (G(1,1,1)) AND only a subset of the FCC + face2 voxels at L¹=2. A threshold in the proposed gap would select the L¹-ball-radius-2 shape, not the actual cluster shape.
+
+### What survives
+
+- **§1 (centered octahedral number)**: 25 = O(2) is still a clean math fact about ℤ³. The cluster has 25 voxels; the lattice has the structural number 25 = O(2). Whether the cluster is geometrically O(2)-shaped is now refuted.
+- **§2 (Moore-26 sub-stencil decomposition)**: still useful as a CLASSIFICATION framework. The actual cluster is a specific subset of {center, SC, FCC, BCC, face2} whose precise selection rule is now an open question.
+- **The cluster count itself (FTD-0102 / FTD-0107)**: ROBUST. Engine still produces 25-voxel cluster, deterministic across seeds, L-invariant. T1 and T2 of `test_emergent_ic1_topology.cpp` PASS as regressions.
+- **Localisation**: cluster has no voxels at L¹ ≥ 4. The 25-voxel bound state is still a *localised* phenomenon, just not octahedral-shaped.
+
+### What this opens
+
+The actual topology — "Moore-1 + center MINUS 5 FCC + 3 face2" — is itself a [HYPOTHESIS] that needs verification. Specifically:
+
+- Is this shape **deterministic across seeds**, or does Langevin noise cause seed-specific variations that average to this distribution?
+- Is the **shape symmetric** under O_h, or does it select a specific axis?
+- Does the **shape persist at L=64**, or does the "Moore-1 + center" part change shape?
+
+The next engine measurements should bin per-orbit counts across multiple seeds at L=32 AND L=64 to see whether the per-orbit distribution {1, 6, 7±?, 3±?, 8±?, 0, 0} is robust or has a different structure when averaged.
+
+### Methodological note
+
+This is exactly the discipline working as it should. A hypothesis that looked structurally elegant was directly tested against engine measurement and **refuted**. The refutation came from the very next step (instrumenting the engine), not after months of speculation. The L¹-ball-2 reading is now a documented dead end; the actual topology is the next research question.
+
+The deeper FTD structural gap (per `WHERE_WE_LEFT_OFF.md` §10) is unchanged — algebra and engine still don't have a derivation chain — but one specific bridge candidate (octahedral polytope duality) has been ruled out. The "WHY 25 voxels?" question persists. The "WHAT shape are the 25 voxels?" question is now operationally answerable: per-orbit decomposition is {1, 6, 7, 3, 8, 0, 0} for this seed at L=32, modulo seed-to-seed Langevin variance which we have not yet characterised.
+
+The polytope-duality reading was the cleanest bridge candidate yet; its refutation tightens the structural-gap diagnosis without resolving it.
+

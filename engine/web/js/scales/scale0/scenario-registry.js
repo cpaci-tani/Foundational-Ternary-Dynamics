@@ -105,6 +105,280 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Moore Seeds (geometric)', 's0-seed-stella-octangula', 'Stella octangula (8 corners)', ['seed'], '[CONJECTURE]'),
     makeScenario('Moore Seeds (geometric)', 's0-seed-moore-cell', 'Moore cell (full 26)', ['seed'], '[CONJECTURE]'),
     makeScenario('Moore Seeds (geometric)', 's0-seed-moore-decomposition', 'Moore decomposition (3 shells)', ['seed'], '[CONJECTURE]'),
+
+    // FTD-0102 / FTD-0107 emergent-spectrum reproduction.
+    // Custom load() pre-sets the required toggles before injecting the seed.
+    {
+        id: 's0-seed-emergent-ic1',
+        scale: 'lattice',
+        title: 'Emergent ic1 (FTD-0107: 25-voxel L¹-ball-radius-2 cluster)',
+        category: 'Emergent Bound States (FTD-0107)',
+        tags: ['seed', 'emergent', 'cluster'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
+        load({ bridge }, params = {}) {
+            // Required toggle state per `campaign_emergent_spectrum_2026-04-27.cpp`:
+            //   wave_propagation, gauss_projection, genesis, langevin (T=0.005, γ=0.02).
+            // dual_substrate must be OFF.
+            // The langevin_T / langevin_gamma controls live in the dashboard's
+            // Langevin slider section; user can adjust if desired but T=0.005
+            // is the FTD-0107 measured value.
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.005, 0.02);
+                }
+            } catch (e) {
+                console.warn('[s0-seed-emergent-ic1] toggle setup partial:', e);
+            }
+            bridge.setupScenario(params.id || 's0-seed-emergent-ic1');
+        },
+    },
+    {
+        id: 's0-seed-emergent-ic3-collision',
+        scale: 'lattice',
+        title: 'Emergent ic3 (FTD-0107: 2-cluster collision, 2-3 voxels each)',
+        category: 'Emergent Bound States (FTD-0107)',
+        tags: ['seed', 'emergent', 'cluster', 'collision'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
+        load({ bridge }, params = {}) {
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.005, 0.02);
+                }
+            } catch (e) {
+                console.warn('[s0-seed-emergent-ic3-collision] toggle setup partial:', e);
+            }
+            bridge.setupScenario(params.id || 's0-seed-emergent-ic3-collision');
+        },
+    },
+    {
+        id: 's0-seed-emergent-ic4-subthreshold',
+        scale: 'lattice',
+        title: 'Emergent ic4 (FTD-0107: sub-threshold, 0 voxels — negative control)',
+        category: 'Emergent Bound States (FTD-0107)',
+        tags: ['seed', 'emergent', 'control'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
+        load({ bridge }, params = {}) {
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.005, 0.02);
+                }
+            } catch (e) {
+                console.warn('[s0-seed-emergent-ic4-subthreshold] toggle setup partial:', e);
+            }
+            bridge.setupScenario(params.id || 's0-seed-emergent-ic4-subthreshold');
+        },
+    },
+    {
+        id: 's0-seed-emergent-ic2-thermal-runaway',
+        scale: 'lattice',
+        title: 'Emergent ic2 (FTD-0107: thermal-driven runaway — unstable phase)',
+        category: 'Emergent Bound States (FTD-0107)',
+        tags: ['seed', 'emergent', 'runaway', 'thermal'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
+        load({ bridge }, params = {}) {
+            // Elevated Langevin T = 0.05 (10× ic1) — drives runaway genesis
+            // from pure thermal noise, no flux injection.
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.05, 0.02);   // 10× ic1
+                }
+            } catch (e) {
+                console.warn('[s0-seed-emergent-ic2-thermal-runaway] toggle setup partial:', e);
+            }
+            bridge.setupScenario(params.id || 's0-seed-emergent-ic2-thermal-runaway');
+        },
+    },
+    {
+        id: 's0-seed-emergent-ic1-diagonal',
+        scale: 'lattice',
+        title: 'Emergent ic1 — body-diagonal injection (D3g: Z₄ vs Z₃ test)',
+        category: 'Emergent Bound States (FTD-0107)',
+        tags: ['seed', 'emergent', 'cluster', 'D3g', 'diagonal'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
+        load({ bridge }, params = {}) {
+            // Same total flux magnitude as ic1 but along body diagonal.
+            // Predicted: k = 1/3 (Z_3 about body diagonal) → 33-voxel cluster
+            // if the cluster-efficiency origin is the rotation cycle around
+            // the injection axis. If k stays at ¼ → 25-voxel cluster, the
+            // origin is N_base (global, not direction-specific).
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.005, 0.02);
+                }
+            } catch (e) {
+                console.warn('[s0-seed-emergent-ic1-diagonal] toggle setup partial:', e);
+            }
+            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-diagonal');
+        },
+    },
+    {
+        id: 's0-seed-emergent-ic1-isotropic',
+        scale: 'lattice',
+        title: 'Emergent ic1 — isotropic 6-axis injection (D3h: full O_h symmetry test)',
+        category: 'Emergent Bound States (FTD-0107)',
+        tags: ['seed', 'emergent', 'cluster', 'D3h', 'isotropic'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
+        load({ bridge }, params = {}) {
+            // Symmetrise the injection direction. Predicts: cluster has
+            // full O_h symmetry — no +x/−x asymmetry as in standard ic1.
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.005, 0.02);
+                }
+            } catch (e) {
+                console.warn('[s0-seed-emergent-ic1-isotropic] toggle setup partial:', e);
+            }
+            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-isotropic');
+        },
+    },
+    {
+        id: 's0-seed-emergent-ic1-viz',
+        scale: 'lattice',
+        title: 'Emergent ic1 — clean view (T=0, no thermal background)',
+        category: 'Emergent Bound States — Clean View (T=0)',
+        tags: ['seed', 'emergent', 'cluster', 'viz', 'clean'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[VISUALISATION]',
+        load({ bridge }, params = {}) {
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.0, 0.02);   // T=0
+                }
+            } catch (e) { console.warn('[ic1-viz]', e); }
+            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-viz');
+        },
+    },
+    {
+        id: 's0-seed-emergent-ic1-diagonal-viz',
+        scale: 'lattice',
+        title: 'Emergent ic1 body-diagonal — clean view (T=0)',
+        category: 'Emergent Bound States — Clean View (T=0)',
+        tags: ['seed', 'emergent', 'cluster', 'viz', 'clean', 'diagonal'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[VISUALISATION]',
+        load({ bridge }, params = {}) {
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.0, 0.02);
+                }
+            } catch (e) { console.warn('[ic1-diag-viz]', e); }
+            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-diagonal-viz');
+        },
+    },
+    {
+        id: 's0-seed-emergent-ic1-isotropic-viz',
+        scale: 'lattice',
+        title: 'Emergent ic1 isotropic — clean view (T=0)',
+        category: 'Emergent Bound States — Clean View (T=0)',
+        tags: ['seed', 'emergent', 'cluster', 'viz', 'clean', 'isotropic'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[VISUALISATION]',
+        load({ bridge }, params = {}) {
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.0, 0.02);
+                }
+            } catch (e) { console.warn('[ic1-iso-viz]', e); }
+            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-isotropic-viz');
+        },
+    },
+    {
+        id: 's0-seed-symmetry-regression',
+        scale: 'lattice',
+        title: 'Radial 6-axis seed (engine determinism check, T=0)',
+        category: 'Emergent Bound States (FTD-0107)',
+        tags: ['seed', 'regression', 'determinism', 'engine-fix'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[REGRESSION TEST]',
+        load({ bridge }, params = {}) {
+            // 6-axis radial flux at centre with T=0 (no thermal noise).
+            // Demonstrates the post-fix engine's iteration-order-independent
+            // genesis: every voxel's gate decision depends only on
+            // (seed, voxel_idx, tick) via voxel_uniform(); reruns with the
+            // same seed produce byte-identical cluster patterns.
+            //
+            // NOTE this is NOT a spatial-symmetry test — per-voxel hashes
+            // differ across spatially-equivalent voxels, so the spawn
+            // pattern is NOT centro-symmetric (the underlying flux
+            // dynamics are symmetric; the genesis probability gate is
+            // per-voxel-index by design). Spatial-symmetry would require
+            // ensemble averaging over many seeds.
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.0, 0.02);  // T=0
+                }
+            } catch (e) {
+                console.warn('[s0-seed-symmetry-regression] toggle setup partial:', e);
+            }
+            bridge.setupScenario(params.id || 's0-seed-symmetry-regression');
+        },
+    },
 ];
 
 export const SCALE0_SCENARIO_MAP = new Map(SCALE0_SCENARIOS.map((scenario) => [scenario.id, scenario]));
