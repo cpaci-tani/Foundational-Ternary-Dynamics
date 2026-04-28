@@ -70,7 +70,13 @@ export function setupQuantumScenario(name, ctx) {
                     break;
                 }
                 case 'quantum-tunnel': {
-                    // Gaussian flux packet → barrier of locked particles → tunneling
+                    // Gaussian flux packet → barrier of locked particles → tunneling.
+                    // genesis=false (audit-2 2026-04-28): the flux packet
+                    // should TUNNEL through the barrier, not pair-produce.
+                    // The 3072 initial particles are the locked barrier
+                    // (32×32×W=3 wall) and stay constant; the wave was
+                    // otherwise manifesting ~28k by t=200.
+                    this._toggles.genesis = false;
                     const sigma = N / 12;
                     const amp = K_B * 2;
                     const packetX = Math.floor(N / 4);
@@ -145,7 +151,12 @@ export function setupQuantumScenario(name, ctx) {
                     break;
                 }
                 case 'quantum-aharonov-bohm': {
-                    // Solenoid flux tube + two packets passing on opposite sides
+                    // Solenoid flux tube + two packets passing on opposite sides.
+                    // genesis=false (audit-2 2026-04-28): the A-B effect is a
+                    // *gauge-phase* phenomenon — the packets should NOT
+                    // pair-produce while traversing the solenoid. Without
+                    // this, ~31k particles by t=200.
+                    this._toggles.genesis = false;
                     const R = Math.floor(N / 8);
                     // Confined flux tube along z at center (solenoid)
                     for (let z = 0; z < N; z++)

@@ -52,7 +52,12 @@ export function setupLightScenario(name, ctx) {
                     break;
                 }
                 case 'light-dipole': {
-                    // Gaussian z-directed pulse → sin²θ radiation
+                    // Gaussian z-directed pulse → sin²θ radiation.
+                    // genesis=false (audit-2 2026-04-28): classical EM
+                    // dipole radiation is not a pair-producer; the
+                    // wave evolution would otherwise manifest ~29k
+                    // particles by t=200.
+                    this._toggles.genesis = false;
                     const sigma = 3;
                     const dAmp = 0.5;
                     for (let x = 0; x < N; x++)
@@ -68,7 +73,11 @@ export function setupLightScenario(name, ctx) {
                     break;
                 }
                 case 'light-two-slit': {
-                    // Two coherent line sources offset in y, propagating in +x
+                    // Two coherent line sources offset in y, propagating in +x.
+                    // genesis=false (audit-2 2026-04-28): classical
+                    // double-slit interference; should NOT manifest
+                    // particles. Without this, ~31k particles by t=200.
+                    this._toggles.genesis = false;
                     const sigma = 2;
                     const sAmp = 0.3;
                     const slit_sep = Math.floor(N / 6);

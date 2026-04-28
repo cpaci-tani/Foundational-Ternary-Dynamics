@@ -42,6 +42,8 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "light-dipole") {
+        // genesis=false (audit-2 2026-04-28): classical EM dipole — not a pair-producer.
+        rb.toggles.genesis = false;
         const int sigma = 3;
         const double dAmp = 0.5;
         for (int x = 0; x < N; x++) for (int y = 0; y < N; y++) for (int z = 0; z < N; z++) {
@@ -53,6 +55,8 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "light-two-slit") {
+        // genesis=false (audit-2 2026-04-28): classical interference — should not pair-produce.
+        rb.toggles.genesis = false;
         const int sigma = 2;
         const double sAmp = 0.3;
         const int slit_sep = N / 6;

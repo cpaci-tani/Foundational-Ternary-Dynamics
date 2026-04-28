@@ -74,7 +74,12 @@ export function setupFluxScenario(name, ctx) {
                     break;
                 }
                 case 'flux-soliton': {
-                    // Large amplitude nonlinear pulse — centered at midF
+                    // Large amplitude nonlinear pulse — centered at midF.
+                    // genesis=false (audit-2 2026-04-28): a soliton is a
+                    // *non-dispersive localized wave*, not a pair-producer;
+                    // the high amp * 10 exceeded K_GENESIS as the wave
+                    // evolved, manifesting ~28k particles by t=200.
+                    this._toggles.genesis = false;
                     const sLo = Math.floor(midF) - 3, sHi = Math.ceil(midF) + 3;
                     for (let z = sLo; z <= sHi; z++) for (let y = sLo; y <= sHi; y++) for (let x = sLo; x <= sHi; x++) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;

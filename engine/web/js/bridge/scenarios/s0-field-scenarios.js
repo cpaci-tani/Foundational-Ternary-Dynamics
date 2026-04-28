@@ -64,7 +64,13 @@ export function setupS0FieldScenario(name, ctx) {
                 }
 
                 case 's0-field-uniform-e': {
-                    // Uniform E field in the +x direction
+                    // Uniform E field in the +x direction.
+                    // genesis=false (audit-2 2026-04-28): a static uniform
+                    // E field shouldn't fill the entire lattice with
+                    // manifested particles. Schwinger-effect pair production
+                    // at this lattice scale is unphysical. Without this,
+                    // 32767 particles (≈INT16_MAX cap) by t=30.
+                    this._toggles.genesis = false;
                     const eMag = 0.1;
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
