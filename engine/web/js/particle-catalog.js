@@ -97,12 +97,10 @@ const PARTICLES = [
     {
         id: 'nu_e', name: 'Electron Neutrino', symbol: 'νₑ',
         category: 'leptons', generation: 1,
-        // [TODO Theme H — neutrino mass literal value mismatches both
-        // its own "4.1 neV" comment AND the M_NU_E_PHYS=4.1e-9 MeV in
-        // constants.js (this evaluates to 4.1e-12 MeV = 4.1 µeV).
-        // Preserved verbatim to avoid silent UI value shift; revisit
-        // when neutrino-mass display is audited as a unit.]
-        mass_mev: 4.1e-9 * 1e-3, charge: 0, spin: 0.5,
+        // 2026-04-27 audit: dropped a stray ×1e-3 unit-mismatch factor that
+        // made the catalog 1000× lighter than M_NU_E_PHYS = 4.1e-9 MeV in
+        // constants.js. Now matches the canonical value (sum-of-masses ~0.06 eV).
+        mass_mev: 4.1e-9, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_e',
         ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 neV',
         ftd_accuracy: null, ftd_status: 'derived',
@@ -111,8 +109,8 @@ const PARTICLES = [
     {
         id: 'antinu_e', name: 'Electron Antineutrino', symbol: 'ν̄ₑ',
         category: 'leptons', generation: 1,
-        // [TODO Theme H — see nu_e for unit/value mismatch note]
-        mass_mev: 4.1e-9 * 1e-3, charge: 0, spin: 0.5,
+        // 2026-04-27 audit: same ×1e-3 factor drop as nu_e above.
+        mass_mev: 4.1e-9, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_e',
         ftd_formula: 'm_ν₁ (same mass)',
         ftd_accuracy: null, ftd_status: 'derived',
@@ -121,7 +119,7 @@ const PARTICLES = [
     {
         id: 'nu_mu', name: 'Muon Neutrino', symbol: 'νμ',
         category: 'leptons', generation: 2,
-        mass_mev: 8.58e-3 * 1e-3, charge: 0, spin: 0.5,
+        mass_mev: 8.58e-3, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_mu',
         ftd_formula: 'm₃·√N_c/(b₃+N_c) ≈ 8.6 meV',
         ftd_accuracy: null, ftd_status: 'derived',
@@ -130,7 +128,7 @@ const PARTICLES = [
     {
         id: 'antinu_mu', name: 'Muon Antineutrino', symbol: 'ν̄μ',
         category: 'leptons', generation: 2,
-        mass_mev: 8.58e-3 * 1e-3, charge: 0, spin: 0.5,
+        mass_mev: 8.58e-3, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_mu',
         ftd_formula: 'm_ν₂ (same mass)',
         ftd_accuracy: null, ftd_status: 'derived',
@@ -139,7 +137,7 @@ const PARTICLES = [
     {
         id: 'nu_tau', name: 'Tau Neutrino', symbol: 'ντ',
         category: 'leptons', generation: 3,
-        mass_mev: 4.955e-2 * 1e-3, charge: 0, spin: 0.5,
+        mass_mev: 4.955e-2, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_tau',
         ftd_formula: 'v·(N_base/N_c)·α⁶ ≈ 49.6 meV',
         ftd_accuracy: null, ftd_status: 'derived',
@@ -148,7 +146,7 @@ const PARTICLES = [
     {
         id: 'antinu_tau', name: 'Tau Antineutrino', symbol: 'ν̄τ',
         category: 'leptons', generation: 3,
-        mass_mev: 4.955e-2 * 1e-3, charge: 0, spin: 0.5,
+        mass_mev: 4.955e-2, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_tau',
         ftd_formula: 'm_ν₃ (same mass)',
         ftd_accuracy: null, ftd_status: 'derived',
