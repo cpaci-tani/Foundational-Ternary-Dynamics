@@ -65,6 +65,9 @@ export function setupVacuumScenario(name, ctx) {
         case 's0-vacuum-photon': {
             // Mirror of s0-seed-photon — J_z-polarized Gaussian pulse
             // propagating +x. c = 1/√3 [THEOREM] from cubic-lattice CFL.
+            // genesis=false (audit 2026-04-28): a free EM wave should not
+            // spontaneously pair-produce.
+            this._toggles.genesis = false;
             const sigma = 3;
             const pAmp = K_B * 2;
             const pStartX = Math.max(4, Math.floor(N / 4));

@@ -82,6 +82,8 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         seed_lepton(rb, mc, midF, N, boost);
     }
     else if (name == "s0-seed-photon") {
+        // genesis=false (audit 2026-04-28): a free EM wave should not pair-produce.
+        rb.toggles.genesis = false;
         const int sigma = 3;
         const double pAmp = K_B * 2.0;
         const int pStartX = std::max(4, N / 4);
@@ -402,10 +404,28 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         dp(rb, mc, mc, mc + oR, -1, -1, 0, 2, K_B, false);
     }
     else if (name == "s0-seed-helium") {
+        // ⁴He / α-particle (audit 2026-04-28 fix): 2 protons + 2 neutrons
+        // at tetrahedral vertices + 2 electrons in 1s² shell. Each nucleon
+        // is a 3-quark triad. Mirrors JS s0-seed-helium body.
         const int oR = std::max(3, N / 8);
-        dp(rb, mc, mc, mc,       +1, 0, 0, 2, K_B * 3.0, true);
-        dp(rb, mc, mc, mc + oR,  -1, +1, 0, 2, K_B * 0.8, false);
-        dp(rb, mc, mc, mc - oR,  -1, -1, 0, 2, K_B * 0.8, false);
+        const int nR = std::max(2, N / 12);
+        const int bR = std::max(1, N / 16);
+        const int tet[4][3] = {
+            { +nR, +nR, +nR },   // proton 1
+            { -nR, -nR, +nR },   // proton 2
+            { +nR, -nR, -nR },   // neutron 1
+            { -nR, +nR, -nR },   // neutron 2
+        };
+        const int pCharges[3] = { +1, +1, -1 };
+        const int nCharges[3] = { +1, -1, -1 };
+        const int colors[3]   = { 1, 2, 3 };
+        for (int i = 0; i < 4; ++i) {
+            const int* charges = (i < 2) ? pCharges : nCharges;
+            tri(rb, mc + tet[i][0], mc + tet[i][1], mc + tet[i][2],
+                charges, colors, bR, true);
+        }
+        dp(rb, mc, mc, mc + oR, -1, +1, 0, 2, K_B * 0.8, false);
+        dp(rb, mc, mc, mc - oR, -1, -1, 0, 2, K_B * 0.8, false);
     }
     else if (name == "s0-seed-h2-molecule") {
         const int bd = std::max(4, N / 6), hf = bd / 2;
@@ -498,6 +518,8 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-gluon") {
+        // genesis=false (audit 2026-04-28): same fix as photon.
+        rb.toggles.genesis = false;
         const int sigma = 3;
         const double gAmp = K_B * 2.0;
         const int startX = std::max(4, N / 4);
@@ -514,6 +536,10 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     }
     // ── Process demos ──
     else if (name == "s0-seed-beta-decay") {
+        // Audit 2026-04-28: auto-enable required toggles so the decay
+        // actually fires by default (mirrors JS s0-seed-beta-decay).
+        rb.toggles.weak_transmutation = true;
+        rb.toggles.dual_substrate = true;
         const int bdR = std::max(2, N / 10);
         for (int k = 0; k < 3; k++) {
             double ang = (2.0 * PI * k) / 3.0;
