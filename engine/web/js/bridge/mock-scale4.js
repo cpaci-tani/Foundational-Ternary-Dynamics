@@ -11,6 +11,14 @@
  * - Time: Earth Years (yr)
  * - Velocity: AU / FTD_Time
  * -> Gravitational Constant G = G_N = 0.01
+ *
+ * NOTE: G = G_N here is decorative cadence — it sets the integrator step
+ * scale so animations play at a watchable rate. It is NOT the
+ * Keplerian/heliocentric constant (which would be 4π² in AU·M_sun·yr).
+ * Orbital periods/velocities therefore won't match real solar-system
+ * Kepler values. For physically calibrated heliocentric dynamics use
+ * `G_HELIOCENTRIC` from constants.js. The figure-8 scenario below sets
+ * G=1 deliberately (Chenciner–Montgomery natural units).
  */
 
 import { EXOPLANET_SEEDS } from '../config/exoplanet-seeds.js';
@@ -90,6 +98,8 @@ export class PlanetaryMockBridge {
             this.addBody(T.GAS_GIANT, 3.00e-6, 0.05, rp, 0, 0, 0, vp, 0);
         } else if (name === 'planetary-threebody') {
             // Figure-8 (Chenciner-Montgomery 2000). Requires G=1, so temporarily override.
+            // The G=1.0 below is the intentional figure-8 unit convention
+            // (Chenciner–Montgomery natural units) and is NOT a physics value.
             const savedG = this.G;
             this.G = 1.0;
             this.addBody(T.STAR, 1.0, 0.5, 0.97000436, -0.24308753, 0, 0.466203685, 0.43236573, 0);

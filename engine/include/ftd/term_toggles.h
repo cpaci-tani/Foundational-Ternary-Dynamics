@@ -32,6 +32,19 @@ struct TermToggles {
     bool emergent_forces = false;  // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
     bool langevin = false;         // Stochastic thermalization: OU process on wave_vel with (gamma, T)
 
+    // D-3 / E-1 (2026-04-27): JS scale-0 scenario library has been pushing a
+    // `confinement` bool through setToggle(); without a backing field the
+    // value was silently dropped by the binding map. The C++ confinement
+    // physics is implemented inside compute_color_force()'s three-regime
+    // profile (Coulomb / transition / linear), gated on `color_forces` and
+    // `strong_force`. This field exists so JS overrides land somewhere
+    // observable; it is ALIASED to "color_forces && strong_force linear regime
+    // active" and is not yet consumed by any C++ branch. Treat it as an
+    // intent flag — a future refactor that splits the linear regime out of
+    // compute_color_force() will gate on this directly. Default false so
+    // toggle scenarios that don't ask for it stay in the legacy code path.
+    bool confinement = false;
+
     // Cluster A (FTD-0093 / Mechanism C): sublattice stencil mode for phase_read.
     // FULL preserves the legacy 18-pt (σ_SC + σ_FCC)/2 path. SC, FCC, BCC select
     // a single sub-stencil — required for the BCC-projected spectrum measurement
@@ -99,6 +112,17 @@ struct TermToggles {
         // Cluster A: a non-default Langevin site filter requires Langevin to be on.
         if (langevin_site_filter != SiteClass::ALL_SITES && !langevin)
             msg += "langevin_site_filter != ALL_SITES requires langevin=true\n";
+        // E-2 / RF-9 (2026-04-27): additional toggle dependency checks.
+        if (langevin && larmor_radiation)
+            msg += "langevin and larmor_radiation are mutually exclusive (both modulate wave_vel damping)\n";
+        if (selective_damping && !damping)
+            msg += "selective_damping has no effect with damping=false\n";
+        if (pair_production && !genesis)
+            msg += "pair_production requires genesis (it is an enhanced manifestation path)\n";
+        if (bcc_stencil != BccStencilMode::FULL && !wave_propagation)
+            msg += "bcc_stencil != FULL requires wave_propagation=true (sublattice projection requires the wave path)\n";
+        if (triad_binding && !dual_substrate)
+            msg += "triad_binding requires dual_substrate (operates on J_L/J_R)\n";
         if (err) *err = msg;
         return msg.empty();
     }

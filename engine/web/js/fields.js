@@ -6,7 +6,7 @@
  * (Scale 1) and AtomEngine (Scale 2).
  */
 
-import { ALPHA, G_N } from './constants.js';
+import { ALPHA, G_N, COULOMB_K_FORCE } from './constants.js';
 import { AE_K_COULOMB } from './atomic-props.js';
 
 const FOUR_PI = 4.0 * Math.PI;
@@ -62,11 +62,11 @@ export function samplePEField(sources, gridPos, gridCount, soft = 0.5) {
             const r = Math.sqrt(r2);
             const qi = sources.charges[i];
 
-            // Coulomb potential: φ = α·q / (4π·r)
-            phi += ALPHA * qi / (FOUR_PI * r);
+            // Coulomb potential: φ = COULOMB_K_FORCE·q / r  (= α·q / (4π·r))
+            phi += COULOMB_K_FORCE * qi / r;
 
-            // E-field at grid point: E = α·q/(4π·r²)·r̂  (r̂ = dx/r, from source to grid)
-            const fMag = ALPHA * qi / (FOUR_PI * r2);
+            // E-field at grid point: E = COULOMB_K_FORCE·q/r²·r̂  (r̂ = dx/r, from source to grid)
+            const fMag = COULOMB_K_FORCE * qi / r2;
             fx += fMag * dx / r;
             fy += fMag * dy / r;
             fz += fMag * dz / r;
@@ -110,9 +110,9 @@ export function samplePECoulombOnly(sources, gridPos, gridCount, soft = 0.5) {
             const r = Math.sqrt(r2);
             const qi = sources.charges[i];
 
-            phi += ALPHA * qi / (FOUR_PI * r);
-            // E-field at grid point: E = α·q/(4π·r²)·r̂  (r̂ = dx/r, from source to grid)
-            const fMag = ALPHA * qi / (FOUR_PI * r2);
+            phi += COULOMB_K_FORCE * qi / r;
+            // E-field at grid point: E = COULOMB_K_FORCE·q/r²·r̂  (r̂ = dx/r, from source to grid)
+            const fMag = COULOMB_K_FORCE * qi / r2;
             fx += fMag * dx / r;
             fy += fMag * dy / r;
             fz += fMag * dz / r;
@@ -201,8 +201,8 @@ export function makePECoulombFieldFn(sources, soft = 0.5) {
             const r = Math.sqrt(r2);
             const qi = sources.charges[i];
 
-            // E = α·q/(4π·r²)·r̂  (r̂ = dx/r, from source to field point)
-            const fMag = ALPHA * qi / (FOUR_PI * r2);
+            // E = COULOMB_K_FORCE·q/r²·r̂  (r̂ = dx/r, from source to field point)
+            const fMag = COULOMB_K_FORCE * qi / r2;
             fx += fMag * dx / r;
             fy += fMag * dy / r;
             fz += fMag * dz / r;

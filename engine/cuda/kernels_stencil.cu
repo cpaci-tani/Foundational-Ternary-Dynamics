@@ -10,6 +10,7 @@
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
 #include "ftd/sublattice.h"   // N_FACE, N_EDGE, N_CORNER, W_SC_FACE, W_FCC_EDGE, W_BCC_CORNER
+#include "../cuda/cuda_index.cuh"   // ftd::wrap, ftd::idx3d (X-major flat layout)
 #include <cuda_runtime.h>
 #include <cmath>
 #include <cstdio>   // fprintf — Linux/clang stricter than MSVC
@@ -29,16 +30,20 @@ namespace gpu {
 namespace kernels {
 
 // ---------- Device helpers ----------
+// F-8 (2026-04-27): shared shims onto ::ftd::wrap / ::ftd::idx3d in
+// engine/cuda/cuda_index.cuh. The local definitions used to live here and in
+// kernels_forces.cu; both have been collapsed into the header so geometry-
+// affecting fixes touch one place. Kept under the same name so all
+// existing call sites in this TU compile unchanged.
 
 __device__ __forceinline__
 int wrap(int x, int L) {
-    return ((x % L) + L) % L;
+    return ::ftd::wrap(x, L);
 }
 
 __device__ __forceinline__
 int idx3d(int x, int y, int z, int L) {
-    // CRIT-3 fix: match CPU X-major layout (was Z-major: z*L²+y*L+x)
-    return wrap(x, L) * L * L + wrap(y, L) * L + wrap(z, L);
+    return ::ftd::idx3d(x, y, z, L);
 }
 
 // Compute effective damping coefficient at site i. Centralised so the
@@ -127,8 +132,8 @@ __global__ void phase_read_kernel(
             int xz_mp = idx3d(x-1,y,z+1,L), xz_mm = idx3d(x-1,y,z-1,L);
             int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
             int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
-            constexpr double WF = 1.0/3.0;
-            constexpr double WE = 1.0/6.0;
+            constexpr double WF = LAPLACIAN_FACE_WEIGHT;
+            constexpr double WE = LAPLACIAN_EDGE_WEIGHT;
             double face_x = flux_x[xp]+flux_x[xm]+flux_x[yp]+flux_x[ym]+flux_x[zp]+flux_x[zm];
             double edge_x = flux_x[xy_pp]+flux_x[xy_pm]+flux_x[xy_mp]+flux_x[xy_mm]
                           + flux_x[xz_pp]+flux_x[xz_pm]+flux_x[xz_mp]+flux_x[xz_mm]
@@ -428,8 +433,8 @@ __global__ void wave_update_kernel(
         int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
         int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
 
-        constexpr double WF = 1.0/3.0;
-        constexpr double WE = 1.0/6.0;
+        constexpr double WF = LAPLACIAN_FACE_WEIGHT;
+        constexpr double WE = LAPLACIAN_EDGE_WEIGHT;
         constexpr double cw2 = C_WAVE * C_WAVE;
 
         double face_x = flux_x[xp] + flux_x[xm] + flux_x[yp] + flux_x[ym]
@@ -685,7 +690,7 @@ __global__ void phase_read_dual_kernel(
         int yz_pp = idx3d(x,y+1,z+1,L), yz_pm = idx3d(x,y+1,z-1,L);
         int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
 
-        constexpr double WF = 1.0/3.0, WE = 1.0/6.0;
+        constexpr double WF = LAPLACIAN_FACE_WEIGHT, WE = LAPLACIAN_EDGE_WEIGHT;
         constexpr double cw2 = C_WAVE * C_WAVE;
 
         // Macro for 18-point Laplacian on a single component array

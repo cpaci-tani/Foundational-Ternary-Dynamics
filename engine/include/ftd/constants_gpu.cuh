@@ -34,3 +34,11 @@ inline constexpr double VERTEX_GAUGE_NUM          = 11.0 / 6.0;            // c3
 inline constexpr double EDGE_GAUGE_NUM            = 13.0 / 9.0;            // c2 loop gauge
 inline constexpr double VERTEX_GAUGE = VERTEX_GAUGE_NUM / STELLA_OCTA_NEIGHBOR_NORM;
 inline constexpr double EDGE_GAUGE   = EDGE_GAUGE_NUM   / CUBOCTA_NEIGHBOR_NORM;
+
+// NOTE: GRAD_TIER1_SCALE, GRAD_TIER2_SCALE, LAPLACIAN_FACE_WEIGHT, and
+// LAPLACIAN_EDGE_WEIGHT are defined in include/ftd/constants.h (host) inside
+// `namespace ftd`. The CUDA kernels in this directory live in
+// `namespace ftd::gpu::kernels` and resolve them via ordinary unqualified
+// name lookup, so we deliberately do NOT redeclare them here — doing so
+// at global scope would create a second entity with the same simple name
+// and make every consumer ambiguous when both headers are in scope.
