@@ -133,6 +133,8 @@ add_library(ftd_core
     src/injection.cpp                # R5: inject_flux/particle/wavepacket + aggregate profile
     # Phase 4a — phase_write decomposition (2026-04-27, ADR-0008)
     src/render_bridge_phases/phase_write.cpp  # leapfrog + damping + genesis + evaporation
+    # Phase 4b — phase_forces decomposition (2026-04-27, ADR-0008)
+    src/render_bridge_phases/phase_forces.cpp # EM/gravity/Lorentz/color + γ_FTD integration
     src/backend.cpp                  # ARCH-2: CpuBackend / GpuBackend abstraction over use_gpu_ ifdef
     src/bridge_rng.cpp               # RF-9: PIMPL'd <random> state to keep render_bridge.h slim
     # Cosmic engine split (CE1-CE5, 2026-04-19)
