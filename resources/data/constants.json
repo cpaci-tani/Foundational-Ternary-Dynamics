@@ -1,8 +1,9 @@
 {
   "_meta": {
     "source": "scripts/constants.py",
-    "version": "5.30",
+    "version": "5.33",
     "canonical": true,
+    "last_synced": "2026-04-27",
     "note": "If this file drifts from scripts/constants.py, the Python module wins. Regenerate by hand when constants.py changes."
   },
 
@@ -19,22 +20,22 @@
   "math_primitives": {
     "GAMMA_QUARTER":      { "value": 3.62560990,   "meaning": "Gamma(1/4)" },
     "GAMMA_HALF":         { "value": 1.77245385,   "meaning": "Gamma(1/2) = sqrt(pi)" },
-    "GAMMA_THREE_QUARTER":{ "value": 1.22541670,   "meaning": "Gamma(3/4)" },
-    "G_STAR":             { "value": 2.95867513,   "meaning": "Gamma(1/4)/Gamma(3/4) = lemniscatic bridge constant" },
-    "VARPI_CLASSICAL":    { "value": 2.62205755,   "meaning": "classical lemniscate constant" },
-    "R_GAMMA":            { "value": 4.18388074,   "meaning": "Gamma(1/4)^2 / Gamma(1/2)^2; single dimensionless framework ratio" },
-    "PF":                 { "value": 0.78539816,   "meaning": "packing fraction = pi/4" },
-    "PHI":                { "value": 1.61803399,   "meaning": "golden ratio" },
-    "EPSILON":            { "value": 0.0046942478, "meaning": "e^pi - pi - 20 (CFT anomaly residual)" }
+    "GAMMA_THREE_QUARTER":{ "value": 1.2254167024651774,  "meaning": "Gamma(3/4)" },
+    "G_STAR":             { "value": 2.9586751191886385,  "meaning": "Gamma(1/4)/Gamma(3/4) = lemniscatic bridge constant" },
+    "VARPI_CLASSICAL":    { "value": 2.622057554292119,   "meaning": "classical lemniscate constant" },
+    "R_GAMMA":            { "value": 4.184198480212407,   "meaning": "Gamma(1/4)^2 / Gamma(1/2)^2; single dimensionless framework ratio" },
+    "PF":                 { "value": 0.7853981633974483,  "meaning": "packing fraction = pi/4" },
+    "PHI":                { "value": 1.618033988749895,   "meaning": "golden ratio" },
+    "EPSILON":            { "value": -0.000900020810526314, "meaning": "e^pi - pi - 20 (CFT anomaly residual; small NEGATIVE quantity)" }
   },
 
   "master_quadratic": {
     "equation": "x^2 - 16 G*^2 x + 16 G*^3 = 0",
-    "x_plus_tree":      137.030,
-    "x_plus_4term":     137.0359989,
+    "x_plus_tree":      137.03617145815548,
+    "x_plus_4term":     137.035999177,
     "x_plus_one_loop":  137.036000,
-    "x_minus":          3.024,
-    "root_separation":  134.012
+    "x_minus":          3.0239639163390137,
+    "root_separation":  134.01220754181647
   },
 
   "loop_coefficients": {

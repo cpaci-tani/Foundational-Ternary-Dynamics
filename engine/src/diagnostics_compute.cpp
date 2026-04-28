@@ -89,8 +89,14 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
 
   for (int i = 0; i < N; ++i) {
     const auto &v = voxels[i];
-    a.field_energy += v.flux.mag2();
-    a.wave_energy  += v.wave_vel.mag2();
+    // Field energies follow the canonical ½·|·|² convention used by
+    // engine/src/lagrangian.cpp and engine/web/js/bridge/mock-diagnostics.js.
+    // Pre-2026-04-27 this site dropped the ½ on field_energy / wave_energy,
+    // making MockBridge report half the WasmBridge value for the SAME
+    // scenario — the Energy Budget chart and Lagrangian readout silently
+    // jumped 2× when the user switched bridges.
+    a.field_energy += 0.5 * v.flux.mag2();
+    a.wave_energy  += 0.5 * v.wave_vel.mag2();
 
     Vec3 E = v.wave_vel * -1.0;
     Vec3 B = rb.curl_flux(i);
@@ -105,10 +111,11 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
       // Split flux-channel and wave-channel energies separately so
       // the dashboard's Dual Substrate panel can render them as
       // distinct columns (E_L / E_R = flux; Wave L / R = wave_vel).
-      a.E_L_total += v.flux_L.mag2();
-      a.E_R_total += v.flux_R.mag2();
-      a.wv_L_total += v.wave_vel_L.mag2();
-      a.wv_R_total += v.wave_vel_R.mag2();
+      // Same ½·|·|² convention as field_energy / wave_energy above.
+      a.E_L_total += 0.5 * v.flux_L.mag2();
+      a.E_R_total += 0.5 * v.flux_R.mag2();
+      a.wv_L_total += 0.5 * v.wave_vel_L.mag2();
+      a.wv_R_total += 0.5 * v.wave_vel_R.mag2();
       a.chirality_total += v.chirality_density();
     }
 
@@ -129,9 +136,14 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
   // wrapper exposes it via the friend relationship below.
 
   if (!phi_coulomb.empty()) {
+    // Standard pair-potential convention: U = ½·Σ_i α·q_i·φ_i, equivalent
+    // to Σ_{i<j} α·q_i·q_j/r_ij — the ½ avoids double-counting each pair.
+    // MockBridge (mock-diagnostics.js) uses the i<j form natively and
+    // therefore needs no explicit ½. Pre-2026-04-27 this site reported 2×
+    // the physical Coulomb PE because the ½ was missing.
     for (int i = 0; i < N; ++i) {
       if (voxels[i].state != 0)
-        a.coulomb_pe += ALPHA * voxels[i].state * phi_coulomb[i];
+        a.coulomb_pe += 0.5 * ALPHA * voxels[i].state * phi_coulomb[i];
     }
   }
 

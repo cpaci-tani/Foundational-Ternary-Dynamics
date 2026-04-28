@@ -78,7 +78,10 @@ export class MockBridge {
             gauss_projection: true, forces: true, gravity: false, movement: true,
             poisson_coulomb: true, lorentz_force: false, selective_damping: false,
             larmor_radiation: false, dual_substrate: false, confinement: false,
-            weak_transmutation: true,
+            // weak_transmutation requires dual_substrate (operates on J_L/J_R).
+            // Default OFF to satisfy the C++ TermToggles validator and stop
+            // the spurious console-error spam on every scenario load.
+            weak_transmutation: false,
             color_forces: false, strong_force: false, triad_binding: false,
             pair_production: false, exchange_force: false, latency_field: false,
         };
@@ -576,7 +579,10 @@ export class MockBridge {
             gauss_projection: true, forces: true, gravity: false, movement: true,
             poisson_coulomb: true, lorentz_force: false, selective_damping: false,
             larmor_radiation: false, dual_substrate: false, confinement: false,
-            weak_transmutation: true,
+            // weak_transmutation requires dual_substrate (operates on J_L/J_R).
+            // Default OFF to satisfy the C++ TermToggles validator and stop
+            // the spurious console-error spam on every scenario load.
+            weak_transmutation: false,
             color_forces: false, strong_force: false, triad_binding: false,
             pair_production: false, exchange_force: false, latency_field: false,
         };
