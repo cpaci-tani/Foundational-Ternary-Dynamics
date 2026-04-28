@@ -188,6 +188,41 @@ endif()
 # ============================================================================
 if(NOT EMSCRIPTEN)
 
+# ============================================================================
+# Phase 7 (2026-04-27): Test support static library
+# ----------------------------------------------------------------------------
+# Holds:
+#   - tests/support/test_telemetry.cpp    — impl extracted from ftd/test_telemetry.h
+#                                           (was 412 LOC inline; now declarations in
+#                                           the header + bodies in this lib so test
+#                                           TUs only see the small declaration set).
+#   - tests/support/bridge_fixtures.cpp   — shared RenderBridge fixtures (make_bridge,
+#                                           run_for, inject_particle_at_center,
+#                                           assert_energy_conserved).
+#
+# Every test target links this library to pull in the test_telemetry impl. Tests
+# that don't need bridge_fixtures still link it without penalty (the linker drops
+# unreferenced object code). NO_CORE tests link only this lib (no ftd_core).
+# ============================================================================
+add_library(ftd_test_support STATIC
+    tests/support/test_telemetry.cpp
+    tests/support/bridge_fixtures.cpp
+)
+target_include_directories(ftd_test_support PUBLIC
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/tests/support
+)
+# bridge_fixtures.cpp uses RenderBridge; ftd_core supplies it.
+target_link_libraries(ftd_test_support PUBLIC ftd_core)
+
+# Auto-link ftd_test_support into every test executable defined below in this
+# directory. Each test_*.cpp includes <ftd/test_telemetry.h>; the impl now
+# lives in ftd_test_support. This avoids touching every existing
+# `target_link_libraries(test_xxx ftd_core)` site individually. Targets
+# defined BEFORE this point (the engine library, ftd_sim, ws_server) are
+# unaffected because link_libraries() applies forward only.
+link_libraries(ftd_test_support)
+
 # ---- Test Telemetry self-test (uses ftd_add_test macro for first time) ----
 # This test exercises the ftd::test NDJSON API. It doesn't need ftd_core.
 ftd_add_test(test_telemetry_selftest tests/test_telemetry_selftest.cpp NO_CORE)
@@ -1793,6 +1828,46 @@ set_property(TEST
     benchmark_budget_equation benchmark_bh_thermo benchmark_wilson_loops
     benchmark
     APPEND PROPERTY LABELS "benchmark;slow")
+
+# ============================================================================
+# Phase 7 (2026-04-27): "golden" + "physics" labels
+# ----------------------------------------------------------------------------
+# golden  — bit-exact regression vs frozen output; only the render-bridge
+#           hash test belongs here today. Run alone with `ctest -L golden`
+#           before any commit that touches engine physics.
+# physics — energy-conservation, Coulomb law, locked-particle, absorbing-BC
+#           tests that pin physical correctness independent of bit-hash.
+# ============================================================================
+if(TEST render_bridge_golden)
+    set_property(TEST render_bridge_golden APPEND PROPERTY LABELS "golden;regression")
+endif()
+
+# Conservative physics-correctness subset: only tests that pin a
+# physical-law assertion (not generic stencil/boilerplate tests). Each
+# listed name MUST already exist as a registered test (the if-guard makes
+# this resilient to future renames / disablings).
+foreach(_phys_test
+        audit_regression
+        energy_conservation
+        energy_conservation_tight
+        gauss
+        intervoxel_coupling
+        annihilation_conservation
+        em_energy_conservation
+        continuity
+        poynting
+        leapfrog_integrator_audit
+        moore_laplacian_isotropy
+        gamma_ftd_momentum
+        callstack_audit_fixes
+        langevin_equipartition
+        determinism
+        closed_negatives
+        master_quadratic_identities)
+    if(TEST ${_phys_test})
+        set_property(TEST ${_phys_test} APPEND PROPERTY LABELS "physics")
+    endif()
+endforeach()
 
 # ============================================================================
 # RF-17: Domain labels (physics area)
