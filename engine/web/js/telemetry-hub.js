@@ -152,24 +152,6 @@ export class TelemetryHub {
         this.csIntensity = new RingBuffer(200);
         this.csFluxRatio = new RingBuffer(200);
 
-        // ── Pause-gating ────────────────────────────────
-        // RingBuffer pushes are gated on the data-source tick advancing
-        // since the last push. When the scenario is paused (running=false,
-        // step-through halted, scrub-bar replay), the bridge's tick stops
-        // incrementing — the hub then keeps `s0.diag` / `s0.audit` fresh
-        // (cells still show current values) but doesn't advance the
-        // sparklines. Initial -1 guarantees the first collect pushes
-        // unconditionally so the trend isn't dead at boot.
-        this._lastTickPushed = {
-            s0:    -1,    // Scale 0 lattice diagnostics
-            s0aud: -1,    // Scale 0 energy audit (separate channel)
-            s0lag: -1,    // Scale 0 Lagrangian decomposition
-            s1:    -1,    // Scale 1 particle engine
-            s2:    -1,    // Scale 2/3 atom / molecule engine
-            s4:    -1,    // Scale 4 planetary
-            s5:    -1,    // Scale 5 cosmic
-            s11:   -1,    // Scale 11 consciousness
-        };
     }
 
     // ── Scale 0 collection ──────────────────────────────────────────────────
@@ -193,14 +175,6 @@ export class TelemetryHub {
             : wasmDiag;
 
         this.s0.diag = diag;
-
-        // Pause gate: only advance ring buffers when the simulation tick
-        // has moved since the last push. Cells still render the latest
-        // diag (set above), but the sparkline stops scrolling so a paused
-        // scenario looks paused.
-        const tick = (diag && Number.isFinite(diag.tick)) ? diag.tick : -1;
-        if (tick === this._lastTickPushed.s0) return diag;
-        this._lastTickPushed.s0 = tick;
 
         // 500-sample buffers for charts
         this.flux.push(diag.totalFlux     || 0);
@@ -235,13 +209,6 @@ export class TelemetryHub {
 
         this.s0.audit = audit;
         if (audit) {
-            // Pause gate: audit doesn't carry a tick of its own — read
-            // the bridge's diag tick. Same gating semantics as collectScale0.
-            const wasmTick = mainCaps.getScale0Diagnostics?.()?.tick;
-            const tick = Number.isFinite(wasmTick) ? wasmTick : -1;
-            if (tick === this._lastTickPushed.s0aud) return audit;
-            this._lastTickPushed.s0aud = tick;
-
             const eF  = audit.EFieldEnergy || audit.eFieldEnergy || 0;
             const bF  = audit.BFieldEnergy || audit.bFieldEnergy || 0;
             const px  = audit.totalPoynting?.x ?? audit.poyntingX ?? 0;
@@ -285,12 +252,6 @@ export class TelemetryHub {
 
         this.s0.lagrangian = lag;
         if (lag) {
-            // Pause gate (same semantics as the audit channel).
-            const wasmTick = mainCaps.getScale0Diagnostics?.()?.tick;
-            const tick = Number.isFinite(wasmTick) ? wasmTick : -1;
-            if (tick === this._lastTickPushed.s0lag) return lag;
-            this._lastTickPushed.s0lag = tick;
-
             this.lag.fieldKinetic.push( Math.abs(lag.fieldKinetic  || 0));
             this.lag.fieldGradient.push(Math.abs(lag.fieldGradient || 0));
             this.lag.bornInfeld.push(   Math.abs(lag.bornInfeld    || 0));
@@ -311,12 +272,6 @@ export class TelemetryHub {
         const diag = bridge.peGetDiagnostics?.();
         if (!diag) return null;
         this.s1.diag = diag;
-
-        // Pause gate: skip ring-buffer pushes when the PE tick hasn't
-        // advanced. Cells render the latest diag; trends freeze.
-        const tick = Number.isFinite(diag.tick) ? diag.tick : -1;
-        if (tick === this._lastTickPushed.s1) return diag;
-        this._lastTickPushed.s1 = tick;
 
         const ke  = diag.totalKE       || diag.kineticEnergy || 0;
         const pe  = diag.totalPE       || diag.potentialEnergy || 0;
@@ -345,11 +300,6 @@ export class TelemetryHub {
         if (!diag) return null;
         this.s2.diag = diag;
 
-        // Pause gate.
-        const tick = Number.isFinite(diag.tick) ? diag.tick : -1;
-        if (tick === this._lastTickPushed.s2) return diag;
-        this._lastTickPushed.s2 = tick;
-
         this.aeKE.push(diag.kineticEnergy || 0);
         this.aeTemp.push(diag.temperature || 0);
         this.aeEnergy.push((diag.kineticEnergy || 0) + (diag.totalPotential || diag.potentialEnergy || 0));
@@ -364,12 +314,6 @@ export class TelemetryHub {
         const diag = cosmicBridge.getDiagnostics?.();
         if (!diag) return null;
         this.s5.diag = diag;
-
-        // Pause gate.
-        const tick = Number.isFinite(diag.tick) ? diag.tick : -1;
-        if (tick === this._lastTickPushed.s5) return diag;
-        this._lastTickPushed.s5 = tick;
-
         this.csBodies.push(diag.bodyCount  || diag.count || 0);
         this.csHubble.push(diag.hubble     || diag.hubbleParam || 0);
         this.csDM.push(    diag.darkMatter || diag.dmFraction  || 0);
@@ -382,14 +326,6 @@ export class TelemetryHub {
         const audit = bridge?.getEnergyAudit?.();
         if (!audit) return null;
         this.s11.audit = audit;
-
-        // Pause gate. Scale 11 audit doesn't carry a tick directly;
-        // pull it from the bridge's diagnostics if exposed.
-        const diagTick = bridge?.getDiagnostics?.()?.tick;
-        const tick = Number.isFinite(diagTick) ? diagTick : -1;
-        if (tick === this._lastTickPushed.s11) return audit;
-        this._lastTickPushed.s11 = tick;
-
         this.csFluxRatio.push(audit.totalFluxMag || 0);
         this.csIntensity.push(audit.totalEnergy  || 0);
         return audit;
