@@ -48,6 +48,9 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-uniform-e") {
+        // genesis=false (audit-2 2026-04-28): static uniform E shouldn't
+        // fill the lattice with manifested particles. Mirrors JS.
+        rb.toggles.genesis = false;
         const double eMag = 0.1;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             IW(rb, x, y, z, -eMag, 0, 0);
