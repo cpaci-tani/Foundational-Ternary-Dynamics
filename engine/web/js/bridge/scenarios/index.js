@@ -36,6 +36,7 @@
 import { setupFluxScenario }    from './flux-scenarios.js';
 import { setupLightScenario }   from './light-scenarios.js';
 import { setupQuantumScenario } from './quantum-scenarios.js';
+import { setupVacuumScenario }  from './vacuum-scenarios.js';
 import { setupS0SeedScenario }  from './s0-seed-scenarios.js';
 import { setupS0FieldScenario } from './s0-field-scenarios.js';
 
@@ -66,6 +67,7 @@ export function runSetupScenario(name) {
     if (setupFluxScenario.call(this, name, ctx))    return;
     if (setupLightScenario.call(this, name, ctx))   return;
     if (setupQuantumScenario.call(this, name, ctx)) return;
+    if (setupVacuumScenario.call(this, name, ctx))  return;
     if (setupS0SeedScenario.call(this, name, ctx))  return;
     if (setupS0FieldScenario.call(this, name, ctx)) return;
 }
