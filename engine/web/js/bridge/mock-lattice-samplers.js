@@ -40,7 +40,13 @@
  * invoke it internally.
  */
 
-import { ALPHA, K_B } from '../constants.js';
+import {
+    ALPHA, K_B,
+    COULOMB_K_FORCE,
+    STRONG_ALPHA_S, STRONG_RUN_COEFF, STRONG_R_COULOMB, STRONG_R_LINEAR,
+    STRONG_TRANSITION_DENOM, STRONG_LINEAR_DENOM,
+    STRONG_COLOR_REPEL, STRONG_COLOR_ATTRACT,
+} from '../constants.js';
 
 /**
  * Build all 17 lattice samplers + the latency-proxy helper, bound to the
@@ -524,7 +530,7 @@ export function createLatticeSamplers(state) {
         if (ps.length === 0) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const halfN = N / 2;
-        const alpha4pi = ALPHA / (4 * Math.PI);
+        const alpha4pi = COULOMB_K_FORCE;
         const gn = state._params.gn;
         const doGravity = state._toggles.gravity;
         const soft = 1.0;
@@ -622,7 +628,7 @@ export function createLatticeSamplers(state) {
         if (ps.length === 0) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const halfN = N / 2;
-        const alpha4pi = ALPHA / (4 * Math.PI);
+        const alpha4pi = COULOMB_K_FORCE;
         const soft = 1.0;
         const maxPts = Math.ceil(N / stride) ** 3;
         const positions = new Float32Array(maxPts * 3);
@@ -671,7 +677,7 @@ export function createLatticeSamplers(state) {
         if (ps.length < 2) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const halfN = N / 2;
-        const ALPHA_S = 1.0;
+        const ALPHA_S = STRONG_ALPHA_S;
         const TUBE_W  = 1.5;     // flux tube Gaussian width (visualization only)
         const maxPts = Math.ceil(N / stride) ** 3;
         const positions = new Float32Array(maxPts * 3);
@@ -723,14 +729,14 @@ export function createLatticeSamplers(state) {
 
                 // 3-regime force magnitude (matching C++ engine)
                 const r = Math.max(Math.sqrt(rx * rx + ry * ry + rz * rz), 0.5);
-                const alpha_s_r = ALPHA_S / (1.0 + 0.1 * Math.log(1.0 + r));
+                const alpha_s_r = ALPHA_S / (1.0 + STRONG_RUN_COEFF * Math.log(1.0 + r));
                 let fMag;
-                if (r < 3.0) {
-                    fMag = alpha_s_r / (r * r);         // Coulomb
-                } else if (r < 8.0) {
-                    fMag = alpha_s_r / (3.0 * r);       // Transition
+                if (r < STRONG_R_COULOMB) {
+                    fMag = alpha_s_r / (r * r);                       // Coulomb
+                } else if (r < STRONG_R_LINEAR) {
+                    fMag = alpha_s_r / (STRONG_TRANSITION_DENOM * r); // Transition
                 } else {
-                    fMag = alpha_s_r * r / 64.0;        // Linear confinement
+                    fMag = alpha_s_r * r / STRONG_LINEAR_DENOM;       // Linear confinement
                 }
                 fMag *= tubeEnv;
 
@@ -752,7 +758,7 @@ export function createLatticeSamplers(state) {
                 const r = Math.sqrt(rx * rx + ry * ry + rz * rz + 0.5);
                 if (r > 5.0) continue;
                 // Coulomb-like at short range with asymptotic freedom
-                const alpha_s_r = ALPHA_S / (1.0 + 0.1 * Math.log(1.0 + r));
+                const alpha_s_r = ALPHA_S / (1.0 + STRONG_RUN_COEFF * Math.log(1.0 + r));
                 const fNuc = alpha_s_r / (r * r);
                 if (fNuc < 1e-4) continue;
                 // Attractive: toward the quark (rx points away, so negate)

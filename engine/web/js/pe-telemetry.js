@@ -10,7 +10,7 @@
  */
 
 import { Sparkline } from './diagnostics.js';
-import { ALPHA, G_N } from './constants.js';
+import { ALPHA, G_N, COULOMB_K_FORCE } from './constants.js';
 import { formatEnergy, formatVelocity, formatLength, formatForce, formatTemperature } from './units.js';
 import { createCachedCanvasRect } from './dom-utils.js';
 
@@ -385,9 +385,9 @@ export class PETelemetryPanel {
         // Reduced mass
         const mu = m1 * m2 / (m1 + m2);
 
-        // Effective coupling: k = α·q1·q2/(4π) + G_N·m1·m2 (with signs)
+        // Effective coupling: k = COULOMB_K_FORCE·q1·q2 + G_N·m1·m2 (with signs)
         const q1 = ext.charges[0], q2 = ext.charges[1];
-        const k_em = -ALPHA * q1 * q2 / (4 * Math.PI); // attractive when opposite
+        const k_em = -COULOMB_K_FORCE * q1 * q2; // attractive when opposite
         const k_grav = G_N * m1 * m2;                   // always attractive
         const k = k_em + k_grav; // net coupling constant (positive = attractive)
 

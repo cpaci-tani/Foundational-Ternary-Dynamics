@@ -269,12 +269,91 @@ export const PLANCK_TEMP_K       = 1.416784e32;         // K
 // ── Cosmic-Lattice Anchors [IMPOSED] ────────────────────────────────
 // Lattice-unit anchors used by the cosmic mock bridge. Calibration
 // to physical SI units is undocumented; these are tuning anchors,
-// not derived predictions. M_CHANDRA_LATTICE / M_TOV_LATTICE imply
-// a ~50× lattice-mass-to-solar-mass conversion (70 / 1.4 = 50;
-// 150 / 3.0 = 50), but this conversion factor itself is undeclared.
+// not derived predictions.
 export const H0_LATTICE        = 0.001;     // Hubble constant (lattice units)
 export const M_CHANDRA_LATTICE = 70.0;      // Chandrasekhar limit (lattice mass, ~1.4 M☉)
 export const M_TOV_LATTICE     = 150.0;     // TOV limit (lattice mass, ~3 M☉)
+// Lattice-mass to solar-mass conversion implied by M_CHANDRA_LATTICE/1.4
+// and M_TOV_LATTICE/3.0: both give 50.0. Exposed for cosmic-physics.js
+// to make the calibration explicit instead of buried in the anchors.
+export const LATTICE_TO_SOLAR_MASS = 50.0;
+// Heliocentric Newton constant: G ≈ 4π² in units where [length]=AU,
+// [mass]=M_sun, [time]=yr. Earth's 1-yr period at 1 AU requires this
+// value; G_N=0.01 above is the FTD lattice-natural constant and is NOT
+// the Keplerian G in heliocentric units. mock-scale4.js: use this
+// when running orbital-period-faithful demos.
+export const G_HELIOCENTRIC = 4.0 * Math.PI * Math.PI;
+// FTD tick in seconds: 1 tick = √3·ℓ_P/c (per CLAUDE.md a_phys ≡ ℓ_P
+// declaration). Distinct from PLANCK_TIME_S = ℓ_P/c. Use this when
+// converting tick counts to physical seconds.
+export const FTD_TICK_S = Math.sqrt(3.0) * 5.391247e-44;
+// Bohr-radius conversion: voxels-per-Bohr divided by Bohr-meters-per-Bohr.
+// Multiply lattice positions by this to get meters in Bohr-radius units.
+// R_BOHR is the FTD-natural Bohr radius (lattice voxels); BOHR_RADIUS_M
+// is the SI value. The conversion factor is meters per voxel at the
+// Bohr scale.
+export const BOHR_LATTICE_TO_M = 5.29177210903e-11 / (4.0 * PI_FTD / (K_B * ALPHA));
+// G_F in MeV^-2 (engine internal MeV unit system). G_FERMI is in
+// GeV^-2; multiply by 1e-6 to convert. Used by decay-rates.js for
+// neutron-lifetime / muon-lifetime computations in MeV phase space.
+export const G_FERMI_MEV = G_FERMI * 1e-6;
+// Scale 11 (consciousness) sub-amplitude. Pre-2026-04-27 was K_B*0.3
+// inline literal in scale11/scenario-loader.js — promoted here so the
+// consciousness sub-amplitude tracks any K_B change explicitly rather
+// than implicitly. Value preserved verbatim (0.1533).
+export const CS_SUB_AMPLITUDE = K_B * 0.3;
+
+// ── SI / CODATA SI primitives [PDG 2022] ────────────────────────────
+// Promoted from units.js so all SI literals live in one place. Use
+// these when converting FTD-internal values to SI for display.
+export const PLANCK_MASS_KG   = 2.176434e-8;     // m_P (kg)
+export const PLANCK_FORCE_N   = 1.21027e44;      // F_P (N)
+export const J_PER_EV         = 1.602176634e-19; // joules per electron-volt
+export const C_MS             = 2.99792458e8;    // speed of light (m/s)
+
+// ── Coulomb prefactor canonical exports ─────────────────────────────
+// FTD has THREE distinct Coulomb conventions in production paths;
+// each is correct for its scale but they are NOT interchangeable.
+// Importers MUST pick the convention matching their use case:
+//
+//   COULOMB_K_PE     = ALPHA            (dimensionless lattice-PE convention,
+//                                        used by mock-diagnostics.js for
+//                                        Σ q_i·q_j/r_ij at the lattice level)
+//   COULOMB_K_FORCE  = ALPHA / (4π)     (classical force-law convention,
+//                                        Scale-1 pairwise force F = K·q·q/r²
+//                                        as in mock-particle-engine.js,
+//                                        wasm-bridge-dag.js pair-force loop)
+//   COULOMB_K_HEP    = ALPHA            (Gaussian/HEP units, used in
+//                                        cross-sections.js / spectroscopy.js
+//                                        for textbook-comparable formulas)
+//
+// COULOMB_K_PE and COULOMB_K_HEP are numerically identical but live in
+// different epistemic categories; keep them named separately so a future
+// audit can tell which convention an import meant.
+export const COULOMB_K_PE    = ALPHA;
+export const COULOMB_K_FORCE = ALPHA / (4.0 * Math.PI);
+export const COULOMB_K_HEP   = ALPHA;
+
+// ── Strong-force tuning constants [IMPOSED] ─────────────────────────
+// Hardcoded across MockBridge and mock-lattice-samplers pre-2026-04-27;
+// promoted here so any tuning change propagates to every callsite at
+// once. The 3-regime model (Coulomb / transition / linear confinement)
+// matches the C++ engine in render_bridge.cpp::phase_forces.
+export const STRONG_ALPHA_S         = 1.0;       // base color coupling (≠ ALPHA_S_MZ; this is the lattice-unit scale)
+export const STRONG_RUN_COEFF       = 0.1;       // running-coupling log coefficient
+export const STRONG_R_COULOMB       = 3.0;       // r < this → Coulomb regime (1/r²)
+export const STRONG_R_LINEAR        = 8.0;       // r ≥ this → linear confinement (r/64)
+export const STRONG_TRANSITION_DENOM = 3.0;      // transition regime: F = α_s/(3·r)
+export const STRONG_LINEAR_DENOM    = 64.0;      // linear regime: F = α_s·r/64
+export const STRONG_COLOR_REPEL     = 0.5;       // same-color factor (repulsive)
+export const STRONG_COLOR_ATTRACT   = -1.0;      // different-color factor (attractive)
+
+// ── 18-pt isotropic Laplacian weights ───────────────────────────────
+// Cancels O(k⁴) anisotropy on the 26-neighbor Moore stencil
+// (Patra-Karttunen 2006). Implementation now consumes these named
+// constants instead of bare 1/3, 1/6 literals.
+export const LAPLACIAN_FACE_WEIGHT = 1.0 / 3.0;
+export const LAPLACIAN_EDGE_WEIGHT = 1.0 / 6.0;
 
 // ── Atom-Engine MD-Tuning Constants [IMPOSED] ───────────────────────
 // Tuning parameters for the atom-engine LJ + bond molecular dynamics.

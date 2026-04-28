@@ -2,9 +2,12 @@
  * Scale 0 Substrate Controls Card
  */
 
+import { K_B } from '../../../../constants.js';
+
 export function createSubstrateControlsCard() {
   const card = document.createElement('div');
   card.className = 'card scale0-only';
+  const kbStr = K_B.toFixed(3);
   card.innerHTML = `
     <div class="card-title">Substrate Controls</div>
     <div class="combo-section-label">Inject</div>
@@ -51,8 +54,8 @@ export function createSubstrateControlsCard() {
     <div class="combo-section-label">Parameters</div>
     <div class="pe-ctrl-row">
       <span class="pe-ctrl-label ctrl-label-md" title="Genesis Threshold (K_B)">K<sub>B</sub> (Thresh)</span>
-      <input type="range" class="pe-slider" id="combo-kb" min="0.05" max="2.0" step="0.01" value="0.511">
-      <span class="pe-ctrl-value" id="combo-kb-val">0.511</span>
+      <input type="range" class="pe-slider" id="combo-kb" min="0.05" max="2.0" step="0.01" value="${kbStr}">
+      <span class="pe-ctrl-value" id="combo-kb-val">${kbStr}</span>
     </div>
     <div class="pe-ctrl-row">
       <span class="pe-ctrl-label ctrl-label-md" title="Gravitational Constant (G_N)">G<sub>N</sub> (Gravity)</span>

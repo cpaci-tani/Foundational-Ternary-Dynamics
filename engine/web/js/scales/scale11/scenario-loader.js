@@ -25,7 +25,7 @@
  *     { name, domain, thetaMode, sloopDepth, bellS }
  */
 
-import { K_B } from '../../constants.js';
+import { K_B, CS_SUB_AMPLITUDE } from '../../constants.js';
 
 
 /**
@@ -41,7 +41,7 @@ export function setupConsciousnessScenario(name, bridge) {
             // Start below K_C with low-amplitude Gaussian, gradually build
             // to cross real -> complex boundary
             const csMid    = Math.floor((bridge.latticeSize || 32) / 2);
-            const csSubAmp = K_B * 0.3;  // 0.511 * 0.3
+            const csSubAmp = CS_SUB_AMPLITUDE;  // = K_B * 0.3
             const csSigma  = 4;
             for (let dz = -6; dz <= 6; dz++) {
                 for (let dy = -6; dy <= 6; dy++) {

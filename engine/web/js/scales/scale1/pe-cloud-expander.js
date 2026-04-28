@@ -49,6 +49,11 @@ import { K_B } from '../../constants.js';
 // =====================================================================
 // Each PE particle is rendered as a Gaussian flux cloud, not a point.
 // Cloud point count ~ mass (electron 0.511 MeV -> 511 cloud points).
+// TODO(A-24): the visual heuristic below (point count and cloud radius)
+// is implicitly anchored on K_B = 0.511 MeV; if K_B is rescaled in the
+// substrate UI, electron-class clouds will keep their point count but
+// the comment-numeric example ("511 cloud points") will go stale.
+// Track via M_E_PHYS / K_B if a stable visual reference is ever needed.
 export const MAX_CLOUD_TOTAL = 100000;
 const _cloudPos  = new Float32Array(MAX_CLOUD_TOTAL * 3);
 const _cloudCol  = new Float32Array(MAX_CLOUD_TOTAL * 3);

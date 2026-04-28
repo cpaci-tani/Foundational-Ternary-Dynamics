@@ -13,7 +13,7 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { K_B, K_GENESIS, C_SPEED } from '../../constants.js';
+import { K_B, K_GENESIS, C_SPEED, G_N } from '../../constants.js';
 import {
     TRIAD_ANGLES,
     injectRadialEnvelope,
@@ -191,6 +191,82 @@ export function setupS0SeedScenario(name, ctx) {
                         if (dx === 0 && dy === 0 && dz === 0) continue;
                         this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
                     }
+                    break;
+                }
+
+                case 's0-seed-emergent-ic1': {
+                    // FTD-0102 ic1 (point injection). FTD-0107 confirmed
+                    // L-invariant 25-voxel cluster at L ∈ {32, 64}, 5/5 seeds.
+                    //
+                    // Setup: inject 10·K_GENESIS flux at the lattice center,
+                    // single voxel. Under (genesis + langevin + gauss-projection
+                    // + wave-propagation) toggles, the dynamics produce an
+                    // emergent bound state in the SC + FCC + face2 sub-stencils
+                    // — predicted to be the L¹-ball-radius-2 octahedral fillout
+                    // (centered octahedral number O(2) = 25).
+                    //
+                    // REQUIRED TOGGLES (set by scenario-registry.js at load):
+                    //   genesis, langevin (T=0.005 γ=0.02), gauss-projection,
+                    //   wave-propagation.
+                    //
+                    // What to watch for in the dashboard:
+                    //   • Burn-in (~200 ticks): nothing manifested.
+                    //   • After burn: 25 voxels manifest as state ±1, arranged
+                    //     in a regular octahedral pattern centered on the
+                    //     lattice midpoint.
+                    //   • Voxels appear in 4 orbits under O_h symmetry:
+                    //     1 center + 6 face1 (SC) + 12 edge (FCC) + 6 face2.
+                    //   • The 8 BCC corner positions (±1,±1,±1) DO NOT manifest.
+                    //
+                    // See: docs/theory/08_structural/EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md
+                    this._injectFlux(mc, mc, mc, 10.0 * K_GENESIS, 0, 0);
+                    break;
+                }
+
+                case 's0-seed-emergent-ic3-collision': {
+                    // FTD-0102 ic3 (two-beam collision). FTD-0107 post-fix
+                    // re-measurement: 5/5 seeds = 2 stable clusters of
+                    // 2-3 voxels each at the two collision points.
+                    // Toggles set by scenario-registry.js at load.
+                    const q = Math.max(1, Math.floor(N / 4));
+                    this._injectFlux(mc - q, mc, mc, +5.0 * K_GENESIS, 0, 0);
+                    this._injectFlux(mc + q, mc, mc, -5.0 * K_GENESIS, 0, 0);
+                    break;
+                }
+
+                case 's0-seed-emergent-ic4-subthreshold': {
+                    // FTD-0102 ic4 (sub-threshold injection).
+                    // 0.5·K_GENESIS at centre — below the gap. Pre-registered
+                    // outcome: 0 manifested voxels (negative control).
+                    // Toggles set by scenario-registry.js at load.
+                    this._injectFlux(mc, mc, mc, 0.5 * K_GENESIS, 0, 0);
+                    break;
+                }
+
+                case 's0-seed-emergent-ic2-thermal-runaway': {
+                    // FTD-0102 ic2 (thermal-driven runaway). NO flux
+                    // injection — only elevated Langevin T = 0.05.
+                    // Demonstrates the unstable-phase regime.
+                    // Toggles + Langevin T set by scenario-registry.js at load.
+                    break;
+                }
+
+                case 's0-seed-symmetry-regression': {
+                    // Engine-fix regression test (2026-04-27).
+                    // Inject 6-axis radial flux at centre. Post-fix the
+                    // resulting cluster must be centro-symmetric within
+                    // numerical noise (T=0 disables Langevin to isolate
+                    // determinism). Pre-fix the serial-state RNG broke
+                    // y/z reflection symmetry — see render_bridge.cpp
+                    // voxel_uniform() docstring.
+                    // Toggles set by scenario-registry.js at load.
+                    const A = 5.0 * K_GENESIS;
+                    this._injectFlux(mc + 1, mc, mc, +A, 0, 0);
+                    this._injectFlux(mc - 1, mc, mc, -A, 0, 0);
+                    this._injectFlux(mc, mc + 1, mc, 0, +A, 0);
+                    this._injectFlux(mc, mc - 1, mc, 0, -A, 0);
+                    this._injectFlux(mc, mc, mc + 1, 0, 0, +A);
+                    this._injectFlux(mc, mc, mc - 1, 0, 0, -A);
                     break;
                 }
 
@@ -523,12 +599,19 @@ export function setupS0SeedScenario(name, ctx) {
 
                 // ── Level 7: Gravity / Cosmology ─────────────────────
                 case 's0-seed-schwarzschild': {
+                    // Custom seed-bias inflow toward a central mass: a
+                    // visualization aid, NOT engine gravity (does not gate
+                    // on the gravity toggle and does not run through the
+                    // engine's Newton solver). The G_N factor here is
+                    // included so the seed bias scales with the FTD
+                    // gravitational-coupling knob in the same direction
+                    // as a physical Schwarzschild well.
                     const sHalf=(N-1)/2.0, rs=3.0;
                     this.injectParticle(mc,mc,mc,+1);
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
                         const rx=x-sHalf,ry=y-sHalf,rz=z-sHalf;
                         const r=Math.max(Math.sqrt(rx*rx+ry*ry+rz*rz),0.5);
-                        const mg=K_B*rs/(r*r); if(mg<1e-6) continue;
+                        const mg=G_N * (K_B*rs)/(r*r); if(mg<1e-6) continue;
                         this._injectFlux(x,y,z, -mg*rx/r, -mg*ry/r, -mg*rz/r);
                     }
                     break;

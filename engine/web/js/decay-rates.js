@@ -7,9 +7,9 @@
  */
 
 import {
-    ALPHA, K_B, PI_FTD, N_C, B_3, N_EFF, N_BASE,
+    ALPHA, K_B, M_E_PHYS, PI_FTD, N_C, B_3, N_EFF, N_BASE,
     MU_RATIO, TAU_RATIO, M_PROTON,
-    SIN2_WEINBERG, M_W, M_Z, G_FERMI, HBAR_C_MEV_FM,
+    SIN2_WEINBERG, M_W, M_Z, G_FERMI, G_FERMI_MEV, HBAR_C_MEV_FM,
     M_P_PHYS, M_PI_CH_PHYS, M_PI_0_PHYS, DELTA_NP,
     HBAR_MEV_S, AMU_MEV,
     V_UD, G_A, F_N, F_PI,
@@ -40,7 +40,10 @@ export const M_PION_NEUTRAL = M_PI_0_PHYS;          // neutral pion (PDG)
  * sign or factor structure has drifted in constants.js — see the
  * "Muon lifetime gate" verification step in the surgical attack plan.
  */
-const G_F_MEV = G_FERMI * 1e-6;
+// G_FERMI_MEV is the canonical MeV⁻² Fermi coupling (= G_FERMI · 1e-6).
+// Re-aliased here as G_F_MEV for backward compatibility with the local
+// decay-width formulas below.
+const G_F_MEV = G_FERMI_MEV;
 
 // ── Muon Lifetime ────────────────────────────────────────────────────
 
@@ -91,12 +94,14 @@ export function tauLifetime() {
 export function neutronLifetime() {
     const dM = M_NEUTRON - M_PROTON; // mass difference ~1.293 MeV
     // Phase space factor for neutron beta decay
-    const x = dM / M_ELECTRON;
+    // Use M_E_PHYS (PDG) here since the lifetime is compared against the
+    // PDG-measured neutron lifetime; using K_B would shift τ by ~0.2%.
+    const x = dM / M_E_PHYS;
     // f(x) ≈ x*sqrt(x^2-1)*(x^2 - 9/4*x + 4/3) — Wilkinson approximation
     // V_UD, F_N, G_A imported from constants.js (PDG / lattice values)
 
     const numerator = 2.0 * PI_FTD * PI_FTD * PI_FTD;
-    const denominator = G_F_MEV * G_F_MEV * Math.pow(M_ELECTRON, 5) * V_UD * V_UD * F_N * (1 + 3 * G_A * G_A);
+    const denominator = G_F_MEV * G_F_MEV * Math.pow(M_E_PHYS, 5) * V_UD * V_UD * F_N * (1 + 3 * G_A * G_A);
     // Factor (1 + 3*g_A^2) where g_A is the axial coupling
     return numerator * HBAR_MEV_S / denominator;
 }
