@@ -189,7 +189,12 @@ export function setupS0SeedScenario(name, ctx) {
                 }
 
                 case 's0-seed-moore-cell': {
-                    // Full 26-site Moore neighborhood (union of all 3 shells)
+                    // Full 26-site Moore neighborhood (union of all 3 shells).
+                    // genesis=false (audit-2 2026-04-28): the 27-site geometric
+                    // seed should *stay* a 27-site geometric seed. Genesis
+                    // contamination drove it to ~30k particles by t=200,
+                    // erasing the polyhedral structure.
+                    this._toggles.genesis = false;
                     this.injectParticle(mc, mc, mc, -1);  // center anchor
                     for (let dx = -1; dx <= 1; dx++)
                     for (let dy = -1; dy <= 1; dy++)

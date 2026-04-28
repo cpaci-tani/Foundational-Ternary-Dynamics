@@ -146,6 +146,9 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         for (int i = 0; i < 8; i++) IP(rb, mc+off[i][0], mc+off[i][1], mc+off[i][2], +1);
     }
     else if (name == "s0-seed-moore-cell") {
+        // genesis=false (audit-2 2026-04-28): the 27-site geometric seed
+        // should stay a 27-site seed. Mirrors JS s0-seed-moore-cell.
+        rb.toggles.genesis = false;
         IP(rb, mc, mc, mc, -1);
         for (int dx = -1; dx <= 1; dx++) for (int dy = -1; dy <= 1; dy++) for (int dz = -1; dz <= 1; dz++) {
             if (dx == 0 && dy == 0 && dz == 0) continue;

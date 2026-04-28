@@ -57,6 +57,10 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.coupling = false;
     }
     else if (name == "quantum-tunnel") {
+        // genesis=false (audit-2 2026-04-28): the wave packet should TUNNEL,
+        // not pair-produce. The 3072 initial particles are the locked
+        // barrier (32×32×W=3 wall). Mirrors JS quantum-tunnel.
+        rb.toggles.genesis = false;
         const double sigma = N / 12.0;
         const double amp = K_B * 2.0;
         const int packetX = N / 4;
@@ -104,6 +108,9 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.genesis = true;
     }
     else if (name == "quantum-aharonov-bohm") {
+        // genesis=false (audit-2 2026-04-28): A-B effect is gauge-phase,
+        // packets shouldn't pair-produce while traversing the solenoid.
+        rb.toggles.genesis = false;
         const int R = N / 8;
         for (int z = 0; z < N; z++) for (int dy = -R; dy <= R; dy++) for (int dx = -R; dx <= R; dx++) {
             if (dx * dx + dy * dy > R * R) continue;
