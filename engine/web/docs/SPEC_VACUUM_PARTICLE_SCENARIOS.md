@@ -40,7 +40,7 @@ scenarios act as a comparable set rather than a research grab-bag.
 | 14 | `s0-vacuum-pion-neutral` | π⁰ | **new** | derived from s0-seed-pion with charge=0 + 2γ decay coupling |
 | 15 | `s0-vacuum-kaon-charged` | K± | **new** | pion injector with elevated amplitude (parametric — chosen so the manifested cluster size matches FTD-0110's m_K prediction at ~5%) |
 
-**12 wrappers + 5 new scenarios** = 5 net additions to the engine/JS scenario catalog.
+**10 wrappers + 5 new scenarios** = 5 net-new injectors in the catalog (electron-neutrino, muon-neutrino, tau-neutrino, π⁰, K±).
 
 ## Uniform configuration
 
