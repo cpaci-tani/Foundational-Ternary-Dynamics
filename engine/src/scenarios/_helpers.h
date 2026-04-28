@@ -70,5 +70,12 @@ inline int    RND(double d) { return static_cast<int>(std::round(d)); }
 // scenario .cpp already includes constants.h, so call sites use `PI`
 // directly without re-defining a SCN_PI alias here.
 
+// Vacuum environment — mirror of JS applyVacuumEnvironment(bridge, ctx).
+// In v1 this is a no-op (RenderBridge::reset() is invoked by the caller);
+// kept as the single extension point for a future absorbing_boundary toggle.
+inline void apply_vacuum_environment(RenderBridge& rb) {
+    (void)rb;
+}
+
 }  // namespace
 }  // namespace ftd

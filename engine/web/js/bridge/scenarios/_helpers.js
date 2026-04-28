@@ -106,3 +106,25 @@ export function injectTriad(bridge, cx, cy, cz, charges, colors, rad, locked = t
             (k % 2 === 0) ? 1 : -1, colors[k], 2, K_B * 0.5, locked);
     }
 }
+
+/**
+ * Apply the vacuum environment that every s0-vacuum-* scenario needs:
+ * - This.reset() is already invoked by the dispatcher in index.js, so
+ *   the lattice arrives flux-zero.
+ * - Particle list is already empty for the same reason.
+ *
+ * v1: this is effectively a no-op confirming the dispatcher contract.
+ * The function exists as the single point that a future
+ * `absorbing_boundary` toggle (separate spec) would mutate, so all 15
+ * vacuum scenarios pick up the new behavior with one edit.
+ *
+ * @param {object} bridge      MockBridge instance
+ * @param {{N:number, mid:number, midF:number}} ctx  precomputed lattice params
+ */
+export function applyVacuumEnvironment(bridge, ctx) {
+    // No-op in v1. Reserved extension point — see SPEC_VACUUM_PARTICLE_SCENARIOS.md.
+    // Reads ctx + bridge to make the dependency explicit (and silence linters
+    // when this becomes non-trivial in v2).
+    void bridge;
+    void ctx;
+}
