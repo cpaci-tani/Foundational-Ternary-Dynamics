@@ -109,6 +109,8 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     }
 
     if (name == "s0-vacuum-photon") {
+        // genesis=false (audit 2026-04-28): a free EM wave should not pair-produce.
+        rb.toggles.genesis = false;
         const double sigma = 3.0;
         const double pAmp = K_B * 2.0;
         const int pStartX = std::max(4, N / 4);

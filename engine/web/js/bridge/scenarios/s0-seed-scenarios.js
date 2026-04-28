@@ -90,6 +90,12 @@ export function setupS0SeedScenario(name, ctx) {
                     // Pol. (2)    : [THEOREM]  (Gauss constraint ∇·J = 0)
                     // Name        : [SELECTION] (structurally consistent
                     //                            with SM photon)
+                    //
+                    // genesis=false: a free EM wave should NOT spontaneously
+                    // pair-produce as it propagates. Without this, the wavefront's
+                    // |J|² crosses K_GENESIS and manifests ~30k particles over
+                    // 200 ticks — the audit (2026-04-28) caught this as a bug.
+                    this._toggles.genesis = false;
                     const sigma = 3;
                     const pAmp = K_B * 2;
                     const pStartX = Math.max(4, Math.floor(N / 4));
@@ -385,8 +391,36 @@ export function setupS0SeedScenario(name, ctx) {
                         tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc,mc,mc+oR, -1,-1,0, 2,K_B);
                     }
                     else if (name === 's0-seed-helium') {
-                        const oR=Math.max(3,Math.floor(N/8));
-                        dp(mc,mc,mc, +1,0,0, 2,K_B*3, true); dp(mc,mc,mc+oR, -1,+1,0, 2,K_B*0.8); dp(mc,mc,mc-oR, -1,-1,0, 2,K_B*0.8);
+                        // ⁴He / α-particle: 2 protons + 2 neutrons at the
+                        // 4 vertices of a tetrahedron, plus 2 electrons in
+                        // the 1s² shell at ±z. Each nucleon is a 3-quark
+                        // triad (proton charges [+1,+1,-1], neutron [+1,-1,-1])
+                        // sharing the {1,2,3} color triple.
+                        //
+                        // Audit 2026-04-28 fix: previous body was a single
+                        // dressed +1 particle posing as the nucleus —
+                        // physically wrong. Now: 4 nucleons × 3 quarks +
+                        // 2 electrons = 14 manifested particles.
+                        const oR = Math.max(3, Math.floor(N/8));        // electron-shell radius
+                        const nR = Math.max(2, Math.floor(N/12));       // nucleon-center offset
+                        const bR = Math.max(1, Math.floor(N/16));       // intra-triad radius
+                        const tet = [
+                            [+nR, +nR, +nR],   // proton 1
+                            [-nR, -nR, +nR],   // proton 2
+                            [+nR, -nR, -nR],   // neutron 1
+                            [-nR, +nR, -nR],   // neutron 2
+                        ];
+                        const pCharges = [+1, +1, -1];
+                        const nCharges = [+1, -1, -1];
+                        const colors   = [1, 2, 3];
+                        for (let i = 0; i < 4; i++) {
+                            const [dx, dy, dz] = tet[i];
+                            const charges = (i < 2) ? pCharges : nCharges;
+                            tri(mc + dx, mc + dy, mc + dz, charges, colors, bR);
+                        }
+                        // 1s² electron shell (2 electrons, opposite spins) along ±z.
+                        dp(mc, mc, mc + oR, -1, +1, 0, 2, K_B * 0.8);
+                        dp(mc, mc, mc - oR, -1, -1, 0, 2, K_B * 0.8);
                     }
                     else if (name === 's0-seed-h2-molecule') {
                         const bd=Math.max(4,Math.floor(N/6)), hf=Math.floor(bd/2), oR=Math.max(3,Math.floor(N/8)), bR=Math.max(1,Math.floor(N/16));
@@ -521,6 +555,10 @@ export function setupS0SeedScenario(name, ctx) {
                     // color charge encoded via axis dominance. Launched
                     // at x ≈ N/4, propagating +x, J_y polarized with
                     // color=G (y-axis dominant).
+                    //
+                    // genesis=false: same fix as photon (audit 2026-04-28) —
+                    // a free gauge-boson wave should not pair-produce.
+                    this._toggles.genesis = false;
                     const sigma = 3;
                     const gAmp = K_B * 2;
                     const startX = Math.max(4, Math.floor(N / 4));
@@ -545,9 +583,16 @@ export function setupS0SeedScenario(name, ctx) {
                     // Neutron triad (2 negative + 1 positive) on an
                     // equilateral triangle, with a pre-seeded electron
                     // and neutrino nearby as the leptonic output of a
-                    // future weak transmutation event. Enable
+                    // future weak transmutation event.
+                    //
+                    // Audit 2026-04-28: previously the comment said "enable
                     // weak_transmutation + dual_substrate toggles to see
-                    // polarity flips under stress.
+                    // polarity flips" — but the user had to do it manually.
+                    // Now the scenario auto-enables both toggles so the
+                    // decay actually fires by default. Both are in the
+                    // scenario-mutable whitelist (CONTRACTS.md §s0-seed).
+                    this._toggles.weak_transmutation = true;
+                    this._toggles.dual_substrate = true;
                     const bdR = Math.max(2, Math.floor(N/10));
                     // Three-vertex neutron-ish triangle.
                     for (let k = 0; k < 3; k++) {
