@@ -251,6 +251,57 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
 
+                case 's0-seed-emergent-ic1-diagonal': {
+                    // FTD-0110 D3g: body-diagonal injection.
+                    // Same total flux magnitude as ic1 (10·K_GENESIS) but
+                    // along (1,1,1)/√3 instead of +x. Tests Z_4 (face-axis,
+                    // k=¼) vs Z_3 (body-diagonal, k=⅓) discrimination of
+                    // the cluster-efficiency origin. If Z_4 reading correct,
+                    // expect ~33-voxel cluster (vs 25 for axial).
+                    const A_diag = 10.0 * K_GENESIS / Math.sqrt(3);
+                    this._injectFlux(mc, mc, mc, A_diag, A_diag, A_diag);
+                    break;
+                }
+
+                case 's0-seed-emergent-ic1-isotropic': {
+                    // FTD-0110 D3h: isotropic 6-axis injection.
+                    // Distributes 10·K_GENESIS total magnitude across the
+                    // 6 SC face-neighbours of the centre, each flux pointing
+                    // outward. Tests whether the cluster is fully O_h-symmetric
+                    // when the injection direction is symmetrised away.
+                    const a_iso = 10.0 * K_GENESIS / Math.sqrt(6);
+                    this._injectFlux(mc + 1, mc, mc, +a_iso, 0, 0);
+                    this._injectFlux(mc - 1, mc, mc, -a_iso, 0, 0);
+                    this._injectFlux(mc, mc + 1, mc, 0, +a_iso, 0);
+                    this._injectFlux(mc, mc - 1, mc, 0, -a_iso, 0);
+                    this._injectFlux(mc, mc, mc + 1, 0, 0, +a_iso);
+                    this._injectFlux(mc, mc, mc - 1, 0, 0, -a_iso);
+                    break;
+                }
+
+                case 's0-seed-emergent-ic1-viz': {
+                    // Clean axial cluster (A=20, T=0). Higher amplitude
+                    // compensates for CPU genesis-drain so cluster is
+                    // visible in dashboard. Run ~200 ticks for clearest view.
+                    this._injectFlux(mc, mc, mc, 20.0 * K_GENESIS, 0, 0);
+                    break;
+                }
+                case 's0-seed-emergent-ic1-diagonal-viz': {
+                    const A_dv = 20.0 * K_GENESIS / Math.sqrt(3);
+                    this._injectFlux(mc, mc, mc, A_dv, A_dv, A_dv);
+                    break;
+                }
+                case 's0-seed-emergent-ic1-isotropic-viz': {
+                    const a_iv = 20.0 * K_GENESIS / Math.sqrt(6);
+                    this._injectFlux(mc + 1, mc, mc, +a_iv, 0, 0);
+                    this._injectFlux(mc - 1, mc, mc, -a_iv, 0, 0);
+                    this._injectFlux(mc, mc + 1, mc, 0, +a_iv, 0);
+                    this._injectFlux(mc, mc - 1, mc, 0, -a_iv, 0);
+                    this._injectFlux(mc, mc, mc + 1, 0, 0, +a_iv);
+                    this._injectFlux(mc, mc, mc - 1, 0, 0, -a_iv);
+                    break;
+                }
+
                 case 's0-seed-symmetry-regression': {
                     // Engine-fix regression test (2026-04-27).
                     // Inject 6-axis radial flux at centre. Post-fix the
