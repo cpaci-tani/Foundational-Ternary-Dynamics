@@ -203,6 +203,14 @@ target_link_libraries(test_constants ftd_core)
 add_executable(test_audit_regression tests/test_audit_regression.cpp)
 target_link_libraries(test_audit_regression ftd_core)
 
+# Phase 4 PRE-FLIGHT regression gate (2026-04-27)
+# Before any phase extraction is allowed out of render_bridge.cpp, every
+# extraction commit MUST reproduce the byte-hash captured in this test.
+# 100-tick deterministic scenario at L=16, CPU-only, RNG seeded with 42.
+# See `.claude/plans/i-want-to-try-crispy-charm.md` Phase 4 + ADR-0008.
+ftd_add_test(test_render_bridge_golden tests/test_render_bridge_golden.cpp
+             CTEST_NAME render_bridge_golden)
+
 # Wave 4b.6: test_lorentz_force + test_lorentz_invariance + test_magnetic +
 # test_magnetic_lagrangian merged into test_lorentz (self-ref target)
 ftd_add_test(test_lorentz tests/test_lorentz.cpp CTEST_NAME lorentz TIMEOUT 600)
