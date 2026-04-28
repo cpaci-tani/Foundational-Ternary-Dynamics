@@ -30,46 +30,21 @@
 using namespace emscripten;
 
 // ── Toggle wrapper ───────────────────────────────────────────────────
-// Pointer-to-member map for TermToggles (RenderBridge).
+// Pointer-to-member map for TermToggles, populated from the canonical
+// TOGGLE_SPECS[] table in term_toggles.h. Adding a new toggle requires
+// no edit here — the table is the single source of truth. Filtered to
+// JS-visible toggles via the `backends` bitmask.
 using RbBoolPTM = bool ftd::TermToggles::*;
 static const std::unordered_map<std::string, RbBoolPTM>& rb_toggle_map() {
-    static const std::unordered_map<std::string, RbBoolPTM> kMap = {
-        {"wave_propagation",  &ftd::TermToggles::wave_propagation},
-        {"coupling",          &ftd::TermToggles::coupling},
-        {"damping",           &ftd::TermToggles::damping},
-        {"genesis",           &ftd::TermToggles::genesis},
-        {"gauss_projection",  &ftd::TermToggles::gauss_projection},
-        {"forces",            &ftd::TermToggles::forces},
-        {"gravity",           &ftd::TermToggles::gravity},
-        {"poisson_coulomb",   &ftd::TermToggles::poisson_coulomb},
-        {"movement",          &ftd::TermToggles::movement},
-        {"lorentz_force",     &ftd::TermToggles::lorentz_force},
-        {"selective_damping", &ftd::TermToggles::selective_damping},
-        {"larmor_radiation",  &ftd::TermToggles::larmor_radiation},
-        {"dual_substrate",    &ftd::TermToggles::dual_substrate},
-        {"color_forces",      &ftd::TermToggles::color_forces},
-        {"weak_transmutation",&ftd::TermToggles::weak_transmutation},
-        {"strong_force",      &ftd::TermToggles::strong_force},
-        {"triad_binding",     &ftd::TermToggles::triad_binding},
-        {"pair_production",   &ftd::TermToggles::pair_production},
-        {"exchange_force",    &ftd::TermToggles::exchange_force},
-        {"latency_field",     &ftd::TermToggles::latency_field},
-        {"emergent_forces",   &ftd::TermToggles::emergent_forces},
-        // D-5 / D-3 (2026-04-27): real-bool toggles previously missing from
-        // the JS<->C++ map. JS toggle config (engine/web/js/config/toggles.js)
-        // listed all of these as real fields, but the binding swallowed
-        // setToggle() calls for them. They now route to the underlying
-        // TermToggles fields. `confinement` is an intent flag (no C++ branch
-        // consumes it yet — see term_toggles.h docstring) but is in the map so
-        // scenario overrides aren't silently dropped.
-        {"pair_production",   &ftd::TermToggles::pair_production},
-        {"triad_binding",     &ftd::TermToggles::triad_binding},
-        {"latency_field",     &ftd::TermToggles::latency_field},
-        {"exact_dual_gauss",  &ftd::TermToggles::exact_dual_gauss},
-        {"langevin",          &ftd::TermToggles::langevin},
-        {"strict_validation", &ftd::TermToggles::strict_validation},
-        {"confinement",       &ftd::TermToggles::confinement},
-    };
+    static const std::unordered_map<std::string, RbBoolPTM> kMap = [] {
+        std::unordered_map<std::string, RbBoolPTM> m;
+        for (const auto& spec : ftd::TOGGLE_SPECS) {
+            if (spec.backends & ftd::ToggleBackend::JS) {
+                m.emplace(spec.name, spec.field);
+            }
+        }
+        return m;
+    }();
     return kMap;
 }
 

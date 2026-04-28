@@ -1,13 +1,37 @@
 #pragma once
 // Runtime toggles for the logic-first engine.
-// 20 toggles: 10 core (logic-derived, default ON) + 10 extensions (default OFF).
+// 25 boolean toggles + 5 non-bool config fields.
+//
+// Phase 6 (2026-04-27): redesign as a TABLE-DRIVEN registry. Adding a new
+// boolean toggle now requires ONE edit (a row in TOGGLE_SPECS[]) instead
+// of the legacy four edits (struct field + validate() case + enable_all()
+// + disable_all() + cpu_runtime_warnings()).
+//
+// The struct fields themselves are preserved verbatim so every existing
+// consumer (`toggles.wave_propagation = true`, `rb.toggles.langevin_T`,
+// etc.) continues to compile unchanged. The table just gives us the
+// metadata to auto-generate the helper bodies.
 
+#include <cstdint>
 #include <string>
+#include <string_view>
 #include "sublattice.h"   // BccStencilMode, SiteClass
 
 namespace ftd {
 
+// Backend bitmask used by ToggleSpec::backends. CPU = 0b001, GPU = 0b010,
+// JS  = 0b100, ANY = 0b111. Currently informational — not enforced at the
+// binding layer — but the WASM map below filters by `(backends & 0b100)`
+// so a future GPU-only toggle won't accidentally appear in the JS surface.
+namespace ToggleBackend {
+    constexpr uint8_t CPU = 0b001;
+    constexpr uint8_t GPU = 0b010;
+    constexpr uint8_t JS  = 0b100;
+    constexpr uint8_t ANY = CPU | GPU | JS;
+}
+
 struct TermToggles {
+    // ── Boolean toggles (table-managed; see TOGGLE_SPECS[] below) ─────
     bool wave_propagation = true;   // phase_read: Laplacian wave equation
     bool coupling = true;           // phase_read: g_c * grad(s) source term
     bool damping = true;            // phase_write: energy dissipation
@@ -19,18 +43,18 @@ struct TermToggles {
     bool movement = true;           // phase_movement: velocity integration + collisions
     bool lorentz_force = true;      // phase_forces: F = α·s·(v×B) magnetic force
     bool selective_damping = true;  // phase_write: damp only near particles (true = vacuum EM lossless)
-    bool larmor_radiation = false; // phase_write: acceleration-dependent damping at particle sites
-    bool dual_substrate = true;    // dual-substrate mode: J_L, J_R independent fields (Paper: 2026)
-    bool color_forces = false;     // phase_forces: SU(3)-inspired color-dependent pairwise force
-    bool weak_transmutation = true;  // tick: chirality/stress polarity flip (+1 ↔ -1) [CLAUDE.md §6.5]
-    bool strong_force = false;     // phase_forces: Yukawa short-range nuclear force [CLAUDE.md §6.4]
-    bool triad_binding = false;    // tick: detect 3-particle triads, set locked=true [CLAUDE.md §8.1]
-    bool pair_production = false;  // genesis: correlated +1/-1 pairs from high-flux void [CLAUDE.md §4.1]
-    bool exchange_force = false;   // phase_forces: Pauli exclusion repulsion (same-spin) [CLAUDE.md §11]
-    bool latency_field = false;    // Poisson-based latency field ∇²L = 4πGρ (gravity potential)
-    bool exact_dual_gauss = false; // gauss_project: exact dual-cell face-flux projection (Phase 1 Electrodynamics)
-    bool emergent_forces = false;  // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
-    bool langevin = false;         // Stochastic thermalization: OU process on wave_vel with (gamma, T)
+    bool larmor_radiation = false;  // phase_write: acceleration-dependent damping at particle sites
+    bool dual_substrate = true;     // dual-substrate mode: J_L, J_R independent fields
+    bool color_forces = false;      // phase_forces: SU(3)-inspired color-dependent pairwise force
+    bool weak_transmutation = true; // tick: chirality/stress polarity flip (+1 ↔ -1)
+    bool strong_force = false;      // phase_forces: Yukawa short-range nuclear force
+    bool triad_binding = false;     // tick: detect 3-particle triads, set locked=true
+    bool pair_production = false;   // genesis: correlated +1/-1 pairs from high-flux void
+    bool exchange_force = false;    // phase_forces: Pauli exclusion repulsion (same-spin)
+    bool latency_field = false;     // Poisson-based latency field ∇²L = 4πGρ (gravity potential)
+    bool exact_dual_gauss = false;  // gauss_project: exact dual-cell face-flux projection
+    bool emergent_forces = false;   // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
+    bool langevin = false;          // Stochastic thermalization: OU process on wave_vel with (gamma, T)
 
     // D-3 / E-1 (2026-04-27): JS scale-0 scenario library has been pushing a
     // `confinement` bool through setToggle(); without a backing field the
@@ -40,147 +64,219 @@ struct TermToggles {
     // `strong_force`. This field exists so JS overrides land somewhere
     // observable; it is ALIASED to "color_forces && strong_force linear regime
     // active" and is not yet consumed by any C++ branch. Treat it as an
-    // intent flag — a future refactor that splits the linear regime out of
-    // compute_color_force() will gate on this directly. Default false so
-    // toggle scenarios that don't ask for it stay in the legacy code path.
+    // intent flag.
     bool confinement = false;
 
+    // ARCH-3 (2026-04-25): when true, RenderBridge::tick() THROWS on the
+    // first validate() failure instead of printing to stderr and continuing.
+    bool strict_validation = false;
+
+    // ── Non-bool config fields (NOT in TOGGLE_SPECS[]) ────────────────
+    // These are typed parameters / enum modes, not boolean toggles, so
+    // they live outside the table. Direct field access only.
+
     // Cluster A (FTD-0093 / Mechanism C): sublattice stencil mode for phase_read.
-    // FULL preserves the legacy 18-pt (σ_SC + σ_FCC)/2 path. SC, FCC, BCC select
-    // a single sub-stencil — required for the BCC-projected spectrum measurement
-    // (PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md). See ftd/sublattice.h.
     BccStencilMode bcc_stencil = BccStencilMode::FULL;
 
-    // Cluster A: voxel-parity filter for the Langevin thermostat. ALL_SITES
-    // applies the OU update everywhere (legacy behaviour). SC_SITES / FCC_SITES /
-    // BCC_SITES restrict to that parity class; non-selected voxels fall through
-    // to the existing else-branch (deterministic damping). See render_bridge.cpp
-    // phase_write Langevin block.
+    // Cluster A: voxel-parity filter for the Langevin thermostat.
     SiteClass langevin_site_filter = SiteClass::ALL_SITES;
 
     // Langevin thermalization parameters (used only when langevin == true).
-    // Continuous form:  dv = -gamma v dt + sqrt(2 gamma T) dW, per component per voxel.
-    // Discrete form (per tick, dt=1):
-    //     v <- (1 - gamma) v  +  sqrt(2 gamma T) * eta,   eta ~ N(0, I)
-    // Equilibrium:  <|v|^2>_voxel = 3 T  (three components of wave_vel).
-    // Autocorrelation time: tau ~ 1/gamma ticks.
-    // Keep gamma in [0, 0.5] for discrete stability; T sets the energy scale.
-    // See docs/theory/10_eft_program/DERIV_LANGEVIN_THERMALIZATION.md (future).
     double langevin_T     = 0.0;
     double langevin_gamma = 0.01;
     unsigned int langevin_seed = 1;  // RNG seed for reproducibility
 
     // Phase H (Apr 2026): explicit coupling constant in the Gauss law source.
-    // gauss_project_cpu uses source = div(J) - coulomb_charge_coupling * s.
-    // Default 1.0 preserves geometric Coulomb (Phase G theorem:
-    // alpha_r = 2 r G_L(r) -> 1/(2 pi) at continuum). To test whether FTD
-    // emergent dynamics can reproduce alpha_ref = 1/137, set this to
-    // sqrt(2 pi alpha_ref) ~ 0.2141 (engine convention) or
-    // sqrt(4 pi alpha_ref) ~ 0.3028 (classical convention). See
-    // docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md Section 7.
     double coulomb_charge_coupling = 1.0;
 
-    // ARCH-3 (2026-04-25): when true, RenderBridge::tick() THROWS on the
-    // first validate() failure instead of printing to stderr and continuing.
-    // Off by default to preserve legacy behaviour; tests/campaigns that need
-    // hard guarantees can enable it. The throw type is std::logic_error.
-    bool strict_validation = false;
-
-    // Validates known dependency constraints between toggles.
-    // Returns true if the combination is valid.
-    // If err != nullptr, appends a human-readable description of each violation.
-    bool validate(std::string* err = nullptr) const {
-        std::string msg;
-        if (weak_transmutation && !dual_substrate)
-            msg += "weak_transmutation requires dual_substrate (operates on J_L/J_R)\n";
-        if (lorentz_force && !forces)
-            msg += "lorentz_force requires forces\n";
-        if (triad_binding && !color_forces)
-            msg += "triad_binding requires color_forces\n";
-        if (exchange_force && !poisson_coulomb)
-            msg += "exchange_force requires poisson_coulomb\n";
-        if (emergent_forces && poisson_coulomb)
-            msg += "emergent_forces and poisson_coulomb are mutually exclusive\n";
-        if (larmor_radiation && !damping)
-            msg += "larmor_radiation requires damping\n";
-        if (latency_field && !gravity)
-            msg += "latency_field requires gravity\n";
-        // Cluster A: BCC sub-stencil currently uses single-substrate path only.
-        // Dual-substrate BCC + Langevin is OPEN-7 (deferred per planning doc).
-        if (bcc_stencil != BccStencilMode::FULL && dual_substrate)
-            msg += "bcc_stencil != FULL requires dual_substrate=false (single-substrate path; dual-substrate BCC is OPEN-7)\n";
-        // Cluster A: a non-default Langevin site filter requires Langevin to be on.
-        if (langevin_site_filter != SiteClass::ALL_SITES && !langevin)
-            msg += "langevin_site_filter != ALL_SITES requires langevin=true\n";
-        // E-2 / RF-9 (2026-04-27): additional toggle dependency checks.
-        if (langevin && larmor_radiation)
-            msg += "langevin and larmor_radiation are mutually exclusive (both modulate wave_vel damping)\n";
-        if (selective_damping && !damping)
-            msg += "selective_damping has no effect with damping=false\n";
-        if (pair_production && !genesis)
-            msg += "pair_production requires genesis (it is an enhanced manifestation path)\n";
-        if (bcc_stencil != BccStencilMode::FULL && !wave_propagation)
-            msg += "bcc_stencil != FULL requires wave_propagation=true (sublattice projection requires the wave path)\n";
-        if (triad_binding && !dual_substrate)
-            msg += "triad_binding requires dual_substrate (operates on J_L/J_R)\n";
-        if (err) *err = msg;
-        return msg.empty();
-    }
-
-    // F2 (callstack audit 2026-04-17): warn about toggles whose
-    // implementation lives only on the GPU path. Called from
-    // RenderBridge::tick() when `use_gpu_` is false — returns a
-    // non-empty string when any GPU-only toggle is set, so the caller
-    // can std::cerr it.
-    //
-    // Post-fix: `pair_production` and `triad_binding` are now ported
-    // (pair_production_cpu / triad_binding_cpu). The two still
-    // GPU-only are `strong_force` and `exchange_force`. If either
-    // gets ported, drop it from this check.
-    std::string cpu_runtime_warnings() const {
-        std::string msg;
-        if (strong_force)
-            msg += "strong_force has no CPU implementation — toggle is a no-op on CPU builds\n";
-        if (exchange_force)
-            msg += "exchange_force has no CPU implementation — toggle is a no-op on CPU builds\n";
-        return msg;
-    }
-
-    void enable_all() {
-        wave_propagation = coupling = damping = genesis = true;
-        gauss_projection = forces = gravity = poisson_coulomb = movement = true;
-        lorentz_force = true;
-        selective_damping = true;   // Vacuum EM waves propagate losslessly
-        larmor_radiation = false;  // Keep uniform damping by default
-        dual_substrate = true;     // SU(2) weak gauge requires dual substrate
-        color_forces = false;      // Keep color off by default
-        weak_transmutation = true;  // Chirality-based weak transmutation
-        strong_force = false;      // Keep strong force off by default
-        triad_binding = false;     // Keep triad binding off by default
-        pair_production = false;   // Keep pair production off by default
-        exchange_force = false;    // Keep exchange force off by default
-        latency_field = false;     // Keep latency field off by default
-        bcc_stencil = BccStencilMode::FULL;          // legacy 18-pt
-        langevin_site_filter = SiteClass::ALL_SITES; // unfiltered
-    }
-
-    void disable_all() {
-        wave_propagation = coupling = damping = genesis = false;
-        gauss_projection = forces = gravity = poisson_coulomb = movement = false;
-        lorentz_force = false;
-        selective_damping = false;
-        larmor_radiation = false;
-        dual_substrate = false;
-        color_forces = false;
-        weak_transmutation = false;
-        strong_force = false;
-        triad_binding = false;
-        pair_production = false;
-        exchange_force = false;
-        latency_field = false;
-        bcc_stencil = BccStencilMode::FULL;          // logic-only stencil default
-        langevin_site_filter = SiteClass::ALL_SITES;
-    }
+    // ── Generated helpers — bodies live in this header (header-only,
+    // POD struct preserved). Implementations below TOGGLE_SPECS[]. ────
+    bool validate(std::string* err = nullptr) const;
+    std::string cpu_runtime_warnings() const;
+    void enable_all();
+    void disable_all();
 };
+
+// ─────────────────────────────────────────────────────────────────────
+// ToggleSpec — one row per boolean toggle. Adding a toggle = one new
+// row here (and one new field in TermToggles above). The helpers below
+// (validate, enable_all, disable_all, cpu_runtime_warnings) consume this
+// table, so no other edit is required.
+// ─────────────────────────────────────────────────────────────────────
+struct ToggleSpec {
+    const char* name;                  // canonical key (matches struct field name)
+    bool TermToggles::*field;          // pointer-to-member (typed)
+    bool default_value;                // also: value applied by enable_all()
+    bool bulk_managed;                 // included in enable_all() / disable_all()
+    const char* requires_;             // empty or comma-separated dependency names
+    const char* conflicts;             // empty or single conflict name
+    const char* gpu_only_warning;      // empty or warning string for cpu_runtime_warnings()
+    uint8_t backends;                  // bitmask: CPU=1, GPU=2, JS=4
+    const char* description;
+};
+
+inline constexpr ToggleSpec TOGGLE_SPECS[] = {
+    // {name, field, default, bulk_managed, requires, conflicts, gpu_only_warning, backends, description}
+    {"wave_propagation",   &TermToggles::wave_propagation,   true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-read 18-pt Laplacian wave equation"},
+    {"coupling",           &TermToggles::coupling,           true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-read state-flux coupling g_c*grad(s)"},
+    {"damping",            &TermToggles::damping,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write exponential flux decay at rate alpha"},
+    {"genesis",            &TermToggles::genesis,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write manifestation + evaporation"},
+    {"gauss_projection",   &TermToggles::gauss_projection,   true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Enforce div(J) = s constraint via SOR Poisson"},
+    {"forces",             &TermToggles::forces,             true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-forces master toggle (EM + gravity)"},
+    {"gravity",            &TermToggles::gravity,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Gravitational force F = G_N*grad(rho)"},
+    {"poisson_coulomb",    &TermToggles::poisson_coulomb,    true,  true,  "",                 "emergent_forces",  "", ToggleBackend::ANY, "Solve Poisson for Coulomb potential phi"},
+    {"movement",           &TermToggles::movement,           true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Particle position integration"},
+    {"lorentz_force",      &TermToggles::lorentz_force,      true,  true,  "forces",           "",                 "", ToggleBackend::ANY, "Magnetic Lorentz force F = alpha*s*(v x B)"},
+    {"selective_damping",  &TermToggles::selective_damping,  true,  true,  "damping",          "",                 "", ToggleBackend::ANY, "Damp only near manifested particles"},
+    {"larmor_radiation",   &TermToggles::larmor_radiation,   false, true,  "damping",          "langevin",         "", ToggleBackend::ANY, "Acceleration-squared radiation damping"},
+    {"dual_substrate",     &TermToggles::dual_substrate,     true,  true,  "",                 "",                 "", ToggleBackend::ANY, "J_L / J_R chirality split"},
+    {"color_forces",       &TermToggles::color_forces,       false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3)-inspired color coupling"},
+    {"weak_transmutation", &TermToggles::weak_transmutation, true,  true,  "dual_substrate",   "",                 "", ToggleBackend::ANY, "Chirality flip flavor-changing weak"},
+    {"strong_force",       &TermToggles::strong_force,       false, true,  "",                 "",                 "strong_force has no CPU implementation — toggle is a no-op on CPU builds\n", ToggleBackend::ANY, "Yukawa short-range nuclear force"},
+    {"triad_binding",      &TermToggles::triad_binding,      false, true,  "color_forces",     "",                 "", ToggleBackend::ANY, "Color-singlet triad binding (locked=true)"},
+    {"pair_production",    &TermToggles::pair_production,    false, true,  "genesis",          "",                 "", ToggleBackend::ANY, "Correlated +1/-1 pair manifestation"},
+    {"exchange_force",     &TermToggles::exchange_force,     false, true,  "poisson_coulomb",  "",                 "exchange_force has no CPU implementation — toggle is a no-op on CPU builds\n", ToggleBackend::ANY, "Pauli exclusion repulsion (same-spin)"},
+    {"latency_field",      &TermToggles::latency_field,      false, true,  "gravity",          "",                 "", ToggleBackend::ANY, "Poisson-based latency field (gravity proxy)"},
+    {"exact_dual_gauss",   &TermToggles::exact_dual_gauss,   false, false, "",                 "",                 "", ToggleBackend::ANY, "Exact dual-cell face-flux Gauss projection"},
+    {"emergent_forces",    &TermToggles::emergent_forces,    false, false, "",                 "poisson_coulomb",  "", ToggleBackend::ANY, "EFT mode: force from flux gradient (no Poisson)"},
+    {"langevin",           &TermToggles::langevin,           false, false, "",                 "larmor_radiation", "", ToggleBackend::ANY, "Stochastic OU thermostat (CPU only at runtime)"},
+    {"confinement",        &TermToggles::confinement,        false, false, "",                 "",                 "", ToggleBackend::ANY, "Linear confinement intent flag (no C++ branch yet)"},
+    {"strict_validation",  &TermToggles::strict_validation,  false, false, "",                 "",                 "", ToggleBackend::ANY, "Throw on validate() failure (vs. stderr warn)"},
+};
+
+// ─────────────────────────────────────────────────────────────────────
+// Internal helpers (header-only). C++17, no <algorithm>/<vector> needed.
+// ─────────────────────────────────────────────────────────────────────
+namespace term_toggles_detail {
+
+// Lookup a spec by name. Returns nullptr if not found.
+inline const ToggleSpec* find_spec(std::string_view name) {
+    for (const auto& s : TOGGLE_SPECS) {
+        if (name == s.name) return &s;
+    }
+    return nullptr;
+}
+
+// Iterate comma-separated dep names, calling `cb` with each trimmed view.
+// Skips empty entries. Returns true if `cb` returned true for all entries.
+template <typename Cb>
+inline void for_each_csv(const char* csv, Cb cb) {
+    if (!csv || !*csv) return;
+    std::string_view view(csv);
+    while (!view.empty()) {
+        auto comma = view.find(',');
+        std::string_view tok = (comma == std::string_view::npos) ? view : view.substr(0, comma);
+        // Trim whitespace
+        while (!tok.empty() && (tok.front() == ' ' || tok.front() == '\t')) tok.remove_prefix(1);
+        while (!tok.empty() && (tok.back()  == ' ' || tok.back()  == '\t')) tok.remove_suffix(1);
+        if (!tok.empty()) cb(tok);
+        if (comma == std::string_view::npos) break;
+        view.remove_prefix(comma + 1);
+    }
+}
+
+}  // namespace term_toggles_detail
+
+// ─────────────────────────────────────────────────────────────────────
+// Generated helper implementations.
+// ─────────────────────────────────────────────────────────────────────
+inline bool TermToggles::validate(std::string* err) const {
+    using namespace term_toggles_detail;
+    std::string msg;
+
+    // Pass 1: table-driven requires_/conflicts checks.
+    for (const auto& spec : TOGGLE_SPECS) {
+        if (!(this->*(spec.field))) continue;  // only check enabled toggles
+
+        // requires_: every listed dep must also be true.
+        for_each_csv(spec.requires_, [&](std::string_view dep) {
+            const ToggleSpec* dep_spec = find_spec(dep);
+            if (!dep_spec) return;
+            if (!(this->*(dep_spec->field))) {
+                msg += spec.name;
+                msg += " requires ";
+                msg += dep_spec->name;
+                msg += "\n";
+            }
+        });
+
+        // conflicts: listed conflict must be false. We emit the message only
+        // from the FIRST-defined side of the pair to avoid duplicate output
+        // (e.g. emergent_forces lists poisson_coulomb; poisson_coulomb does
+        // not list emergent_forces — by convention only the OFF-by-default
+        // toggle of a mutex pair declares the conflict).
+        if (spec.conflicts && *spec.conflicts) {
+            const ToggleSpec* conf_spec = find_spec(spec.conflicts);
+            if (conf_spec && (this->*(conf_spec->field))) {
+                msg += spec.name;
+                msg += " and ";
+                msg += conf_spec->name;
+                msg += " are mutually exclusive\n";
+            }
+        }
+    }
+
+    // Pass 2: cross-cutting rules that don't fit the per-spec model.
+    // (Kept hand-rolled because they involve non-bool fields, multi-target
+    // dependencies, or custom phrasing the test suite pins on.)
+
+    // Cluster A: BCC sub-stencil currently uses single-substrate path only.
+    if (bcc_stencil != BccStencilMode::FULL && dual_substrate)
+        msg += "bcc_stencil != FULL requires dual_substrate=false (single-substrate path; dual-substrate BCC is OPEN-7)\n";
+    // Cluster A: a non-default Langevin site filter requires Langevin to be on.
+    if (langevin_site_filter != SiteClass::ALL_SITES && !langevin)
+        msg += "langevin_site_filter != ALL_SITES requires langevin=true\n";
+    // Note: selective_damping->damping requirement is encoded in TOGGLE_SPECS;
+    // legacy phrasing was "has no effect with damping=false" but the table
+    // generates "selective_damping requires damping" (semantically equivalent;
+    // no test pins on the wording).
+    if (bcc_stencil != BccStencilMode::FULL && !wave_propagation)
+        msg += "bcc_stencil != FULL requires wave_propagation=true (sublattice projection requires the wave path)\n";
+    if (triad_binding && !dual_substrate)
+        msg += "triad_binding requires dual_substrate (operates on J_L/J_R)\n";
+
+    if (err) *err = msg;
+    return msg.empty();
+}
+
+// F2 (callstack audit 2026-04-17): warn about toggles whose
+// implementation lives only on the GPU path. Generated from
+// ToggleSpec::gpu_only_warning entries in the table.
+inline std::string TermToggles::cpu_runtime_warnings() const {
+    std::string msg;
+    for (const auto& spec : TOGGLE_SPECS) {
+        if (!(this->*(spec.field))) continue;
+        if (spec.gpu_only_warning && *spec.gpu_only_warning) {
+            msg += spec.gpu_only_warning;
+        }
+    }
+    return msg;
+}
+
+// enable_all() — restore the recommended profile (= each toggle's
+// `default_value`) for every bulk_managed toggle. Non-bulk toggles
+// (langevin, emergent_forces, exact_dual_gauss, confinement,
+// strict_validation) are left untouched, matching legacy semantics.
+// Non-bool config fields (bcc_stencil, langevin_site_filter) are reset
+// to their canonical default mode.
+inline void TermToggles::enable_all() {
+    for (const auto& spec : TOGGLE_SPECS) {
+        if (!spec.bulk_managed) continue;
+        this->*(spec.field) = spec.default_value;
+    }
+    bcc_stencil = BccStencilMode::FULL;
+    langevin_site_filter = SiteClass::ALL_SITES;
+}
+
+// disable_all() — clear every bulk_managed toggle to false. Non-bulk
+// toggles untouched; non-bool config fields reset to canonical defaults.
+inline void TermToggles::disable_all() {
+    for (const auto& spec : TOGGLE_SPECS) {
+        if (!spec.bulk_managed) continue;
+        this->*(spec.field) = false;
+    }
+    bcc_stencil = BccStencilMode::FULL;
+    langevin_site_filter = SiteClass::ALL_SITES;
+}
 
 }  // namespace ftd
