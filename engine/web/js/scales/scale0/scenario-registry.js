@@ -379,6 +379,25 @@ export const SCALE0_SCENARIOS = [
             bridge.setupScenario(params.id || 's0-seed-symmetry-regression');
         },
     },
+
+    // ── Vacuum Particles (s0-vacuum-* group, 2026-04-28) ───────────────
+    // 15 single-particle-in-vacuum scenarios. See
+    // engine/web/docs/SPEC_VACUUM_PARTICLE_SCENARIOS.md for the catalog.
+    makeScenario('Vacuum Particles', 's0-vacuum-electron',          'Electron in vacuum (e⁻)',                 ['vacuum', 'lepton'],   '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-muon',              'Muon in vacuum (μ⁻)',                     ['vacuum', 'lepton'],   '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-tau',               'Tau in vacuum (τ⁻)',                      ['vacuum', 'lepton'],   '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-electron-neutrino', 'Electron neutrino in vacuum (ν_e)',       ['vacuum', 'lepton', 'neutrino'], '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-muon-neutrino',     'Muon neutrino in vacuum (ν_μ)',           ['vacuum', 'lepton', 'neutrino'], '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-tau-neutrino',      'Tau neutrino in vacuum (ν_τ)',            ['vacuum', 'lepton', 'neutrino'], '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-photon',            'Photon in vacuum (γ)',                    ['vacuum', 'gauge'],    '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-w-boson',           'W boson in vacuum (W±)',                  ['vacuum', 'gauge'],    '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-z-boson',           'Z boson in vacuum (Z⁰)',                  ['vacuum', 'gauge'],    '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-higgs',             'Higgs boson in vacuum (H)',               ['vacuum', 'gauge'],    '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-proton',            'Proton in vacuum (p)',                    ['vacuum', 'baryon'],   '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-neutron',           'Neutron in vacuum (n)',                   ['vacuum', 'baryon'],   '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-pion-charged',      'Charged pion in vacuum (π±)',             ['vacuum', 'meson'],    '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-pion-neutral',      'Neutral pion in vacuum (π⁰)',             ['vacuum', 'meson'],    '[CONJECTURE]'),
+    makeScenario('Vacuum Particles', 's0-vacuum-kaon-charged',      'Charged kaon in vacuum (K±)',             ['vacuum', 'meson'],    '[CONJECTURE]'),
 ];
 
 export const SCALE0_SCENARIO_MAP = new Map(SCALE0_SCENARIOS.map((scenario) => [scenario.id, scenario]));
