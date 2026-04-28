@@ -1,8 +1,10 @@
 # engine/web/js/bridge/scenarios — Scenario library
 
-**Purpose.** 84+ Scale-0 scenarios partitioned into 5 prefix-named domains.
+**Purpose.** 84 Scale-0 scenarios partitioned into 5 prefix-named domains.
 Each scenario is a setup function that injects particles + flux into the
-bridge to seed an initial condition.
+bridge to seed an initial condition. Unchanged across the 8-phase refactor
+(commits 2db67ca…87158ae): the scenarios layer was already well-factored
+and survived intact.
 
 ## Public API
 
@@ -27,7 +29,7 @@ Plus:
 ## Dependencies
 
 - **Imports from**: `../../constants.js`, `_helpers.js`
-- **Imported by**: `../wasm-bridge-dag.js` (the dispatcher is registered to MockBridge's `setupScenario` capability)
+- **Imported by**: `../mock-bridge.js` (the dispatcher is registered to MockBridge's `setupScenario` capability; `wasm-bridge-dag.js` is now a 42-LOC re-export shim post-Phase 2 split)
 - **C++ mirror**: `engine/src/scenarios/<group>.cpp` (see `engine/src/scenarios/README.md` if exists, or grep for the C++ counterparts)
 
 ## Scenario contract

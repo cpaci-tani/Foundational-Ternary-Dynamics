@@ -8,16 +8,27 @@ modules they compose to provide a uniform external surface.
 ## Public API
 
 Consumers import from one of:
-- `../wasm-bridge-dag.js` — top-level `MockBridge`, `WasmBridge`, capability factories (Phase 2 will split these into the files in this directory)
-- `./mock-diagnostics.js`, `./mock-particle-engine.js`, `./mock-lattice-samplers.js`, `./mock-atom-engine.js` — live-ref factories that the MockBridge composes
+- `../wasm-bridge-dag.js` — 42-LOC re-export shim (post-Phase 2 split, commits 2db67ca…87158ae). Surfaces `MockBridge`, `WasmBridge`, and capability factories from this directory.
+- `./mock-bridge.js` (1578 LOC, `MockBridge` class — Phase 2a)
+- `./wasm-bridge.js` (715 LOC, `WasmBridge` class — Phase 2b)
+- `./capabilities/scale0.js`, `./capabilities/scale1.js`, `./capabilities/scale2.js`, `./capabilities/install.js` — capability factories (Phase 2c)
+- `./mock-diagnostics.js`, `./mock-particle-engine.js`, `./mock-lattice-samplers.js`, `./mock-atom-engine.js` — live-ref factories that `MockBridge` composes
 - `./scenarios/` — scenario dispatcher; see `./scenarios/README.md`
 - `./boundary.js` — pure boundary-shape geometry (`insideBoundary`, `reflectIntoBoundary`)
 - `./mock-scale4.js`, `./mock-scale5.js` — Scale-4/5 mock bridges (planetary, cosmic)
 
 ## Internal structure
 
+Phase 2 split (post-refactor): `wasm-bridge-dag.js` shrank from 2395 → 42 LOC; the bridge classes and their capability surfaces now live in this directory.
+
 | File | Role |
 |---|---|
+| `mock-bridge.js` | `MockBridge` class (Phase 2a; 1578 LOC) |
+| `wasm-bridge.js` | `WasmBridge` class (Phase 2b; 715 LOC) — thin wrapper over Embind RenderBridge |
+| `capabilities/install.js` | Wires `bridge.capabilities.{scale0,scale1,scale2}` onto a bridge instance |
+| `capabilities/scale0.js` | Scale-0 capability factory (lattice / substrate surface) |
+| `capabilities/scale1.js` | Scale-1 capability factory (particle surface) |
+| `capabilities/scale2.js` | Scale-2 capability factory (atomic surface) |
 | `mock-diagnostics.js` | Energy cache + audit decomposition (STATE CONTRACT exemplar) |
 | `mock-particle-engine.js` | Scale-1 N-body Velocity Verlet |
 | `mock-lattice-samplers.js` | 17 lattice samplers (E/B/Poynting fields, gradients, Kretschmann) + latency-proxy cache |
@@ -31,7 +42,7 @@ Consumers import from one of:
 ## Dependencies
 
 - **Imports from**: `../constants.js`, `../elements.js`, `../atomic-props.js`, `../core/log.js`
-- **Imported by**: `../wasm-bridge-dag.js` (composes the live-ref factories), scale controllers (consume capabilities)
+- **Imported by**: `../wasm-bridge-dag.js` (re-export shim — `MockBridge` composes the live-ref factories internally, `capabilities/install.js` wires the per-scale surfaces), scale controllers (consume capabilities)
 - **No cross-scale imports** — the bridge layer is scale-agnostic.
 
 ## State contract (live-reference pattern)
@@ -47,8 +58,9 @@ Reference exemplar: `mock-diagnostics.js` lines 26–50 (STATE CONTRACT block).
 ## How to extend
 
 - **New scenario** → drop into `scenarios/<group>-scenarios.js` (auto-routed by prefix dispatch)
-- **New diagnostic field** → extend the audit returned by `mock-diagnostics.js::createDiagnosticsProvider` AND mirror in WasmBridge binding (`engine/wasm/bindings_render_bridge.cpp`); add row to `engine/web/js/ui/panels/diagnostics-panel/descriptors/scale0.js`
-- **New mock subsystem** → create `mock-<name>.js` following the live-ref factory pattern; mirror the WasmBridge equivalent
+- **New diagnostic field** → extend the audit returned by `mock-diagnostics.js::createDiagnosticsProvider` AND mirror in `wasm-bridge.js` (Embind binding lives in `engine/wasm/bindings_render_bridge.cpp`); add row to `engine/web/js/ui/panels/diagnostics-panel/descriptors/scale0.js`
+- **New mock subsystem** → create `mock-<name>.js` following the live-ref factory pattern; compose it inside `mock-bridge.js`; mirror the equivalent in `wasm-bridge.js`
+- **New capability method** → add to the capability factory in `capabilities/scaleN.js`; both `MockBridge` and `WasmBridge` MUST satisfy the surface (CONTRACTS.md §2)
 - **New scale bridge** (e.g., `mock-scale6.js`) → mirror `mock-scale4.js` / `mock-scale5.js` class structure
 
 ## Invariants

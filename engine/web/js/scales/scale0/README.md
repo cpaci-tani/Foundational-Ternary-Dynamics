@@ -40,9 +40,17 @@ memory-budget reset.
 
 ## Dependencies
 
-- **Imports from**: `../../constants.js`, `../../config/toggles.js`, `../../bridge/scenarios/`, `../../wasm-bridge-dag.js` (capability factories), `../../viewport.js`
+- **Imports from**: `../../constants.js`, `../../config/toggles.js`, `../../bridge/scenarios/`, `../../wasm-bridge-dag.js` (re-export shim; underlying classes live in `../../bridge/`), `../../viewport.js` (1256-LOC orchestrator that composes 4 sub-renderers — see below)
 - **Imported by**: `../../app_dag.js` (dashboard root)
 - **No cross-scale imports** (Scale 1, 2, etc. are independent)
+
+The viewport adapter ultimately drives 4 cascading sub-renderers under
+`engine/web/js/viewport/`: `scene-core.js` (camera/boundary/render loop),
+`flux-renderer.js` (volume + slice + streamlines), `particle-renderer.js`
+(particles + trails + velocity vectors), `field-renderer.js` (27+ field
+overlays + canonical mesh-factory home). Lifecycle and cross-renderer
+helpers follow the cascade-callback pattern (ADR-0010) and the
+mesh-factory callback pattern (ADR-0011).
 
 ## The `ctx` object
 
@@ -79,5 +87,7 @@ for the canonical shape and the rules that govern who reads/writes what.
 
 - [CONTRACTS.md §3](../../../../CONTRACTS.md#3--scale-controller-ctx-contract), [§4](../../../../CONTRACTS.md#4--scenario-dispatch-contract)
 - [docs/adr/0004-scale-controllers.md](../../../../docs/adr/0004-scale-controllers.md)
+- [docs/adr/0010-cascade-callback-pattern.md](../../../../docs/adr/0010-cascade-callback-pattern.md) — viewport sub-renderer lifecycle hooks
+- [docs/adr/0011-mesh-factory-callback.md](../../../../docs/adr/0011-mesh-factory-callback.md) — cross-sub-renderer mesh helpers
 - [engine/web/docs/USER_GUIDE.md](../../../docs/USER_GUIDE.md)
 - [META_PROJECT_ATLAS.md](../../../../META_PROJECT_ATLAS.md) §1, §2

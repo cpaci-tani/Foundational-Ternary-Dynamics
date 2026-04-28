@@ -1,11 +1,52 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-04-27 (lattice cleanup pass + plumbing/leak audit)
-**Engine version:** 2.16.0 (post 2026-04-27: PhysicsHarness + bridge contract + scenario library DRY + plumbing leak plugs)
-**Test count:** 190+ C++ tests + 16 Playwright specs (incl. scenario-parity guard) + 23 Python test files. GPU conditional on `FTD_ENABLE_CUDA`.
+**Last updated:** 2026-04-27 (post 8-phase modular refactor sweep — see §"April 27, 2026 — Modular refactor sweep" below)
+**Engine version:** 2.17.0 (post-refactor: viewport + bridge + render_bridge + CUDA stencil all decomposed)
+**Test count:** 250+ C++ tests + 17 Playwright specs + 23 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
 
-### April 27, 2026 — Lattice cleanup pass + plumbing leak plugs
+### April 27, 2026 — Modular refactor sweep (8 phases, 17 commits)
+
+The engine was decomposed across 8 phases following the plan in
+`.claude/plans/i-want-to-try-crispy-charm.md` (closed). Driven by the
+audit observation that 5 specific files had accumulated structural
+bloat. Bit-exact physics preservation enforced by a 100-tick
+deterministic byte-hash gate (`test_render_bridge_golden`, hash
+`0xcd957b601d47868a`) that held across every commit.
+
+**Cumulative LOC reductions:**
+
+| File | Before | After | Δ |
+|---|---:|---:|---:|
+| `engine/web/js/viewport.js` | 3953 | 1256 | **−68%** |
+| `engine/web/js/wasm-bridge-dag.js` | 2395 | 42 | **−98%** |
+| `engine/src/render_bridge.cpp` | 1231 | 545 | **−56%** |
+| `engine/cuda/kernels_stencil.cu` | 1530 | 0 (deleted, split into 3 TUs) | **−100%** |
+| `engine/include/ftd/render_bridge.h` | 506 | 369 | **−27%** |
+| `engine/include/ftd/test_telemetry.h` | 412 | 154 | **−63%** |
+
+**New infrastructure created:**
+- 4 viewport sub-renderer modules (4948 LOC across 5 files): `scene-core.js`, `flux-renderer.js`, `particle-renderer.js`, `field-renderer.js`
+- 7 bridge layer modules: `mock-bridge.js`, `wasm-bridge.js`, `capabilities/{install,scale0,scale1,scale2}.js`
+- 5 `render_bridge_phases/` TUs: `phase_write.cpp`, `phase_forces.cpp`, `phase_read.cpp`, `phase_movement.cpp` (Phase 4) + R1-R5 prior
+- 3 CUDA TUs: `kernels_stencil_single.cu`, `kernels_stencil_dual.cu`, `kernels_aux.cu` + shared `kernels_stencil_common.cuh`
+- `ftd_test_support` library (test_telemetry impl + bridge_fixtures)
+- 4 new ADRs: 0010 (cascade callback), 0011 (mesh-factory callback), 0012 (golden-tick gate), 0013 (toggle TOGGLE_SPECS[])
+
+**Key patterns established:**
+- **Cascade callback** (ADR-0010): every sub-renderer exposes `onLatticeSizeChanged`, `setBoundaryShape`, `setEngineMode`, `dispose`; orchestrator dispatches unconditionally.
+- **Mesh-factory callback** (ADR-0011): single canonical home + ctor-bound callbacks for cross-sub-renderer helpers.
+- **Golden-tick regression gate** (ADR-0012): `test_render_bridge_golden.cpp` hashes 100 ticks; bit-exact preservation required.
+- **TOGGLE_SPECS[] table-driven** (ADR-0013): adding a toggle = 2-place edit (was 5-place).
+
+See [docs/audits/AUDIT_2026-04_refactor-sweep.md](../docs/audits/AUDIT_2026-04_refactor-sweep.md)
+for the full ledger including commit hashes, deferred items, and lessons learned.
+
+**Outstanding deferral:** Phase 5 GPU runtime parity at L=64 — kernels_stencil split is host-compile-verified + CPU-deterministic-verified, but bit-exact GPU-stencil parity needs a WSL2 follow-up session (per CLAUDE.md GPU-via-WSL2 mandate).
+
+---
+
+### April 27, 2026 — Lattice cleanup pass + plumbing leak plugs (pre-refactor)
 
 **Web engine architecture additions:**
 - **PhysicsHarness layer** (`engine/web/js/physics/`) — single canonical
