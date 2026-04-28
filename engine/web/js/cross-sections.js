@@ -5,13 +5,16 @@
  * All energies in MeV, lengths in fm, cross-sections in fm².
  */
 
-import { ALPHA, K_B, PI_FTD, N_C, B_3, N_EFF, HBAR_C_MEV_FM } from './constants.js';
+import { ALPHA, K_B, M_E_PHYS, PI_FTD, N_C, B_3, N_EFF, HBAR_C_MEV_FM } from './constants.js';
 
 // ── Classical Electron Radius ────────────────────────────────────────
 
-/** Classical electron radius: r_e = alpha * hbar*c / (m_e * c^2) in fm */
+/** Classical electron radius: r_e = alpha * hbar*c / (m_e * c^2) in fm.
+ *  Uses M_E_PHYS (PDG electron mass) so cross-sections compare directly
+ *  against measured values; K_B is the FTD mass anchor and would shift
+ *  r_e by O(0.2%). */
 export function classicalElectronRadiusFm() {
-    return ALPHA * HBAR_C_MEV_FM / K_B;
+    return ALPHA * HBAR_C_MEV_FM / M_E_PHYS;
 }
 
 // ── Thomson Cross-Section ────────────────────────────────────────────
@@ -74,8 +77,8 @@ export function mottDiffCS(theta, E_kin, Z = 1) {
     const ruth = rutherfordDiffCS(theta, E_kin, 1, Z);
     // beta = v/c, from relativistic kinematics
     // E_total = E_kin + m_e, gamma = E_total / m_e, beta^2 = 1 - 1/gamma^2
-    const E_total = E_kin + K_B;
-    const gamma = E_total / K_B;
+    const E_total = E_kin + M_E_PHYS;
+    const gamma = E_total / M_E_PHYS;
     const beta2 = 1.0 - 1.0 / (gamma * gamma);
     const sinHalf = Math.sin(theta / 2.0);
     return ruth * (1.0 - beta2 * sinHalf * sinHalf);
@@ -107,9 +110,9 @@ export function pairProductionThreshold() {
  * @returns {number} cross-section in fm^2 (0 if below threshold)
  */
 export function pairProductionCS(E_photon, Z = 1) {
-    if (E_photon < 2.0 * K_B) return 0.0;
+    if (E_photon < 2.0 * M_E_PHYS) return 0.0;
     const r_e = classicalElectronRadiusFm();
-    const logTerm = 28.0 / 3.0 * Math.log(2.0 * E_photon / K_B) - 218.0 / 27.0;
+    const logTerm = 28.0 / 3.0 * Math.log(2.0 * E_photon / M_E_PHYS) - 218.0 / 27.0;
     if (logTerm <= 0) return 0.0;
     return 7.0 / 9.0 * ALPHA * r_e * r_e * Z * Z * logTerm;
 }
@@ -125,7 +128,7 @@ export function pairProductionCS(E_photon, Z = 1) {
  */
 export function kleinNishinaDiffCS(theta, E_photon) {
     const r_e = classicalElectronRadiusFm();
-    const x = E_photon / K_B;  // photon energy in electron masses
+    const x = E_photon / M_E_PHYS;  // photon energy in electron masses
     const cosTheta = Math.cos(theta);
     const P = 1.0 / (1.0 + x * (1.0 - cosTheta)); // ratio E'/E
     return 0.5 * r_e * r_e * P * P * (P + 1.0 / P - 1.0 + cosTheta * cosTheta);
@@ -136,7 +139,7 @@ export function kleinNishinaDiffCS(theta, E_photon) {
  * Low-energy limit → Thomson; high-energy → decreases as 1/E.
  */
 export function comptonTotalCS(E_photon) {
-    const x = E_photon / K_B;
+    const x = E_photon / M_E_PHYS;
     const r_e = classicalElectronRadiusFm();
     if (x < 0.01) return thomsonCrossSection(); // Thomson limit
     // Klein-Nishina total:

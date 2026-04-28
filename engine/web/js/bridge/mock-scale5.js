@@ -12,6 +12,12 @@
  * Unit system: G = G_N = 0.01 (FTD ontic chain). Masses and distances
  * scaled so v_circular ~ O(1) for visual dynamics.
  *
+ * Mass-unit note: body masses on this scale are stored in lattice units,
+ * not solar masses. For UI display ("M = X M_sun") multiply by
+ * `LATTICE_TO_SOLAR_MASS` from constants.js. No conversion is currently
+ * applied here — telemetry consumers downstream are responsible for the
+ * SI labelling step.
+ *
  * Refactor note (MS5-1..3): scenario data generation moved to
  * ./cosmic-scenarios/, the force kernel to ./cosmic-physics.js, and
  * post-integration events to ./cosmic-postupdates.js. The class below

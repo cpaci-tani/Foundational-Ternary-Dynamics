@@ -36,6 +36,7 @@
 #include <atomic>
 #include <cassert>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
@@ -49,6 +50,37 @@
 #endif
 
 namespace ftd {
+
+// F-13 (2026-04-27): named salt domains for voxel_uniform() so the
+// genesis/evaporation RNG paths read self-documentingly. Keep the
+// underlying integer values stable — they are part of the public RNG
+// stream definition, not arbitrary tags.
+enum class VoxelRng : std::uint64_t {
+    GenesisManifest = 1,
+    GenesisSpin     = 2,
+    Evaporation     = 3,
+};
+
+// Per-voxel deterministic uniform [0,1).
+// SplitMix64 hash of (langevin_seed, voxel_idx, tick, salt). Replaces the
+// serial-state RNG draws in the genesis probability gate so that each
+// voxel's spawn decision depends only on its own (seed, idx, tick, salt) —
+// not on iteration order. Without this, single-threaded WASM advances one
+// shared RNG sequence voxel-by-voxel, which breaks the y/z reflection
+// symmetry the wave equation otherwise preserves.
+static inline double voxel_uniform(std::uint64_t seed, int voxel_idx,
+                                   int tick, std::uint64_t salt) {
+  std::uint64_t x = seed
+                  ^ (static_cast<std::uint64_t>(voxel_idx) * 0x9E3779B97F4A7C15ULL)
+                  ^ (static_cast<std::uint64_t>(tick)      * 0xBF58476D1CE4E5B9ULL)
+                  ^ (salt                                   * 0x94D049BB133111EBULL);
+  // SplitMix64 finalizer.
+  x = (x ^ (x >> 30)) * 0xBF58476D1CE4E5B9ULL;
+  x = (x ^ (x >> 27)) * 0x94D049BB133111EBULL;
+  x =  x ^ (x >> 31);
+  // Convert top 53 bits to double in [0,1).
+  return (x >> 11) * (1.0 / 9007199254740992.0);
+}
 
 RenderBridge::RenderBridge(int lattice_size)
     : lattice_(lattice_size), voxels_(lattice_.total_sites()),
@@ -440,7 +472,9 @@ void RenderBridge::phase_write() {
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_B);
-        if (rng.thread_uniform(tids) < p) {
+        const std::uint64_t gseed =
+            static_cast<std::uint64_t>(toggles.langevin_seed);
+        if (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
           double chi = v.chirality_density();
           v.state = (chi >= 0) ? 1 : -1;
           // ARCH-7 (2026-04-25): defer particle_id assignment until the
@@ -459,7 +493,7 @@ void RenderBridge::phase_write() {
             else if (ay >= ax) v.spin = (curl.y > 0) ? 1 : -1;
             else v.spin = (curl.x > 0) ? 1 : -1;
           } else {
-            v.spin = (rng.thread_uniform(tids) < 0.5) ? 1 : -1;
+            v.spin = (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::GenesisSpin)) < 0.5) ? 1 : -1;
           }
 
           // Color from dominant flux axis
@@ -512,11 +546,13 @@ void RenderBridge::phase_write() {
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_B);
-        if (rng.thread_uniform(tids) < p) {
+        const std::uint64_t gseed =
+            static_cast<std::uint64_t>(toggles.langevin_seed);
+        if (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
           // Latent Heat of Manifestation: consume wave energy
-          v.wave_vel *= 0.5; // Drain local kinetic energy to pay for mass gap
+          v.wave_vel *= (1.0 - K_GENESIS_KINETIC_DRAIN); // Drain local kinetic energy to pay for mass gap
           double jmag = v.flux.mag();
-          if (jmag > 1e-9) v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag); // Consume potential energy
+          if (jmag > K_GENESIS_FLUX_EPSILON) v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag); // Consume potential energy
 
           // ARCH-7b: divergence from pre-write snapshot (race-free).
           double div = ::ftd::divergence_from_flux_array(flux_pre_write_, lattice_, i);
@@ -535,7 +571,7 @@ void RenderBridge::phase_write() {
             else if (ay >= ax) v.spin = (curl.y > 0) ? 1 : -1;
             else v.spin = (curl.x > 0) ? 1 : -1;
           } else {
-            v.spin = (rng.thread_uniform(tids) < 0.5) ? 1 : -1;
+            v.spin = (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::GenesisSpin)) < 0.5) ? 1 : -1;
           }
 
           double fx = std::abs(v.flux.x), fy = std::abs(v.flux.y), fz = std::abs(v.flux.z);
@@ -561,7 +597,9 @@ void RenderBridge::phase_write() {
       // but even in a thermal bath, virtual pairs have a finite lifetime.
       double evap_prob = std::exp(-local_energy / (K_B * K_B));
       // Increase evaporation rate significantly to stabilize the thermal vacuum
-      if (rng.thread_uniform(tids) < evap_prob * 0.1) {
+      const std::uint64_t gseed =
+          static_cast<std::uint64_t>(toggles.langevin_seed);
+      if (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE) {
         v.state = 0;
         v.particle_id = -1;
         v.spin = 0;

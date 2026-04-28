@@ -8,7 +8,14 @@
  */
 
 import { getById as catalogGetById } from './particle-catalog.js';
-import { ALPHA, ALPHA_EFT, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON, R_BOHR, N_BASE, G_STAR, VARPI, N_C, B_3, N_EFF } from './constants.js';
+import { ALPHA, ALPHA_EFT, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON, R_BOHR, N_BASE, G_STAR, VARPI, N_C, B_3, N_EFF,
+    COULOMB_K_FORCE,
+    STRONG_ALPHA_S, STRONG_RUN_COEFF, STRONG_R_COULOMB, STRONG_R_LINEAR,
+    STRONG_TRANSITION_DENOM, STRONG_LINEAR_DENOM,
+    STRONG_COLOR_REPEL, STRONG_COLOR_ATTRACT } from './constants.js';
+// Hoisted module-scope constant — recomputing K_GENESIS² inside tick() every
+// frame is wasteful (L-5 cleanup).
+const K_GENESIS_SQ = K_GENESIS * K_GENESIS;
 // NOTE: atomic-props and elements.js imports moved to bridge/mock-atom-engine.js
 // alongside the AE block (Wave 2 ticket 6). No caller outside that module
 // needs those constants anymore.
@@ -112,6 +119,12 @@ export class MockBridge {
         this._cachedWaveEnergy = 0;
         this._cachedFluxMag = 0;
 
+        // Cached sponge-layer damping table, rebuilt on demand when D changes
+        // (M-9 cleanup — was a fresh Float32Array(D+1) every absorbing tick).
+        this._spongeTable = null;
+        // Last scatter count for stateGrid zeroing optimization (M-11).
+        this._lastStateScatterCount = 0;
+
         // Lattice samplers — factory takes the live MockBridge instance so
         // cache writes (_latencyProxy, _latencyProxyTick) propagate back
         // here and all existing invalidation sites (reset / setScale0Tick
@@ -187,7 +200,10 @@ export class MockBridge {
         reflectIntoBoundary(this._boundaryShape, p, cx, cy, cz, R, this._reflectiveBoundary);
     }
 
-    setDt(dt) { this._dt = Math.max(1.0, dt); }
+    // Allow real sub-tick dt: a clamp here silently overrode user-set dt and
+    // forced the wave-eq leapfrog to run at unit step regardless. CFL is now
+    // checked at the top of _tickFlux() with a console.warn if violated.
+    setDt(dt) { this._dt = (typeof dt === 'number' && dt > 0) ? dt : 1.0; }
     getDt() { return this._dt; }
     getPhysicalTime() { return this._physicalTime; }
 
@@ -204,7 +220,6 @@ export class MockBridge {
             const Ng = this.latticeSize;
             const J = this._fluxJ;
             const maxNewPerTick = 4; // cap to prevent explosion
-            const K_GENESIS_SQ = K_GENESIS * K_GENESIS;
 
             // Two-pass to match the C++ render_bridge.cpp parallel-for genesis
             // (no positional bias). The legacy single-pass loop hit
@@ -256,9 +271,10 @@ export class MockBridge {
         const doGravity = this._toggles.gravity;
         const doForces = this._toggles.forces;
         const soft = 1.0; // softening length
-        // Coulomb prefactor: ALPHA = G_C^2 (EFT-derived; see constants.js).
-        // Two vertices (source + probe) each contribute G_C, so alpha = G_C*G_C.
-        const alpha4pi = ALPHA_EFT / (4 * Math.PI);
+        // Coulomb prefactor: COULOMB_K_FORCE = ALPHA / (4π) (classical force-law
+        // convention; see constants.js). ALPHA = G_C^2 (EFT-derived); two
+        // vertices (source + probe) each contribute G_C, so alpha = G_C*G_C.
+        const alpha4pi = COULOMB_K_FORCE;
         const gn = this._params.gn;
         const maxV = C_SPEED * 0.3;
 
@@ -443,9 +459,13 @@ export class MockBridge {
                 // Accumulate EM component
                 this._forceEM[i].x += emx; this._forceEM[i].y += emy; this._forceEM[i].z += emz;
                 this._forceEM[j].x -= emx; this._forceEM[j].y -= emy; this._forceEM[j].z -= emz;
-                // Gravity
+                // Gravity — use per-particle masses if available (matches
+                // mock-particle-engine.js convention; locked nuclei carry
+                // physical density, light electrons fall back to K_B).
                 if (doGravity) {
-                    const fGrav = gn * K_B * K_B * invR2 * invR;
+                    const mi = (typeof pi.density === 'number' && pi.density > 0) ? pi.density : K_B;
+                    const mj = (typeof pj.density === 'number' && pj.density > 0) ? pj.density : K_B;
+                    const fGrav = gn * mi * mj * invR2 * invR;
                     const gx = fGrav * dx, gy = fGrav * dy, gz = fGrav * dz;
                     fx += gx; fy += gy; fz += gz;
                     this._forceGravity[i].x += gx; this._forceGravity[i].y += gy; this._forceGravity[i].z += gz;
@@ -461,17 +481,17 @@ export class MockBridge {
                     if (r > 0.5) {
                         // Color factor: +0.5 for same-color (repulsive), -1.0 for different (attractive)
                         const ci = pi.color || 0, cj = pj.color || 0;
-                        const cf = (ci > 0 && cj > 0 && ci === cj) ? 0.5 : -1.0;
-                        const ALPHA_S = 1.0;
+                        const cf = (ci > 0 && cj > 0 && ci === cj) ? STRONG_COLOR_REPEL : STRONG_COLOR_ATTRACT;
+                        const ALPHA_S = STRONG_ALPHA_S;
                         // Running alpha_s: decreases at short distance (asymptotic freedom)
-                        const alpha_s_r = ALPHA_S / (1.0 + 0.1 * Math.log(1.0 + r));
+                        const alpha_s_r = ALPHA_S / (1.0 + STRONG_RUN_COEFF * Math.log(1.0 + r));
                         let F_mag;  // unsigned force magnitude from the regime model
-                        if (r < 3.0) {
-                            F_mag = alpha_s_r / (r * r);         // Coulomb regime
-                        } else if (r < 8.0) {
-                            F_mag = alpha_s_r / (3.0 * r);       // Transition
+                        if (r < STRONG_R_COULOMB) {
+                            F_mag = alpha_s_r / (r * r);                        // Coulomb regime
+                        } else if (r < STRONG_R_LINEAR) {
+                            F_mag = alpha_s_r / (STRONG_TRANSITION_DENOM * r);  // Transition
                         } else {
-                            F_mag = alpha_s_r * r / 64.0;        // Linear confinement
+                            F_mag = alpha_s_r * r / STRONG_LINEAR_DENOM;        // Linear confinement
                         }
                         // Sign convention matching C++ engine (render_bridge.cpp):
                         //   dx points from i toward j.
@@ -779,45 +799,50 @@ export class MockBridge {
         const p = this._particles.find(p =>
             Math.round(p.x) === x && Math.round(p.y) === y && Math.round(p.z) === z
         );
-        if (p) {
-            // Manifested voxel — read flux from grid if available
-            let fx = 0, fy = 0, fz = 0;
-            if (this._fluxJ) {
-                const idx = this._fluxIdx(x, y, z);
-                fx = this._fluxJ[idx * 3] || 0;
-                fy = this._fluxJ[idx * 3 + 1] || 0;
-                fz = this._fluxJ[idx * 3 + 2] || 0;
-            }
-            const Emag = Math.sqrt(fx*fx + fy*fy + fz*fz);
-            return {
-                state: p.state, particleId: p.id, pairId: p.pairId,
-                locked: p.locked, spin: p.spin, color: p.color,
-                fluxX: fx, fluxY: fy, fluxZ: fz, density: p.density,
-                waveVelX: 0, waveVelY: 0, waveVelZ: 0,
-                velX: p.vx, velY: p.vy, velZ: p.vz,
-                speed: Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz),
-                accelMag: 0, divJ: 0, curlX: 0, curlY: 0, curlZ: 0,
-                Emag: Emag, Bmag: 0
-            };
-        }
-        // Void voxel — still return flux data from the grid
+        // Shared field reads — both manifested and void voxels report the
+        // same lattice quantities (wave velocity, divergence). MockBridge
+        // does not compute curl inline (no _curlAt helper); curl stays 0
+        // and is filled by overlay-derived computation in field-overlays.js
+        // when needed (L-6 cleanup).
         let fx = 0, fy = 0, fz = 0;
+        let wv0 = 0, wv1 = 0, wv2 = 0;
+        let divJ = 0;
         if (this._fluxJ) {
             const idx = this._fluxIdx(x, y, z);
             fx = this._fluxJ[idx * 3] || 0;
             fy = this._fluxJ[idx * 3 + 1] || 0;
             fz = this._fluxJ[idx * 3 + 2] || 0;
+            if (this._fluxWV) {
+                wv0 = this._fluxWV[idx * 3] || 0;
+                wv1 = this._fluxWV[idx * 3 + 1] || 0;
+                wv2 = this._fluxWV[idx * 3 + 2] || 0;
+            }
+            if (typeof this._divergenceAt === 'function') {
+                divJ = this._divergenceAt(x, y, z) || 0;
+            }
         }
-        const density = Math.sqrt(fx*fx + fy*fy + fz*fz);
+        const Emag = Math.sqrt(fx*fx + fy*fy + fz*fz);
+        if (p) {
+            return {
+                state: p.state, particleId: p.id, pairId: p.pairId,
+                locked: p.locked, spin: p.spin, color: p.color,
+                fluxX: fx, fluxY: fy, fluxZ: fz, density: p.density,
+                waveVelX: wv0, waveVelY: wv1, waveVelZ: wv2,
+                velX: p.vx, velY: p.vy, velZ: p.vz,
+                speed: Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz),
+                accelMag: 0, divJ: divJ, curlX: 0, curlY: 0, curlZ: 0,
+                Emag: Emag, Bmag: 0
+            };
+        }
         return {
             state: 0, particleId: -1, pairId: -1,
             locked: false, spin: 0, color: 0,
-            fluxX: fx, fluxY: fy, fluxZ: fz, density: density,
-            waveVelX: 0, waveVelY: 0, waveVelZ: 0,
+            fluxX: fx, fluxY: fy, fluxZ: fz, density: Emag,
+            waveVelX: wv0, waveVelY: wv1, waveVelZ: wv2,
             velX: 0, velY: 0, velZ: 0,
-            speed: 0, accelMag: 0, divJ: 0,
+            speed: 0, accelMag: 0, divJ: divJ,
             curlX: 0, curlY: 0, curlZ: 0,
-            Emag: density, Bmag: 0
+            Emag: Emag, Bmag: 0
         };
     }
 
@@ -886,15 +911,23 @@ export class MockBridge {
         const N = this.latticeSize;
         // CFL stability: c * dt <= dx = 1. C_SPEED = 1/sqrt(3) so dt <= sqrt(3).
         // Violating CFL causes silent exponential blow-up — assert early.
-        const dt = this._dt ?? this._params?.dt ?? 1.0;
+        // _params.dt was a dead branch — never set anywhere. Drop it (M-6).
+        const dt = this._dt ?? 1.0;
         if (dt * C_SPEED > 1.0 + 1e-9) {
             if (!this._cflWarned) {
                 console.warn(`[FTD] CFL violation: dt*c=${(dt*C_SPEED).toFixed(4)} > 1. Reduce dt (max = sqrt(3) ~= 1.732).`);
                 this._cflWarned = true;
             }
         }
-        const c2 = C_SPEED * C_SPEED;
-        const damp = this._toggles.damping ? (1.0 - this._params.damping) : 1.0;
+        // c2 absorbs dt so the WV update reads `WV += c2dt * laplacian` and
+        // the J commit reads `J = (J + WV*dt) * damp`. This makes the
+        // leapfrog respect setDt(dt) (C-arch-2 / H-4 fix).
+        const c2 = C_SPEED * C_SPEED * dt;
+        // Clamp damping into [0,1] so a stray param > 1 cannot flip the sign of
+        // J/WV every tick and produce exponential blow-up (L-4 cleanup).
+        const damp = this._toggles.damping
+            ? Math.max(0, Math.min(1, 1.0 - this._params.damping))
+            : 1.0;
         const J = this._fluxJ;
         const WV = this._fluxWV;
         const NN = N * N;
@@ -913,14 +946,21 @@ export class MockBridge {
                 this._stateGrid = new Int8Array(NNN);
             }
             stateGrid = this._stateGrid;
-            stateGrid.fill(0);
+            // Skip the O(L³) zero-fill when the grid is already clean (no
+            // prior scatter in the last tick). Worst case (steady-state
+            // particle count) we still pay one fill, but empty/low-count
+            // ticks become free (M-11 cleanup).
+            if (this._lastStateScatterCount > 0) stateGrid.fill(0);
+            let scatterCount = 0;
             for (const p of this._particles) {
                 if (p.state === 0) continue;
                 const px = ((Math.round(p.x) % N) + N) % N;
                 const py = ((Math.round(p.y) % N) + N) % N;
                 const pz = ((Math.round(p.z) % N) + N) % N;
                 stateGrid[pz * NN + py * N + px] = p.state;
+                scatterCount++;
             }
+            this._lastStateScatterCount = scatterCount;
         }
 
         // 18-point isotropic Laplacian: (1/3)*face + (1/6)*edge - 4*center
@@ -1230,9 +1270,9 @@ export class MockBridge {
             for (let i = 0; i < total; i++) {
                 const d = this._selectiveDampMask[i] ? damp : 1.0;
                 const i3 = i * 3;
-                J[i3]     = (J[i3]     + WV[i3])     * d;
-                J[i3 + 1] = (J[i3 + 1] + WV[i3 + 1]) * d;
-                J[i3 + 2] = (J[i3 + 2] + WV[i3 + 2]) * d;
+                J[i3]     = (J[i3]     + WV[i3]     * dt) * d;
+                J[i3 + 1] = (J[i3 + 1] + WV[i3 + 1] * dt) * d;
+                J[i3 + 2] = (J[i3 + 2] + WV[i3 + 2] * dt) * d;
                 WV[i3]     *= d;
                 WV[i3 + 1] *= d;
                 WV[i3 + 2] *= d;
@@ -1241,9 +1281,9 @@ export class MockBridge {
             // Uniform damping on both J and WV (or no damping if damp === 1.0)
             // Flat stride through the entire array for maximum cache coherence
             for (let k = 0; k < total3; k += 3) {
-                J[k]     = (J[k]     + WV[k])     * damp;
-                J[k + 1] = (J[k + 1] + WV[k + 1]) * damp;
-                J[k + 2] = (J[k + 2] + WV[k + 2]) * damp;
+                J[k]     = (J[k]     + WV[k]     * dt) * damp;
+                J[k + 1] = (J[k + 1] + WV[k + 1] * dt) * damp;
+                J[k + 2] = (J[k + 2] + WV[k + 2] * dt) * damp;
                 WV[k]     *= damp;
                 WV[k + 1] *= damp;
                 WV[k + 2] *= damp;
@@ -1286,12 +1326,17 @@ export class MockBridge {
             const Nm1 = N - 1;
             const D = Math.min(6, Math.max(2, Math.floor(N / 4)));
             // Precompute the per-distance damping table: f[d] for d = 0..D
-            // f(D) = 1.0 (no damping), f(0) = 0 (zero out).
-            const f = new Float32Array(D + 1);
-            for (let d = 0; d <= D; d++) {
-                const r = d / D;
-                f[d] = r * r;  // quadratic ramp
+            // f(D) = 1.0 (no damping), f(0) = 0 (zero out). Cached on
+            // this._spongeTable; rebuilt only when D changes (M-9).
+            if (!this._spongeTable || this._spongeTable.length !== D + 1) {
+                const tbl = new Float32Array(D + 1);
+                for (let d = 0; d <= D; d++) {
+                    const r = d / D;
+                    tbl[d] = r * r;  // quadratic ramp
+                }
+                this._spongeTable = tbl;
             }
+            const f = this._spongeTable;
             for (let z = 0; z < N; z++) {
                 const dz = Math.min(z, Nm1 - z);
                 if (dz >= D) continue;  // entire z-slab is interior
