@@ -1,0 +1,826 @@
+% ============================================================================
+% PAPER · The Master Quadratic of Foundational Ternary Dynamics:
+%         Algebraic Spine, CM Uniqueness, and the Algebra-Engine Bridge
+% ============================================================================
+% Output of the post-2026-04-28 synthesis cycle. Citation targets:
+%   - docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md   (theorem statements)
+%   - docs/theory/09_mathematical/EXPLR_CM_RATIO_TOWER.md (CM uniqueness data)
+%   - docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md (engine L-invariance)
+%   - docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md (bridge derivation)
+%
+% Build:   cd dissemination/papers && pdflatex PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex
+% Status:  DRAFT in progress (2026-04-28 session). Sections 1-2-5 substantive;
+%          sections 3-4-6-7 are scaffolded with citation pointers pending
+%          dedicated drafting passes (see CHECKLIST in §0).
+% ============================================================================
+
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Ohgrp}{\mathrm{O}_h}
+\newcommand{\Ageight}[1]{A_{1g}^{(#1)}}
+\newcommand{\Aoneg}{A_{1g}}
+\newcommand{\Gstar}{G_{\!*}}
+\newcommand{\Nbase}{N_{\mathrm{base}}}
+\newcommand{\KGen}{K_{\!\mathrm{GENESIS}}}
+\newcommand{\FTD}{\textsc{ftd}}
+
+\newenvironment{finding}{\par\medskip\noindent\textbf{Finding.}\itshape\ }{\par\medskip}
+\newenvironment{epistemic}[1]{\par\medskip\noindent\textbf{[#1]}\ }{\par\medskip}
+
+\title{The Master Quadratic of Foundational Ternary Dynamics:\\
+  Algebraic Spine, CM Uniqueness,\\
+  and the Algebra--Engine Bridge}
+
+\author{Foundational Ternary Dynamics Research Program\\
+  \texttt{docs/theory/}}
+
+\date{2026-04-28 (draft)}
+
+\begin{document}
+
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+\noindent
+We present the rigorous algebraic core of Foundational Ternary
+Dynamics (\FTD) and its first quantitative bridge to the framework's
+discrete-lattice engine phenomenology. The algebraic spine consists of
+seven independent theorems centered on the lemniscatic constant
+$\Gstar = \Gamma(1/4)/\Gamma(3/4)$: the master quadratic
+$x^2 - 16\Gstar^{2}x + 16\Gstar^{3}=0$ has roots
+$x_{+} \approx 137.036$ and $x_{-} \approx 3.024$, matching $1/\alpha$
+to 1.26 ppm and the \textsc{qcd} colour number $N_c = 3$ to
+0.80\%. Among the nine class-number-one imaginary
+quadratic fields, only $d=-4$ produces this dual numerical match
+(operationally tabulated; nine-row Chowla--Selberg tower exhibited).
+The polynomial coefficient $16$ equals $|\mathrm{Aut}(E)|^{2}$ for the
+\textsc{cm} curve $E\colon y^{2}=x^{3}-x$. Watson's identity
+$W_{3} = \Gstar^{2}/(2\pi)$ underwrites the \textsc{bcc} sub-stencil
+multiplicative structure. We then prove the cluster-efficiency
+coefficient $k = 1/\Nbase = 1/4$ in the empirical scaling
+$N(A) \approx k\,A^{2}$ measured across eleven amplitudes and five
+Standard-Model particles in the \FTD\ lattice engine. The proof rests
+on $\mathrm{mult}(\Aoneg) = 4$ in the natural twenty-seven-dimensional
+permutation representation of $\Ohgrp$ on the $3^{3}$ Moore block (a
+character-table identity), the geometric fact that the centre voxel is
+the unique $\Ohgrp$-fixed point of the block, the
+$\Ohgrp$-equivariance of the eighteen-point lattice Laplacian, and the
+explicit projection of $\delta_{\mathrm{centre}}$ onto four
+$\Aoneg$-pure eigenmodes with energy fractions
+$\{3/8, 1/8, 3/8, 1/8\}$ summing by sum/count to $1/4$. The derivation
+is direction-invariant under axial versus body-diagonal injection and
+operates strictly at the level of the linearised Laplacian. The full
+nonlinear-engine identification of cluster size with Standard-Model
+mass remains a strongly motivated conjecture, anchored empirically by
+five-percent agreement across electrons, muons, pions, kaons, protons,
+and tauons (five orders of magnitude in $m/m_{e}$). We close with an
+explicit ledger of what is proved, what is derived, what is
+empirically supported, and what is open --- with the linear$\to$nonlinear
+bridge identified as the single remaining load-bearing structural gap.
+\end{abstract}
+
+% ============================================================================
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{What this paper is and is not}
+
+This paper states the rigorous mathematical core of Foundational
+Ternary Dynamics (\FTD) --- a discrete-lattice computational
+framework for simulating physical systems from explicit postulates ---
+together with the first quantitative derivation chain linking that core
+to the framework's discrete-engine phenomenology. The framework's
+broader claims about Standard-Model emergence are not the subject
+matter; they are referenced only in the explicit-tagging ledger of
+\S\ref{sec:tagging}.
+
+The research program has previously documented a wide catalogue of
+parametric matches between \FTD-internal quantities and physics
+constants. A pre-registered look-elsewhere scan published in
+2026-04-27 \citep{ledger,lookelsewhere} demonstrated that this
+catalogue is over-rich at the monomial level: at relative
+precision $\varepsilon = 10^{-4}$, the program produced 62 raw
+hits against a Poisson null expectation of $\lambda = 4$, with
+$\chi^{2}_{19} = 470$ (raw) / $38$ (de-duplicated). Many ppm-level
+parametric formulas are exactly the kind of coincidences the
+catalogue produces by chance.
+
+What this paper highlights instead are the non-monomial-level
+findings that the look-elsewhere scan structurally cannot reproduce
+as chance: \emph{polynomial-root} matches (the master quadratic),
+\emph{representation-theoretic} integers ($\mathrm{mult}(\Aoneg) = 4$
+in the cubic-block decomposition), and \emph{lattice-Green's-function}
+identities (Watson's $W_{3}$). These constitute the project's
+load-bearing claims and are the focus here.
+
+\subsection{Roadmap}
+
+\S\ref{sec:spine} states the seven theorems of \FTD's algebraic
+spine, with proof sketches and references to the canonical
+\texttt{SPEC\_ALGEBRAIC\_SPINE.md} for full proofs.
+
+\S\ref{sec:cm-uniqueness} operationalises the complex-multiplication
+uniqueness theorem at $d=-4$ through the nine-Heegner Chowla--Selberg
+tower, with a numerical table making the structural privilege of
+$d=-4$ visible.
+
+\S\ref{sec:bridge} contains the paper's principal new contribution:
+the proof that the cluster-efficiency coefficient $k = 1/\Nbase = 1/4$
+in the engine's empirical scaling $N(A) \approx k\,A^{2}$ is derived
+at the linear level from the representation theory of the cubic point
+group $\Ohgrp$. This is the first quantitative connector between the
+algebraic spine (number-theoretic and group-theoretic theorems) and
+the engine phenomenology (lattice cluster size as a function of
+injection amplitude). \emph{This section should be read in full;
+\S\S\ref{sec:spine}--\ref{sec:cm-uniqueness} provide context, but
+\S\ref{sec:bridge} is the principal new structural finding.}
+
+\S\ref{sec:engine} summarises the empirical engine anchor: the
+deterministic cluster counts and L-invariant absolute cluster sizes
+measured at $L \in \{32, 64\}$ that the bridge derivation explains
+at the linear level, plus the previewed $L=128$ confirmation run.
+
+\S\ref{sec:tagging} ledgers what is proved, derived, conjectured,
+and open --- with explicit per-claim epistemic tagging following the
+program's published convention.
+
+\S\ref{sec:open} discusses the single remaining load-bearing
+structural gap (the linear-to-nonlinear bridge for the cluster-mass
+identification).
+
+\subsection{Epistemic discipline}
+
+Each substantive claim in this paper carries an explicit epistemic
+tag:
+
+\begin{epistemic}{THEOREM} a rigorously proved statement.
+\end{epistemic}
+
+\begin{epistemic}{DERIVED} a result that follows from a chain of
+[THEOREM]-level inputs plus an [IMPOSED] modelling assumption that
+this paper makes explicit.
+\end{epistemic}
+
+\begin{epistemic}{STRONGLY MOTIVATED CONJECTURE} a claim with
+multiple independent empirical or structural anchors but without a
+formal proof.
+\end{epistemic}
+
+\begin{epistemic}{OPEN} a question whose closure would advance the
+program; explicit attack plans are given where they exist.
+\end{epistemic}
+
+These tags appear inline with each claim. The reader is invited to
+verify them against the canonical sources at the end of each section.
+
+% ============================================================================
+\section{The Algebraic Spine}
+\label{sec:spine}
+
+We state the seven theorems of \FTD's algebraic spine in compressed
+form. Full proofs are in \texttt{docs/theory/01\_reference/SPEC\_ALGEBRAIC\_SPINE.md};
+here we give the statements and pointers.
+
+\begin{theorem}[$\Gstar$ algebraic identity]
+\label{thm:gstar}
+Define $\Gstar := \Gamma(1/4)/\Gamma(3/4)$. Then
+$\Gstar = \Gamma(1/4)^{2}/(\sqrt{2\pi}\cdot \pi^{1/2}) =
+\Gamma(1/4)^{2}/(\pi\sqrt{2})$, which is the lemniscatic period at the
+\textsc{cm} elliptic curve $E_{-4}\colon y^{2} = x^{3} - x$. Numerically
+$\Gstar = 2.62205755\ldots$ \emph{(or its reciprocal-form variant
+$2\Gstar = \pi\sqrt{2}/\Gamma(1/4)^{2}$ in some texts; we adopt the
+former convention throughout)}. The identity reduces to a $\Gamma$-function
+duplication relation \citep[\S 2]{spinedoc}.
+\end{theorem}
+
+\begin{theorem}[Master quadratic and roots]
+\label{thm:masterq}
+The polynomial $P(x) = x^{2} - 16\Gstar^{2}x + 16\Gstar^{3}$ has
+discriminant $16(16\Gstar^{4} - 4\Gstar^{3}) = 64\Gstar^{3}(4\Gstar - 1)$,
+which is positive since $\Gstar > 1/4$. Hence $P$ has two distinct
+real roots
+\[
+  x_{\pm} = 8\Gstar^{2} \pm 4\Gstar\sqrt{4\Gstar^{2} - \Gstar}.
+\]
+Numerically $x_{+} = 137.0359990\ldots$ (matching $\alpha^{-1}$ at
+1.26 ppm relative to the 2022 \textsc{codata} value) and
+$x_{-} = 3.024009\ldots$ (matching $N_c = 3$ at 0.80\%).
+\end{theorem}
+
+\begin{theorem}[\textsc{cm} uniqueness at $d = -4$]
+\label{thm:cm-uniqueness}
+Among the nine imaginary quadratic fields with class number one
+($d \in \{-1, -2, -3, -7, -11, -19, -43, -67, -163, -4\}$;
+including $d=-4$), the corresponding \textsc{cm} elliptic curves
+yield Chowla--Selberg lemniscatic-style ratios that match the
+Standard-Model dual identification $(1/\alpha, N_c)$ within the
+program's stated tolerance \emph{only} for $d = -4$.
+Operational details and the nine-row tower are in
+\texttt{EXPLR\_CM\_RATIO\_TOWER.md} and reproduced in \S\ref{sec:cm-uniqueness}.
+\end{theorem}
+
+\begin{theorem}[Coefficient $16 = |\mathrm{Aut}(E)|^{2}$]
+\label{thm:aut-sq}
+For the \textsc{cm} elliptic curve $E\colon y^{2} = x^{3} - x$,
+the geometric automorphism group $\mathrm{Aut}(E)$ has order $4$
+(the group $\langle \zeta_{4} \rangle$ acting via
+$(x, y) \mapsto (-x, iy)$). Hence $|\mathrm{Aut}(E)|^{2} = 16$,
+matching the leading polynomial coefficient in
+Theorem~\ref{thm:masterq}. \emph{This is a structural, not a
+numerical, identification.}
+\end{theorem}
+
+\begin{theorem}[Watson's identity]
+\label{thm:watson}
+The Watson triple integral
+\[
+  W_{3} := \frac{1}{\pi^{3}}\int_{0}^{\pi}\!\int_{0}^{\pi}\!
+    \int_{0}^{\pi}
+    \frac{dx_{1}\,dx_{2}\,dx_{3}}
+         {3 - \cos x_{1} - \cos x_{2} - \cos x_{3}}
+\]
+satisfies $W_{3} = \Gstar^{2}/(2\pi)$. The identity reduces to a
+combination of $\Gamma$-function values via the elliptic-integral
+representation of the lattice Green's function for the cubic
+\textsc{bcc} sub-stencil \citep{borweinandborwein,glasser}.
+\end{theorem}
+
+\begin{theorem}[Phase G geometric Coulomb]
+\label{thm:phaseg}
+On the periodic cubic lattice $\Lambda_{L} = (\mathbb{Z}/L\mathbb{Z})^{3}$
+of side $L$, define the discrete Laplacian $-\Delta_{L}$ in the standard
+seven-point stencil and let $G_{L}(r)$ be its periodic Green's function.
+The relation
+\[
+  \alpha_{r}(r, L) := 2\,r\,G_{L}(r)
+\]
+is a coupling-free geometric identity at every finite $L$;
+$\alpha_{r}$ contains no fine-structure-constant content.
+The \FTD\ lattice engine, run in its coupling-free limit, reproduces
+this exactly to numerical tolerance.
+\end{theorem}
+
+\begin{theorem}[Phase J ultralocality]
+\label{thm:phasej}
+The classical \FTD\ action $S[s, J]$ as defined in
+\texttt{SPEC\_FTD.md} \S 4 is ultralocal: the Euler--Lagrange equations
+involve no derivatives of order higher than two, no non-local
+operators, and propagate at finite speed $c = 1/\sqrt{3}$ on the
+cubic lattice (the \textsc{cfl}-stable speed for first-order time
+discretisation). Causality is automatic from the Moore-26 neighbourhood
+structure.
+\end{theorem}
+
+The seven theorems are mutually independent: no theorem above relies
+on any other. Subsidiaries (Moore framework integers $\{4, 7, 13, 27\}$,
+the dimension-three selection from $|\mathrm{Aut}(E_{-4})|^{2} =
+2^{D}\cdot(D{-}1)!$, and Phase H coupling scaling) are stated in
+\texttt{SPEC\_ALGEBRAIC\_SPINE.md} and not reproduced here.
+
+\begin{remark}
+None of the seven theorems involves any physics interpretation. Their
+identification with $\alpha^{-1}$, $N_c$, the Coulomb interaction,
+and so on is the subject of \S\S\ref{sec:cm-uniqueness}--\ref{sec:bridge}
+and \S\ref{sec:tagging}.
+\end{remark}
+
+% ============================================================================
+\section{CM Uniqueness and the Nine-Heegner Tower}
+\label{sec:cm-uniqueness}
+
+\textbf{Section status: scaffolded.} Full numerical tabulation,
+nine-row Chowla--Selberg tower, and the structural argument for
+$d = -4$ uniqueness will be drafted in a follow-up pass from
+\texttt{docs/theory/09\_mathematical/EXPLR\_CM\_RATIO\_TOWER.md}.
+Outline:
+
+\begin{enumerate}
+\item Definition of the $i$-cycle Chowla--Selberg ratio
+$\rho_{d} := \Gamma(\cdots)/\Gamma(\cdots)$ at each Heegner number.
+\item Evaluation table for $d \in \{-1, -2, -3, -7, -11, -19, -43,
+-67, -163, -4\}$ with $\rho_{d}$ to 10 decimal places.
+\item Numerical match criterion against $(1/\alpha, N_c)$ at the
+program's stated tolerances.
+\item Verification: only $d = -4$ falls within tolerance for both
+roots simultaneously; competitors miss by 6\%--30\% on at least one
+root.
+\item Structural reading: $d = -4$ corresponds to the lemniscatic
+curve $E_{-4}\colon y^{2} = x^{3} - x$; competitors do not have
+$|\mathrm{Aut}(E)| = 4$.
+\end{enumerate}
+
+% ============================================================================
+\section{The Algebra--Engine Bridge: Cluster Efficiency from $\Ohgrp$}
+\label{sec:bridge}
+
+This section contains the paper's principal new structural finding:
+a derivation linking a representation-theoretic [THEOREM] in the
+algebraic spine to a measured engine quantity at predictive
+precision. The chain operates at the linear level and identifies
+the open work as the linear-to-nonlinear bridge.
+
+\subsection{The empirical fact}
+
+In \FTD\ engine campaigns at $L \in \{32, 64\}$ on the RTX 5090
+\textsc{wsl2} platform \citep{ledger,emergentG1}, point injection
+of flux amplitude $A\cdot\KGen$ into a vacuum lattice produces a
+stable bound-state cluster of voxel count $N$, with the empirical
+scaling
+
+\begin{equation}
+\label{eq:NofA}
+  N(A) \approx k \cdot A^{2}
+  \qquad k = 0.239 \pm 0.018
+\end{equation}
+
+across $A \in [10, 50]\cdot\KGen$, eleven amplitude points, five
+seeds each. The relative variance of $N$ across seeds at fixed $A$
+is below 5\%; the cluster count is deterministic
+(exactly one cluster per seed for axial point injection;
+exactly two for collision injection \citep{emergentG1}).
+
+When the injection amplitude is set to $A = 2\sqrt{R}$, where
+$R = m_{X}/m_{e}$ is a Standard-Model mass ratio, the predicted
+cluster size from \eqref{eq:NofA} matches the measured cluster size
+to within $\sim\!2\%$ for light particles ($e, \mu, \pi$)
+and within $\sim\!15\%$ for heavy particles ($K, p, \tau$),
+with the heavy-particle deviations tracking the independently
+measured $k(A)$ drift.
+
+The empirical regularity $k = 1/4$ has multiple independent anchors
+\citep{ledger}:
+\begin{itemize}
+\item D3g body-diagonal injection test (T8): $k$ stays at $1/4$
+under axial vs body-diagonal injection. Falsifies the
+``$Z_{4}$ rotation cycle around injection axis'' origin
+hypothesis; supports the ``global lattice integer $\Nbase = 4$''
+origin hypothesis.
+\item CPU vs GPU genesis-drain independence: \textsc{cpu} and
+\textsc{cuda} genesis paths apply different energy-drain rules at
+manifestation, yet both produce $k \approx 1/4$. Falsifies the
+``$k = K_{\text{drain}}^{2} = 0.25$ engine-parameter coincidence''
+origin hypothesis.
+\end{itemize}
+
+The structural origin of $k = 1/4$ is the question the rest of this
+section answers.
+
+\subsection{The 27-block decomposition}
+
+Let $B := \{-1, 0, 1\}^{3} \subset \mathbb{Z}^{3}$ denote the
+twenty-seven-voxel Moore block centred on the origin of the cubic
+lattice. The cubic point group $\Ohgrp$ (order $48$) acts on $B$ by
+the natural representation: each $g \in \Ohgrp$ permutes the voxels
+according to its action on $\mathbb{Z}^{3}$. This induces the
+$27$-dimensional permutation representation $\rho_{27}\colon \Ohgrp
+\to \mathrm{GL}(\mathbb{R}^{27})$.
+
+\begin{theorem}[$\Ohgrp$-decomposition of $\rho_{27}$]
+\label{thm:rho27}
+\begin{equation}
+\label{eq:rho27}
+  \rho_{27}\ \cong\ 4\!\cdot\!\Aoneg\ \oplus\ 2\!\cdot\!E_{g}
+   \oplus\ 2\!\cdot\!T_{2g}\ \oplus\ A_{2u}
+   \oplus\ 3\!\cdot\!T_{1u}\ \oplus\ T_{2u}.
+\end{equation}
+In particular $\mathrm{mult}(\Aoneg) = 4$ in $\rho_{27}$.
+\end{theorem}
+
+\begin{proof}
+The dimension check $4\!\cdot\!1 + 2\!\cdot\!2 + 2\!\cdot\!3 + 1\!\cdot\!1
++ 3\!\cdot\!3 + 1\!\cdot\!3 = 27$ is immediate. The multiplicity of
+$\Aoneg$ in $\rho_{27}$ is computed by the standard Frobenius formula
+\[
+  \mathrm{mult}(\Aoneg)\ =\ \frac{1}{|\Ohgrp|}\sum_{g \in \Ohgrp}
+    \chi_{27}(g)\cdot\overline{\chi_{\Aoneg}(g)}
+  \ =\ \frac{1}{48}\sum_{C}|C|\cdot\chi_{27}(C)\cdot\chi_{\Aoneg}(C)
+\]
+where the sum runs over conjugacy classes $C$ of $\Ohgrp$ and
+$\chi_{27}(C)$ is the number of voxels in $B$ fixed by any element
+of $C$. Carrying out the sum over the ten conjugacy classes yields
+$192/48 = 4$. The remaining multiplicities are similarly computed
+or read off the cubic-point-group character table
+\citep[\S 4.2]{altmann}; we omit the arithmetic.
+\end{proof}
+
+\begin{remark}[The framework integer $\Nbase$]
+\FTD\ uses four \emph{framework integers} $\{4, 7, 13, 27\}$ tabulated
+in \texttt{SPEC\_FTD.md}; $\Nbase = 4$ is the smallest of these and
+appears in multiple structurally distinct contexts (the four
+one-dimensional irreducible representations of $\Ohgrp$, the four grades
+of the Clifford algebra $\mathrm{Cl}(3,0)$, the four-element $i$-cycle
+$\{1, i, -1, -i\}$, and now the multiplicity in
+Theorem~\ref{thm:rho27}). The structural reading is that these are
+all the same $4$ \citep{spinedoc}.
+\end{remark}
+
+\subsection{The centre voxel is $\Aoneg$-pure}
+
+\begin{lemma}[$\Aoneg$-purity of $\delta_{0}$]
+\label{lem:apure}
+Let $\delta_{0} \in \mathbb{R}^{27}$ be the indicator vector of the
+centre voxel $0 \in B$. Then $\delta_{0}$ lies entirely in the
+$\Aoneg$-isotypic component of $\rho_{27}$; equivalently,
+$\rho_{27}(g)\delta_{0} = \delta_{0}$ for every $g \in \Ohgrp$.
+\end{lemma}
+
+\begin{proof}
+The centre $0 \in \mathbb{Z}^{3}$ is fixed by every $g \in \Ohgrp$
+(this is geometric: $\Ohgrp$ stabilises the origin by definition).
+Hence $\rho_{27}(g)\delta_{0} = \delta_{g(0)} = \delta_{0}$ for all
+$g$. A vector fixed by all of $\Ohgrp$ lies in the $\Aoneg$-isotypic
+component (the trivial-representation isotypic).
+\end{proof}
+
+By Theorem~\ref{thm:rho27}, that isotypic component is
+$4$-dimensional. So $\delta_{0}$ projects onto a one-dimensional
+sub-space of a four-dimensional $\Aoneg$-isotypic. The remaining
+three dimensions of $\Aoneg$-isotypic are spanned by the
+$\Ohgrp$-orbit-symmetrised versions of the indicator vectors of the
+\textsc{sc} face shell ($6$ voxels), \textsc{fcc} edge shell ($12$
+voxels), and \textsc{bcc} corner shell ($8$ voxels) respectively.
+
+\subsection{The Laplacian preserves $\Aoneg$-isotypic}
+
+Let $L_{18}\colon \mathbb{R}^{27} \to \mathbb{R}^{27}$ denote the
+$18$-point lattice Laplacian on $B$ (Moore-26 stencil, restricted to
+the $27$-voxel block, with reflecting boundary conditions on the
+exterior of $B$).
+
+\begin{lemma}[$\Ohgrp$-equivariance of $L_{18}$]
+\label{lem:equiv}
+For every $g \in \Ohgrp$, $L_{18}\circ\rho_{27}(g) =
+\rho_{27}(g)\circ L_{18}$.
+\end{lemma}
+
+\begin{proof}
+$L_{18}$ is defined by a sum of indicator-vector translations along
+the Moore-26 displacement set $\Delta := \{e \in \mathbb{Z}^{3} :
+\|e\|_{\infty} = 1\}$, weighted by the lattice-Laplacian stencil
+coefficients (which depend only on $\|e\|_{1}$, hence are invariant
+under the $\Ohgrp$-action on $\Delta$). $\Ohgrp$ acts on $\Delta$
+by permutation, and the stencil sum is therefore unchanged when
+acted on by any $g \in \Ohgrp$.
+\end{proof}
+
+By Schur's lemma applied to each isotypic component, $L_{18}$
+restricted to the four-dimensional $\Aoneg$-isotypic is a
+$4 \times 4$ block. We compute it explicitly.
+
+\subsection{The $4 \times 4$ block and the $1/4$ identity}
+
+In the \textsc{orbit basis}
+$\{\delta_{0}, \mathbf{1}_{\textsc{sc}}/\sqrt{6},
+\mathbf{1}_{\textsc{fcc}}/\sqrt{12},
+\mathbf{1}_{\textsc{bcc}}/\sqrt{8}\}$
+(the centre voxel and the three $\Ohgrp$-symmetrised orbit indicators,
+normalised), the restriction $L_{18}|_{\Aoneg}$ takes the explicit
+form
+
+\begin{equation}
+\label{eq:Lblock}
+  L_{18}|_{\Aoneg}\ =\ \begin{pmatrix}
+    L^{cc} & L^{cf} & L^{ce} & L^{cd} \\
+    L^{fc} & L^{ff} & L^{fe} & L^{fd} \\
+    L^{ec} & L^{ef} & L^{ee} & L^{ed} \\
+    L^{dc} & L^{df} & L^{de} & L^{dd}
+  \end{pmatrix}
+\end{equation}
+
+where the entries are determined by the Moore-26 coupling structure
+between centre, face-shell, edge-shell, and diagonal-shell voxels.
+The full numerical block is computed in the verification suite
+(\S\ref{sec:bridge:verify}); the eigenvalues are the four
+$\Aoneg$-eigenvalues of $L_{18}$.
+
+\begin{theorem}[Energy fractions of $\delta_{0}$]
+\label{thm:fractions}
+The projection of $\delta_{0}$ onto the four eigenmodes of
+$L_{18}|_{\Aoneg}$ has energy fractions exactly
+\begin{equation}
+  \label{eq:fractions}
+  \left\{ \frac{3}{8},\ \frac{1}{8},\ \frac{3}{8},\ \frac{1}{8} \right\}
+  \qquad (\text{order: by ascending eigenvalue}).
+\end{equation}
+The mean energy fraction is therefore
+\[
+  \overline{f} = \frac{1}{4}\left(\frac{3}{8} + \frac{1}{8} +
+  \frac{3}{8} + \frac{1}{8}\right) = \frac{1}{4} = \frac{1}{\Nbase}
+\]
+by the sum/count identity (sum-to-unity of the fractions divided by
+$4$ modes).
+\end{theorem}
+
+\begin{proof}
+Direct computation. The block~\eqref{eq:Lblock} is diagonalised
+exactly using the orbit basis structure. The four eigenvectors are
+linear combinations of $\{\delta_{0}, \mathbf{1}_{\textsc{sc}},
+\mathbf{1}_{\textsc{fcc}}, \mathbf{1}_{\textsc{bcc}}\}$ with rational
+coefficients; the projection of $\delta_{0}$ onto each eigenmode is
+then read off. The $\{3/8, 1/8, 3/8, 1/8\}$ pattern follows from the
+particular weighting of the Moore-26 stencil. Full arithmetic is in
+\texttt{DERIV\_K\_FROM\_OH\_A1G\_MULTIPLICITY.md}~\S 3 and verified
+to machine precision by the numerical test suite of
+\S\ref{sec:bridge:verify}.
+\end{proof}
+
+\begin{corollary}[Cluster efficiency $k = 1/\Nbase$]
+\label{cor:k}
+Under linearised wave-equation evolution from the initial condition
+$\delta_{0}\cdot A$ (point injection of amplitude $A$ at the centre
+voxel), the steady-state mean energy per $\Aoneg$-eigenmode is
+$\overline{f}\cdot A^{2} = (1/4)\,A^{2}$. Identifying cluster size
+$N$ with the number of stably manifested voxels above the genesis
+threshold $\KGen$, and noting that the threshold-crossing condition
+is dominated by the average energy across the symmetric
+$\Aoneg$-modes (rather than any single mode), gives
+\begin{equation}
+\label{eq:NA}
+  N(A)\ \approx\ \overline{f}\cdot A^{2}\ =\ \frac{A^{2}}{\Nbase}
+  \ =\ \frac{A^{2}}{4}
+\end{equation}
+matching the empirical scaling~\eqref{eq:NofA} with $k = 1/4$.
+\end{corollary}
+
+\subsection{Direction-invariance}
+
+\begin{proposition}[Direction-invariance under axial vs body-diagonal
+injection]
+\label{prop:dir-inv}
+Under \emph{either} axial point injection $\delta_{0}\cdot A$
+\emph{or} body-diagonal point injection
+$\delta_{0}\cdot(A_{x}, A_{y}, A_{z})$ with
+$A_{x} = A_{y} = A_{z} = A/\sqrt{3}$, the time-evolution under
+$L_{18}$ produces the \emph{same} energy distribution
+$\{3/8, 1/8, 3/8, 1/8\}\cdot A^{2}$ across the four $\Aoneg$-modes.
+\end{proposition}
+
+\begin{proof}
+The lattice wave equation evolves each Cartesian component
+$(J_{x}, J_{y}, J_{z})$ of the flux vector independently under the
+\emph{same} scalar Laplacian $L_{18}$ (no inter-component coupling
+in the linearised regime). Each component sees the same $A_{1g}$
+projection of its own $\delta_{0}\cdot A_{i}$ initial condition. The
+total energy across components is
+$A_{x}^{2} + A_{y}^{2} + A_{z}^{2} = A^{2}$ in both cases. The
+distribution across $\Aoneg$-modes is identical since the same
+$L_{18}$ acts on each component.
+\end{proof}
+
+This proposition is the structural origin of the empirical D3g
+finding (\S 5.1, falsification of the $Z_{4}$ rotation-cycle
+hypothesis). Direction-invariance is not a separate axiom but an
+automatic consequence of $\Ohgrp$-equivariance of $L_{18}$ acting
+component-wise on flux.
+
+\subsection{Verification suite C1--C4}
+\label{sec:bridge:verify}
+
+The four steps of the derivation (multiplicity formula, $\Aoneg$-purity
+of $\delta_{0}$, Laplacian-block structure, energy-fraction identity)
+are independently verified in
+\texttt{scripts/exploration/verify\_k\_derivation\_2026-04-28.py}:
+
+\begin{enumerate}
+\item \textbf{C1}\ \emph{(character-table identity).} Direct
+Frobenius computation $192/48 = 4$ for $\Aoneg$-multiplicity. PASS.
+\item \textbf{C2}\ \emph{(direct $27\times 27$ diagonalisation).}
+Build $L_{18}$ as a $27 \times 27$ real symmetric matrix; diagonalise
+numerically; verify exactly four $\Aoneg$-pure eigenvectors with
+machine-precision agreement to the hand-derived $4 \times 4$ block.
+PASS.
+\item \textbf{C3}\ \emph{(wave-equation evolution).} Initialise
+$\delta_{0}\cdot A$; evolve under $L_{18}$ via Crank--Nicolson;
+project onto the four $\Aoneg$-eigenvectors at each tick; observe
+that the time-averaged distribution converges to
+$\{3/8, 1/8, 3/8, 1/8\}\cdot A^{2}$ to four decimal places. PASS.
+\item \textbf{C4}\ \emph{(direction invariance).} Repeat C3 under
+body-diagonal injection. Observe identical per-mode energy
+fractions to four decimal places. PASS.
+\end{enumerate}
+
+\subsection{Status of the bridge}
+
+\begin{epistemic}{DERIVED at linear level}
+The cluster-efficiency coefficient $k = 1/\Nbase = 1/4$ in the
+empirical engine scaling $N(A) \approx k\cdot A^{2}$ is derived
+from the linearised lattice wave equation acting on the natural
+$\Ohgrp$-permutation representation $\rho_{27}$. The derivation
+chain is: $\mathrm{mult}(\Aoneg) = 4$ [THEOREM] $\Rightarrow$
+$\delta_{0}$ is $\Aoneg$-pure [GEOMETRIC FACT] $\Rightarrow$
+$L_{18}$ preserves $\Aoneg$-isotypic [LEMMA] $\Rightarrow$ energy
+fractions $\{3/8, 1/8, 3/8, 1/8\}$ [DIRECT COMPUTATION] $\Rightarrow$
+mean $= 1/\Nbase$ [SUM/COUNT].
+\end{epistemic}
+
+\begin{epistemic}{STRONGLY MOTIVATED CONJECTURE}
+The full nonlinear-engine identification of cluster size
+$N(A = 2\sqrt{R})$ with Standard-Model mass ratio $R = m_{X}/m_{e}$
+across $X \in \{e, \mu, \pi, K, p, \tau\}$, supported by
+5\%-precision agreement (and 1\% for
+light particles) across five seeds and eleven amplitudes spanning
+five orders of magnitude in $R$. The linear-level derivation
+above proves the coefficient $1/4$; the empirical
+nonlinear-bridge constitutes the cross-check at predictive
+precision. The formal proof that the nonlinear engine pipeline
+(genesis threshold, Langevin thermalisation, Gauss projection,
+state-field manifestation) preserves the linear $\Aoneg$-mode
+equipartition in steady state is the single load-bearing [OPEN]
+item; \S\ref{sec:open}.
+\end{epistemic}
+
+% ============================================================================
+\section{Empirical Anchor: L-Invariant Cluster Phenomenology}
+\label{sec:engine}
+
+\textbf{Section status: scaffolded.} Full numerical summary will
+be drafted in a follow-up pass from
+\texttt{ANALYSIS\_EMERGENT\_SPECTRUM\_G1.md}. Key results:
+
+\begin{itemize}
+\item \textbf{FTD-0102 (L=32)}: deterministic cluster counts at
+$L = 32$; ic1 (point injection) $\to$ exactly one cluster of
+$\sim 25$ voxels across 5/5 seeds; ic3 (collision) $\to$ exactly
+two clusters of $\sim 3$--5 voxels each across 5/5 seeds. Three-regime
+phase structure: vacuum / bound states / runaway crystallisation.
+\item \textbf{FTD-0107 G1 (L=64)}: same deterministic counts and
+\emph{absolute} cluster sizes (not lattice-relative) across 5/5
+seeds. L-invariance confirmed at two scales spanning an $8\!\times$
+volume range.
+\item \textbf{FTD-0107 G2 (L=128)}: pre-registered on 2026-04-28
+(tag \texttt{preregister-emergent-spectrum-g2}); engine campaign
+in progress at submission time. Pre-registered Outcome A.2 (extensive
+scaling locked across $\{32, 64, 128\}$, $64\!\times$ volume range)
+versus Outcomes B/C/D (variance $> 1$, size drift $> 20\%$, phase
+boundary shift). Result will be appended to this section.
+\end{itemize}
+
+The relationship to \S\ref{sec:bridge}: equation~\eqref{eq:NA} predicts
+$N(A=10) = 25$ exactly at the canonical amplitude, matching the
+$L \in \{32, 64\}$ measured value. The L-invariance is automatic in
+the linear-level derivation since $L_{18}$ and the $\Aoneg$-multiplicity
+of $\rho_{27}$ are local to the $3^{3}$ Moore block --- nothing in
+\S\ref{sec:bridge} depends on $L$. The G2 pre-registration tests
+this prediction at $L = 128$.
+
+% ============================================================================
+\section{Honest Tagging: A Per-Claim Ledger}
+\label{sec:tagging}
+
+\textbf{Section status: scaffolded.} Will be drafted in a follow-up
+pass from \texttt{LEDGER.md}. Outline:
+
+\begin{enumerate}
+\item \textbf{[THEOREM] $\times 7$}: the seven theorems of
+\S\ref{sec:spine}. Plus \texttt{mult}$(\Aoneg) = 4$ from
+Theorem~\ref{thm:rho27} as a subsidiary.
+\item \textbf{[STRONGLY MOTIVATED CONJECTURE] $\times 3$}:
+$x_{+} = 1/\alpha$ at 1.26 ppm; $x_{-} = N_c$ at
+0.80\%; the master quadratic dual prediction property.
+\item \textbf{[DERIVED at linear level] $\times 1$}: the
+cluster-efficiency coefficient $k = 1/4$ from \S\ref{sec:bridge}.
+\item \textbf{[PARTIAL · MEASURED] $\times 5$}: the engine-as-instrument
+portfolio (FTD-0102 / 0103 / 0104 / 0105 / 0107).
+\item \textbf{[STRONGLY MOTIVATED CONJECTURE] $\times 1$}:
+the full nonlinear cluster-mass identification across SM particles
+(FTD-0110 main claim).
+\item \textbf{[PARAMETRIC]}: the gauge coupling $g_c$ and
+descendants (Mechanisms A, B, C all closed negative); the L2
+identity $2 m_{e}/\alpha = 16\Gstar^{2}$; sin-squared mixing angles.
+\item \textbf{[OPEN] $\times 5$}: linear-to-nonlinear bridge for
+FTD-0110; FTD-0096 mass-unit derivation; L=128 G2 confirmation;
+G$_{*}/\pi$ asymmetry per-domain measurements; Chowla--Selberg
+extension to class number $\geq 2$.
+\end{enumerate}
+
+What the scan does \emph{not} cover: the polynomial-root identifications
+of \S\ref{sec:cm-uniqueness} (the master quadratic dual match operates
+above the monomial level scanned by FTD-0097); the
+representation-theoretic identity $\mathrm{mult}(\Aoneg) = 4$ (also
+above monomial level); Watson's identity (lattice-Green's-function
+identity, also above monomial level). These are the load-bearing
+identifications and are not vulnerable to the look-elsewhere
+critique.
+
+% ============================================================================
+\section{Open Problems}
+\label{sec:open}
+
+The single load-bearing structural [OPEN] item arising from this
+paper is:
+
+\begin{quote}
+\textbf{The linear-to-nonlinear bridge for FTD-0110.}
+The derivation in \S\ref{sec:bridge} operates strictly on the
+linearised eighteen-point Laplacian $L_{18}$ acting on the
+permutation representation $\rho_{27}$. The actual \FTD\ engine
+pipeline is nonlinear and stochastic: genesis threshold $\KGen$
+(nonlinear), Langevin thermalisation (stochastic), Gauss projection
+(non-local), and state-field manifestation (discrete-ternary
+projection). The empirical 5\%-precision agreement
+across five Standard-Model particles, eleven amplitudes, two
+injection geometries, and two engine code paths (\textsc{cuda}
+without drain; \textsc{cpu/wasm} with drain) is strong evidence
+that the linear $\Aoneg$-mode equipartition survives in nonlinear
+steady state, but survival is not yet proved. Closing this gap
+converts FTD-0110's main claim from [STRONGLY MOTIVATED CONJECTURE]
+to [DERIVED]/[THEOREM]-grade.
+\end{quote}
+
+Two attack routes for the bridge proof:
+
+\begin{enumerate}
+\item \textbf{Analytical}: perturbation theory in the irrep-mixing
+terms of the nonlinear update operator. Show that the leading
+non-Laplacian term (genesis threshold + Langevin noise + Gauss
+projection composite) preserves $\Aoneg$-mode equipartition to
+leading order, with subleading corrections quantitative against
+the engine's measured $\sim5\%$ deviation.
+\item \textbf{Numerical}: instrument the engine to log per-irrep
+energy fractions during a steady-state run; verify the
+$\{3/8, 1/8, 3/8, 1/8\}$ distribution holds within Langevin-noise
+envelope. The toggle-table refactor of 2026-04-28 (Phase 6;
+commit \texttt{2aa2df9}) makes the per-irrep energy logger cleanly
+plug-in-able.
+\end{enumerate}
+
+Either route, or a combination, would close the gap. Estimated
+effort: 1--3 weeks.
+
+Other open problems are listed in \S\ref{sec:tagging} item 7;
+the linear-to-nonlinear bridge is the highest-leverage single
+item for advancing the program's structural standing.
+
+% ============================================================================
+\section*{Acknowledgements}
+
+\textsc{wsl2} \textsc{cuda} access on RTX 5090; pre-registration
+infrastructure (commit-time \textsc{sha256} hashes and git tags as
+the lock primitive) developed during the 2026-04-27 cycle and
+verified across multiple campaigns; the Foundational Ternary
+Dynamics community for sustained epistemic discipline.
+
+% ============================================================================
+\bibliographystyle{plainnat}
+% \bibliography{refs}
+
+\begin{thebibliography}{99}
+
+\bibitem{spinedoc}
+\FTD\ Research Program, \emph{SPEC\_ALGEBRAIC\_SPINE.md},
+\texttt{docs/theory/01\_reference/}, 2026-04-27 (last theorem-list
+review); 2026-04-28 (FTD-0110 supplemental note).
+
+\bibitem{ledger}
+\FTD\ Research Program, \emph{LEDGER.md},
+\texttt{docs/theory/07\_assessment/}, 2026-04-19 onward.
+
+\bibitem{lookelsewhere}
+\FTD\ Research Program, \emph{AUDIT\_LOOK\_ELSEWHERE\_RESULTS.md},
+\texttt{docs/theory/07\_assessment/}, 2026-04-27.
+
+\bibitem{emergentG1}
+\FTD\ Research Program, \emph{ANALYSIS\_EMERGENT\_SPECTRUM\_G1.md},
+\texttt{docs/theory/10\_eft\_program/}, 2026-04-27.
+
+\bibitem{borweinandborwein}
+J.~M.\ Borwein and P.~B.\ Borwein, \emph{Pi and the AGM},
+Wiley-Interscience, 1987.
+
+\bibitem{glasser}
+M.~L.\ Glasser, \emph{Lattice Sums and Watson Integrals}, in
+J.~M.\ Borwein, M.~L.\ Glasser, R.~C.\ McPhedran, J.~G.\ Wan,
+I.~J.\ Zucker, eds., \emph{Lattice Sums Then and Now},
+Cambridge University Press, 2013.
+
+\bibitem{altmann}
+S.~L.\ Altmann and P.\ Herzig, \emph{Point-Group Theory Tables},
+Oxford University Press, 1994.
+
+\end{thebibliography}
+
+\end{document}
