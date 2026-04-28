@@ -68,6 +68,9 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-soliton") {
+        // genesis=false (audit-2 2026-04-28): solitons are non-dispersive,
+        // not pair-producers. Mirrors JS flux-soliton fix.
+        rb.toggles.genesis = false;
         const int sLo = FLR(midF) - 3, sHi = CEL(midF) + 3;
         for (int z = sLo; z <= sHi; z++) for (int y = sLo; y <= sHi; y++) for (int x = sLo; x <= sHi; x++) {
             double dx = x - midF, dy = y - midF, dz = z - midF;
