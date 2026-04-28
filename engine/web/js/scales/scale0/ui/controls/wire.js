@@ -16,8 +16,23 @@
 import { SCALE0_TOGGLES } from '../../../../config/toggles.js';
 import { K_B } from '../../../../constants.js';
 import { getEl } from '../dom.js';
+import { getFluxMock } from '../../controller.js';
 
 let _wired = false;
+
+/**
+ * For flux-* / s0-seed-* / s0-field-* / quantum-* scenarios the active
+ * physics engine is the parallel JS MockBridge ("fluxMock"), not the
+ * WasmBridge — see runtime/tick.js + runtime/frame-sync.js. The
+ * scenario-loader mirrors toggles + boundary state to both bridges at
+ * load time (scenario-loader.js:344-348). User-driven controls that
+ * fire AFTER load must do the same, otherwise the toggle change only
+ * updates the DOM + WasmBridge while the fluxMock keeps running with
+ * its load-time state. This helper resolves the live mock per call.
+ */
+function activeMockScale0() {
+    return getFluxMock()?.capabilities?.scale0 || null;
+}
 
 function wirePhysicsToggles(ctx) {
     for (const [toggleKey, , elId] of SCALE0_TOGGLES) {
@@ -25,6 +40,7 @@ function wirePhysicsToggles(ctx) {
         if (!el) continue;
         el.addEventListener('change', () => {
             ctx.bridge.setToggle(toggleKey, el.checked);
+            activeMockScale0()?.setToggle(toggleKey, el.checked);
             const row = el.closest('.toggle-row');
             if (row) row.classList.remove('scenario-override');
         });
@@ -39,8 +55,10 @@ function wirePhysicsToggles(ctx) {
     const resetBtn = getEl('btn-reset-physics-toggles');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
+            const mock = activeMockScale0();
             for (const [toggleKey, defaultValue, elId] of SCALE0_TOGGLES) {
                 ctx.bridge.setToggle(toggleKey, defaultValue);
+                mock?.setToggle(toggleKey, defaultValue);
                 const el = getEl(elId);
                 if (el) {
                     el.checked = !!defaultValue;
@@ -123,6 +141,15 @@ function wireInjection(ctx, api) {
         const z = getEl('inj-z'); if (z) z.value = half;
     });
 
+    // Mirror an injection action across both bridges. When useFluxMock is
+    // true the fluxMock owns the live physics state; visualization may
+    // read from either, so the user-clicked inject must hit both copies.
+    function dualInject(action) {
+        action(ctx.bridge);
+        const mock = getFluxMock();
+        if (mock) action(mock);
+    }
+
     getEl('btn-random')?.addEventListener('click', () => {
         setCoordMax();
         const L = ctx.bridge.latticeSize || 32;
@@ -131,7 +158,7 @@ function wireInjection(ctx, api) {
         const y = getEl('inj-y'); if (y) y.value = rand();
         const z = getEl('inj-z'); if (z) z.value = rand();
         const { x: px, y: py, z: pz, state } = getInjPos();
-        ctx.bridge.injectWavepacket(px, py, pz, state);
+        dualInject((b) => b.injectWavepacket(px, py, pz, state));
         api.setLatticeNeedsUpload();
     });
 
@@ -140,27 +167,27 @@ function wireInjection(ctx, api) {
         // Wavepacket injection: bare point particles have zero flux and are
         // immediately evaporated by the neighbourhood-energy check. A Gaussian
         // flux envelope lets the self-field stabilise.
-        ctx.bridge.injectWavepacket(x, y, z, state);
+        dualInject((b) => b.injectWavepacket(x, y, z, state));
         api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject-wave')?.addEventListener('click', () => {
         const { x, y, z, state } = getInjPos();
-        ctx.bridge.injectWavepacket(x, y, z, state);
+        dualInject((b) => b.injectWavepacket(x, y, z, state));
         api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject-flux')?.addEventListener('click', () => {
         const { x, y, z } = getInjPos();
         const kb = (ctx.bridge.getParam && ctx.bridge.getParam('kb')) || K_B;
-        ctx.bridge.injectFlux(x, y, z, kb * 0.8, 0, 0);
+        dualInject((b) => b.injectFlux(x, y, z, kb * 0.8, 0, 0));
         api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject-pair')?.addEventListener('click', () => {
         const { x, y, z } = getInjPos();
         const kb = (ctx.bridge.getParam && ctx.bridge.getParam('kb')) || K_B;
-        ctx.bridge.createEntangledPair(x, y, z, kb, 0, 0);
+        dualInject((b) => b.createEntangledPair(x, y, z, kb, 0, 0));
         api.setLatticeNeedsUpload();
     });
 }
@@ -175,18 +202,28 @@ function wireParameterSliders(ctx) {
         const slider = getEl(s.id);
         const display = getEl(s.valId);
         if (!slider || !display) continue;
-        if (ctx.bridge.isWasm) {
-            slider.disabled = true;
-            slider.title = 'Read-only in WASM mode';
-            slider.classList.add('ctrl-slider-disabled');
-        }
+        // Sliders are interactive whenever there's at least one writable
+        // bridge — pure-WASM mode disables them, but flux-* / s0-seed-* /
+        // s0-field-* / quantum-* scenarios always allocate a fluxMock and
+        // its setParam is the live physics knob the user actually wants.
         slider.addEventListener('input', () => {
             const val = parseFloat(slider.value);
             display.textContent = val.toFixed(s.fmt);
             if (!ctx.bridge.isWasm && ctx.bridge.setParam) {
                 ctx.bridge.setParam(s.param, val);
             }
+            getFluxMock()?.setParam?.(s.param, val);
         });
+        // Only mark read-only if we have NO writable target (pure-WASM
+        // scenario with no fluxMock — rare, e.g. emergent-spectrum or
+        // a future custom bridge). The disabled state is recomputed on
+        // each scenario load via the syncComboSliders helper in the
+        // scenario-loader, so the visual state stays current.
+        if (ctx.bridge.isWasm && !getFluxMock()) {
+            slider.disabled = true;
+            slider.title = 'Read-only in WASM mode (no fluxMock active)';
+            slider.classList.add('ctrl-slider-disabled');
+        }
     }
 }
 
@@ -199,6 +236,9 @@ function wireFieldActions(ctx, api) {
             ctx.viewport.setLatticeSize(ctx.bridge.latticeSize);
             ctx.clearCharts?.();
         }
+        // Mirror to fluxMock — same reasoning as inject buttons above.
+        const mock = getFluxMock();
+        if (mock?.clearField) mock.clearField();
         api.setLatticeNeedsUpload();
     });
 
@@ -206,6 +246,8 @@ function wireFieldActions(ctx, api) {
         if (ctx.bridge.seedRandomFlux) {
             ctx.bridge.seedRandomFlux();
         }
+        const mock = getFluxMock();
+        if (mock?.seedRandomFlux) mock.seedRandomFlux();
         api.setLatticeNeedsUpload();
     });
 }
