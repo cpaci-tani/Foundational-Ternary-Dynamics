@@ -32,6 +32,7 @@
 #include "ftd/sublattice.h"
 #include "ftd/transmutation_phases.h"      // moved from mid-file to avoid nested-namespace include
 #include "ftd/energy_ledger_compute.h"     // moved from mid-file to avoid nested-namespace include
+#include "ftd/render_bridge_phases.h"      // Phase 4a: phase_write decomposition (2026-04-27)
 #include <algorithm>
 #include <atomic>
 #include <cassert>
@@ -51,36 +52,12 @@
 
 namespace ftd {
 
-// F-13 (2026-04-27): named salt domains for voxel_uniform() so the
-// genesis/evaporation RNG paths read self-documentingly. Keep the
-// underlying integer values stable — they are part of the public RNG
-// stream definition, not arbitrary tags.
-enum class VoxelRng : std::uint64_t {
-    GenesisManifest = 1,
-    GenesisSpin     = 2,
-    Evaporation     = 3,
-};
-
-// Per-voxel deterministic uniform [0,1).
-// SplitMix64 hash of (langevin_seed, voxel_idx, tick, salt). Replaces the
-// serial-state RNG draws in the genesis probability gate so that each
-// voxel's spawn decision depends only on its own (seed, idx, tick, salt) —
-// not on iteration order. Without this, single-threaded WASM advances one
-// shared RNG sequence voxel-by-voxel, which breaks the y/z reflection
-// symmetry the wave equation otherwise preserves.
-static inline double voxel_uniform(std::uint64_t seed, int voxel_idx,
-                                   int tick, std::uint64_t salt) {
-  std::uint64_t x = seed
-                  ^ (static_cast<std::uint64_t>(voxel_idx) * 0x9E3779B97F4A7C15ULL)
-                  ^ (static_cast<std::uint64_t>(tick)      * 0xBF58476D1CE4E5B9ULL)
-                  ^ (salt                                   * 0x94D049BB133111EBULL);
-  // SplitMix64 finalizer.
-  x = (x ^ (x >> 30)) * 0xBF58476D1CE4E5B9ULL;
-  x = (x ^ (x >> 27)) * 0x94D049BB133111EBULL;
-  x =  x ^ (x >> 31);
-  // Convert top 53 bits to double in [0,1).
-  return (x >> 11) * (1.0 / 9007199254740992.0);
-}
+// F-13 (2026-04-27): VoxelRng salt domains and voxel_uniform() — the
+// per-voxel deterministic uniform sampler used by genesis/evaporation —
+// were moved to engine/src/render_bridge_phases/phase_write.cpp during
+// the Phase 4a refactor (the only call sites were inside phase_write).
+// Keep the salt integer values (1,2,3) stable in that TU: they are part
+// of the public RNG stream definition.
 
 RenderBridge::RenderBridge(int lattice_size)
     : lattice_(lattice_size), voxels_(lattice_.total_sites()),
@@ -356,270 +333,34 @@ void RenderBridge::phase_read() {
 // Evaporation: when |J| << K_B, particle returns to void.
 // ============================================================================
 
+// Phase 4a (2026-04-27): phase_write decomposed into 4 free functions
+// living in src/render_bridge_phases/phase_write.cpp. This method is now
+// a thin orchestrator. The bit-exact gate is test_render_bridge_golden.
+// The free-function bodies are byte-identical with the original code
+// (RF-4 dedup of the manifest body is the only structural change; the
+// state/spin/color assignments themselves are unchanged).
 void RenderBridge::phase_write() {
-  const int N = static_cast<int>(lattice_.total_sites());
-  const double damping_factor = (dt_ > 1.0001)
-      ? std::pow(1.0 - DAMPING, dt_)
-      : 1.0 - DAMPING;
-  const bool do_damping = toggles.damping;
-  const bool do_genesis = toggles.genesis;
-  const bool selective = toggles.selective_damping;
-  const bool do_larmor = toggles.larmor_radiation;
-  const bool dual = toggles.dual_substrate;
-
   // ARCH-7b (2026-04-25): pre-write flux snapshot for genesis curl reads.
-  // The parallel-for body below writes voxel.flux while genesis at other
-  // voxels reads neighbors via curl_flux. Without this snapshot, those
-  // reads race against concurrent writes — making multi-thread runs
-  // non-deterministic. Cost: one O(N) sequential copy of N*Vec3 (~24 bytes
-  // per voxel = 1.5 MB at L=64); cheap relative to the parallel-for itself.
-  if (do_genesis) {
-    flux_pre_write_.resize(N);
-    for (int i = 0; i < N; ++i) flux_pre_write_[i] = voxels_[i].flux;
+  // Without it, sibling-thread voxel.flux writes race the curl reads —
+  // making multi-thread runs non-deterministic. Cost: one O(N) copy.
+  if (toggles.genesis) {
+    snapshot_flux_pre_write(*this);
   }
 
-  // Phase D: Precompute near-particle mask (O(N), race-free)
-  if (selective) {
-    near_particle_.resize(N, 0);
-    std::fill(near_particle_.begin(), near_particle_.end(), 0);
-    if (do_larmor) {
-      near_accel_.resize(N, 0.0);
-      std::fill(near_accel_.begin(), near_accel_.end(), 0.0);
-    }
-    for (int i = 0; i < N; ++i) {
-      if (voxels_[i].state != 0) {
-        near_particle_[i] = 1;
-        if (do_larmor) {
-          double a = voxels_[i].accel_mag;
-          near_accel_[i] = std::max(near_accel_[i], a);
-        }
-        for (int n : lattice_.neighbors_6(i)) {
-          near_particle_[n] = 1;
-          if (do_larmor) {
-            double a = voxels_[i].accel_mag;  // particle's acceleration
-            near_accel_[n] = std::max(near_accel_[n], a);
-          }
-        }
-      }
-    }
+  // Phase D: Precompute near-particle mask (O(N), race-free).
+  if (toggles.selective_damping) {
+    compute_near_particle_mask(*this);
   }
 
-  // PERF: re-seed the per-thread RNG pool ONCE per phase_write (was
-  // constructing a fresh ~5KB mt19937 per voxel inside the parallel-for,
-  // costing ~1.3 GB/tick of stack churn at L=64). Buffers are bridge
-  // members presized in the ctor — no allocation here.
-  int num_threads = 1;
-#ifdef _OPENMP
-  num_threads = omp_get_max_threads();
-#endif
-  if (toggles.langevin
-      && (!langevin_seed_initialized_
-          || active_langevin_seed_ != toggles.langevin_seed)) {
-    rng_state_->seed(toggles.langevin_seed);
-    active_langevin_seed_ = toggles.langevin_seed;
-    langevin_seed_initialized_ = true;
-  }
-  if (static_cast<int>(thread_seeds_.size()) < num_threads)
-    thread_seeds_.resize(num_threads, 0u);
-  rng_state_->reseed_thread_pool(thread_seeds_.data(),
-                                 static_cast<std::size_t>(num_threads));
+  // Main parallel-for: leapfrog (dual or single) + damping/Langevin OU
+  // + genesis + evaporation. Per-thread RNG seeding handled internally.
+  phase_write_main_loop(*this);
 
-#pragma omp parallel for
-  for (int i = 0; i < N; ++i) {
-    auto &v = voxels_[i];
-
-    int tid = 0;
-#ifdef _OPENMP
-    tid = omp_get_thread_num();
-#endif
-    BridgeRng& rng = *rng_state_;
-    const std::size_t tids = static_cast<std::size_t>(tid);
-
-    const bool should_damp = !selective || near_particle_[i];
-
-    if (dual) {
-      // ---- Dual-substrate leapfrog integration ----
-      v.wave_vel_L += delta_j_L_[i];
-      v.wave_vel_R += delta_j_R_[i];
-      v.flux_L += v.wave_vel_L;
-      v.flux_R += v.wave_vel_R;
-
-      // Damping on both substrates independently
-      if (do_damping && should_damp) {
-        double eff_damping = damping_factor;
-        // Larmor radiation: modulate damping at ALL near-particle sites
-        // Uses max accel_mag of nearby particles (propagated via near_accel_)
-        // Static charges (a=0) → LARMOR_FLOOR ≈ 1% damping
-        // Accelerating charges → enhanced damping ∝ a²
-        if (do_larmor && selective && near_particle_[i]) {
-          double a2 = near_accel_[i] * near_accel_[i];
-          double larmor_mod = std::min(1.0, LARMOR_FLOOR + K_LARMOR * a2);
-          eff_damping = 1.0 - DAMPING * larmor_mod;
-        }
-        v.flux_L *= eff_damping;
-        v.flux_R *= eff_damping;
-        v.wave_vel_L *= eff_damping;
-        v.wave_vel_R *= eff_damping;
-      }
-
-      // Update observable field: flux = J_L + J_R
-      v.flux = v.flux_L + v.flux_R;
-      v.wave_vel = v.wave_vel_L + v.wave_vel_R;
-
-      // Genesis: use chirality density for polarity (dual-substrate rule)
-      // chi = |psi_L|^2 - |psi_R|^2 where psi_X = J_Xx + i*J_Xy
-      // s = sgn(chi) * Theta(|chi| - K_B^2)
-      if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
-        double excess = v.density() - K_GENESIS;
-        double p = 1.0 - std::exp(-excess / K_B);
-        const std::uint64_t gseed =
-            static_cast<std::uint64_t>(toggles.langevin_seed);
-        if (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
-          double chi = v.chirality_density();
-          v.state = (chi >= 0) ? 1 : -1;
-          // ARCH-7 (2026-04-25): defer particle_id assignment until the
-          // sequential post-pass below (after the parallel-for completes)
-          // so the IDs are assigned in voxel-index order regardless of OMP
-          // thread scheduling. -2 is the "pending" sentinel.
-          v.particle_id = -2;
-
-          // ARCH-7b: spin from curl of pre-write flux snapshot (avoids
-          // racing concurrent voxel.flux writes from sibling threads).
-          Vec3 curl = ::ftd::curl_from_flux_array(flux_pre_write_, lattice_, i);
-          double ax = std::abs(curl.x), ay = std::abs(curl.y), az = std::abs(curl.z);
-          double mx = std::max({ax, ay, az});
-          if (mx > EPSILON_MAG) {
-            if (az >= ax && az >= ay) v.spin = (curl.z > 0) ? 1 : -1;
-            else if (ay >= ax) v.spin = (curl.y > 0) ? 1 : -1;
-            else v.spin = (curl.x > 0) ? 1 : -1;
-          } else {
-            v.spin = (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::GenesisSpin)) < 0.5) ? 1 : -1;
-          }
-
-          // Color from dominant flux axis
-          double fx = std::abs(v.flux.x), fy = std::abs(v.flux.y), fz = std::abs(v.flux.z);
-          if (fx >= fy && fx >= fz) v.color = 1;
-          else if (fy >= fx && fy >= fz) v.color = 2;
-          else v.color = 3;
-        }
-      }
-    } else {
-      // ---- Single-substrate leapfrog integration (non-dual path) ----
-      v.wave_vel += delta_j_[i];
-      v.flux += v.wave_vel;
-
-      // Langevin thermostat (Ornstein–Uhlenbeck on wave_vel, per-component).
-      // Discrete form:  v <- (1 - gamma) v + sqrt(2 gamma T) eta,  eta ~ N(0,I).
-      // Replaces the deterministic damping block when langevin is on.
-      // Gauss projection runs after phase_write and removes the longitudinal
-      // component of J, so the thermal ensemble lives on the Gauss-physical
-      // subspace automatically.
-      //
-      // Cluster A (FTD-0093): when toggles.langevin_site_filter != ALL_SITES,
-      // restrict the OU update to voxels matching the parity class. Non-matching
-      // voxels fall through to the deterministic damping branch — preserves
-      // the Gauss subspace separation while letting a sublattice equilibrate
-      // independently. See PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md §6 confound checks.
-      const bool langevin_active = toggles.langevin &&
-          ::ftd::site_matches_filter(lattice_, i, toggles.langevin_site_filter);
-      if (langevin_active) {
-        const double gamma = toggles.langevin_gamma;
-        const double T = toggles.langevin_T;
-        const double sigma = std::sqrt(2.0 * gamma * T);
-        const double one_minus_gamma = 1.0 - gamma;
-        v.wave_vel.x = one_minus_gamma * v.wave_vel.x + sigma * rng.thread_normal(tids);
-        v.wave_vel.y = one_minus_gamma * v.wave_vel.y + sigma * rng.thread_normal(tids);
-        v.wave_vel.z = one_minus_gamma * v.wave_vel.z + sigma * rng.thread_normal(tids);
-      } else if (do_damping && should_damp) {
-        double eff_damping = damping_factor;
-        // Larmor radiation: modulate damping at ALL near-particle sites
-        if (do_larmor && selective && near_particle_[i]) {
-          double a2 = near_accel_[i] * near_accel_[i];
-          double larmor_mod = std::min(1.0, LARMOR_FLOOR + K_LARMOR * a2);
-          eff_damping = 1.0 - DAMPING * larmor_mod;
-        }
-        v.flux *= eff_damping;
-        v.wave_vel *= eff_damping;
-      }
-
-      // Genesis: void + high flux → manifest (div(J) for polarity)
-      if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
-        double excess = v.density() - K_GENESIS;
-        double p = 1.0 - std::exp(-excess / K_B);
-        const std::uint64_t gseed =
-            static_cast<std::uint64_t>(toggles.langevin_seed);
-        if (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
-          // Latent Heat of Manifestation: consume wave energy
-          v.wave_vel *= (1.0 - K_GENESIS_KINETIC_DRAIN); // Drain local kinetic energy to pay for mass gap
-          double jmag = v.flux.mag();
-          if (jmag > K_GENESIS_FLUX_EPSILON) v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag); // Consume potential energy
-
-          // ARCH-7b: divergence from pre-write snapshot (race-free).
-          double div = ::ftd::divergence_from_flux_array(flux_pre_write_, lattice_, i);
-          v.state = (div > 0) ? 1 : -1;
-          // ARCH-7 (2026-04-25): defer particle_id assignment to the
-          // sequential post-pass for OMP determinism (see dual-substrate
-          // branch above for rationale).
-          v.particle_id = -2;
-
-          // ARCH-7b: spin from curl of pre-write flux snapshot (race-free).
-          Vec3 curl = ::ftd::curl_from_flux_array(flux_pre_write_, lattice_, i);
-          double ax = std::abs(curl.x), ay = std::abs(curl.y), az = std::abs(curl.z);
-          double mx = std::max({ax, ay, az});
-          if (mx > EPSILON_MAG) {
-            if (az >= ax && az >= ay) v.spin = (curl.z > 0) ? 1 : -1;
-            else if (ay >= ax) v.spin = (curl.y > 0) ? 1 : -1;
-            else v.spin = (curl.x > 0) ? 1 : -1;
-          } else {
-            v.spin = (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::GenesisSpin)) < 0.5) ? 1 : -1;
-          }
-
-          double fx = std::abs(v.flux.x), fy = std::abs(v.flux.y), fz = std::abs(v.flux.z);
-          if (fx >= fy && fx >= fz) v.color = 1;
-          else if (fy >= fx && fy >= fz) v.color = 2;
-          else v.color = 3;
-        }
-      }
-    }
-
-    // Evaporation: low TOTAL wave energy → return to void
-    // (same for both single and dual substrate — uses observable flux)
-    constexpr double EVAP_ENERGY = K_B * K_B * EVAP_THRESHOLD;
-    double local_energy = v.flux.mag2() + v.wave_vel.mag2();
-    {
-      const auto& nbrs = lattice_.neighbors_6(i);
-      for (int n : nbrs)
-        local_energy += voxels_[n].flux.mag2() + voxels_[n].wave_vel.mag2();
-    }
-    if (do_genesis && v.state != 0
-        && !v.locked) {
-      // Thermodynamic Evaporation: Probability of evaporation increases if energy is low,
-      // but even in a thermal bath, virtual pairs have a finite lifetime.
-      double evap_prob = std::exp(-local_energy / (K_B * K_B));
-      // Increase evaporation rate significantly to stabilize the thermal vacuum
-      const std::uint64_t gseed =
-          static_cast<std::uint64_t>(toggles.langevin_seed);
-      if (voxel_uniform(gseed, i, tick_, /*salt=*/static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE) {
-        v.state = 0;
-        v.particle_id = -1;
-        v.spin = 0;
-        v.color = 0;
-      }
-    }
-  }
-
-  // ARCH-7 (2026-04-25): sequential post-pass to assign deterministic
-  // particle IDs in voxel-index order. The parallel-for above marks
-  // newly-manifested voxels with particle_id == -2 ("pending") so that the
-  // injector counter increment doesn't depend on OMP thread scheduling.
-  // After this pass, replaying the same seed with any thread count produces
-  // identical particle_id values, closing TEST-004.
-  const int N_total = static_cast<int>(lattice_.total_sites());
-  for (int i = 0; i < N_total; ++i) {
-    if (voxels_[i].particle_id == -2) {
-      voxels_[i].particle_id = injector_.next_particle_id();
-    }
-  }
+  // Sequential post-pass: convert pending particle_id sentinels (-2)
+  // into deterministic IDs assigned in voxel-index order. ARCH-7 closes
+  // TEST-004: replaying the same seed with any thread count produces
+  // identical IDs.
+  phase_write_assign_pending_ids(*this);
 }
 
 // ============================================================================
