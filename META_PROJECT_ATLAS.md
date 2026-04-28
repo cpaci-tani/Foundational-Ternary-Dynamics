@@ -2,7 +2,7 @@
 
 **Audience: LLM agents and humans needing to find code/docs fast.**
 **Update trigger: any directory creation, public-API change, or architectural decision.**
-**Last refreshed: 2026-04-27 (Phase 0 of refactor sweep).**
+**Last refreshed: 2026-04-27 (post-refactor: 8-phase sweep complete, 17 commits 2db67ca…87158ae).**
 
 This file is the entry point for navigating the FTD codebase. If you are a
 fresh agent looking at this project for the first time, read this file →
@@ -68,10 +68,11 @@ ftd/
 │   ├── WHERE_WE_LEFT_OFF.md           # Session-resume context (read first when resuming)
 │   ├── adr/                           # Architecture Decision Records
 │   │   ├── INDEX.md                   # ADR catalog
-│   │   └── 0001…0009-*.md             # Per-decision records
+│   │   └── 0001…0013-*.md             # Per-decision records (9 retroactive + 4 from refactor sweep)
 │   ├── audits/                        # Archived audit ledgers (per sweep)
 │   │   ├── INDEX.md
-│   │   └── AUDIT_2026-04_pre-refactor.md   # Phase 0 archived from AUDIT_LEDGER.md
+│   │   ├── AUDIT_2026-04_pre-refactor.md   # 122-finding sweep (78 resolved, archived)
+│   │   └── AUDIT_2026-04_refactor-sweep.md # 8-phase refactor (17 commits, archived)
 │   ├── theory/                        # 115+ theory documents
 │   │   ├── META_INDEX.md              # Catalog
 │   │   ├── 01_reference/              # SPEC_ALGEBRAIC_SPINE, SPEC_FTD_COMPLETE_CHAIN
@@ -95,16 +96,23 @@ ftd/
 │   ├── include/ftd/                   # ~30 headers
 │   │   ├── ontic/                     # 9-layer derivation chain (README.md inside)
 │   │   ├── eft/                       # EFT recovery program headers
-│   │   ├── render_bridge.h            # Main API + 4 diagnostic structs (Phase 1 will split)
+│   │   ├── render_bridge.h            # Main API (369 LOC; diagnostic structs in render_bridge_diagnostics.h since Phase 1)
+│   │   ├── render_bridge_diagnostics.h # POD diagnostic structs (split out Phase 1; ~5 TU rebuild fan-out vs ~30 pre-split)
+│   │   ├── render_bridge_phases.h     # Free-function declarations for Phase 4 extracted phase TUs
 │   │   ├── particle_engine.h, atom_engine.h, cosmic_engine.h
-│   │   ├── term_toggles.h             # 20 runtime toggles + validate (Phase 6 → table-driven)
+│   │   ├── term_toggles.h             # TOGGLE_SPECS[] table-driven (Phase 6); single-line edits per new toggle
 │   │   ├── constants.h                # Layer-organized canonical constants
 │   │   ├── constants_gpu.cuh          # Device-side mirror
 │   │   ├── voxel.h, lattice.h, vec3.h # Core types
-│   │   ├── test_telemetry.h           # NDJSON test API (Phase 7 → split impl)
+│   │   ├── test_telemetry.h           # NDJSON test API (154 LOC declarations only; impl in tests/support/, Phase 7)
 │   │   └── ...
-│   ├── src/                           # ~40 .cpp files
-│   │   ├── render_bridge.cpp          # 6-phase tick (Phase 4 will decompose)
+│   ├── src/                           # ~45 .cpp files
+│   │   ├── render_bridge.cpp          # 545 LOC orchestrator (Phase 4 reduced from 1231 LOC)
+│   │   ├── render_bridge_phases/      # Phase 4 extractions (892 LOC physics body)
+│   │   │   ├── phase_write.cpp        # 317 LOC — Phase 4a (RF-4 manifest_at dedup)
+│   │   │   ├── phase_forces.cpp       # 251 LOC — Phase 4b
+│   │   │   ├── phase_read.cpp         # 168 LOC — Phase 4c
+│   │   │   └── phase_movement.cpp     # 156 LOC — Phase 4c
 │   │   ├── poisson_solvers.cpp        # R1 — extracted SOR Poisson chain
 │   │   ├── transmutation_phases.cpp   # R2 — weak/pair/triad/proper-time
 │   │   ├── energy_ledger_compute.cpp  # R3 — conservation bookkeeping
@@ -116,22 +124,30 @@ ftd/
 │   │   ├── cosmic/                    # CE phase decomposition
 │   │   ├── constructors/              # Shared lattice builders
 │   │   └── eft/                       # EFT recovery TUs
-│   ├── cuda/                          # ~10 CUDA TUs (README.md inside)
-│   │   ├── kernels_stencil.cu         # 14 kernels (Phase 5 will split)
+│   ├── cuda/                          # ~12 CUDA TUs (README.md inside)
+│   │   ├── kernels_stencil_single.cu  # 759 LOC — Phase 5: single-substrate kernels
+│   │   ├── kernels_stencil_dual.cu    # 565 LOC — Phase 5: dual-substrate kernels
+│   │   ├── kernels_aux.cu             # 286 LOC — Phase 5: weak_transmutation + pair_production
+│   │   ├── kernels_stencil_common.cuh # 82 LOC — shared device helpers (Phase 5)
 │   │   ├── kernels_forces.cu, kernels_poisson.cu
-│   │   ├── cuda_index.cuh             # Shared idx3d / wrap / decode_xyz / periodic_delta
+│   │   ├── cuda_index.cuh             # Shared idx3d / wrap / decode_xyz / periodic_delta (ADR-0007)
 │   │   ├── gpu_engine.cu, gpu_buffers.cu
 │   │   └── atom_engine_gpu.cu, particle_engine_gpu.cu
 │   ├── wasm/                          # Emscripten bindings
 │   │   ├── ftd_wasm.cpp               # Main embind file
-│   │   ├── bindings_render_bridge.cpp # RenderBridge methods + toggle map
+│   │   ├── bindings_render_bridge.cpp # RenderBridge bindings + auto-generated toggle map (Phase 6)
 │   │   ├── bindings_particle.cpp, bindings_atom.cpp
 │   │   └── bindings_internal.h
 │   ├── tests/                         # 250+ test files (README.md inside)
 │   │   ├── test_*.cpp                 # Unit tests (use test_telemetry.h)
 │   │   ├── benchmark_*.cpp            # Engine-theory bridge tests
 │   │   ├── campaign_*.cpp             # Long-running measurement campaigns
-│   │   └── test_audit_regression.cpp  # Regression suite for recent audit fixes
+│   │   ├── test_render_bridge_golden.cpp # Phase 4 golden-tick gate (hash 0xcd957b601d47868a)
+│   │   ├── test_audit_regression.cpp  # 14-15/15 audit fix coverage
+│   │   └── support/                   # Phase 7 ftd_test_support library
+│   │       ├── test_telemetry.cpp     # 312 LOC impl (was header-only, parsed 155+ times)
+│   │       ├── bridge_fixtures.h      # ToggleProfile enum + make_bridge / run_for / etc.
+│   │       └── bridge_fixtures.cpp
 │   └── web/                           # Browser dashboard
 │       ├── serve.py                   # No-cache dev server
 │       ├── index_dag.html             # Main entry
@@ -139,11 +155,23 @@ ftd/
 │       ├── tests/                     # Playwright .spec.js
 │       └── js/                        # ~250+ modules
 │           ├── constants.js           # JS canonical constants (mirror of ontic.h)
-│           ├── viewport.js            # 3D renderer (Phase 3 will split)
-│           ├── wasm-bridge-dag.js     # MockBridge + WasmBridge (Phase 2 will split)
+│           ├── viewport.js            # 1256 LOC orchestrator (Phase 3 reduced from 3953)
+│           ├── viewport/              # Phase 3 sub-renderers (4948 LOC across 5 files)
+│           │   ├── scene-core.js      # 500 LOC — camera, lights, boundary, axes, render loop
+│           │   ├── flux-renderer.js   # 416 LOC — flux volume, slice, streamlines
+│           │   ├── particle-renderer.js # 503 LOC — particles, trails, velocity vectors
+│           │   ├── field-renderer.js  # 2273 LOC — 27+ field overlay meshes (E/B/Poynting/forces/quantum)
+│           │   ├── molecular-renderer.js, boundary-geometry.js
+│           │   ├── topology-sheet-renderer.js, color-ramps.js
+│           │   └── REFACTOR_MAP.md    # Phase 3 extraction guide (closed; archival reference)
+│           ├── wasm-bridge-dag.js     # 42-LOC re-export shim (Phase 2; 2395 LOC originally)
 │           ├── app_dag.js             # Main entry / orchestrator
 │           ├── config/toggles.js      # SCALE0_TOGGLES + scenario overrides
-│           ├── bridge/                # Bridge layer (README.md inside)
+│           ├── bridge/                # Bridge layer (README.md inside; Phase 2 isolated)
+│           │   ├── mock-bridge.js     # 1578 LOC — MockBridge class (Phase 2a)
+│           │   ├── wasm-bridge.js     # 715 LOC — WasmBridge class (Phase 2b)
+│           │   ├── capabilities/      # Phase 2c capability factories
+│           │   │   ├── scale0.js, scale1.js, scale2.js, install.js
 │           │   ├── mock-diagnostics.js       # Live-reference factory exemplar
 │           │   ├── mock-particle-engine.js, mock-lattice-samplers.js
 │           │   ├── mock-atom-engine.js, mock-scale4.js, mock-scale5.js
@@ -155,9 +183,6 @@ ftd/
 │           │   ├── ui/                # bindings, controls, overlays, panels
 │           │   └── state/             # store
 │           ├── scales/scale1/...scale11/
-│           ├── viewport/              # Sub-renderers (extracted from viewport.js)
-│           │   ├── molecular-renderer.js, boundary-geometry.js
-│           │   ├── topology-sheet-renderer.js, color-ramps.js
 │           └── ui/                    # Shared UI components
 └── scripts/                           # Python tooling (README.md inside)
     ├── constants.py                   # Canonical Python constants (root of derivation chain)
@@ -270,9 +295,7 @@ graph TD
  * ======================================== */
 ```
 
-Reference exemplar: [`engine/web/js/bridge/mock-diagnostics.js`](engine/web/js/bridge/mock-diagnostics.js) lines 26–50.
-
-Required for files modified in subsequent phases; soft-warn for legacy files.
+Reference exemplar: [`engine/web/js/bridge/mock-diagnostics.js`](engine/web/js/bridge/mock-diagnostics.js) lines 26–50. Phase 2/3 extractions all carry the `@file` block; new files must too.
 
 ---
 
@@ -335,9 +358,54 @@ Windows-native CUDA build (`engine/build/`) is acceptable for compile-time
 checks and single-tick correctness only. Any measurement campaign, sweep,
 or multi-seed run goes through WSL2.
 
+**Outstanding WSL2 deferral (post-refactor):** Phase 5 split `kernels_stencil.cu`
+into 3 TUs and is host-compile-verified + CPU-deterministic-verified
+(`test_render_bridge_golden` hash `0xcd957b601d47868a` bit-exact match)
+but bit-exact GPU-stencil parity has NOT yet been verified at L=64.
+Recommended next-session command:
+
+```bash
+wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && \
+    cmake --build engine/build_wsl --target test_cpu_gpu_parity ftd_cuda && \
+    engine/build_wsl/test_cpu_gpu_parity --L 64 --ticks 100 --seed 42"
+```
+
 ---
 
-## §10 — Quick command reference
+## §10 — Refactor sweep history (2026-04-27, completed)
+
+The 8-phase sweep that produced the structure documented above. See
+[docs/audits/AUDIT_2026-04_refactor-sweep.md](docs/audits/AUDIT_2026-04_refactor-sweep.md)
+for the full ledger; commits chained below.
+
+| # | Phase | Commit | Outcome |
+|---|---|---|---|
+| 1 | 0 — Docs scaffolding | [2db67ca](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/2db67ca) | This file + CONTRACTS.md + 9 ADRs + 7 READMEs |
+| 2 | 1 — Diagnostic struct split | [194563a](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/194563a) | `render_bridge.h` 506→369; ~30→5 TU rebuild fan-out |
+| 3 | 2a — MockBridge | [6be0a19](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/6be0a19) | `wasm-bridge-dag.js` 2395→879 |
+| 4 | 2b — WasmBridge | [7256a14](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/7256a14) | →213 |
+| 5 | 2c — Capability factories | [c11ef96](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/c11ef96) | →42 (re-export shim) |
+| 6 | 3 prep — REFACTOR_MAP | [848e839](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/848e839) | viewport.js method map |
+| 7 | 3b — FluxRenderer | [8b4732d](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/8b4732d) | viewport.js 3953→3785 |
+| 8 | 3d — ParticleRenderer | [1506079](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/1506079) | →3542 |
+| 9 | 3a — SceneCore | [1499a11](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/1499a11) | →3307 |
+| 10 | 3c — FieldRenderer | [506805b](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/506805b) | **→1256** (5 sub-renderers in place) |
+| 11 | 4 pre-flight — Golden-tick test | [8afc8be](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/8afc8be) | hash `0xcd957b601d47868a` (gate) |
+| 12 | 4a — phase_write | [9ef51b7](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/9ef51b7) | render_bridge.cpp 1231→972; RF-4 dedup |
+| 13 | 4b — phase_forces | [76d2afe](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/76d2afe) | →759 |
+| 14 | 4c — phase_read+movement | [be2aa8c](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/be2aa8c) | **→545** |
+| 15 | 5 — CUDA stencil split | [183a493](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/183a493) | kernels_stencil.cu 1530 → 3 TUs (single/dual/aux) |
+| 16 | 6 — Toggle TOGGLE_SPECS[] | [2aa2df9](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/2aa2df9) | 5-place edit → 2-place |
+| 17 | 7 — Test fixture + telemetry impl | [87158ae](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/87158ae) | test_telemetry.h 412→154; ftd_test_support library; CTest LABELS |
+
+Physics invariants preserved across all 17 commits:
+- Golden hash `0xcd957b601d47868a` (100-tick deterministic) **bit-exact** across Phases 4a, 4b, 4c, 5, 6, 7
+- `audit_regression` 14-15/15 PASS at every commit
+- Locked-particle pair forces, absorbing-boundary sponge layer, ½-energy convention, Coulomb PE convention, dual-substrate split — all preserved
+
+---
+
+## §11 — Quick command reference
 
 | Task | Command |
 |------|---------|

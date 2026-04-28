@@ -41,12 +41,14 @@ all sub-headers and provides the namespace.
 
 ## Static_assert chain
 
-Header guards in `engine/include/ftd/constants.h` (lines 128–132) ensure:
+Header guards in `engine/include/ftd/constants.h` ensure:
 - `G_C * G_C ≈ ALPHA` (1e-8 tolerance)
 - Master quadratic identities (`N_BASE = N_c² - N_c - 2`, etc.)
 
-Extending these when adding new derived constants is required (see
-ADR-0009 / CONTRACTS.md §7).
+The 9-layer derivation chain in this directory was untouched by the 8-phase
+engine refactor (commits 2db67ca…87158ae) — only test-side and
+phase-decomposition code moved. Extending the static_assert chain when
+adding new derived constants is required (see ADR-0009 / CONTRACTS.md §7).
 
 ## How to extend
 
