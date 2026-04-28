@@ -141,13 +141,67 @@ export function setupVacuumScenario(name, ctx) {
             return true;
         }
 
-        // ── Net-new scenarios filled in by Task 3 ────────────────────
         case 's0-vacuum-electron-neutrino':
         case 's0-vacuum-muon-neutrino':
-        case 's0-vacuum-tau-neutrino':
-        case 's0-vacuum-pion-neutral':
-        case 's0-vacuum-kaon-charged':
-            return true;  // Will be filled in by Task 3.
+        case 's0-vacuum-tau-neutrino': {
+            // Soft chirality-biased flux blob (no manifested core), with
+            // per-flavor amplitude reflecting (m_ν / m_e) hierarchy. Masses
+            // themselves are [OPEN] in FTD; amplitudes are [SELECTION].
+            //
+            //   ν_e : 1.0× baseline   (lightest; m_νe upper bound ≪ m_νμ)
+            //   ν_μ : 1.3×            (suggests slight mass excess)
+            //   ν_τ : 1.6×            (heaviest of the three)
+            //
+            // All three remain well below K_GENESIS so no spurious genesis.
+            const boost =
+                name === 's0-vacuum-tau-neutrino'  ? 1.6 :
+                name === 's0-vacuum-muon-neutrino' ? 1.3 : 1.0;
+            const sig = 2, eR = 6;
+            for (let dz2 = -eR; dz2 <= eR; dz2++)
+            for (let dy2 = -eR; dy2 <= eR; dy2++)
+            for (let dx2 = -eR; dx2 <= eR; dx2++) {
+                const r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
+                if (r22 > eR*eR) continue;
+                const gg = K_B * 0.3 * boost * Math.exp(-r22 / (2 * sig * sig));
+                if (gg < 0.001) continue;
+                this._injectFlux(mc+dx2, mc+dy2, mc+dz2, gg*0.55, gg*0.45, 0);
+            }
+            return true;
+        }
+
+        case 's0-vacuum-pion-neutral': {
+            // π⁰: neutral meson, decays predominantly to 2γ (BR ≈ 98.8%).
+            // Topology: charged-pion-style quark-antiquark dipole on x-axis,
+            // BUT both vertices carry s=0 (void core). Flux dressing remains
+            // ±-paired so the meson has zero net charge but nontrivial flux
+            // structure that couples to the EM channel via Gauss constraint.
+            //
+            // Mass m_π0 = 135.0 MeV (vs m_π± = 139.6 MeV); the small splitting
+            // is [OPEN] in FTD; here we use the charged-pion amplitude.
+            const sp = Math.max(3, Math.floor(N / 8));
+            const hf = Math.floor(sp / 2);
+            // Use injectDressedParticle with state=0 — this gives a void core
+            // at each vertex with the radial flux envelope still applied.
+            injectDressedParticle(this, mc + hf, mc, mc, 0, +1, 1, 2, K_B * 0.5, true);
+            injectDressedParticle(this, mc - hf, mc, mc, 0, -1, 1, 2, K_B * 0.5, true);
+            return true;
+        }
+
+        case 's0-vacuum-kaon-charged': {
+            // K±: charged meson, m_K± = 493.7 MeV ≈ 3.54 × m_π±.
+            // Topology: charged-pion-style dipole with elevated amplitude.
+            // The amplitude scaling here is [PARAMETRIC] — it reproduces the
+            // K-mass via the FTD-0110 cluster-size↔mass map (A = 2·√(m/m_e))
+            // rather than deriving it. Mass itself is [OPEN] in FTD.
+            //
+            //   K-amp / π-amp ≈ √(m_K / m_π) ≈ 1.88
+            const sp = Math.max(3, Math.floor(N / 8));
+            const hf = Math.floor(sp / 2);
+            const kBoost = 1.88;
+            injectDressedParticle(this, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5 * kBoost, true);
+            injectDressedParticle(this, mc - hf, mc, mc, -1, -1, 1, 2, K_B * 0.5 * kBoost, true);
+            return true;
+        }
 
         default:
             return false;
