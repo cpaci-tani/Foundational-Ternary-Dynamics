@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities. **Live repo count:** ~202 real `[OPEN]` items across ~75 files plus the three new §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed today** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. (Previous: 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~202 real `[OPEN]` items across ~75 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -415,21 +415,26 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 - `docs/reference/REF_EPISTEMIC_LABELS.md` — 2 (conventions, not physics).
 - `docs/internal/SPEC_CLAUDE.md` — 2 (internal).
 
-### 7.7 2026-04-27 priorities (post engine-as-instrument cycle) — **3 `[OPEN]`**
+### 7.7 2026-04-27/28 priorities (post engine-as-instrument cycle) — **2 `[OPEN]`, 2 ✅ CLOSED**
 
-Three new high-leverage research items surfaced by the 2026-04-27
-engine-as-instrument campaign. All three are tracked in CLAUDE.md
-v5.33 §[OPEN] and the bird's-eye assessment in
+Three high-leverage research items surfaced by the 2026-04-27
+engine-as-instrument campaign; one new sub-item added 2026-04-28 after
+FTD-0110 closure. All tracked in CLAUDE.md v5.33 §[OPEN] and the
+bird's-eye assessment in
 [`../../WHERE_WE_LEFT_OFF.md`](../../WHERE_WE_LEFT_OFF.md) §10.
 
-- [OPEN] **WHY 25 voxels for ic1 cluster?** — FTD-0107 follow-up.
-  L-invariant deterministic cluster size of ~25 voxels emerging from
-  point injection (5/5 seeds, L ∈ {32, 64}) is the most novel
-  positive structural finding of the engine-as-instrument program.
-  No theoretical derivation links the 25-voxel size to the algebraic
-  spine yet. Highest-leverage theory path; closing this would
-  produce a structural derivation linking algebra to engine
-  observable. **Source:** [`../10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](../10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md).
+- ✅ **WHY 25 voxels for ic1 cluster?** — **CLOSED at linear level
+  2026-04-28 (commit `306837c`).** The 25-voxel value at canonical
+  amplitude A=10 is the steady state of the empirical scaling
+  N(A) ≈ ¼·A² (i.e. ¼·100 = 25). The ¼ coefficient is now [DERIVED at
+  linear level] from O_h representation theory: `mult(A_{1g}) = 4` in
+  the 27-block ([THEOREM] via character-table formula); δ_center is the
+  unique O_h-fixed point and therefore A_{1g}-pure; the 18-pt Laplacian
+  preserves A_{1g} as a 4×4 block; δ_center projects onto 4 A_{1g}
+  eigenmodes with mean energy fraction 1/N_base = 1/4. **Source:**
+  [`../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md);
+  verification suite C1–C4 PASS in
+  `scripts/exploration/verify_k_derivation_2026-04-28.py`.
 
 - [OPEN] **L=128 G2 follow-up to FTD-0107** — engine-side. Extending
   the L-invariance test from {32, 64} to {32, 64, 128} locks the
@@ -437,19 +442,35 @@ v5.33 §[OPEN] and the bird's-eye assessment in
   exists). Pre-registration template ready; engine measurement
   deferred. **Source:** CLAUDE.md v5.33 §[OPEN].
 
-- [OPEN] **Structural bridge between algebraic spine and engine
-  phenomenology** — meta-gap. Per WHERE_WE_LEFT_OFF.md §10: the
-  algebraic spine and engine phenomenology stand as two defensible
-  pillars without a derivation chain connecting them. Standard
-  physics has math-derives-observable; FTD has math AND engine, but
-  no derivation linking specific algebraic content (G\*, master
-  quadratic) to specific engine measurements (25-voxel cluster size,
-  deterministic counts). Closing this bridge is the load-bearing
-  remaining work. The "WHY 25 voxels?" question above is the most
-  concrete entry point.
+- ✅ **Structural bridge between algebraic spine and engine
+  phenomenology** — **CLOSED at linear level 2026-04-28**. The
+  framework integer N_base = 4 = mult(A_{1g}) connects O_h-cubic-point-group
+  structure (algebraic [THEOREM]) to cluster-efficiency coefficient ¼
+  (engine observable, [MEASURED]) via the derivation chain documented
+  in `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. This is the project's
+  first quantitative algebra↔engine connector at predictive precision.
+  Note: closure is at the linear-Laplacian level only; see new sub-item
+  below for the [OPEN] nonlinear extension.
 
-**Last audit refresh:** 2026-04-27 evening (post engine-as-instrument
-cycle + look-elsewhere scan).
+- [OPEN] **FTD-0110 nonlinear bridge** — NEW 2026-04-28 sub-item. The
+  derivation in `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` operates on the
+  linearised 18-point Laplacian acting on the 27-dim permutation rep.
+  The actual engine pipeline (genesis threshold, Langevin
+  thermalisation, Gauss projection, state-field manifestation) is
+  nonlinear and stochastic. The empirical 5%-precision multi-particle
+  multi-seed cross-check across 5 SM particles × 11 amplitudes is
+  strong evidence the linear A_{1g}-mode equipartition survives in
+  steady state, but survival is not yet proved. Two closure routes:
+  (a) analytical perturbation theory in irrep mixing on the nonlinear
+  update operator; (b) instrument the engine to log per-irrep energy
+  fractions during a steady-state run, verify the {3/8, 1/8, 3/8, 1/8}
+  distribution holds within Langevin-noise envelope. Closing this
+  promotes FTD-0110's main claim from [STRONGLY MOTIVATED CONJECTURE]
+  to [DERIVED]/[THEOREM]-grade. **Source:** WHERE_WE_LEFT_OFF.md §10.7;
+  estimated 1-3 weeks theory + engine work.
+
+**Last audit refresh:** 2026-04-28 (post FTD-0110 [DERIVED at linear
+level] closure).
 
 ---
 
