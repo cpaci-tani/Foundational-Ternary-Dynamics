@@ -71,6 +71,7 @@ bool dispatch_scenario(RenderBridge& rb, const std::string& name) {
     if (setup_flux_scenario(rb, name))     return true;
     if (setup_light_scenario(rb, name))    return true;
     if (setup_quantum_scenario(rb, name))  return true;
+    if (setup_vacuum_scenario(rb, name))   return true;
     if (setup_s0_seed_scenario(rb, name))  return true;
     if (setup_s0_field_scenario(rb, name)) return true;
     return false;
