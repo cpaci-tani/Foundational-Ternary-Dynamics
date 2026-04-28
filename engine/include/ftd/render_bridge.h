@@ -60,6 +60,12 @@ class RenderBridge {
     friend void pair_production_cpu(RenderBridge&);
     friend void triad_binding_cpu(RenderBridge&);
     friend void update_energy_ledger_cpu(RenderBridge&);
+    // Phase 4a (2026-04-27): phase_write decomposition. See
+    // engine/src/render_bridge_phases/phase_write.cpp.
+    friend void compute_near_particle_mask(RenderBridge&);
+    friend void snapshot_flux_pre_write(RenderBridge&);
+    friend void phase_write_main_loop(RenderBridge&);
+    friend void phase_write_assign_pending_ids(RenderBridge&);
     // ARCH-2-I (2026-04-25): the 6 inject_*_cpu friends were dropped — the
     // injection helpers now use the public API (backend(), voxels(),
     // lattice(), injector(), gpu_engine_ptr()) only.
