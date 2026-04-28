@@ -49,9 +49,7 @@
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+// EffectComposer / RenderPass / UnrealBloomPass moved to viewport/scene-core.js (Phase 3a).
 // getById moved with applyParticleColors / updateTrails to viewport/particle-renderer.js (Phase 3d).
 import { potentialToColor, magnitudeToColor, fluxToColor, fluxToColorInto } from './fields.js';
 import { K_B } from './constants.js';
@@ -85,7 +83,16 @@ import { SpinArrowManager } from './viewport/spin-arrow-manager.js';
 // Boundary wireframe builders + containment predicate — extracted to keep
 // viewport.js under the refactor-plan LOC target (refactoring-analyst RF-4).
 // Pure geometry; no state beyond the returned Three.js Group.
-import { buildBoundary, insideBoundary } from './viewport/boundary-geometry.js';
+// Note: Phase 3a moved boundary BUILDING into ViewportSceneCore; Viewport
+// itself only consumes `insideBoundary` here for the cross-renderer
+// containment-test callback that's passed to flux/particle renderers.
+import { insideBoundary } from './viewport/boundary-geometry.js';
+// Scene decoration (boundary wireframe, axes, post-processing pipeline,
+// camera presets, render dispatch, dispose) extracted as Phase 3a of the
+// viewport decomposition. Viewport composes a ViewportSceneCore and
+// forwards every scene-decoration method through a thin wrapper. See
+// viewport/REFACTOR_MAP.md §3a.
+import { ViewportSceneCore } from './viewport/scene-core.js';
 // Rubber-sheet visualizations (gravitational potential + 10 topology fields).
 // Extracted per refactoring-analyst RF-1. Viewport holds the instance as
 // this._topoRenderer and forwards via thin delegators.
@@ -248,23 +255,42 @@ export class Viewport {
         // so it can capture live-bound callbacks for boundary clipping and
         // the cross-renderer arrow-field writer.
 
-        // Boundary / wireframe
-        this.wireframe = null;
-        this.showWireframe = true;
-        this._wireframeBrightness = 0.18;
+        // Wireframe / axes / post-processing state owned by ViewportSceneCore
+        // (Phase 3a). The orchestrator keeps showHeatmap because it gates the
+        // flux-slice heatmap which lives on the orchestrator (Phase 3c
+        // territory). Backward-compat getters/setters at the bottom of the
+        // class forward `wireframe`, `axes`, `peAxes`, `peGrid`,
+        // `_engineMode`, `_boundaryShape`, `_boundaryMode`, etc. to SceneCore.
         // showFlux is owned by FluxRenderer (Phase 3b); see backward-compat
         // getter/setter near end of class so external code can still read it.
         this.showHeatmap = false;
-        this._showAxes = true;   // user preference for axes visibility
-        this._showGrid = true;   // user preference for grid visibility
-        this._engineMode = 'lattice';
-        this._boundaryShape = 'cube';
-        this._boundaryMode = 'lattice'; // 'lattice' (Scale 0) or 'origin' (Scale 1+)
 
-        // Lattice reference
+        // Lattice reference (orchestrator-owned; cascaded to all sub-renderers
+        // by setLatticeSize via onLatticeSizeChanged callbacks).
         this.latticeSize = 32;
+        this._latticeSize = 32;  // mirrored so quantum overlays can read it too
         this._halfN = 16;
-        this._buildBoundary(this._boundaryShape, 'lattice');
+
+        // Scene decoration (boundary wireframe, axes, post-processing, camera
+        // presets) — Phase 3a extraction. Constructed BEFORE the flux/particle
+        // renderers so that boundary state queried via the `_insideBoundary`
+        // callback (which delegates to viewport/boundary-geometry.js using
+        // `this._boundaryShape` — itself forwarded through the backward-compat
+        // getter to SceneCore) is well-defined when those sub-renderers run
+        // their first frame.
+        this._sceneCore = new ViewportSceneCore({
+            scene: this.scene,
+            camera: this.camera,
+            renderer: this.renderer,
+            controls: this.controls,
+            container: this.container,
+            latticeSize: this.latticeSize,
+            halfN: this._halfN,
+            boundaryShape: 'cube',
+            boundaryMode: 'lattice',
+            engineMode: 'lattice',
+            insideBoundary: (nx, ny, nz) => this._insideBoundary(nx, ny, nz),
+        });
 
         // Ambient light for subtle depth cues
         const ambient = new THREE.AmbientLight(0x404060, 0.5);
@@ -323,13 +349,8 @@ export class Viewport {
             writeArrowFieldIntoMesh: (m, f, c, k, b, t) => this._writeArrowFieldIntoMesh(m, f, c, k, b, t),
         });
 
-        // Axis helper (subtle)
-        this._buildAxes();
-
-        // Post-processing (lazy init for consciousness mode)
-        this._composer = null;
-        this._bloomPass = null;
-        this._usePostProcessing = false;
+        // Axis helper + boundary wireframe + post-processing pipeline
+        // are all owned by ViewportSceneCore (Phase 3a) — see ctor above.
 
         // Handle resize
         this._onResize();
@@ -343,111 +364,58 @@ export class Viewport {
     // constructor and is reachable via the `particles` getter on Viewport.
 
     // ── Boundary system ────────────────────────────────────────────────
+    // Phase 3a: extracted to viewport/scene-core.js. Thin delegators
+    // preserve any internal callers that still call these names.
 
-    _disposeBoundary() {
-        if (this.wireframe) {
-            this.scene.remove(this.wireframe);
-            this.wireframe.traverse(child => {
-                if (child.geometry) child.geometry.dispose();
-                if (child.material) child.material.dispose();
-            });
-            this.wireframe = null;
-        }
-    }
+    _disposeBoundary() { this._sceneCore?._disposeBoundary(); }
 
-    _buildBoundary(shape, mode) {
-        this._disposeBoundary();
-        this._boundaryShape = shape;
-        this._boundaryMode = mode;
-
-        if (shape === 'none') return;
-
-        const mat = new THREE.LineBasicMaterial({
-            color: 0x1e2d44, transparent: true, opacity: this._wireframeBrightness,
-            depthWrite: false,
-        });
-
-        const group = buildBoundary(shape, mode, { latticeSize: this.latticeSize }, mat);
-
-        // Scale and position based on mode
-        // Non-cube shapes are inscribed within the lattice cube (radius = s/2)
-        // so the flux volume clips to the shape boundary
-        if (mode === 'lattice') {
-            const s = this.latticeSize;
-            if (shape === 'cube') {
-                // Cube is already built at lattice coords — no transform needed
-            } else {
-                group.scale.setScalar(s / 2);
-                group.position.set(s / 2, s / 2, s / 2);
-            }
-        } else {
-            // origin mode (PE/AE/molecules)
-            const radius = 35;
-            if (shape === 'cube') {
-                group.scale.setScalar(radius / (this.latticeSize / 2));
-                group.position.set(0, 0, 0);
-            } else {
-                group.scale.setScalar(radius);
-                group.position.set(0, 0, 0);
-            }
-        }
-
-        this.wireframe = group;
-        this.wireframe.visible = this.showWireframe;
-        this.scene.add(this.wireframe);
-    }
-
-
-
+    _buildBoundary(shape, mode) { this._sceneCore?._buildBoundary(shape, mode); }
 
 
 
     setBoundaryShape(shape) {
-        this._buildBoundary(shape, this._boundaryMode);
+        // Forward to BOTH SceneCore (rebuilds wireframe) AND FluxRenderer
+        // (rebuilds clipped flux volume). ParticleRenderer reads boundary
+        // shape via its `getBoundaryShape` callback, so no explicit notify
+        // there.
+        this._sceneCore?.setBoundaryShape(shape);
         this._fluxRenderer?.setBoundaryShape(shape);
     }
 
     /**
-     * Test whether a point (in normalized coords -1..1 from center) is inside
-     * the current boundary shape. Used to clip flux volume rendering.
-     */
-    /**
      * Test whether a point (normalized -1..1 from center) is inside the
      * current boundary. Delegated to viewport/boundary-geometry.js.
+     * Stays on the orchestrator so flux/particle/field renderers all
+     * share a single callback (avoids 4 duplicate definitions).
      */
     _insideBoundary(nx, ny, nz) { return insideBoundary(this._boundaryShape, nx, ny, nz); }
 
-    _buildAxes() {
-        // Axis indicator at origin — length scales with lattice size
-        const axisLen = Math.max(3, this.latticeSize * 0.1);
-        const axisGeo = new THREE.BufferGeometry();
-        axisGeo.setAttribute('position', new THREE.Float32BufferAttribute([
-            0, 0, 0, axisLen, 0, 0,  // X
-            0, 0, 0, 0, axisLen, 0,  // Y
-            0, 0, 0, 0, 0, axisLen,  // Z
-        ], 3));
-        axisGeo.setAttribute('color', new THREE.Float32BufferAttribute([
-            0.9, 0.3, 0.3, 0.9, 0.3, 0.3,  // X = red
-            0.3, 0.9, 0.3, 0.3, 0.9, 0.3,  // Y = green
-            0.3, 0.3, 0.9, 0.3, 0.3, 0.9,  // Z = blue
-        ], 3));
-        const axisMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.5 });
-        this.axes = new THREE.LineSegments(axisGeo, axisMat);
-        this.scene.add(this.axes);
-    }
+    // Phase 3a: extracted to viewport/scene-core.js.
+    _buildAxes() { this._sceneCore?._buildAxes(); }
 
     setLatticeSize(size) {
         this.latticeSize = size;
         this._latticeSize = size;  // mirrored so quantum overlays can read it too
         this._halfN = size / 2;
-        this._buildBoundary(this._boundaryShape, this._boundaryMode);
+
+        // Sub-renderer cascade — every sub-renderer rebuilds/refreshes its
+        // meshes for the new lattice size. SceneCore handles boundary
+        // wireframe + axes + camera recentering (Phase 3a). FluxRenderer
+        // rebuilds the flux volume + clears streamlines (Phase 3b).
+        // ParticleRenderer refreshes its cached _halfN (Phase 3d).
+        this._sceneCore?.onLatticeSizeChanged(size, this._halfN);
+        this._fluxRenderer?.onLatticeSizeChanged(size, this._halfN);
+        this._particleRenderer?.onLatticeSizeChanged(size, this._halfN);
+
         // Tracked particles may have stale ids after a scenario / lattice resize;
         // dispose all spin arrows so the next track() request gets a clean Group.
         if (this.spinArrowManager) this.spinArrowManager.dispose();
         // TopologySheetRenderer re-queries latticeSize via its getter on next
         // update; grav-surface rebuild now happens inside that module.
-        
-        // Rebuild void box for raycasting
+
+        // Rebuild void box for raycasting (orchestrator-owned — it's a
+        // raycasting bounding volume used by the inspector, not scene
+        // decoration; lives here until a future picker module).
         if (this._voidBox) {
             this.scene.remove(this._voidBox);
             this._voidBox.geometry.dispose();
@@ -460,14 +428,8 @@ export class Viewport {
         this._voidBox.position.set(c, c, c);
         this.scene.add(this._voidBox);
 
-        // Rebuild flux volume + clear flux-streamlines draw range — owned by
-        // FluxRenderer (Phase 3b extraction).
-        this._fluxRenderer?.onLatticeSizeChanged(size, this._halfN);
-        // ParticleRenderer (Phase 3d) — refreshes cached _halfN used by
-        // updateParticles' boundary-clip math. Particle / trail / vector
-        // mesh capacities are constant, so no rebuild needed.
-        this._particleRenderer?.onLatticeSizeChanged(size, this._halfN);
-        // Rebuild field heatmap for new lattice capacity
+        // Rebuild field heatmap for new lattice capacity (Phase 3c territory;
+        // stays on orchestrator until FieldRenderer extraction).
         if (this._fieldHeatmap) {
             this.scene.remove(this._fieldHeatmap);
             this._fieldHeatmap.geometry.dispose();
@@ -489,29 +451,10 @@ export class Viewport {
             if (obj && obj.geometry) obj.geometry.setDrawRange(0, 0);
         }
 
-        // Rebuild axes so length scales with lattice
-        if (this.axes) {
-            this.scene.remove(this.axes);
-            this.axes.geometry.dispose();
-            this.axes.material.dispose();
-        }
-        this._buildAxes();
-
-        // Recenter camera for lattice mode
-        if (this._boundaryMode === 'lattice') {
-            const center = size / 2;
-            const dist = size * 1.6;
-            this.controls.target.set(center, center, center);
-            this.camera.position.set(center + dist * 0.25, center + dist * 0.15, center + dist);
-            this.controls.update();
-        }
         if (this._applyScenarioScale) this._applyScenarioScale();
     }
 
-    toggleWireframe(on) {
-        this.showWireframe = on;
-        if (this.wireframe) this.wireframe.visible = on;
-    }
+    toggleWireframe(on) { this._sceneCore?.toggleWireframe(on); }
 
     // ── Camera presets ────────────────────────────────────────────────
     // Snap the orbit camera to a named viewpoint. All positions are
@@ -526,24 +469,7 @@ export class Viewport {
     //   'iso'   — default isometric (matches boot / resize position)
     //   'moore' — zoomed-in iso that frames a 3×3×3 Moore neighbourhood
     //             around the lattice centre (useful for seed scenarios)
-    setCameraPreset(which) {
-        if (this._boundaryMode !== 'lattice') return false;
-        const N = this.latticeSize || 32;
-        const c = N / 2;
-        let dist, pos;
-        switch (which) {
-            case 'front': dist = N * 1.6; pos = [c, c, c + dist]; break;
-            case 'side':  dist = N * 1.6; pos = [c + dist, c, c]; break;
-            case 'top':   dist = N * 1.6; pos = [c, c + dist, c + 0.001]; break;  // tiny Z offset so OrbitControls can roll freely
-            case 'iso':   dist = N * 1.6; pos = [c + dist * 0.25, c + dist * 0.15, c + dist]; break;
-            case 'moore': dist = Math.max(6, N * 0.35); pos = [c + dist * 0.6, c + dist * 0.4, c + dist]; break;
-            default: return false;
-        }
-        this.controls.target.set(c, c, c);
-        this.camera.position.set(pos[0], pos[1], pos[2]);
-        this.controls.update();
-        return true;
-    }
+    setCameraPreset(which) { return this._sceneCore?.setCameraPreset(which) ?? false; }
 
     // Frame the camera so the lattice / active boundary fills the view.
     // Uses the bounding sphere of the flux-volume geometry when possible
@@ -572,105 +498,17 @@ export class Viewport {
         return true;
     }
 
-    setWireframeBrightness(val) {
-        this._wireframeBrightness = val;
-        if (!this.wireframe) return;
-        this.wireframe.traverse(child => {
-            if (child.material && 'opacity' in child.material) {
-                child.material.opacity = val;
-            }
-        });
-    }
+    setWireframeBrightness(val) { this._sceneCore?.setWireframeBrightness(val); }
 
-    toggleAxes(on) {
-        this._showAxes = on;
-        const mode = this._engineMode || 'lattice';
-        if (mode === 'consciousness' || mode === 'cosmic' || mode === 'meta') return;
-        if (mode === 'lattice') {
-            if (this.axes) this.axes.visible = on;
-        } else {
-            if (this.peAxes) this.peAxes.visible = on;
-        }
-    }
+    toggleAxes(on) { this._sceneCore?.toggleAxes(on); }
 
-    setVoxelHighlight(x, y, z, active) {
-        if (!this._voxelHighlight) {
-            const geo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
-            const edges = new THREE.EdgesGeometry(geo);
-            geo.dispose();   // EdgesGeometry copied what it needs; source is orphan
-            const mat = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 2 });
-            this._voxelHighlight = new THREE.LineSegments(edges, mat);
-            this.scene.add(this._voxelHighlight);
-        }
-        if (active) {
-            // Voxel k's rendered centre is at world (k+0.5). Previously this
-            // snapped the highlight box to integer world coords, so the box
-            // sat on the voxel's lower-left corner instead of its centre —
-            // half-voxel shift visible when overlaid on particles/flux.
-            this._voxelHighlight.position.set(x + 0.5, y + 0.5, z + 0.5);
-            this._voxelHighlight.visible = true;
-        } else {
-            this._voxelHighlight.visible = false;
-        }
-    }
+    setVoxelHighlight(x, y, z, active) { this._sceneCore?.setVoxelHighlight(x, y, z, active); }
 
     setSymmetryHighlights(x, y, z, u1, su2, su3) {
-        if (!this._symHighlights) {
-            const geo = new THREE.BoxGeometry(1.0, 1.0, 1.0);
-            const edges = new THREE.EdgesGeometry(geo);
-            geo.dispose();   // EdgesGeometry copied what it needs; source is orphan
-            const mat = new THREE.LineBasicMaterial({ color: 0x4ade80, linewidth: 1, transparent: true, opacity: 0.6 });
-            this._symHighlights = new THREE.InstancedMesh(edges, mat, 26);
-            this._symHighlights.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-            this.scene.add(this._symHighlights);
-        }
-        
-        let count = 0;
-        const dummy = new THREE.Object3D();
-        
-        if (u1 || su2 || su3) {
-            for (let dx = -1; dx <= 1; dx++) {
-                for (let dy = -1; dy <= 1; dy++) {
-                    for (let dz = -1; dz <= 1; dz++) {
-                        if (dx === 0 && dy === 0 && dz === 0) continue;
-                        
-                        const norm = Math.abs(dx) + Math.abs(dy) + Math.abs(dz);
-                        let include = false;
-                        if (u1 && norm === 1) include = true;   // Face
-                        if (su2 && norm === 2) include = true;  // Edge
-                        if (su3 && norm === 3) include = true;  // Corner
-                        
-                        if (include) {
-                            // Same voxel-centre convention as setVoxelHighlight:
-                            // neighbour voxel (x+dx, y+dy, z+dz) is rendered at
-                            // world centre (x+dx+0.5, y+dy+0.5, z+dz+0.5).
-                            dummy.position.set(x + dx + 0.5, y + dy + 0.5, z + dz + 0.5);
-                            dummy.updateMatrix();
-                            this._symHighlights.setMatrixAt(count++, dummy.matrix);
-                        }
-                    }
-                }
-            }
-        }
-        
-        this._symHighlights.count = count;
-        this._symHighlights.instanceMatrix.needsUpdate = true;
-        this._symHighlights.visible = count > 0;
+        this._sceneCore?.setSymmetryHighlights(x, y, z, u1, su2, su3);
     }
 
-    toggleGrid(on) {
-        this._showGrid = on;
-        const mode = this._engineMode || 'lattice';
-        if (mode === 'consciousness' || mode === 'cosmic' || mode === 'meta') return;
-        if (mode === 'lattice') {
-            // Scale 0: the wireframe cube serves as the grid reference
-            if (this.wireframe) this.wireframe.visible = on;
-            this.showWireframe = on;
-        } else {
-            // Scale 1+: separate XZ plane grid
-            if (this.peGrid) this.peGrid.visible = on;
-        }
-    }
+    toggleGrid(on) { this._sceneCore?.toggleGrid(on); }
 
     // ── Velocity Vectors / Trails ───────────────────────────────────────
     // Phase 3d: extracted to viewport/particle-renderer.js. These thin
@@ -3226,61 +3064,8 @@ export class Viewport {
         if (this._applyScenarioScale) this._applyScenarioScale();
     }
 
-    _buildPEAxes() {
-        // Idempotent rebuild guard (Three-M1 audit, 2026-04-27): if a
-        // prior build exists, dispose its geometry+material before
-        // overwriting the field reference. Prevents the rare leak path
-        // where _buildPEAxes is called twice across a lattice resize.
-        const tearDown = (obj) => {
-            if (!obj) return;
-            this.scene.remove(obj);
-            if (obj.geometry) obj.geometry.dispose();
-            if (obj.material) obj.material.dispose();
-        };
-        tearDown(this.peAxes); this.peAxes = null;
-        tearDown(this.peGrid); this.peGrid = null;
-
-        const len = 30;
-
-        // ── Axes (RGB lines through origin) ──
-        const axVerts = [];
-        const axColors = [];
-        // X axis (red)
-        axVerts.push(-len, 0, 0, len, 0, 0);
-        axColors.push(0.5, 0.2, 0.2, 0.9, 0.3, 0.3);
-        // Y axis (green)
-        axVerts.push(0, -len, 0, 0, len, 0);
-        axColors.push(0.2, 0.5, 0.2, 0.3, 0.9, 0.3);
-        // Z axis (blue)
-        axVerts.push(0, 0, -len, 0, 0, len);
-        axColors.push(0.2, 0.2, 0.5, 0.3, 0.3, 0.9);
-
-        const axGeo = new THREE.BufferGeometry();
-        axGeo.setAttribute('position', new THREE.Float32BufferAttribute(axVerts, 3));
-        axGeo.setAttribute('color', new THREE.Float32BufferAttribute(axColors, 3));
-        const axMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.6 });
-        this.peAxes = new THREE.LineSegments(axGeo, axMat);
-        this.peAxes.visible = false;
-        this.scene.add(this.peAxes);
-
-        // ── Grid (XZ plane lines, separate object for independent toggle) ──
-        const grVerts = [];
-        const grColors = [];
-        for (let i = -len; i <= len; i += 5) {
-            if (i === 0) continue;
-            grVerts.push(i, 0, -len, i, 0, len);
-            grColors.push(0.15, 0.18, 0.25, 0.15, 0.18, 0.25);
-            grVerts.push(-len, 0, i, len, 0, i);
-            grColors.push(0.15, 0.18, 0.25, 0.15, 0.18, 0.25);
-        }
-        const grGeo = new THREE.BufferGeometry();
-        grGeo.setAttribute('position', new THREE.Float32BufferAttribute(grVerts, 3));
-        grGeo.setAttribute('color', new THREE.Float32BufferAttribute(grColors, 3));
-        const grMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.6 });
-        this.peGrid = new THREE.LineSegments(grGeo, grMat);
-        this.peGrid.visible = false;
-        this.scene.add(this.peGrid);
-    }
+    // Phase 3a: extracted to viewport/scene-core.js.
+    _buildPEAxes() { this._sceneCore?._buildPEAxes(); }
 
     // Phase 3d: updateParticles / setPointShape / setOpacity /
     // applyParticleColors extracted to viewport/particle-renderer.js.
@@ -3299,51 +3084,16 @@ export class Viewport {
     }
 
     // ── Post-Processing (Consciousness Mode) ──────────────────────
+    // Phase 3a: extracted to viewport/scene-core.js. Thin delegators
+    // preserve the public API for adapters (scene-panel) and setEngineMode.
 
-    enablePostProcessing() {
-        if (this._composer) {
-            this._usePostProcessing = true;
-            return;
-        }
-        const rect = this.container.getBoundingClientRect();
-        const w = rect.width || 800;
-        const h = rect.height || 600;
+    enablePostProcessing() { this._sceneCore?.enablePostProcessing(); }
 
-        this._composer = new EffectComposer(this.renderer);
-        this._composer.addPass(new RenderPass(this.scene, this.camera));
+    disablePostProcessing() { this._sceneCore?.disablePostProcessing(); }
 
-        this._bloomPass = new UnrealBloomPass(
-            new THREE.Vector2(w, h),
-            1.5,  // strength
-            0.4,  // radius
-            0.2   // threshold
-        );
-        this._composer.addPass(this._bloomPass);
-        this._usePostProcessing = true;
-    }
+    getBloomPass() { return this._sceneCore?.getBloomPass() ?? null; }
 
-    disablePostProcessing() {
-        this._usePostProcessing = false;
-    }
-
-    /** Accessor for the bloom pass. Null when post-processing has never
-     *  been enabled (first call to enablePostProcessing constructs it).
-     *  The Scene panel's adapter uses this to read current values
-     *  without importing Three.js or touching the _composer directly. */
-    getBloomPass() {
-        return this._bloomPass;
-    }
-
-    /** Write bloom parameters without reaching into _bloomPass from
-     *  outside. Unknown keys are ignored. No-op when the pass has not
-     *  been created yet (toggle bloom on first to make it effective). */
-    setBloomParams({ strength, radius, threshold } = {}) {
-        const pass = this._bloomPass;
-        if (!pass) return;
-        if (typeof strength === 'number' && Number.isFinite(strength)) pass.strength = strength;
-        if (typeof radius === 'number' && Number.isFinite(radius)) pass.radius = radius;
-        if (typeof threshold === 'number' && Number.isFinite(threshold)) pass.threshold = threshold;
-    }
+    setBloomParams(params) { this._sceneCore?.setBloomParams(params); }
 
     render() {
         this.controls.update();
@@ -3362,11 +3112,8 @@ export class Viewport {
             this.spinArrowManager.update(dtMs);
             this._lastSpinArrowUpdateMs = now;
         }
-        if (this._usePostProcessing && this._composer) {
-            this._composer.render();
-        } else {
-            this.renderer.render(this.scene, this.camera);
-        }
+        // SceneCore decides composer-vs-renderer based on _usePostProcessing.
+        this._sceneCore?.render(this.scene, this.camera);
     }
 
     _onResize() {
@@ -3377,9 +3124,8 @@ export class Viewport {
         this.camera.aspect = w / h;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(w, h);
-        if (this._composer) {
-            this._composer.setSize(w, h);
-        }
+        // SceneCore resizes its composer (no-op when post-processing disabled).
+        this._sceneCore?.onResize(w, h);
     }
 
     dispose() {
@@ -3396,31 +3142,10 @@ export class Viewport {
             }
         };
 
-        // Helper: dispose a Group by traversing all children
-        const disposeGroup = (group) => {
-            if (!group) return;
-            this.scene.remove(group);
-            group.traverse(child => {
-                if (child.geometry) child.geometry.dispose();
-                if (child.material) {
-                    if (child.material.map) child.material.map.dispose();
-                    child.material.dispose();
-                }
-            });
-        };
-
-        this.renderer.dispose();
-
-        // Wireframe is a Group containing LineSegments — traverse children
-        disposeGroup(this.wireframe);
-
-        // Post-processing composer render targets
-        if (this._composer) {
-            this._composer.renderTarget1.dispose();
-            this._composer.renderTarget2.dispose();
-            this._composer = null;
-        }
-
+        // Sub-renderer dispose cascade — every sub-renderer tears down its
+        // own meshes / materials / textures. Order: leaf renderers first
+        // (their meshes are children of the scene), SceneCore last (it
+        // owns wireframe, axes, post-processing pipeline, highlights).
         // Phase 3b: FluxRenderer owns _fluxVolume + _fluxStreamlines.
         this._fluxRenderer?.dispose();
         // Phase 3d: ParticleRenderer owns particles, velocityVectors,
@@ -3470,6 +3195,8 @@ export class Viewport {
         // Rubber-sheet visualizations (10 topology sheets + Φ gravitational
         // potential) are owned by TopologySheetRenderer — it tears them down.
         this._topoRenderer?.dispose();
+        // Spin-arrow primitives (per-tracked-particle arrows).
+        this.spinArrowManager?.dispose();
         // Event-horizon point cloud (distinct from the Scale 5 black-hole
         // event-horizon sphere/ring above — this is the Scale 0 latency
         // isosurface at L ≥ 0.95).
@@ -3484,19 +3211,19 @@ export class Viewport {
         disposeMesh(this._phaseNeedles);
         this._phaseNeedles = null;
 
-        // Raycasting/inspector helpers
+        // Raycasting (orchestrator-owned bounding volume)
         disposeMesh(this._voidBox);
-        disposeMesh(this._voxelHighlight);
-        disposeMesh(this._symHighlights);
 
         // Event horizon (black hole visualization)
         disposeMesh(this._eventHorizonSphere);
         disposeMesh(this._eventHorizonRing);
 
-        // Coordinate helpers
-        disposeMesh(this.axes);
-        disposeMesh(this.peAxes);
-        disposeMesh(this.peGrid);
+        // Phase 3a: SceneCore disposes wireframe, axes, peAxes, peGrid,
+        // _voxelHighlight, _symHighlights, post-processing composer/bloom.
+        this._sceneCore?.dispose();
+
+        // Renderer last (after every sub-renderer has freed its GPU resources).
+        this.renderer.dispose();
     }
 
     // ── Backward-compat getters/setters for Phase 3b extracted state ──
@@ -3539,4 +3266,42 @@ export class Viewport {
     // visualSettings is shared by reference between Viewport and
     // ParticleRenderer — both sides read/write the same object — so it
     // remains a plain own-property on Viewport (no getter/setter needed).
+
+    // ── Backward-compat getters/setters for Phase 3a extracted state ──
+    // External code reads / writes these via the orchestrator (notably
+    // setEngineMode in this same class, plus zoomToFit which reads
+    // _boundaryMode). Forward to SceneCore so existing call sites keep
+    // working without renaming.
+    get wireframe() { return this._sceneCore?.wireframe ?? null; }
+    set wireframe(v) { if (this._sceneCore) this._sceneCore.wireframe = v; }
+    get showWireframe() { return this._sceneCore?.showWireframe ?? true; }
+    set showWireframe(v) { if (this._sceneCore) this._sceneCore.showWireframe = v; }
+    get _wireframeBrightness() { return this._sceneCore?._wireframeBrightness ?? 0.18; }
+    set _wireframeBrightness(v) { if (this._sceneCore) this._sceneCore._wireframeBrightness = v; }
+    get axes() { return this._sceneCore?.axes ?? null; }
+    set axes(v) { if (this._sceneCore) this._sceneCore.axes = v; }
+    get peAxes() { return this._sceneCore?.peAxes ?? null; }
+    set peAxes(v) { if (this._sceneCore) this._sceneCore.peAxes = v; }
+    get peGrid() { return this._sceneCore?.peGrid ?? null; }
+    set peGrid(v) { if (this._sceneCore) this._sceneCore.peGrid = v; }
+    get _showAxes() { return this._sceneCore?._showAxes ?? true; }
+    set _showAxes(v) { if (this._sceneCore) this._sceneCore._showAxes = v; }
+    get _showGrid() { return this._sceneCore?._showGrid ?? true; }
+    set _showGrid(v) { if (this._sceneCore) this._sceneCore._showGrid = v; }
+    get _engineMode() { return this._sceneCore?._engineMode ?? 'lattice'; }
+    set _engineMode(v) { if (this._sceneCore) this._sceneCore._engineMode = v; }
+    get _boundaryShape() { return this._sceneCore?._boundaryShape ?? 'cube'; }
+    set _boundaryShape(v) { if (this._sceneCore) this._sceneCore._boundaryShape = v; }
+    get _boundaryMode() { return this._sceneCore?._boundaryMode ?? 'lattice'; }
+    set _boundaryMode(v) { if (this._sceneCore) this._sceneCore._boundaryMode = v; }
+    get _voxelHighlight() { return this._sceneCore?._voxelHighlight ?? null; }
+    set _voxelHighlight(v) { if (this._sceneCore) this._sceneCore._voxelHighlight = v; }
+    get _symHighlights() { return this._sceneCore?._symHighlights ?? null; }
+    set _symHighlights(v) { if (this._sceneCore) this._sceneCore._symHighlights = v; }
+    get _composer() { return this._sceneCore?._composer ?? null; }
+    set _composer(v) { if (this._sceneCore) this._sceneCore._composer = v; }
+    get _bloomPass() { return this._sceneCore?._bloomPass ?? null; }
+    set _bloomPass(v) { if (this._sceneCore) this._sceneCore._bloomPass = v; }
+    get _usePostProcessing() { return this._sceneCore?._usePostProcessing ?? false; }
+    set _usePostProcessing(v) { if (this._sceneCore) this._sceneCore._usePostProcessing = v; }
 }
