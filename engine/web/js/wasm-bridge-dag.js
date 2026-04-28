@@ -278,11 +278,25 @@ export class MockBridge {
             p.x += p.vx;
             p.y += p.vy;
             p.z += p.vz;
-            // Boundary containment
+            // Boundary containment.
+            // Cube/none + reflective ON  → periodic wrap (3-torus topology).
+            // Cube/none + reflective OFF → particle exits the lattice and is
+            //   marked dead (state=0, density=0); the per-tick filter at the
+            //   end of tick() then drops it. This matches the user-facing
+            //   "dissipate into the overflow abyss" semantics: a wave or
+            //   particle that crosses the edge is GONE, not wrapped back.
+            // Non-cube shapes delegate to _reflectIntoBoundary which itself
+            //   honors _reflectiveBoundary internally.
             if (this._boundaryShape === 'cube' || this._boundaryShape === 'none') {
-                p.x = ((p.x % N) + N) % N;
-                p.y = ((p.y % N) + N) % N;
-                p.z = ((p.z % N) + N) % N;
+                if (this._reflectiveBoundary) {
+                    p.x = ((p.x % N) + N) % N;
+                    p.y = ((p.y % N) + N) % N;
+                    p.z = ((p.z % N) + N) % N;
+                } else if (p.x < 0 || p.x >= N || p.y < 0 || p.y >= N || p.z < 0 || p.z >= N) {
+                    // Drop out the abyss
+                    p.state = 0;
+                    p.density = 0;
+                }
             } else {
                 this._reflectIntoBoundary(p, halfN, halfN, halfN, halfN);
             }
@@ -1238,6 +1252,66 @@ export class MockBridge {
                 if (!this._boundaryMask[idx]) {
                     J[idx * 3] = 0; J[idx * 3 + 1] = 0; J[idx * 3 + 2] = 0;
                     WV[idx * 3] = 0; WV[idx * 3 + 1] = 0; WV[idx * 3 + 2] = 0;
+                }
+            }
+        }
+
+        // ── Absorbing boundary (reflective = OFF) ─────────────────────────
+        // The wave-equation stencil above uses periodic wrap (modulo N) at
+        // x ∈ {0, N-1} etc., so without intervention the lattice is a
+        // 3-torus and energy never leaves. When the user disables the
+        // reflective toggle they expect flux to dissipate into the abyss
+        // beyond the lattice edge — so we drain it here.
+        //
+        // Strategy: a 2-voxel graded shell. The outermost layer is zeroed
+        // (Dirichlet = 0); the next layer in is multiplicatively damped.
+        // Because the modular-wrap stencil pulls neighbors from the
+        // opposite face, and we just zeroed those neighbors, the
+        // interior tick effectively sees a clamped boundary. The damped
+        // inner ring smooths the residual reflection from the hard zero.
+        // O(L²), not O(L³) — only iterates the surface slabs.
+        if (!this._reflectiveBoundary) {
+            const Nm1 = N - 1;
+            const NN_ = N * N;
+            const f = 0.6; // inner-shell decay per tick
+            const zeroVox = (i) => {
+                const i3 = i * 3;
+                J[i3] = 0; J[i3+1] = 0; J[i3+2] = 0;
+                WV[i3] = 0; WV[i3+1] = 0; WV[i3+2] = 0;
+            };
+            const dampVox = (i) => {
+                const i3 = i * 3;
+                J[i3] *= f; J[i3+1] *= f; J[i3+2] *= f;
+                WV[i3] *= f; WV[i3+1] *= f; WV[i3+2] *= f;
+            };
+            // Outer shell: z=0 / z=N-1 face slabs (full y,x)
+            for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+                zeroVox(0 * NN_ + y * N + x);
+                zeroVox(Nm1 * NN_ + y * N + x);
+            }
+            // Outer shell: y=0 / y=N-1 (z interior, full x)
+            for (let z = 1; z < Nm1; z++) for (let x = 0; x < N; x++) {
+                zeroVox(z * NN_ + 0 * N + x);
+                zeroVox(z * NN_ + Nm1 * N + x);
+            }
+            // Outer shell: x=0 / x=N-1 (z,y interior)
+            for (let z = 1; z < Nm1; z++) for (let y = 1; y < Nm1; y++) {
+                zeroVox(z * NN_ + y * N + 0);
+                zeroVox(z * NN_ + y * N + Nm1);
+            }
+            // Inner shell at coord=1 and coord=N-2: graded damping
+            if (N >= 4) {
+                for (let y = 1; y < Nm1; y++) for (let x = 1; x < Nm1; x++) {
+                    dampVox(1 * NN_ + y * N + x);
+                    dampVox((Nm1 - 1) * NN_ + y * N + x);
+                }
+                for (let z = 2; z < Nm1 - 1; z++) for (let x = 1; x < Nm1; x++) {
+                    dampVox(z * NN_ + 1 * N + x);
+                    dampVox(z * NN_ + (Nm1 - 1) * N + x);
+                }
+                for (let z = 2; z < Nm1 - 1; z++) for (let y = 2; y < Nm1 - 1; y++) {
+                    dampVox(z * NN_ + y * N + 1);
+                    dampVox(z * NN_ + y * N + (Nm1 - 1));
                 }
             }
         }
