@@ -29,7 +29,7 @@ regression gate (ADR-0012), and TOGGLE_SPECS[] table-driven toggles
 `render_bridge.cpp` 1231→545 LOC; `kernels_stencil.cu` 1530→deleted-and-split-into-3-TUs.
 See [META_PROJECT_ATLAS.md §10](META_PROJECT_ATLAS.md#10--refactor-sweep-history-2026-04-27-completed)
 for the full commit ledger and [docs/audits/AUDIT_2026-04_refactor-sweep.md](docs/audits/AUDIT_2026-04_refactor-sweep.md)
-for the audit. Outstanding deferral: WSL2 GPU-stencil parity verification at L=64.
+for the audit. **WSL2 GPU parity verified 2026-04-28** (golden hash `0xcd957b601d47868a` bit-exact at L=16 on CUDA backend; `gpu_parity_complete` 70/0 across all 20 physics domains at L=32; `sim_parity` PASS at 100 + 500 ticks). The refactor sweep is fully verified end-to-end across both CPU and CUDA backends.
 
 **Firm theorems (7, canonical reference: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` created 2026-04-27):**
 G* algebraic identity, master quadratic polynomial + roots, CM curve
