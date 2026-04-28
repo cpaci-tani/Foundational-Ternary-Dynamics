@@ -2,7 +2,8 @@
 
 **Purpose.** All Python scripts for the FTD project: canonical constants,
 formal verification, mathematical proofs, experiments, exploration,
-visualization, test runners.
+visualization, test runners. Untouched by the 8-phase engine refactor
+(commits 2db67ca…87158ae) — that work was confined to `engine/`.
 
 ## Public API
 

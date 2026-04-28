@@ -1,4 +1,17 @@
-# Viewport refactor map — Phase 3 extraction guide
+# Viewport refactor map — Phase 3 extraction guide [CLOSED 2026-04-27]
+
+> **STATUS: CLOSED.** Phase 3 of the refactor sweep completed in 5 commits
+> (8b4732d, 1506079, 1499a11, 506805b, plus 848e839 for this map). The
+> guide below is preserved as historical reference for the design decisions
+> made during the in-flight extraction. The current state of the viewport
+> module is documented in [META_PROJECT_ATLAS.md](../../../../META_PROJECT_ATLAS.md) §2,
+> [CONTRACTS.md §10–11](../../../../CONTRACTS.md), and ADR-0001/0010/0011.
+>
+> Final viewport.js: **1256 LOC orchestrator** (was 3953). Sub-renderers:
+> scene-core.js (500), flux-renderer.js (416), particle-renderer.js (503),
+> field-renderer.js (2273). All pre-existing modules (molecular-renderer,
+> boundary-geometry, topology-sheet-renderer, color-ramps, spin-arrow-manager)
+> remained as delegators per the plan.
 
 **Authoritative reference for Phase 3 of `.claude/plans/i-want-to-try-crispy-charm.md`.**
 

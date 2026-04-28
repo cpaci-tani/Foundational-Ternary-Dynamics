@@ -1,18 +1,35 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.33 (post-2026-04-27 engine-as-instrument cycle + look-elsewhere scan)
+**Version:** 5.34 (post-2026-04-27 engine refactor sweep — 17 commits across 8 phases; physics bit-identical to pre-refactor)
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
-**🔑 Start here if resuming:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — single-doc context recovery, updated 2026-04-27 evening with full-day synthesis (Bird's-eye assessment in §10).
+**🔑 Start here if resuming:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — single-doc context recovery.
+**🧭 Architecture navigation:** [`META_PROJECT_ATLAS.md`](META_PROJECT_ATLAS.md) — task→file table + directory tree + subsystem dependency graph + post-refactor sweep history (§10).
+**📜 Cross-module contracts:** [`CONTRACTS.md`](CONTRACTS.md) — 12 contract sections (bridge state, capability factories, scale ctx, scenarios, toggles, energy convention, constants chain, telemetry, refactor companion, cascade callback, mesh-factory callback, golden-tick gate).
+**🏛 Architectural decisions:** [`docs/adr/INDEX.md`](docs/adr/INDEX.md) — 13 ADRs governing patterns (4 new from refactor sweep: 0010–0013).
+**🔍 Audit ledgers:** [`docs/audits/INDEX.md`](docs/audits/INDEX.md) — historical sweep ledgers, including [the 2026-04 refactor sweep](docs/audits/AUDIT_2026-04_refactor-sweep.md).
 
 ---
 
-## Current epistemic state (2026-04-27 evening)
+## Current epistemic state (2026-04-27 evening — post engine refactor sweep)
 
 After the 2026-04-27 engine-as-instrument portfolio + look-elsewhere scan,
-the project is in a structurally narrowed but defensible state. Do **not**
-claim results stronger than what's listed in `docs/WHERE_WE_LEFT_OFF.md`
-§4 without re-auditing. The bird's-eye assessment lives in
-`WHERE_WE_LEFT_OFF.md` §10 — read that for "what's missing" diagnosis.
+the project is in a structurally narrowed but defensible state. The
+engine codebase was then decomposed across 8 phases (17 commits 2db67ca…87158ae)
+with bit-exact physics preservation; physics-bearing claims are unchanged
+by the refactor. Do **not** claim results stronger than what's listed in
+`docs/WHERE_WE_LEFT_OFF.md` §4 without re-auditing. The bird's-eye
+assessment lives in `WHERE_WE_LEFT_OFF.md` §10 — read that for
+"what's missing" diagnosis.
+
+**Engine architecture (post-refactor):** the 5 hottest files were
+decomposed into focused modules following 4 newly-codified patterns:
+cascade callback (ADR-0010), mesh-factory callback (ADR-0011), golden-tick
+regression gate (ADR-0012), and TOGGLE_SPECS[] table-driven toggles
+(ADR-0013). `viewport.js` 3953→1256 LOC; `wasm-bridge-dag.js` 2395→42 LOC;
+`render_bridge.cpp` 1231→545 LOC; `kernels_stencil.cu` 1530→deleted-and-split-into-3-TUs.
+See [META_PROJECT_ATLAS.md §10](META_PROJECT_ATLAS.md#10--refactor-sweep-history-2026-04-27-completed)
+for the full commit ledger and [docs/audits/AUDIT_2026-04_refactor-sweep.md](docs/audits/AUDIT_2026-04_refactor-sweep.md)
+for the audit. Outstanding deferral: WSL2 GPU-stencil parity verification at L=64.
 
 **Firm theorems (7, canonical reference: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` created 2026-04-27):**
 G* algebraic identity, master quadratic polynomial + roots, CM curve

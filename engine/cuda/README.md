@@ -15,20 +15,27 @@ dispatches to GPU automatically when CUDA is available and toggled on.
 
 ### Kernel libraries (multi-kernel TUs)
 
-| File | LOC | Kernels | Role |
-|---|---:|---:|---|
-| `kernels_stencil.cu` | 1530 | 14 | Wave equation (single + dual substrate), genesis, evaporation, transmutation, pair production. **Phase 5 will split into 3 TUs.** |
-| `kernels_forces.cu` | 934 | 7 | EM + gravity + Lorentz + color/strong/exchange + particle movement |
-| `kernels_poisson.cu` | 478 | 10 | FFT-based Poisson solvers (Coulomb, latency, Gauss); pack/unpack helpers |
-| `gpu_buffers.cu` | 778 | 3 | SoA allocator + uploaders + downloaders; small special-case kernels (continuity ledger reset, Green precompute) |
-| `gpu_engine.cu` | 684 | 0 | Tick orchestration; launches kernels; manages streams |
-| `atom_engine_gpu.cu` | 361 | 1 | Scale-2 O(N²) pairwise ionic + vdW |
-| `particle_engine_gpu.cu` | ~200 | 1 | Scale-1 Barnes-Hut tree force |
+Phase 5 split (commits 2db67ca…87158ae): `kernels_stencil.cu` (1530 LOC) was
+deleted and replaced by 3 TUs along the single/dual substrate seam plus
+auxiliary kernels.
+
+| File | LOC | Role |
+|---|---:|---|
+| `kernels_stencil_single.cu` | 759 | Single-substrate kernels: phase_read, compute_near_particle, phase_write, wave_update, genesis, evaporation |
+| `kernels_stencil_dual.cu` | 565 | Dual-substrate kernels: phase_read_dual, strong_field_stencil, weak_field_stencil, phase_write_dual, genesis_dual, gauss_sync_dual |
+| `kernels_aux.cu` | 286 | Auxiliary kernels: weak_transmutation, pair_production |
+| `kernels_forces.cu` | 934 | EM + gravity + Lorentz + color/strong/exchange + particle movement (unchanged by Phase 5) |
+| `kernels_poisson.cu` | 478 | FFT-based Poisson solvers (Coulomb, latency, Gauss); pack/unpack helpers (unchanged) |
+| `gpu_buffers.cu` | 778 | SoA allocator + uploaders + downloaders; small special-case kernels (unchanged) |
+| `gpu_engine.cu` | 684 | Tick orchestration; launches kernels; manages streams (unchanged) |
+| `atom_engine_gpu.cu` | 361 | Scale-2 O(N²) pairwise ionic + vdW (unchanged) |
+| `particle_engine_gpu.cu` | ~200 | Scale-1 Barnes-Hut tree force (unchanged) |
 
 ### Shared headers
 
 | Header | Role |
 |---|---|
+| `kernels_stencil_common.cuh` | 82 LOC — shared device helpers used by both single-/dual-substrate stencil TUs: `wrap`, `idx3d`, `effective_damping`, `scale_field_pair` |
 | `cuda_index.cuh` | Shared `__device__ __forceinline__` helpers: `idx3d`, `wrap`, `decode_xyz`, `periodic_delta` |
 | `../include/ftd/constants_gpu.cuh` | Device-side `__constant__` mirrors of host constants |
 | `../include/ftd/gpu_buffers.h`, `gpu_engine.h` | Public C++ API consumed by `render_bridge.cpp` |
@@ -70,13 +77,24 @@ device-side equivalent kernel. Parity is enforced by:
 Known divergences are tracked in `AUDIT_LEDGER.md` Track B (GPU/CPU
 parity) and tagged for WSL2 verification before merge.
 
+**Phase 5 GPU runtime parity status:** the Phase 5 stencil split is
+compile-verified and CPU-deterministic-verified only. Full L=64 GPU
+runtime parity is **deferred to a WSL2 follow-up session** (the local
+build environment has Windows-native CUDA only; campaign-grade GPU
+verification routes through `engine/build_wsl/` per CLAUDE.md).
+
 ## How to extend
 
 ### Adding a new kernel
-1. Place in the appropriate kernel library (`kernels_stencil.cu` for wave/state,
-   `kernels_forces.cu` for forces, etc.). Phase 5 may add `kernels_aux.cu`.
-2. Use `__device__ __forceinline__` helpers from `cuda_index.cuh`; do NOT
-   redefine `idx3d` etc. locally (drift risk).
+1. Place in the appropriate kernel library:
+   - `kernels_stencil_single.cu` for single-substrate wave/state kernels
+   - `kernels_stencil_dual.cu` for dual-substrate variants
+   - `kernels_aux.cu` for transmutation / pair production / other auxiliary kernels
+   - `kernels_forces.cu` for force kernels
+   - `kernels_poisson.cu` for Poisson / FFT solvers
+2. Use `__device__ __forceinline__` helpers from `cuda_index.cuh` and
+   `kernels_stencil_common.cuh`; do NOT redefine `idx3d`, `wrap`,
+   `effective_damping`, etc. locally (drift risk).
 3. If the kernel needs a host-side launcher, add it to `gpu_engine.cu`.
 4. If it needs new constants, add to `constants_gpu.cuh` (and host-side
    `constants.h` for parity).
@@ -103,6 +121,7 @@ parity) and tagged for WSL2 verification before merge.
 - [CONTRACTS.md §7](../../CONTRACTS.md#7--constants-chain-contract) (constants chain)
 - [docs/adr/0007-cuda-helper-consolidation.md](../../docs/adr/0007-cuda-helper-consolidation.md)
 - [docs/adr/0008-r1-r5-phase-extraction.md](../../docs/adr/0008-r1-r5-phase-extraction.md) (CPU-side analogue)
+- [docs/adr/0012-golden-tick-regression-gate.md](../../docs/adr/0012-golden-tick-regression-gate.md) — bit-exact regression gate (hash `0xcd957b601d47868a`) covering physics-touching kernel changes
 - [engine/SPEC_ENGINE.md](../SPEC_ENGINE.md)
-- CPU mirror: `engine/src/render_bridge.cpp`
+- CPU mirror: `engine/src/render_bridge.cpp` (now 545 LOC) + `engine/src/render_bridge_phases/{phase_read,phase_write,phase_forces,phase_movement}.cpp` post-Phase 4
 - Constants: `engine/include/ftd/constants_gpu.cuh`
