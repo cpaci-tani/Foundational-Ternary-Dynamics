@@ -87,4 +87,42 @@ void phase_forces_build_color_cache(RenderBridge& rb);
 /// voxel velocity/accel_mag and rb.force_diag_.
 void phase_forces_main_loop(RenderBridge& rb);
 
+// =============================================================================
+// Phase 4c — phase_read + phase_movement decomposition (2026-04-27)
+//
+// phase_read is a single OMP parallel-for that branches per-voxel between
+// dual-substrate and single-substrate paths, and within the single-substrate
+// path between the FULL-stencil interior fast path and the sublattice slow
+// path. Splitting the parallel-for into per-branch passes would require
+// re-walking the lattice multiple times (rejected on cache-locality grounds)
+// or per-voxel scratch storage (rejected on bit-exactness grounds; the golden
+// gate forbids structural drift). Mirror Phase 4a/4b: extract orchestration
+// (none here), keep the loop body intact in a single main-loop function.
+//
+// phase_movement is a single SEQUENTIAL per-voxel loop where each iteration
+// can mutate two voxels (the moving particle and its target — move, bounce,
+// or annihilation). Subsequent iterations then read those mutations via the
+// moved_ guard. Splitting the loop into drift / annihilation / compact passes
+// would require either (a) recording every (i, target) decision in a scratch
+// buffer to be applied later — different observable order — or (b) running
+// multiple sequential passes that each re-read state mutated by the previous
+// pass — different physics. Both break the golden gate. So Phase 4c mirrors
+// Phase 4a/4b: extract one main-loop function with the full body verbatim.
+// =============================================================================
+
+/// The single OMP parallel-for of phase_read: 18-pt isotropic Laplacian
+/// (interior fast path + boundary slow path) plus state-flux coupling
+/// (g_c·∇s + g_c·∇×(s·v)). Branches internally on toggles.dual_substrate
+/// and toggles.bcc_stencil. Reads rb.voxels_, rb.lattice_, rb.toggles;
+/// writes rb.delta_j_ (single) or rb.delta_j_L_ / rb.delta_j_R_ (dual).
+void phase_read_main_loop(RenderBridge& rb);
+
+/// The sequential per-voxel loop of phase_movement: remainder accumulation,
+/// integer-jump dispatch, void-target move (with self-field carry), same-sign
+/// elastic bounce, and opposite-sign annihilation (with 6-neighbor flux burst
+/// distribution). Includes dual-substrate L/R flux carry / burst when
+/// toggles.dual_substrate is on. Reads rb.toggles, rb.dt_; writes voxel
+/// state/velocity/remainder/flux and rb.moved_ (per-tick double-process guard).
+void phase_movement_main_loop(RenderBridge& rb);
+
 }  // namespace ftd
