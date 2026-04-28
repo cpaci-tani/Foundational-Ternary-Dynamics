@@ -328,8 +328,32 @@ inline constexpr double BANDWIDTH_FLOOR = 1e-6;
 // Wavepacket injection: Gaussian truncated at this many sigma
 inline constexpr double GAUSSIAN_CUTOFF_SIGMA = 3.0;
 
+// Tier-1 gradient scale: central difference 1/2.
+inline constexpr double GRAD_TIER1_SCALE = 0.5;
+
 // Tier-2 gravity gradient scale: 1/(2×2) for r=2 stencil
 inline constexpr double GRAD_TIER2_SCALE = 0.25;
+
+// 18-pt isotropic Laplacian weights (Patra-Karttunen 2006).
+// Cancel O(k⁴) anisotropy on the 26-neighbor Moore stencil.
+// Sum rule: 6·FACE + 12·EDGE − 4·center = 0.
+inline constexpr double LAPLACIAN_FACE_WEIGHT = 1.0 / 3.0;
+inline constexpr double LAPLACIAN_EDGE_WEIGHT = 1.0 / 6.0;
+
+// Genesis/evaporation tuning (formerly bare literals in render_bridge.cpp)
+// K_GENESIS_KINETIC_DRAIN: fraction of wave_vel consumed at manifestation
+// (latent heat of mass-gap creation; v.wave_vel *= (1 - this)).
+inline constexpr double K_GENESIS_KINETIC_DRAIN = 0.5;
+// K_EVAP_RATE: per-tick evaporation probability scaling. The Boltzmann
+// decay probability p = exp(-local_energy/K_B²) is multiplied by this
+// to set the actual decay rate.
+inline constexpr double K_EVAP_RATE = 0.1;
+// K_GENESIS_FLUX_EPSILON: floor on |J| during the genesis flux drain
+// to prevent division-by-near-zero. Distinct from EPSILON_MAG (which
+// is the universal magnitude underflow guard at 1e-15) because genesis
+// uses a more permissive 1e-9 threshold to avoid numerical pathology
+// in the flux pre-drain integral.
+inline constexpr double K_GENESIS_FLUX_EPSILON = 1e-9;
 
 // Color force regime boundaries — now defined in ftd/constants_gpu.cuh (shared with GPU).
 // Using declarations bring them into the ftd:: namespace so existing callers are unchanged.

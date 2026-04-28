@@ -55,6 +55,20 @@ static const std::unordered_map<std::string, RbBoolPTM>& rb_toggle_map() {
         {"exchange_force",    &ftd::TermToggles::exchange_force},
         {"latency_field",     &ftd::TermToggles::latency_field},
         {"emergent_forces",   &ftd::TermToggles::emergent_forces},
+        // D-5 / D-3 (2026-04-27): real-bool toggles previously missing from
+        // the JS<->C++ map. JS toggle config (engine/web/js/config/toggles.js)
+        // listed all of these as real fields, but the binding swallowed
+        // setToggle() calls for them. They now route to the underlying
+        // TermToggles fields. `confinement` is an intent flag (no C++ branch
+        // consumes it yet — see term_toggles.h docstring) but is in the map so
+        // scenario overrides aren't silently dropped.
+        {"pair_production",   &ftd::TermToggles::pair_production},
+        {"triad_binding",     &ftd::TermToggles::triad_binding},
+        {"latency_field",     &ftd::TermToggles::latency_field},
+        {"exact_dual_gauss",  &ftd::TermToggles::exact_dual_gauss},
+        {"langevin",          &ftd::TermToggles::langevin},
+        {"strict_validation", &ftd::TermToggles::strict_validation},
+        {"confinement",       &ftd::TermToggles::confinement},
     };
     return kMap;
 }
@@ -95,6 +109,27 @@ static void inject_flux(ftd::RenderBridge& rb, int x, int y, int z,
 static void create_entangled_pair(ftd::RenderBridge& rb, int x, int y, int z,
                                    double fx, double fy, double fz) {
     rb.create_entangled_pair(x, y, z, ftd::Vec3(fx, fy, fz));
+}
+
+// ── Energy Ledger (D-1, M2: per-tick conservation bookkeeping) ──────
+// Mirrors the EnergyLedger struct in include/ftd/render_bridge.h. Tests
+// and dashboards can poll this every tick to see drift_frac / residual /
+// the running cumulative_injection / cumulative_dissipation totals.
+// Distinct from getEnergyAudit (one-shot snapshot of current totals).
+static val get_energy_ledger(ftd::RenderBridge& rb) {
+    const ftd::EnergyLedger& el = rb.energy_ledger();
+    val result = val::object();
+    result.set("tickPrev",             el.tick_prev);
+    result.set("EPrev",                el.E_prev);
+    result.set("ECurr",                el.E_curr);
+    result.set("dEdt",                 el.dE_dt);
+    result.set("driftFrac",            el.drift_frac);
+    result.set("expectedRate",         el.expected_rate);
+    result.set("residual",             el.residual);
+    result.set("cumulativeInjection",  el.cumulative_injection);
+    result.set("cumulativeDissipation",el.cumulative_dissipation);
+    result.set("maxResidualSeen",      el.max_residual_seen);
+    return result;
 }
 
 // ── Time step control ────────────────────────────────────────────────
@@ -227,6 +262,7 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getParticleData",    &get_particle_data);
     function("getDiagnostics",     &get_diagnostics);
     function("getEnergyAudit",     &get_energy_audit);
+    function("getEnergyLedger",    &get_energy_ledger);
     function("getLagrangian",      &get_lagrangian);
     function("getConstants",       &get_constants);
     function("getLatticeSize",     &get_lattice_size);

@@ -10,6 +10,7 @@
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
 #include "ftd/constants_gpu.cuh"
+#include "../cuda/cuda_index.cuh"   // ftd::wrap, ftd::idx3d, ftd::decode_xyz, ftd::periodic_delta
 #include <cuda_runtime.h>
 #include <cmath>
 #include <cstdio>   // fprintf — Linux/clang stricter than MSVC
@@ -29,24 +30,24 @@ namespace gpu {
 namespace kernels {
 
 // ---------- Device helpers ----------
+// F-8 (2026-04-27): shared shims onto ::ftd helpers in
+// engine/cuda/cuda_index.cuh. Local _d-suffixed names are preserved so
+// existing call sites in this TU compile unchanged.
 
 __device__ __forceinline__
 int wrap_d(int x, int L) {
-    return ((x % L) + L) % L;
+    return ::ftd::wrap(x, L);
 }
 
 __device__ __forceinline__
 int idx3d_d(int x, int y, int z, int L) {
-    // CRIT-3 fix: match CPU X-major layout (was Z-major: z*L²+y*L+x)
-    return wrap_d(x, L) * L * L + wrap_d(y, L) * L + wrap_d(z, L);
+    return ::ftd::idx3d(x, y, z, L);
 }
 
 // X-major flat-index decomposition: i = ix*L*L + iy*L + iz.
 __device__ __forceinline__
 void decode_xyz_d(int idx, int L, int& ix, int& iy, int& iz) {
-    ix = idx / (L * L);
-    iy = (idx / L) % L;
-    iz = idx % L;
+    ::ftd::decode_xyz(idx, L, ix, iy, iz);
 }
 
 // Shortest-path delta on a periodic L^3 lattice. Outputs dx/dy/dz in
@@ -58,9 +59,9 @@ void periodic_delta_d(int ix, int iy, int iz,
                       int jx, int jy, int jz,
                       int L,
                       int& dx, int& dy, int& dz) {
-    dx = jx - ix; if (dx >  L/2) dx -= L; if (dx < -L/2) dx += L;
-    dy = jy - iy; if (dy >  L/2) dy -= L; if (dy < -L/2) dy += L;
-    dz = jz - iz; if (dz >  L/2) dz -= L; if (dz < -L/2) dz += L;
+    dx = ::ftd::periodic_delta(jx, ix, L);
+    dy = ::ftd::periodic_delta(jy, iy, L);
+    dz = ::ftd::periodic_delta(jz, iz, L);
 }
 
 // Byte-level atomicCAS: CUDA only supports 32-bit+ atomicCAS,
@@ -209,9 +210,9 @@ __global__ void phase_forces_kernel(
     // --- Coulomb force ---
     if (poisson_coulomb) {
         // Poisson mode: F = -alpha * s * gradient(phi_coulomb)
-        double grad_phi_x = 0.5 * (phi_coulomb[xp] - phi_coulomb[xm]);
-        double grad_phi_y = 0.5 * (phi_coulomb[yp] - phi_coulomb[ym]);
-        double grad_phi_z = 0.5 * (phi_coulomb[zp] - phi_coulomb[zm]);
+        double grad_phi_x = GRAD_TIER1_SCALE * (phi_coulomb[xp] - phi_coulomb[xm]);
+        double grad_phi_y = GRAD_TIER1_SCALE * (phi_coulomb[yp] - phi_coulomb[ym]);
+        double grad_phi_z = GRAD_TIER1_SCALE * (phi_coulomb[zp] - phi_coulomb[zm]);
 
         f_em_x = -ALPHA * s * grad_phi_x;
         f_em_y = -ALPHA * s * grad_phi_y;
@@ -225,13 +226,13 @@ __global__ void phase_forces_kernel(
             int jp_x = idx3d_d(jx+1,jy,jz,L), jm_x = idx3d_d(jx-1,jy,jz,L);
             int jp_y = idx3d_d(jx,jy+1,jz,L), jm_y = idx3d_d(jx,jy-1,jz,L);
             int jp_z = idx3d_d(jx,jy,jz+1,L), jm_z = idx3d_d(jx,jy,jz-1,L);
-            return 0.5 * ((flux_x[jp_x] - flux_x[jm_x])
+            return GRAD_TIER1_SCALE * ((flux_x[jp_x] - flux_x[jm_x])
                         + (flux_y[jp_y] - flux_y[jm_y])
                         + (flux_z[jp_z] - flux_z[jm_z]));
         };
-        double grad_div_x = 0.5 * (div_J(xp) - div_J(xm));
-        double grad_div_y = 0.5 * (div_J(yp) - div_J(ym));
-        double grad_div_z = 0.5 * (div_J(zp) - div_J(zm));
+        double grad_div_x = GRAD_TIER1_SCALE * (div_J(xp) - div_J(xm));
+        double grad_div_y = GRAD_TIER1_SCALE * (div_J(yp) - div_J(ym));
+        double grad_div_z = GRAD_TIER1_SCALE * (div_J(zp) - div_J(zm));
 
         f_em_x = -ALPHA * s * grad_div_x;
         f_em_y = -ALPHA * s * grad_div_y;
@@ -250,9 +251,9 @@ __global__ void phase_forces_kernel(
             return sqrt(flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]);
         };
 
-        double gx = 0.25 * (density(x2p) - density(x2m));
-        double gy = 0.25 * (density(y2p) - density(y2m));
-        double gz = 0.25 * (density(z2p) - density(z2m));
+        double gx = GRAD_TIER2_SCALE * (density(x2p) - density(x2m));
+        double gy = GRAD_TIER2_SCALE * (density(y2p) - density(y2m));
+        double gz = GRAD_TIER2_SCALE * (density(z2p) - density(z2m));
 
         f_grav_x = G_N * gx;
         f_grav_y = G_N * gy;
@@ -267,9 +268,9 @@ __global__ void phase_forces_kernel(
 
         if (speed > 1e-15) {
             // B = curl(J)
-            double Bx = 0.5 * ((flux_z[yp] - flux_z[ym]) - (flux_y[zp] - flux_y[zm]));
-            double By = 0.5 * ((flux_x[zp] - flux_x[zm]) - (flux_z[xp] - flux_z[xm]));
-            double Bz = 0.5 * ((flux_y[xp] - flux_y[xm]) - (flux_x[yp] - flux_x[ym]));
+            double Bx = GRAD_TIER1_SCALE * ((flux_z[yp] - flux_z[ym]) - (flux_y[zp] - flux_y[zm]));
+            double By = GRAD_TIER1_SCALE * ((flux_x[zp] - flux_x[zm]) - (flux_z[xp] - flux_z[xm]));
+            double Bz = GRAD_TIER1_SCALE * ((flux_y[xp] - flux_y[xm]) - (flux_x[yp] - flux_x[ym]));
 
             // v × B
             double cross_x = vy * Bz - vz * By;

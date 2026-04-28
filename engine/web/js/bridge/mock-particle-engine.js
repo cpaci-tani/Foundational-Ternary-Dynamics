@@ -39,7 +39,7 @@
  * locality on the O(N^2) pair loop.
  */
 
-import { ALPHA, K_B, DAMPING, G_N, C_SPEED } from '../constants.js';
+import { ALPHA, K_B, DAMPING, G_N, C_SPEED, COULOMB_K_FORCE } from '../constants.js';
 
 /**
  * Build the particle-engine provider bound to the given bridge-like state.
@@ -128,7 +128,7 @@ export function createParticleEngine(state) {
         const soft2 = state._pe.soft * state._pe.soft;
         const doCoulomb = state._pe.coulomb;
         const doGravity = state._pe.gravity;
-        const alpha4pi = ALPHA / (4 * Math.PI);
+        const alpha4pi = COULOMB_K_FORCE;
         for (let i = 0; i < n; i++) {
             const pi = ps[i];
             const i3 = i * 3;

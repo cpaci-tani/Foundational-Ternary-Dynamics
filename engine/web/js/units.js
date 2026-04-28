@@ -30,6 +30,12 @@ import {
     PLANCK_LENGTH_M as _PLANCK_LENGTH_M,
     PLANCK_TIME_S as _PLANCK_TIME_S,
     PLANCK_TEMP_K as _PLANCK_TEMP_K,
+    PLANCK_MASS_KG as _PLANCK_MASS_KG,
+    PLANCK_FORCE_N as _PLANCK_FORCE_N,
+    J_PER_EV as _J_PER_EV,
+    C_MS as _C_MS,
+    FTD_TICK_S as _FTD_TICK_S,
+    BOHR_LATTICE_TO_M as _BOHR_LATTICE_TO_M,
     AMU_MEV as _AMU_MEV,
     K_PER_EV as _K_PER_EV,
     K_PER_MEV as _K_PER_MEV,
@@ -38,30 +44,44 @@ import {
 // ── Conversion Constants (re-exports from constants.js) ─────────────
 
 // Planck units -> SI
+//
+// Note: PLANCK_TIME_S (≈ 5.391247e-44 s) is the SI Planck time t_P, used
+// for naive lattice-tick→seconds conversion when one tick is taken as
+// one Planck time. FTD_TICK_S (= √3·t_P) is the project-canonical tick
+// duration that accounts for the CFL factor 1/√3 on the cubic lattice
+// (one tick advances information by exactly one voxel along an axis at
+// c_lattice = 1/√3). Use FTD_TICK_S for any FTD-internal time conversion;
+// PLANCK_TIME_S is exposed only for SI-Planck reporting.
 export const PLANCK_LENGTH_M   = _PLANCK_LENGTH_M;
 export const PLANCK_TIME_S     = _PLANCK_TIME_S;
+export const FTD_TICK_S        = _FTD_TICK_S;
 export const PLANCK_ENERGY_GEV = M_PLANCK_GEV;        // single source vs old 1.22089e19 dup
 export const PLANCK_ENERGY_MEV = M_PLANCK_GEV * 1e3;  // GeV → MeV
-export const PLANCK_MASS_KG    = 2.176434e-8;         // kg (no constants.js entry yet)
+export const PLANCK_MASS_KG    = _PLANCK_MASS_KG;
 export const PLANCK_TEMP_K     = _PLANCK_TEMP_K;
-export const PLANCK_FORCE_N    = 1.21027e44;          // Newtons (no constants.js entry yet)
+export const PLANCK_FORCE_N    = _PLANCK_FORCE_N;
 
 // Length conversions
 export const FM_PER_PLANCK       = PLANCK_LENGTH_M * 1e15;
 export const ANGSTROM_PER_PLANCK = PLANCK_LENGTH_M * 1e10;
 export const BOHR_RADIUS_M       = _BOHR_RADIUS_M;
 export const BOHR_RADIUS_ANGSTROM = _BOHR_RADIUS_ANGSTROM;
+// FTD-natural Bohr radius lives in lattice units (R_BOHR = 4π_FTD/(K_B·α)).
+// BOHR_LATTICE_TO_M is the SI-Bohr-radius / FTD-Bohr-radius scale factor —
+// multiply a lattice length by this to obtain meters when interpreting
+// the FTD Bohr length as the physical Bohr radius (5.29177210903e-11 m).
+export const BOHR_LATTICE_TO_M  = _BOHR_LATTICE_TO_M;
 
 // Energy conversions
 export const EV_PER_MEV = 1e6;
-export const J_PER_EV   = 1.602176634e-19;
+export const J_PER_EV   = _J_PER_EV;
 export const KB_MEV     = K_B;                               // 0.511 MeV (FTD anchor)
 
 // Mass
 export const AMU_MEV = _AMU_MEV;
 
 // Speed
-export const C_MS      = 2.99792458e8;
+export const C_MS      = _C_MS;
 export const C_LATTICE = C_SPEED;
 
 // Temperature
