@@ -7,8 +7,8 @@
  * particle at the lattice center with no extras (no other particles,
  * no background field, no boundary tweaks beyond engine defaults).
  *
- * 12 of the 15 cases are wrappers around existing s0-seed-* injectors;
- * 3 neutrino flavors + π⁰ + K± are net-new in this file.
+ * 10 of the 15 cases are wrappers around existing s0-seed-* injectors;
+ * 5 are net-new in this file: 3 neutrino flavors + π⁰ + K±.
  *
  * Call pattern: `setupVacuumScenario.call(mockBridge, name, ctx)`
  * where ctx = { N, mid, midF }.
