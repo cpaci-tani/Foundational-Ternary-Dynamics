@@ -183,6 +183,18 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-field-magnetic-dipole':  [['genesis', false, 't-genesis']],
     's0-field-vortex-line':      [['genesis', false, 't-genesis']],
 
+    // Beta-decay — leptonic output of weak transmutation needs both
+    // dual_substrate (chiral L/R substrates) and weak_transmutation on.
+    // Order is important here: dual_substrate must be set before
+    // weak_transmutation per the validator (see scenario-loader.js
+    // applyToggleDefaults sort). Genesis is forced off so the pre-seeded
+    // electron and neutrino aren't immediately recreated by genesis.
+    's0-seed-beta-decay': [
+        ['dual_substrate',     true,  't-dual'],
+        ['weak_transmutation', true,  't-weak'],
+        ['genesis',            false, 't-genesis'],
+    ],
+
     // Moore Seeds — genesis off so the geometric pattern stays clean
     's0-seed-octahedron':          [['genesis', false, 't-genesis']],
     's0-seed-cuboctahedron':       [['genesis', false, 't-genesis']],
