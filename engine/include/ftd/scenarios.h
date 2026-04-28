@@ -65,5 +65,6 @@ bool setup_light_scenario   (RenderBridge& rb, const std::string& name);
 bool setup_quantum_scenario (RenderBridge& rb, const std::string& name);
 bool setup_s0_seed_scenario (RenderBridge& rb, const std::string& name);
 bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name);
+bool setup_vacuum_scenario  (RenderBridge& rb, const std::string& name);
 
 }  // namespace ftd

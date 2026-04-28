@@ -125,6 +125,7 @@ add_library(ftd_core
     src/scenarios/quantum.cpp        # 8 quantum-* scenarios
     src/scenarios/s0_seed.cpp        # 49 s0-seed-* scenarios (+ seed_lepton/dp/tri statics)
     src/scenarios/s0_field.cpp       # 8 s0-field-* scenarios
+    src/scenarios/vacuum.cpp         # 15 s0-vacuum-* scenarios
     # R1-R5 modular extraction from render_bridge.cpp (2026-04-18)
     src/poisson_solvers.cpp          # R1: sor_sweep_18pt + gauss/coulomb/latency solvers
     src/transmutation_phases.cpp     # R2: weak/pair-production/triad/proper-time
