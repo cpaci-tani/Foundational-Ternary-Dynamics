@@ -28,7 +28,7 @@ static void v_dp(RenderBridge& rb, int cx, int cy, int cz,
                  int st, int sp, int co, double sig, double amp, bool lock) {
     IPF(rb, cx, cy, cz, st, sp, (co >= 0) ? co : 0);
     if (lock) LOCK(rb, cx, cy, cz);
-    int sn = (st > 0) ? 1 : (st < 0 ? -1 : 1);  // void (st=0) defaults to +1 sign
+    int sn = (st > 0) ? 1 : -1;  // matches JS injectDressedParticle: state=0 → sn=-1 (inward)
     int eR = CEL(3.0 * sig);
     for (int dz2 = -eR; dz2 <= eR; ++dz2)
     for (int dy2 = -eR; dy2 <= eR; ++dy2)
@@ -45,8 +45,7 @@ static void v_dp(RenderBridge& rb, int cx, int cy, int cz,
 
 static void v_tri(RenderBridge& rb, int cx, int cy, int cz,
                   const int charges[3], const int colors[3], int rad, bool lock) {
-    static const double angs[3] = {0.0, 2.0 * 3.14159265358979323846 / 3.0,
-                                       4.0 * 3.14159265358979323846 / 3.0};
+    static const double angs[3] = {0.0, 2.0 * PI / 3.0, 4.0 * PI / 3.0};
     for (int k = 0; k < 3; ++k) {
         int qx = RND(cx + rad * std::cos(angs[k]));
         int qy = RND(cy + rad * std::sin(angs[k]));
