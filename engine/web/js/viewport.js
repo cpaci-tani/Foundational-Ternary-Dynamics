@@ -52,7 +52,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { getById } from './particle-catalog.js';
+// getById moved with applyParticleColors / updateTrails to viewport/particle-renderer.js (Phase 3d).
 import { potentialToColor, magnitudeToColor, fluxToColor, fluxToColorInto } from './fields.js';
 import { K_B } from './constants.js';
 import {
@@ -95,6 +95,12 @@ import { TopologySheetRenderer } from './viewport/topology-sheet-renderer.js';
 // every flux-volume/streamline method through a thin wrapper. See
 // viewport/REFACTOR_MAP.md.
 import { ViewportFluxRenderer } from './viewport/flux-renderer.js';
+// Particle Points mesh + trails + velocity-vectors + per-particle force arrows
+// extracted as Phase 3d. Viewport composes a ViewportParticleRenderer and
+// forwards every particle-mesh method through a thin wrapper. Atom/bond/
+// orbital rendering is owned by MolecularRenderer (see import above) and
+// remains delegated separately. See viewport/REFACTOR_MAP.md §3d.
+import { ViewportParticleRenderer } from './viewport/particle-renderer.js';
 
 // Pre-allocated buffer sizes. Particle buffer is fixed at init to avoid
 // dynamic GPU reallocation; draw range controls visible count each frame.
@@ -226,16 +232,21 @@ export class Viewport {
         this.controls.minDistance = 0.01;
         this.controls.maxDistance = 500;
 
-        // Particle system
-        this._initParticles();
-
-        // Visual settings for particle size and opacity
+        // Visual settings for particle size and opacity. Shared with
+        // ViewportParticleRenderer (Phase 3d) — both sides hold a reference
+        // to this same object so opacity changes from setOpacity propagate
+        // both ways without explicit syncing.
         this.visualSettings = {
             globalScale: 1.0,
             manifestedSize: 12.0,
             voidSize: 4.0,
             opacity: 0.95,
         };
+
+        // Particle system extracted to ViewportParticleRenderer (Phase 3d).
+        // The renderer is constructed below alongside the other sub-renderers
+        // so it can capture live-bound callbacks for boundary clipping and
+        // the cross-renderer arrow-field writer.
 
         // Boundary / wireframe
         this.wireframe = null;
@@ -297,6 +308,21 @@ export class Viewport {
             writeStreamlinesIntoMesh: (m, s, c) => this._writeStreamlinesIntoMesh(m, s, c),
         });
 
+        // Particle Points mesh + trails + velocity vectors + per-particle
+        // force arrows — extracted Phase 3d. Atom/bond/orbital rendering is
+        // owned by MolecularRenderer (composed above) and remains a separate
+        // delegation. visualSettings is passed by REFERENCE so setOpacity
+        // writes are visible to both sides without re-syncing.
+        this._particleRenderer = new ViewportParticleRenderer({
+            scene: this.scene,
+            latticeSize: this.latticeSize,
+            halfN: this._halfN,
+            insideBoundary: (nx, ny, nz) => this._insideBoundary(nx, ny, nz),
+            getBoundaryShape: () => this._boundaryShape,
+            visualSettings: this.visualSettings,
+            writeArrowFieldIntoMesh: (m, f, c, k, b, t) => this._writeArrowFieldIntoMesh(m, f, c, k, b, t),
+        });
+
         // Axis helper (subtle)
         this._buildAxes();
 
@@ -311,37 +337,10 @@ export class Viewport {
         this._resizeObserver.observe(container);
     }
 
-    _initParticles() {
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(MAX_PARTICLES * 3);
-        const colors = new Float32Array(MAX_PARTICLES * 3);
-        const sizes = new Float32Array(MAX_PARTICLES);
-
-        const posAttr = new THREE.BufferAttribute(positions, 3);
-        const colAttr = new THREE.BufferAttribute(colors, 3);
-        const sizeAttr = new THREE.BufferAttribute(sizes, 1);
-        posAttr.setUsage(THREE.DynamicDrawUsage);
-        colAttr.setUsage(THREE.DynamicDrawUsage);
-        sizeAttr.setUsage(THREE.DynamicDrawUsage);
-        geometry.setAttribute('position', posAttr);
-        geometry.setAttribute('particleColor', colAttr);
-        geometry.setAttribute('size', sizeAttr);
-        geometry.setDrawRange(0, 0);
-
-        const material = new THREE.ShaderMaterial({
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.9 } },
-            vertexShader: PARTICLE_VERT,
-            fragmentShader: PARTICLE_FRAG,
-            transparent: true,
-            depthWrite: false,
-            depthTest: true,
-            blending: THREE.NormalBlending,
-        });
-
-        this.particles = new THREE.Points(geometry, material);
-        this.particles.frustumCulled = false; // skip bounding sphere recompute for dynamic geometry
-        this.scene.add(this.particles);
-    }
+    // _initParticles extracted to ViewportParticleRenderer (Phase 3d).
+    // External callers should not invoke this method directly — the
+    // particle Points mesh is built eagerly inside ParticleRenderer's
+    // constructor and is reachable via the `particles` getter on Viewport.
 
     // ── Boundary system ────────────────────────────────────────────────
 
@@ -464,6 +463,10 @@ export class Viewport {
         // Rebuild flux volume + clear flux-streamlines draw range — owned by
         // FluxRenderer (Phase 3b extraction).
         this._fluxRenderer?.onLatticeSizeChanged(size, this._halfN);
+        // ParticleRenderer (Phase 3d) — refreshes cached _halfN used by
+        // updateParticles' boundary-clip math. Particle / trail / vector
+        // mesh capacities are constant, so no rebuild needed.
+        this._particleRenderer?.onLatticeSizeChanged(size, this._halfN);
         // Rebuild field heatmap for new lattice capacity
         if (this._fieldHeatmap) {
             this.scene.remove(this._fieldHeatmap);
@@ -669,159 +672,16 @@ export class Viewport {
         }
     }
 
-    // ── Velocity Vectors (PE mode overlay) ──────────────────────────────
-    _buildVelocityVectors() {
-        const MAX_VEC = 200; // max particles for velocity vectors
-        const vertices = new Float32Array(MAX_VEC * 2 * 3);
-        const colors = new Float32Array(MAX_VEC * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.8,
-        });
-        this.velocityVectors = new THREE.LineSegments(geo, mat);
-        this.velocityVectors.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this.velocityVectors.visible = false;
-        this.scene.add(this.velocityVectors);
-    }
-
+    // ── Velocity Vectors / Trails ───────────────────────────────────────
+    // Phase 3d: extracted to viewport/particle-renderer.js. These thin
+    // delegators preserve the public API for app_dag.js and panel code.
     updateVelocityVectors(positions, velocities, count) {
-        if (!this.velocityVectors) this._buildVelocityVectors();
-        if (!velocities) return;
-
-        const posAttr = this.velocityVectors.geometry.getAttribute('position');
-        const colAttr = this.velocityVectors.geometry.getAttribute('color');
-        const maxLines = posAttr.array.length / 6;
-        const n = Math.min(count, maxLines);
-        const scale = 50; // scale factor so velocity vectors are visible
-
-        for (let i = 0; i < n; i++) {
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
-            const vx = velocities[i * 3], vy = velocities[i * 3 + 1], vz = velocities[i * 3 + 2];
-
-            // Start point (particle center)
-            posAttr.array[i * 6] = px;
-            posAttr.array[i * 6 + 1] = py;
-            posAttr.array[i * 6 + 2] = pz;
-            // End point (position + velocity * scale)
-            posAttr.array[i * 6 + 3] = px + vx * scale;
-            posAttr.array[i * 6 + 4] = py + vy * scale;
-            posAttr.array[i * 6 + 5] = pz + vz * scale;
-
-            // Color: yellow at tail → orange at tip, intensity by speed
-            const speed = Math.sqrt(vx * vx + vy * vy + vz * vz);
-            const t = Math.min(speed * 20, 1);
-            // Start: bright yellow
-            colAttr.array[i * 6] = 1.0;
-            colAttr.array[i * 6 + 1] = 0.9 - t * 0.3;
-            colAttr.array[i * 6 + 2] = 0.2;
-            // End: orange/red
-            colAttr.array[i * 6 + 3] = 1.0;
-            colAttr.array[i * 6 + 4] = 0.4 - t * 0.3;
-            colAttr.array[i * 6 + 5] = 0.1;
-        }
-
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this.velocityVectors.geometry.setDrawRange(0, n * 2);
+        this._particleRenderer.updateVelocityVectors(positions, velocities, count);
     }
-
-    toggleVelocityVectors(on) {
-        if (!this.velocityVectors) this._buildVelocityVectors();
-        this.velocityVectors.visible = on;
-        if (!on) this.velocityVectors.geometry.setDrawRange(0, 0);
-    }
-
-    // ── Orbit Trails (PE mode overlay) ───────────────────────────────
-    _buildTrails() {
-        // Pre-allocate for up to 50 particles × 200 trail segments
-        const MAX_SEGMENTS = 50 * 200;
-        const vertices = new Float32Array(MAX_SEGMENTS * 2 * 3);
-        const colors = new Float32Array(MAX_SEGMENTS * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.5,
-        });
-        this.trails = new THREE.LineSegments(geo, mat);
-        this.trails.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this.trails.visible = false;
-        this.scene.add(this.trails);
-    }
-
-    updateTrails(trailHistory, typeMap) {
-        if (!this.trails) this._buildTrails();
-        if (!trailHistory || trailHistory.size === 0) {
-            this.trails.geometry.setDrawRange(0, 0);
-            return;
-        }
-
-        const posAttr = this.trails.geometry.getAttribute('position');
-        const colAttr = this.trails.geometry.getAttribute('color');
-        const maxSegments = posAttr.array.length / 6;
-        let seg = 0;
-
-        for (const [particleId, trail] of trailHistory) {
-            if (trail.length < 2) continue;
-
-            // Determine trail color from catalog
-            const catId = typeMap ? typeMap.get(particleId) : null;
-            const cat = catId ? getById(catId) : null;
-            const cr = cat ? cat.display_color[0] : 0.5;
-            const cg = cat ? cat.display_color[1] : 0.5;
-            const cb = cat ? cat.display_color[2] : 0.5;
-
-            const len = trail.length;
-            const maxLen = 200; // TRAIL_MAX_LENGTH
-            // Read from circular buffer in order (oldest → newest)
-            const start = trail.length < maxLen ? 0 : trail.head;
-
-            for (let j = 0; j < len - 1 && seg < maxSegments; j++) {
-                const idx0 = (start + j) % maxLen;
-                const idx1 = (start + j + 1) % maxLen;
-
-                // Segment start
-                posAttr.array[seg * 6] = trail.positions[idx0 * 3];
-                posAttr.array[seg * 6 + 1] = trail.positions[idx0 * 3 + 1];
-                posAttr.array[seg * 6 + 2] = trail.positions[idx0 * 3 + 2];
-                // Segment end
-                posAttr.array[seg * 6 + 3] = trail.positions[idx1 * 3];
-                posAttr.array[seg * 6 + 4] = trail.positions[idx1 * 3 + 1];
-                posAttr.array[seg * 6 + 5] = trail.positions[idx1 * 3 + 2];
-
-                // Fade: old segments dim, new segments bright
-                const fade = (j + 1) / len;
-                colAttr.array[seg * 6] = cr * fade * 0.8;
-                colAttr.array[seg * 6 + 1] = cg * fade * 0.8;
-                colAttr.array[seg * 6 + 2] = cb * fade * 0.8;
-                colAttr.array[seg * 6 + 3] = cr * fade;
-                colAttr.array[seg * 6 + 4] = cg * fade;
-                colAttr.array[seg * 6 + 5] = cb * fade;
-
-                seg++;
-            }
-        }
-
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this.trails.geometry.setDrawRange(0, seg * 2);
-    }
-
-    toggleTrails(on) {
-        if (!this.trails) this._buildTrails();
-        this.trails.visible = on;
-        if (!on) this.trails.geometry.setDrawRange(0, 0);
-    }
-
-    clearTrails() {
-        if (this.trails) {
-            this.trails.geometry.setDrawRange(0, 0);
-        }
-    }
+    toggleVelocityVectors(on) { this._particleRenderer.toggleVelocityVectors(on); }
+    updateTrails(trailHistory, typeMap) { this._particleRenderer.updateTrails(trailHistory, typeMap); }
+    toggleTrails(on) { this._particleRenderer.toggleTrails(on); }
+    clearTrails() { this._particleRenderer.clearTrails(); }
 
     // ── Bond Lines (Scale 2 — Atom mode) ──────────────────────────────
     // Moved to viewport/molecular-renderer.js (Wave 2 ticket 4).
@@ -1065,65 +925,11 @@ export class Viewport {
     }
 
     // ── Per-Particle Force Arrows ─────────────────────────────────────
-
-    _buildParticleForces() {
-        const MAX_PFORCES = 200;  // max particles
-        const vertices = new Float32Array(MAX_PFORCES * 2 * 3);
-        const colors = new Float32Array(MAX_PFORCES * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.85,
-        });
-        this._particleForces = new THREE.LineSegments(geo, mat);
-        this._particleForces.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this._particleForces.visible = false;
-        this.scene.add(this._particleForces);
-    }
-
+    // Phase 3d: extracted to viewport/particle-renderer.js.
     updateParticleForces(positions, forces, count, maxForce) {
-        if (!this._particleForces) this._buildParticleForces();
-        const posAttr = this._particleForces.geometry.getAttribute('position');
-        const colAttr = this._particleForces.geometry.getAttribute('color');
-        const n = Math.min(count, 200);
-        const arrowScale = 12.0;
-
-        for (let i = 0; i < n; i++) {
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
-            const fx = forces[i * 3], fy = forces[i * 3 + 1], fz = forces[i * 3 + 2];
-            const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
-
-            posAttr.array[i * 6] = px;
-            posAttr.array[i * 6 + 1] = py;
-            posAttr.array[i * 6 + 2] = pz;
-
-            const scale = mag > 1e-20 ? arrowScale * Math.log(1 + mag / (maxForce + 1e-20) * 10) : 0;
-            posAttr.array[i * 6 + 3] = px + (mag > 1e-20 ? fx / mag * scale : 0);
-            posAttr.array[i * 6 + 4] = py + (mag > 1e-20 ? fy / mag * scale : 0);
-            posAttr.array[i * 6 + 5] = pz + (mag > 1e-20 ? fz / mag * scale : 0);
-
-            // Green color for net force
-            const t = mag / (maxForce + 1e-20);
-            colAttr.array[i * 6] = 0.2;
-            colAttr.array[i * 6 + 1] = 0.4 + 0.3 * t;
-            colAttr.array[i * 6 + 2] = 0.2;
-            colAttr.array[i * 6 + 3] = 0.3;
-            colAttr.array[i * 6 + 4] = 0.7 + 0.3 * t;
-            colAttr.array[i * 6 + 5] = 0.3;
-        }
-
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this._particleForces.geometry.setDrawRange(0, n * 2);
+        this._particleRenderer.updateParticleForces(positions, forces, count, maxForce);
     }
-
-    toggleParticleForces(on) {
-        if (!this._particleForces) this._buildParticleForces();
-        this._particleForces.visible = on;
-        if (!on) this._particleForces.geometry.setDrawRange(0, 0);
-    }
+    toggleParticleForces(on) { this._particleRenderer.toggleParticleForces(on); }
 
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
     // Phase 3b extracted into ViewportFluxRenderer (./viewport/flux-renderer.js).
@@ -3476,60 +3282,11 @@ export class Viewport {
         this.scene.add(this.peGrid);
     }
 
-    updateParticles(data) {
-        const geo = this.particles.geometry;
-        const posAttr = geo.getAttribute('position');
-        const colAttr = geo.getAttribute('particleColor');
-        const sizeAttr = geo.getAttribute('size');
-
-        const rawCount = Math.min(data.count, MAX_PARTICLES);
-
-        // Clip particles to current boundary shape
-        const halfN = this._halfN;
-        const needsClip = this._boundaryShape && this._boundaryShape !== 'none' && this._boundaryShape !== 'cube';
-        let count = 0;
-        for (let i = 0; i < rawCount; i++) {
-            const px = data.positions[i * 3];
-            const py = data.positions[i * 3 + 1];
-            const pz = data.positions[i * 3 + 2];
-            if (needsClip) {
-                const nx = (px - halfN) / halfN;
-                const ny = (py - halfN) / halfN;
-                const nz = (pz - halfN) / halfN;
-                if (!this._insideBoundary(nx, ny, nz)) continue;
-            }
-            posAttr.array[count * 3] = px;
-            posAttr.array[count * 3 + 1] = py;
-            posAttr.array[count * 3 + 2] = pz;
-            colAttr.array[count * 3] = data.colors[i * 3];
-            colAttr.array[count * 3 + 1] = data.colors[i * 3 + 1];
-            colAttr.array[count * 3 + 2] = data.colors[i * 3 + 2];
-            sizeAttr.array[count] = data.sizes[i] * this.visualSettings.globalScale;
-            count++;
-        }
-
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        sizeAttr.needsUpdate = true;
-
-        geo.setDrawRange(0, count);
-
-    }
-
-    // ── Particle shape and opacity ──────────────────────────────────
-
-    setPointShape(shapeIndex) {
-        if (this.particles && this.particles.material.uniforms) {
-            this.particles.material.uniforms.shapeType.value = shapeIndex;
-        }
-    }
-
-    setOpacity(val) {
-        if (this.particles && this.particles.material.uniforms) {
-            this.particles.material.uniforms.uOpacity.value = val;
-        }
-        this.visualSettings.opacity = val;
-    }
+    // Phase 3d: updateParticles / setPointShape / setOpacity /
+    // applyParticleColors extracted to viewport/particle-renderer.js.
+    updateParticles(data) { this._particleRenderer.updateParticles(data); }
+    setPointShape(shapeIndex) { this._particleRenderer.setPointShape(shapeIndex); }
+    setOpacity(val) { this._particleRenderer.setOpacity(val); }
 
     // ── Element labels + clearMolecularMeshes — delegated to viewport/molecular-renderer.js
     updateElementLabels(labels) { this._molRenderer.updateElementLabels(labels); }
@@ -3537,29 +3294,8 @@ export class Viewport {
     clearElementLabels()        { this._molRenderer.clearElementLabels(); }
     clearMolecularMeshes()      { this._molRenderer.clearMolecularMeshes(); }
 
-    // Override colors from catalog type map (PE mode)
     applyParticleColors(data, typeMap) {
-        if (!typeMap || typeMap.size === 0) return;
-        const colAttr = this.particles.geometry.getAttribute('particleColor');
-        const sizeAttr = this.particles.geometry.getAttribute('size');
-        const count = Math.min(data.count, MAX_PARTICLES);
-
-        for (let i = 0; i < count; i++) {
-            const pid = data.ids ? data.ids[i] : -1;
-            const catId = typeMap.get(pid);
-            if (!catId) continue;
-            const p = getById(catId);
-            if (!p) continue;
-            const [r, g, b] = p.display_color;
-            colAttr.array[i * 3] = r;
-            colAttr.array[i * 3 + 1] = g;
-            colAttr.array[i * 3 + 2] = b;
-            // Scale size by log mass (relative to electron mass K_B)
-            const s = 3.0 + 2.0 * Math.log10(p.mass_mev / K_B + 1.0);
-            sizeAttr.array[i] = Math.min(s, 40);
-        }
-        colAttr.needsUpdate = true;
-        sizeAttr.needsUpdate = true;
+        this._particleRenderer.applyParticleColors(data, typeMap);
     }
 
     // ── Post-Processing (Consciousness Mode) ──────────────────────
@@ -3674,7 +3410,6 @@ export class Viewport {
         };
 
         this.renderer.dispose();
-        disposeMesh(this.particles);
 
         // Wireframe is a Group containing LineSegments — traverse children
         disposeGroup(this.wireframe);
@@ -3688,12 +3423,16 @@ export class Viewport {
 
         // Phase 3b: FluxRenderer owns _fluxVolume + _fluxStreamlines.
         this._fluxRenderer?.dispose();
+        // Phase 3d: ParticleRenderer owns particles, velocityVectors,
+        // trails, _particleForces.
+        this._particleRenderer?.dispose();
 
-        // Core overlays (geometry+material pairs)
+        // Core overlays (geometry+material pairs) — particles +
+        // velocityVectors + trails + _particleForces moved to
+        // ParticleRenderer (Phase 3d) above.
         const simpleOverlays = [
-            'velocityVectors', 'trails',
             '_fieldHeatmap', '_fieldVectors',
-            '_peStreamlines', '_gravityVectors', '_particleForces',
+            '_peStreamlines', '_gravityVectors',
         ];
         for (const name of simpleOverlays) disposeMesh(this[name]);
 
@@ -3782,4 +3521,22 @@ export class Viewport {
     set _fluxLatticeSpacing(v) { if (this._fluxRenderer) this._fluxRenderer._fluxLatticeSpacing = v; }
     get showFlux() { return this._fluxRenderer?.showFlux ?? true; }
     set showFlux(v) { if (this._fluxRenderer) this._fluxRenderer.showFlux = v; }
+
+    // ── Backward-compat getters/setters for Phase 3d extracted state ──
+    // inspector.js reads viewport.particles for raycasting; the scale-N
+    // controllers toggle viewport.particles.visible directly. Forward to
+    // ParticleRenderer so existing call sites keep working without
+    // renaming. Remove these once all readers move to
+    // `viewport._particleRenderer.X`.
+    get particles() { return this._particleRenderer?.particles ?? null; }
+    set particles(v) { if (this._particleRenderer) this._particleRenderer.particles = v; }
+    get velocityVectors() { return this._particleRenderer?.velocityVectors ?? null; }
+    set velocityVectors(v) { if (this._particleRenderer) this._particleRenderer.velocityVectors = v; }
+    get trails() { return this._particleRenderer?.trails ?? null; }
+    set trails(v) { if (this._particleRenderer) this._particleRenderer.trails = v; }
+    get _particleForces() { return this._particleRenderer?._particleForces ?? null; }
+    set _particleForces(v) { if (this._particleRenderer) this._particleRenderer._particleForces = v; }
+    // visualSettings is shared by reference between Viewport and
+    // ParticleRenderer — both sides read/write the same object — so it
+    // remains a plain own-property on Viewport (no getter/setter needed).
 }
