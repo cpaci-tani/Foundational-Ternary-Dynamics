@@ -129,8 +129,9 @@ ftd/
 │   ├── wasm/                        # Emscripten WASM bindings
 │   └── web/                         # Three.js browser dashboard
 │       └── docs/
-│           ├── SPEC_VERIFICATION_LAB.md        # Verify-panel spec (v2, evidence scoreboard)
-│           └── TELEMETRY_CATALOG_SCALE0.md     # Scale 0 telemetry catalog (ring buffers, panels, charts)
+│           ├── SPEC_VACUUM_PARTICLE_SCENARIOS.md    # 15-scenario s0-vacuum-* catalog showing each elementary particle in isolation
+│           ├── SPEC_VERIFICATION_LAB.md             # Verify-panel spec (v2, evidence scoreboard)
+│           └── TELEMETRY_CATALOG_SCALE0.md          # Scale 0 telemetry catalog (ring buffers, panels, charts)
 │
 ├── scripts/                         # Python verification and proof stack
 │   ├── constants.py                 # Canonical shared constants
