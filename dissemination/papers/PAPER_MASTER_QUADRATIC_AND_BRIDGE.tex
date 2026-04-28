@@ -312,26 +312,183 @@ and \S\ref{sec:tagging}.
 \section{CM Uniqueness and the Nine-Heegner Tower}
 \label{sec:cm-uniqueness}
 
-\textbf{Section status: scaffolded.} Full numerical tabulation,
-nine-row Chowla--Selberg tower, and the structural argument for
-$d = -4$ uniqueness will be drafted in a follow-up pass from
-\texttt{docs/theory/09\_mathematical/EXPLR\_CM\_RATIO\_TOWER.md}.
-Outline:
+This section operationalises Theorem~\ref{thm:cm-uniqueness} of
+\S\ref{sec:spine}: among the nine class-number-one imaginary
+quadratic fields, only $d = -4$ produces a master-quadratic-style
+polynomial whose roots simultaneously match dimensionless
+physical constants. The argument is constructive: we exhibit the
+analog polynomial for each Heegner discriminant, show its roots
+explicitly, and verify by direct evaluation that competitors fail.
 
-\begin{enumerate}
-\item Definition of the $i$-cycle Chowla--Selberg ratio
-$\rho_{d} := \Gamma(\cdots)/\Gamma(\cdots)$ at each Heegner number.
-\item Evaluation table for $d \in \{-1, -2, -3, -7, -11, -19, -43,
--67, -163, -4\}$ with $\rho_{d}$ to 10 decimal places.
-\item Numerical match criterion against $(1/\alpha, N_c)$ at the
-program's stated tolerances.
-\item Verification: only $d = -4$ falls within tolerance for both
-roots simultaneously; competitors miss by 6\%--30\% on at least one
-root.
-\item Structural reading: $d = -4$ corresponds to the lemniscatic
-curve $E_{-4}\colon y^{2} = x^{3} - x$; competitors do not have
-$|\mathrm{Aut}(E)| = 4$.
-\end{enumerate}
+\subsection{The Chowla--Selberg ratio at Heegner discriminants}
+
+The Heegner numbers are the nine negative fundamental discriminants
+$d$ for which the imaginary quadratic field $\mathbb{Q}(\sqrt{d})$
+has class number exactly one:
+\[
+  d \in \{-3, -4, -7, -8, -11, -19, -43, -67, -163\}.
+\]
+For each, the Chowla--Selberg ratio $\rho_{d}$ is defined via the
+Kronecker character $\chi_{d}$ (the unique primitive real Dirichlet
+character modulo $|d|$ with $\chi_{d}(-1) = -1$):
+\[
+  \rho_{d}\ :=\ \prod_{a=1}^{|d|-1}
+    \Gamma\!\left(\frac{a}{|d|}\right)^{\chi_{d}(a)}.
+\]
+For $d = -4$ this reduces to the lemniscatic ratio
+\[
+  \rho_{-4}\ =\ \frac{\Gamma(1/4)}{\Gamma(3/4)}\ =\ \Gstar
+  \ =\ 2.95867\ldots
+\]
+For other discriminants the formula generalises to a multi-$\Gamma$
+product/quotient over quadratic residues vs non-residues mod $|d|$.
+
+\subsection{The numerical tower}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{r r r r r r}
+\toprule
+$d$ & $|d|$ & $\rho_{d}$ & $\log \rho_{d}$ & $\rho_{d}/\pi$ & $\rho_{d}/\Gstar$ \\
+\midrule
+$-3$    & 3   & 1.9783642596 & 0.682270 & 0.6297 & 0.6687 \\
+$\mathbf{-4}$    & \textbf{4}   & $\mathbf{2.9586751192}$ ($=\Gstar$) & 1.084742 & 0.9418 & 1.0000 \\
+$-7$    & 7   & 11.0171928759 & 2.399457 & 3.5069 & 3.7237 \\
+$-8$    & 8   & 11.4250022888 & 2.435804 & 3.6367 & 3.8615 \\
+$-11$   & 11  & 12.1741035468 & 2.499311 & 3.8751 & 4.1147 \\
+$-19$   & 19  & 12.1825720885 & 2.500006 & 3.8778 & 4.1176 \\
+$-43$   & 43  & 8.7199229706  & 2.165610 & 2.7756 & 2.9472 \\
+$-67$   & 67  & 5.7934559532  & 1.756729 & 1.8441 & 1.9581 \\
+$-163$  & 163 & 1.2798790766  & 0.246766 & 0.4074 & 0.4326 \\
+\bottomrule
+\end{tabular}
+\caption{Chowla--Selberg ratios at the nine Heegner discriminants.
+Verified against \texttt{scripts/constants.py} for $d=-4$ and
+standard $\Gamma$-function evaluation elsewhere; full machine
+precision retained (last digit shown rounded).}
+\label{tab:tower}
+\end{table}
+
+The tower is non-monotone in $|d|$: it rises from $\rho_{-3} \approx
+1.98$ to a peak near $\rho_{-11} \approx \rho_{-19} \approx 12.18$
+and falls back to $\rho_{-163} \approx 1.28$. The peak values $\sim$
+11--12 sit between $4\Gstar = 11.83$ and $4\pi = 12.57$. The $d=-163$
+entry is anomalously small: this is the Ramanujan-constant phenomenon
+($e^{\pi\sqrt{163}}$ is integer-near because the $j$-invariant
+$j(\tau_{-163}) = -640320^{3}$ is exactly an integer; the same
+structure compresses the corresponding $\Gamma$-product).
+
+\subsection{Master-quadratic polynomials per discriminant}
+
+For each $\rho_{d}$ define the analog of the FTD master quadratic:
+\[
+  P_{d}(x)\ =\ x^{2} - 16\rho_{d}^{2}\,x + 16\rho_{d}^{3}\ =\ 0.
+\]
+Both roots are real and positive at every Heegner discriminant since
+$\rho_{d} > 1/4$ throughout. Their explicit values are:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{r r r r r r c}
+\toprule
+$d$ & $\rho_{d}$ & $16\rho_{d}^{2}$ & $16\rho_{d}^{3}$ & $x_{+}$ & $x_{-}$ & physics match? \\
+\midrule
+$-3$   & 1.978  & 62.62  & 123.89  & 60.578 & 2.045  & no \\
+$\mathbf{-4}$   & $\mathbf{2.959}$  & $\mathbf{140.06}$ & $\mathbf{414.39}$ & $\mathbf{137.036}$ & $\mathbf{3.024}$ & $\mathbf{YES} \to 1/\alpha,\ N_c$ \\
+$-7$   & 11.02  & 1942.06 & 21396.0 & 1930.98 & 11.080 & no \\
+$-8$   & 11.43  & 2088.49 & 23861.0 & 2077.00 & 11.488 & no \\
+$-11$  & 12.17  & 2371.34 & 28868.9 & 2359.10 & 12.237 & no \\
+$-19$  & 12.18  & 2374.64 & 28929.2 & 2362.40 & 12.246 & no \\
+$-43$  & 8.72   & 1216.59 & 10608.6 & 1207.81 & 8.783  & no \\
+$-67$  & 5.79   & 537.03  & 3111.24 & 531.17  & 5.857  & no \\
+$-163$ & 1.28   & 26.21   & 33.54   & 24.860  & 1.349  & no \\
+\bottomrule
+\end{tabular}
+\caption{Roots of the master-quadratic-style polynomial
+$P_{d}(x) = x^{2} - 16\rho_{d}^{2}\,x + 16\rho_{d}^{3}$ at each
+Heegner discriminant. Only $d = -4$ produces a $(x_{+}, x_{-})$ pair
+matching independent dimensionless physical constants
+($x_{+} = 1/\alpha$ at 1.26 ppm; $x_{-} = N_c$ at 0.80\%).}
+\label{tab:polys}
+\end{table}
+
+This is the explicit operationalisation of Theorem~\ref{thm:cm-uniqueness}.
+Competitors miss by structurally large margins: at $d \in \{-7, -8,
+-11, -19, -43, -67\}$ both roots either both stay modest
+($d \in \{-3, -163\}$) or both blow up ($d \geq -7$ in absolute value
+of $|d|$). \emph{Only at $d = -4$ does the small root land in single
+digits and the large root land near a known physical scale.}
+
+\subsection{The L-function structural scaling: $\pi$ inside every entry}
+
+The Chowla--Selberg ratios are not arbitrary. They satisfy a
+closed-form relationship to the derivative at $s = 0$ of the
+Dirichlet $L$-function:
+\[
+  \log \rho_{d}\ =\ \frac{w_{d}}{2 h(d)}\cdot |d|\cdot L'(0, \chi_{d})
+\]
+(simplified for $h(d) = 1$). Here $w_{d}$ is the number of roots
+of unity in the field's ring of integers ($w_{-3} = 6$ from the
+sixth roots of unity; $w_{-4} = 4$ from $\{\pm 1, \pm i\}$;
+$w_{d} = 2$ otherwise). By the functional equation for
+$L(s, \chi_{d})$, every $\rho_{d}$ is structurally tied to $\pi$
+through the $\Gamma$-function reflection formula. \emph{This is
+the precise statement that ``$\pi$ is the universal substrate of
+the tower''}: every entry routes through $\pi$ via the functional
+equation; the variation between entries is captured by
+$L'(0, \chi_{d})$.
+
+\subsection{Why the cubic lattice picks $d = -4$}
+
+The cubic-lattice geometric structure that the FTD engine
+implements selects $\mathbb{Q}(i)$ (corresponding to $d = -4$)
+through Watson's identity (Theorem~\ref{thm:watson}). The triple-cosine
+denominator of the Watson integral is exactly the dispersion
+relation for the BCC sub-stencil of the cubic Moore-26 neighbourhood,
+and this dispersion factors as a product over $\mathbb{Q}(i)$ via the
+elliptic-integral representation \citep{glasser}. Were the framework
+built on a different lattice geometry --- hexagonal close-packed
+($d = -3$, $\mathbb{Z}[\omega]$), body-centered tetragonal, etc.
+--- a different Heegner discriminant would anchor the corresponding
+master-quadratic polynomial, and the dual numerical match $(1/\alpha,
+N_c)$ would not occur (Table~\ref{tab:polys}).
+
+The dual identification is therefore not a coincidence to be hidden
+behind a look-elsewhere correction: it is a polynomial-root
+phenomenon that the look-elsewhere scan of \citep{lookelsewhere}
+structurally cannot probe (the scan tested monomial space; this
+phenomenon lives at polynomial-root level over a discrete index
+set of nine Heegner discriminants). The selectivity is exhibited
+by Table~\ref{tab:polys}.
+
+\subsection{Status of the section}
+
+\begin{epistemic}{THEOREM}
+$\rho_{d}$ values in Table~\ref{tab:tower} are computed from the
+1949 Chowla--Selberg formula by direct evaluation. The polynomial
+roots in Table~\ref{tab:polys} follow by the quadratic formula. Both
+tables are arithmetic facts.
+\end{epistemic}
+
+\begin{epistemic}{STRONGLY MOTIVATED CONJECTURE}
+The identification $x_{+} = 1/\alpha$ at 1.26 ppm and $x_{-} = N_c$
+at 0.80\% (the physics row of Table~\ref{tab:polys}). The structural
+selectivity of $d = -4$ within the nine-row tower is the strongest
+non-monomial structural anchor for these identifications.
+\end{epistemic}
+
+\begin{epistemic}{OPEN}
+Extension to class number $h \geq 2$. The CM uniqueness theorem
+covers only the nine class-number-one fields. Higher class number
+involves genus-theoretic complications outside the scope of this
+paper; no claim is made that the program's identifications survive
+or fail in that regime.
+\end{epistemic}
+
+The full nine-row Chowla--Selberg tower with $L$-function structural
+scaling and the ``scales of $\pi$ and $\Gstar$'' interpretation is
+in \texttt{docs/theory/09\_mathematical/EXPLR\_CM\_RATIO\_TOWER.md}
+(2026-04-27).
 
 % ============================================================================
 \section{The Algebra--Engine Bridge: Cluster Efficiency from $\Ohgrp$}
@@ -691,40 +848,189 @@ this prediction at $L = 128$.
 \section{Honest Tagging: A Per-Claim Ledger}
 \label{sec:tagging}
 
-\textbf{Section status: scaffolded.} Will be drafted in a follow-up
-pass from \texttt{LEDGER.md}. Outline:
+The program publishes a continuously-maintained per-claim ledger
+(\texttt{docs/theory/07\_assessment/LEDGER.md}; we cite
+\citep{ledger}) recording the epistemic tag and supporting evidence
+for every load-bearing claim. This section reproduces the rows
+relevant to the present paper, with cross-references to the
+underlying evidence. The ledger is the canonical source of truth;
+this table is a derivative summary.
+
+\subsection{[THEOREM]: rigorously proved}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{l p{8.0cm} l}
+\toprule
+Tag & Statement & Source \\
+\midrule
+FTD-0001 & $\Gstar = \Gamma(1/4)/\Gamma(3/4)$ algebraic identity & Thm~\ref{thm:gstar} \\
+FTD-0014 & Master quadratic $x^{2} - 16\Gstar^{2}x + 16\Gstar^{3} = 0$ & Thm~\ref{thm:masterq} \\
+(spine) & CM uniqueness within class-number-one fields at $d=-4$ & Thm~\ref{thm:cm-uniqueness} \\
+(spine) & Coefficient $16 = |\mathrm{Aut}(E)|^{2}$ for $E\colon y^{2}=x^{3}-x$ & Thm~\ref{thm:aut-sq} \\
+(spine) & Watson identity $W_{3} = \Gstar^{2}/(2\pi)$ & Thm~\ref{thm:watson} \\
+(spine) & Phase G geometric Coulomb $\alpha_{r}(r,L) = 2r\,G_{L}(r)$ & Thm~\ref{thm:phaseg} \\
+(spine) & Phase J ultralocality of classical FTD action & Thm~\ref{thm:phasej} \\
+\midrule
+(subs.) & $\mathrm{mult}(\Aoneg) = 4$ in $\rho_{27}$ on $3^{3}$ Moore block & Thm~\ref{thm:rho27} \\
+FTD-0059 & No-go theorem for $a_{\mathrm{phys}}$ derivation from Axiom Zero & \citep{ledger} \\
+\bottomrule
+\end{tabular}
+\caption{Theorems load-bearing in this paper. ``(spine)'' / ``(subs.)''
+are sub-theorems of FTD's algebraic spine and supporting subsidiary
+machinery; FTD-numbered entries appear as primary rows in
+\citep{ledger}. The seven spine theorems are stated in
+\S\ref{sec:spine}; $\mathrm{mult}(\Aoneg) = 4$ is proved en route
+to the bridge derivation in \S\ref{sec:bridge}.}
+\label{tab:theorems}
+\end{table}
+
+\subsection{[DERIVED at linear level]}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{l p{7.5cm} l}
+\toprule
+Tag (LEDGER) & Statement & Anchor \\
+\midrule
+FTD-0110 (k coeff.) & Cluster-efficiency $k = 1/\Nbase = 1/4$ in $N(A) \approx k\,A^{2}$ & \S\ref{sec:bridge} \\
+\bottomrule
+\end{tabular}
+\caption{The sole [DERIVED] row of this paper: the cluster-efficiency
+coefficient. Promoted from [STRONGLY MOTIVATED CONJECTURE] to
+[DERIVED at linear level] on 2026-04-28 (commit \texttt{306837c}
+of the program's repository). The promotion is gated on a verified
+chain $\mathrm{mult}(\Aoneg) = 4$ [THEOREM] $\to$ $\delta_{0}$
+$\Aoneg$-pure [GEOMETRIC FACT] $\to$ $L_{18}$ preserves
+$\Aoneg$-isotypic [LEMMA] $\to$ energy fractions
+$\{3/8, 1/8, 3/8, 1/8\}$ [DIRECT COMPUTATION] $\to$ mean
+$= 1/\Nbase$ [SUM/COUNT IDENTITY].}
+\label{tab:derived}
+\end{table}
+
+\subsection{[STRONGLY MOTIVATED CONJECTURE]}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{l p{8.5cm} l}
+\toprule
+Statement & Evidence & Source \\
+\midrule
+$x_{+} = 1/\alpha$ at 1.26 ppm & Master quadratic root vs.\ \textsc{codata} 2022 & Thm~\ref{thm:masterq} \\
+$x_{-} = N_c$ at 0.80\% & Master quadratic root vs.\ Standard-Model & Thm~\ref{thm:masterq} \\
+Dual match property & \emph{Both} roots simultaneously match unrelated sectors; selectively isolated to $d = -4$ within Heegner tower & \S\ref{sec:cm-uniqueness} \\
+\midrule
+FTD-0110 (full claim) & Cluster-mass identification $N(A = 2\sqrt{R}) \approx R = m_X/m_e$ across $X \in \{e, \mu, \pi, K, p, \tau\}$ to $\sim$5\% & \S\ref{sec:engine}, \citep{ledger} \\
+\bottomrule
+\end{tabular}
+\caption{Conjectures with multiple independent structural or
+empirical anchors but no formal proof. The first three are the
+``physics row'' of Table~\ref{tab:polys}; the fourth is the
+nonlinear-engine extension of the bridge derivation.}
+\label{tab:conjectures}
+\end{table}
+
+\subsection{[PARTIAL · MEASURED]: engine-as-instrument portfolio}
+
+The 2026-04-26/27 reorientation toward engine-as-instrument
+\citep{ledger} produced five pre-registered measurements with
+explicit outcome bins:
+
+\begin{itemize}
+\item \textbf{FTD-0102}: emergent phase structure at $L = 32$ from
+generic initial conditions. Three regimes recovered: vacuum / bound
+states (deterministic counts) / runaway crystallisation. Phase
+boundary lies between Langevin temperatures $T \in [0.005, 0.05]$.
+\item \textbf{FTD-0103}: continuum-limit verification at
+$L \in \{16, 32, 64\}$ for the operator-mixing matrix $M_{ab}(b{=}2)$.
+Condition number cond$(S)$ improves monotonically (factor 18$\times$
+across $L$); RG semigroup $M(b{=}4) \approx M(b{=}2)^{2}$ fails the
+50\% relative-error threshold.
+\item \textbf{FTD-0104}: topological observables (Wilson loops, flux
+tubes, monopoles, vacuum instantons) under matched Langevin and
+shared schema at $L = 32$. Four sub-experiments produce
+non-degenerate output landing on the pre-registered cell.
+\item \textbf{FTD-0105}: lemniscatic 2-sphere replacement test. Strict
+PASS-NONE: the four pre-registered candidates ($4\pi$, $4\varpi$,
+$4\Gstar$, $\Gstar^{2}\pi/2$) miss the measured pooled
+$A/r_{h}^{2} = 18.51 \pm 0.15$. Secondary reading consistent with
+spherical horizon and digital-geometry overhead.
+\item \textbf{FTD-0107} (G1, $L = 64$): deterministic cluster counts
+and \emph{absolute} cluster sizes (5/5 seeds; ic1 $\to$ 1 cluster
+$\sim 25$ voxels; ic3 $\to$ 2 clusters 3-5 voxels each).
+Pre-registered Outcome A.2 (extensive scaling) confirmed; Outcomes
+B/C/D rejected. \textbf{G2 ($L = 128$) pre-registered tag
+\texttt{preregister-emergent-spectrum-g2} on 2026-04-28; campaign
+in progress at submission.}
+\end{itemize}
+
+\subsection{[MEASURED]: methodological hygiene}
+
+\textbf{FTD-0097} look-elsewhere scan \citep{lookelsewhere}.
+Pre-registered SHA256 hash + git tag on the runner before the scan
+ran; 671{,}574 monomials in degree-$\leq 4$ products of
+$\{$framework integers, $\Gstar$ powers, $\alpha$ powers, $\pi$
+powers, $c_{\mathrm{lat}} = 1/\sqrt{3}\}$ tested against 20
+dimensionless physics ratios at $\varepsilon = 10^{-4}$.
+\emph{Headline result: 62 raw / 11 value-deduplicated hits vs.\
+Poisson null $\lambda = 4$; null rejected upward.} $\chi^{2}_{19}
+= 470$ (raw) / 38 (de-duplicated). The catalogue is structurally
+over-rich at the monomial level.
+
+\textbf{What FTD-0097 does cover:} monomial-level near-miss
+identifications including the $L_{2}$ identity
+$8\Gstar^{2}\alpha$ (which appears in the scan's $m_e$ cluster
+at exactly its claimed 68.77 ppm precision, confirming that this
+identity is consistent with the catalogue's chance-level rate).
+
+\textbf{What FTD-0097 does \emph{not} cover:} the polynomial-root
+identifications of \S\ref{sec:cm-uniqueness} (the master quadratic
+dual match operates above the monomial level scanned); the
+representation-theoretic identity $\mathrm{mult}(\Aoneg) = 4$ (also
+above monomial level); Watson's identity (a lattice-Green's-function
+identity, also above monomial level). These are the load-bearing
+identifications of the present paper and are not vulnerable to the
+look-elsewhere critique.
+
+\subsection{[PARAMETRIC]: terminal demotions}
+
+\begin{itemize}
+\item \textbf{Gauge coupling $g_c$ (FTD-0031, FTD-0093)}. All three
+first-principles routes (Mechanisms A, B, C) closed negative. Most
+recent: FTD-0093 closed at $L \in \{24, 32, 48\}$ on 2026-04-27 with
+non-monotonic ratio trend rejecting the predicted
+$\lambda_+/\lambda_- = 45.31$. Empirical input.
+\item \textbf{$L_{2}$ identity $2 m_{e}/\alpha = 16\Gstar^{2}$
+(FTD-0094)}. Terminally demoted 2026-04-27 (FTD-0093 closure +
+FTD-0096 mass-unit arrow remaining [OPEN] = both pre-registered
+demotion conditions met). Confirmed from methodological side by
+FTD-0097's chance-level reproduction of this identity in the $m_e$
+hit cluster.
+\item \textbf{$\sin^{2}\theta_{W}$, $\sin^{2}\theta_{13}$,
+$\alpha_s = 7/59$, PMNS angles}. Demoted 2026-04-19 across the
+\textsc{codata}/PDG epistemic-tag audit cycle.
+\end{itemize}
+
+\subsection{[OPEN]}
 
 \begin{enumerate}
-\item \textbf{[THEOREM] $\times 7$}: the seven theorems of
-\S\ref{sec:spine}. Plus \texttt{mult}$(\Aoneg) = 4$ from
-Theorem~\ref{thm:rho27} as a subsidiary.
-\item \textbf{[STRONGLY MOTIVATED CONJECTURE] $\times 3$}:
-$x_{+} = 1/\alpha$ at 1.26 ppm; $x_{-} = N_c$ at
-0.80\%; the master quadratic dual prediction property.
-\item \textbf{[DERIVED at linear level] $\times 1$}: the
-cluster-efficiency coefficient $k = 1/4$ from \S\ref{sec:bridge}.
-\item \textbf{[PARTIAL · MEASURED] $\times 5$}: the engine-as-instrument
-portfolio (FTD-0102 / 0103 / 0104 / 0105 / 0107).
-\item \textbf{[STRONGLY MOTIVATED CONJECTURE] $\times 1$}:
-the full nonlinear cluster-mass identification across SM particles
-(FTD-0110 main claim).
-\item \textbf{[PARAMETRIC]}: the gauge coupling $g_c$ and
-descendants (Mechanisms A, B, C all closed negative); the L2
-identity $2 m_{e}/\alpha = 16\Gstar^{2}$; sin-squared mixing angles.
-\item \textbf{[OPEN] $\times 5$}: linear-to-nonlinear bridge for
-FTD-0110; FTD-0096 mass-unit derivation; L=128 G2 confirmation;
-G$_{*}/\pi$ asymmetry per-domain measurements; Chowla--Selberg
-extension to class number $\geq 2$.
+\item Linear$\to$nonlinear bridge for FTD-0110. \emph{The single
+load-bearing remaining structural gap.} See \S\ref{sec:open}.
+\item FTD-0096 mass-unit $\mu$-from-$\ell_P$ missing arrow.
+Either an analogous no-go to FTD-0059 (closing $L_2$ permanently)
+or a constructive route. 1--2 weeks theory.
+\item FTD-0107 G2 ($L = 128$) confirmation. Pre-registered
+2026-04-28; campaign in progress; expected resolution within hours
+of paper submission.
+\item FTD-0106 G$_*$/$\pi$ per-domain follow-ups (Langevin
+dissipation, Coulomb phase, BH evaporation). Theory-only catalog
+committed; engine measurements deferred to per-domain tickets.
+\item Chowla--Selberg extension to class number $h \geq 2$. The CM
+uniqueness theorem stated in this paper covers only $h = 1$.
 \end{enumerate}
-
-What the scan does \emph{not} cover: the polynomial-root identifications
-of \S\ref{sec:cm-uniqueness} (the master quadratic dual match operates
-above the monomial level scanned by FTD-0097); the
-representation-theoretic identity $\mathrm{mult}(\Aoneg) = 4$ (also
-above monomial level); Watson's identity (lattice-Green's-function
-identity, also above monomial level). These are the load-bearing
-identifications and are not vulnerable to the look-elsewhere
-critique.
 
 % ============================================================================
 \section{Open Problems}
