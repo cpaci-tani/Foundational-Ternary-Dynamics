@@ -29,6 +29,19 @@
 import * as THREE from 'three';
 import { potentialToColor, magnitudeToColor, fluxToColor } from '../fields.js';
 import { K_B } from '../constants.js';
+
+// ── Voxel-center rendering convention ─────────────────────────────────
+// Lattice voxel index k is rendered at world centre k+0.5 (see
+// scene-core.js, flux-renderer.js, ftd_wasm.cpp particle pos_cache, and
+// the wireframe crosshair in boundary-geometry.js). All overlay positions
+// taken from the WASM samplers (getEFieldSampled, getBFieldSampled,
+// getPoyntingSampled, getEMForceField, getStrongForceField,
+// getGravityFieldSampled, getFluxVectorSampled) come back at RAW voxel
+// indices (0, stride, 2·stride, …, N-1) with NO offset. Without applying
+// VOXEL_CENTER_OFFSET at the mesh-write site, field arrows / streamlines /
+// vectors render half a voxel off from the particles + flux volume. The
+// audit (2026-04-28) caught this systemic mismatch.
+const VOXEL_CENTER_OFFSET = 0.5;
 import {
     rampViridis,
     rampCyclicHSL,
@@ -382,7 +395,10 @@ export class ViewportFieldRenderer {
         const n = Math.min(count, MAX_FIELD_GRID);
 
         for (let i = 0; i < n; i++) {
-            const gx = gridPositions[i * 3], gy = gridPositions[i * 3 + 1], gz = gridPositions[i * 3 + 2];
+            // +VOXEL_CENTER_OFFSET so arrows align with particles + flux volume.
+            const gx = gridPositions[i * 3]     + VOXEL_CENTER_OFFSET;
+            const gy = gridPositions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
+            const gz = gridPositions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             const fx = forces[i * 3], fy = forces[i * 3 + 1], fz = forces[i * 3 + 2];
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
 
@@ -445,12 +461,13 @@ export class ViewportFieldRenderer {
         for (const line of lines) {
             const nPts = line.length / 3;
             for (let i = 0; i < nPts - 1 && vi + 2 <= maxVerts; i++) {
-                posAttr.array[vi * 3] = line[i * 3];
-                posAttr.array[vi * 3 + 1] = line[i * 3 + 1];
-                posAttr.array[vi * 3 + 2] = line[i * 3 + 2];
-                posAttr.array[vi * 3 + 3] = line[(i + 1) * 3];
-                posAttr.array[vi * 3 + 4] = line[(i + 1) * 3 + 1];
-                posAttr.array[vi * 3 + 5] = line[(i + 1) * 3 + 2];
+                // +VOXEL_CENTER_OFFSET — see header convention note.
+                posAttr.array[vi * 3]     = line[i * 3]         + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 1] = line[i * 3 + 1]     + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 2] = line[i * 3 + 2]     + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 3] = line[(i + 1) * 3]     + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 4] = line[(i + 1) * 3 + 1] + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 5] = line[(i + 1) * 3 + 2] + VOXEL_CENTER_OFFSET;
 
                 const t = i / Math.max(1, nPts - 2);
                 const bright = 1.0 - t * 0.6;
@@ -488,7 +505,10 @@ export class ViewportFieldRenderer {
         const n = Math.min(count, MAX_FIELD_GRID);
 
         for (let i = 0; i < n; i++) {
-            const gx = gridPositions[i * 3], gy = gridPositions[i * 3 + 1], gz = gridPositions[i * 3 + 2];
+            // +VOXEL_CENTER_OFFSET so arrows align with particles + flux volume.
+            const gx = gridPositions[i * 3]     + VOXEL_CENTER_OFFSET;
+            const gy = gridPositions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
+            const gz = gridPositions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             const fx = forces[i * 3], fy = forces[i * 3 + 1], fz = forces[i * 3 + 2];
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
 
@@ -585,11 +605,13 @@ export class ViewportFieldRenderer {
         for (let i = 0; i < count && vi < maxArrows; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
             const scale = Math.log(1 + mag / maxMag) * arrowBase;
             const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
             const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
+            // px/py/pz already include VOXEL_CENTER_OFFSET (line above) so arrows
+            // root at voxel centres where particles render.
             posAttr.array[vi * 6]     = px;      posAttr.array[vi * 6 + 1] = py;      posAttr.array[vi * 6 + 2] = pz;
             colAttr.array[vi * 6]     = br;      colAttr.array[vi * 6 + 1] = bg;      colAttr.array[vi * 6 + 2] = bb;
             posAttr.array[vi * 6 + 3] = px + nx; posAttr.array[vi * 6 + 4] = py + ny; posAttr.array[vi * 6 + 5] = pz + nz;
@@ -614,16 +636,17 @@ export class ViewportFieldRenderer {
                 const sx = line[i * 3], sy = line[i * 3 + 1], sz = line[i * 3 + 2];
                 if (!this._insideBoundary((sx - halfN) / halfN, (sy - halfN) / halfN, (sz - halfN) / halfN)) continue;
                 colorFn(i, nPts, rgb);
-                posAttr.array[vi * 3]     = sx;
-                posAttr.array[vi * 3 + 1] = sy;
-                posAttr.array[vi * 3 + 2] = sz;
+                // +VOXEL_CENTER_OFFSET so the line aligns with particles + flux volume.
+                posAttr.array[vi * 3]     = sx + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 1] = sy + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 2] = sz + VOXEL_CENTER_OFFSET;
                 colAttr.array[vi * 3]     = rgb[0];
                 colAttr.array[vi * 3 + 1] = rgb[1];
                 colAttr.array[vi * 3 + 2] = rgb[2];
                 vi++;
-                posAttr.array[vi * 3]     = line[(i + 1) * 3];
-                posAttr.array[vi * 3 + 1] = line[(i + 1) * 3 + 1];
-                posAttr.array[vi * 3 + 2] = line[(i + 1) * 3 + 2];
+                posAttr.array[vi * 3]     = line[(i + 1) * 3]     + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 1] = line[(i + 1) * 3 + 1] + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 2] = line[(i + 1) * 3 + 2] + VOXEL_CENTER_OFFSET;
                 colAttr.array[vi * 3]     = rgb[0];
                 colAttr.array[vi * 3 + 1] = rgb[1];
                 colAttr.array[vi * 3 + 2] = rgb[2];
@@ -732,7 +755,7 @@ export class ViewportFieldRenderer {
             if (mag < threshold) continue;
             const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
 
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
             const scale = Math.log(1 + mag / maxMag) * arrowBase;
             const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
@@ -799,7 +822,7 @@ export class ViewportFieldRenderer {
             const v = values[i];
             if (Math.abs(v) < threshold) continue;
 
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
             posAttr.array[vi * 3] = px;
@@ -889,7 +912,7 @@ export class ViewportFieldRenderer {
             if (mag < threshold) continue;
             const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
 
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
             const t = mag / maxMag;
             const scale = Math.log(1 + t) * arrowBase;
@@ -994,9 +1017,9 @@ export class ViewportFieldRenderer {
         for (let i = 0; i < count && vi < maxPts; i++) {
             const abs = Math.abs(values[i]);
             if (abs < threshold) continue;
-            const px = positions[i * 3];
-            const py = positions[i * 3 + 1];
-            const pz = positions[i * 3 + 2];
+            const px = positions[i * 3]     + VOXEL_CENTER_OFFSET;
+            const py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
+            const pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN,
                                       (py - halfN) / halfN,
                                       (pz - halfN) / halfN)) continue;
@@ -1111,7 +1134,7 @@ export class ViewportFieldRenderer {
         for (let i = 0; i < count && vi < maxPts; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
             const t = mag / maxMag;
@@ -1304,7 +1327,7 @@ export class ViewportFieldRenderer {
             const mag = mags[i];
             if (mag < threshold) continue;
             if ((qualifyingSeen++ % sampleStride) !== 0) continue;
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
             const t = mag / maxMag;
@@ -1811,7 +1834,7 @@ export class ViewportFieldRenderer {
             const v = values[i];
             if (Math.abs(v) < threshold) continue;
 
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
             posAttr.array[vi * 3] = px;
@@ -1887,7 +1910,7 @@ export class ViewportFieldRenderer {
             const mag = Math.sqrt(sx * sx + sy * sy + sz * sz);
             if (mag < threshold) continue;
 
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
 
             posAttr.array[vi * 3] = px;
@@ -1998,7 +2021,7 @@ export class ViewportFieldRenderer {
             const v = signed ? raw / denom : Math.abs(raw) / denom;
             if (!signed && v < threshold) continue;
             if (signed && Math.abs(v) < threshold) continue;
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
             posAttr.array[vi * 3]     = px;
             posAttr.array[vi * 3 + 1] = py;
@@ -2073,9 +2096,9 @@ export class ViewportFieldRenderer {
         const rgb = new Float32Array(3);
         let si = 0;
         for (let i = 0; i < count && si < maxSegments; i++) {
-            const px = positions[i * 3];
-            const py = positions[i * 3 + 1];
-            const pz = positions[i * 3 + 2];
+            const px = positions[i * 3]     + VOXEL_CENTER_OFFSET;
+            const py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
+            const pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
             const phase = values[i];
             if (Math.abs(phase) < 0.02) continue;
@@ -2136,7 +2159,7 @@ export class ViewportFieldRenderer {
         for (let i = 0; i < count && vi < maxPts; i++) {
             const s = Math.max(0, Math.min(1, values[i]));
             if (s < 0.04) continue;
-            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
             const seed = (i * 9301 + this._entropyJitterSeed) & 0x7fffffff;
             const r1 = ((seed * 49297) % 233280) / 233280 - 0.5;
