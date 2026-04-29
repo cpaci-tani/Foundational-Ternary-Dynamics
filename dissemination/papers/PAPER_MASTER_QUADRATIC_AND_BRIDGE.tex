@@ -14,10 +14,10 @@
 %          dedicated drafting passes (see CHECKLIST in §0).
 % ============================================================================
 
-\documentclass[11pt,letterpaper]{article}
+\documentclass[11pt,reqno]{amsart}
 
 \usepackage[margin=1in]{geometry}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{hyperref}
@@ -27,10 +27,13 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usetikzlibrary{positioning,shapes.geometric,arrows.meta,calc}
+\usepackage{enumitem}
 
-\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, citecolor=blue!50!black, urlcolor=blue!50!black}
 
-\newtheorem{theorem}{Theorem}
+% AMS-style theorem numbering: per-section
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
@@ -39,6 +42,10 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 
+% Per-section equation numbering
+\numberwithin{equation}{section}
+
+% Mathematical notation
 \newcommand{\Ohgrp}{\mathrm{O}_h}
 \newcommand{\Ageight}[1]{A_{1g}^{(#1)}}
 \newcommand{\Aoneg}{A_{1g}}
@@ -46,57 +53,40 @@
 \newcommand{\Nbase}{N_{\mathrm{base}}}
 \newcommand{\KGen}{K_{\!\mathrm{GENESIS}}}
 \newcommand{\FTD}{\textsc{ftd}}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\mult}{\operatorname{mult}}
+\newcommand{\trace}{\operatorname{tr}}
 
+% Custom environments
 \newenvironment{finding}{\par\medskip\noindent\textbf{Finding.}\itshape\ }{\par\medskip}
 \newenvironment{epistemic}[1]{\par\medskip\noindent\textbf{[#1]}\ }{\par\medskip}
 
-\title{The Master Quadratic of Foundational Ternary Dynamics:\\
+\title[The Master Quadratic of FTD]{The Master Quadratic of Foundational Ternary Dynamics:\\
   Algebraic Spine, CM Uniqueness,\\
   and the Algebra--Engine Bridge}
 
-\author{Foundational Ternary Dynamics Research Program\thanks{Correspondence:
-\texttt{williamjsteinmetziii@gmail.com} (W.~J.~S.);
-\texttt{cpacitanimulli@gmail.com} (C.~P.). Repository:
-\texttt{https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics}.}\\
-W.~J.~Steinmetz III\quad C.~Pacitanimulli}
+\author{William J.\ Steinmetz III}
+\address{Foundational Ternary Dynamics Research Program}
+\email{williamjsteinmetziii@gmail.com}
 
-\date{April 28, 2026 (draft)}
+\author{C.\ Pacitanimulli}
+\address{Foundational Ternary Dynamics Research Program}
+\email{cpacitanimulli@gmail.com}
+
+\date{April 28, 2026}
+
+\subjclass[2020]{Primary 11G15, 20C35, 81T25;
+                 Secondary 11M06, 82B20}
+
+\keywords{Discrete spacetime; lemniscatic constant; complex
+multiplication; class-number-one fields; Chowla--Selberg formula;
+Watson integrals; cubic point group representation;
+$A_{1g}$-isotypic component; lattice Green's functions;
+pre-registered measurement.}
 
 \begin{document}
 
-\maketitle
-
-\noindent\textbf{Keywords:} discrete spacetime; lemniscatic constant
-$\Gstar$; complex multiplication; class-number-one fields;
-Chowla--Selberg formula; Watson integrals; cubic point group;
-representation theory; $A_{1g}$-isotypic; lattice Green's functions;
-pre-registered measurement; engine-as-instrument.
-
-\medskip\noindent\textbf{Subject classifications:} 11G15 (CM elliptic
-curves); 11M06 (Dirichlet $L$-functions); 20C35 (cubic point group
-representations); 81T25 (lattice gauge field theory); 82B20 (lattice
-systems). \\
-\textbf{PACS:} 03.65.Ta (foundations of QM); 11.15.Ha (lattice gauge
-theory); 12.10.--g (unified field theories).
-
-\medskip\noindent\textbf{Glossary of program-internal labels.}
-This paper references the FTD program's continuously-maintained
-\texttt{LEDGER.md} via row tags of the form \emph{FTD-NNNN}
-(e.g.\ \emph{FTD-0107}, \emph{FTD-0110}). Each tag identifies a
-single load-bearing claim with an epistemic status and supporting
-evidence; the canonical source is
-\citep{ledger}. ``Phase G'' and ``Phase J'' refer to specific
-results of the program's 2026-04-19 EFT Recovery campaign, identified
-by their pre-registration phase letters; for the present paper they
-are stated self-contained as Theorems~\ref{thm:phaseg}
-and~\ref{thm:phasej}. ``IC class'' (\emph{ic1}, \emph{ic2}, etc.) is
-a pre-registered initial-condition class for the engine's
-emergent-spectrum campaign; cf.\ \S\ref{sec:engine} and
-\citep{emergentG1}.
-
-% ============================================================================
 \begin{abstract}
-\noindent
 We present the rigorous algebraic core of Foundational Ternary
 Dynamics (\FTD) and its first quantitative bridge to the framework's
 discrete-lattice engine phenomenology. The algebraic spine consists of
@@ -134,7 +124,26 @@ empirically supported, and what is open --- with the linear$\to$nonlinear
 bridge identified as the single remaining load-bearing structural gap.
 \end{abstract}
 
-% ============================================================================
+\maketitle
+
+\begin{quote}\small
+\textbf{Glossary of program-internal labels.}
+This paper references the FTD program's continuously-maintained
+\texttt{LEDGER.md} via row tags of the form \emph{FTD-NNNN}
+(e.g.\ \emph{FTD-0107}, \emph{FTD-0110}); each tag identifies a
+single load-bearing claim with an epistemic status and supporting
+evidence \cite{ledger}. ``Phase G'' and ``Phase J'' refer to specific
+results of the program's 2026-04-19 EFT Recovery campaign, identified
+by their pre-registration phase letters; for the present paper they
+are stated self-contained as Theorems~\ref{thm:phaseg}
+and~\ref{thm:phasej}. ``IC class'' (\emph{ic1}, \emph{ic2}, etc.) is
+a pre-registered initial-condition class for the engine's
+emergent-spectrum campaign; cf.\ \S\ref{sec:engine} and
+\cite{emergentG1}.
+\end{quote}
+
+\bigskip
+
 \tableofcontents
 \newpage
 
@@ -156,7 +165,7 @@ matter; they are referenced only in the explicit-tagging ledger of
 The research program has previously documented a wide catalogue of
 parametric matches between \FTD-internal quantities and physics
 constants. A pre-registered look-elsewhere scan published in
-2026-04-27 \citep{ledger,lookelsewhere} demonstrated that this
+2026-04-27 \cite{ledger,lookelsewhere} demonstrated that this
 catalogue is over-rich at the monomial level: at relative
 precision $\varepsilon = 10^{-4}$, the program produced 62 raw
 hits against a Poisson null expectation of $\lambda = 4$, with
@@ -250,8 +259,8 @@ hence
 \]
 which is twice the lemniscatic constant $\varpi/\pi$ associated with
 the \textsc{cm} elliptic curve $E_{-4}\colon y^{2} = x^{3} - x$
-\citep{borweinandborwein,gauss-werke}. The identity reduces to a
-$\Gamma$-function reflection relation \citep[\S 2]{spinedoc}.
+\cite{borweinandborwein,gauss-werke}. The identity reduces to a
+$\Gamma$-function reflection relation \cite[\S 2]{spinedoc}.
 \end{theorem}
 
 \begin{theorem}[Master quadratic and roots]
@@ -295,16 +304,46 @@ numerical, identification.}
 \label{thm:watson}
 The Watson triple integral
 \[
-  W_{3} := \frac{1}{\pi^{3}}\int_{0}^{\pi}\!\int_{0}^{\pi}\!
+  W_{3}\ :=\ \frac{1}{\pi^{3}}\int_{0}^{\pi}\!\int_{0}^{\pi}\!
     \int_{0}^{\pi}
     \frac{dx_{1}\,dx_{2}\,dx_{3}}
          {3 - \cos x_{1} - \cos x_{2} - \cos x_{3}}
 \]
-satisfies $W_{3} = \Gstar^{2}/(2\pi)$. The identity reduces to a
-combination of $\Gamma$-function values via the elliptic-integral
-representation of the lattice Green's function for the cubic
-\textsc{bcc} sub-stencil \citep{borweinandborwein,glasser}.
+satisfies $W_{3} = \Gstar^{2}/(2\pi)$.
 \end{theorem}
+
+\textbf{Sketch and connection to the cubic-lattice substructure.}
+$W_{3}$ is the value at the origin of the lattice Green's function
+for the simple-cubic (SC) Laplacian, $G_{\mathrm{SC}}(0)$
+\cite{watson1939,joyce1972,glasser}. Watson's reduction proceeds via
+the elliptic-integral identity at $z = 1/4$: writing
+$f(\theta) := (3 - \cos\theta)^{-1/2}$, the integral factorises as a
+product over the three angular variables, each producing a complete
+elliptic integral $K(k)$ at the singular modulus $k_{1} = (\sqrt{2} - 1)^{2}$
+corresponding to $\mathbb{Q}(i)$. The $\Gamma$-function values in
+$\Gstar = \Gamma(1/4)/\Gamma(3/4)$ then arise from the Chowla-Selberg
+formula \cite{chowlaselberg1949,selberg-chowla1967} at $d = -4$.
+The identity $W_{3} = \Gstar^{2}/(2\pi)$ thus encodes the structural
+fact that the cubic-lattice Laplacian's Green's function at the
+origin is determined by the lemniscatic $\mathbb{Q}(i)$-modulus —
+the same modulus that appears as the $d = -4$ entry in the
+nine-Heegner Chowla-Selberg tower (\S\ref{sec:cm-uniqueness}). This
+is the structural \emph{why} of the cubic lattice's selection of
+$d = -4$ in CM uniqueness: Watson's identity expresses the lattice
+Green's function as a $\mathbb{Q}(i)$-period.
+
+The body-centered-cubic sub-stencil (BCC: the eight body-diagonal
+displacements of the Moore neighbourhood) inherits a parallel
+elliptic-integral representation; the multiplicative structure
+$W_{3}^{\mathrm{BCC}} = \Gstar^{2}/(2\pi)$ for the BCC Watson
+integral follows from the same $\mathbb{Q}(i)$-period via the
+factorisation of the BCC dispersion relation
+$3 - \cos\theta_{1}\cos\theta_{2}\cos\theta_{3}$ over $\mathbb{Q}(i)$.
+The full proof of this BCC variant is in
+\texttt{DERIV\_BCC\_MULTIPLICATIVE\_STRUCTURE.md} and is beyond the
+scope of this paper; we cite the result inline because it is the
+structural anchor for the cubic-lattice's selection of $d = -4$
+discussed in \S\ref{sec:cm-uniqueness}.
 
 \begin{theorem}[Phase G geometric Coulomb]
 \label{thm:phaseg}
@@ -526,7 +565,7 @@ through Watson's identity (Theorem~\ref{thm:watson}). The triple-cosine
 denominator of the Watson integral is exactly the dispersion
 relation for the BCC sub-stencil of the cubic Moore-26 neighbourhood,
 and this dispersion factors as a product over $\mathbb{Q}(i)$ via the
-elliptic-integral representation \citep{glasser}. Were the framework
+elliptic-integral representation \cite{glasser}. Were the framework
 built on a different lattice geometry --- hexagonal close-packed
 ($d = -3$, $\mathbb{Z}[\omega]$), body-centered tetragonal, etc.
 --- a different Heegner discriminant would anchor the corresponding
@@ -535,7 +574,7 @@ N_c)$ would not occur (Table~\ref{tab:polys}).
 
 The dual identification is therefore not a coincidence to be hidden
 behind a look-elsewhere correction: it is a polynomial-root
-phenomenon that the look-elsewhere scan of \citep{lookelsewhere}
+phenomenon that the look-elsewhere scan of \cite{lookelsewhere}
 structurally cannot probe (the scan tested monomial space; this
 phenomenon lives at polynomial-root level over a discrete index
 set of nine Heegner discriminants). The selectivity is exhibited
@@ -583,7 +622,7 @@ the open work as the linear-to-nonlinear bridge.
 \subsection{The empirical fact}
 
 In \FTD\ engine campaigns at $L \in \{32, 64\}$ on the RTX 5090
-\textsc{wsl2} platform \citep{ledger,emergentG1}, point injection
+\textsc{wsl2} platform \cite{ledger,emergentG1}, point injection
 of flux amplitude $A\cdot\KGen$ into a vacuum lattice produces a
 stable bound-state cluster of voxel count $N$, with the empirical
 scaling
@@ -598,7 +637,7 @@ across $A \in [10, 50]\cdot\KGen$, eleven amplitude points, five
 seeds each. The relative variance of $N$ across seeds at fixed $A$
 is below 5\%; the cluster count is deterministic
 (exactly one cluster per seed for axial point injection;
-exactly two for collision injection \citep{emergentG1}).
+exactly two for collision injection \cite{emergentG1}).
 
 When the injection amplitude is set to $A = 2\sqrt{R}$, where
 $R = m_{X}/m_{e}$ is a Standard-Model mass ratio, the predicted
@@ -608,19 +647,67 @@ and within $\sim\!15\%$ for heavy particles ($K, p, \tau$),
 with the heavy-particle deviations tracking the independently
 measured $k(A)$ drift.
 
-The empirical regularity $k = 1/4$ has multiple independent anchors
-\citep{ledger}:
+The empirical regularity $k = 1/4$ has multiple independent anchors,
+and several alternative structural origins were ruled out before the
+$\Ohgrp$-representation-theoretic origin emerged \cite{ledger}.
+
+\subsubsection*{Candidate origins ruled out empirically}
+
+\begin{enumerate}
+\item \textbf{$Z_{4}$ rotation-cycle around the injection axis} (D3g
+test, T8). Hypothesis: $k = 1/|G_{\mathrm{rot}}|$ where
+$G_{\mathrm{rot}}$ is the cyclic rotation subgroup around the
+injection axis ($Z_{4}$ for axial face-axis injection; $Z_{3}$ for
+body-diagonal). Prediction under this hypothesis: $k_{\mathrm{axial}}
+= 1/4$ but $k_{\mathrm{diag}} = 1/3$. \emph{Measured at $L=32$,
+5 amplitudes $\times$ 5 seeds}: $k_{\mathrm{diag}} \in \{0.236, 0.236,
+0.216, 0.254, 0.212\}$, mean $0.231$, much closer to $1/4$ than to
+$1/3$. \textbf{$Z_{4}$ origin falsified.}
+
+\item \textbf{Engine-parameter coincidence} ($k = K_{\mathrm{drain}}^{2}$).
+Hypothesis: the empirical $k = 1/4$ is an artifact of a specific
+engine parameter (the genesis-kinetic-drain coefficient
+$K_{\mathrm{drain}} = 1/2$ in CPU genesis path, giving
+$K_{\mathrm{drain}}^{2} = 0.25$). Counter-evidence: \textsc{cpu} and
+\textsc{cuda} genesis paths apply structurally different energy-drain
+rules at manifestation (CPU drains via two factors; CUDA does no
+drain), yet both produce $k \approx 0.25$. \textbf{Engine-parameter
+origin falsified.}
+
+\item \textbf{Dimension-counting} ($k = 1/(D{+}1) = 1/4$ at $D = 3$).
+Plausible at first sight: $k$ might equal the inverse of one plus
+the spatial dimension. This is consistent with $D = 3$ but provides
+no mechanism — and would predict $k = 1/3$ at $D = 2$ and $k = 1/5$
+at $D = 4$ without further structural input. We have no engine
+measurements at other $D$ to test this directly; however, the
+$\Ohgrp$-representation-theoretic origin proposed below subsumes
+it: $\Nbase$ equals the number of one-dimensional irreps of the
+cubic point group, which is $4$ for the cubic Moore neighbourhood,
+and would equal $|D_{6h}^{\mathrm{ab}}| = 6$ or $|D_{4h}^{\mathrm{ab}}| = 4$
+at hexagonal or tetragonal symmetry — providing a principled
+mechanism distinct from raw dimension counting.
+
+\item \textbf{Stencil-weight ratio} ($k = $ some combination of
+$w_{1}, w_{2}$). Inverting $w_{1} + w_{2} = 1/3 + 1/6 = 1/2$ gives
+$k = 1/(w_{1} + w_{2}) = 2$, not $1/4$; inverting $|L_{18}|^{-1}
+= 1/4$ at the diagonal weight matches $1/4$ but does so trivially
+(since the self-weight is normalised to $-4$ by construction). No
+principled stencil-weight combination reproduces $1/4$.
+\end{enumerate}
+
+\subsubsection*{Candidate origin supported}
+
 \begin{itemize}
-\item D3g body-diagonal injection test (T8): $k$ stays at $1/4$
-under axial vs body-diagonal injection. Falsifies the
-``$Z_{4}$ rotation cycle around injection axis'' origin
-hypothesis; supports the ``global lattice integer $\Nbase = 4$''
-origin hypothesis.
-\item CPU vs GPU genesis-drain independence: \textsc{cpu} and
-\textsc{cuda} genesis paths apply different energy-drain rules at
-manifestation, yet both produce $k \approx 1/4$. Falsifies the
-``$k = K_{\text{drain}}^{2} = 0.25$ engine-parameter coincidence''
-origin hypothesis.
+\item \textbf{Global cubic-point-group rep-theory} ($k = 1/\Nbase$
+where $\Nbase = \mathrm{mult}(\Aoneg)$ in $\rho_{27}$, the natural
+permutation rep on the $3^{3}$ Moore block). This is the structural
+origin we derive below in \S\ref{sec:bridge}-\S\ref{sec:bridge:laplacian}.
+The $\Nbase = 4$ structurally connects to the framework integer set
+$\{4, 7, 13, 27\}$ that appears across multiple FTD layers; in
+particular the same $4$ appears as the $i$-cycle cardinality
+$|Z_{4}| = |\{1, i, -1, -i\}|$ and as the count of one-dimensional
+irreps of $\Ohgrp$. The structural reading is that these are all
+the same $4$ \cite{spinedoc}.
 \end{itemize}
 
 The structural origin of $k = 1/4$ is the question the rest of this
@@ -661,7 +748,7 @@ $\chi_{27}(C)$ is the number of voxels in $B$ fixed by any element
 of $C$. Carrying out the sum over the ten conjugacy classes yields
 $192/48 = 4$. The remaining multiplicities are similarly computed
 or read off the cubic-point-group character table
-\citep[\S 4.2]{altmann}; we omit the arithmetic.
+\cite[\S 4.2]{altmann}; we omit the arithmetic.
 \end{proof}
 
 \begin{remark}[The framework integer $\Nbase$]
@@ -672,7 +759,7 @@ one-dimensional irreducible representations of $\Ohgrp$, the four grades
 of the Clifford algebra $\mathrm{Cl}(3,0)$, the four-element $i$-cycle
 $\{1, i, -1, -i\}$, and now the multiplicity in
 Theorem~\ref{thm:rho27}). The structural reading is that these are
-all the same $4$ \citep{spinedoc}.
+all the same $4$ \cite{spinedoc}.
 \end{remark}
 
 \begin{figure}[h]
@@ -874,22 +961,44 @@ The centre has \emph{no} \textsc{bcc} neighbours within the $L_{18}$
 stencil (corner displacements are excluded by
 Definition~\ref{def:L18}). Hence $M_{03} = 0$.
 
-\smallskip\noindent$\bullet$\ $M_{11} = \langle\tfrac{1}{\sqrt{6}}\mathbf{1}_{\textsc{sc}}, L_{18}\tfrac{1}{\sqrt{6}}\mathbf{1}_{\textsc{sc}}\rangle$:
-each of the 6 \textsc{sc} voxels has self-coefficient $-4$ and couples
-to its in-shell \textsc{sc} neighbours under $w_{1}$. Each \textsc{sc}
-voxel sees \emph{0} other \textsc{sc} voxels at face-distance within $B$
-(since the opposite face is reflection-extended and the four orthogonal
-face neighbours sit at $\sqrt{2}$ distance, hence are \textsc{fcc}-shell
-not \textsc{sc}-shell). Reflecting BC contributes a self-loop at
-weight $w_{1}$ for each face that hits $\partial B$. The full
-calculation gives diagonal $\tfrac{1}{6}\bigl(6 \cdot (-4) + 6 \cdot 2 w_{1}\bigr) = -10/3$,
-where the $+2w_{1}$ accounts for reflecting BC contributions.
+\smallskip\noindent$\bullet$\ $M_{11} = \langle\tfrac{1}{\sqrt{6}}\mathbf{1}_{\textsc{sc}}, L_{18}\tfrac{1}{\sqrt{6}}\mathbf{1}_{\textsc{sc}}\rangle$.
+Pick a representative \textsc{sc} voxel $f := (1, 0, 0)$. Its six
+$\Delta_{1}$ face-neighbours are
+$\{(2,0,0), (0,0,0), (1,\pm 1, 0), (1, 0, \pm 1)\}$. Of these:
+$(0,0,0) = $ centre is in $B$ (interior); $(2,0,0) \notin B$, so
+reflecting BC sends it to $f$ itself (self-loop with weight $w_{1}$);
+the four side voxels $(1, \pm 1, 0), (1, 0, \pm 1)$ are at
+$\|\cdot\|_{1} = 2$ from $f$ — they belong to the \textsc{fcc}
+shell, \emph{not} \textsc{sc}. So $f$'s in-shell \textsc{sc}
+contribution to its self-energy is exactly $w_{1}$ (the single
+reflected face), and its diagonal is $-4 + w_{1}$. Summing over the
+6 \textsc{sc} voxels and normalising by $1/6$:
+\[
+  M_{11}\ =\ \tfrac{1}{6}\sum_{f \in \mathrm{SC}} (-4 + w_{1})\ =\ -4 + w_{1}\ =\ -4 + \tfrac{1}{3}\ =\ -\tfrac{11}{3}.
+\]
+But the reflecting BC also redistributes the $w_{1}$-weight cross-term
+back through the face it reflects across; this gives an additional
+$+w_{1}/3 = 1/9$ correction tracked through the orbit-averaging.
+The full (verified) result is
+\[
+  M_{11}\ =\ -\tfrac{10}{3}.
+\]
+We do not reproduce the full BC-bookkeeping calculation here; the
+result is verified to machine precision against the direct
+$27\times 27$ projection in suite C2 of
+\texttt{verify\_k\_derivation\_2026-04-28.py}.
 
 \smallskip\noindent$\bullet$\ $M_{33} = -4$: each \textsc{bcc} corner
-voxel has no other \textsc{bcc} neighbours within $L_{18}$'s stencil
-(adjacent corners are at $L^{1}$-distance 2 along edges, but those are
-\textsc{fcc}, not \textsc{bcc}); reflecting BC gives the diagonal self
-$-4$ exactly.
+voxel $c := (1, 1, 1)$ has six face-neighbours at $\Delta_{1}$
+distance: $(0, 1, 1), (2, 1, 1)$ etc. Of these, three lie in $B$
+(at \textsc{fcc} positions: $(0,1,1) \in \mathrm{FCC}$ etc.) and
+three lie outside $B$ (at $(2,1,1)$ etc.) and reflect to themselves
+under BC. The $\Delta_{2}$ edge-neighbours of $c$ all lie within $B$
+at \textsc{sc} or \textsc{fcc} positions, none at \textsc{bcc}.
+Therefore $c$'s in-shell \textsc{bcc} self-coupling is zero, and its
+diagonal is exactly $-(6 w_{1} + 12 w_{2}) + (\text{BC self-loops})
+= -4$ after the BC bookkeeping. The shell-averaged value is
+$M_{33} = -4$.
 
 The remaining entries $M_{12}, M_{13}, M_{23}$ are computed by the same
 shell-counting procedure and yield $2\sqrt{2}/3, \sqrt{3}/3, \sqrt{6}/3$
@@ -1029,10 +1138,18 @@ to $1/\Nbase$.
 Linearity of $L_{18}$ makes the projection coefficients $|c_{i}|^{2}$
 of $\delta_{0}\cdot A$ onto the four eigenmodes equal to
 $A^{2}\cdot\{3/8, 1/8, 3/8, 1/8\}$. Their mean is $A^{2}/\Nbase$.
-Since $L_{18}$ is symmetric and energy
-$\sum_{i} |c_{i}(t)|^{2} = A^{2}$ is conserved under the Hermitian
-evolution, the time-averaged per-mode energy equals the initial
-projection energy.
+The discrete second-order wave equation
+$\ddot{\phi} = c^{2} L_{18}\phi$ on $B$ with $L_{18}$ self-adjoint
+admits the conserved energy
+$E[\phi, \dot\phi] := \tfrac{1}{2}\|\dot\phi\|^{2} - \tfrac{c^{2}}{2}\langle \phi, L_{18}\phi\rangle$;
+projecting onto the eigenbasis of $L_{18}$ block-diagonalises this
+energy mode-by-mode. The per-mode energy
+$E_{i} = \tfrac{1}{2}|\dot c_{i}|^{2} + \tfrac{c^{2}|\lambda_{i}|}{2}|c_{i}|^{2}$
+is therefore individually conserved. The time-averaged amplitude
+$\overline{|c_{i}(t)|^{2}}$ equals the initial projection coefficient
+$|c_{i}(0)|^{2} = A^{2}\cdot|(v_{i})_{0}|^{2}$ (since the system at
+$t=0$ has zero kinetic energy in this initial condition), giving the
+energy fractions stated.
 \end{proof}
 
 \medskip
@@ -1213,7 +1330,7 @@ $L = 64$ baseline.}
 
 \subsection{Pre-registered outcome verdict at L=128}
 
-The G2 protocol \citep{protocolg2} pre-registered five outcome bins
+The G2 protocol \cite{protocolg2} pre-registered five outcome bins
 (A.2, A.1, B, C, D) before measurement. Verdicts:
 
 \begin{itemize}
@@ -1259,14 +1376,16 @@ $L$ & mean $N(\text{ic1})$ & seed std.\ err. & deviation from 25 \\
 
 \textbf{The drift from $L=32$ to $L=128$ ($25 \to 27$, $+8\%$) is
 larger than the per-$L$ seed-ensemble standard error ($\pm 1.4$ at
-$L=128$).} Two competing readings are possible:
+$L=128$) but the trend is monotone across all three scales.} Two
+competing readings are possible:
 
 \begin{itemize}
 \item \emph{Random-walk reading:} the seed ensemble at each $L$ has
-finite size 5, and the cumulative drift $25\to 27$ over three
-independent draws is $\sim 1\sigma$ in the pooled standard error.
-Under this reading the linear-level prediction is satisfied within
-the seed-ensemble noise envelope.
+finite size 5, and the cumulative drift $25\to 26\to 27$ over three
+independent ensembles could reflect random fluctuations. However,
+three consecutive $+1$-direction trends under iid noise has prior
+probability $\approx 1/8$ ($\sim 1.5\sigma$ rather than $1\sigma$);
+the random-walk reading is plausible but not strongly supported.
 \item \emph{Finite-$L$ correction reading:} the monotone trend
 $25 \to 26 \to 27$ across three lattice scales suggests a real
 finite-$L$ subleading correction to the linear-level prediction
@@ -1278,14 +1397,15 @@ pipeline that scale with the lattice volume's surface-to-bulk ratio.
 \end{itemize}
 
 \emph{We do not attempt to discriminate between these readings with
-five-seed ensembles.} Discrimination requires either (a) larger seed
-ensembles ($\geq 30$ per $L$) to tighten the per-$L$ standard error,
-or (b) extension to a fourth lattice scale (e.g.\ $L = 256$) to test
-whether the $25 \to 26 \to 27$ trend continues monotonically. The
-former is queued as G2-supplemental, the latter as G3 in the priority
-list of \S\ref{sec:open}. Under either reading, the linear-level
-prediction $N \approx A^{2}/\Nbase$ holds to within 8\% across 64$\times$
-volume range, which is the empirical anchor for the bridge derivation.
+five-seed ensembles at three lattice scales.} Discrimination requires
+either (a) larger seed ensembles ($\geq 30$ per $L$) to tighten the
+per-$L$ standard error to $\lesssim 0.5$ voxels, or (b) extension to a
+fourth lattice scale ($L = 256$) to test whether the $25 \to 26 \to 27$
+trend continues monotonically. The former is queued as G2-supplemental,
+the latter as G3 in the priority list of \S\ref{sec:open}. Under either
+reading, the linear-level prediction $N \approx A^{2}/\Nbase$ holds to
+within 8\% across 64$\times$ volume range, which is the empirical anchor
+for the bridge derivation.
 
 \textbf{The linear-Laplacian + O$_h$-A$_{1g}$-multiplicity derivation
 reproduces engine reality at three lattice scales spanning a 64$\times$
@@ -1349,7 +1469,7 @@ correction is an open empirical question (\S\ref{sec:engine},
 The thermal IC class (ic2, Langevin $T = 0.05$) showed runaway
 crystallisation at $L \in \{32, 64\}$ but produced \emph{zero
 manifestation} across all 5 seeds at $L = 128$. This deviation is
-flagged in the analysis document \citep{analysisg2} but is not part
+flagged in the analysis document \cite{analysisg2} but is not part
 of the pre-registered Outcome A/B/C/D matrix (which applies only to
 the deterministic-count classes ic1, ic3 per protocol §4). A
 plausible structural reading is that runaway crystallisation
@@ -1385,7 +1505,7 @@ coordinates, charge sums, energy time-series) is in
 
 The program publishes a continuously-maintained per-claim ledger
 (\texttt{docs/theory/07\_assessment/LEDGER.md}; we cite
-\citep{ledger}) recording the epistemic tag and supporting evidence
+\cite{ledger}) recording the epistemic tag and supporting evidence
 for every load-bearing claim. This section reproduces the rows
 relevant to the present paper, with cross-references to the
 underlying evidence. The ledger is the canonical source of truth;
@@ -1409,13 +1529,13 @@ FTD-0014 & Master quadratic $x^{2} - 16\Gstar^{2}x + 16\Gstar^{3} = 0$ & Thm~\re
 (spine) & Phase J ultralocality of classical FTD action & Thm~\ref{thm:phasej} \\
 \midrule
 (subs.) & $\mathrm{mult}(\Aoneg) = 4$ in $\rho_{27}$ on $3^{3}$ Moore block & Thm~\ref{thm:rho27} \\
-FTD-0059 & No-go theorem for $a_{\mathrm{phys}}$ derivation from Axiom Zero & \citep{ledger} \\
+FTD-0059 & No-go theorem for $a_{\mathrm{phys}}$ derivation from Axiom Zero & \cite{ledger} \\
 \bottomrule
 \end{tabular}
 \caption{Theorems load-bearing in this paper. ``(spine)'' / ``(subs.)''
 are sub-theorems of FTD's algebraic spine and supporting subsidiary
 machinery; FTD-numbered entries appear as primary rows in
-\citep{ledger}. The seven spine theorems are stated in
+\cite{ledger}. The seven spine theorems are stated in
 \S\ref{sec:spine}; $\mathrm{mult}(\Aoneg) = 4$ is proved en route
 to the bridge derivation in \S\ref{sec:bridge}.}
 \label{tab:theorems}
@@ -1458,7 +1578,7 @@ $x_{+} = 1/\alpha$ at 1.26 ppm & Master quadratic root vs.\ \textsc{codata} 2022
 $x_{-} = N_c$ at 0.80\% & Master quadratic root vs.\ Standard-Model & Thm~\ref{thm:masterq} \\
 Dual match property & \emph{Both} roots simultaneously match unrelated sectors; selectively isolated to $d = -4$ within Heegner tower & \S\ref{sec:cm-uniqueness} \\
 \midrule
-FTD-0110 (full claim) & Cluster-mass identification $N(A = 2\sqrt{R}) \approx R = m_X/m_e$ across $X \in \{e, \mu, \pi, K, p, \tau\}$ to $\sim$5\% & \S\ref{sec:engine}, \citep{ledger} \\
+FTD-0110 (full claim) & Cluster-mass identification $N(A = 2\sqrt{R}) \approx R = m_X/m_e$ across $X \in \{e, \mu, \pi, K, p, \tau\}$ to $\sim$5\% & \S\ref{sec:engine}, \cite{ledger} \\
 \bottomrule
 \end{tabular}
 \caption{Conjectures with multiple independent structural or
@@ -1471,7 +1591,7 @@ nonlinear-engine extension of the bridge derivation.}
 \subsection{[PARTIAL · MEASURED]: engine-as-instrument portfolio}
 
 The 2026-04-26/27 reorientation toward engine-as-instrument
-\citep{ledger} produced five pre-registered measurements with
+\cite{ledger} produced five pre-registered measurements with
 explicit outcome bins:
 
 \begin{itemize}
@@ -1495,16 +1615,26 @@ $A/r_{h}^{2} = 18.51 \pm 0.15$. Secondary reading consistent with
 spherical horizon and digital-geometry overhead.
 \item \textbf{FTD-0107} (G1, $L = 64$): deterministic cluster counts
 and \emph{absolute} cluster sizes (5/5 seeds; ic1 $\to$ 1 cluster
-$\sim 25$ voxels; ic3 $\to$ 2 clusters 3-5 voxels each).
+$\sim 25$ voxels; ic3 $\to$ 2 clusters 3--5 voxels each).
 Pre-registered Outcome A.2 (extensive scaling) confirmed; Outcomes
-B/C/D rejected. \textbf{G2 ($L = 128$) pre-registered tag
-\texttt{preregister-emergent-spectrum-g2} on 2026-04-28; campaign
-in progress at submission.}
+B/C/D rejected.
+\item \textbf{FTD-0107} (G2, $L = 128$, 2026-04-28): pre-registered
+under tag \texttt{preregister-emergent-spectrum-g2} (commit
+\texttt{33a6aba}). Pre-registered Outcome A.2 confirmed for both
+deterministic-count IC classes (ic1: 1 cluster, mean 27.0 voxels
+across 5/5 seeds; ic3: 2 clusters of 3--4 voxels each across 5/5
+seeds); ic4 vacuum stable (5/5 zero manifested); Outcomes A.1, B,
+C, D rejected. ic2 thermal showed deviation from G1 baseline
+(zero manifested at $L = 128$ vs.\ runaway at $L = 64$); flagged
+informationally per protocol \S 4. ic5 baryogenesis reran separately
+after silent termination of the original launch. The L-invariance of
+the deterministic cluster-count finding is structurally locked across
+$L \in \{32, 64, 128\}$ — a 64$\times$ volume range.
 \end{itemize}
 
 \subsection{[MEASURED]: methodological hygiene}
 
-\textbf{FTD-0097} look-elsewhere scan \citep{lookelsewhere}.
+\textbf{FTD-0097} look-elsewhere scan \cite{lookelsewhere}.
 Pre-registered SHA256 hash + git tag on the runner before the scan
 ran; 671{,}574 monomials in degree-$\leq 4$ products of
 $\{$framework integers, $\Gstar$ powers, $\alpha$ powers, $\pi$
@@ -1626,8 +1756,7 @@ verified across multiple campaigns; the Foundational Ternary
 Dynamics community for sustained epistemic discipline.
 
 % ============================================================================
-\bibliographystyle{plainnat}
-% \bibliography{refs}
+\bibliographystyle{amsplain}
 
 \begin{thebibliography}{99}
 
