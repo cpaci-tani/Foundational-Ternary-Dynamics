@@ -90,17 +90,22 @@ def analyze_dir(label: str, ddir: Path, regime_label: str = ""):
     print(f"--- {label}  (regime: {regime_label}) ---")
     print(f"    {ddir.name}")
 
+    # Detect lattice size from path (L32, L64, L80 substrings); default L=32
+    L = 32
+    for cand in [128, 80, 64, 32, 16]:
+        if f"L{cand}" in str(ddir) or f"L{cand}_" in str(ddir):
+            L = cand
+            break
+    # Runaway threshold: cluster spanning > 25% of lattice volume = lattice-fill
+    runaway_thresh = (L ** 3) // 4
+
     per_seed_traces = []
     for f in csvs:
         series = read_voxel_count_series(f)
         if len(series) < 5:
             continue
-        # exclude vacuum-collapse runaways
-        if max(series) > ddir.parts[-1].count("L32") and max(series) > 1000:
-            print(f"  {f.name[:40]}: RUNAWAY skip (max={max(series)})")
-            continue
-        if max(series) > 10000:
-            print(f"  {f.name[:40]}: RUNAWAY skip (max={max(series)})")
+        if max(series) > runaway_thresh:
+            print(f"  {f.name[:40]}: RUNAWAY skip (max={max(series)}, thresh={runaway_thresh}, L={L})")
             continue
         per_seed_traces.append(series)
 
@@ -233,6 +238,36 @@ def main():
         ("A=50 T=0.040 L=32 (10 seeds)", "T0.040",  "T-sweep 8x"),
     ]:
         r = analyze_dir(label, p3 / sub, regime)
+        if r:
+            results.append(r)
+
+    # --- Phase 4 datasets: multi-amplitude T sweep ---
+    p4 = RESULTS / "regime4_phase4"
+    print("================ PHASE 4: multi-amplitude T sweep ======================\n")
+    for label, sub, regime in [
+        ("A=20 T=0.010 L=32 (10 seeds)", "A20_T0.010", "T-sweep at A=20"),
+        ("A=20 T=0.020 L=32 (10 seeds)", "A20_T0.020", "T-sweep at A=20"),
+        ("A=20 T=0.040 L=32 (10 seeds)", "A20_T0.040", "T-sweep at A=20"),
+        ("A=30 T=0.010 L=32 (10 seeds)", "A30_T0.010", "T-sweep at A=30"),
+        ("A=30 T=0.020 L=32 (10 seeds)", "A30_T0.020", "T-sweep at A=30"),
+        ("A=30 T=0.040 L=32 (10 seeds)", "A30_T0.040", "T-sweep at A=30"),
+        ("A=80 T=0.005 L=64 (5 seeds)",  "A80_T0.005_L64", "T-sweep at A=80"),
+        ("A=80 T=0.010 L=64 (5 seeds)",  "A80_T0.010_L64", "T-sweep at A=80"),
+        ("A=80 T=0.020 L=64 (5 seeds)",  "A80_T0.020_L64", "T-sweep at A=80"),
+        ("A=80 T=0.040 L=64 (5 seeds)",  "A80_T0.040_L64", "T-sweep at A=80"),
+    ]:
+        r = analyze_dir(label, p4 / sub, regime)
+        if r:
+            results.append(r)
+
+    # --- Phase 5 datasets: regime-3 thickening at L=80 ---
+    p5 = RESULTS / "regime4_phase5"
+    print("================ PHASE 5: regime-3 thickening (large N at L=80) ========\n")
+    for label, sub, regime in [
+        ("A=117.93 T=0.005 L=80 (5 seeds)", "tau_T0.005", "regime-3 thickening"),
+        ("A=117.93 T=0.020 L=80 (5 seeds)", "tau_T0.020", "regime-3 thickening + active"),
+    ]:
+        r = analyze_dir(label, p5 / sub, regime)
         if r:
             results.append(r)
 
