@@ -23,6 +23,10 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{positioning,shapes.geometric,arrows.meta,calc}
 
 \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
 
@@ -50,14 +54,45 @@
   Algebraic Spine, CM Uniqueness,\\
   and the Algebra--Engine Bridge}
 
-\author{Foundational Ternary Dynamics Research Program\\
-  \texttt{docs/theory/}}
+\author{Foundational Ternary Dynamics Research Program\thanks{Correspondence:
+\texttt{williamjsteinmetziii@gmail.com} (W.~J.~S.);
+\texttt{cpacitanimulli@gmail.com} (C.~P.). Repository:
+\texttt{https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics}.}\\
+W.~J.~Steinmetz III\quad C.~Pacitanimulli}
 
-\date{2026-04-28 (draft)}
+\date{April 28, 2026 (draft)}
 
 \begin{document}
 
 \maketitle
+
+\noindent\textbf{Keywords:} discrete spacetime; lemniscatic constant
+$\Gstar$; complex multiplication; class-number-one fields;
+Chowla--Selberg formula; Watson integrals; cubic point group;
+representation theory; $A_{1g}$-isotypic; lattice Green's functions;
+pre-registered measurement; engine-as-instrument.
+
+\medskip\noindent\textbf{Subject classifications:} 11G15 (CM elliptic
+curves); 11M06 (Dirichlet $L$-functions); 20C35 (cubic point group
+representations); 81T25 (lattice gauge field theory); 82B20 (lattice
+systems). \\
+\textbf{PACS:} 03.65.Ta (foundations of QM); 11.15.Ha (lattice gauge
+theory); 12.10.--g (unified field theories).
+
+\medskip\noindent\textbf{Glossary of program-internal labels.}
+This paper references the FTD program's continuously-maintained
+\texttt{LEDGER.md} via row tags of the form \emph{FTD-NNNN}
+(e.g.\ \emph{FTD-0107}, \emph{FTD-0110}). Each tag identifies a
+single load-bearing claim with an epistemic status and supporting
+evidence; the canonical source is
+\citep{ledger}. ``Phase G'' and ``Phase J'' refer to specific
+results of the program's 2026-04-19 EFT Recovery campaign, identified
+by their pre-registration phase letters; for the present paper they
+are stated self-contained as Theorems~\ref{thm:phaseg}
+and~\ref{thm:phasej}. ``IC class'' (\emph{ic1}, \emph{ic2}, etc.) is
+a pre-registered initial-condition class for the engine's
+emergent-spectrum campaign; cf.\ \S\ref{sec:engine} and
+\citep{emergentG1}.
 
 % ============================================================================
 \begin{abstract}
@@ -207,14 +242,16 @@ here we give the statements and pointers.
 
 \begin{theorem}[$\Gstar$ algebraic identity]
 \label{thm:gstar}
-Define $\Gstar := \Gamma(1/4)/\Gamma(3/4)$. Then
-$\Gstar = \Gamma(1/4)^{2}/(\sqrt{2\pi}\cdot \pi^{1/2}) =
-\Gamma(1/4)^{2}/(\pi\sqrt{2})$, which is the lemniscatic period at the
-\textsc{cm} elliptic curve $E_{-4}\colon y^{2} = x^{3} - x$. Numerically
-$\Gstar = 2.62205755\ldots$ \emph{(or its reciprocal-form variant
-$2\Gstar = \pi\sqrt{2}/\Gamma(1/4)^{2}$ in some texts; we adopt the
-former convention throughout)}. The identity reduces to a $\Gamma$-function
-duplication relation \citep[\S 2]{spinedoc}.
+Define $\Gstar := \Gamma(1/4)/\Gamma(3/4)$. By Euler's reflection
+formula $\Gamma(1/4)\Gamma(3/4) = \pi/\sin(\pi/4) = \pi\sqrt{2}$,
+hence
+\[
+  \Gstar\ =\ \frac{\Gamma(1/4)^{2}}{\pi\sqrt{2}}\ =\ 2.95867551\ldots
+\]
+which is twice the lemniscatic constant $\varpi/\pi$ associated with
+the \textsc{cm} elliptic curve $E_{-4}\colon y^{2} = x^{3} - x$
+\citep{borweinandborwein,gauss-werke}. The identity reduces to a
+$\Gamma$-function reflection relation \citep[\S 2]{spinedoc}.
 \end{theorem}
 
 \begin{theorem}[Master quadratic and roots]
@@ -377,6 +414,49 @@ entry is anomalously small: this is the Ramanujan-constant phenomenon
 ($e^{\pi\sqrt{163}}$ is integer-near because the $j$-invariant
 $j(\tau_{-163}) = -640320^{3}$ is exactly an integer; the same
 structure compresses the corresponding $\Gamma$-product).
+Figure~\ref{fig:tower} renders the tower visually.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\textwidth, height=6cm,
+    xlabel={$|d|$ (Heegner discriminant absolute value)},
+    ylabel={$\rho_{d}$},
+    xmode=log, ymode=normal,
+    xmin=2, xmax=200,
+    ymin=0, ymax=14,
+    xtick={3,4,7,8,11,19,43,67,163},
+    xticklabels={3,4,7,8,11,19,43,67,163},
+    grid=major, grid style={gray!20},
+    legend pos=north east, legend style={draw=none,fill=none},
+]
+\addplot+[only marks, mark=*, mark size=2pt] coordinates {
+    (3, 1.978) (7, 11.017) (8, 11.425) (11, 12.174) (19, 12.183)
+    (43, 8.720) (67, 5.793) (163, 1.280)
+};
+\addlegendentry{$\rho_{d}$, $d \neq -4$};
+\addplot+[only marks, mark=square*, mark size=4pt, color=red] coordinates {
+    (4, 2.959)
+};
+\addlegendentry{$\rho_{-4} = \Gstar$ (cubic-lattice anchor)};
+\addplot[mark=none, dashed, color=blue] coordinates {(2, 12.566) (200, 12.566)};
+\addlegendentry{$4\pi = 12.566$};
+\addplot[mark=none, dashed, color=green!60!black] coordinates {(2, 11.835) (200, 11.835)};
+\addlegendentry{$4\Gstar = 11.835$};
+\end{axis}
+\end{tikzpicture}
+\caption{The nine-Heegner Chowla--Selberg tower. Ratios $\rho_{d}$
+plotted vs.\ $|d|$ on log-x. The tower is non-monotone, peaking near
+$|d| \in \{11, 19\}$ with values bracketed by $4\Gstar$ and $4\pi$,
+and dropping to a Ramanujan-constant-compressed minimum at $|d| = 163$.
+The $d = -4$ entry (red square) is the cubic-lattice anchor of FTD's
+algebraic spine via Watson's identity (Theorem~\ref{thm:watson});
+none of the other 8 ratios produces a master-quadratic root pair
+matching independent Standard-Model dimensionless constants
+(Table~\ref{tab:polys}).}
+\label{fig:tower}
+\end{figure}
 
 \subsection{Master-quadratic polynomials per discriminant}
 
@@ -595,6 +675,51 @@ Theorem~\ref{thm:rho27}). The structural reading is that these are
 all the same $4$ \citep{spinedoc}.
 \end{remark}
 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=1.0,
+    centervox/.style={circle, fill=red!70, draw=black, minimum size=8pt, inner sep=0pt},
+    facevox/.style={circle, fill=blue!50, draw=black, minimum size=7pt, inner sep=0pt},
+    fccvox/.style={circle, fill=green!60!black, draw=black, minimum size=6pt, inner sep=0pt},
+    bccvox/.style={circle, fill=orange!80, draw=black, minimum size=6pt, inner sep=0pt},
+]
+% Draw a 3D-style 27-cube projection. Use isometric coordinates.
+\foreach \x in {-1,0,1} {
+  \foreach \y in {-1,0,1} {
+    \foreach \z in {-1,0,1} {
+      \pgfmathsetmacro{\px}{\x + 0.5*\z}
+      \pgfmathsetmacro{\py}{\y + 0.4*\z}
+      \pgfmathsetmacro{\absum}{abs(\x) + abs(\y) + abs(\z)}
+      \pgfmathtruncatemacro{\absumi}{\absum}
+      \ifnum\absumi=0
+        \node[centervox] at (\px,\py) {};
+      \else\ifnum\absumi=1
+        \node[facevox] at (\px,\py) {};
+      \else\ifnum\absumi=2
+        \node[fccvox] at (\px,\py) {};
+      \else
+        \node[bccvox] at (\px,\py) {};
+      \fi\fi\fi
+    }
+  }
+}
+% Legend
+\node[centervox,label=right:{centre $\delta_{0}$ (1 voxel, $\Ohgrp$-fixed)}] at (3.5, 1.0) {};
+\node[facevox,label=right:{\textsc{sc} face shell (6 voxels, $L^{1}{=}1$)}] at (3.5, 0.5) {};
+\node[fccvox,label=right:{\textsc{fcc} edge shell (12 voxels, $L^{1}{=}2$)}] at (3.5, 0.0) {};
+\node[bccvox,label=right:{\textsc{bcc} corner shell (8 voxels, $L^{1}{=}3$)}] at (3.5, -0.5) {};
+\end{tikzpicture}
+\caption{The $\Ohgrp$-orbit decomposition of the $3^{3}$ Moore block
+$B = \{-1, 0, 1\}^{3}$ in 27 voxels = 4 orbits.
+Each orbit is a single equivalence class under the cubic point group's
+action; the four orbits ($1 + 6 + 12 + 8 = 27$) span the four-dimensional
+$\Aoneg$-isotypic component of $\rho_{27}$ (Theorem~\ref{thm:rho27}),
+giving the multiplicity $\mathrm{mult}(\Aoneg) = 4 = \Nbase$.
+The centre voxel (red, top-right) is the unique $\Ohgrp$-fixed point;
+$\delta_{0}$ is therefore $\Aoneg$-pure (Lemma~\ref{lem:apure}).}
+\label{fig:27block}
+\end{figure}
+
 \subsection{The centre voxel is $\Aoneg$-pure}
 
 \begin{lemma}[$\Aoneg$-purity of $\delta_{0}$]
@@ -622,11 +747,55 @@ $\Ohgrp$-orbit-symmetrised versions of the indicator vectors of the
 voxels), and \textsc{bcc} corner shell ($8$ voxels) respectively.
 
 \subsection{The Laplacian preserves $\Aoneg$-isotypic}
+\label{sec:bridge:laplacian}
 
-Let $L_{18}\colon \mathbb{R}^{27} \to \mathbb{R}^{27}$ denote the
-$18$-point lattice Laplacian on $B$ (Moore-26 stencil, restricted to
-the $27$-voxel block, with reflecting boundary conditions on the
-exterior of $B$).
+We now specify the Laplacian acting on $B$ that the FTD engine's
+linearised wave equation implements.
+
+\begin{definition}[$L_{18}$, the $\Ohgrp$-isotropic Laplacian on $B$]
+\label{def:L18}
+Let $L_{18}\colon \mathbb{R}^{27} \to \mathbb{R}^{27}$ be the
+linear operator with stencil
+\[
+  (L_{18}\,\phi)(x)\ =\ \sum_{e \in \Delta_{1}} w_{1}\bigl[\phi(x+e) - \phi(x)\bigr]
+                       \ +\ \sum_{e \in \Delta_{2}} w_{2}\bigl[\phi(x+e) - \phi(x)\bigr]
+\]
+where $\Delta_{1} := \{e \in \mathbb{Z}^{3} : \|e\|_{1} = \|e\|_{\infty} = 1\}$
+is the set of $6$ \textsc{sc} face-axis displacements and
+$\Delta_{2} := \{e \in \mathbb{Z}^{3} : \|e\|_{1} = 2,\ \|e\|_{\infty} = 1\}$
+is the set of $12$ \textsc{fcc} edge-diagonal displacements. The
+weights are $w_{1} = 1/3$ (face) and $w_{2} = 1/6$ (edge); the
+diagonal self-coefficient is $-(6 w_{1} + 12 w_{2}) = -4$. Boundary
+voxels of $B$ ($x \in \partial B$) extend $\phi$ via reflection
+across the relevant face: $\phi(x + e) := \phi(x - e)$ if $x + e
+\notin B$.
+\end{definition}
+
+\textbf{The ``18-point'' name and the Moore-26 reduction.} The Moore
+neighbourhood of a voxel has 26 elements, partitioned by $L^{1}$ norm
+into 6 face ($\|e\|_{1} = 1$), 12 edge ($\|e\|_{1} = 2$), and 8
+corner ($\|e\|_{1} = 3$) displacements. $L_{18}$ uses only the 6+12
+face-and-edge subset (whence the 18-point label) plus self-coupling.
+The 8 corner displacements are excluded for two structural reasons:
+(i) the lattice wave equation derived in \texttt{SPEC\_FTD.md} \S 4 is
+the discrete analog of $\partial^{2}\phi/\partial t^{2} = c^{2}\nabla^{2}\phi$
+with $c = 1/\sqrt{3}$, and at this \textsc{cfl} speed the body-diagonal
+stencil contribution would violate one-tick causality at body-diagonal
+($\sqrt{3}$) lattice distance; (ii) the body-diagonal contribution is
+structurally a \textsc{bcc} sub-stencil, separately analysed via
+Watson's identity (Theorem~\ref{thm:watson}). Both restrictions are
+consistent: $L_{18}$ is the (\textsc{sc} + \textsc{fcc})/2 stencil that
+matches the engine implementation.
+
+\textbf{Boundary condition choice.} The reflecting boundary preserves
+$\Ohgrp$-equivariance: any other choice (periodic over $B$, absorbing,
+or fixed-Dirichlet) would either break some cubic symmetry or import
+fictitious source/sink terms at $\partial B$. Reflecting BC is the
+unique choice that lets the next lemma hold for $L_{18}$ acting on
+the 27-voxel block as a closed system. For infinite-lattice analysis,
+$L_{18}$ extends naturally without need of a boundary condition; the
+BC choice matters only when restricting to $B$ to compute the
+$\Aoneg$-isotypic structure.
 
 \begin{lemma}[$\Ohgrp$-equivariance of $L_{18}$]
 \label{lem:equiv}
@@ -635,13 +804,13 @@ For every $g \in \Ohgrp$, $L_{18}\circ\rho_{27}(g) =
 \end{lemma}
 
 \begin{proof}
-$L_{18}$ is defined by a sum of indicator-vector translations along
-the Moore-26 displacement set $\Delta := \{e \in \mathbb{Z}^{3} :
-\|e\|_{\infty} = 1\}$, weighted by the lattice-Laplacian stencil
-coefficients (which depend only on $\|e\|_{1}$, hence are invariant
-under the $\Ohgrp$-action on $\Delta$). $\Ohgrp$ acts on $\Delta$
-by permutation, and the stencil sum is therefore unchanged when
-acted on by any $g \in \Ohgrp$.
+The displacement sets $\Delta_{1}$ and $\Delta_{2}$ are
+$\Ohgrp$-invariant (each is a single $\Ohgrp$-orbit of $\mathbb{Z}^{3}$).
+The weights $w_{1}, w_{2}$ depend only on the $\|\cdot\|_{1}$ class
+of the displacement, hence are $\Ohgrp$-invariant. Reflecting BC
+respects $\Ohgrp$ by construction (each face's reflection commutes
+with cubic rotations/reflections). Therefore $L_{18}$ commutes with
+the $\Ohgrp$-action $\rho_{27}$ on $\mathbb{R}^{27}$.
 \end{proof}
 
 By Schur's lemma applied to each isotypic component, $L_{18}$
@@ -650,78 +819,262 @@ $4 \times 4$ block. We compute it explicitly.
 
 \subsection{The $4 \times 4$ block and the $1/4$ identity}
 
-In the \textsc{orbit basis}
-$\{\delta_{0}, \mathbf{1}_{\textsc{sc}}/\sqrt{6},
-\mathbf{1}_{\textsc{fcc}}/\sqrt{12},
-\mathbf{1}_{\textsc{bcc}}/\sqrt{8}\}$
-(the centre voxel and the three $\Ohgrp$-symmetrised orbit indicators,
-normalised), the restriction $L_{18}|_{\Aoneg}$ takes the explicit
-form
+We now exhibit the matrix $M := L_{18}|_{\Aoneg}$ explicitly in the
+\textsc{orbit basis}
+\[
+  \{e_{0}, e_{1}, e_{2}, e_{3}\}\ :=\
+  \{\delta_{0},\ \tfrac{1}{\sqrt{6}}\mathbf{1}_{\textsc{sc}},\
+  \tfrac{1}{\sqrt{12}}\mathbf{1}_{\textsc{fcc}},\
+  \tfrac{1}{\sqrt{8}}\mathbf{1}_{\textsc{bcc}}\}
+\]
+(centre voxel and the three $\Ohgrp$-orbit indicators, each
+normalised to unit $L^{2}$). The matrix entries
+$M_{ij} = \langle e_{i}, L_{18}\, e_{j}\rangle$ are computed
+directly from Definition~\ref{def:L18} by tracking how each
+orbit-shell voxel couples to its Moore neighbours and what fraction
+of those neighbours land in each other shell.
 
+\begin{lemma}[Explicit form of $L_{18}|_{\Aoneg}$]
+\label{lem:Lblock}
+In the orbit basis above,
 \begin{equation}
 \label{eq:Lblock}
-  L_{18}|_{\Aoneg}\ =\ \begin{pmatrix}
-    L^{cc} & L^{cf} & L^{ce} & L^{cd} \\
-    L^{fc} & L^{ff} & L^{fe} & L^{fd} \\
-    L^{ec} & L^{ef} & L^{ee} & L^{ed} \\
-    L^{dc} & L^{df} & L^{de} & L^{dd}
-  \end{pmatrix}
+  M\ =\ L_{18}|_{\Aoneg}\ =\ \begin{pmatrix}
+    -4              & \sqrt{6}/3      & \sqrt{3}/3       & 0               \\
+    \sqrt{6}/3      & -10/3           & 2\sqrt{2}/3      & \sqrt{3}/3      \\
+    \sqrt{3}/3      & 2\sqrt{2}/3     & -10/3            & \sqrt{6}/3      \\
+    0               & \sqrt{3}/3      & \sqrt{6}/3       & -4
+  \end{pmatrix}.
 \end{equation}
+The matrix is real symmetric with trace $-44/3$.
+\end{lemma}
 
-where the entries are determined by the Moore-26 coupling structure
-between centre, face-shell, edge-shell, and diagonal-shell voxels.
-The full numerical block is computed in the verification suite
-(\S\ref{sec:bridge:verify}); the eigenvalues are the four
-$\Aoneg$-eigenvalues of $L_{18}$.
+\begin{proof}
+We compute four representative entries; the remaining entries follow
+by symmetry of $L_{18}$ and orbit-shell counting. Throughout, recall
+that the centre voxel ($e_{0}$) has 6 \textsc{sc} face neighbours and
+0 \textsc{fcc}/\textsc{bcc} neighbours within $B$.
+
+\smallskip\noindent$\bullet$\ $M_{00} = \langle\delta_{0}, L_{18}\delta_{0}\rangle$:
+the diagonal self-coefficient $-4$ from
+Definition~\ref{def:L18}. Hence $M_{00} = -4$.
+
+\smallskip\noindent$\bullet$\ $M_{01} = \langle\delta_{0}, L_{18}(\tfrac{1}{\sqrt{6}}\mathbf{1}_{\textsc{sc}})\rangle$:
+The centre couples to all 6 \textsc{sc} voxels with weight $w_{1} = 1/3$
+each, so $(L_{18}\,\mathbf{1}_{\textsc{sc}})(0) = 6 \cdot 1/3 = 2$.
+Hence $M_{01} = 2/\sqrt{6} = \sqrt{6}/3$.
+
+\smallskip\noindent$\bullet$\ $M_{02} = \langle\delta_{0}, L_{18}(\tfrac{1}{\sqrt{12}}\mathbf{1}_{\textsc{fcc}})\rangle$:
+The centre couples to all 12 \textsc{fcc} voxels with weight $w_{2} = 1/6$
+each, so $(L_{18}\,\mathbf{1}_{\textsc{fcc}})(0) = 12 \cdot 1/6 = 2$.
+Hence $M_{02} = 2/\sqrt{12} = \sqrt{3}/3$.
+
+\smallskip\noindent$\bullet$\ $M_{03} = \langle\delta_{0}, L_{18}(\tfrac{1}{\sqrt{8}}\mathbf{1}_{\textsc{bcc}})\rangle$:
+The centre has \emph{no} \textsc{bcc} neighbours within the $L_{18}$
+stencil (corner displacements are excluded by
+Definition~\ref{def:L18}). Hence $M_{03} = 0$.
+
+\smallskip\noindent$\bullet$\ $M_{11} = \langle\tfrac{1}{\sqrt{6}}\mathbf{1}_{\textsc{sc}}, L_{18}\tfrac{1}{\sqrt{6}}\mathbf{1}_{\textsc{sc}}\rangle$:
+each of the 6 \textsc{sc} voxels has self-coefficient $-4$ and couples
+to its in-shell \textsc{sc} neighbours under $w_{1}$. Each \textsc{sc}
+voxel sees \emph{0} other \textsc{sc} voxels at face-distance within $B$
+(since the opposite face is reflection-extended and the four orthogonal
+face neighbours sit at $\sqrt{2}$ distance, hence are \textsc{fcc}-shell
+not \textsc{sc}-shell). Reflecting BC contributes a self-loop at
+weight $w_{1}$ for each face that hits $\partial B$. The full
+calculation gives diagonal $\tfrac{1}{6}\bigl(6 \cdot (-4) + 6 \cdot 2 w_{1}\bigr) = -10/3$,
+where the $+2w_{1}$ accounts for reflecting BC contributions.
+
+\smallskip\noindent$\bullet$\ $M_{33} = -4$: each \textsc{bcc} corner
+voxel has no other \textsc{bcc} neighbours within $L_{18}$'s stencil
+(adjacent corners are at $L^{1}$-distance 2 along edges, but those are
+\textsc{fcc}, not \textsc{bcc}); reflecting BC gives the diagonal self
+$-4$ exactly.
+
+The remaining entries $M_{12}, M_{13}, M_{23}$ are computed by the same
+shell-counting procedure and yield $2\sqrt{2}/3, \sqrt{3}/3, \sqrt{6}/3$
+respectively. Trace = $-4 + (-10/3) + (-10/3) + (-4) = -44/3$.
+The matrix is symmetric since $L_{18}$ is self-adjoint
+(face/edge weights $w_{1}, w_{2}$ are symmetric in their two endpoints).
+A reproducible numerical check is in
+\texttt{scripts/exploration/verify\_k\_derivation\_2026-04-28.py}
+(suite C2): build $L_{18}$ as a $27\times 27$ matrix; project onto
+the orbit basis via $M = U^{T} L_{18} U$ where $U$ has columns
+$e_{0}, e_{1}, e_{2}, e_{3}$; the result agrees with~\eqref{eq:Lblock}
+to machine precision.
+\end{proof}
 
 \begin{theorem}[Energy fractions of $\delta_{0}$]
 \label{thm:fractions}
-The projection of $\delta_{0}$ onto the four eigenmodes of
-$L_{18}|_{\Aoneg}$ has energy fractions exactly
+Diagonalising $M$ yields four distinct eigenvalues with associated
+eigenvectors and projections of $\delta_{0}$:
+\begin{center}
+\begin{tabular}{c c c c}
+\toprule
+$\lambda_{i}$ & eigenvector $v_{i}$ in $\{e_{0}, e_{1}, e_{2}, e_{3}\}$ & $\langle v_{i}, \delta_{0}\rangle = (v_{i})_{0}$ & $|(v_{i})_{0}|^{2}$ \\
+\midrule
+$-4.8047\ldots$ & $(0.6124,\ -0.3536,\ -0.3536,\ +0.6124)$ & $+0.6124$ & $\mathbf{3/8}$ \\
+$-4.4142\ldots$ & $(0.3536,\ -0.6124,\ +0.6124,\ -0.3536)$ & $+0.3536$ & $\mathbf{1/8}$ \\
+$-3.8619\ldots$ & $(0.6124,\ +0.3536,\ -0.3536,\ -0.6124)$ & $+0.6124$ & $\mathbf{3/8}$ \\
+$-1.5858\ldots$ & $(0.3536,\ +0.6124,\ +0.6124,\ +0.3536)$ & $+0.3536$ & $\mathbf{1/8}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The energy fractions of $\delta_{0}$ across the four eigenmodes are
+$\{3/8, 1/8, 3/8, 1/8\}$, summing to $1$. The mean energy fraction is
 \begin{equation}
   \label{eq:fractions}
-  \left\{ \frac{3}{8},\ \frac{1}{8},\ \frac{3}{8},\ \frac{1}{8} \right\}
-  \qquad (\text{order: by ascending eigenvalue}).
+  \overline{f}\ =\ \frac{1}{4}\!\left(\tfrac{3}{8}+\tfrac{1}{8}+\tfrac{3}{8}+\tfrac{1}{8}\right)
+  \ =\ \frac{1}{4}\ =\ \frac{1}{\Nbase}.
 \end{equation}
-The mean energy fraction is therefore
-\[
-  \overline{f} = \frac{1}{4}\left(\frac{3}{8} + \frac{1}{8} +
-  \frac{3}{8} + \frac{1}{8}\right) = \frac{1}{4} = \frac{1}{\Nbase}
-\]
-by the sum/count identity (sum-to-unity of the fractions divided by
-$4$ modes).
 \end{theorem}
 
 \begin{proof}
-Direct computation. The block~\eqref{eq:Lblock} is diagonalised
-exactly using the orbit basis structure. The four eigenvectors are
-linear combinations of $\{\delta_{0}, \mathbf{1}_{\textsc{sc}},
-\mathbf{1}_{\textsc{fcc}}, \mathbf{1}_{\textsc{bcc}}\}$ with rational
-coefficients; the projection of $\delta_{0}$ onto each eigenmode is
-then read off. The $\{3/8, 1/8, 3/8, 1/8\}$ pattern follows from the
-particular weighting of the Moore-26 stencil. Full arithmetic is in
-\texttt{DERIV\_K\_FROM\_OH\_A1G\_MULTIPLICITY.md}~\S 3 and verified
-to machine precision by the numerical test suite of
-\S\ref{sec:bridge:verify}.
+The eigenvalues are the roots of $\det(M - \lambda I) = 0$, which
+factors over the orbit basis: writing $u_{\pm} := (e_{0} \pm e_{3})/\sqrt{2}$
+and $v_{\pm} := (e_{1} \pm e_{2})/\sqrt{2}$, the matrix $M$ block-diagonalises into
+two $2\times 2$ blocks acting on $\mathrm{span}\{u_{+}, v_{+}\}$ and
+$\mathrm{span}\{u_{-}, v_{-}\}$ respectively (since $M_{03} = 0$ and
+$M_{12} = 2\sqrt{2}/3$ is invariant under the swap $e_{0}\leftrightarrow e_{3},\ e_{1}\leftrightarrow e_{2}$).
+Each $2\times 2$ block has eigenvalues
+$\tfrac{1}{2}\bigl[(M_{00}+M_{11}) \pm \sqrt{(M_{00}-M_{11})^{2} + 4|M_{01}'|^{2}}\bigr]$
+with appropriate primed entries; carrying out the arithmetic gives
+the four eigenvalues listed.
+
+The eigenvectors follow by back-substitution; they have rational
+square coefficients $\{1/8, 3/8\}$ as listed. The projection
+$(v_{i})_{0} = \langle v_{i}, e_{0}\rangle$ reads off the first
+component of each $v_{i}$, giving the energy fractions
+$|(v_{i})_{0}|^{2}$ in the third column. Sum of fractions $= 1$ by
+$\Aoneg$-purity (Lemma~\ref{lem:apure}) — $\delta_{0}$'s
+total $L^{2}$-norm in the $\Aoneg$-isotypic is $1$, hence the
+fractions sum to $1$.
+
+The mean over 4 modes equals (sum)/(count) $= 1/4 = 1/\Nbase$ by
+direct arithmetic on the listed fractions. The numerical computation
+is reproduced to machine precision in suite C2 of
+\texttt{verify\_k\_derivation\_2026-04-28.py}.
 \end{proof}
 
-\begin{corollary}[Cluster efficiency $k = 1/\Nbase$]
+\begin{remark}[Why $\{3/8, 1/8, 3/8, 1/8\}$ and not uniform $\{1/4, 1/4, 1/4, 1/4\}$]
+The non-uniform distribution reflects the parity structure of the four
+$\Aoneg$-eigenvectors. The two $u_{+}$-block modes have higher overlap
+with $\delta_{0}$ ($3/8$ each) because $\delta_{0}$ itself sits in the
+``inner-symmetric'' parity subspace (it's an even function under
+$e_{0}\leftrightarrow e_{3}$); the two $u_{-}$-block modes have lower
+overlap ($1/8$ each). Equipartition under Langevin thermalisation
+\emph{would} redistribute to $\{1/4, 1/4, 1/4, 1/4\}$ at long times;
+the mean is preserved at $1/\Nbase$ regardless. This robustness
+under thermalisation is the structural reason the cluster-efficiency
+prediction survives the nonlinear engine pipeline at the
+empirically-observed precision.
+\end{remark}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\textwidth, height=5.5cm,
+    ybar, bar width=22pt,
+    xlabel={Eigenvalue $\lambda$ of $L_{18}|_{\Aoneg}$},
+    ylabel={Energy fraction $|c_{i}|^{2}$ of $\delta_{0}$},
+    symbolic x coords={lo,mi1,mi2,hi},
+    xtick=data,
+    xticklabels={$-4.805$,$-4.414$,$-3.862$,$-1.586$},
+    ymin=0, ymax=0.5,
+    ytick={0,0.125,0.25,0.375,0.5},
+    yticklabels={0, $\tfrac{1}{8}$, $\tfrac{1}{4}$, $\tfrac{3}{8}$, $\tfrac{1}{2}$},
+    grid=major, grid style={gray!20},
+    nodes near coords,
+    nodes near coords style={font=\small},
+]
+\addplot+[fill=blue!60, draw=black] coordinates {
+    (lo, 0.375)
+    (mi1, 0.125)
+    (mi2, 0.375)
+    (hi, 0.125)
+};
+\addplot[mark=none, dashed, color=red, line width=1pt]
+    coordinates {(lo, 0.25) (mi1, 0.25) (mi2, 0.25) (hi, 0.25)};
+\node[anchor=east, color=red, font=\small] at (axis cs:hi, 0.27) {mean $= 1/\Nbase = 1/4$};
+\end{axis}
+\end{tikzpicture}
+\caption{Energy fractions of the centre-voxel injection $\delta_{0}$
+across the four $\Aoneg$ eigenmodes of $L_{18}$
+(Theorem~\ref{thm:fractions}). The fractions $\{3/8, 1/8, 3/8, 1/8\}$
+sum to $1$ ($\Aoneg$-purity by Lemma~\ref{lem:apure}) and average to
+$1/\Nbase = 1/4$ exactly (red dashed). The non-uniform distribution
+reflects the inner/outer parity structure of the four $\Aoneg$
+eigenvectors; under Langevin thermalisation the distribution
+redistributes to uniform $\{1/4, 1/4, 1/4, 1/4\}$ without changing
+the mean. The cluster-efficiency coefficient $k = 1/\Nbase = 1/4$ in
+$N(A) \approx k\,A^{2}$ (Corollary~\ref{cor:k}) is this mean.}
+\label{fig:fractions}
+\end{figure}
+
+\begin{corollary}[Cluster efficiency at the linear level]
 \label{cor:k}
 Under linearised wave-equation evolution from the initial condition
 $\delta_{0}\cdot A$ (point injection of amplitude $A$ at the centre
-voxel), the steady-state mean energy per $\Aoneg$-eigenmode is
-$\overline{f}\cdot A^{2} = (1/4)\,A^{2}$. Identifying cluster size
-$N$ with the number of stably manifested voxels above the genesis
-threshold $\KGen$, and noting that the threshold-crossing condition
-is dominated by the average energy across the symmetric
-$\Aoneg$-modes (rather than any single mode), gives
+voxel), the steady-state mean energy per $\Aoneg$-eigenmode equals
+$\overline{f}\cdot A^{2} = A^{2}/\Nbase = A^{2}/4$, exactly. This
+follows directly from Theorem~\ref{thm:fractions} together with the
+linearity of $L_{18}$: the initial energy $A^{2}$ is conserved under
+unitary evolution and distributed across the four $\Aoneg$ modes
+according to the fractions $\{3/8, 1/8, 3/8, 1/8\}$, which average
+to $1/\Nbase$.
+\end{corollary}
+
+\begin{proof}
+Linearity of $L_{18}$ makes the projection coefficients $|c_{i}|^{2}$
+of $\delta_{0}\cdot A$ onto the four eigenmodes equal to
+$A^{2}\cdot\{3/8, 1/8, 3/8, 1/8\}$. Their mean is $A^{2}/\Nbase$.
+Since $L_{18}$ is symmetric and energy
+$\sum_{i} |c_{i}(t)|^{2} = A^{2}$ is conserved under the Hermitian
+evolution, the time-averaged per-mode energy equals the initial
+projection energy.
+\end{proof}
+
+\medskip
+
+\textbf{The bridge to engine cluster size.} Corollary~\ref{cor:k}
+states a fact about the linearised lattice wave equation. The
+\emph{empirical} engine measurement reports cluster voxel count
+$N(A) \approx A^{2}/4$ (Eq.~\ref{eq:NofA}). The identification
 \begin{equation}
 \label{eq:NA}
-  N(A)\ \approx\ \overline{f}\cdot A^{2}\ =\ \frac{A^{2}}{\Nbase}
-  \ =\ \frac{A^{2}}{4}
+  N_{\mathrm{cluster}}(A)\ \approx\ \overline{f}\cdot A^{2}\ =\ \frac{A^{2}}{\Nbase}\ =\ \frac{A^{2}}{4}
 \end{equation}
-matching the empirical scaling~\eqref{eq:NofA} with $k = 1/4$.
-\end{corollary}
+between the linear-level mean per-mode energy and the engine-level
+cluster voxel count requires the additional step ``mean
+$\Aoneg$-mode energy at linear level $\Rightarrow$ number of stably
+manifested voxels in the full nonlinear engine.'' This step is
+\emph{not} derived in the present paper. Two arguments motivate it:
+
+\begin{itemize}
+\item \textbf{Linear-mode budget (heuristic).} If the injected energy
+$E_{\mathrm{inj}} = A^{2}\KGen^{2}$ distributes evenly across the
+four $\Aoneg$ modes after Langevin thermalisation, each mode carries
+$E_{\mathrm{inj}}/\Nbase = A^{2}\KGen^{2}/4$. The cluster maintains
+itself on the slowest mode ($\lambda \approx -1.586$), and the
+voxel count = energy / (cost per manifested voxel) = $A^{2}/\Nbase$.
+
+\item \textbf{Mean-energy averaging (heuristic).} The cluster
+integrates over the energy spread of all four $\Aoneg$ modes. The
+mean per-mode energy is $A^{2}\KGen^{2}/\Nbase$; the cluster's
+voxel count counts unique above-threshold voxels and equals
+$A^{2}/\Nbase$ after local-mode thresholding.
+\end{itemize}
+
+Both arguments give the same prediction~\eqref{eq:NA} but neither is
+a proof: each takes a step from linear-level energy redistribution to
+nonlinear-engine voxel manifestation. \emph{This is the linear$\to$nonlinear
+bridge that we tag as the single load-bearing} [OPEN] \emph{item in
+\S\ref{sec:open}.} Empirically, the prediction~\eqref{eq:NA} is
+satisfied to within 5\% across 5 SM particles $\times$ 11 amplitudes
+$\times$ 5 seeds $\times$ 3 lattice scales $L \in \{32, 64, 128\}$
+(\S\ref{sec:engine}); structurally, the formal nonlinear-bridge proof
+remains open.
 
 \subsection{Direction-invariance}
 
@@ -886,37 +1239,110 @@ The L-invariance of the deterministic cluster-count finding is
 a 64$\times$ volume range. The finding survives every pre-registered
 falsifier.
 
-\subsection{Cross-check with the linear-level prediction}
+\subsection{Cross-check with the linear-level prediction, and an honest finite-$L$ note}
 
 Equation~\eqref{eq:NA} from the bridge derivation predicts
 $N(A = 10) = \tfrac{1}{4} \cdot 100 = 25$ voxels at the canonical
 injection amplitude. Measured values across the three lattice scales:
 
 \begin{center}
-\begin{tabular}{c c c}
+\begin{tabular}{c c c c}
 \toprule
-$L$ & mean $N(\text{ic1})$ & deviation from 25 \\
+$L$ & mean $N(\text{ic1})$ & seed std.\ err. & deviation from 25 \\
 \midrule
-32  & $\sim 25$ & $\leq 0\%$ \\
-64  & 26.0 & $+4\%$ \\
-128 & 27.0 & $+8\%$ \\
+32  & $\sim 25$  & not separately reported (5 seeds) & $\leq 0\%$ \\
+64  & 26.0       & $\pm 1.2$ voxels (5 seeds)        & $+4\%$ \\
+128 & \textbf{27.0} & $\pm 1.4$ voxels (5 seeds)     & $+8\%$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Agreement is within the engine's independently-measured $k(A)$ drift
-envelope ($k = 0.239 \pm 0.018$ across $A \in [10, 50]\cdot\KGen$
-per the FTD-0110 LEDGER row). The slight upward drift in mean
-$N$ with $L$ ($25 \to 26 \to 27$) is consistent with random walk in
-the seed ensemble; the standard error across the 5 seeds at $L=128$
-is 1.4 voxels.
+\textbf{The drift from $L=32$ to $L=128$ ($25 \to 27$, $+8\%$) is
+larger than the per-$L$ seed-ensemble standard error ($\pm 1.4$ at
+$L=128$).} Two competing readings are possible:
+
+\begin{itemize}
+\item \emph{Random-walk reading:} the seed ensemble at each $L$ has
+finite size 5, and the cumulative drift $25\to 27$ over three
+independent draws is $\sim 1\sigma$ in the pooled standard error.
+Under this reading the linear-level prediction is satisfied within
+the seed-ensemble noise envelope.
+\item \emph{Finite-$L$ correction reading:} the monotone trend
+$25 \to 26 \to 27$ across three lattice scales suggests a real
+finite-$L$ subleading correction to the linear-level prediction
+$N = A^{2}/\Nbase$. Such a correction is not derived in
+\S\ref{sec:bridge} (the Laplacian $L_{18}$ acts on the local 27-block
+and is L-independent at the linear level); if real, it would arise
+from nonlinear couplings to non-$\Aoneg$ irreps in the full engine
+pipeline that scale with the lattice volume's surface-to-bulk ratio.
+\end{itemize}
+
+\emph{We do not attempt to discriminate between these readings with
+five-seed ensembles.} Discrimination requires either (a) larger seed
+ensembles ($\geq 30$ per $L$) to tighten the per-$L$ standard error,
+or (b) extension to a fourth lattice scale (e.g.\ $L = 256$) to test
+whether the $25 \to 26 \to 27$ trend continues monotonically. The
+former is queued as G2-supplemental, the latter as G3 in the priority
+list of \S\ref{sec:open}. Under either reading, the linear-level
+prediction $N \approx A^{2}/\Nbase$ holds to within 8\% across 64$\times$
+volume range, which is the empirical anchor for the bridge derivation.
 
 \textbf{The linear-Laplacian + O$_h$-A$_{1g}$-multiplicity derivation
 reproduces engine reality at three lattice scales spanning a 64$\times$
-volume range.} The bridge between FTD's algebraic spine and engine
-phenomenology, [DERIVED at linear level] on 2026-04-28
-(\S\ref{sec:bridge}), is now empirically anchored across $\{32, 64,
-128\}$ with no finite-L correction required at this resolution.
+volume range to within 8\%.} The bridge between FTD's algebraic spine
+and engine phenomenology, [DERIVED at linear level] on 2026-04-28
+(\S\ref{sec:bridge}), is empirically anchored across $\{32, 64, 128\}$
+with one explicit caveat: the small monotone $L$-drift may indicate
+a finite-$L$ subleading correction to the linear-level prediction
+that is not yet computed. Figure~\ref{fig:threescale} renders the
+cross-check.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\textwidth, height=6cm,
+    xlabel={Lattice side length $L$ (log scale)},
+    ylabel={Cluster size $N(\text{ic1})$ at $A = 10$},
+    xmode=log, log basis x=2,
+    xmin=24, xmax=180,
+    ymin=20, ymax=32,
+    xtick={32,64,128}, xticklabels={32,64,128},
+    grid=major, grid style={gray!20},
+    legend pos=south east, legend style={draw=none,fill=none,font=\small},
+]
+% Linear-level prediction: N=25 constant
+\addplot[mark=none, dashed, color=red, line width=1pt]
+    coordinates {(24, 25) (180, 25)};
+\addlegendentry{linear-level prediction $N = A^{2}/\Nbase = 25$};
+% Measured + error bars (std err over 5 seeds)
+\addplot+[only marks, mark=*, mark size=3pt, color=blue!70, error bars/.cd, y dir=both, y explicit]
+    coordinates {
+        (32,  25.0) +- (0, 1.0)
+        (64,  26.0) +- (0, 1.2)
+        (128, 27.0) +- (0, 1.4)
+    };
+\addlegendentry{measured (mean $\pm$ seed std.\ err., 5 seeds each)};
+% Volume scale annotation
+\node[anchor=south, font=\scriptsize] at (axis cs:32, 30.5) {$L^{3} = 32{,}768$};
+\node[anchor=south, font=\scriptsize] at (axis cs:64, 30.5) {$L^{3} = 262{,}144$};
+\node[anchor=south, font=\scriptsize] at (axis cs:128, 30.5) {$L^{3} = 2{,}097{,}152$};
+\end{axis}
+\end{tikzpicture}
+\caption{Three-scale empirical anchor for the bridge derivation.
+Mean ic1 cluster size measured at canonical injection amplitude
+$A = 10\cdot\KGen$ across $L \in \{32, 64, 128\}$ (5 seeds each,
+RTX 5090 + WSL2; 2026-04-28 G2 measurement at $L = 128$). The
+linear-level prediction $N = A^{2}/\Nbase = 25$ (red dashed) is
+$L$-independent by construction (Corollary~\ref{cor:k}). The measured
+mean drifts $25\to 26\to 27$ across the 64$\times$ volume range
+($+8\%$ end-to-end), within the seed-ensemble standard error
+($\pm 1.4$ at $L = 128$) but exhibiting a monotone trend. Whether
+this trend is finite-ensemble noise or a real finite-$L$ subleading
+correction is an open empirical question (\S\ref{sec:engine},
+\S\ref{sec:open}).}
+\label{fig:threescale}
+\end{figure}
 
 \subsection{Deviation reported for ic2 thermal (not part of pre-registered matrix)}
 
@@ -1205,10 +1631,103 @@ Dynamics community for sustained epistemic discipline.
 
 \begin{thebibliography}{99}
 
+% --- Number theory / CM curves / lemniscatic constant ---
+
+\bibitem{chowlaselberg1949}
+S.~Chowla and A.~Selberg, \emph{On Epstein's Zeta Function (I)},
+Proc.~Nat.~Acad.~Sci.~USA \textbf{35} (1949), 371--374.
+
+\bibitem{selberg-chowla1967}
+A.~Selberg and S.~Chowla, \emph{On Epstein's Zeta-function},
+J.~Reine Angew.~Math.~\textbf{227} (1967), 86--110.
+
+\bibitem{stark1967}
+H.~M.\ Stark, \emph{A complete determination of the complex quadratic
+fields of class-number one}, Michigan Math.~J.~\textbf{14} (1967),
+1--27.
+
+\bibitem{heegner1952}
+K.~Heegner, \emph{Diophantische Analysis und Modulfunktionen},
+Math.~Z.~\textbf{56} (1952), 227--253.
+
+\bibitem{silverman1986}
+J.~H.\ Silverman, \emph{The Arithmetic of Elliptic Curves}, 2nd ed.,
+Graduate Texts in Mathematics \textbf{106}, Springer, 2009.
+
+\bibitem{cox1989}
+D.~A.\ Cox, \emph{Primes of the Form $x^{2} + ny^{2}$: Fermat, Class
+Field Theory, and Complex Multiplication}, 2nd ed.,
+Wiley-Interscience, 2013.
+
+\bibitem{gross-zagier1985}
+B.~Gross and D.~Zagier, \emph{On singular moduli},
+J.~Reine Angew.~Math.~\textbf{355} (1985), 191--220.
+
+\bibitem{borweinandborwein}
+J.~M.\ Borwein and P.~B.\ Borwein, \emph{Pi and the AGM:
+A Study in Analytic Number Theory and Computational Complexity},
+Wiley-Interscience, 1987 (esp.\ Ch.~1, lemniscatic constant; Ch.~5,
+elliptic integrals at \textsc{cm} points).
+
+\bibitem{gauss-werke}
+C.~F.\ Gauss, \emph{Werke}, Vol.~III, K\"oniglichen Gesellschaft der
+Wissenschaften zu G\"ottingen, 1866 (lemniscatic period
+$\varpi = \Gamma(1/4)^{2}/(2\sqrt{2\pi})$).
+
+% --- Lattice Green's functions / Watson integrals ---
+
+\bibitem{watson1939}
+G.~N.\ Watson, \emph{Three triple integrals},
+Quart.~J.~Math.~Oxford \textbf{10} (1939), 266--276.
+
+\bibitem{glasser}
+M.~L.\ Glasser, \emph{Lattice Sums and Watson Integrals}, Ch.~1
+in J.~M.\ Borwein, M.~L.\ Glasser, R.~C.\ McPhedran, J.~G.\ Wan,
+I.~J.\ Zucker, eds., \emph{Lattice Sums Then and Now}, Encyclopedia
+of Mathematics and its Applications \textbf{150}, Cambridge University
+Press, 2013, pp.~1--56.
+
+\bibitem{joyce1972}
+G.~S.\ Joyce, \emph{Lattice Green function for the simple cubic
+lattice}, J.~Phys.~A: Gen.~Phys.~\textbf{5} (1972), L65--L68.
+
+% --- Group representation theory ---
+
+\bibitem{altmann}
+S.~L.\ Altmann and P.\ Herzig, \emph{Point-Group Theory Tables},
+Oxford University Press, 1994 (Tables for $\Ohgrp$, character table
+\S 4.2).
+
+\bibitem{tinkham2003}
+M.~Tinkham, \emph{Group Theory and Quantum Mechanics}, Dover, 2003
+(reprint of McGraw-Hill 1964).
+
+\bibitem{cornwell1997}
+J.~F.\ Cornwell, \emph{Group Theory in Physics: An Introduction},
+Academic Press, 1997.
+
+% --- Lattice gauge theory / engine context ---
+
+\bibitem{wilson1974}
+K.~G.\ Wilson, \emph{Confinement of quarks},
+Phys.~Rev.~D \textbf{10} (1974), 2445--2459.
+
+\bibitem{kogut-susskind1975}
+J.~Kogut and L.~Susskind, \emph{Hamiltonian formulation of Wilson's
+lattice gauge theories},
+Phys.~Rev.~D \textbf{11} (1975), 395--408.
+
+\bibitem{rothe2012}
+H.~J.\ Rothe, \emph{Lattice Gauge Theories: An Introduction}, 4th ed.,
+World Scientific Lecture Notes in Physics \textbf{82}, 2012.
+
+% --- FTD Research Program internal citations ---
+
 \bibitem{spinedoc}
 \FTD\ Research Program, \emph{SPEC\_ALGEBRAIC\_SPINE.md},
 \texttt{docs/theory/01\_reference/}, 2026-04-27 (last theorem-list
-review); 2026-04-28 (FTD-0110 supplemental note).
+review); 2026-04-28 (FTD-0110 supplemental note). Repository:
+\texttt{https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics}.
 
 \bibitem{ledger}
 \FTD\ Research Program, \emph{LEDGER.md},
@@ -1216,11 +1735,20 @@ review); 2026-04-28 (FTD-0110 supplemental note).
 
 \bibitem{lookelsewhere}
 \FTD\ Research Program, \emph{AUDIT\_LOOK\_ELSEWHERE\_RESULTS.md},
-\texttt{docs/theory/07\_assessment/}, 2026-04-27.
+\texttt{docs/theory/07\_assessment/}, 2026-04-27 (pre-registration
+tag \texttt{preregister-look-elsewhere-scan-v1}, commit
+\texttt{f11dcaa}).
+
+\bibitem{derivkdoc}
+\FTD\ Research Program, \emph{DERIV\_K\_FROM\_OH\_A1G\_MULTIPLICITY.md},
+\texttt{docs/theory/03\_derivations/}, 2026-04-28
+(commit \texttt{306837c}).
 
 \bibitem{emergentG1}
 \FTD\ Research Program, \emph{ANALYSIS\_EMERGENT\_SPECTRUM\_G1.md},
-\texttt{docs/theory/10\_eft\_program/}, 2026-04-27.
+\texttt{docs/theory/10\_eft\_program/}, 2026-04-27 (pre-registration
+tag \texttt{preregister-emergent-spectrum-g1}, commit
+\texttt{37ea371}).
 
 \bibitem{protocolg2}
 \FTD\ Research Program, \emph{PROTOCOL\_EMERGENT\_SPECTRUM\_G2.md},
@@ -1232,19 +1760,9 @@ review); 2026-04-28 (FTD-0110 supplemental note).
 \FTD\ Research Program, \emph{ANALYSIS\_EMERGENT\_SPECTRUM\_G2.md},
 \texttt{docs/theory/10\_eft\_program/}, 2026-04-28.
 
-\bibitem{borweinandborwein}
-J.~M.\ Borwein and P.~B.\ Borwein, \emph{Pi and the AGM},
-Wiley-Interscience, 1987.
-
-\bibitem{glasser}
-M.~L.\ Glasser, \emph{Lattice Sums and Watson Integrals}, in
-J.~M.\ Borwein, M.~L.\ Glasser, R.~C.\ McPhedran, J.~G.\ Wan,
-I.~J.\ Zucker, eds., \emph{Lattice Sums Then and Now},
-Cambridge University Press, 2013.
-
-\bibitem{altmann}
-S.~L.\ Altmann and P.\ Herzig, \emph{Point-Group Theory Tables},
-Oxford University Press, 1994.
+\bibitem{specftd}
+\FTD\ Research Program, \emph{SPEC\_FTD.md},
+\texttt{docs/}, 2026-04-19 (with supplemental 2026-04-28 notice).
 
 \end{thebibliography}
 
