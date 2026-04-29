@@ -135,94 +135,50 @@ static double get_physical_time(ftd::RenderBridge& rb) { return rb.physical_time
 // scales/scale0/scenario-registry.js) produces identical physics on both
 // backends. Single-source authority: src/scenarios.cpp (C++) + engine/
 // web/js/bridge/scenarios/*.js (JS); both are hand-maintained mirrors.
+// ── Legacy backward-compat alias map (audit-4 2026-04-28) ──────────
+// Older saved-state JSONs may reference these short names. Each is now
+// aliased to its closest modern scenario name; the per-name body code
+// (~80 LOC) was deleted in favour of a single redispatch through
+// dispatch_scenario(). Aliases were chosen by scenario-body similarity
+// at the time of removal — see git log for the deleted bodies if you
+// need to restore exact pre-2026-04-28 behavior for any name.
+struct LegacyAlias { const char* old_name; const char* modern_name; };
+static constexpr LegacyAlias kLegacyAliases[] = {
+    {"pair",         "flux-pair-production"},
+    {"production",   "flux-pair-production"},
+    {"interference", "flux-interference"},
+    {"force",        "flux-pulse"},
+    {"hydrogen",     "s0-seed-hydrogen"},
+    {"entangled",    "quantum-entangle"},
+    {"annihilation", "s0-seed-ee-annihilation"},
+    {"triad",        "flux-triad"},
+    {"dipole",       "flux-dipole"},
+    {"scattering",   "s0-seed-ee-annihilation"},
+    {"wave",         "flux-pulse"},
+    {"cluster",      "s0-seed-stella-octangula"},
+    {"vacuum",       "flux-vacuum-foam"},
+};
+
 static void setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
-    // Primary path: ported JS scenario library (83 scenarios, flux-/light-/
-    // quantum-/s0-seed-/s0-field-). Dispatcher returns true on prefix match.
+    // Primary path: ported JS scenario library (flux-/light-/quantum-/
+    // s0-seed-/s0-vacuum-/s0-field-). Dispatcher returns true on prefix match.
     if (ftd::dispatch_scenario(rb, name)) return;
 
-    const int N = rb.lattice().size();
-    const int mid = static_cast<int>(std::round((N - 1) * 0.5));
+    // Backward-compat: 'empty' is also handled by the JS dispatcher (index.js)
+    // as an early-return; the C++ dispatcher does not match it via prefix, so
+    // keep this explicit no-op so legacy callers see consistent behavior.
+    if (name == "empty") return;
 
-    // ── Legacy backward-compat scenarios (not in JS UI registry;
-    // preserved for older tests and saved dashboards) ────────────────
-
-    if (name == "empty") {
-        // Nothing to inject
-    } else if (name == "pair") {
-        rb.inject_wavepacket(mid, mid, mid, 1);
-        rb.inject_particle(mid + 6, mid, mid, -1, ftd::Vec3(0, 0, 0));
-    } else if (name == "production") {
-        for (int i = 0; i < 5; i++) {
-            rb.inject_particle(4 + i, mid, mid, 1, ftd::Vec3(0, 0, 0));
-            rb.inject_particle(N - 5 - i, mid, mid, -1, ftd::Vec3(0, 0, 0));
-        }
-    } else if (name == "interference") {
-        int q = N / 4;
-        rb.inject_wavepacket(q, q, mid, 1);
-        rb.inject_wavepacket(N - q, q, mid, 1);
-        rb.inject_wavepacket(q, N - q, mid, 1);
-        rb.inject_wavepacket(N - q, N - q, mid, 1);
-    } else if (name == "force") {
-        rb.inject_wavepacket(mid, mid, mid, 1);
-    } else if (name == "hydrogen") {
-        rb.inject_particle(mid, mid, mid, 1, ftd::Vec3(0, 0, 0));
-        rb.inject_particle(mid + 8, mid, mid, -1, ftd::Vec3(0, 0, 0));
-    } else if (name == "entangled") {
-        rb.create_entangled_pair(mid, mid, mid, ftd::Vec3(ftd::K_B, 0, 0));
-    } else if (name == "annihilation") {
-        rb.inject_particle(mid - 3, mid, mid, 1, ftd::Vec3(0, 0, 0));
-        rb.inject_particle(mid + 3, mid, mid, -1, ftd::Vec3(0, 0, 0));
-    } else if (name == "triad") {
-        rb.inject_wavepacket(mid, mid + 2, mid, 1);
-        rb.inject_wavepacket(mid - 2, mid - 1, mid, 1);
-        rb.inject_wavepacket(mid + 2, mid - 1, mid, 1);
-    } else if (name == "dipole") {
-        rb.inject_wavepacket(mid - 2, mid, mid, 1);
-        rb.inject_wavepacket(mid + 2, mid, mid, -1);
-        rb.voxel_at(mid - 2, mid, mid).locked = true;
-        rb.voxel_at(mid + 2, mid, mid).locked = true;
-    } else if (name == "scattering") {
-        auto& v1 = rb.voxel_at(mid - 8, mid, mid);
-        rb.inject_particle(mid - 8, mid, mid, 1, ftd::Vec3(0, 0, 0));
-        v1.velocity = ftd::Vec3(0.3, 0.05, 0);
-        auto& v2 = rb.voxel_at(mid + 8, mid, mid);
-        rb.inject_particle(mid + 8, mid, mid, 1, ftd::Vec3(0, 0, 0));
-        v2.velocity = ftd::Vec3(-0.3, -0.05, 0);
-    } else if (name == "wave") {
-        double amp = ftd::K_B * 0.8;
-        rb.inject_flux(mid, mid, mid, ftd::Vec3(amp, 0, 0));
-        rb.inject_flux(mid+1, mid, mid, ftd::Vec3(amp*0.6, 0, 0));
-        rb.inject_flux(mid-1, mid, mid, ftd::Vec3(amp*0.6, 0, 0));
-        rb.inject_flux(mid, mid+1, mid, ftd::Vec3(0, amp*0.6, 0));
-        rb.inject_flux(mid, mid-1, mid, ftd::Vec3(0, amp*0.6, 0));
-        rb.inject_flux(mid, mid, mid+1, ftd::Vec3(0, 0, amp*0.6));
-        rb.inject_flux(mid, mid, mid-1, ftd::Vec3(0, 0, amp*0.6));
-    } else if (name == "cluster") {
-        int d = 3;
-        for (int dx = -1; dx <= 1; dx += 2) {
-            for (int dy = -1; dy <= 1; dy += 2) {
-                for (int dz = -1; dz <= 1; dz += 2) {
-                    int8_t st = ((dx + dy + dz) > 0) ? 1 : -1;
-                    rb.inject_wavepacket(mid + dx * d, mid + dy * d, mid + dz * d, st);
-                }
-            }
-        }
-    } else if (name == "vacuum") {
-        std::mt19937 rng(123);
-        std::uniform_real_distribution<double> dist(-0.2, 0.2);
-        double seed_amp = ftd::K_B * 0.3;
-        for (int x = mid - 4; x <= mid + 4; ++x) {
-            for (int y = mid - 4; y <= mid + 4; ++y) {
-                for (int z = mid - 4; z <= mid + 4; ++z) {
-                    rb.inject_flux(x, y, z, ftd::Vec3(
-                        seed_amp * dist(rng),
-                        seed_amp * dist(rng),
-                        seed_amp * dist(rng)
-                    ));
-                }
-            }
+    // Resolve any legacy short name to its modern alias and redispatch.
+    for (const auto& alias : kLegacyAliases) {
+        if (name == alias.old_name) {
+            ftd::dispatch_scenario(rb, alias.modern_name);
+            return;
         }
     }
+
+    // Unknown name — silently no-op (matches pre-2026-04-28 behavior; the
+    // primary dispatcher already returned false above).
 }
 
 // ── Embind Registration ──────────────────────────────────────────────

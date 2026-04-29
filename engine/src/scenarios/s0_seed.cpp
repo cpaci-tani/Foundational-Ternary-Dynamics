@@ -20,24 +20,8 @@
 
 namespace ftd {
 
-// Helper for s0-seed-electron/muon/tau — identical topology, amp differs.
-static void seed_lepton(RenderBridge& rb, int mc, double midF, int N, double boost) {
-    IP(rb, mc, mc, mc, -1);
-    const int envR = std::max(3, N / 6);
-    const double envSigma = envR / 2.0;
-    const double envAmp = K_B * boost;
-    const double envR2 = envR * envR;
-    const int eLo = FLR(midF) - envR, eHi = CEL(midF) + envR;
-    for (int z = eLo; z <= eHi; z++) for (int y = eLo; y <= eHi; y++) for (int x = eLo; x <= eHi; x++) {
-        double dx = x - midF, dy = y - midF, dz = z - midF;
-        double r2 = dx*dx + dy*dy + dz*dz;
-        if (r2 < 0.25 || r2 > envR2) continue;
-        double r = std::sqrt(r2);
-        double val = envAmp * std::exp(-r2 / (2.0 * envSigma * envSigma));
-        if (val < 0.001) continue;
-        IF(rb, x, y, z, -val*dx/r, -val*dy/r, -val*dz/r);
-    }
-}
+// (seed_lepton helper removed audit-4 2026-04-28: only callers were
+// s0-seed-{electron, muon, tau} which are now canonical in vacuum.cpp.)
 
 // Helper: _dp from JS — particle + radial flux envelope, optional lock.
 static void dp(RenderBridge& rb, int cx, int cy, int cz,
@@ -74,35 +58,12 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     const double midF = (N - 1) * 0.5;
     const int    mc   = RND(midF);
 
-    if (name == "s0-seed-electron") {
-        seed_lepton(rb, mc, midF, N, 1.5);
-    }
-    else if (name == "s0-seed-muon" || name == "s0-seed-tau") {
-        double boost = (name == "s0-seed-tau") ? 2.25 : 1.80;
-        seed_lepton(rb, mc, midF, N, boost);
-    }
-    else if (name == "s0-seed-photon") {
-        // genesis=false (audit 2026-04-28): a free EM wave should not pair-produce.
-        rb.toggles.genesis = false;
-        const int sigma = 3;
-        const double pAmp = K_B * 2.0;
-        const int pStartX = std::max(4, N / 4);
-        const int halfR = 8;
-        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int dx = -halfR; dx <= halfR; dx++) {
-            int x = pStartX + dx;
-            if (x < 0 || x >= N) continue;
-            double dy = y - midF, dz = z - midF;
-            double g = pAmp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2.0 * sigma * sigma));
-            if (g < 1e-6) continue;
-            IF(rb, x, y, z, 0, 0, g);
-            IW(rb, x, y, z, g, 0, 0);
-        }
-    }
-    // s0-seed-proton-candidate removed 2026-04-28 (audit removal): superseded
-    // by s0-seed-proton-l4 / s0-vacuum-proton.
+    // Audit-4 2026-04-28: s0-seed-{electron, muon, tau, photon} removed —
+    // mirrors of s0-vacuum-{electron, muon, tau, photon} which are now canonical.
+    // s0-seed-proton-candidate also removed earlier (audit-3).
 
     // ── Moore Seeds ──
-    else if (name == "s0-seed-octahedron") {
+    if (name == "s0-seed-octahedron") {
         IP(rb, mc, mc, mc, -1);
         const int off[6][3] = {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
         for (int i = 0; i < 6; i++) IP(rb, mc+off[i][0], mc+off[i][1], mc+off[i][2], +1);
@@ -317,30 +278,10 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         };
         for (int i = 0; i < 8; i++) IP(rb, mc+stel[i][0], mc+stel[i][1], mc+stel[i][2], +1);
     }
-    // ── Level 3-5: composite seeds via dp/tri helpers ──
-    // Audit 2026-04-28: removed 4 names — electron-l3 (dup of s0-vacuum-electron),
-    // neutrino (superseded by 3 vacuum-flavor scenarios),
-    // quark/antiquark (superseded by 6 named flavors via dp(... color)).
-    else if (name == "s0-seed-positron") {
-        dp(rb, mc, mc, mc, +1, +1, 0, std::max(3, N / 10), K_B * 1.5, false);
-    }
-    else if (name == "s0-seed-pion") {
-        int sp = std::max(3, N / 8), hf = sp / 2;
-        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5, true);
-        dp(rb, mc - hf, mc, mc, -1, -1, 1, 2, K_B * 0.5, true);
-    }
-    else if (name == "s0-seed-proton-l4") {
-        const int bR = std::max(2, N / 8);
-        const int charges[3] = {+1, +1, -1};
-        const int colors[3]  = {1, 2, 3};
-        tri(rb, mc, mc, mc, charges, colors, bR, true);
-    }
-    else if (name == "s0-seed-neutron") {
-        const int bR = std::max(2, N / 8);
-        const int charges[3] = {+1, -1, -1};
-        const int colors[3]  = {1, 2, 3};
-        tri(rb, mc, mc, mc, charges, colors, bR, true);
-    }
+    // ── Composite seeds via dp/tri helpers ──
+    // Audit-3 2026-04-28: removed electron-l3, neutrino, quark, antiquark.
+    // Audit-4 2026-04-28: removed positron, pion, proton-l4, neutron — all
+    // now canonical in vacuum.cpp (s0-vacuum-*).
     else if (name == "s0-seed-hydrogen") {
         const int oR = std::max(4, N / 6);
         const int bR = std::max(2, N / 12);
@@ -415,18 +356,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     // ── Electroweak bosons + Higgs + gluon ──
-    else if (name == "s0-seed-higgs-boson") {
-        const double hSig = 2.0, hAmp = K_B * 1.2;
-        const int hR = 6;
-        for (int dz = -hR; dz <= hR; dz++) for (int dy = -hR; dy <= hR; dy++) for (int dx = -hR; dx <= hR; dx++) {
-            int r2 = dx*dx + dy*dy + dz*dz;
-            if (r2 == 0 || r2 > hR * hR) continue;
-            double g = hAmp * std::exp(-r2 / (2.0 * hSig * hSig));
-            if (g < 1e-3) continue;
-            double iso = g / std::sqrt(3.0);
-            IF(rb, mc + dx, mc + dy, mc + dz, iso, iso, iso);
-        }
-    }
+    // Audit-4 2026-04-28: s0-seed-higgs-boson removed (mirror of s0-vacuum-higgs).
     else if (name == "s0-seed-higgs-field") {
         const double vevAmp = K_B * 0.3;
         const double noise  = K_B * 0.05;
@@ -437,32 +367,8 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             IF(rb, x, y, z, vevAmp + noise*sx, vevAmp + noise*sy, vevAmp + noise*sz);
         }
     }
-    else if (name == "s0-seed-w-boson") {
-        IP(rb, mc, mc, mc, +1);
-        SET_SPIN(rb, mc, mc, mc, +1);
-        const double wSig = 1.8, wAmp = K_B * 1.6;
-        const int wR = 5;
-        for (int dz = -wR; dz <= wR; dz++) for (int dy = -wR; dy <= wR; dy++) for (int dx = -wR; dx <= wR; dx++) {
-            int r2 = dx*dx + dy*dy + dz*dz;
-            if (r2 == 0 || r2 > wR * wR) continue;
-            double r = std::sqrt(double(r2));
-            double g = wAmp * std::exp(-r2 / (2.0 * wSig * wSig));
-            if (g < 1e-3) continue;
-            IF(rb, mc + dx, mc + dy, mc + dz, g * (1.3 * dx / r), g * (dy / r), g * (dz / r));
-        }
-    }
-    else if (name == "s0-seed-z-boson") {
-        const double zSig = 2.0, zAmp = K_B * 1.8;
-        const int zR = 6;
-        for (int dz = -zR; dz <= zR; dz++) for (int dy = -zR; dy <= zR; dy++) for (int dx = -zR; dx <= zR; dx++) {
-            int r2 = dx*dx + dy*dy + dz*dz;
-            if (r2 == 0 || r2 > zR * zR) continue;
-            double r = std::sqrt(double(r2));
-            double g = zAmp * std::exp(-r2 / (2.0 * zSig * zSig));
-            if (g < 1e-3) continue;
-            IF(rb, mc + dx, mc + dy, mc + dz, -g * dx / r, -g * dy / r, -g * dz / r);
-        }
-    }
+    // Audit-4 2026-04-28: s0-seed-{w-boson, z-boson} removed —
+    // mirrors of s0-vacuum-{w-boson, z-boson} which are now canonical.
     else if (name == "s0-seed-gluon") {
         // genesis=false (audit 2026-04-28): same fix as photon.
         rb.toggles.genesis = false;

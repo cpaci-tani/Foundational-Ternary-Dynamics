@@ -54,6 +54,12 @@ export const QUANTUM_SCENARIO_DESCRIPTIONS = {
 // forbids.
 // ─────────────────────────────────────────────────────────────────────
 export const S0_SEED_SCENARIO_METADATA = {
+    // Audit-3 + Audit-4 2026-04-28 metadata removals: s0-seed-{electron,
+    // muon, tau, photon, w-boson, z-boson, higgs-boson, positron, pion,
+    // proton-l4, neutron, electron-l3, neutrino, quark, antiquark,
+    // proton-candidate, symmetry-regression}. All canonical entries
+    // moved to s0-vacuum-* (or removed for being CI artefacts).
+    /* removed metadata kept in comment for reference only (audit history):
     's0-seed-electron': {
         title: 'Electron seed (unit negative charge + dressing)',
         desc: 'Single s=\u22121 site at the lattice center with radial-inward flux envelope of scale \\(K_B\\). This is the DERIV_DARK_SECTOR \u00a75.2 particle definition in the dispositional layer: { state, flux envelope, id }. No vortex, no topology \u2014 just a charged seed.',
@@ -141,6 +147,7 @@ export const S0_SEED_SCENARIO_METADATA = {
             ['Name', '[IMPOSED]', 'Structural test for Z-ness absent.'],
         ],
     },
+    */
     's0-seed-gluon': {
         title: 'Gluon seed (massless colored gauge wave)',
         desc: 'Transverse flux wave similar to the photon seed, but amplitude is dominated by one Cartesian axis to suggest color charge (the lattice\'s dominant-flux-axis \u2194 color labelling). In FTD the BCC multiplicative structure unifies Watson\'s identity \\(W_3\\) and SU(3); the "gluon" is an excitation of that sector. Propagation at \\(c = 1/\\sqrt{3}\\), massless.',
