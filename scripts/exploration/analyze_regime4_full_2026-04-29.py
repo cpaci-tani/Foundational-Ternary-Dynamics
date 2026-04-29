@@ -271,6 +271,17 @@ def main():
         if r:
             results.append(r)
 
+    # --- Phase 7 datasets: fine-grained amplitude scan at T=0.020 ---
+    p7 = RESULTS / "regime4_phase7"
+    print("================ PHASE 7: amplitude threshold scan at T=0.020 ==========\n")
+    for A in [40, 45, 55, 60, 65, 70]:
+        label = f"A={A} T=0.020 L=32 (10 seeds)"
+        sub = f"A{A}_T0.020"
+        regime = "threshold-localization"
+        r = analyze_dir(label, p7 / sub, regime)
+        if r:
+            results.append(r)
+
     # Summary table
     print("=" * 80)
     print("SUMMARY: Variance decomposition by regime")
