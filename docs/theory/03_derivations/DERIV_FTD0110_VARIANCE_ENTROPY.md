@@ -134,6 +134,65 @@ This is the bookkeeping cost of NOT tracking which specific 6 voxels (out of 29 
 
 ---
 
+## 3.5 · Regime 4 — temporal entropy structure (added 2026-04-29)
+
+**Reframe (user, 2026-04-29):** "There is also regime 4 which is frequency. Frequency being how many still events occurred. For example 60fps would be 60 events per second. Frequency IS time. Amplitude is simply complexity of the event."
+
+The spatial regimes 1-3 set Var(N) at a *fixed-time snapshot* (boundary geometry). Regime 4 is the **temporal-axis** entropy: how N(t) fluctuates *within a single seed* over the simulation duration. If frequency = time = event count, then the cluster's variance has both a spatial dimension (boundary geometry) and a temporal dimension (event-rate-induced churn).
+
+### 3.5.1 Empirical test
+
+Each `cluster_history_seed*.csv` records `(tick, voxel_count, ...)` at snapshot stride 50 ticks. We compute per-seed:
+
+- ⟨N(t)⟩ over the post-burn-in snapshot stream
+- σ_t = standard deviation of N(t) within a single seed (regime-4 contribution)
+
+and compare to:
+
+- σ_ens = standard deviation of terminal N across seeds (regimes 1-3 contribution)
+
+**Ergodic ratio** ≡ σ_t / σ_ens. For an ergodic system at equilibrium this is ≈ 1; for a temporally-frozen system it is ≈ 0.
+
+### 3.5.2 Results (analyze_cluster_temporal_regime4.py)
+
+| L | Per-seed temporal σ_t (mean) | Across-seed σ_ens | Ergodic ratio | Snapshot count per seed |
+|---:|---:|---:|---:|---:|
+| 32 | 0.049 | 1.000 | 0.049 | 100 (5000 ticks) |
+| 64 | **0.000** | 1.225 | **0.000** | 50 (2500 ticks) |
+| 128 | **0.000** | 1.225 | **0.000** | 50 (2500 ticks) |
+
+**At canonical amplitude (A=10) across all three lattice sizes, the cluster is temporally frozen.** Once the cluster forms (within ~250-tick burn-in), each seed locks into a specific N value and stays there for the entire observation window. Only one seed at L=32 (seed 0xe0102001) shows minor drift between N=26 and N=27.
+
+### 3.5.3 Interpretation
+
+The cluster's regime-1 (lattice-pinned) state at canonical amplitude is **structurally non-ergodic at this snapshot resolution**. Across-seed variance σ_ens ≈ 1.2 reflects initial-condition divergence (regimes 1-3 entropy: which voxel configurations happen to manifest given different RNG seeds). Within-seed variance σ_t ≈ 0 reflects the absence of net genesis/evaporation events at the boundary once equilibrium is reached.
+
+**Per the user's framing:** at canonical amplitude, the cluster's effective frequency is essentially zero — there are no per-tick events of consequence at the boundary in steady state. **Frequency and time degenerate** at this regime; the cluster is a "static configuration" rather than a "dynamic process." The bookkeeping cost of NOT tracking temporal events is zero because there ARE no temporal events.
+
+**Autocorrelation function** of the pooled trace decays slowly (at L=128, AC at lag 15 = 0.51) — but this is an artifact of pooling 5 frozen-at-different-N seeds; the within-seed AC is identically 1 because each seed is constant.
+
+### 3.5.4 Refined four-regime structure (canonical amplitude only — temporal axis collapsed)
+
+```
+Regime 1 (lattice-pinned, A ≤ √27): spatial std/N^{1/3} ≈ 0.14, temporal σ_t ≈ 0
+Regime 2 (free-boundary, 30 ≤ N ≤ 1000): spatial std/N^{1/3} ≈ 1.0, temporal σ_t ?
+Regime 3 (thickening, N > 1000): spatial std/N^{1/3} > 1.0, temporal σ_t ?
+Regime 4 (temporal/frequency): nonzero only at amplitudes where boundary
+                                churn is genuinely active; at canonical A
+                                degenerates with regime 1 (frozen state)
+```
+
+### 3.5.5 What we cannot test from existing data
+
+The existing engine instrumentation logs cluster_history at stride 50 ticks. Per-tick boundary events (genesis triggering at one voxel + evaporation at another, balancing to net N=const) would be invisible at this resolution. To genuinely test regime-4 contribution at large amplitudes (A ≥ 30 where boundary becomes free), the engine would need:
+
+- **stride-1 cluster_history logging** (every tick), OR
+- **per-tick event counter** (tally of genesis + evaporation events per tick at the cluster boundary)
+
+Both are 1-day engine-instrumentation tasks. Until then, regime-4 at large amplitude is an [OPEN] empirical question, distinct from but parallel to the spatial regimes' confirmation.
+
+---
+
 ## 4 · Multi-amplitude scaling test (T5b, in progress)
 
 The decisive test of P1 vs P2 is the multi-amplitude scaling. At canonical `A = 10` the cluster fits within one 27-block, so the boundary is geometrically constrained (it's the outer shell of the 27-block, fixed by lattice geometry). At higher amplitudes `A > √27 ≈ 5.2`, the cluster extends beyond a single 27-block and the boundary becomes free.

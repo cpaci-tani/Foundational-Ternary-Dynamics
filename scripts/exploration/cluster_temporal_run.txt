@@ -1,0 +1,76 @@
+==============================================================================
+FTD-0110 Bridge-II Regime-4 (temporal) variance analysis (2026-04-29)
+==============================================================================
+
+Reframe (user, 2026-04-28 evening): frequency IS time; amplitude is
+event complexity. Spatial regimes 1-3 set Var(N) at fixed snapshot;
+regime 4 is the temporal-axis entropy: how N(t) fluctuates across
+ticks for a fixed seed.
+
+Test: for each (lattice L, seed), compute mean N(t) and std N(t) over
+the post-burn-in snapshot stream. Compare:
+  - within-seed temporal std (regime 4)
+  - across-seed ensemble std at terminal time (regimes 1-3)
+
+--- L=32 post-fix (FTD-0107) ---
+    ic1_inject
+  cluster_history_seed3759153152.csv   ticks=250..5200  snapshots=100  N(t) range=25..25  ⟨N(t)⟩=25.00  σ_t=0.000  terminal=25
+  cluster_history_seed3759153153.csv   ticks=250..5200  snapshots=100  N(t) range=26..27  ⟨N(t)⟩=26.04  σ_t=0.196  terminal=27
+  cluster_history_seed3759153154.csv   ticks=250..5200  snapshots=100  N(t) range=25..25  ⟨N(t)⟩=25.00  σ_t=0.000  terminal=25
+  cluster_history_seed3759153155.csv   ticks=250..5200  snapshots=100  N(t) range=25..25  ⟨N(t)⟩=25.00  σ_t=0.000  terminal=25
+  cluster_history_seed3759153156.csv   RUNAWAY (max=32766, skipped)
+
+  Ensemble (across-seed) terminal std:    1.000
+  Mean within-seed temporal std (steady): 0.049
+  Pooled temporal std (all seeds, steady): 0.461
+  Ergodic ratio (temporal/ensemble):      0.049
+  Autocorrelation (lag 0..15):
+    1.00  0.96  0.91  0.86  0.85  0.84  0.82  0.81  0.79  0.78  0.76  0.75  0.73  0.72  0.70  0.69
+
+--- L=64 G1 (FTD-0107) ---
+    ic1_inject
+  cluster_history_seed3759153152.csv   ticks=250..2700  snapshots=50  N(t) range=25..25  ⟨N(t)⟩=25.00  σ_t=0.000  terminal=25
+  cluster_history_seed3759153153.csv   ticks=250..2700  snapshots=50  N(t) range=26..26  ⟨N(t)⟩=26.00  σ_t=0.000  terminal=26
+  cluster_history_seed3759153154.csv   ticks=250..2700  snapshots=50  N(t) range=28..28  ⟨N(t)⟩=28.00  σ_t=0.000  terminal=28
+  cluster_history_seed3759153155.csv   ticks=250..2700  snapshots=50  N(t) range=26..26  ⟨N(t)⟩=26.00  σ_t=0.000  terminal=26
+  cluster_history_seed3759153156.csv   ticks=250..2700  snapshots=50  N(t) range=25..25  ⟨N(t)⟩=25.00  σ_t=0.000  terminal=25
+
+  Ensemble (across-seed) terminal std:    1.225
+  Mean within-seed temporal std (steady): 0.000
+  Pooled temporal std (all seeds, steady): 1.095
+  Ergodic ratio (temporal/ensemble):      0.000
+  Autocorrelation (lag 0..15):
+    1.00  0.98  0.96  0.94  0.91  0.89  0.87  0.85  0.82  0.80  0.78  0.75  0.73  0.71  0.68  0.66
+
+--- L=128 G2 (FTD-0107) ---
+    ic1_inject
+  cluster_history_seed3759153152.csv   ticks=250..2700  snapshots=50  N(t) range=28..28  ⟨N(t)⟩=28.00  σ_t=0.000  terminal=28
+  cluster_history_seed3759153153.csv   ticks=250..2700  snapshots=50  N(t) range=25..25  ⟨N(t)⟩=25.00  σ_t=0.000  terminal=25
+  cluster_history_seed3759153154.csv   ticks=250..2700  snapshots=50  N(t) range=27..27  ⟨N(t)⟩=27.00  σ_t=0.000  terminal=27
+  cluster_history_seed3759153155.csv   ticks=250..2700  snapshots=50  N(t) range=27..27  ⟨N(t)⟩=27.00  σ_t=0.000  terminal=27
+  cluster_history_seed3759153156.csv   ticks=250..2700  snapshots=50  N(t) range=28..28  ⟨N(t)⟩=28.00  σ_t=0.000  terminal=28
+
+  Ensemble (across-seed) terminal std:    1.225
+  Mean within-seed temporal std (steady): 0.000
+  Pooled temporal std (all seeds, steady): 1.095
+  Ergodic ratio (temporal/ensemble):      0.000
+  Autocorrelation (lag 0..15):
+    1.00  0.97  0.94  0.91  0.88  0.85  0.82  0.78  0.75  0.72  0.69  0.65  0.62  0.58  0.55  0.51
+
+==============================================================================
+INTERPRETATION
+==============================================================================
+
+Ergodic ratio = (within-seed temporal std) / (across-seed ensemble std)
+
+  ratio ≈ 1: ergodic. Temporal sampling = ensemble sampling.
+              Regime 4 entropy contribution similar to spatial.
+  ratio < 1: cluster is 'frozen' in time (each seed converges to a
+              specific N, doesn't fluctuate); ensemble variance comes
+              from initial-condition divergence (regimes 1-3 dominate).
+  ratio > 1: cluster fluctuates in time more than across seeds;
+              regime-4 entropy dominates spatial entropy.
+
+Autocorrelation reveals the timescale of temporal entropy generation:
+  - Fast decay (ac drops to 0 within a few lags): high-frequency churn
+  - Slow decay (ac stays > 0.5 for many lags): slow drift, low-freq dynamics
