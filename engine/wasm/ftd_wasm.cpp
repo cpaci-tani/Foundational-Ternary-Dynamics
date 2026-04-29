@@ -357,8 +357,21 @@ val get_flux_volume(ftd::RenderBridge& rb) {
     const auto& voxels = rb.voxels();
 
     if (static_cast<int>(cache.size()) != total) cache.resize(total);
-    for (int i = 0; i < total; ++i) {
-        cache[i] = voxels[i].density();
+
+    // Layout transpose (audit 2026-04-28): C++ lattice.index uses
+    // X-slowest order (idx = x*N² + y*N + z), but the JS-side flux
+    // renderer (and MockBridge `_fluxIdx`) use Z-slowest order
+    // (idx = z*N² + y*N + x). Without this transpose, photons injected
+    // at C++ x=N/4 render at world z=N/4 (X⇄Z swap visible in every
+    // photon / gluon / wavepacket scenario on the WasmBridge path).
+    for (int z = 0; z < N; ++z) {
+        for (int y = 0; y < N; ++y) {
+            for (int x = 0; x < N; ++x) {
+                const int js_idx  = z * N * N + y * N + x;
+                const int cpp_idx = rb.lattice().index(x, y, z);
+                cache[js_idx] = voxels[cpp_idx].density();
+            }
+        }
     }
     return val(typed_memory_view(total, cache.data()));
 }
