@@ -50,11 +50,13 @@ const NEWLY_PORTED_SCENARIOS = [
     ['s0-field-uniform-b',    'newly ported',  's0-field'],
     ['s0-field-electric-dipole', 'newly ported', 's0-field'],
     ['s0-field-vortex-line',  'newly ported',  's0-field'],
-    // s0-seed-* — ALL newly ported (43 total; sample spans all sub-categories)
-    ['s0-seed-electron',      'newly ported',  's0-seed lepton'],
-    ['s0-seed-muon',          'newly ported',  's0-seed lepton'],
-    ['s0-seed-photon',        'newly ported',  's0-seed boson'],
-    ['s0-seed-proton-l4',     'newly ported',  's0-seed baryon'],
+    // s0-vacuum-* + s0-seed-* — sample spans all sub-categories.
+    // (Audit-3 + Audit-4 2026-04-28: many seed mirrors removed; replaced
+    //  with their s0-vacuum-* canonical counterparts.)
+    ['s0-vacuum-electron',    'canonical',     'lepton'],
+    ['s0-vacuum-muon',        'canonical',     'lepton'],
+    ['s0-vacuum-photon',      'canonical',     'gauge boson'],
+    ['s0-vacuum-proton',      'canonical',     'baryon'],
     ['s0-seed-octahedron',    'newly ported',  's0-seed Moore shell'],
     ['s0-seed-cuboctahedron', 'newly ported',  's0-seed Moore shell'],
     ['s0-seed-stella-octangula', 'newly ported', 's0-seed Moore shell'],
@@ -62,9 +64,9 @@ const NEWLY_PORTED_SCENARIOS = [
     ['s0-seed-moore-decomposition', 'newly ported', 's0-seed Moore decomp'],
     ['s0-seed-hydrogen',      'newly ported',  's0-seed atom'],
     ['s0-seed-helium',        'newly ported',  's0-seed atom'],
-    ['s0-seed-higgs-boson',   'newly ported',  's0-seed SM'],
-    ['s0-seed-w-boson',       'newly ported',  's0-seed SM'],
-    ['s0-seed-z-boson',       'newly ported',  's0-seed SM'],
+    ['s0-vacuum-higgs',       'canonical',     'gauge boson'],
+    ['s0-vacuum-w-boson',     'canonical',     'gauge boson'],
+    ['s0-vacuum-z-boson',     'canonical',     'gauge boson'],
     ['s0-seed-gluon',         'newly ported',  's0-seed SM'],
     ['s0-seed-up-quark',      'newly ported',  's0-seed quark'],
     ['s0-seed-top-quark',     'newly ported',  's0-seed quark'],

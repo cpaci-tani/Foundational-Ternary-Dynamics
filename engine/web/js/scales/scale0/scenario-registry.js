@@ -48,13 +48,10 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Quantum Lab', 'quantum-aharonov-bohm', 'Aharonov-Bohm Effect', ['quantum']),
     makeScenario('Quantum Lab', 'quantum-casimir', 'Casimir Effect', ['quantum']),
     makeScenario('Quantum Lab', 'quantum-zeno', 'Quantum Zeno Effect', ['quantum']),
-    makeScenario('SM Seeds (epistemic-tagged)', 's0-seed-electron', 'Electron seed', ['seed'], '[CONJECTURE]'),
-    makeScenario('SM Seeds (epistemic-tagged)', 's0-seed-photon', 'Photon seed', ['seed'], '[CONJECTURE]'),
-    // s0-seed-proton-candidate removed 2026-04-28 (audit): use s0-seed-proton-l4 / s0-vacuum-proton.
-    // s0-seed-electron-l3 removed 2026-04-28 (audit): duplicate of s0-vacuum-electron.
-    makeScenario('Elementary Particles', 's0-seed-muon', 'Muon (2nd-gen lepton, m_\u03bc/m_e=207)', ['seed'], '[CONJECTURE]'),
-    makeScenario('Elementary Particles', 's0-seed-tau', 'Tau (3rd-gen lepton, m_\u03c4/m_e=3477)', ['seed'], '[CONJECTURE]'),
-    makeScenario('Elementary Particles', 's0-seed-positron', 'Positron', ['seed'], '[CONJECTURE]'),
+    // Audit-3 + Audit-4 2026-04-28 removals from this group:
+    //   s0-seed-{electron, muon, tau, photon} \u2014 use s0-vacuum-* counterparts.
+    //   s0-seed-positron \u2014 use s0-vacuum-electron + s0-seed-ee-annihilation.
+    //   s0-seed-electron-l3, proton-candidate \u2014 duplicates/older variants.
 
     // LHC Standard Model — quark flavours (2026-04-17)
     makeScenario('SM Quarks', 's0-seed-up-quark', 'Up quark (u, 1st gen, +2/3)', ['seed', 'sm'], '[CONJECTURE]'),
@@ -65,10 +62,9 @@ export const SCALE0_SCENARIOS = [
     makeScenario('SM Quarks', 's0-seed-top-quark', 'Top quark (t, 3rd gen, m\u2248v_Higgs)', ['seed', 'sm'], '[CONJECTURE]'),
 
     // LHC Standard Model — gauge + Higgs (2026-04-17)
-    makeScenario('SM Bosons', 's0-seed-higgs-boson', 'Higgs boson (H, m\u2248125 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
+    // Audit-4 2026-04-28 removals: s0-seed-{higgs-boson, w-boson, z-boson} \u2014
+    // use s0-vacuum-{higgs, w-boson, z-boson} (canonical).
     makeScenario('SM Bosons', 's0-seed-higgs-field', 'Higgs field vacuum (VEV background)', ['seed', 'sm'], '[CONJECTURE]'),
-    makeScenario('SM Bosons', 's0-seed-w-boson', 'W boson (W\u00b1, m\u224880.4 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
-    makeScenario('SM Bosons', 's0-seed-z-boson', 'Z boson (Z\u2070, m=91.19 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
     makeScenario('SM Bosons', 's0-seed-gluon', 'Gluon (massless, colored)', ['seed', 'sm'], '[CONJECTURE]'),
 
     // LHC Standard Model — processes (2026-04-17)
@@ -77,9 +73,8 @@ export const SCALE0_SCENARIOS = [
     // Audit 2026-04-28 removals: s0-seed-{neutrino, quark, antiquark}.
     //   neutrino  → superseded by s0-vacuum-{electron,muon,tau}-neutrino
     //   quark/antiquark → superseded by s0-seed-{up,down,strange,charm,bottom,top}-quark
-    makeScenario('Composite Particles', 's0-seed-pion', 'Pion (quark-antiquark)', ['seed'], '[CONJECTURE]'),
-    makeScenario('Composite Particles', 's0-seed-proton-l4', 'Proton (3-quark triad)', ['seed'], '[CONJECTURE]'),
-    makeScenario('Composite Particles', 's0-seed-neutron', 'Neutron (3-quark triad)', ['seed'], '[CONJECTURE]'),
+    // Audit-4 2026-04-28 removals: s0-seed-{pion, proton-l4, neutron} —
+    // use s0-vacuum-{pion-charged, proton, neutron} (canonical).
     makeScenario('Atoms & Molecules', 's0-seed-hydrogen', 'Hydrogen atom', ['seed'], '[CONJECTURE]'),
     makeScenario('Atoms & Molecules', 's0-seed-helium', 'Helium atom (⁴He, 2p+2n + 1s²)', ['seed'], '[CONJECTURE]'),
     // s0-seed-h2-molecule renamed 2026-04-28 → s0-seed-2-hydrogen-atoms (the body

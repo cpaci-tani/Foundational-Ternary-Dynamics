@@ -34,91 +34,10 @@ export function setupS0SeedScenario(name, ctx) {
             const mc = Math.round(midF);
 
             switch (name) {
-                case 's0-seed-electron': {
-                    // Electron seed = unit negative charge + radial-inward
-                    // flux envelope at scale K_B.
-                    //
-                    // Configuration : [SELECTION]  (DERIV_DARK_SECTOR §5.2)
-                    // Name          : [IMPOSED]    (structural test absent)
-                    // Mass m_e      : [THEOREM]    (m_P·√(2π)·(16/3)·α¹¹,
-                    //                              but has NO spatial form)
-                    this.injectParticle(mc, mc, mc, -1);
-                    const envR = Math.max(3, Math.floor(N / 6));
-                    injectRadialEnvelope(this, midF, midF, midF, -1, envR / 2, K_B * 1.5,
-                        { radius: envR, minR2: 0.25 });
-                    break;
-                }
-
-                case 's0-seed-muon':
-                case 's0-seed-tau': {
-                    // Heavy-lepton seeds (TRACKER §1.9, closed 2026-04-17).
-                    //
-                    // Same topology as the electron seed — unit s=−1 charge
-                    // at centre + radial-inward flux envelope at scale K_B.
-                    // The only visual difference is a small amplitude boost
-                    // to convey a higher rest-mass energy:
-                    //
-                    //   electron : K_B · 1.5   (reference)
-                    //   muon     : K_B · 1.8   (+20 %)
-                    //   tau      : K_B · 2.25  (+50 %)
-                    //
-                    // Amplitudes are chosen to stay below K_GENESIS (= 3·K_B)
-                    // so no spurious mass-genesis fires in neighbouring voxels.
-                    //
-                    // IMPORTANT — epistemic reality check:
-                    //   FTD's mass ratios (μ/e = 207, τ/e = 3477) are
-                    //   derived from framework integers and are [THEOREM].
-                    //   The LAGRANGIAN mass term encodes the rest-mass
-                    //   energy; it has no spatial form. The envelope you
-                    //   see here is a visualization [SELECTION], not a
-                    //   theory prescription. See S0_SEED_SCENARIO_METADATA
-                    //   in engine/web/js/config/scenarios.js for the full
-                    //   epistemic breakdown.
-                    const boost = (name === 's0-seed-tau') ? 2.25 : 1.80;
-                    this.injectParticle(mc, mc, mc, -1);
-                    const envR = Math.max(3, Math.floor(N / 6));
-                    injectRadialEnvelope(this, midF, midF, midF, -1, envR / 2, K_B * boost,
-                        { radius: envR, minR2: 0.25 });
-                    break;
-                }
-
-                case 's0-seed-photon': {
-                    // Photon seed = J_z-polarized Gaussian pulse propagating +x.
-                    //
-                    // Propagation : [THEOREM]  (c = 1/√3 from cubic-lattice
-                    //                           wave equation + CFL)
-                    // Pol. (2)    : [THEOREM]  (Gauss constraint ∇·J = 0)
-                    // Name        : [SELECTION] (structurally consistent
-                    //                            with SM photon)
-                    //
-                    // genesis=false: a free EM wave should NOT spontaneously
-                    // pair-produce as it propagates. Without this, the wavefront's
-                    // |J|² crosses K_GENESIS and manifests ~30k particles over
-                    // 200 ticks — the audit (2026-04-28) caught this as a bug.
-                    this._toggles.genesis = false;
-                    const sigma = 3;
-                    const pAmp = K_B * 2;
-                    const pStartX = Math.max(4, Math.floor(N / 4));
-                    const halfR = 8;
-                    for (let z = 0; z < N; z++)
-                    for (let y = 0; y < N; y++)
-                    for (let dx = -halfR; dx <= halfR; dx++) {
-                        const x = pStartX + dx;
-                        if (x < 0 || x >= N) continue;
-                        const dy = y - midF, dz = z - midF;
-                        const r2 = dx * dx + dy * dy + dz * dz;
-                        const g = pAmp * Math.exp(-r2 / (2 * sigma * sigma));
-                        if (g < 1e-6) continue;
-                        this._injectFlux(x, y, z, 0, 0, g);      // J_z polarized
-                        this._injectWaveVel(x, y, z, g, 0, 0);   // propagate +x
-                    }
-                    break;
-                }
-
-                // s0-seed-proton-candidate removed 2026-04-28: superseded by
-                // s0-seed-proton-l4 (full triad with charge+color structure)
-                // and s0-vacuum-proton (curated wrapper). Tests previously
-                // referencing it now use s0-vacuum-proton.
+                // Audit-4 2026-04-28: s0-seed-{electron, muon, tau, photon} removed.
+                // These were verbatim mirrors of the s0-vacuum-* counterparts,
+                // which are now the canonical entry points (see SPEC_VACUUM_PARTICLE_SCENARIOS.md).
+                // s0-seed-proton-candidate also removed earlier in audit-3.
 
                 // ── Moore Seeds (geometric) ──────────────────────────
                 // Mirror the C++ ftd::ctor:: constructors (constructors.h)
@@ -321,13 +240,10 @@ export function setupS0SeedScenario(name, ctx) {
 
                 // ── Level 3-5: Particles, Composites, Atoms ──────────
                 // Helper: inject a particle + radial flux dressing.
-                // Audit 2026-04-28: 4 names removed — electron-l3 (dup of
-                // s0-vacuum-electron), neutrino (superseded by 3 vacuum-flavor
-                // scenarios), quark/antiquark (superseded by 6 named flavors).
-                case 's0-seed-positron':
-                case 's0-seed-pion':
-                case 's0-seed-proton-l4':
-                case 's0-seed-neutron':
+                // Audit-4 2026-04-28: removed s0-seed-{positron, pion, proton-l4, neutron}
+                // — all superseded by s0-vacuum-* equivalents (canonical entries).
+                // (Audit-3 also removed electron-l3, neutrino, quark, antiquark.)
+                // Composite ATOMS stay because they have no vacuum-family equivalent yet.
                 case 's0-seed-hydrogen':
                 case 's0-seed-helium':
                 case 's0-seed-2-hydrogen-atoms': {
@@ -335,14 +251,7 @@ export function setupS0SeedScenario(name, ctx) {
                         injectDressedParticle(this, cx, cy, cz, st, sp, co, sig, amp, lock);
                     const tri = (cx, cy, cz, charges, colors, rad, lock = true) =>
                         injectTriad(this, cx, cy, cz, charges, colors, rad, lock);
-                    if (name === 's0-seed-positron') dp(mc, mc, mc, +1, +1, 0, Math.max(3, Math.floor(N/10)), K_B*1.5);
-                    else if (name === 's0-seed-pion') {
-                        const sp=Math.max(3,Math.floor(N/8)), hf=Math.floor(sp/2);
-                        dp(mc+hf,mc,mc, +1,+1,1, 2,K_B*0.5, true); dp(mc-hf,mc,mc, -1,-1,1, 2,K_B*0.5, true);
-                    }
-                    else if (name === 's0-seed-proton-l4') { const bR=Math.max(2,Math.floor(N/8)); tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); }
-                    else if (name === 's0-seed-neutron') { const bR=Math.max(2,Math.floor(N/8)); tri(mc,mc,mc,[+1,-1,-1],[1,2,3],bR); }
-                    else if (name === 's0-seed-hydrogen') {
+                    if (name === 's0-seed-hydrogen') {
                         const oR=Math.max(4,Math.floor(N/6)), bR=Math.max(2,Math.floor(N/12));
                         tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc,mc,mc+oR, -1,-1,0, 2,K_B);
                     }
@@ -441,29 +350,9 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
 
-                // Electroweak gauge bosons + Higgs + gluon.
-                case 's0-seed-higgs-boson': {
-                    // Scalar (spin=0), neutral: void core + radially-
-                    // symmetric isotropic flux envelope. Amplitude set
-                    // by the FTD m_H/m_e = N_eff/α² ratio, scaled to K_B.
-                    const hSig = 2.0, hR = 6, hAmp = K_B * 1.2;
-                    // No injectParticle at centre — Higgs is the FIELD,
-                    // not a state-manifested particle. Represented by a
-                    // localised scalar flux lump.
-                    for (let dz=-hR; dz<=hR; dz++)
-                    for (let dy=-hR; dy<=hR; dy++)
-                    for (let dx=-hR; dx<=hR; dx++) {
-                        const r2 = dx*dx + dy*dy + dz*dz;
-                        if (r2 === 0 || r2 > hR*hR) continue;
-                        const g = hAmp * Math.exp(-r2 / (2 * hSig * hSig));
-                        if (g < 1e-3) continue;
-                        // Isotropic: equal Jx/Jy/Jz, no preferred axis.
-                        const iso = g / Math.sqrt(3);
-                        this._injectFlux(mc+dx, mc+dy, mc+dz, iso, iso, iso);
-                    }
-                    break;
-                }
-
+                // Audit-4 2026-04-28: s0-seed-higgs-boson removed (mirror of
+                // s0-vacuum-higgs). s0-seed-higgs-field stays — distinct VEV
+                // background scenario with no vacuum-family equivalent.
                 case 's0-seed-higgs-field': {
                     // Uniform low-amplitude flux background representing
                     // the VEV, with small random perturbations (thermal-
@@ -488,24 +377,10 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
 
-                case 's0-seed-w-boson': {
-                    // Charged (s=+1) localised lump. Flux envelope
-                    // chirality-biased via L-axis dominance (use Jx
-                    // ahead of Jy/Jz to suggest left-handed coupling).
-                    injectParticleFull(this, mc, mc, mc, +1, { spin: +1 });
-                    // Chirality bias: +30% weight on Jx relative to transverse.
-                    injectRadialEnvelope(this, mc, mc, mc, +1, 1.8, K_B * 1.6,
-                        { radius: 5, axisBias: [1.3, 1, 1] });
-                    break;
-                }
-
-                case 's0-seed-z-boson': {
-                    // Neutral (no state-manifested core) localised lump.
-                    // Balanced radial-inward envelope, no chirality bias.
-                    injectRadialEnvelope(this, mc, mc, mc, -1, 2.0, K_B * 1.8, { radius: 6 });
-                    break;
-                }
-
+                // Audit-4 2026-04-28: s0-seed-{w-boson, z-boson} removed —
+                // mirrors of s0-vacuum-{w-boson, z-boson}. Gluon stays — no
+                // vacuum-family equivalent (color-charged scenarios are
+                // research, not pedagogical).
                 case 's0-seed-gluon': {
                     // Massless transverse wave like the photon, but with
                     // color charge encoded via axis dominance. Launched
