@@ -1,0 +1,434 @@
+{
+  "schema_version": 1,
+  "scope": "algebraic-spine + calibration",
+  "ftd_version": "5.34",
+  "build_stamp": {
+    "generated_by": "scripts/proofs/build_dimensional_map.py",
+    "date": "2026-04-29",
+    "note": "Canonical data file — single source of truth. Edit this; then re-run the renderer to regenerate SPEC_DIMENSIONAL_MAP.md."
+  },
+
+  "scope_note": "Spine + calibration only. Covers the 7 algebraic-spine theorems, 4 dimensionless physical identifications, the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096, and 1 worked dimensional application (m_e in MeV). Full SM-quantity coverage lives in CATALOG_PARAMETRIC_INSERTIONS.md.",
+
+  "epistemic_legend": {
+    "THEOREM": "Rigorously proven from axioms; inputs and proof trace are explicit",
+    "STRONGLY MOTIVATED CONJECTURE": "Polynomial-level theorem with strong empirical match; physical identification not uniquely forced",
+    "CALIBRATION": "Declared (not derived) anchor; theorem-enforced as the irreducible minimum by no-go results (FTD-0059, FTD-0096)",
+    "IMPOSED": "Parametric anchor that fixes a unit; same epistemic status as CALIBRATION but assigned to a specific FTD constant"
+  },
+
+  "entries": [
+    {
+      "id": "g_star_identity",
+      "category": "spine_theorem",
+      "label": "G* algebraic identity",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "G* = Γ(1/4)² / (2·√(2π)·Γ(1/2))",
+      "ftd_value": 2.9586751191886385,
+      "ftd_value_units": null,
+      "depends_on": [],
+      "epistemic_tag": "THEOREM",
+      "ledger_ids": ["FTD-0002"],
+      "source_files": [
+        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
+        "docs/theory/01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md"
+      ],
+      "constants_py_ref": "G_STAR",
+      "lab_measurement": null,
+      "comparison": null,
+      "calibration_note": null,
+      "notes": "Direct Chowla–Selberg evaluation of L(s, χ_{-4}) at s=1 on the lemniscatic curve y² = x³ − x. Four independent derivations enumerated in MONOGRAPH_GSTAR_BRIDGE_CONSTANT (Γ-ratio, Watson period integral, lemniscate arc length, modular-form value)."
+    },
+
+    {
+      "id": "master_quadratic",
+      "category": "spine_theorem",
+      "label": "Master quadratic polynomial + roots",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "P(x) = x² − 16·G*²·x + 16·G*³ = 0; roots x± = 8·G*² ± √(16·G*⁴ − 4·G*³)",
+      "ftd_value": null,
+      "ftd_value_aux": {
+        "x_plus": 137.03617145815542,
+        "x_minus": 3.023963916339028
+      },
+      "ftd_value_units": null,
+      "depends_on": ["g_star_identity"],
+      "epistemic_tag": "THEOREM",
+      "ledger_ids": ["FTD-0001", "FTD-0081"],
+      "source_files": [
+        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
+        "docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md",
+        "docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md",
+        "scripts/proofs/proof_motivic_master_quadratic.py"
+      ],
+      "constants_py_ref": null,
+      "lab_measurement": null,
+      "comparison": null,
+      "calibration_note": null,
+      "notes": "Two independent derivations (FTD-0081): Route A (physics — Gaussian J-integration of S_E) and Route B (arithmetic — Damerell–Shimura at CM curve E_i). Both produce the identical polynomial to 100 digits."
+    },
+
+    {
+      "id": "cm_curve_uniqueness",
+      "category": "spine_theorem",
+      "label": "CM curve uniqueness among class-number-1 fields",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots that simultaneously match dimensionless physical constants to permille precision",
+      "ftd_value": null,
+      "ftd_value_aux": {"unique_discriminant": -4, "class_number": 1},
+      "ftd_value_units": null,
+      "depends_on": ["g_star_identity", "master_quadratic"],
+      "epistemic_tag": "THEOREM",
+      "ledger_ids": ["FTD-0001", "FTD-0014"],
+      "source_files": [
+        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
+        "docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md",
+        "scripts/proofs/scan_cm_curves.py"
+      ],
+      "constants_py_ref": null,
+      "lab_measurement": null,
+      "comparison": null,
+      "calibration_note": null,
+      "notes": "Numerical verification across all 9 class-number-1 discriminants. Uniqueness extends only within the class-number-1 family; class-number ≥ 2 is [OPEN]."
+    },
+
+    {
+      "id": "coefficient_16_aut_e_squared",
+      "category": "spine_theorem",
+      "label": "Coefficient 16 = |Aut(E)|²",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "For E: y² = x³ − x, |Aut(E)| = 4 over ℚ̄, so |Aut(E)|² = 16 (the master-quadratic coefficient)",
+      "ftd_value": 16,
+      "ftd_value_units": null,
+      "depends_on": [],
+      "epistemic_tag": "THEOREM",
+      "ledger_ids": ["FTD-0006", "FTD-0007"],
+      "source_files": [
+        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md"
+      ],
+      "constants_py_ref": null,
+      "lab_measurement": null,
+      "comparison": null,
+      "calibration_note": null,
+      "notes": "Three independent routes converge on 16: direct |Aut(E)|² (Route A, FTD-0006); z_BCC × 2 (Route B, FTD-0007); j-invariant + modular form (additional)."
+    },
+
+    {
+      "id": "watson_identity",
+      "category": "spine_theorem",
+      "label": "Watson identity W₃ = G*²/(2π)",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "W₃ := ∫_0^π dx ∫_0^π dy ∫_0^π dz [3 − cos x − cos y − cos z]⁻¹ / π³ = G*²/(2π)",
+      "ftd_value": 1.3932039296856768,
+      "ftd_value_units": null,
+      "depends_on": ["g_star_identity"],
+      "epistemic_tag": "THEOREM",
+      "ledger_ids": ["FTD-0002"],
+      "source_files": [
+        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
+        "docs/theory/01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md"
+      ],
+      "constants_py_ref": null,
+      "lab_measurement": null,
+      "comparison": null,
+      "calibration_note": null,
+      "notes": "Watson's third triple integral. Bundled with G* under FTD-0002 because it is one of the four independent derivations of G*; here it is also recorded as a structural identity in its own right (the BCC eigenvalue triple-cosine product)."
+    },
+
+    {
+      "id": "phase_g_geometric_coulomb",
+      "category": "spine_theorem",
+      "label": "Phase G geometric Coulomb identity",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "α_r(r, L) = 2·r·G_L(r), where G_L is the periodic lattice Poisson Green's function. Holds at every finite L without free parameters.",
+      "ftd_value": null,
+      "ftd_value_units": null,
+      "depends_on": [],
+      "epistemic_tag": "THEOREM",
+      "ledger_ids": ["FTD-0004"],
+      "source_files": [
+        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
+        "docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md"
+      ],
+      "constants_py_ref": null,
+      "lab_measurement": {
+        "value_note": "R² = 1.0000 at L=384, median 0.07% residual in the Coulomb tail",
+        "source": "Day-2 EFT Recovery Program campaign (2026-04-19)"
+      },
+      "comparison": null,
+      "calibration_note": null,
+      "notes": "Reframed away from the QED-deviation reading: the lattice α plateau at ≈1.8× α_ref is the Poisson Green's function shape, not a fine-structure correction. Zero free parameters."
+    },
+
+    {
+      "id": "phase_j_ultralocality",
+      "category": "spine_theorem",
+      "label": "Phase J partition-function ultralocality at L=2",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "At L=2, the partition function Z factorizes site-locally: Z = ∏_v Z_v(s_v, J_v). No connected correlators between voxels.",
+      "ftd_value": null,
+      "ftd_value_units": null,
+      "depends_on": [],
+      "epistemic_tag": "THEOREM",
+      "ledger_ids": ["FTD-0005"],
+      "source_files": [
+        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md"
+      ],
+      "constants_py_ref": null,
+      "lab_measurement": null,
+      "comparison": null,
+      "calibration_note": null,
+      "notes": "Direct algebraic statement about the L=2 partition function. Empirical engine support: FTD-0075 (flux propagator on Langevin ensemble shows essentially constant correlator at distance, consistent with ultralocality)."
+    },
+
+    {
+      "id": "alpha_inverse",
+      "category": "dimensionless_prediction",
+      "label": "1/α (fine-structure constant) ↔ master-quadratic root x₊",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "x₊ root of master quadratic; tree value 137.0362, with 7-term 1-loop series matching CODATA to 24 digits (post-hoc fit beyond CODATA precision per AUDIT_MASTER_QUADRATIC)",
+      "ftd_value": 137.03599917699998,
+      "ftd_value_units": null,
+      "depends_on": ["master_quadratic"],
+      "epistemic_tag": "STRONGLY MOTIVATED CONJECTURE",
+      "ledger_ids": ["FTD-0001", "FTD-0013"],
+      "source_files": [
+        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
+        "docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md",
+        "docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md"
+      ],
+      "constants_py_ref": "ALPHA_INV",
+      "lab_measurement": {
+        "value": 137.035999177,
+        "sigma": 2.1e-8,
+        "units": null,
+        "source": "CODATA 2022",
+        "url": "https://physics.nist.gov/cgi-bin/cuu/Value?alphinv"
+      },
+      "comparison": {
+        "tier": "hard",
+        "delta_ppb": -0.21,
+        "method": "tree x₊ vs CODATA: 1.26 ppm; full 7-term 1-loop series matches CODATA to within published precision"
+      },
+      "calibration_note": null,
+      "notes": "Polynomial-level theorem (x₊ is a root of a number-theoretic polynomial); the physical identification x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE] (downgraded from THEOREM 2026-04-19) because it depends on dual-match + CM-curve uniqueness rather than a derivation chain to QED. FTD-0097 look-elsewhere scan (2026-04-27) confirms the master quadratic's polynomial-root layer lives outside the monomial scan space and is unaffected by the over-richness verdict."
+    },
+
+    {
+      "id": "n_color",
+      "category": "dimensionless_prediction",
+      "label": "N_c (number of colors) ↔ master-quadratic root x₋",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "x₋ root of master quadratic; numerical value 3.024",
+      "ftd_value": 3.023963916339028,
+      "ftd_value_units": null,
+      "depends_on": ["master_quadratic"],
+      "epistemic_tag": "STRONGLY MOTIVATED CONJECTURE",
+      "ledger_ids": ["FTD-0001", "FTD-0014"],
+      "source_files": [
+        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
+        "docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md"
+      ],
+      "constants_py_ref": "X_MINUS",
+      "lab_measurement": {
+        "value": 3,
+        "sigma": null,
+        "units": null,
+        "source": "Standard Model (exact integer, not a measurement)"
+      },
+      "comparison": {
+        "tier": "hard",
+        "delta_ppb": 7987971.0,
+        "method": "x₋ = 3.024 vs N_c = 3 exactly (0.80% off integer)"
+      },
+      "calibration_note": null,
+      "notes": "Same epistemic tier as α: polynomial-root layer is theorem; physical identification is conjecture. Four independent topological routes converge on N_c = 3 (DERIV_NC_FROM_TOPOLOGY)."
+    },
+
+    {
+      "id": "mu_over_e_mass_ratio",
+      "category": "dimensionless_prediction",
+      "label": "m_μ / m_e (muon/electron mass ratio)",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "m_μ/m_e = 3·b₃·(b₃ + N_c) − N_c = 3·7·10 − 3 = 207",
+      "ftd_value": 207,
+      "ftd_value_units": null,
+      "depends_on": [],
+      "epistemic_tag": "STRONGLY MOTIVATED CONJECTURE",
+      "ledger_ids": ["FTD-0008"],
+      "source_files": [
+        "docs/theory/05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md",
+        "docs/theory/05_particles/PRED_ELECTROWEAK_MASSES.md",
+        "docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md"
+      ],
+      "constants_py_ref": "MU_RATIO",
+      "lab_measurement": {
+        "value": 206.7682830,
+        "sigma": 4.6e-7,
+        "units": null,
+        "source": "CODATA 2022"
+      },
+      "comparison": {
+        "tier": "parametric",
+        "delta_ppb": 1121040.0,
+        "method": "207 (FTD framework integers) vs 206.7683 (CODATA): 0.11% (1.12 × 10⁶ ppb)"
+      },
+      "calibration_note": null,
+      "notes": "Derived from framework integers {b₃=7, N_c=3} with no free parameters. The formula is integer arithmetic; the 0.11% gap to CODATA is the radiative correction not yet computed in FTD."
+    },
+
+    {
+      "id": "tau_over_e_mass_ratio",
+      "category": "dimensionless_prediction",
+      "label": "m_τ / m_e (tau/electron mass ratio)",
+      "is_dimensionless": true,
+      "calibration_required": false,
+      "ftd_formula": "m_τ/m_e = (N_eff + N_base)·μ_ratio − 2·N_c·b₃ = 17·207 − 42 = 3477",
+      "ftd_value": 3477,
+      "ftd_value_units": null,
+      "depends_on": ["mu_over_e_mass_ratio"],
+      "epistemic_tag": "STRONGLY MOTIVATED CONJECTURE",
+      "ledger_ids": ["FTD-0008"],
+      "source_files": [
+        "docs/theory/05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md",
+        "docs/theory/05_particles/PRED_ELECTROWEAK_MASSES.md",
+        "docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md"
+      ],
+      "constants_py_ref": "TAU_RATIO",
+      "lab_measurement": {
+        "value": 3477.23,
+        "sigma": 0.23,
+        "units": null,
+        "source": "PDG 2024"
+      },
+      "comparison": {
+        "tier": "parametric",
+        "delta_ppb": -66147.0,
+        "method": "3477 (FTD framework integers) vs 3477.23 (PDG): 0.0066% (66 × 10³ ppb)"
+      },
+      "calibration_note": null,
+      "notes": "Derived from framework integers {N_eff=13, N_base=4, N_c=3, b₃=7} with no free parameters. 0.01% match to PDG."
+    },
+
+    {
+      "id": "a_phys_planck",
+      "category": "calibration_declaration",
+      "label": "a_phys ≡ ℓ_P (length anchor)",
+      "is_dimensionless": false,
+      "calibration_required": true,
+      "ftd_formula": "DECLARED: 1 voxel ≡ 1 Planck length ℓ_P",
+      "ftd_value": 1.616255e-35,
+      "ftd_value_units": "m",
+      "depends_on": [],
+      "epistemic_tag": "CALIBRATION",
+      "ledger_ids": ["FTD-0030", "FTD-0041", "FTD-0059"],
+      "source_files": [
+        "docs/SPEC_FTD.md",
+        "docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md",
+        "docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md",
+        "docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md"
+      ],
+      "constants_py_ref": null,
+      "lab_measurement": null,
+      "comparison": null,
+      "calibration_note": "FTD-0059 (no-go theorem, 2026-04-23): no length is expressible from Axiom-Zero invariants alone. Mechanisms α/β/γ/δ all closed negative. The Planck-length declaration is theorem-enforced as the irreducible minimum, not a convenience choice. ℓ_P value from CODATA 2022: ≈1.616255 × 10⁻³⁵ m.",
+      "notes": "First of two SI-dimensional calibrations theorem-enforced by FTD-0096."
+    },
+
+    {
+      "id": "t_phys_lattice_tick",
+      "category": "calibration_declaration",
+      "label": "t_phys (one tick in seconds)",
+      "is_dimensionless": false,
+      "calibration_required": true,
+      "ftd_formula": "t_phys = √3 · ℓ_P / c (CFL condition c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s)",
+      "ftd_value": 9.34e-44,
+      "ftd_value_units": "s",
+      "depends_on": ["a_phys_planck"],
+      "epistemic_tag": "CALIBRATION",
+      "ledger_ids": ["FTD-0041"],
+      "source_files": [
+        "docs/SPEC_FTD.md"
+      ],
+      "constants_py_ref": null,
+      "lab_measurement": null,
+      "comparison": null,
+      "calibration_note": "Derived (not declared) from a_phys ≡ ℓ_P and the CFL stability constraint c_lat = 1/√3 (which is itself a [THEOREM] from the cubic-lattice wave equation). Numerically t_phys ≈ 9.34 × 10⁻⁴⁴ s.",
+      "notes": "Once a_phys is fixed, t_phys is fully determined. No additional calibration freedom."
+    },
+
+    {
+      "id": "mass_unit_anchor",
+      "category": "calibration_declaration",
+      "label": "K_B = m_e (mass-unit anchor)",
+      "is_dimensionless": false,
+      "calibration_required": true,
+      "ftd_formula": "DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c².",
+      "ftd_value": 0.5109989461,
+      "ftd_value_units": "MeV/c²",
+      "depends_on": [],
+      "epistemic_tag": "IMPOSED",
+      "ledger_ids": ["FTD-0041", "FTD-0096"],
+      "source_files": [
+        "docs/SPEC_FTD.md",
+        "docs/theory/10_eft_program/THEOREM_MU_NO_GO_FTD0096.md"
+      ],
+      "constants_py_ref": "K_B",
+      "lab_measurement": {
+        "value": 0.51099895069,
+        "sigma": 1.6e-10,
+        "units": "MeV/c²",
+        "source": "CODATA 2022"
+      },
+      "comparison": {
+        "tier": "calibration",
+        "delta_ppb": -1.0e-1,
+        "method": "K_B parametrically anchored to m_e by definition; the comparison is to confirm the calibration is consistently applied in scripts/constants.py (K_B = 0.511 to 3 sig figs)"
+      },
+      "calibration_note": "FTD-0096 (calibration-interface theorem, 2026-04-28): mass-unit μ_FTD is calibration, not derivation, on equal footing with a_phys. Three independent closures of FTD-0094 confirm this from methodological (FTD-0097 look-elsewhere null-rejected upward), structural-mechanism (FTD-0093 Mechanism C closed negative), and dimensional (this no-go) sides. Exactly two SI-dimensional calibrations (a_phys ≡ ℓ_P and K_B = m_e) are theorem-enforced as the irreducible minimum.",
+      "notes": "Second of two SI-dimensional calibrations. Together with a_phys, completes the calibration interface."
+    },
+
+    {
+      "id": "m_electron_dimensional",
+      "category": "calibration_application",
+      "label": "m_e (electron mass in MeV/c²) — worked example",
+      "is_dimensionless": false,
+      "calibration_required": true,
+      "ftd_formula": "m_e = K_B (lattice value 0.511) × mass-unit (1 MeV/c² per K_B unit) = 0.511 MeV/c²",
+      "ftd_value": 0.511,
+      "ftd_value_units": "MeV/c²",
+      "depends_on": ["mass_unit_anchor"],
+      "epistemic_tag": "IMPOSED",
+      "ledger_ids": ["FTD-0041"],
+      "source_files": [
+        "docs/SPEC_FTD.md",
+        "scripts/constants.py"
+      ],
+      "constants_py_ref": "K_B",
+      "lab_measurement": {
+        "value": 0.51099895069,
+        "sigma": 1.6e-10,
+        "units": "MeV/c²",
+        "source": "CODATA 2022"
+      },
+      "comparison": {
+        "tier": "imposed",
+        "delta_ppb": 2053,
+        "method": "0.511 (K_B, 3 sig figs) vs 0.5109989461 (CODATA): bookkeeping match by definition of the anchor. The +2053 ppb gap is purely the precision of K_B as stored in scripts/constants.py — not a physical disagreement."
+      },
+      "calibration_note": "This is the bridge mechanism: every dimensional FTD prediction reduces to (a) a dimensionless ratio (e.g. m_μ/m_e = 207) times (b) the mass-unit anchor (1 MeV/c² ≡ m_e/K_B). The same pattern applies to lengths (multiply dimensionless ratio by a_phys = ℓ_P) and times (multiply by t_phys = √3·ℓ_P/c).",
+      "notes": "Single worked example. Other dimensional consequences (m_μ in MeV via 207 × m_e, m_p in MeV via m_p/m_e × m_e, etc.) follow the same pattern and are catalogued individually in CATALOG_PARAMETRIC_INSERTIONS.md."
+    }
+  ]
+}

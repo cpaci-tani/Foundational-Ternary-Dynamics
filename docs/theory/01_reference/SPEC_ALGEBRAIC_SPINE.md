@@ -399,3 +399,34 @@ numerical match x+ ≈ 1/α (1.26 ppm) + x− ≈ N_c (0.80%) is recorded as
 either a derivation (all three first-principles routes for g_c are
 closed-negative as of 2026-04-27) or a look-elsewhere scan
 demonstrating selectivity (FTD-0097 pre-registered, not run).
+
+---
+
+## 13 · From theorems to physics — see the dimensional map
+
+The seven theorems above are dimensionless. Their connection to
+physical-unit observables (m_e in MeV, lifetimes in seconds, lengths
+in meters) goes through the **calibration interface**: exactly two
+SI-dimensional anchors (`a_phys ≡ ℓ_P` and `K_B = m_e`) are
+theorem-enforced as the irreducible minimum (FTD-0059 + FTD-0096).
+
+The full dimensionless ↔ dimensional bridge — including the seven
+theorems, the four dimensionless physical predictions
+(α, N_c, m_μ/m_e, m_τ/m_e), the three calibration declarations, and
+one worked dimensional application — is catalogued at:
+
+- **Reference map (auto-generated):** `SPEC_DIMENSIONAL_MAP.md`
+- **Canonical data (single source of truth):** `dimensional_map.json`
+- **Renderer:** `scripts/proofs/build_dimensional_map.py`
+- **Tests:** `scripts/tests/test_dimensional_map.py`
+
+Use the dimensional map when drafting papers or replying to reviewers
+that ask "is this prediction dimensionless or does it require
+calibration?". Each map entry carries an explicit epistemic tag,
+LEDGER cross-references, and (for entries with experimental analogues)
+the comparison delta in ppb.
+
+The CATALOG_PARAMETRIC_INSERTIONS.md document remains the right home
+for the full ~162-row enumeration of all SM-quantity insertions; the
+dimensional map's job is to expose the *bridge mechanism*, not
+re-catalog every insertion.

@@ -302,6 +302,7 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 
 - **Full FTD spec**: `docs/SPEC_FTD.md`
 - **Algebraic spine (canonical theorems-only reference, 2026-04-27)**: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` — citation target for paper drafts; states the seven [THEOREM] claims (G* identity, master quadratic, CM uniqueness, coefficient 16, Watson identity, Phase G geometric Coulomb, Phase J ultralocality) independent of any physics interpretation. Read this before claiming anything load-bearing about FTD's algebraic content.
+- **Dimensionless ↔ Dimensional Map** (2026-04-29): `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) + `docs/theory/01_reference/dimensional_map.json` (canonical data, 15 entries). Single citation target for "is this prediction dimensionless or calibration-conditional?". Walks the bridge from the 7 algebraic-spine theorems through the 4 dimensionless physical predictions (α, N_c, m_μ/m_e, m_τ/m_e) through the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (`a_phys ≡ ℓ_P`, `t_phys`, `K_B = m_e`) to one worked dimensional application (m_e in MeV). Renderer: `scripts/proofs/build_dimensional_map.py`. Tests (12 assertions): `scripts/tests/test_dimensional_map.py`.
 - **Engine spec**: `engine/SPEC_ENGINE.md`
 - **Theory catalog**: `docs/theory/META_INDEX.md`
 - **Documentation map**: `META_DOCUMENTATION_MAP.md`

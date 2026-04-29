@@ -8,6 +8,8 @@
 
 > **Epistemic framing.** This catalog exists because the tag `[DERIVED]` is often overapplied. A *derivation* takes FTD axioms and produces both the functional form and the numerical value. A *parametric insertion* borrows the functional form from external physics (QED, ChPT, Fermi theory, Regge phenomenology, seesaw ansatz, etc.) and inserts FTD-supplied integers or couplings into it. Insertions are not wrong — they are how any EFT cross-checks with the existing Standard Model — but they must be tagged honestly. A reviewer should be able to read this catalog and tell in five minutes which claims are independent evidence for FTD and which are cross-checks against known physics.
 
+> **See also:** for the spine-layer + calibration interface (the 7 algebraic-spine theorems, 4 dimensionless physical predictions, 3 calibration declarations, and worked dimensional applications), see `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) and `docs/theory/01_reference/dimensional_map.json` (canonical data). The dimensional map exposes the *bridge mechanism* (how dimensionless quantities cross over to physical units via the two theorem-enforced anchors `a_phys ≡ ℓ_P` and `K_B = m_e`); this catalog enumerates the ~129 parametric insertions that consume that bridge.
+
 ---
 
 ## 1 · Epistemic Tags Used in This Catalog
