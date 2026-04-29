@@ -157,13 +157,10 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-seed-sloop':               [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement']],
     's0-seed-observer-cell':       [['genesis', false, 't-genesis']],
 
-    // Particles — genesis off, gravity on for structure.
-    // Audit 2026-04-28: removed s0-seed-{electron-l3, neutrino, quark, antiquark}.
-    's0-seed-positron':       [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
-    // Composites — strong force essential for binding.
-    's0-seed-pion':           [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force']],
-    's0-seed-proton-l4':      [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force']],
-    's0-seed-neutron':        [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force']],
+    // Particles + composites — toggle profiles for s0-seed-{electron-l3, muon,
+    // tau, photon, w-boson, z-boson, higgs-boson, positron, pion, proton-l4,
+    // neutron, neutrino, quark, antiquark} removed in audit-3+audit-4 2026-04-28.
+    // Use the s0-vacuum-* toggle profiles below for canonical entries.
     // Atoms — strong force for nucleus binding + gravity for electron orbit.
     's0-seed-hydrogen':       [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],
     's0-seed-helium':         [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],
