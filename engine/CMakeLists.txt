@@ -873,6 +873,15 @@ ftd_add_test(test_emergent_ic1_topology tests/test_emergent_ic1_topology.cpp
              CTEST_NAME emergent_ic1_topology TIMEOUT 600
              LABELS native eft observable engine_as_instrument regression)
 
+# FTD-0110 Bridge-II regime-4 (temporal/frequency) variance test:
+# per-tick cluster_history logging at custom amplitude. Used to test
+# whether the cluster has nonzero temporal entropy contribution at
+# active-boundary amplitudes (A ≥ 30 where boundary becomes free).
+# See DERIV_FTD0110_VARIANCE_ENTROPY.md.
+ftd_add_test(campaign_amplitude_time_series tests/campaign_amplitude_time_series.cpp
+             CTEST_NAME campaign_amplitude_time_series TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.

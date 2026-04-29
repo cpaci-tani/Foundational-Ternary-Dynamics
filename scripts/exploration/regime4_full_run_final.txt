@@ -1,0 +1,352 @@
+================================================================================
+FTD-0110 Bridge-II Regime-4 Full Analysis (2026-04-29)
+================================================================================
+
+Anova-style decomposition of cluster-size variance into
+  Var_total = Var_within (regime-4 temporal) + Var_between (regimes 1-3 spatial-IC)
+
+Each (L, A) → a regime classification per the four-regime structure:
+  Regime 1 (lattice-pinned, A ≤ √27, cluster fits one 27-block)
+  Regime 2 (free-boundary, 30 ≤ N ≤ 1000)
+  Regime 3 (boundary-thickening, N > 1000)
+  Regime 4 (temporal/frequency) -- this is the within-seed variance axis
+
+================ PHASE 1: stride-1 + ensemble-precision ================
+
+--- L=32 ic1 stride=1 (5 seeds)  (regime: 1 (lattice-pinned canonical)) ---
+    L32_stride1
+  Seeds (bound-state): 5
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 1: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 2: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 3: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 4: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+  Cross-seed terminal mean: 25.20
+  Cross-seed terminal std (sample, n-1):  0.447
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     =  0.000  σ_within  = 0.000
+    Var_between (regimes-1-3, spatial IC) =  0.160  σ_between = 0.400
+    Var_total                              =  0.160  σ_total   = 0.400
+    Fraction in regime-4 (temporal):   0.0%
+    Fraction in regimes-1-3 (spatial-IC): 100.0%
+  Within-seed AC (lags 0..20):
+     1.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  Mean per-tick |ΔN| (boundary event rate): 0.0000
+
+--- L=64 ic1 stride=1 (3 seeds)  (regime: 1 (lattice-pinned canonical)) ---
+    L64_stride1
+  Seeds (bound-state): 3
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 1: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 2: mean= 28.00  σ_t= 0.00  range=28..28  Δrate=0.000
+  Cross-seed terminal mean: 26.33
+  Cross-seed terminal std (sample, n-1):  1.528
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     =  0.000  σ_within  = 0.000
+    Var_between (regimes-1-3, spatial IC) =  1.556  σ_between = 1.247
+    Var_total                              =  1.556  σ_total   = 1.247
+    Fraction in regime-4 (temporal):   0.0%
+    Fraction in regimes-1-3 (spatial-IC): 100.0%
+  Within-seed AC (lags 0..20):
+     1.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  Mean per-tick |ΔN| (boundary event rate): 0.0000
+
+--- L=32 ic1 stride=50 (30 seeds)  (regime: 1 (canonical ensemble precision)) ---
+    L32_30seeds
+  Seeds (bound-state): 30
+  Snapshots per seed: 40  (post-burn-in)
+  Per-seed:
+    seed 0: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 1: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 2: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 3: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 4: mean= 25.15  σ_t= 0.53  range=25..27  Δrate=0.051
+    seed 5: mean= 27.00  σ_t= 0.00  range=27..27  Δrate=0.000
+    seed 6: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 7: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 8: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 9: mean= 27.00  σ_t= 0.00  range=27..27  Δrate=0.000
+    seed 10: mean= 27.20  σ_t= 0.71  range=27..30  Δrate=0.077
+    seed 11: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 12: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 13: mean= 27.00  σ_t= 0.00  range=27..27  Δrate=0.000
+    seed 14: mean= 24.02  σ_t= 0.16  range=24..25  Δrate=0.026
+    seed 15: mean= 22.00  σ_t= 0.00  range=22..22  Δrate=0.000
+    seed 16: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 17: mean= 29.00  σ_t= 0.00  range=29..29  Δrate=0.000
+    seed 18: mean= 27.00  σ_t= 0.00  range=27..27  Δrate=0.000
+    seed 19: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 20: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 21: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 22: mean= 27.00  σ_t= 0.00  range=27..27  Δrate=0.000
+    seed 23: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 24: mean= 26.07  σ_t= 1.42  range=25..31  Δrate=0.154
+    seed 25: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 26: mean= 28.00  σ_t= 0.00  range=28..28  Δrate=0.000
+    seed 27: mean= 24.00  σ_t= 0.00  range=24..24  Δrate=0.000
+    seed 28: mean= 29.00  σ_t= 0.00  range=29..29  Δrate=0.000
+    seed 29: mean= 29.12  σ_t= 0.33  range=29..30  Δrate=0.026
+  Cross-seed terminal mean: 26.50
+  Cross-seed terminal std (sample, n-1):  1.889
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     =  0.098  σ_within  = 0.313
+    Var_between (regimes-1-3, spatial IC) =  2.247  σ_between = 1.499
+    Var_total                              =  2.345  σ_total   = 1.531
+    Fraction in regime-4 (temporal):   4.2%
+    Fraction in regimes-1-3 (spatial-IC):  95.8%
+  Within-seed AC (lags 0..20):
+     1.00  0.76  0.53  0.39  0.32  0.29  0.26  0.24  0.21  0.19  0.16  0.13  0.10  0.06  0.01 -0.05 -0.08 -0.10 -0.15 -0.20 -0.21
+  Mean per-tick |ΔN| (boundary event rate): 0.0111
+
+--- L=32 ic2 stride=1 (5 seeds)  (regime: active-thermal (different physics)) ---
+    L32_ic2_stride1
+  cluster_history_seed3759153154.csv: RUNAWAY skip (max=32766)
+  ... insufficient bound-state seeds
+================ PHASE 2: amplitude-time-series ========================
+
+--- A=10 L=32 stride=1 (10 seeds)  (regime: 1 (lattice-pinned)) ---
+    A10_L32
+  Seeds (bound-state): 10
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 1: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 2: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 3: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 4: mean= 25.00  σ_t= 0.00  range=25..25  Δrate=0.000
+    seed 5: mean= 27.00  σ_t= 0.00  range=27..27  Δrate=0.000
+    seed 6: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 7: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 8: mean= 26.00  σ_t= 0.00  range=26..26  Δrate=0.000
+    seed 9: mean= 27.00  σ_t= 0.00  range=27..27  Δrate=0.000
+  Cross-seed terminal mean: 25.80
+  Cross-seed terminal std (sample, n-1):  0.789
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     =  0.000  σ_within  = 0.000
+    Var_between (regimes-1-3, spatial IC) =  0.560  σ_between = 0.748
+    Var_total                              =  0.560  σ_total   = 0.748
+    Fraction in regime-4 (temporal):   0.0%
+    Fraction in regimes-1-3 (spatial-IC): 100.0%
+  Within-seed AC (lags 0..20):
+     1.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  Mean per-tick |ΔN| (boundary event rate): 0.0000
+
+--- A=20 L=32 stride=1 (10 seeds)  (regime: transition) ---
+    A20_L32
+  Seeds (bound-state): 10
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean= 97.00  σ_t= 0.00  range=97..97  Δrate=0.000
+    seed 1: mean= 92.00  σ_t= 0.00  range=92..92  Δrate=0.000
+    seed 2: mean= 94.00  σ_t= 0.00  range=94..94  Δrate=0.000
+    seed 3: mean= 91.00  σ_t= 0.00  range=91..91  Δrate=0.000
+    seed 4: mean= 93.00  σ_t= 0.00  range=93..93  Δrate=0.000
+    seed 5: mean= 95.00  σ_t= 0.00  range=95..95  Δrate=0.000
+    seed 6: mean= 93.00  σ_t= 0.00  range=93..93  Δrate=0.000
+    seed 7: mean= 91.00  σ_t= 0.00  range=91..91  Δrate=0.000
+    seed 8: mean= 91.00  σ_t= 0.00  range=91..91  Δrate=0.000
+    seed 9: mean= 93.00  σ_t= 0.00  range=93..93  Δrate=0.000
+  Cross-seed terminal mean: 93.00
+  Cross-seed terminal std (sample, n-1):  1.944
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     =  0.000  σ_within  = 0.000
+    Var_between (regimes-1-3, spatial IC) =  3.400  σ_between = 1.844
+    Var_total                              =  3.400  σ_total   = 1.844
+    Fraction in regime-4 (temporal):   0.0%
+    Fraction in regimes-1-3 (spatial-IC): 100.0%
+  Within-seed AC (lags 0..20):
+     1.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  Mean per-tick |ΔN| (boundary event rate): 0.0000
+
+--- A=30 L=32 stride=1 (10 seeds)  (regime: 2 (free-boundary)) ---
+    A30_L32
+  Seeds (bound-state): 10
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean=232.00  σ_t= 0.00  range=232..232  Δrate=0.000
+    seed 1: mean=227.00  σ_t= 0.00  range=227..227  Δrate=0.000
+    seed 2: mean=239.00  σ_t= 0.00  range=239..239  Δrate=0.000
+    seed 3: mean=237.00  σ_t= 0.00  range=237..237  Δrate=0.000
+    seed 4: mean=244.00  σ_t= 0.00  range=244..244  Δrate=0.000
+    seed 5: mean=239.00  σ_t= 0.00  range=239..239  Δrate=0.000
+    seed 6: mean=230.00  σ_t= 0.00  range=230..230  Δrate=0.000
+    seed 7: mean=245.00  σ_t= 0.00  range=245..245  Δrate=0.000
+    seed 8: mean=236.00  σ_t= 0.00  range=236..236  Δrate=0.000
+    seed 9: mean=229.00  σ_t= 0.00  range=229..229  Δrate=0.000
+  Cross-seed terminal mean: 235.80
+  Cross-seed terminal std (sample, n-1):  6.197
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     =  0.000  σ_within  = 0.000
+    Var_between (regimes-1-3, spatial IC) = 34.560  σ_between = 5.879
+    Var_total                              = 34.560  σ_total   = 5.879
+    Fraction in regime-4 (temporal):   0.0%
+    Fraction in regimes-1-3 (spatial-IC): 100.0%
+  Within-seed AC (lags 0..20):
+     1.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  Mean per-tick |ΔN| (boundary event rate): 0.0000
+
+--- A=50 L=32 stride=1 (10 seeds)  (regime: 2 (deep free-boundary)) ---
+    A50_L32
+  Seeds (bound-state): 10
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean=559.23  σ_t= 0.42  range=559..560  Δrate=0.003
+    seed 1: mean=543.00  σ_t= 0.00  range=543..543  Δrate=0.000
+    seed 2: mean=539.88  σ_t= 2.08  range=539..548  Δrate=0.023
+    seed 3: mean=550.57  σ_t= 1.10  range=550..553  Δrate=0.008
+    seed 4: mean=566.00  σ_t= 0.00  range=566..566  Δrate=0.000
+    seed 5: mean=566.00  σ_t= 0.00  range=566..566  Δrate=0.000
+    seed 6: mean=543.41  σ_t= 1.24  range=543..550  Δrate=0.018
+    seed 7: mean=540.00  σ_t= 0.00  range=540..540  Δrate=0.000
+    seed 8: mean=541.16  σ_t= 2.51  range=540..550  Δrate=0.025
+    seed 9: mean=553.00  σ_t= 0.00  range=553..553  Δrate=0.000
+  Cross-seed terminal mean: 552.90
+  Cross-seed terminal std (sample, n-1):  8.812
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     =  1.356  σ_within  = 1.165
+    Var_between (regimes-1-3, spatial IC) = 97.893  σ_between = 9.894
+    Var_total                              = 99.250  σ_total   = 9.962
+    Fraction in regime-4 (temporal):   1.4%
+    Fraction in regimes-1-3 (spatial-IC):  98.6%
+  Within-seed AC (lags 0..20):
+     1.00  0.98  0.96  0.94  0.92  0.90  0.88  0.86  0.84  0.82  0.80  0.78  0.77  0.75  0.73  0.72  0.70  0.68  0.67  0.65  0.64
+  Mean per-tick |ΔN| (boundary event rate): 0.0075
+
+================ PHASE 3: temperature sweep at A=50 ====================
+
+--- A=50 T=0.005 L=32 (10 seeds)  (regime: T-sweep canonical) ---
+    T0.005
+  Seeds (bound-state): 10
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean=559.23  σ_t= 0.42  range=559..560  Δrate=0.003
+    seed 1: mean=543.00  σ_t= 0.00  range=543..543  Δrate=0.000
+    seed 2: mean=539.88  σ_t= 2.08  range=539..548  Δrate=0.023
+    seed 3: mean=550.57  σ_t= 1.10  range=550..553  Δrate=0.008
+    seed 4: mean=566.00  σ_t= 0.00  range=566..566  Δrate=0.000
+    seed 5: mean=566.00  σ_t= 0.00  range=566..566  Δrate=0.000
+    seed 6: mean=543.41  σ_t= 1.24  range=543..550  Δrate=0.018
+    seed 7: mean=540.00  σ_t= 0.00  range=540..540  Δrate=0.000
+    seed 8: mean=541.16  σ_t= 2.51  range=540..550  Δrate=0.025
+    seed 9: mean=553.00  σ_t= 0.00  range=553..553  Δrate=0.000
+  Cross-seed terminal mean: 552.90
+  Cross-seed terminal std (sample, n-1):  8.812
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     =  1.356  σ_within  = 1.165
+    Var_between (regimes-1-3, spatial IC) = 97.893  σ_between = 9.894
+    Var_total                              = 99.250  σ_total   = 9.962
+    Fraction in regime-4 (temporal):   1.4%
+    Fraction in regimes-1-3 (spatial-IC):  98.6%
+  Within-seed AC (lags 0..20):
+     1.00  0.98  0.96  0.94  0.92  0.90  0.88  0.86  0.84  0.82  0.80  0.78  0.77  0.75  0.73  0.72  0.70  0.68  0.67  0.65  0.64
+  Mean per-tick |ΔN| (boundary event rate): 0.0075
+
+--- A=50 T=0.010 L=32 (10 seeds)  (regime: T-sweep 2x) ---
+    T0.010
+  cluster_history_seed3759153154.csv: RUNAWAY skip (max=21747)
+  Seeds (bound-state): 9
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean=557.00  σ_t= 0.00  range=557..557  Δrate=0.000
+    seed 1: mean=547.00  σ_t= 0.00  range=547..547  Δrate=0.000
+    seed 2: mean=563.00  σ_t= 0.00  range=563..563  Δrate=0.000
+    seed 3: mean=555.00  σ_t= 0.00  range=555..555  Δrate=0.000
+    seed 4: mean=553.00  σ_t= 0.00  range=553..553  Δrate=0.000
+    seed 5: mean=539.00  σ_t= 0.00  range=539..539  Δrate=0.000
+    seed 6: mean=560.05  σ_t= 0.21  range=560..561  Δrate=0.003
+    seed 7: mean=548.08  σ_t= 0.26  range=548..549  Δrate=0.003
+    seed 8: mean=558.00  σ_t= 0.00  range=558..558  Δrate=0.000
+  Cross-seed terminal mean: 553.56
+  Cross-seed terminal std (sample, n-1):  7.535
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     =  0.013  σ_within  = 0.113
+    Var_between (regimes-1-3, spatial IC) = 49.982  σ_between = 7.070
+    Var_total                              = 49.995  σ_total   = 7.071
+    Fraction in regime-4 (temporal):   0.0%
+    Fraction in regimes-1-3 (spatial-IC): 100.0%
+  Within-seed AC (lags 0..20):
+     1.00  0.96  0.92  0.87  0.83  0.79  0.75  0.70  0.66  0.62  0.57  0.53  0.49  0.45  0.40  0.36  0.32  0.28  0.23  0.19  0.17
+  Mean per-tick |ΔN| (boundary event rate): 0.0006
+
+--- A=50 T=0.020 L=32 (10 seeds)  (regime: T-sweep 4x) ---
+    T0.020
+  Seeds (bound-state): 10
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean=570.74  σ_t= 1.24  range=570..575  Δrate=0.013
+    seed 1: mean=562.00  σ_t= 0.00  range=562..562  Δrate=0.000
+    seed 2: mean=551.92  σ_t=19.55  range=542..639  Δrate=0.243
+    seed 3: mean=572.00  σ_t= 0.00  range=572..572  Δrate=0.000
+    seed 4: mean=584.00  σ_t= 0.00  range=584..584  Δrate=0.000
+    seed 5: mean=568.84  σ_t= 1.25  range=568..573  Δrate=0.013
+    seed 6: mean=557.00  σ_t= 0.00  range=557..557  Δrate=0.000
+    seed 7: mean=580.72  σ_t= 3.93  range=578..592  Δrate=0.035
+    seed 8: mean=552.34  σ_t= 2.80  range=549..557  Δrate=0.020
+    seed 9: mean=547.00  σ_t= 0.00  range=547..547  Δrate=0.000
+  Cross-seed terminal mean: 575.80
+  Cross-seed terminal std (sample, n-1):  25.978
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     = 40.861  σ_within  = 6.392
+    Var_between (regimes-1-3, spatial IC) = 143.191  σ_between = 11.966
+    Var_total                              = 184.052  σ_total   = 13.567
+    Fraction in regime-4 (temporal):  22.2%
+    Fraction in regimes-1-3 (spatial-IC):  77.8%
+  Within-seed AC (lags 0..20):
+     1.00  0.98  0.95  0.92  0.90  0.87  0.84  0.82  0.79  0.76  0.74  0.71  0.68  0.65  0.63  0.60  0.58  0.56  0.54  0.52  0.50
+  Mean per-tick |ΔN| (boundary event rate): 0.0323
+
+--- A=50 T=0.040 L=32 (10 seeds)  (regime: T-sweep 8x) ---
+    T0.040
+  cluster_history_seed3759153152.csv: RUNAWAY skip (max=29443)
+  cluster_history_seed3759153154.csv: RUNAWAY skip (max=32768)
+  cluster_history_seed3759153155.csv: RUNAWAY skip (max=32758)
+  cluster_history_seed3759153159.csv: RUNAWAY skip (max=32766)
+  cluster_history_seed3759153160.csv: RUNAWAY skip (max=32761)
+  Seeds (bound-state): 5
+  Snapshots per seed: 400  (post-burn-in)
+  Per-seed:
+    seed 0: mean=583.01  σ_t= 0.98  range=581..584  Δrate=0.008
+    seed 1: mean=623.75  σ_t= 6.20  range=613..637  Δrate=0.060
+    seed 2: mean=589.10  σ_t= 1.98  range=588..599  Δrate=0.028
+    seed 3: mean=581.47  σ_t= 0.50  range=581..582  Δrate=0.003
+    seed 4: mean=600.82  σ_t=17.51  range=587..674  Δrate=0.218
+  Cross-seed terminal mean: 615.20
+  Cross-seed terminal std (sample, n-1):  39.594
+  Variance decomposition (Anova-style):
+    Var_within  (regime-4, temporal)     = 70.012  σ_within  = 8.367
+    Var_between (regimes-1-3, spatial IC) = 244.019  σ_between = 15.621
+    Var_total                              = 314.031  σ_total   = 17.721
+    Fraction in regime-4 (temporal):  22.3%
+    Fraction in regimes-1-3 (spatial-IC):  77.7%
+  Within-seed AC (lags 0..20):
+     1.00  0.98  0.96  0.93  0.91  0.89  0.87  0.85  0.84  0.82  0.80  0.79  0.77  0.76  0.74  0.73  0.72  0.70  0.69  0.68  0.67
+  Mean per-tick |ΔN| (boundary event rate): 0.0632
+
+================================================================================
+SUMMARY: Variance decomposition by regime
+================================================================================
+Dataset                                      ⟨N⟩  σ_total  σ_within  σ_between  %temporal   ⟨|ΔN|⟩
+L=32 ic1 stride=1 (5 seeds)                25.20    0.400     0.000      0.400       0.0%   0.0000
+L=64 ic1 stride=1 (3 seeds)                26.33    1.247     0.000      1.247       0.0%   0.0000
+L=32 ic1 stride=50 (30 seeds)              26.50    1.531     0.313      1.499       4.2%   0.0111
+A=10 L=32 stride=1 (10 seeds)              25.80    0.748     0.000      0.748       0.0%   0.0000
+A=20 L=32 stride=1 (10 seeds)              93.00    1.844     0.000      1.844       0.0%   0.0000
+A=30 L=32 stride=1 (10 seeds)             235.80    5.879     0.000      5.879       0.0%   0.0000
+A=50 L=32 stride=1 (10 seeds)             552.90    9.962     1.165      9.894       1.4%   0.0075
+A=50 T=0.005 L=32 (10 seeds)              552.90    9.962     1.165      9.894       1.4%   0.0075
+A=50 T=0.010 L=32 (10 seeds)              553.56    7.071     0.113      7.070       0.0%   0.0006
+A=50 T=0.020 L=32 (10 seeds)              575.80   13.567     6.392     11.966      22.2%   0.0323
+A=50 T=0.040 L=32 (10 seeds)              615.20   17.721     8.367     15.621      22.3%   0.0632
+
+INTERPRETATION:
+  - %temporal close to 0%: regime-4 is degenerate (frozen state)
+  - %temporal between 30-70%: ergodic regime (temporal ≈ spatial)
+  - %temporal close to 100%: regime-4 dominates (boundary churn)
+
+  - ⟨|ΔN|⟩ measures per-tick boundary event rate.
+    Zero = no genesis/evaporation events at boundary in steady state
+    Nonzero = active boundary; events count toward regime-4 entropy
