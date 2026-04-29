@@ -238,6 +238,8 @@ Consequences:
 
 This is the same epistemic position as every effective field theory's matching to experiment at one renormalisation point, made explicit. See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` Section 3 (Interpretation D) for the framework-level discussion.
 
+**Reference map.** The full dimensionless ↔ dimensional bridge — the seven algebraic-spine theorems, the four dimensionless physical predictions (α, N_c, m_μ/m_e, m_τ/m_e), the three calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (`a_phys ≡ ℓ_P`, `t_phys = √3·ℓ_P/c`, `K_B = m_e`), and one worked dimensional application (m_e in MeV) — is catalogued in `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) and `docs/theory/01_reference/dimensional_map.json` (canonical data). When drafting papers or replying to reviewers about whether a claim is dimensionless or calibration-conditional, cite the map entry by id.
+
 ### POSTULATE 3: Ternary States
 Each voxel v ∈ **L** has a state s(v,t) ∈ {-1, 0, +1} at each tick t.
 
