@@ -228,6 +228,7 @@
 - **recommended disposition:** declare `a_phys ≡ ℓ_P` in `SPEC_FTD.md`; quote all dimensional predictions as conditional on this calibration; flag dimensionless predictions (α, mass ratios, mixing angles) as the calibration-independent falsifiable spine.
 - **dependents:** FTD-0034 (3.6× α plateau interpretation), every dimensional engine benchmark.
 - **citations:** `OPEN_A_PHYS_DERIVATION.md`, `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`.
+- **dimensional_map_id:** `a_phys_planck` (see `docs/theory/01_reference/dimensional_map.json` and rendered `SPEC_DIMENSIONAL_MAP.md`).
 
 ### FTD-0032: Master quadratic as thermodynamic limit [RETRACTED 2026-04-19]
 
@@ -284,6 +285,7 @@
 - **rationale:** `a_phys` cannot be derived from Axiom-Zero invariants alone. Mechanisms α / β / γ all closed (see FTD-0030, FTD-0035). Planck-length declaration is the natural calibration if the framework operates at the smallest length physics has reason to invoke.
 - **discipline:** every dimensional FTD prediction is **conditional on this calibration**. Dimensionless predictions are calibration-independent and constitute the falsifiable spine.
 - **dependents:** every dimensional engine benchmark; FTD-0045.
+- **dimensional_map_ids:** `a_phys_planck`, `t_phys_lattice_tick`, `mass_unit_anchor`, `m_electron_dimensional` (see `docs/theory/01_reference/dimensional_map.json` and rendered `SPEC_DIMENSIONAL_MAP.md`).
 
 ### FTD-0044: Per-voxel mass gap (survives in YM paper)
 
@@ -390,6 +392,7 @@
 - **claim impact:** Promotes the `a_phys ≡ ℓ_P` calibration from a pragmatic fallback to a structurally necessary calibration interface. Identifies FTD's dimensionless predictions (α, mass ratios, mixing angles, anomalous moments) as the calibration-independent falsifiable spine of the framework. Does not demote or affect any existing dimensionless prediction.
 - **last_reviewed:** 2026-04-23
 - **reframe_status:** NEW
+- **dimensional_map_id:** `a_phys_planck` (cited as the no-go-theorem basis for the calibration declaration; see `docs/theory/01_reference/dimensional_map.json` and rendered `SPEC_DIMENSIONAL_MAP.md`).
 - **artifacts:** `docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md` (theorem), `docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md` (δ closure), `docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` (γ closure), `docs/SPEC_FTD.md` (calibration declaration), `docs/theory/10_eft_program/OPEN_A_PHYS_DERIVATION.md` (resolution preamble).
 
 ---
