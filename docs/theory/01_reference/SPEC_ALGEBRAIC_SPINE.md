@@ -1,7 +1,7 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Date:** 2026-04-27 (last theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. **It does NOT add an 8th theorem to this spine** — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]; the spine's seven theorems remain the canonical citation target for paper drafts.
+**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. The spine now has **eight theorems**; full derivation in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Section numbering bumped (`§§9–14`).
 **Purpose:** state the load-bearing algebraic content of FTD in
 [THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
@@ -13,7 +13,7 @@ the Standard Model.
 
 ## 0 · What this document is and is not
 
-**This document IS:** a canonical statement of seven theorems that
+**This document IS:** a canonical statement of eight theorems that
 constitute FTD's rigorous mathematical core, with proof references.
 Each theorem is independent of any physics interpretation. The objects
 involved (Γ-function values, CM elliptic curves, lattice Green's
@@ -23,7 +23,7 @@ established literatures.
 **This document IS NOT:** a derivation of the fine-structure constant,
 the QCD color number, electron mass, or any other physical quantity.
 The numerical match between two roots of the master quadratic and (1/α,
-N_c) is a separate empirical observation — recorded in §9 below as
+N_c) is a separate empirical observation — recorded in §10 below as
 [STRONGLY MOTIVATED CONJECTURE], NOT promoted to theorem.
 
 **Why this distinction matters.** As of 2026-04-27 the FTD program has
@@ -217,7 +217,7 @@ Program Phase F).
 recovers QED's α at any scale. The theorem is exactly what it says: a
 geometric identity for the lattice Poisson kernel. The physical α
 enters separately through the coupling g_c, which is [PARAMETRIC]
-(see §9).
+(see §10).
 
 ---
 
@@ -254,7 +254,70 @@ separate.
 
 ---
 
-## 8 · Subsidiary theorems and structural nulls
+## 8 · Theorem 8 — Harmonic invariant of the master-quadratic tower
+
+**Statement.** For each integer `k ≥ 3`, define the **(1+i)-tower
+master quadratic**
+
+$$M_k(x) \;:=\; x^2 \;-\; 2^k\,G^{*\,k-2}\,x \;+\; 2^k\,G^{*\,k-1}.$$
+
+The `k = 4` instance is the master quadratic of Theorem 2. Let `x_+,
+x_−` be the two roots of `M_k` and define normalized roots `y_± :=
+x_±/G*`. Then for every `k ≥ 3`,
+
+$$\frac{1}{y_+} \;+\; \frac{1}{y_-} \;=\; 1.$$
+
+Furthermore the discriminant factors as
+
+$$\operatorname{disc}(M_k) \;=\; 2^{k+2}\,G^{*\,k-1}\,A_k, \qquad A_k := 2^{k-2}\,G^{*\,k-3} - 1,$$
+
+where `A_k` is rational at `k = 3` (`A_3 = 1`) and irrational at every
+`k ≥ 4` (`A_4 = 4G* − 1`, etc.; transcendence of `G*` via Schneider).
+
+**Proof reference.** Three-line Vieta computation for the harmonic
+invariant; direct factorization for the discriminant. Full derivation
+plus the closed-form corollary `α_tree = 1/(2G*) − √(4G*−1)/(4G*^{3/2})`
+in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`.
+Numerical confirmation at 50-digit precision for `k ∈ {3, 4, 5, 6, 7}`
+in `scripts/proofs/proof_harmonic_invariant_tower.py`.
+
+**LEDGER:** FTD-0111.
+
+**Dependencies:** Theorem 1 (`G*` algebraic identity); Theorem 2
+(master quadratic, the `k = 4` instance); Schneider's transcendence
+theorem (for irrationality of `A_k` at `k ≥ 4`).
+
+**Consequence (DERIVED, restatement of Theorem 2).** The master
+quadratic's `α`-tree-level prediction admits the publication-grade
+closed form
+
+$$\alpha_{\text{tree}} \;=\; \frac{1}{2 G^*} \;-\; \frac{\sqrt{4 G^* - 1}}{4\,G^{*\,3/2}}\,,$$
+
+equivalent to `16 G*³ α² − 16 G*² α + 1 = 0`. This is FTD-0001 in
+algebraically legible form; it is not a new claim and does not change
+the [STRONGLY MOTIVATED CONJECTURE] tag of the dual-prediction
+identification (see §10 below).
+
+**What it does NOT claim.**
+- Selection of `k = 4` as the "physics level" of the tower. The tower
+  parameterizes the master-quadratic family without selecting a level
+  from first principles; the empirical match `α⁻¹ ≈ x_+(k=4)` to 1.26
+  ppm (and `N_c ≈ x_−(k=4)` to 0.80%) is unaltered.
+- Uniqueness of the (1+i)-multiplier choice. The harmonic invariant
+  holds for any family `{M(x) = x² − bx + c : c = G* · b}` regardless
+  of the multiplier, so the (1+i)-tower (`m_k = 2^k`) is one indexed
+  sub-family rather than the unique forced one. A multiplier-level
+  rigidity scan analogous to the 60k-polynomial scan that rigidified
+  FTD-0001 is **[OPEN]**.
+- Any QFT-anomaly construction. The level-`k` discriminant correction
+  `A_k` is a level-indexed algebraic irrationality; calling it an
+  "anomaly factor" by analogy with QFT conformal anomalies is metaphor
+  pending a formal regularization-class construction in the
+  matched-stencil EFT.
+
+---
+
+## 9 · Subsidiary theorems and structural nulls
 
 These are smaller [THEOREM]-level claims that depend on the seven
 above:
@@ -278,7 +341,7 @@ above:
 
 ---
 
-## 9 · The empirical observation (NOT a theorem — explicit boundary)
+## 10 · The empirical observation (NOT a theorem — explicit boundary)
 
 The two roots of the master quadratic (Theorem 2) match dimensionless
 constants from unrelated physical sectors:
@@ -314,11 +377,11 @@ addresses this; not yet run).
 
 ---
 
-## 10 · What this document allows you to claim
+## 11 · What this document allows you to claim
 
 In order from most to least defensible:
 
-1. "FTD has a rigorous algebraic core consisting of seven theorems
+1. "FTD has a rigorous algebraic core consisting of eight theorems
    centered on the lemniscatic constant G* = Γ(1/4)²/(2√(2π)·Γ(1/2))."
    — Theorems 1-7.
 
@@ -358,7 +421,7 @@ What this document explicitly does NOT allow you to claim:
 
 ---
 
-## 11 · Cross-references
+## 12 · Cross-references
 
 | Theorem | Primary doc | Verification script | LEDGER row |
 |---|---|---|---|
@@ -385,9 +448,9 @@ What this document explicitly does NOT allow you to claim:
 
 ---
 
-## 12 · Single-line summary
+## 13 · Single-line summary
 
-**FTD's algebraic spine is seven theorems centered on G* =
+**FTD's algebraic spine is eight theorems centered on G* =
 Γ(1/4)²/(2√(2π)·Γ(1/2)): the G* identity (Chowla-Selberg), the master
 quadratic P(x) = x² − 16G*²x + 16G*³ and its two roots, CM uniqueness
 within class-number-1 fields, the coefficient 16 = |Aut(E)|² for E:
@@ -402,9 +465,9 @@ demonstrating selectivity (FTD-0097 pre-registered, not run).
 
 ---
 
-## 13 · From theorems to physics — see the dimensional map
+## 14 · From theorems to physics — see the dimensional map
 
-The seven theorems above are dimensionless. Their connection to
+The eight theorems above are dimensionless. Their connection to
 physical-unit observables (m_e in MeV, lifetimes in seconds, lengths
 in meters) goes through the **calibration interface**: exactly two
 SI-dimensional anchors (`a_phys ≡ ℓ_P` and `K_B = m_e`) are
