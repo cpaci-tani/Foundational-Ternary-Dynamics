@@ -877,36 +877,105 @@ int main(int argc, char** argv) {
         }
     }
 
-    // Optional: M(b=4) and RG semigroup test M(b=4) ≈ M(b=2)^2
+    // Optional: M(b=4) and RG semigroup test M(b=4) ≈ M(b=2)^2.
+    // Uses the same active subspace as M(b=2) for direct comparability.
     if (args.include_b4 && !coarse4_samples.empty()) {
         auto cov4 = compute_covariances(fine_samples, coarse4_samples);
         if (cov4.valid) {
-            Mat S_inv4;
-            double cond_S4;
-            if (invert_mat(cov4.S, S_inv4, cond_S4)) {
-                Mat M_b4 = matmul(cov4.Sigma, S_inv4);
+            Mat M_b4 = zero_mat();
+            bool b4_ok = false;
+            const int Nact_b4 = static_cast<int>(active_ops.size());
+            std::vector<std::vector<double>> aug(Nact_b4, std::vector<double>(2 * Nact_b4, 0.0));
+            for (int i = 0; i < Nact_b4; ++i) {
+                for (int j = 0; j < Nact_b4; ++j)
+                    aug[i][j] = cov4.S[active_ops[i]][active_ops[j]];
+                for (int j = 0; j < Nact_b4; ++j)
+                    aug[i][Nact_b4 + j] = (i == j) ? 1.0 : 0.0;
+            }
+            bool reg_ok = true;
+            for (int col = 0; col < Nact_b4; ++col) {
+                int pivot_row = col;
+                double pivot_abs = std::abs(aug[col][col]);
+                for (int r = col + 1; r < Nact_b4; ++r) {
+                    if (std::abs(aug[r][col]) > pivot_abs) {
+                        pivot_abs = std::abs(aug[r][col]);
+                        pivot_row = r;
+                    }
+                }
+                if (pivot_abs < 1e-30) { reg_ok = false; break; }
+                if (pivot_row != col) std::swap(aug[col], aug[pivot_row]);
+                const double pivot = aug[col][col];
+                for (int j = 0; j < 2 * Nact_b4; ++j) aug[col][j] /= pivot;
+                for (int r = 0; r < Nact_b4; ++r) {
+                    if (r == col) continue;
+                    const double factor = aug[r][col];
+                    if (factor == 0.0) continue;
+                    for (int j = 0; j < 2 * Nact_b4; ++j) aug[r][j] -= factor * aug[col][j];
+                }
+            }
+            if (reg_ok) {
+                std::vector<std::vector<double>> M_red(Nact_b4, std::vector<double>(Nact_b4, 0.0));
+                for (int i = 0; i < Nact_b4; ++i)
+                    for (int j = 0; j < Nact_b4; ++j)
+                        for (int k = 0; k < Nact_b4; ++k)
+                            M_red[i][j] += cov4.Sigma[active_ops[i]][active_ops[k]] *
+                                           aug[k][Nact_b4 + j];
+                const double NaN = std::nan("");
+                for (int a = 0; a < kNumOps; ++a)
+                    for (int b = 0; b < kNumOps; ++b)
+                        M_b4[a][b] = NaN;
+                for (int i = 0; i < Nact_b4; ++i)
+                    for (int j = 0; j < Nact_b4; ++j)
+                        M_b4[active_ops[i]][active_ops[j]] = M_red[i][j];
+                b4_ok = true;
+            }
+            if (b4_ok) {
                 write_matrix("M_ab_b4.csv", M_b4);
 
-                Mat M_b2_sq = matmul(M_b2, M_b2);
-                Mat diff = zero_mat();
-                double frob_diff = 0.0, frob_b4 = 0.0;
-                for (int a = 0; a < kNumOps; ++a)
-                    for (int b = 0; b < kNumOps; ++b) {
-                        diff[a][b] = M_b4[a][b] - M_b2_sq[a][b];
-                        frob_diff += diff[a][b] * diff[a][b];
-                        frob_b4 += M_b4[a][b] * M_b4[a][b];
+                // RG semigroup test: ||M(b=4) - M(b=2)^2||_F / ||M(b=4)||_F
+                // computed over the ACTIVE subspace only.
+                // Active-subspace square: M_b2_sq[a][b] = Σ_{k∈active} M_b2[a][k] · M_b2[k][b]
+                // (Dropped operators contribute nothing; full matmul would
+                // propagate NaN from dropped row/col.)
+                Mat M_b2_sq = zero_mat();
+                for (int i = 0; i < Nact_b4; ++i)
+                    for (int j = 0; j < Nact_b4; ++j) {
+                        double acc = 0.0;
+                        for (int k = 0; k < Nact_b4; ++k) {
+                            acc += M_b2[active_ops[i]][active_ops[k]] *
+                                   M_b2[active_ops[k]][active_ops[j]];
+                        }
+                        M_b2_sq[active_ops[i]][active_ops[j]] = acc;
                     }
-                frob_diff = std::sqrt(frob_diff);
-                frob_b4 = std::sqrt(frob_b4);
+                double frob_diff_sq = 0.0, frob_b4_sq = 0.0;
+                int active_pairs = 0;
+                for (int i = 0; i < Nact_b4; ++i)
+                    for (int j = 0; j < Nact_b4; ++j) {
+                        const int ai = active_ops[i];
+                        const int aj = active_ops[j];
+                        const double d = M_b4[ai][aj] - M_b2_sq[ai][aj];
+                        frob_diff_sq += d * d;
+                        frob_b4_sq += M_b4[ai][aj] * M_b4[ai][aj];
+                        ++active_pairs;
+                    }
+                const double frob_diff = std::sqrt(frob_diff_sq);
+                const double frob_b4 = std::sqrt(frob_b4_sq);
                 const double rg_ratio = (frob_b4 > 0.0) ? (frob_diff / frob_b4) : 0.0;
                 std::ostringstream rg;
                 rg << "  RG semigroup test: ||M(b=4) - M(b=2)^2|| / ||M(b=4)|| = "
-                   << rg_ratio << "\n";
+                   << rg_ratio << " (over " << active_pairs
+                   << " active-subspace entries)\n";
+                rg << "  Gate C threshold (PROTOCOL §5.3): rg_ratio < 0.30 = "
+                   << (rg_ratio < 0.30 ? "PASS" : "FAIL") << "\n";
                 log(rg.str());
                 std::ofstream(fs::path(args.output_dir) / "rg_semigroup.txt")
                     << "rg_ratio " << rg_ratio << "\n"
                     << "frob_diff " << frob_diff << "\n"
-                    << "frob_b4 " << frob_b4 << "\n";
+                    << "frob_b4 " << frob_b4 << "\n"
+                    << "active_pairs " << active_pairs << "\n"
+                    << "gate_c_pass " << (rg_ratio < 0.30 ? 1 : 0) << "\n";
+            } else {
+                log("  WARN: b=4 active-subspace inversion failed\n");
             }
         }
     }
