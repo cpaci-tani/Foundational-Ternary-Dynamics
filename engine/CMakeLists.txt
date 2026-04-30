@@ -909,6 +909,18 @@ ftd_add_test(test_reaction_operators tests/test_reaction_operators.cpp
              CTEST_NAME reaction_operators TIMEOUT 30
              LABELS native eft eft_quick)
 
+# FTD-0112: nonlinear S_eff campaign binary.
+# Pre-registration: docs/theory/10_eft_program/PROTOCOL_S_EFF_NONLINEAR_CAMPAIGN.md
+# Tag: preregister-s-eff-nonlinear-v1
+# Extends FTD-0098's 6-op M_ab(b=2) with the 4 reaction-sector ops via
+# snapshot-pair sampling; supports --scenario={langevin-pure, genesis-rich,
+# pair-rich, mixed-balanced}, --L, --N-seeds, --N-samples, --b4, --smoke.
+# Long-running production: 5-8 hours per L size on RTX 5090; smoke variant
+# completes in <30s.
+ftd_add_test(campaign_s_eff_nonlinear tests/campaign_s_eff_nonlinear_2026-04-29.cpp
+             CTEST_NAME campaign_s_eff_nonlinear TIMEOUT 28800
+             LABELS native eft blocking observable s_eff_campaign)
+
 # Phase-4 fermion-emergence alternative routes (FTD-0061 extension).
 # Runs WH/Clifford anticommutator measurement under three alternative
 # non-linearities: pair_production (4a), weak_transmutation (4b),
