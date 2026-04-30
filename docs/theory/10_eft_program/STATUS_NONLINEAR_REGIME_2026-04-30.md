@@ -107,19 +107,29 @@ Reaction-operator variance peaks at `T_langevin ∈ [0.10, 0.15]` and decays at 
 
 ---
 
-## 4 · Gate-by-gate v1 verdict (L=32 LARGE)
+## 4 · Gate-by-gate verdict (L=32 LARGE and L=64 LARGE)
 
-| Gate | Status | Detail |
-|---|---|---|
-| A diagonal | **PASS 9/9** | with 4 entries at theorem grade |
-| A off-diagonal | PARTIAL | 21/72 = 29% pass; bootstrap-stderr-limited; 24/72 structurally zero |
-| B (Q + Gauss conservation) | **PASS** | 0/20000 violations |
-| C (RG semigroup `‖M(b=4) − M(b=2)²‖ / ‖M(b=4)‖`) | **PASS at 0.172 < 0.30** | improving with ensemble (was 0.210 at v1 N=2k) |
-| D (S_eff self-consistency) | NOT TESTED | requires v2 perturbation campaign |
+| Gate | L=32 LARGE | L=64 LARGE | Detail |
+|---|---|---|---|
+| A diagonal | **PASS 9/9** | **PASS 9/9** | with 4 entries at theorem grade; theorems hold at both L |
+| A off-diagonal | PARTIAL (29%) | similar | bootstrap-stderr-limited; sector inversion v2 path |
+| B (Q + Gauss conservation) | **PASS** | **PASS** | 0/40000 total violations across both runs |
+| C (RG semigroup) | **PASS at 0.172 < 0.30** | **FAIL at 0.365 > 0.30** | **Gate C is L-dependent** |
+| D (S_eff self-consistency) | NOT TESTED | NOT TESTED | requires v2 perturbation campaign |
 
-L=64 N=2k cross-check (no LARGE yet): JJ M_aa = 16.004 (b⁴ exact within stderr); diagonal patterns confirm; Gate C fails at 0.465 (bootstrap-noise-limited at small N; v1.2 LARGE queued).
+**The Gate C L-dependence is the substantive new structural finding from L=64 LARGE.** With cond(S) actually IMPROVED at L=64 (1.7e12 vs L=32's 1.1e13), the failure is not bootstrap-noise-limited. The RG semigroup `M(b=4) ≈ M(b=2)²` holds approximately at L=32 but breaks down at L=64. Two interpretations:
 
-L=64 LARGE in progress: `biadbkhy6` (~1.5h remaining as of doc-write time).
+1. **L-dependent physics**: the 7 non-theorem diagonals are continuum-limit-flow operators; their values shift with L (e.g., `genesisFlux` -18.47 → -12.67); the b=4 measurement at L=64 picks up L-dependent corrections that iterating b=2 doesn't capture.
+
+2. **Higher-order operator content**: the engine's blocking flow at b=4 includes physics on length-scale 4 lattice units that requires non-linear operator combinations; linear-Wilsonian iteration at b=2 misses these. Standard EFT analog: when one block is too small to capture the full irreducible vertex of the theory.
+
+This means **the engine's "blocking RG" is NOT semigroup-self-consistent at L=64 LARGE precision**. The implication for the math-based EFT is:
+- The Gaussian fixed point (FTD-0070) at the bare-tuple level is preserved.
+- The diagonal RG eigenvalues for theorem-grade ops are L-independent (Theorems 1, 2 verified).
+- The full M_ab(b) → M_ab(b²) iteration breaks down at L ≥ 64.
+- **A clean "math-based EFT" closure must restate Gate C as either L=32-bounded or non-trivial L-dependent flow.**
+
+The structural reading: at L=32, the engine's nonlinear regime is "small enough" that linear-Wilsonian iteration captures the b=4 blocking. At L=64, it's not. Larger lattices reveal genuinely higher-order structure that v2 perturbation runs (Gate D) can characterize.
 
 ---
 
@@ -127,10 +137,12 @@ L=64 LARGE in progress: `biadbkhy6` (~1.5h remaining as of doc-write time).
 
 ### Immediate (next session)
 
-1. **Analyze L=64 LARGE result** when `biadbkhy6` completes:
-   - Confirm sector decoupling persists at L=64
-   - Verify Gate C at L=64 LARGE (expected 0.17 ± 0.03)
-   - Refine the 7 non-theorem diagonal values' L → ∞ extrapolation
+1. **L=64 LARGE LANDED 2026-04-30 16:40** (`biadbkhy6` complete; results: `engine/results/s_eff_nonlinear_2026-04-29/L64_prod_T0.100_LARGE/`).
+   Headline findings:
+   - **JJ M_aa = 16.0000 ± 0.0000**, **J4 M_aa = 256.0030 ± 0.0030** — Theorems 1, 2 confirmed at L=64 to machine precision (L-independent algebraic identities verified at both lattice sizes).
+   - **Gate C FAILS at L=64**: ratio = **0.365 > 0.30 threshold** (was 0.172 PASS at L=32 LARGE). cond(S) IMPROVED at L=64 (1.7e12 vs 1.1e13), so the failure is NOT bootstrap-noise-limited — it is **a real L-dependent breakdown of the RG semigroup property**.
+   - **Sector decoupling partially eroded at L=64**: SPATIAL → DENSITY went from 2/10 to **6/10** entries above 5σ; SPATIAL → REACTION-FLUX went from 0/10 to **2/10**; the fundamental REACTION-FLUX → SPATIAL still 0/10 decoupled. The DENSITY bridge thickens at larger L.
+   - **Diagonal drift**: `divJ²` -16.61 → -17.48 (≈ -b⁴, stable); `JdotDivJ` 30.68 → 31.05 (≈ b⁵, stable); `genesisFlux` -18.47 → -12.67 (significant drop, L-dependent); `reactionDensity` 8.34 → 6.59 (sign-correlation flipped from positive to negative, ρ̄ ≈ -0.18 at L=64).
 
 2. **v2 protocol hash-lock pre-conditions**:
    - Engine wiring for `--wilson-coefficient=name:value` flag
