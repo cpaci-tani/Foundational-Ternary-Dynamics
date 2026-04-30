@@ -159,6 +159,107 @@ def test_block_uniform_uncorrelated():
     print()
 
 
+def block_x_sum(rho, b):
+    """SUM-blocking convention for charge-density: rho_coarse[Cx,Cy,Cz] =
+    sum over the b^3 fine cells in the block."""
+    L_f = rho.shape[0]
+    L_c = L_f // b
+    return rho.reshape(L_c, b, L_c, b, L_c, b).sum(axis=(1, 3, 5))
+
+
+def test_theorem_3_uncorrelated():
+    """Theorem 3 Corollary 3a: uncorrelated random signs -> M = b^3 exactly."""
+    print("Theorem 3 Corollary 3a: random uncorrelated signs -> M = b^3 = ", B ** 3)
+    rng = np.random.default_rng(13)
+    fines, coarses = [], []
+    for _ in range(200):
+        # Random integer signs in {-1, 0, +1}, occupation density ~ 0.3
+        s_fine = rng.choice([-1, 0, 0, 0, 1], size=(L_FINE, L_FINE, L_FINE))
+        s_coarse = block_x_sum(s_fine, B)
+        fines.append(float(np.mean(s_fine ** 2)))
+        coarses.append(float(np.mean(s_coarse ** 2)))
+    fines = np.array(fines)
+    coarses = np.array(coarses)
+    df = fines - fines.mean()
+    dc = coarses - coarses.mean()
+    slope = (df * dc).sum() / (df * df).sum()
+    mr = coarses.mean() / fines.mean()
+    print(f"  regression slope: {slope:.4f}  (target b^3 = {B ** 3})")
+    print(f"  mean ratio:       {mr:.4f}")
+    # For uncorrelated: deviation is O(1/sqrt(N_pairs)). Allow 5% tolerance.
+    deviation = abs(mr - B ** 3) / B ** 3
+    print(f"  deviation from b^3: {100 * deviation:.2f}%")
+    assert deviation < 0.05, f"FAIL: deviation {deviation} > 5%"
+    print("  [PASS]\n")
+
+
+def test_theorem_3_anticorrelated():
+    """Theorem 3 Corollary 3b: anti-correlated signs within blocks -> M < b^3."""
+    print("Theorem 3 Corollary 3b: anti-correlated within blocks -> M < b^3")
+    rng = np.random.default_rng(99)
+    fines, coarses = [], []
+    for _ in range(200):
+        # Construct a field where adjacent cells have opposite sign (checkerboard)
+        s_fine = np.zeros((L_FINE, L_FINE, L_FINE), dtype=int)
+        i, j, k = np.ogrid[: L_FINE, : L_FINE, : L_FINE]
+        # Random ±1 with anti-correlated checkerboard pattern
+        sign_pattern = ((i + j + k) % 2) * 2 - 1  # ±1 checkerboard
+        # Random occupation
+        occ = rng.choice([0, 1], size=(L_FINE, L_FINE, L_FINE), p=[0.5, 0.5])
+        s_fine = sign_pattern * occ
+        s_coarse = block_x_sum(s_fine, B)
+        fines.append(float(np.mean(s_fine ** 2)))
+        coarses.append(float(np.mean(s_coarse ** 2)))
+    fines = np.array(fines)
+    coarses = np.array(coarses)
+    df = fines - fines.mean()
+    dc = coarses - coarses.mean()
+    slope = (df * dc).sum() / (df * df).sum()
+    mr = coarses.mean() / fines.mean()
+    print(f"  regression slope: {slope:.4f}  (expect M < b^3 = {B ** 3})")
+    print(f"  mean ratio:       {mr:.4f}")
+    print("  Anti-correlation suppresses M below b^3, as predicted.")
+    # Should be much less than b^3 = 8 for checkerboard
+    assert mr < B ** 3, f"FAIL: mr {mr} should be < b^3"
+    print("  [PASS]\n")
+
+
+def test_theorem_3_correlated():
+    """Theorem 3 Corollary 3b: positive intra-block correlation -> M > b^3."""
+    print("Theorem 3 Corollary 3b: positive intra-block correlation -> M > b^3")
+    rng = np.random.default_rng(101)
+    fines, coarses = [], []
+    for _ in range(200):
+        # Block-uniform signs (within each b^3 block, all cells have same sign)
+        # but blocks have random signs
+        s_fine = np.zeros((L_FINE, L_FINE, L_FINE), dtype=int)
+        for cx in range(L_COARSE):
+            for cy in range(L_COARSE):
+                for cz in range(L_COARSE):
+                    s_block = rng.choice([-1, 0, 0, 0, 1])
+                    s_fine[
+                        cx * B : (cx + 1) * B,
+                        cy * B : (cy + 1) * B,
+                        cz * B : (cz + 1) * B,
+                    ] = s_block
+        s_coarse = block_x_sum(s_fine, B)
+        fines.append(float(np.mean(s_fine ** 2)))
+        coarses.append(float(np.mean(s_coarse ** 2)))
+    fines = np.array(fines)
+    coarses = np.array(coarses)
+    df = fines - fines.mean()
+    dc = coarses - coarses.mean()
+    slope = (df * dc).sum() / (df * df).sum()
+    mr = coarses.mean() / fines.mean()
+    print(f"  regression slope: {slope:.4f}  (expect M > b^3 = {B ** 3})")
+    print(f"  mean ratio:       {mr:.4f}")
+    # For block-uniform: each block contributes (Σs)^2 with Σs = b^3 * s_block,
+    # so s²_coarse = b^6 * s_block². And s²_fine = s_block². Ratio = b^6 = 64.
+    print(f"  Predicted for block-uniform: b^6 = {B ** 6}")
+    assert mr > B ** 3, f"FAIL: mr {mr} should be > b^3 for positive intra-block corr"
+    print("  [PASS]\n")
+
+
 def main():
     print("=" * 72)
     print("Verification of THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md")
@@ -169,6 +270,9 @@ def main():
     test_theorem_2_constant()
     test_block_uniform_uncorrelated()
     test_corollary_smooth_field_limit()
+    test_theorem_3_uncorrelated()
+    test_theorem_3_anticorrelated()
+    test_theorem_3_correlated()
     print("=" * 72)
     print("All theorem-grade assertions PASS.")
     print("=" * 72)
