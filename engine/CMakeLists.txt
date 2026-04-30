@@ -900,6 +900,15 @@ ftd_add_test(campaign_operator_mixing tests/campaign_operator_mixing_2026-04-26.
              CTEST_NAME campaign_operator_mixing TIMEOUT 1800
              LABELS native eft blocking observable eft_quick)
 
+# FTD-0112: reaction-sector operators (O7-O10) unit tests.
+# Pre-registration: docs/theory/10_eft_program/PROTOCOL_S_EFF_NONLINEAR_CAMPAIGN.md
+# Header: engine/include/ftd/eft/reaction_operators.h
+# Validates SnapshotPair-based per-tick state-delta evaluators on
+# deterministic synthetic inputs before they enter the L=32/L=64 campaign.
+ftd_add_test(test_reaction_operators tests/test_reaction_operators.cpp
+             CTEST_NAME reaction_operators TIMEOUT 30
+             LABELS native eft eft_quick)
+
 # Phase-4 fermion-emergence alternative routes (FTD-0061 extension).
 # Runs WH/Clifford anticommutator measurement under three alternative
 # non-linearities: pair_production (4a), weak_transmutation (4b),
