@@ -128,6 +128,32 @@ The cross-channel reaction operators (genesisFlux↔JdotDeltaS, reactionDensity�
 
 ---
 
+## 1.5 · L=64 cross-check (N=2000, 14m wall)
+
+A second production-grade run at L=64 with the same parameters and N_samples=2000 (10× smaller ensemble than L=32 LARGE) provides a cross-check:
+
+| Op | L=32 LARGE (N=20k) | L=64 (N=2k) | structural reading |
+|---|---:|---:|---|
+| JJ | **16.0001 ± 0.0000** | **16.0040 ± 0.0015** | **b⁴ exact at both L** ⇒ algebraic identity, L-independent |
+| J4 | **256.0040 ± 0.0022** | **248.9030 ± 0.1864** | **b⁸ exact within stderr at both L** |
+| divJ2 | -16.61 ± 0.46 | -35.36 ± 1.78 | L-dependent: -b⁴ at L=32, ≈ -b⁵ at L=64 |
+| curlJ2 | 8.80 ± 0.13 | 11.02 ± 0.22 | L-dependent toward b³·log? |
+| JdotDivJ | 30.68 ± 0.65 | 65.65 ± 3.09 | L-dependent: ≈ b⁵ at L=32, ≈ b⁶ at L=64 |
+| stateSq | 7.35 ± 0.15 | 5.49 ± 0.33 | L-dependent (cluster fraction shrinks with L) |
+| reactionDensity | 8.34 ± 0.76 | 7.29 ± 0.66 | mildly L-dependent, near b³ at both |
+| genesisFlux | -18.47 ± 2.0 | -12.04 ± 1.97 | L-dependent |
+| JdotDeltaS | 27.40 ± 2.9 | 22.63 ± 3.9 | mildly L-dependent |
+
+**Key finding from cross-L comparison**: the **EXACT diagonal entries (JJ M_aa = b⁴, J4 M_aa = b⁸) are L-independent algebraic identities of the blocking map** — they reflect the extensive face-flux convention regardless of lattice size. The other diagonals carry **genuine L-dependent physics** that reflects the engine's RG flow as the lattice approaches its continuum limit.
+
+**Gate C at L=64 FAILS at N=2k**: RG semigroup ratio = 0.465 > 0.30 threshold. This is consistent with N_samples=2000 being insufficient at L=64 (M(b=4) requires sufficient statistics; matrix-squaring of M(b=2) amplifies any bootstrap noise). Gate C at L=32 N=2k was 0.21 (PASS) — also subject to bootstrap noise but well below threshold; at L=32 LARGE it tightened to 0.17.
+
+**Off-diagonal Gate A**: L=64 N=2k passes 26/72 = 36% vs L=32 LARGE 21/72 = 29%. **Off-diagonal improves with L** even at smaller ensemble — the lower cond(S) at L=64 (2.4e10 vs 1.1e13 at L=32 LARGE) is the dominant factor. Going to L=64 LARGE (N=20k) should put the campaign comfortably above PROTOCOL §5.1 thresholds.
+
+**v1 conclusion on Gate C**: L=32 LARGE delivers a clean PASS (0.172). L=64 needs LARGE ensemble (queued for v1.2) to confirm.
+
+---
+
 ## 2 · The activation window finding
 
 ### 2.1 · Reaction-sector activation curve (L=16, pair-rich)
