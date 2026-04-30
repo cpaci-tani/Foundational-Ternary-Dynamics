@@ -375,6 +375,10 @@ struct Args {
     bool include_b4 = false;
     bool smoke = false;
     std::string output_dir;
+    // Tuning knobs for nonlinear-regime exploration (post-smoke direction A)
+    double T_override = -1.0;        // < 0 => use scenario default
+    int inject_period = 0;           // 0 => no periodic re-injection
+    double inject_amp_mult = 1.0;    // multiplier on K_GENESIS for re-injection
 };
 
 static bool parse_args(int argc, char** argv, Args& a, std::string& err) {
@@ -404,6 +408,12 @@ static bool parse_args(int argc, char** argv, Args& a, std::string& err) {
             a.output_dir = val;
         } else if (s == "--b4") {
             a.include_b4 = true;
+        } else if (eq_split("--T-langevin=", val)) {
+            a.T_override = std::atof(val.c_str());
+        } else if (eq_split("--inject-period=", val)) {
+            a.inject_period = std::atoi(val.c_str());
+        } else if (eq_split("--inject-amp=", val)) {
+            a.inject_amp_mult = std::atof(val.c_str());
         } else if (s == "--smoke") {
             a.smoke = true;
             a.L = 8;
@@ -458,6 +468,9 @@ int main(int argc, char** argv) {
            << "  N_samples:   " << args.N_samples << "\n"
            << "  N_burn:      " << args.N_burn << "\n"
            << "  include_b4:  " << (args.include_b4 ? "yes" : "no") << "\n"
+           << "  T_override:  " << (args.T_override >= 0.0 ? std::to_string(args.T_override) : std::string("(default)")) << "\n"
+           << "  inject_period: " << args.inject_period << "\n"
+           << "  inject_amp:  " << args.inject_amp_mult << "\n"
            << "  output_dir:  " << args.output_dir << "\n"
            << "  smoke:       " << (args.smoke ? "yes" : "no") << "\n";
     log(banner.str());
@@ -483,11 +496,47 @@ int main(int argc, char** argv) {
 
         ftd::RenderBridge rb(args.L);
         configure_scenario(rb, args.scenario, args.L);
+        if (args.T_override >= 0.0) {
+            rb.toggles.langevin_T = args.T_override;
+        }
         rb.seed_rng(seed);
         rb.run(args.N_burn);
 
+        // Track the scenario's primary injection point for periodic re-injection.
+        // For multi-source scenarios (S3 pair-rich), re-inject at all 5 points.
+        auto reinject = [&]() {
+            if (args.inject_period <= 0) return;
+            const double amp = args.inject_amp_mult * ftd::K_GENESIS;
+            switch (args.scenario) {
+                case Scenario::GenesisRich:
+                    rb.inject_flux(args.L / 2, args.L / 2, args.L / 2, {amp, 0, 0});
+                    break;
+                case Scenario::PairRich:
+                    for (int i = 0; i < 5; ++i) {
+                        const int x = (args.L / 6) * (1 + i % 3);
+                        const int y = (args.L / 6) * (1 + (i + 1) % 3);
+                        const int z = (args.L / 6) * (1 + (i + 2) % 3);
+                        rb.inject_flux(x % args.L, y % args.L, z % args.L,
+                                       {amp, 0, 0});
+                    }
+                    break;
+                case Scenario::MixedBalanced:
+                    rb.inject_flux(args.L / 2, args.L / 2, args.L / 2, {amp, 0, 0});
+                    break;
+                case Scenario::LangevinPure:
+                    // No injection in pure-Langevin scenario.
+                    break;
+            }
+        };
+
+        int ticks_since_inject = 0;
         for (int k = 0; k < args.N_samples; ++k) {
             rb.run(args.sample_stride);
+            ticks_since_inject += args.sample_stride;
+            if (args.inject_period > 0 && ticks_since_inject >= args.inject_period) {
+                reinject();
+                ticks_since_inject = 0;
+            }
             // Snapshot pair: before, advance 1 tick, after
             const auto before = ftd::eft::render_bridge_to_dual_cell_fields(rb);
             rb.run(1);
@@ -577,36 +626,122 @@ int main(int argc, char** argv) {
         log(os.str());
     }
 
-    // ── Compute M_ab(b=2) ────────────────────────────────────────────────
+    // ── Compute M_ab(b=2) — with graceful degradation per PROTOCOL §5 Gate A ──
+    //
+    // Drop ops with variance below threshold from the active subspace,
+    // invert the reduced S, and report reduced-rank M_ab.  Zero-variance
+    // operators are reported in meta.json as "structurally inactive in
+    // this ensemble"; the M_ab matrix is reported on the active subspace
+    // only with NaN entries for dropped ops.
+    constexpr double kVarianceFloor = 1e-30;
+    std::vector<int> active_ops;
+    std::vector<int> dropped_ops;
+    for (int a = 0; a < kNumOps; ++a) {
+        if (op_var[a] >= kVarianceFloor) active_ops.push_back(a);
+        else dropped_ops.push_back(a);
+    }
+    {
+        std::ostringstream os;
+        os << "  active ops (" << active_ops.size() << "/10): ";
+        for (int a : active_ops) os << kOpNames[a] << " ";
+        os << "\n";
+        if (!dropped_ops.empty()) {
+            os << "  dropped ops (variance < " << kVarianceFloor << "): ";
+            for (int a : dropped_ops) os << kOpNames[a] << " ";
+            os << "\n";
+        }
+        log(os.str());
+    }
+
     auto cov2 = compute_covariances(fine_samples, coarse2_samples);
     if (!cov2.valid) {
         log("  ERR: b=2 covariances invalid\n");
         return 4;
     }
-    Mat S_inv;
-    double cond_S;
-    if (!invert_mat(cov2.S, S_inv, cond_S)) {
-        // Diagnostic: identify which ops have variance below threshold.
-        std::ostringstream os;
-        os << "  WARN: full 10x10 S matrix singular; near-zero-variance ops "
-              "(threshold 1e-30): ";
-        bool any = false;
-        for (int a = 0; a < kNumOps; ++a) {
-            if (op_var[a] < 1e-30) {
-                os << kOpNames[a] << " ";
-                any = true;
+
+    Mat M_b2 = zero_mat();
+    double cond_S = 1e300;
+    bool inversion_ok = false;
+
+    if (active_ops.size() == kNumOps) {
+        // Full 10x10 inversion path.
+        Mat S_inv;
+        if (invert_mat(cov2.S, S_inv, cond_S)) {
+            M_b2 = matmul(cov2.Sigma, S_inv);
+            inversion_ok = true;
+        }
+    }
+    if (!inversion_ok) {
+        // Reduced-rank inversion: extract active subspace, invert, embed.
+        const int Nact = static_cast<int>(active_ops.size());
+        if (Nact >= 2) {
+            // Build reduced fine/coarse samples at active subspace.
+            std::vector<std::vector<double>> S_red(Nact, std::vector<double>(Nact, 0.0));
+            std::vector<std::vector<double>> Sigma_red(Nact, std::vector<double>(Nact, 0.0));
+            for (int i = 0; i < Nact; ++i)
+                for (int j = 0; j < Nact; ++j) {
+                    S_red[i][j] = cov2.S[active_ops[i]][active_ops[j]];
+                    Sigma_red[i][j] = cov2.Sigma[active_ops[i]][active_ops[j]];
+                }
+            // Inline Gauss-Jordan on dynamic-size matrix.
+            std::vector<std::vector<double>> aug(Nact, std::vector<double>(2 * Nact, 0.0));
+            for (int i = 0; i < Nact; ++i) {
+                for (int j = 0; j < Nact; ++j) aug[i][j] = S_red[i][j];
+                for (int j = 0; j < Nact; ++j) aug[i][Nact + j] = (i == j) ? 1.0 : 0.0;
+            }
+            double max_pivot = 0.0;
+            double min_pivot = 1e300;
+            bool ok = true;
+            for (int col = 0; col < Nact; ++col) {
+                int pivot_row = col;
+                double pivot_abs = std::abs(aug[col][col]);
+                for (int r = col + 1; r < Nact; ++r) {
+                    if (std::abs(aug[r][col]) > pivot_abs) {
+                        pivot_abs = std::abs(aug[r][col]);
+                        pivot_row = r;
+                    }
+                }
+                if (pivot_abs < 1e-30) { ok = false; break; }
+                if (pivot_row != col) std::swap(aug[col], aug[pivot_row]);
+                const double pivot = aug[col][col];
+                max_pivot = std::max(max_pivot, std::abs(pivot));
+                min_pivot = std::min(min_pivot, std::abs(pivot));
+                for (int j = 0; j < 2 * Nact; ++j) aug[col][j] /= pivot;
+                for (int r = 0; r < Nact; ++r) {
+                    if (r == col) continue;
+                    const double factor = aug[r][col];
+                    if (factor == 0.0) continue;
+                    for (int j = 0; j < 2 * Nact; ++j) aug[r][j] -= factor * aug[col][j];
+                }
+            }
+            if (ok) {
+                cond_S = (min_pivot > 0.0) ? (max_pivot / min_pivot) : 1e300;
+                // M_red = Sigma_red * S_red^{-1}
+                std::vector<std::vector<double>> M_red(Nact, std::vector<double>(Nact, 0.0));
+                for (int i = 0; i < Nact; ++i)
+                    for (int j = 0; j < Nact; ++j)
+                        for (int k = 0; k < Nact; ++k)
+                            M_red[i][j] += Sigma_red[i][k] * aug[k][Nact + j];
+                // Embed into full 10x10 with NaN for dropped rows/cols.
+                const double NaN = std::nan("");
+                for (int a = 0; a < kNumOps; ++a)
+                    for (int b = 0; b < kNumOps; ++b)
+                        M_b2[a][b] = NaN;
+                for (int i = 0; i < Nact; ++i)
+                    for (int j = 0; j < Nact; ++j)
+                        M_b2[active_ops[i]][active_ops[j]] = M_red[i][j];
+                inversion_ok = true;
+                std::ostringstream os;
+                os << "  reduced-rank inversion succeeded on " << Nact << "-op subspace\n";
+                log(os.str());
             }
         }
-        if (!any) os << "(none — singularity is from linear dependence between ops)";
-        os << "\n";
-        log(os.str());
-        log("  Production mitigation: PROTOCOL §5 Gate A allows graceful degradation"
-            " (drop near-zero ops; report reduced N_active < 10).\n");
-        log("  Smoke runs at L<=16 may be rank-deficient; production L=32, "
-            "N_total=2000 expected to invert.\n");
-        return 5;
+        if (!inversion_ok) {
+            log("  ERR: even reduced-subspace inversion failed (linear dependence "
+                "among active ops?)\n");
+            return 5;
+        }
     }
-    Mat M_b2 = matmul(cov2.Sigma, S_inv);
 
     std::ostringstream cs;
     cs << "  cond(S) = " << cond_S << "\n";
@@ -621,6 +756,7 @@ int main(int argc, char** argv) {
 
     std::mt19937_64 rng(BASE_SEED ^ 0xB007);
     std::uniform_int_distribution<int> idx_dist(0, N_total - 1);
+    const int Nact = static_cast<int>(active_ops.size());
     for (int boot = 0; boot < N_BOOTSTRAP; ++boot) {
         std::vector<OpVec> resampled_fine, resampled_coarse;
         resampled_fine.reserve(N_total);
@@ -632,12 +768,69 @@ int main(int argc, char** argv) {
         }
         auto cov_b = compute_covariances(resampled_fine, resampled_coarse);
         if (!cov_b.valid) continue;
-        Mat S_inv_b;
-        double cond_b;
-        if (!invert_mat(cov_b.S, S_inv_b, cond_b)) continue;
-        Mat M_b = matmul(cov_b.Sigma, S_inv_b);
+
+        Mat M_b = zero_mat();
+        bool ok_b = false;
+
+        if (Nact == kNumOps) {
+            Mat S_inv_b;
+            double cond_b;
+            if (invert_mat(cov_b.S, S_inv_b, cond_b)) {
+                M_b = matmul(cov_b.Sigma, S_inv_b);
+                ok_b = true;
+            }
+        } else {
+            // Reduced-rank inversion on the locked active subspace.
+            std::vector<std::vector<double>> aug(Nact, std::vector<double>(2 * Nact, 0.0));
+            for (int i = 0; i < Nact; ++i) {
+                for (int j = 0; j < Nact; ++j)
+                    aug[i][j] = cov_b.S[active_ops[i]][active_ops[j]];
+                for (int j = 0; j < Nact; ++j)
+                    aug[i][Nact + j] = (i == j) ? 1.0 : 0.0;
+            }
+            bool reg_ok = true;
+            for (int col = 0; col < Nact; ++col) {
+                int pivot_row = col;
+                double pivot_abs = std::abs(aug[col][col]);
+                for (int r = col + 1; r < Nact; ++r) {
+                    if (std::abs(aug[r][col]) > pivot_abs) {
+                        pivot_abs = std::abs(aug[r][col]);
+                        pivot_row = r;
+                    }
+                }
+                if (pivot_abs < 1e-30) { reg_ok = false; break; }
+                if (pivot_row != col) std::swap(aug[col], aug[pivot_row]);
+                const double pivot = aug[col][col];
+                for (int j = 0; j < 2 * Nact; ++j) aug[col][j] /= pivot;
+                for (int r = 0; r < Nact; ++r) {
+                    if (r == col) continue;
+                    const double factor = aug[r][col];
+                    if (factor == 0.0) continue;
+                    for (int j = 0; j < 2 * Nact; ++j) aug[r][j] -= factor * aug[col][j];
+                }
+            }
+            if (reg_ok) {
+                std::vector<std::vector<double>> M_red(Nact, std::vector<double>(Nact, 0.0));
+                for (int i = 0; i < Nact; ++i)
+                    for (int j = 0; j < Nact; ++j)
+                        for (int k = 0; k < Nact; ++k)
+                            M_red[i][j] += cov_b.Sigma[active_ops[i]][active_ops[k]] *
+                                           aug[k][Nact + j];
+                const double NaN = std::nan("");
+                for (int a = 0; a < kNumOps; ++a)
+                    for (int b = 0; b < kNumOps; ++b)
+                        M_b[a][b] = NaN;
+                for (int i = 0; i < Nact; ++i)
+                    for (int j = 0; j < Nact; ++j)
+                        M_b[active_ops[i]][active_ops[j]] = M_red[i][j];
+                ok_b = true;
+            }
+        }
+        if (!ok_b) continue;
+
         for (int a = 0; a < kNumOps; ++a)
             for (int c = 0; c < kNumOps; ++c) {
+                if (std::isnan(M_b[a][c])) continue;
                 M_sum[a][c] += M_b[a][c];
                 M_sum_sq[a][c] += M_b[a][c] * M_b[a][c];
             }
