@@ -1,4 +1,4 @@
-# Analysis — Gate C and diagonal M_aa across L ∈ {24, 32, 48, 64}
+# Analysis — Gate C and diagonal M_aa across L ∈ {24, 32, 48, 64, 128}
 
 **Status:** [MEASURED · structural cross-L picture]
 **Date:** 2026-04-30 (late session)
@@ -174,6 +174,110 @@ For paper drafting: the cleanest "math-based EFT" claim is **at L=32, T=0.100, p
 **Q4**: Theorem 4 attempt: derive analytic L-dependence of `divJ²` and `curlJ²` from the matched-stencil CG projector + blocking convention. Their drift (-15.7 → -17.5 for divJ²) might be derivable rather than measured.
 
 **Q5**: Does the SPATIAL ↔ SPATIAL within-sector coupling pattern (10-12/20 at all L) decompose into specific operator pairs that are present vs absent at all L?
+
+---
+
+## 6.5 · L=128 LARGE addition (5-L picture, 2026-05-01)
+
+L=128 LARGE production complete (10 seeds × 2000 samples = 20,000 snapshot pairs at T_langevin=0.100, pair-rich, 19.5h wall on RTX 5090). Total cross-L data: 100,000 snapshot pairs across 5 lattice sizes.
+
+### 6.5.1 · Diagonal M_aa values at L=128
+
+```
+op              | L=24       | L=32       | L=48       | L=64       | L=128       
+JJ              | 16.000±0.000 | 16.000±0.000 | 16.000±0.000 | 16.000±0.000 | 16.000±0.000
+divJ²           | -15.65±0.49 | -16.61±0.46 | -16.94±0.50 | -17.48±0.47 | **-22.90±0.74**
+curlJ²          | 8.64±0.08   | 8.80±0.13   | 8.87±0.08   | 9.57±0.08   | **10.99±0.13**
+JdotDivJ        | 29.54±0.45  | 30.68±0.65  | 29.77±0.42  | 31.05±0.44  | **40.45±1.03**
+J4              | 256.003±0.001 | 256.004±0.002 | 255.996±0.002 | 256.003±0.003 | **255.833±0.009** ✗
+stateSq         | 7.99±0.16   | 7.35±0.15   | 6.86±0.11   | 6.77±0.15   | 5.85±0.14
+reactionDensity | 10.61±1.04  | 8.34±0.76   | 6.81±0.45   | 6.59±0.53   | 5.15±0.36
+genesisFlux     | -19.30±1.90 | -18.47±2.00 | -16.60±1.35 | -12.67±1.31 | **-12.21±1.19** (stable)
+JdotDeltaS      | 30.33±3.69  | 27.40±2.90  | 25.85±2.19  | 22.48±3.23  | **22.93±0.96** (stable)
+```
+
+Bold = significant change from L=64.
+
+### 6.5.2 · Three new structural findings
+
+**Finding A: Theorem 2 (J⁴ = b⁸) shows first measurable deviation at L=128.**
+
+`M_J4,J4 = 255.833 ± 0.009` at L=128 — 0.167 absolute deviation from the theorem value 256, which is **19σ** from the bootstrap stderr. At L=24, 32, 48, 64 the deviations were <0.005 (within stderr).
+
+This is **a real finite-L breakdown of Theorem 2's smooth-field condition for higher powers.** Theorem 1 (J²) requires the per-cell relation `J²_coarse = b⁴ J²_fine_block_avg` to hold under the block-uniformity-with-block-correlation condition. Theorem 2 (J⁴) requires the squared version, which is more sensitive to within-block fluctuations. At L=128 the gauss-projected field has small block-scale variations that break the higher-power identity at 19σ but not the lower-power one.
+
+This is **structurally interesting**: Theorems 1 and 2 had identical "smooth-field" preconditions, but they have different sensitivities to violations of those preconditions. **Theorem 1 is more robust than Theorem 2**, with Theorem 2 starting to fail at L=128 while Theorem 1 still holds.
+
+**Finding B: Gate C ratio PLATEAUS at L=128, doesn't diverge.**
+
+```
+L=24:  0.556  (small-L noise dominated)
+L=32:  0.172  (sweet spot)
+L=48:  0.307  (just over threshold)
+L=64:  0.365  (deeper breakdown)
+L=128: 0.353  (BETTER than L=64!)
+```
+
+The breakdown is **bounded** — it doesn't continue growing past 0.40. Either we've found the asymptotic value of the irreducible-physics-breakdown amplitude, or it's still drifting slowly with no clean trend.
+
+This is **important for the "math-based EFT" interpretation**: the engine's RG semigroup property breaks down by a finite amount, not unboundedly. The L=32 sweet-spot is genuinely special (the only lattice where Gate C passes), but the breakdown for larger L is bounded above ~0.4.
+
+**Finding C: Sector decoupling REACTION-FLUX → SPATIAL = 2/10 at L=128 (was 0/10 at L≤64).**
+
+At all four smaller lattices (L=24, 32, 48, 64), `RF → SPATIAL = 0/10 entries above 5σ` was the bedrock structural finding — interpreted as the L-independent reflection of FTD's two-layer ontology. At L=128, **2 of 10 entries are above 5σ for the first time**.
+
+Two interpretations:
+
+1. **Better conditioning reveals previously-below-threshold couplings**: cond(S) at L=128 = 8.2e11 is the lowest of all 5 lattices. With smaller bootstrap stderr, marginally non-zero couplings become statistically significant. Under this reading, the underlying physics hasn't changed; the resolution improved.
+
+2. **Genuine large-L cross-coupling emerges**: real new structure visible only at the largest lattice.
+
+Distinguishing requires checking whether the entries that emerge above 5σ at L=128 had non-zero (but below-5σ) values at L=64. If yes → resolution effect. If their absolute magnitudes are larger at L=128 than L=64 → real growth.
+
+**Net implication**: the "L-independent backbone" claim from the 4-lattice analysis needs softening. The fundamental sector-decoupling direction holds **strictly at L ≤ 64** but shows weak (2/10) emergence at L=128. The other backbone elements (Theorems 1, 3, Gaussian fixed point, algebraic spine) hold at all L.
+
+### 6.5.3 · Other 5-L findings
+
+**Gate A off-diagonal continues to improve**: 24% → 29% → 39% → 50% → **64%** at L=128. Approaching but not reaching the 70% PROTOCOL threshold. Linear extrapolation suggests L ≈ 256 would reach 70%; sublinear-trend would never quite get there.
+
+**Some diagonals stabilize, others continue drifting**:
+- Stabilizing (≤5% L=64→L=128 change): genesisFlux (-12.67 → -12.21), JdotDeltaS (22.48 → 22.93). These appear to have reached their asymptotic values.
+- Continuing to drift: divJ² (-17.48 → -22.90, +31% magnitude), curlJ² (9.57 → 10.99, +15%), JdotDivJ (31.05 → 40.45, +30%), stateSq (6.77 → 5.85, −14%), reactionDensity (6.59 → 5.15, −22%).
+
+The drift pattern suggests two operator classes:
+- Reaction-flux operators (genesisFlux, JdotDeltaS): flow toward fixed values
+- Spatial-derivative + density operators: continue flowing
+
+**cond(S) keeps dropping**: 6.4e13 → 1.1e13 → 1.6e12 → 1.7e12 → **8.2e11**. Best-conditioned at L=128. The matrix inversion gets cleaner with larger lattice (more cells = better averaging = less ill-conditioning).
+
+### 6.5.4 · Re-stated math-based EFT closure status
+
+After L=128 LARGE:
+
+**L-INDEPENDENT BACKBONE (holds at L=24, 32, 48, 64, 128)**:
+- Bare Gaussian fixed point (FTD-0070) ✓
+- Algebraic spine (now 9 theorems) ✓
+- **Theorem 1** (M_JJ,JJ = b⁴ exactly): verified at all 5 lattice sizes to machine precision ✓
+- **Theorem 3** (charge-density blocking with ρ̄): structure verified ✓
+
+**FINITE-L BACKBONE (holds at L ≤ 64, partial at L=128)**:
+- **Theorem 2** (M_J4,J4 = b⁸): exact at L≤64, 19σ deviation at L=128 — finite-L applicability
+- **Sector decoupling REACTION-FLUX → SPATIAL = 0**: strict at L≤64, 2/10 emergent at L=128
+
+**SWEET-SPOT FINITE-L EFT (L=32 LARGE)**:
+- All Gates A-diag, B, C, D (theorem-grade) PASS uniquely at L=32 ✓
+
+**L-DEPENDENT FLOW**:
+- 5 non-theorem diagonals show flow with L; some stabilizing (reaction-flux pair), others drifting (spatial-derivative + density)
+- Gate C ratio bounded above ~0.40, plateauing at large L
+
+**IMPLICATIONS FOR PAPER DRAFTING**:
+- Branch-A native EFT paper at L=32 sweet spot remains the cleanest finite-L closure point
+- L=128 result demonstrates that the L-independent backbone is *narrower* than originally thought (Theorem 1 + Theorem 3 + algebraic spine + Gaussian fixed point)
+- Theorem 2 should be re-stated as: holds in the smooth-field-strict limit; observed exactness at L=24, 32, 48, 64 is the engine being in that regime; L=128 measurement begins to deviate
+- Sector decoupling should be re-stated as: holds strictly at L ≤ 64; weakly emergent cross-couplings at L=128
+
+These are honest finite-L EFT statements, not unbounded structural claims.
 
 ---
 
