@@ -1,9 +1,140 @@
-# Where We Left Off — 2026-05-01 (post-Maxwell-exploit-thread closure)
+# Where We Left Off — 2026-05-01 evening (post-physics-bridge crystallization)
+
+**Latest update:** 2026-05-01 evening session. Substantial follow-up to the
+2026-04-30 / 2026-05-01 morning Maxwell-exploit closure: the physics
+bridge has been **crystallized** with structural-uniqueness arguments,
+volumetric pathway verified, and conjugate-lattice interpretation
+explored. Session details in §0.4 below.
+
+---
+
+# Where We Left Off — 2026-05-01 morning (post-Maxwell-exploit-thread closure)
 
 **Purpose:** single entry point for the next session. Supersedes the
 2026-04-28 synthesis (preserved in §§A–F below as historical context;
 its TL;DR remains accurate for the FTD-0110 linear-bridge derivation
 and the engine refactor sweep).
+
+---
+
+## 0.4 · Evening session (2026-05-01): physics-bridge crystallization
+
+After the morning's Maxwell-exploit thread closure, the evening session
+focused on **closing tractable open gaps** and **crystallizing the
+physics bridge**. Net result: 14 substantive commits with all major
+findings positive (3 negative results documented honestly per CLAUDE.md
+discipline).
+
+### Major positive results (this evening)
+
+**FTD-0121 [SYNTHESIS]** — `SPEC_PHYSICS_BRIDGE.md` crystallizes the
+bridge as currently established: mathematical spine + empirical match
++ structural-uniqueness arguments + ~20,000:1 Bayesian evidence for
+structural-vs-coincidence reading within natural FTD polynomial family.
+The bridge is "finished as much as current methods allow"; further
+closure requires research-program-scale work.
+
+**Two structural-uniqueness scans (substantive)**:
+- `EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` (commit `0074f92`):
+  (m=2, k=4) is RANK 1 of 58 (m, k) pairs in the natural Gaussian-
+  integer-tower family with 5-orders-of-magnitude gap to rank 2.
+- `EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` (commit `f36b741`): master
+  quadratic is the UNIQUE dual-matcher in 147,456 polynomials of form
+  `x² − n·G*^p·x + m·G*^q` at MQ precision.
+
+**Volumetric pathway directly verified** (commit `4964ba9`):
+3D BCC Watson integral converges to G*²/(2π); combined with N_base² = 16
+from O_h Moore-irrep gives master quadratic with roots (137.036, 3.024)
+matching (1/α, N_c) at 1.26 ppm and 0.80%. End-to-end verification.
+
+**Conjugate-lattice interpretation** (commit `c9540dd`): the squaring
+16 = N_base² has three readings; Reading 3 (|Aut(E × E)| product
+variety automorphism count) is structurally cleanest, connecting
+Theorems 3, 4, 8 into a unified picture.
+
+### Major negative results (honestly documented)
+
+- **FTD-0110 Mechanism α 1/√d hypothesis FALSIFIED** (commits
+  `2e5246e`, `cf41560`): Phase B and Phase C of the closure attempt
+  both falsified two natural representation-theoretic frameworks for
+  the multi-block extension. Per-block local-symmetry analysis does
+  NOT yield a clean closed-form derivation of empirical k(A) drift.
+
+- **α-derivation route survey: NO new path emerges** (commit
+  `a227145`): exhaustive scan of algebraic combinations of {α, G*,
+  x_+, x_-, 1/(2π), |λ_slow|} produces only Vieta identities. No
+  new structural identity.
+
+- **RG-running approach for α-derivation: closed-negative** (commit
+  `ea8feca`): required β-coefficient c ≈ 0.034 doesn't match any
+  clean FTD structural constant.
+
+- **3×3 mixing-matrix generalization: closed-negative** (commit
+  `0440e1d`): the 2×2 master-quadratic-as-mixing reading does not
+  extend cleanly to 3×3; FTD's mode count for EM-color is
+  specifically 2.
+
+### Brainstorm thread (constructive)
+
+The 2×2 mixing matrix → 3×3 generalization → volumetric correction →
+volumetric pathway → conjugate lattice thread converged on a unified
+picture (commits `09a1569`, `0440e1d`, `a75888f`, `4964ba9`, `c9540dd`).
+
+### LEDGER additions this session
+
+| ID | Tag | Subject |
+|---|---|---|
+| FTD-0121 | [SYNTHESIS] | Physics-bridge crystallization (`SPEC_PHYSICS_BRIDGE.md`) |
+| (FTD-0097 ext) | [MEASURED extended] | Polynomial-level look-elsewhere — master quadratic uniquely dual-selective |
+| (FTD-0111 Q1) | [SUBSTANTIALLY PROGRESSED] | Tower-uniqueness rank-1 with 5-orders gap |
+| (FTD-0119) | [BRIDGE-ANALYZED + Phase C] | Phase C Langevin-equipartition framework FALSIFIED |
+| (FTD-0001/13/14 strengthened) | unchanged tags | Structural standing materially strengthened by uniqueness scans |
+
+### New artifacts this session
+
+**Theory docs (10 new)**:
+- `docs/theory/01_reference/SPEC_PHYSICS_BRIDGE.md` — synthesis (FTD-0121)
+- `docs/theory/03_derivations/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` (extended §8.5/§8.6/§8.7) — bridge attempt + falsifications
+- `docs/theory/09_mathematical/EXPLR_PATHS_TO_ALPHA.md` — α-derivation route survey
+- `docs/theory/09_mathematical/EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` — tower-scan rank-1
+- `docs/theory/09_mathematical/EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` — polynomial-scan unique
+- `docs/theory/09_mathematical/EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md` — 2×2 mixing reading
+- `docs/theory/09_mathematical/EXPLR_3X3_MIXING_NEGATIVE.md` — 3×3 generalization negative
+- `docs/theory/09_mathematical/EXPLR_VOLUMETRIC_READING_OF_MASTER_QUADRATIC.md` — volumetric correction
+- `docs/theory/09_mathematical/EXPLR_CONJUGATE_LATTICE_INTERPRETATIONS.md` — three readings of 16
+- (existing) `EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` extended
+
+**Verification scripts (6 new)**:
+- `scripts/proofs/proof_ftd0110_offcenter_slowmodes.py` — Phase A
+- `scripts/proofs/proof_ftd0110_langevin_steady_state.py` — Phase B (falsifies 1/√d)
+- `scripts/proofs/proof_ftd0110_full_aggregation.py` — Phase C (falsifies Langevin-equipart)
+- `scripts/proofs/proof_z_factor_q4a.py` (morning, retrospective) — falsifies Z = G*²
+- `scripts/proofs/proof_tower_multiplier_uniqueness.py` — tower scan
+- `scripts/proofs/proof_polynomial_look_elsewhere.py` — polynomial scan
+- `scripts/proofs/proof_volumetric_master_quadratic.py` — volumetric pathway
+
+### What's open (priority queue, post-evening)
+
+**Highest-leverage external move**:
+1. **Path A — Paper A draft** (Letters in Mathematical Physics, ~10pp).
+   Mathematical core is publication-grade NOW. The volumetric pathway,
+   uniqueness scans, and conjugate-lattice (Reading 3 = |Aut(E × E)|)
+   provide the structural narrative without claiming α-derivation.
+   ~3-4 days writing. Strategy doc:
+   `STRATEGY_PAPER_SPLIT_2026-04-30.md`.
+
+**Internal research (research-program scale)**:
+2. **Mechanism β / γ for FTD-0110**: nonlinear-bridge mechanisms beyond
+   representation-theoretic. ~3-5 days each.
+3. **Engine experiments D3a-D3d**: discriminate among Mechanism α/β/γ.
+   ~2-3 days each.
+4. **Live-engine C++ benchmark for Q3** (FTD-0118 confirmation,
+   ~1-2 days).
+5. **Higher-precision (m, k) tower scan** at relaxed tolerances, or
+   broader polynomial families (e.g., rational coefficients).
+6. **Conjugate-lattice formalization** at deeper level: explicit
+   construction of E × E and verification that |Aut(E × E)| structure
+   maps to the master quadratic at theorem grade.
 
 ---
 
