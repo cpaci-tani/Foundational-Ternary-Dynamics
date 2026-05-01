@@ -191,16 +191,120 @@ here. If no, that's a genuine new direction worth pursuing.
 
 ---
 
+## 7.5 · RG-running approach (added 2026-05-01 evening)
+
+After the initial survey returned negative, the user requested attempting
+"a mechanism we haven't tried" successfully producing α. The genuinely
+**untried route** is **RG running from FTD lattice scale to lab scale**:
+take FTD's natural coupling at the lattice scale (= M_Pl per a_phys ≡
+ℓ_P) and run it under some β-function down to laboratory energy
+(Q ~ m_e); if the result equals 1/137, FTD has derived α.
+
+### 7.5.1 · Setup
+
+**FTD natural couplings at M_Pl:**
+- Phase G amplitude (geometric, `1/(2π)`):     **0.1592**
+- Engine Rutherford α (Day-2 EFT):             **0.0420**
+- ALPHA_EFT = G_C² in `constants.h`:           **0.333** (= 1/3)
+
+**Standard QED running** (asymptotically non-free, β = +α²/(3π)):
+```
+α(m_e) = 1/137.036  →  α(M_Pl) = 1/126.10 = 0.00794
+```
+QED's α at M_Pl is ~6× smaller than FTD's engine measurement.
+
+### 7.5.2 · Required FTD β-function
+
+To run FTD's natural coupling at M_Pl DOWN to physical α at m_e
+(asymptotic freedom, β = −c·α):
+
+```
+c = ln(α_FTD_lat / α_phys) / ln(M_Pl / m_e)
+```
+
+| FTD natural at M_Pl | Required c | Compare to QED β = +1/(3π) ≈ 0.106, QCD β ≈ 0.557 |
+|---|---|---|
+| Engine = 0.042 | **0.0340** | ~3× smaller than QED, ~16× smaller than QCD |
+| Phase G = 1/(2π) | 0.0598 | ~2× smaller than QED |
+
+### 7.5.3 · Result: no clean structural match
+
+Searching for clean structural numbers near c = 0.034:
+
+| Candidate | Value | Off by |
+|---|---|---|
+| 1/30 | 0.03333 | 1.9% |
+| 1/(2π·5) | 0.03183 | 6.3% |
+| α·N_eff/3 | 0.03162 | 6.9% |
+| 1/(3π·3) | 0.03537 | 4.1% |
+| 1/(8·G\*) | 0.04225 | 24% |
+
+None of these are structurally motivated FTD constants. The "1% match"
+candidates (`α/0.215`, `0.44/N_eff`) found by my search are tautological
+(rearranging the equation) or arbitrary (where does 0.44 come from?).
+
+### 7.5.4 · Verdict
+
+**The simple RG-running approach (β = −c·α) does NOT yield α from FTD
+axioms.** The required β-coefficient is empirically ≈ 0.034, but no
+clean FTD structural constant matches this.
+
+**Possible escapes:**
+- **More complex β-function** (non-power-law, multi-loop): could in
+  principle hit any required value but requires deriving the actual
+  FTD β-function from genesis dynamics + lattice action (a substantial
+  research program).
+- **Different UV scale** (not M_Pl): if FTD's effective UV scale is
+  some Q* < M_Pl, the running distance is shorter. But this would
+  require structural justification for Q*.
+- **Different IR matching point** (not m_e): perhaps the engine α
+  matches at a higher scale and runs only to some intermediate scale.
+  Same justification problem.
+
+**None of these escapes has a candidate in current project structures.**
+
+### 7.5.5 · Cumulative status of α-derivation routes (2026-05-01)
+
+Adding RG-running to the prior list:
+
+| Route | Status | Reason |
+|---|---|---|
+| Algebraic spine (master quadratic) | [STRONGLY MOTIVATED CONJECTURE] | 1.26 ppm match; identification empirical |
+| EFT recovery R1, R2, R3 | [CLOSED NEGATIVE] | Three routes failed |
+| Z-factor reading (FTD-0116) | [CLOSED NEGATIVE] | Z_G18 ≠ G\*² |
+| Algebraic combinations of spine theorems | [NEGATIVE] | §2.1-2.4 of this doc |
+| RG running (simple β = −c·α) | **[NEGATIVE]** (this section) | Required c ≈ 0.034 not clean structural |
+| Mechanism β (genesis-kink for α) | [UNTRIED] | Speculation only |
+| Mechanism γ (Langevin amplitude crossover for α) | [UNTRIED] | Speculation only |
+| Look-elsewhere refinement (polynomial-level) | [UNTRIED] | Could strengthen empirical case but not derive |
+
+### 7.5.6 · Honest meta-assessment after all attempts
+
+**Every session-scale α-derivation attempt has reached the same conclusion:** the existing path through the algebraic spine (with empirical identification x_+ = 1/α at 1.26 ppm) is the only path with substantial evidence, and no derivation route has converted this conjecture to a theorem.
+
+This is not a "we haven't tried hard enough" situation. It's a **structural shape of the problem**: FTD's mathematics gives a rigid prediction (x_+ = 137.036 with 1.26 ppm error to physical α), but the *bridge from mathematics to physics* — connecting the dimensionless number x_+ to the dimensional fine-structure constant — requires a mechanism that hasn't materialized despite multiple attempts.
+
+The candidates that remain genuinely untried (Mechanism β/γ for α; non-trivial β-function derivation; statistical look-elsewhere refinements) are all substantial research programs (1-4 weeks each), not session tasks. None has clear prospects for closure.
+
+**The α-derivation problem is the central open question of FTD.** This series of negative results sharpens that statement: *if* the conjecture is correct, the closure requires structural machinery we don't yet have. *If* the conjecture is wrong (i.e., x_+ = 137.036 is coincidental), the empirical strength is very strong and the catalog-level look-elsewhere arguments don't decisively rule out coincidence.
+
+The framework's strongest external move remains **Paper A**: peer-reviewed publication of the algebraic spine (without claiming α-derivation), which converts the rigorous mathematical content into validated external standing without relying on the open conjecture.
+
+---
+
 ## 8 · Single-line summary
 
 **With the 9 algebraic-spine theorems, the Maxwell-exploit thread
 (FTD-0113-0120), the FTD-0110 closure-attempt artifacts, and the
 post-FTD-0117 canonical references all in clean state, no NEW logical
-path to deriving α emerges from algebraic, logarithmic, or structural
-combinations. The existing path through the master quadratic remains
-[STRONGLY MOTIVATED CONJECTURE] at 1.26 ppm strength. Future progress
-requires either Mechanism β/γ analysis or a fundamentally new
-framework — neither of which is supplied by current project structures.**
+path to deriving α emerges from algebraic, logarithmic, structural,
+or RG-running combinations. The existing path through the master
+quadratic remains [STRONGLY MOTIVATED CONJECTURE] at 1.26 ppm strength.
+The FTD-required β-coefficient for RG running (c ≈ 0.034) does not
+match any clean structural constant. Future progress requires either
+Mechanism β/γ analysis, non-trivial β-function derivation, or a
+fundamentally new framework — none of which is supplied by current
+project structures.**
 
 ---
 
