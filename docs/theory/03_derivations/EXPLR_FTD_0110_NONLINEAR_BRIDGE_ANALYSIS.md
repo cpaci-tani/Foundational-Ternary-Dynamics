@@ -216,6 +216,101 @@ Linear theorem energy distribution `{3/8, 1/8, 3/8, 1/8}` and mean `1/4` re-veri
 
 ---
 
+## 8.7 · Phase C (Langevin equipartition extension) — also FALSIFIED
+
+After Phase B's falsification of the 1/√d law as a per-block efficiency,
+the next natural candidate was the **Langevin equipartition** extension
+of the linear theorem:
+
+> **Hypothesis (Phase C):** at each voxel x, the per-voxel manifestation
+> efficiency is `η(x) = (block_energy_at_x × 1/d_G(x)) / total_injected_energy`.
+> Cluster size: `N(A) = A² × Σ_x η(x)` over cluster voxels.
+
+This recovers the linear theorem at the central block: block energy ≈ A²,
+d_G = 4 → k = 1/4. ✓
+
+### 8.7.1 · Phase C result
+
+Tested in `scripts/proofs/proof_ftd0110_full_aggregation.py`:
+
+| A | k_emp | k_pred | k_pred/k_emp |
+|---|---|---|---|
+| 10 | 0.252 | 0.914 | 3.6 |
+| 50 | 0.222 | 1.514 | 6.8 |
+| 117.93 | 0.206 | 1.717 | 8.3 |
+
+`k_pred` ranges 0.9-1.7 — **dramatically off**, and worse than that:
+**`k_pred > 1` for clusters at A ≥ 15**, which is unphysical
+(`k > 1` means manifesting more energy than was injected).
+
+### 8.7.2 · Diagnosis of the Phase C failure
+
+The over-counting is structural: each lattice voxel `y` belongs to **27
+different "home blocks"** (the block centered at y, plus the 26 blocks
+centered at y's neighbors where y appears as a non-center voxel). My
+per-block summation counts each voxel's field amplitude in all 27
+blocks it belongs to.
+
+A naïve fix `η(x) = |G_L(x)|² / d_G(x) / total_E` (per-voxel rather than
+per-block) avoids over-counting but gives `η(0) ≈ 0.18 / 4 ≈ 0.045`,
+much smaller than the linear theorem's 1/4 = 0.25.
+
+The fundamental issue: **the linear theorem's "1/N_base = 1/4" is a
+TOTAL energy fraction (over all 4 A_{1g} modes of the central block),
+not a per-voxel quantity**. The cluster size A²/4 emerges from
+"slow mode supports A²/4 voxels of cluster" — a TOTAL claim, not
+per-voxel.
+
+For multi-block extension, we'd need a coherent way to aggregate
+TOTAL slow-mode energies across blocks without double-counting. The
+candidate frameworks tested in Phases B and C don't supply this
+aggregation cleanly.
+
+### 8.7.3 · Cumulative status
+
+After this commit:
+- **Mechanism α as 1/√d law**: FALSIFIED (Phase B)
+- **Mechanism α as Langevin-equipartition**: FALSIFIED (Phase C, this section)
+- **Mechanism β (genesis-kink)**: untested
+- **Mechanism γ (Langevin amplitude-crossover at A* ≈ 13)**: untested
+- **f_slow(r) distance-dependence (Phase B finding)**: documented but
+  not promoted as a candidate framework — the smooth-vs-localized
+  distinction it captures predicts k INCREASING with A, opposite to
+  empirical drift.
+
+**The bridge gap is sharper but more discouraging.** The two natural
+representation-theoretic frameworks both fail. The remaining
+candidates (β, γ) are not representation-theoretic and would require
+different machinery (genesis-kink statistical mechanics, or
+non-equilibrium Langevin response).
+
+### 8.7.4 · Honest verdict
+
+Phase B + Phase C jointly establish that **per-block local-symmetry
+analysis does NOT give a clean closed-form derivation of empirical
+k(A) drift**. The 1/√d match at large A reported in commit `e05d9d6`
+remains POSSIBLY COINCIDENTAL.
+
+Bridge closure via this route is now closed-negative. Future work
+must either:
+1. Invoke Mechanism β (genesis-kink induced energy redistribution)
+2. Invoke Mechanism γ (Langevin amplitude-crossover dynamics)
+3. Take a fundamentally different framework (e.g., RG flow on the
+   global lattice, or direct simulation matching)
+
+Each requires substantial new machinery. The bridge remains [OPEN]
+with the gap now well-characterized: **two natural candidates
+ruled out, two more to investigate, and no obvious shortcut**.
+
+CLAUDE.md anti-target discipline preserved throughout: when each
+candidate framework was tested by direct calculation, we reported
+the result honestly. No fishing for laws that fit; we ruled out
+what didn't fit and named what's still open.
+
+New verification script: `scripts/proofs/proof_ftd0110_full_aggregation.py`.
+
+---
+
 ## 8.6 · Mechanism α 1/√d hypothesis FALSIFIED (2026-05-01, Phase B)
 
 **The 1/√d empirical match identified in §8.5 is now FALSIFIED as a
