@@ -1,5 +1,154 @@
 # Foundational Ternary Dynamics Changelog
 
+## Physics-bridge crystallization + structural-uniqueness scans (May 1, 2026 evening)
+
+A focused evening session producing 14 commits with substantive positive
+results (uniqueness scans, volumetric pathway, conjugate-lattice
+interpretation) and honest negative results (FTD-0110 Mechanism α
+falsification, α-derivation route exhaustion).
+
+### FTD-0121 [SYNTHESIS] — Physics-bridge crystallization
+
+`SPEC_PHYSICS_BRIDGE.md` synthesizes FTD's connection to (1/α, N_c) at
+its current standing:
+
+  - Mathematical spine: 9 theorems, theorem-grade
+  - Empirical match: 1.26 ppm + 0.80% (the dual prediction)
+  - Structural-uniqueness arguments: tower-scan rank-1 with 5-orders gap;
+    polynomial-scan unique dual-matcher
+  - Bayesian strength: ~20,000:1 (~4.3 decimal orders) for structural
+    reading vs coincidence within natural FTD polynomial family
+  - IDENTIFICATION x_+ = 1/α stays [STRONGLY MOTIVATED CONJECTURE]
+
+The bridge is "finished as much as current methods allow"; further
+closure requires research-program-scale work (Mechanism β/γ, broader
+statistical analysis).
+
+### Substantive positive structural-uniqueness scans
+
+**(1+i)-tower uniqueness** (`EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md`,
+commit `0074f92`):
+- Scanned 58 (m, k) pairs in natural Gaussian-integer-tower family
+- (m=2, k=4) is RANK 1 with 5-orders-of-magnitude gap to rank 2
+- Both selections (m=2 from Z[i]; k=4 from N_base) are independently
+  structural
+
+**Polynomial-level look-elsewhere** (`EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md`,
+commit `f36b741`):
+- Scanned 147,456 polynomials of form `x² − n·G*^p·x + m·G*^q`
+- Master quadratic is the UNIQUE dual-matcher at MQ precision
+- Extends FTD-0097 monomial scan to polynomial level: catalog NOT
+  over-rich at polynomial level (uniquely selective)
+
+### Volumetric pathway directly verified
+
+**`scripts/proofs/proof_volumetric_master_quadratic.py`** (commit `4964ba9`):
+
+Verified end-to-end pathway:
+  Step 1: 3D BCC Watson integral (Riemann midpoint) → 1.393 = G*²/(2π)
+  Step 2: O_h trivial-irrep multiplicity on Moore neighborhood → N_base = 4
+  Step 3: Algebraic combination → master quadratic
+  Step 4: Roots = (137.036, 3.024) matching (1/α, N_c) at MQ precision
+
+Both ingredients (G* and N_base²) are intrinsically 3D-volumetric.
+
+### Conjugate-lattice interpretations
+
+**`EXPLR_CONJUGATE_LATTICE_INTERPRETATIONS.md`** (commit `c9540dd`)
+explores three readings of 16 = N_base²:
+
+- Reading 1 (SC + BCC interpenetrating): REDUCES to standard 27-block
+- Reading 2 (real ↔ reciprocal duality): suggestive
+- **Reading 3 (|Aut(E × E)| product variety): CLEANEST** — connects
+  Theorems 3, 4, 8 into unified picture
+
+Reading 3 says 16 counts automorphisms of E × E (where E is the
+unique CM curve at d = −4); the two factors of E correspond to the
+two roots of the master quadratic, with independent Z_4 = Aut(E)
+action on each.
+
+### Honest negative results (per CLAUDE.md anti-target discipline)
+
+**FTD-0110 Mechanism α 1/√d hypothesis FALSIFIED** (commits `2e5246e`,
+`cf41560`):
+- Phase A computed per-block trivial-irrep eigenstructure (universal
+  slow mode at λ = -1.586 across all 6 symmetry types)
+- Phase B tested 1/√d as per-block efficiency: f_slow = 0.68-0.87
+  (NOT 1/√d = 0.19-0.50). 1/√d hypothesis FALSIFIED.
+- Phase C tested Langevin-equipartition framework: k_pred = 0.91-1.72
+  (vs k_emp = 0.20-0.25), unphysical for A ≥ 15 (over-counting).
+  FALSIFIED.
+- The 1/√d empirical match at large A is now flagged POSSIBLY
+  COINCIDENTAL.
+- Bridge remains [OPEN]; two natural representation-theoretic
+  frameworks ruled out.
+
+**α-derivation route exhaustion** (`EXPLR_PATHS_TO_ALPHA.md`, commits
+`a227145`, `ea8feca`):
+- Algebraic combinations of {α, G*, x_+, x_-, 1/(2π), |λ_slow|}: only
+  Vieta identities (no new structure)
+- RG-running approach: required β-coefficient c ≈ 0.034 doesn't match
+  any clean FTD structural constant
+- Cumulative status: every session-scale α-derivation attempt has
+  reached the same conclusion. The conjectural identification stays
+  [STRONGLY MOTIVATED CONJECTURE].
+
+**3×3 mixing-matrix generalization** (`EXPLR_3X3_MIXING_NEGATIVE.md`,
+commit `0440e1d`):
+- The 2×2 master-quadratic-as-mixing reading does NOT extend cleanly
+  to 3×3 within natural FTD structures
+- Sub-blocks of A_{1g}, fully-symmetric 3×3, and SM-triple targets
+  all fail to give clean structure
+- The 2-mode reading is structurally specific to (1/α, N_c)
+- Anti-target: post-hoc lepton-mass scan trace ≈ 48·G*⁴ at 0.2%
+  flagged as fishing, NOT promoted
+
+### Brainstorm thread (constructive picture)
+
+The 2×2 mixing matrix → 3×3 → volumetric correction → volumetric
+pathway → conjugate lattice thread converged on a unified picture of
+the master quadratic with three complementary structural readings:
+
+1. **2×2 mixing matrix** (commit `09a1569`): bonding/antibonding
+   eigenmode pair with near-maximal (95.7%) coupling
+2. **Volumetric pathway** (commit `4964ba9`): 3D BCC Watson integral
+   + O_h Moore-irrep
+3. **Product variety** (commit `c9540dd`): |Aut(E × E)| automorphism
+   count
+
+These are complementary structural pictures, not competing readings.
+
+### What's open after this session
+
+**Highest leverage**:
+1. Path A — Paper A draft (~3-4 days; Letters in Mathematical Physics)
+2. Mechanism β/γ for FTD-0110 (~3-5 days each; nonlinear-bridge mechanisms)
+
+**Engine work**:
+3. Live-engine C++ benchmark for Q3 (~1-2 days, confirmatory)
+4. Engine experiments D3a-D3d for FTD-0119 (~2-3 days each)
+
+**Theoretical**:
+5. Conjugate-lattice formalization at deeper level
+6. Higher-precision tower / polynomial scans at relaxed tolerances
+
+### New artifacts (this evening)
+
+**Theory docs (10)**: `SPEC_PHYSICS_BRIDGE.md`, `EXPLR_PATHS_TO_ALPHA.md`,
+`EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md`, `EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md`,
+`EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md`,
+`EXPLR_3X3_MIXING_NEGATIVE.md`,
+`EXPLR_VOLUMETRIC_READING_OF_MASTER_QUADRATIC.md`,
+`EXPLR_CONJUGATE_LATTICE_INTERPRETATIONS.md`,
+`EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` (extended §8.5/§8.6/§8.7).
+
+**Verification scripts (6)**: `proof_ftd0110_offcenter_slowmodes.py`,
+`proof_ftd0110_langevin_steady_state.py`, `proof_ftd0110_full_aggregation.py`,
+`proof_tower_multiplier_uniqueness.py`, `proof_polynomial_look_elsewhere.py`,
+`proof_volumetric_master_quadratic.py`. All run successfully.
+
+---
+
 ## Maxwell-exploit thread closure + spine extensions + canonical-ref bug fix (April 30 - May 1, 2026)
 
 A two-day session producing 9 LEDGER entries (FTD-0112 through FTD-0120),
