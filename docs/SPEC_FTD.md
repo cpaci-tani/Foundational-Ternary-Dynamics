@@ -1347,7 +1347,7 @@ These are the sharpest claims where FTD makes contact with measurement.
 | **Depends on** | [S1] CM preference, [S2] $j=1728$ selection, [S3] quadratic form |
 | **What experiment measures** | QED calculations + precision measurements (Cs atom, electron g-2) |
 
-> **Epistemic Status**: This is the framework's most constrained arithmetic match. The quadratic $x^2 - 16c^2x + 16c^3 = 0$ with $c = \varpi$ yields $x_+ = 137.0360...$. The identification $x_+ = 1/\alpha$ is [CONJECTURE]. The sub-ppm formulas below are retained as conjectural/post-hoc refinements, not as theorem-level physical predictions.
+> **Epistemic Status**: This is the framework's most constrained arithmetic match. The quadratic $x^2 - 16c^2x + 16c^3 = 0$ with $c = G^* = \Gamma(1/4)/\Gamma(3/4) \approx 2.9587$ yields $x_+ = 137.0360...$. **Note**: $G^*$ is distinct from the Bernoulli/Gauss lemniscate constant $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi}) \approx 2.6221$; substituting $c = \varpi$ would give $x_+ \approx 107.3$, which does not match $1/\alpha$. The identification $x_+ = 1/\alpha$ is [CONJECTURE]. The sub-ppm formulas below are retained as conjectural/post-hoc refinements, not as theorem-level physical predictions.
 
 #### 16.2.1 The 4-Term Precision Formula [CONJECTURE]
 
