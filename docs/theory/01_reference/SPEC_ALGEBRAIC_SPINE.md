@@ -219,6 +219,20 @@ geometric identity for the lattice Poisson kernel. The physical α
 enters separately through the coupling g_c, which is [PARAMETRIC]
 (see §10).
 
+**Subsidiary (retarded extension, 2026-04-30).** Phase G is the
+time-integrated specialization of a parent retarded identity. Define
+`α_r(r, t, L) := 2r · G^ret_L(r, t)` where `G^ret_L` is the retarded
+Green's function of the lattice wave equation
+`(D²_t − c² Δ_L) G^ret = δ_{r,0} δ(t)` with `c = c_lat = 1/√3`. Then
+`∫_0^∞ α_r(r, t, L) dt = α_r(r, L)` exactly at every finite L. In the
+continuum limit `α_r(r, t, ∞) = δ(t − r/c) / (2π)` — a delta on the
+forward light cone with universal amplitude `1/(2π)`. This is the
+lattice form of the standard d'Alembert relation `∫G^ret = G_static`,
+filed as **FTD-0113 [DERIVED]** (subsidiary of FTD-0004, not a new
+spine theorem). See `docs/theory/03_derivations/DERIV_RETARDED_GREEN_LATTICE.md`
+and `scripts/proofs/proof_retarded_green_identity.py` (numerical
+verification at L=8 to machine precision).
+
 ---
 
 ## 7 · Theorem 7 — Phase J partition-function ultralocality
