@@ -494,8 +494,9 @@ addresses this; not yet run).
 In order from most to least defensible:
 
 1. "FTD has a rigorous algebraic core consisting of nine theorems
-   centered on the lemniscatic constant G* = Γ(1/4)²/(2√(2π)·Γ(1/2))."
-   — Theorems 1-9.
+   centered on the constant G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) ≈ 2.9587
+   (distinct from the Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622;
+   see §1)." — Theorems 1-9.
 
 2. "A specific polynomial P(x) = x² − 16G*²x + 16G*³ has roots that
    match 1/α and N_c simultaneously to permille precision; this
