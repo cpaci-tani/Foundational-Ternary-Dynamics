@@ -43,13 +43,31 @@ do not let rhetorical momentum promote conjectures.**
 
 ## 1 · Theorem 1 — G* algebraic identity
 
-**Statement.** Let G* := Γ(1/4)² / (2√(2π)·Γ(1/2)). Then
+**Statement.** Let G* := Γ(1/4) / Γ(3/4). Then
 
-$$G^* = \frac{\Gamma(1/4)^2}{2\sqrt{2\pi} \cdot \Gamma(1/2)}
-       = \frac{\varpi}{\pi^{1/2}} \cdot \frac{1}{\sqrt{2}}$$
+$$G^* = \frac{\Gamma(1/4)}{\Gamma(3/4)}
+       = \frac{\Gamma(1/4)^2}{\sqrt{2}\cdot \pi}
+       = \varpi \cdot \frac{2}{\sqrt{\pi}}$$
 
-where ϖ = Γ(1/4)² / (2√(2π)) is the lemniscate constant. Numerically
-G* = 2.622057554... and 16·G*² = 110.001... .
+where ϖ = Γ(1/4)² / (2√(2π)) ≈ 2.62205755... is the Bernoulli/Gauss
+lemniscate constant (a *different* number from G*). Numerically
+G* = 2.95867512... and 16·G*² = 140.060... .
+
+The two equivalent closed forms follow from the Γ-function reflection
+identity Γ(1/4)·Γ(3/4) = π/sin(π/4) = π√2.
+
+**Notational warning.** G* (project canonical, ≈ 2.959) and the
+Bernoulli/Gauss lemniscate constant ϖ (≈ 2.622) are sometimes both
+called "the lemniscate constant" in informal usage. They are distinct:
+the master quadratic `x² − 16G*²x + 16G*³ = 0` produces x_+ = 137.036
+(= 1/α numerically) ONLY at G* = 2.959, not at ϖ = 2.622 (which would
+give x_+ = 107.3, far from 1/α). Always cross-check against
+`scripts/constants.py` (`G_STAR`) when a numerical value is needed.
+
+This document was previously stated with an erroneous formula
+`Γ(1/4)²/(2√(2π)·Γ(1/2))` (which evaluates to 1.479, not 2.622) and
+an erroneous asserted value 2.622 (which is ϖ, not G*). Corrected
+2026-04-30 per LEDGER FTD-0117.
 
 **Proof reference.** Follows directly from Chowla-Selberg evaluation
 of the L-function L(s, χ_{-4}) at s=1, applied to the lemniscatic
@@ -545,7 +563,7 @@ What this document explicitly does NOT allow you to claim:
 ## 14 · Single-line summary
 
 **FTD's algebraic spine is nine theorems centered on G* =
-Γ(1/4)²/(2√(2π)·Γ(1/2)): the G* identity (Chowla-Selberg), the master
+Γ(1/4)/Γ(3/4) ≈ 2.9587: the G* identity (Chowla-Selberg), the master
 quadratic P(x) = x² − 16G*²x + 16G*³ and its two roots, CM uniqueness
 within class-number-1 fields, the coefficient 16 = |Aut(E)|² for E:
 y² = x³ − x, the Watson identity W₃ = G*²/(2π), the Phase G geometric
