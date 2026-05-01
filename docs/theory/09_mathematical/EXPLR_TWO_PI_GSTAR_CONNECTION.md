@@ -32,10 +32,29 @@ to be discovered.
 
 ```
 1/(2π)        ≈ 0.159154943    Phase G continuum amplitude (light cone)
-G*            ≈ 2.6220575...   lemniscatic constant Γ(1/4)²/(2√(2π))
-G*²           ≈ 6.8751854...
-G*²/(2π)      ≈ 1.0944...      Watson-identity value W₃
+G*            ≈ 2.9586751...   PROJECT CANONICAL G_STAR
+                               = Γ(1/4)/Γ(3/4) = Γ(1/4)²/(√2·π)
+G*²           ≈ 8.7538...
+G*²/(2π)      ≈ 1.3932...      Watson-identity value W₃ (BCC normalization)
 ```
+
+**IMPORTANT NOTATIONAL CLARIFICATION (added 2026-04-30 after
+collaborator catch).** The project's canonical `G_STAR` (per
+`scripts/constants.py`) is the lemniscate ratio `Γ(1/4)/Γ(3/4) ≈
+2.9587`, **NOT** the Bernoulli/Gauss lemniscate constant
+`ϖ = Γ(1/4)²/(2√(2π)) ≈ 2.6221`. The two are related by
+`G_STAR = ϖ · √(2/π)` ≈ ϖ · 0.7979 but they are distinct constants.
+
+The spine document `SPEC_ALGEBRAIC_SPINE.md §1` currently has a
+typo: it states `G* = Γ(1/4)²/(2√(2π)·Γ(1/2)) ≈ 2.622057554`, but
+(a) the stated formula evaluates to 1.4793 not 2.622, and (b) the
+master quadratic check `x² − 16G*²x + 16G*³ = 0` produces
+x_+ = 137.036 (= 1/α numerically) ONLY at G* = 2.9587, not at
+G* = 2.622 (which would give x_+ = 107.3). Filed as separate audit
+item against `SPEC_ALGEBRAIC_SPINE.md` for correction.
+
+Throughout this document, **G\* refers to the project canonical
+2.9587** unless otherwise noted.
 
 ---
 
@@ -162,36 +181,220 @@ and it is already a theorem.
 
 ---
 
-## 7 · Decision
+## 7 · Decision (REVISED 2026-04-30, same day)
 
-**Q4 line closed.** No promotion. The connection is real, it is the
-Watson identity, and the Watson identity is already a [THEOREM] in
-the spine.
+**Initial decision was over-aggressive.** On further examination
+prompted by collaborator pushback ("this sounds VERY interesting"),
+the structural observation in §3 (`G*² = self-energy / radiation
+amplitude ratio`) carries a *new physical interpretation* that the
+algebra-only reading missed. Q4 is **NOT fully closed**; it is
+**REOPENED** with three concrete sub-questions (Q4a/b/c, §10 below) and
+a sharpened physical interpretation (§9 below).
+
+**What is closed:** the search for a *new mathematical derivation* of
+`G*` from `1/(2π)` (or vice versa) at the level of Γ-function or
+modular-form identity. The Watson identity is the only such
+connection, and it is already a theorem.
+
+**What is OPEN:** the *physical interpretation* of `G*²` as a
+UV-IR matching constant / lattice Z-factor analog. This carries
+falsifiable predictions that have not been tested.
 
 This document records the assessment so that:
-- Future contributors do not re-open Q4 expecting a new result
+- Future contributors see both the original cautious assessment AND
+  the revised re-opening
 - The structural observation (`G*² = self-energy/radiation ratio`)
-  is preserved
+  is preserved with its physical interpretation made explicit
 - The lemniscate-circle analogy is recorded as a structural curiosity
   with explicit non-promotion
 - The CLAUDE.md anti-target discipline is honoured: numerical
   proximity (`1/(2π)` and `G*` both have `2π` factors) was examined
-  for *structural mechanism*, not pattern-matched for closure.
+  for *structural mechanism*, not pattern-matched for closure
+- The discipline is preserved by NOT promoting any conjecture, while
+  the productive content (engine-testable predictions) is preserved
+  by opening proper [OPEN] sub-questions
 
 ---
 
 ## 8 · LEDGER status
 
-This document does not introduce a new LEDGER entry. It updates the
-status of FTD-0113's Q4 follow-up from [OPEN] to **[EXAMINED — closed-line, no promotion]**.
+**Initial assessment (this section, original 2026-04-30):** this
+document does not introduce a new LEDGER entry; it updates the
+status of FTD-0113's Q4 follow-up from [OPEN] to [EXAMINED —
+closed-line, no promotion].
 
-The structural observation that `G*² = W₃ / α_r(continuum amplitude)`
-is a one-line restatement of the Watson identity (FTD-0001 sub) and
-needs no new entry.
+**Revised (this section, same day, after collaborator pushback):**
+the §9 physical-interpretation reading and §10 sub-questions warrant
+a fresh LEDGER entry **FTD-0116** at the [HYPOTHESIS] tag (Z-factor
+reading + 3D-specificity prediction; not [DERIVED] because the
+Z-factor identification is interpretive and the 3D-specificity claim
+requires the §10 Q4c calculation to confirm).
+
+The original structural observation that `G*² = W₃ / α_r(continuum
+amplitude)` remains a one-line restatement of the Watson identity
+(FTD-0001 sub). What is new in FTD-0116 is the interpretation of
+this ratio as the FTD lattice Z-factor analog and the associated
+falsifiable predictions.
 
 ---
 
-## 9 · What this document does NOT claim
+## 9 · The physical-interpretation reading (added 2026-04-30, revised)
+
+Beyond the Watson-identity-rearrangement reading of §3, the structural
+observation `G*² = G_L(0) / [continuum 2r·G_L(r) on light cone]` admits
+a non-trivial *physical* interpretation:
+
+### 9.1 · G*² as the FTD lattice Z-factor
+
+In QED, the field-strength renormalization constant `Z` relates the
+bare (UV-cutoff-dependent) field amplitude to the physical (IR,
+measured) field amplitude:
+
+```
+e_phys = √Z · e_bare,         A_phys = √Z · A_bare
+```
+
+The constant `Z` is determined by the regularization scheme. With
+the FTD lattice as natural UV cutoff, the analogous Z is exactly:
+
+```
+Z_FTD := G_L(0) / [continuum 2r·G_L(r) on light cone]
+       = (G*²/(2π)) / (1/(2π))
+       = G*²                                                          (★)
+```
+
+If this reading is correct, then `G* = √Z_FTD ≈ 2.9587` is the
+**FTD lattice renormalization constant**. The relationship between
+the source coupling `g_s` (FTD-native bare coupling) and the
+far-field Coulomb amplitude (FTD-native physical coupling) would be
+governed by `G*` in the standard Z-factor sense.
+
+This is a falsifiable claim. The EFT recovery program closed three
+routes (R1, R2, R3) for deriving `α` from `g_s`, but those tested
+*different* relationships. The Z-factor relationship in (★) has not
+been specifically tested.
+
+### 9.2 · Three independent paths to G*, with new fourth angle
+
+`G*` already appears via three independent derivation paths:
+
+| Path | Mechanism | Documented in |
+|---|---|---|
+| (a) Master quadratic | BCC eigenvalue structure | `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` |
+| (b) Watson identity | Lattice Poisson Green's function (Glasser-Zucker) | `SPEC_ALGEBRAIC_SPINE.md §5` |
+| (c) Lemniscatic constant | Gauss-Schwarz formula `Γ(1/4)²/(2√(2π))` | `DERIV_LFUNCTION_GSTAR_CONNECTION.md` |
+
+The new content of this document adds a **fourth angle**:
+
+| (d) Phase G UV/IR ratio | Lattice-vs-continuum mismatch in radiation amplitude | this document, §3 |
+
+This is **not a new derivation** of `G*` (it just rearranges the
+Watson identity). But it gives `G*` a physical interpretation it
+did not previously carry: `G*² = lattice Z-factor analog` in FTD's
+electrodynamics.
+
+### 9.3 · 3D-specificity prediction
+
+If `G*²` truly is the UV/IR mismatch constant in 3D lattice ED,
+then the analogous constant in *other* spatial dimensions should be
+DIFFERENT. The 4D cubic-lattice Green's function at origin is also
+finite (4D Watson integral converges) but evaluates to a different
+closed form NOT involving `G*`.
+
+This is a **falsifiable structural prediction**:
+- 3D lattice: Z-factor analog = `G*²` ≈ 8.754
+- 4D lattice: Z-factor analog = (different closed form, not involving G*)
+
+If FTD's lattice geometry forces 3D specifically (the spine claims
+this via `|Aut(E)|² = 2^D · (D-1)!` at D=3), then `G*` IS the
+dimension-3-specific UV-IR ratio. **`G*` becomes a structural marker
+of three-dimensionality**, not just an arbitrary closed-form
+constant.
+
+---
+
+## 10 · NEW open follow-ups (Q4 reopened)
+
+Three concrete sub-questions emerge from §9.5, each with bounded
+scope and falsifiable content:
+
+### Q4a — Engine measurement of Z_FTD = G*²
+
+Measure `g_s` (source coupling, FTD-native) and `α_r(r → ∞, L = large)`
+(far-field Phase G amplitude) on the engine. Compute the ratio.
+Predicted: it should equal `G*` (or `G*²`, depending on convention).
+
+**Status:** [OPEN]
+**Effort:** Bounded engine work (~1-2 days, C++ benchmark).
+**Falsifiable:** Yes — agreement with `G*` to engine precision is a
+PASS; deviation by O(1) is a FAIL.
+**Risk:** Engine convention for `g_s` may not literally be the
+"bare Coulomb coupling" in the QED Z-factor sense; needs careful
+definition setup before measurement.
+
+### Q4b — Field-theoretic Z-factor calculation from FTD action
+
+Does the FTD action, expanded around the projected-EFT description,
+produce `Z = G*²` in the standard one-loop Z-factor sense (matching
+of UV-divergent self-energy diagrams with a physical regulator)?
+
+This is a direct calculation that connects to the closed-negative
+EFT routes (R1, R2, R3 in `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md`).
+Those routes tested the relationship `x_+ = (something derived from
+FTD action)`. The Z-factor relationship is structurally distinct:
+`Z = G*²` rather than `α = G*² × (something)`.
+
+**Status:** [OPEN]
+**Effort:** Medium pencil-and-paper EFT calculation (~1 week).
+**Falsifiable:** Yes — direct calculation either matches or
+doesn't.
+**Risk:** May produce a derivation that has an `O(1)` numerical
+factor different from `G*²`; would need careful interpretation of
+"matching scheme" choices.
+
+### Q4c — Dimensional Z-factor scan
+
+Compute the analogous Z-factor (lattice Green's function at origin
+÷ continuum-limit Phase-G amplitude) for cubic lattices in
+D = 2, 3, 4, 5 spatial dimensions. If the structural reading of
+`G*²` as "3D-specific UV-IR ratio" is correct, the value should be
+a dimension-specific closed-form constant with `G*` appearing
+specifically at D=3.
+
+**Status:** [OPEN]
+**Effort:** Pure number theory / lattice Green's function
+literature (~3-5 days).
+**Falsifiable:** Yes — D-dependent Z(D) is computable in closed
+form for cubic lattices; the prediction is verifiable.
+**Risk:** Low — even a NEGATIVE result (i.e., D=3 Z-factor is
+"just" `G*²` without 3D being specially marked) is informative.
+A POSITIVE result (3D is uniquely structurally selected at the
+Z-factor level) would strengthen the algebraic-spine claim that
+D=3 is forced.
+
+---
+
+## 11 · Updated decision
+
+**Q4 is REOPENED with sub-questions Q4a/b/c.** The original Q4
+(numerical-proximity hunt for `1/(2π) ↔ G*` derivation) remains
+closed — the Watson identity is the only mathematical connection.
+
+But the **physical interpretation** of `G*² = lattice Z-factor` is
+new content with falsifiable predictions, and the discipline of
+opening proper sub-questions (rather than wishful "we might find
+something later") is honoured by giving each sub-question a bounded
+scope, a falsifiable test, and an explicit risk profile.
+
+This is the correct outcome of the Q4 examination: **not a closed
+line** (initial assessment), **not an inflated promotion** (which the
+discipline forbids), but **three new bounded falsifiable
+sub-questions** whose investigation can either confirm or deny the
+Z-factor reading.
+
+---
+
+## 12 · What this document does NOT claim
 
 - **NOT a new derivation of `G*`.** The Watson identity (already a
   theorem) is the only mechanism connecting `1/(2π)` and `G*`.
