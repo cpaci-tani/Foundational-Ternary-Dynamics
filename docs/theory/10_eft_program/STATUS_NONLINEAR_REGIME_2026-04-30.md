@@ -107,7 +107,49 @@ Reaction-operator variance peaks at `T_langevin ∈ [0.10, 0.15]` and decays at 
 
 ---
 
-## 4 · Gate-by-gate verdict (L=32 LARGE and L=64 LARGE)
+## 4 · Cross-L picture (L ∈ {24, 32, 48, 64} × 80,000 snapshot pairs)
+
+### 4.0 · Theorem invariance verified across all 4 lattice sizes
+
+- **Theorem 1**: `JJ M_aa = 16.0000 ± 0.0001` at L=24, 32, 48, 64. ✓ L-INDEPENDENT
+- **Theorem 2**: `J4 M_aa = 256.000 ± 0.005` at L=24, 32, 48, 64. ✓ L-INDEPENDENT
+- **Theorem 3 structure** (M = b³ + 2b³ρ̄): verified; `ρ̄_intra-block` flows with L (`stateSq`: ρ̄ = 0 at L=24 → -0.15 at L=64; `reactionDensity`: ρ̄ = +0.33 at L=24 → -0.18 at L=64).
+
+### 4.1 · Gate C ratio is non-monotone in L (sweet spot at L=32)
+
+```
+L  | Gate C ratio | cond(S)    | verdict | failure mechanism
+24 | 0.5564       | 6.4e13     | FAIL    | small-L coarse-grid noise (L_c = 6 too small for stable M(b=4))
+32 | 0.1725       | 1.1e13     | PASS    | sweet spot — both effects below threshold
+48 | 0.3072       | 1.6e12     | FAIL    | large-L irreducible physics emerging
+64 | 0.3653       | 1.7e12     | FAIL    | large-L physics breakdown deeper
+```
+
+Two failure mechanisms identified: small-L coarse-grid noise (cond(S) worst at L=24) and large-L irreducible physics (cond(S) IMPROVES at L≥48 yet Gate C still fails — real, not noise). **L=32 is the unique sweet spot.**
+
+### 4.2 · Sector decoupling: REACTION-FLUX → SPATIAL = 0/10 at ALL lattice sizes
+
+The fundamental decoupling direction holds at every L: **0 of 10 cross-sector entries above 5σ at L=24, 32, 48, 64.** This is the L-independent structural reflection of FTD's two-layer ontology. Other directions show L-dependence: SPATIAL → DENSITY thickens (3, 2, 4, 6); SPATIAL → REACTION-FLUX emerges weakly at L≥48 (0, 0, 2, 2).
+
+### 4.3 · Gate A off-diagonal improves monotonically with L
+
+```
+L=24: 17/72 = 24%
+L=32: 21/72 = 29%
+L=48: 28/72 = 39%
+L=64: 36/72 = 50%
+Trend extrapolation: 70% threshold reachable at L ~ 128.
+```
+
+cond(S) drops with L → bootstrap stderrs decrease → more entries pass.
+
+### 4.4 · Non-theorem diagonals show real RG flow
+
+`stateSq` 7.99 → 6.77, `reactionDensity` 10.61 → 6.59, `genesisFlux` -19.3 → -12.7, `JdotDeltaS` 30.3 → 22.5: monotone L-drift consistent with real continuum-limit flow. Some entries (`stateSq`) flow toward apparent fixed points; others (`genesisFlux`) continue drifting.
+
+---
+
+## 5 · Gate-by-gate verdict (L=32 LARGE and L=64 LARGE)
 
 | Gate | L=32 LARGE | L=64 LARGE | Detail |
 |---|---|---|---|
