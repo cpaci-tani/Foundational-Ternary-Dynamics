@@ -10,7 +10,28 @@
 
 ---
 
-## Current epistemic state (2026-04-27 evening — post engine refactor sweep)
+## Current epistemic state (2026-05-01 — post Maxwell-exploit thread closure)
+
+After the 2026-04-30 / 2026-05-01 two-day session, the project gained
+**9 new LEDGER entries** (FTD-0112 through FTD-0120) and the algebraic
+spine is now at **9 theorems** (Theorem 8 = (1+i)-tower harmonic invariant,
+Theorem 9 = field-theoretic Q(G\*) characterization). The
+**Maxwell-exploit thread is COMPLETE** with all 8 sub-questions Q1-Q8
+addressed. A canonical-reference G\* typo bug (FTD-0117) was caught and
+fixed across 5 docs. The FTD-0110 nonlinear-bridge gap was analyzed and
+sharpened (FTD-0119) but not closed.
+
+Read **`docs/WHERE_WE_LEFT_OFF.md` §0** for the latest-session summary
+and §0.3 for the priority queue. The previous-session foundations
+(2026-04-27 engine refactor + 2026-04-28 FTD-0110 linear-level closure)
+are preserved below as historical context.
+
+Do **not** claim results stronger than what's listed in
+`docs/WHERE_WE_LEFT_OFF.md` §0 / §0.1 without re-auditing.
+
+---
+
+### Previous epistemic state (2026-04-27 evening — post engine refactor sweep)
 
 After the 2026-04-27 engine-as-instrument portfolio + look-elsewhere scan,
 the project is in a structurally narrowed but defensible state. The
@@ -31,13 +52,31 @@ See [META_PROJECT_ATLAS.md §10](META_PROJECT_ATLAS.md#10--refactor-sweep-histor
 for the full commit ledger and [docs/audits/AUDIT_2026-04_refactor-sweep.md](docs/audits/AUDIT_2026-04_refactor-sweep.md)
 for the audit. **WSL2 GPU parity verified 2026-04-28** (golden hash `0xcd957b601d47868a` bit-exact at L=16 on CUDA backend; `gpu_parity_complete` 70/0 across all 20 physics domains at L=32; `sim_parity` PASS at 100 + 500 ticks). The refactor sweep is fully verified end-to-end across both CPU and CUDA backends.
 
-**Firm theorems (7, canonical reference: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` created 2026-04-27):**
-G* algebraic identity, master quadratic polynomial + roots, CM curve
-uniqueness among class-number-1 fields (operationally tabulated in
-`EXPLR_CM_RATIO_TOWER.md`, also 2026-04-27), coefficient 16 = |Aut(E)|²
-for E: y² = x³ − x, Watson identity W₃ = G\*²/(2π), Phase G geometric
-Coulomb = lattice Poisson Green's function at every finite L, Phase J
-partition-function ultralocality. **All seven UNCHANGED across 2026-04-27.**
+**Firm theorems (9, canonical reference: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`):**
+G\* algebraic identity (= Γ(1/4)/Γ(3/4) ≈ 2.9587 — note: NOT the
+Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622; per FTD-0117 fix), master
+quadratic polynomial + roots, CM curve uniqueness among class-number-1
+fields (operationally tabulated in `EXPLR_CM_RATIO_TOWER.md`),
+coefficient 16 = |Aut(E)|² for E: y² = x³ − x, Watson identity
+W₃ = G\*²/(2π), Phase G geometric Coulomb = lattice Poisson Green's
+function at every finite L, Phase J partition-function ultralocality,
+**(1+i)-tower harmonic invariant** (Theorem 8, FTD-0111, 2026-04-29:
+1/y₊ + 1/y₋ = 1 with anomaly transcendence A_k ∉ Q for k ≥ 4),
+**field-theoretic Q(G\*)** (Theorem 9, FTD-0112, 2026-04-30: maximal
+π-free subfield of Q(π, Γ(1/4)) conditional on Chudnovsky 1976).
+**All nine [THEOREM]s stand.**
+
+**Maxwell-exploit thread COMPLETE (2026-04-30 / 2026-05-01):** 9 LEDGER
+entries FTD-0112 through FTD-0120. Lattice ED framework now covers
+every classical EM phenomenon — static Coulomb (Phase G FTD-0004),
+retarded radiation (FTD-0113), Bianchi identities (FTD-0114), boosted
+Coulomb + lattice Cherenkov pole (FTD-0115), extended sources + Cherenkov
+rate (FTD-0120 Q6/Q7), Larmor (FTD-0120 Q5), source-half consistency
+(FTD-0120 Q8). The Z-factor reading FTD-0116 was floated as
+[HYPOTHESIS] and falsified via Q4a numerical test (CLOSED NEGATIVE).
+What remains for full Maxwell-on-FTD: dynamical source coupling
+(g_s ↔ α relationship, EFT recovery program territory). 5 new proof
+scripts; all PASS at machine precision (where applicable).
 
 **[STRONGLY MOTIVATED CONJECTURE]:** x+ = 1/α (1.26 ppm); x− = N_c
 (0.80%); the master quadratic dual-prediction property (both roots
