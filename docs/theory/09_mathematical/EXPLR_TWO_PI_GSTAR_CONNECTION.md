@@ -1,9 +1,9 @@
 # EXPLR — Connection Between 1/(2π) and G*: An Honest Assessment
 
-**Document type:** Exploratory note (line examined and closed)
-**Status:** [OBSERVATION] — records the structural connection that exists; explicitly NOT a new derivation
-**Created:** 2026-04-30
-**Provenance:** Q4 follow-up from `DERIV_RETARDED_GREEN_LATTICE.md` (FTD-0113, 2026-04-30 earlier today)
+**Document type:** Exploratory note (line examined, reopened, tested, closed-negative)
+**Status:** **[CLOSED NEGATIVE]** as of 2026-05-01 — Q4a numerical measurement falsified the FTD-0116 [HYPOTHESIS] reopening. See §11 for the falsification result; the rest of the document records the full epistemic trajectory.
+**Created:** 2026-04-30, with §11 falsification update 2026-05-01
+**Provenance:** Q4 follow-up from `DERIV_RETARDED_GREEN_LATTICE.md` (FTD-0113, 2026-04-30 earlier same day)
 **Related:** `SPEC_ALGEBRAIC_SPINE.md §5` (Watson identity, the actual connection);
 `DERIV_RETARDED_GREEN_LATTICE.md` (origin of `1/(2π)` as Phase G continuum amplitude);
 `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` (Watson-identity proof via BCC eigenvalue);
@@ -374,23 +374,125 @@ D=3 is forced.
 
 ---
 
-## 11 · Updated decision
+## 11 · Q4a result: FTD-0116 hypothesis FALSIFIED (2026-05-01)
 
-**Q4 is REOPENED with sub-questions Q4a/b/c.** The original Q4
-(numerical-proximity hunt for `1/(2π) ↔ G*` derivation) remains
-closed — the Watson identity is the only mathematical connection.
+The Q4a sub-question was tested numerically in
+`scripts/proofs/proof_z_factor_q4a.py`. Method: compute `G_L(0)` for
+the actual FTD lattice stencils (SC and G18) at `L ∈ {8, 16, 32, 64,
+96, 128}`, extrapolate to `L → ∞` via Richardson, divide by the
+continuum amplitude `1/(2π)`. Compare to predicted `G*² ≈ 8.754`.
 
-But the **physical interpretation** of `G*² = lattice Z-factor` is
-new content with falsifiable predictions, and the discipline of
-opening proper sub-questions (rather than wishful "we might find
-something later") is honoured by giving each sub-question a bounded
-scope, a falsifiable test, and an explicit risk profile.
+**Result:**
 
-This is the correct outcome of the Q4 examination: **not a closed
-line** (initial assessment), **not an inflated promotion** (which the
-discipline forbids), but **three new bounded falsifiable
-sub-questions** whose investigation can either confirm or deny the
-Z-factor reading.
+| Stencil | Measured Z_FTD = G_∞(0) · 2π | Predicted G*² | Verdict |
+|---|---|---|---|
+| Simple cubic (SC) | **1.5879...** | 8.754 | ≠ G*² (off by 5.5×) |
+| G18 (engine canonical) | **1.9917...** | 8.754 | ≠ G*² (off by 4.4×) |
+
+The naive Z-factor reading **fails by a factor of ~4.4×** for the
+engine's actual stencil.
+
+### 11.1 · What went wrong with the hypothesis
+
+The reading `Z_FTD = G*²` conflated two different Watson constants.
+The spine's `W₃ = G*²/(2π) ≈ 1.393` refers to the **BCC sublattice**
+Watson integral (per `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` §5). The
+engine's gauss-projection runs on **G18** (face + edge weights, no
+corner), which is a different lattice with a different Watson integral
+value (≈ 0.317, giving Z ≈ 1.99). These two Watson constants were
+equated wrongly in the original Q4 reading.
+
+In retrospect this conflation should have been caught earlier:
+- Spine §5 / FTD-0001-sub: `W₃` is a BCC-sublattice quantity
+- Engine: gauss-projection runs on cubic G18, NOT on BCC sublattice
+- Cubic-Watson and BCC-Watson are different integrals
+
+### 11.2 · What's actually true
+
+Two clean structural numbers emerged from the Q4a measurement:
+
+**For SC stencil:**
+
+```
+Z_SC = G_∞^SC(0) · 2π = π · W_cubic_standard ≈ 1.5879
+```
+
+where `W_cubic_standard = 0.5054620...` is the standard Watson 1939
+cubic-lattice integral. This is a clean closed form.
+
+**For G18 stencil:**
+
+```
+Z_G18 = G_∞^G18(0) · 2π ≈ 1.9917
+```
+
+This does NOT equal `π · W_cubic_standard` (which would give 1.588) —
+the G18 stencil has its own Watson integral. The numerical value
+1.9917 has no obvious closed form; it is a stencil-specific quantity.
+Notably, it is close to but does not converge to 2 (residual ≈ 0.4%
+even at L=128).
+
+### 11.3 · Status of Q4 sub-questions after Q4a falsification
+
+**Q4a (engine measurement of Z_FTD):** Tested. **FALSIFIED.** Z_FTD
+≠ G*² for either SC or G18.
+
+**Q4b (EFT calculation of Z = G*² from FTD action):** No longer
+worth pursuing as posed. The naive Z-factor reading is wrong;
+without a candidate mechanism that could produce G*² rather than
+the cubic-Watson value, Q4b is a directed search for a result that
+Q4a has already ruled out.
+
+**Q4c (dimensional Z-factor scan):** Status downgraded but not
+necessarily closed. The Q4a result shows that the cubic-G18 Watson
+integral is the relevant Z-factor on the FTD lattice. Whether the
+*dimensional* Watson integrals on cubic lattices form a structurally
+significant family (e.g., are forced to take certain values at
+D=3 specifically) is an independent question that can still be
+investigated. But it is no longer a Z-factor question; it is a
+cubic-lattice-Watson-integral question.
+
+### 11.4 · Updated honest verdict
+
+**FTD-0116 hypothesis FALSIFIED.** The structural connection between
+`1/(2π)` and `G*` reverts to the original §5 verdict: the only
+mathematical connection is the Watson identity (already a theorem),
+and the only correct Watson identity is the BCC-sublattice one
+(`W_BCC = G*²/(2π)`). The cubic-G18 lattice that the engine actually
+implements has a different Watson value (≈ 1.99/(2π) ≈ 0.317), which
+does not connect to G* in any clean way the present analysis can
+identify.
+
+The lemniscate-circle analogy (§4) and the U(1)/S¹ rotation
+structure observation (§2) remain as structural curiosities without
+predictive content. **No new theorem candidate. No new derivation
+direction. Q4 line CLOSED-NEGATIVE.**
+
+This is the correct outcome of the discipline: hypothesis was
+floated, sub-questions were opened with falsifiable tests, the
+test was run, the hypothesis failed, the line is closed negative
+**with the failure documented honestly**. CLAUDE.md anti-target
+discipline preserved through every step.
+
+### 11.5 · What we keep from this examination
+
+Even though Q4 closed negative, three artifacts have lasting value:
+
+1. **The catch of FTD-0117** (spine document G* typo). Discovered
+   during Q4 examination, fixed across all 5 canonical-tier surface
+   areas in commits 1fcd519 + 0ad116e.
+
+2. **The clean separation of cubic-Watson vs BCC-Watson.** The
+   engine's gauss-projection works on cubic-G18. The spine's
+   Watson identity uses BCC-sublattice. These are different
+   integrals; conflating them was the source of the falsified
+   hypothesis. Future work should keep them clearly distinct.
+
+3. **The numerical value Z_G18 ≈ 1.9917** is itself an engine-
+   measurable structural constant of FTD's lattice. It has no
+   closed form connecting to G*, but it is a real number that the
+   engine produces. Filed for the record in case a future
+   theoretical development connects it to other FTD constants.
 
 ---
 
