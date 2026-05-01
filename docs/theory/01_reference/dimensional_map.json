@@ -24,7 +24,7 @@
       "label": "G* algebraic identity",
       "is_dimensionless": true,
       "calibration_required": false,
-      "ftd_formula": "G* = Γ(1/4)² / (2·√(2π)·Γ(1/2))",
+      "ftd_formula": "G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π)",
       "ftd_value": 2.9586751191886385,
       "ftd_value_units": null,
       "depends_on": [],

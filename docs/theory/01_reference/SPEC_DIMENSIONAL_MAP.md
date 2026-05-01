@@ -25,7 +25,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 
 | ID | Theorem | Formula | Value | LEDGER |
 |---|---|---|---:|---|
-| `g_star_identity` | G* algebraic identity | G* = Γ(1/4)² / (2·√(2π)·Γ(1/2)) | 2.958675119 | [FTD-0002](../07_assessment/LEDGER.md#ftd-0002) |
+| `g_star_identity` | G* algebraic identity | G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) | 2.958675119 | [FTD-0002](../07_assessment/LEDGER.md#ftd-0002) |
 | `master_quadratic` | Master quadratic polynomial + roots | P(x) = x² − 16·G*²·x + 16·G*³ = 0; roots x± = 8·G*² ± √(16·G*⁴ − 4·G*³) | x_plus = 137.03617145815542, x_minus = 3.023963916339028 | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0081](../07_assessment/LEDGER.md#ftd-0081) |
 | `cm_curve_uniqueness` | CM curve uniqueness among class-number-1 fields | Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots that simultaneously match dimensionless physical constants to permille precision | unique_discriminant = -4, class_number = 1 | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0014](../07_assessment/LEDGER.md#ftd-0014) |
 | `coefficient_16_aut_e_squared` | Coefficient 16 = |Aut(E)|² | For E: y² = x³ − x, |Aut(E)| = 4 over ℚ̄, so |Aut(E)|² = 16 (the master-quadratic coefficient) | 16 | [FTD-0006](../07_assessment/LEDGER.md#ftd-0006), [FTD-0007](../07_assessment/LEDGER.md#ftd-0007) |
@@ -35,7 +35,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 
 ### G* algebraic identity (`g_star_identity`)
 
-- **Formula:** G* = Γ(1/4)² / (2·√(2π)·Γ(1/2))
+- **Formula:** G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π)
 - **Value:** 2.958675119
 - **LEDGER:** [FTD-0002](../07_assessment/LEDGER.md#ftd-0002)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`

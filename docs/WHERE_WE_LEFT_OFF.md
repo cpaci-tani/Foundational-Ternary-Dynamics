@@ -264,12 +264,14 @@ verification suite is in
 
 In order from most to least defensible:
 
-1. **"FTD has a rigorous algebraic core: seven theorems centered on G\* =
-   Γ(1/4)²/(2√(2π)·Γ(1/2)). The master quadratic polynomial x² − 16G\*²x +
-   16G\*³ has roots x_+ = 137.036 (matching 1/α at 1.26 ppm) and x_- = 3.024
-   (matching N_c at 0.80%); this polynomial is unique among class-number-1
-   CM curves to produce this dual match. Operationally tabulated in
-   `EXPLR_CM_RATIO_TOWER.md`."** Algebraic spine + CM uniqueness + dual numerical match.
+1. **"FTD has a rigorous algebraic core: nine theorems centered on G\* =
+   Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) ≈ 2.9587 (distinct from the
+   Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622). The master quadratic
+   polynomial x² − 16G\*²x + 16G\*³ has roots x_+ = 137.036 (matching 1/α
+   at 1.26 ppm) and x_- = 3.024 (matching N_c at 0.80%); this polynomial
+   is unique among class-number-1 CM curves to produce this dual match.
+   Operationally tabulated in `EXPLR_CM_RATIO_TOWER.md`."** Algebraic
+   spine + CM uniqueness + dual numerical match.
 
 2. **"The corresponding lattice simulator reproduces the lattice Poisson
    Green's function as its Coulomb interaction exactly, with no
