@@ -10,7 +10,46 @@
 
 ---
 
-## Current epistemic state (2026-05-01 — post Maxwell-exploit thread closure)
+## Current epistemic state (2026-05-01 evening — post physics-bridge crystallization)
+
+After the 2026-05-01 evening session, the project has its most
+externally-defensible state in many sessions. Key new content:
+
+- **FTD-0121 [SYNTHESIS]** — `SPEC_PHYSICS_BRIDGE.md` crystallizes the
+  physics bridge with mathematical spine + empirical match + structural-
+  uniqueness arguments + ~20,000:1 Bayesian evidence (~4.3 decimal
+  orders) for structural-vs-coincidence reading within natural FTD
+  polynomial family.
+- **Two structural-uniqueness scans** (substantive positive): tower-scan
+  rank-1 with 5-orders gap (commit `0074f92`); polynomial-scan unique
+  dual-matcher in 147,456 polynomials (commit `f36b741`).
+- **Volumetric pathway directly verified** (commit `4964ba9`): 3D BCC
+  Watson integral + O_h Moore-irrep N_base² → master quadratic →
+  (137.036, 3.024) end-to-end.
+- **Conjugate-lattice interpretation** (commit `c9540dd`):
+  16 = N_base² = |Aut(E × E)| connects three spine theorems into
+  unified structural picture.
+- **FTD-0110 Mechanism α 1/√d hypothesis FALSIFIED** (commits
+  `2e5246e`, `cf41560`): Phase B + Phase C closed two natural
+  representation-theoretic frameworks. Bridge stays [OPEN].
+- **α-derivation routes exhausted**: multi-session attempts (R1/R2/R3,
+  Z-factor, RG-running, algebraic combinations, 1/√d, Langevin-equipart)
+  all closed-negative. The IDENTIFICATION x_+ = 1/α stays [STRONGLY
+  MOTIVATED CONJECTURE] with substantially strengthened structural
+  evidence.
+
+Read **`docs/WHERE_WE_LEFT_OFF.md` §0.4** for the evening session
+summary and **`SPEC_PHYSICS_BRIDGE.md`** for the canonical physics-
+bridge synthesis.
+
+The next strategic move is **Path A — Paper A draft** (Letters in
+Mathematical Physics, ~3-4 days writing). The mathematical core is
+publication-grade NOW; closing the central conjecture is no longer
+session-tractable but external publication doesn't require it.
+
+---
+
+### Earlier today (2026-05-01 morning — post Maxwell-exploit thread closure)
 
 After the 2026-04-30 / 2026-05-01 two-day session, the project gained
 **9 new LEDGER entries** (FTD-0112 through FTD-0120) and the algebraic
