@@ -1,5 +1,125 @@
 # Foundational Ternary Dynamics Changelog
 
+## Maxwell-exploit thread closure + spine extensions + canonical-ref bug fix (April 30 - May 1, 2026)
+
+A two-day session producing 9 LEDGER entries (FTD-0112 through FTD-0120),
+extending the algebraic spine from 7 → 9 theorems, completing the
+Maxwell-exploit research thread, and catching a canonical-reference
+G\* typo bug that had propagated to 5 documents.
+
+### Spine extensions: Theorems 8 and 9 (FTD-0111 + FTD-0112)
+
+The algebraic spine grew from 7 theorems to 9:
+
+- **Theorem 8 (FTD-0111, filed 2026-04-29):** Harmonic invariant of the
+  (1+i)-tower of master quadratics. Define `M_k(x) := x² − 2^k G\*^(k−2) x
+  + 2^k G\*^(k−1)` for k ≥ 3 (the (1+i)-tower; level k=4 is the master
+  quadratic). With `y_± := x_±/G\*`, the harmonic identity `1/y_+ + 1/y_− = 1`
+  holds at every level k. Anomaly transcendence: A_k = 2^(k−2)·G\*^(k−3) − 1
+  is **transcendental over Q** for k ≥ 4 (via Schneider-Chudnovsky).
+  See `THEOREM_HARMONIC_INVARIANT_TOWER.md`.
+
+- **Theorem 9 (FTD-0112, filed 2026-04-30):** Field-theoretic
+  characterization of `Q(G\*)` as a maximal π-free subfield of
+  `Q(π, Γ(1/4))`, conditional on Chudnovsky 1976 algebraic independence
+  of π and Γ(1/4). Adds a structural reason for the G\*/π asymmetry and
+  underpins FTD-0106's empirical asymmetry investigation. See
+  `SPEC_ALGEBRAIC_SPINE.md §9`.
+
+### Maxwell-exploit thread COMPLETE (FTD-0113 through FTD-0120)
+
+Eight sub-questions Q1-Q8 closed across 6 commits:
+
+- **FTD-0113 [DERIVED]:** Retarded extension of Phase G. Define
+  `α_r(r, t, L) := 2r·G^ret_L(r, t)`; then `∫_0^∞ α_r(r, t, L) dt = α_r(r, L)`
+  exactly at every finite L. Continuum limit gives universal amplitude
+  1/(2π) on the light cone. Three-line lattice-Fourier proof; verified
+  to machine precision at L=8.
+
+- **FTD-0114 [DERIVED]:** Lattice Hodge duality preserved on FTD's
+  vertex-centered stencil. `∇·(∇×A) = 0` and `∇×(∇φ) = 0` hold exactly
+  at every lattice site, **independent of the Laplacian stencil choice**
+  (G6, G18, G26 all preserve them). Stencil debates are energy/dispersion
+  debates, not Maxwell-structure debates.
+
+- **FTD-0115 [DERIVED]:** Lattice Liénard-Wiechert at uniform velocity.
+  Closed-form lattice boosted-Coulomb potential
+  `A⁰(X, L, v) = q·(1/L³)·Σ_{k≠0} e^{ik·X}/[(c|k̂|)² − (k·v)²]`. The
+  substitution `(c|k̂|)² → (c|k̂|)² − (k·v)²` captures all Lorentz-boost
+  content. **Lattice Cherenkov pole** structurally predicted: any
+  v > 0 excites Cherenkov-like radiation at high-k modes (lattice
+  dispersion makes |k̂|/|k| small near the BZ edge). First-pole
+  threshold v_th ≈ 6.62% c_lat at L=16.
+
+- **FTD-0116 [CLOSED NEGATIVE]:** "Z_FTD = G\*²" hypothesis floated
+  and falsified. Initially the Q4 examination of `1/(2π) ↔ G\*` reading
+  was over-aggressively closed; collaborator pushback reopened it as a
+  [HYPOTHESIS] reading G\*² as the FTD lattice Z-factor analog. Q4a
+  numerical test (proof_z_factor_q4a.py at L ∈ {8,16,32,64,96,128})
+  measured Z_FTD(SC) = 1.59 (= π·W_cubic_standard, clean closed form)
+  and Z_FTD(G18) = 1.99 (no closed form). Both are off from G\*² ≈ 8.75
+  by factor ~4.4×. **Diagnosis**: original reading conflated the
+  spine's BCC-sublattice Watson constant with the engine's cubic-G18
+  Watson constant; these are different integrals.
+
+- **FTD-0117 [BUG RESOLVED]:** During Q4 examination, discovered
+  `SPEC_ALGEBRAIC_SPINE.md §1` stated `G\* = Γ(1/4)²/(2√(2π)·Γ(1/2)) ≈ 2.622`.
+  Both wrong: the formula evaluates to 1.479; 2.622 is the Bernoulli/Gauss
+  lemniscate constant ϖ, NOT G\*. The project canonical G_STAR (per
+  scripts/constants.py) is `Γ(1/4)/Γ(3/4) ≈ 2.9587` (master quadratic
+  gives x_+ = 137.036 only at this value, not at 2.622 → 107.3). Fixed
+  across 5 canonical-tier documents (spine §1+§14, dimensional_map
+  JSON+MD, SPEC_FTD §16.2.1, WHERE_WE_LEFT_OFF §4) plus whitepaper
+  digit-string typo. All 12 dimensional-map tests PASS post-fix. The
+  bug had silently misled the AI agent through an entire Q4 work
+  session until caught by collaborator.
+
+- **FTD-0118 [VERIFIED]:** Q3 + Q4 engine-stencil cross-checks. Confirms
+  FTD-0113 retarded-static identity holds at machine precision on the
+  engine's actual G18 stencil (not just SC), and confirms Z_G18 ≈ 1.99
+  is real (not a Fourier-implementation artifact). Engine-equivalent
+  Python verification; live-engine C++ benchmark remains [OPEN].
+
+- **FTD-0119 [BRIDGE-ANALYZED]:** FTD-0110 nonlinear-bridge gap analyzed.
+  Empirical k(A) drift fits `k(A) ≈ ¼·(1 − 0.030·ln(A/2))` — a
+  **logarithmic** correction, not power-law. Three candidate mechanisms
+  identified: α (multi-block irrep leakage, predicts log-A — most
+  consistent with empirical), β (genesis-kink mixing), γ (Langevin
+  amplitude-crossover). Each tractable in 3-5 days to ~1 week. Engine
+  experiments D3a-D3d proposed to discriminate. Bridge gap is **sharper
+  but not closed**.
+
+- **FTD-0120 [DERIVED] / [VERIFIED]:** Q5/Q6/Q7/Q8 unified closure.
+  Q7 (extended-source LW): closed form via Fourier form factor
+  substitution. Q6 (Cherenkov rate): Sokhotski-Plemelj on FTD-0115 pole
+  gives closed-form lattice power; verified at L=16 (threshold detection
+  PASS, mode count strictly increasing). Q5 (Larmor): Bessel-function
+  closed form for sinusoidal motion; continuum Larmor recovered in
+  long-wavelength limit; general motion remains formal expression. Q8
+  (source-half audit): Maxwell's `∇·E = ρ` enforced by gauss-projection
+  to Ward floor 1e-8; Ampère-Maxwell at O(a²) discretization; continuity
+  at machine precision. **Maxwell-exploit thread COMPLETE.**
+
+### New verification scripts (5)
+
+All PASS at machine precision (where applicable):
+- `proof_retarded_green_identity.py` — FTD-0113
+- `proof_lattice_hodge_duality.py` — FTD-0114
+- `proof_lattice_lienard_wiechert.py` — FTD-0115
+- `proof_z_factor_q4a.py` — FTD-0116 falsification
+- `proof_q3_q4_engine_stencil.py` — FTD-0118 G18 cross-check
+- `proof_lattice_cherenkov_rate.py` — FTD-0120 Q6
+
+### What's open after this session
+
+1. Path A — Paper A draft (Letters in Mathematical Physics, ~10pp)
+2. FTD-0110-α perturbation calculation (~1 week, highest-leverage internal)
+3. Live-engine C++ benchmark for Q3 (~1-2 days, confirmatory)
+4. Engine experiments D3a-D3d (~2-3 days each, FTD-0119 mechanism discrimination)
+5. FTD-0110-β/γ perturbations (~3-5 days each)
+
+---
+
 ## FTD-0110 closure + engine refactor sweep (April 28, 2026)
 
 Two-track day on top of the 2026-04-27 engine-as-instrument portfolio:

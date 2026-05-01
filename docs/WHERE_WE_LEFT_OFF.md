@@ -1,9 +1,149 @@
-# Where We Left Off — 2026-04-28 evening (post-FTD-0110-derivation + refactor-sweep synthesis)
+# Where We Left Off — 2026-05-01 (post-Maxwell-exploit-thread closure)
 
 **Purpose:** single entry point for the next session. Supersedes the
-2026-04-27 evening synthesis (its content is preserved below in
-§§9–10.6 as the historical "diagnosis-then-bridge-candidate" arc that
-2026-04-28's work closes at the linear level).
+2026-04-28 synthesis (preserved in §§A–F below as historical context;
+its TL;DR remains accurate for the FTD-0110 linear-bridge derivation
+and the engine refactor sweep).
+
+---
+
+## 0 · Latest session: 2026-04-30 to 2026-05-01
+
+A two-day session produced **9 substantive commits** closing the
+**Maxwell-exploit thread** completely (Q1–Q8 all addressed), filing
+the **FTD-0110 nonlinear-bridge analysis**, and catching/fixing a
+**canonical-reference G\* typo bug** that had propagated to 5 docs.
+
+**Algebraic spine grew to 9 theorems** (was 8 after FTD-0111 on
+2026-04-29; was 7 after the original spine on 2026-04-27):
+- **Theorem 8 (FTD-0111):** harmonic invariant of the (1+i)-tower of
+  master quadratics (filed 2026-04-29).
+- **Theorem 9 (FTD-0112):** field-theoretic characterization of `Q(G*)`
+  as a maximal π-free subfield of `Q(π, Γ(1/4))`, conditional on
+  Chudnovsky 1976 (filed 2026-04-30).
+
+**Maxwell-exploit thread closure (FTD-0113 through FTD-0120):**
+
+| # | Item | Status | LEDGER |
+|---|---|---|---|
+| Q1 | Lattice Liénard-Wiechert + Cherenkov pole | [DERIVED] | FTD-0115 |
+| Q2 | Hodge duality (Bianchi identities exact) | [DERIVED] | FTD-0114 |
+| Q3 | Engine cross-check on G18 stencil | [VERIFIED] | FTD-0118 |
+| Q4 | Z_FTD = G*² hypothesis | **[CLOSED NEGATIVE]** | FTD-0116 |
+| Q5 | Lattice Larmor (sinusoidal closed form) | [PARTIAL DERIVED] | FTD-0120 |
+| Q6 | Cherenkov energy-loss rate | [DERIVED] | FTD-0120 |
+| Q7 | Extended-source LW | [DERIVED] | FTD-0120 |
+| Q8 | Source-half consistency audit | [VERIFIED] | FTD-0120 |
+
+The lattice ED framework on FTD now covers every classical EM
+phenomenon (static Coulomb, retarded radiation, Bianchi, boosted
+Coulomb + Cherenkov, extended sources, Larmor, source-half consistency).
+What remains for full Maxwell-on-FTD is the **dynamical source coupling**
+(g_s ↔ α relationship, EFT recovery program territory with closed-
+negative routes R1/R2/R3).
+
+**FTD-0117 spine G\* typo bug:** `SPEC_ALGEBRAIC_SPINE.md §1` stated
+`G* = Γ(1/4)²/(2√(2π)·Γ(1/2)) ≈ 2.622`. Both wrong — formula evaluates
+to 1.479; 2.622 is the Bernoulli/Gauss lemniscate constant ϖ, not G*.
+Project canonical `G_STAR = Γ(1/4)/Γ(3/4) ≈ 2.9587` (master quadratic
+gives x_+ = 137.036 only at 2.9587, not 2.622). Fixed across 5
+canonical-tier docs (spine §1+§14, dimensional_map JSON+MD, SPEC_FTD
+§16.2.1, WHERE_WE_LEFT_OFF §4) plus whitepaper digit-string typo. All
+12 dimensional-map tests PASS post-fix.
+
+**FTD-0119 nonlinear-bridge analysis:** Path D attempted. The bridge
+between linear theorem (k = 1/4 from O_h rep theory) and full-engine
+empirical k(A) drift (0.252 → 0.206 across A ∈ [10, 120]) is now
+**structurally sharper** but not closed. Three candidate mechanisms
+identified (α multi-block irrep leakage, β genesis-kink mixing,
+γ Langevin amplitude-crossover); empirical log-A drift fit
+`k(A) ≈ ¼·(1 − 0.030·ln(A/2))` is structurally consistent with
+Mechanism α. Closure path mapped: ~3-4 weeks combined theory + engine.
+
+---
+
+## 0.1 · LEDGER additions this session
+
+| ID | Tag | Subject |
+|---|---|---|
+| FTD-0112 | [THEOREM] | Field-theoretic characterization of Q(G\*) (Theorem 9) |
+| FTD-0113 | [DERIVED] | Retarded extension of Phase G (lattice retarded Green's identity) |
+| FTD-0114 | [DERIVED] | Lattice Hodge duality (Bianchi identities exact) |
+| FTD-0115 | [DERIVED] | Lattice Liénard-Wiechert at uniform velocity + Cherenkov pole |
+| FTD-0116 | [CLOSED NEGATIVE] | Z-factor = G*² hypothesis falsified |
+| FTD-0117 | [BUG RESOLVED] | Spine G\* formula/value typo fixed across 5 canonical docs |
+| FTD-0118 | [VERIFIED] | Q3 + Q4 engine-stencil G18 cross-checks |
+| FTD-0119 | [BRIDGE-ANALYZED] | FTD-0110 nonlinear bridge analysis |
+| FTD-0120 | [DERIVED] / [VERIFIED] | Q5/Q6/Q7/Q8 Maxwell-exploit thread closure |
+
+---
+
+## 0.2 · New artifacts this session
+
+**Theory docs (8 new):**
+- `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` — Theorem 9 added; §1 + §14 G\* typo fixed
+- `docs/theory/03_derivations/DERIV_RETARDED_GREEN_LATTICE.md` — FTD-0113
+- `docs/theory/03_derivations/DERIV_LATTICE_HODGE_DUALITY.md` — FTD-0114
+- `docs/theory/03_derivations/DERIV_LATTICE_LIENARD_WIECHERT.md` — FTD-0115
+- `docs/theory/03_derivations/DERIV_LATTICE_LW_EXTENSIONS.md` — FTD-0120 (Q5/Q6/Q7/Q8 unified)
+- `docs/theory/03_derivations/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` — FTD-0119
+- `docs/theory/09_mathematical/EXPLR_FOURIER_CURVE_LEVEL_4.md` — Fourier-curve / triple-cusp
+- `docs/theory/09_mathematical/EXPLR_TWO_PI_GSTAR_CONNECTION.md` — Q4 trajectory + falsification
+
+**Strategy:**
+- `docs/theory/STRATEGY_PAPER_SPLIT_2026-04-30.md` — paper-split recommendation
+
+**Verification scripts (5 new):**
+- `scripts/proofs/proof_retarded_green_identity.py` — FTD-0113 (PASS at machine precision)
+- `scripts/proofs/proof_lattice_hodge_duality.py` — FTD-0114 (PASS at machine precision)
+- `scripts/proofs/proof_lattice_lienard_wiechert.py` — FTD-0115 (Tests A+B+C)
+- `scripts/proofs/proof_z_factor_q4a.py` — FTD-0116 falsification (FAIL as expected)
+- `scripts/proofs/proof_q3_q4_engine_stencil.py` — FTD-0118 G18 cross-check (PASS)
+- `scripts/proofs/proof_lattice_cherenkov_rate.py` — FTD-0120 Q6 (PASS threshold + monotonicity)
+
+**Synthesis archive:**
+- `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md`
+
+---
+
+## 0.3 · What's open (priority queue)
+
+**Highest leverage:**
+
+1. **Path A — Paper A draft** (Letters in Mathematical Physics, ~10pp):
+   closed-form α conditional on Chudnovsky 1976; leverages the algebraic
+   spine + Theorem 9. ~3-4 days writing. Strategy doc:
+   `docs/theory/STRATEGY_PAPER_SPLIT_2026-04-30.md`. **External impact;
+   converts the spine into peer-reviewed validation.**
+
+2. **FTD-0110-α perturbation calculation** (multi-block irrep leakage):
+   structurally consistent with empirical log-A drift. ~1 week of careful
+   calculation. If the per-shell prefactor matches empirical −0.030, this
+   closes the nonlinear bridge to [THEOREM]-grade. Highest-leverage
+   *internal* derivation gap.
+
+**Medium effort:**
+
+3. **Live-engine C++ benchmark for Q3** — confirmatory only (~1-2 days);
+   adds direct engine verification of FTD-0113 retarded-static identity
+   on top of the engine-equivalent Python proof in FTD-0118.
+
+4. **Engine experiments D3a-D3d** (~2-3 days each): vary
+   K_GENESIS_KINETIC_DRAIN, K_EVAP_RATE, T_L, L respectively to
+   discriminate among FTD-0119's three candidate mechanisms for k(A) drift.
+
+5. **FTD-0110-β/γ perturbation calculations** (~3-5 days each): genesis-
+   kink mixing and Langevin amplitude-crossover analyses.
+
+**Lower priority / open-ended:**
+
+6. **EFT recovery via different angle** if/when a new mechanism candidate
+   emerges (R1/R2/R3 closed-negative; awaits new idea).
+
+7. **Paper B draft** (Foundations of Physics, ~30pp, philosophical):
+   analytic-idealist reading. Sequence after Paper A per strategy doc.
+
+---
 
 **TL;DR (~280 words):** Two more material developments since 2026-04-27
 evening, both raising the project's structural standing:
