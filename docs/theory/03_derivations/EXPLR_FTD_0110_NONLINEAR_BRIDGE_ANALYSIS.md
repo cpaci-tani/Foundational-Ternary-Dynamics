@@ -216,6 +216,124 @@ Linear theorem energy distribution `{3/8, 1/8, 3/8, 1/8}` and mean `1/4` re-veri
 
 ---
 
+## 8.5 · Mechanism α detailed analysis (2026-05-01 follow-up)
+
+A focused session on Mechanism α (multi-block irrep leakage) yielded a
+**non-trivial empirical regularity** but did not close the bridge.
+
+### 8.5.1 · Off-center block trivial-irrep dimensions
+
+For a 27-voxel block centered at distance r from the origin, the local
+symmetry that fixes the block center is a subgroup of O_h. The trivial-
+irrep dimension of the natural representation on the 27 voxels gives
+the dimension of the "fully-symmetric" subspace under that local
+symmetry:
+
+| Block position | Local symmetry | Trivial-irrep dim |
+|---|---|---|
+| Central (origin) | O_h (order 48) | **4** = N_base [linear thm] |
+| Axis (n, 0, 0) | C_4v (order 8) | 9 |
+| Body-diagonal (n, n, n) | C_3v (order 6) | 10 |
+| Face-diagonal (n, n, 0) | C_2v (order 4) | 12 |
+| Face-general (n, m, 0), n≠m | C_s (order 2) | 18 |
+| Generic (n, m, p), all distinct | C_1 (order 1) | 27 |
+
+Computed via Burnside's lemma: dim(trivial) = (1/|G|) Σ_g #fixed(g).
+
+### 8.5.2 · Naive 1/d model fails
+
+Using per-block manifestation efficiency `η = 1/d` (analogous to the
+linear theorem's `1/N_base = 1/4` at the central block):
+
+```
+< η > = Σ_categories (fraction of cluster) × 1/d_category
+```
+
+For a sphere of radius R(A), this gives `< η > = 0.10 → 0.04` across
+A ∈ {10, 120}. Empirical k(A) drops only from 0.25 to 0.20 — the naive
+1/d prediction overshoots empirical drift by ~5×.
+
+### 8.5.3 · The 1/√d empirical regularity (NEW, 2026-05-01)
+
+Substituting `η = 1/√d` instead:
+
+| A | k_emp | < 1/√d > | Match |
+|---|---|---|---|
+| 10 | 0.252 | 0.315 | overshoots (linear regime) |
+| 28.77 | 0.253 | 0.243 | within 4% |
+| 50 | 0.222 | **0.224** | **EXCELLENT (1%)** |
+| 85.70 | 0.212 | **0.212** | **EXCELLENT (0%)** |
+| 117.93 | 0.206 | 0.207 | EXCELLENT (1%) |
+
+**At A ≥ 50, the `< 1/√d >` average over the cluster matches
+empirical k(A) to ~1-2%** — within engine measurement precision. At
+smaller A, the linear theorem `k = 1/N_base = 1/4` captures the data;
+the 1/√d model overshoots.
+
+**Asymptotic structural prediction:** as the cluster grows, generic
+blocks (C_1, d=27) dominate, giving asymptotic
+`< 1/√d > → 1/√27 = 1/(3√3) = 1/D^{3/2}` for D=3. This is a clean
+structural number; numerical value 0.1925.
+
+### 8.5.4 · What this is and is NOT
+
+**What this is:**
+- A **structural framework** mapping multi-block geometry to per-block
+  efficiency via the local-symmetry trivial-irrep dimension.
+- A **non-trivial empirical regularity**: the < 1/√d > law captures
+  empirical k(A) at large A within engine precision.
+- A **clean asymptotic prediction** at large clusters:
+  k_asymptotic → 1/D^{3/2} for D=3, a structural number.
+
+**What this is NOT:**
+- A *derivation* of the 1/√d law from FTD axioms. The 1/√d agreement
+  is an empirical fit, not a theorem. **Possible coincidence; possibly
+  structural.**
+- A complete bridge from the linear theorem to empirical drift. The
+  1/√d model FAILS at small A (where the linear theorem applies) and
+  the small-A → large-A *interpolation function* is unknown.
+- A proof that the asymptote is exactly `1/D^{3/2}`. The empirical fit
+  `k(A) = ¼·(1 − 0.030·ln(A/2))` predicts continued logarithmic drift
+  past 1/√27 = 0.192 — the < 1/√d > approach to 1/√27 disagrees with
+  the empirical fit's asymptote at very large A. Higher-A data would
+  discriminate.
+
+### 8.5.5 · Updated path to closure
+
+The closure path identified in §10 of this document is now refined:
+
+1. **Derive the 1/√d law structurally.** If the per-block manifestation
+   efficiency really IS 1/√d, this is a representation-theoretic
+   prediction that should follow from a careful Langevin analysis of
+   the slow-mode manifestation rate as a function of local symmetry.
+   ~3-5 days of careful calculation. Output: either a derivation that
+   confirms 1/√d, or a closed form for the actual law.
+
+2. **Compute the small-A to large-A interpolation.** The empirical k(A)
+   is between linear-theorem (1/4 at small A) and 1/√d-asymptote
+   (0.192 at very large A). The interpolation function is governed by
+   the cluster's spatial extent vs the linear-theorem central block. A
+   Padé-approximant-style interpolation derived from the leading order
+   could match empirical data.
+
+3. **Engine experiments at higher A** (A > 200) to discriminate between
+   the empirical-fit log-A drift and the 1/√d structural asymptote.
+   ~1-2 days engine work.
+
+### 8.5.6 · Status update
+
+**Mechanism α is now MORE plausible structurally** than initially
+characterized, given the < 1/√d > empirical match at large A. But the
+bridge **remains [OPEN]** — the 1/√d law is empirical, not derived,
+and the small-A regime requires the linear theorem.
+
+The single-session output: a concrete framework + empirical regularity
++ refined closure path. Verification script:
+`scripts/proofs/proof_ftd0110_multiblock_structure.py` (PASS at large
+A, by construction tabulating the < 1/√d > average).
+
+---
+
 ## 9 · Summary
 
 The FTD-0110 nonlinear bridge gap is **structurally sharper after this analysis** but **not closed**. Three concrete mechanism-candidates (multi-block irrep leakage, genesis nonlinear mixing, Langevin amplitude-crossover) are identified, each with tractable perturbation routes (~3-5 days to ~1 week per mechanism). The empirical log-A drift signature is structurally consistent with Mechanism α's multi-scale picture. Engine experiments D3a-D3d would discriminate among mechanisms with bounded effort (~2-3 days each). The full closure path is now mapped: ~3-4 weeks of combined theory + engine work, or a focused ~1-week perturbation calculation if Mechanism α turns out to be unambiguously dominant.
