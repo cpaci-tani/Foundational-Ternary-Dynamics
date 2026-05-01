@@ -1,0 +1,227 @@
+# EXPLR — FTD-0110 Nonlinear Bridge Analysis: Sharpening the [OPEN] Gap
+
+**Document type:** Exploratory analysis (does NOT close the bridge)
+**Status:** [PARTIAL] — bridge analyzed and sharpened; closure requires engine measurements + further perturbation theory
+**Created:** 2026-05-01
+**Provenance:** Path D from the 2026-05-01 strategic-direction recommendation; explicit response to CLAUDE.md flag "the cleanest remaining derivation gap; closing it via perturbation theory in the irrep mixing would convert FTD-0110 to [THEOREM]-grade"
+**Related:** `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (linear theorem); `FOUND_MINIMUM_DIMENSIONS.md §6.5` (empirical k(A) data)
+
+---
+
+## 0 · Status of the bridge before this document
+
+**Linear theorem (closed):** for δ-localised injection of amplitude `A` at the O_h-fixed center voxel, the 18-point Laplacian's A_{1g} subspace of the 27-block carries mean energy `1/N_base = 1/4` per A_{1g} eigenmode. Verified at machine precision: energy fractions `{3/8, 1/8, 3/8, 1/8}` with mean exactly 0.25.
+
+**Empirical engine data (10 amplitudes from FOUND_MINIMUM_DIMENSIONS.md §6.5, GPU RTX 5090, 2026-04-27):**
+
+| A | k_eng(A) = N_eng/A² |
+|---|---|
+| 2.00  | 0.250 |
+| 10.00 | 0.252 |
+| 15.00 | 0.224 |
+| 20.00 | 0.234 |
+| 28.77 | 0.253 |
+| 30.00 | 0.262 |
+| 33.05 | 0.245 |
+| 50.00 | 0.222 |
+| 62.42 | 0.224 |
+| 85.70 | 0.212 |
+| 117.93 | 0.206 |
+
+Empirical fit reported in `FOUND_MINIMUM_DIMENSIONS.md` line 164:
+
+```
+k(A) ≈ 1/4 · (1 − 0.07·log₁₀(A/2))  for A ∈ [2, 120]
+     ≈ 1/4 · (1 − 0.030·ln(A/2))
+```
+
+**The gap:** the linear theorem predicts `k_linear = 1/4` exactly, but the engine measurement shows a **logarithmic drift** with slope `dk/d(ln A) ≈ −0.030/4 ≈ −0.0076` (about 3% drift per e-fold of amplitude).
+
+This document sharpens the gap by:
+1. Identifying three candidate mechanisms for the log-A drift
+2. Setting up the perturbation framework for each
+3. Estimating the magnitude where possible
+4. Identifying the engine experiments that would discriminate among mechanisms
+
+It does **NOT** close the bridge. Closure requires either (a) a successful perturbation calculation matching the empirical slope, or (b) engine experiments isolating the dominant mechanism.
+
+---
+
+## 1 · The structural significance of log-A drift
+
+**Log-A corrections are not arbitrary.** Power-law corrections (1/A, 1/A², etc.) typically come from polynomial nonlinearities at fixed scale. Logarithmic corrections come from **scale-integration** — integrating contributions across many length scales gives a log of the scale ratio.
+
+In QFT this is the running-coupling phenomenon (one-loop logs from RG flow). In condensed matter it appears in critical phenomena near continuous transitions. In FTD's lattice context, log-A drift signals that **as the cluster grows with A, it spans a hierarchy of length scales, and integrating contributions from each scale gives a log of the cluster size ratio**.
+
+A cluster of size `N(A) ~ k·A²` has linear extent `R(A) ~ N(A)^(1/3) ~ A^(2/3)`. The number of "lattice scales" the cluster spans is `~ ln(R(A)) ~ (2/3)·ln(A)`. If each scale contributes a fixed correction `−γ` to k, then total drift is `−γ·(2/3)·ln(A)`, predicting empirical slope `−0.030 = γ·(2/3)` so `γ ≈ 0.045`.
+
+This is structurally consistent with **multi-scale irrep mixing** as the dominant mechanism. The cluster spans many 27-blocks; each block contributes some non-A_{1g} leakage; summing log-many shells gives log-A drift.
+
+---
+
+## 2 · Three candidate mechanisms
+
+Let `k(A) = 1/4 · (1 − Δk(A))` where `Δk(A)` is the fractional drift. The empirical fit gives `Δk_emp(A) ≈ 0.030·ln(A/2)`.
+
+### 2.1 · Mechanism α — Multi-block irrep mixing (likely dominant)
+
+**Picture:** the linear A_{1g} analysis lives on the single 27-block centered at the injection point. For a cluster of radius `R(A) ~ A^(2/3)`, the cluster spans a ball of radius `R` that contains `O(R³)` lattice voxels and `O(R³)` overlapping 27-blocks centered on different voxels.
+
+For each off-center 27-block, the original injection at the original center is NOT at that block's O_h fixed point. So the injection is **not A_{1g}-pure** with respect to that block. Energy "leaks" into non-A_{1g} irreps with respect to off-center blocks.
+
+**Perturbation parameter:** `r/R_block = r` (in units of lattice spacing, since R_block = 1). For a voxel at distance `r` from the original injection center, the leakage to non-A_{1g} irreps of the block centered at distance `r` scales as some function of `r`.
+
+**Order-of-magnitude estimate:** if each off-center block contributes a fractional leakage `~α` to non-A_{1g} modes, and the cluster spans `~R³` blocks effectively (but only `~R` independent radial shells contribute due to spherical symmetry of the underlying Green's function), then total leakage is `~α·R = α·A^(2/3)`.
+
+This gives a **power-law correction `~A^(2/3)`, not log-A**. So the naïve multi-block leakage picture predicts the wrong functional form.
+
+**Refined estimate:** if leakage per shell scales as `~1/r` (geometric attenuation in 3D), summing over shells `r = 1, 2, ..., R`:
+
+```
+Δk_α(A) ~ Σ_{r=1}^{R(A)} 1/r ~ ln(R(A)) ~ (2/3)·ln(A)
+```
+
+This **does give log-A**. The slope coefficient depends on the per-shell leakage prefactor, which requires a detailed lattice Green's function calculation.
+
+**What's tractable:** the per-shell leakage prefactor can be computed by projecting the lattice Green's function `G_L(r)` from the central injection onto the 4 A_{1g} eigenvectors of each off-center block. This is a finite calculation (involves the 27-block character table at multiple centers) but tedious.
+
+**Estimated effort to close this mechanism:** ~1 week of careful calculation. Output: a structural prediction for the log-A slope coefficient. If it matches empirical `−0.030`, this is the dominant mechanism.
+
+### 2.2 · Mechanism β — Genesis-induced nonlinear irrep mixing
+
+**Picture:** the engine's genesis step is a **sign-thresholding nonlinearity** on the flux density: voxels with `|J|² > K_GENESIS²` manifest with state `s = sign(J·n̂)` for some axis n̂. This is a hard nonlinear function of `J`, even within a single 27-block.
+
+**Effect:** even if the linear A_{1g}-projected energy is exactly `A²/4`, the genesis step pumps energy from A_{1g} into other irreps via the threshold-crossing kink. Above-threshold modes with non-A_{1g} symmetry components are no longer protected by O_h-equivariance (the threshold function is not O_h-equivariant in the irrep-projected sense).
+
+**Perturbation parameter:** `1/(A·K_GENESIS)` — at very high `A`, the threshold-crossing happens at every voxel near the cluster, smoothing the kink into an effectively-linear large-A regime. At intermediate `A`, the kink is sharp and pumps significant non-A_{1g} energy.
+
+**Functional form prediction:** kink-induced nonlinearity in 1D classically gives `Δk_β(A) ~ 1/A^something` (power law), not log-A. So this mechanism by itself probably does NOT explain the log-A drift.
+
+**However**: if the genesis kink interacts with multi-scale irrep structure (Mechanism α), the combined effect could have a log-A signature. Cross-coupling is possible.
+
+**What's tractable:** estimate the per-tick energy leakage from A_{1g} to non-A_{1g} via the genesis sign function. For a Gaussian-distributed flux `J` with variance `σ² ~ A²·G_L(r)`, the rate of threshold-crossing is `~erfc(K_GENESIS/σ)`. Summing over voxels gives a tractable estimate.
+
+**Estimated effort to close:** ~3-5 days. Output: a structural prediction for the genesis-induced non-A_{1g} energy fraction. If small (<0.5%), Mechanism β is sub-dominant; if large, it's competing with α.
+
+### 2.3 · Mechanism γ — Langevin non-equipartition / dissipation
+
+**Picture:** the engine runs Langevin friction `γ_L` and noise temperature `T_L` continuously. In equilibrium, each mode has thermal energy `T_L`. Total Langevin equilibrium energy across all modes is `M·T_L` for `M` modes.
+
+**For amplitudes `A` with injected energy `A² >> M·T_L`:** the cluster's energy dominates the thermal background. The slow A_{1g} mode retains most of the injected energy, with a small fraction dissipated to thermal modes via friction.
+
+**Estimate of friction loss per tick:** `−γ_L·E_slow`. Over the cluster's relaxation time `τ ~ 1/|λ_slow| ~ 1/1.586`, the dissipated fraction is `~γ_L·τ ~ γ_L/1.586`.
+
+**Engine value:** Langevin friction `γ_L = 0.02` per tick (per FTD-0051 Langevin infrastructure). Per-tick dissipation fraction `~0.02/1.586 ≈ 0.013`. After equilibration time `~1/γ_L = 50` ticks, dissipated fraction is `~50·0.013 = 0.63`. Far too large.
+
+**Refined estimate:** the cluster reaches steady state when injection rate balances dissipation rate. Steady-state cluster energy = `(injected/4) · γ_L·τ_inj/(γ_L·τ_inj + 1)` for some injection timescale `τ_inj`.
+
+**Functional form:** this gives a steady-state energy fraction that is **A-independent** (since γ_L is A-independent). Cannot explain log-A drift on its own.
+
+**Refined picture: Langevin-amplitude interaction.** The Langevin temperature `T_L` is a fixed engine parameter. At small A (cluster energy ~ T_L), Langevin completely dominates and the cluster is "thermal". At large A (cluster energy >> T_L), Langevin is negligible. The crossover is at `A* ~ √(M·T_L)`. **For `A` near `A*`, Langevin contributes a non-trivial drift.** For `A >> A*`, drift saturates.
+
+**Engine value:** `T_L = 0.005` (per FTD-0051). Total mode count `M ~ L³` for L=32, so `M·T_L ~ 32³·0.005 = 164`. So `A* ~ √164 ≈ 13`.
+
+**The crossover is at A* ≈ 13**, which is exactly in the middle of the empirical k(A) drift range (A from 2 to 120)! This is suggestive — Mechanism γ may contribute significantly at small/intermediate A.
+
+**What's tractable:** standard Langevin equilibrium analysis on the linear-Laplacian-projected modes. Should give an explicit `k(A)` curve from the Langevin-interaction balance.
+
+**Estimated effort to close:** ~3-5 days of paper-and-pencil. Output: predicted k(A) curve from Langevin-only mechanism. Compare to engine data.
+
+---
+
+## 3 · Mechanism comparison and discrimination
+
+**Mechanism predictions for k(A):**
+
+| Mechanism | Functional form | Direction | Tractable? |
+|---|---|---|---|
+| α: Multi-block leakage | `~ −γ_α · ln(A)` | Decrease | Yes (~1 week) |
+| β: Genesis nonlinear mixing | `~ −γ_β · A^(−p)` (p > 0) | Decrease | Yes (~3-5 days) |
+| γ: Langevin dissipation | crossover at A* ≈ 13 | Both | Yes (~3-5 days) |
+
+**Empirical fit** `Δk(A) ≈ 0.030·ln(A/2)` is most consistent with **Mechanism α** (multi-scale irrep leakage), with possible Mechanism γ contribution at small `A`.
+
+**Engine experiments to discriminate (proposed in `FOUND_MINIMUM_DIMENSIONS.md` §6.5 D3a/D3b but not yet run):**
+
+- **D3a — Vary `K_GENESIS_KINETIC_DRAIN`:** if `k ∝ DRAIN²`, Mechanism β is dominant.
+- **D3b — Vary `K_EVAP_RATE`:** if `k` scales monotonically with evaporation, Mechanism γ-like dynamics (cluster energy balance) is dominant.
+- **D3c — Vary `T_L` (Langevin temperature):** if `k(A)` curve shifts with `T_L`, Mechanism γ is significant. If unaffected, γ is sub-dominant.
+- **D3d — Vary `L` (lattice size):** Mechanism α predicts saturation at `L < R_cluster` (cluster fills the lattice). Engine measurement at L=64 vs L=128 at fixed A would discriminate.
+
+These four experiments, plus the perturbation calculations above, are the path to closing the bridge.
+
+---
+
+## 4 · What this analysis establishes
+
+**[NEW]:**
+- Quantification of the log-A drift slope: `−0.030/ln-unit` empirically, equivalently `−0.0076 absolute per e-fold of A`.
+- Identification of three candidate mechanisms with specific functional forms.
+- Mechanism α (multi-scale irrep leakage) is structurally consistent with log-A drift; mechanisms β and γ require additional assumptions to match.
+- Concrete engine experiments (D3a-D3d) to discriminate among mechanisms, building on the proposals already in `FOUND_MINIMUM_DIMENSIONS.md` §6.5.
+- Structural significance: log-A drift is **not arbitrary** — it's a signature of multi-scale physics, suggesting the cluster is RG-like in some lattice analog of running couplings.
+
+**[STILL OPEN] (the bridge itself):**
+- Mechanism α perturbation calculation (per-shell A_{1g} leakage prefactor) — ~1 week of work.
+- Mechanism β estimate (genesis kink-induced energy redistribution) — ~3-5 days.
+- Mechanism γ Langevin equilibrium analysis with A-dependent crossover — ~3-5 days.
+- Engine experiments D3a-D3d — bounded engine work, ~2-3 days each.
+
+**[NOT CHANGED]:**
+- The linear theorem (k_linear = 1/4 from O_h representation theory) stands as a [DERIVED] result.
+- The empirical match (cluster size matches mass formulas within ~5% across SM particles e/μ/π/K/p/τ) stands as [STRONGLY MOTIVATED CONJECTURE].
+- The bridge between linear theorem and full-engine empirical match remains [OPEN].
+
+---
+
+## 5 · Why this is genuinely hard
+
+The bridge has three layers of complication that compound:
+
+1. **Multiple mechanisms at play.** The empirical k(A) drift is plausibly the sum of contributions from α, β, γ — possibly with cross-coupling. Disentangling them requires both theory and parameter-varied engine experiments.
+
+2. **Nonequilibrium dynamics.** The cluster is not in thermal equilibrium with the Langevin bath at large A. It's a long-lived metastable structure. Standard equilibrium statistical mechanics doesn't directly apply.
+
+3. **Discrete-continuous mismatch.** The linear A_{1g} theorem is on a continuous-coefficient Laplacian, but the genesis step is a discrete sign function. The mismatch between continuous and discrete dynamics is the source of multiple corrections.
+
+These are not "just unsolved" — they are genuinely hard. A complete closure requires sophisticated machinery: lattice perturbation theory, irrep-mixing tensor calculations, Langevin equilibrium analysis, and engine experiments. **The cleanest path forward is theory + engine experiments together, not theory alone.**
+
+---
+
+## 6 · LEDGER status
+
+This document does NOT close FTD-0110's [OPEN] sub-claim. It updates the description of the gap to be more concrete and identifies the three concrete sub-questions:
+
+- **FTD-0110-α:** multi-block irrep leakage perturbation calculation (PERT)
+- **FTD-0110-β:** genesis-kink induced non-A_{1g} energy estimate (PERT)
+- **FTD-0110-γ:** Langevin equilibrium with amplitude crossover (THEORY)
+- **FTD-0110-D3:** engine experiments D3a/b/c/d (ENGINE)
+
+A LEDGER entry FTD-0119 is filed at the [BRIDGE-ANALYZED] tag to record this analysis without claiming closure.
+
+---
+
+## 7 · Verification
+
+Linear theorem energy distribution `{3/8, 1/8, 3/8, 1/8}` and mean `1/4` re-verified at floating-point precision via 4×4 A_{1g}-projected Laplacian diagonalization (matches `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` C2 result independently). No new closed-form result added.
+
+---
+
+## 8 · What this document does NOT claim
+
+- **NOT a closure of the bridge.** The bridge analysis sharpens the gap; it does not close it.
+- **NOT a derivation of the empirical slope `−0.030`.** That requires Mechanism α's perturbation calculation, which is identified but not executed here.
+- **NOT a falsification of any mechanism.** All three mechanisms (α, β, γ) remain candidates; the analysis only argues α is most consistent with the *functional form*.
+- **NOT a new theorem.** Spine count remains 9; FTD-0110 main claim remains [STRONGLY MOTIVATED CONJECTURE] for the full nonlinear regime.
+
+---
+
+## 9 · Summary
+
+The FTD-0110 nonlinear bridge gap is **structurally sharper after this analysis** but **not closed**. Three concrete mechanism-candidates (multi-block irrep leakage, genesis nonlinear mixing, Langevin amplitude-crossover) are identified, each with tractable perturbation routes (~3-5 days to ~1 week per mechanism). The empirical log-A drift signature is structurally consistent with Mechanism α's multi-scale picture. Engine experiments D3a-D3d would discriminate among mechanisms with bounded effort (~2-3 days each). The full closure path is now mapped: ~3-4 weeks of combined theory + engine work, or a focused ~1-week perturbation calculation if Mechanism α turns out to be unambiguously dominant.
+
+This is the cleanest possible "structural gap analysis" without the closure itself. The closure remains the highest-leverage open derivation gap in the project per CLAUDE.md.
+
+---
+
+*End of analysis.*
