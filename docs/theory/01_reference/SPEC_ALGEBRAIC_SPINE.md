@@ -1,7 +1,7 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. The spine now has **eight theorems**; full derivation in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Section numbering bumped (`§§9–14`).
+**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. **Update 2026-04-30:** Theorem 9 (field-theoretic characterization of `Q(G*)` as a maximal `π`-free subfield of `Q(π, Γ(1/4))`) added in §9, conditional on Chudnovsky 1976; LEDGER FTD-0112. The spine now has **nine theorems**; full derivations in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md` (Theorem 8) and `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 (Theorem 9). Section numbering bumped (`§§10–15`).
 **Purpose:** state the load-bearing algebraic content of FTD in
 [THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
@@ -13,7 +13,7 @@ the Standard Model.
 
 ## 0 · What this document is and is not
 
-**This document IS:** a canonical statement of eight theorems that
+**This document IS:** a canonical statement of nine theorems that
 constitute FTD's rigorous mathematical core, with proof references.
 Each theorem is independent of any physics interpretation. The objects
 involved (Γ-function values, CM elliptic curves, lattice Green's
@@ -271,8 +271,10 @@ Furthermore the discriminant factors as
 
 $$\operatorname{disc}(M_k) \;=\; 2^{k+2}\,G^{*\,k-1}\,A_k, \qquad A_k := 2^{k-2}\,G^{*\,k-3} - 1,$$
 
-where `A_k` is rational at `k = 3` (`A_3 = 1`) and irrational at every
-`k ≥ 4` (`A_4 = 4G* − 1`, etc.; transcendence of `G*` via Schneider).
+where `A_k` is rational at `k = 3` (`A_3 = 1`) and **transcendental
+over `Q`** at every `k ≥ 4` (`A_4 = 4G* − 1`, etc.; via Schneider–
+Chudnovsky transcendence of `G*` — a non-rational polynomial in a
+transcendental over `Q` with rational coefficients is transcendental).
 
 **Proof reference.** Three-line Vieta computation for the harmonic
 invariant; direct factorization for the discriminant. Full derivation
@@ -284,8 +286,8 @@ in `scripts/proofs/proof_harmonic_invariant_tower.py`.
 **LEDGER:** FTD-0111.
 
 **Dependencies:** Theorem 1 (`G*` algebraic identity); Theorem 2
-(master quadratic, the `k = 4` instance); Schneider's transcendence
-theorem (for irrationality of `A_k` at `k ≥ 4`).
+(master quadratic, the `k = 4` instance); Schneider–Chudnovsky
+transcendence of `G*` (for transcendence of `A_k` at `k ≥ 4`).
 
 **Consequence (DERIVED, restatement of Theorem 2).** The master
 quadratic's `α`-tree-level prediction admits the publication-grade
@@ -310,14 +312,92 @@ identification (see §10 below).
   rigidity scan analogous to the 60k-polynomial scan that rigidified
   FTD-0001 is **[OPEN]**.
 - Any QFT-anomaly construction. The level-`k` discriminant correction
-  `A_k` is a level-indexed algebraic irrationality; calling it an
+  `A_k` is a level-indexed algebraic transcendental; calling it an
   "anomaly factor" by analogy with QFT conformal anomalies is metaphor
   pending a formal regularization-class construction in the
   matched-stencil EFT.
 
 ---
 
-## 9 · Subsidiary theorems and structural nulls
+## 9 · Theorem 9 — Field-theoretic characterization of `Q(G*)`
+
+**Statement.** `Q(G*)` is a maximal `π`-free subfield of
+`Q(π, Γ(1/4))`. Specifically:
+
+$$\mathbb{Q}(G^*) \;\subseteq\; \mathbb{Q}(\pi,\,\Gamma(1/4)),
+\qquad
+\mathbb{Q}(G^*) \;\cap\; \mathbb{Q}(\pi) \;=\; \mathbb{Q}.$$
+
+That is, `G*` is a generator of the lemniscatic field with no algebraic
+content visible to `Q(π)` alone.
+
+**Proof.**
+
+*Containment* `Q(G*) ⊆ Q(π, Γ(1/4))`: by classical identity (Theorem 1
+of this document and §6 of `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`),
+`G* = Γ(1/4)² / (π√2)`, so `G*` is a `Q`-rational function in
+`{Γ(1/4), π}`. Hence every element of `Q(G*)` lies in `Q(π, Γ(1/4))`.
+
+*Trivial intersection* `Q(G*) ∩ Q(π) = Q`: assume `α ∈ Q(G*) ∩ Q(π)`.
+Then `α` is a rational function in `G*` with rational coefficients,
+i.e. `α = p(G*)/q(G*)` with `p, q ∈ Q[T]` and `q(G*) ≠ 0`. If `α` is
+also in `Q(π)`, then there exist `f, g ∈ Q[T]` with `α = f(π)/g(π)`,
+`g(π) ≠ 0`. Cross-multiplying gives `p(G*) · g(π) = q(G*) · f(π)`, a
+polynomial relation in `Q[G*, π]` between `G*` and `π`.
+
+By Chudnovsky 1976 (algebraic independence of `π` and `Γ(1/4)`) and
+the rational identity `G* · π · √2 = Γ(1/4)²`, the constants `G*` and
+`π` are algebraically independent over `Q`: any polynomial relation
+`P(G*, π) = 0` with `P ∈ Q[X, Y]` would force, via the Γ(1/4)
+substitution `Γ(1/4)² = G* · π · √2`, a polynomial relation
+`P̃(π, Γ(1/4)) = 0` with `P̃ ∈ Q(√2)[X, Y] ⊆ \overline{Q}[X, Y]`,
+contradicting Chudnovsky.
+
+Hence the only polynomial relation `p(G*)·g(π) = q(G*)·f(π)` consistent
+with algebraic independence is the constant case: both sides reduce to
+the same rational. Therefore `α ∈ Q`. ∎
+
+**Conditional clause.** This theorem is conditional on the algebraic
+independence of `π` and `Γ(1/4)` over `Q`, established by D. V.
+Chudnovsky, "Algebraic independence of values of exponential and
+hypergeometric functions" (1976) and consolidated in the modern
+references (Waldschmidt 2000, *Diophantine Approximation on Linear
+Algebraic Groups*, §1.4). The result is a standard tool of contemporary
+transcendence theory; "conditional" here means "depends on this
+established theorem", not "depends on a conjecture".
+
+**Why it matters.** Theorem 9 makes the `π`-free positioning of FTD's
+algebraic spine a precise field-theoretic statement rather than a
+slogan. Combined with Theorem 8 (which proves `G*` is the unique
+named-constant generator with which the entire master-quadratic tower
+admits clean rational-coefficient × integer-power form), Theorem 9
+characterizes `Q(G*)` as the **canonical π-free subfield** of
+`Q(π, Γ(1/4))` — the algebraic content of the spine that is invisible
+to `Q(π)` alone.
+
+**LEDGER:** FTD-0112 (filed 2026-04-30 alongside this theorem).
+
+**Dependencies:** Theorem 1 (`G*` identity), Chudnovsky 1976.
+
+**What it does NOT claim.**
+- That `G*` is in OEIS under its own A-number. (A085565 is the
+  lemniscate constant `L = 2ϖ`, not `G*`. As of 2026-04-30 audit, no
+  A-number for `Γ(1/4)/Γ(3/4)` itself has been confirmed.)
+- That Gauss computed `G*` as a privileged object. (Gauss computed
+  `Γ(1/4)` and `ϖ`; the specific ratio `Γ(1/4)/Γ(3/4)` was retracted
+  during the 2026-04-30 audit unless a citation is produced.)
+- Maximality of `Q(G*)` as a subfield in any sense beyond
+  `π`-freeness. There may be larger π-free subfields of
+  `Q(π, Γ(1/4))`; the theorem does not exclude them.
+
+**Provenance.** Imported from external session synthesis on
+2026-04-30; the synthesis is archived at
+`docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1
+where this is "Theorem 3".
+
+---
+
+## 10 · Subsidiary theorems and structural nulls
 
 These are smaller [THEOREM]-level claims that depend on the seven
 above:
@@ -341,7 +421,7 @@ above:
 
 ---
 
-## 10 · The empirical observation (NOT a theorem — explicit boundary)
+## 11 · The empirical observation (NOT a theorem — explicit boundary)
 
 The two roots of the master quadratic (Theorem 2) match dimensionless
 constants from unrelated physical sectors:
@@ -377,13 +457,13 @@ addresses this; not yet run).
 
 ---
 
-## 11 · What this document allows you to claim
+## 12 · What this document allows you to claim
 
 In order from most to least defensible:
 
-1. "FTD has a rigorous algebraic core consisting of eight theorems
+1. "FTD has a rigorous algebraic core consisting of nine theorems
    centered on the lemniscatic constant G* = Γ(1/4)²/(2√(2π)·Γ(1/2))."
-   — Theorems 1-7.
+   — Theorems 1-9.
 
 2. "A specific polynomial P(x) = x² − 16G*²x + 16G*³ has roots that
    match 1/α and N_c simultaneously to permille precision; this
@@ -421,7 +501,7 @@ What this document explicitly does NOT allow you to claim:
 
 ---
 
-## 12 · Cross-references
+## 13 · Cross-references
 
 | Theorem | Primary doc | Verification script | LEDGER row |
 |---|---|---|---|
@@ -448,15 +528,18 @@ What this document explicitly does NOT allow you to claim:
 
 ---
 
-## 13 · Single-line summary
+## 14 · Single-line summary
 
-**FTD's algebraic spine is eight theorems centered on G* =
+**FTD's algebraic spine is nine theorems centered on G* =
 Γ(1/4)²/(2√(2π)·Γ(1/2)): the G* identity (Chowla-Selberg), the master
 quadratic P(x) = x² − 16G*²x + 16G*³ and its two roots, CM uniqueness
 within class-number-1 fields, the coefficient 16 = |Aut(E)|² for E:
 y² = x³ − x, the Watson identity W₃ = G*²/(2π), the Phase G geometric
-Coulomb α_r = 2r·G_L(r), and Phase J classical-action ultralocality.
-All seven are independent of physics interpretation. The dual
+Coulomb α_r = 2r·G_L(r), Phase J classical-action ultralocality, the
+(1+i)-tower harmonic invariant 1/y₊ + 1/y₋ = 1 with anomaly transcendence
+A_k ∉ Q for k ≥ 4, and the field-theoretic characterization of Q(G*)
+as a maximal π-free subfield of Q(π, Γ(1/4)) (conditional on Chudnovsky
+1976). All nine are independent of physics interpretation. The dual
 numerical match x+ ≈ 1/α (1.26 ppm) + x− ≈ N_c (0.80%) is recorded as
 [STRONGLY MOTIVATED CONJECTURE], not theorem; promotion requires
 either a derivation (all three first-principles routes for g_c are
@@ -465,9 +548,9 @@ demonstrating selectivity (FTD-0097 pre-registered, not run).
 
 ---
 
-## 14 · From theorems to physics — see the dimensional map
+## 15 · From theorems to physics — see the dimensional map
 
-The eight theorems above are dimensionless. Their connection to
+The nine theorems above are dimensionless. Their connection to
 physical-unit observables (m_e in MeV, lifetimes in seconds, lengths
 in meters) goes through the **calibration interface**: exactly two
 SI-dimensional anchors (`a_phys ≡ ℓ_P` and `K_B = m_e`) are
