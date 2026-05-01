@@ -20,7 +20,7 @@ import os
 from pathlib import Path
 
 ROOT = Path("engine/results/s_eff_nonlinear_2026-04-29")
-LATTICE_SIZES = [24, 32, 48, 64]
+LATTICE_SIZES = [24, 32, 48, 64, 128]
 ACTIVE_OPS = [
     "JJ", "divJ2", "curlJ2", "JdotDivJ", "J4",
     "stateSq", "reactionDensity",
