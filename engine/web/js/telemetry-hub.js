@@ -70,7 +70,7 @@ export class TelemetryHub {
         this.s2  = { diag: null };  // also used for scale3
         this.s4  = { diag: null };
         this.s5  = { diag: null, cosmic: null };
-        this.s11 = { audit: null };
+        // s11 (Scale 11 audit snapshot) removed 2026-05-01.
 
         // ── Scale 0 — Lattice / Flux ────────────────────
         // Core diagnostics (500-sample history)
@@ -147,10 +147,8 @@ export class TelemetryHub {
         this.csHubble = new RingBuffer(200);
         this.csDM     = new RingBuffer(200);
 
-        // ── Scale 11 — Consciousness (200-sample) ──────
-        this.csTheta     = new RingBuffer(200);
-        this.csIntensity = new RingBuffer(200);
-        this.csFluxRatio = new RingBuffer(200);
+        // Scale 11 telemetry (csTheta/csIntensity/csFluxRatio) removed
+        // 2026-05-01 along with Scale 11 deletion.
 
     }
 
@@ -320,16 +318,8 @@ export class TelemetryHub {
         return diag;
     }
 
-    // ── Scale 11 collection ─────────────────────────────────────────────────
-
-    collectScale11(bridge) {
-        const audit = bridge?.getEnergyAudit?.();
-        if (!audit) return null;
-        this.s11.audit = audit;
-        this.csFluxRatio.push(audit.totalFluxMag || 0);
-        this.csIntensity.push(audit.totalEnergy  || 0);
-        return audit;
-    }
+    // Scale 11 collection (collectScale11) removed 2026-05-01 along with
+    // Scale 11 deletion.
 
     // ── Derived metrics ─────────────────────────────────────────────────────
 
@@ -432,10 +422,7 @@ export class TelemetryHub {
                 for (const b of [this.csBodies, this.csHubble, this.csDM]) b.clear();
                 this.s5 = { diag: null, cosmic: null };
                 break;
-            case 11:
-                for (const b of [this.csTheta, this.csIntensity, this.csFluxRatio]) b.clear();
-                this.s11 = { audit: null };
-                break;
+            // Scale 11 case removed 2026-05-01 along with Scale 11 deletion.
         }
     }
 

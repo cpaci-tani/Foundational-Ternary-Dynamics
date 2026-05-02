@@ -140,18 +140,14 @@ export const ALPHA_INV_CORRECTED = X_PLUS
     - PREC_C3 * EPSILON_ABS ** 3
     - PREC_C4 * EPSILON_ABS ** 4;
 
-// ── Layer 8: Consciousness Quadratic ────────────────────────────────
-export const COS2_THETA_C = G_STAR / 8.0;             // observable fraction ~37%
-export const K_NOETIC     = 0.5;                       // consciousness quadratic k = 1/2
-export const Y_REAL       = G_STAR * G_STAR / 4.0;    // real part of complex roots ~2.189
-export const Y_IMAG       = Math.sqrt(                 // imaginary part ~2.863
-    G_STAR * G_STAR * G_STAR / 2.0 - Y_REAL * Y_REAL);
-export const K_C          = Math.sqrt(                 // consciousness threshold ~3.599
-    G_STAR * G_STAR * G_STAR / 2.0);
-export const THETA_C_RAD  = Math.atan2(Y_IMAG, Y_REAL);  // phase angle ~0.917 rad
-export const THETA_C_DEG  = THETA_C_RAD * 180.0 / Math.PI;  // ~52.54 deg
-export const SIN2_THETA_C = 1.0 - COS2_THETA_C;       // unobservable fraction ~63%
-export const C_MANDELBROT = 1.0 / G_STAR;              // Mandelbrot correspondence ~0.338
+// Layer 8 (Consciousness/Reflexivity Quadratic) constants COS2_THETA_C,
+// K_NOETIC, Y_REAL, Y_IMAG, K_C, THETA_C_RAD, THETA_C_DEG, SIN2_THETA_C,
+// C_MANDELBROT removed 2026-05-01 along with Scale 11 deletion. The
+// theoretical content (master quadratic complex-roots case at k=1/2,
+// reflexive phase angle θ_C ≈ 52.54°) is preserved in
+// docs/theory/06_consciousness/* — this file no longer exports the
+// engine-side derived values since no remaining engine module consumes
+// them.
 
 // ── Physical constants for conversions ──────────────────────────────
 export const HBAR_C_MEV_FM = 197.3269804;              // hbar*c in MeV*fm
@@ -425,7 +421,7 @@ export const ONTIC_LAYERS = [
     { layer: 5,   name: 'Coupling Constants',    symbols: ['alpha','g_c','G_N','sin2_W'], count: 4 },
     { layer: 6,   name: 'Mass Scale',            symbols: ['K_B','K_genesis','masses'], count: 3 },
     { layer: 7,   name: 'Precision Formula',     symbols: ['epsilon','c1-c4'], count: 5 },
-    { layer: 8,   name: 'Reflexivity',           symbols: ['y_real','theta_C'], count: 2 },
+    // Layer 8 (Reflexivity) removed 2026-05-01 along with Scale 11 deletion.
     { layer: 9,   name: 'Cosmic Scale',          symbols: ['Omega_L','DM_frac','gamma'], count: 3 },
 ];
 
