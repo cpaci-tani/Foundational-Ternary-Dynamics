@@ -154,7 +154,7 @@ This is spin-1/2: rotate twice to return. The topology is π₁(SO(3)) = ℤ₂.
 - The **Bernoulli lemniscate** (r² = cos 2θ) via self-intersection at the origin
 - The **Lemniscate-Alpha** (5-harmonic Fourcier curve) via winding number w = −2
 
-Both independently extract G* ≈ 2.9587 (5.45 ppm agreement), and both produce the 720° = 4π periodicity. The lemniscate topology is ontologically prior to π₁(SO(3)) — the ℤ₂ ascends FROM the curves to the rotation group. The Lemniscate-Alpha additionally embeds the ℤ₂ into color space via its Z/6Z ≅ Z/2Z × Z/3Z lobe-doublet structure.
+Both independently extract G* ≈ 2.9587 (the Lemniscate-Alpha route via L_α × 91/732 lands at +6.41 ppm; corrected 2026-05-01 from prior 5.45 ppm claim and retagged [SELECTION] per `AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` (FTD-0122) — the canonical curve is one of ~4-5% of natural Cayley-Dickson 5-harmonic curves with comparable matches, NOT uniquely privileged), and both produce the 720° = 4π periodicity. The lemniscate topology is ontologically prior to π₁(SO(3)) — the ℤ₂ ascends FROM the curves to the rotation group. The Lemniscate-Alpha additionally embeds the ℤ₂ into color space via its Z/6Z ≅ Z/2Z × Z/3Z lobe-doublet structure.
 
 The **discriminant trichotomy** of the generalized master quadratic x² − kG*²x + kG*³ = 0 provides structural necessity for the statistics classification: Δ > 0 → real roots (bosonic, symmetric exchange); Δ = 0 → degenerate (measurement boundary); Δ < 0 → complex conjugate roots (fermionic, antisymmetric exchange). No intermediate statistics are possible.
 

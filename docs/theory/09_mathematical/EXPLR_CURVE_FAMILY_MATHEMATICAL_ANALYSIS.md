@@ -81,9 +81,9 @@ y(t) = sin(t) - 0.5*sin(2t) + 0.5*sin(4t) - 0.35*sin(8t) + 0.0625*sin(16t)
 
 ### Properties [THEOREM]
 
-1. **Arc length:** L = 23.7994... (numerically computed to high precision)
-2. **G* encoding:** L * 91/732 = G* to 5.45 ppm
-3. **Minimum distance to origin:** min_dist = 0.2730... = G*^2/32 to 0.19%
+1. **Arc length:** L = 23.79960517... (cross-validated at 20-digit precision via 4 independent integration methods, 2026-05-01)
+2. **G* encoding:** L * 91/732 = 2.95869409... = G* to +6.41 ppm (corrected 2026-05-01 from prior "5.45 ppm" claim that was based on misstated L=23.7994; rigidity-scan verdict in `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` (FTD-0122) finds ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable matches — canonical curve is one of a measurable minority, [SELECTION] not [THEOREM])
+3. **Minimum distance to origin:** min_dist = 0.273024... ≈ G*^2/32 to 0.19%
 4. **Winding number:** w = -2 (loops around origin twice, clockwise)
 
 ## 1.3 The 137-Lobe Curve (Level 7)
@@ -153,11 +153,22 @@ y = sin(t)*cos(t) / (1 + sin^2(t))
 
 Despite being geometrically different, both curves produce the same G*:
 
-- **Bernoulli:** G* = Gamma(1/4) / Gamma(3/4) = 2.9586751191... [equivalently Gamma(1/4)^2/(sqrt(2)*Gamma(1/2)^2) = sqrt(2)*Gamma(1/4)^2/(2*pi)]
-- **Alpha:** G* = L * 91/732 = 2.9586589... (5.45 ppm difference)
+- **Bernoulli:** G* = Gamma(1/4) / Gamma(3/4) = 2.9586751192... [equivalently sqrt(2)*Gamma(1/4)^2/(2*pi)]
+- **Alpha:** G* = L_α * 91/732 = 2.9586940857... (+6.41 ppm difference, corrected 2026-05-01 from prior 5.45 ppm based on misstated L_α = 23.7994)
 
-**This agreement at 5.45 ppm from two independent constructions is statistically
-significant (probability < 10^-6 for chance coincidence).**
+**Original claim**: agreement at 5.45 ppm from two independent constructions
+is statistically significant (probability < 10^-6 for chance coincidence under
+a free-real-line null model).
+
+**Revised claim (2026-05-01)**: the pre-registered Lemniscate-Alpha rigidity
+scan tested the natural null model — random Cayley-Dickson 5-harmonic curves
+with rational coefficients — and found that **~4.3% of valid curves admit
+framework-integer-factorable rational multipliers landing within 5.45 ppm of
+any of 14 natural framework constants**. This is far above the 10^-6 free-line
+estimate. The canonical Lemniscate-Alpha is one of a measurable minority
+(~1 in 23) of natural curves with similar matches; it is **not uniquely
+privileged**. The two-road agreement remains real and structurally interesting,
+but is [SELECTION], not [THEOREM]. See `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` (FTD-0122) for full scan results.
 
 ---
 
@@ -254,10 +265,13 @@ where:
 
 ### Numerical Verification
 
-L = 23.79940... (computed by numerical integration)
-L * 91/732 = 2.9586589...
-G* (exact) = 2.9586751...
-Error: 5.45 ppm
+L = 23.79960517... (cross-validated at 20-digit precision via 4 methods)
+L * 91/732 = 2.9586940857...
+G* (exact) = 2.9586751192...
+Error: +6.41 ppm
+
+(Corrected 2026-05-01 from prior "5.45 ppm" / L=23.7994. The corrected value
+is in the audit `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md`.)
 
 ## 2.5 Minimum Distance Formula [THEOREM]
 
@@ -628,7 +642,7 @@ are needed to generate all FTD structure.
 | G* = Gamma(1/4)^2/(sqrt(2)*Gamma(1/2)^2) [pi-free; equiv. sqrt(2)*Gamma(1/4)^2/(2*pi)] | Exact | Elliptic integral theory |
 | floor(delta) = 4, floor(delta+G*) = 7, floor(delta*G*) = 13 | Exact | Numerical |
 | Beat frequency = 2*pi/137 | Exact | Harmonic analysis |
-| Arc length * 91/732 = G* | 5.45 ppm | Two constructions |
+| Arc length * 91/732 = G* | +6.41 ppm (corrected 2026-05-01 from 5.45 ppm) | Two constructions; [SELECTION] per FTD-0122 |
 | min_dist = G*^2/32 | 0.19% | Curve geometry |
 | First Riemann zero formula | 2.1 ppb | Number theory |
 | 137 mod 4 = 1 spin-2 structure | Exact | Modular arithmetic |

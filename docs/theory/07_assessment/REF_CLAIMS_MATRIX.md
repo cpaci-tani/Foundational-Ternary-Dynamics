@@ -790,10 +790,12 @@ The lemniscate as the geometric signature of the void's primordial self-division
 | Curve | Derivation Method | G* Value |
 |-------|-------------------|----------|
 | Bernoulli | √2 × Γ(1/4)² / (2π) | 2.9586751192... |
-| Lemniscate-Alpha | L × 91/732 | 2.9586912539... |
-| **Discrepancy** | | **5.45 ppm** |
+| Lemniscate-Alpha | L × 91/732, with L_α = 23.79960517... | 2.9586940857... |
+| **Discrepancy** | | **+6.41 ppm** |
 
-Two independent mathematical approaches produce the **same G*** to 5.45 ppm. This establishes ontological equivalence: neither curve is more fundamental.
+(Corrected 2026-05-01 from prior "5.45 ppm". Cross-validation at 20-digit precision via four independent integration methods gives L_α = 23.79960517... and the corrected match is +6.41 ppm. The rigidity-scan verdict in `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` (FTD-0122) finds ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable framework-integer-factorable matches; the canonical curve is one of a measurable minority, not uniquely privileged.)
+
+Two independent mathematical approaches produce the **same G*** to +6.41 ppm. The framework's [SELECTION] tag for this match (per FTD-0122 rigidity scan) is the correct epistemic status — the agreement is real and structurally interesting, but ~4-5% of natural Cayley-Dickson curves admit comparable matches, so this does not establish unique ontological privilege.
 
 ### The Mitosis Concept
 
@@ -829,7 +831,7 @@ The Mandelbrot set is necessary (simplest nontrivial iteration). G* bridges uniq
 
 | Claim ID | Statement | Value | Status | Location |
 |----------|-----------|-------|--------|----------|
-| **MIT-1** | Bernoulli and Alpha produce same G* | 5.45 ppm | **[THEOREM]** | MITOSIS_OF_THE_VOID.md §III |
+| **MIT-1** | Bernoulli and Alpha produce same G* | +6.41 ppm | **[SELECTION]** (was [THEOREM]; retagged 2026-05-01 per AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md FTD-0122 — ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable matches) | MITOSIS_OF_THE_VOID.md §III |
 | **MIT-2** | Void mitosis = lemniscate self-intersection | Topological | **[SELECTION]** | MITOSIS_OF_THE_VOID.md §I |
 | **MIT-3** | Triangle of Necessity (Mandelbrot anchor) | Proof structure | **[SELECTION]** | MITOSIS_OF_THE_VOID.md §IV |
 | **MIT-4** | 720° traversal = fermionic spin structure | Exact | **[THEOREM]** | MITOSIS_OF_THE_VOID.md §II |
@@ -871,7 +873,7 @@ The Mandelbrot set is necessary (simplest nontrivial iteration). G* bridges uniq
 | Function | Purpose |
 |----------|---------|
 | `bernoulli_lemniscate_parametric()` | Smooth parametric form |
-| `verify_gstar_from_both_curves()` | Verify 5.45 ppm match |
+| `verify_gstar_from_both_curves()` | Verify +6.41 ppm match (corrected from prior 5.45 ppm) |
 | `verify_mandelbrot_bridge()` | Verify k_c × c_cusp × G* = 1 |
 | `verify_master_quadratic()` | Verify roots and Vieta |
 
