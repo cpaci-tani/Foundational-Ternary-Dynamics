@@ -19,7 +19,7 @@ export const PANEL_REGISTRY = Object.freeze([
     { id: 'flux-slice',       label: 'Flux Slice',      icon: '▦',        scales: ['0'] },
     { id: 'p1-observables',   label: 'P1 Observables',  icon: '⦾',        scales: ['0'] },
     { id: 'spectrum',         label: 'Spectrum',        icon: '〰',       scales: ['0'] },
-    { id: 'consciousness',    label: 'Consciousness',   icon: '\u25C9',        scales: ['11'] },
+    { id: 'consciousness',    label: 'Reflexivity',     icon: '\u25C9',        scales: ['11'] },
     { id: 'cosmic-info',      label: 'Cosmic',          icon: '\u2740',        scales: ['5'] },
     { id: 'meta-info',        label: 'Meta',            icon: '\u29BF',        scales: ['12'] },
     { id: 'verification-lab', label: 'Verify',          icon: '\u2713',        scales: ['0', '1', '2', '3'] },

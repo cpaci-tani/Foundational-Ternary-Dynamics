@@ -895,11 +895,11 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
             },
             {
                 id: 'scale11',
-                title: 'Scale 11: Consciousness',
+                title: 'Scale 11: Reflexivity',
                 shortTitle: 'Scale 11',
-                summary: 'Pedagogical consciousness-mode presentation with figure and scenario controls.',
+                summary: 'Pedagogical reflexive-projection-layer presentation with figure and scenario controls.',
                 body: [
-                    'Scale 11 is the consciousness-oriented teaching surface in the web engine. It has its own figures, scenarios, and explanatory framing.',
+                    'Scale 11 is the reflexivity-oriented teaching surface in the web engine. It has its own figures, scenarios, and explanatory framing. (Vocabulary refresh 2026-05-01: this scale was previously framed as the "consciousness scale"; the conceptual content is the reflexive-projection layer, see docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md.)',
                     'Even if a learner never works through the full theory stack, this scale is useful for understanding how the engine packages conceptual material into guided visual surfaces.',
                 ],
                 bullets: [
@@ -1761,15 +1761,15 @@ const CONSCIOUSNESS_SCENARIO_ENTRIES = Object.freeze(
             id,
             title: `${title} [Scale 11]`,
             shortTitle: title,
-            scale: 'Scale 11 / Consciousness',
-            summary: CS_SCENARIO_DESCRIPTIONS[id] || 'A consciousness-mode pedagogical scenario.',
+            scale: 'Scale 11 / Reflexivity',
+            summary: CS_SCENARIO_DESCRIPTIONS[id] || 'A reflexivity-mode pedagogical scenario.',
             body: [
-                `${title} is a consciousness-mode teaching scenario, so it should be read as a conceptual demonstration as much as a dynamical one.`,
+                `${title} is a reflexivity-mode teaching scenario, so it should be read as a conceptual demonstration as much as a dynamical one.`,
                 CONSCIOUSNESS_SCENARIO_GUIDES[id],
-                'The math focus depends on the case: threshold discriminants, complex roots, self-reference fixed points, chirality, Bell correlations, or subject/object phase balance.',
+                'The math focus depends on the case: threshold discriminants, complex roots, self-reference fixed points, chirality, Bell correlations, or reflexive phase balance.',
             ],
             bullets: [
-                id === 'cs-custom' ? 'Custom scenario for user-defined pedagogical exploration.' : 'Best read together with the consciousness description panel and figure selector.',
+                id === 'cs-custom' ? 'Custom scenario for user-defined pedagogical exploration.' : 'Best read together with the reflexivity description panel and figure selector.',
             ],
             notation: dedupe(
                 id === 'cs-threshold' ? ['\\(\\Delta_k\\)', '\\(K_C \\approx 3.60\\)', 'real → complex roots']
