@@ -1,7 +1,6 @@
 export { DiagnosticsPanelComponent, initDiagnosticsPanel } from './diagnostics-panel/component.js';
 export { ChartsPanelComponent, initChartsPanel } from './charts-panel/component.js';
 export { LagrangianPanelComponent, initLagrangianPanel } from './lagrangian-panel/component.js';
-export { ConsciousnessPanelComponent, initConsciousnessPanel } from './consciousness-panel/component.js';
 export { InspectorPanelComponent, initInspectorPanel } from './inspector-panel/component.js';
 export { ZooPanelComponent, initZooPanel } from './zoo-panel/component.js';
 export { OnticPanelComponent, initOnticPanel } from './ontic-panel/component.js';

@@ -69,7 +69,9 @@ export class ViewportSceneCore {
         this._voxelHighlight = null;
         this._symHighlights = null;
 
-        // Post-processing (lazy init for consciousness mode)
+        // Post-processing (lazy init; was used by the now-deleted Scale 11
+        // consciousness mode; retained as a public-API hook in case other
+        // modes ever opt into bloom).
         this._composer = null;
         this._bloomPass = null;
         this._usePostProcessing = false;
@@ -240,7 +242,7 @@ export class ViewportSceneCore {
     toggleAxes(on) {
         this._showAxes = on;
         const mode = this._engineMode || 'lattice';
-        if (mode === 'consciousness' || mode === 'cosmic' || mode === 'meta') return;
+        if (mode === 'cosmic' || mode === 'meta') return;
         if (mode === 'lattice') {
             if (this.axes) this.axes.visible = on;
         } else {
@@ -316,7 +318,7 @@ export class ViewportSceneCore {
     toggleGrid(on) {
         this._showGrid = on;
         const mode = this._engineMode || 'lattice';
-        if (mode === 'consciousness' || mode === 'cosmic' || mode === 'meta') return;
+        if (mode === 'cosmic' || mode === 'meta') return;
         if (mode === 'lattice') {
             // Scale 0: the wireframe cube serves as the grid reference
             if (this.wireframe) this.wireframe.visible = on;
