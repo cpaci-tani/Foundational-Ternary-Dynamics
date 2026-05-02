@@ -178,8 +178,9 @@
 ### FTD-0003: CM-curve uniqueness across class-number-1 fields
 
 - **statement:** Among the 9 imaginary quadratic fields with class number 1, the discriminant `d = −4` (CM curve E: y² = x³ − x) is the **unique** field whose associated polynomial reproduces the dual match (1/α, N_c).
-- **tag:** THEOREM (numerical scan exhaustive over 9 fields).
-- **proof_status:** COMPLETE
+- **tag:** **[NUMERICAL FACT, exhaustive over 9-element h=1 set]** (Tier-I MC-T1.2 closure 2026-05-02; honestly downgraded from blanket [THEOREM] which had implied structural generality).
+- **tag_history:** 2026-04-19 [THEOREM]; 2026-05-02 [NUMERICAL FACT, h=1 only] (Tier-I MC-T1.2 route-(b) closure — content unchanged, status sharpened).
+- **proof_status:** COMPLETE for h=1; h ≥ 2 extension is MC-T2.3 / MC-T1.2-route-(a) and remains [OPEN].
 - **proof_location:** `scripts/exploration/scan_cm_curves.py`, `CONJ_ALPHA_FROM_CM.md` (with one path flagged for re-derivation), `AUDIT_MASTER_QUADRATIC.md` Item (b).
 - **reframe_status:** UNAFFECTED — finite-combinatorial scan.
 
@@ -192,11 +193,12 @@
 
 ### FTD-0005: Phase J partition-function ultralocality at L=2
 
-- **statement:** Explicit calculation on the L=2 torus (8 voxels, 1107 charge-neutral configs) shows the action `S_E = (c²/2)|∇J|² + g_c · s · (∇·J)` is ultralocal in s (Parseval: ∫|∇J|² = ∫s²). Two dipoles at different separations give identical S_E.
-- **tag:** THEOREM (finite-combinatorial)
-- **proof_location:** `DERIV_PARTITION_FUNCTION_L2.md`, `scripts/proofs/partition_function_L2.py`
+- **statement:** Explicit calculation on the L=2 torus (8 voxels, 1107 charge-neutral configs) shows the action `S_E = (c²/2)|∇J|² + g_c · s · (∇·J)` is ultralocal in s. Two dipoles at different separations give identical S_E.
+- **tag:** **[THEOREM at L=2 — Nyquist-mode degeneracy origin]**
+- **tag_history:** 2026-04-19 NEW from L=2 explicit-construction proof; 2026-05-01 audit restated as `[THEOREM at L=2] + [CONJECTURE for general L]`; 2026-05-02 (Tier-I MC-T1.1 closure) the general-L conjecture portion was numerically disconfirmed at L ≥ 4 — the L=2 status is preserved with explicit Nyquist-mode-degeneracy origin.
+- **proof_location:** `DERIV_PARTITION_FUNCTION_L2.md`, `scripts/proofs/partition_function_L2.py`, `scripts/proofs/proof_phase_j_general_L.py` (Tier-I closure: L=2 PASS, L≥4 disconfirmation, engine-stencil non-ultralocality per FTD-0090).
 - **reframe_status:** UNAFFECTED — explicit finite-L computation.
-- **consequence:** The FTD analytical action contains no Coulomb interaction between static charges; classical extremisation cannot fix g_c. This closes Mechanism C (fixed-point self-consistency) as a route for first-principles g_c.
+- **consequence:** The FTD analytical action contains no Coulomb interaction between static charges *at L=2*; classical extremisation cannot fix g_c at L=2. This closes Mechanism C (fixed-point self-consistency) as a route for first-principles g_c. The general-L Coulomb structure is non-trivial and requires the proper Gauss-constraint treatment (MC-T1.1-extension).
 
 ### FTD-0011: Phase H coupling scaling — g_c² scales α_r [THEOREM]
 
@@ -300,10 +302,12 @@
 
 ### FTD-0044: Per-voxel mass gap (survives in YM paper)
 
-- **statement:** A per-voxel mass gap exists from the manifestation threshold K_B; this holds at every site, in every region the framework actually exhibits.
+- **statement:** A per-voxel mass gap exists from the manifestation threshold K_B; this holds at every site, in every region the framework actually exhibits. Specifically: spec(H) ⊂ {0} ∪ [K_B, ∞) on any finite Λ ⊂ ℤ³, with Δ = K_B = m_e ≈ 0.511 MeV under FTD-0041 calibration.
 - **tag:** THEOREM
-- **proof_location:** `docs/papers/archive/retracted_under_reframe/FTD_Yang_Mills_Mass_Gap.tex` Theorem 5.1 (paper retracted Session 3; per-voxel mass gap content preserved in archived `.tex`).
-- **reframe_status:** UNAFFECTED — local statement, holds at every L.
+- **tag_history:** 2026-04-19 NEW (extracted from retracted YM paper Theorem 5.1); 2026-05-02 verification script added (Tier-I MC-T1.4 closure).
+- **proof_location:** `docs/papers/archive/retracted_under_reframe/FTD_Yang_Mills_Mass_Gap.tex` Theorem 5.1 (original argument); `scripts/proofs/proof_per_voxel_mass_gap.py` (5/5 tests PASS, 2026-05-02).
+- **proof_status:** structural lower-bound spec(H) ⊂ {0} ∪ [K_B, ∞) verified via the manifestation-threshold rule. Full Hamiltonian-diagonalization proof of spectrum-density above K_B is outside session scope (continuum-limit territory).
+- **reframe_status:** UNAFFECTED — local statement, holds at every finite L without invoking thermodynamic limit.
 - **note:** this is the only YM-paper claim that survives the reframe cleanly. Could anchor a smaller, honest paper without the Clay-eligibility framing.
 
 ### FTD-0045: α_largeL ≈ 3.6 × α_ref (calibration-conditional)
@@ -588,10 +592,10 @@ downstream cites can reference.
 
 ### FTD-0112: Field-theoretic characterization of Q(G*) (Theorem 9)
 - **tag:** **[THEOREM]** (2026-04-30, conditional on Chudnovsky 1976 algebraic independence of π and Γ(1/4) over ℚ)
-- **proof_location:** `SPEC_ALGEBRAIC_SPINE.md` §9
+- **proof_location:** `SPEC_ALGEBRAIC_SPINE.md` §9 (narrative); `scripts/proofs/proof_field_theoretic_qgstar.py` (verification, 4/4 tests PASS, 2026-05-02).
 - **content:** Q(G*) ⊂ Q(π, Γ(1/4)) and Q(G*) ∩ Q(π) = ℚ ("π-free"). Provides algebraic underpinning of G*/π asymmetry (FTD-0106). (1+i)-tower coefficients live in ℤ[2, G*] ⊂ Q(G*).
 - **dependencies:** FTD-0001, FTD-0002, FTD-0111.
-- **paper-A risk:** No automated verification script; narrative-only proof. Audit recommended `proof_field_theoretic_qgstar.py` before paper submission (now MC-T1.3 in `CHECKLIST_MATH_COMPLETE.md`).
+- **paper-A risk RESOLVED 2026-05-02:** verification script added per Tier-I MC-T1.3 closure. 4 tests: G* ∈ Q(π, Γ(1/4)) symbolic; Chudnovsky 1976 conditional with proof sketch; Γ(1/4) and π content witnesses; (1+i)-tower coefficients verified in ℤ[2, G*].
 
 ### FTD-0113: Retarded extension of Phase G — lattice retarded Green's function identity
 - **tag:** [DERIVED] (2026-04-30, subsidiary of FTD-0004)
