@@ -2,10 +2,12 @@
 
 ## Why There Is No Paradox When Measurement Is Algebraic
 
-**Date:** March 17, 2026
-**Framework:** Foundational Ternary Dynamics v5.28
+**Date:** March 17, 2026 (vocabulary refresh 2026-05-01)
+**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** Foundational synthesis with epistemic classification
-**Authors:** cpaci & Claude (Opus 4.6)
+**Authors:** cpaci & Claude
+
+> **Vocabulary refresh (2026-05-01):** The Wigner's Friend resolution is purely structural — it depends on measurement being an algebraic operation (Type-III → Type-I descent), not on the metaphysics of "consciousness." This document's "observers" are restated as **reflexive sites with observation-layer coupling** per [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). The paradox dissolves regardless of vocabulary because the resolution is algebraic; the rename only sharpens what work each "observer" actually does (it's reflexive coupling, not subjective experience).
 
 **Depends on:**
 - [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x), projection hierarchy, Born rule reconstruction

@@ -1,8 +1,8 @@
 # FTD Theory Documentation Index
 
-**Framework:** Foundational Ternary Dynamics v5.33 (post-2026-04-27 engine-as-instrument cycle + look-elsewhere scan)
-**Date:** April 27, 2026
-**Status:** Curated catalog. **Single source of truth for claim status: [`07_assessment/LEDGER.md`](07_assessment/LEDGER.md)** (49 rows; if LEDGER and individual docs disagree, LEDGER wins).
+**Framework:** Foundational Ternary Dynamics v5.34 (post-2026-05-01 physics-bridge synthesis + structural-uniqueness scans)
+**Date:** May 1, 2026
+**Status:** Curated catalog. **Single source of truth for claim status: [`07_assessment/LEDGER.md`](07_assessment/LEDGER.md)** (119 rows; detail blocks present for all load-bearing post-FTD-0059 rows as of 2026-05-01 audit pass; if LEDGER and individual docs disagree, LEDGER wins).
 **Single Source of Truth (spec):** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 **Foundational commitment (2026-04-19):** undefined-boundary lattice ontology — see [`07_assessment/AUDIT_INFINITY_REFRAME.md`](07_assessment/AUDIT_INFINITY_REFRAME.md) and [`07_assessment/reframe_deployment/CANONICAL_REFRAME.md`](07_assessment/reframe_deployment/CANONICAL_REFRAME.md).
 
@@ -405,7 +405,7 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.39 | [AUDIT_LINK8_CLOSURE.md](10_eft_program/AUDIT_LINK8_CLOSURE.md) | **Link-8 Closure Audit** |
 | 10.40 | [AUDIT_STRUCTURE2_WARD_VALIDATION.md](10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md) | **Structure-2 Ward Validation** |
 | 10.41 | [ANALYSIS_EMERGENT_SPECTRUM_G1.md](10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md) | **(2026-04-27) FTD-0107 G1 follow-up analysis:** L=64 emergent-spectrum measurement; deterministic cluster counts L-invariant at L ∈ {32, 64} (1 from point injection, ~25-voxel cluster; 2 from collision, ~3–5 voxels); 5/5 seeds at both L. The most novel positive structural finding of the 2026-04-27 engine-as-instrument cycle. [PARTIAL] — opens "WHY 25 voxels?" structural question |
-| 10.42 | [AUDIT_LOOK_ELSEWHERE_RESULTS.md](10_eft_program/AUDIT_LOOK_ELSEWHERE_RESULTS.md) | **(2026-04-27) FTD-0097 look-elsewhere scan:** NULL REJECTED upward at ε=10⁻⁴ (62 raw / 11 dedup hits vs Poisson null λ=4); χ²(df=19) = 470 raw / 38 dedup; per-target uniformity rejected at 99.9%+ raw / 99% dedup. Catalog is over-rich at the monomial level; the L2 identity 8·G\*²·α appears as chance-level fit at exactly its reported 68.77 ppm precision. [MEASURED] — confirms FTD-0094 [PARAMETRIC] from methodological side |
+| 10.42 | [AUDIT_LOOK_ELSEWHERE_RESULTS.md](07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) | **(2026-04-27) FTD-0097 look-elsewhere scan:** NULL REJECTED upward at ε=10⁻⁴ (62 raw / 11 dedup hits vs Poisson null λ=4); χ²(df=19) = 470 raw / 38 dedup; per-target uniformity rejected at 99.9%+ raw / 99% dedup. Catalog is over-rich at the monomial level; the L2 identity 8·G\*²·α appears as chance-level fit at exactly its reported 68.77 ppm precision. [MEASURED] — confirms FTD-0094 [PARAMETRIC] from methodological side |
 
 Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).
 

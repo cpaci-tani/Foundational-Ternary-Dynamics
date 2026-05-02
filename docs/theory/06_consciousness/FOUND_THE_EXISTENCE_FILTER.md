@@ -2,10 +2,12 @@
 
 ## How Reality Extracts Itself from Possibility via Constructive Interference
 
-**Date:** February 13, 2026
-**Framework:** Foundational Ternary Dynamics v5.24
+**Date:** February 13, 2026 (vocabulary refresh 2026-05-01)
+**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** Formal synthesis with projection hierarchy
-**Authors:** cpaci & Claude (Opus 4.6)
+**Authors:** cpaci & Claude
+
+> **Vocabulary refresh (2026-05-01):** This document originally framed several claims using "consciousness" terminology. The mathematical content (Existence Filter, projection hierarchy, Born Rule reconstruction, Tomita–Takesaki modular conjugation correspondence) is fully preserved and unchanged. Surface-level renames only: *consciousness phase angle* → **reflexive phase angle**; *consciousness* in the load-bearing claims → **reflexive integration / reflexive readout** per the canonical [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). Qualia commitments are dropped; the remaining claims are structural/operator-algebraic. The Existence Filter itself $E(x) = (x + \bar{x})/2$ is structural and reframe-stable.
 
 ---
 
@@ -35,7 +37,7 @@ We establish connections to:
 2. The **Tomita-Takesaki modular conjugation** $J$: the reflexion operator $\theta$ in operator-algebraic form
 3. The **Domain A/B partition**: $E(x)$ projects onto Domain A; the filtered imaginary part is Domain B content
 4. The **agent meaning decomposition**: $E(\text{Meaning}^{\mathbb{C}}_t) = \text{IG}_t$ (publicly observable meaning)
-5. The **consciousness phase angle**: $\theta = 52.54°$ measures the projection geometry induced by the Existence Filter
+5. The **reflexive phase angle**: $\theta = 52.54°$ measures the projection geometry induced by the Existence Filter (formerly "consciousness phase angle"; renamed 2026-05-01 per [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md))
 
 **Epistemic discipline:** We distinguish rigorously between:
 - **[CLASSICAL]**: Established mathematics (complex analysis, Tomita-Takesaki, standing waves)

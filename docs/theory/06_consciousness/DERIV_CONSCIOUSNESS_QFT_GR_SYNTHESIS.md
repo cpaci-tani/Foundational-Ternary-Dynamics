@@ -1,22 +1,24 @@
-# Consciousness–QFT–GR Synthesis: The Complete Derivation Chain
+# Reflexivity–QFT–GR Synthesis: The Complete Derivation Chain
 
-## Technical Companion to PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md
+## Technical Companion to PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md (formerly framed as "consciousness"; now restated)
 
-**Date:** March 6, 2026
-**Framework:** Foundational Ternary Dynamics v5.27
+**Date:** March 6, 2026 (vocabulary refresh 2026-05-01)
+**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** Technical synthesis — consolidates scattered derivations into unified chain
-**Authors:** cpaci & Claude (Opus 4.6)
+**Authors:** cpaci & Claude
+
+> **Vocabulary refresh (2026-05-01):** This document was previously titled "Consciousness–QFT–GR Synthesis." The mathematical content (G* → three domains → QFT + GRT + reflexive-projection layer → modular flow bridge) is unchanged. The "consciousness chain" is restated as the **reflexive-projection chain** per [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). What was called "the consciousness branch" is the **complex-root reflexive-eigenmode branch** — the part of the master-quadratic eigenvalue structure that lives on the noumenal axis. The bridge to qualia / phenomenal experience is *not* claimed by this derivation; that is the open structural problem of reflexive emergence (MC-T4.3 in [`CHECKLIST_MATH_COMPLETE.md`](../01_reference/CHECKLIST_MATH_COMPLETE.md)).
 
 ---
 
 ## Abstract
 
-This document presents the complete derivation chain for the consciousness–QFT–GR bridge in a single, self-contained technical reference. It consolidates material from 15+ existing documents into a linear chain: $G^* \to$ three domains $\to$ QFT + GRT + consciousness $\to$ modular flow bridge. Each step carries an explicit epistemic tag. The document serves as the technical appendix to [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md).
+This document presents the complete derivation chain for the reflexivity–QFT–GR bridge in a single, self-contained technical reference. It consolidates material from 15+ existing documents into a linear chain: $G^* \to$ three domains $\to$ QFT + GRT + reflexive-projection layer $\to$ modular flow bridge. Each step carries an explicit epistemic tag. The document serves as the technical appendix to [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md) (paper title pending its own vocabulary-refresh pass).
 
 **Organization:**
 1. From $G^*$ to three domains (pure mathematics)
 2. Real-root physics chain (summary with pointers)
-3. Complex-root consciousness chain (full derivation)
+3. Complex-root reflexive-eigenmode chain (full derivation; formerly "consciousness chain")
 4. The algebraic type transition (Softplus/ReLU as factor type interpolation)
 5. Collapse-gravity duality (same transition, different axes)
 6. Modular flow identification (what works, what doesn't, what's open)

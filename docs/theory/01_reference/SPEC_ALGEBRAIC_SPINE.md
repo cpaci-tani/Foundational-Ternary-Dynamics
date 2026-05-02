@@ -109,8 +109,10 @@ because G* > 1/4 (Theorem 1). See
 (rewritten 2026-04-19 as algebraic identity + physical match) and
 `scripts/proofs/proof_motivic_master_quadratic.py`.
 
-**LEDGER:** FTD-0014 (algebraic identity); the polynomial coefficients
-are deterministic functions of G*.
+**LEDGER:** FTD-0001 (Master Quadratic Polynomial + Roots, [THEOREM]);
+the polynomial coefficients are deterministic functions of G*. The
+physical identifications x+ ↔ 1/α and x− ↔ N_c are tracked separately
+under FTD-0013 and FTD-0014 ([STRONGLY MOTIVATED CONJECTURE]).
 
 **Dependencies:** Theorem 1.
 
@@ -255,15 +257,26 @@ verification at L=8 to machine precision).
 
 ## 7 · Theorem 7 — Phase J partition-function ultralocality
 
-**Statement.** The classical FTD partition function on a finite L³
-lattice has Euclidean action S_E that depends on the state field s ∈
-{−1, 0, +1}^{L³} only through Σ_i s_i² (the count of manifested
-sites). The action is invariant under arbitrary spatial permutations
-of charge placement at fixed charge count.
+**Status.** [THEOREM at L = 2] + [CONJECTURE for general L]. The L = 2
+case is proven by explicit construction; the structural-feature claim
+for arbitrary L is asserted but not formally derived from the axioms
+in this document. Audit 2026-05-01 flagged the unconditional [THEOREM]
+framing as inflated; the present text is the corrected statement.
 
-**Proof.** Explicit construction of the L=2 partition function in
-`docs/theory/10_eft_program/DERIV_PARTITION_FUNCTION_L2.md`; the
-ultralocality is a structural feature, not a coincidence at small L.
+**Statement (L = 2, [THEOREM]).** The classical FTD partition function
+on a 2³ lattice has Euclidean action S_E that depends on the state
+field s ∈ {−1, 0, +1}^{8} only through Σ_i s_i² (the count of
+manifested sites). The action is invariant under arbitrary spatial
+permutations of charge placement at fixed charge count.
+
+**Statement (general L, [CONJECTURE]).** The same dependence on
+Σ_i s_i² alone, and the same permutation invariance, hold on every
+finite L³ lattice.
+
+**Proof (L = 2 only).** Explicit construction of the L=2 partition
+function in `docs/theory/10_eft_program/DERIV_PARTITION_FUNCTION_L2.md`.
+The general-L extension is asserted on structural-feature grounds; a
+formal proof from the 5 axioms is [OPEN].
 
 **LEDGER:** FTD-0042 area (classical partition function).
 
@@ -538,13 +551,13 @@ What this document explicitly does NOT allow you to claim:
 
 | Theorem | Primary doc | Verification script | LEDGER row |
 |---|---|---|---|
-| 1 G* identity | `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` | `proof_motivic_master_quadratic.py` | FTD-0001 |
-| 2 Master quadratic | `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` | `audit_master_quadratic_rigidity.py` | FTD-0014 |
-| 3 CM uniqueness | `AUDIT_MASTER_QUADRATIC.md` | `scan_cm_curves.py` | (audit-derived) |
-| 4 Coefficient 16 | `EXPLR_COEFFICIENT_16.md` | included in motivic proof | FTD-0014 (sub) |
+| 1 G* identity | `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` | `proof_motivic_master_quadratic.py` | FTD-0002 |
+| 2 Master quadratic | `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` | `audit_master_quadratic_rigidity.py` | FTD-0001 |
+| 3 CM uniqueness | `AUDIT_MASTER_QUADRATIC.md` | `scan_cm_curves.py` | (audit-derived; numerical scan over 9 class-number-1 discriminants) |
+| 4 Coefficient 16 | `EXPLR_COEFFICIENT_16.md` | included in motivic proof | FTD-0006 / FTD-0007 |
 | 5 Watson identity | `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` | (analytic) | FTD-0001 (sub) |
 | 6 Phase G Coulomb | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | `fit_geometric_coulomb.py` | (Phase G) |
-| 7 Phase J ultralocal | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` | FTD-0042 area |
+| 7 Phase J ultralocal (L=2 only) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` | FTD-0042 area |
 
 | Subsidiary | Primary doc | LEDGER |
 |---|---|---|
