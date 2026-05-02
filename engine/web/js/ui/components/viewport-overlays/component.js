@@ -23,7 +23,7 @@ import { getScale2OverlayTemplate, getScale2LegendTemplate } from '../../../scal
 import { getScale3OverlayTemplate, getScale3LegendTemplate } from '../../../scales/scale3/ui/overlays/template.js';
 import { getScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js';
 import { getScale5OverlayTemplate } from '../../../scales/scale5/ui/overlays/template.js';
-import { getScale11OverlayTemplate } from '../../../scales/scale11/ui/overlays/template.js';
+// Scale 11 overlay template removed 2026-05-01 along with Scale 11 deletion.
 
 export class ViewportOverlaysComponent {
   constructor(viewportEl) {
@@ -69,7 +69,6 @@ export class ViewportOverlaysComponent {
 
     this.overlays.set('scale4', append(getScale4OverlayTemplate()));
     this.overlays.set('scale5', append(getScale5OverlayTemplate()));
-    this.overlays.set('scale11', append(getScale11OverlayTemplate()));
 
     this._mountUniversalOverlays();
     this._wireCollapsibles();

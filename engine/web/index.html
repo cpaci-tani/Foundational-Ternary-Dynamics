@@ -41,7 +41,6 @@
     <link rel="stylesheet" href="css/ui/scales/scale2/legend.css">
     <link rel="stylesheet" href="css/ui/scales/scale23/toolbar.css">
     <link rel="stylesheet" href="css/ui/scales/scale4/overlays.css">
-    <link rel="stylesheet" href="css/ui/scales/scale11/pedagogy.css">
     <!-- Primitive CSS (Phase 1) -->
     <link rel="stylesheet" href="css/ui/primitives/utilities.css">
     <link rel="stylesheet" href="css/ui/primitives/button.css">
@@ -58,7 +57,6 @@
     <!-- Panel CSS (Phase 4) -->
     <link rel="stylesheet" href="css/ui/panels/diagnostics-panel.css?v=7">
     <link rel="stylesheet" href="css/ui/panels/charts-panel.css?v=7">
-    <link rel="stylesheet" href="css/ui/panels/consciousness-panel.css?v=2">
     <link rel="stylesheet" href="css/ui/panels/inspector-panel.css?v=2">
     <link rel="stylesheet" href="css/ui/panels/lagrangian-panel.css?v=4">
     <link rel="stylesheet" href="css/ui/panels/verify-panel.css?v=1">
@@ -120,7 +118,6 @@
                     <option value="planetary">Scale 4 (Planetary)</option>
                     <option value="cosmic">Scale 5 (Cosmic)</option>
                     <option value="meta">Meta (Existential Unit)</option>
-                    <option value="consciousness">Scale 11 (Consciousness)</option>
                 </select>
             </div>
             <button class="tb-btn tb-btn-settings" id="btn-settings" title="Settings (Ctrl+,)"
@@ -148,7 +145,6 @@
                     <span class="scale3-only">Scale 3 &middot; Molecular Engine</span>
                     <span class="scale4-only">Scale 4 &middot; Planetary Sandbox</span>
                     <span class="scale5-only">Scale 5 &middot; Cosmic Engine</span>
-                    <span class="scale11-only">Scale 11 &middot; Consciousness</span>
                     <span class="scale12-only">Meta &middot; Existential Unit</span>
                 </div>
                 <!-- Scale control cards are rendered by each scale's ControlsComponent (via controller.bindUI) -->
@@ -172,8 +168,7 @@
         <!-- Planetary panel is rendered by js/ui/components/panel-resources -->
 
             <!-- Hierarchy panel is rendered by js/ui/components/panel-resources -->
-            <!-- Consciousness panel is rendered by js/ui/panels/consciousness-panel -->
-            <div class="panel" id="panel-consciousness"></div>
+            <!-- Consciousness panel + #panel-consciousness div removed 2026-05-01 along with Scale 11 deletion -->
 
             <!-- Scene panel is rendered by js/ui/panels/scene-panel -->
             <div class="panel" id="panel-scene"></div>
