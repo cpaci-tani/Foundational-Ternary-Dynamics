@@ -1,4 +1,4 @@
-import { CS_SCENARIO_DESCRIPTIONS, QUANTUM_SCENARIO_DESCRIPTIONS, S0_SEED_SCENARIO_METADATA } from '../../../config/scenarios.js';
+import { QUANTUM_SCENARIO_DESCRIPTIONS, S0_SEED_SCENARIO_METADATA } from '../../../config/scenarios.js';
 import { getAllMolecules } from '../../../molecules.js';
 import { SCALE0_SCENARIOS } from '../../../scales/scale0/scenario-registry.js';
 
@@ -1424,11 +1424,6 @@ const COSMIC_SCENARIO_GUIDES = Object.freeze({
     'cosmic-baryogenesis': 'Baryogenesis is the asymmetry story: how a tiny normalized excess can seed the later matter-dominated universe.',
 });
 
-// Scale 11 (Consciousness/Reflexivity) scenario guides removed 2026-05-01
-// along with Scale 11 deletion. Empty const retained in case any
-// downstream code path still references the symbol.
-const CONSCIOUSNESS_SCENARIO_GUIDES = Object.freeze({});
-
 function buildScale0ScenarioEntry(scenario) {
     const categoryGuide = SCALE0_CATEGORY_GUIDES[scenario.category] || {
         summary: `${scenario.title} is a Scale 0 lattice scenario.`,
@@ -1717,11 +1712,6 @@ const COSMIC_SCENARIO_ENTRIES = Object.freeze([
     }),
 ));
 
-// Scale 11 (Consciousness/Reflexivity) scenario titles + entries removed
-// 2026-05-01 along with Scale 11 deletion. Empty const retained for any
-// downstream code path that still references it.
-const CONSCIOUSNESS_SCENARIO_ENTRIES = Object.freeze([]);
-
 const SCENARIO_KB_SECTIONS = Object.freeze([
     {
         id: 'scenario-lattice',
@@ -1744,7 +1734,7 @@ const SCENARIO_KB_SECTIONS = Object.freeze([
     {
         id: 'scenario-worlds',
         title: 'Scenarios: Scales 4-5',
-        description: 'Planetary and cosmic scenarios with their conceptual math framing. (Scale 11 reflexivity-mode scenarios removed 2026-05-01.)',
+        description: 'Planetary and cosmic scenarios with their conceptual math framing.',
         entries: [...PLANETARY_SCENARIO_ENTRIES, ...COSMIC_SCENARIO_ENTRIES],
     },
 ]);
