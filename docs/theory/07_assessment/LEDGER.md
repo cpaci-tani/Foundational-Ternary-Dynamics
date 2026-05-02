@@ -159,9 +159,10 @@
 - **tag_history:** 2026-04-15 SELECTION (numerical verification only); 2026-04-19 THEOREM (pure algebra, no completed-infinity steps; Phase I audit verified).
 - **proof_status:** COMPLETE
 - **proof_location:** `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` (rewritten 2026-04-19), `scripts/proofs/proof_motivic_master_quadratic.py`
+- **structural-uniqueness backing:** 2,871,576-polynomial extended scan (2026-05-02 MC-T2.1+T2.2 closure, `scripts/proofs/proof_polynomial_look_elsewhere_extended.py`, pre-registered via `git tag preregister-polynomial-scan-extended-v1`). Master quadratic uniquely dual-selective; 0 dual-matchers in Eisenstein integer family. Bayes factor strengthened from ~20,000:1 to ~4×10⁵:1 against null.
 - **dependencies:** FTD-0002 (G*), FTD-0006 + FTD-0007 (coefficient 16 routes)
-- **dependents:** FTD-0013, FTD-0014, FTD-0012, FTD-0024, FTD-0025
-- **last_reviewed:** 2026-04-19
+- **dependents:** FTD-0013, FTD-0014, FTD-0012, FTD-0024, FTD-0025, FTD-0121
+- **last_reviewed:** 2026-05-02
 - **reframe_status:** UNAFFECTED — pure algebra.
 - **citations:** `FOUND_AXIOM_ZERO.md` §3.2, `META_INDEX.md` row 7.17, `CLAUDE.md` "Firm theorems."
 
@@ -589,6 +590,7 @@ downstream cites can reference.
 - **proof_location:** `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`; `scripts/proofs/proof_harmonic_invariant_tower.py` (14/14 PASS at 50-digit precision)
 - **content:** M_k(x) := x² − 2^k G*^(k−2) x + 2^k G*^(k−1) for k ≥ 3. Theorem 1: harmonic identity 1/y₊ + 1/y₋ = 1 at every level. Theorem 2: discriminant factorization with A_k irrational for k ≥ 4 (Schneider–Chudnovsky transcendence). Closed-form α at k=4: α_tree = 1/(2G*) − √(4G*−1)/(4 G*^(3/2)).
 - **2026-05-01 Q1 — RANK-1 STRUCTURAL UNIQUENESS:** scanned 58 (m, k) pairs in natural Gaussian-integer-tower family; (m=2, k=4) is RANK 1 with 5-orders-of-magnitude gap to rank 2. Structurally forced within tower family.
+- **2026-05-02 MC-T2.2 closure** (`scripts/proofs/proof_polynomial_look_elsewhere_extended.py`, pre-registered tag `preregister-polynomial-scan-extended-v1`): extended multiplier scan over Gaussian-integer + Eisenstein-integer norms × k ∈ [3, 12]. **0 dual-matchers in Eisenstein integer family** confirms (1+i, k=4) is structurally distinguished, not just rank-1 within Gaussian. **2026-05-02 MC-T1.5+T4.5 advance** (`scripts/proofs/proof_a1g_dual4_via_zi_units.py`): tower-level k=4 traces to |Z[i]^×| = 4 via the same unit-group argument as |Aut(E)| = 4 (FTD-0006) and |O_h^ab| = 4 (FTD-0084). All three "4"s conjecturally come from the unit group of the CM endomorphism ring Z[i].
 - **dependencies:** FTD-0001, FTD-0014.
 
 ### FTD-0112: Field-theoretic characterization of Q(G*) (Theorem 9)
@@ -648,11 +650,11 @@ downstream cites can reference.
 ### FTD-0121: Physics-bridge crystallization (synthesis)
 - **tag:** **[SYNTHESIS]** (2026-05-01 evening) — see CLAUDE.md tag table for definition.
 - **proof_location:** `docs/theory/01_reference/SPEC_PHYSICS_BRIDGE.md`
-- **content:** Three-tier: (1) Mathematical [THEOREM]: G*, master quadratic, harmonic-invariant tower (FTD-0111), Q(G*) (FTD-0112). (2) Empirical: x₊ = 1/α (1.26 ppm), x₋ = N_c (0.80%). (3) Structural-uniqueness: tower-scan rank-1 of 58 (commit 0074f92); polynomial-scan unique dual-matcher of 147,456 (commit f36b741). **Combined Bayes ~20,000:1 within natural FTD polynomial family.**
+- **content:** Three-tier: (1) Mathematical [THEOREM]: G*, master quadratic, harmonic-invariant tower (FTD-0111), Q(G*) (FTD-0112). (2) Empirical: x₊ = 1/α (1.26 ppm), x₋ = N_c (0.80%). (3) Structural-uniqueness: tower-scan rank-1 of 58 (commit 0074f92); polynomial-scan unique dual-matcher of 147,456 (commit f36b741); **EXTENDED scan of 2,871,576 polynomials/multipliers (2026-05-02 MC-T2.1+T2.2 closure, pre-registered tag `preregister-polynomial-scan-extended-v1`) confirms uniqueness in ~19× larger search space + 0 dual-matchers in Eisenstein integer family**. Combined Bayes factor strengthened from ~20,000:1 to **~4×10⁵:1** in favor of structural-vs-coincidence reading.
 - **bridge closure status:** "finished as much as current methods allow". x₊ = 1/α and x₋ = N_c remain formally [STRONGLY MOTIVATED CONJECTURE]. Multiple session-scale derivation routes attempted and closed-negative.
-- **paper-A risk RESOLVED:** polynomial-scan runner hash-locked via `git tag hashlock-polynomial-scan-v1` against commit f36b741 (audit 2026-05-01). Honest naming: `hashlock-` not `preregister-` (retrospective).
+- **paper-A risk RESOLVED 2026-05-01 (retroactive hash-lock for original scan)**: `git tag hashlock-polynomial-scan-v1` against commit f36b741. **Methodological-discipline gap RESOLVED 2026-05-02 (genuine pre-registration for extended scan)**: `git tag preregister-polynomial-scan-extended-v1` against commit 83823a6 BEFORE scan execution.
 - **dependencies:** FTD-0001, FTD-0002, FTD-0013, FTD-0014, FTD-0097, FTD-0111, FTD-0112, FTD-0117.
-- **cross-reference:** the path forward beyond [SYNTHESIS] is laid out in `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` (2026-05-01); the central foundational obstruction is item MC-T4.3 (non-action α-injection mechanism).
+- **cross-reference:** the path forward beyond [SYNTHESIS] is laid out in `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md`; **2026-05-02 status update**: Tier I + II closed (8/8); Tier III 1/5 closed; Tier IV T4.5 advanced. The central foundational obstruction MC-T4.3 (non-action α-injection mechanism) remains untouched.
 
 ---
 
