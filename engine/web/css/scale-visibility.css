@@ -4,7 +4,7 @@
  *
  *  Controls which UI elements are shown/hidden based on the
  *  active scale mode (lattice, particles, atoms, molecules,
- *  consciousness, cosmic, meta). 
+ *  cosmic, meta).
  * ============================================================ */
 
 /* Hide any element marked for a specific scale if that scale is NOT active.
@@ -16,7 +16,6 @@
 #app:not([data-active-scale="4"]) .scale4-only,
 #app:not([data-active-scale="5"]) .scale5-only,
 #app:not([data-active-scale="6"]) .scale6-only,
-/* .scale11-only rule removed 2026-05-01 along with Scale 11 deletion. */
 #app:not([data-active-scale="12"]) .scale12-only {
     display: none !important;
 }
@@ -33,7 +32,6 @@
 /* ── Mode-specific styling ── */
 #app.mode-cosmic #viewport { background: #020208; }
 #app.mode-meta #viewport { background: #080818; }
-/* .mode-consciousness rule removed 2026-05-01 along with Scale 11 deletion. */
 
 /* .mode-unavailable: defined in css/ui/panels/diagnostics-panel.css */
 

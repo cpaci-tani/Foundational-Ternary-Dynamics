@@ -23,7 +23,6 @@ import { getScale2OverlayTemplate, getScale2LegendTemplate } from '../../../scal
 import { getScale3OverlayTemplate, getScale3LegendTemplate } from '../../../scales/scale3/ui/overlays/template.js';
 import { getScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js';
 import { getScale5OverlayTemplate } from '../../../scales/scale5/ui/overlays/template.js';
-// Scale 11 overlay template removed 2026-05-01 along with Scale 11 deletion.
 
 export class ViewportOverlaysComponent {
   constructor(viewportEl) {

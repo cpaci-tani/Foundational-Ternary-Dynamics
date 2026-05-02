@@ -6,12 +6,6 @@
  * Human coders: add new scenario descriptions here when adding scenarios.
  */
 
-// Scale 11 (Consciousness/Reflexivity) scenario descriptions removed
-// 2026-05-01 along with Scale 11 deletion. Empty export retained in case
-// any downstream import path still references the symbol; can be deleted
-// once a coordinated import-graph cleanup happens.
-export const CS_SCENARIO_DESCRIPTIONS = {};
-
 export const QUANTUM_SCENARIO_DESCRIPTIONS = {
     'quantum-born-rule': 'Born Rule Convergence: Tests that manifestation probability converges to \\(|J|^2\\). Runs N trials with random-phase Gaussian flux, accumulates positions, verifies Born rule emergence from deterministic lattice dynamics. [THEOREM]',
     'quantum-double-slit': 'Quantitative Double-Slit: Two coherent sources create interference on a detector screen. Measures fringe visibility \\(V = (I_{\\max}-I_{\\min})/(I_{\\max}+I_{\\min})\\) and fringe spacing. Tests wave-particle duality from the two-layer ontology.',

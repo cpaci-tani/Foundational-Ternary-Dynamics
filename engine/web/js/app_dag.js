@@ -6,7 +6,7 @@
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge, MockBridge } from './wasm-bridge-dag.js';
+import { createBridge } from './wasm-bridge-dag.js';
 // PhysicsHarness factory — lazily attached per-bridge by panels and
 // overlays that need the canonical read/write surface.
 import { getPhysicsHarness } from './physics/index.js';
@@ -32,18 +32,11 @@ import * as Scale3Controller from './scales/scale3/controller.js';
 import * as Scale4Controller from './scales/scale4/controller.js';
 import * as Scale5Controller from './scales/scale5/controller.js';
 import * as Scale6Controller from './scales/scale6/controller.js';
-// Scale 11 (consciousness/reflexivity) deleted 2026-05-01 — see
-// REF_REFLEXIVITY_VOCABULARY.md for the vocabulary doc and theory-side
-// docs/theory/06_consciousness/* for the math (preserved). Engine
-// implementation removed because it was interpretive pedagogy, not
-// load-bearing for any derivation, and carried external-defensibility
-// risk for the algebraic-spine paper.
 import { OnticObservatory } from './ontic-observatory.js';
 // renderEnergyLevels, renderCrossSections, renderDecayRates, renderFcCard,
 // renderObserverCard, renderOnticHierarchy, renderInfoDynamics moved to
 // ui/app-ontic.js (Wave 2 ticket 7).
 import { TICK_PHASES, K_B, K_GENESIS, C_SPEED } from './constants.js';
-// COS2_THETA_C dropped along with Scale 11.
 // ALPHA, G_STAR, VARPI, X_PLUS, X_MINUS, ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS
 // now imported directly by ui/app-ontic.js.
 import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor } from './aggregation-bridge.js';
@@ -111,7 +104,6 @@ let fpsDisplay = 0;
 //   'planetary'     (Scale 4) — N-body solar system (separate controller)
 //   'cosmic'        (Scale 5) — galaxy/cluster simulation (CosmicRenderer)
 //   'meta'          (Scale 12) — 3^3 existential unit (MetaUnit)
-// Scale 11 ('consciousness'/'reflexivity') was deleted 2026-05-01.
 // Transitions: switchEngineMode() is the SOLE entry point for mode changes.
 let engineMode = 'lattice';
 let _aeInitialEnergy = null; // for AE energy drift tracking
@@ -819,9 +811,6 @@ function wireToolbar() {
         });
     }
 
-    // Scale 11 consciousness scenario / figure / audio selectors removed
-    // 2026-05-01 along with Scale 11 deletion.
-
     // Orbital cloud toggles (Scale 2 and Scale 3)
     const cloudToggle = document.getElementById('ae-show-clouds');
     if (cloudToggle) {
@@ -1406,7 +1395,7 @@ function wireKeyboard() {
 //   1. Stop simulation (running = false)
 //   2. Update CSS classes for panel/control visibility
 //   3. Filter tab bar to show only tabs valid for this scale
-//   4. Dispose old scale resources (consciousness engine, cosmic renderer, planetary)
+//   4. Dispose old scale resources (cosmic renderer, planetary, etc.)
 //   5. Call the new scale's scenario loader
 // Rapid switching is safe because step 1 halts ticking before any teardown,
 // and each loader calls _resetAllVisualState() which clears all prior state.
