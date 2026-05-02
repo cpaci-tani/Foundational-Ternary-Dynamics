@@ -157,14 +157,16 @@ The closures map to the realistic effort the Tier-III items required:
 
 > Items here have closure paths that may require ontology change rather than within-framework derivation. The lead-physicist diagnosis (audit 2026-05-01) is that **Phase J ultralocality structurally decouples the algebraic spine from the dynamical EFT** — standard EFT machinery cannot bridge axioms to α because the action data does not contain the polynomial data. Closure requires a non-action-level injection mechanism (boundary conditions, observable selection rules, quantization choice, or an ontology extension that adds polynomial structure as an axiom rather than deriving it). **Whether FTD's current 5-axiom commitment can support this closure is itself an open question.**
 
-### MC-T4.1 — Two-layer ontology axiomatization
-- **Closes**: a structural gap in the postulate set. The 5 axioms name only the state field s ∈ {−1, 0, +1}; the flux field J ∈ ℝ³ is added separately. The engine implements two fields; the axiomatization names one.
-- **Current status**: `[OPEN]`. Two routes: (a) add J to postulates (raising count from 5 to 6 axioms), (b) derive J from state-only dynamics.
-- **Exit criterion**: either (a) explicit 6-axiom system with J as a primitive, all current derivations reverified under the extended axiom set, OR (b) constructive derivation `J = F(s, neighborhood)` from axioms 1–5 with no smuggled assumptions.
+### MC-T4.1 — Two-layer ontology axiomatization **[REFRAMED 2026-05-02 — documentation alignment, not ontological gap]**
+- **Original framing (overstated)**: the 5 axioms name only s ∈ {−1, 0, +1}; J is added separately, suggesting a missing axiom.
+- **Corrected framing**: SPEC_FTD.md §1.1 graded-monism table already establishes the substantive ontology — `Substance = Void (s=0)` / `Disposition = Flux J` / `Manifestation = States ±1`. The Genesis rule (SPEC_FTD.md line 422) makes the dependence explicit: when a void voxel's flux density crosses K_B, manifestation occurs, i.e. `s = manifestation_of(J)` via threshold projection. **J is primary; s is the action of J.** The framework is J-primary with s as the discrete observable layer.
+- **What is actually open**: Postulate 3 in SPEC_FTD.md states ternary states without making the J→s dependence textually explicit at the postulate level. The graded monism table appears in §1.1 but Postulate 3 itself reads as if s were independent. This is a **documentation-alignment** issue, not an ontological gap.
+- **Current status**: `[OPEN — documentation]`. Substantive ontology is clean (J-primary per graded monism + Genesis rule). The remaining task is to update Postulate 3 to read explicitly as "s is the manifestation/projection of J via the Genesis threshold rule" so reviewers cannot misread the postulate set as 5-axioms-naming-only-s.
+- **Exit criterion**: revised SPEC_FTD.md Postulate 3 makes the J-primary structure explicit at the postulate level (not just in the ontology table); manuscript v1/v2 propagation; LEDGER cross-check that no claim depended on the ambiguous reading.
 - **Dependencies**: none.
-- **Effort**: **M** (route a) or **RP** (route b).
-- **Risk**: route (a) is bookkeeping; route (b) may not be achievable. The prevailing FTD literature treats J as a derived quantity but the derivation is not fully written down.
-- **Foundational note**: this affects all downstream claims. Route (a) is the safe path; the framework's self-description as "5 postulates" becomes "6 postulates," which is honest but requires manuscript propagation.
+- **Effort**: **D** (1–3 days documentation propagation).
+- **Risk**: low. The change is editorial clarity, not new mathematics or new axioms.
+- **Severity downgrade**: previously framed as foundational gap; reframed as Severity-3 (documentation alignment). The substantive parsimony claim ("5 postulates") survives because s is definitionally the manifestation of J, not an independent field.
 
 ### MC-T4.2 — Phase-2 EFT non-Gaussian flow at b ≥ 4
 - **Closes**: bridge contract Gate 6/7 (the open matching parameters from FTD-0064/0070).
