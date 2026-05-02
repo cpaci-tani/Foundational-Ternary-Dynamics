@@ -35,7 +35,7 @@ Specifically:
 
 ## Abstract
 
-Two independent lemniscate curves — the Bernoulli lemniscate (r² = cos 2θ, self-crossing at origin) and the Lemniscate-Alpha (a 5-harmonic Fourcier curve with winding number w = −2) — each encode the ℤ₂ topology underlying spin-1/2 fermions, and each independently extract the lemniscatic constant G* ≈ 2.9587 to 5.45 ppm agreement. The Bernoulli lemniscate achieves this through self-intersection; the Lemniscate-Alpha through double-winding. G* inherits both continuous (bosonic, from ϖ) and discrete (fermionic, from PF = π/4) character via the factorization G* = ϖ/√PF. The discriminant of the generalized quadratic x² − k·G*²x + k·G*³ = 0 forces a sharp trichotomy — positive (bosonic), zero (measurement), negative (fermionic) — that matches the classification of quantum statistics with no intermediate case. The Lemniscate-Alpha's 3-lobe × 2-fold structure realizes Z/6Z ≅ Z/2Z × Z/3Z, embedding particle-antiparticle duality and color triality into a single geometric object. The coefficient 16 simultaneously counts bosonic gauge degrees of freedom (24 − 7 − 1 = 16) and fermionic spinor bilinear dimension (N_base² = 4² = 16). Both lemniscates are ontologically prior to π₁(SO(3)) — the rotation group's ℤ₂ descends from the curve geometry, not the other way around.
+Two independent lemniscate curves — the Bernoulli lemniscate (r² = cos 2θ, self-crossing at origin) and the Lemniscate-Alpha (a 5-harmonic Fourcier curve with winding number w = −2) — each encode the ℤ₂ topology underlying spin-1/2 fermions, and each independently extract the lemniscatic constant G* ≈ 2.9587 to 6.41 ppm agreement. The Bernoulli lemniscate achieves this through self-intersection; the Lemniscate-Alpha through double-winding. G* inherits both continuous (bosonic, from ϖ) and discrete (fermionic, from PF = π/4) character via the factorization G* = ϖ/√PF. The discriminant of the generalized quadratic x² − k·G*²x + k·G*³ = 0 forces a sharp trichotomy — positive (bosonic), zero (measurement), negative (fermionic) — that matches the classification of quantum statistics with no intermediate case. The Lemniscate-Alpha's 3-lobe × 2-fold structure realizes Z/6Z ≅ Z/2Z × Z/3Z, embedding particle-antiparticle duality and color triality into a single geometric object. The coefficient 16 simultaneously counts bosonic gauge degrees of freedom (24 − 7 − 1 = 16) and fermionic spinor bilinear dimension (N_base² = 4² = 16). Both lemniscates are ontologically prior to π₁(SO(3)) — the rotation group's ℤ₂ descends from the curve geometry, not the other way around.
 
 ---
 
@@ -98,13 +98,22 @@ Unlike the Bernoulli lemniscate, this curve does **not** self-intersect — its 
 
 Its arc length is:
 
-$$L_\alpha = 23.7994\ldots$$
+$$L_\alpha = 23.79960517\ldots$$
+
+(Cross-validated at 20-digit precision by scipy adaptive quadrature with `epsrel=1e-12`, scipy chunked quadrature over 16 sub-intervals, mpmath at 50 dps with chunked integration, and trapezoidal integration at $N=10^{6}$ samples. All methods agree on $L_\alpha = 23.79960517\ldots$.)
 
 From this arc length, G* is extracted via:
 
-$$G^*_\alpha = L_\alpha \times \frac{91}{732} \approx 2.9587.$$
+$$G^*_\alpha = L_\alpha \times \frac{91}{732} = 2.95869409\ldots$$
 
-**[SELECTION]**: The ratio 91/732 requires independent justification. We note that 91 = 7 × 13 = b₃ × N_eff and 732 = 4 × 183 = N_base × (N_eff × (N_eff + 1)/2 + 1), connecting to framework integers, but this factorization has not been proven necessary.
+This agrees with the canonical `G* = Γ(1/4)/Γ(3/4) = 2.95867512...` at **+6.41 ppm**.
+
+**[SELECTION]**: The ratio 91/732 requires independent justification. We note that 91 = 7 × 13 = b₃ × N_eff and 732 = 4 × 183 = N_base × (N_eff² + N_eff + 1) = N_base × (1 + N_eff + N_eff²), connecting to framework integers via a third-cyclotomic-like expression in N_eff. This factorization has not been proven necessary, and is the subject of the rigidity-scan pre-registered in `docs/theory/10_eft_program/PREREG_LEMNISCATE_ALPHA_RIGIDITY.md` (2026-05-01 evening). Earlier versions of this doc:
+- Misstated $L_\alpha$ as 23.7994 (correct value 23.79960517; arc-length error in the 4th decimal place).
+- Misstated the denominator decomposition as `N_eff(N_eff+1)/2 + 1`, which evaluates to 92, not 183.
+- Cited the agreement as "5.45 ppm" based on the misstated $L_\alpha = 23.7994$; with the corrected $L_\alpha$, the agreement is 6.41 ppm.
+
+All three corrections applied 2026-05-01. The structural claim (Lemniscate-Alpha arc length × small framework-integer-factorable rational lands within single-digit ppm of G*) is unchanged in character; the specific numbers are now correct.
 
 ## §1.4 The Lemniscate-Alpha Double-Winding: ℤ₂ from Winding Number [THEOREM]
 
@@ -167,12 +176,14 @@ Two completely independent geometric constructions yield the same constant:
 | Route | Method | G* Value |
 |-------|--------|----------|
 | **Bernoulli** | CM theory: G* = √2 · Γ(1/4)² / (2π) = 2ϖ/√π | 2.9586751192... |
-| **Lemniscate-Alpha** | Arc length: G* = L_α × 91/732 | 2.9586912539... |
-| **Agreement** | | **5.45 ppm** |
+| **Lemniscate-Alpha** | Arc length: G* = L_α × 91/732, with L_α = 23.79960517... | 2.9586940857... |
+| **Agreement** | | **+6.41 ppm** |
+
+(Corrected 2026-05-01 from prior table value of +5.45 ppm, which depended on the incorrect L_α = 23.7994 stated in the original draft. Re-derivation at 20-digit precision via four independent integration methods confirms L_α = 23.79960517... and the corrected agreement of +6.41 ppm.)
 
 The Bernoulli route employs elliptic integral theory, the arithmetic-geometric mean, and Complex Multiplication. The Lemniscate-Alpha route employs harmonic superposition at Cayley-Dickson frequencies and arc-length measurement. These share no intermediate computational step, yet converge on G* to parts-per-million precision.
 
-**[SELECTION]**: The 5.45 ppm gap could indicate: (a) higher-order corrections analogous to radiative corrections in QED, (b) the fundamental inexactness of the Fourcier approximation to the true ontological curve, or (c) a genuine physical distinction between the two sectors. This remains an open question.
+**[SELECTION]**: The 6.41 ppm gap could indicate: (a) higher-order corrections analogous to radiative corrections in QED, (b) the fundamental inexactness of the Fourcier approximation to the true ontological curve, or (c) a genuine physical distinction between the two sectors. This remains an open question.
 
 See [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md), Claims MIT-1, MIT-5 [THEOREM].
 
@@ -416,7 +427,7 @@ THE TWO LEMNISCATES
 │   └── CM: j = 1728 = (4×3)³, elliptic curve y²=x³−x │
 │                                                       ▼
 ├── LEMNISCATE-ALPHA (Fourcier, 5 harmonics)         G* ≈ 2.9587
-│   ├── Frequencies {1,2,4,8,16}: Cayley-Dickson      (5.45 ppm
+│   ├── Frequencies {1,2,4,8,16}: Cayley-Dickson      (6.41 ppm
 │   ├── ℤ₂ from DOUBLE WINDING: w = −2                agreement)
 │   │   └── Same 720° periodicity, different mechanism
 │   ├── 3 lobes × 2 minima = Z/6Z ≅ Z/2Z × Z/3Z
@@ -440,7 +451,7 @@ THE TWO LEMNISCATES
 |----------|-----------|--------|--------------|---------------|
 | SSB-1 | Bernoulli lemniscate has ℤ₂ at self-intersection | [THEOREM] | Definition of r² = cos 2θ | Mathematical fact |
 | SSB-2 | Lemniscate-Alpha has winding number w = −2 | [THEOREM] | Parametric form, winding number integral | Compute winding number |
-| SSB-3 | Both curves extract G* to 5.45 ppm | [THEOREM] | Arc length calculations | Numerical verification |
+| SSB-3 | Both curves extract G* to 6.41 ppm | [SELECTION] (was [THEOREM]; retagged 2026-05-01 per `AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` §4: ~4.3% of natural Cayley-Dickson 5-harmonic curves admit FC-factorable rational multipliers landing on natural framework targets at 5.45 ppm; canonical curve is not uniquely privileged) | Arc length calculations | Rigidity-scan refutes uniqueness |
 | SSB-4 | ℤ₂ topology = spin-1/2 | [SELECTION] | SSB-1, SSB-2 | Find ℤ₂ topology without spin-1/2 |
 | SSB-5 | G* = ϖ/√PF is boson-fermion inseparable | [THEOREM] | Algebraic structure | Factor G* without both components |
 | SSB-6 | Discriminant sign = statistics type | [SELECTION] | §3.1 | Find particles violating the trichotomy |
@@ -461,7 +472,7 @@ The following remain to be formalized:
 
 3. **Independent justification of 91/732.** The Lemniscate-Alpha's G* extraction ratio 91/732 connects to framework integers (91 = 7 × 13 = b₃ × N_eff), but the factorization needs to be derived from geometric principles rather than observed.
 
-4. **Physical significance of the 5.45 ppm gap.** The two G* values differ at the fifth significant digit. Whether this represents a higher-order correction (like α²-order radiative corrections) or a fundamental distinction between the Bernoulli and Fourcier sectors is unknown.
+4. **Physical significance of the 6.41 ppm gap.** The two G* values differ at the fifth significant digit. Whether this represents a higher-order correction (like α²-order radiative corrections) or a fundamental distinction between the Bernoulli and Fourcier sectors is unknown.
 
 5. **Explicit lattice elliptic fibration.** The connection between the 3D cubic lattice and the lemniscate's elliptic curve y² = x³ − x should be constructible as an explicit fibration, with the lattice providing the base and the elliptic curve the fiber.
 
@@ -477,7 +488,7 @@ The following remain to be formalized:
 |----|-------|-----------------|----------------|
 | SSB-1 | Bernoulli ℤ₂ from self-intersection | [THEOREM] | FOUND_ONTOLOGICAL_GENESIS MIT-1 |
 | SSB-2 | Lemniscate-Alpha winding w = −2 | [THEOREM] | FOUND_FOURCIER_ONTIC_TOOL OT-8 |
-| SSB-3 | Two-road G* agreement (5.45 ppm) | [THEOREM] | FOUND_ONTOLOGICAL_GENESIS MIT-5 |
+| SSB-3 | Two-road G* agreement (6.41 ppm) | [SELECTION] | FOUND_ONTOLOGICAL_GENESIS MIT-5; rigidity verdict in AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md (2026-05-01) |
 | SSB-4 | ℤ₂ topology ↔ spin-1/2 identification | [SELECTION] | DERIV_QM_RESOLVED §2.7 |
 | SSB-5 | G* inseparability (boson-fermion) | [THEOREM] | DERIV_DISCRETE_CONTINUOUS_BRIDGE §1.1 |
 | SSB-6 | Discriminant trichotomy ↔ statistics | [SELECTION] | DERIV_DISCRETE_CONTINUOUS_BRIDGE §3 |
