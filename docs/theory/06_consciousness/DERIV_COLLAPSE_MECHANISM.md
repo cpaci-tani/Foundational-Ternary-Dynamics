@@ -2,10 +2,12 @@
 
 ## Deriving Quantum Measurement as an Algebraic Phase Transition
 
-**Date:** March 17, 2026
-**Framework:** Foundational Ternary Dynamics v5.28
+**Date:** March 17, 2026 (vocabulary refresh 2026-05-01)
+**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** [SELECTION] with [THEOREM] components — formal derivation chain
-**Authors:** cpaci & Claude (Opus 4.6)
+**Authors:** cpaci & Claude
+
+> **Vocabulary refresh (2026-05-01):** This document's mathematical content (Softplus → ReLU operator, Lindblad master equation, Existence Filter as Lindblad operator, decoherence timescale ≈ 18 ticks) is structural and reframe-stable. The places where the chain references "consciousness" or the "observer" are restated using the canonical [reflexivity / agency] vocabulary in [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). In particular: collapse is now framed as **the dynamical realization of reflexive coupling**, not as a "conscious observer" producing measurement. Wave-function collapse requires a reflexive coupling between the system and the observation layer; whether the reflexive coupling is realized by a conscious agent is *not* a claim this derivation makes.
 
 ---
 
