@@ -313,7 +313,7 @@ ftd/                                     # Project root
 │   │   ├── 03_derivations/       # Core physics derivations
 │   │   ├── 04_coupling/          # Coupling constants
 │   │   ├── 05_particles/         # Particle physics
-│   │   ├── 06_consciousness/     # Consciousness and measurement
+│   │   ├── 06_consciousness/     # Reflexive-projection layer + measurement (formerly framed as "consciousness"; directory name preserved for backward compatibility, see REF_REFLEXIVITY_VOCABULARY.md)
 │   │   ├── 07_assessment/        # Epistemic audits
 │   │   ├── 08_structural/        # Geometry and information theory
 │   │   ├── 09_mathematical/      # Number theory and connections
@@ -384,7 +384,9 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 ## Key Navigation Documents
 
 - **Full FTD spec**: `docs/SPEC_FTD.md`
-- **Algebraic spine (canonical theorems-only reference, 2026-04-27)**: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` — citation target for paper drafts; states the seven [THEOREM] claims (G* identity, master quadratic, CM uniqueness, coefficient 16, Watson identity, Phase G geometric Coulomb, Phase J ultralocality) independent of any physics interpretation. Read this before claiming anything load-bearing about FTD's algebraic content.
+- **Algebraic spine (canonical theorems-only reference, 2026-04-27)**: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` — citation target for paper drafts; states the nine [THEOREM] claims (G* identity, master quadratic, CM uniqueness h=1, coefficient 16, Watson identity, Phase G geometric Coulomb, Phase J ultralocality at L=2, harmonic invariant tower, Q(G*) field-theoretic) independent of any physics interpretation. Theorem 7 honest status: [THEOREM at L=2] + [CONJECTURE for general L] (audit 2026-05-01). Read this before claiming anything load-bearing about FTD's algebraic content.
+- **Math-complete roadmap** (2026-05-01): `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` — bridge-complete roadmap, 18 items across 4 tiers (spine completion, structural-uniqueness, engine-bridge, axioms→α derivation). MC-T4.3 is the central foundational obstruction (non-action α-injection mechanism); closure may require ontology extension per the lead-physicist diagnosis (Phase J ultralocality decouples algebraic spine from dynamical EFT).
+- **Reflexivity vocabulary** (2026-05-01): `docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md` — canonical replacement for "consciousness" terminology. Two-term core (reflexivity = structural; agency = dynamical). Drops qualia commitments without losing conceptual content. Cite this before applying vocabulary in new docs.
 - **Dimensionless ↔ Dimensional Map** (2026-04-29): `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) + `docs/theory/01_reference/dimensional_map.json` (canonical data, 15 entries). Single citation target for "is this prediction dimensionless or calibration-conditional?". Walks the bridge from the 7 algebraic-spine theorems through the 4 dimensionless physical predictions (α, N_c, m_μ/m_e, m_τ/m_e) through the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (`a_phys ≡ ℓ_P`, `t_phys`, `K_B = m_e`) to one worked dimensional application (m_e in MeV). Renderer: `scripts/proofs/build_dimensional_map.py`. Tests (12 assertions): `scripts/tests/test_dimensional_map.py`.
 - **Engine spec**: `engine/SPEC_ENGINE.md`
 - **Theory catalog**: `docs/theory/META_INDEX.md`

@@ -1,8 +1,16 @@
 /**
- * Consciousness Engine — holographic figure, sLoop ring, and audio synthesis
- * driven by lattice flux dynamics.
+ * Reflexivity Engine (Scale 11) — holographic figure, sLoop ring, and audio
+ * synthesis driven by lattice flux dynamics.
  *
- * Scale 11 in the FTD DAG hierarchy: the meta-scale where physics meets consciousness.
+ * VOCABULARY NOTE (2026-05-01): module name "consciousness" is preserved
+ * here for backward compatibility (extensive import surface). The conceptual
+ * content is the reflexive-projection layer per
+ * docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md. UI labels and user-
+ * facing strings now use "reflexivity" / "reflexive readout" terminology.
+ * A coordinated module-rename is queued for a future refactor.
+ *
+ * Scale 11 in the FTD DAG hierarchy: the meta-scale where physics meets the
+ * reflexive-projection layer (formerly framed as "consciousness").
  *
  * The holographic figure responds to real-time flux data:
  *   - Vertex deformation from flux spatial variance
@@ -10,8 +18,9 @@
  *   - Opacity from central flux density
  *   - Sound from flux energy / wave energy / curl
  *
- * The sLoop torus ring orbits at theta_C = 52.54 degrees — the consciousness
- * phase angle from the master quadratic with k = 1/2.
+ * The sLoop torus ring orbits at theta_C = 52.54 degrees — the reflexive
+ * phase angle (formerly "consciousness phase angle") from the master
+ * quadratic with k = 1/2.
  */
 
 import * as THREE from 'three';
