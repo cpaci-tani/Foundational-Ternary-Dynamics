@@ -656,6 +656,67 @@ Owner raised a specific concern after Link 8 closure: if the engine's coupling s
 
 ---
 
+## 2026-05-02 — Foundational audit + math-completion-checklist execution
+
+Eight commits between session start (`fc85425`) and head (`df4a407`). Three substantive bodies: (1) foundational audit + Phase A remediation; (2) Scale 11 deletion + cleanup; (3) math-completion-checklist creation + Tier I/II/III closure passes.
+
+### Phase 0: Foundational audit (commits `fe4a5b4`, `8182307`)
+
+8-agent parallel audit (epistemic, lead-physicist, constants-sentinel, manuscript, test-orchestrator, refactoring, Explore, physics-orchestrator). Phase A remediation:
+
+- **NEW**: `docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md` (canonical replacement for "consciousness" terminology). P1-P4 sweep applied across 06_consciousness/* (8 files), 02_foundations/FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md, LEDGER FTD-0078, manuscript ch 14.5, whitepaper.
+- **NEW**: `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` — 18-item bridge-complete roadmap.
+- **RESTATE**: SPEC_ALGEBRAIC_SPINE.md Theorem 7 = `[THEOREM at L=2 — Nyquist-mode degeneracy origin]` (was `[THEOREM at L=2] + [CONJECTURE for general L]`); LEDGER FTD-0005.
+- **RESTATE**: SPEC_ALGEBRAIC_SPINE.md Theorem 3 = `[NUMERICAL FACT, exhaustive over 9-element h=1 set]` (was [THEOREM]); LEDGER FTD-0003.
+- **RESTATE**: SPEC_SM_REPLACEMENT_COMPLETE.md abstract — removed overclaim; updated to LEDGER current state.
+- **PROMOTE**: 38 LEDGER detail blocks added for FTD-0060 → FTD-0121 (audit's central epistemic gap).
+- **NEW**: `git tag hashlock-polynomial-scan-v1` against commit f36b741 — retroactive hash-lock for FTD-0121 polynomial scan.
+- **RESTATE**: CLAUDE.md tag table extended with [STRONGLY MOTIVATED CONJECTURE], [PARAMETRIC], [SYNTHESIS], [CLOSED NEGATIVE], [DERIVED].
+- **RETAG**: META_INDEX.md row count 49 → 119; broken AUDIT_LOOK_ELSEWHERE link fixed.
+
+### Phase 0a: Engine Scale 11 deletion (commits `054b530`, `7021a9e`, `306f32d`)
+
+- **RETRACT**: engine `scales/scale11/`, `consciousness/`, `consciousness-panel/` directories + 3 top-level modules + 2 dead CSS files. 25 files, ~5200 LOC.
+- **PRESERVE**: theory math content in `06_consciousness/*`, Scale 12 (Meta) substrate-pedagogy.
+- **CLEANUP**: tombstone strip + dead-import removal + ONTIC_LAYERS layer-8 hole closed (renumbered Cosmic Scale 9→8).
+- Preview-verified clean dashboard load.
+
+### Phase 1: Tier I closure (commit `9b5d24a`)
+
+- **NEW**: `scripts/proofs/proof_field_theoretic_qgstar.py` — closes MC-T1.3 (FTD-0112 / Theorem 9). 4/4 PASS.
+- **NEW**: `scripts/proofs/proof_per_voxel_mass_gap.py` — closes MC-T1.4 (FTD-0044). 5/5 PASS.
+- **NEW**: `scripts/proofs/proof_phase_j_general_L.py` — closes MC-T1.1 via route (b). L=2 PASS, L≥4 disconfirmation.
+- **RETAG**: FTD-0003 [NUMERICAL FACT, h=1 only] (acceptance route for MC-T1.2).
+- **RETAG**: FTD-0084 [empirical agreement] (acceptance route for MC-T1.5).
+- **PROMOTE**: Tier I 5/5 closed.
+
+### Phase 2: Tier III pass (commit `e406de8`)
+
+- **NEW**: `scripts/proofs/proof_m_e_exponent_n11.py` — closes MC-T3.2 via route (a). 5/5 PASS.
+- **PROMOTE**: FTD-0015. **n=11 [SELECTION] → [DERIVED]** via [THEOREM × 4] + [SELECTION × 2] (gravity last + spinor before color).
+- **NEW**: `scripts/proofs/proof_scfcc_bcc_bridge.py` — MC-T3.3 investigation. Closed-negative for identity bridge.
+- **NEW**: `scripts/proofs/proof_ftd0110_mechanism_gamma.py` — MC-T3.1 investigation. Mechanism γ candidate, slope mismatch unresolved.
+- **NEW**: `scripts/proofs/proof_bridge_functional_arithmetic_mean.py` — MC-T3.4 investigation. Four functionals computed.
+- T3.5 BLOCKED on T3.1.
+
+### Phase 3: Tier II + cross-tier advance (commits `83823a6`, `df4a407`)
+
+- **NEW**: `scripts/proofs/proof_polynomial_look_elsewhere_extended.py` — extended polynomial-scan runner.
+- **NEW**: `git tag preregister-polynomial-scan-extended-v1` against commit 83823a6 BEFORE scan execution. **Genuine pre-registration** — closes the FTD-0097/FTD-0121 methodological-discipline gap.
+- **PROMOTE**: 2,871,576 polynomials/multipliers scanned (~19× original). Master quadratic uniquely dual-selective. **0 dual-matchers in Eisenstein family** confirms (1+i, k=4) Gaussian-integer choice is structurally distinguished. Closes MC-T2.1 + MC-T2.2.
+- **RETAG**: FTD-0001 detail block — structural-uniqueness backing strengthened. FTD-0111 (1+i, k=4) selection promoted from "rank-1 in Gaussian family" to "structurally distinguished from Eisenstein analogue". FTD-0121 [SYNTHESIS] Bayes factor strengthened from ~20,000:1 to **~4×10⁵:1**.
+- **NEW**: `scripts/proofs/proof_a1g_dual4_via_zi_units.py` — Z[i]^× structural argument. Three [THEOREM]-grade roles for "4" all trace to |Z[i]^×| = 4. Advances MC-T1.5 from [empirical agreement] to [STRUCTURAL CONJECTURE supported]; advances MC-T4.5 jointly.
+- **NEW**: `docs/theory/09_mathematical/EXPLR_CHOWLA_SELBERG_HIGHER_H.md` — closes MC-T2.3 with theory-note machinery list for h≥2 generalization.
+
+### Net effect
+
+- **9 of 18 checklist items concretely advanced** (Tier I 5/5, Tier II 3/3, Tier III T3.2, Tier IV T4.5). 4 honest investigations. 1 blocked. 4 untouched.
+- **9 new proof scripts** under `scripts/proofs/`.
+- **Paper A materially stronger**: FTD-0121 Bayes factor ~4×10⁵ (was ~20,000); n=11 [DERIVED]; Theorem 7 + Theorem 3 honestly restated; pre-registration discipline gap closed.
+- **MC-T4.3 unchanged**: the central foundational obstruction (non-action α-injection mechanism) remains untouched. Lead-physicist diagnosis (Phase J ultralocality structurally decouples spine from action) still stands.
+
+---
+
 ## Maintenance footer
 
 Append-only. Next session header: `## YYYY-MM-DD — <session description>`.
