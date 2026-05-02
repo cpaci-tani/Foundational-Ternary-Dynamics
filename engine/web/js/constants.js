@@ -425,7 +425,7 @@ export const ONTIC_LAYERS = [
     { layer: 5,   name: 'Coupling Constants',    symbols: ['alpha','g_c','G_N','sin2_W'], count: 4 },
     { layer: 6,   name: 'Mass Scale',            symbols: ['K_B','K_genesis','masses'], count: 3 },
     { layer: 7,   name: 'Precision Formula',     symbols: ['epsilon','c1-c4'], count: 5 },
-    { layer: 8,   name: 'Consciousness',         symbols: ['y_real','theta_C'], count: 2 },
+    { layer: 8,   name: 'Reflexivity',           symbols: ['y_real','theta_C'], count: 2 },
     { layer: 9,   name: 'Cosmic Scale',          symbols: ['Omega_L','DM_frac','gamma'], count: 3 },
 ];
 
