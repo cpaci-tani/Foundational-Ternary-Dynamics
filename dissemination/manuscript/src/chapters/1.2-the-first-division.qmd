@@ -28,7 +28,7 @@ This geometric self-division **precedes** the discrete pair production of partic
 
 ### Ontological Equivalence
 
-Two different lemniscate forms—the classical Bernoulli and the Lemniscate-Alpha—both produce the same geometric constant G* = 2.9587 to 5.45 ppm. This establishes their **ontological equivalence**: neither is more fundamental.
+Two different lemniscate forms—the classical Bernoulli and the Lemniscate-Alpha—both produce the same geometric constant G* = 2.9587 to +6.41 ppm. The pre-registered rigidity scan of 2026-05-01 (FTD-0122; see `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md`) finds ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable framework-integer-factorable matches. We therefore read this as **[SELECTION] — one valid structural interpretation establishing ontological compatibility** rather than as a uniqueness theorem; the canonical Lemniscate-Alpha is one of a measurable minority of natural curves with similar matches, not uniquely privileged.
 
 From G*, the master quadratic produces:
 - x₊ = 137.036 = 1/α (fine structure constant inverse)

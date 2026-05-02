@@ -76,16 +76,18 @@ A remarkable result: the classical Bernoulli lemniscate and the Lemniscate-Alpha
 | Curve | Method | Formula | Value |
 |-------|--------|---------|-------|
 | **Bernoulli** | Complex Multiplication | G* = √2 × Γ(1/4)² / (2π) | 2.9586751192... |
-| **Lemniscate-Alpha** | Arc Length | G* = L × 91/732 | 2.9586912539... |
-| **Discrepancy** | | | **5.45 ppm** |
+| **Lemniscate-Alpha** | Arc Length | G* = L × 91/732, with L_α = 23.79960517... | 2.9586940857... |
+| **Discrepancy** | | | **+6.41 ppm** |
 
-#### Why This Matters
+(Corrected 2026-05-01 from prior 5.45 ppm. Cross-validation at 20-digit precision via four independent integration methods gives L_α = 23.79960517... and the corrected match is +6.41 ppm.)
 
-1. **Not coincidence:** The probability of random agreement to 5.45 ppm is ~10⁻⁶
+#### Why This Might Matter (with rigidity-scan caveat)
 
-2. **Ontological equivalence:** Both curves access the same underlying mathematical structure
+1. **Not pure coincidence, but not unique either:** The original claim "probability of random agreement to 5.45 ppm is ~10⁻⁶" was based on a free-real-line null model. The pre-registered Lemniscate-Alpha rigidity scan (2026-05-01, `docs/theory/10_eft_program/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md`, FTD-0122) tested the *natural* null model — random Cayley-Dickson 5-harmonic curves with rational coefficients — and found that **~4.3% of valid curves admit framework-integer-factorable rational multipliers** landing within 5.45 ppm of any of 14 natural framework constants. This is far above the 10⁻⁶ free-line estimate; the canonical Lemniscate-Alpha is one of a measurable minority (~1 in 23) of natural curves with similar matches, **not uniquely privileged**.
 
-3. **Mutual necessity:** Via the Triangle of Necessity (see [MANDELBROT_TRD_DUALITY.md](../archive/ARCH_MANDELBROT_TRD_DUALITY.md) §XI), if one is necessary for physics, both are
+2. **[SELECTION], not [THEOREM]:** Both curves access G* through different geometric routes. The agreement at 6.41 ppm is real and the framework-integer factorization 91 = 7 × 13 = b₃ × N_eff is structurally interesting, but the rigidity scan finds non-canonical curves with strictly cleaner factorizations and tighter precision (e.g., L = 23.71 with multiplier 189/512 = 3³·7 / 2⁹ landing on G*² at +0.71 ppm). The two-road agreement is a [SELECTION] reading, not a forced structural identity.
+
+3. **Mutual necessity (revised):** The framework's "Triangle of Necessity" argument that, if one curve is necessary for physics then both are, requires an independent uniqueness argument that the rigidity scan now shows is missing. See [MANDELBROT_TRD_DUALITY.md](../archive/ARCH_MANDELBROT_TRD_DUALITY.md) §XI for the original argument; treat it as [SELECTION] pending independent derivation of the canonical 5-harmonic coefficients.
 
 #### The Bernoulli Lemniscate
 
@@ -108,7 +110,7 @@ Both converge to the same G*, which then generates the master quadratic producin
 
 #### Figure
 
-![Two Lemniscates: Bernoulli and Alpha both produce G* to 5.45 ppm](../../media/images/fig_two_lemniscates.png)
+![Two Lemniscates: Bernoulli and Alpha both produce G* to +6.41 ppm](../../media/images/fig_two_lemniscates.png)
 
 See [MITOSIS_OF_THE_VOID.md](../archive/ARCH_MITOSIS_OF_THE_VOID.md) for complete derivation and the "void mitosis" interpretation.
 

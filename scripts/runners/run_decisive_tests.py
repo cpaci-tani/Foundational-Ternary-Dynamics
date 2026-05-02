@@ -231,7 +231,7 @@ def run_phase4_consistency():
     # Import needed modules
     from constants import G_STAR, X_PLUS, X_MINUS, N_c, N_base
 
-    # G* from two lemniscate forms (5.45 ppm match)
+    # G* from two lemniscate forms (+6.41 ppm match; corrected 2026-05-01 from 5.45 ppm)
     try:
         from physics_constants import verify_gstar_from_both_curves
         result = verify_gstar_from_both_curves()
