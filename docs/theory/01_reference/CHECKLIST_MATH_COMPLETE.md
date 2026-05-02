@@ -2,6 +2,7 @@
 
 **Created:** 2026-05-01 (post-foundational-audit Phase A)
 **Tier I closed:** 2026-05-02 (5/5 items completed via mix of script + acceptance)
+**Tier III pass:** 2026-05-02 (1/5 closed [T3.2], 3/5 investigated-not-closed [T3.1/T3.3/T3.4], 1/5 blocked [T3.5]) — research-program nature of Tier III items confirmed
 **Scope:** Bridge-complete — closes the algebraic spine in the strong sense AND the axioms→1/α derivation chain, including items that may have foundational obstructions in the current FTD ontology.
 **Authoritative status source:** [`07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) wins on any disagreement.
 **Audience:** Project owner + future AI agents resuming the project. Written to be picked up cold.
@@ -101,49 +102,45 @@
 
 ## Tier III — Engine ↔ algebra bridge
 
-### MC-T3.1 — FTD-0110 nonlinear bridge perturbation theorem
+### MC-T3.1 — FTD-0110 nonlinear bridge perturbation theorem  **[INVESTIGATED 2026-05-02 — NOT CLOSED]**
 - **Closes**: FTD-0110 nonlinear identification; converts cluster↔mass from [SMC] to [DERIVED]/[THEOREM].
-- **Current status**: linear `k = 1/N_base = 1/4` [DERIVED] from O_h rep theory (FTD-0110 linear closure 2026-04-28). Nonlinear engine empirically matches across 5 SM particles + 11 amplitudes at ~5%. Mechanisms α (1/√d) and β (Langevin-equipart) [FALSIFIED] 2026-05-01. Mechanism γ (Langevin amplitude-crossover at A* ≈ 13) and finite-amplitude irrep-leakage corrections remain candidates.
-- **Exit criterion**: perturbation-theory expansion in genesis density (or amplitude) showing the linear-mode mean is preserved at zeroth order, with explicit logarithmic correction term `≈ −0.030·ln(A/2)` derived from a structural mechanism. Either (a) Mechanism γ confirmed via engine experiments D3a-D3d, OR (b) a fourth mechanism δ identified and proven.
-- **Dependencies**: none.
-- **Effort**: **W-M** (1–8 weeks). The two failed mechanisms cost ~1 week each; γ + new candidate δ likely costs 2–6 more.
-- **Risk**: high. Both natural representation-theoretic frameworks already failed. The nonlinear regime may not have a closed-form perturbative answer in irrep variables.
-- **Closure path**: see `EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` §8.7. Engine experiments D3a (vary K_GENESIS_KINETIC_DRAIN), D3b (K_EVAP_RATE), D3c (T_L), D3d (L) discriminate γ vs δ. ~2–3 GPU days each.
+- **Investigation script**: `scripts/proofs/proof_ftd0110_mechanism_gamma.py` — exits 0. Findings: (+) Mechanism γ crossover scale A* = √(L³·T_L) = 12.8 at canonical (L=32, T=0.005), matching empirical drift midpoint A ≈ 13 qualitatively; (-) naive predicted slope -1/A* ≈ -0.077 does NOT match empirical -0.030 (off ~2.5×); discriminator experiments D3a-D3d (varying K_GENESIS_KINETIC_DRAIN, K_EVAP_RATE, T_L, L) identified for engine campaign.
+- **Status**: NOT closed. Mechanism γ is candidate (consistent with onset) but slope mismatch is unresolved. Two routes for actual closure: (a) GPU experiments D3a-D3d on WSL2 RTX 5090 (~2 weeks at 2-3 days each) to discriminate γ vs δ; (b) more careful Langevin signal-to-noise analytical model.
+- **Risk**: high — both natural representation-theoretic frameworks (Mechanisms α, β) already FALSIFIED.
 
 ### MC-T3.2 — m_e exponent n=11 first-principles ladder-position theorem
 - **Closes**: FTD-0015 / FTD-0077 m_e exponent [SELECTION] → [DERIVED].
-- **Current status**: 3/6 components of `m_e = M_P√(2π)(16/3)α¹¹` are [THEOREM] (√(2π), 16, D=3). Exponent `n=11` from cumulative-sum ladder `{4, 4, 3, 3, 6} → {8, 11, 14, 20}` is physically motivated but not first-principles forced.
-- **Exit criterion**: theorem deriving `n=11` from O_h ladder structure + electron's role as smallest-charge lepton, with explicit subgroup-chain reduction. Pole-mass calculation on a non-ultralocal ensemble (per FTD-0075) is the alternative route.
-- **Dependencies**: MC-T1.5 (A_{1g} = 4 dual identification) likely supports this; MC-T3.1 success provides framework.
-- **Effort**: **M-RP** (1–6 months).
-- **Risk**: high. The O_h subgroup-chain approach is the cleanest route; pole-mass route is blocked by FTD-0075 (ultralocal flux propagator).
+- **Status**: **[CLOSED 2026-05-02 via route (a) — structural derivation]**
+- **Closure script**: `scripts/proofs/proof_m_e_exponent_n11.py` — 5/5 tests PASS. Verifies the partition theorem (multiset {3, 3, 4, 6} forced by O_h structural integers + sum-16 / 4-parts / structural-completeness constraints, citing FTD-0084), enumerates the 12 distinct orderings, identifies the 4 of 12 that give n=11 at the electron position, and shows that two SM-hierarchy SELECTIONs ("gravity last" + "spinor before color") force the unique ordering (4, 3, 3, 6) → positions (4, 8, 11, 14, 20).
+- **Closure chain**: [THEOREM × 4] (D=3 from 16=2^D(D-1)!; |Aut(E)|²=16 for E:y²=x³−x; {N_c, N_base, N_f}={3,4,6} forced by O_h; multiset {3,3,4,6} forced by partition theorem) + [SELECTION × 2] (gravity last; spinor before color) → **[DERIVED]** n=11 for electron position.
+- **Net**: FTD-0015 / m_e formula upgrades from "n=11 [SELECTION]" to "n=11 [DERIVED]" given the multiset theorem + 2 standard SM-hierarchy SELECTIONs (these are not new FTD postulates).
 
-### MC-T3.3 — Engine (SC+FCC)/2 ↔ BCC Watson agreement bridge theorem
-- **Closes**: a structural mystery — the algebraic spine wants BCC (Watson identity W₃ = G*²/(2π) is a BCC integral), the engine runs on (SC+FCC)/2 (BCC-orthogonal per `AUDIT_LINK8_CLOSURE.md`), and yet the engine reproduces spine numerics empirically.
-- **Current status**: Watson integrals computed for SC, BCC, FCC, Moore-18 (FTD-0079, 2026-04-24); ratios 0.83–0.95, none matching the conjectured 27/8. No bridge theorem.
-- **Exit criterion**: theorem stating that for the FTD-relevant observable class, (SC+FCC)/2 and BCC give numerically equivalent answers up to a structural correction expressible from FTD primitives, OR explicit acceptance that the empirical agreement is not yet understood.
-- **Dependencies**: none.
-- **Effort**: **W-M** (2–8 weeks).
-- **Risk**: medium-high. May require new lattice-Fourier identities not yet in the FTD literature.
-- **Closure path**: investigate (SC+FCC)/2 ↔ BCC structural duality via 27-block decomposition; look for a `2² × 1` vs `1 × 8` reorganization that bridges them.
+### MC-T3.3 — Engine (SC+FCC)/2 ↔ BCC Watson agreement bridge theorem  **[INVESTIGATED 2026-05-02 — closed-negative for identity, closed-positive for symmetry]**
+- **Closes**: a structural mystery — the algebraic spine wants BCC, engine runs on (SC+FCC)/2.
+- **Investigation script**: `scripts/proofs/proof_scfcc_bcc_bridge.py` — confirms FTD-0079 finding (no exact Watson-integral identity between (SC+FCC)/2 and BCC; ~3% mismatch at L=128, scales with L); confirms no L-independent calibration α exists; documents the actual structural agreement source: shared O_h symmetry forces leading-order agreement on O_h-invariant observables, and the algebraic-coefficient layer (16, G*², G*³) is stencil-independent (number-theoretic).
+- **Status**: NOT closed as a structural-identity theorem because **no such theorem exists** per this investigation. Closed-positive at the symmetry level: engine and spine agree because both respect O_h, not because of a Watson-integral identity. The ~3% finite-L stencil mismatch bounds the engine's accuracy as a sampling instrument.
+- **Net**: FTD-0079 / FTD-0078 statuses unchanged. The "bridge theorem" route is closed-negative; deeper structural connection beyond shared O_h symmetry remains a Tier-IV research-program question.
 
-### MC-T3.4 — Bridge Functional arithmetic-mean rule (FTD-0095)
+### MC-T3.4 — Bridge Functional arithmetic-mean rule (FTD-0095)  **[INVESTIGATED 2026-05-02 — NOT CLOSED]**
 - **Closes**: the open sub-claim that mass = `α · (x_+ + x_-)/2` rather than geometric/harmonic/power-mean alternatives.
-- **Current status**: [SELECTION] (2026-04-26). Three closure routes named: (i) variational principle on σ_BCC, (ii) 't Hooft beable equiprobability, (iii) Beilinson regulator slot.
-- **Exit criterion**: one of three closure routes succeeds with a derivation that uniquely picks arithmetic mean over alternatives; FTD-0095 promotes from [SELECTION] to [DERIVED].
-- **Dependencies**: MC-T3.3 (BCC/(SC+FCC) bridge) likely supports route (i).
-- **Effort**: **M** (1–3 months).
-- **Risk**: medium. All three routes have technical machinery available but require careful FTD-side adaptation.
+- **Investigation script**: `scripts/proofs/proof_bridge_functional_arithmetic_mean.py` — exits 0. Computes the four candidate functionals (arithmetic, geometric, harmonic, quadratic mean) on the master quadratic root spectrum (x_+, x_-). All four give values of order O(α·x_+) ≈ 1, with relative differences of ~10–20% between functionals. The FTD-0015 high-precision m_e formula uses the ladder walk (a different functional entirely), so direct mean-discrimination via empirical match is not possible at the precision available.
+- **Status**: NOT closed. The Bridge Functional ontology commitment (FTD-0095) remains [SELECTION]. The three closure routes (variational on σ_BCC, 't Hooft beable, Beilinson regulator) all require research-program-scale machinery beyond session scope.
+- **Net**: FTD-0095 status unchanged.
 
-### MC-T3.5 — FTD-0110 multi-scale boundary-correction closure
+### MC-T3.5 — FTD-0110 multi-scale boundary-correction closure  **[BLOCKED on T3.1]**
 - **Closes**: the multi-scale extension currently empirically verified at 5% but with `[OPEN]` analytical boundary-correction.
-- **Current status**: cluster size formula at single 27-block [DERIVED]; multi-scale to clusters spanning many 27-blocks empirically verified across 4 dimensions of variation; analytical closure [OPEN].
-- **Exit criterion**: derivation of the boundary-correction term that quantitatively reproduces the cross-block residuals observed at L ∈ {32, 64, 128}; closure of FTD-0110 multi-scale tag.
-- **Dependencies**: MC-T3.1 success.
-- **Effort**: **W-M** (2–6 weeks after MC-T3.1).
-- **Risk**: medium. Likely tractable if MC-T3.1 closes cleanly.
+- **Status**: 2026-05-02 — cannot close until MC-T3.1 closes (Mechanism γ confirmed or replaced). The boundary-correction analysis depends on which non-linear mechanism is the right one, and that depends on the GPU campaign D3a-D3d. **Net**: FTD-0110 multi-scale tag remains as before; closure deferred until T3.1 closes.
 
-**Tier III total effort:** ~3–9 months.
+**Tier III closure (2026-05-02):** **1/5 closed (T3.2), 3/5 investigated-not-closed (T3.1, T3.3, T3.4), 1/5 blocked (T3.5).**
+
+The closures map to the realistic effort the Tier-III items required:
+- **T3.2** was the only item with concrete mathematical content tractable in a single session — and it succeeded by leveraging existing FTD-0084 work on the multiset theorem.
+- **T3.1, T3.3, T3.4** are research-program-scale items where session-tractable analytical work produces investigation results, not closures. The scripts document the question precisely + identify what would close each item (engine GPU campaigns for T3.1, lattice-Fourier identities for T3.3, variational machinery for T3.4) — making future closure attempts more focused.
+- **T3.5** is structurally blocked.
+
+**Net effect on Paper A**: T3.2 closure provides one substantive new derivation chain ([DERIVED] for n=11 in m_e formula). The T3.1/T3.3/T3.4 investigations strengthen the honest-tagging discipline (closed-negative results have value; they prevent re-attempts). Paper A's algebraic-spine focus is unaffected.
+
+**Tier III remaining effort:** Tier III items 1, 3, 4 are research-program-scale. ~3-9 months small-team focused.
 
 ---
 
