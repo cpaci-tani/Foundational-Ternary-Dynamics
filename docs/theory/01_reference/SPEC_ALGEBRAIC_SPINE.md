@@ -123,7 +123,17 @@ and x− ≈ N_c is recorded separately in §9.
 
 ---
 
-## 3 · Theorem 3 — CM curve uniqueness among class-number-1 fields
+## 3 · Theorem 3 — CM curve uniqueness within class-number-1 fields
+
+**Status.** **[NUMERICAL FACT, exhaustive over the 9-element h=1 set]**.
+Audit 2026-05-01 / Tier-I closure 2026-05-02 (see
+[`CHECKLIST_MATH_COMPLETE.md`](CHECKLIST_MATH_COMPLETE.md) MC-T1.2): the
+audit honestly reclassified this from [THEOREM] to [NUMERICAL FACT,
+h=1 only]. The original claim's content is unchanged; the status reflects
+that the proof is a finite numerical scan over 9 discriminants, not a
+structural theorem. Extension to class number h ≥ 2 (the structural
+version) is a separate open problem (Tier-I MC-T1.2 / Tier-II MC-T2.3 in
+the math-complete checklist) requiring extended Chowla–Selberg machinery.
 
 **Statement.** Let E_d denote the CM elliptic curve with complex
 multiplication by the ring of integers of ℚ(√−d) for d in the nine
@@ -138,11 +148,9 @@ discriminant d = −4 is the unique value for which both roots
 simultaneously match dimensionless physical constants to permille
 precision.
 
-**Proof.** Numerical verification across all nine discriminants. See
-`scripts/proofs/scan_cm_curves.py` and
-`docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`. The verification
-is exhaustive over the nine discriminants and the result is reported
-as a uniqueness theorem within the class-number-1 family.
+**Verification.** Exhaustive numerical scan over all nine discriminants.
+See `scripts/proofs/scan_cm_curves.py` and
+`docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`.
 
 **LEDGER:** Implied by FTD-0001 + FTD-0014; not assigned its own row
 (audit-derived rather than independent claim).
@@ -151,8 +159,9 @@ as a uniqueness theorem within the class-number-1 family.
 quadratic fields.
 
 **What it does NOT claim.** Uniqueness extends to class-number ≥ 2;
-that's an [OPEN] extension (FTD priority queue Option 4). The
-uniqueness here is among class-number-1 fields only.
+that is the structural version of this question and is [OPEN]
+(MC-T1.2 path (a) in the math-complete checklist). The numerical fact
+here is exhaustive only over the 9-element h=1 family.
 
 ---
 
@@ -349,7 +358,15 @@ identification (see §10 below).
 - Selection of `k = 4` as the "physics level" of the tower. The tower
   parameterizes the master-quadratic family without selecting a level
   from first principles; the empirical match `α⁻¹ ≈ x_+(k=4)` to 1.26
-  ppm (and `N_c ≈ x_−(k=4)` to 0.80%) is unaltered.
+  ppm (and `N_c ≈ x_−(k=4)` to 0.80%) is unaltered. The structural
+  question of whether `k=4` here is the same `4` as `mult(A_{1g})=4`
+  on the 27-block (FTD-0110 / `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`)
+  is **[OPEN; empirical agreement, structural identification not
+  proven]** (Tier-I MC-T1.5 in the math-complete checklist; Tier-IV
+  MC-T4.5 escalates this question to "why-level-k=4 from N_base=4").
+  The 2026-05-02 Tier-I closure pass reclassifies this as an
+  acceptance (structural identification deferred to Tier-IV) rather
+  than a structural theorem.
 - Uniqueness of the (1+i)-multiplier choice. The harmonic invariant
   holds for any family `{M(x) = x² − bx + c : c = G* · b}` regardless
   of the multiplier, so the (1+i)-tower (`m_k = 2^k`) is one indexed
